@@ -20,6 +20,7 @@
 
 UEditModelCameraController::UEditModelCameraController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
+	, bUpdateCameraTransform(true)
 	, RotateSpeed(5.0f)
 	, bUseSmoothZoom(true)
 	, SmoothZoomSpeed(25.0f)
@@ -123,7 +124,7 @@ void UEditModelCameraController::TickComponent(float DeltaTime, enum ELevelTick 
 	FVector clampedCamPos = curCamPos.GetClampedToMaxSize(ZoomMaxTotalDistance);
 	CamTransform.SetLocation(clampedCamPos);
 
-	if (!CamTransform.EqualsNoScale(oldTransform))
+	if (!CamTransform.EqualsNoScale(oldTransform) && bUpdateCameraTransform)
 	{
 		Controller->EMPlayerPawn->SetActorLocationAndRotation(CamTransform.GetLocation(), CamTransform.GetRotation());
 	}

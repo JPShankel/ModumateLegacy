@@ -219,6 +219,7 @@ public:
 	void DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
 
 	void MakeNew(UWorld *world);
+	bool Serialize(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord);
 	bool Save(UWorld *world, const FString &path);
 	bool Load(UWorld *world, const FString &path, bool setAsCurrentProject);
 	void SetCurrentProjectPath(const FString& currentProjectPath = FString());

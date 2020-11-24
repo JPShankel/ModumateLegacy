@@ -37,6 +37,68 @@ namespace Modumate
 		TraversalGraph2D->Reset();
 	}
 
+	bool FGraph3D::Equals(const FGraph3D& Other, float EqualityEpsilon) const
+	{
+		if ((Vertices.Num() != Other.Vertices.Num()) ||
+			(Edges.Num() != Other.Edges.Num()) ||
+			(Faces.Num() != Other.Faces.Num()) ||
+			(CachedGroups.Num() != Other.CachedGroups.Num()))
+		{
+			return false;
+		}
+
+		for (auto& kvp : Vertices)
+		{
+			auto* otherVertex = Other.FindVertex(kvp.Key);
+			if ((otherVertex == nullptr) ||
+				!kvp.Value.Position.Equals(otherVertex->Position, EqualityEpsilon))
+			{
+				return false;
+			}
+		}
+
+		for (auto& kvp : Edges)
+		{
+			auto* otherEdge = Other.FindEdge(kvp.Key);
+			if ((otherEdge == nullptr) ||
+				(otherEdge->StartVertexID != kvp.Value.StartVertexID) ||
+				(otherEdge->EndVertexID != kvp.Value.EndVertexID))
+			{
+				return false;
+			}
+		}
+
+		for (auto& kvp : Faces)
+		{
+			auto* otherFace = Other.FindFace(kvp.Key);
+			if ((otherFace == nullptr) ||
+				(otherFace->VertexIDs != kvp.Value.VertexIDs))
+			{
+				return false;
+			}
+		}
+
+		for (auto& kvp : CachedGroups)
+		{
+			auto* otherGroup = Other.CachedGroups.Find(kvp.Key);
+			if ((otherGroup == nullptr) ||
+				(otherGroup->Num() != kvp.Value.Num()))
+			{
+				return false;
+			}
+
+			for (int32 groupMemberID : kvp.Value)
+			{
+				if (!otherGroup->Contains(groupMemberID))
+				{
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
 	FGraph3DEdge* FGraph3D::FindEdge(FGraphSignedID EdgeID)
 	{
 		return Edges.Find(FMath::Abs(EdgeID));
@@ -672,6 +734,7 @@ namespace Modumate
 	{
 		// TODO: updating planes could be a part of Dirty instead of 
 		// part of applying the deltas
+		TempDeletedIDs.Reset();
 
 		for (auto &kvp : Delta.VertexMovements)
 		{
@@ -712,6 +775,7 @@ namespace Modumate
 			{
 				return false;
 			}
+			TempDeletedIDs.Add(kvp.Key);
 		}
 
 		for (auto &kvp : Delta.EdgeAdditions)
@@ -744,6 +808,7 @@ namespace Modumate
 			{
 				return false;
 			}
+			TempDeletedIDs.Add(kvp.Key);
 		}
 
 		for (auto &kvp : Delta.FaceAdditions)
@@ -776,6 +841,7 @@ namespace Modumate
 			{
 				return false;
 			}
+			TempDeletedIDs.Add(kvp.Key);
 		}
 
 		for (auto &kvp : Delta.FaceContainmentUpdates)
@@ -857,6 +923,12 @@ namespace Modumate
 		// Apply changes to the GroupIDs field of vertices, edges, and faces
 		for (auto &kvp : Delta.GroupIDsUpdates)
 		{
+			// We can safely skip GroupIDs updates for graph members that were just deleted
+			if (TempDeletedIDs.Contains(kvp.Key))
+			{
+				continue;
+			}
+
 			ApplyGroupIDsDelta(kvp.Key, kvp.Value);
 		}
 

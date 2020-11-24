@@ -451,8 +451,14 @@ void AEditModelPlayerController_CPP::SetupInputComponent()
 		InputComponent->BindKey(FInputChord(EKeys::Backslash, true, true, true, false), EInputEvent::IE_Pressed, this, &AEditModelPlayerController_CPP::DebugCrash);
 
 #if !UE_BUILD_SHIPPING
-		// Add a debug command to force clean selected objects (Ctrl+Shift+R)
-		InputComponent->BindKey(FInputChord(EKeys::R, true, true, false, false), EInputEvent::IE_Pressed, this, &AEditModelPlayerController_CPP::CleanSelectedObjects);
+		// Add a debug command to force clean selected objects (Ctrl+F5)
+		InputComponent->BindKey(FInputChord(EKeys::F5, false, true, false, false), EInputEvent::IE_Pressed, this, &AEditModelPlayerController_CPP::CleanSelectedObjects);
+
+		// Add debug commands for input recording/playback
+		InputComponent->BindKey(FInputChord(EKeys::R, false, true, true, false), EInputEvent::IE_Pressed, InputAutomationComponent, &UEditModelInputAutomation::TryBeginRecording);
+		InputComponent->BindKey(FInputChord(EKeys::R, true, true, true, false), EInputEvent::IE_Pressed, InputAutomationComponent, &UEditModelInputAutomation::TryEndRecording);
+		InputComponent->BindKey(FInputChord(EKeys::I, false, true, true, false), EInputEvent::IE_Pressed, InputAutomationComponent, &UEditModelInputAutomation::TryBeginPlaybackPrompt);
+		InputComponent->BindKey(FInputChord(EKeys::I, true, true, true, false), EInputEvent::IE_Pressed, InputAutomationComponent, &UEditModelInputAutomation::TryEndPlayback);
 #endif
 	}
 }
@@ -1355,21 +1361,6 @@ void AEditModelPlayerController_CPP::SetObjectSelected(const FModumateObjectInst
 		.Param(Parameters::kObjectID, ob->ID)
 		.Param(Parameters::kSelected, selected)
 	);
-}
-
-bool AEditModelPlayerController_CPP::InputKey(FKey Key, EInputEvent EventType, float AmountDepressed, bool bGamepad)
-{
-	// First, pass through the input
-	bool bResult = Super::InputKey(Key, EventType, AmountDepressed, bGamepad);
-
-	// Check to see if we're recording input (and not playing it back); if so, then log it
-	if (InputAutomationComponent && InputAutomationComponent->IsRecording() &&
-		!bGamepad && !InputAutomationComponent->IsPlaying())
-	{
-		InputAutomationComponent->RecordInput(Key, EventType);
-	}
-
-	return bResult;
 }
 
 void AEditModelPlayerController_CPP::HandleDigitKey(int32 DigitKey)

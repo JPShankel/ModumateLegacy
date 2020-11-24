@@ -30,6 +30,9 @@ public:
 
 	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent);
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "Whether to update the camera transform during tick, rather than just handle input"))
+	bool bUpdateCameraTransform;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The speed of rotation, in degrees / second, during Orbiting and Flying that's applied by the yaw and pitch input axes"))
 	float RotateSpeed;
 

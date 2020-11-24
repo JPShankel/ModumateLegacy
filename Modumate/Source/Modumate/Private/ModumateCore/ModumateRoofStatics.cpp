@@ -189,6 +189,17 @@ bool FTessellationPolygon::UpdatePolygonVerts()
 			return ClipPoint.Equals(clipPointOnRay, RAY_INTERSECT_TOLERANCE);
 		};
 
+		auto addNextPolyVert = [this](const FVector& NewPolyVert) -> bool
+		{
+			if ((PolygonVerts.Num() > 0) && PolygonVerts.Last().Equals(NewPolyVert, RAY_INTERSECT_TOLERANCE))
+			{
+				return false;
+			}
+
+			PolygonVerts.Add(NewPolyVert);
+			return true;
+		};
+
 		// Naively consume clipping segments, assuming that they are attached to one another.
 		// TODO: use generic polygon clipping if they are always convex, or make stronger guarantees
 		// about clipping segment connectivity if the polygon may be clipped into a convex polygon.
@@ -242,21 +253,13 @@ bool FTessellationPolygon::UpdatePolygonVerts()
 					const FVector &lastPolyVert = PolygonVerts.Last();
 					if (clipStartPoint.Equals(lastPolyVert, RAY_INTERSECT_TOLERANCE))
 					{
-						if (!lastPolyVert.Equals(clipEndPoint, RAY_INTERSECT_TOLERANCE))
-						{
-							PolygonVerts.Add(clipEndPoint);
-						}
-
+						addNextPolyVert(clipEndPoint);
 						bConsumed = true;
 						bReachedStartRay = testClipPointOnRay(StartPoint, StartDir, clipEndPoint, curLengthOnEndRay);
 					}
 					else if (clipEndPoint.Equals(lastPolyVert, RAY_INTERSECT_TOLERANCE))
 					{
-						if (!lastPolyVert.Equals(clipStartPoint, RAY_INTERSECT_TOLERANCE))
-						{
-							PolygonVerts.Add(clipStartPoint);
-						}
-
+						addNextPolyVert(clipStartPoint);
 						bConsumed = true;
 						bReachedStartRay = testClipPointOnRay(StartPoint, StartDir, clipStartPoint, curLengthOnEndRay);
 					}
@@ -277,8 +280,8 @@ bool FTessellationPolygon::UpdatePolygonVerts()
 				const FVector &clipPointA = ClippingPoints[endRaySegStartIdx];
 				const FVector &clipPointB = ClippingPoints[endRaySegEndIdx];
 
-				PolygonVerts.Add(clipPointA);
-				PolygonVerts.Add(clipPointB);
+				addNextPolyVert(clipPointA);
+				addNextPolyVert(clipPointB);
 
 				int32 minIndex = FMath::Min(endRaySegStartIdx, endRaySegEndIdx);
 				ClippingPoints.RemoveAt(minIndex, 2, false);

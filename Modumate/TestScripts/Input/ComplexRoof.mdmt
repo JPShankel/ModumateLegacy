@@ -1,0 +1,310 @@
+{
+	"ModumateHeader":
+	{
+		"version": 9,
+		"thumbnail": "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1FeU0UAerUV5TRQB6tRXlNFAHq1FeU0UAerUV5TRQB6tRXlNFAHq1FeU0UAerUV5TRQB6tUV3bQXlpNa3kMU9tOjRyxSoHSRGGCrKeCCCQQa8uooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAopFYMoZTkEZFLQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA2PIXBAXBIAHpnj9KdUaYEsgzycN+mP6VJTYIKKKKQBRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAMIPmggfKVIJ9+Mf1p9MlwNjNn5WGMep4/rT6YBRRRSAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//Z"
+	},
+	"ModumateObjects":
+	{
+		"objectData": [
+			{
+				"iD": 12,
+				"objectType": "OTRoofPerimeter",
+				"parentId": 0,
+				"assemblyKey": "",
+				"customData":
+				{
+					"structName": "MOIRoofPerimeterData",
+					"structJson":
+					{
+						"edgeProperties":
+						{
+						}
+					}
+				}
+			}
+		],
+		"currentToolAssemblyMap":
+		{
+			"VE_PLACEOBJECT": "",
+			"VE_WALL": "",
+			"VE_FLOOR": "",
+			"VE_DOOR": "",
+			"VE_WINDOW": "",
+			"VE_STAIR": "",
+			"VE_RAIL": "",
+			"VE_CABINET": "",
+			"VE_FINISH": "",
+			"VE_COUNTERTOP": "",
+			"VE_STRUCTURELINE": "",
+			"VE_TRIM": "",
+			"VE_ROOF_FACE": "",
+			"VE_CEILING": ""
+		},
+		"presetCollection": {},
+		"keyStore": [],
+		"cameraViews": [],
+		"customGraph2DRecords":
+		{
+		},
+		"surfaceGraphs":
+		{
+		},
+		"objectInstances": [],
+		"volumeGraph":
+		{
+			"vertices":
+			{
+				"36":
+				{
+					"iD": 36,
+					"position":
+					{
+						"x": 500.00006103515625,
+						"y": -499.99996948242188,
+						"z": 250.00001525878906
+					}
+				},
+				"37":
+				{
+					"iD": 37,
+					"position":
+					{
+						"x": 1499.999755859375,
+						"y": -499.99996948242188,
+						"z": 250.00001525878906
+					}
+				},
+				"13":
+				{
+					"iD": 13,
+					"position":
+					{
+						"x": 7.62939453125e-05,
+						"y": -499.99996948242188,
+						"z": 0
+					}
+				},
+				"8":
+				{
+					"iD": 8,
+					"position":
+					{
+						"x": 0.000152587890625,
+						"y": -999.99993896484375,
+						"z": 0
+					}
+				},
+				"6":
+				{
+					"iD": 6,
+					"position":
+					{
+						"x": 500.0001220703125,
+						"y": -999.99993896484375,
+						"z": 0
+					}
+				},
+				"4":
+				{
+					"iD": 4,
+					"position":
+					{
+						"x": 2000,
+						"y": -999.99993896484375,
+						"z": 0
+					}
+				},
+				"2":
+				{
+					"iD": 2,
+					"position":
+					{
+						"x": 2000,
+						"y": 0,
+						"z": 0
+					}
+				},
+				"1":
+				{
+					"iD": 1,
+					"position":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					}
+				}
+			},
+			"edges":
+			{
+				"38":
+				{
+					"iD": 38,
+					"startVertexId": 1,
+					"endVertexId": 36,
+					"groupIds": []
+				},
+				"39":
+				{
+					"iD": 39,
+					"startVertexId": 36,
+					"endVertexId": 37,
+					"groupIds": []
+				},
+				"40":
+				{
+					"iD": 40,
+					"startVertexId": 37,
+					"endVertexId": 2,
+					"groupIds": []
+				},
+				"42":
+				{
+					"iD": 42,
+					"startVertexId": 13,
+					"endVertexId": 36,
+					"groupIds": []
+				},
+				"16":
+				{
+					"iD": 16,
+					"startVertexId": 13,
+					"endVertexId": 1,
+					"groupIds": [ 12 ]
+				},
+				"44":
+				{
+					"iD": 44,
+					"startVertexId": 8,
+					"endVertexId": 36,
+					"groupIds": []
+				},
+				"46":
+				{
+					"iD": 46,
+					"startVertexId": 6,
+					"endVertexId": 36,
+					"groupIds": []
+				},
+				"49":
+				{
+					"iD": 49,
+					"startVertexId": 4,
+					"endVertexId": 37,
+					"groupIds": []
+				},
+				"15":
+				{
+					"iD": 15,
+					"startVertexId": 8,
+					"endVertexId": 13,
+					"groupIds": [ 12 ]
+				},
+				"14":
+				{
+					"iD": 14,
+					"startVertexId": 13,
+					"endVertexId": 6,
+					"groupIds": []
+				},
+				"9":
+				{
+					"iD": 9,
+					"startVertexId": 6,
+					"endVertexId": 8,
+					"groupIds": [ 12 ]
+				},
+				"7":
+				{
+					"iD": 7,
+					"startVertexId": 4,
+					"endVertexId": 6,
+					"groupIds": [ 12 ]
+				},
+				"5":
+				{
+					"iD": 5,
+					"startVertexId": 2,
+					"endVertexId": 4,
+					"groupIds": [ 12 ]
+				},
+				"3":
+				{
+					"iD": 3,
+					"startVertexId": 1,
+					"endVertexId": 2,
+					"groupIds": [ 12 ]
+				}
+			},
+			"faces":
+			{
+				"45":
+				{
+					"iD": 45,
+					"vertexIds": [ 8, 36, 13 ],
+					"groupIds": [ 12 ],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"41":
+				{
+					"iD": 41,
+					"vertexIds": [ 1, 36, 37, 2 ],
+					"groupIds": [ 12 ],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"43":
+				{
+					"iD": 43,
+					"vertexIds": [ 1, 13, 36 ],
+					"groupIds": [ 12 ],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"47":
+				{
+					"iD": 47,
+					"vertexIds": [ 6, 36, 8 ],
+					"groupIds": [ 12 ],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"50":
+				{
+					"iD": 50,
+					"vertexIds": [ 4, 37, 36, 6 ],
+					"groupIds": [ 12 ],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"52":
+				{
+					"iD": 52,
+					"vertexIds": [ 2, 37, 4 ],
+					"groupIds": [ 12 ],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"18":
+				{
+					"iD": 18,
+					"vertexIds": [ 6, 8, 13 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"17":
+				{
+					"iD": 17,
+					"vertexIds": [ 1, 2, 4, 6, 13 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				}
+			}
+		},
+		"commandHistory": []
+	}
+}

@@ -10,6 +10,7 @@ const unsigned int INDEX_MODFILE = 1;
 const unsigned int INDEX_PDFFILE = 2;
 const unsigned int INDEX_PNGFILE = 3;
 const unsigned int INDEX_DWGFILE = 4;
+const unsigned int INDEX_ILOGFILE = 5;
 
 namespace Modumate
 {

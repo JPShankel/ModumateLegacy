@@ -4,9 +4,8 @@
 
 #include "Backends/CborStructDeserializerBackend.h"
 #include "Backends/CborStructSerializerBackend.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerPawn_CPP.h"
 #include "HAL/FileManager.h"
+#include "Kismet/KismetStringLibrary.h"
 #include "Misc/Compression.h"
 #include "Misc/FileHelper.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
@@ -14,6 +13,10 @@
 #include "Slate/SceneViewport.h"
 #include "StructDeserializer.h"
 #include "StructSerializer.h"
+#include "UnrealClasses/AutomationCaptureInputProcessor.h"
+#include "UnrealClasses/EditModelCameraController.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerPawn_CPP.h"
 #include "Widgets/SViewport.h"
 #include "Widgets/SWindow.h"
 
@@ -32,15 +35,15 @@ bool FEditModelInputPacket::CompareFrameState(const FEditModelInputPacket &Other
 		(bMouseInWorld == Other.bMouseInWorld);
 }
 
-const uint32 FEditModelInputLog::CurInputLogVersion = 1;
+const uint32 FEditModelInputLog::CurInputLogVersion = 2;
 const FString FEditModelInputLog::LogExtension(TEXT(".ilog"));
 const FGuid FEditModelInputLog::LogFileFooter(0x8958689A, 0x9f624172, 0xAA5D7B46, 0xA834850C);
 
-void FEditModelInputLog::Reset()
+void FEditModelInputLog::Reset(float CurTimeSeconds)
 {
 	ViewportSize = FIntPoint::ZeroValue;
 	StartCameraTransform.SetIdentity();
-	RecordStartTime = FDateTime::Now();
+	RecordStartTime = CurTimeSeconds;
 	InputPackets.Reset();
 	RecordEndTime = RecordStartTime;
 }
@@ -56,6 +59,7 @@ UEditModelInputAutomation::UEditModelInputAutomation(const FObjectInitializer& O
 	, FrameCaptureIndex(0)
 	, bCapturingFrames(false)
 	, PlaybackSpeed(1.0f)
+	, SceneViewport(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bStartWithTickEnabled = false;
@@ -67,16 +71,37 @@ void UEditModelInputAutomation::BeginPlay()
 
 	EMPlayerController = Cast<AEditModelPlayerController_CPP>(GetOwner());
 	ensureAlways(EMPlayerController != nullptr);
+
+	InputProcessor = MakeShared<FAutomationCaptureInputProcessor>(this);
+	FindViewport();
+}
+
+void UEditModelInputAutomation::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	switch (CurState)
+	{
+	case EInputAutomationState::Playing:
+		EndPlayback();
+		break;
+	case EInputAutomationState::Recording:
+		EndRecording(false);
+		break;
+	}
 }
 
 void UEditModelInputAutomation::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	FString automationTimeStr = UKismetStringLibrary::TimeSecondsToString(CurAutomationTime);
+
 	switch (CurState)
 	{
 	case EInputAutomationState::Recording:
 	{
+		FString debugMessage = FString::Printf(TEXT("\u25CF RECORDING INPUT - %s - %d packets"), *automationTimeStr, CurPacketIndex);
+		GEngine->AddOnScreenDebugMessage(0, 0.0f, FColor::Red, debugMessage);
+
 		AddRecordingPacket(EInputPacketType::FrameState);
 		CurAutomationTime += DeltaTime;
 		CurAutomationFrame++;
@@ -84,6 +109,13 @@ void UEditModelInputAutomation::TickComponent(float DeltaTime, enum ELevelTick T
 	break;
 	case EInputAutomationState::Playing:
 	{
+		float totalLogDuration = (CurInputLogData.RecordEndTime - CurInputLogData.RecordStartTime);
+		int32 currentLogPCT = FMath::CeilToInt(100.0 * CurAutomationTime / totalLogDuration);
+
+		FString curLogFilename = FPaths::GetBaseFilename(LastLogPath, true);
+		FString debugMessage = FString::Printf(TEXT("\u25B6 Playing input (%s) - %s - %d%%"), *curLogFilename, *automationTimeStr, currentLogPCT);
+		GEngine->AddOnScreenDebugMessage(0, 0.0f, FColor::Green, debugMessage);
+
 		float nextAutomationTime = CurAutomationTime + (PlaybackSpeed * DeltaTime);
 		float nextAutomationFrame = CurAutomationFrame + static_cast<int32>(PlaybackSpeed);
 
@@ -124,9 +156,55 @@ void UEditModelInputAutomation::TickComponent(float DeltaTime, enum ELevelTick T
 	}
 }
 
+bool UEditModelInputAutomation::PreProcessKeyCharEvent(const FCharacterEvent& InCharEvent)
+{
+	RecordCharInput(InCharEvent.GetCharacter(), InCharEvent.IsRepeat());
+	return false;
+}
+
+bool UEditModelInputAutomation::PreProcessKeyDownEvent(const FKeyEvent& InKeyEvent)
+{
+	RecordButton(InKeyEvent.GetKey(), InKeyEvent.IsRepeat() ? IE_Repeat : IE_Pressed);
+	return false;
+}
+
+bool UEditModelInputAutomation::PreProcessKeyUpEvent(const FKeyEvent& InKeyEvent)
+{
+	RecordButton(InKeyEvent.GetKey(), IE_Released);
+	return false;
+}
+
+bool UEditModelInputAutomation::PreProcessMouseMoveEvent(const FPointerEvent& MouseEvent)
+{
+	// Convert cursor from desktop space to viewport space, for consistent playback
+	FVector2D viewportMousePos = SceneViewport->VirtualDesktopPixelToViewport(MouseEvent.GetScreenSpacePosition().IntPoint());
+	FVector2D viewportMouseDelta = SceneViewport->VirtualDesktopPixelToViewport(MouseEvent.GetCursorDelta().IntPoint());
+
+	RecordMouseMove(viewportMousePos, viewportMouseDelta);
+	return false;
+}
+
+bool UEditModelInputAutomation::PreProcessMouseButtonDownEvent(const FPointerEvent& MouseEvent)
+{
+	RecordButton(MouseEvent.GetEffectingButton(), IE_Pressed);
+	return false;
+}
+
+bool UEditModelInputAutomation::PreProcessMouseButtonUpEvent(const FPointerEvent& MouseEvent)
+{
+	RecordButton(MouseEvent.GetEffectingButton(), IE_Released);
+	return false;
+}
+
+bool UEditModelInputAutomation::PreProcessMouseWheelEvent(const FPointerEvent& InWheelEvent)
+{
+	RecordWheelScroll(InWheelEvent.GetWheelDelta());
+	return false;
+}
+
 bool UEditModelInputAutomation::BeginRecording()
 {
-	if (!ensureAlways(CurState == EInputAutomationState::None))
+	if ((CurState != EInputAutomationState::None) || (SceneViewport == nullptr))
 	{
 		return false;
 	}
@@ -135,9 +213,12 @@ bool UEditModelInputAutomation::BeginRecording()
 	CurAutomationTime = 0.0f;
 	CurAutomationFrame = 0;
 	CurPacketIndex = 0;
-	CurInputLogData.Reset();
+	CurInputLogData.Reset(GetWorld()->GetTimeSeconds());
 	EMPlayerController->GetViewportSize(CurInputLogData.ViewportSize.X, CurInputLogData.ViewportSize.Y);
 	CurInputLogData.StartCameraTransform = EMPlayerController->EMPlayerPawn->CameraComponent->GetComponentTransform();
+	FSlateApplication::Get().RegisterInputPreProcessor(InputProcessor);
+	GEngine->bForceDisableFrameRateSmoothing = true;
+	GEngine->bUseFixedFrameRate = true;
 
 	UE_LOG(LogInputAutomation, Log, TEXT("Started recording!"));
 
@@ -146,40 +227,107 @@ bool UEditModelInputAutomation::BeginRecording()
 	return true;
 }
 
+void UEditModelInputAutomation::TryBeginRecording()
+{
+	if (!BeginRecording())
+	{
+		UE_LOG(LogInputAutomation, Error, TEXT("Failed to begin recording input!"));
+	}
+}
+
 void UEditModelInputAutomation::RecordCommand(const FString &CommandString)
 {
 	FEditModelInputPacket &curPacket = AddRecordingPacket(EInputPacketType::Command);
 	curPacket.CommandString = CommandString;
 }
 
-void UEditModelInputAutomation::RecordInput(const FKey &InputKey, EInputEvent InputEvent)
+void UEditModelInputAutomation::RecordButton(const FKey &InputKey, EInputEvent InputEvent)
 {
+	if (!InputKey.IsValid())
+	{
+		return;
+	}
+
 	FEditModelInputPacket &curPacket = AddRecordingPacket(EInputPacketType::Input);
+	curPacket.ActionType = InputKey.IsMouseButton() ? EInputActionType::MouseButton : EInputActionType::Key;
 	curPacket.InputKey = InputKey;
 	curPacket.InputEvent = InputEvent;
 }
 
-bool UEditModelInputAutomation::EndRecording()
+void UEditModelInputAutomation::RecordCharInput(const TCHAR InputChar, bool bIsRepeat)
 {
-	if (!ensureAlways(CurState == EInputAutomationState::Recording))
+	FEditModelInputPacket& curPacket = AddRecordingPacket(EInputPacketType::Input);
+	curPacket.ActionType = EInputActionType::Char;
+	curPacket.InputChar.AppendChar(InputChar);
+	curPacket.InputEvent = bIsRepeat ? IE_Repeat : IE_Pressed;
+}
+
+void UEditModelInputAutomation::RecordWheelScroll(float ScrollDelta)
+{
+	FEditModelInputPacket& curPacket = AddRecordingPacket(EInputPacketType::Input);
+	curPacket.ActionType = EInputActionType::MouseWheel;
+	curPacket.ScrollDelta = ScrollDelta;
+}
+
+void UEditModelInputAutomation::RecordMouseMove(const FVector2D& CurPos, const FVector2D& Delta)
+{
+	FEditModelInputPacket& curPacket = AddRecordingPacket(EInputPacketType::Input);
+	curPacket.ActionType = EInputActionType::MouseMove;
+	curPacket.MouseScreenPos = CurPos;
+	curPacket.MouseDelta = Delta;
+}
+
+bool UEditModelInputAutomation::EndRecording(bool bPromptForPath)
+{
+	if (CurState != EInputAutomationState::Recording)
 	{
 		return false;
 	}
 
-	CurInputLogData.RecordEndTime = FDateTime::Now();
+	CurInputLogData.RecordEndTime = GetWorld()->GetTimeSeconds();
 
-	FString newLogPath = GetDefaultInputLogPath(FEditModelInputLog::LogExtension);
-	bool bSaveSuccess = SaveInputLog(newLogPath);
-	if (bSaveSuccess)
+	bool bTrySaveFile = true;
+	FString newLogPath;
+	if (bPromptForPath)
 	{
-		LastLogPath = newLogPath;
+		if (!Modumate::PlatformFunctions::GetSaveFilename(newLogPath, INDEX_ILOGFILE))
+		{
+			bTrySaveFile = false;
+		}
 	}
+	else
+	{
+		newLogPath = GetDefaultInputLogPath(FEditModelInputLog::LogExtension);
+	}
+
+	bool bEndSuccess = true;
+	if (bTrySaveFile)
+	{
+		bEndSuccess = SaveInputLog(newLogPath);
+		if (bEndSuccess)
+		{
+			LastLogPath = newLogPath;
+		}
+		else
+		{
+			UE_LOG(LogInputAutomation, Error, TEXT("Failed to save recording to: %s"), *newLogPath);
+		}
+	}
+
+	FSlateApplication::Get().UnregisterInputPreProcessor(InputProcessor);
+	GEngine->bForceDisableFrameRateSmoothing = false;
+	GEngine->bUseFixedFrameRate = false;
 
 	UE_LOG(LogInputAutomation, Log, TEXT("Finished recording!"));
 
 	CurState = EInputAutomationState::None;
 	PrimaryComponentTick.SetTickFunctionEnable(false);
-	return bSaveSuccess;
+	return bEndSuccess;
+}
+
+void UEditModelInputAutomation::TryEndRecording()
+{
+	EndRecording(true);
 }
 
 bool UEditModelInputAutomation::BeginPlaybackPrompt(bool bCaptureFrames, float InPlaybackSpeed)
@@ -195,16 +343,20 @@ bool UEditModelInputAutomation::BeginPlaybackPrompt(bool bCaptureFrames, float I
 
 bool UEditModelInputAutomation::BeginPlayback(const FString& InputLogPath, bool bCaptureFrames, float InPlaybackSpeed)
 {
-	if (!ensureAlways(CurState == EInputAutomationState::None) ||
-		!LoadInputLog(InputLogPath))
+	if ((CurState != EInputAutomationState::None) || !LoadInputLog(InputLogPath))
 	{
 		return false;
 	}
 
 	UE_LOG(LogInputAutomation, Log, TEXT("Starting playback from file: %s"), *FPaths::GetCleanFilename(InputLogPath));
 
-	ResizeWindowForViewportSize(CurInputLogData.ViewportSize.X, CurInputLogData.ViewportSize.Y);
+	if (!ResizeWindowForViewportSize(CurInputLogData.ViewportSize.X, CurInputLogData.ViewportSize.Y))
+	{
+		return false;
+	}
+
 	EMPlayerController->EMPlayerPawn->CameraComponent->SetComponentToWorld(CurInputLogData.StartCameraTransform);
+	EMPlayerController->CameraController->bUpdateCameraTransform = false;
 
 	CurState = EInputAutomationState::Playing;
 	CurAutomationTime = 0.0f;
@@ -216,8 +368,18 @@ bool UEditModelInputAutomation::BeginPlayback(const FString& InputLogPath, bool 
 	PlaybackSpeed = InPlaybackSpeed;
 	LastLogPath = InputLogPath;
 	PrimaryComponentTick.SetTickFunctionEnable(true);
+	GEngine->bForceDisableFrameRateSmoothing = true;
+	GEngine->bUseFixedFrameRate = true;
 
 	return true;
+}
+
+void UEditModelInputAutomation::TryBeginPlaybackPrompt()
+{
+	if (!BeginPlaybackPrompt(false))
+	{
+		UE_LOG(LogInputAutomation, Error, TEXT("Failed to begin input playback!"));
+	}
 }
 
 bool UEditModelInputAutomation::EndPlayback()
@@ -230,20 +392,48 @@ bool UEditModelInputAutomation::EndPlayback()
 	UE_LOG(LogInputAutomation, Log, TEXT("Ending playback at %.2fs."), CurAutomationTime);
 
 	CurState = EInputAutomationState::None;
+	EMPlayerController->CameraController->bUpdateCameraTransform = true;
 	PrimaryComponentTick.SetTickFunctionEnable(false);
+	GEngine->bForceDisableFrameRateSmoothing = false;
+	GEngine->bUseFixedFrameRate = false;
 
 	return true;
 }
 
+void UEditModelInputAutomation::TryEndPlayback()
+{
+	EndPlayback();
+}
+
 bool UEditModelInputAutomation::ResizeWindowForViewportSize(int32 Width, int32 Height)
 {
+	if (SceneViewport == nullptr)
+	{
+		return false;
+	}
+
+	TSharedPtr<SWindow> window = SceneViewport->FindWindow();
+	if (window.IsValid())
+	{
+		// Try to set the window size to match the originally-recorded size.
+		FVector2D viewportSize(Width, Height);
+		FVector2D newWindowSize = window->GetWindowSizeFromClientSize(viewportSize);
+
+		SceneViewport->ResizeFrame(static_cast<uint32>(newWindowSize.X), static_cast<uint32>(newWindowSize.Y), EWindowMode::Windowed);
+	}
+
+	return true;
+}
+
+bool UEditModelInputAutomation::FindViewport()
+{
 	// Try to find the scene viewport, whether this is inside the editor or not.
-	FSceneViewport *sceneViewport = nullptr;
+	SceneViewport = nullptr;
 
 	if (!GIsEditor)
 	{
 		UGameEngine* GameEngine = Cast<UGameEngine>(GEngine);
-		sceneViewport = GameEngine->SceneViewport.Get();
+		SceneViewport = GameEngine->SceneViewport.Get();
 	}
 #if WITH_EDITOR
 	else
@@ -255,32 +445,18 @@ bool UEditModelInputAutomation::ResizeWindowForViewportSize(int32 Width, int32 H
 			if (context.WorldType == EWorldType::PIE)
 			{
 				UEditorEngine* editorEngine = CastChecked<UEditorEngine>(GEngine);
-				FSlatePlayInEditorInfo *slatePlayInEditorSessionPtr = editorEngine->SlatePlayInEditorMap.Find(context.ContextHandle);
+				FSlatePlayInEditorInfo* slatePlayInEditorSessionPtr = editorEngine->SlatePlayInEditorMap.Find(context.ContextHandle);
 				if (slatePlayInEditorSessionPtr && slatePlayInEditorSessionPtr->SlatePlayInEditorWindowViewport.IsValid())
 				{
-					sceneViewport = slatePlayInEditorSessionPtr->SlatePlayInEditorWindowViewport.Get();
+					SceneViewport = slatePlayInEditorSessionPtr->SlatePlayInEditorWindowViewport.Get();
 				}
 			}
 		}
 	}
 #endif
 
-	if (sceneViewport)
-	{
-		TSharedPtr<SWindow> window = sceneViewport->FindWindow();
-		if (window.IsValid())
-		{
-			// Try to set the window size to match the originally-recorded size.
-			FVector2D viewportSize(Width, Height);
-			FVector2D newWindowSize = window->GetWindowSizeFromClientSize(viewportSize);
-
-			sceneViewport->ResizeFrame(static_cast<uint32>(newWindowSize.X), static_cast<uint32>(newWindowSize.Y), EWindowMode::Windowed);
-		}
-	}
-
-	return true;
+	return (SceneViewport != nullptr);
 }
-
 
 FEditModelInputPacket &UEditModelInputAutomation::AddRecordingPacket(EInputPacketType Type)
 {
@@ -290,28 +466,24 @@ FEditModelInputPacket &UEditModelInputAutomation::AddRecordingPacket(EInputPacke
 	newPacket.Type = Type;
 	newPacket.TimeSeconds = CurAutomationTime;
 	newPacket.TimeFrame = CurAutomationFrame;
+	
+	// Populate the packet with the current frame state values we can retrieve from here.
+	newPacket.CameraTransform = EMPlayerController->EMPlayerPawn->CameraComponent->GetComponentTransform();
 
-	if (Type == EInputPacketType::FrameState)
+	// Keep track of whether the mouse cursor is visible.
+	newPacket.bCursorVisible = EMPlayerController->bShowMouseCursor;
+
+	// Keep track of whether the mouse is over one of our UI widgets.
+	newPacket.bMouseInWorld = !EMPlayerController->IsCursorOverWidget();
+
+	// If the frame state is the same as the previous frame, then don't bother to make a new packet
+	if ((Type == EInputPacketType::FrameState) && (CurInputLogData.InputPackets.Num() >= 2))
 	{
-		// Populate the packet with the current frame state values we can retrieve from here.
-		newPacket.CameraTransform = EMPlayerController->EMPlayerPawn->CameraComponent->GetComponentTransform();
-		EMPlayerController->GetMousePosition(newPacket.MouseScreenPos.X, newPacket.MouseScreenPos.Y);
-
-		// Keep track of whether the mouse cursor is visible.
-		newPacket.bCursorVisible = EMPlayerController->bShowMouseCursor;
-
-		// Keep track of whether the mouse is over one of our UI widgets.
-		newPacket.bMouseInWorld = !EMPlayerController->IsCursorOverWidget();
-
-		// If the frame state is the same as the previous frame, then don't bother to make a new packet
-		if (CurInputLogData.InputPackets.Num() >= 2)
+		FEditModelInputPacket& prevPacket = CurInputLogData.InputPackets.Last(1);
+		if (prevPacket.CompareFrameState(newPacket))
 		{
-			FEditModelInputPacket &prevPacket = CurInputLogData.InputPackets.Last(1);
-			if (prevPacket.CompareFrameState(newPacket))
-			{
-				CurInputLogData.InputPackets.RemoveAt(CurInputLogData.InputPackets.Num() - 1);
-				return prevPacket;
-			}
+			CurInputLogData.InputPackets.RemoveAt(CurInputLogData.InputPackets.Num() - 1);
+			return prevPacket;
 		}
 	}
 
@@ -326,23 +498,11 @@ bool UEditModelInputAutomation::PlayBackPacket(const FEditModelInputPacket &Inpu
 	{
 		// Update state that's captured every frame
 		EMPlayerController->EMPlayerPawn->CameraComponent->SetComponentToWorld(InputPacket.CameraTransform);
-		EMPlayerController->SetMouseLocation(InputPacket.MouseScreenPos.X, InputPacket.MouseScreenPos.Y);
-		EMPlayerController->bShowMouseCursor = InputPacket.bCursorVisible;
-
 		return true;
 	}
 	case EInputPacketType::Input:
 	{
-		// Play back input, if some was recorded
-		if (!InputPacket.InputKey.IsValid() || (InputPacket.InputEvent == IE_MAX))
-		{
-			return false;
-		}
-
-		float amountDepressed = (InputPacket.InputEvent == EInputEvent::IE_Released) ? 0.0f : 1.0f;
-		EMPlayerController->InputKey(InputPacket.InputKey, InputPacket.InputEvent, amountDepressed, false);
-
-		return true;
+		return SimulateInput(InputPacket);
 	}
 	break;
 	case EInputPacketType::Command:
@@ -356,6 +516,140 @@ bool UEditModelInputAutomation::PlayBackPacket(const FEditModelInputPacket &Inpu
 		EMPlayerController->ModumateCommand(Modumate::FModumateCommand::FromJSONString(InputPacket.CommandString));
 		return true;
 	}
+	default:
+		return false;
+	}
+}
+
+bool UEditModelInputAutomation::SimulateInput(const FEditModelInputPacket& InputPacket)
+{
+	// Play back input, if some was recorded
+	auto& key = InputPacket.InputKey;
+	bool bIsPress = (InputPacket.InputEvent == EInputEvent::IE_Pressed) || (InputPacket.InputEvent == EInputEvent::IE_Repeat);
+	bool bIsRepeat = (InputPacket.InputEvent == EInputEvent::IE_Repeat);
+	bool bIsRelease = (InputPacket.InputEvent == EInputEvent::IE_Released);
+	auto& slateApp = FSlateApplication::Get();
+	auto slateUser = slateApp.GetUser(FSlateApplication::CursorUserIndex);
+	if (!slateUser.IsValid())
+	{
+		return false;
+	}
+
+	// Generate fake inputs to Slate at the lowest level, as if they're coming from pumping OS input event messages
+	switch (InputPacket.ActionType)
+	{
+	case EInputActionType::Key:
+	{
+		if (!key.IsValid())
+		{
+			return false;
+		}
+
+		uint32 keyCode = 0x0, charCode = 0x0;
+		const uint32* keyCodePtr = nullptr, * charCodePtr = nullptr;
+		FInputKeyManager::Get().GetCodesFromKey(InputPacket.InputKey, keyCodePtr, charCodePtr);
+		keyCode = keyCodePtr ? *keyCodePtr : keyCode;
+		charCode = charCodePtr ? *charCodePtr : charCode;
+		if ((keyCode == 0x0) && (charCode == 0x0))
+		{
+			return false;
+		}
+
+		if (bIsPress)
+		{
+			return slateApp.OnKeyDown(keyCode, charCode, bIsRepeat);
+		}
+		else if (bIsRelease)
+		{
+			return slateApp.OnKeyUp(keyCode, charCode, bIsRepeat);
+		}
+		else
+		{
+			return false;
+		}
+	}
+	case EInputActionType::Char:
+	{
+		if (key.IsValid() || (InputPacket.InputChar.Len() != 1) || !bIsPress)
+		{
+			return false;
+		}
+
+		return slateApp.OnKeyChar(InputPacket.InputChar[0], bIsRepeat);
+	}
+	case EInputActionType::MouseButton:
+	{
+		if (!key.IsMouseButton())
+		{
+			return false;
+		}
+
+		FPointerEvent pointerEvent(
+			slateUser->GetUserIndex(),
+			FSlateApplication::CursorPointerIndex,
+			slateUser->GetCursorPosition(),
+			slateUser->GetPreviousCursorPosition(),
+			slateApp.GetPressedMouseButtons(),
+			key,
+			0.0f,
+			slateApp.GetModifierKeys()
+		);
+
+		if (bIsPress)
+		{
+			TSharedPtr<FGenericWindow> genWindow;
+			return slateApp.ProcessMouseButtonDownEvent(genWindow, pointerEvent);
+		}
+		else if (bIsRelease)
+		{
+			return slateApp.ProcessMouseButtonUpEvent(pointerEvent);
+		}
+		else
+		{
+			return false;
+		}
+	}
+	case EInputActionType::MouseWheel:
+	{
+		if (key.IsValid() || (InputPacket.ScrollDelta == 0.0f))
+		{
+			return false;
+		}
+
+		return slateApp.OnMouseWheel(InputPacket.ScrollDelta);
+	}
+	case EInputActionType::MouseMove:
+	{
+		FVector2D oldMouseLocation = slateUser->GetCursorPosition();
+
+		// Convert cursor from viewport space back to desktop space, for interfacing with Slate
+		FVector2D newDesktopMousePos(SceneViewport->ViewportToVirtualDesktopPixel(InputPacket.MouseScreenPos));
+		FVector2D desktopMouseDelta(SceneViewport->ViewportToVirtualDesktopPixel(InputPacket.MouseDelta));
+
+		if ((oldMouseLocation == newDesktopMousePos) && desktopMouseDelta.IsZero())
+		{
+			return true;
+		}
+
+		slateUser->SetCursorPosition(newDesktopMousePos);
+		FVector2D newClampedLocation = slateUser->GetCursorPosition();
+
+		// Create a fake mouse event
+		FPointerEvent pointerEvent(
+			slateUser->GetUserIndex(),
+			newClampedLocation,
+			oldMouseLocation,
+			desktopMouseDelta,
+			slateApp.GetPressedMouseButtons(),
+			slateApp.GetModifierKeys()
+		);
+
+		// Process the fake mouse event, as though it were at the OS level, but bypassing cursor equality checks
+		slateApp.ProcessMouseMoveEvent(pointerEvent);
+
+		return true;
+	}
+	case EInputActionType::None:
 	default:
 		return false;
 	}
@@ -472,7 +766,7 @@ bool UEditModelInputAutomation::LoadInputLog(const FString& InputLogPath)
 		FStructDeserializerPolicies policies;
 		policies.MissingFields = EStructDeserializerErrorPolicies::Ignore;
 
-		CurInputLogData.Reset();
+		CurInputLogData.Reset(0.0f);
 		return FStructDeserializer::Deserialize(CurInputLogData, deserializerBackend, policies);
 	}
 

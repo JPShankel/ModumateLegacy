@@ -2151,23 +2151,15 @@ bool FModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
 	return true;
 }
 
-bool FModumateDocument::Save(UWorld *world, const FString &path)
+bool FModumateDocument::Serialize(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord)
 {
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Save"));
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Serialize"));
 
-	AEditModelGameMode_CPP *gameMode = Cast<AEditModelGameMode_CPP>(world->GetAuthGameMode());
+	AEditModelGameMode_CPP *gameMode = Cast<AEditModelGameMode_CPP>(World->GetAuthGameMode());
 
-
-	TSharedPtr<FJsonObject> FileJson = MakeShared<FJsonObject>();
-	TSharedPtr<FJsonObject> HeaderJson = MakeShared<FJsonObject>();
-
-	// Header is its own
-	FModumateDocumentHeader header;
-	header.Version = Modumate::DocVersion;
-	header.Thumbnail = CurrentEncodedThumbnail;
-	FileJson->SetObjectField(DocHeaderField, FJsonObjectConverter::UStructToJsonObject<FModumateDocumentHeader>(header));
-
-	FMOIDocumentRecord docRec;
+	// Header is its own object
+	OutHeader.Version = Modumate::DocVersion;
+	OutHeader.Thumbnail = CurrentEncodedThumbnail;
 
 	EToolMode modes[] = {
 		EToolMode::VE_PLACEOBJECT,
@@ -2186,7 +2178,7 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 		EToolMode::VE_CEILING
 	};
 
-	AEditModelPlayerController_CPP* emPlayerController = Cast<AEditModelPlayerController_CPP>(world->GetFirstPlayerController());
+	AEditModelPlayerController_CPP* emPlayerController = Cast<AEditModelPlayerController_CPP>(World->GetFirstPlayerController());
 	AEditModelPlayerState_CPP* emPlayerState = emPlayerController->EMPlayerState;
 
 	for (auto &mode : modes)
@@ -2194,14 +2186,14 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 		TScriptInterface<IEditModelToolInterface> tool = emPlayerController->ModeToTool.FindRef(mode);
 		if (ensureAlways(tool))
 		{
-			docRec.CurrentToolAssemblyMap.Add(mode, tool->GetAssemblyKey().ToString());
+			OutDocumentRecord.CurrentToolAssemblyMap.Add(mode, tool->GetAssemblyKey().ToString());
 		}
 	}
 
-	docRec.CommandHistory = CommandHistory;
+	OutDocumentRecord.CommandHistory = CommandHistory;
 
 	// DDL 2.0
-	PresetManager.ToDocumentRecord(docRec);
+	PresetManager.ToDocumentRecord(OutDocumentRecord);
 
 	// Capture object instances into doc struct
 	for (FModumateObjectInstance* obj : ObjectInstanceArray)
@@ -2214,23 +2206,39 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 		{
 			FMOIStateData& stateData = obj->GetStateData();
 			stateData.CustomData.SaveJsonFromCbor();
-			docRec.ObjectData.Add(stateData);
+			OutDocumentRecord.ObjectData.Add(stateData);
 		}
 	}
 
-	VolumeGraph.Save(&docRec.VolumeGraph);
+	VolumeGraph.Save(&OutDocumentRecord.VolumeGraph);
 
 	// Save all of the surface graphs as records
 	for (const auto &kvp : SurfaceGraphs)
 	{
 		auto& surfaceGraph = kvp.Value;
-		FGraph2DRecord& surfaceGraphRecord = docRec.SurfaceGraphs.Add(kvp.Key);
+		FGraph2DRecord& surfaceGraphRecord = OutDocumentRecord.SurfaceGraphs.Add(kvp.Key);
 		surfaceGraph->ToDataRecord(&surfaceGraphRecord, true, true);
 	}
 
-	docRec.CameraViews = SavedCameraViews;
+	OutDocumentRecord.CameraViews = SavedCameraViews;
 
-	TSharedPtr<FJsonObject> docOb = FJsonObjectConverter::UStructToJsonObject<FMOIDocumentRecord>(docRec);
+	return true;
+}
+
+bool FModumateDocument::Save(UWorld* World, const FString& FilePath)
+{
+	FModumateDocumentHeader docHeader;
+	FMOIDocumentRecord docRecord;
+	if (!Serialize(World, docHeader, docRecord))
+	{
+		return false;
+	}
+
+	TSharedPtr<FJsonObject> FileJson = MakeShared<FJsonObject>();
+	TSharedPtr<FJsonObject> HeaderJson = MakeShared<FJsonObject>();
+	FileJson->SetObjectField(DocHeaderField, FJsonObjectConverter::UStructToJsonObject<FModumateDocumentHeader>(docHeader));
+
+	TSharedPtr<FJsonObject> docOb = FJsonObjectConverter::UStructToJsonObject<FMOIDocumentRecord>(docRecord);
 	FileJson->SetObjectField(DocObjectInstanceField, docOb);
 
 	FString ProjectJsonString;
@@ -2242,15 +2250,15 @@ bool FModumateDocument::Save(UWorld *world, const FString &path)
 		return false;
 	}
 
-	bool fileSaveSuccess = FFileHelper::SaveStringToFile(ProjectJsonString, *path);
+	bool fileSaveSuccess = FFileHelper::SaveStringToFile(ProjectJsonString, *FilePath);
 
 	if (fileSaveSuccess)
 	{
-		SetCurrentProjectPath(path);
+		SetCurrentProjectPath(FilePath);
 
-		if (auto *gameInstance = world->GetGameInstance<UModumateGameInstance>())
+		if (auto* gameInstance = World->GetGameInstance<UModumateGameInstance>())
 		{
-			gameInstance->UserSettings.RecordRecentProject(path, true);
+			gameInstance->UserSettings.RecordRecentProject(FilePath, true);
 		}
 	}
 

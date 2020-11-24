@@ -24,6 +24,7 @@ namespace Modumate
 		FGraph3D(float InEpsilon = DEFAULT_GRAPH3D_EPSILON, bool bInDebugCheck = !UE_BUILD_SHIPPING);
 
 		void Reset();
+		bool Equals(const FGraph3D& Other, float EqualityEpsilon = DEFAULT_GRAPH3D_EPSILON) const;
 
 		FGraph3DEdge* FindEdge(FGraphSignedID EdgeID);
 		const FGraph3DEdge* FindEdge(FGraphSignedID EdgeID) const;
@@ -121,6 +122,7 @@ namespace Modumate
 
 		mutable TSet<int32> TempInheritedGroupIDs;
 		mutable TArray<FVector2D> TempProjectedPoints;
+		TSet<int32> TempDeletedIDs;
 
 		TSharedPtr<FGraph2D> TraversalGraph2D;
 

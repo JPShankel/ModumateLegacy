@@ -179,12 +179,6 @@ public:
 	UFUNCTION()
 	void OnControllerTimer();
 
-	// Override the base APlayerController::InputKey function, for input recording,
-	// and to make sure all physical inputs get forwarded to wherever they need to go
-	// (regardless of whether they're handled in C++, directly in Blueprint as keys,
-	//  indirectly as FInputChords, interpreted as actions, etc.)
-	virtual bool InputKey(FKey Key, EInputEvent EventType, float AmountDepressed, bool bGamepad) override;
-
 	void HandleDigitKey(int32 DigitKey);
 
 	// Raw mouse input handling functions, so that C++ owns the primary bindings.

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Framework/Commands/InputChord.h"
+#include "Input/Events.h"
 
 #include "EditModelInputAutomation.generated.h"
 
@@ -18,6 +19,17 @@ enum class EInputPacketType : uint8
 	FrameState,
 	Input,
 	Command
+};
+
+UENUM()
+enum class EInputActionType : uint8
+{
+	None,
+	Key,
+	Char,
+	MouseButton,
+	MouseWheel,
+	MouseMove
 };
 
 USTRUCT()
@@ -35,7 +47,16 @@ struct MODUMATE_API FEditModelInputPacket
 	EInputPacketType Type = EInputPacketType::None;
 
 	UPROPERTY()
+	EInputActionType ActionType = EInputActionType::None;
+
+	UPROPERTY()
 	FKey InputKey;
+
+	UPROPERTY()
+	FString InputChar;
+
+	UPROPERTY()
+	float ScrollDelta = 0.0f;
 
 	UPROPERTY()
 	TEnumAsByte<EInputEvent> InputEvent = IE_MAX;
@@ -45,6 +66,9 @@ struct MODUMATE_API FEditModelInputPacket
 
 	UPROPERTY()
 	FVector2D MouseScreenPos = FVector2D::ZeroVector;
+
+	UPROPERTY()
+	FVector2D MouseDelta = FVector2D::ZeroVector;
 
 	UPROPERTY()
 	bool bCursorVisible = true;
@@ -70,20 +94,20 @@ struct MODUMATE_API FEditModelInputLog
 	FTransform StartCameraTransform;
 
 	UPROPERTY()
-	FDateTime RecordStartTime;
+	float RecordStartTime;
 
 	UPROPERTY()
 	TArray<FEditModelInputPacket> InputPackets;
 
 	UPROPERTY()
-	FDateTime RecordEndTime;
+	float RecordEndTime;
 
 	const static uint32 CurInputLogVersion;
 	const static FGuid LogFileFooter;
 	const static FString LogExtension;
 
-	FEditModelInputLog() { Reset(); }
-	void Reset();
+	FEditModelInputLog() { Reset(0.0f); }
+	void Reset(float CurTimeSeconds);
 };
 
 UENUM()
@@ -103,7 +127,17 @@ public:
 	UEditModelInputAutomation(const FObjectInitializer& ObjectInitializer);
 
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+
+	// Input pre-processor handling functions
+	bool PreProcessKeyCharEvent(const FCharacterEvent& InCharEvent);
+	bool PreProcessKeyDownEvent(const FKeyEvent& InKeyEvent);
+	bool PreProcessKeyUpEvent(const FKeyEvent& InKeyEvent);
+	bool PreProcessMouseMoveEvent(const FPointerEvent& MouseEvent);
+	bool PreProcessMouseButtonDownEvent(const FPointerEvent& MouseEvent);
+	bool PreProcessMouseButtonUpEvent(const FPointerEvent& MouseEvent);
+	bool PreProcessMouseWheelEvent(const FPointerEvent& InWheelEvent);
 
 	UPROPERTY()
 	float FrameCaptureDuration;
@@ -117,23 +151,32 @@ public:
 	UFUNCTION()
 	bool BeginRecording();
 
+	UFUNCTION()
+	void TryBeginRecording();
+
 	UFUNCTION(BlueprintPure)
 	bool IsRecording() const { return CurState == EInputAutomationState::Recording; }
 
-	UFUNCTION()
 	void RecordCommand(const FString &CommandString);
+	void RecordButton(const FKey& InputKey, EInputEvent InputEvent);
+	void RecordCharInput(const TCHAR InputChar, bool bIsRepeat);
+	void RecordWheelScroll(float ScrollDelta);
+	void RecordMouseMove(const FVector2D& CurPos, const FVector2D& Delta);
 
 	UFUNCTION()
-	void RecordInput(const FKey &InputKey, EInputEvent InputEvent);
+	bool EndRecording(bool bPromptForPath);
 
 	UFUNCTION()
-	bool EndRecording();
+	void TryEndRecording();
 
 	UFUNCTION()
 	bool BeginPlaybackPrompt(bool bCaptureFrames, float InPlaybackSpeed = 1.0f);
 
 	UFUNCTION()
 	bool BeginPlayback(const FString& InputLogPath, bool bCaptureFrames, float InPlaybackSpeed = 1.0f);
+
+	UFUNCTION()
+	void TryBeginPlaybackPrompt();
 
 	UFUNCTION(BlueprintPure)
 	bool IsPlaying() const { return CurState == EInputAutomationState::Playing; }
@@ -142,11 +185,15 @@ public:
 	bool EndPlayback();
 
 	UFUNCTION()
+	void TryEndPlayback();
+
+	UFUNCTION()
 	bool ResizeWindowForViewportSize(int32 Width, int32 Height);
 
 	const FString &GetLastLogPath() const { return LastLogPath; }
 
 protected:
+	TSharedPtr<class FAutomationCaptureInputProcessor> InputProcessor;
 	EInputAutomationState CurState;
 	float CurAutomationTime;
 	int32 CurAutomationFrame;
@@ -157,12 +204,15 @@ protected:
 	bool bCapturingFrames;
 	float PlaybackSpeed;
 	FString LastLogPath;
+	class FSceneViewport* SceneViewport;
 
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *EMPlayerController;
 
+	bool FindViewport();
 	FEditModelInputPacket &AddRecordingPacket(EInputPacketType Type);
 	bool PlayBackPacket(const FEditModelInputPacket &InputPacket, float DeltaTime);
+	bool SimulateInput(const FEditModelInputPacket& InputPacket);
 	FString GetDefaultInputLogPath(const FString &Extension);
 	bool SaveInputLog(const FString& InputLogPath);
 	bool LoadInputLog(const FString& InputLogPath);
