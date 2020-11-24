@@ -285,14 +285,10 @@ bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FBIMKey
 
 void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 {
-	// TODO: Skip slot based assembly for now
 	FBIMPresetEditorNodeSharedPtr rootNodeInst = InstancePool.InstanceFromID(1);
-	if (rootNodeInst->WorkingPresetCopy.PartSlots.Num() == 0)
-	{
-		EBIMResult asmResult = InstancePool.CreateAssemblyFromNodes(
-			Controller->GetDocument()->PresetManager.CraftingNodePresets,
-			*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly);
-	}
+	EBIMResult asmResult = InstancePool.CreateAssemblyFromNodes(
+		Controller->GetDocument()->PresetManager.CraftingNodePresets,
+		*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly);
 
 	bool bAssemblyHasPart = false;
 
@@ -347,31 +343,15 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 		}
 	}
 
-	// Map nodes by ID. Sort by id if this is not parts assembly
-	if (bAssemblyHasPart)
+	// Map nodes by ID
+	TArray<int32> sortedNodeIDs;
+	InstancePool.GetSortedNodeIDs(sortedNodeIDs);
+	for (const auto& curID : sortedNodeIDs)
 	{
-		// TODO: Maybe make InstanceMap public in BIMPresetEditor
-		for (auto& curInst : InstancePool.GetInstancePool())
+		const auto& curNode = IdToNodeMapUnSorted.FindRef(curID);
+		if (curNode)
 		{
-			int32 instID = curInst->GetInstanceID();
-			const auto& curNode = IdToNodeMapUnSorted.FindRef(instID);
-			if (curNode)
-			{
-				IdToNodeMap.Add(instID, curNode);
-			}
-		}
-	}
-	else
-	{
-		TArray<int32> sortedNodeIDs;
-		InstancePool.GetSortedNodeIDs(sortedNodeIDs);
-		for (const auto& curID : sortedNodeIDs)
-		{
-			const auto& curNode = IdToNodeMapUnSorted.FindRef(curID);
-			if (curNode)
-			{
-				IdToNodeMap.Add(curID, curNode);
-			}
+			IdToNodeMap.Add(curID, curNode);
 		}
 	}
 
