@@ -612,7 +612,8 @@ float ACompoundMeshActor::GetPortalCenter(const FModumateDocument* Doc, const FB
 {
 	float centerOffset = 0.0f;
 	
-	const UStaticMeshComponent* panelMesh = nullptr;
+	const UMeshComponent* panelMesh = nullptr;
+	const UStaticMeshComponent* panelStaticMesh = nullptr;
 
 	const FBIMAssemblySpec* assembly = Doc->PresetManager.GetAssemblyByKey(EToolMode::VE_DOOR, AssemblyKey);
 	assembly = assembly ? assembly : Doc->PresetManager.GetAssemblyByKey(EToolMode::VE_WINDOW, AssemblyKey);
@@ -624,7 +625,8 @@ float ACompoundMeshActor::GetPortalCenter(const FModumateDocument* Doc, const FB
 			if (assembly->Parts[slot].NodeCategoryPath == panelTag && StaticMeshComps[slot]
 				&& StaticMeshComps[slot]->GetStaticMesh())
 			{
-				panelMesh = StaticMeshComps[slot];
+				panelStaticMesh = StaticMeshComps[slot];
+				panelMesh = UseSlicedMesh[slot] ? Cast<UMeshComponent>(NineSliceComps[9 * slot]) : StaticMeshComps[slot];
 				break;
 			}
 		}
@@ -633,7 +635,7 @@ float ACompoundMeshActor::GetPortalCenter(const FModumateDocument* Doc, const FB
 	if (panelMesh)
 	{
 		FVector meshMin, meshMax;
-		panelMesh->GetLocalBounds(meshMin, meshMax);
+		panelStaticMesh->GetLocalBounds(meshMin, meshMax);
 		FTransform panelMeshTransform = panelMesh->GetRelativeTransform();
 		centerOffset = 0.5f * FMath::Abs(meshMax.Y - meshMin.Y) + panelMeshTransform.GetTranslation().Y;
 	}
