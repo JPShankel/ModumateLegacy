@@ -174,4 +174,63 @@ namespace Modumate
 			bMakeRisers, bStartingRiser, bEndingRiser, OutTreadPolys, OutRiserPolys
 		);
 	}
+
+	bool FStairStatics::CalculateSetupStairPolysParams(
+		const FBIMAssemblySpec& Assembly,
+		const float TotalTreadThickness, const float TotalRiserThickness, const FVector& RunDir,
+		const TArray<TArray<FVector>>& CachedTreadPolys, const TArray<TArray<FVector>>& CachedRiserPolys,
+		TArray<FVector>& OutCachedRiserNormals, TArray<FLayerGeomDef>& OutTreadLayers, TArray<FLayerGeomDef>& OutRiserLayers)
+	{
+		OutTreadLayers.Empty();
+		OutRiserLayers.Empty();
+		int32 numTreadLayers = Assembly.TreadLayers.Num();
+		int32 numRiserLayers = Assembly.RiserLayers.Num();
+		float currentTreadThickness = 0.0f;
+		float currentRiserThickness = 0.0f;
+
+		TArray<FVector> pointsA(&FVector::ZeroVector, 4);
+		TArray<FVector> pointsB(&FVector::ZeroVector, 4);
+		for (int32 layer = 0; layer < numTreadLayers; ++layer)
+		{
+			float treadThickness = Assembly.TreadLayers[layer].Thickness.AsWorldCentimeters();
+			pointsA[0] = CachedTreadPolys[0][0] - currentTreadThickness * FVector::UpVector;
+			pointsA[1] = CachedTreadPolys[0][1] - currentTreadThickness * FVector::UpVector;
+			pointsA[2] = CachedTreadPolys[0][2] - currentTreadThickness * FVector::UpVector + TotalRiserThickness * RunDir;
+			pointsA[3] = CachedTreadPolys[0][3] - currentTreadThickness * FVector::UpVector + TotalRiserThickness * RunDir;
+			currentTreadThickness += treadThickness;
+
+			for (int32 p = 0; p < 4; ++p)
+			{
+				pointsB[p] = pointsA[p] - treadThickness * FVector::UpVector;
+			}
+			FLayerGeomDef& treadLayer = OutTreadLayers.Emplace_GetRef(pointsA, pointsB, -FVector::UpVector, -FVector::ForwardVector);
+		}
+
+		for (int32 layer = 0; layer < numRiserLayers; ++layer)
+		{
+			float riserThickness = Assembly.RiserLayers[layer].Thickness.AsWorldCentimeters();
+			pointsA[0] = CachedRiserPolys[0][0] + currentRiserThickness * RunDir;
+			pointsA[1] = CachedRiserPolys[0][1] + currentRiserThickness * RunDir;
+			pointsA[2] = CachedRiserPolys[0][2] + currentRiserThickness * RunDir - TotalTreadThickness * FVector::UpVector;
+			pointsA[3] = CachedRiserPolys[0][3] + currentRiserThickness * RunDir - TotalTreadThickness * FVector::UpVector;
+			currentRiserThickness += riserThickness;
+
+			for (int32 p = 0; p < 4; ++p)
+			{
+				pointsB[p] = pointsA[p] + riserThickness * RunDir;
+			}
+			OutRiserLayers.Emplace(pointsA, pointsB, RunDir, (CachedRiserPolys[0][1] - CachedRiserPolys[0][0]).GetSafeNormal());
+		}
+
+
+		// For linear stairs, each riser has the same normal, so populate them here
+		int32 numRisers = CachedRiserPolys.Num();
+		OutCachedRiserNormals.SetNum(numRisers);
+		for (int32 i = 0; i < numRisers; ++i)
+		{
+			OutCachedRiserNormals[i] = RunDir;
+		}
+
+		return true;
+	}
 }

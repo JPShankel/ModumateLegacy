@@ -19,6 +19,7 @@
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
+#include "Objects/LayeredObjectInterface.h"
 
 using namespace Modumate;
 
@@ -585,71 +586,84 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 {
 	// Step 1: Setup stair mesh
 	/////////////////////////////////////////////////////////////////////////////////////////////
-	// TODO: This is copied from UStairTool::UpdatePreviewStairs(), expected to be replaced with one that can be made from assembly
-	float CurrentWidth = 150.f;
-	float currentRunLength = 300.f;
-	int32 CurrentRiserNum = 15;
-	float totalRise = 300.f;
-	FVector RunStartPos = FVector::ZeroVector;
-	FVector WidthDir = FVector::LeftVector;
-	FVector RunDir = FVector::ForwardVector;
-	bool bWantStartRiser = true;
-	bool bWantEndRiser = true;
 
-	float CurrentTreadDepth = Units::FUnitValue(12.0f, Units::EUnitType::WorldInches).AsWorldCentimeters();
-	int32 CurrentTreadNum = FMath::FloorToInt(currentRunLength / CurrentTreadDepth);
-	float CurrentRiserHeight = totalRise / CurrentRiserNum;
-	TArray<TArray<FVector>> CachedTreadPolys;
-	TArray<TArray<FVector>> CachedRiserPolys;
-	TArray<FVector> CachedRiserNormals;
+	// Note: This should be similar to FMOIStaircaseImpl::SetupDynamicGeometry() in Stairs.cpp
+	
+	// Instead of MOI as planeParent, icon uses specific dimension for stair model
+	TArray<FVector> runPlanePoints;
+	runPlanePoints.Add(FVector::ZeroVector);
+	runPlanePoints.Add(FVector(0.f, StairDimension.Y, 0.f));
+	runPlanePoints.Add(FVector(StairDimension.X, StairDimension.Y, StairDimension.Z));
+	runPlanePoints.Add(FVector(StairDimension.X, 0.f, StairDimension.Z));
 
-	// TODO: get from document, or somewhere else
-	float treadThickness = Units::FUnitValue(1.0f, Units::EUnitType::WorldInches).AsWorldCentimeters();
-	FVector previewWidthDir = ((CurrentWidth > 0) ? 1 : -1) * WidthDir;
-	float previewTotalWidth = FMath::Max(FMath::Abs(CurrentWidth), 0.01f);
+	// Tread 'depth' is horizontal run from nose to nose.
+	float goalTreadDepth = Assembly.TreadDepth.AsWorldCentimeters();
 
 	// Calculate the polygons that make up the outer surfaces of each tread and riser of the linear stair run
-	bool bStairSuccess = FStairStatics::MakeLinearRunPolysFromBox(
-		RunDir, previewWidthDir, CurrentTreadDepth, CurrentRiserHeight, CurrentTreadNum, previewTotalWidth,
-		true, bWantStartRiser, bWantEndRiser, CachedTreadPolys, CachedRiserPolys
-	);
+	float stepRun, stepRise;
+	bool bCachedUseRisers = Assembly.RiserLayers.Num() != 0;
+	bool bCachedStartRiser = true;
+	bool bCachedEndRiser = true;
+	TArray<TArray<FVector>> cachedTreadPolys;
+	TArray<TArray<FVector>> cachedRiserPolys;
 
-	// For linear stairs, each riser has the same normal, so populate them here
-	int32 numRisers = CachedRiserPolys.Num();
-	if (bStairSuccess)
+	FVector runDir(ForceInitToZero), stairOrigin(ForceInitToZero);
+	if (!Modumate::FStairStatics::CalculateLinearRunPolysFromPlane(
+		runPlanePoints, goalTreadDepth, bCachedUseRisers, bCachedStartRiser, bCachedEndRiser,
+		stepRun, stepRise, runDir, stairOrigin,
+		cachedTreadPolys, cachedRiserPolys))
 	{
-		CachedRiserNormals.SetNum(numRisers);
-		for (int32 i = 0; i < numRisers; ++i)
-		{
-			CachedRiserNormals[i] = RunDir;
-		}
+		return false;
 	}
 
-	// TODO: get this material from a real assembly
-	FArchitecturalMaterial material;
-	material.EngineMaterial = IconDynamicMeshActor->StaircaseMaterial;
+	TArray<FLayerGeomDef> treadLayers;
+	TArray<FLayerGeomDef> riserLayers;
+	FCachedLayerDimsByType cachedTreadDims;
+	FCachedLayerDimsByType cachedRiserDims;
+	TArray<FVector> cachedRiserNormals;
+
+	// Empirically derived overlap.
+	// TODO: put in assembly spec.
+	static constexpr float openStairsOverhang = 2.0f * Modumate::InchesToCentimeters;
+
+	const float totalTreadThickness = cachedTreadDims.TotalUnfinishedWidth;
+	const float totalRiserThickness = bCachedUseRisers ? cachedRiserDims.TotalUnfinishedWidth : openStairsOverhang;
+
+	Modumate::FStairStatics::CalculateSetupStairPolysParams(
+		Assembly,
+		totalTreadThickness, totalRiserThickness, runDir,
+		cachedTreadPolys, cachedRiserPolys,
+		cachedRiserNormals, treadLayers, riserLayers);
 
 	// Set up the triangulated staircase mesh by extruding each tread and riser polygon
-	bStairSuccess = bStairSuccess && IconDynamicMeshActor->SetupStairPolys(RunStartPos, CachedTreadPolys, CachedRiserPolys, CachedRiserNormals, treadThickness, material);
+	bool bStairSuccess = IconDynamicMeshActor->SetupStairPolys(stairOrigin, cachedTreadPolys, cachedRiserPolys, cachedRiserNormals, treadLayers, riserLayers,
+		Assembly);
+
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	if (!bStairSuccess)
 	{
 		return false;
 	}
-	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
-	FVector meshScale = ((StairIconScaleFactor / IconDynamicMeshActor->Mesh->Bounds.SphereRadius) * FVector::OneVector);
-	FVector meshLocation = (IconDynamicMeshActor->Mesh->Bounds.Origin * meshScale) * -1.f;
+	// Step 2: Position the spring arm in order to capture mesh
+	// Reset stair relative location
+	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
 
-	IconDynamicMeshActor->SetActorRelativeLocation(meshLocation);
-	IconDynamicMeshActor->SetActorScale3D(meshScale);
+	FVector oldSpringArmRelPos = SpringArm->GetRelativeLocation();
+	FVector captureForward = SceneCaptureComp->GetForwardVector();
+	FVector stairBoxOrigin, stairBoxExtents;
+	IconDynamicMeshActor->GetActorBounds(false, stairBoxOrigin, stairBoxExtents);
+	float springArmCaptureDist = (stairBoxExtents.Size() * StairIconScaleFactor) / FMath::Tan(FMath::DegreesToRadians(SceneCaptureComp->FOVAngle));
+	SpringArm->SetWorldLocation(stairBoxOrigin - (springArmCaptureDist * captureForward));
 
+	// Step 3: Capture
 	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, true);
 	IconDynamicMeshActor->Mesh->SetVisibility(true);
 	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
-	// Step 3: Cleanup
-	IconDynamicMeshActor->SetActorRelativeTransform(FTransform::Identity);
+	// Step 4: Cleanup
+	//IconDynamicMeshActor->SetActorRelativeTransform(FTransform::Identity);
+	SpringArm->SetRelativeLocation(oldSpringArmRelPos);
 	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, false);
 	IconDynamicMeshActor->Mesh->SetVisibility(false);
 	return true;

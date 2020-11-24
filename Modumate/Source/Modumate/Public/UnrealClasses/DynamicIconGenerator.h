@@ -89,6 +89,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Dimension")
 	float TrimLength = 32.f;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Dimension")
+	FVector StairDimension = FVector(250.f, -150.f, 300.f);
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
 	float WallIconScaleFactor = 0.35f;
 
@@ -111,7 +114,7 @@ public:
 	float ProfileIconScaleFactor = 24.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
-	float StairIconScaleFactor = 24.f;
+	float StairIconScaleFactor = 1.5f;
 
 protected:
 	// Called when the game starts or when spawned
