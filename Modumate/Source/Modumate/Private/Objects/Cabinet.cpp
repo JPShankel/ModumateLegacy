@@ -620,6 +620,12 @@ void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &Par
 				clippedLine->SetLayerTypeRecursive(dwgLayerType);
 			}
 		}
+
+		// Cabinet door:
+		if (FrontFacePortalActor.IsValid())
+		{
+			FrontFacePortalActor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin);
+		}
 	}
 	else
 	{   // Beyond lines:
@@ -659,6 +665,11 @@ void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &Par
 				}
 
 			}
+		}
+
+		if (FrontFacePortalActor.IsValid())
+		{
+			FrontFacePortalActor->GetFarDraftingLines(ParentPage, Plane, BoundingBox);
 		}
 
 	}

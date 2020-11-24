@@ -17,6 +17,11 @@ class UStaticMeshComponent;
 class UProceduralMeshComponent;
 class FModumateDocument;
 
+namespace Modumate
+{
+	class FDraftingComposite;
+}
+
 UCLASS()
 class MODUMATE_API ACompoundMeshActor : public AActor
 {
@@ -44,6 +49,9 @@ public:
 	void SetIsDynamic(bool DynamicStatus);
 	bool GetIsDynamic() const { return bIsDynamic; }
 
+	bool GetCutPlaneDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+		const FVector& AxisX, const FVector& AxisY, const FVector& Origin) const;
+	void GetFarDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane, const FBox2D& BoundingBox) const;
 	float GetPortalCenter(const FModumateDocument* Doc, const FBIMKey& AssemblyKey) const;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)

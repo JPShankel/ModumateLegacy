@@ -39,7 +39,6 @@ protected:
 
 	bool SetupCompoundActorGeometry();
 	bool SetRelativeTransform(const FVector2D &InRelativePos, const FQuat &InRelativeRot);
-	void GetFarDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane &Plane, const FBox2D& BoundingBox) const;
 
 	FVector2D CachedRelativePos;
 	FVector CachedWorldPos;

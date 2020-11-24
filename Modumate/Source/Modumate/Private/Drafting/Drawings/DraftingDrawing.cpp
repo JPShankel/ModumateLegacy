@@ -97,7 +97,9 @@ namespace Modumate {
 		controlPoints = scopeBox->GetControlPoints();
 #else
 		FVector scopeBoxOrigin = cutPlaneOrigin;
-		controlPoints = GetCorners(cutPlane);
+		const FBox sceneBounds(Doc->CalculateProjectBounds().GetBox());
+		controlPoints.Add(sceneBounds.Min);
+		controlPoints.Add(sceneBounds.Max);
 #endif
 		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(controlPoints[0], AxisX, AxisY, cutPlaneOrigin);
 
