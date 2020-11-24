@@ -5,7 +5,7 @@ PROPERTY,,DisplayText,,Name,,Dimension.Name,,,,
 PROPERTY,,Dimension,,Diameter,,Dimension.Diameter,,,,
 PROPERTY,,Dimension,,Thickness,,Dimension.Thickness,,,,
 ,,Presets,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Diameter,Dimension.Thickness,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
+TAGPATHS,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Diameter,Dimension.Thickness,DataType=ParentCategoryPath,TG_ParentNode+CategoryPath
 PRESET,,0DimDiT-12.75inDi-0.365inT,,0DimDiT,,D12X0.375,12.75in,0.365in,,Part_ExtrudedProfile_BeamColumn_SteelTube
 PRESET,,0DimDiT-10.75inDi-0.365inT,,0DimDiT,,D10X0.365,10.75in,0.365in,,Part_ExtrudedProfile_BeamColumn_SteelTube
 PRESET,,0DimDiT-8.625inDi-0.5inT,,0DimDiT,,D8X0.5,8.625in,0.5in,,Part_ExtrudedProfile_BeamColumn_SteelTube

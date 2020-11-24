@@ -80,20 +80,18 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 		FLayerPatternModule& module = Modules.AddDefaulted_GetRef();
 
 		// Get the material and color for this module
-		FString matColKey;
-		if (ensureAlways(modProps.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, matColKey)))
+		FBIMKey rawMaterialKey;
+		if (ensureAlways(modProps.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey)))
 		{
-			const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(matColKey);
+			const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(rawMaterialKey);
 			if (ensureAlways(mat != nullptr))
 			{
 				module.Material = *mat;
-				if (modProps.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::AssetID, matColKey))
+				FString colorHexValue;
+				if (modProps.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue))
 				{
-					const FCustomColor* color = InDB.GetCustomColorByKey(matColKey);
-					if (ensureAlways(color != nullptr))
-					{
-						module.Material.DefaultBaseColor = *color;
-					}
+					module.Material.DefaultBaseColor.Color = FColor::FromHex(colorHexValue);
+					module.Material.DefaultBaseColor.bValid = true;
 				}
 			}
 		}
@@ -103,7 +101,7 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 		We need to reconcile those against the actual targets for X, Y & Z
 		For now "everyone has a depth or a length and a thickness and a width" is a reasonable approximation
 		*/
-		modProps.TryGetProperty(EBIMValueScope::Module, BIMPropertyNames::BevelWidth, module.BevelWidth);
+		modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::BevelWidth, module.BevelWidth);
 		if (!modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, module.ModuleExtents.X))
 		{
 			modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, module.ModuleExtents.X);

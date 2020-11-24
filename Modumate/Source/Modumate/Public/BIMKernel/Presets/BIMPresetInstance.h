@@ -96,7 +96,10 @@ public:
 
 	UPROPERTY()
 	FBIMKey PresetID;
-	
+
+	UPROPERTY()
+	FBIMKey GUID;
+
 	UPROPERTY()
 	FBIMKey SlotConfigPresetID;
 

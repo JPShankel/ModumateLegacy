@@ -1,46 +1,46 @@
-TYPENAME,,0Profile,,Profile,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DisplayText,,Name,,Profile.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,PresetID,,,,Profile.AssetID,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,AssetPath,,,,Profile.AssetPath,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,1,1,1,1,1,1,1,1,1,1,6,6,1,1,1,1,2,1,1,1,1,1,1,1,,,1,1,1,1
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Profile.Name,Profile.AssetPath,Profile.AssetID,DataType=TG_Parent Node+CategoryPath,Part_ModuleLinear_Corrugated Plastic Sheet,Part_ModuleLinear_Corrugated Steel Deck,Part_ModuleLinear_Steel C-Channel,Part_ModuleLinear_Steel C-H Channel,Part_ModuleLinear_Steel Hat Channel,Part_ModuleLinear_Steel Web Joist,Part_ModuleLinear_Steel Z Channel,Part_ModuleLinear_Wood Lumber,Part_ModuleLinear_Wood Web Joist,"Part_ModuleLinear_Wood-Chord, Steel-Web Joist",2Gap2D_Mortar Gaps,2Gap2D_Grout Gaps,Part_ExtrudedProfile_BeamColumn_ConcreteRectangular,Part_ExtrudedProfile_BeamColumn_ConcreteRound,Part_ExtrudedProfile_BeamColumn_SteelC,Part_ExtrudedProfile_BeamColumn_SteelHSS,Part_ExtrudedProfile_BeamColumn_SteelL,Part_ExtrudedProfile_BeamColumn_SteelTube,Part_ExtrudedProfile_BeamColumn_SteelW,Part_ExtrudedProfile_BeamColumn_SteelWT,Part_ExtrudedProfile_BeamColumn_StoneRectangular,Part_ExtrudedProfile_BeamColumn_StoneRound,Part_ExtrudedProfile_BeamColumn_WoodRectangular,Part_ExtrudedProfile_BeamColumn_WoodRound,Part_ExtrudedProfile_Mullion,Part_ExtrudedProfile_Stringer,Part_ExtrudedProfile_Trim_FloorMoulding,Part_ExtrudedProfile_Trim_OpeningCasing,Part_ExtrudedProfile_Trim_CeilingMoulding,Part_ExtrudedProfile_Trim_CabinetMoulding
-PRESET,,0Profile-Corrugated Plastic,,0Profile,,Corrugated Plastic,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Corrugated Plastic,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Corrugated Steel,,0Profile,,Corrugated Steel,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Corrugated Steel,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Steel C-Stud,,0Profile,,Steel C-Stud,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Steel C-Stud,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Steel C-H Stud,,0Profile,,Steel C-H Stud,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Steel C-H Stud,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Steel Hat Channel,,0Profile,,Steel Hat Channel,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Steel Hat Channel,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Steel Web Joist,,0Profile,,Steel Web Joist,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Steel Web Joist,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Steel Z Channel,,0Profile,,Steel Z Channel,/Game/ShoppingData/Profiles/SteelProfile-Z,0Profile-Steel Z Channel,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Solid Rectangle,,0Profile,,Solid Rectangle,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Solid Rectangle,,,,,,,,,X,,,,,X,,,,,,,,X,,X,,,,,,,
-PRESET,,0Profile-Wood Web Joist,,0Profile,,Wood Web Joist,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Wood Web Joist,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Wood-Chord Steel-Web Joist,,0Profile,,Wood-Chord Steel-Web Joist,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Solid Circle,,0Profile,,Solid Circle,/Game/ShoppingData/Profiles/SteelProfile-Tube,0Profile-Solid Circle,,,,,,,,,,,,,,,X,,,,,,,,X,,X,,X,,,,
-PRESET,,"0Profile-Wide Flange, W",,0Profile,,"Wide Flange, W",/Game/ShoppingData/Profiles/SteelProfile-W,"0Profile-Wide Flange, W",,,,,,,,,,,,,,,,,,,,X,,,,,,,X,,,,
-PRESET,,"0Profile-Channel, C",,0Profile,,"Channel, C",/Game/ShoppingData/Profiles/SteelProfile-C,"0Profile-Channel, C",,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,
-PRESET,,"0Profile-Hollow Structural Section, HSS",,0Profile,,"Hollow Structural Section, HSS",/Game/ShoppingData/Profiles/SteelProfile-HSS-02,"0Profile-Hollow Structural Section, HSS",,,,,,,,,,,,,,,,,X,,,,,,,,,,X,,,,
-PRESET,,0Profile-Tube Steel,,0Profile,,Tube Steel,/Game/ShoppingData/Profiles/SteelProfile-Tube,0Profile-Tube Steel,,,,,,,,,,,,,,,,,,,X,,,,,,,,X,,,,
-PRESET,,"0Profile-Angle, L",,0Profile,,"Angle, L",/Game/ShoppingData/Profiles/SteelProfile-L,"0Profile-Angle, L",,,,,,,,,,,,,,,,,,X,,,,,,,,,X,,,,
-PRESET,,"0Profile-Tee, WT",,0Profile,,"Tee, WT",/Game/ShoppingData/Profiles/SteelProfile-WT,"0Profile-Tee, WT",,,,,,,,,,,,,,,,,,,,,X,,,,,,X,,,,
-PRESET,,0Profile-Plate Section,,0Profile,,Plate Section,/Game/ShoppingData/Profiles/SteelProfile-Plate,0Profile-Plate Section,,,,,,,,,,,,,,,,,,X,,,,,,,,,X,,,,
-PRESET,,0Profile-Rectangular Mullion,,0Profile,,Rectangular Mullion,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Rectangular Mullion,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,
-,,0Profile-L Corner Mullion,,0Profile,,L Corner Mullion,/Game/ShoppingData/Profiles/Mullion-LShaped-01,0Profile-L Corner Mullion,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,
-,,"0Profile-Mullion Fin, Oblong",,0Profile,,"Mullion Fin, Oblong",/Game/ShoppingData/Profiles/Mullion-Fin-Oblong-01,"0Profile-Mullion Fin, Oblong",,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,
-PRESET,,0Profile-Flat,,0Profile,,Flat,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Flat,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Curved,,0Profile,,Curved,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Curved,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Raked,,0Profile,,Raked,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Raked,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-V,,0Profile,,V,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-V,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Upslope,,0Profile,,Upslope,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Upslope,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
-PRESET,,0Profile-Downslope,,0Profile,,Downslope,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Downslope,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
-PRESET,,"0Profile-Colonial Base, 3 1/2""",,0Profile,,"Colonial Base, 3 1/2""",/Game/ShoppingData/Profiles/Trim-Base-Colonial-01,"0Profile-Colonial Base, 3 1/2""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
-PRESET,,"0Profile-Colonial Base, 5 1/4""",,0Profile,,"Colonial Base, 5 1/4""",/Game/ShoppingData/Profiles/Trim-Base-Speed-514,"0Profile-Colonial Base, 5 1/4""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
-PRESET,,"0Profile-Cove, 4""",,0Profile,,"Cove, 4""",/Game/ShoppingData/Profiles/Trim-Base-Cove-01,"0Profile-Cove, 4""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
-PRESET,,"0Profile-Cove, 6""",,0Profile,,"Cove, 6""",/Game/ShoppingData/Profiles/Trim-Base-Cove-02,"0Profile-Cove, 6""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
-PRESET,,"0Profile-Victorian, 5 1/4""",,0Profile,,"Victorian, 5 1/4""",/Game/ShoppingData/Profiles/Trim-Base-Victorian-01,"0Profile-Victorian, 5 1/4""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
-PRESET,,"0Profile-Victorian, 6 1/2""",,0Profile,,"Victorian, 6 1/2""",/Game/ShoppingData/Profiles/Trim-Base-Victorian-02,"0Profile-Victorian, 6 1/2""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
-PRESET,,"0Profile-Rectangle, 3 1/2"" x 1""",,0Profile,,"Rectangle, 3 1/2"" x 1""",/Game/ShoppingData/Profiles/Trim-Casing-Exterior-01,"0Profile-Rectangle, 3 1/2"" x 1""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
-PRESET,,"0Profile-Rectangle, 1"" x 1""",,0Profile,,"Rectangle, 1"" x 1""",/Game/ShoppingData/Profiles/Trim-Casing-Exterior-02,"0Profile-Rectangle, 1"" x 1""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
-PRESET,,"0Profile-Rectangle, 1 1/2"" x 1 1/2""",,0Profile,,"Rectangle, 1 1/2"" x 1 1/2""",/Game/ShoppingData/Profiles/Trim-Casing-Exterior-03,"0Profile-Rectangle, 1 1/2"" x 1 1/2""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
-PRESET,,"0Profile-Windsor, 3""",,0Profile,,"Windsor, 3""",/Game/ShoppingData/Profiles/Trim-Casing-Windsor-01,"0Profile-Windsor, 3""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
-PRESET,,0Profile-Crown 1,,0Profile,,Crown 1,/Game/ShoppingData/Profiles/Trim-Crown-Contemporary-01,0Profile-Crown 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+TYPENAME,,0Profile,,Profile,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DisplayText,,Name,,Profile.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,PresetID,,,,Profile.AssetID,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,AssetPath,,,,Profile.AssetPath,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,6,6,1,1,1,1,2,1,1,1,1,1,1,1,,,1,1,1,1
+TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Profile.Name,Profile.AssetPath,Profile.AssetID,DataType=ParentCategoryPath,Part_ModuleLinear_Corrugated Plastic Sheet,Part_ModuleLinear_Corrugated Steel Deck,Part_ModuleLinear_Steel C-Channel,Part_ModuleLinear_Steel C-H Channel,Part_ModuleLinear_Steel Hat Channel,Part_ModuleLinear_Steel Web Joist,Part_ModuleLinear_Steel Z Channel,Part_ModuleLinear_Wood Lumber,Part_ModuleLinear_Wood Web Joist,"Part_ModuleLinear_Wood-Chord, Steel-Web Joist",2Gap2D_Mortar Gaps,2Gap2D_Grout Gaps,Part_ExtrudedProfile_BeamColumn_ConcreteRectangular,Part_ExtrudedProfile_BeamColumn_ConcreteRound,Part_ExtrudedProfile_BeamColumn_SteelC,Part_ExtrudedProfile_BeamColumn_SteelHSS,Part_ExtrudedProfile_BeamColumn_SteelL,Part_ExtrudedProfile_BeamColumn_SteelTube,Part_ExtrudedProfile_BeamColumn_SteelW,Part_ExtrudedProfile_BeamColumn_SteelWT,Part_ExtrudedProfile_BeamColumn_StoneRectangular,Part_ExtrudedProfile_BeamColumn_StoneRound,Part_ExtrudedProfile_BeamColumn_WoodRectangular,Part_ExtrudedProfile_BeamColumn_WoodRound,Part_ExtrudedProfile_Mullion,Part_ExtrudedProfile_Stringer,Part_ExtrudedProfile_Trim_FloorMoulding,Part_ExtrudedProfile_Trim_OpeningCasing,Part_ExtrudedProfile_Trim_CeilingMoulding,Part_ExtrudedProfile_Trim_CabinetMoulding
+PRESET,,450FC550-CBBA-D240-8A3D-AAB320533EE5,,0Profile-Corrugated Plastic,,0Profile,,Corrugated Plastic,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Corrugated Plastic,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,EC63CF56-B365-A54C-9E4C-675FA637F669,,0Profile-Corrugated Steel,,0Profile,,Corrugated Steel,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Corrugated Steel,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,FDCCF17F-36B2-AD4A-987B-E2221AF24702,,0Profile-Steel C-Stud,,0Profile,,Steel C-Stud,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Steel C-Stud,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,3035C09B-FB87-1E43-B8BF-9125FE1AF906,,0Profile-Steel C-H Stud,,0Profile,,Steel C-H Stud,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Steel C-H Stud,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,C6AD64BA-2CE3-AE4C-A9F8-740D569DF6B2,,0Profile-Steel Hat Channel,,0Profile,,Steel Hat Channel,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Steel Hat Channel,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,A76CCB6F-2062-3942-8CC9-F333E256A0A9,,0Profile-Steel Web Joist,,0Profile,,Steel Web Joist,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Steel Web Joist,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,B0E8C402-3850-FB43-8C7E-0449D7056AAA,,0Profile-Steel Z Channel,,0Profile,,Steel Z Channel,/Game/ShoppingData/Profiles/SteelProfile-Z,0Profile-Steel Z Channel,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,E9563842-5C81-4D4A-8471-6B35D6A8720B,,0Profile-Solid Rectangle,,0Profile,,Solid Rectangle,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Solid Rectangle,,,,,,,,,X,,,,,X,,,,,,,,X,,X,,,,,,,
+PRESET,,B23C4DD5-A526-0045-9CEB-D265D14DFD31,,0Profile-Wood Web Joist,,0Profile,,Wood Web Joist,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Wood Web Joist,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,,
+PRESET,,ED15761B-F4C0-224D-B19B-4F1216737C77,,0Profile-Wood-Chord Steel-Web Joist,,0Profile,,Wood-Chord Steel-Web Joist,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Wood-Chord Steel-Web Joist,,,,,,,,,,,X,,,,,,,,,,,,,,,,,,,,
+PRESET,,49EF82A8-BF2E-2146-9598-263B907D006C,,0Profile-Solid Circle,,0Profile,,Solid Circle,/Game/ShoppingData/Profiles/SteelProfile-Tube,0Profile-Solid Circle,,,,,,,,,,,,,,,X,,,,,,,,X,,X,,X,,,,
+PRESET,,F64A492B-D16D-B242-8627-1E4424D9144D,,"0Profile-Wide Flange, W",,0Profile,,"Wide Flange, W",/Game/ShoppingData/Profiles/SteelProfile-W,"0Profile-Wide Flange, W",,,,,,,,,,,,,,,,,,,,X,,,,,,,X,,,,
+PRESET,,7D21F629-F04D-834F-A362-C94DCE3FA228,,"0Profile-Channel, C",,0Profile,,"Channel, C",/Game/ShoppingData/Profiles/SteelProfile-C,"0Profile-Channel, C",,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,
+PRESET,,5B812E71-3398-7641-A1D7-4279A5B88077,,"0Profile-Hollow Structural Section, HSS",,0Profile,,"Hollow Structural Section, HSS",/Game/ShoppingData/Profiles/SteelProfile-HSS-02,"0Profile-Hollow Structural Section, HSS",,,,,,,,,,,,,,,,,X,,,,,,,,,,X,,,,
+PRESET,,C2175929-3BDD-1C4B-AA06-518C88454DE7,,0Profile-Tube Steel,,0Profile,,Tube Steel,/Game/ShoppingData/Profiles/SteelProfile-Tube,0Profile-Tube Steel,,,,,,,,,,,,,,,,,,,X,,,,,,,,X,,,,
+PRESET,,9789EAA2-7F75-4A4D-B481-1A2C67E59D37,,"0Profile-Angle, L",,0Profile,,"Angle, L",/Game/ShoppingData/Profiles/SteelProfile-L,"0Profile-Angle, L",,,,,,,,,,,,,,,,,,X,,,,,,,,,X,,,,
+PRESET,,D1F99435-AD24-F44E-89F4-39905587CA1B,,"0Profile-Tee, WT",,0Profile,,"Tee, WT",/Game/ShoppingData/Profiles/SteelProfile-WT,"0Profile-Tee, WT",,,,,,,,,,,,,,,,,,,,,X,,,,,,X,,,,
+PRESET,,FAED1D83-7A1F-9843-8510-5BE771EA49D2,,0Profile-Plate Section,,0Profile,,Plate Section,/Game/ShoppingData/Profiles/SteelProfile-Plate,0Profile-Plate Section,,,,,,,,,,,,,,,,,,X,,,,,,,,,X,,,,
+PRESET,,85E59D9D-B878-1140-B25D-DE33B85DA0EE,,0Profile-Rectangular Mullion,,0Profile,,Rectangular Mullion,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Rectangular Mullion,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,
+,,,,0Profile-L Corner Mullion,,0Profile,,L Corner Mullion,/Game/ShoppingData/Profiles/Mullion-LShaped-01,0Profile-L Corner Mullion,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,
+,,,,"0Profile-Mullion Fin, Oblong",,0Profile,,"Mullion Fin, Oblong",/Game/ShoppingData/Profiles/Mullion-Fin-Oblong-01,"0Profile-Mullion Fin, Oblong",,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,
+PRESET,,4D9E7647-F6EE-B44C-953F-6A9D26B9AD5B,,0Profile-Flat,,0Profile,,Flat,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Flat,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
+PRESET,,AC9B03C9-C7EE-564C-BEB7-E03B98DB6669,,0Profile-Curved,,0Profile,,Curved,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Curved,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
+PRESET,,7A2EA21E-817B-FA45-84BA-415BF34AC06A,,0Profile-Raked,,0Profile,,Raked,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Raked,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
+PRESET,,BFDEF6D6-6A60-8B41-AE21-7E6B61CA88B0,,0Profile-V,,0Profile,,V,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-V,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
+PRESET,,7437D87F-40B5-9749-92B1-9AC99DDFBB91,,0Profile-Upslope,,0Profile,,Upslope,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Upslope,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
+PRESET,,D409AE91-6FC5-2549-A04F-43C0F3C4D9C1,,0Profile-Downslope,,0Profile,,Downslope,/Game/ShoppingData/Profiles/Mullion-Rectangular-02,0Profile-Downslope,,,,,,,,,,,,X,X,,,,,,,,,,,,,,,,,,
+PRESET,,4D548CE3-0A5D-DA4F-97B2-1D8F8FE82AD0,,"0Profile-Colonial Base, 3 1/2""",,0Profile,,"Colonial Base, 3 1/2""",/Game/ShoppingData/Profiles/Trim-Base-Colonial-01,"0Profile-Colonial Base, 3 1/2""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,E14DEA9D-64AC-BF4A-82EE-32FFAD9ABB48,,"0Profile-Colonial Base, 5 1/4""",,0Profile,,"Colonial Base, 5 1/4""",/Game/ShoppingData/Profiles/Trim-Base-Speed-514,"0Profile-Colonial Base, 5 1/4""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,961F821F-AE3C-CE47-948D-FDB28D150332,,"0Profile-Cove, 4""",,0Profile,,"Cove, 4""",/Game/ShoppingData/Profiles/Trim-Base-Cove-01,"0Profile-Cove, 4""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,AEE1B0B8-0E3E-B54C-BBB1-A2E05F4F3A0E,,"0Profile-Cove, 6""",,0Profile,,"Cove, 6""",/Game/ShoppingData/Profiles/Trim-Base-Cove-02,"0Profile-Cove, 6""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,F403C7D2-3309-7A47-AFC3-94A58B4016FA,,"0Profile-Victorian, 5 1/4""",,0Profile,,"Victorian, 5 1/4""",/Game/ShoppingData/Profiles/Trim-Base-Victorian-01,"0Profile-Victorian, 5 1/4""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,8BC10711-41EA-9B49-84CC-2D5F11ACE1B3,,"0Profile-Victorian, 6 1/2""",,0Profile,,"Victorian, 6 1/2""",/Game/ShoppingData/Profiles/Trim-Base-Victorian-02,"0Profile-Victorian, 6 1/2""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,34915632-F959-9745-8562-B2119F31A3F6,,"0Profile-Rectangle, 3 1/2"" x 1""",,0Profile,,"Rectangle, 3 1/2"" x 1""",/Game/ShoppingData/Profiles/Trim-Casing-Exterior-01,"0Profile-Rectangle, 3 1/2"" x 1""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,6AD24EED-3400-CF44-B42B-546B1C4D369F,,"0Profile-Rectangle, 1"" x 1""",,0Profile,,"Rectangle, 1"" x 1""",/Game/ShoppingData/Profiles/Trim-Casing-Exterior-02,"0Profile-Rectangle, 1"" x 1""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,795E01AC-E300-7745-B6B7-8E8F083DEF49,,"0Profile-Rectangle, 1 1/2"" x 1 1/2""",,0Profile,,"Rectangle, 1 1/2"" x 1 1/2""",/Game/ShoppingData/Profiles/Trim-Casing-Exterior-03,"0Profile-Rectangle, 1 1/2"" x 1 1/2""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,1814C933-2D65-7642-8855-83D0813D55B1,,"0Profile-Windsor, 3""",,0Profile,,"Windsor, 3""",/Game/ShoppingData/Profiles/Trim-Casing-Windsor-01,"0Profile-Windsor, 3""",,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X
+PRESET,,2397757B-27E1-1C4F-BE14-DFAFD70E3476,,0Profile-Crown 1,,0Profile,,Crown 1,/Game/ShoppingData/Profiles/Trim-Crown-Contemporary-01,0Profile-Crown 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,X,X,X

@@ -6,7 +6,7 @@ PROPERTY,,Dimension,,Width,,Dimension.Width,,,,,
 PROPERTY,,Dimension,,Depth,,Dimension.Depth,,,,,
 PROPERTY,,Dimension,,Thickness,,Dimension.Thickness,,,,,
 ,,Presets,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Width,Dimension.Depth,Dimension.Thickness,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
+TAGPATHS,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Width,Dimension.Depth,Dimension.Thickness,DataType=ParentCategoryPath,TG_ParentNode+CategoryPath
 PRESET,,0DimWDT_LAngle-12inW-12inD-1.38inT,,0DimWDT_LAngle,,L12X12X1-3/8,12in,12in,1.38in,,Part_ExtrudedProfile_BeamColumn_SteelL
 PRESET,,0DimWDT_LAngle-12inW-12inD-1.25inT,,0DimWDT_LAngle,,L12X12X1-1/4,12in,12in,1.25in,,Part_ExtrudedProfile_BeamColumn_SteelL
 PRESET,,0DimWDT_LAngle-12inW-12inD-1.13inT,,0DimWDT_LAngle,,L12X12X1-1/8,12in,12in,1.13in,,Part_ExtrudedProfile_BeamColumn_SteelL

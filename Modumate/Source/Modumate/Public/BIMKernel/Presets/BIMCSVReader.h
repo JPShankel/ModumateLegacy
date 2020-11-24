@@ -6,6 +6,7 @@
 #include "BIMKernel/Core/BIMEnums.h"
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
+#include "BIMCSVReader.generated.h"
 
 /*
 
@@ -29,27 +30,53 @@ This is primarily used to store the name of a property that subsequent cells wil
 
 */
 
+
+UENUM(BlueprintType)
+enum class ECSVMatrixNames : uint8
+{
+	Category,
+	Color,
+	Dimensions,
+	FinalPartTransformAtSlot,
+	GUID,
+	ID,
+	InputPins,
+	Material,
+	MaterialChannels,
+	Mesh,
+	MyCategoryPath,
+	ParentCategoryPath,
+	Profile,
+	Properties,
+	ReferencedAssets,
+	Rig,
+	Slots,
+	StartsInProject,
+	SubcategoryPath,
+	Error = 255
+};
+
 struct FBIMCSVReader
 {
-	struct FColumnRange
+	struct FPresetMatrix
 	{
-		int32 first = -1;
-		TArray<FString> columns;
-		TArray<FBIMTagPath> columnTags;
-		bool wantTags = false;
+		FPresetMatrix(ECSVMatrixNames InName, int32 InFirst) { Name = InName; First = InFirst; }
+
+		ECSVMatrixNames Name;
+		int32 First = -1;
+		TArray<FString> Columns;
+
 		bool IsIn(int32 i) const;
-		const FString& Get(int32 i) const; 
 	};
 
 	FBIMCSVReader();
 
 	FBIMPresetTypeDefinition NodeType;
+	FBIMPresetInstance Preset;
 
 	TMap<FBIMNameType, EBIMValueType> PropertyTypeMap;
 
-	FBIMPresetInstance Preset;
-
-	FColumnRange PropertyRange, MyPathRange, ParentPathRange, PinRange, IDRange, StartInProjectRange, SlotRange, PinChannelRange;
+	TArray<FPresetMatrix> PresetMatrices;
 
 	EBIMResult ProcessNodeTypeRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
 	EBIMResult ProcessPropertyDeclarationRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);

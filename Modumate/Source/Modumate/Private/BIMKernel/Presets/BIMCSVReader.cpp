@@ -2,20 +2,15 @@
 
 #include "BIMKernel/Presets/BIMCSVReader.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "Database/ModumateObjectEnums.h"
 
 FBIMCSVReader::FBIMCSVReader()
 {
-	ParentPathRange.wantTags = true;
 }
 
-bool FBIMCSVReader::FColumnRange::IsIn(int32 i) const 
+bool FBIMCSVReader::FPresetMatrix::IsIn(int32 i) const
 {
-	return first >= 0 && i >= first && i < first + columns.Num();
-}
-
-const FString& FBIMCSVReader::FColumnRange::Get(int32 i) const
-{
-	return columns[i - first];
+	return First >= 0 && i >= First && i < First + Columns.Num();
 }
 
 static FString NormalizeCell(const FString& Row)
@@ -124,13 +119,9 @@ EBIMResult FBIMCSVReader::ProcessTagPathRow(const TArray<const TCHAR*>& Row, int
 
 	//The different kinds of data columns we may be reading
 
-	FColumnRange* currentRange = nullptr;
+	int32 currentRange = INDEX_NONE;
 
-	auto setColumnRange = [this, &currentRange](FColumnRange &ColumnRange, int32 StartingColumn)
-	{
-		currentRange = &ColumnRange;
-		ColumnRange.first = StartingColumn;
-	};
+	PresetMatrices.Empty();
 
 	for (int32 i = 1; i < Row.Num(); ++i)
 	{
@@ -141,60 +132,29 @@ EBIMResult FBIMCSVReader::ProcessTagPathRow(const TArray<const TCHAR*>& Row, int
 			continue;
 		}
 
-		FString normalizedCell = NormalizeCell(cell);
 		TArray<FString> dataType;
 
 		//When we encounter a new DataType column, set up the corresponding state
 		if (cell.ParseIntoArray(dataType, TEXT("=")) && dataType[0].Equals(TEXT("DataType")))
 		{
-			if (dataType[1].Equals(TEXT("Slots")))
+			ECSVMatrixNames matrixName = FindEnumValueByName<ECSVMatrixNames>(TEXT("ECSVMatrixNames"), *dataType[1]);
+			if (matrixName != ECSVMatrixNames::Error)
 			{
-				setColumnRange(SlotRange, i + 1);
-			}
-			else if (dataType[1].Equals(TEXT("Properties")))
-			{
-				setColumnRange(PropertyRange, i + 1);
-			}
-			else if (dataType[1].Equals(TEXT("StartsInProject")))
-			{
-				setColumnRange(StartInProjectRange, i + 1);
-			}
-			else if (dataType[1].Equals(TEXT("InputPins")))
-			{
-				setColumnRange(PinRange, i + 1);
-			}
-			else if (dataType[1].Contains(TEXT("Parent")))
-			{
-				setColumnRange(ParentPathRange, i + 1);
-			}
-			else if (dataType[1].Contains(TEXT("MyNode")))
-			{
-				setColumnRange(MyPathRange, i + 1);
-			}
-			else if (dataType[1].Equals(TEXT("ID")))
-			{
-				setColumnRange(IDRange, i + 1);
-			}
-			else if (dataType[1].Equals(TEXT("PinChannel")))
-			{
-				setColumnRange(PinChannelRange, i + 1);
+				PresetMatrices.Add(FPresetMatrix(matrixName, i + 1));
+				currentRange = PresetMatrices.Num() - 1;
 			}
 			else
 			{
-				currentRange = nullptr;
+				currentRange = INDEX_NONE;
 			}
 			continue;
 		}
 
-		if (currentRange != nullptr)
+		if (currentRange != INDEX_NONE)
 		{
-			currentRange->columns.Add(normalizedCell);
-			if (currentRange->wantTags)
-			{
-				FBIMTagPath path;
-				path.FromString(normalizedCell);
-				currentRange->columnTags.Add(path);
-			}
+			FPresetMatrix& currentMatrix = PresetMatrices[currentRange];
+			FString normalizedCell = NormalizeCell(cell);
+			currentMatrix.Columns.Add(normalizedCell);
 		}
 	}
 	return EBIMResult::Success;
@@ -209,190 +169,283 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 	The columns in a preset correspond to the definitions stored in the various column range object
 	For each column, find the range it lands into and set a corresponding value (property, pin, slot, etc)
 	*/
-	for (int32 i = 1; i < Row.Num(); ++i)
+
+	for (auto& presetMatrix : PresetMatrices)
 	{
-		FString cell = NormalizeCell(Row[i]);
-
-		if (IDRange.IsIn(i))
+		switch (presetMatrix.Name)
 		{
-			if (!cell.IsEmpty())
+			case ECSVMatrixNames::ID:
 			{
-				if (!Preset.PresetID.IsNone())
+				FBIMKey presetID = FBIMKey(NormalizeCell(Row[presetMatrix.First]));
+				if (!presetID.IsNone())
 				{
-					Preset.TryGetProperty(BIMPropertyNames::Name, Preset.DisplayName);
-					OutPresets.Add(Preset.PresetID, Preset);
-					Preset = FBIMPresetInstance();
-				}
-
-				Preset.PresetID = FBIMKey(*cell);
-				Preset.NodeType = NodeType.TypeName;
-				Preset.NodeScope = NodeType.Scope;
-				Preset.TypeDefinition = NodeType;
-			}
-		}
-		else if (StartInProjectRange.IsIn(i))
-		{
-			if (!cell.IsEmpty())
-			{
-				OutStarters.Add(Preset.PresetID);
-			}
-		}
-		else if (PropertyRange.IsIn(i))
-		{
-			FBIMPropertyKey propSpec(*PropertyRange.Get(i));
-
-			// Only add blank properties if they don't already exist
-			if (!Preset.HasProperty(propSpec.Name) || !cell.IsEmpty())
-			{
-				EBIMValueType* propType = PropertyTypeMap.Find(propSpec.QN());
-				if (ensureAlways(propType != nullptr))
-				{
-					switch (*propType)
+					if (!Preset.PresetID.IsNone())
 					{
-						// These values are stored as is from the spreadsheet
-						case EBIMValueType::Vector:
-						case EBIMValueType::DimensionSet:
-						case EBIMValueType::String:
-						case EBIMValueType::HexValue:
-						case EBIMValueType::Formula:
-						case EBIMValueType::Boolean:
-						case EBIMValueType::DisplayText:
-						{
-							Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, FString(Row[i]));
-						}
-						break;
-
-						// These values want to have whitespace stripped
-						case EBIMValueType::PresetID:
-						case EBIMValueType::AssetPath:
-						case EBIMValueType::CategoryPath: 
-						{
-							Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, cell);
-						}
-						break;
-
-						case EBIMValueType::Dimension:
-						{
-							Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, UModumateDimensionStatics::StringToFormattedDimension(cell).Centimeters);
-						}
-						break;
-
-						case EBIMValueType::Number: 
-						{
-							float v = FCString::Atof(Row[i]);
-							Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, v);
-						}
-						break;
-
-						default:
-							ensureAlways(false);
-					};
-				}
-			}
-		}
-		else if (MyPathRange.IsIn(i) && !cell.IsEmpty())
-		{
-			Preset.MyTagPath.FromString(cell);
-		}
-		else if (ParentPathRange.IsIn(i) && !cell.IsEmpty())
-		{
-			FBIMTagPath &path = Preset.ParentTagPaths.AddDefaulted_GetRef();
-			if (cell.Equals(TEXT("X")))
-			{
-				path.FromString(ParentPathRange.Get(i));
-			}
-			else
-			{
-				path.FromString(NormalizeCell(cell));
-			}
-		}
-		else if (SlotRange.IsIn(i))
-		{
-			FString category = SlotRange.Get(i);
-			if (category.Equals(TEXT("SlotConfig")))
-			{
-				if (!cell.IsEmpty())
-				{
-					Preset.SlotConfigPresetID = FBIMKey(*cell);
-				}
-			}
-			else if (category.Equals(TEXT("PartPreset")) && ensureAlways(!cell.IsEmpty()))
-			{
-				if (Preset.PartSlots.Num() == 0 || !Preset.PartSlots.Last().PartPreset.IsNone())
-				{
-					Preset.PartSlots.AddDefaulted();
-				}
-				Preset.PartSlots.Last().PartPreset = FBIMKey(*NormalizeCell(cell));
-			}
-			else if (category.Equals(TEXT("SlotName")))
-			{
-				if (Preset.PartSlots.Num() == 0 || !Preset.PartSlots.Last().SlotPreset.IsNone())
-				{
-					Preset.PartSlots.AddDefaulted();
-				}
-				Preset.PartSlots.Last().SlotPreset = FBIMKey(*cell);
-			}
-		}
-		else if (PinRange.IsIn(i))
-		{
-			if (cell.IsEmpty())
-			{
-				continue;
-			}
-			FName pinName = *PinRange.Get(i);
-			bool found = false;
-			for (int32 setIndex = 0; setIndex < NodeType.PinSets.Num(); ++setIndex)
-			{
-				if (NodeType.PinSets[setIndex].SetName == pinName)
-				{
-					int32 setPosition = 0;
-					for (auto &cap : Preset.ChildPresets)
-					{
-						if (cap.ParentPinSetIndex == setIndex)
-						{
-							setPosition = FMath::Max(cap.ParentPinSetPosition + 1, setPosition);
-						}
+						Preset.TryGetProperty(BIMPropertyNames::Name, Preset.DisplayName);
+						OutPresets.Add(Preset.PresetID, Preset);
+						Preset = FBIMPresetInstance();
 					}
 
-					FBIMPresetPinAttachment &newCAP = Preset.ChildPresets.AddDefaulted_GetRef();
-					newCAP.ParentPinSetIndex = setIndex;
-					newCAP.ParentPinSetPosition = setPosition;
-					newCAP.Target = NodeType.PinSets[setIndex].PinTarget;
+					Preset.PresetID = presetID;
+					Preset.NodeType = NodeType.TypeName;
+					Preset.NodeScope = NodeType.Scope;
+					Preset.TypeDefinition = NodeType;
+				}
+				ensureAlways(!Preset.PresetID.IsNone());
+			}
+			break;
 
-					FString rowStr = cell;
-					rowStr.RemoveSpacesInline();
-					newCAP.PresetID = FBIMKey(*rowStr);
-					if (newCAP.PresetID.IsNone() && Preset.ChildPresets.Num() > 1)
-					{
-						newCAP.PresetID = Preset.ChildPresets[0].PresetID;
-					}
-					ensureAlways(!newCAP.PresetID.IsNone());
-					found = true;
+			case ECSVMatrixNames::GUID :
+			{
+				FString guidStr(Row[presetMatrix.First]);
+				if (!guidStr.IsEmpty())
+				{
+					Preset.GUID = FBIMKey(guidStr);
 				}
 			}
+			break;
 
-			if (!found)
+			case ECSVMatrixNames::Profile:
 			{
-				OutMessages.Add(FString::Printf(TEXT("Could not find pin %s"), *PinRange.Get(i)));
-			}
-		}
-		else if (PinChannelRange.IsIn(i))
-		{
-			// Pin channels are used to assign materials to meshes
-			// Materials are siblings of their meshes, so we tag all siblings with the pin channel to link them in FBimAssemblSpec::FromPreset
-			if (ensureAlways(Preset.ChildPresets.Num() > 0))
-			{
-				int32 channelPosition = Preset.ChildPresets.Last().ParentPinSetPosition;
-				for (auto& cp : Preset.ChildPresets)
+				FString profileKey(Row[presetMatrix.First]);
+				if (!profileKey.IsEmpty())
 				{
-					if (cp.ParentPinSetPosition == channelPosition)
+					Preset.Properties.SetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID, NormalizeCell(profileKey));
+				}
+			}
+			break;
+
+			case ECSVMatrixNames::Material :
+			{
+				// TODO: Rows 0, 2 & 3 are channel, surface material and color tint, to be implemented later
+				FString rawMaterial(Row[presetMatrix.First + 1]);
+				FString hexValue(Row[presetMatrix.First + 4]);
+				if (!rawMaterial.IsEmpty())
+				{
+					Preset.Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, NormalizeCell(rawMaterial));
+				}
+				if (!hexValue.IsEmpty())
+				{
+					Preset.Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, hexValue);
+				}
+			}
+			break;
+
+			case ECSVMatrixNames::Dimensions : 
+			{
+				FModumateFormattedDimension measurement = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 1]);
+				Preset.Properties.SetProperty(EBIMValueScope::Dimension, FName(Row[presetMatrix.First]), measurement.Centimeters);
+			}
+			break;
+
+			case ECSVMatrixNames::StartsInProject:
+			{
+				ensureAlways(!Preset.PresetID.IsNone());
+				FString cellStr = Row[presetMatrix.First];
+				if (!cellStr.IsEmpty())
+				{
+					OutStarters.Add(Preset.PresetID);
+				}
+			}
+			break;
+
+			case ECSVMatrixNames::Properties:
+			{
+				ensureAlways(!Preset.PresetID.IsNone());
+				for (int32 i = 0; i < presetMatrix.Columns.Num(); ++i)
+				{
+					const FString& column = presetMatrix.Columns[i];
+
+					FBIMPropertyKey propSpec(*column);
+					FString cell = Row[presetMatrix.First + i];
+
+					// Only add blank properties if they don't already exist
+					if (!Preset.HasProperty(propSpec.Name) || !cell.IsEmpty())
 					{
-						cp.PinChannel = *cell;
+						EBIMValueType* propType = PropertyTypeMap.Find(propSpec.QN());
+						if (ensureAlways(propType != nullptr))
+						{
+							switch (*propType)
+							{
+								// These values are stored as is from the spreadsheet
+							case EBIMValueType::Vector:
+							case EBIMValueType::DimensionSet:
+							case EBIMValueType::String:
+							case EBIMValueType::HexValue:
+							case EBIMValueType::Formula:
+							case EBIMValueType::Boolean:
+							case EBIMValueType::DisplayText:
+							{
+								Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, cell);
+							}
+							break;
+
+							// These values want to have whitespace stripped
+							case EBIMValueType::PresetID:
+							case EBIMValueType::AssetPath:
+							case EBIMValueType::CategoryPath:
+							{
+								Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, NormalizeCell(cell));
+							}
+							break;
+
+							case EBIMValueType::Dimension:
+							{
+								Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, UModumateDimensionStatics::StringToFormattedDimension(cell).Centimeters);
+							}
+							break;
+
+							case EBIMValueType::Number:
+							{
+								Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, FCString::Atof(*cell));
+							}
+							break;
+
+							default:
+								ensureAlways(false);
+							};
+						}
 					}
 				}
 			}
+			break;
+
+			case ECSVMatrixNames::MyCategoryPath:
+			{
+				ensureAlways(!Preset.PresetID.IsNone());
+				FString ncp = Row[presetMatrix.First];
+				if (!ncp.IsEmpty())
+				{
+					Preset.MyTagPath.FromString(Row[presetMatrix.First]);
+				}
+			}
+			break;
+
+			case ECSVMatrixNames::ParentCategoryPath:
+			{
+				ensureAlways(!Preset.PresetID.IsNone());
+				for (int32 i = 0; i < presetMatrix.Columns.Num(); ++i)
+				{
+					FString cell = Row[presetMatrix.First + i];
+					if (!cell.IsEmpty())
+					{
+						FBIMTagPath& path = Preset.ParentTagPaths.AddDefaulted_GetRef();
+						if (cell.Equals(TEXT("X")))
+						{
+							path.FromString(presetMatrix.Columns[i]);
+						}
+						else
+						{
+							path.FromString(NormalizeCell(cell));
+						}
+					}
+				}
+			}
+			break;
+
+			case ECSVMatrixNames::Slots:
+			{
+				ensureAlways(!Preset.PresetID.IsNone());
+				for (int32 i = 0; i < presetMatrix.Columns.Num(); ++i)
+				{
+					FString category = presetMatrix.Columns[i];
+					FString cell = Row[presetMatrix.First + i];
+					if (category.Equals(TEXT("SlotConfig")))
+					{
+						if (!cell.IsEmpty())
+						{
+							Preset.SlotConfigPresetID = FBIMKey(NormalizeCell(*cell));
+						}
+					}
+					else if (category.Equals(TEXT("PartPreset")) && ensureAlways(!cell.IsEmpty()))
+					{
+						if (Preset.PartSlots.Num() == 0 || !Preset.PartSlots.Last().PartPreset.IsNone())
+						{
+							Preset.PartSlots.AddDefaulted();
+						}
+						Preset.PartSlots.Last().PartPreset = FBIMKey(*NormalizeCell(cell));
+					}
+					else if (category.Equals(TEXT("SlotName")))
+					{
+						if (Preset.PartSlots.Num() == 0 || !Preset.PartSlots.Last().SlotPreset.IsNone())
+						{
+							Preset.PartSlots.AddDefaulted();
+						}
+						Preset.PartSlots.Last().SlotPreset = FBIMKey(*cell);
+					}
+				}
+			}
+			break;
+
+			case ECSVMatrixNames::InputPins:
+			{
+				ensureAlways(!Preset.PresetID.IsNone());
+				for (int32 i = 0; i < presetMatrix.Columns.Num(); ++i)
+				{
+					FString cell = Row[presetMatrix.First + i];
+					if (cell.IsEmpty())
+					{
+						continue;
+					}
+					FName pinName = *presetMatrix.Columns[i];
+					bool found = false;
+					for (int32 setIndex = 0; setIndex < NodeType.PinSets.Num(); ++setIndex)
+					{
+						if (NodeType.PinSets[setIndex].SetName == pinName)
+						{
+							int32 setPosition = 0;
+							for (auto& cap : Preset.ChildPresets)
+							{
+								if (cap.ParentPinSetIndex == setIndex)
+								{
+									setPosition = FMath::Max(cap.ParentPinSetPosition + 1, setPosition);
+								}
+							}
+
+							FBIMPresetPinAttachment& newCAP = Preset.ChildPresets.AddDefaulted_GetRef();
+							newCAP.ParentPinSetIndex = setIndex;
+							newCAP.ParentPinSetPosition = setPosition;
+							newCAP.Target = NodeType.PinSets[setIndex].PinTarget;
+
+							newCAP.PresetID = FBIMKey(NormalizeCell(cell));
+							if (newCAP.PresetID.IsNone() && Preset.ChildPresets.Num() > 1)
+							{
+								newCAP.PresetID = Preset.ChildPresets[0].PresetID;
+							}
+							ensureAlways(!newCAP.PresetID.IsNone());
+							found = true;
+						}
+					}
+
+					if (!found)
+					{
+						OutMessages.Add(FString::Printf(TEXT("Could not find pin %s"), *presetMatrix.Columns[i]));
+					}
+				}
+			}
+			break;
+
+			case ECSVMatrixNames::MaterialChannels:
+				{
+					ensureAlways(!Preset.PresetID.IsNone());
+					// Pin channels are used to assign materials to meshes
+					// Materials are siblings of their meshes, so we tag all siblings with the pin channel to link them in FBimAssemblSpec::FromPreset
+					if (ensureAlways(Preset.ChildPresets.Num() > 0))
+					{
+						int32 channelPosition = Preset.ChildPresets.Last().ParentPinSetPosition;
+						for (auto& cp : Preset.ChildPresets)
+						{
+							if (cp.ParentPinSetPosition == channelPosition)
+							{
+								cp.PinChannel = Row[presetMatrix.First];
+							}
+						}
+					}
+				}
+				break;
 		}
 	}
+
 	return EBIMResult::Success;
 }
 

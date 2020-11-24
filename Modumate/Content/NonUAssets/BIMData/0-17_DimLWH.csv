@@ -6,7 +6,7 @@ PROPERTY,,Dimension,,Length,,Dimension.Length,,,,,
 PROPERTY,,Dimension,,Width,,Dimension.Width,,,,,
 PROPERTY,,Dimension,,Height,,Dimension.Height,,,,,
 ,,Presets,,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Length,Dimension.Width,Dimension.Height,DataType=TG_Parent Node+CategoryPath,
+TAGPATHS,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Length,Dimension.Width,Dimension.Height,DataType=ParentCategoryPath,
 PRESET,,0DimLWH_ClayBrick-7.625inL-3.625inW-2.29167inH,,0DimLWH_ClayBrick,,8in Modular,7.625in,3.625in,2.29167in,,Part_ModuleVolumetric_Clay Brick
 PRESET,,0DimLWH_ClayBrick-7.625inL-3.125inW-2.29167inH,,0DimLWH_ClayBrick,,Narrow 8in Modular,7.625in,3.125in,2.29167in,,Part_ModuleVolumetric_Clay Brick
 PRESET,,0DimLWH_ClayBrick-7.625inL-2.29167inW-2.29167inH,,0DimLWH_ClayBrick,,Extra-Narrow 8in Modular,7.625in,2.29167in,2.29167in,,Part_ModuleVolumetric_Clay Brick

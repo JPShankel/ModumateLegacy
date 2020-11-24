@@ -4,7 +4,7 @@ TYPENAME,,0Color,,Color,,,,,,
 PROPERTY,,DisplayText,,Name,,Color.Name,,,,
 PROPERTY,,HexValue,,,,Color.HEXValue,,,,
 ,,Presets,,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=TG_MyNode+CategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Color.Name,Color.HEXValue,,DataType=TG_Parent Node+CategoryPath,TG_ParentNode+CategoryPath
+TAGPATHS,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Color.Name,Color.HEXValue,,DataType=ParentCategoryPath,TG_ParentNode+CategoryPath
 PRESET,,0Color_Abstract-FFFFFF-White,,0Color_Abstract,,White,FFFFFF,,,1Material_Abstract
 PRESET,,0Color_Abstract-EAEAEA-Gray1,,0Color_Abstract,,Gray 1,EAEAEA,,,1Material_Abstract
 PRESET,,0Color_Abstract-D5D5D5-Gray2,,0Color_Abstract,,Gray 2,D5D5D5,,,1Material_Abstract
