@@ -63,12 +63,7 @@ EBIMResult FBIMPresetCollection::GetPropertyFormForPreset(const FBIMKey& PresetI
 		return EBIMResult::Error;
 	}
 
-	const FBIMPresetTypeDefinition* descriptor = NodeDescriptors.Find(preset->NodeType);
-	if (descriptor == nullptr)
-	{
-		return EBIMResult::Error;
-	}
-	OutForm = descriptor->FormItemToProperty;
+	OutForm = preset->FormItemToProperty;
 	return EBIMResult::Success;
 }
 

@@ -85,6 +85,9 @@ public:
 	FBIMPropertySheet Properties;
 
 	UPROPERTY()
+	TMap<FString, FName> FormItemToProperty;
+
+	UPROPERTY()
 	FText CategoryTitle = FText::FromString(TEXT("Unknown Category"));
 
 	UPROPERTY()

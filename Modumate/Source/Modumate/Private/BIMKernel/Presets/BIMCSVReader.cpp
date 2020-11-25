@@ -190,6 +190,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					Preset.NodeType = NodeType.TypeName;
 					Preset.NodeScope = NodeType.Scope;
 					Preset.TypeDefinition = NodeType;
+					Preset.FormItemToProperty = NodeType.FormItemToProperty;
 				}
 				ensureAlways(!Preset.PresetID.IsNone());
 			}
@@ -211,6 +212,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				if (!profileKey.IsEmpty())
 				{
 					Preset.Properties.SetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID, NormalizeCell(profileKey));
+					Preset.FormItemToProperty.Add(TEXT("Profile"), FBIMPropertyKey(EBIMValueScope::Profile, BIMPropertyNames::AssetID).QN());
 				}
 			}
 			break;
@@ -223,10 +225,12 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				if (!rawMaterial.IsEmpty())
 				{
 					Preset.Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, NormalizeCell(rawMaterial));
+					Preset.FormItemToProperty.Add(TEXT("Material"), FBIMPropertyKey(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID).QN());
 				}
 				if (!hexValue.IsEmpty())
 				{
 					Preset.Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, hexValue);
+					Preset.FormItemToProperty.Add(TEXT("Color"), FBIMPropertyKey(EBIMValueScope::Color, BIMPropertyNames::HexValue).QN());
 				}
 			}
 			break;
@@ -235,6 +239,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 			{
 				FModumateFormattedDimension measurement = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 1]);
 				Preset.Properties.SetProperty(EBIMValueScope::Dimension, FName(Row[presetMatrix.First]), measurement.Centimeters);
+				Preset.FormItemToProperty.Add(Row[presetMatrix.First], FBIMPropertyKey(EBIMValueScope::Dimension, FName(Row[presetMatrix.First])).QN());
 			}
 			break;
 
