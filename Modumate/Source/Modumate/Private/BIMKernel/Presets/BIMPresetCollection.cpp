@@ -67,6 +67,47 @@ EBIMResult FBIMPresetCollection::GetPropertyFormForPreset(const FBIMKey& PresetI
 	return EBIMResult::Success;
 }
 
+EBIMResult FBIMPresetCollection::GetPresetsByPredicate(const TFunction<bool(const FBIMPresetInstance& Preset)>& Predicate, TArray<FBIMKey>& OutPresets) const
+{
+	for (auto& kvp : Presets)
+	{
+		if (Predicate(kvp.Value))
+		{
+			OutPresets.Add(kvp.Key);
+		}
+	}
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetCollection::GetPresetsForSlot(const FBIMKey& SlotPresetID, TArray<FBIMKey>& OutPresets) const
+{
+	const FBIMPresetInstance* slotPreset = Presets.Find(SlotPresetID);
+	if (slotPreset == nullptr)
+	{
+		return EBIMResult::Error;
+	}
+
+	FString slotPathNCP;
+	if (slotPreset->Properties.TryGetProperty(EBIMValueScope::Slot, BIMPropertyNames::SupportedNCPs, slotPathNCP))
+	{
+		FBIMTagPath tagPath;
+		EBIMResult res = tagPath.FromString(slotPathNCP);
+		if (res == EBIMResult::Success)
+		{
+			return GetPresetsByPredicate([tagPath](const FBIMPresetInstance& Preset)
+			{
+				return Preset.MyTagPath.MatchesExact(tagPath);
+			}, OutPresets);
+		}
+		else
+		{
+			return res;
+		}
+	}
+	return EBIMResult::Error;
+}
+
+
 // TODO: Loading data from a CSV manifest file is not going to be required long term. 
 // Ultimately we will develop a compiler from this code that generates a record that can be read more efficiently
 // Once this compiler is in the shape we intend, we will determine where in the toolchain this code will reside we can refactor for long term sustainability

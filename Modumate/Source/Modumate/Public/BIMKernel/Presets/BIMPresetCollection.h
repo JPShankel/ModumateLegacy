@@ -38,6 +38,9 @@ struct MODUMATE_API FBIMPresetCollection
 
 	EBIMResult GetPropertyFormForPreset(const FBIMKey& PresetID, TMap<FString, FBIMNameType> &OutForm) const;
 
+	EBIMResult GetPresetsByPredicate(const TFunction<bool(const FBIMPresetInstance& Preset)>& Predicate,TArray<FBIMKey>& OutPresets) const;
+	EBIMResult GetPresetsForSlot(const FBIMKey& SlotPresetID,TArray<FBIMKey>& OutPresets) const;
+
 	EBIMResult GenerateBIMKeyForPreset(const FBIMKey& PresetID, FBIMKey& OutKey) const;
 	EBIMResult GetAvailableGUID(FGuid& OutGUID);
 

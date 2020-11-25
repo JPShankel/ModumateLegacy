@@ -168,5 +168,4 @@ public:
 	bool ValidatePreset() const;
 
 	bool Matches(const FBIMPresetInstance& OtherPreset) const;
-	bool SupportsChild(const FBIMPresetInstance& CandidateChild) const;
 };

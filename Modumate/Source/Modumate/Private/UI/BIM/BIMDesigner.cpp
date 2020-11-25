@@ -949,7 +949,19 @@ void UBIMDesigner::ToggleSlotNode(int32 ParentPartSlotID, int32 SlotID, bool New
 		{
 			// TODO: get default preset for slot
 			FBIMKey newPartPreset = nodeParent->OriginalPresetCopy.PartSlots[SlotID].PartPreset;
-			result = InstancePool.SetPartPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets,ParentPartSlotID, SlotID, newPartPreset);
+			if (newPartPreset.IsNone())
+			{
+				TArray<FBIMKey> swapPresets;
+				Controller->GetDocument()->PresetManager.CraftingNodePresets.GetPresetsForSlot(nodeParent->OriginalPresetCopy.PartSlots[SlotID].SlotPreset, swapPresets);
+				if (swapPresets.Num() > 0)
+				{
+					newPartPreset = swapPresets[0];
+				}
+			}
+			if (!newPartPreset.IsNone())
+			{
+				result = InstancePool.SetPartPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, ParentPartSlotID, SlotID, newPartPreset);
+			}
 		}
 		else
 		{

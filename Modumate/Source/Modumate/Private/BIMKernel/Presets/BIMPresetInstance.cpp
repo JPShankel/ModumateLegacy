@@ -108,18 +108,6 @@ void FBIMPresetInstance::SetProperties(const FBIMPropertySheet& InProperties)
 	Properties = InProperties;
 }
 
-bool FBIMPresetInstance::SupportsChild(const FBIMPresetInstance& CandidateChild) const
-{
-	for (auto& childPath : CandidateChild.ParentTagPaths)
-	{
-		if (childPath.MatchesPartial(MyTagPath))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
 bool FBIMPresetInstance::HasPin(int32 PinSetIndex, int32 PinSetPosition) const
 {
 	for (auto& child : ChildPresets)

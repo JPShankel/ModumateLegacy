@@ -119,6 +119,7 @@ namespace BIMPropertyNames
 	extern const FBIMNameType StyleComments;
 	extern const FBIMNameType StyleName;
 	extern const FBIMNameType Subcategory;
+	extern const FBIMNameType SupportedNCPs;
 	extern const FBIMNameType Tag;
 	extern const FBIMNameType Tangent;
 	extern const FBIMNameType Thickness;

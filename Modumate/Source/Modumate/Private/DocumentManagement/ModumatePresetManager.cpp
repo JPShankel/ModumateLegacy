@@ -206,40 +206,11 @@ EBIMResult FPresetManager::GetAvailablePresetsForSwap(const FBIMKey& ParentPrese
 		return EBIMResult::Error;
 	}
 
-	/*
-	If we don't have a parent, we're an object assembly, so return all compatible object assemblies
-	*/
-	if (ParentPresetID.IsNone())
-	{
-		if (!ensureAlways(preset->ObjectType != EObjectType::OTNone))
+	return CraftingNodePresets.GetPresetsByPredicate([preset](const FBIMPresetInstance& Preset)
 		{
-			return EBIMResult::Error;
-		}
-		for (auto& candidate : CraftingNodePresets.Presets)
-		{
-			if (candidate.Value.NodeType == preset->NodeType && candidate.Value.ObjectType == preset->ObjectType)
-			{
-				OutAvailablePresets.Add(candidate.Value.PresetID);
-			}
-		}
-	}
-	else // Otherwise, find all presets of same type that are supported by parent as indicated by tags
-	{
-		const FBIMPresetInstance* parentPreset = CraftingNodePresets.Presets.Find(ParentPresetID);
-		if (!ensureAlways(parentPreset != nullptr))
-		{
-			return EBIMResult::Error;
-		}
+			return Preset.MyTagPath.MatchesExact(preset->MyTagPath);
+		}, OutAvailablePresets);
 
-		OutAvailablePresets.Empty();
-		for (auto& candidate : CraftingNodePresets.Presets)
-		{
-			if (candidate.Value.NodeType == preset->NodeType && parentPreset->SupportsChild(candidate.Value))
-			{
-				OutAvailablePresets.Add(candidate.Value.PresetID);
-			}
-		}
-	}
 
 	return EBIMResult::Success;
 }

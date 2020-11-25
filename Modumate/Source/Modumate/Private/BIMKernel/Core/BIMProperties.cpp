@@ -199,6 +199,7 @@ namespace BIMPropertyNames
 	const FBIMNameType StyleComments = TEXT("StyleComments");
 	const FBIMNameType StyleName = TEXT("StyleName");
 	const FBIMNameType Subcategory = TEXT("Subcategory");
+	const FBIMNameType SupportedNCPs = TEXT("SupportedNCPs");
 	const FBIMNameType Tag = TEXT("Tag");
 	const FBIMNameType Tangent = TEXT("Tangent");
 	const FBIMNameType Thickness = TEXT("Thickness");
