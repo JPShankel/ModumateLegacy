@@ -200,7 +200,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				FString guidStr(Row[presetMatrix.First]);
 				if (!guidStr.IsEmpty())
 				{
-					Preset.GUID = FBIMKey(guidStr);
+					Preset.GUID = guidStr;
 				}
 			}
 			break;

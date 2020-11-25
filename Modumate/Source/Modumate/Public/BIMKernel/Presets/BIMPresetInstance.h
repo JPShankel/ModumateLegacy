@@ -79,6 +79,8 @@ public:
 	// TODO: roll fields below into type definition and make it the top level UPROPERTY
 	FBIMPresetTypeDefinition TypeDefinition;
 
+	bool ReadOnly = true;
+
 	UPROPERTY()
 	FBIMPropertySheet Properties;
 
@@ -98,7 +100,7 @@ public:
 	FBIMKey PresetID;
 
 	UPROPERTY()
-	FBIMKey GUID;
+	FString GUID;
 
 	UPROPERTY()
 	FBIMKey SlotConfigPresetID;

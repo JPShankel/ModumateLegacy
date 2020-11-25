@@ -797,48 +797,37 @@ bool ADynamicIconGenerator::SetIconMeshForPart(bool UseDependentPreset, const FB
 {
 	// Step 1: Get params needed to make parts
 	FBIMKey rawMaterialKey;
-	FBIMKey colorKey;
+	FString colorHexValue = TEXT("FFFFFF");
 	FBIMKey meshKey;
 	const FPresetManager &presetManager = GameState->Document.PresetManager;
 
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	if (UseDependentPreset)
 	{
-		TArray<FBIMKey> dependentPresetIDs;
-		presetManager.CraftingNodePresets.GetDependentPresets(PresetID, dependentPresetIDs);
-		for (const auto& curPresetID : dependentPresetIDs)
+		const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(PresetID);
+		preset->Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
+		preset->Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
+		// Get mesh key from child preset
+		for (const auto& curChild : preset->ChildPresets)
 		{
-			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(curPresetID);
-			if (preset->NodeScope == EBIMValueScope::RawMaterial)
+			const FBIMPresetInstance* curChildPreset = presetManager.CraftingNodePresets.Presets.Find(curChild.PresetID);
+			if (curChildPreset->NodeScope == EBIMValueScope::Mesh)
 			{
-				rawMaterialKey = curPresetID;
-			}
-			if (preset->NodeScope == EBIMValueScope::Color)
-			{
-				colorKey = curPresetID;
-			}
-			if (preset->NodeScope == EBIMValueScope::Mesh)
-			{
-				meshKey = curPresetID;
+				meshKey = curChild.PresetID;
 			}
 		}
 	}
 	else
 	{
 		const FBIMPresetEditorNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
+		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
+		// Get mesh key from child node
 		TArray<FBIMPresetEditorNodeSharedPtr> childrenNodes;
 		inst->GatherAllChildNodes(childrenNodes);
 		for (const auto& child : childrenNodes)
 		{
 			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(child->WorkingPresetCopy.PresetID);
-			if (preset->NodeScope == EBIMValueScope::RawMaterial)
-			{
-				rawMaterialKey = child->WorkingPresetCopy.PresetID;
-			}
-			if (preset->NodeScope == EBIMValueScope::Color)
-			{
-				colorKey = child->WorkingPresetCopy.PresetID;
-			}
 			if (preset->NodeScope == EBIMValueScope::Mesh)
 			{
 				meshKey = child->WorkingPresetCopy.PresetID;
@@ -850,11 +839,10 @@ bool ADynamicIconGenerator::SetIconMeshForPart(bool UseDependentPreset, const FB
 	FVector vSize = FVector::OneVector;
 
 	const FArchitecturalMaterial* aMat = Gamemode->ObjectDatabase->GetArchitecturalMaterialByKey(rawMaterialKey);
-	const FCustomColor* customColor = Gamemode->ObjectDatabase->GetCustomColorByKey(colorKey);
 	const FArchitecturalMesh* aMesh = Gamemode->ObjectDatabase->GetArchitecturalMeshByKey(meshKey);
 
 	// Step 4: Set assets
-	if (aMat->IsValid() && customColor->IsValid() && aMesh->EngineMesh.IsValid())
+	if (aMat != nullptr && aMesh != nullptr && aMesh->EngineMesh.IsValid())
 	{
 		UStaticMesh* mesh = aMesh->EngineMesh.Get();
 		IconStaticMesh->SetStaticMesh(mesh);
@@ -862,7 +850,7 @@ bool ADynamicIconGenerator::SetIconMeshForPart(bool UseDependentPreset, const FB
 		// Override material
 		// TODO: Meshes that have multiple material channels
 		auto* dynMat = IconStaticMesh->CreateDynamicMaterialInstance(0, aMat->EngineMaterial.Get());
-		dynMat->SetVectorParameterValue(MaterialColorParamName, customColor->Color);
+		dynMat->SetVectorParameterValue(MaterialColorParamName, FColor::FromHex(colorHexValue));
 		for (int32 i = 0; i < IconStaticMesh->GetNumMaterials(); ++i)
 		{
 			IconStaticMesh->OverrideMaterials.Add(dynMat);
@@ -894,55 +882,31 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(bool UseDependentPreset, cons
 {
 	// Step 1: Get params needed to make material icon
 	FBIMKey rawMaterialKey;
-	FBIMKey colorKey;
+	FString colorHexValue = TEXT("FFFFFF");
 	const FPresetManager &presetManager = GameState->Document.PresetManager;
 
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	if (UseDependentPreset)
 	{
-		TArray<FBIMKey> dependentPresetIDs;
-		presetManager.CraftingNodePresets.GetDependentPresets(PresetID, dependentPresetIDs);
-		for (const auto& curPresetID : dependentPresetIDs)
-		{
-			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(curPresetID);
-			if (preset->NodeScope == EBIMValueScope::RawMaterial)
-			{
-				rawMaterialKey = curPresetID;
-			}
-			if (preset->NodeScope == EBIMValueScope::Color)
-			{
-				colorKey = curPresetID;
-			}
-		}
+		const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(PresetID);
+		preset->Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
+		preset->Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
 	}
 	else
 	{
 		const FBIMPresetEditorNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
-		TArray<FBIMPresetEditorNodeSharedPtr> childrenNodes;
-		inst->GatherAllChildNodes(childrenNodes);
-		for (const auto& child : childrenNodes)
-		{
-			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(child->WorkingPresetCopy.PresetID);
-			if (preset->NodeScope == EBIMValueScope::RawMaterial)
-			{
-				rawMaterialKey = child->WorkingPresetCopy.PresetID;
-			}
-			if (preset->NodeScope == EBIMValueScope::Color)
-			{
-				colorKey = child->WorkingPresetCopy.PresetID;
-			}
-		}
+		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
+		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
 	}
 
 	// Step 3: Get assets from key
 	const FArchitecturalMaterial* aMat = Gamemode->ObjectDatabase->GetArchitecturalMaterialByKey(rawMaterialKey);
-	const FCustomColor* customColor = Gamemode->ObjectDatabase->GetCustomColorByKey(colorKey);
 
 	// Step 4: Set assets
-	if (aMat->IsValid() && customColor->IsValid())
+	if (aMat != nullptr)
 	{
 		auto* dynMat = IconSphereMesh->CreateDynamicMaterialInstance(0, aMat->EngineMaterial.Get());
-		dynMat->SetVectorParameterValue(MaterialColorParamName, customColor->Color);
+		dynMat->SetVectorParameterValue(MaterialColorParamName, FColor::FromHex(colorHexValue));
 		IconSphereMesh->SetMaterial(0, dynMat);
 
 		// Step 5: Capture icon
@@ -961,92 +925,66 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(bool UseDependentPreset, cons
 
 bool ADynamicIconGenerator::SetIconMeshForModule(bool UseDependentPreset, const FBIMKey& PresetID, int32 NodeID, UTextureRenderTarget2D* InRenderTarget)
 {
-	// TODO: Need dimension schema 
-
 	// Step 1: Get params needed to make module icon
 	FBIMKey rawMaterialKey;
-	FBIMKey colorKey;
-	FString widthString, lengthString, depthString, heightString;
+	FString colorHexValue = TEXT("FFFFFF");
+
+	Modumate::Units::FUnitValue 
+		width = Modumate::Units::FUnitValue::WorldCentimeters(0), 
+		length = Modumate::Units::FUnitValue::WorldCentimeters(0),
+		depth = Modumate::Units::FUnitValue::WorldCentimeters(0),
+		height = Modumate::Units::FUnitValue::WorldCentimeters(0);
+
 	const FPresetManager &presetManager = GameState->Document.PresetManager;
 
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	if (UseDependentPreset)
 	{
-		TArray<FBIMKey> dependentPresetIDs;
-		presetManager.CraftingNodePresets.GetDependentPresets(PresetID, dependentPresetIDs);
-		for (const auto& curPresetID : dependentPresetIDs)
-		{
-			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(curPresetID);
-			if (preset->NodeScope == EBIMValueScope::RawMaterial)
-			{
-				rawMaterialKey = curPresetID;
-			}
-			if (preset->NodeScope == EBIMValueScope::Color)
-			{
-				colorKey = curPresetID;
-			}
-			if (preset->NodeScope == EBIMValueScope::Dimension)
-			{
-				preset->TryGetProperty(BIMPropertyNames::Width, widthString);
-				preset->TryGetProperty(BIMPropertyNames::Length, lengthString);
-				preset->TryGetProperty(BIMPropertyNames::Depth, depthString);
-				preset->TryGetProperty(BIMPropertyNames::Height, heightString);
-			}
-		}
+		const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(PresetID);
+		preset->Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
+		preset->Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
+		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, width);
+		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, length);
+		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, depth);
+		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, height);
 	}
 	else
 	{
 		const FBIMPresetEditorNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
-		TArray<FBIMPresetEditorNodeSharedPtr> childrenNodes;
-		inst->GatherAllChildNodes(childrenNodes);
-		for (const auto& child : childrenNodes)
-		{
-			const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(child->WorkingPresetCopy.PresetID);
-			if (preset->NodeScope == EBIMValueScope::RawMaterial)
-			{
-				rawMaterialKey = child->WorkingPresetCopy.PresetID;
-			}
-			if (preset->NodeScope == EBIMValueScope::Color)
-			{
-				colorKey = child->WorkingPresetCopy.PresetID;
-			}
-			if (preset->NodeScope == EBIMValueScope::Dimension)
-			{
-				child->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, widthString);
-				child->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, lengthString);
-				child->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, depthString);
-				child->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, heightString);
-			}
-		}
+		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
+		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
+		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, width);
+		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, length);
+		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, depth);
+		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, height);
 	}
 
 	// Step 3: Get assets from key, and size from dimension
 	FVector vSize = FVector::OneVector;
 
 	const FArchitecturalMaterial* aMat = Gamemode->ObjectDatabase->GetArchitecturalMaterialByKey(rawMaterialKey);
-	const FCustomColor* customColor = Gamemode->ObjectDatabase->GetCustomColorByKey(colorKey);
-	if (!widthString.IsEmpty())
+	if (width.AsWorldCentimeters() > 0)
 	{
-		vSize.Y = UModumateDimensionStatics::StringToFormattedDimension(widthString).Centimeters;
+		vSize.Y = width.AsWorldCentimeters();
 	}
-	if (!lengthString.IsEmpty())
+	if (length.AsWorldCentimeters() > 0)
 	{
-		vSize.X = UModumateDimensionStatics::StringToFormattedDimension(lengthString).Centimeters;
+		vSize.X = length.AsWorldCentimeters();
 	}
-	if (!depthString.IsEmpty())
+	if (depth.AsWorldCentimeters() > 0)
 	{
-		vSize.Y = UModumateDimensionStatics::StringToFormattedDimension(depthString).Centimeters;
+		vSize.Y = depth.AsWorldCentimeters();
 	}
-	if (!heightString.IsEmpty())
+	if (height.AsWorldCentimeters() > 0)
 	{
-		vSize.Z = UModumateDimensionStatics::StringToFormattedDimension(heightString).Centimeters;
+		vSize.Z = height.AsWorldCentimeters();
 	}
 
 	// Step 4: Set assets
-	if (aMat->IsValid() && customColor->IsValid())
+	if (aMat != nullptr)
 	{
 		auto* dynMat = IconCubeMesh->CreateDynamicMaterialInstance(0, aMat->EngineMaterial.Get());
-		dynMat->SetVectorParameterValue(MaterialColorParamName, customColor->Color);
+		dynMat->SetVectorParameterValue(MaterialColorParamName, FColor::FromHex(colorHexValue));
 		IconCubeMesh->SetMaterial(0, dynMat);
 		FVector normalizedSize = vSize.GetSafeNormal() * 0.5f;
 		IconCubeMesh->SetWorldScale3D(normalizedSize);
