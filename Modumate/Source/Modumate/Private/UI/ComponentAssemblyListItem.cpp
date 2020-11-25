@@ -181,7 +181,17 @@ void UComponentAssemblyListItem::OnButtonConfirmReleased()
 	{
 	case EComponentListItemType::SwapDesignerPreset:
 		EMPlayerController->EditModelUserWidget->BIMDesigner->UpdateNodeSwapMenuVisibility(BIMInstanceID, false);
-		result = EMPlayerController->EditModelUserWidget->BIMDesigner->SetPresetForNodeInBIMDesigner(BIMInstanceID, BIMKey);
+		// This swap can be either from node, or from one the properties inside this node
+		// If this item has a SwapScope and SwapNameType, then it is swapping a property
+		// else is swapping the node
+		if (SwapScope == EBIMValueScope::None && SwapNameType == NAME_None)
+		{
+			result = EMPlayerController->EditModelUserWidget->BIMDesigner->SetPresetForNodeInBIMDesigner(BIMInstanceID, BIMKey);
+		}
+		else
+		{
+			result = EMPlayerController->EditModelUserWidget->BIMDesigner->SetNodeProperty(BIMInstanceID, SwapScope, SwapNameType, BIMKey.ToString());
+		}
 		break;
 	case EComponentListItemType::SwapListItem:
 		FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
@@ -269,6 +279,8 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 
 	BIMKey = compListObj->UniqueKey;
 	ToolMode = compListObj->Mode;
+	SwapScope = compListObj->SwapScope;
+	SwapNameType = compListObj->SwapNameType;
 	EMPlayerController = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	FPresetManager &presetManager = gameState->Document.PresetManager;

@@ -37,6 +37,8 @@ EBIMResult FBIMPresetEditorNode::GetPartSlots(TArray<FBIMPresetPartSlot>& OutPar
 EBIMResult FBIMPresetEditorNode::NodeIamEmbeddedIn(int32& OutNodeId) const
 {
 	OutNodeId = INDEX_NONE;
+	return EBIMResult::Success;
+	
 	// TODO: Should consider partslot when determining if this is embedded
 	if (WorkingPresetCopy.ChildPresets.Num() == 0 && ParentInstance.IsValid())
 	{
@@ -49,6 +51,8 @@ EBIMResult FBIMPresetEditorNode::NodeIamEmbeddedIn(int32& OutNodeId) const
 EBIMResult FBIMPresetEditorNode::NodesEmbeddedInMe(TArray<int32>& OutNodeIds) const
 {
 	OutNodeIds.Empty();
+	return EBIMResult::Success;
+
 	for (const auto& child : ChildNodes)
 	{
 		int32 embeddedInId;

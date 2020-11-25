@@ -42,50 +42,43 @@ void UBIMBlockDropdownPreset::NativeConstruct()
 
 void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 {
-	ParentNode->UpdateNodeSwitchState(ENodeWidgetSwitchState::PendingSwap);
-	FBIMKey parentPresetID;
+	OwnerNode->UpdateNodeSwitchState(ENodeWidgetSwitchState::PendingSwap);
+	FBIMKey ownerNodePresetID;
 	// Dropdown preset is embedded into parent node, it should always have a parentPresetID
-	if (ensureAlways(ParentNode->ID != INDEX_NONE))
+	if (ensureAlways(OwnerNode->ID != INDEX_NONE))
 	{
-		parentPresetID = ParentBIMDesigner->GetPresetID(ParentNode->ID);
+		ownerNodePresetID = ParentBIMDesigner->GetPresetID(OwnerNode->ID);
 	}
 	// Move swap menu to be in front of this node
-	ParentBIMDesigner->UpdateNodeSwapMenuVisibility(NodeID, true, DropdownOffset);
+	ParentBIMDesigner->UpdateNodeSwapMenuVisibility(OwnerNode->ID, true, DropdownOffset);
 
 	// Generate list of presets
-	ParentBIMDesigner->SelectionTray_Block_Swap->CreatePresetListInNodeForSwap(parentPresetID, PresetID, NodeID);
+	ParentBIMDesigner->SelectionTray_Block_Swap->CreatePresetListInNodeForSwap(ownerNodePresetID, PresetID, OwnerNode->ID, SwapScope, SwapNameType);
 }
 
-void UBIMBlockDropdownPreset::BuildDropdownFromProperty(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InParentNode, int32 InNodeID, int32 InEmbeddedParentID, FVector2D InDropdownOffset)
+void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, FBIMKey InPresetID, FVector2D InDropdownOffset)
 {
 	ParentBIMDesigner = OuterBIMDesigner;
-	ParentNode = InParentNode;
-	NodeID = InNodeID;
-	EmbeddedParentID = InEmbeddedParentID;
+	OwnerNode = InOwnerNode;
+	SwapScope = InScope;
+	SwapNameType = InNameType;
+	PresetID = InPresetID;
 	DropdownOffset = InDropdownOffset;
 
-	const FBIMPresetEditorNodeSharedPtr nodePtr = ParentBIMDesigner->InstancePool.InstanceFromID(NodeID);
-	if (!nodePtr.IsValid())
-	{
-		return;
-	}
+	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(PresetID);
 
-	// TextTitle
-	TextTitle->ChangeText(nodePtr->CategoryTitle);
+	// PresetText
+	if (preset != nullptr)
+	{
+		TextTitle->ChangeText(preset->CategoryTitle);
+		PresetText->ChangeText(preset->DisplayName);
+	}
 
 	// Icon
 	bool bCaptureSuccess = false;
-	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, nodePtr->WorkingPresetCopy.PresetID, IconMaterial, IconTexture, NodeID);
+	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetID, IconMaterial, IconTexture, MOD_ID_NONE);
 	if (bCaptureSuccess)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);
-	}
-
-	// PresetText
-	PresetID = nodePtr->WorkingPresetCopy.PresetID;
-	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(nodePtr->WorkingPresetCopy.PresetID);
-	if (preset != nullptr)
-	{
-		PresetText->ChangeText(preset->DisplayName);
 	}
 }

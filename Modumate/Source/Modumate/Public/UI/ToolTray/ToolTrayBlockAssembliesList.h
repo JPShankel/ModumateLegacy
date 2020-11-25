@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Database/ModumateObjectEnums.h"
 #include "BIMKernel/Core/BIMKey.h"
+#include "BIMKernel/Core/BIMProperties.h"
 #include "ToolTrayBlockAssembliesList.generated.h"
 
 /**
@@ -17,6 +18,7 @@ enum class ESwapType : uint8
 {
 	SwapFromNode,
 	SwapFromAssemblyList,
+	SwapFromSelection,
 	None
 };
 
@@ -39,7 +41,13 @@ protected:
 	class AEditModelGameState_CPP *GameState;
 
 	ESwapType SwapType = ESwapType::None;
-	int32 CurrentNodeForSwap = -1;
+	FBIMKey NodeParentPresetID;
+	FBIMKey NodePresetIDToSwap;
+	int32 CurrentNodeForSwap = INDEX_NONE;
+	EToolMode SwapSelectionToolMode = EToolMode::VE_NONE;
+	FBIMKey SwapSelectionPresetID;
+	EBIMValueScope SwapScope = EBIMValueScope::None;
+	FBIMNameType SwapNameType = NAME_None;
 
 public:
 	UPROPERTY()
@@ -57,15 +65,22 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UComponentPresetListItem* ComponentPresetItem;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateEditableTextBoxUserWidget* Text_SearchBar;
+
 	UFUNCTION(BlueprintCallable)
 	void CreateAssembliesListForCurrentToolMode();
 
-	void CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, int32 NodeID);
+	void CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, int32 NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType);
 	void CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FBIMKey& PresetID);
+	bool IsPresetAvailableForSearch(const FBIMKey& PresetKey);
 
 	UFUNCTION()
 	void OnButtonAddReleased();
 
 	UFUNCTION()
 	void OnButtonCancelReleased();
+
+	UFUNCTION()
+	void OnSearchBarChanged(const FText& NewText);
 };

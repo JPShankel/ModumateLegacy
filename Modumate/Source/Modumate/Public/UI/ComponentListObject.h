@@ -24,4 +24,8 @@ public:
 
 	// The BIM node that is pending swap
 	int32 BIMNodeInstanceID = INDEX_NONE;
+
+	// For swapping preset properties in node
+	EBIMValueScope SwapScope = EBIMValueScope::None;
+	FBIMNameType SwapNameType = NAME_None;
 };

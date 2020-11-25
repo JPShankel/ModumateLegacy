@@ -16,6 +16,9 @@
 #include "UI/ComponentPresetListItem.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
+#include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
+#include "UI/Custom/ModumateEditableTextBox.h"
+#include "Kismet/KismetStringLibrary.h"
 
 UToolTrayBlockAssembliesList::UToolTrayBlockAssembliesList(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -28,7 +31,7 @@ bool UToolTrayBlockAssembliesList::Initialize()
 	{
 		return false;
 	}
-	if (!ButtonAdd)
+	if (!(ButtonAdd && Text_SearchBar))
 	{
 		return false;
 	}
@@ -37,6 +40,10 @@ bool UToolTrayBlockAssembliesList::Initialize()
 	if (ButtonCancel)
 	{
 		ButtonCancel->ModumateButton->OnReleased.AddDynamic(this, &UToolTrayBlockAssembliesList::OnButtonCancelReleased);
+	}
+	if (Text_SearchBar)
+	{
+		Text_SearchBar->ModumateEditableTextBox->OnTextChanged.AddDynamic(this, &UToolTrayBlockAssembliesList::OnSearchBarChanged);
 	}
 
 	return true;
@@ -52,6 +59,7 @@ void UToolTrayBlockAssembliesList::NativeConstruct()
 
 void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 {
+	SwapType = ESwapType::SwapFromAssemblyList;
 	if (Controller && GameState)
 	{
 		FPresetManager &presetManager = GameState->Document.PresetManager;
@@ -67,19 +75,27 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 
 		for (auto &kvp : assemblies->DataMap)
 		{
-			UComponentListObject *newCompListObj = NewObject<UComponentListObject>(this);
-			newCompListObj->ItemType = EComponentListItemType::AssemblyListItem;
-			newCompListObj->Mode = Controller->GetToolMode();
-			newCompListObj->UniqueKey = kvp.Value.UniqueKey();
-			AssembliesList->AddItem(newCompListObj);
+			if (IsPresetAvailableForSearch(kvp.Value.UniqueKey()))
+			{
+				UComponentListObject* newCompListObj = NewObject<UComponentListObject>(this);
+				newCompListObj->ItemType = EComponentListItemType::AssemblyListItem;
+				newCompListObj->Mode = Controller->GetToolMode();
+				newCompListObj->UniqueKey = kvp.Value.UniqueKey();
+				AssembliesList->AddItem(newCompListObj);
+			}
 		}
 	}
 }
 
-void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, int32 NodeID)
+void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, int32 NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType)
 {
 	SwapType = ESwapType::SwapFromNode;
+	NodeParentPresetID = ParentPresetID;
+	NodePresetIDToSwap = PresetIDToSwap;
 	CurrentNodeForSwap = NodeID;
+	SwapScope = InScope;
+	SwapNameType = InNameType;
+
 	if (Controller && GameState)
 	{
 		FPresetManager &presetManager = GameState->Document.PresetManager;
@@ -100,19 +116,27 @@ void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& 
 
 		for (auto &curPreset : availablePresets)
 		{
-			UComponentListObject *newCompListObj = NewObject<UComponentListObject>(this);
-			newCompListObj->ItemType = EComponentListItemType::SwapDesignerPreset;
-			newCompListObj->Mode = Controller->GetToolMode();
-			newCompListObj->UniqueKey = curPreset;
-			newCompListObj->BIMNodeInstanceID = NodeID;
-			AssembliesList->AddItem(newCompListObj);
+			if (IsPresetAvailableForSearch(curPreset))
+			{
+				UComponentListObject* newCompListObj = NewObject<UComponentListObject>(this);
+				newCompListObj->ItemType = EComponentListItemType::SwapDesignerPreset;
+				newCompListObj->Mode = Controller->GetToolMode();
+				newCompListObj->UniqueKey = curPreset;
+				newCompListObj->BIMNodeInstanceID = NodeID;
+				newCompListObj->SwapScope = SwapScope;
+				newCompListObj->SwapNameType = SwapNameType;
+				AssembliesList->AddItem(newCompListObj);
+			}
 		}
 	}
 }
 
 void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FBIMKey& PresetID)
 {
-	SwapType = ESwapType::SwapFromAssemblyList;
+	SwapType = ESwapType::SwapFromSelection;
+	SwapSelectionToolMode = ToolMode;
+	SwapSelectionPresetID = PresetID;
+
 	if (Controller && GameState)
 	{
 		FPresetManager &presetManager = GameState->Document.PresetManager;
@@ -133,13 +157,34 @@ void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(ETool
 
 		for (auto &curPreset : availablePresets)
 		{
-			UComponentListObject *newCompListObj = NewObject<UComponentListObject>(this);
-			newCompListObj->ItemType = EComponentListItemType::SwapListItem;
-			newCompListObj->Mode = ToolMode;
-			newCompListObj->UniqueKey = curPreset;
-			AssembliesList->AddItem(newCompListObj);
+			if (IsPresetAvailableForSearch(curPreset))
+			{
+				UComponentListObject* newCompListObj = NewObject<UComponentListObject>(this);
+				newCompListObj->ItemType = EComponentListItemType::SwapListItem;
+				newCompListObj->Mode = ToolMode;
+				newCompListObj->UniqueKey = curPreset;
+				AssembliesList->AddItem(newCompListObj);
+			}
 		}
 	}
+}
+
+bool UToolTrayBlockAssembliesList::IsPresetAvailableForSearch(const FBIMKey& PresetKey)
+{
+	FString searchSubString = Text_SearchBar->ModumateEditableTextBox->GetText().ToString();
+	if (searchSubString.Len() == 0)
+	{
+		return true;
+	}
+	if (GameState)
+	{
+		const FBIMPresetInstance* preset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(PresetKey);
+		if (preset)
+		{
+			return UKismetStringLibrary::Contains(preset->DisplayName.ToString(), searchSubString);
+		}
+	}
+	return false;
 }
 
 void UToolTrayBlockAssembliesList::OnButtonAddReleased()
@@ -162,5 +207,23 @@ void UToolTrayBlockAssembliesList::OnButtonCancelReleased()
 		{
 			Controller->EditModelUserWidget->SelectionTrayWidget->OpenToolTrayForSelection();
 		}
+	}
+}
+
+void UToolTrayBlockAssembliesList::OnSearchBarChanged(const FText& NewText)
+{
+	switch (SwapType)
+	{
+	case ESwapType::SwapFromNode:
+		CreatePresetListInNodeForSwap(NodeParentPresetID, NodePresetIDToSwap, CurrentNodeForSwap, SwapScope, SwapNameType);
+		break;
+	case ESwapType::SwapFromAssemblyList:
+		CreateAssembliesListForCurrentToolMode();
+		break;
+	case ESwapType::SwapFromSelection:
+		CreatePresetListInAssembliesListForSwap(SwapSelectionToolMode, SwapSelectionPresetID);
+		break;
+	default:
+		break;
 	}
 }

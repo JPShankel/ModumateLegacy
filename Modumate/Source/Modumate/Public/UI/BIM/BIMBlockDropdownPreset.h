@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "BIMKernel/Core/BIMKey.h"
+#include "BIMKernel/Core/BIMProperties.h"
 
 #include "BIMBlockDropdownPreset.generated.h"
 
@@ -33,12 +34,12 @@ protected:
 	class UBIMDesigner* ParentBIMDesigner;
 
 	UPROPERTY()
-	class UBIMBlockNode* ParentNode;
+	class UBIMBlockNode* OwnerNode;
 
-	int32 EmbeddedParentID = INDEX_NONE;
 	FVector2D DropdownOffset = FVector2D::ZeroVector;
-	int32 NodeID = INDEX_NONE;
 	FBIMKey PresetID;
+	EBIMValueScope SwapScope = EBIMValueScope::None;
+	FBIMNameType SwapNameType = NAME_None;
 
 public:
 
@@ -63,5 +64,5 @@ public:
 	UFUNCTION()
 	void OnButtonSwapReleased();
 
-	void BuildDropdownFromProperty(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InParentNode, int32 InNodeID, int32 InEmbeddedParentID, FVector2D InDropdownOffset);
+	void BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, FBIMKey InPresetID, FVector2D InDropdownOffset);
 };

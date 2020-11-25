@@ -22,6 +22,7 @@
 #include "UI/BIM/BIMBlockSlotListItem.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "UI/BIM/BIMBlockMiniNode.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -756,7 +757,17 @@ bool UBIMDesigner::SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, co
 	{
 		return false;
 	}
-	instPtr->WorkingPresetCopy.Properties.SetProperty(Scope, NameType, Value);
+	// TODO: Need property form system, for now check on EBIMValueScope::Dimension
+	if (Scope == EBIMValueScope::Dimension)
+	{
+		FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(Value);
+		instPtr->WorkingPresetCopy.Properties.SetProperty(Scope, NameType, dim.Centimeters);
+	}
+	else
+	{
+		instPtr->WorkingPresetCopy.Properties.SetProperty(Scope, NameType, Value);
+	}
+
 	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
 	return true;

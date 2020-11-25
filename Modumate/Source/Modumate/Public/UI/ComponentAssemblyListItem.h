@@ -7,6 +7,7 @@
 #include "Blueprint/IUserObjectListEntry.h"
 #include "Database/ModumateObjectEnums.h"
 #include "BIMKernel/Core/BIMKey.h"
+#include "BIMKernel/Core/BIMProperties.h"
 
 #include "ComponentAssemblyListItem.generated.h"
 
@@ -42,6 +43,8 @@ protected:
 	EComponentListItemType ItemType = EComponentListItemType::None;
 	int32 BIMInstanceID = INDEX_NONE;
 	bool bIsNonAssemblyObjectSelectItem = false;
+	EBIMValueScope SwapScope = EBIMValueScope::None;
+	FBIMNameType SwapNameType = NAME_None;
 
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *EMPlayerController;

@@ -24,6 +24,7 @@
 #include "UI/BIM/BIMBlockNodeDirtyTab.h"
 #include "UI/BIM/BIMBlockSlotList.h"
 #include "UI/BIM/BIMBlockDropdownPreset.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 
 UBIMBlockNode::UBIMBlockNode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -139,7 +140,7 @@ void UBIMBlockNode::OnButtonSwapReleased()
 	ParentBIMDesigner->UpdateNodeSwapMenuVisibility(ID, true);
 
 	// Generate list of presets
-	ParentBIMDesigner->SelectionTray_Block_Swap->CreatePresetListInNodeForSwap(parentPresetID, PresetID, ID);
+	ParentBIMDesigner->SelectionTray_Block_Swap->CreatePresetListInNodeForSwap(parentPresetID, PresetID, ID, EBIMValueScope::None, NAME_None);
 }
 
 void UBIMBlockNode::OnButtonDeleteReleased()
@@ -224,6 +225,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	}
 
 	// Node status
+	BIMBlockNodeDirty->ButtonSave->SetVisibility(Node->WorkingPresetCopy.ReadOnly ? ESlateVisibility::Hidden : ESlateVisibility::SelfHitTestInvisible);
 	UpdateNodeDirty(Node->GetPresetStatus() == EBIMPresetEditorNodeStatus::Dirty);
 
 	// Build instance properties
@@ -232,21 +234,56 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	Controller->GetDocument()->PresetManager.CraftingNodePresets.GetPropertyFormForPreset(PresetID, properties);
 	for (auto& curProperty : properties)
 	{
-		UBIMBlockUserEnterable* newEnterable = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockUserEnterable>(BIMBlockUserEnterableClass);
-		if (newEnterable)
+		// TODO: Need more format info to determine if this should be drop-down
+		// For now just use dropdown if propertyValue.Name == BIMPropertyNames::AssetID
+		FBIMPropertyKey propertyValue(curProperty.Value);
+		if (propertyValue.Name == BIMPropertyNames::AssetID)
 		{
-			// Text title
-			newEnterable->Text_Title->ChangeText(FText::FromString(curProperty.Key));
+			UBIMBlockDropdownPreset* newDropdown = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockDropdownPreset>(BIMBlockDropdownPresetClass);
+			if (newDropdown)
+			{
+				// The location of the dropdown menu if the swap button is pressed
+				FVector2D dropDownOffset = FVector2D::ZeroVector;
+				dropDownOffset.Y += ExpandedImageSize;
+				dropDownOffset.Y += (FormItemSize * VerticalBoxProperties->GetAllChildren().Num());
 
-			// Text value: user enter-able
-			FBIMPropertyKey value(curProperty.Value);
-			FString valueString;
-			Node->WorkingPresetCopy.Properties.TryGetProperty(value.Scope, value.Name, valueString);
-			newEnterable->BuildEnterableFieldFromProperty(ParentBIMDesigner, ID, value.Scope, value.Name, valueString);
-			VerticalBoxProperties->AddChildToVerticalBox(newEnterable);
+				// Store preset into new dropdown
+				FBIMKey propertyPresetKey;
+				Node->WorkingPresetCopy.Properties.TryGetProperty(propertyValue.Scope, propertyValue.Name, propertyPresetKey);
+				newDropdown->BuildDropdownFromPropertyPreset(ParentBIMDesigner, this, propertyValue.Scope, propertyValue.Name, propertyPresetKey, dropDownOffset);
+
+				VerticalBoxProperties->AddChildToVerticalBox(newDropdown);
+			}
+		}
+		else
+		{
+			UBIMBlockUserEnterable* newEnterable = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockUserEnterable>(BIMBlockUserEnterableClass);
+			if (newEnterable)
+			{
+				// Text title
+				newEnterable->Text_Title->ChangeText(FText::FromString(curProperty.Key));
+
+				// Text value: user enter-able
+				FBIMPropertyKey value(curProperty.Value);
+				FString valueString;
+				if (!Node->WorkingPresetCopy.Properties.TryGetProperty(value.Scope, value.Name, valueString))
+				{
+					Modumate::Units::FUnitValue unitValue;
+					if (Node->WorkingPresetCopy.Properties.TryGetProperty(value.Scope, value.Name, unitValue))
+					{
+						TArray<int32> imperialsInches;
+						UModumateDimensionStatics::CentimetersToImperialInches(unitValue.AsWorldCentimeters(), imperialsInches);
+						valueString = UModumateDimensionStatics::ImperialInchesToDimensionStringText(imperialsInches).ToString();
+					}
+				}
+
+				newEnterable->BuildEnterableFieldFromProperty(ParentBIMDesigner, ID, value.Scope, value.Name, valueString);
+				VerticalBoxProperties->AddChildToVerticalBox(newEnterable);
+			}
 		}
 	}
 
+#if 0
 	TArray<int32> embeddedNodeIds;
 	Node->NodesEmbeddedInMe(embeddedNodeIds);
 	for (const auto& curEmbeddedID : embeddedNodeIds)
@@ -262,6 +299,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 			VerticalBoxProperties->AddChildToVerticalBox(newDropdown);
 		}
 	}
+#endif
 
 	// Additional panel for this node if it is part of rigged assembly
 	if (bNodeHasSlotPart)
