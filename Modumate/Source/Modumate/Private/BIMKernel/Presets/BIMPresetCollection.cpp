@@ -149,11 +149,51 @@ EBIMResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPath, co
 				Presets.Add(tableData.Preset.PresetID, tableData.Preset);
 			}
 		}
+		PostLoad();
 		return EBIMResult::Success;
 	}
 	OutMessages.Add(FString::Printf(TEXT("Failed to load manifest file %s"), *ManifestFile));
 	return EBIMResult::Error;
 }
+
+EBIMResult FBIMPresetCollection::PostLoad()
+{
+	UsedGUIDs.Empty();
+	for (auto& kvp : Presets)
+	{
+		FGuid guid;
+		if (!kvp.Value.GUID.IsEmpty() && ensureAlways(FGuid::ParseExact(kvp.Value.GUID, EGuidFormats::DigitsWithHyphens, guid)))
+		{
+			UsedGUIDs.Add(guid);
+		}
+		
+		FBIMPresetTypeDefinition* typeDef = NodeDescriptors.Find(kvp.Value.NodeType);
+		if (ensureAlways(typeDef != nullptr))
+		{
+			kvp.Value.TypeDefinition = *typeDef;
+		}
+	}
+
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetCollection::GetAvailableGUID(FGuid& OutGUID)
+{
+	int32 sanity = 0;
+	static constexpr int32 sanityCheck = 1000;
+
+	do {
+		OutGUID = FGuid::NewGuid();
+	} while (UsedGUIDs.Contains(OutGUID) && ++sanity < sanityCheck);
+
+	if (sanity == sanityCheck)
+	{
+		return EBIMResult::Error;
+	}
+	UsedGUIDs.Add(OutGUID);
+	return EBIMResult::Success;
+}
+
 
 EBIMResult FBIMPresetCollection::CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FBIMKey& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec)
 {
@@ -197,6 +237,62 @@ EBIMResult FBIMPresetCollection::CreateAssemblyFromLayerPreset(const FModumateDa
 	}
 
 	return OutAssemblySpec.FromPreset(InDB, previewCollection, assemblyPreset.PresetID);
+}
+
+EBIMResult FBIMPresetCollection::GenerateBIMKeyForPreset(const FBIMKey& PresetID, FBIMKey& OutKey) const
+{
+	OutKey = FBIMKey();
+
+	TArray<FBIMKey> idStack;
+	idStack.Push(PresetID);
+
+	FString returnKey;
+
+	while (idStack.Num() > 0)
+	{
+		FBIMKey id = idStack.Pop();
+		const FBIMPresetInstance* preset = Presets.Find(id);
+		if (!ensureAlways(preset != nullptr))
+		{
+			return EBIMResult::Error;
+		}
+
+		FString key;
+		preset->MyTagPath.ToString(key);
+		returnKey.Append(key);
+
+		FString name;
+		if (preset->TryGetProperty(BIMPropertyNames::Name, name))
+		{
+			returnKey.Append(name);
+		}
+
+		for (auto& childPreset : preset->ChildPresets)
+		{
+			idStack.Push(childPreset.PresetID);
+		}
+
+		for (auto& part : preset->PartSlots)
+		{
+			idStack.Push(part.PartPreset);
+		}
+	}
+
+	if (returnKey.IsEmpty())
+	{
+		return EBIMResult::Error;
+	}
+
+	returnKey.RemoveSpacesInline();
+
+	OutKey = FBIMKey(returnKey);
+	int32 sequence = 1;
+	while (Presets.Find(OutKey) != nullptr)
+	{
+		OutKey = FBIMKey(FString::Printf(TEXT("%s-%d"), *returnKey, sequence++));
+	}
+
+	return EBIMResult::Success;
 }
 
 bool FBIMPresetCollection::Matches(const FBIMPresetCollection& OtherCollection) const

@@ -909,8 +909,16 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
 	if (SaveAs)
 	{
 		outPreset.PresetID = Controller->GetDocument()->PresetManager.GetAvailableKey(outPreset.PresetID);
+		FGuid guid;
+		Controller->GetDocument()->PresetManager.CraftingNodePresets.GetAvailableGUID(guid);
+		outPreset.GUID = guid.ToString(EGuidFormats::DigitsWithHyphens);
+		outPreset.ReadOnly = false;
 		CraftingAssembly.RootPreset = outPreset.PresetID;
 		node->WorkingPresetCopy.PresetID = outPreset.PresetID;
+	}
+	else if (outPreset.ReadOnly)
+	{
+		return false;
 	}
 
 	node->OriginalPresetCopy = node->WorkingPresetCopy;

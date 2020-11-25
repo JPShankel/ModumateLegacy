@@ -21,15 +21,9 @@ FPresetManager::~FPresetManager()
 
 FBIMKey FPresetManager::GetAvailableKey(const FBIMKey& BaseKey)
 {
-	FString newKey;
-	int32 num = 0;
-	do
-	{
-		newKey = FString::Printf(TEXT("%s-%d"), *BaseKey.ToString(), ++num);
-	} while (KeyStore.Contains(newKey));
-
-	KeyStore.Add(newKey);
-	return newKey;
+	FBIMKey outKey;
+	CraftingNodePresets.GenerateBIMKeyForPreset(BaseKey, outKey);
+	return outKey;
 }
 
 EBIMResult FPresetManager::GetProjectAssembliesForObjectType(EObjectType ObjectType, TArray<FBIMAssemblySpec>& OutAssemblies) const
@@ -48,17 +42,29 @@ EBIMResult FPresetManager::GetProjectAssembliesForObjectType(EObjectType ObjectT
 
 EBIMResult FPresetManager::FromDocumentRecord(const FModumateDatabase& InDB, const FMOIDocumentRecord& DocRecord)
 {
-	CraftingNodePresets = DocRecord.PresetCollection;
-	KeyStore = DocRecord.KeyStore;
+	for (auto& kvp : DocRecord.PresetCollection.NodeDescriptors)
+	{
+		if (!CraftingNodePresets.NodeDescriptors.Contains(kvp.Key))
+		{
+			CraftingNodePresets.NodeDescriptors.Add(kvp.Key, kvp.Value);
+		}
+	}
+
+	for (auto& kvp : DocRecord.PresetCollection.Presets)
+	{
+		if (!CraftingNodePresets.Presets.Contains(kvp.Key))
+		{
+			FBIMPresetInstance editedPreset = kvp.Value;
+			editedPreset.ReadOnly = false;
+			CraftingNodePresets.Presets.Add(kvp.Key, editedPreset);
+		}
+	}
+
 	AssembliesByObjectType.Empty();
+	CraftingNodePresets.PostLoad();
+
 	for (auto& kvp : CraftingNodePresets.Presets)
 	{
-		FBIMPresetTypeDefinition* typeDef = CraftingNodePresets.NodeDescriptors.Find(kvp.Value.NodeType);
-		if (ensureAlways(typeDef != nullptr))
-		{
-			kvp.Value.TypeDefinition = *typeDef;
-		}
-
 		if (kvp.Value.ObjectType != EObjectType::OTNone)
 		{
 			FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(kvp.Value.ObjectType);
@@ -72,8 +78,23 @@ EBIMResult FPresetManager::FromDocumentRecord(const FModumateDatabase& InDB, con
 
 EBIMResult FPresetManager::ToDocumentRecord(FMOIDocumentRecord& DocRecord) const
 {
-	DocRecord.PresetCollection = CraftingNodePresets;
-	DocRecord.KeyStore = KeyStore;
+	for (auto& kvp : CraftingNodePresets.Presets)
+	{
+		// ReadOnly presets have not been edited
+		if (!kvp.Value.ReadOnly)
+		{
+			DocRecord.PresetCollection.Presets.Add(kvp.Key, kvp.Value);
+			if (!DocRecord.PresetCollection.NodeDescriptors.Contains(kvp.Value.NodeType))
+			{
+				const FBIMPresetTypeDefinition* typeDef = CraftingNodePresets.NodeDescriptors.Find(kvp.Value.NodeType);
+				if (ensureAlways(typeDef != nullptr))
+				{
+					DocRecord.PresetCollection.NodeDescriptors.Add(kvp.Value.NodeType, *typeDef);
+				}
+			};
+		}
+	}
+
 	return EBIMResult::Success;
 }
 

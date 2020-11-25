@@ -303,9 +303,6 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 	FBIMPresetCollection PresetCollection;
 
 	UPROPERTY()
-	TSet<FString> KeyStore;
-
-	UPROPERTY()
 	TArray<FModumateCameraView> CameraViews;
 
 	UPROPERTY()

@@ -2299,6 +2299,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 
 		if (docRec.PresetCollection.Presets.Num() > 0 && docRec.PresetCollection.NodeDescriptors.Num() > 0)
 		{
+			objectDB->InitPresetManagerForNewDocument(PresetManager);
 			PresetManager.FromDocumentRecord(*objectDB,docRec);
 		}
 
