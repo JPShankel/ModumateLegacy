@@ -193,6 +193,7 @@ namespace BIMPropertyNames
 	const FBIMNameType Pattern = TEXT("Pattern");
 	const FBIMNameType Preset = TEXT("Preset");
 	const FBIMNameType ProfileKey = TEXT("ProfileKey");
+	const FBIMNameType Recess = TEXT("Recess");
 	const FBIMNameType Scale = TEXT("Scale");
 	const FBIMNameType Slope = TEXT("Slope");
 	const FBIMNameType StyleComments = TEXT("StyleComments");

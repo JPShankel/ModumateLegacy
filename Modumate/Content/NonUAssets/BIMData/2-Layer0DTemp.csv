@@ -11,7 +11,7 @@ INPUTPIN,,1..1,,ChildDimThk,,,,,,,,,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildDimLWH,,,,,,,,,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildProfile,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Layer.Name,DataType=Dimensions,Dimension,Value,UI Group,DataType=Profile,Module.Profile,DataType=Material,AppliesToChannel,InnerMaterial,SurfaceMaterial,ColorTintVariation,ColorTint,DataType=InputPins,ChildMaterial,ChildDimension,ChildDimWD,ChildDimLW,ChildDimThk,ChildDimLWH,ChildProfile,DataType=ParentCategoryPath,TG_ParentNode+CategoryPath
+TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Layer.Name,DataType=Dimensions,Dimension,Value,UI Group,DataType=Profile,Module.Profile,DataType=Material,AppliesToChannel,InnerMaterial,SurfaceMaterial,ColorTintVariation,ColorTint,DataType=DEPRECATED,ChildMaterial,ChildDimension,ChildDimWD,ChildDimLW,ChildDimThk,ChildDimLWH,ChildProfile,DataType=ParentCategoryPath,TG_ParentNode+CategoryPath
 PRESET,,79E6805A-250F-444A-82A1-CBE35C018F7D,,Assembly_Layer-Thickness-6in-Finish1-0RawMaterial-Abstract---FFFFFF,,Assembly_Layer,,"6in, Abstract, White",,Thickness,6in,Major,,,,Finish1,0RawMaterial-Abstract,-,0,FFFFFF,,1Material_Abstract-0RawMaterial-Abstract-0Color_Abstract-FFFFFF-White,,,,0DimThk-6inT,,,,
 PRESET,,,,,,,,,,IconLength,64in,Preview,,,,,,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,Preview,,,,,,,,,,,,,,,,,,

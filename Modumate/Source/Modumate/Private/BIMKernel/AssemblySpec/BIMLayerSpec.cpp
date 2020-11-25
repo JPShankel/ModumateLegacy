@@ -33,7 +33,7 @@ As we refactor patterns, we would like "unpatterened" layers to consist of a sin
 EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
 {
 	FBIMKey materialKey;
-	if (ensureAlways(LayerProperties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, materialKey)))
+	if (ensureAlways(LayerProperties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, materialKey)))
 	{
 		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(materialKey);
 		if (ensureAlways(mat != nullptr))
@@ -43,14 +43,10 @@ EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
 		}
 	}
 
-	FBIMKey colorKey;
-	if (ensureAlways(LayerProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::AssetID, colorKey)))
+	FString colorHexValue;
+	if (ensureAlways(LayerProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue)))
 	{
-		const FCustomColor* customColor = InDB.GetCustomColorByKey(colorKey);
-		if (customColor != nullptr)
-		{
-			Material_DEPRECATED.DefaultBaseColor = *customColor;
-		}
+		Material_DEPRECATED.DefaultBaseColor.Color = FColor::FromHex(colorHexValue);
 	}
 
 	if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, Thickness))
@@ -122,24 +118,17 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 	*/
 
 	FString gapStr;
-	if (GapProperties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, gapStr))
+	if (GapProperties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, gapStr))
 	{
 		// Fetch material & color per module
 		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(gapStr);
 		if (ensureAlways(mat != nullptr))
 		{
 			Gap.Material = *mat;
-			if (GapProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::AssetID, gapStr))
+			FString colorHexValue;
+			if (GapProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue))
 			{
-				const FCustomColor* color = InDB.GetCustomColorByKey(gapStr);
-				if (ensureAlways(color != nullptr))
-				{
-					Gap.BaseColor = *color;
-				}
-				else
-				{
-					Gap.BaseColor = Gap.Material.DefaultBaseColor;
-				}
+				Gap.BaseColor.Color = FColor::FromHex(colorHexValue);
 			}
 			else
 			{
@@ -150,7 +139,7 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 		Gap dimensions are reliably defined
 		*/
 		ensureAlways(GapProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, Gap.GapExtents.X));
-		ensureAlways(GapProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, Gap.GapExtents.Y));
+		ensureAlways(GapProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Recess, Gap.GapExtents.Y));
 	}
 
 	// TODO: handle multiple modules, find overall thickness for 2.5 dimensional patterns 

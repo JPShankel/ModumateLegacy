@@ -113,6 +113,7 @@ namespace BIMPropertyNames
 	extern const FBIMNameType Pattern;
 	extern const FBIMNameType Preset;
 	extern const FBIMNameType ProfileKey;
+	extern const FBIMNameType Recess;
 	extern const FBIMNameType Scale;
 	extern const FBIMNameType Slope;
 	extern const FBIMNameType StyleComments;

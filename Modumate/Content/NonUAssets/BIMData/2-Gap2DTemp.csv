@@ -11,7 +11,7 @@ INPUTPIN,,1..1,,ChildDimThk,,,,,,,,,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildDimLWH,,,,,,,,,,,,,,,,,,,,,,,,,,
 INPUTPIN,,1..1,,ChildProfile,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Module.Name,DataType=Dimensions,Dimension,Value,UI Group,DataType=Profile,Module.Profile,DataType=Material,AppliesToChannel,InnerMaterial,SurfaceMaterial,ColorTintVariation,ColorTint,DataType=InputPins,ChildMaterial,ChildDimension,ChildDimWD,ChildDimLW,ChildDimThk,ChildDimLWH,ChildProfile,DataType=ParentCategoryPath,TG_ParentNode+CategoryPath
+TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Module.Name,DataType=Dimensions,Dimension,Value,UI Group,DataType=Profile,Module.Profile,DataType=Material,AppliesToChannel,InnerMaterial,SurfaceMaterial,ColorTintVariation,ColorTint,DataType=DEPRECATED,ChildMaterial,ChildDimension,ChildDimWD,ChildDimLW,ChildDimThk,ChildDimLWH,ChildProfile,DataType=ParentCategoryPath,TG_ParentNode+CategoryPath
 PRESET,,6319F909-8C95-2545-AB4E-FC63D62223F0,,2Gap2D_Gapless-Width-0in-Recess-0in-0Profile-Flat-Finish1-0RawMaterial-Air---FFFFFF,,2Gap2D_Gapless,,"0in x 0in, Air, Clear",,Width,0in,Major,,0Profile-Flat,,Finish1,0RawMaterial-Air,-,,FFFFFF,,1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear,,0DimWD-0inW-0inD,,,,0Profile-Flat,,
 PRESET,,,,,,,,,,Recess,0in,Major,,,,,,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconDepth,4in,Preview,,,,,,,,,,,,,,,,,,
