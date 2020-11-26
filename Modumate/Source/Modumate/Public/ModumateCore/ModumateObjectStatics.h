@@ -20,6 +20,8 @@ namespace Modumate
 {
 	class FGraph2DEdge;
 	class FGraph3DEdge;
+	class FDraftingComposite;
+	enum class FModumateLayerType;
 };
 
 // Helper functions for creating / updating MOIs and their geometry.
@@ -83,4 +85,13 @@ public:
 		const FSnappedCursor &SnappedCursor, FTransform &OutTransform);
 
 	static bool GetFFEBoxSidePoints(AActor *Actor, const FVector &AssemblyNormal, TArray<FVector> &OutPoints);
+
+	// Extruded objects drafting.
+	static bool GetExtrusionPerimeterPoints(const FModumateObjectInstance* MOI,
+		const FVector& LineUp, const FVector& LineNormal, TArray<FVector>& outPerimeterPoints);
+	static void GetExtrusionCutPlaneDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox, const TArray<FVector>& Perimeter,
+		const FVector& StartPosition, const FVector& EndPosition, Modumate::FModumateLayerType LayerType, float Epsilon = 0.0f);
+	static TArray<FEdge> GetExtrusionBeyondLinesFromMesh(const FPlane& Plane, const TArray<FVector>& Perimeter,
+		const FVector& StartPosition, const FVector& EndPosition);
 };

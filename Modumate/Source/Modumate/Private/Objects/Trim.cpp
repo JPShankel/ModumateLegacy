@@ -2,13 +2,17 @@
 
 #include "Objects/Trim.h"
 
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
+#include "Drafting/ModumateDraftingElements.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
+
+#include "Algo/ForEach.h"
 
 FMOITrimImpl::FMOITrimImpl(FModumateObjectInstance *moi)
 	: FModumateObjectInstanceImplBase(moi)
@@ -144,6 +148,53 @@ bool FMOITrimImpl::GetInvertedState(FMOIStateData& OutState) const
 	modifiedTrimData.bUpInverted = !modifiedTrimData.bUpInverted;
 
 	return OutState.CustomData.SaveStructData(modifiedTrimData);
+}
+
+void FMOITrimImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
+	TArray<TArray<FVector>>& OutPerimeters) const
+{
+	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
+	TArray<FVector> perimeter;
+	UModumateObjectStatics::GetExtrusionPerimeterPoints(MOI, TrimUp, TrimNormal, perimeter);
+	if (bGetFarLines)
+	{   // Beyond lines.
+		TArray<FEdge> beyondLines = UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(Plane, perimeter, TrimStartPos, TrimEndPos);
+
+		TArray<FEdge> clippedLines;
+		for (const auto& edge : beyondLines)
+		{
+			int32 savedCount = edge.Count;
+			auto lines = ParentPage->lineClipping->ClipWorldLineToView(edge);
+			// Restore count (silhouette flag).
+			Algo::ForEach(lines, [savedCount](FEdge& e) {e.Count = savedCount; });
+			clippedLines.Append(MoveTemp(lines));
+		}
+
+		FVector2D boxClipped0;
+		FVector2D boxClipped1;
+		for (const auto& clippedLine : clippedLines)
+		{
+			FVector2D vert0(clippedLine.Vertex[0]);
+			FVector2D vert1(clippedLine.Vertex[1]);
+
+			if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
+			{
+				TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+					Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
+					Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
+					Modumate::Units::FThickness::Points(bool(clippedLine.Count) ? 0.15f : 0.05f),
+					Modumate::FMColor::Gray128);
+				ParentPage->Children.Add(line);
+				line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kSeparatorBeyondModuleEdges);
+			}
+		}
+	}
+	else
+	{   // In-plane lines.
+	 UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox,
+			perimeter, TrimStartPos, TrimEndPos, Modumate::FModumateLayerType::kSeparatorCutTrim, 0.3f);
+	}
 }
 
 bool FMOITrimImpl::UpdateCachedStructure()

@@ -173,7 +173,7 @@ namespace Modumate {
 
 		TArray<TArray<FVector>> WallCutPerimeters;
 		TArray<const FModumateObjectInstance*> miscDraftObjects(Doc->GetObjectsOfType(
-			{ EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTFinish }));
+			{ EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTFinish, EObjectType::OTTrim }));
 
 		for (const auto* miscObject: miscDraftObjects)
 		{
@@ -191,7 +191,7 @@ namespace Modumate {
 			EObjectType::OTRoofFace, EObjectType::OTWindow, EObjectType::OTDoor,
 			EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTRailSegment,
 			EObjectType::OTSystemPanel, EObjectType::OTMullion, EObjectType::OTStaircase,
-			EObjectType::OTFinish
+			EObjectType::OTFinish, EObjectType::OTTrim
 			}));
 
 		for (auto object: beyondCutObjects)

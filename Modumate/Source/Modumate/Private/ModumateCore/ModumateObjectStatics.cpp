@@ -2,6 +2,7 @@
 
 #include "ModumateCore/ModumateObjectStatics.h"
 
+#include "Algo/ForEach.h"
 #include "BIMKernel/Core/BIMProperties.h"
 #include "Database/ModumateSimpleMesh.h"
 #include "DocumentManagement/ModumateSnappingView.h"
@@ -13,6 +14,7 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "Objects/PlaneHostedObj.h"
 #include "Objects/SurfaceGraph.h"
+#include "Drafting/ModumateDraftingElements.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -764,4 +766,211 @@ bool UModumateObjectStatics::GetFFEBoxSidePoints(AActor *Actor, const FVector &A
 	}
 
 	return true;
+}
+
+bool UModumateObjectStatics::GetExtrusionPerimeterPoints(const FModumateObjectInstance* MOI,
+       const FVector& LineUp, const FVector& LineNormal, TArray<FVector>& outPerimeterPoints)
+{
+       const FSimplePolygon* polyProfile = nullptr;
+       const FModumateObjectInstance* parent = MOI ? MOI->GetParentObject() : nullptr;
+       if (parent == nullptr)
+       {
+               return false;
+       }
+
+       FVector scale(FVector::OneVector);
+       const auto& assembly = MOI->GetAssembly();
+       if (ensureAlways(assembly.Extrusions.Num() > 0))
+       {
+               scale = MOI->GetAssembly().Extrusions[0].Scale;
+       }
+       else
+       {
+               return false;
+       }
+
+       if (!UModumateObjectStatics::GetPolygonProfile(&MOI->GetAssembly(), polyProfile)
+               || polyProfile->Points.Num() == 0)
+       {
+               return false;
+       }
+
+       for (const auto& point : polyProfile->Points)
+       {
+               outPerimeterPoints.Add(point.X * LineUp * scale.X + point.Y * LineNormal * scale.Y);
+       }
+
+       return true;
+}
+
+void UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox, const TArray<FVector>& Perimeter,
+	const FVector& StartPosition, const FVector& EndPosition, Modumate::FModumateLayerType LayerType, float Epsilon /*= 0.0f*/)
+{
+	FVector startCap(Perimeter.Last(0) + StartPosition);
+	FVector endCap(Perimeter.Last(0) + EndPosition);
+
+	TArray<FVector2D> points;
+	TArray<FVector2D> startCapPoints;
+	TArray<FVector2D> endCapPoints;
+	for (const auto& edgePoint : Perimeter)
+	{
+		FVector p1(edgePoint + StartPosition);
+		FVector p2(edgePoint + EndPosition);
+		FVector intersect;
+		if (FMath::SegmentPlaneIntersection(p1, p2, Plane, intersect))
+		{
+			points.Emplace(UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersect));
+		}
+		if (FMath::SegmentPlaneIntersection(startCap, p1, Plane, intersect))
+		{
+			startCapPoints.Emplace(UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersect));
+		}
+		if (FMath::SegmentPlaneIntersection(endCap, p2, Plane, intersect))
+		{
+			endCapPoints.Emplace(UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersect));
+		}
+		startCap = p1;
+		endCap = p2;
+	}
+
+	if (Epsilon != 0.0f && points.Num() > 2)
+	{
+		const float Epsilon2 = Epsilon * Epsilon;
+		TArray<FVector2D> thinnedPoints;
+		thinnedPoints.Add(points[0]);
+		for (int32 i = 1; i < points.Num(); ++i)
+		{
+			if (FVector2D::DistSquared(points[i], thinnedPoints.Last()) >= Epsilon2)
+			{
+				thinnedPoints.Add(points[i]);
+			}
+		}
+		points = MoveTemp(thinnedPoints);
+	}
+
+	if (points.Num() + startCapPoints.Num() + endCapPoints.Num() >= 2)
+	{
+		TArray<FEdge> draftEdges;
+		int32 numPoints = points.Num();
+		if (numPoints >= 2)
+		{
+			for (int32 p = 0; p < numPoints; ++p)
+			{
+				draftEdges.Emplace(FVector(points[p], 0), FVector(points[(p + 1) % numPoints], 0));
+			}
+		}
+
+		if (startCapPoints.Num() == endCapPoints.Num() && startCapPoints.Num() >= 2)
+		{
+			numPoints = startCapPoints.Num();
+			for (int32 p = 0; p < numPoints; ++p)
+			{
+				draftEdges.Emplace(FVector(startCapPoints[p], 0), FVector(endCapPoints[p], 0));
+				draftEdges.Emplace(FVector(startCapPoints[p], 0), FVector(startCapPoints[(p + 1) % numPoints], 0));
+				draftEdges.Emplace(FVector(endCapPoints[p], 0), FVector(endCapPoints[(p + 1) % numPoints], 0));
+			}
+		}
+
+		for (const auto& edge : draftEdges)
+		{
+			FVector2D vert0(edge.Vertex[0]);
+			FVector2D vert1(edge.Vertex[1]);
+
+			FVector2D boxClipped0;
+			FVector2D boxClipped1;
+
+			if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
+			{
+				TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+					Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
+					Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
+					Modumate::Units::FThickness::Points(0.25f), Modumate::FMColor::Black);
+				ParentPage->Children.Add(line);
+				line->SetLayerTypeRecursive(LayerType);
+			}
+
+		}
+	}
+}
+
+TArray<FEdge> UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(const FPlane& Plane, const TArray<FVector>& Perimeter,
+	const FVector& StartPosition, const FVector& EndPosition)
+{
+	const FVector viewNormal = Plane;
+	TArray<FEdge> beamEdges;
+	FVector LineUp, LineNormal;
+
+	int32 numEdges = Perimeter.Num();
+	int32 closestPoint = 0;
+	float closestDist = INFINITY;
+	for (int32 i = 0; i < numEdges; ++i)
+	{
+		float dist = Plane.PlaneDot(Perimeter[i] + StartPosition);
+		if (dist < closestDist)
+		{
+			closestPoint = i;
+			closestDist = dist;
+		}
+	}
+
+	if (closestDist < 0.0f)
+	{
+		return beamEdges;
+	}
+
+	const FVector LineDir = (EndPosition - StartPosition).GetSafeNormal();
+
+	FVector previousNormal(0.0f);
+	bool bPreviousFacing = false;
+
+	static constexpr float facetThreshold = 0.985;  // 10 degrees
+
+	// Test closest facet for winding direction:
+	bool bPerimeterFacingDir;
+	FVector tp0 = Perimeter[(closestPoint + numEdges - 1) % numEdges];
+	FVector tp1 = Perimeter[closestPoint];
+	FVector tp2 = Perimeter[(closestPoint + 1) % numEdges];
+	if (((tp2 - tp1).GetSafeNormal() | viewNormal) < ((tp0 - tp1).GetSafeNormal() | viewNormal))
+	{
+		FVector normal(((tp2 - tp1) ^ LineDir).GetSafeNormal());
+		bPerimeterFacingDir = (normal | viewNormal) > 0;
+	}
+	else
+	{
+		FVector normal(((tp1 - tp0) ^ LineDir).GetSafeNormal());
+		bPerimeterFacingDir = (normal | viewNormal) > 0;
+	}
+
+	for (int32 edge = 0; edge <= numEdges; ++edge)
+	{
+		FVector p1 = Perimeter[(closestPoint + edge) % numEdges];
+		FVector p2 = Perimeter[(closestPoint + edge + 1) % numEdges];
+		FVector normal((p2 - p1) ^ LineDir);
+		normal.Normalize();
+		bool bFacing = ((normal | viewNormal) < 0) ^ bPerimeterFacingDir;
+		if (!previousNormal.IsZero())
+		{
+			bool bSilhouette = bFacing ^ bPreviousFacing;
+			if (bSilhouette || bFacing && (normal | previousNormal) <= facetThreshold)
+			{
+				FVector draftLineStart(p1 + StartPosition);
+				FVector draftLineEnd(p1 + EndPosition);
+				FEdge edgeAlongBeam(draftLineStart, draftLineEnd);
+				edgeAlongBeam.Count = int(bSilhouette);  // Use count field to encode internal/silhouette.
+				beamEdges.Add(edgeAlongBeam);
+			}
+		}
+
+		previousNormal = normal;
+		bPreviousFacing = bFacing;
+
+		if (edge < numEdges)
+		{
+			beamEdges.Emplace(p1 + StartPosition, p2 + StartPosition);
+			beamEdges.Emplace(p1 + EndPosition, p2 + EndPosition);
+		}
+	}
+
+	return beamEdges;
 }

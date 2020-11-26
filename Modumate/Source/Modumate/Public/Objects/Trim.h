@@ -47,6 +47,11 @@ public:
 
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
 
+
+	void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
+		TArray<TArray<FVector>>& OutPerimeters) const override;
+
 protected:
 	// Cached values for the trim, derived from instance properties and the parent SurfaceEdge
 	FVector TrimStartPos, TrimEndPos, TrimNormal, TrimUp, TrimDir, TrimScale;

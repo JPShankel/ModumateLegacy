@@ -20,11 +20,6 @@ protected:
 
 	void InternalUpdateGeometry(bool bRecreate, bool bCreateCollision);
 
-private:
-	bool GetPerimeterPoints(TArray<FVector>& outPerimeterPoints) const;
-	TArray<FEdge> GetBeyondLinesFromMesh(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
-		const FVector& AxisX, const FVector& AxisY, const FVector& Origin) const;
-
 public:
 	FMOIStructureLine(FModumateObjectInstance *moi);
 	virtual ~FMOIStructureLine();
