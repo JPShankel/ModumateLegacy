@@ -606,10 +606,12 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 		addOpeningLines(LayerGeometries[0], parentLocation, true);
 		addOpeningLines(LayerGeometries[numLayers - 1], parentLocation, false);
 
-		// Corner lines normal to plane.
-		for (const auto& point: LayerGeometries[0].PointsA)
+		// Corner lines.
+		int32 numPoints = LayerGeometries[0].PointsA.Num();
+		for (int32 p = 0; p < numPoints; ++p)
 		{
-			FEdge line(point + parentLocation, point + parentLocation + planeOffset);
+			FEdge line(LayerGeometries[0].PointsA[p] + parentLocation,
+				LayerGeometries[numLayers - 1].PointsB[p] + parentLocation);
 			backgroundLines.Emplace(line, layerType);
 		}
 
