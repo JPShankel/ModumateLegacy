@@ -327,6 +327,7 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 	bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
 	{
+		bool bIsCountertop = MOI->GetObjectType() == EObjectType::OTCountertop;
 		const FModumateObjectInstance *parent = MOI->GetParentObject();
 		FVector parentLocation = parent->GetObjectLocation();
 
@@ -430,7 +431,7 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
 							lineThickness, lineColor);
 						ParentPage->Children.Add(line);
-						line->SetLayerTypeRecursive(dwgLayerType);
+						line->SetLayerTypeRecursive(bIsCountertop ? Modumate::FModumateLayerType::kCountertopCut : dwgLayerType);
 					}
 					if (previousLinePoints.Num() > linePoint)
 					{
@@ -441,7 +442,8 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
 								lineThickness, lineColor);
 							ParentPage->Children.Add(line);
-							line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kSeparatorCutOuterSurface);
+							line->SetLayerTypeRecursive(bIsCountertop ? Modumate::FModumateLayerType::kCountertopCut :
+								Modumate::FModumateLayerType::kSeparatorCutOuterSurface);
 						}
 						if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint+1], rangeEnd, BoundingBox, clippedStart, clippedEnd))
 						{
@@ -450,7 +452,8 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
 								lineThickness, lineColor);
 							ParentPage->Children.Add(line);
-							line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kSeparatorCutOuterSurface);
+							line->SetLayerTypeRecursive(bIsCountertop ? Modumate::FModumateLayerType::kCountertopCut :
+								Modumate::FModumateLayerType::kSeparatorCutOuterSurface);
 						}
 					}
 					previousLinePoints.SetNum(FMath::Max(linePoint + 2, previousLinePoints.Num()) );
@@ -553,6 +556,9 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 
 	const FModumateObjectInstance *parent = MOI->GetParentObject();
 	FVector parentLocation = parent->GetObjectLocation();
+	bool bIsCountertop = MOI->GetObjectType() == EObjectType::OTCountertop;
+	Modumate::FModumateLayerType layerType = bIsCountertop ? Modumate::FModumateLayerType::kCountertopBeyond :
+		Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges;
 
 	TArray<TPair<FEdge, Modumate::FModumateLayerType>> backgroundLines;
 
@@ -564,14 +570,14 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 			[](float s, const auto& layer) { return s + layer.Thickness; });
 		const FVector planeOffset = totalThickness * LayerGeometries[0].Normal;
 
-		auto addPerimeterLines = [&backgroundLines, parentLocation](const TArray<FVector>& points)
+		auto addPerimeterLines = [&backgroundLines, parentLocation, layerType](const TArray<FVector>& points)
 		{
 			int numPoints = points.Num();
 			for (int i = 0; i < numPoints; ++i)
 			{
 				FEdge line(points[i] + parentLocation,
 					points[(i + 1) % numPoints] + parentLocation);
-				backgroundLines.Emplace(line, Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges);
+				backgroundLines.Emplace(line, layerType);
 
 			}
 
@@ -604,7 +610,7 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 		for (const auto& point: LayerGeometries[0].PointsA)
 		{
 			FEdge line(point + parentLocation, point + parentLocation + planeOffset);
-			backgroundLines.Emplace(line, Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges);
+			backgroundLines.Emplace(line, layerType);
 		}
 
 		FVector2D boxClipped0;

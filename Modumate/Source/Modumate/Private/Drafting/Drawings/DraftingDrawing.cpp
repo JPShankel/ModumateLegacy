@@ -97,7 +97,8 @@ namespace Modumate {
 		controlPoints = scopeBox->GetControlPoints();
 #else
 		FVector scopeBoxOrigin = cutPlaneOrigin;
-		const FBox sceneBounds(Doc->CalculateProjectBounds().GetBox());
+		FBox sceneBounds(Doc->CalculateProjectBounds().GetBox());
+		sceneBounds = sceneBounds.ExpandBy(1000.0f);
 		controlPoints.Add(sceneBounds.Min);
 		controlPoints.Add(sceneBounds.Max);
 #endif
@@ -191,7 +192,7 @@ namespace Modumate {
 			EObjectType::OTRoofFace, EObjectType::OTWindow, EObjectType::OTDoor,
 			EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTRailSegment,
 			EObjectType::OTSystemPanel, EObjectType::OTMullion, EObjectType::OTStaircase,
-			EObjectType::OTFinish, EObjectType::OTTrim
+			EObjectType::OTFinish, EObjectType::OTCountertop, EObjectType::OTTrim
 			}));
 
 		for (auto object: beyondCutObjects)
