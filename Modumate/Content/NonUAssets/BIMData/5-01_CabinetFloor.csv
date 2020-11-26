@@ -35,7 +35,7 @@ Assembly_Rigged_Panel
 Part_Panel-0Mesh-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut---FFFFFF
 0Slot-HandleUpperFixedXZ
 Part_HandleStatic-0Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum---331F20
-1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural",,Assembly_Rigged_CabinetFloor,,"Single Swing, Walnunt",30in,24in,36in,4in,3.5in,,X,,"Assembly_Rigged_CabinetFace
+1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural",,Assembly_Rigged_CabinetFloor,,"Single Swing, Walnut",30in,24in,36in,4in,3.5in,,X,,"Assembly_Rigged_CabinetFace
 1SlotConfig_Frame
 0Slot-Frame
 0Slot-AssemblyPanelOverlay1of1

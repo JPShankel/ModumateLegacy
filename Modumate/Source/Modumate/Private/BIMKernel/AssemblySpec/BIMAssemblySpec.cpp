@@ -131,7 +131,11 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		// TODO: until we can combine extrusions and layers, ignore extrusions on layered assemblies
 		// This limits extrusions to Trim, Beams, Columns and Mullions for the time being
 		// For extrusions not hosted on a metabeam, we will need assembly-level geometric data
-		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Profile)
+		else if (
+			presetIterator.Preset->ObjectType == EObjectType::OTStructureLine ||
+			presetIterator.Preset->ObjectType == EObjectType::OTMullion ||
+			presetIterator.Preset->ObjectType == EObjectType::OTTrim
+			)
 		{
 			if (Layers.Num() == 0 && TreadLayers.Num() == 0 && RiserLayers.Num() == 0)
 			{
@@ -423,6 +427,12 @@ EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FModumateDatabase& InDB)
 			return EBIMResult::Success;
 		}
 	}
+
+#if WITH_EDITOR
+	FBIMPartLayout layout;
+	ensureAlways(layout.FromAssembly(*this, FVector::OneVector) == EBIMResult::Success);
+#endif
+
 	return EBIMResult::Error;
 }
 
@@ -532,24 +542,17 @@ EBIMResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& InDB)
 {
 	for (auto& extrusion : Extrusions)
 	{
-
-		// Extrusion dimensions are a sibling so properties are stored in parent and inherited
-		extrusion.Properties.AddProperties(RootProperties);
-			
 		FString materialAsset;
-		if (RootProperties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, materialAsset))
+		if (extrusion.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, materialAsset))
 		{
 			const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(materialAsset);
 			if (ensureAlways(mat != nullptr))
 			{
 				extrusion.Material = *mat;
-				if (RootProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::AssetID, materialAsset))
+				FString colorHexValue;
+				if (extrusion.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue))
 				{
-					const FCustomColor* color = InDB.GetCustomColorByKey(materialAsset);
-					if (ensureAlways(color != nullptr))
-					{
-						extrusion.Material.DefaultBaseColor = *color;
-					}
+					extrusion.Material.DefaultBaseColor.Color = FColor::FromHex(colorHexValue);
 				}
 			}
 		}

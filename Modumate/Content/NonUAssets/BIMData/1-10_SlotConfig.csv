@@ -150,25 +150,25 @@ PRESET,,,,,,,,,,,0Slot-AssemblyPanelSwingLeft,,,,,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelSwingRight,,,,,,,,
 PRESET,,343EE2F2-6478-3B41-95F0-07DF7AB5A442,,"1SlotConfig_Frame
 0Slot-Frame
-0Slot-AssemblyPanelOverlay1of1",,1SlotConfig_Frame,,Overlay (Single),Self.Part_Frame.NativeSizeY+Self.Assembly_Rigged.Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
+0Slot-AssemblyPanelOverlay1of1",,1SlotConfig_Frame,,Overlay (Single),Self.Part_Frame.NativeSizeY+Self.Assembly_Rigged.Part_Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlay1of1,,,,,,,,
 PRESET,,554D3B70-EAB5-0C40-B8D4-9DFBC66876C9,,"1SlotConfig_Frame
 0Slot-Frame
 0Slot-AssemblyPanelOverlayLeft
-0Slot-AssemblyPanelOverlayRight",,1SlotConfig_Frame,,Overlay (Double),Self.Part_Frame.NativeSizeY+Self.Assembly_Rigged_Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
+0Slot-AssemblyPanelOverlayRight",,1SlotConfig_Frame,,Overlay (Double),Self.Part_Frame.NativeSizeY+Self.Assembly_Rigged.Part_Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlayLeft,,,,,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlayRight,,,,,,,,
 PRESET,,24116C3C-16E8-234F-AB9D-6D9348A1F991,,"1SlotConfig_Frame
 0Slot-Frame
 0Slot-AssemblyPanelOverlay2Vertical-1
-0Slot-AssemblyPanelOverlay2Vertical-2",,1SlotConfig_Frame,,Overlay (Two Drawers),Self.Part_Frame.NativeSizeY+Self.Assembly_Rigged_Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
+0Slot-AssemblyPanelOverlay2Vertical-2",,1SlotConfig_Frame,,Overlay (Two Drawers),Self.Part_Frame.NativeSizeY+Self.Assembly_Rigged.Part_Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlay2Vertical-1,,,,,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlay2Vertical-2,,,,,,,,
 PRESET,,7780F1AA-A878-2D43-A6EE-330A131BE2F9,,"1SlotConfig_Frame
 0Slot-Frame
 0Slot-AssemblyPanelOverlay3Vertical-1
 0Slot-AssemblyPanelOverlay3Vertical-2
-0Slot-AssemblyPanelOverlay3Vertical-3",,1SlotConfig_Frame,,Overlay (Three Drawers),Self.Part_Frame.NativeSizeY+Self.Assembly_Rigged_Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
+0Slot-AssemblyPanelOverlay3Vertical-3",,1SlotConfig_Frame,,Overlay (Three Drawers),Self.Part_Frame.NativeSizeY+Self.Assembly_Rigged.Part_Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlay3Vertical-1,,,,,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlay3Vertical-2,,,,,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlay3Vertical-3,,,,,,,,
@@ -177,7 +177,7 @@ PRESET,,0E8E93A1-9689-0E4E-8B73-1C0A90B1ECA8,,"1SlotConfig_Frame
 0Slot-AssemblyPanelOverlay4Vertical-1
 0Slot-AssemblyPanelOverlay4Vertical-2
 0Slot-AssemblyPanelOverlay4Vertical-3
-0Slot-AssemblyPanelOverlay4Vertical-4",,1SlotConfig_Frame,,Overlay (Four Drawers),Self.Part_Frame.NativeSizeY+Self.Assembly_Rigged_Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
+0Slot-AssemblyPanelOverlay4Vertical-4",,1SlotConfig_Frame,,Overlay (Four Drawers),Self.Part_Frame.NativeSizeY+Self.Assembly_Rigged.Part_Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlay4Vertical-1,,,,,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlay4Vertical-2,,,,,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlay4Vertical-3,,,,,,,,
@@ -186,7 +186,7 @@ PRESET,,586DC0CD-87B0-8841-A1E5-E79D95295160,,"1SlotConfig_Frame
 0Slot-Frame
 0Slot-AssemblyPanelOverlay1Above2-1
 0Slot-AssemblyPanelOverlay1Above2-2
-0Slot-AssemblyPanelOverlay1Above2-3",,1SlotConfig_Frame,,Overlay (One Drawer Over Two Doors),Self.Part_Frame.NativeSizeY+Self_Assembly_RiggedPanel.NativeSizeY,,0Slot-Frame,,,,X,,,,
+0Slot-AssemblyPanelOverlay1Above2-3",,1SlotConfig_Frame,,Overlay (One Drawer Over Two Doors),Self.Part_Frame.NativeSizeY+Self.Assembly_Rigged.Part_Panel.NativeSizeY,,0Slot-Frame,,,,X,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlay1Above2-1,,,,,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlay1Above2-2,,,,,,,,
 PRESET,,,,,,,,,,,0Slot-AssemblyPanelOverlay1Above2-3,,,,,,,,
