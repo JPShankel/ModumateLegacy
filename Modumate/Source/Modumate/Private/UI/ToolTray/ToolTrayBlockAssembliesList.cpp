@@ -187,6 +187,11 @@ bool UToolTrayBlockAssembliesList::IsPresetAvailableForSearch(const FBIMKey& Pre
 	return false;
 }
 
+void UToolTrayBlockAssembliesList::ResetSearchBox()
+{
+	Text_SearchBar->ModumateEditableTextBox->SetText(FText::GetEmpty());
+}
+
 void UToolTrayBlockAssembliesList::OnButtonAddReleased()
 {
 	if (Controller && Controller->EditModelUserWidget)

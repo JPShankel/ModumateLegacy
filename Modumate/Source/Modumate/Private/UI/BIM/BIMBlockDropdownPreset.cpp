@@ -52,6 +52,9 @@ void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 	// Move swap menu to be in front of this node
 	ParentBIMDesigner->UpdateNodeSwapMenuVisibility(OwnerNode->ID, true, DropdownOffset);
 
+	// Reset the search box in preset list
+	ParentBIMDesigner->SelectionTray_Block_Swap->ResetSearchBox();
+
 	// Generate list of presets
 	ParentBIMDesigner->SelectionTray_Block_Swap->CreatePresetListInNodeForSwap(ownerNodePresetID, PresetID, OwnerNode->ID, SwapScope, SwapNameType);
 }

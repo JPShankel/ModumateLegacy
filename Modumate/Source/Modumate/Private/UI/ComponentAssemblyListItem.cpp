@@ -18,6 +18,7 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Components/Image.h"
+#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 
 using namespace Modumate;
 
@@ -169,6 +170,9 @@ void UComponentAssemblyListItem::OnButtonSwapReleased()
 {
 	if (EMPlayerController)
 	{
+		// Reset the search box in swap list
+		EMPlayerController->EditModelUserWidget->SelectionTrayWidget->SelectionTray_Block_Swap->ResetSearchBox();
+
 		EMPlayerController->EditModelUserWidget->SelectionTrayWidget->OpenToolTrayForSwap(ToolMode, BIMKey);
 	}
 }

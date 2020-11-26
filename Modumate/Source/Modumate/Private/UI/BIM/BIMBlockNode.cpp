@@ -139,6 +139,9 @@ void UBIMBlockNode::OnButtonSwapReleased()
 	// Move swap menu to be in front of this node
 	ParentBIMDesigner->UpdateNodeSwapMenuVisibility(ID, true);
 
+	// Reset the search box in preset list
+	ParentBIMDesigner->SelectionTray_Block_Swap->ResetSearchBox();
+
 	// Generate list of presets
 	ParentBIMDesigner->SelectionTray_Block_Swap->CreatePresetListInNodeForSwap(parentPresetID, PresetID, ID, EBIMValueScope::None, NAME_None);
 }

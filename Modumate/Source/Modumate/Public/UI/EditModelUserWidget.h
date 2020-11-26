@@ -33,6 +33,9 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
+	void UpdateOnToolModeChanged();
+
+	UFUNCTION()
 	void UpdateToolTray();
 
 public:

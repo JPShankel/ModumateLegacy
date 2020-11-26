@@ -40,7 +40,7 @@ bool UEditModelUserWidget::Initialize()
 
 	if (Controller)
 	{
-		Controller->OnToolModeChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
+		Controller->OnToolModeChanged.AddDynamic(this, &UEditModelUserWidget::UpdateOnToolModeChanged);
 		Controller->OnToolAxisConstraintChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
 		Controller->OnToolCreateObjectModeChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
 		Controller->OnToolAssemblyChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
@@ -57,6 +57,12 @@ void UEditModelUserWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	// Update current menu visibility according to tool mode
+	UpdateToolTray();
+}
+
+void UEditModelUserWidget::UpdateOnToolModeChanged()
+{
+	ToolTrayWidget->ToolTrayBlockAssembliesList->ResetSearchBox();
 	UpdateToolTray();
 }
 

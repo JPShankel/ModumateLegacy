@@ -74,6 +74,7 @@ public:
 	void CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, int32 NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType);
 	void CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FBIMKey& PresetID);
 	bool IsPresetAvailableForSearch(const FBIMKey& PresetKey);
+	void ResetSearchBox();
 
 	UFUNCTION()
 	void OnButtonAddReleased();
