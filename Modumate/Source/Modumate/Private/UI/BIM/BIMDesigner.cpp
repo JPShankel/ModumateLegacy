@@ -924,17 +924,48 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
 		Controller->GetDocument()->PresetManager.CraftingNodePresets.GetAvailableGUID(guid);
 		outPreset.GUID = guid.ToString(EGuidFormats::DigitsWithHyphens);
 		outPreset.ReadOnly = false;
-		CraftingAssembly.RootPreset = outPreset.PresetID;
-		node->WorkingPresetCopy.PresetID = outPreset.PresetID;
+
+		Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Add(outPreset.PresetID, outPreset);
+
+		if (!node->ParentInstance.IsValid())
+		{
+			CraftingAssembly.RootPreset = outPreset.PresetID;
+		}
+		else
+		{
+			FBIMPresetEditorNodeSharedPtr parent = node->ParentInstance.Pin();
+
+			if (!node->MyParentPartSlot.IsNone())
+			{
+				TArray<FBIMPresetPartSlot> partSlots;
+				parent->GetPartSlots(partSlots);
+
+				for (int32 i = 0; i < partSlots.Num(); ++i)
+				{
+					if (partSlots[i].SlotPreset == node->MyParentPartSlot)
+					{
+						InstancePool.SetPartPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets,parent->GetInstanceID(),i, outPreset.PresetID);
+					}
+				}
+			}
+			else
+			{
+				InstancePool.SetNewPresetForNode(Controller->GetDocument()->PresetManager.CraftingNodePresets, node->GetInstanceID(), outPreset.PresetID);
+			}
+		}
+		node->WorkingPresetCopy = outPreset;
 	}
 	else if (outPreset.ReadOnly)
 	{
 		return false;
 	}
+	else
+	{
+		Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Add(outPreset.PresetID, outPreset);
+	}
 
 	node->OriginalPresetCopy = node->WorkingPresetCopy;
 
-	Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Add(outPreset.PresetID, outPreset);
 
 	// TODO: Only root node can make assembly for now, but stairs can have assembly in child node 
 	if (!node->ParentInstance.IsValid())
@@ -946,6 +977,7 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
 		Controller->EditModelUserWidget->RefreshAssemblyList();
 	}
 
+	SelectedNodeID = InstanceID;
 	UpdateBIMDesigner();
 	return true;
 }

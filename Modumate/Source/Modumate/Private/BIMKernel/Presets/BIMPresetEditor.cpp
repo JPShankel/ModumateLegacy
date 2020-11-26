@@ -322,50 +322,22 @@ EBIMResult FBIMPresetEditor::CreateAssemblyFromLayerNode(const FBIMPresetCollect
 	{
 		if (inst->ParentInstance == nullptr)
 		{
-			const FBIMPresetInstance* rootPreset = PresetCollection.Presets.Find(inst->WorkingPresetCopy.PresetID);
-			if (ensureAlways(rootPreset != nullptr))
-			{
-				assemblyPreset.NodeType = rootPreset->NodeType;
-				assemblyPreset.ObjectType = rootPreset->ObjectType;
-			}
-			else
-			{
-				return EBIMResult::Error;
-			}
+			assemblyPreset.NodeType = inst->WorkingPresetCopy.NodeType;
+			assemblyPreset.ObjectType = inst->WorkingPresetCopy.ObjectType;
 			break;
 		}
 	}
 
 	// Add the temp assembly and layer presets
 	previewCollection.Presets.Add(assemblyPreset.PresetID, assemblyPreset);
-
-	const FBIMPresetInstance* layerPreset = PresetCollection.Presets.Find(layerNode->WorkingPresetCopy.PresetID);
-	if (ensureAlways(layerPreset != nullptr))
-	{
-		previewCollection.Presets.Add(layerPreset->PresetID, *layerPreset);
-	}
-	else
-	{
-		return EBIMResult::Error;
-	}
+	previewCollection.Presets.Add(layerNode->WorkingPresetCopy.PresetID, layerNode->WorkingPresetCopy);
 
 	// Add presets from children of the layer node 
 	TArray<FBIMPresetEditorNodeSharedPtr> childrenNodes;
 	layerNode->GatherAllChildNodes(childrenNodes);
 	for (auto& child : childrenNodes)
 	{
-		if (child->GetPresetStatus() == EBIMPresetEditorNodeStatus::Dirty)
-		{
-			previewCollection.Presets.Add(child->WorkingPresetCopy.PresetID, child->WorkingPresetCopy);
-		}
-		else
-		{
-			const FBIMPresetInstance* original = PresetCollection.Presets.Find(child->WorkingPresetCopy.PresetID);
-			if (ensureAlways(original != nullptr))
-			{
-				previewCollection.Presets.Add(original->PresetID, *original);
-			}
-		}
+		previewCollection.Presets.Add(child->WorkingPresetCopy.PresetID, child->WorkingPresetCopy);
 	}
 	
 	return OutAssemblySpec.FromPreset(InDB, previewCollection, assemblyPreset.PresetID);
