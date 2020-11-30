@@ -32,7 +32,7 @@ void UBIMBlockMiniNode::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UBIMBlockMiniNode::BuildMiniNode(class UBIMDesigner* OuterBIMDesigner, int32 NewParentID, int32 NumberOfNodes)
+void UBIMBlockMiniNode::BuildMiniNode(class UBIMDesigner* OuterBIMDesigner, const FBIMEditorNodeIDType& NewParentID, int32 NumberOfNodes)
 {
 	ParentBIMDesigner = OuterBIMDesigner;
 	ParentID = NewParentID;

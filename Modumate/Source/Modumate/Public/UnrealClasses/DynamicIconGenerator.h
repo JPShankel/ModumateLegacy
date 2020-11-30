@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "BIMKernel/Core/BIMKey.h"
+#include "BIMKernel/Presets/BIMPresetEditorNode.h"
 #include "Database/ModumateObjectEnums.h"
 #include "DynamicIconGenerator.generated.h"
 
@@ -146,7 +147,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	bool SetIconMeshForAssembly(const FBIMKey& AsmKey, UMaterialInterface*& OutMaterial);
-	bool SetIconMeshForBIMDesigner(bool UseDependentPreset, const FBIMKey& PresetID, UMaterialInterface*& OutMaterial, UTexture*& OutTexture, int32 NodeID);
+	bool SetIconMeshForBIMDesigner(bool UseDependentPreset, const FBIMKey& PresetID, UMaterialInterface*& OutMaterial, UTexture*& OutTexture, const FBIMEditorNodeIDType& NodeID);
 	bool GetSavedIconFromPreset(const FBIMKey& PresetID, UTexture*& OutTexture);
 	UMaterialInterface* CreateMaterialForIconTexture(const FBIMKey& PresetID, UTexture* InTexture);
 	bool SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
@@ -163,10 +164,10 @@ public:
 	bool SetIconMeshForColor(const FBIMKey& ColorKey, UMaterialInterface*& OutMaterial);
 	bool SetIconMeshForProfile(const FBIMKey& ProfileKey, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForMesh(const FBIMKey& MeshKey, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForPart(bool UseDependentPreset, const FBIMKey& PresetID, int32 NodeID, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForMaterial(bool UseDependentPreset, const FBIMKey& PresetID, int32 NodeID, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForModule(bool UseDependentPreset, const FBIMKey& PresetID, int32 NodeID, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForLayerNodeID(int32 NodeID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForPart(bool UseDependentPreset, const FBIMKey& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForMaterial(bool UseDependentPreset, const FBIMKey& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForModule(bool UseDependentPreset, const FBIMKey& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForLayerNodeID(const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForLayerPreset(const FBIMKey& PresetID, UTextureRenderTarget2D* InRenderTarget);
 
 	void GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal);

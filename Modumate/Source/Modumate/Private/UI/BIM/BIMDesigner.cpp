@@ -98,7 +98,7 @@ int32 UBIMDesigner::NativePaint(const FPaintArgs& Args, const FGeometry& Allotte
 	FPaintContext Context(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
 	for (auto& curNode : BIMBlockNodes)
 	{
-		if (!curNode->IsKingNode && curNode->ParentID > -1)
+		if (!curNode->IsKingNode && !curNode->ParentID.IsNone())
 		{
 			UBIMBlockNode *parentNode = IdToNodeMap.FindRef(curNode->ParentID);
 			if (parentNode && !curNode->bNodeIsHidden)
@@ -175,7 +175,7 @@ void UBIMDesigner::ToggleCollapseExpandNodes()
 	}
 }
 
-void UBIMDesigner::SetNodeAsSelected(int32 InstanceID)
+void UBIMDesigner::SetNodeAsSelected(const FBIMEditorNodeIDType& InstanceID)
 {
 	SelectedNodeID = InstanceID;
 
@@ -203,7 +203,7 @@ void UBIMDesigner::SetNodeAsSelected(int32 InstanceID)
 	}
 
 	// Find selected node's children
-	TArray<int32> selectedNodeChildren;
+	TArray<FBIMEditorNodeIDType> selectedNodeChildren;
 	const FBIMPresetEditorNodeSharedPtr selectedInst = InstancePool.InstanceFromID(SelectedNodeID);
 	if (selectedInst)
 	{
@@ -218,9 +218,9 @@ void UBIMDesigner::SetNodeAsSelected(int32 InstanceID)
 	// Set nodes expanded or collapsed state based on which node is selected
 	// All nodes from selected node's parent lineage are expanded, all other nodes are collapsed
 	// All nodes that are within the branch of selected node are consider as highlighted
-	TArray<int32> selectedNodeLineage;
+	TArray<FBIMEditorNodeIDType> selectedNodeLineage;
 	InstancePool.FindNodeParentLineage(SelectedNodeID, selectedNodeLineage);
-	TArray<int32> highlightedNodeIDs;
+	TArray<FBIMEditorNodeIDType> highlightedNodeIDs;
 
 	for (const auto curNode : BIMBlockNodes)
 	{
@@ -272,7 +272,7 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FBIMKey& PresetID)
 	return true;
 }
 
-bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FBIMKey& PresetID)
+bool UBIMDesigner::SetPresetForNodeInBIMDesigner(const FBIMEditorNodeIDType& InstanceID, const FBIMKey& PresetID)
 {
 	EBIMResult result = InstancePool.SetNewPresetForNode(Controller->GetDocument()->PresetManager.CraftingNodePresets, InstanceID, PresetID);
 	if (result != EBIMResult::Success)
@@ -286,7 +286,13 @@ bool UBIMDesigner::SetPresetForNodeInBIMDesigner(int32 InstanceID, const FBIMKey
 
 void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 {
-	FBIMPresetEditorNodeSharedPtr rootNodeInst = InstancePool.InstanceFromID(1);
+	FBIMPresetEditorNodeSharedPtr rootNodeInst = InstancePool.GetRootInstance();
+
+	if (!ensureAlways(rootNodeInst.IsValid()))
+	{
+		return;
+	}
+
 	EBIMResult asmResult = InstancePool.CreateAssemblyFromNodes(
 		Controller->GetDocument()->PresetManager.CraftingNodePresets,
 		*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly);
@@ -303,7 +309,7 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 	BIMBlockNodes.Empty();
 	IdToNodeMap.Empty();
 
-	TMap<int32, class UBIMBlockNode*> IdToNodeMapUnSorted; 	// Temp map used to aid sorting node order
+	TMap<FBIMEditorNodeIDType, class UBIMBlockNode*> IdToNodeMapUnSorted; 	// Temp map used to aid sorting node order
 
 	for (const FBIMPresetEditorNodeSharedPtr& curInstance : InstancePool.GetInstancePool())
 	{
@@ -316,36 +322,30 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 			bAssemblyHasPart = true;
 		}
 
-		// Create widget for this node only if it's not embedded, nodes with slots must have widgets 
-		int32 embeddedInId = INDEX_NONE;
-		curInstance->NodeIamEmbeddedIn(embeddedInId);
-		if (embeddedInId == INDEX_NONE || bInstHasParts)
+		// Create a normal node or a rigged assembly node, depends on whether any of its children have parts
+		TSubclassOf<UBIMBlockNode> nodeWidgetClass = bInstHasParts ? BIMBlockRiggedNodeClass : BIMBlockNodeClass;
+		UBIMBlockNode* newBlockNode = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockNode>(nodeWidgetClass);
+		if (newBlockNode)
 		{
-			// Create a normal node or a rigged assembly node, depends on whether any of its children have parts
-			TSubclassOf<UBIMBlockNode> nodeWidgetClass = bInstHasParts ? BIMBlockRiggedNodeClass : BIMBlockNodeClass;
-			UBIMBlockNode* newBlockNode = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockNode>(nodeWidgetClass);
-			if (newBlockNode)
+			if (!curInstance->ParentInstance.IsValid()) // assume instance without parent is king node
 			{
-				if (!curInstance->ParentInstance.IsValid()) // assume instance without parent is king node
-				{
-					RootNode = newBlockNode;
-					// Do other kingly things, maybe auto focus when no other node is selected
-				}
-				newBlockNode->BuildNode(this, curInstance, bInstHasParts);
-				BIMBlockNodes.Add(newBlockNode);
-				CanvasPanelForNodes->AddChildToCanvas(newBlockNode);
-				IdToNodeMapUnSorted.Add(curInstance->GetInstanceID(), newBlockNode);
-				UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(newBlockNode);
-				if (canvasSlot)
-				{
-					canvasSlot->SetAutoSize(true);
-				}
+				RootNode = newBlockNode;
+				// Do other kingly things, maybe auto focus when no other node is selected
+			}
+			newBlockNode->BuildNode(this, curInstance, bInstHasParts);
+			BIMBlockNodes.Add(newBlockNode);
+			CanvasPanelForNodes->AddChildToCanvas(newBlockNode);
+			IdToNodeMapUnSorted.Add(curInstance->GetInstanceID(), newBlockNode);
+			UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(newBlockNode);
+			if (canvasSlot)
+			{
+				canvasSlot->SetAutoSize(true);
 			}
 		}
 	}
 
 	// Map nodes by ID
-	TArray<int32> sortedNodeIDs;
+	TArray<FBIMEditorNodeIDType> sortedNodeIDs;
 	InstancePool.GetSortedNodeIDs(sortedNodeIDs);
 	for (const auto& curID : sortedNodeIDs)
 	{
@@ -379,7 +379,6 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 
 void UBIMDesigner::AutoArrangeNodes()
 {
-
 	for (auto& curItem : NodesWithAddLayerButton)
 	{
 		auto& curAddButton = curItem.Value;
@@ -597,7 +596,7 @@ void UBIMDesigner::AutoArrangeNodes()
 			FBIMPresetEditorNodeSharedPtr instPtr = InstancePool.InstanceFromID(curNode->ID);
 			if (instPtr.IsValid())
 			{
-				TArray<int32> rawChildrenIDs; TArray<int32> childrenIDs;
+				TArray<FBIMEditorNodeIDType> rawChildrenIDs; TArray<FBIMEditorNodeIDType> childrenIDs;
 				instPtr->GatherChildrenInOrder(rawChildrenIDs);
 
 				// Only check nodes that has widgets (embedded nodes don't have widgets)
@@ -713,7 +712,7 @@ void UBIMDesigner::DrawConnectSplineForMiniNode(const FPaintContext& context, cl
 	UModumateSlateHelper::DrawCubicBezierSplineBP(context, splinePts, StartNode->bNodeHighlight ? NodeSplineHighlightedColor : NodeSplineFadeColor, NodeSplineThickness);
 }
 
-FBIMKey UBIMDesigner::GetPresetID(int32 InstanceID)
+FBIMKey UBIMDesigner::GetPresetID(const FBIMEditorNodeIDType& InstanceID)
 {
 	FBIMPresetEditorNodeSharedPtr instPtr = InstancePool.InstanceFromID(InstanceID);
 	if (ensureAlways(instPtr.IsValid()))
@@ -723,9 +722,9 @@ FBIMKey UBIMDesigner::GetPresetID(int32 InstanceID)
 	return FBIMKey();
 }
 
-bool UBIMDesigner::DeleteNode(int32 InstanceID)
+bool UBIMDesigner::DeleteNode(const FBIMEditorNodeIDType& InstanceID)
 {
-	TArray<int32> outDestroyed;
+	TArray<FBIMEditorNodeIDType> outDestroyed;
 	EBIMResult result = InstancePool.DestroyNodeInstance(InstanceID, outDestroyed);
 	if (result != EBIMResult::Success)
 	{
@@ -736,7 +735,7 @@ bool UBIMDesigner::DeleteNode(int32 InstanceID)
 	return true;
 }
 
-bool UBIMDesigner::AddNodeFromPreset(int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
+bool UBIMDesigner::AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
 {
 	FBIMPresetEditorNodeSharedPtr newNode = InstancePool.CreateNodeInstanceFromPreset(
 		Controller->GetDocument()->PresetManager.CraftingNodePresets,
@@ -750,7 +749,7 @@ bool UBIMDesigner::AddNodeFromPreset(int32 ParentID, const FBIMKey& PresetID, in
 	return true;
 }
 
-bool UBIMDesigner::SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value)
+bool UBIMDesigner::SetNodeProperty(const FBIMEditorNodeIDType& NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value)
 {
 	FBIMPresetEditorNodeSharedPtr instPtr = InstancePool.InstanceFromID(NodeID);
 	if (!instPtr.IsValid())
@@ -773,7 +772,7 @@ bool UBIMDesigner::SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, co
 	return true;
 }
 
-bool UBIMDesigner::UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVisibility, FVector2D offset)
+bool UBIMDesigner::UpdateNodeSwapMenuVisibility(const FBIMEditorNodeIDType& SwapFromNodeID, bool NewVisibility, FVector2D offset)
 {
 	const FBIMPresetEditorNodeWeakPtr inst = InstancePool.InstanceFromID(SwapFromNodeID);
 	if (!inst.IsValid())
@@ -781,12 +780,7 @@ bool UBIMDesigner::UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVi
 		SizeBoxSwapTray->SetVisibility(ESlateVisibility::Collapsed);
 		return false;
 	}
-	int32 idSearch = INDEX_NONE;
-	inst.Pin()->NodeIamEmbeddedIn(idSearch);
-	if (idSearch == INDEX_NONE)
-	{
-		idSearch = SwapFromNodeID;
-	}
+	FBIMEditorNodeIDType idSearch = SwapFromNodeID;
 
 	UBIMBlockNode* blocknode = IdToNodeMap.FindRef(idSearch);
 	if (!blocknode)
@@ -828,7 +822,7 @@ bool UBIMDesigner::UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVi
 	return true;
 }
 
-bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, int32 NodeID)
+bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, const FBIMEditorNodeIDType& NodeID)
 {
 	// Get the mouse position relative to BIM Designer current zoom and offset
 	UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(ScaleBoxForNodes);
@@ -846,7 +840,7 @@ bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition
 		return false;
 	}
 	TArray<UBIMBlockNode*> nodeGroup;
-	TArray<int32> relatives;
+	TArray<FBIMEditorNodeIDType> relatives;
 	if (instPtr->FindOtherChildrenOnPin(relatives) == EBIMResult::Success)
 	{
 		for (auto& curID : relatives)
@@ -907,7 +901,7 @@ bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition
 	return false;
 }
 
-bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
+bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& InstanceID)
 {
 	FBIMPresetEditorNodeSharedPtr node = InstancePool.InstanceFromID(InstanceID);
 	if (!ensureAlways(node.IsValid()))
@@ -982,9 +976,9 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, int32 InstanceID)
 	return true;
 }
 
-void UBIMDesigner::ToggleSlotNode(int32 ParentPartSlotID, int32 SlotID, bool NewEnable)
+void UBIMDesigner::ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 SlotID, bool NewEnable)
 {
-	const FBIMPresetEditorNodeSharedPtr nodeParent = InstancePool.InstanceFromID(ParentPartSlotID);
+	const FBIMPresetEditorNodeSharedPtr nodeParent = InstancePool.InstanceFromID(ParentID);
 	if (nodeParent.IsValid())
 	{
 		EBIMResult result = EBIMResult::Error;
@@ -1003,12 +997,12 @@ void UBIMDesigner::ToggleSlotNode(int32 ParentPartSlotID, int32 SlotID, bool New
 			}
 			if (!newPartPreset.IsNone())
 			{
-				result = InstancePool.SetPartPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, ParentPartSlotID, SlotID, newPartPreset);
+				result = InstancePool.SetPartPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, ParentID, SlotID, newPartPreset);
 			}
 		}
 		else
 		{
-			result = InstancePool.ClearPartPreset(ParentPartSlotID, SlotID);
+			result = InstancePool.ClearPartPreset(ParentID, SlotID);
 		}
 
 		if (result == EBIMResult::Success)

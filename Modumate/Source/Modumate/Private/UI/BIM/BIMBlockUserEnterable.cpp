@@ -43,7 +43,7 @@ void UBIMBlockUserEnterable::OnEditableTextBoxCommitted(const FText& Text, EText
 	}
 }
 
-void UBIMBlockUserEnterable::BuildEnterableFieldFromProperty(class UBIMDesigner *OuterBIMDesigner, int32 InNodeID, const EBIMValueScope &InScope, const FBIMNameType &InNameType, const FString &InValue)
+void UBIMBlockUserEnterable::BuildEnterableFieldFromProperty(class UBIMDesigner *OuterBIMDesigner, const FBIMEditorNodeIDType& InNodeID, const EBIMValueScope &InScope, const FBIMNameType &InNameType, const FString &InValue)
 {
 	ParentBIMDesigner = OuterBIMDesigner;
 	NodeID = InNodeID;

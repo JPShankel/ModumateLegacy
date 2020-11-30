@@ -38,10 +38,10 @@ void UBIMBlockSlotListItem::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UBIMBlockSlotListItem::ConnectSlotItemToNode(int32 NodeID)
+void UBIMBlockSlotListItem::ConnectSlotItemToNode(const FBIMEditorNodeIDType& NodeID)
 {
 	ConnectedNodeID = NodeID;
-	ButtonImage->SetBrushFromTexture(ConnectedNodeID == MOD_ID_NONE ? DisconnectedTexture : ConnectedTexture);
+	ButtonImage->SetBrushFromTexture(ConnectedNodeID.IsNone() ? DisconnectedTexture : ConnectedTexture);
 }
 
 void UBIMBlockSlotListItem::OnButtonSlotReleased()
@@ -49,7 +49,7 @@ void UBIMBlockSlotListItem::OnButtonSlotReleased()
 	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	if (controller && controller->EditModelUserWidget && controller->EditModelUserWidget->BIMDesigner)
 	{
-		bool hasConnection = ConnectedNodeID != MOD_ID_NONE;
+		bool hasConnection = !ConnectedNodeID.IsNone();
 		controller->EditModelUserWidget->BIMDesigner->ToggleSlotNode(ParentID, SlotIndex, !hasConnection);
 	}
 }

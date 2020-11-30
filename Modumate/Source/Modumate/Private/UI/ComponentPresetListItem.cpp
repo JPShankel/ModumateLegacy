@@ -41,7 +41,7 @@ bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerCo
 	return result;
 }
 
-bool UComponentPresetListItem::CaptureIconForBIMDesignerSwap(class AEditModelPlayerController_CPP* Controller, const FBIMKey& BIMKey, int32 NodeID)
+bool UComponentPresetListItem::CaptureIconForBIMDesignerSwap(class AEditModelPlayerController_CPP* Controller, const FBIMKey& BIMKey, const FBIMEditorNodeIDType& NodeID)
 {
 	if (!(Controller && IconImage))
 	{

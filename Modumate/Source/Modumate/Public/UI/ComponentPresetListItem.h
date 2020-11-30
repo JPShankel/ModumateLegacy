@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "BIMKernel/Core/BIMKey.h"
+#include "BIMKernel/Presets/BIMPresetEditorNode.h"
 #include "Database/ModumateObjectEnums.h"
 
 #include "ComponentPresetListItem.generated.h"
@@ -50,5 +51,5 @@ public:
 	class UTexture* IconTexture;
 
 	bool CaptureIconFromPresetKey(class AEditModelPlayerController_CPP* Controller, const FBIMKey& BIMKey);
-	bool CaptureIconForBIMDesignerSwap(class AEditModelPlayerController_CPP* Controller, const FBIMKey& BIMKey, int32 NodeID);
+	bool CaptureIconForBIMDesignerSwap(class AEditModelPlayerController_CPP* Controller, const FBIMKey& BIMKey, const FBIMEditorNodeIDType& NodeID);
 };

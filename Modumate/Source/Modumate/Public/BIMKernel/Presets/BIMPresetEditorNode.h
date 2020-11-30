@@ -16,11 +16,14 @@ enum class EBIMPresetEditorNodeStatus : uint8
 
 class FBIMPresetEditorNode;
 
-typedef TSharedPtr<FBIMPresetEditorNode> FBIMPresetEditorNodeSharedPtr;
-typedef TWeakPtr<FBIMPresetEditorNode> FBIMPresetEditorNodeWeakPtr;
+using FBIMPresetEditorNodeSharedPtr = TSharedPtr<FBIMPresetEditorNode>;
+using FBIMPresetEditorNodeWeakPtr = TWeakPtr<FBIMPresetEditorNode>;
 
-typedef TSharedPtr<const FBIMPresetEditorNode> FBIMPresetEditorNodeSharedPtrConst;
-typedef TWeakPtr<const FBIMPresetEditorNode> FBIMPresetEditorNodeWeakPtrConst;
+using FBIMPresetEditorNodeSharedPtrConst = TSharedPtr<const FBIMPresetEditorNode>;
+using FBIMPresetEditorNodeWeakPtrConst = TWeakPtr<const FBIMPresetEditorNode>;
+
+using FBIMEditorNodeIDType = FName;
+static const FBIMEditorNodeIDType BIM_ID_NONE = NAME_None;
 
 class MODUMATE_API FBIMPresetEditorNode : public TSharedFromThis<FBIMPresetEditorNode>
 {
@@ -35,9 +38,9 @@ private:
 	FBIMPresetEditorNode() = delete;
 	FBIMPresetEditorNode(const FBIMPresetEditorNode& rhs) = delete;
 	FBIMPresetEditorNode& operator=(const FBIMPresetEditorNode& rhs) = delete;
-	FBIMPresetEditorNode(int32 instanceID,int32 InPinSetIndex,int32 InPinSetPosition,const FBIMPresetInstance& InPreset);
+	FBIMPresetEditorNode(const FBIMEditorNodeIDType& InInstanceID,int32 InPinSetIndex,int32 InPinSetPosition,const FBIMPresetInstance& InPreset);
 
-	int32 InstanceID;
+	FBIMEditorNodeIDType InstanceID;
 
 	EBIMResult SortChildren();
 	EBIMResult UpdateAddButtons();
@@ -67,9 +70,7 @@ public:
 
 	bool bWantAddButton = false;
 
-	int32 GetInstanceID() const;
-	EBIMResult NodeIamEmbeddedIn(int32& OutNodeId) const;
-	EBIMResult NodesEmbeddedInMe(TArray<int32>& OutNodeIds) const;
+	FBIMEditorNodeIDType GetInstanceID() const;
 
 	EBIMPresetEditorNodeStatus GetPresetStatus() const;
 
@@ -80,9 +81,9 @@ public:
 
 	EBIMResult GetPartSlots(TArray<FBIMPresetPartSlot>& OutPartSlots) const;
 
-	EBIMResult FindChild(int32 ChildID, int32& OutPinSetIndex, int32& OutPinSetPosition) const;
-	EBIMResult FindNodeIDConnectedToSlot(const FBIMKey& SlotPreset, int32& OutChildID) const;
-	EBIMResult FindOtherChildrenOnPin(TArray<int32>& OutChildIDs) const;
-	EBIMResult GatherChildrenInOrder(TArray<int32>& OutChildIDs) const;
+	EBIMResult FindChild(const FBIMEditorNodeIDType& ChildID, int32& OutPinSetIndex, int32& OutPinSetPosition) const;
+	EBIMResult FindNodeIDConnectedToSlot(const FBIMKey& SlotPreset, FBIMEditorNodeIDType& OutChildID) const;
+	EBIMResult FindOtherChildrenOnPin(TArray<FBIMEditorNodeIDType>& OutChildIDs) const;
+	EBIMResult GatherChildrenInOrder(TArray<FBIMEditorNodeIDType>& OutChildIDs) const;
 	EBIMResult GatherAllChildNodes(TArray<FBIMPresetEditorNodeSharedPtr>& OutChildren);
 };

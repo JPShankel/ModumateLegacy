@@ -144,7 +144,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssembly(const FBIMKey& AsmKey, UMater
 	return captureSuccess;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, const FBIMKey& PresetID, UMaterialInterface*& OutMaterial, UTexture*& OutTexture, int32 NodeID)
+bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, const FBIMKey& PresetID, UMaterialInterface*& OutMaterial, UTexture*& OutTexture, const FBIMEditorNodeIDType& NodeID)
 {
 	// TODO: Attempt to use cached icon first, make new if not available
 	OutMaterial = nullptr;
@@ -793,7 +793,7 @@ bool ADynamicIconGenerator::SetIconMeshForMesh(const FBIMKey& MeshKey, UTextureR
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForPart(bool UseDependentPreset, const FBIMKey& PresetID, int32 NodeID, UTextureRenderTarget2D* InRenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForPart(bool UseDependentPreset, const FBIMKey& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Step 1: Get params needed to make parts
 	FBIMKey rawMaterialKey;
@@ -878,7 +878,7 @@ bool ADynamicIconGenerator::SetIconMeshForPart(bool UseDependentPreset, const FB
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForMaterial(bool UseDependentPreset, const FBIMKey& PresetID, int32 NodeID, UTextureRenderTarget2D* InRenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForMaterial(bool UseDependentPreset, const FBIMKey& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Step 1: Get params needed to make material icon
 	FBIMKey rawMaterialKey;
@@ -923,7 +923,7 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(bool UseDependentPreset, cons
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForModule(bool UseDependentPreset, const FBIMKey& PresetID, int32 NodeID, UTextureRenderTarget2D* InRenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForModule(bool UseDependentPreset, const FBIMKey& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Step 1: Get params needed to make module icon
 	FBIMKey rawMaterialKey;
@@ -1005,7 +1005,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(bool UseDependentPreset, const 
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForLayerNodeID(int32 NodeID, UTextureRenderTarget2D* InRenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForLayerNodeID(const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget)
 {
 	FBIMAssemblySpec assembly;
 	Controller->EditModelUserWidget->BIMDesigner->InstancePool.CreateAssemblyFromLayerNode(

@@ -55,11 +55,11 @@ void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMPresetEditorNodeShared
 
 			if (partSlots[i].PartPreset.IsNone())
 			{
-				newSlot->ConnectSlotItemToNode(MOD_ID_NONE);
+				newSlot->ConnectSlotItemToNode(BIM_ID_NONE);
 			}
 			else
 			{
-				int32 connectedChildID = MOD_ID_NONE;
+				FBIMEditorNodeIDType connectedChildID;
 				NodePtr->FindNodeIDConnectedToSlot(partSlots[i].SlotPreset, connectedChildID);
 				newSlot->ConnectSlotItemToNode(connectedChildID);
 				NodeIDToSlotMapItem.Add(connectedChildID, newSlot);

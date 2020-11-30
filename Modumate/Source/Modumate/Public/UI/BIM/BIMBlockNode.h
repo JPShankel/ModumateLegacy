@@ -160,8 +160,9 @@ public:
 	class UTexture* IconTexture;
 
 	FBIMKey PresetID;
-	int32 ID = INDEX_NONE;
-	int32 ParentID = INDEX_NONE;
+	FBIMEditorNodeIDType ID;
+	FBIMEditorNodeIDType ParentID;
+
 	bool IsKingNode = false;
 	bool NodeDirty = false;
 	bool NodeCollapse = true;

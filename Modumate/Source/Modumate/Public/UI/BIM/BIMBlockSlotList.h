@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
+#include "BIMKernel/Presets/BIMPresetEditorNode.h"
 #include "BIMBlockSlotList.generated.h"
 
 /**
@@ -35,8 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UBIMBlockSlotListItem> SlotListItemClass;
 
+	// Typedef'd as FBIMEditorNodeIDType...UPROPERTIES don't support typedef
 	UPROPERTY()
-	TMap<int32, class UBIMBlockSlotListItem*> NodeIDToSlotMapItem;
+	TMap<FName, class UBIMBlockSlotListItem*> NodeIDToSlotMapItem;
 
 	void BuildSlotAssignmentList(const FBIMPresetEditorNodeSharedPtr& NodePtr);
 	void ReleaseSlotAssignmentList();

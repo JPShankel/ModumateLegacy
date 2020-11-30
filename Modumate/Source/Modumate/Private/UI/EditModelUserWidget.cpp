@@ -149,7 +149,7 @@ void UEditModelUserWidget::ToggleBIMDesigner(bool Open)
 		// TODO: Replace with closing animation
 		BIMDesigner->SetVisibility(ESlateVisibility::Collapsed);
 		BIMBlockDialogBox->SetVisibility(ESlateVisibility::Collapsed);
-		BIMDesigner->UpdateNodeSwapMenuVisibility(INDEX_NONE, false);
+		BIMDesigner->UpdateNodeSwapMenuVisibility(BIM_ID_NONE, false);
 	}
 	ToolTrayWidget->ToolTrayBIMDesignerMode(Open);
 }

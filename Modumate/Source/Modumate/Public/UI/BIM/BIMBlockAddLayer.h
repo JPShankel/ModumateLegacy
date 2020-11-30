@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "BIMKernel/Core/BIMKey.h"
+#include "BIMKernel/Presets/BIMPresetEditorNode.h"
 #include "BIMBlockAddLayer.generated.h"
 
 /**
@@ -36,7 +37,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButton *Button_AddLayer;
 
-	int32 ParentID = -1;
+	FBIMEditorNodeIDType ParentID;
 	FBIMKey PresetID;
 	int32 ParentSetIndex = -1;
 	int32 ParentSetPosition = -1;

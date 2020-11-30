@@ -42,8 +42,9 @@ protected:
 	UPROPERTY()
 	TArray<class UBIMBlockNode*> BIMBlockNodes;
 
+	// Typedef'd as FBIMEditorNodeIDType...UPROPERTIES don't support typedef
 	UPROPERTY()
-	TMap<int32, class UBIMBlockNode*> IdToNodeMap;
+	TMap<FName, class UBIMBlockNode*> IdToNodeMap;
 
 	UPROPERTY()
 	TMap<FIntPoint, class UBIMBlockNode*> NodeCoordinateMap;
@@ -138,26 +139,26 @@ public:
 	UFUNCTION()
 	void PerformDrag();
 
-	int32 SelectedNodeID = INDEX_NONE;
+	FBIMEditorNodeIDType SelectedNodeID;
 	FBIMPresetEditor InstancePool;
 	FBIMAssemblySpec CraftingAssembly;
 
 	bool UpdateCraftingAssembly();
 	void ToggleCollapseExpandNodes();
-	void SetNodeAsSelected(int32 InstanceID);
+	void SetNodeAsSelected(const FBIMEditorNodeIDType& InstanceID);
 	float GetCurrentZoomScale() const;
 	bool EditPresetInBIMDesigner(const FBIMKey& PresetID);
-	bool SetPresetForNodeInBIMDesigner(int32 InstanceID, const FBIMKey& PresetID);
+	bool SetPresetForNodeInBIMDesigner(const FBIMEditorNodeIDType& InstanceID, const FBIMKey& PresetID);
 	void UpdateBIMDesigner(bool AutoAdjustToRootNode = false);
 	void AutoArrangeNodes();
 	void DrawConnectSplineForNodes(const FPaintContext& context, class UBIMBlockNode* StartNode, class UBIMBlockNode* EndNode) const;
 	void DrawConnectSplineForMiniNode(const FPaintContext& context, class UBIMBlockNode* StartNode, class UBIMBlockMiniNode* MiniNode) const;
-	FBIMKey GetPresetID(int32 InstanceID);
-	bool DeleteNode(int32 InstanceID);
-	bool AddNodeFromPreset(int32 ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
-	bool SetNodeProperty(int32 NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value);
-	bool UpdateNodeSwapMenuVisibility(int32 SwapFromNodeID, bool NewVisibility, FVector2D offset = FVector2D::ZeroVector);
-	bool GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, int32 NodeID);
-	bool SavePresetFromNode(bool SaveAs, int32 InstanceID);
-	void ToggleSlotNode(int32 ParentPartSlotID, int32 SlotID, bool NewEnable);
+	FBIMKey GetPresetID(const FBIMEditorNodeIDType& InstanceID);
+	bool DeleteNode(const FBIMEditorNodeIDType& InstanceID);
+	bool AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
+	bool SetNodeProperty(const FBIMEditorNodeIDType& NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value);
+	bool UpdateNodeSwapMenuVisibility(const FBIMEditorNodeIDType& SwapFromNodeID, bool NewVisibility, FVector2D offset = FVector2D::ZeroVector);
+	bool GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, const FBIMEditorNodeIDType& NodeID);
+	bool SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& InstanceID);
+	void ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 SlotID, bool NewEnable);
 };

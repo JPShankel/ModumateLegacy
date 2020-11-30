@@ -45,7 +45,7 @@ void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 	OwnerNode->UpdateNodeSwitchState(ENodeWidgetSwitchState::PendingSwap);
 	FBIMKey ownerNodePresetID;
 	// Dropdown preset is embedded into parent node, it should always have a parentPresetID
-	if (ensureAlways(OwnerNode->ID != INDEX_NONE))
+	if (ensureAlways(OwnerNode->ID != BIM_ID_NONE))
 	{
 		ownerNodePresetID = ParentBIMDesigner->GetPresetID(OwnerNode->ID);
 	}
@@ -79,7 +79,7 @@ void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner
 
 	// Icon
 	bool bCaptureSuccess = false;
-	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetID, IconMaterial, IconTexture, MOD_ID_NONE);
+	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetID, IconMaterial, IconTexture, BIM_ID_NONE);
 	if (bCaptureSuccess)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);

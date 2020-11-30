@@ -132,7 +132,7 @@ void UBIMBlockNode::OnButtonSwapReleased()
 {
 	UpdateNodeSwitchState(ENodeWidgetSwitchState::PendingSwap);
 	FBIMKey parentPresetID;
-	if (ParentID != -1)
+	if (!ParentID.IsNone())
 	{
 		parentPresetID = ParentBIMDesigner->GetPresetID(ParentID);
 	}
@@ -209,7 +209,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 
 	if (Button_Debug)
 	{
-		FString debugString = FString::Printf(TEXT("ID: ")) + FString::FromInt(Node->GetInstanceID()) + LINE_TERMINATOR + PresetID.ToString() + LINE_TERMINATOR + LINE_TERMINATOR + FString::Printf(TEXT("Properties:")) + LINE_TERMINATOR;
+		FString debugString = FString::Printf(TEXT("ID: ")) + Node->GetInstanceID().ToString() + LINE_TERMINATOR + PresetID.ToString() + LINE_TERMINATOR + LINE_TERMINATOR + FString::Printf(TEXT("Properties:")) + LINE_TERMINATOR;
 		Modumate::FModumateFunctionParameterSet params;
 		
 #if 0 // TODO: provide a debug string in BIM properties

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "BIMKernel/Presets/BIMPresetEditorNode.h"
 #include "ModumateCore/ModumateTypes.h"
 
 #include "BIMBlockSlotListItem.generated.h"
@@ -46,12 +47,12 @@ public:
 	int32 SlotIndex = INDEX_NONE;
 
 	// Owner of this slot
-	int32 ParentID = MOD_ID_NONE;
+	FBIMEditorNodeIDType ParentID;
 
 	// The node connecting to this slot. None if this slot is empty
-	int32 ConnectedNodeID = MOD_ID_NONE;
+	FBIMEditorNodeIDType ConnectedNodeID;
 
-	void ConnectSlotItemToNode(int32 NodeID);
+	void ConnectSlotItemToNode(const FBIMEditorNodeIDType& NodeID);
 
 	UFUNCTION()
 	void OnButtonSlotReleased();

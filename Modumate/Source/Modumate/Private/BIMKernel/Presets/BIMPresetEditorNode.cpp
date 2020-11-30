@@ -9,8 +9,8 @@
 int32 FBIMPresetEditorNode::InstanceCount = 0;
 #endif
 
-FBIMPresetEditorNode::FBIMPresetEditorNode(int32 instanceID, int32 InPinSetIndex, int32 InPinSetPosition,const FBIMPresetInstance& InPreset) :
-	InstanceID(instanceID),
+FBIMPresetEditorNode::FBIMPresetEditorNode(const FBIMEditorNodeIDType& InInstanceID, int32 InPinSetIndex, int32 InPinSetPosition,const FBIMPresetInstance& InPreset) :
+	InstanceID(InInstanceID),
 	OriginalPresetCopy(InPreset),
 	WorkingPresetCopy(InPreset),
 	MyParentPinSetIndex(InPinSetIndex),
@@ -23,7 +23,7 @@ FBIMPresetEditorNode::FBIMPresetEditorNode(int32 instanceID, int32 InPinSetIndex
 #endif
 }
 
-int32 FBIMPresetEditorNode::GetInstanceID() const
+FBIMEditorNodeIDType FBIMPresetEditorNode::GetInstanceID() const
 {
 	return InstanceID;
 }
@@ -32,37 +32,6 @@ EBIMResult FBIMPresetEditorNode::GetPartSlots(TArray<FBIMPresetPartSlot>& OutPar
 {
 	OutPartSlots = WorkingPresetCopy.PartSlots;
 	return EBIMResult::Success;
-}
-
-EBIMResult FBIMPresetEditorNode::NodeIamEmbeddedIn(int32& OutNodeId) const
-{
-	OutNodeId = INDEX_NONE;
-	return EBIMResult::Success;
-	
-	// TODO: Should consider partslot when determining if this is embedded
-	if (WorkingPresetCopy.ChildPresets.Num() == 0 && ParentInstance.IsValid())
-	{
-		OutNodeId = ParentInstance.Pin()->GetInstanceID();
-		return EBIMResult::Success;
-	}
-	return EBIMResult::Error;
-}
-
-EBIMResult FBIMPresetEditorNode::NodesEmbeddedInMe(TArray<int32>& OutNodeIds) const
-{
-	OutNodeIds.Empty();
-	return EBIMResult::Success;
-
-	for (const auto& child : ChildNodes)
-	{
-		int32 embeddedInId;
-		FBIMPresetEditorNodeSharedPtr childNodePinned = child.Pin();
-		if (childNodePinned->NodeIamEmbeddedIn(embeddedInId) == EBIMResult::Success && embeddedInId == InstanceID)
-		{
-			OutNodeIds.Add(childNodePinned->GetInstanceID());
-		}
-	}
-	return OutNodeIds.Num() > 0 ? EBIMResult::Success : EBIMResult::Error;
 }
 
 EBIMResult FBIMPresetEditorNode::GatherAllChildNodes(TArray<FBIMPresetEditorNodeSharedPtr>& OutChildren)
@@ -142,7 +111,7 @@ bool FBIMPresetEditorNode::CanReorderChild(const FBIMPresetEditorNodeSharedPtrCo
 	return false;
 }
 
-EBIMResult FBIMPresetEditorNode::FindChild(int32 ChildID, int32& OutPinSetIndex, int32& OutPinSetPosition) const
+EBIMResult FBIMPresetEditorNode::FindChild(const FBIMEditorNodeIDType& ChildID, int32& OutPinSetIndex, int32& OutPinSetPosition) const
 {
 	FBIMPresetEditorNodeSharedPtr foundChildNode;
 
@@ -172,7 +141,7 @@ EBIMResult FBIMPresetEditorNode::FindChild(int32 ChildID, int32& OutPinSetIndex,
 	return EBIMResult::Error;
 }
 
-EBIMResult FBIMPresetEditorNode::FindNodeIDConnectedToSlot(const FBIMKey& SlotPreset, int32& OutChildID) const
+EBIMResult FBIMPresetEditorNode::FindNodeIDConnectedToSlot(const FBIMKey& SlotPreset, FBIMEditorNodeIDType& OutChildID) const
 {
 	for (auto& curNode : PartNodes)
 	{
@@ -185,7 +154,7 @@ EBIMResult FBIMPresetEditorNode::FindNodeIDConnectedToSlot(const FBIMKey& SlotPr
 	return EBIMResult::Error;
 }
 
-EBIMResult FBIMPresetEditorNode::FindOtherChildrenOnPin(TArray<int32>& OutChildIDs) const
+EBIMResult FBIMPresetEditorNode::FindOtherChildrenOnPin(TArray<FBIMEditorNodeIDType>& OutChildIDs) const
 {
 	if (ParentInstance != nullptr)
 	{
@@ -198,7 +167,7 @@ EBIMResult FBIMPresetEditorNode::FindOtherChildrenOnPin(TArray<int32>& OutChildI
 		for (auto& child : parentInstance->ChildNodes)
 		{
 			int32 childPinSet, childPinPosition;
-			int32 childID = child.Pin()->InstanceID;
+			FBIMEditorNodeIDType childID = child.Pin()->InstanceID;
 			if (parentInstance->FindChild(childID, childPinSet, childPinPosition) != EBIMResult::Error)
 			{
 				if (childPinSet == myPinSet)
@@ -213,7 +182,7 @@ EBIMResult FBIMPresetEditorNode::FindOtherChildrenOnPin(TArray<int32>& OutChildI
 	return EBIMResult::Error;
 }
 
-EBIMResult FBIMPresetEditorNode::GatherChildrenInOrder(TArray<int32>& OutChildIDs) const
+EBIMResult FBIMPresetEditorNode::GatherChildrenInOrder(TArray<FBIMEditorNodeIDType>& OutChildIDs) const
 {
 	// TODO: Split this into separate function for PartNodes
 	if (PartNodes.Num() == 0)

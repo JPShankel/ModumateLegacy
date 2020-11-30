@@ -6,6 +6,7 @@
 #include "Database/ModumateObjectEnums.h"
 #include "UI/ComponentAssemblyListItem.h"
 #include "BIMKernel/Core/BIMKey.h"
+#include "BIMKernel/Presets/BIMPresetEditorNode.h"
 
 #include "ComponentListObject.generated.h"
 
@@ -23,7 +24,7 @@ public:
 	int32 SelectionItemCount = 0;
 
 	// The BIM node that is pending swap
-	int32 BIMNodeInstanceID = INDEX_NONE;
+	FBIMEditorNodeIDType BIMNodeInstanceID;
 
 	// For swapping preset properties in node
 	EBIMValueScope SwapScope = EBIMValueScope::None;

@@ -7,6 +7,7 @@
 #include "Database/ModumateObjectEnums.h"
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Core/BIMProperties.h"
+#include "BIMKernel/Presets/BIMPresetEditorNode.h"
 #include "ToolTrayBlockAssembliesList.generated.h"
 
 /**
@@ -43,7 +44,7 @@ protected:
 	ESwapType SwapType = ESwapType::None;
 	FBIMKey NodeParentPresetID;
 	FBIMKey NodePresetIDToSwap;
-	int32 CurrentNodeForSwap = INDEX_NONE;
+	FBIMEditorNodeIDType CurrentNodeForSwap;
 	EToolMode SwapSelectionToolMode = EToolMode::VE_NONE;
 	FBIMKey SwapSelectionPresetID;
 	EBIMValueScope SwapScope = EBIMValueScope::None;
@@ -71,7 +72,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateAssembliesListForCurrentToolMode();
 
-	void CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, int32 NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType);
+	void CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType);
 	void CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FBIMKey& PresetID);
 	bool IsPresetAvailableForSearch(const FBIMKey& PresetKey);
 	void ResetSearchBox();

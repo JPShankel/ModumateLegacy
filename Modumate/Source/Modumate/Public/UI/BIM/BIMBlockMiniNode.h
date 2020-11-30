@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "BIMKernel/Presets/BIMPresetEditorNode.h"
 #include "BIMBlockMiniNode.generated.h"
 
 /**
@@ -39,9 +40,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
 	float AttachmentOffset = 16.f;
 
-	int32 ParentID = INDEX_NONE;
+	FBIMEditorNodeIDType ParentID;
 
-	void BuildMiniNode(class UBIMDesigner* OuterBIMDesigner, int32 NewParentID, int32 NumberOfNodes);
+	void BuildMiniNode(class UBIMDesigner* OuterBIMDesigner, const FBIMEditorNodeIDType& NewParentID, int32 NumberOfNodes);
 
 	UFUNCTION()
 	void OnMainButtonReleased();

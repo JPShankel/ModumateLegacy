@@ -41,7 +41,7 @@ protected:
 	FText ItemDisplayName; // Display name, user-facing
 	EToolMode ToolMode = EToolMode::VE_NONE;
 	EComponentListItemType ItemType = EComponentListItemType::None;
-	int32 BIMInstanceID = INDEX_NONE;
+	FBIMEditorNodeIDType BIMInstanceID;
 	bool bIsNonAssemblyObjectSelectItem = false;
 	EBIMValueScope SwapScope = EBIMValueScope::None;
 	FBIMNameType SwapNameType = NAME_None;
