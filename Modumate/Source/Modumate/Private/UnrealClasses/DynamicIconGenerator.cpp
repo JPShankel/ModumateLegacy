@@ -173,6 +173,8 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 	case EBIMValueScope::Dimension: // Dimension icon is a static material, skip render capture
 		OutMaterial = IconDimensionMaterial;
 		return true;
+	case EBIMValueScope::Pattern:
+		return SetIconFromTextureAsset(PresetID, OutMaterial);
 	}
 
 	// The following presets need render capture for icon
@@ -667,6 +669,19 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, false);
 	IconDynamicMeshActor->Mesh->SetVisibility(false);
 	return true;
+}
+
+bool ADynamicIconGenerator::SetIconFromTextureAsset(const FBIMKey& PresetID, UMaterialInterface*& OutMaterial)
+{
+	const FStaticIconTexture* staticIcon = Gamemode->ObjectDatabase->GetStaticIconTextureByKey(PresetID);
+	if (staticIcon != nullptr && staticIcon->IsValid())
+	{
+		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
+		dynMat->SetTextureParameterValue(MaterialIconTextureParamName, staticIcon->Texture.Get());
+		OutMaterial = dynMat;
+		return true;
+	}
+	return false;
 }
 
 bool ADynamicIconGenerator::SetIconMeshForRawMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* InRenderTarget)

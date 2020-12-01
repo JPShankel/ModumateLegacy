@@ -286,24 +286,6 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 		}
 	}
 
-#if 0
-	TArray<int32> embeddedNodeIds;
-	Node->NodesEmbeddedInMe(embeddedNodeIds);
-	for (const auto& curEmbeddedID : embeddedNodeIds)
-	{
-		UBIMBlockDropdownPreset* newDropdown = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockDropdownPreset>(BIMBlockDropdownPresetClass);
-		if (newDropdown)
-		{
-			FVector2D dropDownOffset = FVector2D::ZeroVector;
-			dropDownOffset.Y += ExpandedImageSize;
-			dropDownOffset.Y += (FormItemSize * VerticalBoxProperties->GetAllChildren().Num());
-			
-			newDropdown->BuildDropdownFromProperty(ParentBIMDesigner, this, curEmbeddedID, ID, dropDownOffset);
-			VerticalBoxProperties->AddChildToVerticalBox(newDropdown);
-		}
-	}
-#endif
-
 	// Additional panel for this node if it is part of rigged assembly
 	if (bNodeHasSlotPart)
 	{

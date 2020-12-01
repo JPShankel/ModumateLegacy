@@ -162,6 +162,7 @@ namespace BIMPropertyNames
 	const FBIMNameType Comments = TEXT("Comments");
 	const FBIMNameType ConceptualSizeY = TEXT("ConceptualSizeY");
 	const FBIMNameType Configuration = TEXT("Configuration");
+	const FBIMNameType CraftingIconAssetFilePath = TEXT("CraftingIconAssetFilePath");
 	const FBIMNameType Depth = TEXT("Depth");
 	const FBIMNameType Diameter = TEXT("Diameter");
 	const FBIMNameType DimensionSetComments = TEXT("DimensionSetComments");

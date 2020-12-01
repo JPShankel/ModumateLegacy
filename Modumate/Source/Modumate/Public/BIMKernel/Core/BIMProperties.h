@@ -82,6 +82,7 @@ namespace BIMPropertyNames
 	extern const FBIMNameType Comments;
 	extern const FBIMNameType ConceptualSizeY;
 	extern const FBIMNameType Configuration;
+	extern const FBIMNameType CraftingIconAssetFilePath;
 	extern const FBIMNameType Depth;
 	extern const FBIMNameType Diameter;
 	extern const FBIMNameType DimensionSetComments;

@@ -599,7 +599,7 @@ void UBIMDesigner::AutoArrangeNodes()
 				TArray<FBIMEditorNodeIDType> rawChildrenIDs; TArray<FBIMEditorNodeIDType> childrenIDs;
 				instPtr->GatherChildrenInOrder(rawChildrenIDs);
 
-				// Only check nodes that has widgets (embedded nodes don't have widgets)
+				// Only check nodes that has widgets
 				for (auto curID : rawChildrenIDs)
 				{
 					if (IdToNodeMap.FindRef(curID))

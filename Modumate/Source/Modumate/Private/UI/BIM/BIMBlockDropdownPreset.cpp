@@ -44,7 +44,7 @@ void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 {
 	OwnerNode->UpdateNodeSwitchState(ENodeWidgetSwitchState::PendingSwap);
 	FBIMKey ownerNodePresetID;
-	// Dropdown preset is embedded into parent node, it should always have a parentPresetID
+	// Dropdown changes a property of its owner node, it should always have an ID from its owner
 	if (ensureAlways(OwnerNode->ID != BIM_ID_NONE))
 	{
 		ownerNodePresetID = ParentBIMDesigner->GetPresetID(OwnerNode->ID);

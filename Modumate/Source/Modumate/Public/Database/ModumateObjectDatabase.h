@@ -28,6 +28,7 @@ private:
 	void AddArchitecturalMesh(const FBIMKey& Key, const FString& Name, const FString& InNamedParameters, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath);
 	void AddSimpleMesh(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 	void AddCustomColor(const FBIMKey& Key, const FString& Name, const FString& HexValue);
+	void AddStaticIconTexture(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 
 	FPresetManager PresetManager;
 

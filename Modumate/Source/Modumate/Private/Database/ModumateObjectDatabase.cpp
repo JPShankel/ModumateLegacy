@@ -123,6 +123,25 @@ void FModumateDatabase::AddCustomColor(const FBIMKey& Key, const FString& Name, 
 	NamedColors.AddData(MoveTemp(namedColor));
 }
 
+void FModumateDatabase::AddStaticIconTexture(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath)
+{
+	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
+	{
+		return;
+	}
+
+	FStaticIconTexture staticTexture;
+
+	staticTexture.Key = Key;
+	staticTexture.DisplayName = FText::FromString(Name);
+	staticTexture.Texture = Cast<UTexture2D>(AssetPath.TryLoad());
+	if (staticTexture.Texture.IsValid())
+	{
+		staticTexture.Texture->AddToRoot();
+		StaticIconTextures.AddData(staticTexture);
+	}
+}
+
 /*
 This function is in development pending a complete data import/access plan
 In the meantime, we read a manifest of CSV files and look for expected presets to populate tools
@@ -290,6 +309,17 @@ void FModumateDatabase::ReadPresetData()
 		FLayerPattern newPattern;
 		newPattern.InitFromCraftingPreset(Preset);
 		Patterns.AddData(newPattern);
+
+		FString assetPath;
+		Preset.TryGetProperty(BIMPropertyNames::CraftingIconAssetFilePath, assetPath);
+		if (assetPath.Len() > 0)
+		{
+			FString iconName;
+			if (Preset.TryGetProperty(BIMPropertyNames::Name, iconName))
+			{
+				AddStaticIconTexture(Preset.PresetID, iconName, assetPath);
+			}
+		}
 	};
 
 	/*
@@ -549,7 +579,7 @@ const Modumate::FRoomConfiguration * FModumateDatabase::GetRoomConfigByKey(const
 	return RoomConfigurations.GetData(Key);
 }
 
-const FStaticIconTexture * FModumateDatabase::GetStaticIconTextureByKey(const FBIMKey& Key) const
+const FStaticIconTexture* FModumateDatabase::GetStaticIconTextureByKey(const FBIMKey& Key) const
 {
 	return StaticIconTextures.GetData(Key);
 }
