@@ -151,6 +151,12 @@ FVector FLayerGeomDef::Deproject2DPoint(const FVector2D& Point2D, bool bSideA) c
 		(bSideA ? FVector::ZeroVector : (Thickness * Normal));
 }
 
+FVector FLayerGeomDef::ProjectToPlane(const FVector& Point, bool bSideA) const
+{
+	FVector PointDefiningPlane = bSideA ? PointsA[0] : PointsB[0];
+	return Point + ((PointDefiningPlane | Normal) - (Point | Normal)) * Normal;
+}
+
 bool FLayerGeomDef::CachePoints2D()
 {
 	// Simply project the 3D layer pairs into 2D for triangulation

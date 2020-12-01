@@ -23,6 +23,7 @@
 namespace Modumate
 {
 	using Vec2 = FVector2D;
+	using DVec2 = FVector2d;  // Double
 
 	FModumateClippingTriangles::FModumateClippingTriangles(const FModumateObjectInstance& CutPlane)
 	{
@@ -189,14 +190,14 @@ namespace Modumate
 	namespace
 	{
 		// Solve a.v1 + b.v2 = v3.
-		FVector2D Intersect2V(const FVector2D& v1, const FVector2D& v2, const FVector2D& v3)
+		DVec2 Intersect2V(const FVector2D& v1, const FVector2D& v2, const FVector2D& v3)
 		{
-			float d = v1 ^ v2;
+			double d = DVec2(v1).Cross(v2);
 			if (d == 0)
 			{
-				return { 0.0f, 0.0f };
+				return { -1.0, -1.0 };
 			}
-			return { (v3.X * v2.Y - v2.X * v3.Y) / d, (v3.Y * v1.X - v1.Y * v3.X) / d };
+			return { (double(v3.X) * v2.Y - double(v2.X) * v3.Y) / d, (double(v3.Y) * v1.X - double(v1.Y) * v3.X) / d };
 		}
 
 		inline bool LineBoxIntersection(const FEdge& Line, const FBox2D& Box)
@@ -299,28 +300,28 @@ namespace Modumate
 			vecEps.Z = vecEps.Size() / dir.Size() * delta3d.Z;
 
 			// Intersect line with all triangle sides.
-			Vec2 t1Alpha = Intersect2V(dir, -u, q - a);
-			Vec2 t2Beta = Intersect2V(dir, -v, q - a);
-			Vec2 t3Gamma = Intersect2V(dir, u - v, Vec2(occluder.Vertices[1]) - a);
+			DVec2 t1Alpha = Intersect2V(dir, -u, q - a);
+			DVec2 t2Beta = Intersect2V(dir, -v, q - a);
+			DVec2 t3Gamma = Intersect2V(dir, u - v, Vec2(occluder.Vertices[1]) - a);
 
-			float t1 = t1Alpha.X;
-			float t2 = t2Beta.X;
-			float t3 = t3Gamma.X;
-			bool bIntersectU = t1Alpha.Y > 0.0f && t1Alpha.Y < 1.0f && t1 > 0.0f && t1 < 1.0f;
-			bool bIntersectV = t2Beta.Y > 0.0f && t2Beta.Y < 1.0f && t2 > 0.0f && t2 < 1.0f;
-			bool bIntersectW = t3Gamma.Y > 0.0f && t3Gamma.Y < 1.0f && t3 > 0.0f && t3 < 1.0f;
+			double t1 = t1Alpha.X;
+			double t2 = t2Beta.X;
+			double t3 = t3Gamma.X;
+			bool bIntersectU = t1Alpha.Y >= 0.0 && t1Alpha.Y <= 1.0 && t1 > 0.0 && t1 < 1.0;
+			bool bIntersectV = t2Beta.Y >= 0.0 && t2Beta.Y <= 1.0 && t2 > 0.0 && t2 < 1.0;
+			bool bIntersectW = t3Gamma.Y >= 0.0 && t3Gamma.Y <= 1.0 && t3 > 0.0 && t3 < 1.0;
 
 			if (!bIntersectU && !bIntersectV && !bIntersectW)
 			{   // No line-segment/triangle intersections.
-				Vec2 alphaBeta = Intersect2V(u, v, a - q + 0.5f * dir);  // Mid-line barycentrics.
+				DVec2 alphaBeta = Intersect2V(u, v, a - q + 0.5f * dir);  // Mid-line barycentrics.
 
-				if (alphaBeta.X > 0.0f && alphaBeta.X < 1.0f && alphaBeta.Y > 0.0f && alphaBeta.Y < 1.0f
-					&& (alphaBeta.X + alphaBeta.Y) < 1.0f)
+				if (alphaBeta.X > 0.0 && alphaBeta.X < 1.0 && alphaBeta.Y > 0.0 && alphaBeta.Y < 1.0
+					&& (alphaBeta.X + alphaBeta.Y) < 1.0)
 				{
 					// Line segment entirely within triangle.
-					float triangleZ = (1.0f - alphaBeta.X - alphaBeta.Y) * occluder.Vertices[0].Z
+					double triangleZ = (1.0 - alphaBeta.X - alphaBeta.Y) * occluder.Vertices[0].Z
 						+ alphaBeta.X * occluder.Vertices[1].Z + alphaBeta.Y * occluder.Vertices[2].Z;
-					if ((viewLine.Vertex[0].Z + viewLine.Vertex[1].Z) / 2.0f >= triangleZ)
+					if ((viewLine.Vertex[0].Z + viewLine.Vertex[1].Z) / 2.0 >= triangleZ)
 					{
 						// Entire line hidden so drop.
 						return false;
@@ -331,7 +332,7 @@ namespace Modumate
 			else if (bIntersectU)
 			{
 				FVector intersect = viewLine.Vertex[0] + t1 * (viewLine.Vertex[1] - viewLine.Vertex[0]);
-				float triangleZ = (1.0f - t1Alpha.Y) * occluder.Vertices[0].Z + t1Alpha.Y * occluder.Vertices[1].Z;
+				double triangleZ = (1.0f - t1Alpha.Y) * occluder.Vertices[0].Z + t1Alpha.Y * occluder.Vertices[1].Z;
 				if (intersect.Z > triangleZ)
 				{   // Clip.
 					if (((a - q) ^ u) > 0.0f)
@@ -355,7 +356,7 @@ namespace Modumate
 			else if (bIntersectV)
 			{
 				FVector intersect = viewLine.Vertex[0] + t2 * (viewLine.Vertex[1] - viewLine.Vertex[0]);
-				float triangleZ = (1.0f - t2Beta.Y) * occluder.Vertices[0].Z + t2Beta.Y * occluder.Vertices[2].Z;
+				double triangleZ = (1.0f - t2Beta.Y) * occluder.Vertices[0].Z + t2Beta.Y * occluder.Vertices[2].Z;
 				if (intersect.Z > triangleZ)
 				{   // Clip.
 					if (((a - q) ^ v) < 0.0f)
@@ -379,7 +380,7 @@ namespace Modumate
 			else if (bIntersectW)
 			{
 				FVector intersect = viewLine.Vertex[0] + t3 * (viewLine.Vertex[1] - viewLine.Vertex[0]);
-				float triangleZ = (1.0f - t3Gamma.Y) * occluder.Vertices[1].Z + t3Gamma.Y * occluder.Vertices[2].Z;
+				double triangleZ = (1.0f - t3Gamma.Y) * occluder.Vertices[1].Z + t3Gamma.Y * occluder.Vertices[2].Z;
 				if (intersect.Z > triangleZ)
 				{   // Clip.
 					if ((a - Vec2(occluder.Vertices[1]) ^ (v - u)) > 0.0f)

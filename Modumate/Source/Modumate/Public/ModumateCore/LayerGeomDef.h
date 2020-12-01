@@ -73,6 +73,7 @@ struct MODUMATE_API FLayerGeomDef
 	FVector2D ProjectPoint2D(const FVector& Point3D) const;
 	FVector2D ProjectPoint2DSnapped(const FVector& Point3D, float Tolerance = KINDA_SMALL_NUMBER) const;
 	FVector Deproject2DPoint(const FVector2D& Point2D, bool bSideA) const;
+	FVector ProjectToPlane(const FVector& Point, bool bSideA) const;
 	bool CachePoints2D();
 
 	static void AppendTriangles(const TArray<FVector>& Verts, const TArray<int32>& SourceTriIndices,

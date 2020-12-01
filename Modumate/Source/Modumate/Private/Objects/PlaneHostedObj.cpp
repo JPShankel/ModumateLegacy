@@ -588,15 +588,15 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 
 		auto addOpeningLines = [&backgroundLines](const FLayerGeomDef& layer, FVector parentLocation, bool bSideA)
 		{
-			const auto& holes = layer.CachedHoles2D;
+			const auto& holes = layer.Holes3D;
 			for (const auto& hole: holes)
 			{
 				int32 n = hole.Points.Num();
 				for (int32 i = 0; i < n; ++i)
 				{
-					FVector v1 { layer.Deproject2DPoint(hole.Points[i], bSideA) + parentLocation};
-					FVector v2 { layer.Deproject2DPoint(hole.Points[(i + 1) % n], bSideA) + parentLocation};
-					FEdge line(v1, v2);
+					FVector v1 = layer.ProjectToPlane(hole.Points[i], bSideA);
+					FVector v2 = layer.ProjectToPlane(hole.Points[(i + 1) % n], bSideA);
+					FEdge line(v1 + parentLocation, v2 + parentLocation);
 					backgroundLines.Emplace(line, Modumate::FModumateLayerType::kOpeningSystemBeyond);
 				}
 			}
