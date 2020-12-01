@@ -3,6 +3,7 @@
 #include "Database/ModumateObjectDatabase.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "ModumateCore/ExpressionEvaluator.h"
+#include "ModumateCore/ModumateUserSettings.h"
 #include "Misc/FileHelper.h"
 #include "Serialization/Csv/CsvParser.h"
 
@@ -11,7 +12,10 @@ FModumateDatabase::FModumateDatabase() {}
 
 FModumateDatabase::~FModumateDatabase() {}
 
-void FModumateDatabase::Init() {}
+void FModumateDatabase::Init() 
+{
+	ManifestDirectoryPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMData");
+}
 
 void FModumateDatabase::Shutdown() {}
 
@@ -123,6 +127,95 @@ void FModumateDatabase::AddCustomColor(const FBIMKey& Key, const FString& Name, 
 	NamedColors.AddData(MoveTemp(namedColor));
 }
 
+
+/*
+* TODO: Refactor for FArchive binary format
+*/
+static constexpr TCHAR* BIMCacheRecordField = TEXT("BIMCacheRecord");
+static constexpr TCHAR* BIMManifestFileName = TEXT("BIMManifest.txt");
+
+bool FModumateDatabase::ReadBIMCache(const FString& CacheFile, FModumateBIMCacheRecord& OutCache)
+{
+	FString cacheFile = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), CacheFile);
+	if (!FPaths::FileExists(cacheFile))
+	{
+		return false;
+	}
+
+	// In development, automatically update the cache if the source data is younger
+#if WITH_EDITOR
+	FString manifestFilePath = FPaths::Combine(*ManifestDirectoryPath, BIMManifestFileName);
+	FDateTime cacheDate = IFileManager::Get().GetTimeStamp(*cacheFile);
+
+	FDateTime manifestDate = IFileManager::Get().GetTimeStamp(*manifestFilePath);
+
+	if (manifestDate > cacheDate)
+	{
+		return false;
+	}
+
+	TArray<FString> fileList;
+	if (FFileHelper::LoadFileToStringArray(fileList, *manifestFilePath))
+	{
+		for (auto& file : fileList)
+		{
+			FString bimFile = ManifestDirectoryPath / *file;
+			FDateTime bimDate = IFileManager::Get().GetTimeStamp(*bimFile);
+			if (bimDate > cacheDate)
+			{
+				return false;
+			}
+		}
+	}
+#endif
+
+	FString jsonString;
+	if (!FFileHelper::LoadFileToString(jsonString, *cacheFile))
+	{
+		return false;
+	}
+
+	auto JsonReader = TJsonReaderFactory<>::Create(jsonString);
+
+	TSharedPtr<FJsonObject> FileJson;
+	if (!FJsonSerializer::Deserialize(JsonReader, FileJson) || !FileJson.IsValid())
+	{
+		return false;
+	}
+
+	const TSharedPtr<FJsonObject>* cacheOb;
+	if (!FileJson->TryGetObjectField(BIMCacheRecordField, cacheOb))
+	{
+		return false;
+	}
+
+	if (!FJsonObjectConverter::JsonObjectToUStruct<FModumateBIMCacheRecord>(cacheOb->ToSharedRef(), &OutCache))
+	{
+		return false;
+	}
+
+	if (OutCache.Version < BIMCacheCurrentVersion)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool FModumateDatabase::WriteBIMCache(const FString& CacheFile, const FModumateBIMCacheRecord& InCache) const
+{
+	FString cacheFile = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), CacheFile);
+
+	TSharedPtr<FJsonObject> jsonOb = MakeShared<FJsonObject>();
+	TSharedPtr<FJsonObject> cacheOb = FJsonObjectConverter::UStructToJsonObject<FModumateBIMCacheRecord>(InCache);
+	jsonOb->SetObjectField(BIMCacheRecordField, cacheOb);
+
+	FString ProjectJsonString;
+	TSharedRef<FPrettyJsonStringWriter> JsonStringWriter = FPrettyJsonStringWriterFactory::Create(&ProjectJsonString);
+
+	return FJsonSerializer::Serialize(jsonOb.ToSharedRef(), JsonStringWriter) && FFileHelper::SaveStringToFile(ProjectJsonString, *cacheFile);
+}
+
 void FModumateDatabase::AddStaticIconTexture(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
@@ -148,12 +241,10 @@ In the meantime, we read a manifest of CSV files and look for expected presets t
 */
 void FModumateDatabase::ReadPresetData()
 {
-	FString manifestPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMData");
-
 	// Parts may have unique values like "JambLeftSizeX" or "PeepholeDistanceZ"
 	// If a part is expected to have one of these values but doesn't, we provide defaults here
 	TArray<FString> partDefaultVals;
-	if (FFileHelper::LoadFileToStringArray(partDefaultVals, *(manifestPath / TEXT("DefaultPartParams.txt"))))
+	if (FFileHelper::LoadFileToStringArray(partDefaultVals, *(ManifestDirectoryPath / TEXT("DefaultPartParams.txt"))))
 	{
 		FBIMPartSlotSpec::DefaultNamedParameterMap.Empty();
 		for (auto& partValStr : partDefaultVals)
@@ -168,16 +259,28 @@ void FModumateDatabase::ReadPresetData()
 			}
 		}
 	}
-
-	TArray<FString> errors;
-	TArray<FBIMKey> starters;
-	if (!ensureAlways(PresetManager.CraftingNodePresets.LoadCSVManifest(manifestPath, TEXT("BIMManifest.txt"), starters, errors) == EBIMResult::Success))
+	const static FString BIMCacheFile = TEXT("_bimCache.json");
+	FModumateBIMCacheRecord bimCacheRecord;
+	if (!ReadBIMCache(BIMCacheFile, bimCacheRecord))
 	{
-		return;
+		TArray<FString> errors;
+		TArray<FBIMKey> starters;
+		if (!ensureAlways(PresetManager.CraftingNodePresets.LoadCSVManifest(*ManifestDirectoryPath, BIMManifestFileName, starters, errors) == EBIMResult::Success))
+		{
+			return;
+		}
+		bimCacheRecord.Presets = PresetManager.CraftingNodePresets;
+		bimCacheRecord.Starters = starters;
+		WriteBIMCache(BIMCacheFile, bimCacheRecord);
+	}
+	else
+	{
+		PresetManager.CraftingNodePresets = bimCacheRecord.Presets;
+		PresetManager.CraftingNodePresets.PostLoad();
 	}
 
 	FString NCPString;
-	FString NCPPath = manifestPath / TEXT("NCPTable.csv");
+	FString NCPPath = ManifestDirectoryPath / TEXT("NCPTable.csv");
 	if (!ensureAlways(FFileHelper::LoadFileToString(NCPString, *NCPPath)))
 	{
 		return;
@@ -513,7 +616,7 @@ void FModumateDatabase::ReadPresetData()
 		switch (*ot)
 		{
 			case EObjectType::OTFurniture:
-				starters.Add(kvp.Key);
+				bimCacheRecord.Starters.Add(kvp.Key);
 			break;
 		}
 	}
@@ -521,7 +624,7 @@ void FModumateDatabase::ReadPresetData()
 	/*
 	Now build every preset that was returned in 'starters' by the manifest parse and add it to the project
 	*/
-	for (auto &starter : starters)
+	for (auto &starter : bimCacheRecord.Starters)
 	{
 		const FBIMPresetInstance* preset = PresetManager.CraftingNodePresets.Presets.Find(starter);
 

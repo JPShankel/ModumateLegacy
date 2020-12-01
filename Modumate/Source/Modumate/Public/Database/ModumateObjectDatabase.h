@@ -13,6 +13,25 @@
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
 
+#include "ModumateObjectDatabase.generated.h"
+
+static constexpr int32 BIMCacheCurrentVersion = 1;
+
+USTRUCT()
+struct FModumateBIMCacheRecord
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	int32 Version = BIMCacheCurrentVersion;
+
+	UPROPERTY()
+	FBIMPresetCollection Presets;
+
+	UPROPERTY()
+	TArray<FBIMKey> Starters;
+};
+
 class MODUMATE_API FModumateDatabase
 {
 private:
@@ -31,6 +50,8 @@ private:
 	void AddStaticIconTexture(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 
 	FPresetManager PresetManager;
+
+	FString ManifestDirectoryPath;
 
 public:
 
@@ -56,6 +77,9 @@ public:
 	const FLayerPattern* GetLayerByKey(const FBIMKey& Key) const;
 
 	TArray<FString> GetDebugInfo();
+
+	bool ReadBIMCache(const FString& CacheFile, FModumateBIMCacheRecord& OutCache);
+	bool WriteBIMCache(const FString& CacheFile, const FModumateBIMCacheRecord& InCache) const;
 
 	TModumateDataCollection<Modumate::FRoomConfiguration> RoomConfigurations;
 };
