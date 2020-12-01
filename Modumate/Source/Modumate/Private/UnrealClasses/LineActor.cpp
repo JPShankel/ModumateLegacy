@@ -15,18 +15,10 @@
 // Sets default values
 ALineActor::ALineActor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, Tris({ 2, 1, 0, 3, 2, 0 })
 	, Color(FColor::Black)
 	, Thickness(1.0f)
 {
-	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
-	RootComponent = ProceduralMesh;
-	ProceduralMesh->bUseAsyncCooking = true;
-	ProceduralMesh->SetCastShadow(false);
-	PrimaryActorTick.bCanEverTick = true;
-
-	Uvs.Init(FVector2D(), 4);
-	Colors.Init(Color, 4);
+	SetMobility(EComponentMobility::Movable);
 }
 
 // Called when the game starts or when spawned
@@ -39,9 +31,6 @@ void ALineActor::BeginPlay()
 		EMPlayerState = playerController->EMPlayerState;
 		EMGameMode = EMPlayerState->GetEditModelGameMode();
 		EMPlayerHUD = playerController->GetEditModelHUD();
-		EMGameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-
-		CameraManager = playerController->PlayerCameraManager;
 
 		SetIsHUD(bIsHUD);
 	}
@@ -57,127 +46,54 @@ void ALineActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-bool ALineActor::CalculateVertices()
-{
-	auto *playerController = GetWorld()->GetFirstPlayerController();
-	if (playerController == nullptr || CameraManager == nullptr)
-	{
-		return false;
-	}
-		
-	FVector camOrigin = CameraManager->GetCameraLocation();
-	FVector quadOffsetDirection = FVector::CrossProduct(Point2 - Point1, camOrigin - Point1).GetSafeNormal();
-	if (quadOffsetDirection.IsZero())
-	{
-		return false;
-	}
-
-
-	FVector direction = (Point2 - Point1).GetSafeNormal();
-	FVector normal = FVector::CrossProduct(direction, quadOffsetDirection).GetSafeNormal();
-
-	if (FVector::DotProduct(normal, camOrigin) < 0)
-	{
-		normal *= -1.0f;
-	}
-
-	FVector offset = 0.5f * Thickness * quadOffsetDirection;
-
-	// make a draft set of points to project on to the screen
-	Vertices = {
-		Point1 - offset,
-		Point1 + offset,
-		Point2 + offset,
-		Point2 - offset
-	};
-
-	bool bOutBehindCamera;
-	ScreenVertices.Reset();
-	for (FVector vertex : Vertices)
-	{
-		FVector2D screenVertex;
-		UModumateFunctionLibrary::ProjectWorldToScreenBidirectional(playerController, vertex, screenVertex, bOutBehindCamera, false);
-		ScreenVertices.Add(screenVertex);
-	}
-
-	float p1Size = FMath::Clamp((ScreenVertices[1] - ScreenVertices[0]).Size(), KINDA_SMALL_NUMBER, 1000.0f);
-	float p2Size = FMath::Clamp((ScreenVertices[3] - ScreenVertices[2]).Size(), KINDA_SMALL_NUMBER, 1000.0f);
-
-	// calculate the difference between the desired screen-space scale (Thickness) and the calculated screen-space scale
-	float p1Scale = Thickness / p1Size;
-	float p2Scale = Thickness / p2Size;
-
-	// update the points based on the calculated scale
-	Vertices = {
-		Point1 - (offset * p1Scale),
-		Point1 + (offset * p1Scale),
-		Point2 + (offset * p2Scale),
-		Point2 - (offset * p2Scale)
-	};
-		
-	Normals.Init(normal, 4);
-
-	Tangents.Init(FProcMeshTangent(direction.X, direction.Y, direction.Z), 4);
-
-	return true;
-}
-
 void ALineActor::UpdateColor()
 {
-	Colors.Init(Color, 4);
+	if (auto meshComp = GetStaticMeshComponent())
+	{
+		meshComp->SetCustomPrimitiveDataVector4(0, FVector4(Color.R, Color.G, Color.B, Color.A) / 255.0f);
+	}
 }
 
 bool ALineActor::MakeGeometry()
 {
-	ProceduralMesh->ClearAllMeshSections();
-
-	if (!CalculateVertices())
+	if (auto meshComp = GetStaticMeshComponent())
 	{
-		return false;
+		if (!EMGameMode)
+		{
+			return false;
+		}
+
+		meshComp->SetStaticMesh(EMGameMode->LineMesh);
+		FArchitecturalMaterial materialData;
+		materialData.EngineMaterial = EMGameMode->LineMaterial;
+		meshComp->SetMaterial(0, materialData.EngineMaterial.Get());
+		meshComp->SetCastShadow(false);
+
+		// TODO: without this line, there is a flickering issue where the cpu occlusion 
+		// is conflicting with material rendering.  With a large bounds scale, the cpu occlusion
+		// will not hide any of the line actors.
+		meshComp->SetBoundsScale(10000.0f);
 	}
+
+	UpdateTransform();
 	UpdateColor();
-
-	ProceduralMesh->CreateMeshSection_LinearColor(0, Vertices, Tris, Normals, Uvs, Colors, Tangents, false);
-
-	FArchitecturalMaterial materialData;
-	materialData.EngineMaterial = EMGameMode ? EMGameMode->LineMaterial : nullptr;
-	ProceduralMesh->SetMaterial(0, materialData.EngineMaterial.Get());
 
 	return true;
 }
 
-bool ALineActor::UpdateGeometry()
+bool ALineActor::UpdateTransform()
 {
-	if (!CalculateVertices())
-	{
-		return false;
-	}
-	UpdateColor();
+	SetActorLocation((Point1 + Point2) / 2.0f);
 
-	ProceduralMesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, Uvs, Colors, Tangents);
+	FVector direction = (Point2 - Point1).GetSafeNormal();
+	SetActorRotation(FRotationMatrix::MakeFromX(direction).ToQuat());
+
+	float size = (Point2 - Point1).Size();
+	// this constant needs to be applied to the thickness here because it was
+	// not effective in the material
+	SetActorScale3D(FVector(size, Thickness * 0.0005f, 1.0f));
 
 	return true;
-}
-
-// Called every frame
-void ALineActor::Tick(float DeltaTime)
-{
-	// TODO: conditionally update geometry based on the camera changing (ex vertex actor)
-	Super::Tick(DeltaTime);
-	if (!bIsHUD)
-	{
-		if (bCreate)
-		{
-			bLastRenderValid = MakeGeometry();
-			bCreate = false;
-		}
-		else
-		{
-			bLastRenderValid = UpdateGeometry();
-		}
-
-		SetActorHiddenInGame(!(bVisibleInApp && bLastRenderValid));
-	}
 }
 
 void ALineActor::SetIsHUD(bool bRenderScreenSpace)
@@ -188,20 +104,19 @@ void ALineActor::SetIsHUD(bool bRenderScreenSpace)
 		{
 			EMPlayerHUD->All3DLineActors.RemoveSingleSwap(this, false);
 		}
-		bCreate = true;
 		bIsHUD = bRenderScreenSpace;
+		MakeGeometry();
 	}
 	else
 	{
 		EMPlayerHUD->All3DLineActors.Add(this);
-		ProceduralMesh->ClearAllMeshSections();
 	}
 }
 
 void ALineActor::SetVisibilityInApp(bool bVisible)
 {
 	bVisibleInApp = bVisible;
-	SetActorHiddenInGame(!(bVisibleInApp && bLastRenderValid));
+	SetActorHiddenInGame(!bVisibleInApp);
 }
 
 void ALineActor::UpdateVisuals(bool bConnected, float ThicknessMultiplier, FColor NewColor)
@@ -218,15 +133,10 @@ void ALineActor::UpdateVisuals(bool bConnected, float ThicknessMultiplier, FColo
 	if (bUpdateThickness)
 	{
 		Thickness = newThickness;
-		if (!CalculateVertices())
+		if (!bIsHUD)
 		{
-			return;
+			UpdateTransform();
 		}
-	}
-
-	if (bUpdateThickness || bUpdateColor)
-	{
-		ProceduralMesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, Uvs, Colors, Tangents);
 	}
 }
 

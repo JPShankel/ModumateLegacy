@@ -42,6 +42,7 @@ bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 
 		LineActor->Point1 = vertexStart->Position;
 		LineActor->Point2 = vertexEnd->Position;
+		LineActor->UpdateTransform();
 
 		bool bGrouped = (edge->GroupIDs.Num() > 0);
 		BaseColor = bGrouped ? BaseGroupedColor : BaseDefaultColor;

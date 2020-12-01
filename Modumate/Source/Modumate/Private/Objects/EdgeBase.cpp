@@ -48,6 +48,7 @@ AActor *FMOIEdgeImplBase::CreateActor(UWorld *world, const FVector &loc, const F
 	World = world;
 	LineActor = world->SpawnActor<ALineActor>();
 	LineActor->SetIsHUD(false);
+	LineActor->MakeGeometry();
 	LineActor->UpdateVisuals(false);
 	return LineActor.Get();
 }

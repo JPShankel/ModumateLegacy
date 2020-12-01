@@ -58,6 +58,7 @@ bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelta
 		CachedDeprojectedEnd = endVertexObj->GetObjectLocation();
 		LineActor->Point1 = CachedDeprojectedStart + offsetDelta;
 		LineActor->Point2 = CachedDeprojectedEnd + offsetDelta;
+		LineActor->UpdateTransform();
 		break;
 	}
 	case EObjectDirtyFlags::Visuals:
