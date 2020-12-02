@@ -205,8 +205,12 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(PresetID);
 	if (preset != nullptr)
 	{
-		ComponentPresetListItem->MainText->ChangeText(preset->DisplayName);
-		Preset_Name->ChangeText(preset->DisplayName);
+		FText presetDisplayName;
+		if (Node->WorkingPresetCopy.TryGetProperty(BIMPropertyNames::Name, presetDisplayName))
+		{
+			ComponentPresetListItem->MainText->ChangeText(presetDisplayName);
+			Preset_Name->ChangeText(presetDisplayName);
+		}
 	}
 
 	if (Button_Debug)

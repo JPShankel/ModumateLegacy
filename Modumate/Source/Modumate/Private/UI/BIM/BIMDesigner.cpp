@@ -915,6 +915,13 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 		return false;
 	}
 
+	// Update its DisplayName from property
+	FText presetDisplayName;
+	if (node->WorkingPresetCopy.TryGetProperty(BIMPropertyNames::Name, presetDisplayName))
+	{
+		node->WorkingPresetCopy.DisplayName = presetDisplayName;
+	}
+
 	FBIMPresetInstance outPreset = node->WorkingPresetCopy;
 
 	if (SaveAs)
