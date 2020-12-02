@@ -29,7 +29,13 @@ namespace Modumate
 		kFfeOutline,
 		kFfeInteriorEdges,
 		kBeamColumnCut,
-		kBeamColumnBeyond
+		kBeamColumnBeyond,
+		kMullionCut,
+		kMullionBeyond,
+		kSystemPanelCut,
+		kSystemPanelBeyond,
+		kFinishCut,
+		kFinishBeyond
 	};
 
 }

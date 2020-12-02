@@ -14,24 +14,31 @@ const FModumateLayerType FModumateLineCorral::LayerTypeOrder[] =
 	FModumateLayerType::kSeparatorCutStructuralLayer,
 	FModumateLayerType::kBeamColumnCut,
 	FModumateLayerType::kOpeningSystemCutLine,
+	FModumateLayerType::kMullionCut,
+	FModumateLayerType::kSystemPanelCut,
 	FModumateLayerType::kCountertopCut,
 	FModumateLayerType::kCabinetCutCarcass,
 	FModumateLayerType::kCabinetCutAttachment,
 	FModumateLayerType::kSeparatorCutTrim,
+	FModumateLayerType::kFinishCut,
 	FModumateLayerType::kOpeningSystemOperatorLine,
 	FModumateLayerType::kOpeningSystemBeyond,
 	FModumateLayerType::kSeparatorBeyondModuleEdges,
 	FModumateLayerType::kSeparatorBeyondSurfaceEdges,
 	FModumateLayerType::kBeamColumnBeyond,
+	FModumateLayerType::kMullionBeyond,
+	FModumateLayerType::kSystemPanelBeyond,
 	FModumateLayerType::kCountertopBeyond,
 	FModumateLayerType::kCabinetBeyond,
 	FModumateLayerType::kCabinetBeyondBlockedByCountertop,
 	FModumateLayerType::kOpeningSystemBehind,
 	FModumateLayerType::kCabinetBehind,
+	FModumateLayerType::kFinishBeyond,
 	FModumateLayerType::kFfeOutline,
 	FModumateLayerType::kFfeInteriorEdges,
 	FModumateLayerType::kDefault
 };
+
 int FModumateLineCorral::LinePriorities[sizeof(LayerTypeOrder) / sizeof(FModumateLayerType)];
 TAtomic<int32> FModumateLineCorral::InitPriorities{ 0 };
 

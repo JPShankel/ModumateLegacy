@@ -597,7 +597,7 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 					FVector v1 = layer.ProjectToPlane(hole.Points[i], bSideA);
 					FVector v2 = layer.ProjectToPlane(hole.Points[(i + 1) % n], bSideA);
 					FEdge line(v1 + parentLocation, v2 + parentLocation);
-					backgroundLines.Emplace(line, Modumate::FModumateLayerType::kOpeningSystemBeyond);
+					backgroundLines.Emplace(line, Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges);
 				}
 			}
 

@@ -988,8 +988,6 @@ bool AEditModelPlayerController_CPP::OnCreateDwg()
 		return false;
 	}
 
-	EMPlayerState->ShowingFileDialog = true;
-
 	if (ToolIsInUse())
 	{
 		AbortUseTool();
@@ -1011,6 +1009,8 @@ bool AEditModelPlayerController_CPP::OnCreateDwg()
 			&dialogTitle);
 		return false;
 	}
+
+	EMPlayerState->ShowingFileDialog = true;
 
 	FString filename;
 	if (Modumate::PlatformFunctions::GetSaveFilename(filename, INDEX_DWGFILE))

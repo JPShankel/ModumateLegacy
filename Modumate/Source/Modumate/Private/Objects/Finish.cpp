@@ -310,8 +310,8 @@ void FMOIFinishImpl::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposit
 {
 	static const Modumate::Units::FThickness lineThickness = Modumate::Units::FThickness::Points(0.15f);
 	static const Modumate::FMColor lineColor(0.439f, 0.439f, 0.439f);  // Gray112
-	static const Modumate::FModumateLayerType dwgOuterType = Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges;
-	static const Modumate::FModumateLayerType dwgHoleType = Modumate::FModumateLayerType::kOpeningSystemBeyond;
+	static const Modumate::FModumateLayerType dwgOuterType = Modumate::FModumateLayerType::kFinishBeyond;
+	static const Modumate::FModumateLayerType dwgHoleType = Modumate::FModumateLayerType::kFinishBeyond;
 
 	const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(MOI->GetActor());
 	if (actor == nullptr)
