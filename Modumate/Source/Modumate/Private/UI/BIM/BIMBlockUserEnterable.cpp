@@ -33,7 +33,7 @@ void UBIMBlockUserEnterable::NativeConstruct()
 
 void UBIMBlockUserEnterable::OnEditableTextBoxCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	if (CommitMethod == ETextCommit::OnEnter)
+	if (CommitMethod == ETextCommit::OnEnter || CommitMethod == ETextCommit::OnUserMovedFocus)
 	{
 		ParentBIMDesigner->SetNodeProperty(NodeID, Scope, NameTpye, Text_Value->ModumateEditableTextBox->GetText().ToString());
 	}

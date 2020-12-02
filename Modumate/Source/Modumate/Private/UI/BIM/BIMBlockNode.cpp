@@ -74,6 +74,7 @@ void UBIMBlockNode::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 FReply UBIMBlockNode::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	FReply reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	bMouseButtonDownOnNode = true;
 	if (InMouseEvent.GetEffectingButton() == DragKey)
 	{
 		if (NodeCollapse && ComponentPresetListItem->GrabHandleImage->GetTickSpaceGeometry().IsUnderLocation(UWidgetLayoutLibrary::GetMousePositionOnPlatform()))
@@ -91,10 +92,11 @@ FReply UBIMBlockNode::NativeOnMouseButtonDown(const FGeometry& InGeometry, const
 FReply UBIMBlockNode::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	FReply reply = Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
-	if (InMouseEvent.GetEffectingButton() == ToggleCollapseKey && !DragTick)
+	if (InMouseEvent.GetEffectingButton() == ToggleCollapseKey && !DragTick && bMouseButtonDownOnNode == true)
 	{
 		ParentBIMDesigner->SetNodeAsSelected(ID);
 	}
+	bMouseButtonDownOnNode = false;
 	return reply;
 }
 

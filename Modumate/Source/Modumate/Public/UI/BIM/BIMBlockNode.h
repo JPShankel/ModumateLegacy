@@ -48,6 +48,7 @@ protected:
 	FVector2D LastMousePosition = FVector2D::ZeroVector;
 	bool DragReset = true;
 	FVector2D PreDragCanvasPosition = FVector2D::ZeroVector;
+	bool bMouseButtonDownOnNode = false;
 
 public:
 	// Size of node, should be constant regardless of dirty/collapse state
@@ -197,6 +198,7 @@ public:
 	void UpdateNodeSwitchState(ENodeWidgetSwitchState NewState);
 	void BeginDrag();
 	void SetNodeAsHighlighted(bool NewHighlight);
+	void ResetMouseButtonOnNode() { bMouseButtonDownOnNode = false; }
 
 	UFUNCTION(BlueprintPure)
 	FVector2D GetEstimatedNodeSize();

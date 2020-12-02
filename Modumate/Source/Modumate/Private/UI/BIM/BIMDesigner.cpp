@@ -299,9 +299,15 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 
 	bool bAssemblyHasPart = false;
 
-	// Remove old nodes
+	// Should clear focused widget since this function will clear all widgets in BIM Designer
+	FSlateApplication::Get().SetAllUserFocusToGameViewport();
+
+	// Remove and release old nodes
 	for (auto& curNodeWidget : BIMBlockNodes)
 	{
+		// If this node currently has mouse button down, we want to prevent it from 
+		// activating NativeOnMouseButtonUp when it is being reused.
+		curNodeWidget->ResetMouseButtonOnNode();
 		curNodeWidget->RemoveFromParent();
 		curNodeWidget->ReleaseNode();
 	}
