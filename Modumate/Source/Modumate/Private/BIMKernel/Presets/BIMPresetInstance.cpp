@@ -29,30 +29,9 @@ bool FBIMPresetInstance::Matches(const FBIMPresetInstance &OtherPreset) const
 		return false;
 	}
 
-	if (SlotConfigPresetID != OtherPreset.SlotConfigPresetID)
-	{
-		return false;
-	}
-
-	for (auto& ps : PartSlots)
-	{
-		if (!OtherPreset.PartSlots.Contains(ps))
-		{
-			return false;
-		}
-	}
-
 	if (ChildPresets.Num() != OtherPreset.ChildPresets.Num())
 	{
 		return false;
-	}
-
-	for (auto& cp : ChildPresets)
-	{
-		if (!OtherPreset.ChildPresets.Contains(cp))
-		{
-			return false;
-		}
 	}
 
 	if (ParentTagPaths.Num() != OtherPreset.ParentTagPaths.Num())
@@ -60,12 +39,9 @@ bool FBIMPresetInstance::Matches(const FBIMPresetInstance &OtherPreset) const
 		return false;
 	}
 
-	for (auto &ptp : ParentTagPaths)
+	if (SlotConfigPresetID != OtherPreset.SlotConfigPresetID)
 	{
-		if (!OtherPreset.ParentTagPaths.Contains(ptp))
-		{
-			return false;
-		}
+		return false;
 	}
 
 	if (MyTagPath != OtherPreset.MyTagPath)
@@ -76,6 +52,30 @@ bool FBIMPresetInstance::Matches(const FBIMPresetInstance &OtherPreset) const
 	if (!Properties.Matches(OtherPreset.Properties))
 	{
 		return false;
+	}
+
+	for (int32 i=0;i<PartSlots.Num();++i)
+	{
+		if (OtherPreset.PartSlots[i] != PartSlots[i])
+		{
+			return false;
+		}
+	}
+
+	for (auto& cp : ChildPresets)
+	{
+		if (!OtherPreset.ChildPresets.Contains(cp))
+		{
+			return false;
+		}
+	}
+
+	for (auto &ptp : ParentTagPaths)
+	{
+		if (!OtherPreset.ParentTagPaths.Contains(ptp))
+		{
+			return false;
+		}
 	}
 
 	return true;

@@ -60,6 +60,11 @@ struct MODUMATE_API FBIMPresetPartSlot
 	{
 		return RHS.PartPreset == PartPreset && RHS.SlotPreset == SlotPreset;
 	}
+
+	bool operator!=(const FBIMPresetPartSlot& RHS) const
+	{
+		return !(*this == RHS);
+	}
 };
 
 USTRUCT()

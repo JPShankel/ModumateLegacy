@@ -68,6 +68,11 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::GetRootInstance()
 
 FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition, const FBIMKey& SlotAssignment)
 {
+	if (!ensureAlways(!PresetID.IsNone()))
+	{
+		return nullptr;
+	}
+
 	struct FPresetTreeIterator
 	{
 		FBIMEditorNodeIDType ParentNode;
@@ -79,24 +84,33 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 		FPresetTreeIterator(const FBIMEditorNodeIDType& InParentNode, const FBIMKey& InPresetID, const FBIMKey& InSlot) :
 			ParentNode(InParentNode), PresetID(InPresetID), SlotAssignment(InSlot)
 		{
+			ensureAlways(!InPresetID.IsNone());
+			ensureAlways(!InSlot.IsNone());
 			ParentSetIndex = INDEX_NONE;
 			ParentSetPosition = INDEX_NONE;
 		}
 
-		FPresetTreeIterator(const FBIMEditorNodeIDType& InParentNode, const FBIMKey& InPresetID, int32 InParentSetIndex, int32 InParentSetPosition, const FBIMKey& InSlot) :
-			ParentNode(InParentNode), PresetID(InPresetID), SlotAssignment(InSlot), ParentSetIndex(InParentSetIndex), ParentSetPosition(InParentSetPosition)
-		{}
+		FPresetTreeIterator(const FBIMEditorNodeIDType& InParentNode, const FBIMKey& InPresetID, int32 InParentSetIndex, int32 InParentSetPosition) :
+			ParentNode(InParentNode), PresetID(InPresetID), ParentSetIndex(InParentSetIndex), ParentSetPosition(InParentSetPosition)
+		{
+			ensureAlways(!InPresetID.IsNone());
+		}
 	};
 
 	TArray<FPresetTreeIterator> iteratorStack;
-
-	iteratorStack.Push(FPresetTreeIterator(ParentID, PresetID, ParentSetIndex, ParentSetPosition, SlotAssignment));
+	if (SlotAssignment.IsNone())
+	{
+		iteratorStack.Push(FPresetTreeIterator(ParentID, PresetID, ParentSetIndex, ParentSetPosition));
+	}
+	else
+	{
+		iteratorStack.Push(FPresetTreeIterator(ParentID, PresetID, SlotAssignment));
+	}
 
 	FBIMPresetEditorNodeSharedPtr returnVal = nullptr;
-
 	TArray<FBIMPresetEditorNodeSharedPtr> createdInstances;
-
 	FBIMPresetEditorNodeSharedPtr parent = InstanceFromID(ParentID);
+
 	if (parent.IsValid())
 	{
 		// Presets are assigned either to a part slot or a pin, but not both
@@ -157,7 +171,10 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 		for (int32 i= preset->ChildPresets.Num()-1;i>=0;--i)
 		{
 			auto& childPreset = preset->ChildPresets[i];
-			iteratorStack.Push(FPresetTreeIterator(instance->GetInstanceID(), childPreset.PresetID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition, FBIMKey()));
+			if (ensureAlways(!childPreset.PresetID.IsNone()))
+			{
+				iteratorStack.Push(FPresetTreeIterator(instance->GetInstanceID(), childPreset.PresetID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition));
+			}
 		}
 
 		for (int32 i = preset->PartSlots.Num() - 1; i >= 0; --i)
@@ -576,10 +593,17 @@ EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMPresetCollection& Pre
 		return EBIMResult::Error;
 	}
 
+	FBIMKey parentSlot = inst->MyParentPartSlot;
+
 	TArray<FBIMEditorNodeIDType> toDestroy;
 	for (auto& child : inst->ChildNodes)
 	{
 		toDestroy.Add(child.Pin()->GetInstanceID());
+	}
+
+	for (auto& part : inst->PartNodes)
+	{
+		toDestroy.Add(part.Pin()->GetInstanceID());
 	}
 
 	for (auto& child : toDestroy)
@@ -597,11 +621,26 @@ EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMPresetCollection& Pre
 
 	if (inst->ParentInstance.IsValid())
 	{
-		for (auto& sibling : inst->ParentInstance.Pin()->WorkingPresetCopy.ChildPresets)
+		if (parentSlot.IsNone())
 		{
-			if (sibling.ParentPinSetIndex == inst->MyParentPinSetIndex && sibling.ParentPinSetPosition == inst->MyParentPinSetPosition)
+			for (auto& sibling : inst->ParentInstance.Pin()->WorkingPresetCopy.ChildPresets)
 			{
-				sibling.PresetID = preset->PresetID;
+				if (sibling.ParentPinSetIndex == inst->MyParentPinSetIndex && sibling.ParentPinSetPosition == inst->MyParentPinSetPosition)
+				{
+					sibling.PresetID = preset->PresetID;
+					break;
+				}
+			}
+		}
+		else
+		{
+			for (auto& part : inst->ParentInstance.Pin()->WorkingPresetCopy.PartSlots)
+			{
+				if (part.SlotPreset == parentSlot)
+				{
+					part.PartPreset = preset->PresetID;
+					break;
+				}
 			}
 		}
 	}
@@ -611,12 +650,18 @@ EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMPresetCollection& Pre
 
 	for (auto& childPreset : preset->ChildPresets)
 	{
-		CreateNodeInstanceFromPreset(PresetCollection, InstanceID, childPreset.PresetID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition);
+		if (!childPreset.PresetID.IsNone())
+		{
+			CreateNodeInstanceFromPreset(PresetCollection, InstanceID, childPreset.PresetID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition);
+		}
 	}
 
 	for (auto& partPreset : preset->PartSlots)
 	{
-		CreateNodeInstanceFromPreset(PresetCollection, inst->GetInstanceID(), partPreset.PartPreset, INDEX_NONE, INDEX_NONE, partPreset.SlotPreset);
+		if (!partPreset.PartPreset.IsNone())
+		{
+			CreateNodeInstanceFromPreset(PresetCollection, inst->GetInstanceID(), partPreset.PartPreset, INDEX_NONE, INDEX_NONE, partPreset.SlotPreset);
+		}
 	}
 
 	SortAndValidate();

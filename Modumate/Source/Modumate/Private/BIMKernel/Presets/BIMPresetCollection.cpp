@@ -315,7 +315,10 @@ EBIMResult FBIMPresetCollection::GenerateBIMKeyForPreset(const FBIMKey& PresetID
 
 		for (auto& part : preset->PartSlots)
 		{
-			idStack.Push(part.PartPreset);
+			if (!part.PartPreset.IsNone())
+			{
+				idStack.Push(part.PartPreset);
+			}
 		}
 	}
 

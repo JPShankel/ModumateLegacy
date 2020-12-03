@@ -8,7 +8,7 @@
 #include "Database/ModumateObjectEnums.h"
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Core/BIMProperties.h"
-
+#include "BIMKernel/Presets/BIMPresetEditorNode.h"
 #include "ComponentAssemblyListItem.generated.h"
 
 /**
