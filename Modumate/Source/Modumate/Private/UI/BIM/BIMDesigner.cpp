@@ -267,6 +267,7 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FBIMKey& PresetID)
 	{
 		return false;
 	}
+	// Since this is a new pool, root node should be the new selected
 	SelectedNodeID = rootNode->GetInstanceID();
 	UpdateBIMDesigner(true);
 	return true;

@@ -169,6 +169,8 @@ void UBIMBlockNode::OnButtonDirtyCancel()
 	if (result == EBIMResult::Success)
 	{
 		ParentBIMDesigner->UpdateCraftingAssembly();
+		// Mark this node as the last selected node
+		ParentBIMDesigner->SelectedNodeID = ID;
 		ParentBIMDesigner->UpdateBIMDesigner();
 	}
 }

@@ -195,6 +195,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 		captureSuccess = SetIconMeshForMaterial(UseDependentPreset, PresetID, NodeID, renderTarget);
 		break;
 	case EBIMValueScope::Module:
+	case EBIMValueScope::Gap:
 		captureSuccess = SetIconMeshForModule(UseDependentPreset, PresetID, NodeID, renderTarget);
 		break;
 	case EBIMValueScope::Mesh:
@@ -477,12 +478,7 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 	FMOICabinetImpl::UpdateCabinetActors(Assembly, cabinetBasePoints, extrusionDelta, 2, false, false, false, IconDynamicMeshActor, IconCompoundMeshActor, bFaceValid);
 
 	// Step 3: Position the spring arm in order to capture the cabinet
-	FVector oldSpringArmRelPos = SpringArm->GetRelativeLocation();
-	FVector captureForward = SceneCaptureComp->GetForwardVector();
-	FVector cabinetBoxOrigin, cabinetBoxExtents;
-	IconDynamicMeshActor->GetActorBounds(false, cabinetBoxOrigin, cabinetBoxExtents);
-	float springArmCaptureDist = (cabinetBoxExtents.Size() + CabinetIconSizePadding) / FMath::Tan(FMath::DegreesToRadians(SceneCaptureComp->FOVAngle));
-	SpringArm->SetWorldLocation(cabinetBoxOrigin - (springArmCaptureDist * captureForward));
+	SetSpringArmDistanceForCapture(IconDynamicMeshActor, CabinetScaleFactor, false);
 
 	// Set bound render to prevent mesh from being occluded by front mesh
 	SetIconCompoundMeshActorForCapture(true);
@@ -493,7 +489,7 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 	SceneCaptureComp->CaptureScene();
 
 	// Step 5: Cleanup
-	SpringArm->SetRelativeLocation(oldSpringArmRelPos);
+	ResetSpringArm();
 	IconCompoundMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
 	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
 	IconCompoundMeshActor->SetActorScale3D(FVector::OneVector);
@@ -649,13 +645,7 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 	// Step 2: Position the spring arm in order to capture mesh
 	// Reset stair relative location
 	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
-
-	FVector oldSpringArmRelPos = SpringArm->GetRelativeLocation();
-	FVector captureForward = SceneCaptureComp->GetForwardVector();
-	FVector stairBoxOrigin, stairBoxExtents;
-	IconDynamicMeshActor->GetActorBounds(false, stairBoxOrigin, stairBoxExtents);
-	float springArmCaptureDist = (stairBoxExtents.Size() * StairIconScaleFactor) / FMath::Tan(FMath::DegreesToRadians(SceneCaptureComp->FOVAngle));
-	SpringArm->SetWorldLocation(stairBoxOrigin - (springArmCaptureDist * captureForward));
+	SetSpringArmDistanceForCapture(IconDynamicMeshActor, StairIconScaleFactor, false);
 
 	// Step 3: Capture
 	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, true);
@@ -664,10 +654,10 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 	SceneCaptureComp->CaptureScene();
 
 	// Step 4: Cleanup
-	//IconDynamicMeshActor->SetActorRelativeTransform(FTransform::Identity);
-	SpringArm->SetRelativeLocation(oldSpringArmRelPos);
+	ADynamicIconGenerator::ResetSpringArm();
 	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, false);
 	IconDynamicMeshActor->Mesh->SetVisibility(false);
+	IconDynamicMeshActor->Mesh->ClearAllMeshSections(); // Procedural mesh with multiple sections should be cleared out
 	return true;
 }
 
@@ -1103,6 +1093,21 @@ void ADynamicIconGenerator::SetIconCompoundMeshActorForCapture(bool Visible)
 		SetComponentForIconCapture(curComp, Visible);
 	}
 	IconCompoundMeshActor->SetActorHiddenInGame(!Visible);
+}
+
+void ADynamicIconGenerator::SetSpringArmDistanceForCapture(AActor* ActorToCapture, float SizeScale, bool OnlyCollidingComponents)
+{
+	SavedSpringArmRelativeTransform = SpringArm->GetRelativeTransform();
+	FVector captureForward = SceneCaptureComp->GetForwardVector();
+	FVector actorBoxOrigin, actorBoxExtents;
+	ActorToCapture->GetActorBounds(OnlyCollidingComponents, actorBoxOrigin, actorBoxExtents);
+	float springArmCaptureDist = (actorBoxExtents.Size() * SizeScale) / FMath::Tan(FMath::DegreesToRadians(SceneCaptureComp->FOVAngle));
+	SpringArm->SetWorldLocation(actorBoxOrigin - (springArmCaptureDist * captureForward));
+}
+
+void ADynamicIconGenerator::ResetSpringArm()
+{
+	SpringArm->SetRelativeTransform(SavedSpringArmRelativeTransform);
 }
 
 void ADynamicIconGenerator::ReleaseSavedRenderTarget()

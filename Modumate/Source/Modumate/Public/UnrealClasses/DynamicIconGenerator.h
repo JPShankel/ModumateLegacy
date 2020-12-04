@@ -103,7 +103,7 @@ public:
 	float PortalIconScaleFactor = 50.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
-	float CabinetIconSizePadding = 10.f;
+	float CabinetScaleFactor = 1.1f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
 	float TrimIconScaleFactor = 24.f;
@@ -133,6 +133,8 @@ protected:
 
 	UPROPERTY()
 	class UMaterialInstanceDynamic* DynCustomMaterial;
+
+	FTransform SavedSpringArmRelativeTransform;
 
 public:
 
@@ -176,6 +178,9 @@ public:
 	bool SetComponentForIconCapture(UPrimitiveComponent* Comp, bool CanCapture);
 	void SetIconDynamicMeshLayersForCapture(bool Visible);
 	void SetIconCompoundMeshActorForCapture(bool Visible);
+
+	void SetSpringArmDistanceForCapture(AActor* ActorToCapture, float SizeScale, bool OnlyCollidingComponents);
+	void ResetSpringArm();
 
 	// TODO: This is a temp function for releasing saved render targets related to BIM presets	
 	// When BIMKey can guarantee unique appearance, then BIMKeyToRenderTarget array and this function can be removed	
