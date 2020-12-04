@@ -5,15 +5,6 @@
 0-05_Mesh.csv
 0-05B_StubbyFFE.csv
 0-06_Slot.csv
-0-10_Dim.csv
-0-10_DimThk.csv
-0-12_DimWD.csv
-0-13_DimDi.csv
-0-14_DimDiT.csv
-0-15_DimWDT.csv
-0-16_DimWDWtFt.csv
-0-17_DimLWH.csv
-0-18_DimLW.csv
 0-20_2019Patterns.csv
 1-00_Material.csv
 1-10_SlotConfig.csv

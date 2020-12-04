@@ -60,19 +60,75 @@ PRESET,,6D9466FC-B2DE-BC45-AB8A-7E9810DFD252,,Part_Frame-0Mesh-Door-Frame-Slidin
 PRESET,,72A38992-AAF5-304F-B88C-4FAA47DB2260,,Part_Frame-0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,Part_Frame,,"Cased Opening Wood Frame, Walnut, Natural",,0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01',,Finish1,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,,,0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01',1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,X,,,,,,,,,,,,,X,,,
 PRESET,,3DC80373-E284-DF47-8EF0-72550CA81B85,,Part_Frame-0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,Part_Frame,,"Cased Opening Wood Frame, Ash, Natural",,0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01',,Finish1,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,,,0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01',1Material_Wood_Ash-0RawMaterial-Ash-0Color_Wood_Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,X,,,,,,,,,,,,,X,,,
 PRESET,,AF851F6B-9ED0-2A4D-B11F-4A49A190DCC9,,Part_Frame-0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01'-Finish1-0RawMaterial-Spruce-Pine-Fir-0RawMaterial-Paint-FEF1ED,,Part_Frame,,"Cased Opening Wood Frame, Paint, Gentle White",,0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01',,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,FEF1ED,,,,0Mesh-Door-Frame-CasedOpening-01.Door-Frame-CasedOpening-01',1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,X,X,,,,,,X,,,,,,,,,,,,,X,,,
-PRESET,,D9C10089-9A0D-BA40-A82C-6BADE7ED9D8F,,Part_Frame-0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,Part_Frame,,"Double-Rabbet Wood Frame, Walnut, Natural",,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',,Finish1,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,,,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,D9C10089-9A0D-BA40-A82C-6BADE7ED9D8F,,Part_Frame-0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'-Finish1-0RawMaterial-Walnut---FFFFFF,,Part_Frame,,"Double-Rabbet Wood Frame, Walnut, Natural",,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',,Finish1,0RawMaterial-Walnut,-,FFFFFF,,,,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
 PRESET,,7B297759-B113-7042-BB12-8031A3253618,,Part_Frame-0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'-Finish1-0RawMaterial-Spruce-Pine-Fir-0RawMaterial-Paint-1C2F68,,Part_Frame,,"Double-Rabbet Wood Frame, Paint, Royal Blue",,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,1C2F68,,,,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-1C2F68-RoyalBlue,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
-PRESET,,81D7337D-2906-8143-A4F6-18FC1EACFD2E,,Part_Frame-0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,Part_Frame,,"Double-Rabbet Wood Frame, Ash, Natural",,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',,Finish1,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,,,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',1Material_Wood_Ash-0RawMaterial-Ash-0Color_Wood_Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,81D7337D-2906-8143-A4F6-18FC1EACFD2E,,Part_Frame-0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'-Finish1-0RawMaterial-Ash---FFFFFF,,Part_Frame,,"Double-Rabbet Wood Frame, Ash, Natural",,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',,Finish1,0RawMaterial-Ash,-,FFFFFF,,,,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',1Material_Wood_Ash-0RawMaterial-Ash-0Color_Wood_Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
 PRESET,,69C730A1-E4AB-4F42-A653-13262C442C5A,,Part_Frame-0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'-Finish1-0RawMaterial-Spruce-Pine-Fir-0RawMaterial-Paint-FEF1ED,,Part_Frame,,"Double-Rabbet Wood Frame, Paint, Gentle White",,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,FEF1ED,,,,0Mesh-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood',1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
-PRESET,,8C011AAB-64DE-4A4A-9593-5EC38F4F3220,,Part_Frame-0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,Part_Frame,,"Single-Rabbet Wood Frame, Walnut, Natural",,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',,Finish1,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,,,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
-PRESET,,81D9F2B1-04E0-7541-8125-CA8D1D0BA8EE,,Part_Frame-0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,Part_Frame,,"Single-Rabbet Wood Frame, Ash, Natural",,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',,Finish1,0RawMaterial-Spruce-Pine-Fir,-,FFFFFF,,,,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',1Material_Wood_Ash-0RawMaterial-Ash-0Color_Wood_Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,8C011AAB-64DE-4A4A-9593-5EC38F4F3220,,Part_Frame-0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'-Finish1-0RawMaterial-Walnut---FFFFFF,,Part_Frame,,"Single-Rabbet Wood Frame, Walnut, Natural",,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',,Finish1,0RawMaterial-Walnut,-,FFFFFF,,,,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
+PRESET,,81D9F2B1-04E0-7541-8125-CA8D1D0BA8EE,,Part_Frame-0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'-Finish1-0RawMaterial-Ash---FFFFFF,,Part_Frame,,"Single-Rabbet Wood Frame, Ash, Natural",,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',,Finish1,0RawMaterial-Ash,-,FFFFFF,,,,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',1Material_Wood_Ash-0RawMaterial-Ash-0Color_Wood_Ash-FFFFFF-Natural,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
 PRESET,,0EAC676B-D854-7D4E-AF55-D0CE891195CA,,Part_Frame-0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'-Finish1-0RawMaterial-Spruce-Pine-Fir-0RawMaterial-Paint-F3F1ED,,Part_Frame,,"Single-Rabbet Wood Frame, Paint, Gentle White",,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,F3F1ED,,,,0Mesh-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood',1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-F3F1ED-GentleWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,,,X,,,
 PRESET,,F0FD2C1C-94DD-2447-85EA-3CB411BE491D,,Part_HandleStatic-0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum---FFFFFF,,Part_HandleStatic,,"Knob Handle 1, Aluminum, Pure White",,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',,Finish1,0RawMaterial-Aluminum,-,FFFFFF,,,,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',1Material_Metal_Aluminum-0RawMaterial-Aluminum-0Color_Metal_Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
 PRESET,,A0ED2C89-AD88-FD4A-A1E7-2EDA6E2A967E,,Part_HandleStatic-0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum---331F20,,Part_HandleStatic,,"Knob Handle 1, Aluminum, Patrician Bronze",,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',,Finish1,0RawMaterial-Aluminum,-,331F20,,,,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',1Material_Metal_Aluminum-0RawMaterial-Aluminum-0Color_Metal_Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
-PRESET,,E9DD1F07-C411-2842-9C56-0BF4998DB20E,,Part_HandleStatic-0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum---FFFFFF,,Part_HandleStatic,,"Knob Handle 1, Aluminum, Pure White",,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',,Finish1,0RawMaterial-Aluminum,-,FFFFFF,,,,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',1Material_Metal_Aluminum-0RawMaterial-Aluminum-0Color_Metal_Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,E9DD1F07-C411-2842-9C56-0BF4998DB20E,,"Part_HandleStatic-0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-1SlotConfig_Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetDistanceXYInsideZHandleHeight
+0Slot-HandleXBacksetDistanceXYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot-FFFFFF",,Part_HandleStatic,,"Knob Handle 1, Aluminum, Pure White",,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',,Finish1,0RawMaterial-Aluminum,"1SlotConfig_Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetDistanceXYInsideZHandleHeight
+0Slot-HandleXBacksetDistanceXYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot",FFFFFF,,,,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',1Material_Metal_Aluminum-0RawMaterial-Aluminum-0Color_Metal_Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
 PRESET,,B67A7DF0-67A8-0140-AEDE-7AA4C59549C1,,Part_HandleStatic-0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum---FFFFFF,,Part_HandleStatic,,"Knob Handle 1, Aluminum, Pure White",,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',,Finish1,0RawMaterial-Aluminum,-,FFFFFF,,,,0Mesh-Door-Handle-Knob-01.Door-Handle-Knob-01',1Material_Metal_Aluminum-0RawMaterial-Aluminum-0Color_Metal_Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
 PRESET,,1371B95A-31B4-1D4D-97A3-804F5538AD4C,,Part_HandleStatic-0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'-Finish1-0RawMaterial-Aluminum---FFFFFF,,Part_HandleStatic,,"Knob Handle 2, Aluminum, Pure White",,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',,Finish1,0RawMaterial-Aluminum,-,FFFFFF,,,,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',1Material_Metal_Aluminum-0RawMaterial-Aluminum-0Color_Metal_Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
-PRESET,,AB14931E-384B-3E4E-B3B0-5093D593A12D,,Part_HandleStatic-0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'-Finish1-0RawMaterial-Aluminum---331F20,,Part_HandleStatic,,"Knob Handle 2, Aluminum, Patrician Bronze",,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',,Finish1,0RawMaterial-Aluminum,-,331F20,,,,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',1Material_Metal_Aluminum-0RawMaterial-Aluminum-0Color_Metal_Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
+PRESET,,AB14931E-384B-3E4E-B3B0-5093D593A12D,,"Part_HandleStatic-0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'-Finish1-0RawMaterial-Aluminum-1SlotConfig_Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetDistanceXYInsideZHandleHeight
+0Slot-HandleXBacksetDistanceXYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot-331F20",,Part_HandleStatic,,"Knob Handle 2, Aluminum, Patrician Bronze",,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',,Finish1,0RawMaterial-Aluminum,"1SlotConfig_Panel
+0Slot-Panel
+0Slot-CasterBarnLeft
+0Slot-CasterBarnRight
+0Slot-HandleXBacksetDistanceXYInsideZHandleHeight
+0Slot-HandleXBacksetDistanceXYOutsideZHandleHeight
+0Slot-HandleXEdgeYInsideZHandleHeight
+0Slot-HandleXEdgeYOutsideZHandleHeight
+0Slot-Deadbolt
+0Slot-SurfaceLockLower
+0Slot-SurfaceLockUpper
+0Slot-PeepholeLower
+0Slot-PeepholeUpper
+0Slot-Knocker
+0Slot-MailSlot",331F20,,,,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',1Material_Metal_Aluminum-0RawMaterial-Aluminum-0Color_Metal_Aluminum-331F20-PatricianBronze,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
 PRESET,,FF2A0AC2-527C-8B42-AA6F-990772E397BA,,Part_HandleStatic-0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02'-Finish1-0RawMaterial-Aluminum---FFFFFF,,Part_HandleStatic,,"Knob Handle 2, Aluminum, Pure White",,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',,Finish1,0RawMaterial-Aluminum,-,FFFFFF,,,,0Mesh-Door-Handle-Knob-02.Door-Handle-Knob-02',1Material_Metal_Aluminum-0RawMaterial-Aluminum-0Color_Metal_Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
 PRESET,,549FB0C2-E5D2-734C-8223-F3C9FADFAAB5,,Part_HandleStatic-0Mesh-Door-Handle-Knob-03.Door-Handle-Knob-03'-Finish1-0RawMaterial-Aluminum---FFFFFF,,Part_HandleStatic,,"Knob Handle 3, Aluminum, Pure White",,0Mesh-Door-Handle-Knob-03.Door-Handle-Knob-03',,Finish1,0RawMaterial-Aluminum,-,FFFFFF,,,,0Mesh-Door-Handle-Knob-03.Door-Handle-Knob-03',1Material_Metal_Aluminum-0RawMaterial-Aluminum-0Color_Metal_Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
 PRESET,,A132BD8B-7BD9-2541-ADBB-5E9FC263A729,,Part_HandleStatic-0Mesh-Door-Handle-Knob-04.Door-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum---FFFFFF,,Part_HandleStatic,,"Knob Handle 4, Aluminum, Pure White",,0Mesh-Door-Handle-Knob-04.Door-Handle-Knob-04',,Finish1,0RawMaterial-Aluminum,-,FFFFFF,,,,0Mesh-Door-Handle-Knob-04.Door-Handle-Knob-04',1Material_Metal_Aluminum-0RawMaterial-Aluminum-0Color_Metal_Aluminum-FFFFFF-PureWhite,,Finish1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,X,,,,,,,,,,,X,,,,,
