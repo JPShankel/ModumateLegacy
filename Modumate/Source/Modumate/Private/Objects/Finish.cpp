@@ -236,7 +236,7 @@ void FMOIFinishImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposi
 		Modumate::FModumateLayerType dwgTypeThisLayer = usePointsA ? dwgLayerType : Modumate::FModumateLayerType::kSeparatorCutOuterSurface;
 
 		TArray<FVector> intersections;
-		UModumateGeometryStatics::GetPlaneIntersections(intersections, usePointsA ? layer.PointsA : layer.PointsB, Plane);
+		UModumateGeometryStatics::GetPlaneIntersections(intersections, usePointsA ? layer.OriginalPointsA : layer.OriginalPointsB, Plane);
 		intersections.Sort(UModumateGeometryStatics::Points3dSorter);
 
 		int32 linePoint = 0;
@@ -330,11 +330,11 @@ void FMOIFinishImpl::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposit
 		const FLayerGeomDef& layer = layers.Last();
 		const FVector finishOffset = totalThickness * layer.Normal;
 
-		const int numPoints = layer.PointsB.Num();
+		const int numPoints = layer.OriginalPointsB.Num();
 		for (int i = 0; i < numPoints; ++i)
 		{
-			FVector point(layer.PointsB[i]);
-			beyondLines.Emplace( FEdge(point, layer.PointsB[(i + 1) % numPoints]), dwgOuterType );
+			FVector point(layer.OriginalPointsB[i]);
+			beyondLines.Emplace( FEdge(point, layer.OriginalPointsB[(i + 1) % numPoints]), dwgOuterType );
 			// Lines along finish thickness.
 			beyondLines.Emplace( FEdge(point, point - finishOffset), dwgOuterType );
 		}

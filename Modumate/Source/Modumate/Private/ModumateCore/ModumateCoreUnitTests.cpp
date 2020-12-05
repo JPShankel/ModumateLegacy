@@ -446,6 +446,15 @@ namespace Modumate
 			FMath::IsNearlyEqual(rayDistB, -2.0f) &&
 			intersectionPoint.Equals(FVector2D(2.0f, 0.0f));
 
+		// 3D anti-parallel, colinear rays pointing at each other
+		FVector intersectionPoint3D(ForceInitToZero);
+		bIntersection = UModumateGeometryStatics::RayIntersection3D(
+			FVector(0.0f, 0.0f, 0.0f), FVector(1.0f, 1.0f, 1.0f).GetSafeNormal(),
+			FVector(10.0f, 10.0f, 10.0f), FVector(-1.0f, -1.0f, -1.0f).GetSafeNormal(),
+			intersectionPoint3D, rayDistA, rayDistB);
+		TestTrue(TEXT("3D anti-parallel rays intersect"), bIntersection);
+		TestTrue(TEXT("3D anti-parallel ray intersection correct"), intersectionPoint3D.Equals(FVector(5.0f, 5.0f, 5.0f), RAY_INTERSECT_TOLERANCE));
+
 		return bSuccess;
 	}
 

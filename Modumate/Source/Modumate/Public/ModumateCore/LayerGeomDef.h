@@ -14,10 +14,16 @@ struct MODUMATE_API FLayerGeomDef
 	GENERATED_USTRUCT_BODY();
 
 	UPROPERTY()
-	TArray<FVector> PointsA;
+	TArray<FVector> OriginalPointsA;
 
 	UPROPERTY()
-	TArray<FVector> PointsB;
+	TArray<FVector> OriginalPointsB;
+
+	UPROPERTY()
+	TArray<FVector> UniquePointsA;
+
+	UPROPERTY()
+	TArray<FVector> UniquePointsB;
 
 	UPROPERTY()
 	TArray<FPolyHole3D> Holes3D;
@@ -41,13 +47,22 @@ struct MODUMATE_API FLayerGeomDef
 	bool bValid = false;
 
 	UPROPERTY()
+	bool bInitialPointsUnique = false;
+
+	UPROPERTY()
 	bool bCoincident = false;
 
 	UPROPERTY()
-	TArray<FVector2D> CachedPointsA2D;
+	TArray<FVector2D> CachedOriginalPointsA2D;
 
 	UPROPERTY()
-	TArray<FVector2D> CachedPointsB2D;
+	TArray<FVector2D> CachedOriginalPointsB2D;
+
+	UPROPERTY()
+	TArray<FVector2D> CachedUniquePointsA2D;
+
+	UPROPERTY()
+	TArray<FVector2D> CachedUniquePointsB2D;
 
 	UPROPERTY()
 	TArray<FPolyHole2D> CachedHoles2D;
@@ -69,7 +84,7 @@ struct MODUMATE_API FLayerGeomDef
 		const FVector& InAxisX = FVector::ZeroVector, const TArray<FPolyHole3D> *InHoles = nullptr);
 
 	void Init(const TArray<FVector>& InPointsA, const TArray<FVector>& InPointsB, const FVector& InNormal,
-		const FVector& InAxisX = FVector::ZeroVector, const TArray<FPolyHole3D> *InHoles = nullptr);
+		const FVector& InAxisX = FVector::ZeroVector, const TArray<FPolyHole3D> *InHoles = nullptr, bool bHandleDuplicates = false);
 	FVector2D ProjectPoint2D(const FVector& Point3D) const;
 	FVector2D ProjectPoint2DSnapped(const FVector& Point3D, float Tolerance = KINDA_SMALL_NUMBER) const;
 	FVector Deproject2DPoint(const FVector2D& Point2D, bool bSideA) const;

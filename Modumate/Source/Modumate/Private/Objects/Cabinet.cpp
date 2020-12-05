@@ -563,7 +563,7 @@ void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &Par
 		for (int32 layerIdx = 0; layerIdx < numLayerSides; layerIdx++)
 		{
 			bool usePointsA = layerIdx % 2 == 0;
-			const TArray<FVector> layerPoints = usePointsA ? LayerGeometries[layerIdx / 2].PointsA : LayerGeometries[layerIdx / 2].PointsB;
+			const TArray<FVector> layerPoints = usePointsA ? LayerGeometries[layerIdx / 2].OriginalPointsA : LayerGeometries[layerIdx / 2].OriginalPointsB;
 			TArray<FVector2D> intersections;
 			int32 numPoints = layerPoints.Num();
 			for (int32 point = 0; point < numPoints; ++point)
@@ -634,12 +634,12 @@ void FMOICabinetImpl::GetDraftingLines(const TSharedPtr<FDraftingComposite> &Par
 		int32 numLayers = LayerGeometries.Num();
 		for (const auto& layer : LayerGeometries)
 		{
-			int32 numPoints = layer.PointsA.Num();
+			int32 numPoints = layer.OriginalPointsA.Num();
 			for (int point = 0; point < numPoints; ++point)
 			{
-				cabinetEdges.Emplace(actorOrigin + layer.PointsA[point], actorOrigin + layer.PointsA[(point + 1) % numPoints]);
-				cabinetEdges.Emplace(actorOrigin + layer.PointsB[point], actorOrigin + layer.PointsB[(point + 1) % numPoints]);
-				cabinetEdges.Emplace(actorOrigin + layer.PointsA[point], actorOrigin + layer.PointsB[point]);
+				cabinetEdges.Emplace(actorOrigin + layer.OriginalPointsA[point], actorOrigin + layer.OriginalPointsA[(point + 1) % numPoints]);
+				cabinetEdges.Emplace(actorOrigin + layer.OriginalPointsB[point], actorOrigin + layer.OriginalPointsB[(point + 1) % numPoints]);
+				cabinetEdges.Emplace(actorOrigin + layer.OriginalPointsA[point], actorOrigin + layer.OriginalPointsB[point]);
 			}
 		}
 

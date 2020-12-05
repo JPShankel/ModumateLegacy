@@ -979,12 +979,78 @@ bool UModumateGeometryStatics::GetPolygonIntersection(const TArray<FVector2D> &C
 }
 
 bool UModumateGeometryStatics::RayIntersection3D(const FVector& RayOriginA, const FVector& RayDirectionA, const FVector& RayOriginB, const FVector& RayDirectionB,
-	FVector& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool bRequirePositive, float IntersectionTolerance, float RayNormalTolerance)
+	FVector& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool bRequirePositive, float IntersectionTolerance)
 {
-	// Find the plane shared by the ray directions
-	// NOTE: using a different tolerance here, because otherwise a forgiving intersection tolerance here would reject rays that are still detectably non-parallel
+	OutRayADist = OutRayBDist = 0.0f;
+
+	if (!RayDirectionA.IsNormalized() || !RayDirectionB.IsNormalized())
+	{
+		return false;
+	}
+
+	// First, check if the rays start at the same origin
+	FVector originDelta = RayOriginB - RayOriginA;
+	float originDist = originDelta.Size();
+
+	float rayADotB = RayDirectionA | RayDirectionB;
+	bool bParallel = (FMath::Abs(rayADotB) > THRESH_NORMALS_ARE_PARALLEL);
+
+	if (FMath::IsNearlyZero(originDist, IntersectionTolerance))
+	{
+		OutIntersectionPoint = RayOriginA;
+		return true;
+	}
+
+	// Next, check for parallel rays; they can only intersect if they're overlapping
+	if (bParallel)
+	{
+		// Check if the rays are colinear; if not, then they can't intersect
+		float originBOnRayADist = originDelta | RayDirectionA;
+		FVector originBOnRayAPoint = RayOriginA + (originBOnRayADist * RayDirectionA);
+
+		float originAOnRayBDist = -originDelta | RayDirectionB;
+		FVector originAOnRayBPoint = RayOriginB + (originAOnRayBDist * RayDirectionB);
+
+		float rayDist = FVector::Dist(RayOriginB, originBOnRayAPoint);
+		if (rayDist > IntersectionTolerance)
+		{
+			return false;
+		}
+
+		// Coincident colinear rays
+		if (rayADotB > 0.0f)
+		{
+			ensureAlways(FMath::Sign(originBOnRayADist) != FMath::Sign(originAOnRayBDist));
+
+			OutRayADist = FMath::Max(originBOnRayADist, 0.0f);
+			OutRayBDist = FMath::Max(originAOnRayBDist, 0.0f);
+			if (originBOnRayADist > -IntersectionTolerance)
+			{
+				OutIntersectionPoint = RayOriginB;
+			}
+			else
+			{
+				OutIntersectionPoint = RayOriginA;
+			}
+
+			return true;
+		}
+		// Anti-parallel colinear rays
+		else
+		{
+			ensureAlways(FMath::IsNearlyEqual(originBOnRayADist, originAOnRayBDist, IntersectionTolerance));
+
+			OutIntersectionPoint = 0.5f * (RayOriginA + RayOriginB);
+			OutRayADist = 0.5f * originBOnRayADist;
+			OutRayBDist = 0.5f * originAOnRayBDist;
+
+			return (originBOnRayADist > -IntersectionTolerance) || !bRequirePositive;
+		}
+	}
+
+	// Find the plane shared by the ray directions, which we expect to succeed if we didn't already detect them as parallel
 	FVector planeNormal = RayDirectionA ^ RayDirectionB;
-	if (!planeNormal.Normalize(RayNormalTolerance))
+	if (!ensure(planeNormal.Normalize(KINDA_SMALL_NUMBER)))
 	{
 		return false;
 	}
@@ -996,16 +1062,6 @@ bool UModumateGeometryStatics::RayIntersection3D(const FVector& RayOriginA, cons
 	if (!FMath::IsNearlyEqual(planeDistA, planeDistB, IntersectionTolerance))
 	{
 		return false;
-	}
-
-	FVector originDelta = RayOriginB - RayOriginA;
-	float originDist = originDelta.Size();
-
-	if (FMath::IsNearlyZero(originDist, IntersectionTolerance))
-	{
-		OutRayADist = OutRayBDist = 0.0f;
-		OutIntersectionPoint = RayOriginA;
-		return true;
 	}
 
 	// Determine ray perpendicular vectors, for intersection
@@ -1198,32 +1254,6 @@ bool UModumateGeometryStatics::FindShortestDistanceBetweenRays(
 	outDistance = (OutRayInterceptA - OutRayInterceptB).Size();
 
 	return true;
-}
-
-// Given a corner point, its neighboring points, the normals of its neighboring edges, and offsets along those edge normals,
-// find the resulting corner position based on the intersection of the new edges.
-bool UModumateGeometryStatics::GetExtendedCorner(FVector &RefCorner, const FVector &PrevPoint, const FVector &NextPoint,
-	const FVector &PrevEdgeNormal, const FVector &NextEdgeNormal, float PrevEdgeExtension, float NextEdgeExtension)
-{
-	FVector prevDelta = RefCorner - PrevPoint;
-	float prevLen = prevDelta.Size();
-	FVector nextDelta = NextPoint - RefCorner;
-	float nextLen = nextDelta.Size();
-
-	if (FMath::IsNearlyZero(prevLen) || FMath::IsNearlyZero(nextLen))
-	{
-		return false;
-	}
-
-	FVector prevRayDir = prevDelta / prevLen;
-	FVector nextRayDir = -nextDelta / nextLen;
-
-	FVector prevOrigin = PrevPoint - PrevEdgeExtension * PrevEdgeNormal;
-	FVector nextOrigin = NextPoint - NextEdgeExtension * NextEdgeNormal;
-
-	FVector2D rayDists;
-	return UModumateGeometryStatics::RayIntersection3D(prevOrigin, prevRayDir, nextOrigin, nextRayDir,
-		RefCorner, rayDists.X, rayDists.Y);
 }
 
 bool UModumateGeometryStatics::CompareVectors(const TArray<FVector2D> &vectorsA, const TArray<FVector2D> &vectorsB, float tolerance)
@@ -1557,6 +1587,12 @@ bool UModumateGeometryStatics::GetEdgeIntersections(const TArray<FVector> &Posit
 		FVector edgeIntersection;
 		float distAlongRay, distAlongEdge;
 
+		// Reject parallel rays early, since perfectly aligned edges/points can report intersection by RayIntersection3D
+		if (FVector::Parallel(IntersectionDir, edgeDir))
+		{
+			continue;
+		}
+
 		bool bIntersect = UModumateGeometryStatics::RayIntersection3D(IntersectionOrigin, IntersectionDir,
 			edgePosA, edgeDir, edgeIntersection, distAlongRay, distAlongEdge, false);
 		bool b1 = distAlongEdge > -Epsilon;
@@ -1588,6 +1624,30 @@ bool UModumateGeometryStatics::GetEdgeIntersections(const TArray<FVector> &Posit
 	OutEdgeIntersections.Sort();
 	return (OutEdgeIntersections.Num() > 0);
 	
+}
+
+void UModumateGeometryStatics::GetUniquePoints(const TArray<FVector>& InPoints, TArray<FVector>& OutPoints, float Tolerance)
+{
+	OutPoints.Reset();
+
+	for (auto& inPoint : InPoints)
+	{
+		bool bUniquePoint = true;
+
+		for (auto& outPoint : OutPoints)
+		{
+			if (outPoint.Equals(inPoint, Tolerance))
+			{
+				bUniquePoint = false;
+				break;
+			}
+		}
+
+		if (bUniquePoint)
+		{
+			OutPoints.Add(inPoint);
+		}
+	}
 }
 
 bool UModumateGeometryStatics::AreConsecutivePoints2DRepeated(const TArray<FVector2D> &Points, float Tolerance)

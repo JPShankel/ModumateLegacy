@@ -16,6 +16,7 @@
 #include "Objects/SurfaceGraph.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "UnrealClasses/CompoundMeshActor.h"
+#include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
@@ -215,6 +216,7 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const FModumateObjectInsta
 			return false;
 		}
 
+		FVector hostLocation = hostParent->GetObjectLocation();
 		FVector hostNormal = hostParent->GetNormal();
 		int32 numCorners = hostParent->GetNumCorners();
 		if (numCorners < 3)
@@ -224,15 +226,20 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const FModumateObjectInsta
 
 		if (FaceIndex < 2)
 		{
-			bool bTopFace = (FaceIndex == 0);
-			int32 cornerIdxOffset = bTopFace ? numCorners : 0;
-			for (int32 i = 0; i < numCorners; ++i)
+			auto meshActor = Cast<ADynamicMeshActor>(Host->GetActor());
+			if (!ensure(meshActor && (meshActor->LayerGeometries.Num() > 0)))
 			{
-				int32 cornerIdx = i + cornerIdxOffset;
-				OutFacePoints.Add(Host->GetCorner(cornerIdx));
+				return false;
 			}
 
-			OutNormal = hostNormal * (bTopFace ? 1.0f : -1.0f);
+			bool bOnStartingSide = (FaceIndex != 0);
+			auto& layerPoints = bOnStartingSide ? meshActor->LayerGeometries[0].UniquePointsA : meshActor->LayerGeometries.Last().UniquePointsB;
+			for (auto& layerPoint : layerPoints)
+			{
+				OutFacePoints.Add(hostLocation + layerPoint);
+			}
+
+			OutNormal = hostNormal * (bOnStartingSide ? -1.0f : 1.0f);
 			UModumateGeometryStatics::FindBasisVectors(OutFaceAxisX, OutFaceAxisY, OutNormal);
 
 			return true;

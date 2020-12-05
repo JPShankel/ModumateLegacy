@@ -11,7 +11,7 @@ FLayerGeomDef::FLayerGeomDef()
 }
 
 FLayerGeomDef::FLayerGeomDef(const TArray<FVector>& Points, float InThickness, const FVector& InNormal)
-	: PointsA(Points)
+	: OriginalPointsA(Points)
 	, Thickness(InThickness)
 	, Normal(InNormal)
 {
@@ -22,6 +22,8 @@ FLayerGeomDef::FLayerGeomDef(const TArray<FVector>& Points, float InThickness, c
 	{
 		return;
 	}
+
+	UniquePointsA = Points;
 
 	FPlane sourcePlane;
 	bool bSuccess = UModumateGeometryStatics::GetPlaneFromPoints(Points, sourcePlane);
@@ -34,12 +36,14 @@ FLayerGeomDef::FLayerGeomDef(const TArray<FVector>& Points, float InThickness, c
 
 	FVector pointsBDelta = Thickness * Normal;
 
-	for (const FVector& pointA : PointsA)
+	for (const FVector& pointA : OriginalPointsA)
 	{
-		PointsB.Add(pointA + pointsBDelta);
+		const FVector pointB = pointA + pointsBDelta;
+		OriginalPointsB.Add(pointB);
+		UniquePointsB.Add(pointB);
 	}
 
-	Origin = PointsA[0];
+	Origin = OriginalPointsA[0];
 	AxisX = (Points[1] - Points[0]).GetSafeNormal();
 	AxisY = (Normal ^ AxisX).GetSafeNormal();
 	bValid = CachePoints2D();
@@ -52,17 +56,17 @@ FLayerGeomDef::FLayerGeomDef(const TArray<FVector>& InPointsA, const TArray<FVec
 }
 
 void FLayerGeomDef::Init(const TArray<FVector>& InPointsA, const TArray<FVector>& InPointsB,
-	const FVector& InNormal, const FVector& InAxisX, const TArray<FPolyHole3D>* InHoles)
+	const FVector& InNormal, const FVector& InAxisX, const TArray<FPolyHole3D>* InHoles, bool bHandleDuplicates)
 {
 	bValid = false;
 	Thickness = 0.0f;
 
-	PointsA = InPointsA;
-	PointsB = InPointsB;
+	OriginalPointsA = InPointsA;
+	OriginalPointsB = InPointsB;
 	Normal = InNormal;
 
-	int32 numPoints = PointsA.Num();
-	if ((numPoints != PointsB.Num()) || (numPoints < 3))
+	int32 numPoints = OriginalPointsA.Num();
+	if ((numPoints != OriginalPointsB.Num()) || (numPoints < 3))
 	{
 		return;
 	}
@@ -72,15 +76,15 @@ void FLayerGeomDef::Init(const TArray<FVector>& InPointsA, const TArray<FVector>
 		return;
 	}
 
-	FVector pointsDelta = PointsB[0] - PointsA[0];
+	FVector pointsDelta = OriginalPointsB[0] - OriginalPointsA[0];
 	Thickness = pointsDelta | Normal;
 
-	Origin = PointsA[0];
+	Origin = OriginalPointsA[0];
 
 #if DEBUG_CHECK_LAYERS
 	for (int32 i = 1; i < numPoints; ++i)
 	{
-		float otherPointsDist = (PointsB[i] - PointsA[i]) | Normal;
+		float otherPointsDist = (OriginalPointsB[i] - OriginalPointsA[i]) | Normal;
 		if (!ensure(FMath::IsNearlyEqual(otherPointsDist, Thickness, PLANAR_DOT_EPSILON)))
 		{
 			return;
@@ -89,18 +93,39 @@ void FLayerGeomDef::Init(const TArray<FVector>& InPointsA, const TArray<FVector>
 #endif
 
 	// Make sure that we have polygon points that we expect to be able to triangulate
-	if (UModumateGeometryStatics::AreConsecutivePointsRepeated(PointsA) ||
-		UModumateGeometryStatics::AreConsecutivePointsRepeated(PointsB))
+	if (bHandleDuplicates)
 	{
-		return;
+		UModumateGeometryStatics::GetUniquePoints(OriginalPointsA, UniquePointsA, RAY_INTERSECT_TOLERANCE);
+		UModumateGeometryStatics::GetUniquePoints(OriginalPointsB, UniquePointsB, RAY_INTERSECT_TOLERANCE);
+
+		int32 numUniquePointsA = UniquePointsA.Num();
+		int32 numUniquePointsB = UniquePointsB.Num();
+		bInitialPointsUnique = (numUniquePointsA == numPoints) && (numUniquePointsB == numPoints);
+
+		if ((numUniquePointsA < 3) || (numUniquePointsB < 3))
+		{
+			return;
+		}
+	}
+	else
+	{
+		if (UModumateGeometryStatics::AreConsecutivePointsRepeated(OriginalPointsA) ||
+			UModumateGeometryStatics::AreConsecutivePointsRepeated(OriginalPointsB))
+		{
+			return;
+		}
+
+		UniquePointsA = OriginalPointsA;
+		UniquePointsB = OriginalPointsB;
+		bInitialPointsUnique = true;
 	}
 
 	// Now, we expect to be able to find a plane from the given points
 	FPlane planeA, planeB;
-	bool bSuccessA = UModumateGeometryStatics::GetPlaneFromPoints(PointsA, planeA);
-	bool bSuccessB = UModumateGeometryStatics::GetPlaneFromPoints(PointsB, planeB);
+	bool bSuccessA = UModumateGeometryStatics::GetPlaneFromPoints(UniquePointsA, planeA);
+	bool bSuccessB = UModumateGeometryStatics::GetPlaneFromPoints(UniquePointsB, planeB);
 
-	if (!ensure(bSuccessA && bSuccessB && FVector::Coincident(planeA, planeB) && FVector::Parallel(planeA, Normal)))
+	if (!ensure(bSuccessA && bSuccessB && FVector::Parallel(planeA, planeB) && FVector::Parallel(planeA, Normal)))
 	{
 		return;
 	}
@@ -134,7 +159,7 @@ FVector2D FLayerGeomDef::ProjectPoint2DSnapped(const FVector& Point3D, float Tol
 {
 	FVector2D projectedPoint = ProjectPoint2D(Point3D);
 
-	for (const FVector2D& existingPoint : CachedPointsA2D)
+	for (const FVector2D& existingPoint : CachedUniquePointsA2D)
 	{
 		if (projectedPoint.Equals(existingPoint, Tolerance))
 		{
@@ -153,30 +178,44 @@ FVector FLayerGeomDef::Deproject2DPoint(const FVector2D& Point2D, bool bSideA) c
 
 FVector FLayerGeomDef::ProjectToPlane(const FVector& Point, bool bSideA) const
 {
-	FVector PointDefiningPlane = bSideA ? PointsA[0] : PointsB[0];
+	FVector PointDefiningPlane = bSideA ? OriginalPointsA[0] : OriginalPointsA[0];
 	return Point + ((PointDefiningPlane | Normal) - (Point | Normal)) * Normal;
 }
 
 bool FLayerGeomDef::CachePoints2D()
 {
-	// Simply project the 3D layer pairs into 2D for triangulation
-	CachedPointsA2D.Reset(PointsA.Num());
-	for (const FVector& pointA : PointsA)
+	// First, project the original 3D layer pairs into 2D for triangulation of side faces
+	CachedOriginalPointsA2D.Reset(OriginalPointsA.Num());
+	for (const FVector& pointA : OriginalPointsA)
 	{
-		CachedPointsA2D.Add(ProjectPoint2D(pointA));
+		CachedOriginalPointsA2D.Add(ProjectPoint2D(pointA));
 	}
 
-	CachedPointsB2D.Reset(PointsB.Num());
-	for (const FVector& pointB : PointsB)
+	CachedOriginalPointsB2D.Reset(OriginalPointsB.Num());
+	for (const FVector& pointB : OriginalPointsB)
 	{
-		CachedPointsB2D.Add(ProjectPoint2DSnapped(pointB));
+		CachedOriginalPointsB2D.Add(ProjectPoint2DSnapped(pointB));
+	}
+
+	// Then, project the de-duplicated 3D layer points into 2D for triangulation of the primary front and back faces.
+	CachedUniquePointsA2D.Reset(UniquePointsA.Num());
+	for (const FVector& pointA : UniquePointsA)
+	{
+		CachedUniquePointsA2D.Add(ProjectPoint2D(pointA));
+	}
+
+	CachedUniquePointsB2D.Reset(UniquePointsB.Num());
+	for (const FVector& pointB : UniquePointsB)
+	{
+		CachedUniquePointsB2D.Add(ProjectPoint2DSnapped(pointB));
 	}
 
 	// Make sure the polygons' edges are valid
-	if (!UModumateGeometryStatics::IsPolygon2DValid(CachedPointsA2D) ||
-		!UModumateGeometryStatics::IsPolygon2DValid(CachedPointsB2D))
+	if (!UModumateGeometryStatics::IsPolygon2DValid(CachedUniquePointsA2D) ||
+		!UModumateGeometryStatics::IsPolygon2DValid(CachedUniquePointsB2D))
 	{
-		return false;
+		UE_LOG(LogTemp, Warning, TEXT("Invalid 2D polygons, triangulation may fail!"));
+		//return false;
 	}
 
 	// Project the 3D holes into 2D, and make sure that they don't overlap with the layer points or each other.
@@ -198,10 +237,10 @@ bool FLayerGeomDef::CachePoints2D()
 		// Otherwise, they only exist to detect inconsistencies between triangulations of the front and back of the layer, based on different hole handling.
 
 		bool bHoleOverlapsA, bHolePartiallyInA, bHoleFullyInA;
-		bool bSuccessA = UModumateGeometryStatics::GetPolygonIntersection(CachedPointsA2D, hole2D.Points, bHoleOverlapsA, bHolePartiallyInA, bHoleFullyInA);
+		bool bSuccessA = UModumateGeometryStatics::GetPolygonIntersection(CachedUniquePointsA2D, hole2D.Points, bHoleOverlapsA, bHolePartiallyInA, bHoleFullyInA);
 
 		bool bHoleOverlapsB, bHolePartiallyInB, bHoleFullyInB;
-		bool bSuccessB = UModumateGeometryStatics::GetPolygonIntersection(CachedPointsB2D, hole2D.Points, bHoleOverlapsB, bHolePartiallyInB, bHoleFullyInB);
+		bool bSuccessB = UModumateGeometryStatics::GetPolygonIntersection(CachedUniquePointsB2D, hole2D.Points, bHoleOverlapsB, bHolePartiallyInB, bHoleFullyInB);
 
 		if (!bSuccessA || !bSuccessB ||
 			bHoleOverlapsA || !(bHolePartiallyInA || bHoleFullyInA) ||
@@ -256,51 +295,118 @@ bool FLayerGeomDef::TriangulateSideFace(const FVector2D& Point2DA1, const FVecto
 	TempSidePoints[2] = Deproject2DPoint(Point2DB1, false);
 	TempSidePoints[3] = Deproject2DPoint(Point2DB2, false);
 
-	FPlane sidePlane(ForceInitToZero);
-	bool bSidePointsPlanar = UModumateGeometryStatics::GetPlaneFromPoints(TempSidePoints, sidePlane);
-	if (!bSidePointsPlanar)
+	FVector edgeADelta = TempSidePoints[1] - TempSidePoints[0];
+	float edgeALen = edgeADelta.Size();
+	bool bEdgeAValid = !FMath::IsNearlyZero(edgeALen, THRESH_POINTS_ARE_NEAR);
+	FVector edgeBDelta = TempSidePoints[3] - TempSidePoints[2];
+	float edgeBLen = edgeBDelta.Size();
+	bool bEdgeBValid = !FMath::IsNearlyZero(edgeBLen, THRESH_POINTS_ARE_NEAR);
+
+	// If both Edge A and Edge B are nearly zero-length, then there's no side face to triangulate.
+	if (!bEdgeAValid && !bEdgeBValid)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Side of layer is not planar!"));
-		// TODO: we could exit here with failure, but until we can prevent this from happening we might as well try our best.
-		// This currently happens due to differing number of naive miter participants on different vertices of a given edge.
-		//return false;
+		return false;
 	}
 
-	FVector edgeADir = (TempSidePoints[1] - TempSidePoints[0]).GetSafeNormal();
-	FVector edgeAB1Dir = (TempSidePoints[2] - TempSidePoints[0]).GetSafeNormal();
-	FVector sideNormal = (edgeADir ^ edgeAB1Dir).GetSafeNormal();
+	FVector edgeADir = bEdgeAValid ? edgeADelta / edgeALen : FVector::ZeroVector;
+	FVector edgeBDir = bEdgeBValid ? edgeBDelta / edgeBLen : FVector::ZeroVector;
+	FVector sideStartDir = (TempSidePoints[2] - TempSidePoints[0]).GetSafeNormal();
+	FVector sideEndDir = (TempSidePoints[3] - TempSidePoints[1]).GetSafeNormal();
+	FVector edgeDir(ForceInitToZero), sideNormal(ForceInitToZero);
+
+	// For quads, see whether they are planar and calculate the most accurate edge direction and side normals possible
+	if (bEdgeAValid && bEdgeBValid)
+	{
+		// This can happen due to differing number of naive miter participants on different vertices of a given edge,
+		// but with stitch faces and point de-duplication, this isn't expected to occur as often.
+		if (!FVector::Coincident(edgeADir, edgeBDir))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Start and end sides of layer are not coincident, no valid quad!"));
+			//return false;
+			edgeDir = edgeADir;
+		}
+		else
+		{
+			edgeDir = 0.5f * (edgeADir + edgeBDir);
+		}
+
+		FVector sideStartNormal = (edgeDir ^ sideStartDir).GetSafeNormal();
+		FVector sideEndNormal = (edgeDir ^ sideEndDir).GetSafeNormal();
+
+		if (FVector::Coincident(sideStartNormal, sideEndNormal))
+		{
+			sideNormal = 0.5f * (sideStartNormal + sideEndNormal);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Side of layer is not planar!"));
+			//return false;
+			sideNormal = sideStartNormal;
+		}
+
+		if (bReverseTris)
+		{
+			sideNormal *= -1.0f;
+		}
+	}
+	// Otherwise, For a triangular side get the only valid edge direction and side normal
+	else
+	{
+		edgeDir = bEdgeAValid ? edgeADir : edgeBDir;
+		sideNormal = (edgeDir ^ sideStartDir).GetSafeNormal();
+		bReverseTris = bEdgeAValid ? bReverseTris : !bReverseTris;
+
+		// Remove one of the arrayed side points, so we can keep track of the unique triangular side points
+		if (bEdgeAValid)
+		{
+			TempSidePoints.RemoveAt(2);
+		}
+		else
+		{
+			TempSidePoints.RemoveAt(0);
+		}
+	}
 
 	// Whether to treat UVs as if the wall was laid on its front face,
 	// as opposed to using the best projection on the wall's up vector as the vertical UV component.
 	// TODO: when tile materials can reinterpret their pattern data to understand how to cut modules in 3D,
 	// make UVs consistent on all sides so that they can all evaluate the same material.
-	bool bUseFlatUVs = FVector::Orthogonal(edgeADir, FVector::UpVector);
-	bool bSideAlignsWithUp = (edgeADir | FVector::UpVector) > 0.0f;
+	bool bUseFlatUVs = FVector::Orthogonal(edgeDir, FVector::UpVector);
+	bool bSideAlignsWithUp = (edgeDir | FVector::UpVector) > 0.0f;
 
-	if (bReverseTris)
-	{
-		sideNormal *= -1.0f;
-	}
-
-	FVector sideAxisY = bUseFlatUVs ? -Normal : (bSideAlignsWithUp ? -edgeADir : edgeADir);
+	FVector sideAxisY = bUseFlatUVs ? -Normal : (bSideAlignsWithUp ? -edgeDir : edgeDir);
 	FVector sideAxisX = (-sideNormal ^ sideAxisY).GetSafeNormal();
 
-	FVector2D sideUVs[4];
-	FVector sideNormals[4];
-	FProcMeshTangent sideTangents[4];
-	for (int32 i = 0; i < 4; ++i)
+	static TArray<FVector2D> sideUVs;
+	static TArray<FVector> sideNormals;
+	static TArray<FProcMeshTangent> sideTangents;
+	static TArray<int32> sideTris;
+
+	sideUVs.Reset();
+	sideNormals.Reset();
+	sideTangents.Reset();
+
+	if (bEdgeAValid && bEdgeBValid)
 	{
-		sideUVs[i] = UVScale * UModumateGeometryStatics::ProjectPoint2D(TempSidePoints[i], sideAxisX, sideAxisY, UVAnchor);
-		sideNormals[i] = sideNormal;
-		sideTangents[i] = FProcMeshTangent(Normal, false);
+		sideTris = { 3, 1, 2, 2, 1, 0 };
+	}
+	else
+	{
+		sideTris = { 2, 1, 0 };
 	}
 
-	static TArray<int32> sideTris({ 3, 1, 2, 2, 1, 0 });
+	for (auto& sidePoint : TempSidePoints)
+	{
+		sideUVs.Add(UVScale * UModumateGeometryStatics::ProjectPoint2D(sidePoint, sideAxisX, sideAxisY, UVAnchor));
+		sideNormals.Add(sideNormal);
+		sideTangents.Add(FProcMeshTangent(Normal, false));
+	}
+
 	AppendTriangles(OutVerts, sideTris, OutTris, bReverseTris);
 	OutVerts.Append(TempSidePoints);
-	OutNormals.Append(sideNormals, 4);
-	OutUVs.Append(sideUVs, 4);
-	OutTangents.Append(sideTangents, 4);
+	OutNormals.Append(sideNormals);
+	OutUVs.Append(sideUVs);
+	OutTangents.Append(sideTangents);
 
 	return true;
 }
@@ -317,7 +423,7 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector>& OutVerts, TArray<int32>& Ou
 
 	TArray<FVector2D> verticesA2D, verticesB2D;
 	TArray<int32> trisA2D, trisB2D;
-	bool bTriangulatedA = UModumateGeometryStatics::TriangulateVerticesGTE(CachedPointsA2D, ValidHoles2D, trisA2D, &verticesA2D);
+	bool bTriangulatedA = UModumateGeometryStatics::TriangulateVerticesGTE(CachedUniquePointsA2D, ValidHoles2D, trisA2D, &verticesA2D);
 
 	if (!bTriangulatedA)
 	{
@@ -329,7 +435,7 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector>& OutVerts, TArray<int32>& Ou
 	// If the layer has *any* thickness, then triangulate its opposite side so that there can be distinct triangles
 	if (Thickness > SMALL_NUMBER)
 	{
-		bool bTriangulatedB = UModumateGeometryStatics::TriangulateVerticesGTE(CachedPointsB2D, ValidHoles2D, trisB2D, &verticesB2D);
+		bool bTriangulatedB = UModumateGeometryStatics::TriangulateVerticesGTE(CachedUniquePointsB2D, ValidHoles2D, trisB2D, &verticesB2D);
 
 		if (!bTriangulatedB)
 		{
@@ -337,14 +443,12 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector>& OutVerts, TArray<int32>& Ou
 		}
 
 		// The perimeter and hole merging calculations should match; otherwise, we can't fix any differences between them.
-		bool bSamePerimeters = (CachedPointsA2D.Num() == CachedPointsA2D.Num());
+		bool bSamePerimeters = (CachedUniquePointsA2D.Num() == CachedUniquePointsA2D.Num());
 		if (!ensure(bSamePerimeters))
 		{
 			return false;
 		}
 	}
-
-	int32 numPerimeterPoints = CachedPointsA2D.Num();
 
 	// Side A
 	AppendTriangles(OutVerts, trisA2D, OutTris, false);
@@ -384,12 +488,13 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector>& OutVerts, TArray<int32>& Ou
 	}
 
 	// Perimeter sides
+	int32 numPerimeterPoints = CachedOriginalPointsA2D.Num();
 	for (int32 perimIdx1 = 0; perimIdx1 < numPerimeterPoints; ++perimIdx1)
 	{
 		int32 perimIdx2 = (perimIdx1 + 1) % numPerimeterPoints;
 
-		TriangulateSideFace(CachedPointsA2D[perimIdx1], CachedPointsA2D[perimIdx2],
-			CachedPointsB2D[perimIdx1], CachedPointsB2D[perimIdx2], !bCoincident,
+		TriangulateSideFace(CachedOriginalPointsA2D[perimIdx1], CachedOriginalPointsA2D[perimIdx2],
+			CachedOriginalPointsB2D[perimIdx1], CachedOriginalPointsB2D[perimIdx2], !bCoincident,
 			OutVerts, OutTris, OutNormals, OutUVs, OutTangents, uvScale, UVAnchor, UVRotOffset);
 	}
 

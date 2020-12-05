@@ -80,11 +80,11 @@ FVector FMOIPlaneHostedObjImpl::GetCorner(int32 CornerIndex) const
 
 		if (ensure((numLayers == MOI->GetAssembly().Layers.Num()) && numLayers > 0))
 		{
-			auto& layerPoints = bOnStartingSide ? LayerGeometries[0].PointsA : LayerGeometries[numLayers - 1].PointsB;
+			auto& layerPoints = bOnStartingSide ? LayerGeometries[0].OriginalPointsA : LayerGeometries[numLayers - 1].OriginalPointsB;
 
-			if (ensure(numPlanePoints == layerPoints.Num()))
+			if (ensure((3 * numPlanePoints) == layerPoints.Num()))
 			{
-				return parent->GetObjectLocation() + layerPoints[pointIndex];
+				return parent->GetObjectLocation() + layerPoints[3 * pointIndex];
 			}
 		}
 	}
@@ -148,13 +148,12 @@ bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDe
 			}
 		}
 
-		SetupDynamicGeometry();
+		UpdateMeshWithLayers(false, true);
 	}
 	break;
 	case EObjectDirtyFlags::Visuals:
 	{
 		MOI->UpdateVisibilityAndCollision();
-		UpdateMeshWithLayers(false, false);
 	}
 	break;
 	}
@@ -164,22 +163,10 @@ bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDe
 
 void FMOIPlaneHostedObjImpl::SetupDynamicGeometry()
 {
-	bGeometryDirty = true;
-	InternalUpdateGeometry();
 }
 
 void FMOIPlaneHostedObjImpl::UpdateDynamicGeometry()
 {
-	// If our parent metaplane is being adjusted, then just update our own mesh to match rather than derive points from the doc graph
-	const FModumateObjectInstance *parent = MOI->GetParentObject();
-	if (ensure(parent != nullptr) && parent->GetIsInPreviewMode())
-	{
-		UpdateMeshWithLayers(false, true);
-	}
-	else
-	{
-		InternalUpdateGeometry();
-	}
 }
 
 void FMOIPlaneHostedObjImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
@@ -209,34 +196,6 @@ void FMOIPlaneHostedObjImpl::GetStructuralPointsAndLines(TArray<FStructurePoint>
 			outLines.Add(FStructureLine(cornerMinA, cornerMaxA, edgeIdxA, edgeIdxA + numPlanePoints));
 		}
 	}
-}
-
-void FMOIPlaneHostedObjImpl::InternalUpdateGeometry()
-{
-	FModumateObjectInstance *parent = MOI->GetParentObject();
-	if (!(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
-	{
-		return;
-	}
-
-	if (bGeometryDirty)
-	{
-		UpdateMeshWithLayers(false, true);
-
-		TArray<FModumateObjectInstance*> children = MOI->GetChildObjects();
-		for (auto *child : children)
-		{
-			child->MarkDirty(EObjectDirtyFlags::Structure);
-		}
-
-		CachedLayerDims.UpdateFinishFromObject(MOI);
-	}
-	else
-	{
-		UpdateMeshWithLayers(false, true);
-	}
-
-	bGeometryDirty = false;
 }
 
 void FMOIPlaneHostedObjImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
@@ -346,7 +305,7 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 			}
 
 			TArray<FVector> intersections;
-			UModumateGeometryStatics::GetPlaneIntersections(intersections, usePointsA ? layer.PointsA : layer.PointsB, Plane, parentLocation);
+			UModumateGeometryStatics::GetPlaneIntersections(intersections, usePointsA ? layer.UniquePointsA : layer.UniquePointsB, Plane, parentLocation);
 
 			intersections.Sort(UModumateGeometryStatics::Points3dSorter);
 			// we can make mask perimeters when there are an even amount of intersection between a simple polygon and a plane
@@ -406,7 +365,7 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 				FVector intersectionEnd = intersections[idx + 1];
 				TPair<FVector, FVector> currentIntersection = TPair<FVector, FVector>(intersectionStart, intersectionEnd);
 				// Hole coords are on the parent meta-plane so project.
-				FVector samplePoint = usePointsA ? layer.PointsA[0] : layer.PointsB[0];
+				FVector samplePoint = usePointsA ? layer.OriginalPointsA[0] : layer.OriginalPointsB[0];
 				FVector hole3DDisplacement = (samplePoint | layer.Normal) * layer.Normal;
 				layer.GetRangesForHolesOnPlane(lineRanges, currentIntersection,
 					parentLocation + hole3DDisplacement, Plane, -AxisX, -AxisY, Origin);
@@ -583,8 +542,8 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 
 		};
 
-		addPerimeterLines(LayerGeometries[0].PointsA);
-		addPerimeterLines(LayerGeometries[numLayers - 1].PointsB);
+		addPerimeterLines(LayerGeometries[0].OriginalPointsA);
+		addPerimeterLines(LayerGeometries[numLayers - 1].OriginalPointsB);
 
 		auto addOpeningLines = [&backgroundLines](const FLayerGeomDef& layer, FVector parentLocation, bool bSideA)
 		{
@@ -607,11 +566,11 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 		addOpeningLines(LayerGeometries[numLayers - 1], parentLocation, false);
 
 		// Corner lines.
-		int32 numPoints = LayerGeometries[0].PointsA.Num();
+		int32 numPoints = LayerGeometries[0].UniquePointsA.Num();
 		for (int32 p = 0; p < numPoints; ++p)
 		{
-			FEdge line(LayerGeometries[0].PointsA[p] + parentLocation,
-				LayerGeometries[numLayers - 1].PointsB[p] + parentLocation);
+			FEdge line(LayerGeometries[0].UniquePointsA[p] + parentLocation,
+				LayerGeometries[numLayers - 1].UniquePointsB[p] + parentLocation);
 			backgroundLines.Emplace(line, layerType);
 		}
 

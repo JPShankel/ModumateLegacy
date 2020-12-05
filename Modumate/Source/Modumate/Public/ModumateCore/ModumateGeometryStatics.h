@@ -149,7 +149,7 @@ public:
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool RayIntersection3D(const FVector& RayOriginA, const FVector& RayDirectionA, const FVector& RayOriginB, const FVector& RayDirectionB,
-		FVector& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool bRequirePositive = true, float IntersectionTolerance = RAY_INTERSECT_TOLERANCE, float RayNormalTolerance = KINDA_SMALL_NUMBER);
+		FVector& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool bRequirePositive = true, float IntersectionTolerance = RAY_INTERSECT_TOLERANCE);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool TranslatePolygonEdge(const TArray<FVector> &PolyPoints, const FVector &PolyNormal, int32 EdgeStartIdx, float Translation, FVector &OutStartPoint, FVector &OutEndPoint);
@@ -159,10 +159,6 @@ public:
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool FindShortestDistanceBetweenRays(const FVector &RayOriginA, const FVector &RayDirectionA, const FVector &RayOriginB, const FVector &RayDirectionB, FVector &OutRayInterceptA, FVector &OutRayInterceptB, float &outDistance);
-
-	UFUNCTION(Category = "Modumate | Geometry")
-	static bool GetExtendedCorner(FVector &RefCorner, const FVector &PrevPoint, const FVector &NextPoint,
-		const FVector &PrevEdgeNormal, const FVector &NextEdgeNormal, float PrevEdgeExtension, float NextEdgeExtension);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool CompareVectors(const TArray<FVector2D> &vectorsA, const TArray<FVector2D> &vectorsB, float tolerance = KINDA_SMALL_NUMBER);
@@ -177,6 +173,7 @@ public:
 
 	static bool GetEdgeIntersections(const TArray<FVector> &Positions, const FVector &IntersectionOrigin, const FVector &IntersectionDir, TArray<Modumate::FEdgeIntersection> &OutEdgeIntersections, float Epsilon = DEFAULT_GRAPH3D_EPSILON);
 
+	static void GetUniquePoints(const TArray<FVector>& InPoints, TArray<FVector>& OutPoints, float Tolerance = THRESH_POINTS_ARE_NEAR);
 	static bool AreConsecutivePoints2DRepeated(const TArray<FVector2D> &Points, float Tolerance = KINDA_SMALL_NUMBER);
 	static bool AreConsecutivePointsRepeated(const TArray<FVector> &Points, float Tolerance = KINDA_SMALL_NUMBER);
 

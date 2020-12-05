@@ -54,7 +54,6 @@ public:
 		TArray<TArray<FVector>> &OutPerimeters) const override;
 
 protected:
-	void InternalUpdateGeometry();
 	void UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalculateEdgeExtensions);
 	void UpdateConnectedEdges();
 	void MarkEdgesMiterDirty();

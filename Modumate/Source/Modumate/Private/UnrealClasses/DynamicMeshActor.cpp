@@ -747,7 +747,7 @@ bool ADynamicMeshActor::SetupStairPolys(const FVector& StairOrigin, const TArray
 			for (const TArray<FVector>& elementPoly: polys)
 			{
 				FVector stepDelta(elementPoly[0] - polys[0][0]);
-				stairPoints = inLayer.PointsA;
+				stairPoints = inLayer.OriginalPointsA;
 				for (auto& point: stairPoints)
 				{
 					point += stepDelta;
