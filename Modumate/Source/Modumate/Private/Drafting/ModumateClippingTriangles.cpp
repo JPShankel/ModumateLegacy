@@ -124,7 +124,7 @@ namespace Modumate
 				}
 			}
 
-			static constexpr float triangleEpsilon = 1.0f;  // Push triangles back slightly.
+			static constexpr float triangleEpsilon = 0.5f;  // Push triangles back slightly.
 			static constexpr float minTriangleArea = 1.0f;  // Cull degenerate triangles.
 
 			const float minScaledArea = minTriangleArea * Scale * Scale;

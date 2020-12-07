@@ -639,7 +639,7 @@ float ACompoundMeshActor::GetPortalCenter(const FModumateDocument* Doc, const FB
 		FVector meshMin, meshMax;
 		panelStaticMesh->GetLocalBounds(meshMin, meshMax);
 		FTransform panelMeshTransform = panelMesh->GetRelativeTransform();
-		centerOffset = 0.5f * FMath::Abs(meshMax.Y - meshMin.Y) + panelMeshTransform.GetTranslation().Y;
+		centerOffset = panelMeshTransform.TransformPosition((meshMin + meshMax) / 2).Y;
 	}
 
 	return centerOffset;
@@ -724,36 +724,6 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 		}
 		return false;  // False if equal.
 	};
-	static auto lexicalVectorCompare = [](const FVector& a, const FVector& b)
-	{
-		if (a.X == b.X)
-		{
-			if (a.Y == b.Y)
-			{
-				return a.Z < b.Z;
-			}
-			return a.Y < b.Y;
-		}
-		return a.X < b.X;
-	};
-
-	struct FLocalEdge
-	{
-		FVector A;
-		FVector B;
-		FVector N;
-		bool bIsValid{ true };
-		operator bool() const { return bIsValid; }
-		void Normalize() { if (lexicalVectorCompare(B, A)) { Swap(A, B); } }
-		bool operator==(const FLocalEdge& rhs) const
-		{
-			return A == rhs.A && B == rhs.B || A == rhs.B && B == rhs.A;
-		}
-		bool operator<(const FLocalEdge& rhs) const
-		{
-			return A == rhs.A ? lexicalVectorCompare(B, rhs.B) : lexicalVectorCompare(A, rhs.A);
-		}
-	};
 
 	const int32 numComponents = StaticMeshComps.Num();
 	for (int32 component = 0; component < numComponents; ++component)
@@ -766,6 +736,9 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 
 		if (UseSlicedMesh[component])
 		{   // Component has been nine-sliced.
+			TArray<FVector> vertices;
+			TArray<int32> indices;
+
 			for (int32 slice = 9 * component; slice < 9 * (component + 1); ++slice)
 			{
 				UProceduralMeshComponent* meshComponent = NineSliceLowLODComps[slice];
@@ -774,8 +747,6 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 				{
 					continue;
 				}
-
-				TArray<FLocalEdge> edges;
 
 				const FTransform localToWorld = meshComponent->GetRelativeTransform() * actorToWorld;
 				int numSections = meshComponent->GetNumSections();
@@ -786,63 +757,31 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 					{
 						continue;
 					}
-					const auto& vertices = meshSection->ProcVertexBuffer;
-					const auto& indices = meshSection->ProcIndexBuffer;
-					const int32 numIndices = indices.Num();
+					const auto& sectionVertices = meshSection->ProcVertexBuffer;
+					const auto& sectionIndices = meshSection->ProcIndexBuffer;
+					const int32 numIndices = sectionIndices.Num();
+					const int32 numVertices = sectionVertices.Num();
 					ensure(numIndices % 3 == 0);
 
-					const int32 numTriangles = numIndices / 3;
-					for (int32 triangle = 0; triangle < numTriangles; ++triangle)
-					{
+					int32 indexOffset = vertices.Num();
 
-						FVector vert0 = localToWorld.TransformPosition(vertices[indices[triangle * 3]].Position);
-						FVector vert1 = localToWorld.TransformPosition(vertices[indices[triangle * 3 + 1]].Position);
-						FVector vert2 = localToWorld.TransformPosition(vertices[indices[triangle * 3 + 2]].Position);
-						FVector triNormal = ((vert2 - vert0) ^ (vert1 - vert0)).GetSafeNormal();
-						if ((viewNormal | triNormal) <= 0.0f)
-						{
-							edges.Add({ vert0, vert1, triNormal });
-							edges.Add({ vert1, vert2, triNormal });
-							edges.Add({ vert2, vert0, triNormal });
-						}
+					for (int32 v = 0; v < numVertices; ++v)
+					{
+						vertices.Add(localToWorld.TransformPosition(sectionVertices[v].Position));
+					}
+					for (int32 i = 0; i < numIndices; ++i)
+					{
+						indices.Add(sectionIndices[i] + indexOffset);
 					}
 
-				}
-
-				const int numEdges = edges.Num();
-				for (auto& edge : edges)
-				{
-					edge.Normalize();
-				}
-
-				static constexpr float distDeltaSquare = 0.5f * 0.5f;  // 5 mm
-				static constexpr float angleThreshold = 0.996f;  // 5 degrees
-
-				// Brute-force search for internal lines.
-				for (int32 e1 = 0; e1 < numEdges; ++e1)
-				{
-					for (int32 e2 = e1 + 1; e2 < numEdges; ++e2)
-					{
-						auto& edge1 = edges[e1];
-						auto& edge2 = edges[e2];
-						if (FVector::DistSquared(edge1.A, edge2.A) < distDeltaSquare && FVector::DistSquared(edge1.B, edge2.B) < distDeltaSquare
-							&& FMath::Abs(edge1.N | edge2.N) > angleThreshold)
-						{
-							edge1.bIsValid = false;
-							edge2.bIsValid = false;
-						}
-					}
-				}
-
-				for (auto& edge : edges)
-				{
-					if (edge)
-					{
-						portalEdges.Emplace(edge.A, edge.B);
-					}
 				}
 
 			}
+
+			// Nine-slicing can introduce significant shifts in vertices and edges,
+			// so use increased epsilon of 6 mm.
+			DraftingLinesFromTriangles(vertices, indices, viewNormal, portalEdges, 0.6f);
+
 		}
 		else
 		{
@@ -853,10 +792,9 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 				continue;
 			}
 
-			TArray<FLocalEdge> edges;
-
 			const int levelOfDetailIndex = staticMesh->GetNumLODs() - 1;
 			const FStaticMeshLODResources& meshResources = staticMesh->GetLODForExport(levelOfDetailIndex);
+			FVector viewNormalLocal = localToWorld.InverseTransformVector(viewNormal);
 
 			TArray<FVector> positions;
 			TArray<int32> indices;
@@ -867,64 +805,34 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 			int32 numSections = meshResources.Sections.Num();
 			for (int32 section = 0; section < numSections; ++section)
 			{
-				UKismetProceduralMeshLibrary::GetSectionFromStaticMesh(staticMesh, levelOfDetailIndex, section, positions, indices, normals, UVs, tangents);
-				ensure(indices.Num() % 3 == 0);
-				int32 numTriangles = indices.Num() / 3;
-				for (int32 triangle = 0; triangle < numTriangles; ++triangle)
-				{
-					FVector pos[3];
-					for (int32 v = 0; v < 3; ++v)
-					{
-						int32 index = indices[triangle * 3 + v];
-						pos[v] = localToWorld.TransformPosition(positions[index]);
-					}
+				TArray<FVector> sectionPositions;
+				TArray<int32> sectionIndices;
+				UKismetProceduralMeshLibrary::GetSectionFromStaticMesh(staticMesh, levelOfDetailIndex, section,
+					sectionPositions, sectionIndices, normals, UVs, tangents);
+				ensure(sectionIndices.Num() % 3 == 0);
 
-					// Verts are CW from front.
-					FVector geomNormal = (pos[2] - pos[0]) ^ (pos[1] - pos[0]);
-					bool geomFrontFacing = (geomNormal | viewNormal) <= 0.0f;
-					if (geomFrontFacing)
-					{
-						geomNormal.Normalize();
-						edges.Add({ pos[0], pos[1], geomNormal });
-						edges.Add({ pos[1], pos[2], geomNormal });
-						edges.Add({ pos[2], pos[0], geomNormal });
-					}
+				const int32 numVerts = sectionPositions.Num();
+				const int32 numIndices = sectionIndices.Num();
+
+				int32 indexOffset = positions.Num();
+
+				for (int32 v = 0; v < numVerts; ++v)
+				{
+					positions.Add(sectionPositions[v]);
+				}
+				for (int32 i = 0; i < numIndices; ++i)
+				{
+					indices.Add(sectionIndices[i] + indexOffset);
 				}
 
 			}
 
-			for (auto& edge : edges)
+			TArray<FEdge> localEdges;
+			// Portal static meshes tend to have a lot of fine detail, to use epsilon of 0.5 mm.
+			DraftingLinesFromTriangles(positions, indices, viewNormalLocal, localEdges, 0.05f);
+			for (const auto& edge: localEdges)
 			{
-				edge.Normalize();
-			}
-			const int numEdges = edges.Num();
-			Algo::Sort(edges);
-			// Remove all common edges with common directions. 
-			for (int e1 = 0; e1 < numEdges; ++e1)
-			{
-				FLocalEdge& edge1 = edges[e1];
-				for (int e2 = e1 + 1; e2 < numEdges; ++e2)
-				{
-					FLocalEdge& edge2 = edges[e2];
-					if (!(edge1 == edge2))
-					{
-						break;
-					}
-					if (edge2 && FMath::Abs(edge1.N | edge2.N) > THRESH_NORMALS_ARE_PARALLEL)
-					{
-						edge1.bIsValid = false;
-						edge2.bIsValid = false;
-						break;
-					}
-				}
-			}
-
-			for (auto& edge : edges)
-			{
-				if (edge)
-				{
-					portalEdges.Emplace(edge.A, edge.B);
-				}
+				portalEdges.Add(FEdge(localToWorld.TransformPosition(edge.Vertex[0]), localToWorld.TransformPosition(edge.Vertex[1])) );
 			}
 
 		}
@@ -938,7 +846,6 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 
 	// Eliminate identical lines in 2D...
 	// Superfluous now that we eliminate over the whole draft, but more efficient.
-
 	for (auto& edge : clippedLines)
 	{   // Canonical form:
 		if (edge.Vertex[0].X > edge.Vertex[1].X ||
@@ -974,4 +881,96 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 			line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kOpeningSystemBeyond);
 		}
 	}
+}
+
+// Vertices separated by Epsilon are considered equivalent.
+void ACompoundMeshActor::DraftingLinesFromTriangles(const TArray<FVector>& Vertices, const TArray<int32>& Indices,
+	const FVector& ViewDirection, TArray<FEdge>& outEdges, float Epsilon /*= 0.4f*/) const
+{
+	const float EpsilonSquare = Epsilon * Epsilon;
+	static constexpr float angleThreshold = 0.9205f;  // 23 degrees
+
+	static auto lexicalVectorCompare = [](const FVector& a, const FVector& b)
+	{
+		if (a.X == b.X)
+		{
+			if (a.Y == b.Y)
+			{
+				return a.Z < b.Z;
+			}
+			return a.Y < b.Y;
+		}
+		return a.X < b.X;
+	};
+
+	struct FLocalEdge
+	{
+		FVector A;
+		FVector B;
+		FVector N;
+		bool bIsValid { true };
+		operator bool() const { return bIsValid; }
+		void Normalize() { if (lexicalVectorCompare(B, A)) { Swap(A, B); } }
+		bool operator==(const FLocalEdge& rhs) const
+		{
+			return A == rhs.A && B == rhs.B || A == rhs.B && B == rhs.A;
+		}
+		bool operator<(const FLocalEdge& rhs) const
+		{
+			return A == rhs.A ? lexicalVectorCompare(B, rhs.B) : lexicalVectorCompare(A, rhs.A);
+		}
+	};
+
+	TArray<FLocalEdge> edges;
+
+	const int32 numTriangles = Indices.Num() / 3;
+	for (int32 triangle = 0; triangle < numTriangles; ++triangle)
+	{
+
+		FVector vert0 = Vertices[Indices[triangle * 3]];
+		FVector vert1 = Vertices[Indices[triangle * 3 + 1]];
+		FVector vert2 = Vertices[Indices[triangle * 3 + 2]];
+		if (FVector::DistSquared(vert0, vert1) > EpsilonSquare && FVector::DistSquared(vert0, vert2) > EpsilonSquare
+			&& FVector::DistSquared(vert1, vert2) > EpsilonSquare)
+		{
+			FVector triNormal = ((vert2 - vert0) ^ (vert1 - vert0)).GetSafeNormal();
+			if ((ViewDirection | triNormal) <= 0.0f)
+			{
+				edges.Add({ vert0, vert1, triNormal });
+				edges.Add({ vert1, vert2, triNormal });
+				edges.Add({ vert2, vert0, triNormal });
+			}
+		}
+	}
+
+	const int numEdges = edges.Num();
+	for (auto& edge : edges)
+	{
+		edge.Normalize();
+	}
+
+	// Brute-force search for internal lines.
+	for (int32 e1 = 0; e1 < numEdges; ++e1)
+	{
+		for (int32 e2 = e1 + 1; e2 < numEdges; ++e2)
+		{
+			auto& edge1 = edges[e1];
+			auto& edge2 = edges[e2];
+			if (FVector::DistSquared(edge1.A, edge2.A) < EpsilonSquare && FVector::DistSquared(edge1.B, edge2.B) < EpsilonSquare
+				&& FMath::Abs(edge1.N | edge2.N) > angleThreshold)
+			{
+				edge1.bIsValid = false;
+				edge2.bIsValid = false;
+			}
+		}
+	}
+
+	for (auto& edge: edges)
+	{
+		if (edge)
+		{
+			outEdges.Emplace(edge.A, edge.B);
+		}
+	}
+
 }

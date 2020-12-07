@@ -59,7 +59,7 @@ namespace Modumate
 		TUniquePtr<QuadTreeNode> QuadTree;
 
 		// Erode-length in world units.
-		static constexpr float LineClipEpsilon = 0.5f;
+		static constexpr float LineClipEpsilon = 0.05f;
 	};
 
 }

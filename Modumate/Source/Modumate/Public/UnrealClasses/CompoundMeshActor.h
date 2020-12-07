@@ -91,4 +91,6 @@ private:
 	void ResetProcMeshComponents(TArray<UProceduralMeshComponent*> &ProcMeshComps, int32 maxNumMeshes);
 	bool InitializeProcMeshComponent(TArray<UProceduralMeshComponent*> &ProcMeshComps, USceneComponent *rootComp, int32 index);
 	void CalculateNineSliceComponents(TArray<UProceduralMeshComponent*> &ProcMeshComps, USceneComponent *rootComp, const int32 LodIndex, int32 sliceCompIdxStart, FBox &nineSliceInterior, const FVector &partNativeSize);
+	void DraftingLinesFromTriangles(const TArray<FVector>& Vertices, const TArray<int32>& Indices,
+		const FVector& ViewDirection, TArray<FEdge>& outEdges, float Epsilon = 0.4f) const;
 };
