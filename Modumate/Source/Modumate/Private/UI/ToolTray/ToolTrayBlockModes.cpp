@@ -37,7 +37,7 @@ void UToolTrayBlockModes::NativeConstruct()
 
 void UToolTrayBlockModes::ChangeToMetaPlaneToolsButtons()
 {
-	TArray<UModumateButtonUserWidget*> buttonsToShow = { ButtonMetaPlaneLine, ButtonMetaPlaneHorizontal, ButtonMetaPlaneVertical };
+	TArray<UModumateButtonUserWidget*> buttonsToShow = { ButtonAxesNone, ButtonAxesXY, ButtonAxesZ };
 	SetButtonsState(buttonsToShow);
 }
 
@@ -95,22 +95,7 @@ void UToolTrayBlockModes::SetButtonsState(const TArray<UModumateButtonUserWidget
 	EAxisConstraint currentConstraint = currentTool->GetAxisConstraint();
 	EToolCreateObjectMode currentDrawMode = currentTool->GetCreateObjectMode();
 
-	if (controller->GetToolMode() == EToolMode::VE_METAPLANE)
-	{
-		switch (currentConstraint)
-		{
-		case EAxisConstraint::None:
-			ButtonMetaPlaneLine->SwitchToActiveStyle();
-			break;
-		case EAxisConstraint::AxisZ:
-			ButtonMetaPlaneHorizontal->SwitchToActiveStyle();
-			break;
-		case EAxisConstraint::AxesXY:
-			ButtonMetaPlaneVertical->SwitchToActiveStyle();
-			break;
-		}
-	}
-	else if (currentDrawMode == EToolCreateObjectMode::Apply)
+	if (currentDrawMode == EToolCreateObjectMode::Apply)
 	{
 		ButtonMPBucket->SwitchToActiveStyle();
 	}

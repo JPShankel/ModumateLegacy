@@ -94,9 +94,6 @@ enum class EInputCommand : uint8
 	ActivateTool_END,
 
 	// Tool-related commands
-	MetaPlaneLine,
-	MetaPlaneHorizontal,
-	MetaPlaneVertical,
 	ConstraintAxesNone,
 	ConstraintAxesXY,
 	ConstraintAxesZ,
@@ -137,9 +134,6 @@ struct MODUMATE_API FInputCommandDataRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FInputChord> Binding;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bPassThroughInput;
 };
 
 // The struct for storing combined data for an input command, with all of its bindings.
@@ -166,9 +160,6 @@ struct MODUMATE_API FInputCommandData
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 NumBindings = 0;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	bool bPassThroughInput;
-
 	TArray<TArray<FInputChord>> AllBindings;
 };
 
@@ -188,7 +179,7 @@ struct MODUMATE_API FCommandTrieNode : public TSharedFromThis<FCommandTrieNode>
 
 // Delegate definitions purely for passing stored arguments via UPlayerInput action bindings.
 DECLARE_DELEGATE_OneParam(FInputCommandDelegate, EInputCommand);
-DECLARE_DELEGATE_TwoParams(FInputChordDelegate, FInputChord, bool);
+DECLARE_DELEGATE_OneParam(FInputChordDelegate, FInputChord);
 DECLARE_DELEGATE_OneParam(FInputDigitDelegate, int32);
 
 
@@ -253,7 +244,7 @@ public:
 
 protected:
 	UFUNCTION()
-	void HandleBoundChord(FInputChord Chord, bool bPassThroughInput);
+	void HandleBoundChord(FInputChord Chord);
 
 	UFUNCTION()
 	void HandleDigitKey(int32 DigitNumber);

@@ -107,7 +107,6 @@ void UEditModelInputHandler::SetupBindings()
 			data.Title = data.Title.IsEmpty() ? Row.Title : data.Title;
 			data.EnabledDescription = data.EnabledDescription.IsEmpty() ? Row.EnabledDescription : data.EnabledDescription;
 			data.DisabledDescription = data.DisabledDescription.IsEmpty() ? Row.DisabledDescription : data.DisabledDescription;
-			data.bPassThroughInput |= Row.bPassThroughInput;
 
 			if (Row.Binding.Num() > 0)
 			{
@@ -154,7 +153,7 @@ void UEditModelInputHandler::SetupBindings()
 						FInputActionKeyMapping commandMapping(chordActionName, curChord.Key, curChord.bShift, curChord.bCtrl, curChord.bAlt, curChord.bCmd);
 						inputSettings->AddActionMapping(commandMapping, true);
 
-						Controller->InputComponent->BindAction<FInputChordDelegate>(chordActionName, EInputEvent::IE_Pressed, this, &UEditModelInputHandler::HandleBoundChord, curChord, data.bPassThroughInput);
+						Controller->InputComponent->BindAction<FInputChordDelegate>(chordActionName, EInputEvent::IE_Pressed, this, &UEditModelInputHandler::HandleBoundChord, curChord);
 
 						BoundChords.Add(curChord);
 					}
@@ -368,27 +367,6 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 
 	// Tool-related commands
 
-	case EInputCommand::MetaPlaneLine:
-	{
-		Controller->SetToolMode(EToolMode::VE_METAPLANE);
-		Controller->SetToolAxisConstraint(EAxisConstraint::None);
-		return true;
-	}
-
-	case EInputCommand::MetaPlaneHorizontal:
-	{
-		Controller->SetToolMode(EToolMode::VE_METAPLANE);
-		Controller->SetToolAxisConstraint(EAxisConstraint::AxesXY);
-		return true;
-	}
-
-	case EInputCommand::MetaPlaneVertical:
-	{
-		Controller->SetToolMode(EToolMode::VE_METAPLANE);
-		Controller->SetToolAxisConstraint(EAxisConstraint::AxisZ);
-		return true;
-	}
-
 	case EInputCommand::ConstraintAxesNone:
 	{
 		Controller->SetToolCreateObjectMode(EToolCreateObjectMode::Draw);
@@ -584,7 +562,7 @@ bool UEditModelInputHandler::IsAxisInputPrioritized() const
 	return (AxisPriorityRequests.Num() > 0);
 }
 
-void UEditModelInputHandler::HandleBoundChord(FInputChord Chord, bool bPassThroughInput)
+void UEditModelInputHandler::HandleBoundChord(FInputChord Chord)
 {
 	if (!IsInputEnabled())
 	{
@@ -600,9 +578,22 @@ void UEditModelInputHandler::HandleBoundChord(FInputChord Chord, bool bPassThrou
 		return;
 	}
 
+	// If the current chord isn't in the sequence, then reset the current sequence
 	if (!curCommandNode->Children.Contains(Chord))
 	{
-		return;
+		CurCommandNode = RootCommandTrie;
+		curCommandNode = CurCommandNode.Pin();
+
+		// Allow starting a new sequence from the beginning, with the new chord
+		if (ensure(curCommandNode.IsValid()) && curCommandNode->Children.Contains(Chord))
+		{
+			curCommandNode = CurCommandNode.Pin();
+		}
+		// But if it's not the start of any chord, then exit with the reset sequence.
+		else
+		{
+			return;
+		}
 	}
 
 	// If this is a root command that overlaps with a bound axis input, and axis input is currently prioritized,
@@ -629,7 +620,7 @@ void UEditModelInputHandler::HandleBoundChord(FInputChord Chord, bool bPassThrou
 	}
 
 	// If the current node has no children, or if it successfully executed and captures input, then we want to start back at the root immediately
-	if ((bCommandSuccess && !bPassThroughInput) || (curCommandNode->Children.Num() == 0))
+	if (bCommandSuccess || (curCommandNode->Children.Num() == 0))
 	{
 		CurCommandNode = RootCommandTrie;
 	}
