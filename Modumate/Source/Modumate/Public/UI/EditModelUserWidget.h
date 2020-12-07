@@ -56,6 +56,9 @@ public:
 	class UBIMDesigner *BIMDesigner;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UBIMDebugger* BIMDebugger;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UBIMBlockDialogBox *BIMBlockDialogBox;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -98,4 +101,6 @@ public:
 	void ShowAlertPausedAccountDialog();
 	void ShowAlertFreeAccountDialog();
 	void UpdateViewModeIndicator(EEditViewModes NewViewMode);
+	void ShowBIMDebugger(bool NewVisible);
+	bool IsBIMDebuggerOn();
 };

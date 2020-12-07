@@ -30,6 +30,7 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "UnrealClasses/TooltipManager.h"
+#include "UI/EditModelUserWidget.h"
 
 using namespace Modumate::Commands;
 using namespace Modumate::Parameters;
@@ -90,6 +91,18 @@ TSharedPtr<FModumateAccountManager> UModumateGameInstance::GetAccountManager() c
 
 void UModumateGameInstance::RegisterAllCommands()
 {
+	RegisterCommand(kBIMDebug, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
+	{
+		AEditModelPlayerController_CPP* controller = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
+		if (controller && controller->EditModelUserWidget)
+		{
+			bool newShow = !controller->EditModelUserWidget->IsBIMDebuggerOn();
+			controller->EditModelUserWidget->ShowBIMDebugger(newShow);
+			return true;
+		}
+		return false;
+	});
+
 	RegisterCommand(kYield, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		float interval = params.GetValue(kSeconds);

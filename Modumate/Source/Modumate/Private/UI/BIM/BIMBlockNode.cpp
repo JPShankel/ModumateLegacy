@@ -217,8 +217,10 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 
 	if (Button_Debug)
 	{
-		FString debugString = FString::Printf(TEXT("ID: ")) + Node->GetInstanceID().ToString() + LINE_TERMINATOR + PresetID.ToString() + LINE_TERMINATOR + LINE_TERMINATOR + FString::Printf(TEXT("Properties:")) + LINE_TERMINATOR;
-		Modumate::FModumateFunctionParameterSet params;
+		FString debugString = 
+			FString::Printf(TEXT("ID: ")) + Node->GetInstanceID().ToString() + LINE_TERMINATOR 
+			+ preset->GUID + LINE_TERMINATOR
+			+ PresetID.ToString() + LINE_TERMINATOR;
 		
 #if 0 // TODO: provide a debug string in BIM properties
 		Node->InstanceProperties.ForEachProperty([this, &params, &debugString](const FString &name, const Modumate::FModumateCommandParameter &param)

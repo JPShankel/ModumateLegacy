@@ -54,6 +54,9 @@ namespace Modumate
 		MODUMATE_COMMAND(kRedo, "redo");
 		MODUMATE_COMMAND(kBeginUndoRedoMacro, "begin_undoredo_macro");
 		MODUMATE_COMMAND(kEndUndoRedoMacro, "end_undoredo_macro");
+
+		// BIM
+		MODUMATE_COMMAND(kBIMDebug, "bim_debug");
 	}
 
 	namespace Parameters

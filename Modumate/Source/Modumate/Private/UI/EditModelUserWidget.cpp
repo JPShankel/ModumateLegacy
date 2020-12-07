@@ -19,6 +19,7 @@
 #include "UnrealClasses/EditModelInputHandler.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UI/Debugger/BIMDebugger.h"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -215,4 +216,14 @@ void UEditModelUserWidget::UpdateViewModeIndicator(EEditViewModes NewViewMode)
 	{
 		ViewMenu->ViewMenu_Block_ViewMode->SetActiveViewMode(NewViewMode);
 	}
+}
+
+void UEditModelUserWidget::ShowBIMDebugger(bool NewVisible)
+{
+	BIMDebugger->SetVisibility(NewVisible ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+}
+
+bool UEditModelUserWidget::IsBIMDebuggerOn()
+{
+	return BIMDebugger->IsVisible();
 }
