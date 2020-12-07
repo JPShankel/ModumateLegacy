@@ -32,6 +32,8 @@ class MODUMATE_API FMOIDelta : public FDocumentDelta
 public:
 	FMOIDelta() {}
 
+	bool IsValid() const;
+
 	void AddCreateDestroyState(const FMOIStateData& State, EMOIDeltaType DeltaType);
 	void AddCreateDestroyStates(const TArray<FMOIStateData>& InStates, EMOIDeltaType DeltaType);
 	FMOIStateData& AddMutationState(const FModumateObjectInstance* Object);

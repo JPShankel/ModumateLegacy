@@ -5,6 +5,11 @@
 #include "DocumentManagement/ModumateDocument.h"
 
 
+bool FMOIDelta::IsValid() const
+{
+	return States.Num() > 0;
+}
+
 bool FMOIDelta::ApplyTo(FModumateDocument* doc, UWorld* world) const
 {
 	return doc->ApplyMOIDelta(*this, world);

@@ -38,6 +38,8 @@ public:
 	virtual bool ScrollToolOption(int32 dir) = 0;
 	virtual bool HandleInputNumber(double n) = 0;
 	virtual bool HandleInvert() = 0;
+	virtual bool HandleFlip(EAxis::Type FlipAxis) = 0;
+	virtual bool HandleAdjustJustification(const FVector2D& ViewSpaceDirection) = 0;
 	virtual bool HandleControlKey(bool pressed) = 0;
 	virtual bool HandleMouseUp() = 0;
 	virtual bool ShowSnapCursorAffordances() = 0;

@@ -207,7 +207,7 @@ bool USelectTool::HandleInvert()
 	auto delta = MakeShared<FMOIDelta>();
 	FMOIStateData invertedState;
 
-	// Put a selected object supports inversion, add it to the delta
+	// If a selected object supports inversion, add it to the delta
 	for (auto obj : Controller->EMPlayerState->SelectedObjects)
 	{
 		if (obj->GetInvertedState(invertedState))
@@ -216,10 +216,74 @@ bool USelectTool::HandleInvert()
 		}
 	}
 
-	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	gameState->Document.ApplyDeltas({ delta }, GetWorld());
+	if (!delta->IsValid())
+	{
+		return false;
+	}
 
-	return true;
+	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	return gameState->Document.ApplyDeltas({ delta }, GetWorld());
+}
+
+bool USelectTool::HandleFlip(EAxis::Type FlipAxis)
+{
+	if (!Active || (Controller->EMPlayerState->SelectedObjects.Num() == 0))
+	{
+		return false;
+	}
+
+	auto delta = MakeShared<FMOIDelta>();
+	FMOIStateData flippedState;
+
+	// If a selected object supports flipping, add it to the delta
+	for (auto obj : Controller->EMPlayerState->SelectedObjects)
+	{
+		if (obj->GetFlippedState(FlipAxis, flippedState))
+		{
+			delta->AddMutationState(obj, obj->GetStateData(), flippedState);
+		}
+	}
+
+	if (!delta->IsValid())
+	{
+		return false;
+	}
+
+	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	return gameState->Document.ApplyDeltas({ delta }, GetWorld());
+}
+
+bool USelectTool::HandleAdjustJustification(const FVector2D& ViewSpaceDirection)
+{
+	if (!Active || (Controller->EMPlayerState->SelectedObjects.Num() == 0))
+	{
+		return false;
+	}
+
+	FQuat cameraRotation = Controller->PlayerCameraManager->GetCameraRotation().Quaternion();
+	FVector worldSpaceDirection =
+		(ViewSpaceDirection.X * cameraRotation.GetRightVector()) +
+		(ViewSpaceDirection.Y * cameraRotation.GetUpVector());
+
+	auto delta = MakeShared<FMOIDelta>();
+	FMOIStateData justifiedState;
+
+	// If a selected object supports justification, add it to the delta
+	for (auto obj : Controller->EMPlayerState->SelectedObjects)
+	{
+		if (obj->GetJustifiedState(worldSpaceDirection, justifiedState))
+		{
+			delta->AddMutationState(obj, obj->GetStateData(), justifiedState);
+		}
+	}
+
+	if (!delta->IsValid())
+	{
+		return false;
+	}
+
+	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	return gameState->Document.ApplyDeltas({ delta }, GetWorld());
 }
 
 

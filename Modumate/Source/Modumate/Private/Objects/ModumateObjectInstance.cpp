@@ -1003,6 +1003,16 @@ bool FModumateObjectInstance::GetInvertedState(FMOIStateData& OutState) const
 	return Implementation->GetInvertedState(OutState);
 }
 
+bool FModumateObjectInstance::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
+{
+	return Implementation->GetFlippedState(FlipAxis, OutState);
+}
+
+bool FModumateObjectInstance::GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
+{
+	return Implementation->GetJustifiedState(AdjustmentDirection, OutState);
+}
+
 bool FModumateObjectInstance::GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const
 {
 	return Implementation->GetTransformedLocationState(Transform, OutState);

@@ -48,6 +48,8 @@ public:
 	virtual const FCachedLayerDimsByType &GetCachedLayerDims() const override { return CachedLayerDims; }
 
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
+	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
+	virtual bool GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
 
 	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane,
 		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,

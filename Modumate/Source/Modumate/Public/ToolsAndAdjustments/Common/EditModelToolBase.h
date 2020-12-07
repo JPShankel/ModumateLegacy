@@ -37,6 +37,8 @@ public:
 	virtual bool AbortUse() override;
 	virtual bool PostEndOrAbort() override;
 	virtual bool HandleInvert() override { return true; }
+	virtual bool HandleFlip(EAxis::Type FlipAxis) override { return false; }
+	virtual bool HandleAdjustJustification(const FVector2D& ViewSpaceDirection) override { return false; }
 	virtual bool HandleControlKey(bool pressed) override { return true; }
 	virtual bool HandleMouseUp() override { return true; }
 	virtual bool ShowSnapCursorAffordances() override { return true; }

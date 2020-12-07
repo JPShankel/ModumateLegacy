@@ -271,6 +271,30 @@ bool FMOIPlaneHostedObjImpl::GetInvertedState(FMOIStateData& OutState) const
 	return OutState.CustomData.SaveStructData(modifiedPlaneHostedObjData);
 }
 
+bool FMOIPlaneHostedObjImpl::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
+{
+	return false;
+}
+
+bool FMOIPlaneHostedObjImpl::GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
+{
+	float projectedAdjustment = -AdjustmentDirection | GetNormal();
+	if (FMath::IsNearlyZero(projectedAdjustment, THRESH_NORMALS_ARE_ORTHOGONAL))
+	{
+		projectedAdjustment = 0.0f;
+	}
+
+	float projectedAdjustmentSign = FMath::Sign(projectedAdjustment);
+	float justificationDelta = projectedAdjustmentSign * 0.5f;
+	float newJustification = FMath::Clamp(InstanceData.Justification + justificationDelta, 0.0f, 1.0f);
+
+	FMOIPlaneHostedObjData modifiedPlaneHostedObjData = InstanceData;
+	modifiedPlaneHostedObjData.Justification = newJustification;
+	OutState = MOI->GetStateData();
+
+	return OutState.CustomData.SaveStructData(modifiedPlaneHostedObjData);
+}
+
 void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
 {
 	OutPerimeters.Reset();

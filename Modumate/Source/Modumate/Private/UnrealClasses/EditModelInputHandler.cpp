@@ -2,15 +2,16 @@
 
 #include "UnrealClasses/EditModelInputHandler.h"
 
+#include "Database/ModumateDataTables.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "GameFramework/InputSettings.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerPawn_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "GameFramework/InputSettings.h"
-#include "DocumentManagement/ModumateCommands.h"
-#include "Database/ModumateDataTables.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
 
 
 using namespace Modumate;
@@ -106,6 +107,7 @@ void UEditModelInputHandler::SetupBindings()
 			data.Title = data.Title.IsEmpty() ? Row.Title : data.Title;
 			data.EnabledDescription = data.EnabledDescription.IsEmpty() ? Row.EnabledDescription : data.EnabledDescription;
 			data.DisabledDescription = data.DisabledDescription.IsEmpty() ? Row.DisabledDescription : data.DisabledDescription;
+			data.bPassThroughInput |= Row.bPassThroughInput;
 
 			if (Row.Binding.Num() > 0)
 			{
@@ -152,7 +154,7 @@ void UEditModelInputHandler::SetupBindings()
 						FInputActionKeyMapping commandMapping(chordActionName, curChord.Key, curChord.bShift, curChord.bCtrl, curChord.bAlt, curChord.bCmd);
 						inputSettings->AddActionMapping(commandMapping, true);
 
-						Controller->InputComponent->BindAction<FInputChordDelegate>(chordActionName, EInputEvent::IE_Pressed, this, &UEditModelInputHandler::HandleBoundChord, curChord);
+						Controller->InputComponent->BindAction<FInputChordDelegate>(chordActionName, EInputEvent::IE_Pressed, this, &UEditModelInputHandler::HandleBoundChord, curChord, data.bPassThroughInput);
 
 						BoundChords.Add(curChord);
 					}
@@ -166,6 +168,11 @@ void UEditModelInputHandler::SetupBindings()
 
 bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 {
+	if (Controller == nullptr)
+	{
+		return false;
+	}
+
 	// Special case non-switch handling for tools, for convenience
 	EToolMode commandToolMode = ToolModeFromInputCommand(Command);
 	if (commandToolMode != EToolMode::VE_NONE)
@@ -173,6 +180,8 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 		Controller->SetToolMode(commandToolMode);
 		return true;
 	}
+
+	auto currentTool = Cast<UEditModelToolBase>(Controller->CurrentTool.GetObject());
 
 	switch (Command)
 	{
@@ -325,6 +334,35 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	{
 		return Controller->HandleInvert();
 	}
+	case EInputCommand::FlipX:
+	{
+		return currentTool->HandleFlip(EAxis::X);
+	}
+	case EInputCommand::FlipY:
+	{
+		return currentTool->HandleFlip(EAxis::Y);
+	}
+	case EInputCommand::FlipZ:
+	{
+		return currentTool->HandleFlip(EAxis::Z);
+	}
+	case EInputCommand::JustifyLeft:
+	{
+		return currentTool->HandleAdjustJustification(FVector2D(-1.0f, 0.0f));
+	}
+	case EInputCommand::JustifyRight:
+	{
+		return currentTool->HandleAdjustJustification(FVector2D(1.0f, 0.0f));
+	}
+	case EInputCommand::JustifyUp:
+	{
+		return currentTool->HandleAdjustJustification(FVector2D(0, 1.0f));
+	}
+	case EInputCommand::JustifyDown:
+	{
+		return currentTool->HandleAdjustJustification(FVector2D(0.0f, -1.0f));
+	}
+
 
 	// Tool activation commands are handled before the switch statement!
 
@@ -546,7 +584,7 @@ bool UEditModelInputHandler::IsAxisInputPrioritized() const
 	return (AxisPriorityRequests.Num() > 0);
 }
 
-void UEditModelInputHandler::HandleBoundChord(FInputChord Chord)
+void UEditModelInputHandler::HandleBoundChord(FInputChord Chord, bool bPassThroughInput)
 {
 	if (!IsInputEnabled())
 	{
@@ -584,13 +622,14 @@ void UEditModelInputHandler::HandleBoundChord(FInputChord Chord)
 	}
 
 	// If the current node has a command associated with it, then execute it now
+	bool bCommandSuccess = false;
 	if (curCommandNode->InputCommand != EInputCommand::None)
 	{
-		TryCommand(curCommandNode->InputCommand);
+		bCommandSuccess = TryCommand(curCommandNode->InputCommand);
 	}
 
-	// If the current node has no children, then we want to start back at the root immediately
-	if (curCommandNode->Children.Num() == 0)
+	// If the current node has no children, or if it successfully executed and captures input, then we want to start back at the root immediately
+	if ((bCommandSuccess && !bPassThroughInput) || (curCommandNode->Children.Num() == 0))
 	{
 		CurCommandNode = RootCommandTrie;
 	}
