@@ -10,7 +10,7 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPortalInvertHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPortalReverseHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPortalJustifyHandle.h"
@@ -228,9 +228,8 @@ void FMOIPortalImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *cont
 	int32 numCorners = parent->GetNumCorners();
 	for (int32 i = 0; i < numCorners; ++i)
 	{
-		auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		auto edgeHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
 		edgeHandle->SetTargetIndex(i);
-		edgeHandle->SetAdjustPolyEdge(true);
 		edgeHandle->SetTargetMOI(parent);
 	}
 

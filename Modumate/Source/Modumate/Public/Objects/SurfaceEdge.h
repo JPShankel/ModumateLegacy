@@ -10,7 +10,6 @@ public:
 
 	virtual FVector GetCorner(int32 index) const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 
 protected:
 	FVector CachedDeprojectedStart, CachedDeprojectedEnd;

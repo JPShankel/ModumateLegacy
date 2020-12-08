@@ -3,7 +3,7 @@
 #include "Objects/PlaneBase.h"
 
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 
@@ -83,12 +83,8 @@ void FMOIPlaneImplBase::SetupAdjustmentHandles(AEditModelPlayerController_CPP *c
 	int32 numPoints = CachedPoints.Num();
 	for (int32 i = 0; i < numPoints; ++i)
 	{
-		auto vertexHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
-		vertexHandle->SetTargetIndex(i);
-
-		auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		auto edgeHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
 		edgeHandle->SetTargetIndex(i);
-		edgeHandle->SetAdjustPolyEdge(true);
 	}
 }
 

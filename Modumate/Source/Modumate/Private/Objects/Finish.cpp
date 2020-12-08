@@ -11,7 +11,7 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Objects/ModumateObjectInstance.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
@@ -134,13 +134,12 @@ void FMOIFinishImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* cont
 	int32 numCorners = parent->GetNumCorners();
 	for (int32 i = 0; i < numCorners; ++i)
 	{
-		auto cornerHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		auto cornerHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
 		cornerHandle->SetTargetIndex(i);
 		cornerHandle->SetTargetMOI(parent);
 
-		auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		auto edgeHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
 		edgeHandle->SetTargetIndex(i);
-		edgeHandle->SetAdjustPolyEdge(true);
 		edgeHandle->SetTargetMOI(parent);
 	}
 }

@@ -1,4 +1,4 @@
-#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 
 #include "Components/EditableTextBox.h"
 #include "DocumentManagement/ModumateDocument.h"
@@ -16,14 +16,13 @@
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
-AAdjustPolyPointHandle::AAdjustPolyPointHandle(const FObjectInitializer& ObjectInitializer)
+AAdjustPolyEdgeHandle::AAdjustPolyEdgeHandle(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, bAdjustPolyEdge(false)
 	, PolyPlane(ForceInitToZero)
 {
 }
 
-bool AAdjustPolyPointHandle::BeginUse()
+bool AAdjustPolyEdgeHandle::BeginUse()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AAdjustPolyPointHandle::OnBeginUse"));
 
@@ -100,7 +99,7 @@ bool AAdjustPolyPointHandle::BeginUse()
 	return true;
 }
 
-bool AAdjustPolyPointHandle::UpdateUse()
+bool AAdjustPolyEdgeHandle::UpdateUse()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AAdjustPolyPointHandle::OnUpdateUse"));
 
@@ -139,7 +138,7 @@ bool AAdjustPolyPointHandle::UpdateUse()
 
 	if (pendingSegment != nullptr)
 	{
-		FVector offset = bAdjustPolyEdge ? CurrentDirection * (dp | CurrentDirection) : dp;
+		FVector offset = CurrentDirection * (dp | CurrentDirection);
 
 		pendingSegment->Point1 = AnchorLoc;
 		pendingSegment->Point2 = AnchorLoc + offset;
@@ -149,12 +148,6 @@ bool AAdjustPolyPointHandle::UpdateUse()
 	else
 	{
 		return false;
-	}
-
-	if (!bAdjustPolyEdge && !dp.IsNearlyZero())
-	{
-		CurrentDirection = dp;
-		CurrentDirection.Normalize();
 	}
 
 	FModumateDocument* doc = Controller->GetDocument();
@@ -167,7 +160,7 @@ bool AAdjustPolyPointHandle::UpdateUse()
 	return true;
 }
 
-FVector AAdjustPolyPointHandle::GetHandlePosition() const
+FVector AAdjustPolyEdgeHandle::GetHandlePosition() const
 {
 	if (!ensure(TargetMOI && TargetIndex < TargetMOI->GetNumCorners()))
 	{
@@ -177,31 +170,14 @@ FVector AAdjustPolyPointHandle::GetHandlePosition() const
 	FVector averageTargetPos(ForceInitToZero);
 	int32 numCorners = TargetMOI->GetNumCorners();
 
-	if (bAdjustPolyEdge)
-	{
-		int32 edgeEndIdx = (TargetIndex + 1) % numCorners;
-		averageTargetPos = 0.5f * (TargetMOI->GetCorner(TargetIndex) + TargetMOI->GetCorner(edgeEndIdx));
-	}
-	else
-	{
-		averageTargetPos = TargetMOI->GetCorner(TargetIndex);
-	}
+	int32 edgeEndIdx = (TargetIndex + 1) % numCorners;
+	averageTargetPos = 0.5f * (TargetMOI->GetCorner(TargetIndex) + TargetMOI->GetCorner(edgeEndIdx));
 
 	// TODO: offset handle position by some amount of the target object's extrusion, if relevant
 	return averageTargetPos;
 }
 
-FVector AAdjustPolyPointHandle::GetHandleDirection() const
-{
-	if (!bAdjustPolyEdge)
-	{
-		return FVector::ZeroVector;
-	}
-
-	return Super::GetHandleDirection();
-}
-
-bool AAdjustPolyPointHandle::HandleInputNumber(float number)
+bool AAdjustPolyEdgeHandle::HandleInputNumber(float number)
 {
 	// TODO: reimplement with UModumateGeometryStatics::TranslatePolygonEdge and new dimension string manager
 	FModumateDocument* doc = Controller->GetDocument();
@@ -237,29 +213,16 @@ bool AAdjustPolyPointHandle::HandleInputNumber(float number)
 	return true;
 }
 
-void AAdjustPolyPointHandle::SetAdjustPolyEdge(bool bInAdjustPolyEdge)
+bool AAdjustPolyEdgeHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const
 {
-	bAdjustPolyEdge = bInAdjustPolyEdge;
-}
-
-bool AAdjustPolyPointHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const
-{
-	if (bAdjustPolyEdge)
-	{
-		OutButtonStyle = PlayerHUD->HandleAssets->GenericArrowStyle;
-		OutWidgetSize = FVector2D(16.0f, 16.0f);
-		OutMainButtonOffset = FVector2D(16.0f, 0.0f);
-	}
-	else
-	{
-		OutButtonStyle = PlayerHUD->HandleAssets->GenericPointStyle;
-		OutWidgetSize = FVector2D(12.0f, 12.0f);
-	}
+	OutButtonStyle = PlayerHUD->HandleAssets->GenericArrowStyle;
+	OutWidgetSize = FVector2D(16.0f, 16.0f);
+	OutMainButtonOffset = FVector2D(16.0f, 0.0f);
 
 	return true;
 }
 
-bool AAdjustPolyPointHandle::GetTransforms(const FVector Offset, TMap<int32, FTransform>& OutTransforms)
+bool AAdjustPolyEdgeHandle::GetTransforms(const FVector Offset, TMap<int32, FTransform>& OutTransforms)
 {
 	FModumateDocument* doc = Controller->GetDocument();
 	if (doc == nullptr)
@@ -276,22 +239,15 @@ bool AAdjustPolyPointHandle::GetTransforms(const FVector Offset, TMap<int32, FTr
 		if (TargetMOI->GetObjectType() == EObjectType::OTMetaPlane)
 		{
 			auto face = doc->GetVolumeGraph().FindFace(TargetMOI->ID);
-			if (bAdjustPolyEdge)
-			{
-				int32 numPolyPoints = OriginalPolyPoints.Num();
-				int32 edgeStartIdx = TargetIndex;
-				int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
+			int32 numPolyPoints = OriginalPolyPoints.Num();
+			int32 edgeStartIdx = TargetIndex;
+			int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
 
-				FVector edgeStartPoint, edgeEndPoint;
-				if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
-				{
-					OutTransforms.Add(face->VertexIDs[edgeStartIdx], FTransform(edgeStartPoint));
-					OutTransforms.Add(face->VertexIDs[edgeEndIdx], FTransform(edgeEndPoint));
-				}
-			}
-			else
+			FVector edgeStartPoint, edgeEndPoint;
+			if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
 			{
-				OutTransforms.Add(face->VertexIDs[TargetIndex], FTransform(OriginalPolyPoints[TargetIndex] + Offset));
+				OutTransforms.Add(face->VertexIDs[edgeStartIdx], FTransform(edgeStartPoint));
+				OutTransforms.Add(face->VertexIDs[edgeEndIdx], FTransform(edgeEndPoint));
 			}
 		}
 		else if (TargetMOI->GetObjectType() == EObjectType::OTMetaEdge)
@@ -325,22 +281,15 @@ bool AAdjustPolyPointHandle::GetTransforms(const FVector Offset, TMap<int32, FTr
 				return false;
 			}
 
-			if (bAdjustPolyEdge)
-			{
-				int32 numPolyPoints = OriginalPolyPoints.Num();
-				int32 edgeStartIdx = TargetIndex;
-				int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
+			int32 numPolyPoints = OriginalPolyPoints.Num();
+			int32 edgeStartIdx = TargetIndex;
+			int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
 
-				FVector edgeStartPoint, edgeEndPoint;
-				if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
-				{
-					OutTransforms.Add(poly->CachedPerimeterVertexIDs[edgeStartIdx], FTransform(edgeStartPoint));
-					OutTransforms.Add(poly->CachedPerimeterVertexIDs[edgeEndIdx], FTransform(edgeEndPoint));
-				}
-			}
-			else
+			FVector edgeStartPoint, edgeEndPoint;
+			if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
 			{
-				OutTransforms.Add(poly->CachedPerimeterVertexIDs[TargetIndex], FTransform(OriginalPolyPoints[TargetIndex] + Offset));
+				OutTransforms.Add(poly->CachedPerimeterVertexIDs[edgeStartIdx], FTransform(edgeStartPoint));
+				OutTransforms.Add(poly->CachedPerimeterVertexIDs[edgeEndIdx], FTransform(edgeEndPoint));
 			}
 		}
 		else if (TargetMOI->GetObjectType() == EObjectType::OTSurfaceEdge)

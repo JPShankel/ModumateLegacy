@@ -6,7 +6,7 @@
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Objects/MiterNode.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/LineActor.h"
@@ -92,21 +92,6 @@ bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 	}
 
 	return true;
-}
-
-void FMOIMetaEdgeImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
-{
-	if (MOI->HasAdjustmentHandles())
-	{
-		return;
-	}
-
-	// Edges always have two vertices
-	for (int32 i = 0; i < 2; ++i)
-	{
-		auto vertexHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
-		vertexHandle->SetTargetIndex(i);
-	}
 }
 
 void FMOIMetaEdgeImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow)

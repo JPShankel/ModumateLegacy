@@ -7,7 +7,7 @@
 #include "Drafting/ModumateDraftingElements.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -72,7 +72,7 @@ void FMOIStructureLine::SetupAdjustmentHandles(AEditModelPlayerController_CPP* c
 	// edges have two vertices and want an adjustment handle for each
 	for (int32 i = 0; i < 2; i++)
 	{
-		auto cornerHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		auto cornerHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
 		cornerHandle->SetTargetIndex(i);
 		cornerHandle->SetTargetMOI(parent);
 	}

@@ -14,7 +14,7 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "ToolsAndAdjustments/Handles/JustificationHandle.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -213,14 +213,13 @@ void FMOIPlaneHostedObjImpl::SetupAdjustmentHandles(AEditModelPlayerController_C
 		// Don't allow adjusting wall corners, since they're more likely to be edited edge-by-edge.
 		if (MOI->GetObjectType() != EObjectType::OTWallSegment)
 		{
-			auto cornerHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+			auto cornerHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
 			cornerHandle->SetTargetIndex(i);
 			cornerHandle->SetTargetMOI(parent);
 		}
 
-		auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		auto edgeHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
 		edgeHandle->SetTargetIndex(i);
-		edgeHandle->SetAdjustPolyEdge(true);
 		edgeHandle->SetTargetMOI(parent);
 	}
 

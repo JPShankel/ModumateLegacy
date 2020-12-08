@@ -10,7 +10,7 @@
 #include "ModumateCore/LayerGeomDef.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "ToolsAndAdjustments/Handles/AdjustPolyPointHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "ToolsAndAdjustments/Handles/CabinetExtrusionHandle.h"
 #include "ToolsAndAdjustments/Handles/CabinetFrontFaceHandle.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
@@ -505,13 +505,12 @@ void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *con
 	int32 numCorners = parent->GetNumCorners();
 	for (int32 i = 0; i < numCorners; ++i)
 	{
-		auto cornerHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		auto cornerHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
 		cornerHandle->SetTargetIndex(i);
 		cornerHandle->SetTargetMOI(parent);
 
-		auto edgeHandle = MOI->MakeHandle<AAdjustPolyPointHandle>();
+		auto edgeHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
 		edgeHandle->SetTargetIndex(i);
-		edgeHandle->SetAdjustPolyEdge(true);
 		edgeHandle->SetTargetMOI(parent);
 	}
 }
