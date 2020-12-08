@@ -113,17 +113,3 @@ bool AEditModelPlayerPawn_CPP::SetCameraFOV(float NewFOV)
 
 	return false;
 }
-
-bool AEditModelPlayerPawn_CPP::SetCameraTransform(const FTransform &PlayerActorTransform, const FTransform &CameraTransform, const FRotator &ControlRotation)
-{
-	if (CameraComponent == nullptr)
-	{
-		return false;
-	}
-
-	SetActorTransform(PlayerActorTransform);
-	CameraComponent->SetWorldTransform(CameraTransform);
-	Controller->SetControlRotation(ControlRotation);
-
-	return true;
-}

@@ -58,8 +58,5 @@ public:
 
 	bool SetCameraFOV(float NewFOV);
 
-	UFUNCTION(BlueprintCallable)
-	bool SetCameraTransform(const FTransform &PlayerActorTransform, const FTransform &CameraTransform, const FRotator &ControlRotation);
-
 	bool bHaveEverBeenPossessed;
 };

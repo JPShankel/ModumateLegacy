@@ -3035,14 +3035,12 @@ bool AEditModelPlayerController_CPP::ToggleGravityPawn()
 	{
 		Possess(EMPlayerPawn);
 		EMToggleGravityPawn->SetActorEnableCollision(false);
-
-		// Move the pawn location forward 
-		FVector forwardOffset = possessRotation.Vector() * 600.f;
-		FVector pawnActorLocation = possessLocation + forwardOffset;
-		
-		FTransform playerActorTransform = FTransform(possessRotation, pawnActorLocation, FVector::OneVector);
-		FTransform cameraTransform = FTransform(possessRotation, possessLocation, FVector::OneVector);
-		EMPlayerPawn->SetCameraTransform(playerActorTransform, cameraTransform, possessRotation);
 	}
+	else
+	{
+		ensureAlwaysMsgf(false, TEXT("Unknown pawn possessed!"));
+		return false;
+	}
+
 	return true;
 }
