@@ -25,7 +25,7 @@ bool UModumateBrowserStatics::GetCutPlanesFromProject(UObject* WorldContextObjec
 		auto &cutPlaneParam = OutCutPlaneParams.AddDefaulted_GetRef();
 		cutPlaneParam.ObjectID = cutPlaneObj->ID;
 		cutPlaneParam.bVisiblity = cutPlaneObj->IsVisible();
-		cutPlaneParam.Location = cutPlaneObj->GetObjectLocation();
+		cutPlaneParam.Location = cutPlaneObj->GetLocation();
 		cutPlaneParam.Normal = cutPlaneObj->GetNormal();
 		
 		// TODO: Copy other parameters?
@@ -56,7 +56,7 @@ bool UModumateBrowserStatics::GetScopeBoxesFromProject(UObject* WorldContextObje
 		scopeBoxParam.ObjectID = scopeBoxObj->ID;
 		scopeBoxParam.bVisiblity = scopeBoxObj->IsVisible();
 		// TODO: re-implement scope box data
-		//scopeBoxParam.Location = scopeBoxObj->GetObjectLocation();
+		//scopeBoxParam.Location = scopeBoxObj->GetLocation();
 		//scopeBoxParam.Extent = scopeBoxObj->GetExtents();
 
 		// TODO: Copy other parameters?

@@ -100,8 +100,8 @@ namespace Modumate
 			float curThickness = 0.0f;
 			float totalThickness = PlaneHostedObj->CalculateThickness();
 			FVector planeNormal = parentPlane->GetNormal();
-			FVector planeCenter = parentPlane->GetObjectLocation();
-			FVector layerAxisX = parentPlane->GetObjectRotation().GetAxisX();
+			FVector planeCenter = parentPlane->GetLocation();
+			FVector layerAxisX = parentPlane->GetRotation().GetAxisX();
 
 			// For each layer, generate points that interpolate between the extension values of the two outermost sides of the
 			// object, that take both adjacent edge's retractions into account.

@@ -223,7 +223,7 @@ bool FMiterData::GatherDetails(const FModumateObjectInstance *InMiterObject)
 		return false;
 	}
 
-	EdgeCenter = MOI->GetObjectLocation();
+	EdgeCenter = MOI->GetLocation();
 	EdgeDir = GraphEdge->CachedDir;
 	UModumateGeometryStatics::FindBasisVectors(AxisX, AxisY, EdgeDir);
 

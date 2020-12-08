@@ -204,7 +204,7 @@ bool UCabinetTool::FrameUpdate()
 					BasePoints.Add(targetMOI->GetCorner(cornerIdx));
 				}
 
-				BaseOrigin = targetMOI->GetObjectLocation();
+				BaseOrigin = targetMOI->GetLocation();
 				BaseNormal = targetMOI->GetNormal();
 			}
 		}

@@ -42,7 +42,6 @@ FGraph3DFaceRecordV1::FGraph3DFaceRecordV1(int32 InID, const TArray<int32>& InVe
 
 void FMOIDocumentRecordV4::FromVersion3(const FMOIDocumentRecordV3 &v3)
 {
-	ObjectInstances = v3.ObjectInstances;
 	CommandHistory = v3.CommandHistory;
 }
 
@@ -133,33 +132,8 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 		return false;
 	}
 
-	// Version 4 -> 5: portal locations and rotations are now relative, so just delete them for now.
-	if (OutHeader.Version == 4)
-	{
-		bool bRemovedAnyObjs = false;
-		TSet<int32> removedObjIDs;
-
-		do
-		{
-			bRemovedAnyObjs = false;
-			int32 numObjs = OutRecord.ObjectInstances.Num();
-			for (int32 i = numObjs - 1; i >= 0; --i)
-			{
-				const FMOIDataRecord_DEPRECATED& objRecord = OutRecord.ObjectInstances[i];
-
-				if (removedObjIDs.Contains(objRecord.ParentID) ||
-					(objRecord.ObjectType == EObjectType::OTDoor) ||
-					(objRecord.ObjectType == EObjectType::OTWindow))
-				{
-					bRemovedAnyObjs = true;
-					removedObjIDs.Add(objRecord.ID);
-					OutRecord.ObjectInstances.RemoveAt(i, 1, false);
-				}
-			}
-		} while (bRemovedAnyObjs);
-
-		OutHeader.Version = 5;
-	}
+	// Version 4 -> 5: portal locations and rotations are now relative
+	// They were saved in the now-deleted `ObjectInstances`, so there's nothing we can do to restore them now.
 
 	// Version 5 -> 6: Roof was split into RoofFace and RoofPerimeter (EToolMode VE_ROOF -> VE_ROOF_FACE and EObjectType OTRoof -> OTRoofFace),
 	// but the serialization change is handled by EnumRedirects in DefaultEngine.ini.
@@ -173,11 +147,11 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 	if (OutHeader.Version < 8) // Empty FName keys serialized as "None", BIMKeys as empty string
 	{
 		const FBIMKey badNone = FBIMKey(TEXT("None"));
-		for (auto& objInst : OutRecord.ObjectInstances)
+		for (auto& obj : OutRecord.ObjectData)
 		{
-			if (objInst.AssemblyKey == badNone)
+			if (obj.AssemblyKey == badNone)
 			{
-				objInst.AssemblyKey = FBIMKey();
+				obj.AssemblyKey = FBIMKey();
 			}
 		}
 		for (auto& kvp : OutRecord.CurrentToolAssemblyMap)

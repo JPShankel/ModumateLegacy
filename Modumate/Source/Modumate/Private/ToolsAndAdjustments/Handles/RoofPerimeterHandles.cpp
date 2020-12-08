@@ -105,7 +105,7 @@ bool ACreateRoofFacesHandle::BeginUse()
 
 FVector ACreateRoofFacesHandle::GetHandlePosition() const
 {
-	return TargetMOI->GetObjectLocation();
+	return TargetMOI->GetLocation();
 }
 
 bool ACreateRoofFacesHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const
@@ -147,7 +147,7 @@ bool ARetractRoofFacesHandle::BeginUse()
 
 FVector ARetractRoofFacesHandle::GetHandlePosition() const
 {
-	return TargetMOI->GetObjectLocation();
+	return TargetMOI->GetLocation();
 }
 
 bool ARetractRoofFacesHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const
@@ -217,7 +217,7 @@ FVector AEditRoofEdgeHandle::GetHandlePosition() const
 	const FModumateObjectInstance *targetEdgeMOI = doc ? doc->GetObjectById(FMath::Abs(TargetEdgeID)) : nullptr;
 	if (ensure(targetEdgeMOI))
 	{
-		return targetEdgeMOI->GetObjectLocation();
+		return targetEdgeMOI->GetLocation();
 	}
 
 	return FVector::ZeroVector;

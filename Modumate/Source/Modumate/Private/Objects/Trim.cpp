@@ -36,7 +36,7 @@ FVector FMOITrimImpl::GetLocation() const
 	const FModumateObjectInstance* parentMOI = MOI ? MOI->GetParentObject() : nullptr;
 	if (parentMOI)
 	{
-		return parentMOI->GetObjectLocation();
+		return parentMOI->GetLocation();
 	}
 
 	return FVector::ZeroVector;
@@ -47,7 +47,7 @@ FQuat FMOITrimImpl::GetRotation() const
 	const FModumateObjectInstance *parentMOI = MOI ? MOI->GetParentObject() : nullptr;
 	if (parentMOI)
 	{
-		return parentMOI->GetObjectRotation();
+		return parentMOI->GetRotation();
 	}
 
 	return FQuat::Identity;
@@ -95,7 +95,7 @@ bool FMOITrimImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 			return false;
 		}
 
-		bool bInPreviewMode = MOI->GetIsInPreviewMode();
+		bool bInPreviewMode = MOI->IsInPreviewMode();
 		bool bRecreateMesh = !bInPreviewMode;
 		bool bCreateCollision = !bInPreviewMode;
 		return InternalUpdateGeometry(bRecreateMesh, bCreateCollision);

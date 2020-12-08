@@ -27,7 +27,7 @@ bool AAdjustFFEPointHandle::BeginUse()
 	}
 
 	OriginalObjectLoc = TargetMOI->GetActor()->GetActorLocation();
-	OriginalObjectRot = TargetMOI->GetObjectRotation();
+	OriginalObjectRot = TargetMOI->GetRotation();
 
 	FVector curObjectNormal = OriginalObjectRot.RotateVector(AssemblyNormal);
 	FVector curObjectTangent = OriginalObjectRot.RotateVector(AssemblyTangent);

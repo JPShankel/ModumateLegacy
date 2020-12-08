@@ -44,50 +44,6 @@ struct FCustomAssemblyProperty
 };
 
 
-USTRUCT()
-struct FMOIDataRecordV1
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	int32 ID;
-
-	UPROPERTY()
-	EObjectType ObjectType;
-
-	UPROPERTY()
-	FBIMKey AssemblyKey;
-
-	UPROPERTY()
-	int32 ParentID;
-
-	UPROPERTY()
-	TArray<int32> ChildIDs;
-
-	UPROPERTY()
-	FVector Location;
-
-	UPROPERTY()
-	FRotator Rotation;
-
-	UPROPERTY()
-	FVector UVAnchor;
-
-	UPROPERTY()
-	TArray<int32> ControlIndices;
-
-	UPROPERTY()
-	FVector Extents;
-
-	UPROPERTY()
-	bool ObjectInverted;
-
-	UPROPERTY()
-	TMap<FString, FString> ObjectProperties;
-};
-typedef FMOIDataRecordV1 FMOIDataRecord_DEPRECATED;
-
-
 // ---------------- Graph2D serialization ----------------
 
 USTRUCT()
@@ -268,9 +224,6 @@ USTRUCT()
 struct FMOIDocumentRecordBASE
 {
 	GENERATED_BODY()
-
-	UPROPERTY()
-	TArray<FMOIDataRecordV1> ObjectInstances;
 
 	UPROPERTY()
 	FGraph3DRecordV1 VolumeGraph;

@@ -143,11 +143,7 @@ void AAdjustmentHandleActor::PostEndOrAbort()
 
 	if (TargetMOI)
 	{
-		if (TargetMOI->GetIsInPreviewMode())
-		{
-			TargetMOI->EndPreviewOperation_DEPRECATED();
-		}
-
+		TargetMOI->EndPreviewOperation();
 		TargetMOI->RequestCollisionDisabled(StateRequestTag, false);
 
 		for (auto *descendent : TargetDescendents)
@@ -269,7 +265,7 @@ bool AAdjustmentHandleActor::BeginUse()
 	// By default, disable collision on the target MOI so that its current modified state doesn't interfere with handle usage
 	if (TargetMOI)
 	{
-		TargetMOI->BeginPreviewOperation_DEPRECATED();
+		TargetMOI->BeginPreviewOperation();
 		TargetMOI->RequestCollisionDisabled(StateRequestTag, true);
 
 		TargetDescendents = TargetMOI->GetAllDescendents();
@@ -367,10 +363,6 @@ void AAdjustmentHandleActor::EndUse()
 		newTransforms.Add(id, obj->GetWorldTransform());
 	}
 
-	// TODO: preview operation is no longer necessary, but removing this could cause ensures
-	// until the other handles are refactored
-	TargetMOI->EndPreviewOperation_DEPRECATED();
-
 	// Now that we've reverted the target object back to its original state, clean all objects so that
 	// deltas can be applied to the original state, and all of its dependent changes.
 	GameState->Document.CleanObjects();
@@ -411,7 +403,7 @@ bool AAdjustmentHandleActor::HasDistanceTextInput()
 
 FVector AAdjustmentHandleActor::GetHandlePosition() const
 {
-	return SourceMOI ? SourceMOI->GetObjectLocation() : FVector::ZeroVector;
+	return SourceMOI ? SourceMOI->GetLocation() : FVector::ZeroVector;
 }
 
 FVector AAdjustmentHandleActor::GetHandleDirection() const

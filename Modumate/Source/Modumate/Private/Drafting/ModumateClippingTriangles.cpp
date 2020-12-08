@@ -29,7 +29,7 @@ namespace Modumate
 	{
 		if (CutPlane.GetObjectType() == EObjectType::OTCutPlane)
 		{
-			Position = CutPlane.GetObjectLocation();
+			Position = CutPlane.GetLocation();
 			Normal = CutPlane.GetNormal();
 		}
 	}

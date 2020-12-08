@@ -60,7 +60,8 @@ void FMOIRoomImpl::SetupDynamicGeometry()
 
 	TArray<TArray<FVector>> polygons;
 	const Modumate::FGraph3D &volumeGraph = doc->GetVolumeGraph();
-	for (FGraphSignedID faceID : MOI->GetControlPointIndices())
+	// TODO: refactor room faces using strongly-typed InstanceProperties
+	for (FGraphSignedID faceID : { MOD_ID_NONE })//MOI->GetControlPointIndices())
 	{
 		const Modumate::FGraph3DFace *graphFace = volumeGraph.FindFace(faceID);
 		const FModumateObjectInstance *planeObj = doc->GetObjectById(FMath::Abs(faceID));
@@ -96,10 +97,11 @@ void FMOIRoomImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoint
 	const FModumateDocument *doc = MOI ? MOI->GetDocument() : nullptr;
 	if (doc)
 	{
-		for (FGraphSignedID faceID : MOI->GetControlPointIndices())
+		// TODO: refactor room faces using strongly-typed InstanceProperties
+		for (FGraphSignedID faceID : { MOD_ID_NONE })//MOI->GetControlPointIndices())
 		{
 			const FModumateObjectInstance *planeObj = doc->GetObjectById(FMath::Abs(faceID));
-			if (!ensureAlways(planeObj))
+			if (planeObj == nullptr)
 			{
 				continue;
 			}

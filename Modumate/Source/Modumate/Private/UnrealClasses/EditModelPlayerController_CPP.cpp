@@ -1238,11 +1238,11 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 
 		for (auto &sob : EMPlayerState->SelectedObjects)
 		{
-			FVector p = sob->GetObjectLocation();
+			FVector p = sob->GetLocation();
 			GetWorld()->LineBatcher->DrawLine(p - FVector(20, 0, 0), p + FVector(20, 0, 0), FColor::Blue, SDPG_MAX, 2, 0.0);
 			GetWorld()->LineBatcher->DrawLine(p - FVector(0, 20, 0), p + FVector(0, 20, 0), FColor::Blue, SDPG_MAX, 2, 0.0);
 
-			FVector d = sob->GetObjectRotation().RotateVector(FVector(40, 0, 0));
+			FVector d = sob->GetRotation().RotateVector(FVector(40, 0, 0));
 			GetWorld()->LineBatcher->DrawLine(p, p + d, FColor::Green, SDPG_MAX, 2, 0.0);
 		}
 	}
@@ -2557,7 +2557,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 		if ((objectType == EObjectType::OTMetaPlane) || (objectType == EObjectType::OTSurfacePolygon))
 		{
 			FVector moiNormal = moi->GetNormal();
-			FPlane plane = FPlane(moi->GetObjectLocation(), moiNormal);
+			FPlane plane = FPlane(moi->GetLocation(), moiNormal);
 			objectHit.Normal = (moiNormal | objectHit.Normal) > 0 ? moiNormal : -moiNormal;
 			objectHit.Location = FVector::PointPlaneProject(objectHit.Location, plane);
 		}

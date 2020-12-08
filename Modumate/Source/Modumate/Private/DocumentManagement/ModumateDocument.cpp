@@ -579,7 +579,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 			if (newParentObj != nullptr)
 			{
 				FTransform worldTransform = obj->GetWorldTransform();
-				newParentObj->AddChild_DEPRECATED(obj);
+				obj->SetParentID(newParentObj->ID);
 				//obj->SetWorldTransform(worldTransform);
 			}
 			else

@@ -103,7 +103,7 @@ void URoofPerimeterPropertiesWidget::UpdateTransform()
 
 	FVector2D targetScreenPosition;
 	FVector2D widgetSize = GetCachedGeometry().GetAbsoluteSize();
-	if (!widgetSize.IsZero() && targetObj && controller && controller->ProjectWorldLocationToScreen(targetObj->GetObjectLocation(), targetScreenPosition))
+	if (!widgetSize.IsZero() && targetObj && controller && controller->ProjectWorldLocationToScreen(targetObj->GetLocation(), targetScreenPosition))
 	{
 		SetColorAndOpacity(FLinearColor::White);
 

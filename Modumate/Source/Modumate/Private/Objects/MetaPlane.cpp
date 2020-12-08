@@ -49,7 +49,7 @@ void FMOIMetaPlaneImpl::SetupDynamicGeometry()
 	AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
 	MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
-	bool bEnableCollision = !MOI->GetIsInPreviewMode();
+	bool bEnableCollision = !MOI->IsInPreviewMode();
 
 	DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, GetAlpha(), true, &CachedHoles, bEnableCollision);
 

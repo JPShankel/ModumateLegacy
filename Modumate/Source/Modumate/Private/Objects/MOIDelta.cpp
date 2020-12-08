@@ -58,7 +58,7 @@ void FMOIDelta::AddCreateDestroyStates(const TArray<FMOIStateData>& InStates, EM
 
 FMOIStateData& FMOIDelta::AddMutationState(const FModumateObjectInstance* Object)
 {
-	auto& statePair = States.Add_GetRef(FMOIDeltaState{ Object->StateData_V2, Object->StateData_V2, EMOIDeltaType::Mutate });
+	auto& statePair = States.Add_GetRef(FMOIDeltaState{ Object->StateData, Object->StateData, EMOIDeltaType::Mutate });
 	return statePair.NewState;
 }
 

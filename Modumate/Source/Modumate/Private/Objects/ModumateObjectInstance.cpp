@@ -30,27 +30,27 @@ class AEditModelPlayerController_CPP;
 FModumateObjectInstance::FModumateObjectInstance(UWorld *world, FModumateDocument *doc, const FMOIStateData& InStateData)
 	: World(world)
 	, Document(doc)
-	, StateData_V2(InStateData)
+	, StateData(InStateData)
 	, ID(InStateData.ID)
 {
-	if (!ensureAlways(world && doc && (StateData_V2.ObjectType != EObjectType::OTNone) && (ID != MOD_ID_NONE)))
+	if (!ensureAlways(world && doc && (StateData.ObjectType != EObjectType::OTNone) && (ID != MOD_ID_NONE)))
 	{
 		return;
 	}
 
-	EToolMode assemblyToolMode = UModumateTypeStatics::ToolModeFromObjectType(StateData_V2.ObjectType);
+	EToolMode assemblyToolMode = UModumateTypeStatics::ToolModeFromObjectType(StateData.ObjectType);
 
 	// May return a default assembly if preset database changes, so update assembly key if necessary
-	if (Document->PresetManager.TryGetProjectAssemblyForPreset(StateData_V2.ObjectType, StateData_V2.AssemblyKey, CachedAssembly))
+	if (Document->PresetManager.TryGetProjectAssemblyForPreset(StateData.ObjectType, StateData.AssemblyKey, CachedAssembly))
 	{
-		StateData_V2.AssemblyKey = CachedAssembly.UniqueKey();
+		StateData.AssemblyKey = CachedAssembly.UniqueKey();
 	}
 	else
 	{
-		CachedAssembly.ObjectType = StateData_V2.ObjectType;
+		CachedAssembly.ObjectType = StateData.ObjectType;
 	}
 
-	Implementation = FMOIFactory::MakeMOIImplementation(StateData_V2.ObjectType, this);
+	Implementation = FMOIFactory::MakeMOIImplementation(StateData.ObjectType, this);
 	if (ensureAlways(Implementation))
 	{
 		MeshActor = Implementation->CreateActor(world, FVector::ZeroVector, FQuat::Identity);
@@ -79,12 +79,12 @@ void FModumateObjectInstance::SetupMOIComponent()
 
 void FModumateObjectInstance::UpdateAssemblyFromKey()
 {
-	if (CachedAssembly.UniqueKey() != StateData_V2.AssemblyKey)
+	if (CachedAssembly.UniqueKey() != StateData.AssemblyKey)
 	{
 		// Meta-objects don't have assemblies but we track MOI type in the CachedAssembly
-		if (!Document->PresetManager.TryGetProjectAssemblyForPreset(StateData_V2.ObjectType, StateData_V2.AssemblyKey, CachedAssembly))
+		if (!Document->PresetManager.TryGetProjectAssemblyForPreset(StateData.ObjectType, StateData.AssemblyKey, CachedAssembly))
 		{
-			CachedAssembly.ObjectType = StateData_V2.ObjectType;
+			CachedAssembly.ObjectType = StateData.ObjectType;
 		}
 		bAssemblyLayersReversed = false;
 	}
@@ -187,65 +187,6 @@ void FModumateObjectInstance::RemoveCachedChildID(int32 ChildID)
 		CachedChildIDs.Remove(ChildID);
 		MarkDirty(EObjectDirtyFlags::Structure);
 	}
-}
-
-bool FModumateObjectInstance::AddChild_DEPRECATED(FModumateObjectInstance *child, bool bUpdateChildHierarchy)
-{
-	if (child)
-	{
-		if (child->GetParentID() == ID)
-		{
-			return false;
-		}
-
-		if (FModumateObjectInstance *oldParent = child->GetParentObject())
-		{
-			oldParent->RemoveChild_DEPRECATED(child, bUpdateChildHierarchy);
-		}
-
-		child->SetParentID(ID);
-
-		if (CachedChildIDs.AddUnique(child->ID) != INDEX_NONE)
-		{
-			MarkDirty(EObjectDirtyFlags::All);
-		}
-
-		if (bUpdateChildHierarchy)
-		{
-			child->MarkDirty(EObjectDirtyFlags::All);
-		}
-
-		return true;
-	}
-
-	return false;
-}
-
-bool FModumateObjectInstance::RemoveChild_DEPRECATED(FModumateObjectInstance *child, bool bUpdateChildHierarchy)
-{
-	if (child)
-	{
-		if (child->GetParentID() != ID)
-		{
-			return false;
-		}
-
-		child->SetParentID(MOD_ID_NONE);
-
-		if (CachedChildIDs.Remove(child->ID) > 0)
-		{
-			MarkDirty(EObjectDirtyFlags::All);
-		}
-
-		if (bUpdateChildHierarchy)
-		{
-			child->MarkDirty(EObjectDirtyFlags::All);
-		}
-
-		return true;
-	}
-
-	return false;
 }
 
 void FModumateObjectInstance::GetConnectedIDs(TArray<int32> &connectedIDs) const
@@ -674,57 +615,38 @@ bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FD
 		}
 	}
 
-	if (DirtyFlags == EObjectDirtyFlags::None && !GetIsInPreviewMode())
+	if (DirtyFlags == EObjectDirtyFlags::None && !IsInPreviewMode())
 	{
 		Implementation->SetIsDynamic(false);
 	}
 	return bSuccess;
 }
 
-bool FModumateObjectInstance::SetDataState_DEPRECATED(const FMOIStateData_DEPRECATED &DataState)
-{
-	CurrentState_DEPRECATED = DataState;
-	PreviewState_DEPRECATED = DataState;
-	MarkDirty(EObjectDirtyFlags::Structure);
-
-	return true;
-}
-
-FMOIStateData_DEPRECATED &FModumateObjectInstance::GetDataState_DEPRECATED()
-{
-	return GetIsInPreviewMode() ? PreviewState_DEPRECATED : CurrentState_DEPRECATED;
-}
-
-const FMOIStateData_DEPRECATED &FModumateObjectInstance::GetDataState_DEPRECATED() const
-{
-	return GetIsInPreviewMode() ? PreviewState_DEPRECATED : CurrentState_DEPRECATED;
-}
-
 FMOIStateData& FModumateObjectInstance::GetStateData()
 {
-	return StateData_V2;
+	return StateData;
 }
 
 const FMOIStateData& FModumateObjectInstance::GetStateData() const
 {
-	return StateData_V2;
+	return StateData;
 }
 
 bool FModumateObjectInstance::SetStateData(const FMOIStateData& NewStateData)
 {
 	// Don't support modifying existing objects' ID or ObjectType (except during initial creation); this would require recreating the entire object for now.
-	if (!ensure((StateData_V2.ID == NewStateData.ID) && (StateData_V2.ObjectType == NewStateData.ObjectType)))
+	if (!ensure((StateData.ID == NewStateData.ID) && (StateData.ObjectType == NewStateData.ObjectType)))
 	{
 		return false;
 	}
 
 	// Skip setting data state that's identical to the current state
-	if (NewStateData == StateData_V2)
+	if (NewStateData == StateData)
 	{
 		return false;
 	}
 
-	StateData_V2 = NewStateData;
+	StateData = NewStateData;
 	if (!UpdateInstanceData())
 	{
 		return false;
@@ -742,7 +664,7 @@ bool FModumateObjectInstance::UpdateStateDataFromObject()
 	const void* customStructPtr;
 	if (GetTypedInstanceData(customStructDef, customStructPtr))
 	{
-		return StateData_V2.CustomData.SaveStructData(customStructDef, customStructPtr);
+		return StateData.CustomData.SaveStructData(customStructDef, customStructPtr);
 	}
 
 	// Otherwise, the serialized representation doesn't need to be updated.
@@ -756,7 +678,7 @@ bool FModumateObjectInstance::UpdateInstanceData()
 	void* customStructPtr;
 	if (GetTypedInstanceData(customStructDef, customStructPtr))
 	{
-		return StateData_V2.CustomData.LoadStructData(customStructDef, customStructPtr);
+		return StateData.CustomData.LoadStructData(customStructDef, customStructPtr);
 	}
 
 	// Otherwise, the object doesn't need to be updated.
@@ -784,37 +706,38 @@ bool FModumateObjectInstance::GetTypedInstanceData(UScriptStruct*& OutStructDef,
 	return bSuccess;
 }
 
-bool FModumateObjectInstance::BeginPreviewOperation_DEPRECATED()
+bool FModumateObjectInstance::BeginPreviewOperation()
 {
-	if (!ensure(!GetIsInPreviewMode()))
+	if (IsInPreviewMode())
 	{
 		return false;
 	}
-	PreviewState_DEPRECATED = CurrentState_DEPRECATED;
+
 	bPreviewOperationMode = true;
 	Implementation->SetIsDynamic(true);
 	return true;
 }
 
-bool FModumateObjectInstance::EndPreviewOperation_DEPRECATED()
+bool FModumateObjectInstance::EndPreviewOperation()
 {
-	if (!ensure(GetIsInPreviewMode()))
+	if (!IsInPreviewMode())
 	{
 		return false;
 	}
+
 	bPreviewOperationMode = false;
 	MarkDirty(EObjectDirtyFlags::Structure);
 	return true;
 }
 
-bool FModumateObjectInstance::GetIsInPreviewMode() const
+bool FModumateObjectInstance::IsInPreviewMode() const
 {
 	return bPreviewOperationMode;
 }
 
 int32 FModumateObjectInstance::GetParentID() const 
 { 
-	return StateData_V2.ParentID;
+	return StateData.ParentID;
 }
 
 void FModumateObjectInstance::SetParentID(int32 NewParentID) 
@@ -823,7 +746,7 @@ void FModumateObjectInstance::SetParentID(int32 NewParentID)
 	{
 		FModumateObjectInstance* oldParentObj = GetParentObject();
 
-		StateData_V2.ParentID = NewParentID;
+		StateData.ParentID = NewParentID;
 		MarkDirty(EObjectDirtyFlags::Structure);
 
 		if (oldParentObj)
@@ -850,11 +773,6 @@ void FModumateObjectInstance::SetAssemblyLayersReversed(bool bNewLayersReversed)
 		CachedAssembly.ReverseLayers();
 		bAssemblyLayersReversed = bNewLayersReversed;
 	}
-}
-
-const TArray<int32> &FModumateObjectInstance::GetControlPointIndices() const
-{
-	return GetDataState_DEPRECATED().ControlIndices;
 }
 
 void FModumateObjectInstance::SetupGeometry()
@@ -1018,12 +936,12 @@ bool FModumateObjectInstance::GetTransformedLocationState(const FTransform Trans
 	return Implementation->GetTransformedLocationState(Transform, OutState);
 }
 
-FVector FModumateObjectInstance::GetObjectLocation() const
+FVector FModumateObjectInstance::GetLocation() const
 {
 	return Implementation->GetLocation();
 }
 
-FQuat FModumateObjectInstance::GetObjectRotation() const
+FQuat FModumateObjectInstance::GetRotation() const
 {
 	return Implementation->GetRotation();
 }
@@ -1033,38 +951,6 @@ FTransform FModumateObjectInstance::GetWorldTransform() const
 	return Implementation->GetWorldTransform();
 }
 
-const FBIMPropertySheet &FModumateObjectInstance::GetProperties() const
-{
-	return GetDataState_DEPRECATED().ObjectProperties;
-}
-
-FBIMPropertySheet& FModumateObjectInstance::GetPropertiesNonConst()
-{
-	return GetDataState_DEPRECATED().ObjectProperties;
-}
-
-void FModumateObjectInstance::SetAllProperties(const FBIMPropertySheet &NewProperties)
-{
-	GetDataState_DEPRECATED().ObjectProperties = NewProperties;
-}
-
-// data records are USTRUCTs used in serialization and clipboard operations
-FMOIDataRecord_DEPRECATED FModumateObjectInstance::AsDataRecord_DEPRECATED() const
-{
-	FMOIDataRecord_DEPRECATED ret;
-	ret.ID = ID;
-	ret.ObjectType = GetObjectType();
-	ret.AssemblyKey = CachedAssembly.UniqueKey().ToString();
-	ret.ParentID = GetParentID();
-	ret.ChildIDs = CachedChildIDs;
-	ret.Location = GetObjectLocation();
-	ret.Rotation = GetObjectRotation().Rotator();
-	ret.UVAnchor = FVector::ZeroVector;
-	ret.ControlIndices = CurrentState_DEPRECATED.ControlIndices;
-	ret.Extents = CurrentState_DEPRECATED.Extents;
-	ret.ObjectInverted = CurrentState_DEPRECATED.bObjectInverted;
-	return ret;
-}
 
 // FModumateObjectInstanceImplBase Implementation
 

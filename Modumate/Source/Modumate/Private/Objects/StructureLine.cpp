@@ -34,7 +34,7 @@ FQuat FMOIStructureLine::GetRotation() const
 	FModumateObjectInstance *parentObj = MOI ? MOI->GetParentObject() : nullptr;
 	if (parentObj)
 	{
-		return parentObj->GetObjectRotation();
+		return parentObj->GetRotation();
 	}
 
 	return FQuat::Identity;
@@ -45,7 +45,7 @@ FVector FMOIStructureLine::GetLocation() const
 	FModumateObjectInstance *parentObj = MOI ? MOI->GetParentObject() : nullptr;
 	if (parentObj)
 	{
-		return parentObj->GetObjectLocation();
+		return parentObj->GetLocation();
 	}
 
 	return FVector::ZeroVector;

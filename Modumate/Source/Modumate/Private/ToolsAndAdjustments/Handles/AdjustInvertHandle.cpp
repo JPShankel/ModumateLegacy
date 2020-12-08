@@ -33,7 +33,7 @@ FVector AAdjustInvertHandle::GetHandlePosition() const
 		return FVector::ZeroVector;
 	}
 
-	FVector objectPos = TargetMOI->GetObjectLocation();
+	FVector objectPos = TargetMOI->GetLocation();
 	FVector objectNormal = TargetMOI->GetNormal();
 	FVector attachDirection(ForceInitToZero);
 	float faceExtent = 0.0f;
@@ -41,7 +41,7 @@ FVector AAdjustInvertHandle::GetHandlePosition() const
 	auto parent = TargetMOI->GetParentObject();
 	if (parent)
 	{
-		attachDirection = -parent->GetObjectRotation().GetAxisY();
+		attachDirection = -parent->GetRotation().GetAxisY();
 		int32 numCorners = parent->GetNumCorners();
 		for (int32 c = 0; c < numCorners; ++c)
 		{

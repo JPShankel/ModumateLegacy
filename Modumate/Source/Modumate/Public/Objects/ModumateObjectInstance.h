@@ -174,8 +174,7 @@ private:
 	IModumateObjectInstanceImpl *Implementation = nullptr;
 	FModumateDocument *Document = nullptr;
 
-	FMOIStateData_DEPRECATED CurrentState_DEPRECATED, PreviewState_DEPRECATED;
-	FMOIStateData StateData_V2;
+	FMOIStateData StateData;
 
 	// Carry a bespoke copy of your assembly
 	// TODO: this is motivated by object-level overrides and anticipated serialization needs
@@ -202,8 +201,6 @@ private:
 
 	EObjectDirtyFlags DirtyFlags = EObjectDirtyFlags::None;
 
-	FMOIStateData_DEPRECATED& GetDataState_DEPRECATED();
-
 	bool GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr);
 	bool GetTypedInstanceData(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const;
 
@@ -228,15 +225,9 @@ public:
 	bool UpdateStateDataFromObject();
 	bool UpdateInstanceData();
 
-	const FMOIStateData_DEPRECATED &GetDataState_DEPRECATED() const;
-
-	const TArray<int32> &GetControlPointIndices() const;
-
-	bool BeginPreviewOperation_DEPRECATED();
-	bool EndPreviewOperation_DEPRECATED();
-	bool GetIsInPreviewMode() const;
-
-	bool SetDataState_DEPRECATED(const FMOIStateData_DEPRECATED &DataState);
+	bool BeginPreviewOperation();
+	bool EndPreviewOperation();
+	bool IsInPreviewMode() const;
 
 	int32 GetParentID() const;
 	void SetParentID(int32 NewParentID);
@@ -262,35 +253,8 @@ public:
 	const TArray<int32> &GetChildIDs() const { return CachedChildIDs; }
 	bool HasChildID(int32 ChildID) const;
 
-	bool AddChild_DEPRECATED(FModumateObjectInstance *child, bool bUpdateChildHierarchy = true);
-	bool RemoveChild_DEPRECATED(FModumateObjectInstance *child, bool bUpdateChildHierarchy = true);
-
 	void GetConnectedIDs(TArray<int32> &connectedIDs) const;
 	void GetConnectedMOIs(TArray<FModumateObjectInstance *> &connectedMOIs) const;
-
-	// Property getters/setters that, for now, only pass through directly to ObjectProperties.
-	// TODO: use these for instance-level overrides, where they pass through to the assembly.
-	const FBIMPropertySheet &GetProperties() const;
-	FBIMPropertySheet& GetPropertiesNonConst();
-	void SetAllProperties(const FBIMPropertySheet &NewProperties);
-
-	template<class T>
-	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType &Name, T &OutT) const
-	{
-		return GetProperties().TryGetProperty(Scope, Name, OutT);
-	}
-
-	template<class T>
-	T GetProperty(EBIMValueScope Scope, const FBIMNameType& Name) const
-	{
-		return GetProperties().GetProperty<T>(Scope, Name);
-	}
-
-	template<class T>
-	void SetProperty(EBIMValueScope Scope, const FBIMNameType& Name, const T& Value) 
-	{
-		return GetPropertiesNonConst().SetProperty<T>(Scope, Name, Value);
-	}
 
 	TArray<FModumateObjectInstance *> GetAllDescendents();
 	TArray<const FModumateObjectInstance *> GetAllDescendents() const;
@@ -320,13 +284,13 @@ public:
 	ISceneCaptureObject* GetSceneCaptureInterface();
 
 	// Object transform getters/setters.
-	//   NOTE: ObjectLocation and ObjectRotation are intended to be interpreted by the object;
+	//   NOTE: GetLocation and GetRotation are intended to be interpreted by the object;
 	//   they may either be world-relative, or parent-relative, or in any arbitrary coordinate space.
 	//   WorldTransform, however, is always intended to be in world coordinate space, if that makes sense for the object.
 	//   Setting any of these values does not guarantee that getting it will return the same value;
 	//   objects will do their best to interpret an intended transform value, based on any constraints it might have.
-	FVector GetObjectLocation() const;
-	FQuat GetObjectRotation() const;
+	FVector GetLocation() const;
+	FQuat GetRotation() const;
 	FTransform GetWorldTransform() const;
 	FVector GetNormal() const;
 	FVector GetCorner(int32 index) const;
@@ -363,9 +327,6 @@ public:
 
 	// Whether it can be split - called by both the Document and the SplitTool
 	bool CanBeSplit() const;
-
-	// Serialization
-	FMOIDataRecord_DEPRECATED AsDataRecord_DEPRECATED() const;
 
 	UMaterialInterface *GetMaterial();
 	void SetMaterial(UMaterialInterface *mat);

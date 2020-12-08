@@ -300,7 +300,8 @@ namespace Modumate {
 		{
 			int32 roomID = room->ID;
 			TSet<int32> roomConnectedFaces;
-			for (int32 faceID : room->GetControlPointIndices())
+			// TODO: refactor room faces using strongly-typed InstanceProperties
+			for (int32 faceID : { MOD_ID_NONE })//room->GetControlPointIndices())
 			{
 				auto face = volumeGraph.FindFace(faceID);
 				if (!face)
@@ -387,7 +388,8 @@ namespace Modumate {
 				continue;
 			}
 
-			for (int32 faceID : room->GetControlPointIndices())
+			// TODO: refactor room faces using strongly-typed InstanceProperties
+			for (int32 faceID : { MOD_ID_NONE })//room->GetControlPointIndices())
 			{
 				auto face = volumeGraph.FindFace(faceID);
 				if (face == nullptr)

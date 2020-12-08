@@ -30,8 +30,8 @@ bool AAdjustFFERotateHandle::BeginUse()
 	{
 		return false;
 	}
-	AnchorLoc = TargetMOI->GetObjectLocation();
-	OriginalRotation = TargetMOI->GetObjectRotation();
+	AnchorLoc = TargetMOI->GetLocation();
+	OriginalRotation = TargetMOI->GetRotation();
 
 	FVector curObjectNormal = OriginalRotation.RotateVector(AssemblyNormal);
 	FVector curObjectTangent = OriginalRotation.RotateVector(AssemblyTangent);
@@ -51,7 +51,7 @@ bool AAdjustFFERotateHandle::BeginUse()
 	APendingAngleActor* dimensionActor = Cast<APendingAngleActor>(GameInstance->DimensionManager->AddDimensionActor(APendingAngleActor::StaticClass()));
 	dimensionActor->SetHidden(false);
 	PendingSegmentID = dimensionActor->ID;
-	dimensionActor->WorldPosition = TargetMOI->GetObjectLocation();
+	dimensionActor->WorldPosition = TargetMOI->GetLocation();
 	dimensionActor->WorldDirection = BaseLine->Point2 - BaseLine->Point1;
 	dimensionActor->WorldDirection.Normalize();
 
@@ -133,7 +133,7 @@ bool AAdjustFFERotateHandle::HandleInputNumber(float number)
 	FQuat deltaRot(AssemblyNormal, radians * clockwiseScale);
 
 	TMap<int32, FTransform> objectInfo;
-	objectInfo.Add(TargetMOI->ID, FTransform(deltaRot * OriginalRotation, TargetMOI->GetObjectLocation()));
+	objectInfo.Add(TargetMOI->ID, FTransform(deltaRot * OriginalRotation, TargetMOI->GetLocation()));
 	FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Controller->GetDocument(), Controller->GetWorld(), false);
 
 	if (!IsActorBeingDestroyed())
@@ -210,7 +210,7 @@ void AAdjustFFERotateHandle::Initialize()
 
 	for (auto line : { BaseLine, RotationLine })
 	{
-		line->Point1 = TargetMOI->GetObjectLocation();
+		line->Point1 = TargetMOI->GetLocation();
 		line->Color = SegmentColor;
 		line->Thickness = SegmentThickness;
 		line->SetVisibilityInApp(false);

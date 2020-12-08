@@ -53,7 +53,7 @@ FVector AAdjustPortalOrientHandle::GetHandleDirection() const
 		{
 			Widget->SetRenderScale(FVector2D(-1.0f, 1.0f));
 		}
-		return (bFacing ? +1 : -1) * parent->GetObjectRotation().GetAxisX();
+		return (bFacing ? +1 : -1) * parent->GetRotation().GetAxisX();
 	}
 	return FVector::RightVector;
 }
@@ -68,8 +68,8 @@ FVector AAdjustPortalOrientHandle::GetHandlePosition() const
 	auto parent = TargetMOI->GetParentObject();
 	if (parent)
 	{
-		FVector objectPos = parent->GetObjectLocation();
-		FQuat objectRotation = parent->GetObjectRotation();
+		FVector objectPos = parent->GetLocation();
+		FQuat objectRotation = parent->GetRotation();
 		FVector attachDirectionY = -objectRotation.GetAxisY();
 		FVector attachDirectionX = objectRotation.GetAxisX();
 		FVector attachDirection = ((CounterClockwise ? +1 : -1 ) * attachDirectionX - attachDirectionY).GetSafeNormal();

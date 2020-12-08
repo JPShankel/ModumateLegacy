@@ -112,8 +112,8 @@ void FMOICabinetImpl::SetupDynamicGeometry()
 		return;
 	}
 
-	bool bUpdateCollision = !MOI->GetIsInPreviewMode();
-	bool bEnableCollision = !MOI->GetIsInPreviewMode();
+	bool bUpdateCollision = !MOI->IsInPreviewMode();
+	bool bEnableCollision = !MOI->IsInPreviewMode();
 
 	if (!FrontFacePortalActor.IsValid())
 	{

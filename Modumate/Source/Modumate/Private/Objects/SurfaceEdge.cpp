@@ -54,8 +54,8 @@ bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelta
 			return false;
 		}
 
-		CachedDeprojectedStart = startVertexObj->GetObjectLocation();
-		CachedDeprojectedEnd = endVertexObj->GetObjectLocation();
+		CachedDeprojectedStart = startVertexObj->GetLocation();
+		CachedDeprojectedEnd = endVertexObj->GetLocation();
 		LineActor->Point1 = CachedDeprojectedStart + offsetDelta;
 		LineActor->Point2 = CachedDeprojectedEnd + offsetDelta;
 		LineActor->UpdateTransform();

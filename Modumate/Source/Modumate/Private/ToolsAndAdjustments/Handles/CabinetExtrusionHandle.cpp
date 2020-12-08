@@ -121,7 +121,7 @@ FVector ACabinetExtrusionHandle::GetHandlePosition() const
 	FMOICabinetData cabinetData;
 	if (!ensure((numBasePoints > 0) && TargetMOI->GetStateData().CustomData.LoadStructData(cabinetData)))
 	{
-		return TargetMOI->GetObjectLocation();
+		return TargetMOI->GetLocation();
 	}
 
 	FVector objectNormal = TargetMOI->GetNormal();

@@ -841,19 +841,12 @@ bool AEditModelPlayerState_CPP::DoesObjectHaveAnyError(int32 ObjectID) const
 
 void AEditModelPlayerState_CPP::CopySelectedToClipboard(const FModumateDocument &document)
 {
-	ClipboardEntries.Reset();
 	// TODO: re-implement
 }
 
 void AEditModelPlayerState_CPP::Paste(FModumateDocument &document) const
 {
-	if (ClipboardEntries.Num() == 0)
-	{
-		return;
-	}
-	document.BeginUndoRedoMacro();
 	// TODO: re-implement
-	document.EndUndoRedoMacro();
 }
 
 FBIMKey AEditModelPlayerState_CPP::GetAssemblyForToolMode(EToolMode mode)

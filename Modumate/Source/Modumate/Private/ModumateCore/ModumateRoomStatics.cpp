@@ -86,12 +86,11 @@ bool UModumateRoomStatics::GetRoomConfig(const FModumateObjectInstance *RoomObj,
 		return false;
 	}
 
-	// TODO: expose these BIM values directly to Blueprint and delete FRoomConfigurationBlueprint, and/or
-	// allow the proper serialization of types like FColor and FText to avoid unnecessary conversion.
+	// TODO: expose these BIM values directly to Blueprint and delete FRoomConfigurationBlueprint, by using a strongly-typed InstanceData USTRUCT instead
 	bool bSuccess = true;
-	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Preset, OutRoomConfig.Key) && bSuccess;
-
 	OutRoomConfig.ObjectID = RoomObj->ID;
+#if 0
+	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Preset, OutRoomConfig.Key) && bSuccess;
 
 	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Number, OutRoomConfig.RoomNumber) && bSuccess;
 
@@ -116,6 +115,7 @@ bool UModumateRoomStatics::GetRoomConfig(const FModumateObjectInstance *RoomObj,
 		TryEnumValueByString(EAreaType, areaTypeString, OutRoomConfig.AreaType) && bSuccess;
 
 	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::LoadFactorSpecialCalc, OutRoomConfig.LoadFactorSpecialCalc) && bSuccess;
+#endif
 
 	return bSuccess;
 }
@@ -138,6 +138,8 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(FModumateObjectInstance *RoomObj
 		return false;
 	}
 
+	// TODO: refactor Room properties to used strongly-typed InstanceData
+#if 0
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Preset, ConfigKey.ToString());
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Color, roomConfig->HexValue);
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Area, 0.0f);
@@ -148,6 +150,7 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(FModumateObjectInstance *RoomObj
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantLoadFactor, roomConfig->OccupantLoadFactor);
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::AreaType, EnumValueString(EAreaType, roomConfig->AreaType));
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::LoadFactorSpecialCalc, roomConfig->LoadFactorSpecialCalc.ToString());
+#endif
 
 	// Mark the room as dirty, so that it will re-calculate area, update derived properties, and update its material.
 	// TODO: calculate both gross and net area during structural clean (SetupDynamicGeometry), so that we only need to mark visuals as dirty.
@@ -176,6 +179,8 @@ void UModumateRoomStatics::UpdateDerivedRoomProperties(FModumateObjectInstance *
 
 	// Store the room area in ft^2, since that's how everyone will display it and use it in calculations
 	// TODO: differentiate between gross and net area
+	// TODO: use strongly-typed InstanceData instead of BIM properties
+#if 0
 	float roomAreaValueCM2 = roomMesh->GetBaseArea();
 	float cm2Toft2 = FMath::Pow(InchesPerFoot * InchesToCentimeters, 2);
 	float roomAreaValueFT2 = FMath::RoundHalfFromZero(roomAreaValueCM2 / cm2Toft2);
@@ -191,6 +196,7 @@ void UModumateRoomStatics::UpdateDerivedRoomProperties(FModumateObjectInstance *
 	}
 
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantsNumber, occupantsNumValue);
+#endif
 }
 
 bool UModumateRoomStatics::CanRoomContainFace(const FModumateDocument *Document, FGraphSignedID FaceID)
@@ -246,9 +252,10 @@ void UModumateRoomStatics::CalculateRoomChanges(const FModumateDocument *Documen
 
 	// Gather the current set of room objects and their FaceIDs, to compare against the new room calculation
 	TArray<const FModumateObjectInstance *> curRoomObjs = Document->GetObjectsOfType(EObjectType::OTRoom);
+	// TODO: refactor room faces using strongly-typed InstanceProperties
 	for (const FModumateObjectInstance *curRoomObj : curRoomObjs)
 	{
-		TArray<FGraphSignedID> roomFaceIDs = curRoomObj->GetControlPointIndices();
+		TArray<FGraphSignedID> roomFaceIDs;// = curRoomObj->GetControlPointIndices();
 		roomFaceIDs.Sort();
 		oldRoomsFaceIDs.Add(curRoomObj->ID, roomFaceIDs);
 	}
@@ -366,8 +373,9 @@ void UModumateRoomStatics::CalculateRoomNumbers(const FModumateDocument *Documen
 			return;
 		}
 
+		// TODO: use strongly-typed InstanceData instead of BIM properties
 		FString oldRoomNumberValue;
-		roomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Number, oldRoomNumberValue);
+		//roomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::Number, oldRoomNumberValue);
 
 		int32 roomNumberInt = roomBaseOnFloor + roomIdx + 1;
 		FString newRoomNumberValue = FText::AsNumber(roomNumberInt, &FNumberFormattingOptions::DefaultNoGrouping()).ToString();

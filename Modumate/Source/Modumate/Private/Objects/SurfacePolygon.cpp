@@ -93,7 +93,7 @@ bool FMOISurfacePolygonImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDe
 		}
 
 		// Now build the triangulated mesh with holes for the surface polygon
-		bool bEnableCollision = !MOI->GetIsInPreviewMode();
+		bool bEnableCollision = !MOI->IsInPreviewMode();
 		DynamicMeshActor->SetupMetaPlaneGeometry(CachedOffsetPoints, MaterialData, GetAlpha(), true, &CachedOffsetHoles, bEnableCollision);
 	}
 	case EObjectDirtyFlags::Visuals:

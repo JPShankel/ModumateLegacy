@@ -41,7 +41,7 @@ FQuat FMOIPlaneHostedObjImpl::GetRotation() const
 	const FModumateObjectInstance *parent = MOI->GetParentObject();
 	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
-		return parent->GetObjectRotation();
+		return parent->GetRotation();
 	}
 	else
 	{
@@ -58,7 +58,7 @@ FVector FMOIPlaneHostedObjImpl::GetLocation() const
 		FVector normal;
 		UModumateObjectStatics::GetPlaneHostedValues(MOI, thickness, startOffset, normal);
 
-		FVector planeLocation = parent->GetObjectLocation();
+		FVector planeLocation = parent->GetLocation();
 		return planeLocation + (startOffset + (0.5f * thickness)) * normal;
 	}
 	else
@@ -84,7 +84,7 @@ FVector FMOIPlaneHostedObjImpl::GetCorner(int32 CornerIndex) const
 
 			if (ensure((3 * numPlanePoints) == layerPoints.Num()))
 			{
-				return parent->GetObjectLocation() + layerPoints[3 * pointIndex];
+				return parent->GetLocation() + layerPoints[3 * pointIndex];
 			}
 		}
 	}
@@ -312,7 +312,7 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 	{
 		bool bIsCountertop = MOI->GetObjectType() == EObjectType::OTCountertop;
 		const FModumateObjectInstance *parent = MOI->GetParentObject();
-		FVector parentLocation = parent->GetObjectLocation();
+		FVector parentLocation = parent->GetLocation();
 
 		float currentThickness = 0.0f;
 		TArray<FVector2D> previousLinePoints;
@@ -473,7 +473,7 @@ void FMOIPlaneHostedObjImpl::UpdateMeshWithLayers(bool bRecreateMesh, bool bReca
 		return;
 	}
 
-	DynamicMeshActor->SetActorLocation(parentPlane->GetObjectLocation());
+	DynamicMeshActor->SetActorLocation(parentPlane->GetLocation());
 	DynamicMeshActor->SetActorRotation(FQuat::Identity);
 
 	CachedHoles.Reset();
@@ -538,7 +538,7 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 	static const Modumate::Units::FThickness outerThickness = Modumate::Units::FThickness::Points(0.25f);
 
 	const FModumateObjectInstance *parent = MOI->GetParentObject();
-	FVector parentLocation = parent->GetObjectLocation();
+	FVector parentLocation = parent->GetLocation();
 	bool bIsCountertop = MOI->GetObjectType() == EObjectType::OTCountertop;
 	Modumate::FModumateLayerType layerType = bIsCountertop ? Modumate::FModumateLayerType::kCountertopBeyond :
 		Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges;

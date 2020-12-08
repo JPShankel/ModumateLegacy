@@ -68,7 +68,7 @@ void AJustificationHandle::Tick(float DeltaTime)
 		FModumateObjectInstance* parentMetaplane = TargetMOI->GetParentObject();
 		if (parentMetaplane != nullptr && parentMetaplane->GetObjectType() == EObjectType::OTMetaPlane)
 		{
-			FVector metaPlaneMidpoint = parentMetaplane->GetObjectLocation();
+			FVector metaPlaneMidpoint = parentMetaplane->GetLocation();
 			if (!metaPlaneMidpoint.Equals(attachLocation))
 			{
 				// Make new line
@@ -90,7 +90,7 @@ FVector AJustificationHandle::GetHandlePosition() const
 		return FVector::ZeroVector;
 	}
 
-	FVector objectPos = TargetMOI->GetObjectLocation();
+	FVector objectPos = TargetMOI->GetLocation();
 	FVector objectNormalWorld = TargetMOI->GetNormal();
 
 	FVector worldP0, worldP1;

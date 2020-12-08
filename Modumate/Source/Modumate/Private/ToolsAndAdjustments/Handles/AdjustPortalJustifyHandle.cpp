@@ -76,7 +76,7 @@ void AAdjustPortalJustifyHandle::AbortUse()
 FVector AAdjustPortalJustifyHandle::GetHandlePosition() const
 {
 	const FModumateObjectInstance* parentMOI = TargetMOI ? TargetMOI->GetParentObject() : nullptr;
-	return parentMOI ? parentMOI->GetObjectLocation() : FVector::ZeroVector;
+	return parentMOI ? parentMOI->GetLocation() : FVector::ZeroVector;
 }
 
 bool AAdjustPortalJustifyHandle::HandleInputNumber(float number)

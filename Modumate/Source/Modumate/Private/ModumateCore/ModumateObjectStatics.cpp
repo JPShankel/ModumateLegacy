@@ -69,9 +69,9 @@ bool UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
 		}
 	}
 		
-	FVector hostOrigin = metaPlaneObject->GetObjectLocation();
+	FVector hostOrigin = metaPlaneObject->GetLocation();
 	FVector hostNormal = metaPlaneObject->GetNormal();
-	FQuat hostRot = metaPlaneObject->GetObjectRotation();
+	FQuat hostRot = metaPlaneObject->GetRotation();
 
 	FVector pointToProject = WorldPos;
 
@@ -151,9 +151,9 @@ bool UModumateObjectStatics::GetWorldTransformOnPlanarObj(
 		}
 	}
 
-	FVector hostOrigin = metaPlaneObject->GetObjectLocation();
+	FVector hostOrigin = metaPlaneObject->GetLocation();
 	FVector hostNormal = metaPlaneObject->GetNormal();
-	FQuat hostRot = metaPlaneObject->GetObjectRotation();
+	FQuat hostRot = metaPlaneObject->GetRotation();
 
 	// TODO: support more than just portal-style "flipped or not" relative rotation about Z
 	bool bSameNormals = RelativeRot.IsIdentity(KINDA_SMALL_NUMBER);
@@ -216,7 +216,7 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const FModumateObjectInsta
 			return false;
 		}
 
-		FVector hostLocation = hostParent->GetObjectLocation();
+		FVector hostLocation = hostParent->GetLocation();
 		FVector hostNormal = hostParent->GetNormal();
 		int32 numCorners = hostParent->GetNumCorners();
 		if (numCorners < 3)
@@ -343,7 +343,7 @@ bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const FModumateDocument*
 			return false;
 		}
 
-		OutPerimeter.Add(perimeterVertexObj->GetObjectLocation());
+		OutPerimeter.Add(perimeterVertexObj->GetLocation());
 	}
 
 	for (int32 interiorPolyID : surfacePolygon->ContainedPolyIDs)
@@ -363,7 +363,7 @@ bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const FModumateDocument*
 				return false;
 			}
 
-			hole.Points.Add(perimeterVertexObj->GetObjectLocation());
+			hole.Points.Add(perimeterVertexObj->GetLocation());
 		}
 	}
 

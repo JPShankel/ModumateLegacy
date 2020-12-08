@@ -217,10 +217,6 @@ bool AAdjustPolyPointHandle::HandleInputNumber(float number)
 	TMap<int32, FTransform> objectInfo;
 	if (GetTransforms(number * CurrentDirection, objectInfo))
 	{
-		// TODO: preview operation is no longer necessary, but removing this could cause ensures
-		// until the other handles are refactored
-		TargetMOI->EndPreviewOperation_DEPRECATED();
-
 		// Now that we've reverted the target object back to its original state, clean all objects so that
 		// deltas can be applied to the original state, and all of its dependent changes.
 		GameState->Document.CleanObjects();
