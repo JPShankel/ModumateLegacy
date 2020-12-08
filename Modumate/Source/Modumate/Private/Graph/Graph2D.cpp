@@ -703,8 +703,6 @@ namespace Modumate
 		{
 			BoundingPolygon = Delta.BoundsUpdates.Value.OuterBounds;
 			BoundingContainedPolygons = Delta.BoundsUpdates.Value.InnerBounds;
-			GraphFaceToInnerBound = Delta.BoundsUpdates.Value.GraphFaceToInnerBound;
-			GraphVertexToBoundVertex = Delta.BoundsUpdates.Value.GraphVerticesToSurfaceVertices;
 		}
 
 		for (int32 vertexID : BoundingPolygon.Value)
@@ -825,8 +823,6 @@ namespace Modumate
 	{
 		BoundingPolygon = TPair<int32, TArray<int32>>();
 		BoundingContainedPolygons.Reset();
-		GraphFaceToInnerBound.Reset();
-		GraphVertexToBoundVertex.Reset();
 	}
 
 	bool FGraph2D::TraverseEdges(FGraphSignedID StartingEdgeID, TArray<FGraphSignedID>& OutEdgeIDs, TArray<int32>& OutVertexIDs,

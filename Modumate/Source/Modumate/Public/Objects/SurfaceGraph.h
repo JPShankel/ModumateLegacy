@@ -34,8 +34,12 @@ public:
 
 protected:
 	bool UpdateCachedGraphData();
+	bool CalculateFaces(const TArray<int32>& AddIDs, TMap<int32, TArray<FVector2D>>& OutPolygonsToAdd, TMap<int32, TArray<int32>>& OutFaceToVertices);
 
 	TMap<int32, int32> FaceIdxToVertexID;
+	TMap<int32, int32> GraphFaceToInnerBound;
+	TMap<int32, int32> GraphVertexToBoundVertex;
+
 	TArray<FVector> CachedFacePoints;
 	FTransform CachedFaceOrigin;
 

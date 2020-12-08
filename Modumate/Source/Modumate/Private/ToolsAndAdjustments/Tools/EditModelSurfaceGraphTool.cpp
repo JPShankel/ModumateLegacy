@@ -446,22 +446,9 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfa
 		return false;
 	}
 
-	if (hostParentFace)
-	{
-		for (int32 containedFaceID : hostParentFace->ContainedFaceIDs)
-		{
-			const auto *containedFace = volumeGraph.FindFace(containedFaceID);
-			TArray<FVector2D> holePolygon;
-			Algo::Transform(containedFace->CachedPositions, holePolygon, [this](const FVector &WorldPoint) {
-				return UModumateGeometryStatics::ProjectPoint2DTransform(WorldPoint, HitFaceOrigin);
-			});
-			graphPolygonsToAdd.Add(containedFaceID, holePolygon);
-			graphFaceToVertices.Add(containedFaceID, containedFace->VertexIDs);
-		}
-	}
-
 	TArray<FGraph2DDelta> fillGraphDeltas;
-	if (!HitSurfaceGraph->PopulateFromPolygons(fillGraphDeltas, NextID, graphPolygonsToAdd, graphFaceToVertices, true, OutRootPolyID))
+	TMap<int32, int32> outFaceToPoly, outGraphToSurfaceVertices;
+	if (!HitSurfaceGraph->PopulateFromPolygons(fillGraphDeltas, NextID, graphPolygonsToAdd, graphFaceToVertices, outFaceToPoly, outGraphToSurfaceVertices, true, OutRootPolyID))
 	{
 		return false;
 	}

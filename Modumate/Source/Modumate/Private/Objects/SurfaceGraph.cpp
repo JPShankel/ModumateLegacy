@@ -45,6 +45,8 @@ void FMOISurfaceGraphImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, vo
 
 bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
+	int32 numVerts = GraphVertexToBoundVertex.Num();
+
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
 	{
 		FModumateDocument* doc = MOI ? MOI->GetDocument() : nullptr;
@@ -56,6 +58,25 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 		auto surfaceGraph = doc->FindSurfaceGraph(MOI->ID);
 		if (!ensure(surfaceGraph.IsValid()) || !UpdateCachedGraphData())
 		{
+			return true;
+		}
+
+		auto hostObj = doc->GetObjectById(MOI->GetParentID());
+		if (hostObj == nullptr)
+		{
+			return false;
+		}
+
+		auto faceObj = doc->GetObjectById(hostObj->GetParentID());
+		if (faceObj == nullptr)
+		{
+			return false;
+		}
+
+		auto& graph = doc->GetVolumeGraph();
+		auto face = graph.FindFace(faceObj->ID);
+		if (face == nullptr)
+		{
 			return false;
 		}
 
@@ -63,12 +84,72 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 		if (OutSideEffectDeltas == nullptr)
 		{
 			CheckGraphLink();
+
+			if (FVector::Parallel(face->CachedPlane, MOI->GetNormal()))
+			{
+				GraphVertexToBoundVertex.Reset();
+				GraphFaceToInnerBound.Reset();
+
+				TArray<int32> addIDs;
+				for (int32 containedFaceID : face->ContainedFaceIDs)
+				{
+					if (!GraphFaceToInnerBound.Contains(containedFaceID))
+					{
+						addIDs.Add(containedFaceID);
+					}
+				}
+
+				TMap<int32, TArray<FVector2D>> graphPolygonsToAdd;
+				TMap<int32, TArray<int32>> graphFaceToVertices;
+				if (CalculateFaces(addIDs, graphPolygonsToAdd, graphFaceToVertices))
+				{
+					for (auto& kvp : graphPolygonsToAdd)
+					{
+						const auto* containedFace = graph.FindFace(kvp.Key);
+
+						for (int32 idx = 0; idx < kvp.Value.Num(); idx++)
+						{
+							FVector2D pos = kvp.Value[idx];
+							int32 vertexID = containedFace->VertexIDs[idx];
+
+							if (auto surfaceVertex = surfaceGraph->FindVertex(pos))
+							{
+								GraphVertexToBoundVertex.Add(vertexID, surfaceVertex->ID);
+							}
+						}
+					}
+
+					TArray<int32> edges;
+					surfaceGraph->GetEdges().GenerateKeyArray(edges);
+
+					if (!surfaceGraph->FindVerticesAndPolygons(graphPolygonsToAdd, GraphFaceToInnerBound, GraphVertexToBoundVertex, edges))
+					{
+						return true;
+					}
+				}
+			}
+
 			return true;
 		}
 
 		int32 numIDs = FaceIdxToVertexID.Num();
+		if (numIDs == 0)
+		{
+			TArray<int32> boundingVertexIDs;
+			surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
+			for (int32 facePointIdx = 0; facePointIdx < CachedFacePoints.Num(); ++facePointIdx)
+			{
+				FVector2D prevPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
+				Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(prevPos2D);
+				if (ensure(vertex) && boundingVertexIDs.Contains(vertex->ID))
+				{
+					FaceIdxToVertexID.Add(facePointIdx, vertex->ID);
+				}
+			}
+		}
+		numIDs = FaceIdxToVertexID.Num();
 		// If the cached host face geometry has changed after it was created, then the surface graph may need to be updated or deleted to match the new host face
-		if (numIDs > 0)
+		if (ensureAlways(numIDs > 0))
 		{
 			bool bFoundAllVertices = true;
 			TMap<int32, FVector2D> vertexMoves;
@@ -113,28 +194,8 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 			// Attempt to update the surface graph with the correct bounds
 			int32 nextID = doc->ReserveNextIDs(MOI->ID);
 			
-			// find hosting metaplane
-			auto hostObj = doc->GetObjectById(MOI->GetParentID());
-			if (hostObj == nullptr)
-			{
-				return false;
-			}
-
-			auto faceObj = doc->GetObjectById(hostObj->GetParentID());
-			if (faceObj == nullptr)
-			{
-				return false;
-			}
-
-			auto& graph = doc->GetVolumeGraph();
-			auto face = graph.FindFace(faceObj->ID);
-			if (face == nullptr)
-			{
-				return false;
-			}
-
 			// movement updates
-			for (auto& kvp : surfaceGraph->GraphVertexToBoundVertex)
+			for (auto& kvp : GraphVertexToBoundVertex)
 			{
 				auto graphVertex = graph.FindVertex(kvp.Key);
 				auto surfaceVertex = surfaceGraph->FindVertex(kvp.Value);
@@ -156,7 +217,7 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 				// removes
 				TArray<FGraph2DDelta> deleteDeltas;
 				TArray<int32> deleteIDs;
-				for (auto& kvp : surfaceGraph->GraphFaceToInnerBound)
+				for (auto& kvp : GraphFaceToInnerBound)
 				{
 					// face in the map is no longer contained
 					if (kvp.Key != MOD_ID_NONE && !face->ContainedFaceIDs.Contains(kvp.Key))
@@ -164,8 +225,31 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 						deleteIDs.Add(kvp.Value);
 					}
 				}
+				for (int32 id : deleteIDs)
+				{
+					GraphFaceToInnerBound.Remove(id);
+				}
 
 				surfaceGraph->DeleteObjects(deleteDeltas, nextID, deleteIDs);
+				TSet<int32> deletedObjects;
+				for (auto& delta : deleteDeltas)
+				{
+					delta.AggregateDeletedObjects(deletedObjects);
+				}
+
+				TSet<int32> removedVertices;
+				removedVertices.Reset();
+				for (auto& kvp : GraphVertexToBoundVertex)
+				{
+					if (deletedObjects.Contains(kvp.Value))
+					{
+						removedVertices.Add(kvp.Key);
+					}
+				}
+				for (int32 id : removedVertices)
+				{
+					GraphVertexToBoundVertex.Remove(id);
+				}
 
 				for (auto& delta : deleteDeltas)
 				{
@@ -176,53 +260,29 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 				TArray<int32> addIDs;
 				for (int32 containedFaceID : face->ContainedFaceIDs)
 				{
-					if (!surfaceGraph->GraphFaceToInnerBound.Contains(containedFaceID))
+					if (!GraphFaceToInnerBound.Contains(containedFaceID))
 					{
 						addIDs.Add(containedFaceID);
-
 					}
 				}
 
-				if (addIDs.Num() > 0)
+				TMap<int32, TArray<FVector2D>> graphPolygonsToAdd;
+				TMap<int32, TArray<int32>> graphFaceToVertices;
+				if (CalculateFaces(addIDs, graphPolygonsToAdd, graphFaceToVertices))
 				{
-					int32 hitFaceIndex = UModumateObjectStatics::GetParentFaceIndex(MOI);
-					TArray<FVector> cornerPositions;
-					FVector origin, normal, axisX, axisY;
-					TMap<int32, TArray<FVector2D>> graphPolygonsToAdd;
-					TMap<int32, TArray<int32>> graphFaceToVertices;
-					auto hostmoi = doc->GetObjectById(MOI->GetParentID());
-					if (hostmoi && UModumateObjectStatics::GetGeometryFromFaceIndex(hostmoi, hitFaceIndex,
-						cornerPositions, normal, axisX, axisY))
+					int32 rootPolyID;
+					TArray<FGraph2DDelta> boundsDeltas;
+					if (!surfaceGraph->PopulateFromPolygons(boundsDeltas, nextID, graphPolygonsToAdd, graphFaceToVertices, GraphFaceToInnerBound, GraphVertexToBoundVertex, true, rootPolyID))
 					{
-						origin = cornerPositions[0];
+						doc->SetNextID(doc->GetNextAvailableID(), MOI->ID);
+						return true;
+					}
 
-						for (int32 id : addIDs)
-						{
-							const auto* containedFace = graph.FindFace(id);
-							TArray<FVector2D> holePolygon;
-							Algo::Transform(containedFace->CachedPositions, holePolygon, [this, axisX, axisY, origin](const FVector& WorldPoint) {
-								return UModumateGeometryStatics::ProjectPoint2D(WorldPoint, axisX, axisY, origin);
-								});
-							graphPolygonsToAdd.Add(id, holePolygon);
-							graphFaceToVertices.Add(id, containedFace->VertexIDs);
-						}
-
-						int32 rootPolyID;
-						TArray<FGraph2DDelta> boundsDeltas;
-						if (!surfaceGraph->PopulateFromPolygons(boundsDeltas, nextID, graphPolygonsToAdd, graphFaceToVertices, true, rootPolyID))
-						{
-							doc->SetNextID(doc->GetNextAvailableID(), MOI->ID);
-							return true;
-						}
-
-						for (auto& delta : boundsDeltas)
-						{
-							OutSideEffectDeltas->Add(MakeShared<FGraph2DDelta>(delta));
-						}
+					for (auto& delta : boundsDeltas)
+					{
+						OutSideEffectDeltas->Add(MakeShared<FGraph2DDelta>(delta));
 					}
 				}
-
-				
 			}
 
 			// surface graph can only have inner bounds (that are mirrored by the volume graph)
@@ -260,21 +320,9 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 
 			doc->SetNextID(nextID, MOI->ID);
 		}
-		else if (numIDs == 0)
-		{
-			TArray<int32> boundingVertexIDs;
-			surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
-			for (int32 facePointIdx = 0; facePointIdx < CachedFacePoints.Num(); ++facePointIdx)
-			{
-				FVector2D prevPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
-				Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(prevPos2D);
-				if (ensure(vertex) && boundingVertexIDs.Contains(vertex->ID))
-				{
-					FaceIdxToVertexID.Add(facePointIdx, vertex->ID);
-				}
-			}
-		}
 	}
+
+	numVerts = GraphVertexToBoundVertex.Num();
 
 	return true;
 }
@@ -336,4 +384,43 @@ bool FMOISurfaceGraphImpl::UpdateCachedGraphData()
 	}
 
 	return UModumateObjectStatics::GetGeometryFromFaceIndex(parentObj, InstanceData.ParentFaceIndex, CachedFacePoints, CachedFaceOrigin);
+}
+
+bool FMOISurfaceGraphImpl::CalculateFaces(const TArray<int32>& AddIDs, TMap<int32, TArray<FVector2D>>& OutPolygonsToAdd, TMap<int32, TArray<int32>>& OutFaceToVertices)
+{
+	if (AddIDs.Num() == 0)
+	{
+		return false;
+	}
+
+	FModumateDocument* doc = MOI ? MOI->GetDocument() : nullptr;
+	if (!ensure(doc))
+	{
+		return false;
+	}
+	auto& graph = doc->GetVolumeGraph();
+
+	int32 hitFaceIndex = UModumateObjectStatics::GetParentFaceIndex(MOI);
+	TArray<FVector> cornerPositions;
+	FVector origin, normal, axisX, axisY;
+
+	auto hostmoi = doc->GetObjectById(MOI->GetParentID());
+	if (hostmoi && UModumateObjectStatics::GetGeometryFromFaceIndex(hostmoi, hitFaceIndex,
+		cornerPositions, normal, axisX, axisY))
+	{
+		origin = cornerPositions[0];
+
+		for (int32 id : AddIDs)
+		{
+			const auto* containedFace = graph.FindFace(id);
+			TArray<FVector2D> holePolygon;
+			Algo::Transform(containedFace->CachedPositions, holePolygon, [this, axisX, axisY, origin](const FVector& WorldPoint) {
+				return UModumateGeometryStatics::ProjectPoint2D(WorldPoint, axisX, axisY, origin);
+				});
+			OutPolygonsToAdd.Add(id, holePolygon);
+			OutFaceToVertices.Add(id, containedFace->VertexIDs);
+		}
+	}
+
+	return true;
 }

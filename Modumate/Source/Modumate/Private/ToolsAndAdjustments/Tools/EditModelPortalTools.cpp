@@ -277,7 +277,7 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 		if (bValidContainedFace &&
 			GameState->Document.MakeMetaObject(world, metaPlanePoints, {}, EObjectType::OTMetaPlane, MOD_ID_NONE,
 				addedVertexIDs, addedEdgeIDs, addedFaceIDs, OutDeltas) &&
-			(addedFaceIDs.Num() > 0))
+			(addedFaceIDs.Num() == 1))
 		{
 			newParentID = addedFaceIDs[0];
 		}

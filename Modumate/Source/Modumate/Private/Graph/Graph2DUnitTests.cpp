@@ -867,9 +867,8 @@ namespace Modumate
 		TMap<int32, TArray<int32>> innerBounds;
 		graph->GetVertices().GenerateKeyArray(outerBounds.Value);
 
-		TMap<int32, int32> graph3DMap;
 		TestTrue(TEXT("Add Bounds"),
-			graph->SetBounds(deltas, outerBounds, innerBounds, graph3DMap, graph3DMap));
+			graph->SetBounds(deltas, outerBounds, innerBounds));
 		TestDeltas(this, deltas, graph, 2, 4, 4);
 
 		TestTrue(TEXT("Add Edge inside poly"),
@@ -975,9 +974,8 @@ namespace Modumate
 		TMap<int32, TArray<int32>> innerBounds;
 		graph->GetVertices().GenerateKeyArray(outerBounds.Value);
 
-		TMap<int32, int32> graph3DMap;
 		TestTrue(TEXT("Add Bounds"),
-			graph->SetBounds(deltas, outerBounds, innerBounds, graph3DMap, graph3DMap));
+			graph->SetBounds(deltas, outerBounds, innerBounds));
 		TestDeltas(this, deltas, graph, 2, 5, 5);
 
 		TestTrue(TEXT("Add Edge inside poly"),
@@ -1121,9 +1119,8 @@ namespace Modumate
 		// add hole
 		innerBounds.Add(NextID++, holeVertexIDs.Array());
 
-		TMap<int32, int32> graph3DMap;
 		TestTrue(TEXT("Add Bounds"),
-			graph->SetBounds(deltas, outerBounds, innerBounds, graph3DMap, graph3DMap));
+			graph->SetBounds(deltas, outerBounds, innerBounds));
 		TestDeltas(this, deltas, graph, 4, 8, 8);
 
 		TestTrue(TEXT("Add Edge inside poly"),
@@ -1496,9 +1493,8 @@ namespace Modumate
 		TMap<int32, TArray<int32>> innerBounds;
 		graph->GetVertices().GenerateKeyArray(outerBounds.Value);
 
-		TMap<int32, int32> graph3DMap;
 		TestTrue(TEXT("Add Bounds"),
-			graph->SetBounds(deltas, outerBounds, innerBounds, graph3DMap, graph3DMap));
+			graph->SetBounds(deltas, outerBounds, innerBounds));
 		TestDeltas(this, deltas, graph, 2, 4, 4);
 
 		// 5-sided star

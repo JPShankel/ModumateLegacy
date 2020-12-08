@@ -121,7 +121,7 @@ void FMOIMetaEdgeImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Con
 
 	auto& graph = doc->GetVolumeGraph();
 	auto edge = graph.FindEdge(MOI->ID);
-	if (!ensure(edge))
+	if (MOI->IsDestroyed() || !ensure(edge))
 	{
 		return;
 	}

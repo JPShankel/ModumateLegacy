@@ -49,8 +49,6 @@ struct FBoundsUpdate
 
 	TPair<int32, TArray<int32>> OuterBounds;
 	TMap<int32, TArray<int32>> InnerBounds;
-	TMap<int32, int32> GraphFaceToInnerBound;
-	TMap<int32, int32> GraphVerticesToSurfaceVertices;
 
 	void Reset();
 	bool IsEmpty() const;
