@@ -58,7 +58,7 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 		auto surfaceGraph = doc->FindSurfaceGraph(MOI->ID);
 		if (!ensure(surfaceGraph.IsValid()) || !UpdateCachedGraphData())
 		{
-			return true;
+			return false;
 		}
 
 		auto hostObj = doc->GetObjectById(MOI->GetParentID());
