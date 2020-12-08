@@ -93,6 +93,7 @@ bool URotateObjectTool::EnterNextStage()
 		dimensionActor->WorldPosition = AnchorPoint;
 		dimensionActor->WorldDirection = AngleAnchor - AnchorPoint;
 		dimensionActor->WorldDirection.Normalize();
+		PendingDimensionActor = dimensionActor; // PendingDimensionActor is the base class
 
 		auto dimensionWidget = dimensionActor->DimensionText;
 		dimensionWidget->Measurement->SetIsReadOnly(false);
@@ -116,14 +117,14 @@ bool URotateObjectTool::EndUse()
 		ReleaseObjectsAndApplyDeltas();
 	}
 
-	return UEditModelToolBase::EndUse();
+	return Super::EndUse();
 }
 
 bool URotateObjectTool::AbortUse()
 {
 	ReleaseSelectedObjects();
 
-	return UEditModelToolBase::AbortUse();
+	return Super::AbortUse();
 }
 
 bool URotateObjectTool::PostEndOrAbort()
