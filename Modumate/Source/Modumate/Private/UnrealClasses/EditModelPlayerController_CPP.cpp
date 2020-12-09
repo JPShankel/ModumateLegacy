@@ -336,6 +336,7 @@ void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
 
 	UpdateMouseTraceParams();
 	EMPlayerState->UpdateObjectVisibilityAndCollision();
+	EMPlayerState->PostSelectionChanged();
 
 	OnToolModeChanged.Broadcast();
 }

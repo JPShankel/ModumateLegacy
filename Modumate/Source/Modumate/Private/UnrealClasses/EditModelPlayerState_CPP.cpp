@@ -484,7 +484,8 @@ void AEditModelPlayerState_CPP::SetActorRenderValues(AActor* actor, int32 stenci
 void AEditModelPlayerState_CPP::PostSelectionChanged()
 {
 	auto gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
-	if (SelectedObjects.Num() == 1)
+	bool bSelectTool = EMPlayerController->CurrentTool->GetToolMode() == EToolMode::VE_SELECT;
+	if (SelectedObjects.Num() == 1 && bSelectTool)
 	{
 		FModumateObjectInstance* moi = *SelectedObjects.CreateConstIterator();
 
