@@ -25,6 +25,8 @@
 #include "UI/BIM/BIMBlockSlotList.h"
 #include "UI/BIM/BIMBlockDropdownPreset.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/Debugger/BIMDebugger.h"
 
 UBIMBlockNode::UBIMBlockNode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -52,6 +54,11 @@ bool UBIMBlockNode::Initialize()
 	BIMBlockNodeDirty->ButtonSave->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtySave);
 	BIMBlockNodeDirty->ButtonAddNew->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtyAddNew);
 	BIMBlockNodeDirty->ButtonCancel->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtyCancel);
+
+	if (Button_Debug)
+	{
+		Button_Debug->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDebugReleased);
+	}
 
 	return true;
 }
@@ -175,6 +182,14 @@ void UBIMBlockNode::OnButtonDirtyCancel()
 	}
 }
 
+void UBIMBlockNode::OnButtonDebugReleased()
+{
+#if WITH_EDITOR
+	Controller->EditModelUserWidget->ShowBIMDebugger(true);
+	Controller->EditModelUserWidget->BIMDebugger->DebugBIMPreset(PresetID);
+#endif
+}
+
 void UBIMBlockNode::UpdateNodeDirty(bool NewDirty)
 {
 	NodeDirty = NewDirty;
@@ -215,6 +230,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 		}
 	}
 
+#if WITH_EDITOR
 	if (Button_Debug)
 	{
 		FString debugString = 
@@ -222,14 +238,9 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 			+ preset->GUID.ToString() + LINE_TERMINATOR
 			+ PresetID.ToString() + LINE_TERMINATOR;
 		
-#if 0 // TODO: provide a debug string in BIM properties
-		Node->InstanceProperties.ForEachProperty([this, &params, &debugString](const FString &name, const Modumate::FModumateCommandParameter &param)
-		{
-			debugString = debugString + name + param.AsString() + LINE_TERMINATOR;
-		});
-#endif
 		Button_Debug->SetToolTipText(FText::FromString(debugString));
 	}
+#endif
 
 	ID = Node->GetInstanceID();
 	if (Node->ParentInstance != nullptr)

@@ -12,6 +12,8 @@
 #include "Components/MultiLineEditableText.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "UI/Debugger/BIMDebugTestITem.h"
+#include "Components/VerticalBox.h"
 
 UBIMDebugger::UBIMDebugger(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -25,13 +27,14 @@ bool UBIMDebugger::Initialize()
 		return false;
 	}
 
-	if (!(ButtonUpdatePresetList && SearchField && ButtonClearHistory))
+	if (!(ButtonUpdatePresetList && SearchField && ButtonClearHistory && ButtonClose))
 	{
 		return false;
 	}
 
 	ButtonUpdatePresetList->OnReleased.AddDynamic(this, &UBIMDebugger::OnButtonUpdatePresetListReleased);
 	ButtonClearHistory->OnReleased.AddDynamic(this, &UBIMDebugger::ClearPresetHistory);
+	ButtonClose->OnReleased.AddDynamic(this, &UBIMDebugger::OnButtonCloseReleased);
 
 	if (SearchField)
 	{
@@ -55,6 +58,11 @@ void UBIMDebugger::ClearPresetHistory()
 {
 	PresetHistoryList->ClearListItems();
 	LastSelectedKey = FBIMKey();
+}
+
+void UBIMDebugger::OnButtonCloseReleased()
+{
+	SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UBIMDebugger::OnSearchFieldChanged(const FText& NewText)
@@ -93,6 +101,7 @@ EBIMResult UBIMDebugger::ConstructPresetList()
 EBIMResult UBIMDebugger::DebugBIMPreset(const FBIMKey& PresetKey, bool AddToHistory)
 {
 	DependentPresetsList->ClearListItems();
+	BIMDebugTestList->ClearChildren();
 
 	class AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	if (controller)
@@ -167,6 +176,9 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FBIMKey& PresetKey, bool AddToHist
 				newPresetObj->bIsFromHistoryMenu = true;
 				PresetHistoryList->AddItem(newPresetObj);
 			}
+
+			ConstructBIMDebugTestList();
+
 			return EBIMResult::Success;
 		}
 	}
@@ -200,6 +212,40 @@ bool UBIMDebugger::IsPresetAvailableForSearch(const FBIMPresetInstance& SearchPr
 	if (UKismetStringLibrary::Contains(SearchPreset.PresetID.ToString(), searchSubString))
 	{
 		return true;
+	}
+
+	return false;
+}
+
+void UBIMDebugger::ConstructBIMDebugTestList()
+{
+	BIMDebugTestList->ClearChildren();
+
+	for (EBIMDebugTestType curType : TEnumRange<EBIMDebugTestType>())
+	{
+		UBIMDebugTestItem* newValidatePresetItem = CreateWidget<UBIMDebugTestItem>(this, BIMDebugTestItemClass);
+		newValidatePresetItem->BuildDebugTestItem(this, curType);
+		BIMDebugTestList->AddChildToVerticalBox(newValidatePresetItem);
+	}
+}
+
+bool UBIMDebugger::PerformBIMDebugTest(EBIMDebugTestType BIMDebugTest)
+{
+	class AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	const FBIMPresetInstance* preset = controller ? controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(LastSelectedKey) : nullptr;
+	if (!preset)
+	{
+		return false;
+	}
+
+	switch (BIMDebugTest)
+	{
+	case EBIMDebugTestType::TestDebugFalse:
+		return false;
+	case EBIMDebugTestType::TestDebugTrue:
+		return true;
+	case EBIMDebugTestType::ValidatePreset:
+		return preset->ValidatePreset();
 	}
 
 	return false;

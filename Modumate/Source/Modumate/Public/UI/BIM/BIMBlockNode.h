@@ -190,6 +190,9 @@ public:
 	UFUNCTION()
 	void OnButtonDirtyCancel();
 
+	UFUNCTION()
+	void OnButtonDebugReleased();
+
 	void UpdateNodeDirty(bool NewDirty);
 	void UpdateNodeCollapse(bool NewCollapse);
 	void UpdateNodeHidden(bool NewHide);
