@@ -36,7 +36,7 @@ public:
 	class UModumateTextBlockUserWidget *ListNumber;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateTextBlockUserWidget *SavedViewTitle;
+	class UModumateEditableTextBoxUserWidget* SavedViewEdiableTitle;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *ButtonDelete;
@@ -52,6 +52,9 @@ public:
 	class UModumateButton *ButtonMain;
 
 	UFUNCTION()
+	void OnButtonEditReleased();
+
+	UFUNCTION()
 	void OnButtonMainReleased();
 
 	UFUNCTION()
@@ -59,6 +62,9 @@ public:
 
 	UFUNCTION()
 	void OnButtonUpdateReleased();
+
+	UFUNCTION()
+	void OnEditableTitleCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
 	void ActivateCameraView();
 
