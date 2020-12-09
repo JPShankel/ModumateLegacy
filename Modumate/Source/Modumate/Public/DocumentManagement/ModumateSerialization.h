@@ -264,6 +264,9 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 	UPROPERTY()
 	TMap<int32, FGraph2DRecord> SurfaceGraphs;
 
+	UPROPERTY()
+	TMap<FBIMKey, FGuid> UsedPresetGUIDs;
+
 	void FromVersion3(const FMOIDocumentRecordV3 &v3);
 };
 

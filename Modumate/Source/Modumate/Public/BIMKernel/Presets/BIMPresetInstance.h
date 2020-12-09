@@ -108,7 +108,7 @@ public:
 	FBIMKey PresetID;
 
 	UPROPERTY()
-	FString GUID;
+	FGuid GUID;
 
 	UPROPERTY()
 	FBIMKey SlotConfigPresetID;

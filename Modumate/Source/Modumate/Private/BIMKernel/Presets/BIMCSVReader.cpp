@@ -201,7 +201,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				FString guidStr(Row[presetMatrix.First]);
 				if (!guidStr.IsEmpty())
 				{
-					Preset.GUID = guidStr;
+					FGuid::ParseExact(guidStr, EGuidFormats::DigitsWithHyphens, Preset.GUID);
 				}
 			}
 			break;

@@ -2196,6 +2196,7 @@ bool FModumateDocument::Serialize(UWorld* World, FModumateDocumentHeader& OutHea
 	PresetManager.ToDocumentRecord(OutDocumentRecord);
 
 	// Capture object instances into doc struct
+	TSet<FBIMKey> usedPresets;
 	for (FModumateObjectInstance* obj : ObjectInstanceArray)
 	{
 		// Don't save graph-reflected MOIs, since their information is stored in separate graph structures
@@ -2207,6 +2208,19 @@ bool FModumateDocument::Serialize(UWorld* World, FModumateDocumentHeader& OutHea
 			FMOIStateData& stateData = obj->GetStateData();
 			stateData.CustomData.SaveJsonFromCbor();
 			OutDocumentRecord.ObjectData.Add(stateData);
+			if (!stateData.AssemblyKey.IsNone())
+			{
+				usedPresets.Add(stateData.AssemblyKey);
+			}
+		}
+	}
+
+	for (auto& usedPreset : usedPresets)
+	{
+		const FBIMPresetInstance* preset = PresetManager.CraftingNodePresets.Presets.Find(usedPreset);
+		if (ensureAlways(preset != nullptr))
+		{
+			OutDocumentRecord.UsedPresetGUIDs.Add(usedPreset, preset->GUID);
 		}
 	}
 

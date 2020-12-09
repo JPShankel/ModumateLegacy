@@ -219,7 +219,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	{
 		FString debugString = 
 			FString::Printf(TEXT("ID: ")) + Node->GetInstanceID().ToString() + LINE_TERMINATOR 
-			+ preset->GUID + LINE_TERMINATOR
+			+ preset->GUID.ToString() + LINE_TERMINATOR
 			+ PresetID.ToString() + LINE_TERMINATOR;
 		
 #if 0 // TODO: provide a debug string in BIM properties

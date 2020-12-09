@@ -203,10 +203,7 @@ EBIMResult FBIMPresetCollection::PostLoad()
 	for (auto& kvp : Presets)
 	{
 		FGuid guid;
-		if (!kvp.Value.GUID.IsEmpty() && ensureAlways(FGuid::ParseExact(kvp.Value.GUID, EGuidFormats::DigitsWithHyphens, guid)))
-		{
-			UsedGUIDs.Add(guid);
-		}
+		UsedGUIDs.Add(kvp.Value.GUID);
 		
 		FBIMPresetTypeDefinition* typeDef = NodeDescriptors.Find(kvp.Value.NodeType);
 		if (ensureAlways(typeDef != nullptr))

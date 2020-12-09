@@ -101,7 +101,7 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FBIMKey& PresetKey, bool AddToHist
 		if (preset)
 		{
 			TextDisplayName->SetText(preset->DisplayName);
-			TextGUID->SetText(FText::FromString(preset->GUID));
+			TextGUID->SetText(FText::FromString(preset->GUID.ToString()));
 			TextBIMKey->SetText(FText::FromString(PresetKey.ToString()));
 
 			TMap<FString, FBIMNameType> properties;
@@ -192,7 +192,7 @@ bool UBIMDebugger::IsPresetAvailableForSearch(const FBIMPresetInstance& SearchPr
 		return true;
 	}
 
-	if (UKismetStringLibrary::Contains(SearchPreset.GUID, searchSubString))
+	if (UKismetStringLibrary::Contains(SearchPreset.GUID.ToString(), searchSubString))
 	{
 		return true;
 	}
