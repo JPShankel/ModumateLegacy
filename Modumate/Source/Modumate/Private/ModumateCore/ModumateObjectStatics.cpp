@@ -955,7 +955,7 @@ TArray<FEdge> UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(const FPla
 		FVector p2 = Perimeter[(closestPoint + edge + 1) % numEdges];
 		FVector normal((p2 - p1) ^ LineDir);
 		normal.Normalize();
-		bool bFacing = ((normal | viewNormal) < 0) ^ bPerimeterFacingDir;
+		bool bFacing = ((normal | viewNormal) <= 0) ^ bPerimeterFacingDir;
 		if (!previousNormal.IsZero())
 		{
 			bool bSilhouette = bFacing ^ bPreviousFacing;

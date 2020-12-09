@@ -40,8 +40,7 @@ namespace Modumate
 			EObjectType::OTRoofFace, EObjectType::OTCeiling, EObjectType::OTSystemPanel, EObjectType::OTDoor,
 			EObjectType::OTWindow,  EObjectType::OTStaircase, EObjectType::OTRailSegment, EObjectType::OTCabinet });
 
-		const TSet<EObjectType>  actorMeshOccluderTypes({ EObjectType::OTStructureLine,
-			EObjectType::OTMullion, EObjectType::OTFinish });
+		const TSet<EObjectType>  actorMeshOccluderTypes({ EObjectType::OTStructureLine, EObjectType::OTMullion });
 
 		TSet<EObjectType> occluderTypes(separatorOccluderTypes);
 		occluderTypes.Append(actorMeshOccluderTypes);

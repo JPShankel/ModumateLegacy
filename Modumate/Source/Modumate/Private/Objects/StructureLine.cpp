@@ -142,11 +142,15 @@ void FMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
 	{   // In cut-plane lines.
+		const Modumate::FModumateLayerType layerType =
+			MOI->GetObjectType() == EObjectType::OTMullion ? Modumate::FModumateLayerType::kMullionCut : Modumate::FModumateLayerType::kBeamColumnCut;
 		UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox,
-			perimeter, LineStartPos, LineEndPos, Modumate::FModumateLayerType::kBeamColumnCut);
+			perimeter, LineStartPos, LineEndPos, layerType);
 	}
 	else
 	{   // Beyond cut-plane lines.
+		const Modumate::FModumateLayerType layerType =
+			MOI->GetObjectType() == EObjectType::OTMullion ? Modumate::FModumateLayerType::kMullionBeyond : Modumate::FModumateLayerType::kBeamColumnBeyond;
 		TArray<FEdge> beyondLines = UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(Plane, perimeter, LineStartPos, LineEndPos);
 
 		TArray<FEdge> clippedLines;
@@ -174,7 +178,7 @@ void FMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 					Modumate::Units::FThickness::Points(bool(clippedLine.Count) ? 0.15f : 0.05f),
 					Modumate::FMColor::Gray128);
 				ParentPage->Children.Add(line);
-				line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kBeamColumnBeyond);
+				line->SetLayerTypeRecursive(layerType);
 			}
 		}
 

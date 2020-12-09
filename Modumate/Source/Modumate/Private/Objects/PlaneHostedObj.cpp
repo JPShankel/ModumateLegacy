@@ -309,9 +309,29 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 	bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
 	{
-		bool bIsCountertop = MOI->GetObjectType() == EObjectType::OTCountertop;
 		const FModumateObjectInstance *parent = MOI->GetParentObject();
 		FVector parentLocation = parent->GetLocation();
+
+		Modumate::FModumateLayerType layerTypeOuterSurface;
+		Modumate::FModumateLayerType layerTypeMinorSurface;
+
+		switch (MOI->GetObjectType())
+		{
+		case EObjectType::OTCountertop:
+			layerTypeOuterSurface = Modumate::FModumateLayerType::kCountertopCut;
+			layerTypeMinorSurface = layerTypeOuterSurface;
+			break;
+
+		case EObjectType::OTSystemPanel:
+			layerTypeOuterSurface = Modumate::FModumateLayerType::kSystemPanelCut;
+			layerTypeMinorSurface = layerTypeOuterSurface;
+			break;
+
+		default:
+			layerTypeOuterSurface = Modumate::FModumateLayerType::kSeparatorCutOuterSurface;
+			layerTypeMinorSurface = Modumate::FModumateLayerType::kSeparatorCutMinorLayer;
+			break;
+		}
 
 		float currentThickness = 0.0f;
 		TArray<FVector2D> previousLinePoints;
@@ -321,14 +341,14 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 			bool usePointsA = layerIdx < LayerGeometries.Num();
 			auto& layer = usePointsA ? LayerGeometries[layerIdx] : LayerGeometries[layerIdx - 1];
 
-			auto dwgLayerType = Modumate::FModumateLayerType::kSeparatorCutMinorLayer;
+			auto dwgLayerType = layerTypeMinorSurface;
 			if (layerIdx == 0 || layerIdx == LayerGeometries.Num())
 			{
-				dwgLayerType = Modumate::FModumateLayerType::kSeparatorCutOuterSurface;
+				dwgLayerType = layerTypeOuterSurface;
 			}
 
 			TArray<FVector> intersections;
-			UModumateGeometryStatics::GetPlaneIntersections(intersections, usePointsA ? layer.UniquePointsA : layer.UniquePointsB, Plane, parentLocation);
+			UModumateGeometryStatics::GetPlaneIntersections(intersections, usePointsA ? layer.OriginalPointsA : layer.OriginalPointsB, Plane, parentLocation);
 
 			intersections.Sort(UModumateGeometryStatics::Points3dSorter);
 			// we can make mask perimeters when there are an even amount of intersection between a simple polygon and a plane
@@ -342,10 +362,6 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 				lineThickness = structureThickness;
 				lineColor = structureColor;
 			}
-			// TODO: currently, finishes are not rendered in drawings.  Given finish lines are implemented,
-			// the wall needs to check whether there is a finish on the outside before choosing to use the
-			// outer layer weight as opposed to the inner layer weight.
-			// Finish lines are not considered structural, they are all inner except for the outermost layer
 			else if (layerIdx == 0 || layerIdx == LayerGeometries.Num())
 			{
 				lineThickness = outerThickness;
@@ -413,7 +429,7 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
 							lineThickness, lineColor);
 						ParentPage->Children.Add(line);
-						line->SetLayerTypeRecursive(bIsCountertop ? Modumate::FModumateLayerType::kCountertopCut : dwgLayerType);
+						line->SetLayerTypeRecursive(dwgLayerType);
 					}
 					if (previousLinePoints.Num() > linePoint)
 					{
@@ -424,8 +440,7 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
 								lineThickness, lineColor);
 							ParentPage->Children.Add(line);
-							line->SetLayerTypeRecursive(bIsCountertop ? Modumate::FModumateLayerType::kCountertopCut :
-								Modumate::FModumateLayerType::kSeparatorCutOuterSurface);
+							line->SetLayerTypeRecursive(layerTypeOuterSurface);
 						}
 						if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint+1], rangeEnd, BoundingBox, clippedStart, clippedEnd))
 						{
@@ -434,8 +449,7 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
 								lineThickness, lineColor);
 							ParentPage->Children.Add(line);
-							line->SetLayerTypeRecursive(bIsCountertop ? Modumate::FModumateLayerType::kCountertopCut :
-								Modumate::FModumateLayerType::kSeparatorCutOuterSurface);
+							line->SetLayerTypeRecursive(layerTypeOuterSurface);
 						}
 					}
 					previousLinePoints.SetNum(FMath::Max(linePoint + 2, previousLinePoints.Num()) );
@@ -538,9 +552,22 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 
 	const FModumateObjectInstance *parent = MOI->GetParentObject();
 	FVector parentLocation = parent->GetLocation();
-	bool bIsCountertop = MOI->GetObjectType() == EObjectType::OTCountertop;
-	Modumate::FModumateLayerType layerType = bIsCountertop ? Modumate::FModumateLayerType::kCountertopBeyond :
-		Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges;
+	Modumate::FModumateLayerType layerType;
+
+	switch (MOI->GetObjectType())
+	{
+	case EObjectType::OTCountertop:
+		layerType = Modumate::FModumateLayerType::kCountertopBeyond;
+		break;
+
+	case EObjectType::OTSystemPanel:
+		layerType = Modumate::FModumateLayerType::kSystemPanelBeyond;
+		break;
+
+	default:
+		layerType = Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges;
+		break;
+	}
 
 	TArray<TPair<FEdge, Modumate::FModumateLayerType>> backgroundLines;
 
@@ -589,11 +616,11 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 		addOpeningLines(LayerGeometries[numLayers - 1], parentLocation, false);
 
 		// Corner lines.
-		int32 numPoints = LayerGeometries[0].UniquePointsA.Num();
+		int32 numPoints = LayerGeometries[0].OriginalPointsA.Num();
 		for (int32 p = 0; p < numPoints; ++p)
 		{
-			FEdge line(LayerGeometries[0].UniquePointsA[p] + parentLocation,
-				LayerGeometries[numLayers - 1].UniquePointsB[p] + parentLocation);
+			FEdge line(LayerGeometries[0].OriginalPointsA[p] + parentLocation,
+				LayerGeometries[numLayers - 1].OriginalPointsB[p] + parentLocation);
 			backgroundLines.Emplace(line, layerType);
 		}
 

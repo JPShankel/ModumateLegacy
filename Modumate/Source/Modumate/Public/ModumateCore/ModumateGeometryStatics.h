@@ -199,4 +199,6 @@ public:
 
 	// Smooth a Bezier curve.
 	static void DeCasteljau(const FVector Points[4], int32 iterations, TArray<FVector>& outCurve);
+
+	static bool SegmentPlaneIntersectionDouble(FVector3d StartPoint, FVector3d EndPoint, const FPlane& Plane, FVector3d& outIntersectionPoint);
 };

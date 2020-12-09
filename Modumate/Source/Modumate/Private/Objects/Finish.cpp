@@ -213,7 +213,7 @@ void FMOIFinishImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposi
 {
 	static const Modumate::Units::FThickness lineThickness = Modumate::Units::FThickness::Points(0.05f);
 	static const Modumate::FMColor lineColor = Modumate::FMColor::Gray144;
-	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kSeparatorCutMinorLayer;
+	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kFinishCut;
 
 	const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(MOI->GetActor());
 	if (actor == nullptr)
@@ -229,16 +229,17 @@ void FMOIFinishImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposi
 
 	for (int32 layerIdx = 0; layerIdx <= numLayers; layerIdx++)
 	{
-
 		bool usePointsA = layerIdx < numLayers;
-		const auto& layer = usePointsA ? layers[layerIdx] : layers[layerIdx - 1];
-		Modumate::FModumateLayerType dwgTypeThisLayer = usePointsA ? dwgLayerType : Modumate::FModumateLayerType::kSeparatorCutOuterSurface;
+		auto& layer = usePointsA ? layers[layerIdx] : layers[layerIdx - 1];
+
 
 		TArray<FVector> intersections;
 		UModumateGeometryStatics::GetPlaneIntersections(intersections, usePointsA ? layer.OriginalPointsA : layer.OriginalPointsB, Plane);
+
 		intersections.Sort(UModumateGeometryStatics::Points3dSorter);
 
 		int32 linePoint = 0;
+
 		for (int32 idx = 0; idx < intersections.Num() - 1; idx += 2)
 		{
 
@@ -246,15 +247,20 @@ void FMOIFinishImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposi
 			FVector intersectionStart = intersections[idx];
 			FVector intersectionEnd = intersections[idx + 1];
 			TPair<FVector, FVector> currentIntersection = TPair<FVector, FVector>(intersectionStart, intersectionEnd);
-			layer.GetRangesForHolesOnPlane(lineRanges, currentIntersection, currentThickness * layer.Normal,
-				Plane, -AxisX, -AxisY, Origin);
+			// Hole coords are on the parent meta-plane so project.
+			FVector samplePoint = usePointsA ? layer.OriginalPointsA[0] : layer.OriginalPointsB[0];
+			FVector hole3DDisplacement = ((samplePoint - layers[0].Origin) | layer.Normal) * layer.Normal;
+			layer.GetRangesForHolesOnPlane(lineRanges, currentIntersection,
+				hole3DDisplacement, Plane, -AxisX, -AxisY, Origin);
 
 			// TODO: unclear why the axes need to be flipped here, could be because of the different implementation of finding intersections
 			FVector2D start = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersectionStart);
 			FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersectionEnd);
 			FVector2D delta = end - start;
 
-			for (auto& range: lineRanges)
+			ParentPage->inPlaneLines.Emplace(FVector(start, 0), FVector(end, 0));
+
+			for (auto& range : lineRanges)
 			{
 				FVector2D clippedStart, clippedEnd;
 				FVector2D rangeStart = start + delta * range.Key;
@@ -267,7 +273,7 @@ void FMOIFinishImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposi
 						Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
 						lineThickness, lineColor);
 					ParentPage->Children.Add(line);
-					line->SetLayerTypeRecursive(dwgTypeThisLayer);
+					line->SetLayerTypeRecursive(dwgLayerType);
 				}
 				if (previousLinePoints.Num() > linePoint)
 				{
@@ -276,20 +282,18 @@ void FMOIFinishImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposi
 						TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
 							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
 							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
-							Modumate::Units::FThickness::Points(0.25f),
-							Modumate::FMColor::Gray96);
+							lineThickness, lineColor);
 						ParentPage->Children.Add(line);
-						line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kSeparatorCutOuterSurface);
+						line->SetLayerTypeRecursive(dwgLayerType);
 					}
 					if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint + 1], rangeEnd, BoundingBox, clippedStart, clippedEnd))
 					{
 						TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
 							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
 							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
-							Modumate::Units::FThickness::Points(0.25f),
-							Modumate::FMColor::Gray96);
+							lineThickness, lineColor);
 						ParentPage->Children.Add(line);
-						line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kSeparatorCutOuterSurface);
+						line->SetLayerTypeRecursive(dwgLayerType);
 					}
 				}
 				previousLinePoints.SetNum(FMath::Max(linePoint + 2, previousLinePoints.Num()));
@@ -300,8 +304,9 @@ void FMOIFinishImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposi
 
 		}
 		currentThickness += layer.Thickness;
+
 	}
-	
+
 }
 
 void FMOIFinishImpl::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
@@ -326,35 +331,45 @@ void FMOIFinishImpl::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposit
 
 	if (numLayers > 0)
 	{
-		const FLayerGeomDef& layer = layers.Last();
-		const FVector finishOffset = totalThickness * layer.Normal;
-
-		const int numPoints = layer.OriginalPointsB.Num();
-		for (int i = 0; i < numPoints; ++i)
+		for (int side = 0; side < 2; ++side)
 		{
-			FVector point(layer.OriginalPointsB[i]);
-			beyondLines.Emplace( FEdge(point, layer.OriginalPointsB[(i + 1) % numPoints]), dwgOuterType );
-			// Lines along finish thickness.
-			beyondLines.Emplace( FEdge(point, point - finishOffset), dwgOuterType );
-		}
+			const FLayerGeomDef& layer = side == 0 ? layers[0] : layers.Last();
+			const TArray<FVector> FLayerGeomDef::* layerPoints = side == 0 ? &FLayerGeomDef::OriginalPointsA : &FLayerGeomDef::OriginalPointsB;
+			const FVector finishOffset = totalThickness * layer.Normal;
 
-		for (const auto& hole: layer.Holes3D)
-		{
-			const int numHolePoints = hole.Points.Num();
-			for (int i = 0; i < numHolePoints; ++i)
+			const int numPoints = layer.OriginalPointsA.Num();
+			for (int i = 0; i < numPoints; ++i)
 			{
-				beyondLines.Emplace( FEdge(hole.Points[i] + finishOffset, hole.Points[(i + 1) % numHolePoints] + finishOffset),
-					dwgHoleType );
+				FVector point((layer.*layerPoints)[i]);
+				beyondLines.Emplace(FEdge(point, (layer.*layerPoints)[(i + 1) % numPoints]), dwgOuterType);
+
+				if (side == 1)
+				{   // Lines along finish thickness.
+					beyondLines.Emplace(FEdge(point, point - finishOffset), dwgOuterType);
+				}
+			}
+
+			if (side == 1)
+			{   // Hole outsides.
+				for (const auto& hole: layer.Holes3D)
+				{
+					const int numHolePoints = hole.Points.Num();
+					for (int i = 0; i < numHolePoints; ++i)
+					{
+						beyondLines.Emplace(FEdge(hole.Points[i] + finishOffset, hole.Points[(i + 1) % numHolePoints] + finishOffset),
+							dwgHoleType);
+					}
+				}
 			}
 		}
-
+		
 		FVector2D boxClipped0;
 		FVector2D boxClipped1;
-		for (const auto& line: beyondLines)
+		for (const auto& line : beyondLines)
 		{
 			TArray<FEdge> clippedLineSections = ParentPage->lineClipping->ClipWorldLineToView(line.Key);
 
-			for (const auto& lineSection: clippedLineSections)
+			for (const auto& lineSection : clippedLineSections)
 			{
 				FVector2D vert0(lineSection.Vertex[0]);
 				FVector2D vert1(lineSection.Vertex[1]);

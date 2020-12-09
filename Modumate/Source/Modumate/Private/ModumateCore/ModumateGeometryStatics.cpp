@@ -1980,25 +1980,26 @@ void UModumateGeometryStatics::GetPlaneIntersections(TArray<FVector>& OutInterse
 		FVector layerPoint1 = InPoints[pointIdx] + InLocation;
 		FVector layerPoint2 = InPoints[(pointIdx + 1) % numPoints] + InLocation;
 
-		FVector point;
-		if (FMath::SegmentPlaneIntersection(layerPoint1, layerPoint2, InPlane, point))
+		FVector3d point;
+		if (layerPoint1 != layerPoint2 && SegmentPlaneIntersectionDouble(layerPoint1, layerPoint2, InPlane, point))
 		{
-			OutIntersections.Add(point);
+			OutIntersections.Add(FVector(point));
 		}
 	}
 }
 
 bool UModumateGeometryStatics::Points3dSorter(const FVector& rhs, const FVector& lhs)
 {
-	if (!FMath::IsNearlyEqual(rhs.X, lhs.X, KINDA_SMALL_NUMBER))
+	static constexpr float EPSILON = 1e-3f;
+	if (!FMath::IsNearlyEqual(rhs.X, lhs.X, EPSILON))
 	{
 		return rhs.X > lhs.X;
 	}
-	else if (!FMath::IsNearlyEqual(rhs.Y, lhs.Y, KINDA_SMALL_NUMBER))
+	else if (!FMath::IsNearlyEqual(rhs.Y, lhs.Y, EPSILON))
 	{
 		return rhs.Y > lhs.Y;
 	}
-	else if (!FMath::IsNearlyEqual(rhs.Z, lhs.Z, KINDA_SMALL_NUMBER))
+	else if (!FMath::IsNearlyEqual(rhs.Z, lhs.Z, EPSILON))
 	{
 		return rhs.Z > lhs.Z;
 	}
@@ -2034,3 +2035,18 @@ void UModumateGeometryStatics::DeCasteljau(const FVector Points[4], int32 iterat
 
 	outCurve = MoveTemp(points);
 };
+
+bool UModumateGeometryStatics::SegmentPlaneIntersectionDouble(FVector3d StartPoint, FVector3d EndPoint, const FPlane& Plane, FVector3d& outIntersectionPoint)
+{
+	FVector3d normal(Plane);
+	double t = (Plane.W - StartPoint.Dot(normal)) / normal.Dot(EndPoint - StartPoint);
+	if (t >= 0.0 && t <= 1.0)
+	{
+		outIntersectionPoint = StartPoint + t * (EndPoint - StartPoint);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
