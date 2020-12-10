@@ -37,9 +37,6 @@ struct MODUMATE_API FBIMPresetPinAttachment
 	FBIMKey PresetID;
 
 	UPROPERTY()
-	FName PinChannel;
-
-	UPROPERTY()
 	EBIMPinTarget Target = EBIMPinTarget::Default;
 
 	bool operator==(const FBIMPresetPinAttachment& OtherAttachment) const;
@@ -65,6 +62,24 @@ struct MODUMATE_API FBIMPresetPartSlot
 	{
 		return !(*this == RHS);
 	}
+};
+
+USTRUCT()
+struct MODUMATE_API FBIMPresetMaterialChannelBinding
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString Channel;
+
+	UPROPERTY()
+	FBIMKey InnerMaterial;
+
+	UPROPERTY()
+	FBIMKey SurfaceMaterial;
+
+	UPROPERTY()
+	FString ColorHexValue;
 };
 
 USTRUCT()
@@ -133,6 +148,9 @@ public:
 
 	UPROPERTY()
 	FBIMTagPath MyTagPath;
+
+	UPROPERTY()
+	TArray<FBIMPresetMaterialChannelBinding> MaterialChannelBindings;
 
 	bool HasProperty(const FBIMNameType& Name) const;
 

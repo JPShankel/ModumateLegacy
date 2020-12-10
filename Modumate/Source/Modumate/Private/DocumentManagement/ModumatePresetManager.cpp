@@ -163,7 +163,6 @@ bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, cons
 
 	// It's legal for an object database to not exist
 	if (db == nullptr)
-
 	{
 		return false;
 	}

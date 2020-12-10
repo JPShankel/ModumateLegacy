@@ -1882,17 +1882,6 @@ void FModumateDocument::RegisterDirtyObject(EObjectDirtyFlags DirtyType, FModuma
 	}
 }
 
-void FModumateDocument::AddCommandToHistory(const FString &cmd)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::AddCommand"));
-	CommandHistory.Add(cmd);
-}
-
-TArray<FString> FModumateDocument::GetCommandHistory() const
-{
-	return CommandHistory;
-}
-
 void FModumateDocument::MakeNew(UWorld *world)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeNew"));
@@ -1934,8 +1923,6 @@ void FModumateDocument::MakeNew(UWorld *world)
 	}
 
 	NextID = 1;
-
-	CommandHistory.Reset();
 
 	ClearRedoBuffer();
 	ClearUndoBuffer();
@@ -2190,8 +2177,6 @@ bool FModumateDocument::Serialize(UWorld* World, FModumateDocumentHeader& OutHea
 		}
 	}
 
-	OutDocumentRecord.CommandHistory = CommandHistory;
-
 	// DDL 2.0
 	PresetManager.ToDocumentRecord(OutDocumentRecord);
 
@@ -2288,6 +2273,34 @@ const FModumateObjectInstance *FModumateDocument::GetObjectById(int32 id) const
 {
 	return ObjectsByID.FindRef(id);
 }
+void FModumateDocument::RemapOldBIMKeys(FMOIDocumentRecord& DocRec) const
+{
+	TMap<FBIMKey, FBIMKey> bimkeyRemap;
+	for (auto& stateData : DocRec.ObjectData)
+	{
+		const FBIMKey* newKey = bimkeyRemap.Find(stateData.AssemblyKey);
+
+		if (newKey == nullptr)
+		{
+			FGuid* guid = DocRec.UsedPresetGUIDs.Find(stateData.AssemblyKey);
+			if (ensureAlwaysMsgf(guid != nullptr, TEXT("Objecht has assembly key with no associated guid! (should have been stored in Save())")) && guid->IsValid())
+			{
+				newKey = PresetManager.CraftingNodePresets.GUIDKeyMap.Find(*guid);
+				if (newKey != nullptr)
+				{
+					bimkeyRemap.Add(stateData.AssemblyKey, *newKey);
+				}
+			}
+		}
+
+		// TODO: the assembly builder assigns default values for presets that are completely retired (no guid)
+		// Refactor to do that mapping here instead
+		if (newKey != nullptr)
+		{
+			stateData.AssemblyKey = *newKey;
+		}
+	}
+}
 
 bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurrentProject)
 {
@@ -2309,12 +2322,18 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 
 	if (FModumateSerializationStatics::TryReadModumateDocumentRecord(path, docHeader, docRec))
 	{
-		CommandHistory = docRec.CommandHistory;
+		objectDB->InitPresetManagerForNewDocument(PresetManager);
 
-		if (docRec.PresetCollection.Presets.Num() > 0 && docRec.PresetCollection.NodeDescriptors.Num() > 0)
+		if (docRec.PresetCollection.Version == PresetManager.CraftingNodePresets.Version)
 		{
-			objectDB->InitPresetManagerForNewDocument(PresetManager);
-			PresetManager.FromDocumentRecord(*objectDB,docRec);
+			if (docRec.PresetCollection.Presets.Num() > 0 && docRec.PresetCollection.NodeDescriptors.Num() > 0)
+			{
+				PresetManager.FromDocumentRecord(*objectDB, docRec);
+			}
+		}
+		else
+		{
+			RemapOldBIMKeys(docRec);
 		}
 
 		// Load the connectivity graphs now, which contain associations between object IDs,

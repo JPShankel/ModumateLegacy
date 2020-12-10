@@ -219,6 +219,57 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 			case ECSVMatrixNames::Material :
 			{
+				FBIMPresetMaterialChannelBinding materialBinding;
+				for (int32 i = 0; i < presetMatrix.Columns.Num(); ++i)
+				{
+					EMaterialChannelFields targetEnum = EnumValueByString(EMaterialChannelFields, presetMatrix.Columns[i]);
+					switch (targetEnum)
+					{
+						case EMaterialChannelFields::AppliesToChannel:
+						{
+							materialBinding.Channel = Row[presetMatrix.First + i];
+						}
+						break;
+
+						case EMaterialChannelFields::InnerMaterial:
+						{
+							materialBinding.InnerMaterial = FBIMKey(Row[presetMatrix.First + i]);
+						}
+						break;
+
+						case EMaterialChannelFields::SurfaceMaterial:
+						{
+							materialBinding.SurfaceMaterial = FBIMKey(Row[presetMatrix.First + i]);
+						}
+						break;
+
+						case EMaterialChannelFields::ColorTint:
+						{
+							FString hexValue(Row[presetMatrix.First + i]);
+							if (!hexValue.IsEmpty())
+							{
+								Preset.Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, hexValue);
+								Preset.FormItemToProperty.Add(TEXT("Color"), FBIMPropertyKey(EBIMValueScope::Color, BIMPropertyNames::HexValue).QN());
+							}
+						}
+						break;
+
+						case EMaterialChannelFields::ColorTintVariation:
+						{
+							// TODO: color tint variation for patterned layers of slightly different module colors
+						}
+						break;
+
+						default:
+							ensureAlways(false);
+					};
+				}
+
+				if (!materialBinding.Channel.IsEmpty())
+				{
+					Preset.MaterialChannelBindings.Add(materialBinding);
+				}
+
 				// TODO: Rows 0, 2 & 3 are channel, surface material and color tint, to be implemented later
 				FString rawMaterial(Row[presetMatrix.First + 1]);
 				FString hexValue(Row[presetMatrix.First + 4]);
@@ -237,9 +288,13 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 			case ECSVMatrixNames::Dimensions : 
 			{
-				FModumateFormattedDimension measurement = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 1]);
-				Preset.Properties.SetProperty(EBIMValueScope::Dimension, FName(Row[presetMatrix.First]), measurement.Centimeters);
-				Preset.FormItemToProperty.Add(Row[presetMatrix.First], FBIMPropertyKey(EBIMValueScope::Dimension, FName(Row[presetMatrix.First])).QN());
+				FName dimName(Row[presetMatrix.First]);
+				if (!dimName.IsNone())
+				{
+					FModumateFormattedDimension measurement = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 1]);
+					Preset.Properties.SetProperty(EBIMValueScope::Dimension, dimName, measurement.Centimeters);
+					Preset.FormItemToProperty.Add(Row[presetMatrix.First], FBIMPropertyKey(EBIMValueScope::Dimension, dimName).QN());
+				}
 			}
 			break;
 
@@ -355,14 +410,16 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				{
 					FString category = presetMatrix.Columns[i];
 					FString cell = Row[presetMatrix.First + i];
+					if (cell.IsEmpty())
+					{
+						continue;
+					}
+
 					if (category.Equals(TEXT("SlotConfig")))
 					{
-						if (!cell.IsEmpty())
-						{
-							Preset.SlotConfigPresetID = FBIMKey(NormalizeCell(*cell));
-						}
+						Preset.SlotConfigPresetID = FBIMKey(NormalizeCell(*cell));
 					}
-					else if (category.Equals(TEXT("PartPreset")) && ensureAlways(!cell.IsEmpty()))
+					else if (category.Equals(TEXT("PartPreset")))
 					{
 						if (Preset.PartSlots.Num() == 0 || !Preset.PartSlots.Last().PartPreset.IsNone())
 						{
@@ -429,25 +486,6 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				}
 			}
 			break;
-
-			case ECSVMatrixNames::MaterialChannels:
-				{
-					ensureAlways(!Preset.PresetID.IsNone());
-					// Pin channels are used to assign materials to meshes
-					// Materials are siblings of their meshes, so we tag all siblings with the pin channel to link them in FBimAssemblSpec::FromPreset
-					if (ensureAlways(Preset.ChildPresets.Num() > 0))
-					{
-						int32 channelPosition = Preset.ChildPresets.Last().ParentPinSetPosition;
-						for (auto& cp : Preset.ChildPresets)
-						{
-							if (cp.ParentPinSetPosition == channelPosition)
-							{
-								cp.PinChannel = Row[presetMatrix.First];
-							}
-						}
-					}
-				}
-				break;
 		}
 	}
 

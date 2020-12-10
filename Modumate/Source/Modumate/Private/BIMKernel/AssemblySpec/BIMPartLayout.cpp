@@ -52,12 +52,11 @@ bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, 
 		{
 			// If it's not "Parent" or "Self" then it's a tag path for one of this slot's children and we want to navigate down
 			// Create a tag path and look for any children of this slot with the same tag path (highlander rules: there can be only one)
-			FBIMTagPath tag;
-			tag.FromString(scopes[i]);
+			FString slotID(scopes[i]);
 			bool found = false;
 			for (int32 j = 0; j < PartSlotInstances.Num(); ++j)
 			{
-				if (InAssemblySpec.Parts[j].ParentSlotIndex == currentSlot && InAssemblySpec.Parts[j].NodeCategoryPath.MatchesPartial(tag))
+				if (InAssemblySpec.Parts[j].ParentSlotIndex == currentSlot && InAssemblySpec.Parts[j].SlotID.Equals(slotID))
 				{
 					currentSlot = j;
 					found = true;

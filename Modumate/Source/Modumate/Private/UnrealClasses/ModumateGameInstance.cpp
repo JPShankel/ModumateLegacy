@@ -234,33 +234,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return bSuccess;
 	});
 
-	RegisterCommand(kDumpScript, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		TArray<FString> inputHistory = GetDocument()->GetCommandHistory();
-		TArray<FString> outputHistory;
-		FString filePath = FPaths::ProjectDir() / TestScriptRelativePath / params.GetValue(kFilename, TEXT("script"));
-
-		bool yield = params.GetValue(TEXT("yield"), true);
-		float secs = params.GetValue(kSeconds,0.5f);
-
-		FModumateCommand cmd = FModumateCommand(Commands::kYield).Param(Parameters::kSeconds, secs);
-		FString yieldStr = cmd.GetJSONString();
-
-		for (auto &line : GetDocument()->GetCommandHistory())
-		{
-			outputHistory.Add(line);
-			if (yield)
-			{
-				outputHistory.Add(yieldStr);
-			}
-		}
-		// the dump command itself is removed
-		outputHistory.RemoveAt(outputHistory.Num() - 1);
-		FFileHelper::SaveStringArrayToFile(outputHistory, *filePath);
-
-		return true;
-	});
-
 	RegisterCommand(kSelectObject, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		FModumateObjectInstance *ob = GetDocument()->GetObjectById(params.GetValue(kObjectID));
@@ -559,15 +532,13 @@ Modumate::FModumateFunctionParameterSet UModumateGameInstance::DoModumateCommand
 
 	reenter = true;
 
-	GetDocument()->AddCommandToHistory(commandString);
-
 	FModumateFunctionParameterSet params = command.GetParameterSet();
 
 	FModumateFunctionParameterSet fnOutput;
 
 	FString commandName = params.GetValue(FModumateCommand::CommandFieldString);
 	auto *fn = CommandMap.Find(commandName);
-	if (ensureAlways(fn != nullptr))
+	if (fn != nullptr)
 	{
 		bool bSuccess = (*fn)->FN(params, fnOutput);
 		fnOutput.SetValue(kSuccess, bSuccess);

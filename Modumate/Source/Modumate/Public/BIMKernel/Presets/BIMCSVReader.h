@@ -31,7 +31,7 @@ This is primarily used to store the name of a property that subsequent cells wil
 */
 
 
-UENUM(BlueprintType)
+UENUM()
 enum class ECSVMatrixNames : uint8
 {
 	Category,
@@ -42,7 +42,6 @@ enum class ECSVMatrixNames : uint8
 	ID,
 	InputPins,
 	Material,
-	MaterialChannels,
 	Mesh,
 	MyCategoryPath,
 	ParentCategoryPath,
@@ -54,6 +53,17 @@ enum class ECSVMatrixNames : uint8
 	StartsInProject,
 	SubcategoryPath,
 	Error = 255
+};
+
+UENUM()
+enum class EMaterialChannelFields : uint8
+{
+	AppliesToChannel,
+	InnerMaterial,
+	SurfaceMaterial,
+	ColorTint,
+	ColorTintVariation,
+	Error=255
 };
 
 struct FBIMCSVReader

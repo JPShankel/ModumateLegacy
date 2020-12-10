@@ -204,6 +204,7 @@ EBIMResult FBIMPresetCollection::PostLoad()
 	{
 		FGuid guid;
 		UsedGUIDs.Add(kvp.Value.GUID);
+		GUIDKeyMap.Add(kvp.Value.GUID, kvp.Key);
 		
 		FBIMPresetTypeDefinition* typeDef = NodeDescriptors.Find(kvp.Value.NodeType);
 		if (ensureAlways(typeDef != nullptr))

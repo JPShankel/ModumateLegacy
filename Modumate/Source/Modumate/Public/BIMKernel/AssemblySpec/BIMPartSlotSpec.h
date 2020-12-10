@@ -46,6 +46,8 @@ public:
 
 	FBIMTagPath NodeCategoryPath;
 
+	FString SlotID;
+
 	FArchitecturalMesh Mesh;
 	TMap<FName, FArchitecturalMaterial> ChannelMaterials;
 

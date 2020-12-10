@@ -42,7 +42,6 @@ FGraph3DFaceRecordV1::FGraph3DFaceRecordV1(int32 InID, const TArray<int32>& InVe
 
 void FMOIDocumentRecordV4::FromVersion3(const FMOIDocumentRecordV3 &v3)
 {
-	CommandHistory = v3.CommandHistory;
 }
 
 FString FCustomAssemblyProperty::ToCompactString() const

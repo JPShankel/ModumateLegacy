@@ -10,7 +10,7 @@
 
 #include "BIMPresetCollection.generated.h"
 
-static constexpr int32 BIMPresetCollectionCurrentVersion = 1;
+static constexpr int32 BIMPresetCollectionCurrentVersion = 2;
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetCollection
@@ -25,6 +25,8 @@ struct MODUMATE_API FBIMPresetCollection
 
 	UPROPERTY()
 	TMap<FBIMKey, FBIMPresetInstance> Presets;
+
+	TMap<FGuid, FBIMKey> GUIDKeyMap;
 
 	TSet<FGuid> UsedGUIDs;
 

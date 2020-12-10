@@ -19,7 +19,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kDebug, "debug");
 		MODUMATE_COMMAND(kValidateData, "validate_data");
 		MODUMATE_COMMAND(kYield, "yield");
-		MODUMATE_COMMAND(kDumpScript, "dump_script");
 		MODUMATE_COMMAND(kScreenPrint, "screen_print");
 		MODUMATE_COMMAND(kReanalyzeGraph, "reanalyze_graph");
 		MODUMATE_COMMAND(kCleanAllObjects, "clean_all_objects");

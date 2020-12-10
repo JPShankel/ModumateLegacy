@@ -122,14 +122,12 @@ bool FBIMPresetInstance::HasPin(int32 PinSetIndex, int32 PinSetPosition) const
 
 EBIMResult FBIMPresetInstance::AddChildPreset(const FBIMKey& ChildPresetID, int32 PinSetIndex, int32 PinSetPosition)
 {
-	FName pinChannel;
 	EBIMPinTarget target = EBIMPinTarget::Default;
 	for (auto& child : ChildPresets)
 	{
 		if (child.ParentPinSetIndex == PinSetIndex && child.ParentPinSetPosition >= PinSetPosition)
 		{
 			++child.ParentPinSetPosition;
-			pinChannel = child.PinChannel;
 			target = child.Target;
 		}
 	}
@@ -137,7 +135,6 @@ EBIMResult FBIMPresetInstance::AddChildPreset(const FBIMKey& ChildPresetID, int3
 	FBIMPresetPinAttachment& newAttachment = ChildPresets.AddDefaulted_GetRef();
 	newAttachment.ParentPinSetIndex = PinSetIndex;
 	newAttachment.ParentPinSetPosition = PinSetPosition;
-	newAttachment.PinChannel = pinChannel;
 	newAttachment.PresetID = ChildPresetID;
 	newAttachment.Target = target;
 

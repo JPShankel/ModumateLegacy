@@ -20,6 +20,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	EBIMResult ret = EBIMResult::Success;
 	RootPreset = PresetID;
 
+
 	/*
 	We build an assembly spec by iterating through the tree of presets and assigning BIM values to specific targets like structural layers, risers, treads, etc		
 	Layers for stair tread and risers can be in embedded layered assemblies...when we get to those layers we need to know where they land in the top level assembly
@@ -60,6 +61,11 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		int32 ParentSlotIndex = 0;
 	};
 	TQueue<FPartIterator> partIteratorQueue;
+
+#if WITH_EDITOR
+	DEBUG_GUID = PresetCollection.Presets.Find(PresetID)->GUID;
+#endif
+
 
 	while (iteratorStack.Num() > 0)
 	{
@@ -243,20 +249,35 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		FPartIterator partIterator;
 		partIteratorQueue.Dequeue(partIterator);
 		const FBIMPresetInstance* partPreset = PresetCollection.Presets.Find(partIterator.Slot.PartPreset);
+		const FBIMPresetInstance* slotPreset = PresetCollection.Presets.Find(partIterator.Slot.SlotPreset);
 		const FBIMPresetInstance* slotConfigPreset = PresetCollection.Presets.Find(partIterator.SlotConfigPreset);
 
-		if (ensureAlways(partPreset != nullptr) && ensureAlways(slotConfigPreset != nullptr))
+		if (ensureAlways(partPreset != nullptr) && ensureAlways(slotPreset != nullptr) && ensureAlways(slotConfigPreset != nullptr))
 		{
 			// Each child of a part represents one component (mesh, material or color)
 			FBIMPartSlotSpec& partSpec = Parts.AddDefaulted_GetRef();
 			partSpec.ParentSlotIndex = partIterator.ParentSlotIndex;
 			partSpec.NodeCategoryPath = partPreset->MyTagPath;
+			ensureAlways(slotPreset->Properties.TryGetProperty(EBIMValueScope::Slot, BIMPropertyNames::ID, partSpec.SlotID));
 
 #if WITH_EDITOR //for debugging
 			partSpec.DEBUGNodeScope = partPreset->NodeScope;
 			partSpec.DEBUGPresetID = partPreset->PresetID;
 			partSpec.DEBUGSlotName = partIterator.Slot.SlotPreset;
 #endif
+
+			for (auto& matBinding : partPreset->MaterialChannelBindings)
+			{
+				FBIMKey matKey = matBinding.SurfaceMaterial.IsNone() ? matBinding.InnerMaterial : matBinding.SurfaceMaterial;
+				const FArchitecturalMaterial* material = InDB.GetArchitecturalMaterialByKey(matKey);
+				if (ensureAlways(material != nullptr))
+				{
+					FArchitecturalMaterial newMat = *material;
+					newMat.DefaultBaseColor.Color = matBinding.ColorHexValue.IsEmpty() ? FColor::White : FColor::FromHex(matBinding.ColorHexValue);
+					partSpec.ChannelMaterials.Add(*matBinding.Channel, newMat);
+				}
+			}
+
 			// Look for asset child presets (mesh and material) and cache assets in the part
 			for (auto& cp : partPreset->ChildPresets)
 			{
@@ -272,28 +293,6 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 				{
 					ret = EBIMResult::Error;
 					continue;
-				}
-
-				// If this preset has a material asset ID, then its ID is an architectural material
-				FString materialAsset;
-				if (childPreset->Properties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, materialAsset))
-				{
-					// Pin channels are defined in the DDL spreadsheet
-					// Each row of a preset can define a separate "channel" to which its pin assignments apply
-					// The only use case for this right now is binding material assignments in parts, 
-					// so all parts must define pin channels.
-					if (ensureAlways(!cp.PinChannel.IsNone()))
-					{
-						// Pin channel names are set in the spreadsheet/database
-						// They do NOT conform to channel names in the mesh itself
-						// the Material property binds a channel by name to a material
-						// the Mesh property binds a channel by name to a material index in the engine mesh
-						const FArchitecturalMaterial* material = InDB.GetArchitecturalMaterialByKey(childPreset->PresetID);
-						if (ensureAlways(material != nullptr))
-						{
-							partSpec.ChannelMaterials.Add(cp.PinChannel, *material);
-						}
-					}
 				}
 
 				// If this child has a mesh asset ID, this fetch the mesh and use it 

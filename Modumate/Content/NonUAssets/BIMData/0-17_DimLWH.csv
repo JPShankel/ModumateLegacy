@@ -7,37 +7,37 @@ PROPERTY,,Dimension,,Width,,Dimension.Width,,,,,
 PROPERTY,,Dimension,,Height,,Dimension.Height,,,,,
 ,,Presets,,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.Name,Dimension.Length,Dimension.Width,Dimension.Height,DataType=ParentCategoryPath,
-PRESET,,0DimLWH_ClayBrick-7.625inL-3.625inW-2.29167inH,,0DimLWH_ClayBrick,,8in Modular,7.625in,3.625in,2.29167in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-7.625inL-3.125inW-2.29167inH,,0DimLWH_ClayBrick,,Narrow 8in Modular,7.625in,3.125in,2.29167in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-7.625inL-2.29167inW-2.29167inH,,0DimLWH_ClayBrick,,Extra-Narrow 8in Modular,7.625in,2.29167in,2.29167in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-7.625inL-3.625inW-2.75inH,,0DimLWH_ClayBrick,,Tall 8in Modular,7.625in,3.625in,2.75in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-7.625inL-3.125inW-2.75inH,,0DimLWH_ClayBrick,,Tall Narrow 8in Modular,7.625in,3.125in,2.75in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-7.625inL-3.625inW-3.625inH,,0DimLWH_ClayBrick,,Square-Head 8in Modular,7.625in,3.625in,3.625in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-7.625inL-3.625inW-7.625inH,,0DimLWH_ClayBrick,,Triple-Height 8in Modular,7.625in,3.625in,7.625in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-11.625inL-3.625inW-2.29167inH,,0DimLWH_ClayBrick,,Norman,11.625in,3.625in,2.29167in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-11.625inL-3.125inW-2.29167inH,,0DimLWH_ClayBrick,,Narrow Norman,11.625in,3.125in,2.29167in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-11.625inL-3.625inW-2.75inH,,0DimLWH_ClayBrick,,Tall Norman,11.625in,3.625in,2.75in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-11.625inL-3.125inW-2.75inH,,0DimLWH_ClayBrick,,Tall Narrow Norman,11.625in,3.125in,2.75in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-11.625inL-3.625inW-3.625inH,,0DimLWH_ClayBrick,,Square-Head Norman,11.625in,3.625in,3.625in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-11.625inL-3.625inW-7.625inH,,0DimLWH_ClayBrick,,Triple-Height Norman,11.625in,3.625in,7.625in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-15.625inL-3.625inW-2.29167inH,,0DimLWH_ClayBrick,,Monarch,15.625in,3.625in,2.29167in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-15.625inL-3.125inW-2.29167inH,,0DimLWH_ClayBrick,,Narrow Monarch,15.625in,3.125in,2.29167in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-15.625inL-3.625inW-2.75inH,,0DimLWH_ClayBrick,,Tall Monarch,15.625in,3.625in,2.75in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-15.625inL-3.625inW-7.625inH,,0DimLWH_ClayBrick,,Triple-Height Monarch,15.625in,3.625in,7.625in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_ClayBrick-11.625inL-3.625inW-1.625inH,,0DimLWH_ClayBrick,,Roman,11.625in,3.625in,1.625in,,Part_ModuleVolumetric_Clay Brick
-PRESET,,0DimLWH_CMU-7.625inL-3.625inW-3.625inH,,0DimLWH_CMU,,"4in Half Block, 4in x 8in x 4in",7.625in,3.625in,3.625in,,Part_ModuleVolumetric_Concrete Masonry Unit
-PRESET,,0DimLWH_CMU-15.625inL-3.625inW-7.625inH,,0DimLWH_CMU,,"4in Full Block, 8in x 16in x 4in",15.625in,3.625in,7.625in,,Part_ModuleVolumetric_Concrete Masonry Unit
-PRESET,,0DimLWH_CMU-7.625inL-5.625inW-7.625inH,,0DimLWH_CMU,,"6in Half Block, 8in x 8in x 6in",7.625in,5.625in,7.625in,,Part_ModuleVolumetric_Concrete Masonry Unit
-PRESET,,0DimLWH_CMU-15.625inL-5.625inW-7.625inH,,0DimLWH_CMU,,"6in Full Block, 8in x 16in x 6in",15.625in,5.625in,7.625in,,Part_ModuleVolumetric_Concrete Masonry Unit
-PRESET,,0DimLWH_CMU-7.625inL-7.625inW-7.625inH,,0DimLWH_CMU,,"8in Half Block, 8in x 8in x 8in",7.625in,7.625in,7.625in,,Part_ModuleVolumetric_Concrete Masonry Unit
-PRESET,,0DimLWH_CMU-15.625inL-7.625inW-7.625inH,,0DimLWH_CMU,,"8in Full Block, 8in x 16in x 8in",15.625in,7.625in,7.625in,,Part_ModuleVolumetric_Concrete Masonry Unit
-PRESET,,0DimLWH_CMU-7.625inL-9.625inW-7.625inH,,0DimLWH_CMU,,"10in Half Block, 8in x 8in x 10in",7.625in,9.625in,7.625in,,Part_ModuleVolumetric_Concrete Masonry Unit
-PRESET,,0DimLWH_CMU-15.625inL-9.625inW-7.625inH,,0DimLWH_CMU,,"10in Full Block, 8in x 16in x 10in",15.625in,9.625in,7.625in,,Part_ModuleVolumetric_Concrete Masonry Unit
-PRESET,,0DimLWH_CMU-7.625inL-11.625inW-7.625inH,,0DimLWH_CMU,,"12in Half Block, 8in x 8in x 12in",7.625in,11.625in,7.625in,,Part_ModuleVolumetric_Concrete Masonry Unit
-PRESET,,0DimLWH_CMU-15.625inL-11.625inW-7.625inH,,0DimLWH_CMU,,"12in Full Block, 8in x 16in x 12in",15.625in,11.625in,7.625in,,Part_ModuleVolumetric_Concrete Masonry Unit
-PRESET,,0DimLWH_EarthBrick-11.614inL-5.512inW-3.543inH,,0DimLWH_EarthBrick,,"Full Block, 29.5cm x 14cm x 9cm",11.614in,5.512in,3.543in,,Part_ModuleVolumetric_Earth Brick
-PRESET,,0DimLWH_EarthBrick-8.563inL-5.512inW-3.543inH,,0DimLWH_EarthBrick,,"3/4 Block, 21.75cm x 14cm x 9cm",8.563in,5.512in,3.543in,,Part_ModuleVolumetric_Earth Brick
-PRESET,,0DimLWH_EarthBrick-5.512inL-5.512inW-3.543inH,,0DimLWH_EarthBrick,,"Half Block, 14cm x 14cm x 9cm",5.512in,5.512in,3.543in,,Part_ModuleVolumetric_Earth Brick
-PRESET,,0DimLWH_GlassBlock-7.75inL-3.875inW-3.75inH,,0DimLWH_GlassBlock,,4in x 8in x 4in,7.75in,3.875in,3.75in,,Part_ModuleVolumetric_Glass Block
-PRESET,,0DimLWH_GlassBlock-5.75inL-3.875inW-5.75inH,,0DimLWH_GlassBlock,,6in x 6in x 4in,5.75in,3.875in,5.75in,,Part_ModuleVolumetric_Glass Block
-PRESET,,0DimLWH_GlassBlock-7.75inL-3.875inW-7.75inH,,0DimLWH_GlassBlock,,8in x 8in x 4in,7.75in,3.875in,7.75in,,Part_ModuleVolumetric_Glass Block
+PRESET,,0DimLWH_ClayBrick-7.625inL-3.625inW-2.29167inH,,0DimLWH_ClayBrick,,8in Modular,7.625in,3.625in,2.29167in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-7.625inL-3.125inW-2.29167inH,,0DimLWH_ClayBrick,,Narrow 8in Modular,7.625in,3.125in,2.29167in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-7.625inL-2.29167inW-2.29167inH,,0DimLWH_ClayBrick,,Extra-Narrow 8in Modular,7.625in,2.29167in,2.29167in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-7.625inL-3.625inW-2.75inH,,0DimLWH_ClayBrick,,Tall 8in Modular,7.625in,3.625in,2.75in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-7.625inL-3.125inW-2.75inH,,0DimLWH_ClayBrick,,Tall Narrow 8in Modular,7.625in,3.125in,2.75in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-7.625inL-3.625inW-3.625inH,,0DimLWH_ClayBrick,,Square-Head 8in Modular,7.625in,3.625in,3.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-7.625inL-3.625inW-7.625inH,,0DimLWH_ClayBrick,,Triple-Height 8in Modular,7.625in,3.625in,7.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-11.625inL-3.625inW-2.29167inH,,0DimLWH_ClayBrick,,Norman,11.625in,3.625in,2.29167in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-11.625inL-3.125inW-2.29167inH,,0DimLWH_ClayBrick,,Narrow Norman,11.625in,3.125in,2.29167in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-11.625inL-3.625inW-2.75inH,,0DimLWH_ClayBrick,,Tall Norman,11.625in,3.625in,2.75in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-11.625inL-3.125inW-2.75inH,,0DimLWH_ClayBrick,,Tall Narrow Norman,11.625in,3.125in,2.75in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-11.625inL-3.625inW-3.625inH,,0DimLWH_ClayBrick,,Square-Head Norman,11.625in,3.625in,3.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-11.625inL-3.625inW-7.625inH,,0DimLWH_ClayBrick,,Triple-Height Norman,11.625in,3.625in,7.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-15.625inL-3.625inW-2.29167inH,,0DimLWH_ClayBrick,,Monarch,15.625in,3.625in,2.29167in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-15.625inL-3.125inW-2.29167inH,,0DimLWH_ClayBrick,,Narrow Monarch,15.625in,3.125in,2.29167in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-15.625inL-3.625inW-2.75inH,,0DimLWH_ClayBrick,,Tall Monarch,15.625in,3.625in,2.75in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-15.625inL-3.625inW-7.625inH,,0DimLWH_ClayBrick,,Triple-Height Monarch,15.625in,3.625in,7.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_ClayBrick-11.625inL-3.625inW-1.625inH,,0DimLWH_ClayBrick,,Roman,11.625in,3.625in,1.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick
+PRESET,,0DimLWH_CMU-7.625inL-3.625inW-3.625inH,,0DimLWH_CMU,,"4in Half Block, 4in x 8in x 4in",7.625in,3.625in,3.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit
+PRESET,,0DimLWH_CMU-15.625inL-3.625inW-7.625inH,,0DimLWH_CMU,,"4in Full Block, 8in x 16in x 4in",15.625in,3.625in,7.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit
+PRESET,,0DimLWH_CMU-7.625inL-5.625inW-7.625inH,,0DimLWH_CMU,,"6in Half Block, 8in x 8in x 6in",7.625in,5.625in,7.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit
+PRESET,,0DimLWH_CMU-15.625inL-5.625inW-7.625inH,,0DimLWH_CMU,,"6in Full Block, 8in x 16in x 6in",15.625in,5.625in,7.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit
+PRESET,,0DimLWH_CMU-7.625inL-7.625inW-7.625inH,,0DimLWH_CMU,,"8in Half Block, 8in x 8in x 8in",7.625in,7.625in,7.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit
+PRESET,,0DimLWH_CMU-15.625inL-7.625inW-7.625inH,,0DimLWH_CMU,,"8in Full Block, 8in x 16in x 8in",15.625in,7.625in,7.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit
+PRESET,,0DimLWH_CMU-7.625inL-9.625inW-7.625inH,,0DimLWH_CMU,,"10in Half Block, 8in x 8in x 10in",7.625in,9.625in,7.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit
+PRESET,,0DimLWH_CMU-15.625inL-9.625inW-7.625inH,,0DimLWH_CMU,,"10in Full Block, 8in x 16in x 10in",15.625in,9.625in,7.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit
+PRESET,,0DimLWH_CMU-7.625inL-11.625inW-7.625inH,,0DimLWH_CMU,,"12in Half Block, 8in x 8in x 12in",7.625in,11.625in,7.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit
+PRESET,,0DimLWH_CMU-15.625inL-11.625inW-7.625inH,,0DimLWH_CMU,,"12in Full Block, 8in x 16in x 12in",15.625in,11.625in,7.625in,,Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit
+PRESET,,0DimLWH_EarthBrick-11.614inL-5.512inW-3.543inH,,0DimLWH_EarthBrick,,"Full Block, 29.5cm x 14cm x 9cm",11.614in,5.512in,3.543in,,Part_0FlexDims3Fixed_ModuleVolumetric_Earth Brick
+PRESET,,0DimLWH_EarthBrick-8.563inL-5.512inW-3.543inH,,0DimLWH_EarthBrick,,"3/4 Block, 21.75cm x 14cm x 9cm",8.563in,5.512in,3.543in,,Part_0FlexDims3Fixed_ModuleVolumetric_Earth Brick
+PRESET,,0DimLWH_EarthBrick-5.512inL-5.512inW-3.543inH,,0DimLWH_EarthBrick,,"Half Block, 14cm x 14cm x 9cm",5.512in,5.512in,3.543in,,Part_0FlexDims3Fixed_ModuleVolumetric_Earth Brick
+PRESET,,0DimLWH_GlassBlock-7.75inL-3.875inW-3.75inH,,0DimLWH_GlassBlock,,4in x 8in x 4in,7.75in,3.875in,3.75in,,Part_0FlexDims3Fixed_ModuleVolumetric_Glass Block
+PRESET,,0DimLWH_GlassBlock-5.75inL-3.875inW-5.75inH,,0DimLWH_GlassBlock,,6in x 6in x 4in,5.75in,3.875in,5.75in,,Part_0FlexDims3Fixed_ModuleVolumetric_Glass Block
+PRESET,,0DimLWH_GlassBlock-7.75inL-3.875inW-7.75inH,,0DimLWH_GlassBlock,,8in x 8in x 4in,7.75in,3.875in,7.75in,,Part_0FlexDims3Fixed_ModuleVolumetric_Glass Block

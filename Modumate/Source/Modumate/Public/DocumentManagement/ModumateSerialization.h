@@ -228,8 +228,6 @@ struct FMOIDocumentRecordBASE
 	UPROPERTY()
 	FGraph3DRecordV1 VolumeGraph;
 
-	UPROPERTY()
-	TArray<FString> CommandHistory;
 };
 
 USTRUCT()
@@ -311,7 +309,6 @@ namespace Modumate
 
 	static const TCHAR * DocObjectInstanceField = TEXT("ModumateObjects");
 	static const TCHAR * DocHeaderField = TEXT("ModumateHeader");
-	static const TCHAR * CommandHistoryField = TEXT("CommandHistory");
 }
 
 struct MODUMATE_API FModumateSerializationStatics

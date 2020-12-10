@@ -54,7 +54,6 @@ private:
 	float DefaultJustificationXY = 0.f;
 
 	TArray<int32> UndoRedoMacroStack;
-	TArray<FString> CommandHistory;
 
 	// The volume connectivity information, for the purpose of keeping track of connectivity of all planar objects;
 	// the source of truth for mitering, room detection, volume calculation, slicing floorplans/sections/elevations, heat/acoustics, etc.
@@ -67,6 +66,8 @@ private:
 	TMap<int32, TSharedPtr<Modumate::FGraph2D>> SurfaceGraphs;
 
 	TMap<EObjectDirtyFlags, TArray<FModumateObjectInstance*>> DirtyObjectMap;
+
+	void RemapOldBIMKeys(FMOIDocumentRecord& DocRec) const;
 
 public:
 
@@ -93,9 +94,6 @@ public:
 
 	bool CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas = nullptr);
 	void RegisterDirtyObject(EObjectDirtyFlags DirtyType, FModumateObjectInstance *DirtyObj, bool bDirty);
-
-	void AddCommandToHistory(const FString &cmd);
-	TArray<FString> GetCommandHistory() const;
 
 	void BeginUndoRedoMacro();
 	void EndUndoRedoMacro();

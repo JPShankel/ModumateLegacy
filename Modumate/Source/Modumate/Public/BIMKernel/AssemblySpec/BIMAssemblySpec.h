@@ -42,6 +42,10 @@ private:
 
 	FBIMPropertySheet RootProperties;
 
+#if WITH_EDITOR
+	FGuid DEBUG_GUID;
+#endif
+
 public:
 
 	EObjectType ObjectType = EObjectType::OTNone;
