@@ -25,24 +25,22 @@ struct MODUMATE_API FMOIPlaneHostedObjData
 	int32 OverrideOriginIndex = INDEX_NONE;
 };
 
-class MODUMATE_API FMOIPlaneHostedObjImpl : public FModumateObjectInstanceImplBase, ILayeredObject
+class MODUMATE_API FMOIPlaneHostedObjImpl : public FModumateObjectInstance, ILayeredObject
 {
 public:
-	FMOIPlaneHostedObjImpl(FModumateObjectInstance *InMOI);
-	virtual ~FMOIPlaneHostedObjImpl();
+	FMOIPlaneHostedObjImpl();
 	virtual FQuat GetRotation() const override;
 	virtual FVector GetLocation() const override;
 	virtual FVector GetCorner(int32 index) const override;
 	virtual FVector GetNormal() const override;
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
-	virtual void Destroy() override;
+	virtual void PreDestroy() override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
-	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override {};
-	virtual void OnSelected(bool bIsSelected) override;
+	virtual bool OnSelected(bool bIsSelected) override;
 
 	virtual const ILayeredObject* GetLayeredInterface() const override { return this; }
 	virtual const FCachedLayerDimsByType &GetCachedLayerDims() const override { return CachedLayerDims; }

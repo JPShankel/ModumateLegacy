@@ -2,47 +2,42 @@
 
 #include "DocumentManagement/ModumateDocument.h"
 
-#include "Online/ModumateAnalyticsStatics.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "UnrealClasses/ModumateGameInstance.h"
-#include "ModumateCore/ModumateGeometryStatics.h"
-#include "ModumateCore/ModumateObjectStatics.h"
-#include "UnrealClasses/LineActor.h"
-
-#include "Internationalization/Internationalization.h"
-#include "Misc/FileHelper.h"
-#include "Serialization/JsonReader.h"
-#include "Policies/PrettyJsonPrintPolicy.h"
-#include "Serialization/JsonSerializer.h"
-
+#include "Algo/Accumulate.h"
+#include "Algo/ForEach.h"
+#include "Algo/Transform.h"
+#include "Database/ModumateObjectDatabase.h"
+#include "DocumentManagement/DocumentDelta.h"
+#include "Drafting/DraftingManager.h"
+#include "Drafting/ModumateDraftingView.h"
 #include "Graph/Graph2D.h"
 #include "Graph/Graph3DDelta.h"
-
+#include "Internationalization/Internationalization.h"
+#include "JsonObjectConverter.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateMitering.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/PlatformFunctions.h"
-#include "Drafting/DraftingManager.h"
+#include "Objects/MOIFactory.h"
+#include "Objects/SurfaceGraph.h"
+#include "Online/ModumateAnalyticsStatics.h"
+#include "Policies/PrettyJsonPrintPolicy.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
+#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
-#include "DocumentManagement/DocumentDelta.h"
-#include "Drafting/ModumateDraftingView.h"
-#include "ModumateCore/ModumateMitering.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "Objects/SurfaceGraph.h"
-
-#include "Algo/Transform.h"
-#include "Algo/Accumulate.h"
-#include "Algo/ForEach.h"
-#include "Misc/Paths.h"
-#include "JsonObjectConverter.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "Kismet/GameplayStatics.h"
-
-#include "Database/ModumateObjectDatabase.h"
-#include "UnrealClasses/ModumateObjectComponent_CPP.h"
-
+#include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/Modumate.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/ModumateObjectComponent_CPP.h"
 
 using namespace Modumate::Mitering;
 using namespace Modumate;
@@ -280,7 +275,7 @@ void FModumateDocument::UnhideAllObjects(UWorld *world)
 	// TODO: Pending removal
 	for (FModumateObjectInstance *obj : ObjectInstanceArray)
 	{
-		obj->UpdateVisibilityAndCollision();
+		obj->UpdateVisuals();
 	}
 }
 
@@ -301,7 +296,7 @@ void FModumateDocument::UnhideObjectsById(UWorld *world, const TArray<int32> &id
 	// TODO: Pending removal
 	for (FModumateObjectInstance *obj : ObjectInstanceArray)
 	{
-		obj->UpdateVisibilityAndCollision();
+		obj->UpdateVisuals();
 	}
 }
 
@@ -413,7 +408,11 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObj(UWorld* World, co
 		return nullptr;
 	}
 
-	FModumateObjectInstance* newObj = new FModumateObjectInstance(World, this, StateData);
+	// TODO: replace this with AActor-spawning
+	FModumateObjectInstance* newObj = FMOIFactory::MakeMOI(StateData.ObjectType);
+	newObj->World = World;
+	newObj->Document = this;
+
 	ObjectInstanceArray.AddUnique(newObj);
 	ObjectsByID.Add(StateData.ID, newObj);
 
@@ -1827,7 +1826,7 @@ bool FModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 							*EnumValueString(EObjectDirtyFlags, flagToClean));
 					}
 
-					bool bCleaned = objToClean->CleanObject(flagToClean, OutSideEffectDeltas);
+					bool bCleaned = objToClean->RouteCleanObject(flagToClean, OutSideEffectDeltas);
 					if (bCleaned)
 					{
 						cleanedFlags |= flagToClean;
@@ -2997,7 +2996,7 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 			continue;
 		}
 
-		const FMOISurfaceGraphImpl* surfaceGraphImpl = static_cast<const FMOISurfaceGraphImpl*>(surfaceGraphObj->Implementation);
+		const FMOISurfaceGraphImpl* surfaceGraphImpl = static_cast<const FMOISurfaceGraphImpl*>(surfaceGraphObj);
 		FString surfaceGraphString = FString::Printf(TEXT("SurfaceGraph: #%d, face %d, %s"),
 			surfaceGraphID, surfaceGraphFaceIndex, surfaceGraphImpl->IsGraphLinked() ? TEXT("linked") : TEXT("unlinked"));
 		GEngine->AddOnScreenDebugMessage(surfaceGraphID, 0.0f, FColor::White, surfaceGraphString);

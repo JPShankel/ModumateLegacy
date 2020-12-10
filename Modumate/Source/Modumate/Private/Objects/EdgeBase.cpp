@@ -9,8 +9,8 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 
-FMOIEdgeImplBase::FMOIEdgeImplBase(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOIEdgeImplBase::FMOIEdgeImplBase()
+	: FModumateObjectInstance()
 	, World(nullptr)
 	, LineActor(nullptr)
 	, SelectedColor(0x00, 0x35, 0xFF)
@@ -36,11 +36,15 @@ int32 FMOIEdgeImplBase::GetNumCorners() const
 	return 2;
 }
 
-void FMOIEdgeImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
+bool FMOIEdgeImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
-	FModumateObjectInstanceImplBase::OnHovered(controller, bIsHovered);
+	if (!FModumateObjectInstance::OnHovered(controller, bIsHovered))
+	{
+		return false;
+	}
 
-	MOI->UpdateVisibilityAndCollision();
+	UpdateVisuals();
+	return true;
 }
 
 AActor *FMOIEdgeImplBase::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
@@ -53,18 +57,22 @@ AActor *FMOIEdgeImplBase::CreateActor(UWorld *world, const FVector &loc, const F
 	return LineActor.Get();
 }
 
-void FMOIEdgeImplBase::OnSelected(bool bIsSelected)
+bool FMOIEdgeImplBase::OnSelected(bool bIsSelected)
 {
-	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
+	if (!FModumateObjectInstance::OnSelected(bIsSelected))
+	{
+		return false;
+	}
 
-	MOI->UpdateVisibilityAndCollision();
+	UpdateVisuals();
+	return true;
 }
 
-void FMOIEdgeImplBase::UpdateVisibilityAndCollision(bool& bOutVisible, bool& bOutCollisionEnabled)
+void FMOIEdgeImplBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
 {
-	if (MOI && LineActor.IsValid())
+	if (LineActor.IsValid())
 	{
-		UModumateObjectStatics::GetNonPhysicalEnabledFlags(MOI, bOutVisible, bOutCollisionEnabled);
+		UModumateObjectStatics::GetNonPhysicalEnabledFlags(this, bOutVisible, bOutCollisionEnabled);
 
 		LineActor->SetVisibilityInApp(bOutVisible);
 		LineActor->SetActorEnableCollision(bOutCollisionEnabled);
@@ -99,11 +107,11 @@ void FMOIEdgeImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outP
 
 float FMOIEdgeImplBase::GetThicknessMultiplier() const
 {
-	if (MOI->IsSelected())
+	if (IsSelected())
 	{
 		return SelectedThickness;
 	}
-	else if (MOI->IsHovered())
+	else if (IsHovered())
 	{
 		return HoverThickness;
 	}
@@ -113,7 +121,7 @@ float FMOIEdgeImplBase::GetThicknessMultiplier() const
 
 void FMOIEdgeImplBase::UpdateMaterial()
 {
-	if (MOI && LineActor.IsValid())
+	if (LineActor.IsValid())
 	{
 		AEditModelGameMode_CPP* gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
 		// Color
@@ -121,11 +129,11 @@ void FMOIEdgeImplBase::UpdateMaterial()
 		{
 
 			FColor color;
-			if (MOI->IsSelected())
+			if (IsSelected())
 			{
 				color = SelectedColor;
 			}
-			else if (MOI->IsHovered())
+			else if (IsHovered())
 			{
 				color = HoveredColor;
 			}

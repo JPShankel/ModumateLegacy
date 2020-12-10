@@ -6,7 +6,7 @@
 class MODUMATE_API FMOISurfaceEdgeImpl : public FMOIEdgeImplBase
 {
 public:
-	FMOISurfaceEdgeImpl(FModumateObjectInstance *moi);
+	FMOISurfaceEdgeImpl();
 
 	virtual FVector GetCorner(int32 index) const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;

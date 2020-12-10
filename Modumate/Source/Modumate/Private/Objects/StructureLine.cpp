@@ -13,8 +13,8 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
-FMOIStructureLine::FMOIStructureLine(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOIStructureLine::FMOIStructureLine()
+	: FModumateObjectInstance()
 	, LineStartPos(ForceInitToZero)
 	, LineEndPos(ForceInitToZero)
 	, LineDir(ForceInitToZero)
@@ -25,13 +25,9 @@ FMOIStructureLine::FMOIStructureLine(FModumateObjectInstance *moi)
 {
 }
 
-FMOIStructureLine::~FMOIStructureLine()
-{
-}
-
 FQuat FMOIStructureLine::GetRotation() const
 {
-	FModumateObjectInstance *parentObj = MOI ? MOI->GetParentObject() : nullptr;
+	const FModumateObjectInstance *parentObj = GetParentObject();
 	if (parentObj)
 	{
 		return parentObj->GetRotation();
@@ -42,7 +38,7 @@ FQuat FMOIStructureLine::GetRotation() const
 
 FVector FMOIStructureLine::GetLocation() const
 {
-	FModumateObjectInstance *parentObj = MOI ? MOI->GetParentObject() : nullptr;
+	const FModumateObjectInstance *parentObj = GetParentObject();
 	if (parentObj)
 	{
 		return parentObj->GetLocation();
@@ -63,7 +59,7 @@ void FMOIStructureLine::UpdateDynamicGeometry()
 
 void FMOIStructureLine::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
 {
-	FModumateObjectInstance* parent = MOI->GetParentObject();
+	FModumateObjectInstance* parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaEdge)))
 	{
 		return;
@@ -72,7 +68,7 @@ void FMOIStructureLine::SetupAdjustmentHandles(AEditModelPlayerController_CPP* c
 	// edges have two vertices and want an adjustment handle for each
 	for (int32 i = 0; i < 2; i++)
 	{
-		auto cornerHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
+		auto cornerHandle = MakeHandle<AAdjustPolyEdgeHandle>();
 		cornerHandle->SetTargetIndex(i);
 		cornerHandle->SetTargetMOI(parent);
 	}
@@ -81,7 +77,7 @@ void FMOIStructureLine::SetupAdjustmentHandles(AEditModelPlayerController_CPP* c
 void FMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	const FSimplePolygon* profile = nullptr;
-	if (!UModumateObjectStatics::GetPolygonProfile(&MOI->GetAssembly(), profile))
+	if (!UModumateObjectStatics::GetPolygonProfile(&GetAssembly(), profile))
 	{
 		return;
 	}
@@ -109,13 +105,13 @@ void FMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &out
 
 void FMOIStructureLine::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 {
-	if (!ensure(DynamicMeshActor.IsValid() && MOI && (MOI->GetAssembly().Extrusions.Num() == 1)))
+	if (!ensure(DynamicMeshActor.IsValid() && (GetAssembly().Extrusions.Num() == 1)))
 	{
 		return;
 	}
 
 	// This can be an expected error, if the object is still getting set up before it has a parent assigned.
-	const FModumateObjectInstance *parentObj = MOI ? MOI->GetParentObject() : nullptr;
+	const FModumateObjectInstance *parentObj = GetParentObject();
 	if (parentObj == nullptr)
 	{
 		return;
@@ -126,7 +122,7 @@ void FMOIStructureLine::InternalUpdateGeometry(bool bRecreate, bool bCreateColli
 	LineDir = (LineEndPos - LineStartPos).GetSafeNormal();
 	UModumateGeometryStatics::FindBasisVectors(LineNormal, LineUp, LineDir);
 
-	DynamicMeshActor->SetupExtrudedPolyGeometry(MOI->GetAssembly(), LineStartPos, LineEndPos,
+	DynamicMeshActor->SetupExtrudedPolyGeometry(GetAssembly(), LineStartPos, LineEndPos,
 		LineNormal, LineUp, UpperExtensions, OuterExtensions, FVector::OneVector, bRecreate, bCreateCollision);
 }
 
@@ -137,20 +133,20 @@ void FMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 	OutPerimeters.Reset();
 
 	TArray<FVector> perimeter;
-	UModumateObjectStatics::GetExtrusionPerimeterPoints(MOI, LineUp, LineNormal, perimeter);
+	UModumateObjectStatics::GetExtrusionPerimeterPoints(this, LineUp, LineNormal, perimeter);
 
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
 	{   // In cut-plane lines.
 		const Modumate::FModumateLayerType layerType =
-			MOI->GetObjectType() == EObjectType::OTMullion ? Modumate::FModumateLayerType::kMullionCut : Modumate::FModumateLayerType::kBeamColumnCut;
+			GetObjectType() == EObjectType::OTMullion ? Modumate::FModumateLayerType::kMullionCut : Modumate::FModumateLayerType::kBeamColumnCut;
 		UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox,
 			perimeter, LineStartPos, LineEndPos, layerType);
 	}
 	else
 	{   // Beyond cut-plane lines.
 		const Modumate::FModumateLayerType layerType =
-			MOI->GetObjectType() == EObjectType::OTMullion ? Modumate::FModumateLayerType::kMullionBeyond : Modumate::FModumateLayerType::kBeamColumnBeyond;
+			GetObjectType() == EObjectType::OTMullion ? Modumate::FModumateLayerType::kMullionBeyond : Modumate::FModumateLayerType::kBeamColumnBeyond;
 		TArray<FEdge> beyondLines = UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(Plane, perimeter, LineStartPos, LineEndPos);
 
 		TArray<FEdge> clippedLines;

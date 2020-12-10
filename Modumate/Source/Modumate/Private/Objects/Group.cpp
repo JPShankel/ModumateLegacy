@@ -9,8 +9,8 @@
 
 float FMOIGroupImpl::StructuralExtentsExpansion = 20.0f;
 
-FMOIGroupImpl::FMOIGroupImpl(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOIGroupImpl::FMOIGroupImpl()
+	: FModumateObjectInstance()
 	, World(nullptr)
 	, CachedLocation(ForceInitToZero)
 	, CachedExtents(ForceInitToZero)
@@ -18,7 +18,7 @@ FMOIGroupImpl::FMOIGroupImpl(FModumateObjectInstance *moi)
 
 bool FMOIGroupImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-	if (!FModumateObjectInstanceImplBase::CleanObject(DirtyFlag, OutSideEffectDeltas))
+	if (!FModumateObjectInstance::CleanObject(DirtyFlag, OutSideEffectDeltas))
 	{
 		return false;
 	}
@@ -29,7 +29,7 @@ bool FMOIGroupImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* 
 		TArray<FStructureLine> descendentLines;
 		FBox groupAABB(ForceInitToZero);
 
-		auto allChildObjs = MOI->GetAllDescendents();
+		auto allChildObjs = GetAllDescendents();
 		for (auto* childObj : allChildObjs)
 		{
 			descendentPoints.Reset();
@@ -53,7 +53,7 @@ AActor *FMOIGroupImpl::RestoreActor()
 	if (World.IsValid())
 	{
 		AMOIGroupActor_CPP *groupActor = World->SpawnActor<AMOIGroupActor_CPP>(World->GetAuthGameMode<AEditModelGameMode_CPP>()->MOIGroupActorClass);
-		groupActor->MOI = MOI;
+		groupActor->MOI = this;
 		groupActor->SetActorLocation(CachedLocation);
 
 		return groupActor;
@@ -71,7 +71,7 @@ AActor *FMOIGroupImpl::CreateActor(UWorld *world, const FVector &loc, const FQua
 
 void FMOIGroupImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	if (MOI && !CachedExtents.IsZero())
+	if (!CachedExtents.IsZero())
 	{
 		// Don't use groups for snapping
 		if (bForSnapping)
@@ -81,7 +81,7 @@ void FMOIGroupImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoin
 		// For selection, use the contents of the group
 		else if (bForSelection)
 		{
-			for (const FModumateObjectInstance *childObj : MOI->GetChildObjects())
+			for (const FModumateObjectInstance *childObj : GetChildObjects())
 			{
 				childObj->GetStructuralPointsAndLines(TempPoints, TempLines, bForSnapping, bForSelection);
 				outPoints.Append(TempPoints);

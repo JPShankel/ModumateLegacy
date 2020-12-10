@@ -25,20 +25,14 @@ class AEditModelPlayerController_CPP;
 
 using namespace Modumate::Mitering;
 
-FMOIPlaneHostedObjImpl::FMOIPlaneHostedObjImpl(FModumateObjectInstance *InMOI)
-	: FModumateObjectInstanceImplBase(InMOI)
-{
-	CachedLayerDims.UpdateLayersFromAssembly(MOI->GetAssembly());
-	CachedLayerDims.UpdateFinishFromObject(MOI);
-}
-
-FMOIPlaneHostedObjImpl::~FMOIPlaneHostedObjImpl()
+FMOIPlaneHostedObjImpl::FMOIPlaneHostedObjImpl()
+	: FModumateObjectInstance()
 {
 }
 
 FQuat FMOIPlaneHostedObjImpl::GetRotation() const
 {
-	const FModumateObjectInstance *parent = MOI->GetParentObject();
+	const FModumateObjectInstance *parent = GetParentObject();
 	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return parent->GetRotation();
@@ -51,12 +45,12 @@ FQuat FMOIPlaneHostedObjImpl::GetRotation() const
 
 FVector FMOIPlaneHostedObjImpl::GetLocation() const
 {
-	const FModumateObjectInstance *parent = MOI->GetParentObject();
+	const FModumateObjectInstance *parent = GetParentObject();
 	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		float thickness, startOffset;
 		FVector normal;
-		UModumateObjectStatics::GetPlaneHostedValues(MOI, thickness, startOffset, normal);
+		UModumateObjectStatics::GetPlaneHostedValues(this, thickness, startOffset, normal);
 
 		FVector planeLocation = parent->GetLocation();
 		return planeLocation + (startOffset + (0.5f * thickness)) * normal;
@@ -70,7 +64,7 @@ FVector FMOIPlaneHostedObjImpl::GetLocation() const
 FVector FMOIPlaneHostedObjImpl::GetCorner(int32 CornerIndex) const
 {
 	// Handle the meta plane host case which just returns the meta plane with this MOI's offset
-	const FModumateObjectInstance *parent = MOI->GetParentObject();
+	const FModumateObjectInstance *parent = GetParentObject();
 	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		int32 numPlanePoints = parent->GetNumCorners();
@@ -78,7 +72,7 @@ FVector FMOIPlaneHostedObjImpl::GetCorner(int32 CornerIndex) const
 		int32 numLayers = LayerGeometries.Num();
 		int32 pointIndex = CornerIndex % numPlanePoints;
 
-		if (ensure((numLayers == MOI->GetAssembly().Layers.Num()) && numLayers > 0))
+		if (ensure((numLayers == GetAssembly().Layers.Num()) && numLayers > 0))
 		{
 			auto& layerPoints = bOnStartingSide ? LayerGeometries[0].OriginalPointsA : LayerGeometries[numLayers - 1].OriginalPointsB;
 
@@ -94,7 +88,7 @@ FVector FMOIPlaneHostedObjImpl::GetCorner(int32 CornerIndex) const
 
 FVector FMOIPlaneHostedObjImpl::GetNormal() const
 {
-	const FModumateObjectInstance *planeParent = MOI->GetParentObject();
+	const FModumateObjectInstance *planeParent = GetParentObject();
 	if (ensureAlways(planeParent && (planeParent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return planeParent->GetNormal();
@@ -111,7 +105,7 @@ void FMOIPlaneHostedObjImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, 
 	OutStructPtr = &InstanceData;
 }
 
-void FMOIPlaneHostedObjImpl::Destroy()
+void FMOIPlaneHostedObjImpl::PreDestroy()
 {
 	MarkEdgesMiterDirty();
 }
@@ -125,14 +119,14 @@ bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDe
 		// TODO: as long as the assembly is not stored inside of the data state, and its layers can be reversed,
 		// then this is the centralized opportunity to match up the reversal of layers with whatever the intended inversion state is,
 		// based on preview/current state changing, assembly changing, object creation, etc.
-		MOI->SetAssemblyLayersReversed(InstanceData.bLayersInverted);
+		SetAssemblyLayersReversed(InstanceData.bLayersInverted);
 
-		CachedLayerDims.UpdateLayersFromAssembly(MOI->GetAssembly());
-		CachedLayerDims.UpdateFinishFromObject(MOI);
+		CachedLayerDims.UpdateLayersFromAssembly(GetAssembly());
+		CachedLayerDims.UpdateFinishFromObject(this);
 
 		// When structure (assembly, offset, or plane structure) changes, mark neighboring
 		// edges as miter-dirty, so they can re-evaluate mitering with our new structure.
-		MOI->MarkDirty(EObjectDirtyFlags::Mitering);
+		MarkDirty(EObjectDirtyFlags::Mitering);
 		MarkEdgesMiterDirty();
 	}
 	break;
@@ -153,7 +147,7 @@ bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDe
 	break;
 	case EObjectDirtyFlags::Visuals:
 	{
-		MOI->UpdateVisibilityAndCollision();
+		UpdateVisuals();
 	}
 	break;
 	}
@@ -171,7 +165,7 @@ void FMOIPlaneHostedObjImpl::UpdateDynamicGeometry()
 
 void FMOIPlaneHostedObjImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	const FModumateObjectInstance *parent = MOI->GetParentObject();
+	const FModumateObjectInstance *parent = GetParentObject();
 
 	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
@@ -200,7 +194,7 @@ void FMOIPlaneHostedObjImpl::GetStructuralPointsAndLines(TArray<FStructurePoint>
 
 void FMOIPlaneHostedObjImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
-	FModumateObjectInstance *parent = MOI->GetParentObject();
+	FModumateObjectInstance *parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return;
@@ -211,14 +205,14 @@ void FMOIPlaneHostedObjImpl::SetupAdjustmentHandles(AEditModelPlayerController_C
 	for (int32 i = 0; i < numCorners; ++i)
 	{
 		// Don't allow adjusting wall corners, since they're more likely to be edited edge-by-edge.
-		if (MOI->GetObjectType() != EObjectType::OTWallSegment)
+		if (GetObjectType() != EObjectType::OTWallSegment)
 		{
-			auto cornerHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
+			auto cornerHandle = MakeHandle<AAdjustPolyEdgeHandle>();
 			cornerHandle->SetTargetIndex(i);
 			cornerHandle->SetTargetMOI(parent);
 		}
 
-		auto edgeHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
+		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
 		edgeHandle->SetTargetIndex(i);
 		edgeHandle->SetTargetMOI(parent);
 	}
@@ -226,17 +220,17 @@ void FMOIPlaneHostedObjImpl::SetupAdjustmentHandles(AEditModelPlayerController_C
 	// Make justification handles
 	TArray<AAdjustmentHandleActor*> rootHandleChildren;
 
-	auto frontJustificationHandle = MOI->MakeHandle<AJustificationHandle>();
+	auto frontJustificationHandle = MakeHandle<AJustificationHandle>();
 	frontJustificationHandle->SetJustification(0.0f);
 	rootHandleChildren.Add(frontJustificationHandle);
 
-	auto backJustificationHandle = MOI->MakeHandle<AJustificationHandle>();
+	auto backJustificationHandle = MakeHandle<AJustificationHandle>();
 	backJustificationHandle->SetJustification(1.0f);
 	rootHandleChildren.Add(backJustificationHandle);
 
-	auto invertHandle = MOI->MakeHandle<AAdjustInvertHandle>();
+	auto invertHandle = MakeHandle<AAdjustInvertHandle>();
 
-	auto rootJustificationHandle = MOI->MakeHandle<AJustificationHandle>();
+	auto rootJustificationHandle = MakeHandle<AJustificationHandle>();
 	rootJustificationHandle->SetJustification(0.5f);
 	rootJustificationHandle->HandleChildren = rootHandleChildren;
 	for (auto& child : rootHandleChildren)
@@ -245,24 +239,29 @@ void FMOIPlaneHostedObjImpl::SetupAdjustmentHandles(AEditModelPlayerController_C
 	}
 }
 
-void FMOIPlaneHostedObjImpl::OnSelected(bool bIsSelected)
+bool FMOIPlaneHostedObjImpl::OnSelected(bool bIsSelected)
 {
-	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
+	if (!FModumateObjectInstance::OnSelected(bIsSelected))
+	{
+		return false;
+	}
 
-	if (const FModumateObjectInstance *parent = MOI ? MOI->GetParentObject() : nullptr)
+	if (const FModumateObjectInstance *parent = GetParentObject())
 	{
 		TArray<FModumateObjectInstance *> connectedMOIs;
 		parent->GetConnectedMOIs(connectedMOIs);
 		for (FModumateObjectInstance *connectedMOI : connectedMOIs)
 		{
-			connectedMOI->UpdateVisibilityAndCollision();
+			connectedMOI->UpdateVisuals();
 		}
 	}
+
+	return true;
 }
 
 bool FMOIPlaneHostedObjImpl::GetInvertedState(FMOIStateData& OutState) const
 {
-	OutState = MOI->GetStateData();
+	OutState = GetStateData();
 
 	FMOIPlaneHostedObjData modifiedPlaneHostedObjData = InstanceData;
 	modifiedPlaneHostedObjData.bLayersInverted = !modifiedPlaneHostedObjData.bLayersInverted;
@@ -289,7 +288,7 @@ bool FMOIPlaneHostedObjImpl::GetJustifiedState(const FVector& AdjustmentDirectio
 
 	FMOIPlaneHostedObjData modifiedPlaneHostedObjData = InstanceData;
 	modifiedPlaneHostedObjData.Justification = newJustification;
-	OutState = MOI->GetStateData();
+	OutState = GetStateData();
 
 	return OutState.CustomData.SaveStructData(modifiedPlaneHostedObjData);
 }
@@ -309,13 +308,13 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 	bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
 	{
-		const FModumateObjectInstance *parent = MOI->GetParentObject();
+		const FModumateObjectInstance *parent = GetParentObject();
 		FVector parentLocation = parent->GetLocation();
 
 		Modumate::FModumateLayerType layerTypeOuterSurface;
 		Modumate::FModumateLayerType layerTypeMinorSurface;
 
-		switch (MOI->GetObjectType())
+		switch (GetObjectType())
 		{
 		case EObjectType::OTCountertop:
 			layerTypeOuterSurface = Modumate::FModumateLayerType::kCountertopCut;
@@ -471,17 +470,17 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 
 void FMOIPlaneHostedObjImpl::UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalculateEdgeExtensions)
 {
-	const FModumateDocument *doc = MOI ? MOI->GetDocument() : nullptr;
+	const FModumateDocument *doc = GetDocument();
 	if (!ensureAlwaysMsgf(doc, TEXT("Tried to update invalid plane-hosted object!")))
 	{
 		return;
 	}
 
-	int32 parentID = MOI->GetParentID();
+	int32 parentID = GetParentID();
 	const Modumate::FGraph3DFace *planeFace = doc->GetVolumeGraph().FindFace(parentID);
 	const FModumateObjectInstance *parentPlane = doc->GetObjectById(parentID);
-	if (!ensureMsgf(parentPlane, TEXT("Plane-hosted object (ID %d) is missing parent object (ID %d)!"), MOI->ID, parentID) ||
-		!ensureMsgf(planeFace, TEXT("Plane-hosted object (ID %d) is missing parent graph face (ID %d)!"), MOI->ID, parentID))
+	if (!ensureMsgf(parentPlane, TEXT("Plane-hosted object (ID %d) is missing parent object (ID %d)!"), ID, parentID) ||
+		!ensureMsgf(planeFace, TEXT("Plane-hosted object (ID %d) is missing parent graph face (ID %d)!"), ID, parentID))
 	{
 		return;
 	}
@@ -497,12 +496,12 @@ void FMOIPlaneHostedObjImpl::UpdateMeshWithLayers(bool bRecreateMesh, bool bReca
 		CachedHoles.Add(FPolyHole3D(TempHoleRelativePoints));
 	}
 
-	if (!FMiterHelpers::UpdateMiteredLayerGeoms(MOI, planeFace, &CachedHoles, LayerGeometries))
+	if (!FMiterHelpers::UpdateMiteredLayerGeoms(this, planeFace, &CachedHoles, LayerGeometries))
 	{
 		return;
 	}
 
-	DynamicMeshActor->Assembly = MOI->GetAssembly();
+	DynamicMeshActor->Assembly = GetAssembly();
 	DynamicMeshActor->LayerGeometries = LayerGeometries;
 
 	// TODO: now that preview deltas have replaced object-specific preview mode, this change might be too overreaching and affect too many objects.
@@ -520,7 +519,7 @@ void FMOIPlaneHostedObjImpl::UpdateConnectedEdges()
 {
 	CachedParentConnectedMOIs.Reset();
 
-	const FModumateObjectInstance *planeParent = MOI ? MOI->GetParentObject() : nullptr;
+	const FModumateObjectInstance *planeParent = GetParentObject();
 	if (planeParent)
 	{
 		planeParent->GetConnectedMOIs(CachedParentConnectedMOIs);
@@ -550,11 +549,11 @@ void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::F
 {
 	static const Modumate::Units::FThickness outerThickness = Modumate::Units::FThickness::Points(0.25f);
 
-	const FModumateObjectInstance *parent = MOI->GetParentObject();
+	const FModumateObjectInstance *parent = GetParentObject();
 	FVector parentLocation = parent->GetLocation();
 	Modumate::FModumateLayerType layerType;
 
-	switch (MOI->GetObjectType())
+	switch (GetObjectType())
 	{
 	case EObjectType::OTCountertop:
 		layerType = Modumate::FModumateLayerType::kCountertopBeyond;

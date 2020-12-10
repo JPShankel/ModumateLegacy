@@ -8,11 +8,10 @@
 class AEditModelPlayerController_CPP;
 class FModumateObjectInstance;
 
-class MODUMATE_API FMOIStaircaseImpl : public FModumateObjectInstanceImplBase
+class MODUMATE_API FMOIStaircaseImpl : public FModumateObjectInstance
 {
 public:
-	FMOIStaircaseImpl(FModumateObjectInstance *moi);
-	virtual ~FMOIStaircaseImpl();
+	FMOIStaircaseImpl();
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;

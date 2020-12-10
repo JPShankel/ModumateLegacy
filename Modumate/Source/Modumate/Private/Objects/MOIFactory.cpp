@@ -24,7 +24,7 @@
 #include "Objects/Trim.h"
 #include "Objects/Mullion.h"
 
-IModumateObjectInstanceImpl *FMOIFactory::MakeMOIImplementation(EObjectType ObjectType, FModumateObjectInstance *MOI)
+FModumateObjectInstance *FMOIFactory::MakeMOI(EObjectType ObjectType)
 {
 	switch (ObjectType)
 	{
@@ -34,28 +34,28 @@ IModumateObjectInstanceImpl *FMOIFactory::MakeMOIImplementation(EObjectType Obje
 		case EObjectType::OTCeiling:
 		case EObjectType::OTRoofFace:
 		case EObjectType::OTCountertop:
-		case EObjectType::OTSystemPanel: return new FMOIPlaneHostedObjImpl(MOI);
+		case EObjectType::OTSystemPanel: return new FMOIPlaneHostedObjImpl();
 		case EObjectType::OTDoor:
-		case EObjectType::OTWindow: return new FMOIPortalImpl(MOI);
-		case EObjectType::OTFurniture: return new FMOIFFEImpl(MOI);
-		case EObjectType::OTCabinet: return new FMOICabinetImpl(MOI);
-		case EObjectType::OTStaircase: return new FMOIStaircaseImpl(MOI);
-		case EObjectType::OTFinish: return new FMOIFinishImpl(MOI);
-		case EObjectType::OTGroup: return new FMOIGroupImpl(MOI);
-		case EObjectType::OTRoom: return new FMOIRoomImpl(MOI);
-		case EObjectType::OTTrim: return new FMOITrimImpl(MOI);
-		case EObjectType::OTMetaVertex: return new FMOIMetaVertexImpl(MOI);
-		case EObjectType::OTMetaEdge: return new FMOIMetaEdgeImpl(MOI);
-		case EObjectType::OTMetaPlane: return new FMOIMetaPlaneImpl(MOI);
-		case EObjectType::OTSurfaceGraph: return new FMOISurfaceGraphImpl(MOI);
-		case EObjectType::OTSurfaceVertex: return new FMOISurfaceVertexImpl(MOI);
-		case EObjectType::OTSurfaceEdge: return new FMOISurfaceEdgeImpl(MOI);
-		case EObjectType::OTSurfacePolygon: return new FMOISurfacePolygonImpl(MOI);
-		case EObjectType::OTCutPlane: return new FMOICutPlaneImpl(MOI);
-		case EObjectType::OTScopeBox: return new FMOIScopeBoxImpl(MOI);
-		case EObjectType::OTStructureLine: return new FMOIStructureLine(MOI);
-		case EObjectType::OTRoofPerimeter: return new FMOIRoofPerimeterImpl(MOI);
-		case EObjectType::OTMullion: return new FMOIMullion(MOI);
+		case EObjectType::OTWindow: return new FMOIPortalImpl();
+		case EObjectType::OTFurniture: return new FMOIFFEImpl();
+		case EObjectType::OTCabinet: return new FMOICabinetImpl();
+		case EObjectType::OTStaircase: return new FMOIStaircaseImpl();
+		case EObjectType::OTFinish: return new FMOIFinishImpl();
+		case EObjectType::OTGroup: return new FMOIGroupImpl();
+		case EObjectType::OTRoom: return new FMOIRoomImpl();
+		case EObjectType::OTTrim: return new FMOITrimImpl();
+		case EObjectType::OTMetaVertex: return new FMOIMetaVertexImpl();
+		case EObjectType::OTMetaEdge: return new FMOIMetaEdgeImpl();
+		case EObjectType::OTMetaPlane: return new FMOIMetaPlaneImpl();
+		case EObjectType::OTSurfaceGraph: return new FMOISurfaceGraphImpl();
+		case EObjectType::OTSurfaceVertex: return new FMOISurfaceVertexImpl();
+		case EObjectType::OTSurfaceEdge: return new FMOISurfaceEdgeImpl();
+		case EObjectType::OTSurfacePolygon: return new FMOISurfacePolygonImpl();
+		case EObjectType::OTCutPlane: return new FMOICutPlaneImpl();
+		case EObjectType::OTScopeBox: return new FMOIScopeBoxImpl();
+		case EObjectType::OTStructureLine: return new FMOIStructureLine();
+		case EObjectType::OTRoofPerimeter: return new FMOIRoofPerimeterImpl();
+		case EObjectType::OTMullion: return new FMOIMullion();
 		default:
 		{
 			FString objectTypeString = EnumValueString(EObjectType, ObjectType);

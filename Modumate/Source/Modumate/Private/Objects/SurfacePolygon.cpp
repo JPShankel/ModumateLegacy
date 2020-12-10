@@ -10,21 +10,21 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
-FMOISurfacePolygonImpl::FMOISurfacePolygonImpl(FModumateObjectInstance *moi)
-	: FMOIPlaneImplBase(moi)
+FMOISurfacePolygonImpl::FMOISurfacePolygonImpl()
+	: FMOIPlaneImplBase()
 	, bInteriorPolygon(false)
 	, bInnerBoundsPolygon(false)
 {
 
 }
 
-void FMOISurfacePolygonImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+void FMOISurfacePolygonImpl::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	if (MOI && DynamicMeshActor.IsValid())
+	if (DynamicMeshActor.IsValid())
 	{
-		bool bPreviouslyVisible = MOI->IsVisible();
+		bool bPreviouslyVisible = IsVisible();
 
-		UModumateObjectStatics::GetSurfaceObjEnabledFlags(MOI, bOutVisible, bOutCollisionEnabled);
+		UModumateObjectStatics::GetSurfaceObjEnabledFlags(this, bOutVisible, bOutCollisionEnabled);
 
 		DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
 		DynamicMeshActor->SetActorEnableCollision(bOutCollisionEnabled);
@@ -43,16 +43,11 @@ void FMOISurfacePolygonImpl::UpdateVisibilityAndCollision(bool &bOutVisible, boo
 
 bool FMOISurfacePolygonImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-	if (!ensure(MOI))
-	{
-		return false;
-	}
-
 	switch (DirtyFlag)
 	{
 	case EObjectDirtyFlags::Structure:
 	{
-		if (!UModumateObjectStatics::GetGeometryFromSurfacePoly(MOI->GetDocument(), MOI->ID,
+		if (!UModumateObjectStatics::GetGeometryFromSurfacePoly(GetDocument(), ID,
 			bInteriorPolygon, bInnerBoundsPolygon, CachedTransform, CachedPoints, CachedHoles))
 		{
 			return false;
@@ -93,11 +88,11 @@ bool FMOISurfacePolygonImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDe
 		}
 
 		// Now build the triangulated mesh with holes for the surface polygon
-		bool bEnableCollision = !MOI->IsInPreviewMode();
+		bool bEnableCollision = !IsInPreviewMode();
 		DynamicMeshActor->SetupMetaPlaneGeometry(CachedOffsetPoints, MaterialData, GetAlpha(), true, &CachedOffsetHoles, bEnableCollision);
 	}
 	case EObjectDirtyFlags::Visuals:
-		MOI->UpdateVisibilityAndCollision();
+		UpdateVisuals();
 		break;
 	default:
 		break;

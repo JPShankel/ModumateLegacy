@@ -7,7 +7,7 @@
 class MODUMATE_API FMOIMetaEdgeImpl : public FMOIEdgeImplBase, IMiterNode
 {
 public:
-	FMOIMetaEdgeImpl(FModumateObjectInstance *moi);
+	FMOIMetaEdgeImpl();
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow) override;

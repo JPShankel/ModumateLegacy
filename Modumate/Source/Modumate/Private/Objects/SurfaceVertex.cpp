@@ -11,8 +11,8 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/VertexActor.h"
 
-FMOISurfaceVertexImpl::FMOISurfaceVertexImpl(FModumateObjectInstance *moi)
-	: FMOIVertexImplBase(moi)
+FMOISurfaceVertexImpl::FMOISurfaceVertexImpl()
+	: FMOIVertexImplBase()
 	, CachedDeprojectedLocation(ForceInitToZero)
 {
 }
@@ -24,7 +24,7 @@ FVector FMOISurfaceVertexImpl::GetLocation() const
 
 bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-	auto surfaceGraphObj = MOI ? MOI->GetParentObject() : nullptr;
+	auto surfaceGraphObj = GetParentObject();
 	if (!ensure(surfaceGraphObj && VertexActor.IsValid()))
 	{
 		return false;
@@ -34,8 +34,8 @@ bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 	{
 		case EObjectDirtyFlags::Structure:
 		{
-			auto surfaceGraph = MOI->GetDocument()->FindSurfaceGraph(surfaceGraphObj->ID);
-			auto surfaceVertex = surfaceGraph ? surfaceGraph->FindVertex(MOI->ID) : nullptr;
+			auto surfaceGraph = GetDocument()->FindSurfaceGraph(surfaceGraphObj->ID);
+			auto surfaceVertex = surfaceGraph ? surfaceGraph->FindVertex(ID) : nullptr;
 			if (ensureAlways(surfaceVertex))
 			{
 				FTransform surfaceGraphTransform = surfaceGraphObj->GetWorldTransform();
@@ -47,7 +47,7 @@ bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 				for (FGraphSignedID connectedEdgeID : surfaceVertex->Edges)
 				{
 					auto surfaceEdge = surfaceGraph->FindEdge(connectedEdgeID);
-					auto edgeMOI = MOI->GetDocument()->GetObjectById(FMath::Abs(connectedEdgeID));
+					auto edgeMOI = GetDocument()->GetObjectById(FMath::Abs(connectedEdgeID));
 					if (ensure(surfaceEdge && edgeMOI))
 					{
 						edgeMOI->MarkDirty(DirtyFlag);
@@ -57,7 +57,7 @@ bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 							if (polyID != MOD_ID_NONE)
 							{
 								auto surfacePoly = surfaceGraph->FindPolygon(polyID);
-								auto polyMOI = MOI->GetDocument()->GetObjectById(polyID);
+								auto polyMOI = GetDocument()->GetObjectById(polyID);
 								if (ensure(surfacePoly && polyMOI) && surfacePoly->bInterior)
 								{
 									polyMOI->MarkDirty(DirtyFlag);
@@ -71,7 +71,7 @@ bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 			break;
 		}
 		case EObjectDirtyFlags::Visuals:
-			MOI->UpdateVisibilityAndCollision();
+			UpdateVisuals();
 			break;
 		default:
 			break;

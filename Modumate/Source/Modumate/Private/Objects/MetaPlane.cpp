@@ -9,19 +9,19 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
-FMOIMetaPlaneImpl::FMOIMetaPlaneImpl(FModumateObjectInstance *moi)
-	: FMOIPlaneImplBase(moi)
+FMOIMetaPlaneImpl::FMOIMetaPlaneImpl()
+	: FMOIPlaneImplBase()
 {
 
 }
 
-void FMOIMetaPlaneImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+void FMOIMetaPlaneImpl::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	if (MOI && DynamicMeshActor.IsValid())
+	if (DynamicMeshActor.IsValid())
 	{
-		bool bPreviouslyVisible = MOI->IsVisible();
+		bool bPreviouslyVisible = IsVisible();
 
-		UModumateObjectStatics::GetMetaObjEnabledFlags(MOI, bOutVisible, bOutCollisionEnabled);
+		UModumateObjectStatics::GetMetaObjEnabledFlags(this, bOutVisible, bOutCollisionEnabled);
 
 		DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
 		DynamicMeshActor->SetActorEnableCollision(bOutCollisionEnabled);
@@ -40,7 +40,7 @@ void FMOIMetaPlaneImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bO
 
 void FMOIMetaPlaneImpl::SetupDynamicGeometry()
 {
-	const TArray<int32> &newChildIDs = MOI->GetChildIDs();
+	const TArray<int32> &newChildIDs = GetChildIDs();
 	bool bChildrenChanged = (newChildIDs != LastChildIDs);
 	LastChildIDs = newChildIDs;
 
@@ -49,21 +49,16 @@ void FMOIMetaPlaneImpl::SetupDynamicGeometry()
 	AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
 	MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
-	bool bEnableCollision = !MOI->IsInPreviewMode();
+	bool bEnableCollision = !IsInPreviewMode();
 
 	DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, GetAlpha(), true, &CachedHoles, bEnableCollision);
 
-	MOI->UpdateVisibilityAndCollision();
-}
-
-void FMOIMetaPlaneImpl::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
-{
-	FMOIPlaneImplBase::OnHovered(controller, bIsHovered);
+	UpdateVisuals();
 }
 
 void FMOIMetaPlaneImpl::UpdateCachedGraphData()
 {
-	const Modumate::FGraph3DFace *graphFace = MOI ? MOI->GetDocument()->GetVolumeGraph().FindFace(MOI->ID) : nullptr;
+	const Modumate::FGraph3DFace *graphFace = GetDocument()->GetVolumeGraph().FindFace(ID);
 
 	if (ensure(graphFace && (graphFace->CachedPositions.Num() > 0)))
 	{

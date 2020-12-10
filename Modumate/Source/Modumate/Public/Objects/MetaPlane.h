@@ -7,11 +7,10 @@
 class MODUMATE_API FMOIMetaPlaneImpl : public FMOIPlaneImplBase
 {
 public:
-	FMOIMetaPlaneImpl(FModumateObjectInstance *moi);
+	FMOIMetaPlaneImpl();
 
-	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupDynamicGeometry() override;
-	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
 
 protected:
 	void UpdateCachedGraphData();

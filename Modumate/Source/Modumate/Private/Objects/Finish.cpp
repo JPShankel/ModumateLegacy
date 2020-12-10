@@ -16,28 +16,20 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 
-FMOIFinishImpl::FMOIFinishImpl(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
-{ }
-
-FMOIFinishImpl::~FMOIFinishImpl()
-{
-}
-
-void FMOIFinishImpl::Destroy()
+void FMOIFinishImpl::PreDestroy()
 {
 	MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags::Structure);
 }
 
 FVector FMOIFinishImpl::GetCorner(int32 index) const
 {
-	const FModumateObjectInstance *parentObj = MOI->GetParentObject();
+	const FModumateObjectInstance *parentObj = GetParentObject();
 	if (!ensure(parentObj) || (CachedPerimeter.Num() == 0))
 	{
 		return FVector::ZeroVector;
 	}
 
-	float thickness = MOI->CalculateThickness();
+	float thickness = CalculateThickness();
 	int32 numPoints = CachedPerimeter.Num();
 	FVector cornerOffset = (index < numPoints) ? FVector::ZeroVector : (GetNormal() * thickness);
 
@@ -56,14 +48,14 @@ bool FMOIFinishImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 	case EObjectDirtyFlags::Structure:
 	{
 		// The finish requires a surface polygon parent from which to extrude its layered assembly
-		FModumateObjectInstance *surfacePolyParent = MOI->GetParentObject();
+		FModumateObjectInstance *surfacePolyParent = GetParentObject();
 		if ((surfacePolyParent == nullptr) || !ensure(surfacePolyParent->GetObjectType() == EObjectType::OTSurfacePolygon))
 		{
 			return false;
 		}
 
 		bool bInteriorPolygon, bInnerBoundsPolygon;
-		if (!UModumateObjectStatics::GetGeometryFromSurfacePoly(MOI->GetDocument(), surfacePolyParent->ID,
+		if (!UModumateObjectStatics::GetGeometryFromSurfacePoly(GetDocument(), surfacePolyParent->ID,
 			bInteriorPolygon, bInnerBoundsPolygon, CachedGraphOrigin, CachedPerimeter, CachedHoles))
 		{
 			return false;
@@ -77,7 +69,7 @@ bool FMOIFinishImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 
 		bool bToleratePlanarErrors = true;
 		bool bLayerSetupSuccess = DynamicMeshActor->CreateBasicLayerDefs(CachedPerimeter, CachedGraphOrigin.GetRotation().GetAxisZ(), CachedHoles,
-			MOI->GetAssembly(), 0.0f, FVector::ZeroVector, 0.0f, bToleratePlanarErrors);
+			GetAssembly(), 0.0f, FVector::ZeroVector, 0.0f, bToleratePlanarErrors);
 
 		if (bLayerSetupSuccess)
 		{
@@ -88,7 +80,7 @@ bool FMOIFinishImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 	}
 		break;
 	case EObjectDirtyFlags::Visuals:
-		MOI->UpdateVisibilityAndCollision();
+		UpdateVisuals();
 		break;
 	default:
 		break;
@@ -100,7 +92,7 @@ bool FMOIFinishImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 void FMOIFinishImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	int32 numPoints = CachedPerimeter.Num();
-	FVector extrusionDelta = MOI->CalculateThickness() * GetNormal();
+	FVector extrusionDelta = CalculateThickness() * GetNormal();
 
 	for (int32 i = 0; i < numPoints; ++i)
 	{
@@ -125,7 +117,7 @@ void FMOIFinishImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoi
 void FMOIFinishImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
 {
 	// parent handles
-	FModumateObjectInstance* parent = MOI->GetParentObject();
+	FModumateObjectInstance* parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTSurfacePolygon)))
 	{
 		return;
@@ -134,11 +126,11 @@ void FMOIFinishImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* cont
 	int32 numCorners = parent->GetNumCorners();
 	for (int32 i = 0; i < numCorners; ++i)
 	{
-		auto cornerHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
+		auto cornerHandle = MakeHandle<AAdjustPolyEdgeHandle>();
 		cornerHandle->SetTargetIndex(i);
 		cornerHandle->SetTargetMOI(parent);
 
-		auto edgeHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
+		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
 		edgeHandle->SetTargetIndex(i);
 		edgeHandle->SetTargetMOI(parent);
 	}
@@ -162,10 +154,10 @@ void FMOIFinishImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCompos
 void FMOIFinishImpl::UpdateConnectedEdges()
 {
 	CachedConnectedEdgeIDs.Reset();
-	FModumateDocument* doc = MOI->GetDocument();
+	FModumateDocument* doc = GetDocument();
 
-	auto grandParentGraph = doc->FindSurfaceGraphByObjID(MOI->ID);
-	auto parentSurfacePoly = grandParentGraph ? grandParentGraph->FindPolygon(MOI->GetParentID()) : nullptr;
+	auto grandParentGraph = doc->FindSurfaceGraphByObjID(ID);
+	auto parentSurfacePoly = grandParentGraph ? grandParentGraph->FindPolygon(GetParentID()) : nullptr;
 
 	if (parentSurfacePoly == nullptr)
 	{
@@ -198,13 +190,13 @@ void FMOIFinishImpl::UpdateConnectedEdges()
 	}
 }
 
-void FMOIFinishImpl::MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags DirtyFlags)
+void FMOIFinishImpl::MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags EdgeDirtyFlags)
 {
 	UpdateConnectedEdges();
 
 	for (FModumateObjectInstance* connectedEdgeChild : CachedConnectedEdgeChildren)
 	{
-		connectedEdgeChild->MarkDirty(DirtyFlags);
+		connectedEdgeChild->MarkDirty(EdgeDirtyFlags);
 	}
 }
 
@@ -215,7 +207,7 @@ void FMOIFinishImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposi
 	static const Modumate::FMColor lineColor = Modumate::FMColor::Gray144;
 	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kFinishCut;
 
-	const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(MOI->GetActor());
+	const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(GetActor());
 	if (actor == nullptr)
 	{
 		return;
@@ -317,7 +309,7 @@ void FMOIFinishImpl::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposit
 	static const Modumate::FModumateLayerType dwgOuterType = Modumate::FModumateLayerType::kFinishBeyond;
 	static const Modumate::FModumateLayerType dwgHoleType = Modumate::FModumateLayerType::kFinishBeyond;
 
-	const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(MOI->GetActor());
+	const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(GetActor());
 	if (actor == nullptr)
 	{
 		return;

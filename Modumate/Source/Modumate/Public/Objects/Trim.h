@@ -24,11 +24,10 @@ struct MODUMATE_API FMOITrimData
 	float UpJustification = 0.5f;
 };
 
-class MODUMATE_API FMOITrimImpl : public FModumateObjectInstanceImplBase
+class MODUMATE_API FMOITrimImpl : public FModumateObjectInstance
 {
 public:
-	FMOITrimImpl(FModumateObjectInstance *moi);
-	virtual ~FMOITrimImpl();
+	FMOITrimImpl();
 
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
@@ -37,7 +36,6 @@ public:
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP* Controller) override;
-	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow) override;
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;

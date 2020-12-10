@@ -395,7 +395,7 @@ FBoxSphereBounds UModumateFunctionLibrary::GetSelectedExtents(const AEditModelPl
 	{
 		curMOIPoints.Reset();
 		curMOILines.Reset();
-		moi->GetStructuralPointsAndLines(curMOIPoints, curMOILines);
+		moi->RouteGetStructuralPointsAndLines(curMOIPoints, curMOILines);
 
 		for (const FStructurePoint &point : curMOIPoints)
 		{

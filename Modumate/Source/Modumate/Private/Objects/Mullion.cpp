@@ -3,6 +3,6 @@
 #include "Objects/Mullion.h"
 
 
-FMOIMullion::FMOIMullion(FModumateObjectInstance *moi)
-	: FMOIStructureLine(moi)
+FMOIMullion::FMOIMullion()
+	: FMOIStructureLine()
 { }

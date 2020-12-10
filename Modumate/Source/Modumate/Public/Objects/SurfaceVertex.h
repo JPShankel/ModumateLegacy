@@ -8,7 +8,7 @@ class AVertexActor;
 class MODUMATE_API FMOISurfaceVertexImpl : public FMOIVertexImplBase
 {
 public:
-	FMOISurfaceVertexImpl(FModumateObjectInstance *moi);
+	FMOISurfaceVertexImpl();
 
 	virtual FVector GetLocation() const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;

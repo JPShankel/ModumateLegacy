@@ -7,9 +7,9 @@
 class MODUMATE_API FMOISurfacePolygonImpl : public FMOIPlaneImplBase
 {
 public:
-	FMOISurfacePolygonImpl(FModumateObjectInstance *moi);
+	FMOISurfacePolygonImpl();
 
-	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 
 protected:

@@ -24,8 +24,8 @@
 
 static constexpr float PixelsToWorldCentimeters = 0.5f;
 
-FMOICutPlaneImpl::FMOICutPlaneImpl(FModumateObjectInstance *moi)
-	: FMOIPlaneImplBase(moi),
+FMOICutPlaneImpl::FMOICutPlaneImpl()
+	: FMOIPlaneImplBase(),
 	EdgeSelectedColor(28.0f / 255.0f, 159.0f / 255.0f, 255.0f / 255.0f),
 	EdgeColor(73.0f / 255.0f, 179.0f / 255.0f, 255.0f / 255.0f)
 {
@@ -45,7 +45,7 @@ AActor* FMOICutPlaneImpl::CreateActor(UWorld* world, const FVector& loc, const F
 
 void FMOICutPlaneImpl::PostCreateObject(bool bNewObject)
 {
-	FModumateObjectInstanceImplBase::PostCreateObject(bNewObject);
+	FModumateObjectInstance::PostCreateObject(bNewObject);
 
 	auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
 	if (controller && controller->EditModelUserWidget)
@@ -64,7 +64,7 @@ void FMOICutPlaneImpl::PostCreateObject(bool bNewObject)
 		{
 			CaptureActor = World->SpawnActor<ACutPlaneCaptureActor>(gameMode->CutPlaneCaptureActorClass.Get());
 			CaptureActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepWorldTransform);
-			CaptureActor->ObjID = MOI->ID;
+			CaptureActor->ObjID = ID;
 			CaptureActor->Parent = this;
 		}
 
@@ -76,23 +76,23 @@ void FMOICutPlaneImpl::PostCreateObject(bool bNewObject)
 	}
 }
 
-void FMOICutPlaneImpl::Destroy()
+void FMOICutPlaneImpl::PreDestroy()
 {
 	auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
 	if (controller && controller->EditModelUserWidget)
 	{
-		controller->EditModelUserWidget->RemoveCutPlaneFromList(MOI->ID);
+		controller->EditModelUserWidget->RemoveCutPlaneFromList(ID);
 	}
-	FMOIPlaneImplBase::Destroy();
+	FMOIPlaneImplBase::PreDestroy();
 }
 
-void FMOICutPlaneImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+void FMOICutPlaneImpl::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	FMOIPlaneImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
+	FMOIPlaneImplBase::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
 	auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
 	if (controller && controller->EditModelUserWidget)
 	{
-		controller->EditModelUserWidget->UpdateCutPlaneInList(MOI->ID);
+		controller->EditModelUserWidget->UpdateCutPlaneInList(ID);
 	}
 }
 
@@ -103,7 +103,7 @@ void FMOICutPlaneImpl::SetupDynamicGeometry()
 
 	DynamicMeshActor->SetupPlaneGeometry(CachedPoints, MaterialData, true, true);
 
-	MOI->UpdateVisibilityAndCollision();
+	UpdateVisuals();
 }
 
 void FMOICutPlaneImpl::UpdateDynamicGeometry()
@@ -113,9 +113,12 @@ void FMOICutPlaneImpl::UpdateDynamicGeometry()
 	DynamicMeshActor->SetupPlaneGeometry(CachedPoints, MaterialData, false, true);
 }
 
-void FMOICutPlaneImpl::OnSelected(bool bIsSelected)
+bool FMOICutPlaneImpl::OnSelected(bool bIsSelected)
 {
-	FMOIPlaneImplBase::OnSelected(bIsSelected);
+	if (!FMOIPlaneImplBase::OnSelected(bIsSelected))
+	{
+		return false;
+	}
 
 	if (bIsSelected)
 	{
@@ -125,11 +128,13 @@ void FMOICutPlaneImpl::OnSelected(bool bIsSelected)
 	{
 		PreviewHUDLines = nullptr;
 	}
+
+	return true;
 }
 
 void FMOICutPlaneImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
 {
-	if (MOI->HasAdjustmentHandles())
+	if (HasAdjustmentHandles())
 	{
 		return;
 	}
@@ -137,14 +142,14 @@ void FMOICutPlaneImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* co
 	int32 numPoints = CachedPoints.Num();
 	for (int32 i = 0; i < numPoints; ++i)
 	{
-		auto edgeHandle = MOI->MakeHandle<AAdjustCutPlaneExtentsHandle>();
+		auto edgeHandle = MakeHandle<AAdjustCutPlaneExtentsHandle>();
 		edgeHandle->SetTargetIndex(i);
 	}
 }
 	
 bool FMOICutPlaneImpl::GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const
 {
-	OutState = MOI->GetStateData();
+	OutState = GetStateData();
 
 	FMOICutPlaneData modifiedFFEData = InstanceData;
 	modifiedFFEData.Location = Transform.GetLocation();
@@ -165,9 +170,9 @@ void FMOICutPlaneImpl::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
 		FModumateLines objectSelectionLine = FModumateLines();
 		objectSelectionLine.Point1 = structureLine.P1;
 		objectSelectionLine.Point2 = structureLine.P2;
-		objectSelectionLine.OwnerActor = MOI->GetActor();
+		objectSelectionLine.OwnerActor = GetActor();
 		objectSelectionLine.Thickness = 2.0f;
-		objectSelectionLine.Color = MOI->IsSelected() ? EdgeSelectedColor : EdgeColor;
+		objectSelectionLine.Color = IsSelected() ? EdgeSelectedColor : EdgeColor;
 
 		HUDDrawWidget->LinesToDraw.Add(MoveTemp(objectSelectionLine));
 	}
@@ -309,7 +314,7 @@ bool FMOICutPlaneImpl::StartRender(FModumateDocument* doc /*= nullptr*/)
 		{
 			return false;
 		}
-		object = MOI->GetDocument()->GetObjectById(objectRender.MoiId);
+		object = GetDocument()->GetObjectById(objectRender.MoiId);
 	} while (object == nullptr);
 
 	static constexpr float pixelsPerWorldCentimeter = 1.0f / PixelsToWorldCentimeters;
@@ -389,7 +394,7 @@ bool FMOICutPlaneImpl::StartRender(FModumateDocument* doc /*= nullptr*/)
 
 float FMOICutPlaneImpl::GetAlpha() const
 {
-	return FMOIPlaneImplBase::GetAlpha() * ((MOI && MOI->IsSelected()) ? 0.4f : 0.2f);
+	return FMOIPlaneImplBase::GetAlpha() * (IsSelected() ? 0.4f : 0.2f);
 }
 
 void FMOICutPlaneImpl::UpdateCachedGeometryData()
@@ -417,7 +422,7 @@ void FMOICutPlaneImpl::UpdateDraftingPreview()
 {
 	PreviewHUDLines = nullptr;
 
-	if (!MOI->IsSelected())
+	if (!IsSelected())
 	{
 		return;
 	}
@@ -516,7 +521,7 @@ void FMOICutPlaneImpl::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposit
 				// not used
 				TArray<TArray<FVector>> portalPerimeters;
 
-				moi->GetDraftingLines(ParentPage, CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, portalPerimeters);
+				GetDraftingLines(ParentPage, CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, portalPerimeters);
 
 				CaptureActor->CaptureComponent->HiddenActors.Add(moi->GetActor());
 			}
@@ -545,7 +550,7 @@ void FMOICutPlaneImpl::SetupPendingRenders()
 	PendingObjectRenders.Empty();
 	InprocessRenders.Empty();
 
-	TArray<FModumateObjectInstance*> bitmapObjects = MOI->GetDocument()->GetObjectsOfType(EObjectType::OTFurniture);
+	TArray<FModumateObjectInstance*> bitmapObjects = GetDocument()->GetObjectsOfType(EObjectType::OTFurniture);
 	for (const auto object: bitmapObjects)
 	{
 		FPendingObjectRender renderInfo;
@@ -577,7 +582,7 @@ void FMOICutPlaneImpl::ConvertToOutlines(const FString& renderTargetFilename)
 {
 	Modumate::FModumateAutotraceConnect autotraceServer;
 
-	if (autotraceServer.ConvertImageFromFile(renderTargetFilename, CurrentObjectRender.LocalId, this, MOI->ID, MOI->GetWorld()))
+	if (autotraceServer.ConvertImageFromFile(renderTargetFilename, CurrentObjectRender.LocalId, this, ID, GetWorld()))
 	{
 		InprocessRenders.Add(CurrentObjectRender.LocalId, CurrentObjectRender);
 		++PendingTraceRequests;

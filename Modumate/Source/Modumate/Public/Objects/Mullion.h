@@ -7,5 +7,5 @@
 class MODUMATE_API FMOIMullion : public FMOIStructureLine
 {
 public:
-	FMOIMullion(FModumateObjectInstance *moi);
+	FMOIMullion();
 };

@@ -8,8 +8,8 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
-FMOIScopeBoxImpl::FMOIScopeBoxImpl(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOIScopeBoxImpl::FMOIScopeBoxImpl()
+	: FModumateObjectInstance()
 	, EdgeSelectedColor(255.0f / 255.0f, 0.0f / 255.0f, 0.0f / 255.0f)
 	, EdgeColor(255.0f / 255.0f, 45.0f / 255.0f, 45.0f / 255.0f)
 	, HandleScale(0.0015f)
@@ -21,7 +21,7 @@ FMOIScopeBoxImpl::FMOIScopeBoxImpl(FModumateObjectInstance *moi)
 
 AActor* FMOIScopeBoxImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
-	AActor* returnActor = FModumateObjectInstanceImplBase::CreateActor(world, loc, rot);
+	AActor* returnActor = FModumateObjectInstance::CreateActor(world, loc, rot);
 	auto controller = world->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 	auto playerState = controller ? controller->EMPlayerState : nullptr;
 	if (playerState)
@@ -31,7 +31,7 @@ AActor* FMOIScopeBoxImpl::CreateActor(UWorld *world, const FVector &loc, const F
 	return returnActor;
 }
 
-void FMOIScopeBoxImpl::Destroy()
+void FMOIScopeBoxImpl::PreDestroy()
 {
 	auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
 	auto playerState = controller ? controller->EMPlayerState : nullptr;
@@ -48,14 +48,14 @@ void FMOIScopeBoxImpl::SetupDynamicGeometry()
 	AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
 	MaterialData.EngineMaterial = gameMode ? gameMode->ScopeBoxMaterial : nullptr;
 
-	float thickness = MOI->GetExtents().Y;
+	float thickness = GetExtents().Y;
 	FVector extrusionDelta = thickness * FVector::UpVector;
-	DynamicMeshActor->SetupPrismGeometry(MOI->GetControlPoints(), extrusionDelta, MaterialData, true, true);
+	DynamicMeshActor->SetupPrismGeometry(GetControlPoints(), extrusionDelta, MaterialData, true, true);
 
-	MOI->UpdateVisibilityAndCollision();
+	UpdateVisualFlags();
 
 	FPlane outPlane;
-	UModumateGeometryStatics::GetPlaneFromPoints(MOI->GetControlPoints(), outPlane);
+	UModumateGeometryStatics::GetPlaneFromPoints(GetControlPoints(), outPlane);
 
 	Normal = FVector(outPlane);
 #endif
@@ -88,14 +88,14 @@ void FMOIScopeBoxImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outP
 
 	// TODO: derive from extents and transform, rather than old-school control points
 #if 0
-	int32 numPolyPoints = MOI->GetControlPoints().Num();
-	FVector offset = MOI->GetExtents().Y * Normal;
+	int32 numPolyPoints = GetControlPoints().Num();
+	FVector offset = GetExtents().Y * Normal;
  
 	for (int32 i = 0; i < numPolyPoints; ++i)
 	{
 		int32 nextI = (i + 1) % numPolyPoints;
-		const FVector &cp1 = MOI->GetControlPoint(i);
-		const FVector &cp2 = MOI->GetControlPoint(nextI);
+		const FVector &cp1 = GetControlPoint(i);
+		const FVector &cp2 = GetControlPoint(nextI);
 		FVector dir = (cp2 - cp1).GetSafeNormal();
 
 		const FVector &cp1n = cp1 + offset;
@@ -121,9 +121,9 @@ void FMOIScopeBoxImpl::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
 		FModumateLines objectSelectionLine = FModumateLines();
 		objectSelectionLine.Point1 = structureLine.P1;
 		objectSelectionLine.Point2 = structureLine.P2;
-		objectSelectionLine.OwnerActor = MOI->GetActor();
+		objectSelectionLine.OwnerActor = GetActor();
 		objectSelectionLine.Thickness = 2.0f;
-		objectSelectionLine.Color = MOI->IsSelected() ? EdgeSelectedColor : EdgeColor;
+		objectSelectionLine.Color = IsSelected() ? EdgeSelectedColor : EdgeColor;
 
 		HUDDrawWidget->LinesToDraw.Add(MoveTemp(objectSelectionLine));
 	}
@@ -139,10 +139,10 @@ void FMOIScopeBoxImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *co
 {
 	for (int32 i = 0; i < 4; ++i)
 	{
-		auto pointHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
+		auto pointHandle = MakeHandle<AAdjustPolyEdgeHandle>();
 		pointHandle->SetTargetIndex(i);
 
-		auto edgeHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
+		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
 		edgeHandle->SetTargetIndex(i);
 	}
 

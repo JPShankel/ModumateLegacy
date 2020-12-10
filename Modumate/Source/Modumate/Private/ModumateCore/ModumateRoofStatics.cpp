@@ -378,7 +378,7 @@ bool UModumateRoofStatics::GetAllProperties(
 	// - When MOIs are UObjects that can be safely and performantly down-casted, this implementation-specific derived data can be safely exposed publicly
 	// - Alternatively, the ordered edge ID list can be stored in CustomData, but needs to be modified during delta application via side effect deltas
 	const FModumateDocument* doc = RoofObject->GetDocument();
-	const FMOIRoofPerimeterImpl* roofPerimeterImpl = (const FMOIRoofPerimeterImpl*)RoofObject->Implementation;
+	const FMOIRoofPerimeterImpl* roofPerimeterImpl = (const FMOIRoofPerimeterImpl*)RoofObject;
 	OutEdgeIDs = roofPerimeterImpl->GetCachedEdgeIDs();
 	int32 numEdges = OutEdgeIDs.Num();
 

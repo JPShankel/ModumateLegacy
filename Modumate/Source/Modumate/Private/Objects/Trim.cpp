@@ -14,8 +14,8 @@
 
 #include "Algo/ForEach.h"
 
-FMOITrimImpl::FMOITrimImpl(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOITrimImpl::FMOITrimImpl()
+	: FModumateObjectInstance()
 	, TrimStartPos(ForceInitToZero)
 	, TrimEndPos(ForceInitToZero)
 	, TrimNormal(ForceInitToZero)
@@ -27,13 +27,9 @@ FMOITrimImpl::FMOITrimImpl(FModumateObjectInstance *moi)
 {
 }
 
-FMOITrimImpl::~FMOITrimImpl()
-{
-}
-
 FVector FMOITrimImpl::GetLocation() const
 {
-	const FModumateObjectInstance* parentMOI = MOI ? MOI->GetParentObject() : nullptr;
+	const FModumateObjectInstance* parentMOI = GetParentObject();
 	if (parentMOI)
 	{
 		return parentMOI->GetLocation();
@@ -44,7 +40,7 @@ FVector FMOITrimImpl::GetLocation() const
 
 FQuat FMOITrimImpl::GetRotation() const
 {
-	const FModumateObjectInstance *parentMOI = MOI ? MOI->GetParentObject() : nullptr;
+	const FModumateObjectInstance *parentMOI = GetParentObject();
 	if (parentMOI)
 	{
 		return parentMOI->GetRotation();
@@ -66,12 +62,7 @@ void FMOITrimImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& Out
 
 void FMOITrimImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* Controller)
 {
-	MOI->MakeHandle<AAdjustInvertHandle>();
-}
-
-void FMOITrimImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow)
-{
-	return FModumateObjectInstanceImplBase::ShowAdjustmentHandles(Controller, bShow);
+	MakeHandle<AAdjustInvertHandle>();
 }
 
 bool FMOITrimImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
@@ -85,7 +76,7 @@ bool FMOITrimImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 			return false;
 		}
 
-		MOI->MarkDirty(EObjectDirtyFlags::Mitering);
+		MarkDirty(EObjectDirtyFlags::Mitering);
 		return true;
 	}
 	case EObjectDirtyFlags::Mitering:
@@ -95,13 +86,13 @@ bool FMOITrimImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 			return false;
 		}
 
-		bool bInPreviewMode = MOI->IsInPreviewMode();
+		bool bInPreviewMode = IsInPreviewMode();
 		bool bRecreateMesh = !bInPreviewMode;
 		bool bCreateCollision = !bInPreviewMode;
 		return InternalUpdateGeometry(bRecreateMesh, bCreateCollision);
 	}
 	case EObjectDirtyFlags::Visuals:
-		MOI->UpdateVisibilityAndCollision();
+		UpdateVisuals();
 		return true;
 	default:
 		return true;
@@ -111,7 +102,7 @@ bool FMOITrimImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 void FMOITrimImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	const FSimplePolygon* profile = nullptr;
-	if (UModumateObjectStatics::GetPolygonProfile(&MOI->GetAssembly(), profile))
+	if (UModumateObjectStatics::GetPolygonProfile(&GetAssembly(), profile))
 	{
 		FVector2D profileSize = profile->Extents.GetSize();
 
@@ -142,7 +133,7 @@ bool FMOITrimImpl::GetIsDynamic() const
 
 bool FMOITrimImpl::GetInvertedState(FMOIStateData& OutState) const
 {
-	OutState = MOI->GetStateData();
+	OutState = GetStateData();
 
 	FMOITrimData modifiedTrimData = InstanceData;
 	modifiedTrimData.bUpInverted = !modifiedTrimData.bUpInverted;
@@ -156,7 +147,7 @@ void FMOITrimImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposit
 {
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	TArray<FVector> perimeter;
-	UModumateObjectStatics::GetExtrusionPerimeterPoints(MOI, TrimUp, TrimNormal, perimeter);
+	UModumateObjectStatics::GetExtrusionPerimeterPoints(this, TrimUp, TrimNormal, perimeter);
 	if (bGetFarLines)
 	{   // Beyond lines.
 		TArray<FEdge> beyondLines = UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(Plane, perimeter, TrimStartPos, TrimEndPos);
@@ -199,8 +190,8 @@ void FMOITrimImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposit
 
 bool FMOITrimImpl::UpdateCachedStructure()
 {
-	const FBIMAssemblySpec& trimAssembly = MOI->GetAssembly();
-	const FModumateDocument* doc = MOI->GetDocument();
+	const FBIMAssemblySpec& trimAssembly = GetAssembly();
+	const FModumateDocument* doc = GetDocument();
 
 	const FSimplePolygon* polyProfile = nullptr;
 	if (!UModumateObjectStatics::GetPolygonProfile(&trimAssembly, polyProfile))
@@ -210,7 +201,7 @@ bool FMOITrimImpl::UpdateCachedStructure()
 
 	// Find the parent surface edge MOI to set up mounting.
 	// This can fail gracefully, if the object is still getting set up before it has a parent assigned.
-	const FModumateObjectInstance* surfaceEdgeMOI = MOI->GetParentObject();
+	const FModumateObjectInstance* surfaceEdgeMOI = GetParentObject();
 	if ((surfaceEdgeMOI == nullptr) || (surfaceEdgeMOI->GetObjectType() != EObjectType::OTSurfaceEdge) || surfaceEdgeMOI->IsDirty(EObjectDirtyFlags::Structure))
 	{
 		return false;
@@ -292,7 +283,7 @@ bool FMOITrimImpl::UpdateMitering()
 
 bool FMOITrimImpl::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 {
-	const FBIMAssemblySpec& trimAssembly = MOI->GetAssembly();
+	const FBIMAssemblySpec& trimAssembly = GetAssembly();
 
 	return DynamicMeshActor->SetupExtrudedPolyGeometry(trimAssembly, TrimStartPos, TrimEndPos,
 		TrimNormal, TrimUp, UpperExtensions, OuterExtensions, TrimScale, bRecreate, bCreateCollision);

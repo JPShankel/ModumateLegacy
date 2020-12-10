@@ -12,17 +12,16 @@ class AEditModelGameMode_CPP;
 
 class FModumateObjectInstance;
 
-class MODUMATE_API FMOIRoomImpl : public FModumateObjectInstanceImplBase
+class MODUMATE_API FMOIRoomImpl : public FModumateObjectInstance
 {
 public:
-	FMOIRoomImpl(FModumateObjectInstance *moi);
-	virtual ~FMOIRoomImpl();
+	FMOIRoomImpl();
 
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
 
-	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
-	virtual void OnSelected(bool bIsSelected) override;
+	virtual bool OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
+	virtual bool OnSelected(bool bIsSelected) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;

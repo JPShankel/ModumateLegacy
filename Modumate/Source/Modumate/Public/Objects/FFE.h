@@ -28,7 +28,7 @@ class AAdjustmentHandleActor;
 
 class FModumateObjectInstance;
 
-class MODUMATE_API FMOIFFEImpl : public FModumateObjectInstanceImplBase
+class MODUMATE_API FMOIFFEImpl : public FModumateObjectInstance
 {
 protected:
 	TWeakObjectPtr<UWorld> World;
@@ -42,8 +42,7 @@ protected:
 
 public:
 
-	FMOIFFEImpl(FModumateObjectInstance *moi);
-	virtual ~FMOIFFEImpl();
+	FMOIFFEImpl();
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;

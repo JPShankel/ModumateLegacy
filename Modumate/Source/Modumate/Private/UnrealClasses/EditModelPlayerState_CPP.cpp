@@ -97,7 +97,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 		while (curViewGroupObj)
 		{
 			CurViewGroupObjects.Add(curViewGroupObj);
-			curViewGroupObj->GetStructuralPointsAndLines(TempObjectStructurePoints, TempObjectStructureLines);
+			curViewGroupObj->RouteGetStructuralPointsAndLines(TempObjectStructurePoints, TempObjectStructureLines);
 			CurSelectionStructurePoints.Append(TempObjectStructurePoints);
 			CurSelectionStructureLines.Append(TempObjectStructureLines);
 			curViewGroupObj = curViewGroupObj->GetParentObject();
@@ -110,7 +110,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 		{
 			if (selectedObj && selectedObj->ShowStructureOnSelection())
 			{
-				selectedObj->GetStructuralPointsAndLines(TempObjectStructurePoints, TempObjectStructureLines);
+				selectedObj->RouteGetStructuralPointsAndLines(TempObjectStructurePoints, TempObjectStructureLines);
 				CurSelectionStructurePoints.Append(TempObjectStructurePoints);
 				CurSelectionStructureLines.Append(TempObjectStructureLines);
 			}
@@ -653,12 +653,12 @@ void AEditModelPlayerState_CPP::SetHoveredObject(FModumateObjectInstance *ob)
 	{
 		if (HoveredObject != nullptr)
 		{
-			HoveredObject->MouseHoverActor(EMPlayerController, false);
+			HoveredObject->OnHovered(EMPlayerController, false);
 		}
 		HoveredObject = ob;
 		if (ob != nullptr)
 		{
-			ob->MouseHoverActor(EMPlayerController, true);
+			ob->OnHovered(EMPlayerController, true);
 		}
 		PostViewChanged();
 	}
@@ -936,7 +936,7 @@ void AEditModelPlayerState_CPP::UpdateObjectVisibilityAndCollision()
 	{
 		if (moi)
 		{
-			moi->UpdateVisibilityAndCollision();
+			moi->UpdateVisuals();
 		}
 	}
 }

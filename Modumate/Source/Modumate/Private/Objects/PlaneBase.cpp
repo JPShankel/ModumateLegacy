@@ -7,8 +7,8 @@
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 
-FMOIPlaneImplBase::FMOIPlaneImplBase(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOIPlaneImplBase::FMOIPlaneImplBase()
+	: FModumateObjectInstance()
 	, SelectedColor(0x1C, 0x9F, 0xFF)
 	, HoveredColor(0xCF, 0xCF, 0xCF)
 	, BaseColor(0xFF, 0xFF, 0xFF)
@@ -75,7 +75,7 @@ void FMOIPlaneImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &out
 // Adjustment Handles
 void FMOIPlaneImplBase::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
-	if (MOI->HasAdjustmentHandles())
+	if (HasAdjustmentHandles())
 	{
 		return;
 	}
@@ -83,7 +83,7 @@ void FMOIPlaneImplBase::SetupAdjustmentHandles(AEditModelPlayerController_CPP *c
 	int32 numPoints = CachedPoints.Num();
 	for (int32 i = 0; i < numPoints; ++i)
 	{
-		auto edgeHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
+		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
 		edgeHandle->SetTargetIndex(i);
 	}
 }
@@ -93,9 +93,9 @@ bool FMOIPlaneImplBase::ShowStructureOnSelection() const
 	return false;
 }
 
-void FMOIPlaneImplBase::UpdateVisibilityAndCollision(bool& bOutVisible, bool& bOutCollisionEnabled)
+void FMOIPlaneImplBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
 {
-	FModumateObjectInstanceImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
+	FModumateObjectInstance::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
 
 	if (bOutVisible)
 	{
@@ -103,42 +103,54 @@ void FMOIPlaneImplBase::UpdateVisibilityAndCollision(bool& bOutVisible, bool& bO
 	}
 }
 
-void FMOIPlaneImplBase::OnSelected(bool bIsSelected)
+bool FMOIPlaneImplBase::OnSelected(bool bIsSelected)
 {
-	MOI->UpdateVisibilityAndCollision();
-	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
+	if (!FModumateObjectInstance::OnSelected(bIsSelected))
+	{
+		return false;
+	}
+
+	UpdateVisuals();
+	return true;
 }
 
-void FMOIPlaneImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
+bool FMOIPlaneImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
-	MOI->UpdateVisibilityAndCollision();
-	FModumateObjectInstanceImplBase::OnHovered(controller, bIsHovered);
+	if (!FModumateObjectInstance::OnHovered(controller, bIsHovered))
+	{
+		return false;
+	}
+
+	UpdateVisuals();
+	return true;
 }
 
 void FMOIPlaneImplBase::PostCreateObject(bool bNewObject)
 {
+	FModumateObjectInstance::PostCreateObject(bNewObject);
+
 	UpdateConnectedVisuals();
 }
 
 float FMOIPlaneImplBase::GetAlpha() const
 {
-	return MOI->IsHovered() ? 1.5f : 1.0f;
+	return IsHovered() ? 1.5f : 1.0f;
 }
 
 void FMOIPlaneImplBase::UpdateMaterial()
 {
-	if (MOI && DynamicMeshActor.IsValid())
+	if (DynamicMeshActor.IsValid())
 	{
 		AEditModelGameMode_CPP* gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
 		// Color
 		if (gameMode)
 		{
 			MaterialData.EngineMaterial = gameMode->MetaPlaneMaterial;
-			if (MOI->IsSelected())
+			if (IsSelected())
 			{
 				MaterialData.DefaultBaseColor.Color = SelectedColor;
 			}
-			else if (MOI->IsHovered())
+			else if (IsHovered())
 			{
 				MaterialData.DefaultBaseColor.Color = HoveredColor;
 			}
@@ -157,14 +169,11 @@ void FMOIPlaneImplBase::UpdateMaterial()
 
 void FMOIPlaneImplBase::UpdateConnectedVisuals()
 {
-	if (MOI)
+	UpdateVisuals();
+	// Update the visuals of all of our connected edges
+	GetConnectedMOIs(TempConnectedMOIs);
+	for (FModumateObjectInstance* connectedMOI : TempConnectedMOIs)
 	{
-		MOI->UpdateVisibilityAndCollision();
-		// Update the visuals of all of our connected edges
-		MOI->GetConnectedMOIs(TempConnectedMOIs);
-		for (FModumateObjectInstance* connectedMOI : TempConnectedMOIs)
-		{
-			connectedMOI->MarkDirty(EObjectDirtyFlags::Visuals);
-		}
+		connectedMOI->MarkDirty(EObjectDirtyFlags::Visuals);
 	}
 }

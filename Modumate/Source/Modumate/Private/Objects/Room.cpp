@@ -12,13 +12,9 @@
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateRoomStatics.h"
 
-FMOIRoomImpl::FMOIRoomImpl(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOIRoomImpl::FMOIRoomImpl()
+	: FModumateObjectInstance()
 	, DynamicMaterial(nullptr)
-{
-}
-
-FMOIRoomImpl::~FMOIRoomImpl()
 {
 }
 
@@ -36,23 +32,31 @@ FQuat FMOIRoomImpl::GetRotation() const
 	return FQuat::Identity;
 }
 
-void FMOIRoomImpl::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
+bool FMOIRoomImpl::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
-	FModumateObjectInstanceImplBase::OnHovered(controller, bIsHovered);
+	if (!FModumateObjectInstance::OnHovered(controller, bIsHovered))
+	{
+		return false;
+	}
 
 	UpdateMaterial();
+	return true;
 }
 
-void FMOIRoomImpl::OnSelected(bool bIsSelected)
+bool FMOIRoomImpl::OnSelected(bool bIsSelected)
 {
-	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
+	if (!FModumateObjectInstance::OnSelected(bIsSelected))
+	{
+		return false;
+	}
 
 	UpdateMaterial();
+	return true;
 }
 
 void FMOIRoomImpl::SetupDynamicGeometry()
 {
-	const FModumateDocument *doc = MOI ? MOI->GetDocument() : nullptr;
+	const FModumateDocument *doc = GetDocument();
 	if (doc == nullptr)
 	{
 		return;
@@ -61,7 +65,7 @@ void FMOIRoomImpl::SetupDynamicGeometry()
 	TArray<TArray<FVector>> polygons;
 	const Modumate::FGraph3D &volumeGraph = doc->GetVolumeGraph();
 	// TODO: refactor room faces using strongly-typed InstanceProperties
-	for (FGraphSignedID faceID : { MOD_ID_NONE })//MOI->GetControlPointIndices())
+	for (FGraphSignedID faceID : { MOD_ID_NONE })//GetControlPointIndices())
 	{
 		const Modumate::FGraph3DFace *graphFace = volumeGraph.FindFace(faceID);
 		const FModumateObjectInstance *planeObj = doc->GetObjectById(FMath::Abs(faceID));
@@ -74,14 +78,14 @@ void FMOIRoomImpl::SetupDynamicGeometry()
 	}
 
 	DynamicMeshActor->SetupRoomGeometry(polygons, Material);
-	UModumateRoomStatics::UpdateDerivedRoomProperties(MOI);
+	UModumateRoomStatics::UpdateDerivedRoomProperties(this);
 
 	// Update the cached config, now that its derived room properties have been set.
-	if (!UModumateRoomStatics::GetRoomConfig(MOI, CachedRoomConfig))
+	if (!UModumateRoomStatics::GetRoomConfig(this, CachedRoomConfig))
 	{
 		// If we failed to get a config, then we should at least set a default one here, and re-update the derived properties.
-		UModumateRoomStatics::SetRoomConfigFromKey(MOI, UModumateRoomStatics::DefaultRoomConfigKey);
-		UModumateRoomStatics::UpdateDerivedRoomProperties(MOI);
+		UModumateRoomStatics::SetRoomConfigFromKey(this, UModumateRoomStatics::DefaultRoomConfigKey);
+		UModumateRoomStatics::UpdateDerivedRoomProperties(this);
 	}
 
 	UpdateMaterial();
@@ -94,11 +98,11 @@ void FMOIRoomImpl::UpdateDynamicGeometry()
 
 void FMOIRoomImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	const FModumateDocument *doc = MOI ? MOI->GetDocument() : nullptr;
+	const FModumateDocument *doc = GetDocument();
 	if (doc)
 	{
 		// TODO: refactor room faces using strongly-typed InstanceProperties
-		for (FGraphSignedID faceID : { MOD_ID_NONE })//MOI->GetControlPointIndices())
+		for (FGraphSignedID faceID : { MOD_ID_NONE })//GetControlPointIndices())
 		{
 			const FModumateObjectInstance *planeObj = doc->GetObjectById(FMath::Abs(faceID));
 			if (planeObj == nullptr)
@@ -115,7 +119,7 @@ void FMOIRoomImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoint
 
 float FMOIRoomImpl::GetAlpha()
 {
-	return (MOI->IsHovered() ? 1.0f : 0.75f) * (MOI->IsSelected() ? 1.0f : 0.75f);
+	return (IsHovered() ? 1.0f : 0.75f) * (IsSelected() ? 1.0f : 0.75f);
 }
 
 void FMOIRoomImpl::UpdateMaterial()

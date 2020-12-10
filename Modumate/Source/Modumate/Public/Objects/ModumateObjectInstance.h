@@ -30,138 +30,78 @@ class ISceneCaptureObject;
 
 class FModumateObjectInstance;
 
-class MODUMATE_API IModumateObjectInstanceImpl
+class MODUMATE_API FModumateObjectInstance
 {
 public:
-	virtual ~IModumateObjectInstanceImpl() {};
+	FModumateObjectInstance();
+	virtual ~FModumateObjectInstance();
 
-	virtual void SetMaterial(UMaterialInterface *m) = 0;
-	virtual UMaterialInterface *GetMaterial() = 0;
+	virtual void BeginPlay();
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);//override;
 
-	virtual FVector GetLocation() const = 0;
-	virtual FQuat GetRotation() const = 0;
-	virtual FTransform GetWorldTransform() const = 0;
-	virtual FVector GetNormal() const = 0;
-	virtual FVector GetCorner(int32 index) const = 0;
-	virtual int32 GetNumCorners() const = 0;
-
-	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) = 0;
-
-	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) = 0;
-
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) = 0;
-	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow) = 0;
-	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) = 0;
-	virtual void OnSelected(bool bIsSelected) = 0;
-
-	virtual void OnAssemblyChanged() = 0;
-
-	virtual AActor *RestoreActor() = 0;
-	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) = 0;
-	virtual void PostCreateObject(bool bNewObject) = 0;
-	virtual void Destroy() = 0;
-
-	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) = 0;
-
-	virtual void SetupDynamicGeometry() = 0;
-	virtual void UpdateDynamicGeometry() = 0;
-	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const = 0;
-
-	virtual bool IsSelectableByUser() const = 0;
-	virtual bool ShowStructureOnSelection() const = 0;
-	virtual bool UseStructureDataForCollision() const = 0;
-
-	virtual bool GetInvertedState(FMOIStateData& OutState) const = 0;
-	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const = 0;
-	virtual bool GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const = 0;
-	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const = 0;
-
-	virtual TArray<FModelDimensionString> GetDimensionStrings() const = 0;
-
-	virtual const ILayeredObject* GetLayeredInterface() const = 0;
-	virtual const IMiterNode* GetMiterInterface() const = 0;
-	virtual ISceneCaptureObject* GetSceneCaptureInterface() = 0;
-
-	virtual void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget) = 0;
-	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const = 0;
-
-	virtual void SetIsDynamic(bool bIsDynamic) = 0;
-	virtual bool GetIsDynamic() const = 0;
-};
-
-class MODUMATE_API FModumateObjectInstanceImplBase : public IModumateObjectInstanceImpl
-{
 protected:
-	FModumateObjectInstance* MOI;
-
 	// TODO: remove when MOIs are actors or DynamicMeshActor is a component that manages procedural meshes.
 	TWeakObjectPtr<ADynamicMeshActor> DynamicMeshActor;
 
-	TWeakObjectPtr<UWorld> World;
-
-	FModumateObjectInstanceImplBase(FModumateObjectInstance* InMOI)
-		: MOI(InMOI)
-	{}
-
 public:
-	virtual void SetMaterial(UMaterialInterface *m) override { }
-	virtual UMaterialInterface *GetMaterial() override { return nullptr; }
+	// Object transform getters/setters.
+	//   NOTE: GetLocation and GetRotation are intended to be interpreted by the object;
+	//   they may either be world-relative, or parent-relative, or in any arbitrary coordinate space.
+	//   WorldTransform, however, is always intended to be in world coordinate space, if that makes sense for the object.
+	//   Setting any of these values does not guarantee that getting it will return the same value;
+	//   objects will do their best to interpret an intended transform value, based on any constraints it might have.
+	virtual FVector GetLocation() const;
+	virtual FQuat GetRotation() const;
+	virtual FTransform GetWorldTransform() const;
+	virtual FVector GetNormal() const { return FVector::ZeroVector; }
+	virtual FVector GetCorner(int32 index) const;
+	virtual int32 GetNumCorners() const;
 
-	virtual FVector GetLocation() const override;
-	virtual FQuat GetRotation() const override;
-	virtual FTransform GetWorldTransform() const override;
-	virtual FVector GetNormal() const override { return FVector::ZeroVector; }
-	virtual FVector GetCorner(int32 index) const override;
-	virtual int32 GetNumCorners() const override;
+	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr);
 
-	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
+	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled);
 
-	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) { }
+	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow);
+	virtual bool OnHovered(AEditModelPlayerController_CPP* controller, bool bNewHovered);
+	virtual bool OnSelected(bool bIsSelected);
 
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override { }
-	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow) override;
-	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override { }
-	virtual void OnSelected(bool bIsSelected) override;
+	virtual void OnAssemblyChanged();
 
-	virtual void OnAssemblyChanged() override;
+	virtual AActor *RestoreActor();
+	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot);
+	virtual void PostCreateObject(bool bNewObject);
+	virtual void PreDestroy();
 
-	virtual AActor *RestoreActor() override;
-	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
-	virtual void PostCreateObject(bool bNewObject) override;
-	virtual void Destroy() override;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas);
 
-	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
+	virtual void SetupDynamicGeometry() { }
+	virtual void UpdateDynamicGeometry() { }
+	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const { }
 
-	virtual void SetupDynamicGeometry() override { }
-	virtual void UpdateDynamicGeometry() override { }
-	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override { }
+	virtual bool IsSelectableByUser() const { return true; }
+	virtual bool ShowStructureOnSelection() const { return true; }
+	virtual bool UseStructureDataForCollision() const { return false; }
 
-	virtual bool IsSelectableByUser() const override { return true; }
-	virtual bool ShowStructureOnSelection() const override { return true; }
-	virtual bool UseStructureDataForCollision() const override { return false; }
+	virtual bool GetInvertedState(FMOIStateData& OutState) const { return false; }
+	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const { return false; }
+	virtual bool GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const { return false; }
+	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const { return false; };
 
-	virtual bool GetInvertedState(FMOIStateData& OutState) const override { return false; }
-	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override { return false; }
-	virtual bool GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override { return false; }
-	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override { return false; };
+	virtual TArray<FModelDimensionString> GetDimensionStrings() const { return TArray<FModelDimensionString>(); }
 
-	virtual TArray<FModelDimensionString> GetDimensionStrings() const override { return TArray<FModelDimensionString>(); }
+	virtual const ILayeredObject* GetLayeredInterface() const { return nullptr; }
+	virtual const IMiterNode* GetMiterInterface() const { return nullptr; }
+	virtual ISceneCaptureObject* GetSceneCaptureInterface() { return nullptr; }
 
-	virtual const ILayeredObject* GetLayeredInterface() const override { return nullptr; }
-	virtual const IMiterNode* GetMiterInterface() const override { return nullptr; }
-	virtual ISceneCaptureObject* GetSceneCaptureInterface() override { return nullptr; }
+	// Drafting
+	virtual void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget) { };
+	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const { };
 
-	virtual void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget) override { };
-	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override { };
+	virtual void SetIsDynamic(bool bIsDynamic) { }
+	virtual bool GetIsDynamic() const { return false; }
 
-	virtual void SetIsDynamic(bool bIsDynamic) override { }
-	virtual bool GetIsDynamic() const override { return false; }
-};
-
-
-class MODUMATE_API FModumateObjectInstance
-{
-private:
+protected:
 
 	friend class FMOIDelta;
 
@@ -171,7 +111,6 @@ private:
 
 	TWeakObjectPtr<AActor> MeshActor = nullptr;
 	TWeakObjectPtr<UWorld> World = nullptr;
-	IModumateObjectInstanceImpl *Implementation = nullptr;
 	FModumateDocument *Document = nullptr;
 
 	FMOIStateData StateData;
@@ -201,8 +140,8 @@ private:
 
 	EObjectDirtyFlags DirtyFlags = EObjectDirtyFlags::None;
 
-	bool GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr);
-	bool GetTypedInstanceData(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const;
+	bool RouteGetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr);
+	bool RouteGetTypedInstanceData(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const;
 
 	void AddCachedChildID(int32 ChildID);
 	void RemoveCachedChildID(int32 ChildID);
@@ -215,9 +154,6 @@ private:
 	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
 
 public:
-	FModumateObjectInstance(UWorld *world, FModumateDocument *doc, const FMOIStateData& InStateData);
-	~FModumateObjectInstance();
-
 	FMOIStateData& GetStateData();
 	const FMOIStateData& GetStateData() const;
 	bool SetStateData(const FMOIStateData& NewStateData);
@@ -240,7 +176,6 @@ public:
 	FModumateDocument* GetDocument() { return Document; }
 	const FModumateDocument* GetDocument() const { return Document; }
 
-	void PostCreateObject(bool bNewObject);
 	void Destroy(bool bFullDelete);
 	void Restore();
 
@@ -262,15 +197,10 @@ public:
 	// Geometry
 	void MarkDirty(EObjectDirtyFlags NewDirtyFlags);
 	bool IsDirty(EObjectDirtyFlags CheckDirtyFlags) const;
-	bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas);
+	bool RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas);
 
-	void SetupGeometry();
 	void UpdateGeometry();
-	void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const;
-
-	// Drafting
-	void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget);
-	void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const;
+	void RouteGetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const;
 
 	const FBIMAssemblySpec &GetAssembly() const;
 	void SetAssemblyLayersReversed(bool bNewLayersReversed);
@@ -279,40 +209,10 @@ public:
 	// only relevant for objects that will only be hosted by meta planes
 	float CalculateThickness() const;
 
-	const ILayeredObject* GetLayeredInterface() const;
-	const IMiterNode* GetMiterInterface() const;
-	ISceneCaptureObject* GetSceneCaptureInterface();
-
-	// Object transform getters/setters.
-	//   NOTE: GetLocation and GetRotation are intended to be interpreted by the object;
-	//   they may either be world-relative, or parent-relative, or in any arbitrary coordinate space.
-	//   WorldTransform, however, is always intended to be in world coordinate space, if that makes sense for the object.
-	//   Setting any of these values does not guarantee that getting it will return the same value;
-	//   objects will do their best to interpret an intended transform value, based on any constraints it might have.
-	FVector GetLocation() const;
-	FQuat GetRotation() const;
-	FTransform GetWorldTransform() const;
-	FVector GetNormal() const;
-	FVector GetCorner(int32 index) const;
-	int32 GetNumCorners() const;
-
-	void MouseHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover);
 	bool IsHovered() const { return bHovered; }
-
-	void OnSelected(bool bNewSelected);
 	bool IsSelected() const { return bSelected; }
 
-	bool IsSelectableByUser() const;
-	bool ShowStructureOnSelection() const;
-	bool UseStructureDataForCollision() const;
-
-	bool GetInvertedState(FMOIStateData& OutState) const;
-	bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const;
-	bool GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const;
-	bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const;
-
 	// Manipulation
-	void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow);
 	void ClearAdjustmentHandles();
 	const TArray<TWeakObjectPtr<AAdjustmentHandleActor>> &GetAdjustmentHandles() const;
 	bool HasAdjustmentHandles() const;
@@ -328,9 +228,6 @@ public:
 	// Whether it can be split - called by both the Document and the SplitTool
 	bool CanBeSplit() const;
 
-	UMaterialInterface *GetMaterial();
-	void SetMaterial(UMaterialInterface *mat);
-
 	// Interface for different systems requesting state changes without directly setting them.
 	void RequestHidden(const FName &Requester, bool bRequestHidden);
 	void RequestCollisionDisabled(const FName &Requester, bool bRequestCollisionDisabled);
@@ -341,7 +238,7 @@ public:
 
 	// Function exposed to explicitly request objects to re-evaluate the visibility and collision,
 	// in cases where it's affected by global state rather than just the above per-object requests.
-	void UpdateVisibilityAndCollision();
+	void UpdateVisuals();
 
 	// Class Data
 	EObjectType GetObjectType() const;

@@ -18,15 +18,12 @@
 
 class AEditModelPlayerController_CPP;
 
-FMOIFFEImpl::FMOIFFEImpl(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOIFFEImpl::FMOIFFEImpl()
+	: FModumateObjectInstance()
 	, World(nullptr)
 	, CachedLocation(ForceInitToZero)
 	, CachedRotation(ForceInit)
 	, CachedFaceNormal(ForceInitToZero)
-{}
-
-FMOIFFEImpl::~FMOIFFEImpl()
 {}
 
 AActor *FMOIFFEImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
@@ -37,9 +34,9 @@ AActor *FMOIFFEImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat 
 
 FVector FMOIFFEImpl::GetLocation() const
 {
-	if (MOI->GetActor() != nullptr)
+	if (GetActor() != nullptr)
 	{
-		return MOI->GetActor()->GetActorLocation();
+		return GetActor()->GetActorLocation();
 	}
 
 	return CachedLocation;
@@ -47,9 +44,9 @@ FVector FMOIFFEImpl::GetLocation() const
 
 FQuat FMOIFFEImpl::GetRotation() const
 {
-	if (MOI->GetActor() != nullptr)
+	if (GetActor() != nullptr)
 	{
-		return MOI->GetActor()->GetActorQuat();
+		return GetActor()->GetActorQuat();
 	}
 
 	return CachedRotation;
@@ -65,12 +62,12 @@ void FMOIFFEImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *control
 {
 	for (int32 i = 0; i < 4; ++i)
 	{
-		auto ffePointHandle = MOI->MakeHandle<AAdjustFFEPointHandle>();
+		auto ffePointHandle = MakeHandle<AAdjustFFEPointHandle>();
 		ffePointHandle->SetTargetIndex(i);
 	}
 
-	auto ffeRotateHandle = MOI->MakeHandle<AAdjustFFERotateHandle>();
-	auto ffeInvertHandle = MOI->MakeHandle<AAdjustFFEInvertHandle>();
+	auto ffeRotateHandle = MakeHandle<AAdjustFFERotateHandle>();
+	auto ffeInvertHandle = MakeHandle<AAdjustFFEInvertHandle>();
 }
 
 void FMOIFFEImpl::SetupDynamicGeometry()
@@ -86,8 +83,8 @@ void FMOIFFEImpl::UpdateDynamicGeometry()
 
 void FMOIFFEImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	ACompoundMeshActor *cma = MOI ? Cast<ACompoundMeshActor>(MOI->GetActor()) : nullptr;
-	FVector assemblyNormal = MOI->GetAssembly().Normal;
+	const ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(GetActor());
+	FVector assemblyNormal = GetAssembly().Normal;
 	TArray<FVector> boxSidePoints;
 
 	if (cma && UModumateObjectStatics::GetFFEBoxSidePoints(cma, assemblyNormal, boxSidePoints))
@@ -129,8 +126,8 @@ void FMOIFFEImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints
 
 void FMOIFFEImpl::InternalUpdateGeometry()
 {
-	ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(MOI->GetActor());
-	cma->MakeFromAssembly(MOI->GetAssembly(), FVector::OneVector, InstanceData.bLateralInverted, true);
+	ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(GetActor());
+	cma->MakeFromAssembly(GetAssembly(), FVector::OneVector, InstanceData.bLateralInverted, true);
 
 	FTransform dataStateTransform;
 	dataStateTransform.SetLocation(InstanceData.Location);
@@ -141,7 +138,7 @@ void FMOIFFEImpl::InternalUpdateGeometry()
 
 void FMOIFFEImpl::SetIsDynamic(bool bIsDynamic)
 {
-	auto meshActor = Cast<ACompoundMeshActor>(MOI->GetActor());
+	auto meshActor = Cast<ACompoundMeshActor>(GetActor());
 	if (meshActor)
 	{
 		meshActor->SetIsDynamic(bIsDynamic);
@@ -150,7 +147,7 @@ void FMOIFFEImpl::SetIsDynamic(bool bIsDynamic)
 
 bool FMOIFFEImpl::GetIsDynamic() const
 {
-	auto meshActor = Cast<ACompoundMeshActor>(MOI->GetActor());
+	auto meshActor = Cast<ACompoundMeshActor>(GetActor());
 	if (meshActor)
 	{
 		return meshActor->GetIsDynamic();
@@ -160,7 +157,7 @@ bool FMOIFFEImpl::GetIsDynamic() const
 
 bool FMOIFFEImpl::GetInvertedState(FMOIStateData& OutState) const
 {
-	OutState = MOI->GetStateData();
+	OutState = GetStateData();
 
 	FMOIFFEData modifiedFFEData = InstanceData;
 	modifiedFFEData.bLateralInverted = !modifiedFFEData.bLateralInverted;
@@ -170,7 +167,7 @@ bool FMOIFFEImpl::GetInvertedState(FMOIStateData& OutState) const
 
 bool FMOIFFEImpl::GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const
 {
-	OutState = MOI->GetStateData();
+	OutState = GetStateData();
 
 	FMOIFFEData modifiedFFEData = InstanceData;
 	modifiedFFEData.Location = Transform.GetLocation();

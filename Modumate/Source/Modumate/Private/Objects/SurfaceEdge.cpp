@@ -10,8 +10,8 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/LineActor.h"
 
-FMOISurfaceEdgeImpl::FMOISurfaceEdgeImpl(FModumateObjectInstance *moi)
-	: FMOIEdgeImplBase(moi)
+FMOISurfaceEdgeImpl::FMOISurfaceEdgeImpl()
+	: FMOIEdgeImplBase()
 	, CachedDeprojectedStart(ForceInitToZero)
 	, CachedDeprojectedEnd(ForceInitToZero)
 {
@@ -24,8 +24,8 @@ FVector FMOISurfaceEdgeImpl::GetCorner(int32 index) const
 
 bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-	auto surfaceGraphObj = MOI ? MOI->GetParentObject() : nullptr;
-	auto doc = MOI ? MOI->GetDocument() : nullptr;
+	auto surfaceGraphObj = GetParentObject();
+	auto doc = GetDocument();
 	if (!ensure(surfaceGraphObj && doc && LineActor.IsValid()))
 	{
 		return false;
@@ -35,12 +35,12 @@ bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelta
 	{
 	case EObjectDirtyFlags::Structure:
 	{
-		MOI->GetConnectedMOIs(CachedConnectedMOIs);
+		GetConnectedMOIs(CachedConnectedMOIs);
 
 		FVector offsetDelta = FMOISurfaceGraphImpl::VisualNormalOffset * surfaceGraphObj->GetNormal();
 
 		auto surfaceGraph = doc->FindSurfaceGraph(surfaceGraphObj->ID);
-		auto surfaceEdge = surfaceGraph ? surfaceGraph->FindEdge(MOI->ID) : nullptr;
+		auto surfaceEdge = surfaceGraph ? surfaceGraph->FindEdge(ID) : nullptr;
 		if (!ensureAlways(surfaceEdge))
 		{
 			return false;
@@ -62,7 +62,7 @@ bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelta
 		break;
 	}
 	case EObjectDirtyFlags::Visuals:
-		MOI->UpdateVisibilityAndCollision();
+		UpdateVisuals();
 		break;
 	default:
 		break;

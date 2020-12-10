@@ -8,7 +8,7 @@ class AVertexActor;
 class MODUMATE_API FMOIMetaVertexImpl : public FMOIVertexImplBase
 {
 public:
-	FMOIMetaVertexImpl(FModumateObjectInstance *moi);
+	FMOIMetaVertexImpl();
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetTangents(TArray<FVector>& OutTangents) const override;

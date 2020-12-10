@@ -27,36 +27,23 @@
 using namespace Modumate;
 class AEditModelPlayerController_CPP;
 
-FModumateObjectInstance::FModumateObjectInstance(UWorld *world, FModumateDocument *doc, const FMOIStateData& InStateData)
-	: World(world)
-	, Document(doc)
-	, StateData(InStateData)
-	, ID(InStateData.ID)
+FModumateObjectInstance::FModumateObjectInstance()
 {
-	if (!ensureAlways(world && doc && (StateData.ObjectType != EObjectType::OTNone) && (ID != MOD_ID_NONE)))
-	{
-		return;
-	}
+}
 
-	EToolMode assemblyToolMode = UModumateTypeStatics::ToolModeFromObjectType(StateData.ObjectType);
+FModumateObjectInstance::~FModumateObjectInstance()
+{
+	Destroy(true);
+}
 
-	// May return a default assembly if preset database changes, so update assembly key if necessary
-	if (Document->PresetManager.TryGetProjectAssemblyForPreset(StateData.ObjectType, StateData.AssemblyKey, CachedAssembly))
-	{
-		StateData.AssemblyKey = CachedAssembly.UniqueKey();
-	}
-	else
-	{
-		CachedAssembly.ObjectType = StateData.ObjectType;
-	}
+void FModumateObjectInstance::BeginPlay()
+{
 
-	Implementation = FMOIFactory::MakeMOIImplementation(StateData.ObjectType, this);
-	if (ensureAlways(Implementation))
-	{
-		MeshActor = Implementation->CreateActor(world, FVector::ZeroVector, FQuat::Identity);
-		SetupMOIComponent();
-		UpdateAssemblyFromKey();
-	}
+}
+
+void FModumateObjectInstance::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+
 }
 
 void FModumateObjectInstance::SetupMOIComponent()
@@ -79,7 +66,7 @@ void FModumateObjectInstance::SetupMOIComponent()
 
 void FModumateObjectInstance::UpdateAssemblyFromKey()
 {
-	if (CachedAssembly.UniqueKey() != StateData.AssemblyKey)
+	if ((CachedAssembly.UniqueKey() != StateData.AssemblyKey) || (CachedAssembly.ObjectType == EObjectType::OTNone))
 	{
 		// Meta-objects don't have assemblies but we track MOI type in the CachedAssembly
 		if (!Document->PresetManager.TryGetProjectAssemblyForPreset(StateData.ObjectType, StateData.AssemblyKey, CachedAssembly))
@@ -95,25 +82,11 @@ EObjectType FModumateObjectInstance::GetObjectType() const
 	return CachedAssembly.ObjectType;
 }
 
-FModumateObjectInstance::~FModumateObjectInstance()
-{
-	Destroy(true);
-
-	if (Implementation)
-	{
-		delete Implementation;
-		Implementation = nullptr;
-	}
-}
-
 void FModumateObjectInstance::Destroy(bool bFullDelete)
 {
 	if (!bDestroyed)
 	{
-		if (Implementation)
-		{
-			Implementation->Destroy();
-		}
+		PreDestroy();
 
 		CachedChildIDs.Reset();
 		if (FModumateObjectInstance* parentObj = GetParentObject())
@@ -330,49 +303,26 @@ TArray<const FModumateObjectInstance *> FModumateObjectInstance::GetAllDescenden
 	return myKids;
 }
 
-void FModumateObjectInstance::OnSelected(bool bNewSelected)
+bool FModumateObjectInstance::OnSelected(bool bNewSelected)
 {
-	if (bSelected != bNewSelected)
+	if (bSelected == bNewSelected)
 	{
-		bSelected = bNewSelected;
-
-		Implementation->OnSelected(bNewSelected);
+		return false;
 	}
+
+	bSelected = bNewSelected;
+	return true;
 }
 
-void FModumateObjectInstance::MouseHoverActor(AEditModelPlayerController_CPP *controller, bool EnableHover)
+bool FModumateObjectInstance::OnHovered(AEditModelPlayerController_CPP* Controller, bool bNewHovered)
 {
-	if (bHovered != EnableHover)
+	if (bHovered == bNewHovered)
 	{
-		bHovered = EnableHover;
-
-		Implementation->OnHovered(controller, EnableHover);
+		return false;
 	}
-}
 
-bool FModumateObjectInstance::IsSelectableByUser() const
-{
-	return Implementation && Implementation->IsSelectableByUser();
-}
-
-bool FModumateObjectInstance::ShowStructureOnSelection() const
-{
-	return Implementation && Implementation->ShowStructureOnSelection();
-}
-
-bool FModumateObjectInstance::UseStructureDataForCollision() const
-{
-	return Implementation && Implementation->UseStructureDataForCollision();
-}
-
-UMaterialInterface *FModumateObjectInstance::GetMaterial()
-{
-	return Implementation->GetMaterial();
-}
-
-void FModumateObjectInstance::SetMaterial(UMaterialInterface *mat)
-{
-	Implementation->SetMaterial(mat);
+	bHovered = bNewHovered;
+	return true;
 }
 
 void FModumateObjectInstance::RequestHidden(const FName &Requester, bool bRequestHidden)
@@ -395,7 +345,7 @@ void FModumateObjectInstance::RequestHidden(const FName &Requester, bool bReques
 
 	if (bWasRequestedHidden != IsRequestedHidden())
 	{
-		UpdateVisibilityAndCollision();
+		UpdateVisuals();
 	}
 }
 
@@ -419,23 +369,13 @@ void FModumateObjectInstance::RequestCollisionDisabled(const FName &Requester, b
 
 	if (bWasCollisionRequestedDisabled != IsCollisionRequestedDisabled())
 	{
-		UpdateVisibilityAndCollision();
+		UpdateVisuals();
 	}
 }
 
-void FModumateObjectInstance::UpdateVisibilityAndCollision()
+void FModumateObjectInstance::UpdateVisuals()
 {
-	Implementation->UpdateVisibilityAndCollision(bVisible, bCollisionEnabled);
-}
-
-void FModumateObjectInstance::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
-{
-	if (bShow && !HasAdjustmentHandles() && ensure(Implementation))
-	{
-		Implementation->SetupAdjustmentHandles(Controller);
-	}
-
-	Implementation->ShowAdjustmentHandles(Controller, bShow);
+	GetUpdatedVisuals(bVisible, bCollisionEnabled);
 }
 
 void FModumateObjectInstance::ClearAdjustmentHandles()
@@ -502,11 +442,6 @@ float FModumateObjectInstance::CalculateThickness() const
 	return CachedAssembly.CalculateThickness().AsWorldCentimeters();
 }
 
-FVector FModumateObjectInstance::GetNormal() const
-{
-	return Implementation->GetNormal();
-}
-
 void FModumateObjectInstance::MarkDirty(EObjectDirtyFlags NewDirtyFlags)
 {
 	for (EObjectDirtyFlags dirtyFlag : UModumateTypeStatics::OrderedDirtyFlags)
@@ -515,7 +450,7 @@ void FModumateObjectInstance::MarkDirty(EObjectDirtyFlags NewDirtyFlags)
 		{
 			DirtyFlags |= dirtyFlag;
 			Document->RegisterDirtyObject(dirtyFlag, this, true);
-			Implementation->SetIsDynamic(true);
+			SetIsDynamic(true);
 		}
 	}
 }
@@ -525,7 +460,7 @@ bool FModumateObjectInstance::IsDirty(EObjectDirtyFlags CheckDirtyFlags) const
 	return ((DirtyFlags & CheckDirtyFlags) == CheckDirtyFlags);
 }
 
-bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool FModumateObjectInstance::RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	bool bSuccess = false;
 
@@ -587,7 +522,7 @@ bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FD
 			}
 
 			// Let the implementation handle all the specific cleaning
-			bSuccess = Implementation->CleanObject(DirtyFlag, OutSideEffectDeltas);
+			bSuccess = CleanObject(DirtyFlag, OutSideEffectDeltas);
 		}
 
 		if (bSuccess)
@@ -617,7 +552,7 @@ bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FD
 
 	if (DirtyFlags == EObjectDirtyFlags::None && !IsInPreviewMode())
 	{
-		Implementation->SetIsDynamic(false);
+		SetIsDynamic(false);
 	}
 	return bSuccess;
 }
@@ -634,8 +569,12 @@ const FMOIStateData& FModumateObjectInstance::GetStateData() const
 
 bool FModumateObjectInstance::SetStateData(const FMOIStateData& NewStateData)
 {
+	if (ID == MOD_ID_NONE)
+	{
+		ID = NewStateData.ID;
+	}
 	// Don't support modifying existing objects' ID or ObjectType (except during initial creation); this would require recreating the entire object for now.
-	if (!ensure((StateData.ID == NewStateData.ID) && (StateData.ObjectType == NewStateData.ObjectType)))
+	else if (!ensure((StateData.ID == NewStateData.ID) && (StateData.ObjectType == NewStateData.ObjectType)))
 	{
 		return false;
 	}
@@ -662,7 +601,7 @@ bool FModumateObjectInstance::UpdateStateDataFromObject()
 	// If there's custom data for this object, make sure the serialized representation is up-to-date from the object.
 	UScriptStruct* customStructDef;
 	const void* customStructPtr;
-	if (GetTypedInstanceData(customStructDef, customStructPtr))
+	if (RouteGetTypedInstanceData(customStructDef, customStructPtr))
 	{
 		return StateData.CustomData.SaveStructData(customStructDef, customStructPtr);
 	}
@@ -676,7 +615,7 @@ bool FModumateObjectInstance::UpdateInstanceData()
 	// If there's custom data for this object, make sure the object is up-to-date from the serialized representation.
 	UScriptStruct* customStructDef;
 	void* customStructPtr;
-	if (GetTypedInstanceData(customStructDef, customStructPtr))
+	if (RouteGetTypedInstanceData(customStructDef, customStructPtr))
 	{
 		return StateData.CustomData.LoadStructData(customStructDef, customStructPtr);
 	}
@@ -685,23 +624,20 @@ bool FModumateObjectInstance::UpdateInstanceData()
 	return true;
 }
 
-bool FModumateObjectInstance::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+bool FModumateObjectInstance::RouteGetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 	OutStructDef = nullptr;
 	OutStructPtr = nullptr;
 
-	if (Implementation)
-	{
-		Implementation->GetTypedInstanceData(OutStructDef, OutStructPtr);
-	}
+	GetTypedInstanceData(OutStructDef, OutStructPtr);
 
 	return (OutStructDef != nullptr) && (OutStructPtr != nullptr);
 }
 
-bool FModumateObjectInstance::GetTypedInstanceData(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const
+bool FModumateObjectInstance::RouteGetTypedInstanceData(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const
 {
 	void* mutableStructPtr;
-	bool bSuccess = const_cast<FModumateObjectInstance*>(this)->GetTypedInstanceData(OutStructDef, mutableStructPtr);
+	bool bSuccess = const_cast<FModumateObjectInstance*>(this)->RouteGetTypedInstanceData(OutStructDef, mutableStructPtr);
 	OutStructPtr = const_cast<const void*>(mutableStructPtr);
 	return bSuccess;
 }
@@ -714,7 +650,7 @@ bool FModumateObjectInstance::BeginPreviewOperation()
 	}
 
 	bPreviewOperationMode = true;
-	Implementation->SetIsDynamic(true);
+	SetIsDynamic(true);
 	return true;
 }
 
@@ -775,25 +711,20 @@ void FModumateObjectInstance::SetAssemblyLayersReversed(bool bNewLayersReversed)
 	}
 }
 
-void FModumateObjectInstance::SetupGeometry()
-{
-	Implementation->SetupDynamicGeometry();
-}
-
 void FModumateObjectInstance::UpdateGeometry()
 {
-	const bool origDynamicStatus = Implementation->GetIsDynamic();
-	Implementation->SetIsDynamic(true);
-	Implementation->UpdateDynamicGeometry();
-	Implementation->SetIsDynamic(origDynamicStatus);
+	const bool origDynamicStatus = GetIsDynamic();
+	SetIsDynamic(true);
+	UpdateDynamicGeometry();
+	SetIsDynamic(origDynamicStatus);
 }
 
-void FModumateObjectInstance::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void FModumateObjectInstance::RouteGetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	outPoints.Reset();
 	outLines.Reset();
 
-	Implementation->GetStructuralPointsAndLines(outPoints, outLines, bForSnapping, bForSelection);
+	GetStructuralPointsAndLines(outPoints, outLines, bForSnapping, bForSelection);
 
 	// Make sure that the output correctly references this MOI,
 	// since some implementations may copy structure from other connected MOIs.
@@ -806,41 +737,6 @@ void FModumateObjectInstance::GetStructuralPointsAndLines(TArray<FStructurePoint
 	{
 		line.ObjID = ID;
 	}
-}
-
-void FModumateObjectInstance::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
-{
-	Implementation->AddDraftingLines(HUDDrawWidget);
-}
-
-void FModumateObjectInstance::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
-{
-	Implementation->GetDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox, OutPerimeters);
-}
-
-FVector FModumateObjectInstance::GetCorner(int32 index) const
-{
-	return Implementation->GetCorner(index);
-}
-
-int32 FModumateObjectInstance::GetNumCorners() const
-{
-	return Implementation->GetNumCorners();
-}
-
-const ILayeredObject* FModumateObjectInstance::GetLayeredInterface() const
-{
-	return Implementation->GetLayeredInterface();
-}
-
-const IMiterNode* FModumateObjectInstance::GetMiterInterface() const
-{
-	return Implementation->GetMiterInterface();
-}
-
-ISceneCaptureObject* FModumateObjectInstance::GetSceneCaptureInterface()
-{
-	return Implementation->GetSceneCaptureInterface();
 }
 
 static const FName PartialActorDestructionRequest(TEXT("DestroyActorPartial"));
@@ -888,7 +784,7 @@ void FModumateObjectInstance::Restore()
 	}
 	else
 	{
-		MeshActor = Implementation->RestoreActor();
+		MeshActor = RestoreActor();
 		SetupMOIComponent();
 	}
 
@@ -897,6 +793,13 @@ void FModumateObjectInstance::Restore()
 
 void FModumateObjectInstance::PostCreateObject(bool bNewObject)
 {
+	if (bNewObject && ensure(!MeshActor.IsValid() && World.IsValid() && (StateData.ID != MOD_ID_NONE)))
+	{
+		MeshActor = CreateActor(World.Get(), FVector::ZeroVector, FQuat::Identity);
+		SetupMOIComponent();
+		UpdateAssemblyFromKey();
+	}
+
 	if (bDestroyed)
 	{
 		ensureAlways(!bNewObject);
@@ -912,97 +815,64 @@ void FModumateObjectInstance::PostCreateObject(bool bNewObject)
 		parentObj->AddCachedChildID(ID);
 	}
 	MarkDirty(EObjectDirtyFlags::All);
-
-	Implementation->PostCreateObject(bNewObject);
 }
 
-bool FModumateObjectInstance::GetInvertedState(FMOIStateData& OutState) const
-{
-	return Implementation->GetInvertedState(OutState);
-}
-
-bool FModumateObjectInstance::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
-{
-	return Implementation->GetFlippedState(FlipAxis, OutState);
-}
-
-bool FModumateObjectInstance::GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
-{
-	return Implementation->GetJustifiedState(AdjustmentDirection, OutState);
-}
-
-bool FModumateObjectInstance::GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const
-{
-	return Implementation->GetTransformedLocationState(Transform, OutState);
-}
+// FModumateObjectInstanceImplBase Implementation
 
 FVector FModumateObjectInstance::GetLocation() const
 {
-	return Implementation->GetLocation();
+	const AActor* moiActor = GetActor();
+	return moiActor ? moiActor->GetActorLocation() : FVector::ZeroVector;
 }
 
 FQuat FModumateObjectInstance::GetRotation() const
 {
-	return Implementation->GetRotation();
+	const AActor *moiActor = GetActor();
+	return moiActor ? moiActor->GetActorQuat() : FQuat::Identity;
 }
 
 FTransform FModumateObjectInstance::GetWorldTransform() const
 {
-	return Implementation->GetWorldTransform();
-}
-
-
-// FModumateObjectInstanceImplBase Implementation
-
-FVector FModumateObjectInstanceImplBase::GetLocation() const
-{
-	AActor* moiActor = MOI ? MOI->GetActor() : nullptr;
-	return moiActor ? moiActor->GetActorLocation() : FVector::ZeroVector;
-}
-
-FQuat FModumateObjectInstanceImplBase::GetRotation() const
-{
-	AActor *moiActor = MOI ? MOI->GetActor() : nullptr;
-	return moiActor ? moiActor->GetActorQuat() : FQuat::Identity;
-}
-
-FTransform FModumateObjectInstanceImplBase::GetWorldTransform() const
-{
 	return FTransform(GetRotation(), GetLocation());
 }
 
-FVector FModumateObjectInstanceImplBase::GetCorner(int32 index) const
+FVector FModumateObjectInstance::GetCorner(int32 index) const
 {
 	return FVector::ZeroVector;
 }
 
-int32 FModumateObjectInstanceImplBase::GetNumCorners() const
+int32 FModumateObjectInstance::GetNumCorners() const
 {
 	return 0;
 }
 
-void FModumateObjectInstanceImplBase::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+void FModumateObjectInstance::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 }
 
-void FModumateObjectInstanceImplBase::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+void FModumateObjectInstance::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	AActor *moiActor = MOI ? MOI->GetActor() : nullptr;
+	AActor *moiActor = GetActor();
 	auto *controller = moiActor ? moiActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
 	if (controller)
 	{
-		bool bEnabledByViewMode = controller->EMPlayerState->IsObjectTypeEnabledByViewMode(MOI->GetObjectType());
-		bOutVisible = !MOI->IsRequestedHidden() && bEnabledByViewMode;
-		bOutCollisionEnabled = !MOI->IsCollisionRequestedDisabled() && bEnabledByViewMode;
+		bool bEnabledByViewMode = controller->EMPlayerState->IsObjectTypeEnabledByViewMode(GetObjectType());
+		bOutVisible = !IsRequestedHidden() && bEnabledByViewMode;
+		bOutCollisionEnabled = !IsCollisionRequestedDisabled() && bEnabledByViewMode;
 		moiActor->SetActorHiddenInGame(!bOutVisible);
 		moiActor->SetActorEnableCollision(bOutCollisionEnabled);
 	}
 }
 
-void FModumateObjectInstanceImplBase::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
+void FModumateObjectInstance::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow)
 {
+	if (bShow && !HasAdjustmentHandles())
+	{
+		SetupAdjustmentHandles(Controller);
+	}
+
 	// By default, only show top-level handles, and allow them to hide or show their children appropriately.
-	for (auto &ah : MOI->GetAdjustmentHandles())
+	for (auto &ah : GetAdjustmentHandles())
 	{
 		if (ah.IsValid() && (ah->HandleParent == nullptr))
 		{
@@ -1011,19 +881,14 @@ void FModumateObjectInstanceImplBase::ShowAdjustmentHandles(AEditModelPlayerCont
 	}
 }
 
-void FModumateObjectInstanceImplBase::OnSelected(bool bIsSelected)
+void FModumateObjectInstance::OnAssemblyChanged()
 {
-
+	MarkDirty(EObjectDirtyFlags::Structure);
 }
 
-void FModumateObjectInstanceImplBase::OnAssemblyChanged()
+AActor *FModumateObjectInstance::RestoreActor()
 {
-	MOI->MarkDirty(EObjectDirtyFlags::Structure);
-}
-
-AActor *FModumateObjectInstanceImplBase::RestoreActor()
-{
-	if (UWorld *world = MOI ? MOI->GetWorld() : nullptr)
+	if (UWorld *world = GetWorld())
 	{
 		return CreateActor(world, FVector::ZeroVector, FQuat::Identity);
 	}
@@ -1031,7 +896,7 @@ AActor *FModumateObjectInstanceImplBase::RestoreActor()
 	return nullptr;
 }
 
-AActor *FModumateObjectInstanceImplBase::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor *FModumateObjectInstance::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
 	World = world;
 
@@ -1039,9 +904,9 @@ AActor *FModumateObjectInstanceImplBase::CreateActor(UWorld *world, const FVecto
 	{
 		DynamicMeshActor = World->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get(), FTransform(rot, loc));
 
-		if (MOI && DynamicMeshActor.IsValid() && DynamicMeshActor->Mesh)
+		if (DynamicMeshActor.IsValid() && DynamicMeshActor->Mesh)
 		{
-			ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(MOI->GetObjectType());
+			ECollisionChannel collisionObjType = UModumateTypeStatics::CollisionTypeFromObjectType(GetObjectType());
 			DynamicMeshActor->Mesh->SetCollisionObjectType(collisionObjType);
 		}
 	}
@@ -1049,30 +914,21 @@ AActor *FModumateObjectInstanceImplBase::CreateActor(UWorld *world, const FVecto
 	return DynamicMeshActor.Get();
 }
 
-void FModumateObjectInstanceImplBase::PostCreateObject(bool bNewObject)
+
+void FModumateObjectInstance::PreDestroy()
 {
 
 }
 
-void FModumateObjectInstanceImplBase::Destroy()
+bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-
-}
-
-bool FModumateObjectInstanceImplBase::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
-{
-	if (MOI == nullptr)
-	{
-		return false;
-	}
-
 	switch (DirtyFlag)
 	{
 	case EObjectDirtyFlags::Structure:
 		SetupDynamicGeometry();
 		break;
 	case EObjectDirtyFlags::Visuals:
-		MOI->UpdateVisibilityAndCollision();
+		UpdateVisuals();
 		break;
 	default:
 		break;

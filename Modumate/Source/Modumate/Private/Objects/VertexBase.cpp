@@ -9,8 +9,8 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/VertexActor.h"
 
-FMOIVertexImplBase::FMOIVertexImplBase(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOIVertexImplBase::FMOIVertexImplBase()
+	: FModumateObjectInstance()
 	, SelectedColor(0x00, 0x35, 0xFF)
 	, BaseColor(0x00, 0x00, 0x00)
 	, DefaultHandleSize(0.0004f)
@@ -34,11 +34,11 @@ int32 FMOIVertexImplBase::GetNumCorners() const
 	return VertexActor.IsValid() ? 1 : 0;
 }
 
-void FMOIVertexImplBase::UpdateVisibilityAndCollision(bool& bOutVisible, bool& bOutCollisionEnabled)
+void FMOIVertexImplBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
 {
-	if (MOI && VertexActor.IsValid())
+	if (VertexActor.IsValid())
 	{
-		UModumateObjectStatics::GetNonPhysicalEnabledFlags(MOI, bOutVisible, bOutCollisionEnabled);
+		UModumateObjectStatics::GetNonPhysicalEnabledFlags(this, bOutVisible, bOutCollisionEnabled);
 
 		VertexActor->SetActorHiddenInGame(!bOutVisible);
 		VertexActor->SetActorTickEnabled(bOutVisible);
@@ -76,11 +76,14 @@ AActor *FMOIVertexImplBase::CreateActor(UWorld *world, const FVector &loc, const
 	return VertexActor.Get();
 }
 
-void FMOIVertexImplBase::OnSelected(bool bIsSelected)
+bool FMOIVertexImplBase::OnSelected(bool bIsSelected)
 {
-	FModumateObjectInstanceImplBase::OnSelected(bIsSelected);
+	if (!FModumateObjectInstance::OnSelected(bIsSelected))
+	{
+		return false;
+	}
 
-	MOI->UpdateVisibilityAndCollision();
+	UpdateVisuals();
 
 	if (VertexActor.IsValid())
 	{
@@ -91,4 +94,6 @@ void FMOIVertexImplBase::OnSelected(bool bIsSelected)
 
 		UModumateFunctionLibrary::SetMeshMaterial(VertexActor->MeshComp, VertexActor->Material, 0);
 	}
+
+	return true;
 }

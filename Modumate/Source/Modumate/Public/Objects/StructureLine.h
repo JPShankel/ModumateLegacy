@@ -12,7 +12,7 @@ class AEditModelPlayerController_CPP;
 class ADynamicMeshActor;
 class FModumateObjectInstance;
 
-class MODUMATE_API FMOIStructureLine : public FModumateObjectInstanceImplBase
+class MODUMATE_API FMOIStructureLine : public FModumateObjectInstance
 {
 protected:
 	FVector LineStartPos, LineEndPos, LineDir, LineNormal, LineUp;
@@ -21,8 +21,7 @@ protected:
 	void InternalUpdateGeometry(bool bRecreate, bool bCreateCollision);
 
 public:
-	FMOIStructureLine(FModumateObjectInstance *moi);
-	virtual ~FMOIStructureLine();
+	FMOIStructureLine();
 
 	virtual FQuat GetRotation() const override;
 	virtual FVector GetLocation() const override;

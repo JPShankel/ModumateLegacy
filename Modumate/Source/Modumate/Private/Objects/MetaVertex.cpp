@@ -7,8 +7,8 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/VertexActor.h"
 
-FMOIMetaVertexImpl::FMOIMetaVertexImpl(FModumateObjectInstance *moi)
-	: FMOIVertexImplBase(moi)
+FMOIMetaVertexImpl::FMOIMetaVertexImpl()
+	: FMOIVertexImplBase()
 {
 }
 
@@ -18,7 +18,7 @@ bool FMOIMetaVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 	{
 	case EObjectDirtyFlags::Structure:
 	{
-		auto vertex = MOI->GetDocument()->GetVolumeGraph().FindVertex(MOI->ID);
+		auto vertex = GetDocument()->GetVolumeGraph().FindVertex(ID);
 		if (!ensure(vertex))
 		{
 			return false;
@@ -29,7 +29,7 @@ bool FMOIMetaVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 	break;
 	case EObjectDirtyFlags::Visuals:
 	{
-		MOI->UpdateVisibilityAndCollision();
+		UpdateVisuals();
 	}
 	break;
 	}

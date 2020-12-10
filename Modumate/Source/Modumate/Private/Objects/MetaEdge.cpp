@@ -12,8 +12,8 @@
 #include "UnrealClasses/LineActor.h"
 
 
-FMOIMetaEdgeImpl::FMOIMetaEdgeImpl(FModumateObjectInstance *moi)
-	: FMOIEdgeImplBase(moi)
+FMOIMetaEdgeImpl::FMOIMetaEdgeImpl()
+	: FMOIEdgeImplBase()
 	, BaseDefaultColor(FColor::Black)
 	, BaseGroupedColor(FColor::Purple)
 	, HoverDefaultColor(FColor::Black)
@@ -23,16 +23,16 @@ FMOIMetaEdgeImpl::FMOIMetaEdgeImpl(FModumateObjectInstance *moi)
 
 bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-	FModumateDocument* doc = MOI->GetDocument();
+	FModumateDocument* doc = GetDocument();
 
 	switch (DirtyFlag)
 	{
 	case EObjectDirtyFlags::Structure:
 	{
-		MOI->GetConnectedMOIs(CachedConnectedMOIs);
+		GetConnectedMOIs(CachedConnectedMOIs);
 
 		auto& graph = doc->GetVolumeGraph();
-		auto edge = graph.FindEdge(MOI->ID);
+		auto edge = graph.FindEdge(ID);
 		auto vertexStart = edge ? graph.FindVertex(edge->StartVertexID) : nullptr;
 		auto vertexEnd = edge ? graph.FindVertex(edge->EndVertexID) : nullptr;
 		if (!ensure(LineActor.IsValid() && vertexStart && vertexEnd))
@@ -50,13 +50,13 @@ bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 
 		// If our own geometry has been updated, then we need to re-evaluate our mitering,
 		// and if connectivity has changed then we need to update visuals.
-		MOI->MarkDirty(EObjectDirtyFlags::Visuals | EObjectDirtyFlags::Mitering);
+		MarkDirty(EObjectDirtyFlags::Visuals | EObjectDirtyFlags::Mitering);
 	}
 	break;
 	case EObjectDirtyFlags::Mitering:
 	{
 		// TODO: clean the miter details by performing the mitering for this edge's connected plane-hosted objects
-		if (!CachedMiterData.GatherDetails(MOI))
+		if (!CachedMiterData.GatherDetails(this))
 		{
 			return false;
 		}
@@ -84,7 +84,7 @@ bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 			}
 		}
 
-		MOI->UpdateVisibilityAndCollision();
+		UpdateVisuals();
 	}
 	break;
 	default:
@@ -98,15 +98,15 @@ void FMOIMetaEdgeImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Con
 {
 	FMOIEdgeImplBase::ShowAdjustmentHandles(Controller, bShow);
 
-	FModumateDocument* doc = MOI ? MOI->GetDocument() : nullptr;
+	FModumateDocument* doc = GetDocument();
 	if (!ensure(doc))
 	{
 		return;
 	}
 
 	auto& graph = doc->GetVolumeGraph();
-	auto edge = graph.FindEdge(MOI->ID);
-	if (MOI->IsDestroyed() || !ensure(edge))
+	auto edge = graph.FindEdge(ID);
+	if (IsDestroyed() || !ensure(edge))
 	{
 		return;
 	}

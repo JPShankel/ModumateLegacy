@@ -21,16 +21,12 @@
 
 using namespace Modumate::Units;
 
-FMOICabinetImpl::FMOICabinetImpl(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOICabinetImpl::FMOICabinetImpl()
+	: FModumateObjectInstance()
 	, AdjustmentHandlesVisible(false)
 	, CachedExtrusionDelta(ForceInitToZero)
 	, bCurrentFaceValid(false)
 	, bBaseIsRectangular(false)
-{
-}
-
-FMOICabinetImpl::~FMOICabinetImpl()
 {
 }
 
@@ -66,11 +62,6 @@ FVector FMOICabinetImpl::GetNormal() const
 
 bool FMOICabinetImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-	if (MOI == nullptr)
-	{
-		return false;
-	}
-
 	switch (DirtyFlag)
 	{
 	case EObjectDirtyFlags::Structure:
@@ -84,7 +75,7 @@ bool FMOICabinetImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>
 	}
 		break;
 	case EObjectDirtyFlags::Visuals:
-		MOI->UpdateVisibilityAndCollision();
+		UpdateVisuals();
 		break;
 	default:
 		break;
@@ -93,9 +84,9 @@ bool FMOICabinetImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>
 	return true;
 }
 
-void FMOICabinetImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+void FMOICabinetImpl::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	FModumateObjectInstanceImplBase::UpdateVisibilityAndCollision(bOutVisible, bOutCollisionEnabled);
+	FModumateObjectInstance::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
 
 	if (FrontFacePortalActor.IsValid())
 	{
@@ -112,16 +103,16 @@ void FMOICabinetImpl::SetupDynamicGeometry()
 		return;
 	}
 
-	bool bUpdateCollision = !MOI->IsInPreviewMode();
-	bool bEnableCollision = !MOI->IsInPreviewMode();
+	bool bUpdateCollision = !IsInPreviewMode();
+	bool bEnableCollision = !IsInPreviewMode();
 
 	if (!FrontFacePortalActor.IsValid())
 	{
-		FrontFacePortalActor = MOI->GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass());
+		FrontFacePortalActor = GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass());
 		FrontFacePortalActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 	}
 
-	UpdateCabinetActors(MOI->GetAssembly(), CachedBasePoints, CachedExtrusionDelta, InstanceData.FrontFaceIndex,
+	UpdateCabinetActors(GetAssembly(), CachedBasePoints, CachedExtrusionDelta, InstanceData.FrontFaceIndex,
 		InstanceData.bFrontFaceLateralInverted, bUpdateCollision, bEnableCollision,
 		DynamicMeshActor.Get(), FrontFacePortalActor.Get(), bCurrentFaceValid);
 
@@ -129,7 +120,7 @@ void FMOICabinetImpl::SetupDynamicGeometry()
 	AEditModelPlayerController_CPP *controller = DynamicMeshActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 
 	// TODO: revisit the handle paradigm for cabinets
-	MOI->ShowAdjustmentHandles(controller, AdjustmentHandlesVisible);
+	ShowAdjustmentHandles(controller, AdjustmentHandlesVisible);
 }
 
 void FMOICabinetImpl::GetStructuralPointsAndLines(TArray<FStructurePoint>& OutPoints, TArray<FStructureLine>& OutLines, bool bForSnapping, bool bForSelection) const
@@ -155,7 +146,7 @@ void FMOICabinetImpl::GetStructuralPointsAndLines(TArray<FStructurePoint>& OutPo
 
 bool FMOICabinetImpl::GetInvertedState(FMOIStateData& OutState) const
 {
-	OutState = MOI->GetStateData();
+	OutState = GetStateData();
 
 	FMOICabinetData modifiedCabinetData = InstanceData;
 	modifiedCabinetData.bFrontFaceLateralInverted = !modifiedCabinetData.bFrontFaceLateralInverted;
@@ -458,7 +449,7 @@ bool FMOICabinetImpl::UpdateCabinetActors(const FBIMAssemblySpec& Assembly, cons
 
 bool FMOICabinetImpl::UpdateCachedGeometryData()
 {
-	const FModumateObjectInstance* parentObj = MOI ? MOI->GetParentObject() : nullptr;
+	const FModumateObjectInstance* parentObj = GetParentObject();
 	if (parentObj && (parentObj->GetObjectType() == EObjectType::OTSurfacePolygon))
 	{
 		CachedBaseOrigin = parentObj->GetWorldTransform();
@@ -486,17 +477,17 @@ void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *con
 	int32 numBasePoints = CachedBasePoints.Num();
 	for (int32 i = 0; i <= numBasePoints; ++i)
 	{
-		auto selectFrontHandle = MOI->MakeHandle<ACabinetFrontFaceHandle>();
+		auto selectFrontHandle = MakeHandle<ACabinetFrontFaceHandle>();
 		selectFrontHandle->SetTargetIndex(i);
 
 		FrontSelectionHandles.Add(selectFrontHandle);
 	}
 
-	auto topExtrusionHandle = MOI->MakeHandle<ACabinetExtrusionHandle>();
+	auto topExtrusionHandle = MakeHandle<ACabinetExtrusionHandle>();
 	topExtrusionHandle->SetSign(1.0f);
 
 	// parent handles
-	FModumateObjectInstance *parent = MOI->GetParentObject();
+	FModumateObjectInstance *parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTSurfacePolygon)))
 	{
 		return;
@@ -505,11 +496,11 @@ void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *con
 	int32 numCorners = parent->GetNumCorners();
 	for (int32 i = 0; i < numCorners; ++i)
 	{
-		auto cornerHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
+		auto cornerHandle = MakeHandle<AAdjustPolyEdgeHandle>();
 		cornerHandle->SetTargetIndex(i);
 		cornerHandle->SetTargetMOI(parent);
 
-		auto edgeHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
+		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
 		edgeHandle->SetTargetIndex(i);
 		edgeHandle->SetTargetMOI(parent);
 	}
@@ -517,7 +508,7 @@ void FMOICabinetImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *con
 
 void FMOICabinetImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
 {
-	FModumateObjectInstanceImplBase::ShowAdjustmentHandles(Controller, bShow);
+	FModumateObjectInstance::ShowAdjustmentHandles(Controller, bShow);
 
 	AdjustmentHandlesVisible = bShow;
 

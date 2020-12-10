@@ -12,20 +12,17 @@
 
 class AEditModelPlayerController_CPP;
 
-FMOIStaircaseImpl::FMOIStaircaseImpl(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOIStaircaseImpl::FMOIStaircaseImpl()
+	: FModumateObjectInstance()
 	, bCachedStartRiser(true)
 	, bCachedEndRiser(true)
 {
-	const auto& assemblySpec = MOI->GetAssembly();
+	const auto& assemblySpec = GetAssembly();
 	CachedTreadDims.UpdateLayersFromAssembly(assemblySpec.TreadLayers);
 	CachedRiserDims.UpdateLayersFromAssembly(assemblySpec.RiserLayers);
 	bCachedUseRisers = assemblySpec.RiserLayers.Num() != 0;
 	TreadRun = assemblySpec.TreadDepth.AsWorldCentimeters();
 }
-
-FMOIStaircaseImpl::~FMOIStaircaseImpl()
-{}
 
 bool FMOIStaircaseImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
@@ -36,7 +33,7 @@ bool FMOIStaircaseImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 		break;
 
 	case EObjectDirtyFlags::Visuals:
-		MOI->UpdateVisibilityAndCollision();
+		UpdateVisuals();
 		break;
 
 	default:
@@ -50,7 +47,7 @@ void FMOIStaircaseImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &out
 {
 	// TODO: use the tread/riser polygons as structural points and lines
 
-	FModumateObjectInstance *planeParent = MOI ? MOI->GetParentObject() : nullptr;
+	const FModumateObjectInstance *planeParent = GetParentObject();
 	if (planeParent)
 	{
 		planeParent->GetStructuralPointsAndLines(outPoints, outLines, true);
@@ -59,7 +56,7 @@ void FMOIStaircaseImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &out
 
 void FMOIStaircaseImpl::SetupDynamicGeometry()
 {
-	FModumateObjectInstance* planeParent = MOI ? MOI->GetParentObject() : nullptr;
+	FModumateObjectInstance* planeParent = GetParentObject();
 	if (!(planeParent && (planeParent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return;
@@ -88,14 +85,14 @@ void FMOIStaircaseImpl::SetupDynamicGeometry()
 	const float totalTreadThickness = CachedTreadDims.TotalUnfinishedWidth;
 	const float totalRiserThickness = bCachedUseRisers ? CachedRiserDims.TotalUnfinishedWidth : OpenStairsOverhang;
 	Modumate::FStairStatics::CalculateSetupStairPolysParams(
-		MOI->GetAssembly(),
+		GetAssembly(),
 		totalTreadThickness, totalRiserThickness, runDir,
 		CachedTreadPolys, CachedRiserPolys,
 		CachedRiserNormals, TreadLayers, RiserLayers);
 
 	// Set up the triangulated staircase mesh by extruding each tread and riser polygon
 	DynamicMeshActor->SetupStairPolys(stairOrigin, CachedTreadPolys, CachedRiserPolys, CachedRiserNormals, TreadLayers, RiserLayers,
-		MOI->GetAssembly());
+		GetAssembly());
 }
 
 void FMOIStaircaseImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
@@ -307,7 +304,7 @@ void FMOIStaircaseImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComp
 
 void FMOIStaircaseImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
-	FModumateObjectInstance *parent = MOI->GetParentObject();
+	FModumateObjectInstance *parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return;
@@ -317,7 +314,7 @@ void FMOIStaircaseImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *c
 	int32 numCorners = parent->GetNumCorners();
 	for (int32 i = 0; i < numCorners; ++i)
 	{
-		auto edgeHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
+		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
 		edgeHandle->SetTargetIndex(i);
 		edgeHandle->SetTargetMOI(parent);
 	}

@@ -4,10 +4,10 @@
 #include "CoreMinimal.h"
 #include "Objects/ModumateObjectInstance.h"
 
-class MODUMATE_API FMOIPlaneImplBase : public FModumateObjectInstanceImplBase
+class MODUMATE_API FMOIPlaneImplBase : public FModumateObjectInstance
 {
 public:
-	FMOIPlaneImplBase(FModumateObjectInstance *moi);
+	FMOIPlaneImplBase();
 
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
@@ -17,10 +17,10 @@ public:
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 	virtual bool ShowStructureOnSelection() const override;
-	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 
-	virtual void OnSelected(bool bIsSelected) override;
-	virtual void OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
+	virtual bool OnSelected(bool bIsSelected) override;
+	virtual bool OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
 	virtual void PostCreateObject(bool bNewObject) override;
 
 protected:

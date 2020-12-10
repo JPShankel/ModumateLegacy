@@ -8,13 +8,10 @@ class AEditModelPlayerController_CPP;
 
 class FModumateObjectInstance;
 
-class MODUMATE_API FMOIFinishImpl : public FModumateObjectInstanceImplBase
+class MODUMATE_API FMOIFinishImpl : public FModumateObjectInstance
 {
 public:
-	FMOIFinishImpl(FModumateObjectInstance *moi);
-	virtual ~FMOIFinishImpl();
-
-	virtual void Destroy() override;
+	virtual void PreDestroy() override;
 	virtual FVector GetCorner(int32 index) const override;
 	virtual FVector GetNormal() const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;

@@ -84,7 +84,7 @@ public:
 	static bool GetFFEMountedTransform(const FBIMAssemblySpec *Assembly,
 		const FSnappedCursor &SnappedCursor, FTransform &OutTransform);
 
-	static bool GetFFEBoxSidePoints(AActor *Actor, const FVector &AssemblyNormal, TArray<FVector> &OutPoints);
+	static bool GetFFEBoxSidePoints(const AActor *Actor, const FVector &AssemblyNormal, TArray<FVector> &OutPoints);
 
 	// Extruded objects drafting.
 	static bool GetExtrusionPerimeterPoints(const FModumateObjectInstance* MOI,

@@ -44,7 +44,7 @@ void FModumateSnappingView::UpdateSnapPoints(const TSet<int32> &idsToIgnore, int
 			CurObjCorners.Reset();
 			CurObjLineSegments.Reset();
 
-			object->GetStructuralPointsAndLines(CurObjCorners, CurObjLineSegments, bForSnapping, bForSelection);
+			object->RouteGetStructuralPointsAndLines(CurObjCorners, CurObjLineSegments, bForSnapping, bForSelection);
 
 			objectSnapIndices.NumCorners = CurObjCorners.Num();
 			objectSnapIndices.NumLines = CurObjLineSegments.Num();

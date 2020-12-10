@@ -736,7 +736,7 @@ bool UModumateObjectStatics::GetFFEMountedTransform(
 	return false;
 }
 
-bool UModumateObjectStatics::GetFFEBoxSidePoints(AActor *Actor, const FVector &AssemblyNormal, TArray<FVector> &OutPoints)
+bool UModumateObjectStatics::GetFFEBoxSidePoints(const AActor *Actor, const FVector &AssemblyNormal, TArray<FVector> &OutPoints)
 {
 	OutPoints.Reset();
 
@@ -776,38 +776,38 @@ bool UModumateObjectStatics::GetFFEBoxSidePoints(AActor *Actor, const FVector &A
 }
 
 bool UModumateObjectStatics::GetExtrusionPerimeterPoints(const FModumateObjectInstance* MOI,
-       const FVector& LineUp, const FVector& LineNormal, TArray<FVector>& outPerimeterPoints)
+	const FVector& LineUp, const FVector& LineNormal, TArray<FVector>& outPerimeterPoints)
 {
-       const FSimplePolygon* polyProfile = nullptr;
-       const FModumateObjectInstance* parent = MOI ? MOI->GetParentObject() : nullptr;
-       if (parent == nullptr)
-       {
-               return false;
-       }
+	const FSimplePolygon* polyProfile = nullptr;
+	const FModumateObjectInstance* parent = MOI ? MOI->GetParentObject() : nullptr;
+	if (parent == nullptr)
+	{
+		return false;
+	}
 
-       FVector scale(FVector::OneVector);
-       const auto& assembly = MOI->GetAssembly();
-       if (ensureAlways(assembly.Extrusions.Num() > 0))
-       {
-               scale = MOI->GetAssembly().Extrusions[0].Scale;
-       }
-       else
-       {
-               return false;
-       }
+	FVector scale(FVector::OneVector);
+	const auto& assembly = MOI->GetAssembly();
+	if (ensureAlways(assembly.Extrusions.Num() > 0))
+	{
+		scale = MOI->GetAssembly().Extrusions[0].Scale;
+	}
+	else
+	{
+		return false;
+	}
 
-       if (!UModumateObjectStatics::GetPolygonProfile(&MOI->GetAssembly(), polyProfile)
-               || polyProfile->Points.Num() == 0)
-       {
-               return false;
-       }
+	if (!UModumateObjectStatics::GetPolygonProfile(&MOI->GetAssembly(), polyProfile)
+		|| polyProfile->Points.Num() == 0)
+	{
+		return false;
+	}
 
-       for (const auto& point : polyProfile->Points)
-       {
-               outPerimeterPoints.Add(point.X * LineUp * scale.X + point.Y * LineNormal * scale.Y);
-       }
+	for (const auto& point : polyProfile->Points)
+	{
+		outPerimeterPoints.Add(point.X * LineUp * scale.X + point.Y * LineNormal * scale.Y);
+	}
 
-       return true;
+	return true;
 }
 
 void UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,

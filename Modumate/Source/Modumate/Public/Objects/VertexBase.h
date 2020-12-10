@@ -5,19 +5,19 @@
 
 class AVertexActor;
 
-class MODUMATE_API FMOIVertexImplBase : public FModumateObjectInstanceImplBase
+class MODUMATE_API FMOIVertexImplBase : public FModumateObjectInstance
 {
 public:
-	FMOIVertexImplBase(FModumateObjectInstance *moi);
+	FMOIVertexImplBase();
 
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override { return FQuat::Identity; }
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const override;
-	virtual void UpdateVisibilityAndCollision(bool& bOutVisible, bool& bOutCollisionEnabled) override;
+	virtual void GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
-	virtual void OnSelected(bool bIsSelected) override;
+	virtual bool OnSelected(bool bIsSelected) override;
 	virtual bool ShowStructureOnSelection() const override { return false; }
 	virtual bool UseStructureDataForCollision() const override { return true; }
 	virtual void GetTangents(TArray<FVector>& OutTangents) const = 0;

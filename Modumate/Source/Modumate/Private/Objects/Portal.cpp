@@ -24,8 +24,8 @@
 class AEditModelPlayerController_CPP;
 
 
-FMOIPortalImpl::FMOIPortalImpl(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOIPortalImpl::FMOIPortalImpl()
+	: FModumateObjectInstance()
 	, Controller(nullptr)
 	, CachedRelativePos(ForceInitToZero)
 	, CachedWorldPos(ForceInitToZero)
@@ -35,9 +35,6 @@ FMOIPortalImpl::FMOIPortalImpl(FModumateObjectInstance *moi)
 {
 }
 
-FMOIPortalImpl::~FMOIPortalImpl()
-{}
-
 AActor *FMOIPortalImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
 	return world->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform(rot, loc));
@@ -45,7 +42,7 @@ AActor *FMOIPortalImpl::CreateActor(UWorld *world, const FVector &loc, const FQu
 
 FVector FMOIPortalImpl::GetNormal() const
 {
-	AActor *portalActor = MOI ? MOI->GetActor() : nullptr;
+	const AActor *portalActor = GetActor();
 	if (!ensure(portalActor != nullptr))
 	{
 		return FVector::ZeroVector;
@@ -63,7 +60,7 @@ void FMOIPortalImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& O
 
 bool FMOIPortalImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-	if (!FModumateObjectInstanceImplBase::CleanObject(DirtyFlag, OutSideEffectDeltas))
+	if (!FModumateObjectInstance::CleanObject(DirtyFlag, OutSideEffectDeltas))
 	{
 		return false;
 	}
@@ -72,10 +69,10 @@ bool FMOIPortalImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 	{
 	case EObjectDirtyFlags::Structure:
 	{
-		auto *parentObj = MOI ? MOI->GetParentObject() : nullptr;
+		auto *parentObj = GetParentObject();
 		if (parentObj)
 		{
-			const Modumate::FGraph3DFace * parentFace = MOI->GetDocument()->GetVolumeGraph().FindFace(parentObj->ID);
+			const Modumate::FGraph3DFace * parentFace = GetDocument()->GetVolumeGraph().FindFace(parentObj->ID);
 
 			parentObj->MarkDirty(EObjectDirtyFlags::Visuals);
 		}
@@ -104,13 +101,13 @@ void FMOIPortalImpl::UpdateDynamicGeometry()
 bool FMOIPortalImpl::SetupCompoundActorGeometry()
 {
 	bool bResult = false;
-	if (ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(MOI->GetActor()))
+	if (ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(GetActor()))
 	{
 		FVector scale(FVector::OneVector);
-		int32 parentID = MOI->GetParentID();
+		int32 parentID = GetParentID();
 		if (parentID != MOD_ID_NONE)
 		{
-			const Modumate::FGraph3DFace * parentFace = MOI->GetDocument()->GetVolumeGraph().FindFace(parentID);
+			const Modumate::FGraph3DFace * parentFace = GetDocument()->GetVolumeGraph().FindFace(parentID);
 			// Get size of parent metaplane.
 			if (parentFace != nullptr)
 			{
@@ -125,7 +122,7 @@ bool FMOIPortalImpl::SetupCompoundActorGeometry()
 				localPosition = FVector2D(localPosition3d.Z, localPosition3d.X);
 
 
-				const FBIMAssemblySpec& assembly = MOI->GetAssembly();
+				const FBIMAssemblySpec& assembly = GetAssembly();
 				FVector nativeSize = assembly.GetRiggedAssemblyNativeSize();
 				if (!nativeSize.IsZero())
 				{	// Assume first part for native size.
@@ -151,7 +148,7 @@ bool FMOIPortalImpl::SetupCompoundActorGeometry()
 			}
 		}
 
-		cma->MakeFromAssembly(MOI->GetAssembly(), scale, InstanceData.bLateralInverted, true);
+		cma->MakeFromAssembly(GetAssembly(), scale, InstanceData.bLateralInverted, true);
 	}
 	return bResult;
 }
@@ -161,8 +158,8 @@ bool FMOIPortalImpl::SetRelativeTransform(const FVector2D &InRelativePos, const 
 	CachedRelativePos = InRelativePos;
 	CachedRelativeRot = InRelativeRot;
 
-	auto *parentObj = MOI ? MOI->GetParentObject() : nullptr;
-	AActor *portalActor = MOI ? MOI->GetActor() : nullptr;
+	auto *parentObj = GetParentObject();
+	AActor *portalActor = GetActor();
 	if ((parentObj == nullptr) || (portalActor == nullptr))
 	{
 		return false;
@@ -183,7 +180,7 @@ bool FMOIPortalImpl::SetRelativeTransform(const FVector2D &InRelativePos, const 
 
 void FMOIPortalImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	FModumateObjectInstance* parentObject = MOI ? MOI->GetParentObject() : nullptr;
+	const FModumateObjectInstance* parentObject = GetParentObject();
 	if (parentObject && (parentObject->GetObjectType() == EObjectType::OTMetaPlane))
 	{
 		parentObject->GetStructuralPointsAndLines(outPoints, outLines, bForSnapping, bForSelection);
@@ -197,7 +194,7 @@ FQuat FMOIPortalImpl::GetRotation() const
 
 FVector FMOIPortalImpl::GetCorner(int32 index) const
 {
-	FModumateObjectInstance* parentObject = MOI ? MOI->GetParentObject() : nullptr;
+	const FModumateObjectInstance* parentObject = GetParentObject();
 	if (parentObject && (parentObject->GetObjectType() == EObjectType::OTMetaPlane))
 	{
 		return parentObject->GetCorner(index);
@@ -218,7 +215,7 @@ FTransform FMOIPortalImpl::GetWorldTransform() const
 
 void FMOIPortalImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
-	FModumateObjectInstance *parent = MOI->GetParentObject();
+	FModumateObjectInstance *parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return;
@@ -228,23 +225,23 @@ void FMOIPortalImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *cont
 	int32 numCorners = parent->GetNumCorners();
 	for (int32 i = 0; i < numCorners; ++i)
 	{
-		auto edgeHandle = MOI->MakeHandle<AAdjustPolyEdgeHandle>();
+		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
 		edgeHandle->SetTargetIndex(i);
 		edgeHandle->SetTargetMOI(parent);
 	}
 
-	MOI->MakeHandle<AAdjustPortalInvertHandle>();
-	MOI->MakeHandle<AAdjustPortalJustifyHandle>();
-	MOI->MakeHandle<AAdjustPortalReverseHandle>();
-	auto cwOrientHandle = MOI->MakeHandle<AAdjustPortalOrientHandle>();
+	MakeHandle<AAdjustPortalInvertHandle>();
+	MakeHandle<AAdjustPortalJustifyHandle>();
+	MakeHandle<AAdjustPortalReverseHandle>();
+	auto cwOrientHandle = MakeHandle<AAdjustPortalOrientHandle>();
 	cwOrientHandle->CounterClockwise = false;
-	auto ccwOrientHandle = MOI->MakeHandle<AAdjustPortalOrientHandle>();
+	auto ccwOrientHandle = MakeHandle<AAdjustPortalOrientHandle>();
 	ccwOrientHandle->CounterClockwise = true;
 }
 
 bool FMOIPortalImpl::GetInvertedState(FMOIStateData& OutState) const
 {
-	OutState = MOI->GetStateData();
+	OutState = GetStateData();
 
 	FMOIPortalData modifiedTrimData = InstanceData;
 	modifiedTrimData.bNormalInverted = !modifiedTrimData.bNormalInverted;
@@ -255,7 +252,7 @@ bool FMOIPortalImpl::GetInvertedState(FMOIStateData& OutState) const
 void FMOIPortalImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
 {
 	bool bGetFarLines = ParentPage->lineClipping.IsValid();
-	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(MOI->GetActor());
+	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
 	if (bGetFarLines)
 	{
 			actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox);
@@ -271,9 +268,9 @@ void FMOIPortalImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCompos
 
 		// draw door swing lines if the cut plane intersects the door's mesh
 		// TODO: door swings for DDL 2.0 openings
-		if (MOI->GetObjectType() == EObjectType::OTDoor && bLinesDrawn)
+		if (GetObjectType() == EObjectType::OTDoor && bLinesDrawn)
 		{
-			const FBIMAssemblySpec& assembly = MOI->GetAssembly();
+			const FBIMAssemblySpec& assembly = GetAssembly();
 			const auto& parts = assembly.Parts;
 
 			const FVector doorUpVector = CachedWorldRot.RotateVector(FVector::UpVector);
@@ -284,7 +281,7 @@ void FMOIPortalImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCompos
 				bool bCollinear = (doorUpVector | Plane) > 0.0f;
 				bool bLeftHanded = ((AxisX ^ AxisY) | Plane) < 0.0f;  // True for interactive drafting.
 				bool bPositiveSwing = bCollinear ^ InstanceData.bLateralInverted ^ InstanceData.bNormalInverted ^ bLeftHanded;
-				auto parent = MOI->GetParentObject();
+				auto parent = GetParentObject();
 
 				// Get amount of panels
 				TArray<int32> panelSlotIndices;
@@ -356,7 +353,7 @@ void FMOIPortalImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCompos
 
 void FMOIPortalImpl::SetIsDynamic(bool bIsDynamic)
 {
-	auto meshActor = Cast<ACompoundMeshActor>(MOI->GetActor());
+	auto meshActor = Cast<ACompoundMeshActor>(GetActor());
 	if (meshActor)
 	{
 		meshActor->SetIsDynamic(bIsDynamic);
@@ -365,7 +362,7 @@ void FMOIPortalImpl::SetIsDynamic(bool bIsDynamic)
 
 bool FMOIPortalImpl::GetIsDynamic() const
 {
-	auto meshActor = Cast<ACompoundMeshActor>(MOI->GetActor());
+	auto meshActor = Cast<ACompoundMeshActor>(GetActor());
 	if (meshActor)
 	{
 		return meshActor->GetIsDynamic();

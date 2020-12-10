@@ -31,18 +31,17 @@ class AEditModelPlayerController_CPP;
 
 class FModumateObjectInstance;
 
-class MODUMATE_API FMOICabinetImpl : public FModumateObjectInstanceImplBase
+class MODUMATE_API FMOICabinetImpl : public FModumateObjectInstance
 {
 public:
-	FMOICabinetImpl(FModumateObjectInstance *moi);
-	virtual ~FMOICabinetImpl();
+	FMOICabinetImpl();
 
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const override;
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual FVector GetNormal() const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
-	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow);

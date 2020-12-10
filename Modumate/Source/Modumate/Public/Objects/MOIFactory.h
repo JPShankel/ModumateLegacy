@@ -6,5 +6,5 @@
 class MODUMATE_API FMOIFactory
 {
 public:
-	static IModumateObjectInstanceImpl *MakeMOIImplementation(EObjectType ObjectType, FModumateObjectInstance *MOI);
+	static FModumateObjectInstance *MakeMOI(EObjectType ObjectType);
 };

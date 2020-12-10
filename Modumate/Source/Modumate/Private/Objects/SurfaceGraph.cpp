@@ -7,8 +7,8 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "DocumentManagement/ModumateDocument.h"
 
-FMOISurfaceGraphImpl::FMOISurfaceGraphImpl(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOISurfaceGraphImpl::FMOISurfaceGraphImpl()
+	: FModumateObjectInstance()
 {
 }
 
@@ -49,19 +49,19 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
 	{
-		FModumateDocument* doc = MOI ? MOI->GetDocument() : nullptr;
+		FModumateDocument* doc = GetDocument();
 		if (!ensure(doc))
 		{
 			return false;
 		}
 
-		auto surfaceGraph = doc->FindSurfaceGraph(MOI->ID);
+		auto surfaceGraph = doc->FindSurfaceGraph(ID);
 		if (!ensure(surfaceGraph.IsValid()) || !UpdateCachedGraphData())
 		{
 			return false;
 		}
 
-		auto hostObj = doc->GetObjectById(MOI->GetParentID());
+		auto hostObj = doc->GetObjectById(GetParentID());
 		if (hostObj == nullptr)
 		{
 			return false;
@@ -85,7 +85,7 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 		{
 			CheckGraphLink();
 
-			if (FVector::Parallel(face->CachedPlane, MOI->GetNormal()))
+			if (FVector::Parallel(face->CachedPlane, GetNormal()))
 			{
 				GraphVertexToBoundVertex.Reset();
 				GraphFaceToInnerBound.Reset();
@@ -192,7 +192,7 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 			}
 
 			// Attempt to update the surface graph with the correct bounds
-			int32 nextID = doc->ReserveNextIDs(MOI->ID);
+			int32 nextID = doc->ReserveNextIDs(ID);
 			
 			// movement updates
 			for (auto& kvp : GraphVertexToBoundVertex)
@@ -212,7 +212,7 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 				}
 			}
 
-			if (FVector::Parallel(face->CachedPlane, MOI->GetNormal()))
+			if (FVector::Parallel(face->CachedPlane, GetNormal()))
 			{
 				// removes
 				TArray<FGraph2DDelta> deleteDeltas;
@@ -274,7 +274,7 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 					TArray<FGraph2DDelta> boundsDeltas;
 					if (!surfaceGraph->PopulateFromPolygons(boundsDeltas, nextID, graphPolygonsToAdd, graphFaceToVertices, GraphFaceToInnerBound, GraphVertexToBoundVertex, true, rootPolyID))
 					{
-						doc->SetNextID(doc->GetNextAvailableID(), MOI->ID);
+						doc->SetNextID(doc->GetNextAvailableID(), ID);
 						return true;
 					}
 
@@ -306,8 +306,8 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 			// Otherwise, delete the surface graph if it cannot be preserved after the underlying geometry changes
 			else
 			{
-				TArray<FModumateObjectInstance*> objectsToDelete = MOI->GetAllDescendents();
-				objectsToDelete.Add(MOI);
+				TArray<FModumateObjectInstance*> objectsToDelete = GetAllDescendents();
+				objectsToDelete.Add(this);
 
 				auto deleteSurfaceDelta = MakeShared<FMOIDelta>();
 				for (FModumateObjectInstance* descendent : objectsToDelete)
@@ -318,7 +318,7 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 				OutSideEffectDeltas->Add(deleteSurfaceDelta);
 			}
 
-			doc->SetNextID(nextID, MOI->ID);
+			doc->SetNextID(nextID, ID);
 		}
 	}
 
@@ -329,8 +329,8 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 
 bool FMOISurfaceGraphImpl::CheckGraphLink()
 {
-	FModumateDocument* doc = MOI ? MOI->GetDocument() : nullptr;
-	auto surfaceGraph = doc ? doc->FindSurfaceGraph(MOI->ID) : nullptr;
+	FModumateDocument* doc = GetDocument();
+	auto surfaceGraph = doc ? doc->FindSurfaceGraph(ID) : nullptr;
 	if (!ensure(doc && surfaceGraph))
 	{
 		return false;
@@ -377,7 +377,7 @@ bool FMOISurfaceGraphImpl::CheckGraphLink()
 
 bool FMOISurfaceGraphImpl::UpdateCachedGraphData()
 {
-	const FModumateObjectInstance *parentObj = MOI ? MOI->GetParentObject() : nullptr;
+	const FModumateObjectInstance *parentObj = GetParentObject();
 	if (!ensure(parentObj) || parentObj->IsDirty(EObjectDirtyFlags::Structure) || parentObj->IsDirty(EObjectDirtyFlags::Mitering))
 	{
 		return false;
@@ -393,18 +393,18 @@ bool FMOISurfaceGraphImpl::CalculateFaces(const TArray<int32>& AddIDs, TMap<int3
 		return false;
 	}
 
-	FModumateDocument* doc = MOI ? MOI->GetDocument() : nullptr;
+	FModumateDocument* doc = GetDocument();
 	if (!ensure(doc))
 	{
 		return false;
 	}
 	auto& graph = doc->GetVolumeGraph();
 
-	int32 hitFaceIndex = UModumateObjectStatics::GetParentFaceIndex(MOI);
+	int32 hitFaceIndex = UModumateObjectStatics::GetParentFaceIndex(this);
 	TArray<FVector> cornerPositions;
 	FVector origin, normal, axisX, axisY;
 
-	auto hostmoi = doc->GetObjectById(MOI->GetParentID());
+	auto hostmoi = doc->GetObjectById(GetParentID());
 	if (hostmoi && UModumateObjectStatics::GetGeometryFromFaceIndex(hostmoi, hitFaceIndex,
 		cornerPositions, normal, axisX, axisY))
 	{

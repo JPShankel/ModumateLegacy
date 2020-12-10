@@ -2662,7 +2662,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 		{
 			if (moi && moi->IsCollisionEnabled() && moi->UseStructureDataForCollision())
 			{
-				moi->GetStructuralPointsAndLines(tempPointsForCollision, tempLinesForCollision, false, false);
+				moi->RouteGetStructuralPointsAndLines(tempPointsForCollision, tempLinesForCollision, false, false);
 
 				// Structural points and lines used for cursor hit collision are mutually exclusive
 				if (tempLinesForCollision.Num() > 0)

@@ -4,13 +4,13 @@
 #include "CoreMinimal.h"
 #include "Objects/ModumateObjectInstance.h"
 
-class MODUMATE_API FMOIScopeBoxImpl : public FModumateObjectInstanceImplBase
+class MODUMATE_API FMOIScopeBoxImpl : public FModumateObjectInstance
 {
 public:
-	FMOIScopeBoxImpl(FModumateObjectInstance *moi);
+	FMOIScopeBoxImpl();
 
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
-	virtual void Destroy() override;
+	virtual void PreDestroy() override;
 
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;

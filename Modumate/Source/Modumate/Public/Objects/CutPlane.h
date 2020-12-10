@@ -40,12 +40,12 @@ namespace Modumate
 class MODUMATE_API FMOICutPlaneImpl : public FMOIPlaneImplBase, public ISceneCaptureObject
 {
 public:
-	FMOICutPlaneImpl(FModumateObjectInstance *moi);
+	FMOICutPlaneImpl();
 
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
-	virtual void OnSelected(bool bIsSelected) override;
+	virtual bool OnSelected(bool bIsSelected) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 
 	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;
@@ -61,8 +61,8 @@ public:
 
 	virtual AActor* CreateActor(UWorld* world, const FVector& loc, const FQuat& rot) override;
 	virtual void PostCreateObject(bool bNewObject) override;
-	virtual void Destroy() override;
-	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual void PreDestroy() override;
+	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 
 	Modumate::FModumateHUDDraw DrawingInterface;
 

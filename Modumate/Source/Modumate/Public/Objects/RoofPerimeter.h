@@ -13,16 +13,16 @@ class ALineActor;
 class ARetractRoofFacesHandle;
 class URoofPerimeterPropertiesWidget;
 
-class MODUMATE_API FMOIRoofPerimeterImpl : public FModumateObjectInstanceImplBase
+class MODUMATE_API FMOIRoofPerimeterImpl : public FModumateObjectInstance
 {
 public:
-	FMOIRoofPerimeterImpl(FModumateObjectInstance *moi);
+	FMOIRoofPerimeterImpl();
 
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override { return FQuat::Identity; }
 	virtual FVector GetCorner(int32 index) const override;
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
-	virtual void UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;

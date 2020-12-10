@@ -15,8 +15,8 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 
-FMOIRoofPerimeterImpl::FMOIRoofPerimeterImpl(FModumateObjectInstance *moi)
-	: FModumateObjectInstanceImplBase(moi)
+FMOIRoofPerimeterImpl::FMOIRoofPerimeterImpl()
+	: FModumateObjectInstance()
 	, bValidPerimeterLoop(false)
 	, CachedPerimeterCenter(ForceInitToZero)
 	, CachedPlane(ForceInitToZero)
@@ -30,7 +30,7 @@ FVector FMOIRoofPerimeterImpl::GetLocation() const
 
 FVector FMOIRoofPerimeterImpl::GetCorner(int32 index) const
 {
-	const Modumate::FGraph3D &volumeGraph = MOI->GetDocument()->GetVolumeGraph();
+	const Modumate::FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
 
 	if (CachedEdgeIDs.IsValidIndex(index))
 	{
@@ -55,7 +55,7 @@ void FMOIRoofPerimeterImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, v
 	OutStructPtr = &InstanceData;
 }
 
-void FMOIRoofPerimeterImpl::UpdateVisibilityAndCollision(bool &bOutVisible, bool &bOutCollisionEnabled)
+void FMOIRoofPerimeterImpl::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
 	// RoofPerimeters are only seen and interacted with via their edges.
 	bOutVisible = bOutCollisionEnabled = false;
@@ -70,13 +70,13 @@ void FMOIRoofPerimeterImpl::SetupAdjustmentHandles(AEditModelPlayerController_CP
 
 	UStaticMesh *anchorMesh = Controller->EMPlayerState->GetEditModelGameMode()->AnchorMesh;
 
-	CreateFacesHandle = MOI->MakeHandle<ACreateRoofFacesHandle>();
-	RetractFacesHandle = MOI->MakeHandle<ARetractRoofFacesHandle>();
+	CreateFacesHandle = MakeHandle<ACreateRoofFacesHandle>();
+	RetractFacesHandle = MakeHandle<ARetractRoofFacesHandle>();
 
 	// Handles for modifying roof edges
 	for (FGraphSignedID edgeID : CachedEdgeIDs)
 	{
-		AEditRoofEdgeHandle *editEdgeHandle = MOI->MakeHandle<AEditRoofEdgeHandle>();
+		AEditRoofEdgeHandle *editEdgeHandle = MakeHandle<AEditRoofEdgeHandle>();
 		editEdgeHandle->SetTargetEdge(edgeID);
 
 		EdgeHandlesByID.Add(edgeID, editEdgeHandle);
@@ -85,6 +85,8 @@ void FMOIRoofPerimeterImpl::SetupAdjustmentHandles(AEditModelPlayerController_CP
 
 void FMOIRoofPerimeterImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
 {
+	FModumateObjectInstance::ShowAdjustmentHandles(Controller, bShow);
+
 	bAdjustmentHandlesVisible = bShow;
 
 	bool bCreatedRoofFaces = (CachedFaceIDs.Num() > 0);
@@ -141,11 +143,6 @@ FVector FMOIRoofPerimeterImpl::GetNormal() const
 
 bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-	if (MOI == nullptr)
-	{
-		return false;
-	}
-
 	switch (DirtyFlag)
 	{
 	case EObjectDirtyFlags::Structure:
@@ -160,7 +157,7 @@ bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 			{
 				// Delete the roof perimeter MOI
 				auto deletionDelta = MakeShared<FMOIDelta>();
-				deletionDelta->AddCreateDestroyState(MOI->GetStateData(), EMOIDeltaType::Destroy);
+				deletionDelta->AddCreateDestroyState(GetStateData(), EMOIDeltaType::Destroy);
 				OutSideEffectDeltas->Add(deletionDelta);
 
 				// Delete the roof group from the graph
@@ -169,7 +166,7 @@ bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 					auto graphDelta = MakeShared<FGraph3DDelta>();
 					for (int32 staleGroupMemberID : TempGroupMembers)
 					{
-						FGraph3DGroupIDsDelta groupIDsDelta(TSet<int32>(), TSet<int32>({ MOI->ID }));
+						FGraph3DGroupIDsDelta groupIDsDelta(TSet<int32>(), TSet<int32>({ ID }));
 						graphDelta->GroupIDsUpdates.Add(staleGroupMemberID, groupIDsDelta);
 					}
 
@@ -192,11 +189,11 @@ bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 		}
 
 		UpdatePerimeterGeometry();
-		MOI->MarkDirty(EObjectDirtyFlags::Visuals);
+		MarkDirty(EObjectDirtyFlags::Visuals);
 		break;
 	}
 	case EObjectDirtyFlags::Visuals:
-		MOI->UpdateVisibilityAndCollision();
+		UpdateVisuals();
 		break;
 	default:
 		break;
@@ -207,15 +204,10 @@ bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 
 bool FMOIRoofPerimeterImpl::UpdateConnectedIDs()
 {
-	if (!ensure(MOI))
-	{
-		return false;
-	}
-
-	const Modumate::FGraph3D &volumeGraph = MOI->GetDocument()->GetVolumeGraph();
+	const Modumate::FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
 
 	// Ask the graph what IDs belong to this roof perimeter group object
-	if (!volumeGraph.GetGroup(MOI->ID, TempGroupMembers))
+	if (!volumeGraph.GetGroup(ID, TempGroupMembers))
 	{
 		return false;
 	}
@@ -255,7 +247,7 @@ bool FMOIRoofPerimeterImpl::UpdateConnectedIDs()
 				// Make sure that each edge in the perimeter is actually associated with this perimeter's group ID,
 				// otherwise the perimeter can't be created.
 				const Modumate::FGraph3DEdge *graphEdge = volumeGraph.FindEdge(signedEdgeID);
-				if (graphEdge && graphEdge->GroupIDs.Contains(MOI->ID))
+				if (graphEdge && graphEdge->GroupIDs.Contains(ID))
 				{
 					CachedEdgeIDs.Add(signedEdgeID);
 				}
@@ -294,11 +286,11 @@ bool FMOIRoofPerimeterImpl::UpdateConnectedIDs()
 	if (!bEdgesMatchHandles || (PrevCachedEdgeIDs != CachedEdgeIDs))
 	{
 		// TODO: may not need to destroy -all- of the existing handles
-		MOI->ClearAdjustmentHandles();
+		ClearAdjustmentHandles();
 	}
 
 	// Update the handles regardless; this is the last opportunity to toggle visibility between face creation / retraction handles, etc.
-	MOI->ShowAdjustmentHandles(playerController, bAdjustmentHandlesVisible);
+	ShowAdjustmentHandles(playerController, bAdjustmentHandlesVisible);
 
 	PrevCachedEdgeIDs = CachedEdgeIDs;
 
@@ -307,14 +299,14 @@ bool FMOIRoofPerimeterImpl::UpdateConnectedIDs()
 
 void FMOIRoofPerimeterImpl::UpdatePerimeterGeometry()
 {
-	if (!ensure(MOI) || CachedPlane.IsZero())
+	if (CachedPlane.IsZero())
 	{
 		return;
 	}
 
 	CachedPerimeterPoints.Reset();
 	CachedPerimeterCenter = FVector::ZeroVector;
-	const Modumate::FGraph3D &volumeGraph = MOI->GetDocument()->GetVolumeGraph();
+	const Modumate::FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
 
 	int32 numEdges = CachedEdgeIDs.Num();
 	for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
