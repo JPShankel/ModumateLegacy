@@ -1,5 +1,6 @@
 import argparse
 import base64
+import configparser
 import json
 import hashlib
 import marshal
@@ -291,6 +292,15 @@ def run_process_on_server(address, *varargs):
 	print("Process exited with code %d, output:\n%s" % (rc, output))
 	sys.exit(rc)
 
+def get_project_version():
+	cwd = os.path.abspath(os.path.normpath(sys.path[0]))
+
+	config = configparser.ConfigParser(strict=False)
+	config_path = os.path.join(cwd, '../Config/DefaultGame.ini')
+	config.read(config_path, encoding='utf-16')
+	project_version = config.get('/Script/EngineSettings.GeneralProjectSettings', 'ProjectVersion')
+	print(project_version)
+
 # If utils.py is invoked directly, try to call one of its defined functions
 if __name__ == '__main__':
 	global_vars = globals()
@@ -302,3 +312,4 @@ if __name__ == '__main__':
 				print(str(result))
 		else:
 			raise TypeError("Invalid function: %s" % func_name)
+
