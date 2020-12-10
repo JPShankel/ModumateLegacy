@@ -13,6 +13,8 @@
 
 using namespace Modumate;
 
+#define LOCTEXT_NAMESPACE "ModumateDimensions"
+
 bool UModumateDimensionStatics::TryParseInputNumber(const FString &NumberString, float &OutValue)
 {
 	FCultureRef culture = FInternationalization::Get().GetCurrentCulture();
@@ -778,15 +780,20 @@ void UModumateDimensionStatics::CentimetersToImperialInches(float Centimeters, T
 
 FText UModumateDimensionStatics::ImperialInchesToDimensionStringText(TArray<int32>& Imperial)
 {
-	FString ImperialString("");
-	if (Imperial.Num() == 2)
+	int32 numParts = Imperial.Num();
+	switch (numParts)
 	{
-		ImperialString += FString::FromInt(Imperial[0]) + FString("' ") + FString::FromInt(Imperial[1]) + FString("'' ");
+	case 2:
+		return FText::Format(LOCTEXT("imperial_whole_numbers", "{0}' {1}\""),
+			FText::AsNumber(Imperial[0]), FText::AsNumber(Imperial[1]));
+	case 4:
+		return FText::Format(LOCTEXT("imperial_fractions", "{0}' {1} {2}/{3}\""),
+			FText::AsNumber(Imperial[0]), FText::AsNumber(Imperial[1]),
+			FText::AsNumber(Imperial[2]), FText::AsNumber(Imperial[3]));
+	default:
+		ensureMsgf(false, TEXT("Input imperial inches array much be of length 2 or 4, it is: %d"), numParts);
+		return FText::GetEmpty();
 	}
-	if (Imperial.Num() == 4)
-	{
-		ImperialString += FString::FromInt(Imperial[0]) + FString("' ") + FString::FromInt(Imperial[1]) + FString(" ");
-		ImperialString += FString::FromInt(Imperial[2]) + FString("/") + FString::FromInt(Imperial[3]) + FString(" ''");
-	}
-	return FText::FromString(ImperialString);
 }
+
+#undef LOCTEXT_NAMESPACE
