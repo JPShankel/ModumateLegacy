@@ -155,7 +155,7 @@ UTexture2D* UThumbnailCacheManager::GetCachedThumbnailFromPresetKey(const FBIMKe
 	return nullptr;
 }
 
-bool UThumbnailCacheManager::SaveThumbnailFromPresetKey(UTexture *ThumbnailTexture, const FBIMKey& PresetKey, UTexture2D*& OutSavedTexture, UObject *WorldContextObject)
+bool UThumbnailCacheManager::SaveThumbnailFromPresetKey(UTexture *ThumbnailTexture, const FBIMKey& PresetKey, UTexture2D*& OutSavedTexture, UObject *WorldContextObject, bool AllowOverwrite)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	UModumateGameInstance *modGameInst = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
@@ -165,13 +165,13 @@ bool UThumbnailCacheManager::SaveThumbnailFromPresetKey(UTexture *ThumbnailTextu
 
 	if (thumbnailCacheMan && !thumbnailKey.IsNone())
 	{
-		return thumbnailCacheMan->SaveThumbnail(ThumbnailTexture, thumbnailKey, OutSavedTexture);
+		return thumbnailCacheMan->SaveThumbnail(ThumbnailTexture, thumbnailKey, OutSavedTexture, AllowOverwrite);
 	}
 
 	return false;
 }
 
-bool UThumbnailCacheManager::SaveThumbnail(UTexture *ThumbnailTexture, FName ThumbnailKey, UTexture2D*& OutSavedTexture)
+bool UThumbnailCacheManager::SaveThumbnail(UTexture *ThumbnailTexture, FName ThumbnailKey, UTexture2D*& OutSavedTexture, bool AllowOverwrite)
 {
 	OutSavedTexture = nullptr;
 
@@ -182,7 +182,7 @@ bool UThumbnailCacheManager::SaveThumbnail(UTexture *ThumbnailTexture, FName Thu
 	}
 
 	// If we already have the thumbnail loaded, then return it so it can be used.
-	if (HasCachedThumbnail(ThumbnailKey))
+	if (!AllowOverwrite && HasCachedThumbnail(ThumbnailKey))
 	{
 		OutSavedTexture = CachedThumbnailTextures[ThumbnailKey];
 	}
@@ -215,13 +215,13 @@ bool UThumbnailCacheManager::SaveThumbnail(UTexture *ThumbnailTexture, FName Thu
 	}
 
 	// If we can't save the cached thumbnail to disk right now, then return.
-	if (IsSavingThumbnail(ThumbnailKey) || HasSavedThumbnail(ThumbnailKey))
+	if (!AllowOverwrite && (IsSavingThumbnail(ThumbnailKey) || HasSavedThumbnail(ThumbnailKey)))
 	{
 		return false;
 	}
 
 	// Actually write the converted texture to disk
-	return WriteThumbnailToDisk(OutSavedTexture, ThumbnailKey, EImageFormat::PNG, true);
+	return WriteThumbnailToDisk(OutSavedTexture, ThumbnailKey, EImageFormat::PNG, true, AllowOverwrite);
 }
 
 UTexture2D* UThumbnailCacheManager::CreateTexture2D(int32 SizeX, int32 SizeY, int32 NumMips /*= 1*/, EPixelFormat Format /*= PF_B8G8R8A8*/, UObject* Outer /*= nullptr*/, FName Name /*= NAME_None*/)
@@ -238,10 +238,10 @@ bool UThumbnailCacheManager::CopyViewportToTexture(UTexture2D* InTexture, UObjec
 	return FModumateThumbnailHelpers::CopyViewportToTexture(InTexture, WorldContextObject);
 }
 
-bool UThumbnailCacheManager::WriteThumbnailToDisk(UTexture2D *Texture, FName ThumbnailKey, EImageFormat ImageFormat, bool bAsync)
+bool UThumbnailCacheManager::WriteThumbnailToDisk(UTexture2D *Texture, FName ThumbnailKey, EImageFormat ImageFormat, bool bAsync, bool AllowOverwrite)
 {
 	FString thumbnailPath = GetThumbnailCachePathForKey(ThumbnailKey);
-	if (Texture && !IFileManager::Get().FileExists(*thumbnailPath))
+	if (Texture && (AllowOverwrite || !IFileManager::Get().FileExists(*thumbnailPath)))
 	{
 		// Read the texture's pixel data
 		FIntPoint textureSize(Texture->GetSizeX(), Texture->GetSizeY());
@@ -259,7 +259,7 @@ bool UThumbnailCacheManager::WriteThumbnailToDisk(UTexture2D *Texture, FName Thu
 		writeTask->PixelData = MoveTemp(pixelData);
 		writeTask->Format = ImageFormat;
 		writeTask->Filename = thumbnailPath;
-		writeTask->bOverwriteFile = false;
+		writeTask->bOverwriteFile = AllowOverwrite;
 		writeTask->CompressionQuality = 100;
 
 		TWeakObjectPtr<UThumbnailCacheManager> thumbnailCacheManPtr(this);

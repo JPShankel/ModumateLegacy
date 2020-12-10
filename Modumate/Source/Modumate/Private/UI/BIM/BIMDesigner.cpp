@@ -979,7 +979,7 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 	if (!node->ParentInstance.IsValid())
 	{
 		UTexture2D* outTexture;
-		UThumbnailCacheManager::SaveThumbnailFromPresetKey(RootNode->IconTexture, node->WorkingPresetCopy.PresetID, outTexture, this);
+		UThumbnailCacheManager::SaveThumbnailFromPresetKey(RootNode->IconTexture, node->WorkingPresetCopy.PresetID, outTexture, this, true);
 
 		Controller->GetDocument()->PresetManager.UpdateProjectAssembly(CraftingAssembly);
 		Controller->EditModelUserWidget->RefreshAssemblyList();

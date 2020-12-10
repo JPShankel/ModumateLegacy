@@ -50,10 +50,10 @@ public:
 	static UTexture2D* GetCachedThumbnailFromPresetKey(const FBIMKey& PresetKey, UObject *WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate|Thumbnails", meta = (WorldContext = "WorldContextObject"))
-	static bool SaveThumbnailFromPresetKey(UTexture *ThumbnailTexture, const FBIMKey& PresetKey, UTexture2D*& OutSavedTexture, UObject *WorldContextObject);
+	static bool SaveThumbnailFromPresetKey(UTexture *ThumbnailTexture, const FBIMKey& PresetKey, UTexture2D*& OutSavedTexture, UObject *WorldContextObject, bool AllowOverwrite = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate|Thumbnails")
-	bool SaveThumbnail(UTexture *ThumbnailTexture, FName ThumbnailKey, UTexture2D*& OutSavedTexture);
+	bool SaveThumbnail(UTexture *ThumbnailTexture, FName ThumbnailKey, UTexture2D*& OutSavedTexture, bool AllowOverwrite = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate|Texture")
 	static UTexture2D* CreateTexture2D(int32 SizeX, int32 SizeY, int32 NumMips = 1, EPixelFormat Format = PF_B8G8R8A8, UObject* Outer = nullptr, FName Name = NAME_None);
@@ -69,5 +69,5 @@ protected:
 	UPROPERTY()
 	TMap<FName, UTexture2D*> CachedThumbnailTextures;
 
-	bool WriteThumbnailToDisk(UTexture2D *Texture, FName ThumbnailKey, EImageFormat ImageFormat, bool bAsync);
+	bool WriteThumbnailToDisk(UTexture2D *Texture, FName ThumbnailKey, EImageFormat ImageFormat, bool bAsync, bool AllowOverwrite = false);
 };

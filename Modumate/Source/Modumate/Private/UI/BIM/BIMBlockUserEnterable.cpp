@@ -33,6 +33,12 @@ void UBIMBlockUserEnterable::NativeConstruct()
 
 void UBIMBlockUserEnterable::OnEditableTextBoxCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
+	// If text is same as before, do not update BIM Designer
+	if (Text.ToString() == OriginalValueString)
+	{
+		return;
+	}
+
 	if (CommitMethod == ETextCommit::OnEnter || CommitMethod == ETextCommit::OnUserMovedFocus)
 	{
 		ParentBIMDesigner->SetNodeProperty(NodeID, Scope, NameTpye, Text_Value->ModumateEditableTextBox->GetText().ToString());
