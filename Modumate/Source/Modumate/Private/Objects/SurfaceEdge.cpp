@@ -15,6 +15,7 @@ AMOISurfaceEdge::AMOISurfaceEdge()
 	, CachedDeprojectedStart(ForceInitToZero)
 	, CachedDeprojectedEnd(ForceInitToZero)
 {
+	BaseColor = FColor(0x51, 0x50, 0x84);
 }
 
 FVector AMOISurfaceEdge::GetCorner(int32 index) const
