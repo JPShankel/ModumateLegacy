@@ -2335,6 +2335,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 			RemapOldBIMKeys(docRec);
 		}
 
+
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.
 		VolumeGraph.Load(&docRec.VolumeGraph);

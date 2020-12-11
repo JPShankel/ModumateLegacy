@@ -216,6 +216,16 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				}
 			}
 			break;
+			case ECSVMatrixNames::Mesh:
+			{
+				FString meshKey(Row[presetMatrix.First]);
+				if (!meshKey.IsEmpty())
+				{
+					Preset.Properties.SetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, NormalizeCell(meshKey));
+					Preset.FormItemToProperty.Add(TEXT("Mesh"), FBIMPropertyKey(EBIMValueScope::Mesh, BIMPropertyNames::AssetID).QN());
+				}
+			}
+			break;
 
 			case ECSVMatrixNames::Material :
 			{

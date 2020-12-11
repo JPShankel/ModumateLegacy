@@ -33,8 +33,7 @@ private:
 	// For debugging
 	FBIMKey DEBUGPresetID, DEBUGSlotName;
 	EBIMValueScope DEBUGNodeScope;
-
-	// Default values for fine part parameters like "jamb width" and "handle backset"
+	FGuid DEBUG_GUID;
 #endif
 
 public:

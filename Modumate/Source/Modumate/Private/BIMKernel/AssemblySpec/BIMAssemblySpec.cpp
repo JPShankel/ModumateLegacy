@@ -20,6 +20,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	EBIMResult ret = EBIMResult::Success;
 	RootPreset = PresetID;
 
+
 	/*
 	We build an assembly spec by iterating through the tree of presets and assigning BIM values to specific targets like structural layers, risers, treads, etc		
 	Layers for stair tread and risers can be in embedded layered assemblies...when we get to those layers we need to know where they land in the top level assembly
@@ -262,6 +263,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 #if WITH_EDITOR //for debugging
 		partSpec.DEBUGNodeScope = EBIMValueScope::Assembly;
 		partSpec.DEBUGPresetID = PresetID;
+		partSpec.DEBUG_GUID = assemblyPreset->GUID;
 #endif
 	}
 
@@ -287,7 +289,21 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			partSpec.DEBUGNodeScope = partPreset->NodeScope;
 			partSpec.DEBUGPresetID = partPreset->PresetID;
 			partSpec.DEBUGSlotName = partIterator.Slot.SlotPreset;
+			partSpec.DEBUG_GUID = partPreset->GUID;
 #endif
+			// If this child has a mesh asset ID, this fetch the mesh and use it 
+			FBIMKey meshAsset;
+			if (partPreset->Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshAsset))
+			{
+				const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(meshAsset);
+				if (!ensureAlways(mesh != nullptr))
+				{
+					ret = EBIMResult::Error;
+					break;
+				}
+
+				partSpec.Mesh = *mesh;
+			}
 
 			for (auto& matBinding : partPreset->MaterialChannelBindings)
 			{
@@ -299,39 +315,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 					newMat.DefaultBaseColor.Color = matBinding.ColorHexValue.IsEmpty() ? FColor::White : FColor::FromHex(matBinding.ColorHexValue);
 					partSpec.ChannelMaterials.Add(*matBinding.Channel, newMat);
 				}
-			}
-
-			// Look for asset child presets (mesh and material) and cache assets in the part
-			for (auto& cp : partPreset->ChildPresets)
-			{
-				if (!ensureAlways(!cp.PresetID.IsNone()))
-				{
-					ret = EBIMResult::Error;
-					continue;
-				}
-
-				const FBIMPresetInstance* childPreset = PresetCollection.Presets.Find(cp.PresetID);
-
-				if (!ensureAlways(childPreset != nullptr))
-				{
-					ret = EBIMResult::Error;
-					continue;
-				}
-
-				// If this child has a mesh asset ID, this fetch the mesh and use it 
-				FString meshAsset;
-				if (childPreset->Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshAsset))
-				{
-					const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(childPreset->PresetID);
-					if (!ensureAlways(mesh != nullptr))
-					{
-						ret = EBIMResult::Error;
-						break;
-					}
-
-					partSpec.Mesh = *mesh;
-				}
-			}
+			}	
 
 			// Find which slot this child belongs to and fetch transform data
 			for (auto& childSlot : slotConfigPreset->ChildPresets)
@@ -446,14 +430,14 @@ EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FModumateDatabase& InDB)
 		{
 			FBIMExtrusionSpec& extrusion = Extrusions.AddDefaulted_GetRef();
 			extrusion.Material = *mat;
+#if WITH_EDITOR
+			FBIMPartLayout layout;
+			ensureAlways(layout.FromAssembly(*this, FVector::OneVector) == EBIMResult::Success);
+#endif
 			return EBIMResult::Success;
 		}
 	}
 
-#if WITH_EDITOR
-	FBIMPartLayout layout;
-	ensureAlways(layout.FromAssembly(*this, FVector::OneVector) == EBIMResult::Success);
-#endif
 
 	return EBIMResult::Error;
 }
