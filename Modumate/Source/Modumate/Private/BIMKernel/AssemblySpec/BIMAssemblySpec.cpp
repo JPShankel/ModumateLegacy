@@ -20,7 +20,6 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	EBIMResult ret = EBIMResult::Success;
 	RootPreset = PresetID;
 
-
 	/*
 	We build an assembly spec by iterating through the tree of presets and assigning BIM values to specific targets like structural layers, risers, treads, etc		
 	Layers for stair tread and risers can be in embedded layered assemblies...when we get to those layers we need to know where they land in the top level assembly
@@ -66,6 +65,22 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	DEBUG_GUID = PresetCollection.Presets.Find(PresetID)->GUID;
 #endif
 
+	const FBIMPresetInstance* assemblyPreset = PresetCollection.Presets.Find(PresetID);
+
+	if (!ensureAlways(assemblyPreset != nullptr))
+	{
+		return EBIMResult::Error;
+	}
+
+	if (!assemblyPreset->SlotConfigPresetID.IsNone())
+	{
+		const FBIMPresetInstance* slotConfigPreset = PresetCollection.Presets.Find(assemblyPreset->SlotConfigPresetID);
+		if (ensureAlways(slotConfigPreset != nullptr))
+		{
+			slotConfigPreset->TryGetProperty(BIMPropertyNames::ConceptualSizeY, SlotConfigConceptualSizeY);
+			SlotConfigTagPath = slotConfigPreset->MyTagPath;
+		}
+	}
 
 	while (iteratorStack.Num() > 0)
 	{
@@ -209,19 +224,29 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		}
 
 		// If a preset has parts, add them to the part queue for processing below
+
 		for (const auto& part : presetIterator.Preset->PartSlots)
 		{
 			if (!part.PartPreset.IsNone())
 			{
-				const FBIMPresetInstance* slotConfigPreset = PresetCollection.Presets.Find(presetIterator.Preset->SlotConfigPresetID);
-				if (ensureAlways(slotConfigPreset != nullptr))
-				{
-					slotConfigPreset->TryGetProperty(BIMPropertyNames::ConceptualSizeY, SlotConfigConceptualSizeY);
-				}
 				FPartIterator partIterator;
 				partIterator.SlotConfigPreset = presetIterator.Preset->SlotConfigPresetID;
 				partIterator.Slot = part;
 				partIteratorQueue.Enqueue(partIterator);
+
+				const FBIMPresetInstance* slotConfigPreset = PresetCollection.Presets.Find(partIterator.SlotConfigPreset);
+				if (slotConfigPreset != nullptr)
+				{
+					if (SlotConfigConceptualSizeY.IsEmpty())
+					{
+						slotConfigPreset->TryGetProperty(BIMPropertyNames::ConceptualSizeY, SlotConfigConceptualSizeY);
+					}
+
+					if (SlotConfigTagPath.Tags.Num() == 0)
+					{
+						SlotConfigTagPath = slotConfigPreset->MyTagPath;
+					}
+				}
 			}
 		}
 	}
@@ -229,8 +254,6 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	// If we encountered any parts, add a root part to the top of the list to be the parent of the others
 	if (!partIteratorQueue.IsEmpty())
 	{
-		const FBIMPresetInstance* assemblyPreset = PresetCollection.Presets.Find(PresetID);
-
 		FBIMPartSlotSpec& partSpec = Parts.AddDefaulted_GetRef();
 		partSpec.ParentSlotIndex = INDEX_NONE;
 		partSpec.NodeCategoryPath = assemblyPreset->MyTagPath;

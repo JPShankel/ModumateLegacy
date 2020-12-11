@@ -66,6 +66,8 @@ public:
 	Modumate::Units::FUnitValue TreadDepth = Modumate::Units::FUnitValue::WorldCentimeters(0);
 
 	FString SlotConfigConceptualSizeY;
+	FBIMTagPath SlotConfigTagPath;
+
 	// For DataCollection support in preset manager
 	FBIMKey UniqueKey() const { return RootPreset; }
 
