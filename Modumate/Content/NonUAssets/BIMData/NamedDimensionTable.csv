@@ -7,12 +7,14 @@ PROPERTY,,String,,,,UIGroup,,,
 PROPERTY,,String,,Description,,Description,,,
 ,,Presets,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,DisplayName,DefaultValue,UIGroup,Description
-PRESET,,Length,,NamedDimension,,Length,24in,Major,
-PRESET,,Width,,NamedDimension,,Width,6in,Major,
-PRESET,,Height,,NamedDimension,,Height,4in,Major,
-PRESET,,Thickness,,NamedDimension,,Thickness,0.5in,Major,
 PRESET,,Depth,,NamedDimension,,Depth,4in,Major,
 PRESET,,Diameter,,NamedDimension,,Diameter,6in,Major,
+PRESET,,Length,,NamedDimension,,Length,24in,Major,
+PRESET,,Height,,NamedDimension,,Height,4in,Major,
+PRESET,,Thickness,,NamedDimension,,Thickness,0.5in,Major,
+PRESET,,Width,,NamedDimension,,Width,6in,Major,
+PRESET,,ToeKickDepth,,NamedDimension,,Toe Kick Depth,3.5in,Major,
+PRESET,,ToeKickHeight,,NamedDimension,,Toe Kick Height,4in,Major,
 ,,,,,,,,,
 PRESET,,BacksetDistanceX,,NamedDimension,,Backset,2.75in,Minor,How far from the active edge of the panel should this attachment be?
 PRESET,,BevelWidth,,NamedDimension,,Bevel Width,0.1875in,Minor,How much are the edges of a prismic module cut/beveled?
@@ -80,13 +82,16 @@ PRESET,,TrackScreenDistanceY,,NamedDimension,,Screen Track Depth-In-Frame,7.5in,
 PRESET,,TrackScreenSizeY,,NamedDimension,,Screen Track Thickness,0.25in,Minor,"How large, in Y, should the panel be to sit snugly in ScreenTrack?"
 PRESET,,TrackScreenSillSizeZ,,NamedDimension,,Screen Track Sill Size,0.25in,Minor,How far into the reference area does a frame's ScreenTrack's sill intrude?
 PRESET,,TrackScreenHeadSizeZ,,NamedDimension,,Screen Track Head Size,0.25in,Minor,How far into the reference area does a frame's ScreenTrack's head intrude?
+PRESET,,TreadDepthIdeal,,NamedDimension,,Ideal Tread Depth,11in,Minor,What depth should a stair's treads be as close as possible to?
 PRESET,,UndercutDistanceZ,,NamedDimension,,Undercut,0.75in,Minor,How far above the top of the frame's sill is the base of the panel?
 PRESET,,WebThickness,,NamedDimension,,Web Thickness,0.25in,Minor,How thick is the middle section of an I-beam?
 ,,,,,,,,,
-PRESET,,IconLength,,NamedDimension,,Icon Length,48in,Preview,How long is the preview icon for this Preset?
-PRESET,,IconWidth,,NamedDimension,,Icon Width,36in,Preview,How wide is the preview icon for this Preset?
-PRESET,,IconHeight,,NamedDimension,,Icon Height,36in,Preview,How tall is the preview icon for this Preset?
 PRESET,,IconDepth,,NamedDimension,,Icon Depth,4in,Preview,How deep is the preview icon for this Preset?
+PRESET,,IconHeight,,NamedDimension,,Icon Height,36in,Preview,How tall is the preview icon for this Preset?
+PRESET,,IconLength,,NamedDimension,,Icon Length,48in,Preview,How long is the preview icon for this Preset?
+PRESET,,IconRise,,NamedDimension,,Icon Rise,36in,Preview,How long is the preview icon for this Preset?
+PRESET,,IconRun,,NamedDimension,,Icon Run,66in,Preview,How long is the preview icon for this Preset?
+PRESET,,IconWidth,,NamedDimension,,Icon Width,36in,Preview,How wide is the preview icon for this Preset?
 ,,,,,,,,,
 PRESET,,NativeSizeX,,NamedDimension,,Native Size (X),12in,Hidden,"What is this asset's native size, in X?"
 PRESET,,NativeSizeY,,NamedDimension,,Native Size (Y),12in,Hidden,"What is this asset's native size, in Y?"
