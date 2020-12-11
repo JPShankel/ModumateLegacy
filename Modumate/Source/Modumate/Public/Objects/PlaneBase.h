@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 #include "Objects/ModumateObjectInstance.h"
 
-class MODUMATE_API FMOIPlaneImplBase : public FModumateObjectInstance
+class MODUMATE_API FMOIPlaneImplBase : public AModumateObjectInstance
 {
 public:
 	FMOIPlaneImplBase();
@@ -34,5 +34,5 @@ protected:
 	FPlane CachedPlane;
 	FVector CachedAxisX, CachedAxisY, CachedOrigin, CachedCenter;
 	TArray<FPolyHole3D> CachedHoles;
-	TArray<FModumateObjectInstance*> TempConnectedMOIs;
+	TArray<AModumateObjectInstance*> TempConnectedMOIs;
 };

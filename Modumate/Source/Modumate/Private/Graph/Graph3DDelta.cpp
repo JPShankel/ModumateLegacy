@@ -204,7 +204,7 @@ FDeltaPtr FGraph3DDelta::MakeInverse() const
 	return MakeGraphInverse();
 }
 
-bool FGraph3DDelta::ApplyTo(FModumateDocument* doc, UWorld* world) const
+bool FGraph3DDelta::ApplyTo(UModumateDocument* doc, UWorld* world) const
 {
 	doc->ApplyGraph3DDelta(*this, world);
 	return true;

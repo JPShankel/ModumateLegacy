@@ -14,7 +14,7 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 FMOIStructureLine::FMOIStructureLine()
-	: FModumateObjectInstance()
+	: AModumateObjectInstance()
 	, LineStartPos(ForceInitToZero)
 	, LineEndPos(ForceInitToZero)
 	, LineDir(ForceInitToZero)
@@ -27,7 +27,7 @@ FMOIStructureLine::FMOIStructureLine()
 
 FQuat FMOIStructureLine::GetRotation() const
 {
-	const FModumateObjectInstance *parentObj = GetParentObject();
+	const AModumateObjectInstance *parentObj = GetParentObject();
 	if (parentObj)
 	{
 		return parentObj->GetRotation();
@@ -38,7 +38,7 @@ FQuat FMOIStructureLine::GetRotation() const
 
 FVector FMOIStructureLine::GetLocation() const
 {
-	const FModumateObjectInstance *parentObj = GetParentObject();
+	const AModumateObjectInstance *parentObj = GetParentObject();
 	if (parentObj)
 	{
 		return parentObj->GetLocation();
@@ -59,7 +59,7 @@ void FMOIStructureLine::UpdateDynamicGeometry()
 
 void FMOIStructureLine::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
 {
-	FModumateObjectInstance* parent = GetParentObject();
+	AModumateObjectInstance* parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaEdge)))
 	{
 		return;
@@ -111,7 +111,7 @@ void FMOIStructureLine::InternalUpdateGeometry(bool bRecreate, bool bCreateColli
 	}
 
 	// This can be an expected error, if the object is still getting set up before it has a parent assigned.
-	const FModumateObjectInstance *parentObj = GetParentObject();
+	const AModumateObjectInstance *parentObj = GetParentObject();
 	if (parentObj == nullptr)
 	{
 		return;

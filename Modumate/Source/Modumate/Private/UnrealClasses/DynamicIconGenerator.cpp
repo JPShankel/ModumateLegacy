@@ -444,7 +444,7 @@ bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FBIMAssemblySpec 
 bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Now that we have a cabinet assembly, a DynamicMeshActor, and CompoundMeshActor,
-	// we can make a fake cabinet for icon generation the same way that FMOICabinetImpl does.
+	// we can make a fake cabinet for icon generation the same way that AMOICabinet does.
 
 	// Get the material for the cabinet
 	FArchitecturalMaterial materialData;
@@ -475,7 +475,7 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 
 	// Step 2: Update the actors to show the current cabinet assembly
 	bool bFaceValid;
-	FMOICabinetImpl::UpdateCabinetActors(Assembly, cabinetBasePoints, extrusionDelta, 2, false, false, false, IconDynamicMeshActor, IconCompoundMeshActor, bFaceValid);
+	AMOICabinet::UpdateCabinetActors(Assembly, cabinetBasePoints, extrusionDelta, 2, false, false, false, IconDynamicMeshActor, IconCompoundMeshActor, bFaceValid);
 
 	// Step 3: Position the spring arm in order to capture the cabinet
 	SetSpringArmDistanceForCapture(IconDynamicMeshActor, CabinetScaleFactor, false);
@@ -585,7 +585,7 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 	// Step 1: Setup stair mesh
 	/////////////////////////////////////////////////////////////////////////////////////////////
 
-	// Note: This should be similar to FMOIStaircaseImpl::SetupDynamicGeometry() in Stairs.cpp
+	// Note: This should be similar to AMOIStaircase::SetupDynamicGeometry() in Stairs.cpp
 	
 	// Instead of MOI as planeParent, icon uses specific dimension for stair model
 	TArray<FVector> runPlanePoints;

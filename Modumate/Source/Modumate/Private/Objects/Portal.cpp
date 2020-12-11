@@ -24,8 +24,8 @@
 class AEditModelPlayerController_CPP;
 
 
-FMOIPortalImpl::FMOIPortalImpl()
-	: FModumateObjectInstance()
+AMOIPortal::AMOIPortal()
+	: AModumateObjectInstance()
 	, Controller(nullptr)
 	, CachedRelativePos(ForceInitToZero)
 	, CachedWorldPos(ForceInitToZero)
@@ -35,12 +35,12 @@ FMOIPortalImpl::FMOIPortalImpl()
 {
 }
 
-AActor *FMOIPortalImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor *AMOIPortal::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
 	return world->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform(rot, loc));
 }
 
-FVector FMOIPortalImpl::GetNormal() const
+FVector AMOIPortal::GetNormal() const
 {
 	const AActor *portalActor = GetActor();
 	if (!ensure(portalActor != nullptr))
@@ -52,15 +52,15 @@ FVector FMOIPortalImpl::GetNormal() const
 	return portalTransform.GetUnitAxis(EAxis::Y);
 }
 
-void FMOIPortalImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+void AMOIPortal::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 	OutStructDef = InstanceData.StaticStruct();
 	OutStructPtr = &InstanceData;
 }
 
-bool FMOIPortalImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AMOIPortal::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-	if (!FModumateObjectInstance::CleanObject(DirtyFlag, OutSideEffectDeltas))
+	if (!AModumateObjectInstance::CleanObject(DirtyFlag, OutSideEffectDeltas))
 	{
 		return false;
 	}
@@ -87,18 +87,18 @@ bool FMOIPortalImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 	return true;
 }
 
-void FMOIPortalImpl::SetupDynamicGeometry()
+void AMOIPortal::SetupDynamicGeometry()
 {
 	SetupCompoundActorGeometry();
 	SetRelativeTransform(CachedRelativePos, CachedRelativeRot);
 }
 
-void FMOIPortalImpl::UpdateDynamicGeometry()
+void AMOIPortal::UpdateDynamicGeometry()
 {
 	SetupDynamicGeometry();
 }
 
-bool FMOIPortalImpl::SetupCompoundActorGeometry()
+bool AMOIPortal::SetupCompoundActorGeometry()
 {
 	bool bResult = false;
 	if (ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(GetActor()))
@@ -153,7 +153,7 @@ bool FMOIPortalImpl::SetupCompoundActorGeometry()
 	return bResult;
 }
 
-bool FMOIPortalImpl::SetRelativeTransform(const FVector2D &InRelativePos, const FQuat &InRelativeRot)
+bool AMOIPortal::SetRelativeTransform(const FVector2D &InRelativePos, const FQuat &InRelativeRot)
 {
 	CachedRelativePos = InRelativePos;
 	CachedRelativeRot = InRelativeRot;
@@ -178,23 +178,23 @@ bool FMOIPortalImpl::SetRelativeTransform(const FVector2D &InRelativePos, const 
 	return true;
 }
 
-void FMOIPortalImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOIPortal::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	const FModumateObjectInstance* parentObject = GetParentObject();
+	const AModumateObjectInstance* parentObject = GetParentObject();
 	if (parentObject && (parentObject->GetObjectType() == EObjectType::OTMetaPlane))
 	{
 		parentObject->GetStructuralPointsAndLines(outPoints, outLines, bForSnapping, bForSelection);
 	}
 }
 
-FQuat FMOIPortalImpl::GetRotation() const
+FQuat AMOIPortal::GetRotation() const
 {
 	return CachedRelativeRot;
 }
 
-FVector FMOIPortalImpl::GetCorner(int32 index) const
+FVector AMOIPortal::GetCorner(int32 index) const
 {
-	const FModumateObjectInstance* parentObject = GetParentObject();
+	const AModumateObjectInstance* parentObject = GetParentObject();
 	if (parentObject && (parentObject->GetObjectType() == EObjectType::OTMetaPlane))
 	{
 		return parentObject->GetCorner(index);
@@ -203,19 +203,19 @@ FVector FMOIPortalImpl::GetCorner(int32 index) const
 	return FVector::ZeroVector;
 }
 
-FVector FMOIPortalImpl::GetLocation() const
+FVector AMOIPortal::GetLocation() const
 {
 	return FVector(CachedRelativePos, 0.0f);
 }
 
-FTransform FMOIPortalImpl::GetWorldTransform() const
+FTransform AMOIPortal::GetWorldTransform() const
 {
 	return FTransform(CachedWorldRot, CachedWorldPos);
 }
 
-void FMOIPortalImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+void AMOIPortal::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
-	FModumateObjectInstance *parent = GetParentObject();
+	AModumateObjectInstance *parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return;
@@ -239,7 +239,7 @@ void FMOIPortalImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *cont
 	ccwOrientHandle->CounterClockwise = true;
 }
 
-bool FMOIPortalImpl::GetInvertedState(FMOIStateData& OutState) const
+bool AMOIPortal::GetInvertedState(FMOIStateData& OutState) const
 {
 	OutState = GetStateData();
 
@@ -249,7 +249,7 @@ bool FMOIPortalImpl::GetInvertedState(FMOIStateData& OutState) const
 	return OutState.CustomData.SaveStructData(modifiedTrimData);
 }
 
-void FMOIPortalImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
+void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
 {
 	bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
@@ -351,7 +351,7 @@ void FMOIPortalImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCompos
 
 }
 
-void FMOIPortalImpl::SetIsDynamic(bool bIsDynamic)
+void AMOIPortal::SetIsDynamic(bool bIsDynamic)
 {
 	auto meshActor = Cast<ACompoundMeshActor>(GetActor());
 	if (meshActor)
@@ -360,7 +360,7 @@ void FMOIPortalImpl::SetIsDynamic(bool bIsDynamic)
 	}
 }
 
-bool FMOIPortalImpl::GetIsDynamic() const
+bool AMOIPortal::GetIsDynamic() const
 {
 	auto meshActor = Cast<ACompoundMeshActor>(GetActor());
 	if (meshActor)

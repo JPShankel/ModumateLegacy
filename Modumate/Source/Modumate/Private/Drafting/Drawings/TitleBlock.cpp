@@ -10,13 +10,13 @@ namespace Modumate
 {
 	using namespace Units;
 
-	FTitleBlock::FTitleBlock(const FModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID) :
+	FTitleBlock::FTitleBlock(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID) :
 		FDraftingDrawing(doc, world, captureObjID)
 	{
 		DrawingScale = 1.0f;
 	}
 
-	EDrawError FTitleBlock::InitializeWithData(IModumateDraftingDraw *drawingInterface, const FModumateDocument *Document)
+	EDrawError FTitleBlock::InitializeWithData(IModumateDraftingDraw *drawingInterface, const UModumateDocument *Document)
 	{
 		ContentHeight = ContentMargin.Y/2.0f;
 
@@ -134,7 +134,7 @@ namespace Modumate
 
 		// TODO: this section has the chance to extend the size of the title block to be larger than the page
 		// extra individuals may be cut off the page and that may need to be handled gracefully
-		TArray<FModumateDocument::FPartyProfile> allParties;
+		TArray<UModumateDocument::FPartyProfile> allParties;
 		allParties.Add(Document->LeadArchitect);
 		allParties.Add(Document->Client);
 		allParties.Append(Document->SecondaryParties);
@@ -174,7 +174,7 @@ namespace Modumate
 		return EDrawError::ErrorNone;
 	}
 
-	EDrawError FTitleBlock::MakePersonalInformation(IModumateDraftingDraw *drawingInterface, FModumateDocument::FPartyProfile profile)
+	EDrawError FTitleBlock::MakePersonalInformation(IModumateDraftingDraw *drawingInterface, UModumateDocument::FPartyProfile profile)
 	{
 		TSharedPtr<FDraftingComposite> personalInfo = MakeShareable(new FDraftingComposite());
 		personalInfo->Children.Add(MakeShareable(new FDraftingText(FText::FromString(profile.Role), SmallFontSize, HeaderColor, HeaderType)));

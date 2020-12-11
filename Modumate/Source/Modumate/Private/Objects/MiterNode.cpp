@@ -28,7 +28,7 @@ FMiterParticipantData::FMiterParticipantData(const struct FMiterData *InMiterDat
 		return;
 	}
 
-	const FModumateDocument *doc = InMiterData->MOI->GetDocument();
+	const UModumateDocument *doc = InMiterData->MOI->GetDocument();
 	if (!ensure(doc))
 	{
 		return;
@@ -42,7 +42,7 @@ FMiterParticipantData::FMiterParticipantData(const struct FMiterData *InMiterDat
 	}
 
 	int32 planeObjID = FMath::Abs(edgeFaceConnection.FaceID);
-	const FModumateObjectInstance *planeObj = doc->GetObjectById(planeObjID);
+	const AModumateObjectInstance *planeObj = doc->GetObjectById(planeObjID);
 	MOI = Modumate::Mitering::FMiterHelpers::GetChildLayeredObj(planeObj);
 
 	// This step is allowed to fail, since we could try to construct a miter participant from a plane without a child layered object.
@@ -200,7 +200,7 @@ void FMiterData::Reset()
 	ParticipantsByID.Reset();
 }
 
-bool FMiterData::GatherDetails(const FModumateObjectInstance *InMiterObject)
+bool FMiterData::GatherDetails(const AModumateObjectInstance *InMiterObject)
 {
 	Reset();
 
@@ -210,7 +210,7 @@ bool FMiterData::GatherDetails(const FModumateObjectInstance *InMiterObject)
 	}
 
 	MOI = InMiterObject;
-	const FModumateDocument *doc = MOI->GetDocument();
+	const UModumateDocument *doc = MOI->GetDocument();
 	if (doc == nullptr)
 	{
 		return false;

@@ -163,7 +163,7 @@ bool UMetaPlaneTool::EnterNextStage()
 
 bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewObjIDs)
 {
-	FModumateDocument &doc = GameState->Document;
+	UModumateDocument &doc = GameState->Document;
 
 	bool bSuccess = false;
 	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);

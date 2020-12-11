@@ -198,7 +198,7 @@ void UComponentAssemblyListItem::OnButtonConfirmReleased()
 		}
 		break;
 	case EComponentListItemType::SwapListItem:
-		FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+		UModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 		const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, BIMKey);
 		if (assembly)
 		{
@@ -226,7 +226,7 @@ bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 		return false;
 	}
 
-	FModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+	UModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, BIMKey);
 	if (!assembly)
 	{

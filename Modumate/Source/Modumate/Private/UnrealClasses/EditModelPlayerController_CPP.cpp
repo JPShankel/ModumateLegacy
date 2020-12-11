@@ -1355,7 +1355,7 @@ void AEditModelPlayerController_CPP::AddAllOriginAffordances() const
 * Mouse Functions
 */
 
-void AEditModelPlayerController_CPP::SetObjectSelected(const FModumateObjectInstance *ob, bool selected)
+void AEditModelPlayerController_CPP::SetObjectSelected(const AModumateObjectInstance *ob, bool selected)
 {
 	ModumateCommand(
 		FModumateCommand(Commands::kSelectObject)
@@ -1483,7 +1483,7 @@ void AEditModelPlayerController_CPP::DeselectAll()
 
 bool AEditModelPlayerController_CPP::SelectObjectById(int32 ObjectID)
 {
-	const FModumateObjectInstance *moi = Document->GetObjectById(ObjectID);
+	const AModumateObjectInstance *moi = Document->GetObjectById(ObjectID);
 	if (moi == nullptr)
 	{
 		return false;
@@ -1617,7 +1617,7 @@ void AEditModelPlayerController_CPP::CleanSelectedObjects()
 		return;
 	}
 
-	TArray<FModumateObjectInstance *> objectsToClean;
+	TArray<AModumateObjectInstance *> objectsToClean;
 	if (EMPlayerState->SelectedObjects.Num() == 0)
 	{
 		objectsToClean.Append(Document->GetObjectInstances());
@@ -1635,7 +1635,7 @@ void AEditModelPlayerController_CPP::CleanSelectedObjects()
 	Document->CleanObjects();
 }
 
-void AEditModelPlayerController_CPP::SetViewGroupObject(const FModumateObjectInstance *ob)
+void AEditModelPlayerController_CPP::SetViewGroupObject(const AModumateObjectInstance *ob)
 {
 	if (ob && (ob->GetObjectType() == EObjectType::OTGroup))
 	{
@@ -1727,8 +1727,8 @@ void AEditModelPlayerController_CPP::UpdateMouseTraceParams()
 	SnappingActorsToIgnore.Reset();
 	SnappingActorsToIgnore.Add(this);
 
-	const TArray<FModumateObjectInstance *> objs = Document->GetObjectInstances();
-	for (FModumateObjectInstance *obj : objs)
+	const TArray<AModumateObjectInstance *> objs = Document->GetObjectInstances();
+	for (AModumateObjectInstance *obj : objs)
 	{
 		if (obj && SnappingIDsToIgnore.Contains(obj->ID))
 		{
@@ -1973,7 +1973,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 
 		if (baseHit.Valid)
 		{
-			const FModumateObjectInstance *hitMOI = Document->ObjectFromActor(baseHit.Actor.Get());
+			const AModumateObjectInstance *hitMOI = Document->ObjectFromActor(baseHit.Actor.Get());
 			if (EMPlayerState->ShowDebugSnaps && hitMOI)
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("OBJECT HIT #%d, %s"),
@@ -2053,7 +2053,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 				{
 					GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("STRUCTURAL ACTOR %s"), *structuralHit.Actor->GetName()));
 
-					const FModumateObjectInstance *hitMOI = Document->ObjectFromActor(structuralHit.Actor.Get());
+					const AModumateObjectInstance *hitMOI = Document->ObjectFromActor(structuralHit.Actor.Get());
 					if (hitMOI)
 					{
 						GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("STRUCTURAL MOI %d, %s"),
@@ -2233,7 +2233,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, *FString::Printf(TEXT("Location: %s"), *EMPlayerState->SnappedCursor.WorldPosition.ToString()));
 	}
 
-	FModumateObjectInstance *newHoveredObject = nullptr;
+	AModumateObjectInstance *newHoveredObject = nullptr;
 
 	if (InteractionHandle == nullptr && !ShowingModalDialog && actorUnderMouse)
 	{
@@ -2552,7 +2552,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 		objectHit.Location = hitSingleResult.Location;
 		objectHit.Normal = hitSingleResult.Normal;
 
-		const FModumateObjectInstance* moi = Document->ObjectFromActor(objectHit.Actor.Get());
+		const AModumateObjectInstance* moi = Document->ObjectFromActor(objectHit.Actor.Get());
 		EObjectType objectType = moi ? moi->GetObjectType() : EObjectType::OTNone;
 		// TODO: this should be an interface function or there should be a way to find the planar object types
 		if ((objectType == EObjectType::OTMetaPlane) || (objectType == EObjectType::OTSurfacePolygon))
@@ -2597,7 +2597,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 			objectHit.CP1 = bestPoint.CP1;
 			objectHit.CP2 = bestPoint.CP2;
 
-			FModumateObjectInstance *bestObj = Document->GetObjectById(bestPoint.ObjID);
+			AModumateObjectInstance *bestObj = Document->GetObjectById(bestPoint.ObjID);
 			if (bestObj)
 			{
 				objectHit.Actor = bestObj->GetActor();
@@ -2627,7 +2627,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 			objectHit.CP1 = bestLine.CP1;
 			objectHit.CP2 = bestLine.CP2;
 
-			FModumateObjectInstance *bestObj = Document->GetObjectById(bestLine.ObjID);
+			AModumateObjectInstance *bestObj = Document->GetObjectById(bestLine.ObjID);
 			if (bestObj)
 			{
 				objectHit.SnapType = ESnapType::CT_EDGESNAP;
@@ -2658,7 +2658,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 		static TArray<FStructureLine> tempLinesForCollision;
 		// TODO: we know this is inefficient, should replace with an interface that allows for optimization
 		// (like not needing to iterate over every single object in the scene)
-		for (FModumateObjectInstance *moi : Document->GetObjectInstances())
+		for (AModumateObjectInstance *moi : Document->GetObjectInstances())
 		{
 			if (moi && moi->IsCollisionEnabled() && moi->UseStructureDataForCollision())
 			{
@@ -2982,11 +2982,11 @@ void AEditModelPlayerController_CPP::GroupSelected(bool makeGroup)
 		Algo::TransformIf(
 			EMPlayerState->SelectedObjects,
 			groupIds,
-			[](const FModumateObjectInstance *ob)
+			[](const AModumateObjectInstance *ob)
 			{
 				return ob->GetObjectType() == EObjectType::OTGroup;
 			},
-			[](const FModumateObjectInstance *ob) 
+			[](const AModumateObjectInstance *ob) 
 			{
 				return ob->ID; 
 			}

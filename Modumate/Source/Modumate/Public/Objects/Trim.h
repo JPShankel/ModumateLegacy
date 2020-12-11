@@ -24,10 +24,10 @@ struct MODUMATE_API FMOITrimData
 	float UpJustification = 0.5f;
 };
 
-class MODUMATE_API FMOITrimImpl : public FModumateObjectInstance
+class MODUMATE_API AMOITrim : public AModumateObjectInstance
 {
 public:
-	FMOITrimImpl();
+	AMOITrim();
 
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;

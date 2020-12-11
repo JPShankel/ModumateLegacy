@@ -25,7 +25,7 @@ public:
 	AEditModelGameState_CPP();
 	~AEditModelGameState_CPP();
 
-	FModumateDocument Document;
+	UModumateDocument Document;
 
 	UFUNCTION(BlueprintCallable, Category = "Shopping")
 	TArray<float> GetComponentsThicknessWithKey(EToolMode Mode, const FBIMKey& AssemblyKey) const;

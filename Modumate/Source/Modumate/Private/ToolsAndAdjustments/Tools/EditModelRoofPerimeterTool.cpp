@@ -23,7 +23,7 @@ bool URoofPerimeterTool::Activate()
 	Super::Activate();
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument &doc = gameState->Document;
+	UModumateDocument &doc = gameState->Document;
 	const FGraph3D &volumeGraph = doc.GetVolumeGraph();
 
 	TSet<int32> graphObjIDs, connectedGraphIDs;
@@ -43,7 +43,7 @@ bool URoofPerimeterTool::Activate()
 			for (auto signedEdgeID : perimeterPoly->Edges)
 			{
 				int32 edgeID = FMath::Abs(signedEdgeID);
-				FModumateObjectInstance *metaEdge = gameState->Document.GetObjectById(edgeID);
+				AModumateObjectInstance *metaEdge = gameState->Document.GetObjectById(edgeID);
 				const FGraph3DEdge *graphEdge = volumeGraph.FindEdge(edgeID);
 				if (metaEdge && graphEdge && (metaEdge->GetObjectType() == EObjectType::OTMetaEdge))
 				{
@@ -105,7 +105,7 @@ bool URoofPerimeterTool::Activate()
 		bool bAppliedDeltas = doc.ApplyDeltas(deltasToApply, GetWorld());
 
 		// If we succeeded, then select the new roof perimeter object (and only that object)
-		FModumateObjectInstance *roofPerimObj = bAppliedDeltas ? doc.GetObjectById(perimeterID) : nullptr;
+		AModumateObjectInstance *roofPerimObj = bAppliedDeltas ? doc.GetObjectById(perimeterID) : nullptr;
 		if (roofPerimObj)
 		{
 			Controller->DeselectAll();

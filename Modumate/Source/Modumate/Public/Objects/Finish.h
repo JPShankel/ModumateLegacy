@@ -6,9 +6,9 @@
 
 class AEditModelPlayerController_CPP;
 
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
-class MODUMATE_API FMOIFinishImpl : public FModumateObjectInstance
+class MODUMATE_API AMOIFinish : public AModumateObjectInstance
 {
 public:
 	virtual void PreDestroy() override;
@@ -35,5 +35,5 @@ protected:
 	TArray<FVector> CachedPerimeter;
 	TArray<FPolyHole3D> CachedHoles;
 	TArray<int32> CachedConnectedEdgeIDs;
-	TArray<FModumateObjectInstance*> CachedConnectedEdgeChildren;
+	TArray<AModumateObjectInstance*> CachedConnectedEdgeChildren;
 };

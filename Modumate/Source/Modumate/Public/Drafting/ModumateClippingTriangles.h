@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-class FModumateDocument;
-class FModumateObjectInstance;
+class UModumateDocument;
+class AModumateObjectInstance;
 
 namespace Modumate
 {
@@ -12,9 +12,9 @@ namespace Modumate
 	class FModumateClippingTriangles
 	{
 	public:
-		FModumateClippingTriangles(const FModumateObjectInstance& CutPlane);
+		FModumateClippingTriangles(const AModumateObjectInstance& CutPlane);
 		void SetTransform(FVector ViewPosition, FVector ViewXAxis, float ViewScale);
-		void AddTrianglesFromDoc(const FModumateDocument* doc);
+		void AddTrianglesFromDoc(const UModumateDocument* doc);
 		TArray<FEdge> ClipWorldLineToView(FEdge line);
 		TArray<FEdge> ClipViewLineToView(FEdge line);
 		FEdge WorldLineToView(FEdge line) const;

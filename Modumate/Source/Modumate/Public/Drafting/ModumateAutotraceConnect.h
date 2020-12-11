@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "Runtime/Online/HTTP/Public/Http.h"
 
-class FMOICutPlaneImpl;
-class FModumateDocument;
+class AMOICutPlane;
+class UModumateDocument;
 
 namespace Modumate
 {
@@ -14,7 +14,7 @@ namespace Modumate
 	class FModumateAutotraceConnect
 	{
 	public:
-		bool ConvertImageFromFile(const FString& filename, int32 renderID, FMOICutPlaneImpl* cutPlane, int32 cutPlaneID, UWorld* world);
+		bool ConvertImageFromFile(const FString& filename, int32 renderID, AMOICutPlane* cutPlane, int32 cutPlaneID, UWorld* world);
 
 	private:
 		struct ResponseHandler;

@@ -12,7 +12,7 @@ class AEditModelGameState_CPP;
 class AEditModelPlayerState_CPP;
 class ADynamicMeshActor;
 class ALineActor;
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
 
 UCLASS()
@@ -46,7 +46,7 @@ protected:
 
 	bool UpdatePreviewStairs();
 	bool MakeStairs();
-	bool ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget);
+	bool ValidatePlaneTarget(const AModumateObjectInstance *PlaneTarget);
 	void MakePendingSegment(int32 &TargetSegmentID, const FVector &StartingPoint);
 	void ResetState();
 

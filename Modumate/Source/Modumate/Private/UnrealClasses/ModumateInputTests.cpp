@@ -142,7 +142,7 @@ namespace Modumate
 					TMap<int32, FMOIStateData> referenceMOIStates;
 					for (FMOIStateData& MOIState : referenceDocRecord.ObjectData)
 					{
-						// TODO: clean up this logic; this is copied from the post-deserialization behavior in FModumateDocument::Load,
+						// TODO: clean up this logic; this is copied from the post-deserialization behavior in UModumateDocument::Load,
 						// but it's less costly than creating and loading an entirely separate document, with MOIs and all.
 						MOIState.CustomData.SaveCborFromJson();
 						referenceMOIStates.Add(MOIState.ID, MOIState);

@@ -15,14 +15,14 @@ namespace Modumate
 	class MODUMATE_API FTitleBlock : public FDraftingDrawing
 	{
 	public:
-		FTitleBlock(const FModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID);
+		FTitleBlock(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID);
 
 		// TODO: most drafting objects do not have a document as an argument to their initialize function
-		EDrawError InitializeWithData(IModumateDraftingDraw *drawingInterface, const FModumateDocument *Document);
+		EDrawError InitializeWithData(IModumateDraftingDraw *drawingInterface, const UModumateDocument *Document);
 
 		EDrawError MakeContent(IModumateDraftingDraw *drawingInterface, FText headerText, TSharedPtr<FDraftingComposite> content);
 		EDrawError MakeSeparatorLine();
-		EDrawError MakePersonalInformation(IModumateDraftingDraw *drawingInterface, FModumateDocument::FPartyProfile profile);
+		EDrawError MakePersonalInformation(IModumateDraftingDraw *drawingInterface, UModumateDocument::FPartyProfile profile);
 
 	private:
 		Units::FYCoord ContentHeight = Units::FYCoord::FloorplanInches(0.0f);

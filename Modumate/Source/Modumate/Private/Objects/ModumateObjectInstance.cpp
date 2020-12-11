@@ -27,26 +27,26 @@
 using namespace Modumate;
 class AEditModelPlayerController_CPP;
 
-FModumateObjectInstance::FModumateObjectInstance()
+AModumateObjectInstance::AModumateObjectInstance()
 {
 }
 
-FModumateObjectInstance::~FModumateObjectInstance()
+AModumateObjectInstance::~AModumateObjectInstance()
 {
 	Destroy(true);
 }
 
-void FModumateObjectInstance::BeginPlay()
+void AModumateObjectInstance::BeginPlay()
 {
 
 }
 
-void FModumateObjectInstance::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void AModumateObjectInstance::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 
 }
 
-void FModumateObjectInstance::SetupMOIComponent()
+void AModumateObjectInstance::SetupMOIComponent()
 {
 	if (!ensure(MeshActor.IsValid()))
 	{
@@ -64,7 +64,7 @@ void FModumateObjectInstance::SetupMOIComponent()
 	moiComponent->ObjectID = ID;
 }
 
-void FModumateObjectInstance::UpdateAssemblyFromKey()
+void AModumateObjectInstance::UpdateAssemblyFromKey()
 {
 	if ((CachedAssembly.UniqueKey() != StateData.AssemblyKey) || (CachedAssembly.ObjectType == EObjectType::OTNone))
 	{
@@ -77,19 +77,19 @@ void FModumateObjectInstance::UpdateAssemblyFromKey()
 	}
 }
 
-EObjectType FModumateObjectInstance::GetObjectType() const
+EObjectType AModumateObjectInstance::GetObjectType() const
 {
 	return CachedAssembly.ObjectType;
 }
 
-void FModumateObjectInstance::Destroy(bool bFullDelete)
+void AModumateObjectInstance::Destroy(bool bFullDelete)
 {
 	if (!bDestroyed)
 	{
 		PreDestroy();
 
 		CachedChildIDs.Reset();
-		if (FModumateObjectInstance* parentObj = GetParentObject())
+		if (AModumateObjectInstance* parentObj = GetParentObject())
 		{
 			parentObj->RemoveCachedChildID(ID);
 		}
@@ -108,26 +108,26 @@ void FModumateObjectInstance::Destroy(bool bFullDelete)
 	DestroyActor(bFullDelete);
 }
 
-FModumateObjectInstance *FModumateObjectInstance::GetParentObject()
+AModumateObjectInstance *AModumateObjectInstance::GetParentObject()
 {
 	return Document->GetObjectById(GetParentID());
 }
 
-const FModumateObjectInstance *FModumateObjectInstance::GetParentObject() const
+const AModumateObjectInstance *AModumateObjectInstance::GetParentObject() const
 {
 	return Document->GetObjectById(GetParentID());
 }
 
-TArray<FModumateObjectInstance *> FModumateObjectInstance::GetChildObjects()
+TArray<AModumateObjectInstance *> AModumateObjectInstance::GetChildObjects()
 {
-	TArray<FModumateObjectInstance *> ret;
+	TArray<AModumateObjectInstance *> ret;
 	Algo::Transform(CachedChildIDs, ret, [this](int32 id) { return Document->GetObjectById(id); });
-	return ret.FilterByPredicate([](FModumateObjectInstance *ob) {return ob != nullptr; });
+	return ret.FilterByPredicate([](AModumateObjectInstance *ob) {return ob != nullptr; });
 }
 
-TArray<const FModumateObjectInstance *> FModumateObjectInstance::GetChildObjects() const
+TArray<const AModumateObjectInstance *> AModumateObjectInstance::GetChildObjects() const
 {
-	TArray<const FModumateObjectInstance * > ret;
+	TArray<const AModumateObjectInstance * > ret;
 	Algo::TransformIf(
 		CachedChildIDs, 
 		ret, 
@@ -138,14 +138,14 @@ TArray<const FModumateObjectInstance *> FModumateObjectInstance::GetChildObjects
 	return ret;
 }
 
-bool FModumateObjectInstance::HasChildID(int32 ChildID) const
+bool AModumateObjectInstance::HasChildID(int32 ChildID) const
 {
 	return CachedChildIDs.Contains(ChildID);
 }
 
-void FModumateObjectInstance::AddCachedChildID(int32 ChildID)
+void AModumateObjectInstance::AddCachedChildID(int32 ChildID)
 {
-	const FModumateObjectInstance* childObj = Document->GetObjectById(ChildID);
+	const AModumateObjectInstance* childObj = Document->GetObjectById(ChildID);
 	if (ensure(!HasChildID(ChildID) && childObj && (childObj->GetParentID() == ID)))
 	{
 		CachedChildIDs.Add(ChildID);
@@ -153,7 +153,7 @@ void FModumateObjectInstance::AddCachedChildID(int32 ChildID)
 	}
 }
 
-void FModumateObjectInstance::RemoveCachedChildID(int32 ChildID)
+void AModumateObjectInstance::RemoveCachedChildID(int32 ChildID)
 {
 	if (ensure(HasChildID(ChildID)))
 	{
@@ -162,7 +162,7 @@ void FModumateObjectInstance::RemoveCachedChildID(int32 ChildID)
 	}
 }
 
-void FModumateObjectInstance::GetConnectedIDs(TArray<int32> &connectedIDs) const
+void AModumateObjectInstance::GetConnectedIDs(TArray<int32> &connectedIDs) const
 {
 	connectedIDs.Reset();
 	EObjectType objectType = GetObjectType();
@@ -266,7 +266,7 @@ void FModumateObjectInstance::GetConnectedIDs(TArray<int32> &connectedIDs) const
 	}
 }
 
-void FModumateObjectInstance::GetConnectedMOIs(TArray<FModumateObjectInstance *> &connectedMOIs) const
+void AModumateObjectInstance::GetConnectedMOIs(TArray<AModumateObjectInstance *> &connectedMOIs) const
 {
 	TArray<int32> connectedIDs;
 	GetConnectedIDs(connectedIDs);
@@ -274,17 +274,17 @@ void FModumateObjectInstance::GetConnectedMOIs(TArray<FModumateObjectInstance *>
 	connectedMOIs.Reset();
 	for (int32 connectedID : connectedIDs)
 	{
-		if (FModumateObjectInstance *connectedMOI = Document->GetObjectById(connectedID))
+		if (AModumateObjectInstance *connectedMOI = Document->GetObjectById(connectedID))
 		{
 			connectedMOIs.Add(connectedMOI);
 		}
 	}
 }
 
-TArray<FModumateObjectInstance *> FModumateObjectInstance::GetAllDescendents()
+TArray<AModumateObjectInstance *> AModumateObjectInstance::GetAllDescendents()
 {
-	TArray<FModumateObjectInstance *> myKids = GetChildObjects();
-	TArray<FModumateObjectInstance *> copyKids = myKids;
+	TArray<AModumateObjectInstance *> myKids = GetChildObjects();
+	TArray<AModumateObjectInstance *> copyKids = myKids;
 	for (auto &kid : copyKids)
 	{
 		myKids.Append(kid->GetAllDescendents());
@@ -292,10 +292,10 @@ TArray<FModumateObjectInstance *> FModumateObjectInstance::GetAllDescendents()
 	return myKids;
 }
 
-TArray<const FModumateObjectInstance *> FModumateObjectInstance::GetAllDescendents() const
+TArray<const AModumateObjectInstance *> AModumateObjectInstance::GetAllDescendents() const
 {
-	TArray<const FModumateObjectInstance *> myKids = GetChildObjects();
-	TArray<const FModumateObjectInstance *> copyKids = myKids;
+	TArray<const AModumateObjectInstance *> myKids = GetChildObjects();
+	TArray<const AModumateObjectInstance *> copyKids = myKids;
 	for (auto &kid : copyKids)
 	{
 		myKids.Append(kid->GetAllDescendents());
@@ -303,7 +303,7 @@ TArray<const FModumateObjectInstance *> FModumateObjectInstance::GetAllDescenden
 	return myKids;
 }
 
-bool FModumateObjectInstance::OnSelected(bool bNewSelected)
+bool AModumateObjectInstance::OnSelected(bool bNewSelected)
 {
 	if (bSelected == bNewSelected)
 	{
@@ -314,7 +314,7 @@ bool FModumateObjectInstance::OnSelected(bool bNewSelected)
 	return true;
 }
 
-bool FModumateObjectInstance::OnHovered(AEditModelPlayerController_CPP* Controller, bool bNewHovered)
+bool AModumateObjectInstance::OnHovered(AEditModelPlayerController_CPP* Controller, bool bNewHovered)
 {
 	if (bHovered == bNewHovered)
 	{
@@ -325,7 +325,7 @@ bool FModumateObjectInstance::OnHovered(AEditModelPlayerController_CPP* Controll
 	return true;
 }
 
-void FModumateObjectInstance::RequestHidden(const FName &Requester, bool bRequestHidden)
+void AModumateObjectInstance::RequestHidden(const FName &Requester, bool bRequestHidden)
 {
 	bool bWasRequestedHidden = IsRequestedHidden();
 
@@ -349,7 +349,7 @@ void FModumateObjectInstance::RequestHidden(const FName &Requester, bool bReques
 	}
 }
 
-void FModumateObjectInstance::RequestCollisionDisabled(const FName &Requester, bool bRequestCollisionDisabled)
+void AModumateObjectInstance::RequestCollisionDisabled(const FName &Requester, bool bRequestCollisionDisabled)
 {
 	bool bWasCollisionRequestedDisabled = IsCollisionRequestedDisabled();
 
@@ -373,12 +373,12 @@ void FModumateObjectInstance::RequestCollisionDisabled(const FName &Requester, b
 	}
 }
 
-void FModumateObjectInstance::UpdateVisuals()
+void AModumateObjectInstance::UpdateVisuals()
 {
 	GetUpdatedVisuals(bVisible, bCollisionEnabled);
 }
 
-void FModumateObjectInstance::ClearAdjustmentHandles()
+void AModumateObjectInstance::ClearAdjustmentHandles()
 {
 	for (auto &ah : AdjustmentHandles)
 	{
@@ -391,17 +391,17 @@ void FModumateObjectInstance::ClearAdjustmentHandles()
 	AdjustmentHandles.Reset();
 }
 
-const TArray<TWeakObjectPtr<AAdjustmentHandleActor>> &FModumateObjectInstance::GetAdjustmentHandles() const
+const TArray<TWeakObjectPtr<AAdjustmentHandleActor>> &AModumateObjectInstance::GetAdjustmentHandles() const
 {
 	return AdjustmentHandles;
 }
 
-bool FModumateObjectInstance::HasAdjustmentHandles() const
+bool AModumateObjectInstance::HasAdjustmentHandles() const
 {
 	return (AdjustmentHandles.Num() > 0);
 }
 
-AAdjustmentHandleActor *FModumateObjectInstance::MakeHandle(TSubclassOf<AAdjustmentHandleActor> HandleClass)
+AAdjustmentHandleActor *AModumateObjectInstance::MakeHandle(TSubclassOf<AAdjustmentHandleActor> HandleClass)
 {
 	if (!MeshActor.IsValid() || !World.IsValid())
 	{
@@ -420,7 +420,7 @@ AAdjustmentHandleActor *FModumateObjectInstance::MakeHandle(TSubclassOf<AAdjustm
 	return handleActor;
 }
 
-bool FModumateObjectInstance::CanBeSplit() const
+bool AModumateObjectInstance::CanBeSplit() const
 {
 	switch (GetObjectType())
 	{
@@ -437,12 +437,12 @@ bool FModumateObjectInstance::CanBeSplit() const
 	}
 }
 
-float FModumateObjectInstance::CalculateThickness() const
+float AModumateObjectInstance::CalculateThickness() const
 {
 	return CachedAssembly.CalculateThickness().AsWorldCentimeters();
 }
 
-void FModumateObjectInstance::MarkDirty(EObjectDirtyFlags NewDirtyFlags)
+void AModumateObjectInstance::MarkDirty(EObjectDirtyFlags NewDirtyFlags)
 {
 	for (EObjectDirtyFlags dirtyFlag : UModumateTypeStatics::OrderedDirtyFlags)
 	{
@@ -455,12 +455,12 @@ void FModumateObjectInstance::MarkDirty(EObjectDirtyFlags NewDirtyFlags)
 	}
 }
 
-bool FModumateObjectInstance::IsDirty(EObjectDirtyFlags CheckDirtyFlags) const
+bool AModumateObjectInstance::IsDirty(EObjectDirtyFlags CheckDirtyFlags) const
 {
 	return ((DirtyFlags & CheckDirtyFlags) == CheckDirtyFlags);
 }
 
-bool FModumateObjectInstance::RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AModumateObjectInstance::RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	bool bSuccess = false;
 
@@ -492,7 +492,7 @@ bool FModumateObjectInstance::RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArr
 		// NOTE: this is expected if we try to clean children before parents, like during loading, or undoing deletion of parented objects.
 		if (GetParentID() != MOD_ID_NONE)
 		{
-			FModumateObjectInstance *parentObj = Document->GetObjectById(GetParentID());
+			AModumateObjectInstance *parentObj = Document->GetObjectById(GetParentID());
 			if (parentObj == nullptr)
 			{
 				bValidObjectToClean = false;
@@ -533,7 +533,7 @@ bool FModumateObjectInstance::RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArr
 			for (int32 childIdx = curNumChildren - 1; childIdx >= 0; --childIdx)
 			{
 				int32 childID = CachedChildIDs[childIdx];
-				FModumateObjectInstance* childObj = Document->GetObjectById(childID);
+				AModumateObjectInstance* childObj = Document->GetObjectById(childID);
 				if (childObj && !childObj->IsDestroyed() && (childObj->GetParentID() == ID))
 				{
 					childObj->MarkDirty(DirtyFlag);
@@ -557,17 +557,17 @@ bool FModumateObjectInstance::RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArr
 	return bSuccess;
 }
 
-FMOIStateData& FModumateObjectInstance::GetStateData()
+FMOIStateData& AModumateObjectInstance::GetStateData()
 {
 	return StateData;
 }
 
-const FMOIStateData& FModumateObjectInstance::GetStateData() const
+const FMOIStateData& AModumateObjectInstance::GetStateData() const
 {
 	return StateData;
 }
 
-bool FModumateObjectInstance::SetStateData(const FMOIStateData& NewStateData)
+bool AModumateObjectInstance::SetStateData(const FMOIStateData& NewStateData)
 {
 	if (ID == MOD_ID_NONE)
 	{
@@ -596,7 +596,7 @@ bool FModumateObjectInstance::SetStateData(const FMOIStateData& NewStateData)
 	return true;
 }
 
-bool FModumateObjectInstance::UpdateStateDataFromObject()
+bool AModumateObjectInstance::UpdateStateDataFromObject()
 {
 	// If there's custom data for this object, make sure the serialized representation is up-to-date from the object.
 	UScriptStruct* customStructDef;
@@ -610,7 +610,7 @@ bool FModumateObjectInstance::UpdateStateDataFromObject()
 	return true;
 }
 
-bool FModumateObjectInstance::UpdateInstanceData()
+bool AModumateObjectInstance::UpdateInstanceData()
 {
 	// If there's custom data for this object, make sure the object is up-to-date from the serialized representation.
 	UScriptStruct* customStructDef;
@@ -624,7 +624,7 @@ bool FModumateObjectInstance::UpdateInstanceData()
 	return true;
 }
 
-bool FModumateObjectInstance::RouteGetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+bool AModumateObjectInstance::RouteGetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 	OutStructDef = nullptr;
 	OutStructPtr = nullptr;
@@ -634,15 +634,15 @@ bool FModumateObjectInstance::RouteGetTypedInstanceData(UScriptStruct*& OutStruc
 	return (OutStructDef != nullptr) && (OutStructPtr != nullptr);
 }
 
-bool FModumateObjectInstance::RouteGetTypedInstanceData(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const
+bool AModumateObjectInstance::RouteGetTypedInstanceData(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const
 {
 	void* mutableStructPtr;
-	bool bSuccess = const_cast<FModumateObjectInstance*>(this)->RouteGetTypedInstanceData(OutStructDef, mutableStructPtr);
+	bool bSuccess = const_cast<AModumateObjectInstance*>(this)->RouteGetTypedInstanceData(OutStructDef, mutableStructPtr);
 	OutStructPtr = const_cast<const void*>(mutableStructPtr);
 	return bSuccess;
 }
 
-bool FModumateObjectInstance::BeginPreviewOperation()
+bool AModumateObjectInstance::BeginPreviewOperation()
 {
 	if (IsInPreviewMode())
 	{
@@ -654,7 +654,7 @@ bool FModumateObjectInstance::BeginPreviewOperation()
 	return true;
 }
 
-bool FModumateObjectInstance::EndPreviewOperation()
+bool AModumateObjectInstance::EndPreviewOperation()
 {
 	if (!IsInPreviewMode())
 	{
@@ -666,21 +666,21 @@ bool FModumateObjectInstance::EndPreviewOperation()
 	return true;
 }
 
-bool FModumateObjectInstance::IsInPreviewMode() const
+bool AModumateObjectInstance::IsInPreviewMode() const
 {
 	return bPreviewOperationMode;
 }
 
-int32 FModumateObjectInstance::GetParentID() const 
+int32 AModumateObjectInstance::GetParentID() const 
 { 
 	return StateData.ParentID;
 }
 
-void FModumateObjectInstance::SetParentID(int32 NewParentID) 
+void AModumateObjectInstance::SetParentID(int32 NewParentID) 
 {
 	if (GetParentID() != NewParentID)
 	{
-		FModumateObjectInstance* oldParentObj = GetParentObject();
+		AModumateObjectInstance* oldParentObj = GetParentObject();
 
 		StateData.ParentID = NewParentID;
 		MarkDirty(EObjectDirtyFlags::Structure);
@@ -690,19 +690,19 @@ void FModumateObjectInstance::SetParentID(int32 NewParentID)
 			oldParentObj->RemoveCachedChildID(ID);
 		}
 
-		if (FModumateObjectInstance* newParentObj = GetParentObject())
+		if (AModumateObjectInstance* newParentObj = GetParentObject())
 		{
 			newParentObj->AddCachedChildID(ID);
 		}
 	}
 }
 
-const FBIMAssemblySpec &FModumateObjectInstance::GetAssembly() const
+const FBIMAssemblySpec &AModumateObjectInstance::GetAssembly() const
 {
 	return CachedAssembly;
 }
 
-void FModumateObjectInstance::SetAssemblyLayersReversed(bool bNewLayersReversed)
+void AModumateObjectInstance::SetAssemblyLayersReversed(bool bNewLayersReversed)
 {
 	if (bNewLayersReversed != bAssemblyLayersReversed)
 	{
@@ -711,7 +711,7 @@ void FModumateObjectInstance::SetAssemblyLayersReversed(bool bNewLayersReversed)
 	}
 }
 
-void FModumateObjectInstance::UpdateGeometry()
+void AModumateObjectInstance::UpdateGeometry()
 {
 	const bool origDynamicStatus = GetIsDynamic();
 	SetIsDynamic(true);
@@ -719,7 +719,7 @@ void FModumateObjectInstance::UpdateGeometry()
 	SetIsDynamic(origDynamicStatus);
 }
 
-void FModumateObjectInstance::RouteGetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AModumateObjectInstance::RouteGetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	outPoints.Reset();
 	outLines.Reset();
@@ -741,7 +741,7 @@ void FModumateObjectInstance::RouteGetStructuralPointsAndLines(TArray<FStructure
 
 static const FName PartialActorDestructionRequest(TEXT("DestroyActorPartial"));
 
-void FModumateObjectInstance::DestroyActor(bool bFullDelete)
+void AModumateObjectInstance::DestroyActor(bool bFullDelete)
 {
 	if (bFullDelete)
 	{
@@ -770,7 +770,7 @@ void FModumateObjectInstance::DestroyActor(bool bFullDelete)
 	}
 }
 
-void FModumateObjectInstance::Restore()
+void AModumateObjectInstance::Restore()
 {
 	if (!ensure(bDestroyed))
 	{
@@ -791,7 +791,7 @@ void FModumateObjectInstance::Restore()
 	PostCreateObject(false);
 }
 
-void FModumateObjectInstance::PostCreateObject(bool bNewObject)
+void AModumateObjectInstance::PostCreateObject(bool bNewObject)
 {
 	if (bNewObject && ensure(!MeshActor.IsValid() && World.IsValid() && (StateData.ID != MOD_ID_NONE)))
 	{
@@ -810,7 +810,7 @@ void FModumateObjectInstance::PostCreateObject(bool bNewObject)
 	UpdateInstanceData();
 
 	// This isn't strictly necessary, but it will save some flag cleaning if the parent already exists at the time of creation.
-	if (FModumateObjectInstance* parentObj = GetParentObject())
+	if (AModumateObjectInstance* parentObj = GetParentObject())
 	{
 		parentObj->AddCachedChildID(ID);
 	}
@@ -819,38 +819,38 @@ void FModumateObjectInstance::PostCreateObject(bool bNewObject)
 
 // FModumateObjectInstanceImplBase Implementation
 
-FVector FModumateObjectInstance::GetLocation() const
+FVector AModumateObjectInstance::GetLocation() const
 {
 	const AActor* moiActor = GetActor();
 	return moiActor ? moiActor->GetActorLocation() : FVector::ZeroVector;
 }
 
-FQuat FModumateObjectInstance::GetRotation() const
+FQuat AModumateObjectInstance::GetRotation() const
 {
 	const AActor *moiActor = GetActor();
 	return moiActor ? moiActor->GetActorQuat() : FQuat::Identity;
 }
 
-FTransform FModumateObjectInstance::GetWorldTransform() const
+FTransform AModumateObjectInstance::GetWorldTransform() const
 {
 	return FTransform(GetRotation(), GetLocation());
 }
 
-FVector FModumateObjectInstance::GetCorner(int32 index) const
+FVector AModumateObjectInstance::GetCorner(int32 index) const
 {
 	return FVector::ZeroVector;
 }
 
-int32 FModumateObjectInstance::GetNumCorners() const
+int32 AModumateObjectInstance::GetNumCorners() const
 {
 	return 0;
 }
 
-void FModumateObjectInstance::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+void AModumateObjectInstance::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 }
 
-void FModumateObjectInstance::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
+void AModumateObjectInstance::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
 	AActor *moiActor = GetActor();
 	auto *controller = moiActor ? moiActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
@@ -864,7 +864,7 @@ void FModumateObjectInstance::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCol
 	}
 }
 
-void FModumateObjectInstance::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow)
+void AModumateObjectInstance::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow)
 {
 	if (bShow && !HasAdjustmentHandles())
 	{
@@ -881,12 +881,12 @@ void FModumateObjectInstance::ShowAdjustmentHandles(AEditModelPlayerController_C
 	}
 }
 
-void FModumateObjectInstance::OnAssemblyChanged()
+void AModumateObjectInstance::OnAssemblyChanged()
 {
 	MarkDirty(EObjectDirtyFlags::Structure);
 }
 
-AActor *FModumateObjectInstance::RestoreActor()
+AActor *AModumateObjectInstance::RestoreActor()
 {
 	if (UWorld *world = GetWorld())
 	{
@@ -896,7 +896,7 @@ AActor *FModumateObjectInstance::RestoreActor()
 	return nullptr;
 }
 
-AActor *FModumateObjectInstance::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor *AModumateObjectInstance::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
 	World = world;
 
@@ -915,12 +915,12 @@ AActor *FModumateObjectInstance::CreateActor(UWorld *world, const FVector &loc, 
 }
 
 
-void FModumateObjectInstance::PreDestroy()
+void AModumateObjectInstance::PreDestroy()
 {
 
 }
 
-bool FModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
 	{

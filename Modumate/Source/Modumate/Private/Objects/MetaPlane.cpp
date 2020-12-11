@@ -9,13 +9,13 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
-FMOIMetaPlaneImpl::FMOIMetaPlaneImpl()
+AMOIMetaPlane::AMOIMetaPlane()
 	: FMOIPlaneImplBase()
 {
 
 }
 
-void FMOIMetaPlaneImpl::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
+void AMOIMetaPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
 	if (DynamicMeshActor.IsValid())
 	{
@@ -38,7 +38,7 @@ void FMOIMetaPlaneImpl::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollision
 	}
 }
 
-void FMOIMetaPlaneImpl::SetupDynamicGeometry()
+void AMOIMetaPlane::SetupDynamicGeometry()
 {
 	const TArray<int32> &newChildIDs = GetChildIDs();
 	bool bChildrenChanged = (newChildIDs != LastChildIDs);
@@ -56,7 +56,7 @@ void FMOIMetaPlaneImpl::SetupDynamicGeometry()
 	UpdateVisuals();
 }
 
-void FMOIMetaPlaneImpl::UpdateCachedGraphData()
+void AMOIMetaPlane::UpdateCachedGraphData()
 {
 	const Modumate::FGraph3DFace *graphFace = GetDocument()->GetVolumeGraph().FindFace(ID);
 
@@ -72,7 +72,7 @@ void FMOIMetaPlaneImpl::UpdateCachedGraphData()
 	}
 }
 
-float FMOIMetaPlaneImpl::GetAlpha() const
+float AMOIMetaPlane::GetAlpha() const
 {
 	return 1.0f;
 }

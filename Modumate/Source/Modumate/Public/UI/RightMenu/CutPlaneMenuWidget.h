@@ -58,7 +58,7 @@ public:
 	bool RemoveCutPlaneFromMenuBlock(int32 ObjID = MOD_ID_NONE);
 	bool UpdateCutPlaneParamInMenuBlock(int32 ObjID = MOD_ID_NONE);
 	void SetCutPlaneExportMenuVisibility(bool NewVisible);
-	static void BuildCutPlaneItemFromMoi(UCutPlaneDimListItemObject* CutPlaneObj, const class FModumateObjectInstance* Moi);
+	static void BuildCutPlaneItemFromMoi(UCutPlaneDimListItemObject* CutPlaneObj, const class AModumateObjectInstance* Moi);
 
 	// Show CutPlane by type, show all if none specified
 	bool GetCutPlaneIDsByType(ECutPlaneType Type, TArray<int32>& OutIDs);

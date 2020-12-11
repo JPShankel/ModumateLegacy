@@ -50,7 +50,7 @@ public:
 	EBIMResult ToDocumentRecord(FMOIDocumentRecord& DocRecord) const;
 
 	// Intended as a general way to generate keys: given a base name, append with increment integers until an unused name is found
-	// This pattern is used through out the app, particularly in FModumateDocument, to generate IDs for new objects
+	// This pattern is used through out the app, particularly in UModumateDocument, to generate IDs for new objects
 	// All such schemes should switch to this one key store
 	// TODO: the key store is likely to grow, so we may need to add some scope discrimination or a more complex scheme down the road
 	FBIMKey GetAvailableKey(const FBIMKey& BaseKey);

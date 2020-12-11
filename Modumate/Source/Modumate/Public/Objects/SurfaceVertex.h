@@ -5,10 +5,10 @@
 
 class AVertexActor;
 
-class MODUMATE_API FMOISurfaceVertexImpl : public FMOIVertexImplBase
+class MODUMATE_API AMOISurfaceVertex : public FMOIVertexImplBase
 {
 public:
-	FMOISurfaceVertexImpl();
+	AMOISurfaceVertex();
 
 	virtual FVector GetLocation() const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;

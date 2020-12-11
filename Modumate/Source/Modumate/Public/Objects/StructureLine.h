@@ -10,9 +10,9 @@
 
 class AEditModelPlayerController_CPP;
 class ADynamicMeshActor;
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
-class MODUMATE_API FMOIStructureLine : public FModumateObjectInstance
+class MODUMATE_API FMOIStructureLine : public AModumateObjectInstance
 {
 protected:
 	FVector LineStartPos, LineEndPos, LineDir, LineNormal, LineUp;

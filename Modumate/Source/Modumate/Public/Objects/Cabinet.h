@@ -29,12 +29,12 @@ struct MODUMATE_API FMOICabinetData
 
 class AEditModelPlayerController_CPP;
 
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
-class MODUMATE_API FMOICabinetImpl : public FModumateObjectInstance
+class MODUMATE_API AMOICabinet : public AModumateObjectInstance
 {
 public:
-	FMOICabinetImpl();
+	AMOICabinet();
 
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const override;

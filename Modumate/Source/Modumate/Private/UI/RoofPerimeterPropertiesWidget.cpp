@@ -74,7 +74,7 @@ void URoofPerimeterPropertiesWidget::UpdateEditFields()
 		return;
 	}
 
-	const FModumateObjectInstance *targetPerimeter = GameState->Document.GetObjectById(TargetPerimeterID);
+	const AModumateObjectInstance *targetPerimeter = GameState->Document.GetObjectById(TargetPerimeterID);
 	if (!ensure(targetPerimeter && targetPerimeter->GetStateData().CustomData.LoadStructData(TempInitialCombinedProperties)))
 	{
 		return;
@@ -98,7 +98,7 @@ void URoofPerimeterPropertiesWidget::UpdateEditFields()
 
 void URoofPerimeterPropertiesWidget::UpdateTransform()
 {
-	const FModumateObjectInstance *targetObj = GameState->Document.GetObjectById(TargetEdgeID);
+	const AModumateObjectInstance *targetObj = GameState->Document.GetObjectById(TargetEdgeID);
 	auto controller = GetOwningPlayer();
 
 	FVector2D targetScreenPosition;
@@ -236,7 +236,7 @@ void URoofPerimeterPropertiesWidget::SetEdgeSlope(float SlopeValue)
 
 void URoofPerimeterPropertiesWidget::SaveEdgeProperties()
 {
-	FModumateObjectInstance *targetObj = GameState->Document.GetObjectById(TargetPerimeterID);
+	AModumateObjectInstance *targetObj = GameState->Document.GetObjectById(TargetPerimeterID);
 	auto controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 
 	if (!(targetObj && controller && (controller->InteractionHandle == OwningHandle)))
@@ -261,7 +261,7 @@ void URoofPerimeterPropertiesWidget::SaveEdgeProperties()
 	TArray<int32> staleEdgeIDs;
 	for (auto& kvp : roofPerimeterData.EdgeProperties)
 	{
-		const FModumateObjectInstance* edgeMOI = GameState->Document.GetObjectById(kvp.Key);
+		const AModumateObjectInstance* edgeMOI = GameState->Document.GetObjectById(kvp.Key);
 		if ((edgeMOI == nullptr) || edgeMOI->IsDestroyed() || (edgeMOI->GetObjectType() != EObjectType::OTMetaEdge))
 		{
 			staleEdgeIDs.Add(kvp.Key);

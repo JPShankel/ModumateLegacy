@@ -24,7 +24,7 @@
 #include "Objects/Trim.h"
 #include "Objects/Mullion.h"
 
-FModumateObjectInstance *FMOIFactory::MakeMOI(EObjectType ObjectType)
+AModumateObjectInstance *FMOIFactory::MakeMOI(EObjectType ObjectType)
 {
 	switch (ObjectType)
 	{
@@ -34,27 +34,27 @@ FModumateObjectInstance *FMOIFactory::MakeMOI(EObjectType ObjectType)
 		case EObjectType::OTCeiling:
 		case EObjectType::OTRoofFace:
 		case EObjectType::OTCountertop:
-		case EObjectType::OTSystemPanel: return new FMOIPlaneHostedObjImpl();
+		case EObjectType::OTSystemPanel: return new AMOIPlaneHostedObj();
 		case EObjectType::OTDoor:
-		case EObjectType::OTWindow: return new FMOIPortalImpl();
-		case EObjectType::OTFurniture: return new FMOIFFEImpl();
-		case EObjectType::OTCabinet: return new FMOICabinetImpl();
-		case EObjectType::OTStaircase: return new FMOIStaircaseImpl();
-		case EObjectType::OTFinish: return new FMOIFinishImpl();
-		case EObjectType::OTGroup: return new FMOIGroupImpl();
-		case EObjectType::OTRoom: return new FMOIRoomImpl();
-		case EObjectType::OTTrim: return new FMOITrimImpl();
-		case EObjectType::OTMetaVertex: return new FMOIMetaVertexImpl();
-		case EObjectType::OTMetaEdge: return new FMOIMetaEdgeImpl();
-		case EObjectType::OTMetaPlane: return new FMOIMetaPlaneImpl();
-		case EObjectType::OTSurfaceGraph: return new FMOISurfaceGraphImpl();
-		case EObjectType::OTSurfaceVertex: return new FMOISurfaceVertexImpl();
-		case EObjectType::OTSurfaceEdge: return new FMOISurfaceEdgeImpl();
-		case EObjectType::OTSurfacePolygon: return new FMOISurfacePolygonImpl();
-		case EObjectType::OTCutPlane: return new FMOICutPlaneImpl();
-		case EObjectType::OTScopeBox: return new FMOIScopeBoxImpl();
+		case EObjectType::OTWindow: return new AMOIPortal();
+		case EObjectType::OTFurniture: return new AMOIFFE();
+		case EObjectType::OTCabinet: return new AMOICabinet();
+		case EObjectType::OTStaircase: return new AMOIStaircase();
+		case EObjectType::OTFinish: return new AMOIFinish();
+		case EObjectType::OTGroup: return new AMOIGroup();
+		case EObjectType::OTRoom: return new AMOIRoom();
+		case EObjectType::OTTrim: return new AMOITrim();
+		case EObjectType::OTMetaVertex: return new AMOIMetaVertex();
+		case EObjectType::OTMetaEdge: return new AMOIMetaEdge();
+		case EObjectType::OTMetaPlane: return new AMOIMetaPlane();
+		case EObjectType::OTSurfaceGraph: return new AMOISurfaceGraph();
+		case EObjectType::OTSurfaceVertex: return new AMOISurfaceVertex();
+		case EObjectType::OTSurfaceEdge: return new AMOISurfaceEdge();
+		case EObjectType::OTSurfacePolygon: return new AMOISurfacePolygon();
+		case EObjectType::OTCutPlane: return new AMOICutPlane();
+		case EObjectType::OTScopeBox: return new AMOIScopeBox();
 		case EObjectType::OTStructureLine: return new FMOIStructureLine();
-		case EObjectType::OTRoofPerimeter: return new FMOIRoofPerimeterImpl();
+		case EObjectType::OTRoofPerimeter: return new AMOIRoofPerimeter();
 		case EObjectType::OTMullion: return new FMOIMullion();
 		default:
 		{

@@ -10,7 +10,7 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 
 FMOIEdgeImplBase::FMOIEdgeImplBase()
-	: FModumateObjectInstance()
+	: AModumateObjectInstance()
 	, World(nullptr)
 	, LineActor(nullptr)
 	, SelectedColor(0x00, 0x35, 0xFF)
@@ -38,7 +38,7 @@ int32 FMOIEdgeImplBase::GetNumCorners() const
 
 bool FMOIEdgeImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
-	if (!FModumateObjectInstance::OnHovered(controller, bIsHovered))
+	if (!AModumateObjectInstance::OnHovered(controller, bIsHovered))
 	{
 		return false;
 	}
@@ -59,7 +59,7 @@ AActor *FMOIEdgeImplBase::CreateActor(UWorld *world, const FVector &loc, const F
 
 bool FMOIEdgeImplBase::OnSelected(bool bIsSelected)
 {
-	if (!FModumateObjectInstance::OnSelected(bIsSelected))
+	if (!AModumateObjectInstance::OnSelected(bIsSelected))
 	{
 		return false;
 	}

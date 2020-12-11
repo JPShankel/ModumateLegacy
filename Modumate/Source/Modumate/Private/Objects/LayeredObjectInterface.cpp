@@ -115,7 +115,7 @@ void FCachedLayerDimsByType::UpdateLayersFromAssembly(const FBIMAssemblySpec& As
 	UpdateLayersFromAssembly(Assembly.Layers);
 }
 
-void FCachedLayerDimsByType::UpdateFinishFromObject(const FModumateObjectInstance* MOI)
+void FCachedLayerDimsByType::UpdateFinishFromObject(const AModumateObjectInstance* MOI)
 {
 	bHasStartFinish = bHasEndFinish = false;
 	StartFinishThickness = EndFinishThickness = 0.0f;

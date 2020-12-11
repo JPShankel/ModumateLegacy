@@ -9,7 +9,7 @@ using namespace Modumate::Units;
 
 namespace Modumate {
 
-	FFloorplan::FFloorplan(const FModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID)
+	FFloorplan::FFloorplan(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID)
 		: FDraftingDrawing(doc,world,captureObjID)
 	{
 		DrawingScale = 48.0f;

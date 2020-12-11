@@ -5,10 +5,10 @@
 
 class AVertexActor;
 
-class MODUMATE_API FMOIMetaVertexImpl : public FMOIVertexImplBase
+class MODUMATE_API AMOIMetaVertex : public FMOIVertexImplBase
 {
 public:
-	FMOIMetaVertexImpl();
+	AMOIMetaVertex();
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetTangents(TArray<FVector>& OutTangents) const override;

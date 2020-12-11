@@ -43,9 +43,9 @@ using namespace Modumate::Mitering;
 using namespace Modumate;
 
 
-const FName FModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
+const FName UModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
 
-FModumateDocument::FModumateDocument()
+UModumateDocument::UModumateDocument()
 	: NextID(1)
 	, PrePreviewNextID(1)
 	, ReservingObjectID(MOD_ID_NONE)
@@ -65,11 +65,11 @@ FModumateDocument::FModumateDocument()
 	DefaultDoorHeight = 0.f;
 }
 
-FModumateDocument::~FModumateDocument()
+UModumateDocument::~UModumateDocument()
 {
 }
 
-void FModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRedo>>& FromBuffer, TArray<TSharedPtr<UndoRedo>>& ToBuffer)
+void UModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRedo>>& FromBuffer, TArray<TSharedPtr<UndoRedo>>& ToBuffer)
 {
 	if (FromBuffer.Num() > 0)
 	{
@@ -103,7 +103,7 @@ void FModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 	}
 }
 
-void FModumateDocument::Undo(UWorld *World)
+void UModumateDocument::Undo(UWorld *World)
 {
 	if (ensureAlways(!InUndoRedoMacro()))
 	{
@@ -111,7 +111,7 @@ void FModumateDocument::Undo(UWorld *World)
 	}
 }
 
-void FModumateDocument::Redo(UWorld *World)
+void UModumateDocument::Redo(UWorld *World)
 {
 	if (ensureAlways(!InUndoRedoMacro()))
 	{
@@ -119,12 +119,12 @@ void FModumateDocument::Redo(UWorld *World)
 	}
 }
 
-void FModumateDocument::BeginUndoRedoMacro()
+void UModumateDocument::BeginUndoRedoMacro()
 {
 	UndoRedoMacroStack.Push(UndoBuffer.Num());
 }
 
-void FModumateDocument::EndUndoRedoMacro()
+void UModumateDocument::EndUndoRedoMacro()
 {
 	if (!InUndoRedoMacro())
 	{
@@ -155,12 +155,12 @@ void FModumateDocument::EndUndoRedoMacro()
 	UndoBuffer.Add(ur);
 }
 
-bool FModumateDocument::InUndoRedoMacro() const
+bool UModumateDocument::InUndoRedoMacro() const
 {
 	return (UndoRedoMacroStack.Num() > 0);
 }
 
-void FModumateDocument::SetDefaultWallHeight(float height)
+void UModumateDocument::SetDefaultWallHeight(float height)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultWallHeight"));
 	ClearRedoBuffer();
@@ -168,7 +168,7 @@ void FModumateDocument::SetDefaultWallHeight(float height)
 	DefaultWallHeight = height;
 }
 
-void FModumateDocument::SetDefaultRailHeight(float height)
+void UModumateDocument::SetDefaultRailHeight(float height)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultRailHeight"));
 	ClearRedoBuffer();
@@ -177,7 +177,7 @@ void FModumateDocument::SetDefaultRailHeight(float height)
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultRailHeight::Redo"));
 }
 
-void FModumateDocument::SetDefaultCabinetHeight(float height)
+void UModumateDocument::SetDefaultCabinetHeight(float height)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultCabinetHeight"));
 	ClearRedoBuffer();
@@ -185,7 +185,7 @@ void FModumateDocument::SetDefaultCabinetHeight(float height)
 	DefaultCabinetHeight = height;
 }
 
-void FModumateDocument::SetDefaultDoorHeightWidth(float height, float width)
+void UModumateDocument::SetDefaultDoorHeightWidth(float height, float width)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultDoorHeightWidth"));
 	ClearRedoBuffer();
@@ -195,7 +195,7 @@ void FModumateDocument::SetDefaultDoorHeightWidth(float height, float width)
 	DefaultDoorWidth = width;
 }
 
-void FModumateDocument::SetDefaultWindowHeightWidth(float height, float width)
+void UModumateDocument::SetDefaultWindowHeightWidth(float height, float width)
 {
 	float origHeight = DefaultWindowHeight;
 	float origWidth = DefaultWindowWidth;
@@ -203,7 +203,7 @@ void FModumateDocument::SetDefaultWindowHeightWidth(float height, float width)
 	DefaultWindowWidth = width;
 }
 
-void FModumateDocument::SetDefaultJustificationZ(float newValue)
+void UModumateDocument::SetDefaultJustificationZ(float newValue)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultJustificationZ"));
 	ClearRedoBuffer();
@@ -211,7 +211,7 @@ void FModumateDocument::SetDefaultJustificationZ(float newValue)
 	DefaultJustificationZ = newValue;
 }
 
-void FModumateDocument::SetDefaultJustificationXY(float newValue)
+void UModumateDocument::SetDefaultJustificationXY(float newValue)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::SetDefaultJustificationXY"));
 	ClearRedoBuffer();
@@ -219,7 +219,7 @@ void FModumateDocument::SetDefaultJustificationXY(float newValue)
 	DefaultJustificationXY = newValue;
 }
 
-void FModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, const FBIMAssemblySpec &assembly)
+void UModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, const FBIMAssemblySpec &assembly)
 {
 	if (ids.Num() == 0)
 	{
@@ -229,7 +229,7 @@ void FModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, c
 	auto delta = MakeShared<FMOIDelta>();
 	for (auto id : ids)
 	{
-		FModumateObjectInstance* obj = GetObjectById(id);
+		AModumateObjectInstance* obj = GetObjectById(id);
 		if (obj != nullptr)
 		{
 			auto& newState = delta->AddMutationState(obj);
@@ -240,23 +240,23 @@ void FModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, c
 	ApplyDeltas({ delta }, world);
 }
 
-void FModumateDocument::AddHideObjectsById(UWorld *world, const TArray<int32> &ids)
+void UModumateDocument::AddHideObjectsById(UWorld *world, const TArray<int32> &ids)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::AddHideObjectsById"));
 
 	for (auto id : ids)
 	{
-		FModumateObjectInstance *obj = GetObjectById(id);
+		AModumateObjectInstance *obj = GetObjectById(id);
 		if (obj && !HiddenObjectsID.Contains(id))
 		{
-			obj->RequestHidden(FModumateDocument::DocumentHideRequestTag, true);
-			obj->RequestCollisionDisabled(FModumateDocument::DocumentHideRequestTag, true);
+			obj->RequestHidden(UModumateDocument::DocumentHideRequestTag, true);
+			obj->RequestCollisionDisabled(UModumateDocument::DocumentHideRequestTag, true);
 			HiddenObjectsID.Add(id);
 		}
 	}
 }
 
-void FModumateDocument::UnhideAllObjects(UWorld *world)
+void UModumateDocument::UnhideAllObjects(UWorld *world)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UnhideAllObjects"));
 
@@ -264,43 +264,43 @@ void FModumateDocument::UnhideAllObjects(UWorld *world)
 
 	for (auto id : ids)
 	{
-		if (FModumateObjectInstance *obj = GetObjectById(id))
+		if (AModumateObjectInstance *obj = GetObjectById(id))
 		{
-			obj->RequestHidden(FModumateDocument::DocumentHideRequestTag, false);
-			obj->RequestCollisionDisabled(FModumateDocument::DocumentHideRequestTag, false);
+			obj->RequestHidden(UModumateDocument::DocumentHideRequestTag, false);
+			obj->RequestCollisionDisabled(UModumateDocument::DocumentHideRequestTag, false);
 		}
 	}
 
 	HiddenObjectsID.Empty();
 	// TODO: Pending removal
-	for (FModumateObjectInstance *obj : ObjectInstanceArray)
+	for (AModumateObjectInstance *obj : ObjectInstanceArray)
 	{
 		obj->UpdateVisuals();
 	}
 }
 
-void FModumateDocument::UnhideObjectsById(UWorld *world, const TArray<int32> &ids)
+void UModumateDocument::UnhideObjectsById(UWorld *world, const TArray<int32> &ids)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UnhideObjectsById"));
 
 	for (auto id : ids)
 	{
-		FModumateObjectInstance *obj = GetObjectById(id);
+		AModumateObjectInstance *obj = GetObjectById(id);
 		if (obj && HiddenObjectsID.Contains(id))
 		{
-			obj->RequestHidden(FModumateDocument::DocumentHideRequestTag, false);
-			obj->RequestCollisionDisabled(FModumateDocument::DocumentHideRequestTag, false);
+			obj->RequestHidden(UModumateDocument::DocumentHideRequestTag, false);
+			obj->RequestCollisionDisabled(UModumateDocument::DocumentHideRequestTag, false);
 			HiddenObjectsID.Remove(id);
 		}
 	}
 	// TODO: Pending removal
-	for (FModumateObjectInstance *obj : ObjectInstanceArray)
+	for (AModumateObjectInstance *obj : ObjectInstanceArray)
 	{
 		obj->UpdateVisuals();
 	}
 }
 
-void FModumateDocument::RestoreDeletedObjects(const TArray<int32> &ids)
+void UModumateDocument::RestoreDeletedObjects(const TArray<int32> &ids)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::RestoreDeletedObjects"));
 	if (ids.Num() == 0)
@@ -309,10 +309,10 @@ void FModumateDocument::RestoreDeletedObjects(const TArray<int32> &ids)
 	}
 
 	ClearRedoBuffer();
-	TArray<FModumateObjectInstance*> oldObs;
+	TArray<AModumateObjectInstance*> oldObs;
 	for (auto id : ids)
 	{
-		FModumateObjectInstance *oldOb = TryGetDeletedObject(id);
+		AModumateObjectInstance *oldOb = TryGetDeletedObject(id);
 		if (oldOb != nullptr)
 		{
 			RestoreObjectImpl(oldOb);
@@ -321,12 +321,12 @@ void FModumateDocument::RestoreDeletedObjects(const TArray<int32> &ids)
 	}
 }
 
-bool FModumateDocument::DeleteObjectImpl(FModumateObjectInstance *ObjToDelete)
+bool UModumateDocument::DeleteObjectImpl(AModumateObjectInstance *ObjToDelete)
 {
 	if (ObjToDelete && !ObjToDelete->IsDestroyed())
 	{
 		// Store off the connected objects, in case they will be affected by this deletion
-		TArray<FModumateObjectInstance *> connectedMOIs;
+		TArray<AModumateObjectInstance *> connectedMOIs;
 		ObjToDelete->GetConnectedMOIs(connectedMOIs);
 		int32 objID = ObjToDelete->ID;
 
@@ -354,7 +354,7 @@ bool FModumateDocument::DeleteObjectImpl(FModumateObjectInstance *ObjToDelete)
 		ObjectsByID.Remove(objID);
 
 		// Update mitering, visibility & collision enabled on neighbors, in case they were dependent on this MOI.
-		for (FModumateObjectInstance *connectedMOI : connectedMOIs)
+		for (AModumateObjectInstance *connectedMOI : connectedMOIs)
 		{
 			connectedMOI->MarkDirty(EObjectDirtyFlags::Mitering | EObjectDirtyFlags::Visuals);
 		}
@@ -365,7 +365,7 @@ bool FModumateDocument::DeleteObjectImpl(FModumateObjectInstance *ObjToDelete)
 	return false;
 }
 
-bool FModumateDocument::RestoreObjectImpl(FModumateObjectInstance *obj)
+bool UModumateDocument::RestoreObjectImpl(AModumateObjectInstance *obj)
 {
 	if (obj && (DeletedObjects.FindRef(obj->ID) == obj))
 	{
@@ -380,7 +380,7 @@ bool FModumateDocument::RestoreObjectImpl(FModumateObjectInstance *obj)
 	return false;
 }
 
-FModumateObjectInstance* FModumateDocument::CreateOrRestoreObj(UWorld* World, const FMOIStateData& StateData)
+AModumateObjectInstance* UModumateDocument::CreateOrRestoreObj(UWorld* World, const FMOIStateData& StateData)
 {
 	// Check to make sure NextID represents the next highest ID we can allocate to a new object.
 	if (StateData.ID >= NextID)
@@ -389,7 +389,7 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObj(UWorld* World, co
 	}
 
 	// See if we can restore an identical object that was previously deleted (i.e. by undo, or by clearing a preview delta that created an object)
-	FModumateObjectInstance* deletedObj = TryGetDeletedObject(StateData.ID);
+	AModumateObjectInstance* deletedObj = TryGetDeletedObject(StateData.ID);
 	if (deletedObj)
 	{
 		if ((deletedObj->GetStateData() == StateData) && RestoreObjectImpl(deletedObj))
@@ -409,7 +409,7 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObj(UWorld* World, co
 	}
 
 	// TODO: replace this with AActor-spawning
-	FModumateObjectInstance* newObj = FMOIFactory::MakeMOI(StateData.ObjectType);
+	AModumateObjectInstance* newObj = FMOIFactory::MakeMOI(StateData.ObjectType);
 	newObj->World = World;
 	newObj->Document = this;
 
@@ -424,7 +424,7 @@ FModumateObjectInstance* FModumateDocument::CreateOrRestoreObj(UWorld* World, co
 	return newObj;
 }
 
-bool FModumateDocument::ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World)
+bool UModumateDocument::ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World)
 {
 	for (auto& deltaState : Delta.States)
 	{
@@ -434,7 +434,7 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World)
 		{
 		case EMOIDeltaType::Create:
 		{
-			FModumateObjectInstance* newInstance = CreateOrRestoreObj(World, targetState);
+			AModumateObjectInstance* newInstance = CreateOrRestoreObj(World, targetState);
 			if (ensureAlways(newInstance) && (NextID <= newInstance->ID))
 			{
 				NextID = newInstance->ID + 1;
@@ -450,7 +450,7 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World)
 
 		case EMOIDeltaType::Mutate:
 		{
-			FModumateObjectInstance* MOI = GetObjectById(targetState.ID);
+			AModumateObjectInstance* MOI = GetObjectById(targetState.ID);
 			if (ensureAlways(MOI))
 			{
 				MOI->SetStateData(targetState);
@@ -471,7 +471,7 @@ bool FModumateDocument::ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World)
 	return true;
 }
 
-void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World)
+void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World)
 {
 	TSharedPtr<FGraph2D> targetSurfaceGraph;
 
@@ -498,7 +498,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 	}
 
 	int32 surfaceGraphID = targetSurfaceGraph->GetID();
-	FModumateObjectInstance *surfaceGraphObj = GetObjectById(surfaceGraphID);
+	AModumateObjectInstance *surfaceGraphObj = GetObjectById(surfaceGraphID);
 	if (!ensure(surfaceGraphObj))
 	{
 		return;
@@ -616,7 +616,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 	{
 		for (int32 vertexID : modifiedVertices)
 		{
-			FModumateObjectInstance* vertexObj = GetObjectById(vertexID);
+			AModumateObjectInstance* vertexObj = GetObjectById(vertexID);
 			if (ensureAlways(vertexObj && (vertexObj->GetObjectType() == EObjectType::OTSurfaceVertex)))
 			{
 				vertexObj->MarkDirty(EObjectDirtyFlags::Structure);
@@ -625,7 +625,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 
 		for (int32 edgeID : modifiedEdges)
 		{
-			FModumateObjectInstance *edgeObj = GetObjectById(edgeID);
+			AModumateObjectInstance *edgeObj = GetObjectById(edgeID);
 			if (ensureAlways(edgeObj && (edgeObj->GetObjectType() == EObjectType::OTSurfaceEdge)))
 			{
 				edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
@@ -634,7 +634,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 
 		for (int32 polygonID : modifiedPolygons)
 		{
-			FModumateObjectInstance *polygonObj = GetObjectById(polygonID);
+			AModumateObjectInstance *polygonObj = GetObjectById(polygonID);
 			if (ensureAlways(polygonObj && (polygonObj->GetObjectType() == EObjectType::OTSurfacePolygon)))
 			{
 				polygonObj->MarkDirty(EObjectDirtyFlags::Structure);
@@ -649,7 +649,7 @@ void FModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 	}
 }
 
-void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World)
+void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World)
 {
 	TArray<FVector> controlPoints;
 
@@ -724,7 +724,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 	for (auto &kvp : Delta.VertexDeletions)
 	{
-		FModumateObjectInstance *deletedVertexObj = GetObjectById(kvp.Key);
+		AModumateObjectInstance *deletedVertexObj = GetObjectById(kvp.Key);
 		if (ensureAlways(deletedVertexObj))
 		{
 			DeleteObjectImpl(deletedVertexObj);
@@ -738,7 +738,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 	for (auto &kvp : Delta.EdgeDeletions)
 	{
-		FModumateObjectInstance *deletedEdgeObj = GetObjectById(kvp.Key);
+		AModumateObjectInstance *deletedEdgeObj = GetObjectById(kvp.Key);
 		if (ensureAlways(deletedEdgeObj))
 		{
 			DeleteObjectImpl(deletedEdgeObj);
@@ -752,7 +752,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 	for (auto &kvp : Delta.FaceDeletions)
 	{
-		FModumateObjectInstance *deletedFaceObj = GetObjectById(kvp.Key);
+		AModumateObjectInstance *deletedFaceObj = GetObjectById(kvp.Key);
 		if (ensureAlways(deletedFaceObj))
 		{
 			DeleteObjectImpl(deletedFaceObj);
@@ -760,7 +760,7 @@ void FModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 	}
 }
 
-bool FModumateDocument::ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World)
+bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World)
 {
 	ClearPreviewDeltas(World, false);
 
@@ -790,7 +790,7 @@ bool FModumateDocument::ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *Wor
 	return true;
 }
 
-bool FModumateDocument::StartPreviewing()
+bool UModumateDocument::StartPreviewing()
 {
 	if (bApplyingPreviewDeltas || bFastClearingPreviewDeltas)
 	{
@@ -802,7 +802,7 @@ bool FModumateDocument::StartPreviewing()
 	return true;
 }
 
-bool FModumateDocument::ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World)
+bool UModumateDocument::ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World)
 {
 	ClearPreviewDeltas(World, true);
 
@@ -825,12 +825,12 @@ bool FModumateDocument::ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWor
 	return true;
 }
 
-bool FModumateDocument::IsPreviewingDeltas() const
+bool UModumateDocument::IsPreviewingDeltas() const
 {
 	return bApplyingPreviewDeltas;
 }
 
-void FModumateDocument::ClearPreviewDeltas(UWorld *World, bool bFastClear)
+void UModumateDocument::ClearPreviewDeltas(UWorld *World, bool bFastClear)
 {
 	if (!bApplyingPreviewDeltas || !ensure(!bFastClearingPreviewDeltas && !bSlowClearingPreviewDeltas))
 	{
@@ -889,7 +889,7 @@ void FModumateDocument::ClearPreviewDeltas(UWorld *World, bool bFastClear)
 	CleanObjects(nullptr);
 }
 
-void FModumateDocument::CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWorld* World)
+void UModumateDocument::CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWorld* World)
 {
 	// Next, clean objects while gathering potential side effect deltas,
 	// apply side effect deltas, and add them to the undo/redo-able list of deltas.
@@ -916,7 +916,7 @@ void FModumateDocument::CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWo
 	} while (sideEffectDeltas.Num() > 0);
 }
 
-void FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
+void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 {
 	// TODO: unclear whether this is correct or the best place -
 	// set the faces containing or contained by dirty faces dirty as well	
@@ -948,7 +948,7 @@ void FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 		for (int32 vertexID : cleanedVertices)
 		{
 			FGraph3DVertex *graphVertex = VolumeGraph.FindVertex(vertexID);
-			FModumateObjectInstance *vertexObj = GetObjectById(vertexID);
+			AModumateObjectInstance *vertexObj = GetObjectById(vertexID);
 			if (graphVertex && vertexObj && (vertexObj->GetObjectType() == EObjectType::OTMetaVertex))
 			{
 				vertexObj->MarkDirty(EObjectDirtyFlags::Structure);
@@ -959,7 +959,7 @@ void FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 		for (int32 edgeID : cleanedEdges)
 		{
 			FGraph3DEdge *graphEdge = VolumeGraph.FindEdge(edgeID);
-			FModumateObjectInstance *edgeObj = GetObjectById(edgeID);
+			AModumateObjectInstance *edgeObj = GetObjectById(edgeID);
 			if (graphEdge && edgeObj && (edgeObj->GetObjectType() == EObjectType::OTMetaEdge))
 			{
 				edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
@@ -970,7 +970,7 @@ void FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 		for (int32 faceID : cleanedFaces)
 		{
 			FGraph3DFace *graphFace = VolumeGraph.FindFace(faceID);
-			FModumateObjectInstance *faceObj = GetObjectById(faceID);
+			AModumateObjectInstance *faceObj = GetObjectById(faceID);
 			if (graphFace && faceObj && (faceObj->GetObjectType() == EObjectType::OTMetaPlane))
 			{
 				faceObj->MarkDirty(EObjectDirtyFlags::Structure);
@@ -982,7 +982,7 @@ void FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 	// dirty group objects that are related to dirtied graph objects
 	for (int32 groupID : dirtyGroupIDs)
 	{
-		FModumateObjectInstance *groupObj = GetObjectById(groupID);
+		AModumateObjectInstance *groupObj = GetObjectById(groupID);
 		if (groupObj != nullptr)
 		{
 			groupObj->MarkDirty(EObjectDirtyFlags::Structure);
@@ -990,7 +990,7 @@ void FModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 	}
 }
 
-bool FModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs)
+bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs)
 {
 	FGraph3D moiTempGraph;
 	FGraph3D::CloneFromGraph(moiTempGraph, VolumeGraph);
@@ -1047,7 +1047,7 @@ bool FModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDelta
 	return true;
 }
 
-bool FModumateDocument::PostApplyDeltas(UWorld *World)
+bool UModumateDocument::PostApplyDeltas(UWorld *World)
 {
 	UpdateVolumeGraphObjects(World);
 	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
@@ -1064,18 +1064,18 @@ bool FModumateDocument::PostApplyDeltas(UWorld *World)
 	return true;
 }
 
-void FModumateDocument::DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis, bool bDeleteConnected)
+void UModumateDocument::DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis, bool bDeleteConnected)
 {
-	TArray<FModumateObjectInstance*> mois;
+	TArray<AModumateObjectInstance*> mois;
 	Algo::Transform(obIds,mois,[this](int32 id) { return GetObjectById(id);});
 
 	DeleteObjects(
-		mois.FilterByPredicate([](FModumateObjectInstance *ob) { return ob != nullptr; }),
+		mois.FilterByPredicate([](AModumateObjectInstance *ob) { return ob != nullptr; }),
 		bAllowRoomAnalysis, bDeleteConnected
 	);
 }
 
-void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &initialObjectsToDelete, bool bAllowRoomAnalysis, bool bDeleteConnected)
+void UModumateDocument::DeleteObjects(const TArray<AModumateObjectInstance*> &initialObjectsToDelete, bool bAllowRoomAnalysis, bool bDeleteConnected)
 {
 	if (initialObjectsToDelete.Num() == 0)
 	{
@@ -1089,13 +1089,13 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &in
 	}
 
 	// Keep track of all descendants of intended (and connected) objects to delete
-	TSet<FModumateObjectInstance*> allObjectsToDelete(initialObjectsToDelete);
+	TSet<AModumateObjectInstance*> allObjectsToDelete(initialObjectsToDelete);
 	TArray<FDeltaPtr> combinedDeltas;
 
 	// Gather 3D graph objects, so we can generated deltas that will potentially delete connected objects.
 	TSet<int32> graph3DObjIDsToDelete;
-	TSet<FModumateObjectInstance*> graph3DDescendents;
-	for (FModumateObjectInstance* objToDelete : initialObjectsToDelete)
+	TSet<AModumateObjectInstance*> graph3DDescendents;
+	for (AModumateObjectInstance* objToDelete : initialObjectsToDelete)
 	{
 		int32 objID = objToDelete->ID;
 		EGraph3DObjectType graph3DObjType;
@@ -1118,7 +1118,7 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &in
 
 			for (int32 graph3DObjID : graph3DObjIDsToDelete)
 			{
-				FModumateObjectInstance* graph3DObj = GetObjectById(graph3DObjID);
+				AModumateObjectInstance* graph3DObj = GetObjectById(graph3DObjID);
 				if (ensure(graph3DObj))
 				{
 					auto descendants = graph3DObj->GetAllDescendents();
@@ -1136,7 +1136,7 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &in
 	// NOTE: for consistency and less code (at the cost of performance), deleting an entire surface graph (say, as a result of deleting its parent wall)
 	// is accomplished by getting the deltas for deleting all of its elements. This also allows undo to add them back as Graph2D element addition deltas.
 	TMap<int32, TArray<int32>> surfaceGraphDeletionMap;
-	for (FModumateObjectInstance* objToDelete : allObjectsToDelete)
+	for (AModumateObjectInstance* objToDelete : allObjectsToDelete)
 	{
 		EObjectType objType = objToDelete->GetObjectType();
 		bool bInSurfaceGraph = (UModumateTypeStatics::Graph2DObjectTypeFromObjectType(objType) != EGraphObjectType::None);
@@ -1154,7 +1154,7 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &in
 	TArray<FGraph2DDelta> tempSurfaceGraphDeltas;
 	TArray<FDeltaPtr> combinedSurfaceGraphDeltas;
 	TSet<int32> combinedSurfaceGraphObjIDsToDelete;
-	TSet<FModumateObjectInstance*> surfaceGraphDescendents;
+	TSet<AModumateObjectInstance*> surfaceGraphDescendents;
 	for (auto& kvp : surfaceGraphDeletionMap)
 	{
 		int32 surfaceGraphID = kvp.Key;
@@ -1176,7 +1176,7 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &in
 	}
 	for (int32 surfaceGraphObjID : combinedSurfaceGraphObjIDsToDelete)
 	{
-		FModumateObjectInstance* surfaceGraphObj = GetObjectById(surfaceGraphObjID);
+		AModumateObjectInstance* surfaceGraphObj = GetObjectById(surfaceGraphObjID);
 		if (ensure(surfaceGraphObj))
 		{
 			auto descendants = surfaceGraphObj->GetAllDescendents();
@@ -1187,8 +1187,8 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &in
 	}
 
 	// Separate the full list of objects to delete, including connections and descendants, so we can delete non-graph objects correctly.
-	TArray<const FModumateObjectInstance*> graph3DDerivedObjects, surfaceGraphDerivedObjects, nonGraphDerivedObjects;
-	for (FModumateObjectInstance* objToDelete : allObjectsToDelete)
+	TArray<const AModumateObjectInstance*> graph3DDerivedObjects, surfaceGraphDerivedObjects, nonGraphDerivedObjects;
+	for (AModumateObjectInstance* objToDelete : allObjectsToDelete)
 	{
 		if (ensure(objToDelete))
 		{
@@ -1225,10 +1225,10 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &in
 		}
 	}
 
-	auto gatherNonGraphDeletionDeltas = [&combinedDeltas](const TArray<const FModumateObjectInstance*>& objects)
+	auto gatherNonGraphDeletionDeltas = [&combinedDeltas](const TArray<const AModumateObjectInstance*>& objects)
 	{
 		auto deleteDelta = MakeShared<FMOIDelta>();
-		for (const FModumateObjectInstance* nonGraphObject : objects)
+		for (const AModumateObjectInstance* nonGraphObject : objects)
 		{
 			deleteDelta->AddCreateDestroyState(nonGraphObject->GetStateData(), EMOIDeltaType::Destroy);
 		}
@@ -1248,22 +1248,22 @@ void FModumateDocument::DeleteObjects(const TArray<FModumateObjectInstance*> &in
 	// TODO: represent room analysis as side effects
 }
 
-FModumateObjectInstance *FModumateDocument::TryGetDeletedObject(int32 id)
+AModumateObjectInstance *UModumateDocument::TryGetDeletedObject(int32 id)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::TryGetDeletedObject"));
 	return DeletedObjects.FindRef(id);
 }
 
-int32 FModumateDocument::MakeGroupObject(UWorld *world, const TArray<int32> &ids, bool combineWithExistingGroups, int32 parentID)
+int32 UModumateDocument::MakeGroupObject(UWorld *world, const TArray<int32> &ids, bool combineWithExistingGroups, int32 parentID)
 {
 	ClearRedoBuffer();
 
 	int id = NextID++;
 
-	TArray<FModumateObjectInstance*> obs;
+	TArray<AModumateObjectInstance*> obs;
 	Algo::Transform(ids,obs,[this](int32 id){return GetObjectById(id);}); 
 
-	TMap<FModumateObjectInstance*, FModumateObjectInstance*> oldParents;
+	TMap<AModumateObjectInstance*, AModumateObjectInstance*> oldParents;
 	for (auto ob : obs)
 	{
 		oldParents.Add(ob, ob->GetParentObject());
@@ -1279,20 +1279,20 @@ int32 FModumateDocument::MakeGroupObject(UWorld *world, const TArray<int32> &ids
 	return id;
 }
 
-void FModumateDocument::UnmakeGroupObjects(UWorld *world, const TArray<int32> &groupIds)
+void UModumateDocument::UnmakeGroupObjects(UWorld *world, const TArray<int32> &groupIds)
 {
 	ClearRedoBuffer();
 
 	AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
 
-	TArray<FModumateObjectInstance*> obs;
+	TArray<AModumateObjectInstance*> obs;
 	Algo::Transform(groupIds,obs,[this](int32 id){return GetObjectById(id);});
 
-	TMap<FModumateObjectInstance*, TArray<FModumateObjectInstance*>> oldChildren;
+	TMap<AModumateObjectInstance*, TArray<AModumateObjectInstance*>> oldChildren;
 
 	for (auto ob : obs)
 	{
-		TArray<FModumateObjectInstance*> children = ob->GetChildObjects();
+		TArray<AModumateObjectInstance*> children = ob->GetChildObjects();
 		oldChildren.Add(ob, children);
 		for (auto child : children)
 		{
@@ -1302,7 +1302,7 @@ void FModumateDocument::UnmakeGroupObjects(UWorld *world, const TArray<int32> &g
 	}
 }
 
-bool FModumateDocument::GetVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas)
+bool UModumateDocument::GetVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas)
 {
 	TArray<FGraph3DDelta> deltas;
 
@@ -1322,7 +1322,7 @@ bool FModumateDocument::GetVertexMovementDeltas(const TArray<int32>& VertexIDs, 
 	return true;
 }
 
-bool FModumateDocument::GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas)
+bool UModumateDocument::GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas)
 {
 	TArray<FGraph3DDelta> deltas;
 
@@ -1342,7 +1342,7 @@ bool FModumateDocument::GetPreviewVertexMovementDeltas(const TArray<int32>& Vert
 	return true;
 }
 
-bool FModumateDocument::MoveMetaVertices(UWorld* World, const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions)
+bool UModumateDocument::MoveMetaVertices(UWorld* World, const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions)
 {
 	TArray<FDeltaPtr> deltas;
 	if (GetVertexMovementDeltas(VertexIDs, VertexPositions, deltas))
@@ -1353,7 +1353,7 @@ bool FModumateDocument::MoveMetaVertices(UWorld* World, const TArray<int32>& Ver
 	return false;
 }
 
-bool FModumateDocument::JoinMetaObjects(UWorld *World, const TArray<int32> &ObjectIDs)
+bool UModumateDocument::JoinMetaObjects(UWorld *World, const TArray<int32> &ObjectIDs)
 {
 	if (ObjectIDs.Num() < 2)
 	{
@@ -1383,7 +1383,7 @@ bool FModumateDocument::JoinMetaObjects(UWorld *World, const TArray<int32> &Obje
 	return ApplyDeltas(deltaPtrs, World);
 }
 
-int32 FModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &FaceIDs)
+int32 UModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &FaceIDs)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeRoom"));
 
@@ -1393,7 +1393,7 @@ int32 FModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &F
 	return MOD_ID_NONE;
 }
 
-bool FModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& points, const TArray<int32>& IDs, EObjectType objectType, int32 parentID,
+bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& points, const TArray<int32>& IDs, EObjectType objectType, int32 parentID,
 	TArray<int32>& OutAddedVertexIDs, TArray<int32>& OutAddedEdgeIDs, TArray<int32>& OutAddedFaceIDs, TArray<FDeltaPtr>& OutDeltaPtrs)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeMetaObject"));
@@ -1466,13 +1466,13 @@ bool FModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 	return (OutDeltaPtrs.Num() > 0);
 }
 
-bool FModumateDocument::MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height)
+bool UModumateDocument::MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height)
 {
 	// TODO: reimplement
 	return false;
 }
 
-bool FModumateDocument::FinalizeGraph2DDelta(const FGraph2DDelta &Delta, TMap<int32, FGraph2DHostedObjectDelta> &OutParentIDUpdates)
+bool UModumateDocument::FinalizeGraph2DDelta(const FGraph2DDelta &Delta, TMap<int32, FGraph2DHostedObjectDelta> &OutParentIDUpdates)
 {
 	TMap<int32, TArray<int32>> parentIDToChildrenIDs;
 
@@ -1561,7 +1561,7 @@ bool FModumateDocument::FinalizeGraph2DDelta(const FGraph2DDelta &Delta, TMap<in
 	return true;
 }
 
-bool FModumateDocument::FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, const FGraph3DDelta &Delta, TArray<FDeltaPtr> &OutSideEffectDeltas)
+bool UModumateDocument::FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, const FGraph3DDelta &Delta, TArray<FDeltaPtr> &OutSideEffectDeltas)
 {
 	TMap<int32, TArray<int32>> parentIDToChildrenIDs;
 
@@ -1693,11 +1693,11 @@ bool FModumateDocument::FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, const 
 
 					// delete remaining mois (mois reflecting the surface graph are deleted by the FGraph2DDeltas)
 					// TODO: consolidate this kind of behavior with DeleteObjects
-					TArray<FModumateObjectInstance*> objectsToDelete = surfaceGraphObj->GetAllDescendents();
+					TArray<AModumateObjectInstance*> objectsToDelete = surfaceGraphObj->GetAllDescendents();
 					objectsToDelete.Add(surfaceGraphObj);
 
 					auto deleteSurfaceDelta = MakeShared<FMOIDelta>();
-					for (FModumateObjectInstance* descendent : objectsToDelete)
+					for (AModumateObjectInstance* descendent : objectsToDelete)
 					{
 						if (UModumateTypeStatics::Graph2DObjectTypeFromObjectType(descendent->GetObjectType()) == EGraphObjectType::None)
 						{
@@ -1714,26 +1714,26 @@ bool FModumateDocument::FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, const 
 	return true;
 }
 
-void FModumateDocument::ClearRedoBuffer()
+void UModumateDocument::ClearRedoBuffer()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ClearRedoBuffer"));
 	RedoBuffer.Empty();
 }
 
-void FModumateDocument::ClearUndoBuffer()
+void UModumateDocument::ClearUndoBuffer()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ClearUndoBuffer"));
 	UndoBuffer.Empty();
 	UndoRedoMacroStack.Empty();
 }
 
-FBoxSphereBounds FModumateDocument::CalculateProjectBounds() const
+FBoxSphereBounds UModumateDocument::CalculateProjectBounds() const
 {
 	TArray<FVector> allMOIPoints;
 	TArray<FStructurePoint> curMOIPoints;
 	TArray<FStructureLine> curMOILines;
 
-	for (const FModumateObjectInstance *moi : ObjectInstanceArray)
+	for (const AModumateObjectInstance *moi : ObjectInstanceArray)
 	{
 		// TODO: add this functionality to MOIs - IsMetaObject(), meta-objects do not contribute 
 		// to project bounds
@@ -1756,12 +1756,12 @@ FBoxSphereBounds FModumateDocument::CalculateProjectBounds() const
 	return projectBounds;
 }
 
-int32 FModumateDocument::GetNextAvailableID() const 
+int32 UModumateDocument::GetNextAvailableID() const 
 { 
 	return NextID; 
 }
 
-int32 FModumateDocument::ReserveNextIDs(int32 reservingObjID)
+int32 UModumateDocument::ReserveNextIDs(int32 reservingObjID)
 { 
 	if (!ensureAlways(ReservingObjectID == MOD_ID_NONE))
 	{
@@ -1773,7 +1773,7 @@ int32 FModumateDocument::ReserveNextIDs(int32 reservingObjID)
 	return NextID;
 }
 
-void FModumateDocument::SetNextID(int32 ID, int32 reservingObjID)
+void UModumateDocument::SetNextID(int32 ID, int32 reservingObjID)
 {
 	if (!ensureAlways(ReservingObjectID == reservingObjID) ||
 		!ensureAlways(ID >= NextID))
@@ -1785,12 +1785,12 @@ void FModumateDocument::SetNextID(int32 ID, int32 reservingObjID)
 	ReservingObjectID = MOD_ID_NONE;
 }
 
-bool FModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	static TMap<int32, EObjectDirtyFlags> curCleanedFlags;
 	curCleanedFlags.Reset();
 
-	static TArray<FModumateObjectInstance*> curDirtyList;
+	static TArray<AModumateObjectInstance*> curDirtyList;
 	curDirtyList.Reset();
 
 	int32 totalObjectCleans = 0;
@@ -1806,7 +1806,7 @@ bool FModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 			// creates circular dependencies that will never resolve in a single frame.
 			bool bModifiedAnyObjects = false;
 			int32 objectCleans = 0;
-			TArray<FModumateObjectInstance*>& dirtyObjList = DirtyObjectMap.FindOrAdd(flagToClean);
+			TArray<AModumateObjectInstance*>& dirtyObjList = DirtyObjectMap.FindOrAdd(flagToClean);
 
 			// Prevent iterating over objects dirtied with this flag too many times while trying to clean all objects
 			int32 sameFlagSafeguard = 8;
@@ -1816,7 +1816,7 @@ bool FModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 				bModifiedAnyObjects = false;
 				curDirtyList = dirtyObjList;
 
-				for (FModumateObjectInstance *objToClean : curDirtyList)
+				for (AModumateObjectInstance *objToClean : curDirtyList)
 				{
 					EObjectDirtyFlags& cleanedFlags = curCleanedFlags.FindOrAdd(objToClean->ID, EObjectDirtyFlags::None);
 					if (!((cleanedFlags & flagToClean) == EObjectDirtyFlags::None))
@@ -1857,7 +1857,7 @@ bool FModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 	return (totalObjectCleans > 0);
 }
 
-void FModumateDocument::RegisterDirtyObject(EObjectDirtyFlags DirtyType, FModumateObjectInstance *DirtyObj, bool bDirty)
+void UModumateDocument::RegisterDirtyObject(EObjectDirtyFlags DirtyType, AModumateObjectInstance *DirtyObj, bool bDirty)
 {
 	// Make sure only one dirty flag is used at a time
 	int32 flagInt = (int32)DirtyType;
@@ -1867,7 +1867,7 @@ void FModumateDocument::RegisterDirtyObject(EObjectDirtyFlags DirtyType, FModuma
 		return;
 	}
 
-	TArray<FModumateObjectInstance*> &dirtyObjList = DirtyObjectMap.FindOrAdd(DirtyType);
+	TArray<AModumateObjectInstance*> &dirtyObjList = DirtyObjectMap.FindOrAdd(DirtyType);
 
 	if (bDirty)
 	{
@@ -1881,14 +1881,14 @@ void FModumateDocument::RegisterDirtyObject(EObjectDirtyFlags DirtyType, FModuma
 	}
 }
 
-void FModumateDocument::MakeNew(UWorld *world)
+void UModumateDocument::MakeNew(UWorld *world)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeNew"));
 
 	int32 numObjects = ObjectInstanceArray.Num();
 	for (int32 i = numObjects - 1; i >= 0; --i)
 	{
-		FModumateObjectInstance *obj = ObjectInstanceArray[i];
+		AModumateObjectInstance *obj = ObjectInstanceArray[i];
 
 		ObjectsByID.Remove(obj->ID);
 		ObjectInstanceArray.RemoveAt(i, 1, false);
@@ -1941,7 +1941,7 @@ void FModumateDocument::MakeNew(UWorld *world)
 }
 
 
-void FModumateDocument::GatherDocumentMetadata()
+void UModumateDocument::GatherDocumentMetadata()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::GatherDocumentMetadata"));
 	FPartyProfile pp;
@@ -2028,12 +2028,12 @@ void FModumateDocument::GatherDocumentMetadata()
 	ProjectInfo.description = TEXT("A 4-bedroom, 3-bathroom new transitional home with a pool and freestanding poolhouse/garage. The living room has a billiard table with a 6-chair bar and a wine cabinet.");
 }
 
-const FModumateObjectInstance *FModumateDocument::ObjectFromActor(const AActor *actor) const
+const AModumateObjectInstance *UModumateDocument::ObjectFromActor(const AActor *actor) const
 {
-	return const_cast<FModumateDocument*>(this)->ObjectFromActor(const_cast<AActor*>(actor));
+	return const_cast<UModumateDocument*>(this)->ObjectFromActor(const_cast<AActor*>(actor));
 }
 
-FModumateObjectInstance *FModumateDocument::ObjectFromSingleActor(AActor *actor)
+AModumateObjectInstance *UModumateDocument::ObjectFromSingleActor(AActor *actor)
 {
 	auto *moiComponent = actor ? actor->FindComponentByClass<UModumateObjectComponent_CPP>() : nullptr;
 	if (moiComponent && (moiComponent->ObjectID != MOD_ID_NONE))
@@ -2044,9 +2044,9 @@ FModumateObjectInstance *FModumateDocument::ObjectFromSingleActor(AActor *actor)
 	return nullptr;
 }
 
-FModumateObjectInstance *FModumateDocument::ObjectFromActor(AActor *actor)
+AModumateObjectInstance *UModumateDocument::ObjectFromActor(AActor *actor)
 {
-	FModumateObjectInstance *moi = ObjectFromSingleActor(actor);
+	AModumateObjectInstance *moi = ObjectFromSingleActor(actor);
 
 	while ((moi == nullptr) && (actor != nullptr))
 	{
@@ -2057,30 +2057,30 @@ FModumateObjectInstance *FModumateDocument::ObjectFromActor(AActor *actor)
 	return moi;
 }
 
-TArray<FModumateObjectInstance*> FModumateDocument::GetObjectsOfType(EObjectType type)
+TArray<AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(EObjectType type)
 {
-	return ObjectInstanceArray.FilterByPredicate([type](FModumateObjectInstance *moi)
+	return ObjectInstanceArray.FilterByPredicate([type](AModumateObjectInstance *moi)
 	{
 		return moi->GetObjectType() == type;
 	});
 }
 
-TArray<const FModumateObjectInstance*> FModumateDocument::GetObjectsOfType(const FObjectTypeSet& types) const
+TArray<const AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(const FObjectTypeSet& types) const
 {
-	TArray<const FModumateObjectInstance*> outArray;
-	Algo::TransformIf(ObjectInstanceArray, outArray, [&types](FModumateObjectInstance * moi)
+	TArray<const AModumateObjectInstance*> outArray;
+	Algo::TransformIf(ObjectInstanceArray, outArray, [&types](AModumateObjectInstance * moi)
 		{ return types.Contains(moi->GetObjectType()); },
-		[](FModumateObjectInstance * moi) {return moi; });
+		[](AModumateObjectInstance * moi) {return moi; });
 	return outArray;
 }
 
-TArray<FModumateObjectInstance*> FModumateDocument::GetObjectsOfType(const FObjectTypeSet& types)
+TArray<AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(const FObjectTypeSet& types)
 {
-	return ObjectInstanceArray.FilterByPredicate([&types](FModumateObjectInstance *moi)
+	return ObjectInstanceArray.FilterByPredicate([&types](AModumateObjectInstance *moi)
 		{ return types.Contains(moi->GetObjectType()); });
 }
 
-void FModumateDocument::GetObjectIdsByAssembly(const FBIMKey& AssemblyKey, TArray<int32>& OutIds) const
+void UModumateDocument::GetObjectIdsByAssembly(const FBIMKey& AssemblyKey, TArray<int32>& OutIds) const
 {
 	for (const auto &moi : ObjectInstanceArray)
 	{
@@ -2091,32 +2091,32 @@ void FModumateDocument::GetObjectIdsByAssembly(const FBIMKey& AssemblyKey, TArra
 	}
 }
 
-TArray<const FModumateObjectInstance*> FModumateDocument::GetObjectsOfType(EObjectType type) const
+TArray<const AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(EObjectType type) const
 {
 //	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::GetObjectsOfType"));
 
-	TArray< const FModumateObjectInstance *> outObjectsOfType;
+	TArray< const AModumateObjectInstance *> outObjectsOfType;
 	Algo::Transform(
-			ObjectInstanceArray.FilterByPredicate([type](FModumateObjectInstance *moi)
+			ObjectInstanceArray.FilterByPredicate([type](AModumateObjectInstance *moi)
 			{
 				return moi->GetObjectType() == type;
 			}), 
 		outObjectsOfType,
-			[](FModumateObjectInstance *moi)
+			[](AModumateObjectInstance *moi)
 			{
 				return moi;
 			});
 	return outObjectsOfType;
 }
 
-bool FModumateDocument::IsDirty() const
+bool UModumateDocument::IsDirty() const
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::IsDirty"));
 	return UndoBuffer.Num() > 0;
 }
 
 
-bool FModumateDocument::ExportPDF(UWorld *world, const TCHAR *filepath, const FVector &origin, const FVector &normal)
+bool UModumateDocument::ExportPDF(UWorld *world, const TCHAR *filepath, const FVector &origin, const FVector &normal)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ExportPDF"));
 
@@ -2127,7 +2127,7 @@ bool FModumateDocument::ExportPDF(UWorld *world, const TCHAR *filepath, const FV
 	return true;
 }
 
-bool FModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
+bool UModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ExportDWG"));
 	CurrentDraftingView = MakeShared<FModumateDraftingView>(world, this, FModumateDraftingView::kDWG);
@@ -2137,7 +2137,7 @@ bool FModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
 	return true;
 }
 
-bool FModumateDocument::Serialize(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord)
+bool UModumateDocument::Serialize(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Serialize"));
 
@@ -2181,7 +2181,7 @@ bool FModumateDocument::Serialize(UWorld* World, FModumateDocumentHeader& OutHea
 
 	// Capture object instances into doc struct
 	TSet<FBIMKey> usedPresets;
-	for (FModumateObjectInstance* obj : ObjectInstanceArray)
+	for (AModumateObjectInstance* obj : ObjectInstanceArray)
 	{
 		// Don't save graph-reflected MOIs, since their information is stored in separate graph structures
 		EObjectType objectType = obj ? obj->GetObjectType() : EObjectType::OTNone;
@@ -2223,7 +2223,7 @@ bool FModumateDocument::Serialize(UWorld* World, FModumateDocumentHeader& OutHea
 	return true;
 }
 
-bool FModumateDocument::Save(UWorld* World, const FString& FilePath)
+bool UModumateDocument::Save(UWorld* World, const FString& FilePath)
 {
 	FModumateDocumentHeader docHeader;
 	FMOIDocumentRecord docRecord;
@@ -2263,16 +2263,16 @@ bool FModumateDocument::Save(UWorld* World, const FString& FilePath)
 	return fileSaveSuccess;
 }
 
-FModumateObjectInstance *FModumateDocument::GetObjectById(int32 id)
+AModumateObjectInstance *UModumateDocument::GetObjectById(int32 id)
 {
 	return ObjectsByID.FindRef(id);
 }
 
-const FModumateObjectInstance *FModumateDocument::GetObjectById(int32 id) const
+const AModumateObjectInstance *UModumateDocument::GetObjectById(int32 id) const
 {
 	return ObjectsByID.FindRef(id);
 }
-void FModumateDocument::RemapOldBIMKeys(FMOIDocumentRecord& DocRec) const
+void UModumateDocument::RemapOldBIMKeys(FMOIDocumentRecord& DocRec) const
 {
 	TMap<FBIMKey, FBIMKey> bimkeyRemap;
 	for (auto& stateData : DocRec.ObjectData)
@@ -2301,7 +2301,7 @@ void FModumateDocument::RemapOldBIMKeys(FMOIDocumentRecord& DocRec) const
 	}
 }
 
-bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurrentProject)
+bool UModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurrentProject)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Load"));
 
@@ -2424,7 +2424,7 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 		ResequencePortalAssemblies_DEPRECATED(world, EObjectType::OTDoor);
 
 		// Hide all cut planes on load
-		TArray<FModumateObjectInstance*> cutPlanes = GetObjectsOfType(EObjectType::OTCutPlane);
+		TArray<AModumateObjectInstance*> cutPlanes = GetObjectsOfType(EObjectType::OTCutPlane);
 		TArray<int32> hideCutPlaneIds;
 		for (auto curCutPlane : cutPlanes)
 		{
@@ -2452,18 +2452,18 @@ bool FModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 	return false;
 }
 
-TArray<int32> FModumateDocument::CloneObjects(UWorld *world, const TArray<int32> &objs, const FTransform& offsetTransform)
+TArray<int32> UModumateDocument::CloneObjects(UWorld *world, const TArray<int32> &objs, const FTransform& offsetTransform)
 {
 	// make a list of MOI objects from the IDs, send them to the MOI version of this function return array of IDs.
 
-	TArray<FModumateObjectInstance*> obs;
+	TArray<AModumateObjectInstance*> obs;
 	Algo::Transform(objs,obs,[this](auto id) {return GetObjectById(id); });
 
 	obs = CloneObjects(
 		world,
 		obs,
 		offsetTransform)
-		.FilterByPredicate([](FModumateObjectInstance *ob) {return ob != nullptr; });
+		.FilterByPredicate([](AModumateObjectInstance *ob) {return ob != nullptr; });
 
 	TArray<int32> ids;
 
@@ -2472,26 +2472,26 @@ TArray<int32> FModumateDocument::CloneObjects(UWorld *world, const TArray<int32>
 	return ids;
 }
 
-int32 FModumateDocument::CloneObject(UWorld *world, const FModumateObjectInstance *original)
+int32 UModumateDocument::CloneObject(UWorld *world, const AModumateObjectInstance *original)
 {
 	// TODO: reimplement
 	return MOD_ID_NONE;
 }
 
-TArray<FModumateObjectInstance *> FModumateDocument::CloneObjects(UWorld *world, const TArray<FModumateObjectInstance *> &objs, const FTransform& offsetTransform)
+TArray<AModumateObjectInstance *> UModumateDocument::CloneObjects(UWorld *world, const TArray<AModumateObjectInstance *> &objs, const FTransform& offsetTransform)
 {
-	TMap<FModumateObjectInstance*, FModumateObjectInstance*> oldToNew;
+	TMap<AModumateObjectInstance*, AModumateObjectInstance*> oldToNew;
 
 	BeginUndoRedoMacro();
 
 	// Step 1 of clone macro: deserialize the objects, each of which will have its own undo/redo step
-	TArray<FModumateObjectInstance*> newObjs;
+	TArray<AModumateObjectInstance*> newObjs;
 	Algo::Transform(
 		objs,
 		newObjs,
-		[this,world,&oldToNew,offsetTransform](FModumateObjectInstance *obj)
+		[this,world,&oldToNew,offsetTransform](AModumateObjectInstance *obj)
 		{
-			FModumateObjectInstance *newOb = GetObjectById(CloneObject(world, obj));
+			AModumateObjectInstance *newOb = GetObjectById(CloneObject(world, obj));
 			oldToNew.Add(obj, newOb);
 			return newOb;
 		}
@@ -2500,8 +2500,8 @@ TArray<FModumateObjectInstance *> FModumateDocument::CloneObjects(UWorld *world,
 	// Set up the correct parenting for the newly-cloned objects
 	for (auto newObj : newObjs)
 	{
-		FModumateObjectInstance *oldParent = newObj->GetParentObject();
-		FModumateObjectInstance *newParent = oldToNew.FindRef(oldParent);
+		AModumateObjectInstance *oldParent = newObj->GetParentObject();
+		AModumateObjectInstance *newParent = oldToNew.FindRef(oldParent);
 
 		if (oldParent && newParent)
 		{
@@ -2514,7 +2514,7 @@ TArray<FModumateObjectInstance *> FModumateDocument::CloneObjects(UWorld *world,
 	return newObjs;
 }
 
-void FModumateDocument::SetCurrentProjectPath(const FString& currentProjectPath)
+void UModumateDocument::SetCurrentProjectPath(const FString& currentProjectPath)
 {
 	CurrentProjectPath = currentProjectPath;
 	CurrentProjectName = currentProjectPath;
@@ -2528,14 +2528,14 @@ void FModumateDocument::SetCurrentProjectPath(const FString& currentProjectPath)
 	UModumateFunctionLibrary::SetWindowTitle(CurrentProjectName);
 }
 
-void FModumateDocument::UpdateMitering(UWorld *world, const TArray<int32> &dirtyObjIDs)
+void UModumateDocument::UpdateMitering(UWorld *world, const TArray<int32> &dirtyObjIDs)
 {
 	TSet<int32> dirtyPlaneIDs;
 
 	// Gather all of the dirty planes that need to be updated with new miter geometry
 	for (int32 dirtyObjID : dirtyObjIDs)
 	{
-		FModumateObjectInstance *dirtyObj = GetObjectById(dirtyObjID);
+		AModumateObjectInstance *dirtyObj = GetObjectById(dirtyObjID);
 		if (dirtyObj)
 		{
 			switch (dirtyObj->GetObjectType())
@@ -2565,7 +2565,7 @@ void FModumateDocument::UpdateMitering(UWorld *world, const TArray<int32> &dirty
 			}
 			default:
 			{
-				FModumateObjectInstance *parent = dirtyObj->GetParentObject();
+				AModumateObjectInstance *parent = dirtyObj->GetParentObject();
 				if (parent && (parent->GetObjectType() == EObjectType::OTMetaPlane))
 				{
 					dirtyPlaneIDs.Add(parent->ID);
@@ -2579,14 +2579,14 @@ void FModumateDocument::UpdateMitering(UWorld *world, const TArray<int32> &dirty
 	// Miter-aware geometry updates only require UpdateGeometry, which in turn will analyze neighboring objects in the graph.
 	for (int32 dirtyPlaneID : dirtyPlaneIDs)
 	{
-		FModumateObjectInstance *dirtyPlane = GetObjectById(dirtyPlaneID);
+		AModumateObjectInstance *dirtyPlane = GetObjectById(dirtyPlaneID);
 		FGraph3DFace *dirtyFace = VolumeGraph.FindFace(dirtyPlaneID);
 		if (dirtyPlane && dirtyFace)
 		{
 			const TArray<int32> &childIDs = dirtyPlane->GetChildIDs();
 			if (childIDs.Num() == 1)
 			{
-				if (FModumateObjectInstance *dirtyPlaneHostedObj = GetObjectById(childIDs[0]))
+				if (AModumateObjectInstance *dirtyPlaneHostedObj = GetObjectById(childIDs[0]))
 				{
 					dirtyPlaneHostedObj->MarkDirty(EObjectDirtyFlags::Structure);
 				}
@@ -2595,10 +2595,10 @@ void FModumateDocument::UpdateMitering(UWorld *world, const TArray<int32> &dirty
 	}
 }
 
-bool FModumateDocument::CanRoomContainFace(FGraphSignedID FaceID)
+bool UModumateDocument::CanRoomContainFace(FGraphSignedID FaceID)
 {
 	const FGraph3DFace *graphFace = VolumeGraph.FindFace(FaceID);
-	const FModumateObjectInstance *planeObj = GetObjectById(FMath::Abs(FaceID));
+	const AModumateObjectInstance *planeObj = GetObjectById(FMath::Abs(FaceID));
 
 	if ((graphFace == nullptr) || (planeObj == nullptr))
 	{
@@ -2617,7 +2617,7 @@ bool FModumateDocument::CanRoomContainFace(FGraphSignedID FaceID)
 	const TArray<int32> &planeChildIDs = planeObj->GetChildIDs();
 	for (int32 planeChildID : planeChildIDs)
 	{
-		const FModumateObjectInstance *planeChildObj = GetObjectById(planeChildID);
+		const AModumateObjectInstance *planeChildObj = GetObjectById(planeChildID);
 		if (planeChildObj && (planeChildObj->GetObjectType() == EObjectType::OTFloorSegment))
 		{
 			return true;
@@ -2627,7 +2627,7 @@ bool FModumateDocument::CanRoomContainFace(FGraphSignedID FaceID)
 	return false;
 }
 
-void FModumateDocument::UpdateRoomAnalysis(UWorld *world)
+void UModumateDocument::UpdateRoomAnalysis(UWorld *world)
 {
 #if 0
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UpdateRoomAnalysis"));
@@ -2661,7 +2661,7 @@ void FModumateDocument::UpdateRoomAnalysis(UWorld *world)
 				int32 oldRoomObjID = oldToNew.Key;
 				int32 newRoomIndex = oldToNew.Value;
 
-				FModumateObjectInstance *oldRoomObj = GetObjectById(oldRoomObjID);
+				AModumateObjectInstance *oldRoomObj = GetObjectById(oldRoomObjID);
 				const TArray<int32> *newRoomFaceIDs = newRoomsFaceIDs.Find(newRoomIndex);
 				if (oldRoomObj && newRoomFaceIDs)
 				{
@@ -2678,7 +2678,7 @@ void FModumateDocument::UpdateRoomAnalysis(UWorld *world)
 				// Use our room mapping to restore the old rooms
 				for (auto &oldRoomKVP : oldRoomsFaceIDs)
 				{
-					FModumateObjectInstance *oldRoomObj = GetObjectById(oldRoomKVP.Key);
+					AModumateObjectInstance *oldRoomObj = GetObjectById(oldRoomKVP.Key);
 					if (oldRoomObj)
 					{
 						oldRoomObj->SetControlPointIndices(oldRoomKVP.Value);
@@ -2727,7 +2727,7 @@ void FModumateDocument::UpdateRoomAnalysis(UWorld *world)
 		{
 			for (auto &kvp : newRoomNumbers)
 			{
-				FModumateObjectInstance *roomObj = GetObjectById(kvp.Key);
+				AModumateObjectInstance *roomObj = GetObjectById(kvp.Key);
 				const FString &newRoomNumber = kvp.Value;
 				roomObj->SetProperty(EScope::Room, BIMPropertyNames::Number, newRoomNumber);
 			}
@@ -2736,7 +2736,7 @@ void FModumateDocument::UpdateRoomAnalysis(UWorld *world)
 			{
 				for (auto &kvp : oldRoomNumbers)
 				{
-					FModumateObjectInstance *roomObj = GetObjectById(kvp.Key);
+					AModumateObjectInstance *roomObj = GetObjectById(kvp.Key);
 					const FString &oldRoomNumber = kvp.Value;
 					roomObj->SetProperty(EScope::Room, BIMPropertyNames::Number, oldRoomNumber);
 				}
@@ -2754,22 +2754,22 @@ void FModumateDocument::UpdateRoomAnalysis(UWorld *world)
 #endif
 }
 
-const TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID) const
+const TSharedPtr<Modumate::FGraph2D> UModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID) const
 {
 	return SurfaceGraphs.FindRef(SurfaceGraphID);
 }
 
-TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID)
+TSharedPtr<Modumate::FGraph2D> UModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID)
 {
 	return SurfaceGraphs.FindRef(SurfaceGraphID);
 }
 
-const TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraphByObjID(int32 ObjectID) const
+const TSharedPtr<Modumate::FGraph2D> UModumateDocument::FindSurfaceGraphByObjID(int32 ObjectID) const
 {
-	return const_cast<FModumateDocument*>(this)->FindSurfaceGraphByObjID(ObjectID);
+	return const_cast<UModumateDocument*>(this)->FindSurfaceGraphByObjID(ObjectID);
 }
 
-TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraphByObjID(int32 ObjectID)
+TSharedPtr<Modumate::FGraph2D> UModumateDocument::FindSurfaceGraphByObjID(int32 ObjectID)
 {
 	auto moi = GetObjectById(ObjectID);
 	if (moi == nullptr)
@@ -2796,11 +2796,11 @@ TSharedPtr<Modumate::FGraph2D> FModumateDocument::FindSurfaceGraphByObjID(int32 
 	return surfaceGraph;
 }
 
-bool FModumateDocument::IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &OutObjType) const
+bool UModumateDocument::IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &OutObjType) const
 {
 	bool bIsInGraph = false;
 
-	const FModumateObjectInstance *moi = GetObjectById(ObjID);
+	const AModumateObjectInstance *moi = GetObjectById(ObjID);
 	if (moi == nullptr)
 	{
 		return bIsInGraph;
@@ -2814,7 +2814,7 @@ bool FModumateDocument::IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &O
 	return bIsInGraph;
 }
 
-void FModumateDocument::DisplayDebugInfo(UWorld* world)
+void UModumateDocument::DisplayDebugInfo(UWorld* world)
 {
 	auto displayMsg = [](const FString &msg)
 	{
@@ -2824,7 +2824,7 @@ void FModumateDocument::DisplayDebugInfo(UWorld* world)
 
 	auto displayObjectCount = [this,displayMsg](EObjectType ot, const TCHAR *name)
 	{
-		TArray<FModumateObjectInstance*> obs = GetObjectsOfType(ot);
+		TArray<AModumateObjectInstance*> obs = GetObjectsOfType(ot);
 		if (obs.Num() > 0)
 		{
 			displayMsg(FString::Printf(TEXT("%s - %d"), name, obs.Num()));
@@ -2844,7 +2844,7 @@ void FModumateDocument::DisplayDebugInfo(UWorld* world)
 	TSet<FBIMKey> asms;
 
 	Algo::Transform(ObjectInstanceArray, asms,
-		[](const FModumateObjectInstance *ob)
+		[](const AModumateObjectInstance *ob)
 		{
 			return ob->GetAssembly().UniqueKey();
 		}
@@ -2854,7 +2854,7 @@ void FModumateDocument::DisplayDebugInfo(UWorld* world)
 	{
 		int32 instanceCount = Algo::Accumulate(
 			ObjectInstanceArray, 0,
-			[a](int32 total, const FModumateObjectInstance *ob)
+			[a](int32 total, const AModumateObjectInstance *ob)
 			{
 				return ob->GetAssembly().UniqueKey() == a ? total + 1 : total;
 			}
@@ -2880,7 +2880,7 @@ void FModumateDocument::DisplayDebugInfo(UWorld* world)
 	displayMsg(selected);
 }
 
-void FModumateDocument::DrawDebugVolumeGraph(UWorld* world)
+void UModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 {
 	const float drawVerticalOffset = 5.0f;
 	const float pointThickness = 8.0f;
@@ -2975,7 +2975,7 @@ void FModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 	}
 }
 
-void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
+void UModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 {
 	const float drawVerticalOffset = 5.0f;
 	const float pointThickness = 8.0f;
@@ -2989,15 +2989,15 @@ void FModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 		auto graph = kvp.Value;
 
 		int32 surfaceGraphID = kvp.Key;
-		const FModumateObjectInstance *surfaceGraphObj = GetObjectById(surfaceGraphID);
-		const FModumateObjectInstance *surfaceGraphParent = surfaceGraphObj ? surfaceGraphObj->GetParentObject() : nullptr;
+		const AModumateObjectInstance *surfaceGraphObj = GetObjectById(surfaceGraphID);
+		const AModumateObjectInstance *surfaceGraphParent = surfaceGraphObj ? surfaceGraphObj->GetParentObject() : nullptr;
 		int32 surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceGraphObj);
 		if (!ensure(surfaceGraphObj && surfaceGraphParent && (surfaceGraphFaceIndex != INDEX_NONE)))
 		{
 			continue;
 		}
 
-		const FMOISurfaceGraphImpl* surfaceGraphImpl = static_cast<const FMOISurfaceGraphImpl*>(surfaceGraphObj);
+		const AMOISurfaceGraph* surfaceGraphImpl = static_cast<const AMOISurfaceGraph*>(surfaceGraphObj);
 		FString surfaceGraphString = FString::Printf(TEXT("SurfaceGraph: #%d, face %d, %s"),
 			surfaceGraphID, surfaceGraphFaceIndex, surfaceGraphImpl->IsGraphLinked() ? TEXT("linked") : TEXT("unlinked"));
 		GEngine->AddOnScreenDebugMessage(surfaceGraphID, 0.0f, FColor::White, surfaceGraphString);

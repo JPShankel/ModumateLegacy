@@ -30,7 +30,7 @@ FVector AAdjustPortalReverseHandle::GetHandlePosition() const
 {
 	FVector position(ForceInitToZero);
 
-	const FModumateObjectInstance* parentMOI = TargetMOI ? TargetMOI->GetParentObject() : nullptr;
+	const AModumateObjectInstance* parentMOI = TargetMOI ? TargetMOI->GetParentObject() : nullptr;
 	if (parentMOI)
 	{
 		int32 numCorners = parentMOI->GetNumCorners();

@@ -457,7 +457,7 @@ bool AAdjustmentHandleActor::HandleInvert()
 	return false;
 }
 
-void AAdjustmentHandleActor::SetTargetMOI(FModumateObjectInstance *InTargetMOI)
+void AAdjustmentHandleActor::SetTargetMOI(AModumateObjectInstance *InTargetMOI)
 {
 	TargetMOI = InTargetMOI;
 }

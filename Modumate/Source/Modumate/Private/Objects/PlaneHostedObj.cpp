@@ -25,14 +25,14 @@ class AEditModelPlayerController_CPP;
 
 using namespace Modumate::Mitering;
 
-FMOIPlaneHostedObjImpl::FMOIPlaneHostedObjImpl()
-	: FModumateObjectInstance()
+AMOIPlaneHostedObj::AMOIPlaneHostedObj()
+	: AModumateObjectInstance()
 {
 }
 
-FQuat FMOIPlaneHostedObjImpl::GetRotation() const
+FQuat AMOIPlaneHostedObj::GetRotation() const
 {
-	const FModumateObjectInstance *parent = GetParentObject();
+	const AModumateObjectInstance *parent = GetParentObject();
 	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return parent->GetRotation();
@@ -43,9 +43,9 @@ FQuat FMOIPlaneHostedObjImpl::GetRotation() const
 	}
 }
 
-FVector FMOIPlaneHostedObjImpl::GetLocation() const
+FVector AMOIPlaneHostedObj::GetLocation() const
 {
-	const FModumateObjectInstance *parent = GetParentObject();
+	const AModumateObjectInstance *parent = GetParentObject();
 	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		float thickness, startOffset;
@@ -61,10 +61,10 @@ FVector FMOIPlaneHostedObjImpl::GetLocation() const
 	}
 }
 
-FVector FMOIPlaneHostedObjImpl::GetCorner(int32 CornerIndex) const
+FVector AMOIPlaneHostedObj::GetCorner(int32 CornerIndex) const
 {
 	// Handle the meta plane host case which just returns the meta plane with this MOI's offset
-	const FModumateObjectInstance *parent = GetParentObject();
+	const AModumateObjectInstance *parent = GetParentObject();
 	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		int32 numPlanePoints = parent->GetNumCorners();
@@ -86,9 +86,9 @@ FVector FMOIPlaneHostedObjImpl::GetCorner(int32 CornerIndex) const
 	return GetLocation();
 }
 
-FVector FMOIPlaneHostedObjImpl::GetNormal() const
+FVector AMOIPlaneHostedObj::GetNormal() const
 {
-	const FModumateObjectInstance *planeParent = GetParentObject();
+	const AModumateObjectInstance *planeParent = GetParentObject();
 	if (ensureAlways(planeParent && (planeParent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return planeParent->GetNormal();
@@ -99,18 +99,18 @@ FVector FMOIPlaneHostedObjImpl::GetNormal() const
 	}
 }
 
-void FMOIPlaneHostedObjImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+void AMOIPlaneHostedObj::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 	OutStructDef = InstanceData.StaticStruct();
 	OutStructPtr = &InstanceData;
 }
 
-void FMOIPlaneHostedObjImpl::PreDestroy()
+void AMOIPlaneHostedObj::PreDestroy()
 {
 	MarkEdgesMiterDirty();
 }
 
-bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AMOIPlaneHostedObj::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
 	{
@@ -134,7 +134,7 @@ bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDe
 	{
 		// Make sure all connected edges have resolved mitering,
 		// so we can generate our own mitered mesh correctly.
-		for (FModumateObjectInstance *connectedEdge : CachedConnectedEdges)
+		for (AModumateObjectInstance *connectedEdge : CachedConnectedEdges)
 		{
 			if (connectedEdge->IsDirty(EObjectDirtyFlags::Mitering))
 			{
@@ -155,17 +155,17 @@ bool FMOIPlaneHostedObjImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDe
 	return true;
 }
 
-void FMOIPlaneHostedObjImpl::SetupDynamicGeometry()
+void AMOIPlaneHostedObj::SetupDynamicGeometry()
 {
 }
 
-void FMOIPlaneHostedObjImpl::UpdateDynamicGeometry()
+void AMOIPlaneHostedObj::UpdateDynamicGeometry()
 {
 }
 
-void FMOIPlaneHostedObjImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOIPlaneHostedObj::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	const FModumateObjectInstance *parent = GetParentObject();
+	const AModumateObjectInstance *parent = GetParentObject();
 
 	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
@@ -192,9 +192,9 @@ void FMOIPlaneHostedObjImpl::GetStructuralPointsAndLines(TArray<FStructurePoint>
 	}
 }
 
-void FMOIPlaneHostedObjImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+void AMOIPlaneHostedObj::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
-	FModumateObjectInstance *parent = GetParentObject();
+	AModumateObjectInstance *parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return;
@@ -239,18 +239,18 @@ void FMOIPlaneHostedObjImpl::SetupAdjustmentHandles(AEditModelPlayerController_C
 	}
 }
 
-bool FMOIPlaneHostedObjImpl::OnSelected(bool bIsSelected)
+bool AMOIPlaneHostedObj::OnSelected(bool bIsSelected)
 {
-	if (!FModumateObjectInstance::OnSelected(bIsSelected))
+	if (!AModumateObjectInstance::OnSelected(bIsSelected))
 	{
 		return false;
 	}
 
-	if (const FModumateObjectInstance *parent = GetParentObject())
+	if (const AModumateObjectInstance *parent = GetParentObject())
 	{
-		TArray<FModumateObjectInstance *> connectedMOIs;
+		TArray<AModumateObjectInstance *> connectedMOIs;
 		parent->GetConnectedMOIs(connectedMOIs);
-		for (FModumateObjectInstance *connectedMOI : connectedMOIs)
+		for (AModumateObjectInstance *connectedMOI : connectedMOIs)
 		{
 			connectedMOI->UpdateVisuals();
 		}
@@ -259,7 +259,7 @@ bool FMOIPlaneHostedObjImpl::OnSelected(bool bIsSelected)
 	return true;
 }
 
-bool FMOIPlaneHostedObjImpl::GetInvertedState(FMOIStateData& OutState) const
+bool AMOIPlaneHostedObj::GetInvertedState(FMOIStateData& OutState) const
 {
 	OutState = GetStateData();
 
@@ -269,12 +269,12 @@ bool FMOIPlaneHostedObjImpl::GetInvertedState(FMOIStateData& OutState) const
 	return OutState.CustomData.SaveStructData(modifiedPlaneHostedObjData);
 }
 
-bool FMOIPlaneHostedObjImpl::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
+bool AMOIPlaneHostedObj::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
 {
 	return false;
 }
 
-bool FMOIPlaneHostedObjImpl::GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
+bool AMOIPlaneHostedObj::GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
 {
 	float projectedAdjustment = -AdjustmentDirection | GetNormal();
 	if (FMath::IsNearlyZero(projectedAdjustment, THRESH_NORMALS_ARE_ORTHOGONAL))
@@ -293,7 +293,7 @@ bool FMOIPlaneHostedObjImpl::GetJustifiedState(const FVector& AdjustmentDirectio
 	return OutState.CustomData.SaveStructData(modifiedPlaneHostedObjData);
 }
 
-void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
+void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
 {
 	OutPerimeters.Reset();
 
@@ -308,7 +308,7 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 	bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
 	{
-		const FModumateObjectInstance *parent = GetParentObject();
+		const AModumateObjectInstance *parent = GetParentObject();
 		FVector parentLocation = parent->GetLocation();
 
 		Modumate::FModumateLayerType layerTypeOuterSurface;
@@ -468,9 +468,9 @@ void FMOIPlaneHostedObjImpl::GetDraftingLines(const TSharedPtr<Modumate::FDrafti
 	}
 }
 
-void FMOIPlaneHostedObjImpl::UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalculateEdgeExtensions)
+void AMOIPlaneHostedObj::UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalculateEdgeExtensions)
 {
-	const FModumateDocument *doc = GetDocument();
+	const UModumateDocument *doc = GetDocument();
 	if (!ensureAlwaysMsgf(doc, TEXT("Tried to update invalid plane-hosted object!")))
 	{
 		return;
@@ -478,7 +478,7 @@ void FMOIPlaneHostedObjImpl::UpdateMeshWithLayers(bool bRecreateMesh, bool bReca
 
 	int32 parentID = GetParentID();
 	const Modumate::FGraph3DFace *planeFace = doc->GetVolumeGraph().FindFace(parentID);
-	const FModumateObjectInstance *parentPlane = doc->GetObjectById(parentID);
+	const AModumateObjectInstance *parentPlane = doc->GetObjectById(parentID);
 	if (!ensureMsgf(parentPlane, TEXT("Plane-hosted object (ID %d) is missing parent object (ID %d)!"), ID, parentID) ||
 		!ensureMsgf(planeFace, TEXT("Plane-hosted object (ID %d) is missing parent graph face (ID %d)!"), ID, parentID))
 	{
@@ -515,18 +515,18 @@ void FMOIPlaneHostedObjImpl::UpdateMeshWithLayers(bool bRecreateMesh, bool bReca
 	DynamicMeshActor->UpdatePlaneHostedMesh(bRecreateMesh, bUpdateCollision, bEnableCollision);
 }
 
-void FMOIPlaneHostedObjImpl::UpdateConnectedEdges()
+void AMOIPlaneHostedObj::UpdateConnectedEdges()
 {
 	CachedParentConnectedMOIs.Reset();
 
-	const FModumateObjectInstance *planeParent = GetParentObject();
+	const AModumateObjectInstance *planeParent = GetParentObject();
 	if (planeParent)
 	{
 		planeParent->GetConnectedMOIs(CachedParentConnectedMOIs);
 	}
 
 	CachedConnectedEdges.Reset();
-	for (FModumateObjectInstance *planeConnectedMOI : CachedParentConnectedMOIs)
+	for (AModumateObjectInstance *planeConnectedMOI : CachedParentConnectedMOIs)
 	{
 		if (planeConnectedMOI && (planeConnectedMOI->GetObjectType() == EObjectType::OTMetaEdge))
 		{
@@ -535,21 +535,21 @@ void FMOIPlaneHostedObjImpl::UpdateConnectedEdges()
 	}
 }
 
-void FMOIPlaneHostedObjImpl::MarkEdgesMiterDirty()
+void AMOIPlaneHostedObj::MarkEdgesMiterDirty()
 {
 	UpdateConnectedEdges();
-	for (FModumateObjectInstance *connectedEdge : CachedConnectedEdges)
+	for (AModumateObjectInstance *connectedEdge : CachedConnectedEdges)
 	{
 		connectedEdge->MarkDirty(EObjectDirtyFlags::Mitering);
 	}
 }
 
-void FMOIPlaneHostedObjImpl::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FBox2D& BoundingBox) const
 {
 	static const Modumate::Units::FThickness outerThickness = Modumate::Units::FThickness::Points(0.25f);
 
-	const FModumateObjectInstance *parent = GetParentObject();
+	const AModumateObjectInstance *parent = GetParentObject();
 	FVector parentLocation = parent->GetLocation();
 	Modumate::FModumateLayerType layerType;
 

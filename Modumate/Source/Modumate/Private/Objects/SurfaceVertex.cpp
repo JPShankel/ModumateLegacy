@@ -11,18 +11,18 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/VertexActor.h"
 
-FMOISurfaceVertexImpl::FMOISurfaceVertexImpl()
+AMOISurfaceVertex::AMOISurfaceVertex()
 	: FMOIVertexImplBase()
 	, CachedDeprojectedLocation(ForceInitToZero)
 {
 }
 
-FVector FMOISurfaceVertexImpl::GetLocation() const
+FVector AMOISurfaceVertex::GetLocation() const
 {
 	return CachedDeprojectedLocation;
 }
 
-bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AMOISurfaceVertex::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	auto surfaceGraphObj = GetParentObject();
 	if (!ensure(surfaceGraphObj && VertexActor.IsValid()))
@@ -40,7 +40,7 @@ bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 			{
 				FTransform surfaceGraphTransform = surfaceGraphObj->GetWorldTransform();
 				CachedDeprojectedLocation = UModumateGeometryStatics::Deproject2DPointTransform(surfaceVertex->Position, surfaceGraphTransform);
-				FVector offsetLocation = CachedDeprojectedLocation + (surfaceGraphTransform.GetRotation().GetAxisZ() * FMOISurfaceGraphImpl::VisualNormalOffset);
+				FVector offsetLocation = CachedDeprojectedLocation + (surfaceGraphTransform.GetRotation().GetAxisZ() * AMOISurfaceGraph::VisualNormalOffset);
 				VertexActor->SetMOILocation(offsetLocation);
 
 				// Mark the connected edges and polygons dirty
@@ -80,9 +80,9 @@ bool FMOISurfaceVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 	return true;
 }
 
-void FMOISurfaceVertexImpl::GetTangents(TArray<FVector>& OutTangents) const
+void AMOISurfaceVertex::GetTangents(TArray<FVector>& OutTangents) const
 {
-	for (FModumateObjectInstance* connectedMOI : CachedConnectedMOIs)
+	for (AModumateObjectInstance* connectedMOI : CachedConnectedMOIs)
 	{
 		if (connectedMOI && (connectedMOI->GetObjectType() == EObjectType::OTSurfaceEdge))
 		{

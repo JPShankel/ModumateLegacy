@@ -16,7 +16,7 @@ AMOIGroupActor_CPP::AMOIGroupActor_CPP()
 TArray<FVector> AMOIGroupActor_CPP::GetMemberLocations()
 {
 	TArray<FVector> ret;
-	Algo::Transform(MOI->GetChildObjects(),ret,[](const FModumateObjectInstance *ob){return ob->GetLocation();});
+	Algo::Transform(MOI->GetChildObjects(),ret,[](const AModumateObjectInstance *ob){return ob->GetLocation();});
 	return ret;
 }
 

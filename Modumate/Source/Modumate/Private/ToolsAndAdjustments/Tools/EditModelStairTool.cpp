@@ -87,7 +87,7 @@ bool UStairTool::FrameUpdate()
 	case Starting:
 	{
 		LastValidTargetID = MOD_ID_NONE;
-		const FModumateObjectInstance *hitMOI = nullptr;
+		const AModumateObjectInstance *hitMOI = nullptr;
 
 		if ((cursor.SnapType == ESnapType::CT_FACESELECT) && cursor.Actor)
 		{
@@ -525,7 +525,7 @@ bool UStairTool::MakeStairs()
 	return bSuccess;
 }
 
-bool UStairTool::ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget)
+bool UStairTool::ValidatePlaneTarget(const AModumateObjectInstance *PlaneTarget)
 {
 	if ((CurrentState != Starting) || (PlaneTarget == nullptr) || (PlaneTarget->GetObjectType() != EObjectType::OTMetaPlane))
 	{

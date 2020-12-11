@@ -5,7 +5,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 
 
-FObjIDReservationHandle::FObjIDReservationHandle(FModumateDocument* InDocument, int32 InReservingID)
+FObjIDReservationHandle::FObjIDReservationHandle(UModumateDocument* InDocument, int32 InReservingID)
 	: Document(InDocument)
 	, ReservingID(InReservingID)
 	, NextID(MOD_ID_NONE)

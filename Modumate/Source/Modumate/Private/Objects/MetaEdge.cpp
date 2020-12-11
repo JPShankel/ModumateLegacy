@@ -12,7 +12,7 @@
 #include "UnrealClasses/LineActor.h"
 
 
-FMOIMetaEdgeImpl::FMOIMetaEdgeImpl()
+AMOIMetaEdge::AMOIMetaEdge()
 	: FMOIEdgeImplBase()
 	, BaseDefaultColor(FColor::Black)
 	, BaseGroupedColor(FColor::Purple)
@@ -21,9 +21,9 @@ FMOIMetaEdgeImpl::FMOIMetaEdgeImpl()
 {
 }
 
-bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-	FModumateDocument* doc = GetDocument();
+	UModumateDocument* doc = GetDocument();
 
 	switch (DirtyFlag)
 	{
@@ -66,7 +66,7 @@ bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 		// If the miter participants aren't already miter-dirty, then mark them dirty now so that they can update their layer extensions.
 		for (auto& kvp : CachedMiterData.ParticipantsByID)
 		{
-			FModumateObjectInstance* miterParticipantMOI = doc->GetObjectById(kvp.Key);
+			AModumateObjectInstance* miterParticipantMOI = doc->GetObjectById(kvp.Key);
 			if (miterParticipantMOI)
 			{
 				miterParticipantMOI->MarkDirty(EObjectDirtyFlags::Mitering);
@@ -76,7 +76,7 @@ bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 	break;
 	case EObjectDirtyFlags::Visuals:
 	{
-		for (FModumateObjectInstance* connectedMOI : CachedConnectedMOIs)
+		for (AModumateObjectInstance* connectedMOI : CachedConnectedMOIs)
 		{
 			if ((connectedMOI->GetObjectType() == EObjectType::OTMetaPlane) && connectedMOI->IsDirty(EObjectDirtyFlags::Visuals))
 			{
@@ -94,11 +94,11 @@ bool FMOIMetaEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 	return true;
 }
 
-void FMOIMetaEdgeImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow)
+void AMOIMetaEdge::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow)
 {
 	FMOIEdgeImplBase::ShowAdjustmentHandles(Controller, bShow);
 
-	FModumateDocument* doc = GetDocument();
+	UModumateDocument* doc = GetDocument();
 	if (!ensure(doc))
 	{
 		return;
@@ -122,7 +122,7 @@ void FMOIMetaEdgeImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Con
 	}
 }
 
-const FMiterData& FMOIMetaEdgeImpl::GetMiterData() const
+const FMiterData& AMOIMetaEdge::GetMiterData() const
 {
 	return CachedMiterData;
 }

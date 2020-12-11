@@ -14,8 +14,8 @@
 
 #include "Algo/ForEach.h"
 
-FMOITrimImpl::FMOITrimImpl()
-	: FModumateObjectInstance()
+AMOITrim::AMOITrim()
+	: AModumateObjectInstance()
 	, TrimStartPos(ForceInitToZero)
 	, TrimEndPos(ForceInitToZero)
 	, TrimNormal(ForceInitToZero)
@@ -27,9 +27,9 @@ FMOITrimImpl::FMOITrimImpl()
 {
 }
 
-FVector FMOITrimImpl::GetLocation() const
+FVector AMOITrim::GetLocation() const
 {
-	const FModumateObjectInstance* parentMOI = GetParentObject();
+	const AModumateObjectInstance* parentMOI = GetParentObject();
 	if (parentMOI)
 	{
 		return parentMOI->GetLocation();
@@ -38,9 +38,9 @@ FVector FMOITrimImpl::GetLocation() const
 	return FVector::ZeroVector;
 }
 
-FQuat FMOITrimImpl::GetRotation() const
+FQuat AMOITrim::GetRotation() const
 {
-	const FModumateObjectInstance *parentMOI = GetParentObject();
+	const AModumateObjectInstance *parentMOI = GetParentObject();
 	if (parentMOI)
 	{
 		return parentMOI->GetRotation();
@@ -49,23 +49,23 @@ FQuat FMOITrimImpl::GetRotation() const
 	return FQuat::Identity;
 }
 
-FVector FMOITrimImpl::GetNormal() const
+FVector AMOITrim::GetNormal() const
 {
 	return TrimUp;
 }
 
-void FMOITrimImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+void AMOITrim::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 	OutStructDef = InstanceData.StaticStruct();
 	OutStructPtr = &InstanceData;
 }
 
-void FMOITrimImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* Controller)
+void AMOITrim::SetupAdjustmentHandles(AEditModelPlayerController_CPP* Controller)
 {
 	MakeHandle<AAdjustInvertHandle>();
 }
 
-bool FMOITrimImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AMOITrim::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
 	{
@@ -99,7 +99,7 @@ bool FMOITrimImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 	}
 }
 
-void FMOITrimImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOITrim::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	const FSimplePolygon* profile = nullptr;
 	if (UModumateObjectStatics::GetPolygonProfile(&GetAssembly(), profile))
@@ -118,7 +118,7 @@ void FMOITrimImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoint
 	}
 }
 
-void FMOITrimImpl::SetIsDynamic(bool bIsDynamic)
+void AMOITrim::SetIsDynamic(bool bIsDynamic)
 {
 	if (DynamicMeshActor.IsValid())
 	{
@@ -126,12 +126,12 @@ void FMOITrimImpl::SetIsDynamic(bool bIsDynamic)
 	}
 }
 
-bool FMOITrimImpl::GetIsDynamic() const
+bool AMOITrim::GetIsDynamic() const
 {
 	return DynamicMeshActor.IsValid() && DynamicMeshActor->GetIsDynamic();
 }
 
-bool FMOITrimImpl::GetInvertedState(FMOIStateData& OutState) const
+bool AMOITrim::GetInvertedState(FMOIStateData& OutState) const
 {
 	OutState = GetStateData();
 
@@ -141,7 +141,7 @@ bool FMOITrimImpl::GetInvertedState(FMOIStateData& OutState) const
 	return OutState.CustomData.SaveStructData(modifiedTrimData);
 }
 
-void FMOITrimImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOITrim::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 	TArray<TArray<FVector>>& OutPerimeters) const
 {
@@ -188,10 +188,10 @@ void FMOITrimImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposit
 	}
 }
 
-bool FMOITrimImpl::UpdateCachedStructure()
+bool AMOITrim::UpdateCachedStructure()
 {
 	const FBIMAssemblySpec& trimAssembly = GetAssembly();
-	const FModumateDocument* doc = GetDocument();
+	const UModumateDocument* doc = GetDocument();
 
 	const FSimplePolygon* polyProfile = nullptr;
 	if (!UModumateObjectStatics::GetPolygonProfile(&trimAssembly, polyProfile))
@@ -201,13 +201,13 @@ bool FMOITrimImpl::UpdateCachedStructure()
 
 	// Find the parent surface edge MOI to set up mounting.
 	// This can fail gracefully, if the object is still getting set up before it has a parent assigned.
-	const FModumateObjectInstance* surfaceEdgeMOI = GetParentObject();
+	const AModumateObjectInstance* surfaceEdgeMOI = GetParentObject();
 	if ((surfaceEdgeMOI == nullptr) || (surfaceEdgeMOI->GetObjectType() != EObjectType::OTSurfaceEdge) || surfaceEdgeMOI->IsDirty(EObjectDirtyFlags::Structure))
 	{
 		return false;
 	}
 
-	const FModumateObjectInstance* surfaceGraphMOI = surfaceEdgeMOI->GetParentObject();
+	const AModumateObjectInstance* surfaceGraphMOI = surfaceEdgeMOI->GetParentObject();
 	if ((surfaceGraphMOI == nullptr) || (surfaceGraphMOI->GetObjectType() != EObjectType::OTSurfaceGraph) || surfaceGraphMOI->IsDirty(EObjectDirtyFlags::Structure))
 	{
 		return false;
@@ -228,8 +228,8 @@ bool FMOITrimImpl::UpdateCachedStructure()
 		return false;
 	}
 
-	const FModumateObjectInstance* leftPolyMOI = surfacePolyLeft ? doc->GetObjectById(surfacePolyLeft->ID) : nullptr;
-	const FModumateObjectInstance* rightPolyMOI = surfacePolyRight ? doc->GetObjectById(surfacePolyRight->ID) : nullptr;
+	const AModumateObjectInstance* leftPolyMOI = surfacePolyLeft ? doc->GetObjectById(surfacePolyLeft->ID) : nullptr;
+	const AModumateObjectInstance* rightPolyMOI = surfacePolyRight ? doc->GetObjectById(surfacePolyRight->ID) : nullptr;
 	for (auto neighborPolyMOI : { leftPolyMOI, rightPolyMOI })
 	{
 		if (neighborPolyMOI && (neighborPolyMOI->GetObjectType() == EObjectType::OTSurfacePolygon))
@@ -274,14 +274,14 @@ bool FMOITrimImpl::UpdateCachedStructure()
 	return true;
 }
 
-bool FMOITrimImpl::UpdateMitering()
+bool AMOITrim::UpdateMitering()
 {
 	// TODO: miter with neighboring trim, automatically based on graph connectivity and/or based on saved mitering preferences
 	UpperExtensions = OuterExtensions = FVector2D::ZeroVector;
 	return true;
 }
 
-bool FMOITrimImpl::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
+bool AMOITrim::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 {
 	const FBIMAssemblySpec& trimAssembly = GetAssembly();
 

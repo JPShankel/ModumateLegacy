@@ -13,10 +13,10 @@ class ALineActor;
 class ARetractRoofFacesHandle;
 class URoofPerimeterPropertiesWidget;
 
-class MODUMATE_API FMOIRoofPerimeterImpl : public FModumateObjectInstance
+class MODUMATE_API AMOIRoofPerimeter : public AModumateObjectInstance
 {
 public:
-	FMOIRoofPerimeterImpl();
+	AMOIRoofPerimeter();
 
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override { return FQuat::Identity; }

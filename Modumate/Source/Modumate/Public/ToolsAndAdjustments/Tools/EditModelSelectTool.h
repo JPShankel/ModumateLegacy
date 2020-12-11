@@ -35,8 +35,8 @@ public:
 	float MinDragDist = 1.0f;
 
 protected:
-	TMap<const FModumateObjectInstance*, float> LastObjectSelectionAttemptTimes;
-	FModumateObjectInstance *InitialClickedObject;
+	TMap<const AModumateObjectInstance*, float> LastObjectSelectionAttemptTimes;
+	AModumateObjectInstance *InitialClickedObject;
 	FVector2D InitialClickLocation;
 	bool Dragging;
 };

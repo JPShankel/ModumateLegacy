@@ -15,20 +15,20 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 
-FMOIRoofPerimeterImpl::FMOIRoofPerimeterImpl()
-	: FModumateObjectInstance()
+AMOIRoofPerimeter::AMOIRoofPerimeter()
+	: AModumateObjectInstance()
 	, bValidPerimeterLoop(false)
 	, CachedPerimeterCenter(ForceInitToZero)
 	, CachedPlane(ForceInitToZero)
 {
 }
 
-FVector FMOIRoofPerimeterImpl::GetLocation() const
+FVector AMOIRoofPerimeter::GetLocation() const
 {
 	return CachedPerimeterCenter;
 }
 
-FVector FMOIRoofPerimeterImpl::GetCorner(int32 index) const
+FVector AMOIRoofPerimeter::GetCorner(int32 index) const
 {
 	const Modumate::FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
 
@@ -49,19 +49,19 @@ FVector FMOIRoofPerimeterImpl::GetCorner(int32 index) const
 	return GetLocation();
 }
 
-void FMOIRoofPerimeterImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+void AMOIRoofPerimeter::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 	OutStructDef = InstanceData.StaticStruct();
 	OutStructPtr = &InstanceData;
 }
 
-void FMOIRoofPerimeterImpl::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
+void AMOIRoofPerimeter::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
 	// RoofPerimeters are only seen and interacted with via their edges.
 	bOutVisible = bOutCollisionEnabled = false;
 }
 
-void FMOIRoofPerimeterImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller)
+void AMOIRoofPerimeter::SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller)
 {
 	if (CreateFacesHandle.IsValid())
 	{
@@ -83,9 +83,9 @@ void FMOIRoofPerimeterImpl::SetupAdjustmentHandles(AEditModelPlayerController_CP
 	}
 }
 
-void FMOIRoofPerimeterImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
+void AMOIRoofPerimeter::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
 {
-	FModumateObjectInstance::ShowAdjustmentHandles(Controller, bShow);
+	AModumateObjectInstance::ShowAdjustmentHandles(Controller, bShow);
 
 	bAdjustmentHandlesVisible = bShow;
 
@@ -111,7 +111,7 @@ void FMOIRoofPerimeterImpl::ShowAdjustmentHandles(AEditModelPlayerController_CPP
 	}
 }
 
-void FMOIRoofPerimeterImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOIRoofPerimeter::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	int32 numPoints = CachedPerimeterPoints.Num();
 	for (int32 pointAIdx = 0; pointAIdx < numPoints; ++pointAIdx)
@@ -127,7 +127,7 @@ void FMOIRoofPerimeterImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> 
 	}
 }
 
-AActor *FMOIRoofPerimeterImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor *AMOIRoofPerimeter::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
 	World = world;
 	PerimeterActor = World->SpawnActor<AActor>();
@@ -136,12 +136,12 @@ AActor *FMOIRoofPerimeterImpl::CreateActor(UWorld *world, const FVector &loc, co
 	return PerimeterActor.Get();
 }
 
-FVector FMOIRoofPerimeterImpl::GetNormal() const
+FVector AMOIRoofPerimeter::GetNormal() const
 {
 	return CachedPlane;
 }
 
-bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AMOIRoofPerimeter::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
 	{
@@ -202,7 +202,7 @@ bool FMOIRoofPerimeterImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDel
 	return true;
 }
 
-bool FMOIRoofPerimeterImpl::UpdateConnectedIDs()
+bool AMOIRoofPerimeter::UpdateConnectedIDs()
 {
 	const Modumate::FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
 
@@ -297,7 +297,7 @@ bool FMOIRoofPerimeterImpl::UpdateConnectedIDs()
 	return (CachedEdgeIDs.Num() > 0);
 }
 
-void FMOIRoofPerimeterImpl::UpdatePerimeterGeometry()
+void AMOIRoofPerimeter::UpdatePerimeterGeometry()
 {
 	if (CachedPlane.IsZero())
 	{

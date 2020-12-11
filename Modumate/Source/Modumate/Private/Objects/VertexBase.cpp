@@ -10,7 +10,7 @@
 #include "UnrealClasses/VertexActor.h"
 
 FMOIVertexImplBase::FMOIVertexImplBase()
-	: FModumateObjectInstance()
+	: AModumateObjectInstance()
 	, SelectedColor(0x00, 0x35, 0xFF)
 	, BaseColor(0x00, 0x00, 0x00)
 	, DefaultHandleSize(0.0004f)
@@ -78,7 +78,7 @@ AActor *FMOIVertexImplBase::CreateActor(UWorld *world, const FVector &loc, const
 
 bool FMOIVertexImplBase::OnSelected(bool bIsSelected)
 {
-	if (!FModumateObjectInstance::OnSelected(bIsSelected))
+	if (!AModumateObjectInstance::OnSelected(bIsSelected))
 	{
 		return false;
 	}

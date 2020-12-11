@@ -37,10 +37,10 @@ namespace Modumate
 	class FModumateDraftingView;
 }
 
-class MODUMATE_API FMOICutPlaneImpl : public FMOIPlaneImplBase, public ISceneCaptureObject
+class MODUMATE_API AMOICutPlane : public FMOIPlaneImplBase, public ISceneCaptureObject
 {
 public:
-	FMOICutPlaneImpl();
+	AMOICutPlane();
 
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual void SetupDynamicGeometry() override;
@@ -55,7 +55,7 @@ public:
 
 	virtual bool AddCaptureArea(int32 ScopeBoxID, TArray<FVector> CaptureArea) override;
 	virtual void SetupPendingRenders() override;
-	virtual bool StartRender(FModumateDocument* doc = nullptr) override;
+	virtual bool StartRender(UModumateDocument* doc = nullptr) override;
 	virtual void CaptureComplete() override;
 	virtual void TraceRequestComplete(int32 TraceID, FString TraceString) override;
 

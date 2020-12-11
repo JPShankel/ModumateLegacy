@@ -50,12 +50,12 @@ bool UModumateObjectStatics::GetPolygonProfile(const FBIMAssemblySpec *TrimAssem
 // would create its parent metaplane; 2. from world-space corners and portal properties generate a world-space transform
 // and extents for the portal actor to update itself with slicing and stretching.
 bool UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
-	const FModumateObjectInstance *PlanarObj,
+	const AModumateObjectInstance *PlanarObj,
 	const FVector &WorldPos, float DistanceFromBottom,
 	bool bUseDistanceFromBottom, FVector2D &OutRelativePos,
 	FQuat &OutRelativeRot)
 {
-	const FModumateObjectInstance *metaPlaneObject = nullptr;
+	const AModumateObjectInstance *metaPlaneObject = nullptr;
 	if (PlanarObj->GetObjectType() == EObjectType::OTMetaPlane)
 	{
 		metaPlaneObject = PlanarObj;
@@ -133,11 +133,11 @@ bool UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
 }
 
 bool UModumateObjectStatics::GetWorldTransformOnPlanarObj(
-	const FModumateObjectInstance *PlanarObj,
+	const AModumateObjectInstance *PlanarObj,
 	const FVector2D &RelativePos, const FQuat &RelativeRot,
 	FVector &OutWorldPos, FQuat &OutWorldRot)
 {
-	const FModumateObjectInstance *metaPlaneObject = nullptr;
+	const AModumateObjectInstance *metaPlaneObject = nullptr;
 	if (PlanarObj->GetObjectType() == EObjectType::OTMetaPlane)
 	{
 		metaPlaneObject = PlanarObj;
@@ -173,7 +173,7 @@ bool UModumateObjectStatics::GetWorldTransformOnPlanarObj(
 	return true;
 }
 
-int32 UModumateObjectStatics::GetParentFaceIndex(const FModumateObjectInstance *FaceMountedObj)
+int32 UModumateObjectStatics::GetParentFaceIndex(const AModumateObjectInstance *FaceMountedObj)
 {
 	// TODO: generalize face-mounted data through an interface/virtual function, for FF&E mounting support
 	if ((FaceMountedObj == nullptr) || !ensure(FaceMountedObj->GetObjectType() == EObjectType::OTSurfaceGraph))
@@ -190,7 +190,7 @@ int32 UModumateObjectStatics::GetParentFaceIndex(const FModumateObjectInstance *
 	return INDEX_NONE;
 }
 
-bool UModumateObjectStatics::GetGeometryFromFaceIndex(const FModumateObjectInstance *Host, int32 FaceIndex,
+bool UModumateObjectStatics::GetGeometryFromFaceIndex(const AModumateObjectInstance *Host, int32 FaceIndex,
 	TArray<FVector> &OutFacePoints, FVector &OutNormal, FVector &OutFaceAxisX, FVector &OutFaceAxisY)
 {
 	OutFacePoints.Reset();
@@ -209,7 +209,7 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const FModumateObjectInsta
 	case EObjectType::OTRailSegment:
 	case EObjectType::OTSystemPanel:
 	{
-		const FModumateObjectInstance *hostParent = Host->GetParentObject();
+		const AModumateObjectInstance *hostParent = Host->GetParentObject();
 		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)) ||
 			hostParent->IsDirty(EObjectDirtyFlags::Structure) || hostParent->IsDirty(EObjectDirtyFlags::Mitering))
 		{
@@ -294,7 +294,7 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const FModumateObjectInsta
 	}
 }
 
-bool UModumateObjectStatics::GetGeometryFromFaceIndex(const FModumateObjectInstance *Host, int32 FaceIndex,
+bool UModumateObjectStatics::GetGeometryFromFaceIndex(const AModumateObjectInstance *Host, int32 FaceIndex,
 	TArray<FVector>& OutFacePoints, FTransform& OutFaceOrigin)
 {
 	FVector faceNormal, faceAxisX, faceAxisY;
@@ -309,7 +309,7 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const FModumateObjectInsta
 	return false;
 }
 
-bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const FModumateDocument* Doc, int32 SurfacePolyID, bool& bOutInterior, bool& bOutInnerBounds,
+bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const UModumateDocument* Doc, int32 SurfacePolyID, bool& bOutInterior, bool& bOutInnerBounds,
 	FTransform& OutOrigin, TArray<FVector>& OutPerimeter, TArray<FPolyHole3D>& OutHoles)
 {
 	OutOrigin = FTransform();
@@ -321,10 +321,10 @@ bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const FModumateDocument*
 		return false;
 	}
 
-	const FModumateObjectInstance* surfacePolyObj = Doc->GetObjectById(SurfacePolyID);
+	const AModumateObjectInstance* surfacePolyObj = Doc->GetObjectById(SurfacePolyID);
 	int32 surfaceGraphID = surfacePolyObj ? surfacePolyObj->GetParentID() : MOD_ID_NONE;
 	auto surfaceGraph = Doc->FindSurfaceGraph(surfaceGraphID);
-	const FModumateObjectInstance* surfaceGraphObj = Doc->GetObjectById(surfaceGraphID);
+	const AModumateObjectInstance* surfaceGraphObj = Doc->GetObjectById(surfaceGraphID);
 	const FGraph2DPolygon* surfacePolygon = surfaceGraph.IsValid() ? surfaceGraph->FindPolygon(SurfacePolyID) : nullptr;
 	if (!ensure(surfacePolygon))
 	{
@@ -370,7 +370,7 @@ bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const FModumateDocument*
 	return true;
 }
 
-bool UModumateObjectStatics::GetEdgeFaceConnections(const Modumate::FGraph3DEdge* GraphEdge, const FModumateDocument* Doc,
+bool UModumateObjectStatics::GetEdgeFaceConnections(const Modumate::FGraph3DEdge* GraphEdge, const UModumateDocument* Doc,
 	bool& bOutConnectedToAnyFace, bool& bOutConnectedToValidFace)
 {
 	bOutConnectedToAnyFace = false;
@@ -407,7 +407,7 @@ bool UModumateObjectStatics::GetEdgeFaceConnections(const Modumate::FGraph3DEdge
 	return true;
 }
 
-bool UModumateObjectStatics::GetEdgePolyConnections(const Modumate::FGraph2DEdge* SurfaceEdge, const FModumateDocument* Doc,
+bool UModumateObjectStatics::GetEdgePolyConnections(const Modumate::FGraph2DEdge* SurfaceEdge, const UModumateDocument* Doc,
 	bool& bOutConnectedToAnyPolygon, bool& bOutConnectedToValidPolygon)
 {
 	bOutConnectedToAnyPolygon = false;
@@ -455,7 +455,7 @@ bool UModumateObjectStatics::GetEdgePolyConnections(const Modumate::FGraph2DEdge
 	return true;
 }
 
-bool UModumateObjectStatics::GetNonPhysicalEnabledFlags(const FModumateObjectInstance* NonPhysicalMOI, bool& bOutVisible, bool& bOutCollisionEnabled)
+bool UModumateObjectStatics::GetNonPhysicalEnabledFlags(const AModumateObjectInstance* NonPhysicalMOI, bool& bOutVisible, bool& bOutCollisionEnabled)
 {
 	EObjectType objectType = NonPhysicalMOI ? NonPhysicalMOI->GetObjectType() : EObjectType::OTNone;
 	EToolCategories objectCategory = UModumateTypeStatics::GetObjectCategory(objectType);
@@ -471,12 +471,12 @@ bool UModumateObjectStatics::GetNonPhysicalEnabledFlags(const FModumateObjectIns
 	}
 }
 
-bool UModumateObjectStatics::GetMetaObjEnabledFlags(const FModumateObjectInstance *MetaMOI, bool& bOutVisible, bool& bOutCollisionEnabled)
+bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstance *MetaMOI, bool& bOutVisible, bool& bOutCollisionEnabled)
 {
 	bOutVisible = bOutCollisionEnabled = false;
 
 	const AActor* metaActor = MetaMOI ? MetaMOI->GetActor() : nullptr;
-	const FModumateDocument* doc = MetaMOI ? MetaMOI->GetDocument() : nullptr;
+	const UModumateDocument* doc = MetaMOI ? MetaMOI->GetDocument() : nullptr;
 	UWorld *world = metaActor ? metaActor->GetWorld() : nullptr;
 	AEditModelPlayerController_CPP *playerController = world ? world->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
 	if (playerController == nullptr)
@@ -566,12 +566,12 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const FModumateObjectInstanc
 	return true;
 }
 
-bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const FModumateObjectInstance* SurfaceMOI, bool& bOutVisible, bool& bOutCollisionEnabled)
+bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const AModumateObjectInstance* SurfaceMOI, bool& bOutVisible, bool& bOutCollisionEnabled)
 {
 	bOutVisible = bOutCollisionEnabled = false;
 
 	const AActor* surfaceActor = SurfaceMOI ? SurfaceMOI->GetActor() : nullptr;
-	const FModumateDocument* doc = SurfaceMOI ? SurfaceMOI->GetDocument() : nullptr;
+	const UModumateDocument* doc = SurfaceMOI ? SurfaceMOI->GetDocument() : nullptr;
 	UWorld* world = surfaceActor ? surfaceActor->GetWorld() : nullptr;
 	AEditModelPlayerController_CPP* playerController = world ? world->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
 	if (playerController == nullptr)
@@ -651,11 +651,11 @@ bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const FModumateObjectInst
 	return true;
 }
 
-void UModumateObjectStatics::GetGraphIDsFromMOIs(const TSet<FModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs)
+void UModumateObjectStatics::GetGraphIDsFromMOIs(const TSet<AModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs)
 {
 	OutGraphObjIDs.Reset();
 
-	for (FModumateObjectInstance *obj : MOIs)
+	for (AModumateObjectInstance *obj : MOIs)
 	{
 		EObjectType objectType = obj ? obj->GetObjectType() : EObjectType::OTNone;
 		EGraph3DObjectType graphObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
@@ -668,7 +668,7 @@ void UModumateObjectStatics::GetGraphIDsFromMOIs(const TSet<FModumateObjectInsta
 	}
 }
 
-void UModumateObjectStatics::GetPlaneHostedValues(const FModumateObjectInstance *PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal)
+void UModumateObjectStatics::GetPlaneHostedValues(const AModumateObjectInstance *PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal)
 {
 	OutThickness = PlaneHostedObj->CalculateThickness();
 	float offsetPCT = 0.0f;
@@ -683,7 +683,7 @@ void UModumateObjectStatics::GetPlaneHostedValues(const FModumateObjectInstance 
 	OutNormal = PlaneHostedObj->GetNormal();
 }
 
-void UModumateObjectStatics::GetExtrusionDeltas(const FModumateObjectInstance *PlaneHostedObj, FVector &OutStartDelta, FVector &OutEndDelta)
+void UModumateObjectStatics::GetExtrusionDeltas(const AModumateObjectInstance *PlaneHostedObj, FVector &OutStartDelta, FVector &OutEndDelta)
 {
 	float thickness, startOffset;
 	FVector normal;
@@ -745,7 +745,7 @@ bool UModumateObjectStatics::GetFFEBoxSidePoints(const AActor *Actor, const FVec
 		return false;
 	}
 
-	// Copied from FMOIObjectImpl::GetStructuralPointsAndLines, so that we can supply
+	// Copied from AMOIObject::GetStructuralPointsAndLines, so that we can supply
 	// an override vector for the bounding box points, to get only the side that corresponds
 	// to the FF&E's mounting normal vector.
 	FVector actorOrigin, actorBoxExtent;
@@ -775,11 +775,11 @@ bool UModumateObjectStatics::GetFFEBoxSidePoints(const AActor *Actor, const FVec
 	return true;
 }
 
-bool UModumateObjectStatics::GetExtrusionPerimeterPoints(const FModumateObjectInstance* MOI,
+bool UModumateObjectStatics::GetExtrusionPerimeterPoints(const AModumateObjectInstance* MOI,
 	const FVector& LineUp, const FVector& LineNormal, TArray<FVector>& outPerimeterPoints)
 {
 	const FSimplePolygon* polyProfile = nullptr;
-	const FModumateObjectInstance* parent = MOI ? MOI->GetParentObject() : nullptr;
+	const AModumateObjectInstance* parent = MOI ? MOI->GetParentObject() : nullptr;
 	if (parent == nullptr)
 	{
 		return false;

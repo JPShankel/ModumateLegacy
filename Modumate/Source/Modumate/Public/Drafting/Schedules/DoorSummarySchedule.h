@@ -3,7 +3,7 @@
 
 #include "Drafting/Schedules/SummaryList.h"
 
-class MODUMATE_API FModumateDocument;
+class MODUMATE_API UModumateDocument;
 
 namespace Modumate {
 
@@ -12,6 +12,6 @@ namespace Modumate {
 	class MODUMATE_API FDoorSummarySchedule : public FSummaryList
 	{
 	public:
-		FDoorSummarySchedule(const FModumateDocument *doc, IModumateDraftingDraw *drawingInterface);
+		FDoorSummarySchedule(const UModumateDocument *doc, IModumateDraftingDraw *drawingInterface);
 	};
 }

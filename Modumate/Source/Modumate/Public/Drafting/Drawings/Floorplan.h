@@ -10,7 +10,7 @@ namespace Modumate {
 	class FFloorplan : public FDraftingDrawing
 	{
 	public:
-		FFloorplan(const FModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID);
+		FFloorplan(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID);
 
 		virtual void OnPageCompleted() override;
 	};

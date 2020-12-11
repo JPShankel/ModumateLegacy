@@ -385,13 +385,13 @@ FBoxSphereBounds UModumateFunctionLibrary::GetSelectedExtents(const AEditModelPl
 {
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	AEditModelPlayerState_CPP *playerState = Controller->EMPlayerState;
-	const FModumateDocument &doc = gameState->Document;
+	const UModumateDocument &doc = gameState->Document;
 
 	TArray<FVector> selectedMOIPoints;
 	TArray<FStructurePoint> curMOIPoints;
 	TArray<FStructureLine> curMOILines;
 
-	for (const FModumateObjectInstance* moi : playerState->SelectedObjects)
+	for (const AModumateObjectInstance* moi : playerState->SelectedObjects)
 	{
 		curMOIPoints.Reset();
 		curMOILines.Reset();
@@ -426,19 +426,19 @@ void UModumateFunctionLibrary::DocAddHideMoiActors(const TArray<AActor*> Actors)
 	if (Actors.Num() > 0)
 	{
 		AEditModelGameState_CPP *gameState = Actors[0]->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		FModumateDocument *doc = &gameState->Document;
+		UModumateDocument *doc = &gameState->Document;
 
 		// First, find all descendents of the selected actor objects
-		TSet<const FModumateObjectInstance *> objectsAndDescendents;
+		TSet<const AModumateObjectInstance *> objectsAndDescendents;
 		for (auto curActor : Actors)
 		{
-			FModumateObjectInstance *moi = gameState->Document.ObjectFromActor(curActor);
+			AModumateObjectInstance *moi = gameState->Document.ObjectFromActor(curActor);
 			if (moi)
 			{
 				objectsAndDescendents.Add(moi);
 
-				TArray<FModumateObjectInstance *> descendents = moi->GetAllDescendents();
-				for (FModumateObjectInstance *descendent : descendents)
+				TArray<AModumateObjectInstance *> descendents = moi->GetAllDescendents();
+				for (AModumateObjectInstance *descendent : descendents)
 				{
 					if (descendent)
 					{
@@ -450,7 +450,7 @@ void UModumateFunctionLibrary::DocAddHideMoiActors(const TArray<AActor*> Actors)
 
 		// Now, gather their IDs, and any parent IDs that are in the graph
 		TSet<int32> objectIDsToHide;
-		for (const FModumateObjectInstance *object : objectsAndDescendents)
+		for (const AModumateObjectInstance *object : objectsAndDescendents)
 		{
 			objectIDsToHide.Add(object->ID);
 
@@ -475,7 +475,7 @@ void UModumateFunctionLibrary::DocUnHideAllMoiActors(const AActor* Owner)
 	if (Owner != nullptr)
 	{
 		AEditModelGameState_CPP *gameState = Owner->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		FModumateDocument *doc = &gameState->Document;
+		UModumateDocument *doc = &gameState->Document;
 		doc->UnhideAllObjects(Owner->GetWorld());
 	}
 }
@@ -485,8 +485,8 @@ FBIMKey UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool
 	if (TargetActor != nullptr)
 	{
 		AEditModelGameState_CPP *gameState = TargetActor->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		FModumateDocument *doc = &gameState->Document;
-		FModumateObjectInstance *moi = doc->ObjectFromActor(TargetActor);
+		UModumateDocument *doc = &gameState->Document;
+		AModumateObjectInstance *moi = doc->ObjectFromActor(TargetActor);
 		
 		if (moi != nullptr)
 		{

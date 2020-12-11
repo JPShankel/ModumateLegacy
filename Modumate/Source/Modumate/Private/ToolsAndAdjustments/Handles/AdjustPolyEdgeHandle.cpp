@@ -150,7 +150,7 @@ bool AAdjustPolyEdgeHandle::UpdateUse()
 		return false;
 	}
 
-	FModumateDocument* doc = Controller->GetDocument();
+	UModumateDocument* doc = Controller->GetDocument();
 	TMap<int32, FTransform> objectInfo;
 	if (GetTransforms(dp, objectInfo))
 	{
@@ -180,7 +180,7 @@ FVector AAdjustPolyEdgeHandle::GetHandlePosition() const
 bool AAdjustPolyEdgeHandle::HandleInputNumber(float number)
 {
 	// TODO: reimplement with UModumateGeometryStatics::TranslatePolygonEdge and new dimension string manager
-	FModumateDocument* doc = Controller->GetDocument();
+	UModumateDocument* doc = Controller->GetDocument();
 
 	FVector hitPoint = Controller->EMPlayerState->SnappedCursor.SketchPlaneProject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
 	FVector dp = hitPoint - AnchorLoc;
@@ -224,7 +224,7 @@ bool AAdjustPolyEdgeHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*& 
 
 bool AAdjustPolyEdgeHandle::GetTransforms(const FVector Offset, TMap<int32, FTransform>& OutTransforms)
 {
-	FModumateDocument* doc = Controller->GetDocument();
+	UModumateDocument* doc = Controller->GetDocument();
 	if (doc == nullptr)
 	{
 		return false;

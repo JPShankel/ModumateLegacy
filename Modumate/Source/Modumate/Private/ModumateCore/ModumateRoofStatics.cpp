@@ -356,7 +356,7 @@ FRoofEdgeProperties::FRoofEdgeProperties(bool bInOverridden, float InSlope, bool
 }
 
 bool UModumateRoofStatics::GetAllProperties(
-	const FModumateObjectInstance *RoofObject,
+	const AModumateObjectInstance *RoofObject,
 	TArray<FVector> &OutEdgePoints, TArray<FGraphSignedID> &OutEdgeIDs,
 	FRoofEdgeProperties &OutDefaultProperties, TArray<FRoofEdgeProperties> &OutEdgeProperties)
 {
@@ -377,15 +377,15 @@ bool UModumateRoofStatics::GetAllProperties(
 	// nor the serialized CustomData that should only be modified via deltas. Solutions:
 	// - When MOIs are UObjects that can be safely and performantly down-casted, this implementation-specific derived data can be safely exposed publicly
 	// - Alternatively, the ordered edge ID list can be stored in CustomData, but needs to be modified during delta application via side effect deltas
-	const FModumateDocument* doc = RoofObject->GetDocument();
-	const FMOIRoofPerimeterImpl* roofPerimeterImpl = (const FMOIRoofPerimeterImpl*)RoofObject;
+	const UModumateDocument* doc = RoofObject->GetDocument();
+	const AMOIRoofPerimeter* roofPerimeterImpl = (const AMOIRoofPerimeter*)RoofObject;
 	OutEdgeIDs = roofPerimeterImpl->GetCachedEdgeIDs();
 	int32 numEdges = OutEdgeIDs.Num();
 
 	for (FGraphSignedID signedEdgeID : OutEdgeIDs)
 	{
 		int32 edgeID = FMath::Abs(signedEdgeID);
-		const FModumateObjectInstance* edgeMOI = doc->GetObjectById(edgeID);
+		const AModumateObjectInstance* edgeMOI = doc->GetObjectById(edgeID);
 		FVector edgeStart = edgeMOI->GetCorner(signedEdgeID > 0 ? 0 : 1);
 		OutEdgePoints.Add(edgeStart);
 

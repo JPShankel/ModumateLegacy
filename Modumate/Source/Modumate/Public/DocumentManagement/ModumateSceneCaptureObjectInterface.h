@@ -14,7 +14,7 @@ class MODUMATE_API ISceneCaptureObject
 public:
 	virtual ~ISceneCaptureObject() {};
 
-	virtual bool StartRender(FModumateDocument* doc = nullptr) = 0;
+	virtual bool StartRender(UModumateDocument* doc = nullptr) = 0;
 	virtual void CaptureComplete() = 0;
 	virtual void TraceRequestComplete(int32 TraceID, FString TraceString) = 0;
 

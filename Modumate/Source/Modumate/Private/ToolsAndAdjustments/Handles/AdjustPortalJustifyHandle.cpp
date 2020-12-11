@@ -75,7 +75,7 @@ void AAdjustPortalJustifyHandle::AbortUse()
 
 FVector AAdjustPortalJustifyHandle::GetHandlePosition() const
 {
-	const FModumateObjectInstance* parentMOI = TargetMOI ? TargetMOI->GetParentObject() : nullptr;
+	const AModumateObjectInstance* parentMOI = TargetMOI ? TargetMOI->GetParentObject() : nullptr;
 	return parentMOI ? parentMOI->GetLocation() : FVector::ZeroVector;
 }
 

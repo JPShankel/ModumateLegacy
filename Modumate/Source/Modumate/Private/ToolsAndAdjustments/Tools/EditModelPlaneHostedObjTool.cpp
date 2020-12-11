@@ -77,12 +77,12 @@ bool UPlaneHostedObjTool::BeginUse()
 			return false;
 		}
 
-		FModumateObjectInstance* parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
+		AModumateObjectInstance* parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
 
 		if (ensureAlways(parentMOI != nullptr))
 		{
 			auto delta = MakeShared<FMOIDelta>();
-			FModumateObjectInstance* existingLayeredObj = nullptr;
+			AModumateObjectInstance* existingLayeredObj = nullptr;
 			for (auto child : parentMOI->GetChildObjects())
 			{
 				if ((child->GetLayeredInterface() != nullptr) && ensureAlways(existingLayeredObj == nullptr))
@@ -190,7 +190,7 @@ bool UPlaneHostedObjTool::FrameUpdate()
 		// Determine whether we can apply the plane hosted object to a plane targeted by the cursor
 		const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
 		LastValidTargetID = MOD_ID_NONE;
-		const FModumateObjectInstance* hitMOI = nullptr;
+		const AModumateObjectInstance* hitMOI = nullptr;
 
 		if ((cursor.SnapType == ESnapType::CT_FACESELECT) && cursor.Actor)
 		{
@@ -319,7 +319,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector& Location, TArray<int32>& new
 
 		for (int32 newGraphObjID : newGraphObjIDs)
 		{
-			FModumateObjectInstance* newGraphObj = GameState->Document.GetObjectById(newGraphObjID);
+			AModumateObjectInstance* newGraphObj = GameState->Document.GetObjectById(newGraphObjID);
 
 			if (newGraphObj && (newGraphObj->GetObjectType() == EObjectType::OTMetaPlane))
 			{
@@ -343,7 +343,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector& Location, TArray<int32>& new
 	return bSuccess;
 }
 
-bool UPlaneHostedObjTool::ValidatePlaneTarget(const FModumateObjectInstance *PlaneTarget)
+bool UPlaneHostedObjTool::ValidatePlaneTarget(const AModumateObjectInstance *PlaneTarget)
 {
 	return (PlaneTarget != nullptr) && (PlaneTarget->GetObjectType() == EObjectType::OTMetaPlane);
 }
@@ -352,7 +352,7 @@ bool UPlaneHostedObjTool::IsTargetFacingDown()
 {
 	if (LastValidTargetID != MOD_ID_NONE)
 	{
-		FModumateObjectInstance *parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
+		AModumateObjectInstance *parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
 		return (parentMOI && (parentMOI->GetNormal().Z < 0.0f));
 	}
 	else if (bPendingPlaneValid && PendingPlaneGeom.IsNormalized())

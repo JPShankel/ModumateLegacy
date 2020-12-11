@@ -10,7 +10,7 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
-FMOISurfacePolygonImpl::FMOISurfacePolygonImpl()
+AMOISurfacePolygon::AMOISurfacePolygon()
 	: FMOIPlaneImplBase()
 	, bInteriorPolygon(false)
 	, bInnerBoundsPolygon(false)
@@ -18,7 +18,7 @@ FMOISurfacePolygonImpl::FMOISurfacePolygonImpl()
 
 }
 
-void FMOISurfacePolygonImpl::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
+void AMOISurfacePolygon::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
 	if (DynamicMeshActor.IsValid())
 	{
@@ -41,7 +41,7 @@ void FMOISurfacePolygonImpl::GetUpdatedVisuals(bool &bOutVisible, bool &bOutColl
 	}
 }
 
-bool FMOISurfacePolygonImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AMOISurfacePolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
 	{
@@ -72,7 +72,7 @@ bool FMOISurfacePolygonImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDe
 		MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
 		// Offset the vertices used for the surface polygon away from the host, to prevent z-fighting
-		FVector offsetDelta = CachedTransform.GetRotation().GetAxisZ() * FMOISurfaceGraphImpl::VisualNormalOffset;
+		FVector offsetDelta = CachedTransform.GetRotation().GetAxisZ() * AMOISurfaceGraph::VisualNormalOffset;
 		CachedOffsetPoints = CachedPoints;
 		CachedOffsetHoles = CachedHoles;
 		for (FVector& offsetPoint : CachedOffsetPoints)
@@ -101,7 +101,7 @@ bool FMOISurfacePolygonImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDe
 	return true;
 }
 
-float FMOISurfacePolygonImpl::GetAlpha() const
+float AMOISurfacePolygon::GetAlpha() const
 {
 	return 1.0f;
 }

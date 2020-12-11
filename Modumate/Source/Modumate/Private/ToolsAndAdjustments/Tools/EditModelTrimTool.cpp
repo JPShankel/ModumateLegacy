@@ -82,7 +82,7 @@ bool UTrimTool::FrameUpdate()
 	}
 
 	const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
-	const FModumateObjectInstance* targetMOI = GameState->Document.ObjectFromActor(cursor.Actor);
+	const AModumateObjectInstance* targetMOI = GameState->Document.ObjectFromActor(cursor.Actor);
 	if (targetMOI && (targetMOI->GetObjectType() == EObjectType::OTSurfaceEdge))
 	{
 		int32 existingTargetTrimID = MOD_ID_NONE;

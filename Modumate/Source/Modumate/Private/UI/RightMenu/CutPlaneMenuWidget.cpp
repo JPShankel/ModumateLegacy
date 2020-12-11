@@ -57,7 +57,7 @@ void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 	CutPlaneMenuBlockVertical->CutPlanesList->ClearListItems();
 	CutPlaneMenuBlockOther->CutPlanesList->ClearListItems();
 
-	TArray<FModumateObjectInstance*> cutPlaneMois = GameState->Document.GetObjectsOfType(EObjectType::OTCutPlane);
+	TArray<AModumateObjectInstance*> cutPlaneMois = GameState->Document.GetObjectsOfType(EObjectType::OTCutPlane);
 	for (int32 i = 0; i < cutPlaneMois.Num(); ++i)
 	{
 		UCutPlaneDimListItemObject *newCutPlaneObj = NewObject<UCutPlaneDimListItemObject>(this);
@@ -137,7 +137,7 @@ bool UCutPlaneMenuWidget::UpdateCutPlaneParamInMenuBlock(int32 ObjID /*= MOD_ID_
 {
 	// Listview uses UCutPlaneDimListItemObject to build UCutPlaneDimListItem widget, both need to be updated
 	UCutPlaneDimListItemObject* item = GetListItemFromObjID(ObjID);
-	FModumateObjectInstance* moi = GameState->Document.GetObjectById(ObjID);
+	AModumateObjectInstance* moi = GameState->Document.GetObjectById(ObjID);
 	if (!(item && moi))
 	{
 		return false;
@@ -182,7 +182,7 @@ void UCutPlaneMenuWidget::SetCutPlaneExportMenuVisibility(bool NewVisible)
 	CutPlaneMenuBlockExport->SetExportMenuVisibility(NewVisible);
 }
 
-void UCutPlaneMenuWidget::BuildCutPlaneItemFromMoi(UCutPlaneDimListItemObject* CutPlaneObj, const class FModumateObjectInstance* Moi)
+void UCutPlaneMenuWidget::BuildCutPlaneItemFromMoi(UCutPlaneDimListItemObject* CutPlaneObj, const class AModumateObjectInstance* Moi)
 {
 	FMOICutPlaneData cutPlaneData;
 	if (ensure(Moi->GetStateData().CustomData.LoadStructData(cutPlaneData)))

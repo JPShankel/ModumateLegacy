@@ -84,5 +84,5 @@ public:
 
 	TSharedPtr<FGraph3DDelta> MakeGraphInverse() const;
 	virtual FDeltaPtr MakeInverse() const override;
-	virtual bool ApplyTo(FModumateDocument *doc, UWorld *world) const override;
+	virtual bool ApplyTo(UModumateDocument *doc, UWorld *world) const override;
 };

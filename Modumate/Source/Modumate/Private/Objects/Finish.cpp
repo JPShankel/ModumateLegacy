@@ -16,14 +16,14 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 
-void FMOIFinishImpl::PreDestroy()
+void AMOIFinish::PreDestroy()
 {
 	MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags::Structure);
 }
 
-FVector FMOIFinishImpl::GetCorner(int32 index) const
+FVector AMOIFinish::GetCorner(int32 index) const
 {
-	const FModumateObjectInstance *parentObj = GetParentObject();
+	const AModumateObjectInstance *parentObj = GetParentObject();
 	if (!ensure(parentObj) || (CachedPerimeter.Num() == 0))
 	{
 		return FVector::ZeroVector;
@@ -36,19 +36,19 @@ FVector FMOIFinishImpl::GetCorner(int32 index) const
 	return CachedPerimeter[index % numPoints] + cornerOffset;
 }
 
-FVector FMOIFinishImpl::GetNormal() const
+FVector AMOIFinish::GetNormal() const
 {
 	return CachedGraphOrigin.GetRotation().GetAxisZ();
 }
 
-bool FMOIFinishImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AMOIFinish::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
 	{
 	case EObjectDirtyFlags::Structure:
 	{
 		// The finish requires a surface polygon parent from which to extrude its layered assembly
-		FModumateObjectInstance *surfacePolyParent = GetParentObject();
+		AModumateObjectInstance *surfacePolyParent = GetParentObject();
 		if ((surfacePolyParent == nullptr) || !ensure(surfacePolyParent->GetObjectType() == EObjectType::OTSurfacePolygon))
 		{
 			return false;
@@ -89,7 +89,7 @@ bool FMOIFinishImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 	return true;
 }
 
-void FMOIFinishImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOIFinish::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	int32 numPoints = CachedPerimeter.Num();
 	FVector extrusionDelta = CalculateThickness() * GetNormal();
@@ -114,10 +114,10 @@ void FMOIFinishImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoi
 	}
 }
 
-void FMOIFinishImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
+void AMOIFinish::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
 {
 	// parent handles
-	FModumateObjectInstance* parent = GetParentObject();
+	AModumateObjectInstance* parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTSurfacePolygon)))
 	{
 		return;
@@ -136,7 +136,7 @@ void FMOIFinishImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP* cont
 	}
 }
 
-void FMOIFinishImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIFinish::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 	TArray<TArray<FVector>>& OutPerimeters) const
 {
@@ -151,10 +151,10 @@ void FMOIFinishImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCompos
 	}
 }
 
-void FMOIFinishImpl::UpdateConnectedEdges()
+void AMOIFinish::UpdateConnectedEdges()
 {
 	CachedConnectedEdgeIDs.Reset();
-	FModumateDocument* doc = GetDocument();
+	UModumateDocument* doc = GetDocument();
 
 	auto grandParentGraph = doc->FindSurfaceGraphByObjID(ID);
 	auto parentSurfacePoly = grandParentGraph ? grandParentGraph->FindPolygon(GetParentID()) : nullptr;
@@ -182,7 +182,7 @@ void FMOIFinishImpl::UpdateConnectedEdges()
 	CachedConnectedEdgeChildren.Reset();
 	for (int32 connectedEdgeID : CachedConnectedEdgeIDs)
 	{
-		FModumateObjectInstance* connectedEdgeMOI = doc->GetObjectById(connectedEdgeID);
+		AModumateObjectInstance* connectedEdgeMOI = doc->GetObjectById(connectedEdgeID);
 		if (connectedEdgeMOI && (connectedEdgeMOI->GetObjectType() == EObjectType::OTSurfaceEdge))
 		{
 			CachedConnectedEdgeChildren.Append(connectedEdgeMOI->GetChildObjects());
@@ -190,17 +190,17 @@ void FMOIFinishImpl::UpdateConnectedEdges()
 	}
 }
 
-void FMOIFinishImpl::MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags EdgeDirtyFlags)
+void AMOIFinish::MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags EdgeDirtyFlags)
 {
 	UpdateConnectedEdges();
 
-	for (FModumateObjectInstance* connectedEdgeChild : CachedConnectedEdgeChildren)
+	for (AModumateObjectInstance* connectedEdgeChild : CachedConnectedEdgeChildren)
 	{
 		connectedEdgeChild->MarkDirty(EdgeDirtyFlags);
 	}
 }
 
-void FMOIFinishImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIFinish::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
 	static const Modumate::Units::FThickness lineThickness = Modumate::Units::FThickness::Points(0.05f);
@@ -301,7 +301,7 @@ void FMOIFinishImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposi
 
 }
 
-void FMOIFinishImpl::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIFinish::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
 	static const Modumate::Units::FThickness lineThickness = Modumate::Units::FThickness::Points(0.15f);

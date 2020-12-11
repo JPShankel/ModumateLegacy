@@ -9,8 +9,8 @@
 #include "EditModelPlaneHostedObjTool.generated.h"
 
 class ADynamicMeshActor;
-class FModumateDocument;
-class FModumateObjectInstance;
+class UModumateDocument;
+class AModumateObjectInstance;
 
 UCLASS()
 class MODUMATE_API UPlaneHostedObjTool : public UMetaPlaneTool
@@ -38,7 +38,7 @@ protected:
 	virtual void OnAssemblyChanged() override;
 
 	virtual bool MakeObject(const FVector& Location, TArray<int32>& newObjIDs) override;
-	virtual bool ValidatePlaneTarget(const FModumateObjectInstance* PlaneTarget);
+	virtual bool ValidatePlaneTarget(const AModumateObjectInstance* PlaneTarget);
 
 	bool IsTargetFacingDown();
 	float GetDefaultJustificationValue();

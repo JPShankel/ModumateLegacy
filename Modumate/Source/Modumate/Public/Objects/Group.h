@@ -5,10 +5,10 @@
 
 class AMOIGroupActor_CPP;
 
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
 
-class MODUMATE_API FMOIGroupImpl : public FModumateObjectInstance
+class MODUMATE_API AMOIGroup : public AModumateObjectInstance
 {
 private:
 	TWeakObjectPtr<UWorld> World;
@@ -20,8 +20,8 @@ private:
 	mutable TArray<FStructureLine> TempLines;
 
 public:
-	FMOIGroupImpl();
-	virtual ~FMOIGroupImpl() {};
+	AMOIGroup();
+	virtual ~AMOIGroup() {};
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 

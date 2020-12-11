@@ -98,7 +98,7 @@ bool UFinishTool::GetFinishCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 	// If we're replacing an existing finish, just swap its assembly
 	if (HitGraphElementMOI)
 	{
-		for (const FModumateObjectInstance* child : HitGraphElementMOI->GetChildObjects())
+		for (const AModumateObjectInstance* child : HitGraphElementMOI->GetChildObjects())
 		{
 			if (child->GetObjectType() == EObjectType::OTFinish)
 			{

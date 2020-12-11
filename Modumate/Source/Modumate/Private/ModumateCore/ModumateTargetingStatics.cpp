@@ -8,7 +8,7 @@
 
 using namespace Modumate;
 
-int32 UModumateTargetingStatics::GetFaceIndexFromTargetHit(const FModumateObjectInstance* HitObject, const FVector& HitLocation, const FVector& HitNormal)
+int32 UModumateTargetingStatics::GetFaceIndexFromTargetHit(const AModumateObjectInstance* HitObject, const FVector& HitLocation, const FVector& HitNormal)
 {
 	if (HitObject == nullptr)
 	{
@@ -26,7 +26,7 @@ int32 UModumateTargetingStatics::GetFaceIndexFromTargetHit(const FModumateObject
 	case EObjectType::OTRailSegment:
 	case EObjectType::OTSystemPanel:
 	{
-		const FModumateObjectInstance* hostParent = HitObject->GetParentObject();
+		const AModumateObjectInstance* hostParent = HitObject->GetParentObject();
 		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
 		{
 			return INDEX_NONE;
@@ -94,18 +94,18 @@ int32 UModumateTargetingStatics::GetFaceIndexFromTargetHit(const FModumateObject
 	}
 }
 
-void UModumateTargetingStatics::GetConnectedSurfaceGraphs(const FModumateObjectInstance* HitObject, const FVector& HitLocation, TArray<const FModumateObjectInstance*>& OutSurfaceGraphs)
+void UModumateTargetingStatics::GetConnectedSurfaceGraphs(const AModumateObjectInstance* HitObject, const FVector& HitLocation, TArray<const AModumateObjectInstance*>& OutSurfaceGraphs)
 {
 	OutSurfaceGraphs.Reset();
 
-	const FModumateDocument* doc = HitObject ? HitObject->GetDocument() : nullptr;
+	const UModumateDocument* doc = HitObject ? HitObject->GetDocument() : nullptr;
 	if (doc == nullptr)
 	{
 		return;
 	}
 
 	const FGraph3D& volumeGraph = doc->GetVolumeGraph();
-	TArray<const FModumateObjectInstance*, TInlineAllocator<8>> connectedPlanes;
+	TArray<const AModumateObjectInstance*, TInlineAllocator<8>> connectedPlanes;
 
 	auto getEdgeFaces = [&connectedPlanes, doc, &volumeGraph](int32 EdgeID)
 	{
@@ -143,7 +143,7 @@ void UModumateTargetingStatics::GetConnectedSurfaceGraphs(const FModumateObjectI
 		break;
 	default:
 	{
-		const FModumateObjectInstance* planeMOI = HitObject;
+		const AModumateObjectInstance* planeMOI = HitObject;
 		while (planeMOI && (planeMOI->GetObjectType() != EObjectType::OTMetaPlane))
 		{
 			planeMOI = planeMOI->GetParentObject();

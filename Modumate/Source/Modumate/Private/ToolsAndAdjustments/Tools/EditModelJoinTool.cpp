@@ -42,9 +42,9 @@ bool UJoinTool::BeginUse()
 bool UJoinTool::HandleMouseUp()
 {
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument *doc = &gameState->Document;
+	UModumateDocument *doc = &gameState->Document;
 
-	FModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
+	AModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
 		
 	if (newTarget && newTarget->GetObjectType() == EObjectType::OTMetaPlane)
 	{
@@ -138,7 +138,7 @@ bool UJoinTool::HandleMouseUp()
 
 bool UJoinTool::EnterNextStage()
 {
-	FModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
+	AModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
 
 	// TODO: currently executes the command on the second plane press,
 	// make each plane press update the Frontier set and find a different time to execute the command
@@ -148,7 +148,7 @@ bool UJoinTool::EnterNextStage()
 		Controller->DeselectAll();
 		
 		AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		FModumateDocument* doc = &gameState->Document;
+		UModumateDocument* doc = &gameState->Document;
 		return doc->JoinMetaObjects(GetWorld(), PendingObjectIDs.Array());
 		// TODO: potentially return the result of this function, if it is true the two faces will be joined
 		// and the tool can continue

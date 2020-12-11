@@ -3,7 +3,7 @@
 
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
 
 struct FCachedLayerDimsByType
@@ -40,7 +40,7 @@ struct FCachedLayerDimsByType
 
 	void UpdateLayersFromAssembly(const FBIMAssemblySpec& Assembly);
 	void UpdateLayersFromAssembly(const TArray<FBIMLayerSpec>& AssemblyLayers);
-	void UpdateFinishFromObject(const FModumateObjectInstance *MOI);
+	void UpdateFinishFromObject(const AModumateObjectInstance *MOI);
 };
 
 class MODUMATE_API ILayeredObject

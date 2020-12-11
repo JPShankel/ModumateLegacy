@@ -6,12 +6,12 @@
 #include "CoreMinimal.h"
 
 class AEditModelPlayerController_CPP;
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
-class MODUMATE_API FMOIStaircaseImpl : public FModumateObjectInstance
+class MODUMATE_API AMOIStaircase : public AModumateObjectInstance
 {
 public:
-	FMOIStaircaseImpl();
+	AMOIStaircase();
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;

@@ -19,7 +19,7 @@ bool UModumateBrowserStatics::GetCutPlanesFromProject(UObject* WorldContextObjec
 	}
 
 	bool bSuccess = true;
-	TArray<FModumateObjectInstance*> cutPlaneObjs = gameState->Document.GetObjectsOfType(EObjectType::OTCutPlane);
+	TArray<AModumateObjectInstance*> cutPlaneObjs = gameState->Document.GetObjectsOfType(EObjectType::OTCutPlane);
 	for (auto *cutPlaneObj : cutPlaneObjs)
 	{
 		auto &cutPlaneParam = OutCutPlaneParams.AddDefaulted_GetRef();
@@ -49,7 +49,7 @@ bool UModumateBrowserStatics::GetScopeBoxesFromProject(UObject* WorldContextObje
 	}
 
 	bool bSuccess = true;
-	TArray<FModumateObjectInstance*> scopeBoxObjs = gameState->Document.GetObjectsOfType(EObjectType::OTScopeBox);
+	TArray<AModumateObjectInstance*> scopeBoxObjs = gameState->Document.GetObjectsOfType(EObjectType::OTScopeBox);
 	for (auto *scopeBoxObj : scopeBoxObjs)
 	{
 		auto &scopeBoxParam = OutScopeBoxParams.AddDefaulted_GetRef();
@@ -82,7 +82,7 @@ bool UModumateBrowserStatics::SetDrawingObjectVisibility(UObject* WorldContextOb
 		return false;
 	}
 
-	FModumateObjectInstance *drawingObj = gameState->Document.GetObjectById(ObjectID);
+	AModumateObjectInstance *drawingObj = gameState->Document.GetObjectById(ObjectID);
 	if (drawingObj == nullptr)
 	{
 		return false;

@@ -13,7 +13,7 @@ using namespace Modumate::Units;
 #define LOCTEXT_NAMESPACE "ModumateWallDetailsSchedule"
 
 namespace Modumate {
-	FWallDetailsSchedule::FWallDetailsSchedule(const FModumateDocument *doc, UWorld *World, IModumateDraftingDraw *drawingInterface)
+	FWallDetailsSchedule::FWallDetailsSchedule(const UModumateDocument *doc, UWorld *World, IModumateDraftingDraw *drawingInterface)
 	{
 		Title = MakeShareable(new FDraftingText(
 			LOCTEXT("title", "Wall Schedule: Assembly Details"),

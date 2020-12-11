@@ -64,7 +64,7 @@ bool UCreateSimilarTool::AbortUse()
 
 bool UCreateSimilarTool::MatchTargetObject(bool bUseMouseHoverObject)
 {
-	FModumateObjectInstance *targetObj = nullptr;
+	AModumateObjectInstance *targetObj = nullptr;
 
 	if (bUseMouseHoverObject)
 	{

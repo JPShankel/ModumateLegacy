@@ -17,8 +17,8 @@ bool AAdjustPortalOrientHandle::BeginUse()
 		return false;
 	}
 
-	FModumateObjectInstance* parent = TargetMOI->GetParentObject();
-	FModumateDocument* document = parent->GetDocument();
+	AModumateObjectInstance* parent = TargetMOI->GetParentObject();
+	UModumateDocument* document = parent->GetDocument();
 
 	const int32 numCorners = parent->GetNumCorners();
 	if (!ensureAlwaysMsgf(numCorners == 4, TEXT("Portal parent does not have 4 vertices")))

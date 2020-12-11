@@ -48,7 +48,7 @@ bool ACreateRoofFacesHandle::BeginUse()
 		const FVector *combinedPolyVertsPtr = CombinedPolyVerts.GetData();
 		int32 vertIdxStart = 0, vertIdxEnd = 0;
 
-		FModumateDocument &doc = GameState->Document;
+		UModumateDocument &doc = GameState->Document;
 		const FGraph3D &volumeGraph = doc.GetVolumeGraph();
 		FGraph3D &tempVolumeGraph = doc.GetTempVolumeGraph();
 		int32 nextID = doc.GetNextAvailableID();
@@ -123,7 +123,7 @@ bool ARetractRoofFacesHandle::BeginUse()
 		return false;
 	}
 
-	FModumateDocument &doc = GameState->Document;
+	UModumateDocument &doc = GameState->Document;
 	const FGraph3D &volumeGraph = doc.GetVolumeGraph();
 	if (!volumeGraph.GetGroup(TargetMOI->ID, TempGroupMembers))
 	{
@@ -213,8 +213,8 @@ void AEditRoofEdgeHandle::AbortUse()
 
 FVector AEditRoofEdgeHandle::GetHandlePosition() const
 {
-	const FModumateDocument *doc = TargetMOI ? TargetMOI->GetDocument() : nullptr;
-	const FModumateObjectInstance *targetEdgeMOI = doc ? doc->GetObjectById(FMath::Abs(TargetEdgeID)) : nullptr;
+	const UModumateDocument *doc = TargetMOI ? TargetMOI->GetDocument() : nullptr;
+	const AModumateObjectInstance *targetEdgeMOI = doc ? doc->GetObjectById(FMath::Abs(TargetEdgeID)) : nullptr;
 	if (ensure(targetEdgeMOI))
 	{
 		return targetEdgeMOI->GetLocation();

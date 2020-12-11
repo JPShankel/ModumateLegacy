@@ -7,49 +7,49 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "DocumentManagement/ModumateDocument.h"
 
-FMOISurfaceGraphImpl::FMOISurfaceGraphImpl()
-	: FModumateObjectInstance()
+AMOISurfaceGraph::AMOISurfaceGraph()
+	: AModumateObjectInstance()
 {
 }
 
-FVector FMOISurfaceGraphImpl::GetLocation() const
+FVector AMOISurfaceGraph::GetLocation() const
 {
 	return CachedFaceOrigin.GetLocation();
 }
 
-FQuat FMOISurfaceGraphImpl::GetRotation() const
+FQuat AMOISurfaceGraph::GetRotation() const
 {
 	return CachedFaceOrigin.GetRotation();
 }
 
-FVector FMOISurfaceGraphImpl::GetNormal() const
+FVector AMOISurfaceGraph::GetNormal() const
 {
 	return CachedFaceOrigin.GetUnitAxis(EAxis::Z);
 }
 
-FVector FMOISurfaceGraphImpl::GetCorner(int32 index) const
+FVector AMOISurfaceGraph::GetCorner(int32 index) const
 {
 	return ensure(CachedFacePoints.IsValidIndex(index)) ? CachedFacePoints[index] : GetLocation();
 }
 
-int32 FMOISurfaceGraphImpl::GetNumCorners() const
+int32 AMOISurfaceGraph::GetNumCorners() const
 {
 	return CachedFacePoints.Num();
 }
 
-void FMOISurfaceGraphImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+void AMOISurfaceGraph::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 	OutStructDef = InstanceData.StaticStruct();
 	OutStructPtr = &InstanceData;
 }
 
-bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	int32 numVerts = GraphVertexToBoundVertex.Num();
 
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
 	{
-		FModumateDocument* doc = GetDocument();
+		UModumateDocument* doc = GetDocument();
 		if (!ensure(doc))
 		{
 			return false;
@@ -326,11 +326,11 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 			// Otherwise, delete the surface graph if it cannot be preserved after the underlying geometry changes
 			else
 			{
-				TArray<FModumateObjectInstance*> objectsToDelete = GetAllDescendents();
+				TArray<AModumateObjectInstance*> objectsToDelete = GetAllDescendents();
 				objectsToDelete.Add(this);
 
 				auto deleteSurfaceDelta = MakeShared<FMOIDelta>();
-				for (FModumateObjectInstance* descendent : objectsToDelete)
+				for (AModumateObjectInstance* descendent : objectsToDelete)
 				{
 					deleteSurfaceDelta->AddCreateDestroyState(descendent->GetStateData(), EMOIDeltaType::Destroy);
 				}
@@ -347,9 +347,9 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 	return true;
 }
 
-bool FMOISurfaceGraphImpl::CheckGraphLink()
+bool AMOISurfaceGraph::CheckGraphLink()
 {
-	FModumateDocument* doc = GetDocument();
+	UModumateDocument* doc = GetDocument();
 	auto surfaceGraph = doc ? doc->FindSurfaceGraph(ID) : nullptr;
 	if (!ensure(doc && surfaceGraph))
 	{
@@ -395,9 +395,9 @@ bool FMOISurfaceGraphImpl::CheckGraphLink()
 	return true;
 }
 
-bool FMOISurfaceGraphImpl::UpdateCachedGraphData()
+bool AMOISurfaceGraph::UpdateCachedGraphData()
 {
-	const FModumateObjectInstance *parentObj = GetParentObject();
+	const AModumateObjectInstance *parentObj = GetParentObject();
 	if (!ensure(parentObj) || parentObj->IsDirty(EObjectDirtyFlags::Structure) || parentObj->IsDirty(EObjectDirtyFlags::Mitering))
 	{
 		return false;
@@ -406,14 +406,14 @@ bool FMOISurfaceGraphImpl::UpdateCachedGraphData()
 	return UModumateObjectStatics::GetGeometryFromFaceIndex(parentObj, InstanceData.ParentFaceIndex, CachedFacePoints, CachedFaceOrigin);
 }
 
-bool FMOISurfaceGraphImpl::CalculateFaces(const TArray<int32>& AddIDs, TMap<int32, TArray<FVector2D>>& OutPolygonsToAdd, TMap<int32, TArray<int32>>& OutFaceToVertices)
+bool AMOISurfaceGraph::CalculateFaces(const TArray<int32>& AddIDs, TMap<int32, TArray<FVector2D>>& OutPolygonsToAdd, TMap<int32, TArray<int32>>& OutFaceToVertices)
 {
 	if (AddIDs.Num() == 0)
 	{
 		return false;
 	}
 
-	FModumateDocument* doc = GetDocument();
+	UModumateDocument* doc = GetDocument();
 	if (!ensure(doc))
 	{
 		return false;

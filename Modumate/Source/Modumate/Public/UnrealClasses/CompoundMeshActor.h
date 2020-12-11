@@ -15,7 +15,7 @@ class UPointLightComponent;
 class USpotLightComponent;
 class UStaticMeshComponent;
 class UProceduralMeshComponent;
-class FModumateDocument;
+class UModumateDocument;
 
 namespace Modumate
 {
@@ -52,7 +52,7 @@ public:
 	bool GetCutPlaneDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin) const;
 	void GetFarDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane, const FBox2D& BoundingBox) const;
-	float GetPortalCenter(const FModumateDocument* Doc, const FBIMKey& AssemblyKey) const;
+	float GetPortalCenter(const UModumateDocument* Doc, const FBIMKey& AssemblyKey) const;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TArray<bool> UseSlicedMesh;

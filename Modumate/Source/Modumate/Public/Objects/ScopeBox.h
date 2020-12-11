@@ -4,10 +4,10 @@
 #include "CoreMinimal.h"
 #include "Objects/ModumateObjectInstance.h"
 
-class MODUMATE_API FMOIScopeBoxImpl : public FModumateObjectInstance
+class MODUMATE_API AMOIScopeBox : public AModumateObjectInstance
 {
 public:
-	FMOIScopeBoxImpl();
+	AMOIScopeBox();
 
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
 	virtual void PreDestroy() override;

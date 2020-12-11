@@ -11,7 +11,7 @@ namespace Modumate {
 	class FPresentationPlan : public FDraftingDrawing
 	{
 	public:
-		FPresentationPlan(const FModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID);
+		FPresentationPlan(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID);
 
 		virtual bool MakeScaleTag(IModumateDraftingDraw *drawingInterface) override;
 

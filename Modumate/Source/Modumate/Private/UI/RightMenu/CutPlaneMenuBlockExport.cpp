@@ -87,7 +87,7 @@ void UCutPlaneMenuBlockExport::OnButtonExportReleased()
 		UCutPlaneDimListItemObject* item = Controller->EditModelUserWidget->CutPlaneMenu->GetListItemFromObjID(curID);
 		if (item)
 		{
-			FModumateObjectInstance* moi = gameState->Document.GetObjectById(curID);
+			AModumateObjectInstance* moi = gameState->Document.GetObjectById(curID);
 			auto& newStateData = newDelta->AddMutationState(moi);
 
 			FMOICutPlaneData newCutPlaneData;

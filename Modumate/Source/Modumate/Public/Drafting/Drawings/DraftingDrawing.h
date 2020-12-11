@@ -5,7 +5,7 @@
 #include "Drafting/DraftingManager.h"
 
 class UWorld;
-class MODUMATE_API FModumateDocument;
+class MODUMATE_API UModumateDocument;
 
 namespace Modumate {
 
@@ -14,7 +14,7 @@ namespace Modumate {
 	class FDraftingDrawing : public FDraftingComposite
 	{
 	public:
-		FDraftingDrawing(const FModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID);
+		FDraftingDrawing(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID);
 
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
 			Units::FCoordinates2D position = Units::FCoordinates2D(),
@@ -67,7 +67,7 @@ namespace Modumate {
 		bool bScaleToFit = false;
 
 	protected:
-		const FModumateDocument *Doc;
+		const UModumateDocument *Doc;
 		UWorld *World;
 	public:
 		TPair<int32, int32> CaptureObjID;

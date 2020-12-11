@@ -26,9 +26,9 @@ struct MODUMATE_API FMOIFFEData
 class AStaticMeshActor;
 class AAdjustmentHandleActor;
 
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
-class MODUMATE_API FMOIFFEImpl : public FModumateObjectInstance
+class MODUMATE_API AMOIFFE : public AModumateObjectInstance
 {
 protected:
 	TWeakObjectPtr<UWorld> World;
@@ -42,7 +42,7 @@ protected:
 
 public:
 
-	FMOIFFEImpl();
+	AMOIFFE();
 	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;

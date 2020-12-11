@@ -7,12 +7,12 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/VertexActor.h"
 
-FMOIMetaVertexImpl::FMOIMetaVertexImpl()
+AMOIMetaVertex::AMOIMetaVertex()
 	: FMOIVertexImplBase()
 {
 }
 
-bool FMOIMetaVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AMOIMetaVertex::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
 	{
@@ -37,11 +37,11 @@ bool FMOIMetaVertexImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 	return true;
 }
 
-void FMOIMetaVertexImpl::GetTangents(TArray<FVector>& OutTangents) const
+void AMOIMetaVertex::GetTangents(TArray<FVector>& OutTangents) const
 {
 	FVector vertexLocation = GetLocation();
 
-	for (FModumateObjectInstance* connectedMOI : CachedConnectedMOIs)
+	for (AModumateObjectInstance* connectedMOI : CachedConnectedMOIs)
 	{
 		if (connectedMOI && (connectedMOI->GetObjectType() == EObjectType::OTMetaEdge))
 		{

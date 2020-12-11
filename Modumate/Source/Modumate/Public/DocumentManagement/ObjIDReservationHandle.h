@@ -2,17 +2,17 @@
 
 #pragma once
 
-class FModumateDocument;
+class UModumateDocument;
 
-// RAII wrapper for reserving object IDs from FModumateDocument
+// RAII wrapper for reserving object IDs from UModumateDocument
 class MODUMATE_API FObjIDReservationHandle
 {
 public:
-	FObjIDReservationHandle(FModumateDocument* InDocument, int32 InReservingID);
+	FObjIDReservationHandle(UModumateDocument* InDocument, int32 InReservingID);
 	~FObjIDReservationHandle();
 
 private:
-	FModumateDocument* Document;
+	UModumateDocument* Document;
 	int32 ReservingID;
 
 public:

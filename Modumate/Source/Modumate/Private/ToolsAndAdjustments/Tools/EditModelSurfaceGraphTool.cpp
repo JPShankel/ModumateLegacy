@@ -196,7 +196,7 @@ bool USurfaceGraphTool::HandleInputNumber(double n)
 	FVector endPoint = PendingSegment->Point1 + direction * n;
 	PendingSegment->Point2 = endPoint;
 
-	const FModumateObjectInstance* projectedHitGraphMOI = TargetGraphMOI;
+	const AModumateObjectInstance* projectedHitGraphMOI = TargetGraphMOI;
 
 	if (projectedHitGraphMOI == nullptr)
 	{
@@ -212,7 +212,7 @@ bool USurfaceGraphTool::HandleInputNumber(double n)
 	return CompleteSegment();
 }
 
-bool USurfaceGraphTool::UpdateTarget(const FModumateObjectInstance* HitObject, const FVector& Location, const FVector& Normal)
+bool USurfaceGraphTool::UpdateTarget(const AModumateObjectInstance* HitObject, const FVector& Location, const FVector& Normal)
 {
 	ResetTarget();
 

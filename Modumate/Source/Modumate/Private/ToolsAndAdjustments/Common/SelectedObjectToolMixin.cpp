@@ -100,13 +100,13 @@ void FSelectedObjectToolMixin::ReleaseSelectedObjects()
 
 void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 {
-	FModumateDocument* doc = ControllerPtr->GetDocument();
+	UModumateDocument* doc = ControllerPtr->GetDocument();
 	UWorld* world = ControllerPtr->GetWorld();
 
 	TMap<int32, FTransform> objectInfo;
 	for (auto& kvp : OriginalTransforms)
 	{
-		FModumateObjectInstance* targetMOI = doc->GetObjectById(kvp.Key);
+		AModumateObjectInstance* targetMOI = doc->GetObjectById(kvp.Key);
 
 		objectInfo.Add(kvp.Key, targetMOI->GetWorldTransform());
 	}

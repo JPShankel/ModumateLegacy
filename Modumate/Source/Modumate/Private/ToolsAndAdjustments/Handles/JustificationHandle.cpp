@@ -65,7 +65,7 @@ void AJustificationHandle::Tick(float DeltaTime)
 		FVector attachLocation = GetHandlePosition();
 
 		// Draw line from attachLocation to center of ParentMOI
-		FModumateObjectInstance* parentMetaplane = TargetMOI->GetParentObject();
+		AModumateObjectInstance* parentMetaplane = TargetMOI->GetParentObject();
 		if (parentMetaplane != nullptr && parentMetaplane->GetObjectType() == EObjectType::OTMetaPlane)
 		{
 			FVector metaPlaneMidpoint = parentMetaplane->GetLocation();

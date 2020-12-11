@@ -5,7 +5,7 @@
 
 class AVertexActor;
 
-class MODUMATE_API FMOIVertexImplBase : public FModumateObjectInstance
+class MODUMATE_API FMOIVertexImplBase : public AModumateObjectInstance
 {
 public:
 	FMOIVertexImplBase();
@@ -25,7 +25,7 @@ public:
 protected:
 	TWeakObjectPtr<UWorld> World;
 	TWeakObjectPtr<AVertexActor> VertexActor;
-	TArray<FModumateObjectInstance*> CachedConnectedMOIs;
+	TArray<AModumateObjectInstance*> CachedConnectedMOIs;
 
 	FColor SelectedColor, BaseColor;
 	float DefaultHandleSize;

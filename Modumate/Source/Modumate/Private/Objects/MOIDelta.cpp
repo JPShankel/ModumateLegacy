@@ -10,7 +10,7 @@ bool FMOIDelta::IsValid() const
 	return States.Num() > 0;
 }
 
-bool FMOIDelta::ApplyTo(FModumateDocument* doc, UWorld* world) const
+bool FMOIDelta::ApplyTo(UModumateDocument* doc, UWorld* world) const
 {
 	return doc->ApplyMOIDelta(*this, world);
 }
@@ -56,18 +56,18 @@ void FMOIDelta::AddCreateDestroyStates(const TArray<FMOIStateData>& InStates, EM
 	}
 }
 
-FMOIStateData& FMOIDelta::AddMutationState(const FModumateObjectInstance* Object)
+FMOIStateData& FMOIDelta::AddMutationState(const AModumateObjectInstance* Object)
 {
 	auto& statePair = States.Add_GetRef(FMOIDeltaState{ Object->StateData, Object->StateData, EMOIDeltaType::Mutate });
 	return statePair.NewState;
 }
 
-void FMOIDelta::AddMutationState(const FModumateObjectInstance* Object, const FMOIStateData& OldState, const FMOIStateData& NewState)
+void FMOIDelta::AddMutationState(const AModumateObjectInstance* Object, const FMOIStateData& OldState, const FMOIStateData& NewState)
 {
 	States.Add(FMOIDeltaState{ OldState, NewState, EMOIDeltaType::Mutate });
 }
 
-void FMOIDelta::AddMutationStates(const TArray<FModumateObjectInstance*>& Objects)
+void FMOIDelta::AddMutationStates(const TArray<AModumateObjectInstance*>& Objects)
 {
 	for (auto* ob : Objects)
 	{

@@ -25,7 +25,7 @@ namespace Modumate
 	using Vec2 = FVector2D;
 	using DVec2 = FVector2d;  // Double
 
-	FModumateClippingTriangles::FModumateClippingTriangles(const FModumateObjectInstance& CutPlane)
+	FModumateClippingTriangles::FModumateClippingTriangles(const AModumateObjectInstance& CutPlane)
 	{
 		if (CutPlane.GetObjectType() == EObjectType::OTCutPlane)
 		{
@@ -34,7 +34,7 @@ namespace Modumate
 		}
 	}
 
-	void FModumateClippingTriangles::AddTrianglesFromDoc(const FModumateDocument * doc)
+	void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument * doc)
 	{
 		const TSet<EObjectType> separatorOccluderTypes({ EObjectType::OTWallSegment, EObjectType::OTFloorSegment,
 			EObjectType::OTRoofFace, EObjectType::OTCeiling, EObjectType::OTSystemPanel, EObjectType::OTDoor,
@@ -45,7 +45,7 @@ namespace Modumate
 		TSet<EObjectType> occluderTypes(separatorOccluderTypes);
 		occluderTypes.Append(actorMeshOccluderTypes);
 
-		TArray<const FModumateObjectInstance*> occluderObjects(doc->GetObjectsOfType(occluderTypes));
+		TArray<const AModumateObjectInstance*> occluderObjects(doc->GetObjectsOfType(occluderTypes));
 
 		const int numObjects = occluderObjects.Num();
 		int totalTriangles = 0;

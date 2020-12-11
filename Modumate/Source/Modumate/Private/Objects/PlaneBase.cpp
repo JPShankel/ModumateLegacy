@@ -8,7 +8,7 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 FMOIPlaneImplBase::FMOIPlaneImplBase()
-	: FModumateObjectInstance()
+	: AModumateObjectInstance()
 	, SelectedColor(0x1C, 0x9F, 0xFF)
 	, HoveredColor(0xCF, 0xCF, 0xCF)
 	, BaseColor(0xFF, 0xFF, 0xFF)
@@ -95,7 +95,7 @@ bool FMOIPlaneImplBase::ShowStructureOnSelection() const
 
 void FMOIPlaneImplBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
 {
-	FModumateObjectInstance::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
+	AModumateObjectInstance::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
 
 	if (bOutVisible)
 	{
@@ -105,7 +105,7 @@ void FMOIPlaneImplBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollision
 
 bool FMOIPlaneImplBase::OnSelected(bool bIsSelected)
 {
-	if (!FModumateObjectInstance::OnSelected(bIsSelected))
+	if (!AModumateObjectInstance::OnSelected(bIsSelected))
 	{
 		return false;
 	}
@@ -116,7 +116,7 @@ bool FMOIPlaneImplBase::OnSelected(bool bIsSelected)
 
 bool FMOIPlaneImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
-	if (!FModumateObjectInstance::OnHovered(controller, bIsHovered))
+	if (!AModumateObjectInstance::OnHovered(controller, bIsHovered))
 	{
 		return false;
 	}
@@ -127,7 +127,7 @@ bool FMOIPlaneImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bo
 
 void FMOIPlaneImplBase::PostCreateObject(bool bNewObject)
 {
-	FModumateObjectInstance::PostCreateObject(bNewObject);
+	AModumateObjectInstance::PostCreateObject(bNewObject);
 
 	UpdateConnectedVisuals();
 }
@@ -172,7 +172,7 @@ void FMOIPlaneImplBase::UpdateConnectedVisuals()
 	UpdateVisuals();
 	// Update the visuals of all of our connected edges
 	GetConnectedMOIs(TempConnectedMOIs);
-	for (FModumateObjectInstance* connectedMOI : TempConnectedMOIs)
+	for (AModumateObjectInstance* connectedMOI : TempConnectedMOIs)
 	{
 		connectedMOI->MarkDirty(EObjectDirtyFlags::Visuals);
 	}

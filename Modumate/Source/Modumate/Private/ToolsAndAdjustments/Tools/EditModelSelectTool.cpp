@@ -59,9 +59,9 @@ bool USelectTool::HandleMouseUp()
 	}
 
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument *doc = &gameState->Document;
+	UModumateDocument *doc = &gameState->Document;
 
-	FModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
+	AModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
 	bool doubleClicked = false;
 
 	if (newTarget)
@@ -79,7 +79,7 @@ bool USelectTool::HandleMouseUp()
 	auto &sels = Controller->EMPlayerState->SelectedObjects;
 	int32 numSelections = sels.Num();
 
-	FModumateObjectInstance *currentViewGroup = Controller->EMPlayerState->ViewGroupObject;
+	AModumateObjectInstance *currentViewGroup = Controller->EMPlayerState->ViewGroupObject;
 
 	// If we double clicked on a valid object that is within the hierarchy of the current
 	// view group, then go into that level of the hierarchy.
@@ -116,7 +116,7 @@ bool USelectTool::HandleMouseUp()
 		}
 		else if (currentViewGroup && (numSelections == 0))
 		{
-			FModumateObjectInstance *currentViewGroupParent = currentViewGroup->GetParentObject();
+			AModumateObjectInstance *currentViewGroupParent = currentViewGroup->GetParentObject();
 			if (currentViewGroupParent && (currentViewGroupParent->GetObjectType() == EObjectType::OTGroup))
 			{
 				Controller->SetViewGroupObject(currentViewGroupParent);
@@ -308,7 +308,7 @@ bool USelectTool::ProcessDragSelect()
 		}
 
 		AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		FModumateDocument *doc = &gameState->Document;
+		UModumateDocument *doc = &gameState->Document;
 
 		bool requireEnclosure = curMousePosition.X > InitialClickLocation.X;
 		FBox2D screenSelectRect(ForceInitToZero);
@@ -330,7 +330,7 @@ bool USelectTool::ProcessDragSelect()
 		auto *snappingView = Controller->GetSnappingView();
 		snappingView->UpdateSnapPoints(idsToIgnore, collisionChannelMask, bForSnapping, bForSelection);
 
-		TSet<FModumateObjectInstance *> objectsInSelection;
+		TSet<AModumateObjectInstance *> objectsInSelection;
 
 		const auto &snapCorners = snappingView->Corners;
 		const auto &snapLines = snappingView->LineSegments;
@@ -340,7 +340,7 @@ bool USelectTool::ProcessDragSelect()
 			int32 objectID = kvp.Key;
 			bool objInSelection = false;
 
-			FModumateObjectInstance *object = doc->GetObjectById(objectID);
+			AModumateObjectInstance *object = doc->GetObjectById(objectID);
 			if ((object == nullptr) || !Controller->EMPlayerState->IsObjectReachableInView(object))
 			{
 				continue;
@@ -408,7 +408,7 @@ bool USelectTool::ProcessDragSelect()
 			{
 				for (const auto &hitResult : hitResults)
 				{
-					FModumateObjectInstance *object = doc->ObjectFromActor(hitResult.GetActor());
+					AModumateObjectInstance *object = doc->ObjectFromActor(hitResult.GetActor());
 					if (object && Controller->EMPlayerState->IsObjectReachableInView(object))
 					{
 						objectsInSelection.Add(object);

@@ -10,8 +10,8 @@
 #include "Drafting/ModumateDraftingTags.h"
 #include "Runtime/Engine/Classes/Debug/ReporterGraph.h"
 
-class FModumateDocument;
-class FModumateObjectInstance;
+class UModumateDocument;
+class AModumateObjectInstance;
 
 namespace Modumate
 {
@@ -25,7 +25,7 @@ namespace Modumate
 	{
 	public:
 		enum DraftType {kPDF, kDWG};
-		FModumateDraftingView(UWorld *world, FModumateDocument *doc, DraftType draftType);
+		FModumateDraftingView(UWorld *world, UModumateDocument *doc, DraftType draftType);
 		virtual ~FModumateDraftingView();
 
 	public:
@@ -60,7 +60,7 @@ namespace Modumate
 
 	private:
 		TWeakObjectPtr<UWorld> World;
-		FModumateDocument * Document;
+		UModumateDocument * Document;
 		const DraftType ExportType;
 
 	public:

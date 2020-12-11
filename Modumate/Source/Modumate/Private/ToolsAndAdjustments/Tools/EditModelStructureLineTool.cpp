@@ -189,7 +189,7 @@ bool UStructureLineTool::FrameUpdate()
 	case EToolCreateObjectMode::Apply:
 	{
 		int32 newTargetID = MOD_ID_NONE;
-		const FModumateObjectInstance *hitMOI = nullptr;
+		const AModumateObjectInstance *hitMOI = nullptr;
 		LineStartPos = LineEndPos = FVector::ZeroVector;
 
 		if (cursor.Actor)
@@ -284,12 +284,12 @@ void UStructureLineTool::SetTargetID(int32 NewTargetID)
 	{
 		int32 newTargetStructureLineID = MOD_ID_NONE;
 
-		FModumateObjectInstance *targetObj = GameState->Document.GetObjectById(NewTargetID);
+		AModumateObjectInstance *targetObj = GameState->Document.GetObjectById(NewTargetID);
 		if (targetObj && (targetObj->GetObjectType() == EObjectType::OTMetaEdge))
 		{
 			// Find a child structure line on the target (that this tool didn't just create)
-			TArray<FModumateObjectInstance*> children = targetObj->GetChildObjects();
-			for (FModumateObjectInstance *child : children)
+			TArray<AModumateObjectInstance*> children = targetObj->GetChildObjects();
+			for (AModumateObjectInstance *child : children)
 			{
 				if (child && (child->GetObjectType() == UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()) ))
 				{
@@ -316,7 +316,7 @@ bool UStructureLineTool::SetStructureLineHidden(int32 StructureLineID, bool bHid
 {
 	if (GameState && (StructureLineID != MOD_ID_NONE))
 	{
-		FModumateObjectInstance *structureLineObj = GameState->Document.GetObjectById(StructureLineID);
+		AModumateObjectInstance *structureLineObj = GameState->Document.GetObjectById(StructureLineID);
 		if (structureLineObj)
 		{
 			static const FName hideRequestTag(TEXT("StructureLineTool"));

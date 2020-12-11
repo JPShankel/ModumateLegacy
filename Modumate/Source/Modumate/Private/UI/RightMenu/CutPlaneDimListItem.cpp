@@ -81,7 +81,7 @@ void UCutPlaneDimListItem::OnEditableTitleCommitted(const FText& Text, ETextComm
 	AEditModelGameState_CPP *gameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
 	if (gameState)
 	{
-		FModumateObjectInstance* moi = gameState->Document.GetObjectById(ObjID);
+		AModumateObjectInstance* moi = gameState->Document.GetObjectById(ObjID);
 		FMOIStateData oldStateData = moi->GetStateData();
 		FMOIStateData newStateData = oldStateData;
 

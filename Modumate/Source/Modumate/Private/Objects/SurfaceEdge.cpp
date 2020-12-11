@@ -10,19 +10,19 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/LineActor.h"
 
-FMOISurfaceEdgeImpl::FMOISurfaceEdgeImpl()
+AMOISurfaceEdge::AMOISurfaceEdge()
 	: FMOIEdgeImplBase()
 	, CachedDeprojectedStart(ForceInitToZero)
 	, CachedDeprojectedEnd(ForceInitToZero)
 {
 }
 
-FVector FMOISurfaceEdgeImpl::GetCorner(int32 index) const
+FVector AMOISurfaceEdge::GetCorner(int32 index) const
 {
 	return (index == 0) ? CachedDeprojectedStart : CachedDeprojectedEnd;
 }
 
-bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AMOISurfaceEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	auto surfaceGraphObj = GetParentObject();
 	auto doc = GetDocument();
@@ -37,7 +37,7 @@ bool FMOISurfaceEdgeImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelta
 	{
 		GetConnectedMOIs(CachedConnectedMOIs);
 
-		FVector offsetDelta = FMOISurfaceGraphImpl::VisualNormalOffset * surfaceGraphObj->GetNormal();
+		FVector offsetDelta = AMOISurfaceGraph::VisualNormalOffset * surfaceGraphObj->GetNormal();
 
 		auto surfaceGraph = doc->FindSurfaceGraph(surfaceGraphObj->ID);
 		auto surfaceEdge = surfaceGraph ? surfaceGraph->FindEdge(ID) : nullptr;

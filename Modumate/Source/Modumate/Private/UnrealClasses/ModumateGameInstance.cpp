@@ -43,7 +43,7 @@ UModumateGameInstance::UModumateGameInstance(const FObjectInitializer& ObjectIni
 	: Super(ObjectInitializer)
 {}
 
-FModumateDocument *UModumateGameInstance::GetDocument()
+UModumateDocument *UModumateGameInstance::GetDocument()
 {
 	AEditModelGameState_CPP *gameState = GetWorld() != nullptr ? GetWorld()->GetGameState<AEditModelGameState_CPP>() : nullptr;
 	if (gameState != nullptr)
@@ -173,7 +173,7 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kUndo, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		FModumateDocument* doc = GetDocument();
+		UModumateDocument* doc = GetDocument();
 		AEditModelPlayerController_CPP* playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
 		AEditModelPlayerState_CPP* playerState = playerController->EMPlayerState;
 
@@ -189,7 +189,7 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kRedo, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		FModumateDocument* doc = GetDocument();
+		UModumateDocument* doc = GetDocument();
 		AEditModelPlayerController_CPP* playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
 		AEditModelPlayerState_CPP* playerState = playerController->EMPlayerState;
 
@@ -216,7 +216,7 @@ void UModumateGameInstance::RegisterAllCommands()
 	});
 
 	RegisterCommand(kMakeScopeBox, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		FModumateDocument *doc = GetDocument();
+		UModumateDocument *doc = GetDocument();
 		if (doc == nullptr)
 		{
 			return false;
@@ -236,7 +236,7 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kSelectObject, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		FModumateObjectInstance *ob = GetDocument()->GetObjectById(params.GetValue(kObjectID));
+		AModumateObjectInstance *ob = GetDocument()->GetObjectById(params.GetValue(kObjectID));
 		bool selected = params.GetValue(Parameters::kSelected);
 		if (ob != nullptr)
 		{
@@ -255,7 +255,7 @@ void UModumateGameInstance::RegisterAllCommands()
 
 		for (auto obID : obIDs)
 		{
-			FModumateObjectInstance *ob = GetDocument()->GetObjectById(obID);
+			AModumateObjectInstance *ob = GetDocument()->GetObjectById(obID);
 			if (ob != nullptr)
 			{
 				playerState->SetObjectSelected(ob,selected);
@@ -290,7 +290,7 @@ void UModumateGameInstance::RegisterAllCommands()
 	{
 		int32 objID = params.GetValue(kObjectID);
 		FString idString = params.GetValue(kObjectID);
-		FModumateObjectInstance *ob = nullptr;
+		AModumateObjectInstance *ob = nullptr;
 
 		if (objID > 0)
 		{
@@ -312,7 +312,7 @@ void UModumateGameInstance::RegisterAllCommands()
 	RegisterCommand(kDeleteSelectedObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 		AEditModelPlayerController_CPP *playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
 		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(playerController->PlayerState);
-		TArray<FModumateObjectInstance*> obs = playerState->SelectedObjects.Array();
+		TArray<AModumateObjectInstance*> obs = playerState->SelectedObjects.Array();
 		playerState->DeselectAll();
 
 		if (playerController->ToolIsInUse())
@@ -383,7 +383,7 @@ void UModumateGameInstance::RegisterAllCommands()
 	{
 		copySelected();
 		AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		TArray<FModumateObjectInstance*> toBeCut = playerState->SelectedObjects.Array();
+		TArray<AModumateObjectInstance*> toBeCut = playerState->SelectedObjects.Array();
 		playerState->DeselectAll();
 		GetDocument()->DeleteObjects(toBeCut);
 		return true;
@@ -412,20 +412,20 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kDraft, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 
-		FModumateDocument *doc = GetDocument();
+		UModumateDocument *doc = GetDocument();
 		doc->ExportPDF(GetWorld(), *(FPaths::ProjectDir() / TEXT("test.pdf")),FVector::ZeroVector, FVector::ZeroVector);
 		return true;
 	});
 
 	RegisterCommand(kReanalyzeGraph, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		FModumateDocument *doc = GetDocument();
+		UModumateDocument *doc = GetDocument();
 		if (doc)
 		{
 			doc->CalculatePolyhedra();
 
 			TArray<int32> dirtyPlaneIDs;
-			for (const FModumateObjectInstance *obj : doc->GetObjectInstances())
+			for (const AModumateObjectInstance *obj : doc->GetObjectInstances())
 			{
 				if (obj && (obj->GetObjectType() == EObjectType::OTMetaPlane))
 				{
@@ -442,11 +442,11 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kCleanAllObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		FModumateDocument *doc = GetDocument();
+		UModumateDocument *doc = GetDocument();
 		if (doc)
 		{
-			TArray<FModumateObjectInstance *> &allObjects = doc->GetObjectInstances();
-			for (FModumateObjectInstance *obj : allObjects)
+			TArray<AModumateObjectInstance *> &allObjects = doc->GetObjectInstances();
+			for (AModumateObjectInstance *obj : allObjects)
 			{
 				obj->MarkDirty(EObjectDirtyFlags::All);
 			}

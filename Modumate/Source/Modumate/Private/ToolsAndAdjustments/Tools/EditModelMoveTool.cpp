@@ -97,7 +97,7 @@ bool UMoveObjectTool::FrameUpdate()
 				break;
 		};
 
-		FModumateDocument* doc = Controller->GetDocument();
+		UModumateDocument* doc = Controller->GetDocument();
 		if (doc != nullptr)
 		{
 			FVector offset = hitLoc - AnchorPoint;
@@ -122,7 +122,7 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 	if (Controller->EMPlayerState->SnappedCursor.Visible)
 	{
 		const FVector &hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-		FModumateDocument* doc = Controller->GetDocument();
+		UModumateDocument* doc = Controller->GetDocument();
 		if (doc != nullptr)
 		{
 			FVector direction = hitLoc - AnchorPoint;

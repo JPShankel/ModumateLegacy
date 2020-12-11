@@ -8,8 +8,8 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
-FMOIScopeBoxImpl::FMOIScopeBoxImpl()
-	: FModumateObjectInstance()
+AMOIScopeBox::AMOIScopeBox()
+	: AModumateObjectInstance()
 	, EdgeSelectedColor(255.0f / 255.0f, 0.0f / 255.0f, 0.0f / 255.0f)
 	, EdgeColor(255.0f / 255.0f, 45.0f / 255.0f, 45.0f / 255.0f)
 	, HandleScale(0.0015f)
@@ -19,9 +19,9 @@ FMOIScopeBoxImpl::FMOIScopeBoxImpl()
 
 }
 
-AActor* FMOIScopeBoxImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor* AMOIScopeBox::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
-	AActor* returnActor = FModumateObjectInstance::CreateActor(world, loc, rot);
+	AActor* returnActor = AModumateObjectInstance::CreateActor(world, loc, rot);
 	auto controller = world->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 	auto playerState = controller ? controller->EMPlayerState : nullptr;
 	if (playerState)
@@ -31,7 +31,7 @@ AActor* FMOIScopeBoxImpl::CreateActor(UWorld *world, const FVector &loc, const F
 	return returnActor;
 }
 
-void FMOIScopeBoxImpl::PreDestroy()
+void AMOIScopeBox::PreDestroy()
 {
 	auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
 	auto playerState = controller ? controller->EMPlayerState : nullptr;
@@ -41,7 +41,7 @@ void FMOIScopeBoxImpl::PreDestroy()
 	}
 }
 
-void FMOIScopeBoxImpl::SetupDynamicGeometry()
+void AMOIScopeBox::SetupDynamicGeometry()
 {
 	// TODO: generate plane points and extrusion from extents and transform, rather than old-school control points
 #if 0
@@ -61,23 +61,23 @@ void FMOIScopeBoxImpl::SetupDynamicGeometry()
 #endif
 }
 
-void FMOIScopeBoxImpl::UpdateDynamicGeometry()
+void AMOIScopeBox::UpdateDynamicGeometry()
 {
 	SetupDynamicGeometry();
 }
 
-FVector FMOIScopeBoxImpl::GetCorner(int32 index) const
+FVector AMOIScopeBox::GetCorner(int32 index) const
 {
 	// TODO: derive from extents and transform, rather than old-school control points
 	return GetLocation();
 }
 
-FVector FMOIScopeBoxImpl::GetNormal() const
+FVector AMOIScopeBox::GetNormal() const
 {
 	return Normal;
 }
 
-void FMOIScopeBoxImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOIScopeBox::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	// Don't return points or lines if we're snapping,
 	// since otherwise the plane will interfere with edges and vertices.
@@ -110,7 +110,7 @@ void FMOIScopeBoxImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outP
 #endif
 }
 
-void FMOIScopeBoxImpl::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
+void AMOIScopeBox::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
 {
 	TArray<FStructurePoint> ScopeBoxStructurePoints;
 	TArray<FStructureLine> ScopeBoxStructureLines;
@@ -130,12 +130,12 @@ void FMOIScopeBoxImpl::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
 
 }
 
-bool FMOIScopeBoxImpl::ShowStructureOnSelection() const
+bool AMOIScopeBox::ShowStructureOnSelection() const
 {
 	return false;
 }
 
-void FMOIScopeBoxImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+void AMOIScopeBox::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
 	for (int32 i = 0; i < 4; ++i)
 	{

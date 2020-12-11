@@ -4,10 +4,10 @@
 #include "CoreMinimal.h"
 #include "Objects/PlaneBase.h"
 
-class MODUMATE_API FMOISurfacePolygonImpl : public FMOIPlaneImplBase
+class MODUMATE_API AMOISurfacePolygon : public FMOIPlaneImplBase
 {
 public:
-	FMOISurfacePolygonImpl();
+	AMOISurfacePolygon();
 
 	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;

@@ -5,7 +5,7 @@
 
 #include "ModumateTargetingStatics.generated.h"
 
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
 UCLASS(BlueprintType)
 class MODUMATE_API UModumateTargetingStatics : public UBlueprintFunctionLibrary
@@ -13,7 +13,7 @@ class MODUMATE_API UModumateTargetingStatics : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	static int32 GetFaceIndexFromTargetHit(const FModumateObjectInstance* HitObject, const FVector& HitLocation, const FVector& HitNormal);
+	static int32 GetFaceIndexFromTargetHit(const AModumateObjectInstance* HitObject, const FVector& HitLocation, const FVector& HitNormal);
 
-	static void GetConnectedSurfaceGraphs(const FModumateObjectInstance* HitObject, const FVector& HitLocation, TArray<const FModumateObjectInstance*>& OutSurfaceGraphs);
+	static void GetConnectedSurfaceGraphs(const AModumateObjectInstance* HitObject, const FVector& HitLocation, TArray<const AModumateObjectInstance*>& OutSurfaceGraphs);
 };

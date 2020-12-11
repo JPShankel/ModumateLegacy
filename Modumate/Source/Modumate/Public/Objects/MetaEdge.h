@@ -4,10 +4,10 @@
 #include "Objects/EdgeBase.h"
 #include "Objects/MiterNode.h"
 
-class MODUMATE_API FMOIMetaEdgeImpl : public FMOIEdgeImplBase, IMiterNode
+class MODUMATE_API AMOIMetaEdge : public FMOIEdgeImplBase, IMiterNode
 {
 public:
-	FMOIMetaEdgeImpl();
+	AMOIMetaEdge();
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow) override;

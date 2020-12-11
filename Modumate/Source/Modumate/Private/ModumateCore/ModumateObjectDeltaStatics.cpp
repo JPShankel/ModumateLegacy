@@ -7,7 +7,7 @@
 #include "Objects/CutPlane.h"
 #include "Objects/FFE.h"
 
-void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObjectIDs, FModumateDocument *doc, TSet<int32>& OutTransformableIDs)
+void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObjectIDs, UModumateDocument *doc, TSet<int32>& OutTransformableIDs)
 {
 	for (int32 id : InObjectIDs)
 	{
@@ -58,7 +58,7 @@ void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObj
 	}
 }
 
-bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransform>& ObjectMovements, FModumateDocument *doc, UWorld *World, bool bIsPreview)
+bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransform>& ObjectMovements, UModumateDocument *doc, UWorld *World, bool bIsPreview)
 {
 	doc->ClearPreviewDeltas(World, bIsPreview);
 
@@ -176,7 +176,7 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 	{
 		for (auto& kvp : ObjectMovements)
 		{
-			FModumateObjectInstance* moi = doc->GetObjectById(kvp.Key);
+			AModumateObjectInstance* moi = doc->GetObjectById(kvp.Key);
 			FMOIDelta delta;
 			auto& currentData = delta.AddMutationState(moi);
 			if (moi->GetTransformedLocationState(kvp.Value, currentData))

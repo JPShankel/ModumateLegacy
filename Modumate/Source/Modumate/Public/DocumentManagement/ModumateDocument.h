@@ -19,9 +19,9 @@ namespace Modumate
 	class FModumateDraftingView;
 }
 
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
-class MODUMATE_API FModumateDocument
+class MODUMATE_API UModumateDocument
 {
 private:
 
@@ -38,9 +38,9 @@ private:
 	int32 ReservingObjectID;
 	bool bApplyingPreviewDeltas, bFastClearingPreviewDeltas, bSlowClearingPreviewDeltas;
 
-	TArray<FModumateObjectInstance*> ObjectInstanceArray;
-	TMap<int32, FModumateObjectInstance*> ObjectsByID;
-	TMap<int32, FModumateObjectInstance*> DeletedObjects;
+	TArray<AModumateObjectInstance*> ObjectInstanceArray;
+	TMap<int32, AModumateObjectInstance*> ObjectsByID;
+	TMap<int32, AModumateObjectInstance*> DeletedObjects;
 
 	void GatherDocumentMetadata();
 	float DefaultWallHeight;
@@ -65,21 +65,21 @@ private:
 	// The surface graphs used by the current document, mapped by owning object ID
 	TMap<int32, TSharedPtr<Modumate::FGraph2D>> SurfaceGraphs;
 
-	TMap<EObjectDirtyFlags, TArray<FModumateObjectInstance*>> DirtyObjectMap;
+	TMap<EObjectDirtyFlags, TArray<AModumateObjectInstance*>> DirtyObjectMap;
 
 	void RemapOldBIMKeys(FMOIDocumentRecord& DocRec) const;
 
 public:
 
-	FModumateDocument();
-	~FModumateDocument();
+	UModumateDocument();
+	~UModumateDocument();
 
 	// Default Value Library
 	float ElevationDelta;
 
 	// Data
-	FModumateObjectInstance *GetObjectById(int32 id);
-	const FModumateObjectInstance *GetObjectById(int32 id) const;
+	AModumateObjectInstance *GetObjectById(int32 id);
+	const AModumateObjectInstance *GetObjectById(int32 id) const;
 	TSet<int32> HiddenObjectsID;
 	TArray<FModumateCameraView> SavedCameraViews;
 
@@ -89,11 +89,11 @@ public:
 	int32 ReserveNextIDs(int32 reservingObjID);
 	void SetNextID(int32 ID, int32 reservingObjID);
 
-	const TArray<FModumateObjectInstance*>& GetObjectInstances() const { return ObjectInstanceArray; }
-	TArray<FModumateObjectInstance*>& GetObjectInstances() { return ObjectInstanceArray; }
+	const TArray<AModumateObjectInstance*>& GetObjectInstances() const { return ObjectInstanceArray; }
+	TArray<AModumateObjectInstance*>& GetObjectInstances() { return ObjectInstanceArray; }
 
 	bool CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas = nullptr);
-	void RegisterDirtyObject(EObjectDirtyFlags DirtyType, FModumateObjectInstance *DirtyObj, bool bDirty);
+	void RegisterDirtyObject(EObjectDirtyFlags DirtyType, AModumateObjectInstance *DirtyObj, bool bDirty);
 
 	void BeginUndoRedoMacro();
 	void EndUndoRedoMacro();
@@ -137,8 +137,8 @@ public:
 	int32 MakeGroupObject(UWorld *world, const TArray<int32> &ids, bool combineWithExistingGroups, int32 parentID);
 	void UnmakeGroupObjects(UWorld *world, const TArray<int32> &groupIds);
 
-	FModumateObjectInstance *ObjectFromActor(AActor *actor);
-	const FModumateObjectInstance *ObjectFromActor(const AActor *actor) const;
+	AModumateObjectInstance *ObjectFromActor(AActor *actor);
+	const AModumateObjectInstance *ObjectFromActor(const AActor *actor) const;
 
 	void UpdateMitering(UWorld *world, const TArray<int32> &dirtyObjIDs);
 
@@ -161,11 +161,11 @@ public:
 	int32 CalculatePolyhedra() { return VolumeGraph.CalculatePolyhedra(); }
 	bool IsObjectInVolumeGraph(int32 ObjID, Modumate::EGraph3DObjectType &OutObjType) const;
 
-	TArray<const FModumateObjectInstance*> GetObjectsOfType(EObjectType type) const;
-	TArray<FModumateObjectInstance*> GetObjectsOfType(EObjectType type);
+	TArray<const AModumateObjectInstance*> GetObjectsOfType(EObjectType type) const;
+	TArray<AModumateObjectInstance*> GetObjectsOfType(EObjectType type);
 	using FObjectTypeSet = TSet<EObjectType>;
-	TArray<const FModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& types) const;
-	TArray<FModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& types);
+	TArray<const AModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& types) const;
+	TArray<AModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& types);
 
 	void GetObjectIdsByAssembly(const FBIMKey& AssemblyKey, TArray<int32>& OutIDs) const;
 
@@ -176,10 +176,10 @@ public:
 
 	// Deletion and restoration functions used internally by undo/redo-aware functions
 private:
-	bool DeleteObjectImpl(FModumateObjectInstance *ob);
-	bool RestoreObjectImpl(FModumateObjectInstance *ob);
+	bool DeleteObjectImpl(AModumateObjectInstance *ob);
+	bool RestoreObjectImpl(AModumateObjectInstance *ob);
 
-	FModumateObjectInstance* CreateOrRestoreObj(UWorld* World, const FMOIStateData& StateData);
+	AModumateObjectInstance* CreateOrRestoreObj(UWorld* World, const FMOIStateData& StateData);
 
 	// Preview Operations
 public:
@@ -204,15 +204,15 @@ private:
 	bool PostApplyDeltas(UWorld *World);
 
 	// Helper function for ObjectFromActor
-	FModumateObjectInstance *ObjectFromSingleActor(AActor *actor);
+	AModumateObjectInstance *ObjectFromSingleActor(AActor *actor);
 
 	void PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRedo>>& FromBuffer, TArray<TSharedPtr<UndoRedo>>& ToBuffer);
 
 public:
 
-	FModumateObjectInstance *TryGetDeletedObject(int32 id);
+	AModumateObjectInstance *TryGetDeletedObject(int32 id);
 
-	void DeleteObjects(const TArray<FModumateObjectInstance*> &obs, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
+	void DeleteObjects(const TArray<AModumateObjectInstance*> &obs, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
 	void RestoreDeletedObjects(const TArray<int32> &ids);
 	void DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
 
@@ -223,8 +223,8 @@ public:
 	void SetCurrentProjectPath(const FString& currentProjectPath = FString());
 
 	TArray<int32> CloneObjects(UWorld *world, const TArray<int32> &obs, const FTransform& offsetTransform = FTransform::Identity);
-	TArray<FModumateObjectInstance *> CloneObjects(UWorld *world, const TArray<FModumateObjectInstance *> &obs, const FTransform& offsetTransform = FTransform::Identity);
-	int32 CloneObject(UWorld *world, const FModumateObjectInstance *original);
+	TArray<AModumateObjectInstance *> CloneObjects(UWorld *world, const TArray<AModumateObjectInstance *> &obs, const FTransform& offsetTransform = FTransform::Identity);
+	int32 CloneObject(UWorld *world, const AModumateObjectInstance *original);
 
 	bool ExportPDF(UWorld *world, const TCHAR *filepath, const FVector &origin, const FVector &normal);
 	bool ExportDWG(UWorld *world, const TCHAR *filepath);

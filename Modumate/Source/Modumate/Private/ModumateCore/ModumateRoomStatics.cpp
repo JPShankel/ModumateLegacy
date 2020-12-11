@@ -69,7 +69,7 @@ bool UModumateRoomStatics::GetRoomConfigurationsFromProject(UObject* WorldContex
 	}
 
 	bool bSuccess = true;
-	TArray<FModumateObjectInstance *> roomObjs = gameState->Document.GetObjectsOfType(EObjectType::OTRoom);
+	TArray<AModumateObjectInstance *> roomObjs = gameState->Document.GetObjectsOfType(EObjectType::OTRoom);
 	for (auto *roomObj : roomObjs)
 	{
 		auto &roomConfig = OutRoomConfigs.AddDefaulted_GetRef();
@@ -79,7 +79,7 @@ bool UModumateRoomStatics::GetRoomConfigurationsFromProject(UObject* WorldContex
 	return bSuccess;
 }
 
-bool UModumateRoomStatics::GetRoomConfig(const FModumateObjectInstance *RoomObj, FRoomConfigurationBlueprint &OutRoomConfig)
+bool UModumateRoomStatics::GetRoomConfig(const AModumateObjectInstance *RoomObj, FRoomConfigurationBlueprint &OutRoomConfig)
 {
 	if (!ensure(RoomObj))
 	{
@@ -124,11 +124,11 @@ bool UModumateRoomStatics::GetRoomConfig(UObject* WorldContextObject, int32 Room
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
-	FModumateObjectInstance *roomObj = gameState ? gameState->Document.GetObjectById(RoomID) : nullptr;
+	AModumateObjectInstance *roomObj = gameState ? gameState->Document.GetObjectById(RoomID) : nullptr;
 	return GetRoomConfig(roomObj, OutRoomConfig);
 }
 
-bool UModumateRoomStatics::SetRoomConfigFromKey(FModumateObjectInstance *RoomObj, const FBIMKey& ConfigKey)
+bool UModumateRoomStatics::SetRoomConfigFromKey(AModumateObjectInstance *RoomObj, const FBIMKey& ConfigKey)
 {
 	UWorld *world = RoomObj ? RoomObj->GetWorld() : nullptr;
 	AEditModelGameMode_CPP *gameMode = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
@@ -163,12 +163,12 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(UObject* WorldContextObject, int
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
-	FModumateObjectInstance *roomObj = gameState ? gameState->Document.GetObjectById(RoomID) : nullptr;
+	AModumateObjectInstance *roomObj = gameState ? gameState->Document.GetObjectById(RoomID) : nullptr;
 
 	return SetRoomConfigFromKey(roomObj, ConfigKey);
 }
 
-void UModumateRoomStatics::UpdateDerivedRoomProperties(FModumateObjectInstance *RoomObj)
+void UModumateRoomStatics::UpdateDerivedRoomProperties(AModumateObjectInstance *RoomObj)
 {
 	// Retreive the room area
 	ADynamicMeshActor *roomMesh = RoomObj ? Cast<ADynamicMeshActor>(RoomObj->GetActor()) : nullptr;
@@ -199,10 +199,10 @@ void UModumateRoomStatics::UpdateDerivedRoomProperties(FModumateObjectInstance *
 #endif
 }
 
-bool UModumateRoomStatics::CanRoomContainFace(const FModumateDocument *Document, FGraphSignedID FaceID)
+bool UModumateRoomStatics::CanRoomContainFace(const UModumateDocument *Document, FGraphSignedID FaceID)
 {
 	const FGraph3DFace *graphFace = Document->GetVolumeGraph().FindFace(FaceID);
-	const FModumateObjectInstance *planeObj = Document->GetObjectById(FMath::Abs(FaceID));
+	const AModumateObjectInstance *planeObj = Document->GetObjectById(FMath::Abs(FaceID));
 
 	if ((graphFace == nullptr) || (planeObj == nullptr))
 	{
@@ -221,7 +221,7 @@ bool UModumateRoomStatics::CanRoomContainFace(const FModumateDocument *Document,
 	const TArray<int32> &planeChildIDs = planeObj->GetChildIDs();
 	for (int32 planeChildID : planeChildIDs)
 	{
-		const FModumateObjectInstance *planeChildObj = Document->GetObjectById(planeChildID);
+		const AModumateObjectInstance *planeChildObj = Document->GetObjectById(planeChildID);
 		if (planeChildObj && (planeChildObj->GetObjectType() == EObjectType::OTFloorSegment))
 		{
 			return true;
@@ -231,7 +231,7 @@ bool UModumateRoomStatics::CanRoomContainFace(const FModumateDocument *Document,
 	return false;
 }
 
-void UModumateRoomStatics::CalculateRoomChanges(const FModumateDocument *Document, bool &bOutAnyChange,
+void UModumateRoomStatics::CalculateRoomChanges(const UModumateDocument *Document, bool &bOutAnyChange,
 	TMap<int32, int32> &OutOldRoomIDsToNewRoomIndices,
 	TMap<int32, TArray<int32>> &OutNewRoomsFaceIDs,
 	TSet<int32> &OutOldRoomsToDeleteIDs,
@@ -251,9 +251,9 @@ void UModumateRoomStatics::CalculateRoomChanges(const FModumateDocument *Documen
 	TMap<int32, TArray<int32>> oldRoomsFaceIDs;
 
 	// Gather the current set of room objects and their FaceIDs, to compare against the new room calculation
-	TArray<const FModumateObjectInstance *> curRoomObjs = Document->GetObjectsOfType(EObjectType::OTRoom);
+	TArray<const AModumateObjectInstance *> curRoomObjs = Document->GetObjectsOfType(EObjectType::OTRoom);
 	// TODO: refactor room faces using strongly-typed InstanceProperties
-	for (const FModumateObjectInstance *curRoomObj : curRoomObjs)
+	for (const AModumateObjectInstance *curRoomObj : curRoomObjs)
 	{
 		TArray<FGraphSignedID> roomFaceIDs;// = curRoomObj->GetControlPointIndices();
 		roomFaceIDs.Sort();
@@ -263,8 +263,8 @@ void UModumateRoomStatics::CalculateRoomChanges(const FModumateDocument *Documen
 	// Gather the navigable plane IDs that can be eligible for room traversal.
 	// TODO: don't naively consider all floors; there may be other navigable plane-hosted objects.
 	TSet<int32> floorPlaneIDs;
-	TArray<const FModumateObjectInstance *> floorObjs = Document->GetObjectsOfType(EObjectType::OTFloorSegment);
-	for (const FModumateObjectInstance *floorObj : floorObjs)
+	TArray<const AModumateObjectInstance *> floorObjs = Document->GetObjectsOfType(EObjectType::OTFloorSegment);
+	for (const AModumateObjectInstance *floorObj : floorObjs)
 	{
 		int32 floorParentID = floorObj->GetParentID();
 		floorPlaneIDs.Add(floorParentID);
@@ -338,7 +338,7 @@ void UModumateRoomStatics::CalculateRoomChanges(const FModumateDocument *Documen
 	}
 }
 
-void UModumateRoomStatics::CalculateRoomNumbers(const FModumateDocument *Document,
+void UModumateRoomStatics::CalculateRoomNumbers(const UModumateDocument *Document,
 	TMap<int32, FString> &OutOldRoomNumbers, TMap<int32, FString> &OutNewRoomNumbers)
 {
 	OutOldRoomNumbers.Reset();
@@ -349,7 +349,7 @@ void UModumateRoomStatics::CalculateRoomNumbers(const FModumateDocument *Documen
 		return;
 	}
 
-	TArray<const FModumateObjectInstance *> curRoomObjs = Document->GetObjectsOfType(EObjectType::OTRoom);
+	TArray<const AModumateObjectInstance *> curRoomObjs = Document->GetObjectsOfType(EObjectType::OTRoom);
 	int32 totalNumRooms = curRoomObjs.Num();
 
 	// TODO: handle having multiple floors
@@ -367,7 +367,7 @@ void UModumateRoomStatics::CalculateRoomNumbers(const FModumateDocument *Documen
 
 	for (int32 roomIdx = 0; roomIdx < totalNumRooms; ++roomIdx)
 	{
-		const FModumateObjectInstance *roomObj = curRoomObjs[roomIdx];
+		const AModumateObjectInstance *roomObj = curRoomObjs[roomIdx];
 		if (!ensure(roomObj))
 		{
 			return;

@@ -61,7 +61,7 @@ bool UPortalToolBase::FrameUpdate()
 	FQuat lastWorldRot = WorldRot;
 
 	UWorld* world = Controller->GetWorld();
-	FModumateObjectInstance *targetPlaneMOI = nullptr;
+	AModumateObjectInstance *targetPlaneMOI = nullptr;
 	const auto &snapCursor = Controller->EMPlayerState->SnappedCursor;
 	FVector hitLoc = snapCursor.WorldPosition;
 
@@ -203,7 +203,7 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 
 	UWorld* world = Controller->GetWorld();
 	int32 newParentID = MOD_ID_NONE;
-	FModumateObjectInstance* curTargetPlaneObj = GameState->Document.GetObjectById(CurTargetPlaneID);
+	AModumateObjectInstance* curTargetPlaneObj = GameState->Document.GetObjectById(CurTargetPlaneID);
 	const FGraph3DFace* curTargetFace = GameState->Document.GetVolumeGraph().FindFace(CurTargetPlaneID);
 
 	if ((curTargetPlaneObj == nullptr) || (curTargetFace == nullptr))
@@ -223,7 +223,7 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 		{
 			auto deleteChildrenDelta = MakeShared<FMOIDelta>();
 
-			for (FModumateObjectInstance* curTargetPlaneChild : curTargetPlaneObj->GetChildObjects())
+			for (AModumateObjectInstance* curTargetPlaneChild : curTargetPlaneObj->GetChildObjects())
 			{
 				deleteChildrenDelta->AddCreateDestroyState(curTargetPlaneChild->GetStateData(), EMOIDeltaType::Destroy);
 			}

@@ -4,10 +4,10 @@
 #include "CoreMinimal.h"
 #include "Objects/PlaneBase.h"
 
-class MODUMATE_API FMOIMetaPlaneImpl : public FMOIPlaneImplBase
+class MODUMATE_API AMOIMetaPlane : public FMOIPlaneImplBase
 {
 public:
-	FMOIMetaPlaneImpl();
+	AMOIMetaPlane();
 
 	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupDynamicGeometry() override;

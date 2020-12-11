@@ -18,7 +18,7 @@ class AActor;
 class AAdjustmentHandleActor;
 class AEditModelPlayerController_CPP;
 class UHUDDrawWidget;
-class FModumateDocument;
+class UModumateDocument;
 
 namespace Modumate {
 	class FDraftingComposite;
@@ -28,13 +28,13 @@ class IMiterNode;
 class ILayeredObject;
 class ISceneCaptureObject;
 
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
-class MODUMATE_API FModumateObjectInstance
+class MODUMATE_API AModumateObjectInstance
 {
 public:
-	FModumateObjectInstance();
-	virtual ~FModumateObjectInstance();
+	AModumateObjectInstance();
+	virtual ~AModumateObjectInstance();
 
 	virtual void BeginPlay();
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);//override;
@@ -107,11 +107,11 @@ protected:
 
 	// SUPER TEMPORARY TODO: we don't have a way to expose derived/non-definitional implementation-specific data, so this will be here until MOIs are UObjects.
 	friend class UModumateRoofStatics;
-	friend class FModumateDocument;
+	friend class UModumateDocument;
 
 	TWeakObjectPtr<AActor> MeshActor = nullptr;
 	TWeakObjectPtr<UWorld> World = nullptr;
-	FModumateDocument *Document = nullptr;
+	UModumateDocument *Document = nullptr;
 
 	FMOIStateData StateData;
 
@@ -173,26 +173,26 @@ public:
 	bool HasActor(const AActor *actor) const { return MeshActor == actor; }
 	AActor* GetActor() { return MeshActor.Get(); }
 	const AActor* GetActor() const { return MeshActor.Get(); }
-	FModumateDocument* GetDocument() { return Document; }
-	const FModumateDocument* GetDocument() const { return Document; }
+	UModumateDocument* GetDocument() { return Document; }
+	const UModumateDocument* GetDocument() const { return Document; }
 
 	void Destroy(bool bFullDelete);
 	void Restore();
 
 	bool IsDestroyed() const { return bDestroyed; }
 
-	FModumateObjectInstance *GetParentObject();
-	const FModumateObjectInstance *GetParentObject() const;
-	TArray<FModumateObjectInstance *> GetChildObjects();
-	TArray<const FModumateObjectInstance *> GetChildObjects() const;
+	AModumateObjectInstance *GetParentObject();
+	const AModumateObjectInstance *GetParentObject() const;
+	TArray<AModumateObjectInstance *> GetChildObjects();
+	TArray<const AModumateObjectInstance *> GetChildObjects() const;
 	const TArray<int32> &GetChildIDs() const { return CachedChildIDs; }
 	bool HasChildID(int32 ChildID) const;
 
 	void GetConnectedIDs(TArray<int32> &connectedIDs) const;
-	void GetConnectedMOIs(TArray<FModumateObjectInstance *> &connectedMOIs) const;
+	void GetConnectedMOIs(TArray<AModumateObjectInstance *> &connectedMOIs) const;
 
-	TArray<FModumateObjectInstance *> GetAllDescendents();
-	TArray<const FModumateObjectInstance *> GetAllDescendents() const;
+	TArray<AModumateObjectInstance *> GetAllDescendents();
+	TArray<const AModumateObjectInstance *> GetAllDescendents() const;
 
 	// Geometry
 	void MarkDirty(EObjectDirtyFlags NewDirtyFlags);

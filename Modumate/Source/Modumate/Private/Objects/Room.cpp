@@ -12,13 +12,13 @@
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateRoomStatics.h"
 
-FMOIRoomImpl::FMOIRoomImpl()
-	: FModumateObjectInstance()
+AMOIRoom::AMOIRoom()
+	: AModumateObjectInstance()
 	, DynamicMaterial(nullptr)
 {
 }
 
-FVector FMOIRoomImpl::GetLocation() const
+FVector AMOIRoom::GetLocation() const
 {
 	if (DynamicMeshActor != nullptr)
 	{
@@ -27,14 +27,14 @@ FVector FMOIRoomImpl::GetLocation() const
 	return FVector::ZeroVector;
 }
 
-FQuat FMOIRoomImpl::GetRotation() const
+FQuat AMOIRoom::GetRotation() const
 {
 	return FQuat::Identity;
 }
 
-bool FMOIRoomImpl::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
+bool AMOIRoom::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
-	if (!FModumateObjectInstance::OnHovered(controller, bIsHovered))
+	if (!AModumateObjectInstance::OnHovered(controller, bIsHovered))
 	{
 		return false;
 	}
@@ -43,9 +43,9 @@ bool FMOIRoomImpl::OnHovered(AEditModelPlayerController_CPP *controller, bool bI
 	return true;
 }
 
-bool FMOIRoomImpl::OnSelected(bool bIsSelected)
+bool AMOIRoom::OnSelected(bool bIsSelected)
 {
-	if (!FModumateObjectInstance::OnSelected(bIsSelected))
+	if (!AModumateObjectInstance::OnSelected(bIsSelected))
 	{
 		return false;
 	}
@@ -54,9 +54,9 @@ bool FMOIRoomImpl::OnSelected(bool bIsSelected)
 	return true;
 }
 
-void FMOIRoomImpl::SetupDynamicGeometry()
+void AMOIRoom::SetupDynamicGeometry()
 {
-	const FModumateDocument *doc = GetDocument();
+	const UModumateDocument *doc = GetDocument();
 	if (doc == nullptr)
 	{
 		return;
@@ -68,7 +68,7 @@ void FMOIRoomImpl::SetupDynamicGeometry()
 	for (FGraphSignedID faceID : { MOD_ID_NONE })//GetControlPointIndices())
 	{
 		const Modumate::FGraph3DFace *graphFace = volumeGraph.FindFace(faceID);
-		const FModumateObjectInstance *planeObj = doc->GetObjectById(FMath::Abs(faceID));
+		const AModumateObjectInstance *planeObj = doc->GetObjectById(FMath::Abs(faceID));
 		if (!ensureAlways(graphFace && planeObj))
 		{
 			continue;
@@ -91,20 +91,20 @@ void FMOIRoomImpl::SetupDynamicGeometry()
 	UpdateMaterial();
 }
 
-void FMOIRoomImpl::UpdateDynamicGeometry()
+void AMOIRoom::UpdateDynamicGeometry()
 {
 	SetupDynamicGeometry();
 }
 
-void FMOIRoomImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOIRoom::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	const FModumateDocument *doc = GetDocument();
+	const UModumateDocument *doc = GetDocument();
 	if (doc)
 	{
 		// TODO: refactor room faces using strongly-typed InstanceProperties
 		for (FGraphSignedID faceID : { MOD_ID_NONE })//GetControlPointIndices())
 		{
-			const FModumateObjectInstance *planeObj = doc->GetObjectById(FMath::Abs(faceID));
+			const AModumateObjectInstance *planeObj = doc->GetObjectById(FMath::Abs(faceID));
 			if (planeObj == nullptr)
 			{
 				continue;
@@ -117,12 +117,12 @@ void FMOIRoomImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoint
 	}
 }
 
-float FMOIRoomImpl::GetAlpha()
+float AMOIRoom::GetAlpha()
 {
 	return (IsHovered() ? 1.0f : 0.75f) * (IsSelected() ? 1.0f : 0.75f);
 }
 
-void FMOIRoomImpl::UpdateMaterial()
+void AMOIRoom::UpdateMaterial()
 {
 	if (GameMode.IsValid() && DynamicMeshActor.IsValid())
 	{
@@ -135,7 +135,7 @@ void FMOIRoomImpl::UpdateMaterial()
 	}
 }
 
-void FMOIRoomImpl::SetIsDynamic(bool bIsDynamic)
+void AMOIRoom::SetIsDynamic(bool bIsDynamic)
 {
 	if (DynamicMeshActor.IsValid())
 	{
@@ -143,7 +143,7 @@ void FMOIRoomImpl::SetIsDynamic(bool bIsDynamic)
 	}
 }
 
-bool FMOIRoomImpl::GetIsDynamic() const
+bool AMOIRoom::GetIsDynamic() const
 {
 	return DynamicMeshActor.IsValid() && DynamicMeshActor->GetIsDynamic();
 }

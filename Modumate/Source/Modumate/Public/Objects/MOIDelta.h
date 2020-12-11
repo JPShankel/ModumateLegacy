@@ -7,7 +7,7 @@
 
 #include "MOIDelta.generated.h"
 
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
 /**
  * A pair of MOI states, and the desired operation, so that a single MOI delta can perform multiple operations
@@ -36,11 +36,11 @@ public:
 
 	void AddCreateDestroyState(const FMOIStateData& State, EMOIDeltaType DeltaType);
 	void AddCreateDestroyStates(const TArray<FMOIStateData>& InStates, EMOIDeltaType DeltaType);
-	FMOIStateData& AddMutationState(const FModumateObjectInstance* Object);
-	void AddMutationState(const FModumateObjectInstance* Object, const FMOIStateData& OldState, const FMOIStateData& NewState);
-	void AddMutationStates(const TArray<FModumateObjectInstance*>& Objects);
+	FMOIStateData& AddMutationState(const AModumateObjectInstance* Object);
+	void AddMutationState(const AModumateObjectInstance* Object, const FMOIStateData& OldState, const FMOIStateData& NewState);
+	void AddMutationStates(const TArray<AModumateObjectInstance*>& Objects);
 
-	virtual bool ApplyTo(FModumateDocument* doc, UWorld* world) const override;
+	virtual bool ApplyTo(UModumateDocument* doc, UWorld* world) const override;
 	virtual FDeltaPtr MakeInverse() const override;
 
 	TArray<FMOIDeltaState> States;

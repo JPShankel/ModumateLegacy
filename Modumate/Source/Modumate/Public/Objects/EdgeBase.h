@@ -6,7 +6,7 @@
 class UWorld;
 class ALineActor;
 
-class MODUMATE_API FMOIEdgeImplBase : public FModumateObjectInstance
+class MODUMATE_API FMOIEdgeImplBase : public AModumateObjectInstance
 {
 public:
 	FMOIEdgeImplBase();
@@ -27,7 +27,7 @@ protected:
 	void UpdateMaterial();
 
 	TWeakObjectPtr<UWorld> World;
-	TArray<FModumateObjectInstance*> CachedConnectedMOIs;
+	TArray<AModumateObjectInstance*> CachedConnectedMOIs;
 	TWeakObjectPtr<ALineActor> LineActor;
 	FColor SelectedColor, HoveredColor, BaseColor;
 	float HoverThickness, SelectedThickness;

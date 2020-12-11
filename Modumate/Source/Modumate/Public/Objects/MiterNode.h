@@ -3,7 +3,7 @@
 
 #include "Objects/LayeredObjectInterface.h"
 
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
 namespace Modumate
 {
@@ -40,7 +40,7 @@ struct MODUMATE_API FMiterParticipantData
 	bool bValid = false;
 
 	// The pointer to the actual plane-hosted object
-	const FModumateObjectInstance* MOI = nullptr;
+	const AModumateObjectInstance* MOI = nullptr;
 
 	// The pointer to the actual graph face for this object
 	const Modumate::FGraph3DFace* GraphFace = nullptr;
@@ -95,7 +95,7 @@ struct MODUMATE_API FMiterParticipantData
 struct MODUMATE_API FMiterData
 {
 	// The pointer to the actual miter edge object
-	const FModumateObjectInstance* MOI = nullptr;
+	const AModumateObjectInstance* MOI = nullptr;
 
 	// The pointer to the actual graph edge for this object
 	const Modumate::FGraph3DEdge* GraphEdge = nullptr;
@@ -120,7 +120,7 @@ struct MODUMATE_API FMiterData
 	void Reset();
 
 	// Given a miter object, update all of the miter details
-	bool GatherDetails(const FModumateObjectInstance *InMiterObject);
+	bool GatherDetails(const AModumateObjectInstance *InMiterObject);
 
 	// Once all of the miter details have been gathered, calculate where all of the layers are extended.
 	bool CalculateMitering();

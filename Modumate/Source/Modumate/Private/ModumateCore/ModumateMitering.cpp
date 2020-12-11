@@ -12,9 +12,9 @@ namespace Modumate
 {
 	namespace Mitering
 	{
-		const FModumateObjectInstance *FMiterHelpers::GetChildLayeredObj(const FModumateObjectInstance *PlaneObj)
+		const AModumateObjectInstance *FMiterHelpers::GetChildLayeredObj(const AModumateObjectInstance *PlaneObj)
 		{
-			const FModumateDocument *doc = PlaneObj ? PlaneObj->GetDocument() : nullptr;
+			const UModumateDocument *doc = PlaneObj ? PlaneObj->GetDocument() : nullptr;
 			if (!ensure(doc != nullptr))
 			{
 				return nullptr;
@@ -28,7 +28,7 @@ namespace Modumate
 
 			// The layered interface is intended as a condition and requirement for mitering,
 			// even if we aren't fully taking advantage of its cached layer information yet.
-			const FModumateObjectInstance *childObj = doc->GetObjectById(childIDs[0]);
+			const AModumateObjectInstance *childObj = doc->GetObjectById(childIDs[0]);
 			if (childObj && childObj->GetLayeredInterface())
 			{
 				return childObj;
@@ -37,10 +37,10 @@ namespace Modumate
 			return nullptr;
 		}
 
-		bool FMiterHelpers::UpdateMiteredLayerGeoms(const FModumateObjectInstance *PlaneHostedObj, const FGraph3DFace *PlaneFace,
+		bool FMiterHelpers::UpdateMiteredLayerGeoms(const AModumateObjectInstance *PlaneHostedObj, const FGraph3DFace *PlaneFace,
 			const TArray<FPolyHole3D> *Holes, TArray<FLayerGeomDef> &OutLayerGeometries)
 		{
-			const FModumateObjectInstance *parentPlane = PlaneHostedObj ? PlaneHostedObj->GetParentObject() : nullptr;
+			const AModumateObjectInstance *parentPlane = PlaneHostedObj ? PlaneHostedObj->GetParentObject() : nullptr;
 			if (!ensureAlways(PlaneHostedObj && parentPlane && PlaneFace))
 			{
 				return false;
@@ -62,7 +62,7 @@ namespace Modumate
 			int32 numLayers = layers.Num();
 			OutLayerGeometries.SetNum(numLayers);
 
-			const FModumateDocument *doc = PlaneHostedObj->GetDocument();
+			const UModumateDocument *doc = PlaneHostedObj->GetDocument();
 
 			// Collate the edge extensions by layer, so that we can build each layer's geometry independently.
 			// Sourcing them from the miter node interface allows separate miter logic to determine
@@ -77,7 +77,7 @@ namespace Modumate
 			for (int32 edgeIdx = 0; edgeIdx < numPoints; ++edgeIdx)
 			{
 				FGraphSignedID edgeID = PlaneFace->EdgeIDs[edgeIdx];
-				const FModumateObjectInstance* edgeObj = doc->GetObjectById(FMath::Abs(edgeID));
+				const AModumateObjectInstance* edgeObj = doc->GetObjectById(FMath::Abs(edgeID));
 				const IMiterNode *miterNode = edgeObj ? edgeObj->GetMiterInterface() : nullptr;
 				if (!ensure(miterNode))
 				{

@@ -13,7 +13,7 @@ using namespace Modumate::Units;
 
 namespace Modumate {
 
-	FPresentationPlan::FPresentationPlan(const FModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID)
+	FPresentationPlan::FPresentationPlan(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID)
 		: FDraftingDrawing(doc,world,captureObjID)
 	{
 		bScaleToFit = true;

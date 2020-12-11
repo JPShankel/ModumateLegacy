@@ -8,7 +8,7 @@
 
 DECLARE_CYCLE_STAT(TEXT("Snap-points"), STAT_ModumateSnapPoints, STATGROUP_Modumate)
 
-FModumateSnappingView::FModumateSnappingView(FModumateDocument *document, AEditModelPlayerController_CPP *controller)
+FModumateSnappingView::FModumateSnappingView(UModumateDocument *document, AEditModelPlayerController_CPP *controller)
 	: Document(document)
 	, Controller(controller)
 {

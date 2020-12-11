@@ -11,7 +11,7 @@ using namespace Modumate::Units;
 
 namespace Modumate {
 
-	FDoorSchedule::FDoorSchedule(const FModumateDocument *doc)
+	FDoorSchedule::FDoorSchedule(const UModumateDocument *doc)
 	{
 		Title = MakeShareable(new FDraftingText(
 			LOCTEXT("title", "Door Schedule: Instances"),
@@ -74,11 +74,11 @@ namespace Modumate {
 			// TODO: Use new object properties
 			/*
 			// Mark
-			row.Add(doorSchedule->MakeDraftingText(FText::FromString(door->GetMetaValue(FModumateObjectInstance::Param_InstanceMarkRoomID))));
+			row.Add(doorSchedule->MakeDraftingText(FText::FromString(door->GetMetaValue(AModumateObjectInstance::Param_InstanceMarkRoomID))));
 
 			// Other room - this column has a specific font configuration
 			row.Add(new FDraftingText(
-				FText::FromString(door->GetMetaValue(FModumateObjectInstance::Param_InstanceMarkOtherRoomID)),
+				FText::FromString(door->GetMetaValue(AModumateObjectInstance::Param_InstanceMarkOtherRoomID)),
 				doorSchedule->DefaultFontSize,
 				FMColor::Gray144,
 				FontType::Italic));

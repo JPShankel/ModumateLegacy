@@ -14,7 +14,7 @@ static const TCHAR *kModumateRecoveryFile = TEXT("_tempBackupNew.mdmt");
 static const TCHAR *kModumateRecoveryFileBackup = TEXT("_tempBackupOld.mdmt");
 static const TCHAR *kModumateCleanShutdownFile = TEXT("_modumateDidNotShutDownCleanly.txt");
 
-class MODUMATE_API FModumateDocument;
+class MODUMATE_API UModumateDocument;
 class MODUMATE_API FModumateAccountManager;
 
 class IAnalyticsProvider;
@@ -52,7 +52,7 @@ private:
 	TSharedPtr<IAnalyticsProvider> AnalyticsInstance;
 	TSharedPtr<FModumateAccountManager> AccountManager;
 
-	FModumateDocument *GetDocument();
+	UModumateDocument *GetDocument();
 
 	void OnLoginResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void ProcessLogin(const FHttpResponsePtr Response);

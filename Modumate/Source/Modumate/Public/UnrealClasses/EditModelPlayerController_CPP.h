@@ -22,8 +22,8 @@ class UEditModelCameraController;
 class UEditModelInputAutomation;
 class UEditModelInputHandler;
 class UHUDDrawWidget;
-class FModumateDocument;
-class FModumateObjectInstance;
+class UModumateDocument;
+class AModumateObjectInstance;
 class FModumateSnappingView;
 
 UENUM(BlueprintType)
@@ -51,7 +51,7 @@ class MODUMATE_API AEditModelPlayerController_CPP : public APlayerController
 
 private:
 
-	FModumateDocument *Document;
+	UModumateDocument *Document;
 	FModumateSnappingView *SnappingView;
 
 	TSet<int32> SnappingIDsToIgnore;
@@ -83,9 +83,9 @@ private:
 	FMouseWorldHitType GetUserSnapPointMouseHit(const FVector &mouseLoc, const FVector &mouseDir) const;
 
 	// These are cached helpers for GetObjectMouseHit, to avoid allocating new TArrays on each call for GetObjectMouseHit.
-	mutable TArray<FModumateObjectInstance *> CurHitPointMOIs;
+	mutable TArray<AModumateObjectInstance *> CurHitPointMOIs;
 	mutable TArray<FVector> CurHitPointLocations;
-	mutable TArray<FModumateObjectInstance *> CurHitLineMOIs;
+	mutable TArray<AModumateObjectInstance *> CurHitLineMOIs;
 	mutable TArray<TPair<FVector, FVector>> CurHitLineLocations;
 
 protected:
@@ -174,7 +174,7 @@ public:
 	void TickInput(float DeltaTime);
 
 	void AddAllOriginAffordances() const;
-	void SetObjectSelected(const FModumateObjectInstance *ob, bool selected);
+	void SetObjectSelected(const AModumateObjectInstance *ob, bool selected);
 
 	UFUNCTION()
 	void OnControllerTimer();
@@ -231,11 +231,11 @@ public:
 	UFUNCTION()
 	void CleanSelectedObjects();
 
-	void SetViewGroupObject(const FModumateObjectInstance *ob);
+	void SetViewGroupObject(const AModumateObjectInstance *ob);
 
 	Modumate::FModumateFunctionParameterSet ModumateCommand(const Modumate::FModumateCommand &cmd);
 
-	FModumateDocument *GetDocument() const { return Document; }
+	UModumateDocument *GetDocument() const { return Document; }
 	FModumateSnappingView *GetSnappingView() const { return SnappingView; }
 
 	/*  Assembly Layer Inputs */

@@ -18,21 +18,21 @@
 
 class AEditModelPlayerController_CPP;
 
-FMOIFFEImpl::FMOIFFEImpl()
-	: FModumateObjectInstance()
+AMOIFFE::AMOIFFE()
+	: AModumateObjectInstance()
 	, World(nullptr)
 	, CachedLocation(ForceInitToZero)
 	, CachedRotation(ForceInit)
 	, CachedFaceNormal(ForceInitToZero)
 {}
 
-AActor *FMOIFFEImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor *AMOIFFE::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
 	World = world;
 	return world->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform(rot, loc));
 }
 
-FVector FMOIFFEImpl::GetLocation() const
+FVector AMOIFFE::GetLocation() const
 {
 	if (GetActor() != nullptr)
 	{
@@ -42,7 +42,7 @@ FVector FMOIFFEImpl::GetLocation() const
 	return CachedLocation;
 }
 
-FQuat FMOIFFEImpl::GetRotation() const
+FQuat AMOIFFE::GetRotation() const
 {
 	if (GetActor() != nullptr)
 	{
@@ -52,13 +52,13 @@ FQuat FMOIFFEImpl::GetRotation() const
 	return CachedRotation;
 }
 
-void FMOIFFEImpl::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+void AMOIFFE::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 	OutStructDef = InstanceData.StaticStruct();
 	OutStructPtr = &InstanceData;
 }
 
-void FMOIFFEImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+void AMOIFFE::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
 	for (int32 i = 0; i < 4; ++i)
 	{
@@ -70,18 +70,18 @@ void FMOIFFEImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *control
 	auto ffeInvertHandle = MakeHandle<AAdjustFFEInvertHandle>();
 }
 
-void FMOIFFEImpl::SetupDynamicGeometry()
+void AMOIFFE::SetupDynamicGeometry()
 {
 	// TODO: re-implement wall-mounted FF&E, either with optional surface graphs meta vertex mounts
 	InternalUpdateGeometry();
 }
 
-void FMOIFFEImpl::UpdateDynamicGeometry()
+void AMOIFFE::UpdateDynamicGeometry()
 {
 	InternalUpdateGeometry();
 }
 
-void FMOIFFEImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOIFFE::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	const ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(GetActor());
 	FVector assemblyNormal = GetAssembly().Normal;
@@ -124,7 +124,7 @@ void FMOIFFEImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints
 	}
 }
 
-void FMOIFFEImpl::InternalUpdateGeometry()
+void AMOIFFE::InternalUpdateGeometry()
 {
 	ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(GetActor());
 	cma->MakeFromAssembly(GetAssembly(), FVector::OneVector, InstanceData.bLateralInverted, true);
@@ -136,7 +136,7 @@ void FMOIFFEImpl::InternalUpdateGeometry()
 	cma->SetActorTransform(dataStateTransform);
 }
 
-void FMOIFFEImpl::SetIsDynamic(bool bIsDynamic)
+void AMOIFFE::SetIsDynamic(bool bIsDynamic)
 {
 	auto meshActor = Cast<ACompoundMeshActor>(GetActor());
 	if (meshActor)
@@ -145,7 +145,7 @@ void FMOIFFEImpl::SetIsDynamic(bool bIsDynamic)
 	}
 }
 
-bool FMOIFFEImpl::GetIsDynamic() const
+bool AMOIFFE::GetIsDynamic() const
 {
 	auto meshActor = Cast<ACompoundMeshActor>(GetActor());
 	if (meshActor)
@@ -155,7 +155,7 @@ bool FMOIFFEImpl::GetIsDynamic() const
 	return false;
 }
 
-bool FMOIFFEImpl::GetInvertedState(FMOIStateData& OutState) const
+bool AMOIFFE::GetInvertedState(FMOIStateData& OutState) const
 {
 	OutState = GetStateData();
 
@@ -165,7 +165,7 @@ bool FMOIFFEImpl::GetInvertedState(FMOIStateData& OutState) const
 	return OutState.CustomData.SaveStructData(modifiedFFEData);
 }
 
-bool FMOIFFEImpl::GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const
+bool AMOIFFE::GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const
 {
 	OutState = GetStateData();
 

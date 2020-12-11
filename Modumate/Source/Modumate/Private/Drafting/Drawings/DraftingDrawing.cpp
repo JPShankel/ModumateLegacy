@@ -11,11 +11,11 @@
 
 namespace Modumate {
 
-	FDraftingDrawing::FDraftingDrawing(const FModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID) :
+	FDraftingDrawing::FDraftingDrawing(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID) :
 		Doc(doc), World(world), CaptureObjID(captureObjID) {}
 
 	namespace {
-		TArray<FVector> GetCorners(const FModumateObjectInstance * Object)
+		TArray<FVector> GetCorners(const AModumateObjectInstance * Object)
 		{
 			TArray<FVector> corners;
 			if (ensureAlways(Object->GetNumCorners() == 4))
@@ -173,7 +173,7 @@ namespace Modumate {
 		}
 
 		TArray<TArray<FVector>> WallCutPerimeters;
-		TArray<const FModumateObjectInstance*> miscDraftObjects(Doc->GetObjectsOfType(
+		TArray<const AModumateObjectInstance*> miscDraftObjects(Doc->GetObjectsOfType(
 			{ EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTFinish, EObjectType::OTTrim }));
 
 		for (const auto* miscObject: miscDraftObjects)
@@ -187,7 +187,7 @@ namespace Modumate {
 		ParentPage->lineClipping->AddTrianglesFromDoc(Doc);
 
 		// Draw all separators, portals.
-		TArray<const FModumateObjectInstance*> beyondCutObjects(Doc->GetObjectsOfType({
+		TArray<const AModumateObjectInstance*> beyondCutObjects(Doc->GetObjectsOfType({
 			EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTCeiling,
 			EObjectType::OTRoofFace, EObjectType::OTWindow, EObjectType::OTDoor,
 			EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTRailSegment,

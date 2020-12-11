@@ -54,8 +54,8 @@ struct FRoomConfigurationBlueprint
 };
 
 // TODO: this should be defined by BIM, rather than a USTRUCT table row and a Blueprintable subclass
-class FModumateDocument;
-class FModumateObjectInstance;
+class UModumateDocument;
+class AModumateObjectInstance;
 namespace Modumate
 {
 	struct MODUMATE_API FRoomConfiguration : public FRoomConfigurationTableRow
@@ -80,25 +80,25 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Rooms")
 	static bool GetRoomConfigurationsFromProject(UObject* WorldContextObject, TArray<FRoomConfigurationBlueprint> &OutRoomConfigs);
 
-	static bool GetRoomConfig(const FModumateObjectInstance *RoomObj, FRoomConfigurationBlueprint &OutRoomConfig);
+	static bool GetRoomConfig(const AModumateObjectInstance *RoomObj, FRoomConfigurationBlueprint &OutRoomConfig);
 
 	UFUNCTION(BlueprintPure, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Rooms")
 	static bool GetRoomConfig(UObject* WorldContextObject, int32 RoomID, FRoomConfigurationBlueprint &OutRoomConfig);
 
-	static bool SetRoomConfigFromKey(FModumateObjectInstance *RoomObj, const FBIMKey& ConfigKey);
+	static bool SetRoomConfigFromKey(AModumateObjectInstance *RoomObj, const FBIMKey& ConfigKey);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Rooms")
 	static bool SetRoomConfigFromKey(UObject* WorldContextObject, int32 RoomID, const FBIMKey& ConfigKey);
 
-	static void UpdateDerivedRoomProperties(FModumateObjectInstance *RoomObj);
+	static void UpdateDerivedRoomProperties(AModumateObjectInstance *RoomObj);
 
-	static bool CanRoomContainFace(const FModumateDocument *Document, FGraphSignedID FaceID);
+	static bool CanRoomContainFace(const UModumateDocument *Document, FGraphSignedID FaceID);
 
-	static void CalculateRoomChanges(const FModumateDocument *Document, bool &bOutAnyChange,
+	static void CalculateRoomChanges(const UModumateDocument *Document, bool &bOutAnyChange,
 		TMap<int32, int32> &OutOldRoomIDsToNewRoomIndices, TMap<int32, TArray<int32>> &OutNewRoomsFaceIDs,
 		TSet<int32> &OutOldRoomsToDeleteIDs, TSet<int32> &OutNewRoomsToCreateIndices);
 
-	static void CalculateRoomNumbers(const FModumateDocument *Document,
+	static void CalculateRoomNumbers(const UModumateDocument *Document,
 		TMap<int32, FString> &OutOldRoomNumbers, TMap<int32, FString> &OutNewRoomNumbers);
 
 	static const FBIMKey DefaultRoomConfigKey;

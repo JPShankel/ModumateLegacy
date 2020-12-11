@@ -39,9 +39,9 @@ bool UWandTool::HandleMouseUp()
 {
 
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument *doc = &gameState->Document;
+	UModumateDocument *doc = &gameState->Document;
 
-	FModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
+	AModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
 	if (newTarget)
 	{
 		UModumateFunctionLibrary::DocAddHideMoiActors(TArray<AActor*> {newTarget->GetActor()});

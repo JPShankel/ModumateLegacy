@@ -14,10 +14,10 @@ struct MODUMATE_API FMOISurfaceGraphData
 	int32 ParentFaceIndex;
 };
 
-class MODUMATE_API FMOISurfaceGraphImpl : public FModumateObjectInstance
+class MODUMATE_API AMOISurfaceGraph : public AModumateObjectInstance
 {
 public:
-	FMOISurfaceGraphImpl();
+	AMOISurfaceGraph();
 
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;

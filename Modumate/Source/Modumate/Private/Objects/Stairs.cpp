@@ -12,8 +12,8 @@
 
 class AEditModelPlayerController_CPP;
 
-FMOIStaircaseImpl::FMOIStaircaseImpl()
-	: FModumateObjectInstance()
+AMOIStaircase::AMOIStaircase()
+	: AModumateObjectInstance()
 	, bCachedStartRiser(true)
 	, bCachedEndRiser(true)
 {
@@ -24,7 +24,7 @@ FMOIStaircaseImpl::FMOIStaircaseImpl()
 	TreadRun = assemblySpec.TreadDepth.AsWorldCentimeters();
 }
 
-bool FMOIStaircaseImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AMOIStaircase::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
 	{
@@ -43,20 +43,20 @@ bool FMOIStaircaseImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 	return true;
 }
 
-void FMOIStaircaseImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOIStaircase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	// TODO: use the tread/riser polygons as structural points and lines
 
-	const FModumateObjectInstance *planeParent = GetParentObject();
+	const AModumateObjectInstance *planeParent = GetParentObject();
 	if (planeParent)
 	{
 		planeParent->GetStructuralPointsAndLines(outPoints, outLines, true);
 	}
 }
 
-void FMOIStaircaseImpl::SetupDynamicGeometry()
+void AMOIStaircase::SetupDynamicGeometry()
 {
-	FModumateObjectInstance* planeParent = GetParentObject();
+	AModumateObjectInstance* planeParent = GetParentObject();
 	if (!(planeParent && (planeParent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return;
@@ -95,7 +95,7 @@ void FMOIStaircaseImpl::SetupDynamicGeometry()
 		GetAssembly());
 }
 
-void FMOIStaircaseImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIStaircase::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 	TArray<TArray<FVector>>& OutPerimeters) const
 {
@@ -110,7 +110,7 @@ void FMOIStaircaseImpl::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 	}
 }
 
-void FMOIStaircaseImpl::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIStaircase::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
 	static const Modumate::Units::FThickness stairLineThickness = Modumate::Units::FThickness::Points(0.15f);
@@ -191,7 +191,7 @@ void FMOIStaircaseImpl::GetBeyondLines(const TSharedPtr<Modumate::FDraftingCompo
 
 }
 
-void FMOIStaircaseImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIStaircase::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
 	static const Modumate::Units::FThickness lineThickness = Modumate::Units::FThickness::Points(0.25f);
@@ -302,9 +302,9 @@ void FMOIStaircaseImpl::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComp
 	}
 }
 
-void FMOIStaircaseImpl::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+void AMOIStaircase::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
-	FModumateObjectInstance *parent = GetParentObject();
+	AModumateObjectInstance *parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
 	{
 		return;

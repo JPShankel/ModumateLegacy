@@ -15,7 +15,7 @@ namespace Modumate
 	{
 		void operator()(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 		UWorld* World;
-		FMOICutPlaneImpl* CutPlane;
+		AMOICutPlane* CutPlane;
 		int32 CutPlaneID { 0 };
 		int32 RenderID{ 0 };
 
@@ -41,7 +41,7 @@ namespace Modumate
 		}
 
 		AEditModelGameState_CPP *gameState = World->GetGameState<AEditModelGameState_CPP>();
-		FModumateDocument &document = gameState->Document;
+		UModumateDocument &document = gameState->Document;
 
 		if (document.GetObjectById(CutPlaneID) != nullptr)
 		{	// Cut plane exists.
@@ -49,7 +49,7 @@ namespace Modumate
 		}
 	}
 
-	bool FModumateAutotraceConnect::ConvertImageFromFile(const FString& filename, int32 renderID, FMOICutPlaneImpl* cutPlane, int32 cutPlaneID, UWorld* world)
+	bool FModumateAutotraceConnect::ConvertImageFromFile(const FString& filename, int32 renderID, AMOICutPlane* cutPlane, int32 cutPlaneID, UWorld* world)
 	{
 		TArray<uint8> pngFile;
 		if (!FFileHelper::LoadFileToArray(pngFile, *filename))

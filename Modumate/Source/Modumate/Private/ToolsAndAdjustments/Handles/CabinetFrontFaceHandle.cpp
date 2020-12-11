@@ -43,7 +43,7 @@ bool ACabinetFrontFaceHandle::BeginUse()
 
 FVector ACabinetFrontFaceHandle::GetHandlePosition() const
 {
-	const FModumateObjectInstance* cabinetParent = TargetMOI ? TargetMOI->GetParentObject() : nullptr;
+	const AModumateObjectInstance* cabinetParent = TargetMOI ? TargetMOI->GetParentObject() : nullptr;
 	if (!ensure(cabinetParent && (cabinetParent->GetObjectType() == EObjectType::OTSurfacePolygon) && (TargetIndex != INDEX_NONE)))
 	{
 		return FVector::ZeroVector;

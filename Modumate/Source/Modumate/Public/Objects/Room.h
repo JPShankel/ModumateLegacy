@@ -10,12 +10,12 @@
 class AEditModelPlayerController_CPP;
 class AEditModelGameMode_CPP;
 
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
-class MODUMATE_API FMOIRoomImpl : public FModumateObjectInstance
+class MODUMATE_API AMOIRoom : public AModumateObjectInstance
 {
 public:
-	FMOIRoomImpl();
+	AMOIRoom();
 
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;

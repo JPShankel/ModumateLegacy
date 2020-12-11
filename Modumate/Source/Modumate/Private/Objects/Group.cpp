@@ -7,18 +7,18 @@
 #include "UnrealClasses/MOIGroupActor_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 
-float FMOIGroupImpl::StructuralExtentsExpansion = 20.0f;
+float AMOIGroup::StructuralExtentsExpansion = 20.0f;
 
-FMOIGroupImpl::FMOIGroupImpl()
-	: FModumateObjectInstance()
+AMOIGroup::AMOIGroup()
+	: AModumateObjectInstance()
 	, World(nullptr)
 	, CachedLocation(ForceInitToZero)
 	, CachedExtents(ForceInitToZero)
 { }
 
-bool FMOIGroupImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool AMOIGroup::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-	if (!FModumateObjectInstance::CleanObject(DirtyFlag, OutSideEffectDeltas))
+	if (!AModumateObjectInstance::CleanObject(DirtyFlag, OutSideEffectDeltas))
 	{
 		return false;
 	}
@@ -48,7 +48,7 @@ bool FMOIGroupImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* 
 	return true;
 }
 
-AActor *FMOIGroupImpl::RestoreActor()
+AActor *AMOIGroup::RestoreActor()
 {
 	if (World.IsValid())
 	{
@@ -62,14 +62,14 @@ AActor *FMOIGroupImpl::RestoreActor()
 	return nullptr;
 }
 
-AActor *FMOIGroupImpl::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor *AMOIGroup::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
 {
 	World = world;
 	CachedLocation = loc;
 	return RestoreActor();
 }
 
-void FMOIGroupImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOIGroup::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	if (!CachedExtents.IsZero())
 	{
@@ -81,7 +81,7 @@ void FMOIGroupImpl::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoin
 		// For selection, use the contents of the group
 		else if (bForSelection)
 		{
-			for (const FModumateObjectInstance *childObj : GetChildObjects())
+			for (const AModumateObjectInstance *childObj : GetChildObjects())
 			{
 				childObj->GetStructuralPointsAndLines(TempPoints, TempLines, bForSnapping, bForSelection);
 				outPoints.Append(TempPoints);

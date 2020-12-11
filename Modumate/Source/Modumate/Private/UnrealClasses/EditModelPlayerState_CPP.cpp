@@ -89,11 +89,11 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 	CurViewGroupObjects.Reset();
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument &doc = gameState->Document;
+	UModumateDocument &doc = gameState->Document;
 
 	if (ViewGroupObject)
 	{
-		FModumateObjectInstance *curViewGroupObj = ViewGroupObject;
+		AModumateObjectInstance *curViewGroupObj = ViewGroupObject;
 		while (curViewGroupObj)
 		{
 			CurViewGroupObjects.Add(curViewGroupObj);
@@ -119,7 +119,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 
 	for (auto &structureLine : CurSelectionStructureLines)
 	{
-		FModumateObjectInstance *lineObj = doc.GetObjectById(structureLine.ObjID);
+		AModumateObjectInstance *lineObj = doc.GetObjectById(structureLine.ObjID);
 		if (lineObj == nullptr)
 		{
 			continue;
@@ -186,7 +186,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 	}
 
 	// TODO: move this code - either be able to ask objects which lines to draw or enable objects to bypass this function
-	for (FModumateObjectInstance *cutPlaneObj : doc.GetObjectsOfType(EObjectType::OTCutPlane))
+	for (AModumateObjectInstance *cutPlaneObj : doc.GetObjectsOfType(EObjectType::OTCutPlane))
 	{
 		if (!cutPlaneObj || !cutPlaneObj->IsVisible())
 		{
@@ -196,7 +196,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 		cutPlaneObj->AddDraftingLines(EMPlayerController->HUDDrawWidget);
 	}
 
-	for (FModumateObjectInstance *scopeBoxObj : doc.GetObjectsOfType(EObjectType::OTScopeBox))
+	for (AModumateObjectInstance *scopeBoxObj : doc.GetObjectsOfType(EObjectType::OTScopeBox))
 	{
 		if (!scopeBoxObj || !scopeBoxObj->IsVisible())
 		{
@@ -207,14 +207,14 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 	}
 }
 
-void AEditModelPlayerState_CPP::UpdateRenderFlags(const TSet<FModumateObjectInstance*>& ChangedObjects)
+void AEditModelPlayerState_CPP::UpdateRenderFlags(const TSet<AModumateObjectInstance*>& ChangedObjects)
 {
 	if (ChangedObjects.Num() > 0)
 	{
 		OnSelectionOrViewChanged.Broadcast();
 	}
 
-	for (FModumateObjectInstance *moi : ChangedObjects)
+	for (AModumateObjectInstance *moi : ChangedObjects)
 	{
 		if (moi && !moi->IsDestroyed())
 		{
@@ -242,9 +242,9 @@ void AEditModelPlayerState_CPP::SetShowGraphDebug(bool bShow)
 
 		// TODO: replace with non-debug visibility flag for rooms; for now, just piggypack off of the room graph visibility
 		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		FModumateDocument &doc = gameState->Document;
-		TArray<FModumateObjectInstance *> rooms = doc.GetObjectsOfType(EObjectType::OTRoom);
-		for (FModumateObjectInstance *room : rooms)
+		UModumateDocument &doc = gameState->Document;
+		TArray<AModumateObjectInstance *> rooms = doc.GetObjectsOfType(EObjectType::OTRoom);
+		for (AModumateObjectInstance *room : rooms)
 		{
 			if (AActor *roomActor = room->GetActor())
 			{
@@ -306,7 +306,7 @@ bool AEditModelPlayerState_CPP::GetSnapCursorDeltaFromRay(const FVector& RayOrig
 	return false;
 }
 
-void AEditModelPlayerState_CPP::DebugShowWallProfiles(const TArray<FModumateObjectInstance *> &walls)
+void AEditModelPlayerState_CPP::DebugShowWallProfiles(const TArray<AModumateObjectInstance *> &walls)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::DebugShowWallProfiles"));
 }
@@ -322,9 +322,9 @@ bool AEditModelPlayerState_CPP::ValidateSelectionsAndView()
 	bool viewChanged = false;
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument *doc = &gameState->Document;
+	UModumateDocument *doc = &gameState->Document;
 
-	TSet<FModumateObjectInstance*> pendingDeselectObjects;
+	TSet<AModumateObjectInstance*> pendingDeselectObjects;
 	for (auto& moi : SelectedObjects)
 	{
 		if ((moi == nullptr) || moi->IsDestroyed())
@@ -346,7 +346,7 @@ bool AEditModelPlayerState_CPP::ValidateSelectionsAndView()
 	for (auto &kvp : ObjectErrorMap)
 	{
 		int32 objID = kvp.Key;
-		FModumateObjectInstance *obj = doc->GetObjectById(objID);
+		AModumateObjectInstance *obj = doc->GetObjectById(objID);
 		if ((obj == nullptr) || obj->IsDestroyed())
 		{
 			invalidErrorIDs.Add(objID);
@@ -383,7 +383,7 @@ void AEditModelPlayerState_CPP::SelectAll()
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SelectAll"));
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument *doc = &gameState->Document;
+	UModumateDocument *doc = &gameState->Document;
 
 	for (auto *selectedObj : SelectedObjects)
 	{
@@ -409,9 +409,9 @@ void AEditModelPlayerState_CPP::SelectInverse()
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SelectInverse"));
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument *doc = &gameState->Document;
+	UModumateDocument *doc = &gameState->Document;
 
-	TSet<FModumateObjectInstance *> previousSelectedObjs(SelectedObjects);
+	TSet<AModumateObjectInstance *> previousSelectedObjs(SelectedObjects);
 
 	for (auto *selectedObj : SelectedObjects)
 	{
@@ -444,7 +444,7 @@ void AEditModelPlayerState_CPP::DeselectAll()
 	}
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument *doc = &gameState->Document;
+	UModumateDocument *doc = &gameState->Document;
 	auto obs = doc->GetObjectInstances();
 
 	for (auto &ob : obs)
@@ -487,7 +487,7 @@ void AEditModelPlayerState_CPP::PostSelectionChanged()
 	bool bSelectTool = EMPlayerController->CurrentTool->GetToolMode() == EToolMode::VE_SELECT;
 	if (SelectedObjects.Num() == 1 && bSelectTool)
 	{
-		FModumateObjectInstance* moi = *SelectedObjects.CreateConstIterator();
+		AModumateObjectInstance* moi = *SelectedObjects.CreateConstIterator();
 
 		gameInstance->DimensionManager->UpdateGraphDimensionStrings(moi->ID);
 		moi->ShowAdjustmentHandles(EMPlayerController, true);
@@ -501,7 +501,7 @@ void AEditModelPlayerState_CPP::PostSelectionChanged()
 		}
 	}
 
-	TSet<FModumateObjectInstance *> allChangedObjects;
+	TSet<AModumateObjectInstance *> allChangedObjects;
 	allChangedObjects.Append(SelectedObjects);
 	allChangedObjects.Append(LastSelectedObjectSet);
 
@@ -515,7 +515,7 @@ void AEditModelPlayerState_CPP::PostViewChanged()
 {
 	// Gather a set of objects whose render mode may have changed due to either
 	// selection, hover, or view group hierarchy
-	TSet<FModumateObjectInstance *> allChangedObjects;
+	TSet<AModumateObjectInstance *> allChangedObjects;
 
 	// Gather all objects previously and currently under the view group object
 	ViewGroupDescendents.Reset();
@@ -609,10 +609,10 @@ void AEditModelPlayerState_CPP::SetShowHoverEffects(bool showHoverEffects)
 	PostViewChanged();
 }
 
-FModumateObjectInstance *AEditModelPlayerState_CPP::GetValidHoveredObjectInView(FModumateObjectInstance *hoverTarget) const
+AModumateObjectInstance *AEditModelPlayerState_CPP::GetValidHoveredObjectInView(AModumateObjectInstance *hoverTarget) const
 {
-	FModumateObjectInstance *highestGroupUnderViewGroup = nullptr;
-	FModumateObjectInstance *nextTarget = hoverTarget;
+	AModumateObjectInstance *highestGroupUnderViewGroup = nullptr;
+	AModumateObjectInstance *nextTarget = hoverTarget;
 	bool newTargetInViewGroup = false;
 
 	while (nextTarget && !newTargetInViewGroup)
@@ -646,7 +646,7 @@ FModumateObjectInstance *AEditModelPlayerState_CPP::GetValidHoveredObjectInView(
 	return nullptr;
 }
 
-void AEditModelPlayerState_CPP::SetHoveredObject(FModumateObjectInstance *ob)
+void AEditModelPlayerState_CPP::SetHoveredObject(AModumateObjectInstance *ob)
 {
 //	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SetHoveredObject"));
 	if (HoveredObject != ob)
@@ -664,7 +664,7 @@ void AEditModelPlayerState_CPP::SetHoveredObject(FModumateObjectInstance *ob)
 	}
 }
 
-void AEditModelPlayerState_CPP::SetObjectSelected(FModumateObjectInstance *ob, bool selected)
+void AEditModelPlayerState_CPP::SetObjectSelected(AModumateObjectInstance *ob, bool selected)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SetObjectSelected"));
 
@@ -683,13 +683,13 @@ void AEditModelPlayerState_CPP::SetObjectSelected(FModumateObjectInstance *ob, b
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
-void AEditModelPlayerState_CPP::SetViewGroupObject(FModumateObjectInstance *ob)
+void AEditModelPlayerState_CPP::SetViewGroupObject(AModumateObjectInstance *ob)
 {
 	ViewGroupObject = ob;
 	PostViewChanged();
 }
 
-bool AEditModelPlayerState_CPP::IsObjectInCurViewGroup(FModumateObjectInstance *obj) const
+bool AEditModelPlayerState_CPP::IsObjectInCurViewGroup(AModumateObjectInstance *obj) const
 {
 	if (ViewGroupObject)
 	{
@@ -699,15 +699,15 @@ bool AEditModelPlayerState_CPP::IsObjectInCurViewGroup(FModumateObjectInstance *
 	return true;
 }
 
-FModumateObjectInstance *AEditModelPlayerState_CPP::FindHighestParentGroupInViewGroup(FModumateObjectInstance *obj) const
+AModumateObjectInstance *AEditModelPlayerState_CPP::FindHighestParentGroupInViewGroup(AModumateObjectInstance *obj) const
 {
 	if (!IsObjectInCurViewGroup(obj))
 	{
 		return nullptr;
 	}
 
-	FModumateObjectInstance *iter = obj;
-	FModumateObjectInstance *highestGroup = iter;
+	AModumateObjectInstance *iter = obj;
+	AModumateObjectInstance *highestGroup = iter;
 	while (iter && (iter != ViewGroupObject))
 	{
 		if (iter->GetObjectType() == EObjectType::OTGroup)
@@ -721,7 +721,7 @@ FModumateObjectInstance *AEditModelPlayerState_CPP::FindHighestParentGroupInView
 	return highestGroup;
 }
 
-void AEditModelPlayerState_CPP::FindReachableObjects(TSet<FModumateObjectInstance*> &reachableObjs) const
+void AEditModelPlayerState_CPP::FindReachableObjects(TSet<AModumateObjectInstance*> &reachableObjs) const
 {
 	reachableObjs.Reset();
 
@@ -730,7 +730,7 @@ void AEditModelPlayerState_CPP::FindReachableObjects(TSet<FModumateObjectInstanc
 	const auto &allObjects = doc.GetObjectInstances();
 	int32 viewGroupObjID = ViewGroupObject ? ViewGroupObject->ID : 0;
 
-	TQueue<FModumateObjectInstance *> objQueue;
+	TQueue<AModumateObjectInstance *> objQueue;
 
 	for (auto *obj : allObjects)
 	{
@@ -740,8 +740,8 @@ void AEditModelPlayerState_CPP::FindReachableObjects(TSet<FModumateObjectInstanc
 		}
 	}
 
-	TSet<FModumateObjectInstance *> visited;
-	FModumateObjectInstance *iter = nullptr;
+	TSet<AModumateObjectInstance *> visited;
+	AModumateObjectInstance *iter = nullptr;
 
 	while (objQueue.Dequeue(iter))
 	{
@@ -762,7 +762,7 @@ void AEditModelPlayerState_CPP::FindReachableObjects(TSet<FModumateObjectInstanc
 	}
 }
 
-bool AEditModelPlayerState_CPP::IsObjectReachableInView(FModumateObjectInstance* obj) const
+bool AEditModelPlayerState_CPP::IsObjectReachableInView(AModumateObjectInstance* obj) const
 {
 	return LastReachableObjectSet.Contains(obj);
 }
@@ -771,7 +771,7 @@ void AEditModelPlayerState_CPP::GetSelectorModumateObjects(TArray<AActor*>& Modu
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::GetSelectorModumateObjects"));
 	TArray<AActor*> objectRefs;
-	for (FModumateObjectInstance*& curObjectRef : SelectedObjects)
+	for (AModumateObjectInstance*& curObjectRef : SelectedObjects)
 	{
 		if (curObjectRef->GetActor() != nullptr)
 		{
@@ -840,12 +840,12 @@ bool AEditModelPlayerState_CPP::DoesObjectHaveAnyError(int32 ObjectID) const
 	return (objectErrors && (objectErrors->Num() > 0));
 }
 
-void AEditModelPlayerState_CPP::CopySelectedToClipboard(const FModumateDocument &document)
+void AEditModelPlayerState_CPP::CopySelectedToClipboard(const UModumateDocument &document)
 {
 	// TODO: re-implement
 }
 
-void AEditModelPlayerState_CPP::Paste(FModumateDocument &document) const
+void AEditModelPlayerState_CPP::Paste(UModumateDocument &document) const
 {
 	// TODO: re-implement
 }
@@ -931,8 +931,8 @@ bool AEditModelPlayerState_CPP::ChangeViewMode(int32 IndexDelta)
 void AEditModelPlayerState_CPP::UpdateObjectVisibilityAndCollision()
 {
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument &doc = gameState->Document;
-	for (FModumateObjectInstance *moi : doc.GetObjectInstances())
+	UModumateDocument &doc = gameState->Document;
+	for (AModumateObjectInstance *moi : doc.GetObjectInstances())
 	{
 		if (moi)
 		{

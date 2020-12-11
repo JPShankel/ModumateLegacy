@@ -3,10 +3,10 @@
 
 #include "Objects/EdgeBase.h"
 
-class MODUMATE_API FMOISurfaceEdgeImpl : public FMOIEdgeImplBase
+class MODUMATE_API AMOISurfaceEdge : public FMOIEdgeImplBase
 {
 public:
-	FMOISurfaceEdgeImpl();
+	AMOISurfaceEdge();
 
 	virtual FVector GetCorner(int32 index) const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;

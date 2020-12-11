@@ -119,7 +119,7 @@ FDeltaPtr FGraph2DDelta::MakeInverse() const
 	return MakeGraphInverse();
 }
 
-bool FGraph2DDelta::ApplyTo(FModumateDocument* doc, UWorld* world) const
+bool FGraph2DDelta::ApplyTo(UModumateDocument* doc, UWorld* world) const
 {
 	doc->ApplyGraph2DDelta(*this, world);
 	return true;

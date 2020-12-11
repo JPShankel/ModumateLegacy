@@ -610,7 +610,7 @@ void ACompoundMeshActor::SetIsDynamic(bool dynamicStatus)
 	}
 }
 
-float ACompoundMeshActor::GetPortalCenter(const FModumateDocument* Doc, const FBIMKey& AssemblyKey) const
+float ACompoundMeshActor::GetPortalCenter(const UModumateDocument* Doc, const FBIMKey& AssemblyKey) const
 {
 	float centerOffset = 0.0f;
 	

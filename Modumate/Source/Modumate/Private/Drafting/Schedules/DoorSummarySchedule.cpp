@@ -12,7 +12,7 @@ using namespace Modumate::Units;
 
 namespace Modumate {
 
-	FDoorSummarySchedule::FDoorSummarySchedule(const FModumateDocument *doc, IModumateDraftingDraw *drawingInterface)
+	FDoorSummarySchedule::FDoorSummarySchedule(const UModumateDocument *doc, IModumateDraftingDraw *drawingInterface)
 	{
 		Title = MakeShareable(new FDraftingText(
 			LOCTEXT("title", "Door Schedule: Assembly Summaries"),

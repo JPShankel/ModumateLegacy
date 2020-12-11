@@ -27,7 +27,7 @@ bool UFFETool::Activate()
 	CursorCompoundMesh = Controller->GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform::Identity);
 	CursorCompoundMesh->SetActorEnableCollision(false);
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument *doc = &gameState->Document;
+	UModumateDocument *doc = &gameState->Document;
 	FBIMKey key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
 	const FBIMAssemblySpec *obAsmPtr = doc->PresetManager.GetAssemblyByKey(EToolMode::VE_PLACEOBJECT,key);
 
@@ -76,7 +76,7 @@ bool UFFETool::Deactivate()
 bool UFFETool::FrameUpdate()
 {
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument *doc = &gameState->Document;
+	UModumateDocument *doc = &gameState->Document;
 	FBIMKey key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
 	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(EToolMode::VE_PLACEOBJECT, key);
 
@@ -117,10 +117,10 @@ bool UFFETool::BeginUse()
 	FVector hitLoc = snappedCursor.WorldPosition;
 
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FModumateDocument *doc = &gameState->Document;
+	UModumateDocument *doc = &gameState->Document;
 	FBIMKey key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
 
-	FModumateObjectInstance *hitMOI = doc->ObjectFromActor(snappedCursor.Actor);
+	AModumateObjectInstance *hitMOI = doc->ObjectFromActor(snappedCursor.Actor);
 	int32 parentID = hitMOI != nullptr ? hitMOI->ID : Controller->EMPlayerState->GetViewGroupObjectID();
 	int32 parentFaceIdx = UModumateTargetingStatics::GetFaceIndexFromTargetHit(hitMOI, hitLoc, snappedCursor.HitNormal);
 

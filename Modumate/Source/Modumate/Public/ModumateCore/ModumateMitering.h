@@ -4,7 +4,7 @@
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "ModumateCore/LayerGeomDef.h"
 
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
 namespace Modumate
 {
@@ -15,11 +15,11 @@ namespace Modumate
 		struct FMiterHelpers
 		{
 			// Given a plane object, get its child layered object, if it exists.
-			static const FModumateObjectInstance *GetChildLayeredObj(const FModumateObjectInstance *PlaneObj);
+			static const AModumateObjectInstance *GetChildLayeredObj(const AModumateObjectInstance *PlaneObj);
 
 			// Given a plane-hosted object (and its world-space holes), create layer geometry definitions
 			// that use miter data generated from a central miter node.
-			static bool UpdateMiteredLayerGeoms(const FModumateObjectInstance *PlaneHostedObj, const FGraph3DFace *PlaneFace,
+			static bool UpdateMiteredLayerGeoms(const AModumateObjectInstance *PlaneHostedObj, const FGraph3DFace *PlaneFace,
 				const TArray<FPolyHole3D> *Holes, TArray<FLayerGeomDef> &OutLayerGeometries);
 		};
 	}

@@ -3,7 +3,7 @@
 
 #include "Drafting/Schedules/DraftingSchedule.h"
 
-class MODUMATE_API FModumateDocument;
+class MODUMATE_API UModumateDocument;
 
 namespace Modumate {
 
@@ -14,7 +14,7 @@ namespace Modumate {
 	class FWallDetailsSchedule : public FDraftingSchedule
 	{
 	public:
-		FWallDetailsSchedule(const FModumateDocument *doc, UWorld *World, IModumateDraftingDraw *drawingInterface);
+		FWallDetailsSchedule(const UModumateDocument *doc, UWorld *World, IModumateDraftingDraw *drawingInterface);
 		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
 
 	public:

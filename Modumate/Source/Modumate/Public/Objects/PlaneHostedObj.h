@@ -8,7 +8,7 @@
 #include "PlaneHostedObj.generated.h"
 
 class AEditModelPlayerController_CPP;
-class FModumateObjectInstance;
+class AModumateObjectInstance;
 
 USTRUCT()
 struct MODUMATE_API FMOIPlaneHostedObjData
@@ -25,10 +25,10 @@ struct MODUMATE_API FMOIPlaneHostedObjData
 	int32 OverrideOriginIndex = INDEX_NONE;
 };
 
-class MODUMATE_API FMOIPlaneHostedObjImpl : public FModumateObjectInstance, ILayeredObject
+class MODUMATE_API AMOIPlaneHostedObj : public AModumateObjectInstance, ILayeredObject
 {
 public:
-	FMOIPlaneHostedObjImpl();
+	AMOIPlaneHostedObj();
 	virtual FQuat GetRotation() const override;
 	virtual FVector GetLocation() const override;
 	virtual FVector GetCorner(int32 index) const override;
@@ -69,6 +69,6 @@ protected:
 	mutable TArray<FVector> TempHoleRelativePoints;
 
 	TArray<FVector2D> CachedLayerEdgeExtensions;
-	TArray<FModumateObjectInstance *> CachedParentConnectedMOIs;
-	TArray<FModumateObjectInstance *> CachedConnectedEdges;
+	TArray<AModumateObjectInstance *> CachedParentConnectedMOIs;
+	TArray<AModumateObjectInstance *> CachedConnectedEdges;
 };

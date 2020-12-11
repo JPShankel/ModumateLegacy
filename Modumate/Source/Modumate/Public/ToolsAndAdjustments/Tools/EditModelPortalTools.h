@@ -10,7 +10,7 @@
 class APortalFrameActor_CPP;
 class AEditModelPlayerController_CPP;
 class ACompoundMeshActor;
-class FModumateDocument;
+class UModumateDocument;
 class FBIMAssemblySpec;
 
 UCLASS()

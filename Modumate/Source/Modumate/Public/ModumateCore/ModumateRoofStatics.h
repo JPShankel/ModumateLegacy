@@ -9,8 +9,8 @@
 
 #include "ModumateRoofStatics.generated.h"
 
-class FModumateDocument;
-class FModumateObjectInstance;
+class UModumateDocument;
+class AModumateObjectInstance;
 
 struct FBIMPropertySheet;
 
@@ -84,7 +84,7 @@ class MODUMATE_API UModumateRoofStatics : public UBlueprintFunctionLibrary
 public:
 	static void InitializeProperties(FBIMPropertySheet *RoofProperties, int32 NumEdges);
 
-	static bool GetAllProperties(const FModumateObjectInstance *RoofObject,
+	static bool GetAllProperties(const AModumateObjectInstance *RoofObject,
 		TArray<FVector> &OutEdgePoints, TArray<FGraphSignedID> &OutEdgeIDs, FRoofEdgeProperties &OutDefaultProperties, TArray<FRoofEdgeProperties> &OutEdgeProperties);
 
 	static bool TessellateSlopedEdges(const TArray<FVector> &EdgePoints, const TArray<FRoofEdgeProperties> &EdgeProperties,

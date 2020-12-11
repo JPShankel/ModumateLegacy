@@ -14,7 +14,7 @@
 
 #include "EditModelPlayerState_CPP.generated.h"
 
-class MODUMATE_API FModumateDocument;
+class MODUMATE_API UModumateDocument;
 class MODUMATE_API AGraphDimensionActor;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionOrViewChanged);
@@ -37,7 +37,7 @@ class MODUMATE_API AEditModelPlayerState_CPP : public APlayerState
 
 protected:
 	void BatchRenderLines();
-	void UpdateRenderFlags(const TSet<FModumateObjectInstance*>& ChangedObjects);
+	void UpdateRenderFlags(const TSet<AModumateObjectInstance*>& ChangedObjects);
 
 public:
 
@@ -67,7 +67,7 @@ public:
 	bool bRoomsVisible;
 	bool ShowingFileDialog;
 
-	FModumateObjectInstance *HoveredObject;
+	AModumateObjectInstance *HoveredObject;
 
 	bool DebugMouseHits;
 
@@ -106,14 +106,14 @@ public:
 	void OnNewModel();
 
 	void SetShowHoverEffects(bool showHoverEffects);
-	FModumateObjectInstance *GetValidHoveredObjectInView(FModumateObjectInstance *hoverTarget) const;
-	void SetHoveredObject(FModumateObjectInstance *ob);
-	void SetObjectSelected(FModumateObjectInstance *ob, bool selected);
-	void SetViewGroupObject(FModumateObjectInstance *ob);
-	bool IsObjectInCurViewGroup(FModumateObjectInstance *ob) const;
-	FModumateObjectInstance *FindHighestParentGroupInViewGroup(FModumateObjectInstance *ob) const;
-	void FindReachableObjects(TSet<FModumateObjectInstance*> &reachableObjs) const;
-	bool IsObjectReachableInView(FModumateObjectInstance* obj) const;
+	AModumateObjectInstance *GetValidHoveredObjectInView(AModumateObjectInstance *hoverTarget) const;
+	void SetHoveredObject(AModumateObjectInstance *ob);
+	void SetObjectSelected(AModumateObjectInstance *ob, bool selected);
+	void SetViewGroupObject(AModumateObjectInstance *ob);
+	bool IsObjectInCurViewGroup(AModumateObjectInstance *ob) const;
+	AModumateObjectInstance *FindHighestParentGroupInViewGroup(AModumateObjectInstance *ob) const;
+	void FindReachableObjects(TSet<AModumateObjectInstance*> &reachableObjs) const;
+	bool IsObjectReachableInView(AModumateObjectInstance* obj) const;
 	bool ValidateSelectionsAndView();
 	void SelectAll();
 	void SelectInverse();
@@ -122,10 +122,10 @@ public:
 	void PostSelectionChanged();
 	void PostViewChanged();
 
-	void CopySelectedToClipboard(const FModumateDocument &document);
-	void Paste(FModumateDocument &document) const;
+	void CopySelectedToClipboard(const UModumateDocument &document);
+	void Paste(UModumateDocument &document) const;
 
-	void DebugShowWallProfiles(const TArray<FModumateObjectInstance *> &walls);
+	void DebugShowWallProfiles(const TArray<AModumateObjectInstance *> &walls);
 
 	UPROPERTY()
 	AEditModelPlayerController_CPP *EMPlayerController;
@@ -137,21 +137,21 @@ public:
 	// Clicking outside of it or escaping will go to the next highest group in the hierarchy,
 	// so normally only its children can be selected directly with the tool.
 	// Selecting one of its children that is also a group will deepen the view to that new group.
-	FModumateObjectInstance *ViewGroupObject = nullptr;
+	AModumateObjectInstance *ViewGroupObject = nullptr;
 
-	TSet<FModumateObjectInstance *> SelectedObjects;
-	TSet<FModumateObjectInstance *> LastSelectedObjectSet;
+	TSet<AModumateObjectInstance *> SelectedObjects;
+	TSet<AModumateObjectInstance *> LastSelectedObjectSet;
 
-	TSet<FModumateObjectInstance *> ViewGroupDescendents;
-	TSet<FModumateObjectInstance *> LastViewGroupDescendentsSet;
+	TSet<AModumateObjectInstance *> ViewGroupDescendents;
+	TSet<AModumateObjectInstance *> LastViewGroupDescendentsSet;
 
-	TSet<FModumateObjectInstance *> HoveredObjectDescendents;
-	TSet<FModumateObjectInstance *> LastHoveredObjectSet;
+	TSet<AModumateObjectInstance *> HoveredObjectDescendents;
+	TSet<AModumateObjectInstance *> LastHoveredObjectSet;
 
-	TSet<FModumateObjectInstance *> ErrorObjects;
-	TSet<FModumateObjectInstance *> LastErrorObjectSet;
+	TSet<AModumateObjectInstance *> ErrorObjects;
+	TSet<AModumateObjectInstance *> LastErrorObjectSet;
 
-	TSet<FModumateObjectInstance *> LastReachableObjectSet;
+	TSet<AModumateObjectInstance *> LastReachableObjectSet;
 	bool ShowHoverEffects;
 
 	TMap<int32, TSet<FName>> ObjectErrorMap;
@@ -208,5 +208,5 @@ public:
 protected:
 	TArray<FStructurePoint> TempObjectStructurePoints, CurSelectionStructurePoints;
 	TArray<FStructureLine> TempObjectStructureLines, CurSelectionStructureLines;
-	TSet<FModumateObjectInstance *> CurViewGroupObjects;
+	TSet<AModumateObjectInstance *> CurViewGroupObjects;
 };
