@@ -184,7 +184,7 @@ void UComponentAssemblyListItem::OnButtonConfirmReleased()
 	switch (ItemType)
 	{
 	case EComponentListItemType::SwapDesignerPreset:
-		EMPlayerController->EditModelUserWidget->BIMDesigner->UpdateNodeSwapMenuVisibility(BIMInstanceID, false);
+		EMPlayerController->EditModelUserWidget->ToggleBIMPresetSwapTray(false);
 		// This swap can be either from node, or from one the properties inside this node
 		// If this item has a SwapScope and SwapNameType, then it is swapping a property
 		// else is swapping the node

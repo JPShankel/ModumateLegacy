@@ -17,7 +17,6 @@ enum class ENodeWidgetSwitchState : uint8
 {
 	Collapsed,
 	Expanded,
-	PendingSwap,
 	None
 };
 
@@ -164,7 +163,7 @@ public:
 	FBIMEditorNodeIDType ID;
 	FBIMEditorNodeIDType ParentID;
 
-	bool IsKingNode = false;
+	bool IsRootNode = false;
 	bool NodeDirty = false;
 	bool NodeCollapse = true;
 	bool bNodeHasSlotPart = false;

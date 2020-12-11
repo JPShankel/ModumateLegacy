@@ -19,6 +19,7 @@
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "Kismet/KismetStringLibrary.h"
+#include "UI/BIM/BIMBlockNCPNavigator.h"
 
 UToolTrayBlockAssembliesList::UToolTrayBlockAssembliesList(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -95,6 +96,10 @@ void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& 
 	CurrentNodeForSwap = NodeID;
 	SwapScope = InScope;
 	SwapNameType = InNameType;
+	if (NCPNavigator)
+	{
+		NCPNavigator->SetVisibility(ESlateVisibility::Visible);
+	}
 
 	if (Controller && GameState)
 	{
@@ -206,7 +211,7 @@ void UToolTrayBlockAssembliesList::OnButtonCancelReleased()
 	{
 		if (SwapType == ESwapType::SwapFromNode)
 		{
-			Controller->EditModelUserWidget->BIMDesigner->UpdateNodeSwapMenuVisibility(CurrentNodeForSwap, false);
+			Controller->EditModelUserWidget->ToggleBIMPresetSwapTray(false);
 		}
 		else
 		{

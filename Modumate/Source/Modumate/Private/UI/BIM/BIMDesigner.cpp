@@ -98,7 +98,7 @@ int32 UBIMDesigner::NativePaint(const FPaintArgs& Args, const FGeometry& Allotte
 	FPaintContext Context(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
 	for (auto& curNode : BIMBlockNodes)
 	{
-		if (!curNode->IsKingNode && !curNode->ParentID.IsNone())
+		if (!curNode->IsRootNode && !curNode->ParentID.IsNone())
 		{
 			UBIMBlockNode *parentNode = IdToNodeMap.FindRef(curNode->ParentID);
 			if (parentNode && !curNode->bNodeIsHidden)
@@ -440,7 +440,7 @@ void UBIMDesigner::AutoArrangeNodes()
 		int32 column = 0;
 		while (searchingColumn)
 		{
-			if (curNodeToSearch->IsKingNode)
+			if (curNodeToSearch->IsRootNode)
 			{
 				searchingColumn = false;
 			}
@@ -555,7 +555,7 @@ void UBIMDesigner::AutoArrangeNodes()
 		UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(curNode);
 		if (canvasSlot)
 		{
-			if (curNode->IsKingNode)
+			if (curNode->IsRootNode)
 			{
 				float kingNodeAdjustPos = (maxCanvasHeightBottomEdge / 2.f) - (curNode->GetEstimatedNodeSize().Y / 2.f);
 				canvasSlot->SetPosition(FVector2D(curPos.X, kingNodeAdjustPos));
@@ -776,56 +776,6 @@ bool UBIMDesigner::SetNodeProperty(const FBIMEditorNodeIDType& NodeID, const EBI
 
 	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
-	return true;
-}
-
-bool UBIMDesigner::UpdateNodeSwapMenuVisibility(const FBIMEditorNodeIDType& SwapFromNodeID, bool NewVisibility, FVector2D offset)
-{
-	const FBIMPresetEditorNodeWeakPtr inst = InstancePool.InstanceFromID(SwapFromNodeID);
-	if (!inst.IsValid())
-	{
-		SizeBoxSwapTray->SetVisibility(ESlateVisibility::Collapsed);
-		return false;
-	}
-	FBIMEditorNodeIDType idSearch = SwapFromNodeID;
-
-	UBIMBlockNode* blocknode = IdToNodeMap.FindRef(idSearch);
-	if (!blocknode)
-	{
-		SizeBoxSwapTray->SetVisibility(ESlateVisibility::Collapsed);
-		return false;
-	}
-
-	if (NewVisibility)
-	{
-		UCanvasPanelSlot* nodeCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(blocknode);
-		UCanvasPanelSlot* swapCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(SizeBoxSwapTray);
-		if (nodeCanvasSlot && swapCanvasSlot)
-		{
-			FVector2D newPosition = nodeCanvasSlot->GetPosition();
-			if (blocknode->NodeDirty)
-			{
-				newPosition.Y += blocknode->DirtyTabSize;
-			}
-			newPosition += offset;
-			swapCanvasSlot->SetPosition(newPosition);
-		}
-		SizeBoxSwapTray->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	}
-	else
-	{
-		SizeBoxSwapTray->SetVisibility(ESlateVisibility::Collapsed);
-		if (blocknode->NodeCollapse)
-		{
-			blocknode->UpdateNodeSwitchState(ENodeWidgetSwitchState::Collapsed);
-		}
-		else
-		{
-			blocknode->UpdateNodeSwitchState(ENodeWidgetSwitchState::Expanded);
-		}
-
-	}
-
 	return true;
 }
 

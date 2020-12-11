@@ -11,6 +11,7 @@
 #include "UI/BIM/BIMBlockNode.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "DocumentManagement/ModumateDocument.h"
+#include "UI/EditModelUserWidget.h"
 
 UBIMBlockDropdownPreset::UBIMBlockDropdownPreset(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -42,7 +43,6 @@ void UBIMBlockDropdownPreset::NativeConstruct()
 
 void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 {
-	OwnerNode->UpdateNodeSwitchState(ENodeWidgetSwitchState::PendingSwap);
 	FBIMKey ownerNodePresetID;
 	// Dropdown changes a property of its owner node, it should always have an ID from its owner
 	if (ensureAlways(OwnerNode->ID != BIM_ID_NONE))
@@ -50,13 +50,13 @@ void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 		ownerNodePresetID = ParentBIMDesigner->GetPresetID(OwnerNode->ID);
 	}
 	// Move swap menu to be in front of this node
-	ParentBIMDesigner->UpdateNodeSwapMenuVisibility(OwnerNode->ID, true, DropdownOffset);
+	Controller->EditModelUserWidget->ToggleBIMPresetSwapTray(true);
 
 	// Reset the search box in preset list
-	ParentBIMDesigner->SelectionTray_Block_Swap->ResetSearchBox();
+	Controller->EditModelUserWidget->BIMPresetSwap->ResetSearchBox();
 
 	// Generate list of presets
-	ParentBIMDesigner->SelectionTray_Block_Swap->CreatePresetListInNodeForSwap(ownerNodePresetID, PresetID, OwnerNode->ID, SwapScope, SwapNameType);
+	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(ownerNodePresetID, PresetID, OwnerNode->ID, SwapScope, SwapNameType);
 }
 
 void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, FBIMKey InPresetID, FVector2D InDropdownOffset)

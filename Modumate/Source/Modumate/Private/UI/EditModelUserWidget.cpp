@@ -20,6 +20,7 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UI/Debugger/BIMDebugger.h"
+#include "Components/Border.h"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -150,7 +151,7 @@ void UEditModelUserWidget::ToggleBIMDesigner(bool Open)
 		// TODO: Replace with closing animation
 		BIMDesigner->SetVisibility(ESlateVisibility::Collapsed);
 		BIMBlockDialogBox->SetVisibility(ESlateVisibility::Collapsed);
-		BIMDesigner->UpdateNodeSwapMenuVisibility(BIM_ID_NONE, false);
+		ToggleBIMPresetSwapTray(false);
 	}
 	ToolTrayWidget->ToolTrayBIMDesignerMode(Open);
 }
@@ -226,4 +227,26 @@ void UEditModelUserWidget::ShowBIMDebugger(bool NewVisible)
 bool UEditModelUserWidget::IsBIMDebuggerOn()
 {
 	return BIMDebugger->IsVisible();
+}
+
+void UEditModelUserWidget::ToggleBIMPresetSwapTray(bool NewVisibility)
+{
+	if (NewVisibility)
+	{
+		BIMPresetSwap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		ToolTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
+		SelectionTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	else if (Controller->GetToolMode() == EToolMode::VE_SELECT)
+	{
+		BIMPresetSwap->SetVisibility(ESlateVisibility::Collapsed);
+		ToolTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
+		EMOnSelectionObjectChanged();
+	}
+	else if (Controller->GetToolMode() != EToolMode::VE_NONE)
+	{
+		BIMPresetSwap->SetVisibility(ESlateVisibility::Collapsed);
+		SelectionTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
+		UpdateToolTray();
+	}
 }

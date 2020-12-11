@@ -118,12 +118,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UCanvasPanel *CanvasPanelForNodes;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class USizeBox *SizeBoxSwapTray;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UToolTrayBlockAssembliesList *SelectionTray_Block_Swap;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UBIMBlockNode> BIMBlockNodeClass;
 
@@ -157,7 +151,6 @@ public:
 	bool DeleteNode(const FBIMEditorNodeIDType& InstanceID);
 	bool AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
 	bool SetNodeProperty(const FBIMEditorNodeIDType& NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value);
-	bool UpdateNodeSwapMenuVisibility(const FBIMEditorNodeIDType& SwapFromNodeID, bool NewVisibility, FVector2D offset = FVector2D::ZeroVector);
 	bool GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, const FBIMEditorNodeIDType& NodeID);
 	bool SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& InstanceID);
 	void ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 SlotID, bool NewEnable);

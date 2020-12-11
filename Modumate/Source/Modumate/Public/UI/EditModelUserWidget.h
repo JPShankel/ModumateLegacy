@@ -73,6 +73,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UAlertAccountDialogWidget* AlertPausedAccountDialogWidget;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UToolTrayBlockAssembliesList* BIMPresetSwap;
+
 	UPROPERTY()
 	TMap<EToolMode, class UModumateButtonUserWidget*> ToolToButtonMap;
 
@@ -103,4 +106,5 @@ public:
 	void UpdateViewModeIndicator(EEditViewModes NewViewMode);
 	void ShowBIMDebugger(bool NewVisible);
 	bool IsBIMDebuggerOn();
+	void ToggleBIMPresetSwapTray(bool NewVisibility);
 };

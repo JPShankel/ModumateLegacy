@@ -139,20 +139,20 @@ void UBIMBlockNode::PerformDrag()
 
 void UBIMBlockNode::OnButtonSwapReleased()
 {
-	UpdateNodeSwitchState(ENodeWidgetSwitchState::PendingSwap);
+	ParentBIMDesigner->SetNodeAsSelected(ID);
 	FBIMKey parentPresetID;
 	if (!ParentID.IsNone())
 	{
 		parentPresetID = ParentBIMDesigner->GetPresetID(ParentID);
 	}
 	// Move swap menu to be in front of this node
-	ParentBIMDesigner->UpdateNodeSwapMenuVisibility(ID, true);
+	Controller->EditModelUserWidget->ToggleBIMPresetSwapTray(true);
 
 	// Reset the search box in preset list
-	ParentBIMDesigner->SelectionTray_Block_Swap->ResetSearchBox();
+	Controller->EditModelUserWidget->BIMPresetSwap->ResetSearchBox();
 
 	// Generate list of presets
-	ParentBIMDesigner->SelectionTray_Block_Swap->CreatePresetListInNodeForSwap(parentPresetID, PresetID, ID, EBIMValueScope::None, NAME_None);
+	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(parentPresetID, PresetID, ID, EBIMValueScope::None, NAME_None);
 }
 
 void UBIMBlockNode::OnButtonDeleteReleased()
@@ -213,7 +213,7 @@ void UBIMBlockNode::UpdateNodeHidden(bool NewHide)
 
 bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPresetEditorNodeSharedPtr &Node, bool bAsSlot)
 {
-	IsKingNode = Node->ParentInstance == nullptr;
+	IsRootNode = Node->ParentInstance == nullptr;
 	ParentBIMDesigner = OuterBIMDesigner;
 	PresetID = Node->WorkingPresetCopy.PresetID;
 	bNodeHasSlotPart = bAsSlot;
@@ -229,6 +229,10 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 			Preset_Name->ChangeText(presetDisplayName);
 		}
 	}
+
+	// Can't swap in root node
+	ButtonSwapCollapsed->SetVisibility(IsRootNode ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+	ButtonSwapExpanded->SetVisibility(IsRootNode ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 
 #if WITH_EDITOR
 	if (Button_Debug)
@@ -373,9 +377,6 @@ void UBIMBlockNode::UpdateNodeSwitchState(ENodeWidgetSwitchState NewState)
 		break;
 	case ENodeWidgetSwitchState::Expanded:
 		NodeSwitcher->SetActiveWidgetIndex(1);
-		break;
-	case ENodeWidgetSwitchState::PendingSwap:
-		NodeSwitcher->SetActiveWidgetIndex(2);
 		break;
 	default:
 		break;
