@@ -699,12 +699,6 @@ namespace Modumate
 			appliedDelta.PolygonDeletions.Add(kvp);
 		}
 
-		if (!Delta.BoundsUpdates.Key.IsEmpty() || !Delta.BoundsUpdates.Value.IsEmpty())
-		{
-			BoundingPolygon = Delta.BoundsUpdates.Value.OuterBounds;
-			BoundingContainedPolygons = Delta.BoundsUpdates.Value.InnerBounds;
-		}
-
 		for (int32 vertexID : BoundingPolygon.Value)
 		{
 			if (Delta.VertexMovements.Contains(vertexID))

@@ -198,7 +198,7 @@ namespace Modumate
 
 		// Create Deltas that delete all objects provided and also all objects that are invalidated by the deletions -
 		// For example, vertices that are no longer connected to any edges are also deleted.  
-		bool DeleteObjects(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, const TArray<int32>& ObjectIDsToDelete);
+		bool DeleteObjects(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, const TArray<int32>& ObjectIDsToDelete, bool bCheckBounds = true);
 
 		// Create Deltas that move the provided vertices by the provided offset vector.  Moving vertices handles the 
 		// same kind of side effects that occur when you add objects (splitting edges, (TODO) handling new polygons).
@@ -211,7 +211,7 @@ namespace Modumate
 
 		// Set lists of vertex IDs to represent the bounds of the surface graph.  All vertices and edges must be inside the 
 		// OuterBounds (inclusive) and outside all InnerBounds (inclusive).
-		bool SetBounds(TArray<FGraph2DDelta> &OutDeltas, TPair<int32, TArray<int32>> &OuterBounds, TMap<int32, TArray<int32>> &InnerBounds);
+		bool SetBounds(TPair<int32, TArray<int32>> &OuterBounds, TMap<int32, TArray<int32>> &InnerBounds);
 
 		// Create Deltas for an empty graph resulting in adding the specified polygons.
 		// If using as bounds, the bounds will be set based on the resulting polygons.

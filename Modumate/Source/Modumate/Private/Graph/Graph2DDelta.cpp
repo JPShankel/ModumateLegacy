@@ -17,23 +17,6 @@ FGraph2DDelta::FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType)
 {
 }
 
-FBoundsUpdate::FBoundsUpdate()
-{
-	Reset();
-}
-
-void FBoundsUpdate::Reset()
-{
-	OuterBounds.Key = MOD_ID_NONE;
-	OuterBounds.Value.Reset();
-	InnerBounds.Reset();
-}
-
-bool FBoundsUpdate::IsEmpty() const
-{
-	return (OuterBounds.Value.Num() == 0 && InnerBounds.Num() == 0);
-}
-
 void FGraph2DDelta::Reset()
 {
 	VertexMovements.Reset();
@@ -45,9 +28,6 @@ void FGraph2DDelta::Reset()
 
 	PolygonAdditions.Reset();
 	PolygonDeletions.Reset();
-
-	BoundsUpdates.Key.Reset();
-	BoundsUpdates.Value.Reset();
 }
 
 bool FGraph2DDelta::IsEmpty() const
@@ -59,7 +39,6 @@ bool FGraph2DDelta::IsEmpty() const
 	if (EdgeDeletions.Num() > 0) return false;
 	if (PolygonAdditions.Num() > 0) return false;
 	if (PolygonDeletions.Num() > 0) return false;
-	if (!BoundsUpdates.Key.IsEmpty() || !BoundsUpdates.Value.IsEmpty()) return false;
 
 	return true;
 }
@@ -126,7 +105,6 @@ void FGraph2DDelta::Invert()
 	Swap(VertexAdditions, VertexDeletions);
 	Swap(EdgeAdditions, EdgeDeletions);
 	Swap(PolygonAdditions, PolygonDeletions);
-	Swap(BoundsUpdates.Key, BoundsUpdates.Value);
 }
 
 TSharedPtr<FGraph2DDelta> FGraph2DDelta::MakeGraphInverse() const

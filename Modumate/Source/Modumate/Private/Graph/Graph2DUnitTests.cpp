@@ -868,8 +868,7 @@ namespace Modumate
 		graph->GetVertices().GenerateKeyArray(outerBounds.Value);
 
 		TestTrue(TEXT("Add Bounds"),
-			graph->SetBounds(deltas, outerBounds, innerBounds));
-		TestDeltas(this, deltas, graph, 2, 4, 4);
+			graph->SetBounds(outerBounds, innerBounds));
 
 		TestTrue(TEXT("Add Edge inside poly"),
 			graph->AddEdge(deltas, NextID, FVector2D(10.0f, 10.0f), FVector2D(20.0f, 20.0f)));
@@ -975,8 +974,7 @@ namespace Modumate
 		graph->GetVertices().GenerateKeyArray(outerBounds.Value);
 
 		TestTrue(TEXT("Add Bounds"),
-			graph->SetBounds(deltas, outerBounds, innerBounds));
-		TestDeltas(this, deltas, graph, 2, 5, 5);
+			graph->SetBounds(outerBounds, innerBounds));
 
 		TestTrue(TEXT("Add Edge inside poly"),
 			graph->AddEdge(deltas, NextID, FVector2D(10.0f, 10.0f), FVector2D(20.0f, 20.0f)));
@@ -1120,8 +1118,7 @@ namespace Modumate
 		innerBounds.Add(NextID++, holeVertexIDs.Array());
 
 		TestTrue(TEXT("Add Bounds"),
-			graph->SetBounds(deltas, outerBounds, innerBounds));
-		TestDeltas(this, deltas, graph, 4, 8, 8);
+			graph->SetBounds(outerBounds, innerBounds));
 
 		TestTrue(TEXT("Add Edge inside poly"),
 			graph->AddEdge(deltas, NextID, FVector2D(10.0f, 10.0f), FVector2D(20.0f, 20.0f)));
@@ -1494,8 +1491,7 @@ namespace Modumate
 		graph->GetVertices().GenerateKeyArray(outerBounds.Value);
 
 		TestTrue(TEXT("Add Bounds"),
-			graph->SetBounds(deltas, outerBounds, innerBounds));
-		TestDeltas(this, deltas, graph, 2, 4, 4);
+			graph->SetBounds(outerBounds, innerBounds));
 
 		// 5-sided star
 		TestTrue(TEXT("Add first Edge"),

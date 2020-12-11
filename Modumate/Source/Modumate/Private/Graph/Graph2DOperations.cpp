@@ -371,7 +371,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph2D::DeleteObjects(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, const TArray<int32>& ObjectIDsToDelete)
+	bool FGraph2D::DeleteObjects(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, const TArray<int32>& ObjectIDsToDelete, bool bCheckBounds)
 	{
 		// the ids that are considered for deletion starts with the input arguments and grows based on object connectivity
 
@@ -448,41 +448,44 @@ namespace Modumate
 		}
 
 		// if a deleted vertex is contained in the bounds, delete the whole surface graph
-		bool bDeletedVertexOnBounds = false;
-		for (int32 outerBoundsVertexID : BoundingPolygon.Value)
+		if (bCheckBounds)
 		{
-			if (adjacentVertexIDs.Contains(outerBoundsVertexID))
+			bool bDeletedVertexOnBounds = false;
+			for (int32 outerBoundsVertexID : BoundingPolygon.Value)
 			{
-				bDeletedVertexOnBounds = true;
-				break;
-			}
-		}
-		if (!bDeletedVertexOnBounds)
-		{
-			for (auto& kvp : BoundingContainedPolygons)
-			{
-				for (int32 innerBoundsVertexID : kvp.Value)
+				if (adjacentVertexIDs.Contains(outerBoundsVertexID))
 				{
-					if (adjacentVertexIDs.Contains(innerBoundsVertexID))
+					bDeletedVertexOnBounds = true;
+					break;
+				}
+			}
+			if (!bDeletedVertexOnBounds)
+			{
+				for (auto& kvp : BoundingContainedPolygons)
+				{
+					for (int32 innerBoundsVertexID : kvp.Value)
 					{
-						bDeletedVertexOnBounds = true;
-						break;
+						if (adjacentVertexIDs.Contains(innerBoundsVertexID))
+						{
+							bDeletedVertexOnBounds = true;
+							break;
+						}
 					}
 				}
 			}
-		}
 
-		if (bDeletedVertexOnBounds)
-		{
-			vertexIDsToDelete.Reset();
-			edgeIDsToDelete.Reset();
+			if (bDeletedVertexOnBounds)
+			{
+				vertexIDsToDelete.Reset();
+				edgeIDsToDelete.Reset();
 
-			TArray<int32> deleteVerticesArray, deleteEdgesArray;
-			Vertices.GenerateKeyArray(deleteVerticesArray);
-			Edges.GenerateKeyArray(deleteEdgesArray);
+				TArray<int32> deleteVerticesArray, deleteEdgesArray;
+				Vertices.GenerateKeyArray(deleteVerticesArray);
+				Edges.GenerateKeyArray(deleteEdgesArray);
 
-			vertexIDsToDelete.Append(deleteVerticesArray);
-			edgeIDsToDelete.Append(deleteEdgesArray);
+				vertexIDsToDelete.Append(deleteVerticesArray);
+				edgeIDsToDelete.Append(deleteEdgesArray);
+			}
 		}
 
 		FGraph2DDelta deleteDelta(ID);
@@ -505,10 +508,7 @@ namespace Modumate
 		// If the deleted objects would result in an empty graph, then create another delta to delete the whole graph.
 		if (IsEmpty())
 		{
-			// TODO: clear the bounds at a better time, because undoing deletion will set the bounds before the vertices exist.
 			FGraph2DDelta graphDeletionDelta(ID, EGraph2DDeltaType::Remove);
-			graphDeletionDelta.BoundsUpdates.Key.OuterBounds = BoundingPolygon;
-			graphDeletionDelta.BoundsUpdates.Key.InnerBounds = BoundingContainedPolygons;
 			if (ApplyDelta(graphDeletionDelta))
 			{
 				OutDeltas.Add(graphDeletionDelta);
@@ -523,18 +523,14 @@ namespace Modumate
 		// TODO: allow for auto-updating the bounds, i.e. after joining two exterior colinear edges.
 		else
 		{
-			FBoundsUpdate currentBounds;
-			currentBounds.InnerBounds = BoundingContainedPolygons;
+			auto innerBounds = BoundingContainedPolygons;
 			for (int32 polyID : polyIDsToDelete)
 			{
-				if (currentBounds.InnerBounds.Contains(polyID))
+				if (innerBounds.Contains(polyID))
 				{
-					currentBounds.InnerBounds.Remove(polyID);
+					innerBounds.Remove(polyID);
 				}
 			}
-
-			currentBounds.OuterBounds = BoundingPolygon;
-			// TODO: unclear how to deal with modifying the OuterBounds
 
 			if (!ValidateAgainstBounds())
 			{
@@ -542,7 +538,7 @@ namespace Modumate
 				return false;
 			}
 
-			if (!SetBounds(OutDeltas, currentBounds.OuterBounds, currentBounds.InnerBounds))
+			if (!SetBounds(BoundingPolygon, innerBounds))
 			{
 				ApplyInverseDeltas(OutDeltas);
 				return false;
@@ -818,10 +814,8 @@ namespace Modumate
 		return MoveVertices(OutDeltas, NextID, newVertexPositions);
 	}
 
-	bool FGraph2D::SetBounds(TArray<FGraph2DDelta> &OutDeltas, TPair<int32, TArray<int32>> &OuterBounds, TMap<int32, TArray<int32>> &InnerBounds)
+	bool FGraph2D::SetBounds(TPair<int32, TArray<int32>> &OuterBounds, TMap<int32, TArray<int32>> &InnerBounds)
 	{
-		FGraph2DDelta boundsDelta(ID);
-
 		// test to make sure provided polygons are valid
 		if (!(BoundingPolygon.Value.Num() == 0 && OuterBounds.Value.Num() == 0) && OuterBounds.Value.Num() < 3)
 		{
@@ -835,17 +829,8 @@ namespace Modumate
 			}
 		}
 
-		FBoundsUpdate currentBounds;
-		currentBounds.OuterBounds = BoundingPolygon;
-		currentBounds.InnerBounds = BoundingContainedPolygons;
-
-		FBoundsUpdate nextBounds;
-		nextBounds.OuterBounds = OuterBounds;
-		nextBounds.InnerBounds = InnerBounds;
-
-		boundsDelta.BoundsUpdates = TPair<FBoundsUpdate, FBoundsUpdate>(currentBounds, nextBounds);
-
-		OutDeltas.Add(boundsDelta);
+		BoundingPolygon = OuterBounds;
+		BoundingContainedPolygons = InnerBounds;
 
 		return true;
 	}
@@ -984,7 +969,12 @@ namespace Modumate
 				}
 			}
 
-			if (!SetBounds(appliedDeltas, outerBounds, innerBounds) || !ValidateAgainstBounds())
+			if (!SetBounds(outerBounds, innerBounds))
+			{
+				ApplyInverseDeltas(appliedDeltas);
+				return false;
+			}
+			if (!ValidateAgainstBounds())
 			{
 				ApplyInverseDeltas(appliedDeltas);
 				return false;
@@ -1094,6 +1084,19 @@ namespace Modumate
 		}
 
 		OutFaceToPoly = graphFaceToSurfacePoly;
+
+		BoundingContainedPolygons.Reset();
+		for (auto& kvp : graphFaceToSurfacePoly)
+		{
+			auto poly = FindPolygon(kvp.Value);
+			if (!poly)
+			{
+				continue;
+			}
+
+			BoundingContainedPolygons.Add(poly->ID, poly->VertexIDs);
+		}
+
 		return true;
 	}
 

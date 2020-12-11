@@ -80,6 +80,37 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 			return false;
 		}
 
+		// associate corners of the face with surface graph vertex IDs, if it 
+		// hasn't happened yet
+		int32 numIDs = FaceIdxToVertexID.Num();
+		if (numIDs == 0)
+		{
+			// if the outer bounds don't exist yet, set them to be the root polygon
+			// TODO: should the outer bounds always be the same as the root polygon?
+			TArray<int32> boundingVertexIDs;
+			surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
+			auto poly = surfaceGraph->GetRootPolygon();
+			if (boundingVertexIDs.Num() == 0)
+			{
+				TMap<int32, TArray<int32>> emptyBounds;
+				auto outerBounds = TPair<int32, TArray<int32>>(poly->ID, poly->VertexIDs);
+				surfaceGraph->SetBounds(outerBounds, emptyBounds);
+				surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
+			}
+
+			// associate the outer bounds with the hosting object geometry
+			for (int32 facePointIdx = 0; facePointIdx < CachedFacePoints.Num(); ++facePointIdx)
+			{
+				FVector2D prevPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
+				Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(prevPos2D);
+				if (ensure(vertex) && poly->VertexIDs.Contains(vertex->ID))
+				{
+					FaceIdxToVertexID.Add(facePointIdx, vertex->ID);
+				}
+			}
+		}
+		numIDs = FaceIdxToVertexID.Num();
+
 		// If we aren't evaluating side effects, then updating cached graph data (and subsequently dirtying children surface graph elements) is enough
 		if (OutSideEffectDeltas == nullptr)
 		{
@@ -132,22 +163,6 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 			return true;
 		}
 
-		int32 numIDs = FaceIdxToVertexID.Num();
-		if (numIDs == 0)
-		{
-			TArray<int32> boundingVertexIDs;
-			surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
-			for (int32 facePointIdx = 0; facePointIdx < CachedFacePoints.Num(); ++facePointIdx)
-			{
-				FVector2D prevPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
-				Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(prevPos2D);
-				if (ensure(vertex) && boundingVertexIDs.Contains(vertex->ID))
-				{
-					FaceIdxToVertexID.Add(facePointIdx, vertex->ID);
-				}
-			}
-		}
-		numIDs = FaceIdxToVertexID.Num();
 		// If the cached host face geometry has changed after it was created, then the surface graph may need to be updated or deleted to match the new host face
 		if (ensureAlways(numIDs > 0))
 		{
@@ -156,6 +171,8 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 
 			TArray<int32> boundingVertexIDs;
 			surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
+
+			TArray<FDeltaPtr> validSideEffectDeltas;
 
 			// For now, only attempt to generate new vertex movement positions for points that are part of the surface graph bounds,
 			// and are included in the surface graph's mounting face point list
@@ -217,20 +234,22 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 				// removes
 				TArray<FGraph2DDelta> deleteDeltas;
 				TArray<int32> deleteIDs;
+				TArray<int32> deleteFaceIDs;
 				for (auto& kvp : GraphFaceToInnerBound)
 				{
 					// face in the map is no longer contained
 					if (kvp.Key != MOD_ID_NONE && !face->ContainedFaceIDs.Contains(kvp.Key))
 					{
 						deleteIDs.Add(kvp.Value);
+						deleteFaceIDs.Add(kvp.Key);
 					}
 				}
-				for (int32 id : deleteIDs)
+				for (int32 id : deleteFaceIDs)
 				{
 					GraphFaceToInnerBound.Remove(id);
 				}
 
-				surfaceGraph->DeleteObjects(deleteDeltas, nextID, deleteIDs);
+				surfaceGraph->DeleteObjects(deleteDeltas, nextID, deleteIDs, false);
 				TSet<int32> deletedObjects;
 				for (auto& delta : deleteDeltas)
 				{
@@ -253,7 +272,7 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 
 				for (auto& delta : deleteDeltas)
 				{
-					OutSideEffectDeltas->Add(MakeShared<FGraph2DDelta>(delta));
+					validSideEffectDeltas.Add(MakeShared<FGraph2DDelta>(delta));
 				}
 
 				// adds
@@ -280,7 +299,7 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 
 					for (auto& delta : boundsDeltas)
 					{
-						OutSideEffectDeltas->Add(MakeShared<FGraph2DDelta>(delta));
+						validSideEffectDeltas.Add(MakeShared<FGraph2DDelta>(delta));
 					}
 				}
 			}
@@ -298,6 +317,7 @@ bool FMOISurfaceGraphImpl::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDelt
 
 			if (bValidGraph)
 			{
+				OutSideEffectDeltas->Append(validSideEffectDeltas);
 				for (auto& delta : moveDeltas)
 				{
 					OutSideEffectDeltas->Add(MakeShared<FGraph2DDelta>(delta));
