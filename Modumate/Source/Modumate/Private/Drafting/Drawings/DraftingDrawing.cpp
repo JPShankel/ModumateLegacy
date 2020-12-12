@@ -186,6 +186,23 @@ namespace Modumate {
 		ParentPage->lineClipping->SetTransform(cutPlane->GetCorner(0), AxisX, 1.0f);
 		ParentPage->lineClipping->AddTrianglesFromDoc(Doc);
 
+//#define MODUMATE_DRAW_OCCLUDERS
+#ifdef MODUMATE_DRAW_OCCLUDERS
+
+		TArray<FEdge> occluders;
+		ParentPage->lineClipping->GetTriangleEdges(occluders);
+		for (const auto& edge: occluders)
+		{
+			TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+				Modumate::Units::FCoordinates2D::WorldCentimeters(FVector2D(edge.Vertex[0])),
+				Modumate::Units::FCoordinates2D::WorldCentimeters(FVector2D(edge.Vertex[1])),
+				lineThickness, lineColor);
+			ParentPage->Children.Add(line);
+			line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kFinishCut);
+		}
+#endif
+
+
 		// Draw all separators, portals.
 		TArray<const AModumateObjectInstance*> beyondCutObjects(Doc->GetObjectsOfType({
 			EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTCeiling,
