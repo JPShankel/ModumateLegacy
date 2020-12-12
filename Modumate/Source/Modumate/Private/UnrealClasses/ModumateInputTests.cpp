@@ -39,7 +39,7 @@ namespace Modumate
 		if (ensure(controller && controller->InputAutomationComponent && gameState))
 		{
 			// Make an empty document, and turn on document debugging
-			gameState->Document.MakeNew(world);
+			gameState->Document->MakeNew(world);
 			controller->ModumateCommand(
 				Modumate::FModumateCommand(Modumate::Commands::kDebug)
 				.Param(TEXT("type"), TEXT("document"))
@@ -104,7 +104,7 @@ namespace Modumate
 				// Save the current resulting document as a record
 				FModumateDocumentHeader resultDocHeader;
 				FMOIDocumentRecord resultDocRecord;
-				gameState->Document.Serialize(world, resultDocHeader, resultDocRecord);
+				gameState->Document->SerializeRecords(world, resultDocHeader, resultDocRecord);
 
 				// Verify the results
 				bool bLoadedReference = false;
@@ -129,7 +129,7 @@ namespace Modumate
 					FGraph3D referenceDocGraph;
 					referenceDocGraph.Load(&referenceDocRecord.VolumeGraph);
 
-					if (!referenceDocGraph.Equals(gameState->Document.GetVolumeGraph()))
+					if (!referenceDocGraph.Equals(gameState->Document->GetVolumeGraph()))
 					{
 						UE_LOG(LogInputAutomation, Error, TEXT("Resulting VolumeGraph does not equal reference VolumeGraph!"));
 					}

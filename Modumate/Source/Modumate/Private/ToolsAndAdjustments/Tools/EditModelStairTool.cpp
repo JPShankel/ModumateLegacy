@@ -91,7 +91,7 @@ bool UStairTool::FrameUpdate()
 
 		if ((cursor.SnapType == ESnapType::CT_FACESELECT) && cursor.Actor)
 		{
-			hitMOI = GameState->Document.ObjectFromActor(cursor.Actor);
+			hitMOI = GameState->Document->ObjectFromActor(cursor.Actor);
 			if (hitMOI && (hitMOI->GetObjectType() == EObjectType::OTStaircase))
 			{
 				hitMOI = hitMOI->GetParentObject();
@@ -413,7 +413,7 @@ void UStairTool::OnAssemblyChanged()
 
 	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(EObjectType::OTStaircase);
 	const FBIMAssemblySpec* assembly = GameState.IsValid() ?
-		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, AssemblyKey) : nullptr;
+		GameState->Document->PresetManager.GetAssemblyByKey(toolMode, AssemblyKey) : nullptr;
 
 	if (assembly != nullptr)
 	{
@@ -493,7 +493,7 @@ bool UStairTool::MakeStairs()
 		});
 
 		TArray<int32> addedVertexIDs, addedEdgeIDs, addedFaceIDs;
-		if (GameState->Document.MakeMetaObject(GetWorld(), newPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
+		if (GameState->Document->MakeMetaObject(GetWorld(), newPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
 			addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltas))
 		{
 			hostPlaneIDs = addedFaceIDs;
@@ -506,7 +506,7 @@ bool UStairTool::MakeStairs()
 
 	if (hostPlaneIDs.Num() > 0)
 	{
-		int32 nextID = GameState->Document.GetNextAvailableID();
+		int32 nextID = GameState->Document->GetNextAvailableID();
 
 		auto newStairsDelta = MakeShared<FMOIDelta>();
 		deltas.Add(newStairsDelta);
@@ -519,7 +519,7 @@ bool UStairTool::MakeStairs()
 			newStairsDelta->AddCreateDestroyState(newStairState, EMOIDeltaType::Create);
 		}
 
-		bSuccess = GameState->Document.ApplyDeltas(deltas, GetWorld());
+		bSuccess = GameState->Document->ApplyDeltas(deltas, GetWorld());
 	}
 
 	return bSuccess;

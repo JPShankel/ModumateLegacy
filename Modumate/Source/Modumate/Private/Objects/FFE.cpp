@@ -20,16 +20,14 @@ class AEditModelPlayerController_CPP;
 
 AMOIFFE::AMOIFFE()
 	: AModumateObjectInstance()
-	, World(nullptr)
 	, CachedLocation(ForceInitToZero)
 	, CachedRotation(ForceInit)
 	, CachedFaceNormal(ForceInitToZero)
 {}
 
-AActor *AMOIFFE::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor *AMOIFFE::CreateActor(const FVector &loc, const FQuat &rot)
 {
-	World = world;
-	return world->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform(rot, loc));
+	return GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform(rot, loc));
 }
 
 FVector AMOIFFE::GetLocation() const

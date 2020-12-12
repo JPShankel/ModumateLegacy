@@ -39,19 +39,19 @@ bool UFinishTool::Deactivate()
 		Controller->EMPlayerState->SnappedCursor.MouseMode = OriginalMouseMode;
 	}
 
-	GameState->Document.ClearPreviewDeltas(GetWorld());
+	GameState->Document->ClearPreviewDeltas(GetWorld());
 
 	return Super::Deactivate();
 }
 
 bool UFinishTool::BeginUse()
 {
-	GameState->Document.ClearPreviewDeltas(GetWorld());
+	GameState->Document->ClearPreviewDeltas(GetWorld());
 
 	TArray<FDeltaPtr> deltas;
 	if (GetFinishCreationDeltas(deltas))
 	{
-		return GameState->Document.ApplyDeltas(deltas, GetWorld());
+		return GameState->Document->ApplyDeltas(deltas, GetWorld());
 	}
 
 	return false;
@@ -77,12 +77,12 @@ bool UFinishTool::FrameUpdate()
 		}
 	}
 
-	GameState->Document.StartPreviewing();
+	GameState->Document->StartPreviewing();
 
 	TArray<FDeltaPtr> deltas;
 	if (GetFinishCreationDeltas(deltas))
 	{
-		GameState->Document.ApplyPreviewDeltas(deltas, GetWorld());
+		GameState->Document->ApplyPreviewDeltas(deltas, GetWorld());
 	}
 
 	return true;
@@ -118,7 +118,7 @@ bool UFinishTool::GetFinishCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 		}
 	}
 
-	FObjIDReservationHandle objIDReservation(&GameState->Document, HitGraphHostMOI->ID);
+	FObjIDReservationHandle objIDReservation(GameState->Document, HitGraphHostMOI->ID);
 	int32& nextID = objIDReservation.NextID;
 	int32 surfaceGraphPolyID = MOD_ID_NONE;
 

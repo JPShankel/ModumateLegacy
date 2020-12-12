@@ -198,7 +198,7 @@ void UComponentAssemblyListItem::OnButtonConfirmReleased()
 		}
 		break;
 	case EComponentListItemType::SwapListItem:
-		UModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+		UModumateDocument* doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 		const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, BIMKey);
 		if (assembly)
 		{
@@ -226,7 +226,7 @@ bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 		return false;
 	}
 
-	UModumateDocument *doc = &GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+	UModumateDocument* doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, BIMKey);
 	if (!assembly)
 	{
@@ -287,7 +287,7 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 	SwapNameType = compListObj->SwapNameType;
 	EMPlayerController = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	FPresetManager &presetManager = gameState->Document.PresetManager;
+	FPresetManager &presetManager = gameState->Document->PresetManager;
 	
 	// Find the preset for this list item. Note some item types do not require preset
 	const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(BIMKey);

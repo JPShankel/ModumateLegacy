@@ -25,7 +25,7 @@
 static constexpr float PixelsToWorldCentimeters = 0.5f;
 
 AMOICutPlane::AMOICutPlane()
-	: FMOIPlaneImplBase(),
+	: AMOIPlaneBase(),
 	EdgeSelectedColor(28.0f / 255.0f, 159.0f / 255.0f, 255.0f / 255.0f),
 	EdgeColor(73.0f / 255.0f, 179.0f / 255.0f, 255.0f / 255.0f)
 {
@@ -37,23 +37,24 @@ void AMOICutPlane::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& Out
 	OutStructPtr = &InstanceData;
 }
 
-AActor* AMOICutPlane::CreateActor(UWorld* world, const FVector& loc, const FQuat& rot)
+AActor* AMOICutPlane::CreateActor(const FVector& loc, const FQuat& rot)
 {
-	AActor *returnActor = FMOIPlaneImplBase::CreateActor(world, loc, rot);
+	AActor *returnActor = AMOIPlaneBase::CreateActor(loc, rot);
 	return returnActor;
 }
 
 void AMOICutPlane::PostCreateObject(bool bNewObject)
 {
-	AModumateObjectInstance::PostCreateObject(bNewObject);
+	Super::PostCreateObject(bNewObject);
 
-	auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
+	UWorld* world = GetWorld();
+	auto controller = world->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 	if (controller && controller->EditModelUserWidget)
 	{
 		controller->EditModelUserWidget->UpdateCutPlanesList();
 	}
 
-	AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+	AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
 	MaterialData.EngineMaterial = gameMode ? gameMode->CutPlaneMaterial : nullptr;
 
 	// TODO: make sure that these are destroyed
@@ -62,7 +63,7 @@ void AMOICutPlane::PostCreateObject(bool bNewObject)
 	{
 		if (!CaptureActor.IsValid())
 		{
-			CaptureActor = World->SpawnActor<ACutPlaneCaptureActor>(gameMode->CutPlaneCaptureActorClass.Get());
+			CaptureActor = world->SpawnActor<ACutPlaneCaptureActor>(gameMode->CutPlaneCaptureActorClass.Get());
 			CaptureActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepWorldTransform);
 			CaptureActor->ObjID = ID;
 			CaptureActor->Parent = this;
@@ -70,7 +71,7 @@ void AMOICutPlane::PostCreateObject(bool bNewObject)
 
 		if (!MasksActor.IsValid())
 		{
-			MasksActor = World->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get());
+			MasksActor = world->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get());
 			MasksActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepWorldTransform);
 		}
 	}
@@ -78,18 +79,18 @@ void AMOICutPlane::PostCreateObject(bool bNewObject)
 
 void AMOICutPlane::PreDestroy()
 {
-	auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
+	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 	if (controller && controller->EditModelUserWidget)
 	{
 		controller->EditModelUserWidget->RemoveCutPlaneFromList(ID);
 	}
-	FMOIPlaneImplBase::PreDestroy();
+	AMOIPlaneBase::PreDestroy();
 }
 
 void AMOICutPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	FMOIPlaneImplBase::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
-	auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
+	AMOIPlaneBase::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
+	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 	if (controller && controller->EditModelUserWidget)
 	{
 		controller->EditModelUserWidget->UpdateCutPlaneInList(ID);
@@ -115,7 +116,7 @@ void AMOICutPlane::UpdateDynamicGeometry()
 
 bool AMOICutPlane::OnSelected(bool bIsSelected)
 {
-	if (!FMOIPlaneImplBase::OnSelected(bIsSelected))
+	if (!AMOIPlaneBase::OnSelected(bIsSelected))
 	{
 		return false;
 	}
@@ -394,7 +395,7 @@ bool AMOICutPlane::StartRender(UModumateDocument* doc /*= nullptr*/)
 
 float AMOICutPlane::GetAlpha() const
 {
-	return FMOIPlaneImplBase::GetAlpha() * (IsSelected() ? 0.4f : 0.2f);
+	return AMOIPlaneBase::GetAlpha() * (IsSelected() ? 0.4f : 0.2f);
 }
 
 void AMOICutPlane::UpdateCachedGeometryData()
@@ -442,9 +443,9 @@ void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 	CaptureActor->ResetHiddenActorsToDefault();
 	MasksActor->ClearProceduralLayers();
 
-	AEditModelGameState_CPP *gameState = World->GetGameState<AEditModelGameState_CPP>();
-	UModumateDocument &doc = gameState->Document;
-	auto volumeGraph = doc.GetVolumeGraph();
+	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	UModumateDocument* doc = gameState->Document;
+	auto volumeGraph = doc->GetVolumeGraph();
 	TArray<FVector2D> boxPoints;
 
 	for (auto& point : CachedPoints)
@@ -476,7 +477,7 @@ void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 		Modumate::Units::FCoordinates2D end = Modumate::Units::FCoordinates2D::WorldCentimeters(endVertex->Position);
 
 		int32 metaplaneID = objMap[edge.ID];
-		auto metaplane = doc.GetObjectById(metaplaneID);
+		auto metaplane = doc->GetObjectById(metaplaneID);
 		if (metaplane == nullptr)
 		{
 			continue;
@@ -515,7 +516,7 @@ void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 		{
 			for (int32 objID : wall->GetChildIDs())
 			{
-				auto moi = doc.GetObjectById(objID);
+				auto moi = doc->GetObjectById(objID);
 				if (!moi) continue;
 					
 				// not used

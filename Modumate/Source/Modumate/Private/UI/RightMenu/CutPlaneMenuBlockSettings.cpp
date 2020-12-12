@@ -44,7 +44,7 @@ void UCutPlaneMenuBlockSettings::NativeConstruct()
 
 void UCutPlaneMenuBlockSettings::OnButtonShowHideAllReleased()
 {
-	TArray<AModumateObjectInstance*> cutPlaneMois = GameState->Document.GetObjectsOfType(EObjectType::OTCutPlane);
+	TArray<AModumateObjectInstance*> cutPlaneMois = GameState->Document->GetObjectsOfType(EObjectType::OTCutPlane);
 	bool hideAll = false;
 	TArray<int32> allCutPlaneIDs;
 	for (int32 i = 0; i < cutPlaneMois.Num(); ++i)
@@ -57,11 +57,11 @@ void UCutPlaneMenuBlockSettings::OnButtonShowHideAllReleased()
 	}
 	if (hideAll)
 	{
-		GameState->Document.AddHideObjectsById(GetWorld(), allCutPlaneIDs);
+		GameState->Document->AddHideObjectsById(GetWorld(), allCutPlaneIDs);
 	}
 	else
 	{
-		GameState->Document.UnhideObjectsById(GetWorld(), allCutPlaneIDs);
+		GameState->Document->UnhideObjectsById(GetWorld(), allCutPlaneIDs);
 	}
 }
 

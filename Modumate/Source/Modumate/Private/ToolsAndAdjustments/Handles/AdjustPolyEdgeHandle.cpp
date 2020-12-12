@@ -195,7 +195,7 @@ bool AAdjustPolyEdgeHandle::HandleInputNumber(float number)
 	{
 		// Now that we've reverted the target object back to its original state, clean all objects so that
 		// deltas can be applied to the original state, and all of its dependent changes.
-		GameState->Document.CleanObjects();
+		GameState->Document->CleanObjects();
 
 		FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), false);
 
@@ -268,8 +268,8 @@ bool AAdjustPolyEdgeHandle::GetTransforms(const FVector Offset, TMap<int32, FTra
 	}
 	else if (graph2DObjType != Modumate::EGraphObjectType::None)
 	{
-		auto surfaceGraph = GameState->Document.FindSurfaceGraphByObjID(TargetMOI->ID);
-		auto surfaceObj = GameState->Document.GetObjectById(TargetMOI->GetParentID());
+		auto surfaceGraph = GameState->Document->FindSurfaceGraphByObjID(TargetMOI->ID);
+		auto surfaceObj = GameState->Document->GetObjectById(TargetMOI->GetParentID());
 		auto surfaceParent = surfaceObj ? surfaceObj->GetParentObject() : nullptr;
 
 		if (TargetMOI->GetObjectType() == EObjectType::OTSurfacePolygon)

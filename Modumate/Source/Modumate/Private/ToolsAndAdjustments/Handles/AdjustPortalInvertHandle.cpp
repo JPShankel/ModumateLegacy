@@ -17,7 +17,7 @@ bool AAdjustPortalInvertHandle::BeginUse()
 	{
 		auto delta = MakeShared<FMOIDelta>();
 		TargetMOI->GetInvertedState(delta->AddMutationState(TargetMOI));
-		GameState->Document.ApplyDeltas({ delta }, GetWorld());
+		GameState->Document->ApplyDeltas({ delta }, GetWorld());
 	}
 
 	return false;

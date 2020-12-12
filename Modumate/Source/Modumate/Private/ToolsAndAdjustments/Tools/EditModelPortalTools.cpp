@@ -48,7 +48,7 @@ bool UPortalToolBase::Activate()
 
 bool UPortalToolBase::Deactivate()
 {
-	GameState->Document.ClearPreviewDeltas(GameState->GetWorld());
+	GameState->Document->ClearPreviewDeltas(GameState->GetWorld());
 
 	Active = false;
 	return true;
@@ -69,7 +69,7 @@ bool UPortalToolBase::FrameUpdate()
 
 	if (snapCursor.Visible)
 	{
-		targetPlaneMOI = GameState->Document.ObjectFromActor(snapCursor.Actor);
+		targetPlaneMOI = GameState->Document->ObjectFromActor(snapCursor.Actor);
 
 		while (targetPlaneMOI && (targetPlaneMOI->GetObjectType() != EObjectType::OTMetaPlane))
 		{
@@ -96,11 +96,11 @@ bool UPortalToolBase::FrameUpdate()
 	// but that's only possible if the application of preview deltas doesn't affect cursor results.
 	if (bSuccess)
 	{
-		GameState->Document.StartPreviewing();
+		GameState->Document->StartPreviewing();
 
 		if (GetPortalCreationDeltas(Deltas))
 		{
-			GameState->Document.ApplyPreviewDeltas(Deltas, world);
+			GameState->Document->ApplyPreviewDeltas(Deltas, world);
 		}
 	}
 
@@ -150,11 +150,11 @@ bool UPortalToolBase::HandleControlKey(bool pressed)
 bool UPortalToolBase::BeginUse()
 {
 	UWorld* world = Controller->GetWorld();
-	GameState->Document.ClearPreviewDeltas(world);
+	GameState->Document->ClearPreviewDeltas(world);
 
 	if (GetPortalCreationDeltas(Deltas))
 	{
-		GameState->Document.ApplyDeltas(Deltas, world);
+		GameState->Document->ApplyDeltas(Deltas, world);
 	}
 
 	return true;
@@ -203,8 +203,8 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 
 	UWorld* world = Controller->GetWorld();
 	int32 newParentID = MOD_ID_NONE;
-	AModumateObjectInstance* curTargetPlaneObj = GameState->Document.GetObjectById(CurTargetPlaneID);
-	const FGraph3DFace* curTargetFace = GameState->Document.GetVolumeGraph().FindFace(CurTargetPlaneID);
+	AModumateObjectInstance* curTargetPlaneObj = GameState->Document->GetObjectById(CurTargetPlaneID);
+	const FGraph3DFace* curTargetFace = GameState->Document->GetVolumeGraph().FindFace(CurTargetPlaneID);
 
 	if ((curTargetPlaneObj == nullptr) || (curTargetFace == nullptr))
 	{
@@ -275,7 +275,7 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 
 		TArray<int32> addedVertexIDs, addedEdgeIDs, addedFaceIDs;
 		if (bValidContainedFace &&
-			GameState->Document.MakeMetaObject(world, metaPlanePoints, {}, EObjectType::OTMetaPlane, MOD_ID_NONE,
+			GameState->Document->MakeMetaObject(world, metaPlanePoints, {}, EObjectType::OTMetaPlane, MOD_ID_NONE,
 				addedVertexIDs, addedEdgeIDs, addedFaceIDs, OutDeltas) &&
 			(addedFaceIDs.Num() == 1))
 		{
@@ -291,7 +291,7 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 	{
 		FMOIPortalData portalInstanceData;
 
-		FMOIStateData objectStateData(GameState->Document.GetNextAvailableID(), UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()), newParentID);
+		FMOIStateData objectStateData(GameState->Document->GetNextAvailableID(), UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()), newParentID);
 		objectStateData.AssemblyKey = AssemblyKey;
 		objectStateData.CustomData.SaveStructData(portalInstanceData);
 
@@ -307,7 +307,7 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 
 bool UPortalToolBase::CalculateNativeSize()
 {
-	const FBIMAssemblySpec* assembly = GameState->Document.PresetManager.GetAssemblyByKey(GetToolMode(), AssemblyKey);
+	const FBIMAssemblySpec* assembly = GameState->Document->PresetManager.GetAssemblyByKey(GetToolMode(), AssemblyKey);
 	if (assembly == nullptr)
 	{
 		return false;

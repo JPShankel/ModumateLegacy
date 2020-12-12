@@ -56,7 +56,7 @@ bool AMOIRoom::OnSelected(bool bIsSelected)
 
 void AMOIRoom::SetupDynamicGeometry()
 {
-	const UModumateDocument *doc = GetDocument();
+	const UModumateDocument* doc = GetDocument();
 	if (doc == nullptr)
 	{
 		return;
@@ -98,7 +98,7 @@ void AMOIRoom::UpdateDynamicGeometry()
 
 void AMOIRoom::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	const UModumateDocument *doc = GetDocument();
+	const UModumateDocument* doc = GetDocument();
 	if (doc)
 	{
 		// TODO: refactor room faces using strongly-typed InstanceProperties

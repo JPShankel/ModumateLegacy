@@ -21,7 +21,7 @@ bool AAdjustPortalReverseHandle::BeginUse()
 	currentState.CustomData.LoadStructData(portalData);
 	portalData.bLateralInverted = !portalData.bLateralInverted;
 	delta->AddMutationState(TargetMOI).CustomData.SaveStructData(portalData);
-	GameState->Document.ApplyDeltas({ delta }, GetWorld());
+	GameState->Document->ApplyDeltas({ delta }, GetWorld());
 
 	return false;
 }

@@ -13,7 +13,7 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
-FMOIStructureLine::FMOIStructureLine()
+AMOIStructureLine::AMOIStructureLine()
 	: AModumateObjectInstance()
 	, LineStartPos(ForceInitToZero)
 	, LineEndPos(ForceInitToZero)
@@ -25,7 +25,7 @@ FMOIStructureLine::FMOIStructureLine()
 {
 }
 
-FQuat FMOIStructureLine::GetRotation() const
+FQuat AMOIStructureLine::GetRotation() const
 {
 	const AModumateObjectInstance *parentObj = GetParentObject();
 	if (parentObj)
@@ -36,7 +36,7 @@ FQuat FMOIStructureLine::GetRotation() const
 	return FQuat::Identity;
 }
 
-FVector FMOIStructureLine::GetLocation() const
+FVector AMOIStructureLine::GetLocation() const
 {
 	const AModumateObjectInstance *parentObj = GetParentObject();
 	if (parentObj)
@@ -47,17 +47,17 @@ FVector FMOIStructureLine::GetLocation() const
 	return FVector::ZeroVector;
 }
 
-void FMOIStructureLine::SetupDynamicGeometry()
+void AMOIStructureLine::SetupDynamicGeometry()
 {
 	InternalUpdateGeometry(true, true);
 }
 
-void FMOIStructureLine::UpdateDynamicGeometry()
+void AMOIStructureLine::UpdateDynamicGeometry()
 {
 	InternalUpdateGeometry(false, true);
 }
 
-void FMOIStructureLine::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
+void AMOIStructureLine::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
 {
 	AModumateObjectInstance* parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaEdge)))
@@ -74,7 +74,7 @@ void FMOIStructureLine::SetupAdjustmentHandles(AEditModelPlayerController_CPP* c
 	}
 }
 
-void FMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	const FSimplePolygon* profile = nullptr;
 	if (!UModumateObjectStatics::GetPolygonProfile(&GetAssembly(), profile))
@@ -103,7 +103,7 @@ void FMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &out
 	}
 }
 
-void FMOIStructureLine::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
+void AMOIStructureLine::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 {
 	if (!ensure(DynamicMeshActor.IsValid() && (GetAssembly().Extrusions.Num() == 1)))
 	{
@@ -126,7 +126,7 @@ void FMOIStructureLine::InternalUpdateGeometry(bool bRecreate, bool bCreateColli
 		LineNormal, LineUp, UpperExtensions, OuterExtensions, FVector::OneVector, bRecreate, bCreateCollision);
 }
 
-void FMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 	TArray<TArray<FVector>>& OutPerimeters) const
 {

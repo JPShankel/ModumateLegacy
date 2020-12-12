@@ -1,13 +1,17 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Objects/ModumateObjectInstance.h"
 
-class MODUMATE_API FMOIPlaneImplBase : public AModumateObjectInstance
+#include "PlaneBase.generated.h"
+
+UCLASS()
+class MODUMATE_API AMOIPlaneBase : public AModumateObjectInstance
 {
+	GENERATED_BODY()
+
 public:
-	FMOIPlaneImplBase();
+	AMOIPlaneBase();
 
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;

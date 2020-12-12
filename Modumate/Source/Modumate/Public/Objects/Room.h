@@ -1,19 +1,20 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "CoreMinimal.h"
-
-#include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateRoomStatics.h"
+#include "Objects/ModumateObjectInstance.h"
 
+#include "Room.generated.h"
 
 class AEditModelPlayerController_CPP;
 class AEditModelGameMode_CPP;
 
 class AModumateObjectInstance;
 
+UCLASS()
 class MODUMATE_API AMOIRoom : public AModumateObjectInstance
 {
+	GENERATED_BODY()
 public:
 	AMOIRoom();
 
@@ -36,7 +37,6 @@ protected:
 
 	TWeakObjectPtr<UMaterialInstanceDynamic> DynamicMaterial;
 	TWeakObjectPtr<UMaterialInstanceDynamic> VolumeMaterial;
-	TWeakObjectPtr<UWorld> World;
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
 	FArchitecturalMaterial Material;
 	bool bHovered = false;

@@ -125,9 +125,6 @@ void AEditModelPlayerController_CPP::PostInitializeComponents()
 		gameViewport->SetHardwareCursor(EMouseCursor::Custom, AdvancedCursorPath, CursorHotspot);
 	}
 
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	Document = &gameState->Document;
-
 	// Assign our cached casted AEditModelPlayerState_CPP, and its cached casted pointer to us,
 	// immediately after it's created.
 	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
@@ -145,6 +142,9 @@ void AEditModelPlayerController_CPP::PostInitializeComponents()
 void AEditModelPlayerController_CPP::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AEditModelGameState_CPP* gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	Document = gameState->Document;
 
 	EMPlayerPawn = Cast<AEditModelPlayerPawn_CPP>(GetPawn());
 	if (ensure(EMPlayerPawn))
@@ -326,7 +326,7 @@ void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
 		{
 			FBIMAssemblySpec assembly;
 			AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-			if (gameState->Document.PresetManager.TryGetDefaultAssemblyForToolMode(NewToolMode, assembly))
+			if (gameState->Document->PresetManager.TryGetDefaultAssemblyForToolMode(NewToolMode, assembly))
 			{
 				CurrentTool->SetAssemblyKey(assembly.UniqueKey());
 			}
@@ -716,7 +716,7 @@ bool AEditModelPlayerController_CPP::SaveModelFilePath(const FString &filepath)
 	// Try to capture a thumbnail for the project	
 	CaptureProjectThumbnail();
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	if (gameState->Document.Save(GetWorld(), filepath))
+	if (gameState->Document->Save(GetWorld(), filepath))
 	{
 		EMPlayerState->LastFilePath = filepath;
 		Modumate::PlatformFunctions::ShowMessageBox(*FString::Printf(TEXT("Saved as %s"),*EMPlayerState->LastFilePath), TEXT("Save Model"), Modumate::PlatformFunctions::Okay);
@@ -759,7 +759,7 @@ bool AEditModelPlayerController_CPP::LoadModel()
 
 	if (Modumate::PlatformFunctions::GetOpenFilename(filename))
 	{
-		bLoadSuccess = gameState->Document.Load(GetWorld(), filename, true);
+		bLoadSuccess = gameState->Document->Load(GetWorld(), filename, true);
 		if (bLoadSuccess)
 		{
 			EMPlayerState->LastFilePath = filename;
@@ -848,7 +848,7 @@ bool AEditModelPlayerController_CPP::CaptureProjectThumbnail()
 		float captureAspect = (float)captureComp->TextureTarget->SizeX / (float)captureComp->TextureTarget->SizeY;
 		float captureMaxAspect = FMath::Max(captureAspect, 1.0f / captureAspect);
 
-		FSphere projectBounds = gameState->Document.CalculateProjectBounds().GetSphere();
+		FSphere projectBounds = gameState->Document->CalculateProjectBounds().GetSphere();
 		FVector captureOrigin = CalculateViewLocationForSphere(projectBounds, captureComp->GetForwardVector(), captureMaxAspect, captureComp->FOVAngle);
 		captureComp->GetOwner()->SetActorLocation(captureOrigin);
 
@@ -859,7 +859,7 @@ bool AEditModelPlayerController_CPP::CaptureProjectThumbnail()
 		FString encodedThumbnail;
 		if (gameState && FModumateThumbnailHelpers::CreateProjectThumbnail(captureComp->TextureTarget, encodedThumbnail))
 		{
-			gameState->Document.CurrentEncodedThumbnail = encodedThumbnail;
+			gameState->Document->CurrentEncodedThumbnail = encodedThumbnail;
 			return true;
 		}
 	}
@@ -1211,7 +1211,7 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 			FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*oldFile);
 			FPlatformFileManager::Get().GetPlatformFile().MoveFile(*oldFile, *newFile);
 			AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-			gameState->Document.Save(GetWorld(), newFile);
+			gameState->Document->Save(GetWorld(), newFile);
 
 			TimeOfLastAutoSave = FDateTime::Now();
 			WantAutoSave = false;

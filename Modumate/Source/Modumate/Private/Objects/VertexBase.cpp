@@ -9,7 +9,7 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/VertexActor.h"
 
-FMOIVertexImplBase::FMOIVertexImplBase()
+AMOIVertexBase::AMOIVertexBase()
 	: AModumateObjectInstance()
 	, SelectedColor(0x00, 0x35, 0xFF)
 	, BaseColor(0x00, 0x00, 0x00)
@@ -18,23 +18,23 @@ FMOIVertexImplBase::FMOIVertexImplBase()
 {
 }
 
-FVector FMOIVertexImplBase::GetLocation() const
+FVector AMOIVertexBase::GetLocation() const
 {
 	return VertexActor.IsValid() ? VertexActor->MoiLocation : FVector::ZeroVector;
 }
 
-FVector FMOIVertexImplBase::GetCorner(int32 index) const
+FVector AMOIVertexBase::GetCorner(int32 index) const
 {
 	ensure(index == 0);
 	return GetLocation();
 }
 
-int32 FMOIVertexImplBase::GetNumCorners() const
+int32 AMOIVertexBase::GetNumCorners() const
 {
 	return VertexActor.IsValid() ? 1 : 0;
 }
 
-void FMOIVertexImplBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
+void AMOIVertexBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
 {
 	if (VertexActor.IsValid())
 	{
@@ -46,7 +46,7 @@ void FMOIVertexImplBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisio
 	}
 }
 
-void FMOIVertexImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOIVertexBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	TArray<FVector> vertexTangents;
 	GetTangents(vertexTangents);
@@ -57,10 +57,10 @@ void FMOIVertexImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &ou
 	outPoints.Add(FStructurePoint(GetLocation(), defaultTangent, 0));
 }
 
-AActor *FMOIVertexImplBase::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor *AMOIVertexBase::CreateActor(const FVector &loc, const FQuat &rot)
 {
-	World = world;
-	VertexActor = World->SpawnActor<AVertexActor>(AVertexActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
+	UWorld* world = GetWorld();
+	VertexActor = world->SpawnActor<AVertexActor>(AVertexActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
 
 	// Set appearance
 	AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
@@ -76,7 +76,7 @@ AActor *FMOIVertexImplBase::CreateActor(UWorld *world, const FVector &loc, const
 	return VertexActor.Get();
 }
 
-bool FMOIVertexImplBase::OnSelected(bool bIsSelected)
+bool AMOIVertexBase::OnSelected(bool bIsSelected)
 {
 	if (!AModumateObjectInstance::OnSelected(bIsSelected))
 	{
@@ -96,4 +96,8 @@ bool FMOIVertexImplBase::OnSelected(bool bIsSelected)
 	}
 
 	return true;
+}
+
+void AMOIVertexBase::GetTangents(TArray<FVector>& OutTangents) const
+{
 }

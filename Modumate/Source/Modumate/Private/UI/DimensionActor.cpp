@@ -1,5 +1,7 @@
+// Copyright 2020 Modumate, Inc. All Rights Reserved.
 #include "UI/DimensionActor.h"
 
+#include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UI/EditModelPlayerHUD.h"
@@ -8,6 +10,9 @@
 
 ADimensionActor::ADimensionActor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
+	, DimensionText(nullptr)
+	, Document(nullptr)
+	, ID(MOD_ID_NONE)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -16,6 +21,10 @@ void ADimensionActor::BeginPlay()
 {
 	Super::BeginPlay();
 	CreateWidget();
+
+	UWorld* world = GetWorld();
+	auto gameState = world ? world->GetGameState<AEditModelGameState_CPP>() : nullptr;
+	Document = gameState ? gameState->Document : nullptr;
 }
 
 void ADimensionActor::EndPlay(const EEndPlayReason::Type EndPlayReason)

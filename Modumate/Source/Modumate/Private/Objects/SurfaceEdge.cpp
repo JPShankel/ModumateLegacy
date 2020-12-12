@@ -11,7 +11,7 @@
 #include "UnrealClasses/LineActor.h"
 
 AMOISurfaceEdge::AMOISurfaceEdge()
-	: FMOIEdgeImplBase()
+	: AMOIEdgeBase()
 	, CachedDeprojectedStart(ForceInitToZero)
 	, CachedDeprojectedEnd(ForceInitToZero)
 {

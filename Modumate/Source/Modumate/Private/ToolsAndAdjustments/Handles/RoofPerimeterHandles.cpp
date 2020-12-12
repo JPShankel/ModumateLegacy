@@ -48,10 +48,10 @@ bool ACreateRoofFacesHandle::BeginUse()
 		const FVector *combinedPolyVertsPtr = CombinedPolyVerts.GetData();
 		int32 vertIdxStart = 0, vertIdxEnd = 0;
 
-		UModumateDocument &doc = GameState->Document;
-		const FGraph3D &volumeGraph = doc.GetVolumeGraph();
-		FGraph3D &tempVolumeGraph = doc.GetTempVolumeGraph();
-		int32 nextID = doc.GetNextAvailableID();
+		UModumateDocument* doc = GameState->Document;
+		const FGraph3D &volumeGraph = doc->GetVolumeGraph();
+		FGraph3D &tempVolumeGraph = doc->GetTempVolumeGraph();
+		int32 nextID = doc->GetNextAvailableID();
 		TSet<int32> groupIDs({ TargetMOI->ID });
 
 		bool bAnyFaceFailure = false;
@@ -92,7 +92,7 @@ bool ACreateRoofFacesHandle::BeginUse()
 			deltaPtrs.Add(MakeShared<FGraph3DDelta>(graphDelta));
 		}
 
-		bool bAppliedDeltas = doc.ApplyDeltas(deltaPtrs, world);
+		bool bAppliedDeltas = doc->ApplyDeltas(deltaPtrs, world);
 
 		if (!bAppliedDeltas)
 		{
@@ -123,8 +123,8 @@ bool ARetractRoofFacesHandle::BeginUse()
 		return false;
 	}
 
-	UModumateDocument &doc = GameState->Document;
-	const FGraph3D &volumeGraph = doc.GetVolumeGraph();
+	UModumateDocument* doc = GameState->Document;
+	const FGraph3D &volumeGraph = doc->GetVolumeGraph();
 	if (!volumeGraph.GetGroup(TargetMOI->ID, TempGroupMembers))
 	{
 		return false;
@@ -140,7 +140,7 @@ bool ARetractRoofFacesHandle::BeginUse()
 	}
 
 	// TODO: migrate this to one or more deltas, when we can delete objects that way.
-	doc.DeleteObjects(TempFaceIDs, true, true);
+	doc->DeleteObjects(TempFaceIDs, true, true);
 
 	return false;
 }
@@ -213,7 +213,7 @@ void AEditRoofEdgeHandle::AbortUse()
 
 FVector AEditRoofEdgeHandle::GetHandlePosition() const
 {
-	const UModumateDocument *doc = TargetMOI ? TargetMOI->GetDocument() : nullptr;
+	const UModumateDocument* doc = TargetMOI ? TargetMOI->GetDocument() : nullptr;
 	const AModumateObjectInstance *targetEdgeMOI = doc ? doc->GetObjectById(FMath::Abs(TargetEdgeID)) : nullptr;
 	if (ensure(targetEdgeMOI))
 	{

@@ -28,7 +28,7 @@ FMiterParticipantData::FMiterParticipantData(const struct FMiterData *InMiterDat
 		return;
 	}
 
-	const UModumateDocument *doc = InMiterData->MOI->GetDocument();
+	const UModumateDocument* doc = InMiterData->MOI->GetDocument();
 	if (!ensure(doc))
 	{
 		return;
@@ -210,7 +210,7 @@ bool FMiterData::GatherDetails(const AModumateObjectInstance *InMiterObject)
 	}
 
 	MOI = InMiterObject;
-	const UModumateDocument *doc = MOI->GetDocument();
+	const UModumateDocument* doc = MOI->GetDocument();
 	if (doc == nullptr)
 	{
 		return false;

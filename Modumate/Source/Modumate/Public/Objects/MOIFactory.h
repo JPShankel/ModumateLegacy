@@ -1,10 +1,10 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "Objects/ModumateObjectInstance.h"
+#include "Database/ModumateObjectEnums.h"
 
 class MODUMATE_API FMOIFactory
 {
 public:
-	static AModumateObjectInstance *MakeMOI(EObjectType ObjectType);
+	static UClass* GetMOIClass(EObjectType ObjectType);
 };

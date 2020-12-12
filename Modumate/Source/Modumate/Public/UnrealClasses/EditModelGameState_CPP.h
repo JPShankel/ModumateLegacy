@@ -2,34 +2,20 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "GameFramework/GameStateBase.h"
+
 #include "DocumentManagement/ModumateDocument.h"
-#include "ModumateCore/ModumateConsoleCommand.h"
-#include "Runtime/Engine/Classes/GameFramework/GameStateBase.h"
-#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
+
 #include "EditModelGameState_CPP.generated.h"
-
-
-/**
- *
- */
 
 UCLASS(config=Game)
 class MODUMATE_API AEditModelGameState_CPP : public AGameStateBase
 {
 	GENERATED_BODY()
 
-
 public:
+	void InitDocument();
 
-	AEditModelGameState_CPP();
-	~AEditModelGameState_CPP();
-
-	UModumateDocument Document;
-
-	UFUNCTION(BlueprintCallable, Category = "Shopping")
-	TArray<float> GetComponentsThicknessWithKey(EToolMode Mode, const FBIMKey& AssemblyKey) const;
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	bool GetPortalToolTip(EToolMode Mode, const FBIMKey& AssemblyKey, FString& Type, FString& ConfigName, TArray<FString>& Parts);
+	UPROPERTY()
+	UModumateDocument* Document;
 };

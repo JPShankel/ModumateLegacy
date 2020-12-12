@@ -52,13 +52,13 @@ bool UTrimTool::BeginUse()
 	if (TargetEdgeID != MOD_ID_NONE)
 	{
 		FMOITrimData trimCustomData;
-		FMOIStateData stateData(GameState->Document.GetNextAvailableID(), EObjectType::OTTrim, TargetEdgeID);
+		FMOIStateData stateData(GameState->Document->GetNextAvailableID(), EObjectType::OTTrim, TargetEdgeID);
 		stateData.AssemblyKey = AssemblyKey;
 		stateData.CustomData.SaveStructData(trimCustomData);
 
 		auto delta = MakeShared<FMOIDelta>();
 		delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
-		GameState->Document.ApplyDeltas({ delta }, GetWorld());
+		GameState->Document->ApplyDeltas({ delta }, GetWorld());
 
 		EndUse();
 	}
@@ -82,7 +82,7 @@ bool UTrimTool::FrameUpdate()
 	}
 
 	const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
-	const AModumateObjectInstance* targetMOI = GameState->Document.ObjectFromActor(cursor.Actor);
+	const AModumateObjectInstance* targetMOI = GameState->Document->ObjectFromActor(cursor.Actor);
 	if (targetMOI && (targetMOI->GetObjectType() == EObjectType::OTSurfaceEdge))
 	{
 		int32 existingTargetTrimID = MOD_ID_NONE;

@@ -31,8 +31,10 @@ class AEditModelPlayerController_CPP;
 
 class AModumateObjectInstance;
 
+UCLASS()
 class MODUMATE_API AMOICabinet : public AModumateObjectInstance
 {
+	GENERATED_BODY()
 public:
 	AMOICabinet();
 

@@ -9,9 +9,8 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 
-FMOIEdgeImplBase::FMOIEdgeImplBase()
+AMOIEdgeBase::AMOIEdgeBase()
 	: AModumateObjectInstance()
-	, World(nullptr)
 	, LineActor(nullptr)
 	, SelectedColor(0x00, 0x35, 0xFF)
 	, HoveredColor(0x00, 0x00, 0x00)
@@ -21,22 +20,22 @@ FMOIEdgeImplBase::FMOIEdgeImplBase()
 {
 }
 
-FVector FMOIEdgeImplBase::GetLocation() const
+FVector AMOIEdgeBase::GetLocation() const
 {
 	return 0.5f * (GetCorner(0) + GetCorner(1));
 }
 
-FVector FMOIEdgeImplBase::GetCorner(int32 index) const
+FVector AMOIEdgeBase::GetCorner(int32 index) const
 {
 	return LineActor.IsValid() ? ((index == 0) ? LineActor->Point1 : LineActor->Point2) : FVector::ZeroVector;
 }
 
-int32 FMOIEdgeImplBase::GetNumCorners() const
+int32 AMOIEdgeBase::GetNumCorners() const
 {
 	return 2;
 }
 
-bool FMOIEdgeImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
+bool AMOIEdgeBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
 	if (!AModumateObjectInstance::OnHovered(controller, bIsHovered))
 	{
@@ -47,17 +46,16 @@ bool FMOIEdgeImplBase::OnHovered(AEditModelPlayerController_CPP *controller, boo
 	return true;
 }
 
-AActor *FMOIEdgeImplBase::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor *AMOIEdgeBase::CreateActor(const FVector &loc, const FQuat &rot)
 {
-	World = world;
-	LineActor = world->SpawnActor<ALineActor>();
+	LineActor = GetWorld()->SpawnActor<ALineActor>();
 	LineActor->SetIsHUD(false);
 	LineActor->MakeGeometry();
 	LineActor->UpdateVisuals(false);
 	return LineActor.Get();
 }
 
-bool FMOIEdgeImplBase::OnSelected(bool bIsSelected)
+bool AMOIEdgeBase::OnSelected(bool bIsSelected)
 {
 	if (!AModumateObjectInstance::OnSelected(bIsSelected))
 	{
@@ -68,7 +66,7 @@ bool FMOIEdgeImplBase::OnSelected(bool bIsSelected)
 	return true;
 }
 
-void FMOIEdgeImplBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
+void AMOIEdgeBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
 {
 	if (LineActor.IsValid())
 	{
@@ -84,7 +82,7 @@ void FMOIEdgeImplBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionE
 	}
 }
 
-void FMOIEdgeImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOIEdgeBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	FVector startPoint = GetCorner(0);
 	FVector endPoint = GetCorner(1);
@@ -105,7 +103,7 @@ void FMOIEdgeImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outP
 	outLines.Add(FStructureLine(startPoint, endPoint, 0, 1));
 }
 
-float FMOIEdgeImplBase::GetThicknessMultiplier() const
+float AMOIEdgeBase::GetThicknessMultiplier() const
 {
 	if (IsSelected())
 	{
@@ -119,11 +117,11 @@ float FMOIEdgeImplBase::GetThicknessMultiplier() const
 	return 1.0f;
 }
 
-void FMOIEdgeImplBase::UpdateMaterial()
+void AMOIEdgeBase::UpdateMaterial()
 {
 	if (LineActor.IsValid())
 	{
-		AEditModelGameMode_CPP* gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+		AEditModelGameMode_CPP* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
 		// Color
 		if (gameMode)
 		{

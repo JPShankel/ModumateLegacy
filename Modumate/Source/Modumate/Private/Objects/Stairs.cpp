@@ -17,11 +17,6 @@ AMOIStaircase::AMOIStaircase()
 	, bCachedStartRiser(true)
 	, bCachedEndRiser(true)
 {
-	const auto& assemblySpec = GetAssembly();
-	CachedTreadDims.UpdateLayersFromAssembly(assemblySpec.TreadLayers);
-	CachedRiserDims.UpdateLayersFromAssembly(assemblySpec.RiserLayers);
-	bCachedUseRisers = assemblySpec.RiserLayers.Num() != 0;
-	TreadRun = assemblySpec.TreadDepth.AsWorldCentimeters();
 }
 
 bool AMOIStaircase::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
@@ -68,6 +63,12 @@ void AMOIStaircase::SetupDynamicGeometry()
 		runPlanePoints.Add(planeParent->GetCorner(pointIdx));
 	}
 
+	const auto& assemblySpec = GetAssembly();
+	CachedTreadDims.UpdateLayersFromAssembly(assemblySpec.TreadLayers);
+	CachedRiserDims.UpdateLayersFromAssembly(assemblySpec.RiserLayers);
+	bCachedUseRisers = assemblySpec.RiserLayers.Num() != 0;
+	TreadRun = assemblySpec.TreadDepth.AsWorldCentimeters();
+
 	// Tread 'depth' is horizontal run from nose to nose.
 	float goalTreadDepth = TreadRun;
 
@@ -85,14 +86,13 @@ void AMOIStaircase::SetupDynamicGeometry()
 	const float totalTreadThickness = CachedTreadDims.TotalUnfinishedWidth;
 	const float totalRiserThickness = bCachedUseRisers ? CachedRiserDims.TotalUnfinishedWidth : OpenStairsOverhang;
 	Modumate::FStairStatics::CalculateSetupStairPolysParams(
-		GetAssembly(),
+		assemblySpec,
 		totalTreadThickness, totalRiserThickness, runDir,
 		CachedTreadPolys, CachedRiserPolys,
 		CachedRiserNormals, TreadLayers, RiserLayers);
 
 	// Set up the triangulated staircase mesh by extruding each tread and riser polygon
-	DynamicMeshActor->SetupStairPolys(stairOrigin, CachedTreadPolys, CachedRiserPolys, CachedRiserNormals, TreadLayers, RiserLayers,
-		GetAssembly());
+	DynamicMeshActor->SetupStairPolys(stairOrigin, CachedTreadPolys, CachedRiserPolys, CachedRiserNormals, TreadLayers, RiserLayers, assemblySpec);
 }
 
 void AMOIStaircase::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,

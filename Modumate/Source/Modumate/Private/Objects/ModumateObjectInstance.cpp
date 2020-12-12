@@ -31,19 +31,20 @@ AModumateObjectInstance::AModumateObjectInstance()
 {
 }
 
-AModumateObjectInstance::~AModumateObjectInstance()
-{
-	Destroy(true);
-}
-
 void AModumateObjectInstance::BeginPlay()
 {
+	Super::BeginPlay();
 
+	UWorld* world = GetWorld();
+	auto gameState = ensure(world) ? world->GetGameState<AEditModelGameState_CPP>() : nullptr;
+	Document = ensure(gameState) ? gameState->Document : nullptr;
 }
 
 void AModumateObjectInstance::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	DestroyMOI(true);
 
+	Super::EndPlay(EndPlayReason);
 }
 
 void AModumateObjectInstance::SetupMOIComponent()
@@ -80,32 +81,6 @@ void AModumateObjectInstance::UpdateAssemblyFromKey()
 EObjectType AModumateObjectInstance::GetObjectType() const
 {
 	return CachedAssembly.ObjectType;
-}
-
-void AModumateObjectInstance::Destroy(bool bFullDelete)
-{
-	if (!bDestroyed)
-	{
-		PreDestroy();
-
-		CachedChildIDs.Reset();
-		if (AModumateObjectInstance* parentObj = GetParentObject())
-		{
-			parentObj->RemoveCachedChildID(ID);
-		}
-
-		// Clear dirty flags, since we won't be able to clean the object later
-		DirtyFlags = EObjectDirtyFlags::None;
-		for (EObjectDirtyFlags dirtyFlag : UModumateTypeStatics::OrderedDirtyFlags)
-		{
-			Document->RegisterDirtyObject(dirtyFlag, this, false);
-		}
-
-		bDestroyed = true;
-	}
-
-	// DestroyActor is safe to call multiple times, and may be necessary if this was only partially deleted before being fully deleted
-	DestroyActor(bFullDelete);
 }
 
 AModumateObjectInstance *AModumateObjectInstance::GetParentObject()
@@ -403,14 +378,14 @@ bool AModumateObjectInstance::HasAdjustmentHandles() const
 
 AAdjustmentHandleActor *AModumateObjectInstance::MakeHandle(TSubclassOf<AAdjustmentHandleActor> HandleClass)
 {
-	if (!MeshActor.IsValid() || !World.IsValid())
+	if (!MeshActor.IsValid())
 	{
 		return nullptr;
 	}
 
 	FActorSpawnParameters spawnParams;
 	spawnParams.Owner = MeshActor.Get();
-	AAdjustmentHandleActor *handleActor = World->SpawnActor<AAdjustmentHandleActor>(HandleClass.Get(), FTransform::Identity, spawnParams);
+	AAdjustmentHandleActor *handleActor = GetWorld()->SpawnActor<AAdjustmentHandleActor>(HandleClass.Get(), FTransform::Identity, spawnParams);
 
 	handleActor->SourceMOI = this;
 	handleActor->TargetMOI = this;
@@ -762,7 +737,7 @@ void AModumateObjectInstance::DestroyActor(bool bFullDelete)
 	}
 	else
 	{
-		auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
+		auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 		ShowAdjustmentHandles(controller, false);
 
 		RequestHidden(PartialActorDestructionRequest, true);
@@ -770,7 +745,33 @@ void AModumateObjectInstance::DestroyActor(bool bFullDelete)
 	}
 }
 
-void AModumateObjectInstance::Restore()
+void AModumateObjectInstance::DestroyMOI(bool bFullDelete)
+{
+	if (!bDestroyed)
+	{
+		PreDestroy();
+
+		CachedChildIDs.Reset();
+		if (AModumateObjectInstance* parentObj = GetParentObject())
+		{
+			parentObj->RemoveCachedChildID(ID);
+		}
+
+		// Clear dirty flags, since we won't be able to clean the object later
+		DirtyFlags = EObjectDirtyFlags::None;
+		for (EObjectDirtyFlags dirtyFlag : UModumateTypeStatics::OrderedDirtyFlags)
+		{
+			Document->RegisterDirtyObject(dirtyFlag, this, false);
+		}
+
+		bDestroyed = true;
+	}
+
+	// DestroyActor is safe to call multiple times, and may be necessary if this was only partially deleted before being fully deleted
+	DestroyActor(bFullDelete);
+}
+
+void AModumateObjectInstance::RestoreMOI()
 {
 	if (!ensure(bDestroyed))
 	{
@@ -793,11 +794,11 @@ void AModumateObjectInstance::Restore()
 
 void AModumateObjectInstance::PostCreateObject(bool bNewObject)
 {
-	if (bNewObject && ensure(!MeshActor.IsValid() && World.IsValid() && (StateData.ID != MOD_ID_NONE)))
+	if (bNewObject && ensure(!MeshActor.IsValid() && (StateData.ID != MOD_ID_NONE)))
 	{
-		MeshActor = CreateActor(World.Get(), FVector::ZeroVector, FQuat::Identity);
-		SetupMOIComponent();
 		UpdateAssemblyFromKey();
+		MeshActor = CreateActor(FVector::ZeroVector, FQuat::Identity);
+		SetupMOIComponent();
 	}
 
 	if (bDestroyed)
@@ -890,19 +891,19 @@ AActor *AModumateObjectInstance::RestoreActor()
 {
 	if (UWorld *world = GetWorld())
 	{
-		return CreateActor(world, FVector::ZeroVector, FQuat::Identity);
+		return CreateActor(FVector::ZeroVector, FQuat::Identity);
 	}
 
 	return nullptr;
 }
 
-AActor *AModumateObjectInstance::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor *AModumateObjectInstance::CreateActor(const FVector &loc, const FQuat &rot)
 {
-	World = world;
-
-	if (AEditModelGameMode_CPP* gameMode = World->GetAuthGameMode<AEditModelGameMode_CPP>())
+	UWorld* world = GetWorld();
+	AEditModelGameMode_CPP* gameMode = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+	if (gameMode)
 	{
-		DynamicMeshActor = World->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get(), FTransform(rot, loc));
+		DynamicMeshActor = world->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get(), FTransform(rot, loc));
 
 		if (DynamicMeshActor.IsValid() && DynamicMeshActor->Mesh)
 		{

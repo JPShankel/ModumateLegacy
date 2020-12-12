@@ -7,11 +7,13 @@ class AMOIGroupActor_CPP;
 
 class AModumateObjectInstance;
 
+#include "Group.generated.h"
 
+UCLASS()
 class MODUMATE_API AMOIGroup : public AModumateObjectInstance
 {
+	GENERATED_BODY()
 private:
-	TWeakObjectPtr<UWorld> World;
 	FVector CachedLocation;
 	FVector CachedExtents;
 
@@ -26,7 +28,7 @@ public:
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 
 	virtual AActor *RestoreActor() override;
-	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
+	virtual AActor *CreateActor(const FVector &loc, const FQuat &rot) override;
 
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 

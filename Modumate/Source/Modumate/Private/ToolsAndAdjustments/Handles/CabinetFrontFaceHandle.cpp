@@ -35,7 +35,7 @@ bool ACabinetFrontFaceHandle::BeginUse()
 		}
 
 		modifiedStateData.CustomData.SaveStructData(modifiedCustomData);
-		GameState->Document.ApplyDeltas({ delta }, GetWorld());
+		GameState->Document->ApplyDeltas({ delta }, GetWorld());
 	}
 
 	return false;

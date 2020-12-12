@@ -69,7 +69,7 @@ bool UModumateRoomStatics::GetRoomConfigurationsFromProject(UObject* WorldContex
 	}
 
 	bool bSuccess = true;
-	TArray<AModumateObjectInstance *> roomObjs = gameState->Document.GetObjectsOfType(EObjectType::OTRoom);
+	TArray<AModumateObjectInstance *> roomObjs = gameState->Document->GetObjectsOfType(EObjectType::OTRoom);
 	for (auto *roomObj : roomObjs)
 	{
 		auto &roomConfig = OutRoomConfigs.AddDefaulted_GetRef();
@@ -124,7 +124,7 @@ bool UModumateRoomStatics::GetRoomConfig(UObject* WorldContextObject, int32 Room
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
-	AModumateObjectInstance *roomObj = gameState ? gameState->Document.GetObjectById(RoomID) : nullptr;
+	AModumateObjectInstance *roomObj = gameState ? gameState->Document->GetObjectById(RoomID) : nullptr;
 	return GetRoomConfig(roomObj, OutRoomConfig);
 }
 
@@ -163,7 +163,7 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(UObject* WorldContextObject, int
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
-	AModumateObjectInstance *roomObj = gameState ? gameState->Document.GetObjectById(RoomID) : nullptr;
+	AModumateObjectInstance *roomObj = gameState ? gameState->Document->GetObjectById(RoomID) : nullptr;
 
 	return SetRoomConfigFromKey(roomObj, ConfigKey);
 }

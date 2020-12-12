@@ -86,7 +86,7 @@ bool AMOICabinet::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* Ou
 
 void AMOICabinet::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	AModumateObjectInstance::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
+	Super::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
 
 	if (FrontFacePortalActor.IsValid())
 	{
@@ -508,7 +508,7 @@ void AMOICabinet::SetupAdjustmentHandles(AEditModelPlayerController_CPP *control
 
 void AMOICabinet::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
 {
-	AModumateObjectInstance::ShowAdjustmentHandles(Controller, bShow);
+	Super::ShowAdjustmentHandles(Controller, bShow);
 
 	AdjustmentHandlesVisible = bShow;
 

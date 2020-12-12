@@ -1,15 +1,18 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "Objects/ModumateObjectInstance.h"
 #include "Objects/LayeredObjectInterface.h"
-#include "CoreMinimal.h"
+#include "Objects/ModumateObjectInstance.h"
+
+#include "Stairs.generated.h"
 
 class AEditModelPlayerController_CPP;
 class AModumateObjectInstance;
 
+UCLASS()
 class MODUMATE_API AMOIStaircase : public AModumateObjectInstance
 {
+	GENERATED_BODY()
 public:
 	AMOIStaircase();
 

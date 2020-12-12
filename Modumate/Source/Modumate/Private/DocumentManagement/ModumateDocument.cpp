@@ -331,7 +331,7 @@ bool UModumateDocument::DeleteObjectImpl(AModumateObjectInstance *ObjToDelete)
 		int32 objID = ObjToDelete->ID;
 
 		bool bKeepDeletedObj = !bSlowClearingPreviewDeltas;
-		bool bDestroyActor = !bFastClearingPreviewDeltas && !bApplyingPreviewDeltas;
+		bool bFullyDestroy = !bFastClearingPreviewDeltas && !bApplyingPreviewDeltas;
 
 		if (bKeepDeletedObj)
 		{
@@ -339,15 +339,15 @@ bool UModumateDocument::DeleteObjectImpl(AModumateObjectInstance *ObjToDelete)
 			if (DeletedObjects.Contains(ObjToDelete->ID))
 			{
 				ensure(bFastClearingPreviewDeltas || bSlowClearingPreviewDeltas);
-				delete DeletedObjects.FindAndRemoveChecked(ObjToDelete->ID);
+				DeletedObjects.FindAndRemoveChecked(ObjToDelete->ID)->Destroy();
 			}
 
-			ObjToDelete->Destroy(bDestroyActor);
+			ObjToDelete->DestroyMOI(bFullyDestroy);
 			DeletedObjects.Add(ObjToDelete->ID, ObjToDelete);
 		}
 		else
 		{
-			delete ObjToDelete;
+			ObjToDelete->Destroy();
 		}
 
 		ObjectInstanceArray.Remove(ObjToDelete);
@@ -372,7 +372,7 @@ bool UModumateDocument::RestoreObjectImpl(AModumateObjectInstance *obj)
 		DeletedObjects.Remove(obj->ID);
 		ObjectInstanceArray.AddUnique(obj);
 		ObjectsByID.Add(obj->ID, obj);
-		obj->Restore();
+		obj->RestoreMOI();
 
 		return true;
 	}
@@ -399,7 +399,7 @@ AModumateObjectInstance* UModumateDocument::CreateOrRestoreObj(UWorld* World, co
 
 		// If there was a deleted object with the same ID as our new object, but cannot be restored for the given state data,
 		// then fully delete it since its ID must no longer be safely referenced.
-		delete DeletedObjects.FindAndRemoveChecked(StateData.ID);
+		DeletedObjects.FindAndRemoveChecked(StateData.ID)->Destroy();
 	}
 
 	if (!ensureAlwaysMsgf(!ObjectsByID.Contains(StateData.ID),
@@ -408,10 +408,15 @@ AModumateObjectInstance* UModumateDocument::CreateOrRestoreObj(UWorld* World, co
 		return nullptr;
 	}
 
-	// TODO: replace this with AActor-spawning
-	AModumateObjectInstance* newObj = FMOIFactory::MakeMOI(StateData.ObjectType);
-	newObj->World = World;
-	newObj->Document = this;
+	UClass* moiClass = FMOIFactory::GetMOIClass(StateData.ObjectType);
+	FActorSpawnParameters moiSpawnParams;
+	moiSpawnParams.Owner = World->GetGameState<AEditModelGameState_CPP>();
+	moiSpawnParams.bNoFail = true;
+	AModumateObjectInstance* newObj = World->SpawnActor<AModumateObjectInstance>(moiClass, moiSpawnParams);
+	if (!ensure(newObj))
+	{
+		return newObj;
+	}
 
 	ObjectInstanceArray.AddUnique(newObj);
 	ObjectsByID.Add(StateData.ID, newObj);
@@ -877,7 +882,7 @@ void UModumateDocument::ClearPreviewDeltas(UWorld *World, bool bFastClear)
 
 		for (int32 invalidDeletedID : invalidDeletedIDs)
 		{
-			delete DeletedObjects.FindAndRemoveChecked(invalidDeletedID);
+			DeletedObjects.FindAndRemoveChecked(invalidDeletedID)->Destroy();
 		}
 	}
 
@@ -1888,19 +1893,19 @@ void UModumateDocument::MakeNew(UWorld *world)
 	int32 numObjects = ObjectInstanceArray.Num();
 	for (int32 i = numObjects - 1; i >= 0; --i)
 	{
-		AModumateObjectInstance *obj = ObjectInstanceArray[i];
+		AModumateObjectInstance* obj = ObjectInstanceArray[i];
 
 		ObjectsByID.Remove(obj->ID);
 		ObjectInstanceArray.RemoveAt(i, 1, false);
 
-		delete obj;
+		obj->Destroy();
 	}
 
 	for (auto& kvp : DeletedObjects)
 	{
 		if (kvp.Value)
 		{
-			delete kvp.Value;
+			kvp.Value->Destroy();
 		}
 	}
 	DeletedObjects.Reset();
@@ -2137,7 +2142,7 @@ bool UModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
 	return true;
 }
 
-bool UModumateDocument::Serialize(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord)
+bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Serialize"));
 
@@ -2227,7 +2232,7 @@ bool UModumateDocument::Save(UWorld* World, const FString& FilePath)
 {
 	FModumateDocumentHeader docHeader;
 	FMOIDocumentRecord docRecord;
-	if (!Serialize(World, docHeader, docRecord))
+	if (!SerializeRecords(World, docHeader, docRecord))
 	{
 		return false;
 	}

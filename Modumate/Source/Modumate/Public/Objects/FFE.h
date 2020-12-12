@@ -5,6 +5,9 @@
 
 #include "FFE.generated.h"
 
+class AStaticMeshActor;
+class AAdjustmentHandleActor;
+
 USTRUCT()
 struct MODUMATE_API FMOIFFEData
 {
@@ -23,27 +26,15 @@ struct MODUMATE_API FMOIFFEData
 	int32 ParentFaceIndex;
 };
 
-class AStaticMeshActor;
-class AAdjustmentHandleActor;
-
-class AModumateObjectInstance;
-
+UCLASS()
 class MODUMATE_API AMOIFFE : public AModumateObjectInstance
 {
-protected:
-	TWeakObjectPtr<UWorld> World;
-	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
-	FVector CachedLocation;
-	FQuat CachedRotation;
-	FVector CachedFaceNormal;
-	TArray<int32> CachedFaceIndices;
-
-	FMOIFFEData InstanceData;
+	GENERATED_BODY()
 
 public:
-
 	AMOIFFE();
-	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
+
+	virtual AActor *CreateActor(const FVector &loc, const FQuat &rot) override;
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
 	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
@@ -58,4 +49,12 @@ public:
 
 protected:
 	void InternalUpdateGeometry();
+
+	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
+	FVector CachedLocation;
+	FQuat CachedRotation;
+	FVector CachedFaceNormal;
+	TArray<int32> CachedFaceIndices;
+
+	FMOIFFEData InstanceData;
 };

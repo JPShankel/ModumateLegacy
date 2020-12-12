@@ -7,7 +7,7 @@
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 
-FMOIPlaneImplBase::FMOIPlaneImplBase()
+AMOIPlaneBase::AMOIPlaneBase()
 	: AModumateObjectInstance()
 	, SelectedColor(0x1C, 0x9F, 0xFF)
 	, HoveredColor(0xCF, 0xCF, 0xCF)
@@ -20,7 +20,7 @@ FMOIPlaneImplBase::FMOIPlaneImplBase()
 {
 }
 
-FVector FMOIPlaneImplBase::GetCorner(int32 index) const
+FVector AMOIPlaneBase::GetCorner(int32 index) const
 {
 	if (ensure(CachedPoints.IsValidIndex(index)))
 	{
@@ -30,27 +30,27 @@ FVector FMOIPlaneImplBase::GetCorner(int32 index) const
 	return GetLocation();
 }
 
-int32 FMOIPlaneImplBase::GetNumCorners() const
+int32 AMOIPlaneBase::GetNumCorners() const
 {
 	return CachedPoints.Num();
 }
 
-FQuat FMOIPlaneImplBase::GetRotation() const
+FQuat AMOIPlaneBase::GetRotation() const
 {
 	return FRotationMatrix::MakeFromXY(CachedAxisX, CachedAxisY).ToQuat();
 }
 
-FVector FMOIPlaneImplBase::GetLocation() const
+FVector AMOIPlaneBase::GetLocation() const
 {
 	return CachedCenter;
 }
 
-FVector FMOIPlaneImplBase::GetNormal() const
+FVector AMOIPlaneBase::GetNormal() const
 {
 	return CachedPlane;
 }
 
-void FMOIPlaneImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AMOIPlaneBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	// Don't return points or lines if we're snapping,
 	// since otherwise the plane will interfere with edges and vertices.
@@ -73,7 +73,7 @@ void FMOIPlaneImplBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &out
 }
 
 // Adjustment Handles
-void FMOIPlaneImplBase::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+void AMOIPlaneBase::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
 	if (HasAdjustmentHandles())
 	{
@@ -88,12 +88,12 @@ void FMOIPlaneImplBase::SetupAdjustmentHandles(AEditModelPlayerController_CPP *c
 	}
 }
 
-bool FMOIPlaneImplBase::ShowStructureOnSelection() const
+bool AMOIPlaneBase::ShowStructureOnSelection() const
 {
 	return false;
 }
 
-void FMOIPlaneImplBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
+void AMOIPlaneBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
 {
 	AModumateObjectInstance::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
 
@@ -103,7 +103,7 @@ void FMOIPlaneImplBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollision
 	}
 }
 
-bool FMOIPlaneImplBase::OnSelected(bool bIsSelected)
+bool AMOIPlaneBase::OnSelected(bool bIsSelected)
 {
 	if (!AModumateObjectInstance::OnSelected(bIsSelected))
 	{
@@ -114,7 +114,7 @@ bool FMOIPlaneImplBase::OnSelected(bool bIsSelected)
 	return true;
 }
 
-bool FMOIPlaneImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
+bool AMOIPlaneBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
 {
 	if (!AModumateObjectInstance::OnHovered(controller, bIsHovered))
 	{
@@ -125,23 +125,23 @@ bool FMOIPlaneImplBase::OnHovered(AEditModelPlayerController_CPP *controller, bo
 	return true;
 }
 
-void FMOIPlaneImplBase::PostCreateObject(bool bNewObject)
+void AMOIPlaneBase::PostCreateObject(bool bNewObject)
 {
 	AModumateObjectInstance::PostCreateObject(bNewObject);
 
 	UpdateConnectedVisuals();
 }
 
-float FMOIPlaneImplBase::GetAlpha() const
+float AMOIPlaneBase::GetAlpha() const
 {
 	return IsHovered() ? 1.5f : 1.0f;
 }
 
-void FMOIPlaneImplBase::UpdateMaterial()
+void AMOIPlaneBase::UpdateMaterial()
 {
 	if (DynamicMeshActor.IsValid())
 	{
-		AEditModelGameMode_CPP* gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+		AEditModelGameMode_CPP* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
 		// Color
 		if (gameMode)
 		{
@@ -167,7 +167,7 @@ void FMOIPlaneImplBase::UpdateMaterial()
 	}
 }
 
-void FMOIPlaneImplBase::UpdateConnectedVisuals()
+void AMOIPlaneBase::UpdateConnectedVisuals()
 {
 	UpdateVisuals();
 	// Update the visuals of all of our connected edges

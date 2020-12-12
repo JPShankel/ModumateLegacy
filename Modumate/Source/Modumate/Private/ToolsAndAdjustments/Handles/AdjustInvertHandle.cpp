@@ -20,7 +20,7 @@ bool AAdjustInvertHandle::BeginUse()
 	{
 		auto delta = MakeShared<FMOIDelta>();
 		delta->AddMutationState(TargetMOI, TargetMOI->GetStateData(), invertedState);
-		GameState->Document.ApplyDeltas({ delta }, GetWorld());
+		GameState->Document->ApplyDeltas({ delta }, GetWorld());
 	}
 
 	return false;

@@ -22,7 +22,7 @@ bool UGraph2DTool::Activate()
 	Super::Activate();
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	const FGraph3D &volumeGraph = gameState->Document.GetVolumeGraph();
+	const FGraph3D &volumeGraph = gameState->Document->GetVolumeGraph();
 
 	TSet<int32> graphObjIDs, connectedGraphIDs;
 	UModumateObjectStatics::GetGraphIDsFromMOIs(Controller->EMPlayerState->SelectedObjects, graphObjIDs);
@@ -33,7 +33,7 @@ bool UGraph2DTool::Activate()
 		FGraph2DRecord graphRecord;
 		FBIMKey graphKey;
 		if (SelectedGraph->ToDataRecord(&graphRecord) &&
-			(gameState->Document.PresetManager.AddOrUpdateGraph2DRecord(FBIMKey(), graphRecord, graphKey) == EBIMResult::Success))
+			(gameState->Document->PresetManager.AddOrUpdateGraph2DRecord(FBIMKey(), graphRecord, graphKey) == EBIMResult::Success))
 		{
 			UE_LOG(LogTemp, Log, TEXT("Added graph record \"%s\""), *graphKey.ToString());
 		}

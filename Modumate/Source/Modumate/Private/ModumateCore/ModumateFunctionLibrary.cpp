@@ -383,9 +383,7 @@ float UModumateFunctionLibrary::GetViewportDPIScale()
 
 FBoxSphereBounds UModumateFunctionLibrary::GetSelectedExtents(const AEditModelPlayerController_CPP * Controller)
 {
-	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	AEditModelPlayerState_CPP *playerState = Controller->EMPlayerState;
-	const UModumateDocument &doc = gameState->Document;
 
 	TArray<FVector> selectedMOIPoints;
 	TArray<FStructurePoint> curMOIPoints;
@@ -426,13 +424,13 @@ void UModumateFunctionLibrary::DocAddHideMoiActors(const TArray<AActor*> Actors)
 	if (Actors.Num() > 0)
 	{
 		AEditModelGameState_CPP *gameState = Actors[0]->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		UModumateDocument *doc = &gameState->Document;
+		UModumateDocument* doc = gameState->Document;
 
 		// First, find all descendents of the selected actor objects
 		TSet<const AModumateObjectInstance *> objectsAndDescendents;
 		for (auto curActor : Actors)
 		{
-			AModumateObjectInstance *moi = gameState->Document.ObjectFromActor(curActor);
+			AModumateObjectInstance *moi = gameState->Document->ObjectFromActor(curActor);
 			if (moi)
 			{
 				objectsAndDescendents.Add(moi);
@@ -475,7 +473,7 @@ void UModumateFunctionLibrary::DocUnHideAllMoiActors(const AActor* Owner)
 	if (Owner != nullptr)
 	{
 		AEditModelGameState_CPP *gameState = Owner->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		UModumateDocument *doc = &gameState->Document;
+		UModumateDocument* doc = gameState->Document;
 		doc->UnhideAllObjects(Owner->GetWorld());
 	}
 }
@@ -485,7 +483,7 @@ FBIMKey UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool
 	if (TargetActor != nullptr)
 	{
 		AEditModelGameState_CPP *gameState = TargetActor->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		UModumateDocument *doc = &gameState->Document;
+		UModumateDocument* doc = gameState->Document;
 		AModumateObjectInstance *moi = doc->ObjectFromActor(TargetActor);
 		
 		if (moi != nullptr)

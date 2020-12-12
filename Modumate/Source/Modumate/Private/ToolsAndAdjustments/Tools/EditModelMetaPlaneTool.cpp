@@ -163,7 +163,7 @@ bool UMetaPlaneTool::EnterNextStage()
 
 bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewObjIDs)
 {
-	UModumateDocument &doc = GameState->Document;
+	UModumateDocument* doc = GameState->Document;
 
 	bool bSuccess = false;
 	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
@@ -243,7 +243,7 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 
 				TArray<FVector> points = { constrainedStartPoint, constrainedEndPoint };
 
-				bSuccess = doc.MakeMetaObject(GetWorld(), points, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
+				bSuccess = doc->MakeMetaObject(GetWorld(), points, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
 					addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltaPtrs);
 
 				break;
@@ -256,7 +256,7 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 
 				if (bPendingPlaneValid)
 				{
-					bSuccess = doc.MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
+					bSuccess = doc->MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
 						addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltaPtrs);
 
 					// set up cursor affordance so snapping works on the next chained segment
@@ -273,7 +273,7 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 			{
 				if (bPendingPlaneValid)
 				{
-					bSuccess = doc.MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
+					bSuccess = doc->MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
 						addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltaPtrs);
 
 					// Don't chain horizontal planes, so end the tool's use here
@@ -289,7 +289,7 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 
 		if (bSuccess)
 		{
-			bSuccess = doc.ApplyDeltas(deltaPtrs, GetWorld());
+			bSuccess = doc->ApplyDeltas(deltaPtrs, GetWorld());
 
 			// TODO: remove OutNewObjIDs
 			OutNewObjIDs.Append(addedFaceIDs);

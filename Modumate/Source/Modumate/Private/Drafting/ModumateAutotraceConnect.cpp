@@ -41,9 +41,9 @@ namespace Modumate
 		}
 
 		AEditModelGameState_CPP *gameState = World->GetGameState<AEditModelGameState_CPP>();
-		UModumateDocument &document = gameState->Document;
+		UModumateDocument* document = gameState->Document;
 
-		if (document.GetObjectById(CutPlaneID) != nullptr)
+		if (document->GetObjectById(CutPlaneID) != nullptr)
 		{	// Cut plane exists.
 			CutPlane->TraceRequestComplete(RenderID, MoveTemp(jsonResponse));
 		}

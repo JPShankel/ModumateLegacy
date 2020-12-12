@@ -3,10 +3,14 @@
 
 #include "Objects/VertexBase.h"
 
+#include "SurfaceVertex.generated.h"
+
 class AVertexActor;
 
-class MODUMATE_API AMOISurfaceVertex : public FMOIVertexImplBase
+UCLASS()
+class MODUMATE_API AMOISurfaceVertex : public AMOIVertexBase
 {
+	GENERATED_BODY()
 public:
 	AMOISurfaceVertex();
 

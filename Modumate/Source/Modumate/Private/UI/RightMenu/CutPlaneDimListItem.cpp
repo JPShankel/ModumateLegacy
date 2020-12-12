@@ -57,11 +57,11 @@ void UCutPlaneDimListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
 		TArray<int32> objIDs = { ObjID };
 		if (IsChecked)
 		{
-			gameState->Document.AddHideObjectsById(GetWorld(), objIDs);
+			gameState->Document->AddHideObjectsById(GetWorld(), objIDs);
 		}
 		else
 		{
-			gameState->Document.UnhideObjectsById(GetWorld(), objIDs);
+			gameState->Document->UnhideObjectsById(GetWorld(), objIDs);
 		}
 	}
 
@@ -81,7 +81,7 @@ void UCutPlaneDimListItem::OnEditableTitleCommitted(const FText& Text, ETextComm
 	AEditModelGameState_CPP *gameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
 	if (gameState)
 	{
-		AModumateObjectInstance* moi = gameState->Document.GetObjectById(ObjID);
+		AModumateObjectInstance* moi = gameState->Document->GetObjectById(ObjID);
 		FMOIStateData oldStateData = moi->GetStateData();
 		FMOIStateData newStateData = oldStateData;
 
@@ -93,7 +93,7 @@ void UCutPlaneDimListItem::OnEditableTitleCommitted(const FText& Text, ETextComm
 		auto delta = MakeShared<FMOIDelta>();
 		delta->AddMutationState(moi, oldStateData, newStateData);
 
-		gameState->Document.ApplyDeltas({ delta }, GetWorld());
+		gameState->Document->ApplyDeltas({ delta }, GetWorld());
 	}
 }
 

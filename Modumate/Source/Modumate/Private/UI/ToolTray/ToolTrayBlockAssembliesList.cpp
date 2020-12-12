@@ -63,7 +63,7 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 	SwapType = ESwapType::SwapFromAssemblyList;
 	if (Controller && GameState)
 	{
-		FPresetManager &presetManager = GameState->Document.PresetManager;
+		FPresetManager &presetManager = GameState->Document->PresetManager;
 		AssembliesList->ClearListItems();
 
 		EObjectType ot = UModumateTypeStatics::ObjectTypeFromToolMode(Controller->GetToolMode());
@@ -103,7 +103,7 @@ void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& 
 
 	if (Controller && GameState)
 	{
-		FPresetManager &presetManager = GameState->Document.PresetManager;
+		FPresetManager &presetManager = GameState->Document->PresetManager;
 		AssembliesList->ClearListItems();
 
 		TArray<FBIMKey> availablePresets;
@@ -111,7 +111,7 @@ void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& 
 
 		if (ComponentPresetItem)
 		{
-			const FBIMPresetInstance* preset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(PresetIDToSwap);
+			const FBIMPresetInstance* preset = GameState->Document->PresetManager.CraftingNodePresets.Presets.Find(PresetIDToSwap);
 			if (preset != nullptr)
 			{
 				ComponentPresetItem->MainText->ChangeText(preset->DisplayName);
@@ -144,7 +144,7 @@ void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(ETool
 
 	if (Controller && GameState)
 	{
-		FPresetManager &presetManager = GameState->Document.PresetManager;
+		FPresetManager &presetManager = GameState->Document->PresetManager;
 		AssembliesList->ClearListItems();
 
 		TArray<FBIMKey> availablePresets;
@@ -152,7 +152,7 @@ void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(ETool
 
 		if (ComponentPresetItem)
 		{
-			const FBIMPresetInstance* preset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(PresetID);
+			const FBIMPresetInstance* preset = GameState->Document->PresetManager.CraftingNodePresets.Presets.Find(PresetID);
 			if (preset != nullptr)
 			{
 				ComponentPresetItem->MainText->ChangeText(preset->DisplayName);
@@ -183,7 +183,7 @@ bool UToolTrayBlockAssembliesList::IsPresetAvailableForSearch(const FBIMKey& Pre
 	}
 	if (GameState)
 	{
-		const FBIMPresetInstance* preset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(PresetKey);
+		const FBIMPresetInstance* preset = GameState->Document->PresetManager.CraftingNodePresets.Presets.Find(PresetKey);
 		if (preset)
 		{
 			return UKismetStringLibrary::Contains(preset->DisplayName.ToString(), searchSubString);

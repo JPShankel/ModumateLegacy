@@ -138,7 +138,7 @@ void AAdjustmentHandleActor::PostEndOrAbort()
 		Controller->InteractionHandle = nullptr;
 		Controller->EMPlayerState->SnappedCursor.MouseMode = OriginalMouseMode;
 
-		GameState->Document.ClearPreviewDeltas(Controller->GetWorld());
+		GameState->Document->ClearPreviewDeltas(Controller->GetWorld());
 	}
 
 	if (TargetMOI)
@@ -354,7 +354,7 @@ void AAdjustmentHandleActor::EndUse()
 	TMap<int32, FTransform> newTransforms;
 	for (int32 id : newVertexIDs)
 	{
-		auto obj = GameState->Document.GetObjectById(id);
+		auto obj = GameState->Document->GetObjectById(id);
 		if (obj == nullptr)
 		{
 			continue;
@@ -365,7 +365,7 @@ void AAdjustmentHandleActor::EndUse()
 
 	// Now that we've reverted the target object back to its original state, clean all objects so that
 	// deltas can be applied to the original state, and all of its dependent changes.
-	GameState->Document.CleanObjects();
+	GameState->Document->CleanObjects();
 
 	FModumateObjectDeltaStatics::MoveTransformableIDs(newTransforms, Controller->GetDocument(), Controller->GetWorld(), false);
 

@@ -470,7 +470,7 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 
 void AMOIPlaneHostedObj::UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalculateEdgeExtensions)
 {
-	const UModumateDocument *doc = GetDocument();
+	const UModumateDocument* doc = GetDocument();
 	if (!ensureAlwaysMsgf(doc, TEXT("Tried to update invalid plane-hosted object!")))
 	{
 		return;

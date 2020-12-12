@@ -3,8 +3,12 @@
 
 #include "Objects/EdgeBase.h"
 
-class MODUMATE_API AMOISurfaceEdge : public FMOIEdgeImplBase
+#include "SurfaceEdge.generated.h"
+
+UCLASS()
+class MODUMATE_API AMOISurfaceEdge : public AMOIEdgeBase
 {
+	GENERATED_BODY()
 public:
 	AMOISurfaceEdge();
 

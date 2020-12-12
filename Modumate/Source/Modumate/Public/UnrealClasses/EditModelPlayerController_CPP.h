@@ -51,7 +51,9 @@ class MODUMATE_API AEditModelPlayerController_CPP : public APlayerController
 
 private:
 
-	UModumateDocument *Document;
+	UPROPERTY()
+	UModumateDocument* Document;
+
 	FModumateSnappingView *SnappingView;
 
 	TSet<int32> SnappingIDsToIgnore;

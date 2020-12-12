@@ -1,12 +1,14 @@
+// Copyright 2020 Modumate, Inc. All Rights Reserved.
+
 #include "UI/DimensionManager.h"
 
 #include "Database/ModumateObjectEnums.h"
 #include "Graph/Graph3DTypes.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/DimensionWidget.h"
+#include "UI/AngleDimensionActor.h"
 #include "UI/DimensionActor.h"
 #include "UI/GraphDimensionActor.h"
-#include "UI/AngleDimensionActor.h"
+#include "UnrealClasses/DimensionWidget.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 #include "Widgets/SWidget.h"
 
 UDimensionManager::UDimensionManager(const FObjectInitializer& ObjectInitializer)
@@ -41,13 +43,13 @@ void UDimensionManager::Shutdown()
 void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 {
 	// find which vertices are currently selected and create measuring dimension strings
-	auto& doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-	auto& graph = doc.GetVolumeGraph();
+	auto* doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+	auto& graph = doc->GetVolumeGraph();
 
 	LastSelectedVertexIDs.Reset();
 	LastSelectedEdgeIDs.Reset();
 
-	auto moi = doc.GetObjectById(selectedGraphObjID);
+	auto moi = doc->GetObjectById(selectedGraphObjID);
 
 	bool bFoundVolumeGraphObject = false;
 	bool bFoundSurfaceGraphObject = false;
@@ -59,7 +61,7 @@ void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 		graphObject->GetVertexIDs(LastSelectedVertexIDs);
 		bFoundVolumeGraphObject = true;
 	}
-	else if (surfaceGraph = doc.FindSurfaceGraphByObjID(moi->ID))
+	else if (surfaceGraph = doc->FindSurfaceGraphByObjID(moi->ID))
 	{
 		auto surfaceGraphObject = surfaceGraph->FindObject(moi->ID);
 		if (surfaceGraphObject == nullptr)
@@ -73,7 +75,7 @@ void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 			surfaceGraphObject->GetVertexIDs(LastSelectedVertexIDs);
 		}
 	}
-	else if (auto parentMoi = doc.GetObjectById(moi->GetParentID()))
+	else if (auto parentMoi = doc->GetObjectById(moi->GetParentID()))
 	{
 		if (auto parentGraphObject = graph.FindObject(parentMoi->ID))
 		{

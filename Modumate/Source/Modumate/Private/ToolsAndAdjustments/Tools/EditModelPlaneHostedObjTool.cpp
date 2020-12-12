@@ -77,7 +77,7 @@ bool UPlaneHostedObjTool::BeginUse()
 			return false;
 		}
 
-		AModumateObjectInstance* parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
+		AModumateObjectInstance* parentMOI = GameState->Document->GetObjectById(LastValidTargetID);
 
 		if (ensureAlways(parentMOI != nullptr))
 		{
@@ -94,7 +94,7 @@ bool UPlaneHostedObjTool::BeginUse()
 						FMOIStateData& newState = delta->AddMutationState(child);
 						newState.AssemblyKey = AssemblyKey;
 
-						GameState->Document.ApplyDeltas({ delta }, GetWorld());
+						GameState->Document->ApplyDeltas({ delta }, GetWorld());
 
 						EndUse();
 						return false;
@@ -111,14 +111,14 @@ bool UPlaneHostedObjTool::BeginUse()
 			newMOICustomData.Justification = InstanceJustification;
 
 			FMOIStateData newMOIData;
-			newMOIData.ID = GameState->Document.GetNextAvailableID();
+			newMOIData.ID = GameState->Document->GetNextAvailableID();
 			newMOIData.ObjectType = ObjectType;
 			newMOIData.ParentID = LastValidTargetID;
 			newMOIData.AssemblyKey = AssemblyKey;
 			newMOIData.CustomData.SaveStructData(newMOICustomData);
 			delta->AddCreateDestroyState(newMOIData, EMOIDeltaType::Create);
 
-			GameState->Document.ApplyDeltas({ delta }, GetWorld());
+			GameState->Document->ApplyDeltas({ delta }, GetWorld());
 			EndUse();
 		}
 		else
@@ -194,10 +194,10 @@ bool UPlaneHostedObjTool::FrameUpdate()
 
 		if ((cursor.SnapType == ESnapType::CT_FACESELECT) && cursor.Actor)
 		{
-			hitMOI = GameState->Document.ObjectFromActor(cursor.Actor);
+			hitMOI = GameState->Document->ObjectFromActor(cursor.Actor);
 			if (hitMOI && (hitMOI->GetObjectType() == ObjectType))
 			{
-				hitMOI = GameState->Document.GetObjectById(hitMOI->GetParentID());
+				hitMOI = GameState->Document->GetObjectById(hitMOI->GetParentID());
 			}
 
 			if (ValidatePlaneTarget(hitMOI))
@@ -281,7 +281,7 @@ void UPlaneHostedObjTool::OnAssemblyChanged()
 
 	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(ObjectType);
 	const FBIMAssemblySpec* assembly = GameState.IsValid() ?
-		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, AssemblyKey) : nullptr;
+		GameState->Document->PresetManager.GetAssemblyByKey(toolMode, AssemblyKey) : nullptr;
 
 	if (assembly != nullptr)
 	{
@@ -311,7 +311,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector& Location, TArray<int32>& new
 	if (bSuccess)
 	{
 		auto delta = MakeShared<FMOIDelta>();
-		int32 nextID = GameState->Document.GetNextAvailableID();
+		int32 nextID = GameState->Document->GetNextAvailableID();
 
 		FMOIPlaneHostedObjData newMOICustomData;
 		newMOICustomData.bLayersInverted = bInverted;
@@ -319,7 +319,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector& Location, TArray<int32>& new
 
 		for (int32 newGraphObjID : newGraphObjIDs)
 		{
-			AModumateObjectInstance* newGraphObj = GameState->Document.GetObjectById(newGraphObjID);
+			AModumateObjectInstance* newGraphObj = GameState->Document->GetObjectById(newGraphObjID);
 
 			if (newGraphObj && (newGraphObj->GetObjectType() == EObjectType::OTMetaPlane))
 			{
@@ -335,7 +335,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector& Location, TArray<int32>& new
 			}
 		}
 
-		GameState->Document.ApplyDeltas({ delta }, GetWorld());
+		GameState->Document->ApplyDeltas({ delta }, GetWorld());
 	}
 
 	Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kEndUndoRedoMacro));
@@ -352,7 +352,7 @@ bool UPlaneHostedObjTool::IsTargetFacingDown()
 {
 	if (LastValidTargetID != MOD_ID_NONE)
 	{
-		AModumateObjectInstance *parentMOI = GameState->Document.GetObjectById(LastValidTargetID);
+		AModumateObjectInstance *parentMOI = GameState->Document->GetObjectById(LastValidTargetID);
 		return (parentMOI && (parentMOI->GetNormal().Z < 0.0f));
 	}
 	else if (bPendingPlaneValid && PendingPlaneGeom.IsNormalized())
@@ -373,11 +373,11 @@ float UPlaneHostedObjTool::GetDefaultJustificationValue()
 	// For walls, use the default justification for vertically-oriented objects
 	if (ObjectType == EObjectType::OTWallSegment)
 	{
-		return GameState->Document.GetDefaultJustificationZ();
+		return GameState->Document->GetDefaultJustificationZ();
 	}
 
 	// Otherwise, start with the default justification for horizontally-oriented objects
-	float defaultJustificationXY = GameState->Document.GetDefaultJustificationXY();
+	float defaultJustificationXY = GameState->Document->GetDefaultJustificationXY();
 
 	// Now flip the justification if the target plane is not facing downwards
 	if (!IsTargetFacingDown())

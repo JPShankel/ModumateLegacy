@@ -4,8 +4,12 @@
 #include "CoreMinimal.h"
 #include "Objects/PlaneBase.h"
 
-class MODUMATE_API AMOISurfacePolygon : public FMOIPlaneImplBase
+#include "SurfacePolygon.generated.h"
+
+UCLASS()
+class MODUMATE_API AMOISurfacePolygon : public AMOIPlaneBase
 {
+	GENERATED_BODY()
 public:
 	AMOISurfacePolygon();
 

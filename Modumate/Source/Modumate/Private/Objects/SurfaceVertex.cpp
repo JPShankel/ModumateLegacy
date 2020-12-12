@@ -12,7 +12,7 @@
 #include "UnrealClasses/VertexActor.h"
 
 AMOISurfaceVertex::AMOISurfaceVertex()
-	: FMOIVertexImplBase()
+	: AMOIVertexBase()
 	, CachedDeprojectedLocation(ForceInitToZero)
 {
 	BaseColor = FColor(0x51, 0x50, 0x84);

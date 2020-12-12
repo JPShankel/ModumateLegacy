@@ -24,44 +24,44 @@
 #include "Objects/Trim.h"
 #include "Objects/Mullion.h"
 
-AModumateObjectInstance *FMOIFactory::MakeMOI(EObjectType ObjectType)
+UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 {
 	switch (ObjectType)
 	{
-		case EObjectType::OTWallSegment:
-		case EObjectType::OTRailSegment:
-		case EObjectType::OTFloorSegment:
-		case EObjectType::OTCeiling:
-		case EObjectType::OTRoofFace:
-		case EObjectType::OTCountertop:
-		case EObjectType::OTSystemPanel: return new AMOIPlaneHostedObj();
-		case EObjectType::OTDoor:
-		case EObjectType::OTWindow: return new AMOIPortal();
-		case EObjectType::OTFurniture: return new AMOIFFE();
-		case EObjectType::OTCabinet: return new AMOICabinet();
-		case EObjectType::OTStaircase: return new AMOIStaircase();
-		case EObjectType::OTFinish: return new AMOIFinish();
-		case EObjectType::OTGroup: return new AMOIGroup();
-		case EObjectType::OTRoom: return new AMOIRoom();
-		case EObjectType::OTTrim: return new AMOITrim();
-		case EObjectType::OTMetaVertex: return new AMOIMetaVertex();
-		case EObjectType::OTMetaEdge: return new AMOIMetaEdge();
-		case EObjectType::OTMetaPlane: return new AMOIMetaPlane();
-		case EObjectType::OTSurfaceGraph: return new AMOISurfaceGraph();
-		case EObjectType::OTSurfaceVertex: return new AMOISurfaceVertex();
-		case EObjectType::OTSurfaceEdge: return new AMOISurfaceEdge();
-		case EObjectType::OTSurfacePolygon: return new AMOISurfacePolygon();
-		case EObjectType::OTCutPlane: return new AMOICutPlane();
-		case EObjectType::OTScopeBox: return new AMOIScopeBox();
-		case EObjectType::OTStructureLine: return new FMOIStructureLine();
-		case EObjectType::OTRoofPerimeter: return new AMOIRoofPerimeter();
-		case EObjectType::OTMullion: return new FMOIMullion();
-		default:
-		{
-			FString objectTypeString = EnumValueString(EObjectType, ObjectType);
-			ensureAlwaysMsgf(false, TEXT("Tried to create a MOI from an unsupported ObjectType: %s!"),
-				*objectTypeString);
-			return nullptr;
-		}
+	case EObjectType::OTWallSegment:
+	case EObjectType::OTRailSegment:
+	case EObjectType::OTFloorSegment:
+	case EObjectType::OTCeiling:
+	case EObjectType::OTRoofFace:
+	case EObjectType::OTCountertop:
+	case EObjectType::OTSystemPanel: return AMOIPlaneHostedObj::StaticClass();
+	case EObjectType::OTDoor:
+	case EObjectType::OTWindow: return AMOIPortal::StaticClass();
+	case EObjectType::OTFurniture: return AMOIFFE::StaticClass();
+	case EObjectType::OTCabinet: return AMOICabinet::StaticClass();
+	case EObjectType::OTStaircase: return AMOIStaircase::StaticClass();
+	case EObjectType::OTFinish: return AMOIFinish::StaticClass();
+	case EObjectType::OTGroup: return AMOIGroup::StaticClass();
+	case EObjectType::OTRoom: return AMOIRoom::StaticClass();
+	case EObjectType::OTTrim: return AMOITrim::StaticClass();
+	case EObjectType::OTMetaVertex: return AMOIMetaVertex::StaticClass();
+	case EObjectType::OTMetaEdge: return AMOIMetaEdge::StaticClass();
+	case EObjectType::OTMetaPlane: return AMOIMetaPlane::StaticClass();
+	case EObjectType::OTSurfaceGraph: return AMOISurfaceGraph::StaticClass();
+	case EObjectType::OTSurfaceVertex: return AMOISurfaceVertex::StaticClass();
+	case EObjectType::OTSurfaceEdge: return AMOISurfaceEdge::StaticClass();
+	case EObjectType::OTSurfacePolygon: return AMOISurfacePolygon::StaticClass();
+	case EObjectType::OTCutPlane: return AMOICutPlane::StaticClass();
+	case EObjectType::OTScopeBox: return AMOIScopeBox::StaticClass();
+	case EObjectType::OTStructureLine: return AMOIStructureLine::StaticClass();
+	case EObjectType::OTRoofPerimeter: return AMOIRoofPerimeter::StaticClass();
+	case EObjectType::OTMullion: return AMOIMullion::StaticClass();
+	default:
+	{
+		FString objectTypeString = EnumValueString(EObjectType, ObjectType);
+		ensureAlwaysMsgf(false, TEXT("Tried to create a MOI from an unsupported ObjectType: %s!"),
+			*objectTypeString);
+		return nullptr;
+	}
 	}
 }

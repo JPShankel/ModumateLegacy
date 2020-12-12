@@ -117,12 +117,12 @@ bool ADynamicIconGenerator::SetIconMeshForAssembly(const FBIMKey& AsmKey, UMater
 		return true;
 	}
 
-	const FBIMPresetInstance* childPreset = GameState->Document.PresetManager.CraftingNodePresets.Presets.Find(AsmKey);
+	const FBIMPresetInstance* childPreset = GameState->Document->PresetManager.CraftingNodePresets.Presets.Find(AsmKey);
 	if (childPreset == nullptr)
 	{
 		return false;
 	}
-	const FPresetManager::FAssemblyDataCollection* db = GameState->Document.PresetManager.AssembliesByObjectType.Find(childPreset->ObjectType);
+	const FPresetManager::FAssemblyDataCollection* db = GameState->Document->PresetManager.AssembliesByObjectType.Find(childPreset->ObjectType);
 	if (db == nullptr)
 	{
 		return false;
@@ -157,7 +157,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 	}
 #endif
 
-	const FPresetManager &presetManager = GameState->Document.PresetManager;
+	const FPresetManager &presetManager = GameState->Document->PresetManager;
 	const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(PresetID);
 	if (preset == nullptr)
 	{
@@ -238,7 +238,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 bool ADynamicIconGenerator::GetSavedIconFromPreset(const FBIMKey& PresetID, UTexture*& OutTexture)
 {
 	OutTexture = nullptr;
-	const FPresetManager &presetManager = GameState->Document.PresetManager;
+	const FPresetManager &presetManager = GameState->Document->PresetManager;
 	const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(PresetID);
 	if (preset == nullptr)
 	{
@@ -804,7 +804,7 @@ bool ADynamicIconGenerator::SetIconMeshForPart(bool UseDependentPreset, const FB
 	FBIMKey rawMaterialKey;
 	FString colorHexValue = TEXT("FFFFFF");
 	FBIMKey meshKey;
-	const FPresetManager &presetManager = GameState->Document.PresetManager;
+	const FPresetManager &presetManager = GameState->Document->PresetManager;
 
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	if (UseDependentPreset)
@@ -888,7 +888,7 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(bool UseDependentPreset, cons
 	// Step 1: Get params needed to make material icon
 	FBIMKey rawMaterialKey;
 	FString colorHexValue = TEXT("FFFFFF");
-	const FPresetManager &presetManager = GameState->Document.PresetManager;
+	const FPresetManager &presetManager = GameState->Document->PresetManager;
 
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	if (UseDependentPreset)
@@ -940,7 +940,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(bool UseDependentPreset, const 
 		depth = Modumate::Units::FUnitValue::WorldCentimeters(0),
 		height = Modumate::Units::FUnitValue::WorldCentimeters(0);
 
-	const FPresetManager &presetManager = GameState->Document.PresetManager;
+	const FPresetManager &presetManager = GameState->Document->PresetManager;
 
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	if (UseDependentPreset)

@@ -32,6 +32,8 @@ public:
 	UPROPERTY()
 	UDimensionWidget* DimensionText;
 
-	int32 ID;
+	UPROPERTY()
+	class UModumateDocument* Document;
 
+	int32 ID;
 };

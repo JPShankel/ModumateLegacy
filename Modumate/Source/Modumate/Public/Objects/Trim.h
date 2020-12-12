@@ -24,8 +24,10 @@ struct MODUMATE_API FMOITrimData
 	float UpJustification = 0.5f;
 };
 
+UCLASS()
 class MODUMATE_API AMOITrim : public AModumateObjectInstance
 {
+	GENERATED_BODY()
 public:
 	AMOITrim();
 

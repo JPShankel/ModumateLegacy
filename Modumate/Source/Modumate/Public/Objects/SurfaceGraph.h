@@ -14,8 +14,10 @@ struct MODUMATE_API FMOISurfaceGraphData
 	int32 ParentFaceIndex;
 };
 
+UCLASS()
 class MODUMATE_API AMOISurfaceGraph : public AModumateObjectInstance
 {
+	GENERATED_BODY()
 public:
 	AMOISurfaceGraph();
 

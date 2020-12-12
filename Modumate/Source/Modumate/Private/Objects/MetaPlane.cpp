@@ -10,7 +10,7 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 AMOIMetaPlane::AMOIMetaPlane()
-	: FMOIPlaneImplBase()
+	: AMOIPlaneBase()
 {
 
 }
@@ -28,7 +28,7 @@ void AMOIMetaPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnab
 
 		if (bOutVisible)
 		{
-			FMOIPlaneImplBase::UpdateMaterial();
+			AMOIPlaneBase::UpdateMaterial();
 		}
 
 		if (bPreviouslyVisible != bOutVisible)
@@ -46,7 +46,7 @@ void AMOIMetaPlane::SetupDynamicGeometry()
 
 	UpdateCachedGraphData();
 
-	AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
 	MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
 	bool bEnableCollision = !IsInPreviewMode();

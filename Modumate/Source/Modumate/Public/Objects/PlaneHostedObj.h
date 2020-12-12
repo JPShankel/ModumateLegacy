@@ -1,8 +1,8 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "Objects/ModumateObjectInstance.h"
 #include "Objects/LayeredObjectInterface.h"
+#include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 
 #include "PlaneHostedObj.generated.h"
@@ -25,8 +25,11 @@ struct MODUMATE_API FMOIPlaneHostedObjData
 	int32 OverrideOriginIndex = INDEX_NONE;
 };
 
-class MODUMATE_API AMOIPlaneHostedObj : public AModumateObjectInstance, ILayeredObject
+UCLASS()
+class MODUMATE_API AMOIPlaneHostedObj : public AModumateObjectInstance, public ILayeredObject
 {
+	GENERATED_BODY()
+
 public:
 	AMOIPlaneHostedObj();
 	virtual FQuat GetRotation() const override;

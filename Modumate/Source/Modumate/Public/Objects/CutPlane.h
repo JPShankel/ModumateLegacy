@@ -37,8 +37,11 @@ namespace Modumate
 	class FModumateDraftingView;
 }
 
-class MODUMATE_API AMOICutPlane : public FMOIPlaneImplBase, public ISceneCaptureObject
+UCLASS()
+class MODUMATE_API AMOICutPlane : public AMOIPlaneBase, public ISceneCaptureObject
 {
+	GENERATED_BODY()
+
 public:
 	AMOICutPlane();
 
@@ -59,7 +62,7 @@ public:
 	virtual void CaptureComplete() override;
 	virtual void TraceRequestComplete(int32 TraceID, FString TraceString) override;
 
-	virtual AActor* CreateActor(UWorld* world, const FVector& loc, const FQuat& rot) override;
+	virtual AActor* CreateActor(const FVector& loc, const FQuat& rot) override;
 	virtual void PostCreateObject(bool bNewObject) override;
 	virtual void PreDestroy() override;
 	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;

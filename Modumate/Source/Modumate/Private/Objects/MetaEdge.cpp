@@ -13,7 +13,7 @@
 
 
 AMOIMetaEdge::AMOIMetaEdge()
-	: FMOIEdgeImplBase()
+	: AMOIEdgeBase()
 	, BaseDefaultColor(FColor::Black)
 	, BaseGroupedColor(FColor::Purple)
 	, HoverDefaultColor(FColor::Black)
@@ -96,7 +96,7 @@ bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 
 void AMOIMetaEdge::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow)
 {
-	FMOIEdgeImplBase::ShowAdjustmentHandles(Controller, bShow);
+	AMOIEdgeBase::ShowAdjustmentHandles(Controller, bShow);
 
 	UModumateDocument* doc = GetDocument();
 	if (!ensure(doc))

@@ -10,11 +10,6 @@
 
 class AArcActor;
 
-namespace Modumate 
-{
-	class FGraph3D;
-}
-
 UCLASS()
 class MODUMATE_API AAngleDimensionActor : public ADimensionActor
 {
@@ -39,6 +34,4 @@ public:
 	int32 AnchorEdgeID;
 	int32 StartFaceID;
 	int32 EndFaceID;
-
-	const Modumate::FGraph3D *Graph;
 };

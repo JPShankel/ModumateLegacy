@@ -89,7 +89,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 	CurViewGroupObjects.Reset();
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	UModumateDocument &doc = gameState->Document;
+	UModumateDocument* doc = gameState->Document;
 
 	if (ViewGroupObject)
 	{
@@ -119,7 +119,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 
 	for (auto &structureLine : CurSelectionStructureLines)
 	{
-		AModumateObjectInstance *lineObj = doc.GetObjectById(structureLine.ObjID);
+		AModumateObjectInstance *lineObj = doc->GetObjectById(structureLine.ObjID);
 		if (lineObj == nullptr)
 		{
 			continue;
@@ -186,7 +186,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 	}
 
 	// TODO: move this code - either be able to ask objects which lines to draw or enable objects to bypass this function
-	for (AModumateObjectInstance *cutPlaneObj : doc.GetObjectsOfType(EObjectType::OTCutPlane))
+	for (AModumateObjectInstance *cutPlaneObj : doc->GetObjectsOfType(EObjectType::OTCutPlane))
 	{
 		if (!cutPlaneObj || !cutPlaneObj->IsVisible())
 		{
@@ -196,7 +196,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 		cutPlaneObj->AddDraftingLines(EMPlayerController->HUDDrawWidget);
 	}
 
-	for (AModumateObjectInstance *scopeBoxObj : doc.GetObjectsOfType(EObjectType::OTScopeBox))
+	for (AModumateObjectInstance *scopeBoxObj : doc->GetObjectsOfType(EObjectType::OTScopeBox))
 	{
 		if (!scopeBoxObj || !scopeBoxObj->IsVisible())
 		{
@@ -242,8 +242,8 @@ void AEditModelPlayerState_CPP::SetShowGraphDebug(bool bShow)
 
 		// TODO: replace with non-debug visibility flag for rooms; for now, just piggypack off of the room graph visibility
 		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		UModumateDocument &doc = gameState->Document;
-		TArray<AModumateObjectInstance *> rooms = doc.GetObjectsOfType(EObjectType::OTRoom);
+		UModumateDocument* doc = gameState->Document;
+		TArray<AModumateObjectInstance *> rooms = doc->GetObjectsOfType(EObjectType::OTRoom);
 		for (AModumateObjectInstance *room : rooms)
 		{
 			if (AActor *roomActor = room->GetActor())
@@ -322,7 +322,7 @@ bool AEditModelPlayerState_CPP::ValidateSelectionsAndView()
 	bool viewChanged = false;
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	UModumateDocument *doc = &gameState->Document;
+	UModumateDocument* doc = gameState->Document;
 
 	TSet<AModumateObjectInstance*> pendingDeselectObjects;
 	for (auto& moi : SelectedObjects)
@@ -383,7 +383,7 @@ void AEditModelPlayerState_CPP::SelectAll()
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SelectAll"));
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	UModumateDocument *doc = &gameState->Document;
+	UModumateDocument* doc = gameState->Document;
 
 	for (auto *selectedObj : SelectedObjects)
 	{
@@ -409,7 +409,7 @@ void AEditModelPlayerState_CPP::SelectInverse()
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SelectInverse"));
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	UModumateDocument *doc = &gameState->Document;
+	UModumateDocument* doc = gameState->Document;
 
 	TSet<AModumateObjectInstance *> previousSelectedObjs(SelectedObjects);
 
@@ -444,7 +444,7 @@ void AEditModelPlayerState_CPP::DeselectAll()
 	}
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	UModumateDocument *doc = &gameState->Document;
+	UModumateDocument* doc = gameState->Document;
 	auto obs = doc->GetObjectInstances();
 
 	for (auto &ob : obs)
@@ -538,12 +538,12 @@ void AEditModelPlayerState_CPP::PostViewChanged()
 	allChangedObjects.Append(LastHoveredObjectSet);
 
 	// Gather all objects previously and currently having errors
-	auto &doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+	auto* doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
 	for (auto &kvp : ObjectErrorMap)
 	{
 		if (kvp.Value.Num() > 0)
 		{
-			if (auto *moi = doc.GetObjectById(kvp.Key))
+			if (auto *moi = doc->GetObjectById(kvp.Key))
 			{
 				ErrorObjects.Add(moi);
 			}
@@ -726,8 +726,8 @@ void AEditModelPlayerState_CPP::FindReachableObjects(TSet<AModumateObjectInstanc
 	reachableObjs.Reset();
 
 	auto *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	auto &doc = gameState->Document;
-	const auto &allObjects = doc.GetObjectInstances();
+	auto* doc = gameState->Document;
+	const auto &allObjects = doc->GetObjectInstances();
 	int32 viewGroupObjID = ViewGroupObject ? ViewGroupObject->ID : 0;
 
 	TQueue<AModumateObjectInstance *> objQueue;
@@ -931,8 +931,8 @@ bool AEditModelPlayerState_CPP::ChangeViewMode(int32 IndexDelta)
 void AEditModelPlayerState_CPP::UpdateObjectVisibilityAndCollision()
 {
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	UModumateDocument &doc = gameState->Document;
-	for (AModumateObjectInstance *moi : doc.GetObjectInstances())
+	UModumateDocument* doc = gameState->Document;
+	for (AModumateObjectInstance *moi : doc->GetObjectInstances())
 	{
 		if (moi)
 		{

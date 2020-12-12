@@ -19,10 +19,10 @@ AMOIScopeBox::AMOIScopeBox()
 
 }
 
-AActor* AMOIScopeBox::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor* AMOIScopeBox::CreateActor(const FVector &loc, const FQuat &rot)
 {
-	AActor* returnActor = AModumateObjectInstance::CreateActor(world, loc, rot);
-	auto controller = world->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	AActor* returnActor = Super::CreateActor(loc, rot);
+	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 	auto playerState = controller ? controller->EMPlayerState : nullptr;
 	if (playerState)
 	{
@@ -33,7 +33,7 @@ AActor* AMOIScopeBox::CreateActor(UWorld *world, const FVector &loc, const FQuat
 
 void AMOIScopeBox::PreDestroy()
 {
-	auto controller = World.IsValid() ? World->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
+	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 	auto playerState = controller ? controller->EMPlayerState : nullptr;
 	if (playerState)
 	{
@@ -45,7 +45,7 @@ void AMOIScopeBox::SetupDynamicGeometry()
 {
 	// TODO: generate plane points and extrusion from extents and transform, rather than old-school control points
 #if 0
-	AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
 	MaterialData.EngineMaterial = gameMode ? gameMode->ScopeBoxMaterial : nullptr;
 
 	float thickness = GetExtents().Y;

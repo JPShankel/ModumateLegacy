@@ -32,7 +32,7 @@ namespace Modumate
 		{
 			const UWorld * currentWorld = GEngine->GetWorldContexts()[0].World();
 			const AEditModelGameState_CPP* gameState = currentWorld->GetGameState<AEditModelGameState_CPP>();
-			return !gameState->Document.CurrentProjectName.IsEmpty();
+			return !gameState->Document->CurrentProjectName.IsEmpty();
 		}
 
 		DEFINE_LATENT_AUTOMATION_COMMAND(FStartCapture);

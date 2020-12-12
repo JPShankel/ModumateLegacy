@@ -194,7 +194,7 @@ bool UStructureLineTool::FrameUpdate()
 
 		if (cursor.Actor)
 		{
-			hitMOI = GameState->Document.ObjectFromActor(cursor.Actor);
+			hitMOI = GameState->Document->ObjectFromActor(cursor.Actor);
 
 			if (hitMOI && (hitMOI->GetObjectType() == UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()) ))
 			{
@@ -264,7 +264,7 @@ void UStructureLineTool::OnAssemblyChanged()
 
 	EToolMode toolMode = GetToolMode();
 	const FBIMAssemblySpec* assembly = GameState ?
-		GameState->Document.PresetManager.GetAssemblyByKey(toolMode, AssemblyKey) : nullptr;
+		GameState->Document->PresetManager.GetAssemblyByKey(toolMode, AssemblyKey) : nullptr;
 
 	if (assembly != nullptr)
 	{
@@ -284,7 +284,7 @@ void UStructureLineTool::SetTargetID(int32 NewTargetID)
 	{
 		int32 newTargetStructureLineID = MOD_ID_NONE;
 
-		AModumateObjectInstance *targetObj = GameState->Document.GetObjectById(NewTargetID);
+		AModumateObjectInstance *targetObj = GameState->Document->GetObjectById(NewTargetID);
 		if (targetObj && (targetObj->GetObjectType() == EObjectType::OTMetaEdge))
 		{
 			// Find a child structure line on the target (that this tool didn't just create)
@@ -316,7 +316,7 @@ bool UStructureLineTool::SetStructureLineHidden(int32 StructureLineID, bool bHid
 {
 	if (GameState && (StructureLineID != MOD_ID_NONE))
 	{
-		AModumateObjectInstance *structureLineObj = GameState->Document.GetObjectById(StructureLineID);
+		AModumateObjectInstance *structureLineObj = GameState->Document->GetObjectById(StructureLineID);
 		if (structureLineObj)
 		{
 			static const FName hideRequestTag(TEXT("StructureLineTool"));
@@ -374,7 +374,7 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 
 		TArray<FVector> points({ LineStartPos, LineEndPos });
 		TArray<int32> addedVertexIDs, addedFaceIDs;
-		if (!GameState->Document.MakeMetaObject(Controller->GetWorld(), points, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
+		if (!GameState->Document->MakeMetaObject(Controller->GetWorld(), points, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
 			addedVertexIDs, targetEdgeIDs, addedFaceIDs, deltas))
 		{
 			return false;
@@ -386,7 +386,7 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 	}
 
 	TSharedPtr<FMOIDelta> structureLineDelta;
-	int32 nextStructureLineID = GameState->Document.GetNextAvailableID();
+	int32 nextStructureLineID = GameState->Document->GetNextAvailableID();
 	for (int32 targetEdgeID : targetEdgeIDs)
 	{
 		// TODO: fill in custom instance data for StructureLine, once we define and rely on it
@@ -410,7 +410,7 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 		return false;
 	}
 
-	return GameState->Document.ApplyDeltas(deltas, GetWorld());
+	return GameState->Document->ApplyDeltas(deltas, GetWorld());
 }
 
 void UStructureLineTool::ResetState()

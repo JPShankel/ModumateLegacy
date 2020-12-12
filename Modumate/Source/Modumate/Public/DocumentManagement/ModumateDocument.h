@@ -13,6 +13,7 @@
 #include "Graph/Graph3DDelta.h"
 #include "Objects/ModumateObjectInstance.h"
 
+#include "ModumateDocument.generated.h"
 
 namespace Modumate
 {
@@ -21,8 +22,11 @@ namespace Modumate
 
 class AModumateObjectInstance;
 
-class MODUMATE_API UModumateDocument
+UCLASS()
+class MODUMATE_API UModumateDocument : public UObject
 {
+	GENERATED_BODY()
+
 private:
 
 	struct UndoRedo
@@ -38,8 +42,13 @@ private:
 	int32 ReservingObjectID;
 	bool bApplyingPreviewDeltas, bFastClearingPreviewDeltas, bSlowClearingPreviewDeltas;
 
+	UPROPERTY()
 	TArray<AModumateObjectInstance*> ObjectInstanceArray;
+
+	UPROPERTY()
 	TMap<int32, AModumateObjectInstance*> ObjectsByID;
+
+	UPROPERTY()
 	TMap<int32, AModumateObjectInstance*> DeletedObjects;
 
 	void GatherDocumentMetadata();
@@ -217,7 +226,7 @@ public:
 	void DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
 
 	void MakeNew(UWorld *world);
-	bool Serialize(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord);
+	bool SerializeRecords(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord);
 	bool Save(UWorld *world, const FString &path);
 	bool Load(UWorld *world, const FString &path, bool setAsCurrentProject);
 	void SetCurrentProjectPath(const FString& currentProjectPath = FString());

@@ -87,7 +87,7 @@ void UCutPlaneMenuBlockExport::OnButtonExportReleased()
 		UCutPlaneDimListItemObject* item = Controller->EditModelUserWidget->CutPlaneMenu->GetListItemFromObjID(curID);
 		if (item)
 		{
-			AModumateObjectInstance* moi = gameState->Document.GetObjectById(curID);
+			AModumateObjectInstance* moi = gameState->Document->GetObjectById(curID);
 			auto& newStateData = newDelta->AddMutationState(moi);
 
 			FMOICutPlaneData newCutPlaneData;
@@ -97,7 +97,7 @@ void UCutPlaneMenuBlockExport::OnButtonExportReleased()
 			newStateData.CustomData.SaveStructData<FMOICutPlaneData>(newCutPlaneData);
 		}
 	}
-	gameState->Document.ApplyDeltas({ newDelta }, GetWorld());
+	gameState->Document->ApplyDeltas({ newDelta }, GetWorld());
 
 	Controller->OnCreateDwg();
 }

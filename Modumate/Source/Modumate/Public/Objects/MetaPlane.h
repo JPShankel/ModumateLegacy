@@ -4,8 +4,12 @@
 #include "CoreMinimal.h"
 #include "Objects/PlaneBase.h"
 
-class MODUMATE_API AMOIMetaPlane : public FMOIPlaneImplBase
+#include "MetaPlane.generated.h"
+
+UCLASS()
+class MODUMATE_API AMOIMetaPlane : public AMOIPlaneBase
 {
+	GENERATED_BODY()
 public:
 	AMOIMetaPlane();
 

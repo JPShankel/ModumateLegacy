@@ -11,7 +11,7 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 AMOISurfacePolygon::AMOISurfacePolygon()
-	: FMOIPlaneImplBase()
+	: AMOIPlaneBase()
 	, bInteriorPolygon(false)
 	, bInnerBoundsPolygon(false)
 {
@@ -31,7 +31,7 @@ void AMOISurfacePolygon::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisio
 
 		if (bOutVisible)
 		{
-			FMOIPlaneImplBase::UpdateMaterial();
+			AMOIPlaneBase::UpdateMaterial();
 		}
 
 		if (bPreviouslyVisible != bOutVisible)
@@ -59,7 +59,7 @@ bool AMOISurfacePolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 			return true;
 		}
 
-		// Update cached geometry data required by FMOIPlaneImplBase parent class
+		// Update cached geometry data required by AMOIPlaneBase parent class
 		// TODO: refactor plane objects to use more of the same data (FTransform vs. axes & location)
 		FQuat rotation = CachedTransform.GetRotation();
 		CachedPlane = FPlane(CachedTransform.GetLocation(), rotation.GetAxisZ());
@@ -68,7 +68,7 @@ bool AMOISurfacePolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 		CachedOrigin = CachedPoints[0];
 		CachedCenter = CachedOrigin;
 
-		AEditModelGameMode_CPP *gameMode = World.IsValid() ? World->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+		AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
 		MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
 		// Offset the vertices used for the surface polygon away from the host, to prevent z-fighting

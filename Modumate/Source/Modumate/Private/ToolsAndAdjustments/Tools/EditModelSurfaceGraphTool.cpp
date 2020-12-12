@@ -65,11 +65,11 @@ bool USurfaceGraphTool::BeginUse()
 	{
 		int32 newSurfaceGraphID, newRootPolyID;
 		TArray<FDeltaPtr> deltas;
-		int32 nextID = GameState->Document.GetNextAvailableID();
+		int32 nextID = GameState->Document->GetNextAvailableID();
 		if (CreateGraphFromFaceTarget(nextID, newSurfaceGraphID, newRootPolyID, deltas) &&
-			GameState->Document.ApplyDeltas(deltas, GetWorld()))
+			GameState->Document->ApplyDeltas(deltas, GetWorld()))
 		{
-			HitGraphMOI = GameState->Document.GetObjectById(newSurfaceGraphID);
+			HitGraphMOI = GameState->Document->GetObjectById(newSurfaceGraphID);
 			return true;
 		}
 
@@ -134,7 +134,7 @@ bool USurfaceGraphTool::AbortUse()
 bool USurfaceGraphTool::FrameUpdate()
 {
 	FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
-	auto *cursorHitMOI = GameState->Document.ObjectFromActor(cursor.Actor);
+	auto *cursorHitMOI = GameState->Document->ObjectFromActor(cursor.Actor);
 
 	bool bValidTarget = UpdateTarget(cursorHitMOI, cursor.WorldPosition, cursor.HitNormal);
 
@@ -201,7 +201,7 @@ bool USurfaceGraphTool::HandleInputNumber(double n)
 	if (projectedHitGraphMOI == nullptr)
 	{
 		FMouseWorldHitType projectedHitResult = Controller->GetSimulatedStructureHit(endPoint);
-		projectedHitGraphMOI = (projectedHitResult.Valid && projectedHitResult.Actor.IsValid()) ? GameState->Document.ObjectFromActor(projectedHitResult.Actor.Get()) : nullptr;
+		projectedHitGraphMOI = (projectedHitResult.Valid && projectedHitResult.Actor.IsValid()) ? GameState->Document->ObjectFromActor(projectedHitResult.Actor.Get()) : nullptr;
 	}
 
 	if (!UpdateTarget(projectedHitGraphMOI, PendingSegment->Point2, FVector::ZeroVector))
@@ -220,10 +220,10 @@ bool USurfaceGraphTool::UpdateTarget(const AModumateObjectInstance* HitObject, c
 
 	if (HitObject)
 	{
-		HitSurfaceGraph = GameState->Document.FindSurfaceGraph(HitObject->ID);
+		HitSurfaceGraph = GameState->Document->FindSurfaceGraph(HitObject->ID);
 		if (!HitSurfaceGraph.IsValid())
 		{
-			HitSurfaceGraph = GameState->Document.FindSurfaceGraphByObjID(HitObject->ID);
+			HitSurfaceGraph = GameState->Document->FindSurfaceGraphByObjID(HitObject->ID);
 		}
 
 		if (HitSurfaceGraph.IsValid())
@@ -238,8 +238,8 @@ bool USurfaceGraphTool::UpdateTarget(const AModumateObjectInstance* HitObject, c
 			}
 
 			int32 hitSurfaceGraphID = HitSurfaceGraph->GetID();
-			HitGraphMOI = GameState->Document.GetObjectById(hitSurfaceGraphID);
-			HitGraphHostMOI = GameState->Document.GetObjectById(HitGraphMOI ? HitGraphMOI->GetParentID() : MOD_ID_NONE);
+			HitGraphMOI = GameState->Document->GetObjectById(hitSurfaceGraphID);
+			HitGraphHostMOI = GameState->Document->GetObjectById(HitGraphMOI ? HitGraphMOI->GetParentID() : MOD_ID_NONE);
 			HitFaceIndex = UModumateObjectStatics::GetParentFaceIndex(HitGraphMOI);
 		}
 		else
@@ -322,8 +322,8 @@ bool USurfaceGraphTool::UpdateTarget(const AModumateObjectInstance* HitObject, c
 	if (HitGraphMOI)
 	{
 		HitFaceIndex = UModumateObjectStatics::GetParentFaceIndex(HitGraphMOI);
-		HitGraphHostMOI = GameState->Document.GetObjectById(HitGraphMOI->GetParentID());
-		HitSurfaceGraph = GameState->Document.FindSurfaceGraph(HitGraphMOI->ID);
+		HitGraphHostMOI = GameState->Document->GetObjectById(HitGraphMOI->GetParentID());
+		HitSurfaceGraph = GameState->Document->FindSurfaceGraph(HitGraphMOI->ID);
 	}
 
 	return HitGraphHostMOI && UModumateObjectStatics::GetGeometryFromFaceIndex(HitGraphHostMOI, HitFaceIndex, HitFacePoints, HitFaceOrigin);
@@ -388,7 +388,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfa
 	if (HitGraphMOI)
 	{
 		OutSurfaceGraphID = HitGraphMOI->ID;
-		HitSurfaceGraph = GameState->Document.FindSurfaceGraph(OutSurfaceGraphID);
+		HitSurfaceGraph = GameState->Document->FindSurfaceGraph(OutSurfaceGraphID);
 		if (!HitSurfaceGraph.IsValid() || !HitSurfaceGraph->IsEmpty())
 		{
 			return false;
@@ -437,7 +437,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfa
 	graphPolygonsToAdd.Add(MOD_ID_NONE, perimeterPolygon);
 
 	// Project the holes that the target has into graph polygons, if any
-	const auto &volumeGraph = GameState->Document.GetVolumeGraph();
+	const auto &volumeGraph = GameState->Document->GetVolumeGraph();
 	const auto *hostParentFace = volumeGraph.FindFace(HitGraphHostMOI->GetParentID());
 
 	// this only counts faces that are contained, not holes without faces (CachedIslands)
@@ -476,7 +476,7 @@ bool USurfaceGraphTool::AddEdge(FVector StartPos, FVector EndPos)
 
 	// Try to add the edge to the graph, and apply the delta(s) to the document
 	TArray<FGraph2DDelta> addEdgeDeltas;
-	int32 nextID = GameState->Document.GetNextAvailableID();
+	int32 nextID = GameState->Document->GetNextAvailableID();
 	if (!TargetSurfaceGraph->AddEdge(addEdgeDeltas, nextID, startPos, endPos))
 	{
 		return false;
@@ -489,7 +489,7 @@ bool USurfaceGraphTool::AddEdge(FVector StartPos, FVector EndPos)
 			return MakeShared<FGraph2DDelta>(graphDelta);
 		});
 
-		if (!GameState->Document.ApplyDeltas(deltaPtrs, GetWorld()))
+		if (!GameState->Document->ApplyDeltas(deltaPtrs, GetWorld()))
 		{
 			return false;
 		}

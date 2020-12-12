@@ -23,8 +23,8 @@ bool URoofPerimeterTool::Activate()
 	Super::Activate();
 
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	UModumateDocument &doc = gameState->Document;
-	const FGraph3D &volumeGraph = doc.GetVolumeGraph();
+	UModumateDocument* doc = gameState->Document;
+	const FGraph3D &volumeGraph = doc->GetVolumeGraph();
 
 	TSet<int32> graphObjIDs, connectedGraphIDs;
 	UModumateObjectStatics::GetGraphIDsFromMOIs(Controller->EMPlayerState->SelectedObjects, graphObjIDs);
@@ -43,7 +43,7 @@ bool URoofPerimeterTool::Activate()
 			for (auto signedEdgeID : perimeterPoly->Edges)
 			{
 				int32 edgeID = FMath::Abs(signedEdgeID);
-				AModumateObjectInstance *metaEdge = gameState->Document.GetObjectById(edgeID);
+				AModumateObjectInstance *metaEdge = gameState->Document->GetObjectById(edgeID);
 				const FGraph3DEdge *graphEdge = volumeGraph.FindEdge(edgeID);
 				if (metaEdge && graphEdge && (metaEdge->GetObjectType() == EObjectType::OTMetaEdge))
 				{
@@ -81,7 +81,7 @@ bool URoofPerimeterTool::Activate()
 	if ((numEdges >= 3) && (existingPerimeterID == MOD_ID_NONE))
 	{
 		TArray<FDeltaPtr> deltasToApply;
-		int32 perimeterID = doc.GetNextAvailableID();
+		int32 perimeterID = doc->GetNextAvailableID();
 
 		// Create the MOI delta for constructing the perimeter object
 		FMOIRoofPerimeterData newPerimeterInstanceData;
@@ -102,10 +102,10 @@ bool URoofPerimeterTool::Activate()
 		deltasToApply.Add(graphDelta);
 
 		// Apply the deltas to create the perimeter and modify the associated graph objects
-		bool bAppliedDeltas = doc.ApplyDeltas(deltasToApply, GetWorld());
+		bool bAppliedDeltas = doc->ApplyDeltas(deltasToApply, GetWorld());
 
 		// If we succeeded, then select the new roof perimeter object (and only that object)
-		AModumateObjectInstance *roofPerimObj = bAppliedDeltas ? doc.GetObjectById(perimeterID) : nullptr;
+		AModumateObjectInstance *roofPerimObj = bAppliedDeltas ? doc->GetObjectById(perimeterID) : nullptr;
 		if (roofPerimObj)
 		{
 			Controller->DeselectAll();

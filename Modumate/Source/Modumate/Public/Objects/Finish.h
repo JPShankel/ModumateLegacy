@@ -8,8 +8,12 @@ class AEditModelPlayerController_CPP;
 
 class AModumateObjectInstance;
 
+#include "Finish.generated.h"
+
+UCLASS()
 class MODUMATE_API AMOIFinish : public AModumateObjectInstance
 {
+	GENERATED_BODY()
 public:
 	virtual void PreDestroy() override;
 	virtual FVector GetCorner(int32 index) const override;

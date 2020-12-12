@@ -8,7 +8,7 @@
 #include "UnrealClasses/VertexActor.h"
 
 AMOIMetaVertex::AMOIMetaVertex()
-	: FMOIVertexImplBase()
+	: AMOIVertexBase()
 {
 }
 

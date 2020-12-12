@@ -1,13 +1,15 @@
+// Copyright 2020 Modumate, Inc. All Rights Reserved.
+
 #include "UI/AngleDimensionActor.h"
 
 #include "Components/EditableTextBox.h"
 #include "Graph/Graph3D.h"
+#include "UI/ArcActor.h"
+#include "UI/EditModelPlayerHUD.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/LineActor.h"
-#include "UI/ArcActor.h"
-#include "UI/EditModelPlayerHUD.h"
 
 AAngleDimensionActor::AAngleDimensionActor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -15,21 +17,12 @@ AAngleDimensionActor::AAngleDimensionActor(const FObjectInitializer& ObjectIniti
 	, AnchorEdgeID(MOD_ID_NONE)
 	, StartFaceID(MOD_ID_NONE)
 	, EndFaceID(MOD_ID_NONE)
-	, Graph(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
 
 void AAngleDimensionActor::SetTarget(int32 EdgeID, TPair<int32, int32> FaceIDs)
 {
-	UWorld *world = GetWorld();
-	auto gameState = world ? world->GetGameState<AEditModelGameState_CPP>() : nullptr;
-	if (!ensure(gameState))
-	{
-		return;
-	}
-	Graph = &gameState->Document.GetVolumeGraph();
-
 	AnchorEdgeID = EdgeID;
 	StartFaceID = FaceIDs.Key;
 	EndFaceID = FaceIDs.Value;
@@ -64,14 +57,11 @@ void AAngleDimensionActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (Graph == nullptr)
-	{
-		return;
-	}
+	auto& volumeGraph = Document->GetVolumeGraph();
 
-	auto anchorEdge = Graph->FindEdge(FMath::Abs(AnchorEdgeID));
-	auto startFace = Graph->FindFace(FMath::Abs(StartFaceID));
-	auto endFace = Graph->FindFace(FMath::Abs(EndFaceID));
+	auto anchorEdge = volumeGraph.FindEdge(FMath::Abs(AnchorEdgeID));
+	auto startFace = volumeGraph.FindFace(FMath::Abs(StartFaceID));
+	auto endFace = volumeGraph.FindFace(FMath::Abs(EndFaceID));
 
 	auto controller = DimensionText->GetOwningPlayer();
 
@@ -80,8 +70,8 @@ void AAngleDimensionActor::Tick(float DeltaTime)
 		return;
 	}
 
-	auto startVertex = Graph->FindVertex(anchorEdge->StartVertexID);
-	auto endVertex = Graph->FindVertex(anchorEdge->EndVertexID);
+	auto startVertex = volumeGraph.FindVertex(anchorEdge->StartVertexID);
+	auto endVertex = volumeGraph.FindVertex(anchorEdge->EndVertexID);
 
 	// choose one of the vertices of the edge as the position to display the dimension widget
 	FVector position = endVertex->Position.Z < startVertex->Position.Z ? endVertex->Position : startVertex->Position;

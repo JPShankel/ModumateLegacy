@@ -11,7 +11,6 @@ float AMOIGroup::StructuralExtentsExpansion = 20.0f;
 
 AMOIGroup::AMOIGroup()
 	: AModumateObjectInstance()
-	, World(nullptr)
 	, CachedLocation(ForceInitToZero)
 	, CachedExtents(ForceInitToZero)
 { }
@@ -50,21 +49,23 @@ bool AMOIGroup::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutS
 
 AActor *AMOIGroup::RestoreActor()
 {
-	if (World.IsValid())
+	UWorld* world = GetWorld();
+	auto* gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
+	auto* groupActorClass = gameMode ? gameMode->MOIGroupActorClass : nullptr;
+	if (!ensure(groupActorClass))
 	{
-		AMOIGroupActor_CPP *groupActor = World->SpawnActor<AMOIGroupActor_CPP>(World->GetAuthGameMode<AEditModelGameMode_CPP>()->MOIGroupActorClass);
-		groupActor->MOI = this;
-		groupActor->SetActorLocation(CachedLocation);
-
-		return groupActor;
+		return nullptr;
 	}
 
-	return nullptr;
+	AMOIGroupActor_CPP* groupActor = world->SpawnActor<AMOIGroupActor_CPP>(groupActorClass);
+	groupActor->MOI = this;
+	groupActor->SetActorLocation(CachedLocation);
+
+	return groupActor;
 }
 
-AActor *AMOIGroup::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor *AMOIGroup::CreateActor(const FVector &loc, const FQuat &rot)
 {
-	World = world;
 	CachedLocation = loc;
 	return RestoreActor();
 }

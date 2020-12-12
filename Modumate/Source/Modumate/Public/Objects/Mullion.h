@@ -4,8 +4,10 @@
 
 #include "Objects/StructureLine.h"
 
-class MODUMATE_API FMOIMullion : public FMOIStructureLine
+#include "Mullion.generated.h"
+
+UCLASS()
+class MODUMATE_API AMOIMullion : public AMOIStructureLine
 {
-public:
-	FMOIMullion();
+	GENERATED_BODY()
 };

@@ -2,37 +2,44 @@
 
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "Database/ModumateObjectDatabase.h"
 #include "HAL/FileManager.h"
-#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/MOIGroupActor_CPP.h"
-#include "Database/ModumateObjectDatabase.h"
 #include "UnrealClasses/PortalFrameActor_CPP.h"
 #include "UObject/ConstructorHelpers.h"
 
 using namespace Modumate;
 
 AEditModelGameMode_CPP::AEditModelGameMode_CPP()
+	: ObjectDatabase(nullptr)
 {
 	PlayerStateClass = AEditModelPlayerState_CPP::StaticClass();
 	DynamicMeshActorClass = ADynamicMeshActor::StaticClass();
-
-	ObjectDatabase = new FModumateDatabase();
-
-	ObjectDatabase->Init();
 }
 
-AEditModelGameMode_CPP::~AEditModelGameMode_CPP()
+void AEditModelGameMode_CPP::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	ObjectDatabase->Shutdown();
-	delete ObjectDatabase;
+	if (ObjectDatabase)
+	{
+		ObjectDatabase->Shutdown();
+		delete ObjectDatabase;
+		ObjectDatabase = nullptr;
+	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 void AEditModelGameMode_CPP::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
+
+	ObjectDatabase = new FModumateDatabase();
+	ObjectDatabase->Init();
 
 	double databaseLoadTime = 0.0;
 	{
@@ -65,3 +72,13 @@ void AEditModelGameMode_CPP::InitGame(const FString& MapName, const FString& Opt
 	}
 }
 
+void AEditModelGameMode_CPP::InitGameState()
+{
+	Super::InitGameState();
+
+	auto* gameState = Cast<AEditModelGameState_CPP>(GameState);
+	if (ensure(gameState))
+	{
+		gameState->InitDocument();
+	}
+}

@@ -119,7 +119,7 @@ bool UCutPlaneTool::EnterNextStage()
 	}
 
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	UModumateDocument *doc = &gameState->Document;
+	UModumateDocument* doc = gameState->Document;
 
 	FBox bounds = doc->CalculateProjectBounds().GetBox();
 	bounds = bounds.ExpandBy(DefaultPlaneDimension / 2.0f);
@@ -194,7 +194,7 @@ FString UCutPlaneTool::GetNextName() const
 {
 	static const TCHAR namePattern[] = TEXT("CutPlane %d");
 	int32 n = 1;
-	const UModumateDocument* doc = &GameState->Document;
+	const UModumateDocument* doc = GameState->Document;
 
 	auto existingCutPlanes = doc->GetObjectsOfType(EObjectType::OTCutPlane);
 	TArray<FString> existingNames;

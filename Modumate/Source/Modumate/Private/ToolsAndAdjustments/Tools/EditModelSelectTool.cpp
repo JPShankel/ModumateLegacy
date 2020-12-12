@@ -59,7 +59,7 @@ bool USelectTool::HandleMouseUp()
 	}
 
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	UModumateDocument *doc = &gameState->Document;
+	UModumateDocument* doc = gameState->Document;
 
 	AModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
 	bool doubleClicked = false;
@@ -222,7 +222,7 @@ bool USelectTool::HandleInvert()
 	}
 
 	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	return gameState->Document.ApplyDeltas({ delta }, GetWorld());
+	return gameState->Document->ApplyDeltas({ delta }, GetWorld());
 }
 
 bool USelectTool::HandleFlip(EAxis::Type FlipAxis)
@@ -250,7 +250,7 @@ bool USelectTool::HandleFlip(EAxis::Type FlipAxis)
 	}
 
 	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	return gameState->Document.ApplyDeltas({ delta }, GetWorld());
+	return gameState->Document->ApplyDeltas({ delta }, GetWorld());
 }
 
 bool USelectTool::HandleAdjustJustification(const FVector2D& ViewSpaceDirection)
@@ -283,7 +283,7 @@ bool USelectTool::HandleAdjustJustification(const FVector2D& ViewSpaceDirection)
 	}
 
 	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	return gameState->Document.ApplyDeltas({ delta }, GetWorld());
+	return gameState->Document->ApplyDeltas({ delta }, GetWorld());
 }
 
 
@@ -308,7 +308,7 @@ bool USelectTool::ProcessDragSelect()
 		}
 
 		AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-		UModumateDocument *doc = &gameState->Document;
+		UModumateDocument* doc = gameState->Document;
 
 		bool requireEnclosure = curMousePosition.X > InitialClickLocation.X;
 		FBox2D screenSelectRect(ForceInitToZero);

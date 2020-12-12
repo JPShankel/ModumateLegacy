@@ -19,7 +19,7 @@ bool UModumateBrowserStatics::GetCutPlanesFromProject(UObject* WorldContextObjec
 	}
 
 	bool bSuccess = true;
-	TArray<AModumateObjectInstance*> cutPlaneObjs = gameState->Document.GetObjectsOfType(EObjectType::OTCutPlane);
+	TArray<AModumateObjectInstance*> cutPlaneObjs = gameState->Document->GetObjectsOfType(EObjectType::OTCutPlane);
 	for (auto *cutPlaneObj : cutPlaneObjs)
 	{
 		auto &cutPlaneParam = OutCutPlaneParams.AddDefaulted_GetRef();
@@ -49,7 +49,7 @@ bool UModumateBrowserStatics::GetScopeBoxesFromProject(UObject* WorldContextObje
 	}
 
 	bool bSuccess = true;
-	TArray<AModumateObjectInstance*> scopeBoxObjs = gameState->Document.GetObjectsOfType(EObjectType::OTScopeBox);
+	TArray<AModumateObjectInstance*> scopeBoxObjs = gameState->Document->GetObjectsOfType(EObjectType::OTScopeBox);
 	for (auto *scopeBoxObj : scopeBoxObjs)
 	{
 		auto &scopeBoxParam = OutScopeBoxParams.AddDefaulted_GetRef();
@@ -82,7 +82,7 @@ bool UModumateBrowserStatics::SetDrawingObjectVisibility(UObject* WorldContextOb
 		return false;
 	}
 
-	AModumateObjectInstance *drawingObj = gameState->Document.GetObjectById(ObjectID);
+	AModumateObjectInstance *drawingObj = gameState->Document->GetObjectById(ObjectID);
 	if (drawingObj == nullptr)
 	{
 		return false;
@@ -140,7 +140,7 @@ bool UModumateBrowserStatics::GetCameraViewsFromDoc(UObject* WorldContextObject,
 	{
 		return false;
 	}
-	OutCameraViews = gameState->Document.SavedCameraViews;
+	OutCameraViews = gameState->Document->SavedCameraViews;
 	return true;
 }
 
@@ -161,13 +161,13 @@ bool UModumateBrowserStatics::SaveCameraView(UObject* WorldContextObject, UCamer
 	newCameraView.Name = CameraViewName;
 	newCameraView.TimeOfDay = TimeOfDay;
 
-	if (gameState->Document.SavedCameraViews.IsValidIndex(CameraViewIndex))
+	if (gameState->Document->SavedCameraViews.IsValidIndex(CameraViewIndex))
 	{
-		gameState->Document.SavedCameraViews[CameraViewIndex] = newCameraView;
+		gameState->Document->SavedCameraViews[CameraViewIndex] = newCameraView;
 	}
 	else
 	{
-		gameState->Document.SavedCameraViews.Add(newCameraView);
+		gameState->Document->SavedCameraViews.Add(newCameraView);
 	}
 
 	return true;
@@ -182,9 +182,9 @@ bool UModumateBrowserStatics::RemoveCameraView(UObject* WorldContextObject, int3
 		return false;
 	}
 
-	if (gameState->Document.SavedCameraViews.IsValidIndex(CameraViewIndex))
+	if (gameState->Document->SavedCameraViews.IsValidIndex(CameraViewIndex))
 	{
-		gameState->Document.SavedCameraViews.RemoveAt(CameraViewIndex);
+		gameState->Document->SavedCameraViews.RemoveAt(CameraViewIndex);
 		return true;
 	}
 	return false;
@@ -199,9 +199,9 @@ bool UModumateBrowserStatics::EditCameraViewName(UObject* WorldContextObject, in
 		return false;
 	}
 
-	if (gameState->Document.SavedCameraViews.IsValidIndex(CameraViewIndex))
+	if (gameState->Document->SavedCameraViews.IsValidIndex(CameraViewIndex))
 	{
-		gameState->Document.SavedCameraViews[CameraViewIndex].Name = NewCameraViewName;
+		gameState->Document->SavedCameraViews[CameraViewIndex].Name = NewCameraViewName;
 		return true;
 	}
 	return false;
@@ -216,12 +216,12 @@ bool UModumateBrowserStatics::ReorderCameraViews(UObject* WorldContextObject, in
 		return false;
 	}
 
-	if (gameState->Document.SavedCameraViews.IsValidIndex(From) &&
-		(gameState->Document.SavedCameraViews.IsValidIndex(To)))
+	if (gameState->Document->SavedCameraViews.IsValidIndex(From) &&
+		(gameState->Document->SavedCameraViews.IsValidIndex(To)))
 	{
-		FModumateCameraView moveCV = gameState->Document.SavedCameraViews[From];
-		gameState->Document.SavedCameraViews.RemoveAt(From);
-		gameState->Document.SavedCameraViews.Insert(moveCV, To);
+		FModumateCameraView moveCV = gameState->Document->SavedCameraViews[From];
+		gameState->Document->SavedCameraViews.RemoveAt(From);
+		gameState->Document->SavedCameraViews.Insert(moveCV, To);
 		return true;
 	}
 	return false;

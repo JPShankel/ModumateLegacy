@@ -70,7 +70,7 @@ void AAdjustPortalJustifyHandle::EndUse()
 void AAdjustPortalJustifyHandle::AbortUse()
 {
 	Super::AbortUse();
-	GameState->Document.ClearPreviewDeltas(GetWorld());
+	GameState->Document->ClearPreviewDeltas(GetWorld());
 }
 
 FVector AAdjustPortalJustifyHandle::GetHandlePosition() const
@@ -103,7 +103,7 @@ bool AAdjustPortalJustifyHandle::GetHandleWidgetStyle(const USlateWidgetStyleAss
 void AAdjustPortalJustifyHandle::ApplyJustification(bool preview)
 {
 	FMOIPortalData portalData;
-	GameState->Document.ClearPreviewDeltas(GetWorld());
+	GameState->Document->ClearPreviewDeltas(GetWorld());
 	auto newDelta = MakeShared<FMOIDelta>();
 	FMOIStateData& previewState = newDelta->AddMutationState(TargetMOI);
 	previewState.CustomData.LoadStructData(portalData);
@@ -111,11 +111,11 @@ void AAdjustPortalJustifyHandle::ApplyJustification(bool preview)
 	previewState.CustomData.SaveStructData(portalData);
 	if (preview)
 	{
-		GameState->Document.ApplyPreviewDeltas({ newDelta }, GetWorld());
+		GameState->Document->ApplyPreviewDeltas({ newDelta }, GetWorld());
 	}
 	else
 	{
-		GameState->Document.ApplyDeltas({ newDelta }, GetWorld());
+		GameState->Document->ApplyDeltas({ newDelta }, GetWorld());
 	}
 
 }

@@ -3,25 +3,23 @@
 #pragma once
 
 #include "UnrealClasses/CompoundMeshActor.h"
-#include "CoreMinimal.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+
+#include "StructureLine.generated.h"
 
 class AEditModelPlayerController_CPP;
 class ADynamicMeshActor;
 class AModumateObjectInstance;
 
-class MODUMATE_API FMOIStructureLine : public AModumateObjectInstance
+UCLASS()
+class MODUMATE_API AMOIStructureLine : public AModumateObjectInstance
 {
-protected:
-	FVector LineStartPos, LineEndPos, LineDir, LineNormal, LineUp;
-	FVector2D UpperExtensions, OuterExtensions;
-
-	void InternalUpdateGeometry(bool bRecreate, bool bCreateCollision);
+	GENERATED_BODY()
 
 public:
-	FMOIStructureLine();
+	AMOIStructureLine();
 
 	virtual FQuat GetRotation() const override;
 	virtual FVector GetLocation() const override;
@@ -36,4 +34,10 @@ public:
 		TArray<TArray<FVector>> &OutPerimeters) const override;
 
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
+
+protected:
+	FVector LineStartPos, LineEndPos, LineDir, LineNormal, LineUp;
+	FVector2D UpperExtensions, OuterExtensions;
+
+	void InternalUpdateGeometry(bool bRecreate, bool bCreateCollision);
 };

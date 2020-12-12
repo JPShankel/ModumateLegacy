@@ -2,17 +2,16 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-
 #include "DocumentManagement/ModumateSerialization.h"
+#include "GameFramework/Actor.h"
 #include "ModumateCore/ModumateDimensionString.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "Objects/MOIDelta.h"
 #include "Objects/MOIState.h"
 #include "Objects/MOIStructureData.h"
-#include "UObject/Object.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 
+#include "ModumateObjectInstance.generated.h"
 
 class AActor;
 class AAdjustmentHandleActor;
@@ -28,16 +27,18 @@ class IMiterNode;
 class ILayeredObject;
 class ISceneCaptureObject;
 
-class AModumateObjectInstance;
-
-class MODUMATE_API AModumateObjectInstance
+UCLASS()
+class MODUMATE_API AModumateObjectInstance : public AActor
 {
+	GENERATED_BODY()
+
 public:
 	AModumateObjectInstance();
-	virtual ~AModumateObjectInstance();
 
-	virtual void BeginPlay();
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);//override;
+	//~ Begin AActor Interface
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	//~ End AActor Interface
 
 protected:
 	// TODO: remove when MOIs are actors or DynamicMeshActor is a component that manages procedural meshes.
@@ -69,7 +70,7 @@ public:
 	virtual void OnAssemblyChanged();
 
 	virtual AActor *RestoreActor();
-	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot);
+	virtual AActor *CreateActor(const FVector &loc, const FQuat &rot);
 	virtual void PostCreateObject(bool bNewObject);
 	virtual void PreDestroy();
 
@@ -110,7 +111,8 @@ protected:
 	friend class UModumateDocument;
 
 	TWeakObjectPtr<AActor> MeshActor = nullptr;
-	TWeakObjectPtr<UWorld> World = nullptr;
+
+	UPROPERTY()
 	UModumateDocument *Document = nullptr;
 
 	FMOIStateData StateData;
@@ -168,7 +170,6 @@ public:
 	int32 GetParentID() const;
 	void SetParentID(int32 NewParentID);
 
-	UWorld *GetWorld() const { return World.Get(); }
 	// Actor management
 	bool HasActor(const AActor *actor) const { return MeshActor == actor; }
 	AActor* GetActor() { return MeshActor.Get(); }
@@ -176,8 +177,8 @@ public:
 	UModumateDocument* GetDocument() { return Document; }
 	const UModumateDocument* GetDocument() const { return Document; }
 
-	void Destroy(bool bFullDelete);
-	void Restore();
+	void DestroyMOI(bool bFullDelete);
+	void RestoreMOI();
 
 	bool IsDestroyed() const { return bDestroyed; }
 

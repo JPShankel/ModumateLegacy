@@ -1,15 +1,18 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Objects/ModumateObjectInstance.h"
 
+#include "ScopeBox.generated.h"
+
+UCLASS()
 class MODUMATE_API AMOIScopeBox : public AModumateObjectInstance
 {
+	GENERATED_BODY()
 public:
 	AMOIScopeBox();
 
-	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
+	virtual AActor *CreateActor(const FVector &loc, const FQuat &rot) override;
 	virtual void PreDestroy() override;
 
 	virtual void SetupDynamicGeometry() override;

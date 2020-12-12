@@ -39,7 +39,7 @@ bool UWandTool::HandleMouseUp()
 {
 
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	UModumateDocument *doc = &gameState->Document;
+	UModumateDocument* doc = gameState->Document;
 
 	AModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
 	if (newTarget)

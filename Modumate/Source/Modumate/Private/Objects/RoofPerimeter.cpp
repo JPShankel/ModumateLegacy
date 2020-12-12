@@ -127,10 +127,9 @@ void AMOIRoofPerimeter::GetStructuralPointsAndLines(TArray<FStructurePoint> &out
 	}
 }
 
-AActor *AMOIRoofPerimeter::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor *AMOIRoofPerimeter::CreateActor(const FVector &loc, const FQuat &rot)
 {
-	World = world;
-	PerimeterActor = World->SpawnActor<AActor>();
+	PerimeterActor = GetWorld()->SpawnActor<AActor>();
 	PerimeterActor->SetRootComponent(NewObject<USceneComponent>(PerimeterActor.Get(), USceneComponent::GetDefaultSceneRootVariableName()));
 
 	return PerimeterActor.Get();
@@ -282,7 +281,6 @@ bool AMOIRoofPerimeter::UpdateConnectedIDs()
 	}
 
 	// If edges are out of date, then clear out the handles
-	auto playerController = Cast<AEditModelPlayerController_CPP>(World->GetFirstPlayerController());
 	if (!bEdgesMatchHandles || (PrevCachedEdgeIDs != CachedEdgeIDs))
 	{
 		// TODO: may not need to destroy -all- of the existing handles
@@ -290,6 +288,7 @@ bool AMOIRoofPerimeter::UpdateConnectedIDs()
 	}
 
 	// Update the handles regardless; this is the last opportunity to toggle visibility between face creation / retraction handles, etc.
+	auto playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
 	ShowAdjustmentHandles(playerController, bAdjustmentHandlesVisible);
 
 	PrevCachedEdgeIDs = CachedEdgeIDs;

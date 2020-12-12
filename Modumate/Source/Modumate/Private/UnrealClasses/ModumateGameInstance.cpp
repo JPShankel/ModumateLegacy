@@ -48,7 +48,7 @@ UModumateDocument *UModumateGameInstance::GetDocument()
 	AEditModelGameState_CPP *gameState = GetWorld() != nullptr ? GetWorld()->GetGameState<AEditModelGameState_CPP>() : nullptr;
 	if (gameState != nullptr)
 	{
-		return &gameState->Document;
+		return gameState->Document;
 	}
 	ensureAlways(false);
 	return nullptr;
@@ -216,7 +216,7 @@ void UModumateGameInstance::RegisterAllCommands()
 	});
 
 	RegisterCommand(kMakeScopeBox, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		UModumateDocument *doc = GetDocument();
+		UModumateDocument* doc = GetDocument();
 		if (doc == nullptr)
 		{
 			return false;
@@ -412,14 +412,14 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kDraft, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 
-		UModumateDocument *doc = GetDocument();
+		UModumateDocument* doc = GetDocument();
 		doc->ExportPDF(GetWorld(), *(FPaths::ProjectDir() / TEXT("test.pdf")),FVector::ZeroVector, FVector::ZeroVector);
 		return true;
 	});
 
 	RegisterCommand(kReanalyzeGraph, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		UModumateDocument *doc = GetDocument();
+		UModumateDocument* doc = GetDocument();
 		if (doc)
 		{
 			doc->CalculatePolyhedra();
@@ -442,7 +442,7 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kCleanAllObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		UModumateDocument *doc = GetDocument();
+		UModumateDocument* doc = GetDocument();
 		if (doc)
 		{
 			TArray<AModumateObjectInstance *> &allObjects = doc->GetObjectInstances();

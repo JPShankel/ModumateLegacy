@@ -4,8 +4,13 @@
 #include "Objects/EdgeBase.h"
 #include "Objects/MiterNode.h"
 
-class MODUMATE_API AMOIMetaEdge : public FMOIEdgeImplBase, IMiterNode
+#include "MetaEdge.generated.h"
+
+UCLASS()
+class MODUMATE_API AMOIMetaEdge : public AMOIEdgeBase, public IMiterNode
 {
+	GENERATED_BODY()
+
 public:
 	AMOIMetaEdge();
 

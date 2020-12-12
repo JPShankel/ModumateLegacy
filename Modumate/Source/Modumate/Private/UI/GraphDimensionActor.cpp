@@ -1,13 +1,13 @@
 #include "UI/GraphDimensionActor.h"
 
 #include "Components/EditableTextBox.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "Graph/Graph2D.h"
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/DimensionWidget.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/LineActor.h"
 
@@ -22,20 +22,9 @@ void AGraphDimensionActor::SetTarget(int32 InTargetEdgeID, int32 InTargetObjID, 
 	TargetEdgeID = InTargetEdgeID;
 	TargetObjID = InTargetObjID;
 
-	UWorld *world = GetWorld();
-	GameState = world ? world->GetGameState<AEditModelGameState_CPP>() : nullptr;
-	if (!ensure(GameState))
+	if (InTargetSurfaceGraphID != MOD_ID_NONE)
 	{
-		return;
-	}
-
-	if (InTargetSurfaceGraphID == MOD_ID_NONE)
-	{
-		Graph = &GameState->Document.GetVolumeGraph();
-	}
-	else
-	{
-		SurfaceGraph = GameState->Document.FindSurfaceGraph(InTargetSurfaceGraphID);
+		SurfaceGraph = Document->FindSurfaceGraph(InTargetSurfaceGraphID);
 	}
 
 	if (DimensionText != nullptr)
@@ -50,7 +39,7 @@ ALineActor* AGraphDimensionActor::GetLineActor()
 	// associated graph edge
 
 	// TODO: this could be useful if something externally should set properties of the line, following the interface
-	//return Cast<ALineActor>(GameState->Document.GetObjectById(TargetEdgeID)->GetActor());
+	//return Cast<ALineActor>(Document->GetObjectById(TargetEdgeID)->GetActor());
 
 	ensureAlways(false);
 	return nullptr;
@@ -76,16 +65,17 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 
 	FVector startPosition, endPosition, midpoint, offset;
 	offset = FVector::ZeroVector;
-	if (Graph != nullptr)
+	if (!SurfaceGraph.IsValid())
 	{
-		auto targetEdge = Graph->FindEdge(FMath::Abs(TargetEdgeID));
+		auto& volumeGraph = Document->GetVolumeGraph();
+		auto targetEdge = volumeGraph.FindEdge(FMath::Abs(TargetEdgeID));
 		if (targetEdge == nullptr)
 		{
 			return;
 		}
 
-		auto startVertex = Graph->FindVertex(targetEdge->StartVertexID);
-		auto endVertex = Graph->FindVertex(targetEdge->EndVertexID);
+		auto startVertex = volumeGraph.FindVertex(targetEdge->StartVertexID);
+		auto endVertex = volumeGraph.FindVertex(targetEdge->EndVertexID);
 		if (startVertex == nullptr || endVertex == nullptr)
 		{
 			return;
@@ -95,7 +85,7 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 		endPosition = endVertex->Position;
 		midpoint = targetEdge->CachedMidpoint;
 
-		auto targetFace = Graph ? Graph->FindFace(TargetObjID) : nullptr;
+		auto targetFace = volumeGraph.FindFace(TargetObjID);
 		bool bOutSameDirection = true;
 		int32 edgeIdx = targetFace ? targetFace->FindEdgeIndex(TargetEdgeID, bOutSameDirection) : INDEX_NONE;
 		if (edgeIdx != INDEX_NONE)
@@ -105,7 +95,7 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 
 		CurrentDirection = targetEdge->CachedDir;
 	}
-	else if (SurfaceGraph != nullptr)
+	else
 	{
 		auto targetEdge = SurfaceGraph->FindEdge(FMath::Abs(TargetEdgeID));
 		if (targetEdge == nullptr)
@@ -120,8 +110,8 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 			return;
 		}
 
-		auto surfaceGraphObj = GameState->Document.GetObjectById(SurfaceGraph->GetID());
-		auto surfaceGraphParent = surfaceGraphObj != nullptr ? GameState->Document.GetObjectById(surfaceGraphObj->GetParentID()) : nullptr;
+		auto surfaceGraphObj = Document->GetObjectById(SurfaceGraph->GetID());
+		auto surfaceGraphParent = surfaceGraphObj != nullptr ? Document->GetObjectById(surfaceGraphObj->GetParentID()) : nullptr;
 		int32 surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceGraphObj);
 		if ((surfaceGraphParent == nullptr) || (surfaceGraphFaceIndex == INDEX_NONE))
 		{
@@ -158,10 +148,6 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 
 		CurrentDirection = endPosition - startPosition;
 		CurrentDirection.Normalize();
-	}
-	else
-	{
-		return;
 	}
 
 	CurrentLength = (endPosition - startPosition).Size();
@@ -204,30 +190,31 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 
 void AGraphDimensionActor::OnMeasurementTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	bool bVerticesMoved = false;
 	if (CommitMethod == ETextCommit::OnEnter)
 	{
+		auto& volumeGraph = Document->GetVolumeGraph();
+
 		// get the desired length from the text (assuming the text is entered in feet)
 		// shrinking the edge be zero length is not allowed
 		float lengthValue = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString()).Centimeters;
-		float epsilon = Graph ? Graph->Epsilon : SurfaceGraph->Epsilon;
+		float epsilon = SurfaceGraph.IsValid() ? SurfaceGraph->Epsilon : volumeGraph.Epsilon;
 		if (lengthValue > epsilon)
 		{
 			// construct deltas
 			TSet<int32> vertexIDs;
 
-			FModumateObjectDeltaStatics::GetTransformableIDs({ TargetObjID }, &GameState->Document, vertexIDs);
+			FModumateObjectDeltaStatics::GetTransformableIDs({ TargetObjID }, Document, vertexIDs);
 
 			// the selected object will be translated towards the vertex that it does not contain
 			int32 startID = MOD_ID_NONE;
-			if (Graph)
-			{
-				auto edge = Graph->FindEdge(TargetEdgeID);
-				startID = edge->StartVertexID;
-			}
-			else if (SurfaceGraph)
+			if (SurfaceGraph.IsValid())
 			{
 				auto edge = SurfaceGraph->FindEdge(TargetEdgeID);
+				startID = edge->StartVertexID;
+			}
+			else
+			{
+				auto edge = volumeGraph.FindEdge(TargetEdgeID);
 				startID = edge->StartVertexID;
 			}
 
@@ -242,34 +229,22 @@ void AGraphDimensionActor::OnMeasurementTextCommitted(const FText& Text, ETextCo
 			TMap<int32, FTransform> objectInfo;
 			for (int32 vertexID : vertexIDs)
 			{
-				if (Graph)
-				{
-					auto vertex = Graph->FindVertex(vertexID);
-					objectInfo.Add(vertexID, FTransform(vertex->Position + offset));
-				}
-				else if (SurfaceGraph)
+				if (SurfaceGraph)
 				{
 					auto vertex = SurfaceGraph->FindVertex(vertexID);
 
 					FVector position = UModumateGeometryStatics::Deproject2DPoint(vertex->Position, AxisX, AxisY, Origin);
 					objectInfo.Add(vertexID, FTransform(position + offset));
 				}
+				else
+				{
+					auto vertex = volumeGraph.FindVertex(vertexID);
+					objectInfo.Add(vertexID, FTransform(vertex->Position + offset));
+				}
 			}
-			FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, &GameState->Document, GetWorld(), false);
+			FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Document, GetWorld(), false);
 		}
 	}
 
-	if (bVerticesMoved)
-	{
-		auto edge = Graph->FindEdge(TargetEdgeID);
-		auto startVertex = Graph->FindVertex(edge->StartVertexID);
-		auto endVertex = Graph->FindVertex(edge->EndVertexID);
-		float length = (endVertex->Position - startVertex->Position).Size();
-
-		DimensionText->UpdateText(length);
-	}
-	else
-	{
-		DimensionText->ResetText();
-	}
+	DimensionText->ResetText();
 }

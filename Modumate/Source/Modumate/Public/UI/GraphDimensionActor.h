@@ -50,6 +50,5 @@ private:
 	FVector AxisX;
 	FVector AxisY;
 
-	const Modumate::FGraph3D* Graph;
 	TSharedPtr<Modumate::FGraph2D> SurfaceGraph;
 };

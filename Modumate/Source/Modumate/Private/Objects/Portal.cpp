@@ -35,9 +35,9 @@ AMOIPortal::AMOIPortal()
 {
 }
 
-AActor *AMOIPortal::CreateActor(UWorld *world, const FVector &loc, const FQuat &rot)
+AActor *AMOIPortal::CreateActor(const FVector &loc, const FQuat &rot)
 {
-	return world->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform(rot, loc));
+	return GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform(rot, loc));
 }
 
 FVector AMOIPortal::GetNormal() const

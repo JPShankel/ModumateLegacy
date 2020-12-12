@@ -2,17 +2,16 @@
 
 #include "Objects/Trim.h"
 
-#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "Algo/ForEach.h"
 #include "DocumentManagement/ModumateSnappingView.h"
-#include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
 #include "Drafting/ModumateDraftingElements.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-
-#include "Algo/ForEach.h"
 
 AMOITrim::AMOITrim()
 	: AModumateObjectInstance()

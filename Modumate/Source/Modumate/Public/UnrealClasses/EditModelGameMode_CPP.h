@@ -18,10 +18,14 @@ class MODUMATE_API AEditModelGameMode_CPP : public AModumateGameModeBase
 public:
 
 	AEditModelGameMode_CPP();
-	~AEditModelGameMode_CPP();
+
+	//~ Begin AActor Interface
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	//~ End AActor Interface
 
 	//~ Begin AGameModeBase Interface
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+	virtual void InitGameState() override;
 	//~ End AGameModeBase Interface
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")

@@ -17,6 +17,7 @@ public:
 	// Sets default values for this actor's properties
 	AMOIGroupActor_CPP();
 
+	UPROPERTY()
 	AModumateObjectInstance *MOI;
 
 protected:

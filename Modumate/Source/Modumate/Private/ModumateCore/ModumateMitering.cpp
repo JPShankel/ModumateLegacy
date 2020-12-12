@@ -14,7 +14,7 @@ namespace Modumate
 	{
 		const AModumateObjectInstance *FMiterHelpers::GetChildLayeredObj(const AModumateObjectInstance *PlaneObj)
 		{
-			const UModumateDocument *doc = PlaneObj ? PlaneObj->GetDocument() : nullptr;
+			const UModumateDocument* doc = PlaneObj ? PlaneObj->GetDocument() : nullptr;
 			if (!ensure(doc != nullptr))
 			{
 				return nullptr;
@@ -62,7 +62,7 @@ namespace Modumate
 			int32 numLayers = layers.Num();
 			OutLayerGeometries.SetNum(numLayers);
 
-			const UModumateDocument *doc = PlaneHostedObj->GetDocument();
+			const UModumateDocument* doc = PlaneHostedObj->GetDocument();
 
 			// Collate the edge extensions by layer, so that we can build each layer's geometry independently.
 			// Sourcing them from the miter node interface allows separate miter logic to determine

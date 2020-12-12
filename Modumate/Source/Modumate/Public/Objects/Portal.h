@@ -32,8 +32,10 @@ struct MODUMATE_API FMOIPortalData
 class AAdjustmentHandleActor;
 class AModumateObjectInstance;
 
+UCLASS()
 class MODUMATE_API AMOIPortal : public AModumateObjectInstance
 {
+	GENERATED_BODY()
 protected:
 	TWeakObjectPtr<AEditModelPlayerController_CPP> Controller;
 
@@ -50,7 +52,7 @@ public:
 
 	AMOIPortal();
 
-	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
+	virtual AActor *CreateActor(const FVector &loc, const FQuat &rot) override;
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
 	virtual FTransform GetWorldTransform() const override;

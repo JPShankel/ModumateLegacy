@@ -3,8 +3,10 @@
 
 #include "Graph/Graph2D.h"
 #include "Graph/Graph3DTypes.h"
-#include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateRoofStatics.h"
+#include "Objects/ModumateObjectInstance.h"
+
+#include "RoofPerimeter.generated.h"
 
 class AAdjustmentHandleActor;
 class ACreateRoofFacesHandle;
@@ -13,8 +15,10 @@ class ALineActor;
 class ARetractRoofFacesHandle;
 class URoofPerimeterPropertiesWidget;
 
+UCLASS()
 class MODUMATE_API AMOIRoofPerimeter : public AModumateObjectInstance
 {
+	GENERATED_BODY()
 public:
 	AMOIRoofPerimeter();
 
@@ -26,7 +30,7 @@ public:
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
-	virtual AActor *CreateActor(UWorld *world, const FVector &loc, const FQuat &rot) override;
+	virtual AActor *CreateActor(const FVector &loc, const FQuat &rot) override;
 	virtual FVector GetNormal() const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual bool ShowStructureOnSelection() const override { return false; }
@@ -35,7 +39,6 @@ public:
 	const TArray<FGraphSignedID>& GetCachedEdgeIDs() const { return CachedEdgeIDs; }
 
 protected:
-	TWeakObjectPtr<UWorld> World;
 	bool bValidPerimeterLoop;
 	TArray<FGraphSignedID> CachedEdgeIDs, PrevCachedEdgeIDs;
 	TArray<int32> CachedFaceIDs;

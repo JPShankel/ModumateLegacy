@@ -3,10 +3,14 @@
 
 #include "Objects/VertexBase.h"
 
+#include "MetaVertex.generated.h"
+
 class AVertexActor;
 
-class MODUMATE_API AMOIMetaVertex : public FMOIVertexImplBase
+UCLASS()
+class MODUMATE_API AMOIMetaVertex : public AMOIVertexBase
 {
+	GENERATED_BODY()
 public:
 	AMOIMetaVertex();
 

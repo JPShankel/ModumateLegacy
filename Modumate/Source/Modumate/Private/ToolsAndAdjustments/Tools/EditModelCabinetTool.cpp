@@ -164,10 +164,10 @@ bool UCabinetTool::FrameUpdate()
 		TargetPolygonID = MOD_ID_NONE;
 		BasePoints.Reset();
 
-		auto targetMOI = GameState->Document.ObjectFromActor(cursor.Actor);
+		auto targetMOI = GameState->Document->ObjectFromActor(cursor.Actor);
 		if (targetMOI && (targetMOI->GetObjectType() == EObjectType::OTSurfacePolygon))
 		{
-			auto surfaceGraph = GameState->Document.FindSurfaceGraphByObjID(targetMOI->ID);
+			auto surfaceGraph = GameState->Document->FindSurfaceGraphByObjID(targetMOI->ID);
 			if (!surfaceGraph.IsValid())
 			{
 				return false;
@@ -262,7 +262,7 @@ bool UCabinetTool::EnterNextStage()
 	newCabinetData.ExtrusionDist = ExtrusionDist;
 
 	FMOIStateData stateData;
-	stateData.ID = GameState->Document.GetNextAvailableID();
+	stateData.ID = GameState->Document->GetNextAvailableID();
 	stateData.ObjectType = EObjectType::OTCabinet;
 	stateData.ParentID = TargetPolygonID;
 	stateData.AssemblyKey = AssemblyKey;
@@ -270,7 +270,7 @@ bool UCabinetTool::EnterNextStage()
 
 	auto delta = MakeShared<FMOIDelta>();
 	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
-	GameState->Document.ApplyDeltas({ delta }, GetWorld());
+	GameState->Document->ApplyDeltas({ delta }, GetWorld());
 
 	return false;
 }
