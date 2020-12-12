@@ -2039,8 +2039,10 @@ void UModumateGeometryStatics::DeCasteljau(const FVector Points[4], int32 iterat
 bool UModumateGeometryStatics::SegmentPlaneIntersectionDouble(FVector3d StartPoint, FVector3d EndPoint, const FPlane& Plane, FVector3d& outIntersectionPoint)
 {
 	FVector3d normal(Plane);
+	static constexpr double EPSILON = SMALL_NUMBER;
+
 	double t = (Plane.W - StartPoint.Dot(normal)) / normal.Dot(EndPoint - StartPoint);
-	if (t >= 0.0 && t <= 1.0)
+	if (t >= 0.0 - EPSILON && t <= 1.0 + EPSILON)
 	{
 		outIntersectionPoint = StartPoint + t * (EndPoint - StartPoint);
 		return true;

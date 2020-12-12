@@ -295,3 +295,14 @@ struct MODUMATE_API FModumateFormattedDimension
 	FString FormattedString;
 	float Centimeters = 0.0f;
 };
+
+UENUM(BlueprintType)
+enum class EDoorOperationType : uint8
+{
+	None,
+	Barn,
+	Bifold,
+	Pocket,
+	Sliding,
+	Swing
+};

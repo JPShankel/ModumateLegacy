@@ -270,8 +270,6 @@ void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>
 		// TODO: door swings for DDL 2.0 openings
 		if (GetObjectType() == EObjectType::OTDoor && bLinesDrawn)
 		{
-			const FBIMAssemblySpec& assembly = GetAssembly();
-			const auto& parts = assembly.Parts;
 
 			const FVector doorUpVector = CachedWorldRot.RotateVector(FVector::UpVector);
 			bool bOrthogonalCut = FVector::Parallel(doorUpVector, Plane);
@@ -281,68 +279,76 @@ void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>
 				bool bCollinear = (doorUpVector | Plane) > 0.0f;
 				bool bLeftHanded = ((AxisX ^ AxisY) | Plane) < 0.0f;  // True for interactive drafting.
 				bool bPositiveSwing = bCollinear ^ InstanceData.bLateralInverted ^ InstanceData.bNormalInverted ^ bLeftHanded;
-				auto parent = GetParentObject();
 
-				// Get amount of panels
-				TArray<int32> panelSlotIndices;
+				const FBIMAssemblySpec& assembly = GetAssembly();
+				const auto& parts = assembly.Parts;
+				EDoorOperationType operationType = GetDoorType();
 
-				static const FBIMTagPath panelTag("Part_Panel");
-				for (int32 slot = 0; slot < parts.Num(); ++slot)
+				if (operationType == EDoorOperationType::Swing)
 				{
-					if (parts[slot].NodeCategoryPath == panelTag)
+					// Get amount of panels
+					TArray<int32> panelSlotIndices;
+
+					static const FString panelTag("Panel");
+					for (int32 slot = 0; slot < parts.Num(); ++slot)
 					{
-						panelSlotIndices.Add(slot);
-					}
-				}
-
-				int32 numPanels = panelSlotIndices.Num();
-
-				for (int32 panelIdx : panelSlotIndices)
-				{
-					const UStaticMeshComponent* meshComponent = actor->StaticMeshComps[panelIdx];
-					if (!meshComponent)
-					{
-						continue;
-					}
-					FVector meshMin, meshMax;
-					meshComponent->GetLocalBounds(meshMin, meshMax);
-
-					const FTransform componentXfrom = meshComponent->GetRelativeTransform();
-					const FTransform panelXfrom = componentXfrom * actor->GetTransform();
-					FVector axis = panelXfrom.TransformPosition(FVector(meshMin.X, meshMax.Y, 0.0f));
-					FVector panelEnd = panelXfrom.TransformPosition(FVector(meshMax.X, meshMax.Y, 0.0f));
-					float panelLength = (panelEnd - axis).Size();
-					FVector2D planStart = UModumateGeometryStatics::ProjectPoint2D(axis, AxisX, AxisY, Origin);
-					FVector2D planEnd = UModumateGeometryStatics::ProjectPoint2D(panelEnd, AxisX, AxisY, Origin);
-
-					const FRotator doorSwing(0, bPositiveSwing ? +defaultDoorOpeningDegrees : -defaultDoorOpeningDegrees, 0);
-					planEnd = FVector2D(doorSwing.RotateVector(FVector(planEnd - planStart, 0)) ) + planStart;
-					FVector2D planDelta = planEnd - planStart;
-
-					FVector2D clippedStart, clippedEnd;
-					if (UModumateFunctionLibrary::ClipLine2DToRectangle(planStart, planEnd, BoundingBox, clippedStart, clippedEnd))
-					{
-						TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
-							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
-							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
-							defaultThickness, swingColor);
-						ParentPage->Children.Add(line);
-						line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kOpeningSystemOperatorLine);
-
-						auto arcAngle = FMath::Atan2(planDelta.Y, planDelta.X);
-
-						if (bPositiveSwing)
+						const auto& ncp = parts[slot].NodeCategoryPath;
+						if (ncp.Tags.Num() > 0
+							&& ncp.Tags.Last() == panelTag)
 						{
-							arcAngle -= Modumate::Units::FUnitValue::Degrees(defaultDoorOpeningDegrees).AsRadians();
+							panelSlotIndices.Add(slot);
 						}
-						TSharedPtr<Modumate::FDraftingArc> doorArc = MakeShared<Modumate::FDraftingArc>(
-							Modumate::Units::FLength::WorldCentimeters(panelLength),
-							Modumate::Units::FRadius::Degrees(defaultDoorOpeningDegrees),
-							defaultThickness, swingColor);
-						doorArc->SetLocalPosition(Modumate::Units::FCoordinates2D::WorldCentimeters(planStart));
-						doorArc->SetLocalOrientation(Modumate::Units::FUnitValue::Radians(arcAngle));
-						ParentPage->Children.Add(doorArc);
-						doorArc->SetLayerTypeRecursive(Modumate::FModumateLayerType::kOpeningSystemOperatorLine);
+					}
+
+					int32 numPanels = panelSlotIndices.Num();
+
+					for (int32 panelIdx : panelSlotIndices)
+					{
+						const UStaticMeshComponent* meshComponent = actor->StaticMeshComps[panelIdx];
+						if (!meshComponent)
+						{
+							continue;
+						}
+						FVector meshMin, meshMax;
+						meshComponent->GetLocalBounds(meshMin, meshMax);
+
+						const FTransform componentXfrom = meshComponent->GetRelativeTransform();
+						const FTransform panelXfrom = componentXfrom * actor->GetTransform();
+						FVector axis = panelXfrom.TransformPosition(FVector(meshMin.X, meshMax.Y, 0.0f));
+						FVector panelEnd = panelXfrom.TransformPosition(FVector(meshMax.X, meshMax.Y, 0.0f));
+						float panelLength = (panelEnd - axis).Size();
+						FVector2D planStart = UModumateGeometryStatics::ProjectPoint2D(axis, AxisX, AxisY, Origin);
+						FVector2D planEnd = UModumateGeometryStatics::ProjectPoint2D(panelEnd, AxisX, AxisY, Origin);
+
+						const FRotator doorSwing(0, bPositiveSwing ? +defaultDoorOpeningDegrees : -defaultDoorOpeningDegrees, 0);
+						planEnd = FVector2D(doorSwing.RotateVector(FVector(planEnd - planStart, 0))) + planStart;
+						FVector2D planDelta = planEnd - planStart;
+
+						FVector2D clippedStart, clippedEnd;
+						if (UModumateFunctionLibrary::ClipLine2DToRectangle(planStart, planEnd, BoundingBox, clippedStart, clippedEnd))
+						{
+							TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
+								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+								defaultThickness, swingColor);
+							ParentPage->Children.Add(line);
+							line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kOpeningSystemOperatorLine);
+
+							auto arcAngle = FMath::Atan2(planDelta.Y, planDelta.X);
+
+							if (bPositiveSwing)
+							{
+								arcAngle -= Modumate::Units::FUnitValue::Degrees(defaultDoorOpeningDegrees).AsRadians();
+							}
+							TSharedPtr<Modumate::FDraftingArc> doorArc = MakeShared<Modumate::FDraftingArc>(
+								Modumate::Units::FLength::WorldCentimeters(panelLength),
+								Modumate::Units::FRadius::Degrees(defaultDoorOpeningDegrees),
+								defaultThickness, swingColor);
+							doorArc->SetLocalPosition(Modumate::Units::FCoordinates2D::WorldCentimeters(planStart));
+							doorArc->SetLocalOrientation(Modumate::Units::FUnitValue::Radians(arcAngle));
+							ParentPage->Children.Add(doorArc);
+							doorArc->SetLayerTypeRecursive(Modumate::FModumateLayerType::kOpeningSystemOperatorLine);
+						}
 					}
 				}
 			}
@@ -368,4 +374,20 @@ bool AMOIPortal::GetIsDynamic() const
 		return meshActor->GetIsDynamic();
 	}
 	return false;
+}
+
+EDoorOperationType AMOIPortal::GetDoorType() const
+{
+	if (GetObjectType() == EObjectType::OTDoor)
+	{
+		const FBIMAssemblySpec& assembly = GetAssembly();
+		const auto& configTags = assembly.SlotConfigTagPath.Tags;
+		if (configTags.Num() > 0)
+		{
+			int64 doorType = StaticEnum<EDoorOperationType>()->GetValueByNameString(configTags.Last());
+			return doorType == INDEX_NONE ? EDoorOperationType::None : EDoorOperationType(doorType);
+		}
+	}
+
+	return EDoorOperationType::None;
 }

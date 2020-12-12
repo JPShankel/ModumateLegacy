@@ -42,6 +42,8 @@ protected:
 	bool SetupCompoundActorGeometry();
 	bool SetRelativeTransform(const FVector2D &InRelativePos, const FQuat &InRelativeRot);
 
+	EDoorOperationType GetDoorType() const;
+
 	FVector2D CachedRelativePos;
 	FVector CachedWorldPos;
 	FQuat CachedRelativeRot, CachedWorldRot;

@@ -347,7 +347,7 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 			}
 
 			TArray<FVector> intersections;
-			UModumateGeometryStatics::GetPlaneIntersections(intersections, usePointsA ? layer.OriginalPointsA : layer.OriginalPointsB, Plane, parentLocation);
+			UModumateGeometryStatics::GetPlaneIntersections(intersections, usePointsA ? layer.UniquePointsA : layer.UniquePointsB, Plane, parentLocation);
 
 			intersections.Sort(UModumateGeometryStatics::Points3dSorter);
 			// we can make mask perimeters when there are an even amount of intersection between a simple polygon and a plane
