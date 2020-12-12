@@ -205,6 +205,7 @@ EBIMResult FBIMPresetCollection::PostLoad()
 		FGuid guid;
 		UsedGUIDs.Add(kvp.Value.GUID);
 		GUIDKeyMap.Add(kvp.Value.GUID, kvp.Key);
+		AllNCPs.Add(kvp.Value.MyTagPath);
 		
 		FBIMPresetTypeDefinition* typeDef = NodeDescriptors.Find(kvp.Value.NodeType);
 		if (ensureAlways(typeDef != nullptr))
@@ -378,3 +379,33 @@ bool FBIMPresetCollection::Matches(const FBIMPresetCollection& OtherCollection) 
 	return true;
 }
 
+EBIMResult FBIMPresetCollection::GetNCPForPreset(const FBIMKey& InPresetID, FBIMTagPath& OutNCP) const
+{
+	const FBIMPresetInstance* preset = Presets.Find(InPresetID);
+	if (preset == nullptr)
+	{
+		return EBIMResult::Error;
+	}
+	OutNCP = preset->MyTagPath;
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetCollection::GetPresetsForNCP(const FBIMTagPath& InNCP, TArray<FBIMKey>& OutPresets) const
+{
+	return GetPresetsByPredicate([InNCP](const FBIMPresetInstance& Preset) 
+	{
+		return Preset.MyTagPath.Tags.Num() > InNCP.Tags.Num() && Preset.MyTagPath.MatchesPartial(InNCP);
+	},OutPresets);
+}
+
+EBIMResult FBIMPresetCollection::GetNCPSubcategories(const FBIMTagPath& InNCP, TArray<FString>& OutSubcats) const
+{
+	for (auto& ncp : AllNCPs)
+	{
+		if (ncp.Tags.Num() > InNCP.Tags.Num() && ncp.MatchesPartial(InNCP))
+		{
+			OutSubcats.AddUnique(ncp.Tags[InNCP.Tags.Num()]);
+		}
+	}
+	return EBIMResult::Success;
+}

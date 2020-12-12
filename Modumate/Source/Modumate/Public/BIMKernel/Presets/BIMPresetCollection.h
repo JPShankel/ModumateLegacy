@@ -30,11 +30,17 @@ struct MODUMATE_API FBIMPresetCollection
 
 	TSet<FGuid> UsedGUIDs;
 
+	TSet<FBIMTagPath> AllNCPs;
+
 	EBIMResult PostLoad();
 
 	bool Matches(const FBIMPresetCollection& OtherCollection) const;
 
-	EObjectType GetPresetObjectType(const FBIMKey &PresetID) const;
+	EObjectType GetPresetObjectType(const FBIMKey& PresetID) const;
+
+	EBIMResult GetNCPForPreset(const FBIMKey& InPresetID, FBIMTagPath& OutNCP) const;
+	EBIMResult GetPresetsForNCP(const FBIMTagPath& InNCP, TArray<FBIMKey>& OutPresets) const;
+	EBIMResult GetNCPSubcategories(const FBIMTagPath& InNCP, TArray<FString>& OutSubcats) const;
 
 	EBIMResult GetDependentPresets(const FBIMKey& PresetID, TArray<FBIMKey>& OutPresets) const;
 

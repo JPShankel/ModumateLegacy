@@ -209,5 +209,59 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 		return false;
 	}
 
+	FString manifestPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMData");
+
+	FBIMPresetCollection presetCollection;
+	TArray<FString> errors;
+	TArray<FBIMKey> starters;
+	if (!ensureAlways(presetCollection.LoadCSVManifest(*manifestPath, TEXT("BIMManifest.txt"), starters, errors) == EBIMResult::Success))
+	{
+		return false;
+	}
+
+	presetCollection.PostLoad();
+
+	FBIMTagPath searchPath;
+	searchPath.Tags.Add(TEXT("Assembly"));
+
+	TArray<FBIMKey> foundKeys;
+	if (!ensureAlways(presetCollection.GetPresetsForNCP(searchPath,foundKeys)==EBIMResult::Success))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(foundKeys.Num() > 0))
+	{
+		return false;
+	}
+
+	FBIMTagPath checkPath;
+	if (!ensureAlways(presetCollection.GetNCPForPreset(foundKeys[0], checkPath) == EBIMResult::Success))
+	{
+		return false;
+	}
+
+	const FBIMPresetInstance* preset = presetCollection.Presets.Find(foundKeys[0]);
+	if (!ensureAlways(preset != nullptr))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(checkPath.MatchesExact(preset->MyTagPath)))
+	{
+		return false;
+	}
+
+	TArray<FString> subcategories;
+	if (!ensureAlways(presetCollection.GetNCPSubcategories(searchPath, subcategories)==EBIMResult::Success))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(subcategories.Num() > 0))
+	{
+		return false;
+	}
+
 	return true;
 }

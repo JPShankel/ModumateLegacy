@@ -31,6 +31,16 @@ public:
 	bool operator!=(const FBIMTagPath& RHS) const;
 };
 
+FORCEINLINE uint32 GetTypeHash(const FBIMTagPath& TagPath)
+{
+	FString stringVal;
+	if (ensureAlways(TagPath.ToString(stringVal)==EBIMResult::Success))
+	{
+		return GetTypeHash(stringVal);
+	}
+	return 0;
+}
+
 template<>
 struct TStructOpsTypeTraits<FBIMTagPath> : public TStructOpsTypeTraitsBase2<FBIMTagPath>
 {
