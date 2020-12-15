@@ -396,17 +396,22 @@ void FBIMAssemblySpec::ReverseLayers()
 
 FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
 {
-	//The first part with a mesh defines the assembly native size
-	//Parts without meshes represent parents of sets of mesh parts, so we skip those
-	//TODO: read an assembly's native size from data 
+	FVector nativeSize = FVector::ZeroVector;
+
+	// TODO: only needed for Y, retire when Depth is available
 	for (auto& part : Parts)
 	{
 		if (part.Mesh.EngineMesh.IsValid())
 		{
-			return part.Mesh.NativeSize * Modumate::InchesToCentimeters;
+			nativeSize = part.Mesh.NativeSize * Modumate::InchesToCentimeters;
+			break;
 		}
 	}
-	return FVector::ZeroVector;
+
+	RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, nativeSize.X);
+	RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, nativeSize.Z);
+
+	return nativeSize;
 }
 
 EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FModumateDatabase& InDB)
@@ -437,7 +442,6 @@ EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FModumateDatabase& InDB)
 			return EBIMResult::Success;
 		}
 	}
-
 
 	return EBIMResult::Error;
 }
