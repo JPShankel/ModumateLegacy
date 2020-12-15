@@ -11,7 +11,7 @@ class FBIMAssemblySpec;
 class MODUMATE_API FBIMPartLayout
 {
 private:
-	bool TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, int32 InPartIndex, const FString& InVar, float& OutVal) const;
+	bool TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, int32 InPartIndex, const FString& InVar, float& OutVal, TArray<FString>& OutErrors) const;
 
 public:
 	struct FPartSlotInstance

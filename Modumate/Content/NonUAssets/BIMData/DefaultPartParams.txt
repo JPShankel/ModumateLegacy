@@ -1,4 +1,5 @@
 PanelHangDistanceZ=5
+PanelEdgeInsetDistanceX=0.25
 PanelEdgeInsetDistanceXZ=0.25
 JambLeftSizeX=1
 JambRightSizeX=1

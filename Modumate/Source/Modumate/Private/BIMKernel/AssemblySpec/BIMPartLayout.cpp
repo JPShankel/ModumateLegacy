@@ -27,7 +27,7 @@ const FString FBIMPartLayout::Parent = TEXT("Parent");
 
 // Given a starting part and a fully qualified path to a value, navigate to the source and retrieve the value
 // TODO: cache values and add to a global scope map 
-bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, int32 InPartIndex, const FString& InVar, float& OutVal) const
+bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, int32 InPartIndex, const FString& InVar, float& OutVal, TArray<FString>& OutErrors) const
 {
 	// An input var will be a fully qualified value like "Parent.Panel.LocationX"
 	// For a qualified var with N elements, the first N-1 describe slot navigation and the final value is a variable on that slot
@@ -63,7 +63,29 @@ bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, 
 					break;
 				}
 			}
-			ensureAlwaysMsgf(found, TEXT("COULD NOT FIND BIM SCOPE %s"), *scopes[i]);
+#if WITH_EDITOR
+			if (!found)
+			{
+				FString debugSlotID = InAssemblySpec.Parts[currentSlot].SlotID;
+				if (debugSlotID.IsEmpty())
+				{
+					debugSlotID = TEXT("ROOT");
+				}
+
+				FString coreError = TEXT("No such slot for ");
+
+				for (int32 j = 0; j < PartSlotInstances.Num(); ++j)
+				{
+					if (InAssemblySpec.Parts[j].SlotID.Equals(slotID))
+					{
+						coreError = TEXT("Bad path for ");
+						break;
+					}
+				}
+
+				OutErrors.Add(FString::Printf(TEXT("%s BIM Scope %s in variable %s for slot %s in assembly %s"), *coreError,*scopes[i], *InVar, *debugSlotID, *InAssemblySpec.DisplayName));
+			}
+#endif
 		}
 	}
 
@@ -148,6 +170,8 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 		}
 	}
 
+	TArray<FString> formulaErrors;
+
 	if (!InAssemblySpec.SlotConfigConceptualSizeY.IsEmpty())
 	{
 		TArray<FString> varNames;
@@ -155,11 +179,18 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 		for (const auto& var : varNames)
 		{
 			float val;
-			if (ensureAlways(TryGetValueForPart(InAssemblySpec, 0, var, val)))
+			if (TryGetValueForPart(InAssemblySpec, 0, var, val, formulaErrors))
 			{
 				PartSlotInstances[0].VariableValues.Add(var, val);
 			}
 		}
+
+#if WITH_EDITOR
+		for (auto& err : formulaErrors)
+		{
+			err.Append(TEXT(" (ConceptualSize)"));
+		}
+#endif
 
 		CabinetPanelAssemblyConceptualSizeY = Modumate::Expression::Evaluate(PartSlotInstances[0].VariableValues, InAssemblySpec.SlotConfigConceptualSizeY);
 	}
@@ -190,7 +221,7 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 		for (const auto& var : varNames)
 		{
 			float val;
-			if (ensureAlways(TryGetValueForPart(InAssemblySpec, slotIdx, var, val)))
+			if (TryGetValueForPart(InAssemblySpec, slotIdx, var, val, formulaErrors))
 			{
 				PartSlotInstances[slotIdx].VariableValues.Add(var, val);
 			}
@@ -231,5 +262,5 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 		}
 	}
 
-	return EBIMResult::Success;
+	return ensureAlwaysMsgf(formulaErrors.Num() == 0,TEXT("Errors found in rigged assembly formulas")) ? EBIMResult::Success : EBIMResult::Error;
 }

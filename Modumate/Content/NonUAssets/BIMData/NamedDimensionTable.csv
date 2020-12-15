@@ -38,6 +38,7 @@ PRESET,,MailSlotDistanceZ,,NamedDimension,,Mail Slot Height,12in,Minor,How far a
 PRESET,,OverrunLeftSizeX,,NamedDimension,,Left Overrun,4in,Minor,How far to the left of the conceptual area does the barn track extend?
 PRESET,,OverrunRightSizeX,,NamedDimension,,Right Overrun,4in,Minor,How far to the right of the conceptual area does the barn track extend?
 PRESET,,PanelDistanceY,,NamedDimension,,Panel Depth-in-Frame,0in,Minor,"How far from the frame's origin, in Y, should the panel's origin be?"
+PRESET,,PanelEdgeInsetDistanceX,,NamedDimension,,Panel Inset Distance,0.25in,Minor,"How far from the hinge's mount point, in X, is the panel edge?"
 PRESET,,PanelEdgeInsetDistanceXZ,,NamedDimension,,Panel Edge Inset Distance,0.25in,Minor,how far from its reference area are an overlay panel's edges inset? (this will be 1/2 of the gap between overlay panels)
 PRESET,,PanelHangDistanceZ,,NamedDimension,,Panel Hang Distance,5in,Minor,how far below a barn door's track is the top of its panel?
 PRESET,,PeepholeLowerDistanceZ,,NamedDimension,,Peephole Height (Lower),48in,Minor,How far above the base of the frame is the lower peephole?
