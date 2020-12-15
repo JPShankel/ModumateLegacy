@@ -1034,6 +1034,8 @@ namespace Modumate
 			bool bUseOuterBounds = boundsIdx == numBounds;
 			auto& bounds = bUseOuterBounds ? CachedOuterBounds : CachedInnerBounds[boundsIdx];
 
+			UModumateGeometryStatics::GetPolygonWindingAndConcavity(bounds.Positions, bClockwise, bConcave);
+
 			// for outer bounds, edge normals should point toward the inside of the polygon
 			// for inner bounds, edge normals should point toward the outside of the polygon
 			float sign = bClockwise ? -1 : 1;
