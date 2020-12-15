@@ -15,9 +15,9 @@
 AMOIMetaEdge::AMOIMetaEdge()
 	: AMOIEdgeBase()
 	, BaseDefaultColor(FColor::Black)
-	, BaseGroupedColor(FColor::Purple)
+	, BaseGroupedColor(FColor(0x0D, 0x0B, 0x55))
 	, HoverDefaultColor(FColor::Black)
-	, HoverGroupedColor(FColor::Magenta)
+	, HoverGroupedColor(FColor(0x0D, 0x0B, 0x55))
 {
 }
 

@@ -15,7 +15,7 @@ AMOISurfaceVertex::AMOISurfaceVertex()
 	: AMOIVertexBase()
 	, CachedDeprojectedLocation(ForceInitToZero)
 {
-	BaseColor = FColor(0x51, 0x50, 0x84);
+	BaseColor = FColor(0x80, 0x80, 0x80);
 }
 
 FVector AMOISurfaceVertex::GetLocation() const
