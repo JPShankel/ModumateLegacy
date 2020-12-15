@@ -337,7 +337,7 @@ bool USurfaceGraphTool::InitializeSegment()
 	// done for all of the tools
 	PendingSegment->Point1 = HitLocation;
 	PendingSegment->Point2 = HitLocation;
-	PendingSegment->Color = FColor::Black;
+	PendingSegment->Color = FColor(0xBC, 0xBC, 0xBC);
 	PendingSegment->Thickness = 3;
 
 	return true;
