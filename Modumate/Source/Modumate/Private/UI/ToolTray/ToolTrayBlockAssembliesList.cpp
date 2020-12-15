@@ -88,27 +88,17 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 	}
 }
 
-void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType)
+void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType)
 {
 	SwapType = ESwapType::SwapFromNode;
-	NodeParentPresetID = ParentPresetID;
 	NodePresetIDToSwap = PresetIDToSwap;
 	CurrentNodeForSwap = NodeID;
 	SwapScope = InScope;
 	SwapNameType = InNameType;
-	if (NCPNavigator)
-	{
-		NCPNavigator->SetVisibility(ESlateVisibility::Visible);
-	}
 
 	if (Controller && GameState)
 	{
-		FPresetManager &presetManager = GameState->Document->PresetManager;
-		AssembliesList->ClearListItems();
-
-		TArray<FBIMKey> availablePresets;
-		presetManager.GetAvailablePresetsForSwap(ParentPresetID, PresetIDToSwap, availablePresets);
-
+		// Build icon for current preset to swap
 		if (ComponentPresetItem)
 		{
 			const FBIMPresetInstance* preset = GameState->Document->PresetManager.CraftingNodePresets.Presets.Find(PresetIDToSwap);
@@ -119,19 +109,39 @@ void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& 
 			}
 		}
 
-		for (auto &curPreset : availablePresets)
+		FBIMTagPath ncpFromPreset;
+		Controller->GetDocument()->PresetManager.CraftingNodePresets.GetNCPForPreset(PresetIDToSwap, ncpFromPreset);
+		CreatePresetListForSwapFronNCP(ncpFromPreset);
+	}
+}
+
+void UToolTrayBlockAssembliesList::CreatePresetListForSwapFronNCP(const FBIMTagPath& InNCP)
+{
+	if (NCPNavigator)
+	{
+		NCPNavigator->SetVisibility(ESlateVisibility::Visible);
+		NCPNavigator->BuildNCPNavigator(InNCP);
+	}
+
+	FPresetManager& presetManager = GameState->Document->PresetManager;
+	AssembliesList->ClearListItems();
+
+	TArray<FBIMKey> availablePresets;
+	GameState->Document->PresetManager.CraftingNodePresets.GetPresetsForNCP(InNCP, availablePresets);
+
+	// Available presets for swap
+	for (auto& curPreset : availablePresets)
+	{
+		if (IsPresetAvailableForSearch(curPreset))
 		{
-			if (IsPresetAvailableForSearch(curPreset))
-			{
-				UComponentListObject* newCompListObj = NewObject<UComponentListObject>(this);
-				newCompListObj->ItemType = EComponentListItemType::SwapDesignerPreset;
-				newCompListObj->Mode = Controller->GetToolMode();
-				newCompListObj->UniqueKey = curPreset;
-				newCompListObj->BIMNodeInstanceID = NodeID;
-				newCompListObj->SwapScope = SwapScope;
-				newCompListObj->SwapNameType = SwapNameType;
-				AssembliesList->AddItem(newCompListObj);
-			}
+			UComponentListObject* newCompListObj = NewObject<UComponentListObject>(this);
+			newCompListObj->ItemType = EComponentListItemType::SwapDesignerPreset;
+			newCompListObj->Mode = Controller->GetToolMode();
+			newCompListObj->UniqueKey = curPreset;
+			newCompListObj->BIMNodeInstanceID = CurrentNodeForSwap;
+			newCompListObj->SwapScope = SwapScope;
+			newCompListObj->SwapNameType = SwapNameType;
+			AssembliesList->AddItem(newCompListObj);
 		}
 	}
 }
@@ -225,7 +235,7 @@ void UToolTrayBlockAssembliesList::OnSearchBarChanged(const FText& NewText)
 	switch (SwapType)
 	{
 	case ESwapType::SwapFromNode:
-		CreatePresetListInNodeForSwap(NodeParentPresetID, NodePresetIDToSwap, CurrentNodeForSwap, SwapScope, SwapNameType);
+		CreatePresetListInNodeForSwap(NodePresetIDToSwap, CurrentNodeForSwap, SwapScope, SwapNameType);
 		break;
 	case ESwapType::SwapFromAssemblyList:
 		CreateAssembliesListForCurrentToolMode();

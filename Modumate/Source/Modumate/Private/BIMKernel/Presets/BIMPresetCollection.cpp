@@ -394,7 +394,7 @@ EBIMResult FBIMPresetCollection::GetPresetsForNCP(const FBIMTagPath& InNCP, TArr
 {
 	return GetPresetsByPredicate([InNCP](const FBIMPresetInstance& Preset) 
 	{
-		return Preset.MyTagPath.Tags.Num() > InNCP.Tags.Num() && Preset.MyTagPath.MatchesPartial(InNCP);
+		return Preset.MyTagPath.Tags.Num() >= InNCP.Tags.Num() && Preset.MyTagPath.MatchesPartial(InNCP);
 	},OutPresets);
 }
 

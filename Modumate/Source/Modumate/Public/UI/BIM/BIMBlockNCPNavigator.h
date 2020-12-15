@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "BIMKernel/Core/BIMKey.h"
+#include "BIMKernel/Core/BIMTagPath.h"
 #include "BIMBlockNCPNavigator.generated.h"
 
 /**
@@ -24,6 +26,8 @@ protected:
 
 	virtual void NativeConstruct() override;
 
+	FBIMTagPath CurrentNCP;
+
 	UPROPERTY()
 	class AEditModelPlayerController_CPP *Controller;
 
@@ -32,4 +36,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UWrapBox* WrapBoxNCP;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText SeparatorText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UNCPNavigatorButton> NCPTextButtonClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UModumateTextBlockUserWidget> TextSeparatorClass;
+
+	void BuildNCPNavigator(const FBIMTagPath& InNCP);
 };

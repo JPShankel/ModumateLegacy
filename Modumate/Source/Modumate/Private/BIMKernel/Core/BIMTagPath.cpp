@@ -26,6 +26,17 @@ EBIMResult FBIMTagPath::ToString(FString &OutString) const
 	return EBIMResult::Success;
 }
 
+EBIMResult FBIMTagPath::GetPartialPath(int32 Count, FBIMTagPath& PartialPath) const
+{
+	if (ensureAlways(Count > 0 && Tags.Num() >= Count))
+	{
+		PartialPath = *this;
+		PartialPath.Tags.SetNum(Count);
+		return EBIMResult::Success;
+	}
+	return EBIMResult::Error;
+}
+
 bool FBIMTagPath::MatchesExact(const FBIMTagPath &OtherPath) const
 {
 	if (Tags.Num() != OtherPath.Tags.Num())

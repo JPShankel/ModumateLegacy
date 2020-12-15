@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "BIMKernel/Core/BIMTagPath.h"
 #include "BIMBlockNCPSwitcher.generated.h"
 
 /**
@@ -24,6 +25,8 @@ protected:
 
 	virtual void NativeConstruct() override;
 
+	FBIMTagPath CurrentNCP;
+
 	UPROPERTY()
 	class AEditModelPlayerController_CPP* Controller;
 
@@ -33,4 +36,20 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox* VerticalBoxNCP;
+
+	// Padding width under its parent tag
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TagPaddingSize = 20.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UNCPSwitcherButton> NCPSwitcherButtonClassSelected;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UNCPSwitcherButton> NCPSwitcherButtonClassDefault;
+
+	UFUNCTION()
+	void OnButtonClosePress();
+
+	void BuildNCPSwitcher(const FBIMTagPath& InCurrentNCP);
+	void AddNCPTagButtons(int32 TagOrder);
 };

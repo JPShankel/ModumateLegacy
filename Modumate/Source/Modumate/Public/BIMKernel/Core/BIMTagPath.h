@@ -23,6 +23,7 @@ public:
 
 	EBIMResult FromString(const FString &InString);
 	EBIMResult ToString(FString &OutString) const;
+	EBIMResult GetPartialPath(int32 Count, FBIMTagPath& PartialPath) const;
 
 	bool ExportTextItem(FString& ValueStr, FBIMTagPath const& DefaultValue, UObject* Parent, int32 PortFlags, UObject* ExportRootScope) const;
 	bool ImportTextItem(const TCHAR*& Buffer, int32 PortFlags, UObject* Parent, FOutputDevice* ErrorText);

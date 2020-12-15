@@ -43,12 +43,6 @@ void UBIMBlockDropdownPreset::NativeConstruct()
 
 void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 {
-	FBIMKey ownerNodePresetID;
-	// Dropdown changes a property of its owner node, it should always have an ID from its owner
-	if (ensureAlways(OwnerNode->ID != BIM_ID_NONE))
-	{
-		ownerNodePresetID = ParentBIMDesigner->GetPresetID(OwnerNode->ID);
-	}
 	// Move swap menu to be in front of this node
 	Controller->EditModelUserWidget->ToggleBIMPresetSwapTray(true);
 
@@ -56,7 +50,7 @@ void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 	Controller->EditModelUserWidget->BIMPresetSwap->ResetSearchBox();
 
 	// Generate list of presets
-	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(ownerNodePresetID, PresetID, OwnerNode->ID, SwapScope, SwapNameType);
+	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(PresetID, OwnerNode->ID, SwapScope, SwapNameType);
 }
 
 void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, FBIMKey InPresetID, FVector2D InDropdownOffset)

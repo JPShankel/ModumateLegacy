@@ -34,6 +34,16 @@ void UBIMBlockSlotList::NativeConstruct()
 void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMPresetEditorNodeSharedPtr& NodePtr)
 {
 	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+
+	// Release slot item widgets
+	for (auto curWidget : VerticalBoxSlots->GetAllChildren())
+	{
+		UUserWidget* asUserWidget = Cast<UUserWidget>(curWidget);
+		if (asUserWidget)
+		{
+			controller->HUDDrawWidget->UserWidgetPool.Release(asUserWidget);
+		}
+	}
 	NodeIDToSlotMapItem.Empty();
 	VerticalBoxSlots->ClearChildren();
 

@@ -42,7 +42,6 @@ protected:
 	class AEditModelGameState_CPP *GameState;
 
 	ESwapType SwapType = ESwapType::None;
-	FBIMKey NodeParentPresetID;
 	FBIMKey NodePresetIDToSwap;
 	FBIMEditorNodeIDType CurrentNodeForSwap;
 	EToolMode SwapSelectionToolMode = EToolMode::VE_NONE;
@@ -72,10 +71,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UBIMBlockNCPNavigator* NCPNavigator;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
+	class UBIMBlockNCPSwitcher* NCPSwitcher;
+
 	UFUNCTION(BlueprintCallable)
 	void CreateAssembliesListForCurrentToolMode();
 
-	void CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType);
+	void CreatePresetListInNodeForSwap(const FBIMKey& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType);
+	void CreatePresetListForSwapFronNCP(const FBIMTagPath& InNCP);
 	void CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FBIMKey& PresetID);
 	bool IsPresetAvailableForSearch(const FBIMKey& PresetKey);
 	void ResetSearchBox();
