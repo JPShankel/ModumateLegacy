@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SegmentTypes.h"
+#include "Drafting/ModumateOccluder.h"
 
 class UModumateDocument;
 class AModumateObjectInstance;
@@ -32,30 +32,23 @@ namespace Modumate
 		FMatrix TransformMatrix;
 		float Scale;
 
-		struct Occluder
-		{
-			FVector3d Vertices[3];
-			FBox2D BoundingBox;
-			double MinZ;
-			double Area2D() const;
-		};
 
-		TArray<Occluder> Occluders;
-		bool ClipSingleWorldLine(FSegment3d& viewLine, Occluder occluder, TArray<FSegment3d>& generatedLines);
+		TArray<FModumateOccluder> Occluders;
+		bool ClipSingleWorldLine(FSegment3d& viewLine, FModumateOccluder occluder, TArray<FSegment3d>& generatedLines);
 
 		class QuadTreeNode
 		{
 		public:
 			QuadTreeNode(const FBox2D& Box, int NodeDepth = 0);
-			void AddOccluder(const Occluder* NewOccluder);
+			void AddOccluder(const FModumateOccluder* NewOccluder);
 			// Apply a functor to all intersecting lines & boxes (until failure).
-			bool Apply(const FSegment3d& line, TFunctionRef<bool (const Occluder& occluder)> functor);
+			bool Apply(const FSegment3d& line, TFunctionRef<bool (const FModumateOccluder& occluder)> functor);
 			
 			const FBox2D NodeBox;
 
 		private:
 			int NodeDepth { 0 };
-			TArray<const Occluder*> Occluders;
+			TArray<const FModumateOccluder*> Occluders;
 			TUniquePtr<QuadTreeNode> Children[4];
 
 			static const int MaxTreeDepth = 8;

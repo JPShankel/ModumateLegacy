@@ -178,8 +178,9 @@ FVector FLayerGeomDef::Deproject2DPoint(const FVector2D& Point2D, bool bSideA) c
 
 FVector FLayerGeomDef::ProjectToPlane(const FVector& Point, bool bSideA) const
 {
-	FVector PointDefiningPlane = bSideA ? OriginalPointsA[0] : OriginalPointsA[0];
-	return Point + ((PointDefiningPlane | Normal) - (Point | Normal)) * Normal;
+	FVector3d PointDefiningPlane = bSideA ? OriginalPointsA[0] : OriginalPointsB[0];
+	FVector3d NormalDouble(Normal);
+	return FVector(FVector3d(Point) + (PointDefiningPlane.Dot(NormalDouble) - (NormalDouble.Dot(Point))) * NormalDouble);
 }
 
 bool FLayerGeomDef::CachePoints2D()

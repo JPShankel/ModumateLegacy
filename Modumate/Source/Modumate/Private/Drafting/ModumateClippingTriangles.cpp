@@ -138,22 +138,13 @@ namespace Modumate
 				Algo::ForEach(verts, [localToWorld](FVector& v) {v = localToWorld.TransformPosition(v); });
 				if (Algo::AnyOf(verts, [this](FVector v) {return IsPointInFront(v); }))
 				{
-					Occluder newOccluder;
-					newOccluder.Vertices[0] = FVector3d(TransformMatrix.TransformPosition(verts[0])) + vectorEpsilon;
-					newOccluder.Vertices[1] = FVector3d(TransformMatrix.TransformPosition(verts[1])) + vectorEpsilon;
-					newOccluder.Vertices[2] = FVector3d(TransformMatrix.TransformPosition(verts[2])) + vectorEpsilon;
+					FModumateOccluder newOccluder(
+						FVector3d(TransformMatrix.TransformPosition(verts[0])) + vectorEpsilon,
+						FVector3d(TransformMatrix.TransformPosition(verts[1])) + vectorEpsilon,
+						FVector3d(TransformMatrix.TransformPosition(verts[2])) + vectorEpsilon
+					);
 					if (newOccluder.Area2D() > minScaledArea)
 					{
-						if (DVec2((double*)(newOccluder.Vertices[1] - newOccluder.Vertices[0])).Cross(
-							DVec2((double*)(newOccluder.Vertices[2] - newOccluder.Vertices[0])) ) < 0.0f)
-						{   // Ensure right-handed projection.
-							Swap(newOccluder.Vertices[1], newOccluder.Vertices[2]);
-						}
-						newOccluder.BoundingBox = FBox2D({ Vec2(FVector(newOccluder.Vertices[0])),
-							Vec2(FVector(newOccluder.Vertices[1])), Vec2(FVector(newOccluder.Vertices[2])) });
-						newOccluder.BoundingBox.ExpandBy(LineClipEpsilon);
-						newOccluder.MinZ = FMath::Min3(newOccluder.Vertices[0].Z, newOccluder.Vertices[1].Z,
-							newOccluder.Vertices[2].Z);
 						Occluders.Add(newOccluder);
 					}
 				}
@@ -168,10 +159,6 @@ namespace Modumate
 		return (FVector3d(Point) - Position).Dot(Normal) > 0.0;
 	}
 
-	double FModumateClippingTriangles::Occluder::Area2D() const
-	{
-		return FMath::Abs(0.5 * DVec2((double*)(Vertices[1] - Vertices[0])).Cross(DVec2((double*)(Vertices[2] - Vertices[0])) ));
-	}
 
 	void FModumateClippingTriangles::SetTransform(FVector ViewPosition, FVector ViewXAxis, float ViewScale)
 	{
@@ -248,7 +235,7 @@ namespace Modumate
 				continue;
 			}
 
-			if (QuadTree->Apply(viewLine, [this, &viewLine, &inViewLines](const Occluder& occluder)
+			if (QuadTree->Apply(viewLine, [this, &viewLine, &inViewLines](const FModumateOccluder& occluder)
 				{return ClipSingleWorldLine(viewLine, occluder, inViewLines); }))
 			{
 				outViewLines.Add(viewLine);
@@ -284,7 +271,7 @@ namespace Modumate
 				continue;
 			}
 
-			if (QuadTree->Apply(viewLine, [this, &viewLine, &inViewLines](const Occluder& occluder)
+			if (QuadTree->Apply(viewLine, [this, &viewLine, &inViewLines](const FModumateOccluder& occluder)
 			{return ClipSingleWorldLine(viewLine, occluder, inViewLines); }))
 			{
 				outViewLines.Add(viewLine);
@@ -313,7 +300,7 @@ namespace Modumate
 		}
 	}
 
-	bool FModumateClippingTriangles::ClipSingleWorldLine(FSegment3d& viewLine, Occluder occluder, TArray<FSegment3d>& generatedLines)
+	bool FModumateClippingTriangles::ClipSingleWorldLine(FSegment3d& viewLine, FModumateOccluder occluder, TArray<FSegment3d>& generatedLines)
 	{
 		double maxZ = FMath::Max(viewLine.StartPoint().Z, viewLine.EndPoint().Z);
 
@@ -330,7 +317,7 @@ namespace Modumate
 			vecEps.Z = vecEps.Length() / dir.Length() * delta3d.Z;
 
 			// Offset along line, into triangle, for depth comparison.
-			double depthCompareOffset = delta3d.Normalized().Z * triangleEpsilon * 4.0;
+			FVector3d depthVectorOffset = delta3d.Normalized() * triangleEpsilon * 4.0;
 
 			// Intersect line with all triangle sides.
 			DVec2 t1Alpha = Intersect2V(dir, -u, q - a);
@@ -340,21 +327,21 @@ namespace Modumate
 			double t1 = t1Alpha.X;
 			double t2 = t2Beta.X;
 			double t3 = t3Gamma.X;
-			bool bIntersectU = t1Alpha.Y >= 0.0 - KINDA_SMALL_NUMBER && t1Alpha.Y <= 1.0 + KINDA_SMALL_NUMBER && t1 >= 0.0 + KINDA_SMALL_NUMBER && t1 <= 1.0 - KINDA_SMALL_NUMBER;
-			bool bIntersectV = t2Beta.Y >= 0.0 - KINDA_SMALL_NUMBER && t2Beta.Y <= 1.0 + KINDA_SMALL_NUMBER && t2 >= 0.0 + KINDA_SMALL_NUMBER && t2 <= 1.0 - KINDA_SMALL_NUMBER;
-			bool bIntersectW = t3Gamma.Y >= 0.0 - KINDA_SMALL_NUMBER && t3Gamma.Y <= 1.0 + KINDA_SMALL_NUMBER && t3 >= 0.0 + KINDA_SMALL_NUMBER && t3 <= 1.0 - KINDA_SMALL_NUMBER;
+			bool bIntersectU = t1Alpha.Y >= 0.0 - KINDA_SMALL_NUMBER && t1Alpha.Y <= 1.0 + KINDA_SMALL_NUMBER
+				&& t1 >= 0.0 + KINDA_SMALL_NUMBER && t1 <= 1.0 - KINDA_SMALL_NUMBER;
+			bool bIntersectV = t2Beta.Y >= 0.0 - KINDA_SMALL_NUMBER && t2Beta.Y <= 1.0 + KINDA_SMALL_NUMBER
+				&& t2 >= 0.0 + KINDA_SMALL_NUMBER && t2 <= 1.0 - KINDA_SMALL_NUMBER;
+			bool bIntersectW = t3Gamma.Y >= 0.0 - KINDA_SMALL_NUMBER && t3Gamma.Y <= 1.0 + KINDA_SMALL_NUMBER
+				&& t3 >= 0.0 + KINDA_SMALL_NUMBER && t3 <= 1.0 - KINDA_SMALL_NUMBER;
 
 			if (!bIntersectU && !bIntersectV && !bIntersectW)
 			{   // No line-segment/triangle intersections.
-				DVec2 alphaBeta = Intersect2V(u, v, a - q + 0.5f * dir);  // Mid-line barycentrics.
+				DVec2 midPoint(a + 0.5 * dir);
 
-				if (alphaBeta.X > 0.0 && alphaBeta.X < 1.0 && alphaBeta.Y > 0.0 && alphaBeta.Y < 1.0
-					&& (alphaBeta.X + alphaBeta.Y) < 1.0)
+				if (occluder.IsWithinTriangle(midPoint))
 				{
 					// Line segment entirely within triangle.
-					double triangleZ = (1.0 - alphaBeta.X - alphaBeta.Y) * occluder.Vertices[0].Z
-						+ alphaBeta.X * occluder.Vertices[1].Z + alphaBeta.Y * occluder.Vertices[2].Z;
-					if ((viewLine.StartPoint().Z + viewLine.EndPoint().Z) / 2.0 >= triangleZ)
+					if ((viewLine.StartPoint().Z + viewLine.EndPoint().Z) / 2.0 >= occluder.DepthAtPoint(midPoint))
 					{
 						// Entire line hidden so drop.
 						return false;
@@ -365,10 +352,12 @@ namespace Modumate
 			else if (bIntersectU)
 			{
 				FVector3d intersect = viewLine.StartPoint() + t1 * (viewLine.EndPoint() - viewLine.StartPoint());
-				double triangleZ = (1.0f - t1Alpha.Y) * occluder.Vertices[0].Z + t1Alpha.Y * occluder.Vertices[1].Z;
 				if ((a - q).Cross(u) > 0.0)
 				{
-					if (intersect.Z + depthCompareOffset > triangleZ)
+					FVector3d intersectForDepth = intersect + depthVectorOffset;
+					double triangleZ = occluder.DepthAtPoint(intersectForDepth);
+
+					if (intersectForDepth.Z > triangleZ)
 					{   // Clip line
 						if (bIntersectV || bIntersectW)
 						{   // Break into new segment to be clipped.
@@ -379,7 +368,10 @@ namespace Modumate
 				}
 				else
 				{
-					if (intersect.Z - depthCompareOffset > triangleZ)
+					FVector3d intersectForDepth = intersect - depthVectorOffset;
+					double triangleZ = occluder.DepthAtPoint(intersectForDepth);
+
+					if (intersectForDepth.Z > triangleZ)
 					{   // Clip line
 						if (bIntersectV || bIntersectW)
 						{   // Break into new segment to be clipped.
@@ -392,10 +384,12 @@ namespace Modumate
 			else if (bIntersectV)
 			{
 				FVector3d intersect = viewLine.StartPoint() + t2 * (viewLine.EndPoint() - viewLine.StartPoint());
-				double triangleZ = (1.0 - t2Beta.Y) * occluder.Vertices[0].Z + t2Beta.Y * occluder.Vertices[2].Z;
 				if ((a - q).Cross(v) < 0.0)
 				{
-					if (intersect.Z + depthCompareOffset > triangleZ)
+					FVector3d intersectForDepth = intersect + depthVectorOffset;
+					double triangleZ = occluder.DepthAtPoint(intersectForDepth);
+
+					if (intersectForDepth.Z > triangleZ)
 					{   // Clip line
 						if (bIntersectW)
 						{
@@ -406,7 +400,10 @@ namespace Modumate
 				}
 				else
 				{
-					if (intersect.Z - depthCompareOffset > triangleZ)
+					FVector3d intersectForDepth = intersect - depthVectorOffset;
+					double triangleZ = occluder.DepthAtPoint(intersectForDepth);
+
+					if (intersectForDepth.Z > triangleZ)
 					{   // Clip line
 						if (bIntersectW)
 						{
@@ -419,17 +416,22 @@ namespace Modumate
 			else if (bIntersectW)
 			{
 				FVector3d intersect = viewLine.StartPoint() + t3 * (viewLine.EndPoint() - viewLine.StartPoint());
-				double triangleZ = (1.0 - t3Gamma.Y) * occluder.Vertices[1].Z + t3Gamma.Y * occluder.Vertices[2].Z;
 				if ((a - DVec2((double*)occluder.Vertices[1])).Cross(v - u) > 0.0)
 				{
-					if (intersect.Z + depthCompareOffset > triangleZ)
+					FVector3d intersectForDepth = intersect + depthVectorOffset;
+					double triangleZ = occluder.DepthAtPoint(intersectForDepth);
+
+					if (intersectForDepth.Z > triangleZ)
 					{   // Clip line
 						viewLine.SetEndPoint(intersect - vecEps);
 					}
 				}
 				else
 				{
-					if (intersect.Z - depthCompareOffset > triangleZ)
+					FVector3d intersectForDepth = intersect - depthVectorOffset;
+					double triangleZ = occluder.DepthAtPoint(intersectForDepth);
+
+					if (intersectForDepth.Z > triangleZ)
 					{   // Clip line
 						viewLine.SetStartPoint(intersect + vecEps);
 					}
@@ -461,7 +463,7 @@ namespace Modumate
 		  NodeDepth(Depth)
 	{ }
 
-	void FModumateClippingTriangles::QuadTreeNode::AddOccluder(const Occluder* NewOccluder)
+	void FModumateClippingTriangles::QuadTreeNode::AddOccluder(const FModumateOccluder* NewOccluder)
 	{
 		if (NodeDepth < MaxTreeDepth)
 		{
@@ -493,7 +495,7 @@ namespace Modumate
 		Occluders.Add(NewOccluder);
 	}
 
-	bool FModumateClippingTriangles::QuadTreeNode::Apply(const FSegment3d& line, TFunctionRef<bool (const Occluder& occluder)> functor)
+	bool FModumateClippingTriangles::QuadTreeNode::Apply(const FSegment3d& line, TFunctionRef<bool (const FModumateOccluder& occluder)> functor)
 	{
 		for (const auto& occluder: Occluders)
 		{

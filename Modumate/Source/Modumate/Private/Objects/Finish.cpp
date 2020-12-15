@@ -350,6 +350,7 @@ void AMOIFinish::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& 
 					{
 						beyondLines.Emplace(FEdge(hole.Points[i] + finishOffset, hole.Points[(i + 1) % numHolePoints] + finishOffset),
 							dwgHoleType);
+						beyondLines.Emplace(FEdge(hole.Points[i], hole.Points[i] + finishOffset), dwgHoleType);
 					}
 				}
 			}

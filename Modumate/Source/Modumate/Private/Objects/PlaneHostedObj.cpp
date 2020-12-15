@@ -614,6 +614,16 @@ void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraf
 		addOpeningLines(LayerGeometries[0], parentLocation, true);
 		addOpeningLines(LayerGeometries[numLayers - 1], parentLocation, false);
 
+		for (const auto& hole : LayerGeometries[0].Holes3D)
+		{
+			for (const auto& p : hole.Points)
+			{
+				FVector holePoint = LayerGeometries[0].ProjectToPlane(p, true) + parentLocation;
+				backgroundLines.Emplace(FEdge(holePoint, holePoint + planeOffset),
+					Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges);
+			}
+		}
+
 		// Corner lines.
 		int32 numPoints = LayerGeometries[0].OriginalPointsA.Num();
 		for (int32 p = 0; p < numPoints; ++p)
