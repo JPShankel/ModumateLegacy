@@ -49,12 +49,6 @@ FVector AMOIRoofPerimeter::GetCorner(int32 index) const
 	return GetLocation();
 }
 
-void AMOIRoofPerimeter::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
-{
-	OutStructDef = InstanceData.StaticStruct();
-	OutStructPtr = &InstanceData;
-}
-
 void AMOIRoofPerimeter::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
 	// RoofPerimeters are only seen and interacted with via their edges.

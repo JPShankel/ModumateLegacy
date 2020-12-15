@@ -100,7 +100,7 @@ struct MODUMATE_API FLayerGeomDef
 		const FVector2D& UVScale, const FVector& UVAnchor = FVector::ZeroVector, float UVRotOffset = 0.0f) const;
 	bool TriangulateMesh(TArray<FVector>& OutVerts, TArray<int32>& OutTris,
 		TArray<FVector>& OutNormals, TArray<FVector2D>& OutUVs, TArray<FProcMeshTangent>& OutTangents,
-		const FVector& UVAnchor = FVector::ZeroVector, float UVRotOffset = 0.0f) const;
+		const FVector& UVAnchor = FVector::ZeroVector, const FVector2D& UVFlip = FVector2D(1.0f, 1.0f), float UVRotOffset = 0.0f) const;
 
 	// Divide Intersection by any projected layer-holes; return as parametric ranges.
 	void GetRangesForHolesOnPlane(TArray<TPair<float, float>>& OutRanges, TPair<FVector, FVector>& Intersection, const FVector& HoleOffset, const FPlane& Plane, const FVector& AxisX, const FVector& AxisY, const FVector& Origin) const;

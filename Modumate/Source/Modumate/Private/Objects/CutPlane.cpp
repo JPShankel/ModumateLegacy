@@ -31,12 +31,6 @@ AMOICutPlane::AMOICutPlane()
 {
 }
 
-void AMOICutPlane::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
-{
-	OutStructDef = InstanceData.StaticStruct();
-	OutStructPtr = &InstanceData;
-}
-
 AActor* AMOICutPlane::CreateActor(const FVector& loc, const FQuat& rot)
 {
 	AActor *returnActor = AMOIPlaneBase::CreateActor(loc, rot);

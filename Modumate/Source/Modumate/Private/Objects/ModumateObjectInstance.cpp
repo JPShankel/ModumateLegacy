@@ -121,7 +121,7 @@ bool AModumateObjectInstance::HasChildID(int32 ChildID) const
 void AModumateObjectInstance::AddCachedChildID(int32 ChildID)
 {
 	const AModumateObjectInstance* childObj = Document->GetObjectById(ChildID);
-	if (ensure(!HasChildID(ChildID) && childObj && (childObj->GetParentID() == ID)))
+	if (!bDestroyed && ensure(!HasChildID(ChildID) && childObj && (childObj->GetParentID() == ID)))
 	{
 		CachedChildIDs.Add(ChildID);
 		MarkDirty(EObjectDirtyFlags::Structure);
@@ -130,7 +130,7 @@ void AModumateObjectInstance::AddCachedChildID(int32 ChildID)
 
 void AModumateObjectInstance::RemoveCachedChildID(int32 ChildID)
 {
-	if (ensure(HasChildID(ChildID)))
+	if (!bDestroyed && ensure(HasChildID(ChildID)))
 	{
 		CachedChildIDs.Remove(ChildID);
 		MarkDirty(EObjectDirtyFlags::Structure);
@@ -576,7 +576,7 @@ bool AModumateObjectInstance::UpdateStateDataFromObject()
 	// If there's custom data for this object, make sure the serialized representation is up-to-date from the object.
 	UScriptStruct* customStructDef;
 	const void* customStructPtr;
-	if (RouteGetTypedInstanceData(customStructDef, customStructPtr))
+	if (GetInstanceDataStruct(customStructDef, customStructPtr))
 	{
 		return StateData.CustomData.SaveStructData(customStructDef, customStructPtr);
 	}
@@ -590,29 +590,43 @@ bool AModumateObjectInstance::UpdateInstanceData()
 	// If there's custom data for this object, make sure the object is up-to-date from the serialized representation.
 	UScriptStruct* customStructDef;
 	void* customStructPtr;
-	if (RouteGetTypedInstanceData(customStructDef, customStructPtr))
+	bool bLoadedStructData = false;
+
+	if (GetInstanceDataStruct(customStructDef, customStructPtr))
 	{
-		return StateData.CustomData.LoadStructData(customStructDef, customStructPtr);
+		bLoadedStructData = StateData.CustomData.LoadStructData(customStructDef, customStructPtr);
 	}
 
-	// Otherwise, the object doesn't need to be updated.
-	return true;
+	if (bLoadedStructData)
+	{
+		PostLoadInstanceData();
+	}
+
+	return bLoadedStructData;
 }
 
-bool AModumateObjectInstance::RouteGetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
+bool AModumateObjectInstance::GetInstanceDataStruct(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 	OutStructDef = nullptr;
 	OutStructPtr = nullptr;
 
-	GetTypedInstanceData(OutStructDef, OutStructPtr);
+	static const FName instanceDataPropName(TEXT("InstanceData"));
+	UClass* moiClass = GetClass();
+	FProperty* instanceDataProp = moiClass->FindPropertyByName(instanceDataPropName);
+	FStructProperty* structProp = CastField<FStructProperty>(instanceDataProp);
+	if (structProp)
+	{
+		OutStructDef = structProp->Struct;
+		OutStructPtr = structProp->ContainerPtrToValuePtr<void>(this);
+	}
 
 	return (OutStructDef != nullptr) && (OutStructPtr != nullptr);
 }
 
-bool AModumateObjectInstance::RouteGetTypedInstanceData(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const
+bool AModumateObjectInstance::GetInstanceDataStruct(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const
 {
 	void* mutableStructPtr;
-	bool bSuccess = const_cast<AModumateObjectInstance*>(this)->RouteGetTypedInstanceData(OutStructDef, mutableStructPtr);
+	bool bSuccess = const_cast<AModumateObjectInstance*>(this)->GetInstanceDataStruct(OutStructDef, mutableStructPtr);
 	OutStructPtr = const_cast<const void*>(mutableStructPtr);
 	return bSuccess;
 }
@@ -845,10 +859,6 @@ FVector AModumateObjectInstance::GetCorner(int32 index) const
 int32 AModumateObjectInstance::GetNumCorners() const
 {
 	return 0;
-}
-
-void AModumateObjectInstance::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
-{
 }
 
 void AModumateObjectInstance::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)

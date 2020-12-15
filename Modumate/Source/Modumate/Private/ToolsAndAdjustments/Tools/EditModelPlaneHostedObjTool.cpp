@@ -107,7 +107,7 @@ bool UPlaneHostedObjTool::BeginUse()
 			}
 
 			FMOIPlaneHostedObjData newMOICustomData;
-			newMOICustomData.bLayersInverted = GetAppliedInversionValue();
+			newMOICustomData.FlipSigns.Y = GetAppliedInversionValue();
 			newMOICustomData.Justification = InstanceJustification;
 
 			FMOIStateData newMOIData;
@@ -314,7 +314,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector& Location, TArray<int32>& new
 		int32 nextID = GameState->Document->GetNextAvailableID();
 
 		FMOIPlaneHostedObjData newMOICustomData;
-		newMOICustomData.bLayersInverted = bInverted;
+		newMOICustomData.FlipSigns.Y = bInverted ? -1.0f : 1.0f;
 		newMOICustomData.Justification = InstanceJustification;
 
 		for (int32 newGraphObjID : newGraphObjIDs)

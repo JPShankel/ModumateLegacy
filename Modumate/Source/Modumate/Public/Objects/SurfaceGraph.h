@@ -26,13 +26,15 @@ public:
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const override;
 	virtual FVector GetNormal() const override;
-	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 
 	bool CheckGraphLink();
 	bool IsGraphLinked() const { return bLinked; }
 
 	static constexpr float VisualNormalOffset = 0.1f;
+
+	UPROPERTY()
+	FMOISurfaceGraphData InstanceData;
 
 protected:
 	bool UpdateCachedGraphData();
@@ -44,8 +46,6 @@ protected:
 
 	TArray<FVector> CachedFacePoints;
 	FTransform CachedFaceOrigin;
-
-	FMOISurfaceGraphData InstanceData;
 
 	bool bLinked = true;
 };

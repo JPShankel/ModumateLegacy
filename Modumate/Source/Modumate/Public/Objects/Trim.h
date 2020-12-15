@@ -35,8 +35,6 @@ public:
 	virtual FQuat GetRotation() const override;
 	virtual FVector GetNormal() const override;
 
-	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
-
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP* Controller) override;
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
@@ -47,17 +45,17 @@ public:
 
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
 
-
 	void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 		TArray<TArray<FVector>>& OutPerimeters) const override;
+
+	UPROPERTY()
+	FMOITrimData InstanceData;
 
 protected:
 	// Cached values for the trim, derived from instance properties and the parent SurfaceEdge
 	FVector TrimStartPos, TrimEndPos, TrimNormal, TrimUp, TrimDir, TrimScale;
 	FVector2D UpperExtensions, OuterExtensions;
-
-	FMOITrimData InstanceData;
 
 	bool UpdateCachedStructure();
 	bool UpdateMitering();

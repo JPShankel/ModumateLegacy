@@ -25,7 +25,6 @@ public:
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override { return FQuat::Identity; }
 	virtual FVector GetCorner(int32 index) const override;
-	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow) override;
@@ -37,6 +36,9 @@ public:
 	virtual bool UseStructureDataForCollision() const override { return true; }
 
 	const TArray<FGraphSignedID>& GetCachedEdgeIDs() const { return CachedEdgeIDs; }
+
+	UPROPERTY()
+	FMOIRoofPerimeterData InstanceData;
 
 protected:
 	bool bValidPerimeterLoop;
@@ -57,8 +59,6 @@ protected:
 	TWeakObjectPtr<ARetractRoofFacesHandle> RetractFacesHandle;
 	TWeakObjectPtr<URoofPerimeterPropertiesWidget> DefaultPropertiesWidget;
 	TMap<int32, TWeakObjectPtr<AEditRoofEdgeHandle>> EdgeHandlesByID;
-
-	FMOIRoofPerimeterData InstanceData;
 
 	bool UpdateConnectedIDs();
 	void UpdatePerimeterGeometry();

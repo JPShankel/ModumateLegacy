@@ -16,13 +16,21 @@ struct MODUMATE_API FMOIPlaneHostedObjData
 	GENERATED_BODY()
 
 	UPROPERTY()
-	bool bLayersInverted = false;
+	int32 Version = 0;
+
+	UPROPERTY(meta = (DeprecatedProperty, DeprecationMessage = "Layer order reversal is now stored in the Y component of FlipSigns."))
+	bool bLayersInverted_DEPRECATED = false;
+
+	UPROPERTY()
+	FVector FlipSigns = FVector::OneVector;
 
 	UPROPERTY()
 	float Justification = 0.5f;
 
 	UPROPERTY()
 	int32 OverrideOriginIndex = INDEX_NONE;
+
+	static constexpr int32 CurrentVersion = 1;
 };
 
 UCLASS()
@@ -32,11 +40,11 @@ class MODUMATE_API AMOIPlaneHostedObj : public AModumateObjectInstance, public I
 
 public:
 	AMOIPlaneHostedObj();
+
 	virtual FQuat GetRotation() const override;
 	virtual FVector GetLocation() const override;
 	virtual FVector GetCorner(int32 index) const override;
 	virtual FVector GetNormal() const override;
-	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual void PreDestroy() override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void SetupDynamicGeometry() override;
@@ -56,14 +64,17 @@ public:
 		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 		TArray<TArray<FVector>> &OutPerimeters) const override;
 
+	virtual void PostLoadInstanceData() override;
+
+	UPROPERTY()
+	FMOIPlaneHostedObjData InstanceData;
+
 protected:
 	void UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalculateEdgeExtensions);
 	void UpdateConnectedEdges();
 	void MarkEdgesMiterDirty();
 	void GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FBox2D& BoundingBox) const;
-
-	FMOIPlaneHostedObjData InstanceData;
 
 	bool bGeometryDirty = false;
 	FCachedLayerDimsByType CachedLayerDims;

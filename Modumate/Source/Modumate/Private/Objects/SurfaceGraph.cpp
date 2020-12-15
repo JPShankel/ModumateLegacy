@@ -37,12 +37,6 @@ int32 AMOISurfaceGraph::GetNumCorners() const
 	return CachedFacePoints.Num();
 }
 
-void AMOISurfaceGraph::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
-{
-	OutStructDef = InstanceData.StaticStruct();
-	OutStructPtr = &InstanceData;
-}
-
 bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	int32 numVerts = GraphVertexToBoundVertex.Num();
@@ -90,6 +84,11 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 			TArray<int32> boundingVertexIDs;
 			surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
 			auto poly = surfaceGraph->GetRootPolygon();
+			if (!ensureMsgf(poly, TEXT("Error: SurfaceGraph does not have a singular outer polygon!")))
+			{
+				return false;
+			}
+
 			if (boundingVertexIDs.Num() == 0)
 			{
 				TMap<int32, TArray<int32>> emptyBounds;

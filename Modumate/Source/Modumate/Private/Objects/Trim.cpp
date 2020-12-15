@@ -53,12 +53,6 @@ FVector AMOITrim::GetNormal() const
 	return TrimUp;
 }
 
-void AMOITrim::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
-{
-	OutStructDef = InstanceData.StaticStruct();
-	OutStructPtr = &InstanceData;
-}
-
 void AMOITrim::SetupAdjustmentHandles(AEditModelPlayerController_CPP* Controller)
 {
 	MakeHandle<AAdjustInvertHandle>();

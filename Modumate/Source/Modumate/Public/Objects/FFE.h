@@ -37,7 +37,6 @@ public:
 	virtual AActor *CreateActor(const FVector &loc, const FQuat &rot) override;
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
-	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
@@ -47,6 +46,9 @@ public:
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
 	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;
 
+	UPROPERTY()
+	FMOIFFEData InstanceData;
+
 protected:
 	void InternalUpdateGeometry();
 
@@ -55,6 +57,4 @@ protected:
 	FQuat CachedRotation;
 	FVector CachedFaceNormal;
 	TArray<int32> CachedFaceIndices;
-
-	FMOIFFEData InstanceData;
 };

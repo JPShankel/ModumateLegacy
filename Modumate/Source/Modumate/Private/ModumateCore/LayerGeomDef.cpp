@@ -413,9 +413,12 @@ bool FLayerGeomDef::TriangulateSideFace(const FVector2D& Point2DA1, const FVecto
 }
 
 bool FLayerGeomDef::TriangulateMesh(TArray<FVector>& OutVerts, TArray<int32>& OutTris, TArray<FVector>& OutNormals,
-	TArray<FVector2D>& OutUVs, TArray<FProcMeshTangent>& OutTangents, const FVector& UVAnchor, float UVRotOffset) const
+	TArray<FVector2D>& OutUVs, TArray<FProcMeshTangent>& OutTangents, const FVector& UVAnchor, const FVector2D& UVFlip, float UVRotOffset) const
 {
-	const FVector2D uvScale = FVector2D(0.01f, 0.01f);
+	// For meshes flipped in the X or Y in-plane axes, we need to flip both the UVs and Tangents,
+	// so that tangent-space normals generated using UVs can still face the correct direction (i.e. for bevels in the tile shader)
+	const FVector2D uvScale = FVector2D(0.01f, 0.01f) * UVFlip;
+	bool bFlipProcTangentY = (UVFlip.X * UVFlip.Y < 0);
 
 	if (!bValid)
 	{
@@ -460,7 +463,7 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector>& OutVerts, TArray<int32>& Ou
 		FVector2D uvA = UModumateGeometryStatics::ProjectPoint2D(vertexA, -AxisX, AxisY, UVAnchor);
 		OutUVs.Add(uvA * uvScale);
 		OutNormals.Add(-Normal);
-		OutTangents.Add(FProcMeshTangent(-AxisX, false));
+		OutTangents.Add(FProcMeshTangent(-AxisX * UVFlip.X, bFlipProcTangentY));
 	}
 
 	// If the layer is infinitely thin, then exit before we bother creating triangles for the other sides.
@@ -478,7 +481,7 @@ bool FLayerGeomDef::TriangulateMesh(TArray<FVector>& OutVerts, TArray<int32>& Ou
 		FVector2D uvB = UModumateGeometryStatics::ProjectPoint2D(vertexB, AxisX, AxisY, UVAnchor);
 		OutUVs.Add(uvB * uvScale);
 		OutNormals.Add(Normal);
-		OutTangents.Add(FProcMeshTangent(AxisX, false));
+		OutTangents.Add(FProcMeshTangent(AxisX * UVFlip.X, bFlipProcTangentY));
 	}
 
 	// If the layer is just *very* thin, then only make triangles for the opposite extrusion, not the sides

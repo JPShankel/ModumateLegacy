@@ -52,12 +52,6 @@ FVector AMOIPortal::GetNormal() const
 	return portalTransform.GetUnitAxis(EAxis::Y);
 }
 
-void AMOIPortal::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
-{
-	OutStructDef = InstanceData.StaticStruct();
-	OutStructPtr = &InstanceData;
-}
-
 bool AMOIPortal::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	if (!AModumateObjectInstance::CleanObject(DirtyFlag, OutSideEffectDeltas))

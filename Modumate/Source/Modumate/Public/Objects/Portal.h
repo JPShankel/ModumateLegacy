@@ -36,22 +36,8 @@ UCLASS()
 class MODUMATE_API AMOIPortal : public AModumateObjectInstance
 {
 	GENERATED_BODY()
-protected:
-	TWeakObjectPtr<AEditModelPlayerController_CPP> Controller;
 
-	bool SetupCompoundActorGeometry();
-	bool SetRelativeTransform(const FVector2D &InRelativePos, const FQuat &InRelativeRot);
-
-	EDoorOperationType GetDoorType() const;
-
-	FVector2D CachedRelativePos;
-	FVector CachedWorldPos;
-	FQuat CachedRelativeRot, CachedWorldRot;
-	bool bHaveValidTransform;
-
-	FMOIPortalData InstanceData;
 public:
-
 	AMOIPortal();
 
 	virtual AActor *CreateActor(const FVector &loc, const FQuat &rot) override;
@@ -62,7 +48,6 @@ public:
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
 
 	virtual FVector GetNormal() const;
-	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
@@ -73,4 +58,20 @@ public:
 
 	virtual void SetIsDynamic(bool bIsDynamic) override;
 	virtual bool GetIsDynamic() const override;
+
+	UPROPERTY()
+	FMOIPortalData InstanceData;
+
+protected:
+	TWeakObjectPtr<AEditModelPlayerController_CPP> Controller;
+
+	bool SetupCompoundActorGeometry();
+	bool SetRelativeTransform(const FVector2D& InRelativePos, const FQuat& InRelativeRot);
+
+	EDoorOperationType GetDoorType() const;
+
+	FVector2D CachedRelativePos;
+	FVector CachedWorldPos;
+	FQuat CachedRelativeRot, CachedWorldRot;
+	bool bHaveValidTransform;
 };

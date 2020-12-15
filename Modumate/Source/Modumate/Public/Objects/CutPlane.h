@@ -45,7 +45,6 @@ class MODUMATE_API AMOICutPlane : public AMOIPlaneBase, public ISceneCaptureObje
 public:
 	AMOICutPlane();
 
-	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
 	virtual bool OnSelected(bool bIsSelected) override;
@@ -76,6 +75,9 @@ public:
 
 	TWeakObjectPtr<ADynamicMeshActor> MasksActor;
 
+	UPROPERTY()
+	FMOICutPlaneData InstanceData;
+
 protected:
 	virtual float GetAlpha() const override;
 	void UpdateCachedGeometryData();
@@ -92,6 +94,4 @@ protected:
 	TQueue<FPendingObjectRender> PendingObjectRenders;
 	FPendingObjectRender CurrentObjectRender;
 	TMap<int32, FPendingObjectRender> InprocessRenders;
-
-	FMOICutPlaneData InstanceData;
 };

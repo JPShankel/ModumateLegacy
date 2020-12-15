@@ -50,12 +50,6 @@ FQuat AMOIFFE::GetRotation() const
 	return CachedRotation;
 }
 
-void AMOIFFE::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
-{
-	OutStructDef = InstanceData.StaticStruct();
-	OutStructPtr = &InstanceData;
-}
-
 void AMOIFFE::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
 {
 	for (int32 i = 0; i < 4; ++i)

@@ -58,8 +58,6 @@ public:
 	virtual FVector GetCorner(int32 index) const;
 	virtual int32 GetNumCorners() const;
 
-	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr);
-
 	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled);
 
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) { }
@@ -142,8 +140,9 @@ protected:
 
 	EObjectDirtyFlags DirtyFlags = EObjectDirtyFlags::None;
 
-	bool RouteGetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr);
-	bool RouteGetTypedInstanceData(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const;
+	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, void*& OutStructPtr);
+	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const;
+	virtual void PostLoadInstanceData() {}
 
 	void AddCachedChildID(int32 ChildID);
 	void RemoveCachedChildID(int32 ChildID);

@@ -40,7 +40,6 @@ public:
 
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const override;
-	virtual void GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr) override;
 	virtual FVector GetNormal() const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
@@ -60,6 +59,9 @@ public:
 		int32 FrontFaceIndex, bool bFaceLateralInverted, bool bUpdateCollision, bool bEnableCollision,
 		class ADynamicMeshActor* CabinetBoxActor, class ACompoundMeshActor* CabinetFaceActor, bool& bOutFaceValid);
 
+	UPROPERTY()
+	FMOICabinetData InstanceData;
+
 protected:
 	bool UpdateCachedGeometryData();
 
@@ -72,6 +74,4 @@ protected:
 	FVector CachedExtrusionDelta;
 	bool bCurrentFaceValid;
 	bool bBaseIsRectangular;
-
-	FMOICabinetData InstanceData;
 };

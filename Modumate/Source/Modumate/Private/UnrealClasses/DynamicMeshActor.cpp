@@ -272,7 +272,7 @@ bool ADynamicMeshActor::CreateBasicLayerDefs(const TArray<FVector> &PlanePoints,
 	return true;
 }
 
-bool ADynamicMeshActor::UpdatePlaneHostedMesh(bool bRecreateMesh, bool bUpdateCollision, bool bEnableCollision, const FVector &InUVAnchor, float UVRotOffset)
+bool ADynamicMeshActor::UpdatePlaneHostedMesh(bool bRecreateMesh, bool bUpdateCollision, bool bEnableCollision, const FVector &InUVAnchor, const FVector2D& InUVFlip, float UVRotOffset)
 {
 	int32 numLayers = LayerGeometries.Num();
 	if (!ensureAlways(numLayers > 0))
@@ -301,7 +301,7 @@ bool ADynamicMeshActor::UpdatePlaneHostedMesh(bool bRecreateMesh, bool bUpdateCo
 
 		bool bLayerVisible = layerGeomDef.bValid && (layerGeomDef.Thickness > 0.0f);
 
-		if (bLayerVisible && layerGeomDef.TriangulateMesh(vertices, triangles, normals, uv0, tangents, UVAnchor, UVRotOffset))
+		if (bLayerVisible && layerGeomDef.TriangulateMesh(vertices, triangles, normals, uv0, tangents, UVAnchor, InUVFlip, UVRotOffset))
 		{
 			// TODO: enable iterative mesh section updates when we can know that
 			// the order of vertices did not change as a result of re-triangulation
@@ -329,7 +329,7 @@ bool ADynamicMeshActor::UpdatePlaneHostedMesh(bool bRecreateMesh, bool bUpdateCo
 }
 
 void ADynamicMeshActor::SetupPrismGeometry(const TArray<FVector> &BasePoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial &MaterialData,
-	bool bUpdateCollision, bool bEnableCollision, float UVRotOffset)
+	bool bUpdateCollision, bool bEnableCollision, const FVector2D& UVFlip, float UVRotOffset)
 {
 	int32 numPoints = BasePoints.Num();
 	float extrusionDist = ExtrusionDelta.Size();
@@ -366,7 +366,7 @@ void ADynamicMeshActor::SetupPrismGeometry(const TArray<FVector> &BasePoints, co
 	tangents.Reset();
 	vertexColors.Reset();
 
-	if (prismDef.TriangulateMesh(vertices, triangles, normals, uv0, tangents, UVAnchor, UVRotOffset))
+	if (prismDef.TriangulateMesh(vertices, triangles, normals, uv0, tangents, UVAnchor, UVFlip, UVRotOffset))
 	{
 		Mesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, bUpdateCollision);
 		Mesh->SetCollisionEnabled(bEnableCollision ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);
@@ -382,7 +382,7 @@ void ADynamicMeshActor::SetupPrismGeometry(const TArray<FVector> &BasePoints, co
 }
 
 void ADynamicMeshActor::SetupCabinetGeometry(const TArray<FVector>& BasePoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial& MaterialData, bool bUpdateCollision, bool bEnableCollision,
-	const FVector2D& ToeKickDimensions, float FaceInsetDist, int32 FrontIdxStart, float UVRotOffset)
+	const FVector2D& ToeKickDimensions, float FaceInsetDist, int32 FrontIdxStart, const FVector2D& UVFlip, float UVRotOffset)
 {
 	int32 numPoints = BasePoints.Num();
 	float extrusionDist = ExtrusionDelta.Size();
@@ -473,7 +473,7 @@ void ADynamicMeshActor::SetupCabinetGeometry(const TArray<FVector>& BasePoints, 
 
 		bool bLayerVisible = layerGeomDef.bValid && (layerGeomDef.Thickness > 0.0f);
 
-		if (bLayerVisible && layerGeomDef.TriangulateMesh(vertices, triangles, normals, uv0, tangents, UVAnchor, UVRotOffset))
+		if (bLayerVisible && layerGeomDef.TriangulateMesh(vertices, triangles, normals, uv0, tangents, UVAnchor, UVFlip, UVRotOffset))
 		{
 			procMeshComp->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, bUpdateCollision);
 			procMeshComp->SetCollisionEnabled(bEnableCollision ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision);

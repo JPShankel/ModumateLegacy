@@ -49,12 +49,6 @@ int32 AMOICabinet::GetNumCorners() const
 	return CachedBasePoints.Num();
 }
 
-void AMOICabinet::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
-{
-	OutStructDef = InstanceData.StaticStruct();
-	OutStructPtr = &InstanceData;
-}
-
 FVector AMOICabinet::GetNormal() const
 {
 	return CachedBaseOrigin.GetRotation().GetAxisZ();

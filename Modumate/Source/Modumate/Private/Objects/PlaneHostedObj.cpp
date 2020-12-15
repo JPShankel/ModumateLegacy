@@ -99,12 +99,6 @@ FVector AMOIPlaneHostedObj::GetNormal() const
 	}
 }
 
-void AMOIPlaneHostedObj::GetTypedInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
-{
-	OutStructDef = InstanceData.StaticStruct();
-	OutStructPtr = &InstanceData;
-}
-
 void AMOIPlaneHostedObj::PreDestroy()
 {
 	MarkEdgesMiterDirty();
@@ -119,7 +113,7 @@ bool AMOIPlaneHostedObj::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 		// TODO: as long as the assembly is not stored inside of the data state, and its layers can be reversed,
 		// then this is the centralized opportunity to match up the reversal of layers with whatever the intended inversion state is,
 		// based on preview/current state changing, assembly changing, object creation, etc.
-		SetAssemblyLayersReversed(InstanceData.bLayersInverted);
+		SetAssemblyLayersReversed(InstanceData.FlipSigns.Y < 0);
 
 		CachedLayerDims.UpdateLayersFromAssembly(GetAssembly());
 		CachedLayerDims.UpdateFinishFromObject(this);
@@ -261,17 +255,25 @@ bool AMOIPlaneHostedObj::OnSelected(bool bIsSelected)
 
 bool AMOIPlaneHostedObj::GetInvertedState(FMOIStateData& OutState) const
 {
-	OutState = GetStateData();
-
-	FMOIPlaneHostedObjData modifiedPlaneHostedObjData = InstanceData;
-	modifiedPlaneHostedObjData.bLayersInverted = !modifiedPlaneHostedObjData.bLayersInverted;
-
-	return OutState.CustomData.SaveStructData(modifiedPlaneHostedObjData);
+	return GetFlippedState(EAxis::Y, OutState);
 }
 
 bool AMOIPlaneHostedObj::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
 {
-	return false;
+	OutState = GetStateData();
+
+	FMOIPlaneHostedObjData modifiedPlaneHostedObjData = InstanceData;
+
+	float curFlipSign = modifiedPlaneHostedObjData.FlipSigns.GetComponentForAxis(FlipAxis);
+	modifiedPlaneHostedObjData.FlipSigns.SetComponentForAxis(FlipAxis, -curFlipSign);
+
+	// If we're flipping on the Y axis, we also need to flip justification so that flipping across the parent plane can be 1 action/delta.
+	if (FlipAxis == EAxis::Y)
+	{
+		modifiedPlaneHostedObjData.Justification = (1.0f - modifiedPlaneHostedObjData.Justification);
+	}
+
+	return OutState.CustomData.SaveStructData(modifiedPlaneHostedObjData);
 }
 
 bool AMOIPlaneHostedObj::GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
@@ -468,6 +470,29 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 	}
 }
 
+void AMOIPlaneHostedObj::PostLoadInstanceData()
+{
+	if (InstanceData.Version < InstanceData.CurrentVersion)
+	{
+		if (InstanceData.bLayersInverted_DEPRECATED)
+		{
+			InstanceData.FlipSigns.Y = -1.0f;
+		}
+
+		for (int32 axisIdx = 0; axisIdx < 3; ++axisIdx)
+		{
+			float& flipSign = InstanceData.FlipSigns[axisIdx];
+			if (FMath::Abs(flipSign) != 1.0f)
+			{
+				flipSign = 1.0f;
+			}
+		}
+
+		InstanceData.Version = InstanceData.CurrentVersion;
+		StateData.CustomData.SaveStructData(InstanceData);
+	}
+}
+
 void AMOIPlaneHostedObj::UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalculateEdgeExtensions)
 {
 	const UModumateDocument* doc = GetDocument();
@@ -512,7 +537,8 @@ void AMOIPlaneHostedObj::UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalcul
 	// but relying on PhysX collision cooking and deferred actor/mesh flag updating may prevent that.
 	bool bEnableCollision = true;
 	bool bUpdateCollision = !doc->IsPreviewingDeltas();
-	DynamicMeshActor->UpdatePlaneHostedMesh(bRecreateMesh, bUpdateCollision, bEnableCollision);
+	FVector2D uvFlip(InstanceData.FlipSigns.X, InstanceData.FlipSigns.Z);
+	DynamicMeshActor->UpdatePlaneHostedMesh(bRecreateMesh, bUpdateCollision, bEnableCollision, FVector::ZeroVector, uvFlip);
 }
 
 void AMOIPlaneHostedObj::UpdateConnectedEdges()
