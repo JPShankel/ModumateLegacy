@@ -121,7 +121,7 @@ namespace Modumate
 					const TArray<FLayerGeomDef>& layerGeoms = meshActor->LayerGeometries;
 					for (const auto& layerGeom : layerGeoms)
 					{
-						layerGeom.TriangulateMesh(vertices, triangles, normals, uvs, tangents, uvAnchor, FVector2D(1.0f, 1.0f), 0.0f);
+						layerGeom.TriangulateMesh(vertices, triangles, normals, uvs, tangents, uvAnchor, FVector2D::UnitVector, 0.0f);
 					}
 				}
 			}

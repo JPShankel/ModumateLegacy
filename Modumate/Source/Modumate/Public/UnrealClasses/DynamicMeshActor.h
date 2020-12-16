@@ -114,7 +114,7 @@ public:
 		const FVector &InUVAnchor = FVector::ZeroVector, const FVector2D& InUVFlip = FVector2D(1.0f, 1.0f), float UVRotOffset = 0.0f);
 
 	void SetupPrismGeometry(const TArray<FVector>& BasePpoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial& MaterialData, bool bUpdateCollision, bool bEnableCollision,
-		const FVector2D& UVFlip = FVector2D(1.0f, 1.0f), float UVRotOffset = 0.0f);
+		const FVector2D& UVFlip = FVector2D::UnitVector, float UVRotOffset = 0.0f);
 	void SetupCabinetGeometry(const TArray<FVector>& BasePoints, const FVector& ExtrusionDelta, const FArchitecturalMaterial& MaterialData, bool bUpdateCollision, bool bEnableCollision,
 		const FVector2D& ToeKickDimensions = FVector2D::ZeroVector, float FaceInsetDist = 0.0f, int32 FrontIdxStart = INDEX_NONE,
 		const FVector2D& UVFlip = FVector2D(1.0f, 1.0f), float UVRotOffset = 0.0f);
