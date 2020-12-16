@@ -260,13 +260,18 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 							{
 								Preset.Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, hexValue);
 								Preset.FormItemToProperty.Add(TEXT("Color"), FBIMPropertyKey(EBIMValueScope::Color, BIMPropertyNames::HexValue).QN());
+								materialBinding.ColorHexValue = hexValue;
 							}
 						}
 						break;
 
 						case EMaterialChannelFields::ColorTintVariation:
 						{
-							// TODO: color tint variation for patterned layers of slightly different module colors
+							FString hexValue(Row[presetMatrix.First + i]);
+							if (!hexValue.IsEmpty())
+							{
+								materialBinding.ColorTintVariationHexValue = hexValue;
+							}
 						}
 						break;
 

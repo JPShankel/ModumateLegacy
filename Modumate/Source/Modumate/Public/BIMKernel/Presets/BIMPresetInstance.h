@@ -80,6 +80,9 @@ struct MODUMATE_API FBIMPresetMaterialChannelBinding
 
 	UPROPERTY()
 	FString ColorHexValue;
+
+	UPROPERTY()
+	FString ColorTintVariationHexValue;
 };
 
 USTRUCT()

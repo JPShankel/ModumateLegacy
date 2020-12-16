@@ -313,6 +313,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 				{
 					FArchitecturalMaterial newMat = *material;
 					newMat.DefaultBaseColor.Color = matBinding.ColorHexValue.IsEmpty() ? FColor::White : FColor::FromHex(matBinding.ColorHexValue);
+					newMat.DefaultBaseColor.bValid = true;
 					partSpec.ChannelMaterials.Add(*matBinding.Channel, newMat);
 				}
 			}	
@@ -563,6 +564,7 @@ EBIMResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& InDB)
 				if (extrusion.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue))
 				{
 					extrusion.Material.DefaultBaseColor.Color = FColor::FromHex(colorHexValue);
+					extrusion.Material.DefaultBaseColor.bValid = true;
 				}
 			}
 		}

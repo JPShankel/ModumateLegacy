@@ -46,6 +46,7 @@ EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
 	FString colorHexValue;
 	LayerProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
 	Material_DEPRECATED.DefaultBaseColor.Color = colorHexValue.IsEmpty() ? FColor::White : FColor::FromHex(colorHexValue);
+	Material_DEPRECATED.DefaultBaseColor.bValid = true;
 
 	if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, Thickness))
 	{
@@ -123,7 +124,8 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 			Gap.Material = *mat;
 			FString colorHexValue;
 			GapProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
-			Gap.BaseColor.Color = colorHexValue.IsEmpty() ? FColor::White : FColor::FromHex(colorHexValue);
+			Gap.BaseColor.Color = colorHexValue.IsEmpty() ? FColor::Red : FColor::FromHex(colorHexValue);
+			Gap.BaseColor.bValid = true;
 		}
 		/*
 		Gap dimensions are reliably defined
