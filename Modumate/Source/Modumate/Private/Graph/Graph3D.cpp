@@ -1153,6 +1153,7 @@ namespace Modumate
 		TraversalGraph2D->Reset();
 
 		TArray<FPlane> planes;
+		// TODO: it would be interesting to start profiling this
 		GetPlanesForEdge(OriginalEdgeID, planes);
 
 		auto edge = FindEdge(OriginalEdgeID);
@@ -1619,7 +1620,7 @@ namespace Modumate
 					bool bAddPlane = true;
 					for (auto& plane : OutPlanes)
 					{
-						if (UModumateGeometryStatics::ArePlanesCoplanar(plane, newPlane, Epsilon))
+						if (plane.Equals(newPlane, Epsilon))
 						{
 							bAddPlane = false;
 							break;

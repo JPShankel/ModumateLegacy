@@ -366,7 +366,8 @@ namespace Modumate
 				parentIds = { MOD_ID_NONE };
 				int32 addedFaceID;
 				edgeMap.Reset();
-				if (!GetDeltaForFaceAddition(faceVertices, faceDelta, NextID, existingID, parentIds, edgeMap, addedFaceID))
+				int32 faceNextID = NextID;
+				if (!GetDeltaForFaceAddition(faceVertices, faceDelta, faceNextID, existingID, parentIds, edgeMap, addedFaceID))
 				{
 					continue;
 				}
@@ -418,8 +419,12 @@ namespace Modumate
 
 					if (newFace && oldFace)
 					{
+						bool bMatchingNormals = FVector::Coincident(
+							FVector(oldFace->CachedPlane), FVector(newFace->CachedPlane));
+
 						bool bFullyContained, bPartiallyContained;
-						if (GetFaceContainment(oldFace->ID, newFace->ID, bFullyContained, bPartiallyContained) &&
+						if (bMatchingNormals && 
+							GetFaceContainment(oldFace->ID, newFace->ID, bFullyContained, bPartiallyContained) &&
 							!bFullyContained && bPartiallyContained)
 						{
 							faceDelta.FaceAdditions[addedFaceID].ParentObjIDs = { coincidentFaceID };
@@ -437,6 +442,7 @@ namespace Modumate
 				}
 				else
 				{
+					NextID = faceNextID;
 					newFaces.Add(addedFaceID);
 				}
 			}
