@@ -407,7 +407,7 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 		{
 			screenOffsets.X = offsetScreenPosRight.X - screenPosOrigin.X;
 			screenOffsets.Y = offsetScreenPosUp.Y - screenPosOrigin.Y;
-			PanFactors = FVector2D(1.0f, 1.0f) / screenOffsets;
+			PanFactors = FVector2D::UnitVector / screenOffsets;
 		}
 
 		Controller->CurrentMouseCursor = EMouseCursor::GrabHandClosed;

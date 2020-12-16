@@ -2111,7 +2111,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 			// For combined structural/sketch snaps on edges, we want to override the position to be where the edge and sketch axis intersect if possible.
 			FVector lineIntersection;
 			float sketchRayDist, structuralEdgeDist;
-			if (bCombineStructuralSketchSnaps && (structuralHit.SnapType == ESnapType::CT_EDGESNAP) &&
+			if (bCombineStructuralSketchSnaps && (structuralHit.SnapType == ESnapType::CT_EDGESNAP) && !FVector::Parallel(sketchHit.Normal, structuralHit.EdgeDir) &&
 				UModumateGeometryStatics::RayIntersection3D(sketchHit.Origin, sketchHit.Normal, structuralHit.Origin, structuralHit.EdgeDir, lineIntersection, sketchRayDist, structuralEdgeDist, false))
 			{
 				sketchHit.Location = lineIntersection;
