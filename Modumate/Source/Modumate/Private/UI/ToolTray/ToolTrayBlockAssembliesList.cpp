@@ -88,10 +88,9 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 	}
 }
 
-void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType)
+void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType)
 {
 	SwapType = ESwapType::SwapFromNode;
-	NodePresetIDToSwap = PresetIDToSwap;
 	CurrentNodeForSwap = NodeID;
 	SwapScope = InScope;
 	SwapNameType = InNameType;
@@ -109,9 +108,17 @@ void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& 
 			}
 		}
 
-		FBIMTagPath ncpFromPreset;
-		Controller->GetDocument()->PresetManager.CraftingNodePresets.GetNCPForPreset(PresetIDToSwap, ncpFromPreset);
-		CreatePresetListForSwapFronNCP(ncpFromPreset);
+		if (NCPNavigator)
+		{
+			FBIMTagPath ncpFromPreset;
+			Controller->GetDocument()->PresetManager.CraftingNodePresets.GetNCPForPreset(PresetIDToSwap, ncpFromPreset);
+			NCPNavigator->SetVisibility(ESlateVisibility::Visible);
+			NCPNavigator->BuildNCPNavigator(ncpFromPreset);
+		}
+
+		AvailableBIMDesignerPresets.Empty();
+		Controller->GetDocument()->PresetManager.GetAvailablePresetsForSwap(ParentPresetID, PresetIDToSwap, AvailableBIMDesignerPresets);
+		AddBIMDesignerPresetsToList();
 	}
 }
 
@@ -124,13 +131,16 @@ void UToolTrayBlockAssembliesList::CreatePresetListForSwapFronNCP(const FBIMTagP
 	}
 
 	FPresetManager& presetManager = GameState->Document->PresetManager;
+	AvailableBIMDesignerPresets.Empty();
+	GameState->Document->PresetManager.CraftingNodePresets.GetPresetsForNCP(InNCP, AvailableBIMDesignerPresets);
+	AddBIMDesignerPresetsToList();
+}
+
+void UToolTrayBlockAssembliesList::AddBIMDesignerPresetsToList()
+{
+	// Available presets for SwapDesignerPreset
 	AssembliesList->ClearListItems();
-
-	TArray<FBIMKey> availablePresets;
-	GameState->Document->PresetManager.CraftingNodePresets.GetPresetsForNCP(InNCP, availablePresets);
-
-	// Available presets for swap
-	for (auto& curPreset : availablePresets)
+	for (auto& curPreset : AvailableBIMDesignerPresets)
 	{
 		if (IsPresetAvailableForSearch(curPreset))
 		{
@@ -235,7 +245,7 @@ void UToolTrayBlockAssembliesList::OnSearchBarChanged(const FText& NewText)
 	switch (SwapType)
 	{
 	case ESwapType::SwapFromNode:
-		CreatePresetListInNodeForSwap(NodePresetIDToSwap, CurrentNodeForSwap, SwapScope, SwapNameType);
+		AddBIMDesignerPresetsToList();
 		break;
 	case ESwapType::SwapFromAssemblyList:
 		CreateAssembliesListForCurrentToolMode();

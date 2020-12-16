@@ -41,8 +41,9 @@ protected:
 	UPROPERTY()
 	class AEditModelGameState_CPP *GameState;
 
+	TArray<FBIMKey> AvailableBIMDesignerPresets;
+
 	ESwapType SwapType = ESwapType::None;
-	FBIMKey NodePresetIDToSwap;
 	FBIMEditorNodeIDType CurrentNodeForSwap;
 	EToolMode SwapSelectionToolMode = EToolMode::VE_NONE;
 	FBIMKey SwapSelectionPresetID;
@@ -77,8 +78,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateAssembliesListForCurrentToolMode();
 
-	void CreatePresetListInNodeForSwap(const FBIMKey& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType);
+	void CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType);
 	void CreatePresetListForSwapFronNCP(const FBIMTagPath& InNCP);
+	void AddBIMDesignerPresetsToList();
 	void CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FBIMKey& PresetID);
 	bool IsPresetAvailableForSearch(const FBIMKey& PresetKey);
 	void ResetSearchBox();

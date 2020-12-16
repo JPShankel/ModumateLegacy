@@ -140,7 +140,11 @@ void UBIMBlockNode::PerformDrag()
 void UBIMBlockNode::OnButtonSwapReleased()
 {
 	ParentBIMDesigner->SetNodeAsSelected(ID);
-
+	FBIMKey parentPresetID;
+	if (!ParentID.IsNone())
+	{
+		parentPresetID = ParentBIMDesigner->GetPresetID(ParentID);
+	}
 	// Move swap menu to be in front of this node
 	Controller->EditModelUserWidget->ToggleBIMPresetSwapTray(true);
 
@@ -148,7 +152,7 @@ void UBIMBlockNode::OnButtonSwapReleased()
 	Controller->EditModelUserWidget->BIMPresetSwap->ResetSearchBox();
 
 	// Generate list of presets
-	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(PresetID, ID, EBIMValueScope::None, NAME_None);
+	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(parentPresetID, PresetID, ID, EBIMValueScope::None, NAME_None);
 }
 
 void UBIMBlockNode::OnButtonDeleteReleased()

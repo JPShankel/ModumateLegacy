@@ -76,6 +76,11 @@ void UBIMBlockNCPSwitcher::BuildNCPSwitcher(const FBIMTagPath& InCurrentNCP)
 
 void UBIMBlockNCPSwitcher::AddNCPTagButtons(int32 TagOrder)
 {
+	if (!ensureMsgf(TagOrder < 100, TEXT("TagOrder in AddNCPTagButtons at %d"), TagOrder))
+	{
+		return;
+	}
+
 	// Find subcategories under CurrentNCP at tag order
 	FBIMTagPath partialPath;
 	CurrentNCP.GetPartialPath(TagOrder + 1, partialPath);

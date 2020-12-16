@@ -7,6 +7,7 @@
 #include "UI/Custom/ModumateTextBlock.h"
 #include "UI/BIM/BIMBlockNCPSwitcher.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
+#include "UI/BIM/BIMBlockNCPNavigator.h"
 
 UNCPNavigatorButton::UNCPNavigatorButton(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -45,7 +46,10 @@ void UNCPNavigatorButton::OnButtonPress()
 	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	if (controller->EditModelUserWidget->BIMPresetSwap->NCPSwitcher)
 	{
-		controller->EditModelUserWidget->BIMPresetSwap->NCPSwitcher->BuildNCPSwitcher(ButtonNCP);
+		FBIMTagPath newNCP = ButtonNCP;
+		controller->EditModelUserWidget->BIMPresetSwap->NCPSwitcher->BuildNCPSwitcher(newNCP);
+		controller->EditModelUserWidget->BIMPresetSwap->NCPNavigator->BuildNCPNavigator(newNCP);
+		controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListForSwapFronNCP(newNCP);
 	}
 }
 
