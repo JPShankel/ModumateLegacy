@@ -73,7 +73,7 @@ bool AMOIFinish::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* Out
 
 		if (bLayerSetupSuccess)
 		{
-			DynamicMeshActor->UpdatePlaneHostedMesh(true, true, true);
+			DynamicMeshActor->UpdatePlaneHostedMesh(true, true, true, FVector::ZeroVector, InstanceData.FlipSigns);
 		}
 
 		MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags::Structure);
@@ -134,6 +134,22 @@ void AMOIFinish::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controll
 		edgeHandle->SetTargetIndex(i);
 		edgeHandle->SetTargetMOI(parent);
 	}
+}
+
+bool AMOIFinish::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
+{
+	if (FlipAxis == EAxis::Y)
+	{
+		return false;
+	}
+
+	OutState = GetStateData();
+
+	FMOIFinishData modifiedFinishData = InstanceData;
+	int32 flipAxisIdx = (FlipAxis == EAxis::X) ? 0 : 1;
+	modifiedFinishData.FlipSigns[flipAxisIdx] *= -1.0f;
+
+	return OutState.CustomData.SaveStructData(modifiedFinishData);
 }
 
 void AMOIFinish::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,

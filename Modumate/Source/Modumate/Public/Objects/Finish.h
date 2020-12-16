@@ -10,6 +10,21 @@ class AModumateObjectInstance;
 
 #include "Finish.generated.h"
 
+USTRUCT()
+struct MODUMATE_API FMOIFinishData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FVector2D FlipSigns = FVector2D::UnitVector;
+
+	UPROPERTY()
+	int32 OverrideOriginIndex = INDEX_NONE;
+
+	UPROPERTY()
+	float RotationOffset = 0.0f;
+};
+
 UCLASS()
 class MODUMATE_API AMOIFinish : public AModumateObjectInstance
 {
@@ -22,9 +37,14 @@ public:
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller) override;
 
+	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
+
 	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 		TArray<TArray<FVector>>& OutPerimeters) const override;
+
+	UPROPERTY()
+	FMOIFinishData InstanceData;
 
 protected:
 	void UpdateConnectedEdges();

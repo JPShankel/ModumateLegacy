@@ -37,6 +37,14 @@ int32 AMOISurfaceGraph::GetNumCorners() const
 	return CachedFacePoints.Num();
 }
 
+void AMOISurfaceGraph::PreDestroy()
+{
+	FaceIdxToVertexID.Reset();
+	GraphFaceToInnerBound.Reset();
+	GraphVertexToBoundVertex.Reset();
+	CachedFacePoints.Reset();
+}
+
 bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	int32 numVerts = GraphVertexToBoundVertex.Num();

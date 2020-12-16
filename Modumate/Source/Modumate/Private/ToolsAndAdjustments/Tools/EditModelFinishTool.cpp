@@ -2,16 +2,17 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelFinishTool.h"
 
+#include "Database/ModumateObjectDatabase.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ObjIDReservationHandle.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/Finish.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "Database/ModumateObjectDatabase.h"
-#include "ModumateCore/ModumateObjectStatics.h"
-#include "DocumentManagement/ModumateDocument.h"
-#include "DocumentManagement/ModumateCommands.h"
 
 using namespace Modumate;
 
@@ -146,6 +147,8 @@ bool UFinishTool::GetFinishCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 	// Now, create a new finish object on the target surface graph polygon
 	FMOIStateData newFinishState(nextID, EObjectType::OTFinish, surfaceGraphPolyID);
 	newFinishState.AssemblyKey = AssemblyKey;
+	FMOIFinishData newFinishInstanceData;
+	newFinishState.CustomData.SaveStructData(newFinishInstanceData);
 
 	auto createFinishDelta = MakeShared<FMOIDelta>();
 	createFinishDelta->AddCreateDestroyState(newFinishState, EMOIDeltaType::Create);
