@@ -849,15 +849,15 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 	vertexColors.Reset();
 
 	// TODO: scale should come in as an FVector2D
-	FVector2D scale2D(InScale);
+	FVector2D profileScale2D(InScale.GetAbs());
 	if (ensure(Assembly.Extrusions.Num() == 1))
 	{
-		scale2D *= FVector2D(Assembly.Extrusions[0].Scale);
+		profileScale2D *= FVector2D(Assembly.Extrusions[0].Scale);
 	}
 
 	const FBox2D &profileExtents = polyProfile->Extents;
-	FVector2D profileExtentsMin = profileExtents.Min * scale2D;
-	FVector2D profileExtentsSize = profileExtents.GetSize() * scale2D;
+	FVector2D profileExtentsMin = profileExtents.Min * profileScale2D;
+	FVector2D profileExtentsSize = profileExtents.GetSize() * profileScale2D;
 
 	auto offsetPoint = [extrusionDir, ObjNormal, ObjUp, profileExtentsMin, profileExtentsSize, UpperExtensions, OuterExtensions]
 	(const FVector &worldPoint, const FVector2D &polyPoint, bool bAtStart)
@@ -878,8 +878,9 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 		return worldPoint + (lengthExtension * extrusionDir) + (polyPoint.Y * ObjNormal) + (polyPoint.X * ObjUp);
 	};
 
-	static const float uvFactor = 0.01f;
-	auto fixExtrudedTriUVs = [this](const FVector2D &uv1, const FVector2D &uv2, const FVector2D &uv3)
+	static constexpr float uvScale = 0.01f;
+	const FVector2D uvFactor(uvScale * FMath::Sign(InScale.X), uvScale);
+	auto fixExtrudedTriUVs = [this, uvFactor](const FVector2D &uv1, const FVector2D &uv2, const FVector2D &uv3)
 	{
 		int32 numUVs = uv0.Num();
 		uv0[numUVs - 3] = uv1 * uvFactor;
@@ -895,8 +896,8 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 	for (int32 p1Idx = 0; p1Idx < numPoints; ++p1Idx)
 	{
 		int32 p2Idx = (p1Idx + 1) % numPoints;
-		FVector2D p1 = profilePoints[p1Idx] * scale2D;
-		FVector2D p2 = profilePoints[p2Idx] * scale2D;
+		FVector2D p1 = profilePoints[p1Idx] * profileScale2D;
+		FVector2D p2 = profilePoints[p2Idx] * profileScale2D;
 		FVector2D edgeDelta = p2 - p1;
 		float edgeLength = edgeDelta.Size();
 
@@ -932,9 +933,9 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 			int32 triIdxB = profileTris[(3 * triIdx) + 1];
 			int32 triIdxC = profileTris[(3 * triIdx) + 2];
 
-			FVector2D polyPointA = profilePoints[triIdxA]*scale2D;
-			FVector2D polyPointB = profilePoints[triIdxB]*scale2D;
-			FVector2D polyPointC = profilePoints[triIdxC]*scale2D;
+			FVector2D polyPointA = profilePoints[triIdxA]*profileScale2D;
+			FVector2D polyPointB = profilePoints[triIdxB]*profileScale2D;
+			FVector2D polyPointC = profilePoints[triIdxC]*profileScale2D;
 
 			FVector meshPointStartA = offsetPoint(baseStartPoint, polyPointA, true);
 			FVector meshPointStartB = offsetPoint(baseStartPoint, polyPointB, true);

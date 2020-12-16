@@ -51,10 +51,9 @@ bool UTrimTool::BeginUse()
 {
 	if (TargetEdgeID != MOD_ID_NONE)
 	{
-		FMOITrimData trimCustomData;
 		FMOIStateData stateData(GameState->Document->GetNextAvailableID(), EObjectType::OTTrim, TargetEdgeID);
 		stateData.AssemblyKey = AssemblyKey;
-		stateData.CustomData.SaveStructData(trimCustomData);
+		stateData.CustomData.SaveStructData(PendingTrimData);
 
 		auto delta = MakeShared<FMOIDelta>();
 		delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
@@ -75,6 +74,7 @@ bool UTrimTool::FrameUpdate()
 	Super::FrameUpdate();
 
 	TargetEdgeID = MOD_ID_NONE;
+	PendingTrimData = FMOITrimData(FMOITrimData::CurrentVersion);
 
 	if (!ensure(Controller && GameState))
 	{
@@ -85,6 +85,12 @@ bool UTrimTool::FrameUpdate()
 	const AModumateObjectInstance* targetMOI = GameState->Document->ObjectFromActor(cursor.Actor);
 	if (targetMOI && (targetMOI->GetObjectType() == EObjectType::OTSurfaceEdge))
 	{
+		auto targetSurfaceGraph = GameState->Document->FindSurfaceGraphByObjID(targetMOI->ID);
+		if (!targetSurfaceGraph.IsValid())
+		{
+			return false;
+		}
+
 		int32 existingTargetTrimID = MOD_ID_NONE;
 
 		auto targetChildren = targetMOI->GetChildObjects();
@@ -94,6 +100,45 @@ bool UTrimTool::FrameUpdate()
 			{
 				existingTargetTrimID = targetChild->ID;
 				break;
+			}
+		}
+
+		// Determine the desired flip/justification of the Trim based on the target SurfaceEdge
+		PendingTrimData.UpJustification = 0.5f;
+		PendingTrimData.FlipSigns = FVector2D::UnitVector;
+		int32 adjacentPolyID = MOD_ID_NONE;
+
+		auto boudingPoly = targetSurfaceGraph->FindPolygon(targetSurfaceGraph->GetOuterBoundingPolyID());
+		if (boudingPoly)
+		{
+			bool bBoundsForwardEdge = boudingPoly->Edges.Contains(targetMOI->ID);
+			bool bBoundsReverseEdge = boudingPoly->Edges.Contains(-targetMOI->ID);
+			if (bBoundsForwardEdge || bBoundsReverseEdge)
+			{
+				adjacentPolyID = boudingPoly->ID;
+
+				PendingTrimData.UpJustification = 0.0f;
+				PendingTrimData.FlipSigns.Y = bBoundsForwardEdge ? 1.0f : -1.0f;
+			}
+		}
+
+		if (adjacentPolyID == MOD_ID_NONE)
+		{
+			for (auto& innerBoundsKVP : targetSurfaceGraph->GetInnerBounds())
+			{
+				auto innerBoundingPoly = targetSurfaceGraph->FindPolygon(innerBoundsKVP.Key);
+				if (innerBoundingPoly && (innerBoundingPoly->Edges.Contains(targetMOI->ID) || innerBoundingPoly->Edges.Contains(-targetMOI->ID)))
+				{
+					bool bBoundsForwardEdge = innerBoundingPoly->Edges.Contains(targetMOI->ID);
+					bool bBoundsReverseEdge = innerBoundingPoly->Edges.Contains(-targetMOI->ID);
+					if (bBoundsForwardEdge || bBoundsReverseEdge)
+					{
+						adjacentPolyID = innerBoundingPoly->ID;
+
+						PendingTrimData.UpJustification = 0.0f;
+						PendingTrimData.FlipSigns.Y = bBoundsForwardEdge ? -1.0f : 1.0f;
+					}
+				}
 			}
 		}
 

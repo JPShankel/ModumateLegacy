@@ -106,7 +106,7 @@ bool UPlaneHostedObjTool::BeginUse()
 				}
 			}
 
-			FMOIPlaneHostedObjData newMOICustomData;
+			FMOIPlaneHostedObjData newMOICustomData(FMOIPlaneHostedObjData::CurrentVersion);
 			newMOICustomData.FlipSigns.Y = GetAppliedInversionValue();
 			newMOICustomData.Justification = InstanceJustification;
 
@@ -313,7 +313,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector& Location, TArray<int32>& new
 		auto delta = MakeShared<FMOIDelta>();
 		int32 nextID = GameState->Document->GetNextAvailableID();
 
-		FMOIPlaneHostedObjData newMOICustomData;
+		FMOIPlaneHostedObjData newMOICustomData(FMOIPlaneHostedObjData::CurrentVersion);
 		newMOICustomData.FlipSigns.Y = bInverted ? -1.0f : 1.0f;
 		newMOICustomData.Justification = InstanceJustification;
 

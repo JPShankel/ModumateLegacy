@@ -15,6 +15,9 @@ struct MODUMATE_API FMOIPlaneHostedObjData
 {
 	GENERATED_BODY()
 
+	FMOIPlaneHostedObjData();
+	FMOIPlaneHostedObjData(int32 InVersion);
+
 	UPROPERTY()
 	int32 Version = 0;
 

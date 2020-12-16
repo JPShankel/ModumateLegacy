@@ -1216,6 +1216,11 @@ namespace Modumate
 		}
 	}
 
+	int32 FGraph2D::GetOuterBoundingPolyID() const
+	{
+		return BoundingPolygon.Key;
+	}
+
 	void FGraph2D::GetOuterBoundsIDs(TArray<int32> &OutVertexIDs) const
 	{
 		OutVertexIDs = BoundingPolygon.Value;

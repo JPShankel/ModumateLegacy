@@ -17,11 +17,22 @@ struct MODUMATE_API FMOITrimData
 {
 	GENERATED_BODY()
 
+	FMOITrimData();
+	FMOITrimData(int32 InVersion);
+
 	UPROPERTY()
-	bool bUpInverted = false;
+	int32 Version = 0;
+
+	UPROPERTY(meta = (DeprecatedProperty, DeprecationMessage = "Up inversion is stored in the Y axis of FlipSigns."))
+	bool bUpInverted_DEPRECATED = false;
+
+	UPROPERTY()
+	FVector2D FlipSigns = FVector2D::UnitVector;
 
 	UPROPERTY()
 	float UpJustification = 0.5f;
+
+	static constexpr int32 CurrentVersion = 1;
 };
 
 UCLASS()
@@ -44,10 +55,14 @@ public:
 	virtual bool GetIsDynamic() const override;
 
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
+	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
+	virtual bool GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
 
 	void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 		TArray<TArray<FVector>>& OutPerimeters) const override;
+
+	virtual void PostLoadInstanceData() override;
 
 	UPROPERTY()
 	FMOITrimData InstanceData;

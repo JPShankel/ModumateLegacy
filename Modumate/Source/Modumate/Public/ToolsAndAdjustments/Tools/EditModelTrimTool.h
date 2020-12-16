@@ -2,6 +2,7 @@
 #pragma once
 
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "Objects/Trim.h"
 
 #include "EditModelTrimTool.generated.h"
 
@@ -23,4 +24,6 @@ public:
 protected:
 	int32 TargetEdgeID;
 	FVector TargetEdgeStartPos, TargetEdgeEndPos;
+
+	FMOITrimData PendingTrimData;
 };

@@ -13,6 +13,17 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 
+
+FMOITrimData::FMOITrimData()
+{
+}
+
+FMOITrimData::FMOITrimData(int32 InVersion)
+	: Version(InVersion)
+{
+}
+
+
 AMOITrim::AMOITrim()
 	: AModumateObjectInstance()
 	, TrimStartPos(ForceInitToZero)
@@ -126,10 +137,40 @@ bool AMOITrim::GetIsDynamic() const
 
 bool AMOITrim::GetInvertedState(FMOIStateData& OutState) const
 {
+	return GetFlippedState(EAxis::Z, OutState);
+}
+
+bool AMOITrim::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
+{
+	if (FlipAxis == EAxis::Y)
+	{
+		return false;
+	}
+
 	OutState = GetStateData();
 
 	FMOITrimData modifiedTrimData = InstanceData;
-	modifiedTrimData.bUpInverted = !modifiedTrimData.bUpInverted;
+	int32 flipAxisIdx = (FlipAxis == EAxis::X) ? 0 : 1;
+	modifiedTrimData.FlipSigns[flipAxisIdx] *= -1.0f;
+
+	return OutState.CustomData.SaveStructData(modifiedTrimData);
+}
+
+bool AMOITrim::GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
+{
+	float projectedAdjustment = -AdjustmentDirection | TrimUp;
+	if (FMath::IsNearlyZero(projectedAdjustment, THRESH_NORMALS_ARE_ORTHOGONAL))
+	{
+		projectedAdjustment = 0.0f;
+	}
+
+	float projectedAdjustmentSign = FMath::Sign(projectedAdjustment);
+	float justificationDelta = projectedAdjustmentSign * 0.5f;
+	float newJustification = FMath::Clamp(InstanceData.UpJustification + justificationDelta, 0.0f, 1.0f);
+
+	FMOITrimData modifiedTrimData = InstanceData;
+	modifiedTrimData.UpJustification = newJustification;
+	OutState = GetStateData();
 
 	return OutState.CustomData.SaveStructData(modifiedTrimData);
 }
@@ -178,6 +219,29 @@ void AMOITrim::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& 
 	{   // In-plane lines.
 	 UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox,
 			perimeter, TrimStartPos, TrimEndPos, Modumate::FModumateLayerType::kSeparatorCutTrim, 0.3f);
+	}
+}
+
+void AMOITrim::PostLoadInstanceData()
+{
+	if (InstanceData.Version < InstanceData.CurrentVersion)
+	{
+		if (InstanceData.bUpInverted_DEPRECATED)
+		{
+			InstanceData.FlipSigns.Y = -1.0f;
+		}
+
+		for (int32 axisIdx = 0; axisIdx < 2; ++axisIdx)
+		{
+			float& flipSign = InstanceData.FlipSigns[axisIdx];
+			if (FMath::Abs(flipSign) != 1.0f)
+			{
+				flipSign = 1.0f;
+			}
+		}
+
+		InstanceData.Version = InstanceData.CurrentVersion;
+		StateData.CustomData.SaveStructData(InstanceData);
 	}
 }
 
@@ -248,17 +312,12 @@ bool AMOITrim::UpdateCachedStructure()
 	TrimDir = (TrimEndPos - TrimStartPos).GetSafeNormal();
 	TrimNormal = surfaceGraphMOI->GetNormal();
 
-	TrimUp = TrimDir ^ TrimNormal;
-	if (InstanceData.bUpInverted)
-	{
-		TrimUp *= -1.0f;
-	}
-
-	TrimScale = FVector::OneVector;
+	TrimUp = (TrimDir ^ TrimNormal) * InstanceData.FlipSigns.Y;
+	TrimScale = FVector(InstanceData.FlipSigns.X, 1.0f, 1.0f);
 
 	float justification = InstanceData.UpJustification;
-	float justificationDist = justification * polyProfile->Extents.GetSize().Y;
-	FVector justificationDelta = justificationDist * TrimUp;
+	float justificationDist = justification * polyProfile->Extents.GetSize().X;
+	FVector justificationDelta = -justificationDist * TrimUp;
 	FVector neighborOffsetDelta = maxNeighboringThickness * TrimNormal;
 
 	TrimStartPos += justificationDelta + neighborOffsetDelta;

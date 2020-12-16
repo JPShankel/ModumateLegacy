@@ -25,6 +25,17 @@ class AEditModelPlayerController_CPP;
 
 using namespace Modumate::Mitering;
 
+
+FMOIPlaneHostedObjData::FMOIPlaneHostedObjData()
+{
+}
+
+FMOIPlaneHostedObjData::FMOIPlaneHostedObjData(int32 InVersion)
+	: Version(InVersion)
+{
+}
+
+
 AMOIPlaneHostedObj::AMOIPlaneHostedObj()
 	: AModumateObjectInstance()
 {

@@ -163,6 +163,7 @@ namespace Modumate
 		// aggregates only the added edges, constrained by the provided segment
 		void AggregateAddedEdges(const TArray<FGraph2DDelta> &Deltas, TSet<int32> &OutEdges, const FVector2D &StartPosition, const FVector2D &EndPosition);
 
+		int32 GetOuterBoundingPolyID() const;
 		void GetOuterBoundsIDs(TArray<int32> &OutVertexIDs) const;
 		const TMap<int32, TArray<int32>>& GetInnerBounds() const;
 
