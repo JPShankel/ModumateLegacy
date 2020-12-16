@@ -621,10 +621,11 @@ float ACompoundMeshActor::GetPortalCenter(const UModumateDocument* Doc, const FB
 	assembly = assembly ? assembly : Doc->PresetManager.GetAssemblyByKey(EToolMode::VE_WINDOW, AssemblyKey);
 	if (assembly)
 	{
-		static const FBIMTagPath panelTag("Part_Panel");
+		static const FString panelTagComponent(TEXT("Panel"));
 		for (int32 slot = 0; slot < assembly->Parts.Num(); ++slot)
 		{
-			if (assembly->Parts[slot].NodeCategoryPath == panelTag && StaticMeshComps[slot]
+			const auto& ncp = assembly->Parts[slot].NodeCategoryPath;
+			if (ncp.Tags.Num() > 0 && ncp.Tags.Last() == panelTagComponent && StaticMeshComps[slot]
 				&& StaticMeshComps[slot]->GetStaticMesh())
 			{
 				panelStaticMesh = StaticMeshComps[slot];
