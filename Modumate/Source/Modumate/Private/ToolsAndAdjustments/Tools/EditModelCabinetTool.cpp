@@ -270,7 +270,16 @@ bool UCabinetTool::EnterNextStage()
 
 	auto delta = MakeShared<FMOIDelta>();
 	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
-	GameState->Document->ApplyDeltas({ delta }, GetWorld());
+	bool bAppliedDeltas = GameState->Document->ApplyDeltas({ delta }, GetWorld());
+
+	// If we succeeded, then select the new cabinet object (and only that object)
+	AModumateObjectInstance *cabinetObj = bAppliedDeltas ? GameState->Document->GetObjectById(stateData.ID) : nullptr;
+	if (cabinetObj)
+	{
+		Controller->DeselectAll();
+		Controller->SetObjectSelected(cabinetObj, true);
+		cabinetObj->ShowAdjustmentHandles(Controller, true);
+	}
 
 	return false;
 }

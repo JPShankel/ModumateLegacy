@@ -13,10 +13,15 @@
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "ToolsAndAdjustments/Handles/CabinetExtrusionHandle.h"
 #include "ToolsAndAdjustments/Handles/CabinetFrontFaceHandle.h"
+#include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/AdjustmentHandleAssetData.h"
+#include "UI/CabinetDimensionActor.h"
+#include "UI/DimensionActor.h"
+#include "UI/DimensionManager.h"
 #include "UI/EditModelPlayerHUD.h"
 
 using namespace Modumate::Units;
@@ -27,6 +32,7 @@ AMOICabinet::AMOICabinet()
 	, CachedExtrusionDelta(ForceInitToZero)
 	, bCurrentFaceValid(false)
 	, bBaseIsRectangular(false)
+	, ExtrusionDimensionActorID(MOD_ID_NONE)
 {
 }
 
@@ -52,6 +58,17 @@ int32 AMOICabinet::GetNumCorners() const
 FVector AMOICabinet::GetNormal() const
 {
 	return CachedBaseOrigin.GetRotation().GetAxisZ();
+}
+
+void AMOICabinet::PreDestroy()
+{
+	auto gameInstance = Cast<UModumateGameInstance>(GetWorld()->GetGameInstance());
+	auto dimensionManager = gameInstance ? gameInstance->DimensionManager : nullptr;
+	if (gameInstance && dimensionManager)
+	{
+		dimensionManager->ReleaseDimensionActor(ExtrusionDimensionActorID);
+		ExtrusionDimensionActorID = MOD_ID_NONE;
+	}
 }
 
 bool AMOICabinet::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
@@ -521,6 +538,29 @@ void AMOICabinet::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controll
 			frontHandle->SetEnabled(bHandleEnabled);
 		}
 	}
+}
+
+bool AMOICabinet::OnSelected(bool bIsSelected)
+{
+	auto gameInstance = Cast<UModumateGameInstance>(GetWorld()->GetGameInstance());
+	if (!gameInstance)
+	{
+		return false;
+	}
+	auto dimensionManager = gameInstance->DimensionManager;
+
+	if (bIsSelected)
+	{
+		auto dimensionActor = Cast<ACabinetDimensionActor>(dimensionManager->AddDimensionActor(ACabinetDimensionActor::StaticClass()));
+		dimensionActor->CabinetID = ID;
+		ExtrusionDimensionActorID = dimensionActor->ID;
+	}
+	else
+	{
+		dimensionManager->ReleaseDimensionActor(ExtrusionDimensionActorID);
+		ExtrusionDimensionActorID = MOD_ID_NONE;
+	}
+	return true;
 }
 
 using namespace Modumate;
