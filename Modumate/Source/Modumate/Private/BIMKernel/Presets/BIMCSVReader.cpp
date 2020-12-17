@@ -243,13 +243,13 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 						case EMaterialChannelFields::InnerMaterial:
 						{
-							materialBinding.InnerMaterial = FBIMKey(Row[presetMatrix.First + i]);
+							materialBinding.InnerMaterial = FBIMKey(NormalizeCell(Row[presetMatrix.First + i]));
 						}
 						break;
 
 						case EMaterialChannelFields::SurfaceMaterial:
 						{
-							materialBinding.SurfaceMaterial = FBIMKey(Row[presetMatrix.First + i]);
+							materialBinding.SurfaceMaterial = FBIMKey(NormalizeCell(Row[presetMatrix.First + i]));
 						}
 						break;
 
@@ -283,19 +283,16 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				if (!materialBinding.Channel.IsEmpty())
 				{
 					Preset.MaterialChannelBindings.Add(materialBinding);
-				}
 
-				// TODO: Rows 0, 2 & 3 are channel, surface material and color tint, to be implemented later
-				FString rawMaterial(Row[presetMatrix.First + 1]);
-				FString hexValue(Row[presetMatrix.First + 4]);
-				if (!rawMaterial.IsEmpty())
-				{
-					Preset.Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, NormalizeCell(rawMaterial));
-					Preset.FormItemToProperty.Add(TEXT("Material"), FBIMPropertyKey(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID).QN());
-				}
-				if (!hexValue.IsEmpty())
-				{
-					Preset.Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, hexValue);
+					FBIMKey material = materialBinding.SurfaceMaterial.IsNone() ? materialBinding.InnerMaterial : materialBinding.SurfaceMaterial;
+
+					if (ensureAlways(!material.IsNone()))
+					{
+						Preset.Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, material.ToString());
+						Preset.FormItemToProperty.Add(TEXT("Material"), FBIMPropertyKey(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID).QN());
+					}
+
+					Preset.Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, materialBinding.ColorHexValue.IsEmpty() ? FColor::White.ToHex() : materialBinding.ColorHexValue);
 					Preset.FormItemToProperty.Add(TEXT("Color"), FBIMPropertyKey(EBIMValueScope::Color, BIMPropertyNames::HexValue).QN());
 				}
 			}

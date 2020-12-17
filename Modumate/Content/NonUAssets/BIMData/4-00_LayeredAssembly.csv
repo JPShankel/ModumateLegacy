@@ -7,1100 +7,1100 @@ INPUTPIN,,1..,,ChildLayerArray,,,,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,,
 TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,DataType=Dimensions,Dimension,Value,DataType=StartsInProject,X,DataType=InputPins,ChildLayerArray,
 PRESET,,C454BCFC-5CD8-8B4F-906A-D11B79E88841,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Abstract---FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,"6"" Abstract",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Abstract---FFFFFF,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Abstract-FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,"6"" Abstract",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Abstract-FFFFFF,
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,00E974E8-F829-0247-B557-E64B606209CA,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,2x4 Interior Wood Stud,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,AA0881C8-85B1-1247-86E2-75ABB472C778,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,2x6 Interior Insulated Wood Stud,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,001795E1-5195-3442-84F8-99C45D1409C5,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,2x4 Exterior Wood Stud,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,2x4 Exterior Wood Stud,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond",
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
 PRESET,,26BCD0A8-0857-CB45-B2A5-71C56ADFD0DF,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,2x4 Double-Waterproofed Exterior Wood Stud,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,2x4 Double-Waterproofed Exterior Wood Stud,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond",
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
 PRESET,,7A6A35A9-031B-D94C-8613-0B5BC9B88B41,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-16-Inch O.C.
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,3 5/8in Interior Metal Stud,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,63BFCB3C-11A0-A845-AB86-D428BD928DDF,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-16-Inch O.C.
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,3 5/8in Exterior Metal Stud,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,3 5/8in Exterior Metal Stud,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond",
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
 PRESET,,A6A9E83D-4341-A243-A23D-D7AA41DF7EB0,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-2in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-2in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,"2-1/2"" Metal Furring",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-2in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-2in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,591075DF-0434-1B4B-BB04-E7964421327D,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,"8"" Precast Concrete",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,"8"" Precast Concrete",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,EA76CDDD-4542-1248-B669-699856DCB68D,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,"6"" CIP Concrete",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,"6"" CIP Concrete",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,4E8F1F7C-4117-5440-86C0-430BC13E717D,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,"8"" CIP Concrete",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,"8"" CIP Concrete",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,8AE933A7-0BE3-A842-85AE-3904810CA6AD,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-16-Inch O.C.
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Air---FFFFFF
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Air-FFFFFF
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-16-Inch O.C.
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,"3 5/8"" Interior Metal Stud 6"" Cavity",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-16-Inch O.C.",
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Air---FFFFFF,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Air-FFFFFF,
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,800B7078-045E-3141-A2B4-82DE9CF5D8BA,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,Double Wythe Brick,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Running Bond",
 PRESET,,B15F51BF-1840-8E42-8032-BBA394F7A0A6,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit-Length-15.625in-Width-7.625in-Height-7.625in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
+Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit-Length-15.625in-Width-7.625in-Height-7.625in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,Double Wythe Composite Brick,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit-Length-15.625in-Width-7.625in-Height-7.625in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
+Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit-Length-15.625in-Width-7.625in-Height-7.625in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8
 0LayerPattern_2D-Running Bond",
 PRESET,,85451239-7B43-C848-85D6-E351AC9192D0,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Running Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Air---FFFFFF
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Air-FFFFFF
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit-Length-15.625in-Width-7.625in-Height-7.625in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
+Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit-Length-15.625in-Width-7.625in-Height-7.625in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,Exterior Brick Composite Cavity,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Running Bond",
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Air---FFFFFF,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Air-FFFFFF,
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit-Length-15.625in-Width-7.625in-Height-7.625in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
+Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit-Length-15.625in-Width-7.625in-Height-7.625in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8
 0LayerPattern_2D-Running Bond",
 PRESET,,0E01526D-0C90-B142-AC95-E16C755600A4,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Running Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Air---FFFFFF
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Air-FFFFFF
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-16-Inch O.C.
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,Exterior Brick Metal Stud Insulated Cavity Wall,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Running Bond",
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Air---FFFFFF,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Air-FFFFFF,
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,42FC2167-6B06-9841-BBC6-5AB67EBD8A3E,,"Assembly_2FlexDims1Fixed_PlanarGroup_Floor
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"6"" CIP Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"6"" CIP Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,IconWidth,48in,,,,,
 PRESET,,86EF5B85-D450-0B45-A557-777CE53BE6E9,,"Assembly_2FlexDims1Fixed_PlanarGroup_Floor
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"8"" CIP Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"8"" CIP Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,IconWidth,48in,,,,,
 PRESET,,0F2CD4F8-6F5C-4645-9BE4-F7C6540E53E3,,"Assembly_2FlexDims1Fixed_PlanarGroup_Floor
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Sand---FFFFFF
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Gravel---FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"6"" Concrete Slab On Grade",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
-PRESET,,,,,,,,,,IconWidth,48in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Sand---FFFFFF,
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Gravel---FFFFFF,
-PRESET,,78B05468-5237-8C44-8456-644AAB5AC5CB,,Assembly_2FlexDims1Fixed_PlanarGroup-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"6"" Precast Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Sand-FFFFFF
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Gravel-FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"6"" Concrete Slab On Grade",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
+PRESET,,,,,,,,,,IconWidth,48in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Sand-FFFFFF,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Gravel-FFFFFF,
+PRESET,,78B05468-5237-8C44-8456-644AAB5AC5CB,,Assembly_2FlexDims1Fixed_PlanarGroup-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"6"" Precast Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,IconWidth,48in,,,,,
-PRESET,,C0214B9A-74D7-CE41-A76B-C0EFBF10D665,,Assembly_2FlexDims1Fixed_PlanarGroup-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-4.125in-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"3 Ply CLT, 3"" Concrete Topping Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
-PRESET,,,,,,,,,,IconWidth,48in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-4.125in-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,
+PRESET,,C0214B9A-74D7-CE41-A76B-C0EFBF10D665,,Assembly_2FlexDims1Fixed_PlanarGroup-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-4.125in-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"3 Ply CLT, 3"" Concrete Topping Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
+PRESET,,,,,,,,,,IconWidth,48in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-4.125in-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,
 PRESET,,ECD8A008-CBB8-5B41-A42B-635D7338CB42,,"Assembly_2FlexDims1Fixed_PlanarGroup_Floor
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-4.125in-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,3 Ply CLT,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-4.125in-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-4.125in-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,3 Ply CLT,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-4.125in-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,
 PRESET,,,,,,,,,,IconWidth,48in,,,,,
 PRESET,,E3B2AD67-42ED-5640-9D9F-C7F57A66A580,,"Assembly_2FlexDims1Fixed_PlanarGroup_Floor
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,2x8 Wood Joist,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,9B6512A9-F093-364B-961E-FF3980C78B5E,,"Assembly_2FlexDims1Fixed_PlanarGroup_Floor
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,2x8 Wood Joist Over Unconditioned Space,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)---ECB9BE
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
 0LayerPattern_2D-Soldier Bond",
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
 PRESET,,D3877203-47CD-BD4B-8D30-89042AF7CCA4,,"Assembly_2FlexDims1Fixed_PlanarGroup_Floor
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,2x8 Engineered Wood Joist,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,1696EF65-5554-8745-867F-46DF062EFCAC,,"Assembly_2FlexDims1Fixed_PlanarGroup_Floor
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-6in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-6in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"6"" Light Gauge Steel Joist",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-6in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-6in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,190BC659-F58C-604F-9733-CBE869346B7B,,"Assembly_2FlexDims1Fixed_PlanarGroup_Floor
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_0D-Continuous
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
-0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"12"" Steel Web Joist, Metal Deck, Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"12"" Steel Web Joist, Metal Deck, Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_0D-Continuous",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,6D1456F1-C511-CB4E-826D-7AD7081E9F3A,,"Assembly_2FlexDims1Fixed_PlanarGroup_Floor
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_0D-Continuous
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
-0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"12"" Wood Web Joist, Metal Deck, Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"12"" Wood Web Joist, Metal Deck, Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_0D-Continuous",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,175F3326-3CF7-E64F-B65C-4B2A5CFDB590,,"Assembly_2FlexDims1Fixed_PlanarGroup_Floor
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_0D-Continuous
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood-Chord, Steel-Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood-Chord, Steel-Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
-0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"12"" Wood Chord Steel Web Joist, Metal Deck, Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Floor,,"12"" Wood Chord Steel Web Joist, Metal Deck, Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_0D-Continuous",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood-Chord, Steel-Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood-Chord, Steel-Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,87FCA9E8-B221-C84A-BC04-07BFF6E76E58,,"Assembly_2FlexDims1Fixed_PlanarGroup_Roof
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,"6"" Cast-In-Place Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,"6"" Cast-In-Place Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,IconWidth,48in,,,,,
 PRESET,,7ECD7C4D-76D2-7F45-847A-8F3AD3073DBB,,"Assembly_2FlexDims1Fixed_PlanarGroup_Roof
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,"6"" Precast Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,"6"" Precast Concrete Slab",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,IconWidth,48in,,,,,
 PRESET,,8217B447-915C-FE47-AD70-DBCFA9DEAA0E,,"Assembly_2FlexDims1Fixed_PlanarGroup_Roof
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt---594D41
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt-594D41
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)---FAF1D0
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)-FAF1D0
 0LayerPattern_2D-Soldier Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
-0LayerPattern_0D-Continuous",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,TPO Membrane,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
-PRESET,,,,,,,,,,IconWidth,48in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt---594D41,
+0LayerPattern_0D-Continuous",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,TPO Membrane,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
+PRESET,,,,,,,,,,IconWidth,48in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt-594D41,
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)---FAF1D0
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)-FAF1D0
 0LayerPattern_2D-Soldier Bond",
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_0D-Continuous",
 PRESET,,BB1F6677-DC6F-314F-9333-9E4CE86F87BF,,"Assembly_2FlexDims1Fixed_PlanarGroup_Roof
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Asphalt---646963
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Asphalt-646963
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)---FAF1D0
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)-FAF1D0
 0LayerPattern_2D-Soldier Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
-0LayerPattern_0D-Continuous",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,PVC Membrane,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
-PRESET,,,,,,,,,,IconWidth,48in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Asphalt---646963,
+0LayerPattern_0D-Continuous",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,PVC Membrane,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
+PRESET,,,,,,,,,,IconWidth,48in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Asphalt-646963,
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)---FAF1D0
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)-FAF1D0
 0LayerPattern_2D-Soldier Bond",
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_0D-Continuous",
 PRESET,,A19BCAC0-0C7C-0149-8A56-A9839E51AC69,,"Assembly_2FlexDims1Fixed_PlanarGroup_Roof
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt---594D41
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt-594D41
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)---FAF1D0
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)-FAF1D0
 0LayerPattern_2D-Soldier Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
-0LayerPattern_0D-Continuous",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,EPDM Membrane,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
-PRESET,,,,,,,,,,IconWidth,48in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt---594D41,
+0LayerPattern_0D-Continuous",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,EPDM Membrane,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
+PRESET,,,,,,,,,,IconWidth,48in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt-594D41,
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)---FAF1D0
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)-FAF1D0
 0LayerPattern_2D-Soldier Bond",
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_0D-Continuous",
 PRESET,,AF50111C-6A90-9C41-AAD0-626A071CD8F6,,"Assembly_2FlexDims1Fixed_PlanarGroup_Roof
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt---594D41
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt-594D41
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)---FAF1D0
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)-FAF1D0
 0LayerPattern_2D-Soldier Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
-0LayerPattern_0D-Continuous",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,Built Up Roof,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
-PRESET,,,,,,,,,,IconWidth,48in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt---594D41,
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
+0LayerPattern_0D-Continuous",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,Built Up Roof,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
+PRESET,,,,,,,,,,IconWidth,48in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt-594D41,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)---FAF1D0
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)-FAF1D0
 0LayerPattern_2D-Soldier Bond",
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_0D-Continuous",
 PRESET,,E014D5C2-286E-4D46-A8C7-E5B98F5D5BFB,,"Assembly_2FlexDims1Fixed_PlanarGroup_Roof
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
-0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,2x8 Insulated Wood Joist,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
+0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,2x8 Insulated Wood Joist,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,EE20F4AD-C844-3C4B-9312-7CAEE13E19AE,,"Assembly_2FlexDims1Fixed_PlanarGroup_Roof
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-9.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-9.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
-0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,2x10 Wood Joist,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
+0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,2x10 Wood Joist,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-9.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-9.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,4BF48DA9-EBFE-6A4A-B812-003D507901EB,,"Assembly_2FlexDims1Fixed_PlanarGroup_Roof
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)---FAF1D0
-0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,2x8 Insulated Wood Joist,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic---6B6B6B,
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)-FAF1D0
+0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,2x8 Insulated Wood Joist,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)---FAF1D0
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-2in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyisocyanurate)-FAF1D0
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,C3FE07B5-7D43-3D4E-995A-A42EF5D534BF,,"Assembly_2FlexDims1Fixed_PlanarGroup_Roof
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_0D-Continuous
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
-0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,"12"" Open Web Steel Joist, Metal Deck",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)---D6D7D8,
+0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,"12"" Open Web Steel Joist, Metal Deck",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel---EAEAEA
+Part_1FlexDim2Fixed_ModuleLinear_Corrugated Steel Deck-Width-6in-Depth-1.5in-0Profile-Corrugated Steel-Finish1-0RawMaterial-Steel-EAEAEA
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_0D-Continuous",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,2078A5AB-66F8-CD49-AC39-5D999EB8F109,,"Assembly_2FlexDims1Fixed_PlanarGroup_Roof
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Roof,,"18"" Open Web Steel Joist, Plywood Sheathing",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,D09253EB-EC95-0242-95B8-8FAB2ECA20D5,,"Assembly_2FlexDims1Fixed_PlanarGroup_Ceiling
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Ceiling,,"5/8"" Gypsum",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,279160B6-815B-9949-9CBE-E92A55238D6E,,"Assembly_2FlexDims1Fixed_PlanarGroup_Ceiling
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Air---FFFFFF
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Air-FFFFFF
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel---CCCCCC
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.375in-Finish1-0RawMaterial-Plaster---F7EBDB",,Assembly_2FlexDims1Fixed_PlanarGroup_Ceiling,,"Plaster, Suspended",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Air---FFFFFF,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel-CCCCCC
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.375in-Finish1-0RawMaterial-Plaster-F7EBDB",,Assembly_2FlexDims1Fixed_PlanarGroup_Ceiling,,"Plaster, Suspended",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Air-FFFFFF,
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel---CCCCCC,
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.375in-Finish1-0RawMaterial-Plaster---F7EBDB,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel-CCCCCC,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.375in-Finish1-0RawMaterial-Plaster-F7EBDB,
 PRESET,,9DBA21B8-4773-5C46-93BC-9A181A4B61E7,,"Assembly_2FlexDims1Fixed_PlanarGroup_Ceiling
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Air---FFFFFF
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Air-FFFFFF
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Cementitious Wood Fiber-Length-24in-Width-24in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cementitious Wood Fiber---FFFFFF
-0LayerPattern_2D-Stack Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Ceiling,,"24x24 ACT, Suspended",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Air---FFFFFF,
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Cementitious Wood Fiber-Length-24in-Width-24in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cementitious Wood Fiber-FFFFFF
+0LayerPattern_2D-Stack Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Ceiling,,"24x24 ACT, Suspended",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Air-FFFFFF,
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Cementitious Wood Fiber-Length-24in-Width-24in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cementitious Wood Fiber---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Cementitious Wood Fiber-Length-24in-Width-24in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cementitious Wood Fiber-FFFFFF
 0LayerPattern_2D-Stack Bond",
 PRESET,,FC3F10B9-B4A0-7347-A614-E68B7DAA8B08,,"Assembly_2FlexDims1Fixed_PlanarGroup_Ceiling
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Cementitious Wood Fiber-Length-24in-Width-24in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cementitious Wood Fiber---FFFFFF
-0LayerPattern_2D-Stack Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Ceiling,,"24x24 Cementitious Wood Fiber, Suspended",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Air---FFFFFF,
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Cementitious Wood Fiber-Length-24in-Width-24in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cementitious Wood Fiber-FFFFFF
+0LayerPattern_2D-Stack Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Ceiling,,"24x24 Cementitious Wood Fiber, Suspended",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Air-FFFFFF,
 PRESET,,,,,,,,,,IconWidth,48in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Cementitious Wood Fiber-Length-24in-Width-24in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cementitious Wood Fiber---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Cementitious Wood Fiber-Length-24in-Width-24in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cementitious Wood Fiber-FFFFFF
 0LayerPattern_2D-Stack Bond",
 PRESET,,9E11DBCA-2BCC-9F4B-9AEC-C9C756E969E9,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint---F3F1ED",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Paint, Near White",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint---F3F1ED,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-F3F1ED",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Paint, Near White",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-F3F1ED,
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,0FB0A34D-04AB-0D41-862A-5BA5D3EB2A46,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint---C4C4C4",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Paint, Gray",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint---C4C4C4,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-C4C4C4",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Paint, Gray",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-C4C4C4,
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,EC9EA2F8-32A0-464D-8AAF-9B0AB6E6605C,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint---262527",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Paint, Near Black",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint---262527,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-262527",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Paint, Near Black",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-262527,
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,45280940-8FEE-7F45-A4FA-7D1B90E6AB54,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Fiber Cement-Length-120in-Width-6in-Thickness-0.75in-BevelWidth-0.5in-Finish1-0RawMaterial-Fibre Cement---DFE2E7
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Fiber Cement-Length-120in-Width-6in-Thickness-0.75in-BevelWidth-0.5in-Finish1-0RawMaterial-Fibre Cement-DFE2E7
 0LayerPattern_2D-Random Stagger",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Fiber-Cement Siding,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Fiber Cement-Length-120in-Width-6in-Thickness-0.75in-BevelWidth-0.5in-Finish1-0RawMaterial-Fibre Cement---DFE2E7
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Fiber Cement-Length-120in-Width-6in-Thickness-0.75in-BevelWidth-0.5in-Finish1-0RawMaterial-Fibre Cement-DFE2E7
 0LayerPattern_2D-Random Stagger",
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,37A88367-6650-A54E-83C2-D1E4811C669F,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.375in-Finish1-0RawMaterial-Plaster---F7EBDB
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel---CCCCCC",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Plaster, Metal Lath",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.375in-Finish1-0RawMaterial-Plaster---F7EBDB,
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel---CCCCCC,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.375in-Finish1-0RawMaterial-Plaster-F7EBDB
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel-CCCCCC",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Plaster, Metal Lath",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.375in-Finish1-0RawMaterial-Plaster-F7EBDB,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel-CCCCCC,
 PRESET,,292CE425-AE96-DE42-81FD-8E0A47D276E9,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Porcelain-Length-4in-Width-4in-Thickness-0.25in-BevelWidth-0.0625in-Finish1-0RawMaterial-Porcelain---E6E3DE
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Porcelain-Length-4in-Width-4in-Thickness-0.25in-BevelWidth-0.0625in-Finish1-0RawMaterial-Porcelain-E6E3DE
 0LayerPattern_2D-Flemish Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)---AC998D",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Porcelain Tile,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Porcelain-Length-4in-Width-4in-Thickness-0.25in-BevelWidth-0.0625in-Finish1-0RawMaterial-Porcelain---E6E3DE
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-AC998D",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Porcelain Tile,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Porcelain-Length-4in-Width-4in-Thickness-0.25in-BevelWidth-0.0625in-Finish1-0RawMaterial-Porcelain-E6E3DE
 0LayerPattern_2D-Flemish Bond",
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)---AC998D,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-AC998D,
 PRESET,,C3189A7C-A5FB-2C4D-8A5E-ABA2CD034AD2,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Brick Veneer-Length-7.625in-Width-2.29167in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Brick Veneer-Length-7.625in-Width-2.29167in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Cascading Thirds
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)---AC998D",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Thin Brick Veneer, Thinset - Classic Red",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Brick Veneer-Length-7.625in-Width-2.29167in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay---A05633
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-AC998D",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Thin Brick Veneer, Thinset - Classic Red",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Brick Veneer-Length-7.625in-Width-2.29167in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Cascading Thirds",
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)---AC998D,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-AC998D,
 PRESET,,8E88AD7C-6F18-8E4C-B244-129D7486080E,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Brick Veneer-Length-11.625in-Width-2.75in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay---5A4E47
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Brick Veneer-Length-11.625in-Width-2.75in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay-5A4E47
 0LayerPattern_2D-Running Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)---AC998D",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Thin Brick Veneer, Thinset - Dark",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Brick Veneer-Length-11.625in-Width-2.75in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay---5A4E47
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-AC998D",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Thin Brick Veneer, Thinset - Dark",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Brick Veneer-Length-11.625in-Width-2.75in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay-5A4E47
 0LayerPattern_2D-Running Bond",
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)---AC998D,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-AC998D,
 PRESET,,824E4501-816A-C944-9D30-F70875735580,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Brick Veneer-Length-7.625in-Width-2.29167in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Brick Veneer-Length-7.625in-Width-2.29167in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Cascading Thirds
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Concrete (Fine Aggregate)---ABA283
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel---CCCCCC",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Thin Brick Veneer, Thickset",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Brick Veneer-Length-7.625in-Width-2.29167in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay---A05633
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-ABA283
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel-CCCCCC",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Thin Brick Veneer, Thickset",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Brick Veneer-Length-7.625in-Width-2.29167in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Cascading Thirds",
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Concrete (Fine Aggregate)---ABA283,
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel---CCCCCC,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-ABA283,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel-CCCCCC,
 PRESET,,F0A05126-B351-F847-8048-4D70F1FCEAEC,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Plank_Engineered Wood-Length-32in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-0RawMaterial-Teak-FFFFFF
 0LayerPattern_2D-Running Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-5mm-Finish1-0RawMaterial-Felt---44443C",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Bamboo Wood Plank Floor, Direct Applied",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-5mm-Finish1-0RawMaterial-Felt-44443C",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Bamboo Wood Plank Floor, Direct Applied",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Plank_Engineered Wood-Length-32in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-0RawMaterial-Teak-FFFFFF
 0LayerPattern_2D-Running Bond",
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-5mm-Finish1-0RawMaterial-Felt---44443C,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-5mm-Finish1-0RawMaterial-Felt-44443C,
 PRESET,,330D1FAF-952A-C047-BA79-0104BC9ED248,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (White)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (White)-FFFFFF
 0LayerPattern_2D-Running Bond
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.1875in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)---FAF1D0",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Birch Wood Plank Floor, Direct Applied",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (White)---FFFFFF
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.1875in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-FAF1D0",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Birch Wood Plank Floor, Direct Applied",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (White)-FFFFFF
 0LayerPattern_2D-Running Bond",
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.1875in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)---FAF1D0,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.1875in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-FAF1D0,
 PRESET,,460B8887-0C45-B045-9C54-16299AA0EA0B,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cedar (White)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cedar (White)-FFFFFF
 0LayerPattern_2D-Cascading Fourths
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Z Channel-Width-2in-Depth-1.5in-0Profile-Steel Z Channel-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel Z Channel-Width-2in-Depth-1.5in-0Profile-Steel Z Channel-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Wood Rainscreen,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cedar (White)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cedar (White)-FFFFFF
 0LayerPattern_2D-Cascading Fourths",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Z Channel-Width-2in-Depth-1.5in-0Profile-Steel Z Channel-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel Z Channel-Width-2in-Depth-1.5in-0Profile-Steel Z Channel-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink
 0LayerPattern_1D-24-Inch O.C.",
 PRESET,,E190E64B-92D8-9041-9B7B-C54C102DA44A,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (White)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (White)-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Oak Wood Siding,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (White)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (White)-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,076E5E91-249D-AE4E-828F-FB4C79F0F399,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-3in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (Red)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-3in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (Red)-FFFFFF
 0LayerPattern_2D-Random Stagger
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Mahogany Wood Siding,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-3in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (Red)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-3in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (Red)-FFFFFF
 0LayerPattern_2D-Random Stagger",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,3127F340-E8A9-D240-B4ED-CF865F28B512,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (White)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (White)-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Black Cedar Wood Siding,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (White)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Oak (White)-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,5AB40131-9E31-B646-A413-69810F150D2A,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Carpet (Medium Profile)---E9EAE6",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Carpet Roll,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Carpet (Medium Profile)---E9EAE6,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Carpet (Medium Profile)-E9EAE6",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Carpet Roll,,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Carpet (Medium Profile)-E9EAE6,
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,8D0E07C2-49B9-6342-8EDB-53BC5799EC17,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Carpet-Length-32in-Width-16in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Carpet (Low Profile)---E9EAE6
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Carpet-Length-32in-Width-16in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Carpet (Low Profile)-E9EAE6
 0LayerPattern_2D-Stack Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Carpet Tile,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Carpet-Length-32in-Width-16in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Carpet (Low Profile)---E9EAE6
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Carpet-Length-32in-Width-16in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Carpet (Low Profile)-E9EAE6
 0LayerPattern_2D-Stack Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-180in-Width-36in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Zinc---013119
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-180in-Width-36in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Zinc-013119
 0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Zinc Standing-Seam Exterior,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-180in-Width-36in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Zinc---013119
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-180in-Width-36in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Zinc-013119
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel---FFFFFF
+Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel-FFFFFF
 1Material_Glass and Transparent_Air-0RawMaterial-Air-0Color_Glass and Transparent_Air-FFFFFF-Clear
 0LayerPattern_1D-16-Inch O.C.",
 PRESET,,C2070799-E69D-8F4E-9213-0BE69A89AD4B,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-4in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Calacatta)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-4in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Calacatta)-FFFFFF
 0LayerPattern_2D-Flemish Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Stone Tile,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-4in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Calacatta)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-4in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Calacatta)-FFFFFF
 0LayerPattern_2D-Flemish Bond",
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Concrete (Fine Aggregate)---ABA283,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-ABA283,
 PRESET,,BE58F7D2-1357-B343-AE4E-39345BA1932D,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Shingle_Asphalt-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Asphalt---594D41
+Part_0FlexDims3Fixed_ModulePlanar_Shingle_Asphalt-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Asphalt-594D41
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Asphalt Shingle,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Shingle_Asphalt-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Asphalt---594D41
+Part_0FlexDims3Fixed_ModulePlanar_Shingle_Asphalt-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Asphalt-594D41
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,75E7DBB1-AD1F-D84E-B182-464D77E4C3AE,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Shingle_Clay-Length-12in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModulePlanar_Shingle_Clay-Length-12in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Stack Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Clay Shingle,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Shingle_Clay-Length-12in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay---A05633
+Part_0FlexDims3Fixed_ModulePlanar_Shingle_Clay-Length-12in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Stack Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,8710008E-15EF-0C46-8B46-5B864BDD486F,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Shingle_Metal-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---EBECF0
+Part_0FlexDims3Fixed_ModulePlanar_Shingle_Metal-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-EBECF0
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Metal Shingle,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Shingle_Metal-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---EBECF0
+Part_0FlexDims3Fixed_ModulePlanar_Shingle_Metal-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-EBECF0
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,1C0C6F6A-4502-5640-BD65-5D08DE5FE154,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Shingle_Stone-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Slate---ABABAB
+Part_0FlexDims3Fixed_ModulePlanar_Shingle_Stone-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Slate-ABABAB
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Slate Shingle,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Shingle_Stone-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Slate---ABABAB
+Part_0FlexDims3Fixed_ModulePlanar_Shingle_Stone-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Slate-ABABAB
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,81724A33-F0E6-3446-949A-0853D06037C1,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Shingle_Wood-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Redwood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Shingle_Wood-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Redwood-FFFFFF
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Wood Shingle,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Shingle_Wood-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Redwood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Shingle_Wood-Length-12in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Redwood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,4AF85368-76E1-7745-B8BD-B4B192E35F12,,"Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Air---FFFFFF
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Double Pane Insulated Glass Unit, 1/2"" Air Gap",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2,
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Air---FFFFFF,
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Air-FFFFFF
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Double Pane Insulated Glass Unit, 1/2"" Air Gap",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Air-FFFFFF,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2,
 PRESET,,CA76B199-B790-4F40-AD98-45F192504987,,"Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.625in-Finish1-0RawMaterial-Air---FFFFFF
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Double Pane Insulated Glass Unit, 5/8"" Air Gap",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2,
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.625in-Finish1-0RawMaterial-Air---FFFFFF,
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.625in-Finish1-0RawMaterial-Air-FFFFFF
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Double Pane Insulated Glass Unit, 5/8"" Air Gap",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.625in-Finish1-0RawMaterial-Air-FFFFFF,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2,
 PRESET,,CD93B11E-9836-D54D-8C75-B33299FC5D3D,,"Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Air---FFFFFF
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Double Pane Insulated Glass Unit, 3/4"" Air Gap",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2,
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Air---FFFFFF,
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Air-FFFFFF
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Double Pane Insulated Glass Unit, 3/4"" Air Gap",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Air-FFFFFF,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2,
 PRESET,,7A74A18F-B49C-1B45-9C02-1857F4E7DEE2,,"Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Air---FFFFFF
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Double Pane Insulated Glass Unit, 1"" Air Gap",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2,
-PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Air---FFFFFF,
-PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Air-FFFFFF
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Double Pane Insulated Glass Unit, 1"" Air Gap",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2,
+PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Air-FFFFFF,
+PRESET,,,,,,,,,,,,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2,
 PRESET,,5059FE68-7AB6-A24E-96E3-EF9BCF2FEC90,,"Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.09375in-Finish1-0RawMaterial-Glass---F2F2F2",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"3/32"" Float Glass",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.09375in-Finish1-0RawMaterial-Glass---F2F2F2,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.09375in-Finish1-0RawMaterial-Glass-F2F2F2",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"3/32"" Float Glass",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.09375in-Finish1-0RawMaterial-Glass-F2F2F2,
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,B2E3910D-F7DE-8B49-8110-EE9E2A9E6B6C,,"Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"1/8"" Float Glass",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---F2F2F2,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"1/8"" Float Glass",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2,
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,9BB15A3F-6530-FF45-A7C0-AC4710A5D190,,"Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---D6DAD8
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-D6DAD8
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)---ECB9BE
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
-0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Spandrel Glass, 3/4"" Insulation",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---D6DAD8,
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
+0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Spandrel Glass, 3/4"" Insulation",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-D6DAD8,
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)---ECB9BE
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,50D8984B-355D-1C4F-9EC4-335C2C4F5E46,,"Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---D6DAD8
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-D6DAD8
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)---ECB9BE
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
-0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Spandrel Glass, 1"" Insulation",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass---D6DAD8,
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
+0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Spandrel Glass, 1"" Insulation",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-D6DAD8,
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)---ECB9BE
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)---D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond",
 PRESET,,F6C3795B-9C62-574F-A774-8F59931B7B1D,,"Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-FFFFFF
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)---ECB9BE
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-FFFFFF
 0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Insulated Aluminum panel, 1""",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-FFFFFF
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)---ECB9BE
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-FFFFFF
 0LayerPattern_2D-Soldier Bond",
 PRESET,,793BD07C-5187-4448-90C4-351B71BC164E,,"Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-FFFFFF
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyethylene)---FAFAFA
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyethylene)-FAFAFA
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-FFFFFF
 0LayerPattern_2D-Soldier Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Insulated Aluminum panel, 1-1/2""",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-FFFFFF
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyethylene)---FAFAFA
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyethylene)-FAFAFA
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-12in-Width-12in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-FFFFFF
 0LayerPattern_2D-Soldier Bond",
 PRESET,,ECD87B07-4F6D-484C-B5B3-E3D5DC2B83EE,,"Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-16in-Width-12in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---D0C0A9
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-16in-Width-12in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-D0C0A9
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyethylene)---FAFAFA
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyethylene)-FAFAFA
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-16in-Width-12in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---D0C0A9
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-16in-Width-12in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-D0C0A9
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_SystemPanel,,"Insulated Aluminum panel, 2""",,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-16in-Width-12in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---D0C0A9
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-16in-Width-12in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-D0C0A9
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconHeight,64in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyethylene)---FAFAFA
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Foam-Length-96in-Width-48in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Foam (Polyethylene)-FAFAFA
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,,,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-16in-Width-12in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum---D0C0A9
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-16in-Width-12in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-D0C0A9
 0LayerPattern_2D-Running Bond",
 PRESET,,DC3CED53-6914-D745-BA69-D1EA30B8AC4A,,"Assembly_2FlexDims1Fixed_PlanarGroup_Countertop
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Terrazzo (Beige)---FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Countertop,,"1"" Terazzo",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Terrazzo (Beige)---FFFFFF,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Terrazzo (Beige)-FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Countertop,,"1"" Terazzo",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Terrazzo (Beige)-FFFFFF,
 PRESET,,,,,,,,,,IconWidth,48in,,,,,
 PRESET,,37E11074-0963-504B-8DB4-9AC588CF7D6F,,"Assembly_2FlexDims1Fixed_PlanarGroup_Countertop
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1.25in-Finish1-0RawMaterial-Granite (Black 1)---FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Countertop,,"1-1/4"" Granite (Black 1)",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1.25in-Finish1-0RawMaterial-Granite (Black 1)---FFFFFF,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1.25in-Finish1-0RawMaterial-Granite (Black 1)-FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Countertop,,"1-1/4"" Granite (Black 1)",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1.25in-Finish1-0RawMaterial-Granite (Black 1)-FFFFFF,
 PRESET,,,,,,,,,,IconWidth,48in,,,,,
 PRESET,,9C28ACEA-DD52-2D41-BECE-4C8FCD58D695,,"Assembly_2FlexDims1Fixed_PlanarGroup_Countertop
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Granite (Black 2)---FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Countertop,,"2"" Granite (Black 2)",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Granite (Black 2)---FFFFFF,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Granite (Black 2)-FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Countertop,,"2"" Granite (Black 2)",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Granite (Black 2)-FFFFFF,
 PRESET,,,,,,,,,,IconWidth,48in,,,,,
 PRESET,,A0776356-EF13-C34B-A458-025A181D3E1D,,"Assembly_2FlexDims1Fixed_PlanarGroup_Countertop
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Marble (Black 1)---FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Countertop,,"3"" Marble (Black 1)",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Marble (Black 1)---FFFFFF,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Marble (Black 1)-FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Countertop,,"3"" Marble (Black 1)",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Marble (Black 1)-FFFFFF,
 PRESET,,,,,,,,,,IconWidth,48in,,,,,
 PRESET,,7D996580-9C84-3946-B39F-7458B1AD1D2B,,"Assembly_2FlexDims1Fixed_PlanarGroup_Tread
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Tread,,Plywood Tread,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconWidth,12in,,,,,
 PRESET,,2B7F4608-5F7A-0143-8384-00643D584333,,"Assembly_2FlexDims1Fixed_PlanarGroup_Tread
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)-FFFFFF
 0LayerPattern_2D-English Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Tread,,Limestone Tread,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)-FFFFFF
 0LayerPattern_2D-English Bond",
 PRESET,,,,,,,,,,IconWidth,12in,,,,,
 PRESET,,1725A092-FA98-3642-84D2-20B8C7204812,,"Assembly_2FlexDims1Fixed_PlanarGroup_Tread
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Glass---D6DAD8",,Assembly_2FlexDims1Fixed_PlanarGroup_Tread,,"1"" Glass Tread",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Glass---D6DAD8,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Glass-D6DAD8",,Assembly_2FlexDims1Fixed_PlanarGroup_Tread,,"1"" Glass Tread",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Glass-D6DAD8,
 PRESET,,,,,,,,,,IconWidth,12in,,,,,
 PRESET,,8BBF1960-F91A-824E-9913-259C9A9C1AB1,,"Assembly_2FlexDims1Fixed_PlanarGroup_Tread
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Tread,,Plywood + OSB Tread,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconWidth,12in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,279C8DA1-7DF3-814F-A48F-D1BA2EB43273,,"Assembly_2FlexDims1Fixed_PlanarGroup_Tread
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Tread,,Birch + Plywood Tread,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconWidth,12in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,C6ED0EA0-7014-3942-AA17-4EA838FDA773,,"Assembly_2FlexDims1Fixed_PlanarGroup_Tread
 Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Tile_Luxury Vinyl-Length-24in-Width-8in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Vinyl Composite-0RawMaterial-Walnut-FFFFFF
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Tread,,Walnut + Plywood Tread,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Tile_Luxury Vinyl-Length-24in-Width-8in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Vinyl Composite-0RawMaterial-Walnut-FFFFFF
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,IconWidth,12in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,083A265B-F8F5-B144-92CE-BC69F8C5C968,,"Assembly_2FlexDims1Fixed_PlanarGroup_Riser
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Riser,,Plywood Riser,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconWidth,12in,,,,,
 PRESET,,A976B689-C570-9C4B-837B-9B4DFC731CE5,,"Assembly_2FlexDims1Fixed_PlanarGroup_Riser
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)-FFFFFF
 0LayerPattern_2D-English Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Riser,,Limestone Riser,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)-FFFFFF
 0LayerPattern_2D-English Bond",
 PRESET,,,,,,,,,,IconWidth,12in,,,,,
 PRESET,,FC24436F-FB6A-9A4C-8D76-2165B869C2BC,,"Assembly_2FlexDims1Fixed_PlanarGroup_Riser
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Glass---D6DAD8",,Assembly_2FlexDims1Fixed_PlanarGroup_Riser,,"1"" Glass Riser",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Glass---D6DAD8,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Glass-D6DAD8",,Assembly_2FlexDims1Fixed_PlanarGroup_Riser,,"1"" Glass Riser",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Glass-D6DAD8,
 PRESET,,,,,,,,,,IconWidth,12in,,,,,
 PRESET,,9B189D5C-2E19-C04B-98FE-F14789D456FE,,"Assembly_2FlexDims1Fixed_PlanarGroup_Riser
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Riser,,Plywood + OSB Riser,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconWidth,12in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,808A570C-1627-A24E-8DC0-C77F98F54451,,"Assembly_2FlexDims1Fixed_PlanarGroup_Riser
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry-FFFFFF
 0LayerPattern_2D-Running Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Riser,,Birch + Plywood Riser,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,,,,,,,,,IconWidth,12in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,44E31263-9053-5B4F-9600-22771659DAF2,,"Assembly_2FlexDims1Fixed_PlanarGroup_Riser
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Ash---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Ash-FFFFFF
 0LayerPattern_2D-Soldier Bond
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",,Assembly_2FlexDims1Fixed_PlanarGroup_Riser,,Walnut + Plywood Riser,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Ash---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Ash-FFFFFF
 0LayerPattern_2D-Soldier Bond",
 PRESET,,,,,,,,,,IconHeight,12in,,,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood---FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
 0LayerPattern_2D-Running Bond",
 PRESET,,2FB7E639-D432-7248-BEEB-2DE0DB9E12B2,,"Assembly_2FlexDims1Fixed_PlanarGroup_Railing
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Asphalt---646963",,Assembly_2FlexDims1Fixed_PlanarGroup_Railing,,Chain Link Fence,,IconLength,60in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Asphalt---646963,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Asphalt-646963",,Assembly_2FlexDims1Fixed_PlanarGroup_Railing,,Chain Link Fence,,IconLength,60in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Asphalt-646963,
 PRESET,,,,,,,,,,IconHeight,42in,,,,,
 PRESET,,D336D8A5-5EFA-FD4B-83F3-14298874D58A,,"Assembly_2FlexDims1Fixed_PlanarGroup_Railing
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Cement---8F9AA0",,Assembly_2FlexDims1Fixed_PlanarGroup_Railing,,Picket Fence,,IconLength,60in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Cement---8F9AA0,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Cement-8F9AA0",,Assembly_2FlexDims1Fixed_PlanarGroup_Railing,,Picket Fence,,IconLength,60in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Cement-8F9AA0,
 PRESET,,,,,,,,,,IconHeight,42in,,,,,
 PRESET,,D960F48F-3EAC-3F49-9C0D-B611B3C3CDDA,,"Assembly_2FlexDims1Fixed_PlanarGroup_Railing
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.25in-Finish1-0RawMaterial-Glass---D6DAD8",,Assembly_2FlexDims1Fixed_PlanarGroup_Railing,,"1/4"" Glass Railing",,IconLength,60in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.25in-Finish1-0RawMaterial-Glass---D6DAD8,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.25in-Finish1-0RawMaterial-Glass-D6DAD8",,Assembly_2FlexDims1Fixed_PlanarGroup_Railing,,"1/4"" Glass Railing",,IconLength,60in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.25in-Finish1-0RawMaterial-Glass-D6DAD8,
 PRESET,,,,,,,,,,IconHeight,42in,,,,,
 PRESET,,1BD00E20-039A-9740-B05C-4AEC64BDA65F,,"Assembly_2FlexDims1Fixed_PlanarGroup_Railing
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Metal Wire Fence---FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Railing,,"1/2"" Metal Wire Fence",,IconLength,60in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Metal Wire Fence---FFFFFF,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Metal Wire Fence-FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Railing,,"1/2"" Metal Wire Fence",,IconLength,60in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Metal Wire Fence-FFFFFF,
 PRESET,,,,,,,,,,IconHeight,42in,,,,,
 ,,,,"Assembly_2FlexDims1Fixed_PlanarGroup_Landscape
-Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Grass---FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Landscape,,Grass and Soil,,IconLength,60in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Grass---FFFFFF,
-,,,,,,,,,,IconHeight,42in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Soil---FFFFFF,
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Grass-FFFFFF",,Assembly_2FlexDims1Fixed_PlanarGroup_Landscape,,Grass and Soil,,IconLength,60in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Grass-FFFFFF,
+,,,,,,,,,,IconHeight,42in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Soil-FFFFFF,
