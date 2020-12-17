@@ -10,7 +10,7 @@
 
 #include "BIMPresetCollection.generated.h"
 
-static constexpr int32 BIMPresetCollectionCurrentVersion = 2;
+static constexpr int32 BIMPresetCollectionCurrentVersion = 3;
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetCollection
