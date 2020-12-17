@@ -1086,7 +1086,7 @@ void UModumateDocument::DeleteObjects(const TArray<AModumateObjectInstance*>& in
 	GetDeleteObjectsDeltas(deleteDeltas, initialObjectsToDelete, bAllowRoomAnalysis, bDeleteConnected);
 
 	UWorld *world = initialObjectsToDelete.Num() > 0 ? initialObjectsToDelete[0]->GetWorld() : nullptr;
-	if (world != nullptr)
+	if (world == nullptr)
 	{
 		return;
 	}
