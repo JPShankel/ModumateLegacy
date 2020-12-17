@@ -1080,7 +1080,20 @@ void UModumateDocument::DeleteObjects(const TArray<int32> &obIds, bool bAllowRoo
 	);
 }
 
-void UModumateDocument::DeleteObjects(const TArray<AModumateObjectInstance*> &initialObjectsToDelete, bool bAllowRoomAnalysis, bool bDeleteConnected)
+void UModumateDocument::DeleteObjects(const TArray<AModumateObjectInstance*>& initialObjectsToDelete, bool bAllowRoomAnalysis, bool bDeleteConnected)
+{
+	TArray<FDeltaPtr> deleteDeltas;
+	GetDeleteObjectsDeltas(deleteDeltas, initialObjectsToDelete, bAllowRoomAnalysis, bDeleteConnected);
+
+	UWorld *world = initialObjectsToDelete.Num() > 0 ? initialObjectsToDelete[0]->GetWorld() : nullptr;
+	if (world != nullptr)
+	{
+		return;
+	}
+	ApplyDeltas(deleteDeltas, world);
+}
+
+void UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, const TArray<AModumateObjectInstance*> &initialObjectsToDelete, bool bAllowRoomAnalysis, bool bDeleteConnected)
 {
 	if (initialObjectsToDelete.Num() == 0)
 	{
@@ -1095,7 +1108,6 @@ void UModumateDocument::DeleteObjects(const TArray<AModumateObjectInstance*> &in
 
 	// Keep track of all descendants of intended (and connected) objects to delete
 	TSet<AModumateObjectInstance*> allObjectsToDelete(initialObjectsToDelete);
-	TArray<FDeltaPtr> combinedDeltas;
 
 	// Gather 3D graph objects, so we can generated deltas that will potentially delete connected objects.
 	TSet<int32> graph3DObjIDsToDelete;
@@ -1230,25 +1242,22 @@ void UModumateDocument::DeleteObjects(const TArray<AModumateObjectInstance*> &in
 		}
 	}
 
-	auto gatherNonGraphDeletionDeltas = [&combinedDeltas](const TArray<const AModumateObjectInstance*>& objects)
+	auto gatherNonGraphDeletionDeltas = [&OutDeltas](const TArray<const AModumateObjectInstance*>& objects)
 	{
 		auto deleteDelta = MakeShared<FMOIDelta>();
 		for (const AModumateObjectInstance* nonGraphObject : objects)
 		{
 			deleteDelta->AddCreateDestroyState(nonGraphObject->GetStateData(), EMOIDeltaType::Destroy);
 		}
-		combinedDeltas.Add(deleteDelta);
+		OutDeltas.Add(deleteDelta);
 	};
 
 	// Gather all of the deltas that apply to different types of objects
 	gatherNonGraphDeletionDeltas(surfaceGraphDerivedObjects);
-	combinedDeltas.Append(combinedSurfaceGraphDeltas);
+	OutDeltas.Append(combinedSurfaceGraphDeltas);
 	gatherNonGraphDeletionDeltas(graph3DDerivedObjects);
-	combinedDeltas.Append(graph3DDeltas);
+	OutDeltas.Append(graph3DDeltas);
 	gatherNonGraphDeletionDeltas(nonGraphDerivedObjects);
-
-	// Finally, apply the combined deltas for all types of objects to delete
-	ApplyDeltas(combinedDeltas, world);
 
 	// TODO: represent room analysis as side effects
 }

@@ -333,16 +333,7 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 			// Otherwise, delete the surface graph if it cannot be preserved after the underlying geometry changes
 			else
 			{
-				TArray<AModumateObjectInstance*> objectsToDelete = GetAllDescendents();
-				objectsToDelete.Add(this);
-
-				auto deleteSurfaceDelta = MakeShared<FMOIDelta>();
-				for (AModumateObjectInstance* descendent : objectsToDelete)
-				{
-					deleteSurfaceDelta->AddCreateDestroyState(descendent->GetStateData(), EMOIDeltaType::Destroy);
-				}
-
-				OutSideEffectDeltas->Add(deleteSurfaceDelta);
+				doc->GetDeleteObjectsDeltas(*OutSideEffectDeltas, { this });
 			}
 
 			doc->SetNextID(nextID, ID);
