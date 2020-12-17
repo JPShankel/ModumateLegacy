@@ -107,7 +107,7 @@ bool UPlaneHostedObjTool::BeginUse()
 			}
 
 			FMOIPlaneHostedObjData newMOICustomData(FMOIPlaneHostedObjData::CurrentVersion);
-			newMOICustomData.FlipSigns.Y = GetAppliedInversionValue();
+			newMOICustomData.FlipSigns.Y = GetAppliedInversionValue() ? -1.0 : 1.0f;
 			newMOICustomData.Justification = InstanceJustification;
 
 			FMOIStateData newMOIData;

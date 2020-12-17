@@ -483,6 +483,8 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 
 void AMOIPlaneHostedObj::PostLoadInstanceData()
 {
+	bool bFixedInstanceData = false;
+
 	if (InstanceData.Version < InstanceData.CurrentVersion)
 	{
 		if (InstanceData.bLayersInverted_DEPRECATED)
@@ -490,16 +492,23 @@ void AMOIPlaneHostedObj::PostLoadInstanceData()
 			InstanceData.FlipSigns.Y = -1.0f;
 		}
 
-		for (int32 axisIdx = 0; axisIdx < 3; ++axisIdx)
-		{
-			float& flipSign = InstanceData.FlipSigns[axisIdx];
-			if (FMath::Abs(flipSign) != 1.0f)
-			{
-				flipSign = 1.0f;
-			}
-		}
-
 		InstanceData.Version = InstanceData.CurrentVersion;
+		bFixedInstanceData = true;
+	}
+
+	// Check for invalid flip signs regardless of version numbers, due to non-serialization-version bugs
+	for (int32 axisIdx = 0; axisIdx < 3; ++axisIdx)
+	{
+		float& flipSign = InstanceData.FlipSigns[axisIdx];
+		if (FMath::Abs(flipSign) != 1.0f)
+		{
+			flipSign = 1.0f;
+			bFixedInstanceData = true;
+		}
+	}
+
+	if (bFixedInstanceData)
+	{
 		StateData.CustomData.SaveStructData(InstanceData);
 	}
 }
