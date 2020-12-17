@@ -17,6 +17,7 @@ FModumateOccluder::FModumateOccluder(const FVector3d& A, const FVector3d& B, con
 		Swap(u, v);
 		d = -d;
 	}
+	Area2D = 0.5 * d;
 
 	BarycentricMx.Row0 = { v.Y / d , -v.X / d };
 	BarycentricMx.Row1 = { -u.Y / d, u.X / d };
@@ -25,12 +26,7 @@ FModumateOccluder::FModumateOccluder(const FVector3d& A, const FVector3d& B, con
 
 	BoundingBox = FBox2D({ FVector2D(FVector(A)), FVector2D(FVector(B)), FVector2D(FVector(C)) });
 	BoundingBox.ExpandBy(boxExpansion);
-	MinZ = FMath::Min3(Vertices[0].Z, Vertices[1].Z, Vertices[2].Z);
-}
-
-double FModumateOccluder::Area2D() const
-{
-	return FMath::Abs(0.5 * FVector2d((double*)(Vertices[1] - Vertices[0])).Cross(FVector2d((double*)(Vertices[2] - Vertices[0])) ));
+	MinZ = FMath::Min3(Vertices[0].Z, Vertices[1].Z, Vertices[2].Z) - boxExpansion;
 }
 
 double FModumateOccluder::DepthAtPoint(FVector2d Point) const

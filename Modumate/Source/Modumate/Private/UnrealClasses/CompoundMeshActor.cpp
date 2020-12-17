@@ -727,6 +727,7 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 	};
 
 	const int32 numComponents = StaticMeshComps.Num();
+
 	for (int32 component = 0; component < numComponents; ++component)
 	{
 		const UStaticMeshComponent* staticMeshComponent = StaticMeshComps[component];
@@ -789,6 +790,18 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 			const FTransform localToWorld = staticMeshComponent->GetRelativeTransform() * actorToWorld;
 			UStaticMesh* staticMesh = staticMeshComponent->GetStaticMesh();
 			if (staticMesh == nullptr)
+			{
+				continue;
+			}
+
+			FVector minPoint;
+			FVector maxPoint;
+			FBox boundingBox(ForceInit);
+			staticMeshComponent->GetLocalBounds(minPoint, maxPoint);
+			boundingBox += localToWorld.TransformPosition(minPoint);
+			boundingBox += localToWorld.TransformPosition(maxPoint);
+
+			if (!boundingBox.IsValid || ParentPage->lineClipping->IsBoxOccluded(boundingBox))
 			{
 				continue;
 			}

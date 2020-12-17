@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "SegmentTypes.h"
 #include "MatrixTypes.h"
 
 class FModumateOccluder
@@ -13,8 +12,8 @@ public:
 	FMatrix2d BarycentricMx;
 	FBox2D BoundingBox;
 	double MinZ;
+	double Area2D;
 
-	double Area2D() const;
 	double DepthAtPoint(FVector2d Point) const;
 	double DepthAtPoint(FVector3d Point) const;
 	bool IsWithinTriangle(FVector2d Point) const;

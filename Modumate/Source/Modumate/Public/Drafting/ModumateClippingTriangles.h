@@ -7,6 +7,7 @@
 
 class UModumateDocument;
 class AModumateObjectInstance;
+class FModumateViewLineSegment;
 
 namespace Modumate
 {
@@ -20,6 +21,8 @@ namespace Modumate
 		TArray<FEdge> ClipWorldLineToView(FEdge line);
 		TArray<FEdge> ClipViewLineToView(FEdge line);
 		FEdge WorldLineToView(FEdge line) const;
+		bool IsBoxOccluded(const FBox2D& Box, float Depth) const;
+		bool IsBoxOccluded(const FBox& Box) const;
 
 		// Debugging:
 		void GetTriangleEdges(TArray<FEdge>& outEdges) const;
@@ -34,7 +37,8 @@ namespace Modumate
 
 
 		TArray<FModumateOccluder> Occluders;
-		bool ClipSingleWorldLine(FSegment3d& viewLine, FModumateOccluder occluder, TArray<FSegment3d>& generatedLines);
+		bool ClipSingleWorldLine(FModumateViewLineSegment& viewLine, FModumateOccluder occluder, TArray<FModumateViewLineSegment>& generatedLines);
+		static bool IsBoxUnoccluded(const FModumateOccluder& Occluder, const FBox2D Box, float Depth);
 
 		class QuadTreeNode
 		{
@@ -42,7 +46,8 @@ namespace Modumate
 			QuadTreeNode(const FBox2D& Box, int NodeDepth = 0);
 			void AddOccluder(const FModumateOccluder* NewOccluder);
 			// Apply a functor to all intersecting lines & boxes (until failure).
-			bool Apply(const FSegment3d& line, TFunctionRef<bool (const FModumateOccluder& occluder)> functor);
+			bool Apply(const FModumateViewLineSegment& line, TFunctionRef<bool (const FModumateOccluder& occluder)> functor);
+			bool Apply(const FBox2D& box, TFunctionRef<bool (const FModumateOccluder& occluder)> functor);
 			
 			const FBox2D NodeBox;
 
