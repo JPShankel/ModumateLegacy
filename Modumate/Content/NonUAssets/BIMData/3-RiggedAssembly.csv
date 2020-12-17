@@ -2,8 +2,6 @@ TYPENAME,,Assembly_2FlexDims1Fixed_PlanarRig,,Assembly,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,PropertyType,,PropertyName,,,,,,,,,,,,,,,,,,,,,,,,,,
 PROPERTY,,DisplayText,,Name,,Assembly.Name,,,,,,,,,,,,,,,,,,,,,,,,
-,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,DataType=Dimensions,Dimension,Value,DataType=StartsInProject,X,DataType=Slots,SlotConfig,SlotName,PartPreset,DataType=FinalPartTransformAtSlot,LocationX,LocationY,LocationZ,SizeX,SizeY,SizeZ,RotationX,RotationY,RotationZ,FlipX,FlipY,FlipZ
 PRESET,,0AAF99EC-E318-114E-BE45-FFBAF0C048C1,,"Assembly_1FlexDim2Fixed_LinearRig_HingeSet

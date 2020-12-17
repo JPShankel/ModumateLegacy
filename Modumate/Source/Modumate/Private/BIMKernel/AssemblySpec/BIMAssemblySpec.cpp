@@ -417,25 +417,32 @@ FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
 
 EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FModumateDatabase& InDB)
 {
-	if (!RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::ToeKickDepth, ToeKickDepth))
+	if (!RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::ToeKickDepth, ToeKickDepth))
 	{
 		ToeKickDepth = Modumate::Units::FUnitValue::WorldCentimeters(0);
 	}
 
-	if (!RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::ToeKickHeight, ToeKickHeight))
+	if (!RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::ToeKickHeight, ToeKickHeight))
 	{
 		ToeKickHeight = Modumate::Units::FUnitValue::WorldCentimeters(0);
 	}
 
 	// Cabinets consist of a list of parts (per rigged assembly) and a single material added to an extrusion for the prism
 	FString materialAsset;
-	if (RootProperties.TryGetProperty(EBIMValueScope::Material, BIMPropertyNames::AssetID, materialAsset))
+	if (ensureAlways(RootProperties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, materialAsset)))
 	{
 		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(materialAsset);
 		if (ensureAlways(mat != nullptr))
 		{
 			FBIMExtrusionSpec& extrusion = Extrusions.AddDefaulted_GetRef();
 			extrusion.Material = *mat;
+
+			FString colorHexValue;
+			if (RootProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue))
+			{
+				extrusion.Material.DefaultBaseColor.Color = colorHexValue.IsEmpty() ? FColor::White : FColor::FromHex(colorHexValue);
+			}
+
 #if WITH_EDITOR
 			FBIMPartLayout layout;
 			ensureAlways(layout.FromAssembly(*this, FVector::OneVector) == EBIMResult::Success);

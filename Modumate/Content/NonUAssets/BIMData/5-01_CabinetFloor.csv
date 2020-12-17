@@ -1,17 +1,11 @@
-TYPENAME,,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,Assembly,,,,,,,,,,,,,,,,,,,,,,,
-,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DisplayText,,Name,,Assembly.Name,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,Dimension,,,,Assembly.IconWidth,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,Dimension,,,,Assembly.IconDepth,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,Dimension,,,,Assembly.IconHeight,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,Dimension,,,,Assembly.ToeKickHeight,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,Dimension,,,,Assembly.ToeKickDepth,,,,,,,,,,,,,,,,,,,,,
-,,InputExtensibility,,InputPreset,,PinTarget,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildCabinetFace,,Cabinet,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..1,,ChildCarcassMaterial,,Cabinet,,,,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,,,,,,,,,,,,,,,,
-TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,Assembly.IconWidth,Assembly.IconDepth,Assembly.IconHeight,Assembly.ToeKickHeight,Assembly.ToeKickDepth,DataType=Dimensions,Dimension,Value,DataType=Material,AppliesToChannel,InnerMaterial,SurfaceMaterial,ColorTintVariation,ColorTint,DataType=StartsInProject,X,DataType=InputPins,ChildCabinetFace,ChildCarcassMaterial
+TYPENAME,,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,Assembly,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,,,,,,,,,,,
+PROPERTY,,DisplayText,,Name,,Assembly.Name,,,,,,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,PinTarget,,,,,,,,,,,,,,,
+INPUTPIN,,1..1,,ChildCabinetFace,,Cabinet,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,,,,,,,,,,
+TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,DataType=Dimensions,Dimension,Value,DataType=Material,AppliesToChannel,InnerMaterial,SurfaceMaterial,ColorTintVariation,ColorTint,DataType=StartsInProject,X,DataType=InputPins,ChildCabinetFace
 PRESET,,499F3847-BCCF-E046-8BE9-1D371F035BFD,,"Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor
 Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1of1-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight
@@ -23,8 +17,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF
 Property_Spatiality_Slot-HandleUpperFixedXZ
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20
-1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,"Single Swing, Walnut",30in,24in,36in,4in,3.5in,,ToeKickDepth,4in,,Finish1,0RawMaterial-Walnut,,0,FFFFFF,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,"Single Swing, Walnut",,ToeKickDepth,4in,,Finish1,0RawMaterial-Walnut,,0,FFFFFF,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1of1-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight
 Property_Spatiality_Slot-Frame
 Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Walnut-FFFFFF
@@ -34,11 +27,11 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF
 Property_Spatiality_Slot-HandleUpperFixedXZ
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20",1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural
-PRESET,,,,,,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconWidth,30in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconHeight,36in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconDepth,24in,,,,,,,,,,,
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20"
+PRESET,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,
+PRESET,,,,,,,,,,IconWidth,30in,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,36in,,,,,,,,,,
+PRESET,,,,,,,,,,IconDepth,24in,,,,,,,,,,
 PRESET,,23279B64-6EC9-4349-98BC-162E0B052970,,"Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor
 Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical1
@@ -50,8 +43,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF
 Property_Spatiality_Slot-HandleUpperFixedXZ
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20
-1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,"Double Swing, Walnut",30in,24in,36in,4in,3.5in,,ToeKickDepth,4in,,Finish1,0RawMaterial-Walnut,,0,FFFFFF,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,"Double Swing, Walnut",,ToeKickDepth,4in,,Finish1,0RawMaterial-Walnut,,0,FFFFFF,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical1
 Property_Spatiality_Slot-Frame
 Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Walnut-FFFFFF
@@ -61,11 +53,11 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF
 Property_Spatiality_Slot-HandleUpperFixedXZ
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20",1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural
-PRESET,,,,,,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconWidth,30in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconHeight,36in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconDepth,24in,,,,,,,,,,,
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20"
+PRESET,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,
+PRESET,,,,,,,,,,IconWidth,30in,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,36in,,,,,,,,,,
+PRESET,,,,,,,,,,IconDepth,24in,,,,,,,,,,
 PRESET,,BEAEA929-031D-3A4D-B53D-93EA9A781B33,,"Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor
 Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1of1-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight
@@ -77,8 +69,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF
 Property_Spatiality_Slot-HandleXMidWidthYOutsideZMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20
-1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,Single Drawer,30in,24in,36in,4in,3.5in,,ToeKickDepth,4in,,Finish1,0RawMaterial-Walnut,,0,FFFFFF,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,Single Drawer,,ToeKickDepth,4in,,Finish1,0RawMaterial-Walnut,,0,FFFFFF,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1of1-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight
 Property_Spatiality_Slot-Frame
 Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Walnut-FFFFFF
@@ -88,11 +79,11 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF
 Property_Spatiality_Slot-HandleXMidWidthYOutsideZMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20",1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural
-PRESET,,,,,,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconWidth,30in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconHeight,36in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconDepth,24in,,,,,,,,,,,
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20"
+PRESET,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,
+PRESET,,,,,,,,,,IconWidth,30in,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,36in,,,,,,,,,,
+PRESET,,,,,,,,,,IconDepth,24in,,,,,,,,,,
 PRESET,,D09F5C89-C2F8-494E-9F09-18C326A50921,,"Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor
 Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical1-Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical2-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay3Vertical1
@@ -111,8 +102,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF
 Property_Spatiality_Slot-HandleXMidWidthYOutsideZMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20
-1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,Two Drawers,30in,24in,36in,4in,3.5in,,ToeKickDepth,4in,,Finish1,0RawMaterial-Walnut,,0,FFFFFF,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,Two Drawers,,ToeKickDepth,4in,,Finish1,0RawMaterial-Walnut,,0,FFFFFF,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical1-Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical2-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay3Vertical1
 Property_Spatiality_Slot-Frame
 Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Walnut-FFFFFF
@@ -129,11 +119,11 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF
 Property_Spatiality_Slot-HandleXMidWidthYOutsideZMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20",1Material_Wood_Walnut-0RawMaterial-Walnut-0Color_Wood_Walnut-FFFFFF-Natural
-PRESET,,,,,,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconWidth,30in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconHeight,36in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconDepth,24in,,,,,,,,,,,
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20"
+PRESET,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,
+PRESET,,,,,,,,,,IconWidth,30in,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,36in,,,,,,,,,,
+PRESET,,,,,,,,,,IconDepth,24in,,,,,,,,,,
 PRESET,,8C73EC1C-E2F6-684D-AE87-21C9545631CB,,"Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor
 Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay3Vertical1-Property_Spatiality_Slot-AssemblyPanelOverlay3Vertical2-Property_Spatiality_Slot-AssemblyPanelOverlay3Vertical3-Property_Spatiality_Slot-Frame
@@ -159,8 +149,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-04.Cabinet-Panel-04'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-F3F1ED
 Property_Spatiality_Slot-HandleXMidWidthYOutsideZMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'-Finish1-0RawMaterial-Aluminum-EBECF0
-1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-F3F1ED-GentleWhite",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,Three Drawers,30in,24in,36in,4in,3.5in,,ToeKickDepth,4in,,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,0,F3F1ED,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'-Finish1-0RawMaterial-Aluminum-EBECF0",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,Three Drawers,,ToeKickDepth,4in,,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,0,F3F1ED,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay3Vertical1-Property_Spatiality_Slot-AssemblyPanelOverlay3Vertical2-Property_Spatiality_Slot-AssemblyPanelOverlay3Vertical3-Property_Spatiality_Slot-Frame
 Property_Spatiality_Slot-Frame
 Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-F3F1ED
@@ -184,11 +173,11 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-04.Cabinet-Panel-04'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-F3F1ED
 Property_Spatiality_Slot-HandleXMidWidthYOutsideZMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'-Finish1-0RawMaterial-Aluminum-EBECF0",1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-F3F1ED-GentleWhite
-PRESET,,,,,,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconWidth,30in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconHeight,36in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconDepth,24in,,,,,,,,,,,
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'-Finish1-0RawMaterial-Aluminum-EBECF0"
+PRESET,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,
+PRESET,,,,,,,,,,IconWidth,30in,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,36in,,,,,,,,,,
+PRESET,,,,,,,,,,IconDepth,24in,,,,,,,,,,
 PRESET,,08C43859-8C51-5640-89A8-2A82B09A4ACD,,"Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor
 Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay4Vertical1-Property_Spatiality_Slot-AssemblyPanelOverlay4Vertical2-Property_Spatiality_Slot-AssemblyPanelOverlay4Vertical3-Property_Spatiality_Slot-AssemblyPanelOverlay4Vertical4
@@ -221,8 +210,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-04.Cabinet-Panel-04'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-F3F1ED
 Property_Spatiality_Slot-HandleXMidWidthYOutsideZMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'-Finish1-0RawMaterial-Aluminum-EBECF0
-1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-F3F1ED-GentleWhite",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,Four Drawers,30in,24in,36in,4in,3.5in,,ToeKickDepth,4in,,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,0,F3F1ED,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'-Finish1-0RawMaterial-Aluminum-EBECF0",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,Four Drawers,,ToeKickDepth,4in,,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,0,F3F1ED,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay4Vertical1-Property_Spatiality_Slot-AssemblyPanelOverlay4Vertical2-Property_Spatiality_Slot-AssemblyPanelOverlay4Vertical3-Property_Spatiality_Slot-AssemblyPanelOverlay4Vertical4
 Property_Spatiality_Slot-Frame
 Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-F3F1ED
@@ -253,11 +241,11 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-04.Cabinet-Panel-04'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-F3F1ED
 Property_Spatiality_Slot-HandleXMidWidthYOutsideZMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'-Finish1-0RawMaterial-Aluminum-EBECF0",1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-F3F1ED-GentleWhite
-PRESET,,,,,,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconWidth,30in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconHeight,36in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconDepth,24in,,,,,,,,,,,
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'-Finish1-0RawMaterial-Aluminum-EBECF0"
+PRESET,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,
+PRESET,,,,,,,,,,IconWidth,30in,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,36in,,,,,,,,,,
+PRESET,,,,,,,,,,IconDepth,24in,,,,,,,,,,
 PRESET,,FE4B2814-5C95-F14C-9DAC-4F0ED9406BCB,,"Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor
 Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1Above21-Property_Spatiality_Slot-AssemblyPanelOverlay1Above22-Property_Spatiality_Slot-AssemblyPanelOverlay1Above23-Property_Spatiality_Slot-Frame
@@ -283,8 +271,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-04.Cabinet-Panel-04'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-F3F1ED
 Property_Spatiality_Slot-HandleXMidWidthYOutsideZMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'-Finish1-0RawMaterial-Aluminum-EBECF0
-1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-F3F1ED-GentleWhite",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,One Drawer Over Two Doors,30in,24in,36in,4in,3.5in,,ToeKickDepth,4in,,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,0,F3F1ED,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'-Finish1-0RawMaterial-Aluminum-EBECF0",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,One Drawer Over Two Doors,,ToeKickDepth,4in,,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,0,F3F1ED,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1Above21-Property_Spatiality_Slot-AssemblyPanelOverlay1Above22-Property_Spatiality_Slot-AssemblyPanelOverlay1Above23-Property_Spatiality_Slot-Frame
 Property_Spatiality_Slot-Frame
 Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-F3F1ED
@@ -308,11 +295,11 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-04.Cabinet-Panel-04'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-F3F1ED
 Property_Spatiality_Slot-HandleXMidWidthYOutsideZMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'-Finish1-0RawMaterial-Aluminum-EBECF0",1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-F3F1ED-GentleWhite
-PRESET,,,,,,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconWidth,30in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconHeight,36in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconDepth,24in,,,,,,,,,,,
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-03.Cabinet-Handle-Pull-03'-Finish1-0RawMaterial-Aluminum-EBECF0"
+PRESET,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,
+PRESET,,,,,,,,,,IconWidth,30in,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,36in,,,,,,,,,,
+PRESET,,,,,,,,,,IconDepth,24in,,,,,,,,,,
 PRESET,,25DE1F0E-6022-4C47-89E6-7F858EA5FBCB,,"Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor
 Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1of1-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight
@@ -324,8 +311,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-03.Cabinet-Panel-03'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-ABABAB
 Property_Spatiality_Slot-HandleUpperFixedXZ
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09'-Finish1-0RawMaterial-Aluminum-EBECF0
-1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-ABABAB-DarkGrey",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,"Single Swing, Grey Paint",30in,24in,36in,4in,3.5in,,ToeKickDepth,4in,,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,0,ABABAB,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09'-Finish1-0RawMaterial-Aluminum-EBECF0",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,"Single Swing, Grey Paint",,ToeKickDepth,4in,,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,0,ABABAB,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1of1-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight
 Property_Spatiality_Slot-Frame
 Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-ABABAB
@@ -335,11 +321,11 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-03.Cabinet-Panel-03'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-ABABAB
 Property_Spatiality_Slot-HandleUpperFixedXZ
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09'-Finish1-0RawMaterial-Aluminum-EBECF0",1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-ABABAB-DarkGrey
-PRESET,,,,,,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconWidth,30in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconHeight,36in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconDepth,24in,,,,,,,,,,,
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09'-Finish1-0RawMaterial-Aluminum-EBECF0"
+PRESET,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,
+PRESET,,,,,,,,,,IconWidth,30in,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,36in,,,,,,,,,,
+PRESET,,,,,,,,,,IconDepth,24in,,,,,,,,,,
 PRESET,,89083846-C15A-1D47-94A7-E32D24A3F57B,,"Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor
 Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical1
@@ -351,8 +337,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-03.Cabinet-Panel-03'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-ABABAB
 Property_Spatiality_Slot-HandleUpperFixedXZ
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09'-Finish1-0RawMaterial-Aluminum-EBECF0
-1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-ABABAB-DarkGrey",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,"Double Swing, Grey Paint",30in,24in,36in,4in,3.5in,,ToeKickDepth,4in,,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,0,ABABAB,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09'-Finish1-0RawMaterial-Aluminum-EBECF0",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,"Double Swing, Grey Paint",,ToeKickDepth,4in,,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,0,ABABAB,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical1
 Property_Spatiality_Slot-Frame
 Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-ABABAB
@@ -362,11 +347,11 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-03.Cabinet-Panel-03'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-ABABAB
 Property_Spatiality_Slot-HandleUpperFixedXZ
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09'-Finish1-0RawMaterial-Aluminum-EBECF0",1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-ABABAB-DarkGrey
-PRESET,,,,,,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconWidth,30in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconHeight,36in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconDepth,24in,,,,,,,,,,,
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-Pull-09.Cabinet-Handle-Pull-09'-Finish1-0RawMaterial-Aluminum-EBECF0"
+PRESET,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,
+PRESET,,,,,,,,,,IconWidth,30in,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,36in,,,,,,,,,,
+PRESET,,,,,,,,,,IconDepth,24in,,,,,,,,,,
 PRESET,,B75DCE2D-FEDA-0847-8999-4E52DAC0C7BC,,"Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor
 Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Sliding-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelSlidingXX_1-Property_Spatiality_Slot-AssemblyPanelSlidingXX_2-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelSlidingXO_2
@@ -385,8 +370,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-03.Cabinet-Panel-03'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-ABABAB
 Property_Spatiality_Slot-HandleXBacksetDistanceXYOutsideZMidHeight
-Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-331F20
-1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-ABABAB-DarkGrey",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,Two-Door Sliding,30in,24in,36in,4in,3.5in,,ToeKickDepth,4in,,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,0,ABABAB,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
+Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-331F20",,Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,,Two-Door Sliding,,ToeKickDepth,4in,,Finish1,0RawMaterial-Spruce-Pine-Fir,0RawMaterial-Paint,0,ABABAB,,X,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Sliding-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelSlidingXX_1-Property_Spatiality_Slot-AssemblyPanelSlidingXX_2-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelSlidingXO_2
 Property_Spatiality_Slot-FrameSliding
 Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh-Cabinet-Frame-Sliding-01.Cabinet-Frame-Sliding-01'-Finish1-0RawMaterial-Aluminum-0RawMaterial-Paint-FEF1ED
@@ -403,8 +387,8 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh-Cabinet-Panel-03.Cabinet-Panel-03'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-ABABAB
 Property_Spatiality_Slot-HandleXBacksetDistanceXYOutsideZMidHeight
-Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-331F20",1Material_Spread_Paint-0RawMaterial-Paint-0Color_Spread_Paint-ABABAB-DarkGrey
-PRESET,,,,,,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconWidth,30in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconHeight,36in,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,IconDepth,24in,,,,,,,,,,,
+Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-331F20"
+PRESET,,,,,,,,,,ToeKickHeight,3.5in,,,,,,,,,,
+PRESET,,,,,,,,,,IconWidth,30in,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,36in,,,,,,,,,,
+PRESET,,,,,,,,,,IconDepth,24in,,,,,,,,,,
