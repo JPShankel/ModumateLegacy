@@ -94,16 +94,16 @@ public:
 	FVector StairDimension = FVector(250.f, -150.f, 300.f);
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
-	float WallIconScaleFactor = 0.35f;
+	float WallIconScaleFactor = 1.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
-	float FloorIconScaleFactor = 0.25f;
+	float FloorIconScaleFactor = 1.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
-	float PortalIconScaleFactor = 50.f;
+	float PortalIconScaleFactor = 1.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
-	float CabinetScaleFactor = 1.1f;
+	float CabinetScaleFactor = 1.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
 	float TrimIconScaleFactor = 24.f;
@@ -115,7 +115,7 @@ public:
 	float ProfileIconScaleFactor = 24.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
-	float StairIconScaleFactor = 1.5f;
+	float StairIconScaleFactor = 1.f;
 
 protected:
 	// Called when the game starts or when spawned
@@ -134,8 +134,6 @@ protected:
 	UPROPERTY()
 	class UMaterialInstanceDynamic* DynCustomMaterial;
 
-	FTransform SavedSpringArmRelativeTransform;
-
 public:
 
 	UPROPERTY()
@@ -152,15 +150,15 @@ public:
 	bool SetIconMeshForBIMDesigner(bool UseDependentPreset, const FBIMKey& PresetID, UMaterialInterface*& OutMaterial, UTexture*& OutTexture, const FBIMEditorNodeIDType& NodeID);
 	bool GetSavedIconFromPreset(const FBIMKey& PresetID, UTexture*& OutTexture);
 	UMaterialInterface* CreateMaterialForIconTexture(const FBIMKey& PresetID, UTexture* InTexture);
-	bool SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex);
 
 	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForPortalAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForPortalAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex);
+	bool SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex);
 	bool SetIconMeshForTrimAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForFFEAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForStairAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForStairAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex);
 
 	bool SetIconFromTextureAsset(const FBIMKey& PresetID, UMaterialInterface*& OutMaterial);
 	bool SetIconMeshForRawMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* InRenderTarget);
@@ -178,8 +176,7 @@ public:
 	void SetIconDynamicMeshLayersForCapture(bool Visible);
 	void SetIconCompoundMeshActorForCapture(bool Visible);
 
-	void SetSpringArmDistanceForCapture(AActor* ActorToCapture, float SizeScale, bool OnlyCollidingComponents);
-	void ResetSpringArm();
+	void SetCaptureCompTransformForCapture(AActor* ActorToCapture, float SizeScale, bool OnlyCollidingComponents);
 
 	// TODO: This is a temp function for releasing saved render targets related to BIM presets	
 	// When BIMKey can guarantee unique appearance, then BIMKeyToRenderTarget array and this function can be removed	

@@ -341,6 +341,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 		IconImage->SetBrushFromMaterial(IconMaterial);
 		ComponentPresetListItem->IconImage->SetBrushFromMaterial(IconMaterial);
 	}
+	IconImage->SetVisibility(bCaptureSuccess ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 
 	return true;
 }

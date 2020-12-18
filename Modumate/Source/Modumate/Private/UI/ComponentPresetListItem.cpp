@@ -52,5 +52,6 @@ bool UComponentPresetListItem::CaptureIconForBIMDesignerSwap(class AEditModelPla
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);
 	}
+	IconImage->SetVisibility(result ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 	return result;
 }

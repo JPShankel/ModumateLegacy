@@ -44,15 +44,20 @@ void ACompoundMeshActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector Scale, bool bLateralInvert, bool bMakeCollision)
+void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int32 PartIndex, FVector Scale, bool bLateralInvert, bool bMakeCollision)
 {
 	// Figure out how many components we might need.
 
 	int32 maxNumMeshes = ObAsm.Parts.Num();
 
+	if (!ensureAlways(PartIndex >= 0 && PartIndex < maxNumMeshes))
+	{
+		return;
+	}
+
 	for (int32 compIdx = 0; compIdx < StaticMeshComps.Num(); ++compIdx)
 	{
-		if (UStaticMeshComponent *staticMeshComp = StaticMeshComps[compIdx])
+		if (UStaticMeshComponent* staticMeshComp = StaticMeshComps[compIdx])
 		{
 			if (compIdx < maxNumMeshes)
 			{
@@ -86,7 +91,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 
 	// Update scaled part layout for assembly
 	// TODO: determine when we can avoid re-calculating the part layout, ideally by comparing assembly by-value or by-key as well as the desired scale.
-	if (!ensureAlways(CachedPartLayout.FromAssembly(ObAsm,Scale)==EBIMResult::Success))
+	if (!ensureAlways(CachedPartLayout.FromAssembly(ObAsm, Scale) == EBIMResult::Success))
 	{
 		return;
 	}
@@ -99,8 +104,36 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 		return;
 	}
 
+	TArray<bool> partVisible;
+	// Part 0 is the root of the whole assembly, so all parts will be active
+	if (PartIndex > 0)
+	{
+		partVisible.SetNum(maxNumMeshes);
+
+		for (int32 i = 0; i < maxNumMeshes; ++i)
+		{
+			int32 part = i;
+			int32 sanity = 0;
+			partVisible[i] = false;
+			while (part != -1 && sanity++ < maxNumMeshes)
+			{
+				if (part == PartIndex)
+				{
+					partVisible[i] = true;
+					break;
+				}
+				part = ObAsm.Parts[part].ParentSlotIndex;
+			}
+		}
+	}
+
 	for (int32 slotIdx = 0; slotIdx < numSlots; ++slotIdx)
 	{
+		if (partVisible.Num() > 0 && !partVisible[slotIdx])
+		{
+			continue;
+		}
+
 		const FBIMPartSlotSpec& assemblyPart = ObAsm.Parts[slotIdx];
 		// Part[0] and potentially other parts are mesh-less containers used to store parenting values
 		// All they need is their VariableValues set, there are no mesh components to make
@@ -110,10 +143,10 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 		}
 
 		// Now make the mesh component and set it up using the cached transform data
-		UStaticMesh *partMesh = assemblyPart.Mesh.EngineMesh.Get();
+		UStaticMesh* partMesh = assemblyPart.Mesh.EngineMesh.Get();
 
 		// Make sure that there's a static mesh component for each part that has the engine mesh.
-		UStaticMeshComponent *partStaticMeshComp = StaticMeshComps[slotIdx];
+		UStaticMeshComponent* partStaticMeshComp = StaticMeshComps[slotIdx];
 		if (partStaticMeshComp == nullptr)
 		{
 			partStaticMeshComp = NewObject<UStaticMeshComponent>(this);
@@ -130,7 +163,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 		FRotator partRotator = FRotator::MakeFromEuler(CachedPartLayout.PartSlotInstances[slotIdx].Rotation);
 		FVector partNativeSize = assemblyPart.Mesh.NativeSize * Modumate::InchesToCentimeters;
 
- 		FVector partScale = CachedPartLayout.PartSlotInstances[slotIdx].Size / partNativeSize;
+		FVector partScale = CachedPartLayout.PartSlotInstances[slotIdx].Size / partNativeSize;
 
 		FVector partDesiredSize = CachedPartLayout.PartSlotInstances[slotIdx].Size;
 
@@ -195,7 +228,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 			for (int32 sliceIdx = 0; sliceIdx < 9; ++sliceIdx)
 			{
 				int32 compIdx = sliceCompIdxStart + sliceIdx;
-				UProceduralMeshComponent *procMeshComp = NineSliceComps[compIdx];
+				UProceduralMeshComponent* procMeshComp = NineSliceComps[compIdx];
 				if (procMeshComp)
 				{
 					procMeshComp->DestroyComponent();
@@ -210,7 +243,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 			partStaticMeshComp->SetVisibility(false);
 			partStaticMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-			TMap<FName, int32> &matIndexMapping = MaterialIndexMappings[slotIdx];
+			TMap<FName, int32>& matIndexMapping = MaterialIndexMappings[slotIdx];
 			bool bUpdateMaterials = false;
 
 			int32 baseLodIndex = 0;
@@ -220,13 +253,13 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 			for (int32 meshesIdx = 0; meshesIdx <= 1; meshesIdx++)
 			{
 				int32 lodIndex = meshesIdx == 0 ? baseLodIndex : minLodIndex;
-				TArray<UProceduralMeshComponent*> &comps = meshesIdx == 0 ? NineSliceComps : NineSliceLowLODComps;
+				TArray<UProceduralMeshComponent*>& comps = meshesIdx == 0 ? NineSliceComps : NineSliceLowLODComps;
 
 				if (partMesh->HasValidRenderData(true, lodIndex))
 				{
 					bool bCreated = InitializeProcMeshComponent(comps, rootComp, sliceCompIdxStart);
 
-					UProceduralMeshComponent *baseProcMeshComp = comps[sliceCompIdxStart];
+					UProceduralMeshComponent* baseProcMeshComp = comps[sliceCompIdxStart];
 					if (bMeshChanged && !bCreated)
 					{
 						baseProcMeshComp->ClearAllMeshSections();
@@ -248,7 +281,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 				matIndexMapping.Empty();
 				for (int32 matIdx = 0; matIdx < partMesh->StaticMaterials.Num(); ++matIdx)
 				{
-					const FStaticMaterial &meshMaterial = partMesh->StaticMaterials[matIdx];
+					const FStaticMaterial& meshMaterial = partMesh->StaticMaterials[matIdx];
 					matIndexMapping.Add(meshMaterial.MaterialSlotName, matIdx);
 				}
 			}
@@ -262,15 +295,15 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 #endif // DEBUG_NINE_SLICING
 
 			FBox partRelSliceBounds[9];
-			const FBoxSphereBounds &meshBounds = partMesh->ExtendedBounds;
+			const FBoxSphereBounds& meshBounds = partMesh->ExtendedBounds;
 			FVector meshMinExtension = (meshBounds.Origin - meshBounds.BoxExtent);
 			FVector meshMaxExtension = (meshBounds.Origin + meshBounds.BoxExtent) - partNativeSize;
 
 			for (int32 sliceIdx = 0; sliceIdx < 9; ++sliceIdx)
 			{
 				int32 compIdx = sliceCompIdxStart + sliceIdx;
-				UProceduralMeshComponent *procMeshComp = NineSliceComps[compIdx];
-				UProceduralMeshComponent *procMeshLowLODComp = NineSliceLowLODComps[compIdx];
+				UProceduralMeshComponent* procMeshComp = NineSliceComps[compIdx];
+				UProceduralMeshComponent* procMeshLowLODComp = NineSliceLowLODComps[compIdx];
 				if (procMeshComp && (procMeshComp->GetNumSections() > 0))
 				{
 					FVector sliceRelativePos = partRelativePos;
@@ -278,7 +311,7 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 
 					if (!partScale.Equals(FVector::OneVector))
 					{
-						FBox &newBounds = partRelSliceBounds[sliceIdx];
+						FBox& newBounds = partRelSliceBounds[sliceIdx];
 						newBounds.Min = meshMinExtension;
 						newBounds.Max = partDesiredSize + meshMaxExtension;
 						FBox originalBounds(meshBounds.Origin - meshBounds.BoxExtent, meshBounds.Origin + meshBounds.BoxExtent);
@@ -387,16 +420,21 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec &ObAsm, FVector
 			for (int32 sliceIdx = 0; sliceIdx < 9; ++sliceIdx)
 			{
 				int32 compIdx = sliceCompIdxStart + sliceIdx;
-				UProceduralMeshComponent *procMeshComp = NineSliceComps[compIdx];
+				UProceduralMeshComponent* procMeshComp = NineSliceComps[compIdx];
 				UModumateFunctionLibrary::SetMeshMaterialsFromMapping(procMeshComp, assemblyPart.ChannelMaterials, &matIndexMapping);
 
 				procMeshComp = NineSliceLowLODComps[compIdx];
 				UModumateFunctionLibrary::SetMeshMaterialsFromMapping(procMeshComp, assemblyPart.ChannelMaterials, &matIndexMapping);
 				procMeshComp->SetVisibility(false);
 			}
-		}
-	}
-	SetIsDynamic(origDynamicStatus);
+				}
+			}
+	SetIsDynamic(origDynamicStatus); 
+}
+
+void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec& ObAsm, FVector Scale, bool bLateralInvert, bool bMakeCollision)
+{
+	MakeFromAssemblyPart(ObAsm, 0, Scale, bLateralInvert, bMakeCollision);
 }
 
 bool ACompoundMeshActor::ConvertProcMeshToLinesOnPlane(const FVector &PlanePosition, const FVector &PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges)

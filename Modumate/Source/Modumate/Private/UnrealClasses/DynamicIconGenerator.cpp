@@ -133,7 +133,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssembly(const FBIMKey& AsmKey, UMater
 		return false;
 	}
 
-	bool captureSuccess = SetIconMeshForAssemblyType(*assembly, IconRenderTarget);
+	bool captureSuccess = SetIconMeshForAssemblyType(*assembly, IconRenderTarget, BIM_ROOT_PART);
 	if (captureSuccess)
 	{
 		UTexture2D* outSavedTexture = nullptr;
@@ -177,11 +177,56 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 	// The following presets need render capture for icon
 	UTextureRenderTarget2D* renderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), RenderTargetSize, RenderTargetSize, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
 	bool captureSuccess = false;
+
+	// TODO: Ideally this function will be in FBIMPresetEditor, in InstancePool of BIMDesigner
+	// If this assembly is a part of its parent assembly, find the partID associated with the meshes needed to isolate for render
+	if (preset->NodeScope == EBIMValueScope::Assembly || preset->NodeScope == EBIMValueScope::Part)
+	{
+		FString slotID;
+		const FBIMPresetEditorNodeSharedPtr nodeInst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+		if (nodeInst && nodeInst->ParentInstance.Pin())
+		{
+			TArray<FBIMPresetPartSlot> partSlots;
+			nodeInst->ParentInstance.Pin()->GetPartSlots(partSlots);
+			for (int32 i = 0; i < partSlots.Num(); ++i)
+			{
+				if (partSlots[i].SlotPreset == nodeInst->MyParentPartSlot)
+				{
+					const FBIMPresetInstance* slotPreset = presetManager.CraftingNodePresets.Presets.Find(partSlots[i].SlotPreset);
+					slotPreset->Properties.TryGetProperty(EBIMValueScope::Slot, BIMPropertyNames::ID, slotID);
+					break;
+				}
+			}
+		}
+
+		// Match slotID to the part inside the CraftingAssembly
+		int32 assemblyPartIndex = 0; // 0 = defaulted to full assembly
+		if (!slotID.IsEmpty())
+		{
+			for (int32 i = 0; i < Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly.Parts.Num(); ++i)
+			{
+				if (Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly.Parts[i].SlotID == slotID)
+				{
+					assemblyPartIndex = i;
+					break;
+				}
+			}
+		}
+
+		// Check if this icon is used for slot based swapping menu
+		if (UseDependentPreset && assemblyPartIndex > 0)
+		{
+			// TODO: Need delta system to preview swap presets
+			captureSuccess = false;
+		}
+		else
+		{
+			captureSuccess = SetIconMeshForAssemblyType(Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly, renderTarget, assemblyPartIndex);
+		}
+	}
+
 	switch (preset->NodeScope)
 	{
-	case EBIMValueScope::Assembly:
-		captureSuccess = SetIconMeshForAssemblyType(Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly, renderTarget);
-		break;
 	case EBIMValueScope::RawMaterial:
 		captureSuccess = SetIconMeshForRawMaterial(PresetID, renderTarget);
 		break;
@@ -198,9 +243,6 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 	case EBIMValueScope::Mesh:
 		captureSuccess = SetIconMeshForMesh(PresetID, renderTarget);
 		break;
-	case EBIMValueScope::Part:
-		captureSuccess = SetIconMeshForPart(UseDependentPreset, PresetID, NodeID, renderTarget);
-		break;
 	case EBIMValueScope::Layer:
 		if (UseDependentPreset)
 		{
@@ -210,7 +252,6 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 		{
 			captureSuccess = SetIconMeshForLayerNodeID(NodeID, renderTarget);
 		}
-
 		break;
 	}
 	
@@ -262,7 +303,7 @@ UMaterialInterface* ADynamicIconGenerator::CreateMaterialForIconTexture(const FB
 	return dynMat;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex)
 {
 	switch (Assembly.ObjectType)
 	{
@@ -278,23 +319,24 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &A
 		return SetIconMeshForFloorAssembly(Assembly, InRenderTarget);
 	case EObjectType::OTDoor:
 	case EObjectType::OTWindow:
-		return SetIconMeshForPortalAssembly(Assembly, InRenderTarget);
+		return SetIconMeshForPortalAssembly(Assembly, InRenderTarget, PartIndex);
 	case EObjectType::OTStructureLine:
 	case EObjectType::OTTrim:
 	case EObjectType::OTMullion:
 		return SetIconMeshForTrimAssembly(Assembly, InRenderTarget);
 	case EObjectType::OTCabinet:
-		return SetIconMeshForCabinetAssembly(Assembly, InRenderTarget);
+		return SetIconMeshForCabinetAssembly(Assembly, InRenderTarget, PartIndex);
 	case EObjectType::OTFurniture:
 		return SetIconMeshForFFEAssembly(Assembly, InRenderTarget);
 	case  EObjectType::OTStaircase:
-		return SetIconMeshForStairAssembly(Assembly, InRenderTarget);
+		return SetIconMeshForStairAssembly(Assembly, InRenderTarget, PartIndex);
 	}
 	return false;
 }
 
 bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
 {
+	// Step 1: Setup for actor to create meshes from assembly
 	// TODO: Investigate component bounding box issue when location isn't in FVector::zero
 	IconDynamicMeshActor->SetActorLocation(FVector::ZeroVector);
 	FVector p1(WallLength * 0.5f, 0.f, 0.f);
@@ -326,28 +368,25 @@ bool ADynamicIconGenerator::SetIconMeshForWallAssembly(const FBIMAssemblySpec &A
 				IconDynamicMeshActor->ProceduralSubLayers[i]->GetMaterial(0));
 		}
 	}
-	SetIconDynamicMeshLayersForCapture(true);
+	IconDynamicMeshActor->SetActorRelativeTransform(FTransform::Identity);
 
-	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
-	FVector meshOrigin, meshExtent;
-	IconDynamicMeshActor->GetActorBounds(true, meshOrigin, meshExtent, true);
-	meshExtent.Normalize();
-	FVector meshSize = FVector(meshExtent.Size()) * WallIconScaleFactor;
-	FVector meshLocation = meshOrigin * meshExtent * -1.f;
-	IconDynamicMeshActor->SetActorRelativeLocation(FVector(meshLocation.X, 0.f, meshLocation.Z * 0.5f));
-	IconDynamicMeshActor->SetActorScale3D(meshSize);
+	// Step 2: Set camera transform and actor for capture
+	FTransform originalCaptureCompTransform = SceneCaptureComp->GetRelativeTransform();
+	SetCaptureCompTransformForCapture(IconDynamicMeshActor, WallIconScaleFactor, true);
+	SetIconDynamicMeshLayersForCapture(true);
 	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
-	// Step 3: Cleanup
-	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
-	IconDynamicMeshActor->SetActorScale3D(FVector::OneVector);
+	// Step 3: Revert capture comp to its original transform, and actor to its original state
+	SceneCaptureComp->SetRelativeTransform(originalCaptureCompTransform);
 	SetIconDynamicMeshLayersForCapture(false);
+
 	return true;
 }
 
 bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
 {
+	// Step 1: Setup for actor to create meshes from assembly
 	// TODO: Investigate component bounding box issue when location isn't in FVector::zero
 	IconDynamicMeshActor->SetActorLocation(FVector::ZeroVector);
 	FVector p1(FloorLength * -0.5f, FloorDepth * 0.5f, 0.f);
@@ -387,58 +426,46 @@ bool ADynamicIconGenerator::SetIconMeshForFloorAssembly(const FBIMAssemblySpec &
 			}
 		}
 	}
+	IconDynamicMeshActor->SetActorRelativeTransform(FTransform::Identity);
+
+	// Step 2: Set camera transform and actor for capture
+	FTransform originalCaptureCompTransform = SceneCaptureComp->GetRelativeTransform();
+	SetCaptureCompTransformForCapture(IconDynamicMeshActor, FloorIconScaleFactor, true);
 	SetIconDynamicMeshLayersForCapture(true);
-
-	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
-	FVector meshOrigin, meshExtent;
-	IconDynamicMeshActor->GetActorBounds(true, meshOrigin, meshExtent, true);
-	meshExtent.Normalize();
-	FVector meshSize = FVector(meshExtent.Size()) * FloorIconScaleFactor;
-	FVector meshLocation = meshOrigin * meshSize * -1.f;
-	IconDynamicMeshActor->SetActorRelativeLocation(FVector(0.f, 0.f, meshLocation.Z));
-	IconDynamicMeshActor->SetActorScale3D(meshSize);
-
 	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
-	// Step 3: Cleanup
-	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
-	IconDynamicMeshActor->SetActorScale3D(FVector::OneVector);
+	// Step 3: Revert capture comp to its original transform, and actor to its original state
+	SceneCaptureComp->SetRelativeTransform(originalCaptureCompTransform);
 	SetIconDynamicMeshLayersForCapture(false);
+
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex)
 {
-	IconCompoundMeshActor->MakeFromAssembly(Assembly, FVector::OneVector, false, true);
+	// Step 1: Setup for actor to create meshes from assembly
+	// TODO: Check door not created with proper extent unless location is set to zero during MakeFromAssembly
+	IconCompoundMeshActor->SetActorTransform(FTransform::Identity);
+	IconCompoundMeshActor->MakeFromAssemblyPart(Assembly, PartIndex, FVector::OneVector, false, true);
+	IconCompoundMeshActor->SetActorRelativeTransform(FTransform::Identity);
 
-	// Step 1: Calculate and adjust model to fit inside the view of SceneCaptureComp
-	// TODO: Some assemblies have native size = 0 
-	FVector portalSize = Assembly.GetRiggedAssemblyNativeSize();
-	float portalWidth = portalSize.X;
-	float portalHeight = portalSize.Z;
-
-	FVector meshSize = (PortalIconScaleFactor / FVector(portalWidth, 0.f, portalHeight).Size()) * FVector::OneVector;
-	FVector meshLocation = (FVector(portalWidth, 0.f, portalHeight)) * meshSize * -0.5f;
-
-	IconCompoundMeshActor->SetActorRelativeLocation(meshLocation);
-	IconCompoundMeshActor->SetActorRelativeScale3D(meshSize);
-
-	// Step 2: Set bound render to prevent mesh from being occluded by front mesh
+	// Step 2: Set camera transform and actor for capture
+	FTransform originalCaptureCompTransform = SceneCaptureComp->GetRelativeTransform();
+	SetCaptureCompTransformForCapture(IconCompoundMeshActor, PortalIconScaleFactor, true);
 	SetIconCompoundMeshActorForCapture(true);
-
 	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
-	// Step 3: Cleanup
-	IconCompoundMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
-	IconCompoundMeshActor->SetActorScale3D(FVector::OneVector);
+	// Step 3: Revert capture comp to its original transform, and actor to its original state
+	SceneCaptureComp->SetRelativeTransform(originalCaptureCompTransform);
+	IconCompoundMeshActor->SetActorRelativeTransform(FTransform::Identity);
 	SetIconCompoundMeshActorForCapture(false);
 
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex)
 {
 	// Now that we have a cabinet assembly, a DynamicMeshActor, and CompoundMeshActor,
 	// we can make a fake cabinet for icon generation the same way that AMOICabinet does.
@@ -470,29 +497,26 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 	};
 	FVector extrusionDelta = cabinetHeight * FVector::UpVector;
 
-	// Step 2: Update the actors to show the current cabinet assembly
+	// Step 1: Setup for actor to create meshes from assembly
 	bool bFaceValid;
-	AMOICabinet::UpdateCabinetActors(Assembly, cabinetBasePoints, extrusionDelta, 2, false, false, false, IconDynamicMeshActor, IconCompoundMeshActor, bFaceValid);
+	AMOICabinet::UpdateCabinetActors(Assembly, cabinetBasePoints, extrusionDelta, 2, false, false, false, IconDynamicMeshActor, IconCompoundMeshActor, bFaceValid, PartIndex);
 
-	// Step 3: Position the spring arm in order to capture the cabinet
-	SetSpringArmDistanceForCapture(IconDynamicMeshActor, CabinetScaleFactor, false);
-
-	// Set bound render to prevent mesh from being occluded by front mesh
+	// Step 2: Set camera transform and actor for capture
+	FTransform originalCaptureCompTransform = SceneCaptureComp->GetRelativeTransform();
+	// TODO: Capture extent to dynamic mesh actor?
+	SetCaptureCompTransformForCapture(IconCompoundMeshActor, CabinetScaleFactor, true);
 	SetIconCompoundMeshActorForCapture(true);
 	SetIconDynamicMeshLayersForCapture(true);
-
-	// Step 4: Capture!
 	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
-	// Step 5: Cleanup
-	ResetSpringArm();
-	IconCompoundMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
-	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
-	IconCompoundMeshActor->SetActorScale3D(FVector::OneVector);
-	IconDynamicMeshActor->SetActorScale3D(FVector::OneVector);
+	// Step 3: Revert capture comp to its original transform, and actor to its original state
+	SceneCaptureComp->SetRelativeTransform(originalCaptureCompTransform);
+	IconCompoundMeshActor->SetActorRelativeTransform(FTransform::Identity);
+	IconDynamicMeshActor->SetActorRelativeTransform(FTransform::Identity);
 	SetIconCompoundMeshActorForCapture(false);
 	SetIconDynamicMeshLayersForCapture(false);
+
 	return true;
 }
 
@@ -578,7 +602,7 @@ bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FBIMAssemblySpec &As
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
+bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex)
 {
 	// Step 1: Setup stair mesh
 	/////////////////////////////////////////////////////////////////////////////////////////////
@@ -640,22 +664,22 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 	{
 		return false;
 	}
-	// Step 2: Position the spring arm in order to capture mesh
-	// Reset stair relative location
-	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
-	SetSpringArmDistanceForCapture(IconDynamicMeshActor, StairIconScaleFactor, false);
+	IconDynamicMeshActor->SetActorRelativeTransform(FTransform::Identity);
 
-	// Step 3: Capture
+	// Step 2: Set camera transform and actor for capture
+	FTransform originalCaptureCompTransform = SceneCaptureComp->GetRelativeTransform();
+	SetCaptureCompTransformForCapture(IconDynamicMeshActor, StairIconScaleFactor, true);
 	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, true);
 	IconDynamicMeshActor->Mesh->SetVisibility(true);
 	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
-	// Step 4: Cleanup
-	ADynamicIconGenerator::ResetSpringArm();
+	// Step 3: Revert capture comp to its original transform, and actor to its original state
+	SceneCaptureComp->SetRelativeTransform(originalCaptureCompTransform);
 	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, false);
 	IconDynamicMeshActor->Mesh->SetVisibility(false);
 	IconDynamicMeshActor->Mesh->ClearAllMeshSections(); // Procedural mesh with multiple sections should be cleared out
+
 	return true;
 }
 
@@ -1080,19 +1104,23 @@ void ADynamicIconGenerator::SetIconCompoundMeshActorForCapture(bool Visible)
 	IconCompoundMeshActor->SetActorHiddenInGame(!Visible);
 }
 
-void ADynamicIconGenerator::SetSpringArmDistanceForCapture(AActor* ActorToCapture, float SizeScale, bool OnlyCollidingComponents)
+void ADynamicIconGenerator::SetCaptureCompTransformForCapture(AActor* ActorToCapture, float SizeScale, bool OnlyCollidingComponents)
 {
-	SavedSpringArmRelativeTransform = SpringArm->GetRelativeTransform();
-	FVector captureForward = SceneCaptureComp->GetForwardVector();
 	FVector actorBoxOrigin, actorBoxExtents;
 	ActorToCapture->GetActorBounds(OnlyCollidingComponents, actorBoxOrigin, actorBoxExtents);
-	float springArmCaptureDist = (actorBoxExtents.Size() * SizeScale) / FMath::Tan(FMath::DegreesToRadians(SceneCaptureComp->FOVAngle));
-	SpringArm->SetWorldLocation(actorBoxOrigin - (springArmCaptureDist * captureForward));
-}
+	actorBoxExtents = actorBoxExtents * SizeScale;
 
-void ADynamicIconGenerator::ResetSpringArm()
-{
-	SpringArm->SetRelativeTransform(SavedSpringArmRelativeTransform);
+	FSphere selectedBounds(actorBoxOrigin, actorBoxExtents.Size());
+	FTransform camTransform = SceneCaptureComp->GetComponentTransform();
+	FVector selectionViewOrigin = Controller->CalculateViewLocationForSphere(
+		selectedBounds,
+		camTransform.GetRotation().GetForwardVector(),
+		1.f,
+		SceneCaptureComp->FOVAngle);
+	FTransform newTargetTransform;
+	newTargetTransform.SetComponents(camTransform.GetRotation(), selectionViewOrigin, camTransform.GetScale3D());
+
+	SceneCaptureComp->SetWorldTransform(newTargetTransform);
 }
 
 void ADynamicIconGenerator::ReleaseSavedRenderTarget()

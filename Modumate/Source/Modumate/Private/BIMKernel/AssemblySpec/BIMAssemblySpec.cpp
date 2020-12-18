@@ -20,7 +20,6 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	EBIMResult ret = EBIMResult::Success;
 	RootPreset = PresetID;
 
-
 	/*
 	We build an assembly spec by iterating through the tree of presets and assigning BIM values to specific targets like structural layers, risers, treads, etc		
 	Layers for stair tread and risers can be in embedded layered assemblies...when we get to those layers we need to know where they land in the top level assembly
@@ -377,7 +376,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	return EBIMResult::Success;
 }
 
-void FBIMAssemblySpec::Reset()
+EBIMResult FBIMAssemblySpec::Reset()
 {
 	ObjectType = EObjectType::OTNone;
 
@@ -387,11 +386,13 @@ void FBIMAssemblySpec::Reset()
 	Layers.Empty();
 	Parts.Empty();
 	Extrusions.Empty();
+	return EBIMResult::Success;
 }
 
-void FBIMAssemblySpec::ReverseLayers()
+EBIMResult FBIMAssemblySpec::ReverseLayers()
 {
 	Algo::Reverse(Layers);
+	return EBIMResult::Success;
 }
 
 FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const

@@ -31,6 +31,8 @@ Assemblies have three categories of subcomponent: layers, part slots and extrusi
 An assembly layer (for walls, floors and other sandwich objects) references an FArchitecturalMaterial and some metadata
 */
 
+static constexpr int32 BIM_ROOT_PART = 0;
+
 class MODUMATE_API FBIMAssemblySpec
 {
 private:
@@ -71,13 +73,13 @@ public:
 	// For DataCollection support in preset manager
 	FBIMKey UniqueKey() const { return RootPreset; }
 
-	void Reset();
+	EBIMResult Reset();
 
 	EBIMResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID);
 
 	Modumate::Units::FUnitValue CalculateThickness() const;
 
-	void ReverseLayers();
+	EBIMResult ReverseLayers();
 
 	FVector GetRiggedAssemblyNativeSize() const;
 };

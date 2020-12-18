@@ -293,7 +293,7 @@ bool AMOICabinet::GetFaceGeometry(const TArray<FVector>& BasePoints, const FVect
 
 bool AMOICabinet::UpdateCabinetActors(const FBIMAssemblySpec& Assembly, const TArray<FVector>& InBasePoints, const FVector& InExtrusionDelta,
 	int32 FrontFaceIndex, bool bFaceLateralInverted, bool bUpdateCollision, bool bEnableCollision,
-	ADynamicMeshActor* CabinetBoxActor, ACompoundMeshActor* CabinetFaceActor, bool& bOutFaceValid)
+	ADynamicMeshActor* CabinetBoxActor, ACompoundMeshActor* CabinetFaceActor, bool& bOutFaceValid, int32 DoorPartIndex)
 {
 	bOutFaceValid = false;
 	int32 numBasePoints = InBasePoints.Num();
@@ -423,7 +423,7 @@ bool AMOICabinet::UpdateCabinetActors(const FBIMAssemblySpec& Assembly, const TA
 
 		// Now make the portal's parts from the cabinet's combined assembly
 		FVector portalScale = portalDesiredSize / portalNativeSize;
-		CabinetFaceActor->MakeFromAssembly(Assembly, portalScale, bFaceLateralInverted, bUpdateCollision && bEnableCollision);
+		CabinetFaceActor->MakeFromAssemblyPart(Assembly, DoorPartIndex, portalScale, bFaceLateralInverted, bUpdateCollision && bEnableCollision);
 
 		// Update the face inset distance, now that it's been calculated by the cabinet's part layout
 		// TODO: update the part layout (if necessary and not already cached) before having to fully update the whole portal actor.

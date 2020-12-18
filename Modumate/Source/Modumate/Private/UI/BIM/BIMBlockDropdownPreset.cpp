@@ -84,4 +84,5 @@ void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);
 	}
+	IconImage->SetVisibility(bCaptureSuccess ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
