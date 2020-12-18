@@ -44,7 +44,6 @@ struct MODUMATE_API FLayerPatternGap
 	FVector2D GapExtents = FVector2D::ZeroVector;
 
 	FArchitecturalMaterial Material;
-	FCustomColor BaseColor;
 	TArray<ELayerFormat> SupportedFormats;
 
 	FBIMKey UniqueKey() const { return Key; }

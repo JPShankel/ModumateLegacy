@@ -38,15 +38,13 @@ private:
 
 	TModumateDataCollection<FArchitecturalMaterial> AMaterials;
 	TModumateDataCollection<FArchitecturalMesh> AMeshes;
-	TModumateDataCollection<FCustomColor> NamedColors;
 	TModumateDataCollection<FSimpleMeshRef> SimpleMeshes;
 	TModumateDataCollection<FStaticIconTexture> StaticIconTextures;
 	TModumateDataCollection<FLayerPattern> Patterns;
 
-	void AddArchitecturalMaterial(const FBIMKey& Key, const FString& Name, const FBIMKey& ColorKey,const FSoftObjectPath& AssetPath);
+	void AddArchitecturalMaterial(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 	void AddArchitecturalMesh(const FBIMKey& Key, const FString& Name, const FString& InNamedParameters, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath);
 	void AddSimpleMesh(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath);
-	void AddCustomColor(const FBIMKey& Key, const FString& Name, const FString& HexValue);
 	void AddStaticIconTexture(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 
 	FPresetManager PresetManager;
@@ -70,7 +68,6 @@ public:
 	// Data Access
 	const FArchitecturalMesh* GetArchitecturalMeshByKey(const FBIMKey& Key) const;
 	const FArchitecturalMaterial* GetArchitecturalMaterialByKey(const FBIMKey& Key) const;
-	const FCustomColor* GetCustomColorByKey(const FBIMKey& Key) const;
 	const FSimpleMeshRef* GetSimpleMeshByKey(const FBIMKey& Key) const;
 	const Modumate::FRoomConfiguration* GetRoomConfigByKey(const FBIMKey& Key) const;
 	const FStaticIconTexture* GetStaticIconTextureByKey(const FBIMKey& Key) const;

@@ -164,7 +164,6 @@ public:
 
 	bool SetIconFromTextureAsset(const FBIMKey& PresetID, UMaterialInterface*& OutMaterial);
 	bool SetIconMeshForRawMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForColor(const FBIMKey& ColorKey, UMaterialInterface*& OutMaterial);
 	bool SetIconMeshForProfile(const FBIMKey& ProfileKey, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForMesh(const FBIMKey& MeshKey, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForPart(bool UseDependentPreset, const FBIMKey& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);

@@ -757,11 +757,28 @@ bool ADynamicMeshActor::SetupStairPolys(const FVector& StairOrigin, const TArray
 				newLayerGeom.TriangulateMesh(vertices, triangles, normals, uv0, tangents);
 			}
 
-			const FArchitecturalMaterial& material =
-				bProcessingRisers ?
-					Assembly.RiserLayers[materialIndex++].Material_DEPRECATED : Assembly.TreadLayers[materialIndex++].Material_DEPRECATED;
-			Mesh->CreateMeshSection_LinearColor(sectionIndex, vertices, triangles, normals, uv0, vertexColors, tangents, true);
-			UModumateFunctionLibrary::SetMeshMaterial(Mesh, material, sectionIndex, &CachedMIDs[sectionIndex]);
+			const FArchitecturalMaterial* material = nullptr;
+			if (bProcessingRisers)
+			{
+				if (ensureAlways(Assembly.RiserLayers[materialIndex].Modules.Num() > 0))
+				{
+					material =  &Assembly.RiserLayers[materialIndex].Modules[0].Material;
+				}
+			}
+			else
+			{
+				if (ensureAlways(Assembly.TreadLayers[materialIndex].Modules.Num() > 0))
+				{
+					material = &Assembly.TreadLayers[materialIndex].Modules[0].Material;
+				}
+			}
+
+			++materialIndex;
+
+			if (ensureAlways(material != nullptr))
+			{
+				UModumateFunctionLibrary::SetMeshMaterial(Mesh, *material, sectionIndex, &CachedMIDs[sectionIndex]);
+			}
 			++sectionIndex;
 		}
 
@@ -1063,8 +1080,11 @@ bool ADynamicMeshActor::SetPlacementError(FName errorTag, bool bIsError)
 			}
 			else
 			{
-				const FBIMLayerSpec &layerData = Assembly.Layers[i];
-				UModumateFunctionLibrary::SetMeshMaterial(procMeshComp, layerData.Material_DEPRECATED, 0, &CachedMIDs[i]);
+				const FBIMLayerSpec& layerData = Assembly.Layers[i];
+				if (ensureAlways(layerData.Modules.Num() > 0))
+				{
+					UModumateFunctionLibrary::SetMeshMaterial(procMeshComp, layerData.Modules[0].Material, 0, &CachedMIDs[i]);
+				}
 			}
 		}
 	}

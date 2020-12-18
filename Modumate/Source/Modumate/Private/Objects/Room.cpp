@@ -127,9 +127,8 @@ void AMOIRoom::UpdateMaterial()
 	if (GameMode.IsValid() && DynamicMeshActor.IsValid())
 	{
 		Material.EngineMaterial = GameMode->MetaPlaneMaterial;
-		Material.DefaultBaseColor.Color = CachedRoomConfig.RoomColor;
-		Material.DefaultBaseColor.Color.A = static_cast<uint8>(255.0f * GetAlpha());
-		Material.DefaultBaseColor.bValid = true;
+		Material.Color = CachedRoomConfig.RoomColor;
+		Material.Color.A = static_cast<uint8>(255.0f * GetAlpha());
 
 		UModumateFunctionLibrary::SetMeshMaterial(DynamicMeshActor->Mesh, Material, 0, &DynamicMeshActor->CachedMIDs[0]);
 	}

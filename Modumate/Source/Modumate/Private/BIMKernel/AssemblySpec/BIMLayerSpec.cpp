@@ -36,27 +36,29 @@ EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
 	if (ensureAlways(LayerProperties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, materialKey)))
 	{
 		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(materialKey);
-		if (ensureAlways(mat != nullptr))
+		if (ensureAlways(mat != nullptr && mat->EngineMaterial.IsValid()))
 		{
-			Material_DEPRECATED = *mat;
-			ensureAlways(Material_DEPRECATED.EngineMaterial != nullptr);
+			FLayerPatternModule& module = Modules.AddDefaulted_GetRef();
+			module.Material = *mat;
+
+			FString colorHexValue;
+
+			if (LayerProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue) && !colorHexValue.IsEmpty())
+			{
+				module.Material.Color = FColor::FromHex(colorHexValue);
+			}
+
+			if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, Thickness))
+			{
+				if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, Thickness))
+				{
+					LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, Thickness);
+				}
+			}
+			return EBIMResult::Success;
 		}
 	}
-
-	FString colorHexValue;
-	LayerProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
-	Material_DEPRECATED.DefaultBaseColor.Color = colorHexValue.IsEmpty() ? FColor::White : FColor::FromHex(colorHexValue);
-	Material_DEPRECATED.DefaultBaseColor.bValid = true;
-
-	if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, Thickness))
-	{
-		if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, Thickness))
-		{
-			LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, Thickness);
-		}
-	}
-
-	return EBIMResult::Success;
+	return EBIMResult::Error;
 }
 
 /*
@@ -83,9 +85,10 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 			{
 				module.Material = *mat;
 				FString colorHexValue;
-				modProps.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
-				module.Material.DefaultBaseColor.Color = colorHexValue.IsEmpty() ? FColor::White : FColor::FromHex(colorHexValue);
-				module.Material.DefaultBaseColor.bValid = true;
+				if (modProps.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue) && !colorHexValue.IsEmpty())
+				{
+					module.Material.Color = FColor::FromHex(colorHexValue);
+				}
 			}
 		}
 
@@ -123,9 +126,10 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 		{
 			Gap.Material = *mat;
 			FString colorHexValue;
-			GapProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
-			Gap.BaseColor.Color = colorHexValue.IsEmpty() ? FColor::Red : FColor::FromHex(colorHexValue);
-			Gap.BaseColor.bValid = true;
+			if (GapProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue) && !colorHexValue.IsEmpty())
+			{
+				Gap.Material.Color = FColor::FromHex(colorHexValue);
+			}
 		}
 		/*
 		Gap dimensions are reliably defined
@@ -147,9 +151,6 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 	{
 		Thickness = Modumate::Units::FUnitValue::WorldCentimeters(Modules[0].ModuleExtents.Z);
 	}
-
-	// TODO: 1-dimensional patterns still depend on deprecated layer material
-	Material_DEPRECATED = Modules[0].Material;
 
 	return EBIMResult::Success;
 }

@@ -33,12 +33,8 @@ public:
 
 	Modumate::Units::FUnitValue Thickness;
 
-	// TODO: All layers will get their materials through modules
-	FArchitecturalMaterial Material_DEPRECATED;
-
 	// TODO: this is the DDL 1.0 pattern loadout...to be extended
 	FLayerPattern Pattern;
 	TArray<FLayerPatternModule> Modules;
 	FLayerPatternGap Gap;
-	FCustomColor BaseColor;
 };

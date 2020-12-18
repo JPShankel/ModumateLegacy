@@ -148,18 +148,16 @@ void AMOIPlaneBase::UpdateMaterial()
 			MaterialData.EngineMaterial = gameMode->MetaPlaneMaterial;
 			if (IsSelected())
 			{
-				MaterialData.DefaultBaseColor.Color = SelectedColor;
+				MaterialData.Color = SelectedColor;
 			}
 			else if (IsHovered())
 			{
-				MaterialData.DefaultBaseColor.Color = HoveredColor;
+				MaterialData.Color = HoveredColor;
 			}
 			else
 			{
-				MaterialData.DefaultBaseColor.Color = BaseColor;
+				MaterialData.Color = BaseColor;
 			}
-
-			MaterialData.DefaultBaseColor.bValid = true;
 
 			DynamicMeshActor->CachedMIDs.SetNumZeroed(1);
 			UModumateFunctionLibrary::SetMeshMaterial(DynamicMeshActor->Mesh, MaterialData, 0, &DynamicMeshActor->CachedMIDs[0]);

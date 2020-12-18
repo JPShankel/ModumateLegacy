@@ -167,9 +167,6 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 	// First go through the presets that don't need render capture for icon
 	switch (preset->NodeScope)
 	{
-	case EBIMValueScope::Color: // Color is a material with dynamic color, skip render capture
-		SetIconMeshForColor(PresetID, OutMaterial);
-		return true;
 	case EBIMValueScope::Dimension: // Dimension icon is a static material, skip render capture
 		OutMaterial = IconDimensionMaterial;
 		return true;
@@ -694,20 +691,6 @@ bool ADynamicIconGenerator::SetIconMeshForRawMaterial(const FBIMKey& MaterialKey
 	SetComponentForIconCapture(IconSphereMesh, false);
 	IconSphereMesh->SetVisibility(false);
 	return true;
-}
-
-bool ADynamicIconGenerator::SetIconMeshForColor(const FBIMKey& ColorKey, UMaterialInterface*& OutMaterial)
-{
-	// Step 1: Get color
-	const FCustomColor* customColor = Gamemode->ObjectDatabase->GetCustomColorByKey(ColorKey);
-	if (customColor->IsValid())
-	{
-		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconColorMaterial, this);
-		dynMat->SetVectorParameterValue(MaterialColorParamName, customColor->Color);
-		OutMaterial = dynMat;
-		return true;
-	}
-	return false;
 }
 
 bool ADynamicIconGenerator::SetIconMeshForProfile(const FBIMKey& ProfileKey, UTextureRenderTarget2D* InRenderTarget)

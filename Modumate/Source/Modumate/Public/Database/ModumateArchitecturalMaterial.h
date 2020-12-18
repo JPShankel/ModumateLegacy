@@ -8,47 +8,7 @@
 
 #include "ModumateArchitecturalMaterial.generated.h"
 
-USTRUCT(BlueprintType)
-struct MODUMATE_API FCustomColor
-{
-	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FBIMKey Key;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FColor Color = FColor::White;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FBIMKey Library;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FText DisplayName;
-
-	FBIMKey CombinedKey;
-	bool bValid = false;
-
-	FCustomColor()
-		: bValid(false)
-	{ }
-
-	FCustomColor(const FBIMKey& InKey, FColor InColor, const FBIMKey& InLibrary, const FText& InDisplayName)
-		: Key(InKey)
-		, Color(InColor)
-		, Library(InLibrary)
-		, DisplayName(InDisplayName)
-		, CombinedKey(Library + Key)
-		, bValid(true)
-	{ }
-
-	FBIMKey UniqueKey() const { return CombinedKey; }
-	bool IsValid() const { return bValid; }
-
-	FString ToString() const
-	{
-		return IsValid() ? (CombinedKey.IsNone() ? Color.ToHex() : CombinedKey.StringValue) : FString();
-	}
-};
 
 /*
 Materials like gypsum, wood, cement, etc located in ShoppingData/Materials
@@ -62,10 +22,8 @@ struct FArchitecturalMaterial
 	FText DisplayName = FText::GetEmpty();
 
 	TWeakObjectPtr<UMaterialInterface> EngineMaterial = nullptr;
+	FColor Color = FColor::White;
 
-	FCustomColor DefaultBaseColor;
-	TArray<FCustomColor> SupportedBaseColors;
-	bool bSupportsColorPicker = false;
 	float UVScaleFactor = 1.0f;
 	float HSVRangeWhenTiled = 0.0f;
 

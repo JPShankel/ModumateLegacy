@@ -503,53 +503,51 @@ bool UModumateFunctionLibrary::SetMeshMaterial(UMeshComponent *MeshComponent, co
 	static const FName baseColorParamName(TEXT("ColorMultiplier"));
 	static const FName uvScaleParamName(TEXT("UVScale"));
 
-	if (Material.EngineMaterial.IsValid())
+	if (!Material.EngineMaterial.IsValid())
 	{
-		UMaterialInterface* engineMat = Material.EngineMaterial.Get();
-
-		// Only create and set a MaterialInstanceDynamic if there's a param (color) that needs to be set.
-		if (Material.DefaultBaseColor.IsValid())
-		{
-			UMaterialInterface* curEngineMat = MeshComponent->GetMaterial(MatIndex);
-			UMaterialInstanceDynamic* curMID = Cast<UMaterialInstanceDynamic>(curEngineMat);
-			bool bReapplyMID = false;
-
-			// If the mesh's current material isn't the right MID, see if the cached one is.
-			if (((curMID == nullptr) || (curMID->Parent != engineMat)) && CachedMIDPtr)
-			{
-				curMID = *CachedMIDPtr;
-				bReapplyMID = true;
-			}
-
-			if ((curMID == nullptr) || (curMID->Parent != engineMat))
-			{
-				curMID = UMaterialInstanceDynamic::Create(engineMat, MeshComponent);
-				MeshComponent->SetMaterial(MatIndex, curMID);
-			}
-			else if (bReapplyMID)
-			{
-				MeshComponent->SetMaterial(MatIndex, curMID);
-			}
-
-			curMID->SetVectorParameterValue(baseColorParamName, Material.DefaultBaseColor.Color);
-			curMID->SetScalarParameterValue(uvScaleParamName, Material.UVScaleFactor);
-
-			// Cache the MID if requested
-			if (CachedMIDPtr)
-			{
-				*CachedMIDPtr = curMID;
-			}
-		}
-		// Otherwise just set the material to the base MaterialInterface asset.
-		else
-		{
-			MeshComponent->SetMaterial(MatIndex, engineMat);
-		}
-
-		return true;
+		return false;
 	}
 
-	return false;
+	UMaterialInterface* engineMat = Material.EngineMaterial.Get();
+
+	if (Material.Color != FColor::White)
+	{
+		// Only create and set a MaterialInstanceDynamic if there's a param (color) that needs to be set.
+		UMaterialInterface* curEngineMat = MeshComponent->GetMaterial(MatIndex);
+		UMaterialInstanceDynamic* curMID = Cast<UMaterialInstanceDynamic>(curEngineMat);
+		bool bReapplyMID = false;
+
+		// If the mesh's current material isn't the right MID, see if the cached one is.
+		if (((curMID == nullptr) || (curMID->Parent != engineMat)) && CachedMIDPtr)
+		{
+			curMID = *CachedMIDPtr;
+			bReapplyMID = true;
+		}
+
+		if ((curMID == nullptr) || (curMID->Parent != engineMat))
+		{
+			curMID = UMaterialInstanceDynamic::Create(engineMat, MeshComponent);
+			MeshComponent->SetMaterial(MatIndex, curMID);
+		}
+		else if (bReapplyMID)
+		{
+			MeshComponent->SetMaterial(MatIndex, curMID);
+		}
+
+		curMID->SetVectorParameterValue(baseColorParamName, Material.Color);
+		curMID->SetScalarParameterValue(uvScaleParamName, Material.UVScaleFactor);
+
+		// Cache the MID if requested
+		if (CachedMIDPtr)
+		{
+			*CachedMIDPtr = curMID;
+		}
+	}
+	else
+	{
+		MeshComponent->SetMaterial(MatIndex, engineMat);
+	}
+	return true;
 }
 
 bool UModumateFunctionLibrary::SetMeshMaterialsFromMapping(UMeshComponent *MeshComponent, const TMap<FName, FArchitecturalMaterial> &MaterialMapping, const TMap<FName, int32> *MatIndexMapping)
@@ -732,11 +730,11 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 					MID->SetTextureParameterValue(bgTexParamNormal, bgTexNormal);
 				}
 
-				if (Layer.Gap.BaseColor.IsValid())
+				if (Layer.Gap.Material.IsValid())
 				{
 					// NOTE: this assumes the provided color is in sRGB space,
 					// otherwise we should use layerData.GapBaseColor.ReinterpretAsLinear()
-					FLinearColor bgColor = Layer.Gap.BaseColor.Color;
+					FLinearColor bgColor = Layer.Gap.Material.Color;
 					MID->SetVectorParameterValue(bgColorParamName, bgColor);
 				}
 			}
@@ -774,11 +772,7 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 					moduleInstParams.TileShapeDetails.R = moduleDef.BevelWidth.AsWorldCentimeters();
 
 					auto &moduleMaterialData = moduleDef.Material;
-
-					if (moduleMaterialData.DefaultBaseColor.IsValid())
-					{
-						moduleInstParams.Color = moduleMaterialData.DefaultBaseColor.Color;
-					}
+					moduleInstParams.Color = moduleMaterialData.Color;
 
 					moduleInstParams.TileTexDetails.A = moduleMaterialData.UVScaleFactor;
 
@@ -841,7 +835,10 @@ bool UModumateFunctionLibrary::UpdateMaterialsFromAssembly(const TArray<UProcedu
 			}
 			else
 			{
-				UModumateFunctionLibrary::SetMeshMaterial(layerMesh, layerData.Material_DEPRECATED, 0, cachedMIDPtr);
+				if (ensureAlways(layerData.Modules.Num() > 0))
+				{
+					UModumateFunctionLibrary::SetMeshMaterial(layerMesh, layerData.Modules[0].Material, 0, cachedMIDPtr);
+				}
 			}
 		}
 	}

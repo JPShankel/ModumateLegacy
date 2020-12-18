@@ -92,7 +92,7 @@ void FModumateDatabase::AddArchitecturalMesh(const FBIMKey& Key, const FString& 
 	AMeshes.AddData(mesh);
 }
 
-void FModumateDatabase::AddArchitecturalMaterial(const FBIMKey& Key, const FString& Name, const FBIMKey& ColorKey, const FSoftObjectPath& AssetPath)
+void FModumateDatabase::AddArchitecturalMaterial(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
 	{
@@ -109,22 +109,8 @@ void FModumateDatabase::AddArchitecturalMaterial(const FBIMKey& Key, const FStri
 		mat.EngineMaterial->AddToRoot();
 	}
 
-	const FCustomColor *color = GetCustomColorByKey(ColorKey);
-	if (color != nullptr)
-	{
-		mat.DefaultBaseColor = *color;
-	}
-
 	mat.UVScaleFactor = 1;
 	AMaterials.AddData(mat);
-}
-
-void FModumateDatabase::AddCustomColor(const FBIMKey& Key, const FString& Name, const FString& HexValue)
-{
-	FColor value = FColor::FromHex(HexValue);
-	FCustomColor namedColor(Key, MoveTemp(value), FBIMKey(), FText::FromString(Name));
-	namedColor.CombinedKey = Key;
-	NamedColors.AddData(MoveTemp(namedColor));
 }
 
 
@@ -304,16 +290,6 @@ void FModumateDatabase::ReadPresetData()
 	typedef TPair<FBIMTagPath, FAddAssetFunction> FAddAssetPath;
 	TArray<FAddAssetPath> assetTargetPaths;
 
-	FAddAssetFunction addColor = [this](const FBIMPresetInstance& Preset)
-	{
-		FString hexValue, colorName;
-		if (ensureAlways(Preset.TryGetProperty<FString>(BIMPropertyNames::HexValue, hexValue) &&
-			Preset.TryGetProperty<FString>(BIMPropertyNames::Name, colorName)))
-		{
-			AddCustomColor(Preset.PresetID, colorName, hexValue);
-		}
-	};
-
 	FAddAssetFunction addMesh = [this](const FBIMPresetInstance& Preset)
 	{
 		FString assetPath = Preset.GetScopedProperty<FString>(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
@@ -352,7 +328,7 @@ void FModumateDatabase::ReadPresetData()
 			FString matName;
 			if (ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
 			{
-				AddArchitecturalMaterial(Preset.PresetID, matName, FBIMKey(), assetPath);
+				AddArchitecturalMaterial(Preset.PresetID, matName, assetPath);
 			}
 		}
 	};
@@ -360,7 +336,6 @@ void FModumateDatabase::ReadPresetData()
 	FAddAssetFunction addMaterial = [this](const FBIMPresetInstance& Preset)
 	{
 		FBIMKey rawMaterial;
-		FBIMKey color;
 
 		for (auto& cp : Preset.ChildPresets)
 		{
@@ -370,10 +345,6 @@ void FModumateDatabase::ReadPresetData()
 				if (childPreset->NodeScope == EBIMValueScope::RawMaterial)
 				{
 					rawMaterial = cp.PresetID;
-				}
-				else if (childPreset->NodeScope == EBIMValueScope::Color)
-				{
-					color = cp.PresetID;
 				}
 			}
 		}
@@ -387,7 +358,7 @@ void FModumateDatabase::ReadPresetData()
 				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::AssetPath, assetPath) 
 					&& Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
 				{
-					AddArchitecturalMaterial(Preset.PresetID, matName, color, assetPath);
+					AddArchitecturalMaterial(Preset.PresetID, matName, assetPath);
 				}
 			}
 		}
@@ -466,7 +437,6 @@ void FModumateDatabase::ReadPresetData()
 	typedef TFunction<void(const FBIMTagPath &TagPath)> FAssetTargetAssignment;
 	TMap<FString, FAssetTargetAssignment> assetTargetMap;
 
-	assetTargetMap.Add(colorTag, [addColor, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addColor)); });
 	assetTargetMap.Add(meshTag, [addMesh, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addMesh)); });
 	assetTargetMap.Add(profileTag, [addProfile, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addProfile)); });
 	assetTargetMap.Add(rawMaterialTag, [addRawMaterial, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addRawMaterial)); });
@@ -665,11 +635,6 @@ const FArchitecturalMaterial *FModumateDatabase::GetArchitecturalMaterialByKey(c
 const FArchitecturalMesh* FModumateDatabase::GetArchitecturalMeshByKey(const FBIMKey& Key) const
 {
 	return AMeshes.GetData(Key);
-}
-
-const FCustomColor *FModumateDatabase::GetCustomColorByKey(const FBIMKey& Key) const
-{
-	return NamedColors.GetData(Key);
 }
 
 const FSimpleMeshRef* FModumateDatabase::GetSimpleMeshByKey(const FBIMKey& Key) const

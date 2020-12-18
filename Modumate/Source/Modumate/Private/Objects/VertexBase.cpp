@@ -69,8 +69,7 @@ AActor *AMOIVertexBase::CreateActor(const FVector &loc, const FQuat &rot)
 
 	FArchitecturalMaterial material;
 	material.EngineMaterial = gameMode ? gameMode->VertexMaterial : nullptr;
-	material.DefaultBaseColor.Color = BaseColor;
-	material.DefaultBaseColor.bValid = true;
+	material.Color = BaseColor;
 	VertexActor->SetActorMaterial(material);
 
 	return VertexActor.Get();
@@ -89,8 +88,7 @@ bool AMOIVertexBase::OnSelected(bool bIsSelected)
 	{
 		VertexActor->SetHandleScaleScreenSize(bIsSelected ? SelectedHandleSize : DefaultHandleSize);
 
-		VertexActor->Material.DefaultBaseColor.Color = bIsSelected ? SelectedColor : BaseColor;
-		VertexActor->Material.DefaultBaseColor.bValid = true;
+		VertexActor->Material.Color = bIsSelected ? SelectedColor : BaseColor;
 
 		UModumateFunctionLibrary::SetMeshMaterial(VertexActor->MeshComp, VertexActor->Material, 0);
 	}
