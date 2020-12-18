@@ -86,9 +86,24 @@ public:
 
 	static bool GetFFEBoxSidePoints(const AActor *Actor, const FVector &AssemblyNormal, TArray<FVector> &OutPoints);
 
-	// Extruded objects drafting.
-	static bool GetExtrusionPerimeterPoints(const AModumateObjectInstance* MOI,
-		const FVector& LineUp, const FVector& LineNormal, TArray<FVector>& outPerimeterPoints);
+	// Extruded objects polygon utilities
+
+	// Justification and FlipSigns have their X and Y components set to correspond to the X and Y components of the profile polygon.
+	//     The counter-intuitive case of a Trim extruded along the bottom of a vertical wall would then have the counter-intuitive names:
+	//     - "Up" axis pointing in world +Z and corresponding to the polygon's X axis
+	//     - "Normal" axis pointing in world XY and corresponding to the polygon's Y axis
+	// GetExtrusionProfilePoints centrally interprets a polygon's shape and the assembly's specified scale factor, and outputs
+	// OutProfilePoints in the polygon's coordinate axes, where the origin represents the hosting line.
+	static bool GetExtrusionProfilePoints(const FBIMAssemblySpec& Assembly,
+		const FVector2D& Justification, const FVector2D& FlipSigns, TArray<FVector2D>& OutProfilePoints, FBox2D& OutProfileExtents);
+
+	// GetExtrusionObjectPoints first interpret's an extrusion in polygon space, and then outputs
+	// OutObjectPoints in the object's specified coordinate axes (which may be rotated by the object beforehand).
+	// OutObjectPoints are expected only be offset from world space by a position along the hosting line.
+	static bool GetExtrusionObjectPoints(const FBIMAssemblySpec& Assembly,
+		const FVector& LineUp, const FVector& LineNormal, const FVector2D& Justification, const FVector2D& FlipSigns, TArray<FVector>& OutObjectPoints);
+
+	// Extruded objects drafting
 	static void GetExtrusionCutPlaneDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox, const TArray<FVector>& Perimeter,
 		const FVector& StartPosition, const FVector& EndPosition, Modumate::FModumateLayerType LayerType, float Epsilon = 0.0f);

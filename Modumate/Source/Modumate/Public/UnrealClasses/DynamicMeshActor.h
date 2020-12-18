@@ -119,8 +119,8 @@ public:
 		const FVector2D& ToeKickDimensions = FVector2D::ZeroVector, float FaceInsetDist = 0.0f, int32 FrontIdxStart = INDEX_NONE,
 		const FVector2D& UVFlip = FVector2D(1.0f, 1.0f), float UVRotOffset = 0.0f);
 
-	bool SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAssembly, const FVector& InStartPoint, const FVector& InEndPoint, const FVector& ObjNormal, const FVector& ObjUp,
-		const FVector2D& UpperExtensions = FVector2D::ZeroVector, const FVector2D& OuterExtensions = FVector2D::ZeroVector, const FVector& InScale = FVector::OneVector, bool bRecreateSection = true, bool bCreateCollision = true);
+	bool SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAssembly, const FVector& InStartPoint, const FVector& InEndPoint, const FVector& ObjNormal, const FVector& ObjUp, const FVector2D& Justification,
+		const FVector2D& UpperExtensions = FVector2D::ZeroVector, const FVector2D& OuterExtensions = FVector2D::ZeroVector, const FVector& InFlipSigns = FVector::OneVector, bool bRecreateSection = true, bool bCreateCollision = true);
 
 	void SetupMasksGeometry(const TArray<TArray<FVector>> &Polygons, const FPlane &Plane, const FVector &Origin, const FVector &AxisX, const FVector &AxisY);
 

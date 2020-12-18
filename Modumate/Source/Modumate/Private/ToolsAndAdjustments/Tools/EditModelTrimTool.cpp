@@ -117,7 +117,7 @@ bool UTrimTool::FrameUpdate()
 			{
 				adjacentPolyID = boudingPoly->ID;
 
-				PendingTrimData.UpJustification = 0.0f;
+				PendingTrimData.UpJustification = 1.0f;
 				PendingTrimData.FlipSigns.Y = bBoundsForwardEdge ? 1.0f : -1.0f;
 			}
 		}
@@ -135,7 +135,7 @@ bool UTrimTool::FrameUpdate()
 					{
 						adjacentPolyID = innerBoundingPoly->ID;
 
-						PendingTrimData.UpJustification = 0.0f;
+						PendingTrimData.UpJustification = 1.0f;
 						PendingTrimData.FlipSigns.Y = bBoundsForwardEdge ? -1.0f : 1.0f;
 					}
 				}

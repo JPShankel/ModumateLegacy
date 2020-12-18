@@ -506,11 +506,12 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FBIMAssemblySpec &A
 	FVector meshNormal = Assembly.ObjectType == EObjectType::OTStructureLine ? FVector::LeftVector : FVector::RightVector;
 	FVector meshUp = Assembly.ObjectType == EObjectType::OTStructureLine ? FVector::DownVector : FVector::UpVector;
 
+	FVector2D justification(0.5f, 0.5f);
 	FVector2D upperExtensions = FVector2D::ZeroVector;
 	FVector2D outerExtensions = FVector2D::ZeroVector;
 
 	IconDynamicMeshActor->SetupExtrudedPolyGeometry(Assembly, meshStartPos, meshEndPos,
-		meshNormal, meshUp, upperExtensions, outerExtensions, FVector::OneVector, true, false);
+		meshNormal, meshUp, justification, upperExtensions, outerExtensions, FVector::OneVector, true, false);
 
 	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
 	FVector meshExtent = IconDynamicMeshActor->Mesh->Bounds.BoxExtent;
@@ -715,9 +716,10 @@ bool ADynamicIconGenerator::SetIconMeshForProfile(const FBIMKey& ProfileKey, UTe
 	bool asBeamProfile = Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly.ObjectType == EObjectType::OTStructureLine;
 	FVector meshNormal = asBeamProfile ? FVector::LeftVector : FVector::RightVector;
 	FVector meshUp = asBeamProfile ? FVector::DownVector : FVector::UpVector;
+	FVector2D justification(0.5f, 0.5f);
 
 	IconDynamicMeshActor->SetupExtrudedPolyGeometry(obAsm, meshStartPos, meshEndPos,
-		meshNormal, meshUp, FVector2D::ZeroVector, FVector2D::ZeroVector, FVector::OneVector, true, false);
+		meshNormal, meshUp, justification, FVector2D::ZeroVector, FVector2D::ZeroVector, FVector::OneVector, true, false);
 
 	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
 	FVector meshScale = ((ProfileIconScaleFactor / IconDynamicMeshActor->Mesh->Bounds.SphereRadius) * FVector::OneVector);

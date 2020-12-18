@@ -31,9 +31,11 @@ AMOITrim::AMOITrim()
 	, TrimNormal(ForceInitToZero)
 	, TrimUp(ForceInitToZero)
 	, TrimDir(ForceInitToZero)
-	, TrimScale(FVector::OneVector)
+	, TrimExtrusionFlip(FVector::OneVector)
 	, UpperExtensions(ForceInitToZero)
 	, OuterExtensions(ForceInitToZero)
+	, ProfileJustification(ForceInitToZero)
+	, ProfileFlip(ForceInitToZero)
 {
 }
 
@@ -105,20 +107,24 @@ bool AMOITrim::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSi
 
 void AMOITrim::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	const FSimplePolygon* profile = nullptr;
-	if (UModumateObjectStatics::GetPolygonProfile(&GetAssembly(), profile))
+	// For snapping, we want to attach to the underlying line itself
+	if (bForSnapping)
 	{
-		FVector2D profileSize = profile->Extents.GetSize();
+		outPoints.Add(FStructurePoint(TrimStartPos, FVector::ZeroVector, 0));
+		outPoints.Add(FStructurePoint(TrimEndPos, FVector::ZeroVector, 1));
 
-		// Trims are not centered on their line start/end positions; it is their origin.
-		FVector upOffset = (profileSize.X * TrimUp);
-		FVector normalOffset = (profileSize.Y * TrimNormal);
+		outLines.Add(FStructureLine(TrimStartPos, TrimEndPos, 0, 1));
+	}
+	// Otherwise, we want the extents of the mesh
+	else
+	{
+		FVector2D profileSize = CachedProfileExtents.GetSize();
+		FVector2D profileCenter = CachedProfileExtents.GetCenter();
+		FVector lineCenter = 0.5f * (TrimStartPos + TrimEndPos) + (profileCenter.X * TrimUp) + (profileCenter.Y * TrimNormal);
+		FVector boxExtents(profileSize.Y, FVector::Dist(TrimStartPos, TrimEndPos), profileSize.X);
+		FQuat boxRot = FRotationMatrix::MakeFromXZ(TrimNormal, TrimUp).ToQuat();
 
-		FVector centroid = 0.5f * (TrimStartPos + TrimEndPos + upOffset + normalOffset);
-		FVector boxExtents(FVector::Dist(TrimStartPos, TrimEndPos), profileSize.X, profileSize.Y);
-		FQuat boxRot = FRotationMatrix::MakeFromYZ(TrimUp, TrimNormal).ToQuat();
-
-		FModumateSnappingView::GetBoundingBoxPointsAndLines(centroid, boxRot, 0.5f * boxExtents, outPoints, outLines);
+		FModumateSnappingView::GetBoundingBoxPointsAndLines(lineCenter, boxRot, 0.5f * boxExtents, outPoints, outLines);
 	}
 }
 
@@ -142,7 +148,7 @@ bool AMOITrim::GetInvertedState(FMOIStateData& OutState) const
 
 bool AMOITrim::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
 {
-	if (FlipAxis == EAxis::Y)
+	if (FlipAxis == EAxis::X)
 	{
 		return false;
 	}
@@ -150,15 +156,21 @@ bool AMOITrim::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) co
 	OutState = GetStateData();
 
 	FMOITrimData modifiedTrimData = InstanceData;
-	int32 flipAxisIdx = (FlipAxis == EAxis::X) ? 0 : 1;
+	int32 flipAxisIdx = (FlipAxis == EAxis::Y) ? 0 : 1;
 	modifiedTrimData.FlipSigns[flipAxisIdx] *= -1.0f;
+
+	// If we're flipping on the Z axis, we also need to flip justification so that flipping across the parent edge can be 1 action/delta.
+	if (FlipAxis == EAxis::Z)
+	{
+		modifiedTrimData.UpJustification = 1.0f - modifiedTrimData.UpJustification;
+	}
 
 	return OutState.CustomData.SaveStructData(modifiedTrimData);
 }
 
 bool AMOITrim::GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
 {
-	float projectedAdjustment = -AdjustmentDirection | TrimUp;
+	float projectedAdjustment = AdjustmentDirection | TrimUp;
 	if (FMath::IsNearlyZero(projectedAdjustment, THRESH_NORMALS_ARE_ORTHOGONAL))
 	{
 		projectedAdjustment = 0.0f;
@@ -181,7 +193,8 @@ void AMOITrim::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& 
 {
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	TArray<FVector> perimeter;
-	UModumateObjectStatics::GetExtrusionPerimeterPoints(this, TrimUp, TrimNormal, perimeter);
+	UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, TrimUp, TrimNormal, ProfileJustification, ProfileFlip, perimeter);
+
 	if (bGetFarLines)
 	{   // Beyond lines.
 		TArray<FEdge> beyondLines = UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(Plane, perimeter, TrimStartPos, TrimEndPos);
@@ -247,14 +260,7 @@ void AMOITrim::PostLoadInstanceData()
 
 bool AMOITrim::UpdateCachedStructure()
 {
-	const FBIMAssemblySpec& trimAssembly = GetAssembly();
 	const UModumateDocument* doc = GetDocument();
-
-	const FSimplePolygon* polyProfile = nullptr;
-	if (!UModumateObjectStatics::GetPolygonProfile(&trimAssembly, polyProfile))
-	{
-		return false;
-	}
 
 	// Find the parent surface edge MOI to set up mounting.
 	// This can fail gracefully, if the object is still getting set up before it has a parent assigned.
@@ -312,18 +318,12 @@ bool AMOITrim::UpdateCachedStructure()
 	TrimDir = (TrimEndPos - TrimStartPos).GetSafeNormal();
 	TrimNormal = surfaceGraphMOI->GetNormal();
 
-	TrimUp = (TrimDir ^ TrimNormal) * InstanceData.FlipSigns.Y;
-	TrimScale = FVector(InstanceData.FlipSigns.X, 1.0f, 1.0f);
+	TrimUp = (TrimDir ^ TrimNormal);
+	TrimExtrusionFlip.Set(1.0f, InstanceData.FlipSigns.X, InstanceData.FlipSigns.Y);
+	ProfileJustification.Set(InstanceData.UpJustification, 1.0f);
+	ProfileFlip.Set(InstanceData.FlipSigns.Y, 1.0f);
 
-	float justification = InstanceData.UpJustification;
-	float justificationDist = justification * polyProfile->Extents.GetSize().X;
-	FVector justificationDelta = -justificationDist * TrimUp;
-	FVector neighborOffsetDelta = maxNeighboringThickness * TrimNormal;
-
-	TrimStartPos += justificationDelta + neighborOffsetDelta;
-	TrimEndPos += justificationDelta + neighborOffsetDelta;
-
-	return true;
+	return UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, ProfileJustification, ProfileFlip, CachedProfilePoints, CachedProfileExtents);
 }
 
 bool AMOITrim::UpdateMitering()
@@ -335,8 +335,6 @@ bool AMOITrim::UpdateMitering()
 
 bool AMOITrim::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 {
-	const FBIMAssemblySpec& trimAssembly = GetAssembly();
-
-	return DynamicMeshActor->SetupExtrudedPolyGeometry(trimAssembly, TrimStartPos, TrimEndPos,
-		TrimNormal, TrimUp, UpperExtensions, OuterExtensions, TrimScale, bRecreate, bCreateCollision);
+	return DynamicMeshActor->SetupExtrudedPolyGeometry(CachedAssembly, TrimStartPos, TrimEndPos,
+		TrimNormal, TrimUp, ProfileJustification, UpperExtensions, OuterExtensions, TrimExtrusionFlip, bRecreate, bCreateCollision);
 }

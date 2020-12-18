@@ -344,8 +344,9 @@ bool UStructureLineTool::UpdatePreviewStructureLine()
 	// Set up the extruded polygon for the structure line,
 	// and recreate geometry based on whether it's been set up before.
 
+	FVector2D justification(0.5f, 0.5f);
 	PendingObjMesh->SetupExtrudedPolyGeometry(ObjAssembly, LineStartPos, LineEndPos, ObjNormal, ObjUp,
-		FVector2D::ZeroVector, FVector2D::ZeroVector, FVector::OneVector, !bHaveSetUpGeometry, false);
+		justification, FVector2D::ZeroVector, FVector2D::ZeroVector, FVector::OneVector, !bHaveSetUpGeometry, false);
 	PendingObjMesh->SetActorHiddenInGame(false);
 
 	bHaveSetUpGeometry = true;

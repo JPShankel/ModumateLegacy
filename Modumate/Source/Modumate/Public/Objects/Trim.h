@@ -26,6 +26,8 @@ struct MODUMATE_API FMOITrimData
 	UPROPERTY(meta = (DeprecatedProperty, DeprecationMessage = "Up inversion is stored in the Y axis of FlipSigns."))
 	bool bUpInverted_DEPRECATED = false;
 
+	// FlipSigns.X refers to flipping along the direction of the hosting line, which only flips UVs.
+	// FlipSigns.Y refers to flipping about the extrusion's "Up" axis, which for Trim is along the hosting polygon, and is the profile polygon's X component.
 	UPROPERTY()
 	FVector2D FlipSigns = FVector2D::UnitVector;
 
@@ -55,6 +57,10 @@ public:
 	virtual bool GetIsDynamic() const override;
 
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
+
+	// Flipping the X axis (R) has no effect, because it is generalized to affect extrusion "Normal" axis, and Trim can't be flipped into the hosting polygon.
+	// Flipping the Y axis (F) flips along the hosting line, negating InstanceData.FlipSigns.X.
+	// Flipping the Z axis (V) flips across the hosting line in the hosting polygon plane, negating InstanceData.FlipSigns.Y and flipping InstanceData.UpJustification.
 	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
 	virtual bool GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
 
@@ -69,11 +75,12 @@ public:
 
 protected:
 	// Cached values for the trim, derived from instance properties and the parent SurfaceEdge
-	FVector TrimStartPos, TrimEndPos, TrimNormal, TrimUp, TrimDir, TrimScale;
-	FVector2D UpperExtensions, OuterExtensions;
+	FVector TrimStartPos, TrimEndPos, TrimNormal, TrimUp, TrimDir, TrimExtrusionFlip;
+	FVector2D UpperExtensions, OuterExtensions, ProfileJustification, ProfileFlip;
+	TArray<FVector2D> CachedProfilePoints;
+	FBox2D CachedProfileExtents;
 
 	bool UpdateCachedStructure();
 	bool UpdateMitering();
 	bool InternalUpdateGeometry(bool bRecreate, bool bCreateCollision);
 };
-

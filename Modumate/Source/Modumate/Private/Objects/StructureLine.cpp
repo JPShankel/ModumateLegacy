@@ -22,6 +22,7 @@ AMOIStructureLine::AMOIStructureLine()
 	, LineUp(ForceInitToZero)
 	, UpperExtensions(ForceInitToZero)
 	, OuterExtensions(ForceInitToZero)
+	, CachedProfileExtents(ForceInitToZero)
 {
 }
 
@@ -49,39 +50,61 @@ FVector AMOIStructureLine::GetLocation() const
 
 void AMOIStructureLine::SetupDynamicGeometry()
 {
-	InternalUpdateGeometry(true, true);
+	UpdateCachedGeometry(true, true);
 }
 
 void AMOIStructureLine::UpdateDynamicGeometry()
 {
-	InternalUpdateGeometry(false, true);
+	UpdateCachedGeometry(false, true);
 }
 
-void AMOIStructureLine::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
+bool AMOIStructureLine::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
 {
-	AModumateObjectInstance* parent = GetParentObject();
-	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaEdge)))
+	OutState = GetStateData();
+
+	FMOIStructureLineData modifiedInstanceData = InstanceData;
+
+	float curFlipSign = modifiedInstanceData.FlipSigns.GetComponentForAxis(FlipAxis);
+	modifiedInstanceData.FlipSigns.SetComponentForAxis(FlipAxis, -curFlipSign);
+
+	// If we're not flipping on the Y axis, we also need to flip justification so that flipping across the parent edge can be 1 action/delta.
+	if (FlipAxis != EAxis::Y)
 	{
-		return;
+		int32 justificationIdx = (FlipAxis == EAxis::Z) ? 0 : 1;
+		float& justificationValue = modifiedInstanceData.Justification[justificationIdx];
+		justificationValue = (1.0f - justificationValue);
 	}
 
-	// edges have two vertices and want an adjustment handle for each
-	for (int32 i = 0; i < 2; i++)
+	return OutState.CustomData.SaveStructData(modifiedInstanceData);
+}
+
+bool AMOIStructureLine::GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
+{
+	FVector2D projectedAdjustments(
+		AdjustmentDirection | LineUp,
+		AdjustmentDirection | LineNormal
+		);
+	int32 justificationIdx = (FMath::Abs(projectedAdjustments.X) > FMath::Abs(projectedAdjustments.Y)) ? 0 : 1;
+	float projectedAdjustment = projectedAdjustments[justificationIdx];
+
+	OutState = GetStateData();
+	FMOIStructureLineData modifiedInstanceData = InstanceData;
+	float& justificationValue = modifiedInstanceData.Justification[justificationIdx];
+
+	if (FMath::IsNearlyZero(projectedAdjustment, THRESH_NORMALS_ARE_ORTHOGONAL))
 	{
-		auto cornerHandle = MakeHandle<AAdjustPolyEdgeHandle>();
-		cornerHandle->SetTargetIndex(i);
-		cornerHandle->SetTargetMOI(parent);
+		projectedAdjustment = 0.0f;
 	}
+
+	float projectedAdjustmentSign = FMath::Sign(projectedAdjustment);
+	float justificationDelta = projectedAdjustmentSign * 0.5f;
+	justificationValue = FMath::Clamp(justificationValue + justificationDelta, 0.0f, 1.0f);
+
+	return OutState.CustomData.SaveStructData(modifiedInstanceData);
 }
 
 void AMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
-	const FSimplePolygon* profile = nullptr;
-	if (!UModumateObjectStatics::GetPolygonProfile(&GetAssembly(), profile))
-	{
-		return;
-	}
-
 	// For snapping, we want to attach to the underlying line itself
 	if (bForSnapping)
 	{
@@ -93,37 +116,54 @@ void AMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &out
 	// Otherwise, we want the extents of the mesh
 	else
 	{
-		FVector2D profileSize = profile->Extents.GetSize();
+		FVector2D profileSize = CachedProfileExtents.GetSize();
+		FVector2D profileCenter = CachedProfileExtents.GetCenter();
+		FVector lineCenter = 0.5f * (LineStartPos + LineEndPos) + (profileCenter.X * LineUp) + (profileCenter.Y * LineNormal);
+		FVector boxExtents(profileSize.Y, FVector::Dist(LineStartPos, LineEndPos), profileSize.X);
+		FQuat boxRot = FRotationMatrix::MakeFromXZ(LineNormal, LineUp).ToQuat();
 
-		FVector centroid = 0.5f * (LineStartPos + LineEndPos);
-		FVector boxExtents(FVector::Dist(LineStartPos, LineEndPos), profileSize.X, profileSize.Y);
-		FQuat boxRot = FRotationMatrix::MakeFromYZ(LineUp, LineNormal).ToQuat();
-
-		FModumateSnappingView::GetBoundingBoxPointsAndLines(centroid, boxRot, 0.5f * boxExtents, outPoints, outLines);
+		FModumateSnappingView::GetBoundingBoxPointsAndLines(lineCenter, boxRot, 0.5f * boxExtents, outPoints, outLines);
 	}
 }
 
-void AMOIStructureLine::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
+bool AMOIStructureLine::UpdateCachedGeometry(bool bRecreate, bool bCreateCollision)
 {
-	if (!ensure(DynamicMeshActor.IsValid() && (GetAssembly().Extrusions.Num() == 1)))
+	const FSimplePolygon* profile = nullptr;
+	if (!ensure(DynamicMeshActor.IsValid() && UModumateObjectStatics::GetPolygonProfile(&CachedAssembly, profile)))
 	{
-		return;
+		return false;
 	}
 
 	// This can be an expected error, if the object is still getting set up before it has a parent assigned.
 	const AModumateObjectInstance *parentObj = GetParentObject();
 	if (parentObj == nullptr)
 	{
-		return;
+		return false;
 	}
 
 	LineStartPos = parentObj->GetCorner(0);
 	LineEndPos = parentObj->GetCorner(1);
 	LineDir = (LineEndPos - LineStartPos).GetSafeNormal();
-	UModumateGeometryStatics::FindBasisVectors(LineNormal, LineUp, LineDir);
 
-	DynamicMeshActor->SetupExtrudedPolyGeometry(GetAssembly(), LineStartPos, LineEndPos,
-		LineNormal, LineUp, UpperExtensions, OuterExtensions, FVector::OneVector, bRecreate, bCreateCollision);
+	UModumateGeometryStatics::FindBasisVectors(LineNormal, LineUp, LineDir);
+	if (InstanceData.Rotation != 0.0f)
+	{
+		FQuat rotation(LineDir, FMath::DegreesToRadians(InstanceData.Rotation));
+		LineNormal = rotation * LineNormal;
+		LineUp = rotation * LineUp;
+	}
+
+	ProfileFlip.Set(InstanceData.FlipSigns.Z, InstanceData.FlipSigns.X);
+
+	if (!UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, InstanceData.Justification, ProfileFlip, CachedProfilePoints, CachedProfileExtents))
+	{
+		return false;
+	}
+
+	DynamicMeshActor->SetupExtrudedPolyGeometry(CachedAssembly, LineStartPos, LineEndPos, LineNormal, LineUp,
+		InstanceData.Justification, UpperExtensions, OuterExtensions, InstanceData.FlipSigns, bRecreate, bCreateCollision);
+
+	return true;
 }
 
 void AMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
@@ -133,7 +173,7 @@ void AMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 	OutPerimeters.Reset();
 
 	TArray<FVector> perimeter;
-	UModumateObjectStatics::GetExtrusionPerimeterPoints(this, LineUp, LineNormal, perimeter);
+	UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, LineUp, LineNormal, InstanceData.Justification, ProfileFlip, perimeter);
 
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)

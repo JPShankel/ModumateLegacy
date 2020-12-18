@@ -833,7 +833,7 @@ void ADynamicMeshActor::ClearProceduralLayers()
 }
 
 bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAssembly, const FVector& InStartPoint, const FVector& InEndPoint, const FVector& ObjNormal, const FVector& ObjUp,
-	const FVector2D& UpperExtensions, const FVector2D& OuterExtensions, const FVector& InScale, bool bRecreateSection, bool bCreateCollision)
+	const FVector2D& Justification, const FVector2D& UpperExtensions, const FVector2D& OuterExtensions, const FVector& InFlipSigns, bool bRecreateSection, bool bCreateCollision)
 {
 	const FSimplePolygon *polyProfile = nullptr;
 	if (!UModumateObjectStatics::GetPolygonProfile(&InAssembly, polyProfile))
@@ -856,8 +856,15 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 	SetActorLocation(midPoint);
 	SetActorRotation(FQuat::Identity);
 
-	const TArray<FVector2D> &profilePoints = polyProfile->Points;
-	const TArray<int32> &profileTris = polyProfile->Triangles;
+	TArray<FVector2D> profilePoints;
+	FBox2D profileExtents;
+	FVector2D profileFlip(InFlipSigns.Z, InFlipSigns.X);
+	if (!UModumateObjectStatics::GetExtrusionProfilePoints(InAssembly, Justification, profileFlip, profilePoints, profileExtents))
+	{
+		return false;
+	}
+
+	const TArray<int32>& profileTris = polyProfile->Triangles;
 
 	vertices.Reset();
 	normals.Reset();
@@ -865,21 +872,11 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 	uv0.Reset();
 	vertexColors.Reset();
 
-	// TODO: scale should come in as an FVector2D
-	FVector2D profileScale2D(InScale.GetAbs());
-	if (ensure(Assembly.Extrusions.Num() == 1))
-	{
-		profileScale2D *= FVector2D(Assembly.Extrusions[0].Scale);
-	}
-
-	const FBox2D &profileExtents = polyProfile->Extents;
-	FVector2D profileExtentsMin = profileExtents.Min * profileScale2D;
-	FVector2D profileExtentsSize = profileExtents.GetSize() * profileScale2D;
-
-	auto offsetPoint = [extrusionDir, ObjNormal, ObjUp, profileExtentsMin, profileExtentsSize, UpperExtensions, OuterExtensions]
+	auto offsetPoint = [extrusionDir, ObjNormal, ObjUp, profileExtents, UpperExtensions, OuterExtensions]
 	(const FVector &worldPoint, const FVector2D &polyPoint, bool bAtStart)
 	{
-		FVector2D pointRelative = polyPoint - profileExtentsMin;
+		FVector2D profileExtentsSize = profileExtents.GetSize();
+		FVector2D pointRelative = polyPoint - profileExtents.Min;
 		FVector2D pointPCT = (profileExtentsSize.GetMin() > 0.0f) ? (pointRelative / profileExtentsSize) : FVector2D::ZeroVector;
 		float lengthExtension = 0.0f;
 
@@ -896,7 +893,7 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 	};
 
 	static constexpr float uvScale = 0.01f;
-	const FVector2D uvFactor(uvScale * FMath::Sign(InScale.X), uvScale);
+	const FVector2D uvFactor(uvScale * FMath::Sign(InFlipSigns.Y), uvScale);
 	auto fixExtrudedTriUVs = [this, uvFactor](const FVector2D &uv1, const FVector2D &uv2, const FVector2D &uv3)
 	{
 		int32 numUVs = uv0.Num();
@@ -913,8 +910,8 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 	for (int32 p1Idx = 0; p1Idx < numPoints; ++p1Idx)
 	{
 		int32 p2Idx = (p1Idx + 1) % numPoints;
-		FVector2D p1 = profilePoints[p1Idx] * profileScale2D;
-		FVector2D p2 = profilePoints[p2Idx] * profileScale2D;
+		FVector2D p1 = profilePoints[p1Idx];
+		FVector2D p2 = profilePoints[p2Idx];
 		FVector2D edgeDelta = p2 - p1;
 		float edgeLength = edgeDelta.Size();
 
@@ -950,9 +947,9 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 			int32 triIdxB = profileTris[(3 * triIdx) + 1];
 			int32 triIdxC = profileTris[(3 * triIdx) + 2];
 
-			FVector2D polyPointA = profilePoints[triIdxA]*profileScale2D;
-			FVector2D polyPointB = profilePoints[triIdxB]*profileScale2D;
-			FVector2D polyPointC = profilePoints[triIdxC]*profileScale2D;
+			FVector2D polyPointA = profilePoints[triIdxA];
+			FVector2D polyPointB = profilePoints[triIdxB];
+			FVector2D polyPointC = profilePoints[triIdxC];
 
 			FVector meshPointStartA = offsetPoint(baseStartPoint, polyPointA, true);
 			FVector meshPointStartB = offsetPoint(baseStartPoint, polyPointB, true);
