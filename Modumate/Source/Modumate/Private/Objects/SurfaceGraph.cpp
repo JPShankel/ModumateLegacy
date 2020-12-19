@@ -92,10 +92,6 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 			TArray<int32> boundingVertexIDs;
 			surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
 			auto poly = surfaceGraph->GetRootPolygon();
-			if (!ensureMsgf(poly, TEXT("Error: SurfaceGraph does not have a singular outer polygon!")))
-			{
-				return false;
-			}
 
 			if (boundingVertexIDs.Num() == 0)
 			{

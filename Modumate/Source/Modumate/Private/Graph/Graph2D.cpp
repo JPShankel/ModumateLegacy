@@ -448,6 +448,8 @@ namespace Modumate
 	{
 		int32 resultID = MOD_ID_NONE;
 
+		TSet<int32> potentialRootOuterPolygons;
+
 		for (auto &kvp : Polygons)
 		{
 			auto &polygon = kvp.Value;
@@ -460,12 +462,36 @@ namespace Modumate
 				// If there's already another root polygon, then there's no singular root polygon, so return neither.
 				else
 				{
-					return MOD_ID_NONE;
+					for (int32 edgeID : polygon.Edges)
+					{
+						auto edge = FindEdge(edgeID);
+						if (!edge)
+						{
+							continue;
+						}
+
+						for (int32 polyID : { edge->LeftPolyID, edge->RightPolyID })
+						{
+							auto poly = FindPolygon(polyID);
+							if (poly && !poly->bInterior)
+							{
+								potentialRootOuterPolygons.Add(polyID);
+							}
+						}
+					}
 				}
 			}
 		}
-
-		return resultID;
+		
+		if (potentialRootOuterPolygons.Num() == 0)
+		{
+			return resultID;
+		}
+		else if (potentialRootOuterPolygons.Num() == 1)
+		{
+			return *potentialRootOuterPolygons.CreateConstIterator();
+		}
+		return MOD_ID_NONE;
 	}
 
 	FGraph2DPolygon *FGraph2D::GetRootPolygon()
