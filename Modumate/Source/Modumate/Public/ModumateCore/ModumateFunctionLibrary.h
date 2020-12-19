@@ -51,7 +51,7 @@ public:
 	static bool ComponentToUIScreenPosition(UStaticMeshComponent* Target, FVector WorldLocation, FVector ScreenOffset = FVector::ZeroVector);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
-	static bool LineBoxIntersection(const FBox2D &box, const FVector2D &start, const FVector2D &end);
+	static bool LineBoxIntersection(const FBox2D &box, const FVector2D start, const FVector2D end);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Vector")
 	static void ScreenLineExtend(FVector2D& ReturnStart, FVector2D& ReturnEnd, FVector2D Start, FVector2D End, float StartExtendDistance, float EndExtendDistance);

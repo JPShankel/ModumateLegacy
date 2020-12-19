@@ -7,6 +7,7 @@
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "KismetProceduralMeshLibrary.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateStats.h"
 #include "Objects/Portal.h"
 #include "Algo/AnyOf.h"
 #include "Algo/Copy.h"
@@ -21,6 +22,9 @@
 #include "Drafting/ModumateViewLineSegment.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/DynamicMeshActor.h"
+
+DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Drafting Line Clipping"), STAT_ModumateDraftLineClip, STATGROUP_Modumate);
+DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Drafting Clip Kernel"), STAT_ModumateDraftClipKernel, STATGROUP_Modumate);
 
 namespace Modumate
 {
@@ -224,6 +228,7 @@ namespace Modumate
 		}
 
 		BuildAccelerationStructure();
+
 	}
 
 	bool FModumateClippingTriangles::IsPointInFront(FVector Point) const
@@ -270,7 +275,8 @@ namespace Modumate
 	// Clip one line in world space to (possibly) multiple lines in view space.
 	TArray<FEdge> FModumateClippingTriangles::ClipWorldLineToView(FEdge line)
 	{
-		QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDraftLineClip);
+		SCOPE_MS_ACCUMULATOR(STAT_ModumateDraftLineClip);
+		++numberClipCalls;
 
 		TArray<FModumateViewLineSegment> outViewLines;
 		TArray<FModumateViewLineSegment> inViewLines;
@@ -316,6 +322,7 @@ namespace Modumate
 			}
 		}
 		
+		numberGeneratedLines += outViewLines.Num();
 		for (auto& l: outViewLines)
 		{
 			returnValue.Emplace(FVector(l.Start), FVector(l.End) );
@@ -325,6 +332,9 @@ namespace Modumate
 
 	TArray<FEdge> FModumateClippingTriangles::ClipViewLineToView(FEdge lineInViewSpace)
 	{
+		SCOPE_MS_ACCUMULATOR(STAT_ModumateDraftLineClip);
+		++numberClipCalls;
+
 		TArray<FModumateViewLineSegment> outViewLines;
 		TArray<FModumateViewLineSegment> inViewLines;
 
@@ -352,6 +362,7 @@ namespace Modumate
 			}
 		}
 
+		numberGeneratedLines += outViewLines.Num();
 		for (auto& l: outViewLines)
 		{
 			returnValue.Emplace(FVector(l.Start), FVector(l.End) );
@@ -387,18 +398,22 @@ namespace Modumate
 		}
 	}
 
-	bool FModumateClippingTriangles::ClipSingleWorldLine(FModumateViewLineSegment& viewLine, FModumateOccluder occluder, TArray<FModumateViewLineSegment>& generatedLines)
+	bool FModumateClippingTriangles::ClipSingleWorldLine(FModumateViewLineSegment& viewLine, const FModumateOccluder& occluder,
+		TArray<FModumateViewLineSegment>& generatedLines)
 	{
 		double maxZ = FMath::Max(viewLine.Start.Z, viewLine.End.Z);
 
-		if (maxZ > occluder.MinZ && LineBoxIntersection(viewLine, occluder.BoundingBox))
+		if (maxZ > occluder.MinZ)
 		{
+			SCOPE_MS_ACCUMULATOR(STAT_ModumateDraftClipKernel);
+			++numberClipKernels;
+
 			DVec2 a((double*)(viewLine.Start));
 			FVector3d delta3d(viewLine.End - viewLine.Start);
 			DVec2 dir(delta3d.X, delta3d.Y);
-			DVec2 q((double*)occluder.Vertices[0]);
-			DVec2 u(DVec2((double*)occluder.Vertices[1]) - q);
-			DVec2 v(DVec2((double*)occluder.Vertices[2]) - q);
+			DVec2 q((const double*)occluder.Vertices[0]);
+			DVec2 u(DVec2((const double*)occluder.Vertices[1]) - q);
+			DVec2 v(DVec2((const double*)occluder.Vertices[2]) - q);
 			// Epsilon for eroding clipped line away in view-space:
 			FVector3d vecEps(dir.Normalized() * (LineClipEpsilon * Scale));
 			vecEps.Z = vecEps.Length() / dir.Length() * delta3d.Z;
@@ -409,7 +424,7 @@ namespace Modumate
 			// Intersect line with all triangle sides.
 			DVec2 t1Alpha = Intersect2V(dir, -u, q - a);
 			DVec2 t2Beta = Intersect2V(dir, -v, q - a);
-			DVec2 t3Gamma = Intersect2V(dir, u - v, DVec2((double*)occluder.Vertices[1]) - a);
+			DVec2 t3Gamma = Intersect2V(dir, u - v, DVec2((const double*)occluder.Vertices[1]) - a);
 
 			double t1 = t1Alpha.X;
 			double t2 = t2Beta.X;
@@ -503,7 +518,7 @@ namespace Modumate
 			else if (bIntersectW)
 			{
 				FVector3d intersect = viewLine.Start + t3 * viewLine.AsVector();
-				if ((a - DVec2((double*)occluder.Vertices[1])).Cross(v - u) > 0.0)
+				if ((a - DVec2((const double*)occluder.Vertices[1])).Cross(v - u) > 0.0)
 				{
 					FVector3d intersectForDepth = intersect + depthVectorOffset;
 					double triangleZ = occluder.DepthAtPoint(intersectForDepth);
@@ -524,6 +539,10 @@ namespace Modumate
 					}
 				}
 			}
+		}
+		else
+		{
+			++numberDepthRejects;
 		}
 
 		return true;
@@ -554,6 +573,7 @@ namespace Modumate
 			QuadTree->AddOccluder(&occluder);
 		}
 
+		QuadTree->GetOccluderSizesAtlevel(occludersAtLevel);
 	}
 
 	FModumateClippingTriangles::QuadTreeNode::QuadTreeNode(const FBox2D& Box, int Depth)
@@ -585,6 +605,7 @@ namespace Modumate
 						Children[child].Reset(new QuadTreeNode(childBoxes[child], NodeDepth + 1));
 					}
 					Children[child]->AddOccluder(NewOccluder);
+					++SubtreeSize[child];
 					return;
 				}
 			}
@@ -595,9 +616,10 @@ namespace Modumate
 
 	bool FModumateClippingTriangles::QuadTreeNode::Apply(const FModumateViewLineSegment& line, TFunctionRef<bool (const FModumateOccluder& occluder)> functor)
 	{
+
 		for (const auto& occluder: Occluders)
 		{
-			if (!functor(*occluder))
+			if (LineBoxIntersection(line, occluder->BoundingBox) && !functor(*occluder))
 			{
 				return false;
 			}
@@ -639,6 +661,21 @@ namespace Modumate
 		}
 
 		return true;
+	}
+
+	void FModumateClippingTriangles::QuadTreeNode::GetOccluderSizesAtlevel(int32 sizes[]) const
+	{
+		if (ensureAlways(NodeDepth <= MaxTreeDepth))
+		{
+			sizes[NodeDepth] += Occluders.Num();
+			for (int32 i = 0; i < 4; ++i)
+			{
+				if (Children[i].IsValid())
+				{
+					Children[i]->GetOccluderSizesAtlevel(sizes);
+				}
+			}
+		}
 	}
 
 }

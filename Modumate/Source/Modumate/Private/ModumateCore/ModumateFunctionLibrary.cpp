@@ -193,7 +193,7 @@ bool UModumateFunctionLibrary::ComponentToUIScreenPosition(UStaticMeshComponent 
 }
 
 // Reimplemented in 2D based on FMath::LineBoxIntersection in 3D
-bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVector2D &start, const FVector2D &end)
+bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVector2D start, const FVector2D end)
 {
 	if (start.Equals(end))
 	{
@@ -207,9 +207,9 @@ bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVec
 
 	if (start.X < box.Min.X)
 	{
-		bStartIsOutside = true;
 		if (end.X >= box.Min.X)
 		{
+			bStartIsOutside = true;
 			time.X = (box.Min.X - start.X) * oneOverStartToEnd.X;
 		}
 		else
@@ -219,9 +219,9 @@ bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVec
 	}
 	else if (start.X > box.Max.X)
 	{
-		bStartIsOutside = true;
 		if (end.X <= box.Max.X)
 		{
+			bStartIsOutside = true;
 			time.X = (box.Max.X - start.X) * oneOverStartToEnd.X;
 		}
 		else
@@ -236,9 +236,9 @@ bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVec
 
 	if (start.Y < box.Min.Y)
 	{
-		bStartIsOutside = true;
 		if (end.Y >= box.Min.Y)
 		{
+			bStartIsOutside = true;
 			time.Y = (box.Min.Y - start.Y) * oneOverStartToEnd.Y;
 		}
 		else
@@ -248,9 +248,9 @@ bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVec
 	}
 	else if (start.Y > box.Max.Y)
 	{
-		bStartIsOutside = true;
 		if (end.Y <= box.Max.Y)
 		{
+			bStartIsOutside = true;
 			time.Y = (box.Max.Y - start.Y) * oneOverStartToEnd.Y;
 		}
 		else
@@ -270,7 +270,7 @@ bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVec
 		if (maxTime >= 0.0f && maxTime <= 1.0f)
 		{
 			const FVector2D hit = start + startToEnd * maxTime;
-			const float BOX_SIDE_THRESHOLD = 0.1f;
+			static constexpr float BOX_SIDE_THRESHOLD = 0.1f;
 			if (hit.X > box.Min.X - BOX_SIDE_THRESHOLD && hit.X < box.Max.X + BOX_SIDE_THRESHOLD &&
 				hit.Y > box.Min.Y - BOX_SIDE_THRESHOLD && hit.Y < box.Max.Y + BOX_SIDE_THRESHOLD)
 			{

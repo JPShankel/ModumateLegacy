@@ -15,10 +15,13 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateUnits.h"
+#include "ModumateCore/ModumateStats.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Drafting/ModumateDraftingElements.h"
+
+DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Mesh To Lines"), STAT_ModumateMeshToLines, STATGROUP_Modumate);
 
 using namespace Modumate;
 
@@ -939,6 +942,8 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 void ACompoundMeshActor::DraftingLinesFromTriangles(const TArray<FVector>& Vertices, const TArray<int32>& Indices,
 	const FVector& ViewDirection, TArray<FEdge>& outEdges, float Epsilon /*= 0.4f*/) const
 {
+	SCOPE_MS_ACCUMULATOR(STAT_ModumateMeshToLines);
+
 	const float EpsilonSquare = Epsilon * Epsilon;
 	static constexpr float angleThreshold = 0.9205f;  // 23 degrees
 

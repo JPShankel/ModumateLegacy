@@ -37,7 +37,7 @@ namespace Modumate
 
 
 		TArray<FModumateOccluder> Occluders;
-		bool ClipSingleWorldLine(FModumateViewLineSegment& viewLine, FModumateOccluder occluder, TArray<FModumateViewLineSegment>& generatedLines);
+		bool ClipSingleWorldLine(FModumateViewLineSegment& viewLine, const FModumateOccluder& occluder, TArray<FModumateViewLineSegment>& generatedLines);
 		static bool IsBoxUnoccluded(const FModumateOccluder& Occluder, const FBox2D Box, float Depth);
 
 		class QuadTreeNode
@@ -48,21 +48,30 @@ namespace Modumate
 			// Apply a functor to all intersecting lines & boxes (until failure).
 			bool Apply(const FModumateViewLineSegment& line, TFunctionRef<bool (const FModumateOccluder& occluder)> functor);
 			bool Apply(const FBox2D& box, TFunctionRef<bool (const FModumateOccluder& occluder)> functor);
+			void GetOccluderSizesAtlevel(int32 sizes[]) const;  // Stats
 			
 			const FBox2D NodeBox;
+
+			static const int MaxTreeDepth = 10;
 
 		private:
 			int NodeDepth { 0 };
 			TArray<const FModumateOccluder*> Occluders;
 			TUniquePtr<QuadTreeNode> Children[4];
-
-			static const int MaxTreeDepth = 8;
+			int32 SubtreeSize[4] = { 0 };
 		};
 
 		TUniquePtr<QuadTreeNode> QuadTree;
 
 		// Erode-length in world units.
 		static constexpr double LineClipEpsilon = 0.05;
+
+		// Stats
+		int64 numberClipKernels = 0;
+		int64 numberDepthRejects = 0;
+		int32 numberClipCalls = 0;
+		int32 numberGeneratedLines = 0;
+		int32 occludersAtLevel[QuadTreeNode::MaxTreeDepth + 1] = { 0 };
 	};
 
 }
