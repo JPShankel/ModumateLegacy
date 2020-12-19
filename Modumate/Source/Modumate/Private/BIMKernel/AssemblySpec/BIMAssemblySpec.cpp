@@ -604,7 +604,6 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 	RootProperties.TryGetProperty(EBIMValueScope::Assembly,BIMPropertyNames::Name, DisplayName);
 	RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Comments, Comments);
 	RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Code, CodeName);
-	RootProperties.TryGetProperty(EBIMValueScope::Assembly, TEXT("IdealTreadDepth"), TreadDepth);
 
 	// TODO: move assembly synthesis to each tool mode or MOI implementation (TBD)
 	EBIMResult result = EBIMResult::Error;
@@ -623,7 +622,14 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 	case EObjectType::OTCountertop:
 	case EObjectType::OTSystemPanel:
 	case EObjectType::OTFinish:
+		return MakeLayeredAssembly(InDB);
+
 	case EObjectType::OTStaircase:
+		if (!ensureAlways(RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::TreadDepthIdeal, TreadDepth) && TreadDepth.AsWorldCentimeters() > 0.0f))
+		{
+			// Prevent divide by zero errors with treads of ludicrous size
+			TreadDepth = Modumate::Units::FUnitValue::WorldInches(1.0f);
+		}
 		return MakeLayeredAssembly(InDB);
 
 	case EObjectType::OTDoor:

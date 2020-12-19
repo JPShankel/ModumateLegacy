@@ -207,6 +207,7 @@ namespace BIMPropertyNames
 	const FBIMNameType Title = TEXT("Title");
 	const FBIMNameType ToeKickDepth = TEXT("ToeKickDepth");
 	const FBIMNameType ToeKickHeight = TEXT("ToeKickHeight");
+	const FBIMNameType TreadDepthIdeal = TEXT("TreadDepthIdeal");
 	const FBIMNameType TrimProfile = TEXT("TrimProfile");
 	const FBIMNameType UseGroupType = TEXT("UseGroupType");
 	const FBIMNameType Width = TEXT("Width");
