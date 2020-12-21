@@ -757,6 +757,8 @@ bool ADynamicMeshActor::SetupStairPolys(const FVector& StairOrigin, const TArray
 				newLayerGeom.TriangulateMesh(vertices, triangles, normals, uv0, tangents);
 			}
 
+			Mesh->CreateMeshSection_LinearColor(sectionIndex, vertices, triangles, normals, uv0, vertexColors, tangents, true);
+
 			const FArchitecturalMaterial* material = nullptr;
 			if (bProcessingRisers)
 			{
