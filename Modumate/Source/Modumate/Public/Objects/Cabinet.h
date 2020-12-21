@@ -60,7 +60,7 @@ public:
 	static bool UpdateCabinetActors(const FBIMAssemblySpec& Assembly, const TArray<FVector>& InBasePoints, const FVector& InExtrusionDelta,
 		int32 FrontFaceIndex, bool bFaceLateralInverted, bool bUpdateCollision, bool bEnableCollision,
 		class ADynamicMeshActor* CabinetBoxActor, class ACompoundMeshActor* CabinetFaceActor, bool& bOutFaceValid,
-		int32 DoorPartIndex = 0);
+		int32 DoorPartIndex = BIM_ROOT_PART, bool bEnableCabinetBox = true);
 
 	UPROPERTY()
 	FMOICabinetData InstanceData;

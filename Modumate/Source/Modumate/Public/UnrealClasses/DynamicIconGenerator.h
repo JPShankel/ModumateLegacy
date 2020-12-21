@@ -106,13 +106,13 @@ public:
 	float CabinetScaleFactor = 1.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
-	float TrimIconScaleFactor = 24.f;
+	float TrimIconScaleFactor = 1.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
 	float FFEIconScaleFactor = 22.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
-	float ProfileIconScaleFactor = 24.f;
+	float ProfileIconScaleFactor = 1.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Size")
 	float StairIconScaleFactor = 1.f;
@@ -150,12 +150,12 @@ public:
 	bool SetIconMeshForBIMDesigner(bool UseDependentPreset, const FBIMKey& PresetID, UMaterialInterface*& OutMaterial, UTexture*& OutTexture, const FBIMEditorNodeIDType& NodeID);
 	bool GetSavedIconFromPreset(const FBIMKey& PresetID, UTexture*& OutTexture);
 	UMaterialInterface* CreateMaterialForIconTexture(const FBIMKey& PresetID, UTexture* InTexture);
-	bool SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex);
+	bool SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex, bool bFromRootNode);
 
 	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForPortalAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex);
-	bool SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex);
+	bool SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex, bool bIncludeCabinetBoxMesh);
 	bool SetIconMeshForTrimAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForFFEAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForStairAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex);
@@ -174,6 +174,7 @@ public:
 	void GetFloorSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& StartPt, const FVector& EndPt, float Height, FVector& OutLocation, FVector& OutNormal, bool& OutSliced);
 	bool SetComponentForIconCapture(UPrimitiveComponent* Comp, bool CanCapture);
 	void SetIconDynamicMeshLayersForCapture(bool Visible);
+	void SetIconDynamicMeshMeshCompForCapture(bool Visible);
 	void SetIconCompoundMeshActorForCapture(bool Visible);
 
 	void SetCaptureCompTransformForCapture(AActor* ActorToCapture, float SizeScale, bool OnlyCollidingComponents);

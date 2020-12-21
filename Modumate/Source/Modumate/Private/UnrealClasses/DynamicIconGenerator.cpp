@@ -133,7 +133,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssembly(const FBIMKey& AsmKey, UMater
 		return false;
 	}
 
-	bool captureSuccess = SetIconMeshForAssemblyType(*assembly, IconRenderTarget, BIM_ROOT_PART);
+	bool captureSuccess = SetIconMeshForAssemblyType(*assembly, IconRenderTarget, BIM_ROOT_PART, true);
 	if (captureSuccess)
 	{
 		UTexture2D* outSavedTexture = nullptr;
@@ -177,6 +177,8 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 	// The following presets need render capture for icon
 	UTextureRenderTarget2D* renderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), RenderTargetSize, RenderTargetSize, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
 	bool captureSuccess = false;
+	// Some object types have special rule to render root node, ex: cabinet may not need extruded mesh on non root node
+	bool fromRootNode = false;
 
 	// TODO: Ideally this function will be in FBIMPresetEditor, in InstancePool of BIMDesigner
 	// If this assembly is a part of its parent assembly, find the partID associated with the meshes needed to isolate for render
@@ -197,6 +199,10 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 					break;
 				}
 			}
+		}
+		if (!nodeInst->ParentInstance.Pin())
+		{
+			fromRootNode = true;
 		}
 
 		// Match slotID to the part inside the CraftingAssembly
@@ -221,7 +227,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 		}
 		else
 		{
-			captureSuccess = SetIconMeshForAssemblyType(Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly, renderTarget, assemblyPartIndex);
+			captureSuccess = SetIconMeshForAssemblyType(Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly, renderTarget, assemblyPartIndex, fromRootNode);
 		}
 	}
 
@@ -303,7 +309,7 @@ UMaterialInterface* ADynamicIconGenerator::CreateMaterialForIconTexture(const FB
 	return dynMat;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex)
+bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex, bool bFromRootNode)
 {
 	switch (Assembly.ObjectType)
 	{
@@ -325,7 +331,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &A
 	case EObjectType::OTMullion:
 		return SetIconMeshForTrimAssembly(Assembly, InRenderTarget);
 	case EObjectType::OTCabinet:
-		return SetIconMeshForCabinetAssembly(Assembly, InRenderTarget, PartIndex);
+		return SetIconMeshForCabinetAssembly(Assembly, InRenderTarget, PartIndex, bFromRootNode);
 	case EObjectType::OTFurniture:
 		return SetIconMeshForFFEAssembly(Assembly, InRenderTarget);
 	case  EObjectType::OTStaircase:
@@ -459,13 +465,12 @@ bool ADynamicIconGenerator::SetIconMeshForPortalAssembly(const FBIMAssemblySpec 
 
 	// Step 3: Revert capture comp to its original transform, and actor to its original state
 	SceneCaptureComp->SetRelativeTransform(originalCaptureCompTransform);
-	IconCompoundMeshActor->SetActorRelativeTransform(FTransform::Identity);
 	SetIconCompoundMeshActorForCapture(false);
 
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex)
+bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex, bool bIncludeCabinetBoxMesh)
 {
 	// Now that we have a cabinet assembly, a DynamicMeshActor, and CompoundMeshActor,
 	// we can make a fake cabinet for icon generation the same way that AMOICabinet does.
@@ -499,14 +504,20 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 
 	// Step 1: Setup for actor to create meshes from assembly
 	bool bFaceValid;
-	AMOICabinet::UpdateCabinetActors(Assembly, cabinetBasePoints, extrusionDelta, 2, false, false, false, IconDynamicMeshActor, IconCompoundMeshActor, bFaceValid, PartIndex);
+	AMOICabinet::UpdateCabinetActors(Assembly, cabinetBasePoints, extrusionDelta, 2, false, true, true, IconDynamicMeshActor, IconCompoundMeshActor, bFaceValid, PartIndex, bIncludeCabinetBoxMesh);
 
 	// Step 2: Set camera transform and actor for capture
 	FTransform originalCaptureCompTransform = SceneCaptureComp->GetRelativeTransform();
-	// TODO: Capture extent to dynamic mesh actor?
-	SetCaptureCompTransformForCapture(IconCompoundMeshActor, CabinetScaleFactor, true);
+	if (bIncludeCabinetBoxMesh)
+	{
+		SetCaptureCompTransformForCapture(IconDynamicMeshActor, CabinetScaleFactor, true);
+	}
+	else
+	{
+		SetCaptureCompTransformForCapture(IconCompoundMeshActor, CabinetScaleFactor, true);
+	}
 	SetIconCompoundMeshActorForCapture(true);
-	SetIconDynamicMeshLayersForCapture(true);
+	SetIconDynamicMeshLayersForCapture(bIncludeCabinetBoxMesh);
 	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
@@ -522,8 +533,7 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 
 bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
 {
-	// Now that we have an assembly, a DynamicMeshActor, and CompoundMeshActor,
-	// we can make a mesh for icon generation.
+	// Step 1: Setup for from assembly
 	FVector meshStartPos = FVector(TrimLength * 0.5f, 0.f, 0.f);
 	FVector meshEndPos = FVector(TrimLength * -0.5f, 0.f, 0.f);
 
@@ -536,28 +546,19 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FBIMAssemblySpec &A
 
 	IconDynamicMeshActor->SetupExtrudedPolyGeometry(Assembly, meshStartPos, meshEndPos,
 		meshNormal, meshUp, justification, upperExtensions, outerExtensions, FVector::OneVector, true, false);
+	IconDynamicMeshActor->SetActorRelativeTransform(FTransform::Identity);
 
-	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
-	FVector meshExtent = IconDynamicMeshActor->Mesh->Bounds.BoxExtent;
-	FVector meshOrigin = IconDynamicMeshActor->Mesh->Bounds.Origin;
-	FVector meshSize = ((TrimIconScaleFactor / meshExtent.Size()) * FVector::OneVector);
-	FVector meshLocation = meshOrigin * meshSize * -1.f;
-
-	IconDynamicMeshActor->SetActorRelativeLocation(meshLocation);
-	IconDynamicMeshActor->SetActorRelativeScale3D(meshSize);
-
-	// Set bound render to prevent mesh from being occluded by front mesh
-	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, true);
-	IconDynamicMeshActor->Mesh->SetVisibility(true);
-
+	// Step 2: Set camera transform and actor for capture
+	FTransform originalCaptureCompTransform = SceneCaptureComp->GetRelativeTransform();
+	SetCaptureCompTransformForCapture(IconDynamicMeshActor, TrimIconScaleFactor, true);
+	SetIconDynamicMeshMeshCompForCapture(true);
 	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
-	// Step 3: Cleanup
-	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
-	IconDynamicMeshActor->SetActorScale3D(FVector::OneVector);
-	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, false);
-	IconDynamicMeshActor->Mesh->SetVisibility(false);
+	// Step 3: Revert capture comp to its original transform, and actor to its original state
+	SceneCaptureComp->SetRelativeTransform(originalCaptureCompTransform);
+	SetIconDynamicMeshMeshCompForCapture(false);
+
 	return true;
 }
 
@@ -744,29 +745,21 @@ bool ADynamicIconGenerator::SetIconMeshForProfile(const FBIMKey& ProfileKey, UTe
 
 	IconDynamicMeshActor->SetupExtrudedPolyGeometry(obAsm, meshStartPos, meshEndPos,
 		meshNormal, meshUp, justification, FVector2D::ZeroVector, FVector2D::ZeroVector, FVector::OneVector, true, false);
+	IconDynamicMeshActor->SetActorRelativeTransform(FTransform::Identity);
 
-	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
-	FVector meshScale = ((ProfileIconScaleFactor / IconDynamicMeshActor->Mesh->Bounds.SphereRadius) * FVector::OneVector);
-	FVector meshLocation = (IconDynamicMeshActor->Mesh->Bounds.Origin * meshScale) * -1.f;
-	IconDynamicMeshActor->SetActorRelativeLocation(meshLocation);
-	IconDynamicMeshActor->SetActorRelativeScale3D(meshScale);
+	// Step 2: Set camera transform and actor for capture
 	// For 2D profile icon, rotation the capture comp to point directly at profile mesh
-	FRotator originalSpringArmRotation = SpringArm->GetRelativeRotation();
-	SpringArm->SetRelativeRotation(FRotator::ZeroRotator);
-
-	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, true);
-	IconDynamicMeshActor->Mesh->SetVisibility(true);
-
+	FTransform originalCaptureCompTransform = SceneCaptureComp->GetRelativeTransform();
+	SceneCaptureComp->SetWorldTransform(FTransform::Identity);
+	SetCaptureCompTransformForCapture(IconDynamicMeshActor, ProfileIconScaleFactor, true);
+	SetIconDynamicMeshMeshCompForCapture(true);
 	SceneCaptureComp->TextureTarget = InRenderTarget;
 	SceneCaptureComp->CaptureScene();
 
-	// Step 3: Cleanup
-	IconDynamicMeshActor->SetActorRelativeLocation(FVector::ZeroVector);
-	IconDynamicMeshActor->SetActorScale3D(FVector::OneVector);
-	IconDynamicMeshActor->SetActorRotation(FRotator::ZeroRotator);
-	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, false);
-	IconDynamicMeshActor->Mesh->SetVisibility(false);
-	SpringArm->SetRelativeRotation(originalSpringArmRotation);
+	// Step 3: Revert capture comp to its original transform, and actor to its original state
+	SceneCaptureComp->SetRelativeTransform(originalCaptureCompTransform);
+	SetIconDynamicMeshMeshCompForCapture(false);
+
 	return true;
 }
 
@@ -1090,6 +1083,20 @@ void ADynamicIconGenerator::SetIconDynamicMeshLayersForCapture(bool Visible)
 	{
 		SetComponentForIconCapture(curLayer, Visible);
 		curLayer->SetVisibility(Visible);
+	}
+	if (!Visible)
+	{
+		IconDynamicMeshActor->ClearProceduralLayers();
+	}
+}
+
+void ADynamicIconGenerator::SetIconDynamicMeshMeshCompForCapture(bool Visible)
+{
+	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, Visible);
+	IconDynamicMeshActor->Mesh->SetVisibility(Visible);
+	if (!Visible)
+	{
+		IconDynamicMeshActor->Mesh->ClearAllMeshSections();
 	}
 }
 

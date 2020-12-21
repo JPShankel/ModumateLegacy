@@ -293,7 +293,7 @@ bool AMOICabinet::GetFaceGeometry(const TArray<FVector>& BasePoints, const FVect
 
 bool AMOICabinet::UpdateCabinetActors(const FBIMAssemblySpec& Assembly, const TArray<FVector>& InBasePoints, const FVector& InExtrusionDelta,
 	int32 FrontFaceIndex, bool bFaceLateralInverted, bool bUpdateCollision, bool bEnableCollision,
-	ADynamicMeshActor* CabinetBoxActor, ACompoundMeshActor* CabinetFaceActor, bool& bOutFaceValid, int32 DoorPartIndex)
+	ADynamicMeshActor* CabinetBoxActor, ACompoundMeshActor* CabinetFaceActor, bool& bOutFaceValid, int32 DoorPartIndex, bool bEnableCabinetBox)
 {
 	bOutFaceValid = false;
 	int32 numBasePoints = InBasePoints.Num();
@@ -440,9 +440,12 @@ bool AMOICabinet::UpdateCabinetActors(const FBIMAssemblySpec& Assembly, const TA
 	}
 
 	// Set up the cabinet box geometry, which will recenter the actor around its base points
-	auto& extrusion = extrusions[0];
-	CabinetBoxActor->SetupCabinetGeometry(basePoints, extrusionDelta, extrusion.Material, bUpdateCollision, bEnableCollision,
-		toeKickDimensions, faceInsetDist, FrontFaceIndex);
+	if (bEnableCabinetBox && ensure(extrusions.Num() > 0))
+	{
+		auto& extrusion = extrusions[0];
+		CabinetBoxActor->SetupCabinetGeometry(basePoints, extrusionDelta, extrusion.Material, bUpdateCollision, bEnableCollision,
+			toeKickDimensions, faceInsetDist, FrontFaceIndex);
+	}
 
 	// Then, either position the newly-set up cabinet face actor, or hide it if it's disabled, since it's attached to the cabinet box actor.
 	if (bOutFaceValid)
