@@ -46,19 +46,21 @@ namespace Modumate
 			QuadTreeNode(const FBox2D& Box, int NodeDepth = 0);
 			void AddOccluder(const FModumateOccluder* NewOccluder);
 			// Apply a functor to all intersecting lines & boxes (until failure).
-			bool Apply(const FModumateViewLineSegment& line, TFunctionRef<bool (const FModumateOccluder& occluder)> functor);
+			bool Apply(FModumateViewLineSegment& line, TFunctionRef<bool (const FModumateOccluder& occluder)> functor);
 			bool Apply(const FBox2D& box, TFunctionRef<bool (const FModumateOccluder& occluder)> functor);
 			void GetOccluderSizesAtlevel(int32 sizes[]) const;  // Stats
+			void PostProcess(int32 GlobalPosition = 0);
 			
 			const FBox2D NodeBox;
 
-			static const int MaxTreeDepth = 10;
+			static constexpr int MaxTreeDepth = 10;
 
 		private:
 			int NodeDepth { 0 };
 			TArray<const FModumateOccluder*> Occluders;
 			TUniquePtr<QuadTreeNode> Children[4];
 			int32 SubtreeSize[4] = { 0 };
+			int32 OccluderStart = 0;
 		};
 
 		TUniquePtr<QuadTreeNode> QuadTree;

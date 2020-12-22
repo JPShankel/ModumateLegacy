@@ -2,7 +2,10 @@
 
 #include "Drafting/ModumateLineCorral.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateStats.h"
 #include "SegmentTypes.h"
+
+DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Line Coalescing"), STAT_ModumateLineCoalescing, STATGROUP_Modumate);
 
 using namespace Modumate;
 
@@ -204,6 +207,8 @@ bool FModumateLineCorral::SaveDocument(const FString& filename)
 
 void FModumateLineCorral::ProcessLines()
 {
+	SCOPE_MS_ACCUMULATOR(STAT_ModumateLineCoalescing);
+
 	using FVector2Double = FVector2<double>;
 	static constexpr double Epsilon2 = Epsilon * Epsilon;
 

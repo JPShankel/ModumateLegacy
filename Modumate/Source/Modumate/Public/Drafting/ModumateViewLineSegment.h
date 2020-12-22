@@ -10,8 +10,10 @@ class FModumateViewLineSegment
 {
 public:
 	FModumateViewLineSegment() = default;
-	FModumateViewLineSegment(FVector3d LineStart, FVector3d LineEnd)
-		{ Start = LineStart; End = LineEnd; }
+	FModumateViewLineSegment(FVector3d LineStart, FVector3d LineEnd, int32 LinePosition = 0)
+	{
+		Start = LineStart; End = LineEnd; Position = LinePosition;
+	}
 	FVector3d AsVector() const { return End - Start; }
 	double Length() const { return AsVector().Length(); }
 	FVector2d AsVector2() const { return { End.X - Start.X, End.Y - Start.Y }; }
@@ -19,4 +21,5 @@ public:
 
 	FVector3d Start;
 	FVector3d End;
+	int32 Position = 0;
 };

@@ -45,7 +45,7 @@ namespace Modumate
 		}
 	}
 
-	void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument * doc)
+	void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* doc)
 	{
 		const TSet<EObjectType> separatorOccluderTypes({ EObjectType::OTWallSegment, EObjectType::OTFloorSegment,
 			EObjectType::OTRoofFace, EObjectType::OTCeiling, EObjectType::OTSystemPanel, EObjectType::OTDoor,
@@ -463,7 +463,7 @@ namespace Modumate
 					{   // Clip line
 						if (bIntersectV || bIntersectW)
 						{   // Break into new segment to be clipped.
-							generatedLines.Add({ intersect + vecEps, viewLine.End });
+							generatedLines.Add({ intersect + vecEps, viewLine.End, viewLine.Position });
 						}
 						viewLine.End = intersect - vecEps;
 					}
@@ -477,7 +477,7 @@ namespace Modumate
 					{   // Clip line
 						if (bIntersectV || bIntersectW)
 						{   // Break into new segment to be clipped.
-							generatedLines.Add({ viewLine.Start, intersect - vecEps });
+							generatedLines.Add({ viewLine.Start, intersect - vecEps, viewLine.Position });
 						}
 						viewLine.Start = intersect + vecEps;
 					}
@@ -495,7 +495,7 @@ namespace Modumate
 					{   // Clip line
 						if (bIntersectW)
 						{
-							generatedLines.Add({ intersect + vecEps, viewLine.End });
+							generatedLines.Add({ intersect + vecEps, viewLine.End, viewLine.Position });
 						}
 						viewLine.End = intersect - vecEps;
 					}
@@ -509,7 +509,7 @@ namespace Modumate
 					{   // Clip line
 						if (bIntersectW)
 						{
-							generatedLines.Add({ viewLine.Start, intersect - vecEps });
+							generatedLines.Add({ viewLine.Start, intersect - vecEps, viewLine.Position });
 						}
 						viewLine.Start = intersect + vecEps;
 					}
@@ -561,6 +561,8 @@ namespace Modumate
 
 	void FModumateClippingTriangles::BuildAccelerationStructure()
 	{
+		Occluders.Sort(std::greater<FModumateOccluder>());
+
 		FBox2D ViewBound(ForceInit);
 		for (const auto& occluder: Occluders)
 		{
@@ -573,6 +575,7 @@ namespace Modumate
 			QuadTree->AddOccluder(&occluder);
 		}
 
+		QuadTree->PostProcess();
 		QuadTree->GetOccluderSizesAtlevel(occludersAtLevel);
 	}
 
@@ -614,26 +617,35 @@ namespace Modumate
 		Occluders.Add(NewOccluder);
 	}
 
-	bool FModumateClippingTriangles::QuadTreeNode::Apply(const FModumateViewLineSegment& line, TFunctionRef<bool (const FModumateOccluder& occluder)> functor)
+	bool FModumateClippingTriangles::QuadTreeNode::Apply(FModumateViewLineSegment& line, TFunctionRef<bool (const FModumateOccluder& occluder)> functor)
 	{
+		int32 lineStartBox = line.Position;
+		const int32 numOccluders = Occluders.Num();
+		ensureAlways(lineStartBox >= OccluderStart);
 
-		for (const auto& occluder: Occluders)
+		for (int32 i = lineStartBox - OccluderStart; i < numOccluders; ++i)
 		{
-			if (LineBoxIntersection(line, occluder->BoundingBox) && !functor(*occluder))
+			if (LineBoxIntersection(line, Occluders[i]->BoundingBox) && !functor(*Occluders[i]))
 			{
 				return false;
 			}
+			++line.Position;
 		}
+
+		int32 occluderLimit = OccluderStart + numOccluders;
 
 		for (int child = 0; child < 4; ++child)
 		{
-			if (Children[child].IsValid() && LineBoxIntersection(line, Children[child]->NodeBox))
+			occluderLimit += SubtreeSize[child];
+			if (Children[child].IsValid() && line.Position < occluderLimit && LineBoxIntersection(line, Children[child]->NodeBox))
 			{
 				if (!Children[child]->Apply(line, functor))
 				{
 					return false;
 				}
+
 			}
+			line.Position = FMath::Max(line.Position, occluderLimit);
 		}
 
 		return true;
@@ -674,6 +686,27 @@ namespace Modumate
 				{
 					Children[i]->GetOccluderSizesAtlevel(sizes);
 				}
+			}
+		}
+	}
+
+	// Occluder nodes are processed in a pre-order, depth-first manner.
+	// The occluders are numbered in processing order and the
+	// line-segment structure tracks the next occluder to process;
+	// for lines generated from clipping processing skips already
+	// processed nodes. Each node holds its position in the global
+	// order and the sizes of each sub-tree to implement this.
+	void FModumateClippingTriangles::QuadTreeNode::PostProcess(int32 GlobalPosition /* = 0*/)
+	{
+		OccluderStart = GlobalPosition;
+		GlobalPosition += Occluders.Num();
+		for (int32 i = 0; i < 4; ++i)
+		{
+			const auto& child = Children[i];
+			if (child.IsValid())
+			{
+				child->PostProcess(GlobalPosition);
+				GlobalPosition += SubtreeSize[i];
 			}
 		}
 	}

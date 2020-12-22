@@ -202,7 +202,6 @@ bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVec
 
 	FVector2D time;
 	FVector2D startToEnd = (end - start);
-	FVector2D oneOverStartToEnd(1.0f / startToEnd.X, 1.0f / startToEnd.Y);
 	bool bStartIsOutside = false;
 
 	if (start.X < box.Min.X)
@@ -210,7 +209,7 @@ bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVec
 		if (end.X >= box.Min.X)
 		{
 			bStartIsOutside = true;
-			time.X = (box.Min.X - start.X) * oneOverStartToEnd.X;
+			time.X = (box.Min.X - start.X) / startToEnd.X;
 		}
 		else
 		{
@@ -222,7 +221,7 @@ bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVec
 		if (end.X <= box.Max.X)
 		{
 			bStartIsOutside = true;
-			time.X = (box.Max.X - start.X) * oneOverStartToEnd.X;
+			time.X = (box.Max.X - start.X) / startToEnd.X;
 		}
 		else
 		{
@@ -239,7 +238,7 @@ bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVec
 		if (end.Y >= box.Min.Y)
 		{
 			bStartIsOutside = true;
-			time.Y = (box.Min.Y - start.Y) * oneOverStartToEnd.Y;
+			time.Y = (box.Min.Y - start.Y) / startToEnd.Y;
 		}
 		else
 		{
@@ -251,7 +250,7 @@ bool UModumateFunctionLibrary::LineBoxIntersection(const FBox2D &box, const FVec
 		if (end.Y <= box.Max.Y)
 		{
 			bStartIsOutside = true;
-			time.Y = (box.Max.Y - start.Y) * oneOverStartToEnd.Y;
+			time.Y = (box.Max.Y - start.Y) / startToEnd.Y;
 		}
 		else
 		{
