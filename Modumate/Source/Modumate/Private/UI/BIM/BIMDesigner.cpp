@@ -878,9 +878,7 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 	if (SaveAs)
 	{
 		outPreset.PresetID = Controller->GetDocument()->PresetManager.GetAvailableKey(outPreset.PresetID);
-		FGuid guid;
-		Controller->GetDocument()->PresetManager.CraftingNodePresets.GetAvailableGUID(guid);
-		outPreset.GUID = guid;
+		Controller->GetDocument()->PresetManager.CraftingNodePresets.GetAvailableGUID(outPreset.GUID);
 		outPreset.ReadOnly = false;
 
 		Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Add(outPreset.PresetID, outPreset);

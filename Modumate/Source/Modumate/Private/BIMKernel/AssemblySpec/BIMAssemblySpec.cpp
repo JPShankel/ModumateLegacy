@@ -368,12 +368,12 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	}
 
 	// All assembly specs must bind to an object type
-	if (ObjectType != EObjectType::OTNone)
+	if (ret == EBIMResult::Success && ObjectType != EObjectType::OTNone)
 	{
 		return DoMakeAssembly(InDB, PresetCollection);
 	}
 
-	return EBIMResult::Success;
+	return ret;
 }
 
 EBIMResult FBIMAssemblySpec::Reset()

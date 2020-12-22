@@ -2209,6 +2209,12 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 			if (!stateData.AssemblyKey.IsNone())
 			{
 				usedPresets.Add(stateData.AssemblyKey);
+				TArray<FBIMKey> dependents;
+				PresetManager.CraftingNodePresets.GetDependentPresets(stateData.AssemblyKey, dependents);
+				for (auto& dependent : dependents)
+				{
+					usedPresets.Add(dependent);
+				}
 			}
 		}
 	}
@@ -2291,12 +2297,17 @@ void UModumateDocument::RemapOldBIMKeys(FMOIDocumentRecord& DocRec) const
 	TMap<FBIMKey, FBIMKey> bimkeyRemap;
 	for (auto& stateData : DocRec.ObjectData)
 	{
+		if (stateData.AssemblyKey.IsNone())
+		{
+			continue;
+		}
+
 		const FBIMKey* newKey = bimkeyRemap.Find(stateData.AssemblyKey);
 
 		if (newKey == nullptr)
 		{
 			FGuid* guid = DocRec.UsedPresetGUIDs.Find(stateData.AssemblyKey);
-			if (ensureAlwaysMsgf(guid != nullptr, TEXT("Objecht has assembly key with no associated guid! (should have been stored in Save())")) && guid->IsValid())
+			if (ensureAlwaysMsgf(guid != nullptr, TEXT("Object has assembly key with no associated guid! (should have been stored in Save())")) && guid->IsValid())
 			{
 				newKey = PresetManager.CraftingNodePresets.GUIDKeyMap.Find(*guid);
 				if (newKey != nullptr)
@@ -2337,18 +2348,15 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 	{
 		objectDB->InitPresetManagerForNewDocument(PresetManager);
 
-		if (docRec.PresetCollection.Version == PresetManager.CraftingNodePresets.Version)
-		{
-			if (docRec.PresetCollection.Presets.Num() > 0 && docRec.PresetCollection.NodeDescriptors.Num() > 0)
-			{
-				PresetManager.FromDocumentRecord(*objectDB, docRec);
-			}
-		}
-		else
+		if (docRec.PresetCollection.Version < PresetManager.CraftingNodePresets.Version)
 		{
 			RemapOldBIMKeys(docRec);
 		}
 
+		if (docRec.PresetCollection.Presets.Num() > 0 && docRec.PresetCollection.NodeDescriptors.Num() > 0)
+		{
+			PresetManager.FromDocumentRecord(*objectDB, docRec);
+		}
 
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.

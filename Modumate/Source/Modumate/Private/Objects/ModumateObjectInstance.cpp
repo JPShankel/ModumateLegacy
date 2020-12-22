@@ -74,6 +74,13 @@ void AModumateObjectInstance::UpdateAssemblyFromKey()
 		{
 			CachedAssembly.ObjectType = StateData.ObjectType;
 		}
+		else
+		{
+			// Missing assemblies will get default keys, so CachedAssembly will be different if we had to fallback
+			// NOTE: this is a temporary solution to avoid persistent ensures when BIM keys expire
+			// Future work will deprecate BIM keys for GUIDs which will be much more stable (they may disappear but won't change)
+			StateData.AssemblyKey = CachedAssembly.UniqueKey();
+		}
 		bAssemblyLayersReversed = false;
 	}
 }

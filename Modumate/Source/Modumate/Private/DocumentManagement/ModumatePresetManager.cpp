@@ -62,17 +62,32 @@ EBIMResult FPresetManager::FromDocumentRecord(const FModumateDatabase& InDB, con
 
 	AssembliesByObjectType.Empty();
 	CraftingNodePresets.PostLoad();
-
+	
+	// If any presets fail to build their assembly, remove them
+	// They'll be replaced by the fallback system and will not be written out again
+	TSet<FBIMKey> incompletePresets;
 	for (auto& kvp : CraftingNodePresets.Presets)
 	{
 		if (kvp.Value.ObjectType != EObjectType::OTNone)
 		{
 			FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(kvp.Value.ObjectType);
 			FBIMAssemblySpec newSpec;
-			newSpec.FromPreset(InDB, CraftingNodePresets, kvp.Key);
-			db.AddData(newSpec);
+			if (newSpec.FromPreset(InDB, CraftingNodePresets, kvp.Key) == EBIMResult::Success)
+			{
+				db.AddData(newSpec);
+			}
+			else
+			{
+				incompletePresets.Add(kvp.Key);
+			}
 		}
 	}
+
+	for (auto& incompletePreset : incompletePresets)
+	{
+		CraftingNodePresets.Presets.Remove(incompletePreset);
+	}
+
 	return EBIMResult::Success;
 }
 
