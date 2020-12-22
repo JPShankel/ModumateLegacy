@@ -24,7 +24,7 @@ PROPERTY,,Formula,,,,Pattern.Module15Dimensions,,,,,,,,,,,,,,,,,,,,
 PROPERTY,,Formula,,,,Pattern.Module16Dimensions,,,,,,,,,,,,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,,,,,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Pattern.Name,Pattern.CraftingIconAssetFilePath,Pattern.ModuleCount,Pattern.Extents,Pattern.Thickness,Pattern.Module1Dimensions,Pattern.Module2Dimensions,Pattern.Module3Dimensions,Pattern.Module4Dimensions,Pattern.Module5Dimensions,Pattern.Module6Dimensions,Pattern.Module7Dimensions,Pattern.Module8Dimensions,Pattern.Module9Dimensions,Pattern.Module10Dimensions,Pattern.Module11Dimensions,Pattern.Module12Dimensions,Pattern.Module13Dimensions,Pattern.Module14Dimensions,Pattern.Module15Dimensions,Pattern.Module16Dimensions
-PRESET,,0LayerPattern_0D-Continuous,,0LayerPattern_0D,,Continuous,,,,,,,,,,,,,,,,,,,,
+PRESET,,0LayerPattern_0D-Continuous,,0LayerPattern_0D,,Continuous,/Game/ShoppingData/CraftingIcons/Patterns/Patterns_Continuous,,,,,,,,,,,,,,,,,,,
 PRESET,,0LayerPattern_2D-Stack Bond,,0LayerPattern_2D,,Stack Bond,/Game/ShoppingData/CraftingIcons/Patterns/Patterns_StackBond,1,"(G+L,G+H)",Width,"(G/2,G/2),Module1,L,H",,,,,,,,,,,,,,,
 PRESET,,0LayerPattern_2D-Soldier Bond,,0LayerPattern_2D,,Soldier Bond,/Game/ShoppingData/CraftingIcons/Patterns/Patterns_SoldierBond,1,"(G+H,G+L)",Width,"(G/2,G/2),Module1,H,L",,,,,,,,,,,,,,,
 PRESET,,0LayerPattern_2D-Running Bond,,0LayerPattern_2D,,Running Bond,/Game/ShoppingData/CraftingIcons/Patterns/Patterns_RunningBond,1,"(G+L,2*(G+H))",Width,"(G/2,G/2),Module1,L,H","((1/2)*(G+L),(3/2)*G+H),Module1,L,H",,,,,,,,,,,,,,

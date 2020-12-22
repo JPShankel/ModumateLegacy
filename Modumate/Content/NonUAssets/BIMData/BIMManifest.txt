@@ -1,12 +1,9 @@
-0-01_Color.csv
 0-02_RawMaterial.csv
-0-03_SrfTreatment.csv
 0-04_Profile.csv
 0-05_Mesh.csv
 0-05B_StubbyFFE.csv
 0-06_Slot.csv
 0-20_2019Patterns.csv
-1-00_Material.csv
 1-10_SlotConfig.csv
 2-ModuleLWH.csv
 2-Layer0DTemp.csv
