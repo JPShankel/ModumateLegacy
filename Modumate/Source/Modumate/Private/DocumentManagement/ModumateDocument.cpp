@@ -1408,7 +1408,7 @@ int32 UModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &F
 }
 
 bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& points, const TArray<int32>& IDs, EObjectType objectType, int32 parentID,
-	TArray<int32>& OutAddedVertexIDs, TArray<int32>& OutAddedEdgeIDs, TArray<int32>& OutAddedFaceIDs, TArray<FDeltaPtr>& OutDeltaPtrs)
+	TArray<int32>& OutAddedVertexIDs, TArray<int32>& OutAddedEdgeIDs, TArray<int32>& OutAddedFaceIDs, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitAndUpdateFaces)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeMetaObject"));
 	OutAddedVertexIDs.Reset();
@@ -1458,7 +1458,7 @@ bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 	{
 		if (numPoints >= 3)
 		{
-			bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(points, deltas, NextID, id);
+			bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(points, deltas, NextID, id, TSet<int32>(), bSplitAndUpdateFaces);
 			if (!bValidDelta && (id != MOD_ID_NONE))
 			{
 				OutAddedFaceIDs.Add(id);
@@ -2889,6 +2889,7 @@ void UModumateDocument::DisplayDebugInfo(UWorld* world)
 	displayMsg(FString::Printf(TEXT("Redo Buffer: %d"), RedoBuffer.Num()));
 	displayMsg(FString::Printf(TEXT("Deleted Obs: %d"), DeletedObjects.Num()));
 	displayMsg(FString::Printf(TEXT("Active Obs: %d"), ObjectInstanceArray.Num()));
+	displayMsg(FString::Printf(TEXT("Next ID: %d"), NextID));
 
 	FString selected = FString::Printf(TEXT("Selected Obs: %d"), emPlayerState->SelectedObjects.Num());
 	if (emPlayerState->SelectedObjects.Num() > 0)

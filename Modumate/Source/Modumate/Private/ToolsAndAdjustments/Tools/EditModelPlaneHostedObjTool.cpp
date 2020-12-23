@@ -18,7 +18,6 @@ using namespace Modumate;
 
 UPlaneHostedObjTool::UPlaneHostedObjTool(const FObjectInitializer& ObjectInitializer)
 	: UMetaPlaneTool(ObjectInitializer)
-	, PendingObjMesh(nullptr)
 	, bInverted(false)
 	, bRequireHoverMetaPlane(false)
 	, ObjectType(EObjectType::OTNone)
@@ -36,6 +35,13 @@ bool UPlaneHostedObjTool::Activate()
 		return false;
 	}
 
+	FMOIPlaneHostedObjData newMOICustomData(FMOIPlaneHostedObjData::CurrentVersion);
+	newMOICustomData.FlipSigns.Y = GetAppliedInversionValue() ? -1.0 : 1.0f;
+	newMOICustomData.Justification = InstanceJustification;
+
+	NewMOIStateData.ObjectType = ObjectType;
+	NewMOIStateData.CustomData.SaveStructData(newMOICustomData);
+
 	bWasShowingSnapCursor = Controller->EMPlayerState->bShowSnappedCursor;
 	return true;
 }
@@ -47,12 +53,6 @@ bool UPlaneHostedObjTool::HandleInputNumber(double n)
 
 bool UPlaneHostedObjTool::Deactivate()
 {
-	if (PendingObjMesh.IsValid())
-	{
-		PendingObjMesh->Destroy();
-		PendingObjMesh.Reset();
-	}
-
 	if (Controller)
 	{
 		Controller->EMPlayerState->bShowSnappedCursor = bWasShowingSnapCursor;
@@ -69,7 +69,7 @@ bool UPlaneHostedObjTool::BeginUse()
 		return false;
 	}
 
-	if (!PendingObjMesh.IsValid() && (LastValidTargetID != MOD_ID_NONE))
+	if (LastValidTargetID != MOD_ID_NONE)
 	{
 		// Skip FMetaPlaneTool::BeginUse because we don't want to create any line segments in plane-application / "paint bucket" mode
 		if (!UEditModelToolBase::BeginUse())
@@ -77,71 +77,20 @@ bool UPlaneHostedObjTool::BeginUse()
 			return false;
 		}
 
-		AModumateObjectInstance* parentMOI = GameState->Document->GetObjectById(LastValidTargetID);
+		GameState->Document->ClearPreviewDeltas(GetWorld());
 
-		if (ensureAlways(parentMOI != nullptr))
+		auto delta = GetObjectCreationDelta({ LastValidTargetID });
+		if (delta.IsValid())
 		{
-			auto delta = MakeShared<FMOIDelta>();
-			AModumateObjectInstance* existingLayeredObj = nullptr;
-			for (auto child : parentMOI->GetChildObjects())
-			{
-				if ((child->GetLayeredInterface() != nullptr) && ensureAlways(existingLayeredObj == nullptr))
-				{
-					existingLayeredObj = child;
-
-					if (child->GetObjectType() == ObjectType)
-					{
-						FMOIStateData& newState = delta->AddMutationState(child);
-						newState.AssemblyKey = AssemblyKey;
-
-						GameState->Document->ApplyDeltas({ delta }, GetWorld());
-
-						EndUse();
-						return false;
-					}
-					else
-					{
-						delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
-					}
-				}
-			}
-
-			FMOIPlaneHostedObjData newMOICustomData(FMOIPlaneHostedObjData::CurrentVersion);
-			newMOICustomData.FlipSigns.Y = GetAppliedInversionValue() ? -1.0 : 1.0f;
-			newMOICustomData.Justification = InstanceJustification;
-
-			FMOIStateData newMOIData;
-			newMOIData.ID = GameState->Document->GetNextAvailableID();
-			newMOIData.ObjectType = ObjectType;
-			newMOIData.ParentID = LastValidTargetID;
-			newMOIData.AssemblyKey = AssemblyKey;
-			newMOIData.CustomData.SaveStructData(newMOICustomData);
-			delta->AddCreateDestroyState(newMOIData, EMOIDeltaType::Create);
-
 			GameState->Document->ApplyDeltas({ delta }, GetWorld());
 			EndUse();
-		}
-		else
-		{
-			EndUse();
-			return false;
 		}
 	}
 	else if (!bRequireHoverMetaPlane)
 	{
-		if (!Super::BeginUse())
-		{
-			return false;
-		}
-
-		if (GameMode.IsValid())
-		{
-			PendingObjMesh = GameMode->GetWorld()->SpawnActor<ADynamicMeshActor>(GameMode->DynamicMeshActorClass.Get());
-			PendingObjMesh->SetActorHiddenInGame(true);
-		}
-
-		return true;
+		return Super::BeginUse();
 	}
+
 	return false;
 }
 
@@ -152,38 +101,23 @@ bool UPlaneHostedObjTool::EnterNextStage()
 
 bool UPlaneHostedObjTool::FrameUpdate()
 {
-	if (!Super::FrameUpdate())
+	// Skip the direct parent UMetaPlaneTool::FrameUpdate, because we don't want to apply preview deltas yet
+	if (!UEditModelToolBase::FrameUpdate())
 	{
 		return false;
 	}
 
-	if (PendingObjMesh.IsValid() && PendingSegmentID != MOD_ID_NONE)
+	CurDeltas.Reset();
+	FDeltaPtr previewDelta;
+
+	if (PendingSegmentID != MOD_ID_NONE)
 	{
-		auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
-
-		if (bPendingPlaneValid && (PendingPlanePoints.Num() >= 3))
+		if (!Super::UpdatePreview() || (CurAddedFaceIDs.Num() == 0))
 		{
-			TArray<FPolyHole3D> holes;
-			bool bRecreatingGeometry = (PendingObjMesh->LayerGeometries.Num() == 0);
-			PendingObjMesh->CreateBasicLayerDefs(PendingPlanePoints, FVector::ZeroVector, holes, ObjAssembly, InstanceJustification);
-			PendingObjMesh->UpdatePlaneHostedMesh(bRecreatingGeometry, false, false, PendingPlanePoints[0]);
-			PendingObjMesh->SetActorHiddenInGame(false);
-		}
-		else
-		{
-			PendingObjMesh->SetActorHiddenInGame(true);
+			return false;
 		}
 
-		if (pendingSegment)
-		{
-			pendingSegment->SetActorHiddenInGame(!bPendingSegmentValid || bPendingPlaneValid);
-		}
-
-		// Always hide the pending plane mesh inherited from the MetaPlaneTool
-		if (PendingPlane.IsValid())
-		{
-			PendingPlane->SetActorHiddenInGame(true);
-		}
+		previewDelta = GetObjectCreationDelta(CurAddedFaceIDs);
 	}
 	else
 	{
@@ -220,10 +154,18 @@ bool UPlaneHostedObjTool::FrameUpdate()
 					curCornerPos, nextCornerPos, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness, 1)
 				);
 			}
+
+			previewDelta = GetObjectCreationDelta({ LastValidTargetID });
 		}
 
 		// Don't show the snap cursor if we're targeting a plane.
 		Controller->EMPlayerState->bShowSnappedCursor = (LastValidTargetID == MOD_ID_NONE);
+	}
+
+	if (previewDelta.IsValid())
+	{
+		CurDeltas.Add(previewDelta);
+		GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
 	}
 
 	return true;
@@ -231,23 +173,11 @@ bool UPlaneHostedObjTool::FrameUpdate()
 
 bool UPlaneHostedObjTool::EndUse()
 {
-	if (PendingObjMesh.IsValid())
-	{
-		PendingObjMesh->Destroy();
-		PendingObjMesh = nullptr;
-	}
-
 	return Super::EndUse();
 }
 
 bool UPlaneHostedObjTool::AbortUse()
 {
-	if (PendingObjMesh.IsValid())
-	{
-		PendingObjMesh->Destroy();
-		PendingObjMesh = nullptr;
-	}
-
 	return Super::AbortUse();
 }
 
@@ -257,12 +187,37 @@ bool UPlaneHostedObjTool::HandleInvert()
 	{
 		return false;
 	}
-	if (PendingObjMesh.IsValid())
-	{
-		bInverted = !bInverted;
-		ObjAssembly.ReverseLayers();
-	}
+
+	bInverted = !bInverted;
+
 	return true;
+}
+
+bool UPlaneHostedObjTool::HandleFlip(EAxis::Type FlipAxis)
+{
+	if (NewObjectIDs.Num() == 0)
+	{
+		return false;
+	}
+
+	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	return newMOI && newMOI->GetFlippedState(FlipAxis, NewMOIStateData);
+}
+
+bool UPlaneHostedObjTool::HandleAdjustJustification(const FVector2D& ViewSpaceDirection)
+{
+	if (NewObjectIDs.Num() == 0)
+	{
+		return false;
+	}
+
+	FQuat cameraRotation = Controller->PlayerCameraManager->GetCameraRotation().Quaternion();
+	FVector worldSpaceDirection =
+		(ViewSpaceDirection.X * cameraRotation.GetRightVector()) +
+		(ViewSpaceDirection.Y * cameraRotation.GetUpVector());
+
+	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	return newMOI && newMOI->GetJustifiedState(worldSpaceDirection, NewMOIStateData);
 }
 
 void UPlaneHostedObjTool::SetInstanceJustification(const float InJustification)
@@ -279,63 +234,83 @@ void UPlaneHostedObjTool::OnAssemblyChanged()
 {
 	Super::OnAssemblyChanged();
 
-	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(ObjectType);
-	const FBIMAssemblySpec* assembly = GameState.IsValid() ?
-		GameState->Document->PresetManager.GetAssemblyByKey(toolMode, AssemblyKey) : nullptr;
-
-	if (assembly != nullptr)
-	{
-		ObjAssembly = *assembly;
-
-		// If we changed assembly, and we already wanted to be inverted,
-		// then we need to make sure the layers are inverted now.
-		if (bInverted)
-		{
-			ObjAssembly.ReverseLayers();
-		}
-	}
-
 	if (Active)
 	{
 		FrameUpdate();
 	}
 }
 
-bool UPlaneHostedObjTool::MakeObject(const FVector& Location, TArray<int32>& newObjIDs)
+FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& TargetFaceIDs)
 {
-	Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kBeginUndoRedoMacro));
+	NewObjectIDs.Reset();
+	TSharedPtr<FMOIDelta> delta;
+	int32 nextID = GameState->Document->GetNextAvailableID();
 
-	TArray<int32> newGraphObjIDs;
-	bool bSuccess = Super::MakeObject(Location, newGraphObjIDs);
-
-	if (bSuccess)
+	for (int32 targetFaceID : TargetFaceIDs)
 	{
-		auto delta = MakeShared<FMOIDelta>();
-		int32 nextID = GameState->Document->GetNextAvailableID();
-
-		FMOIPlaneHostedObjData newMOICustomData(FMOIPlaneHostedObjData::CurrentVersion);
-		newMOICustomData.FlipSigns.Y = bInverted ? -1.0f : 1.0f;
-		newMOICustomData.Justification = InstanceJustification;
-
-		for (int32 newGraphObjID : newGraphObjIDs)
+		if (!delta.IsValid())
 		{
-			AModumateObjectInstance* newGraphObj = GameState->Document->GetObjectById(newGraphObjID);
+			delta = MakeShared<FMOIDelta>();
+		}
 
-			if (newGraphObj && (newGraphObj->GetObjectType() == EObjectType::OTMetaPlane))
+		bool bCreateNewObject = true;
+		AModumateObjectInstance* parentMOI = GameState->Document->GetObjectById(targetFaceID);
+
+		if (parentMOI && ensure(parentMOI->GetObjectType() == EObjectType::OTMetaPlane))
+		{
+			AModumateObjectInstance* existingLayeredObj = nullptr;
+			for (auto child : parentMOI->GetChildObjects())
 			{
-				FMOIStateData newMOIData;
-				newMOIData.ID = nextID++;
-				newMOIData.ObjectType = ObjectType;
-				newMOIData.ParentID = newGraphObjID;
-				newMOIData.AssemblyKey = AssemblyKey;
-				newMOIData.CustomData.SaveStructData(newMOICustomData);
-				delta->AddCreateDestroyState(newMOIData, EMOIDeltaType::Create);
+				if ((child->GetLayeredInterface() != nullptr) && ensureAlways(existingLayeredObj == nullptr))
+				{
+					existingLayeredObj = child;
 
-				newObjIDs.Add(newMOIData.ID);
+					if (child->GetObjectType() == ObjectType)
+					{
+						FMOIStateData& newState = delta->AddMutationState(child);
+						newState.AssemblyKey = AssemblyKey;
+						bCreateNewObject = false;
+					}
+					else
+					{
+						delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
+					}
+				}
 			}
 		}
 
-		GameState->Document->ApplyDeltas({ delta }, GetWorld());
+		if (bCreateNewObject)
+		{
+			/*FMOIPlaneHostedObjData newMOICustomData(FMOIPlaneHostedObjData::CurrentVersion);
+			newMOICustomData.FlipSigns.Y = GetAppliedInversionValue() ? -1.0 : 1.0f;
+			newMOICustomData.Justification = InstanceJustification;*/
+
+			NewMOIStateData.ID = nextID++;
+			NewMOIStateData.ParentID = targetFaceID;
+			NewMOIStateData.AssemblyKey = AssemblyKey;
+			//NewMOIStateData.CustomData.SaveStructData(newMOICustomData);
+			delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
+
+			NewObjectIDs.Add(NewMOIStateData.ID);
+		}
+	}
+
+	return delta;
+}
+
+bool UPlaneHostedObjTool::MakeObject(const FVector& Location)
+{
+	Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kBeginUndoRedoMacro));
+
+	bool bSuccess = Super::MakeObject(Location);
+
+	if (bSuccess && (CurAddedFaceIDs.Num() > 0))
+	{
+		auto delta = GetObjectCreationDelta(CurAddedFaceIDs);
+		if (delta.IsValid())
+		{
+			GameState->Document->ApplyDeltas({ delta }, GetWorld());
+		}
 	}
 
 	Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kEndUndoRedoMacro));

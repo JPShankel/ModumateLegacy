@@ -26,10 +26,8 @@ protected:
 	EState State;
 
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
-	TWeakObjectPtr<AEditModelGameState_CPP> GameState;
 
 	EMouseMode OriginalMouseMode;
-	TWeakObjectPtr<ADynamicMeshActor> PendingPlane;
 	FVector AnchorPointDegree;
 	TArray<FVector> PendingPlanePoints, SketchPlanePoints;
 	FArchitecturalMaterial PendingPlaneMaterial;
@@ -39,8 +37,6 @@ protected:
 	float MinPlaneSize;
 	float PendingPlaneAlpha;
 	float InstanceHeight;
-
-	TArray<int32> NewObjIDs;
 
 	virtual float GetDefaultPlaneHeight() const;
 
@@ -57,6 +53,7 @@ public:
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
+	virtual bool PostEndOrAbort() override;
 
 	virtual bool HasDimensionActor() { return true; }
 
@@ -66,7 +63,16 @@ public:
 protected:
 	virtual void OnAxisConstraintChanged() override;
 
-	virtual bool MakeObject(const FVector &Location, TArray<int32> &OutNewObjIDs);
+	bool GetMetaObjectCreationDeltas(const FVector& Location, bool bSplitAndUpdateFaces,
+		FVector& OutConstrainedLocation, FVector& OutAffordanceNormal, FVector& OutAffordanceTangent,
+		TArray<FVector>& OutSketchPoints, TArray<FDeltaPtr>& OutDeltaPtrs);
+
+	virtual bool MakeObject(const FVector& Location);
+	virtual bool UpdatePreview();
+
 	void UpdatePendingPlane();
 	bool ConstrainHitPoint(FVector &hitPoint);
+
+	TArray<int32> CurAddedVertexIDs, CurAddedEdgeIDs, CurAddedFaceIDs;
+	TArray<FDeltaPtr> CurDeltas;
 };

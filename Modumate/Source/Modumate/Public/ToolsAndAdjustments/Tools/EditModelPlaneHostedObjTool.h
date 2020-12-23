@@ -30,6 +30,8 @@ public:
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
 	virtual bool HandleInvert() override;
+	virtual bool HandleFlip(EAxis::Type FlipAxis) override;
+	virtual bool HandleAdjustJustification(const FVector2D& ViewSpaceDirection) override;
 
 	void SetInstanceJustification(const float InJustification);
 	float GetInstanceJustification() const;
@@ -37,22 +39,28 @@ public:
 protected:
 	virtual void OnAssemblyChanged() override;
 
-	virtual bool MakeObject(const FVector& Location, TArray<int32>& newObjIDs) override;
+	FDeltaPtr GetObjectCreationDelta(const TArray<int32>& TargetFaceIDs);
+
+	virtual bool MakeObject(const FVector& Location) override;
 	virtual bool ValidatePlaneTarget(const AModumateObjectInstance* PlaneTarget);
 
 	bool IsTargetFacingDown();
 	float GetDefaultJustificationValue();
 	bool GetAppliedInversionValue();
 
-	TWeakObjectPtr<ADynamicMeshActor> PendingObjMesh;
 	bool bInverted;
 	bool bRequireHoverMetaPlane;
 	EObjectType ObjectType;
-	FBIMAssemblySpec ObjAssembly;
 	int32 LastValidTargetID;
 	bool bWasShowingSnapCursor;
 
 	float InstanceJustification;
+
+	// The original template state data for the MOI(s) that this tool creates, either preview for for real.
+	FMOIStateData NewMOIStateData;
+
+	// The IDs of objects that this tool references with its creation deltas, preview or not.
+	TArray<int32> NewObjectIDs;
 };
 
 UCLASS()

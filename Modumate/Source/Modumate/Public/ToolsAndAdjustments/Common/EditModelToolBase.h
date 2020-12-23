@@ -6,6 +6,7 @@
 
 #include "BIMKernel/Core/BIMKey.h"
 #include "Database/ModumateObjectEnums.h"
+#include "Objects/MOIState.h"
 
 #include "EditModelToolBase.generated.h"
 

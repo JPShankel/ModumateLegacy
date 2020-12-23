@@ -130,7 +130,8 @@ public:
 
 	int32 MakeRoom(UWorld *World, const TArray<FGraphSignedID> &FaceIDs);
 	bool MakeMetaObject(UWorld *world, const TArray<FVector> &points, const TArray<int32> &IDs, EObjectType objectType, int32 parentID,
-		TArray<int32>& OutAddedVertexIDs, TArray<int32>& OutAddedEdgeIDs, TArray<int32>& OutAddedFaceIDs, TArray<FDeltaPtr>& OutDeltaPtrs);
+		TArray<int32>& OutAddedVertexIDs, TArray<int32>& OutAddedEdgeIDs, TArray<int32>& OutAddedFaceIDs, TArray<FDeltaPtr>& OutDeltaPtrs,
+		bool bSplitAndUpdateFaces = true);
 
 	bool MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height);
 

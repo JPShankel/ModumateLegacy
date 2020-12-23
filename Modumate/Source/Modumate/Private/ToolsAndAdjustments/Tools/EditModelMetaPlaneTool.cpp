@@ -20,7 +20,6 @@ using namespace Modumate;
 UMetaPlaneTool::UMetaPlaneTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, State(Neutral)
-	, PendingPlane(nullptr)
 	, AnchorPointDegree(ForceInitToZero)
 	, bPendingSegmentValid(false)
 	, bPendingPlaneValid(false)
@@ -49,7 +48,6 @@ bool UMetaPlaneTool::HandleInputNumber(double n)
 	{
 		return false;
 	}
-	NewObjIDs.Reset();
 
 	auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
 
@@ -64,7 +62,7 @@ bool UMetaPlaneTool::HandleInputNumber(double n)
 			return false;
 		}
 
-		return MakeObject(pendingSegment->Point1 + dir, NewObjIDs);
+		return MakeObject(pendingSegment->Point1 + dir);
 	}
 	return true;
 }
@@ -133,12 +131,7 @@ bool UMetaPlaneTool::BeginUse()
 
 	AnchorPointDegree = hitLoc + FVector(0.f, -1.f, 0.f); // Make north as AnchorPointDegree at new segment
 
-	if (GameMode.IsValid())
-	{
-		PendingPlane = Controller->GetWorld()->SpawnActor<ADynamicMeshActor>(GameMode->DynamicMeshActorClass.Get());
-		PendingPlane->SetActorHiddenInGame(true);
-		PendingPlaneMaterial.EngineMaterial = GameMode->MetaPlaneMaterial;
-	}
+	GameState->Document->StartPreviewing();
 
 	PendingPlanePoints.Reset();
 
@@ -155,14 +148,26 @@ bool UMetaPlaneTool::EnterNextStage()
 	}
 	if (State == NewSegmentPending)
 	{
-		return MakeObject(Controller->EMPlayerState->SnappedCursor.WorldPosition, NewObjIDs);
+		return MakeObject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
 	}
 
 	return false;
 }
 
-bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewObjIDs)
+bool UMetaPlaneTool::GetMetaObjectCreationDeltas(const FVector& Location, bool bSplitAndUpdateFaces,
+	FVector& OutConstrainedLocation, FVector& OutAffordanceNormal, FVector& OutAffordanceTangent, TArray<FVector>& OutSketchPoints,
+	TArray<FDeltaPtr>& OutDeltaPtrs)
 {
+	OutConstrainedLocation = Location;
+	OutAffordanceNormal = FVector::ZeroVector;
+	OutAffordanceTangent = FVector::ZeroVector;
+	OutSketchPoints = SketchPlanePoints;
+	OutDeltaPtrs.Reset();
+
+	CurAddedVertexIDs.Reset();
+	CurAddedEdgeIDs.Reset();
+	CurAddedFaceIDs.Reset();
+
 	UModumateDocument* doc = GameState->Document;
 
 	bool bSuccess = false;
@@ -170,54 +175,50 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 	auto pendingSegment = dimensionActor->GetLineActor();
 
 	FVector constrainedStartPoint = pendingSegment->Point1;
-	FVector constrainedEndPoint = Location;
+	OutConstrainedLocation = Location;
 	ConstrainHitPoint(constrainedStartPoint);
-	ConstrainHitPoint(constrainedEndPoint);
-	OutNewObjIDs.Reset();
-	TArray<int32> addedVertexIDs, addedEdgeIDs, addedFaceIDs;
+	ConstrainHitPoint(OutConstrainedLocation);
 
 	if (State == NewSegmentPending && pendingSegment != nullptr &&
-		(FVector::Dist(constrainedStartPoint, constrainedEndPoint) >= MinPlaneSize))
+		(FVector::Dist(constrainedStartPoint, OutConstrainedLocation) >= MinPlaneSize))
 	{
-		TArray<FDeltaPtr> deltaPtrs;
-
 		switch (AxisConstraint)
 		{
 			case EAxisConstraint::None:
 			{
 				// The segment-based plane updates the sketch plane on the first three clicks
-				FVector segmentDirection = FVector(constrainedEndPoint - constrainedStartPoint).GetSafeNormal();
+				FVector segmentDirection = FVector(OutConstrainedLocation - constrainedStartPoint).GetSafeNormal();
 				FVector currentSketchPlaneNormal(Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Normal);
 
-				FVector tangentDir = !FVector::Parallel(currentSketchPlaneNormal, segmentDirection) ? segmentDirection : Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Tangent;
+				OutAffordanceTangent = !FVector::Parallel(currentSketchPlaneNormal, segmentDirection) ? segmentDirection : Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Tangent;
 				bool bSetDefaultAffordance = true;
 
-				if (SketchPlanePoints.Num() == 0)
+				if (OutSketchPoints.Num() == 0)
 				{
 					// If the two points are close together, ignore them and wait for the next segment
 					if (!FMath::IsNearlyZero(segmentDirection.Size()))
 					{
 						// Otherwise, this is our first valid line segment, so adjust sketch plane normal to be perpendicular to this
-						SketchPlanePoints.Add(constrainedStartPoint);
-						SketchPlanePoints.Add(constrainedEndPoint);
+						OutSketchPoints.Add(constrainedStartPoint);
+						OutSketchPoints.Add(OutConstrainedLocation);
 
 						// If we've selected a point along the sketch plane's Z, leave the sketch plane intact
 						// Note: it is all right to add the sketch plane points above as a vertical line is a legitimate basis for a new sketch plane
 						// which will be established with the next click, meantime a vertical click should just leave the original sketch plane in place
-						if (!FVector::Orthogonal(currentSketchPlaneNormal, tangentDir))
+						if (!FVector::Orthogonal(currentSketchPlaneNormal, OutAffordanceTangent))
 						{
 							FVector transverse = FVector::CrossProduct(currentSketchPlaneNormal, segmentDirection);
-							Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, FVector::CrossProduct(transverse, tangentDir).GetSafeNormal(), tangentDir);
+							OutAffordanceNormal = FVector::CrossProduct(transverse, OutAffordanceTangent).GetSafeNormal();
 							bSetDefaultAffordance = false;
 						}
 					}
 				}
 				// If we've clicked our third point, establish a sketch plane from the three points and then constrain all future points to that plane
-				else if (SketchPlanePoints.Num() < 3)
+				else if (OutSketchPoints.Num() < 3)
 				{
 					// If the third point is colinear, skip it and wait for the next one
-					FVector firstSegmentDir = (SketchPlanePoints[1] - SketchPlanePoints[0]).GetSafeNormal();
-					FVector nextPointDir = (constrainedEndPoint - SketchPlanePoints[0]).GetSafeNormal();
+					FVector firstSegmentDir = (OutSketchPoints[1] - OutSketchPoints[0]).GetSafeNormal();
+					FVector nextPointDir = (OutConstrainedLocation - OutSketchPoints[0]).GetSafeNormal();
 
 					if (!FVector::Parallel(firstSegmentDir, nextPointDir))
 					{
@@ -225,8 +226,8 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 						// we should not have gotten a degenerate point, ensure
 						if (ensureAlways(sketchNormal.IsNormalized()))
 						{
-							Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, sketchNormal, tangentDir);
-							SketchPlanePoints.Add(constrainedEndPoint);
+							OutAffordanceNormal = sketchNormal;
+							OutSketchPoints.Add(OutConstrainedLocation);
 							bSetDefaultAffordance = false;
 						}
 					}
@@ -234,76 +235,95 @@ bool UMetaPlaneTool::MakeObject(const FVector &Location, TArray<int32> &OutNewOb
 
 				if (bSetDefaultAffordance)
 				{
-					Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, currentSketchPlaneNormal, tangentDir);
+					OutAffordanceNormal = currentSketchPlaneNormal;
 				}
 
-				AnchorPointDegree = pendingSegment->Point1;
-				pendingSegment->Point1 = constrainedEndPoint;
-				pendingSegment->Point2 = constrainedEndPoint;
-
-				TArray<FVector> points = { constrainedStartPoint, constrainedEndPoint };
+				TArray<FVector> points = { constrainedStartPoint, OutConstrainedLocation };
 
 				bSuccess = doc->MakeMetaObject(GetWorld(), points, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
-					addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltaPtrs);
+					CurAddedVertexIDs, CurAddedEdgeIDs, CurAddedFaceIDs, OutDeltaPtrs, bSplitAndUpdateFaces);
 
 				break;
 			}
 			case EAxisConstraint::AxisZ:
 			{
 				// set end of the segment to the hit location
-				pendingSegment->Point2 = constrainedEndPoint;
+				pendingSegment->Point2 = OutConstrainedLocation;
 				UpdatePendingPlane();
 
 				if (bPendingPlaneValid)
 				{
 					bSuccess = doc->MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
-						addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltaPtrs);
+						CurAddedVertexIDs, CurAddedEdgeIDs, CurAddedFaceIDs, OutDeltaPtrs, bSplitAndUpdateFaces);
 
-					// set up cursor affordance so snapping works on the next chained segment
-					Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedEndPoint, FVector::UpVector, (pendingSegment->Point1 - pendingSegment->Point2).GetSafeNormal());
-
-					// continue plane creation starting from the hit location
-					AnchorPointDegree = pendingSegment->Point1;
-					pendingSegment->Point1 = constrainedEndPoint;
+					OutAffordanceNormal = FVector::UpVector;
+					OutAffordanceTangent = (pendingSegment->Point1 - pendingSegment->Point2).GetSafeNormal();
 				}
 
 				break;
 			}
 			case EAxisConstraint::AxesXY:
 			{
-				if (bPendingPlaneValid)
-				{
-					bSuccess = doc->MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
-						addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltaPtrs);
-
-					// Don't chain horizontal planes, so end the tool's use here
-					if (bSuccess)
-					{
-						EndUse();
-					}
-				}
+				bSuccess = bPendingPlaneValid && doc->MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
+					CurAddedVertexIDs, CurAddedEdgeIDs, CurAddedFaceIDs, OutDeltaPtrs, bSplitAndUpdateFaces);
 
 				break;
 			}
-		}
-
-		if (bSuccess)
-		{
-			bSuccess = doc->ApplyDeltas(deltaPtrs, GetWorld());
-
-			// TODO: remove OutNewObjIDs
-			OutNewObjIDs.Append(addedFaceIDs);
-			OutNewObjIDs.Append(addedVertexIDs);
-			OutNewObjIDs.Append(addedEdgeIDs);
 		}
 	}
 
 	return bSuccess;
 }
 
-bool UMetaPlaneTool::FrameUpdate()
+bool UMetaPlaneTool::MakeObject(const FVector& Location)
 {
-	Super::FrameUpdate();
+	UModumateDocument* doc = GameState ? GameState->Document : nullptr;
+	if (doc == nullptr)
+	{
+		return false;
+	}
+
+	doc->ClearPreviewDeltas(GetWorld());
+
+	FVector constrainedLocation, newAffordanceNormal, newAffordanceTangent;
+	if (!GetMetaObjectCreationDeltas(Location, true, constrainedLocation, newAffordanceNormal, newAffordanceTangent, SketchPlanePoints, CurDeltas))
+	{
+		return false;
+	}
+
+	if (!doc->ApplyDeltas(CurDeltas, GetWorld()))
+	{
+		return false;
+	}
+
+	// Decide whether to end the tool's use, or continue the chain, based on axis constraint
+	switch (AxisConstraint)
+	{
+	case EAxisConstraint::AxesXY:
+		EndUse();
+		break;
+	default:
+	{
+		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(constrainedLocation, newAffordanceNormal, newAffordanceTangent);
+
+		AnchorPointDegree = constrainedLocation;
+		auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
+		auto pendingSegment = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
+		if (pendingSegment)
+		{
+			pendingSegment->Point1 = constrainedLocation;
+			pendingSegment->Point2 = constrainedLocation;
+		}
+	}
+	break;
+	}
+
+	return true;
+}
+
+bool UMetaPlaneTool::UpdatePreview()
+{
+	CurDeltas.Reset();
 
 	if (!Controller->EMPlayerState->SnappedCursor.Visible)
 	{
@@ -312,32 +332,49 @@ bool UMetaPlaneTool::FrameUpdate()
 
 	FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 
-	if (State == NewSegmentPending)
+	if (State != NewSegmentPending || !ensure(GameState && GameState->Document))
 	{
-		auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
-		ALineActor *pendingSegment = nullptr;
-		if (dimensionActor != nullptr)
+		return false;
+	}
+
+	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
+	ALineActor* pendingSegment = nullptr;
+	if (dimensionActor != nullptr)
+	{
+		pendingSegment = dimensionActor->GetLineActor();
+	}
+
+	if (pendingSegment != nullptr)
+	{
+		if (ConstrainHitPoint(hitLoc))
 		{
-			pendingSegment = dimensionActor->GetLineActor();
+			FAffordanceLine affordance;
+			affordance.Color = FLinearColor::Blue;
+			affordance.EndPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+			affordance.StartPoint = hitLoc;
+			affordance.Interval = 4.0f;
+			Controller->EMPlayerState->AffordanceLines.Add(affordance);
 		}
 
-		if (pendingSegment != nullptr)
-		{
-			if (ConstrainHitPoint(hitLoc))
-			{
-				FAffordanceLine affordance;
-				affordance.Color = FLinearColor::Blue;
-				affordance.EndPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-				affordance.StartPoint = hitLoc;
-				affordance.Interval = 4.0f;
-				Controller->EMPlayerState->AffordanceLines.Add(affordance);
-			}
+		pendingSegment->Point2 = hitLoc;
+		pendingSegment->UpdateVisuals(false);
+	}
 
-			pendingSegment->Point2 = hitLoc;
-			pendingSegment->UpdateVisuals(false);
-		}
+	UpdatePendingPlane();
+	GameState->Document->StartPreviewing();
 
-		UpdatePendingPlane();
+	FVector previewAffordanceNormal, previewAffordanceTangent;
+	TArray<FVector> tempSketchPoints;
+	return GetMetaObjectCreationDeltas(hitLoc, false, hitLoc, previewAffordanceNormal, previewAffordanceTangent, tempSketchPoints, CurDeltas);
+}
+
+bool UMetaPlaneTool::FrameUpdate()
+{
+	Super::FrameUpdate();
+
+	if (UpdatePreview())
+	{
+		GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
 	}
 
 	return true;
@@ -346,12 +383,6 @@ bool UMetaPlaneTool::FrameUpdate()
 bool UMetaPlaneTool::EndUse()
 {
 	State = Neutral;
-
-	if (PendingPlane.IsValid())
-	{
-		PendingPlane->Destroy();
-		PendingPlane.Reset();
-	}
 
 	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = false;
 
@@ -362,6 +393,16 @@ bool UMetaPlaneTool::AbortUse()
 {
 	EndUse();
 	return Super::AbortUse();
+}
+
+bool UMetaPlaneTool::PostEndOrAbort()
+{
+	if (GameState && GameState->Document)
+	{
+		GameState->Document->ClearPreviewDeltas(GetWorld(), false);
+	}
+
+	return Super::PostEndOrAbort();
 }
 
 void UMetaPlaneTool::SetInstanceHeight(const float InHeight)
@@ -387,73 +428,69 @@ void UMetaPlaneTool::UpdatePendingPlane()
 	bPendingSegmentValid = false;
 	bPendingPlaneValid = false;
 
-	if (PendingPlane.IsValid())
+	if (!InUse)
 	{
-		auto pendingSegment = DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor();
-		if (State == NewSegmentPending && pendingSegment != nullptr &&
-			(FVector::Dist(pendingSegment->Point1, pendingSegment->Point2) >= MinPlaneSize))
+		return;
+	}
+
+	auto pendingSegment = DimensionManager ? DimensionManager->GetDimensionActor(PendingSegmentID)->GetLineActor() : nullptr;
+	if (State == NewSegmentPending && pendingSegment != nullptr &&
+		(FVector::Dist(pendingSegment->Point1, pendingSegment->Point2) >= MinPlaneSize))
+	{
+		bPendingSegmentValid = true;
+
+		switch (AxisConstraint)
 		{
-			bPendingSegmentValid = true;
+		case EAxisConstraint::None:
+			break;
+		case EAxisConstraint::AxisZ:
+		{
+			bPendingPlaneValid = true;
+			FVector verticalRectOffset = FVector::UpVector * InstanceHeight;
 
-			switch (AxisConstraint)
-			{
-			case EAxisConstraint::None:
-				break;
-			case EAxisConstraint::AxisZ:
-			{
-				bPendingPlaneValid = true;
-				FVector verticalRectOffset = FVector::UpVector * InstanceHeight;
+			PendingPlanePoints = {
+				pendingSegment->Point1,
+				pendingSegment->Point2,
+				pendingSegment->Point2 + verticalRectOffset,
+				pendingSegment->Point1 + verticalRectOffset
+			};
 
-				PendingPlanePoints = {
-					pendingSegment->Point1,
-					pendingSegment->Point2,
-					pendingSegment->Point2 + verticalRectOffset,
-					pendingSegment->Point1 + verticalRectOffset
-				};
-
-				break;
-			}
-			case EAxisConstraint::AxesXY:
-			{
-				bPendingPlaneValid = !FMath::IsNearlyEqual(pendingSegment->Point1.X, pendingSegment->Point2.X) &&
-					!FMath::IsNearlyEqual(pendingSegment->Point1.Y, pendingSegment->Point2.Y) &&
-					FMath::IsNearlyEqual(pendingSegment->Point1.Z, pendingSegment->Point2.Z);
-
-				if (bPendingPlaneValid)
-				{
-					FBox2D pendingRect(ForceInitToZero);
-					pendingRect += FVector2D(pendingSegment->Point1);
-					pendingRect += FVector2D(pendingSegment->Point2);
-					float planeHeight = pendingSegment->Point1.Z;
-
-					PendingPlanePoints = {
-						FVector(pendingRect.Min.X, pendingRect.Min.Y, planeHeight),
-						FVector(pendingRect.Min.X, pendingRect.Max.Y, planeHeight),
-						FVector(pendingRect.Max.X, pendingRect.Max.Y, planeHeight),
-						FVector(pendingRect.Max.X, pendingRect.Min.Y, planeHeight),
-					};
-				}
-
-				break;
-			}
-			}
+			break;
+		}
+		case EAxisConstraint::AxesXY:
+		{
+			bPendingPlaneValid = !FMath::IsNearlyEqual(pendingSegment->Point1.X, pendingSegment->Point2.X) &&
+				!FMath::IsNearlyEqual(pendingSegment->Point1.Y, pendingSegment->Point2.Y) &&
+				FMath::IsNearlyEqual(pendingSegment->Point1.Z, pendingSegment->Point2.Z);
 
 			if (bPendingPlaneValid)
 			{
-				bPendingPlaneValid = UModumateGeometryStatics::GetPlaneFromPoints(PendingPlanePoints, PendingPlaneGeom);
-			}
-		}
+				FBox2D pendingRect(ForceInitToZero);
+				pendingRect += FVector2D(pendingSegment->Point1);
+				pendingRect += FVector2D(pendingSegment->Point2);
+				float planeHeight = pendingSegment->Point1.Z;
 
-		PendingPlane->SetActorHiddenInGame(!bPendingPlaneValid);
+				PendingPlanePoints = {
+					FVector(pendingRect.Min.X, pendingRect.Min.Y, planeHeight),
+					FVector(pendingRect.Min.X, pendingRect.Max.Y, planeHeight),
+					FVector(pendingRect.Max.X, pendingRect.Max.Y, planeHeight),
+					FVector(pendingRect.Max.X, pendingRect.Min.Y, planeHeight),
+				};
+			}
+
+			break;
+		}
+		}
 
 		if (bPendingPlaneValid)
 		{
-			PendingPlane->SetupMetaPlaneGeometry(PendingPlanePoints, PendingPlaneMaterial, PendingPlaneAlpha, true, false);
+			bPendingPlaneValid = UModumateGeometryStatics::GetPlaneFromPoints(PendingPlanePoints, PendingPlaneGeom);
 		}
-		else
-		{
-			PendingPlanePoints.Reset();
-		}
+	}
+
+	if (!bPendingPlaneValid)
+	{
+		PendingPlanePoints.Reset();
 	}
 }
 

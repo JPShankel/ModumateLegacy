@@ -688,7 +688,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltaForFaceAddition(const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID, const TSet<int32> &InGroupIDs)
+	bool FGraph3D::GetDeltaForFaceAddition(const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID, const TSet<int32> &InGroupIDs, bool bSplitAndUpdateFaces)
 	{
 		TArray<int32> newVertices;
 		FGraph3DDelta OutDelta;
@@ -714,6 +714,11 @@ namespace Modumate
 		}
 
 		OutDeltas.Add(OutDelta);
+
+		if (!bSplitAndUpdateFaces)
+		{
+			return true;
+		}
 
 		// Edges that are added by the face search to add new faces on the same plane as the added face
 		TArray<int32> faceEdgeIDs;
