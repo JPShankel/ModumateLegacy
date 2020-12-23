@@ -921,7 +921,7 @@ Part_0FlexDims3Fixed_ModulePlanar_Tile_Carpet-Length-32in-Width-16in-Thickness-0
 0LayerPattern_2D-Stack Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF",
 PRESET,,,,,,,,,,IconHeight,64in,,,,,
-PRESET,,,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
+PRESET,,AA9A3980-377E-CC46-AB8A-FF555154AB58,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-180in-Width-36in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Zinc-013119
 0LayerPattern_2D-Soldier Bond
