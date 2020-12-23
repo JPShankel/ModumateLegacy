@@ -76,15 +76,15 @@ public:
 
 	// Size from bottom edge the dirty tab to the top of the first form item
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
-	float ExpandedImageSize = 310.f;
+	float ExpandedImageSize = 320.f;
 
 	// Size of form items, such as drop down and user input field
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
-	float FormItemSize = 30.f;
+	float FormItemSize = 22.f;
 
 	// Size from bottom edge of the last form item to the bottom of the node
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
-	float BottomPadding = 12.f;
+	float BottomPadding = 35.f;
 
 	// Opacity of node if it's not highlighted
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Node Material")

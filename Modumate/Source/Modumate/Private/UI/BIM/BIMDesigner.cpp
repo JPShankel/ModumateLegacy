@@ -23,6 +23,7 @@
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "UI/BIM/BIMBlockMiniNode.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "UI/BIM/BIMEditColorPicker.h"
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -62,6 +63,10 @@ FReply UBIMDesigner::NativeOnMouseButtonDown(const FGeometry& InGeometry, const 
 	if (InMouseEvent.GetEffectingButton() == DragKey)
 	{
 		DragTick = true;
+	}
+	else
+	{
+		CheckMouseButtonDownOnBIMDesigner();
 	}
 	return reply;
 }
@@ -302,6 +307,9 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 
 	// Should clear focused widget since this function will clear all widgets in BIM Designer
 	FSlateApplication::Get().SetAllUserFocusToGameViewport();
+
+	// Should clear any editing menu
+	ToggleColorPickerVisibility(false);
 
 	// Remove and release old nodes
 	for (auto& curNodeWidget : BIMBlockNodes)
@@ -972,4 +980,18 @@ void UBIMDesigner::ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 Sl
 			UpdateBIMDesigner();
 		}
 	}
+}
+
+void UBIMDesigner::CheckMouseButtonDownOnBIMDesigner()
+{
+	// Close Color Picker widget if mouse is clicked out of its geometry
+	if (BIM_EditColorBP->IsVisible() && !BIM_EditColorBP->GetTickSpaceGeometry().IsUnderLocation(UWidgetLayoutLibrary::GetMousePositionOnPlatform()))
+	{
+		ToggleColorPickerVisibility(false);
+	}
+}
+
+void UBIMDesigner::ToggleColorPickerVisibility(bool NewVisibility)
+{
+	BIM_EditColorBP->SetVisibility(NewVisibility ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 }

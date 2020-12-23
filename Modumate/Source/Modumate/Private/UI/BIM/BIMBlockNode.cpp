@@ -265,7 +265,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 		// TODO: Need more format info to determine if this should be drop-down
 		// For now just use dropdown if propertyValue.Name == BIMPropertyNames::AssetID
 		FBIMPropertyKey propertyValue(curProperty.Value);
-		if (propertyValue.Name == BIMPropertyNames::AssetID)
+		if (propertyValue.Name == BIMPropertyNames::AssetID || propertyValue.Name == BIMPropertyNames::HexValue)
 		{
 			UBIMBlockDropdownPreset* newDropdown = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockDropdownPreset>(BIMBlockDropdownPresetClass);
 			if (newDropdown)

@@ -12,6 +12,7 @@
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UI/EditModelUserWidget.h"
+#include "UI/BIM/BIMEditColorPicker.h"
 
 UBIMBlockDropdownPreset::UBIMBlockDropdownPreset(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -43,6 +44,16 @@ void UBIMBlockDropdownPreset::NativeConstruct()
 
 void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 {
+	// Open color picker
+	if (SwapScope == EBIMValueScope::Color)
+	{
+		FVector2D colorDropdownOffset = DropdownOffset + FVector2D(0.f, OwnerNode->FormItemSize);
+		Controller->EditModelUserWidget->BIMDesigner->BIM_EditColorBP->BuildColorPicker(
+			ParentBIMDesigner, OwnerNode->ID, SwapScope, SwapNameType, PresetID, colorDropdownOffset);
+		return;
+	}
+
+	// If none of the above, open swap preset menu
 	FBIMKey ownerNodePresetID;
 	// Dropdown changes a property of its owner node, it should always have an ID from its owner	
 	if (ensureAlways(OwnerNode->ID != BIM_ID_NONE))
@@ -76,10 +87,23 @@ void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner
 		TextTitle->ChangeText(preset->CategoryTitle);
 		PresetText->ChangeText(preset->DisplayName);
 	}
+	else // If no preset is found, use its preset ID
+	{
+		TextTitle->ChangeText(FText::FromName(BIMNameFromValueScope(SwapScope)));
+		PresetText->ChangeText(FText::FromString(PresetID.ToString()));
+	}
 
 	// Icon
 	bool bCaptureSuccess = false;
-	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetID, IconMaterial, IconTexture, BIM_ID_NONE);
+	if (SwapScope == EBIMValueScope::Color) // Color is entered as hex, not preset key
+	{
+		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconFromColor(PresetID, IconMaterial);
+	}
+	else
+	{
+		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetID, IconMaterial, IconTexture, BIM_ID_NONE);
+	}
+
 	if (bCaptureSuccess)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);

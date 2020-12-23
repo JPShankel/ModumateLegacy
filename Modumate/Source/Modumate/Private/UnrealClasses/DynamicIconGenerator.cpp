@@ -1029,6 +1029,15 @@ bool ADynamicIconGenerator::SetIconMeshForLayerPreset(const FBIMKey& PresetID, U
 	return SetIconMeshForWallAssembly(assembly, InRenderTarget);
 }
 
+bool ADynamicIconGenerator::SetIconFromColor(const FBIMKey& ColorHex, UMaterialInterface*& OutMaterial)
+{
+	FLinearColor iconColor = FColor::FromHex(ColorHex.ToString());
+	UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconColorMaterial, this);
+	dynMat->SetVectorParameterValue(MaterialColorParamName, iconColor);
+	OutMaterial = dynMat;
+	return true;
+}
+
 void ADynamicIconGenerator::GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal)
 {
 	FVector endPt = FVector(Cp1.X, Cp1.Y, Cp1.Z + Height);

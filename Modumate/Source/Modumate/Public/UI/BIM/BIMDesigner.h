@@ -42,10 +42,6 @@ protected:
 	UPROPERTY()
 	TArray<class UBIMBlockNode*> BIMBlockNodes;
 
-	// Typedef'd as FBIMEditorNodeIDType...UPROPERTIES don't support typedef
-	UPROPERTY()
-	TMap<FName, class UBIMBlockNode*> IdToNodeMap;
-
 	UPROPERTY()
 	TMap<FIntPoint, class UBIMBlockNode*> NodeCoordinateMap;
 
@@ -118,6 +114,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UCanvasPanel *CanvasPanelForNodes;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UBIMEditColorPicker* BIM_EditColorBP;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UBIMBlockNode> BIMBlockNodeClass;
 
@@ -137,6 +136,10 @@ public:
 	FBIMPresetEditor InstancePool;
 	FBIMAssemblySpec CraftingAssembly;
 
+	// Typedef'd as FBIMEditorNodeIDType...UPROPERTIES don't support typedef
+	UPROPERTY()
+	TMap<FName, class UBIMBlockNode*> IdToNodeMap;
+
 	bool UpdateCraftingAssembly();
 	void ToggleCollapseExpandNodes();
 	void SetNodeAsSelected(const FBIMEditorNodeIDType& InstanceID);
@@ -154,4 +157,6 @@ public:
 	bool GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, const FBIMEditorNodeIDType& NodeID);
 	bool SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& InstanceID);
 	void ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 SlotID, bool NewEnable);
+	void CheckMouseButtonDownOnBIMDesigner();
+	void ToggleColorPickerVisibility(bool NewVisibility);
 };
