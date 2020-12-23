@@ -73,102 +73,122 @@ namespace Modumate
 			const EObjectType objectType = object->GetObjectType();
 
 			const ADynamicMeshActor* meshActor = nullptr;
-			if (objectType == EObjectType::OTDoor || objectType == EObjectType::OTWindow)
+			if (objectType == EObjectType::OTDoor || objectType == EObjectType::OTWindow || objectType == EObjectType::OTCabinet)
 			{
 				const auto* parent = object->GetParentObject();
 				if (parent)
 				{
-					localToWorld = object->GetWorldTransform();
-					const ACompoundMeshActor* portalActor = Cast<ACompoundMeshActor>(object->GetActor());
-					const int32 numComponents = portalActor->StaticMeshComps.Num();
-
-					for (int32 component = 0; component < numComponents; ++component)
+					const ACompoundMeshActor* portalActor = nullptr;
+					if (objectType == EObjectType::OTCabinet)
 					{
-						const UStaticMeshComponent* staticMeshComponent = portalActor->StaticMeshComps[component];
-						if (staticMeshComponent == nullptr)
+						const ADynamicMeshActor* cabinetActor = Cast<ADynamicMeshActor>(object->GetActor());
+						TArray<AActor*> attachedActors;
+						cabinetActor->GetAttachedActors(attachedActors);
+						if (attachedActors.Num() != 0)
 						{
-							continue;
+							portalActor = Cast<ACompoundMeshActor>(attachedActors[0]);
 						}
+					}
+					else
+					{
+						portalActor = Cast<ACompoundMeshActor>(object->GetActor());
+					}
 
-						if (!portalActor->UseSlicedMesh[component])
+					if (portalActor)
+					{
+						localToWorld = portalActor->GetActorTransform();
+						const int32 numComponents = portalActor->StaticMeshComps.Num();
+
+						for (int32 component = 0; component < numComponents; ++component)
 						{
-							UStaticMesh* staticMesh = staticMeshComponent->GetStaticMesh();
-							if (staticMesh == nullptr)
+							const UStaticMeshComponent* staticMeshComponent = portalActor->StaticMeshComps[component];
+							if (staticMeshComponent == nullptr)
 							{
 								continue;
 							}
 
-							const FTransform localTransform = staticMeshComponent->GetRelativeTransform();
-							const int32 levelOfDetailIndex = staticMesh->GetNumLODs() - 1;
-							const FStaticMeshLODResources& meshResources = staticMesh->GetLODForExport(levelOfDetailIndex);
-							for (int32 section = 0; section < meshResources.Sections.Num(); ++section)
+							if (!portalActor->UseSlicedMesh[component])
 							{
-								TArray<FVector> sectionPositions;
-								TArray<int32> sectionIndices;
-								UKismetProceduralMeshLibrary::GetSectionFromStaticMesh(staticMesh, levelOfDetailIndex, section,
-									sectionPositions, sectionIndices, normals, uvs, tangents);
-
-								const int32 numVerts = sectionPositions.Num();
-								const int32 numIndices = sectionIndices.Num();
-
-								int32 indexOffset = vertices.Num();
-
-								for (int32 v = 0; v < numVerts; ++v)
-								{
-									vertices.Add(localTransform.TransformPosition(sectionPositions[v]));
-								}
-								for (int32 i = 0; i < numIndices; ++i)
-								{
-									triangles.Add(sectionIndices[i] + indexOffset);
-								}
-							}
-						}
-						else
-						{
-							for (int32 slice = 9 * component; slice < 9 * (component + 1); ++slice)
-							{
-								UProceduralMeshComponent* meshComponent = portalActor->NineSliceLowLODComps[slice];
-
-								if (meshComponent == nullptr)
+								UStaticMesh* staticMesh = staticMeshComponent->GetStaticMesh();
+								if (staticMesh == nullptr)
 								{
 									continue;
 								}
 
-								const FTransform localTransform = meshComponent->GetRelativeTransform();
-								int numSections = meshComponent->GetNumSections();
-								for (int section = 0; section < numSections; ++section)
+								const FTransform localTransform = staticMeshComponent->GetRelativeTransform() * localToWorld;
+								const int32 levelOfDetailIndex = staticMesh->GetNumLODs() - 1;
+								const FStaticMeshLODResources& meshResources = staticMesh->GetLODForExport(levelOfDetailIndex);
+								for (int32 section = 0; section < meshResources.Sections.Num(); ++section)
 								{
-									const FProcMeshSection* meshSection = meshComponent->GetProcMeshSection(section);
-									if (meshSection == nullptr)
-									{
-										continue;
-									}
-									const auto& sectionVertices = meshSection->ProcVertexBuffer;
-									const auto& sectionIndices = meshSection->ProcIndexBuffer;
+									TArray<FVector> sectionPositions;
+									TArray<int32> sectionIndices;
+									UKismetProceduralMeshLibrary::GetSectionFromStaticMesh(staticMesh, levelOfDetailIndex, section,
+										sectionPositions, sectionIndices, normals, uvs, tangents);
+
+									const int32 numVerts = sectionPositions.Num();
 									const int32 numIndices = sectionIndices.Num();
-									const int32 numVertices = sectionVertices.Num();
-									ensure(numIndices % 3 == 0);
 
 									int32 indexOffset = vertices.Num();
 
-									for (int32 v = 0; v < numVertices; ++v)
+									for (int32 v = 0; v < numVerts; ++v)
 									{
-										vertices.Add(localTransform.TransformPosition(sectionVertices[v].Position));
+										vertices.Add(localTransform.TransformPosition(sectionPositions[v]));
 									}
 									for (int32 i = 0; i < numIndices; ++i)
 									{
 										triangles.Add(sectionIndices[i] + indexOffset);
 									}
-
 								}
 							}
+							else
+							{
+								for (int32 slice = 9 * component; slice < 9 * (component + 1); ++slice)
+								{
+									UProceduralMeshComponent* meshComponent = portalActor->NineSliceLowLODComps[slice];
 
+									if (meshComponent == nullptr)
+									{
+										continue;
+									}
+
+									const FTransform localTransform = meshComponent->GetRelativeTransform() * localToWorld;
+									int numSections = meshComponent->GetNumSections();
+									for (int section = 0; section < numSections; ++section)
+									{
+										const FProcMeshSection* meshSection = meshComponent->GetProcMeshSection(section);
+										if (meshSection == nullptr)
+										{
+											continue;
+										}
+										const auto& sectionVertices = meshSection->ProcVertexBuffer;
+										const auto& sectionIndices = meshSection->ProcIndexBuffer;
+										const int32 numIndices = sectionIndices.Num();
+										const int32 numVertices = sectionVertices.Num();
+										ensure(numIndices % 3 == 0);
+
+										int32 indexOffset = vertices.Num();
+
+										for (int32 v = 0; v < numVertices; ++v)
+										{
+											vertices.Add(localTransform.TransformPosition(sectionVertices[v].Position));
+										}
+										for (int32 i = 0; i < numIndices; ++i)
+										{
+											triangles.Add(sectionIndices[i] + indexOffset);
+										}
+
+									}
+								}
+
+							}
 						}
 					}
 
 				}
 			}
-			else
+			
+			// TODO: Clean up this logic mess.
+			if (objectType != EObjectType::OTDoor && objectType != EObjectType::OTWindow)
 			{
 				meshActor = Cast<ADynamicMeshActor>(object->GetActor());
 
@@ -186,7 +206,7 @@ namespace Modumate
 					{
 						for (const auto& vertex : meshSection->ProcVertexBuffer)
 						{
-							vertices.Add((vertex.Position));
+							vertices.Add(localToWorld.TransformPosition(vertex.Position));
 						}
 						triangles.Append(meshSection->ProcIndexBuffer);
 					}
@@ -195,9 +215,14 @@ namespace Modumate
 				else
 				{
 					const TArray<FLayerGeomDef>& layerGeoms = meshActor->LayerGeometries;
+					int32 startVertex = vertices.Num();
 					for (const auto& layerGeom : layerGeoms)
 					{
 						layerGeom.TriangulateMesh(vertices, triangles, normals, uvs, tangents, uvAnchor, FVector2D::UnitVector, 0.0f);
+					}
+					for (int32 v = startVertex; v < vertices.Num(); ++v)
+					{
+						vertices[v] = localToWorld.TransformPosition(vertices[v]);
 					}
 				}
 			}
@@ -211,7 +236,6 @@ namespace Modumate
 			{
 				FVector verts[3] = { vertices[triangles[triangle]],
 					vertices[triangles[triangle + 1]], vertices[triangles[triangle + 2]] };
-				Algo::ForEach(verts, [localToWorld](FVector& v) {v = localToWorld.TransformPosition(v); });
 				if (Algo::AnyOf(verts, [this](FVector v) {return IsPointInFront(v); }))
 				{
 					FModumateOccluder newOccluder(

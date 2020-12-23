@@ -35,7 +35,9 @@ namespace Modumate
 		kSystemPanelCut,
 		kSystemPanelBeyond,
 		kFinishCut,
-		kFinishBeyond
+		kFinishBeyond,
+		kDebug1,
+		kDebug2
 	};
 
 }

@@ -198,7 +198,7 @@ namespace Modumate {
 				Modumate::Units::FCoordinates2D::WorldCentimeters(FVector2D(edge.Vertex[1])),
 				lineThickness, lineColor);
 			ParentPage->Children.Add(line);
-			line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kFinishCut);
+			line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kDebug1);
 		}
 #endif
 

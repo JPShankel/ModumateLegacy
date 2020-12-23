@@ -39,6 +39,8 @@ const FModumateLayerType FModumateLineCorral::LayerTypeOrder[] =
 	FModumateLayerType::kFinishBeyond,
 	FModumateLayerType::kFfeOutline,
 	FModumateLayerType::kFfeInteriorEdges,
+	FModumateLayerType::kDebug1,
+	FModumateLayerType::kDebug2,
 	FModumateLayerType::kDefault
 };
 
@@ -46,7 +48,7 @@ int FModumateLineCorral::LinePriorities[sizeof(LayerTypeOrder) / sizeof(FModumat
 TAtomic<int32> FModumateLineCorral::InitPriorities{ 0 };
 
 const TSet<FModumateLayerType>  FModumateLineCorral::PassedThroughTypes = 
-    { FModumateLayerType::kFfeInteriorEdges, FModumateLayerType::kFfeOutline };
+    { FModumateLayerType::kFfeInteriorEdges, FModumateLayerType::kFfeOutline, FModumateLayerType::kDebug1, FModumateLayerType::kDebug2 };
 
 
 namespace

@@ -19,6 +19,7 @@
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 #include "DocumentManagement/ModumateDocument.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
 #include "Drafting/ModumateDraftingElements.h"
 
 DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Mesh To Lines"), STAT_ModumateMeshToLines, STATGROUP_Modumate);
@@ -692,6 +693,12 @@ bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<Modumate::FDr
 {
 		TArray<TPair<FVector, FVector>> OutEdges;
 
+		auto gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		auto moi = gameState->Document->ObjectFromActor(this);
+		bool bIsCabinet = moi && moi->GetObjectType() == EObjectType::OTCabinet;
+		Modumate::FModumateLayerType layerType = bIsCabinet ? Modumate::FModumateLayerType::kCabinetCutCarcass
+			: Modumate::FModumateLayerType::kOpeningSystemCutLine;
+
 		const int32 numComponents = StaticMeshComps.Num();
 		for (int32 component = 0; component < numComponents; ++component)
 		{
@@ -729,7 +736,7 @@ bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<Modumate::FDr
 				Modumate::Units::FCoordinates2D::WorldCentimeters(start),
 				Modumate::Units::FCoordinates2D::WorldCentimeters(end),
 				defaultThickness, defaultColor);
-			line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kOpeningSystemCutLine);
+			line->SetLayerTypeRecursive(layerType);
 			ParentPage->Children.Add(line);
 		}
 
@@ -766,6 +773,12 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 		}
 		return false;  // False if equal.
 	};
+
+	auto gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	auto moi = gameState->Document->ObjectFromActor(this);
+	bool bIsCabinet = moi && moi->GetObjectType() == EObjectType::OTCabinet;
+	Modumate::FModumateLayerType layerType = bIsCabinet ? Modumate::FModumateLayerType::kCabinetBeyond
+		: Modumate::FModumateLayerType::kOpeningSystemBeyond;
 
 	const int32 numComponents = StaticMeshComps.Num();
 
@@ -933,7 +946,7 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 				Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
 				Modumate::Units::FThickness::Points(0.125f), Modumate::FMColor::Gray64);
 			ParentPage->Children.Add(line);
-			line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kOpeningSystemBeyond);
+			line->SetLayerTypeRecursive(layerType);
 		}
 	}
 }
