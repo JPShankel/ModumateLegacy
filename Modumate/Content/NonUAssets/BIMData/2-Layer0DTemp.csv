@@ -4,192 +4,180 @@ TYPENAME,,Layer0DTemp,,Layer,,,,,,,,,,,,,,,
 PROPERTY,,DisplayText,,Name,,Layer.Name,,,,,,,,,,,,,
 ,,Presets,,,,,,,,,,,,,,,,,
 TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Layer.Name,DataType=Dimensions,Dimension,Value,DataType=Profile,Module.Profile,DataType=Material,AppliesToChannel,InnerMaterial,SurfaceMaterial,ColorTintVariation,ColorTint
-PRESET,,79E6805A-250F-444A-82A1-CBE35C018F7D,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Abstract-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"6in, Abstract, White",,Thickness,6in,,,,Finish1,0RawMaterial-Abstract,,0,FFFFFF
+PRESET,,79E6805A-250F-444A-82A1-CBE35C018F7D,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Abstract-FFFFFF-79E6805A-250F-444A-82A1-CBE35C018F7D,,Assembly_2FlexDims1Fixed_PlanarPattern,,"6in, Abstract, White",,Thickness,6in,,,,Finish1,0RawMaterial-Abstract,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,2F765909-2372-3E47-8756-696B278BFC4D,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-20in-Finish1-0RawMaterial-Abstract-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"20in, Abstract, White",,Thickness,20in,,,,Finish1,0RawMaterial-Abstract,,0,FFFFFF
+PRESET,,2F765909-2372-3E47-8756-696B278BFC4D,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-20in-Finish1-0RawMaterial-Abstract-FFFFFF-2F765909-2372-3E47-8756-696B278BFC4D,,Assembly_2FlexDims1Fixed_PlanarPattern,,"20in, Abstract, White",,Thickness,20in,,,,Finish1,0RawMaterial-Abstract,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,E5476D45-F84D-0240-9E40-25FEEB048401,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-22in-Finish1-0RawMaterial-Abstract-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"22in, Abstract, White",,Thickness,22in,,,,Finish1,0RawMaterial-Abstract,,0,FFFFFF
+PRESET,,E5476D45-F84D-0240-9E40-25FEEB048401,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-22in-Finish1-0RawMaterial-Abstract-FFFFFF-E5476D45-F84D-0240-9E40-25FEEB048401,,Assembly_2FlexDims1Fixed_PlanarPattern,,"22in, Abstract, White",,Thickness,22in,,,,Finish1,0RawMaterial-Abstract,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,E4E09B02-222A-B043-A1FD-629451DB358C,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Asphalt-646963,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/32in, Asphalt, Gray-Green Slate",,Thickness,0.03125in,,,,Finish1,0RawMaterial-Asphalt,,0,646963
+PRESET,,E4E09B02-222A-B043-A1FD-629451DB358C,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Asphalt-646963-E4E09B02-222A-B043-A1FD-629451DB358C,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/32in, Asphalt, Gray-Green Slate",,Thickness,0.03125in,,,,Finish1,0RawMaterial-Asphalt,,,646963
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,AEA0CC45-8683-804B-B050-A45B0757A853,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Cement-8F9AA0,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/2in, Cement, Ocean",,Thickness,0.5in,,,,Finish1,0RawMaterial-Cement,,0,8F9AA0
+PRESET,,AEA0CC45-8683-804B-B050-A45B0757A853,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Cement-8F9AA0-AEA0CC45-8683-804B-B050-A45B0757A853,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/2in, Cement, Ocean",,Thickness,0.5in,,,,Finish1,0RawMaterial-Cement,,,8F9AA0
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,80249775-914B-9E4B-AE97-361829BF02FD,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Metal Wire Fence-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/2in, Metal Wire Fence, White",,Thickness,0.5in,,,,Finish1,0RawMaterial-Metal Wire Fence,,0,FFFFFF
+PRESET,,80249775-914B-9E4B-AE97-361829BF02FD,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Metal Wire Fence-FFFFFF-80249775-914B-9E4B-AE97-361829BF02FD,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/2in, Metal Wire Fence, White",,Thickness,0.5in,,,,Finish1,0RawMaterial-Metal Wire Fence,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,EF5432A6-C640-E34F-B9C9-54A5A8DC8AF8,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,,Assembly_2FlexDims1Fixed_PlanarPattern,,3in Cast-In-Place Concrete,,Thickness,3in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,0,D6D7D8
+PRESET,,EF5432A6-C640-E34F-B9C9-54A5A8DC8AF8,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8-EF5432A6-C640-E34F-B9C9-54A5A8DC8AF8,,Assembly_2FlexDims1Fixed_PlanarPattern,,3in Cast-In-Place Concrete,,Thickness,3in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,,D6D7D8
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,D5A359C0-FD98-A243-AF5A-68EB8D8B740F,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,,Assembly_2FlexDims1Fixed_PlanarPattern,,6in Cast-In-Place Concrete,,Thickness,6in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,0,D6D7D8
+PRESET,,D5A359C0-FD98-A243-AF5A-68EB8D8B740F,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8-D5A359C0-FD98-A243-AF5A-68EB8D8B740F,,Assembly_2FlexDims1Fixed_PlanarPattern,,6in Cast-In-Place Concrete,,Thickness,6in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,,D6D7D8
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,094D953C-967F-1C46-8516-D990B677EC7A,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,,Assembly_2FlexDims1Fixed_PlanarPattern,,6in Precast Concrete,,Thickness,6in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,0,D6D7D8
+PRESET,,094D953C-967F-1C46-8516-D990B677EC7A,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8-094D953C-967F-1C46-8516-D990B677EC7A,,Assembly_2FlexDims1Fixed_PlanarPattern,,6in Precast Concrete,,Thickness,6in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,,D6D7D8
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,96B9CC67-7690-D446-8173-0ABA5A3EFD18,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,,Assembly_2FlexDims1Fixed_PlanarPattern,,8in Cast-In-Place Concrete,,Thickness,8in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,0,D6D7D8
+PRESET,,96B9CC67-7690-D446-8173-0ABA5A3EFD18,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8-96B9CC67-7690-D446-8173-0ABA5A3EFD18,,Assembly_2FlexDims1Fixed_PlanarPattern,,8in Cast-In-Place Concrete,,Thickness,8in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,,D6D7D8
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,EC2717E0-31D0-D24C-91E4-AC4CC5B1B6F1,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,,Assembly_2FlexDims1Fixed_PlanarPattern,,8in Precast Concrete,,Thickness,8in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,0,D6D7D8
+PRESET,,EC2717E0-31D0-D24C-91E4-AC4CC5B1B6F1,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-8in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8-EC2717E0-31D0-D24C-91E4-AC4CC5B1B6F1,,Assembly_2FlexDims1Fixed_PlanarPattern,,8in Precast Concrete,,Thickness,8in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,,D6D7D8
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,4B9A0950-7CCC-8C48-AAE7-C88438AA0DC8,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-10in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,,Assembly_2FlexDims1Fixed_PlanarPattern,,"10in, Concrete (Normal Aggregate), Natural",,Thickness,10in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,0,D6D7D8
+PRESET,,4B9A0950-7CCC-8C48-AAE7-C88438AA0DC8,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-10in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8-4B9A0950-7CCC-8C48-AAE7-C88438AA0DC8,,Assembly_2FlexDims1Fixed_PlanarPattern,,"10in, Concrete (Normal Aggregate), Natural",,Thickness,10in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,,D6D7D8
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,6019B90F-E311-C942-9EF4-4E0EBBF71B8A,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,,Assembly_2FlexDims1Fixed_PlanarPattern,,"12in, Concrete (Normal Aggregate), Natural",,Thickness,12in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,0,D6D7D8
+PRESET,,6019B90F-E311-C942-9EF4-4E0EBBF71B8A,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8-6019B90F-E311-C942-9EF4-4E0EBBF71B8A,,Assembly_2FlexDims1Fixed_PlanarPattern,,"12in, Concrete (Normal Aggregate), Natural",,Thickness,12in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,,D6D7D8
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,AD051AE4-81CF-0645-A8D7-6AC72FAAF74E,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-16in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,,Assembly_2FlexDims1Fixed_PlanarPattern,,"16in, Concrete (Normal Aggregate), Natural",,Thickness,16in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,0,D6D7D8
+PRESET,,AD051AE4-81CF-0645-A8D7-6AC72FAAF74E,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-16in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8-AD051AE4-81CF-0645-A8D7-6AC72FAAF74E,,Assembly_2FlexDims1Fixed_PlanarPattern,,"16in, Concrete (Normal Aggregate), Natural",,Thickness,16in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,,D6D7D8
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,CF313796-9498-074C-958A-FB650C3F76DA,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-20in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,,Assembly_2FlexDims1Fixed_PlanarPattern,,"20in, Concrete (Normal Aggregate), Natural",,Thickness,20in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,0,D6D7D8
+PRESET,,CF313796-9498-074C-958A-FB650C3F76DA,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-20in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8-CF313796-9498-074C-958A-FB650C3F76DA,,Assembly_2FlexDims1Fixed_PlanarPattern,,"20in, Concrete (Normal Aggregate), Natural",,Thickness,20in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,,D6D7D8
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,E5070B38-7BEF-A341-B353-469800B36532,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,,Assembly_2FlexDims1Fixed_PlanarPattern,,"6in, Concrete (Normal Aggregate), Natural",,Thickness,6in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,0,D6D7D8
+PRESET,,E5070B38-7BEF-A341-B353-469800B36532,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8-E5070B38-7BEF-A341-B353-469800B36532,,Assembly_2FlexDims1Fixed_PlanarPattern,,"6in, Concrete (Normal Aggregate), Natural",,Thickness,6in,,,,Finish1,0RawMaterial-Concrete (Normal Aggregate),,,D6D7D8
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,D4F2981D-5A32-7248-B63D-56851F109F83,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-4.125in-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"4-1/8in, Spruce-Pine-Fir, Natural",,Thickness,4.125in,,,,Finish1,0RawMaterial-Spruce-Pine-Fir,,0,FFFFFF
+PRESET,,D4F2981D-5A32-7248-B63D-56851F109F83,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-4.125in-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF-D4F2981D-5A32-7248-B63D-56851F109F83,,Assembly_2FlexDims1Fixed_PlanarPattern,,"4-1/8in, Spruce-Pine-Fir, Natural",,Thickness,4.125in,,,,Finish1,0RawMaterial-Spruce-Pine-Fir,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,D4E0F6EF-E313-7D40-B676-0D6108F301C6,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-30cm-Finish1-0RawMaterial-Rammed Earth-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"30cm, Rammed Earth, White",,Thickness,30cm,,,,Finish1,0RawMaterial-Rammed Earth,,0,FFFFFF
+PRESET,,D4E0F6EF-E313-7D40-B676-0D6108F301C6,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-30cm-Finish1-0RawMaterial-Rammed Earth-FFFFFF-D4E0F6EF-E313-7D40-B676-0D6108F301C6,,Assembly_2FlexDims1Fixed_PlanarPattern,,"30cm, Rammed Earth, White",,Thickness,30cm,,,,Finish1,0RawMaterial-Rammed Earth,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,AEB706AF-EF57-7144-9D4E-A2A400C76685,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Terrazzo (Beige)-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1in, Terrazzo (Beige), White",,Thickness,1in,,,,Finish1,0RawMaterial-Terrazzo (Beige),,0,FFFFFF
+PRESET,,AEB706AF-EF57-7144-9D4E-A2A400C76685,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Terrazzo (Beige)-FFFFFF-AEB706AF-EF57-7144-9D4E-A2A400C76685,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1in, Terrazzo (Beige), White",,Thickness,1in,,,,Finish1,0RawMaterial-Terrazzo (Beige),,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,74A9A3DD-F072-6248-929B-6B3BD37755ED,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1.25in-Finish1-0RawMaterial-Granite (Black 1)-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1-1/4in, Granite (Black 1), White",,Thickness,1.25in,,,,Finish1,0RawMaterial-Granite (Black 1),,0,FFFFFF
+PRESET,,74A9A3DD-F072-6248-929B-6B3BD37755ED,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1.25in-Finish1-0RawMaterial-Granite (Black 1)-FFFFFF-74A9A3DD-F072-6248-929B-6B3BD37755ED,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1-1/4in, Granite (Black 1), White",,Thickness,1.25in,,,,Finish1,0RawMaterial-Granite (Black 1),,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,AAAB3D50-63ED-5745-9999-E5296F23BB42,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Granite (Black 2)-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"2in, Granite (Black 2), White",,Thickness,2in,,,,Finish1,0RawMaterial-Granite (Black 2),,0,FFFFFF
+PRESET,,AAAB3D50-63ED-5745-9999-E5296F23BB42,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Granite (Black 2)-FFFFFF-AAAB3D50-63ED-5745-9999-E5296F23BB42,,Assembly_2FlexDims1Fixed_PlanarPattern,,"2in, Granite (Black 2), White",,Thickness,2in,,,,Finish1,0RawMaterial-Granite (Black 2),,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,75539356-9A45-584A-89AF-E7BDCF6B3B6D,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Marble (Black 1)-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"2in, Marble (Black 1), White",,Thickness,2in,,,,Finish1,0RawMaterial-Marble (Black 1),,0,FFFFFF
+PRESET,,75539356-9A45-584A-89AF-E7BDCF6B3B6D,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Marble (Black 1)-FFFFFF-75539356-9A45-584A-89AF-E7BDCF6B3B6D,,Assembly_2FlexDims1Fixed_PlanarPattern,,"2in, Marble (Black 1), White",,Thickness,2in,,,,Finish1,0RawMaterial-Marble (Black 1),,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,1C00639B-B1A9-1846-9CD4-7DA91C285B13,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt-594D41,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/16in, Asphalt, Barkwood",,Thickness,0.0625in,,,,Finish1,0RawMaterial-Asphalt,,0,594D41
+PRESET,,1C00639B-B1A9-1846-9CD4-7DA91C285B13,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Asphalt-594D41-1C00639B-B1A9-1846-9CD4-7DA91C285B13,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/16in, Asphalt, Barkwood",,Thickness,0.0625in,,,,Finish1,0RawMaterial-Asphalt,,,594D41
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,3EE5224F-9848-674A-8D35-2D1B69B11081,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/16in, Plastic, Gray 6",,Thickness,0.0625in,,,,Finish1,0RawMaterial-Plastic,,0,6B6B6B
+PRESET,,3EE5224F-9848-674A-8D35-2D1B69B11081,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B-3EE5224F-9848-674A-8D35-2D1B69B11081,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/16in, Plastic, Gray 6",,Thickness,0.0625in,,,,Finish1,0RawMaterial-Plastic,,,6B6B6B
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,BCDE20CD-564B-044F-A514-F52A3BCA58E4,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/16in, Plastic, Gray 6",,Thickness,0.0625in,,,,Finish1,0RawMaterial-Plastic,,0,6B6B6B
+PRESET,,D5087437-B013-5749-AF7A-E9FF2F7A07DB,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Carpet (Medium Profile)-E9EAE6-D5087437-B013-5749-AF7A-E9FF2F7A07DB,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/2in, Carpet (Medium Profile), White",,Thickness,0.5in,,,,Finish1,0RawMaterial-Carpet (Medium Profile),,,E9EAE6
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,E8457597-C4A8-C24A-ADCD-18BEE0B9AD90,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/16in, Plastic, Gray 6",,Thickness,0.0625in,,,,Finish1,0RawMaterial-Plastic,,0,6B6B6B
+PRESET,,C1D224EE-D896-4641-A6A2-3EC8347221A7,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Cork-FFFFFF-C1D224EE-D896-4641-A6A2-3EC8347221A7,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/8in, Cork, Natural",,Thickness,0.125in,,,,Finish1,0RawMaterial-Cork,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,ECCB51C7-63D1-5947-AD2B-6E3D62B08CB7,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/16in, Plastic, Gray 6",,Thickness,0.0625in,,,,Finish1,0RawMaterial-Plastic,,0,6B6B6B
+PRESET,,6FB02481-306C-3142-8B21-3B1C06009574,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-5mm-Finish1-0RawMaterial-Felt-44443C-6FB02481-306C-3142-8B21-3B1C06009574,,Assembly_2FlexDims1Fixed_PlanarPattern,,"5mm, Felt, Weathered Brown",,Thickness,5mm,,,,Finish1,0RawMaterial-Felt,,,44443C
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,99A83F61-3FAD-4A47-8F06-BC8D9E45C824,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/16in, Plastic, Gray 6",,Thickness,0.0625in,,,,Finish1,0RawMaterial-Plastic,,0,6B6B6B
+PRESET,,43E86C3C-CEA4-6446-BA22-75212095C5B4,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.1875in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-FAF1D0-43E86C3C-CEA4-6446-BA22-75212095C5B4,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3/16in, Foam (Extruded Polystyrene), Yellow",,Thickness,0.1875in,,,,Finish1,0RawMaterial-Foam (Extruded Polystyrene),,,FAF1D0
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,D5087437-B013-5749-AF7A-E9FF2F7A07DB,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Carpet (Medium Profile)-E9EAE6,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/2in, Carpet (Medium Profile), White",,Thickness,0.5in,,,,Finish1,0RawMaterial-Carpet (Medium Profile),,0,E9EAE6
+PRESET,,4FC4307B-36A7-304F-AD15-1249E65EA2E7,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel-CCCCCC-4FC4307B-36A7-304F-AD15-1249E65EA2E7,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/8in, Aluminum, Birch",,Thickness,0.125in,,,,Finish1,0RawMaterial-Steel,,,CCCCCC
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,C1D224EE-D896-4641-A6A2-3EC8347221A7,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Cork-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/8in, Cork, Natural",,Thickness,0.125in,,,,Finish1,0RawMaterial-Cork,,0,FFFFFF
+PRESET,,DC9558D6-F483-A14E-9B19-56FC9F3CED1B,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.09375in-Finish1-0RawMaterial-Plastic-6B6B6B-DC9558D6-F483-A14E-9B19-56FC9F3CED1B,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3/32in, Plastic, Gray 6",,Thickness,0.09375in,,,,Finish1,0RawMaterial-Plastic,,,6B6B6B
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,6FB02481-306C-3142-8B21-3B1C06009574,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-5mm-Finish1-0RawMaterial-Felt-44443C,,Assembly_2FlexDims1Fixed_PlanarPattern,,"5mm, Felt, Weathered Brown",,Thickness,5mm,,,,Finish1,0RawMaterial-Felt,,0,44443C
+PRESET,,7AF713D3-4E62-114A-BDE4-B27385F1605D,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B-7AF713D3-4E62-114A-BDE4-B27385F1605D,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/16in, Plastic, Gray 6",,Thickness,0.0625in,,,,Finish1,0RawMaterial-Plastic,,,6B6B6B
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,43E86C3C-CEA4-6446-BA22-75212095C5B4,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.1875in-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-FAF1D0,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3/16in, Foam (Extruded Polystyrene), Yellow",,Thickness,0.1875in,,,,Finish1,0RawMaterial-Foam (Extruded Polystyrene),,0,FAF1D0
+PRESET,,6D14F4AC-60E7-7D4C-AB88-4A7AFC4A3051,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Gypsum-D6D7D1-6D14F4AC-60E7-7D4C-AB88-4A7AFC4A3051,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/32in, Gypsum, Natural",,Thickness,0.03125in,,,,Finish1,0RawMaterial-Gypsum,,,D6D7D1
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,4FC4307B-36A7-304F-AD15-1249E65EA2E7,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Steel-CCCCCC,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/8in, Aluminum, Birch",,Thickness,0.125in,,,,Finish1,0RawMaterial-Steel,,0,CCCCCC
+PRESET,,2156FDFF-17D9-3246-AE15-879536B35663,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Gravel-FFFFFF-2156FDFF-17D9-3246-AE15-879536B35663,,Assembly_2FlexDims1Fixed_PlanarPattern,,"2in, Gravel, White",,Thickness,2in,,,,Finish1,0RawMaterial-Gravel,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,DC9558D6-F483-A14E-9B19-56FC9F3CED1B,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.09375in-Finish1-0RawMaterial-Plastic-6B6B6B,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3/32in, Plastic, Gray 6",,Thickness,0.09375in,,,,Finish1,0RawMaterial-Plastic,,0,6B6B6B
+PRESET,,A8B735E4-538E-BE49-9FD6-2EB6120EF794,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Gravel-FFFFFF-A8B735E4-538E-BE49-9FD6-2EB6120EF794,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3in, Gravel, White",,Thickness,3in,,,,Finish1,0RawMaterial-Gravel,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,7AF713D3-4E62-114A-BDE4-B27385F1605D,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.0625in-Finish1-0RawMaterial-Plastic-6B6B6B,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/16in, Plastic, Gray 6",,Thickness,0.0625in,,,,Finish1,0RawMaterial-Plastic,,0,6B6B6B
+PRESET,,CD5E4669-0472-4747-B514-1AC5CEC261EC,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Grass-FFFFFF-CD5E4669-0472-4747-B514-1AC5CEC261EC,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3in, Grass, White",,Thickness,3in,,,,Finish1,0RawMaterial-Grass,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,6D14F4AC-60E7-7D4C-AB88-4A7AFC4A3051,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Gypsum-D6D7D1,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/32in, Gypsum, Natural",,Thickness,0.03125in,,,,Finish1,0RawMaterial-Gypsum,,0,D6D7D1
+PRESET,,75134162-CAFA-B349-9236-59E1BE73C3E8,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Decomposed Granite-CCCCCC-75134162-CAFA-B349-9236-59E1BE73C3E8,,Assembly_2FlexDims1Fixed_PlanarPattern,,"2in, Decomposed Granite, Light Gray",,Thickness,2in,,,,Finish1,0RawMaterial-Decomposed Granite,,,CCCCCC
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,2156FDFF-17D9-3246-AE15-879536B35663,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Gravel-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"2in, Gravel, White",,Thickness,2in,,,,Finish1,0RawMaterial-Gravel,,0,FFFFFF
+PRESET,,3FAF4BD5-0C19-6746-BD71-8175142FDDE2,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Sand-FFFFFF-3FAF4BD5-0C19-6746-BD71-8175142FDDE2,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3in, Sand, White",,Thickness,3in,,,,Finish1,0RawMaterial-Sand,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,A8B735E4-538E-BE49-9FD6-2EB6120EF794,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Gravel-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3in, Gravel, White",,Thickness,3in,,,,Finish1,0RawMaterial-Gravel,,0,FFFFFF
+PRESET,,7C9BA2A6-543B-E045-9522-734C3FEFE1B5,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Soil-FFFFFF-7C9BA2A6-543B-E045-9522-734C3FEFE1B5,,Assembly_2FlexDims1Fixed_PlanarPattern,,"6in, Soil, White",,Thickness,6in,,,,Finish1,0RawMaterial-Soil,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,CD5E4669-0472-4747-B514-1AC5CEC261EC,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Grass-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3in, Grass, White",,Thickness,3in,,,,Finish1,0RawMaterial-Grass,,0,FFFFFF
+PRESET,,25485882-5FE6-734C-B351-96B8C6C040DC,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Asphalt-6B6758-25485882-5FE6-734C-B351-96B8C6C040DC,,Assembly_2FlexDims1Fixed_PlanarPattern,,"12in, Asphalt, Olive",,Thickness,12in,,,,Finish1,0RawMaterial-Asphalt,,,6B6758
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,75134162-CAFA-B349-9236-59E1BE73C3E8,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-2in-Finish1-0RawMaterial-Decomposed Granite-CCCCCC,,Assembly_2FlexDims1Fixed_PlanarPattern,,"2in, Decomposed Granite, Light Gray",,Thickness,2in,,,,Finish1,0RawMaterial-Decomposed Granite,,0,CCCCCC
+PRESET,,48467EEA-7428-604F-A83C-5F9E264C33F9,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.375in-Finish1-0RawMaterial-Plaster-F7EBDB-48467EEA-7428-604F-A83C-5F9E264C33F9,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3/8in, Plaster, Shell",,Thickness,0.375in,,,,Finish1,0RawMaterial-Plaster,,,F7EBDB
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,3FAF4BD5-0C19-6746-BD71-8175142FDDE2,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Sand-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3in, Sand, White",,Thickness,3in,,,,Finish1,0RawMaterial-Sand,,0,FFFFFF
+PRESET,,93586BD5-DE8C-0D48-BD67-ACD87150F0BC,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Joint Compound-D6D7D1-93586BD5-DE8C-0D48-BD67-ACD87150F0BC,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/32in, Joint Compound, Natural",,Thickness,0.03125in,,,,Finish1,0RawMaterial-Joint Compound,,,D6D7D1
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,7C9BA2A6-543B-E045-9522-734C3FEFE1B5,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Soil-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"6in, Soil, White",,Thickness,6in,,,,Finish1,0RawMaterial-Soil,,0,FFFFFF
+PRESET,,672BB2A2-EE65-264B-AFD6-F753EF54F68D,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-F3F1ED-672BB2A2-EE65-264B-AFD6-F753EF54F68D,,Assembly_2FlexDims1Fixed_PlanarPattern,,"Typical Coat (1/50in), Paint, Gentle White",,Thickness,0.02in,,,,Finish1,0RawMaterial-Paint,,,F3F1ED
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,25485882-5FE6-734C-B351-96B8C6C040DC,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Asphalt-6B6758,,Assembly_2FlexDims1Fixed_PlanarPattern,,"12in, Asphalt, Olive",,Thickness,12in,,,,Finish1,0RawMaterial-Asphalt,,0,6B6758
+PRESET,,7A7092AE-CDF8-D346-96A2-D792230A4B4E,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-C4C4C4-7A7092AE-CDF8-D346-96A2-D792230A4B4E,,Assembly_2FlexDims1Fixed_PlanarPattern,,"Typical Coat (1/50in), Paint, Grey",,Thickness,0.02in,,,,Finish1,0RawMaterial-Paint,,,C4C4C4
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,48467EEA-7428-604F-A83C-5F9E264C33F9,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.375in-Finish1-0RawMaterial-Plaster-F7EBDB,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3/8in, Plaster, Shell",,Thickness,0.375in,,,,Finish1,0RawMaterial-Plaster,,0,F7EBDB
+PRESET,,BD4C8BC3-5918-8446-AF45-AEF908E7FA13,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-262527-BD4C8BC3-5918-8446-AF45-AEF908E7FA13,,Assembly_2FlexDims1Fixed_PlanarPattern,,"Typical Coat (1/50in), Paint, Midnight",,Thickness,0.02in,,,,Finish1,0RawMaterial-Paint,,,262527
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,93586BD5-DE8C-0D48-BD67-ACD87150F0BC,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.03125in-Finish1-0RawMaterial-Joint Compound-D6D7D1,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/32in, Joint Compound, Natural",,Thickness,0.03125in,,,,Finish1,0RawMaterial-Joint Compound,,0,D6D7D1
+PRESET,,8250982F-E629-C84C-B1FB-F4F2801C1A4A,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-AC998D-8250982F-E629-C84C-B1FB-F4F2801C1A4A,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/2in, Concrete (Fine Aggregate), Maple",,Thickness,0.5in,,,,Finish1,0RawMaterial-Concrete (Fine Aggregate),,,AC998D
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,672BB2A2-EE65-264B-AFD6-F753EF54F68D,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-F3F1ED,,Assembly_2FlexDims1Fixed_PlanarPattern,,"Typical Coat (1/50in), Paint, Gentle White",,Thickness,0.02in,,,,Finish1,0RawMaterial-Paint,,0,F3F1ED
+PRESET,,49836543-CCED-E34E-B3E7-E4480E480FA1,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-ABA283-49836543-CCED-E34E-B3E7-E4480E480FA1,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3/4in, Concrete (Fine Aggregate), Olive",,Thickness,0.75in,,,,Finish1,0RawMaterial-Concrete (Fine Aggregate),,,ABA283
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,7A7092AE-CDF8-D346-96A2-D792230A4B4E,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-C4C4C4,,Assembly_2FlexDims1Fixed_PlanarPattern,,"Typical Coat (1/50in), Paint, Grey",,Thickness,0.02in,,,,Finish1,0RawMaterial-Paint,,0,C4C4C4
+PRESET,,51559653-AA73-7E4B-8676-D23DC1DF68D0,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.25in-Finish1-0RawMaterial-Mortar-C6C6C6-51559653-AA73-7E4B-8676-D23DC1DF68D0,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/4in, Mortar, Natural",,Thickness,0.25in,,,,Finish1,0RawMaterial-Mortar,,,C6C6C6
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,BD4C8BC3-5918-8446-AF45-AEF908E7FA13,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-262527,,Assembly_2FlexDims1Fixed_PlanarPattern,,"Typical Coat (1/50in), Paint, Midnight",,Thickness,0.02in,,,,Finish1,0RawMaterial-Paint,,0,262527
+PRESET,,49D08B25-845F-044F-A903-873BEC9F78CB,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.09375in-Finish1-0RawMaterial-Glass-F2F2F2-49D08B25-845F-044F-A903-873BEC9F78CB,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3/32in, Glass, Untinted",,Thickness,0.09375in,,,,Finish1,0RawMaterial-Glass,,,F2F2F2
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,8250982F-E629-C84C-B1FB-F4F2801C1A4A,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-AC998D,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/2in, Concrete (Fine Aggregate), Maple",,Thickness,0.5in,,,,Finish1,0RawMaterial-Concrete (Fine Aggregate),,0,AC998D
+PRESET,,F4C2A134-CD3C-8C42-85C9-625A51A767A6,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2-F4C2A134-CD3C-8C42-85C9-625A51A767A6,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/8in, Glass, Untinted",,Thickness,0.125in,,,,Finish1,0RawMaterial-Glass,,,F2F2F2
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,49836543-CCED-E34E-B3E7-E4480E480FA1,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-ABA283,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3/4in, Concrete (Fine Aggregate), Olive",,Thickness,0.75in,,,,Finish1,0RawMaterial-Concrete (Fine Aggregate),,0,ABA283
+PRESET,,3214528D-AE89-B243-BA75-4095C6735BF7,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-D6DAD8-3214528D-AE89-B243-BA75-4095C6735BF7,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/8in, Glass, Slate",,Thickness,0.125in,,,,Finish1,0RawMaterial-Glass,,,D6DAD8
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,51559653-AA73-7E4B-8676-D23DC1DF68D0,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.25in-Finish1-0RawMaterial-Mortar-C6C6C6,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/4in, Mortar, Natural",,Thickness,0.25in,,,,Finish1,0RawMaterial-Mortar,,0,C6C6C6
+PRESET,,C5DD6A97-5C19-8D4A-8255-65D1954267F0,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.25in-Finish1-0RawMaterial-Glass-D6DAD8-C5DD6A97-5C19-8D4A-8255-65D1954267F0,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/4in, Glass, Slate",,Thickness,0.25in,,,,Finish1,0RawMaterial-Glass,,,D6DAD8
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,49D08B25-845F-044F-A903-873BEC9F78CB,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.09375in-Finish1-0RawMaterial-Glass-F2F2F2,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3/32in, Glass, Untinted",,Thickness,0.09375in,,,,Finish1,0RawMaterial-Glass,,0,F2F2F2
+PRESET,,93AFFBB9-4672-8C41-AA2D-80CB58D68CA4,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Glass-D6DAD8-93AFFBB9-4672-8C41-AA2D-80CB58D68CA4,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1in, Glass, Slate",,Thickness,1in,,,,Finish1,0RawMaterial-Glass,,,D6DAD8
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,F4C2A134-CD3C-8C42-85C9-625A51A767A6,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-F2F2F2,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/8in, Glass, Untinted",,Thickness,0.125in,,,,Finish1,0RawMaterial-Glass,,0,F2F2F2
+PRESET,,2B8D79B1-DE9B-A146-90E7-41382B29654B,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Air-FFFFFF-2B8D79B1-DE9B-A146-90E7-41382B29654B,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/2in, Air, Clear",,Thickness,0.5in,,,,Finish1,0RawMaterial-Air,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,3214528D-AE89-B243-BA75-4095C6735BF7,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.125in-Finish1-0RawMaterial-Glass-D6DAD8,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/8in, Glass, Slate",,Thickness,0.125in,,,,Finish1,0RawMaterial-Glass,,0,D6DAD8
+PRESET,,EC3A8B27-19A5-6048-9B85-734174FDFA74,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.625in-Finish1-0RawMaterial-Air-FFFFFF-EC3A8B27-19A5-6048-9B85-734174FDFA74,,Assembly_2FlexDims1Fixed_PlanarPattern,,"5/8in, Air, Clear",,Thickness,0.625in,,,,Finish1,0RawMaterial-Air,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,C5DD6A97-5C19-8D4A-8255-65D1954267F0,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.25in-Finish1-0RawMaterial-Glass-D6DAD8,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/4in, Glass, Slate",,Thickness,0.25in,,,,Finish1,0RawMaterial-Glass,,0,D6DAD8
+PRESET,,F4C11F58-4868-384E-A8EC-BC982181F1E3,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Air-FFFFFF-F4C11F58-4868-384E-A8EC-BC982181F1E3,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3/4in, Air, Clear",,Thickness,0.75in,,,,Finish1,0RawMaterial-Air,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,93AFFBB9-4672-8C41-AA2D-80CB58D68CA4,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Glass-D6DAD8,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1in, Glass, Slate",,Thickness,1in,,,,Finish1,0RawMaterial-Glass,,0,D6DAD8
+PRESET,,8CD301BC-8707-7745-AD1D-6CAF94B37577,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Air-FFFFFF-8CD301BC-8707-7745-AD1D-6CAF94B37577,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1in, Air, Clear",,Thickness,1in,,,,Finish1,0RawMaterial-Air,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,2B8D79B1-DE9B-A146-90E7-41382B29654B,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Air-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1/2in, Air, Clear",,Thickness,0.5in,,,,Finish1,0RawMaterial-Air,,0,FFFFFF
+PRESET,,62A90BCC-EDED-4B4F-9E0F-37E64D141320,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Air-FFFFFF-62A90BCC-EDED-4B4F-9E0F-37E64D141320,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3in, Air, Clear",,Thickness,3in,,,,Finish1,0RawMaterial-Air,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,EC3A8B27-19A5-6048-9B85-734174FDFA74,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.625in-Finish1-0RawMaterial-Air-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"5/8in, Air, Clear",,Thickness,0.625in,,,,Finish1,0RawMaterial-Air,,0,FFFFFF
+PRESET,,D05FED57-B79F-4743-AA4E-B491EB4DBFE8,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Air-FFFFFF-D05FED57-B79F-4743-AA4E-B491EB4DBFE8,,Assembly_2FlexDims1Fixed_PlanarPattern,,"6in, Air, Clear",,Thickness,6in,,,,Finish1,0RawMaterial-Air,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,F4C11F58-4868-384E-A8EC-BC982181F1E3,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Air-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3/4in, Air, Clear",,Thickness,0.75in,,,,Finish1,0RawMaterial-Air,,0,FFFFFF
-PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,8CD301BC-8707-7745-AD1D-6CAF94B37577,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-1in-Finish1-0RawMaterial-Air-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"1in, Air, Clear",,Thickness,1in,,,,Finish1,0RawMaterial-Air,,0,FFFFFF
-PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,62A90BCC-EDED-4B4F-9E0F-37E64D141320,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-3in-Finish1-0RawMaterial-Air-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"3in, Air, Clear",,Thickness,3in,,,,Finish1,0RawMaterial-Air,,0,FFFFFF
-PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,D05FED57-B79F-4743-AA4E-B491EB4DBFE8,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-6in-Finish1-0RawMaterial-Air-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"6in, Air, Clear",,Thickness,6in,,,,Finish1,0RawMaterial-Air,,0,FFFFFF
-PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
-PRESET,,8D2CBB4E-8D68-2E40-BD00-91138E071194,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Air-FFFFFF,,Assembly_2FlexDims1Fixed_PlanarPattern,,"12in, Air, Clear",,Thickness,12in,,,,Finish1,0RawMaterial-Air,,0,FFFFFF
+PRESET,,8D2CBB4E-8D68-2E40-BD00-91138E071194,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-12in-Finish1-0RawMaterial-Air-FFFFFF-8D2CBB4E-8D68-2E40-BD00-91138E071194,,Assembly_2FlexDims1Fixed_PlanarPattern,,"12in, Air, Clear",,Thickness,12in,,,,Finish1,0RawMaterial-Air,,,FFFFFF
 PRESET,,,,,,,,,,IconLength,64in,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,
