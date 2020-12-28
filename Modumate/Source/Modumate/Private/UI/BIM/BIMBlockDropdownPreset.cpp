@@ -49,12 +49,12 @@ void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 	{
 		FVector2D colorDropdownOffset = DropdownOffset + FVector2D(0.f, OwnerNode->FormItemSize);
 		Controller->EditModelUserWidget->BIMDesigner->BIM_EditColorBP->BuildColorPicker(
-			ParentBIMDesigner, OwnerNode->ID, SwapScope, SwapNameType, PresetID, colorDropdownOffset);
+			ParentBIMDesigner, OwnerNode->ID, SwapScope, SwapNameType, PresetKEY_DEPRECATED, colorDropdownOffset);
 		return;
 	}
 
 	// If none of the above, open swap preset menu
-	FBIMKey ownerNodePresetID;
+	FGuid ownerNodePresetID;
 	// Dropdown changes a property of its owner node, it should always have an ID from its owner	
 	if (ensureAlways(OwnerNode->ID != BIM_ID_NONE))
 	{
@@ -67,41 +67,42 @@ void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 	Controller->EditModelUserWidget->BIMPresetSwap->ResetSearchBox();
 
 	// Generate list of presets
-	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(ownerNodePresetID, PresetID, OwnerNode->ID, SwapScope, SwapNameType);
+	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(ownerNodePresetID, PresetGUID, OwnerNode->ID, SwapScope, SwapNameType);
 }
 
-void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, FBIMKey InPresetID, FVector2D InDropdownOffset)
+void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FGuid& InPresetID, FVector2D InDropdownOffset)
 {
 	ParentBIMDesigner = OuterBIMDesigner;
 	OwnerNode = InOwnerNode;
 	SwapScope = InScope;
 	SwapNameType = InNameType;
-	PresetID = InPresetID;
+	PresetGUID = InPresetID;
 	DropdownOffset = InDropdownOffset;
 
-	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(PresetID);
+	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.PresetFromGUID(PresetGUID);
 
 	// PresetText
 	if (preset != nullptr)
 	{
+		PresetKEY_DEPRECATED = preset->PresetID;
 		TextTitle->ChangeText(preset->CategoryTitle);
 		PresetText->ChangeText(preset->DisplayName);
 	}
 	else // If no preset is found, use its preset ID
 	{
 		TextTitle->ChangeText(FText::FromName(BIMNameFromValueScope(SwapScope)));
-		PresetText->ChangeText(FText::FromString(PresetID.ToString()));
+		PresetText->ChangeText(FText::FromString(PresetGUID.ToString()));
 	}
 
 	// Icon
 	bool bCaptureSuccess = false;
 	if (SwapScope == EBIMValueScope::Color) // Color is entered as hex, not preset key
 	{
-		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconFromColor(PresetID, IconMaterial);
+		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconFromColor(PresetKEY_DEPRECATED, IconMaterial);
 	}
 	else
 	{
-		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetID, IconMaterial, IconTexture, BIM_ID_NONE);
+		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetGUID, IconMaterial, IconTexture, BIM_ID_NONE);
 	}
 
 	if (bCaptureSuccess)

@@ -32,10 +32,10 @@ As we refactor patterns, we would like "unpatterened" layers to consist of a sin
 */
 EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
 {
-	FBIMKey materialKey;
+	FGuid materialKey;
 	if (ensureAlways(LayerProperties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, materialKey)))
 	{
-		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(materialKey);
+		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByGUID(materialKey);
 		if (ensureAlways(mat != nullptr && mat->EngineMaterial.IsValid()))
 		{
 			FLayerPatternModule& module = Modules.AddDefaulted_GetRef();
@@ -77,10 +77,10 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 		FLayerPatternModule& module = Modules.AddDefaulted_GetRef();
 
 		// Get the material and color for this module
-		FBIMKey rawMaterialKey;
+		FGuid rawMaterialKey;
 		if (ensureAlways(modProps.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey)))
 		{
-			const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(rawMaterialKey);
+			const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByGUID(rawMaterialKey);
 			if (ensureAlways(mat != nullptr))
 			{
 				module.Material = *mat;
@@ -117,11 +117,11 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 	Should we combine modules and gaps into a single concept? 
 	*/
 
-	FString gapStr;
+	FGuid gapStr;
 	if (GapProperties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, gapStr))
 	{
 		// Fetch material & color per module
-		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(gapStr);
+		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByGUID(gapStr);
 		if (ensureAlways(mat != nullptr))
 		{
 			Gap.Material = *mat;

@@ -38,7 +38,7 @@ FRoomConfigurationBlueprint FRoomConfiguration::AsBlueprintObject(int32 InObject
 }
 
 
-const FBIMKey UModumateRoomStatics::DefaultRoomConfigKey(TEXT("Unassigned"));
+const FGuid UModumateRoomStatics::DefaultRoomConfigKey;
 
 bool UModumateRoomStatics::GetRoomConfigurationsFromTable(UObject* WorldContextObject, TArray<FRoomConfigurationBlueprint> &OutRoomConfigs)
 {
@@ -128,18 +128,19 @@ bool UModumateRoomStatics::GetRoomConfig(UObject* WorldContextObject, int32 Room
 	return GetRoomConfig(roomObj, OutRoomConfig);
 }
 
-bool UModumateRoomStatics::SetRoomConfigFromKey(AModumateObjectInstance *RoomObj, const FBIMKey& ConfigKey)
+bool UModumateRoomStatics::SetRoomConfigFromKey(AModumateObjectInstance *RoomObj, const FGuid& ConfigKey)
 {
+#if 0 
+
 	UWorld *world = RoomObj ? RoomObj->GetWorld() : nullptr;
 	AEditModelGameMode_CPP *gameMode = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
-	const FRoomConfiguration *roomConfig = gameMode ? gameMode->ObjectDatabase->GetRoomConfigByKey(ConfigKey) : nullptr;
+	const FRoomConfiguration *roomConfig = gameMode ? gameMode->ObjectDatabase->GetRoomConfigByGUID(ConfigKey) : nullptr;
 	if (roomConfig == nullptr)
 	{
 		return false;
 	}
 
 	// TODO: refactor Room properties to used strongly-typed InstanceData
-#if 0
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Preset, ConfigKey.ToString());
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Color, roomConfig->HexValue);
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Area, 0.0f);
@@ -150,16 +151,16 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(AModumateObjectInstance *RoomObj
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantLoadFactor, roomConfig->OccupantLoadFactor);
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::AreaType, EnumValueString(EAreaType, roomConfig->AreaType));
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::LoadFactorSpecialCalc, roomConfig->LoadFactorSpecialCalc.ToString());
-#endif
 
 	// Mark the room as dirty, so that it will re-calculate area, update derived properties, and update its material.
 	// TODO: calculate both gross and net area during structural clean (SetupDynamicGeometry), so that we only need to mark visuals as dirty.
 	RoomObj->MarkDirty(EObjectDirtyFlags::Structure);
+#endif
 
-	return true;
+	return false;
 }
 
-bool UModumateRoomStatics::SetRoomConfigFromKey(UObject* WorldContextObject, int32 RoomID, const FBIMKey& ConfigKey)
+bool UModumateRoomStatics::SetRoomConfigFromKey(UObject* WorldContextObject, int32 RoomID, const FGuid& ConfigKey)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;

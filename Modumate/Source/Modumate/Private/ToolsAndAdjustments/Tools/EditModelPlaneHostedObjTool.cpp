@@ -64,7 +64,7 @@ bool UPlaneHostedObjTool::Deactivate()
 bool UPlaneHostedObjTool::BeginUse()
 {
 	// TODO: require assemblies for stairs, once they can be crafted
-	if (!Controller || (AssemblyKey.IsNone() && (ObjectType != EObjectType::OTStaircase)))
+	if (!Controller || (!AssemblyGUID.IsValid() && (ObjectType != EObjectType::OTStaircase)))
 	{
 		return false;
 	}
@@ -268,7 +268,7 @@ FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& Targe
 					if (child->GetObjectType() == ObjectType)
 					{
 						FMOIStateData& newState = delta->AddMutationState(child);
-						newState.AssemblyKey = AssemblyKey;
+						newState.AssemblyGUID = AssemblyGUID;
 						bCreateNewObject = false;
 					}
 					else
@@ -287,7 +287,7 @@ FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& Targe
 
 			NewMOIStateData.ID = nextID++;
 			NewMOIStateData.ParentID = targetFaceID;
-			NewMOIStateData.AssemblyKey = AssemblyKey;
+			NewMOIStateData.AssemblyGUID = AssemblyGUID;
 			//NewMOIStateData.CustomData.SaveStructData(newMOICustomData);
 			delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
 

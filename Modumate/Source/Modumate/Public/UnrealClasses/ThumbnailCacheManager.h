@@ -38,7 +38,7 @@ public:
 
 	static FName GetThumbnailKeyForAssembly(const FBIMAssemblySpec &Assembly);
 
-	static FName GetThumbnailKeyForPreset(const FBIMKey& PresetID);
+	static FName GetThumbnailKeyForPreset(const FGuid& PresetID);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate|Thumbnails")
 	static FString GetThumbnailCacheDir();
@@ -47,10 +47,10 @@ public:
 	static FString GetThumbnailCachePathForKey(FName ThumbnailKey);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate|Thumbnails", meta = (WorldContext = "WorldContextObject"))
-	static UTexture2D* GetCachedThumbnailFromPresetKey(const FBIMKey& PresetKey, UObject *WorldContextObject);
+	static UTexture2D* GetCachedThumbnailFromPresetKey(const FGuid& PresetKey, UObject *WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate|Thumbnails", meta = (WorldContext = "WorldContextObject"))
-	static bool SaveThumbnailFromPresetKey(UTexture *ThumbnailTexture, const FBIMKey& PresetKey, UTexture2D*& OutSavedTexture, UObject *WorldContextObject, bool AllowOverwrite = false);
+	static bool SaveThumbnailFromPresetKey(UTexture *ThumbnailTexture, const FGuid& PresetKey, UTexture2D*& OutSavedTexture, UObject *WorldContextObject, bool AllowOverwrite = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate|Thumbnails")
 	bool SaveThumbnail(UTexture *ThumbnailTexture, FName ThumbnailKey, UTexture2D*& OutSavedTexture, bool AllowOverwrite = false);

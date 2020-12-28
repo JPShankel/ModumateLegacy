@@ -19,7 +19,7 @@ struct MODUMATE_API FLayerPatternModule
 {
 	GENERATED_BODY()
 
-	FBIMKey Key;
+	FGuid Key;
 	FText DisplayName = FText::GetEmpty();
 
 	TArray<ELayerFormat> SupportedFormats;
@@ -30,7 +30,7 @@ struct MODUMATE_API FLayerPatternModule
 
 	FArchitecturalMaterial Material;
 
-	FBIMKey UniqueKey() const { return Key; }
+	FGuid UniqueKey() const { return Key; }
 };
 
 USTRUCT()
@@ -38,7 +38,7 @@ struct MODUMATE_API FLayerPatternGap
 {
 	GENERATED_BODY()
 
-	FBIMKey Key;
+	FGuid Key;
 	FText DisplayName = FText::GetEmpty();
 
 	FVector2D GapExtents = FVector2D::ZeroVector;
@@ -46,7 +46,7 @@ struct MODUMATE_API FLayerPatternGap
 	FArchitecturalMaterial Material;
 	TArray<ELayerFormat> SupportedFormats;
 
-	FBIMKey UniqueKey() const { return Key; }
+	FGuid UniqueKey() const { return Key; }
 };
 
 USTRUCT()
@@ -111,7 +111,7 @@ struct MODUMATE_API FLayerPattern
 {
 	GENERATED_BODY()
 
-	FBIMKey Key;
+	FGuid Key;
 	FText DisplayName = FText::GetEmpty();
 	TArray<ELayerFormat> SupportedFormats;
 	int32 ModuleCount = 0;
@@ -126,7 +126,7 @@ struct MODUMATE_API FLayerPattern
 
 	void InitFromCraftingPreset(const FBIMPresetInstance& Preset);
 
-	FBIMKey UniqueKey() const { return Key; }
+	FGuid UniqueKey() const { return Key; }
 };
 
 // TODO: add to BIM lighting kernel when it exists 
@@ -135,11 +135,11 @@ struct FLightConfiguration
 {
 	GENERATED_BODY()
 
-	FBIMKey Key;
+	FGuid Key;
 	float LightIntensity = 0.f;
 	FLinearColor LightColor = FLinearColor::White;
 	TWeakObjectPtr<UTextureLightProfile> LightProfile = nullptr;
 	bool bAsSpotLight = false;
 
-	FBIMKey UniqueKey() const { return Key; }
+	FGuid UniqueKey() const { return Key; }
 };

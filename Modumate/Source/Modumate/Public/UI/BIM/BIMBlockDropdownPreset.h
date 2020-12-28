@@ -37,7 +37,8 @@ protected:
 	class UBIMBlockNode* OwnerNode;
 
 	FVector2D DropdownOffset = FVector2D::ZeroVector;
-	FBIMKey PresetID;
+	FGuid PresetGUID;
+	FBIMKey PresetKEY_DEPRECATED;
 	EBIMValueScope SwapScope = EBIMValueScope::None;
 	FBIMNameType SwapNameType = NAME_None;
 
@@ -64,5 +65,5 @@ public:
 	UFUNCTION()
 	void OnButtonSwapReleased();
 
-	void BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, FBIMKey InPresetID, FVector2D InDropdownOffset);
+	void BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FGuid& InPresetID, FVector2D InDropdownOffset);
 };

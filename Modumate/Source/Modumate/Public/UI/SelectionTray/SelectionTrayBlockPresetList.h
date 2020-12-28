@@ -25,7 +25,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY()
-	TMap<FBIMKey, class UComponentListObject*> ComponentItemMap;
+	TMap<FGuid, class UComponentListObject*> ComponentItemMap;
 
 public:
 	UPROPERTY()

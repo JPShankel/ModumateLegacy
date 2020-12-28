@@ -10,7 +10,7 @@ template<class T>
 class TModumateDataCollection
 {
 public:
-	typedef TMap<FBIMKey, T> FDataMap;		
+	typedef TMap<FGuid, T> FDataMap;
 	FDataMap DataMap;
 
 	void AddData(const T& Data)
@@ -32,7 +32,7 @@ public:
 		DataMap.Remove(Data.UniqueKey());
 	}
 
-	const T *GetData(const FBIMKey& Str) const
+	const T *GetData(const FGuid& Str) const
 	{
 		return DataMap.Find(Str);
 	}

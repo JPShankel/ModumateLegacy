@@ -10,7 +10,7 @@
 
 #include "BIMPresetCollection.generated.h"
 
-static constexpr int32 BIMPresetCollectionCurrentVersion = 3;
+static constexpr int32 BIMPresetCollectionCurrentVersion = 4;
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetCollection
@@ -24,9 +24,16 @@ struct MODUMATE_API FBIMPresetCollection
 	TMap<FName, FBIMPresetTypeDefinition> NodeDescriptors;
 
 	UPROPERTY()
-	TMap<FBIMKey, FBIMPresetInstance> Presets;
+	TMap<FBIMKey, FBIMPresetInstance> Presets_DEPRECATED;
 
-	TMap<FGuid, FBIMKey> GUIDKeyMap;
+	UPROPERTY()
+	TMap<FGuid, FBIMPresetInstance> PresetsByGUID;
+
+	FBIMPresetInstance* PresetFromGUID(const FGuid& InGUID);
+	const FBIMPresetInstance* PresetFromGUID(const FGuid& InGUID) const;
+
+	EBIMResult AddPreset(const FBIMPresetInstance& InPreset);
+	EBIMResult RemovePreset(const FGuid& InGUID);
 
 	TSet<FGuid> UsedGUIDs;
 
@@ -36,22 +43,22 @@ struct MODUMATE_API FBIMPresetCollection
 
 	bool Matches(const FBIMPresetCollection& OtherCollection) const;
 
-	EObjectType GetPresetObjectType(const FBIMKey& PresetID) const;
+	EObjectType GetPresetObjectType(const FGuid& PresetID) const;
 
-	EBIMResult GetNCPForPreset(const FBIMKey& InPresetID, FBIMTagPath& OutNCP) const;
-	EBIMResult GetPresetsForNCP(const FBIMTagPath& InNCP, TArray<FBIMKey>& OutPresets) const;
+	EBIMResult GetNCPForPreset(const FGuid& InPresetID, FBIMTagPath& OutNCP) const;
+	EBIMResult GetPresetsForNCP(const FBIMTagPath& InNCP, TArray<FGuid>& OutPresets) const;
 	EBIMResult GetNCPSubcategories(const FBIMTagPath& InNCP, TArray<FString>& OutSubcats) const;
 
-	EBIMResult GetDependentPresets(const FBIMKey& PresetID, TArray<FBIMKey>& OutPresets) const;
+	EBIMResult GetDependentPresets(const FGuid& PresetGUID, TArray<FGuid>& OutPresets) const;
 
-	EBIMResult GetPropertyFormForPreset(const FBIMKey& PresetID, TMap<FString, FBIMNameType> &OutForm) const;
+	EBIMResult GetPropertyFormForPreset(const FGuid& PresetGUID, TMap<FString, FBIMNameType> &OutForm) const;
 
-	EBIMResult GetPresetsByPredicate(const TFunction<bool(const FBIMPresetInstance& Preset)>& Predicate,TArray<FBIMKey>& OutPresets) const;
-	EBIMResult GetPresetsForSlot(const FBIMKey& SlotPresetID,TArray<FBIMKey>& OutPresets) const;
+	EBIMResult GetPresetsByPredicate(const TFunction<bool(const FBIMPresetInstance& Preset)>& Predicate,TArray<FGuid>& OutPresets) const;
+	EBIMResult GetPresetsForSlot(const FGuid& SlotPresetGUID,TArray<FGuid>& OutPresets) const;
 
-	EBIMResult GenerateBIMKeyForPreset(const FBIMKey& PresetID, FBIMKey& OutKey) const;
+	EBIMResult GenerateBIMKeyForPreset(const FGuid& PresetID, FBIMKey& OutKey) const;
 	EBIMResult GetAvailableGUID(FGuid& OutGUID);
 
-	EBIMResult LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages);
-	EBIMResult CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FBIMKey& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec);
+	EBIMResult LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FGuid>& OutStarters, TArray<FString>& OutMessages);
+	EBIMResult CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FGuid& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec);
 };

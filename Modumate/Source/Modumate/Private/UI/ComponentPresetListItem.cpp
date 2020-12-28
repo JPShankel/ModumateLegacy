@@ -26,14 +26,14 @@ void UComponentPresetListItem::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerController_CPP* Controller, const FBIMKey& BIMKey)
+bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerController_CPP* Controller, const FGuid& InGUID)
 {
 	if (!(Controller && IconImage))
 	{
 		return false;
 	}
 	UMaterialInterface* iconMat = nullptr;
-	bool result = Controller->DynamicIconGenerator->SetIconMeshForAssembly(BIMKey, iconMat);
+	bool result = Controller->DynamicIconGenerator->SetIconMeshForAssembly(InGUID, iconMat);
 	if (result)
 	{
 		IconImage->SetBrushFromMaterial(iconMat);
@@ -41,13 +41,13 @@ bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerCo
 	return result;
 }
 
-bool UComponentPresetListItem::CaptureIconForBIMDesignerSwap(class AEditModelPlayerController_CPP* Controller, const FBIMKey& BIMKey, const FBIMEditorNodeIDType& NodeID)
+bool UComponentPresetListItem::CaptureIconForBIMDesignerSwap(class AEditModelPlayerController_CPP* Controller, const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID)
 {
 	if (!(Controller && IconImage))
 	{
 		return false;
 	}
-	bool result = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(true, BIMKey, IconMaterial, IconTexture, NodeID);
+	bool result = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(true, InGUID, IconMaterial, IconTexture, NodeID);
 	if (result)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);

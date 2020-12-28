@@ -103,11 +103,11 @@ bool UFinishTool::GetFinishCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 		{
 			if (child->GetObjectType() == EObjectType::OTFinish)
 			{
-				if (child->GetAssembly().UniqueKey() != AssemblyKey)
+				if (child->GetAssembly().UniqueKey() != AssemblyGUID)
 				{
 					auto swapAssemblyDelta = MakeShared<FMOIDelta>();
 					auto& newState = swapAssemblyDelta->AddMutationState(child);
-					newState.AssemblyKey = AssemblyKey;
+					newState.AssemblyGUID = AssemblyGUID;
 
 					OutDeltas.Add(swapAssemblyDelta);
 				}
@@ -146,7 +146,7 @@ bool UFinishTool::GetFinishCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 
 	// Now, create a new finish object on the target surface graph polygon
 	FMOIStateData newFinishState(nextID, EObjectType::OTFinish, surfaceGraphPolyID);
-	newFinishState.AssemblyKey = AssemblyKey;
+	newFinishState.AssemblyGUID = AssemblyGUID;
 	FMOIFinishData newFinishInstanceData;
 	newFinishState.CustomData.SaveStructData(newFinishInstanceData);
 

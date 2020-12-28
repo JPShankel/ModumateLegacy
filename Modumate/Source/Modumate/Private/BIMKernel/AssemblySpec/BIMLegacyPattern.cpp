@@ -30,7 +30,7 @@ FPatternModuleTemplate::FPatternModuleTemplate(const FString &DimensionStringsCo
 
 void FLayerPattern::InitFromCraftingPreset(const FBIMPresetInstance& Preset)
 {
-	Key = Preset.PresetID;
+	Key = Preset.GUID;
 
 	FString localName;
 	if (Preset.TryGetProperty(BIMPropertyNames::Name, localName))

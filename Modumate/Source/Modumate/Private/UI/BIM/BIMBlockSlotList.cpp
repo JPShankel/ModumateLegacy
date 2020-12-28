@@ -54,7 +54,7 @@ void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMPresetEditorNodeShared
 		UBIMBlockSlotListItem* newSlot = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockSlotListItem>(SlotListItemClass);
 		if (newSlot)
 		{
-			const FBIMPresetInstance* preset = controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(partSlots[i].SlotPreset);
+			const FBIMPresetInstance* preset = controller->GetDocument()->PresetManager.CraftingNodePresets.PresetFromGUID(partSlots[i].SlotPresetGUID);
 			if (preset != nullptr)
 			{
 				newSlot->TextBlockWidget->ChangeText(preset->DisplayName);
@@ -63,14 +63,14 @@ void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMPresetEditorNodeShared
 			newSlot->SlotIndex = i;
 			newSlot->ParentID = NodePtr->GetInstanceID();
 
-			if (partSlots[i].PartPreset.IsNone())
+			if (!partSlots[i].PartPresetGUID.IsValid())
 			{
 				newSlot->ConnectSlotItemToNode(BIM_ID_NONE);
 			}
 			else
 			{
 				FBIMEditorNodeIDType connectedChildID;
-				NodePtr->FindNodeIDConnectedToSlot(partSlots[i].SlotPreset, connectedChildID);
+				NodePtr->FindNodeIDConnectedToSlot(partSlots[i].SlotPresetGUID, connectedChildID);
 				newSlot->ConnectSlotItemToNode(connectedChildID);
 				NodeIDToSlotMapItem.Add(connectedChildID, newSlot);
 			}

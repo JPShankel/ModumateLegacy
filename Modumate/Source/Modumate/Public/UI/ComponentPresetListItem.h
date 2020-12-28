@@ -50,6 +50,6 @@ public:
 	UPROPERTY()
 	class UTexture* IconTexture;
 
-	bool CaptureIconFromPresetKey(class AEditModelPlayerController_CPP* Controller, const FBIMKey& BIMKey);
-	bool CaptureIconForBIMDesignerSwap(class AEditModelPlayerController_CPP* Controller, const FBIMKey& BIMKey, const FBIMEditorNodeIDType& NodeID);
+	bool CaptureIconFromPresetKey(class AEditModelPlayerController_CPP* Controller, const FGuid& InGUID);
+	bool CaptureIconForBIMDesignerSwap(class AEditModelPlayerController_CPP* Controller, const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID);
 };

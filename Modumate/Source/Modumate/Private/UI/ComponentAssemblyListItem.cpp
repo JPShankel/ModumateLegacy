@@ -119,7 +119,7 @@ void UComponentAssemblyListItem::UpdateSelectionItemCount(int32 ItemCount)
 
 bool UComponentAssemblyListItem::BuildFromAssembly()
 {
-	if (!ComponentPresetItem || BIMKey.IsNone())
+	if (!ComponentPresetItem || !BIMKey.IsValid())
 	{
 		return false;
 	}
@@ -199,7 +199,7 @@ void UComponentAssemblyListItem::OnButtonConfirmReleased()
 		break;
 	case EComponentListItemType::SwapListItem:
 		UModumateDocument* doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-		const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, BIMKey);
+		const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByGUID(ToolMode, BIMKey);
 		if (assembly)
 		{
 			TArray<int32> objIDs;
@@ -227,7 +227,7 @@ bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 	}
 
 	UModumateDocument* doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
-	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(ToolMode, BIMKey);
+	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByGUID(ToolMode, BIMKey);
 	if (!assembly)
 	{
 		return false;
@@ -262,8 +262,8 @@ void UComponentAssemblyListItem::SwitchToActiveStyle()
 
 void UComponentAssemblyListItem::CheckIsCurrentToolAssemblyState()
 {
-	FBIMKey asmKey = EMPlayerController->EMPlayerState->GetAssemblyForToolMode(ToolMode);
-	if (!asmKey.IsNone() && asmKey == BIMKey)
+	FGuid asmKey = EMPlayerController->EMPlayerState->GetAssemblyForToolMode(ToolMode);
+	if (asmKey.IsValid() && asmKey == BIMKey)
 	{
 		SwitchToActiveStyle();
 	}
@@ -290,7 +290,7 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 	FPresetManager &presetManager = gameState->Document->PresetManager;
 	
 	// Find the preset for this list item. Note some item types do not require preset
-	const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.Presets.Find(BIMKey);
+	const FBIMPresetInstance* preset = presetManager.CraftingNodePresets.PresetFromGUID(BIMKey);
 
 	switch (compListObj->ItemType)
 	{

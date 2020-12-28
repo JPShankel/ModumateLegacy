@@ -233,7 +233,7 @@ void UModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, c
 		if (obj != nullptr)
 		{
 			auto& newState = delta->AddMutationState(obj);
-			newState.AssemblyKey = assembly.UniqueKey();
+			newState.AssemblyGUID = assembly.UniqueKey();
 		}
 	}
 
@@ -2094,7 +2094,7 @@ TArray<AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(const FObje
 		{ return types.Contains(moi->GetObjectType()); });
 }
 
-void UModumateDocument::GetObjectIdsByAssembly(const FBIMKey& AssemblyKey, TArray<int32>& OutIds) const
+void UModumateDocument::GetObjectIdsByAssembly(const FGuid& AssemblyKey, TArray<int32>& OutIds) const
 {
 	for (const auto &moi : ObjectInstanceArray)
 	{
@@ -2186,7 +2186,7 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 		TScriptInterface<IEditModelToolInterface> tool = emPlayerController->ModeToTool.FindRef(mode);
 		if (ensureAlways(tool))
 		{
-			OutDocumentRecord.CurrentToolAssemblyMap.Add(mode, tool->GetAssemblyKey().ToString());
+			OutDocumentRecord.CurrentToolAssemblyGUIDMap.Add(mode, tool->GetAssemblyGUID());
 		}
 	}
 
@@ -2194,7 +2194,6 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 	PresetManager.ToDocumentRecord(OutDocumentRecord);
 
 	// Capture object instances into doc struct
-	TSet<FBIMKey> usedPresets;
 	for (AModumateObjectInstance* obj : ObjectInstanceArray)
 	{
 		// Don't save graph-reflected MOIs, since their information is stored in separate graph structures
@@ -2206,27 +2205,9 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 			FMOIStateData& stateData = obj->GetStateData();
 			stateData.CustomData.SaveJsonFromCbor();
 			OutDocumentRecord.ObjectData.Add(stateData);
-			if (!stateData.AssemblyKey.IsNone())
-			{
-				usedPresets.Add(stateData.AssemblyKey);
-				TArray<FBIMKey> dependents;
-				PresetManager.CraftingNodePresets.GetDependentPresets(stateData.AssemblyKey, dependents);
-				for (auto& dependent : dependents)
-				{
-					usedPresets.Add(dependent);
-				}
-			}
 		}
 	}
 
-	for (auto& usedPreset : usedPresets)
-	{
-		const FBIMPresetInstance* preset = PresetManager.CraftingNodePresets.Presets.Find(usedPreset);
-		if (ensureAlways(preset != nullptr))
-		{
-			OutDocumentRecord.UsedPresetGUIDs.Add(usedPreset, preset->GUID);
-		}
-	}
 
 	VolumeGraph.Save(&OutDocumentRecord.VolumeGraph);
 
@@ -2292,39 +2273,6 @@ const AModumateObjectInstance *UModumateDocument::GetObjectById(int32 id) const
 {
 	return ObjectsByID.FindRef(id);
 }
-void UModumateDocument::RemapOldBIMKeys(FMOIDocumentRecord& DocRec) const
-{
-	TMap<FBIMKey, FBIMKey> bimkeyRemap;
-	for (auto& stateData : DocRec.ObjectData)
-	{
-		if (stateData.AssemblyKey.IsNone())
-		{
-			continue;
-		}
-
-		const FBIMKey* newKey = bimkeyRemap.Find(stateData.AssemblyKey);
-
-		if (newKey == nullptr)
-		{
-			FGuid* guid = DocRec.UsedPresetGUIDs.Find(stateData.AssemblyKey);
-			if (ensureAlwaysMsgf(guid != nullptr, TEXT("Object has assembly key with no associated guid! (should have been stored in Save())")) && guid->IsValid())
-			{
-				newKey = PresetManager.CraftingNodePresets.GUIDKeyMap.Find(*guid);
-				if (newKey != nullptr)
-				{
-					bimkeyRemap.Add(stateData.AssemblyKey, *newKey);
-				}
-			}
-		}
-
-		// TODO: the assembly builder assigns default values for presets that are completely retired (no guid)
-		// Refactor to do that mapping here instead
-		if (newKey != nullptr)
-		{
-			stateData.AssemblyKey = *newKey;
-		}
-	}
-}
 
 bool UModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurrentProject)
 {
@@ -2348,15 +2296,7 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 	{
 		objectDB->InitPresetManagerForNewDocument(PresetManager);
 
-		if (docRec.PresetCollection.Version < PresetManager.CraftingNodePresets.Version)
-		{
-			RemapOldBIMKeys(docRec);
-		}
-
-		if (docRec.PresetCollection.Presets.Num() > 0 && docRec.PresetCollection.NodeDescriptors.Num() > 0)
-		{
-			PresetManager.FromDocumentRecord(*objectDB, docRec);
-		}
+		PresetManager.FromDocumentRecord(*objectDB, docRec);
 
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.
@@ -2426,15 +2366,15 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 			}
 		}
 
-		for (auto& cta : docRec.CurrentToolAssemblyMap)
+		for (auto& cta : docRec.CurrentToolAssemblyGUIDMap)
 		{
 			TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(cta.Key);
 			if (ensureAlways(tool))
 			{
-				const FBIMAssemblySpec *obAsm = PresetManager.GetAssemblyByKey(cta.Key, cta.Value);
+				const FBIMAssemblySpec *obAsm = PresetManager.GetAssemblyByGUID(cta.Key, cta.Value);
 				if (obAsm != nullptr)
 				{
-					tool->SetAssemblyKey(obAsm->UniqueKey());
+					tool->SetAssemblyGUID(obAsm->UniqueKey());
 				}
 			}
 		}
@@ -2863,7 +2803,7 @@ void UModumateDocument::DisplayDebugInfo(UWorld* world)
 		displayObjectCount(objectType, *EnumValueString(EObjectType, objectType));
 	}
 
-	TSet<FBIMKey> asms;
+	TSet<FGuid> asms;
 
 	Algo::Transform(ObjectInstanceArray, asms,
 		[](const AModumateObjectInstance *ob)

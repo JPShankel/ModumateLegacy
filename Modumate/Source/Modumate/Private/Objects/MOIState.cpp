@@ -19,7 +19,7 @@ bool FMOIStateData::operator==(const FMOIStateData& Other) const
 	return (ID == Other.ID) &&
 		(ObjectType == Other.ObjectType) &&
 		(ParentID == Other.ParentID) &&
-		(AssemblyKey == Other.AssemblyKey) &&
+		(AssemblyGUID == Other.AssemblyGUID) &&
 		(CustomData == Other.CustomData);
 }
 

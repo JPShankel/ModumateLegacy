@@ -35,16 +35,12 @@ public:
 	// DDL 2.0
 	FBIMPresetCollection CraftingNodePresets;
 
-	bool TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FBIMKey& PresetID, FBIMAssemblySpec& OutAssembly) const;
+	bool TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FGuid& PresetID, FBIMAssemblySpec& OutAssembly) const;
 	bool TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FBIMAssemblySpec& OutAssembly) const;
 
 	EBIMResult GetProjectAssembliesForObjectType(EObjectType ObjectType, TArray<FBIMAssemblySpec>& OutAssemblies) const;
-	EBIMResult RemoveProjectAssemblyForPreset(const FBIMKey& PresetID);
+	EBIMResult RemoveProjectAssemblyForPreset(const FGuid& PresetID);
 	EBIMResult UpdateProjectAssembly(const FBIMAssemblySpec& Assembly);
-
-	EBIMResult AddOrUpdateGraph2DRecord(const FBIMKey& Key, const FGraph2DRecord& Graph, FBIMKey& OutKey);
-	EBIMResult RemoveGraph2DRecord(const FBIMKey& Key);
-	EBIMResult GetGraph2DRecord(const FBIMKey& Key, FGraph2DRecord& OutGraph) const;
 
 	EBIMResult FromDocumentRecord(const FModumateDatabase& InDB, const FMOIDocumentRecord& DocRecord);
 	EBIMResult ToDocumentRecord(FMOIDocumentRecord& DocRecord) const;
@@ -53,9 +49,9 @@ public:
 	// This pattern is used through out the app, particularly in UModumateDocument, to generate IDs for new objects
 	// All such schemes should switch to this one key store
 	// TODO: the key store is likely to grow, so we may need to add some scope discrimination or a more complex scheme down the road
-	FBIMKey GetAvailableKey(const FBIMKey& BaseKey);
+	FBIMKey GetAvailableKey(const FGuid& BaseKey);
 
-	const FBIMAssemblySpec* GetAssemblyByKey(EToolMode Mode, const FBIMKey& Key) const;
+	const FBIMAssemblySpec* GetAssemblyByGUID(EToolMode Mode, const FGuid& Key) const;
 
-	EBIMResult GetAvailablePresetsForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, TArray<FBIMKey>& OutAvailablePresets);
+	EBIMResult GetAvailablePresetsForSwap(const FGuid& ParentPresetID, const FGuid& PresetIDToSwap, TArray<FGuid>& OutAvailablePresets);
 };

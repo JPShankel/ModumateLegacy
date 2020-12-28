@@ -76,8 +76,6 @@ private:
 
 	TMap<EObjectDirtyFlags, TArray<AModumateObjectInstance*>> DirtyObjectMap;
 
-	void RemapOldBIMKeys(FMOIDocumentRecord& DocRec) const;
-
 public:
 
 	UModumateDocument();
@@ -177,7 +175,7 @@ public:
 	TArray<const AModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& types) const;
 	TArray<AModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& types);
 
-	void GetObjectIdsByAssembly(const FBIMKey& AssemblyKey, TArray<int32>& OutIDs) const;
+	void GetObjectIdsByAssembly(const FGuid& AssemblyKey, TArray<int32>& OutIDs) const;
 
 	static const FName DocumentHideRequestTag;
 	void AddHideObjectsById(UWorld *world, const TArray<int32> &ids);

@@ -110,7 +110,7 @@ FName UThumbnailCacheManager::GetThumbnailKeyForAssembly(const FBIMAssemblySpec 
 	return GetThumbnailKeyForPreset(Assembly.UniqueKey());
 }
 
-FName UThumbnailCacheManager::GetThumbnailKeyForPreset(const FBIMKey& PresetID)
+FName UThumbnailCacheManager::GetThumbnailKeyForPreset(const FGuid& PresetID)
 {
 	const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
 	const FString& projectVersion = projectSettings->ProjectVersion;
@@ -139,7 +139,7 @@ FString UThumbnailCacheManager::GetThumbnailCachePathForKey(FName ThumbnailKey)
 	}
 }
 
-UTexture2D* UThumbnailCacheManager::GetCachedThumbnailFromPresetKey(const FBIMKey& PresetKey, UObject *WorldContextObject)
+UTexture2D* UThumbnailCacheManager::GetCachedThumbnailFromPresetKey(const FGuid& PresetKey, UObject *WorldContextObject)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	UModumateGameInstance *modGameInst = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
@@ -155,7 +155,7 @@ UTexture2D* UThumbnailCacheManager::GetCachedThumbnailFromPresetKey(const FBIMKe
 	return nullptr;
 }
 
-bool UThumbnailCacheManager::SaveThumbnailFromPresetKey(UTexture *ThumbnailTexture, const FBIMKey& PresetKey, UTexture2D*& OutSavedTexture, UObject *WorldContextObject, bool AllowOverwrite)
+bool UThumbnailCacheManager::SaveThumbnailFromPresetKey(UTexture *ThumbnailTexture, const FGuid& PresetKey, UTexture2D*& OutSavedTexture, UObject *WorldContextObject, bool AllowOverwrite)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	UModumateGameInstance *modGameInst = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;

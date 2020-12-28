@@ -1,0 +1,1623 @@
+{
+	"ModumateHeader":
+	{
+		"version": 9,
+		"thumbnail": "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"
+	},
+	"ModumateObjects":
+	{
+		"objectData": [
+			{
+				"iD": 10,
+				"objectType": "OTWallSegment",
+				"parentId": 9,
+				"assemblyKey": "",
+				"assemblyGUId": "8DAD20F84E5FE12D7DD03996E05D3E3F",
+				"customData":
+				{
+					"structName": "MOIPlaneHostedObjData",
+					"structJson":
+					{
+						"version": 1,
+						"flipSigns":
+						{
+							"x": 1,
+							"y": 1,
+							"z": 1
+						},
+						"justification": 1,
+						"overrideOriginIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 17,
+				"objectType": "OTWallSegment",
+				"parentId": 16,
+				"assemblyKey": "",
+				"assemblyGUId": "8DAD20F84E5FE12D7DD03996E05D3E3F",
+				"customData":
+				{
+					"structName": "MOIPlaneHostedObjData",
+					"structJson":
+					{
+						"version": 1,
+						"flipSigns":
+						{
+							"x": 1,
+							"y": 1,
+							"z": 1
+						},
+						"justification": 1,
+						"overrideOriginIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 42,
+				"objectType": "OTWallSegment",
+				"parentId": 41,
+				"assemblyKey": "",
+				"assemblyGUId": "8DAD20F84E5FE12D7DD03996E05D3E3F",
+				"customData":
+				{
+					"structName": "MOIPlaneHostedObjData",
+					"structJson":
+					{
+						"version": 1,
+						"flipSigns":
+						{
+							"x": 1,
+							"y": 1,
+							"z": 1
+						},
+						"justification": 1,
+						"overrideOriginIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 43,
+				"objectType": "OTDoor",
+				"parentId": 37,
+				"assemblyKey": "",
+				"assemblyGUId": "66EB393B4720C68A3DBA7BB543D4AA9E",
+				"customData":
+				{
+					"structName": "MOIPortalData",
+					"structJson":
+					{
+						"bNormalInverted": false,
+						"bLateralInverted": false,
+						"justification": 0,
+						"orientation": "Up"
+					}
+				}
+			},
+			{
+				"iD": 58,
+				"objectType": "OTDoor",
+				"parentId": 52,
+				"assemblyKey": "",
+				"assemblyGUId": "C9B888EBA32F6248B15DBC3EC4A97617",
+				"customData":
+				{
+					"structName": "MOIPortalData",
+					"structJson":
+					{
+						"bNormalInverted": false,
+						"bLateralInverted": false,
+						"justification": 0,
+						"orientation": "Up"
+					}
+				}
+			},
+			{
+				"iD": 57,
+				"objectType": "OTWallSegment",
+				"parentId": 56,
+				"assemblyKey": "",
+				"assemblyGUId": "8DAD20F84E5FE12D7DD03996E05D3E3F",
+				"customData":
+				{
+					"structName": "MOIPlaneHostedObjData",
+					"structJson":
+					{
+						"version": 1,
+						"flipSigns":
+						{
+							"x": 1,
+							"y": 1,
+							"z": 1
+						},
+						"justification": 1,
+						"overrideOriginIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 68,
+				"objectType": "OTWindow",
+				"parentId": 67,
+				"assemblyKey": "",
+				"assemblyGUId": "D54CB8460E4CAE4092A96DB06F4079BC",
+				"customData":
+				{
+					"structName": "MOIPortalData",
+					"structJson":
+					{
+						"bNormalInverted": false,
+						"bLateralInverted": false,
+						"justification": 0,
+						"orientation": "Up"
+					}
+				}
+			},
+			{
+				"iD": 90,
+				"objectType": "OTFloorSegment",
+				"parentId": 88,
+				"assemblyKey": "",
+				"assemblyGUId": "9B6512A9F093364B961EFF3980C78B5E",
+				"customData":
+				{
+					"structName": "MOIPlaneHostedObjData",
+					"structJson":
+					{
+						"version": 1,
+						"flipSigns":
+						{
+							"x": 1,
+							"y": -1,
+							"z": 1
+						},
+						"justification": 1,
+						"overrideOriginIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 91,
+				"objectType": "OTFloorSegment",
+				"parentId": 89,
+				"assemblyKey": "",
+				"assemblyGUId": "9B6512A9F093364B961EFF3980C78B5E",
+				"customData":
+				{
+					"structName": "MOIPlaneHostedObjData",
+					"structJson":
+					{
+						"version": 1,
+						"flipSigns":
+						{
+							"x": 1,
+							"y": -1,
+							"z": 1
+						},
+						"justification": 1,
+						"overrideOriginIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 95,
+				"objectType": "OTStructureLine",
+				"parentId": 94,
+				"assemblyKey": "",
+				"assemblyGUId": "8E69278C33B2B24FBBF242BF2ED3B8EF",
+				"customData":
+				{
+					"structName": "None",
+					"structJson":
+					{
+					}
+				}
+			},
+			{
+				"iD": 96,
+				"objectType": "OTFurniture",
+				"parentId": 0,
+				"assemblyKey": "",
+				"assemblyGUId": "E4FB89E2A456584DB3DF9FD3B16F8C3F",
+				"customData":
+				{
+					"structName": "MOIFFEData",
+					"structJson":
+					{
+						"location":
+						{
+							"x": 1551.67431640625,
+							"y": 0,
+							"z": 0
+						},
+						"rotation":
+						{
+							"x": 0.49999997019767761,
+							"y": 0.49999982118606567,
+							"z": 0.49999997019767761,
+							"w": 0.50000017881393433
+						},
+						"bLateralInverted": false,
+						"parentFaceIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 97,
+				"objectType": "OTFurniture",
+				"parentId": 0,
+				"assemblyKey": "",
+				"assemblyGUId": "E4FB89E2A456584DB3DF9FD3B16F8C3F",
+				"customData":
+				{
+					"structName": "MOIFFEData",
+					"structJson":
+					{
+						"location":
+						{
+							"x": 1855.57568359375,
+							"y": -595.712890625,
+							"z": 0
+						},
+						"rotation":
+						{
+							"x": 0,
+							"y": -0,
+							"z": 0,
+							"w": 1
+						},
+						"bLateralInverted": false,
+						"parentFaceIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 98,
+				"objectType": "OTFurniture",
+				"parentId": 0,
+				"assemblyKey": "",
+				"assemblyGUId": "740CAF60D00D224B9D48D0AB0E8EFEBA",
+				"customData":
+				{
+					"structName": "MOIFFEData",
+					"structJson":
+					{
+						"location":
+						{
+							"x": 523.9412841796875,
+							"y": -1949.20654296875,
+							"z": 0
+						},
+						"rotation":
+						{
+							"x": 0,
+							"y": -0,
+							"z": 0,
+							"w": 1
+						},
+						"bLateralInverted": false,
+						"parentFaceIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 99,
+				"objectType": "OTSurfaceGraph",
+				"parentId": 42,
+				"assemblyKey": "",
+				"assemblyGUId": "00000000000000000000000000000000",
+				"customData":
+				{
+					"structName": "MOISurfaceGraphData",
+					"structJson":
+					{
+						"parentFaceIndex": 0
+					}
+				}
+			},
+			{
+				"iD": 144,
+				"objectType": "OTSurfaceGraph",
+				"parentId": 17,
+				"assemblyKey": "",
+				"assemblyGUId": "00000000000000000000000000000000",
+				"customData":
+				{
+					"structName": "MOISurfaceGraphData",
+					"structJson":
+					{
+						"parentFaceIndex": 1
+					}
+				}
+			},
+			{
+				"iD": 182,
+				"objectType": "OTCabinet",
+				"parentId": 181,
+				"assemblyKey": "",
+				"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+				"customData":
+				{
+					"structName": "MOICabinetData",
+					"structJson":
+					{
+						"extrusionDist": 106.79526519775391,
+						"frontFaceIndex": -1,
+						"bFrontFaceLateralInverted": false
+					}
+				}
+			}
+		],
+		"currentToolAssemblyGUIdMap":
+		{
+			"VE_PLACEOBJECT": "740CAF60D00D224B9D48D0AB0E8EFEBA",
+			"VE_WALL": "8DAD20F84E5FE12D7DD03996E05D3E3F",
+			"VE_FLOOR": "9B6512A9F093364B961EFF3980C78B5E",
+			"VE_DOOR": "C9B888EBA32F6248B15DBC3EC4A97617",
+			"VE_WINDOW": "D54CB8460E4CAE4092A96DB06F4079BC",
+			"VE_STAIR": "00000000000000000000000000000000",
+			"VE_RAIL": "00000000000000000000000000000000",
+			"VE_CABINET": "499F3847BCCFE0468BE91D371F035BFD",
+			"VE_FINISH": "9E11DBCA2BCC9F4B9AECC9C756E969E9",
+			"VE_COUNTERTOP": "00000000000000000000000000000000",
+			"VE_STRUCTURELINE": "8E69278C33B2B24FBBF242BF2ED3B8EF",
+			"VE_TRIM": "00000000000000000000000000000000",
+			"VE_ROOF_FACE": "00000000000000000000000000000000",
+			"VE_CEILING": "00000000000000000000000000000000"
+		},
+		"presetCollection":
+		{
+			"version": 4,
+			"nodeDescriptors":
+			{
+				"AssemblyDD_2FlexDims1FixedDD_PlanarGroup":
+				{
+					"typeName": "AssemblyDD_2FlexDims1FixedDD_PlanarGroup",
+					"scope": "Assembly",
+					"formItemToProperty":
+					{
+						"Name": "Assembly.Name"
+					},
+					"pinSets": [
+						{
+							"setName": "ChildLayerArray",
+							"minCount": 1,
+							"maxCount": -1,
+							"pinTarget": "Default"
+						}
+					],
+					"properties":
+					{
+						"stringMap":
+						{
+							"Assembly.Name": ""
+						},
+						"numberMap":
+						{
+						}
+					}
+				},
+				"AssemblyDD_2FlexDims1FixedDD_PlanarRig":
+				{
+					"typeName": "AssemblyDD_2FlexDims1FixedDD_PlanarRig",
+					"scope": "Assembly",
+					"formItemToProperty":
+					{
+						"Name": "Assembly.Name"
+					},
+					"pinSets": [],
+					"properties":
+					{
+						"stringMap":
+						{
+							"Assembly.Name": ""
+						},
+						"numberMap":
+						{
+						}
+					}
+				}
+			},
+			"presets":
+			{
+				"AssemblyDD_2FlexDims1FixedDD_PlanarGroup_Wall2x4InteriorWoodStudAssemblyDD_2FlexDims1FixedDD_PlanarPattern5/8inGypsumBoards(TypeX)PartDD_1FlexDim2FixedDD_Gap2D0inx0in,AirPartDD_0FlexDims3Fixed_ModulePlanar_Board/Panel_GypsumGypsumBoard0LayerPatternDD_2DSoldierBondAssemblyDD_2FlexDims1FixedDD_PlanarPatternWood2x4s@16inO.C.PartDD_1FlexDim2FixedDD_Gap1DAirPartDD_1FlexDim2FixedDD_ModuleLinear_WoodLumberTypical2x40LayerPatternDD_1D16-InchO.C.AssemblyDD_2FlexDims1FixedDD_PlanarPattern5/8inGypsumBoards(TypeX)PartDD_1FlexDim2FixedDD_Gap2D0inx0in,AirPartDD_0FlexDims3Fixed_ModulePlanar_Board/Panel_GypsumGypsumBoard0LayerPatternDD_2DSoldierBond":
+				{
+					"properties":
+					{
+						"stringMap":
+						{
+							"Assembly.Name": "2x4 Interior Wood Stud"
+						},
+						"numberMap":
+						{
+							"Dimension.IconLength": 121.91999816894531,
+							"Dimension.IconHeight": 162.55999755859375
+						}
+					},
+					"formItemToProperty":
+					{
+						"Name": "Assembly.Name",
+						"IconLength": "Dimension.IconLength",
+						"IconHeight": "Dimension.IconHeight"
+					},
+					"categoryTitle": "Wall",
+					"displayName": "2x4 Interior Wood Stud",
+					"nodeScope": "Assembly",
+					"nodeType": "AssemblyDD_2FlexDims1FixedDD_PlanarGroup",
+					"presetId": "AssemblyDD_2FlexDims1FixedDD_PlanarGroup_Wall2x4InteriorWoodStudAssemblyDD_2FlexDims1FixedDD_PlanarPattern5/8inGypsumBoards(TypeX)PartDD_1FlexDim2FixedDD_Gap2D0inx0in,AirPartDD_0FlexDims3Fixed_ModulePlanar_Board/Panel_GypsumGypsumBoard0LayerPatternDD_2DSoldierBondAssemblyDD_2FlexDims1FixedDD_PlanarPatternWood2x4s@16inO.C.PartDD_1FlexDim2FixedDD_Gap1DAirPartDD_1FlexDim2FixedDD_ModuleLinear_WoodLumberTypical2x40LayerPatternDD_1D16-InchO.C.AssemblyDD_2FlexDims1FixedDD_PlanarPattern5/8inGypsumBoards(TypeX)PartDD_1FlexDim2FixedDD_Gap2D0inx0in,AirPartDD_0FlexDims3Fixed_ModulePlanar_Board/Panel_GypsumGypsumBoard0LayerPatternDD_2DSoldierBond",
+					"gUId": "8DAD20F84E5FE12D7DD03996E05D3E3F",
+					"slotConfigPresetId": "",
+					"slotConfigPresetGUId": "00000000000000000000000000000000",
+					"objectType": "OTWallSegment",
+					"iconType": "None",
+					"orientation": "Inherited",
+					"partSlots": [],
+					"childPresets": [
+						{
+							"parentPinSetIndex": 0,
+							"parentPinSetPosition": 0,
+							"presetId": "AssemblyDD_2FlexDims1FixedDD_PlanarPatternPartDD_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterialDD-Gypsum(TypeX)-D6D7D10LayerPatternDD_2D-SoldierBondPartDD_1FlexDim2FixedDD_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterialDD-Air-FFFFFFCAB213E5-892C-FA44-B4B9-2021AEDCE20A",
+							"presetGUId": "CAB213E5892CFA44B4B92021AEDCE20A",
+							"target": "Default"
+						},
+						{
+							"parentPinSetIndex": 0,
+							"parentPinSetPosition": 1,
+							"presetId": "AssemblyDD_2FlexDims1FixedDD_PlanarPatternPartDD_1FlexDim2FixedDD_ModuleLinear_WoodLumber-Width-1.5in-Depth-3.5in-0ProfileDD-SolidRectangle-Finish1-0RawMaterialDD-Spruce-Pine-Fir-FFFFFF0LayerPatternDD_1D-16-InchO.C.PartDD_1FlexDim2FixedDD_Gap1D-Finish1-0RawMaterialDD-Air-FFFFFFF923BEF5-1F2D-1549-9773-0BE04F9EA31F",
+							"presetGUId": "F923BEF51F2D154997730BE04F9EA31F",
+							"target": "Default"
+						},
+						{
+							"parentPinSetIndex": 0,
+							"parentPinSetPosition": 2,
+							"presetId": "AssemblyDD_2FlexDims1FixedDD_PlanarPatternPartDD_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterialDD-Gypsum(TypeX)-D6D7D10LayerPatternDD_2D-SoldierBondPartDD_1FlexDim2FixedDD_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterialDD-Air-FFFFFFCAB213E5-892C-FA44-B4B9-2021AEDCE20A",
+							"presetGUId": "CAB213E5892CFA44B4B92021AEDCE20A",
+							"target": "Default"
+						},
+						{
+							"parentPinSetIndex": 0,
+							"parentPinSetPosition": 3,
+							"presetId": "AssemblyDD_2FlexDims1FixedDD_PlanarPatternPartDD_0FlexDims3Fixed_ModulePlanar_Tile_BrickVeneer-Length-7.625in-Width-2.29167in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterialDD-Clay-A056330LayerPatternDD_2D-CascadingThirdsPartDD_1FlexDim2FixedDD_Gap2D-Width-0.375in-Recess-0.125in-Finish1-0RawMaterialDD-Mortar-C6C6C691761014-D678-1B46-87D4-B89B02171008",
+							"presetGUId": "91761014D6781B4687D4B89B02171008",
+							"target": "Default"
+						}
+					],
+					"parentTagPaths": [],
+					"myTagPath": "AssemblyDD_2FlexDims1FixedDD_PlanarGroup_Wall",
+					"materialChannelBindings": []
+				},
+				"AssemblyDD_2FlexDims1FixedDD_PlanarRig_DoorDoubleSwingDoor,AshAssemblyDD_2FlexDims1FixedDD_PlanarRig_Panel_DoorPaneledSwingDoorPanel,AshPartDD_0FlexDims3Fixed_LockSurfaceSurfaceLatch1(Bolt),Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_LockDeadboltDeadbolt2,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HandleStaticKnobHandle2,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HandleStaticKnobHandle2,Aluminum,PatricianBronzePartDD_2FlexDims1FixedDD_Panel_Door6PanelDoor,Ash,NaturalAssemblyDD_2FlexDims1FixedDD_PlanarRig_Panel_DoorPaneledSwingDoorPanel,AshPartDD_0FlexDims3Fixed_LockSurfaceSurfaceLatch1(Bolt),Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_LockDeadboltDeadbolt2,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HandleStaticKnobHandle2,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HandleStaticKnobHandle2,Aluminum,PatricianBronzePartDD_2FlexDims1FixedDD_Panel_Door6PanelDoor,Ash,NaturalAssemblyDD_1FlexDim2FixedDD_LinearRig_HingeSet3-HingeSet,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzeAssemblyDD_1FlexDim2FixedDD_LinearRig_HingeSet3-HingeSet,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_2FlexDims1FixedDD_FrameDouble-RabbetWoodFrame,Ash,Natural":
+				{
+					"properties":
+					{
+						"stringMap":
+						{
+							"Assembly.Name": "Double Swing Door, Ash"
+						},
+						"numberMap":
+						{
+							"Dimension.Width": 182.8800048828125,
+							"Dimension.Height": 203.19999694824219
+						}
+					},
+					"formItemToProperty":
+					{
+						"Name": "Assembly.Name",
+						"Width": "Dimension.Width",
+						"Height": "Dimension.Height"
+					},
+					"categoryTitle": "Door",
+					"displayName": "Double Swing Door, Ash",
+					"nodeScope": "Assembly",
+					"nodeType": "AssemblyDD_2FlexDims1FixedDD_PlanarRig",
+					"presetId": "AssemblyDD_2FlexDims1FixedDD_PlanarRig_DoorDoubleSwingDoor,AshAssemblyDD_2FlexDims1FixedDD_PlanarRig_Panel_DoorPaneledSwingDoorPanel,AshPartDD_0FlexDims3Fixed_LockSurfaceSurfaceLatch1(Bolt),Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_LockDeadboltDeadbolt2,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HandleStaticKnobHandle2,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HandleStaticKnobHandle2,Aluminum,PatricianBronzePartDD_2FlexDims1FixedDD_Panel_Door6PanelDoor,Ash,NaturalAssemblyDD_2FlexDims1FixedDD_PlanarRig_Panel_DoorPaneledSwingDoorPanel,AshPartDD_0FlexDims3Fixed_LockSurfaceSurfaceLatch1(Bolt),Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_LockDeadboltDeadbolt2,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HandleStaticKnobHandle2,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HandleStaticKnobHandle2,Aluminum,PatricianBronzePartDD_2FlexDims1FixedDD_Panel_Door6PanelDoor,Ash,NaturalAssemblyDD_1FlexDim2FixedDD_LinearRig_HingeSet3-HingeSet,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzeAssemblyDD_1FlexDim2FixedDD_LinearRig_HingeSet3-HingeSet,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_2FlexDims1FixedDD_FrameDouble-RabbetWoodFrame,Ash,Natural",
+					"gUId": "66EB393B4720C68A3DBA7BB543D4AA9E",
+					"slotConfigPresetId": "PropertyDD_SpatialityDD_Rig_SlotConfig_2FlexDims_Portal_Swing_Framed-PropertyDD_SpatialityDD_Slot-Frame-PropertyDD_SpatialityDD_Slot-AssemblyHingeSetInsetLeft-PropertyDD_SpatialityDD_Slot-AssemblyHingeSetInsetRight-PropertyDD_SpatialityDD_Slot-AssemblyPanelSwingLeft-PropertyDD_SpatialityDD_Slot-AssemblyPanelSwingRight",
+					"slotConfigPresetGUId": "9B0E5BC71195904F8B2BB0220BA0157B",
+					"objectType": "OTDoor",
+					"iconType": "None",
+					"orientation": "Inherited",
+					"partSlots": [
+						{
+							"partPreset": "PartDD_2FlexDims1FixedDD_Frame-PropertyDD_SpatialityDD_Mesh_Frame-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'-Finish1-0RawMaterialDD-Spruce-Pine-Fir-0RawMaterialDD-Ash-FFFFFF-81D7337D-2906-8143-A4F6-18FC1EACFD2E",
+							"slotPreset": "PropertyDD_SpatialityDD_Slot-Frame",
+							"partPresetGUId": "81D7337D29068143A4F618FC1EACFD2E",
+							"slotPresetGUId": "F2ECA3C34E3DC94EA3700C27E7CED8E5"
+						},
+						{
+							"partPreset": "AssemblyDD_1FlexDim2FixedDD_LinearRig_HingeSetPropertyDD_SpatialityDD_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-PropertyDD_SpatialityDD_Slot-HingeFramed1of3-PropertyDD_SpatialityDD_Slot-HingeFramed2of3-PropertyDD_SpatialityDD_Slot-HingeFramed3of3-PropertyDD_SpatialityDD_Slot-FramelessBracket1of3-PropertyDD_SpatialityDD_Slot-FramelessBracket2of3-PropertyDD_SpatialityDD_Slot-FramelessBracket3of3-PropertyDD_SpatialityDD_Slot-Panel-PropertyDD_SpatialityDD_Slot-CasterBarnLeftPropertyDD_SpatialityDD_Slot-HingeFramed1of3PartDD_0FlexDims3Fixed_Hinge-PropertyDD_SpatialityDD_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterialDD-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23PropertyDD_SpatialityDD_Slot-HingeFramed2of3PartDD_0FlexDims3Fixed_Hinge-PropertyDD_SpatialityDD_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterialDD-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F2370743C31-3B93-7346-AEFF-72B89C85BD3E",
+							"slotPreset": "PropertyDD_SpatialityDD_Slot-AssemblyHingeSetInsetLeft",
+							"partPresetGUId": "70743C313B937346AEFF72B89C85BD3E",
+							"slotPresetGUId": "BF56A1721294534AA49361B26FC0F253"
+						},
+						{
+							"partPreset": "AssemblyDD_1FlexDim2FixedDD_LinearRig_HingeSetPropertyDD_SpatialityDD_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-PropertyDD_SpatialityDD_Slot-HingeFramed1of3-PropertyDD_SpatialityDD_Slot-HingeFramed2of3-PropertyDD_SpatialityDD_Slot-HingeFramed3of3-PropertyDD_SpatialityDD_Slot-FramelessBracket1of3-PropertyDD_SpatialityDD_Slot-FramelessBracket2of3-PropertyDD_SpatialityDD_Slot-FramelessBracket3of3-PropertyDD_SpatialityDD_Slot-Panel-PropertyDD_SpatialityDD_Slot-CasterBarnLeftPropertyDD_SpatialityDD_Slot-HingeFramed1of3PartDD_0FlexDims3Fixed_Hinge-PropertyDD_SpatialityDD_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterialDD-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23PropertyDD_SpatialityDD_Slot-HingeFramed2of3PartDD_0FlexDims3Fixed_Hinge-PropertyDD_SpatialityDD_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterialDD-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F2370743C31-3B93-7346-AEFF-72B89C85BD3E",
+							"slotPreset": "PropertyDD_SpatialityDD_Slot-AssemblyHingeSetInsetRight",
+							"partPresetGUId": "70743C313B937346AEFF72B89C85BD3E",
+							"slotPresetGUId": "22407517B0C11C4B8AE5CC5DF7AAEAF8"
+						},
+						{
+							"partPreset": "AssemblyDD_2FlexDims1FixedDD_PlanarRig_Panel_DoorPropertyDD_SpatialityDD_Rig_SlotConfig_2FlexDims_Panel_Door-PropertyDD_SpatialityDD_Slot-Panel-PropertyDD_SpatialityDD_Slot-CasterBarnLeft-PropertyDD_SpatialityDD_Slot-CasterBarnRight-PropertyDD_SpatialityDD_Slot-HandleXBacksetDistanceXYInsideZHandleHeight-PropertyDD_SpatialityDD_Slot-HandleXBacksetDistanceXYOutsideZHandleHeightPropertyDD_SpatialityDD_Slot-PanelPartDD_2FlexDims1FixedDD_Panel_Door-PropertyDD_SpatialityDD_Mesh_Panel_Door-Door-Panel-Swing-01.Door-Panel-Swing-01'-Finish1-0RawMaterialDD-Walnut-FFFFFF-C4CEE33E-2F53-1C42-AE4C-DBFFD2516CA9PropertyDD_SpatialityDD_Slot-HandleXEdgeYInsideZHandleHeightPartDD_0FlexDims3Fixed_HandleStatic-PropertyDD_SpatialityDD_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterialDD-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A021009D08CBF4-51B9-AC41-A416-403CE9AE59B9",
+							"slotPreset": "PropertyDD_SpatialityDD_Slot-AssemblyPanelSwingLeft",
+							"partPresetGUId": "9D08CBF451B9AC41A416403CE9AE59B9",
+							"slotPresetGUId": "1E8EF41E37D9A24EBCAABDBF23361FE8"
+						},
+						{
+							"partPreset": "AssemblyDD_2FlexDims1FixedDD_PlanarRig_Panel_DoorPropertyDD_SpatialityDD_Rig_SlotConfig_2FlexDims_Panel_Door-PropertyDD_SpatialityDD_Slot-Panel-PropertyDD_SpatialityDD_Slot-CasterBarnLeft-PropertyDD_SpatialityDD_Slot-CasterBarnRight-PropertyDD_SpatialityDD_Slot-HandleXBacksetDistanceXYInsideZHandleHeight-PropertyDD_SpatialityDD_Slot-HandleXBacksetDistanceXYOutsideZHandleHeightPropertyDD_SpatialityDD_Slot-PanelPartDD_2FlexDims1FixedDD_Panel_Door-PropertyDD_SpatialityDD_Mesh_Panel_Door-Door-Panel-Swing-05.Door-Panel-Swing-05'-Finish1-0RawMaterialDD-Maple-FFFFFF-03F74AFE-65A0-DB45-9983-7D93AD02AE71PropertyDD_SpatialityDD_Slot-HandleXBacksetDistanceXYInsideZHandleHeightPartDD_0FlexDims3Fixed_HandleStatic-PropertyDD_SpatialityDD_Mesh_HandleStatic_Knob_Door-Door-Handle-Knob-02.Door-Handle-Knob-02'-Finish1-0RawMaterialDD-Aluminum-331F20-AB14931E-384B-3E4E-B3B0-5093D593A12DBB7C2F60-0025-9D41-A2C2-90F2C8CFFC02",
+							"slotPreset": "PropertyDD_SpatialityDD_Slot-AssemblyPanelSwingRight",
+							"partPresetGUId": "BB7C2F6000259D41A2C290F2C8CFFC02",
+							"slotPresetGUId": "61A69BF89D7AA144BBA9313A2BF2299E"
+						}
+					],
+					"childPresets": [],
+					"parentTagPaths": [],
+					"myTagPath": "AssemblyDD_2FlexDims1FixedDD_PlanarRig_Door",
+					"materialChannelBindings": []
+				}
+			},
+			"presetsByGUId":
+			{
+				"8DAD20F84E5FE12D7DD03996E05D3E3F":
+				{
+					"properties":
+					{
+						"stringMap":
+						{
+							"Assembly.Name": "2x4 Interior Wood Stud"
+						},
+						"numberMap":
+						{
+							"Dimension.IconLength": 121.91999816894531,
+							"Dimension.IconHeight": 162.55999755859375
+						}
+					},
+					"formItemToProperty":
+					{
+						"Name": "Assembly.Name",
+						"IconLength": "Dimension.IconLength",
+						"IconHeight": "Dimension.IconHeight"
+					},
+					"categoryTitle": "Wall",
+					"displayName": "2x4 Interior Wood Stud",
+					"nodeScope": "Assembly",
+					"nodeType": "AssemblyDD_2FlexDims1FixedDD_PlanarGroup",
+					"presetId": "AssemblyDD_2FlexDims1FixedDD_PlanarGroup_Wall2x4InteriorWoodStudAssemblyDD_2FlexDims1FixedDD_PlanarPattern5/8inGypsumBoards(TypeX)PartDD_1FlexDim2FixedDD_Gap2D0inx0in,AirPartDD_0FlexDims3Fixed_ModulePlanar_Board/Panel_GypsumGypsumBoard0LayerPatternDD_2DSoldierBondAssemblyDD_2FlexDims1FixedDD_PlanarPatternWood2x4s@16inO.C.PartDD_1FlexDim2FixedDD_Gap1DAirPartDD_1FlexDim2FixedDD_ModuleLinear_WoodLumberTypical2x40LayerPatternDD_1D16-InchO.C.AssemblyDD_2FlexDims1FixedDD_PlanarPattern5/8inGypsumBoards(TypeX)PartDD_1FlexDim2FixedDD_Gap2D0inx0in,AirPartDD_0FlexDims3Fixed_ModulePlanar_Board/Panel_GypsumGypsumBoard0LayerPatternDD_2DSoldierBond",
+					"gUId": "8DAD20F84E5FE12D7DD03996E05D3E3F",
+					"slotConfigPresetId": "",
+					"slotConfigPresetGUId": "00000000000000000000000000000000",
+					"objectType": "OTWallSegment",
+					"iconType": "None",
+					"orientation": "Inherited",
+					"partSlots": [],
+					"childPresets": [
+						{
+							"parentPinSetIndex": 0,
+							"parentPinSetPosition": 0,
+							"presetId": "AssemblyDD_2FlexDims1FixedDD_PlanarPatternPartDD_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterialDD-Gypsum(TypeX)-D6D7D10LayerPatternDD_2D-SoldierBondPartDD_1FlexDim2FixedDD_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterialDD-Air-FFFFFFCAB213E5-892C-FA44-B4B9-2021AEDCE20A",
+							"presetGUId": "CAB213E5892CFA44B4B92021AEDCE20A",
+							"target": "Default"
+						},
+						{
+							"parentPinSetIndex": 0,
+							"parentPinSetPosition": 1,
+							"presetId": "AssemblyDD_2FlexDims1FixedDD_PlanarPatternPartDD_1FlexDim2FixedDD_ModuleLinear_WoodLumber-Width-1.5in-Depth-3.5in-0ProfileDD-SolidRectangle-Finish1-0RawMaterialDD-Spruce-Pine-Fir-FFFFFF0LayerPatternDD_1D-16-InchO.C.PartDD_1FlexDim2FixedDD_Gap1D-Finish1-0RawMaterialDD-Air-FFFFFFF923BEF5-1F2D-1549-9773-0BE04F9EA31F",
+							"presetGUId": "F923BEF51F2D154997730BE04F9EA31F",
+							"target": "Default"
+						},
+						{
+							"parentPinSetIndex": 0,
+							"parentPinSetPosition": 2,
+							"presetId": "AssemblyDD_2FlexDims1FixedDD_PlanarPatternPartDD_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterialDD-Gypsum(TypeX)-D6D7D10LayerPatternDD_2D-SoldierBondPartDD_1FlexDim2FixedDD_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterialDD-Air-FFFFFFCAB213E5-892C-FA44-B4B9-2021AEDCE20A",
+							"presetGUId": "CAB213E5892CFA44B4B92021AEDCE20A",
+							"target": "Default"
+						},
+						{
+							"parentPinSetIndex": 0,
+							"parentPinSetPosition": 3,
+							"presetId": "AssemblyDD_2FlexDims1FixedDD_PlanarPatternPartDD_0FlexDims3Fixed_ModulePlanar_Tile_BrickVeneer-Length-7.625in-Width-2.29167in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterialDD-Clay-A056330LayerPatternDD_2D-CascadingThirdsPartDD_1FlexDim2FixedDD_Gap2D-Width-0.375in-Recess-0.125in-Finish1-0RawMaterialDD-Mortar-C6C6C691761014-D678-1B46-87D4-B89B02171008",
+							"presetGUId": "91761014D6781B4687D4B89B02171008",
+							"target": "Default"
+						}
+					],
+					"parentTagPaths": [],
+					"myTagPath": "AssemblyDD_2FlexDims1FixedDD_PlanarGroup_Wall",
+					"materialChannelBindings": []
+				},
+				"66EB393B4720C68A3DBA7BB543D4AA9E":
+				{
+					"properties":
+					{
+						"stringMap":
+						{
+							"Assembly.Name": "Double Swing Door, Ash"
+						},
+						"numberMap":
+						{
+							"Dimension.Width": 182.8800048828125,
+							"Dimension.Height": 203.19999694824219
+						}
+					},
+					"formItemToProperty":
+					{
+						"Name": "Assembly.Name",
+						"Width": "Dimension.Width",
+						"Height": "Dimension.Height"
+					},
+					"categoryTitle": "Door",
+					"displayName": "Double Swing Door, Ash",
+					"nodeScope": "Assembly",
+					"nodeType": "AssemblyDD_2FlexDims1FixedDD_PlanarRig",
+					"presetId": "AssemblyDD_2FlexDims1FixedDD_PlanarRig_DoorDoubleSwingDoor,AshAssemblyDD_2FlexDims1FixedDD_PlanarRig_Panel_DoorPaneledSwingDoorPanel,AshPartDD_0FlexDims3Fixed_LockSurfaceSurfaceLatch1(Bolt),Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_LockDeadboltDeadbolt2,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HandleStaticKnobHandle2,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HandleStaticKnobHandle2,Aluminum,PatricianBronzePartDD_2FlexDims1FixedDD_Panel_Door6PanelDoor,Ash,NaturalAssemblyDD_2FlexDims1FixedDD_PlanarRig_Panel_DoorPaneledSwingDoorPanel,AshPartDD_0FlexDims3Fixed_LockSurfaceSurfaceLatch1(Bolt),Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_LockDeadboltDeadbolt2,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HandleStaticKnobHandle2,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HandleStaticKnobHandle2,Aluminum,PatricianBronzePartDD_2FlexDims1FixedDD_Panel_Door6PanelDoor,Ash,NaturalAssemblyDD_1FlexDim2FixedDD_LinearRig_HingeSet3-HingeSet,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzeAssemblyDD_1FlexDim2FixedDD_LinearRig_HingeSet3-HingeSet,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_0FlexDims3Fixed_HingeShallowHinge,Aluminum,PatricianBronzePartDD_2FlexDims1FixedDD_FrameDouble-RabbetWoodFrame,Ash,Natural",
+					"gUId": "66EB393B4720C68A3DBA7BB543D4AA9E",
+					"slotConfigPresetId": "PropertyDD_SpatialityDD_Rig_SlotConfig_2FlexDims_Portal_Swing_Framed-PropertyDD_SpatialityDD_Slot-Frame-PropertyDD_SpatialityDD_Slot-AssemblyHingeSetInsetLeft-PropertyDD_SpatialityDD_Slot-AssemblyHingeSetInsetRight-PropertyDD_SpatialityDD_Slot-AssemblyPanelSwingLeft-PropertyDD_SpatialityDD_Slot-AssemblyPanelSwingRight",
+					"slotConfigPresetGUId": "9B0E5BC71195904F8B2BB0220BA0157B",
+					"objectType": "OTDoor",
+					"iconType": "None",
+					"orientation": "Inherited",
+					"partSlots": [
+						{
+							"partPreset": "PartDD_2FlexDims1FixedDD_Frame-PropertyDD_SpatialityDD_Mesh_Frame-Door-Frame-Swing-Interior-DoubleRabbetWood.Door-Frame-Swing-Interior-DoubleRabbetWood'-Finish1-0RawMaterialDD-Spruce-Pine-Fir-0RawMaterialDD-Ash-FFFFFF-81D7337D-2906-8143-A4F6-18FC1EACFD2E",
+							"slotPreset": "PropertyDD_SpatialityDD_Slot-Frame",
+							"partPresetGUId": "81D7337D29068143A4F618FC1EACFD2E",
+							"slotPresetGUId": "F2ECA3C34E3DC94EA3700C27E7CED8E5"
+						},
+						{
+							"partPreset": "AssemblyDD_1FlexDim2FixedDD_LinearRig_HingeSetPropertyDD_SpatialityDD_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-PropertyDD_SpatialityDD_Slot-HingeFramed1of3-PropertyDD_SpatialityDD_Slot-HingeFramed2of3-PropertyDD_SpatialityDD_Slot-HingeFramed3of3-PropertyDD_SpatialityDD_Slot-FramelessBracket1of3-PropertyDD_SpatialityDD_Slot-FramelessBracket2of3-PropertyDD_SpatialityDD_Slot-FramelessBracket3of3-PropertyDD_SpatialityDD_Slot-Panel-PropertyDD_SpatialityDD_Slot-CasterBarnLeftPropertyDD_SpatialityDD_Slot-HingeFramed1of3PartDD_0FlexDims3Fixed_Hinge-PropertyDD_SpatialityDD_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterialDD-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23PropertyDD_SpatialityDD_Slot-HingeFramed2of3PartDD_0FlexDims3Fixed_Hinge-PropertyDD_SpatialityDD_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterialDD-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F2370743C31-3B93-7346-AEFF-72B89C85BD3E",
+							"slotPreset": "PropertyDD_SpatialityDD_Slot-AssemblyHingeSetInsetLeft",
+							"partPresetGUId": "70743C313B937346AEFF72B89C85BD3E",
+							"slotPresetGUId": "BF56A1721294534AA49361B26FC0F253"
+						},
+						{
+							"partPreset": "AssemblyDD_1FlexDim2FixedDD_LinearRig_HingeSetPropertyDD_SpatialityDD_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-PropertyDD_SpatialityDD_Slot-HingeFramed1of3-PropertyDD_SpatialityDD_Slot-HingeFramed2of3-PropertyDD_SpatialityDD_Slot-HingeFramed3of3-PropertyDD_SpatialityDD_Slot-FramelessBracket1of3-PropertyDD_SpatialityDD_Slot-FramelessBracket2of3-PropertyDD_SpatialityDD_Slot-FramelessBracket3of3-PropertyDD_SpatialityDD_Slot-Panel-PropertyDD_SpatialityDD_Slot-CasterBarnLeftPropertyDD_SpatialityDD_Slot-HingeFramed1of3PartDD_0FlexDims3Fixed_Hinge-PropertyDD_SpatialityDD_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterialDD-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23PropertyDD_SpatialityDD_Slot-HingeFramed2of3PartDD_0FlexDims3Fixed_Hinge-PropertyDD_SpatialityDD_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterialDD-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F2370743C31-3B93-7346-AEFF-72B89C85BD3E",
+							"slotPreset": "PropertyDD_SpatialityDD_Slot-AssemblyHingeSetInsetRight",
+							"partPresetGUId": "70743C313B937346AEFF72B89C85BD3E",
+							"slotPresetGUId": "22407517B0C11C4B8AE5CC5DF7AAEAF8"
+						},
+						{
+							"partPreset": "AssemblyDD_2FlexDims1FixedDD_PlanarRig_Panel_DoorPropertyDD_SpatialityDD_Rig_SlotConfig_2FlexDims_Panel_Door-PropertyDD_SpatialityDD_Slot-Panel-PropertyDD_SpatialityDD_Slot-CasterBarnLeft-PropertyDD_SpatialityDD_Slot-CasterBarnRight-PropertyDD_SpatialityDD_Slot-HandleXBacksetDistanceXYInsideZHandleHeight-PropertyDD_SpatialityDD_Slot-HandleXBacksetDistanceXYOutsideZHandleHeightPropertyDD_SpatialityDD_Slot-PanelPartDD_2FlexDims1FixedDD_Panel_Door-PropertyDD_SpatialityDD_Mesh_Panel_Door-Door-Panel-Swing-01.Door-Panel-Swing-01'-Finish1-0RawMaterialDD-Walnut-FFFFFF-C4CEE33E-2F53-1C42-AE4C-DBFFD2516CA9PropertyDD_SpatialityDD_Slot-HandleXEdgeYInsideZHandleHeightPartDD_0FlexDims3Fixed_HandleStatic-PropertyDD_SpatialityDD_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterialDD-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A021009D08CBF4-51B9-AC41-A416-403CE9AE59B9",
+							"slotPreset": "PropertyDD_SpatialityDD_Slot-AssemblyPanelSwingLeft",
+							"partPresetGUId": "9D08CBF451B9AC41A416403CE9AE59B9",
+							"slotPresetGUId": "1E8EF41E37D9A24EBCAABDBF23361FE8"
+						},
+						{
+							"partPreset": "AssemblyDD_2FlexDims1FixedDD_PlanarRig_Panel_DoorPropertyDD_SpatialityDD_Rig_SlotConfig_2FlexDims_Panel_Door-PropertyDD_SpatialityDD_Slot-Panel-PropertyDD_SpatialityDD_Slot-CasterBarnLeft-PropertyDD_SpatialityDD_Slot-CasterBarnRight-PropertyDD_SpatialityDD_Slot-HandleXBacksetDistanceXYInsideZHandleHeight-PropertyDD_SpatialityDD_Slot-HandleXBacksetDistanceXYOutsideZHandleHeightPropertyDD_SpatialityDD_Slot-PanelPartDD_2FlexDims1FixedDD_Panel_Door-PropertyDD_SpatialityDD_Mesh_Panel_Door-Door-Panel-Swing-05.Door-Panel-Swing-05'-Finish1-0RawMaterialDD-Maple-FFFFFF-03F74AFE-65A0-DB45-9983-7D93AD02AE71PropertyDD_SpatialityDD_Slot-HandleXBacksetDistanceXYInsideZHandleHeightPartDD_0FlexDims3Fixed_HandleStatic-PropertyDD_SpatialityDD_Mesh_HandleStatic_Knob_Door-Door-Handle-Knob-02.Door-Handle-Knob-02'-Finish1-0RawMaterialDD-Aluminum-331F20-AB14931E-384B-3E4E-B3B0-5093D593A12DBB7C2F60-0025-9D41-A2C2-90F2C8CFFC02",
+							"slotPreset": "PropertyDD_SpatialityDD_Slot-AssemblyPanelSwingRight",
+							"partPresetGUId": "BB7C2F6000259D41A2C290F2C8CFFC02",
+							"slotPresetGUId": "61A69BF89D7AA144BBA9313A2BF2299E"
+						}
+					],
+					"childPresets": [],
+					"parentTagPaths": [],
+					"myTagPath": "AssemblyDD_2FlexDims1FixedDD_PlanarRig_Door",
+					"materialChannelBindings": []
+				}
+			}
+		},
+		"cameraViews": [],
+		"customGraph2DRecords":
+		{
+		},
+		"surfaceGraphs":
+		{
+			"99":
+			{
+				"vertices":
+				{
+					"100":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"101":
+					{
+						"x": -7.2669981818762608e-06,
+						"y": -243.83999633789062
+					},
+					"102":
+					{
+						"x": 912.74554443359375,
+						"y": -243.84007263183594
+					},
+					"103":
+					{
+						"x": 912.74554443359375,
+						"y": -6.9285291829146445e-05
+					},
+					"104":
+					{
+						"x": 488.82119750976562,
+						"y": -2.1846972231287509e-05
+					},
+					"105":
+					{
+						"x": 488.82119750976562,
+						"y": -203.20001220703125
+					},
+					"106":
+					{
+						"x": 305.94119262695312,
+						"y": -203.20002746582031
+					},
+					"107":
+					{
+						"x": 305.94119262695312,
+						"y": -2.3223585230880417e-05
+					},
+					"108":
+					{
+						"x": 295.3253173828125,
+						"y": -2.2417743821279146e-05
+					},
+					"109":
+					{
+						"x": 295.3253173828125,
+						"y": -22.304397583007812
+					},
+					"110":
+					{
+						"x": 186.23208618164062,
+						"y": -22.304388046264648
+					},
+					"111":
+					{
+						"x": 186.23208618164062,
+						"y": -1.4136627214611508e-05
+					},
+					"134":
+					{
+						"x": 737.546875,
+						"y": -243.84005737304688
+					},
+					"127":
+					{
+						"x": 912.74554443359375,
+						"y": -154.63160705566406
+					},
+					"135":
+					{
+						"x": 737.546875,
+						"y": -125.91133117675781
+					}
+				},
+				"edges":
+				{
+					"112":
+					{
+						"vertexIds": [ 100, 101 ]
+					},
+					"138":
+					{
+						"vertexIds": [ 134, 135 ]
+					},
+					"137":
+					{
+						"vertexIds": [ 134, 102 ]
+					},
+					"115":
+					{
+						"vertexIds": [ 103, 104 ]
+					},
+					"116":
+					{
+						"vertexIds": [ 104, 105 ]
+					},
+					"117":
+					{
+						"vertexIds": [ 105, 106 ]
+					},
+					"118":
+					{
+						"vertexIds": [ 106, 107 ]
+					},
+					"119":
+					{
+						"vertexIds": [ 107, 108 ]
+					},
+					"120":
+					{
+						"vertexIds": [ 108, 109 ]
+					},
+					"121":
+					{
+						"vertexIds": [ 109, 110 ]
+					},
+					"122":
+					{
+						"vertexIds": [ 110, 111 ]
+					},
+					"123":
+					{
+						"vertexIds": [ 111, 100 ]
+					},
+					"128":
+					{
+						"vertexIds": [ 102, 127 ]
+					},
+					"129":
+					{
+						"vertexIds": [ 127, 103 ]
+					},
+					"141":
+					{
+						"vertexIds": [ 135, 127 ]
+					},
+					"136":
+					{
+						"vertexIds": [ 101, 134 ]
+					}
+				},
+				"polygons":
+				{
+					"143":
+					{
+						"vertexIds": [ 127, 135, 134, 101, 100, 111, 110, 109, 108, 107, 106, 105, 104, 103 ]
+					},
+					"139":
+					{
+						"vertexIds": [ 100, 101, 134, 102, 127, 103, 104, 105, 106, 107, 108, 109, 110, 111 ]
+					},
+					"142":
+					{
+						"vertexIds": [ 135, 127, 102, 134 ]
+					}
+				}
+			},
+			"144":
+			{
+				"vertices":
+				{
+					"145":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"146":
+					{
+						"x": 840.66253662109375,
+						"y": 3.7061625334899873e-05
+					},
+					"147":
+					{
+						"x": 840.66253662109375,
+						"y": -243.83995056152344
+					},
+					"148":
+					{
+						"x": 4.1076571505982429e-05,
+						"y": -243.83998107910156
+					},
+					"158":
+					{
+						"x": 123.55326843261719,
+						"y": -91.44000244140625
+					},
+					"157":
+					{
+						"x": 123.55326843261719,
+						"y": -213.3599853515625
+					},
+					"156":
+					{
+						"x": 275.95321655273438,
+						"y": -213.3599853515625
+					},
+					"155":
+					{
+						"x": 275.95321655273438,
+						"y": -91.440010070800781
+					},
+					"165":
+					{
+						"x": 360.55569458007812,
+						"y": -243.8399658203125
+					},
+					"166":
+					{
+						"x": 360.55569458007812,
+						"y": -124.46281433105469
+					},
+					"172":
+					{
+						"x": 473.81878662109375,
+						"y": -124.46280670166016
+					},
+					"175":
+					{
+						"x": 473.81878662109375,
+						"y": -243.83992004394531
+					}
+				},
+				"edges":
+				{
+					"149":
+					{
+						"vertexIds": [ 145, 146 ]
+					},
+					"150":
+					{
+						"vertexIds": [ 146, 147 ]
+					},
+					"169":
+					{
+						"vertexIds": [ 165, 166 ]
+					},
+					"152":
+					{
+						"vertexIds": [ 148, 145 ]
+					},
+					"159":
+					{
+						"vertexIds": [ 155, 156 ]
+					},
+					"160":
+					{
+						"vertexIds": [ 156, 157 ]
+					},
+					"161":
+					{
+						"vertexIds": [ 157, 158 ]
+					},
+					"162":
+					{
+						"vertexIds": [ 158, 155 ]
+					},
+					"168":
+					{
+						"vertexIds": [ 165, 148 ]
+					},
+					"178":
+					{
+						"vertexIds": [ 172, 175 ]
+					},
+					"173":
+					{
+						"vertexIds": [ 166, 172 ]
+					},
+					"177":
+					{
+						"vertexIds": [ 175, 165 ]
+					},
+					"176":
+					{
+						"vertexIds": [ 147, 175 ]
+					}
+				},
+				"polygons":
+				{
+					"181":
+					{
+						"vertexIds": [ 165, 166, 172, 175 ]
+					},
+					"180":
+					{
+						"vertexIds": [ 146, 145, 148, 165, 175, 147 ]
+					},
+					"164":
+					{
+						"vertexIds": [ 156, 155, 158, 157 ]
+					},
+					"163":
+					{
+						"vertexIds": [ 155, 156, 157, 158 ]
+					},
+					"179":
+					{
+						"vertexIds": [ 145, 146, 147, 175, 172, 166, 165, 148 ]
+					}
+				}
+			}
+		},
+		"usedPresetGUIds":
+		{
+		},
+		"volumeGraph":
+		{
+			"vertices":
+			{
+				"1":
+				{
+					"iD": 1,
+					"position":
+					{
+						"x": 571.36248779296875,
+						"y": -627.577880859375,
+						"z": 0
+					}
+				},
+				"2":
+				{
+					"iD": 2,
+					"position":
+					{
+						"x": 866.4005126953125,
+						"y": -1294.954833984375,
+						"z": 0
+					}
+				},
+				"3":
+				{
+					"iD": 3,
+					"position":
+					{
+						"x": 866.4005126953125,
+						"y": -1294.954833984375,
+						"z": 243.83999633789062
+					}
+				},
+				"4":
+				{
+					"iD": 4,
+					"position":
+					{
+						"x": 571.36248779296875,
+						"y": -627.577880859375,
+						"z": 243.83999633789062
+					}
+				},
+				"11":
+				{
+					"iD": 11,
+					"position":
+					{
+						"x": 1451.72802734375,
+						"y": -651.663818359375,
+						"z": 0
+					}
+				},
+				"12":
+				{
+					"iD": 12,
+					"position":
+					{
+						"x": 1451.72802734375,
+						"y": -651.663818359375,
+						"z": 243.83999633789062
+					}
+				},
+				"18":
+				{
+					"iD": 18,
+					"position":
+					{
+						"x": 1130.9332275390625,
+						"y": 93.52197265625,
+						"z": 0
+					}
+				},
+				"19":
+				{
+					"iD": 19,
+					"position":
+					{
+						"x": 1130.9332275390625,
+						"y": 93.52197265625,
+						"z": 243.83999633789062
+					}
+				},
+				"32":
+				{
+					"iD": 32,
+					"position":
+					{
+						"x": 871.04083251953125,
+						"y": -241.39260864257812,
+						"z": -1.3882175153412391e-05
+					}
+				},
+				"31":
+				{
+					"iD": 31,
+					"position":
+					{
+						"x": 871.04083251953125,
+						"y": -241.39260864257812,
+						"z": 203.19998168945312
+					}
+				},
+				"30":
+				{
+					"iD": 30,
+					"position":
+					{
+						"x": 758.923828125,
+						"y": -385.87399291992188,
+						"z": 203.19999694824219
+					}
+				},
+				"29":
+				{
+					"iD": 29,
+					"position":
+					{
+						"x": 758.923828125,
+						"y": -385.87399291992188,
+						"z": 0
+					}
+				},
+				"47":
+				{
+					"iD": 47,
+					"position":
+					{
+						"x": 1323.7542724609375,
+						"y": -354.38912963867188,
+						"z": 0
+					}
+				},
+				"46":
+				{
+					"iD": 46,
+					"position":
+					{
+						"x": 1323.7542724609375,
+						"y": -354.38912963867188,
+						"z": 203.19999694824219
+					}
+				},
+				"45":
+				{
+					"iD": 45,
+					"position":
+					{
+						"x": 1287.5982666015625,
+						"y": -270.40093994140625,
+						"z": 203.19999694824219
+					}
+				},
+				"44":
+				{
+					"iD": 44,
+					"position":
+					{
+						"x": 1287.5982666015625,
+						"y": -270.40093994140625,
+						"z": 0
+					}
+				},
+				"62":
+				{
+					"iD": 62,
+					"position":
+					{
+						"x": 963.3319091796875,
+						"y": -1188.4244384765625,
+						"z": 91.440010070800781
+					}
+				},
+				"61":
+				{
+					"iD": 61,
+					"position":
+					{
+						"x": 963.3319091796875,
+						"y": -1188.4244384765625,
+						"z": 213.36001586914062
+					}
+				},
+				"60":
+				{
+					"iD": 60,
+					"position":
+					{
+						"x": 1065.8968505859375,
+						"y": -1075.7027587890625,
+						"z": 213.36001586914062
+					}
+				},
+				"59":
+				{
+					"iD": 59,
+					"position":
+					{
+						"x": 1065.8968505859375,
+						"y": -1075.7027587890625,
+						"z": 91.440017700195312
+					}
+				},
+				"69":
+				{
+					"iD": 69,
+					"position":
+					{
+						"x": 397.81121826171875,
+						"y": -480.4482421875,
+						"z": 0
+					}
+				},
+				"70":
+				{
+					"iD": 70,
+					"position":
+					{
+						"x": 397.81121826171875,
+						"y": 0,
+						"z": 0
+					}
+				},
+				"71":
+				{
+					"iD": 71,
+					"position":
+					{
+						"x": 752.4156494140625,
+						"y": 0,
+						"z": 0
+					}
+				},
+				"72":
+				{
+					"iD": 72,
+					"position":
+					{
+						"x": 752.4156494140625,
+						"y": -480.4482421875,
+						"z": 0
+					}
+				},
+				"78":
+				{
+					"iD": 78,
+					"position":
+					{
+						"x": 752.4156494140625,
+						"y": -394.26092529296875,
+						"z": 0
+					}
+				},
+				"79":
+				{
+					"iD": 79,
+					"position":
+					{
+						"x": 685.5345458984375,
+						"y": -480.4482421875,
+						"z": 0
+					}
+				},
+				"92":
+				{
+					"iD": 92,
+					"position":
+					{
+						"x": 393.843017578125,
+						"y": -829.09375,
+						"z": 0
+					}
+				},
+				"93":
+				{
+					"iD": 93,
+					"position":
+					{
+						"x": 393.843017578125,
+						"y": -829.09375,
+						"z": 256.365966796875
+					}
+				}
+			},
+			"edges":
+			{
+				"5":
+				{
+					"iD": 5,
+					"startVertexId": 1,
+					"endVertexId": 2,
+					"groupIds": []
+				},
+				"6":
+				{
+					"iD": 6,
+					"startVertexId": 2,
+					"endVertexId": 3,
+					"groupIds": []
+				},
+				"7":
+				{
+					"iD": 7,
+					"startVertexId": 3,
+					"endVertexId": 4,
+					"groupIds": []
+				},
+				"8":
+				{
+					"iD": 8,
+					"startVertexId": 4,
+					"endVertexId": 1,
+					"groupIds": []
+				},
+				"13":
+				{
+					"iD": 13,
+					"startVertexId": 2,
+					"endVertexId": 11,
+					"groupIds": []
+				},
+				"14":
+				{
+					"iD": 14,
+					"startVertexId": 11,
+					"endVertexId": 12,
+					"groupIds": []
+				},
+				"15":
+				{
+					"iD": 15,
+					"startVertexId": 12,
+					"endVertexId": 3,
+					"groupIds": []
+				},
+				"55":
+				{
+					"iD": 55,
+					"startVertexId": 44,
+					"endVertexId": 18,
+					"groupIds": []
+				},
+				"21":
+				{
+					"iD": 21,
+					"startVertexId": 18,
+					"endVertexId": 19,
+					"groupIds": []
+				},
+				"22":
+				{
+					"iD": 22,
+					"startVertexId": 19,
+					"endVertexId": 12,
+					"groupIds": []
+				},
+				"82":
+				{
+					"iD": 82,
+					"startVertexId": 71,
+					"endVertexId": 78,
+					"groupIds": []
+				},
+				"36":
+				{
+					"iD": 36,
+					"startVertexId": 32,
+					"endVertexId": 29,
+					"groupIds": []
+				},
+				"26":
+				{
+					"iD": 26,
+					"startVertexId": 4,
+					"endVertexId": 19,
+					"groupIds": []
+				},
+				"35":
+				{
+					"iD": 35,
+					"startVertexId": 31,
+					"endVertexId": 32,
+					"groupIds": []
+				},
+				"34":
+				{
+					"iD": 34,
+					"startVertexId": 30,
+					"endVertexId": 31,
+					"groupIds": []
+				},
+				"33":
+				{
+					"iD": 33,
+					"startVertexId": 29,
+					"endVertexId": 30,
+					"groupIds": []
+				},
+				"51":
+				{
+					"iD": 51,
+					"startVertexId": 47,
+					"endVertexId": 44,
+					"groupIds": []
+				},
+				"38":
+				{
+					"iD": 38,
+					"startVertexId": 18,
+					"endVertexId": 32,
+					"groupIds": []
+				},
+				"50":
+				{
+					"iD": 50,
+					"startVertexId": 46,
+					"endVertexId": 47,
+					"groupIds": []
+				},
+				"49":
+				{
+					"iD": 49,
+					"startVertexId": 45,
+					"endVertexId": 46,
+					"groupIds": []
+				},
+				"48":
+				{
+					"iD": 48,
+					"startVertexId": 44,
+					"endVertexId": 45,
+					"groupIds": []
+				},
+				"66":
+				{
+					"iD": 66,
+					"startVertexId": 62,
+					"endVertexId": 59,
+					"groupIds": []
+				},
+				"53":
+				{
+					"iD": 53,
+					"startVertexId": 11,
+					"endVertexId": 47,
+					"groupIds": []
+				},
+				"65":
+				{
+					"iD": 65,
+					"startVertexId": 61,
+					"endVertexId": 62,
+					"groupIds": []
+				},
+				"64":
+				{
+					"iD": 64,
+					"startVertexId": 60,
+					"endVertexId": 61,
+					"groupIds": []
+				},
+				"63":
+				{
+					"iD": 63,
+					"startVertexId": 59,
+					"endVertexId": 60,
+					"groupIds": []
+				},
+				"74":
+				{
+					"iD": 74,
+					"startVertexId": 70,
+					"endVertexId": 71,
+					"groupIds": []
+				},
+				"73":
+				{
+					"iD": 73,
+					"startVertexId": 69,
+					"endVertexId": 70,
+					"groupIds": []
+				},
+				"84":
+				{
+					"iD": 84,
+					"startVertexId": 78,
+					"endVertexId": 79,
+					"groupIds": []
+				},
+				"83":
+				{
+					"iD": 83,
+					"startVertexId": 78,
+					"endVertexId": 72,
+					"groupIds": []
+				},
+				"86":
+				{
+					"iD": 86,
+					"startVertexId": 72,
+					"endVertexId": 79,
+					"groupIds": []
+				},
+				"80":
+				{
+					"iD": 80,
+					"startVertexId": 29,
+					"endVertexId": 78,
+					"groupIds": []
+				},
+				"94":
+				{
+					"iD": 94,
+					"startVertexId": 92,
+					"endVertexId": 93,
+					"groupIds": []
+				},
+				"85":
+				{
+					"iD": 85,
+					"startVertexId": 79,
+					"endVertexId": 1,
+					"groupIds": []
+				},
+				"87":
+				{
+					"iD": 87,
+					"startVertexId": 79,
+					"endVertexId": 69,
+					"groupIds": []
+				}
+			},
+			"faces":
+			{
+				"9":
+				{
+					"iD": 9,
+					"vertexIds": [ 1, 2, 3, 4 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"16":
+				{
+					"iD": 16,
+					"vertexIds": [ 2, 11, 12, 3 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": [ 67 ]
+				},
+				"52":
+				{
+					"iD": 52,
+					"vertexIds": [ 44, 45, 46, 47 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"37":
+				{
+					"iD": 37,
+					"vertexIds": [ 29, 30, 31, 32 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"41":
+				{
+					"iD": 41,
+					"vertexIds": [ 1, 4, 19, 18, 32, 31, 30, 29, 78, 79 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"56":
+				{
+					"iD": 56,
+					"vertexIds": [ 11, 47, 46, 45, 44, 18, 19, 12 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"67":
+				{
+					"iD": 67,
+					"vertexIds": [ 59, 60, 61, 62 ],
+					"groupIds": [],
+					"containingFaceId": 16,
+					"containedFaceIds": []
+				},
+				"88":
+				{
+					"iD": 88,
+					"vertexIds": [ 69, 70, 71, 78, 79 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"89":
+				{
+					"iD": 89,
+					"vertexIds": [ 72, 79, 78 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				}
+			}
+		}
+	}
+}

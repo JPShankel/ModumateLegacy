@@ -146,10 +146,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	bool SetIconMeshForAssembly(const FBIMKey& AsmKey, UMaterialInterface*& OutMaterial);
-	bool SetIconMeshForBIMDesigner(bool UseDependentPreset, const FBIMKey& PresetID, UMaterialInterface*& OutMaterial, UTexture*& OutTexture, const FBIMEditorNodeIDType& NodeID);
-	bool GetSavedIconFromPreset(const FBIMKey& PresetID, UTexture*& OutTexture);
-	UMaterialInterface* CreateMaterialForIconTexture(const FBIMKey& PresetID, UTexture* InTexture);
+	bool SetIconMeshForAssembly(const FGuid& AsmKey, UMaterialInterface*& OutMaterial);
+	bool SetIconMeshForBIMDesigner(bool UseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, UTexture*& OutTexture, const FBIMEditorNodeIDType& NodeID);
+	bool GetSavedIconFromPreset(const FGuid& PresetID, UTexture*& OutTexture);
+	UMaterialInterface* CreateMaterialForIconTexture(const FGuid& PresetID, UTexture* InTexture);
 	bool SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex, bool bFromRootNode);
 
 	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
@@ -160,15 +160,15 @@ public:
 	bool SetIconMeshForFFEAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForStairAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex);
 
-	bool SetIconFromTextureAsset(const FBIMKey& PresetID, UMaterialInterface*& OutMaterial);
-	bool SetIconMeshForRawMaterial(const FBIMKey& MaterialKey, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForProfile(const FBIMKey& ProfileKey, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForMesh(const FBIMKey& MeshKey, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForPart(bool UseDependentPreset, const FBIMKey& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForMaterial(bool UseDependentPreset, const FBIMKey& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForModule(bool UseDependentPreset, const FBIMKey& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconFromTextureAsset(const FGuid& PresetID, UMaterialInterface*& OutMaterial);
+	bool SetIconMeshForRawMaterial(const FGuid& MaterialKey, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForProfile(const FGuid& ProfileKey, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForMesh(const FGuid& MeshKey, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForPart(bool UseDependentPreset, const FGuid& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForMaterial(bool UseDependentPreset, const FGuid& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForModule(bool UseDependentPreset, const FGuid& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForLayerNodeID(const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForLayerPreset(const FBIMKey& PresetID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForLayerPreset(const FGuid& PresetID, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconFromColor(const FBIMKey& ColorHex, UMaterialInterface*& OutMaterial);
 
 	void GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal);

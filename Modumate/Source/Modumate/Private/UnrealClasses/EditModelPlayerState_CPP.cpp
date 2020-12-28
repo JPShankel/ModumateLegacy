@@ -850,22 +850,22 @@ void AEditModelPlayerState_CPP::Paste(UModumateDocument &document) const
 	// TODO: re-implement
 }
 
-FBIMKey AEditModelPlayerState_CPP::GetAssemblyForToolMode(EToolMode mode)
+FGuid AEditModelPlayerState_CPP::GetAssemblyForToolMode(EToolMode mode)
 {
 	TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(mode);
 	if (ensureAlways(tool))
 	{
-		return tool->GetAssemblyKey();
+		return tool->GetAssemblyGUID();
 	}
-	return FBIMKey();
+	return FGuid();
 }
 
-void AEditModelPlayerState_CPP::SetAssemblyForToolMode(EToolMode Mode, const FBIMKey& AssemblyKey)
+void AEditModelPlayerState_CPP::SetAssemblyForToolMode(EToolMode Mode, const FGuid& AssemblyGUID)
 {
 	TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(Mode);
 	if (ensureAlways(tool))
 	{
-		tool->SetAssemblyKey(AssemblyKey);
+		tool->SetAssemblyGUID(AssemblyGUID);
 	}
 }
 

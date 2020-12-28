@@ -35,16 +35,17 @@ void USelectionTrayBlockPresetList::NativeConstruct()
 void USelectionTrayBlockPresetList::BuildPresetListFromSelection()
 {
 	ClearPresetList();
-	TMap<FBIMKey, int32> numberOfObjectsWithKey;
+	TMap<FGuid, int32> numberOfObjectsWithKey;
 	for (auto& curObject : Controller->EMPlayerState->SelectedObjects)
 	{
-		FBIMKey itemKey = curObject->GetAssembly().UniqueKey();
-		if (itemKey.IsNone())
+		FGuid itemKey = curObject->GetAssembly().UniqueKey();
+#if 0 //GUIDTODO
+		if (!itemKey.IsValid())
 		{
 			// If no assembly key is found, use its object type to track its selection, ex: meta edges and planes
 			itemKey = UModumateTypeStatics::GetTextForObjectType(curObject->GetObjectType()).ToString();
 		}
-
+#endif
 		UComponentListObject* compItem = ComponentItemMap.FindRef(itemKey);
 		if (compItem)
 		{

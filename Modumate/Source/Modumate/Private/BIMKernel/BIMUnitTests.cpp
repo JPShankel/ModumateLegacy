@@ -185,9 +185,9 @@ static bool testTags()
 	return true;
 }
 
-bool testPreset(const FBIMPresetCollection &PresetCollection, const FBIMKey& PresetID)
+bool testPreset(const FBIMPresetCollection &PresetCollection, const FGuid& PresetGUID)
 {
-	const FBIMPresetInstance* preset = PresetCollection.Presets.Find(PresetID);
+	const FBIMPresetInstance* preset = PresetCollection.PresetFromGUID(PresetGUID);
 	if (preset == nullptr)
 	{
 		return false;
@@ -213,7 +213,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 
 	FBIMPresetCollection presetCollection;
 	TArray<FString> errors;
-	TArray<FBIMKey> starters;
+	TArray<FGuid> starters;
 	if (!ensureAlways(presetCollection.LoadCSVManifest(*manifestPath, TEXT("BIMManifest.txt"), starters, errors) == EBIMResult::Success))
 	{
 		return false;
@@ -224,7 +224,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 	FBIMTagPath searchPath;
 	searchPath.Tags.Add(TEXT("Assembly"));
 
-	TArray<FBIMKey> foundKeys;
+	TArray<FGuid> foundKeys;
 	if (!ensureAlways(presetCollection.GetPresetsForNCP(searchPath,foundKeys)==EBIMResult::Success))
 	{
 		return false;
@@ -241,7 +241,7 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 		return false;
 	}
 
-	const FBIMPresetInstance* preset = presetCollection.Presets.Find(foundKeys[0]);
+	const FBIMPresetInstance* preset = presetCollection.PresetFromGUID(foundKeys[0]);
 	if (!ensureAlways(preset != nullptr))
 	{
 		return false;

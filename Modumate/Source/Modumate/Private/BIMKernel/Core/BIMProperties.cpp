@@ -103,13 +103,12 @@ bool FBIMPropertySheet::TryGetProperty(EBIMValueScope InScope, const FBIMNameTyp
 	return false;
 }
 
-bool FBIMPropertySheet::TryGetProperty(EBIMValueScope InScope, const FBIMNameType& InName, FBIMKey& OutT) const
+bool FBIMPropertySheet::TryGetProperty(EBIMValueScope InScope, const FBIMNameType& InName, FGuid& OutT) const
 {
 	FString stringKey;
 	if (TryGetProperty<FString>(InScope, InName, stringKey))
 	{
-		OutT = FBIMKey(stringKey);
-		return true;
+		return FGuid::Parse(stringKey, OutT);
 	}
 	return false;
 }

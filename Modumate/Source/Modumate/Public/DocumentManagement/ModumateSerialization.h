@@ -248,7 +248,10 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 	TArray<FMOIStateData> ObjectData;
 
 	UPROPERTY()
-	TMap<EToolMode, FBIMKey> CurrentToolAssemblyMap;
+	TMap<EToolMode, FBIMKey> CurrentToolAssemblyMap_DEPRECATED;
+
+	UPROPERTY()
+	TMap<EToolMode, FGuid> CurrentToolAssemblyGUIDMap;
 
 	UPROPERTY()
 	FBIMPresetCollection PresetCollection;

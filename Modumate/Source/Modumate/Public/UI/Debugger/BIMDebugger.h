@@ -36,7 +36,7 @@ public:
 	virtual bool Initialize() override;
 
 protected:
-	FBIMKey LastSelectedKey;
+	FGuid LastSelectedKey;
 
 	virtual void NativeConstruct() override;
 
@@ -93,7 +93,7 @@ public:
 	void OnSearchFieldChanged(const FText& NewText);
 
 	EBIMResult ConstructPresetList();
-	EBIMResult DebugBIMPreset(const FBIMKey& PresetKey, bool AddToHistory = true);
+	EBIMResult DebugBIMPreset(const FGuid& PresetKey, bool AddToHistory = true);
 	bool IsPresetAvailableForSearch(const FBIMPresetInstance& SearchPreset);
 
 	// Debug test

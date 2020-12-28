@@ -48,6 +48,6 @@ public:
 	virtual EAxisConstraint GetAxisConstraint() const = 0;
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) = 0;
 	virtual EToolCreateObjectMode GetCreateObjectMode() const = 0;
-	virtual void SetAssemblyKey(const FBIMKey &InAssemblyKey) = 0;
-	virtual FBIMKey GetAssemblyKey() const = 0;
+	virtual void SetAssemblyGUID(const FGuid &InAssemblyKey) = 0;
+	virtual FGuid GetAssemblyGUID() const = 0;
 };

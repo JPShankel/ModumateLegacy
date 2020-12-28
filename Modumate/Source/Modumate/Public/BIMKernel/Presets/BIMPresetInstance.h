@@ -37,6 +37,9 @@ struct MODUMATE_API FBIMPresetPinAttachment
 	FBIMKey PresetID;
 
 	UPROPERTY()
+	FGuid PresetGUID;
+
+	UPROPERTY()
 	EBIMPinTarget Target = EBIMPinTarget::Default;
 
 	bool operator==(const FBIMPresetPinAttachment& OtherAttachment) const;
@@ -53,9 +56,15 @@ struct MODUMATE_API FBIMPresetPartSlot
 	UPROPERTY()
 	FBIMKey SlotPreset;
 
+	UPROPERTY()
+	FGuid PartPresetGUID;
+
+	UPROPERTY()
+	FGuid SlotPresetGUID;
+
 	bool operator==(const FBIMPresetPartSlot& RHS) const
 	{
-		return RHS.PartPreset == PartPreset && RHS.SlotPreset == SlotPreset;
+		return RHS.PartPresetGUID == PartPresetGUID && RHS.SlotPresetGUID == SlotPresetGUID;
 	}
 
 	bool operator!=(const FBIMPresetPartSlot& RHS) const
@@ -79,6 +88,12 @@ struct MODUMATE_API FBIMPresetMaterialChannelBinding
 	FBIMKey SurfaceMaterial;
 
 	UPROPERTY()
+	FGuid InnerMaterialGUID;
+
+	UPROPERTY()
+	FGuid SurfaceMaterialGUID;
+
+	UPROPERTY()
 	FString ColorHexValue;
 
 	UPROPERTY()
@@ -98,6 +113,11 @@ private:
 	friend class FBIMPresetEditorNode;
 
 public:
+
+#if WITH_EDITOR
+	FString DEBUG_SourceFile;
+	int32 DEBUG_SourceRow=0;
+#endif
 
 	// TODO: roll fields below into type definition and make it the top level UPROPERTY
 	FBIMPresetTypeDefinition TypeDefinition;
@@ -130,6 +150,9 @@ public:
 
 	UPROPERTY()
 	FBIMKey SlotConfigPresetID;
+
+	UPROPERTY()
+	FGuid SlotConfigPresetGUID;
 
 	UPROPERTY()
 	EObjectType ObjectType = EObjectType::OTNone;
@@ -186,9 +209,9 @@ public:
 	// Sort child nodes by PinSetIndex and PinSetPosition so serialization will be consistent
 	EBIMResult SortChildPresets();
 
-	EBIMResult AddChildPreset(const FBIMKey& ChildPresetID, int32 PinSetIndex, int32 PinSetPosition);
+	EBIMResult AddChildPreset(const FGuid& ChildPresetGUID, int32 PinSetIndex, int32 PinSetPosition);
 	EBIMResult RemoveChildPreset(int32 PinSetIndex, int32 PinSetPosition);
-	EBIMResult SetPartPreset(const FBIMKey& SlotPreset, const FBIMKey& PartPreset);
+	EBIMResult SetPartPreset(const FGuid& SlotPresetGUID, const FGuid& PartPresetGUID);
 	bool HasPin(int32 PinSetIndex, int32 PinSetPosition) const;
 
 	bool ValidatePreset() const;

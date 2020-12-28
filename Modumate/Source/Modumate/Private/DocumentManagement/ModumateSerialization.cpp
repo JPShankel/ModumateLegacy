@@ -143,24 +143,5 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 		OutHeader.Version = 6;
 	}
 
-	if (OutHeader.Version < 8) // Empty FName keys serialized as "None", BIMKeys as empty string
-	{
-		const FBIMKey badNone = FBIMKey(TEXT("None"));
-		for (auto& obj : OutRecord.ObjectData)
-		{
-			if (obj.AssemblyKey == badNone)
-			{
-				obj.AssemblyKey = FBIMKey();
-			}
-		}
-		for (auto& kvp : OutRecord.CurrentToolAssemblyMap)
-		{
-			if (kvp.Value == badNone)
-			{
-				kvp.Value = FBIMKey();
-			}
-		}
-	}
-
 	return true;
 }

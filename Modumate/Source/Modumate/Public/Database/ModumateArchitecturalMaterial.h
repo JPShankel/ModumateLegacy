@@ -18,7 +18,7 @@ struct FArchitecturalMaterial
 {
 	GENERATED_BODY()
 
-	FBIMKey Key;
+	FGuid Key;
 	FText DisplayName = FText::GetEmpty();
 
 	TWeakObjectPtr<UMaterialInterface> EngineMaterial = nullptr;
@@ -27,7 +27,7 @@ struct FArchitecturalMaterial
 	float UVScaleFactor = 1.0f;
 	float HSVRangeWhenTiled = 0.0f;
 
-	FBIMKey UniqueKey() const { return Key; }
+	FGuid UniqueKey() const { return Key; }
 
 	// Whether this material has been created with real data.
 	// TODO: make this more accurate once the underlying materials are lazy-loaded.
@@ -40,7 +40,7 @@ struct MODUMATE_API FStaticIconTexture
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FBIMKey Key;
+	FGuid Key;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FText DisplayName = FText::GetEmpty();
@@ -48,7 +48,7 @@ struct MODUMATE_API FStaticIconTexture
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TWeakObjectPtr<UTexture2D> Texture;
 
-	FBIMKey UniqueKey() const { return Key; }
+	FGuid UniqueKey() const { return Key; }
 
 	// TODO: Like FArchitecturalMaterial, check if texture will be lazy-loaded.
 	bool IsValid() const { return Texture.IsValid(); }

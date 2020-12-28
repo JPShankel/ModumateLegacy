@@ -52,7 +52,7 @@ bool UTrimTool::BeginUse()
 	if (TargetEdgeID != MOD_ID_NONE)
 	{
 		FMOIStateData stateData(GameState->Document->GetNextAvailableID(), EObjectType::OTTrim, TargetEdgeID);
-		stateData.AssemblyKey = AssemblyKey;
+		stateData.AssemblyGUID = AssemblyGUID;
 		stateData.CustomData.SaveStructData(PendingTrimData);
 
 		auto delta = MakeShared<FMOIDelta>();

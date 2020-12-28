@@ -65,7 +65,7 @@ public:
 	int32 MyParentPinSetPosition = INDEX_NONE;
 	TArray<FBIMPresetEditorNodeWeakPtr> ChildNodes;
 
-	FBIMKey MyParentPartSlot;
+	FGuid MyParentPartSlot;
 	TArray<FBIMPresetEditorNodeWeakPtr> PartNodes;
 
 	bool bWantAddButton = false;
@@ -82,7 +82,7 @@ public:
 	EBIMResult GetPartSlots(TArray<FBIMPresetPartSlot>& OutPartSlots) const;
 
 	EBIMResult FindChild(const FBIMEditorNodeIDType& ChildID, int32& OutPinSetIndex, int32& OutPinSetPosition) const;
-	EBIMResult FindNodeIDConnectedToSlot(const FBIMKey& SlotPreset, FBIMEditorNodeIDType& OutChildID) const;
+	EBIMResult FindNodeIDConnectedToSlot(const FGuid& SlotPreset, FBIMEditorNodeIDType& OutChildID) const;
 	EBIMResult FindOtherChildrenOnPin(TArray<FBIMEditorNodeIDType>& OutChildIDs) const;
 	EBIMResult GatherChildrenInOrder(TArray<FBIMEditorNodeIDType>& OutChildIDs) const;
 	EBIMResult GatherAllChildNodes(TArray<FBIMPresetEditorNodeSharedPtr>& OutChildren);

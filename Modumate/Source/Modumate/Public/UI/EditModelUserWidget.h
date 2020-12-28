@@ -94,7 +94,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
 	void EventToggleProjectMenu();
 
-	void EditExistingAssembly(EToolMode ToolMode, const FBIMKey& AssemblyKey);
+	void EditExistingAssembly(EToolMode ToolMode, const FGuid& AssemblyGUID);
 	void ToggleBIMDesigner(bool Open);
 	void SwitchRightMenu(ERightMenuState NewMenuState);
 	void UpdateCutPlanesList();

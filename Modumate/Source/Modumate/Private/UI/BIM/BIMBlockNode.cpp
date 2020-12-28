@@ -140,7 +140,7 @@ void UBIMBlockNode::PerformDrag()
 void UBIMBlockNode::OnButtonSwapReleased()
 {
 	ParentBIMDesigner->SetNodeAsSelected(ID);
-	FBIMKey parentPresetID;
+	FGuid parentPresetID;
 	if (!ParentID.IsNone())
 	{
 		parentPresetID = ParentBIMDesigner->GetPresetID(ParentID);
@@ -215,11 +215,11 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 {
 	IsRootNode = Node->ParentInstance == nullptr;
 	ParentBIMDesigner = OuterBIMDesigner;
-	PresetID = Node->WorkingPresetCopy.PresetID;
+	PresetID = Node->WorkingPresetCopy.GUID;
 	bNodeHasSlotPart = bAsSlot;
 	TitleNodeCollapsed->ChangeText(Node->CategoryTitle);
 	TitleNodeExpanded->ChangeText(Node->CategoryTitle);
-	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(PresetID);
+	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.PresetFromGUID(PresetID);
 	if (preset != nullptr)
 	{
 		FText presetDisplayName;
@@ -276,7 +276,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 				dropDownOffset.Y += (FormItemSize * VerticalBoxProperties->GetAllChildren().Num());
 
 				// Store preset into new dropdown
-				FBIMKey propertyPresetKey;
+				FGuid propertyPresetKey;
 				Node->WorkingPresetCopy.Properties.TryGetProperty(propertyValue.Scope, propertyValue.Name, propertyPresetKey);
 				newDropdown->BuildDropdownFromPropertyPreset(ParentBIMDesigner, this, propertyValue.Scope, propertyValue.Name, propertyPresetKey, dropDownOffset);
 

@@ -1,8 +1,12 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "BIMKernel/Presets/BIMCSVReader.h"
+#include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Database/ModumateObjectEnums.h"
+
+TMap<FBIMKey, FGuid> FBIMCSVReader::KeyGuidMap;
+TMap<FGuid, FBIMKey> FBIMCSVReader::GuidKeyMap;
 
 FBIMCSVReader::FBIMCSVReader()
 {
@@ -160,7 +164,7 @@ EBIMResult FBIMCSVReader::ProcessTagPathRow(const TArray<const TCHAR*>& Row, int
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TMap<FBIMKey, FBIMPresetInstance>& OutPresets, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages)
+EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int32 RowNumber, FBIMPresetCollection& OutPresets, TArray<FGuid>& OutStarters, TArray<FString>& OutMessages)
 {
 	//Row Format:
 	//[Preset]([]([column data]+))*
@@ -170,59 +174,104 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 	For each column, find the range it lands into and set a corresponding value (property, pin, slot, etc)
 	*/
 
+	// Handle ID first
+	// If there is no ID, this is a multi-line preset
+	// If there is an ID and a pre-existing GUID, we just wrapped up
+	for (auto& presetMatrix : PresetMatrices)
+	{
+		if (presetMatrix.Name == ECSVMatrixNames::ID)
+		{
+			FBIMKey presetID = FBIMKey(NormalizeCell(Row[presetMatrix.First]));
+
+			if (!presetID.IsNone())
+			{
+				if (!Preset.PresetID.IsNone())
+				{
+					Preset.TryGetProperty(BIMPropertyNames::Name, Preset.DisplayName);
+					if (OutPresets.PresetFromGUID(Preset.GUID)==nullptr)
+					{
+						OutPresets.AddPreset(Preset);
+					}
+					else
+					{
+						OutMessages.Add(FString::Printf(TEXT("Duplicated preset on row %d of file %s (%s)"), RowNumber, *CurrentFile,*Preset.GUID.ToString()));
+					}
+				}
+	
+				Preset = FBIMPresetInstance();
+#if WITH_EDITOR
+				Preset.DEBUG_SourceFile = CurrentFile;
+				Preset.DEBUG_SourceRow = RowNumber;
+#endif
+
+				if (KeyGuidMap.Find(presetID)!=nullptr)
+				{
+					OutMessages.Add(FString::Printf(TEXT("Duplicated BIM Key on row %d of file %s (%s)"), RowNumber, *CurrentFile, *Preset.GUID.ToString()));
+				}
+
+				Preset.PresetID = presetID;
+				Preset.NodeType = NodeType.TypeName;
+				Preset.NodeScope = NodeType.Scope;
+				Preset.TypeDefinition = NodeType;
+				Preset.FormItemToProperty = NodeType.FormItemToProperty;
+			}
+		}
+	}
+
+	//Handle GUID second so we can establish the guid<->key mapping
+	for (auto& presetMatrix : PresetMatrices)
+	{
+		if (presetMatrix.Name == ECSVMatrixNames::GUID)
+		{
+			FString guidStr(Row[presetMatrix.First]);
+			if (!guidStr.IsEmpty())
+			{
+				FGuid::ParseExact(guidStr, EGuidFormats::DigitsWithHyphens, Preset.GUID);
+				if (GuidKeyMap.Contains(Preset.GUID))
+				{
+					FBIMKey* key = GuidKeyMap.Find(Preset.GUID);
+					OutMessages.Add(FString::Printf(TEXT("Duplicated GUID on row %d of file %s (%s)"), RowNumber, *CurrentFile, *Preset.GUID.ToString()));
+				}
+			}
+		}
+	}
+
+	if (ensureAlways(!Preset.PresetID.IsNone() && Preset.GUID.IsValid()))
+	{
+		KeyGuidMap.Add(Preset.PresetID, Preset.GUID);
+		GuidKeyMap.Add(Preset.GUID, Preset.PresetID);
+	}
+
 	for (auto& presetMatrix : PresetMatrices)
 	{
 		switch (presetMatrix.Name)
 		{
-			case ECSVMatrixNames::ID:
-			{
-				FBIMKey presetID = FBIMKey(NormalizeCell(Row[presetMatrix.First]));
-				if (!presetID.IsNone())
-				{
-					if (!Preset.PresetID.IsNone())
-					{
-						Preset.TryGetProperty(BIMPropertyNames::Name, Preset.DisplayName);
-						OutPresets.Add(Preset.PresetID, Preset);
-						Preset = FBIMPresetInstance();
-					}
-
-					Preset.PresetID = presetID;
-					Preset.NodeType = NodeType.TypeName;
-					Preset.NodeScope = NodeType.Scope;
-					Preset.TypeDefinition = NodeType;
-					Preset.FormItemToProperty = NodeType.FormItemToProperty;
-				}
-				ensureAlways(!Preset.PresetID.IsNone());
-			}
-			break;
-
-			case ECSVMatrixNames::GUID :
-			{
-				FString guidStr(Row[presetMatrix.First]);
-				if (!guidStr.IsEmpty())
-				{
-					FGuid::ParseExact(guidStr, EGuidFormats::DigitsWithHyphens, Preset.GUID);
-				}
-			}
-			break;
-
 			case ECSVMatrixNames::Profile:
 			{
-				FString profileKey(Row[presetMatrix.First]);
-				if (!profileKey.IsEmpty())
+				FBIMKey profileKey(NormalizeCell(Row[presetMatrix.First]));
+				if (!profileKey.IsNone())
 				{
-					Preset.Properties.SetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID, NormalizeCell(profileKey));
-					Preset.FormItemToProperty.Add(TEXT("Profile"), FBIMPropertyKey(EBIMValueScope::Profile, BIMPropertyNames::AssetID).QN());
+					FGuid* guid = KeyGuidMap.Find(profileKey);
+					if (ensureAlways(guid != nullptr))
+					{
+						Preset.Properties.SetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID, guid->ToString());
+						Preset.FormItemToProperty.Add(TEXT("Profile"), FBIMPropertyKey(EBIMValueScope::Profile, BIMPropertyNames::AssetID).QN());
+					}
 				}
 			}
 			break;
+
 			case ECSVMatrixNames::Mesh:
 			{
-				FString meshKey(Row[presetMatrix.First]);
-				if (!meshKey.IsEmpty())
+				FBIMKey meshKey(NormalizeCell(Row[presetMatrix.First]));
+				if (!meshKey.IsNone())
 				{
-					Preset.Properties.SetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, NormalizeCell(meshKey));
-					Preset.FormItemToProperty.Add(TEXT("Mesh"), FBIMPropertyKey(EBIMValueScope::Mesh, BIMPropertyNames::AssetID).QN());
+					FGuid* guid = KeyGuidMap.Find(meshKey);
+					if (ensureAlways(guid != nullptr))
+					{
+						Preset.Properties.SetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, guid->ToString());
+						Preset.FormItemToProperty.Add(TEXT("Mesh"), FBIMPropertyKey(EBIMValueScope::Mesh, BIMPropertyNames::AssetID).QN());
+					}
 				}
 			}
 			break;
@@ -243,13 +292,29 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 						case EMaterialChannelFields::InnerMaterial:
 						{
-							materialBinding.InnerMaterial = FBIMKey(NormalizeCell(Row[presetMatrix.First + i]));
+							FBIMKey matKey(NormalizeCell(Row[presetMatrix.First + i]));
+							if (!matKey.IsNone())
+							{
+								const FGuid* guid = KeyGuidMap.Find(matKey);
+								if (ensureAlways(guid != nullptr))
+								{
+									materialBinding.InnerMaterialGUID = *guid;
+								}
+							}
 						}
 						break;
 
 						case EMaterialChannelFields::SurfaceMaterial:
 						{
-							materialBinding.SurfaceMaterial = FBIMKey(NormalizeCell(Row[presetMatrix.First + i]));
+							FBIMKey matKey(NormalizeCell(Row[presetMatrix.First + i]));
+							if (!matKey.IsNone())
+							{
+								const FGuid* guid = KeyGuidMap.Find(matKey);
+								if (ensureAlways(guid != nullptr))
+								{
+									materialBinding.SurfaceMaterialGUID = *guid;
+								}
+							}
 						}
 						break;
 
@@ -284,9 +349,9 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				{
 					Preset.MaterialChannelBindings.Add(materialBinding);
 
-					FBIMKey material = materialBinding.SurfaceMaterial.IsNone() ? materialBinding.InnerMaterial : materialBinding.SurfaceMaterial;
+					FGuid material = materialBinding.SurfaceMaterialGUID.IsValid() ? materialBinding.SurfaceMaterialGUID : materialBinding.InnerMaterialGUID;
 
-					if (ensureAlways(!material.IsNone()))
+					if (ensureAlways(material.IsValid()))
 					{
 						Preset.Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, material.ToString());
 						Preset.FormItemToProperty.Add(TEXT("Material"), FBIMPropertyKey(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID).QN());
@@ -312,11 +377,13 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 			case ECSVMatrixNames::StartsInProject:
 			{
-				ensureAlways(!Preset.PresetID.IsNone());
-				FString cellStr = Row[presetMatrix.First];
-				if (!cellStr.IsEmpty())
+				if (ensureAlways(Preset.GUID.IsValid()))
 				{
-					OutStarters.Add(Preset.PresetID);
+					FString cellStr = Row[presetMatrix.First];
+					if (!cellStr.IsEmpty())
+					{
+						OutStarters.Add(Preset.GUID);
+					}
 				}
 			}
 			break;
@@ -429,23 +496,41 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 					if (category.Equals(TEXT("SlotConfig")))
 					{
-						Preset.SlotConfigPresetID = FBIMKey(NormalizeCell(*cell));
+						FBIMKey key(NormalizeCell(*cell));
+						FGuid* guid = KeyGuidMap.Find(key);
+						if (ensureAlways(guid != nullptr))
+						{
+							Preset.SlotConfigPresetGUID = *guid;
+							Preset.SlotConfigPresetID = key;
+						}
 					}
 					else if (category.Equals(TEXT("PartPreset")))
 					{
-						if (Preset.PartSlots.Num() == 0 || !Preset.PartSlots.Last().PartPreset.IsNone())
+						if (Preset.PartSlots.Num() == 0 || Preset.PartSlots.Last().PartPresetGUID.IsValid())
 						{
 							Preset.PartSlots.AddDefaulted();
 						}
-						Preset.PartSlots.Last().PartPreset = FBIMKey(*NormalizeCell(cell));
+						FBIMKey bimKey(NormalizeCell(cell));
+						FGuid* guid = KeyGuidMap.Find(bimKey);
+						if (ensureAlways(guid != nullptr))
+						{
+							Preset.PartSlots.Last().PartPresetGUID = *guid;
+							Preset.PartSlots.Last().PartPreset = bimKey;
+						}
 					}
 					else if (category.Equals(TEXT("SlotName")))
 					{
-						if (Preset.PartSlots.Num() == 0 || !Preset.PartSlots.Last().SlotPreset.IsNone())
+						if (Preset.PartSlots.Num() == 0 || Preset.PartSlots.Last().SlotPresetGUID.IsValid())
 						{
 							Preset.PartSlots.AddDefaulted();
 						}
-						Preset.PartSlots.Last().SlotPreset = FBIMKey(*cell);
+						FBIMKey key(NormalizeCell(cell));
+						FGuid* guid = KeyGuidMap.Find(key);
+						if (ensureAlways(guid != nullptr))
+						{
+							Preset.PartSlots.Last().SlotPresetGUID = *guid;
+							Preset.PartSlots.Last().SlotPreset = key;
+						}
 					}
 				}
 			}
@@ -486,6 +571,13 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 							{
 								newCAP.PresetID = Preset.ChildPresets[0].PresetID;
 							}
+
+							FGuid* guid = KeyGuidMap.Find(newCAP.PresetID);
+							if (ensureAlways(guid != nullptr))
+							{
+								newCAP.PresetGUID = *guid;
+							}
+
 							ensureAlways(!newCAP.PresetID.IsNone());
 							found = true;
 						}

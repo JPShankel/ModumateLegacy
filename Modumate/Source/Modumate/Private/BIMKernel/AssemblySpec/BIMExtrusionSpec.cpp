@@ -17,11 +17,10 @@ EBIMResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& InDB)
 		Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, yDim);
 	}
 
-	FBIMKey profileKey = FBIMKey(Properties.GetProperty<FString>(EBIMValueScope::Profile, BIMPropertyNames::AssetID));
-
-	if (ensureAlways(!profileKey.IsNone()))
+	FGuid profileKey;
+	if (ensureAlways(Properties.TryGetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID,profileKey) && profileKey.IsValid()))
 	{
-		const FSimpleMeshRef* trimMesh = InDB.GetSimpleMeshByKey(profileKey);
+		const FSimpleMeshRef* trimMesh = InDB.GetSimpleMeshByGUID(profileKey);
 
 		if (ensureAlways(trimMesh != nullptr))
 		{

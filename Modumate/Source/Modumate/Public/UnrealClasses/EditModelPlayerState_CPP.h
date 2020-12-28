@@ -188,10 +188,10 @@ public:
 	int32 GetViewGroupObjectID() const { return ViewGroupObject ? ViewGroupObject->ID : 0; }
 
 	UFUNCTION(BlueprintCallable, Category = "Shopping")
-	void SetAssemblyForToolMode(EToolMode Mode, const FBIMKey &AssemblyKey);
+	void SetAssemblyForToolMode(EToolMode Mode, const FGuid &AssemblyGUID);
 
 	UFUNCTION(BlueprintCallable, Category = "Shopping")
-	FBIMKey GetAssemblyForToolMode(EToolMode mode);
+	FGuid GetAssemblyForToolMode(EToolMode mode);
 
 	UFUNCTION()
 	bool SetViewMode(EEditViewModes NewEditViewMode, bool bForceUpdate = false);

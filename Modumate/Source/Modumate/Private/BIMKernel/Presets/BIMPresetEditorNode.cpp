@@ -83,7 +83,7 @@ int32 FBIMPresetEditorNode::GetNumChildrenOnPin(int32 InPin) const
 
 bool FBIMPresetEditorNode::CanRemoveChild(const FBIMPresetEditorNodeSharedPtrConst& Child) const
 {
-	if (!Child->MyParentPartSlot.IsNone())
+	if (Child->MyParentPartSlot.IsValid())
 	{
 		return false;
 	}
@@ -98,7 +98,7 @@ bool FBIMPresetEditorNode::CanRemoveChild(const FBIMPresetEditorNodeSharedPtrCon
 
 bool FBIMPresetEditorNode::CanReorderChild(const FBIMPresetEditorNodeSharedPtrConst& Child) const
 {
-	if (!Child->MyParentPartSlot.IsNone())
+	if (Child->MyParentPartSlot.IsValid())
 	{
 		return false;
 	}
@@ -130,7 +130,7 @@ EBIMResult FBIMPresetEditorNode::FindChild(const FBIMEditorNodeIDType& ChildID, 
 
 	for (auto& checkChild : WorkingPresetCopy.ChildPresets)
 	{
-		if (checkChild.PresetID == foundChildNode->WorkingPresetCopy.PresetID)
+		if (checkChild.PresetGUID == foundChildNode->WorkingPresetCopy.GUID)
 		{
 			OutPinSetIndex = checkChild.ParentPinSetIndex;
 			OutPinSetPosition = checkChild.ParentPinSetPosition;
@@ -141,7 +141,7 @@ EBIMResult FBIMPresetEditorNode::FindChild(const FBIMEditorNodeIDType& ChildID, 
 	return EBIMResult::Error;
 }
 
-EBIMResult FBIMPresetEditorNode::FindNodeIDConnectedToSlot(const FBIMKey& SlotPreset, FBIMEditorNodeIDType& OutChildID) const
+EBIMResult FBIMPresetEditorNode::FindNodeIDConnectedToSlot(const FGuid& SlotPreset, FBIMEditorNodeIDType& OutChildID) const
 {
 	for (auto& curNode : PartNodes)
 	{
@@ -234,7 +234,7 @@ EBIMResult FBIMPresetEditorNode::DetachSelfFromParent()
 			if (childToRemove.IsValid())
 			{
 				pinnedParent->PartNodes.Remove(childToRemove);
-				pinnedParent->WorkingPresetCopy.SetPartPreset(childToRemove.Pin()->MyParentPartSlot, FBIMKey());
+				pinnedParent->WorkingPresetCopy.SetPartPreset(childToRemove.Pin()->MyParentPartSlot, FGuid());
 			}
 		}
 
@@ -251,7 +251,7 @@ EBIMResult FBIMPresetEditorNode::AddChildPreset(const FBIMPresetEditorNodeShared
 	ChildNodes.Last().Pin()->MyParentPinSetIndex = PinSetIndex;
 	ChildNodes.Last().Pin()->MyParentPinSetPosition = PinSetPosition;
 	ChildNodes.Last().Pin()->ParentInstance = AsShared();
-	WorkingPresetCopy.AddChildPreset(Child->WorkingPresetCopy.PresetID, PinSetIndex, PinSetPosition);
+	WorkingPresetCopy.AddChildPreset(Child->WorkingPresetCopy.GUID, PinSetIndex, PinSetPosition);
 	return SortChildren();
 }
 
@@ -277,7 +277,7 @@ EBIMResult FBIMPresetEditorNode::SortChildren()
 
 
 	// When parts are added and removed, the PartNodes array gets out of order
-	TMap<FBIMKey, FBIMPresetEditorNodeWeakPtr> slotMap;
+	TMap<FGuid, FBIMPresetEditorNodeWeakPtr> slotMap;
 	for (auto& partNode : PartNodes)
 	{
 		slotMap.Add(partNode.Pin()->MyParentPartSlot, partNode);
@@ -287,7 +287,7 @@ EBIMResult FBIMPresetEditorNode::SortChildren()
 
 	for (auto& presetPart : WorkingPresetCopy.PartSlots)
 	{
-		auto* slotNode = slotMap.Find(presetPart.SlotPreset);
+		auto* slotNode = slotMap.Find(presetPart.SlotPresetGUID);
 		// Will be null for empty slots
 		if (slotNode != nullptr)
 		{
@@ -324,7 +324,7 @@ bool FBIMPresetEditorNode::ValidateNode() const
 		return false;
 	}
 
-	if (MyParentPartSlot.IsNone() && (MyParentPinSetIndex == INDEX_NONE || MyParentPinSetPosition == INDEX_NONE))
+	if (!MyParentPartSlot.IsValid() && (MyParentPinSetIndex == INDEX_NONE || MyParentPinSetPosition == INDEX_NONE))
 	{
 		return false;
 	}

@@ -44,9 +44,6 @@ void AEditModelGameMode_CPP::InitGame(const FString& MapName, const FString& Opt
 	double databaseLoadTime = 0.0;
 	{
 		SCOPE_SECONDS_COUNTER(databaseLoadTime);
-
-		ObjectDatabase->ReadRoomConfigurations(RoomConfigurationTable);
-
 		ObjectDatabase->ReadPresetData();
 	}
 	databaseLoadTime *= 1000.0;

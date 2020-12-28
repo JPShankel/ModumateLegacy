@@ -67,10 +67,10 @@ void AModumateObjectInstance::SetupMOIComponent()
 
 void AModumateObjectInstance::UpdateAssemblyFromKey()
 {
-	if ((CachedAssembly.UniqueKey() != StateData.AssemblyKey) || (CachedAssembly.ObjectType == EObjectType::OTNone))
+	if ((CachedAssembly.UniqueKey() != StateData.AssemblyGUID) || (CachedAssembly.ObjectType == EObjectType::OTNone))
 	{
 		// Meta-objects don't have assemblies but we track MOI type in the CachedAssembly
-		if (!Document->PresetManager.TryGetProjectAssemblyForPreset(StateData.ObjectType, StateData.AssemblyKey, CachedAssembly))
+		if (!Document->PresetManager.TryGetProjectAssemblyForPreset(StateData.ObjectType, StateData.AssemblyGUID, CachedAssembly))
 		{
 			CachedAssembly.ObjectType = StateData.ObjectType;
 		}
@@ -79,7 +79,7 @@ void AModumateObjectInstance::UpdateAssemblyFromKey()
 			// Missing assemblies will get default keys, so CachedAssembly will be different if we had to fallback
 			// NOTE: this is a temporary solution to avoid persistent ensures when BIM keys expire
 			// Future work will deprecate BIM keys for GUIDs which will be much more stable (they may disappear but won't change)
-			StateData.AssemblyKey = CachedAssembly.UniqueKey();
+			StateData.AssemblyGUID = CachedAssembly.UniqueKey();
 		}
 		bAssemblyLayersReversed = false;
 	}

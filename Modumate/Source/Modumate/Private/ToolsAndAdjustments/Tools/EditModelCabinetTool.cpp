@@ -265,7 +265,7 @@ bool UCabinetTool::EnterNextStage()
 	stateData.ID = GameState->Document->GetNextAvailableID();
 	stateData.ObjectType = EObjectType::OTCabinet;
 	stateData.ParentID = TargetPolygonID;
-	stateData.AssemblyKey = AssemblyKey;
+	stateData.AssemblyGUID = AssemblyGUID;
 	stateData.CustomData.SaveStructData(newCabinetData);
 
 	auto delta = MakeShared<FMOIDelta>();

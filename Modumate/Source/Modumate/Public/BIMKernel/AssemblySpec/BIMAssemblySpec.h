@@ -52,7 +52,7 @@ public:
 
 	EObjectType ObjectType = EObjectType::OTNone;
 
-	FBIMKey RootPreset;
+	FGuid RootPreset;
 
 	TArray<FBIMLayerSpec> Layers,TreadLayers,RiserLayers;
 	TArray<FBIMPartSlotSpec> Parts;
@@ -71,11 +71,11 @@ public:
 	FBIMTagPath SlotConfigTagPath;
 
 	// For DataCollection support in preset manager
-	FBIMKey UniqueKey() const { return RootPreset; }
+	FGuid UniqueKey() const { return RootPreset; }
 
 	EBIMResult Reset();
 
-	EBIMResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID);
+	EBIMResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FGuid& PresetID);
 
 	Modumate::Units::FUnitValue CalculateThickness() const;
 

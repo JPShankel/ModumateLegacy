@@ -19,7 +19,7 @@ FPresetManager::FPresetManager()
 FPresetManager::~FPresetManager()
 {}
 
-FBIMKey FPresetManager::GetAvailableKey(const FBIMKey& BaseKey)
+FBIMKey FPresetManager::GetAvailableKey(const FGuid& BaseKey)
 {
 	FBIMKey outKey;
 	CraftingNodePresets.GenerateBIMKeyForPreset(BaseKey, outKey);
@@ -42,6 +42,7 @@ EBIMResult FPresetManager::GetProjectAssembliesForObjectType(EObjectType ObjectT
 
 EBIMResult FPresetManager::FromDocumentRecord(const FModumateDatabase& InDB, const FMOIDocumentRecord& DocRecord)
 {
+
 	for (auto& kvp : DocRecord.PresetCollection.NodeDescriptors)
 	{
 		if (!CraftingNodePresets.NodeDescriptors.Contains(kvp.Key))
@@ -50,55 +51,68 @@ EBIMResult FPresetManager::FromDocumentRecord(const FModumateDatabase& InDB, con
 		}
 	}
 
-	for (auto& kvp : DocRecord.PresetCollection.Presets)
+	// Old file support
+	if (DocRecord.PresetCollection.PresetsByGUID.Num() == 0)
 	{
-		if (!CraftingNodePresets.Presets.Contains(kvp.Key))
+		for (auto& kvp : DocRecord.PresetCollection.Presets_DEPRECATED)
 		{
-			FBIMPresetInstance editedPreset = kvp.Value;
-			editedPreset.ReadOnly = false;
-			CraftingNodePresets.Presets.Add(kvp.Key, editedPreset);
+			if (!CraftingNodePresets.PresetsByGUID.Contains(kvp.Value.GUID))
+			{
+				FBIMPresetInstance editedPreset = kvp.Value;
+				editedPreset.ReadOnly = false;
+				CraftingNodePresets.AddPreset(editedPreset);
+			}
 		}
 	}
-
-	AssembliesByObjectType.Empty();
-	CraftingNodePresets.PostLoad();
+	else 
+	{
+		for (auto& kvp : DocRecord.PresetCollection.PresetsByGUID)
+		{
+			if (!CraftingNodePresets.PresetsByGUID.Contains(kvp.Key))
+			{
+				FBIMPresetInstance editedPreset = kvp.Value;
+				editedPreset.ReadOnly = false;
+				CraftingNodePresets.AddPreset(editedPreset);
+			}
+		}
+	}
 	
 	// If any presets fail to build their assembly, remove them
 	// They'll be replaced by the fallback system and will not be written out again
-	TSet<FBIMKey> incompletePresets;
-	for (auto& kvp : CraftingNodePresets.Presets)
+	TSet<FGuid> incompletePresets;
+	for (auto& kvp : CraftingNodePresets.PresetsByGUID)
 	{
 		if (kvp.Value.ObjectType != EObjectType::OTNone)
 		{
 			FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(kvp.Value.ObjectType);
 			FBIMAssemblySpec newSpec;
-			if (newSpec.FromPreset(InDB, CraftingNodePresets, kvp.Key) == EBIMResult::Success)
+			if (newSpec.FromPreset(InDB, CraftingNodePresets, kvp.Value.GUID) == EBIMResult::Success)
 			{
 				db.AddData(newSpec);
 			}
 			else
 			{
-				incompletePresets.Add(kvp.Key);
+				incompletePresets.Add(kvp.Value.GUID);
 			}
 		}
 	}
 
 	for (auto& incompletePreset : incompletePresets)
 	{
-		CraftingNodePresets.Presets.Remove(incompletePreset);
+		CraftingNodePresets.RemovePreset(incompletePreset);
 	}
 
-	return EBIMResult::Success;
+	return CraftingNodePresets.PostLoad();
 }
 
 EBIMResult FPresetManager::ToDocumentRecord(FMOIDocumentRecord& DocRecord) const
 {
-	for (auto& kvp : CraftingNodePresets.Presets)
+	for (auto& kvp : CraftingNodePresets.PresetsByGUID)
 	{
 		// ReadOnly presets have not been edited
 		if (!kvp.Value.ReadOnly)
 		{
-			DocRecord.PresetCollection.Presets.Add(kvp.Key, kvp.Value);
+			DocRecord.PresetCollection.AddPreset(kvp.Value);
 			if (!DocRecord.PresetCollection.NodeDescriptors.Contains(kvp.Value.NodeType))
 			{
 				const FBIMPresetTypeDefinition* typeDef = CraftingNodePresets.NodeDescriptors.Find(kvp.Value.NodeType);
@@ -113,30 +127,7 @@ EBIMResult FPresetManager::ToDocumentRecord(FMOIDocumentRecord& DocRecord) const
 	return EBIMResult::Success;
 }
 
-EBIMResult FPresetManager::AddOrUpdateGraph2DRecord(const FBIMKey& Key, const FGraph2DRecord& Graph, FBIMKey& OutKey)
-{
-	static const FString defaultGraphBaseKey(TEXT("Graph2D"));
-	OutKey = GetAvailableKey(defaultGraphBaseKey);
-	return EBIMResult::Success;
-}
-
-EBIMResult FPresetManager::GetGraph2DRecord(const FBIMKey& Key, FGraph2DRecord& OutGraph) const
-{
-	if (GraphCollection.Contains(Key))
-	{
-		OutGraph = GraphCollection.FindChecked(Key);
-		return EBIMResult::Success;
-	}
-	return EBIMResult::Error;
-}
-
-EBIMResult FPresetManager::RemoveGraph2DRecord(const FBIMKey& Key)
-{
-	int32 numRemoved = GraphCollection.Remove(Key);
-	return (numRemoved > 0) ? EBIMResult::Success : EBIMResult::Error;
-}
-
-EBIMResult FPresetManager::RemoveProjectAssemblyForPreset(const FBIMKey& PresetID)
+EBIMResult FPresetManager::RemoveProjectAssemblyForPreset(const FGuid& PresetID)
 {
 	FBIMAssemblySpec assembly;
 	EObjectType objectType = CraftingNodePresets.GetPresetObjectType(PresetID);
@@ -172,7 +163,7 @@ bool FPresetManager::TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FBIMAs
 	return false;
 }
 
-bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FBIMKey& PresetID, FBIMAssemblySpec& OutAssembly) const
+bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FGuid& PresetID, FBIMAssemblySpec& OutAssembly) const
 {
 	const TModumateDataCollection<FBIMAssemblySpec> *db = AssembliesByObjectType.Find(ObjectType);
 
@@ -198,7 +189,7 @@ bool FPresetManager::TryGetProjectAssemblyForPreset(EObjectType ObjectType, cons
 	return false;
 }
 
-const FBIMAssemblySpec *FPresetManager::GetAssemblyByKey(EToolMode ToolMode, const FBIMKey& Key) const
+const FBIMAssemblySpec *FPresetManager::GetAssemblyByGUID(EToolMode ToolMode, const FGuid& Key) const
 {
 	EObjectType objectType = UModumateTypeStatics::ObjectTypeFromToolMode(ToolMode);
 	const FAssemblyDataCollection *db = AssembliesByObjectType.Find(objectType);
@@ -212,9 +203,9 @@ const FBIMAssemblySpec *FPresetManager::GetAssemblyByKey(EToolMode ToolMode, con
 	}
 }
 
-EBIMResult FPresetManager::GetAvailablePresetsForSwap(const FBIMKey& ParentPresetID, const FBIMKey &PresetIDToSwap, TArray<FBIMKey>& OutAvailablePresets)
+EBIMResult FPresetManager::GetAvailablePresetsForSwap(const FGuid& ParentPresetID, const FGuid&PresetIDToSwap, TArray<FGuid>& OutAvailablePresets)
 {
-	const FBIMPresetInstance* preset = CraftingNodePresets.Presets.Find(PresetIDToSwap);
+	const FBIMPresetInstance* preset = CraftingNodePresets.PresetFromGUID(PresetIDToSwap);
 	if (!ensureAlways(preset != nullptr))
 	{
 		return EBIMResult::Error;

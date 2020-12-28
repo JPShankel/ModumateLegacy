@@ -88,7 +88,7 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 	}
 }
 
-void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType)
+void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FGuid& ParentPresetID, const FGuid& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType)
 {
 	SwapType = ESwapType::SwapFromNode;
 	CurrentNodeForSwap = NodeID;
@@ -100,7 +100,7 @@ void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FBIMKey& 
 		// Build icon for current preset to swap
 		if (ComponentPresetItem)
 		{
-			const FBIMPresetInstance* preset = GameState->Document->PresetManager.CraftingNodePresets.Presets.Find(PresetIDToSwap);
+			const FBIMPresetInstance* preset = GameState->Document->PresetManager.CraftingNodePresets.PresetFromGUID(PresetIDToSwap);
 			if (preset != nullptr)
 			{
 				ComponentPresetItem->MainText->ChangeText(preset->DisplayName);
@@ -156,7 +156,7 @@ void UToolTrayBlockAssembliesList::AddBIMDesignerPresetsToList()
 	}
 }
 
-void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FBIMKey& PresetID)
+void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FGuid& PresetID)
 {
 	SwapType = ESwapType::SwapFromSelection;
 	SwapSelectionToolMode = ToolMode;
@@ -167,12 +167,12 @@ void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(ETool
 		FPresetManager &presetManager = GameState->Document->PresetManager;
 		AssembliesList->ClearListItems();
 
-		TArray<FBIMKey> availablePresets;
-		presetManager.GetAvailablePresetsForSwap(FBIMKey(), PresetID, availablePresets);
+		TArray<FGuid> availablePresets;
+		presetManager.GetAvailablePresetsForSwap(FGuid(), PresetID, availablePresets);
 
 		if (ComponentPresetItem)
 		{
-			const FBIMPresetInstance* preset = GameState->Document->PresetManager.CraftingNodePresets.Presets.Find(PresetID);
+			const FBIMPresetInstance* preset = GameState->Document->PresetManager.CraftingNodePresets.PresetFromGUID(PresetID);
 			if (preset != nullptr)
 			{
 				ComponentPresetItem->MainText->ChangeText(preset->DisplayName);
@@ -194,7 +194,7 @@ void UToolTrayBlockAssembliesList::CreatePresetListInAssembliesListForSwap(ETool
 	}
 }
 
-bool UToolTrayBlockAssembliesList::IsPresetAvailableForSearch(const FBIMKey& PresetKey)
+bool UToolTrayBlockAssembliesList::IsPresetAvailableForSearch(const FGuid& PresetKey)
 {
 	FString searchSubString = Text_SearchBar->ModumateEditableTextBox->GetText().ToString();
 	if (searchSubString.Len() == 0)
@@ -203,7 +203,7 @@ bool UToolTrayBlockAssembliesList::IsPresetAvailableForSearch(const FBIMKey& Pre
 	}
 	if (GameState)
 	{
-		const FBIMPresetInstance* preset = GameState->Document->PresetManager.CraftingNodePresets.Presets.Find(PresetKey);
+		const FBIMPresetInstance* preset = GameState->Document->PresetManager.CraftingNodePresets.PresetFromGUID(PresetKey);
 		if (preset)
 		{
 			return UKismetStringLibrary::Contains(preset->DisplayName.ToString(), searchSubString);

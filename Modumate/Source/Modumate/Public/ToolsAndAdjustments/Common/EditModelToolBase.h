@@ -49,8 +49,8 @@ public:
 	virtual EAxisConstraint GetAxisConstraint() const { return AxisConstraint; }
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override;
 	virtual EToolCreateObjectMode GetCreateObjectMode() const override { return CreateObjectMode; }
-	virtual void SetAssemblyKey(const FBIMKey& InAssemblyKey) override;
-	virtual FBIMKey GetAssemblyKey() const override { return AssemblyKey; }
+	virtual void SetAssemblyGUID(const FGuid& InAssemblyKey) override;
+	virtual FGuid GetAssemblyGUID() const override { return AssemblyGUID; }
 
 	// TODO: potentially duplicate with handles
 	virtual bool HasDimensionActor() { return false; }
@@ -82,7 +82,7 @@ protected:
 	EAxisConstraint AxisConstraint;
 	EToolCreateObjectMode CreateObjectMode;
 
-	FBIMKey AssemblyKey;
+	FGuid AssemblyGUID;
 
 	int32 PendingSegmentID;
 

@@ -19,36 +19,7 @@ void FModumateDatabase::Init()
 
 void FModumateDatabase::Shutdown() {}
 
-void FModumateDatabase::ReadRoomConfigurations(UDataTable *data)
-{
-	if (!ensureAlways(data))
-	{
-		return;
-	}
-
-	data->ForeachRow<FRoomConfigurationTableRow>(TEXT("FRoomConfigurationTableRow"),
-		[this]
-	(const FName &Key, const FRoomConfigurationTableRow &Row)
-	{
-		if (!Key.IsNone())
-		{
-			Modumate::FRoomConfiguration newRow;
-			newRow.UseGroupCode = Row.UseGroupCode;
-			newRow.UseGroupType = Row.UseGroupType;
-			newRow.DisplayName = Row.DisplayName;
-			newRow.OccupantLoadFactor = Row.OccupantLoadFactor;
-			newRow.AreaType = Row.AreaType;
-			newRow.LoadFactorSpecialCalc = Row.LoadFactorSpecialCalc;
-			newRow.HexValue = Row.HexValue;
-
-			newRow.DatabaseKey = FBIMKey(Key.ToString());
-
-			RoomConfigurations.AddData(newRow);
-		}
-	});
-}
-
-void FModumateDatabase::AddSimpleMesh(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath)
+void FModumateDatabase::AddSimpleMesh(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
 	{
@@ -69,7 +40,7 @@ void FModumateDatabase::AddSimpleMesh(const FBIMKey& Key, const FString& Name, c
 	SimpleMeshes.AddData(mesh);
 }
 
-void FModumateDatabase::AddArchitecturalMesh(const FBIMKey& Key, const FString& Name, const FString& InNamedParams, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath)
+void FModumateDatabase::AddArchitecturalMesh(const FGuid& Key, const FString& Name, const FString& InNamedParams, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
 	{
@@ -92,7 +63,7 @@ void FModumateDatabase::AddArchitecturalMesh(const FBIMKey& Key, const FString& 
 	AMeshes.AddData(mesh);
 }
 
-void FModumateDatabase::AddArchitecturalMaterial(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath)
+void FModumateDatabase::AddArchitecturalMaterial(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
 	{
@@ -202,7 +173,7 @@ bool FModumateDatabase::WriteBIMCache(const FString& CacheFile, const FModumateB
 	return FJsonSerializer::Serialize(jsonOb.ToSharedRef(), JsonStringWriter) && FFileHelper::SaveStringToFile(ProjectJsonString, *cacheFile);
 }
 
-void FModumateDatabase::AddStaticIconTexture(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath)
+void FModumateDatabase::AddStaticIconTexture(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
 	{
@@ -250,11 +221,12 @@ void FModumateDatabase::ReadPresetData()
 	if (!ReadBIMCache(BIMCacheFile, bimCacheRecord))
 	{
 		TArray<FString> errors;
-		TArray<FBIMKey> starters;
+		TArray<FGuid> starters;
 		if (!ensureAlways(PresetManager.CraftingNodePresets.LoadCSVManifest(*ManifestDirectoryPath, BIMManifestFileName, starters, errors) == EBIMResult::Success))
 		{
 			return;
 		}
+		ensureAlways(errors.Num() == 0);
 		bimCacheRecord.Presets = PresetManager.CraftingNodePresets;
 		bimCacheRecord.Starters = starters;
 		WriteBIMCache(BIMCacheFile, bimCacheRecord);
@@ -315,7 +287,7 @@ void FModumateDatabase::ReadPresetData()
 			FString name;
 			Preset.TryGetProperty(BIMPropertyNames::Name, name);
 			FString namedDimensions = Preset.GetScopedProperty<FString>(EBIMValueScope::Mesh,BIMPropertyNames::NamedDimensions);
-			AddArchitecturalMesh(Preset.PresetID, name, namedDimensions, nativeSize, nineSlice, assetPath);
+			AddArchitecturalMesh(Preset.GUID, name, namedDimensions, nativeSize, nineSlice, assetPath);
 		}
 	};
 
@@ -328,37 +300,37 @@ void FModumateDatabase::ReadPresetData()
 			FString matName;
 			if (ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
 			{
-				AddArchitecturalMaterial(Preset.PresetID, matName, assetPath);
+				AddArchitecturalMaterial(Preset.GUID, matName, assetPath);
 			}
 		}
 	};
 
 	FAddAssetFunction addMaterial = [this](const FBIMPresetInstance& Preset)
 	{
-		FBIMKey rawMaterial;
+		FGuid rawMaterial;
 
 		for (auto& cp : Preset.ChildPresets)
 		{
-			const FBIMPresetInstance* childPreset = PresetManager.CraftingNodePresets.Presets.Find(cp.PresetID);
+			const FBIMPresetInstance* childPreset = PresetManager.CraftingNodePresets.PresetFromGUID(cp.PresetGUID);
 			if (childPreset != nullptr)
 			{
 				if (childPreset->NodeScope == EBIMValueScope::RawMaterial)
 				{
-					rawMaterial = cp.PresetID;
+					rawMaterial = cp.PresetGUID;
 				}
 			}
 		}
 
-		if (!rawMaterial.IsNone())
+		if (rawMaterial.IsValid())
 		{
-			const FBIMPresetInstance* preset = PresetManager.CraftingNodePresets.Presets.Find(rawMaterial);
+			const FBIMPresetInstance* preset = PresetManager.CraftingNodePresets.PresetFromGUID(rawMaterial);
 			if (preset != nullptr)
 			{
 				FString assetPath, matName;
 				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::AssetPath, assetPath) 
 					&& Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
 				{
-					AddArchitecturalMaterial(Preset.PresetID, matName, assetPath);
+					AddArchitecturalMaterial(Preset.GUID, matName, assetPath);
 				}
 			}
 		}
@@ -373,7 +345,7 @@ void FModumateDatabase::ReadPresetData()
 			FString name;
 			if (ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Name, name)))
 			{
-				AddSimpleMesh(Preset.PresetID, name, assetPath);
+				AddSimpleMesh(Preset.GUID, name, assetPath);
 			}
 		}
 	};
@@ -391,7 +363,7 @@ void FModumateDatabase::ReadPresetData()
 			FString iconName;
 			if (Preset.TryGetProperty(BIMPropertyNames::Name, iconName))
 			{
-				AddStaticIconTexture(Preset.PresetID, iconName, assetPath);
+				AddStaticIconTexture(Preset.GUID, iconName, assetPath);
 			}
 		}
 	};
@@ -489,7 +461,7 @@ void FModumateDatabase::ReadPresetData()
 	// More specific matches further down the table
 	Algo::Reverse(tagTitles);
 
-	for (auto& preset : PresetManager.CraftingNodePresets.Presets)
+	for (auto& preset : PresetManager.CraftingNodePresets.PresetsByGUID)
 	{
 		for (auto& tag : tagTitles)
 		{
@@ -515,11 +487,11 @@ void FModumateDatabase::ReadPresetData()
 	/*
 	For every preset, load its dependent assets (if any) and set its object type based on tag path
 	*/
-	for (auto &kvp : PresetManager.CraftingNodePresets.Presets)
+	for (auto &kvp : PresetManager.CraftingNodePresets.PresetsByGUID)
 	{
-		if (!kvp.Value.SlotConfigPresetID.IsNone())
+		if (kvp.Value.SlotConfigPresetGUID.IsValid())
 		{
-			const FBIMPresetInstance* slotConfig = PresetManager.CraftingNodePresets.Presets.Find(kvp.Value.SlotConfigPresetID);
+			const FBIMPresetInstance* slotConfig = PresetManager.CraftingNodePresets.PresetFromGUID(kvp.Value.SlotConfigPresetGUID);
 			if (!ensureAlways(slotConfig != nullptr))
 			{
 				continue;
@@ -528,7 +500,7 @@ void FModumateDatabase::ReadPresetData()
 			TArray<FBIMPresetPartSlot> EmptySlots;
 			for (auto& configSlot : slotConfig->ChildPresets)
 			{
-				const FBIMPresetInstance* slotPreset = PresetManager.CraftingNodePresets.Presets.Find(configSlot.PresetID);
+				const FBIMPresetInstance* slotPreset = PresetManager.CraftingNodePresets.PresetFromGUID(configSlot.PresetGUID);
 				if (!ensureAlways(slotPreset != nullptr))
 				{
 					continue;
@@ -536,7 +508,7 @@ void FModumateDatabase::ReadPresetData()
 
 				FBIMPresetPartSlot* partSlot = kvp.Value.PartSlots.FindByPredicate([slotPreset](const FBIMPresetPartSlot& PartSlot)
 				{
-					if (PartSlot.SlotPreset == slotPreset->PresetID)
+					if (PartSlot.SlotPresetGUID == slotPreset->GUID)
 					{
 						return true;
 					}
@@ -546,7 +518,7 @@ void FModumateDatabase::ReadPresetData()
 				if (partSlot == nullptr)
 				{
 					FBIMPresetPartSlot& newSlot = EmptySlots.AddDefaulted_GetRef();
-					newSlot.SlotPreset = slotPreset->PresetID;
+					newSlot.SlotPresetGUID = slotPreset->GUID;
 				}
 			}
 
@@ -586,7 +558,7 @@ void FModumateDatabase::ReadPresetData()
 		switch (*ot)
 		{
 			case EObjectType::OTFurniture:
-				bimCacheRecord.Starters.Add(kvp.Key);
+				bimCacheRecord.Starters.Add(kvp.Value.GUID);
 			break;
 		}
 	}
@@ -596,7 +568,7 @@ void FModumateDatabase::ReadPresetData()
 	*/
 	for (auto &starter : bimCacheRecord.Starters)
 	{
-		const FBIMPresetInstance* preset = PresetManager.CraftingNodePresets.Presets.Find(starter);
+		const FBIMPresetInstance* preset = PresetManager.CraftingNodePresets.PresetFromGUID(starter);
 
 		// TODO: "starter" presets currently only refer to complete assemblies, will eventually include presets to be shopped from the marketplace
 		if (ensureAlways(preset != nullptr) && preset->ObjectType == EObjectType::OTNone)
@@ -605,7 +577,7 @@ void FModumateDatabase::ReadPresetData()
 		}
 
 		FBIMAssemblySpec outSpec;
-		outSpec.FromPreset(*this, PresetManager.CraftingNodePresets, starter);
+		outSpec.FromPreset(*this, PresetManager.CraftingNodePresets, preset->GUID);
 		outSpec.ObjectType = preset->ObjectType;PresetManager.UpdateProjectAssembly(outSpec);
 
 		// TODO: default assemblies added to allow interim loading during assembly refactor, to be eliminated
@@ -627,34 +599,29 @@ TArray<FString> FModumateDatabase::GetDebugInfo()
 Data Access
 */
 
-const FArchitecturalMaterial *FModumateDatabase::GetArchitecturalMaterialByKey(const FBIMKey& Key) const
+const FArchitecturalMaterial *FModumateDatabase::GetArchitecturalMaterialByGUID(const FGuid& Key) const
 {
 	return AMaterials.GetData(Key);
 }
 
-const FArchitecturalMesh* FModumateDatabase::GetArchitecturalMeshByKey(const FBIMKey& Key) const
+const FArchitecturalMesh* FModumateDatabase::GetArchitecturalMeshByGUID(const FGuid& Key) const
 {
 	return AMeshes.GetData(Key);
 }
 
-const FSimpleMeshRef* FModumateDatabase::GetSimpleMeshByKey(const FBIMKey& Key) const
+const FSimpleMeshRef* FModumateDatabase::GetSimpleMeshByGUID(const FGuid& Key) const
 {
 	return SimpleMeshes.GetData(Key);
 }
 
-const Modumate::FRoomConfiguration * FModumateDatabase::GetRoomConfigByKey(const FBIMKey& Key) const
-{
-	return RoomConfigurations.GetData(Key);
-}
-
-const FStaticIconTexture* FModumateDatabase::GetStaticIconTextureByKey(const FBIMKey& Key) const
+const FStaticIconTexture* FModumateDatabase::GetStaticIconTextureByGUID(const FGuid& Key) const
 {
 	return StaticIconTextures.GetData(Key);
 }
 
-const FLayerPattern* FModumateDatabase::GetLayerByKey(const FBIMKey& Key) const
+const FLayerPattern* FModumateDatabase::GetPatternByGUID(const FGuid& GUID) const
 {
-	return Patterns.GetData(Key);
+	return Patterns.GetData(GUID);
 }
 
 void FModumateDatabase::InitPresetManagerForNewDocument(FPresetManager &OutManager) const

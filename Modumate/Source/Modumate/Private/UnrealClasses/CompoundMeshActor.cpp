@@ -652,15 +652,15 @@ void ACompoundMeshActor::SetIsDynamic(bool dynamicStatus)
 	}
 }
 
-float ACompoundMeshActor::GetPortalCenter(const UModumateDocument* Doc, const FBIMKey& AssemblyKey) const
+float ACompoundMeshActor::GetPortalCenter(const UModumateDocument* Doc, const FGuid& AssemblyGUID) const
 {
 	float centerOffset = 0.0f;
 	
 	const UMeshComponent* panelMesh = nullptr;
 	const UStaticMeshComponent* panelStaticMesh = nullptr;
 
-	const FBIMAssemblySpec* assembly = Doc->PresetManager.GetAssemblyByKey(EToolMode::VE_DOOR, AssemblyKey);
-	assembly = assembly ? assembly : Doc->PresetManager.GetAssemblyByKey(EToolMode::VE_WINDOW, AssemblyKey);
+	const FBIMAssemblySpec* assembly = Doc->PresetManager.GetAssemblyByGUID(EToolMode::VE_DOOR, AssemblyGUID);
+	assembly = assembly ? assembly : Doc->PresetManager.GetAssemblyByGUID(EToolMode::VE_WINDOW, AssemblyGUID);
 	if (assembly)
 	{
 		static const FString panelTagComponent(TEXT("Panel"));

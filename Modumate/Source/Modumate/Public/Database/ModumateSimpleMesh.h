@@ -53,10 +53,10 @@ struct MODUMATE_API FSimpleMeshRef
 {
 	GENERATED_USTRUCT_BODY()
 
-	FBIMKey Key;
+	FGuid Key;
 
 	FSoftObjectPath AssetPath;
 	TWeakObjectPtr<USimpleMeshData> Asset = nullptr;
 
-	FBIMKey UniqueKey() const { return Key; }
+	FGuid UniqueKey() const { return Key; }
 };

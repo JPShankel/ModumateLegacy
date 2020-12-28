@@ -17,7 +17,7 @@ struct FRoomConfigurationBlueprint
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
-	FBIMKey Key;
+	FGuid Key;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
 	int32 ObjectID;
@@ -60,8 +60,8 @@ namespace Modumate
 {
 	struct MODUMATE_API FRoomConfiguration : public FRoomConfigurationTableRow
 	{
-		FBIMKey DatabaseKey;
-		FBIMKey UniqueKey() const { return DatabaseKey; }
+		FGuid DatabaseKey;
+		FGuid UniqueKey() const { return DatabaseKey; }
 		FRoomConfigurationBlueprint AsBlueprintObject() const;
 		FRoomConfigurationBlueprint AsBlueprintObject(int32 InObjectID, const FString &InRoomNumber, float InArea, int32 InOccupantsNumber) const;
 	};
@@ -85,10 +85,10 @@ public:
 	UFUNCTION(BlueprintPure, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Rooms")
 	static bool GetRoomConfig(UObject* WorldContextObject, int32 RoomID, FRoomConfigurationBlueprint &OutRoomConfig);
 
-	static bool SetRoomConfigFromKey(AModumateObjectInstance *RoomObj, const FBIMKey& ConfigKey);
+	static bool SetRoomConfigFromKey(AModumateObjectInstance *RoomObj, const FGuid& ConfigKey);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Rooms")
-	static bool SetRoomConfigFromKey(UObject* WorldContextObject, int32 RoomID, const FBIMKey& ConfigKey);
+	static bool SetRoomConfigFromKey(UObject* WorldContextObject, int32 RoomID, const FGuid& ConfigKey);
 
 	static void UpdateDerivedRoomProperties(AModumateObjectInstance *RoomObj);
 
@@ -101,5 +101,5 @@ public:
 	static void CalculateRoomNumbers(const UModumateDocument *Document,
 		TMap<int32, FString> &OutOldRoomNumbers, TMap<int32, FString> &OutNewRoomNumbers);
 
-	static const FBIMKey DefaultRoomConfigKey;
+	static const FGuid DefaultRoomConfigKey;
 };

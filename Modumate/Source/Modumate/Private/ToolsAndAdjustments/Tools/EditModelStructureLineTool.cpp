@@ -106,7 +106,7 @@ bool UStructureLineTool::Deactivate()
 
 bool UStructureLineTool::BeginUse()
 {
-	if (AssemblyKey.IsNone())
+	if (!AssemblyGUID.IsValid())
 	{
 		return false;
 	}
@@ -166,7 +166,7 @@ bool UStructureLineTool::FrameUpdate()
 {
 	const FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
 
-	if (!cursor.Visible || AssemblyKey.IsNone())
+	if (!cursor.Visible || !AssemblyGUID.IsValid())
 	{
 		return false;
 	}
@@ -264,7 +264,7 @@ void UStructureLineTool::OnAssemblyChanged()
 
 	EToolMode toolMode = GetToolMode();
 	const FBIMAssemblySpec* assembly = GameState ?
-		GameState->Document->PresetManager.GetAssemblyByKey(toolMode, AssemblyKey) : nullptr;
+		GameState->Document->PresetManager.GetAssemblyByGUID(toolMode, AssemblyGUID) : nullptr;
 
 	if (assembly != nullptr)
 	{
@@ -273,7 +273,7 @@ void UStructureLineTool::OnAssemblyChanged()
 	}
 	else
 	{
-		AssemblyKey = FBIMKey();
+		AssemblyGUID = FGuid();
 		ObjAssembly = FBIMAssemblySpec();
 	}
 }
@@ -330,7 +330,7 @@ bool UStructureLineTool::SetStructureLineHidden(int32 StructureLineID, bool bHid
 
 bool UStructureLineTool::UpdatePreviewStructureLine()
 {
-	if ((PendingObjMesh == nullptr) || AssemblyKey.IsNone())
+	if ((PendingObjMesh == nullptr) || !AssemblyGUID.IsValid())
 	{
 		return false;
 	}
@@ -393,7 +393,7 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 		// TODO: fill in custom instance data for StructureLine, once we define and rely on it
 		FMOIStateData stateData(nextStructureLineID++,
 			UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()), targetEdgeID);
-		stateData.AssemblyKey = AssemblyKey;
+		stateData.AssemblyGUID = AssemblyGUID;
 
 		if (!structureLineDelta.IsValid())
 		{

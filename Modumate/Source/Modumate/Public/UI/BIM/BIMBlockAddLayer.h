@@ -38,7 +38,7 @@ public:
 	class UModumateButton *Button_AddLayer;
 
 	FBIMEditorNodeIDType ParentID;
-	FBIMKey PresetID;
+	FGuid PresetID;
 	int32 ParentSetIndex = -1;
 	int32 ParentSetPosition = -1;
 

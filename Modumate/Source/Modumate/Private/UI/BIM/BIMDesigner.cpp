@@ -262,7 +262,7 @@ float UBIMDesigner::GetCurrentZoomScale() const
 	return ScaleBoxForNodes->UserSpecifiedScale;
 }
 
-bool UBIMDesigner::EditPresetInBIMDesigner(const FBIMKey& PresetID)
+bool UBIMDesigner::EditPresetInBIMDesigner(const FGuid& PresetID)
 {
 	Controller->DynamicIconGenerator->ReleaseSavedRenderTarget();
 
@@ -278,7 +278,7 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FBIMKey& PresetID)
 	return true;
 }
 
-bool UBIMDesigner::SetPresetForNodeInBIMDesigner(const FBIMEditorNodeIDType& InstanceID, const FBIMKey& PresetID)
+bool UBIMDesigner::SetPresetForNodeInBIMDesigner(const FBIMEditorNodeIDType& InstanceID, const FGuid& PresetID)
 {
 	EBIMResult result = InstancePool.SetNewPresetForNode(Controller->GetDocument()->PresetManager.CraftingNodePresets, InstanceID, PresetID);
 	if (result != EBIMResult::Success)
@@ -414,7 +414,7 @@ void UBIMDesigner::AutoArrangeNodes()
 					NodesWithAddLayerButton.Add(nodeWithAddButton, newAddButton);
 
 					newAddButton->ParentID = curInstance->ParentInstance.Pin()->GetInstanceID();
-					newAddButton->PresetID = curInstance->WorkingPresetCopy.PresetID;
+					newAddButton->PresetID = curInstance->WorkingPresetCopy.GUID;
 					newAddButton->ParentSetIndex = curInstance->MyParentPinSetIndex;
 					newAddButton->ParentSetPosition = curInstance->MyParentPinSetPosition + 1;
 
@@ -727,14 +727,14 @@ void UBIMDesigner::DrawConnectSplineForMiniNode(const FPaintContext& context, cl
 	UModumateSlateHelper::DrawCubicBezierSplineBP(context, splinePts, StartNode->bNodeHighlight ? NodeSplineHighlightedColor : NodeSplineFadeColor, NodeSplineThickness);
 }
 
-FBIMKey UBIMDesigner::GetPresetID(const FBIMEditorNodeIDType& InstanceID)
+FGuid UBIMDesigner::GetPresetID(const FBIMEditorNodeIDType& InstanceID)
 {
 	FBIMPresetEditorNodeSharedPtr instPtr = InstancePool.InstanceFromID(InstanceID);
 	if (ensureAlways(instPtr.IsValid()))
 	{
-		return instPtr->WorkingPresetCopy.PresetID;
+		return instPtr->WorkingPresetCopy.GUID;
 	}
-	return FBIMKey();
+	return FGuid();
 }
 
 bool UBIMDesigner::DeleteNode(const FBIMEditorNodeIDType& InstanceID)
@@ -750,7 +750,7 @@ bool UBIMDesigner::DeleteNode(const FBIMEditorNodeIDType& InstanceID)
 	return true;
 }
 
-bool UBIMDesigner::AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
+bool UBIMDesigner::AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
 {
 	FBIMPresetEditorNodeSharedPtr newNode = InstancePool.CreateNodeInstanceFromPreset(
 		Controller->GetDocument()->PresetManager.CraftingNodePresets,
@@ -885,47 +885,48 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 
 	if (SaveAs)
 	{
-		outPreset.PresetID = Controller->GetDocument()->PresetManager.GetAvailableKey(outPreset.PresetID);
+		outPreset.PresetID = Controller->GetDocument()->PresetManager.GetAvailableKey(outPreset.GUID);
 		Controller->GetDocument()->PresetManager.CraftingNodePresets.GetAvailableGUID(outPreset.GUID);
 		outPreset.ReadOnly = false;
 
-		Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Add(outPreset.PresetID, outPreset);
+		Controller->GetDocument()->PresetManager.CraftingNodePresets.AddPreset(outPreset);
 
 		if (!node->ParentInstance.IsValid())
 		{
-			CraftingAssembly.RootPreset = outPreset.PresetID;
+			CraftingAssembly.RootPreset = outPreset.GUID;
 		}
 		else
 		{
 			FBIMPresetEditorNodeSharedPtr parent = node->ParentInstance.Pin();
 
-			if (!node->MyParentPartSlot.IsNone())
+			if (node->MyParentPartSlot.IsValid())
 			{
 				TArray<FBIMPresetPartSlot> partSlots;
 				parent->GetPartSlots(partSlots);
 
 				for (int32 i = 0; i < partSlots.Num(); ++i)
 				{
-					if (partSlots[i].SlotPreset == node->MyParentPartSlot)
+					if (partSlots[i].SlotPresetGUID == node->MyParentPartSlot)
 					{
-						InstancePool.SetPartPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets,parent->GetInstanceID(),i, outPreset.PresetID);
+						InstancePool.SetPartPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets,parent->GetInstanceID(),i, outPreset.GUID);
 					}
 				}
 			}
 			else
 			{
-				InstancePool.SetNewPresetForNode(Controller->GetDocument()->PresetManager.CraftingNodePresets, node->GetInstanceID(), outPreset.PresetID);
+				InstancePool.SetNewPresetForNode(Controller->GetDocument()->PresetManager.CraftingNodePresets, node->GetInstanceID(), outPreset.GUID);
 			}
 		}
 		node->WorkingPresetCopy = outPreset;
 	}
-	else if (outPreset.ReadOnly)
+	else 
+	if (outPreset.ReadOnly)
 	{
 		return false;
 	}
 	else
 	{
-		Controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Add(outPreset.PresetID, outPreset);
+		Controller->GetDocument()->PresetManager.CraftingNodePresets.AddPreset(outPreset);
 	}
 
 	node->OriginalPresetCopy = node->WorkingPresetCopy;
@@ -935,7 +936,7 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 	if (!node->ParentInstance.IsValid())
 	{
 		UTexture2D* outTexture;
-		UThumbnailCacheManager::SaveThumbnailFromPresetKey(RootNode->IconTexture, node->WorkingPresetCopy.PresetID, outTexture, this, true);
+		UThumbnailCacheManager::SaveThumbnailFromPresetKey(RootNode->IconTexture, node->WorkingPresetCopy.GUID, outTexture, this, true);
 
 		Controller->GetDocument()->PresetManager.UpdateProjectAssembly(CraftingAssembly);
 		Controller->EditModelUserWidget->RefreshAssemblyList();
@@ -955,17 +956,17 @@ void UBIMDesigner::ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 Sl
 		if (NewEnable)
 		{
 			// TODO: get default preset for slot
-			FBIMKey newPartPreset = nodeParent->OriginalPresetCopy.PartSlots[SlotID].PartPreset;
-			if (newPartPreset.IsNone())
+			FGuid newPartPreset = nodeParent->OriginalPresetCopy.PartSlots[SlotID].PartPresetGUID;
+			if (!newPartPreset.IsValid())
 			{
-				TArray<FBIMKey> swapPresets;
-				Controller->GetDocument()->PresetManager.CraftingNodePresets.GetPresetsForSlot(nodeParent->OriginalPresetCopy.PartSlots[SlotID].SlotPreset, swapPresets);
+				TArray<FGuid> swapPresets;
+				Controller->GetDocument()->PresetManager.CraftingNodePresets.GetPresetsForSlot(nodeParent->OriginalPresetCopy.PartSlots[SlotID].SlotPresetGUID, swapPresets);
 				if (swapPresets.Num() > 0)
 				{
 					newPartPreset = swapPresets[0];
 				}
 			}
-			if (!newPartPreset.IsNone())
+			if (newPartPreset.IsValid())
 			{
 				result = InstancePool.SetPartPreset(Controller->GetDocument()->PresetManager.CraftingNodePresets, ParentID, SlotID, newPartPreset);
 			}

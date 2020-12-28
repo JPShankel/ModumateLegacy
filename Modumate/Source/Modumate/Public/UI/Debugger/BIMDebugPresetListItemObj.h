@@ -14,7 +14,7 @@ class MODUMATE_API UBIMDebugPresetListItemObj : public UObject
 
 public:
 
-	FBIMKey PresetKey;
+	FGuid PresetKey;
 	FText DisplayName;
 	class UBIMDebugger* ParentDebugger;
 	bool bItemIsPreset = false;

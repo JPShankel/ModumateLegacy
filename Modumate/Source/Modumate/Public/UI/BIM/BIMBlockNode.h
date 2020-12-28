@@ -159,7 +159,7 @@ public:
 	UPROPERTY()
 	class UTexture* IconTexture;
 
-	FBIMKey PresetID;
+	FGuid PresetID;
 	FBIMEditorNodeIDType ID;
 	FBIMEditorNodeIDType ParentID;
 

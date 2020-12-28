@@ -66,7 +66,7 @@ enum class EMaterialChannelFields : uint8
 	Error=255
 };
 
-struct FBIMCSVReader
+struct MODUMATE_API FBIMCSVReader
 {
 	struct FPresetMatrix
 	{
@@ -86,11 +86,16 @@ struct FBIMCSVReader
 
 	TMap<FBIMNameType, EBIMValueType> PropertyTypeMap;
 
+	static TMap<FBIMKey, FGuid> KeyGuidMap;
+	static TMap<FGuid, FBIMKey> GuidKeyMap;
+
 	TArray<FPresetMatrix> PresetMatrices;
+
+	FString CurrentFile;
 
 	EBIMResult ProcessNodeTypeRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
 	EBIMResult ProcessPropertyDeclarationRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
 	EBIMResult ProcessTagPathRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
-	EBIMResult ProcessPresetRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TMap<FBIMKey, FBIMPresetInstance>& OutPresets, TArray<FBIMKey>& OutStarters, TArray<FString>& OutMessages);
+	EBIMResult ProcessPresetRow(const TArray<const TCHAR*>& Row, int32 RowNumber, FBIMPresetCollection& OutPresets, TArray<FGuid>& OutStarters, TArray<FString>& OutMessages);
 	EBIMResult ProcessInputPinRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
 };

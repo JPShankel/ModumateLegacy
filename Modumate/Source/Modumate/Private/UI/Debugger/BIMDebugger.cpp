@@ -57,7 +57,7 @@ void UBIMDebugger::OnButtonUpdatePresetListReleased()
 void UBIMDebugger::ClearPresetHistory()
 {
 	PresetHistoryList->ClearListItems();
-	LastSelectedKey = FBIMKey();
+	LastSelectedKey = FGuid();
 }
 
 void UBIMDebugger::OnButtonCloseReleased()
@@ -81,12 +81,12 @@ EBIMResult UBIMDebugger::ConstructPresetList()
 	PresetList->ClearListItems();
 	PresetList->SetScrollOffset(0.f);
 
-	for (auto& kvp : controller->GetDocument()->PresetManager.CraftingNodePresets.Presets)
+	for (auto& kvp : controller->GetDocument()->PresetManager.CraftingNodePresets.PresetsByGUID)
 	{
 		if (IsPresetAvailableForSearch(kvp.Value))
 		{
 			UBIMDebugPresetListItemObj* newPresetObj = NewObject<UBIMDebugPresetListItemObj>(this);
-			newPresetObj->PresetKey = kvp.Key;
+			newPresetObj->PresetKey = kvp.Value.GUID;
 			newPresetObj->DisplayName = kvp.Value.DisplayName;
 			newPresetObj->ParentDebugger = this;
 			newPresetObj->bItemIsPreset = true;
@@ -98,7 +98,7 @@ EBIMResult UBIMDebugger::ConstructPresetList()
 	return EBIMResult::Success;
 }
 
-EBIMResult UBIMDebugger::DebugBIMPreset(const FBIMKey& PresetKey, bool AddToHistory)
+EBIMResult UBIMDebugger::DebugBIMPreset(const FGuid& PresetKey, bool AddToHistory)
 {
 	DependentPresetsList->ClearListItems();
 	BIMDebugTestList->ClearChildren();
@@ -106,7 +106,7 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FBIMKey& PresetKey, bool AddToHist
 	class AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	if (controller)
 	{
-		const FBIMPresetInstance* preset = controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(PresetKey);
+		const FBIMPresetInstance* preset = controller->GetDocument()->PresetManager.CraftingNodePresets.PresetFromGUID(PresetKey);
 		if (preset)
 		{
 			TextDisplayName->SetText(preset->DisplayName);
@@ -122,7 +122,7 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FBIMKey& PresetKey, bool AddToHist
 
 				// Get this property scope, name, and value
 				FBIMPropertyKey propertyValue(kvp.Value);
-				FBIMKey propertyPresetKey;
+				FGuid propertyPresetKey;
 				Modumate::Units::FUnitValue unitValue;
 				bool bPropertyIsPreset = preset->Properties.TryGetProperty(propertyValue.Scope, propertyValue.Name, propertyPresetKey);
 				if (!bPropertyIsPreset)
@@ -158,7 +158,7 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FBIMKey& PresetKey, bool AddToHist
 			preset->MyTagPath.ToString(tagPathString);
 
 			FString otherDebugString =
-				FString::Printf(TEXT("SlotConfigPresetID: ")) + preset->SlotConfigPresetID.ToString() + LINE_TERMINATOR
+				FString::Printf(TEXT("SlotConfigPresetID: ")) + preset->SlotConfigPresetGUID.ToString() + LINE_TERMINATOR
 				+ FString::Printf(TEXT("CategoryTitle: ")) + preset->CategoryTitle.ToString() + LINE_TERMINATOR
 				+ FString::Printf(TEXT("MyTagPath: ")) + tagPathString + LINE_TERMINATOR;
 
@@ -232,7 +232,7 @@ void UBIMDebugger::ConstructBIMDebugTestList()
 bool UBIMDebugger::PerformBIMDebugTest(EBIMDebugTestType BIMDebugTest)
 {
 	class AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
-	const FBIMPresetInstance* preset = controller ? controller->GetDocument()->PresetManager.CraftingNodePresets.Presets.Find(LastSelectedKey) : nullptr;
+	const FBIMPresetInstance* preset = controller ? controller->GetDocument()->PresetManager.CraftingNodePresets.PresetFromGUID(LastSelectedKey) : nullptr;
 	if (!preset)
 	{
 		return false;

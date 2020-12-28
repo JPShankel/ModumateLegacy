@@ -81,7 +81,7 @@ public:
 	static void DocUnHideAllMoiActors(const AActor* Owner);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	static FBIMKey GetShopItemFromActor(AActor* TargetActor, bool& bSuccess);
+	static FGuid GetShopItemFromActor(AActor* TargetActor, bool& bSuccess);
 
 	// Helper non-BP methods for below BP method
 	static bool SetMeshMaterial(UMeshComponent *MeshComponent, const FArchitecturalMaterial &Material, int32 MatIndex, UMaterialInstanceDynamic** CachedMIDPtr = nullptr);

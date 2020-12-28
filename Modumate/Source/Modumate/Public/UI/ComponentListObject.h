@@ -20,7 +20,7 @@ public:
 
 	EComponentListItemType ItemType = EComponentListItemType::None;
 	EToolMode Mode = EToolMode::VE_NONE;
-	FBIMKey UniqueKey;
+	FGuid UniqueKey;
 	int32 SelectionItemCount = 0;
 
 	// The BIM node that is pending swap

@@ -32,18 +32,19 @@ private:
 public:
 
 	EBIMResult ResetInstances();
-	EBIMResult InitFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID, FBIMPresetEditorNodeSharedPtr &OutRootNode);
+	EBIMResult InitFromPreset(const FBIMPresetCollection& PresetCollection, const FGuid& PresetGUID, FBIMPresetEditorNodeSharedPtr &OutRootNode);
 
 	EBIMResult DestroyNodeInstance(const FBIMPresetEditorNodeSharedPtr& Instance, TArray<FBIMEditorNodeIDType>& OutDestroyed);
 	EBIMResult DestroyNodeInstance(const FBIMEditorNodeIDType& InstanceID, TArray<FBIMEditorNodeIDType>& OutDestroyed);
 
-	FBIMPresetEditorNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& ParentID, const FBIMKey& PresetID, int32 ParentSetIndex, int32 ParentSetPosition, const FBIMKey& SlotAssignment = FBIMKey());
+	FBIMPresetEditorNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex, int32 ParentSetPosition, const FGuid& SlotAssignment);
+	FBIMPresetEditorNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
 
 	const TArray<FBIMPresetEditorNodeSharedPtr> &GetInstancePool() const { return InstancePool; }
 
-	EBIMResult SetNewPresetForNode(const FBIMPresetCollection &PresetCollection, const FBIMEditorNodeIDType& InstanceID, const FBIMKey &PresetID);
+	EBIMResult SetNewPresetForNode(const FBIMPresetCollection &PresetCollection, const FBIMEditorNodeIDType& InstanceID, const FGuid &PresetID);
 
-	EBIMResult SetPartPreset(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& ParentID, int32 SlotID, const FBIMKey& PartPreset);
+	EBIMResult SetPartPreset(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& ParentID, int32 SlotID, const FGuid& PartPreset);
 	EBIMResult ClearPartPreset(const FBIMEditorNodeIDType& ParentID, int32 SlotID);
 
 	const FBIMPresetEditorNodeSharedPtr InstanceFromID(const FBIMEditorNodeIDType& InstanceID) const;

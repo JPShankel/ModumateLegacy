@@ -9,7 +9,7 @@ bool FBIMPresetPinAttachment::operator==(const FBIMPresetPinAttachment &OtherAtt
 {
 	return ParentPinSetIndex == OtherAttachment.ParentPinSetIndex &&
 		ParentPinSetPosition == OtherAttachment.ParentPinSetPosition &&
-		PresetID == OtherAttachment.PresetID;
+		PresetGUID == OtherAttachment.PresetGUID;
 }
 
 bool FBIMPresetInstance::Matches(const FBIMPresetInstance &OtherPreset) const
@@ -19,7 +19,7 @@ bool FBIMPresetInstance::Matches(const FBIMPresetInstance &OtherPreset) const
 		return false;
 	}
 
-	if (PresetID != OtherPreset.PresetID)
+	if (GUID != OtherPreset.GUID)
 	{
 		return false;
 	}
@@ -39,7 +39,7 @@ bool FBIMPresetInstance::Matches(const FBIMPresetInstance &OtherPreset) const
 		return false;
 	}
 
-	if (SlotConfigPresetID != OtherPreset.SlotConfigPresetID)
+	if (SlotConfigPresetGUID != OtherPreset.SlotConfigPresetGUID)
 	{
 		return false;
 	}
@@ -120,7 +120,7 @@ bool FBIMPresetInstance::HasPin(int32 PinSetIndex, int32 PinSetPosition) const
 	return false;
 }
 
-EBIMResult FBIMPresetInstance::AddChildPreset(const FBIMKey& ChildPresetID, int32 PinSetIndex, int32 PinSetPosition)
+EBIMResult FBIMPresetInstance::AddChildPreset(const FGuid& ChildPresetID, int32 PinSetIndex, int32 PinSetPosition)
 {
 	EBIMPinTarget target = EBIMPinTarget::Default;
 	for (auto& child : ChildPresets)
@@ -135,7 +135,7 @@ EBIMResult FBIMPresetInstance::AddChildPreset(const FBIMKey& ChildPresetID, int3
 	FBIMPresetPinAttachment& newAttachment = ChildPresets.AddDefaulted_GetRef();
 	newAttachment.ParentPinSetIndex = PinSetIndex;
 	newAttachment.ParentPinSetPosition = PinSetPosition;
-	newAttachment.PresetID = ChildPresetID;
+	newAttachment.PresetGUID = ChildPresetID;
 	newAttachment.Target = target;
 
 	SortChildPresets();
@@ -167,13 +167,13 @@ EBIMResult FBIMPresetInstance::RemoveChildPreset(int32 PinSetIndex, int32 PinSet
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMPresetInstance::SetPartPreset(const FBIMKey& SlotPreset, const FBIMKey& PartPreset)
+EBIMResult FBIMPresetInstance::SetPartPreset(const FGuid& SlotPreset, const FGuid& PartPreset)
 {
 	for (auto& partSlot : PartSlots)
 	{
-		if (partSlot.SlotPreset == SlotPreset)
+		if (partSlot.SlotPresetGUID == SlotPreset)
 		{
-			partSlot.PartPreset = PartPreset;
+			partSlot.PartPresetGUID = PartPreset;
 			return EBIMResult::Success;
 		}
 	}

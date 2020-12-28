@@ -322,13 +322,13 @@ void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
 
 		// TODO: runtime assemblies to be replaced with presets 
 		// meantime this will ensure tools start with a default assembly
-		if (CurrentTool->GetAssemblyKey().IsNone())
+		if (!CurrentTool->GetAssemblyGUID().IsValid())
 		{
 			FBIMAssemblySpec assembly;
 			AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 			if (gameState->Document->PresetManager.TryGetDefaultAssemblyForToolMode(NewToolMode, assembly))
 			{
-				CurrentTool->SetAssemblyKey(assembly.UniqueKey());
+				CurrentTool->SetAssemblyGUID(assembly.UniqueKey());
 			}
 		}
 		CurrentTool->Activate();

@@ -28,8 +28,8 @@ bool UFFETool::Activate()
 	CursorCompoundMesh->SetActorEnableCollision(false);
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	UModumateDocument* doc = gameState->Document;
-	FBIMKey key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
-	const FBIMAssemblySpec *obAsmPtr = doc->PresetManager.GetAssemblyByKey(EToolMode::VE_PLACEOBJECT,key);
+	FGuid key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
+	const FBIMAssemblySpec *obAsmPtr = doc->PresetManager.GetAssemblyByGUID(EToolMode::VE_PLACEOBJECT,key);
 
 	if (!ensureAlways(obAsmPtr))
 	{
@@ -77,8 +77,8 @@ bool UFFETool::FrameUpdate()
 {
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	UModumateDocument* doc = gameState->Document;
-	FBIMKey key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
-	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByKey(EToolMode::VE_PLACEOBJECT, key);
+	FGuid key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
+	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByGUID(EToolMode::VE_PLACEOBJECT, key);
 
 	if (assembly != nullptr)
 	{
@@ -118,7 +118,7 @@ bool UFFETool::BeginUse()
 
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	UModumateDocument* doc = gameState->Document;
-	FBIMKey key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
+	FGuid key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
 
 	AModumateObjectInstance *hitMOI = doc->ObjectFromActor(snappedCursor.Actor);
 	int32 parentID = hitMOI != nullptr ? hitMOI->ID : Controller->EMPlayerState->GetViewGroupObjectID();
@@ -131,7 +131,7 @@ bool UFFETool::BeginUse()
 	ffeData.ParentFaceIndex = parentFaceIdx;
 
 	FMOIStateData stateData(doc->GetNextAvailableID(), EObjectType::OTFurniture, parentID);
-	stateData.AssemblyKey = key;
+	stateData.AssemblyGUID = key;
 	stateData.CustomData.SaveStructData(ffeData);
 
 	auto delta = MakeShared<FMOIDelta>();

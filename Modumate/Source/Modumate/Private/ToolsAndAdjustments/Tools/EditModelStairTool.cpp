@@ -413,7 +413,7 @@ void UStairTool::OnAssemblyChanged()
 
 	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(EObjectType::OTStaircase);
 	const FBIMAssemblySpec* assembly = GameState.IsValid() ?
-		GameState->Document->PresetManager.GetAssemblyByKey(toolMode, AssemblyKey) : nullptr;
+		GameState->Document->PresetManager.GetAssemblyByGUID(toolMode, AssemblyGUID) : nullptr;
 
 	if (assembly != nullptr)
 	{
@@ -515,7 +515,7 @@ bool UStairTool::MakeStairs()
 		{
 			// TODO: fill in custom instance data for stairs, once we define and rely on it
 			FMOIStateData newStairState(nextID++, EObjectType::OTStaircase, hostPlaneID);
-			newStairState.AssemblyKey = AssemblyKey;
+			newStairState.AssemblyGUID = AssemblyGUID;
 			newStairsDelta->AddCreateDestroyState(newStairState, EMOIDeltaType::Create);
 		}
 

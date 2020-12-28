@@ -292,7 +292,7 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 		FMOIPortalData portalInstanceData;
 
 		FMOIStateData objectStateData(GameState->Document->GetNextAvailableID(), UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()), newParentID);
-		objectStateData.AssemblyKey = AssemblyKey;
+		objectStateData.AssemblyGUID = AssemblyGUID;
 		objectStateData.CustomData.SaveStructData(portalInstanceData);
 
 		auto addPortal = MakeShared<FMOIDelta>();
@@ -307,7 +307,7 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 
 bool UPortalToolBase::CalculateNativeSize()
 {
-	const FBIMAssemblySpec* assembly = GameState->Document->PresetManager.GetAssemblyByKey(GetToolMode(), AssemblyKey);
+	const FBIMAssemblySpec* assembly = GameState->Document->PresetManager.GetAssemblyByGUID(GetToolMode(), AssemblyGUID);
 	if (assembly == nullptr)
 	{
 		return false;

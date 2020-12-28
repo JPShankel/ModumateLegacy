@@ -149,11 +149,11 @@ void UEditModelToolBase::SetCreateObjectMode(EToolCreateObjectMode InCreateObjec
 	}
 }
 
-void UEditModelToolBase::SetAssemblyKey(const FBIMKey& InAssemblyKey)
+void UEditModelToolBase::SetAssemblyGUID(const FGuid& InAssemblyGUID)
 {
-	if (AssemblyKey != InAssemblyKey)
+	if (AssemblyGUID != InAssemblyGUID)
 	{
-		AssemblyKey = InAssemblyKey;
+		AssemblyGUID = InAssemblyGUID;
 		OnAssemblyChanged();
 
 		if (Controller)

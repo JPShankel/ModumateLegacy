@@ -17,7 +17,7 @@ struct FArchitecturalMesh
 {
 	GENERATED_BODY()
 
-	FBIMKey Key;
+	FGuid Key;
 
 	FSoftObjectPath AssetPath;
 	TWeakObjectPtr<UStaticMesh> EngineMesh = nullptr;
@@ -25,7 +25,7 @@ struct FArchitecturalMesh
 	FVector NativeSize = FVector::ZeroVector;
 	FBox NineSliceBox = FBox(ForceInit);
 
-	FBIMKey UniqueKey() const { return Key; }
+	FGuid UniqueKey() const { return Key; }
 
 	TMap<FString, Modumate::Units::FUnitValue> NamedDimensions;
 

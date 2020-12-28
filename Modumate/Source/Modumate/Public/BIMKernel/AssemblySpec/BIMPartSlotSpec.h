@@ -31,7 +31,8 @@ private:
 
 #if WITH_EDITOR
 	// For debugging
-	FBIMKey DEBUGPresetID, DEBUGSlotName;
+	FBIMKey DEBUGPresetKey;
+	FGuid DEBUGSlotGUID;
 	EBIMValueScope DEBUGNodeScope;
 	FGuid DEBUG_GUID;
 #endif

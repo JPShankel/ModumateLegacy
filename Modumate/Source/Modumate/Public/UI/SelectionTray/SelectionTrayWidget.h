@@ -25,7 +25,7 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
-	FBIMKey CurrentPresetToSwap;
+	FGuid CurrentPresetToSwap;
 
 public:
 
@@ -39,9 +39,9 @@ public:
 	class UWidgetSwitcher *WidgetSwitcherTray;
 
 	void OpenToolTrayForSelection();
-	void OpenToolTrayForSwap(EToolMode ToolMode, const FBIMKey& PresetToSwap);
+	void OpenToolTrayForSwap(EToolMode ToolMode, const FGuid& PresetToSwap);
 	void CloseToolTray();
-	const FBIMKey &GetCurrentPresetToSwap() const { return CurrentPresetToSwap; }
+	const FGuid& GetCurrentPresetToSwap() const { return CurrentPresetToSwap; }
 
 protected:
 

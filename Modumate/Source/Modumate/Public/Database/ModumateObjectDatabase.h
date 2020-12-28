@@ -15,7 +15,8 @@
 
 #include "ModumateObjectDatabase.generated.h"
 
-static constexpr int32 BIMCacheCurrentVersion = 1;
+static constexpr int32 BIMCacheCurrentVersion = 2;
+// Version 2: deprecate FBIMKeys for FGuids
 
 USTRUCT()
 struct FModumateBIMCacheRecord
@@ -29,7 +30,7 @@ struct FModumateBIMCacheRecord
 	FBIMPresetCollection Presets;
 
 	UPROPERTY()
-	TArray<FBIMKey> Starters;
+	TArray<FGuid> Starters;
 };
 
 class MODUMATE_API FModumateDatabase
@@ -42,10 +43,10 @@ private:
 	TModumateDataCollection<FStaticIconTexture> StaticIconTextures;
 	TModumateDataCollection<FLayerPattern> Patterns;
 
-	void AddArchitecturalMaterial(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath);
-	void AddArchitecturalMesh(const FBIMKey& Key, const FString& Name, const FString& InNamedParameters, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath);
-	void AddSimpleMesh(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath);
-	void AddStaticIconTexture(const FBIMKey& Key, const FString& Name, const FSoftObjectPath& AssetPath);
+	void AddArchitecturalMaterial(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
+	void AddArchitecturalMesh(const FGuid& Key, const FString& Name, const FString& InNamedParameters, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath);
+	void AddSimpleMesh(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
+	void AddStaticIconTexture(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 
 	FPresetManager PresetManager;
 
@@ -60,18 +61,16 @@ public:
 	void Shutdown();
 
 	// Read database
-	void ReadRoomConfigurations(UDataTable* data);
 	void ReadPresetData();
 
 	void InitPresetManagerForNewDocument(FPresetManager &OutManager) const;
 
 	// Data Access
-	const FArchitecturalMesh* GetArchitecturalMeshByKey(const FBIMKey& Key) const;
-	const FArchitecturalMaterial* GetArchitecturalMaterialByKey(const FBIMKey& Key) const;
-	const FSimpleMeshRef* GetSimpleMeshByKey(const FBIMKey& Key) const;
-	const Modumate::FRoomConfiguration* GetRoomConfigByKey(const FBIMKey& Key) const;
-	const FStaticIconTexture* GetStaticIconTextureByKey(const FBIMKey& Key) const;
-	const FLayerPattern* GetLayerByKey(const FBIMKey& Key) const;
+	const FArchitecturalMesh* GetArchitecturalMeshByGUID(const FGuid& Key) const;
+	const FArchitecturalMaterial* GetArchitecturalMaterialByGUID(const FGuid& Key) const;
+	const FSimpleMeshRef* GetSimpleMeshByGUID(const FGuid& Key) const;
+	const FStaticIconTexture* GetStaticIconTextureByGUID(const FGuid& Key) const;
+	const FLayerPattern* GetPatternByGUID(const FGuid& Key) const;
 
 	TArray<FString> GetDebugInfo();
 

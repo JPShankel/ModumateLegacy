@@ -25,7 +25,7 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
-	FBIMKey PresetKey;
+	FGuid PresetKey;
 	bool bIsFromHistoryMenu = false;
 	class UBIMDebugger* ParentDebugger;
 

@@ -477,7 +477,7 @@ void UModumateFunctionLibrary::DocUnHideAllMoiActors(const AActor* Owner)
 	}
 }
 
-FBIMKey UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& bSuccess)
+FGuid UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& bSuccess)
 {
 	if (TargetActor != nullptr)
 	{
@@ -492,7 +492,7 @@ FBIMKey UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool
 		}
 	}
 	bSuccess = false;
-	return FBIMKey();
+	return FGuid();
 }
 
 using namespace Modumate;

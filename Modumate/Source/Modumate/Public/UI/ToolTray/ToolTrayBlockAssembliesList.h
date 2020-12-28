@@ -41,12 +41,12 @@ protected:
 	UPROPERTY()
 	class AEditModelGameState_CPP *GameState;
 
-	TArray<FBIMKey> AvailableBIMDesignerPresets;
+	TArray<FGuid> AvailableBIMDesignerPresets;
 
 	ESwapType SwapType = ESwapType::None;
 	FBIMEditorNodeIDType CurrentNodeForSwap;
 	EToolMode SwapSelectionToolMode = EToolMode::VE_NONE;
-	FBIMKey SwapSelectionPresetID;
+	FGuid SwapSelectionPresetID;
 	EBIMValueScope SwapScope = EBIMValueScope::None;
 	FBIMNameType SwapNameType = NAME_None;
 
@@ -78,11 +78,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateAssembliesListForCurrentToolMode();
 
-	void CreatePresetListInNodeForSwap(const FBIMKey& ParentPresetID, const FBIMKey& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType);
+	void CreatePresetListInNodeForSwap(const FGuid& ParentPresetID, const FGuid& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType);
 	void CreatePresetListForSwapFronNCP(const FBIMTagPath& InNCP);
 	void AddBIMDesignerPresetsToList();
-	void CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FBIMKey& PresetID);
-	bool IsPresetAvailableForSearch(const FBIMKey& PresetKey);
+	void CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FGuid& PresetID);
+	bool IsPresetAvailableForSearch(const FGuid& PresetKey);
 	void ResetSearchBox();
 
 	UFUNCTION()

@@ -14,11 +14,11 @@
 #include "Algo/Accumulate.h"
 #include "Containers/Queue.h"
 
-EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FBIMKey& PresetID)
+EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FGuid& PresetGUID)
 {
 	Reset();
 	EBIMResult ret = EBIMResult::Success;
-	RootPreset = PresetID;
+	RootPreset = PresetGUID;
 
 	/*
 	We build an assembly spec by iterating through the tree of presets and assigning BIM values to specific targets like structural layers, risers, treads, etc		
@@ -36,7 +36,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	// Structure used to walk the tree of presets
 	struct FPresetIterator
 	{
-		FBIMKey PresetID;
+		FGuid PresetGUID;
 		const FBIMPresetInstance* Preset = nullptr;
 
 		// As we iterate, we keep track of which layer and which property sheet to set modifier values on
@@ -48,7 +48,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	// We use a stack of iterators to perform a depth-first visitation of child presets
 	TArray<FPresetIterator> iteratorStack;
 	FPresetIterator rootIterator;
-	rootIterator.PresetID = PresetID;
+	rootIterator.PresetGUID = PresetGUID;
 	rootIterator.TargetProperties = &RootProperties;
 	iteratorStack.Push(rootIterator);
 
@@ -56,25 +56,25 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	struct FPartIterator
 	{
 		FBIMPresetPartSlot Slot;
-		FBIMKey SlotConfigPreset;
+		FGuid SlotConfigPreset;
 		int32 ParentSlotIndex = 0;
 	};
 	TQueue<FPartIterator> partIteratorQueue;
 
 #if WITH_EDITOR
-	DEBUG_GUID = PresetCollection.Presets.Find(PresetID)->GUID;
+	DEBUG_GUID = PresetGUID;
 #endif
 
-	const FBIMPresetInstance* assemblyPreset = PresetCollection.Presets.Find(PresetID);
+	const FBIMPresetInstance* assemblyPreset = PresetCollection.PresetFromGUID(PresetGUID);
 
 	if (!ensureAlways(assemblyPreset != nullptr))
 	{
 		return EBIMResult::Error;
 	}
 
-	if (!assemblyPreset->SlotConfigPresetID.IsNone())
+	if (assemblyPreset->SlotConfigPresetGUID.IsValid())
 	{
-		const FBIMPresetInstance* slotConfigPreset = PresetCollection.Presets.Find(assemblyPreset->SlotConfigPresetID);
+		const FBIMPresetInstance* slotConfigPreset = PresetCollection.PresetFromGUID(assemblyPreset->SlotConfigPresetGUID);
 		if (ensureAlways(slotConfigPreset != nullptr))
 		{
 			slotConfigPreset->TryGetProperty(BIMPropertyNames::ConceptualSizeY, SlotConfigConceptualSizeY);
@@ -88,7 +88,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		//It will get modified below to set the context for subsequent children
 		FPresetIterator presetIterator = iteratorStack.Pop();
 
-		presetIterator.Preset = PresetCollection.Presets.Find(presetIterator.PresetID);
+		presetIterator.Preset = PresetCollection.PresetFromGUID(presetIterator.PresetGUID);
 		if (!ensureAlways(presetIterator.Preset != nullptr))
 		{
 			ret = EBIMResult::Error;
@@ -142,7 +142,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		// TODO: if patterns gain a wider scope, we may just need to track it as a property
 		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Pattern)
 		{
-			const FLayerPattern* pattern = InDB.GetLayerByKey(presetIterator.PresetID);
+			const FLayerPattern* pattern = InDB.GetPatternByGUID(presetIterator.PresetGUID);
 
 			if (ensureAlways(pattern != nullptr && presetIterator.TargetLayer != nullptr))
 			{
@@ -168,7 +168,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		{
 			if (ensureAlways(presetIterator.TargetProperties != nullptr))
 			{
-				presetIterator.TargetProperties->SetProperty(EBIMValueScope::Color, BIMPropertyNames::AssetID, presetIterator.Preset->PresetID.StringValue);
+				presetIterator.TargetProperties->SetProperty(EBIMValueScope::Color, BIMPropertyNames::AssetID, presetIterator.Preset->GUID.ToString());
 			}
 		}
 		// When we encounter a module, we'll expect children to apply color, material and dimension data
@@ -198,7 +198,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			const FBIMPresetPinAttachment& childPreset = presetIterator.Preset->ChildPresets[i];
 			// Each child inherits the targeting information from its parent (presetIterator)
 			FPresetIterator childIterator = presetIterator;
-			childIterator.PresetID = childPreset.PresetID;
+			childIterator.PresetGUID = childPreset.PresetGUID;
 			childIterator.Preset = nullptr;
 
 			/*
@@ -227,14 +227,14 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 
 		for (const auto& part : presetIterator.Preset->PartSlots)
 		{
-			if (!part.PartPreset.IsNone())
+			if (part.PartPresetGUID.IsValid())
 			{
 				FPartIterator partIterator;
-				partIterator.SlotConfigPreset = presetIterator.Preset->SlotConfigPresetID;
+				partIterator.SlotConfigPreset = presetIterator.Preset->SlotConfigPresetGUID;
 				partIterator.Slot = part;
 				partIteratorQueue.Enqueue(partIterator);
 
-				const FBIMPresetInstance* slotConfigPreset = PresetCollection.Presets.Find(partIterator.SlotConfigPreset);
+				const FBIMPresetInstance* slotConfigPreset = PresetCollection.PresetFromGUID(partIterator.SlotConfigPreset);
 				if (slotConfigPreset != nullptr)
 				{
 					if (SlotConfigConceptualSizeY.IsEmpty())
@@ -261,8 +261,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		partSpec.Size = Modumate::Expression::FVectorExpression(TEXT("Self.ScaledSizeX"), TEXT("Self.ScaledSizeY"), TEXT("Self.ScaledSizeZ"));
 #if WITH_EDITOR //for debugging
 		partSpec.DEBUGNodeScope = EBIMValueScope::Assembly;
-		partSpec.DEBUGPresetID = PresetID;
-		partSpec.DEBUG_GUID = assemblyPreset->GUID;
+		partSpec.DEBUG_GUID = PresetGUID;
 #endif
 	}
 
@@ -272,9 +271,9 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	{
 		FPartIterator partIterator;
 		partIteratorQueue.Dequeue(partIterator);
-		const FBIMPresetInstance* partPreset = PresetCollection.Presets.Find(partIterator.Slot.PartPreset);
-		const FBIMPresetInstance* slotPreset = PresetCollection.Presets.Find(partIterator.Slot.SlotPreset);
-		const FBIMPresetInstance* slotConfigPreset = PresetCollection.Presets.Find(partIterator.SlotConfigPreset);
+		const FBIMPresetInstance* partPreset = PresetCollection.PresetFromGUID(partIterator.Slot.PartPresetGUID);
+		const FBIMPresetInstance* slotPreset = PresetCollection.PresetFromGUID(partIterator.Slot.SlotPresetGUID);
+		const FBIMPresetInstance* slotConfigPreset = PresetCollection.PresetFromGUID(partIterator.SlotConfigPreset);
 
 		if (ensureAlways(partPreset != nullptr) && ensureAlways(slotPreset != nullptr) && ensureAlways(slotConfigPreset != nullptr))
 		{
@@ -286,15 +285,15 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 
 #if WITH_EDITOR //for debugging
 			partSpec.DEBUGNodeScope = partPreset->NodeScope;
-			partSpec.DEBUGPresetID = partPreset->PresetID;
-			partSpec.DEBUGSlotName = partIterator.Slot.SlotPreset;
+			partSpec.DEBUGPresetKey = partPreset->PresetID;
+			partSpec.DEBUGSlotGUID = partIterator.Slot.SlotPresetGUID;
 			partSpec.DEBUG_GUID = partPreset->GUID;
 #endif
 			// If this child has a mesh asset ID, this fetch the mesh and use it 
-			FBIMKey meshAsset;
+			FGuid meshAsset;
 			if (partPreset->Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshAsset))
 			{
-				const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(meshAsset);
+				const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByGUID(meshAsset);
 				if (!ensureAlways(mesh != nullptr))
 				{
 					ret = EBIMResult::Error;
@@ -306,8 +305,8 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 
 			for (auto& matBinding : partPreset->MaterialChannelBindings)
 			{
-				FBIMKey matKey = matBinding.SurfaceMaterial.IsNone() ? matBinding.InnerMaterial : matBinding.SurfaceMaterial;
-				const FArchitecturalMaterial* material = InDB.GetArchitecturalMaterialByKey(matKey);
+				FGuid matKey = matBinding.SurfaceMaterialGUID.IsValid() ? matBinding.SurfaceMaterialGUID : matBinding.InnerMaterialGUID;
+				const FArchitecturalMaterial* material = InDB.GetArchitecturalMaterialByGUID(matKey);
 				if (ensureAlways(material != nullptr))
 				{
 					FArchitecturalMaterial newMat = *material;
@@ -319,9 +318,9 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			// Find which slot this child belongs to and fetch transform data
 			for (auto& childSlot : slotConfigPreset->ChildPresets)
 			{
-				if (childSlot.PresetID == partIterator.Slot.SlotPreset)
+				if (childSlot.PresetGUID == partIterator.Slot.SlotPresetGUID)
 				{
-					const FBIMPresetInstance* childSlotPreset = PresetCollection.Presets.Find(childSlot.PresetID);
+					const FBIMPresetInstance* childSlotPreset = PresetCollection.PresetFromGUID(childSlot.PresetGUID);
 					if (!ensureAlways(childSlotPreset != nullptr))
 					{
 						break;
@@ -355,12 +354,12 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			int32 parentSlotIndex = partPreset->NodeScope == EBIMValueScope::Assembly ? Parts.Num() - 1 : partIterator.ParentSlotIndex;
 			for (const auto& part : partPreset->PartSlots)
 			{
-				if (!part.PartPreset.IsNone())
+				if (part.PartPresetGUID.IsValid())
 				{
 					FPartIterator nextPartIterator;
 					nextPartIterator.ParentSlotIndex = parentSlotIndex;
 					nextPartIterator.Slot = part;
-					nextPartIterator.SlotConfigPreset = partPreset->SlotConfigPresetID;
+					nextPartIterator.SlotConfigPreset = partPreset->SlotConfigPresetGUID;
 					partIteratorQueue.Enqueue(nextPartIterator);
 				}
 			}
@@ -380,7 +379,7 @@ EBIMResult FBIMAssemblySpec::Reset()
 {
 	ObjectType = EObjectType::OTNone;
 
-	RootPreset = FBIMKey();
+	RootPreset.Invalidate();
 	RootProperties = FBIMPropertySheet();
 
 	Layers.Empty();
@@ -428,10 +427,10 @@ EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FModumateDatabase& InDB)
 	}
 
 	// Cabinets consist of a list of parts (per rigged assembly) and a single material added to an extrusion for the prism
-	FString materialAsset;
+	FGuid materialAsset;
 	if (ensureAlways(RootProperties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, materialAsset)))
 	{
-		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(materialAsset);
+		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByGUID(materialAsset);
 		if (ensureAlways(mat != nullptr))
 		{
 			FBIMExtrusionSpec& extrusion = Extrusions.AddDefaulted_GetRef();
@@ -459,7 +458,7 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 	// TODO: "Stubby" temporary FFE don't have parts, just one mesh on their root
 	if (Parts.Num() == 0)
 	{
-		FBIMKey meshKey;
+		FGuid meshKey;
 
 		auto stringToAxis = [](const FString& InStr, FVector& OutVector,const FVector& InDefault)
 		{
@@ -495,7 +494,7 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 			return EBIMResult::Error;
 		}
 
-		const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByKey(meshKey);
+		const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByGUID(meshKey);
 		if (mesh == nullptr)
 		{
 			return EBIMResult::Error;
@@ -560,10 +559,10 @@ EBIMResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& InDB)
 {
 	for (auto& extrusion : Extrusions)
 	{
-		FString materialAsset;
+		FGuid materialAsset;
 		if (extrusion.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, materialAsset))
 		{
-			const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByKey(materialAsset);
+			const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByGUID(materialAsset);
 			if (ensureAlways(mat != nullptr))
 			{
 				extrusion.Material = *mat;
