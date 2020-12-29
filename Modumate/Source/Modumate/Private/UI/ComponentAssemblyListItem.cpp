@@ -19,6 +19,7 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Components/Image.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
+#include "Database/ModumateObjectEnums.h"
 
 using namespace Modumate;
 
@@ -327,7 +328,8 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 		{
 			// Display the UniqueKey from compListObj if preset is missing
 			// This can happen during selection of meta objects like edges and meta planes
-			ItemDisplayName = FText::FromString(compListObj->UniqueKey.ToString());
+			FString objectTypeString = UModumateTypeStatics::GetTextForObjectType(compListObj->ObjType).ToString();
+			ItemDisplayName = FText::FromString(objectTypeString);
 			UpdateSelectionItemCount(compListObj->SelectionItemCount);
 			bIsNonAssemblyObjectSelectItem = true;
 			UpdateItemType(compListObj->ItemType);

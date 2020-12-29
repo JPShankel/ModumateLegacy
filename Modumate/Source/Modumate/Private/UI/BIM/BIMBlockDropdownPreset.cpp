@@ -49,7 +49,7 @@ void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 	{
 		FVector2D colorDropdownOffset = DropdownOffset + FVector2D(0.f, OwnerNode->FormItemSize);
 		Controller->EditModelUserWidget->BIMDesigner->BIM_EditColorBP->BuildColorPicker(
-			ParentBIMDesigner, OwnerNode->ID, SwapScope, SwapNameType, PresetKEY_DEPRECATED, colorDropdownOffset);
+			ParentBIMDesigner, OwnerNode->ID, SwapScope, SwapNameType, HexValue, colorDropdownOffset);
 		return;
 	}
 
@@ -70,7 +70,7 @@ void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(ownerNodePresetID, PresetGUID, OwnerNode->ID, SwapScope, SwapNameType);
 }
 
-void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FGuid& InPresetID, FVector2D InDropdownOffset)
+void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FGuid& InPresetID, const FVector2D& InDropdownOffset)
 {
 	ParentBIMDesigner = OuterBIMDesigner;
 	OwnerNode = InOwnerNode;
@@ -81,30 +81,37 @@ void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner
 
 	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.PresetFromGUID(PresetGUID);
 
-	// PresetText
+	// Set text and label
 	if (preset != nullptr)
 	{
-		PresetKEY_DEPRECATED = preset->PresetID;
 		TextTitle->ChangeText(preset->CategoryTitle);
 		PresetText->ChangeText(preset->DisplayName);
 	}
-	else // If no preset is found, use its preset ID
-	{
-		TextTitle->ChangeText(FText::FromName(BIMNameFromValueScope(SwapScope)));
-		PresetText->ChangeText(FText::FromString(PresetGUID.ToString()));
-	}
 
 	// Icon
-	bool bCaptureSuccess = false;
-	if (SwapScope == EBIMValueScope::Color) // Color is entered as hex, not preset key
+	bool bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetGUID, IconMaterial, IconTexture, BIM_ID_NONE);
+	if (bCaptureSuccess)
 	{
-		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconFromColor(PresetKEY_DEPRECATED, IconMaterial);
+		IconImage->SetBrushFromMaterial(IconMaterial);
 	}
-	else
-	{
-		bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetGUID, IconMaterial, IconTexture, BIM_ID_NONE);
-	}
+	IconImage->SetVisibility(bCaptureSuccess ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+}
 
+void UBIMBlockDropdownPreset::BuildDropdownFromColor(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const FString& InHex, const FVector2D& InDropdownOffset)
+{
+	ParentBIMDesigner = OuterBIMDesigner;
+	OwnerNode = InOwnerNode;
+	SwapScope = EBIMValueScope::Color;
+	SwapNameType = BIMPropertyNames::HexValue;
+	HexValue = InHex;
+	DropdownOffset = InDropdownOffset;
+
+	// Set text and label
+	TextTitle->ChangeText(FText::FromName(BIMNameFromValueScope(SwapScope)));
+	PresetText->ChangeText(FText::FromString(HexValue));
+
+	// Icon
+	bool bCaptureSuccess = Controller->DynamicIconGenerator->SetIconFromColor(HexValue, IconMaterial);
 	if (bCaptureSuccess)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);

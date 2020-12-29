@@ -276,10 +276,19 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 				dropDownOffset.Y += (FormItemSize * VerticalBoxProperties->GetAllChildren().Num());
 
 				// Store preset into new dropdown
-				FGuid propertyPresetKey;
-				Node->WorkingPresetCopy.Properties.TryGetProperty(propertyValue.Scope, propertyValue.Name, propertyPresetKey);
-				newDropdown->BuildDropdownFromPropertyPreset(ParentBIMDesigner, this, propertyValue.Scope, propertyValue.Name, propertyPresetKey, dropDownOffset);
-
+				if (propertyValue.Name == BIMPropertyNames::HexValue)
+				{
+					// As color
+					FName propertyColorName;
+					Node->WorkingPresetCopy.Properties.TryGetProperty(propertyValue.Scope, propertyValue.Name, propertyColorName);
+					newDropdown->BuildDropdownFromColor(ParentBIMDesigner, this, propertyColorName.ToString(), dropDownOffset);
+				}
+				else
+				{
+					FGuid propertyPresetKey;
+					Node->WorkingPresetCopy.Properties.TryGetProperty(propertyValue.Scope, propertyValue.Name, propertyPresetKey);
+					newDropdown->BuildDropdownFromPropertyPreset(ParentBIMDesigner, this, propertyValue.Scope, propertyValue.Name, propertyPresetKey, dropDownOffset);
+				}
 				VerticalBoxProperties->AddChildToVerticalBox(newDropdown);
 			}
 		}

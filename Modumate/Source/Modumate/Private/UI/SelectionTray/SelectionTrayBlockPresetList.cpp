@@ -39,13 +39,13 @@ void USelectionTrayBlockPresetList::BuildPresetListFromSelection()
 	for (auto& curObject : Controller->EMPlayerState->SelectedObjects)
 	{
 		FGuid itemKey = curObject->GetAssembly().UniqueKey();
-#if 0 //GUIDTODO
+		// If GUID is invalid, use its object type to track its selection, ex: meta edges and planes
 		if (!itemKey.IsValid())
 		{
-			// If no assembly key is found, use its object type to track its selection, ex: meta edges and planes
-			itemKey = UModumateTypeStatics::GetTextForObjectType(curObject->GetObjectType()).ToString();
+			FString objectTypeString = UModumateTypeStatics::GetTextForObjectType(curObject->GetObjectType()).ToString();
+			FString objectTypeHash = FMD5::HashAnsiString(*objectTypeString);
+			FGuid::Parse(objectTypeHash, itemKey);
 		}
-#endif
 		UComponentListObject* compItem = ComponentItemMap.FindRef(itemKey);
 		if (compItem)
 		{
@@ -68,6 +68,7 @@ void USelectionTrayBlockPresetList::BuildPresetListFromSelection()
 			UComponentListObject* newCompListObj = NewObject<UComponentListObject>(this);
 			newCompListObj->ItemType = EComponentListItemType::SelectionListItem;
 			newCompListObj->Mode = UModumateTypeStatics::ToolModeFromObjectType(curObject->GetObjectType());
+			newCompListObj->ObjType = curObject->GetObjectType();
 			newCompListObj->UniqueKey = itemKey;
 			newCompListObj->SelectionItemCount = 1;
 			AssembliesList->AddItem(newCompListObj);

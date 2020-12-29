@@ -158,7 +158,9 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FGuid& PresetKey, bool AddToHistor
 			preset->MyTagPath.ToString(tagPathString);
 
 			FString otherDebugString =
-				FString::Printf(TEXT("SlotConfigPresetID: ")) + preset->SlotConfigPresetGUID.ToString() + LINE_TERMINATOR
+				FString::Printf(TEXT("SourceFile: ")) + preset->DEBUG_SourceFile + LINE_TERMINATOR
+				+ FString::Printf(TEXT("SourceRow: ")) + FString::FromInt(preset->DEBUG_SourceRow) + LINE_TERMINATOR
+				+ FString::Printf(TEXT("SlotConfigPresetID: ")) + preset->SlotConfigPresetGUID.ToString() + LINE_TERMINATOR
 				+ FString::Printf(TEXT("CategoryTitle: ")) + preset->CategoryTitle.ToString() + LINE_TERMINATOR
 				+ FString::Printf(TEXT("MyTagPath: ")) + tagPathString + LINE_TERMINATOR;
 

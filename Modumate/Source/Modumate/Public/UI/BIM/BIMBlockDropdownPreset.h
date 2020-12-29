@@ -38,7 +38,7 @@ protected:
 
 	FVector2D DropdownOffset = FVector2D::ZeroVector;
 	FGuid PresetGUID;
-	FBIMKey PresetKEY_DEPRECATED;
+	FString HexValue;
 	EBIMValueScope SwapScope = EBIMValueScope::None;
 	FBIMNameType SwapNameType = NAME_None;
 
@@ -65,5 +65,6 @@ public:
 	UFUNCTION()
 	void OnButtonSwapReleased();
 
-	void BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FGuid& InPresetID, FVector2D InDropdownOffset);
+	void BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FGuid& InPresetID, const FVector2D& InDropdownOffset);
+	void BuildDropdownFromColor(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const FString& InHex, const FVector2D& InDropdownOffset);
 };
