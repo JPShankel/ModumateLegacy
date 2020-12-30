@@ -120,6 +120,14 @@ bool FBIMPresetInstance::HasPin(int32 PinSetIndex, int32 PinSetPosition) const
 	return false;
 }
 
+// Used by the BIM designer to determine whether to off an add button
+bool FBIMPresetInstance::HasOpenPin() const
+{
+	// By convention, only the last pin will have additions
+	return (TypeDefinition.PinSets.Num() > 0 && TypeDefinition.PinSets.Last().MaxCount == INDEX_NONE);
+}
+
+
 EBIMResult FBIMPresetInstance::AddChildPreset(const FGuid& ChildPresetID, int32 PinSetIndex, int32 PinSetPosition)
 {
 	EBIMPinTarget target = EBIMPinTarget::Default;

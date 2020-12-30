@@ -115,7 +115,10 @@ private:
 public:
 
 #if WITH_EDITOR
+	UPROPERTY()
 	FString DEBUG_SourceFile;
+
+	UPROPERTY()
 	int32 DEBUG_SourceRow=0;
 #endif
 
@@ -213,6 +216,8 @@ public:
 	EBIMResult RemoveChildPreset(int32 PinSetIndex, int32 PinSetPosition);
 	EBIMResult SetPartPreset(const FGuid& SlotPresetGUID, const FGuid& PartPresetGUID);
 	bool HasPin(int32 PinSetIndex, int32 PinSetPosition) const;
+
+	bool HasOpenPin() const;
 
 	bool ValidatePreset() const;
 

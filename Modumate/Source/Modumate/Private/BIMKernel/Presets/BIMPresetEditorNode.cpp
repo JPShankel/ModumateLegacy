@@ -312,7 +312,7 @@ EBIMResult FBIMPresetEditorNode::UpdateAddButtons()
 		{
 			ChildNodes[i].Pin()->bWantAddButton = false;
 		}
-		ChildNodes.Last().Pin()->bWantAddButton = true;
+		ChildNodes.Last().Pin()->bWantAddButton = WorkingPresetCopy.HasOpenPin();
 	}
 	return EBIMResult::Success;
 }
