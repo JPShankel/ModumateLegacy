@@ -108,7 +108,7 @@ void UBIMBlockDropdownPreset::BuildDropdownFromColor(class UBIMDesigner* OuterBI
 
 	// Set text and label
 	TextTitle->ChangeText(FText::FromName(BIMNameFromValueScope(SwapScope)));
-	PresetText->ChangeText(FText::FromString(HexValue));
+	PresetText->ChangeText(FText::FromString(HexValue.Left(6)));
 
 	// Icon
 	bool bCaptureSuccess = Controller->DynamicIconGenerator->SetIconFromColor(HexValue, IconMaterial);

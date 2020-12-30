@@ -86,13 +86,12 @@ void UBIMEditColorBar::PerformDrag()
 	}
 }
 
-void UBIMEditColorBar::BuildColorBar(const FLinearColor& InColor, class UBIMEditColorPicker* InParentColorPicker)
+void UBIMEditColorBar::BuildColorBar(const FLinearColor& InHSV, class UBIMEditColorPicker* InParentColorPicker)
 {
 	ParentColorPicker = InParentColorPicker;
-	FLinearColor inHSV = InColor.LinearRGBToHSV();
 
-	float posY = (1.f - (inHSV.R / 360.f)) * ColorBarSize;
-	FVector2D barOffset = FVector2D(0.f, posY);
+	float posY = (1.f - (InHSV.R / 360.f)) * ColorBarSize;
+	FVector2D barOffset = FVector2D(0.f, FMath::Clamp(posY, 0.f, ColorBarSize));
 	ColorLevelBarLeft->SetRenderTranslation(barOffset);
 	ColorLevelBarRight->SetRenderTranslation(barOffset);
 }

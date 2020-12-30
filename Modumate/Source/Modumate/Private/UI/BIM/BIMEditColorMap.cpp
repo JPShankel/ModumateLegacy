@@ -85,14 +85,13 @@ void UBIMEditColorMap::PerformDrag()
 	}
 }
 
-void UBIMEditColorMap::BuildColorMap(const FLinearColor& InColor, class UBIMEditColorPicker* InParentColorPicker)
+void UBIMEditColorMap::BuildColorMap(const FLinearColor& InHSV, class UBIMEditColorPicker* InParentColorPicker)
 {
 	ParentColorPicker = InParentColorPicker;
-	FLinearColor inHSV = InColor.LinearRGBToHSV();
 
-	UpdateColorMapGradient(inHSV.R);
-	float posX = inHSV.G * ColorGradientMapSize.X;
-	float posY = (1.f - inHSV.B) * ColorGradientMapSize.Y;
+	UpdateColorMapGradient(InHSV.R);
+	float posX = InHSV.G * ColorGradientMapSize.X;
+	float posY = (1.f - InHSV.B) * ColorGradientMapSize.Y;
 	PickerIcon->SetRenderTranslation(FVector2D(posX, posY));
 }
 

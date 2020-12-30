@@ -46,5 +46,5 @@ public:
 	class UImage* ColorLevelBarRight;
 
 	void PerformDrag();
-	void BuildColorBar(const FLinearColor& InColor, class UBIMEditColorPicker* InParentColorPicker);
+	void BuildColorBar(const FLinearColor& InHSV, class UBIMEditColorPicker* InParentColorPicker);
 };

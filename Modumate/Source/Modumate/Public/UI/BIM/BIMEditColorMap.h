@@ -49,6 +49,6 @@ public:
 	class UImage* PickerIcon;
 
 	void PerformDrag();
-	void BuildColorMap(const FLinearColor& InColor, class UBIMEditColorPicker* InParentColorPicker);
+	void BuildColorMap(const FLinearColor& InHSV, class UBIMEditColorPicker* InParentColorPicker);
 	void UpdateColorMapGradient(float InHue);
 };

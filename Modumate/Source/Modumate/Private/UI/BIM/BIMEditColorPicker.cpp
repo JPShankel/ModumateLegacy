@@ -83,19 +83,30 @@ void UBIMEditColorPicker::OnHexTextBoxCommitted(const FText& Text, ETextCommit::
 	}
 }
 
-void UBIMEditColorPicker::BuildColorPicker(class UBIMDesigner* OuterBIMDesigner, const FName& InOwnerNodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FBIMKey& InColorBIMKey, const FVector2D& InDropdownOffset)
+void UBIMEditColorPicker::BuildColorPicker(class UBIMDesigner* OuterBIMDesigner, const FName& InOwnerNodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FString& InColorBIMKey, const FVector2D& InDropdownOffset)
 {
 	ParentBIMDesigner = OuterBIMDesigner;
 	OwnerNodeID = InOwnerNodeID;
-	OwnerNode = ParentBIMDesigner->IdToNodeMap.FindRef(OwnerNodeID);
+	SwapScope = InScope;
+	SwapNameType = InNameType;
+	CurrentColorHex = InColorBIMKey;
+	DropdownOffset = InDropdownOffset;
+
+	// Convert color key from hex
+	FLinearColor newColor = FColor::FromHex(CurrentColorHex);
+	FLinearColor newHSV = newColor.LinearRGBToHSV();
+	UpdateCurrentHSV(newHSV);
+
+	UpdateColorPicker();
+}
+
+void UBIMEditColorPicker::UpdateColorPicker()
+{
+	UBIMBlockNode* OwnerNode = ParentBIMDesigner->IdToNodeMap.FindRef(OwnerNodeID);
 	if (!ensure(OwnerNode))
 	{
 		return;
 	}
-	SwapScope = InScope;
-	SwapNameType = InNameType;
-	DefaultColorBIMKey = InColorBIMKey;
-	DropdownOffset = InDropdownOffset;
 
 	ParentBIMDesigner->ToggleColorPickerVisibility(true);
 	UCanvasPanelSlot* nodeCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(OwnerNode);
@@ -111,92 +122,88 @@ void UBIMEditColorPicker::BuildColorPicker(class UBIMDesigner* OuterBIMDesigner,
 		swapCanvasSlot->SetPosition(newPosition);
 	}
 
-	// Convert color key from hex
-	FLinearColor newColor = FColor::FromHex(DefaultColorBIMKey.ToString());
-	UpdateCurrentColor(newColor);
-
 	// Build children widgets
-	ColorBar_Widget_BP->BuildColorBar(CurrentColor, this);
-	ColorMap_Widget_BP->BuildColorMap(CurrentColor, this);
+	ColorBar_Widget_BP->BuildColorBar(CurrentHSV, this);
+	ColorMap_Widget_BP->BuildColorMap(CurrentHSV, this);
 }
 
 void UBIMEditColorPicker::EditColorFromHue(float InHueValue)
 {
 	ColorMap_Widget_BP->UpdateColorMapGradient(InHueValue);
 
-	FLinearColor currentHSV = CurrentColor.LinearRGBToHSV();
-	currentHSV.R = InHueValue;
-	FLinearColor newCurrentColor = currentHSV.HSVToLinearRGB();
-	UpdateCurrentColor(newCurrentColor);
+	FLinearColor newCurrentHSV = CurrentHSV;
+	newCurrentHSV.R = InHueValue;
+	UpdateCurrentHSV(newCurrentHSV);
 }
 
 void UBIMEditColorPicker::EditColorFromSaturationAndBrightness(float InSaturation, float InBrightness)
 {
-	FLinearColor currentHSV = CurrentColor.LinearRGBToHSV();
-	currentHSV.G = InSaturation;
-	currentHSV.B = InBrightness;
-	FLinearColor newCurrentColor = currentHSV.HSVToLinearRGB();
-	UpdateCurrentColor(newCurrentColor);
+	FLinearColor newCurrentHSV = CurrentHSV;
+	newCurrentHSV.G = InSaturation;
+	newCurrentHSV.B = InBrightness;
+	UpdateCurrentHSV(newCurrentHSV);
 }
 
 void UBIMEditColorPicker::EditColorFromRed(int32 InRedValue)
 {
-	FColor newColor = CurrentColor.ToFColor(true);
+	FColor newColor = CurrentHSV.HSVToLinearRGB().ToFColor(true);
 	newColor.R = InRedValue;
-	UpdateCurrentColor(FLinearColor(newColor));
+	UpdateCurrentHSV(FLinearColor(newColor).LinearRGBToHSV());
 
-	ColorBar_Widget_BP->BuildColorBar(CurrentColor, this);
-	ColorMap_Widget_BP->BuildColorMap(CurrentColor, this);
+	ColorBar_Widget_BP->BuildColorBar(CurrentHSV, this);
+	ColorMap_Widget_BP->BuildColorMap(CurrentHSV, this);
 }
 
 void UBIMEditColorPicker::EditColorFromGreen(int32 InGreenValue)
 {
-	FColor newColor = CurrentColor.ToFColor(true);
+	FColor newColor = CurrentHSV.HSVToLinearRGB().ToFColor(true);
 	newColor.G = InGreenValue;
-	UpdateCurrentColor(FLinearColor(newColor));
+	UpdateCurrentHSV(FLinearColor(newColor).LinearRGBToHSV());
 
-	ColorBar_Widget_BP->BuildColorBar(CurrentColor, this);
-	ColorMap_Widget_BP->BuildColorMap(CurrentColor, this);
+	ColorBar_Widget_BP->BuildColorBar(CurrentHSV, this);
+	ColorMap_Widget_BP->BuildColorMap(CurrentHSV, this);
 }
 
 void UBIMEditColorPicker::EditColorFromBlue(int32 InBlueValue)
 {
-	FColor newColor = CurrentColor.ToFColor(true);
+	FColor newColor = CurrentHSV.HSVToLinearRGB().ToFColor(true);
 	newColor.B = InBlueValue;
-	UpdateCurrentColor(FLinearColor(newColor));
+	UpdateCurrentHSV(FLinearColor(newColor).LinearRGBToHSV());
 
-	ColorBar_Widget_BP->BuildColorBar(CurrentColor, this);
-	ColorMap_Widget_BP->BuildColorMap(CurrentColor, this);
+	ColorBar_Widget_BP->BuildColorBar(CurrentHSV, this);
+	ColorMap_Widget_BP->BuildColorMap(CurrentHSV, this);
 }
 
 void UBIMEditColorPicker::EditColorFromHex(const FString& InHexValue)
 {
 	FLinearColor newColor = FColor::FromHex(InHexValue);
-	UpdateCurrentColor(newColor);
+	UpdateCurrentHSV(newColor.LinearRGBToHSV());
 
-	ColorBar_Widget_BP->BuildColorBar(CurrentColor, this);
-	ColorMap_Widget_BP->BuildColorMap(CurrentColor, this);
+	ColorBar_Widget_BP->BuildColorBar(CurrentHSV, this);
+	ColorMap_Widget_BP->BuildColorMap(CurrentHSV, this);
 }
 
-void UBIMEditColorPicker::UpdateCurrentColor(const FLinearColor& InCurrentColor)
+void UBIMEditColorPicker::UpdateCurrentHSV(const FLinearColor& InCurrentHSV)
 {
-	CurrentColor = InCurrentColor;
-	Image_CurrentColor->SetColorAndOpacity(CurrentColor);
+	CurrentHSV = InCurrentHSV;
+	FLinearColor newCurrentColor = CurrentHSV.HSVToLinearRGB();
+	newCurrentColor.A = 1.f;
+	Image_CurrentColor->SetColorAndOpacity(newCurrentColor);
 
 	// TODO: Save previous color history
 
-	FColor readColor = CurrentColor.ToFColor(true);
+	FColor readColor = newCurrentColor.ToFColor(true);
 	R_TextBox->ChangeText(FText::FromString(FString::FromInt(readColor.R)));
 	G_TextBox->ChangeText(FText::FromString(FString::FromInt(readColor.G)));
 	B_TextBox->ChangeText(FText::FromString(FString::FromInt(readColor.B)));
-	Hex_TextBox->ChangeText(FText::FromString(readColor.ToHex()));
+	Hex_TextBox->ChangeText(FText::FromString(readColor.ToHex().Left(6)));
 }
 
 void UBIMEditColorPicker::UpdateParentNodeProperty()
 {
-	FColor readColor = CurrentColor.ToFColor(true);
-	ParentBIMDesigner->SetNodeProperty(OwnerNode->ID, SwapScope, SwapNameType, readColor.ToHex());
+	FColor readColor = CurrentHSV.HSVToLinearRGB().ToFColor(true);
+	ParentBIMDesigner->SetNodeProperty(OwnerNodeID, SwapScope, SwapNameType, readColor.ToHex());
 
 	// Reopen color picker after BIM Designer update from SetNodeProperty
-	BuildColorPicker(ParentBIMDesigner, OwnerNodeID, SwapScope, SwapNameType, readColor.ToHex(), DropdownOffset);
+	UpdateColorPicker();
 }

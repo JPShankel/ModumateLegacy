@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Core/BIMProperties.h"
 
 #include "BIMEditColorPicker.generated.h"
@@ -30,16 +29,12 @@ protected:
 	UPROPERTY()
 	class AEditModelPlayerController_CPP* Controller;
 
-	UPROPERTY()
-	class UBIMBlockNode* OwnerNode;
-
 	FName OwnerNodeID;
-
 	FVector2D DropdownOffset = FVector2D::ZeroVector;
-	FBIMKey DefaultColorBIMKey;
+	FString CurrentColorHex;
 	EBIMValueScope SwapScope = EBIMValueScope::None;
 	FBIMNameType SwapNameType = NAME_None;
-	FLinearColor CurrentColor = FLinearColor::Black;
+	FLinearColor CurrentHSV = FLinearColor::Black;
 
 public:
 
@@ -79,7 +74,8 @@ public:
 	UFUNCTION()
 	void OnHexTextBoxCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
-	void BuildColorPicker(class UBIMDesigner* OuterBIMDesigner, const FName& InOwnerNodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FBIMKey& InColorBIMKey, const FVector2D& InDropdownOffset);
+	void BuildColorPicker(class UBIMDesigner* OuterBIMDesigner, const FName& InOwnerNodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FString& InColorBIMKey, const FVector2D& InDropdownOffset);
+	void UpdateColorPicker();
 	void EditColorFromHue(float InHueValue);
 	void EditColorFromSaturationAndBrightness(float InSaturation, float InBrightness);
 	void EditColorFromRed(int32 InRedValue);
@@ -87,6 +83,6 @@ public:
 	void EditColorFromBlue(int32 InBlueValue);
 	void EditColorFromHex(const FString& InHexValue);
 
-	void UpdateCurrentColor(const FLinearColor& InCurrentColor);
+	void UpdateCurrentHSV(const FLinearColor& InCurrentHSV);
 	void UpdateParentNodeProperty();
 };
