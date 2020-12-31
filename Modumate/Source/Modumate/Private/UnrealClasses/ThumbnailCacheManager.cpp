@@ -209,6 +209,7 @@ bool UThumbnailCacheManager::SaveThumbnail(UTexture *ThumbnailTexture, FName Thu
 		{
 			// If the source is a render target, then it must be converted to a texture first
 			OutSavedTexture = FModumateThumbnailHelpers::CreateTexture2DFromRT(renderTargetSource, this, ThumbnailKey, EObjectFlags::RF_NoFlags);
+			OutSavedTexture->SRGB = true;
 		}
 
 		CachedThumbnailTextures.Add(ThumbnailKey, OutSavedTexture);

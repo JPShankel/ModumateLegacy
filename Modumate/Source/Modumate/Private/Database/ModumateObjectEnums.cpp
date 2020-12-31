@@ -28,11 +28,11 @@ EToolCategories UModumateTypeStatics::GetToolCategory(EToolMode ToolMode)
 	case EToolMode::VE_STRUCTURELINE:
 	case EToolMode::VE_PANEL:
 	case EToolMode::VE_MULLION:
+	case EToolMode::VE_COUNTERTOP:
 		return EToolCategories::Separators;
 	case EToolMode::VE_PLACEOBJECT:
 	case EToolMode::VE_CABINET:
 	case EToolMode::VE_FINISH:
-	case EToolMode::VE_COUNTERTOP:
 	case EToolMode::VE_TRIM:
 		return EToolCategories::Attachments;
 	case EToolMode::VE_SURFACEGRAPH:

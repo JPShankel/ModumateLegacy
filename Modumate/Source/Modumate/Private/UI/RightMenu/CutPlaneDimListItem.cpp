@@ -130,8 +130,10 @@ void UCutPlaneDimListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 
 void UCutPlaneDimListItem::BuildAsVerticalCutPlaneItem(const FQuat& Rotation)
 {
-	float angle = Rotation.GetAngle();
-	TextDimension->ChangeText(FText::AsNumber(angle));
+	// TODO: This will be in static function for converting from ue4 axis to Modumate axis
+	FRotator rot = FRotator(0.f, Rotation.Euler().Z * -1.f, 0.f) + FRotator(0.f, -90.f, 0.f);
+	float degree = rot.Yaw;
+	TextDimension->ChangeText(FText::AsNumber(degree >= 0.f ? degree : 360.f + degree));
 }
 
 void UCutPlaneDimListItem::BuildAsHorizontalCutPlaneItem(const FVector& Location)

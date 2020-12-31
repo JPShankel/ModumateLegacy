@@ -224,7 +224,6 @@ UTexture2D* FModumateThumbnailHelpers::CreateTexture2DFromRT(UTextureRenderTarge
 	uint32* mipBytes = (uint32*)mipData.BulkData.Lock(LOCK_READ_WRITE);
 	const int32 mipSize = mipData.BulkData.GetBulkDataSize();
 
-	// TODO: Find how ue4 handles render target format RTF_RGBA8_SRGB
 	// If render target gamma used was 1.0 then disable SRGB for the static texture
 	if (FMath::Abs(rtResource->GetDisplayGamma() - 1.0f) < KINDA_SMALL_NUMBER)
 	{

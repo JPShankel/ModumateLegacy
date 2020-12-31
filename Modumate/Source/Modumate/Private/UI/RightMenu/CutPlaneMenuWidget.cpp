@@ -49,7 +49,7 @@ void UCutPlaneMenuWidget::SetCutPlaneMenuVisibility(bool NewVisible)
 
 void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 {
-	TArray<UCutPlaneDimListItemObject*> verticalItems;
+	TArray<UCutPlaneDimListItemObject*> horizontalItems;
 	HorizontalItemToIDMap.Empty();
 	VerticalItemToIDMap.Empty();
 	OtherItemToIDMap.Empty();
@@ -70,13 +70,13 @@ void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 		{
 			// Vertical cut planes need to be sorted before adding into the list
 			newCutPlaneObj->CutPlaneType = ECutPlaneType::Vertical;
-			verticalItems.Add(newCutPlaneObj);
+			CutPlaneMenuBlockVertical->CutPlanesList->AddItem(newCutPlaneObj);
 			VerticalItemToIDMap.Add(cutPlaneMois[i]->ID, newCutPlaneObj);
 		}
 		else if (cutPlaneUpDot >= THRESH_NORMALS_ARE_PARALLEL)
 		{
 			newCutPlaneObj->CutPlaneType = ECutPlaneType::Horizontal;
-			CutPlaneMenuBlockHorizontal->CutPlanesList->AddItem(newCutPlaneObj);
+			horizontalItems.Add(newCutPlaneObj);
 			HorizontalItemToIDMap.Add(cutPlaneMois[i]->ID, newCutPlaneObj);
 		}
 		else
@@ -87,12 +87,12 @@ void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 		}
 	}
 
-	verticalItems.Sort([](const UCutPlaneDimListItemObject &item1, const UCutPlaneDimListItemObject &item2) {
+	horizontalItems.Sort([](const UCutPlaneDimListItemObject &item1, const UCutPlaneDimListItemObject &item2) {
 		return item1.Location.Z > item2.Location.Z;
 	});
-	for (auto& curItem : verticalItems)
+	for (auto& curItem : horizontalItems)
 	{
-		CutPlaneMenuBlockVertical->CutPlanesList->AddItem(curItem);
+		CutPlaneMenuBlockHorizontal->CutPlanesList->AddItem(curItem);
 	}
 }
 
