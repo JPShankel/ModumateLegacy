@@ -112,15 +112,16 @@ private:
 	friend class FBIMAssemblySpec;
 	friend class FBIMPresetEditorNode;
 
+
 public:
 
-#if WITH_EDITOR
+	//TODO: Debug data must be UPROPERTY() to serialize in cache, cannot be conditionally compiled out
+	//To be deprecated with move to SQL
 	UPROPERTY()
 	FString DEBUG_SourceFile;
 
 	UPROPERTY()
-	int32 DEBUG_SourceRow=0;
-#endif
+	int32 DEBUG_SourceRow = 0;
 
 	// TODO: roll fields below into type definition and make it the top level UPROPERTY
 	FBIMPresetTypeDefinition TypeDefinition;

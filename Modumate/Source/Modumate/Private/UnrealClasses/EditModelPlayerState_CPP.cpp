@@ -483,6 +483,11 @@ void AEditModelPlayerState_CPP::SetActorRenderValues(AActor* actor, int32 stenci
 
 void AEditModelPlayerState_CPP::PostSelectionChanged()
 {
+	if (!EMPlayerController || !EMPlayerController->CurrentTool)
+	{
+		return;
+	}
+
 	auto gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 	bool bSelectTool = EMPlayerController->CurrentTool->GetToolMode() == EToolMode::VE_SELECT;
 	if (SelectedObjects.Num() == 1 && bSelectTool)

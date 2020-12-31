@@ -259,6 +259,8 @@ void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& userS
 		}
 	}
 
+	bRecordTelemetry = userStatus.Analytics;
+
 	FString version = userStatus.latest_modumate_version;
 	if (!version.IsEmpty())
 	{

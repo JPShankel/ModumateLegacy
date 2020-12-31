@@ -214,7 +214,11 @@ protected:
 	bool PlayBackPacket(const FEditModelInputPacket &InputPacket, float DeltaTime);
 	bool SimulateInput(const FEditModelInputPacket& InputPacket);
 	FString GetDefaultInputLogPath(const FString &Extension);
-	bool SaveInputLog(const FString& InputLogPath);
 	bool LoadInputLog(const FString& InputLogPath);
 	void CaptureFrame();
+
+	// Need public interface for player controller record
+public:
+	bool SaveInputLog(const FString& InputLogPath);
+
 };

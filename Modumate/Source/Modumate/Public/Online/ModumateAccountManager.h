@@ -10,7 +10,7 @@
 USTRUCT()
 struct MODUMATE_API FModumateLoginParams
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
 
 	UPROPERTY()
 	FString Username;
@@ -22,7 +22,7 @@ struct MODUMATE_API FModumateLoginParams
 USTRUCT()
 struct MODUMATE_API FModumateUserInfo
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
 
 	UPROPERTY()
 	FString Firstname;
@@ -46,7 +46,7 @@ struct MODUMATE_API FModumateUserInfo
 USTRUCT()
 struct MODUMATE_API FModumateUserNotification
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
 
 	UPROPERTY()
 	FString Type;
@@ -61,7 +61,7 @@ struct MODUMATE_API FModumateUserNotification
 USTRUCT()
 struct MODUMATE_API FModumateUserStatus
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
 
 	UPROPERTY()
 	bool Active;
@@ -74,12 +74,15 @@ struct MODUMATE_API FModumateUserStatus
 
 	UPROPERTY()
 	FString latest_modumate_version;
+
+	UPROPERTY()
+	bool Analytics;
 };
 
 USTRUCT()
 struct MODUMATE_API FModumateUserVerifyParams
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
 
 	UPROPERTY()
 	FString IdToken;
@@ -99,7 +102,7 @@ enum class ELoginStatus : uint8;
 UENUM(BlueprintType)
 enum class EModumatePermission : uint8 { None, View, Edit, Save, Export };
 
-class FModumateAccountManager
+class MODUMATE_API FModumateAccountManager
 {
 public:
 	FModumateAccountManager();
@@ -114,6 +117,7 @@ public:
 	FString GetLastname() const { return UserInfo.Lastname; }
 	FString GetEmail() const { return UserInfo.Email; }
 	FString GetIdToken() const { return IdToken; }
+	bool GetRecordTelemetry() const { return bRecordTelemetry; }
 
 	void RequestIdTokenRefresh(TBaseDelegate<void, bool>* callback = nullptr);
 	void RequestStatus();
@@ -142,6 +146,8 @@ private:
 	TArray<TBaseDelegate<void, bool>> TokenRefreshDelegates;
 
 	FDateTime IdTokenTimestamp;
+
+	bool bRecordTelemetry = false;
 
 	FPermissionSet CurrentPermissions;
 	const static FTimespan IdTokenTimeout;

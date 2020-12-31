@@ -72,6 +72,12 @@ private:
 	void UpdateUserSnapPoint();
 
 	FTimerHandle ControllerTimer;
+	FGuid RecordSessionKey;
+	static const FString InputTelemetryDirectory;
+
+	bool StartTelemetryRecording();
+	bool EndTelemetryRecording();
+	bool UploadTelemetryLog() const;
 
 	bool ValidateVirtualHit(const FVector &MouseOrigin, const FVector &MouseDir, const FVector &HitPoint,
 		float CurObjectHitDist, float CurVirtualHitDist, float MaxScreenDist, float &OutRayDist) const;
@@ -104,8 +110,9 @@ protected:
 
 	void RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool);
 
-	FDateTime TimeOfLastAutoSave;
+	FDateTime TimeOfLastAutoSave,TimeOfLastUpload;
 	bool WantAutoSave = false;
+	bool WantTelemetryUpload = false;
 
 	// Keep track of the most recent snapped cursor
 	UPROPERTY()

@@ -31,6 +31,7 @@
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "UnrealClasses/TooltipManager.h"
 #include "UI/EditModelUserWidget.h"
+#include "Online/ModumateCloudConnection.h"
 
 using namespace Modumate::Commands;
 using namespace Modumate::Parameters;
@@ -59,6 +60,13 @@ void UModumateGameInstance::Init()
 {
 	AnalyticsInstance = UModumateAnalyticsStatics::InitAnalytics();
 	AccountManager = MakeShared<FModumateAccountManager>();
+	CloudConnection = MakeShared<FModumateCloudConnection>();
+	#if UE_BUILD_SHIPPING
+		CloudConnection->SetUrl("https://account.modumate.com");
+	#else  // Developer builds login to staging server.
+		//CloudConnection->SetUrl("http://192.168.2.174:3000"); // Change to match local version for local testing
+		CloudConnection->SetUrl("https://beta.account.modumate.com");
+	#endif
 
 	UModumateFunctionLibrary::SetWindowTitle();
 
@@ -82,6 +90,11 @@ void UModumateGameInstance::Init()
 		TooltipManager = NewObject<UTooltipManager>(this, TooltipManagerClass);
 		TooltipManager->Init();
 	}
+}
+
+TSharedPtr<FModumateCloudConnection> UModumateGameInstance::GetCloudConnection() const
+{
+	return CloudConnection;
 }
 
 TSharedPtr<FModumateAccountManager> UModumateGameInstance::GetAccountManager() const
@@ -122,14 +135,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
-	RegisterCommand(kMakeNew, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		playerState->OnNewModel();
-		GetDocument()->MakeNew(GetWorld());
-		return true;
-	});
-
 	RegisterCommand(kCloneObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		FTransform tr = FTransform::Identity;
@@ -142,27 +147,6 @@ void UModumateGameInstance::RegisterAllCommands()
 	{
 		GetDocument()->RestoreDeletedObjects(params.GetValue(kObjectIDs));
 		return true;
-	});
-
-	RegisterCommand(kRunScript, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		FString filePath = FPaths::ProjectDir() / TestScriptRelativePath / params.GetValue(Parameters::kFilename);
-
-		TArray<FString> lines;
-		if (FFileHelper::LoadFileToStringArray(lines, *filePath))
-		{
-			for (auto &l : lines)
-			{
-				if (l.Len() > 0 && l[0] != TCHAR(';'))
-				{
-					DoModumateCommand(FModumateCommand::FromJSONString(l));
-				}
-			}
-
-			return true;
-		}
-
-		return false;
 	});
 
 	RegisterCommand(kScreenPrint, [](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)

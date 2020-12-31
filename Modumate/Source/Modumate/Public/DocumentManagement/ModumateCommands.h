@@ -13,8 +13,6 @@ namespace Modumate
 	namespace Commands
 	{
 		// System commands
-		MODUMATE_COMMAND(kRunScript, "run_script");
-		MODUMATE_COMMAND(kMakeNew, "make_new");
 		MODUMATE_COMMAND(kDraft, "draft");
 		MODUMATE_COMMAND(kDebug, "debug");
 		MODUMATE_COMMAND(kValidateData, "validate_data");

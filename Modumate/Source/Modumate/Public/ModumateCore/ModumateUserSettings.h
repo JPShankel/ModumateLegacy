@@ -20,7 +20,7 @@ struct MODUMATE_API FRecentProject
 USTRUCT(BlueprintType)
 struct MODUMATE_API FModumateUserSettings
 {
-	GENERATED_USTRUCT_BODY();
+	GENERATED_BODY();
 
 	static const FString FileName;
 
@@ -35,6 +35,9 @@ struct MODUMATE_API FModumateUserSettings
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	int32 AutoBackupFrequencySeconds = 60;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	int32 TelemetryUploadFrequencySeconds = 60;
 
 	bool bLoaded = false;
 	bool bDirty = false;

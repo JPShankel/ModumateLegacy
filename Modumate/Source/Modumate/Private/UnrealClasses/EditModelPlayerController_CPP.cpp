@@ -19,6 +19,7 @@
 #include "ModumateCore/PlatformFunctions.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Online/ModumateAccountManager.h"
+#include "Online/ModumateCloudConnection.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
@@ -64,8 +65,9 @@
 #include "ToolsAndAdjustments/Tools/EditModelTrimTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelWandTool.h"
 
-
 static Modumate::PDF::PDFResult PDFLibrary;
+
+const FString AEditModelPlayerController_CPP::InputTelemetryDirectory = TEXT("Telemetry");
 
 using namespace Modumate;
 
@@ -86,9 +88,7 @@ AEditModelPlayerController_CPP::AEditModelPlayerController_CPP()
 	, SelectionMode(ESelectObjectMode::DefaultObjects)
 	, MaxRaycastDist(100000.0f)
 {
-#if !UE_BUILD_SHIPPING
 	InputAutomationComponent = CreateDefaultSubobject<UEditModelInputAutomation>(TEXT("InputAutomationComponent"));
-#endif
 
 	InputHandlerComponent = CreateDefaultSubobject<UEditModelInputHandler>(TEXT("InputHandlerComponent"));
 	CameraController = CreateDefaultSubobject<UEditModelCameraController>(TEXT("CameraController"));
@@ -191,6 +191,7 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	else
 	{
 		Document->MakeNew(GetWorld());
+		StartTelemetryRecording();
 	}
 
 	EMPlayerState->SnappedCursor.ClearAffordanceFrame();
@@ -223,6 +224,61 @@ void AEditModelPlayerController_CPP::BeginPlay()
 		console->BuildRuntimeAutoCompleteList(true);
 	}
 #endif
+
+	// Make a clean telemetry directory, also cleans up on EndPlay 
+	FString path = FModumateUserSettings::GetLocalTempDir() / InputTelemetryDirectory;
+	IFileManager::Get().DeleteDirectory(*path, false, true);
+	IFileManager::Get().MakeDirectory(*path);
+}
+
+bool AEditModelPlayerController_CPP::StartTelemetryRecording()
+{
+	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (!gameInstance->GetAccountManager().Get()->GetRecordTelemetry())
+	{
+		return false;
+	}
+	
+	EndTelemetryRecording();
+
+	if (InputAutomationComponent->BeginRecording())
+	{
+		RecordSessionKey = FGuid::NewGuid();
+		TimeOfLastUpload = FDateTime::Now();
+
+		const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
+		if (!ensureAlways(projectSettings != nullptr))
+		{
+			return false;
+		}
+		const FString& projectVersion = projectSettings->ProjectVersion;
+
+		TSharedPtr<FModumateCloudConnection> Cloud = gameInstance->GetCloudConnection();
+
+		if (Cloud.IsValid())
+		{
+			Cloud->CreateReplay(RecordSessionKey.ToString(), *projectVersion, [](bool success) {
+				UE_LOG(LogTemp, Log, TEXT("Created Successfully"));
+
+			}, [](int32 code, FString error) {
+				UE_LOG(LogTemp, Error, TEXT("Error: %s"), *error);
+			});
+
+			return true;
+		}
+	}
+	return false;
+}
+
+bool AEditModelPlayerController_CPP::EndTelemetryRecording()
+{
+	if (InputAutomationComponent->IsRecording())
+	{
+		UploadTelemetryLog();
+		InputAutomationComponent->EndRecording(false);
+	}
+	RecordSessionKey = FGuid();
+	return true;
 }
 
 void AEditModelPlayerController_CPP::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -231,6 +287,12 @@ void AEditModelPlayerController_CPP::EndPlay(const EEndPlayReason::Type EndPlayR
 	FString lockFile = FPaths::Combine(gameInstance->UserSettings.GetLocalTempDir(), kModumateCleanShutdownFile);
 	FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*lockFile);
 	GetWorldTimerManager().ClearTimer(ControllerTimer);
+
+	// Clean up input telemetry files
+	UploadTelemetryLog();
+	FString path = FModumateUserSettings::GetLocalTempDir() / InputTelemetryDirectory;
+	IFileManager::Get().DeleteDirectory(*path,false,true);
+
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -759,6 +821,7 @@ bool AEditModelPlayerController_CPP::LoadModel()
 
 	if (Modumate::PlatformFunctions::GetOpenFilename(filename))
 	{
+		EndTelemetryRecording();
 		bLoadSuccess = gameState->Document->Load(GetWorld(), filename, true);
 		if (bLoadSuccess)
 		{
@@ -776,6 +839,7 @@ bool AEditModelPlayerController_CPP::LoadModel()
 
 bool AEditModelPlayerController_CPP::LoadModelFilePath(const FString &filename,bool addToRecents)
 {
+	EndTelemetryRecording();
 	EMPlayerState->OnNewModel();
 	if (addToRecents)
 	{
@@ -818,7 +882,8 @@ void AEditModelPlayerController_CPP::NewModel()
 		}
 
 		EMPlayerState->OnNewModel();
-		ModumateCommand(FModumateCommand(Commands::kMakeNew));
+		Document->MakeNew(GetWorld());
+		StartTelemetryRecording();
 	}
 }
 
@@ -1173,18 +1238,21 @@ bool AEditModelPlayerController_CPP::IsControlDown() const
 	return IsInputKeyDown(EKeys::LeftControl) || IsInputKeyDown(EKeys::RightControl);
 }
 
-
 void AEditModelPlayerController_CPP::OnControllerTimer()
 {
 	UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 
-	if (gameInstance->UserSettings.AutoBackup)
+	FTimespan ts(FDateTime::Now().GetTicks() - TimeOfLastAutoSave.GetTicks());
+
+	if (ts.GetTotalSeconds() > gameInstance->UserSettings.AutoBackupFrequencySeconds && gameInstance->UserSettings.AutoBackup)
 	{
-		FTimespan ts(FDateTime::Now().GetTicks() - TimeOfLastAutoSave.GetTicks());
-		if (ts.GetTotalSeconds() > gameInstance->UserSettings.AutoBackupFrequencySeconds)
-		{
-			WantAutoSave = true;
-		}
+		WantAutoSave = gameInstance->UserSettings.AutoBackup;
+	}
+
+	ts = FTimespan(FDateTime::Now().GetTicks() - TimeOfLastUpload.GetTicks());
+	if (ts.GetTotalSeconds() > gameInstance->UserSettings.TelemetryUploadFrequencySeconds)
+	{
+		WantTelemetryUpload = gameInstance->GetAccountManager().Get()->GetRecordTelemetry();
 	}
 
 	gameInstance->GetAccountManager()->Tick();
@@ -1192,17 +1260,60 @@ void AEditModelPlayerController_CPP::OnControllerTimer()
 
 DECLARE_CYCLE_STAT(TEXT("Edit tick"), STAT_ModumateEditTick, STATGROUP_Modumate)
 
+bool AEditModelPlayerController_CPP::UploadTelemetryLog() const
+{
+	if (!InputAutomationComponent->IsRecording())
+	{
+		return false;
+	}
+
+	FString path = FModumateUserSettings::GetLocalTempDir() / InputTelemetryDirectory;
+	FString  cacheFile =  path / RecordSessionKey.ToString() + FEditModelInputLog::LogExtension;
+	if (!InputAutomationComponent->SaveInputLog(cacheFile))
+	{
+		return false;
+	}
+
+	UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
+	TSharedPtr<FModumateCloudConnection> Cloud = gameInstance->GetCloudConnection();
+
+	if (Cloud.IsValid())
+	{
+		Cloud->SetAuthToken(gameInstance->GetAccountManager()->GetIdToken());
+
+			Cloud->UploadReplay(RecordSessionKey.ToString(), *cacheFile, [](bool success) {
+				UE_LOG(LogTemp, Log, TEXT("Uploaded Successfully"));
+			}, [](int32 code, FString error) {
+				UE_LOG(LogTemp, Error, TEXT("Error: %s"), *error);
+			});
+
+
+		return true;
+	}
+	return false;
+}
+
 void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	SCOPE_CYCLE_COUNTER(STAT_ModumateEditTick);
 
-	if (WantAutoSave)
+	// Don't perform hitchy functions while tools or handles are in use
+	if (InteractionHandle == nullptr && !ToolIsInUse())
 	{
-		if (InteractionHandle == nullptr && !ToolIsInUse())
+		if (WantTelemetryUpload)
+		{
+			TimeOfLastUpload = FDateTime::Now();
+			WantTelemetryUpload = false;
+			if (RecordSessionKey.IsValid())
+			{
+				UploadTelemetryLog();
+			}
+		}
+
+		if (WantAutoSave)
 		{
 			UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
-
 			FString tempDir = gameInstance->UserSettings.GetLocalTempDir();
 			FString oldFile = FPaths::Combine(tempDir, kModumateRecoveryFileBackup);
 			FString newFile = FPaths::Combine(tempDir, kModumateRecoveryFile);
@@ -1210,13 +1321,14 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 			//Look for the first available (of 3) backup files and delete the one following it
 			FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*oldFile);
 			FPlatformFileManager::Get().GetPlatformFile().MoveFile(*oldFile, *newFile);
-			AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+			AEditModelGameState_CPP* gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
 			gameState->Document->Save(GetWorld(), newFile);
 
 			TimeOfLastAutoSave = FDateTime::Now();
 			WantAutoSave = false;
 		}
 	}
+	
 
 	// Keep track of how long we've been using the current tool
 	if (CurrentTool != nullptr)

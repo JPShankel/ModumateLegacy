@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-
+#include "Framework/Text/TextLayout.h"
 #include "ModumateTextBlockUserWidget.generated.h"
 
 /**

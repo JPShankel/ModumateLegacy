@@ -199,10 +199,9 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				}
 	
 				Preset = FBIMPresetInstance();
-#if WITH_EDITOR
+
 				Preset.DEBUG_SourceFile = CurrentFile;
 				Preset.DEBUG_SourceRow = RowNumber;
-#endif
 
 				if (KeyGuidMap.Find(presetID)!=nullptr)
 				{
