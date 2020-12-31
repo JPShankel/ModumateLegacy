@@ -307,7 +307,7 @@ EBIMResult FBIMPresetEditor::CreateAssemblyFromNodes(const FBIMPresetCollection&
 		for (auto& instance : InstancePool)
 		{
 			previewCollection.AddPreset(instance->WorkingPresetCopy);
-			PresetCollection.GetDependentPresets(instance->WorkingPresetCopy.GUID, dependentPresets);
+			PresetCollection.GetAllDescendentPresets(instance->WorkingPresetCopy.GUID, dependentPresets);
 		}
 
 		for (auto& depPres : dependentPresets)

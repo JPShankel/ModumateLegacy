@@ -263,5 +263,26 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 		return false;
 	}
 
+	FGuid guid;
+	// Multi-layered wall
+	guid.Parse(TEXT("00E974E8F8290247B557E64B606209CA"), guid);
+
+	TArray<FGuid> descendents;
+	if (!ensureAlways(presetCollection.GetAllDescendentPresets(guid, descendents) == EBIMResult::Success && descendents.Num()>0))
+	{
+		return false;
+	}
+
+	TArray<FGuid> ancestors;
+	if (!ensureAlways(presetCollection.GetAllAncestorPresets(descendents[0], ancestors) == EBIMResult::Success && ancestors.Num() > 0))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(ancestors.Contains(guid)))
+	{
+		return false;
+	}
+
 	return true;
 }

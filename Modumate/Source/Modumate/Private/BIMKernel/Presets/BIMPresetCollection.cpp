@@ -8,9 +8,8 @@
 
 /*
 Given a preset ID, recurse through all its children and gather all other presets that this one depends on
-Note: we don't empty the container because the function is recursive
 */
-EBIMResult FBIMPresetCollection::GetDependentPresets(const FGuid& PresetID, TArray<FGuid>& OutPresets) const
+EBIMResult FBIMPresetCollection::GetAllDescendentPresets(const FGuid& PresetID, TArray<FGuid>& OutPresets) const
 {
 	TArray<FGuid> presetStack;
 	presetStack.Push(PresetID);
@@ -40,6 +39,23 @@ EBIMResult FBIMPresetCollection::GetDependentPresets(const FGuid& PresetID, TArr
 				OutPresets.AddUnique(part.PartPresetGUID);
 				presetStack.Push(part.PartPresetGUID);
 			}
+		}
+	}
+	return EBIMResult::Success;
+}
+
+/*
+* Given a PresetID, get all other presets that depend on it
+*/
+EBIMResult FBIMPresetCollection::GetAllAncestorPresets(const FGuid& PresetGUID, TArray<FGuid>& OutPresets) const
+{
+	for (auto& preset : PresetsByGUID)
+	{
+		TArray<FGuid> descendents;
+		GetAllDescendentPresets(preset.Key, descendents);
+		if (descendents.Contains(PresetGUID))
+		{
+			OutPresets.Add(preset.Key);
 		}
 	}
 	return EBIMResult::Success;
@@ -285,7 +301,7 @@ EBIMResult FBIMPresetCollection::CreateAssemblyFromLayerPreset(const FModumateDa
 
 	// Add presets from dependents
 	TArray<FGuid> outpresetKeys;
-	GetDependentPresets(LayerPresetKey, outpresetKeys);
+	GetAllDescendentPresets(LayerPresetKey, outpresetKeys);
 	for (auto& curPreset : outpresetKeys)
 	{
 		const FBIMPresetInstance* original = PresetFromGUID(curPreset);

@@ -49,7 +49,8 @@ struct MODUMATE_API FBIMPresetCollection
 	EBIMResult GetPresetsForNCP(const FBIMTagPath& InNCP, TArray<FGuid>& OutPresets) const;
 	EBIMResult GetNCPSubcategories(const FBIMTagPath& InNCP, TArray<FString>& OutSubcats) const;
 
-	EBIMResult GetDependentPresets(const FGuid& PresetGUID, TArray<FGuid>& OutPresets) const;
+	EBIMResult GetAllDescendentPresets(const FGuid& PresetGUID, TArray<FGuid>& OutPresets) const;
+	EBIMResult GetAllAncestorPresets(const FGuid& PresetGUID, TArray<FGuid>& OutPresets) const;
 
 	EBIMResult GetPropertyFormForPreset(const FGuid& PresetGUID, TMap<FString, FBIMNameType> &OutForm) const;
 
