@@ -91,6 +91,18 @@ void AMOICutPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabl
 	}
 }
 
+int32 AMOICutPlane::GetCutPlaneVerticalDegree(const FQuat& Rotation)
+{
+	// Converting from ue4 axis to Modumate axis
+	FRotator rot = FRotator(0.f, Rotation.Euler().Z * -1.f, 0.f) + FRotator(0.f, -90.f, 0.f);
+	int32 degree = FMath::RoundToInt(rot.Yaw);
+	if (degree < 0)
+	{
+		degree += 360;
+	}
+	return degree % 180;
+}
+
 void AMOICutPlane::SetupDynamicGeometry()
 {
 	// TODO: Migrate to CleanObject

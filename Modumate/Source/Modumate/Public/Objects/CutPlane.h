@@ -66,6 +66,8 @@ public:
 	virtual void PreDestroy() override;
 	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 
+	static int32 GetCutPlaneVerticalDegree(const FQuat& Rotation);
+
 	Modumate::FModumateHUDDraw DrawingInterface;
 
 	// These two objects are similar in purpose and use, but there are differences between what the HUD and the PDF 
