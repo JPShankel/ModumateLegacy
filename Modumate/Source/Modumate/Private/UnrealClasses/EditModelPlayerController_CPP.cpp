@@ -257,6 +257,7 @@ bool AEditModelPlayerController_CPP::StartTelemetryRecording()
 
 		if (Cloud.IsValid())
 		{
+			Cloud->SetAuthToken(gameInstance->GetAccountManager()->GetIdToken());
 			Cloud->CreateReplay(RecordSessionKey.ToString(), *projectVersion, [](bool success) {
 				UE_LOG(LogTemp, Log, TEXT("Created Successfully"));
 
@@ -1281,12 +1282,11 @@ bool AEditModelPlayerController_CPP::UploadTelemetryLog() const
 	{
 		Cloud->SetAuthToken(gameInstance->GetAccountManager()->GetIdToken());
 
-			Cloud->UploadReplay(RecordSessionKey.ToString(), *cacheFile, [](bool success) {
-				UE_LOG(LogTemp, Log, TEXT("Uploaded Successfully"));
-			}, [](int32 code, FString error) {
-				UE_LOG(LogTemp, Error, TEXT("Error: %s"), *error);
-			});
-
+		Cloud->UploadReplay(RecordSessionKey.ToString(), *cacheFile, [](bool success) {
+			UE_LOG(LogTemp, Log, TEXT("Uploaded Successfully"));
+		}, [](int32 code, FString error) {
+			UE_LOG(LogTemp, Error, TEXT("Error: %s"), *error);
+		});
 
 		return true;
 	}
