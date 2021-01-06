@@ -739,7 +739,7 @@ namespace Modumate
 		for (auto &kvp : Delta.VertexMovements)
 		{
 			int32 vertexID = kvp.Key;
-			const TPair<FVector, FVector> &vertexDelta = kvp.Value;
+			const auto &vertexDelta = kvp.Value;
 			FGraph3DVertex *vertex = FindVertex(vertexID);
 			if (ensureAlways(vertex))
 			{
@@ -863,7 +863,7 @@ namespace Modumate
 		for (auto &kvp : Delta.FaceVertexAdditions)
 		{
 			auto face = FindFace(kvp.Key);
-			auto addIDs = kvp.Value;
+			auto addIDs = kvp.Value.Map;
 
 			// TODO: sometimes the face is removed as well by this point
 			if (face == nullptr) continue;
@@ -906,7 +906,7 @@ namespace Modumate
 			}
 
 			TArray<int32> removeIDs;
-			kvp.Value.GenerateValueArray(removeIDs);
+			kvp.Value.Map.GenerateValueArray(removeIDs);
 
 			TArray<int32> newVertexIDs;
 			for (int32 vertexIdx = 0; vertexIdx < face->VertexIDs.Num(); vertexIdx++)

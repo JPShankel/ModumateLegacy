@@ -54,7 +54,7 @@ namespace Modumate
 			// ensure that the delta is meaningful
 			if (!newPos.Equals(oldPos))
 			{
-				moveVertexDelta.VertexMovements.Add(vertexID, TPair<FVector, FVector>(oldPos, newPos));
+				moveVertexDelta.VertexMovements.Add(vertexID, { oldPos, newPos });
 			}
 
 		}
@@ -895,15 +895,15 @@ namespace Modumate
 				int32 edgeIdx = FindFace(connection.FaceID)->FindEdgeIndex(edge->ID, bForward);
 				if (!OutDelta.FaceVertexAdditions.Contains(connection.FaceID))
 				{
-					OutDelta.FaceVertexAdditions.Add(connection.FaceID, TMap<int32, int32>());
+					OutDelta.FaceVertexAdditions.Add(connection.FaceID, FModumateIntMap());
 				}
 				if (ensureAlways(edgeIdx != -1))
 				{
-					if (OutDelta.FaceVertexAdditions[connection.FaceID].Contains(edgeIdx))
+					if (OutDelta.FaceVertexAdditions[connection.FaceID].Map.Contains(edgeIdx))
 					{
 						return false;
 					}
-					OutDelta.FaceVertexAdditions[connection.FaceID].Add(edgeIdx, VertexIDToAdd);
+					OutDelta.FaceVertexAdditions[connection.FaceID].Map.Add(edgeIdx, VertexIDToAdd);
 				}
 			}
 		}
@@ -941,7 +941,7 @@ namespace Modumate
 			int32 vertexIdx = face->VertexIDs.Find(VertexIDToRemove);
 			if (!OutDelta.FaceVertexRemovals.Contains(faceID))
 			{
-				OutDelta.FaceVertexRemovals.Add(faceID, TMap<int32, int32>());
+				OutDelta.FaceVertexRemovals.Add(faceID, FModumateIntMap());
 			}
 
 			// when removing vertices, ApplyDelta only looks for the ID of the vertex to remove
@@ -950,11 +950,11 @@ namespace Modumate
 			// requires providing the index before its current index
 			if (ensureAlways(vertexIdx != -1))
 			{
-				if (OutDelta.FaceVertexRemovals[faceID].Contains(vertexIdx))
+				if (OutDelta.FaceVertexRemovals[faceID].Map.Contains(vertexIdx))
 				{
 					return false;
 				}
-				OutDelta.FaceVertexRemovals[faceID].Add(vertexIdx-1, VertexIDToRemove);
+				OutDelta.FaceVertexRemovals[faceID].Map.Add(vertexIdx-1, VertexIDToRemove);
 			}
 		}
 
@@ -1116,10 +1116,10 @@ namespace Modumate
 			}
 
 			auto& faceVertexAdditions = OutDelta.FaceVertexAdditions.FindOrAdd(faceID);
-			faceVertexAdditions.Add(oldVertexIdx, SavedVertexID);
+			faceVertexAdditions.Map.Add(oldVertexIdx, SavedVertexID);
 
 			auto& faceVertexRemovals = OutDelta.FaceVertexRemovals.FindOrAdd(faceID);
-			faceVertexRemovals.Add(oldVertexIdx, RemovedVertexID);
+			faceVertexRemovals.Map.Add(oldVertexIdx, RemovedVertexID);
 		}
 
 		// TODO: check for coincident faces

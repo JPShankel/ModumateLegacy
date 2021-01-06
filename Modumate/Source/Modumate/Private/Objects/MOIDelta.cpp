@@ -5,6 +5,17 @@
 #include "DocumentManagement/ModumateDocument.h"
 
 
+FStructDataWrapper FMOIDelta::SerializeStruct()
+{
+	for (FMOIDeltaState& statePair : States)
+	{
+		statePair.OldState.CustomData.SaveJsonFromCbor();
+		statePair.NewState.CustomData.SaveJsonFromCbor();
+	}
+
+	return FStructDataWrapper(StaticStruct(), this, true);
+}
+
 bool FMOIDelta::IsValid() const
 {
 	return States.Num() > 0;

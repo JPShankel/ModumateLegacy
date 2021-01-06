@@ -629,7 +629,7 @@ namespace Modumate
 		for (auto &kvp : Delta.VertexMovements)
 		{
 			int32 vertexID = kvp.Key;
-			const TPair<FVector2D, FVector2D> &vertexDelta = kvp.Value;
+			const auto &vertexDelta = kvp.Value;
 			FGraph2DVertex *vertex = FindVertex(vertexID);
 			if (ensureAlways(vertex))
 			{

@@ -50,6 +50,10 @@ FGraph3DFaceContainmentDelta FGraph3DFaceContainmentDelta::MakeInverse() const
 		ContainedFaceIDsToRemove, ContainedFaceIDsToAdd);
 }
 
+FGraph3DObjDelta::FGraph3DObjDelta()
+{
+
+}
 
 FGraph3DObjDelta::FGraph3DObjDelta(const TArray<int32>& InVertices)
 	: Vertices(InVertices)
@@ -169,9 +173,9 @@ TSharedPtr<FGraph3DDelta> FGraph3DDelta::MakeGraphInverse() const
 	for (const auto& kvp : VertexMovements)
 	{
 		int32 vertexID = kvp.Key;
-		const TPair<FVector, FVector>& vertexMovement = kvp.Value;
+		const FModumateVectorPair& vertexMovement = kvp.Value;
 
-		inverse->VertexMovements.Add(vertexID, TPair<FVector, FVector>(vertexMovement.Value, vertexMovement.Key));
+		inverse->VertexMovements.Add(vertexID, { vertexMovement.Value, vertexMovement.Key });
 	}
 
 	inverse->VertexAdditions = VertexDeletions;

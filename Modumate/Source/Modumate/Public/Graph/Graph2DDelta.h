@@ -7,22 +7,31 @@
 #include "Graph/Graph2DTypes.h"
 #include "ModumateCore/ModumateTypes.h"
 
+#include "Graph2DDelta.generated.h"
 
 // A struct that describes a change to a graph object (currently edges and faces)
+USTRUCT()
 struct FGraph2DObjDelta
 {
+	GENERATED_BODY()
+
+	UPROPERTY()
 	TArray<int32> Vertices;			// vertex IDs that define the positions for this object
+
+	UPROPERTY()
 	TArray<int32> ParentObjIDs;		// objects that were deleted to make this object
 
 	// The 3D graph has group IDs and contained obj IDs, and those relationships could be useful here.
 	// However, it is likely preferable to have the 3D graph maintain those relationships / features
 	// and keep 2D graphs simple, but have more of them to approximate the behavior.
 
+	FGraph2DObjDelta();
 	FGraph2DObjDelta(const TArray<int32> &InVertices);
 	FGraph2DObjDelta(const TArray<int32> &InVertices, const TArray<int32> &InParents);
 };
 
-enum EGraph2DDeltaType
+UENUM()
+enum class EGraph2DDeltaType
 {
 	Add,
 	Edit,
@@ -30,11 +39,22 @@ enum EGraph2DDeltaType
 };
 
 // TODO: this is redundant with FGraph3DHostedObjectDelta
+USTRUCT()
 struct FGraph2DHostedObjectDelta
 {
+	GENERATED_BODY()
+		
+	UPROPERTY()
 	int32 PreviousHostedObjID;
+
+	UPROPERTY()
 	int32 PreviousParentID;
+
+	UPROPERTY()
 	int32 NextParentID;
+
+	FGraph2DHostedObjectDelta()
+	{ }
 
 	FGraph2DHostedObjectDelta(int32 prevHostedObjID, int32 prevParentID, int32 nextParentID)
 		: PreviousHostedObjID(prevHostedObjID)
@@ -46,23 +66,39 @@ struct FGraph2DHostedObjectDelta
 // TODO: generalize FGraph3DHostedObjDelta for use here as well
 
 // A struct that completely describes a change to the 2D graph
-class FGraph2DDelta : public FDocumentDelta
+USTRUCT()
+struct MODUMATE_API FGraph2DDelta : public FDocumentDelta
 {
-public:
+	GENERATED_BODY()
+
+	UPROPERTY()
 	int32 ID = MOD_ID_NONE; // id of the surface graph object to apply this delta
 
+	UPROPERTY()
 	EGraph2DDeltaType DeltaType = EGraph2DDeltaType::Edit;
 
-	TMap<int32, TPair<FVector2D, FVector2D>> VertexMovements;
+	UPROPERTY()
+	TMap<int32, FVector2DPair> VertexMovements;
+
+	UPROPERTY()
 	TMap<int32, FVector2D> VertexAdditions;
+
+	UPROPERTY()
 	TMap<int32, FVector2D> VertexDeletions;
 
+	UPROPERTY()
 	TMap<int32, FGraph2DObjDelta> EdgeAdditions;
+
+	UPROPERTY()
 	TMap<int32, FGraph2DObjDelta> EdgeDeletions;
 
+	UPROPERTY()
 	TMap<int32, FGraph2DObjDelta> PolygonAdditions;
+
+	UPROPERTY()
 	TMap<int32, FGraph2DObjDelta> PolygonDeletions;
 
+	FGraph2DDelta();
 	FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType = EGraph2DDeltaType::Edit);
 
 	void Reset();
@@ -78,4 +114,5 @@ public:
 	TSharedPtr<FGraph2DDelta> MakeGraphInverse() const;
 	virtual FDeltaPtr MakeInverse() const override;
 	virtual bool ApplyTo(UModumateDocument *doc, UWorld *world) const override;
+	virtual FStructDataWrapper SerializeStruct() override { return FStructDataWrapper(StaticStruct(), this, true); }
 };

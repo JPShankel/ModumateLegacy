@@ -13,7 +13,7 @@
 
 struct FGraph3DRecordV1;
 typedef FGraph3DRecordV1 FGraph3DRecord;
-class FGraph3DDelta;
+struct FGraph3DDelta;
 struct FGraph3DGroupIDsDelta;
 
 namespace Modumate

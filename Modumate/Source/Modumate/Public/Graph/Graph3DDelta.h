@@ -7,16 +7,31 @@
 #include "Graph/Graph3DTypes.h"
 #include "DocumentManagement/DocumentDelta.h"
 
+#include "Graph3DDelta.generated.h"
+
 
 // A struct that describes a change to a graph object (currently edges and faces)
-struct FGraph3DObjDelta
+USTRUCT()
+struct MODUMATE_API FGraph3DObjDelta
 {
+	GENERATED_BODY()
+
+	UPROPERTY()
 	TArray<int32> Vertices;					// vertex IDs that define the positions for this object
+
+	UPROPERTY()
 	TArray<int32> ParentObjIDs;				// objects that were deleted to make this object
+
+	UPROPERTY()
 	TSet<int32> GroupIDs;					// group objects that this object is related to
+
+	UPROPERTY()
 	int32 ContainingObjID = MOD_ID_NONE;	// the ID of the object that contains this object, if any
+
+	UPROPERTY()
 	TSet<int32> ContainedObjIDs;			// the IDs of objects that are contained by this object
 
+	FGraph3DObjDelta();
 	FGraph3DObjDelta(const TArray<int32>& InVertices);
 	FGraph3DObjDelta(const TArray<int32>& InVertices, const TArray<int32>& InParents,
 		const TSet<int32>& InGroupIDs = TSet<int32>(),
@@ -27,9 +42,16 @@ struct FGraph3DObjDelta
 		const TSet<int32>& InGroupIDs = TSet<int32>());
 };
 
-struct FGraph3DGroupIDsDelta
+USTRUCT()
+struct MODUMATE_API FGraph3DGroupIDsDelta
 {
-	TSet<int32> GroupIDsToAdd, GroupIDsToRemove;
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TSet<int32> GroupIDsToAdd;
+
+	UPROPERTY()
+	TSet<int32> GroupIDsToRemove;
 
 	FGraph3DGroupIDsDelta();
 	FGraph3DGroupIDsDelta(const FGraph3DGroupIDsDelta& Other);
@@ -38,10 +60,22 @@ struct FGraph3DGroupIDsDelta
 	FGraph3DGroupIDsDelta MakeInverse() const;
 };
 
-struct FGraph3DFaceContainmentDelta
+USTRUCT()
+struct MODUMATE_API FGraph3DFaceContainmentDelta
 {
-	int32 PrevContainingFaceID, NextContainingFaceID;
-	TSet<int32> ContainedFaceIDsToAdd, ContainedFaceIDsToRemove;
+	GENERATED_BODY()
+
+	UPROPERTY()
+	int32 PrevContainingFaceID;
+
+	UPROPERTY()
+	int32 NextContainingFaceID;
+
+	UPROPERTY()
+	TSet<int32> ContainedFaceIDsToAdd;
+
+	UPROPERTY()
+	TSet<int32> ContainedFaceIDsToRemove;
 
 	FGraph3DFaceContainmentDelta();
 	FGraph3DFaceContainmentDelta(const FGraph3DFaceContainmentDelta& Other);
@@ -53,25 +87,45 @@ struct FGraph3DFaceContainmentDelta
 };
 
 // A struct that completely describes a change to the 3D graph
-class FGraph3DDelta : public FDocumentDelta
+USTRUCT()
+struct MODUMATE_API FGraph3DDelta : public FDocumentDelta
 {
+	GENERATED_BODY()
+
 public:
-	TMap<int32, TPair<FVector, FVector>> VertexMovements;
+	UPROPERTY()
+	TMap<int32, FModumateVectorPair> VertexMovements;
+
+	UPROPERTY()
 	TMap<int32, FVector> VertexAdditions;
+
+	UPROPERTY()
 	TMap<int32, FVector> VertexDeletions;
 
+	UPROPERTY()
 	TMap<int32, FGraph3DObjDelta> EdgeAdditions;
+
+	UPROPERTY()
 	TMap<int32, FGraph3DObjDelta> EdgeDeletions;
 
+	UPROPERTY()
 	TMap<int32, FGraph3DObjDelta> FaceAdditions;
+
+	UPROPERTY()
 	TMap<int32, FGraph3DObjDelta> FaceDeletions;
+
+	UPROPERTY()
 	TMap<int32, FGraph3DFaceContainmentDelta> FaceContainmentUpdates;
 
 	// map from faceID to a map from vertex index to new ID
-	TMap<int32, TMap<int32, int32>> FaceVertexAdditions;
-	TMap<int32, TMap<int32, int32>> FaceVertexRemovals;
+	UPROPERTY()
+	TMap<int32, FModumateIntMap> FaceVertexAdditions;
+
+	UPROPERTY()
+	TMap<int32, FModumateIntMap> FaceVertexRemovals;
 
 	// Updates to GroupIDs for graph objects
+	UPROPERTY()
 	TMap<int32, FGraph3DGroupIDsDelta> GroupIDsUpdates;
 
 	void Reset();
@@ -85,4 +139,5 @@ public:
 	TSharedPtr<FGraph3DDelta> MakeGraphInverse() const;
 	virtual FDeltaPtr MakeInverse() const override;
 	virtual bool ApplyTo(UModumateDocument *doc, UWorld *world) const override;
+	virtual FStructDataWrapper SerializeStruct() override { return FStructDataWrapper(StaticStruct(), this, true); }
 };

@@ -663,7 +663,7 @@ namespace Modumate
 			}
 			else if (!newPos.Equals(oldPos))
 			{
-				moveVertexDelta.VertexMovements.Add(vertexID, TPair<FVector2D, FVector2D>(oldPos, newPos));
+				moveVertexDelta.VertexMovements.Add(vertexID, { oldPos, newPos });
 				dirtyVertexIDs.Add(vertex->ID);
 			}
 		}
@@ -772,7 +772,7 @@ namespace Modumate
 			const FGraph2DVertex *existingVertex = FindVertex(newPos);
 			if (!newPos.Equals(oldPos))
 			{
-				moveVertexDelta.VertexMovements.Add(vertexID, TPair<FVector2D, FVector2D>(oldPos, newPos));
+				moveVertexDelta.VertexMovements.Add(vertexID, { oldPos, newPos });
 			}
 		}
 

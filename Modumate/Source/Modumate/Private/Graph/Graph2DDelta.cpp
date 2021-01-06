@@ -2,6 +2,9 @@
 #include "DocumentManagement/ModumateDocument.h"
 
 
+FGraph2DObjDelta::FGraph2DObjDelta()
+{ }
+
 FGraph2DObjDelta::FGraph2DObjDelta(const TArray<int32>& InVertices)
 	: Vertices(InVertices)
 { }
@@ -9,6 +12,9 @@ FGraph2DObjDelta::FGraph2DObjDelta(const TArray<int32>& InVertices)
 FGraph2DObjDelta::FGraph2DObjDelta(const TArray<int32>& InVertices, const TArray<int32>& InParents)
 	: Vertices(InVertices)
 	, ParentObjIDs(InParents)
+{ }
+
+FGraph2DDelta::FGraph2DDelta()
 { }
 
 FGraph2DDelta::FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType)
@@ -98,7 +104,7 @@ void FGraph2DDelta::Invert()
 
 	for (auto& kvp : VertexMovements)
 	{
-		TPair<FVector2D, FVector2D>& vertexMovement = kvp.Value;
+		FVector2DPair& vertexMovement = kvp.Value;
 		Swap(vertexMovement.Key, vertexMovement.Value);
 	}
 

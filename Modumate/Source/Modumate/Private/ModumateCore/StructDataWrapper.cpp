@@ -18,7 +18,7 @@ FStructDataWrapper::FStructDataWrapper()
 
 FStructDataWrapper::FStructDataWrapper(UScriptStruct* StructDef, const void* SrcStructPtr, bool bSaveJson)
 {
-	SaveStructData(StructDef, SrcStructPtr);
+	SaveStructData(StructDef, SrcStructPtr, bSaveJson);
 }
 
 bool FStructDataWrapper::SaveStructData(UScriptStruct* StructDef, const void* SrcStructPtr, bool bSaveJson)
