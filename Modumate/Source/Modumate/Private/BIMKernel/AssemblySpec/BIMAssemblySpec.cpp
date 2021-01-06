@@ -377,14 +377,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 
 EBIMResult FBIMAssemblySpec::Reset()
 {
-	ObjectType = EObjectType::OTNone;
-
-	RootPreset.Invalidate();
-	RootProperties = FBIMPropertySheet();
-
-	Layers.Empty();
-	Parts.Empty();
-	Extrusions.Empty();
+	*this = FBIMAssemblySpec();
 	return EBIMResult::Success;
 }
 
