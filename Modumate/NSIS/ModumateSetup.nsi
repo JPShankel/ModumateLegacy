@@ -94,8 +94,6 @@ Section "Engine Files" SEC02
 #  File "${PATH_IN}\Engine\Content\SlateDebug\Fonts\LastResort.ttf"
   SetOutPath "$INSTDIR\Engine\Extras\Redist\en-us"
   File "${PATH_IN}\Engine\Extras\Redist\en-us\UE4PrereqSetup_x64.exe"
-  SetOutPath "$INSTDIR\Engine\Programs\CrashReportClient\Config\NoRedist"
-  File "${PATH_IN}\Engine\Programs\CrashReportClient\Config\NoRedist\DefaultEngine.ini"
   SetOutPath "$INSTDIR\Engine\Programs\CrashReportClient\Content\Paks"
   File "${PATH_IN}\Engine\Programs\CrashReportClient\Content\Paks\CrashReportClient.pak"
 SectionEnd
