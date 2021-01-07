@@ -73,6 +73,7 @@ private:
 
 	FTimerHandle ControllerTimer;
 	FGuid RecordSessionKey;
+	FDateTime SessionStartTime;
 	static const FString InputTelemetryDirectory;
 
 	bool StartTelemetryRecording();

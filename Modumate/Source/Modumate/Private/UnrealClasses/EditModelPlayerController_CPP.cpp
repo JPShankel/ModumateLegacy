@@ -243,8 +243,8 @@ bool AEditModelPlayerController_CPP::StartTelemetryRecording()
 
 	if (InputAutomationComponent->BeginRecording())
 	{
-		RecordSessionKey = FGuid::NewGuid();
 		TimeOfLastUpload = FDateTime::Now();
+		SessionStartTime = FDateTime::Now();
 
 		const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
 		if (!ensureAlways(projectSettings != nullptr))
@@ -278,7 +278,36 @@ bool AEditModelPlayerController_CPP::EndTelemetryRecording()
 		UploadTelemetryLog();
 		InputAutomationComponent->EndRecording(false);
 	}
-	RecordSessionKey = FGuid();
+
+	// If we don't have a session key, there's nothing to record
+	if (RecordSessionKey.IsValid())
+	{
+		FTimespan sessionTime = FDateTime::Now() - SessionStartTime;
+
+		UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+		TSharedPtr<FModumateCloudConnection> Cloud = gameInstance->GetCloudConnection();
+
+		if (Cloud.IsValid())
+		{
+			Cloud->SetAuthToken(gameInstance->GetAccountManager()->GetIdToken());
+			Cloud->UploadSessionTime(
+				sessionTime, 
+				[](bool success) 
+				{
+					UE_LOG(LogTemp, Log, TEXT("Uploaded Session Time Successfully"));
+				}, [
+				](int32 code, FString error) 
+				{
+					UE_LOG(LogTemp, Error, TEXT("Error: %s"), *error);
+				}
+			);
+		}
+
+	}
+
+	RecordSessionKey = FGuid::NewGuid();
+	SessionStartTime = FDateTime::Now();
+
 	return true;
 }
 
