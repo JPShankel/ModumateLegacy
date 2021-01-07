@@ -6,6 +6,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateStairStatics.h"
+#include "Objects/StructureLine.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
@@ -20,25 +21,17 @@ using namespace Modumate;
 
 UStructureLineTool::UStructureLineTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, bHaveSetUpGeometry(false)
 	, bWasShowingSnapCursor(false)
 	, OriginalMouseMode(EMouseMode::Location)
 	, bWantedVerticalSnap(false)
 	, LastValidTargetID(MOD_ID_NONE)
 	, LastTargetStructureLineID(MOD_ID_NONE)
-	, PendingObjMesh(nullptr)
-	, GameMode(nullptr)
 	, LineStartPos(ForceInitToZero)
 	, LineEndPos(ForceInitToZero)
 	, LineDir(ForceInitToZero)
 	, ObjNormal(ForceInitToZero)
 	, ObjUp(ForceInitToZero)
 {
-	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
-	if (world)
-	{
-		GameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
-	}
 }
 
 bool UStructureLineTool::Activate()
@@ -57,14 +50,6 @@ bool UStructureLineTool::Activate()
 	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = true;
 
 	ResetState();
-
-	if (PendingObjMesh == nullptr)
-	{
-		PendingObjMesh = Controller->GetWorld()->SpawnActor<ADynamicMeshActor>(GameMode->DynamicMeshActorClass.Get());
-	}
-
-	PendingObjMesh->SetActorHiddenInGame(true);
-	PendingObjMesh->SetActorEnableCollision(false);
 
 	return true;
 }
@@ -87,12 +72,6 @@ bool UStructureLineTool::HandleInputNumber(double n)
 bool UStructureLineTool::Deactivate()
 {
 	ResetState();
-
-	if (PendingObjMesh)
-	{
-		PendingObjMesh->Destroy();
-		PendingObjMesh = nullptr;
-	}
 
 	if (Controller)
 	{
@@ -183,6 +162,12 @@ bool UStructureLineTool::FrameUpdate()
 			pendingSegment->Point2 = LineEndPos;
 			LineDir = (LineEndPos - LineStartPos).GetSafeNormal();
 			UModumateGeometryStatics::FindBasisVectors(ObjNormal, ObjUp, LineDir);
+
+			// Preview the deltas to create a structureline
+			if (GameState->Document->StartPreviewing() && GetObjectCreationDeltas({}, CurDeltas, false))
+			{
+				GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
+			}
 		}
 	}
 	break;
@@ -210,6 +195,7 @@ bool UStructureLineTool::FrameUpdate()
 		SetTargetID(newTargetID);
 		if (LastValidTargetID != MOD_ID_NONE)
 		{
+			// Show an affordance for the preview object
 			LineStartPos = hitMOI->GetCorner(0);
 			LineEndPos = hitMOI->GetCorner(1);
 			LineDir = (LineEndPos - LineStartPos).GetSafeNormal();
@@ -219,6 +205,12 @@ bool UStructureLineTool::FrameUpdate()
 				LineStartPos, LineEndPos,
 				AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness, 1)
 			);
+
+			// Preview the deltas to create a structureline
+			if (GameState->Document->StartPreviewing() && GetObjectCreationDeltas({ LastValidTargetID }, CurDeltas, false))
+			{
+				GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
+			}
 		}
 
 		// Don't show the snap cursor if we're targeting an edge or existing structure line.
@@ -226,8 +218,6 @@ bool UStructureLineTool::FrameUpdate()
 	}
 	break;
 	}
-
-	UpdatePreviewStructureLine();
 
 	return true;
 }
@@ -244,6 +234,33 @@ bool UStructureLineTool::AbortUse()
 	return UEditModelToolBase::AbortUse();
 }
 
+bool UStructureLineTool::HandleFlip(EAxis::Type FlipAxis)
+{
+	if (NewObjectIDs.Num() == 0)
+	{
+		return false;
+	}
+
+	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	return newMOI && newMOI->GetFlippedState(FlipAxis, NewMOIStateData);
+}
+
+bool UStructureLineTool::HandleAdjustJustification(const FVector2D& ViewSpaceDirection)
+{
+	if (NewObjectIDs.Num() == 0)
+	{
+		return false;
+	}
+
+	FQuat cameraRotation = Controller->PlayerCameraManager->GetCameraRotation().Quaternion();
+	FVector worldSpaceDirection =
+		(ViewSpaceDirection.X * cameraRotation.GetRightVector()) +
+		(ViewSpaceDirection.Y * cameraRotation.GetUpVector());
+
+	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	return newMOI && newMOI->GetJustifiedState(worldSpaceDirection, NewMOIStateData);
+}
+
 void UStructureLineTool::OnCreateObjectModeChanged()
 {
 	Super::OnCreateObjectModeChanged();
@@ -255,26 +272,6 @@ void UStructureLineTool::OnCreateObjectModeChanged()
 	else
 	{
 		ResetState();
-	}
-}
-
-void UStructureLineTool::OnAssemblyChanged()
-{
-	Super::OnAssemblyChanged();
-
-	EToolMode toolMode = GetToolMode();
-	const FBIMAssemblySpec* assembly = GameState ?
-		GameState->Document->PresetManager.GetAssemblyByGUID(toolMode, AssemblyGUID) : nullptr;
-
-	if (assembly != nullptr)
-	{
-		ObjAssembly = *assembly;
-		bHaveSetUpGeometry = false;
-	}
-	else
-	{
-		AssemblyGUID = FGuid();
-		ObjAssembly = FBIMAssemblySpec();
 	}
 }
 
@@ -328,82 +325,14 @@ bool UStructureLineTool::SetStructureLineHidden(int32 StructureLineID, bool bHid
 	return false;
 }
 
-bool UStructureLineTool::UpdatePreviewStructureLine()
-{
-	if ((PendingObjMesh == nullptr) || !AssemblyGUID.IsValid())
-	{
-		return false;
-	}
-
-	if (LineStartPos.Equals(LineEndPos))
-	{
-		PendingObjMesh->SetActorHiddenInGame(true);
-		return false;
-	}
-
-	// Set up the extruded polygon for the structure line,
-	// and recreate geometry based on whether it's been set up before.
-
-	FVector2D justification(0.5f, 0.5f);
-	PendingObjMesh->SetupExtrudedPolyGeometry(ObjAssembly, LineStartPos, LineEndPos, ObjNormal, ObjUp,
-		justification, FVector2D::ZeroVector, FVector2D::ZeroVector, FVector::OneVector, !bHaveSetUpGeometry, false);
-	PendingObjMesh->SetActorHiddenInGame(false);
-
-	bHaveSetUpGeometry = true;
-	return true;
-}
-
 bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 {
-	if (GameState == nullptr)
-	{
-		return false;
-	}
+	GameState->Document->ClearPreviewDeltas(GetWorld());
 
 	TArray<FDeltaPtr> deltas;
-	TArray<int32> targetEdgeIDs;
-	bool bMakeEdge = (TargetEdgeID == MOD_ID_NONE);
-	if (bMakeEdge)
+	if (!GetObjectCreationDeltas({ TargetEdgeID }, deltas, true))
 	{
-		// Make sure the pending line is valid
-		FVector lineDelta = LineEndPos - LineStartPos;
-		float lineLength = lineDelta.Size();
-		if (FMath::IsNearlyZero(lineLength))
-		{
-			return false;
-		}
-
-		TArray<FVector> points({ LineStartPos, LineEndPos });
-		TArray<int32> addedVertexIDs, addedFaceIDs;
-		if (!GameState->Document->MakeMetaObject(Controller->GetWorld(), points, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
-			addedVertexIDs, targetEdgeIDs, addedFaceIDs, deltas))
-		{
-			return false;
-		}
-	}
-	else
-	{
-		targetEdgeIDs.Add(TargetEdgeID);
-	}
-
-	TSharedPtr<FMOIDelta> structureLineDelta;
-	int32 nextStructureLineID = GameState->Document->GetNextAvailableID();
-	for (int32 targetEdgeID : targetEdgeIDs)
-	{
-		// TODO: fill in custom instance data for StructureLine, once we define and rely on it
-		FMOIStateData stateData(nextStructureLineID++,
-			UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()), targetEdgeID);
-		stateData.AssemblyGUID = AssemblyGUID;
-
-		if (!structureLineDelta.IsValid())
-		{
-			structureLineDelta = MakeShared<FMOIDelta>();
-		}
-		structureLineDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
-	}
-	if (structureLineDelta.IsValid())
-	{
-		deltas.Add(structureLineDelta);
+		return false;
 	}
 
 	if (deltas.Num() == 0)
@@ -416,15 +345,71 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 
 void UStructureLineTool::ResetState()
 {
-	bHaveSetUpGeometry = false;
 	SetTargetID(MOD_ID_NONE);
 	LineStartPos = FVector::ZeroVector;
 	LineEndPos = FVector::ZeroVector;
 	LineDir = FVector::ZeroVector;
 	ObjNormal = FVector::ZeroVector;
 	ObjUp = FVector::ZeroVector;
+
+	FMOIStructureLineData newMOICustomData;
+	NewMOIStateData.CustomData.SaveStructData(newMOICustomData);
 }
 
-UMullionTool::UMullionTool(const FObjectInitializer& ObjectInitializer)
-	: UStructureLineTool(ObjectInitializer)
-{ }
+bool UStructureLineTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeIDs, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitFaces)
+{
+	OutDeltaPtrs.Reset();
+	NewObjectIDs.Reset();
+
+	TArray<int32> targetEdgeIDs;
+	for (int32 targetEdgeID : InTargetEdgeIDs)
+	{
+		if (targetEdgeID != MOD_ID_NONE)
+		{
+			targetEdgeIDs.Add(targetEdgeID);
+		}
+	}
+
+	if (targetEdgeIDs.Num() == 0)
+	{
+		// Make sure the pending line is valid
+		FVector lineDelta = LineEndPos - LineStartPos;
+		float lineLength = lineDelta.Size();
+		if (FMath::IsNearlyZero(lineLength))
+		{
+			return false;
+		}
+
+		TArray<FVector> points({ LineStartPos, LineEndPos });
+		TArray<int32> addedVertexIDs, addedFaceIDs;
+		if (!GameState->Document->MakeMetaObject(Controller->GetWorld(), points, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
+			addedVertexIDs, targetEdgeIDs, addedFaceIDs, OutDeltaPtrs, bSplitFaces, true))
+		{
+			return false;
+		}
+	}
+
+	TSharedPtr<FMOIDelta> structureLineDelta;
+	int32 nextStructureLineID = GameState->Document->GetNextAvailableID();
+	for (int32 targetEdgeID : targetEdgeIDs)
+	{
+		NewMOIStateData.ID = nextStructureLineID++;
+		NewMOIStateData.ObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
+		NewMOIStateData.ParentID = targetEdgeID;
+		NewMOIStateData.AssemblyGUID = AssemblyGUID;
+
+		NewObjectIDs.Add(NewMOIStateData.ID);
+
+		if (!structureLineDelta.IsValid())
+		{
+			structureLineDelta = MakeShared<FMOIDelta>();
+		}
+		structureLineDelta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
+	}
+	if (structureLineDelta.IsValid())
+	{
+		OutDeltaPtrs.Add(structureLineDelta);
+	}
+
+	return true;
+}

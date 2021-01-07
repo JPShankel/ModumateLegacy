@@ -281,14 +281,10 @@ FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& Targe
 
 		if (bCreateNewObject)
 		{
-			/*FMOIPlaneHostedObjData newMOICustomData(FMOIPlaneHostedObjData::CurrentVersion);
-			newMOICustomData.FlipSigns.Y = GetAppliedInversionValue() ? -1.0 : 1.0f;
-			newMOICustomData.Justification = InstanceJustification;*/
-
 			NewMOIStateData.ID = nextID++;
 			NewMOIStateData.ParentID = targetFaceID;
 			NewMOIStateData.AssemblyGUID = AssemblyGUID;
-			//NewMOIStateData.CustomData.SaveStructData(newMOICustomData);
+
 			delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
 
 			NewObjectIDs.Add(NewMOIStateData.ID);

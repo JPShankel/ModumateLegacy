@@ -1408,7 +1408,8 @@ int32 UModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &F
 }
 
 bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& points, const TArray<int32>& IDs, EObjectType objectType, int32 parentID,
-	TArray<int32>& OutAddedVertexIDs, TArray<int32>& OutAddedEdgeIDs, TArray<int32>& OutAddedFaceIDs, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitAndUpdateFaces)
+	TArray<int32>& OutAddedVertexIDs, TArray<int32>& OutAddedEdgeIDs, TArray<int32>& OutAddedFaceIDs, TArray<FDeltaPtr>& OutDeltaPtrs,
+	bool bSplitAndUpdateFaces, bool bReturnOnlyParallel)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeMetaObject"));
 	OutAddedVertexIDs.Reset();
@@ -1475,6 +1476,51 @@ bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 		// delta will be false if the object exists, out object ids should contain the existing id
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;
+	}
+
+	// If requested, return only the added graph elements that are parallel to the input.
+	if (bReturnOnlyParallel)
+	{
+		switch (graphObjectType)
+		{
+		case EGraph3DObjectType::Edge:
+		{
+			FVector inputDir = (points.Num() == 2) ? (points[1] - points[0]).GetSafeNormal() : FVector::ZeroVector;
+			int32 totalAddedEdges = OutAddedEdgeIDs.Num();
+			for (int32 addedEdgeIdx = totalAddedEdges - 1; addedEdgeIdx >= 0; --addedEdgeIdx)
+			{
+				if (auto addedGraphEdge = TempVolumeGraph.FindEdge(OutAddedEdgeIDs[addedEdgeIdx]))
+				{
+					if (!FVector::Parallel(addedGraphEdge->CachedDir, inputDir))
+					{
+						OutAddedEdgeIDs.RemoveAt(addedEdgeIdx);
+					}
+				}
+			}
+		}
+		break;
+		case EGraph3DObjectType::Face:
+		{
+			FPlane inputPlane;
+			if (UModumateGeometryStatics::GetPlaneFromPoints(points, inputPlane))
+			{
+				int32 totalAddedFaces = OutAddedFaceIDs.Num();
+				for (int32 addedFaceIdx = totalAddedFaces - 1; addedFaceIdx >= 0; --addedFaceIdx)
+				{
+					if (auto addedGraphFace = TempVolumeGraph.FindFace(OutAddedFaceIDs[addedFaceIdx]))
+					{
+						if (!UModumateGeometryStatics::ArePlanesCoplanar(addedGraphFace->CachedPlane, inputPlane))
+						{
+							OutAddedFaceIDs.RemoveAt(addedFaceIdx);
+						}
+					}
+				}
+			}
+		}
+		break;
+		default:
+			break;
+		}
 	}
 
 	return (OutDeltaPtrs.Num() > 0);

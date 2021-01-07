@@ -1,6 +1,8 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #pragma once
+
+#include "DocumentManagement/DocumentDelta.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
@@ -23,31 +25,25 @@ public:
 	virtual bool FrameUpdate() override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
+	virtual bool HandleFlip(EAxis::Type FlipAxis) override;
+	virtual bool HandleAdjustJustification(const FVector2D& ViewSpaceDirection) override;
 	virtual bool HasDimensionActor() override { return true; }
 
 protected:
 	virtual void OnCreateObjectModeChanged() override;
-	virtual void OnAssemblyChanged() override;
 
 	void SetTargetID(int32 NewTargetID);
 	bool SetStructureLineHidden(int32 StructureLineID, bool bHidden);
-	bool UpdatePreviewStructureLine();
 	bool MakeStructureLine(int32 TargetEdgeID = MOD_ID_NONE);
 	void ResetState();
 
-	bool bHaveSetUpGeometry;
+	bool GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeIDs, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitFaces);
+
 	bool bWasShowingSnapCursor;
 	EMouseMode OriginalMouseMode;
 	bool bWantedVerticalSnap;
 	int32 LastValidTargetID;
 	int32 LastTargetStructureLineID;
-	FBIMAssemblySpec ObjAssembly;
-
-	UPROPERTY()
-	class ADynamicMeshActor* PendingObjMesh;
-
-	UPROPERTY()
-	class AEditModelGameMode_CPP* GameMode;
 
 	FVector LineStartPos, LineEndPos, LineDir, ObjNormal, ObjUp;
 };
@@ -58,6 +54,5 @@ class MODUMATE_API UMullionTool : public UStructureLineTool
 	GENERATED_BODY()
 
 public:
-	UMullionTool(const FObjectInitializer& ObjectInitializer);
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_MULLION; }
 };

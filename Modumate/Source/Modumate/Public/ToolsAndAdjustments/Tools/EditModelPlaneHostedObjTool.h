@@ -55,12 +55,6 @@ protected:
 	bool bWasShowingSnapCursor;
 
 	float InstanceJustification;
-
-	// The original template state data for the MOI(s) that this tool creates, either preview for for real.
-	FMOIStateData NewMOIStateData;
-
-	// The IDs of objects that this tool references with its creation deltas, preview or not.
-	TArray<int32> NewObjectIDs;
 };
 
 UCLASS()
