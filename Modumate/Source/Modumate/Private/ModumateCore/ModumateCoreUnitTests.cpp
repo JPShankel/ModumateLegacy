@@ -202,6 +202,39 @@ namespace Modumate
 		return true;
 	}
 
+	// Test for (and interactive debuggable example of) custom USTRUCT comparison utilities.
+	// Expectation: USTRUCTs that can be compared by their UPROPERTYs should be able to be compared by the global utility UScriptStruct::CompareScriptStruct,
+	// which will in turn compare properties based on their own CPPStructOps.
+	// Struct properties that either shouldn't use operator== for logical comparison, or do not implement it,
+	// will recurse through their properties, unless they have the WithIdenticalViaEquality trait.
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateUStructComparisonTest, "Modumate.Core.Serialization.UStructComparison", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::LowPriority)
+		bool FModumateUStructComparisonTest::RunTest(const FString& Parameters)
+	{
+		FModumateTestStruct1 testStruct1A{ false, 1.0 / 2.54, {1, 2, 3, 4} };
+		FModumateTestStruct1 testStruct1B{ true, 1.0 / 2.54, {1, 0, 3, 4} };
+
+		FModumateTestStruct2 testStruct2A;
+		testStruct2A.VectorMap.Add(FName(TEXT("Handle")), FVector(6.0f, 36.0f, 0.0f));
+		testStruct2A.VectorMap.Add(FName(TEXT("Frame")), FVector(0.0f, 0.0f, 0.0f));
+		testStruct2A.VectorMap.Add(FName(TEXT("Panel")), FVector(0.0f, 0.0f, 1.0f));
+
+		FModumateTestStruct2 testStruct2B;
+		testStruct2B.VectorMap.Add(FName(TEXT("Frame")), FVector(1.0f, 0.0f, 0.0f));
+		testStruct2B.VectorMap.Add(FName(TEXT("Handle")), FVector(6.0f, 36.0f, 0.0f));
+
+		FModumateTestStructContainer testStructContainerA{ testStruct1A, testStruct2A };
+		FModumateTestStructContainer testStructContainerACopy = testStructContainerA;
+		FModumateTestStructContainer testStructContainerB{ testStruct1B, testStruct2B };
+
+		bool bAEqualsCopy = FModumateTestStructContainer::StaticStruct()->CompareScriptStruct(&testStructContainerA, &testStructContainerACopy, 0x0);
+		TestTrue(TEXT("testStructContainerA == testStructContainerACopy"), bAEqualsCopy);
+
+		bool bAEqualsB = FModumateTestStructContainer::StaticStruct()->CompareScriptStruct(&testStructContainerA, &testStructContainerB, 0x0);
+		TestTrue(TEXT("testStructContainerA != testStructContainerB"), !bAEqualsB);
+
+		return true;
+	}
+
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateUObjectSerializationTest, "Modumate.Core.Serialization.UObjectSerialization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::LowPriority)
 		bool FModumateUObjectSerializationTest::RunTest(const FString& Parameters)
 	{

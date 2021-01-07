@@ -82,6 +82,16 @@ struct MODUMATE_API FModumateTestStruct1
 	bool operator!=(const FModumateTestStruct1& RHS) const { return !(*this == RHS); }
 };
 
+template<>
+struct TStructOpsTypeTraits<FModumateTestStruct1> : public TStructOpsTypeTraitsBase2<FModumateTestStruct1>
+{
+	enum
+	{
+		WithIdenticalViaEquality = true,
+	};
+};
+IMPLEMENT_STRUCT(ModumateTestStruct1);
+
 USTRUCT()
 struct MODUMATE_API FModumateTestStruct2
 {
@@ -89,6 +99,18 @@ struct MODUMATE_API FModumateTestStruct2
 
 	UPROPERTY()
 	TMap<FName, FVector> VectorMap;
+};
+
+USTRUCT()
+struct MODUMATE_API FModumateTestStructContainer
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FModumateTestStruct1 ContainedStruct1;
+
+	UPROPERTY()
+	FModumateTestStruct2 ContainedStruct2;
 };
 
 USTRUCT()
