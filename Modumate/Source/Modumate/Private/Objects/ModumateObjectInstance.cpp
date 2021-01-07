@@ -568,10 +568,8 @@ bool AModumateObjectInstance::SetStateData(const FMOIStateData& NewStateData)
 	}
 
 	StateData = NewStateData;
-	if (!UpdateInstanceData())
-	{
-		return false;
-	}
+
+	UpdateInstanceData();
 
 	// TODO: selectively dirty the object based on implementation, based on which custom data was modified
 	MarkDirty(EObjectDirtyFlags::All);

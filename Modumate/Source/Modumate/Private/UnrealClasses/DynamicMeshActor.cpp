@@ -716,6 +716,8 @@ bool ADynamicMeshActor::SetupStairPolys(const FVector& StairOrigin, const TArray
 	const TArray<TArray<FVector>>& RiserPolys, const TArray<FVector>& RiserNormals,
 	const TArray<FLayerGeomDef>& TreadLayers, const TArray<FLayerGeomDef>& RiserLayers, const FBIMAssemblySpec& AssemblySpec)
 {
+	Mesh->ClearAllMeshSections();
+
 	SetActorLocation(StairOrigin);
 	SetActorRotation(FQuat::Identity);
 

@@ -730,3 +730,36 @@ EBIMResult FBIMPresetEditor::ClearPartPreset(const FBIMEditorNodeIDType& ParentI
 	}
 	return EBIMResult::Error;
 }
+
+/*
+* Given a child node attached to its parent by a pin, determine which layer type the child is attached to (Default, Tread, Riser or Cabinet)
+* Used to determine how parts or plane-hosted assemblies which can target multiple sections of a complex assembly are interpreted
+* Used by the dynamic icon generator to isolate icons by category as presets do not inherently have a target
+*/
+EBIMResult FBIMPresetEditor::GetBIMPinTargetForChildNode(const FBIMEditorNodeIDType& ChildID, EBIMPinTarget& OutTarget) const
+{
+	const auto child = InstanceMap.Find(ChildID);
+	if (child == nullptr)
+	{
+		return EBIMResult::Error;
+	}
+
+	// If we don't have a parent, we don't target anything
+	auto childPtr = child->Pin();
+	if (!childPtr->ParentInstance.IsValid())
+	{
+		return EBIMResult::Error;
+	}
+
+	// Find myself in my parent's sibling list and get the target stored on that pin
+	for (auto& sibling : childPtr->ParentInstance.Pin()->WorkingPresetCopy.ChildPresets)
+	{
+		if (sibling.ParentPinSetIndex == childPtr->MyParentPinSetIndex && sibling.ParentPinSetPosition == childPtr->MyParentPinSetPosition)
+		{
+			OutTarget = sibling.Target;
+			return EBIMResult::Success;
+		}
+	}
+
+	return EBIMResult::Error;
+}

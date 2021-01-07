@@ -219,6 +219,22 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 			}
 		}
 
+		// Stairs do not have slotIDs, find riser vs tread instead
+		if (Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly.ObjectType == EObjectType::OTStaircase)
+		{
+			EBIMPinTarget target;
+			Controller->EditModelUserWidget->BIMDesigner->InstancePool.GetBIMPinTargetForChildNode(NodeID, target);
+
+			if (target == EBIMPinTarget::Tread)
+			{
+				assemblyPartIndex = StairLayerTreadAssemblyPartIndex;
+			}
+			else if (target == EBIMPinTarget::Riser)
+			{
+				assemblyPartIndex = StairLayerRiserAssemblyPartIndex;
+			}
+		}
+
 		// Check if this icon is used for slot based swapping menu
 		if (UseDependentPreset && assemblyPartIndex > 0)
 		{
@@ -335,7 +351,9 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &A
 	case EObjectType::OTFurniture:
 		return SetIconMeshForFFEAssembly(Assembly, InRenderTarget);
 	case  EObjectType::OTStaircase:
-		return SetIconMeshForStairAssembly(Assembly, InRenderTarget, PartIndex);
+		return SetIconMeshForStairAssembly(Assembly, InRenderTarget, 
+			(PartIndex == 0 || PartIndex == StairLayerTreadAssemblyPartIndex),
+			(PartIndex == 0 || PartIndex == StairLayerRiserAssemblyPartIndex));
 	}
 	return false;
 }
@@ -603,7 +621,7 @@ bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FBIMAssemblySpec &As
 	return true;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex)
+bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, bool bMakeTread, bool bMakeRiser)
 {
 	// Step 1: Setup stair mesh
 	/////////////////////////////////////////////////////////////////////////////////////////////
@@ -657,6 +675,14 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 		cachedRiserNormals, treadLayers, riserLayers);
 
 	// Set up the triangulated staircase mesh by extruding each tread and riser polygon
+	if (!bMakeTread)
+	{
+		treadLayers.Empty();
+	}
+	if (!bMakeRiser)
+	{
+		riserLayers.Empty();
+	}
 	bool bStairSuccess = IconDynamicMeshActor->SetupStairPolys(stairOrigin, cachedTreadPolys, cachedRiserPolys, cachedRiserNormals, treadLayers, riserLayers,
 		Assembly);
 

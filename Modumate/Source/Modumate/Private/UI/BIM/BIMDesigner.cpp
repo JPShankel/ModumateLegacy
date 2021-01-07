@@ -747,6 +747,7 @@ bool UBIMDesigner::DeleteNode(const FBIMEditorNodeIDType& InstanceID)
 	}
 	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
+	SetNodeAsSelected(RootNode->ID);
 	return true;
 }
 

@@ -63,4 +63,6 @@ public:
 	EBIMResult FindNodeParentLineage(const FBIMEditorNodeIDType& NodeID, TArray<FBIMEditorNodeIDType>& OutLineage);
 
 	bool GetSortedNodeIDs(TArray<FBIMEditorNodeIDType> &OutNodeIDs);
+
+	EBIMResult GetBIMPinTargetForChildNode(const FBIMEditorNodeIDType& ChildID, EBIMPinTarget& OutTarget) const;
 };
