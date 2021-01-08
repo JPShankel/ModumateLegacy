@@ -59,7 +59,7 @@ bool FStructDataWrapper::LoadStructData(UScriptStruct* StructDef, void* DestStru
 
 bool FStructDataWrapper::SaveJsonFromCbor()
 {
-	if ((StructCborBuffer.Num() == 0) || !UpdateStructDefFromName() || !AllocateTempStruct())
+	if ((StructCborBuffer.Num() == 0) || !UpdateStructDefFromName() || !CreateInternalStruct())
 	{
 		return false;
 	}
@@ -71,16 +71,21 @@ bool FStructDataWrapper::SaveJsonFromCbor()
 	return bSuccess;
 }
 
+bool FStructDataWrapper::LoadFromJson()
+{
+	return StructJson && StructJson.JsonObjectToString(StructJson.JsonString) && UpdateStructDefFromName();
+}
+
 bool FStructDataWrapper::SaveCborFromJson()
 {
 	// Require that the Json object is valid, can be turned into a string, and we've parsed the StructName for reflection
-	if (!StructJson || !StructJson.JsonObjectToString(StructJson.JsonString) || !UpdateStructDefFromName() || !AllocateTempStruct())
+	if (!LoadFromJson() || !CreateInternalStruct())
 	{
 		return false;
 	}
 
-	bool bSuccess = FJsonObjectConverter::JsonObjectToUStruct(StructJson.JsonObject.ToSharedRef(), CachedStructDef, TempStructBuffer) &&
-		SaveStructDataCbor(TempStructBuffer);
+	
+	bool bSuccess = CreateStructFromJSONRaw(TempStructBuffer) && SaveStructDataCbor(TempStructBuffer);
 
 	FreeTempStruct();
 	return bSuccess;
@@ -167,31 +172,48 @@ bool FStructDataWrapper::SaveStructDataCbor(const void* SrcStructPtr)
 	return (StructCborBuffer.Num() > 0);
 }
 
-bool FStructDataWrapper::AllocateTempStruct()
+uint8* FStructDataWrapper::CreateInitStructRaw()
 {
-	if (CachedStructDef == nullptr)
+	if ((CachedStructDef == nullptr) || !ensure(CachedStructDef->IsNative()))
 	{
-		return false;
+		return nullptr;
 	}
 
-	const int32 structAllocSize = CachedStructDef->GetStructureSize();
-	if (structAllocSize == 0)
+	// Allocate space for the struct
+	const int32 RequiredAllocSize = CachedStructDef->GetStructureSize();
+	uint8* structPtr = (uint8*)FMemory::Malloc(RequiredAllocSize, CachedStructDef->GetMinAlignment());
+
+	// Perform the correct constructor, which initially zeroes out the allocated memory
+	CachedStructDef->InitializeStruct(structPtr);
+
+	// Perform script-based construction if necessary
+	if (CachedStructDef->StructFlags & STRUCT_PostScriptConstruct)
 	{
-		return false;
+		UScriptStruct::ICppStructOps* structOps = CachedStructDef->GetCppStructOps();
+		if (ensure(structOps))
+		{
+			structOps->PostScriptConstruct(structPtr);
+		}
 	}
 
-	TempStructBuffer = (uint8*)FMemory::Malloc(structAllocSize, CachedStructDef->GetMinAlignment());
-	if (TempStructBuffer == nullptr)
-	{
-		return false;
-	}
+	return structPtr;
+}
 
-	FMemory::Memzero(TempStructBuffer, structAllocSize);
-	return true;
+bool FStructDataWrapper::CreateStructFromJSONRaw(uint8* OutStructPtr)
+{
+	return StructJson.JsonObject.IsValid() && CachedStructDef &&
+		FJsonObjectConverter::JsonObjectToUStruct(StructJson.JsonObject.ToSharedRef(), CachedStructDef, OutStructPtr);
+}
+
+bool FStructDataWrapper::CreateInternalStruct()
+{
+	TempStructBuffer = CreateInitStructRaw();
+	return (TempStructBuffer != nullptr);
 }
 
 void FStructDataWrapper::FreeTempStruct()
 {
+	CachedStructDef->DestroyStruct(TempStructBuffer);
 	FMemory::Free(TempStructBuffer);
 	TempStructBuffer = nullptr;
 }

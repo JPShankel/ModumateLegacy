@@ -2267,6 +2267,11 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 
 	OutDocumentRecord.CameraViews = SavedCameraViews;
 
+	for (auto& ur : UndoBuffer)
+	{
+		OutDocumentRecord.AppliedDeltas.Add(FDeltasRecord(ur->Deltas));
+	}
+
 	return true;
 }
 
@@ -2441,6 +2446,31 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 		AddHideObjectsById(world, hideCutPlaneIds);
 
 		ClearUndoBuffer();
+
+		// Load undo/redo buffer
+		for (auto& deltaRecord : docRec.AppliedDeltas)
+		{
+			TSharedPtr<UndoRedo> undoRedo = MakeShared<UndoRedo>();
+
+			for (auto& structWrapper : deltaRecord.DeltaStructWrappers)
+			{
+				// TODO: we'd prefer to be able to call SaveCborFromJson here, rather than its first step LoadFromJson,
+				// but there's an issue with StructDataWrapper UPROPERTYs contained within StructDataWrappers that the CBOR struct serialization logic doesn't handle.
+				if (!ensure(structWrapper.LoadFromJson()))
+				{
+					continue;
+				}
+
+				auto deltaPtr = structWrapper.CreateStructFromJSON<FDocumentDelta>();
+				if (deltaPtr)
+				{
+					deltaPtr->PostDeserializeStruct();
+					undoRedo->Deltas.Add(MakeShareable(deltaPtr));
+				}
+			}
+
+			UndoBuffer.Add(undoRedo);
+		}
 
 		if (setAsCurrentProject)
 		{

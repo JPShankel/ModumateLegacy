@@ -17,12 +17,12 @@ struct MODUMATE_API FDocumentDelta
 	GENERATED_BODY()
 
 public:
-	FDocumentDelta();
-	virtual ~FDocumentDelta();
+	virtual ~FDocumentDelta() {}
 
 	virtual bool ApplyTo(UModumateDocument* doc, UWorld* world) const { return false; };
 	virtual TSharedPtr<FDocumentDelta> MakeInverse() const { return nullptr; };
 	virtual FStructDataWrapper SerializeStruct();
+	virtual void PostDeserializeStruct() {}
 
 	// TODO: potentially, int32 ID if it is useful here
 };

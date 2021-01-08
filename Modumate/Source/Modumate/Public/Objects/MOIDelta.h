@@ -32,7 +32,8 @@ struct MODUMATE_API FMOIDelta : public FDocumentDelta
 {
 	GENERATED_BODY()
 
-public:
+	virtual ~FMOIDelta() {}
+
 	bool IsValid() const;
 
 	void AddCreateDestroyState(const FMOIStateData& State, EMOIDeltaType DeltaType);
@@ -44,6 +45,7 @@ public:
 	virtual bool ApplyTo(UModumateDocument* doc, UWorld* world) const override;
 	virtual FDeltaPtr MakeInverse() const override;
 	virtual FStructDataWrapper SerializeStruct() override;
+	virtual void PostDeserializeStruct() override;
 
 	UPROPERTY()
 	TArray<FMOIDeltaState> States;

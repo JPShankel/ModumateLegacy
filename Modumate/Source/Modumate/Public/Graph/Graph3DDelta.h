@@ -92,7 +92,8 @@ struct MODUMATE_API FGraph3DDelta : public FDocumentDelta
 {
 	GENERATED_BODY()
 
-public:
+	virtual ~FGraph3DDelta() {}
+
 	UPROPERTY()
 	TMap<int32, FModumateVectorPair> VertexMovements;
 

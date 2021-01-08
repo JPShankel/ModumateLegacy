@@ -39,11 +39,26 @@ struct MODUMATE_API FStructDataWrapper
 	// If JSON wasn't saved during initialization (not by default for performance), it must be saved before serialization.
 	bool SaveJsonFromCbor();
 
+	// If we've only loaded from JSON, we must load internal struct reflection data before we can serialize to CBOR.
+	bool LoadFromJson();
+
 	// If CBOR wasn't loaded during deserialization (not currently possible from JSON), it must be generated before copying into structs.
 	bool SaveCborFromJson();
 
 	// If only the JSON string was loaded during deserialization (from CBOR), the JSON object and CBOR buffer must be saved.
 	bool SaveFromJsonString();
+
+	// Allocate an actual struct, created and loaded from JSON (rather than filling out an existing one from CBOR with LoadStructData)
+	template<typename OutStructType>
+	OutStructType* CreateStructFromJSON()
+	{
+		auto result = CreateInitStructRaw();
+		if (result)
+		{
+			CreateStructFromJSONRaw(result);
+		}
+		return (OutStructType*)result;
+	}
 
 	bool IsValid() const;
 
@@ -54,7 +69,9 @@ private:
 	bool UpdateStructDefFromName();
 	bool SaveStructDataJson(const void* StructPtr);
 	bool SaveStructDataCbor(const void* StructPtr);
-	bool AllocateTempStruct();
+	uint8* CreateInitStructRaw();
+	bool CreateStructFromJSONRaw(uint8* OutStructPtr);
+	bool CreateInternalStruct();
 	void FreeTempStruct();
 
 	UPROPERTY()

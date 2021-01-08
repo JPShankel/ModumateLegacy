@@ -71,6 +71,8 @@ struct MODUMATE_API FGraph2DDelta : public FDocumentDelta
 {
 	GENERATED_BODY()
 
+	virtual ~FGraph2DDelta() {}
+
 	UPROPERTY()
 	int32 ID = MOD_ID_NONE; // id of the surface graph object to apply this delta
 

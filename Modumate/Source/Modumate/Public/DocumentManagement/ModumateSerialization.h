@@ -2,14 +2,15 @@
 
 #pragma once
 
-#include "Database/ModumateObjectEnums.h"
-#include "Serialization/JsonReader.h"
-#include "Policies/PrettyJsonPrintPolicy.h"
-#include "Serialization/JsonSerializer.h"
-#include "JsonObjectConverter.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
+#include "Database/ModumateObjectEnums.h"
+#include "DocumentManagement/DocumentDelta.h"
 #include "DocumentManagement/ModumateCameraView.h"
+#include "JsonObjectConverter.h"
 #include "Objects/MOIState.h"
+#include "Policies/PrettyJsonPrintPolicy.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
 
 #include "ModumateSerialization.generated.h"
 
@@ -267,6 +268,9 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 
 	UPROPERTY()
 	TMap<FBIMKey, FGuid> UsedPresetGUIDs;
+
+	UPROPERTY()
+	TArray<FDeltasRecord> AppliedDeltas;
 
 	void FromVersion3(const FMOIDocumentRecordV3 &v3);
 };
