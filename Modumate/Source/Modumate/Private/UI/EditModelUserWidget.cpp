@@ -21,6 +21,7 @@
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UI/Debugger/BIMDebugger.h"
 #include "Components/Border.h"
+#include "UI/TutorialMenu/TutorialMenuWidget.h"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -249,4 +250,19 @@ void UEditModelUserWidget::ToggleBIMPresetSwapTray(bool NewVisibility)
 		SelectionTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
 		UpdateToolTray();
 	}
+}
+
+void UEditModelUserWidget::ToggleTutorialMenu(bool NewVisibility)
+{
+	TutorialsMenuWidgetBP->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (NewVisibility)
+	{
+		ToolbarWidget->ToolBarTopBP->ButtonTopToolbarHelp->SwitchToActiveStyle();
+	}
+	else
+	{
+		ToolbarWidget->ToolBarTopBP->ButtonTopToolbarHelp->SwitchToNormalStyle();
+	}
+	// Test tutorial data
+	TutorialsMenuWidgetBP->BuildTutorialMenu(TutorialsMenuWidgetBP->TestTutorialInfo);
 }

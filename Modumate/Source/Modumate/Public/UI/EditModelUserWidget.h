@@ -76,6 +76,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UToolTrayBlockAssembliesList* BIMPresetSwap;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UTutorialMenuWidget* TutorialsMenuWidgetBP;
+
 	UPROPERTY()
 	TMap<EToolMode, class UModumateButtonUserWidget*> ToolToButtonMap;
 
@@ -107,4 +110,5 @@ public:
 	void ShowBIMDebugger(bool NewVisible);
 	bool IsBIMDebuggerOn();
 	void ToggleBIMPresetSwapTray(bool NewVisibility);
+	void ToggleTutorialMenu(bool NewVisibility);
 };

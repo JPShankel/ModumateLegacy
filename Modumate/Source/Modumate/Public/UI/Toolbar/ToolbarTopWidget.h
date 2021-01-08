@@ -27,18 +27,24 @@ protected:
 public:
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *Controller;
+	class AEditModelPlayerController_CPP* Controller;
 
 	UPROPERTY()
-	class UEditModelUserWidget *EditModelUserWidget;
+	class UEditModelUserWidget* EditModelUserWidget;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget *ButtonModumateHome;
+	class UModumateButtonUserWidget* ButtonModumateHome;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonTopToolbarHelp;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UViewModeIndicatorWidget* ViewModeIndicator;
 
 	UFUNCTION()
 	void OnButtonReleaseModumateHome();
+
+	UFUNCTION()
+	void OnButtonReleaseTopToolbarHelp();
 
 };
