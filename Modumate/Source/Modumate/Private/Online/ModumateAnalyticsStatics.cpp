@@ -129,3 +129,18 @@ bool UModumateAnalyticsStatics::RecordObjectDeletion(UObject* WorldContextObject
 	FString eventName = FString::Printf(TEXT("DeletedObject_%s"), *objectEnumString.RightChop(2));
 	return UModumateAnalyticsStatics::RecordEventSimple(WorldContextObject, eventCategory, eventName);
 }
+
+bool UModumateAnalyticsStatics::RecordSessionDuration(UObject* WorldContextObject, const FTimespan& SessionDuration)
+{
+	static const FString eventCategory(TEXT("Metrics"));
+	static const FString eventName(TEXT("SessionDuration"));
+
+	bool bEventSuccess = UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, eventCategory, eventName, SessionDuration.GetSeconds());
+
+	if (IAnalyticsProvider* analytics = GetAnalyticsFromWorld(WorldContextObject))
+	{
+		analytics->FlushEvents();
+	}
+
+	return bEventSuccess;
+}

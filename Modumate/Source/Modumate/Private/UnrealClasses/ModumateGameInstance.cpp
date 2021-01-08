@@ -55,18 +55,12 @@ UModumateDocument *UModumateGameInstance::GetDocument()
 	return nullptr;
 }
 
-
 void UModumateGameInstance::Init()
 {
-	AnalyticsInstance = UModumateAnalyticsStatics::InitAnalytics();
 	AccountManager = MakeShared<FModumateAccountManager>();
 	CloudConnection = MakeShared<FModumateCloudConnection>();
-	#if UE_BUILD_SHIPPING
-		CloudConnection->SetUrl("https://account.modumate.com");
-	#else  // Developer builds login to staging server.
-		//CloudConnection->SetUrl("http://192.168.2.174:3000"); // Change to match local version for local testing
-		CloudConnection->SetUrl("https://beta.account.modumate.com");
-	#endif
+	CloudConnection->SetUrl(AccountManager->GetAmsAddress());
+	AnalyticsInstance = UModumateAnalyticsStatics::InitAnalytics();
 
 	UModumateFunctionLibrary::SetWindowTitle();
 

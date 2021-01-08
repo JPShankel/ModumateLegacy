@@ -2,6 +2,8 @@
 
 #include "Online/ModumateCloudConnection.h"
 
+#include "Serialization/JsonSerializer.h"
+
 void FModumateCloudConnection::SetUrl(const FString& InURL)
 {
 	URL = InURL + "/api/v2";
@@ -69,56 +71,26 @@ bool FModumateCloudConnection::UploadReplay(const FString& SessionID, const FStr
 	return Request->ProcessRequest();
 }
 
-bool FModumateCloudConnection::SendAnalyticsEvent(const FString& Key, float Value, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback)
-{
-	TSharedRef<IHttpRequest> Request = MakeRequest(Callback, ServerErrorCallback);
-
-	Request->SetURL(URL + TEXT("/analytics/events/"));
-	Request->SetVerb(TEXT("PUT"));
-
-	// Send session_end as a single element array of event objects
-	TSharedPtr<FJsonObject> jsonOb = MakeShared<FJsonObject>();
-	jsonOb->SetStringField(TEXT("key"), *Key);
-	jsonOb->SetNumberField(TEXT("value"), Value);
-	jsonOb->SetNumberField(TEXT("timestamp"), FDateTime::Now().ToUnixTimestamp());
-
-	FString jsonString;
-	if (FJsonSerializer::Serialize({ MakeShared<FJsonValueObject>(jsonOb) }, TJsonWriterFactory<>::Create(&jsonString)))
-	{
-		Request->SetContentAsString(jsonString);
-		return Request->ProcessRequest();
-	}
-
-	return false;
-}
-
-bool FModumateCloudConnection::UploadSessionTime(const FTimespan& SessionDuration, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback)
-{
-	return SendAnalyticsEvent(TEXT("session_end"), SessionDuration.GetSeconds(), Callback, ServerErrorCallback);
-}
-
 TSharedPtr<FJsonObject> FModumateCloudConnection::ParseJSONResponse(FHttpRequestPtr Request, FHttpResponsePtr Response)
 {
 	FString content = Response->GetContentAsString();
 	auto JsonResponse = TJsonReaderFactory<>::Create(content);
 	TSharedPtr<FJsonValue> responseValue;
+	FJsonSerializer::Deserialize(JsonResponse, responseValue);
 	if (responseValue.IsValid())
 	{
-		FJsonSerializer::Deserialize(JsonResponse, responseValue);
 		TSharedPtr<FJsonObject> responseObject = responseValue->AsObject();
 
-		FString refreshToken = responseObject->GetStringField(TEXT("refreshToken"));
-
-		if (!refreshToken.IsEmpty())
+		FString newRefreshToken;
+		if (responseObject->TryGetStringField(TEXT("refreshToken"), newRefreshToken) && !newRefreshToken.IsEmpty())
 		{
-			RefreshToken = refreshToken;
+			RefreshToken = newRefreshToken;
 		}
 
-		FString authToken = responseObject->GetStringField(TEXT("authToken"));
-
-		if (!authToken.IsEmpty())
+		FString newAuthToken;
+		if (responseObject->TryGetStringField(TEXT("authToken"), newAuthToken) && !newAuthToken.IsEmpty())
 		{
-			AuthToken = authToken;
+			AuthToken = newAuthToken;
 		}
 
 		return responseObject;
@@ -150,4 +122,27 @@ TSharedRef<IHttpRequest> FModumateCloudConnection::MakeRequest(const TFunction<v
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 
 	return Request;
+}
+
+bool FModumateCloudConnection::UploadAnalyticsEvents(const TArray<TSharedPtr<FJsonValue>>& EventsJSON, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback)
+{
+	if (EventsJSON.Num() == 0)
+	{
+		return false;
+	}
+
+	FString eventsJSONString;
+	auto jsonWriter = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&eventsJSONString, 0);
+	if (!FJsonSerializer::Serialize(EventsJSON, jsonWriter, true))
+	{
+		return false;
+	}
+
+	TSharedRef<IHttpRequest> Request = MakeRequest(Callback, ServerErrorCallback);
+
+	Request->SetURL(URL + TEXT("/analytics/events/"));
+	Request->SetVerb(TEXT("PUT"));
+	Request->SetContentAsString(eventsJSONString);
+
+	return Request->ProcessRequest();
 }

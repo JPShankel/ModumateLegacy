@@ -284,25 +284,7 @@ bool AEditModelPlayerController_CPP::EndTelemetryRecording()
 	{
 		FTimespan sessionTime = FDateTime::Now() - SessionStartTime;
 
-		UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
-		TSharedPtr<FModumateCloudConnection> Cloud = gameInstance->GetCloudConnection();
-
-		if (Cloud.IsValid())
-		{
-			Cloud->SetAuthToken(gameInstance->GetAccountManager()->GetIdToken());
-			Cloud->UploadSessionTime(
-				sessionTime, 
-				[](bool success) 
-				{
-					UE_LOG(LogTemp, Log, TEXT("Uploaded Session Time Successfully"));
-				}, [
-				](int32 code, FString error) 
-				{
-					UE_LOG(LogTemp, Error, TEXT("Error: %s"), *error);
-				}
-			);
-		}
-
+		UModumateAnalyticsStatics::RecordSessionDuration(this, sessionTime);
 	}
 
 	RecordSessionKey = FGuid::NewGuid();

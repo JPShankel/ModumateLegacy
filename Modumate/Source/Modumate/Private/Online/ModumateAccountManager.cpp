@@ -8,13 +8,19 @@
 // Period for requesting refresh of IdToken.
 const FTimespan FModumateAccountManager::IdTokenTimeout = { 0, 10 /* min */, 0 };
 
+TAutoConsoleVariable<FString> CVarModumateAmsAddress(
+	TEXT("modumate.AmsAddress"),
+#if UE_BUILD_SHIPPING
+	TEXT("https://account.modumate.com"),
+#else
+	TEXT("https://beta.account.modumate.com"),
+#endif
+	TEXT("The address used to connect to the Modumate AMS backend."),
+	ECVF_Default | ECVF_Cheat);
+
 FString FModumateAccountManager::GetAmsAddress()
 {
-#if UE_BUILD_SHIPPING
-	return TEXT("https://account.modumate.com");
-#else  // Developer builds login to staging server.
-	return TEXT("https://beta.account.modumate.com");
-#endif
+	return CVarModumateAmsAddress.GetValueOnGameThread();
 }
 
 FModumateAccountManager::FModumateAccountManager() : LoginStatus(ELoginStatus::Disconnected)

@@ -15,6 +15,9 @@ namespace UnrealBuildTool.Rules
 					"CoreUObject",
 					"Engine",
 					// ... add other public dependencies that you statically link with here ...
+					"Json",
+					"JsonUtilities",
+					"Modumate",
 				}
 				);
 
@@ -28,6 +31,7 @@ namespace UnrealBuildTool.Rules
 				);
 
 			PublicIncludePathModuleNames.Add("Analytics");
+			PublicIncludePathModuleNames.Add("Modumate");
 		}
 	}
 }

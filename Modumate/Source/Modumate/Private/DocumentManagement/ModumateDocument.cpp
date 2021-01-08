@@ -424,8 +424,6 @@ AModumateObjectInstance* UModumateDocument::CreateOrRestoreObj(UWorld* World, co
 	newObj->SetStateData(StateData);
 	newObj->PostCreateObject(true);
 
-	UModumateAnalyticsStatics::RecordObjectCreation(World, StateData.ObjectType);
-
 	return newObj;
 }
 

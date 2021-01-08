@@ -60,11 +60,11 @@
 		},
 		{
 			"Name": "Revulytics",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "AnalyticsMulticast",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "GeometryProcessing",

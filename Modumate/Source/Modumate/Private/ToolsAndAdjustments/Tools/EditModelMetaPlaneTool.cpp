@@ -4,6 +4,7 @@
 
 #include "Components/EditableTextBox.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
 #include "UnrealClasses/DimensionWidget.h"
@@ -295,6 +296,9 @@ bool UMetaPlaneTool::MakeObject(const FVector& Location)
 	{
 		return false;
 	}
+
+	EObjectType analyticsObjectType = (AxisConstraint == EAxisConstraint::None) ? EObjectType::OTMetaEdge : EObjectType::OTMetaPlane;
+	UModumateAnalyticsStatics::RecordObjectCreation(this, analyticsObjectType);
 
 	// Decide whether to end the tool's use, or continue the chain, based on axis constraint
 	switch (AxisConstraint)

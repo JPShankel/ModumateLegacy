@@ -20,13 +20,12 @@ class MODUMATE_API FModumateCloudConnection
 
 		bool CreateReplay(const FString& SessionID, const FString& Version, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback);
 		bool UploadReplay(const FString& SessionID, const FString& Filename, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback);
-		bool UploadSessionTime(const FTimespan& SessionDuration, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback);
+		bool UploadAnalyticsEvents(const TArray<TSharedPtr<FJsonValue>>& EventsJSON, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback);
 
 	private:
 		TSharedPtr<FJsonObject> ParseJSONResponse(FHttpRequestPtr Request, FHttpResponsePtr Response);
 
 		TSharedRef<IHttpRequest> MakeRequest(const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback);
-		bool SendAnalyticsEvent(const FString& Key, float Value, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback);
 
 		FString AuthToken;
 		FString RefreshToken;

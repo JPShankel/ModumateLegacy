@@ -7,9 +7,49 @@
 #include "Misc/Paths.h"
 #include "ModumateAnalyticsProvider.h"
 
+#include "Online/ModumateAccountManager.h"
+#include "Online/ModumateAnalyticsStatics.h"
+#include "Online/ModumateCloudConnection.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+
 DEFINE_LOG_CATEGORY_STATIC(LogModumateAnalytics, Display, All);
 
 IMPLEMENT_MODULE( FAnalyticsModumate, ModumateAnalytics )
+
+
+FModumateAnalyticsEventData::FModumateAnalyticsEventData()
+	: key()
+	, value(0)
+	, timestamp(0)
+{
+}
+
+FModumateAnalyticsEventData::FModumateAnalyticsEventData(const FString& EventName, const TArray<FAnalyticsEventAttribute>& Attributes)
+{
+	value = 1.0f;
+
+	for (auto& attribute : Attributes)
+	{
+		if ((attribute.AttrName == UModumateAnalyticsStatics::AttrNameCategory) &&
+			ensure(attribute.AttrType == FAnalyticsEventAttribute::AttrTypeEnum::String))
+		{
+			key = attribute.AttrValueString / EventName;
+		}
+		else if ((attribute.AttrName == UModumateAnalyticsStatics::AttrNameCustomValue) &&
+			(attribute.AttrType == FAnalyticsEventAttribute::AttrTypeEnum::Number))
+		{
+			value = attribute.AttrValueNumber;
+		}
+	}
+
+	if (key.IsEmpty())
+	{
+		key = EventName;
+	}
+
+	timestamp = FDateTime::UtcNow().ToUnixTimestamp();
+}
+
 
 void FAnalyticsModumate::StartupModule()
 {
@@ -31,14 +71,11 @@ TSharedPtr<IAnalyticsProvider> FAnalyticsModumate::CreateAnalyticsProvider(const
 
 // Provider
 
-FAnalyticsProviderModumate::FAnalyticsProviderModumate() :
-	bHasSessionStarted(false),
-	bHasWrittenFirstEvent(false),
-	Age(0),
-	FileArchive(nullptr)
+const int32 FAnalyticsProviderModumate::MaxEventBufferLength = 32;
+
+FAnalyticsProviderModumate::FAnalyticsProviderModumate()
+	: bHasSessionStarted(false)
 {
-	FileArchive = nullptr;
-	AnalyticsFilePath = FPaths::ProjectSavedDir() + TEXT("Analytics/");
 	UserId = FPlatformMisc::GetLoginId();
 }
 
@@ -55,70 +92,42 @@ bool FAnalyticsProviderModumate::StartSession(const TArray<FAnalyticsEventAttrib
 	if (bHasSessionStarted)
 	{
 		EndSession();
+		bHasSessionStarted = false;
 	}
 
-	FString DateTimeString = FDateTime::Now().ToString();
-	SessionId = UserId + TEXT("-") + DateTimeString;
-	const FString FileName = AnalyticsFilePath + SessionId + TEXT(".analytics");
-	// Close the old file and open a new one
-	FileArchive = IFileManager::Get().CreateFileWriter(*FileName);
-	if (FileArchive != nullptr)
+	UModumateGameInstance* gameInstance = nullptr;
+	for (const FWorldContext& worldContext : GEngine->GetWorldContexts())
 	{
-		FileArchive->Logf(TEXT("{"));
-		FileArchive->Logf(TEXT("\t\"sessionStartTime\" : \"%s\","), *DateTimeString);
-		FileArchive->Logf(TEXT("\t\"sessionId\" : \"%s\","), *SessionId);
-		FileArchive->Logf(TEXT("\t\"userId\" : \"%s\","), *UserId);
-		if (BuildInfo.Len() > 0)
+		UWorld* world = worldContext.World();
+		gameInstance = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
+		if (gameInstance)
 		{
-			FileArchive->Logf(TEXT("\t\"buildInfo\" : \"%s\","), *BuildInfo);
+			break;
 		}
-		if (Age != 0)
-		{
-			FileArchive->Logf(TEXT("\t\"age\" : %d,"), Age);
-		}
-		if (Gender.Len() > 0)
-		{
-			FileArchive->Logf(TEXT("\t\"gender\" : \"%s\","), *Gender);
-		}
-		if (Location.Len() > 0)
-		{
-			FileArchive->Logf(TEXT("\t\"location\" : \"%s\","), *Location);
-		}
-		FileArchive->Logf(TEXT("\t\"events\" : ["));
-		bHasSessionStarted = true;
-		UE_LOG(LogModumateAnalytics, Display, TEXT("Session created file (%s) for user (%s)"), *FileName, *UserId);
 	}
-	else
+
+	if (gameInstance == nullptr)
 	{
-		UE_LOG(LogModumateAnalytics, Warning, TEXT("FAnalyticsProviderModumate::StartSession failed to create file to log analytics events to"));
+		return false;
 	}
+
+	AccountManager = gameInstance->GetAccountManager();
+	CloudConnection = gameInstance->GetCloudConnection();
+	bHasSessionStarted = AccountManager.IsValid() && CloudConnection.IsValid();
+
 	return bHasSessionStarted;
 }
 
 void FAnalyticsProviderModumate::EndSession()
 {
-	if (FileArchive != nullptr)
-	{
-		FileArchive->Logf(TEXT("\t]"));
-		FileArchive->Logf(TEXT(",\t\"sessionEndTime\" : \"%s\""), *FDateTime::Now().ToString());
-		FileArchive->Logf(TEXT("}"));
-		FileArchive->Flush();
-		FileArchive->Close();
-		delete FileArchive;
-		FileArchive = nullptr;
-		UE_LOG(LogModumateAnalytics, Display, TEXT("Session ended for user (%s) and session id (%s)"), *UserId, *SessionId);
-	}
-	bHasWrittenFirstEvent = false;
+	FlushEvents();
+
 	bHasSessionStarted = false;
 }
 
 void FAnalyticsProviderModumate::FlushEvents()
 {
-	if (FileArchive != nullptr)
-	{
-		FileArchive->Flush();
-		UE_LOG(LogModumateAnalytics, Display, TEXT("Analytics file flushed"));
-	}
+	UploadBufferedEvents();
 }
 
 void FAnalyticsProviderModumate::SetUserID(const FString& InUserID)
@@ -164,38 +173,16 @@ void FAnalyticsProviderModumate::RecordEvent(const FString& EventName, const TAr
 {
 	if (bHasSessionStarted)
 	{
-		check(FileArchive != nullptr);
+		FModumateAnalyticsEventData eventData(EventName, Attributes);
+		AllEvents.Add(eventData);
+		EventBuffer.Add(eventData);
 
-		if (bHasWrittenFirstEvent)
+		if (EventBuffer.Num() >= FAnalyticsProviderModumate::MaxEventBufferLength)
 		{
-			FileArchive->Logf(TEXT(","));
+			UploadBufferedEvents();
 		}
-		bHasWrittenFirstEvent = true;
 
-		FileArchive->Logf(TEXT("\t\t{"));
-		FileArchive->Logf(TEXT("\t\t\t\"eventName\" : \"%s\""), *EventName);
-		if (Attributes.Num() > 0)
-		{
-			FileArchive->Logf(TEXT(",\t\t\t\"attributes\" : ["));
-			bool bHasWrittenFirstAttr = false;
-			// Write out the list of attributes as an array of attribute objects
-			for (auto Attr : Attributes)
-			{
-				if (bHasWrittenFirstAttr)
-				{
-					FileArchive->Logf(TEXT("\t\t\t,"));
-				}
-				FileArchive->Logf(TEXT("\t\t\t{"));
-				FileArchive->Logf(TEXT("\t\t\t\t\"name\" : \"%s\","), *Attr.AttrName);
-				FileArchive->Logf(TEXT("\t\t\t\t\"value\" : \"%s\""), *Attr.ToString());
-				FileArchive->Logf(TEXT("\t\t\t}"));
-				bHasWrittenFirstAttr = true;
-			}
-			FileArchive->Logf(TEXT("\t\t\t]"));
-		}
-		FileArchive->Logf(TEXT("\t\t}"));
-
-		UE_LOG(LogModumateAnalytics, Display, TEXT("Analytics event (%s) written with (%d) attributes"), *EventName, Attributes.Num());
+		UE_LOG(LogModumateAnalytics, Display, TEXT("Analytics event (%s) buffered with (%d) attributes"), *EventName, Attributes.Num());
 	}
 	else
 	{
@@ -203,349 +190,39 @@ void FAnalyticsProviderModumate::RecordEvent(const FString& EventName, const TAr
 	}
 }
 
-void FAnalyticsProviderModumate::RecordItemPurchase(const FString& ItemId, const FString& Currency, int PerItemCost, int ItemQuantity)
-{
-	if (bHasSessionStarted)
-	{
-		check(FileArchive != nullptr);
-
-		if (bHasWrittenFirstEvent)
-		{
-			FileArchive->Logf(TEXT("\t\t,"));
-		}
-		bHasWrittenFirstEvent = true;
-
-		FileArchive->Logf(TEXT("\t\t{"));
-		FileArchive->Logf(TEXT("\t\t\t\"eventName\" : \"recordItemPurchase\","));
-
-		FileArchive->Logf(TEXT("\t\t\t\"attributes\" :"));
-		FileArchive->Logf(TEXT("\t\t\t["));
-
-		FileArchive->Logf(TEXT("\t\t\t\t{ \"name\" : \"itemId\", \t\"value\" : \"%s\" },"), *ItemId);
-		FileArchive->Logf(TEXT("\t\t\t\t{ \"name\" : \"currency\", \t\"value\" : \"%s\" },"), *Currency);
-		FileArchive->Logf(TEXT("\t\t\t\t{ \"name\" : \"perItemCost\", \t\"value\" : \"%d\" },"), PerItemCost);
-		FileArchive->Logf(TEXT("\t\t\t\t{ \"name\" : \"itemQuantity\", \t\"value\" : \"%d\" }"), ItemQuantity);
-
-		FileArchive->Logf(TEXT("\t\t\t]"));
-
-		FileArchive->Logf(TEXT("\t\t}"));
-
-		UE_LOG(LogModumateAnalytics, Display, TEXT("(%d) number of item (%s) purchased with (%s) at a cost of (%d) each"), ItemQuantity, *ItemId, *Currency, PerItemCost);
-	}
-	else
-	{
-		UE_LOG(LogModumateAnalytics, Warning, TEXT("FAnalyticsProviderModumate::RecordItemPurchase called before StartSession. Ignoring."));
-	}
-}
-
-void FAnalyticsProviderModumate::RecordCurrencyPurchase(const FString& GameCurrencyType, int GameCurrencyAmount, const FString& RealCurrencyType, float RealMoneyCost, const FString& PaymentProvider)
-{
-	if (bHasSessionStarted)
-	{
-		check(FileArchive != nullptr);
-
-		if (bHasWrittenFirstEvent)
-		{
-			FileArchive->Logf(TEXT("\t\t,"));
-		}
-		bHasWrittenFirstEvent = true;
-
-		FileArchive->Logf(TEXT("\t\t{"));
-		FileArchive->Logf(TEXT("\t\t\t\"eventName\" : \"recordCurrencyPurchase\","));
-
-		FileArchive->Logf(TEXT("\t\t\t\"attributes\" :"));
-		FileArchive->Logf(TEXT("\t\t\t["));
-
-		FileArchive->Logf(TEXT("\t\t\t\t{ \"name\" : \"gameCurrencyType\", \t\"value\" : \"%s\" },"), *GameCurrencyType);
-		FileArchive->Logf(TEXT("\t\t\t\t{ \"name\" : \"gameCurrencyAmount\", \t\"value\" : \"%d\" },"), GameCurrencyAmount);
-		FileArchive->Logf(TEXT("\t\t\t\t{ \"name\" : \"realCurrencyType\", \t\"value\" : \"%s\" },"), *RealCurrencyType);
-		FileArchive->Logf(TEXT("\t\t\t\t{ \"name\" : \"realMoneyCost\", \t\"value\" : \"%f\" },"), RealMoneyCost);
-		FileArchive->Logf(TEXT("\t\t\t\t{ \"name\" : \"paymentProvider\", \t\"value\" : \"%s\" }"), *PaymentProvider);
-
-		FileArchive->Logf(TEXT("\t\t\t]"));
-
-		FileArchive->Logf(TEXT("\t\t}"));
-
-		UE_LOG(LogModumateAnalytics, Display, TEXT("(%d) amount of in game currency (%s) purchased with (%s) at a cost of (%f) each"), GameCurrencyAmount, *GameCurrencyType, *RealCurrencyType, RealMoneyCost);
-	}
-	else
-	{
-		UE_LOG(LogModumateAnalytics, Warning, TEXT("FAnalyticsProviderModumate::RecordCurrencyPurchase called before StartSession. Ignoring."));
-	}
-}
-
-void FAnalyticsProviderModumate::RecordCurrencyGiven(const FString& GameCurrencyType, int GameCurrencyAmount)
-{
-	if (bHasSessionStarted)
-	{
-		check(FileArchive != nullptr);
-
-		if (bHasWrittenFirstEvent)
-		{
-			FileArchive->Logf(TEXT("\t\t,"));
-		}
-		bHasWrittenFirstEvent = true;
-
-		FileArchive->Logf(TEXT("\t\t{"));
-		FileArchive->Logf(TEXT("\t\t\t\"eventName\" : \"recordCurrencyGiven\","));
-
-		FileArchive->Logf(TEXT("\t\t\t\"attributes\" :"));
-		FileArchive->Logf(TEXT("\t\t\t["));
-
-		FileArchive->Logf(TEXT("\t\t\t\t{ \"name\" : \"gameCurrencyType\", \t\"value\" : \"%s\" },"), *GameCurrencyType);
-		FileArchive->Logf(TEXT("\t\t\t\t{ \"name\" : \"gameCurrencyAmount\", \t\"value\" : \"%d\" }"), GameCurrencyAmount);
-
-		FileArchive->Logf(TEXT("\t\t\t]"));
-
-		FileArchive->Logf(TEXT("\t\t}"));
-
-		UE_LOG(LogModumateAnalytics, Display, TEXT("(%d) amount of in game currency (%s) given to user"), GameCurrencyAmount, *GameCurrencyType);
-	}
-	else
-	{
-		UE_LOG(LogModumateAnalytics, Warning, TEXT("FAnalyticsProviderModumate::RecordCurrencyGiven called before StartSession. Ignoring."));
-	}
-}
-
-void FAnalyticsProviderModumate::SetAge(int InAge)
-{
-	Age = InAge;
-}
-
-void FAnalyticsProviderModumate::SetLocation(const FString& InLocation)
-{
-	Location = InLocation;
-}
-
-void FAnalyticsProviderModumate::SetGender(const FString& InGender)
-{
-	Gender = InGender;
-}
-
 void FAnalyticsProviderModumate::SetBuildInfo(const FString& InBuildInfo)
 {
 	BuildInfo = InBuildInfo;
 }
 
-void FAnalyticsProviderModumate::RecordError(const FString& Error, const TArray<FAnalyticsEventAttribute>& Attributes)
+bool FAnalyticsProviderModumate::UploadBufferedEvents()
 {
-	if (bHasSessionStarted)
+	int32 numEvents = EventBuffer.Num();
+	if (!bHasSessionStarted || !AccountManager.IsValid() || !CloudConnection.IsValid() || (numEvents == 0))
 	{
-		check(FileArchive != nullptr);
-
-		if (bHasWrittenFirstEvent)
-		{
-			FileArchive->Logf(TEXT("\t\t,"));
-		}
-		bHasWrittenFirstEvent = true;
-
-		FileArchive->Logf(TEXT("\t\t{"));
-		FileArchive->Logf(TEXT("\t\t\t\"error\" : \"%s\","), *Error);
-
-		FileArchive->Logf(TEXT("\t\t\t\"attributes\" :"));
-		FileArchive->Logf(TEXT("\t\t\t["));
-		bool bHasWrittenFirstAttr = false;
-		// Write out the list of attributes as an array of attribute objects
-		for (auto Attr : Attributes)
-		{
-			if (bHasWrittenFirstAttr)
-			{
-				FileArchive->Logf(TEXT("\t\t\t,"));
-			}
-			FileArchive->Logf(TEXT("\t\t\t{"));
-			FileArchive->Logf(TEXT("\t\t\t\t\"name\" : \"%s\","), *Attr.AttrName);
-			FileArchive->Logf(TEXT("\t\t\t\t\"value\" : \"%s\""), *Attr.ToString());
-			FileArchive->Logf(TEXT("\t\t\t}"));
-			bHasWrittenFirstAttr = true;
-		}
-		FileArchive->Logf(TEXT("\t\t\t]"));
-
-		FileArchive->Logf(TEXT("\t\t}"));
-
-		UE_LOG(LogModumateAnalytics, Display, TEXT("Error is (%s) number of attributes is (%d)"), *Error, Attributes.Num());
+		return false;
 	}
-	else
+
+	auto authToken = AccountManager->GetIdToken();
+	if (authToken.IsEmpty())
 	{
-		UE_LOG(LogModumateAnalytics, Warning, TEXT("FAnalyticsProviderModumate::RecordError called before StartSession. Ignoring."));
+		return false;
 	}
-}
 
-void FAnalyticsProviderModumate::RecordProgress(const FString& ProgressType, const FString& ProgressName, const TArray<FAnalyticsEventAttribute>& Attributes)
-{
-	if (bHasSessionStarted)
+	FModumateAnalyticsEventArray eventArray{ EventBuffer };
+	auto eventsJson = FJsonObjectConverter::UStructToJsonObject(eventArray);
+	auto eventsJsonArray = eventsJson->GetArrayField(TEXT("Events"));
+
+	CloudConnection->SetAuthToken(authToken);
+	bool bUploadRequestSuccess = CloudConnection->UploadAnalyticsEvents(eventsJsonArray,
+		[numEvents](bool bSuccess) { UE_LOG(LogModumateAnalytics, Display, TEXT("Successfully uploaded %d buffered analytics events."), numEvents); },
+		[](int32 Code, FString Error) { UE_LOG(LogModumateAnalytics, Error, TEXT("Analytics event upload error code: %d, error message: %s"), Code, *Error); }
+	);
+
+	if (bUploadRequestSuccess)
 	{
-		check(FileArchive != nullptr);
-
-		if (bHasWrittenFirstEvent)
-		{
-			FileArchive->Logf(TEXT("\t\t,"));
-		}
-		bHasWrittenFirstEvent = true;
-
-		FileArchive->Logf(TEXT("\t\t{"));
-		FileArchive->Logf(TEXT("\t\t\t\"eventType\" : \"Progress\","));
-		FileArchive->Logf(TEXT("\t\t\t\"progressType\" : \"%s\","), *ProgressType);
-		FileArchive->Logf(TEXT("\t\t\t\"progressName\" : \"%s\","), *ProgressName);
-
-		FileArchive->Logf(TEXT("\t\t\t\"attributes\" :"));
-		FileArchive->Logf(TEXT("\t\t\t["));
-		bool bHasWrittenFirstAttr = false;
-		// Write out the list of attributes as an array of attribute objects
-		for (auto Attr : Attributes)
-		{
-			if (bHasWrittenFirstAttr)
-			{
-				FileArchive->Logf(TEXT("\t\t\t,"));
-			}
-			FileArchive->Logf(TEXT("\t\t\t{"));
-			FileArchive->Logf(TEXT("\t\t\t\t\"name\" : \"%s\","), *Attr.AttrName);
-			FileArchive->Logf(TEXT("\t\t\t\t\"value\" : \"%s\""), *Attr.ToString());
-			FileArchive->Logf(TEXT("\t\t\t}"));
-			bHasWrittenFirstAttr = true;
-		}
-		FileArchive->Logf(TEXT("\t\t\t]"));
-
-		FileArchive->Logf(TEXT("\t\t}"));
-
-		UE_LOG(LogModumateAnalytics, Display, TEXT("Progress event is type (%s), named (%s), number of attributes is (%d)"), *ProgressType, *ProgressName, Attributes.Num());
+		EventBuffer.Reset();
 	}
-	else
-	{
-		UE_LOG(LogModumateAnalytics, Warning, TEXT("FAnalyticsProviderModumate::RecordProgress called before StartSession. Ignoring."));
-	}
-}
 
-void FAnalyticsProviderModumate::RecordItemPurchase(const FString& ItemId, int ItemQuantity, const TArray<FAnalyticsEventAttribute>& Attributes)
-{
-	if (bHasSessionStarted)
-	{
-		check(FileArchive != nullptr);
-
-		if (bHasWrittenFirstEvent)
-		{
-			FileArchive->Logf(TEXT("\t\t,"));
-		}
-		bHasWrittenFirstEvent = true;
-
-		FileArchive->Logf(TEXT("\t\t{"));
-		FileArchive->Logf(TEXT("\t\t\t\"eventType\" : \"ItemPurchase\","));
-		FileArchive->Logf(TEXT("\t\t\t\"itemId\" : \"%s\","), *ItemId);
-		FileArchive->Logf(TEXT("\t\t\t\"itemQuantity\" : %d,"), ItemQuantity);
-
-		FileArchive->Logf(TEXT("\t\t\t\"attributes\" :"));
-		FileArchive->Logf(TEXT("\t\t\t["));
-		bool bHasWrittenFirstAttr = false;
-		// Write out the list of attributes as an array of attribute objects
-		for (auto Attr : Attributes)
-		{
-			if (bHasWrittenFirstAttr)
-			{
-				FileArchive->Logf(TEXT("\t\t\t,"));
-			}
-			FileArchive->Logf(TEXT("\t\t\t{"));
-			FileArchive->Logf(TEXT("\t\t\t\t\"name\" : \"%s\","), *Attr.AttrName);
-			FileArchive->Logf(TEXT("\t\t\t\t\"value\" : \"%s\""), *Attr.ToString());
-			FileArchive->Logf(TEXT("\t\t\t}"));
-			bHasWrittenFirstAttr = true;
-		}
-		FileArchive->Logf(TEXT("\t\t\t]"));
-
-		FileArchive->Logf(TEXT("\t\t}"));
-
-		UE_LOG(LogModumateAnalytics, Display, TEXT("Item purchase id (%s), quantity (%d), number of attributes is (%d)"), *ItemId, ItemQuantity, Attributes.Num());
-	}
-	else
-	{
-		UE_LOG(LogModumateAnalytics, Warning, TEXT("FAnalyticsProviderModumate::RecordItemPurchase called before StartSession. Ignoring."));
-	}
-}
-
-void FAnalyticsProviderModumate::RecordCurrencyPurchase(const FString& GameCurrencyType, int GameCurrencyAmount, const TArray<FAnalyticsEventAttribute>& Attributes)
-{
-	if (bHasSessionStarted)
-	{
-		check(FileArchive != nullptr);
-
-		if (bHasWrittenFirstEvent)
-		{
-			FileArchive->Logf(TEXT("\t\t,"));
-		}
-		bHasWrittenFirstEvent = true;
-
-		FileArchive->Logf(TEXT("\t\t{"));
-		FileArchive->Logf(TEXT("\t\t\t\"eventType\" : \"CurrencyPurchase\","));
-		FileArchive->Logf(TEXT("\t\t\t\"gameCurrencyType\" : \"%s\","), *GameCurrencyType);
-		FileArchive->Logf(TEXT("\t\t\t\"gameCurrencyAmount\" : %d,"), GameCurrencyAmount);
-
-		FileArchive->Logf(TEXT("\t\t\t\"attributes\" :"));
-		FileArchive->Logf(TEXT("\t\t\t["));
-		bool bHasWrittenFirstAttr = false;
-		// Write out the list of attributes as an array of attribute objects
-		for (auto Attr : Attributes)
-		{
-			if (bHasWrittenFirstAttr)
-			{
-				FileArchive->Logf(TEXT("\t\t\t,"));
-			}
-			FileArchive->Logf(TEXT("\t\t\t{"));
-			FileArchive->Logf(TEXT("\t\t\t\t\"name\" : \"%s\","), *Attr.AttrName);
-			FileArchive->Logf(TEXT("\t\t\t\t\"value\" : \"%s\""), *Attr.ToString());
-			FileArchive->Logf(TEXT("\t\t\t}"));
-			bHasWrittenFirstAttr = true;
-		}
-		FileArchive->Logf(TEXT("\t\t\t]"));
-
-		FileArchive->Logf(TEXT("\t\t}"));
-
-		UE_LOG(LogModumateAnalytics, Display, TEXT("Currency purchase type (%s), quantity (%d), number of attributes is (%d)"), *GameCurrencyType, GameCurrencyAmount, Attributes.Num());
-	}
-	else
-	{
-		UE_LOG(LogModumateAnalytics, Warning, TEXT("FAnalyticsProviderModumate::RecordCurrencyPurchase called before StartSession. Ignoring."));
-	}
-}
-
-void FAnalyticsProviderModumate::RecordCurrencyGiven(const FString& GameCurrencyType, int GameCurrencyAmount, const TArray<FAnalyticsEventAttribute>& Attributes)
-{
-	if (bHasSessionStarted)
-	{
-		check(FileArchive != nullptr);
-
-		if (bHasWrittenFirstEvent)
-		{
-			FileArchive->Logf(TEXT("\t\t,"));
-		}
-		bHasWrittenFirstEvent = true;
-
-		FileArchive->Logf(TEXT("\t\t{"));
-		FileArchive->Logf(TEXT("\t\t\t\"eventType\" : \"CurrencyGiven\","));
-		FileArchive->Logf(TEXT("\t\t\t\"gameCurrencyType\" : \"%s\","), *GameCurrencyType);
-		FileArchive->Logf(TEXT("\t\t\t\"gameCurrencyAmount\" : %d,"), GameCurrencyAmount);
-
-		FileArchive->Logf(TEXT("\t\t\t\"attributes\" :"));
-		FileArchive->Logf(TEXT("\t\t\t["));
-		bool bHasWrittenFirstAttr = false;
-		// Write out the list of attributes as an array of attribute objects
-		for (auto Attr : Attributes)
-		{
-			if (bHasWrittenFirstAttr)
-			{
-				FileArchive->Logf(TEXT("\t\t\t,"));
-			}
-			FileArchive->Logf(TEXT("\t\t\t{"));
-			FileArchive->Logf(TEXT("\t\t\t\t\"name\" : \"%s\","), *Attr.AttrName);
-			FileArchive->Logf(TEXT("\t\t\t\t\"value\" : \"%s\""), *Attr.ToString());
-			FileArchive->Logf(TEXT("\t\t\t}"));
-			bHasWrittenFirstAttr = true;
-		}
-		FileArchive->Logf(TEXT("\t\t\t]"));
-
-		FileArchive->Logf(TEXT("\t\t}"));
-
-		UE_LOG(LogModumateAnalytics, Display, TEXT("Currency given type (%s), quantity (%d), number of attributes is (%d)"), *GameCurrencyType, GameCurrencyAmount, Attributes.Num());
-	}
-	else
-	{
-		UE_LOG(LogModumateAnalytics, Warning, TEXT("FAnalyticsProviderModumate::RecordCurrencyGiven called before StartSession. Ignoring."));
-	}
+	return bUploadRequestSuccess;
 }

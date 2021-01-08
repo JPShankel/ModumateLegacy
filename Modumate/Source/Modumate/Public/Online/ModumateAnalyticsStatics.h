@@ -43,4 +43,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
 	static bool RecordObjectDeletion(UObject* WorldContextObject, EObjectType ObjectType);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
+	static bool RecordSessionDuration(UObject* WorldContextObject, const FTimespan& SessionDuration);
 };

@@ -9,6 +9,7 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Objects/Finish.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
@@ -50,12 +51,14 @@ bool UFinishTool::BeginUse()
 	GameState->Document->ClearPreviewDeltas(GetWorld());
 
 	TArray<FDeltaPtr> deltas;
-	if (GetFinishCreationDeltas(deltas))
+	bool bSuccess = GetFinishCreationDeltas(deltas) && GameState->Document->ApplyDeltas(deltas, GetWorld());
+
+	if (bSuccess)
 	{
-		return GameState->Document->ApplyDeltas(deltas, GetWorld());
+		UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTFinish);
 	}
 
-	return false;
+	return bSuccess;
 }
 
 bool UFinishTool::FrameUpdate()
