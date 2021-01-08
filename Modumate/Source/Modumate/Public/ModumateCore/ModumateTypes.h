@@ -281,7 +281,7 @@ struct MODUMATE_API FVector2DPair
 	UPROPERTY()
 	FVector2D Value;
 
-	FVector2DPair() {}
+	FVector2DPair() : Key(ForceInitToZero), Value(ForceInitToZero) {}
 	FVector2DPair(FVector2D InKey, FVector2D InValue) : Key(InKey), Value(InValue) {}
 };
 
@@ -296,7 +296,7 @@ struct MODUMATE_API FModumateVectorPair
 	UPROPERTY()
 	FVector Value;
 
-	FModumateVectorPair() {}
+	FModumateVectorPair() : Key(ForceInitToZero), Value(ForceInitToZero) {}
 	FModumateVectorPair(FVector InKey, FVector InValue) : Key(InKey), Value(InValue) {}
 };
 

@@ -45,16 +45,15 @@ struct FGraph2DHostedObjectDelta
 	GENERATED_BODY()
 		
 	UPROPERTY()
-	int32 PreviousHostedObjID;
+	int32 PreviousHostedObjID = MOD_ID_NONE;
 
 	UPROPERTY()
-	int32 PreviousParentID;
+	int32 PreviousParentID = MOD_ID_NONE;
 
 	UPROPERTY()
-	int32 NextParentID;
+	int32 NextParentID = MOD_ID_NONE;
 
-	FGraph2DHostedObjectDelta()
-	{ }
+	FGraph2DHostedObjectDelta() = default;
 
 	FGraph2DHostedObjectDelta(int32 prevHostedObjID, int32 prevParentID, int32 nextParentID)
 		: PreviousHostedObjID(prevHostedObjID)
