@@ -34,6 +34,8 @@ struct FTutorialMenuCardInfo
 	UPROPERTY(EditAnywhere)
 	FString FileProject;
 
+	UPROPERTY(EditAnywhere)
+	FString ThumbnailLink;
 };
 
 UCLASS()
@@ -64,6 +66,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool AsStartMenuTutorial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FMargin TitleSectionMargin = FMargin(0.f, 0.f, 0.f, 12.f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FMargin CardMargin = FMargin(0.f, 0.f, 0.f, 12.f);

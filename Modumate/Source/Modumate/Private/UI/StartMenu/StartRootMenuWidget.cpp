@@ -6,6 +6,9 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/StartMenu/StartBlockHomeWidget.h"
 #include "HAL/PlatformMisc.h"
+#include "Components/HorizontalBox.h"
+#include "UnrealClasses/MainMenuGameMode_CPP.h"
+#include "UI/TutorialMenu/TutorialMenuWidget.h"
 
 UStartRootMenuWidget::UStartRootMenuWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -21,13 +24,16 @@ bool UStartRootMenuWidget::Initialize()
 	}
 
 	ModumateGameInstance = Cast<UModumateGameInstance>(GetGameInstance());
-	if (!(ButtonHelp && ButtonQuit))
+	if (!(ButtonHelp && ButtonQuit && ButtonOpen && ButtonCreateNew))
 	{
 		return false;
 	}
 
 	ButtonHelp->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedHelp);
 	ButtonQuit->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedQuit);
+	ButtonOpen->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedOpen);
+	ButtonCreateNew->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedCreateNew);
+
 	return true;
 }
 
@@ -45,9 +51,7 @@ void UStartRootMenuWidget::NativeTick(const FGeometry& MyGeometry, float InDelta
 	{
 		if (Start_Home_BP && Start_Home_BP->GetVisibility() == ESlateVisibility::Collapsed)
 		{
-			Start_Home_BP->SetVisibility(ESlateVisibility::SelfHitTestInvisible); 
-			// TODO: Play widget opening animation here
-			Start_Home_BP->OpenRecentProjectMenu();
+			ShowStartMenu();
 		}
 	}
 }
@@ -67,4 +71,28 @@ void UStartRootMenuWidget::OnButtonReleasedQuit()
 void UStartRootMenuWidget::OnButtonReleasedHelp()
 {
 	FPlatformProcess::LaunchURL(*HelpURL, nullptr, nullptr);
+}
+
+void UStartRootMenuWidget::OnButtonReleasedOpen()
+{
+	AMainMenuGameMode_CPP* mainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode_CPP>();
+	if (mainMenuGameMode)
+	{
+		mainMenuGameMode->OpenProjectFromPicker();
+	}
+}
+
+void UStartRootMenuWidget::OnButtonReleasedCreateNew()
+{
+	UGameplayStatics::OpenLevel(this, NewLevelName, true);
+}
+
+void UStartRootMenuWidget::ShowStartMenu()
+{
+	Start_Home_BP->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	// TODO: Play widget opening animation here
+	Start_Home_BP->OpenRecentProjectMenu();
+	Start_Home_BP->TutorialsMenuWidgetBP->BuildTutorialMenu(Start_Home_BP->TutorialsMenuWidgetBP->TestTutorialInfo);
+
+	OpenCreateNewButtonsBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }

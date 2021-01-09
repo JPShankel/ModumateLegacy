@@ -4,6 +4,8 @@
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
+#include "Blueprint/AsyncTaskDownloadImage.h"
+#include "Components/Image.h"
 
 UTutorialMenuCardWidget::UTutorialMenuCardWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -43,11 +45,29 @@ void UTutorialMenuCardWidget::OnReleaseButtonPlayVideo()
 	FPlatformProcess::LaunchURL(*VideoLink, nullptr, nullptr);
 }
 
+void UTutorialMenuCardWidget::OnImageDownloadedSucceed(class UTexture2DDynamic* Texture)
+{
+	ImageThumbnail->SetBrushFromTextureDynamic(Texture);
+}
+
+void UTutorialMenuCardWidget::OnImageDownloadedFailed(class UTexture2DDynamic* Texture)
+{
+	UE_LOG(LogTemp, Error, TEXT("Failed to download tutorial thumbnail for %s"), *TutorialTitle);
+}
+
 void UTutorialMenuCardWidget::BuildTutorialCard(const FTutorialMenuCardInfo& InTutorialCard)
 {
-	TitleText->ChangeText(FText::FromString(InTutorialCard.Title));
+	TutorialTitle = InTutorialCard.Title;
+	TitleText->ChangeText(FText::FromString(TutorialTitle));
 	DescriptionText->ChangeText(FText::FromString(InTutorialCard.Description));
 	VideoLengthText->ChangeText(FText::FromString(InTutorialCard.VideoLength));
 	ProjectFilePath = InTutorialCard.FileProject;
 	VideoLink = InTutorialCard.VideoLink;
+
+	if (!InTutorialCard.ThumbnailLink.IsEmpty())
+	{
+		ImageDownloadTask = UAsyncTaskDownloadImage::DownloadImage(InTutorialCard.ThumbnailLink);
+		ImageDownloadTask->OnSuccess.AddDynamic(this, &UTutorialMenuCardWidget::OnImageDownloadedSucceed);
+		ImageDownloadTask->OnFail.AddDynamic(this, &UTutorialMenuCardWidget::OnImageDownloadedFailed);
+	}
 }

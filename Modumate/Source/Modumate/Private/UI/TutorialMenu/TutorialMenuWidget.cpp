@@ -48,7 +48,7 @@ void UTutorialMenuWidget::BuildTutorialMenu(const TArray<FTutorialMenuCardInfo>&
 				titleCardWidget->ChangeText(FText::FromString(CurrentTutorialMenuCardInfo[i].Title));
 				VerticalBoxTutorialCards->AddChildToVerticalBox(titleCardWidget);
 				UVerticalBoxSlot* slot = UWidgetLayoutLibrary::SlotAsVerticalBoxSlot(titleCardWidget);
-				slot->SetPadding(CardMargin);
+				slot->SetPadding(TitleSectionMargin);
 			}
 		}
 		else

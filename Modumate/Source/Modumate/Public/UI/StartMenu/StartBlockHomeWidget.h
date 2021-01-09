@@ -24,6 +24,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UWrapBox *WrapBoxProjects;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UTutorialMenuWidget* TutorialsMenuWidgetBP;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UStartBlockProjectCardWidget> LoadProjectCardWidgetClass;
 

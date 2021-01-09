@@ -24,8 +24,12 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+	UPROPERTY()
+	class UAsyncTaskDownloadImage* ImageDownloadTask;
+
 	FString ProjectFilePath;
 	FString VideoLink;
+	FString TutorialTitle;
 
 public:
 
@@ -44,11 +48,20 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonPlayVideo;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UImage* ImageThumbnail;
+
 	UFUNCTION()
 	void OnReleaseButtonTutorialProject();
 
 	UFUNCTION()
 	void OnReleaseButtonPlayVideo();
+
+	UFUNCTION()
+	void OnImageDownloadedSucceed(class UTexture2DDynamic* Texture);
+
+	UFUNCTION()
+	void OnImageDownloadedFailed(class UTexture2DDynamic* Texture);
 
 	void BuildTutorialCard(const FTutorialMenuCardInfo& InTutorialCard);
 };

@@ -18,9 +18,6 @@ public:
 	UStartBlockNewProjectCardWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName NewLevelName;
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButton *ModumateButtonNewProject;
 

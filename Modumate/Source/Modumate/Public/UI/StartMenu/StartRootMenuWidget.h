@@ -22,6 +22,9 @@ public:
 	UPROPERTY()
 	class UModumateGameInstance *ModumateGameInstance;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName NewLevelName;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString HelpURL;
 
@@ -33,6 +36,15 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UStartBlockHomeWidget *Start_Home_BP;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UHorizontalBox* OpenCreateNewButtonsBox;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonOpen;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonCreateNew;
 
 	UPROPERTY(Transient)
 	FUserWidgetPool UserWidgetPool;
@@ -47,4 +59,12 @@ protected:
 
 	UFUNCTION()
 	void OnButtonReleasedHelp();
+
+	UFUNCTION()
+	void OnButtonReleasedOpen();
+
+	UFUNCTION()
+	void OnButtonReleasedCreateNew();
+
+	void ShowStartMenu();
 };

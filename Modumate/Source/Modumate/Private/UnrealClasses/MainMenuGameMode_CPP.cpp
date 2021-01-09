@@ -42,7 +42,7 @@ void AMainMenuGameMode_CPP::LoadRecentProjectData()
 
 		IFileManager &fileManger = IFileManager::Get();
 		FModumateUserSettings &userSettings = gameInstance->UserSettings;
-		static const int32 maxNumRecentProjects = 6;
+		static const int32 maxNumRecentProjects = 9;
 		for (int32 i = 0; i < FMath::Min(maxNumRecentProjects, userSettings.RecentProjects.Num()); ++i)
 		{
 			FRecentProject &recentProject = userSettings.RecentProjects[i];
