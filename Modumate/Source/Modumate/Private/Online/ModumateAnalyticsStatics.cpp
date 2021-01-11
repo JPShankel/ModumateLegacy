@@ -144,3 +144,24 @@ bool UModumateAnalyticsStatics::RecordSessionDuration(UObject* WorldContextObjec
 
 	return bEventSuccess;
 }
+
+bool UModumateAnalyticsStatics::RecordPresetCreation(UObject* WorldContextObject)
+{
+	static const FString eventCategory(TEXT("Presets"));
+	static const FString eventName(TEXT("PresetCreation"));
+	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, eventCategory, eventName, 1.0f);
+}
+
+bool UModumateAnalyticsStatics::RecordPresetUpdate(UObject* WorldContextObject)
+{
+	static const FString eventCategory(TEXT("Presets"));
+	static const FString eventName(TEXT("PresetUpdate"));
+	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, eventCategory, eventName, 1.0f);
+}
+
+bool UModumateAnalyticsStatics::RecordPresetDeletion(UObject* WorldContextObject)
+{
+	static const FString eventCategory(TEXT("Presets"));
+	static const FString eventName(TEXT("PresetDeletion"));
+	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, eventCategory, eventName, 1.0f);
+}

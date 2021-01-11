@@ -46,4 +46,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
 	static bool RecordSessionDuration(UObject* WorldContextObject, const FTimespan& SessionDuration);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
+	static bool RecordPresetCreation(UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
+	static bool RecordPresetUpdate(UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
+	static bool RecordPresetDeletion(UObject* WorldContextObject);
 };

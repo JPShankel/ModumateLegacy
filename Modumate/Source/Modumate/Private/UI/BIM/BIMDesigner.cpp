@@ -24,6 +24,8 @@
 #include "UI/BIM/BIMBlockMiniNode.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "UI/BIM/BIMEditColorPicker.h"
+#include "Online/ModumateAnalyticsStatics.h"
+
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -919,6 +921,7 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 			}
 		}
 		node->WorkingPresetCopy = outPreset;
+		UModumateAnalyticsStatics::RecordPresetCreation(this);
 	}
 	else 
 	if (outPreset.ReadOnly)
@@ -927,6 +930,7 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 	}
 	else
 	{
+		UModumateAnalyticsStatics::RecordPresetUpdate(this);
 		Controller->GetDocument()->PresetManager.CraftingNodePresets.AddPreset(outPreset);
 	}
 
