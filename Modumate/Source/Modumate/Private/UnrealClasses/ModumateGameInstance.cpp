@@ -57,9 +57,8 @@ UModumateDocument *UModumateGameInstance::GetDocument()
 
 void UModumateGameInstance::Init()
 {
-	AccountManager = MakeShared<FModumateAccountManager>();
 	CloudConnection = MakeShared<FModumateCloudConnection>();
-	CloudConnection->SetUrl(AccountManager->GetAmsAddress());
+	AccountManager = MakeShared<FModumateAccountManager>(CloudConnection);
 	AnalyticsInstance = UModumateAnalyticsStatics::InitAnalytics();
 
 	UModumateFunctionLibrary::SetWindowTitle();
@@ -550,9 +549,9 @@ void UModumateGameInstance::GetRegisteredCommands(TMap<FString, FString> &OutCom
 	}
 }
 
-void UModumateGameInstance::Modumate(const FString &params)
+void UModumateGameInstance::Modumate(const FString &Params)
 {
-	const TCHAR* parsePtr = *params;
+	const TCHAR* parsePtr = *Params;
 
 	bool fnSuccess = false;
 	FModumateFunctionParameterSet fnOutput;
@@ -622,17 +621,49 @@ void UModumateGameInstance::CheckCrashRecovery()
 			TEXT("Recovery"), Modumate::PlatformFunctions::YesNo) == Modumate::PlatformFunctions::Yes);
 }
 
-void UModumateGameInstance::Login(const FString &userName, const FString &password)
+void UModumateGameInstance::Login(const FString& UserName, const FString& Password)
 {
-	AccountManager->Login(userName, password);
+	TWeakPtr<FModumateAccountManager> WeakAMS(AccountManager);
+	CloudConnection->Login(UserName, Password,
+		[WeakAMS](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+		{
+			if (bSuccessful)
+			{
+				TSharedPtr<FModumateAccountManager> SharedAMS = WeakAMS.Pin();
+				if (!SharedAMS.IsValid())
+				{
+					return;
+				}
+
+				FModumateUserVerifyParams verifyParams;
+				if (FJsonObjectConverter::JsonObjectToUStruct<FModumateUserVerifyParams>(Response.ToSharedRef(), &verifyParams))
+				{
+					SharedAMS->SetUserInfo(verifyParams.User);
+					SharedAMS->ProcessUserStatus(verifyParams.Status);
+				}
+			}
+			else
+			{
+				Modumate::PlatformFunctions::ShowMessageBox(
+					TEXT("Unknown network error"),
+					TEXT("Unknown Error"), Modumate::PlatformFunctions::Okay);
+			}
+		},
+		[](int32 Code, const FString& Error)
+		{
+			Modumate::PlatformFunctions::ShowMessageBox(
+				TEXT("Incorrect user name or password"),
+				TEXT("Login Failed"), Modumate::PlatformFunctions::Okay);
+		}
+	);
 }
 
 ELoginStatus UModumateGameInstance::LoginStatus() const
 {
-	return AccountManager->GetLoginStatus();
+	return CloudConnection->GetLoginStatus();
 }
 
 bool UModumateGameInstance::IsloggedIn() const
 {
-	return AccountManager->IsloggedIn();
+	return CloudConnection->IsLoggedIn();
 }

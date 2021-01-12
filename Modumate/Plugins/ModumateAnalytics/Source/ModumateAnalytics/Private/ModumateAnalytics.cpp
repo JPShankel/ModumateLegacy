@@ -203,20 +203,13 @@ bool FAnalyticsProviderModumate::UploadBufferedEvents()
 		return false;
 	}
 
-	auto authToken = AccountManager->GetIdToken();
-	if (authToken.IsEmpty())
-	{
-		return false;
-	}
-
 	FModumateAnalyticsEventArray eventArray{ EventBuffer };
 	auto eventsJson = FJsonObjectConverter::UStructToJsonObject(eventArray);
 	auto eventsJsonArray = eventsJson->GetArrayField(TEXT("Events"));
 
-	CloudConnection->SetAuthToken(authToken);
 	bool bUploadRequestSuccess = CloudConnection->UploadAnalyticsEvents(eventsJsonArray,
-		[numEvents](bool bSuccess) { UE_LOG(LogModumateAnalytics, Display, TEXT("Successfully uploaded %d buffered analytics events."), numEvents); },
-		[](int32 Code, FString Error) { UE_LOG(LogModumateAnalytics, Error, TEXT("Analytics event upload error code: %d, error message: %s"), Code, *Error); }
+		[numEvents](bool bSuccess, const TSharedPtr<FJsonObject>&) { UE_LOG(LogModumateAnalytics, Display, TEXT("Successfully uploaded %d buffered analytics events."), numEvents); },
+		[](int32 Code, const FString& Error) { UE_LOG(LogModumateAnalytics, Error, TEXT("Analytics event upload error code: %d, error message: %s"), Code, *Error); }
 	);
 
 	if (bUploadRequestSuccess)

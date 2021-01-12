@@ -4,30 +4,50 @@
 
 #include "CoreMinimal.h"
 #include "Runtime/Online/HTTP/Public/Http.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "JsonUtilities.h"
 
 /**
  * Client to Cloud Connection Manager. Authentication details are passed automatically with all required requests.
  */
-class MODUMATE_API FModumateCloudConnection
+class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCloudConnection>
 {
 	public:
-		void SetUrl(const FString& InURL);
-		void SetAuthToken(const FString& InAuthToken);
+		FModumateCloudConnection();
 
-		bool Login(const FString& InRefreshToken, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback);
-		bool Login(const FString& Username, const FString& Password, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback);
+		FString GetCloudRootURL() const;
+		FString GetCloudAPIURL() const;
 
-		bool CreateReplay(const FString& SessionID, const FString& Version, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback);
-		bool UploadReplay(const FString& SessionID, const FString& Filename, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback);
-		bool UploadAnalyticsEvents(const TArray<TSharedPtr<FJsonValue>>& EventsJSON, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback);
+		FString GetAuthToken() const { return AuthToken; }
+
+		void SetLoginStatus(ELoginStatus InLoginStatus);
+		ELoginStatus GetLoginStatus() const;
+		bool IsLoggedIn() const { return LoginStatus == ELoginStatus::Connected; }
+
+		using FRequestCustomizer = TFunction<void(TSharedRef<IHttpRequest>& RefRequest)>;
+		using FSuccessCallback = TFunction<void(bool,const TSharedPtr<FJsonObject>&)>;
+		using FErrorCallback = TFunction<void(int32, const FString&)>;
+
+		enum ERequestType { Get, Delete, Put, Post };
+		bool RequestEndpoint(const FString& Endpoint, ERequestType RequestType, const FRequestCustomizer& Customizer, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
+
+		bool CreateReplay(const FString& SessionID, const FString& Version, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
+		bool UploadReplay(const FString& SessionID, const FString& Filename, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
+		bool UploadAnalyticsEvents(const TArray<TSharedPtr<FJsonValue>>& EventsJSON, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
+
+		bool Login(const FString& Username, const FString& Password, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
+		bool RequestAuthTokenRefresh(const FString& InRefreshToken, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
+
+		void Tick();
 
 	private:
-		TSharedPtr<FJsonObject> ParseJSONResponse(FHttpRequestPtr Request, FHttpResponsePtr Response);
+		TSharedRef<IHttpRequest> MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 
-		TSharedRef<IHttpRequest> MakeRequest(const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback);
+		static FString GetRequestTypeString(ERequestType RequestType);
 
 		FString AuthToken;
 		FString RefreshToken;
-		FString URL;
+		ELoginStatus LoginStatus = ELoginStatus::Disconnected;
+		FDateTime AuthTokenTimestamp;
+		const static FTimespan AuthTokenTimeout;
 };

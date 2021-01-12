@@ -8,6 +8,7 @@
 #include "Misc/Base64.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "Online/ModumateAccountManager.h"
+#include "Online/ModumateCloudConnection.h"
 
 #include "Drafting/MiniZip.h"
 
@@ -185,9 +186,9 @@ namespace Modumate
 		request->SetURL(ServerAddress + TEXT("/jsontodwg"));
 #else
 		// Send via AMS public web-server.
-		request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + AccountManager->GetIdToken());
+		request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + AccountManager->CloudConnection->GetAuthToken());
 
-		request->SetURL(AccountManager->GetAmsAddress() + TEXT("/api/v2/service/jsontodwg"));
+		request->SetURL(AccountManager->CloudConnection->GetCloudRootURL() + TEXT("/api/v2/service/jsontodwg"));
 		request->SetContentAsString(jsonString);
 #endif
 		request->ProcessRequest();

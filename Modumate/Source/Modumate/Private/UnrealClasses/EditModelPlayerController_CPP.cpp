@@ -234,7 +234,7 @@ void AEditModelPlayerController_CPP::BeginPlay()
 bool AEditModelPlayerController_CPP::StartTelemetryRecording()
 {
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
-	if (!gameInstance->GetAccountManager().Get()->GetRecordTelemetry())
+	if (!gameInstance->GetAccountManager().Get()->ShouldRecordTelemetry())
 	{
 		return false;
 	}
@@ -257,11 +257,10 @@ bool AEditModelPlayerController_CPP::StartTelemetryRecording()
 
 		if (Cloud.IsValid())
 		{
-			Cloud->SetAuthToken(gameInstance->GetAccountManager()->GetIdToken());
-			Cloud->CreateReplay(RecordSessionKey.ToString(), *projectVersion, [](bool success) {
+			Cloud->CreateReplay(RecordSessionKey.ToString(), *projectVersion, [](bool bSuccess, const TSharedPtr<FJsonObject>& Response) {
 				UE_LOG(LogTemp, Log, TEXT("Created Successfully"));
 
-			}, [](int32 code, FString error) {
+			}, [](int32 code, const FString& error) {
 				UE_LOG(LogTemp, Error, TEXT("Error: %s"), *error);
 			});
 
@@ -283,7 +282,6 @@ bool AEditModelPlayerController_CPP::EndTelemetryRecording()
 	if (RecordSessionKey.IsValid())
 	{
 		FTimespan sessionTime = FDateTime::Now() - SessionStartTime;
-
 		UModumateAnalyticsStatics::RecordSessionDuration(this, sessionTime);
 	}
 
@@ -1264,10 +1262,10 @@ void AEditModelPlayerController_CPP::OnControllerTimer()
 	ts = FTimespan(FDateTime::Now().GetTicks() - TimeOfLastUpload.GetTicks());
 	if (ts.GetTotalSeconds() > gameInstance->UserSettings.TelemetryUploadFrequencySeconds)
 	{
-		WantTelemetryUpload = gameInstance->GetAccountManager().Get()->GetRecordTelemetry();
+		WantTelemetryUpload = gameInstance->GetAccountManager().Get()->ShouldRecordTelemetry();
 	}
 
-	gameInstance->GetAccountManager()->Tick();
+	gameInstance->GetCloudConnection()->Tick();
 }
 
 DECLARE_CYCLE_STAT(TEXT("Edit tick"), STAT_ModumateEditTick, STATGROUP_Modumate)
@@ -1291,11 +1289,9 @@ bool AEditModelPlayerController_CPP::UploadTelemetryLog() const
 
 	if (Cloud.IsValid())
 	{
-		Cloud->SetAuthToken(gameInstance->GetAccountManager()->GetIdToken());
-
-		Cloud->UploadReplay(RecordSessionKey.ToString(), *cacheFile, [](bool success) {
+		Cloud->UploadReplay(RecordSessionKey.ToString(), *cacheFile, [](bool bSuccess, const TSharedPtr<FJsonObject>& Response) {
 			UE_LOG(LogTemp, Log, TEXT("Uploaded Successfully"));
-		}, [](int32 code, FString error) {
+		}, [](int32 code, const FString& error) {
 			UE_LOG(LogTemp, Error, TEXT("Error: %s"), *error);
 		});
 

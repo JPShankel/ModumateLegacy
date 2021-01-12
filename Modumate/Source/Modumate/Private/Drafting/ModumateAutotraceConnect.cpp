@@ -5,6 +5,7 @@
 #include "Logging/LogMacros.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "Online/ModumateAccountManager.h"
+#include "Online/ModumateCloudConnection.h"
 #include "Misc/FileHelper.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 #include "Objects/CutPlane.h"
@@ -78,8 +79,8 @@ namespace Modumate
 		request->SetURL(ServerAddress + "/autotrace");
 		request->SetHeader(TEXT("Authorization"), TEXT("Basic YW1zOmtpZ2VibXk2dWtrNzN3"));
 #else
-		request->SetURL(accountManager->GetAmsAddress() + TEXT("/api/v2/service/autotrace"));
-		request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + accountManager->GetIdToken());
+		request->SetURL(accountManager->CloudConnection->GetCloudRootURL() + TEXT("/api/v2/service/autotrace"));
+		request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + accountManager->CloudConnection->GetAuthToken());
 #endif
 
 		request->SetContent(pngFile);

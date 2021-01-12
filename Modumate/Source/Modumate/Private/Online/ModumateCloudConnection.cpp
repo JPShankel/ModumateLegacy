@@ -1,66 +1,220 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "Online/ModumateCloudConnection.h"
+#include "ModumateCore/PlatformFunctions.h"
+#include "Online/ModumateAccountManager.h"
 
 #include "Serialization/JsonSerializer.h"
 
-void FModumateCloudConnection::SetUrl(const FString& InURL)
+TAutoConsoleVariable<FString> CVarModumateCloudAddress(
+	TEXT("modumate.CloudAddress"),
+#if UE_BUILD_SHIPPING
+	TEXT("https://account.modumate.com"),
+#else
+	TEXT("https://beta.account.modumate.com"),
+#endif
+	TEXT("The address used to connect to the Modumate Cloud backend."),
+	ECVF_Default | ECVF_Cheat);
+
+
+// Period for requesting refresh of AuthToken.
+const FTimespan FModumateCloudConnection::AuthTokenTimeout = { 0, 10 /* min */, 0 };
+
+FModumateCloudConnection::FModumateCloudConnection()
 {
-	URL = InURL + "/api/v2";
 }
 
-void FModumateCloudConnection::SetAuthToken(const FString& InAuthToken)
+FString FModumateCloudConnection::GetCloudRootURL() const
 {
-	AuthToken = InAuthToken;
+	return CVarModumateCloudAddress.GetValueOnGameThread();
 }
 
-bool FModumateCloudConnection::Login(const FString& InRefreshToken, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback)
+FString FModumateCloudConnection::GetCloudAPIURL() const
 {
+	return CVarModumateCloudAddress.GetValueOnGameThread() + TEXT("/api/v2");
+}
+
+void FModumateCloudConnection::SetLoginStatus(ELoginStatus InLoginStatus)
+{
+	LoginStatus = InLoginStatus;
+}
+
+ELoginStatus FModumateCloudConnection::GetLoginStatus() const
+{
+	return LoginStatus;
+}
+
+FString FModumateCloudConnection::GetRequestTypeString(ERequestType RequestType)
+{
+	switch (RequestType)
+	{
+		case ERequestType::Get: return TEXT("GET");
+		case ERequestType::Delete: return TEXT("DELETE");
+		case ERequestType::Put: return TEXT("PUT");
+		case ERequestType::Post: return TEXT("POST");
+	};
+	return TEXT("POST");
+}
+
+bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequestType RequestType, const FRequestCustomizer& Customizer, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
+{
+	if (!ensureAlways(Endpoint.Len() > 0 && Endpoint[0] == TCHAR('/')))
+	{
+		return false;
+	}
+
 	TSharedRef<IHttpRequest> Request = MakeRequest(Callback, ServerErrorCallback);
 
-	Request->SetURL(URL + TEXT("/auth/verify"));
-	Request->SetVerb(TEXT("POST"));
+	Request->SetURL(GetCloudAPIURL() + Endpoint);
+	Request->SetVerb(GetRequestTypeString(RequestType));
 
-	// TODO: refactor with Unreal JSON objects
-	FString json = "{\"refreshToken\":\"" + InRefreshToken + "\"}";
+	Customizer(Request);
 
-	Request->SetContentAsString(json);
 	return Request->ProcessRequest();
 }
 
-bool FModumateCloudConnection::Login(const FString& Username, const FString& Password, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback)
+bool FModumateCloudConnection::RequestAuthTokenRefresh(const FString& InRefreshToken, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
 {
-	TSharedRef<IHttpRequest> Request = MakeRequest(Callback, ServerErrorCallback);
+	if (LoginStatus != ELoginStatus::Connected)
+	{
+		return false;
+	}
 
-	Request->SetURL(URL + TEXT("/auth/login"));
-	Request->SetVerb(TEXT("POST"));
+	LoginStatus = ELoginStatus::WaitingForReverify;
 
-	// TODO: refactor with Unreal JSON objects
-	FString json = "{\"username\":\"" + Username + "\", \"password\":\"" + Password + "\"}";
+	TWeakPtr<FModumateCloudConnection> WeakThisCaptured(AsShared());
+	return RequestEndpoint(TEXT("/auth/verify"), Post,
+		[WeakThisCaptured](TSharedRef<IHttpRequest>& RefRequest)
+		{
+			TSharedPtr<FModumateCloudConnection> SharedThis = WeakThisCaptured.Pin();
+			if (!SharedThis.IsValid())
+			{
+				return;
+			}
 
-	Request->SetContentAsString(json);
-	return Request->ProcessRequest();
+			FModumateUserVerifyParams refreshParams;
+			refreshParams.RefreshToken = SharedThis->RefreshToken;
+
+			FString jsonString;
+			if (FJsonObjectConverter::UStructToJsonObjectString<FModumateUserVerifyParams>(refreshParams, jsonString, 0, 0, 0, nullptr, false))
+			{
+				RefRequest->SetContentAsString(jsonString);
+			}
+		},
+
+		[WeakThisCaptured,Callback](bool bSuccess, const TSharedPtr<FJsonObject>& Payload)
+		{
+			TSharedPtr<FModumateCloudConnection> SharedThis = WeakThisCaptured.Pin();
+			if (!SharedThis.IsValid())
+			{
+				return;
+			}
+
+			FModumateUserVerifyParams verifyParams;
+			FJsonObjectConverter::JsonObjectToUStruct<FModumateUserVerifyParams>(Payload.ToSharedRef(), &verifyParams);
+
+			if (!verifyParams.AuthToken.IsEmpty())
+			{
+				SharedThis->AuthToken = verifyParams.AuthToken;
+				SharedThis->AuthTokenTimestamp = FDateTime::Now();
+				SharedThis->LoginStatus = ELoginStatus::Connected;
+			}
+			else
+			{
+				SharedThis->LoginStatus = ELoginStatus::ConnectionError;
+			}
+
+			Callback(bSuccess, Payload);
+		},
+
+		ServerErrorCallback
+	);
+
+	return false;
 }
 
-bool FModumateCloudConnection::CreateReplay(const FString& SessionID, const FString& Version, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback)
+bool FModumateCloudConnection::Login(const FString& Username, const FString& Password, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
+{
+	TWeakPtr<FModumateCloudConnection> WeakThisCaptured(this->AsShared());
+	return RequestEndpoint(TEXT("/auth/login"), Post,
+		// Customize request
+		[WeakThisCaptured,Password,Username](TSharedRef<IHttpRequest>& RefRequest)
+		{
+			TSharedPtr<FModumateCloudConnection> SharedThis = WeakThisCaptured.Pin();
+			if (!SharedThis.IsValid())
+			{
+				return;
+			}
+
+			FModumateLoginParams loginParams;
+			loginParams.Password = Password;
+			loginParams.Username = Username;
+
+			FString jsonString;
+			if (FJsonObjectConverter::UStructToJsonObjectString<FModumateLoginParams>(loginParams, jsonString, 0, 0, 0, nullptr, false))
+			{
+				SharedThis->LoginStatus = ELoginStatus::WaitingForRefreshToken;
+				RefRequest->SetContentAsString(jsonString);
+			}
+		},
+			// Handle success payload
+		[WeakThisCaptured,Callback,ServerErrorCallback](bool bSuccess, const TSharedPtr<FJsonObject>& Payload)
+		{
+			TSharedPtr<FModumateCloudConnection> SharedThis = WeakThisCaptured.Pin();
+			if (!SharedThis.IsValid())
+			{
+				return;
+			}
+
+			FModumateUserVerifyParams verifyParams;
+			FJsonObjectConverter::JsonObjectToUStruct<FModumateUserVerifyParams>(Payload.ToSharedRef(), &verifyParams);
+
+			if (!verifyParams.RefreshToken.IsEmpty() && !verifyParams.AuthToken.IsEmpty())
+			{
+				SharedThis->RefreshToken = verifyParams.RefreshToken;
+				SharedThis->AuthToken = verifyParams.AuthToken;
+				SharedThis->LoginStatus = ELoginStatus::Connected;
+			}
+			else
+			{
+				SharedThis->LoginStatus = ELoginStatus::ConnectionError;
+			}
+			Callback(bSuccess, Payload);
+		},
+			// Handle error
+		[WeakThisCaptured,ServerErrorCallback](int32 ErrorCode, const FString& ErrorString)
+		{
+			TSharedPtr<FModumateCloudConnection> SharedThis = WeakThisCaptured.Pin();
+			if (!SharedThis.IsValid())
+			{
+				return;
+			}
+			SharedThis->LoginStatus = ELoginStatus::ConnectionError;
+			ServerErrorCallback(ErrorCode, ErrorString);
+		});
+
+	return false;
+}
+
+bool FModumateCloudConnection::CreateReplay(const FString& SessionID, const FString& Version, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
 {
 	TSharedRef<IHttpRequest> Request = MakeRequest(Callback, ServerErrorCallback);
 
-	Request->SetURL(URL + TEXT("/analytics/replay/") + SessionID);
+	Request->SetURL(GetCloudAPIURL() + TEXT("/analytics/replay/") + SessionID);
 	Request->SetVerb(TEXT("PUT"));
 
 	// TODO: refactor with Unreal JSON objects
-	FString json = "{\"version\":\"" + Version + "\"}";
+	FString json = TEXT("{\"version\":\"") + Version + TEXT("\"}");
 
 	Request->SetContentAsString(json);
 	return Request->ProcessRequest();
 }
 
-bool FModumateCloudConnection::UploadReplay(const FString& SessionID, const FString& Filename, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback)
+bool FModumateCloudConnection::UploadReplay(const FString& SessionID, const FString& Filename, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
 {
 	TSharedRef<IHttpRequest> Request = MakeRequest(Callback,ServerErrorCallback);
 
-	Request->SetURL(URL + TEXT("/analytics/replay/") + SessionID + TEXT("/0"));
+	Request->SetURL(GetCloudAPIURL() + TEXT("/analytics/replay/") + SessionID + TEXT("/0"));
 	Request->SetVerb(TEXT("POST"));
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/octet-stream"));
 
@@ -71,60 +225,43 @@ bool FModumateCloudConnection::UploadReplay(const FString& SessionID, const FStr
 	return Request->ProcessRequest();
 }
 
-TSharedPtr<FJsonObject> FModumateCloudConnection::ParseJSONResponse(FHttpRequestPtr Request, FHttpResponsePtr Response)
-{
-	FString content = Response->GetContentAsString();
-	auto JsonResponse = TJsonReaderFactory<>::Create(content);
-	TSharedPtr<FJsonValue> responseValue;
-	FJsonSerializer::Deserialize(JsonResponse, responseValue);
-	if (responseValue.IsValid())
-	{
-		TSharedPtr<FJsonObject> responseObject = responseValue->AsObject();
-
-		FString newRefreshToken;
-		if (responseObject->TryGetStringField(TEXT("refreshToken"), newRefreshToken) && !newRefreshToken.IsEmpty())
-		{
-			RefreshToken = newRefreshToken;
-		}
-
-		FString newAuthToken;
-		if (responseObject->TryGetStringField(TEXT("authToken"), newAuthToken) && !newAuthToken.IsEmpty())
-		{
-			AuthToken = newAuthToken;
-		}
-
-		return responseObject;
-	}
-	return nullptr;
-}
-
-TSharedRef<IHttpRequest> FModumateCloudConnection::MakeRequest(const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback)
+TSharedRef<IHttpRequest> FModumateCloudConnection::MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
 {
 	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest();
-	Request->OnProcessRequestComplete().BindLambda([this, Callback, ServerErrorCallback](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+	Request->OnProcessRequestComplete().BindLambda([Callback, ServerErrorCallback](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 	{
-		if (bWasSuccessful) {
+		if (bWasSuccessful) 
+		{
+			FString content = Response->GetContentAsString();
+			auto JsonResponse = TJsonReaderFactory<>::Create(content);
+			TSharedPtr<FJsonValue> responseValue;
+			FJsonSerializer::Deserialize(JsonResponse, responseValue);
+
 			int32 code = Response->GetResponseCode();
-			if (code == 200) {
-				Callback(true);
+			if (code == 200)
+			{
+				Callback(true, responseValue ? responseValue->AsObject() : nullptr);
 			}
 			else
 			{
-				auto responseJSON = ParseJSONResponse(Request, Response);
-				ServerErrorCallback(code, responseJSON ? responseJSON->GetStringField(TEXT("error")) : TEXT("null response"));
+				ServerErrorCallback(code, responseValue && responseValue->AsObject() ? responseValue->AsObject()->GetStringField(TEXT("error")) : TEXT("null response"));
 			}
 		}
 	});
 
 	Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
-	Request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + AuthToken);
 	Request->SetHeader(TEXT("Accepts"), TEXT("application/json"));
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+
+	if (!AuthToken.IsEmpty())
+	{
+		Request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + AuthToken);
+	}
 
 	return Request;
 }
 
-bool FModumateCloudConnection::UploadAnalyticsEvents(const TArray<TSharedPtr<FJsonValue>>& EventsJSON, const TFunction<void(bool)>& Callback, const TFunction<void(int32, FString)>& ServerErrorCallback)
+bool FModumateCloudConnection::UploadAnalyticsEvents(const TArray<TSharedPtr<FJsonValue>>& EventsJSON, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
 {
 	if (EventsJSON.Num() == 0)
 	{
@@ -138,11 +275,21 @@ bool FModumateCloudConnection::UploadAnalyticsEvents(const TArray<TSharedPtr<FJs
 		return false;
 	}
 
-	TSharedRef<IHttpRequest> Request = MakeRequest(Callback, ServerErrorCallback);
+	return RequestEndpoint(TEXT("/analytics/events/"), ERequestType::Put,
+		[eventsJSONString](TSharedRef<IHttpRequest>& RefRequest)
+		{
+			RefRequest->SetContentAsString(eventsJSONString);
+		},
+		Callback,
+		ServerErrorCallback
+	);
+}
 
-	Request->SetURL(URL + TEXT("/analytics/events/"));
-	Request->SetVerb(TEXT("PUT"));
-	Request->SetContentAsString(eventsJSONString);
-
-	return Request->ProcessRequest();
+void FModumateCloudConnection::Tick()
+{
+	if (LoginStatus == ELoginStatus::Connected && FDateTime::Now() - AuthTokenTimestamp > AuthTokenTimeout)
+	{
+		AuthTokenTimestamp = FDateTime::Now();
+		RequestAuthTokenRefresh(RefreshToken, [](bool, const TSharedPtr<FJsonObject>&) {}, [](int32, const FString&) {});
+	}
 }

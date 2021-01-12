@@ -41,6 +41,9 @@ struct MODUMATE_API FModumateUserInfo
 
 	UPROPERTY()
 	FString Zipcode;
+
+	UPROPERTY()
+	bool Analytics = false;
 };
 
 USTRUCT()
@@ -74,9 +77,6 @@ struct MODUMATE_API FModumateUserStatus
 
 	UPROPERTY()
 	FString latest_modumate_version;
-
-	UPROPERTY()
-	bool Analytics;
 };
 
 USTRUCT()
@@ -85,7 +85,7 @@ struct MODUMATE_API FModumateUserVerifyParams
 	GENERATED_BODY();
 
 	UPROPERTY()
-	FString IdToken;
+	FString AuthToken;
 
 	UPROPERTY()
 	FString RefreshToken;
@@ -97,58 +97,52 @@ struct MODUMATE_API FModumateUserVerifyParams
 	FModumateUserStatus Status;
 };
 
+USTRUCT()
+struct MODUMATE_API FModumateAnalyticsEvent
+{
+	GENERATED_BODY();
+
+	UPROPERTY()
+	FString Key;
+
+	UPROPERTY()
+	float Value;
+
+	UPROPERTY()
+	int64 Timestamp;
+};
+
 enum class ELoginStatus : uint8;
 
 UENUM(BlueprintType)
 enum class EModumatePermission : uint8 { None, View, Edit, Save, Export };
 
-class MODUMATE_API FModumateAccountManager
+class FModumateCloudConnection;
+class MODUMATE_API FModumateAccountManager : public TSharedFromThis<FModumateAccountManager>
 {
 public:
-	FModumateAccountManager();
+	FModumateAccountManager(TSharedPtr<FModumateCloudConnection>& InConnection);
 
 	using FPermissionSet = TSet<EModumatePermission>;
 
-	void Login(const FString& userName, const FString& password);
-
-	ELoginStatus GetLoginStatus() const { return LoginStatus; }
-	FString GetLocalId() const { return LocalId; }
 	FString GetFirstname() const { return UserInfo.Firstname; }
 	FString GetLastname() const { return UserInfo.Lastname; }
 	FString GetEmail() const { return UserInfo.Email; }
-	FString GetIdToken() const { return IdToken; }
-	bool GetRecordTelemetry() const { return bRecordTelemetry; }
+	bool ShouldRecordTelemetry() const;
 
-	void RequestIdTokenRefresh(TBaseDelegate<void, bool>* callback = nullptr);
+	void SetUserInfo(const FModumateUserInfo& InUserInfo) { UserInfo = InUserInfo; }
+	void ProcessUserStatus(const FModumateUserStatus& UserStatus);
+
 	void RequestStatus();
-	bool IsloggedIn() const;
 	bool HasPermission(EModumatePermission requestedPermission) const;
 
-	void Tick();
-
-	static FString GetAmsAddress();  // AMS address as URL.
-
-	enum ResponseCodes {kSuccess = 200, kInvalidIdToken = 401, kBackendError = 463};
+	TSharedPtr<FModumateCloudConnection> CloudConnection;
 
 private:
-	void OnAmsResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-	void OnStatusResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-	void ProcessLogin(const FHttpResponsePtr Response);
-	void ProcessUserStatus(const FModumateUserStatus& userStatus);
-	static FString ModumateIdentityEndpoint(const FString& api);
 
-	ELoginStatus LoginStatus;
-	FString IdToken;
-	FString RefreshToken;
-	FString LocalId;
 	FModumateUserInfo UserInfo;
 	FString LatestVersion;
 	TArray<TBaseDelegate<void, bool>> TokenRefreshDelegates;
 
-	FDateTime IdTokenTimestamp;
-
-	bool bRecordTelemetry = false;
-
 	FPermissionSet CurrentPermissions;
-	const static FTimespan IdTokenTimeout;
 };

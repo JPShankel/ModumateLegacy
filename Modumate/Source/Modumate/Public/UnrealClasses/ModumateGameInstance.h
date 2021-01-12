@@ -87,10 +87,10 @@ public:
 	bool IsloggedIn() const;
 
 	UFUNCTION(BlueprintCallable, Category = ModumateLogin)
-	void Login(const FString &userName, const FString &password);
+	void Login(const FString& UserName, const FString& Password);
 
 	UFUNCTION(Exec, Category = ExecFunctions)
-	void Modumate(const FString &params);
+	void Modumate(const FString &Params);
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FModumateUserSettings UserSettings;
