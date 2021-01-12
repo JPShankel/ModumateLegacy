@@ -1,10 +1,11 @@
 #include "CoreMinimal.h"
 #include "ModumateCore/ExpressionEvaluator.h"
+#include "Database/ModumateObjectDatabase.h"
 #include "BIMKernel/Core/BIMProperties.h"
 
 static bool testVectorFormula()
 {
-	Modumate::Expression::FVectorExpression vf1(TEXT("Parent.SizeX-2.5"), TEXT("(1/2)*Parent.SizeY"), TEXT("(1/2)*(12+Parent.SizeZ-6)"));
+	FVectorExpression vf1(TEXT("Parent.SizeX-2.5"), TEXT("(1/2)*Parent.SizeY"), TEXT("(1/2)*(12+Parent.SizeZ-6)"));
 
 	TMap<FString, float> vars;
 	vars.Add(TEXT("Parent.SizeX"), 3.0f);
@@ -29,7 +30,7 @@ static bool testVectorFormula()
 		return false;
 	}
 	
-	Modumate::Expression::FVectorExpression vf2(TEXT("Parent.SizeX-2.5"), TEXT(""), TEXT("(1/2)*(12+Parent.SizeZ-6)"));
+	FVectorExpression vf2(TEXT("Parent.SizeX-2.5"), TEXT(""), TEXT("(1/2)*(12+Parent.SizeZ-6)"));
 	
 	outVector = FVector::ZeroVector;
 	if (!vf2.Evaluate(vars, outVector))
@@ -61,6 +62,11 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDatabaseBIMTest, "Modumate.Database.BI
 	ret = (fqn == TEXT("Assembly.Name")) && ret;
 
 	ret = testVectorFormula() && ret;
+
+	FModumateDatabase bimDatabase;
+	bimDatabase.Init();
+	bimDatabase.ReadPresetData();
+	ret = bimDatabase.UnitTest() && ret;
 
 	UE_LOG(LogUnitTest, Display, TEXT("Modumate BIM Schema - Unit Test Completed %s"), ret ? TEXT("PASSED") : TEXT("FAILED"));
 	return ret;

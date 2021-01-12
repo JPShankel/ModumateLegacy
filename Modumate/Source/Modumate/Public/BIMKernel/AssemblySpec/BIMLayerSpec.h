@@ -10,15 +10,24 @@
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "ModumateCore/ModumateUnits.h"
+#include "BIMLayerSpec.generated.h"
 
 class FModumateDatabase;
 
-class MODUMATE_API FBIMLayerSpec
+USTRUCT()
+struct MODUMATE_API FBIMLayerSpec
 {
-	friend class FBIMAssemblySpec;
+	GENERATED_BODY()
+	friend struct FBIMAssemblySpec;
 private:
+	
+	UPROPERTY()
 	FBIMPropertySheet LayerProperties;
+
+	UPROPERTY()
 	TArray<FBIMPropertySheet> ModuleProperties;
+
+	UPROPERTY()
 	FBIMPropertySheet GapProperties;
 
 	EBIMResult BuildUnpatternedLayer(const FModumateDatabase& InDB);
@@ -26,15 +35,25 @@ private:
 	EBIMResult BuildFromProperties(const FModumateDatabase& InDB);
 
 public:
+	UPROPERTY()
 	ELayerFunction Function = ELayerFunction::None;
 
+	UPROPERTY()
 	FString CodeName;
+
+	UPROPERTY()
 	FString PresetSequence;
 
-	Modumate::Units::FUnitValue Thickness;
+	UPROPERTY()
+	float ThicknessCentimeters;
 
 	// TODO: this is the DDL 1.0 pattern loadout...to be extended
+	UPROPERTY()
 	FLayerPattern Pattern;
+
+	UPROPERTY()
 	TArray<FLayerPatternModule> Modules;
+
+	UPROPERTY()
 	FLayerPatternGap Gap;
 };

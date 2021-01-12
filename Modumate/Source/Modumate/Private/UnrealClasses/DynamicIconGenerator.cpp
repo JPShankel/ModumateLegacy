@@ -636,7 +636,7 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 	runPlanePoints.Add(FVector(StairDimension.X, 0.f, StairDimension.Z));
 
 	// Tread 'depth' is horizontal run from nose to nose.
-	float goalTreadDepth = Assembly.TreadDepth.AsWorldCentimeters();
+	float goalTreadDepth = Assembly.TreadDepthCentimeters;
 
 	// Calculate the polygons that make up the outer surfaces of each tread and riser of the linear stair run
 	float stepRun, stepRise;

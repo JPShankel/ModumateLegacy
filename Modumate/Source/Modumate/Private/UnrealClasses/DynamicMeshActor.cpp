@@ -249,7 +249,7 @@ bool ADynamicMeshActor::CreateBasicLayerDefs(const TArray<FVector> &PlanePoints,
 	for (int32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
 	{
 		const FBIMLayerSpec &layer = Assembly.Layers[layerIdx];
-		float layerThickness = layer.Thickness.AsWorldCentimeters();
+		float layerThickness = layer.ThicknessCentimeters;
 
 		layerPointsA.Reset(numPoints);
 		layerPointsB.Reset(numPoints);

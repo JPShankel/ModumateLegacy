@@ -11,7 +11,7 @@ class APortalFrameActor_CPP;
 class AEditModelPlayerController_CPP;
 class ACompoundMeshActor;
 class UModumateDocument;
-class FBIMAssemblySpec;
+struct FBIMAssemblySpec;
 
 UCLASS()
 class MODUMATE_API UPortalToolBase : public UEditModelToolBase

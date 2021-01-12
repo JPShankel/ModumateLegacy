@@ -57,7 +57,7 @@ void FCachedLayerDimsByType::UpdateLayersFromAssembly(const TArray<FBIMLayerSpec
 	{
 		LayerOffsets.Add(curThickness);
 		const FBIMLayerSpec &layer = AssemblyLayers[layerIdx];
-		float layerThickness = layer.Thickness.AsWorldCentimeters();
+		float layerThickness = layer.ThicknessCentimeters;
 
 		if ((layer.Function == ELayerFunction::Membrane) && (StructuralLayerStartIdx == INDEX_NONE))
 		{
@@ -81,7 +81,7 @@ void FCachedLayerDimsByType::UpdateLayersFromAssembly(const TArray<FBIMLayerSpec
 	for (int32 layerIdx = NumLayers - 1; layerIdx >= 0; --layerIdx)
 	{
 		const FBIMLayerSpec &layer = AssemblyLayers[layerIdx];
-		float layerThickness = layer.Thickness.AsWorldCentimeters();
+		float layerThickness = layer.ThicknessCentimeters;
 
 		if ((layer.Function == ELayerFunction::Membrane) && (StructuralLayerEndIdx == INDEX_NONE))
 		{

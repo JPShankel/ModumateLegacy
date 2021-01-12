@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "BIMKernel/Core/BIMEnums.h"
 
-class FBIMAssemblySpec;
+struct FBIMAssemblySpec;
 
 // Used by MOIs to calculate the layout of parts on a host plane
 class MODUMATE_API FBIMPartLayout

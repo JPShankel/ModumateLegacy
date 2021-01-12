@@ -11,7 +11,7 @@
 
 #include "ModumateObjectStatics.generated.h"
 
-class FBIMAssemblySpec;
+struct FBIMAssemblySpec;
 class UModumateDocument;
 class AModumateObjectInstance;
 struct FSimplePolygon;

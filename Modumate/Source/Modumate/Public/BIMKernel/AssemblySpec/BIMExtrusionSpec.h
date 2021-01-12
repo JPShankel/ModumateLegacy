@@ -14,20 +14,32 @@
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "Database/ModumateSimpleMesh.h"
 
+#include "BIMExtrusionSpec.generated.h"
+
 class FModumateDatabase;
 
 /*
 An extrusion is a simple 2D mesh extruded along a hosted edge
 */
-class MODUMATE_API FBIMExtrusionSpec
+USTRUCT()
+struct MODUMATE_API FBIMExtrusionSpec
 {
-	friend class FBIMAssemblySpec;
+	GENERATED_BODY()
+	friend struct FBIMAssemblySpec;
 private:
+
+	UPROPERTY()
 	FBIMPropertySheet Properties;
+
 	EBIMResult BuildFromProperties(const FModumateDatabase& InDB);
 
 public:
+	UPROPERTY()
 	FArchitecturalMaterial Material;
+	
+	UPROPERTY()
 	TArray<FSimpleMeshRef> SimpleMeshes;
+	
+	UPROPERTY()
 	FVector Scale { FVector::OneVector };
 };

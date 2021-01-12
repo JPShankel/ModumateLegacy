@@ -192,7 +192,7 @@ namespace Modumate
 		TArray<FVector> pointsB(&FVector::ZeroVector, 4);
 		for (int32 layer = 0; layer < numTreadLayers; ++layer)
 		{
-			float treadThickness = Assembly.TreadLayers[layer].Thickness.AsWorldCentimeters();
+			float treadThickness = Assembly.TreadLayers[layer].ThicknessCentimeters;
 			pointsA[0] = CachedTreadPolys[0][0] - currentTreadThickness * FVector::UpVector;
 			pointsA[1] = CachedTreadPolys[0][1] - currentTreadThickness * FVector::UpVector;
 			pointsA[2] = CachedTreadPolys[0][2] - currentTreadThickness * FVector::UpVector + TotalRiserThickness * RunDir;
@@ -208,7 +208,7 @@ namespace Modumate
 
 		for (int32 layer = 0; layer < numRiserLayers; ++layer)
 		{
-			float riserThickness = Assembly.RiserLayers[layer].Thickness.AsWorldCentimeters();
+			float riserThickness = Assembly.RiserLayers[layer].ThicknessCentimeters;
 			pointsA[0] = CachedRiserPolys[0][0] + currentRiserThickness * RunDir;
 			pointsA[1] = CachedRiserPolys[0][1] + currentRiserThickness * RunDir;
 			pointsA[2] = CachedRiserPolys[0][2] + currentRiserThickness * RunDir - TotalTreadThickness * FVector::UpVector;

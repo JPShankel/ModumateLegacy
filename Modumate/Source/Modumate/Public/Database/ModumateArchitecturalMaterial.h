@@ -14,17 +14,26 @@
 Materials like gypsum, wood, cement, etc located in ShoppingData/Materials
 */
 USTRUCT()
-struct FArchitecturalMaterial
+struct MODUMATE_API FArchitecturalMaterial
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
 	FGuid Key;
+
+	UPROPERTY()
 	FText DisplayName = FText::GetEmpty();
 
+	UPROPERTY()
 	TWeakObjectPtr<UMaterialInterface> EngineMaterial = nullptr;
+
+	UPROPERTY()
 	FColor Color = FColor::White;
 
+	UPROPERTY()
 	float UVScaleFactor = 1.0f;
+
+	UPROPERTY()
 	float HSVRangeWhenTiled = 0.0f;
 
 	FGuid UniqueKey() const { return Key; }
@@ -52,4 +61,13 @@ struct MODUMATE_API FStaticIconTexture
 
 	// TODO: Like FArchitecturalMaterial, check if texture will be lazy-loaded.
 	bool IsValid() const { return Texture.IsValid(); }
+};
+
+template<>
+struct TStructOpsTypeTraits<FArchitecturalMaterial> : public TStructOpsTypeTraitsBase2<FArchitecturalMaterial>
+{
+	enum
+	{
+		// Override default traits here
+	};
 };

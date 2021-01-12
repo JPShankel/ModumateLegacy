@@ -23,7 +23,7 @@ EBIMResult FBIMLayerSpec::BuildFromProperties(const FModumateDatabase& InDB)
 		}
 	}
 
-	return ensureAlways(Thickness.AsWorldCentimeters() > 0.0f) ? EBIMResult::Success : EBIMResult::Error;
+	return ensureAlways(ThicknessCentimeters > 0.0f) ? EBIMResult::Success : EBIMResult::Error;
 }
 
 /*
@@ -48,13 +48,15 @@ EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
 				module.Material.Color = FColor::FromHex(colorHexValue);
 			}
 
-			if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, Thickness))
+			Modumate::Units::FUnitValue dimension = Modumate::Units::FUnitValue::WorldCentimeters(0.0f);
+			if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, dimension))
 			{
-				if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, Thickness))
+				if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, dimension))
 				{
-					LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, Thickness);
+					LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, dimension);
 				}
 			}
+			ThicknessCentimeters = dimension.AsWorldCentimeters();
 			return EBIMResult::Success;
 		}
 	}
@@ -97,7 +99,17 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 		We need to reconcile those against the actual targets for X, Y & Z
 		For now "everyone has a depth or a length and a thickness and a width" is a reasonable approximation
 		*/
-		modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::BevelWidth, module.BevelWidth);
+		
+		Modumate::Units::FUnitValue bevelWidth;
+		if (modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::BevelWidth, bevelWidth))
+		{
+			module.BevelWidthCentimeters = bevelWidth.AsWorldCentimeters();
+		}
+		else
+		{
+			module.BevelWidthCentimeters = 0;
+		}
+
 		if (!modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, module.ModuleExtents.X))
 		{
 			modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, module.ModuleExtents.X);
@@ -141,15 +153,15 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 	// TODO: handle multiple modules, find overall thickness for 2.5 dimensional patterns 
 	if (Modules[0].ModuleExtents.Y > 0)
 	{
-		Thickness = Modumate::Units::FUnitValue::WorldCentimeters(Modules[0].ModuleExtents.Y);
+		ThicknessCentimeters = Modules[0].ModuleExtents.Y;
 	}
 	else if (Modules[0].ModuleExtents.X > 0)
 	{
-		Thickness = Modumate::Units::FUnitValue::WorldCentimeters(Modules[0].ModuleExtents.X);
+		ThicknessCentimeters = Modules[0].ModuleExtents.X;
 	}
 	else if (Modules[0].ModuleExtents.Z > 0)
 	{
-		Thickness = Modumate::Units::FUnitValue::WorldCentimeters(Modules[0].ModuleExtents.Z);
+		ThicknessCentimeters = Modules[0].ModuleExtents.Z;
 	}
 
 	return EBIMResult::Success;

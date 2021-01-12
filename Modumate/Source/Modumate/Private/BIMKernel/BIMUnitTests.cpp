@@ -8,6 +8,7 @@
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/Core/BIMKey.h"
+#include "Database/ModumateObjectDatabase.h"
 
 static bool testKeys()
 {
@@ -205,81 +206,6 @@ bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 	}
 
 	if (!testKeys())
-	{
-		return false;
-	}
-
-	FString manifestPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMData");
-
-	FBIMPresetCollection presetCollection;
-	TArray<FString> errors;
-	TArray<FGuid> starters;
-	if (!ensureAlways(presetCollection.LoadCSVManifest(*manifestPath, TEXT("BIMManifest.txt"), starters, errors) == EBIMResult::Success))
-	{
-		return false;
-	}
-
-	presetCollection.PostLoad();
-
-	FBIMTagPath searchPath;
-	searchPath.Tags.Add(TEXT("Assembly"));
-
-	TArray<FGuid> foundKeys;
-	if (!ensureAlways(presetCollection.GetPresetsForNCP(searchPath,foundKeys)==EBIMResult::Success))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(foundKeys.Num() > 0))
-	{
-		return false;
-	}
-
-	FBIMTagPath checkPath;
-	if (!ensureAlways(presetCollection.GetNCPForPreset(foundKeys[0], checkPath) == EBIMResult::Success))
-	{
-		return false;
-	}
-
-	const FBIMPresetInstance* preset = presetCollection.PresetFromGUID(foundKeys[0]);
-	if (!ensureAlways(preset != nullptr))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(checkPath.MatchesExact(preset->MyTagPath)))
-	{
-		return false;
-	}
-
-	TArray<FString> subcategories;
-	if (!ensureAlways(presetCollection.GetNCPSubcategories(searchPath, subcategories)==EBIMResult::Success))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(subcategories.Num() > 0))
-	{
-		return false;
-	}
-
-	FGuid guid;
-	// Multi-layered wall
-	guid.Parse(TEXT("00E974E8F8290247B557E64B606209CA"), guid);
-
-	TArray<FGuid> descendents;
-	if (!ensureAlways(presetCollection.GetAllDescendentPresets(guid, descendents) == EBIMResult::Success && descendents.Num()>0))
-	{
-		return false;
-	}
-
-	TArray<FGuid> ancestors;
-	if (!ensureAlways(presetCollection.GetAllAncestorPresets(descendents[0], ancestors) == EBIMResult::Success && ancestors.Num() > 0))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(ancestors.Contains(guid)))
 	{
 		return false;
 	}

@@ -61,10 +61,6 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	};
 	TQueue<FPartIterator> partIteratorQueue;
 
-#if WITH_EDITOR
-	DEBUG_GUID = PresetGUID;
-#endif
-
 	const FBIMPresetInstance* assemblyPreset = PresetCollection.PresetFromGUID(PresetGUID);
 
 	if (!ensureAlways(assemblyPreset != nullptr))
@@ -257,8 +253,8 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		FBIMPartSlotSpec& partSpec = Parts.AddDefaulted_GetRef();
 		partSpec.ParentSlotIndex = INDEX_NONE;
 		partSpec.NodeCategoryPath = assemblyPreset->MyTagPath;
-		partSpec.Translation = Modumate::Expression::FVectorExpression(TEXT("0"), TEXT("0"), TEXT("0"));
-		partSpec.Size = Modumate::Expression::FVectorExpression(TEXT("Self.ScaledSizeX"), TEXT("Self.ScaledSizeY"), TEXT("Self.ScaledSizeZ"));
+		partSpec.Translation = FVectorExpression(TEXT("0"), TEXT("0"), TEXT("0"));
+		partSpec.Size = FVectorExpression(TEXT("Self.ScaledSizeX"), TEXT("Self.ScaledSizeY"), TEXT("Self.ScaledSizeZ"));
 #if WITH_EDITOR //for debugging
 		partSpec.DEBUGNodeScope = EBIMValueScope::Assembly;
 		partSpec.DEBUG_GUID = PresetGUID;
@@ -327,17 +323,17 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 					}
 
 					// FVectorExpression holds 3 values as formula strings (ie "Parent.NativeSizeX * 0.5) that are evaluated in CompoundMeshActor
-					partSpec.Translation = Modumate::Expression::FVectorExpression(
+					partSpec.Translation = FVectorExpression(
 						childSlotPreset->GetProperty<FString>(TEXT("LocationX")),
 						childSlotPreset->GetProperty<FString>(TEXT("LocationY")),
 						childSlotPreset->GetProperty<FString>(TEXT("LocationZ")));
 
-					partSpec.Orientation = Modumate::Expression::FVectorExpression(
+					partSpec.Orientation = FVectorExpression(
 						childSlotPreset->GetProperty<FString>(TEXT("RotationX")),
 						childSlotPreset->GetProperty<FString>(TEXT("RotationY")),
 						childSlotPreset->GetProperty<FString>(TEXT("RotationZ")));
 
-					partSpec.Size = Modumate::Expression::FVectorExpression(
+					partSpec.Size = FVectorExpression(
 						childSlotPreset->GetProperty<FString>(TEXT("SizeX")),
 						childSlotPreset->GetProperty<FString>(TEXT("SizeY")),
 						childSlotPreset->GetProperty<FString>(TEXT("SizeZ")));
@@ -409,14 +405,23 @@ FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
 
 EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FModumateDatabase& InDB)
 {
-	if (!RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::ToeKickDepth, ToeKickDepth))
+	Modumate::Units::FUnitValue dimension;
+	if (RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::ToeKickDepth, dimension))
 	{
-		ToeKickDepth = Modumate::Units::FUnitValue::WorldCentimeters(0);
+		ToeKickDepthCentimeters = dimension.AsWorldCentimeters();
+	}
+	else
+	{
+		ToeKickDepthCentimeters = 0.0f;
 	}
 
-	if (!RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::ToeKickHeight, ToeKickHeight))
+	if (RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::ToeKickHeight, dimension))
 	{
-		ToeKickHeight = Modumate::Units::FUnitValue::WorldCentimeters(0);
+		ToeKickHeightCentimeters = dimension.AsWorldCentimeters();
+	}
+	else
+	{
+		ToeKickHeightCentimeters = 0.0f;
 	}
 
 	// Cabinets consist of a list of parts (per rigged assembly) and a single material added to an extrusion for the prism
@@ -495,8 +500,8 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 
 		FBIMPartSlotSpec& partSlot = Parts.AddDefaulted_GetRef();
 		partSlot.Mesh = *mesh;
-		partSlot.Translation = Modumate::Expression::FVectorExpression(TEXT("0"), TEXT("0"), TEXT("0"));
-		partSlot.Size = Modumate::Expression::FVectorExpression(TEXT("Self.ScaledSizeX"), TEXT("Self.ScaledSizeY"), TEXT("Self.ScaledSizeZ"));
+		partSlot.Translation = FVectorExpression(TEXT("0"), TEXT("0"), TEXT("0"));
+		partSlot.Size = FVectorExpression(TEXT("Self.ScaledSizeX"), TEXT("Self.ScaledSizeY"), TEXT("Self.ScaledSizeZ"));
 		partSlot.Flip[0] = false;
 		partSlot.Flip[1] = false;
 		partSlot.Flip[2] = false;
@@ -581,7 +586,7 @@ Modumate::Units::FUnitValue FBIMAssemblySpec::CalculateThickness() const
 		Layers,
 		[](const FBIMLayerSpec& l)
 		{
-			return l.Thickness.AsWorldCentimeters();
+			return l.ThicknessCentimeters;
 		},
 			0.0f,
 			[](float lhs, float rhs)
@@ -617,12 +622,19 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 		return MakeLayeredAssembly(InDB);
 
 	case EObjectType::OTStaircase:
-		if (!ensureAlways(RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::TreadDepthIdeal, TreadDepth) && TreadDepth.AsWorldCentimeters() > 0.0f))
+	{
+		Modumate::Units::FUnitValue dimension;
+		if (ensureAlways(RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::TreadDepthIdeal, dimension) && dimension.AsWorldCentimeters() > 0.0f))
+		{
+			TreadDepthCentimeters = dimension.AsWorldCentimeters();
+		}
+		else
 		{
 			// Prevent divide by zero errors with treads of ludicrous size
-			TreadDepth = Modumate::Units::FUnitValue::WorldInches(1.0f);
+			TreadDepthCentimeters = 1.0f;
 		}
 		return MakeLayeredAssembly(InDB);
+	}
 
 	case EObjectType::OTDoor:
 	case EObjectType::OTWindow:

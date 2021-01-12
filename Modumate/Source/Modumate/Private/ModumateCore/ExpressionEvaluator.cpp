@@ -313,14 +313,6 @@ namespace Modumate
 			return ret;
 		}
 
-		bool Modumate::Expression::FVectorExpression::Evaluate(const TMap<FString, float> &Vars, FVector& OutVector) const
-		{
-			OutVector.X = X.IsEmpty() ? 0 : Modumate::Expression::Evaluate(Vars, X);
-			OutVector.Y = Y.IsEmpty() ? 0 : Modumate::Expression::Evaluate(Vars, Y);
-			OutVector.Z = Z.IsEmpty() ? 0 : Modumate::Expression::Evaluate(Vars, Z);
-			return true;
-		}
-
 		// Variables are dot-qualified paths of arbitrary length, ie: "Parent.Frame.JambSizeX"
 		bool Modumate::Expression::ExtractVariables(const FString &ExprString, TArray<FString>& OutVariables)
 		{
@@ -335,12 +327,30 @@ namespace Modumate
 			}
 			return true;
 		}
-
-		bool Modumate::Expression::FVectorExpression::ExtractVariables(TArray<FString>& OutVariables) const
-		{
-			return Modumate::Expression::ExtractVariables(X, OutVariables) &&
-					Modumate::Expression::ExtractVariables(Y, OutVariables) &&
-					Modumate::Expression::ExtractVariables(Z, OutVariables);
-		}
 	}
+}
+
+bool FVectorExpression::Evaluate(const TMap<FString, float>& Vars, FVector& OutVector) const
+{
+	OutVector.X = X.IsEmpty() ? 0 : Modumate::Expression::Evaluate(Vars, X);
+	OutVector.Y = Y.IsEmpty() ? 0 : Modumate::Expression::Evaluate(Vars, Y);
+	OutVector.Z = Z.IsEmpty() ? 0 : Modumate::Expression::Evaluate(Vars, Z);
+	return true;
+}
+
+bool FVectorExpression::ExtractVariables(TArray<FString>& OutVariables) const
+{
+	return Modumate::Expression::ExtractVariables(X, OutVariables) &&
+		Modumate::Expression::ExtractVariables(Y, OutVariables) &&
+		Modumate::Expression::ExtractVariables(Z, OutVariables);
+}
+
+bool FVectorExpression::operator==(const FVectorExpression& OtherExpression) const
+{
+	return X.Equals(OtherExpression.X) && Y.Equals(OtherExpression.Y) && Z.Equals(OtherExpression.Z);
+}
+
+bool FVectorExpression::operator!=(const FVectorExpression& OtherExpression) const
+{
+	return !(*this == OtherExpression);
 }

@@ -16,17 +16,25 @@
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "Database/ModumateArchitecturalMesh.h"
 
+#include "BIMPartSlotSpec.generated.h"
+
 class FModumateDatabase;
 
 /*
 An assembly part slot contains a mesh and local transform
 TODO: transforms will be derived from hosting plane/moi parameters...to be hard coded initially
 */
-class MODUMATE_API FBIMPartSlotSpec
+USTRUCT()
+struct MODUMATE_API FBIMPartSlotSpec
 {
-	friend class FBIMAssemblySpec;
+	GENERATED_BODY()
+
+	friend struct FBIMAssemblySpec;
 private:
+
+	UPROPERTY()
 	FBIMPropertySheet Properties;
+
 	EBIMResult BuildFromProperties(const FModumateDatabase& InDB);
 
 #if WITH_EDITOR
@@ -38,19 +46,35 @@ private:
 #endif
 
 public:
-	Modumate::Expression::FVectorExpression Translation, Size, Orientation;
-	using FBooleanVector = bool[3];
-	FBooleanVector Flip{ false, false, false };
 
+	UPROPERTY()
+	FVectorExpression Translation;
+
+	UPROPERTY()
+	FVectorExpression Size;
+
+	UPROPERTY()
+	FVectorExpression Orientation;
+
+	UPROPERTY()
+	TArray<bool> Flip = { false,false,false };
+
+	UPROPERTY()
 	int32 ParentSlotIndex = 0;
 
+	UPROPERTY()
 	FBIMTagPath NodeCategoryPath;
 
+	UPROPERTY()
 	FString SlotID;
 
+	UPROPERTY()
 	FArchitecturalMesh Mesh;
+	
+	UPROPERTY()
 	TMap<FName, FArchitecturalMaterial> ChannelMaterials;
 
 	static TMap<FString, Modumate::Units::FUnitValue> DefaultNamedParameterMap;
 	static bool TryGetDefaultNamedParameter(const FString& Name, Modumate::Units::FUnitValue& OutVal);
+
 };

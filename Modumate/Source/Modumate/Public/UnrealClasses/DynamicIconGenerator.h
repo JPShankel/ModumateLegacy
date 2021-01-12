@@ -9,7 +9,7 @@
 #include "Database/ModumateObjectEnums.h"
 #include "DynamicIconGenerator.generated.h"
 
-class FBIMAssemblySpec;
+struct FBIMAssemblySpec;
 
 UCLASS()
 class MODUMATE_API ADynamicIconGenerator : public AActor

@@ -23,4 +23,3 @@ bool FBIMPartSlotSpec::TryGetDefaultNamedParameter(const FString& Name, Modumate
 	OutVal = *val;
 	return true;
 }
-

@@ -117,8 +117,9 @@ namespace Modumate {
 				materialTag->Material = FText::FromString(layer.CodeName);
 				materialTag->Sequence = FText::FromString(layer.PresetSequence);
 
-				FString imperial = UModumateDimensionStatics::DecimalToFractionString(layer.Thickness.AsWorldInches());
-				auto imperialList = UModumateDimensionStatics::DecimalToFraction(layer.Thickness.AsWorldInches());
+				Modumate::Units::FUnitValue thicknessUnits = Modumate::Units::FUnitValue::WorldCentimeters(layer.ThicknessCentimeters);
+				FString imperial = UModumateDimensionStatics::DecimalToFractionString(thicknessUnits.AsWorldInches());
+				auto imperialList = UModumateDimensionStatics::DecimalToFraction(thicknessUnits.AsWorldInches());
 				materialTag->ThicknessFraction = imperialList;
 
 				materialTag->InitializeBounds(drawingInterface);

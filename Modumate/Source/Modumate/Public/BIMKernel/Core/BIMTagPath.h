@@ -49,5 +49,6 @@ struct TStructOpsTypeTraits<FBIMTagPath> : public TStructOpsTypeTraitsBase2<FBIM
 	{
 		WithExportTextItem = true,
 		WithImportTextItem = true,
+		WithIdenticalViaEquality = true
 	};
 };

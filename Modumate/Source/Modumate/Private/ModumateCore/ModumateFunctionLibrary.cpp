@@ -768,7 +768,7 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 				if (moduleInstData.ModuleDefIndex < Layer.Modules.Num())
 				{
 					auto &moduleDef = Layer.Modules[moduleInstData.ModuleDefIndex];
-					moduleInstParams.TileShapeDetails.R = moduleDef.BevelWidth.AsWorldCentimeters();
+					moduleInstParams.TileShapeDetails.R = moduleDef.BevelWidthCentimeters;
 
 					auto &moduleMaterialData = moduleDef.Material;
 					moduleInstParams.Color = moduleMaterialData.Color;

@@ -471,7 +471,7 @@ FMaterialTagSequence::FMaterialTagSequence(const FBIMAssemblySpec &Assembly)
 
 	for (auto layer : Assembly.Layers)
 	{
-		Modumate::Units::FUnitValue t = layer.Thickness;
+		Modumate::Units::FUnitValue t = Modumate::Units::FUnitValue::WorldCentimeters(layer.ThicknessCentimeters);
 		FString imperial = UModumateDimensionStatics::DecimalToFractionString(t.AsWorldInches());
 		auto imperialList = UModumateDimensionStatics::DecimalToFraction(t.AsWorldInches());
 		TotalThickness += t.AsWorldInches();

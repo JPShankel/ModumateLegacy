@@ -4,6 +4,7 @@
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateUserSettings.h"
+#include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "Misc/FileHelper.h"
 #include "Serialization/Csv/CsvParser.h"
 
@@ -632,4 +633,32 @@ void FModumateDatabase::InitPresetManagerForNewDocument(FPresetManager &OutManag
 	}
 }
 
+bool FModumateDatabase::UnitTest()
+{
+	bool success = true;
+	for (auto& kvdp : PresetManager.AssembliesByObjectType)
+	{
+		// Furniture is not crafted
+		if (kvdp.Key == EObjectType::OTFurniture)
+		{
+			continue;
+		};
 
+		for (auto& kvp : kvdp.Value.DataMap)
+		{
+			FBIMPresetEditor editor;
+			FBIMPresetEditorNodeSharedPtr root;
+			success = ensureAlways(editor.InitFromPreset(PresetManager.CraftingNodePresets, kvp.Value.RootPreset, root) == EBIMResult::Success) && success;
+
+			FBIMAssemblySpec editSpec;
+			success = ensureAlways(editor.CreateAssemblyFromNodes(PresetManager.CraftingNodePresets, *this, editSpec) == EBIMResult::Success) && success;
+
+			FBIMAssemblySpec makeSpec;
+			success = ensureAlways(makeSpec.FromPreset(*this, PresetManager.CraftingNodePresets, editSpec.RootPreset) == EBIMResult::Success) && success;
+
+			success = ensureAlways(FBIMAssemblySpec::StaticStruct()->CompareScriptStruct(&editSpec, &kvp.Value, PPF_None)) && success;
+			success = ensureAlways(FBIMAssemblySpec::StaticStruct()->CompareScriptStruct(&makeSpec, &kvp.Value, PPF_None)) && success;
+		}
+	}
+	return success;
+}

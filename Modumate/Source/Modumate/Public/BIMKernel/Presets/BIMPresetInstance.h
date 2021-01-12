@@ -109,7 +109,7 @@ private:
 
 	//for direct access to properties
 	friend class FBIMPresetEditor;
-	friend class FBIMAssemblySpec;
+	friend struct FBIMAssemblySpec;
 	friend class FBIMPresetEditorNode;
 
 

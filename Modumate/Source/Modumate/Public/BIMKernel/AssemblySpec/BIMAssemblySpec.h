@@ -22,6 +22,8 @@
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
 #include "DocumentManagement/ModumateSerialization.h"
 
+#include "BIMAssemblySpec.generated.h"
+
 struct FBIMPresetCollection;
 class FModumateDatabase;
 
@@ -33,8 +35,10 @@ An assembly layer (for walls, floors and other sandwich objects) references an F
 
 static constexpr int32 BIM_ROOT_PART = 0;
 
-class MODUMATE_API FBIMAssemblySpec
+USTRUCT()
+struct MODUMATE_API FBIMAssemblySpec
 {
+	GENERATED_BODY()
 private:
 	EBIMResult MakeLayeredAssembly(const FModumateDatabase& InDB);
 	EBIMResult MakeExtrudedAssembly(const FModumateDatabase& InDB);
@@ -42,33 +46,61 @@ private:
 	EBIMResult MakeCabinetAssembly(const FModumateDatabase& InDB);
 	EBIMResult DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection);
 
+	UPROPERTY()
 	FBIMPropertySheet RootProperties;
 
 public:
 
-#if WITH_EDITOR
-	FGuid DEBUG_GUID;
-#endif
-
+	UPROPERTY()
 	EObjectType ObjectType = EObjectType::OTNone;
 
+	UPROPERTY()
 	FGuid RootPreset;
 
-	TArray<FBIMLayerSpec> Layers,TreadLayers,RiserLayers;
+	UPROPERTY()
+	TArray<FBIMLayerSpec> Layers;
+
+	UPROPERTY()
+	TArray<FBIMLayerSpec> TreadLayers;
+
+	UPROPERTY()
+	TArray<FBIMLayerSpec> RiserLayers;
+
+	UPROPERTY()
 	TArray<FBIMPartSlotSpec> Parts;
+	
+	UPROPERTY()
 	TArray<FBIMExtrusionSpec> Extrusions;
 
-	FString DisplayName,Comments,CodeName;
+	UPROPERTY()
+	FString DisplayName;
 
+	UPROPERTY()
+	FString Comments;
+
+	UPROPERTY()
+	FString CodeName;
+
+	UPROPERTY()
 	FVector Normal = FVector(0, 0, 1);
+	
+	UPROPERTY()
 	FVector Tangent = FVector(0, 1, 0);
 
-	Modumate::Units::FUnitValue ToeKickDepth = Modumate::Units::FUnitValue::WorldCentimeters(0);
-	Modumate::Units::FUnitValue ToeKickHeight = Modumate::Units::FUnitValue::WorldCentimeters(0);
-	Modumate::Units::FUnitValue TreadDepth = Modumate::Units::FUnitValue::WorldCentimeters(0);
-
+	UPROPERTY()
 	FString SlotConfigConceptualSizeY;
+
+	UPROPERTY()
 	FBIMTagPath SlotConfigTagPath;
+
+	UPROPERTY()
+	float ToeKickDepthCentimeters = 0.0f;
+	
+	UPROPERTY()
+	float ToeKickHeightCentimeters = 0.0f;
+	
+	UPROPERTY()
+	float TreadDepthCentimeters = 0.0f;
 
 	// For DataCollection support in preset manager
 	FGuid UniqueKey() const { return RootPreset; }

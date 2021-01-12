@@ -311,7 +311,7 @@ bool AMOICabinet::UpdateCabinetActors(const FBIMAssemblySpec& Assembly, const TA
 	FPlane basePlane(basePoints[0], extrusionDir);
 	UWorld* world = CabinetBoxActor->GetWorld();
 
-	FVector2D toeKickDimensions(Assembly.ToeKickDepth.AsWorldCentimeters(), Assembly.ToeKickHeight.AsWorldCentimeters());
+	FVector2D toeKickDimensions(Assembly.ToeKickDepthCentimeters, Assembly.ToeKickHeightCentimeters);
 	float faceInsetDist = 0.0f;
 
 	TArray<FVector> facePoints;

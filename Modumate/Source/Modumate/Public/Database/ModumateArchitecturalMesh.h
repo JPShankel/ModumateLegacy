@@ -17,12 +17,18 @@ struct FArchitecturalMesh
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
 	FGuid Key;
 
+	UPROPERTY()
 	FSoftObjectPath AssetPath;
+	
 	TWeakObjectPtr<UStaticMesh> EngineMesh = nullptr;
 
+	UPROPERTY()
 	FVector NativeSize = FVector::ZeroVector;
+	
+	UPROPERTY()
 	FBox NineSliceBox = FBox(ForceInit);
 
 	FGuid UniqueKey() const { return Key; }
@@ -30,4 +36,13 @@ struct FArchitecturalMesh
 	TMap<FString, Modumate::Units::FUnitValue> NamedDimensions;
 
 	void ReadNamedDimensions(const FString& InNamedDimensions);
+};
+
+template<>
+struct TStructOpsTypeTraits<FArchitecturalMesh> : public TStructOpsTypeTraitsBase2<FArchitecturalMesh>
+{
+	enum
+	{
+		// Override default traits here
+	};
 };

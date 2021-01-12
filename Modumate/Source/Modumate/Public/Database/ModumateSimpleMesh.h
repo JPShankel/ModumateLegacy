@@ -11,7 +11,7 @@
 USTRUCT(BlueprintType)
 struct MODUMATE_API FSimplePolygon
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TArray<FVector2D> Points;
@@ -51,11 +51,14 @@ protected:
 USTRUCT()
 struct MODUMATE_API FSimpleMeshRef
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
+	UPROPERTY()
 	FGuid Key;
 
+	UPROPERTY()
 	FSoftObjectPath AssetPath;
+	
 	TWeakObjectPtr<USimpleMeshData> Asset = nullptr;
 
 	FGuid UniqueKey() const { return Key; }

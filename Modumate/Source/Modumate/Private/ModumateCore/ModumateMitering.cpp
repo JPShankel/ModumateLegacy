@@ -111,7 +111,7 @@ namespace Modumate
 			{
 				const FBIMLayerSpec& layer = layers[layerIdx];
 				float layerStartPCT = curThickness / totalThickness;
-				float layerThickness = layer.Thickness.AsWorldCentimeters();
+				float layerThickness = layer.ThicknessCentimeters;
 				curThickness += layerThickness;
 				float layerEndPCT = curThickness / totalThickness;
 

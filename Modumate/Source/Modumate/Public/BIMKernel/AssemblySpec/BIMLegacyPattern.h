@@ -19,15 +19,22 @@ struct MODUMATE_API FLayerPatternModule
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
 	FGuid Key;
+
+	UPROPERTY()
 	FText DisplayName = FText::GetEmpty();
 
+	UPROPERTY()
 	TArray<ELayerFormat> SupportedFormats;
 
+	UPROPERTY()
 	FVector ModuleExtents = FVector::ZeroVector;
 
-	Modumate::Units::FUnitValue BevelWidth = Modumate::Units::FUnitValue::WorldCentimeters(0);
+	UPROPERTY()
+	float BevelWidthCentimeters = 0.0f;
 
+	UPROPERTY()
 	FArchitecturalMaterial Material;
 
 	FGuid UniqueKey() const { return Key; }
@@ -38,12 +45,19 @@ struct MODUMATE_API FLayerPatternGap
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
 	FGuid Key;
+
+	UPROPERTY()
 	FText DisplayName = FText::GetEmpty();
 
+	UPROPERTY()
 	FVector2D GapExtents = FVector2D::ZeroVector;
 
+	UPROPERTY()
 	FArchitecturalMaterial Material;
+
+	UPROPERTY()
 	TArray<ELayerFormat> SupportedFormats;
 
 	FGuid UniqueKey() const { return Key; }
@@ -111,17 +125,31 @@ struct MODUMATE_API FLayerPattern
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
 	FGuid Key;
+
+	UPROPERTY()
 	FText DisplayName = FText::GetEmpty();
+
+	UPROPERTY()
 	TArray<ELayerFormat> SupportedFormats;
+
+	UPROPERTY()
 	int32 ModuleCount = 0;
 
-	FBIMNameType ThicknessDimensionPropertyName;
+	UPROPERTY()
+	FName ThicknessDimensionPropertyName;
 
+	UPROPERTY()
 	FString ParameterizedExtents;
+	
+	UPROPERTY()
 	TArray<FPatternModuleTemplate> ParameterizedModuleDimensions;
 
+	UPROPERTY()
 	FLayerPatternGap DefaultGap;
+
+	UPROPERTY()
 	TArray<FLayerPatternModule> DefaultModules;
 
 	void InitFromCraftingPreset(const FBIMPresetInstance& Preset);
@@ -135,10 +163,19 @@ struct FLightConfiguration
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
 	FGuid Key;
+
+	UPROPERTY()
 	float LightIntensity = 0.f;
+
+	UPROPERTY()
 	FLinearColor LightColor = FLinearColor::White;
+
+	UPROPERTY()
 	TWeakObjectPtr<UTextureLightProfile> LightProfile = nullptr;
+
+	UPROPERTY()
 	bool bAsSpotLight = false;
 
 	FGuid UniqueKey() const { return Key; }

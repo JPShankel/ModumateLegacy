@@ -77,5 +77,7 @@ public:
 	bool ReadBIMCache(const FString& CacheFile, FModumateBIMCacheRecord& OutCache);
 	bool WriteBIMCache(const FString& CacheFile, const FModumateBIMCacheRecord& InCache) const;
 
+	bool UnitTest();
+
 	TModumateDataCollection<Modumate::FRoomConfiguration> RoomConfigurations;
 };
