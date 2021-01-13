@@ -173,6 +173,13 @@ bool UEditModelCameraController::ZoomToNextAxis(FVector2D NextAxisDirection, boo
 		return false;
 	}
 
+	// If we're already retargeting, chain the subsequent move as if we've already finished the retarget
+	if (CurMovementState == ECameraMovementState::Retargeting)
+	{
+		CamTransform = NewTargetTransform;
+		SetMovementState(ECameraMovementState::Default);
+	}
+
 	const float normalizedYawDelta = SnapAxisYawDelta / 90.0f;
 
 	FQuat curViewQuat = CamTransform.GetRotation();
@@ -751,7 +758,15 @@ void UEditModelCameraController::UpdateRetargeting(float DeltaTime)
 
 		FVector newLocation = FMath::Lerp(PreRetargetTransform.GetLocation(), NewTargetTransform.GetLocation(), lerpAlpha);
 		FQuat newRotation = FQuat::Slerp(PreRetargetTransform.GetRotation(), NewTargetTransform.GetRotation(), lerpAlpha);
-		// TODO: ensure that the interpolated rotation has no roll
+
+		// Ensure that the interpolated rotation has no roll
+		FVector newRightVector = newRotation.GetRightVector();
+		FVector flatRightVector(newRightVector.X, newRightVector.Y, 0.0f);
+		if (!FMath::IsNearlyZero(newRightVector.Z) && flatRightVector.Normalize())
+		{
+			FQuat cancelRollDelta = FQuat::FindBetweenNormals(newRightVector, flatRightVector);
+			newRotation = cancelRollDelta * newRotation;
+		}
 
 		CamTransform.SetLocation(newLocation);
 		CamTransform.SetRotation(newRotation);
@@ -856,6 +871,5 @@ bool UEditModelCameraController::ZoomToTargetSphere(const FSphere& TargetSphere,
 		Controller->EMPlayerPawn->CameraComponent->FieldOfView);
 
 	NewTargetTransform.SetComponents(newViewRotation, newViewOrigin, CamTransform.GetScale3D());
-	SetMovementState(ECameraMovementState::Retargeting);
-	return true;
+	return SetMovementState(ECameraMovementState::Retargeting);
 }
