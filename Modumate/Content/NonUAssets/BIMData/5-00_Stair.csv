@@ -14,6 +14,11 @@ Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length
 0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
 55F34BBF-9A73-B744-B610-49EF26889D8B
+Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+8AAAFBBF-8CB7-0D46-9BFB-AD57AEB08BAE
 8BBF1960-F91A-824E-9913-259C9A9C1AB1
 Assembly_2FlexDims1Fixed_PlanarGroup_Riser
 Assembly_2FlexDims1Fixed_PlanarPattern
@@ -21,18 +26,33 @@ Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length
 0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
 55F34BBF-9A73-B744-B610-49EF26889D8B
+Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+8AAAFBBF-8CB7-0D46-9BFB-AD57AEB08BAE
 9B189D5C-2E19-C04B-98FE-F14789D456FE",,Assembly_2FlexDims1Fixed_Serrated_Stair,,OSB + Plywood Stair,,TreadDepthIdeal,11in,,X,,"Assembly_2FlexDims1Fixed_PlanarGroup_Tread
 Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
 55F34BBF-9A73-B744-B610-49EF26889D8B
+Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+8AAAFBBF-8CB7-0D46-9BFB-AD57AEB08BAE
 8BBF1960-F91A-824E-9913-259C9A9C1AB1","Assembly_2FlexDims1Fixed_PlanarGroup_Riser
 Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
 0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
 55F34BBF-9A73-B744-B610-49EF26889D8B
+Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+8AAAFBBF-8CB7-0D46-9BFB-AD57AEB08BAE
 9B189D5C-2E19-C04B-98FE-F14789D456FE"
 PRESET,,,,,,,,,,IconRise,36in,,,,,
 PRESET,,,,,,,,,,IconRun,66in,,,,,
@@ -70,29 +90,29 @@ PRESET,,,,,,,,,,IconWidth,48in,,,,,
 PRESET,,2814F313-6BED-F245-87C2-E1DA57D917F5,,"Assembly_2FlexDims1Fixed_Serrated_Stair
 Assembly_2FlexDims1Fixed_PlanarGroup_Tread
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)-FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-12in-Width-24in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Limestone (White)-FFFFFF
 0LayerPattern_2D-English Bond
-Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.125in-Finish1-0RawMaterial-Mortar-C6C6C6
-3CC99ED8-2336-384A-B5A7-E031CB53B2A1
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+5BF678FD-9CB4-614E-AD79-D0F5C697707B
 2B7F4608-5F7A-0143-8384-00643D584333
 Assembly_2FlexDims1Fixed_PlanarGroup_Riser
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)-FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-12in-Width-24in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Limestone (White)-FFFFFF
 0LayerPattern_2D-English Bond
-Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.125in-Finish1-0RawMaterial-Mortar-C6C6C6
-3CC99ED8-2336-384A-B5A7-E031CB53B2A1
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+5BF678FD-9CB4-614E-AD79-D0F5C697707B
 A976B689-C570-9C4B-837B-9B4DFC731CE5",,Assembly_2FlexDims1Fixed_Serrated_Stair,,Limestone Stair,,TreadDepthIdeal,11in,,X,,"Assembly_2FlexDims1Fixed_PlanarGroup_Tread
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)-FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-12in-Width-24in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Limestone (White)-FFFFFF
 0LayerPattern_2D-English Bond
-Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.125in-Finish1-0RawMaterial-Mortar-C6C6C6
-3CC99ED8-2336-384A-B5A7-E031CB53B2A1
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+5BF678FD-9CB4-614E-AD79-D0F5C697707B
 2B7F4608-5F7A-0143-8384-00643D584333","Assembly_2FlexDims1Fixed_PlanarGroup_Riser
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-6in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Grey 1)-FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-12in-Width-24in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Limestone (White)-FFFFFF
 0LayerPattern_2D-English Bond
-Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.125in-Finish1-0RawMaterial-Mortar-C6C6C6
-3CC99ED8-2336-384A-B5A7-E031CB53B2A1
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+5BF678FD-9CB4-614E-AD79-D0F5C697707B
 A976B689-C570-9C4B-837B-9B4DFC731CE5"
 PRESET,,,,,,,,,,IconRise,36in,,,,,
 PRESET,,,,,,,,,,IconRun,66in,,,,,
@@ -100,29 +120,49 @@ PRESET,,,,,,,,,,IconWidth,48in,,,,,
 PRESET,,406F5208-7C55-3C4A-BA75-56E68D992FCA,,"Assembly_2FlexDims1Fixed_Serrated_Stair
 Assembly_2FlexDims1Fixed_PlanarGroup_Tread
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry-FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-32in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Birch (Yellow)-FFFFFF
 0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0.25in-Recess-0.1875in-Finish1-0RawMaterial-Mortar-C6C6C6
-C683BC51-3B8D-5F41-A9FE-79E57C75BCBB
+D462ED6E-215F-3946-B335-1259CEB651BA
+Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+8AAAFBBF-8CB7-0D46-9BFB-AD57AEB08BAE
 279C8DA1-7DF3-814F-A48F-D1BA2EB43273
 Assembly_2FlexDims1Fixed_PlanarGroup_Riser
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry-FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-32in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Birch (Yellow)-FFFFFF
 0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0.25in-Recess-0.1875in-Finish1-0RawMaterial-Mortar-C6C6C6
-C683BC51-3B8D-5F41-A9FE-79E57C75BCBB
+D462ED6E-215F-3946-B335-1259CEB651BA
+Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+8AAAFBBF-8CB7-0D46-9BFB-AD57AEB08BAE
 808A570C-1627-A24E-8DC0-C77F98F54451",,Assembly_2FlexDims1Fixed_Serrated_Stair,,Birch Stair,,TreadDepthIdeal,11in,,X,,"Assembly_2FlexDims1Fixed_PlanarGroup_Tread
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry-FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-32in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Birch (Yellow)-FFFFFF
 0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0.25in-Recess-0.1875in-Finish1-0RawMaterial-Mortar-C6C6C6
-C683BC51-3B8D-5F41-A9FE-79E57C75BCBB
+D462ED6E-215F-3946-B335-1259CEB651BA
+Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+8AAAFBBF-8CB7-0D46-9BFB-AD57AEB08BAE
 279C8DA1-7DF3-814F-A48F-D1BA2EB43273","Assembly_2FlexDims1Fixed_PlanarGroup_Riser
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-7in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cherry-FFFFFF
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-32in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Birch (Yellow)-FFFFFF
 0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0.25in-Recess-0.1875in-Finish1-0RawMaterial-Mortar-C6C6C6
-C683BC51-3B8D-5F41-A9FE-79E57C75BCBB
+D462ED6E-215F-3946-B335-1259CEB651BA
+Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+8AAAFBBF-8CB7-0D46-9BFB-AD57AEB08BAE
 808A570C-1627-A24E-8DC0-C77F98F54451"
 PRESET,,,,,,,,,,IconRise,36in,,,,,
 PRESET,,,,,,,,,,IconRun,66in,,,,,
@@ -130,16 +170,26 @@ PRESET,,,,,,,,,,IconWidth,48in,,,,,
 PRESET,,EAA7F0BE-3E4E-9A4B-9120-715063FE2777,,"Assembly_2FlexDims1Fixed_Serrated_Stair
 Assembly_2FlexDims1Fixed_PlanarGroup_Tread
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Luxury Vinyl-Length-24in-Width-8in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Vinyl Composite-0RawMaterial-Walnut-FFFFFF
-0LayerPattern_2D-Soldier Bond
-Part_1FlexDim2Fixed_Gap2D-Width-0.25in-Recess-0.1875in-Finish1-0RawMaterial-Mortar-C6C6C6
-EC6B7052-8423-274A-90C7-9FD89F78CD1C
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Walnut-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0.25in-Recess-0.0625in-Finish1-0RawMaterial-Mortar-C6C6C6
+4C6CBC5D-0B3A-6D4E-AD62-6C21ECB39F4B
+Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+8AAAFBBF-8CB7-0D46-9BFB-AD57AEB08BAE
 C6ED0EA0-7014-3942-AA17-4EA838FDA773",,Assembly_2FlexDims1Fixed_Serrated_Stair,,Walnut Open Tread Stair,,TreadDepthIdeal,11in,,X,,"Assembly_2FlexDims1Fixed_PlanarGroup_Tread
 Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Tile_Luxury Vinyl-Length-24in-Width-8in-Thickness-0.25in-BevelWidth-0.125in-Finish1-0RawMaterial-Vinyl Composite-0RawMaterial-Walnut-FFFFFF
-0LayerPattern_2D-Soldier Bond
-Part_1FlexDim2Fixed_Gap2D-Width-0.25in-Recess-0.1875in-Finish1-0RawMaterial-Mortar-C6C6C6
-EC6B7052-8423-274A-90C7-9FD89F78CD1C
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-72in-Width-7in-Thickness-0.75in-BevelWidth-0.125in-Finish1-0RawMaterial-Walnut-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0.25in-Recess-0.0625in-Finish1-0RawMaterial-Mortar-C6C6C6
+4C6CBC5D-0B3A-6D4E-AD62-6C21ECB39F4B
+Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+8AAAFBBF-8CB7-0D46-9BFB-AD57AEB08BAE
 C6ED0EA0-7014-3942-AA17-4EA838FDA773",
 PRESET,,,,,,,,,,IconRise,36in,,,,,
 PRESET,,,,,,,,,,IconRun,66in,,,,,
