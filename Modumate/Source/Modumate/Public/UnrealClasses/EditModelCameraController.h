@@ -84,11 +84,23 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The exponent of the retargeting easing function while retargeting"))
 	float RetargetingEaseExp;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The range of camera pitch [-SnapAxisPitchLimit, SnapAxisPitchLimit] within which we'll treat snap axis behavior as horizontal"))
+	float SnapAxisPitchLimit;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "For changing snap axes, the amount of yaw to increment to the camera before rounding to the nearest axis"))
+	float SnapAxisYawDelta;
+
 	UFUNCTION(BlueprintPure)
 	ECameraMovementState GetMovementState() const { return CurMovementState; }
 
-	bool ZoomToProjectExtents();
-	bool ZoomToSelection();
+	UFUNCTION()
+	bool ZoomToProjectExtents(const FVector& NewViewForward, const FVector& NewViewUp);
+
+	UFUNCTION()
+	bool ZoomToSelection(const FVector& NewViewForward, const FVector& NewViewUp);
+
+	UFUNCTION()
+	bool ZoomToNextAxis(FVector2D NextAxisDirection, bool bUseSelection);
 
 protected:
 	// Begin input binding functions
@@ -145,6 +157,7 @@ protected:
 	bool GetRealMouseCursorInViewport(FIntPoint &OutPosition);
 	bool TryWrapCursor(FIntPoint CurCursorPos);
 	void UpdateOrbitAnchorScale();
+	bool ZoomToTargetSphere(const FSphere& TargetSphere, const FVector& NewViewForward, const FVector& NewViewUp, bool bSnapVerticalViewToAxis = true);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class AEditModelPlayerController_CPP *Controller;

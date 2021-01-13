@@ -323,11 +323,11 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	}
 	case EInputCommand::ZoomExtents:
 	{
-		return Controller->CameraController->ZoomToProjectExtents();
+		return Controller->CameraController->ZoomToProjectExtents(FVector::ZeroVector, FVector::ZeroVector);
 	}
 	case EInputCommand::ZoomSelected:
 	{
-		return Controller->CameraController->ZoomToSelection();
+		return Controller->CameraController->ZoomToSelection(FVector::ZeroVector, FVector::ZeroVector);
 	}
 	case EInputCommand::Invert:
 	{
@@ -439,6 +439,32 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	{
 		Controller->EMPlayerPawn->ToggleWalkAround();
 		return true;
+	}
+	case EInputCommand::SnapNextAxisLeft:
+	case EInputCommand::SnapNextAxisRight:
+	case EInputCommand::SnapNextAxisUp:
+	case EInputCommand::SnapNextAxisDown:
+	{
+		FVector2D nextAxisDirection(ForceInitToZero);
+		bool bUseSelection = (Controller->EMPlayerState->SelectedObjects.Num() > 0);
+
+		switch (Command)
+		{
+		case EInputCommand::SnapNextAxisLeft:
+			nextAxisDirection.X = -1.0f;
+			break;
+		case EInputCommand::SnapNextAxisRight:
+			nextAxisDirection.X = 1.0f;
+			break;
+		case EInputCommand::SnapNextAxisUp:
+			nextAxisDirection.Y = 1.0f;
+			break;
+		case EInputCommand::SnapNextAxisDown:
+			nextAxisDirection.Y = -1.0f;
+			break;
+		}
+
+		return Controller->CameraController->ZoomToNextAxis(nextAxisDirection, bUseSelection);
 	}
 	default:
 	{

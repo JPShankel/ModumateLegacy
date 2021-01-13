@@ -111,6 +111,12 @@ enum class EInputCommand : uint8
 	SetViewMode_Physical,
 	ToggleRoomView,
 	ToggleWalkAround,
+
+	// Advanced camera commands
+	SnapNextAxisLeft,
+	SnapNextAxisRight,
+	SnapNextAxisUp,
+	SnapNextAxisDown,
 };
 
 // The struct for the input command data table; there can be multiple rows for a given command,

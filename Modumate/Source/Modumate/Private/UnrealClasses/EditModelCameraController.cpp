@@ -29,13 +29,15 @@ UEditModelCameraController::UEditModelCameraController(const FObjectInitializer&
 	, ZoomMinDistance(20.0f)
 	, ZoomMaxTotalDistance(525600.0f)
 	, OrbitMovementLerpCurve(nullptr)
-	, OrbitMaxPitch(88.0f)
+	, OrbitMaxPitch(90.0f)
 	, OrbitDriftPitchRange(20.0f, 70.0f)
 	, OrbitCursorMaxHeightPCT(0.9f)
 	, OrbitAnchorScreenSize(0.25f)
 	, FlyingSpeed(15.0f)
 	, RetargetingDuration(0.25f)
 	, RetargetingEaseExp(4.0f)
+	, SnapAxisPitchLimit(60.0f)
+	, SnapAxisYawDelta(54.0f)
 	, Controller(nullptr)
 	, CurMovementState(ECameraMovementState::Default)
 	, OrbitTarget(ForceInitToZero)
@@ -154,54 +156,90 @@ void UEditModelCameraController::SetupPlayerInputComponent(UInputComponent* Play
 	}
 }
 
-bool UEditModelCameraController::ZoomToProjectExtents()
+bool UEditModelCameraController::ZoomToProjectExtents(const FVector& NewViewForward, const FVector& NewViewUp)
 {
-	if (CurMovementState != ECameraMovementState::Default)
-	{
-		return false;
-	}
-
-	// Calculate project bound, perform no action if it's too small
-	FSphere projectBounds = Controller->GetDocument()->CalculateProjectBounds().GetSphere();
-	if (projectBounds.W <= 1.f)
-	{
-		return false;
-	}
-
-	FVector projectViewOrigin = Controller->CalculateViewLocationForSphere(
-		projectBounds,
-		CamTransform.GetRotation().GetForwardVector(),
-		Controller->EMPlayerPawn->CameraComponent->AspectRatio,
-		Controller->EMPlayerPawn->CameraComponent->FieldOfView);
-
-	NewTargetTransform.SetComponents(CamTransform.GetRotation(), projectViewOrigin, CamTransform.GetScale3D());
-	SetMovementState(ECameraMovementState::Retargeting);
-	return true;
+	return ZoomToTargetSphere(Controller->GetDocument()->CalculateProjectBounds().GetSphere(), NewViewForward, NewViewUp);
 }
 
-bool UEditModelCameraController::ZoomToSelection()
+bool UEditModelCameraController::ZoomToSelection(const FVector& NewViewForward, const FVector& NewViewUp)
 {
-	if (CurMovementState != ECameraMovementState::Default)
+	return ZoomToTargetSphere(UModumateFunctionLibrary::GetSelectedExtents(Controller).GetSphere(), NewViewForward, NewViewUp);
+}
+
+bool UEditModelCameraController::ZoomToNextAxis(FVector2D NextAxisDirection, bool bUseSelection)
+{
+	if (NextAxisDirection.IsNearlyZero())
 	{
 		return false;
 	}
 
-	// Calculate selection bound, perform no action if it's too small
-	FSphere selectedBounds = UModumateFunctionLibrary::GetSelectedExtents(Controller).GetSphere();
-	if (selectedBounds.W <= 1.f)
+	const float normalizedYawDelta = SnapAxisYawDelta / 90.0f;
+
+	FQuat curViewQuat = CamTransform.GetRotation();
+	FRotator curViewRot = curViewQuat.Rotator();
+	FVector curViewForward = curViewQuat.GetForwardVector();
+	FVector curViewUp = curViewQuat.GetUpVector();
+	FVector newViewForward(ForceInitToZero), newViewUp(ForceInitToZero);
+
+	// The current view is within the horizontal pitch limit
+	if (FMath::IsWithin(curViewRot.Pitch, -SnapAxisPitchLimit, SnapAxisPitchLimit))
 	{
-		return false;
+		// Find the nearest axis-aligned yaw, with an optional delta from horizontal movement
+		float curYawIndex = curViewRot.Yaw / 90.0f;
+		float newYawIndex = FMath::RoundToFloat(curYawIndex - NextAxisDirection.X * normalizedYawDelta);
+		float newYawRad = HALF_PI * newYawIndex;
+		FVector2D newProjectedYaw(FMath::Cos(newYawRad), FMath::Sin(newYawRad));
+
+		// Without vertical movement, only adjust the view forward
+		if (NextAxisDirection.Y == 0)
+		{
+			newViewForward.Set(newProjectedYaw.X, newProjectedYaw.Y, 0.0f);
+		}
+		// With vertical movement, we also need to calculate the corresponding new view up
+		else
+		{
+			newViewForward = -NextAxisDirection.Y * FVector::UpVector;
+			newViewUp = FVector(NextAxisDirection.Y * newProjectedYaw, 0.0f);
+		}
+	}
+	// Otherwise, treat the view as vertical
+	else
+	{
+		float curViewSignZ = FMath::Sign(curViewForward.Z);
+
+		// Find the nearest axis-aligned "yaw" from the view up, with an optional delta from horizontal movement
+		FVector2D curPojectedViewUp = FVector2D(curViewUp.X, curViewUp.Y).GetSafeNormal();
+		float curYawIndex = FMath::Atan2(curPojectedViewUp.Y, curPojectedViewUp.X) / HALF_PI;
+		float newYawIndex = FMath::RoundToFloat(curYawIndex + curViewSignZ * NextAxisDirection.X * normalizedYawDelta);
+		float newYawRad = HALF_PI * newYawIndex;
+		FVector2D newProjectedYaw(FMath::Cos(newYawRad), FMath::Sin(newYawRad));
+
+		// With vertical movement, we also need to calculate the corresponding new view forward
+		if (NextAxisDirection.Y == curViewSignZ)
+		{
+			newViewForward = FVector(-curViewSignZ * newProjectedYaw, 0.0f);
+		}
+		// Without vertical movement, only adjust the view up
+		else
+		{
+			newViewForward.Set(0.0f, 0.0f, curViewSignZ);
+			newViewUp.Set(newProjectedYaw.X, newProjectedYaw.Y, 0.0f);
+		}
 	}
 
-	FVector selectionViewOrigin = Controller->CalculateViewLocationForSphere(
-		selectedBounds,
-		CamTransform.GetRotation().GetForwardVector(),
-		Controller->EMPlayerPawn->CameraComponent->AspectRatio,
-		Controller->EMPlayerPawn->CameraComponent->FieldOfView);
+	if (newViewForward.IsNormalized())
+	{
+		if (bUseSelection)
+		{
+			return ZoomToSelection(newViewForward, newViewUp);
+		}
+		else
+		{
+			return ZoomToProjectExtents(newViewForward, newViewUp);
+		}
+	}
 
-	NewTargetTransform.SetComponents(CamTransform.GetRotation(), selectionViewOrigin, CamTransform.GetScale3D());
-	SetMovementState(ECameraMovementState::Retargeting);
-	return true;
+	return false;
 }
 
 void UEditModelCameraController::OnActionOrbitPressed()
@@ -576,19 +614,31 @@ void UEditModelCameraController::UpdateRotating(float DeltaTime)
 		return;
 	}
 
-	const FRotator camRotator = CamTransform.GetRotation().Rotator();
+	FQuat camRotation = CamTransform.GetRotation();
 
-	// Accumulate camera yaw
-	FRotator newCamRotator = camRotator;
-	newCamRotator.Yaw = camRotator.Yaw + RotationDeltasAccumulated.X;
+	// First, consume accumulated yaw by rotating about the Z axis
+	if (!FMath::IsNearlyZero(RotationDeltasAccumulated.X))
+	{
+		FQuat deltaYaw(FVector::UpVector, FMath::DegreesToRadians(RotationDeltasAccumulated.X));
+		camRotation = deltaYaw * camRotation;
+	}
 
-	// Accumulate camera pitch
-	newCamRotator.Pitch = FMath::Clamp(camRotator.Pitch + RotationDeltasAccumulated.Y, -OrbitMaxPitch, OrbitMaxPitch);
+	// Next, consume accumulated pitch by rotating about the local Y axis, to an extent
+	if (!FMath::IsNearlyZero(RotationDeltasAccumulated.Y))
+	{
+		float curPitch = camRotation.Rotator().Pitch;
+		float newPitch = FMath::Clamp(curPitch + RotationDeltasAccumulated.Y, -OrbitMaxPitch, OrbitMaxPitch);
+		float pitchDeltaDegrees = (newPitch - curPitch);
 
-	// Constrain camera roll, in case it became non-zero during Rotator <-> Quat conversions
-	newCamRotator.Roll = 0.0f;
+		if (!FMath::IsNearlyZero(pitchDeltaDegrees))
+		{
+			FVector camAxisY = camRotation.GetAxisY();
+			FQuat deltaPitch(camAxisY, FMath::DegreesToRadians(-pitchDeltaDegrees));
+			camRotation = deltaPitch * camRotation;
+		}
+	}
 
-	CamTransform.SetRotation(FQuat(newCamRotator));
+	CamTransform.SetRotation(camRotation);
 	RotationDeltasAccumulated = FVector2D::ZeroVector;
 }
 
@@ -698,8 +748,13 @@ void UEditModelCameraController::UpdateRetargeting(float DeltaTime)
 	{
 		RetargetingTimeElapsed += DeltaTime;
 		float lerpAlpha = FMath::InterpEaseOut(0.0f, 1.0f, FMath::Clamp(RetargetingTimeElapsed / RetargetingDuration, 0.0f, 1.0f), RetargetingEaseExp);
-		CamTransform.SetLocation(FMath::Lerp(PreRetargetTransform.GetLocation(), NewTargetTransform.GetLocation(), lerpAlpha));
-		CamTransform.SetRotation(FQuat::Slerp(PreRetargetTransform.GetRotation(), NewTargetTransform.GetRotation(), lerpAlpha));
+
+		FVector newLocation = FMath::Lerp(PreRetargetTransform.GetLocation(), NewTargetTransform.GetLocation(), lerpAlpha);
+		FQuat newRotation = FQuat::Slerp(PreRetargetTransform.GetRotation(), NewTargetTransform.GetRotation(), lerpAlpha);
+		// TODO: ensure that the interpolated rotation has no roll
+
+		CamTransform.SetLocation(newLocation);
+		CamTransform.SetRotation(newRotation);
 	}
 }
 
@@ -750,4 +805,57 @@ void UEditModelCameraController::UpdateOrbitAnchorScale()
 		FVector adjustedScale = UModumateFunctionLibrary::GetWorldComponentToScreenSizeScale(orbitAnchorMeshComp, FVector(OrbitAnchorScreenSize));
 		orbitAnchorMeshComp->SetWorldScale3D(adjustedScale);
 	}
+}
+
+bool UEditModelCameraController::ZoomToTargetSphere(const FSphere& TargetSphere, const FVector& NewViewForward, const FVector& NewViewUp, bool bSnapVerticalViewToAxis)
+{
+	if ((CurMovementState != ECameraMovementState::Default) || (TargetSphere.W <= 1.f))
+	{
+		return false;
+	}
+
+	FQuat curViewRotation = CamTransform.GetRotation();
+	FVector curViewForward = curViewRotation.GetForwardVector();
+	FVector curViewUp = curViewRotation.GetUpVector();
+	FQuat newViewRotation = curViewRotation;
+	FVector fixedViewForward = NewViewForward;
+
+	// If the new view direction is unspecified, or close to the current one, use the current view forward.
+	if (!fixedViewForward.IsNormalized() || (FVector::Coincident(fixedViewForward, curViewForward) && FVector::Coincident(NewViewUp, curViewUp)))
+	{
+		fixedViewForward = CamTransform.GetRotation().GetForwardVector();
+	}
+	// Otherwise, if the target view direction isn't in the Z axis, then compute the default view rotation (with a maximally-Z-oriented up vector).
+	else if (!FVector::Parallel(fixedViewForward, FVector::UpVector))
+	{
+		newViewRotation = FRotationMatrix::MakeFromX(fixedViewForward).ToQuat();
+	}
+	// Otherwise, find the view rotation that has the smallest change in up-vector, to prevent unnecessary rolling of camera view while transitioning to up/down views.
+	else if (NewViewUp.IsNormalized() && FVector::Orthogonal(fixedViewForward, NewViewUp))
+	{
+		newViewRotation = FRotationMatrix::MakeFromXZ(fixedViewForward, NewViewUp).ToQuat();
+	}
+	else
+	{
+		FVector newViewRight = curViewRotation.GetRightVector();
+
+		if (bSnapVerticalViewToAxis)
+		{
+			newViewRight = (FMath::Abs(newViewRight.X) > FMath::Abs(newViewRight.Y)) ?
+				FVector(FMath::Sign(newViewRight.X), 0.0f, 0.0f) :
+				FVector(0.0f, FMath::Sign(newViewRight.Y), 0.0f);
+		}
+
+		newViewRotation = FRotationMatrix::MakeFromXY(fixedViewForward, newViewRight).ToQuat();
+	}
+
+	FVector newViewOrigin = Controller->CalculateViewLocationForSphere(
+		TargetSphere,
+		fixedViewForward,
+		Controller->EMPlayerPawn->CameraComponent->AspectRatio,
+		Controller->EMPlayerPawn->CameraComponent->FieldOfView);
+
+	NewTargetTransform.SetComponents(newViewRotation, newViewOrigin, CamTransform.GetScale3D());
+	SetMovementState(ECameraMovementState::Retargeting);
+	return true;
 }
