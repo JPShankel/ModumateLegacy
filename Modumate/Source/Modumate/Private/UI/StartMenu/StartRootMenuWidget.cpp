@@ -92,7 +92,7 @@ void UStartRootMenuWidget::ShowStartMenu()
 	Start_Home_BP->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	// TODO: Play widget opening animation here
 	Start_Home_BP->OpenRecentProjectMenu();
-	Start_Home_BP->TutorialsMenuWidgetBP->BuildTutorialMenu(Start_Home_BP->TutorialsMenuWidgetBP->TestTutorialInfo);
+	Start_Home_BP->TutorialsMenuWidgetBP->BuildTutorialMenuFromLink();
 
 	OpenCreateNewButtonsBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }

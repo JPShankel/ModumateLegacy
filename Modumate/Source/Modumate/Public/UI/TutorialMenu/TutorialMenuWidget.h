@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Interfaces/IHttpRequest.h"
 
 #include "TutorialMenuWidget.generated.h"
 
@@ -11,31 +12,45 @@
  *
  */
 
-USTRUCT(BlueprintType)
-struct FTutorialMenuCardInfo
-{
-	GENERATED_USTRUCT_BODY();
+static const TCHAR* DocObjectTutorialInfo = TEXT("TutorialInfoArrayCollection");
 
-	UPROPERTY(EditAnywhere)
+USTRUCT()
+struct FTutorialMenuInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
 	FString Title;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	bool ShowTitleOnly = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	FString Description;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	FString VideoLink;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	FString VideoLength;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	FString FileProject;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	FString ThumbnailLink;
+};
+
+USTRUCT()
+struct FTutorialInfoArrayCollection
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString HeaderMessage;
+
+	UPROPERTY()
+	TArray<FTutorialMenuInfo> ModumateTutorialInfoObjects;
 };
 
 UCLASS()
@@ -51,7 +66,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY()
-	TArray<FTutorialMenuCardInfo> CurrentTutorialMenuCardInfo;
+	TArray<FTutorialMenuInfo> CurrentTutorialMenuCardInfo;
 
 public:
 
@@ -83,7 +98,9 @@ public:
 	int32 EllipsizeTitleWordAt = 50;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FTutorialMenuCardInfo> TestTutorialInfo;
+	FString JsonTutorialLink;
 
-	void BuildTutorialMenu(const TArray<FTutorialMenuCardInfo>& InTutorialCards);
+	void BuildTutorialMenuFromLink();
+	void OnHttpReply(const FHttpRequestPtr& Request, const FHttpResponsePtr& Response, bool bWasSuccessful);
+	void UpdateTutorialMenu(const FTutorialInfoArrayCollection& InTutorialInfo);
 };

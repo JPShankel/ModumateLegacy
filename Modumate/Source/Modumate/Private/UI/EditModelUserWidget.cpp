@@ -264,5 +264,5 @@ void UEditModelUserWidget::ToggleTutorialMenu(bool NewVisibility)
 		ToolbarWidget->ToolBarTopBP->ButtonTopToolbarHelp->SwitchToNormalStyle();
 	}
 	// Test tutorial data
-	TutorialsMenuWidgetBP->BuildTutorialMenu(TutorialsMenuWidgetBP->TestTutorialInfo);
+	TutorialsMenuWidgetBP->BuildTutorialMenuFromLink();
 }

@@ -7,6 +7,9 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/VerticalBoxSlot.h"
 #include "Components/Sizebox.h"
+#include "HttpModule.h"
+#include "Runtime/Online/HTTP/Public/Http.h"
+#include "JsonObjectConverter.h"
 
 
 UTutorialMenuWidget::UTutorialMenuWidget(const FObjectInitializer& ObjectInitializer)
@@ -32,9 +35,55 @@ void UTutorialMenuWidget::NativeConstruct()
 	TutorialTextHeader->SetVisibility(AsStartMenuTutorial ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 }
 
-void UTutorialMenuWidget::BuildTutorialMenu(const TArray<FTutorialMenuCardInfo>& InTutorialCards)
+void UTutorialMenuWidget::BuildTutorialMenuFromLink()
 {
-	CurrentTutorialMenuCardInfo = InTutorialCards;
+	TSharedRef<IHttpRequest> httpRequest = FHttpModule::Get().CreateRequest();
+	httpRequest->SetVerb("GET");
+	httpRequest->SetURL(JsonTutorialLink);
+
+	httpRequest->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr request,
+		FHttpResponsePtr response, bool bWasSuccessful)
+		{
+			this->OnHttpReply(request, response, bWasSuccessful);
+		});
+
+	httpRequest->ProcessRequest();
+}
+
+void UTutorialMenuWidget::OnHttpReply(const FHttpRequestPtr& Request, const FHttpResponsePtr& Response, bool bWasSuccessful)
+{
+	if (bWasSuccessful)
+	{
+		FString fileJsonString = Response->GetContentAsString();
+
+		auto jsonReader = TJsonReaderFactory<>::Create(fileJsonString);
+
+		TSharedPtr<FJsonObject> fileJsonObj;
+		bool bLoadJsonSuccess = FJsonSerializer::Deserialize(jsonReader, fileJsonObj) && fileJsonObj.IsValid();
+		if (!bLoadJsonSuccess)
+		{
+			return;
+		}
+
+		const TSharedPtr<FJsonObject>* jsonObj;
+		if (!fileJsonObj->TryGetObjectField(DocObjectTutorialInfo, jsonObj))
+		{
+			return;
+		}
+
+		FTutorialInfoArrayCollection newTutorialInfoArray;
+		if (!FJsonObjectConverter::JsonObjectToUStruct<FTutorialInfoArrayCollection>(jsonObj->ToSharedRef(), &newTutorialInfoArray))
+		{
+			return;
+		}
+
+		UpdateTutorialMenu(newTutorialInfoArray);
+	}
+}
+
+void UTutorialMenuWidget::UpdateTutorialMenu(const FTutorialInfoArrayCollection& InTutorialInfo)
+{
+	CurrentTutorialMenuCardInfo = InTutorialInfo.ModumateTutorialInfoObjects;
 	VerticalBoxTutorialCards->ClearChildren();
 
 	for (int32 i = 0; i < CurrentTutorialMenuCardInfo.Num(); ++i)

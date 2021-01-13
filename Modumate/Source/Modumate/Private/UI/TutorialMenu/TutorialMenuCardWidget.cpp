@@ -55,7 +55,7 @@ void UTutorialMenuCardWidget::OnImageDownloadedFailed(class UTexture2DDynamic* T
 	UE_LOG(LogTemp, Error, TEXT("Failed to download tutorial thumbnail for %s"), *TutorialTitle);
 }
 
-void UTutorialMenuCardWidget::BuildTutorialCard(const FTutorialMenuCardInfo& InTutorialCard)
+void UTutorialMenuCardWidget::BuildTutorialCard(const FTutorialMenuInfo& InTutorialCard)
 {
 	TutorialTitle = InTutorialCard.Title;
 	TitleText->ChangeText(FText::FromString(TutorialTitle));

@@ -63,5 +63,5 @@ public:
 	UFUNCTION()
 	void OnImageDownloadedFailed(class UTexture2DDynamic* Texture);
 
-	void BuildTutorialCard(const FTutorialMenuCardInfo& InTutorialCard);
+	void BuildTutorialCard(const FTutorialMenuInfo& InTutorialCard);
 };
