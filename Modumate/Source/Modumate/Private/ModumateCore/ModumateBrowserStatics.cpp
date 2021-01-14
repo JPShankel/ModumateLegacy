@@ -1,8 +1,9 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "ModumateCore/ModumateBrowserStatics.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+
 #include "Objects/ModumateObjectInstance.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
 
 using namespace Modumate;
@@ -169,6 +170,9 @@ bool UModumateBrowserStatics::SaveCameraView(UObject* WorldContextObject, UCamer
 	{
 		gameState->Document->SavedCameraViews.Add(newCameraView);
 	}
+
+	static const FString analyticsEventName(TEXT("SaveCameraView"));
+	UModumateAnalyticsStatics::RecordEventSimple(WorldContextObject, UModumateAnalyticsStatics::EventCategoryView, analyticsEventName);
 
 	return true;
 }

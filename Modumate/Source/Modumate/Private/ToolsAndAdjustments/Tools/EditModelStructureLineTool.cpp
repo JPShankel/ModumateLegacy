@@ -7,6 +7,7 @@
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateStairStatics.h"
 #include "Objects/StructureLine.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
@@ -340,7 +341,13 @@ bool UStructureLineTool::MakeStructureLine(int32 TargetEdgeID)
 		return false;
 	}
 
-	return GameState->Document->ApplyDeltas(deltas, GetWorld());
+	bool bSuccess = GameState->Document->ApplyDeltas(deltas, GetWorld());
+	if (bSuccess)
+	{
+		UModumateAnalyticsStatics::RecordObjectCreation(this, UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()));
+	}
+
+	return bSuccess;
 }
 
 void UStructureLineTool::ResetState()

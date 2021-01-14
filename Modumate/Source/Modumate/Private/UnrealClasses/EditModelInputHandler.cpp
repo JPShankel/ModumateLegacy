@@ -188,7 +188,7 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 
 	case EInputCommand::New:
 	{
-		Controller->NewModel();
+		Controller->NewModel(true);
 		return true;
 	}
 	case EInputCommand::Open:

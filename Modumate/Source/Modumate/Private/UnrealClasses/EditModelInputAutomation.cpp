@@ -78,15 +78,7 @@ void UEditModelInputAutomation::BeginPlay()
 
 void UEditModelInputAutomation::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	switch (CurState)
-	{
-	case EInputAutomationState::Playing:
-		EndPlayback();
-		break;
-	case EInputAutomationState::Recording:
-		EndRecording(false);
-		break;
-	}
+	Super::EndPlay(EndPlayReason);
 }
 
 void UEditModelInputAutomation::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)

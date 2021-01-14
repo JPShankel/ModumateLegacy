@@ -7,7 +7,6 @@
 #include "Misc/Paths.h"
 #include "ModumateAnalyticsProvider.h"
 
-#include "Online/ModumateAccountManager.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Online/ModumateCloudConnection.h"
 #include "UnrealClasses/ModumateGameInstance.h"
@@ -21,12 +20,15 @@ FModumateAnalyticsEventData::FModumateAnalyticsEventData()
 	: key()
 	, value(0)
 	, timestamp(0)
+	, inTutorial(false)
 {
 }
 
-FModumateAnalyticsEventData::FModumateAnalyticsEventData(const FString& EventName, const TArray<FAnalyticsEventAttribute>& Attributes)
+FModumateAnalyticsEventData::FModumateAnalyticsEventData(const FString& EventName, const FString& AppVersion, const TArray<FAnalyticsEventAttribute>& Attributes)
 {
+	appVersion = AppVersion;
 	value = 1.0f;
+	inTutorial = false;
 
 	for (auto& attribute : Attributes)
 	{
@@ -39,6 +41,11 @@ FModumateAnalyticsEventData::FModumateAnalyticsEventData(const FString& EventNam
 			(attribute.AttrType == FAnalyticsEventAttribute::AttrTypeEnum::Number))
 		{
 			value = attribute.AttrValueNumber;
+		}
+		else if ((attribute.AttrName == UModumateAnalyticsStatics::AttrNameInTutorial) &&
+			(attribute.AttrType == FAnalyticsEventAttribute::AttrTypeEnum::Boolean))
+		{
+			inTutorial = attribute.AttrValueBool;
 		}
 	}
 
@@ -111,9 +118,8 @@ bool FAnalyticsProviderModumate::StartSession(const TArray<FAnalyticsEventAttrib
 		return false;
 	}
 
-	AccountManager = gameInstance->GetAccountManager();
 	CloudConnection = gameInstance->GetCloudConnection();
-	bHasSessionStarted = AccountManager.IsValid() && CloudConnection.IsValid();
+	bHasSessionStarted = CloudConnection.IsValid();
 
 	return bHasSessionStarted;
 }
@@ -173,7 +179,7 @@ void FAnalyticsProviderModumate::RecordEvent(const FString& EventName, const TAr
 {
 	if (bHasSessionStarted)
 	{
-		FModumateAnalyticsEventData eventData(EventName, Attributes);
+		FModumateAnalyticsEventData eventData(EventName, BuildInfo, Attributes);
 		AllEvents.Add(eventData);
 		EventBuffer.Add(eventData);
 
@@ -198,7 +204,7 @@ void FAnalyticsProviderModumate::SetBuildInfo(const FString& InBuildInfo)
 bool FAnalyticsProviderModumate::UploadBufferedEvents()
 {
 	int32 numEvents = EventBuffer.Num();
-	if (!bHasSessionStarted || !AccountManager.IsValid() || !CloudConnection.IsValid() || (numEvents == 0))
+	if (!bHasSessionStarted || !CloudConnection.IsValid() || !CloudConnection->IsLoggedIn() || (numEvents == 0))
 	{
 		return false;
 	}

@@ -297,8 +297,11 @@ bool UMetaPlaneTool::MakeObject(const FVector& Location)
 		return false;
 	}
 
-	EObjectType analyticsObjectType = (AxisConstraint == EAxisConstraint::None) ? EObjectType::OTMetaEdge : EObjectType::OTMetaPlane;
-	UModumateAnalyticsStatics::RecordObjectCreation(this, analyticsObjectType);
+	if (GetToolMode() == EToolMode::VE_METAPLANE)
+	{
+		EObjectType analyticsObjectType = (AxisConstraint == EAxisConstraint::None) ? EObjectType::OTMetaEdge : EObjectType::OTMetaPlane;
+		UModumateAnalyticsStatics::RecordObjectCreation(this, analyticsObjectType);
+	}
 
 	// Decide whether to end the tool's use, or continue the chain, based on axis constraint
 	switch (AxisConstraint)

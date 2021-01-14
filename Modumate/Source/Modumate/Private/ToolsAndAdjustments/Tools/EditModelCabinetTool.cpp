@@ -6,6 +6,7 @@
 #include "DocumentManagement/ModumateCommands.h"
 #include "Objects/Cabinet.h"
 #include "Graph/Graph2D.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -279,6 +280,8 @@ bool UCabinetTool::EnterNextStage()
 		Controller->DeselectAll();
 		Controller->SetObjectSelected(cabinetObj, true);
 		cabinetObj->ShowAdjustmentHandles(Controller, true);
+
+		UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTCabinet);
 	}
 
 	return false;

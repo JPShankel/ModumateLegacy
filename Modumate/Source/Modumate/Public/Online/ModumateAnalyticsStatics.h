@@ -19,6 +19,13 @@ class MODUMATE_API UModumateAnalyticsStatics : public UBlueprintFunctionLibrary
 public:
 	static const FString AttrNameCategory;
 	static const FString AttrNameCustomValue;
+	static const FString AttrNameInTutorial;
+
+	static const FString EventCategoryObjects;
+	static const FString EventCategoryTools;
+	static const FString EventCategoryPresets;
+	static const FString EventCategoryView;
+	static const FString EventCategorySession;
 
 	static TSharedPtr<IAnalyticsProvider> InitAnalytics();
 
@@ -27,13 +34,13 @@ public:
 	static IAnalyticsProvider *GetAnalyticsFromWorld(UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
+	static void SetInTutorial(bool bNewIntutorial);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
 	static bool RecordEventSimple(UObject* WorldContextObject, const FString &EventCategory, const FString &EventName);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
 	static bool RecordEventCustomFloat(UObject* WorldContextObject, const FString &EventCategory, const FString &EventName, float CustomValue);
-
-	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
-	static bool RecordEventCustomString(UObject* WorldContextObject, const FString &EventCategory, const FString &EventName, const FString &CustomValue);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
 	static bool RecordToolUsage(UObject* WorldContextObject, EToolMode ToolMode, float UsedDuration);
@@ -55,4 +62,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
 	static bool RecordPresetDeletion(UObject* WorldContextObject);
+
+protected:
+	static bool bInTutorial;
 };

@@ -5,6 +5,7 @@
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Objects/CutPlane.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -166,7 +167,14 @@ bool UCutPlaneTool::EnterNextStage()
 	auto delta = MakeShared<FMOIDelta>();
 	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
 
-	return doc->ApplyDeltas({ delta }, GetWorld());
+	bool bSuccess = doc->ApplyDeltas({ delta }, GetWorld());
+
+	if (bSuccess)
+	{
+		UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTCutPlane);
+	}
+
+	return bSuccess;
 }
 
 bool UCutPlaneTool::EndUse()

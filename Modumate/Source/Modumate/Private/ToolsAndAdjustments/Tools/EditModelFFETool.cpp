@@ -7,6 +7,7 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateTargetingStatics.h"
 #include "Objects/FFE.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "UnrealClasses/EditModelGameState_CPP.h"
@@ -137,7 +138,12 @@ bool UFFETool::BeginUse()
 	auto delta = MakeShared<FMOIDelta>();
 	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
 
-	doc->ApplyDeltas({ delta }, GetWorld());
+	bool bSuccess = doc->ApplyDeltas({ delta }, GetWorld());
 
-	return true;
+	if (bSuccess)
+	{
+		UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTFurniture);
+	}
+
+	return bSuccess;
 }

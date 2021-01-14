@@ -81,9 +81,10 @@ bool UPlaneHostedObjTool::BeginUse()
 		GameState->Document->ClearPreviewDeltas(GetWorld());
 
 		auto delta = GetObjectCreationDelta({ LastValidTargetID });
-		if (delta.IsValid())
+		if (delta.IsValid() && GameState->Document->ApplyDeltas({ delta }, GetWorld()))
 		{
-			GameState->Document->ApplyDeltas({ delta }, GetWorld());
+			UModumateAnalyticsStatics::RecordObjectCreation(this, ObjectType);
+
 			EndUse();
 		}
 	}
@@ -311,7 +312,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector& Location)
 
 	if (bSuccess)
 	{
-		UModumateAnalyticsStatics::RecordObjectCreation(this, NewMOIStateData.ObjectType);
+		UModumateAnalyticsStatics::RecordObjectCreation(this, ObjectType);
 	}
 
 	return bSuccess;

@@ -72,13 +72,13 @@ private:
 	void UpdateUserSnapPoint();
 
 	FTimerHandle ControllerTimer;
-	FGuid RecordSessionKey;
+	FGuid TelemetrySessionKey;
 	FDateTime SessionStartTime;
 	static const FString InputTelemetryDirectory;
 
-	bool StartTelemetryRecording();
-	bool EndTelemetryRecording();
-	bool UploadTelemetryLog() const;
+	bool StartTelemetrySession(bool bRecordInput);
+	bool EndTelemetrySession();
+	bool UploadInputTelemetry() const;
 
 	bool ValidateVirtualHit(const FVector &MouseOrigin, const FVector &MouseDir, const FVector &HitPoint,
 		float CurObjectHitDist, float CurVirtualHitDist, float MaxScreenDist, float &OutRayDist) const;
@@ -457,7 +457,7 @@ public:
 	bool LoadModelFilePath(const FString &filename, bool addToRecents = true);
 
 	UFUNCTION(BlueprintCallable, Category = Persistence)
-	void NewModel();
+	void NewModel(bool bShouldCheckForSave);
 
 	UFUNCTION(BlueprintCallable, Category = Persistence)
 	bool CheckSaveModel();

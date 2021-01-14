@@ -9,7 +9,6 @@
 #include "ModumateAnalyticsProvider.generated.h"
 
 class Error;
-class FModumateAccountManager;
 class FModumateCloudConnection;
 
 USTRUCT()
@@ -21,13 +20,19 @@ struct FModumateAnalyticsEventData
 	FString key;
 
 	UPROPERTY()
+	FString appVersion;
+
+	UPROPERTY()
 	float value;
 
 	UPROPERTY()
 	int64 timestamp;
 
+	UPROPERTY()
+	bool inTutorial;
+
 	FModumateAnalyticsEventData();
-	FModumateAnalyticsEventData(const FString& EventName, const TArray<FAnalyticsEventAttribute>& Attributes);
+	FModumateAnalyticsEventData(const FString& EventName, const FString& AppVersion, const TArray<FAnalyticsEventAttribute>& Attributes);
 };
 
 USTRUCT()
@@ -55,7 +60,6 @@ class FAnalyticsProviderModumate :
 	/** The analytics events that have been recorded but not yet sent so far */
 	TArray<FModumateAnalyticsEventData> EventBuffer;
 
-	TSharedPtr<FModumateAccountManager> AccountManager;
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
 
 	static const int32 MaxEventBufferLength;

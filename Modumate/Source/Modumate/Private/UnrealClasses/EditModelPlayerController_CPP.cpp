@@ -67,7 +67,7 @@
 
 static Modumate::PDF::PDFResult PDFLibrary;
 
-const FString AEditModelPlayerController_CPP::InputTelemetryDirectory = TEXT("Telemetry");
+const FString AEditModelPlayerController_CPP::InputTelemetryDirectory(TEXT("Telemetry"));
 
 using namespace Modumate;
 
@@ -190,8 +190,7 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	}
 	else
 	{
-		Document->MakeNew(GetWorld());
-		StartTelemetryRecording();
+		NewModel(false);
 	}
 
 	EMPlayerState->SnappedCursor.ClearAffordanceFrame();
@@ -231,20 +230,27 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	IFileManager::Get().MakeDirectory(*path);
 }
 
-bool AEditModelPlayerController_CPP::StartTelemetryRecording()
+bool AEditModelPlayerController_CPP::StartTelemetrySession(bool bRecordInput)
 {
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
 	if (!gameInstance->GetAccountManager().Get()->ShouldRecordTelemetry())
 	{
 		return false;
 	}
-	
-	EndTelemetryRecording();
+
+	EndTelemetrySession();
+
+	TelemetrySessionKey = FGuid::NewGuid();
+	SessionStartTime = FDateTime::Now();
+
+	if (!bRecordInput)
+	{
+		return true;
+	}
 
 	if (InputAutomationComponent->BeginRecording())
 	{
 		TimeOfLastUpload = FDateTime::Now();
-		SessionStartTime = FDateTime::Now();
 
 		const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
 		if (!ensureAlways(projectSettings != nullptr))
@@ -257,7 +263,7 @@ bool AEditModelPlayerController_CPP::StartTelemetryRecording()
 
 		if (Cloud.IsValid())
 		{
-			Cloud->CreateReplay(RecordSessionKey.ToString(), *projectVersion, [](bool bSuccess, const TSharedPtr<FJsonObject>& Response) {
+			Cloud->CreateReplay(TelemetrySessionKey.ToString(), *projectVersion, [](bool bSuccess, const TSharedPtr<FJsonObject>& Response) {
 				UE_LOG(LogTemp, Log, TEXT("Created Successfully"));
 
 			}, [](int32 code, const FString& error) {
@@ -267,26 +273,25 @@ bool AEditModelPlayerController_CPP::StartTelemetryRecording()
 			return true;
 		}
 	}
+
 	return false;
 }
 
-bool AEditModelPlayerController_CPP::EndTelemetryRecording()
+bool AEditModelPlayerController_CPP::EndTelemetrySession()
 {
 	if (InputAutomationComponent->IsRecording())
 	{
-		UploadTelemetryLog();
+		UploadInputTelemetry();
 		InputAutomationComponent->EndRecording(false);
 	}
 
 	// If we don't have a session key, there's nothing to record
-	if (RecordSessionKey.IsValid())
+	if (TelemetrySessionKey.IsValid())
 	{
 		FTimespan sessionTime = FDateTime::Now() - SessionStartTime;
 		UModumateAnalyticsStatics::RecordSessionDuration(this, sessionTime);
+		TelemetrySessionKey.Invalidate();
 	}
-
-	RecordSessionKey = FGuid::NewGuid();
-	SessionStartTime = FDateTime::Now();
 
 	return true;
 }
@@ -298,8 +303,9 @@ void AEditModelPlayerController_CPP::EndPlay(const EEndPlayReason::Type EndPlayR
 	FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*lockFile);
 	GetWorldTimerManager().ClearTimer(ControllerTimer);
 
+	EndTelemetrySession();
+
 	// Clean up input telemetry files
-	UploadTelemetryLog();
 	FString path = FModumateUserSettings::GetLocalTempDir() / InputTelemetryDirectory;
 	IFileManager::Get().DeleteDirectory(*path,false,true);
 
@@ -793,9 +799,8 @@ bool AEditModelPlayerController_CPP::SaveModelFilePath(const FString &filepath)
 		EMPlayerState->LastFilePath = filepath;
 		Modumate::PlatformFunctions::ShowMessageBox(*FString::Printf(TEXT("Saved as %s"),*EMPlayerState->LastFilePath), TEXT("Save Model"), Modumate::PlatformFunctions::Okay);
 
-		static const FString eventCategory(TEXT("FileIO"));
 		static const FString eventName(TEXT("SaveDocument"));
-		UModumateAnalyticsStatics::RecordEventSimple(this, eventCategory, eventName);
+		UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategorySession, eventName);
 		return true;
 	}
 	else
@@ -831,27 +836,30 @@ bool AEditModelPlayerController_CPP::LoadModel()
 
 	if (Modumate::PlatformFunctions::GetOpenFilename(filename))
 	{
-		EndTelemetryRecording();
-		bLoadSuccess = gameState->Document->Load(GetWorld(), filename, true);
-		if (bLoadSuccess)
-		{
-			EMPlayerState->LastFilePath = filename;
-		}
-		else
-		{
-			EMPlayerState->LastFilePath.Empty();
-		}
+		bLoadSuccess = LoadModelFilePath(filename, true);
 	}
 
 	EMPlayerState->ShowingFileDialog = false;
 	return bLoadSuccess;
 }
 
-bool AEditModelPlayerController_CPP::LoadModelFilePath(const FString &filename,bool addToRecents)
+bool AEditModelPlayerController_CPP::LoadModelFilePath(const FString &filename, bool bAddToRecents)
 {
-	EndTelemetryRecording();
+	EndTelemetrySession();
 	EMPlayerState->OnNewModel();
-	if (addToRecents)
+
+	bool bLoadSuccess = Document->Load(GetWorld(), filename, bAddToRecents);
+
+	if (bLoadSuccess)
+	{
+		static const FString LoadDocumentEventName(TEXT("LoadDocument"));
+		UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategorySession, LoadDocumentEventName);
+
+		// TODO: always record input, and remove this flag, when we can upload the loaded document as the start of the input telemetry log
+		StartTelemetrySession(false);
+	}
+
+	if (bLoadSuccess && bAddToRecents)
 	{
 		EMPlayerState->LastFilePath = filename;
 	}
@@ -859,7 +867,8 @@ bool AEditModelPlayerController_CPP::LoadModelFilePath(const FString &filename,b
 	{
 		EMPlayerState->LastFilePath.Empty();
 	}
-	return Document->Load(GetWorld(),filename, addToRecents);
+
+	return bLoadSuccess;
 }
 
 bool AEditModelPlayerController_CPP::CheckSaveModel()
@@ -882,18 +891,24 @@ bool AEditModelPlayerController_CPP::CheckSaveModel()
 	return true;
 }
 
-void AEditModelPlayerController_CPP::NewModel()
+void AEditModelPlayerController_CPP::NewModel(bool bShouldCheckForSave)
 {
 	if (!EMPlayerState->ShowingFileDialog)
 	{
-		if (!CheckSaveModel())
+		if (bShouldCheckForSave && !CheckSaveModel())
 		{
 			return;
 		}
 
+		EndTelemetrySession();
+
+		static const FString NewDocumentEventName(TEXT("NewDocument"));
+		UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategorySession, NewDocumentEventName);
+
 		EMPlayerState->OnNewModel();
 		Document->MakeNew(GetWorld());
-		StartTelemetryRecording();
+
+		StartTelemetrySession(true);
 	}
 }
 
@@ -1270,7 +1285,7 @@ void AEditModelPlayerController_CPP::OnControllerTimer()
 
 DECLARE_CYCLE_STAT(TEXT("Edit tick"), STAT_ModumateEditTick, STATGROUP_Modumate)
 
-bool AEditModelPlayerController_CPP::UploadTelemetryLog() const
+bool AEditModelPlayerController_CPP::UploadInputTelemetry() const
 {
 	if (!InputAutomationComponent->IsRecording())
 	{
@@ -1278,7 +1293,7 @@ bool AEditModelPlayerController_CPP::UploadTelemetryLog() const
 	}
 
 	FString path = FModumateUserSettings::GetLocalTempDir() / InputTelemetryDirectory;
-	FString  cacheFile =  path / RecordSessionKey.ToString() + FEditModelInputLog::LogExtension;
+	FString  cacheFile =  path / TelemetrySessionKey.ToString() + FEditModelInputLog::LogExtension;
 	if (!InputAutomationComponent->SaveInputLog(cacheFile))
 	{
 		return false;
@@ -1289,7 +1304,7 @@ bool AEditModelPlayerController_CPP::UploadTelemetryLog() const
 
 	if (Cloud.IsValid())
 	{
-		Cloud->UploadReplay(RecordSessionKey.ToString(), *cacheFile, [](bool bSuccess, const TSharedPtr<FJsonObject>& Response) {
+		Cloud->UploadReplay(TelemetrySessionKey.ToString(), *cacheFile, [](bool bSuccess, const TSharedPtr<FJsonObject>& Response) {
 			UE_LOG(LogTemp, Log, TEXT("Uploaded Successfully"));
 		}, [](int32 code, const FString& error) {
 			UE_LOG(LogTemp, Error, TEXT("Error: %s"), *error);
@@ -1312,9 +1327,9 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 		{
 			TimeOfLastUpload = FDateTime::Now();
 			WantTelemetryUpload = false;
-			if (RecordSessionKey.IsValid())
+			if (TelemetrySessionKey.IsValid())
 			{
-				UploadTelemetryLog();
+				UploadInputTelemetry();
 			}
 		}
 
@@ -3161,6 +3176,9 @@ bool AEditModelPlayerController_CPP::ToggleGravityPawn()
 		ensureAlwaysMsgf(false, TEXT("Unknown pawn possessed!"));
 		return false;
 	}
+
+	static const FString analyticsEventName(TEXT("ToggleGravity"));
+	UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategoryView, analyticsEventName);
 
 	return true;
 }

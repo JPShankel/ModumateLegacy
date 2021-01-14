@@ -3,12 +3,13 @@
 #include "ToolsAndAdjustments/Tools/EditModelRoofPerimeterTool.h"
 
 #include "Algo/Transform.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "Graph/Graph3DDelta.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateRoofStatics.h"
+#include "Online/ModumateAnalyticsStatics.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerState_CPP.h"
 
 using namespace Modumate;
 
@@ -110,6 +111,8 @@ bool URoofPerimeterTool::Activate()
 		{
 			Controller->DeselectAll();
 			Controller->SetObjectSelected(roofPerimObj, true);
+
+			UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTRoofPerimeter);
 		}
 	}
 

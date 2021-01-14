@@ -1,18 +1,20 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/RightMenu/CutPlaneMenuBlockExport.h"
+
 #include "Components/ListView.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UI/EditModelUserWidget.h"
-#include "UI/RightMenu/CutPlaneMenuWidget.h"
-#include "UI/RightMenu/CutPlaneMenuBlock.h"
-#include "UI/RightMenu/CutPlaneDimListItemObject.h"
-#include "UI/Custom/ModumateCheckBox.h"
-#include "UI/Custom/ModumateButtonUserWidget.h"
-#include "UI/Custom/ModumateButton.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
 #include "Objects/CutPlane.h"
+#include "Online/ModumateAnalyticsStatics.h"
+#include "UI/Custom/ModumateButton.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/Custom/ModumateCheckBox.h"
 #include "UI/Custom/ModumateTextBlock.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/RightMenu/CutPlaneDimListItemObject.h"
+#include "UI/RightMenu/CutPlaneMenuBlock.h"
+#include "UI/RightMenu/CutPlaneMenuWidget.h"
+#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 #define LOCTEXT_NAMESPACE "ModumateCutPlane"
 
@@ -98,6 +100,9 @@ void UCutPlaneMenuBlockExport::OnButtonExportReleased()
 		}
 	}
 	gameState->Document->ApplyDeltas({ newDelta }, GetWorld());
+
+	static const FString analyticsEventName(TEXT("ExportDWG"));
+	UModumateAnalyticsStatics::RecordEventSimple(Controller, UModumateAnalyticsStatics::EventCategoryView, analyticsEventName);
 
 	Controller->OnCreateDwg();
 }

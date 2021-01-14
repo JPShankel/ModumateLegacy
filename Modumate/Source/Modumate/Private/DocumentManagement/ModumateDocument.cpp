@@ -1990,11 +1990,6 @@ void UModumateDocument::MakeNew(UWorld *world)
 	SurfaceGraphs.Reset();
 
 	GatherDocumentMetadata();
-
-	static const FString eventCategory(TEXT("FileIO"));
-	static const FString eventNameNew(TEXT("NewDocument"));
-	UModumateAnalyticsStatics::RecordEventSimple(world, eventCategory, eventNameNew);
-
 	SetCurrentProjectPath();
 }
 
@@ -2477,10 +2472,6 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 			if (auto* gameInstance = world->GetGameInstance<UModumateGameInstance>())
 			{
 				gameInstance->UserSettings.RecordRecentProject(path, true);
-
-				static const FString eventCategory(TEXT("FileIO"));
-				static const FString eventName(TEXT("LoadDocument"));
-				UModumateAnalyticsStatics::RecordEventSimple(world, eventCategory, eventName);
 			}
 		}
 		return true;
