@@ -19,7 +19,7 @@ void FArchitecturalMesh::ReadNamedDimensions(const FString& InNamedDimensions)
 				params[i] = params[i].TrimQuotes();
 				params[i + 1].RemoveFromEnd(TEXT(")"));
 				float inches = FCString::Atof(*params[i + 1]);
-				NamedDimensions.Add(params[i], Modumate::Units::FUnitValue(inches,Modumate::Units::EUnitType::WorldInches));
+				NamedDimensions.Add(params[i], FModumateUnitValue(inches,EModumateUnitType::WorldInches));
 			}
 		}
 	}

@@ -3,6 +3,7 @@
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 #include "BIMKernel/AssemblySpec/BIMPartSlotSpec.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 #include "Algo/Transform.h"
 
 // Common named parameters
@@ -94,7 +95,7 @@ bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, 
 
 	if (returnVal == nullptr)
 	{
-		Modumate::Units::FUnitValue unitVal;
+		FModumateUnitValue unitVal;
 		if (ensureAlwaysMsgf(FBIMPartSlotSpec::TryGetDefaultNamedParameter(scopes.Last(), unitVal), TEXT("COULD NOT FIND BIM VALUE %s"), *InVar))
 		{
 			OutVal = unitVal.AsWorldCentimeters();
@@ -156,7 +157,7 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 		// This value is recalculated down below but may depend on this initial value
 		if (ensureAlways(useMesh->EngineMesh.IsValid()))
 		{
-			FVector nativeSize = useMesh->NativeSize * Modumate::InchesToCentimeters;
+			FVector nativeSize = useMesh->NativeSize * UModumateDimensionStatics::InchesToCentimeters;
 			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeX, nativeSize.X);
 			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeY, nativeSize.Y);
 			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeZ, nativeSize.Z);

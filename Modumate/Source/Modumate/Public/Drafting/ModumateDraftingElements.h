@@ -22,57 +22,57 @@ namespace Modumate
 		virtual void ClearChildren();
 
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) = 0;
 		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) { return EDrawError::ErrorNone; };
 
 		void ApplyTransform(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D& position,
-			Units::FAngle& orientation,
+			FModumateUnitCoord2D& position,
+			ModumateUnitParams::FAngle& orientation,
 			float& scale);
 
 		// Some implementations of FDrafting composite are not able to provide
-		virtual Units::FCoordinates2D GetDimensions(IModumateDraftingDraw *drawingInterface) {
-			return Units::FCoordinates2D();
+		virtual FModumateUnitCoord2D GetDimensions(IModumateDraftingDraw *drawingInterface) {
+			return FModumateUnitCoord2D();
 		};
 
 		// TODO: so far AABB has been implemented for DraftingComposite, LinePrimitive, TextPrimitive, and ArcPrimitive,
 		// because those are the primitives that appear in floorplan drawings at the time of creation
 		virtual FBox2D MakeAABB(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f);
 
-		Units::FCoordinates2D GetLocalPosition() { return Position; }
-		Units::FAngle GetLocalOrientation() { return Orientation; }
+		FModumateUnitCoord2D GetLocalPosition() { return Position; }
+		ModumateUnitParams::FAngle GetLocalOrientation() { return Orientation; }
 		float GetLocalScale() { return Scale; }
 
-		void SetLocalPosition(Units::FCoordinates2D position) { Position = position; }
-		void SetLocalPosition(Units::FXCoord x, Units::FYCoord y) { Position.X = x; Position.Y = y; }
-		void SetLocalOrientation(Units::FAngle orientation) { Orientation = orientation; }
+		void SetLocalPosition(FModumateUnitCoord2D position) { Position = position; }
+		void SetLocalPosition(ModumateUnitParams::FXCoord x, ModumateUnitParams::FYCoord y) { Position.X = x; Position.Y = y; }
+		void SetLocalOrientation(ModumateUnitParams::FAngle orientation) { Orientation = orientation; }
 		void SetLocalScale(float scale) { Scale = scale; }
 
-		void MoveXTo(Units::FXCoord x) { Position.X = x; }
-		void MoveYTo(Units::FYCoord y) { Position.Y = y; }
+		void MoveXTo(ModumateUnitParams::FXCoord x) { Position.X = x; }
+		void MoveYTo(ModumateUnitParams::FYCoord y) { Position.Y = y; }
 
-		void TranslateBy(Units::FCoordinates2D position) { Position += position; }
-		void TranslateBy(Units::FXCoord x) { Position.X += x; }
-		void TranslateBy(Units::FYCoord y) { Position.Y += y; }
+		void TranslateBy(FModumateUnitCoord2D position) { Position += position; }
+		void TranslateBy(ModumateUnitParams::FXCoord x) { Position.X += x; }
+		void TranslateBy(ModumateUnitParams::FYCoord y) { Position.Y += y; }
 
-		void SetLocalTransform(Units::FCoordinates2D position, Units::FAngle orientation, float scale);
+		void SetLocalTransform(FModumateUnitCoord2D position, ModumateUnitParams::FAngle orientation, float scale);
 		FModumateLayerType GetLayerType() const { return LayerType; }
 		void SetLayerTypeRecursive(FModumateLayerType layerType);
 
 	protected:
-		Units::FCoordinates2D Position;
-		Units::FAngle Orientation = Units::FAngle::Radians(0);
+		FModumateUnitCoord2D Position;
+		ModumateUnitParams::FAngle Orientation = ModumateUnitParams::FAngle::Radians(0);
 		// TODO: while scale is applied during Draw, it isn't respected at the primitive level
 		float Scale = 1.0f;
 		FModumateLayerType LayerType { FModumateLayerType::kDefault };
 
 	public:
-		Units::FCoordinates2D Dimensions;
+		FModumateUnitCoord2D Dimensions;
 		DraftingAlignment VerticalAlignment = DraftingAlignment::Bottom;
 		DraftingAlignment HorizontalAlignment = DraftingAlignment::Left;
 
@@ -93,16 +93,16 @@ namespace Modumate
 		FDraftingComposite() {};
 
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
-		virtual Units::FCoordinates2D GetDimensions(IModumateDraftingDraw *drawingInterface) override;
+		virtual FModumateUnitCoord2D GetDimensions(IModumateDraftingDraw *drawingInterface) override;
 		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
 
 		virtual FBox2D MakeAABB(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
 	};
@@ -112,37 +112,37 @@ namespace Modumate
 	public:
 		FTextPrimitive(
 			FString text = FString(),
-			Units::FFontSize fontSize = Units::FFontSize::FontHeight(16),
+			ModumateUnitParams::FFontSize fontSize = ModumateUnitParams::FFontSize::FontHeight(16),
 			FMColor color = FMColor::Black,
 			FontType type = FontType::Standard,
 			DraftingAlignment justify = DraftingAlignment::Left,
-			Units::FAngle angle = Units::FAngle::Radians(0),
-			Units::FWidth width = Units::FWidth::FloorplanInches(0)) :
+			ModumateUnitParams::FAngle angle = ModumateUnitParams::FAngle::Radians(0),
+			ModumateUnitParams::FWidth width = ModumateUnitParams::FWidth::FloorplanInches(0)) :
 			Text(text), FontSize(fontSize), Color(color), TextFontName(type), TextAlignment(justify), Angle(angle), ContainerWidth(width)
 		{
 
 		}
 		virtual ~FTextPrimitive() {}
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
 		virtual FBox2D MakeAABB(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
 		float GetWidth(IModumateDraftingDraw *drawingInterface);
 
 	public:
 		FString Text;
-		Units::FFontSize FontSize = Units::FFontSize::FontHeight(9.45f);
+		ModumateUnitParams::FFontSize FontSize = ModumateUnitParams::FFontSize::FontHeight(9.45f);
 		FMColor Color = FMColor::Black;
 		FontType TextFontName = FontType::Standard;
 		DraftingAlignment TextAlignment;
-		Units::FAngle Angle = Units::FAngle::Radians(0);
-		Units::FWidth ContainerWidth = Units::FWidth::FloorplanInches(0);
+		ModumateUnitParams::FAngle Angle = ModumateUnitParams::FAngle::Radians(0);
+		ModumateUnitParams::FWidth ContainerWidth = ModumateUnitParams::FWidth::FloorplanInches(0);
 	};
 
 	class FDraftingText : public FDraftingComposite
@@ -150,23 +150,23 @@ namespace Modumate
 	public:
 		FDraftingText(
 			FText text = FText(),
-			Units::FFontSize fontSize = Units::FFontSize::FontHeight(16),
+			ModumateUnitParams::FFontSize fontSize = ModumateUnitParams::FFontSize::FontHeight(16),
 			FMColor color = FMColor::Black,
 			FontType type = FontType::Standard,
 			DraftingAlignment justify = DraftingAlignment::Left,
-			Units::FAngle angle = Units::FAngle::Radians(0),
-			Units::FWidth width = Units::FWidth::FloorplanInches(0));
+			ModumateUnitParams::FAngle angle = ModumateUnitParams::FAngle::Radians(0),
+			ModumateUnitParams::FWidth width = ModumateUnitParams::FWidth::FloorplanInches(0));
 		virtual ~FDraftingText() {}
 
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
 		// if width is set to a value greater than 0, DraftingText will attempt to wrap (and split) the text
 		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
 
-		virtual Units::FCoordinates2D GetDimensions(IModumateDraftingDraw *drawingInterface) override;
+		virtual FModumateUnitCoord2D GetDimensions(IModumateDraftingDraw *drawingInterface) override;
 
 	public:
 		TSharedPtr<FTextPrimitive> Child;
@@ -180,22 +180,22 @@ namespace Modumate
 	{
 	public:
 		FDraftingTick(
-			Units::FLength length,
-			Units::FThickness thickness,
+			ModumateUnitParams::FLength length,
+			ModumateUnitParams::FThickness thickness,
 			FMColor color = FMColor::Black,
 			LinePattern linePattern = LinePattern(),
-			Units::FPhase phase = Units::FPhase::Points(0));
+			ModumateUnitParams::FPhase phase = ModumateUnitParams::FPhase::Points(0));
 	};
 
 	class FDraftingRectangle : public FDraftingComposite
 	{
 	public:
 		FDraftingRectangle(
-			Units::FCoordinates2D dimensions,
-			Units::FThickness thickness = Units::FThickness::Points(0.15f),
+			FModumateUnitCoord2D dimensions,
+			ModumateUnitParams::FThickness thickness = ModumateUnitParams::FThickness::Points(0.15f),
 			FMColor color = FMColor::Black,
 			LinePattern linePattern = LinePattern(),
-			Units::FPhase phase = Units::FPhase::Points(0));
+			ModumateUnitParams::FPhase phase = ModumateUnitParams::FPhase::Points(0));
 	};
 
 	class FDraftingFraction : public FDraftingComposite
@@ -204,8 +204,8 @@ namespace Modumate
 		FDraftingFraction(
 			FText numerator,
 			FText denominator,
-			Units::FFontSize fontSize,
-			Units::FThickness lineWidth,
+			ModumateUnitParams::FFontSize fontSize,
+			ModumateUnitParams::FThickness lineWidth,
 			FMColor color = FMColor::Black
 		);
 		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
@@ -213,22 +213,22 @@ namespace Modumate
 	public:
 		FText Numerator;
 		FText Denominator;
-		Units::FFontSize FontSize;
-		Units::FThickness LineWidth;
+		ModumateUnitParams::FFontSize FontSize;
+		ModumateUnitParams::FThickness LineWidth;
 		FMColor Color;
 	};
 
 	class FDraftingSwingDoor : public FDraftingComposite
 	{
 	public:
-		FDraftingSwingDoor(Units::FLength doorLength, Units::FLength doorDepth);
+		FDraftingSwingDoor(ModumateUnitParams::FLength doorLength, ModumateUnitParams::FLength doorDepth);
 
 	public:
-		Units::FLength DoorLength;
-		Units::FLength DoorDepth;
+		ModumateUnitParams::FLength DoorLength;
+		ModumateUnitParams::FLength DoorDepth;
 
-		Units::FThickness DoorFrameThickness = Units::FThickness::Points(0.5f);
-		Units::FThickness DoorThickness = Units::FThickness::WorldInches(2.0f);
+		ModumateUnitParams::FThickness DoorFrameThickness = ModumateUnitParams::FThickness::Points(0.5f);
+		ModumateUnitParams::FThickness DoorThickness = ModumateUnitParams::FThickness::WorldInches(2.0f);
 	};
 
 
@@ -236,32 +236,36 @@ namespace Modumate
 	{
 	public:
 		FLinePrimitive(
-			Units::FLength length,
-			Units::FThickness thickness,
+			ModumateUnitParams::FLength length,
+			ModumateUnitParams::FThickness thickness,
 			FMColor color,
 			LinePattern &linePattern,
-			Units::FPhase phase
-		) : Length(length), LineWidth(thickness), Color(color), Pattern(linePattern), Phase(phase)
+			ModumateUnitParams::FPhase phase
+		) : Length(length), 
+			LineWidth(thickness), 
+			Color(color), 
+			Pattern(linePattern), 
+			Phase(phase)
 		{}
 
 		virtual ~FLinePrimitive() {}
 
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
 		virtual FBox2D MakeAABB(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
 	public:
-		Units::FLength Length = Units::FLength::FloorplanInches(0);
-		Units::FThickness LineWidth;
+		ModumateUnitParams::FLength Length = ModumateUnitParams::FLength::FloorplanInches(0);
+		ModumateUnitParams::FThickness LineWidth;
 		FMColor Color;
 		LinePattern Pattern;
-		Units::FPhase Phase;
+		ModumateUnitParams::FPhase Phase;
 	};
 
 	// TODO: already class called FDrafting line
@@ -269,32 +273,32 @@ namespace Modumate
 	{
 	public:
 		FDraftingLine(
-			Units::FLength length,
-			Units::FThickness thickness,
+			ModumateUnitParams::FLength length,
+			ModumateUnitParams::FThickness thickness,
 			FMColor color = FMColor::Black,
 			LinePattern linePattern = LinePattern(),
-			Units::FPhase phase = Units::FPhase::Points(0))
+			ModumateUnitParams::FPhase phase = ModumateUnitParams::FPhase::Points(0))
 		{
 			Children.Add(TSharedPtr<FLinePrimitive>(new FLinePrimitive(length, thickness, color, linePattern, phase)));
 		}
 
 		// Legacy line construction - Position is set to P1, length and orientation are derived from P2 - P1
 		FDraftingLine(
-			Units::FCoordinates2D P1,
-			Units::FCoordinates2D P2,
-			Units::FThickness thickness,
+			FModumateUnitCoord2D P1,
+			FModumateUnitCoord2D P2,
+			ModumateUnitParams::FThickness thickness,
 			FMColor color = FMColor::Black,
 			LinePattern linePattern = LinePattern(),
-			Units::FPhase phase = Units::FPhase::Points(0));
+			ModumateUnitParams::FPhase phase = ModumateUnitParams::FPhase::Points(0));
 	};
 
 	class FArcPrimitive : public FDraftingElement
 	{
 	public:
 		FArcPrimitive(
-			Units::FRadius radius,
-			Units::FAngle angle,
-			Units::FThickness thickness,
+			ModumateUnitParams::FRadius radius,
+			ModumateUnitParams::FAngle angle,
+			ModumateUnitParams::FThickness thickness,
 			FMColor color = FMColor::Black,
 			LinePattern linePattern = LinePattern()
 		) : Radius(radius), Angle(angle), LineWidth(thickness), Color(color), Pattern(linePattern)
@@ -302,19 +306,19 @@ namespace Modumate
 		virtual ~FArcPrimitive() {}
 
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
 		virtual FBox2D MakeAABB(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f);
 
 	public:
-		Units::FRadius Radius;
-		Units::FAngle Angle;
-		Units::FThickness LineWidth;
+		ModumateUnitParams::FRadius Radius;
+		ModumateUnitParams::FAngle Angle;
+		ModumateUnitParams::FThickness LineWidth;
 		FMColor Color;
 		LinePattern Pattern;
 	};
@@ -323,9 +327,9 @@ namespace Modumate
 	{
 	public:
 		FDraftingArc(
-			Units::FRadius radius,
-			Units::FAngle angle,
-			Units::FThickness thickness,
+			ModumateUnitParams::FRadius radius,
+			ModumateUnitParams::FAngle angle,
+			ModumateUnitParams::FThickness thickness,
 			FMColor color = FMColor::Black,
 			LinePattern linePattern = LinePattern())
 		{
@@ -337,18 +341,18 @@ namespace Modumate
 	{
 	public:
 		FFilledCirclePrimitive(
-			Units::FRadius radius,
+			ModumateUnitParams::FRadius radius,
 			FMColor color = FMColor::Black);
 
 		virtual ~FFilledCirclePrimitive() {}
 
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
 	public:
-		Units::FRadius Radius;
+		ModumateUnitParams::FRadius Radius;
 		FMColor Color;
 	};
 
@@ -356,8 +360,8 @@ namespace Modumate
 	{
 	public:
 		FCirclePrimitive(
-			Units::FRadius radius,
-			Units::FThickness thickness,
+			ModumateUnitParams::FRadius radius,
+			ModumateUnitParams::FThickness thickness,
 			FMColor color = FMColor::Black,
 			LinePattern linePattern = LinePattern()
 		);
@@ -365,13 +369,13 @@ namespace Modumate
 		virtual ~FCirclePrimitive() {}
 
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
 	public:
-		Units::FRadius Radius;
-		Units::FThickness LineWidth;
+		ModumateUnitParams::FRadius Radius;
+		ModumateUnitParams::FThickness LineWidth;
 		FMColor Color;
 		LinePattern Pattern;
 	};
@@ -380,14 +384,14 @@ namespace Modumate
 	{
 	public:
 		FFilledRectPrimitive(
-			Units::FCoordinates2D dimensions,
+			FModumateUnitCoord2D dimensions,
 			FMColor color = FMColor::Black);
 
 		virtual ~FFilledRectPrimitive() {}
 
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
 	public:
@@ -405,8 +409,8 @@ namespace Modumate
 		virtual ~FFilledPolyPrimitive() {}
 
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
 	public:
@@ -419,14 +423,14 @@ namespace Modumate
 	public:
 		FImagePrimitive(
 			FString imagePath,
-			Units::FCoordinates2D dimensions
+			FModumateUnitCoord2D dimensions
 		);
 
 		virtual ~FImagePrimitive() {}
 
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
 	public:

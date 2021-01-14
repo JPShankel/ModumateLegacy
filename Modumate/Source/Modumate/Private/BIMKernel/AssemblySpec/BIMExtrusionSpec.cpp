@@ -6,7 +6,7 @@
 
 EBIMResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& InDB)
 {
-	Modumate::Units::FUnitValue xDim, yDim;
+	FModumateUnitValue xDim, yDim;
 	if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter, xDim))
 	{
 		yDim = xDim;

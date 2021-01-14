@@ -216,7 +216,7 @@ public:
 	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType& Name, FName& OutT) const;
 	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType& Name, FText& OutT) const;
 	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType& Name, FGuid& OutT) const;
-	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType& Name, Modumate::Units::FUnitValue& OutT) const;
+	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType& Name, FModumateUnitValue& OutT) const;
 	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType& Name, int32& OutT) const;
 	
 	EBIMResult AddProperties(const FBIMPropertySheet& PropSheet);

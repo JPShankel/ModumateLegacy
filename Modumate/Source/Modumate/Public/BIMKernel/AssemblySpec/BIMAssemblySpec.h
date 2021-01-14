@@ -109,7 +109,7 @@ public:
 
 	EBIMResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FGuid& PresetID);
 
-	Modumate::Units::FUnitValue CalculateThickness() const;
+	FModumateUnitValue CalculateThickness() const;
 
 	EBIMResult ReverseLayers();
 

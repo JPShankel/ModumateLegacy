@@ -4,7 +4,7 @@
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "Algo/Transform.h"
 
-TMap<FString, Modumate::Units::FUnitValue> FBIMPartSlotSpec::DefaultNamedParameterMap;
+TMap<FString, FModumateUnitValue> FBIMPartSlotSpec::DefaultNamedParameterMap;
 
 EBIMResult FBIMPartSlotSpec::BuildFromProperties(const FModumateDatabase& InDB)
 {
@@ -13,9 +13,9 @@ EBIMResult FBIMPartSlotSpec::BuildFromProperties(const FModumateDatabase& InDB)
 	return EBIMResult::Error;
 }
 
-bool FBIMPartSlotSpec::TryGetDefaultNamedParameter(const FString& Name, Modumate::Units::FUnitValue& OutVal)
+bool FBIMPartSlotSpec::TryGetDefaultNamedParameter(const FString& Name, FModumateUnitValue& OutVal)
 {
-	Modumate::Units::FUnitValue* val = DefaultNamedParameterMap.Find(Name);
+	FModumateUnitValue* val = DefaultNamedParameterMap.Find(Name);
 	if (val == nullptr)
 	{
 		return false;

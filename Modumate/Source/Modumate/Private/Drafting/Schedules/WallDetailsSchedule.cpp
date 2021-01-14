@@ -8,8 +8,6 @@
 #include "Drafting/Schedules/ScheduleGrid.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 
-using namespace Modumate::Units;
-
 #define LOCTEXT_NAMESPACE "ModumateWallDetailsSchedule"
 
 namespace Modumate {
@@ -17,7 +15,7 @@ namespace Modumate {
 	{
 		Title = MakeShareable(new FDraftingText(
 			LOCTEXT("title", "Wall Schedule: Assembly Details"),
-			FFontSize::FloorplanInches(TitleHeight),
+			ModumateUnitParams::FFontSize::FloorplanInches(TitleHeight),
 			DefaultColor,
 			FontType::Bold));
 
@@ -55,7 +53,7 @@ namespace Modumate {
 			// Icon thumbnail
 			FName key = UThumbnailCacheManager::GetThumbnailKeyForAssembly(assembly);
 			FString path = UThumbnailCacheManager::GetThumbnailCachePathForKey(key);
-			FCoordinates2D imageSize = FCoordinates2D(FXCoord::FloorplanInches(1.0f), FYCoord::FloorplanInches(1.0f));
+			FModumateUnitCoord2D imageSize = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(1.0f), ModumateUnitParams::FYCoord::FloorplanInches(1.0f));
 			iconData.Add(MakeShareable(new FImagePrimitive(path, imageSize)));
 
 			TSharedPtr<FScheduleGrid> assemblyGrid = MakeShareable(new FScheduleGrid());
@@ -117,7 +115,7 @@ namespace Modumate {
 				materialTag->Material = FText::FromString(layer.CodeName);
 				materialTag->Sequence = FText::FromString(layer.PresetSequence);
 
-				Modumate::Units::FUnitValue thicknessUnits = Modumate::Units::FUnitValue::WorldCentimeters(layer.ThicknessCentimeters);
+				FModumateUnitValue thicknessUnits = FModumateUnitValue::WorldCentimeters(layer.ThicknessCentimeters);
 				FString imperial = UModumateDimensionStatics::DecimalToFractionString(thicknessUnits.AsWorldInches());
 				auto imperialList = UModumateDimensionStatics::DecimalToFraction(thicknessUnits.AsWorldInches());
 				materialTag->ThicknessFraction = imperialList;
@@ -200,7 +198,7 @@ namespace Modumate {
 		Title->MoveYTo(Title->Dimensions.Y * -1.0f);
 
 		Dimensions = Title->Dimensions;
-		Dimensions.Y += FYCoord::FloorplanInches(TitleMargin);
+		Dimensions.Y += ModumateUnitParams::FYCoord::FloorplanInches(TitleMargin);
 
 		if (assemblyData.Num() != iconData.Num())
 		{
@@ -215,7 +213,7 @@ namespace Modumate {
 			{
 				error = grid->InitializeBounds(drawingInterface);
 				icon->MoveYTo((Dimensions.Y + icon->Dimensions.Y) * -1.0f);
-				FXCoord iconX = icon->Dimensions.X + FXCoord::FloorplanInches(Margin * 2.0f);
+				ModumateUnitParams::FXCoord iconX = icon->Dimensions.X + ModumateUnitParams::FXCoord::FloorplanInches(Margin * 2.0f);
 				grid->SetLocalPosition(iconX, Dimensions.Y * -1.0f);
 
 				Dimensions.X = grid->Dimensions.X + iconX > Dimensions.X ? grid->Dimensions.X + iconX : Dimensions.X;
@@ -227,7 +225,7 @@ namespace Modumate {
 
 			if (i != assemblyData.Num() - 1)
 			{
-				Dimensions.Y += FYCoord::FloorplanInches(ScheduleMargin);
+				Dimensions.Y += ModumateUnitParams::FYCoord::FloorplanInches(ScheduleMargin);
 			}
 		}
 

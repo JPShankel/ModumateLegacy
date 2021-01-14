@@ -3,6 +3,7 @@
 #include "Components/EditableTextBox.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "UI/EditModelPlayerHUD.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 #define LOCTEXT_NAMESPACE "UDimensionWidget"
@@ -86,7 +87,7 @@ void UDimensionWidget::UpdateDegreeTransform(const FVector2D position, FVector2D
 void UDimensionWidget::SanitizeInput(float InLength, FText &OutText)
 {
 	// TODO: this is assuming the input is in cm, because that's how the data is stored in the volume graph
-	InLength /= Modumate::InchesToCentimeters;
+	InLength /= UModumateDimensionStatics::InchesToCentimeters;
 
 	// TODO: potentially this is a project setting
 	int32 tolerance = 64;

@@ -48,7 +48,7 @@ EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
 				module.Material.Color = FColor::FromHex(colorHexValue);
 			}
 
-			Modumate::Units::FUnitValue dimension = Modumate::Units::FUnitValue::WorldCentimeters(0.0f);
+			FModumateUnitValue dimension = FModumateUnitValue::WorldCentimeters(0.0f);
 			if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, dimension))
 			{
 				if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, dimension))
@@ -100,7 +100,7 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 		For now "everyone has a depth or a length and a thickness and a width" is a reasonable approximation
 		*/
 		
-		Modumate::Units::FUnitValue bevelWidth;
+		FModumateUnitValue bevelWidth;
 		if (modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::BevelWidth, bevelWidth))
 		{
 			module.BevelWidthCentimeters = bevelWidth.AsWorldCentimeters();

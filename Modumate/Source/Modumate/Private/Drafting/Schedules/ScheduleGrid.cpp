@@ -1,8 +1,6 @@
 #include "Drafting/Schedules/ScheduleGrid.h"
 #include "Drafting/ModumateDraftingElements.h"
 
-using namespace Modumate::Units;
-
 namespace Modumate {
 
 	EDrawError FScheduleGrid::MakeRow(TArray<TSharedPtr<FDraftingComposite>> row)
@@ -17,10 +15,10 @@ namespace Modumate {
 			auto column = Columns->Children[i];
 
 			column->Children.Add(row[i]);
-			row[i]->MoveYTo(FYCoord::FloorplanInches(-1.0f * column->Children.Num() * RowHeight));
+			row[i]->MoveYTo(ModumateUnitParams::FYCoord::FloorplanInches(-1.0f * column->Children.Num() * RowHeight));
 		}
 
-		Dimensions.Y = Dimensions.Y + FYCoord::FloorplanInches(RowHeight);
+		Dimensions.Y = Dimensions.Y + ModumateUnitParams::FYCoord::FloorplanInches(RowHeight);
 
 		return EDrawError::ErrorNone;
 	}
@@ -35,7 +33,7 @@ namespace Modumate {
 	{
 		Columns.Reset();
 
-		Dimensions = Units::FCoordinates2D::FloorplanInches(FVector2D::ZeroVector);
+		Dimensions = FModumateUnitCoord2D::FloorplanInches(FVector2D::ZeroVector);
 
 		Columns = MakeShareable(new FDraftingComposite());
 		for (auto header : ColumnData)
@@ -51,7 +49,7 @@ namespace Modumate {
 					DefaultAlignment));
 
 				column->Children.Add(text);
-				text->MoveYTo(FYCoord::FloorplanInches(-1.0f * column->Children.Num() * RowHeight));
+				text->MoveYTo(ModumateUnitParams::FYCoord::FloorplanInches(-1.0f * column->Children.Num() * RowHeight));
 			}
 
 			Columns->Children.Add(column);
@@ -65,17 +63,17 @@ namespace Modumate {
 	{
 		EDrawError error = EDrawError::ErrorNone;
 
-		TArray<FYCoord> ySum;
+		TArray<ModumateUnitParams::FYCoord> ySum;
 		for (int32 i = 0; i < Columns->Children[0]->Children.Num(); i++)
 		{
-			FYCoord maxY = FYCoord::FloorplanInches(0.0f);
+			ModumateUnitParams::FYCoord maxY = ModumateUnitParams::FYCoord::FloorplanInches(0.0f);
 			for (int32 j = 0; j < Columns->Children.Num(); j++)
 			{
-				FYCoord currentY = Columns->Children[j]->Children[i]->GetDimensions(drawingInterface).Y;
+				ModumateUnitParams::FYCoord currentY = Columns->Children[j]->Children[i]->GetDimensions(drawingInterface).Y;
 				maxY = currentY > maxY ? currentY : maxY;
 			}
 
-			maxY += FYCoord::FloorplanInches(2.0f * Margin);
+			maxY += ModumateUnitParams::FYCoord::FloorplanInches(2.0f * Margin);
 			ySum.Add(maxY);
 			if (i != 0)
 			{
@@ -90,7 +88,7 @@ namespace Modumate {
 			xOffset += 2.0f * Margin;
 
 			TSharedPtr<FDraftingElement> column = Columns->Children[i];
-			column->MoveXTo(FXCoord::FloorplanInches(xOffset));
+			column->MoveXTo(ModumateUnitParams::FXCoord::FloorplanInches(xOffset));
 
 			float maxWidth = 0.0f;
 			for (int32 j = 0; j < column->Children.Num(); j++)
@@ -100,7 +98,7 @@ namespace Modumate {
 				float currentWidth = child->GetDimensions(drawingInterface).X.AsFloorplanInches();
 				maxWidth = currentWidth > maxWidth ? currentWidth : maxWidth;
 
-				FYCoord currentRowHeight = j == 0 ? ySum[j] : ySum[j] - ySum[j - 1];
+				ModumateUnitParams::FYCoord currentRowHeight = j == 0 ? ySum[j] : ySum[j] - ySum[j - 1];
 
 				child->MoveYTo(ySum[j] * -1.0f + currentRowHeight / 2.0f);
 				child->VerticalAlignment = DraftingAlignment::Center;
@@ -110,7 +108,7 @@ namespace Modumate {
 			xOffset += ColumnMargin;
 		}
 
-		Dimensions.X = FXCoord::FloorplanInches(xOffset);
+		Dimensions.X = ModumateUnitParams::FXCoord::FloorplanInches(xOffset);
 		Dimensions.Y = ySum[Columns->Children[0]->Children.Num() - 1];
 
 		if (bShowLines)
@@ -118,11 +116,11 @@ namespace Modumate {
 			for (int32 i = 0; i <= Columns->Children[0]->Children.Num(); i++)
 			{
 				TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(
-					FLength::FloorplanInches(xOffset),
-					FThickness::FloorplanInches(LineWidth)));
+					ModumateUnitParams::FLength::FloorplanInches(xOffset),
+					ModumateUnitParams::FThickness::FloorplanInches(LineWidth)));
 				if (i == 0)
 				{
-					line->MoveYTo(FYCoord::FloorplanInches(0.0f));
+					line->MoveYTo(ModumateUnitParams::FYCoord::FloorplanInches(0.0f));
 				}
 				else
 				{
@@ -132,20 +130,20 @@ namespace Modumate {
 				Children.Add(line);
 			}
 
-			FYCoord vertLineY = FYCoord::FloorplanInches(-Dimensions.Y.AsFloorplanInches());
+			ModumateUnitParams::FYCoord vertLineY = ModumateUnitParams::FYCoord::FloorplanInches(-Dimensions.Y.AsFloorplanInches());
 
 			TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(
-				FLength::FloorplanInches(Dimensions.Y.AsFloorplanInches()),
-				FThickness::FloorplanInches(LineWidth)));
-			line->SetLocalOrientation(FAngle::Degrees(90.0f));
+				ModumateUnitParams::FLength::FloorplanInches(Dimensions.Y.AsFloorplanInches()),
+				ModumateUnitParams::FThickness::FloorplanInches(LineWidth)));
+			line->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(90.0f));
 			line->MoveYTo(vertLineY);
 			Children.Add(line);
 
 			line = MakeShareable(new FDraftingLine(
-				FLength::FloorplanInches(Dimensions.Y.AsFloorplanInches()),
-				FThickness::FloorplanInches(LineWidth)));
-			line->SetLocalOrientation(FAngle::Degrees(90.0f));
-			line->SetLocalPosition(FXCoord::FloorplanInches(xOffset), vertLineY);
+				ModumateUnitParams::FLength::FloorplanInches(Dimensions.Y.AsFloorplanInches()),
+				ModumateUnitParams::FThickness::FloorplanInches(LineWidth)));
+			line->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(90.0f));
+			line->SetLocalPosition(ModumateUnitParams::FXCoord::FloorplanInches(xOffset), vertLineY);
 			Children.Add(line);
 		}
 

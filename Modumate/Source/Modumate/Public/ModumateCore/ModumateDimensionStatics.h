@@ -47,4 +47,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static FText ImperialInchesToDimensionStringText(UPARAM(ref) TArray<int32>& Imperial);
 
+	static constexpr float InchesToCentimeters = 2.54f;
+	static constexpr float CentimetersToInches = 1.0f / InchesToCentimeters;
+	static constexpr float InchesPerFoot = 12.0f;
 };

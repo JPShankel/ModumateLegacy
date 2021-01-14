@@ -24,7 +24,6 @@
 #include "UI/DimensionManager.h"
 #include "UI/EditModelPlayerHUD.h"
 
-using namespace Modumate::Units;
 
 AMOICabinet::AMOICabinet()
 	: AModumateObjectInstance()
@@ -572,7 +571,7 @@ void AMOICabinet::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentP
 	const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 	TArray<TArray<FVector>> &OutPerimeters) const
 {
-	static const Units::FThickness lineThickness = FThickness::Points(0.25f);
+	static const ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.25f);
 	static const FMColor lineColor = FMColor::Black;
 	static FModumateLayerType dwgLayerType = FModumateLayerType::kCabinetCutCarcass;
 	OutPerimeters.Reset();
@@ -640,8 +639,8 @@ void AMOICabinet::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentP
 			if (UModumateFunctionLibrary::ClipLine2DToRectangle(lineStart, lineEnd, BoundingBox, clippedStart, clippedEnd))
 			{
 				TSharedPtr<Modumate::FDraftingLine> clippedLine = MakeShared<Modumate::FDraftingLine>(
-					Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
-					Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+					FModumateUnitCoord2D::WorldCentimeters(clippedStart),
+					FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 					lineThickness, lineColor);
 				ParentPage->Children.Add(clippedLine);
 				clippedLine->SetLayerTypeRecursive(dwgLayerType);
@@ -684,9 +683,9 @@ void AMOICabinet::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentP
 				{
 
 					TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
-						Units::FCoordinates2D::WorldCentimeters(boxClipped0),
-						Units::FCoordinates2D::WorldCentimeters(boxClipped1),
-						Units::FThickness::Points(0.15f), FMColor::Gray144);
+						FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
+						FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
+						ModumateUnitParams::FThickness::Points(0.15f), FMColor::Gray144);
 					ParentPage->Children.Add(line);
 					line->SetLayerTypeRecursive(FModumateLayerType::kCabinetBeyond);
 				}

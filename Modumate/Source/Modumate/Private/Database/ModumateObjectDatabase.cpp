@@ -4,6 +4,7 @@
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateUserSettings.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "Misc/FileHelper.h"
 #include "Serialization/Csv/CsvParser.h"
@@ -213,7 +214,7 @@ void FModumateDatabase::ReadPresetData()
 			if (ensureAlways(partValPair.Num() == 2))
 			{
 				float inches = FCString::Atof(*partValPair[1].TrimStartAndEnd());
-				FBIMPartSlotSpec::DefaultNamedParameterMap.Add(partValPair[0].TrimStartAndEnd(), Modumate::Units::FUnitValue::WorldInches(inches));
+				FBIMPartSlotSpec::DefaultNamedParameterMap.Add(partValPair[0].TrimStartAndEnd(), FModumateUnitValue::WorldInches(inches));
 			}
 		}
 	}
@@ -273,16 +274,16 @@ void FModumateDatabase::ReadPresetData()
 				Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("NativeSizeX")),
 				Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("NativeSizeY")),
 				Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("NativeSizeZ"))
-			) * Modumate::CentimetersToInches;
+			) * UModumateDimensionStatics::CentimetersToInches;
 
 			FBox nineSlice(
 				FVector(Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceX1")),
 					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceY1")),
-					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceZ1"))) * Modumate::CentimetersToInches,
+					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceZ1"))) * UModumateDimensionStatics::CentimetersToInches,
 
 				FVector(Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceX2")),
 					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceY2")),
-					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceZ2"))) * Modumate::CentimetersToInches
+					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceZ2"))) * UModumateDimensionStatics::CentimetersToInches
 			);
 
 			FString name;
@@ -635,7 +636,7 @@ void FModumateDatabase::InitPresetManagerForNewDocument(FPresetManager &OutManag
 
 bool FModumateDatabase::UnitTest()
 {
-	bool success = true;
+	bool success = PresetManager.AssembliesByObjectType.Num() > 0;
 	for (auto& kvdp : PresetManager.AssembliesByObjectType)
 	{
 		// Furniture is not crafted

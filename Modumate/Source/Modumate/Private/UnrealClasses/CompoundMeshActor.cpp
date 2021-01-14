@@ -16,6 +16,7 @@
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "ModumateCore/ModumateStats.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 #include "UnrealClasses/EditModelGameMode_CPP.h"
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 #include "DocumentManagement/ModumateDocument.h"
@@ -165,7 +166,7 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 
 		const FVector& partRelativePos = CachedPartLayout.PartSlotInstances[slotIdx].Location;
 		FRotator partRotator = FRotator::MakeFromEuler(CachedPartLayout.PartSlotInstances[slotIdx].Rotation);
-		FVector partNativeSize = assemblyPart.Mesh.NativeSize * Modumate::InchesToCentimeters;
+		FVector partNativeSize = assemblyPart.Mesh.NativeSize * UModumateDimensionStatics::InchesToCentimeters;
 
 		FVector partScale = CachedPartLayout.PartSlotInstances[slotIdx].Size / partNativeSize;
 
@@ -176,8 +177,8 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 #endif // DEBUG_NINE_SLICING
 
 		FBox nineSliceInterior = assemblyPart.Mesh.NineSliceBox;
-		nineSliceInterior.Min *= Modumate::InchesToCentimeters;
-		nineSliceInterior.Max *= Modumate::InchesToCentimeters;
+		nineSliceInterior.Min *= UModumateDimensionStatics::InchesToCentimeters;
+		nineSliceInterior.Max *= UModumateDimensionStatics::InchesToCentimeters;
 		FBox nativeExteriorSizes(nineSliceInterior.Min, partNativeSize - nineSliceInterior.Max);
 		FVector minNativeExteriorSizes = nativeExteriorSizes.Min.ComponentMin(nativeExteriorSizes.Max);
 
@@ -722,7 +723,7 @@ bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<Modumate::FDr
 
 		}
 
-		Modumate::Units::FThickness defaultThickness = Modumate::Units::FThickness::Points(0.1f);
+		ModumateUnitParams::FThickness defaultThickness = ModumateUnitParams::FThickness::Points(0.1f);
 		Modumate::FMColor defaultColor = Modumate::FMColor::Gray64;
 		Modumate::FMColor swingColor = Modumate::FMColor::Gray160;
 		static constexpr float defaultDoorOpeningDegrees = 90.0f;
@@ -733,8 +734,8 @@ bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<Modumate::FDr
 			FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Value);
 
 			TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
-				Modumate::Units::FCoordinates2D::WorldCentimeters(start),
-				Modumate::Units::FCoordinates2D::WorldCentimeters(end),
+				FModumateUnitCoord2D::WorldCentimeters(start),
+				FModumateUnitCoord2D::WorldCentimeters(end),
 				defaultThickness, defaultColor);
 			line->SetLayerTypeRecursive(layerType);
 			ParentPage->Children.Add(line);
@@ -942,9 +943,9 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 		{
 
 			TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
-				Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
-				Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
-				Modumate::Units::FThickness::Points(0.125f), Modumate::FMColor::Gray64);
+				FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
+				FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
+				ModumateUnitParams::FThickness::Points(0.125f), Modumate::FMColor::Gray64);
 			ParentPage->Children.Add(line);
 			line->SetLayerTypeRecursive(layerType);
 		}

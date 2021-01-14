@@ -310,9 +310,9 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 {
 	OutPerimeters.Reset();
 
-	Modumate::Units::FThickness innerThickness = Modumate::Units::FThickness::Points(0.125f);
-	Modumate::Units::FThickness structureThickness = Modumate::Units::FThickness::Points(0.375f);
-	Modumate::Units::FThickness outerThickness = Modumate::Units::FThickness::Points(0.25f);
+	ModumateUnitParams::FThickness innerThickness = ModumateUnitParams::FThickness::Points(0.125f);
+	ModumateUnitParams::FThickness structureThickness = ModumateUnitParams::FThickness::Points(0.375f);
+	ModumateUnitParams::FThickness outerThickness = ModumateUnitParams::FThickness::Points(0.25f);
 
 	Modumate::FMColor innerColor = Modumate::FMColor::Gray64;
 	Modumate::FMColor outerColor = Modumate::FMColor::Gray32;
@@ -366,7 +366,7 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 			// we can make mask perimeters when there are an even amount of intersection between a simple polygon and a plane
 			bool bMakeMaskPerimeter = (intersections.Num() % 2 == 0);
 
-			Modumate::Units::FThickness lineThickness;
+			ModumateUnitParams::FThickness lineThickness;
 			Modumate::FMColor lineColor = innerColor;
 			if (FMath::IsNearlyEqual(currentThickness, CachedLayerDims.StructureWidthStart) ||
 				FMath::IsNearlyEqual(currentThickness, CachedLayerDims.StructureWidthEnd, KINDA_SMALL_NUMBER))
@@ -437,8 +437,8 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 					if (UModumateFunctionLibrary::ClipLine2DToRectangle(rangeStart, rangeEnd, BoundingBox, clippedStart, clippedEnd))
 					{
 						TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
-							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
-							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+							FModumateUnitCoord2D::WorldCentimeters(clippedStart),
+							FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 							lineThickness, lineColor);
 						ParentPage->Children.Add(line);
 						line->SetLayerTypeRecursive(dwgLayerType);
@@ -448,8 +448,8 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 						if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint], rangeStart, BoundingBox, clippedStart, clippedEnd))
 						{
 							TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
-								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
-								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+								FModumateUnitCoord2D::WorldCentimeters(clippedStart),
+								FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 								lineThickness, lineColor);
 							ParentPage->Children.Add(line);
 							line->SetLayerTypeRecursive(layerTypeOuterSurface);
@@ -457,8 +457,8 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 						if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint+1], rangeEnd, BoundingBox, clippedStart, clippedEnd))
 						{
 							TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
-								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
-								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+								FModumateUnitCoord2D::WorldCentimeters(clippedStart),
+								FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 								lineThickness, lineColor);
 							ParentPage->Children.Add(line);
 							line->SetLayerTypeRecursive(layerTypeOuterSurface);
@@ -593,7 +593,7 @@ void AMOIPlaneHostedObj::MarkEdgesMiterDirty()
 void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FBox2D& BoundingBox) const
 {
-	static const Modumate::Units::FThickness outerThickness = Modumate::Units::FThickness::Points(0.25f);
+	static const ModumateUnitParams::FThickness outerThickness = ModumateUnitParams::FThickness::Points(0.25f);
 
 	const AModumateObjectInstance *parent = GetParentObject();
 	FVector parentLocation = parent->GetLocation();
@@ -705,8 +705,8 @@ void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraf
 					if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 					{
 						TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShared<Modumate::FDraftingLine>(
-							Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
-							Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
+							FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
+							FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
 							outerThickness, Modumate::FMColor::Black);
 						ParentPage->Children.Add(draftingLine);
 						draftingLine->SetLayerTypeRecursive(line.Value);

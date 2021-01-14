@@ -219,9 +219,9 @@ void AMOITrim::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& 
 			if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 			{
 				TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
-					Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
-					Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
-					Modumate::Units::FThickness::Points(bool(clippedLine.Count) ? 0.15f : 0.05f),
+					FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
+					FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
+					ModumateUnitParams::FThickness::Points(bool(clippedLine.Count) ? 0.15f : 0.05f),
 					Modumate::FMColor::Gray128);
 				ParentPage->Children.Add(line);
 				line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kSeparatorBeyondModuleEdges);

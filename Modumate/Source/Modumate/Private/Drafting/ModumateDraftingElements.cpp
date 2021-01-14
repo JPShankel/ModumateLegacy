@@ -5,20 +5,20 @@ namespace Modumate
 {
 	FDraftingElement::~FDraftingElement() { ClearChildren(); }
 
-	void FDraftingElement::SetLocalTransform(Units::FCoordinates2D position, Units::FAngle orientation, float scale) {
+	void FDraftingElement::SetLocalTransform(FModumateUnitCoord2D position, ModumateUnitParams::FAngle orientation, float scale) {
 		SetLocalPosition(position);
 		SetLocalOrientation(orientation);
 		SetLocalScale(scale);
 	}
 
 	void FDraftingElement::ApplyTransform(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D& position,
-		Units::FAngle& orientation,
+		FModumateUnitCoord2D& position,
+		ModumateUnitParams::FAngle& orientation,
 		float& scale)
 	{
 
 		// calculate composite position
-		Units::FCoordinates2D parentPosition = position;
+		FModumateUnitCoord2D parentPosition = position;
 
 		float x = Position.X.AsWorldCentimeters(drawingInterface->DrawingScale);
 		float y = Position.Y.AsWorldCentimeters(drawingInterface->DrawingScale);
@@ -26,7 +26,7 @@ namespace Modumate
 		// accommodate for element alignment
 		// Default implementation of GetDimensions returns the Dimension member variable -
 		// the member variable has default values of zero so that this code has no effect without intention
-		Units::FCoordinates2D dimensions = GetDimensions(drawingInterface);
+		FModumateUnitCoord2D dimensions = GetDimensions(drawingInterface);
 		float w = dimensions.X.AsWorldCentimeters(drawingInterface->DrawingScale);
 		float h = dimensions.Y.AsWorldCentimeters(drawingInterface->DrawingScale);
 
@@ -54,14 +54,14 @@ namespace Modumate
 		float rx = x * FMath::Cos(parentRadians) - y * FMath::Sin(parentRadians);
 		float ry = x * FMath::Sin(parentRadians) + y * FMath::Cos(parentRadians);
 
-		position = parentPosition + Units::FCoordinates2D(Units::FXCoord::WorldCentimeters(rx), Units::FYCoord::WorldCentimeters(ry));
+		position = parentPosition + FModumateUnitCoord2D(ModumateUnitParams::FXCoord::WorldCentimeters(rx), ModumateUnitParams::FYCoord::WorldCentimeters(ry));
 
 		// calculate composite orientation
 		float parentDegrees = orientation.AsDegrees();
 		float compositeDegrees = Orientation.AsDegrees();
 
 		float degrees = FRotator::ClampAxis(parentDegrees + compositeDegrees);
-		orientation = Units::FAngle::Degrees(degrees);
+		orientation = ModumateUnitParams::FAngle::Degrees(degrees);
 
 		// calculate composite scale
 		scale = scale * Scale;
@@ -69,8 +69,8 @@ namespace Modumate
 	}
 
 	FBox2D FDraftingElement::MakeAABB(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		return BoundingBox;
@@ -91,8 +91,8 @@ namespace Modumate
 	}
 
 	EDrawError FDraftingComposite::Draw(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		EDrawError error = EDrawError::ErrorNone;
@@ -127,7 +127,7 @@ namespace Modumate
 		return error;
 	}
 
-	Units::FCoordinates2D FDraftingComposite::GetDimensions(IModumateDraftingDraw *drawingInterface)
+	FModumateUnitCoord2D FDraftingComposite::GetDimensions(IModumateDraftingDraw *drawingInterface)
 	{
 		return Dimensions;
 	}
@@ -155,8 +155,8 @@ namespace Modumate
 	}
 
 	FBox2D FDraftingComposite::MakeAABB(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		FBox2D aabb = FBox2D();
@@ -197,8 +197,8 @@ namespace Modumate
 	}
 
 	EDrawError FTextPrimitive::Draw(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position,
-			Units::FAngle orientation,
+			FModumateUnitCoord2D position,
+			ModumateUnitParams::FAngle orientation,
 			float scale)
 	{
 		EDrawError error = EDrawError::ErrorNone;
@@ -215,7 +215,7 @@ namespace Modumate
 		float expectedOrientation = FRotator::ClampAxis(orientation.AsDegrees());
 		if (expectedOrientation > 90.0f && expectedOrientation < 270.0f)
 		{
-			orientation = Units::FAngle::Degrees(FRotator::ClampAxis(orientation.AsDegrees() + 180.0f));
+			orientation = ModumateUnitParams::FAngle::Degrees(FRotator::ClampAxis(orientation.AsDegrees() + 180.0f));
 
 			switch (TextAlignment)
 			{
@@ -239,8 +239,8 @@ namespace Modumate
 	}
 
 	FBox2D FTextPrimitive::MakeAABB(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		ApplyTransform(drawingInterface, position, orientation, scale);
@@ -269,19 +269,19 @@ namespace Modumate
 
 	float FTextPrimitive::GetWidth(IModumateDraftingDraw *drawingInterface)
 	{
-		Units::FUnitValue len = Units::FUnitValue::Points(0);
+		FModumateUnitValue len = FModumateUnitValue::Points(0);
 		drawingInterface->GetTextLength(*Text, FontSize, len, TextFontName);
 		return len.AsFloorplanInches(drawingInterface->DrawingScale);
 	}
 
 	FDraftingText::FDraftingText(
 		FText text,
-		Units::FFontSize fontSize,
+		ModumateUnitParams::FFontSize fontSize,
 		FMColor color,
 		FontType type,
 		DraftingAlignment justify,
-		Units::FAngle angle,
-		Units::FWidth width)
+		ModumateUnitParams::FAngle angle,
+		ModumateUnitParams::FWidth width)
 	{
 		// save child for use with getting dimensions later on
 		Child = MakeShareable(new FTextPrimitive(text.ToString(), fontSize, color, type, justify, angle, width));
@@ -290,8 +290,8 @@ namespace Modumate
 	}
 
 	EDrawError FDraftingText::Draw(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		// sanitize orientation value so that text always faces up,
@@ -299,7 +299,7 @@ namespace Modumate
 		float expectedOrientation = FRotator::ClampAxis(orientation.AsDegrees() + Orientation.AsDegrees());
 		if (expectedOrientation > 90.0f && expectedOrientation < 270.0f)
 		{
-			Position.Y = Units::FYCoord::WorldCentimeters(Position.Y.AsWorldCentimeters(drawingInterface->DrawingScale) + GetDimensions(drawingInterface).Y.AsWorldCentimeters(drawingInterface->DrawingScale));
+			Position.Y = ModumateUnitParams::FYCoord::WorldCentimeters(Position.Y.AsWorldCentimeters(drawingInterface->DrawingScale) + GetDimensions(drawingInterface).Y.AsWorldCentimeters(drawingInterface->DrawingScale));
 		}
 		return FDraftingComposite::Draw(drawingInterface, position, orientation, scale);
 	}
@@ -312,8 +312,8 @@ namespace Modumate
 			return EDrawError::ErrorException;
 		}
 
-		ensure(Child->FontSize.GetUnitType() == Units::EUnitType::FontHeight || Child->FontSize.GetUnitType() == Units::EUnitType::FloorplanInches);
-		ensure(Child->ContainerWidth.GetUnitType() == Units::EUnitType::FloorplanInches);
+		ensure(Child->FontSize.GetUnitType() == EModumateUnitType::FontHeight || Child->FontSize.GetUnitType() == EModumateUnitType::FloorplanInches);
+		ensure(Child->ContainerWidth.GetUnitType() == EModumateUnitType::FloorplanInches);
 
 		float width = Child->GetWidth(drawingInterface);
 		float height = Child->FontSize.AsFloorplanInches();
@@ -345,13 +345,13 @@ namespace Modumate
 			}
 			words.Add(splitString);
 
-			Units::FUnitValue len;
+			FModumateUnitValue len;
 			drawingInterface->GetTextLength(*Delimiter,Child->FontSize,len,Child->TextFontName);
 			float delimiterSize = len.AsFloorplanInches();
 
 			FString currentLine;
 			float xOffset = 0.0f;
-			Dimensions.X = Units::FXCoord::FloorplanInches(0.0f);
+			Dimensions.X = ModumateUnitParams::FXCoord::FloorplanInches(0.0f);
 
 			for (auto w : words)
 			{
@@ -362,7 +362,7 @@ namespace Modumate
 				{
 					if (xOffset > Dimensions.X.AsFloorplanInches())
 					{
-						Dimensions.X = Units::FXCoord::FloorplanInches(xOffset);
+						Dimensions.X = ModumateUnitParams::FXCoord::FloorplanInches(xOffset);
 					}
 
 					Children.Add(MakeShareable(new FTextPrimitive(currentLine, Child->FontSize, Child->Color, Child->TextFontName, Child->TextAlignment, Child->Angle, Child->ContainerWidth)));
@@ -382,23 +382,23 @@ namespace Modumate
 			float yOffset = RowMargin;
 			for (int32 i = Children.Num()-1; i >= 0; i--)
 			{
-				Children[i]->MoveYTo(Units::FYCoord::FloorplanInches(yOffset));
+				Children[i]->MoveYTo(ModumateUnitParams::FYCoord::FloorplanInches(yOffset));
 
 				yOffset += Child->FontSize.AsFloorplanInches() + RowMargin;
 			}
-			Dimensions.Y = Units::FYCoord::FloorplanInches(yOffset);
+			Dimensions.Y = ModumateUnitParams::FYCoord::FloorplanInches(yOffset);
 
 		}
 		else
 		{
-			Dimensions = Units::FCoordinates2D(Units::FXCoord::FloorplanInches(width), Units::FYCoord::FloorplanInches(height));
+			Dimensions = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(width), ModumateUnitParams::FYCoord::FloorplanInches(height));
 		}
 
 
 		return EDrawError::ErrorNone;
 	}
 
-	Units::FCoordinates2D FDraftingText::GetDimensions(IModumateDraftingDraw *drawingInterface)
+	FModumateUnitCoord2D FDraftingText::GetDimensions(IModumateDraftingDraw *drawingInterface)
 	{
 		// TODO: this is inconsistent with the rest of the objects; potentially GetDimensions can be deprecated entirely,
 		// since Dimensions has been promoted to FDraftingElement and should be populated through InitializeBounds
@@ -411,50 +411,50 @@ namespace Modumate
 	}
 
 	FDraftingTick::FDraftingTick(
-		Units::FLength length,
-		Units::FThickness thickness,
+		ModumateUnitParams::FLength length,
+		ModumateUnitParams::FThickness thickness,
 		FMColor color,
 		LinePattern linePattern,
-		Units::FPhase phase)
+		ModumateUnitParams::FPhase phase)
 	{
 		TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(length,thickness,color,linePattern,phase));
-		line->SetLocalOrientation(Units::FAngle::Degrees(45));
+		line->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(45));
 		Children.Add(line);
 
 		line = MakeShareable(new FDraftingLine(length,thickness,color,linePattern,phase));
-		line->SetLocalOrientation(Units::FAngle::Degrees(225));
+		line->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(225));
 		Children.Add(line);
 	}
 
 	FDraftingRectangle::FDraftingRectangle(
-		Units::FCoordinates2D dimensions,
-		Units::FThickness thickness,
+		FModumateUnitCoord2D dimensions,
+		ModumateUnitParams::FThickness thickness,
 		FMColor color,
 		LinePattern linePattern,
-		Units::FPhase phase)
+		ModumateUnitParams::FPhase phase)
 	{
 		Dimensions = dimensions;
 
-		TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(Units::FLength(dimensions.X), thickness, color));
-		line->SetLocalOrientation(Units::FAngle::Degrees(0));
+		TSharedPtr<FDraftingLine> line = MakeShareable(new FDraftingLine(ModumateUnitParams::FLength(dimensions.X), thickness, color));
+		line->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(0));
 		Children.Add(line);
 
-		line = MakeShareable(new FDraftingLine(Units::FLength(dimensions.X), thickness, color));
-		line->SetLocalPosition(Units::FCoordinates2D(dimensions.X*0.0f, dimensions.Y));
-		line->SetLocalOrientation(Units::FAngle::Degrees(0));
+		line = MakeShareable(new FDraftingLine(ModumateUnitParams::FLength(dimensions.X), thickness, color));
+		line->SetLocalPosition(FModumateUnitCoord2D(dimensions.X*0.0f, dimensions.Y));
+		line->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(0));
 		Children.Add(line);
 
-		line = MakeShareable(new FDraftingLine(Units::FLength(dimensions.Y), thickness, color));
-		line->SetLocalOrientation(Units::FAngle::Degrees(90));
+		line = MakeShareable(new FDraftingLine(ModumateUnitParams::FLength(dimensions.Y), thickness, color));
+		line->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(90));
 		Children.Add(line);
 
-		line = MakeShareable(new FDraftingLine(Units::FLength(dimensions.Y), thickness, color));
-		line->SetLocalPosition(Units::FCoordinates2D(dimensions.X, dimensions.Y*0.0f));
-		line->SetLocalOrientation(Units::FAngle::Degrees(90));
+		line = MakeShareable(new FDraftingLine(ModumateUnitParams::FLength(dimensions.Y), thickness, color));
+		line->SetLocalPosition(FModumateUnitCoord2D(dimensions.X, dimensions.Y*0.0f));
+		line->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(90));
 		Children.Add(line);
 	}
 
-	FDraftingFraction::FDraftingFraction(FText numerator, FText denominator, Units::FFontSize fontSize, Units::FThickness lineWidth, FMColor color)
+	FDraftingFraction::FDraftingFraction(FText numerator, FText denominator, ModumateUnitParams::FFontSize fontSize, ModumateUnitParams::FThickness lineWidth, FMColor color)
 		: Numerator(numerator), Denominator(denominator), FontSize(fontSize), LineWidth(lineWidth), Color(color)
 	{
 
@@ -466,11 +466,11 @@ namespace Modumate
 		TSharedPtr<FDraftingText> denominatorText = MakeShareable(new FDraftingText(Denominator, FontSize, Color));
 
 		// derive tick length (line at 45 degrees) matching half of the text height
-		Units::FLength tickLength = Units::FLength::WorldCentimeters(FontSize.AsWorldCentimeters(drawingInterface->DrawingScale) / 2.0f) * FMath::Sqrt(2);
+		ModumateUnitParams::FLength tickLength = ModumateUnitParams::FLength::WorldCentimeters(FontSize.AsWorldCentimeters(drawingInterface->DrawingScale) / 2.0f) * FMath::Sqrt(2);
 		TSharedPtr<FDraftingTick> divider = MakeShareable(new FDraftingTick(tickLength, LineWidth, Color));
 
-		Units::FCoordinates2D numeratorDimensions = numeratorText->GetDimensions(drawingInterface);
-		Units::FCoordinates2D denominatorDimensions = denominatorText->GetDimensions(drawingInterface);
+		FModumateUnitCoord2D numeratorDimensions = numeratorText->GetDimensions(drawingInterface);
+		FModumateUnitCoord2D denominatorDimensions = denominatorText->GetDimensions(drawingInterface);
 
 		numeratorText->SetLocalPosition(numeratorDimensions.X, denominatorDimensions.Y);
 		numeratorText->HorizontalAlignment = DraftingAlignment::Right;
@@ -489,29 +489,29 @@ namespace Modumate
 		return EDrawError::ErrorNone;
 	}
 
-	FDraftingSwingDoor::FDraftingSwingDoor(Units::FLength doorLength, Units::FLength doorDepth) : DoorLength(doorLength), DoorDepth(doorDepth)
+	FDraftingSwingDoor::FDraftingSwingDoor(ModumateUnitParams::FLength doorLength, ModumateUnitParams::FLength doorDepth) : DoorLength(doorLength), DoorDepth(doorDepth)
 	{
 		// two frame lines along the side of the door
 		// TODO: delete this entirely 
 		TSharedPtr<FDraftingLine> frameLine = MakeShareable(new FDraftingLine(doorDepth, DoorFrameThickness));
-		frameLine->MoveXTo(Units::FXCoord(DoorFrameThickness) / 2.0f * -1.0f);
-		frameLine->SetLocalOrientation(Units::FAngle::Degrees(90.0f));
+		frameLine->MoveXTo(ModumateUnitParams::FXCoord(DoorFrameThickness) / 2.0f * -1.0f);
+		frameLine->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(90.0f));
 		Children.Add(frameLine);
 
 		frameLine = MakeShareable(new FDraftingLine(doorDepth, DoorFrameThickness));
-		frameLine->MoveXTo(Units::FXCoord(doorLength + DoorFrameThickness / 2.0f));
-		frameLine->SetLocalOrientation(Units::FAngle::Degrees(90.0f));
+		frameLine->MoveXTo(ModumateUnitParams::FXCoord(doorLength + DoorFrameThickness / 2.0f));
+		frameLine->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(90.0f));
 		Children.Add(frameLine);
 
 		// door rect next to right side
-		Units::FCoordinates2D doorDimensions = Units::FCoordinates2D(Units::FXCoord(DoorThickness), Units::FYCoord(doorLength));
+		FModumateUnitCoord2D doorDimensions = FModumateUnitCoord2D(ModumateUnitParams::FXCoord(DoorThickness), ModumateUnitParams::FYCoord(doorLength));
 		TSharedPtr<FDraftingRectangle> doorRect = MakeShareable(new FDraftingRectangle(doorDimensions, DoorFrameThickness/2.0f));
-		doorRect->SetLocalPosition(	Units::FXCoord(DoorLength - DoorThickness), Units::FYCoord(DoorDepth));
-		//doorRect->Orientation = Units::FAngle::Degrees(90.0f);
+		doorRect->SetLocalPosition(ModumateUnitParams::FXCoord(DoorLength - DoorThickness), ModumateUnitParams::FYCoord(DoorDepth));
+		//doorRect->Orientation = FAngle::Degrees(90.0f);
 		Children.Add(doorRect);
 
 		// arc connecting opposite frame to door
-		Units::FRadius arcRadius = Units::FRadius::WorldCentimeters(doorLength.AsWorldCentimeters());
+		ModumateUnitParams::FRadius arcRadius = ModumateUnitParams::FRadius::WorldCentimeters(doorLength.AsWorldCentimeters());
 
 		// TODO: see line pattern definition, this should be a TArray
 		std::vector<double> pattern = { 8.0, 4.0 };
@@ -519,36 +519,36 @@ namespace Modumate
 		arcLinePattern.LineStyle = DraftingLineStyle::Dashed;
 		arcLinePattern.DashPattern = pattern;
 
-		TSharedPtr<FDraftingArc> doorArc = MakeShareable(new FDraftingArc(arcRadius, Units::FAngle::Degrees(90), Units::FThickness::Points(0.25f), FMColor::Gray144, arcLinePattern));
-		doorArc->SetLocalPosition(Units::FXCoord::WorldCentimeters(DoorLength.AsWorldCentimeters()), doorRect->GetLocalPosition().Y);
-		doorArc->SetLocalOrientation(Units::FAngle::Degrees(90.0f));
+		TSharedPtr<FDraftingArc> doorArc = MakeShareable(new FDraftingArc(arcRadius, ModumateUnitParams::FAngle::Degrees(90), ModumateUnitParams::FThickness::Points(0.25f), FMColor::Gray144, arcLinePattern));
+		doorArc->SetLocalPosition(ModumateUnitParams::FXCoord::WorldCentimeters(DoorLength.AsWorldCentimeters()), doorRect->GetLocalPosition().Y);
+		doorArc->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(90.0f));
 		Children.Add(doorArc);
 
 		// TODO: not sure whether this primitive should contain the thicknesses of the frameline, which extend outside of this dimensioning
-		Dimensions.X = Units::FXCoord(doorLength);
-		Dimensions.Y = Units::FYCoord(doorLength) + Units::FYCoord(doorDepth);
+		Dimensions.X = ModumateUnitParams::FXCoord(doorLength);
+		Dimensions.Y = ModumateUnitParams::FYCoord(doorLength) + ModumateUnitParams::FYCoord(doorDepth);
 	}
 
 	FDraftingLine::FDraftingLine(
-		Units::FCoordinates2D P1,
-		Units::FCoordinates2D P2,
-		Units::FThickness thickness,
+		FModumateUnitCoord2D P1,
+		FModumateUnitCoord2D P2,
+		ModumateUnitParams::FThickness thickness,
 		FMColor color,
 		LinePattern linePattern,
-		Units::FPhase phase)
+		ModumateUnitParams::FPhase phase)
 	{
 		// potentially, Position and Orientation could be assigned to the FLinePrimitive child
 		Position = P1;
 
-		Units::FCoordinates2D difference = P2 - P1;
-		Orientation = Units::FAngle::Radians(FMath::Atan2(difference.Y.AsWorldCentimeters(), difference.X.AsWorldCentimeters()));
+		FModumateUnitCoord2D difference = P2 - P1;
+		Orientation = ModumateUnitParams::FAngle::Radians(FMath::Atan2(difference.Y.AsWorldCentimeters(), difference.X.AsWorldCentimeters()));
 
 		Children.Add(MakeShareable(new FLinePrimitive(difference.Size(), thickness, color, linePattern, phase)));
 	}
 
 	EDrawError FLinePrimitive::Draw(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		EDrawError error = EDrawError::ErrorNone;
@@ -560,12 +560,12 @@ namespace Modumate
 
 		ApplyTransform(drawingInterface, position, orientation, scale);
 
-		Units::FCoordinates2D TopRight;
+		FModumateUnitCoord2D TopRight;
 		float length = Length.AsWorldCentimeters(drawingInterface->DrawingScale);
 		float radians = orientation.AsRadians();
 
-		TopRight.X = Units::FXCoord::WorldCentimeters(position.X.AsWorldCentimeters(drawingInterface->DrawingScale) + length * FMath::Cos(radians));
-		TopRight.Y = Units::FYCoord::WorldCentimeters(position.Y.AsWorldCentimeters(drawingInterface->DrawingScale) + length * FMath::Sin(radians));
+		TopRight.X = ModumateUnitParams::FXCoord::WorldCentimeters(position.X.AsWorldCentimeters(drawingInterface->DrawingScale) + length * FMath::Cos(radians));
+		TopRight.Y = ModumateUnitParams::FYCoord::WorldCentimeters(position.Y.AsWorldCentimeters(drawingInterface->DrawingScale) + length * FMath::Sin(radians));
 
 		// values for drawingInterface view rectangle should be set at the top-level, first draw call
 		if (drawingInterface->Viewport.bIsValid)
@@ -580,8 +580,8 @@ namespace Modumate
 				clippedStart,
 				clippedEnd))
 			{
-				position = Units::FCoordinates2D(Units::FXCoord::WorldCentimeters(clippedStart.X), Units::FYCoord::WorldCentimeters(clippedStart.Y));
-				TopRight = Units::FCoordinates2D(Units::FXCoord::WorldCentimeters(clippedEnd.X), Units::FYCoord::WorldCentimeters(clippedEnd.Y));
+				position = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::WorldCentimeters(clippedStart.X), ModumateUnitParams::FYCoord::WorldCentimeters(clippedStart.Y));
+				TopRight = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::WorldCentimeters(clippedEnd.X), ModumateUnitParams::FYCoord::WorldCentimeters(clippedEnd.Y));
 				error = drawingInterface->DrawLine(position.X, position.Y, TopRight.X, TopRight.Y, LineWidth, Color,
 					Pattern, Phase, LayerType);
 			}
@@ -597,8 +597,8 @@ namespace Modumate
 	}
 
 	FBox2D FLinePrimitive::MakeAABB(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		ApplyTransform(drawingInterface, position, orientation, scale);
@@ -625,15 +625,15 @@ namespace Modumate
 	}
 
 	/*
-	Units::FCoordinates2D FDraftingLineComposite::GetDimensions(IModumateDraftingDraw *drawingInterface)
+	FModumateUnitCoord2D FDraftingLineComposite::GetDimensions(IModumateDraftingDraw *drawingInterface)
 	{
-		return Units::FCoordinates2D(Units::FXCoord::WorldCentimeters(Length.AsWorldCentimeters()), Units::FYCoord::WorldCentimeters(LineWidth.AsWorldCentimeters()));
+		return FModumateUnitCoord2D(FXCoord::WorldCentimeters(Length.AsWorldCentimeters()), FYCoord::WorldCentimeters(LineWidth.AsWorldCentimeters()));
 	}
 	//*/
 
 	EDrawError FArcPrimitive::Draw(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		EDrawError error = EDrawError::ErrorNone;
@@ -654,15 +654,15 @@ namespace Modumate
 		float end = FRotator::ClampAxis(orientation.AsDegrees() + Angle.AsDegrees());
 		int slices = (int)(Angle.AsDegrees() * 0.2f);
 
-		error = drawingInterface->DrawArc(position.X, position.Y, orientation, Units::FAngle::Degrees(end), Radius,
+		error = drawingInterface->DrawArc(position.X, position.Y, orientation, ModumateUnitParams::FAngle::Degrees(end), Radius,
 			LineWidth, Color, Pattern, slices, LayerType);
 
 		return error;
 	}
 
 	FBox2D FArcPrimitive::MakeAABB(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		ApplyTransform(drawingInterface, position, orientation, scale);
@@ -694,15 +694,15 @@ namespace Modumate
 		return arcAABB;
 	}
 
-	FFilledCirclePrimitive::FFilledCirclePrimitive(Units::FRadius radius, FMColor color) : Radius(radius), Color(color)
+	FFilledCirclePrimitive::FFilledCirclePrimitive(ModumateUnitParams::FRadius radius, FMColor color) : Radius(radius), Color(color)
 	{
-		Dimensions.X = Units::FXCoord(Radius * 2.0f);
-		Dimensions.Y = Units::FYCoord(Radius * 2.0f);
+		Dimensions.X = ModumateUnitParams::FXCoord(Radius * 2.0f);
+		Dimensions.Y = ModumateUnitParams::FYCoord(Radius * 2.0f);
 	}
 
 	EDrawError FFilledCirclePrimitive::Draw(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		EDrawError error = EDrawError::ErrorNone;
@@ -725,14 +725,14 @@ namespace Modumate
 		return error;
 	}
 
-	FCirclePrimitive::FCirclePrimitive(Units::FRadius radius, Units::FThickness thickness, FMColor color, LinePattern linePattern) : Radius(radius), LineWidth(thickness), Color(color), Pattern(linePattern)
+	FCirclePrimitive::FCirclePrimitive(ModumateUnitParams::FRadius radius, ModumateUnitParams::FThickness thickness, FMColor color, LinePattern linePattern) : Radius(radius), LineWidth(thickness), Color(color), Pattern(linePattern)
 	{
 		// empty
 	}
 
 	EDrawError FCirclePrimitive::Draw(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		if (drawingInterface == nullptr)
@@ -753,14 +753,14 @@ namespace Modumate
 		return EDrawError::ErrorNone;
 	}
 
-	FFilledRectPrimitive::FFilledRectPrimitive(Units::FCoordinates2D dimensions, FMColor color) : Color(color)
+	FFilledRectPrimitive::FFilledRectPrimitive(FModumateUnitCoord2D dimensions, FMColor color) : Color(color)
 	{
 		Dimensions = dimensions;
 	}
 
 	EDrawError FFilledRectPrimitive::Draw(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		EDrawError error = EDrawError::ErrorNone;
@@ -772,13 +772,13 @@ namespace Modumate
 
 		ApplyTransform(drawingInterface, position, orientation, scale);
 
-		Units::FCoordinates2D offsetDimensions = Units::FCoordinates2D::WorldCentimeters(Dimensions.AsWorldCentimeters(drawingInterface->DrawingScale));
+		FModumateUnitCoord2D offsetDimensions = FModumateUnitCoord2D::WorldCentimeters(Dimensions.AsWorldCentimeters(drawingInterface->DrawingScale));
 		// TODO: based on this code, FFilledRectPrimitives may not be able to respond to orientation
-		TArray<Units::FCoordinates2D> corners;
+		TArray<FModumateUnitCoord2D> corners;
 		corners.Add(position);
-		corners.Add(position + Units::FCoordinates2D(offsetDimensions.X, Units::FYCoord::WorldCentimeters(0.0f)));
+		corners.Add(position + FModumateUnitCoord2D(offsetDimensions.X, ModumateUnitParams::FYCoord::WorldCentimeters(0.0f)));
 		corners.Add(position + offsetDimensions);
-		corners.Add(position + Units::FCoordinates2D(Units::FXCoord::WorldCentimeters(0.0f), offsetDimensions.Y));
+		corners.Add(position + FModumateUnitCoord2D(ModumateUnitParams::FXCoord::WorldCentimeters(0.0f), offsetDimensions.Y));
 
 		// don't draw object if it is outside of the drawable region
 		if (drawingInterface->Viewport.bIsValid && BoundingBox.bIsValid && !drawingInterface->Viewport.IsInside(BoundingBox))
@@ -801,8 +801,8 @@ namespace Modumate
 	}
 
 	EDrawError FFilledPolyPrimitive::Draw(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		ApplyTransform(drawingInterface, position, orientation, scale);
@@ -876,14 +876,14 @@ namespace Modumate
 		return EDrawError::ErrorNone;
 	}
 
-	FImagePrimitive::FImagePrimitive(FString imagePath, Units::FCoordinates2D dimensions) : Path(imagePath)
+	FImagePrimitive::FImagePrimitive(FString imagePath, FModumateUnitCoord2D dimensions) : Path(imagePath)
 	{
 		Dimensions = dimensions;
 	}
 
 	EDrawError FImagePrimitive::Draw(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		ApplyTransform(drawingInterface, position, orientation, scale);

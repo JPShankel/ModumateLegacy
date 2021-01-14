@@ -292,9 +292,9 @@ void AMOICutPlane::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposit
 				if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 				{
 					TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShareable(new Modumate::FDraftingLine(
-						Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
-						Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
-						Modumate::Units::FThickness::Points(0.15f), Modumate::FMColor::Gray144));
+						FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
+						FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
+						ModumateUnitParams::FThickness::Points(0.15f), Modumate::FMColor::Gray144));
 					singleOutlineElement->Children.Add(draftingLine);
 					draftingLine->SetLayerTypeRecursive(traceResponse.Value.LayerType);
 				}
@@ -467,7 +467,7 @@ void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 	TMap<int32, int32> objMap;
 	volumeGraph.Create2DGraph(CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, graph, objMap);
 
-	Modumate::Units::FThickness lineThickness = Modumate::Units::FThickness::Points(0.15f);
+	ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
 	Modumate::FMColor lineColor = Modumate::FMColor::Black;
 
 	TArray<TArray<FVector>> allMaskVerts;
@@ -479,8 +479,8 @@ void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 		auto startVertex = graph->FindVertex(edge.StartVertexID);
 		auto endVertex = graph->FindVertex(edge.EndVertexID);
 
-		Modumate::Units::FCoordinates2D start = Modumate::Units::FCoordinates2D::WorldCentimeters(startVertex->Position);
-		Modumate::Units::FCoordinates2D end = Modumate::Units::FCoordinates2D::WorldCentimeters(endVertex->Position);
+		FModumateUnitCoord2D start = FModumateUnitCoord2D::WorldCentimeters(startVertex->Position);
+		FModumateUnitCoord2D end = FModumateUnitCoord2D::WorldCentimeters(endVertex->Position);
 
 		int32 metaplaneID = objMap[edge.ID];
 		auto metaplane = doc->GetObjectById(metaplaneID);

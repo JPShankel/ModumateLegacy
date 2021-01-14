@@ -6,8 +6,6 @@
 #include "Drafting/ModumateDraftingTags.h"
 #include "Drafting/Schedules/ScheduleGrid.h"
 
-using namespace Modumate::Units;
-
 #define LOCTEXT_NAMESPACE "ModumateWallDetailsSchedule"
 
 namespace Modumate {
@@ -16,7 +14,7 @@ namespace Modumate {
 	{
 		Title = MakeShareable(new FDraftingText(
 			LOCTEXT("title", "Wall Schedule: Assembly Summaries"),
-			FFontSize::FloorplanInches(TitleHeight),
+			ModumateUnitParams::FFontSize::FloorplanInches(TitleHeight),
 			DefaultColor,
 			FontType::Bold));
 
@@ -80,8 +78,8 @@ namespace Modumate {
 
 			// Comments
 			TSharedPtr<FDraftingComposite> whiteSpace = MakeShareable(new FDraftingComposite());
-			whiteSpace->Dimensions.X = FXCoord::FloorplanInches(CommentsWidth);
-			whiteSpace->Dimensions.Y = FYCoord::FloorplanInches(External->RowHeight);
+			whiteSpace->Dimensions.X = ModumateUnitParams::FXCoord::FloorplanInches(CommentsWidth);
+			whiteSpace->Dimensions.Y = ModumateUnitParams::FYCoord::FloorplanInches(External->RowHeight);
 
 			row.Add(whiteSpace);
 
@@ -100,7 +98,7 @@ namespace Modumate {
 		Title->MoveYTo(Title->Dimensions.Y * -1.0f);
 
 		Dimensions = Title->Dimensions;
-		Dimensions.Y += FYCoord::FloorplanInches(TitleMargin);
+		Dimensions.Y += ModumateUnitParams::FYCoord::FloorplanInches(TitleMargin);
 
 		if (!Internal->IsEmpty())
 		{
@@ -115,7 +113,7 @@ namespace Modumate {
 		// if there are both internal and external walls, add margin between the schedule grids
 		if (!Internal->IsEmpty() && !External->IsEmpty())
 		{
-			Dimensions.Y += FYCoord::FloorplanInches(ScheduleMargin);
+			Dimensions.Y += ModumateUnitParams::FYCoord::FloorplanInches(ScheduleMargin);
 		}
 
 		if (!External->IsEmpty())

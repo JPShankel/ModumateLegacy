@@ -6,7 +6,6 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 
-using namespace Modumate::Units;
 
 #define LOCTEXT_NAMESPACE "ModumateDoorSummarySchedule"
 
@@ -16,7 +15,7 @@ namespace Modumate {
 	{
 		Title = MakeShareable(new FDraftingText(
 			LOCTEXT("title", "Door Schedule: Assembly Summaries"),
-			FFontSize::FloorplanInches(TitleHeight),
+			ModumateUnitParams::FFontSize::FloorplanInches(TitleHeight),
 			DefaultColor,
 			FontType::Bold));
 		Children.Add(Title);
@@ -72,7 +71,7 @@ namespace Modumate {
 			// Icon thumbnail
 			FName key = UThumbnailCacheManager::GetThumbnailKeyForAssembly(assembly);
 			FString path = UThumbnailCacheManager::GetThumbnailCachePathForKey(key);
-			FCoordinates2D imageSize = FCoordinates2D(FXCoord::FloorplanInches(1.0f), FYCoord::FloorplanInches(1.0f));
+			FModumateUnitCoord2D imageSize = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(1.0f), ModumateUnitParams::FYCoord::FloorplanInches(1.0f));
 
 			iconElement->Icon->Children.Add(MakeShareable(new FImagePrimitive(path, imageSize)));
 			iconElement->Icon->Dimensions = imageSize;

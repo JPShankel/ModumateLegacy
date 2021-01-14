@@ -74,7 +74,7 @@ public:
 	UPROPERTY()
 	TMap<FName, FArchitecturalMaterial> ChannelMaterials;
 
-	static TMap<FString, Modumate::Units::FUnitValue> DefaultNamedParameterMap;
-	static bool TryGetDefaultNamedParameter(const FString& Name, Modumate::Units::FUnitValue& OutVal);
+	static TMap<FString, FModumateUnitValue> DefaultNamedParameterMap;
+	static bool TryGetDefaultNamedParameter(const FString& Name, FModumateUnitValue& OutVal);
 
 };

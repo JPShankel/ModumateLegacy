@@ -8,8 +8,6 @@
 
 namespace Modumate
 {
-	using namespace Units;
-
 	FTitleBlock::FTitleBlock(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID) :
 		FDraftingDrawing(doc, world, captureObjID)
 	{
@@ -72,7 +70,7 @@ namespace Modumate
 		projectAddress2Text->SetLocalPosition(Dimensions.X - ContentMargin.X, ContentHeight);
 		projectAddress2Text->InitializeBounds(drawingInterface);
 		Children.Add(projectAddress2Text);
-		ContentHeight += projectAddress2Text->Dimensions.Y + FYCoord::FloorplanInches(projectAddress2Text->RowMargin);
+		ContentHeight += projectAddress2Text->Dimensions.Y + ModumateUnitParams::FYCoord::FloorplanInches(projectAddress2Text->RowMargin);
 
 		FText projectAddressHeader = LOCTEXT("projectInfo_address", "Project Address:");
 		TSharedPtr<FDraftingText> projectAddress1Text = MakeShareable(new FDraftingText(FText::FromString(Document->ProjectInfo.address1), HeaderFontSize, ContentColor, ContentType));
@@ -91,7 +89,7 @@ namespace Modumate
 		// to be able to respond to different ordering requirements, in particular the stamp region will sometimes need to be at the top
 		FText stampHeader = LOCTEXT("stamp", "Stamp:");
 		TSharedPtr<FDraftingComposite> stampWhitespace = MakeShareable(new FDraftingComposite());
-		stampWhitespace->Dimensions = FCoordinates2D(Dimensions.X, StampHeight);
+		stampWhitespace->Dimensions = FModumateUnitCoord2D(Dimensions.X, StampHeight);
 		MakeContent(drawingInterface, stampHeader, stampWhitespace);
 
 		MakeSeparatorLine();
@@ -166,7 +164,7 @@ namespace Modumate
 
 	EDrawError FTitleBlock::MakeSeparatorLine()
 	{
-		TSharedPtr<FDraftingLine> separatorLine = MakeShareable(new FDraftingLine(FLength(Dimensions.X), LineThickness, LineColor));
+		TSharedPtr<FDraftingLine> separatorLine = MakeShareable(new FDraftingLine(ModumateUnitParams::FLength(Dimensions.X), LineThickness, LineColor));
 		separatorLine->MoveYTo(ContentHeight);
 		ContentHeight += ContentMargin.Y;
 		Children.Add(separatorLine);
@@ -183,7 +181,7 @@ namespace Modumate
 		personalInfo->Children.Add(MakeShareable(new FDraftingText(FText::FromString(profile.Email), HeaderFontSize, ContentColor)));
 		personalInfo->Children.Add(MakeShareable(new FDraftingText(FText::FromString(profile.Phone), HeaderFontSize, ContentColor)));
 
-		FYCoord textOffset = FYCoord::FloorplanInches(0.0f);
+		ModumateUnitParams::FYCoord textOffset = ModumateUnitParams::FYCoord::FloorplanInches(0.0f);
 		for (int i = personalInfo->Children.Num() - 1; i >= 0; i--)
 		{
 			auto child = personalInfo->Children[i];
@@ -191,7 +189,7 @@ namespace Modumate
 			child->InitializeBounds(drawingInterface);
 
 			child->MoveYTo(textOffset);
-			textOffset += child->Dimensions.Y + FYCoord::FloorplanInches(4.0f / 64.0f);
+			textOffset += child->Dimensions.Y + ModumateUnitParams::FYCoord::FloorplanInches(4.0f / 64.0f);
 		}
 
 		personalInfo->SetLocalPosition(Dimensions.X - ContentMargin.X, ContentHeight);

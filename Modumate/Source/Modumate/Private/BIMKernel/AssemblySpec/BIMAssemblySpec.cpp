@@ -392,7 +392,7 @@ FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
 	{
 		if (part.Mesh.EngineMesh.IsValid())
 		{
-			nativeSize = part.Mesh.NativeSize * Modumate::InchesToCentimeters;
+			nativeSize = part.Mesh.NativeSize * UModumateDimensionStatics::InchesToCentimeters;
 			break;
 		}
 	}
@@ -405,7 +405,7 @@ FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
 
 EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FModumateDatabase& InDB)
 {
-	Modumate::Units::FUnitValue dimension;
+	FModumateUnitValue dimension;
 	if (RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::ToeKickDepth, dimension))
 	{
 		ToeKickDepthCentimeters = dimension.AsWorldCentimeters();
@@ -580,9 +580,9 @@ EBIMResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& InDB)
 	return EBIMResult::Success;
 }
 
-Modumate::Units::FUnitValue FBIMAssemblySpec::CalculateThickness() const
+FModumateUnitValue FBIMAssemblySpec::CalculateThickness() const
 {
-	return Modumate::Units::FUnitValue::WorldCentimeters(Algo::TransformAccumulate(
+	return FModumateUnitValue::WorldCentimeters(Algo::TransformAccumulate(
 		Layers,
 		[](const FBIMLayerSpec& l)
 		{
@@ -623,7 +623,7 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 
 	case EObjectType::OTStaircase:
 	{
-		Modumate::Units::FUnitValue dimension;
+		FModumateUnitValue dimension;
 		if (ensureAlways(RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::TreadDepthIdeal, dimension) && dimension.AsWorldCentimeters() > 0.0f))
 		{
 			TreadDepthCentimeters = dimension.AsWorldCentimeters();

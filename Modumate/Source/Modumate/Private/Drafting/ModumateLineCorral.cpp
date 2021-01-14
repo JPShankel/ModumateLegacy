@@ -70,8 +70,8 @@ FModumateLineCorral::FLineSegment::FLineSegment(float x1, float y1, float x2, fl
 }
 
 
-FModumateLineCorral::FLineData::FLineData(Units::FThickness thickness, FMColor color, LinePattern linePattern,
-	Units::FPhase phase, FModumateLayerType layerType) :
+FModumateLineCorral::FLineData::FLineData(ModumateUnitParams::FThickness thickness, FMColor color, LinePattern linePattern,
+	ModumateUnitParams::FPhase phase, FModumateLayerType layerType) :
 	Thickness(thickness), Color(color), Pattern(linePattern),
 	Phase(phase), LayerType(layerType)
 { }
@@ -89,17 +89,17 @@ FModumateLineCorral::FModumateLineCorral(IModumateDraftingDraw * nextDrafting) :
 }
 
 Modumate::EDrawError FModumateLineCorral::DrawLine(
-	const Units::FXCoord &x1,
-	const Units::FYCoord &y1,
-	const Units::FXCoord &x2,
-	const Units::FYCoord &y2,
-	const Units::FThickness &thickness,
+	const ModumateUnitParams::FXCoord &x1,
+	const ModumateUnitParams::FYCoord &y1,
+	const ModumateUnitParams::FXCoord &x2,
+	const ModumateUnitParams::FYCoord &y2,
+	const ModumateUnitParams::FThickness &thickness,
 	const FMColor &color,
 	const LinePattern &linePattern,
-	const Units::FPhase &phase,
+	const ModumateUnitParams::FPhase &phase,
 	FModumateLayerType layerType /*= FModumateLayerType::kDefault */)
 {
-	if (x1.GetUnitType() != Units::EUnitType::WorldCentimeters
+	if (x1.GetUnitType() != EModumateUnitType::WorldCentimeters
 		|| PassedThroughTypes.Contains(layerType))
 	{
 		return Next->DrawLine(x1, y1, x2, y2, thickness, color, linePattern, phase, layerType);
@@ -115,13 +115,13 @@ Modumate::EDrawError FModumateLineCorral::DrawLine(
 
 Modumate::EDrawError FModumateLineCorral::AddText(
 	const TCHAR *text,
-	const Units::FFontSize &fontSize,
-	const Units::FXCoord &xpos,
-	const Units::FYCoord &ypos,
-	const Units::FAngle &rotateByRadians,
+	const ModumateUnitParams::FFontSize &fontSize,
+	const ModumateUnitParams::FXCoord &xpos,
+	const ModumateUnitParams::FYCoord &ypos,
+	const ModumateUnitParams::FAngle &rotateByRadians,
 	const FMColor &color,
 	DraftingAlignment textJustify,
-	const Units::FWidth &containingRectWidth,
+	const ModumateUnitParams::FWidth &containingRectWidth,
 	FontType type,
 	FModumateLayerType layerType /*= FModumateLayerType::kDefault */)
 {
@@ -131,20 +131,20 @@ Modumate::EDrawError FModumateLineCorral::AddText(
 
 Modumate::EDrawError FModumateLineCorral::GetTextLength(
 	const TCHAR *text,
-	const Units::FFontSize &fontSize,
-	Units::FUnitValue &textLength,
+	const ModumateUnitParams::FFontSize &fontSize,
+	FModumateUnitValue &textLength,
 	FontType type /*= FontType::Standard*/)
 {
 	return Next->GetTextLength(text, fontSize, textLength, type);
 }
 
 Modumate::EDrawError FModumateLineCorral::DrawArc(
-	const Units::FXCoord &x,
-	const Units::FYCoord &y,
-	const Units::FAngle &a1,
-	const Units::FAngle &a2,
-	const Units::FRadius &radius,
-	const Units::FThickness &lineWidth,
+	const ModumateUnitParams::FXCoord &x,
+	const ModumateUnitParams::FYCoord &y,
+	const ModumateUnitParams::FAngle &a1,
+	const ModumateUnitParams::FAngle &a2,
+	const ModumateUnitParams::FRadius &radius,
+	const ModumateUnitParams::FThickness &lineWidth,
 	const FMColor &color,
 	const LinePattern &linePattern,
 	int slices,
@@ -155,10 +155,10 @@ Modumate::EDrawError FModumateLineCorral::DrawArc(
 
 Modumate::EDrawError FModumateLineCorral::AddImage(
 	const TCHAR *imageFileFullPath,
-	const Units::FXCoord &x,
-	const Units::FYCoord &y,
-	const Units::FWidth &width,
-	const Units::FHeight &height,
+	const ModumateUnitParams::FXCoord &x,
+	const ModumateUnitParams::FYCoord &y,
+	const ModumateUnitParams::FWidth &width,
+	const ModumateUnitParams::FHeight &height,
 	FModumateLayerType layerType /*= FModumateLayerType::kDefault */)
 {
 	return Next->AddImage(imageFileFullPath, x, y, width, height, layerType);
@@ -174,10 +174,10 @@ Modumate::EDrawError FModumateLineCorral::FillPoly(
 }
 
 Modumate::EDrawError FModumateLineCorral::DrawCircle(
-	const Units::FXCoord &cx,
-	const Units::FYCoord &cy,
-	const Units::FRadius &radius,
-	const Units::FThickness &lineWidth,
+	const ModumateUnitParams::FXCoord &cx,
+	const ModumateUnitParams::FYCoord &cy,
+	const ModumateUnitParams::FRadius &radius,
+	const ModumateUnitParams::FThickness &lineWidth,
 	const LinePattern &linePattern,
 	const FMColor &color,
 	FModumateLayerType layerType /*= FModumateLayerType::kDefault */)
@@ -186,9 +186,9 @@ Modumate::EDrawError FModumateLineCorral::DrawCircle(
 }
 
 Modumate::EDrawError FModumateLineCorral::FillCircle(
-	const Units::FXCoord &cx,
-	const Units::FYCoord &cy,
-	const Units::FRadius &radius,
+	const ModumateUnitParams::FXCoord &cx,
+	const ModumateUnitParams::FYCoord &cy,
+	const ModumateUnitParams::FRadius &radius,
 	const FMColor &color,
 	FModumateLayerType layerType /*= FModumateLayerType::kDefault */)
 {
@@ -373,10 +373,10 @@ void FModumateLineCorral::ProcessLines()
 	for (const auto& l: OutLines)
 	{
 		const auto& lineData = LineDataItems[l.LineData];
-		Next->DrawLine(Units::FUnitValue::WorldCentimeters(l.StartVert.X),
-			Units::FUnitValue::WorldCentimeters(l.StartVert.Y),
-			Units::FUnitValue::WorldCentimeters(l.EndVert.X),
-			Units::FUnitValue::WorldCentimeters(l.EndVert.Y),
+		Next->DrawLine(FModumateUnitValue::WorldCentimeters(l.StartVert.X),
+			FModumateUnitValue::WorldCentimeters(l.StartVert.Y),
+			FModumateUnitValue::WorldCentimeters(l.EndVert.X),
+			FModumateUnitValue::WorldCentimeters(l.EndVert.Y),
 			lineData.Thickness, lineData.Color, lineData.Pattern, lineData.Phase, lineData.LayerType);
 	}
 

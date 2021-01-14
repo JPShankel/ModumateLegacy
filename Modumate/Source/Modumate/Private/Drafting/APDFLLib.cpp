@@ -259,14 +259,14 @@ namespace Modumate
 
 		PDFResult DrawLine(PDFOBJECT ob,
 			int pageNumber,
-			const Units::FXCoord &x1,
-			const Units::FYCoord &y1,
-			const Units::FXCoord &x2,
-			const Units::FYCoord &y2,
-			const Units::FThickness &thickness,
+			const ModumateUnitParams::FXCoord &x1,
+			const ModumateUnitParams::FYCoord &y1,
+			const ModumateUnitParams::FXCoord &x2,
+			const ModumateUnitParams::FYCoord &y2,
+			const ModumateUnitParams::FThickness &thickness,
 			const FMColor &lineColor,
 			const LinePattern &linePattern,
-			const Units::FPhase &patternPhase,
+			const ModumateUnitParams::FPhase &patternPhase,
 			const float scale)
 		{
 			PDFResult res;
@@ -353,14 +353,14 @@ namespace Modumate
 		PDFResult AddText(PDFOBJECT ob,
 			int page,
 			const TCHAR *text,
-			const Units::FFontSize &fontSize,
-			const Units::FXCoord &xpos,
-			const Units::FYCoord &ypos,
-			const Units::FAngle &rotateByRadians,
+			const ModumateUnitParams::FFontSize &fontSize,
+			const ModumateUnitParams::FXCoord &xpos,
+			const ModumateUnitParams::FYCoord &ypos,
+			const ModumateUnitParams::FAngle &rotateByRadians,
 			const FMColor &color,
 			const float scale,
 			DraftingAlignment textJustify,
-			const Units::FWidth &containingRectWidth,
+			const ModumateUnitParams::FWidth &containingRectWidth,
 			FontType type)
 		{
 			PDFResult res;
@@ -458,8 +458,8 @@ namespace Modumate
 
 		PDFResult GetTextLength(PDFOBJECT ob,
 			const TCHAR *text,
-			const Units::FFontSize &fontSize,
-			Units::FUnitValue &textLength,
+			const ModumateUnitParams::FFontSize &fontSize,
+			FModumateUnitValue &textLength,
 			const float scale,
 			FontType type)
 		{
@@ -485,7 +485,7 @@ namespace Modumate
 				element = elementBuilder.CreateTextBegin(font, fontSize.AsFontHeight(scale));
 				pdftron::UString str(text);
 				element = elementBuilder.CreateUnicodeTextRun(str.CStr(), str.GetLength());
-				textLength = Units::FUnitValue::Points((float)element.GetTextLength());
+				textLength = FModumateUnitValue::Points((float)element.GetTextLength());
 			}
 			catch (pdftron::Common::Exception &exc)
 			{
@@ -497,10 +497,10 @@ namespace Modumate
 
 		PDFResult DrawCircle(PDFOBJECT ob,
 			int pageNumber,
-			const Units::FXCoord &cx,
-			const Units::FYCoord &cy,
-			const Units::FRadius &radius,
-			const Units::FThickness &lineWidth,
+			const ModumateUnitParams::FXCoord &cx,
+			const ModumateUnitParams::FYCoord &cy,
+			const ModumateUnitParams::FRadius &radius,
+			const ModumateUnitParams::FThickness &lineWidth,
 			const LinePattern &linePattern,
 			const FMColor &color,
 			const float scale)
@@ -565,9 +565,9 @@ namespace Modumate
 
 		PDFResult FillCircle(PDFOBJECT ob,
 			int pageNumber,
-			const Units::FXCoord &cx,
-			const Units::FYCoord &cy,
-			const Units::FRadius &radius,
+			const ModumateUnitParams::FXCoord &cx,
+			const ModumateUnitParams::FYCoord &cy,
+			const ModumateUnitParams::FRadius &radius,
 			const FMColor &color,
 			const float scale)
 		{
@@ -627,12 +627,12 @@ namespace Modumate
 
 		PDFResult DrawArc(PDFOBJECT ob,
 			int pageNumber,
-			const Units::FXCoord &x,
-			const Units::FYCoord &y,
-			const Units::FAngle &a1,
-			const Units::FAngle &a2,
-			const Units::FRadius &radius,
-			const Units::FThickness &lineWidth,
+			const ModumateUnitParams::FXCoord &x,
+			const ModumateUnitParams::FYCoord &y,
+			const ModumateUnitParams::FAngle &a1,
+			const ModumateUnitParams::FAngle &a2,
+			const ModumateUnitParams::FRadius &radius,
+			const ModumateUnitParams::FThickness &lineWidth,
 			const FMColor &color,
 			const LinePattern &linePattern,
 			int slices,
@@ -650,10 +650,10 @@ namespace Modumate
 				float cosA2 = cosf(a2.AsRadians());
 				float sinA2 = sinf(a2.AsRadians());
 
-				Units::FXCoord x1 = x + radius * cosA1;
-				Units::FYCoord y1 = y + radius * sinA1;
-				Units::FXCoord x2 = x + radius * cosA2;
-				Units::FYCoord y2 = y + radius * sinA2;
+				ModumateUnitParams::FXCoord x1 = x + radius * cosA1;
+				ModumateUnitParams::FYCoord y1 = y + radius * sinA1;
+				ModumateUnitParams::FXCoord x2 = x + radius * cosA2;
+				ModumateUnitParams::FYCoord y2 = y + radius * sinA2;
 
 				// the midpoint
 				float mx = (x1.AsFloorplanInches(scale) + x2.AsFloorplanInches(scale))*0.5f;
@@ -703,14 +703,14 @@ namespace Modumate
 
 					DrawLine(ob,
 						pageNumber,
-						Units::FXCoord::FloorplanInches(sx1),
-						Units::FYCoord::FloorplanInches(sy1),
-						Units::FXCoord::FloorplanInches(sx2),
-						Units::FYCoord::FloorplanInches(sy2),
+						ModumateUnitParams::FXCoord::FloorplanInches(sx1),
+						ModumateUnitParams::FYCoord::FloorplanInches(sy1),
+						ModumateUnitParams::FXCoord::FloorplanInches(sx2),
+						ModumateUnitParams::FYCoord::FloorplanInches(sy2),
 						lineWidth,
 						color,
 						linePattern,
-						Units::FPhase::Points(0),
+						ModumateUnitParams::FPhase::Points(0),
 						scale);
 				}
 			}
@@ -724,10 +724,10 @@ namespace Modumate
 		PDFResult AddImage(PDFOBJECT ob,
 			int pageNumber,
 			const TCHAR *imageFileDir,
-			const Units::FXCoord &x,
-			const Units::FYCoord &y,
-			const Units::FWidth &w,
-			const Units::FHeight &h,
+			const ModumateUnitParams::FXCoord &x,
+			const ModumateUnitParams::FYCoord &y,
+			const ModumateUnitParams::FWidth &w,
+			const ModumateUnitParams::FHeight &h,
 			const float scale)
 		{
 			PDFResult res;
@@ -819,10 +819,10 @@ namespace Modumate
 
 #if 0
 			PDFResult res = AddText(doc.Object, 1, TEXT("THIS IS A TEST"),
-				Units::FFontSize::FloorplanInches(0.5f),
-				Units::FXCoord::FloorplanInches(3),
-				Units::FYCoord::FloorplanInches(3),
-				Units::FAngle::Degrees(0),
+				FFontSize::FloorplanInches(0.5f),
+				FXCoord::FloorplanInches(3),
+				FYCoord::FloorplanInches(3),
+				FAngle::Degrees(0),
 				FMColor::Black);
 #endif
 
@@ -874,14 +874,14 @@ namespace Modumate
 
 
 	EDrawError FModumatePDFDraw::DrawLine(
-		const Units::FXCoord &x1,
-		const Units::FYCoord &y1,
-		const Units::FXCoord &x2,
-		const Units::FYCoord &y2,
-		const Units::FThickness &thickness,
+		const ModumateUnitParams::FXCoord &x1,
+		const ModumateUnitParams::FYCoord &y1,
+		const ModumateUnitParams::FXCoord &x2,
+		const ModumateUnitParams::FYCoord &y2,
+		const ModumateUnitParams::FThickness &thickness,
 		const FMColor &color,
 		const LinePattern &linePattern,
-		const Units::FPhase &phase,
+		const ModumateUnitParams::FPhase &phase,
 		FModumateLayerType layerType
 	)
 	{
@@ -898,13 +898,13 @@ namespace Modumate
 
 	EDrawError FModumatePDFDraw::AddText(
 		const TCHAR *text,
-		const Units::FFontSize &fontSize,
-		const Units::FXCoord &xpos,
-		const Units::FYCoord &ypos,
-		const Units::FAngle &rotateByRadians,
+		const ModumateUnitParams::FFontSize &fontSize,
+		const ModumateUnitParams::FXCoord &xpos,
+		const ModumateUnitParams::FYCoord &ypos,
+		const ModumateUnitParams::FAngle &rotateByRadians,
 		const FMColor &color,
 		DraftingAlignment textJustify,
-		const Units::FWidth &containingRectWidth,
+		const ModumateUnitParams::FWidth &containingRectWidth,
 		FontType type = FontType::Standard,
 		FModumateLayerType layerType
 	)
@@ -926,20 +926,20 @@ namespace Modumate
 
 	EDrawError FModumatePDFDraw::GetTextLength(
 		const TCHAR *text,
-		const Units::FFontSize &fontSize,
-		Units::FUnitValue &textLength,
+		const ModumateUnitParams::FFontSize &fontSize,
+		FModumateUnitValue &textLength,
 		FontType type = FontType::Standard)
 	{
 		return PDF::GetTextLength(Doc.Object, text, fontSize, textLength, DrawingScale, type).ErrorCode;
 	}
 
 	EDrawError FModumatePDFDraw::DrawArc(
-		const Units::FXCoord &x,
-		const Units::FYCoord &y,
-		const Units::FAngle &a1,
-		const Units::FAngle &a2,
-		const Units::FRadius &radius,
-		const Units::FThickness &lineWidth,
+		const ModumateUnitParams::FXCoord &x,
+		const ModumateUnitParams::FYCoord &y,
+		const ModumateUnitParams::FAngle &a1,
+		const ModumateUnitParams::FAngle &a2,
+		const ModumateUnitParams::FRadius &radius,
+		const ModumateUnitParams::FThickness &lineWidth,
 		const FMColor &color,
 		const LinePattern &linePattern,
 		int slices,
@@ -959,10 +959,10 @@ namespace Modumate
 
 	EDrawError FModumatePDFDraw::AddImage(
 		const TCHAR *imageFileFullPath,
-		const Units::FXCoord &x,
-		const Units::FYCoord &y,
-		const Units::FWidth &width,
-		const Units::FHeight &height,
+		const ModumateUnitParams::FXCoord &x,
+		const ModumateUnitParams::FYCoord &y,
+		const ModumateUnitParams::FWidth &width,
+		const ModumateUnitParams::FHeight &height,
 		FModumateLayerType layerType)
 	{
 		return PDF::AddImage(
@@ -990,10 +990,10 @@ namespace Modumate
 	}
 
 	EDrawError FModumatePDFDraw::DrawCircle(
-		const Units::FXCoord &cx,
-		const Units::FYCoord &cy,
-		const Units::FRadius &radius,
-		const Units::FThickness &lineWidth,
+		const ModumateUnitParams::FXCoord &cx,
+		const ModumateUnitParams::FYCoord &cy,
+		const ModumateUnitParams::FRadius &radius,
+		const ModumateUnitParams::FThickness &lineWidth,
 		const LinePattern &linePattern,
 		const FMColor &color,
 		FModumateLayerType layerType)
@@ -1009,9 +1009,9 @@ namespace Modumate
 	}
 
 	EDrawError FModumatePDFDraw::FillCircle(
-		const Units::FXCoord &cx,
-		const Units::FYCoord &cy,
-		const Units::FRadius &radius,
+		const ModumateUnitParams::FXCoord &cx,
+		const ModumateUnitParams::FYCoord &cy,
+		const ModumateUnitParams::FRadius &radius,
 		const FMColor &color,
 		FModumateLayerType layerType)
 	{

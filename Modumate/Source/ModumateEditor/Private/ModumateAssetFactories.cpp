@@ -81,9 +81,9 @@ bool USimpleMeshImportFactory::ImportFromOBJ(class USimpleMeshData* TargetObject
 				(parsedValue.Z == 0.0f))
 			{
 				// Polygons are assumed to be given in inches, serialized as centimeters.
-				Units::FCoordinates2D saved2DCoord(
-					Units::FXCoord::WorldInches(parsedValue.X),
-					Units::FYCoord::WorldInches(parsedValue.Y)
+				FModumateUnitCoord2D saved2DCoord(
+					ModumateUnitParams::FXCoord::WorldInches(parsedValue.X),
+					ModumateUnitParams::FYCoord::WorldInches(parsedValue.Y)
 				);
 				FVector2D saved2DValue = saved2DCoord.AsWorldCentimeters();
 

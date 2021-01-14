@@ -4,14 +4,14 @@
 namespace Modumate
 {
 	EDrawError FModumateHUDDraw::DrawLine(
-		const Units::FXCoord &x1,
-		const Units::FYCoord &y1,
-		const Units::FXCoord &x2,
-		const Units::FYCoord &y2,
-		const Units::FThickness &thickness,
+		const ModumateUnitParams::FXCoord &x1,
+		const ModumateUnitParams::FYCoord &y1,
+		const ModumateUnitParams::FXCoord &x2,
+		const ModumateUnitParams::FYCoord &y2,
+		const ModumateUnitParams::FThickness &thickness,
 		const FMColor &color,
 		const LinePattern &linePattern,
-		const Units::FPhase &phase,
+		const ModumateUnitParams::FPhase &phase,
 		FModumateLayerType layerType)
 	{
 		FModumateLines line;
@@ -32,13 +32,13 @@ namespace Modumate
 
 	EDrawError FModumateHUDDraw::AddText(
 		const TCHAR *text,
-		const Units::FFontSize &fontSize,
-		const Units::FXCoord &xpos,
-		const Units::FYCoord &ypos,
-		const Units::FAngle &rotateByRadians,
+		const ModumateUnitParams::FFontSize &fontSize,
+		const ModumateUnitParams::FXCoord &xpos,
+		const ModumateUnitParams::FYCoord &ypos,
+		const ModumateUnitParams::FAngle &rotateByRadians,
 		const FMColor &color,
 		DraftingAlignment textJustify,
-		const Units::FWidth &containingRectWidth,
+		const ModumateUnitParams::FWidth &containingRectWidth,
 		FontType type,
 		FModumateLayerType layerType)
 	{
@@ -47,20 +47,20 @@ namespace Modumate
 
 	EDrawError FModumateHUDDraw::GetTextLength(
 		const TCHAR *text,
-		const Units::FFontSize &fontSize,
-		Units::FUnitValue &textLength,
+		const ModumateUnitParams::FFontSize &fontSize,
+		FModumateUnitValue &textLength,
 		FontType type)
 	{
 		return EDrawError::ErrorUnimplemented;
 	}
 
 	EDrawError FModumateHUDDraw::DrawArc(
-		const Units::FXCoord &x,
-		const Units::FYCoord &y,
-		const Units::FAngle &a1,
-		const Units::FAngle &a2,
-		const Units::FRadius &radius,
-		const Units::FThickness &lineWidth,
+		const ModumateUnitParams::FXCoord &x,
+		const ModumateUnitParams::FYCoord &y,
+		const ModumateUnitParams::FAngle &a1,
+		const ModumateUnitParams::FAngle &a2,
+		const ModumateUnitParams::FRadius &radius,
+		const ModumateUnitParams::FThickness &lineWidth,
 		const FMColor &color,
 		const LinePattern &linePattern,
 		int slices,
@@ -71,10 +71,10 @@ namespace Modumate
 
 	EDrawError FModumateHUDDraw::AddImage(
 		const TCHAR *imageFileFullPath,
-		const Units::FXCoord &x,
-		const Units::FYCoord &y,
-		const Units::FWidth &width,
-		const Units::FHeight &height,
+		const ModumateUnitParams::FXCoord &x,
+		const ModumateUnitParams::FYCoord &y,
+		const ModumateUnitParams::FWidth &width,
+		const ModumateUnitParams::FHeight &height,
 		FModumateLayerType layerType)
 	{
 		return EDrawError::ErrorUnimplemented;
@@ -90,10 +90,10 @@ namespace Modumate
 	}
 
 	EDrawError FModumateHUDDraw::DrawCircle(
-		const Units::FXCoord &cx,
-		const Units::FYCoord &cy,
-		const Units::FRadius &radius,
-		const Units::FThickness &lineWidth,
+		const ModumateUnitParams::FXCoord &cx,
+		const ModumateUnitParams::FYCoord &cy,
+		const ModumateUnitParams::FRadius &radius,
+		const ModumateUnitParams::FThickness &lineWidth,
 		const LinePattern &linePattern,
 		const FMColor &color,
 		FModumateLayerType layerType)
@@ -102,9 +102,9 @@ namespace Modumate
 	}
 
 	EDrawError FModumateHUDDraw::FillCircle(
-		const Units::FXCoord &cx,
-		const Units::FYCoord &cy,
-		const Units::FRadius &radius,
+		const ModumateUnitParams::FXCoord &cx,
+		const ModumateUnitParams::FYCoord &cy,
+		const ModumateUnitParams::FRadius &radius,
 		const FMColor &color,
 		FModumateLayerType layerType)
 	{

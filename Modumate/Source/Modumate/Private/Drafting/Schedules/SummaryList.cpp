@@ -2,8 +2,6 @@
 
 #include "Drafting/Schedules/IconElement.h"
 
-using namespace Modumate::Units;
-
 namespace Modumate {
 	EDrawError FSummaryList::InitializeBounds(IModumateDraftingDraw *drawingInterface)
 	{
@@ -14,13 +12,13 @@ namespace Modumate {
 			Title->InitializeBounds(drawingInterface);
 			Title->MoveYTo(Title->Dimensions.Y * -1.0f);
 
-			Dimensions.Y = Title->Dimensions.Y + FYCoord::FloorplanInches(TitleMargin);
+			Dimensions.Y = Title->Dimensions.Y + ModumateUnitParams::FYCoord::FloorplanInches(TitleMargin);
 		}
 
 
-		FXCoord xOffset = FXCoord::FloorplanInches(0.0f);
-		FYCoord yOffset = (Dimensions.Y) * -1.0f;
-		FYCoord maxIconY = FYCoord::FloorplanInches(0.0f);
+		ModumateUnitParams::FXCoord xOffset = ModumateUnitParams::FXCoord::FloorplanInches(0.0f);
+		ModumateUnitParams::FYCoord yOffset = (Dimensions.Y) * -1.0f;
+		ModumateUnitParams::FYCoord maxIconY = ModumateUnitParams::FYCoord::FloorplanInches(0.0f);
 		bool bHasMultipleRows = false;
 
 		for (int32 i = 0; i < ffeIconElements.Num(); i++)
@@ -28,17 +26,17 @@ namespace Modumate {
 			auto iconElement = ffeIconElements[i];
 			iconElement->InitializeBounds(drawingInterface);
 
-			FXCoord iconDimX = iconElement->Dimensions.X;
+			ModumateUnitParams::FXCoord iconDimX = iconElement->Dimensions.X;
 			// row is filled with data when the width limit is exceeded, reset the variables to start a new row
 			if (xOffset + iconDimX > maxDimensionX)
 			{
 				Dimensions.X = xOffset > Dimensions.X ? xOffset : Dimensions.X;
-				xOffset = FXCoord::FloorplanInches(0.0f);
+				xOffset = ModumateUnitParams::FXCoord::FloorplanInches(0.0f);
 				bHasMultipleRows = true;
 
 				Dimensions.Y += maxIconY;
 				yOffset += (maxIconY) * -1.0f;
-				maxIconY = FYCoord::FloorplanInches(0.0f);
+				maxIconY = ModumateUnitParams::FYCoord::FloorplanInches(0.0f);
 			}
 
 			iconElement->SetLocalPosition(xOffset, yOffset);
@@ -56,7 +54,7 @@ namespace Modumate {
 			maxIconY = iconElement->Dimensions.Y > maxIconY ? iconElement->Dimensions.Y : maxIconY;
 
 		}
-		FXCoord TitleX = Title->GetDimensions(drawingInterface).X;
+		ModumateUnitParams::FXCoord TitleX = Title->GetDimensions(drawingInterface).X;
 		Dimensions.X = Dimensions.X > TitleX ? Dimensions.X : TitleX;
 		Dimensions.Y += maxIconY;
 

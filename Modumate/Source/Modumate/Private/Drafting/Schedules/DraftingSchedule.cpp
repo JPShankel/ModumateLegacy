@@ -6,7 +6,6 @@
 
 #define LOCTEXT_NAMESPACE "ModumateSchedule"
 
-using namespace Modumate::Units;
 using namespace Modumate::PDF;
 
 namespace Modumate {
@@ -24,8 +23,8 @@ namespace Modumate {
 			DefaultColor,
 			DefaultFont,
 			DefaultAlignment,
-			Units::FAngle::Degrees(0.0f),
-			Units::FWidth::FloorplanInches(DefaultColumnWidth)));
+			ModumateUnitParams::FAngle::Degrees(0.0f),
+			ModumateUnitParams::FWidth::FloorplanInches(DefaultColumnWidth)));
 	}
 }
 

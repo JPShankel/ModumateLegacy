@@ -33,7 +33,7 @@ struct FArchitecturalMesh
 
 	FGuid UniqueKey() const { return Key; }
 
-	TMap<FString, Modumate::Units::FUnitValue> NamedDimensions;
+	TMap<FString, FModumateUnitValue> NamedDimensions;
 
 	void ReadNamedDimensions(const FString& InNamedDimensions);
 };

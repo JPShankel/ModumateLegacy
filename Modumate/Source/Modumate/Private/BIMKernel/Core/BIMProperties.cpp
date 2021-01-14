@@ -124,12 +124,12 @@ bool FBIMPropertySheet::TryGetProperty(EBIMValueScope InScope, const FBIMNameTyp
 	return false;
 }
 
-bool FBIMPropertySheet::TryGetProperty(EBIMValueScope InScope, const FBIMNameType& InName, Modumate::Units::FUnitValue& OutT) const
+bool FBIMPropertySheet::TryGetProperty(EBIMValueScope InScope, const FBIMNameType& InName, FModumateUnitValue& OutT) const
 {
 	float v;
 	if (TryGetProperty<float>(InScope, InName, v))
 	{
-		OutT = Modumate::Units::FUnitValue::WorldCentimeters(v);
+		OutT = FModumateUnitValue::WorldCentimeters(v);
 		return true;
 	}
 	return false;

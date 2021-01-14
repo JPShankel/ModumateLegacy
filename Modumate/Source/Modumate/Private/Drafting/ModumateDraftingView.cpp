@@ -38,7 +38,6 @@
 #define LOCTEXT_NAMESPACE "ModumateDraftingView"
 
 using namespace Modumate::PDF;
-using namespace Modumate::Units;
 using namespace Modumate;
 
 
@@ -163,11 +162,11 @@ void FModumateDraftingView::PaginateScheduleViews(IModumateDraftingDraw *drawing
 	// TODO: there is some duplication associated with the population of this value
 	TSharedPtr<FDraftingComposite> currentScheduleArea = MakeShareable(new FDraftingComposite());
 
-	FCoordinates2D drawableDimensions = PageSize - PageMargin * 2.0f;
-	drawableDimensions.X -= FXCoord::FloorplanInches(TitleBarWidth);
+	FModumateUnitCoord2D drawableDimensions = PageSize - PageMargin * 2.0f;
+	drawableDimensions.X -= ModumateUnitParams::FXCoord::FloorplanInches(TitleBarWidth);
 
 	// TODO: value is the same as FDraftingSchedule::ScheduleMargin
-	FCoordinates2D scheduleMargin = FCoordinates2D(FXCoord::FloorplanInches(16.0f / 64.0f), FYCoord::FloorplanInches(16.0f / 64.0f));
+	FModumateUnitCoord2D scheduleMargin = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(16.0f / 64.0f), ModumateUnitParams::FYCoord::FloorplanInches(16.0f / 64.0f));
 
 	// TODO: margin won't be applied on the left with this implementation - could create another child view that holds the schedules
 	// without a margin and have the margin applied at a higher level
@@ -178,7 +177,7 @@ void FModumateDraftingView::PaginateScheduleViews(IModumateDraftingDraw *drawing
 	float availableY = maxAvailableY;
 
 	// create a column aligned to the widest schedule, with all schedules in the column left-aligned
-	FXCoord maxScheduleX = FXCoord::FloorplanInches(0.0f);
+	ModumateUnitParams::FXCoord maxScheduleX = ModumateUnitParams::FXCoord::FloorplanInches(0.0f);
 
 	for (auto& schedule : Schedules)
 	{
@@ -195,7 +194,7 @@ void FModumateDraftingView::PaginateScheduleViews(IModumateDraftingDraw *drawing
 			{
 				availableX -= maxScheduleX.AsFloorplanInches();
 
-				currentColumn->MoveXTo(FXCoord::FloorplanInches(availableX));
+				currentColumn->MoveXTo(ModumateUnitParams::FXCoord::FloorplanInches(availableX));
 
 				availableX -= schedule->ScheduleMargin;
 			}
@@ -212,7 +211,7 @@ void FModumateDraftingView::PaginateScheduleViews(IModumateDraftingDraw *drawing
 			currentScheduleArea->Children.Add(currentColumn);
 			currentColumn = MakeShareable(new FDraftingComposite());
 
-			maxScheduleX = FXCoord::FloorplanInches(0.0f);
+			maxScheduleX = ModumateUnitParams::FXCoord::FloorplanInches(0.0f);
 			availableY = maxAvailableY;
 		}
 
@@ -225,7 +224,7 @@ void FModumateDraftingView::PaginateScheduleViews(IModumateDraftingDraw *drawing
 
 		// schedules are drawn with the top-left corner as the origin so the height of the schedule is
 		// added to the position to match
-		schedule->MoveYTo(drawableDimensions.Y + FYCoord::FloorplanInches(-availableY + height));
+		schedule->MoveYTo(drawableDimensions.Y + ModumateUnitParams::FYCoord::FloorplanInches(-availableY + height));
 
 		currentColumn->Children.Add(schedule);
 
@@ -245,7 +244,7 @@ void FModumateDraftingView::PaginateScheduleViews(IModumateDraftingDraw *drawing
 
 	// TODO: the value subtracted here is shared with FDraftingSchedule::ScheduleMargin.  Currently, it could be a constant, but it should probably
 	// be a part of a future class that helps group details schedules with summary schedules
-	currentColumn->MoveXTo(FXCoord::FloorplanInches(availableX) - maxScheduleX);
+	currentColumn->MoveXTo(ModumateUnitParams::FXCoord::FloorplanInches(availableX) - maxScheduleX);
 	currentScheduleArea->Children.Add(currentColumn);
 	currentScheduleArea->SetLocalPosition(PageMargin);
 	currentScheduleArea->Children.Add(MakeShareable(new FDraftingRectangle(drawableDimensions)));
@@ -258,11 +257,11 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 	UDraftingManager *draftMan = modGameInst ? modGameInst->DraftingManager : nullptr;
 
 	// TODO: most likely this information should be controlled by UI and requested here
-	FCoordinates2D presentationSeriesSize = FCoordinates2D(FXCoord::FloorplanInches(36.0f), FYCoord::FloorplanInches(24.0f));
-	FCoordinates2D floorplanSeriesSize = FCoordinates2D(FXCoord::FloorplanInches(36.0f), FYCoord::FloorplanInches(24.0f));
-	FCoordinates2D titleBlockSize = FCoordinates2D(FXCoord::FloorplanInches(3.0f), FYCoord::FloorplanInches(24.0f));
-	FCoordinates2D drawingMargin = FCoordinates2D(FXCoord::FloorplanInches(0.5f), FYCoord::FloorplanInches(0.5f));
-	FCoordinates2D pageMargin = FCoordinates2D(FXCoord::FloorplanInches(0.5f), FYCoord::FloorplanInches(0.5f));
+	FModumateUnitCoord2D presentationSeriesSize = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(36.0f), ModumateUnitParams::FYCoord::FloorplanInches(24.0f));
+	FModumateUnitCoord2D floorplanSeriesSize = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(36.0f), ModumateUnitParams::FYCoord::FloorplanInches(24.0f));
+	FModumateUnitCoord2D titleBlockSize = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(3.0f), ModumateUnitParams::FYCoord::FloorplanInches(24.0f));
+	FModumateUnitCoord2D drawingMargin = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(0.5f), ModumateUnitParams::FYCoord::FloorplanInches(0.5f));
+	FModumateUnitCoord2D pageMargin = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(0.5f), ModumateUnitParams::FYCoord::FloorplanInches(0.5f));
 
 	TArray<AModumateObjectInstance*> cutPlanes = Document->GetObjectsOfType(EObjectType::OTCutPlane);
 	TArray<AModumateObjectInstance*> exportableCutPlanes;

@@ -90,9 +90,9 @@ namespace Modumate
 			drawingInterface.PageNum = 1;
 			drawingInterface.Doc.Object = doc.Object;
 
-			FXCoord xpos = FXCoord::FloorplanInches(4.0f);
-			FYCoord ypos = FYCoord::FloorplanInches(8.3f);
-			FAngle angle = FAngle::Degrees(0);
+			ModumateUnitParams::FXCoord xpos = ModumateUnitParams::FXCoord::FloorplanInches(4.0f);
+			ModumateUnitParams::FYCoord ypos = ModumateUnitParams::FYCoord::FloorplanInches(8.3f);
+			ModumateUnitParams::FAngle angle = ModumateUnitParams::FAngle::Degrees(0);
 
 
 			TSharedPtr<FDraftingComposite> testTag = MakeShareable(new FDraftingComposite());
@@ -100,11 +100,11 @@ namespace Modumate
 			for (int x = 0; x < 10; x++)
 			{
 				TSharedPtr<FDraftingComposite> tag = MakeShareable(new FDraftingComposite());
-				tag->SetLocalPosition(FXCoord::FloorplanInches(0.15f * x), FYCoord::FloorplanInches(0.0f));
+				tag->SetLocalPosition(ModumateUnitParams::FXCoord::FloorplanInches(0.15f * x), ModumateUnitParams::FYCoord::FloorplanInches(0.0f));
 
 				TSharedPtr<FDraftingRectangle> rect = MakeShareable(new FDraftingRectangle(
-					FCoordinates2D(FXCoord::FloorplanInches(0.1f), FYCoord::FloorplanInches(0.2f)),
-					FThickness::FloorplanInches(0.01f),
+					FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(0.1f), ModumateUnitParams::FYCoord::FloorplanInches(0.2f)),
+					ModumateUnitParams::FThickness::FloorplanInches(0.01f),
 					FMColor::Black));
 				rect->HorizontalAlignment = DraftingAlignment::Center;
 				rect->VerticalAlignment = DraftingAlignment::Center;
@@ -124,37 +124,37 @@ namespace Modumate
 			testTag->SetLocalPosition(xpos, ypos);
 			testTag->Draw(&drawingInterface);
 
-			xpos = FXCoord::FloorplanInches(4.5f);
-			ypos = FYCoord::FloorplanInches(6.0f);
+			xpos = ModumateUnitParams::FXCoord::FloorplanInches(4.5f);
+			ypos = ModumateUnitParams::FYCoord::FloorplanInches(6.0f);
 			testTag->SetLocalPosition(xpos, ypos);
-			testTag->SetLocalOrientation(FAngle::Degrees(45));
+			testTag->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(45));
 			testTag->Draw(&drawingInterface);
 
-			xpos = FXCoord::FloorplanInches(4.0f);
-			ypos = FYCoord::FloorplanInches(7.0f);
+			xpos = ModumateUnitParams::FXCoord::FloorplanInches(4.0f);
+			ypos = ModumateUnitParams::FYCoord::FloorplanInches(7.0f);
 			testTag->SetLocalPosition(xpos, ypos);
-			testTag->SetLocalOrientation(FAngle::Degrees(90));
+			testTag->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(90));
 			testTag->Draw(&drawingInterface);
 
 			TSharedPtr<FDraftingComposite> testAngles = MakeShareable(new FDraftingComposite());
-			xpos = FXCoord::FloorplanInches(2.5f);
+			xpos = ModumateUnitParams::FXCoord::FloorplanInches(2.5f);
 
 			testAngles->SetLocalPosition(xpos, ypos);
 
-			FRadius radius = FRadius::FloorplanInches(0.1f);
-			FAngle degs = FAngle::Degrees(45.0f);
-			FThickness lineWidth = FThickness::FloorplanInches(0.01f);
+			ModumateUnitParams::FRadius radius = ModumateUnitParams::FRadius::FloorplanInches(0.1f);
+			ModumateUnitParams::FAngle degs = ModumateUnitParams::FAngle::Degrees(45.0f);
+			ModumateUnitParams::FThickness lineWidth = ModumateUnitParams::FThickness::FloorplanInches(0.01f);
 
 			TSharedPtr<FDraftingArc> arc1 = MakeShareable(new FDraftingArc(radius, degs, lineWidth));
 			testAngles->Children.Add(arc1);
 
-			degs = FAngle::Degrees(150.0f);
+			degs = ModumateUnitParams::FAngle::Degrees(150.0f);
 			TSharedPtr<FDraftingArc> arc2 = MakeShareable(new FDraftingArc(radius, degs, lineWidth));
-			arc2->MoveXTo(FXCoord::FloorplanInches(0.25f));
-			arc2->SetLocalOrientation(FAngle::Degrees(270.0f));
+			arc2->MoveXTo(ModumateUnitParams::FXCoord::FloorplanInches(0.25f));
+			arc2->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(270.0f));
 			testAngles->Children.Add(arc2);
 
-			testAngles->SetLocalOrientation(FAngle::Degrees(45.0f));
+			testAngles->SetLocalOrientation(ModumateUnitParams::FAngle::Degrees(45.0f));
 
 			testAngles->Draw(&drawingInterface);
 

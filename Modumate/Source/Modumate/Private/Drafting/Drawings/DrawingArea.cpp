@@ -2,8 +2,8 @@
 
 namespace Modumate {
 	EDrawError FDrawingArea::Draw(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		EDrawError error = EDrawError::ErrorNone;

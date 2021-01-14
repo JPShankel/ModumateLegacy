@@ -51,7 +51,7 @@ namespace Modumate
 		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
 
 	public:
-		Units::FAngle Angle = Units::FAngle::Radians(0);
+		ModumateUnitParams::FAngle Angle = ModumateUnitParams::FAngle::Radians(0);
 		const float Radius = 24.0f / 64.0f; // default radius, first thing to change given sizing requirements
 		const float TickLength = 2.0f / 64.0f;
 		const float TextOffset = 5.0f / 64.0f; // default text distance from arc
@@ -62,11 +62,11 @@ namespace Modumate
 	class FDimensionTag : public FTag
 	{
 	public:
-		FDimensionTag(Units::FLength witnessLength, Units::FLength stringLength, FText dimensionText);
+		FDimensionTag(ModumateUnitParams::FLength witnessLength, ModumateUnitParams::FLength stringLength, FText dimensionText);
 		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
 	public:
-		Units::FLength WitnessLength;
-		Units::FLength StringLength;
+		ModumateUnitParams::FLength WitnessLength;
+		ModumateUnitParams::FLength StringLength;
 		FText DimensionText;
 	};
 
@@ -100,7 +100,7 @@ namespace Modumate
 	class FRoomTag : public FTag
 	{
 	public:
-		FRoomTag(const Units::FCoordinates2D &coords, const FString &name, const FString &number, const FString &area, const FString &load);
+		FRoomTag(const FModumateUnitCoord2D &coords, const FString &name, const FString &number, const FString &area, const FString &load);
 		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
 
 	public:
@@ -178,11 +178,11 @@ namespace Modumate
 	public:
 		TSharedPtr<FDraftingComposite> Content;
 
-		Units::FRadius CornerRadius; //Units::FRadius::FloorplanInches(2.0f * Margin);
+		ModumateUnitParams::FRadius CornerRadius; //FRadius::FloorplanInches(2.0f * Margin);
 		// default yellow color used in schedules
 		// FMColor(254.0f / 255.0f, 247.0f / 255.0f, 194.0f / 255.0f);
 		FMColor FillColor = FMColor::White;
-		Units::FCoordinates2D OuterMargins;
+		FModumateUnitCoord2D OuterMargins;
 	};
 
 	// FHeaderTag expects an initialized object as its argument, and it will wrap the object with a header text object
@@ -201,7 +201,7 @@ namespace Modumate
 	class FMatchLineTag : public FTag
 	{
 	public:
-		FMatchLineTag(FText topDrawing, FText bottomDrawing, Units::FLength pageLength) :
+		FMatchLineTag(FText topDrawing, FText bottomDrawing, ModumateUnitParams::FLength pageLength) :
 			TopDrawing(topDrawing), BottomDrawing(bottomDrawing), PageLength(pageLength) {};
 
 		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
@@ -209,15 +209,15 @@ namespace Modumate
 	public:
 		FText TopDrawing;
 		FText BottomDrawing;
-		Units::FLength PageLength;
+		ModumateUnitParams::FLength PageLength;
 
 	public:
-		Units::FXCoord PageOffset = Units::FXCoord::FloorplanInches(1.0f);					// match line offset from page dimension
-		Units::FXCoord TextOffset = Units::FXCoord::FloorplanInches(0.5f);					// additional text offset from match line offset
-		Units::FYCoord MatchLineMargin = Units::FYCoord::FloorplanInches(6.0f / 64.0f);		// distance between text objects and dashed line
+		ModumateUnitParams::FXCoord PageOffset = ModumateUnitParams::FXCoord::FloorplanInches(1.0f);					// match line offset from page dimension
+		ModumateUnitParams::FXCoord TextOffset = ModumateUnitParams::FXCoord::FloorplanInches(0.5f);					// additional text offset from match line offset
+		ModumateUnitParams::FYCoord MatchLineMargin = ModumateUnitParams::FYCoord::FloorplanInches(6.0f / 64.0f);		// distance between text objects and dashed line
 
 		float MatchLineWidth = 1.0f / 24.0f;
-		Units::FFontSize TextFontSize = Units::FFontSize::FloorplanInches(12.0f / 64.0f);	// match line text font size
+		ModumateUnitParams::FFontSize TextFontSize = ModumateUnitParams::FFontSize::FloorplanInches(12.0f / 64.0f);	// match line text font size
 
 		FMColor Color = FMColor::Gray32;
 		LinePattern Pattern = { DraftingLineStyle::Dashed, { 16, 8 } };
@@ -235,8 +235,8 @@ namespace Modumate
 		FText TitleText;
 		FText ScaleText;
 
-		Units::FRadius Radius = Units::FRadius::FloorplanInches(1.0f / 6.0f);
-		Units::FLength LineOverrunRight = Units::FLength::FloorplanInches(1.0f / 3.0f);
+		ModumateUnitParams::FRadius Radius = ModumateUnitParams::FRadius::FloorplanInches(1.0f / 6.0f);
+		ModumateUnitParams::FLength LineOverrunRight = ModumateUnitParams::FLength::FloorplanInches(1.0f / 3.0f);
 
 		FMColor Color = FMColor::Gray32;
 	};
@@ -244,16 +244,16 @@ namespace Modumate
 	class FSectionTag : public FTag
 	{
 	public:
-		FSectionTag(FText view, FText sheet, Units::FAngle angle = Units::FAngle::Degrees(0)) : ViewText(view), SheetText(sheet), ArrowAngle(angle) {};
+		FSectionTag(FText view, FText sheet, ModumateUnitParams::FAngle angle = ModumateUnitParams::FAngle::Degrees(0)) : ViewText(view), SheetText(sheet), ArrowAngle(angle) {};
 
 		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
 
 	public:
 		FText ViewText;
 		FText SheetText;
-		Units::FAngle ArrowAngle;
+		ModumateUnitParams::FAngle ArrowAngle;
 
-		Units::FRadius Radius = Units::FRadius::FloorplanInches(1.0f / 4.0f);
+		ModumateUnitParams::FRadius Radius = ModumateUnitParams::FRadius::FloorplanInches(1.0f / 4.0f);
 
 		FMColor Color = FMColor::Gray32;
 	};
@@ -261,12 +261,12 @@ namespace Modumate
 	class FScaleTag : public FTag
 	{
 	public:
-		FScaleTag(TArray<Units::FLength> lengths) : Lengths(lengths) {};
+		FScaleTag(TArray<ModumateUnitParams::FLength> lengths) : Lengths(lengths) {};
 
 		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
 
 	public:
-		TArray<Units::FLength> Lengths;
+		TArray<ModumateUnitParams::FLength> Lengths;
 	};
 
 	// TODO: Previous implementations of the following tags were removed in Change 2354:

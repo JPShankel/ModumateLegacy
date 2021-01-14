@@ -441,7 +441,7 @@ bool UStairTool::UpdatePreviewStairs()
 	}
 
 	// TODO: get from document, or somewhere else
-	float treadThickness = Units::FUnitValue(1.0f, Units::EUnitType::WorldInches).AsWorldCentimeters();
+	float treadThickness = FModumateUnitValue(1.0f, EModumateUnitType::WorldInches).AsWorldCentimeters();
 	FVector previewWidthDir = ((CurrentWidth > 0) ? 1 : -1) * WidthDir;
 	float previewTotalWidth = FMath::Max(FMath::Abs(CurrentWidth), 0.01f);
 

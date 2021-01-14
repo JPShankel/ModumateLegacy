@@ -32,8 +32,8 @@ namespace Modumate {
 
 
 	EDrawError FDraftingDrawing::Draw(IModumateDraftingDraw *drawingInterface,
-		Units::FCoordinates2D position,
-		Units::FAngle orientation,
+		FModumateUnitCoord2D position,
+		ModumateUnitParams::FAngle orientation,
 		float scale)
 	{
 		EDrawError error = EDrawError::ErrorNone;
@@ -49,7 +49,7 @@ namespace Modumate {
 		return FDraftingComposite::Draw(drawingInterface,position,orientation,scale);
 	}
 
-	bool FDraftingDrawing::InitializeDimensions(Units::FCoordinates2D drawingSize, Units::FCoordinates2D drawingMargin)
+	bool FDraftingDrawing::InitializeDimensions(FModumateUnitCoord2D drawingSize, FModumateUnitCoord2D drawingMargin)
 	{
 		DrawingSize = drawingSize;
 		DrawingMargin = drawingMargin;
@@ -120,7 +120,7 @@ namespace Modumate {
 		auto volumeGraph = Doc->GetVolumeGraph();
 		volumeGraph.Create2DGraph(plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, graph, objMap);
 
-		Units::FThickness lineThickness = Units::FThickness::Points(0.15f);
+		ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
 		FMColor lineColor = FMColor::Black;
 
 		for (auto& edgekvp : graph->GetEdges())
@@ -130,8 +130,8 @@ namespace Modumate {
 			auto startVertex = graph->FindVertex(edge.StartVertexID);
 			auto endVertex = graph->FindVertex(edge.EndVertexID);
 
-			Units::FCoordinates2D start = Units::FCoordinates2D::WorldCentimeters(startVertex->Position);
-			Units::FCoordinates2D end = Units::FCoordinates2D::WorldCentimeters(endVertex->Position);
+			FModumateUnitCoord2D start = FModumateUnitCoord2D::WorldCentimeters(startVertex->Position);
+			FModumateUnitCoord2D end = FModumateUnitCoord2D::WorldCentimeters(endVertex->Position);
 
 			int32 metaplaneID = objMap[edge.ID];
 			auto metaplane = Doc->GetObjectById(metaplaneID);
@@ -194,8 +194,8 @@ namespace Modumate {
 		for (const auto& edge: occluders)
 		{
 			TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
-				Modumate::Units::FCoordinates2D::WorldCentimeters(FVector2D(edge.Vertex[0])),
-				Modumate::Units::FCoordinates2D::WorldCentimeters(FVector2D(edge.Vertex[1])),
+				FModumateUnitCoord2D::WorldCentimeters(FVector2D(edge.Vertex[0])),
+				FModumateUnitCoord2D::WorldCentimeters(FVector2D(edge.Vertex[1])),
 				lineThickness, lineColor);
 			ParentPage->Children.Add(line);
 			line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kDebug1);
@@ -274,7 +274,7 @@ namespace Modumate {
 		float orthoWidth = drawingBox.GetSize().X;
 		float orthoHeight = drawingBox.GetSize().Y;
 
-		Units::FCoordinates2D dimensions = Units::FCoordinates2D(Units::FXCoord::WorldCentimeters(orthoWidth), Units::FYCoord::WorldCentimeters(orthoHeight));
+		FModumateUnitCoord2D dimensions = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::WorldCentimeters(orthoWidth), ModumateUnitParams::FYCoord::WorldCentimeters(orthoHeight));
 
 		TSharedPtr<FDraftingComposite> foregroundLines = MakeShareable(new FDraftingComposite());
 		TArray<TArray<FVector>> outPerimeters;
@@ -286,7 +286,7 @@ namespace Modumate {
 		}
 		GetForegroundLines(foregroundLines, axisX, axisY, true);
 
-		foregroundLines->SetLocalPosition(Units::FCoordinates2D::WorldCentimeters(drawingBox.Min) * -1.0f);
+		foregroundLines->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);
 
 		if (!FVector::Parallel(FVector(plane), FVector::UpVector))
 		{

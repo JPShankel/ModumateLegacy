@@ -5,7 +5,6 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "Drafting/Schedules/ScheduleGrid.h"
 
-using namespace Modumate::Units;
 
 #define LOCTEXT_NAMESPACE "ModumateDoorSchedule"
 
@@ -15,7 +14,7 @@ namespace Modumate {
 	{
 		Title = MakeShareable(new FDraftingText(
 			LOCTEXT("title", "Door Schedule: Instances"),
-			FFontSize::FloorplanInches(TitleHeight),
+			ModumateUnitParams::FFontSize::FloorplanInches(TitleHeight),
 			DefaultColor,
 			FontType::Bold));
 
@@ -141,8 +140,8 @@ namespace Modumate {
 
 			// Comments
 			TSharedPtr<FDraftingComposite> whiteSpace = MakeShareable(new FDraftingComposite());
-			whiteSpace->Dimensions.X = FXCoord::FloorplanInches(CommentsWidth);
-			whiteSpace->Dimensions.Y = FYCoord::FloorplanInches(RowHeight);
+			whiteSpace->Dimensions.X = ModumateUnitParams::FXCoord::FloorplanInches(CommentsWidth);
+			whiteSpace->Dimensions.Y = ModumateUnitParams::FYCoord::FloorplanInches(RowHeight);
 
 			row.Add(whiteSpace);
 
@@ -160,7 +159,7 @@ namespace Modumate {
 		Title->InitializeBounds(drawingInterface);
 		Title->MoveYTo(Title->Dimensions.Y * -1.0f);
 
-		Dimensions.Y = Title->Dimensions.Y + FYCoord::FloorplanInches(TitleMargin);
+		Dimensions.Y = Title->Dimensions.Y + ModumateUnitParams::FYCoord::FloorplanInches(TitleMargin);
 
 
 		Data->MoveYTo(Dimensions.Y * -1.0f);

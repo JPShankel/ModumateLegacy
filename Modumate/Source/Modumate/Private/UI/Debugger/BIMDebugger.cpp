@@ -123,7 +123,7 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FGuid& PresetKey, bool AddToHistor
 				// Get this property scope, name, and value
 				FBIMPropertyKey propertyValue(kvp.Value);
 				FGuid propertyPresetKey;
-				Modumate::Units::FUnitValue unitValue;
+				FModumateUnitValue unitValue;
 				bool bPropertyIsPreset = preset->Properties.TryGetProperty(propertyValue.Scope, propertyValue.Name, propertyPresetKey);
 				if (!bPropertyIsPreset)
 				{

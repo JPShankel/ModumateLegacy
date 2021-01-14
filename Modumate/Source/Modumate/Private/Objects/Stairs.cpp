@@ -113,7 +113,7 @@ void AMOIStaircase::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposi
 void AMOIStaircase::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
-	static const Modumate::Units::FThickness stairLineThickness = Modumate::Units::FThickness::Points(0.15f);
+	static const ModumateUnitParams::FThickness stairLineThickness = ModumateUnitParams::FThickness::Points(0.15f);
 	static const Modumate::FMColor lineColor(0.439f, 0.439f, 0.439f);  // Gray112
 	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges;
 
@@ -180,8 +180,8 @@ void AMOIStaircase::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite
 			if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 			{
 				TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShared<Modumate::FDraftingLine>(
-					Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
-					Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
+					FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
+					FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
 					stairLineThickness, lineColor);
 				ParentPage->Children.Add(draftingLine);
 				draftingLine->SetLayerTypeRecursive(dwgLayerType);
@@ -194,7 +194,7 @@ void AMOIStaircase::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite
 void AMOIStaircase::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
-	static const Modumate::Units::FThickness lineThickness = Modumate::Units::FThickness::Points(0.25f);
+	static const ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.25f);
 	static const Modumate::FMColor lineColor = Modumate::FMColor::Gray96;
 	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kSeparatorCutOuterSurface;
 
@@ -293,8 +293,8 @@ void AMOIStaircase::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposit
 		if (UModumateFunctionLibrary::ClipLine2DToRectangle(start, end, BoundingBox, clippedStart, clippedEnd))
 		{
 			TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShared<Modumate::FDraftingLine>(
-				Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
-				Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+				FModumateUnitCoord2D::WorldCentimeters(clippedStart),
+				FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 				lineThickness, lineColor);
 			ParentPage->Children.Add(draftingLine);
 			draftingLine->SetLayerTypeRecursive(dwgLayerType);

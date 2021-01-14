@@ -501,9 +501,9 @@ bool ADynamicIconGenerator::SetIconMeshForCabinetAssembly(const FBIMAssemblySpec
 	}
 
 	// Get the cabinet dimensions
-	Units::FUnitValue cabinetWidthUnit(CabinetDimension.X, Units::EUnitType::WorldInches);
-	Units::FUnitValue cabinetHeightUnit(CabinetDimension.Z, Units::EUnitType::WorldInches);
-	Units::FUnitValue cabinetDepthUnit(CabinetDimension.Y, Units::EUnitType::WorldInches);
+	FModumateUnitValue cabinetWidthUnit(CabinetDimension.X, EModumateUnitType::WorldInches);
+	FModumateUnitValue cabinetHeightUnit(CabinetDimension.Z, EModumateUnitType::WorldInches);
+	FModumateUnitValue cabinetDepthUnit(CabinetDimension.Y, EModumateUnitType::WorldInches);
 
 	float cabinetWidth = cabinetWidthUnit.AsWorldCentimeters();
 	float cabinetHeight = cabinetHeightUnit.AsWorldCentimeters();
@@ -663,7 +663,7 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 
 	// Empirically derived overlap.
 	// TODO: put in assembly spec.
-	static constexpr float openStairsOverhang = 2.0f * Modumate::InchesToCentimeters;
+	static constexpr float openStairsOverhang = 2.0f * UModumateDimensionStatics::InchesToCentimeters;
 
 	const float totalTreadThickness = cachedTreadDims.TotalUnfinishedWidth;
 	const float totalRiserThickness = bCachedUseRisers ? cachedRiserDims.TotalUnfinishedWidth : openStairsOverhang;
@@ -962,11 +962,11 @@ bool ADynamicIconGenerator::SetIconMeshForModule(bool UseDependentPreset, const 
 	FGuid rawMaterialKey;
 	FString colorHexValue = TEXT("FFFFFF");
 
-	Modumate::Units::FUnitValue 
-		width = Modumate::Units::FUnitValue::WorldCentimeters(0), 
-		length = Modumate::Units::FUnitValue::WorldCentimeters(0),
-		depth = Modumate::Units::FUnitValue::WorldCentimeters(0),
-		height = Modumate::Units::FUnitValue::WorldCentimeters(0);
+	FModumateUnitValue 
+		width = FModumateUnitValue::WorldCentimeters(0), 
+		length = FModumateUnitValue::WorldCentimeters(0),
+		depth = FModumateUnitValue::WorldCentimeters(0),
+		height = FModumateUnitValue::WorldCentimeters(0);
 
 	const FPresetManager &presetManager = GameState->Document->PresetManager;
 

@@ -39,7 +39,7 @@ namespace Modumate {
 		float DefaultColumnWidth = 3.0f;		// default max column width, for wrapping and for comments space
 
 	public:
-		Units::FXCoord maxDimensionX = Units::FXCoord::FloorplanInches(0.0f);
+		ModumateUnitParams::FXCoord maxDimensionX = ModumateUnitParams::FXCoord::FloorplanInches(0.0f);
 
 	public:
 		// Rendering helper variables
@@ -47,7 +47,7 @@ namespace Modumate {
 		float scheduleY = 1.0f;
 
 		// Drafting Variables
-		Units::FFontSize DefaultFontSize = Units::FFontSize::FloorplanInches(ContentHeight);
+		ModumateUnitParams::FFontSize DefaultFontSize = ModumateUnitParams::FFontSize::FloorplanInches(ContentHeight);
 		FMColor DefaultColor = FMColor::Black;
 		FontType DefaultFont = FontType::Standard;
 		DraftingAlignment DefaultAlignment = DraftingAlignment::Left;

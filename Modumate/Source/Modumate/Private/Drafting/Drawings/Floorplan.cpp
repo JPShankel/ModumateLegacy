@@ -5,7 +5,6 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "Objects/ModumateObjectInstance.h"
 
-using namespace Modumate::Units;
 
 namespace Modumate {
 
@@ -25,11 +24,11 @@ namespace Modumate {
 		auto viewArea = DrawingContent.Pin();
 		ensureAlways(viewArea.IsValid());
 
-		worldObjects->SetLocalPosition(FCoordinates2D::WorldCentimeters(worldObjects->BoundingBox.Min) * -1.0f);
-		viewArea->Dimensions = FCoordinates2D::WorldCentimeters(viewArea->Dimensions.AsWorldCentimeters(DrawingScale));
+		worldObjects->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(worldObjects->BoundingBox.Min) * -1.0f);
+		viewArea->Dimensions = FModumateUnitCoord2D::WorldCentimeters(viewArea->Dimensions.AsWorldCentimeters(DrawingScale));
 		worldObjects->TranslateBy(viewArea->Dimensions.X);
 
-		worldObjects->Dimensions = FCoordinates2D::WorldCentimeters(worldObjects->BoundingBox.GetSize());
+		worldObjects->Dimensions = FModumateUnitCoord2D::WorldCentimeters(worldObjects->BoundingBox.GetSize());
 		worldObjects->TranslateBy(worldObjects->Dimensions.X * -1.0f);
 
 		UDraftingManager::OnPageCompleted(CaptureObjID, World);

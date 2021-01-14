@@ -219,7 +219,7 @@ void AMOIFinish::MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags EdgeDirtyFlags
 void AMOIFinish::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
-	static const Modumate::Units::FThickness lineThickness = Modumate::Units::FThickness::Points(0.05f);
+	static const ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.05f);
 	static const Modumate::FMColor lineColor = Modumate::FMColor::Gray144;
 	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kFinishCut;
 
@@ -277,8 +277,8 @@ void AMOIFinish::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>&
 				if (UModumateFunctionLibrary::ClipLine2DToRectangle(rangeStart, rangeEnd, BoundingBox, clippedStart, clippedEnd))
 				{
 					TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
-						Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
-						Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+						FModumateUnitCoord2D::WorldCentimeters(clippedStart),
+						FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 						lineThickness, lineColor);
 					ParentPage->Children.Add(line);
 					line->SetLayerTypeRecursive(dwgLayerType);
@@ -288,8 +288,8 @@ void AMOIFinish::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>&
 					if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint], rangeStart, BoundingBox, clippedStart, clippedEnd))
 					{
 						TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
-							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
-							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+							FModumateUnitCoord2D::WorldCentimeters(clippedStart),
+							FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 							lineThickness, lineColor);
 						ParentPage->Children.Add(line);
 						line->SetLayerTypeRecursive(dwgLayerType);
@@ -297,8 +297,8 @@ void AMOIFinish::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>&
 					if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint + 1], rangeEnd, BoundingBox, clippedStart, clippedEnd))
 					{
 						TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
-							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
-							Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+							FModumateUnitCoord2D::WorldCentimeters(clippedStart),
+							FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 							lineThickness, lineColor);
 						ParentPage->Children.Add(line);
 						line->SetLayerTypeRecursive(dwgLayerType);
@@ -320,7 +320,7 @@ void AMOIFinish::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>&
 void AMOIFinish::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
-	static const Modumate::Units::FThickness lineThickness = Modumate::Units::FThickness::Points(0.15f);
+	static const ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
 	static const Modumate::FMColor lineColor(0.439f, 0.439f, 0.439f);  // Gray112
 	static const Modumate::FModumateLayerType dwgOuterType = Modumate::FModumateLayerType::kFinishBeyond;
 	static const Modumate::FModumateLayerType dwgHoleType = Modumate::FModumateLayerType::kFinishBeyond;
@@ -386,8 +386,8 @@ void AMOIFinish::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& 
 				if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 				{
 					TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShared<Modumate::FDraftingLine>(
-						Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped0),
-						Modumate::Units::FCoordinates2D::WorldCentimeters(boxClipped1),
+						FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
+						FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
 						lineThickness, lineColor);
 					ParentPage->Children.Add(draftingLine);
 					draftingLine->SetLayerTypeRecursive(line.Value);

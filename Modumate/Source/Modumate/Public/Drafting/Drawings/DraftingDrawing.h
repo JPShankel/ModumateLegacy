@@ -17,11 +17,11 @@ namespace Modumate {
 		FDraftingDrawing(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID);
 
 		virtual EDrawError Draw(IModumateDraftingDraw *drawingInterface,
-			Units::FCoordinates2D position = Units::FCoordinates2D(),
-			Units::FAngle orientation = Units::FAngle::Radians(0),
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
 			float scale = 1.0f) override;
 
-		virtual bool InitializeDimensions(Units::FCoordinates2D drawingSize, Units::FCoordinates2D drawingMargin);
+		virtual bool InitializeDimensions(FModumateUnitCoord2D drawingSize, FModumateUnitCoord2D drawingMargin);
 
 		virtual bool MakeTitleTag(IModumateDraftingDraw *drawingInterface);
 
@@ -47,8 +47,8 @@ namespace Modumate {
 		TWeakPtr<FDraftingComposite> WorldObjects = nullptr;
 
 	protected:
-		Units::FCoordinates2D DrawingSize;
-		Units::FCoordinates2D DrawingMargin;
+		FModumateUnitCoord2D DrawingSize;
+		FModumateUnitCoord2D DrawingMargin;
 
 	// Rooms - this information is likely only relevant to plans (cut plane normal = down vector)
 	protected:

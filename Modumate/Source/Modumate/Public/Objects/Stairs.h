@@ -3,6 +3,7 @@
 
 #include "Objects/LayeredObjectInterface.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 
 #include "Stairs.generated.h"
 
@@ -44,5 +45,5 @@ protected:
 
 	// Empirically derived overlap.
 	// TODO: put in assembly spec.
-	static constexpr float OpenStairsOverhang = 2.0f * Modumate::InchesToCentimeters;
+	static constexpr float OpenStairsOverhang = 2.0f * UModumateDimensionStatics::InchesToCentimeters;
 };

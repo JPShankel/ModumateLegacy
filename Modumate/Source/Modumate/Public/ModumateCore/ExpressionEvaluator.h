@@ -12,7 +12,7 @@ namespace Modumate
 	{
 		bool ReplaceVariable(FString &ExprString, const FString &VarName, float VarValue);
 		bool Evaluate(const TMap<FString, float> &Vars, const FString &Expr, float &Result);
-		bool Evaluate(const TMap<FName, Units::FUnitValue> &Vars, const FString &Expr, Units::FUnitValue &Result);
+		bool Evaluate(const TMap<FName, FModumateUnitValue> &Vars, const FString &Expr, FModumateUnitValue& OutResult);
 		bool Evaluate(const FString &Expr, float &Result);
 		float Evaluate(const TMap<FString, float> &Vars, const FString &Expr);
 		bool ExtractVariables(const FString &ExprString, TArray<FString>& OutVariables);

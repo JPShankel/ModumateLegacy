@@ -4,7 +4,6 @@
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "Algo/Transform.h"
 
-using namespace Modumate::Units;
 
 FPatternModuleTemplate::FPatternModuleTemplate(const FString &DimensionStringsCombined)
 	: OriginalString(DimensionStringsCombined)

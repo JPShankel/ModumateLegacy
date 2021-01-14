@@ -74,21 +74,21 @@ void UToolTrayBlockProperties::ChangeBlockProperties(UEditModelToolBase* Current
 	HorizontalBoxInstWidth->SetVisibility(bWidthEnabled ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 	if (bWidthEnabled)
 	{
-		FString widthString = UModumateDimensionStatics::DecimalToFractionString(widthValue * Modumate::CentimetersToInches, true);
+		FString widthString = UModumateDimensionStatics::DecimalToFractionString(widthValue * UModumateDimensionStatics::CentimetersToInches, true);
 		EditableTextBoxInstWidth->ModumateEditableTextBox->SetText(FText::FromString(widthString));
 	}
 
 	HorizontalBoxInstHeight->SetVisibility(bHeightEnabled ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 	if (bHeightEnabled)
 	{
-		FString heightString = UModumateDimensionStatics::DecimalToFractionString(heightValue * Modumate::CentimetersToInches, true);
+		FString heightString = UModumateDimensionStatics::DecimalToFractionString(heightValue * UModumateDimensionStatics::CentimetersToInches, true);
 		EditableTextBoxInstHeight->ModumateEditableTextBox->SetText(FText::FromString(heightString));
 	}
 
 	HorizontalBoxInstSillHeight->SetVisibility(bSillHeightEnabled ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 	if (bSillHeightEnabled)
 	{
-		FString sillHeightString = UModumateDimensionStatics::DecimalToFractionString(sillHeightValue * Modumate::CentimetersToInches, true);
+		FString sillHeightString = UModumateDimensionStatics::DecimalToFractionString(sillHeightValue * UModumateDimensionStatics::CentimetersToInches, true);
 		EditableTextBoxInstSillHeight->ModumateEditableTextBox->SetText(FText::FromString(sillHeightString));
 	}
 

@@ -255,7 +255,7 @@ void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>
 	{
 		bool bLinesDrawn = actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin);
 
-		Modumate::Units::FThickness defaultThickness = Modumate::Units::FThickness::Points(0.1f);
+		ModumateUnitParams::FThickness defaultThickness = ModumateUnitParams::FThickness::Points(0.1f);
 		Modumate::FMColor defaultColor = Modumate::FMColor::Gray64;
 		Modumate::FMColor swingColor = Modumate::FMColor::Gray160;
 		static constexpr float defaultDoorOpeningDegrees = 90.0f;
@@ -322,8 +322,8 @@ void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>
 						if (UModumateFunctionLibrary::ClipLine2DToRectangle(planStart, planEnd, BoundingBox, clippedStart, clippedEnd))
 						{
 							TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
-								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedStart),
-								Modumate::Units::FCoordinates2D::WorldCentimeters(clippedEnd),
+								FModumateUnitCoord2D::WorldCentimeters(clippedStart),
+								FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 								defaultThickness, swingColor);
 							ParentPage->Children.Add(line);
 							line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kOpeningSystemOperatorLine);
@@ -332,14 +332,14 @@ void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>
 
 							if (bPositiveSwing)
 							{
-								arcAngle -= Modumate::Units::FUnitValue::Degrees(defaultDoorOpeningDegrees).AsRadians();
+								arcAngle -= FModumateUnitValue::Degrees(defaultDoorOpeningDegrees).AsRadians();
 							}
 							TSharedPtr<Modumate::FDraftingArc> doorArc = MakeShared<Modumate::FDraftingArc>(
-								Modumate::Units::FLength::WorldCentimeters(panelLength),
-								Modumate::Units::FRadius::Degrees(defaultDoorOpeningDegrees),
+								ModumateUnitParams::FLength::WorldCentimeters(panelLength),
+								ModumateUnitParams::FRadius::Degrees(defaultDoorOpeningDegrees),
 								defaultThickness, swingColor);
-							doorArc->SetLocalPosition(Modumate::Units::FCoordinates2D::WorldCentimeters(planStart));
-							doorArc->SetLocalOrientation(Modumate::Units::FUnitValue::Radians(arcAngle));
+							doorArc->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(planStart));
+							doorArc->SetLocalOrientation(FModumateUnitValue::Radians(arcAngle));
 							ParentPage->Children.Add(doorArc);
 							doorArc->SetLayerTypeRecursive(Modumate::FModumateLayerType::kOpeningSystemOperatorLine);
 						}

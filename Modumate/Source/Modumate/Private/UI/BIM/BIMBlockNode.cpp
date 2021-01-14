@@ -305,7 +305,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 				FString valueString;
 				if (!Node->WorkingPresetCopy.Properties.TryGetProperty(value.Scope, value.Name, valueString))
 				{
-					Modumate::Units::FUnitValue unitValue;
+					FModumateUnitValue unitValue;
 					if (Node->WorkingPresetCopy.Properties.TryGetProperty(value.Scope, value.Name, unitValue))
 					{
 						TArray<int32> imperialsInches;

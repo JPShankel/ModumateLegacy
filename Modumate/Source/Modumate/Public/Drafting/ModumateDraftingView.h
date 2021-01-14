@@ -17,8 +17,6 @@ namespace Modumate
 {
 	class FDraftingSchedule;
 
-	using namespace Units;
-
 	class IModumateDraftingDraw;
 
 	class MODUMATE_API FModumateDraftingView
@@ -66,8 +64,8 @@ namespace Modumate
 	public:
 		// TODO: this stuff should probably be a setting, as opposed to hard-coded here
 		// this can be removed once the remaining schedule code is moved somewhere else or deleted
-		FCoordinates2D PageSize = FCoordinates2D(FXCoord::FloorplanInches(17.0f), FYCoord::FloorplanInches(11.0f));
-		FCoordinates2D PageMargin = FCoordinates2D(FXCoord::FloorplanInches(0.5f), FYCoord::FloorplanInches(0.5f));
+		FModumateUnitCoord2D PageSize = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(17.0f), ModumateUnitParams::FYCoord::FloorplanInches(11.0f));
+		FModumateUnitCoord2D PageMargin = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(0.5f), ModumateUnitParams::FYCoord::FloorplanInches(0.5f));
 
 		const float TitleBarWidth = 3.0f;
 

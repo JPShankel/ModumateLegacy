@@ -11,7 +11,7 @@ namespace Modumate
 {
 	namespace Expression
 	{
-		bool ReplaceVariable(FString &ExprString, const FString &VarName, float VarValue)
+		bool ReplaceVariable(FString& ExprString, const FString& VarName, float VarValue)
 		{
 			// Adapated from FString::Replace, but with some expression-specific features and optimizations.
 
@@ -136,17 +136,17 @@ namespace Modumate
 			return Evaluate(fexpr, result);
 		}
 
-		bool Evaluate(const TMap<FName, Units::FUnitValue> &vars, const FString &expr, Units::FUnitValue &result)
+		bool Evaluate(const TMap<FName, FModumateUnitValue>& Vars, const FString& Expr, FModumateUnitValue& OutResult)
 		{
 			// First, determine the common units of the variables in the expression, so they can be converted to the same type
-			Units::EUnitType commonUnit = Units::EUnitType::WorldCentimeters;
+			EModumateUnitType commonUnit = EModumateUnitType::WorldCentimeters;
 			int32 maxUnitUsage = 0;
-			int32 unitUsage[Units::EUnitType::NUM];
+			int32 unitUsage[EModumateUnitType::NUM];
 			FMemory::Memset(unitUsage, 0);
 
-			for (auto &kvp : vars)
+			for (auto &kvp : Vars)
 			{
-				Units::EUnitType unitType = kvp.Value.GetUnitType();
+				EModumateUnitType unitType = kvp.Value.GetUnitType();
 				int32 unitIdx = (int32)unitType;
 				if (++unitUsage[unitIdx] > maxUnitUsage)
 				{
@@ -156,24 +156,24 @@ namespace Modumate
 			}
 
 			// If we haven't determined a common unit from input variables, abort.
-			if ((maxUnitUsage == 0) && (vars.Num() > 0))
+			if ((maxUnitUsage == 0) && (Vars.Num() > 0))
 			{
 				return false;
 			}
 
 			// strip spaces
-			FString fexpr = expr.Replace(TEXT(" "), TEXT(""));
+			FString fexpr = Expr.Replace(TEXT(" "), TEXT(""));
 
 			// replace all vars with literal values - sort keys to guarantee that more specific names get bound first (ie "Hank1" vs "Hank")
 			TArray<FName> keys;
-			vars.GetKeys(keys);
-			keys.Sort([](const FName &rhs, const FName &lhs) {
-				return rhs.GetDisplayNameEntry()->GetNameLength() > lhs.GetDisplayNameEntry()->GetNameLength();
+			Vars.GetKeys(keys);
+			keys.Sort([](const FName& RHS, const FName& LHS) {
+				return RHS.GetDisplayNameEntry()->GetNameLength() > LHS.GetDisplayNameEntry()->GetNameLength();
 			});
 			FString tempKeyString;
 			for (auto &key : keys)
 			{
-				if (const Units::FUnitValue *unitValue = vars.Find(key))
+				if (const FModumateUnitValue* unitValue = Vars.Find(key))
 				{
 					key.ToString(tempKeyString);
 					float convertedValue = unitValue->AsUnit(commonUnit);
@@ -184,7 +184,7 @@ namespace Modumate
 			float resultValue;
 			if (Evaluate(fexpr, resultValue))
 			{
-				result = Units::FUnitValue(resultValue, commonUnit);
+				OutResult = FModumateUnitValue(resultValue, commonUnit);
 				return true;
 			}
 

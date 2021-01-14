@@ -19,7 +19,7 @@ namespace Modumate {
 	public:
 		// Column objects
 		TSharedPtr<FDraftingComposite> Columns;
-		TArray<Units::FYCoord> RowHeights;
+		TArray<ModumateUnitParams::FYCoord> RowHeights;
 
 		bool bShowLines = true;
 	};
