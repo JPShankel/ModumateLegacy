@@ -639,7 +639,7 @@ void UModumateGameInstance::Login(const FString& UserName, const FString& Passwo
 				if (FJsonObjectConverter::JsonObjectToUStruct<FModumateUserVerifyParams>(Response.ToSharedRef(), &verifyParams))
 				{
 					SharedAMS->SetUserInfo(verifyParams.User);
-					SharedAMS->ProcessUserStatus(verifyParams.Status);
+					SharedAMS->RequestStatus();
 				}
 			}
 			else
