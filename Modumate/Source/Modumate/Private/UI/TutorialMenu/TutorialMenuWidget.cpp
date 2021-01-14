@@ -105,7 +105,7 @@ void UTutorialMenuWidget::UpdateTutorialMenu(const FTutorialInfoArrayCollection&
 			UTutorialMenuCardWidget* tutorialCardWidget = CreateWidget<UTutorialMenuCardWidget>(this, TutorialCardClass);
 			if (tutorialCardWidget)
 			{
-				tutorialCardWidget->BuildTutorialCard(CurrentTutorialMenuCardInfo[i]);
+				tutorialCardWidget->BuildTutorialCard(CurrentTutorialMenuCardInfo[i], this);
 				VerticalBoxTutorialCards->AddChildToVerticalBox(tutorialCardWidget);
 				UVerticalBoxSlot* slot = UWidgetLayoutLibrary::SlotAsVerticalBoxSlot(tutorialCardWidget);
 				slot->SetPadding(CardMargin);

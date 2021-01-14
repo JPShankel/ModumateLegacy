@@ -27,6 +27,9 @@ protected:
 	UPROPERTY()
 	class UAsyncTaskDownloadImage* ImageDownloadTask;
 
+	UPROPERTY()
+	class UTutorialMenuWidget* ParentTutorialMenu;
+
 	FString ProjectFilePath;
 	FString VideoLink;
 	FString TutorialTitle;
@@ -63,5 +66,5 @@ public:
 	UFUNCTION()
 	void OnImageDownloadedFailed(class UTexture2DDynamic* Texture);
 
-	void BuildTutorialCard(const FTutorialMenuInfo& InTutorialCard);
+	void BuildTutorialCard(const FTutorialMenuInfo& InTutorialCard, class UTutorialMenuWidget* InParentTutorialMenu);
 };

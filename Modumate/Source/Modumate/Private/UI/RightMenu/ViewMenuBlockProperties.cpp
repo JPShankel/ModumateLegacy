@@ -79,7 +79,7 @@ FReply UViewMenuBlockProperties::NativeOnMouseWheel(const FGeometry& InGeometry,
 		FDateTime currentTime = Controller->SkyActor->GetCurrentDateTime();
 		int32 newYear = currentTime.GetYear();
 		int32 newMonth = (currentTime.GetMonth() + (int32)InMouseEvent.GetWheelDelta()) % 12;
-		if (newMonth == 0)
+		if (newMonth <= 0)
 		{
 			newMonth = 12;
 			newYear = InMouseEvent.GetWheelDelta() > 0 ? currentTime.GetYear() + 1 : currentTime.GetYear() - 1;

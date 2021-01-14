@@ -6,6 +6,8 @@
 #include "UI/Custom/ModumateButton.h"
 #include "Blueprint/AsyncTaskDownloadImage.h"
 #include "Components/Image.h"
+#include "UI/TutorialMenu/TutorialMenuWidget.h"
+#include "UI/ModalDialog/ModalDialogConfirmPlayTutorial.h"
 
 UTutorialMenuCardWidget::UTutorialMenuCardWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -37,7 +39,10 @@ void UTutorialMenuCardWidget::NativeConstruct()
 
 void UTutorialMenuCardWidget::OnReleaseButtonTutorialProject()
 {
-
+	if (ParentTutorialMenu)
+	{
+		ParentTutorialMenu->ModalDialogConfirmPlayTutorialBP->BuildModalDialog(ProjectFilePath, VideoLink);
+	}
 }
 
 void UTutorialMenuCardWidget::OnReleaseButtonPlayVideo()
@@ -55,8 +60,9 @@ void UTutorialMenuCardWidget::OnImageDownloadedFailed(class UTexture2DDynamic* T
 	UE_LOG(LogTemp, Error, TEXT("Failed to download tutorial thumbnail for %s"), *TutorialTitle);
 }
 
-void UTutorialMenuCardWidget::BuildTutorialCard(const FTutorialMenuInfo& InTutorialCard)
+void UTutorialMenuCardWidget::BuildTutorialCard(const FTutorialMenuInfo& InTutorialCard, class UTutorialMenuWidget* InParentTutorialMenu)
 {
+	ParentTutorialMenu = InParentTutorialMenu;
 	TutorialTitle = InTutorialCard.Title;
 	TitleText->ChangeText(FText::FromString(TutorialTitle));
 	DescriptionText->ChangeText(FText::FromString(InTutorialCard.Description));

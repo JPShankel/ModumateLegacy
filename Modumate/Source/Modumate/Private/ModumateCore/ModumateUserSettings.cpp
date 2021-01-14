@@ -22,6 +22,11 @@ FString FModumateUserSettings::GetLocalTempDir()
 }
 
 
+FString FModumateUserSettings::GetTutorialsFolderPath()
+{
+	return FPaths::Combine(FPlatformProcess::UserSettingsDir(), FApp::GetProjectName(), TEXT("Tutorials"));
+}
+
 void FModumateUserSettings::RecordRecentProject(const FString &projectPath, bool bAutoSave)
 {
 	FDateTime currentTime = FDateTime::Now();

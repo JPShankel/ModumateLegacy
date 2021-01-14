@@ -79,6 +79,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox* VerticalBoxTutorialCards;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModalDialogConfirmPlayTutorial* ModalDialogConfirmPlayTutorialBP;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool AsStartMenuTutorial;
 
