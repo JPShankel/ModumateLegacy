@@ -6,7 +6,6 @@
 #include "UI/Custom/ModumateButton.h"
 #include "ModumateCore/ModumateUserSettings.h"
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/MainMenuGameMode_CPP.h"
 
 
 
@@ -41,27 +40,12 @@ void UModalDialogConfirmPlayTutorial::OnReleaseButtonOpenProject()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
 
-	// Play Video
-	FPlatformProcess::LaunchURL(*CurrentVideoLink, nullptr, nullptr);
-
 	// Open tutorial map
-	FString tutorialsFolderPath = FModumateUserSettings::GetTutorialsFolderPath();
-	FString tutorialPath = tutorialsFolderPath / CurrentProjectFilePath;
-	if (ensureAlways(IFileManager::Get().FileExists(*tutorialPath)))
+	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	if (controller && controller->CheckSaveModel())
 	{
-		AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
-		if (controller)
-		{
-			controller->LoadModelFilePath(tutorialPath, false);
-		}
-		else // If EMPlayerController not found, then use main menu
-		{
-			AMainMenuGameMode_CPP* mainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode_CPP>();
-			if (mainMenuGameMode)
-			{
-				mainMenuGameMode->OpenProject(tutorialPath);
-			}
-		}
+		FPlatformProcess::LaunchURL(*CurrentVideoLink, nullptr, nullptr);
+		controller->LoadModelFilePath(CurrentProjectFilePath, false);
 	}
 }
 

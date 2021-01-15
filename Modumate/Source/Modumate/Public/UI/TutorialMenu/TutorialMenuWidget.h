@@ -74,7 +74,10 @@ public:
 	class USizeBox* TitleHeader;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateTextBlockUserWidget* TutorialTextHeader;
+	class UModumateTextBlockUserWidget* TutorialTitleHeader;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateTextBlockUserWidget* TutorialHeaderMessageText;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox* VerticalBoxTutorialCards;
@@ -98,6 +101,9 @@ public:
 	TSubclassOf<class UModumateTextBlockUserWidget> TutorialTitleTextClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText DefaultTutorialHeaderMessage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 EllipsizeTitleWordAt = 50;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -106,4 +112,6 @@ public:
 	void BuildTutorialMenuFromLink();
 	void OnHttpReply(const FHttpRequestPtr& Request, const FHttpResponsePtr& Response, bool bWasSuccessful);
 	void UpdateTutorialMenu(const FTutorialInfoArrayCollection& InTutorialInfo);
+
+	bool GetTutorialFilePath(const FString& TutorialFileName, FString& OutFullTutorialFilePath );
 };

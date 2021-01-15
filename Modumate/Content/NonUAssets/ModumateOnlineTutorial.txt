@@ -1,0 +1,135 @@
+{
+	"TutorialInfoArrayCollection":
+	{
+		"HeaderMessage": "Play through these tutorials to become a Modumate pro. Each takes less than 5 minutes and less than 30 clicks.",
+		"ModumateTutorialInfoObjects":
+		[
+		    {
+		      "Title": "0: Overviews",
+		      "ShowTitleOnly": true,
+		      "Description": "",
+		      "VideoLink": "",
+		      "VideoLength": "",
+		      "FileProject": "",
+		      "ThumbnailLink": ""
+		    },
+		    {
+		      "Title": "Modumate in 60 Seconds",
+		      "ShowTitleOnly": false,
+		      "Description": "See Modumate's whole workflow in less than a minute.",
+		      "VideoLink": "https://youtu.be/8zgekbHeZpk",
+		      "VideoLength": "(0m 59s)",
+		      "FileProject": "",
+		      "ThumbnailLink": "https://uploads-ssl.webflow.com/5fdf86dba6f3f11ba0be218f/5ff52e4db34e966b6ecf9684_tut0a%20YT%20thumbnail%20image.jpg"
+		    },
+		    {
+		      "Title": "7-Minute Tour",
+		      "ShowTitleOnly": false,
+		      "Description": "See a deeper dive into Modumate's workflow in this seven-minute overview.",
+		      "VideoLink": "https://youtu.be/WPPMt47buZU",
+		      "VideoLength": "(6m 31s)",
+		      "FileProject": "",
+		      "ThumbnailLink": "https://uploads-ssl.webflow.com/5fdf86dba6f3f11ba0be218f/5ff52fc211575d52dbfba085_tut0b%20YT%20thumbnail%20image.jpg"
+		    },
+		    {
+		      "Title": "1: Design Your Architecture",
+		      "ShowTitleOnly": true,
+		      "Description": "",
+		      "VideoLink": "",
+		      "VideoLength": "",
+		      "FileProject": "",
+		      "ThumbnailLink": ""
+		    },
+		    {
+		      "Title": "1A: Model Your Massing Graph",
+		      "ShowTitleOnly": false,
+		      "Description": "The Massing Graph describes your building's separate spaces. Its elements become hosts for your construction assemblies and connection details. In this video, we show you how to create and edit your Massing Graph.",
+		      "VideoLink": "https://youtu.be/aXzeAiwL3Bs",
+		      "VideoLength": "(7m 05s)",
+		      "FileProject": "Tutorial 1A - Model Your Massing Graph.mdmt",
+		      "ThumbnailLink": "https://uploads-ssl.webflow.com/5fdf86dba6f3f11ba0be218f/5ff53289c50906a49e975941_tut1a%20YT%20thumbnail%20image.jpg"
+		    },
+		    {
+		      "Title": "1B: Craft Your Separators",
+		      "ShowTitleOnly": false,
+		      "Description": "\"Separators\" are the construction assemblies that separate spaces (Walls, Floors, Roofs, Ceilings, Doors, WIndows, Stairs, Railings, Panels, Countertops, Beams/Columns, and Mullions). In this video, we show you how to design them.",
+		      "VideoLink": "https://youtu.be/tlLQ_ypt1gQ",
+		      "VideoLength": "(4m 18s)",
+		      "FileProject": "Tutorial 1B - Craft Your Separators.mdmt",
+		      "ThumbnailLink": "https://uploads-ssl.webflow.com/5fdf86dba6f3f11ba0be218f/5ff533e3201890a9f48c94f2_tut1b%20YT%20thumbnail%20image.jpg"
+		    },
+		    {
+		      "Title": "1C: Host Separators Onto Your Massing Graph",
+		      "ShowTitleOnly": false,
+		      "Description": "Separators host onto your Massing Graph to give it physical form. In this video, we show you how to host them quickly and easily to make your building real.",
+		      "VideoLink": "https://youtu.be/FqOGdJqw7Wc",
+		      "VideoLength": "(5m 28s)",
+		      "FileProject": "Tutorial 1C - Apply Your Separators.mdmt",
+		      "ThumbnailLink": "https://uploads-ssl.webflow.com/5fdf86dba6f3f11ba0be218f/5ff534d1f035bdcc369f4356_tut1c%20YT%20thumbnail%20image.jpg"
+		    },
+		    {
+		      "Title": "2: Design Your Surfaces",
+		      "ShowTitleOnly": true,
+		      "Description": "",
+		      "VideoLink": "",
+		      "VideoLength": "",
+		      "FileProject": "",
+		      "ThumbnailLink": ""
+		    },
+		   	{
+		      "Title": "2A: Model Your Surface Graphs",
+		      "ShowTitleOnly": false,
+		      "Description": "Surface Graphs describe the layout of your finishes, cabinets, and trim. In this video, we show you how to create and edit your Surface Graphs.",
+		      "VideoLink": "https://youtu.be/238l4TYH0Jc",
+		      "VideoLength": "(5m 10s)",
+		      "FileProject": "Tutorial 2A - Model Your Surface Graph.mdmt",
+		      "ThumbnailLink": "https://uploads-ssl.webflow.com/5fdf86dba6f3f11ba0be218f/5ff5363f18c68d04fc6389aa_tut2a%20YT%20thumbnail%20image.jpg"
+		    },
+		    {
+		      "Title": "2B: Craft Your Attachments",
+		      "ShowTitleOnly": false,
+		      "Description": "\"Attachments\" are your finishes, cabinets, trim, and FF&E - the interior elements that make a building special. In this video, we show you how to design them",
+		      "VideoLink": "https://youtu.be/44f5AKa6wF8",
+		      "VideoLength": "(5m 36s)",
+		      "FileProject": "Tutorial 2B - Craft Your Attachments.mdmt",
+		      "ThumbnailLink": "https://uploads-ssl.webflow.com/5fdf86dba6f3f11ba0be218f/5ff536709abf13d612d46be2_tut2b%20YT%20thumbnail%20image.jpg"
+		    },
+		    {
+		      "Title": "2C: Host Attachments Onto Your Surface Graph",
+		      "ShowTitleOnly": false,
+		      "Description": "Attachments host onto Surface Graphs to give them physical form. In this video, we show you how to host them quickly and easily to make your spaces beautiful and \"finished\".",
+		      "VideoLink": "https://youtu.be/IzZ5jjMtgU0",
+		      "VideoLength": "(4m 20s)",
+		      "FileProject": "Tutorial 2C - Apply Your Attachments.mdmt",
+		      "ThumbnailLink": "https://uploads-ssl.webflow.com/5fdf86dba6f3f11ba0be218f/5ff536fc711fd835781f2f19_tut2c%20YT%20thumbnail%20image.jpg"
+		    },
+		    {
+		      "Title": "3: Get Instant Documentation",
+		      "ShowTitleOnly": true,
+		      "Description": "",
+		      "VideoLink": "",
+		      "VideoLength": "",
+		      "FileProject": "",
+		      "ThumbnailLink": ""
+		    },
+		    {
+		      "Title": "3A: Instant Renderings and Walkthroughs",
+		      "ShowTitleOnly": false,
+		      "Description": "Modumate is natively gorgeous, so it doesn't need separate rendering tools. In this video, we show you how to set up views and walkthroughs of your BIM model.",
+		      "VideoLink": "https://youtu.be/wy46RpnQ-Ko",
+		      "VideoLength": "(3m 48s)",
+		      "FileProject": "Tutorial 3A - Instant Renderings and Walkthroughs.mdmt",
+		      "ThumbnailLink": "https://uploads-ssl.webflow.com/5fdf86dba6f3f11ba0be218f/5ff539d63cf7c6bf9da860b3_tut3a%20YT%20thumbnail%20image.jpg"
+		    },
+		    {
+		      "Title": "3B: Instant Background DWGs",
+		      "ShowTitleOnly": false,
+		      "Description": "Modumate can instantly export beautiful background DWGs. In this video, we show you how to create Cut Planes and export DWGs.",
+		      "VideoLink": "https://youtu.be/Aj7mDxZxv08",
+		      "VideoLength": "(2m 18s)",
+		      "FileProject": "Tutorial 3B - Instant Background DWGs.mdmt",
+		      "ThumbnailLink": "https://uploads-ssl.webflow.com/5fdf86dba6f3f11ba0be218f/5ff53a2d0c84312eac4e63eb_tut3b%20YT%20thumbnail%20image.jpg"
+		    }
+	  	]
+	}
+}

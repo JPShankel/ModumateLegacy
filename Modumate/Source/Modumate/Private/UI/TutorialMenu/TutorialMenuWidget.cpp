@@ -10,6 +10,8 @@
 #include "HttpModule.h"
 #include "Runtime/Online/HTTP/Public/Http.h"
 #include "JsonObjectConverter.h"
+#include "HAL/FileManager.h"
+#include "ModumateCore/ModumateUserSettings.h"
 
 
 UTutorialMenuWidget::UTutorialMenuWidget(const FObjectInitializer& ObjectInitializer)
@@ -32,11 +34,13 @@ void UTutorialMenuWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	TitleHeader->SetVisibility(AsStartMenuTutorial ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
-	TutorialTextHeader->SetVisibility(AsStartMenuTutorial ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+	TutorialTitleHeader->SetVisibility(AsStartMenuTutorial ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 }
 
 void UTutorialMenuWidget::BuildTutorialMenuFromLink()
 {
+	TutorialHeaderMessageText->ChangeText(DefaultTutorialHeaderMessage);
+
 	TSharedRef<IHttpRequest> httpRequest = FHttpModule::Get().CreateRequest();
 	httpRequest->SetVerb("GET");
 	httpRequest->SetURL(JsonTutorialLink);
@@ -76,7 +80,7 @@ void UTutorialMenuWidget::OnHttpReply(const FHttpRequestPtr& Request, const FHtt
 		{
 			return;
 		}
-
+		TutorialHeaderMessageText->ChangeText(FText::FromString(newTutorialInfoArray.HeaderMessage));
 		UpdateTutorialMenu(newTutorialInfoArray);
 	}
 }
@@ -111,5 +115,20 @@ void UTutorialMenuWidget::UpdateTutorialMenu(const FTutorialInfoArrayCollection&
 				slot->SetPadding(CardMargin);
 			}
 		}
+	}
+}
+
+bool UTutorialMenuWidget::GetTutorialFilePath(const FString& TutorialFileName, FString& OutFullTutorialFilePath)
+{
+	FString tutorialsFolderPath = FModumateUserSettings::GetTutorialsFolderPath();
+	FString fullTutorialPath = tutorialsFolderPath / TutorialFileName;
+	if (IFileManager::Get().FileExists(*fullTutorialPath))
+	{
+		OutFullTutorialFilePath = fullTutorialPath;
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }

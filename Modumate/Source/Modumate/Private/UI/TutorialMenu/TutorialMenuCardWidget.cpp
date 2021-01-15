@@ -8,6 +8,8 @@
 #include "Components/Image.h"
 #include "UI/TutorialMenu/TutorialMenuWidget.h"
 #include "UI/ModalDialog/ModalDialogConfirmPlayTutorial.h"
+#include "UnrealClasses/MainMenuGameMode_CPP.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 UTutorialMenuCardWidget::UTutorialMenuCardWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -39,9 +41,20 @@ void UTutorialMenuCardWidget::NativeConstruct()
 
 void UTutorialMenuCardWidget::OnReleaseButtonTutorialProject()
 {
-	if (ParentTutorialMenu)
+	// If this is opened in the main app, use EMPlayerController
+	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	if (controller)
 	{
 		ParentTutorialMenu->ModalDialogConfirmPlayTutorialBP->BuildModalDialog(ProjectFilePath, VideoLink);
+	}
+	else // else this is from the main menu
+	{
+		AMainMenuGameMode_CPP* mainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode_CPP>();
+		if (mainMenuGameMode)
+		{
+			FPlatformProcess::LaunchURL(*VideoLink, nullptr, nullptr);
+			mainMenuGameMode->OpenProject(ProjectFilePath);
+		}
 	}
 }
 
@@ -67,8 +80,11 @@ void UTutorialMenuCardWidget::BuildTutorialCard(const FTutorialMenuInfo& InTutor
 	TitleText->ChangeText(FText::FromString(TutorialTitle));
 	DescriptionText->ChangeText(FText::FromString(InTutorialCard.Description));
 	VideoLengthText->ChangeText(FText::FromString(InTutorialCard.VideoLength));
-	ProjectFilePath = InTutorialCard.FileProject;
 	VideoLink = InTutorialCard.VideoLink;
+
+	// Hide play project button if file is invalid
+	bool bValidProjectFile = ParentTutorialMenu->GetTutorialFilePath(InTutorialCard.FileProject, ProjectFilePath);
+	ButtonTutorialProject->SetVisibility(bValidProjectFile ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 
 	if (!InTutorialCard.ThumbnailLink.IsEmpty())
 	{
