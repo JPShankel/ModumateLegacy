@@ -165,7 +165,9 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	// otherwise if the game mode started with a pending project (if it came from the command line, for example) then load it immediately. 
 
 	FString fileLoadPath;
-	bool addToRecents = true;
+	bool bSetAsCurrentProject = true;
+	bool bAddToRecents = true;
+	bool bEnableAutoSave = true;
 
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
 	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
@@ -174,19 +176,24 @@ void AEditModelPlayerController_CPP::BeginPlay()
 		
 	if (gameInstance->RecoveringFromCrash)
 	{
-		fileLoadPath = recoveryFile;
-		addToRecents = false;
 		gameInstance->RecoveringFromCrash = false;
+
+		fileLoadPath = recoveryFile;
+		bSetAsCurrentProject = false;
+		bAddToRecents = false;
+		bEnableAutoSave = true;
 	}
 	else
 	{
 		fileLoadPath = gameMode->PendingProjectPath;
-		addToRecents = true;
+		bSetAsCurrentProject = true;
+		bAddToRecents = !gameMode->bPendingProjectIsTutorial;
+		bEnableAutoSave = !gameMode->bPendingProjectIsTutorial;
 	}
 
 	if (!fileLoadPath.IsEmpty())
 	{
-		LoadModelFilePath(fileLoadPath, addToRecents);
+		LoadModelFilePath(fileLoadPath, bSetAsCurrentProject, bAddToRecents, bEnableAutoSave);
 	}
 	else
 	{
@@ -794,7 +801,7 @@ bool AEditModelPlayerController_CPP::SaveModelFilePath(const FString &filepath)
 	// Try to capture a thumbnail for the project	
 	CaptureProjectThumbnail();
 	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-	if (gameState->Document->Save(GetWorld(), filepath))
+	if (gameState->Document->Save(GetWorld(), filepath, true))
 	{
 		EMPlayerState->LastFilePath = filepath;
 		Modumate::PlatformFunctions::ShowMessageBox(*FString::Printf(TEXT("Saved as %s"),*EMPlayerState->LastFilePath), TEXT("Save Model"), Modumate::PlatformFunctions::Okay);
@@ -836,19 +843,19 @@ bool AEditModelPlayerController_CPP::LoadModel()
 
 	if (Modumate::PlatformFunctions::GetOpenFilename(filename))
 	{
-		bLoadSuccess = LoadModelFilePath(filename, true);
+		bLoadSuccess = LoadModelFilePath(filename, true, true, true);
 	}
 
 	EMPlayerState->ShowingFileDialog = false;
 	return bLoadSuccess;
 }
 
-bool AEditModelPlayerController_CPP::LoadModelFilePath(const FString &filename, bool bAddToRecents)
+bool AEditModelPlayerController_CPP::LoadModelFilePath(const FString &filename, bool bSetAsCurrentProject, bool bAddToRecents, bool bEnableAutoSave)
 {
 	EndTelemetrySession();
 	EMPlayerState->OnNewModel();
 
-	bool bLoadSuccess = Document->Load(GetWorld(), filename, bAddToRecents);
+	bool bLoadSuccess = Document->Load(GetWorld(), filename, bSetAsCurrentProject, bAddToRecents);
 
 	if (bLoadSuccess)
 	{
@@ -857,9 +864,13 @@ bool AEditModelPlayerController_CPP::LoadModelFilePath(const FString &filename, 
 
 		// TODO: always record input, and remove this flag, when we can upload the loaded document as the start of the input telemetry log
 		StartTelemetrySession(false);
+
+		TimeOfLastAutoSave = FDateTime::Now();
+		bWantAutoSave = false;
+		bCurProjectAutoSaves = bEnableAutoSave;
 	}
 
-	if (bLoadSuccess && bAddToRecents)
+	if (bLoadSuccess && bSetAsCurrentProject)
 	{
 		EMPlayerState->LastFilePath = filename;
 	}
@@ -907,6 +918,10 @@ void AEditModelPlayerController_CPP::NewModel(bool bShouldCheckForSave)
 
 		EMPlayerState->OnNewModel();
 		Document->MakeNew(GetWorld());
+
+		TimeOfLastAutoSave = FDateTime::Now();
+		bWantAutoSave = false;
+		bCurProjectAutoSaves = true;
 
 		StartTelemetrySession(true);
 	}
@@ -1271,13 +1286,13 @@ void AEditModelPlayerController_CPP::OnControllerTimer()
 
 	if (ts.GetTotalSeconds() > gameInstance->UserSettings.AutoBackupFrequencySeconds && gameInstance->UserSettings.AutoBackup)
 	{
-		WantAutoSave = gameInstance->UserSettings.AutoBackup;
+		bWantAutoSave = gameInstance->UserSettings.AutoBackup && bCurProjectAutoSaves;
 	}
 
 	ts = FTimespan(FDateTime::Now().GetTicks() - TimeOfLastUpload.GetTicks());
 	if (ts.GetTotalSeconds() > gameInstance->UserSettings.TelemetryUploadFrequencySeconds)
 	{
-		WantTelemetryUpload = gameInstance->GetAccountManager().Get()->ShouldRecordTelemetry();
+		bWantTelemetryUpload = gameInstance->GetAccountManager().Get()->ShouldRecordTelemetry();
 	}
 
 	gameInstance->GetCloudConnection()->Tick();
@@ -1323,17 +1338,17 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 	// Don't perform hitchy functions while tools or handles are in use
 	if (InteractionHandle == nullptr && !ToolIsInUse())
 	{
-		if (WantTelemetryUpload)
+		if (bWantTelemetryUpload)
 		{
 			TimeOfLastUpload = FDateTime::Now();
-			WantTelemetryUpload = false;
+			bWantTelemetryUpload = false;
 			if (TelemetrySessionKey.IsValid())
 			{
 				UploadInputTelemetry();
 			}
 		}
 
-		if (WantAutoSave)
+		if (bWantAutoSave)
 		{
 			UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 			FString tempDir = gameInstance->UserSettings.GetLocalTempDir();
@@ -1344,13 +1359,12 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 			FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*oldFile);
 			FPlatformFileManager::Get().GetPlatformFile().MoveFile(*oldFile, *newFile);
 			AEditModelGameState_CPP* gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-			gameState->Document->Save(GetWorld(), newFile);
+			gameState->Document->Save(GetWorld(), newFile, false);
 
 			TimeOfLastAutoSave = FDateTime::Now();
-			WantAutoSave = false;
+			bWantAutoSave = false;
 		}
 	}
-	
 
 	// Keep track of how long we've been using the current tool
 	if (CurrentTool != nullptr)

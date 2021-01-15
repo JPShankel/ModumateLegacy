@@ -105,6 +105,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Loading")
 	FString PendingProjectPath;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Loading")
+	bool bPendingProjectIsTutorial;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Actors")
 	AActor *Axes;
 

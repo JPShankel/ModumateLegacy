@@ -111,9 +111,10 @@ protected:
 
 	void RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool);
 
-	FDateTime TimeOfLastAutoSave,TimeOfLastUpload;
-	bool WantAutoSave = false;
-	bool WantTelemetryUpload = false;
+	FDateTime TimeOfLastAutoSave, TimeOfLastUpload;
+	bool bWantAutoSave = false;
+	bool bCurProjectAutoSaves = false;
+	bool bWantTelemetryUpload = false;
 
 	// Keep track of the most recent snapped cursor
 	UPROPERTY()
@@ -454,7 +455,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Persistence)
 	bool LoadModel();
-	bool LoadModelFilePath(const FString &filename, bool addToRecents = true);
+	bool LoadModelFilePath(const FString &filename, bool bSetAsCurrentProject, bool bAddToRecents, bool bEnableAutoSave);
 
 	UFUNCTION(BlueprintCallable, Category = Persistence)
 	void NewModel(bool bShouldCheckForSave);

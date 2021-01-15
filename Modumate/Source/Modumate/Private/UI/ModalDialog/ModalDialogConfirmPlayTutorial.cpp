@@ -45,7 +45,7 @@ void UModalDialogConfirmPlayTutorial::OnReleaseButtonOpenProject()
 	if (controller && controller->CheckSaveModel())
 	{
 		FPlatformProcess::LaunchURL(*CurrentVideoLink, nullptr, nullptr);
-		controller->LoadModelFilePath(CurrentProjectFilePath, false);
+		controller->LoadModelFilePath(CurrentProjectFilePath, true, false, false);
 	}
 }
 

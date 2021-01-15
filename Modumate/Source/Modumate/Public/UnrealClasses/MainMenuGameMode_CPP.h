@@ -40,7 +40,7 @@ public:
 	bool GetRecentProjectData(int32 index, FString &outProjectPath, FText &outProjectName, FDateTime &outProjectTime, FSlateBrush &outDefaultThumbnail, FSlateBrush &outHoveredThumbnail) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Files")
-	bool OpenProject(const FString &projectPath);
+	bool OpenProject(const FString &projectPath, bool bIsTutorial);
 
 	UFUNCTION(BlueprintCallable, Category = "Files")
 	bool OpenProjectFromPicker();

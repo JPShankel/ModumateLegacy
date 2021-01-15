@@ -2268,7 +2268,7 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 	return true;
 }
 
-bool UModumateDocument::Save(UWorld* World, const FString& FilePath)
+bool UModumateDocument::Save(UWorld* World, const FString& FilePath, bool bSetAsCurrentProject)
 {
 	FModumateDocumentHeader docHeader;
 	FMOIDocumentRecord docRecord;
@@ -2293,9 +2293,9 @@ bool UModumateDocument::Save(UWorld* World, const FString& FilePath)
 		return false;
 	}
 
-	bool fileSaveSuccess = FFileHelper::SaveStringToFile(ProjectJsonString, *FilePath);
+	bool bFileSaveSuccess = FFileHelper::SaveStringToFile(ProjectJsonString, *FilePath);
 
-	if (fileSaveSuccess)
+	if (bFileSaveSuccess && bSetAsCurrentProject)
 	{
 		SetCurrentProjectPath(FilePath);
 
@@ -2305,7 +2305,7 @@ bool UModumateDocument::Save(UWorld* World, const FString& FilePath)
 		}
 	}
 
-	return fileSaveSuccess;
+	return bFileSaveSuccess;
 }
 
 AModumateObjectInstance *UModumateDocument::GetObjectById(int32 id)
@@ -2318,7 +2318,7 @@ const AModumateObjectInstance *UModumateDocument::GetObjectById(int32 id) const
 	return ObjectsByID.FindRef(id);
 }
 
-bool UModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurrentProject)
+bool UModumateDocument::Load(UWorld *world, const FString &path, bool bSetAsCurrentProject, bool bRecordAsRecentProject)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Load"));
 
@@ -2465,15 +2465,17 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool setAsCurre
 			UndoBuffer.Add(undoRedo);
 		}
 
-		if (setAsCurrentProject)
+		if (bSetAsCurrentProject)
 		{
 			SetCurrentProjectPath(path);
-
-			if (auto* gameInstance = world->GetGameInstance<UModumateGameInstance>())
-			{
-				gameInstance->UserSettings.RecordRecentProject(path, true);
-			}
 		}
+
+		auto* gameInstance = world->GetGameInstance<UModumateGameInstance>();
+		if (bRecordAsRecentProject && gameInstance)
+		{
+			gameInstance->UserSettings.RecordRecentProject(path, true);
+		}
+
 		return true;
 	}
 	return false;

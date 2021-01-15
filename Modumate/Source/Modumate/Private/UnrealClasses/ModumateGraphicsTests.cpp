@@ -122,7 +122,7 @@ namespace Modumate
 				FPaths::ProjectDir() / world->GetGameInstance<UModumateGameInstance>()->TestScriptRelativePath / sceneFile;
 			
 			AEditModelPlayerController_CPP * playerController = world->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-			playerController->LoadModelFilePath(scenePathname, false);
+			playerController->LoadModelFilePath(scenePathname, false, false, false);
 
 			return true;
 		}

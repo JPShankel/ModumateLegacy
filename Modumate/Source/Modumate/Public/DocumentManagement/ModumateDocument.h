@@ -227,8 +227,8 @@ public:
 
 	void MakeNew(UWorld *world);
 	bool SerializeRecords(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord);
-	bool Save(UWorld *world, const FString &path);
-	bool Load(UWorld *world, const FString &path, bool setAsCurrentProject);
+	bool Save(UWorld *world, const FString &path, bool bSetAsCurrentProject);
+	bool Load(UWorld *world, const FString &path, bool bSetAsCurrentProject, bool bRecordAsRecentProject);
 	void SetCurrentProjectPath(const FString& currentProjectPath = FString());
 
 	TArray<int32> CloneObjects(UWorld *world, const TArray<int32> &obs, const FTransform& offsetTransform = FTransform::Identity);

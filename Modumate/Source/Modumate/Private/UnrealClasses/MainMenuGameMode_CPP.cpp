@@ -22,8 +22,11 @@ void AMainMenuGameMode_CPP::InitGame(const FString& MapName, const FString& Opti
 	FString projectPath;
 	if (FParse::Value(FCommandLine::Get(), TEXT("-Project="), projectPath))
 	{
+		bool bIsTutorial = false;
+		FParse::Bool(FCommandLine::Get(), TEXT("-IsTutorial="), bIsTutorial);
+
 		UE_LOG(LogCallTrace, Log, TEXT("Command line specified project: \"%s\""), *projectPath);
-		OpenProject(projectPath);
+		OpenProject(projectPath, bIsTutorial);
 	}
 	else
 	{
@@ -108,13 +111,14 @@ bool AMainMenuGameMode_CPP::GetRecentProjectData(int32 index, FString &outProjec
 	return false;
 }
 
-bool AMainMenuGameMode_CPP::OpenProject(const FString &projectPath)
+bool AMainMenuGameMode_CPP::OpenProject(const FString &projectPath, bool bIsTutorial)
 {
 	if (IFileManager::Get().FileExists(*projectPath))
 	{
 		const FName editModelLevelName(TEXT("EditModelLVL"));
 
-		FString levelOptions = FString::Printf(TEXT("LoadFile=\"%s\""), *projectPath);
+		FString levelOptions = FString::Printf(TEXT("LoadFile=\"%s\"?IsTutorial=%s"), *projectPath,
+			bIsTutorial ? *FCoreTexts::Get().True.ToString() : *FCoreTexts::Get().False.ToString());
 		UGameplayStatics::OpenLevel(this, editModelLevelName, false, levelOptions);
 		return true;
 	}
@@ -127,7 +131,7 @@ bool AMainMenuGameMode_CPP::OpenProjectFromPicker()
 	FString projectPath;
 	if (GetLoadFilename(projectPath))
 	{
-		return OpenProject(projectPath);
+		return OpenProject(projectPath, false);
 	}
 
 	return false;

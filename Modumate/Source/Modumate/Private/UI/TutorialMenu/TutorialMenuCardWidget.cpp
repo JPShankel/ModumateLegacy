@@ -53,7 +53,7 @@ void UTutorialMenuCardWidget::OnReleaseButtonTutorialProject()
 		if (mainMenuGameMode)
 		{
 			FPlatformProcess::LaunchURL(*VideoLink, nullptr, nullptr);
-			mainMenuGameMode->OpenProject(ProjectFilePath);
+			mainMenuGameMode->OpenProject(ProjectFilePath, true);
 		}
 	}
 }
