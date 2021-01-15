@@ -120,7 +120,7 @@ void UTutorialMenuWidget::UpdateTutorialMenu(const FTutorialInfoArrayCollection&
 
 bool UTutorialMenuWidget::GetTutorialFilePath(const FString& TutorialFileName, FString& OutFullTutorialFilePath)
 {
-	FString tutorialsFolderPath = FModumateUserSettings::GetTutorialsFolderPath();
+	FString tutorialsFolderPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("Tutorials");
 	FString fullTutorialPath = tutorialsFolderPath / TutorialFileName;
 	if (IFileManager::Get().FileExists(*fullTutorialPath))
 	{

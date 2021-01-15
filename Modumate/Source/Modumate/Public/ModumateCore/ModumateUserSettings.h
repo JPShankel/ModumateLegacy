@@ -44,7 +44,6 @@ struct MODUMATE_API FModumateUserSettings
 
 	static FString GetLocalSavePath();
 	static FString GetLocalTempDir();
-	static FString GetTutorialsFolderPath();
 
 	void RecordRecentProject(const FString &projectPath, bool bAutoSave = true);
 
