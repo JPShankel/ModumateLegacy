@@ -7,10 +7,10 @@
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "Database/ModumateArchitecturalMesh.h"
 
-#include "DocumentManagement/ModumatePresetManager.h"
 #include "ModumateCore/ModumateRoomStatics.h"
 
 #include "BIMKernel/Core/BIMKey.h"
+#include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
 
 #include "ModumateObjectDatabase.generated.h"
@@ -48,7 +48,7 @@ private:
 	void AddSimpleMesh(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 	void AddStaticIconTexture(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 
-	FPresetManager PresetManager;
+	FBIMPresetCollection BIMPresetCollection;
 
 	FString ManifestDirectoryPath;
 
@@ -63,7 +63,8 @@ public:
 	// Read database
 	void ReadPresetData();
 
-	void InitPresetManagerForNewDocument(FPresetManager &OutManager) const;
+	const FBIMPresetCollection& GetPresetCollection() const { return BIMPresetCollection; }
+
 
 	// Data Access
 	const FArchitecturalMesh* GetArchitecturalMeshByGUID(const FGuid& Key) const;

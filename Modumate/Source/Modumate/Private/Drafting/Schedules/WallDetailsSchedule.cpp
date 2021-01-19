@@ -41,7 +41,7 @@ namespace Modumate {
 
 
 		TArray<FBIMAssemblySpec> assemblies;
-		doc->PresetManager.GetProjectAssembliesForObjectType(EObjectType::OTWallSegment,assemblies);
+		doc->GetPresetCollection().GetProjectAssembliesForObjectType(EObjectType::OTWallSegment,assemblies);
 		ensureAlways(assemblies.Num() > 0);
 
 		static const FText InchesFormat = FText::FromString(TEXT("{0}\""));

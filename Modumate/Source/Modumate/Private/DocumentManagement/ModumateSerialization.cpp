@@ -1,7 +1,6 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #include "DocumentManagement/ModumateSerialization.h"
-#include "DocumentManagement/ModumatePresetManager.h"
 
 FGraph3DVertexRecordV1::FGraph3DVertexRecordV1()
 	: ID(MOD_ID_NONE)

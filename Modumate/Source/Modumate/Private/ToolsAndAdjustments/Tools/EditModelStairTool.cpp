@@ -414,7 +414,7 @@ void UStairTool::OnAssemblyChanged()
 
 	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(EObjectType::OTStaircase);
 	const FBIMAssemblySpec* assembly = GameState.IsValid() ?
-		GameState->Document->PresetManager.GetAssemblyByGUID(toolMode, AssemblyGUID) : nullptr;
+		GameState->Document->GetPresetCollection().GetAssemblyByGUID(toolMode, AssemblyGUID) : nullptr;
 
 	if (assembly != nullptr)
 	{

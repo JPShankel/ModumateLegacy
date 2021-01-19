@@ -119,7 +119,7 @@ void FModumateDraftingView::GenerateScheduleViews()
 	// Wall Schedules
 	TArray<FBIMAssemblySpec> assemblies;
 
-	Document->PresetManager.GetProjectAssembliesForObjectType(EObjectType::OTWallSegment, assemblies);
+	Document->GetPresetCollection().GetProjectAssembliesForObjectType(EObjectType::OTWallSegment, assemblies);
 
 	if (assemblies.Num() > 0)
 	{

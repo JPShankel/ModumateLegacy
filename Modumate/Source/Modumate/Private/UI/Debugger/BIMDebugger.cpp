@@ -81,19 +81,21 @@ EBIMResult UBIMDebugger::ConstructPresetList()
 	PresetList->ClearListItems();
 	PresetList->SetScrollOffset(0.f);
 
-	for (auto& kvp : controller->GetDocument()->PresetManager.CraftingNodePresets.PresetsByGUID)
-	{
-		if (IsPresetAvailableForSearch(kvp.Value))
+	controller->GetDocument()->GetPresetCollection().ForEachPreset(
+		[this](const FBIMPresetInstance& Preset)
 		{
-			UBIMDebugPresetListItemObj* newPresetObj = NewObject<UBIMDebugPresetListItemObj>(this);
-			newPresetObj->PresetKey = kvp.Value.GUID;
-			newPresetObj->DisplayName = kvp.Value.DisplayName;
-			newPresetObj->ParentDebugger = this;
-			newPresetObj->bItemIsPreset = true;
-			newPresetObj->bIsFromHistoryMenu = false;
-			PresetList->AddItem(newPresetObj);
+			if (IsPresetAvailableForSearch(Preset))
+			{
+				UBIMDebugPresetListItemObj* newPresetObj = NewObject<UBIMDebugPresetListItemObj>(this);
+				newPresetObj->PresetKey = Preset.GUID;
+				newPresetObj->DisplayName = Preset.DisplayName;
+				newPresetObj->ParentDebugger = this;
+				newPresetObj->bItemIsPreset = true;
+				newPresetObj->bIsFromHistoryMenu = false;
+				PresetList->AddItem(newPresetObj);
+			}
 		}
-	}
+	);
 
 	return EBIMResult::Success;
 }
@@ -106,7 +108,7 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FGuid& PresetKey, bool AddToHistor
 	class AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
 	if (controller)
 	{
-		const FBIMPresetInstance* preset = controller->GetDocument()->PresetManager.CraftingNodePresets.PresetFromGUID(PresetKey);
+		const FBIMPresetInstance* preset = controller->GetDocument()->GetPresetCollection().PresetFromGUID(PresetKey);
 		if (preset)
 		{
 			TextDisplayName->SetText(preset->DisplayName);
@@ -114,7 +116,7 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FGuid& PresetKey, bool AddToHistor
 			TextBIMKey->SetText(FText::FromString(PresetKey.ToString()));
 
 			TMap<FString, FBIMNameType> properties;
-			controller->GetDocument()->PresetManager.CraftingNodePresets.GetPropertyFormForPreset(PresetKey, properties);
+			controller->GetDocument()->GetPresetCollection().GetPropertyFormForPreset(PresetKey, properties);
 
 			for (auto& kvp : properties)
 			{
@@ -234,7 +236,7 @@ void UBIMDebugger::ConstructBIMDebugTestList()
 bool UBIMDebugger::PerformBIMDebugTest(EBIMDebugTestType BIMDebugTest)
 {
 	class AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
-	const FBIMPresetInstance* preset = controller ? controller->GetDocument()->PresetManager.CraftingNodePresets.PresetFromGUID(LastSelectedKey) : nullptr;
+	const FBIMPresetInstance* preset = controller ? controller->GetDocument()->GetPresetCollection().PresetFromGUID(LastSelectedKey) : nullptr;
 	if (!preset)
 	{
 		return false;

@@ -150,7 +150,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	bool SetIconMeshForAssembly(const FGuid& AsmKey, UMaterialInterface*& OutMaterial);
+	bool SetIconMeshForAssembly(const FGuid& AsmKey, bool bAllowOverwrite = false);
+	bool SetIconMeshForAssembly(const FGuid& AsmKey, UMaterialInterface*& OutMaterial, bool bAllowOverwrite = false);
 	bool SetIconMeshForBIMDesigner(bool UseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, UTexture*& OutTexture, const FBIMEditorNodeIDType& NodeID);
 	bool GetSavedIconFromPreset(const FGuid& PresetID, UTexture*& OutTexture);
 	UMaterialInterface* CreateMaterialForIconTexture(const FGuid& PresetID, UTexture* InTexture);
@@ -187,4 +188,6 @@ public:
 	// TODO: This is a temp function for releasing saved render targets related to BIM presets	
 	// When BIMKey can guarantee unique appearance, then BIMKeyToRenderTarget array and this function can be removed	
 	void ReleaseSavedRenderTarget();
+
+	void UpdateCachedAssemblies(const TArray<FGuid>& AsmKeys);
 };

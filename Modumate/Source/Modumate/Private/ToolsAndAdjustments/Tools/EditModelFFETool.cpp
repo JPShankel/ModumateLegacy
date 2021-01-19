@@ -30,7 +30,7 @@ bool UFFETool::Activate()
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	UModumateDocument* doc = gameState->Document;
 	FGuid key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
-	const FBIMAssemblySpec *obAsmPtr = doc->PresetManager.GetAssemblyByGUID(EToolMode::VE_PLACEOBJECT,key);
+	const FBIMAssemblySpec *obAsmPtr = doc->GetPresetCollection().GetAssemblyByGUID(EToolMode::VE_PLACEOBJECT,key);
 
 	if (!ensureAlways(obAsmPtr))
 	{
@@ -79,7 +79,7 @@ bool UFFETool::FrameUpdate()
 	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
 	UModumateDocument* doc = gameState->Document;
 	FGuid key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
-	const FBIMAssemblySpec *assembly = doc->PresetManager.GetAssemblyByGUID(EToolMode::VE_PLACEOBJECT, key);
+	const FBIMAssemblySpec *assembly = doc->GetPresetCollection().GetAssemblyByGUID(EToolMode::VE_PLACEOBJECT, key);
 
 	if (assembly != nullptr)
 	{

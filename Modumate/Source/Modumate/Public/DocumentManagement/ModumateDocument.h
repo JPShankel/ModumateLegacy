@@ -5,7 +5,6 @@
 #include "Database/ModumateObjectDatabase.h"
 #include "DocumentManagement/DocumentDelta.h"
 #include "DocumentManagement/ModumateCameraView.h"
-#include "DocumentManagement/ModumatePresetManager.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "Graph/Graph2D.h"
 #include "Graph/Graph2DDelta.h"
@@ -204,6 +203,7 @@ public:
 	void ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World);
 	void ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World);
 	bool ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World);
+	bool ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWorld* World);
 
 	void UpdateVolumeGraphObjects(UWorld *World);
 
@@ -225,7 +225,7 @@ public:
 	void RestoreDeletedObjects(const TArray<int32> &ids);
 	void DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
 
-	void MakeNew(UWorld *world);
+	void MakeNew(UWorld *World);
 	bool SerializeRecords(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord);
 	bool Save(UWorld *world, const FString &path, bool bSetAsCurrentProject);
 	bool Load(UWorld *world, const FString &path, bool bSetAsCurrentProject, bool bRecordAsRecentProject);
@@ -287,13 +287,12 @@ public:
 	TArray<FPartyProfile> SecondaryParties;
 	TArray<FDraftRevision> Revisions;
 
-	FPresetManager PresetManager;
+	// Generates a GUID...non-const because all generated guids are stored to avoid (infinitessimal) chance of duplication
+	bool MakeNewGUIDForPreset(FBIMPresetInstance& Preset);
 
-private:
-	// TODO: All sequencing/coding schemes etc to be handled by a single key pool in the preset manager
-	// Vestigial implementation kept in place to mark where this currently expect to be done when it's working
-	void ResequencePortalAssemblies_DEPRECATED(UWorld *world, EObjectType portalType) {};
+	const FBIMPresetCollection& GetPresetCollection() const;
 
 private:
 	TSharedPtr<Modumate::FModumateDraftingView> CurrentDraftingView = nullptr;
+	FBIMPresetCollection BIMPresetCollection;
 };

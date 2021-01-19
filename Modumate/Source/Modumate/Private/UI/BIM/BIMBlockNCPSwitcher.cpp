@@ -4,7 +4,6 @@
 #include "UnrealClasses/EditModelPlayerController_CPP.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
-#include "DocumentManagement/ModumatePresetManager.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Components/VerticalBox.h"
@@ -85,7 +84,7 @@ void UBIMBlockNCPSwitcher::AddNCPTagButtons(int32 TagOrder)
 	FBIMTagPath partialPath;
 	CurrentNCP.GetPartialPath(TagOrder + 1, partialPath);
 	TArray<FString> subCats;
-	Controller->GetDocument()->PresetManager.CraftingNodePresets.GetNCPSubcategories(partialPath, subCats);
+	Controller->GetDocument()->GetPresetCollection().GetNCPSubcategories(partialPath, subCats);
 
 	// Build buttons for this tag's subcategories. Recursion ends here if there's none
 	for (int32 i = 0; i < subCats.Num(); ++i)

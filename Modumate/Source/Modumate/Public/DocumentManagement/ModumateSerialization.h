@@ -275,7 +275,7 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 	void FromVersion3(const FMOIDocumentRecordV3 &v3);
 };
 
-typedef FMOIDocumentRecordV4 FMOIDocumentRecord;
+using FMOIDocumentRecord = FMOIDocumentRecordV4;
 
 USTRUCT()
 struct FModumateDocumentHeaderV1
@@ -302,7 +302,7 @@ struct FModumateDocumentHeaderV2
 };
 
 
-typedef FModumateDocumentHeaderV2 FModumateDocumentHeader;
+using FModumateDocumentHeader = FModumateDocumentHeaderV2;
 
 // USTRUCTs above cannot be in a namespace
 namespace Modumate

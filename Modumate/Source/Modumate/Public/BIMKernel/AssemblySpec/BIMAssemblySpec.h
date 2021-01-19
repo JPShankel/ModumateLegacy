@@ -12,15 +12,7 @@
 #include "BIMKernel/AssemblySpec/BIMPartSlotSpec.h"
 #include "BIMKernel/AssemblySpec/BIMExtrusionSpec.h"
 
-// All needed by ObjectAssembly, first step is to replace all inclusions of the object assembly header with this one
-#include "ModumateCore/ModumateUnits.h"
-#include "ModumateCore/ModumateConsoleCommand.h"
-#include "ModumateCore/ExpressionEvaluator.h"
-#include "Database/ModumateArchitecturalMaterial.h"
-#include "Database/ModumateArchitecturalMesh.h"
-#include "Database/ModumateSimpleMesh.h"
-#include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
-#include "DocumentManagement/ModumateSerialization.h"
+#include "Database/ModumateDataCollection.h"
 
 #include "BIMAssemblySpec.generated.h"
 
@@ -115,3 +107,5 @@ public:
 
 	FVector GetRiggedAssemblyNativeSize() const;
 };
+
+using FAssemblyDataCollection = TModumateDataCollection<FBIMAssemblySpec>;

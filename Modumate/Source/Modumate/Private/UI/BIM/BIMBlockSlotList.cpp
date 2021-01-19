@@ -7,7 +7,6 @@
 #include "UI/EditModelPlayerHUD.h"
 #include "Components/VerticalBox.h"
 #include "UI/BIM/BIMBlockSlotListItem.h"
-#include "DocumentManagement/ModumatePresetManager.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 
@@ -54,7 +53,7 @@ void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMPresetEditorNodeShared
 		UBIMBlockSlotListItem* newSlot = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockSlotListItem>(SlotListItemClass);
 		if (newSlot)
 		{
-			const FBIMPresetInstance* preset = controller->GetDocument()->PresetManager.CraftingNodePresets.PresetFromGUID(partSlots[i].SlotPresetGUID);
+			const FBIMPresetInstance* preset = controller->GetDocument()->GetPresetCollection().PresetFromGUID(partSlots[i].SlotPresetGUID);
 			if (preset != nullptr)
 			{
 				newSlot->TextBlockWidget->ChangeText(preset->DisplayName);

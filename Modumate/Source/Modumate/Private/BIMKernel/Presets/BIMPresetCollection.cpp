@@ -3,8 +3,10 @@
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "BIMKernel/Presets/BIMCSVReader.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
+#include "BIMKernel/Presets/BIMPresetDelta.h"
+#include "Database/ModumateObjectDatabase.h"
+#include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/ModumateScriptProcessor.h"
-
 
 /*
 Given a preset ID, recurse through all its children and gather all other presets that this one depends on
@@ -224,18 +226,6 @@ EBIMResult FBIMPresetCollection::PostLoad()
 	UsedGUIDs.Empty();
 	AllNCPs.Empty();
 
-	// If we're reading an old collection, build the GUID map
-	if (PresetsByGUID.Num() == 0)
-	{
-		for (auto& kvp : Presets_DEPRECATED)
-		{
-			if (kvp.Value.GUID.IsValid())
-			{
-				AddPreset(kvp.Value);
-			}
-		}
-	}
-
 	for (auto& kvp : PresetsByGUID)
 	{
 		UsedGUIDs.Add(kvp.Value.GUID);
@@ -268,8 +258,7 @@ EBIMResult FBIMPresetCollection::GetAvailableGUID(FGuid& OutGUID)
 	return EBIMResult::Success;
 }
 
-
-EBIMResult FBIMPresetCollection::CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FGuid& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec)
+EBIMResult FBIMPresetCollection::CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FGuid& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec) const
 {
 	FBIMPresetCollection previewCollection;
 
@@ -364,11 +353,7 @@ EBIMResult FBIMPresetCollection::GenerateBIMKeyForPreset(const FGuid& PresetID, 
 	returnKey.RemoveSpacesInline();
 
 	OutKey = FBIMKey(returnKey);
-	int32 sequence = 1;
-	while (Presets_DEPRECATED.Find(OutKey) != nullptr)
-	{
-		OutKey = FBIMKey(FString::Printf(TEXT("%s-%d"), *returnKey, sequence++));
-	}
+
 	return EBIMResult::Success;
 }
 
@@ -473,4 +458,205 @@ EBIMResult FBIMPresetCollection::RemovePreset(const FGuid& InGUID)
 		return EBIMResult::Success;
 	}
 	return EBIMResult::Error;
+}
+
+TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeDelta(FBIMPresetInstance& UpdatedPreset) const
+{
+	TSharedPtr<FBIMPresetDelta> presetDelta = MakeShared<FBIMPresetDelta>();
+
+	presetDelta->NewState = UpdatedPreset;
+	const FBIMPresetInstance* oldPreset = PresetsByGUID.Find(UpdatedPreset.GUID);
+	if (oldPreset != nullptr)
+	{
+		presetDelta->OldState = *oldPreset;
+	}
+
+	return presetDelta;
+}
+
+EBIMResult FBIMPresetCollection::ForEachPreset(const TFunction<void(const FBIMPresetInstance& Preset)>& Operation) const
+{
+	for (auto& kvp : PresetsByGUID)
+	{
+		Operation(kvp.Value);
+	}
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetCollection::GetAvailablePresetsForSwap(const FGuid& ParentPresetID, const FGuid& PresetIDToSwap, TArray<FGuid>& OutAvailablePresets) const
+{
+	const FBIMPresetInstance* preset = PresetFromGUID(PresetIDToSwap);
+	if (!ensureAlways(preset != nullptr))
+	{
+		return EBIMResult::Error;
+	}
+
+	return GetPresetsByPredicate([preset](const FBIMPresetInstance& Preset)
+	{
+		return Preset.MyTagPath.MatchesExact(preset->MyTagPath);
+	}, OutAvailablePresets);
+
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetCollection::GetProjectAssembliesForObjectType(EObjectType ObjectType, TArray<FBIMAssemblySpec>& OutAssemblies) const
+{
+	const FAssemblyDataCollection* db = AssembliesByObjectType.Find(ObjectType);
+	if (db == nullptr)
+	{
+		return EBIMResult::Success;
+	}
+	for (auto& kvp : db->DataMap)
+	{
+		OutAssemblies.Add(kvp.Value);
+	}
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetCollection::RemoveProjectAssemblyForPreset(const FGuid& PresetID)
+{
+	FBIMAssemblySpec assembly;
+	EObjectType objectType = GetPresetObjectType(PresetID);
+	if (TryGetProjectAssemblyForPreset(objectType, PresetID, assembly))
+	{
+		FAssemblyDataCollection* db = AssembliesByObjectType.Find(objectType);
+		if (ensureAlways(db != nullptr))
+		{
+			db->RemoveData(assembly);
+			return EBIMResult::Success;
+		}
+	}
+	return EBIMResult::Error;
+}
+
+EBIMResult FBIMPresetCollection::UpdateProjectAssembly(const FBIMAssemblySpec& Assembly)
+{
+	FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(Assembly.ObjectType);
+	db.AddData(Assembly);
+	return EBIMResult::Success;
+}
+
+bool FBIMPresetCollection::TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FBIMAssemblySpec& OutAssembly) const
+{
+	EObjectType objectType = UModumateTypeStatics::ObjectTypeFromToolMode(ToolMode);
+	const FAssemblyDataCollection* db = AssembliesByObjectType.Find(objectType);
+	if (db != nullptr && db->DataMap.Num() > 0)
+	{
+		auto iterator = db->DataMap.CreateConstIterator();
+		OutAssembly = iterator->Value;
+		return true;
+	}
+	return false;
+}
+
+bool FBIMPresetCollection::TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FGuid& PresetID, FBIMAssemblySpec& OutAssembly) const
+{
+	const TModumateDataCollection<FBIMAssemblySpec>* db = AssembliesByObjectType.Find(ObjectType);
+
+	// It's legal for an object database to not exist
+	if (db == nullptr)
+	{
+		return false;
+	}
+
+	const FBIMAssemblySpec* presetAssembly = db->GetData(PresetID);
+
+	// TODO: temp patch to support missing assemblies prior to assemblies being retired
+	if (presetAssembly == nullptr)
+	{
+		presetAssembly = DefaultAssembliesByObjectType.Find(ObjectType);
+	}
+
+	if (presetAssembly != nullptr)
+	{
+		OutAssembly = *presetAssembly;
+		return true;
+	}
+	return false;
+}
+
+const FBIMAssemblySpec* FBIMPresetCollection::GetAssemblyByGUID(EToolMode ToolMode, const FGuid& Key) const
+{
+	EObjectType objectType = UModumateTypeStatics::ObjectTypeFromToolMode(ToolMode);
+	const FAssemblyDataCollection* db = AssembliesByObjectType.Find(objectType);
+	if (db != nullptr)
+	{
+		return db->GetData(Key);
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InDB, const FMOIDocumentRecord& DocRecord)
+{
+	*this = InDB.GetPresetCollection();
+
+	for (auto& kvp : DocRecord.PresetCollection.NodeDescriptors)
+	{
+		if (!NodeDescriptors.Contains(kvp.Key))
+		{
+			NodeDescriptors.Add(kvp.Key, kvp.Value);
+		}
+	}
+
+	for (auto& kvp : DocRecord.PresetCollection.PresetsByGUID)
+	{
+		if (!PresetsByGUID.Contains(kvp.Key))
+		{
+			FBIMPresetInstance editedPreset = kvp.Value;
+			editedPreset.ReadOnly = false;
+			AddPreset(editedPreset);
+		}
+	}
+
+	// If any presets fail to build their assembly, remove them
+	// They'll be replaced by the fallback system and will not be written out again
+	TSet<FGuid> incompletePresets;
+	for (auto& kvp : PresetsByGUID)
+	{
+		if (kvp.Value.ObjectType != EObjectType::OTNone)
+		{
+			FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(kvp.Value.ObjectType);
+			FBIMAssemblySpec newSpec;
+			if (newSpec.FromPreset(InDB, *this, kvp.Value.GUID) == EBIMResult::Success)
+			{
+				db.AddData(newSpec);
+			}
+			else
+			{
+				incompletePresets.Add(kvp.Value.GUID);
+			}
+		}
+	}
+
+	for (auto& incompletePreset : incompletePresets)
+	{
+		RemovePreset(incompletePreset);
+	}
+
+	return PostLoad() == EBIMResult::Success;
+}
+
+bool FBIMPresetCollection::SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord) const
+{
+	for (auto& kvp : PresetsByGUID)
+	{
+		// ReadOnly presets have not been edited
+		if (!kvp.Value.ReadOnly)
+		{
+			DocRecord.PresetCollection.AddPreset(kvp.Value);
+			if (!DocRecord.PresetCollection.NodeDescriptors.Contains(kvp.Value.NodeType))
+			{
+				const FBIMPresetTypeDefinition* typeDef = NodeDescriptors.Find(kvp.Value.NodeType);
+				if (ensureAlways(typeDef != nullptr))
+				{
+					DocRecord.PresetCollection.NodeDescriptors.Add(kvp.Value.NodeType, *typeDef);
+				}
+			};
+		}
+	}
+
+	return true;
 }

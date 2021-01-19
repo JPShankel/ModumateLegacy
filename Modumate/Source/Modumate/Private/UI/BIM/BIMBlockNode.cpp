@@ -14,7 +14,6 @@
 #include "UI/ComponentPresetListItem.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "DocumentManagement/ModumatePresetManager.h"
 #include "Components/VerticalBox.h"
 #include "UI/BIM/BIMBlockUserEnterable.h"
 #include "UI/EditModelPlayerHUD.h"
@@ -172,7 +171,7 @@ void UBIMBlockNode::OnButtonDirtyAddNew()
 
 void UBIMBlockNode::OnButtonDirtyCancel()
 {
-	EBIMResult result = ParentBIMDesigner->InstancePool.SetNewPresetForNode(Controller->GetDocument()->PresetManager.CraftingNodePresets, ID, PresetID);
+	EBIMResult result = ParentBIMDesigner->InstancePool.SetNewPresetForNode(Controller->GetDocument()->GetPresetCollection(), ID, PresetID);
 	if (result == EBIMResult::Success)
 	{
 		ParentBIMDesigner->UpdateCraftingAssembly();
@@ -219,7 +218,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	bNodeHasSlotPart = bAsSlot;
 	TitleNodeCollapsed->ChangeText(Node->CategoryTitle);
 	TitleNodeExpanded->ChangeText(Node->CategoryTitle);
-	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.PresetFromGUID(PresetID);
+	const FBIMPresetInstance* preset = Controller->GetDocument()->GetPresetCollection().PresetFromGUID(PresetID);
 	if (preset != nullptr)
 	{
 		FText presetDisplayName;
@@ -259,7 +258,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	// Build instance properties
 	VerticalBoxProperties->ClearChildren();
 	TMap<FString, FBIMNameType> properties;
-	Controller->GetDocument()->PresetManager.CraftingNodePresets.GetPropertyFormForPreset(PresetID, properties);
+	Controller->GetDocument()->GetPresetCollection().GetPropertyFormForPreset(PresetID, properties);
 	for (auto& curProperty : properties)
 	{
 		// TODO: Need more format info to determine if this should be drop-down

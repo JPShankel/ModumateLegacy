@@ -411,7 +411,7 @@ void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
 		{
 			FBIMAssemblySpec assembly;
 			AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
-			if (gameState->Document->PresetManager.TryGetDefaultAssemblyForToolMode(NewToolMode, assembly))
+			if (gameState->Document->GetPresetCollection().TryGetDefaultAssemblyForToolMode(NewToolMode, assembly))
 			{
 				CurrentTool->SetAssemblyGUID(assembly.UniqueKey());
 			}

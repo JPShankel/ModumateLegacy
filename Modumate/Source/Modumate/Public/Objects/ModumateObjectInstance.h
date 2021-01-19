@@ -65,6 +65,7 @@ public:
 	virtual bool OnHovered(AEditModelPlayerController_CPP* controller, bool bNewHovered);
 	virtual bool OnSelected(bool bIsSelected);
 
+	// Can be called when a new assembly is assigned or when an the existing assembly changes structure
 	virtual void OnAssemblyChanged();
 
 	virtual AActor *RestoreActor();

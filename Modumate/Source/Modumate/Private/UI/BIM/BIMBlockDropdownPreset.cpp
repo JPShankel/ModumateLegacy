@@ -79,7 +79,7 @@ void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner
 	PresetGUID = InPresetID;
 	DropdownOffset = InDropdownOffset;
 
-	const FBIMPresetInstance* preset = Controller->GetDocument()->PresetManager.CraftingNodePresets.PresetFromGUID(PresetGUID);
+	const FBIMPresetInstance* preset = Controller->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
 
 	// Set text and label
 	if (preset != nullptr)

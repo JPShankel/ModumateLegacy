@@ -660,8 +660,8 @@ float ACompoundMeshActor::GetPortalCenter(const UModumateDocument* Doc, const FG
 	const UMeshComponent* panelMesh = nullptr;
 	const UStaticMeshComponent* panelStaticMesh = nullptr;
 
-	const FBIMAssemblySpec* assembly = Doc->PresetManager.GetAssemblyByGUID(EToolMode::VE_DOOR, AssemblyGUID);
-	assembly = assembly ? assembly : Doc->PresetManager.GetAssemblyByGUID(EToolMode::VE_WINDOW, AssemblyGUID);
+	const FBIMAssemblySpec* assembly = Doc->GetPresetCollection().GetAssemblyByGUID(EToolMode::VE_DOOR, AssemblyGUID);
+	assembly = assembly ? assembly : Doc->GetPresetCollection().GetAssemblyByGUID(EToolMode::VE_WINDOW, AssemblyGUID);
 	if (assembly)
 	{
 		static const FString panelTagComponent(TEXT("Panel"));

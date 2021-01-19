@@ -70,7 +70,7 @@ void AModumateObjectInstance::UpdateAssemblyFromKey()
 	if ((CachedAssembly.UniqueKey() != StateData.AssemblyGUID) || (CachedAssembly.ObjectType == EObjectType::OTNone))
 	{
 		// Meta-objects don't have assemblies but we track MOI type in the CachedAssembly
-		if (!Document->PresetManager.TryGetProjectAssemblyForPreset(StateData.ObjectType, StateData.AssemblyGUID, CachedAssembly))
+		if (!Document->GetPresetCollection().TryGetProjectAssemblyForPreset(StateData.ObjectType, StateData.AssemblyGUID, CachedAssembly))
 		{
 			CachedAssembly.ObjectType = StateData.ObjectType;
 		}
@@ -897,8 +897,10 @@ void AModumateObjectInstance::ShowAdjustmentHandles(AEditModelPlayerController_C
 	}
 }
 
+// Can be called when a new assembly is assigned or when an the existing assembly changes structure
 void AModumateObjectInstance::OnAssemblyChanged()
 {
+	CachedAssembly.Reset();
 	MarkDirty(EObjectDirtyFlags::Structure);
 }
 

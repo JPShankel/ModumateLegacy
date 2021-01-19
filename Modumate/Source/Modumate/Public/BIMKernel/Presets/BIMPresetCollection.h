@@ -7,10 +7,17 @@
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetTypeDefinition.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
+#include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 
 #include "BIMPresetCollection.generated.h"
 
 static constexpr int32 BIMPresetCollectionCurrentVersion = 4;
+
+struct FBIMPresetDelta;
+
+// Can't include ModumateSerialization, circular dependency
+struct FMOIDocumentRecordV4;
+using FMOIDocumentRecord = FMOIDocumentRecordV4;
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetCollection
@@ -24,9 +31,6 @@ struct MODUMATE_API FBIMPresetCollection
 	TMap<FName, FBIMPresetTypeDefinition> NodeDescriptors;
 
 	UPROPERTY()
-	TMap<FBIMKey, FBIMPresetInstance> Presets_DEPRECATED;
-
-	UPROPERTY()
 	TMap<FGuid, FBIMPresetInstance> PresetsByGUID;
 
 	FBIMPresetInstance* PresetFromGUID(const FGuid& InGUID);
@@ -35,8 +39,10 @@ struct MODUMATE_API FBIMPresetCollection
 	EBIMResult AddPreset(const FBIMPresetInstance& InPreset);
 	EBIMResult RemovePreset(const FGuid& InGUID);
 
+	//When an assembly can't be found, use a default
+	TMap<EObjectType, FBIMAssemblySpec> DefaultAssembliesByObjectType;
+	TMap<EObjectType, FAssemblyDataCollection> AssembliesByObjectType;
 	TSet<FGuid> UsedGUIDs;
-
 	TSet<FBIMTagPath> AllNCPs;
 
 	EBIMResult PostLoad();
@@ -61,5 +67,22 @@ struct MODUMATE_API FBIMPresetCollection
 	EBIMResult GetAvailableGUID(FGuid& OutGUID);
 
 	EBIMResult LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FGuid>& OutStarters, TArray<FString>& OutMessages);
-	EBIMResult CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FGuid& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec);
+	EBIMResult CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FGuid& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec) const;
+
+	EBIMResult ForEachPreset(const TFunction<void(const FBIMPresetInstance& Preset)>& Operation) const;
+	EBIMResult GetAvailablePresetsForSwap(const FGuid& ParentPresetID, const FGuid& PresetIDToSwap, TArray<FGuid>& OutAvailablePresets) const;
+
+	TSharedPtr<FBIMPresetDelta> MakeDelta(FBIMPresetInstance& UpdatedPreset) const;
+
+	bool TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FGuid& PresetID, FBIMAssemblySpec& OutAssembly) const;
+	bool TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FBIMAssemblySpec& OutAssembly) const;
+
+	EBIMResult GetProjectAssembliesForObjectType(EObjectType ObjectType, TArray<FBIMAssemblySpec>& OutAssemblies) const;
+	EBIMResult RemoveProjectAssemblyForPreset(const FGuid& PresetID);
+	EBIMResult UpdateProjectAssembly(const FBIMAssemblySpec& Assembly);
+	const FBIMAssemblySpec* GetAssemblyByGUID(EToolMode Mode, const FGuid& Key) const;
+
+	bool SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord) const;
+	bool ReadPresetsFromDocRecord(const FModumateDatabase& InDB, const FMOIDocumentRecord& DocRecord);
+
 };

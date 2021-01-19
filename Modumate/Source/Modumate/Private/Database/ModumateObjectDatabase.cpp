@@ -8,7 +8,7 @@
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "Misc/FileHelper.h"
 #include "Serialization/Csv/CsvParser.h"
-
+#include "DocumentManagement/ModumateSerialization.h"
 
 FModumateDatabase::FModumateDatabase() {}	
 
@@ -224,19 +224,19 @@ void FModumateDatabase::ReadPresetData()
 	{
 		TArray<FString> errors;
 		TArray<FGuid> starters;
-		if (!ensureAlways(PresetManager.CraftingNodePresets.LoadCSVManifest(*ManifestDirectoryPath, BIMManifestFileName, starters, errors) == EBIMResult::Success))
+		if (!ensureAlways(BIMPresetCollection.LoadCSVManifest(*ManifestDirectoryPath, BIMManifestFileName, starters, errors) == EBIMResult::Success))
 		{
 			return;
 		}
 		ensureAlways(errors.Num() == 0);
-		bimCacheRecord.Presets = PresetManager.CraftingNodePresets;
+		bimCacheRecord.Presets = BIMPresetCollection;
 		bimCacheRecord.Starters = starters;
 		WriteBIMCache(BIMCacheFile, bimCacheRecord);
 	}
 	else
 	{
-		PresetManager.CraftingNodePresets = bimCacheRecord.Presets;
-		PresetManager.CraftingNodePresets.PostLoad();
+		BIMPresetCollection = bimCacheRecord.Presets;
+		BIMPresetCollection.PostLoad();
 	}
 
 	FString NCPString;
@@ -313,7 +313,7 @@ void FModumateDatabase::ReadPresetData()
 
 		for (auto& cp : Preset.ChildPresets)
 		{
-			const FBIMPresetInstance* childPreset = PresetManager.CraftingNodePresets.PresetFromGUID(cp.PresetGUID);
+			const FBIMPresetInstance* childPreset = BIMPresetCollection.PresetFromGUID(cp.PresetGUID);
 			if (childPreset != nullptr)
 			{
 				if (childPreset->NodeScope == EBIMValueScope::RawMaterial)
@@ -325,7 +325,7 @@ void FModumateDatabase::ReadPresetData()
 
 		if (rawMaterial.IsValid())
 		{
-			const FBIMPresetInstance* preset = PresetManager.CraftingNodePresets.PresetFromGUID(rawMaterial);
+			const FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(rawMaterial);
 			if (preset != nullptr)
 			{
 				FString assetPath, matName;
@@ -463,7 +463,7 @@ void FModumateDatabase::ReadPresetData()
 	// More specific matches further down the table
 	Algo::Reverse(tagTitles);
 
-	for (auto& preset : PresetManager.CraftingNodePresets.PresetsByGUID)
+	for (auto& preset : BIMPresetCollection.PresetsByGUID)
 	{
 		for (auto& tag : tagTitles)
 		{
@@ -489,11 +489,11 @@ void FModumateDatabase::ReadPresetData()
 	/*
 	For every preset, load its dependent assets (if any) and set its object type based on tag path
 	*/
-	for (auto &kvp : PresetManager.CraftingNodePresets.PresetsByGUID)
+	for (auto &kvp : BIMPresetCollection.PresetsByGUID)
 	{
 		if (kvp.Value.SlotConfigPresetGUID.IsValid())
 		{
-			const FBIMPresetInstance* slotConfig = PresetManager.CraftingNodePresets.PresetFromGUID(kvp.Value.SlotConfigPresetGUID);
+			const FBIMPresetInstance* slotConfig = BIMPresetCollection.PresetFromGUID(kvp.Value.SlotConfigPresetGUID);
 			if (!ensureAlways(slotConfig != nullptr))
 			{
 				continue;
@@ -502,7 +502,7 @@ void FModumateDatabase::ReadPresetData()
 			TArray<FBIMPresetPartSlot> EmptySlots;
 			for (auto& configSlot : slotConfig->ChildPresets)
 			{
-				const FBIMPresetInstance* slotPreset = PresetManager.CraftingNodePresets.PresetFromGUID(configSlot.PresetGUID);
+				const FBIMPresetInstance* slotPreset = BIMPresetCollection.PresetFromGUID(configSlot.PresetGUID);
 				if (!ensureAlways(slotPreset != nullptr))
 				{
 					continue;
@@ -570,7 +570,7 @@ void FModumateDatabase::ReadPresetData()
 	*/
 	for (auto &starter : bimCacheRecord.Starters)
 	{
-		const FBIMPresetInstance* preset = PresetManager.CraftingNodePresets.PresetFromGUID(starter);
+		const FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(starter);
 
 		// TODO: "starter" presets currently only refer to complete assemblies, will eventually include presets to be shopped from the marketplace
 		if (ensureAlways(preset != nullptr) && preset->ObjectType == EObjectType::OTNone)
@@ -579,13 +579,14 @@ void FModumateDatabase::ReadPresetData()
 		}
 
 		FBIMAssemblySpec outSpec;
-		outSpec.FromPreset(*this, PresetManager.CraftingNodePresets, preset->GUID);
-		outSpec.ObjectType = preset->ObjectType;PresetManager.UpdateProjectAssembly(outSpec);
+		outSpec.FromPreset(*this, BIMPresetCollection, preset->GUID);
+		outSpec.ObjectType = preset->ObjectType;
+		BIMPresetCollection.UpdateProjectAssembly(outSpec);
 
 		// TODO: default assemblies added to allow interim loading during assembly refactor, to be eliminated
-		if (!PresetManager.DefaultAssembliesByObjectType.Contains(outSpec.ObjectType))
+		if (!BIMPresetCollection.DefaultAssembliesByObjectType.Contains(outSpec.ObjectType))
 		{
-			PresetManager.DefaultAssembliesByObjectType.Add(outSpec.ObjectType, outSpec);
+			BIMPresetCollection.DefaultAssembliesByObjectType.Add(outSpec.ObjectType, outSpec);
 		}
 	}
 }
@@ -626,18 +627,10 @@ const FLayerPattern* FModumateDatabase::GetPatternByGUID(const FGuid& GUID) cons
 	return Patterns.GetData(GUID);
 }
 
-void FModumateDatabase::InitPresetManagerForNewDocument(FPresetManager &OutManager) const
-{
-	if (ensureAlways(&OutManager != &PresetManager))
-	{
-		OutManager = PresetManager;
-	}
-}
-
 bool FModumateDatabase::UnitTest()
 {
-	bool success = PresetManager.AssembliesByObjectType.Num() > 0;
-	for (auto& kvdp : PresetManager.AssembliesByObjectType)
+	bool success = BIMPresetCollection.AssembliesByObjectType.Num() > 0;
+	for (auto& kvdp : BIMPresetCollection.AssembliesByObjectType)
 	{
 		// Furniture is not crafted
 		if (kvdp.Key == EObjectType::OTFurniture)
@@ -649,13 +642,13 @@ bool FModumateDatabase::UnitTest()
 		{
 			FBIMPresetEditor editor;
 			FBIMPresetEditorNodeSharedPtr root;
-			success = ensureAlways(editor.InitFromPreset(PresetManager.CraftingNodePresets, kvp.Value.RootPreset, root) == EBIMResult::Success) && success;
+			success = ensureAlways(editor.InitFromPreset(BIMPresetCollection, kvp.Value.RootPreset, root) == EBIMResult::Success) && success;
 
 			FBIMAssemblySpec editSpec;
-			success = ensureAlways(editor.CreateAssemblyFromNodes(PresetManager.CraftingNodePresets, *this, editSpec) == EBIMResult::Success) && success;
+			success = ensureAlways(editor.CreateAssemblyFromNodes(BIMPresetCollection, *this, editSpec) == EBIMResult::Success) && success;
 
 			FBIMAssemblySpec makeSpec;
-			success = ensureAlways(makeSpec.FromPreset(*this, PresetManager.CraftingNodePresets, editSpec.RootPreset) == EBIMResult::Success) && success;
+			success = ensureAlways(makeSpec.FromPreset(*this, BIMPresetCollection, editSpec.RootPreset) == EBIMResult::Success) && success;
 
 			success = ensureAlways(FBIMAssemblySpec::StaticStruct()->CompareScriptStruct(&editSpec, &kvp.Value, PPF_None)) && success;
 			success = ensureAlways(FBIMAssemblySpec::StaticStruct()->CompareScriptStruct(&makeSpec, &kvp.Value, PPF_None)) && success;

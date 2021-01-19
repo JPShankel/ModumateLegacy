@@ -307,7 +307,7 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 
 bool UPortalToolBase::CalculateNativeSize()
 {
-	const FBIMAssemblySpec* assembly = GameState->Document->PresetManager.GetAssemblyByGUID(GetToolMode(), AssemblyGUID);
+	const FBIMAssemblySpec* assembly = GameState->Document->GetPresetCollection().GetAssemblyByGUID(GetToolMode(), AssemblyGUID);
 	if (assembly == nullptr)
 	{
 		return false;

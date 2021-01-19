@@ -23,6 +23,7 @@
 #include "ModumateCore/ModumateMitering.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/PlatformFunctions.h"
+#include "BIMKernel/Presets/BIMPresetDelta.h"
 #include "Objects/MOIFactory.h"
 #include "Objects/SurfaceGraph.h"
 #include "Online/ModumateAnalyticsStatics.h"
@@ -38,6 +39,7 @@
 #include "UnrealClasses/Modumate.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/ModumateObjectComponent_CPP.h"
+#include "UnrealClasses/DynamicIconGenerator.h"
 
 using namespace Modumate::Mitering;
 using namespace Modumate;
@@ -761,6 +763,79 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 			DeleteObjectImpl(deletedFaceObj);
 		}
 	}
+}
+
+bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWorld* World)
+{
+	/*
+	* Invalid GUID->Valid GUID == Make new preset
+	* Valid GUID->Valid GUID == Update existing preset
+	* Valid GUID->Invalid GUID == Delete existing preset
+	*/
+
+	AEditModelGameMode_CPP* gameMode = World->GetAuthGameMode<AEditModelGameMode_CPP>();
+
+	// Add or update if we have a new GUID
+	if (PresetDelta.NewState.GUID.IsValid())
+	{
+		BIMPresetCollection.AddPreset(PresetDelta.NewState);
+
+		// Find all affected presets and update affected assemblies
+		TArray<FGuid> affectedPresets;
+		BIMPresetCollection.GetAllAncestorPresets(PresetDelta.NewState.GUID, affectedPresets);
+		if (PresetDelta.NewState.ObjectType != EObjectType::OTNone)
+		{
+			affectedPresets.AddUnique(PresetDelta.NewState.GUID);
+		}
+
+		TArray<FGuid> affectedAssemblies;
+		for (auto& affectedPreset : affectedPresets)
+		{
+			// Skip presets that don't define assemblies
+			FBIMPresetInstance* preset = BIMPresetCollection.PresetsByGUID.Find(affectedPreset);
+			if (!ensureAlways(preset != nullptr) || preset->ObjectType == EObjectType::OTNone)
+			{
+				continue;
+			}
+			
+			FBIMAssemblySpec newSpec;
+			if (ensureAlways(newSpec.FromPreset(*gameMode->ObjectDatabase, BIMPresetCollection, affectedPreset) == EBIMResult::Success))
+			{
+				affectedAssemblies.Add(affectedPreset);
+				BIMPresetCollection.UpdateProjectAssembly(newSpec);
+			}
+		}
+
+		AEditModelPlayerController_CPP* controller = Cast<AEditModelPlayerController_CPP>(World->GetFirstPlayerController());
+		if (controller && controller->DynamicIconGenerator)
+		{
+			controller->DynamicIconGenerator->UpdateCachedAssemblies(affectedAssemblies);
+		}
+
+		for (auto& moi : ObjectInstanceArray)
+		{
+			if (affectedAssemblies.Contains(moi->GetAssembly().RootPreset))
+			{
+				moi->OnAssemblyChanged();
+			}
+		}
+
+		return true;
+	}
+	// Remove if we're deleting an old one (new state has no guid)
+	else if (PresetDelta.OldState.GUID.IsValid())
+	{
+		// TODO: removing presets not yet supported, add scope impact here (fallback assemblies, etc)
+		BIMPresetCollection.RemovePreset(PresetDelta.OldState.GUID);
+		if (PresetDelta.OldState.ObjectType != EObjectType::OTNone)
+		{
+			BIMPresetCollection.RemoveProjectAssemblyForPreset(PresetDelta.OldState.GUID);
+		}
+		return true;
+	}
+
+	// Who sent us a delta with no guids?
+	return ensure(false);
 }
 
 bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World)
@@ -1939,7 +2014,7 @@ void UModumateDocument::RegisterDirtyObject(EObjectDirtyFlags DirtyType, AModuma
 	}
 }
 
-void UModumateDocument::MakeNew(UWorld *world)
+void UModumateDocument::MakeNew(UWorld *World)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeNew"));
 
@@ -1968,11 +2043,11 @@ void UModumateDocument::MakeNew(UWorld *world)
 		kvp.Value.Reset();
 	}
 
-	AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
-	gameMode->ObjectDatabase->InitPresetManagerForNewDocument(PresetManager);
+	AEditModelGameMode_CPP* gameMode = Cast<AEditModelGameMode_CPP>(World->GetAuthGameMode());
+	BIMPresetCollection = gameMode->ObjectDatabase->GetPresetCollection();
 	
 	// Clear drafting render directories
-	UModumateGameInstance *modGameInst = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
+	UModumateGameInstance *modGameInst = World ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
 	UDraftingManager *draftMan = modGameInst ? modGameInst->DraftingManager : nullptr;
 	if (draftMan != nullptr)
 	{
@@ -1990,9 +2065,13 @@ void UModumateDocument::MakeNew(UWorld *world)
 	SurfaceGraphs.Reset();
 
 	GatherDocumentMetadata();
+
+	static const FString eventCategory(TEXT("FileIO"));
+	static const FString eventNameNew(TEXT("NewDocument"));
+	UModumateAnalyticsStatics::RecordEventSimple(World, eventCategory, eventNameNew);
+
 	SetCurrentProjectPath();
 }
-
 
 void UModumateDocument::GatherDocumentMetadata()
 {
@@ -2230,7 +2309,7 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 	}
 
 	// DDL 2.0
-	PresetManager.ToDocumentRecord(OutDocumentRecord);
+	BIMPresetCollection.SavePresetsToDocRecord(OutDocumentRecord);
 
 	// Capture object instances into doc struct
 	for (AModumateObjectInstance* obj : ObjectInstanceArray)
@@ -2338,9 +2417,7 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool bSetAsCurr
 
 	if (FModumateSerializationStatics::TryReadModumateDocumentRecord(path, docHeader, docRec))
 	{
-		objectDB->InitPresetManagerForNewDocument(PresetManager);
-
-		PresetManager.FromDocumentRecord(*objectDB, docRec);
+		BIMPresetCollection.ReadPresetsFromDocRecord(*objectDB, docRec);
 
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.
@@ -2415,7 +2492,7 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool bSetAsCurr
 			TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(cta.Key);
 			if (ensureAlways(tool))
 			{
-				const FBIMAssemblySpec *obAsm = PresetManager.GetAssemblyByGUID(cta.Key, cta.Value);
+				const FBIMAssemblySpec *obAsm = GetPresetCollection().GetAssemblyByGUID(cta.Key, cta.Value);
 				if (obAsm != nullptr)
 				{
 					tool->SetAssemblyGUID(obAsm->UniqueKey());
@@ -2425,9 +2502,6 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool bSetAsCurr
 
 		// Just in case the loaded document's rooms don't match up with our current room analysis logic, do that now.
 		UpdateRoomAnalysis(world);
-
-		ResequencePortalAssemblies_DEPRECATED(world, EObjectType::OTWindow);
-		ResequencePortalAssemblies_DEPRECATED(world, EObjectType::OTDoor);
 
 		// Hide all cut planes on load
 		TArray<AModumateObjectInstance*> cutPlanes = GetObjectsOfType(EObjectType::OTCutPlane);
@@ -3130,4 +3204,14 @@ void UModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 			DrawDebugString(world, originDrawPos, faceString, nullptr, FColor::White, 0.0f, true);
 		}
 	}
+}
+
+const FBIMPresetCollection& UModumateDocument::GetPresetCollection() const
+{
+	return BIMPresetCollection;
+}
+
+bool UModumateDocument::MakeNewGUIDForPreset(FBIMPresetInstance& Preset)
+{
+	return BIMPresetCollection.GetAvailableGUID(Preset.GUID) == EBIMResult::Success;
 }
