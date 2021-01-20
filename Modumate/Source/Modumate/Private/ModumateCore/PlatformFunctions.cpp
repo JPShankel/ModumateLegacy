@@ -476,7 +476,7 @@ namespace Modumate
 		{
 			case IDCANCEL: return Cancel; break;
 			case IDNO: return No; break;
-			case IDYES: return Yes; break;
+			case IDYES: case IDOK: return Yes; break;
 			case IDRETRY: return Retry; break;
 		};
 

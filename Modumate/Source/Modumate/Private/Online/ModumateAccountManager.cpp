@@ -4,11 +4,16 @@
 #include "JsonUtilities.h"
 #include "Dom/JsonObject.h"
 #include "UnrealClasses/ModumateGameInstance.h"
-#include "Online/ModumateCloudConnection.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "Online/ModumateUpdater.h"
 
-FModumateAccountManager::FModumateAccountManager(TSharedPtr<FModumateCloudConnection>& InConnection) :
-	CloudConnection(InConnection)
+FModumateAccountManager::FModumateAccountManager(TSharedPtr<FModumateCloudConnection>& InConnection,
+	UModumateGameInstance* InGameInstance) :
+	CloudConnection(InConnection),
+	Updater(new FModumateUpdater(InGameInstance))
 {}
+
+FModumateAccountManager::~FModumateAccountManager() = default;
 
 void FModumateAccountManager::RequestStatus()
 {
@@ -20,24 +25,16 @@ void FModumateAccountManager::RequestStatus()
 	TWeakPtr<FModumateAccountManager> WeakThisCaptured(AsShared());
 
 	CloudConnection->RequestEndpoint(TEXT("/status"), FModumateCloudConnection::Get,
-		[](TSharedRef<IHttpRequest>& RefRequest) 
-		{},		
-
+		[](TSharedRef<IHttpRequest>& RefRequest)
+		{ },
 		[WeakThisCaptured](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
 		{
-			if (bSuccessful)
+			if (bSuccessful && Response.IsValid())
 			{
 				TSharedPtr<FModumateAccountManager> SharedThis = WeakThisCaptured.Pin();
 				if (!SharedThis.IsValid())
 				{
 					return;
-				}
-
-				TSharedPtr<FJsonObject> userInfoJson = Response->GetObjectField(TEXT("user"));
-				FModumateUserInfo userInfo;
-				if (FJsonObjectConverter::JsonObjectToUStruct<FModumateUserInfo>(userInfoJson.ToSharedRef(), &userInfo))
-				{
-					SharedThis->SetUserInfo(userInfo);
 				}
 
 				FModumateUserStatus status;
@@ -84,9 +81,10 @@ void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserS
 		LatestVersion = version;
 	}
 
+	Updater->ProcessLatestInstallers(UserStatus);
+
 	if (!UserStatus.Active)
 	{
 		CloudConnection->SetLoginStatus(ELoginStatus::UserDisabled);
 	}
 }
-

@@ -62,6 +62,18 @@ struct MODUMATE_API FModumateUserNotification
 };
 
 USTRUCT()
+struct MODUMATE_API FModumateInstallerItem
+{
+	GENERATED_BODY();
+
+	UPROPERTY()
+	FString Version;
+
+	UPROPERTY()
+	FString Url;
+};
+
+USTRUCT()
 struct MODUMATE_API FModumateUserStatus
 {
 	GENERATED_BODY();
@@ -77,6 +89,9 @@ struct MODUMATE_API FModumateUserStatus
 
 	UPROPERTY()
 	FString latest_modumate_version;
+
+	UPROPERTY()
+	TArray<FModumateInstallerItem> Installers;
 };
 
 USTRUCT()
@@ -118,10 +133,14 @@ UENUM(BlueprintType)
 enum class EModumatePermission : uint8 { None, View, Edit, Save, Export };
 
 class FModumateCloudConnection;
+class FModumateUpdater;
+class UModumateGameInstance;
+
 class MODUMATE_API FModumateAccountManager : public TSharedFromThis<FModumateAccountManager>
 {
 public:
-	FModumateAccountManager(TSharedPtr<FModumateCloudConnection>& InConnection);
+	FModumateAccountManager(TSharedPtr<FModumateCloudConnection>& InConnection, UModumateGameInstance * InGameInstance);
+	~FModumateAccountManager();
 
 	using FPermissionSet = TSet<EModumatePermission>;
 
@@ -139,7 +158,7 @@ public:
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
 
 private:
-
+	TUniquePtr<FModumateUpdater> Updater;
 	FModumateUserInfo UserInfo;
 	FString LatestVersion;
 	TArray<TBaseDelegate<void, bool>> TokenRefreshDelegates;

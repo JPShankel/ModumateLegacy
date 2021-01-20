@@ -58,7 +58,7 @@ UModumateDocument *UModumateGameInstance::GetDocument()
 void UModumateGameInstance::Init()
 {
 	CloudConnection = MakeShared<FModumateCloudConnection>();
-	AccountManager = MakeShared<FModumateAccountManager>(CloudConnection);
+	AccountManager = MakeShared<FModumateAccountManager>(CloudConnection, this);
 	AnalyticsInstance = UModumateAnalyticsStatics::InitAnalytics();
 
 	UModumateFunctionLibrary::SetWindowTitle();
