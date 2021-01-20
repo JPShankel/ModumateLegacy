@@ -203,6 +203,18 @@ namespace Modumate
 								layerPoints->Add(intersectionPoint);
 								layerPoints->Add(intersectionPoint);
 							}
+							else if (FVector::Parallel(prevEdgeNormal, curEdgeNormal))
+							{
+								// This should always be true if we only & always split edges based on whether their directions (and therefore also their normals) are parallel.
+								// But to be specific, if edge normals are parallel, then it means that we don't want `curSidePoint` to be a shared vertex between two
+								// coplanar split faces, since it will cause triangulation to fail.
+								// Instead we'll start the split face from the current point, with the previous edge normal and extension,
+								// which is intended to be identical to `nextExtPoint` for the previous edge iteration.
+								// TODO: This is another opportunity to reduce calculation between edge iterations if we know exactly how many unique vertices there are for each layer.
+								const FVector prevEndExtPoint = curSidePoint - prevEdgeExtension * prevEdgeNormal;
+								layerPoints->Add(prevEndExtPoint);
+								layerPoints->Add(curExtPoint);
+							}
 							else
 							{
 								layerPoints->Add(curSidePoint);
