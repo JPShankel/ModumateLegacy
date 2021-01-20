@@ -359,6 +359,7 @@ EBIMResult FBIMPresetEditor::CreateAssemblyFromLayerNode(const FBIMPresetCollect
 		{
 			assemblyPreset.NodeType = inst->WorkingPresetCopy.NodeType;
 			assemblyPreset.ObjectType = inst->WorkingPresetCopy.ObjectType;
+			assemblyPreset.Properties.AddProperties(inst->WorkingPresetCopy.Properties);
 			break;
 		}
 	}
