@@ -33,13 +33,7 @@ public:
 	class UWrapBox* WrapBox_Buttons;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget* ButtonAxesNone;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget* ButtonAxesXY;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget* ButtonAxesZ;
+	class UModumateButtonUserWidget* ButtonRectangle;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonMPBucket;
@@ -52,12 +46,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonOpeningSystem;
-
-	UFUNCTION(BlueprintCallable)
-	void ChangeToMetaPlaneToolsButtons();
-
-	UFUNCTION(BlueprintCallable)
-	void ChangeToSurfaceGraphToolsButtons();
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeToSeparatorToolsButtons(EToolMode mode);

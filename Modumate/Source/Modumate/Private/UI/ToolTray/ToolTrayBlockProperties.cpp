@@ -5,7 +5,7 @@
 #include "Components/ComboBoxString.h"
 #include "Components/HorizontalBox.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
-#include "ToolsAndAdjustments/Tools/EditModelMetaPlaneTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelRectangleTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelPlaneHostedObjTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelPortalTools.h"
 #include "UI/Custom/ModumateDropDownUserWidget.h"
@@ -59,11 +59,8 @@ void UToolTrayBlockProperties::ChangeBlockProperties(UEditModelToolBase* Current
 			sillHeightValue = portalTool->GetInstanceBottomOffset();
 		}
 	}
-	else if (auto metaPlaneTool = Cast<UMetaPlaneTool>(CurrentTool))
+	else if (auto metaPlaneTool = Cast<URectangleTool>(CurrentTool))
 	{
-		bHeightEnabled = (metaPlaneTool->GetAxisConstraint() == EAxisConstraint::AxisZ);
-		heightValue = metaPlaneTool->GetInstanceHeight();
-
 		if (auto layeredTool = Cast<UPlaneHostedObjTool>(CurrentTool))
 		{
 			bJustificationEnabled = true;
@@ -131,10 +128,6 @@ void UToolTrayBlockProperties::OnInstHeightTextCommitted(const FText& Text, ETex
 		if (auto portalTool = Cast<UPortalToolBase>(currentTool))
 		{
 			portalTool->SetInstanceHeight(enteredDimension.Centimeters);
-		}
-		else if (auto metaPlaneTool = Cast<UMetaPlaneTool>(currentTool))
-		{
-			metaPlaneTool->SetInstanceHeight(enteredDimension.Centimeters);
 		}
 	}
 }

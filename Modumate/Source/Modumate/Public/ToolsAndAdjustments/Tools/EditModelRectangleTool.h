@@ -6,14 +6,14 @@
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 
-#include "EditModelMetaPlaneTool.generated.h"
+#include "EditModelRectangleTool.generated.h"
 
 class AEditModelGameMode_CPP;
 class AEditModelGameState_CPP;
 class ALineActor;
 
 UCLASS()
-class MODUMATE_API UMetaPlaneTool : public UEditModelToolBase
+class MODUMATE_API URectangleTool : public UEditModelToolBase
 {
 	GENERATED_BODY()
 
@@ -22,29 +22,26 @@ protected:
 	{
 		Neutral = 0,
 		NewSegmentPending,
+		NewPlanePending,
 	};
 	EState State;
 
 	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
 
 	EMouseMode OriginalMouseMode;
-	FVector AnchorPointDegree;
-	TArray<FVector> PendingPlanePoints, SketchPlanePoints;
+	TArray<FVector> PendingPlanePoints;
+	FVector PlaneBaseStart, PlaneBaseEnd; // for rectangle tool, base points are a line segment that the rectangle extrudes from
 	FArchitecturalMaterial PendingPlaneMaterial;
-	bool bPendingSegmentValid;
 	bool bPendingPlaneValid;
 	FPlane PendingPlaneGeom;
 	float MinPlaneSize;
-	float PendingPlaneAlpha;
-	float InstanceHeight;
 
 	virtual float GetDefaultPlaneHeight() const;
 
 public:
-	UMetaPlaneTool(const FObjectInitializer& ObjectInitializer);
+	URectangleTool(const FObjectInitializer& ObjectInitializer);
 
-	virtual EToolMode GetToolMode() override { return EToolMode::VE_METAPLANE; }
-	virtual void Initialize() override;
+	virtual EToolMode GetToolMode() override { return EToolMode::VE_RECTANGLE; }
 	virtual bool Activate() override;
 	virtual bool HandleInputNumber(double n) override;
 	virtual bool Deactivate() override;
@@ -57,15 +54,9 @@ public:
 
 	virtual bool HasDimensionActor() { return true; }
 
-	void SetInstanceHeight(const float InHeight);
-	float GetInstanceHeight() const;
-
 protected:
-	virtual void OnAxisConstraintChanged() override;
-
 	bool GetMetaObjectCreationDeltas(const FVector& Location, bool bSplitAndUpdateFaces,
-		FVector& OutConstrainedLocation, FVector& OutAffordanceNormal, FVector& OutAffordanceTangent,
-		TArray<FVector>& OutSketchPoints, TArray<FDeltaPtr>& OutDeltaPtrs);
+		FVector& OutConstrainedLocation, TArray<FDeltaPtr>& OutDeltaPtrs);
 
 	virtual bool MakeObject(const FVector& Location);
 	virtual bool UpdatePreview();

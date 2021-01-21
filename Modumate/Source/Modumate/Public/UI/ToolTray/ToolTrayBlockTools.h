@@ -22,6 +22,18 @@ public:
 	virtual bool Initialize() override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UWrapBox* WrapBox_Buttons;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_Line;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_Rectangle;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_SurfaceLine;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* Button_Wall;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -70,12 +82,22 @@ public:
 	class UModumateButtonUserWidget* Button_Railing;
 
 	UFUNCTION(BlueprintCallable)
+	void ChangeToMassingGraphToolsButtons();
+
+	UFUNCTION(BlueprintCallable)
 	void ChangeToSeparatorToolsButtons();
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeToAttachmentToolsButtons();
 
+	UFUNCTION(BlueprintCallable)
+	void ChangeToSurfaceGraphToolsButtons();
+
 protected:
 	virtual void NativeConstruct() override;
 
+	UPROPERTY()
+	TArray<class UModumateButtonUserWidget*> AllModumateButtons;
+
+	void SetButtonsState(const TArray<UModumateButtonUserWidget*>& ButtonsToShow);
 };

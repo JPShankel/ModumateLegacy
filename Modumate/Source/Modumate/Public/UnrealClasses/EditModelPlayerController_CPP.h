@@ -36,7 +36,6 @@ enum class ECameraMode : uint8
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUserSnapPointEvent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolModeChanged);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolAxisConstraintChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolCreateObjectModeChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolAssemblyChanged);
 
@@ -147,9 +146,6 @@ public:
 
 	UPROPERTY()
 	FOnToolModeChanged OnToolModeChanged;
-
-	UPROPERTY()
-	FOnToolAxisConstraintChanged OnToolAxisConstraintChanged;
 
 	UPROPERTY()
 	FOnToolCreateObjectModeChanged OnToolCreateObjectModeChanged;
@@ -408,9 +404,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Tools)
 	void AbortUseTool();
-
-	UFUNCTION(BlueprintCallable, Category = Tools)
-	void SetToolAxisConstraint(EAxisConstraint AxisConstraint);
 
 	UFUNCTION(BlueprintCallable, Category = Tools)
 	void SetToolCreateObjectMode(EToolCreateObjectMode CreateObjectMode);

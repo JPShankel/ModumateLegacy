@@ -28,7 +28,6 @@ UEditModelToolBase::UEditModelToolBase(const FObjectInitializer& ObjectInitializ
 	, Active(false)
 	, Controller(nullptr)
 	, GameInstance(nullptr)
-	, AxisConstraint(EAxisConstraint::None)
 	, CreateObjectMode(EToolCreateObjectMode::Draw)
 	, PendingSegmentID(MOD_ID_NONE)
 {
@@ -121,20 +120,6 @@ bool UEditModelToolBase::PostEndOrAbort()
 	return true;
 }
 
-void UEditModelToolBase::SetAxisConstraint(EAxisConstraint InAxisConstraint)
-{
-	if (AxisConstraint != InAxisConstraint)
-	{
-		AxisConstraint = InAxisConstraint;
-		OnAxisConstraintChanged();
-
-		if (Controller)
-		{
-			Controller->OnToolAxisConstraintChanged.Broadcast();
-		}
-	}
-}
-
 void UEditModelToolBase::SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode)
 {
 	if (CreateObjectMode != InCreateObjectMode)
@@ -179,10 +164,6 @@ void UEditModelToolBase::InitializeDimension()
 	dimensionWidget->Measurement->OnTextCommitted.AddDynamic(this, &UEditModelToolBase::OnTextCommitted);
 
 	DimensionManager->SetActiveActorID(PendingSegmentID);
-}
-
-void UEditModelToolBase::OnAxisConstraintChanged()
-{
 }
 
 void UEditModelToolBase::OnCreateObjectModeChanged()

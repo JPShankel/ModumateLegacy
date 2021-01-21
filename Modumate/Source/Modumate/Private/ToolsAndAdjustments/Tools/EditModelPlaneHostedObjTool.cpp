@@ -18,7 +18,7 @@
 using namespace Modumate;
 
 UPlaneHostedObjTool::UPlaneHostedObjTool(const FObjectInitializer& ObjectInitializer)
-	: UMetaPlaneTool(ObjectInitializer)
+	: URectangleTool(ObjectInitializer)
 	, bInverted(false)
 	, bRequireHoverMetaPlane(false)
 	, ObjectType(EObjectType::OTNone)
@@ -103,25 +103,11 @@ bool UPlaneHostedObjTool::EnterNextStage()
 
 bool UPlaneHostedObjTool::FrameUpdate()
 {
-	// Skip the direct parent UMetaPlaneTool::FrameUpdate, because we don't want to apply preview deltas yet
-	if (!UEditModelToolBase::FrameUpdate())
-	{
-		return false;
-	}
+	UEditModelToolBase::FrameUpdate();
 
 	CurDeltas.Reset();
 	FDeltaPtr previewDelta;
-
-	if (PendingSegmentID != MOD_ID_NONE)
-	{
-		if (!Super::UpdatePreview() || (CurAddedFaceIDs.Num() == 0))
-		{
-			return false;
-		}
-
-		previewDelta = GetObjectCreationDelta(CurAddedFaceIDs);
-	}
-	else
+	if (GetCreateObjectMode() == EToolCreateObjectMode::Apply)
 	{
 		// Determine whether we can apply the plane hosted object to a plane targeted by the cursor
 		const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
@@ -163,10 +149,20 @@ bool UPlaneHostedObjTool::FrameUpdate()
 		// Don't show the snap cursor if we're targeting a plane.
 		Controller->EMPlayerState->bShowSnappedCursor = (LastValidTargetID == MOD_ID_NONE);
 	}
+	else if (UpdatePreview())
+	{
+		if (State == EState::NewPlanePending)
+		{
+			previewDelta = GetObjectCreationDelta(CurAddedFaceIDs);
+		}
+	}
 
 	if (previewDelta.IsValid())
 	{
 		CurDeltas.Add(previewDelta);
+	}
+	if (CurDeltas.Num() > 0)
+	{
 		GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
 	}
 
@@ -388,40 +384,34 @@ UWallTool::UWallTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	ObjectType = EObjectType::OTWallSegment;
-	SetAxisConstraint(EAxisConstraint::AxisZ);
 }
 
 UFloorTool::UFloorTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	ObjectType = EObjectType::OTFloorSegment;
-	SetAxisConstraint(EAxisConstraint::AxesXY);
 }
 
 URoofFaceTool::URoofFaceTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	ObjectType = EObjectType::OTRoofFace;
-	SetAxisConstraint(EAxisConstraint::AxesXY);
 }
 
 UCeilingTool::UCeilingTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	ObjectType = EObjectType::OTCeiling;
-	SetAxisConstraint(EAxisConstraint::AxesXY);
 }
 
 UCountertopTool::UCountertopTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	ObjectType = EObjectType::OTCountertop;
-	SetAxisConstraint(EAxisConstraint::AxesXY);
 }
 
 UPanelTool::UPanelTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	ObjectType = EObjectType::OTSystemPanel;
-	SetAxisConstraint(EAxisConstraint::AxisZ);
 }

@@ -46,8 +46,6 @@ public:
 	virtual bool ShowSnapCursorAffordances() override { return true; }
 	virtual bool GetRequiredViewModes(TArray<EEditViewModes>& OutViewModes) const override { return false; }
 
-	virtual void SetAxisConstraint(EAxisConstraint InAxisConstraint) override;
-	virtual EAxisConstraint GetAxisConstraint() const { return AxisConstraint; }
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) override;
 	virtual EToolCreateObjectMode GetCreateObjectMode() const override { return CreateObjectMode; }
 	virtual void SetAssemblyGUID(const FGuid& InAssemblyKey) override;
@@ -61,7 +59,6 @@ protected:
 	void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
 	virtual void InitializeDimension();
-	virtual void OnAxisConstraintChanged();
 	virtual void OnCreateObjectModeChanged();
 	virtual void OnAssemblyChanged();
 
@@ -80,7 +77,6 @@ protected:
 	UPROPERTY()
 	class UDimensionManager* DimensionManager;
 
-	EAxisConstraint AxisConstraint;
 	EToolCreateObjectMode CreateObjectMode;
 
 	FGuid AssemblyGUID;

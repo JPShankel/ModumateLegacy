@@ -46,7 +46,7 @@ void UToolbarWidget::NativeConstruct()
 
 void UToolbarWidget::OnButtonReleaseMetaPlane()
 {
-	Controller->SetToolMode(EToolMode::VE_METAPLANE);
+	Controller->SetToolMode(EToolMode::VE_LINE);
 	if (EditModelUserWidget->ToolTrayWidget->CurrentToolCategory != EToolCategories::MetaGraph)
 	{
 		EditModelUserWidget->ToolTrayWidget->ChangeBlockToMetaPlaneTools();

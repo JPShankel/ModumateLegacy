@@ -79,7 +79,8 @@ enum class EInputCommand : uint8
 	ActivateTool_Trim,
 	ActivateTool_RoofFace,
 	ActivateTool_RoofPerimeter,
-	ActivateTool_MetaPlane,
+	ActivateTool_Line,
+	ActivateTool_Rectangle,
 	ActivateTool_CutPlane,
 	ActivateTool_ScopeBox,
 	ActivateTool_Join,
@@ -94,9 +95,7 @@ enum class EInputCommand : uint8
 	ActivateTool_END,
 
 	// Tool-related commands
-	ConstraintAxesNone,
-	ConstraintAxesXY,
-	ConstraintAxesZ,
+	Draw,
 	PaintBucket,
 	OpeningStamp,
 	OpeningSystem,

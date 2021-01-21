@@ -44,8 +44,6 @@ public:
 	virtual bool HandleMouseUp() = 0;
 	virtual bool ShowSnapCursorAffordances() = 0;
 	virtual bool GetRequiredViewModes(TArray<EEditViewModes>& OutViewModes) const = 0;
-	virtual void SetAxisConstraint(EAxisConstraint AxisConstraint) = 0;
-	virtual EAxisConstraint GetAxisConstraint() const = 0;
 	virtual void SetCreateObjectMode(EToolCreateObjectMode InCreateObjectMode) = 0;
 	virtual EToolCreateObjectMode GetCreateObjectMode() const = 0;
 	virtual void SetAssemblyGUID(const FGuid &InAssemblyKey) = 0;

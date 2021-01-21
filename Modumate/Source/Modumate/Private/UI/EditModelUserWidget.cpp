@@ -44,7 +44,6 @@ bool UEditModelUserWidget::Initialize()
 	if (Controller)
 	{
 		Controller->OnToolModeChanged.AddDynamic(this, &UEditModelUserWidget::UpdateOnToolModeChanged);
-		Controller->OnToolAxisConstraintChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
 		Controller->OnToolCreateObjectModeChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
 		Controller->OnToolAssemblyChanged.AddDynamic(this, &UEditModelUserWidget::UpdateToolTray);
 	}

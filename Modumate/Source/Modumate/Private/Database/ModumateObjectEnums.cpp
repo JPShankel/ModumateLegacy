@@ -14,7 +14,8 @@ EToolCategories UModumateTypeStatics::GetToolCategory(EToolMode ToolMode)
 {
 	switch (ToolMode)
 	{
-	case EToolMode::VE_METAPLANE:
+	case EToolMode::VE_LINE:
+	case EToolMode::VE_RECTANGLE:
 	case EToolMode::VE_ROOF_PERIMETER:
 		return EToolCategories::MetaGraph;
 	case EToolMode::VE_WALL:
@@ -72,7 +73,7 @@ EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 	case EToolMode::VE_TRIM: return EObjectType::OTTrim;
 	case EToolMode::VE_ROOF_FACE: return EObjectType::OTRoofFace;
 	case EToolMode::VE_ROOF_PERIMETER: return EObjectType::OTRoofPerimeter;
-	case EToolMode::VE_METAPLANE: return EObjectType::OTMetaPlane;
+	case EToolMode::VE_RECTANGLE: return EObjectType::OTMetaPlane;
 	case EToolMode::VE_CUTPLANE: return EObjectType::OTCutPlane;
 	case EToolMode::VE_SCOPEBOX: return EObjectType::OTScopeBox;
 	case EToolMode::VE_JOIN: return EObjectType::OTUnknown;
@@ -106,7 +107,7 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTTrim: return EToolMode::VE_TRIM;
 	case EObjectType::OTMetaVertex:
 	case EObjectType::OTMetaEdge:
-	case EObjectType::OTMetaPlane: return EToolMode::VE_METAPLANE;
+	case EObjectType::OTMetaPlane: return EToolMode::VE_RECTANGLE;
 	case EObjectType::OTSurfaceGraph:
 	case EObjectType::OTSurfaceVertex:
 	case EObjectType::OTSurfaceEdge:

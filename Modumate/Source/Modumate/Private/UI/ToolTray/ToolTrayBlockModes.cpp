@@ -1,10 +1,11 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/ToolTray/ToolTrayBlockModes.h"
-#include "UI/Custom/ModumateButtonUserWidget.h"
-#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+
 #include "Components/WrapBox.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UnrealClasses/EditModelPlayerController_CPP.h"
 
 UToolTrayBlockModes::UToolTrayBlockModes(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -35,18 +36,6 @@ void UToolTrayBlockModes::NativeConstruct()
 	}
 }
 
-void UToolTrayBlockModes::ChangeToMetaPlaneToolsButtons()
-{
-	TArray<UModumateButtonUserWidget*> buttonsToShow = { ButtonAxesNone, ButtonAxesXY, ButtonAxesZ };
-	SetButtonsState(buttonsToShow);
-}
-
-void UToolTrayBlockModes::ChangeToSurfaceGraphToolsButtons()
-{
-	TArray<UModumateButtonUserWidget*> buttonsToShow = { ButtonAxesNone };
-	SetButtonsState(buttonsToShow);
-}
-
 void UToolTrayBlockModes::ChangeToSeparatorToolsButtons(EToolMode mode)
 {
 	TArray<UModumateButtonUserWidget*> buttonsToShow;
@@ -55,7 +44,7 @@ void UToolTrayBlockModes::ChangeToSeparatorToolsButtons(EToolMode mode)
 	{
 	case EToolMode::VE_ROOF_FACE:
 	case EToolMode::VE_ROOF_PERIMETER:
-		buttonsToShow.Append({ ButtonAxesNone, ButtonAxesXY, ButtonAxesZ, ButtonMPBucket, ButtonRoofPerimeter });
+		buttonsToShow.Append({ ButtonRectangle, ButtonMPBucket, ButtonRoofPerimeter });
 		break;
 
 	case EToolMode::VE_DOOR:
@@ -64,7 +53,7 @@ void UToolTrayBlockModes::ChangeToSeparatorToolsButtons(EToolMode mode)
 		break;
 
 	default:
-		buttonsToShow.Append({ ButtonAxesNone, ButtonAxesXY, ButtonAxesZ, ButtonMPBucket });
+		buttonsToShow.Append({ ButtonRectangle, ButtonMPBucket });
 		break;
 	}
 
@@ -92,30 +81,16 @@ void UToolTrayBlockModes::SetButtonsState(const TArray<UModumateButtonUserWidget
 		return;
 	}
 
-	EAxisConstraint currentConstraint = currentTool->GetAxisConstraint();
-	EToolCreateObjectMode currentDrawMode = currentTool->GetCreateObjectMode();
-
-	if (currentDrawMode == EToolCreateObjectMode::Apply)
+	switch (currentTool->GetCreateObjectMode())
 	{
+	case EToolCreateObjectMode::Draw:
+		ButtonRectangle->SwitchToActiveStyle();
+		break;
+	case EToolCreateObjectMode::Apply:
 		ButtonMPBucket->SwitchToActiveStyle();
-	}
-	else if (currentDrawMode == EToolCreateObjectMode::Stamp)
-	{
+		break;
+	case EToolCreateObjectMode::Stamp:
 		ButtonOpeningStamp->SwitchToActiveStyle();
-	}
-	else
-	{
-		switch (currentConstraint)
-		{
-		case EAxisConstraint::None:
-			ButtonAxesNone->SwitchToActiveStyle();
-			break;
-		case EAxisConstraint::AxisZ:
-			ButtonAxesXY->SwitchToActiveStyle();
-			break;
-		case EAxisConstraint::AxesXY:
-			ButtonAxesZ->SwitchToActiveStyle();
-			break;
-		}
+		break;
 	}
 }

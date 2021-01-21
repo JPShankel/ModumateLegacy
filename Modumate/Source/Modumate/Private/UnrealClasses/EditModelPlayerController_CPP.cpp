@@ -50,7 +50,8 @@
 #include "ToolsAndAdjustments/Tools/EditModelFinishTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelGraph2DTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelJoinTool.h"
-#include "ToolsAndAdjustments/Tools/EditModelMetaPlaneTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelLineTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelRectangleTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelMoveTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelPlaneHostedObjTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelPortalTools.h"
@@ -446,14 +447,6 @@ void AEditModelPlayerController_CPP::AbortUseTool()
 	}
 }
 
-void AEditModelPlayerController_CPP::SetToolAxisConstraint(EAxisConstraint AxisConstraint)
-{
-	if (CurrentTool)
-	{
-		CurrentTool->SetAxisConstraint(AxisConstraint);
-	}
-}
-
 void AEditModelPlayerController_CPP::SetToolCreateObjectMode(EToolCreateObjectMode CreateObjectMode)
 {
 	if (CurrentTool)
@@ -569,7 +562,8 @@ void AEditModelPlayerController_CPP::CreateTools()
 	RegisterTool(CreateTool<UTrimTool>());
 	RegisterTool(CreateTool<URoofFaceTool>());
 	RegisterTool(CreateTool<URoofPerimeterTool>());
-	RegisterTool(CreateTool<UMetaPlaneTool>());
+	RegisterTool(CreateTool<ULineTool>());
+	RegisterTool(CreateTool<URectangleTool>());
 	RegisterTool(CreateTool<UCutPlaneTool>());
 	RegisterTool(CreateTool<UScopeBoxTool>());
 	RegisterTool(CreateTool<UJoinTool>());
@@ -1899,7 +1893,7 @@ void AEditModelPlayerController_CPP::UpdateMouseTraceParams()
 	case EToolMode::VE_ROOF_FACE:
 	case EToolMode::VE_RAIL:
 	case EToolMode::VE_STAIR:
-	case EToolMode::VE_METAPLANE:
+	case EToolMode::VE_RECTANGLE:
 		MOITraceObjectQueryParams = FCollisionObjectQueryParams(COLLISION_META_MOI);
 		break;
 	case EToolMode::VE_DOOR:

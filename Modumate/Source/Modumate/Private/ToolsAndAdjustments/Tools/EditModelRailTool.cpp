@@ -7,7 +7,6 @@ URailTool::URailTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	ObjectType = EObjectType::OTRailSegment;
-	SetAxisConstraint(EAxisConstraint::AxisZ);
 }
 
 float URailTool::GetDefaultPlaneHeight() const

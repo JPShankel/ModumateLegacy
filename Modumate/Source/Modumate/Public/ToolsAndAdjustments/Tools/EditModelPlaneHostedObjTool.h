@@ -1,7 +1,7 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #pragma once
-#include "ToolsAndAdjustments/Tools/EditModelMetaPlaneTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelRectangleTool.h"
 #include "UnrealClasses/EditModelPlayerState_CPP.h"
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
@@ -13,7 +13,7 @@ class UModumateDocument;
 class AModumateObjectInstance;
 
 UCLASS()
-class MODUMATE_API UPlaneHostedObjTool : public UMetaPlaneTool
+class MODUMATE_API UPlaneHostedObjTool : public URectangleTool
 {
 	GENERATED_BODY()
 

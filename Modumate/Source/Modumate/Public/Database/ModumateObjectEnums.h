@@ -91,7 +91,8 @@ enum class EToolMode : uint8
 	VE_TRIM,
 	VE_ROOF_FACE,
 	VE_ROOF_PERIMETER,
-	VE_METAPLANE,
+	VE_LINE,
+	VE_RECTANGLE,
 	VE_CUTPLANE,
 	VE_SCOPEBOX,
 	VE_JOIN,
@@ -148,14 +149,6 @@ enum class EEditObjectStatus : uint8
 	None = 0,
 	CanSave,
 	CannotSave
-};
-
-UENUM(BlueprintType)
-enum class EAxisConstraint : uint8
-{
-	None,
-	AxisZ,
-	AxesXY,
 };
 
 UENUM(BlueprintType)

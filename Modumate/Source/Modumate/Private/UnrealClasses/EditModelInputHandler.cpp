@@ -367,24 +367,9 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 
 	// Tool-related commands
 
-	case EInputCommand::ConstraintAxesNone:
+	case EInputCommand::Draw:
 	{
 		Controller->SetToolCreateObjectMode(EToolCreateObjectMode::Draw);
-		Controller->SetToolAxisConstraint(EAxisConstraint::None);
-		return true;
-	}
-
-	case EInputCommand::ConstraintAxesXY:
-	{
-		Controller->SetToolCreateObjectMode(EToolCreateObjectMode::Draw);
-		Controller->SetToolAxisConstraint(EAxisConstraint::AxesXY);
-		return true;
-	}
-
-	case EInputCommand::ConstraintAxesZ:
-	{
-		Controller->SetToolCreateObjectMode(EToolCreateObjectMode::Draw);
-		Controller->SetToolAxisConstraint(EAxisConstraint::AxisZ);
 		return true;
 	}
 

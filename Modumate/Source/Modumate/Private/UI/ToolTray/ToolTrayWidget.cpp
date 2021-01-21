@@ -52,11 +52,8 @@ bool UToolTrayWidget::ChangeBlockToMetaPlaneTools()
 	HideAllToolTrayBlocks();
 	CurrentToolCategory = EToolCategories::MetaGraph;
 
-	ToolTrayBlockModes->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ToolTrayBlockModes->ChangeToMetaPlaneToolsButtons();
-
-	ToolTrayBlockProperties->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ToolTrayBlockProperties->ChangeBlockProperties(Cast<UEditModelToolBase>(controller->CurrentTool.GetObject()));
+	ToolTrayBlockTools->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ToolTrayBlockTools->ChangeToMassingGraphToolsButtons();
 
 	if (EditModelUserWidget)
 	{
@@ -108,8 +105,8 @@ bool UToolTrayWidget::ChangeBlockToSurfaceGraphTools()
 	CurrentToolCategory = EToolCategories::SurfaceGraphs;
 	ToolTrayMainTitleBlock->SetText(UModumateTypeStatics::GetToolCategoryText(EToolCategories::SurfaceGraphs));
 	HideAllToolTrayBlocks();
-	ToolTrayBlockModes->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ToolTrayBlockModes->ChangeToSurfaceGraphToolsButtons();
+	ToolTrayBlockTools->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ToolTrayBlockTools->ChangeToSurfaceGraphToolsButtons();
 	if (EditModelUserWidget)
 	{
 		EditModelUserWidget->ToolbarWidget->Button_SurfaceGraphs->SwitchToActiveStyle();
