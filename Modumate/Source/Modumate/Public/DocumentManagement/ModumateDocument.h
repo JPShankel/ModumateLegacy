@@ -50,7 +50,6 @@ private:
 	UPROPERTY()
 	TMap<int32, AModumateObjectInstance*> DeletedObjects;
 
-	void GatherDocumentMetadata();
 	float DefaultWallHeight;
 	float DefaultRailHeight = 106.68f;
 	float DefaultCabinetHeight = 87.63f;
@@ -258,34 +257,6 @@ public:
 	FString DocumentPath;
 
 	FString CurrentEncodedThumbnail;
-
-	struct FPartyProfile
-	{
-		FString Role, Name, Representative, Email, Phone, LogoPath;
-	};
-
-	struct FDraftRevision
-	{
-		FString Name;
-		FDateTime DateTime;
-		int Number;
-	};
-
-	struct FProjectInfo
-	{
-		FString name;
-		FString address1;
-		FString address2;
-		FString lotNumber;
-		FString ID;
-		FString description;
-	};
-
-	FString StampPath;
-	FPartyProfile LeadArchitect, Client;
-	FProjectInfo ProjectInfo;
-	TArray<FPartyProfile> SecondaryParties;
-	TArray<FDraftRevision> Revisions;
 
 	// Generates a GUID...non-const because all generated guids are stored to avoid (infinitessimal) chance of duplication
 	bool MakeNewGUIDForPreset(FBIMPresetInstance& Preset);

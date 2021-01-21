@@ -6,7 +6,6 @@
 #include "CoreMinimal.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "Drafting/ModumateDraftingPage.h"
-#include "Drafting/Drawings/TitleBlock.h"
 #include "Drafting/ModumateDraftingTags.h"
 #include "Runtime/Engine/Classes/Debug/ReporterGraph.h"
 

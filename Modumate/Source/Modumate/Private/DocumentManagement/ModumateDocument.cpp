@@ -57,8 +57,6 @@ UModumateDocument::UModumateDocument()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ModumateDocument"));
 
-	GatherDocumentMetadata();
-
 	//Set Default Values
 	//Values will be deprecated in favor of instance-level overrides for assemblies
 	DefaultWallHeight = 243.84f;
@@ -2064,100 +2062,12 @@ void UModumateDocument::MakeNew(UWorld *World)
 	TempVolumeGraph.Reset();
 	SurfaceGraphs.Reset();
 
-	GatherDocumentMetadata();
 
 	static const FString eventCategory(TEXT("FileIO"));
 	static const FString eventNameNew(TEXT("NewDocument"));
 	UModumateAnalyticsStatics::RecordEventSimple(World, eventCategory, eventNameNew);
 
 	SetCurrentProjectPath();
-}
-
-void UModumateDocument::GatherDocumentMetadata()
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::GatherDocumentMetadata"));
-	FPartyProfile pp;
-
-	// Read architect metadata from the registry
-	pp.Role = TEXT("Architect (Author):");
-	FString regSubKey = L"SOFTWARE\\Modumate\\OrganizationInfo\\";
-	FString regValue = L"CompanyName";
-	pp.Name = Modumate::PlatformFunctions::GetStringValueFromHKCU(regSubKey, regValue);
-	pp.Representative = TEXT("Andrew Stevenson");
-
-	regValue = L"CompanyEmail";
-	pp.Email = Modumate::PlatformFunctions::GetStringValueFromHKCU(regSubKey, regValue);
-
-	regValue = L"CompanyPhone";
-	pp.Phone = Modumate::PlatformFunctions::GetStringValueFromHKCU(regSubKey, regValue);
-
-	regValue = L"CompanyLogoPath";
-	FString relativeLogoPath = Modumate::PlatformFunctions::GetStringValueFromHKCU(regSubKey, regValue);
-	pp.LogoPath = FPaths::ProjectContentDir() + relativeLogoPath;
-
-	LeadArchitect = pp;
-
-	// Clear the secondary parties array
-	SecondaryParties.Empty();
-
-	pp.Role = TEXT("Structural Engineer");
-	pp.Name = TEXT("ZFA Atructural Engineers");
-	pp.Representative = TEXT("Frank Lloyd Wright");
-	pp.Email = TEXT("franklloydwright@gmail.com");
-	pp.Phone = TEXT("(702) 445-2314");
-	SecondaryParties.Add(pp);
-
-	pp.Role = TEXT("Mechanical Engineer");
-	pp.Name = TEXT("Austal HVAC Design and Fabrication");
-	pp.Representative = TEXT("Norman Foster");
-	pp.Email = TEXT("normanfosetr@gmail.com");
-	pp.Phone = TEXT("(408) 145-4315");
-	SecondaryParties.Add(pp);
-
-	pp.Role = TEXT("Interior Designer");
-	pp.Name = TEXT("Frank Gehry Interiors");
-	pp.Representative = TEXT("Frank Gehry");
-	pp.Email = TEXT("frankgehry@gmail.com");
-	pp.Phone = TEXT("(415) 220-4312");
-	SecondaryParties.Add(pp);
-
-	pp.Role = TEXT("Client:");
-	pp.Name = TEXT("Andrew and Susan Stevenson");
-	pp.Representative = TEXT("Johnny McClient");
-	pp.Email = TEXT("johnnymcclient@gmail.com");
-	pp.Phone = TEXT("(650) 350-3675");
-	Client = pp;
-
-	FDraftRevision dr;
-
-	// Clear the revisions (versions) array
-	Revisions.Empty();
-
-	dr.Name = TEXT("First Revision. Subject to review and modifications, especially in the early stages of the project.");
-	dr.DateTime = FDateTime::Now();
-	dr.Number = 1;
-	Revisions.Add(dr);
-
-	dr.Name = TEXT("Moved All Of Frank's Lines.");
-	dr.DateTime = FDateTime::Now();
-	dr.Number = 2;
-	Revisions.Add(dr);
-
-	dr.Name = TEXT("Put Frank's Lines Back so that they can be accounted for when executing the project.");
-	dr.DateTime = FDateTime::Now();
-	dr.Number = 3;
-	Revisions.Add(dr);
-
-	regValue = L"LicenseStampPath";
-	FString relativeStampPath = Modumate::PlatformFunctions::GetStringValueFromHKCU(regSubKey, regValue);
-	StampPath = FPaths::ProjectContentDir() + relativeStampPath;
-
-	ProjectInfo.name = TEXT("Stevenson Residence");
-	ProjectInfo.address1 = TEXT("200 Holly Ave.");
-	ProjectInfo.address2 = TEXT("San Francisco, CA 94116");
-	ProjectInfo.lotNumber = TEXT("15-200-05");
-	ProjectInfo.ID = TEXT("16097.001");
-	ProjectInfo.description = TEXT("A 4-bedroom, 3-bathroom new transitional home with a pool and freestanding poolhouse/garage. The living room has a billiard table with a 6-chair bar and a wine cabinet.");
 }
 
 const AModumateObjectInstance *UModumateDocument::ObjectFromActor(const AActor *actor) const

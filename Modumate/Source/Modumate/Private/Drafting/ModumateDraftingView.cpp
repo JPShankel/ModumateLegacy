@@ -85,7 +85,9 @@ TSharedPtr<FDraftingPage> FModumateDraftingView::CreateAndAddPage(FString name, 
 {
 	TSharedPtr<FDraftingPage> newPage = MakeShareable(new FDraftingPage());
 
+#if 0 //TODO: get from project metadata when implemented
 	newPage->StampPath = Document->LeadArchitect.LogoPath;
+#endif
 	newPage->PageNumber = DraftingPages.Num() > 0 ? DraftingPages.Last()->PageNumber + 1 : 1;
 	newPage->Date = FText::AsDate(FDateTime::Now().GetDate(), EDateTimeStyle::Long);
 
