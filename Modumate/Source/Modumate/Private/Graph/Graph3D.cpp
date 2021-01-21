@@ -851,9 +851,24 @@ namespace Modumate
 			if (ensureAlways(face && (face->ID != delta.NextContainingFaceID)))
 			{
 				face->UpdateContainingFace(delta.NextContainingFaceID);
+
+				if (bDebugCheck)
+				{
+					auto duplicateAdds = face->ContainedFaceIDs.Intersect(delta.ContainedFaceIDsToAdd);
+					int32 numDuplicateAdds = duplicateAdds.Num();
+					ensureMsgf(numDuplicateAdds == 0,
+						TEXT("Face ID #%d already contains %d proposed new faces!"), face->ID, numDuplicateAdds);
+				}
+
 				face->ContainedFaceIDs.Append(delta.ContainedFaceIDsToAdd);
 				for (int32 faceIDToRemove : delta.ContainedFaceIDsToRemove)
 				{
+					if (bDebugCheck)
+					{
+						ensureMsgf(face->ContainedFaceIDs.Contains(faceIDToRemove),
+							TEXT("Face ID #%d doesn't contain proposed face to remove, ID #%d!"), face->ID, faceIDToRemove);
+					}
+
 					face->ContainedFaceIDs.Remove(faceIDToRemove);
 				}
 				face->Dirty(false);

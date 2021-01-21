@@ -84,6 +84,7 @@ struct MODUMATE_API FGraph3DFaceContainmentDelta
 		const TSet<int32>& InContainedFaceIDsToRemove = TSet<int32>());
 
 	FGraph3DFaceContainmentDelta MakeInverse() const;
+	bool IsEmpty() const;
 };
 
 // A struct that completely describes a change to the 3D graph

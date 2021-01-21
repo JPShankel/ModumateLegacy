@@ -50,6 +50,13 @@ FGraph3DFaceContainmentDelta FGraph3DFaceContainmentDelta::MakeInverse() const
 		ContainedFaceIDsToRemove, ContainedFaceIDsToAdd);
 }
 
+bool FGraph3DFaceContainmentDelta::IsEmpty() const
+{
+	return (PrevContainingFaceID == NextContainingFaceID) &&
+		(ContainedFaceIDsToAdd.Num() == 0) &&
+		(ContainedFaceIDsToRemove.Num() == 0);
+}
+
 FGraph3DObjDelta::FGraph3DObjDelta()
 {
 
@@ -103,6 +110,7 @@ void FGraph3DDelta::Reset()
 
 bool FGraph3DDelta::IsEmpty()
 {
+	// TODO: check for no-op deltas for all types, not just FaceContainmentUpdates
 	if (VertexMovements.Num() > 0) return false;
 	if (VertexAdditions.Num() > 0) return false;
 	if (VertexDeletions.Num() > 0) return false;
@@ -110,7 +118,13 @@ bool FGraph3DDelta::IsEmpty()
 	if (EdgeDeletions.Num() > 0) return false;
 	if (FaceAdditions.Num() > 0) return false;
 	if (FaceDeletions.Num() > 0) return false;
-	if (FaceContainmentUpdates.Num() > 0) return false;
+	for (auto& kvp : FaceContainmentUpdates)
+	{
+		if (!kvp.Value.IsEmpty())
+		{
+			return false;
+		}
+	}
 	if (FaceVertexAdditions.Num() > 0) return false;
 	if (FaceVertexRemovals.Num() > 0) return false;
 

@@ -555,7 +555,8 @@ namespace Modumate
 			}
 
 			auto containingFace = FindFace(containingFaceID);
-			if (containingFace && ensure(containmentDelta.FaceContainmentUpdates.Contains(containingFaceID)))
+			if (containingFace && !containingFace->ContainedFaceIDs.Contains(faceID) &&
+				ensure(containmentDelta.FaceContainmentUpdates.Contains(containingFaceID)))
 			{
 				auto& containDelta = containmentDelta.FaceContainmentUpdates[containingFaceID];
 				containDelta.ContainedFaceIDsToAdd.Add(faceID);
@@ -565,8 +566,8 @@ namespace Modumate
 		if (!containmentDelta.IsEmpty())
 		{
 			OutDeltas.Add(containmentDelta);
+			ApplyDelta(containmentDelta);
 		}
-		ApplyDelta(containmentDelta);
 
 		return true;
 	}
@@ -1526,6 +1527,19 @@ namespace Modumate
 		faceAddition.ParentObjIDs = parentFaceIDs;
 		faceAddition.ContainingObjID = containingFaceID;
 		faceAddition.ContainedObjIDs = containedFaceIDs;
+
+		// If there's a face that contains the faces that were joined, then make sure it now contains the new joined face,
+		// and doesn't contain the faces that are contained by the new joined face.
+		if (containingFaceID != MOD_ID_NONE)
+		{
+			if (auto* containingFace = FindFace(containingFaceID))
+			{
+				auto& containmentDelta = addFaceDelta.FaceContainmentUpdates.FindOrAdd(containingFaceID);
+				containmentDelta.PrevContainingFaceID = containmentDelta.NextContainingFaceID = containingFace->ContainingFaceID;
+				containmentDelta.ContainedFaceIDsToAdd.Add(addedFaceID);
+				containmentDelta.ContainedFaceIDsToRemove.Append(containedFaceIDs);
+			}
+		}
 
 		for (int32 faceID : containedFaceIDs)
 		{

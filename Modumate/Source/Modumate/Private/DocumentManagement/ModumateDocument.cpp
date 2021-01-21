@@ -3053,9 +3053,11 @@ void UModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 			DrawDebugDirectionalArrow(world, edgeNStartPos, edgeNEndPos, arrowSize, FColor::Blue, false, -1.f, 0, lineThickness);
 		}
 
-		FString faceString = FString::Printf(TEXT("Face #%d: [%s]%s"), face.ID,
+		FString faceString = FString::Printf(TEXT("Face #%d: [%s]%s%s%s"), face.ID,
 			*FString::JoinBy(face.EdgeIDs, TEXT(", "), [](const FGraphSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }),
-			(face.GroupIDs.Num() == 0) ? TEXT("") : *FString::Printf(TEXT(" {%s}"), *FString::JoinBy(face.GroupIDs, TEXT(", "), [](const int32 &GroupID) { return FString::Printf(TEXT("%d"), GroupID); }))
+			(face.GroupIDs.Num() == 0) ? TEXT("") : *FString::Printf(TEXT(" Groups{%s}"), *FString::JoinBy(face.GroupIDs, TEXT(", "), [](const int32 &GroupID) { return FString::Printf(TEXT("%d"), GroupID); })),
+			(face.ContainedFaceIDs.Num() == 0) ? TEXT("") : *FString::Printf(TEXT(" Contains{%s}"), *FString::JoinBy(face.ContainedFaceIDs, TEXT(", "), [](const int32& ContainedFaceID) { return FString::Printf(TEXT("%d"), ContainedFaceID); })),
+			(face.ContainingFaceID == MOD_ID_NONE) ? TEXT("") : *FString::Printf(TEXT(" ContainedBy #%d"), face.ContainingFaceID)
 		);
 		DrawDebugString(world, face.CachedCenter, faceString, nullptr, FColor::White, 0.0f, true);
 

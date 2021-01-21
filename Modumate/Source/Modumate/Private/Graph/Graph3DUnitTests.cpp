@@ -2699,8 +2699,6 @@ namespace Modumate
 
 		int32 outerFaceID = faceIDs[0];
 		int32 innerFaceID = faceIDs[1];
-		auto outerFace = graph.FindFace(outerFaceID);
-		auto innerFace = graph.FindFace(innerFaceID);
 
 		TArray<int32> joinFaceIDs;
 		FVector offset = FVector(100.0f, 0.0f, 0.0f);
@@ -2750,14 +2748,45 @@ namespace Modumate
 		// each face does not share edges or vertices
 		TestDeltas(this, deltas, graph, tempGraph, 4, 14, 15);
 
+		// Also add a face the contains both of the larger faces, to make sure that joining within a larger face still has correct containment
+		TArray<FVector> outerOuterVertices = {
+			FVector(-10.0f, -10.0f, 0.0f),
+			FVector(210.0f, -10.0f, 0.0f),
+			FVector(210.0f, 110.0f, 0.0f),
+			FVector(-10.0f, 110.0f, 0.0f)
+		};
+
+		TestTrue(TEXT("Add outer-outer face"),
+			tempGraph.GetDeltaForFaceAddition(outerOuterVertices, deltas, nextID, existingID));
+		if ((deltas.Num() < 1) || (deltas[0].FaceAdditions.Num() != 1))
+		{
+			return false;
+		}
+
+		faceDeltaKVP = *deltas[0].FaceAdditions.CreateConstIterator();
+		int32 outerOuterFaceID = faceDeltaKVP.Key;
+
+		TestDeltas(this, deltas, graph, tempGraph, 5, 18, 19);
+		auto outerOuterFace = graph.FindFace(outerOuterFaceID);
+
 		int32 joinInnerFaceID = joinFaceIDs[0];
 		int32 joinOuterFaceID = joinFaceIDs[1];
-		auto joinInnerFace = graph.FindFace(joinInnerFaceID);
+
+		auto outerFace = graph.FindFace(outerFaceID);
 		auto joinOuterFace = graph.FindFace(joinOuterFaceID);
 
+		TestTrue(TEXT("Outer-outer face contains outer faces"), (outerOuterFace->ContainedFaceIDs.Num() == 2) &&
+			outerOuterFace->ContainedFaceIDs.Contains(outerFaceID) && outerOuterFace->ContainedFaceIDs.Contains(joinOuterFace->ID));
+		TestTrue(TEXT("Outer faces contained by outer-outer face"),
+			(outerFace->ContainingFaceID == outerOuterFaceID) && (joinOuterFace->ContainingFaceID == outerOuterFaceID));
+
+		// Now, join some faces
 		TestTrue(TEXT("join faces"),
 			tempGraph.GetDeltasForObjectJoin(deltas, { outerFaceID, joinOuterFaceID }, nextID, EGraph3DObjectType::Face));
-		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12);
+		TestDeltas(this, deltas, graph, tempGraph, 4, 16, 16);
+
+		auto innerFace = graph.FindFace(innerFaceID);
+		auto joinInnerFace = graph.FindFace(joinInnerFaceID);
 
 		TestTrue(TEXT("inner faces are contained by new face"),
 			innerFace->ContainingFaceID != MOD_ID_NONE &&
@@ -2778,6 +2807,11 @@ namespace Modumate
 			joinedOuterFace->ContainedFaceIDs.Num() == 2 &&
 			joinedOuterFace->ContainedFaceIDs.Contains(innerFaceID) &&
 			joinedOuterFace->ContainedFaceIDs.Contains(joinInnerFaceID));
+
+		outerOuterFace = graph.FindFace(outerOuterFaceID);
+		TestTrue(TEXT("Outer-outer face contains new joined face"), (outerOuterFace->ContainedFaceIDs.Num() == 1) &&
+			outerOuterFace->ContainedFaceIDs.Contains(joinedOuterID));
+		TestTrue(TEXT("New joined face contained by outer-outer face"), (joinedOuterFace->ContainingFaceID == outerOuterFaceID));
 
 		return true;
 	}
