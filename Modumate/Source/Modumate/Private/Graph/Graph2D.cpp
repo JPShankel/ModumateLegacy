@@ -2,6 +2,7 @@
 
 #include "Graph/Graph2D.h"
 
+#include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 
 #define LOG_MDM_GRAPH 0

@@ -1180,6 +1180,22 @@ namespace Modumate
 			!graph->AddEdge(deltas, NextID, FVector2D(0.0f, 0.0f), FVector2D(50.0f, 50.0f)));
 		deltas.Reset();
 
+		TestTrue(TEXT("Add Edge splitting outer bounds towards hole, exactly on outer bounds"),
+			graph->AddEdge(deltas, NextID, FVector2D(100.0f, 50.0f), FVector2D(90.0f, 50.0f)));
+		TestDeltasAndResetGraph(this, deltas, graph, 4);
+
+		TestTrue(TEXT("Add Edge splitting outer bounds towards hole, slightly within outer bounds"),
+			graph->AddEdge(deltas, NextID, FVector2D(100.0f - (0.125f * graph->Epsilon), 50.0f), FVector2D(90.0f, 50.0f)));
+		TestDeltasAndResetGraph(this, deltas, graph, 4);
+
+		TestTrue(TEXT("Add Edge splitting outer bounds towards hole, slightly outside outer bounds"),
+			graph->AddEdge(deltas, NextID, FVector2D(100.0f + (0.125f * graph->Epsilon), 50.0f), FVector2D(90.0f, 50.0f)));
+		TestDeltasAndResetGraph(this, deltas, graph, 4);
+
+		TestTrue(TEXT("Add Edge splitting outer bounds towards hole, outside outer bounds"),
+			!graph->AddEdge(deltas, NextID, FVector2D(100.0f + (4.0f * graph->Epsilon), 50.0f), FVector2D(90.0f, 50.0f)));
+		deltas.Reset();
+
 		return true;
 	}
 

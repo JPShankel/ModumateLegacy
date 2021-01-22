@@ -1876,6 +1876,12 @@ bool UModumateGeometryStatics::IsLineSegmentWithin2D(const FVector2d& OuterLineS
 	return true;
 }
 
+float Get2DCrossProductSign(const FVector2D& A, const FVector2D& B, float Epsilon = THRESH_NORMALS_ARE_ORTHOGONAL)
+{
+	float result = A ^ B;
+	return FMath::IsNearlyZero(result, Epsilon) ? 0.0f : FMath::Sign(result);
+}
+
 bool UModumateGeometryStatics::IsLineSegmentBoundedByPoints2D(const FVector2D &StartPosition, const FVector2D &EndPosition, const TArray<FVector2D> &Positions, const TArray<FVector2D> &EdgeNormals, float Epsilon)
 {
 	int32 numPoints = Positions.Num();
@@ -1928,29 +1934,43 @@ bool UModumateGeometryStatics::IsLineSegmentBoundedByPoints2D(const FVector2D &S
 				FVector2D dirToNextPoint = (nextPoint - currentPoint).GetSafeNormal();
 				FVector2D dirToPrevPoint = (prevPoint - currentPoint).GetSafeNormal();
 
-				bool isCornerConvex = ((dirToPrevPoint | nextEdgeNormal) > 0.0f) && ((dirToNextPoint | prevEdgeNormal) > 0.0f);
+				bool bIsCornerConvex =
+					((dirToPrevPoint | nextEdgeNormal) > THRESH_NORMALS_ARE_ORTHOGONAL) &&
+					((dirToNextPoint | prevEdgeNormal) > THRESH_NORMALS_ARE_ORTHOGONAL);
 
-				float prevToNextCrossAmount = (dirToPrevPoint ^ dirToNextPoint);
-				float prevToSplitCrossAmount = (dirToPrevPoint ^ edgeDir);
-				float nextToPrevCrossAmount = (dirToNextPoint ^ dirToPrevPoint);
-				float nextToSplitCrossAmount = (dirToNextPoint ^ edgeDir);
+				float prevToNextCrossAmount = Get2DCrossProductSign(dirToPrevPoint, dirToNextPoint);
+				float prevToSplitCrossAmount = Get2DCrossProductSign(dirToPrevPoint, edgeDir);
+				float nextToPrevCrossAmount = Get2DCrossProductSign(dirToNextPoint, dirToPrevPoint);
+				float nextToSplitCrossAmount = Get2DCrossProductSign(dirToNextPoint, edgeDir);
 
-				bool splitDirBetweenEdgesAcute = ((prevToNextCrossAmount * prevToSplitCrossAmount) >= 0) &&
+				bool bSplitDirBetweenEdgesAcute = ((prevToNextCrossAmount * prevToSplitCrossAmount) >= 0) &&
 					((nextToPrevCrossAmount * nextToSplitCrossAmount) >= 0);
 
 				// this makes the check inclusive by checking whether the edge has the same direction as the polygon edge
-				bool splitDirBetweenEdgesZero = ((prevToNextCrossAmount * prevToSplitCrossAmount) == 0) ||
+				bool bSplitDirBetweenEdgesZero = ((prevToNextCrossAmount * prevToSplitCrossAmount) == 0) ||
 					((nextToPrevCrossAmount * nextToSplitCrossAmount) == 0);
 
-				if (!splitDirBetweenEdgesZero && (isCornerConvex != splitDirBetweenEdgesAcute))
+				if (!bSplitDirBetweenEdgesZero && (bIsCornerConvex != bSplitDirBetweenEdgesAcute))
+				{
+					return true;
+				}
+			}
+			else if (bOnEdgeStart || bOnEdgeEnd)
+			{
+				// If the edge normal of the bounds is pointing away from the direction of the edge to test,
+				// then the edge is outside the polygon.
+				float edgeBoundsDot = edgeDir | EdgeNormals[idx];
+				if (edgeBoundsDot < 0)
 				{
 					return true;
 				}
 			}
 			else
 			{
-				// if the edge normal of the bounds is pointing away from the direction of the edge
-				// the edge is outside the polygon
+				// If the edge normal of the bounds is pointing away from the direction of the edge to test, relative to the intersection point,
+				// then the edge is outside the polygon.
+				// TODO: verify that this behavior is necessary and correct, since it's currently impossible if this function is only used for
+				// segments that have already performed splits based on intersections.
 				FVector2D dir1 = (StartPosition - intersection).GetSafeNormal();
 				FVector2D dir2 = (EndPosition - intersection).GetSafeNormal();
 				float dot1 = dir1 | EdgeNormals[idx];
