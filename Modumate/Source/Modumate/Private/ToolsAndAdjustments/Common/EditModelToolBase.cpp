@@ -28,7 +28,7 @@ UEditModelToolBase::UEditModelToolBase(const FObjectInitializer& ObjectInitializ
 	, Active(false)
 	, Controller(nullptr)
 	, GameInstance(nullptr)
-	, CreateObjectMode(EToolCreateObjectMode::Draw)
+	, CreateObjectMode(EToolCreateObjectMode::Apply)
 	, PendingSegmentID(MOD_ID_NONE)
 {
 	Controller = Cast<AEditModelPlayerController_CPP>(GetOuter());

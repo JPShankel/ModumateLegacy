@@ -44,7 +44,7 @@ void UToolTrayBlockModes::ChangeToSeparatorToolsButtons(EToolMode mode)
 	{
 	case EToolMode::VE_ROOF_FACE:
 	case EToolMode::VE_ROOF_PERIMETER:
-		buttonsToShow.Append({ ButtonRectangle, ButtonMPBucket, ButtonRoofPerimeter });
+		buttonsToShow.Append({ ButtonMPBucket, ButtonRectangle, ButtonRoofPerimeter });
 		break;
 
 	case EToolMode::VE_DOOR:
@@ -53,7 +53,7 @@ void UToolTrayBlockModes::ChangeToSeparatorToolsButtons(EToolMode mode)
 		break;
 
 	default:
-		buttonsToShow.Append({ ButtonRectangle, ButtonMPBucket });
+		buttonsToShow.Append({ ButtonMPBucket, ButtonRectangle });
 		break;
 	}
 

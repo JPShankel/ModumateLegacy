@@ -88,7 +88,7 @@ bool UPlaneHostedObjTool::BeginUse()
 			EndUse();
 		}
 	}
-	else if (!bRequireHoverMetaPlane)
+	else if (!bRequireHoverMetaPlane && GetCreateObjectMode() == EToolCreateObjectMode::Draw)
 	{
 		return Super::BeginUse();
 	}
