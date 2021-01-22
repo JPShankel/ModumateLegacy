@@ -174,7 +174,8 @@ bool UCutPlaneTool::EnterNextStage()
 		UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTCutPlane);
 	}
 
-	return bSuccess;
+	// Return false so that EndUse is called, returning true would chain cut plane creation
+	return false;
 }
 
 bool UCutPlaneTool::EndUse()
