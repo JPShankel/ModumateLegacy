@@ -294,7 +294,7 @@ FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& Targe
 
 bool UPlaneHostedObjTool::MakeObject(const FVector& Location)
 {
-	Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kBeginUndoRedoMacro));
+	GameState->Document->BeginUndoRedoMacro();
 
 	bool bSuccess = Super::MakeObject(Location);
 
@@ -304,7 +304,7 @@ bool UPlaneHostedObjTool::MakeObject(const FVector& Location)
 		bSuccess = delta.IsValid() && GameState->Document->ApplyDeltas({ delta }, GetWorld());
 	}
 
-	Controller->ModumateCommand(FModumateCommand(Modumate::Commands::kEndUndoRedoMacro));
+	GameState->Document->EndUndoRedoMacro();
 
 	if (bSuccess)
 	{

@@ -3197,3 +3197,35 @@ bool AEditModelPlayerController_CPP::ToggleGravityPawn()
 
 	return true;
 }
+
+void AEditModelPlayerController_CPP::HandleUndo()
+{
+	if (EditModelUserWidget->IsBIMDesingerActive())
+	{
+		return; 
+	}
+
+	UModumateDocument* doc = GetDocument();
+
+	if (doc && !doc->IsPreviewingDeltas())
+	{
+		doc->Undo(GetWorld());
+		EMPlayerState->ValidateSelectionsAndView();
+	}
+}
+
+void AEditModelPlayerController_CPP::HandleRedo()
+{
+	if (EditModelUserWidget->IsBIMDesingerActive())
+	{
+		return;
+	}
+
+	UModumateDocument* doc = GetDocument();
+
+	if (doc && !doc->IsPreviewingDeltas())
+	{
+		doc->Redo(GetWorld());
+		EMPlayerState->ValidateSelectionsAndView();
+	}
+}

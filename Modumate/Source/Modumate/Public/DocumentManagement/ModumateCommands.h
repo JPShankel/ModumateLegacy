@@ -46,11 +46,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kCloneObjects, "clone_objects");
 		MODUMATE_COMMAND(kRestoreDeletedObjects, "restore_deleted_objects");
 
-		// Undo/Redo
-		MODUMATE_COMMAND(kUndo, "undo");
-		MODUMATE_COMMAND(kRedo, "redo");
-		MODUMATE_COMMAND(kBeginUndoRedoMacro, "begin_undoredo_macro");
-		MODUMATE_COMMAND(kEndUndoRedoMacro, "end_undoredo_macro");
 
 		// BIM
 		MODUMATE_COMMAND(kBIMDebug, "bim_debug");

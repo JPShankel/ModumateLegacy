@@ -231,6 +231,11 @@ bool UEditModelUserWidget::IsBIMDebuggerOn()
 	return BIMDebugger->IsVisible();
 }
 
+bool UEditModelUserWidget::IsBIMDesingerActive() const
+{
+	return BIMDesigner->IsVisible();
+}
+
 void UEditModelUserWidget::ToggleBIMPresetSwapTray(bool NewVisibility)
 {
 	if (NewVisibility)

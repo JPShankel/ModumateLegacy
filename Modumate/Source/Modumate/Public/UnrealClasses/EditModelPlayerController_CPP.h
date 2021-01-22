@@ -427,6 +427,9 @@ public:
 	bool IsShiftDown() const;
 	bool IsControlDown() const;
 
+	void HandleUndo();
+	void HandleRedo();
+
 	UFUNCTION()
 	bool HandleInvert();
 

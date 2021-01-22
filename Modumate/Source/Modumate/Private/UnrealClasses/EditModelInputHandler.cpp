@@ -209,13 +209,13 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	case EInputCommand::Undo:
 	{
 		Controller->ClearTextInputs();
-		Controller->ModumateCommand(FModumateCommand(Commands::kUndo));
+		Controller->HandleUndo();
 		return true;
 	}
 	case EInputCommand::Redo:
 	{
 		Controller->ClearTextInputs();
-		Controller->ModumateCommand(FModumateCommand(Commands::kRedo));
+		Controller->HandleRedo();
 		return true;
 	}
 	case EInputCommand::TakeScreenshot:

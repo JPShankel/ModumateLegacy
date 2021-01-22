@@ -148,50 +148,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
-	RegisterCommand(kUndo, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		UModumateDocument* doc = GetDocument();
-		AEditModelPlayerController_CPP* playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
-		AEditModelPlayerState_CPP* playerState = playerController->EMPlayerState;
-
-		if (doc && !doc->IsPreviewingDeltas())
-		{
-			doc->Undo(GetWorld());
-			playerState->ValidateSelectionsAndView();
-			return true;
-		}
-
-		return false;
-	});
-
-	RegisterCommand(kRedo, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		UModumateDocument* doc = GetDocument();
-		AEditModelPlayerController_CPP* playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
-		AEditModelPlayerState_CPP* playerState = playerController->EMPlayerState;
-
-		if (doc && !doc->IsPreviewingDeltas())
-		{
-			doc->Redo(GetWorld());
-			playerState->ValidateSelectionsAndView();
-			return true;
-		}
-
-		return false;
-	});
-
-	RegisterCommand(kBeginUndoRedoMacro, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		GetDocument()->BeginUndoRedoMacro();
-		return true;
-	});
-
-	RegisterCommand(kEndUndoRedoMacro, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		GetDocument()->EndUndoRedoMacro();
-		return true;
-	});
-
 	RegisterCommand(kMakeScopeBox, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 		UModumateDocument* doc = GetDocument();
 		if (doc == nullptr)

@@ -114,4 +114,5 @@ public:
 	bool IsBIMDebuggerOn();
 	void ToggleBIMPresetSwapTray(bool NewVisibility);
 	void ToggleTutorialMenu(bool NewVisibility);
+	bool IsBIMDesingerActive() const;
 };
