@@ -9,6 +9,7 @@
 #include "Components/HorizontalBox.h"
 #include "UnrealClasses/MainMenuGameMode_CPP.h"
 #include "UI/TutorialMenu/TutorialMenuWidget.h"
+#include "ModumateCore/PlatformFunctions.h"
 
 UStartRootMenuWidget::UStartRootMenuWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -34,7 +35,18 @@ bool UStartRootMenuWidget::Initialize()
 	ButtonOpen->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedOpen);
 	ButtonCreateNew->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedCreateNew);
 
+	UGameViewportClient* viewportClient = ModumateGameInstance->GetGameViewportClient();
+	if (viewportClient)
+	{
+		viewportClient->OnWindowCloseRequested().BindUObject(this, &UStartRootMenuWidget::ConfirmQuit);
+	}
+
 	return true;
+}
+
+bool UStartRootMenuWidget::ConfirmQuit() const
+{
+	return Modumate::PlatformFunctions::ShowMessageBox(TEXT("Quit? Are you sure?"), TEXT("Quit"), Modumate::PlatformFunctions::YesNo) == Modumate::PlatformFunctions::EMessageBoxResponse::Yes;
 }
 
 void UStartRootMenuWidget::NativeConstruct()
@@ -65,7 +77,10 @@ void UStartRootMenuWidget::ReleaseSlateResources(bool bReleaseChildren)
 
 void UStartRootMenuWidget::OnButtonReleasedQuit()
 {
-	FPlatformMisc::RequestExit(false);
+	if (ConfirmQuit())
+	{
+		FPlatformMisc::RequestExit(false);
+	}
 }
 
 void UStartRootMenuWidget::OnButtonReleasedHelp()

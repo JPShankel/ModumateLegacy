@@ -838,6 +838,7 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 
 bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World)
 {
+	bIsDirty = true;
 	ClearPreviewDeltas(World, false);
 
 	ClearRedoBuffer();
@@ -2068,6 +2069,8 @@ void UModumateDocument::MakeNew(UWorld *World)
 	UModumateAnalyticsStatics::RecordEventSimple(World, eventCategory, eventNameNew);
 
 	SetCurrentProjectPath();
+
+	bIsDirty = false;
 }
 
 const AModumateObjectInstance *UModumateDocument::ObjectFromActor(const AActor *actor) const
@@ -2150,13 +2153,6 @@ TArray<const AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(EObje
 			});
 	return outObjectsOfType;
 }
-
-bool UModumateDocument::IsDirty() const
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::IsDirty"));
-	return UndoBuffer.Num() > 0;
-}
-
 
 bool UModumateDocument::ExportPDF(UWorld *world, const TCHAR *filepath, const FVector &origin, const FVector &normal)
 {
@@ -2287,6 +2283,7 @@ bool UModumateDocument::Save(UWorld* World, const FString& FilePath, bool bSetAs
 	if (bFileSaveSuccess && bSetAsCurrentProject)
 	{
 		SetCurrentProjectPath(FilePath);
+		bIsDirty = false;
 
 		if (auto* gameInstance = World->GetGameInstance<UModumateGameInstance>())
 		{
@@ -2459,6 +2456,8 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool bSetAsCurr
 		{
 			gameInstance->UserSettings.RecordRecentProject(path, true);
 		}
+
+		bIsDirty = false;
 
 		return true;
 	}

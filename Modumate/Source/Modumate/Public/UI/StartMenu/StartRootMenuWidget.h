@@ -66,5 +66,8 @@ protected:
 	UFUNCTION()
 	void OnButtonReleasedCreateNew();
 
+	UFUNCTION()
+	bool ConfirmQuit() const;
+
 	void ShowStartMenu();
 };

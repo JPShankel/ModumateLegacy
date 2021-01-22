@@ -171,6 +171,13 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	bool bEnableAutoSave = true;
 
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+
+	UGameViewportClient* viewportClient = gameInstance->GetGameViewportClient();
+	if (viewportClient)
+	{
+		viewportClient->OnWindowCloseRequested().BindUObject(this, &AEditModelPlayerController_CPP::CheckSaveModel);
+	}
+
 	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
 
 	FString recoveryFile = FPaths::Combine(gameInstance->UserSettings.GetLocalTempDir(), kModumateRecoveryFile);
@@ -880,7 +887,7 @@ bool AEditModelPlayerController_CPP::CheckSaveModel()
 {
 	if (Document->IsDirty())
 	{
-		Modumate::PlatformFunctions::EMessageBoxResponse resp = Modumate::PlatformFunctions::ShowMessageBox(TEXT("Save current model?"), TEXT("New Model"), Modumate::PlatformFunctions::YesNoCancel);
+		Modumate::PlatformFunctions::EMessageBoxResponse resp = Modumate::PlatformFunctions::ShowMessageBox(TEXT("Save current model?"), TEXT("Save"), Modumate::PlatformFunctions::YesNoCancel);
 		if (resp == Modumate::PlatformFunctions::Yes)
 		{
 			if (!SaveModelAs())

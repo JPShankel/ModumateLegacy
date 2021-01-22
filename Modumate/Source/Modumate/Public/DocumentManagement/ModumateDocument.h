@@ -245,7 +245,8 @@ public:
 
 	FBoxSphereBounds CalculateProjectBounds() const;
 
-	bool IsDirty() const;
+	bool IsDirty() const { return bIsDirty; }
+
 	void DisplayDebugInfo(UWorld* world);
 	void DrawDebugVolumeGraph(UWorld* world);
 	void DrawDebugSurfaceGraphs(UWorld* world);
@@ -266,4 +267,5 @@ public:
 private:
 	TSharedPtr<Modumate::FModumateDraftingView> CurrentDraftingView = nullptr;
 	FBIMPresetCollection BIMPresetCollection;
+	bool bIsDirty = true;
 };
