@@ -231,10 +231,6 @@ bool URectangleTool::MakeObject(const FVector& Location)
 	{
 		return false;
 	}
-	if (CurDeltas.Num() == 0)
-	{
-		return true;
-	}
 
 	if (GetToolMode() == EToolMode::VE_RECTANGLE)
 	{
@@ -243,6 +239,10 @@ bool URectangleTool::MakeObject(const FVector& Location)
 
 	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
 	auto pendingSegment = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
+	if ((pendingSegment->Point2 - pendingSegment->Point1).IsNearlyZero())
+	{
+		return true;
+	}
 	if (pendingSegment)
 	{
 		pendingSegment->Point1 = constrainedLocation;
