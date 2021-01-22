@@ -25,6 +25,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "UI/BIM/BIMEditColorPicker.h"
 #include "Online/ModumateAnalyticsStatics.h"
+#include "UI/BIM/BIMScopeWarning.h"
 
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
@@ -312,6 +313,7 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 
 	// Should clear any editing menu
 	ToggleColorPickerVisibility(false);
+	Controller->EditModelUserWidget->ScopeWarningWidget->DismissScopeWarning();
 
 	// Remove and release old nodes
 	for (auto& curNodeWidget : BIMBlockNodes)
@@ -884,19 +886,20 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 		node->WorkingPresetCopy.DisplayName = presetDisplayName;
 	}
 
-	FBIMPresetInstance outPreset = node->WorkingPresetCopy;
+	SavePendingPreset = node->WorkingPresetCopy;
 
 	if (SaveAs)
 	{
-		Controller->GetDocument()->MakeNewGUIDForPreset(outPreset);
-		outPreset.ReadOnly = false;
+		// Creating new preset, do not check for affected presets
+		Controller->GetDocument()->MakeNewGUIDForPreset(SavePendingPreset);
+		SavePendingPreset.ReadOnly = false;
 
-		TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeDelta(outPreset);
+		TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeDelta(SavePendingPreset);
 		Controller->GetDocument()->ApplyDeltas({presetDelta},GetWorld());
 
 		if (!node->ParentInstance.IsValid())
 		{
-			CraftingAssembly.RootPreset = outPreset.GUID;
+			CraftingAssembly.RootPreset = SavePendingPreset.GUID;
 		}
 		else
 		{
@@ -911,33 +914,63 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 				{
 					if (partSlots[i].SlotPresetGUID == node->MyParentPartSlot)
 					{
-						InstancePool.SetPartPreset(Controller->GetDocument()->GetPresetCollection(),parent->GetInstanceID(),i, outPreset.GUID);
+						InstancePool.SetPartPreset(Controller->GetDocument()->GetPresetCollection(),parent->GetInstanceID(),i, SavePendingPreset.GUID);
 					}
 				}
 			}
 			else
 			{
-				InstancePool.SetNewPresetForNode(Controller->GetDocument()->GetPresetCollection(), node->GetInstanceID(), outPreset.GUID);
+				InstancePool.SetNewPresetForNode(Controller->GetDocument()->GetPresetCollection(), node->GetInstanceID(), SavePendingPreset.GUID);
 			}
 		}
-		node->WorkingPresetCopy = outPreset;
+		node->WorkingPresetCopy = SavePendingPreset;
 		UModumateAnalyticsStatics::RecordPresetCreation(this);
+
+		node->OriginalPresetCopy = node->WorkingPresetCopy;
+
+		SelectedNodeID = InstanceID;
+		UpdateBIMDesigner();
+		return true;
 	}
-	else 
-	if (outPreset.ReadOnly)
+	else if (SavePendingPreset.ReadOnly)
 	{
+		// This preset is read-only, can't be saved
 		return false;
 	}
 	else
 	{
-		TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeDelta(outPreset);
-		Controller->GetDocument()->ApplyDeltas({ presetDelta }, GetWorld());
-		UModumateAnalyticsStatics::RecordPresetUpdate(this);
+		// Check if there are presets being affected by this change
+		SavePendingInstanceID = InstanceID;
+		TArray<FGuid> affectedGUID;
+		Controller->GetDocument()->GetPresetCollection().GetAllAncestorPresets(SavePendingPreset.GUID, affectedGUID);
+		if (affectedGUID.Num() > 0)
+		{
+			// Use scope warning message if there is at least one affected preset
+			Controller->EditModelUserWidget->ScopeWarningWidget->BuildScopeWarning(affectedGUID);
+			return false;
+		}
+		else
+		{
+			return ConfirmSavePendingPreset();
+		}
+	}
+}
+
+bool UBIMDesigner::ConfirmSavePendingPreset()
+{
+	TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeDelta(SavePendingPreset);
+	Controller->GetDocument()->ApplyDeltas({ presetDelta }, GetWorld());
+	UModumateAnalyticsStatics::RecordPresetUpdate(this);
+
+	FBIMPresetEditorNodeSharedPtr node = InstancePool.InstanceFromID(SavePendingInstanceID);
+	if (!ensureAlways(node.IsValid()))
+	{
+		return false;
 	}
 
 	node->OriginalPresetCopy = node->WorkingPresetCopy;
 
-	SelectedNodeID = InstanceID;
+	SelectedNodeID = SavePendingInstanceID;
 	UpdateBIMDesigner();
 	return true;
 }

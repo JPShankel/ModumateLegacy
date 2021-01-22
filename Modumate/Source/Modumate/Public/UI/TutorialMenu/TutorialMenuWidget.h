@@ -110,8 +110,7 @@ public:
 	FString JsonTutorialLink;
 
 	void BuildTutorialMenuFromLink();
-	void OnHttpReply(const FHttpRequestPtr& Request, const FHttpResponsePtr& Response, bool bWasSuccessful);
+	void OnHttpReply(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);	
 	void UpdateTutorialMenu(const FTutorialInfoArrayCollection& InTutorialInfo);
-
 	bool GetTutorialFilePath(const FString& TutorialFileName, FString& OutFullTutorialFilePath );
 };

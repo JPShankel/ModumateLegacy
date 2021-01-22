@@ -44,17 +44,11 @@ void UTutorialMenuWidget::BuildTutorialMenuFromLink()
 	TSharedRef<IHttpRequest> httpRequest = FHttpModule::Get().CreateRequest();
 	httpRequest->SetVerb("GET");
 	httpRequest->SetURL(JsonTutorialLink);
-
-	httpRequest->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr request,
-		FHttpResponsePtr response, bool bWasSuccessful)
-		{
-			this->OnHttpReply(request, response, bWasSuccessful);
-		});
-
+	httpRequest->OnProcessRequestComplete().BindUObject(this, &UTutorialMenuWidget::OnHttpReply);
 	httpRequest->ProcessRequest();
 }
 
-void UTutorialMenuWidget::OnHttpReply(const FHttpRequestPtr& Request, const FHttpResponsePtr& Response, bool bWasSuccessful)
+void UTutorialMenuWidget::OnHttpReply(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
 	if (bWasSuccessful)
 	{

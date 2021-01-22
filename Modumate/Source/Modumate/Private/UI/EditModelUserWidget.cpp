@@ -22,6 +22,7 @@
 #include "UI/Debugger/BIMDebugger.h"
 #include "Components/Border.h"
 #include "UI/TutorialMenu/TutorialMenuWidget.h"
+#include "UI/BIM/BIMScopeWarning.h"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -152,6 +153,7 @@ void UEditModelUserWidget::ToggleBIMDesigner(bool Open)
 		BIMDesigner->SetVisibility(ESlateVisibility::Collapsed);
 		BIMBlockDialogBox->SetVisibility(ESlateVisibility::Collapsed);
 		ToggleBIMPresetSwapTray(false);
+		ScopeWarningWidget->DismissScopeWarning();
 	}
 	ToolTrayWidget->ToolTrayBIMDesignerMode(Open);
 }
