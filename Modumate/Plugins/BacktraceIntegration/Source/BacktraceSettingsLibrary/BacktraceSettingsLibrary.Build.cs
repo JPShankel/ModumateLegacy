@@ -23,6 +23,7 @@ namespace UnrealBuildTool.Rules
                 }
                 );
 
+            //@third party BEGIN MODUMATE - remove circular reference
             PublicDependencyModuleNames.AddRange(
                 new string[]
                 {
@@ -31,16 +32,18 @@ namespace UnrealBuildTool.Rules
                     "Engine",
                     "InputCore",
                     "Projects",
-                    "BacktraceSettingsLibrary",
+                    "DeveloperSettings",
+                    //"BacktraceSettingsLibrary",
                 }
                 );
 
             PrivateDependencyModuleNames.AddRange(
                 new string[]
                 {
-                    "BacktraceSettingsLibrary",
+                    //"BacktraceSettingsLibrary",
                 }
                 );
+            //@third party END MODUMATE
 
             DynamicallyLoadedModuleNames.AddRange(
                 new string[]

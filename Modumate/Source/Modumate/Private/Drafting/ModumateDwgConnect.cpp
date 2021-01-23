@@ -167,7 +167,7 @@ namespace Modumate
 
 	bool FModumateDwgConnect::CallDwgServer(const FString& jsonString, const FString& saveFilename)
 	{
-		TSharedRef<IHttpRequest> request = FHttpModule::Get().CreateRequest();
+		auto request = FHttpModule::Get().CreateRequest();
 		TSharedPtr<DwgSaver> responseSaver = ResponseSaver;
 		request->OnProcessRequestComplete().BindLambda([responseSaver, saveFilename](FHttpRequestPtr Request,
 			FHttpResponsePtr Response, bool bWasSuccessful)

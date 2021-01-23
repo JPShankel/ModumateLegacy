@@ -82,7 +82,7 @@ bool FModumateUpdater::StartDownload(const FString& Url, const FString& Location
 		return false;
 	}
 
-	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest();
+	auto Request = FHttpModule::Get().CreateRequest();
 	Request->SetVerb(TEXT("GET"));
 	Request->SetURL(Url);
 	Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));

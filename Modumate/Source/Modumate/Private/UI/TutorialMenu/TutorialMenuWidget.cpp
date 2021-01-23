@@ -41,7 +41,7 @@ void UTutorialMenuWidget::BuildTutorialMenuFromLink()
 {
 	TutorialHeaderMessageText->ChangeText(DefaultTutorialHeaderMessage);
 
-	TSharedRef<IHttpRequest> httpRequest = FHttpModule::Get().CreateRequest();
+	auto httpRequest = FHttpModule::Get().CreateRequest();
 	httpRequest->SetVerb("GET");
 	httpRequest->SetURL(JsonTutorialLink);
 	httpRequest->OnProcessRequestComplete().BindUObject(this, &UTutorialMenuWidget::OnHttpReply);

@@ -3,6 +3,8 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "ModumateCore/ModumateTypes.h"
+#include <functional>
+
 /*
 Modumate Commands are text commands issued that are sent to the Unreal console
 Modumate Functions are functionality that are bound to text commands

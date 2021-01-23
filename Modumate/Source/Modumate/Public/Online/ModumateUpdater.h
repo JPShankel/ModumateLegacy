@@ -23,7 +23,7 @@ private:
 
 	FString DownloadFilename;
 	FString DownloadVersion;
-	TSharedPtr<IHttpRequest> PendingRequest;
+	TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> PendingRequest;
 	UModumateGameInstance* GameInstance;
 	enum EState {Idle, Downloading, Ready, Failed, Declined, Upgrading} State = Idle;
 

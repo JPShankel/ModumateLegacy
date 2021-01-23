@@ -39,7 +39,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UHorizontalBox* HorizontalBoxForKeys;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetAnim))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* FadeInAnim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Menu)

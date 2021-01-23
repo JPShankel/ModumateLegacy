@@ -62,7 +62,8 @@ public class Modumate : ModuleRules
 			"Serialization",
 			"GeometryAlgorithms",
 			"GeometricObjects",
-            "SunPosition"
+			"SunPosition",
+			"RHI"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
@@ -81,13 +82,13 @@ public class Modumate : ModuleRules
 		PublicAdditionalLibraries.Add(Path.Combine(PDFLibraryPath, "PDFNetC.lib"));
 		PublicIncludePaths.Add(PDFIncludePath);
 
-        RuntimeDependencies.Add(Path.Combine(BinariesPath, "PDFNetC.dll"));
-        RuntimeDependencies.Add(Path.Combine(BinariesPath, "PDFNetDotNetCore.dll"));
+		RuntimeDependencies.Add(Path.Combine(BinariesPath, "PDFNetC.dll"));
+		RuntimeDependencies.Add(Path.Combine(BinariesPath, "PDFNetDotNetCore.dll"));
 
-        PublicDelayLoadDLLs.Add("PDFNetC.dll");
-        PublicDelayLoadDLLs.Add("PDFNetDotNetCore.dll");
+		PublicDelayLoadDLLs.Add("PDFNetC.dll");
+		PublicDelayLoadDLLs.Add("PDFNetDotNetCore.dll");
 
-        PublicDefinitions.Add(string.Format("WITH_PDFTRON_BINDING={0}", 1));
+		PublicDefinitions.Add(string.Format("WITH_PDFTRON_BINDING={0}", 1));
 		return true;
 	}
 

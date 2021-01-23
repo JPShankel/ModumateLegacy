@@ -61,7 +61,7 @@ namespace Modumate
 		UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
 		const auto accountManager = gameInstance->GetAccountManager();
 
-		TSharedRef<IHttpRequest> request = FHttpModule::Get().CreateRequest();
+		auto request = FHttpModule::Get().CreateRequest();
 		ResponseHandler handler;
 		handler.World = world;
 		handler.CutPlaneID = cutPlaneID;

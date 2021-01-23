@@ -30,12 +30,14 @@ namespace UnrealBuildTool.Rules
                 }
                 );
 
+            //@third party BEGIN MODUMATE - remove circular reference
             PrivateDependencyModuleNames.AddRange(
                 new string[]
                 {
-                    "BacktraceBlueprintLibrary",
+                    //"BacktraceBlueprintLibrary",
                 }
                 );
+            //@third party END MODUMATE
 
             DynamicallyLoadedModuleNames.AddRange(
                 new string[]
@@ -44,6 +46,6 @@ namespace UnrealBuildTool.Rules
                 );
 
             PublicIncludePathModuleNames.Add("BacktraceBlueprintLibrary");
-        }
-    }
+		}
+	}
 }

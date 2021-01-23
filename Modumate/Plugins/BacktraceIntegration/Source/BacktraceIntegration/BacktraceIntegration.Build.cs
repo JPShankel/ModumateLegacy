@@ -19,6 +19,7 @@ namespace UnrealBuildTool.Rules
                 }
                 );
 
+            //@third party BEGIN MODUMATE - remove circular reference
             PublicDependencyModuleNames.AddRange(
                 new string[]
                 {
@@ -30,7 +31,7 @@ namespace UnrealBuildTool.Rules
                     "Json",
                     "JsonUtilities",
                     "BacktraceSettingsLibrary",
-                    "BacktraceIntegration",
+                    //"BacktraceIntegration",
                 }
                 );
 
@@ -41,9 +42,10 @@ namespace UnrealBuildTool.Rules
                     "SlateCore",
                     "UnrealEd",
                     "XmlParser",
-                    "BacktraceIntegration",
+                    //"BacktraceIntegration",
                 }
                 );
+            //@third party END MODUMATE
 
             DynamicallyLoadedModuleNames.AddRange(
                 new string[]

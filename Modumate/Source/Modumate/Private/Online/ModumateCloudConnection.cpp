@@ -63,7 +63,7 @@ bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequest
 		return false;
 	}
 
-	TSharedRef<IHttpRequest> Request = MakeRequest(Callback, ServerErrorCallback);
+	auto Request = MakeRequest(Callback, ServerErrorCallback);
 
 	Request->SetURL(GetCloudAPIURL() + Endpoint);
 	Request->SetVerb(GetRequestTypeString(RequestType));
@@ -84,7 +84,7 @@ bool FModumateCloudConnection::RequestAuthTokenRefresh(const FString& InRefreshT
 
 	TWeakPtr<FModumateCloudConnection> WeakThisCaptured(AsShared());
 	return RequestEndpoint(TEXT("/auth/verify"), Post,
-		[WeakThisCaptured](TSharedRef<IHttpRequest>& RefRequest)
+		[WeakThisCaptured](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
 		{
 			TSharedPtr<FModumateCloudConnection> SharedThis = WeakThisCaptured.Pin();
 			if (!SharedThis.IsValid())
@@ -138,7 +138,7 @@ bool FModumateCloudConnection::Login(const FString& Username, const FString& Pas
 	TWeakPtr<FModumateCloudConnection> WeakThisCaptured(this->AsShared());
 	return RequestEndpoint(TEXT("/auth/login"), Post,
 		// Customize request
-		[WeakThisCaptured,Password,Username](TSharedRef<IHttpRequest>& RefRequest)
+		[WeakThisCaptured,Password,Username](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
 		{
 			TSharedPtr<FModumateCloudConnection> SharedThis = WeakThisCaptured.Pin();
 			if (!SharedThis.IsValid())
@@ -198,7 +198,7 @@ bool FModumateCloudConnection::Login(const FString& Username, const FString& Pas
 
 bool FModumateCloudConnection::CreateReplay(const FString& SessionID, const FString& Version, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
 {
-	TSharedRef<IHttpRequest> Request = MakeRequest(Callback, ServerErrorCallback);
+	auto Request = MakeRequest(Callback, ServerErrorCallback);
 
 	Request->SetURL(GetCloudAPIURL() + TEXT("/analytics/replay/") + SessionID);
 	Request->SetVerb(TEXT("PUT"));
@@ -212,7 +212,7 @@ bool FModumateCloudConnection::CreateReplay(const FString& SessionID, const FStr
 
 bool FModumateCloudConnection::UploadReplay(const FString& SessionID, const FString& Filename, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
 {
-	TSharedRef<IHttpRequest> Request = MakeRequest(Callback,ServerErrorCallback);
+	auto Request = MakeRequest(Callback,ServerErrorCallback);
 
 	Request->SetURL(GetCloudAPIURL() + TEXT("/analytics/replay/") + SessionID + TEXT("/0"));
 	Request->SetVerb(TEXT("POST"));
@@ -225,9 +225,9 @@ bool FModumateCloudConnection::UploadReplay(const FString& SessionID, const FStr
 	return Request->ProcessRequest();
 }
 
-TSharedRef<IHttpRequest> FModumateCloudConnection::MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
+TSharedRef<IHttpRequest, ESPMode::ThreadSafe> FModumateCloudConnection::MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
 {
-	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest();
+	auto Request = FHttpModule::Get().CreateRequest();
 	Request->OnProcessRequestComplete().BindLambda([Callback, ServerErrorCallback](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 	{
 		if (bWasSuccessful) 
@@ -276,7 +276,7 @@ bool FModumateCloudConnection::UploadAnalyticsEvents(const TArray<TSharedPtr<FJs
 	}
 
 	return RequestEndpoint(TEXT("/analytics/events/"), ERequestType::Put,
-		[eventsJSONString](TSharedRef<IHttpRequest>& RefRequest)
+		[eventsJSONString](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
 		{
 			RefRequest->SetContentAsString(eventsJSONString);
 		},

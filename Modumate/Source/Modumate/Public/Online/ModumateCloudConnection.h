@@ -24,7 +24,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		ELoginStatus GetLoginStatus() const;
 		bool IsLoggedIn() const { return LoginStatus == ELoginStatus::Connected; }
 
-		using FRequestCustomizer = TFunction<void(TSharedRef<IHttpRequest>& RefRequest)>;
+		using FRequestCustomizer = TFunction<void(TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)>;
 		using FSuccessCallback = TFunction<void(bool,const TSharedPtr<FJsonObject>&)>;
 		using FErrorCallback = TFunction<void(int32, const FString&)>;
 
@@ -41,7 +41,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		void Tick();
 
 	private:
-		TSharedRef<IHttpRequest> MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
+		TSharedRef<IHttpRequest, ESPMode::ThreadSafe> MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 
 		static FString GetRequestTypeString(ERequestType RequestType);
 

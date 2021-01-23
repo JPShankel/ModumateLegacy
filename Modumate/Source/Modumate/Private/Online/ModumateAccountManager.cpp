@@ -25,7 +25,7 @@ void FModumateAccountManager::RequestStatus()
 	TWeakPtr<FModumateAccountManager> WeakThisCaptured(AsShared());
 
 	CloudConnection->RequestEndpoint(TEXT("/status"), FModumateCloudConnection::Get,
-		[](TSharedRef<IHttpRequest>& RefRequest)
+		[](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
 		{ },
 		[WeakThisCaptured](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
 		{

@@ -161,7 +161,6 @@ private:
 	TUniquePtr<FModumateUpdater> Updater;
 	FModumateUserInfo UserInfo;
 	FString LatestVersion;
-	TArray<TBaseDelegate<void, bool>> TokenRefreshDelegates;
 
 	FPermissionSet CurrentPermissions;
 };
