@@ -29,7 +29,7 @@ protected:
 
 public:
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *Controller;
+	class AEditModelPlayerController *Controller;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UListView *AssembliesList;

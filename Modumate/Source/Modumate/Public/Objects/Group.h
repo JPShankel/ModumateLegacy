@@ -3,7 +3,7 @@
 
 #include "Objects/ModumateObjectInstance.h"
 
-class AMOIGroupActor_CPP;
+class AMOIGroupActor;
 
 class AModumateObjectInstance;
 

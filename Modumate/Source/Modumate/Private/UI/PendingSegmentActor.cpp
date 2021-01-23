@@ -2,7 +2,7 @@
 
 #include "Components/EditableTextBox.h"
 #include "UnrealClasses/DimensionWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/LineActor.h"
 
 APendingSegmentActor::APendingSegmentActor(const FObjectInitializer& ObjectInitializer)

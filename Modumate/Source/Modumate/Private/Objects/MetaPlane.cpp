@@ -5,9 +5,9 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateObjectStatics.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 AMOIMetaPlane::AMOIMetaPlane()
 	: AMOIPlaneBase()
@@ -46,7 +46,7 @@ void AMOIMetaPlane::SetupDynamicGeometry()
 
 	UpdateCachedGraphData();
 
-	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
+	AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
 	MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
 	bool bEnableCollision = !IsInPreviewMode();

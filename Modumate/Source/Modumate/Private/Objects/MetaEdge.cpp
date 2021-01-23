@@ -7,8 +7,8 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Objects/MiterNode.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/LineActor.h"
 
 
@@ -94,7 +94,7 @@ bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 	return true;
 }
 
-void AMOIMetaEdge::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow)
+void AMOIMetaEdge::ShowAdjustmentHandles(AEditModelPlayerController* Controller, bool bShow)
 {
 	AMOIEdgeBase::ShowAdjustmentHandles(Controller, bShow);
 

@@ -27,7 +27,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY()
-	class AEditModelGameState_CPP* GameState;
+	class AEditModelGameState* GameState;
 
 	UPROPERTY()
 	TMap<int32, class UCutPlaneDimListItemObject*> HorizontalItemToIDMap;

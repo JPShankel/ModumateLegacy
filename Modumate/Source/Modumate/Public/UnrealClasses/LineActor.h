@@ -9,12 +9,12 @@
 #include "ProceduralMeshComponent.h"
 #include "LineActor.generated.h"
 
-class AEditModelPlayerState_CPP;
-class AEditModelGameMode_CPP;
+class AEditModelPlayerState;
+class AEditModelGameMode;
 class AEditModelPlayerHUD;
 class UProceduralMeshComponent;
 class UMaterialInstanceDynamic;
-class AEditModelGameState_CPP;
+class AEditModelGameState;
 
 UCLASS()
 class MODUMATE_API ALineActor : public AStaticMeshActor
@@ -37,10 +37,10 @@ protected:
 
 public:
 	UPROPERTY()
-	AEditModelPlayerState_CPP* EMPlayerState;
+	AEditModelPlayerState* EMPlayerState;
 
 	UPROPERTY()
-	AEditModelGameMode_CPP* EMGameMode;
+	AEditModelGameMode* EMGameMode;
 
 	UPROPERTY()
 	AEditModelPlayerHUD* EMPlayerHUD;

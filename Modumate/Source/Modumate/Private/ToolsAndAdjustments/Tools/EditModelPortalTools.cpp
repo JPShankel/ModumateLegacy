@@ -4,17 +4,17 @@
 
 #include "DrawDebugHelpers.h"
 #include "Graph/Graph3DFace.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "DocumentManagement/ModumateCommands.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "UnrealClasses/PortalFrameActor_CPP.h"
+#include "UnrealClasses/PortalFrameActor.h"
 #include "Objects/Portal.h"
 
 using namespace Modumate;

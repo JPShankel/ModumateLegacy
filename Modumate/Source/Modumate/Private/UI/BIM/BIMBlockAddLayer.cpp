@@ -1,10 +1,10 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/BIM/BIMBlockAddLayer.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/Custom/ModumateButton.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/EditModelUserWidget.h"
 
 UBIMBlockAddLayer::UBIMBlockAddLayer(const FObjectInitializer& ObjectInitializer)
@@ -32,7 +32,7 @@ bool UBIMBlockAddLayer::Initialize()
 void UBIMBlockAddLayer::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 }
 
 void UBIMBlockAddLayer::OnButtonAddReleased()

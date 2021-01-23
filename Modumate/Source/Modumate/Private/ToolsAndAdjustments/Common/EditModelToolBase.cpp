@@ -14,9 +14,9 @@
 #include "UI/PendingSegmentActor.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/DimensionWidget.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
 /*
@@ -31,11 +31,11 @@ UEditModelToolBase::UEditModelToolBase(const FObjectInitializer& ObjectInitializ
 	, CreateObjectMode(EToolCreateObjectMode::Apply)
 	, PendingSegmentID(MOD_ID_NONE)
 {
-	Controller = Cast<AEditModelPlayerController_CPP>(GetOuter());
+	Controller = Cast<AEditModelPlayerController>(GetOuter());
 	if (auto world = GetWorld())
 	{
 		GameInstance = Cast<UModumateGameInstance>(world->GetGameInstance());
-		GameState = world->GetGameState<AEditModelGameState_CPP>();
+		GameState = world->GetGameState<AEditModelGameState>();
 		DimensionManager = GameInstance ? GameInstance->DimensionManager : nullptr;
 	}
 }

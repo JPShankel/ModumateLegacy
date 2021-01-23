@@ -7,9 +7,9 @@
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 using namespace Modumate;
 
@@ -58,7 +58,7 @@ bool USelectTool::HandleMouseUp()
 		return true;
 	}
 
-	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 
 	AModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
@@ -221,7 +221,7 @@ bool USelectTool::HandleInvert()
 		return false;
 	}
 
-	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
 	return gameState->Document->ApplyDeltas({ delta }, GetWorld());
 }
 
@@ -249,7 +249,7 @@ bool USelectTool::HandleFlip(EAxis::Type FlipAxis)
 		return false;
 	}
 
-	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
 	return gameState->Document->ApplyDeltas({ delta }, GetWorld());
 }
 
@@ -282,7 +282,7 @@ bool USelectTool::HandleAdjustJustification(const FVector2D& ViewSpaceDirection)
 		return false;
 	}
 
-	AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
 	return gameState->Document->ApplyDeltas({ delta }, GetWorld());
 }
 
@@ -307,7 +307,7 @@ bool USelectTool::ProcessDragSelect()
 			Controller->EMPlayerState->DeselectAll();
 		}
 
-		AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		AEditModelGameState *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
 		UModumateDocument* doc = gameState->Document;
 
 		bool requireEnclosure = curMousePosition.X > InitialClickLocation.X;

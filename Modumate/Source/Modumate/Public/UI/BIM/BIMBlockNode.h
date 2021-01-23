@@ -41,7 +41,7 @@ protected:
 	class UBIMDesigner *ParentBIMDesigner;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *Controller;
+	class AEditModelPlayerController *Controller;
 
 	bool DragTick = false;
 	FVector2D LastMousePosition = FVector2D::ZeroVector;

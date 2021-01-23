@@ -12,8 +12,8 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Objects/MOIDelta.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 
 using namespace Modumate;
@@ -63,7 +63,7 @@ void URoofPerimeterPropertiesWidget::SetTarget(int32 InTargetPerimeterID, FGraph
 void URoofPerimeterPropertiesWidget::UpdateEditFields()
 {
 	UWorld *world = GetWorld();
-	GameState = world ? world->GetGameState<AEditModelGameState_CPP>() : nullptr;
+	GameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
 	if (!ensure(GameState))
 	{
 		return;
@@ -202,7 +202,7 @@ void URoofPerimeterPropertiesWidget::OnOverhangEditorTextCommitted(const FText& 
 
 void URoofPerimeterPropertiesWidget::OnButtonPressedCommit()
 {
-	auto controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	auto controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller && (controller->InteractionHandle == OwningHandle))
 	{
 		// TODO: this is a sign that we need a better tool/handle API
@@ -213,7 +213,7 @@ void URoofPerimeterPropertiesWidget::OnButtonPressedCommit()
 
 void URoofPerimeterPropertiesWidget::OnButtonPressedCancel()
 {
-	auto controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	auto controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller && (controller->InteractionHandle == OwningHandle))
 	{
 		controller->AbortUseTool();
@@ -237,7 +237,7 @@ void URoofPerimeterPropertiesWidget::SetEdgeSlope(float SlopeValue)
 void URoofPerimeterPropertiesWidget::SaveEdgeProperties()
 {
 	AModumateObjectInstance *targetObj = GameState->Document->GetObjectById(TargetPerimeterID);
-	auto controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	auto controller = GetOwningPlayer<AEditModelPlayerController>();
 
 	if (!(targetObj && controller && (controller->InteractionHandle == OwningHandle)))
 	{

@@ -1,28 +1,28 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
 
 #include "Database/ModumateObjectDatabase.h"
 #include "HAL/FileManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/LineActor.h"
-#include "UnrealClasses/MOIGroupActor_CPP.h"
-#include "UnrealClasses/PortalFrameActor_CPP.h"
+#include "UnrealClasses/MOIGroupActor.h"
+#include "UnrealClasses/PortalFrameActor.h"
 #include "UObject/ConstructorHelpers.h"
 
 using namespace Modumate;
 
-AEditModelGameMode_CPP::AEditModelGameMode_CPP()
+AEditModelGameMode::AEditModelGameMode()
 	: ObjectDatabase(nullptr)
 {
-	PlayerStateClass = AEditModelPlayerState_CPP::StaticClass();
+	PlayerStateClass = AEditModelPlayerState::StaticClass();
 	DynamicMeshActorClass = ADynamicMeshActor::StaticClass();
 }
 
-void AEditModelGameMode_CPP::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void AEditModelGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (ObjectDatabase)
 	{
@@ -34,7 +34,7 @@ void AEditModelGameMode_CPP::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-void AEditModelGameMode_CPP::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+void AEditModelGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 
@@ -79,11 +79,11 @@ void AEditModelGameMode_CPP::InitGame(const FString& MapName, const FString& Opt
 	}
 }
 
-void AEditModelGameMode_CPP::InitGameState()
+void AEditModelGameMode::InitGameState()
 {
 	Super::InitGameState();
 
-	auto* gameState = Cast<AEditModelGameState_CPP>(GameState);
+	auto* gameState = Cast<AEditModelGameState>(GameState);
 	if (ensure(gameState))
 	{
 		gameState->InitDocument();

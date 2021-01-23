@@ -207,7 +207,7 @@ protected:
 	class FSceneViewport* SceneViewport;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *EMPlayerController;
+	class AEditModelPlayerController *EMPlayerController;
 
 	bool FindViewport();
 	FEditModelInputPacket &AddRecordingPacket(EInputPacketType Type);

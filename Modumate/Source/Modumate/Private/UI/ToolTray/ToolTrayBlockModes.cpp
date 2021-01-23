@@ -5,7 +5,7 @@
 #include "Components/WrapBox.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 UToolTrayBlockModes::UToolTrayBlockModes(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -69,7 +69,7 @@ void UToolTrayBlockModes::SetButtonsState(const TArray<UModumateButtonUserWidget
 	}
 
 	// Set button active state based on current tool
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (!controller)
 	{
 		return;

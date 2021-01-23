@@ -86,7 +86,7 @@ public:
 	// Take a viewport screenshot, saves it in the playerController, then applies it to an UImage.
 	// Should only be used during viewport draw, else there will be a TextureRHI ensure
 	UFUNCTION(BlueprintCallable, Category = HUD)
-	bool StaticCameraViewScreenshot(const FVector2D &ViewportSize, AEditModelPlayerController_CPP *EMPlayerController, UImage *ImageUI);
+	bool StaticCameraViewScreenshot(const FVector2D &ViewportSize, AEditModelPlayerController *EMPlayerController, UImage *ImageUI);
 
 	// Pass-through convenience function for using the HUD's widget pool
 	template <typename UserWidgetT = UUserWidget>

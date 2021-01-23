@@ -4,7 +4,7 @@
 #include "JsonUtilities.h"
 #include "Dom/JsonObject.h"
 #include "UnrealClasses/ModumateGameInstance.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "Online/ModumateUpdater.h"
 
 FModumateAccountManager::FModumateAccountManager(TSharedPtr<FModumateCloudConnection>& InConnection,

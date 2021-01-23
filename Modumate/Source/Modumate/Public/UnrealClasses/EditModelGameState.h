@@ -6,10 +6,10 @@
 
 #include "DocumentManagement/ModumateDocument.h"
 
-#include "EditModelGameState_CPP.generated.h"
+#include "EditModelGameState.generated.h"
 
 UCLASS(config=Game)
-class MODUMATE_API AEditModelGameState_CPP : public AGameStateBase
+class MODUMATE_API AEditModelGameState : public AGameStateBase
 {
 	GENERATED_BODY()
 

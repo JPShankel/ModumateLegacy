@@ -16,9 +16,9 @@
 #include "ToolsAndAdjustments/Handles/AdjustCutPlaneExtentsHandle.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/CutPlaneCaptureActor.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 
@@ -42,13 +42,13 @@ void AMOICutPlane::PostCreateObject(bool bNewObject)
 	Super::PostCreateObject(bNewObject);
 
 	UWorld* world = GetWorld();
-	auto controller = world->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	auto controller = world->GetFirstPlayerController<AEditModelPlayerController>();
 	if (controller && controller->EditModelUserWidget)
 	{
 		controller->EditModelUserWidget->UpdateCutPlanesList();
 	}
 
-	AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
+	AEditModelGameMode *gameMode = world->GetAuthGameMode<AEditModelGameMode>();
 	MaterialData.EngineMaterial = gameMode ? gameMode->CutPlaneMaterial : nullptr;
 
 	// TODO: make sure that these are destroyed
@@ -73,7 +73,7 @@ void AMOICutPlane::PostCreateObject(bool bNewObject)
 
 void AMOICutPlane::PreDestroy()
 {
-	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 	if (controller && controller->EditModelUserWidget)
 	{
 		controller->EditModelUserWidget->RemoveCutPlaneFromList(ID);
@@ -84,7 +84,7 @@ void AMOICutPlane::PreDestroy()
 void AMOICutPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
 	AMOIPlaneBase::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
-	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 	if (controller && controller->EditModelUserWidget)
 	{
 		controller->EditModelUserWidget->UpdateCutPlaneInList(ID);
@@ -139,7 +139,7 @@ bool AMOICutPlane::OnSelected(bool bIsSelected)
 	return true;
 }
 
-void AMOICutPlane::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
+void AMOICutPlane::SetupAdjustmentHandles(AEditModelPlayerController* controller)
 {
 	if (HasAdjustmentHandles())
 	{
@@ -449,7 +449,7 @@ void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 	CaptureActor->ResetHiddenActorsToDefault();
 	MasksActor->ClearProceduralLayers();
 
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 	auto volumeGraph = doc->GetVolumeGraph();
 	TArray<FVector2D> boxPoints;

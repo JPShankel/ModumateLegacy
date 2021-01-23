@@ -4,8 +4,8 @@
 
 #include "Algo/LevenshteinDistance.h"
 #include "UnrealClasses/DynamicMeshActor.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "Graph/Graph3D.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "Objects/ModumateObjectInstance.h"
@@ -43,7 +43,7 @@ const FGuid UModumateRoomStatics::DefaultRoomConfigKey;
 bool UModumateRoomStatics::GetRoomConfigurationsFromTable(UObject* WorldContextObject, TArray<FRoomConfigurationBlueprint> &OutRoomConfigs)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameMode_CPP *gameMode = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+	AEditModelGameMode *gameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
 	if (!ensure(gameMode && gameMode->ObjectDatabase))
 	{
 		return false;
@@ -62,7 +62,7 @@ bool UModumateRoomStatics::GetRoomConfigurationsFromProject(UObject* WorldContex
 	OutRoomConfigs.Reset();
 
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 	if (gameState == nullptr)
 	{
 		return false;
@@ -123,7 +123,7 @@ bool UModumateRoomStatics::GetRoomConfig(const AModumateObjectInstance *RoomObj,
 bool UModumateRoomStatics::GetRoomConfig(UObject* WorldContextObject, int32 RoomID, FRoomConfigurationBlueprint &OutRoomConfig)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 	AModumateObjectInstance *roomObj = gameState ? gameState->Document->GetObjectById(RoomID) : nullptr;
 	return GetRoomConfig(roomObj, OutRoomConfig);
 }
@@ -133,7 +133,7 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(AModumateObjectInstance *RoomObj
 #if 0 
 
 	UWorld *world = RoomObj ? RoomObj->GetWorld() : nullptr;
-	AEditModelGameMode_CPP *gameMode = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+	AEditModelGameMode *gameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
 	const FRoomConfiguration *roomConfig = gameMode ? gameMode->ObjectDatabase->GetRoomConfigByGUID(ConfigKey) : nullptr;
 	if (roomConfig == nullptr)
 	{
@@ -163,7 +163,7 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(AModumateObjectInstance *RoomObj
 bool UModumateRoomStatics::SetRoomConfigFromKey(UObject* WorldContextObject, int32 RoomID, const FGuid& ConfigKey)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 	AModumateObjectInstance *roomObj = gameState ? gameState->Document->GetObjectById(RoomID) : nullptr;
 
 	return SetRoomConfigFromKey(roomObj, ConfigKey);

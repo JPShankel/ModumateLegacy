@@ -6,7 +6,7 @@
 #include "Components/Button.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/BIM/BIMDesigner.h"
 #include "Components/Image.h"
@@ -46,7 +46,7 @@ void UBIMBlockSlotListItem::ConnectSlotItemToNode(const FBIMEditorNodeIDType& No
 
 void UBIMBlockSlotListItem::OnButtonSlotReleased()
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller && controller->EditModelUserWidget && controller->EditModelUserWidget->BIMDesigner)
 	{
 		bool hasConnection = !ConnectedNodeID.IsNone();

@@ -38,7 +38,7 @@ protected:
 
 public:
 	UPROPERTY()
-	class AEditModelGameState_CPP *GameState;
+	class AEditModelGameState *GameState;
 
 private:
 	int32 TargetEdgeID;

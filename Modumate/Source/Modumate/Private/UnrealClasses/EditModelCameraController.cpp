@@ -7,10 +7,10 @@
 #include "Components/StaticMeshComponent.h"
 #include "Curves/CurveFloat.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelInputHandler.h"
-#include "UnrealClasses/EditModelPlayerPawn_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerPawn.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "Engine/StaticMeshActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
@@ -63,7 +63,7 @@ void UEditModelCameraController::BeginPlay()
 	Super::BeginPlay();
 
 	UWorld *world = GetWorld();
-	Controller = Cast<AEditModelPlayerController_CPP>(GetOwner());
+	Controller = Cast<AEditModelPlayerController>(GetOwner());
 	ViewportClient = Cast<UModumateViewportClient>(GetWorld()->GetGameViewport());
 
 	if (ensure(ViewportClient))

@@ -6,8 +6,8 @@
 #include "ProfilingDebugging/CsvProfiler.h"
 #include "Serialization/Csv/CsvParser.h"
 #include "HAL/FileManager.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
@@ -31,7 +31,7 @@ namespace Modumate
 		bool FGraphicsSceneLoaded::Update()
 		{
 			const UWorld * currentWorld = GEngine->GetWorldContexts()[0].World();
-			const AEditModelGameState_CPP* gameState = currentWorld->GetGameState<AEditModelGameState_CPP>();
+			const AEditModelGameState* gameState = currentWorld->GetGameState<AEditModelGameState>();
 			return !gameState->Document->CurrentProjectName.IsEmpty();
 		}
 
@@ -121,7 +121,7 @@ namespace Modumate
 			FString scenePathname =
 				FPaths::ProjectDir() / world->GetGameInstance<UModumateGameInstance>()->TestScriptRelativePath / sceneFile;
 			
-			AEditModelPlayerController_CPP * playerController = world->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+			AEditModelPlayerController * playerController = world->GetFirstPlayerController<AEditModelPlayerController>();
 			playerController->LoadModelFilePath(scenePathname, false, false, false);
 
 			return true;

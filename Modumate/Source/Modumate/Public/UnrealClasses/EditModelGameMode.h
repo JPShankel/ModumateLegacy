@@ -4,20 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "UnrealClasses/ModumateGameModeBase.h"
-#include "EditModelGameMode_CPP.generated.h"
+#include "EditModelGameMode.generated.h"
 
 class MODUMATE_API FModumateDatabase;
 
 class UDataTable;
 
 UCLASS()
-class MODUMATE_API AEditModelGameMode_CPP : public AModumateGameModeBase
+class MODUMATE_API AEditModelGameMode : public AModumateGameModeBase
 {
 	GENERATED_BODY()
 
 public:
 
-	AEditModelGameMode_CPP();
+	AEditModelGameMode();
 
 	//~ Begin AActor Interface
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -112,5 +112,5 @@ public:
 	AActor *Axes;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Pawn")
-	TSubclassOf<class AEditModelToggleGravityPawn_CPP> ToggleGravityPawnClass;
+	TSubclassOf<class AEditModelToggleGravityPawn> ToggleGravityPawnClass;
 };

@@ -2,7 +2,7 @@
 
 #include "UI/Custom/NCPSwitcherButton.h"
 #include "UI/Custom/ModumateButton.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/Custom/ModumateTextBlock.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
@@ -39,7 +39,7 @@ void UNCPSwitcherButton::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 }
 
 void UNCPSwitcherButton::OnButtonPress()

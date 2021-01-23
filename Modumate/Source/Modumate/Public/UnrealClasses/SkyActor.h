@@ -36,7 +36,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *Controller;
+	class AEditModelPlayerController *Controller;
 
 	FDateTime CurrentDateTime;
 

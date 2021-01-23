@@ -1,15 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "UnrealClasses/EditModelPlayerPawn_CPP.h"
+#include "UnrealClasses/EditModelPlayerPawn.h"
 
 #include "CollisionShape.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelInputHandler.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "Database/ModumateObjectEnums.h"
 
 // Sets default values
-AEditModelPlayerPawn_CPP::AEditModelPlayerPawn_CPP(const FObjectInitializer& ObjectInitializer)
+AEditModelPlayerPawn::AEditModelPlayerPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, EMPlayerController(nullptr)
 	, bHaveEverBeenPossessed(false)
@@ -36,22 +36,22 @@ AEditModelPlayerPawn_CPP::AEditModelPlayerPawn_CPP(const FObjectInitializer& Obj
 }
 
 // Called when the game starts or when spawned
-void AEditModelPlayerPawn_CPP::BeginPlay()
+void AEditModelPlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
 // Called every frame
-void AEditModelPlayerPawn_CPP::Tick(float DeltaTime)
+void AEditModelPlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AEditModelPlayerPawn_CPP::PossessedBy(AController* NewController)
+void AEditModelPlayerPawn::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	EMPlayerController = Cast<AEditModelPlayerController_CPP>(NewController);
+	EMPlayerController = Cast<AEditModelPlayerController>(NewController);
 
 	// Stop prioritizing axis input when we're possessed
 	if (EMPlayerController && EMPlayerController->InputHandlerComponent && bHaveEverBeenPossessed)
@@ -62,7 +62,7 @@ void AEditModelPlayerPawn_CPP::PossessedBy(AController* NewController)
 	bHaveEverBeenPossessed = true;
 }
 
-void AEditModelPlayerPawn_CPP::UnPossessed()
+void AEditModelPlayerPawn::UnPossessed()
 {
 	// Start prioritizing axis input when we're not possessed
 	if (EMPlayerController && EMPlayerController->InputHandlerComponent)
@@ -76,7 +76,7 @@ void AEditModelPlayerPawn_CPP::UnPossessed()
 }
 
 // Called to bind functionality to input
-void AEditModelPlayerPawn_CPP::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AEditModelPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
@@ -86,12 +86,12 @@ void AEditModelPlayerPawn_CPP::SetupPlayerInputComponent(UInputComponent* Player
 	}
 }
 
-bool AEditModelPlayerPawn_CPP::SphereTraceForZoomLocation(const FVector &Start, const FVector &End, float Radius, FHitResult& OutHit)
+bool AEditModelPlayerPawn::SphereTraceForZoomLocation(const FVector &Start, const FVector &End, float Radius, FHitResult& OutHit)
 {
 	return GetWorld()->SweepSingleByObjectType(OutHit, Start, End, FQuat::Identity, CachedCollisionObjQueryParams, FCollisionShape::MakeSphere(Radius), CachedCollisionQueryParams);
 }
 
-bool AEditModelPlayerPawn_CPP::LineTraceForCollisionLocation(const FVector &Start, const FVector &End, FHitResult& OutHit, bool TraceComplex)
+bool AEditModelPlayerPawn::LineTraceForCollisionLocation(const FVector &Start, const FVector &End, FHitResult& OutHit, bool TraceComplex)
 {
 	if (TraceComplex)
 	{
@@ -103,7 +103,7 @@ bool AEditModelPlayerPawn_CPP::LineTraceForCollisionLocation(const FVector &Star
 	}
 }
 
-bool AEditModelPlayerPawn_CPP::SetCameraFOV(float NewFOV)
+bool AEditModelPlayerPawn::SetCameraFOV(float NewFOV)
 {
 	if (CameraComponent)
 	{

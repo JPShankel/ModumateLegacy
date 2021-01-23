@@ -1,10 +1,10 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/RightMenu/CutPlaneMenuBlockSettings.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/Custom/ModumateButtonIconTextUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
@@ -38,8 +38,8 @@ bool UCutPlaneMenuBlockSettings::Initialize()
 void UCutPlaneMenuBlockSettings::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
-	GameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
+	GameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
 }
 
 void UCutPlaneMenuBlockSettings::OnButtonShowHideAllReleased()

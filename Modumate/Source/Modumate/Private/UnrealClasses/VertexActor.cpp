@@ -4,7 +4,7 @@
 
 #include "Engine/StaticMesh.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 // Sets default values
 AVertexActor::AVertexActor()
@@ -38,7 +38,7 @@ void AVertexActor::BeginPlay()
 		MeshComp->SetCastShadow(false);
 	}
 
-	Controller = Cast<AEditModelPlayerController_CPP>(this->GetWorld()->GetFirstPlayerController());
+	Controller = Cast<AEditModelPlayerController>(this->GetWorld()->GetFirstPlayerController());
 
 	SetActorTickEnabled(false);
 	SetActorHiddenInGame(true);

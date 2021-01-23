@@ -7,10 +7,10 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ProceduralMeshComponent.h"
 #include "UI/EditModelPlayerHUD.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 // Sets default values
 ALineActor::ALineActor(const FObjectInitializer& ObjectInitializer)
@@ -26,7 +26,7 @@ void ALineActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (auto *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>())
+	if (auto *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>())
 	{
 		EMPlayerState = playerController->EMPlayerState;
 		EMGameMode = EMPlayerState->GetEditModelGameMode();

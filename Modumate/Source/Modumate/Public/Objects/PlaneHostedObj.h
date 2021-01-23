@@ -7,7 +7,7 @@
 
 #include "PlaneHostedObj.generated.h"
 
-class AEditModelPlayerController_CPP;
+class AEditModelPlayerController;
 class AModumateObjectInstance;
 
 USTRUCT()
@@ -53,7 +53,7 @@ public:
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
 	virtual bool OnSelected(bool bIsSelected) override;
 
 	virtual const ILayeredObject* GetLayeredInterface() const override { return this; }

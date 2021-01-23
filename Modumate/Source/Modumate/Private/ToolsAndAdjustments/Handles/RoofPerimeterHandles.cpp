@@ -2,7 +2,7 @@
 
 #include "ToolsAndAdjustments/Handles/RoofPerimeterHandles.h"
 
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "Graph/Graph3D.h"
 #include "Graph/Graph3DDelta.h"
 #include "DocumentManagement/ModumateDocument.h"

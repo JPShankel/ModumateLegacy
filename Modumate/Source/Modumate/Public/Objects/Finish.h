@@ -4,7 +4,7 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 
-class AEditModelPlayerController_CPP;
+class AEditModelPlayerController;
 
 class AModumateObjectInstance;
 
@@ -35,7 +35,7 @@ public:
 	virtual FVector GetNormal() const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller) override;
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController* controller) override;
 
 	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
 

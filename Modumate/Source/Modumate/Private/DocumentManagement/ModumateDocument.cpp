@@ -31,14 +31,14 @@
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/Modumate.h"
 #include "UnrealClasses/ModumateGameInstance.h"
-#include "UnrealClasses/ModumateObjectComponent_CPP.h"
+#include "UnrealClasses/ModumateObjectComponent.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 
 using namespace Modumate::Mitering;
@@ -93,7 +93,7 @@ void UModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 		PostApplyDeltas(World);
 		UpdateRoomAnalysis(World);
 
-		AEditModelPlayerState_CPP* EMPlayerState = Cast<AEditModelPlayerState_CPP>(World->GetFirstPlayerController()->PlayerState);
+		AEditModelPlayerState* EMPlayerState = Cast<AEditModelPlayerState>(World->GetFirstPlayerController()->PlayerState);
 		EMPlayerState->RefreshActiveAssembly();
 
 #if WITH_EDITOR
@@ -410,7 +410,7 @@ AModumateObjectInstance* UModumateDocument::CreateOrRestoreObj(UWorld* World, co
 
 	UClass* moiClass = FMOIFactory::GetMOIClass(StateData.ObjectType);
 	FActorSpawnParameters moiSpawnParams;
-	moiSpawnParams.Owner = World->GetGameState<AEditModelGameState_CPP>();
+	moiSpawnParams.Owner = World->GetGameState<AEditModelGameState>();
 	moiSpawnParams.bNoFail = true;
 	AModumateObjectInstance* newObj = World->SpawnActor<AModumateObjectInstance>(moiClass, moiSpawnParams);
 	if (!ensure(newObj))
@@ -771,7 +771,7 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 	* Valid GUID->Invalid GUID == Delete existing preset
 	*/
 
-	AEditModelGameMode_CPP* gameMode = World->GetAuthGameMode<AEditModelGameMode_CPP>();
+	AEditModelGameMode* gameMode = World->GetAuthGameMode<AEditModelGameMode>();
 
 	// Add or update if we have a new GUID
 	if (PresetDelta.NewState.GUID.IsValid())
@@ -804,7 +804,7 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 			}
 		}
 
-		AEditModelPlayerController_CPP* controller = Cast<AEditModelPlayerController_CPP>(World->GetFirstPlayerController());
+		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
 		if (controller && controller->DynamicIconGenerator)
 		{
 			controller->DynamicIconGenerator->UpdateCachedAssemblies(affectedAssemblies);
@@ -1135,7 +1135,7 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World)
 	}
 
 	// Now that objects may have been deleted, validate the player state so that none of them are incorrectly referenced.
-	AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(World->GetFirstPlayerController()->PlayerState);
+	AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(World->GetFirstPlayerController()->PlayerState);
 	playerState->ValidateSelectionsAndView();
 
 	return true;
@@ -1369,7 +1369,7 @@ void UModumateDocument::UnmakeGroupObjects(UWorld *world, const TArray<int32> &g
 {
 	ClearRedoBuffer();
 
-	AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
+	AEditModelGameMode *gameMode = world->GetAuthGameMode<AEditModelGameMode>();
 
 	TArray<AModumateObjectInstance*> obs;
 	Algo::Transform(groupIds,obs,[this](int32 id){return GetObjectById(id);});
@@ -2042,7 +2042,7 @@ void UModumateDocument::MakeNew(UWorld *World)
 		kvp.Value.Reset();
 	}
 
-	AEditModelGameMode_CPP* gameMode = Cast<AEditModelGameMode_CPP>(World->GetAuthGameMode());
+	AEditModelGameMode* gameMode = Cast<AEditModelGameMode>(World->GetAuthGameMode());
 	BIMPresetCollection = gameMode->ObjectDatabase->GetPresetCollection();
 	
 	// Clear drafting render directories
@@ -2080,7 +2080,7 @@ const AModumateObjectInstance *UModumateDocument::ObjectFromActor(const AActor *
 
 AModumateObjectInstance *UModumateDocument::ObjectFromSingleActor(AActor *actor)
 {
-	auto *moiComponent = actor ? actor->FindComponentByClass<UModumateObjectComponent_CPP>() : nullptr;
+	auto *moiComponent = actor ? actor->FindComponentByClass<UModumateObjectComponent>() : nullptr;
 	if (moiComponent && (moiComponent->ObjectID != MOD_ID_NONE))
 	{
 		return GetObjectById(moiComponent->ObjectID);
@@ -2179,7 +2179,7 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Serialize"));
 
-	AEditModelGameMode_CPP *gameMode = Cast<AEditModelGameMode_CPP>(World->GetAuthGameMode());
+	AEditModelGameMode *gameMode = Cast<AEditModelGameMode>(World->GetAuthGameMode());
 
 	// Header is its own object
 	OutHeader.Version = Modumate::DocVersion;
@@ -2202,8 +2202,8 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 		EToolMode::VE_CEILING
 	};
 
-	AEditModelPlayerController_CPP* emPlayerController = Cast<AEditModelPlayerController_CPP>(World->GetFirstPlayerController());
-	AEditModelPlayerState_CPP* emPlayerState = emPlayerController->EMPlayerState;
+	AEditModelPlayerController* emPlayerController = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
+	AEditModelPlayerState* emPlayerState = emPlayerController->EMPlayerState;
 
 	for (auto &mode : modes)
 	{
@@ -2309,13 +2309,13 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool bSetAsCurr
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Load"));
 
 	//Get player state and tells it to empty selected object
-	AEditModelPlayerController_CPP* EMPlayerController = Cast<AEditModelPlayerController_CPP>(world->GetFirstPlayerController());
-	AEditModelPlayerState_CPP* EMPlayerState = EMPlayerController->EMPlayerState;
+	AEditModelPlayerController* EMPlayerController = Cast<AEditModelPlayerController>(world->GetFirstPlayerController());
+	AEditModelPlayerState* EMPlayerState = EMPlayerController->EMPlayerState;
 	EMPlayerState->OnNewModel();
 
 	MakeNew(world);
 
-	AEditModelGameMode_CPP* gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
+	AEditModelGameMode* gameMode = world->GetAuthGameMode<AEditModelGameMode>();
 
 	FModumateDatabase* objectDB = gameMode->ObjectDatabase;
 
@@ -2843,7 +2843,7 @@ void UModumateDocument::DisplayDebugInfo(UWorld* world)
 		}
 	};
 
-	AEditModelPlayerState_CPP* emPlayerState = Cast<AEditModelPlayerState_CPP>(world->GetFirstPlayerController()->PlayerState);
+	AEditModelPlayerState* emPlayerState = Cast<AEditModelPlayerState>(world->GetFirstPlayerController()->PlayerState);
 
 	displayMsg(TEXT("OBJECT COUNTS"));
 	auto objectTypeEnum = StaticEnum<EObjectType>();

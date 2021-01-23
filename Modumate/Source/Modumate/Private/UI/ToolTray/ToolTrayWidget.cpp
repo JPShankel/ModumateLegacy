@@ -11,7 +11,7 @@
 #include "UI/ToolTray/ToolTrayBlockModes.h"
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UI/ToolTray/ToolTrayBlockTools.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 UToolTrayWidget::UToolTrayWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -41,7 +41,7 @@ void UToolTrayWidget::NativeConstruct()
 
 bool UToolTrayWidget::ChangeBlockToMetaPlaneTools()
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (!controller)
 	{
 		return false;
@@ -65,7 +65,7 @@ bool UToolTrayWidget::ChangeBlockToMetaPlaneTools()
 
 bool UToolTrayWidget::ChangeBlockToSeparatorTools(EToolMode Toolmode)
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (!controller)
 	{
 		return false;
@@ -117,7 +117,7 @@ bool UToolTrayWidget::ChangeBlockToSurfaceGraphTools()
 
 bool UToolTrayWidget::ChangeBlockToAttachmentTools(EToolMode Toolmode)
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (!controller)
 	{
 		return false;

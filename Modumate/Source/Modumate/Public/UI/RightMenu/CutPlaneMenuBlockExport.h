@@ -26,7 +26,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP* Controller;
+	class AEditModelPlayerController* Controller;
 
 public:
 

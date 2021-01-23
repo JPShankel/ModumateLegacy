@@ -3,7 +3,7 @@
 #include "Online/ModumateUpdater.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "Online/ModumateAccountManager.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 const FString FModumateUpdater::InstallerSubdir(TEXT("Installers"));
 
@@ -133,7 +133,7 @@ void FModumateUpdater::NotifyUser()
 			// Run via cmd as it's a UAC executable.
 			FPlatformProcess::CreateProc(TEXT("cmd.exe"), *(TEXT("/c \"") + DownloadFilename + TEXT("\"")), false, false, false, nullptr, 0, TEXT("/"), nullptr);
 			State = Upgrading;
-			auto playerController = Cast<AEditModelPlayerController_CPP>(GameInstance->GetPrimaryPlayerController());
+			auto playerController = Cast<AEditModelPlayerController>(GameInstance->GetPrimaryPlayerController());
 			if (playerController)
 			{
 				playerController->CheckSaveModel();

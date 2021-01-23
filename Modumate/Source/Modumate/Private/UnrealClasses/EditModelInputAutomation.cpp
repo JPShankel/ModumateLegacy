@@ -15,8 +15,8 @@
 #include "StructSerializer.h"
 #include "UnrealClasses/AutomationCaptureInputProcessor.h"
 #include "UnrealClasses/EditModelCameraController.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerPawn_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerPawn.h"
 #include "Widgets/SViewport.h"
 #include "Widgets/SWindow.h"
 
@@ -69,7 +69,7 @@ void UEditModelInputAutomation::BeginPlay()
 {
 	Super::BeginPlay();
 
-	EMPlayerController = Cast<AEditModelPlayerController_CPP>(GetOwner());
+	EMPlayerController = Cast<AEditModelPlayerController>(GetOwner());
 	ensureAlways(EMPlayerController != nullptr);
 
 	InputProcessor = MakeShared<FAutomationCaptureInputProcessor>(this);

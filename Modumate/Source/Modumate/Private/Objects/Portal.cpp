@@ -16,12 +16,12 @@
 #include "ToolsAndAdjustments/Handles/AdjustPortalJustifyHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPortalOrientHandle.h"
 #include "UnrealClasses/CompoundMeshActor.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/ModumateObjectInstanceParts.h"
 
 
-class AEditModelPlayerController_CPP;
+class AEditModelPlayerController;
 
 
 AMOIPortal::AMOIPortal()
@@ -207,7 +207,7 @@ FTransform AMOIPortal::GetWorldTransform() const
 	return FTransform(CachedWorldRot, CachedWorldPos);
 }
 
-void AMOIPortal::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+void AMOIPortal::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 {
 	AModumateObjectInstance *parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))

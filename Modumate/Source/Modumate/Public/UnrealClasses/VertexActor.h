@@ -11,7 +11,7 @@
 /**
  * 
  */
-class AEditModelPlayerController_CPP;
+class AEditModelPlayerController;
 
 UCLASS()
 class MODUMATE_API AVertexActor : public AStaticMeshActor
@@ -28,7 +28,7 @@ public:
 	FArchitecturalMaterial Material;
 
 	UPROPERTY()
-	AEditModelPlayerController_CPP *Controller;
+	AEditModelPlayerController *Controller;
 
 	float HandleScreenSize = 0.0f;
 	FVector MoiLocation = FVector::ZeroVector;

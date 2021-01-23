@@ -8,7 +8,7 @@
 #include "EditModelRotateTool.generated.h"
 
 class ALineActor;
-class AEditModelPlayerController_CPP;
+class AEditModelPlayerController;
 
 UCLASS()
 class URotateObjectTool : public UEditModelToolBase, public FSelectedObjectToolMixin

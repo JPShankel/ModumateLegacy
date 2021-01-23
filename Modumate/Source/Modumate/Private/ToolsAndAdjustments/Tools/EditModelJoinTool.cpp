@@ -2,9 +2,9 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelJoinTool.h"
 
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 #include "DocumentManagement/ModumateCommands.h"
 
@@ -41,7 +41,7 @@ bool UJoinTool::BeginUse()
 
 bool UJoinTool::HandleMouseUp()
 {
-	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 
 	AModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
@@ -147,7 +147,7 @@ bool UJoinTool::EnterNextStage()
 		PendingObjectIDs.Add(newTarget->ID);
 		Controller->DeselectAll();
 		
-		AEditModelGameState_CPP* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		AEditModelGameState* gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
 		UModumateDocument* doc = gameState->Document;
 		return doc->JoinMetaObjects(GetWorld(), PendingObjectIDs.Array());
 		// TODO: potentially return the result of this function, if it is true the two faces will be joined

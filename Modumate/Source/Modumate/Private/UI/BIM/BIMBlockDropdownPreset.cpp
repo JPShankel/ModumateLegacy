@@ -3,7 +3,7 @@
 #include "UI/BIM/BIMBlockDropdownPreset.h"
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
@@ -26,7 +26,7 @@ bool UBIMBlockDropdownPreset::Initialize()
 		return false;
 	}
 
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 	
 	if (!ButtonSwap)
 	{

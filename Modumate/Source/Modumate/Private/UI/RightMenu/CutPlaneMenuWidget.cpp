@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "Objects/CutPlane.h"
 #include "UI/RightMenu/CutPlaneDimListItemObject.h"
 #include "UI/RightMenu/CutPlaneMenuBlock.h"
@@ -29,7 +29,7 @@ bool UCutPlaneMenuWidget::Initialize()
 void UCutPlaneMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	GameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
+	GameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
 
 }
 

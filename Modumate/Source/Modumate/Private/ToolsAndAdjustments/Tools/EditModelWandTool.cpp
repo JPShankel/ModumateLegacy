@@ -2,9 +2,9 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelWandTool.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 
@@ -38,7 +38,7 @@ bool UWandTool::BeginUse()
 bool UWandTool::HandleMouseUp()
 {
 
-	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 
 	AModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;

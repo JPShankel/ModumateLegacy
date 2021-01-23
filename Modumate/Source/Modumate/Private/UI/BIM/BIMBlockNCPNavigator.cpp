@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/BIM/BIMBlockNCPNavigator.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "Components/Wrapbox.h"
 #include "UI/HUDDrawWidget.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
@@ -32,7 +32,7 @@ bool UBIMBlockNCPNavigator::Initialize()
 void UBIMBlockNCPNavigator::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 }
 
 void UBIMBlockNCPNavigator::BuildNCPNavigator(const FBIMTagPath& InNCP)

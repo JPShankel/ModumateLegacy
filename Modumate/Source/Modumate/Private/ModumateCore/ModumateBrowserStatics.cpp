@@ -4,7 +4,7 @@
 
 #include "Objects/ModumateObjectInstance.h"
 #include "Online/ModumateAnalyticsStatics.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
 
 using namespace Modumate;
 
@@ -13,7 +13,7 @@ bool UModumateBrowserStatics::GetCutPlanesFromProject(UObject* WorldContextObjec
 	OutCutPlaneParams.Reset();
 
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 	if (gameState == nullptr)
 	{
 		return false;
@@ -43,7 +43,7 @@ bool UModumateBrowserStatics::GetScopeBoxesFromProject(UObject* WorldContextObje
 	OutScopeBoxParams.Reset();
 
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 	if (gameState == nullptr)
 	{
 		return false;
@@ -77,7 +77,7 @@ bool UModumateBrowserStatics::SetDrawingObjectName(UObject* WorldContextObject, 
 bool UModumateBrowserStatics::SetDrawingObjectVisibility(UObject* WorldContextObject, int32 ObjectID, bool Visible)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 	if (gameState == nullptr)
 	{
 		return false;
@@ -96,7 +96,7 @@ bool UModumateBrowserStatics::SetDrawingObjectVisibility(UObject* WorldContextOb
 bool UModumateBrowserStatics::ToggleAllCutPlaneVisibility(UObject* WorldContextObject)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 	if (gameState == nullptr)
 	{
 		return false;
@@ -110,7 +110,7 @@ bool UModumateBrowserStatics::ToggleAllCutPlaneVisibility(UObject* WorldContextO
 bool UModumateBrowserStatics::ToggleAllScopeBoxesVisibility(UObject* WorldContextObject)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 	if (gameState == nullptr)
 	{
 		return false;
@@ -136,7 +136,7 @@ FVector UModumateBrowserStatics::GetDrawingXDirectionFromProject(UObject* WorldC
 bool UModumateBrowserStatics::GetCameraViewsFromDoc(UObject* WorldContextObject, TArray<FModumateCameraView> &OutCameraViews)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 	if (gameState == nullptr)
 	{
 		return false;
@@ -148,7 +148,7 @@ bool UModumateBrowserStatics::GetCameraViewsFromDoc(UObject* WorldContextObject,
 bool UModumateBrowserStatics::SaveCameraView(UObject* WorldContextObject, UCameraComponent *CameraComp, const FString &CameraViewName, const FDateTime &TimeOfDay, int32 CameraViewIndex /*= -1*/)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 	if (gameState == nullptr || CameraComp == nullptr)
 	{
 		return false;
@@ -180,7 +180,7 @@ bool UModumateBrowserStatics::SaveCameraView(UObject* WorldContextObject, UCamer
 bool UModumateBrowserStatics::RemoveCameraView(UObject* WorldContextObject, int32 CameraViewIndex)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 	if (gameState == nullptr)
 	{
 		return false;
@@ -197,7 +197,7 @@ bool UModumateBrowserStatics::RemoveCameraView(UObject* WorldContextObject, int3
 bool UModumateBrowserStatics::EditCameraViewName(UObject* WorldContextObject, int32 CameraViewIndex, const FString &NewCameraViewName)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 	if (gameState == nullptr)
 	{
 		return false;
@@ -214,7 +214,7 @@ bool UModumateBrowserStatics::EditCameraViewName(UObject* WorldContextObject, in
 bool UModumateBrowserStatics::ReorderCameraViews(UObject* WorldContextObject, int32 From, int32 To)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 	if (gameState == nullptr)
 	{
 		return false;

@@ -2,8 +2,8 @@
 #pragma once
 
 #include "ToolsAndAdjustments/Tools/EditModelSurfaceGraphTool.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 #include "EditModelFinishTool.generated.h"
 

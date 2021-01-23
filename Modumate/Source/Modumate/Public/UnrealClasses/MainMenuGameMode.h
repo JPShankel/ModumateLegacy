@@ -7,13 +7,13 @@
 #include "Styling/SlateBrush.h"
 #include "Templates/SharedPointer.h"
 
-#include "MainMenuGameMode_CPP.generated.h"
+#include "MainMenuGameMode.generated.h"
 
 /**
  *
  */
 UCLASS()
-class MODUMATE_API AMainMenuGameMode_CPP : public AModumateGameModeBase
+class MODUMATE_API AMainMenuGameMode : public AModumateGameModeBase
 {
 	GENERATED_BODY()
 

@@ -77,7 +77,7 @@ protected:
 	FMOIRoofPerimeterData TempInitialCombinedProperties;
 
 	UPROPERTY()
-	class AEditModelGameState_CPP *GameState;
+	class AEditModelGameState *GameState;
 
 	UFUNCTION()
 	FEventReply OnClickedBorder(FGeometry MyGeometry, const FPointerEvent& MouseEvent);

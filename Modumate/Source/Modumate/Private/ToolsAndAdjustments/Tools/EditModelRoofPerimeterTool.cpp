@@ -7,9 +7,9 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateRoofStatics.h"
 #include "Online/ModumateAnalyticsStatics.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 using namespace Modumate;
 
@@ -23,7 +23,7 @@ bool URoofPerimeterTool::Activate()
 {
 	Super::Activate();
 
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 	const FGraph3D &volumeGraph = doc->GetVolumeGraph();
 

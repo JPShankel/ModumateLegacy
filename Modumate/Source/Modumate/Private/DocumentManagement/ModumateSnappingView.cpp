@@ -4,11 +4,11 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateStats.h"
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 DECLARE_CYCLE_STAT(TEXT("Snap-points"), STAT_ModumateSnapPoints, STATGROUP_Modumate)
 
-FModumateSnappingView::FModumateSnappingView(UModumateDocument *document, AEditModelPlayerController_CPP *controller)
+FModumateSnappingView::FModumateSnappingView(UModumateDocument *document, AEditModelPlayerController *controller)
 	: Document(document)
 	, Controller(controller)
 {

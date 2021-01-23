@@ -48,7 +48,7 @@ public:
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
 	virtual bool OnSelected(bool bIsSelected) override;
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
 
 	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;
 	virtual void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget) override;

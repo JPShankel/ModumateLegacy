@@ -15,7 +15,7 @@ public:
 	AMOIMetaEdge();
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
-	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow) override;
+	virtual void ShowAdjustmentHandles(AEditModelPlayerController* Controller, bool bShow) override;
 	virtual const IMiterNode* GetMiterInterface() const override { return this; }
 
 	// Begin IMiterNode interface

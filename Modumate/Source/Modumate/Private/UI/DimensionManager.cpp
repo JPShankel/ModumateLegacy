@@ -8,7 +8,7 @@
 #include "UI/DimensionActor.h"
 #include "UI/GraphDimensionActor.h"
 #include "UnrealClasses/DimensionWidget.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "Widgets/SWidget.h"
 
 UDimensionManager::UDimensionManager(const FObjectInitializer& ObjectInitializer)
@@ -43,7 +43,7 @@ void UDimensionManager::Shutdown()
 void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 {
 	// find which vertices are currently selected and create measuring dimension strings
-	auto* doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+	auto* doc = GetWorld()->GetGameState<AEditModelGameState>()->Document;
 	auto& graph = doc->GetVolumeGraph();
 
 	LastSelectedVertexIDs.Reset();

@@ -7,7 +7,7 @@
 #include "UI/StartMenu/StartBlockHomeWidget.h"
 #include "HAL/PlatformMisc.h"
 #include "Components/HorizontalBox.h"
-#include "UnrealClasses/MainMenuGameMode_CPP.h"
+#include "UnrealClasses/MainMenuGameMode.h"
 #include "UI/TutorialMenu/TutorialMenuWidget.h"
 #include "ModumateCore/PlatformFunctions.h"
 
@@ -90,7 +90,7 @@ void UStartRootMenuWidget::OnButtonReleasedHelp()
 
 void UStartRootMenuWidget::OnButtonReleasedOpen()
 {
-	AMainMenuGameMode_CPP* mainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode_CPP>();
+	AMainMenuGameMode* mainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode>();
 	if (mainMenuGameMode)
 	{
 		mainMenuGameMode->OpenProjectFromPicker();

@@ -2,13 +2,13 @@
 #pragma once
 
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 
 #include "EditModelScopeBoxTool.generated.h"
 
-class AEditModelGameMode_CPP;
-class AEditModelGameState_CPP;
+class AEditModelGameMode;
+class AEditModelGameState;
 class ALineActor;
 
 UCLASS()
@@ -40,7 +40,7 @@ protected:
 
 	bool ResetState();
 
-	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
+	TWeakObjectPtr<AEditModelGameMode> GameMode;
 	TWeakObjectPtr<ADynamicMeshActor> PendingBox;
 	TWeakObjectPtr<ALineActor> PendingSegment;
 	FArchitecturalMaterial PendingBoxMaterial;

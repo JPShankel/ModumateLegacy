@@ -4,8 +4,8 @@
 
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 AMOIPlaneBase::AMOIPlaneBase()
 	: AModumateObjectInstance()
@@ -73,7 +73,7 @@ void AMOIPlaneBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoin
 }
 
 // Adjustment Handles
-void AMOIPlaneBase::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+void AMOIPlaneBase::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 {
 	if (HasAdjustmentHandles())
 	{
@@ -114,7 +114,7 @@ bool AMOIPlaneBase::OnSelected(bool bIsSelected)
 	return true;
 }
 
-bool AMOIPlaneBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
+bool AMOIPlaneBase::OnHovered(AEditModelPlayerController *controller, bool bIsHovered)
 {
 	if (!AModumateObjectInstance::OnHovered(controller, bIsHovered))
 	{
@@ -141,7 +141,7 @@ void AMOIPlaneBase::UpdateMaterial()
 {
 	if (DynamicMeshActor.IsValid())
 	{
-		AEditModelGameMode_CPP* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
+		AEditModelGameMode* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
 		// Color
 		if (gameMode)
 		{

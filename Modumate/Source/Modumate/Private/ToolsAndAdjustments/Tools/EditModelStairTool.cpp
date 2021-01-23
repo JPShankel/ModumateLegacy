@@ -12,10 +12,10 @@
 #include "UI/PendingSegmentActor.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/DynamicMeshActor.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
@@ -55,8 +55,8 @@ UStairTool::UStairTool(const FObjectInitializer& ObjectInitializer)
 	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
 	if (world)
 	{
-		GameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
-		GameState = world->GetGameState<AEditModelGameState_CPP>();
+		GameMode = world->GetAuthGameMode<AEditModelGameMode>();
+		GameState = world->GetGameState<AEditModelGameState>();
 	}
 }
 

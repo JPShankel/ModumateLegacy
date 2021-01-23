@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/BIM/BIMDesigner.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/ScaleBox.h"
@@ -12,7 +12,7 @@
 #include "ModumateCore/ModumateSlateHelper.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "UI/BIM/BIMBlockAddLayer.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "BIMKernel/Presets/BIMPresetDelta.h"
 #include "Components/Sizebox.h"
@@ -40,7 +40,7 @@ bool UBIMDesigner::Initialize()
 		return false;
 	}
 
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 
 	return true;
 }
@@ -160,7 +160,7 @@ void UBIMDesigner::PerformDrag()
 bool UBIMDesigner::UpdateCraftingAssembly()
 {
 	return InstancePool.CreateAssemblyFromNodes(Controller->GetDocument()->GetPresetCollection(),
-		*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly) == EBIMResult::Success;
+		*GetWorld()->GetAuthGameMode<AEditModelGameMode>()->ObjectDatabase, CraftingAssembly) == EBIMResult::Success;
 }
 
 void UBIMDesigner::ToggleCollapseExpandNodes()
@@ -304,7 +304,7 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 
 	EBIMResult asmResult = InstancePool.CreateAssemblyFromNodes(
 		Controller->GetDocument()->GetPresetCollection(),
-		*GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>()->ObjectDatabase, CraftingAssembly);
+		*GetWorld()->GetAuthGameMode<AEditModelGameMode>()->ObjectDatabase, CraftingAssembly);
 
 	bool bAssemblyHasPart = false;
 

@@ -11,7 +11,7 @@
 #include "UI/Custom/ModumateDropDownUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 UToolTrayBlockProperties::UToolTrayBlockProperties(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -107,7 +107,7 @@ void UToolTrayBlockProperties::OnInstWidthTextCommitted(const FText& Text, EText
 {
 	if (CommitMethod == ETextCommit::OnEnter)
 	{
-		AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+		AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 		auto currentTool = controller ? controller->CurrentTool.GetObject() : nullptr;
 		if (auto portalTool = Cast<UPortalToolBase>(controller->CurrentTool.GetObject()))
 		{
@@ -121,7 +121,7 @@ void UToolTrayBlockProperties::OnInstHeightTextCommitted(const FText& Text, ETex
 {
 	if (CommitMethod == ETextCommit::OnEnter)
 	{
-		AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+		AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 		auto currentTool = controller ? controller->CurrentTool.GetObject() : nullptr;
 		auto enteredDimension = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString());
 
@@ -136,7 +136,7 @@ void UToolTrayBlockProperties::OnInstSillHeightTextCommitted(const FText& Text, 
 {
 	if (CommitMethod == ETextCommit::OnEnter)
 	{
-		AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+		AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 		auto currentTool = controller ? controller->CurrentTool.GetObject() : nullptr;
 		if (auto portalTool = Cast<UPortalToolBase>(currentTool))
 		{
@@ -160,7 +160,7 @@ void UToolTrayBlockProperties::OnInstJustificationCommitted(FString SelectedItem
 			justificationValue = 1.f;
 		}
 
-		AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+		AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 		auto currentTool = controller ? controller->CurrentTool.GetObject() : nullptr;
 		if (auto layeredTool = Cast<UPlaneHostedObjTool>(currentTool))
 		{

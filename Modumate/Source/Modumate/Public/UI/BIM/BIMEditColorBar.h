@@ -28,7 +28,7 @@ protected:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP* Controller;
+	class AEditModelPlayerController* Controller;
 
 	UPROPERTY()
 	class UBIMEditColorPicker* ParentColorPicker;

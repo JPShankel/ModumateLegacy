@@ -6,8 +6,8 @@
 
 #include "Room.generated.h"
 
-class AEditModelPlayerController_CPP;
-class AEditModelGameMode_CPP;
+class AEditModelPlayerController;
+class AEditModelGameMode;
 
 class AModumateObjectInstance;
 
@@ -21,7 +21,7 @@ public:
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
 
-	virtual bool OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
+	virtual bool OnHovered(AEditModelPlayerController *controller, bool bIsHovered) override;
 	virtual bool OnSelected(bool bIsSelected) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
@@ -37,7 +37,7 @@ protected:
 
 	TWeakObjectPtr<UMaterialInstanceDynamic> DynamicMaterial;
 	TWeakObjectPtr<UMaterialInstanceDynamic> VolumeMaterial;
-	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
+	TWeakObjectPtr<AEditModelGameMode> GameMode;
 	FArchitecturalMaterial Material;
 	bool bHovered = false;
 	FRoomConfigurationBlueprint CachedRoomConfig;

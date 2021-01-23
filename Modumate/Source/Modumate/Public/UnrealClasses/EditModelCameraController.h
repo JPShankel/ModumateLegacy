@@ -160,7 +160,7 @@ protected:
 	bool ZoomToTargetSphere(const FSphere& TargetSphere, const FVector& NewViewForward, const FVector& NewViewUp, bool bSnapVerticalViewToAxis = true);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class AEditModelPlayerController_CPP *Controller;
+	class AEditModelPlayerController *Controller;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UModumateViewportClient *ViewportClient;

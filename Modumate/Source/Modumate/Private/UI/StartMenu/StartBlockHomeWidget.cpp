@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/StartMenu/StartBlockHomeWidget.h"
-#include "UnrealClasses/MainMenuGameMode_CPP.h"
+#include "UnrealClasses/MainMenuGameMode.h"
 #include "Components/WrapBox.h"
 #include "UI/StartMenu/StartBlockProjectCardWidget.h"
 #include "UI/StartMenu/StartBlockNewProjectCardWidget.h"
@@ -17,7 +17,7 @@ bool UStartBlockHomeWidget::Initialize()
 	{
 		return false;
 	}
-	MainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode_CPP>();
+	MainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode>();
 
 	return true;
 }

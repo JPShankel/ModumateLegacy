@@ -8,10 +8,10 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
 #include "UnrealClasses/DynamicMeshActor.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 
 FMOITrimData::FMOITrimData()
@@ -66,7 +66,7 @@ FVector AMOITrim::GetNormal() const
 	return TrimUp;
 }
 
-void AMOITrim::SetupAdjustmentHandles(AEditModelPlayerController_CPP* Controller)
+void AMOITrim::SetupAdjustmentHandles(AEditModelPlayerController* Controller)
 {
 	MakeHandle<AAdjustInvertHandle>();
 }

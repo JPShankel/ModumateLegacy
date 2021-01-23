@@ -4,7 +4,7 @@
 #include "ModumateCore/ModumateUnits.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 #define LOCTEXT_NAMESPACE "UDimensionWidget"
 
@@ -173,7 +173,7 @@ void UDimensionWidget::OnWidgetRebuilt()
 {
 	Super::OnWidgetRebuilt();
 
-	auto controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	auto controller = GetOwningPlayer<AEditModelPlayerController>();
 	auto playerHUD = controller ? controller->GetEditModelHUD() : nullptr;
 	if (playerHUD)
 	{

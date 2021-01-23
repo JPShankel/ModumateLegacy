@@ -5,7 +5,7 @@
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "ModumateCore/ModumateBrowserStatics.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/RightMenu/ViewMenuWidget.h"
@@ -55,7 +55,7 @@ void UComponentSavedViewListItem::NativeOnMouseLeave(const FPointerEvent& InMous
 void UComponentSavedViewListItem::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 }
 
 void UComponentSavedViewListItem::OnButtonEditReleased()

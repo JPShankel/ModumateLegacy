@@ -109,7 +109,7 @@ public:
 	float SlotListItemHeight = 18.f;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *Controller;
+	class AEditModelPlayerController *Controller;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UScaleBox *ScaleBoxForNodes;

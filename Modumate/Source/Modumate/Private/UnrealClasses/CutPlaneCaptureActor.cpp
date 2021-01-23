@@ -2,7 +2,7 @@
 
 #include "Components/SceneCaptureComponent2D.h"
 #include "Drafting/DraftingManager.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "DocumentManagement/ModumateSceneCaptureObjectInterface.h"
 #include "ModumateCore/ModumateUserSettings.h"
@@ -64,6 +64,6 @@ void ACutPlaneCaptureActor::ResetHiddenActorsToDefault()
 {
 	CaptureComponent->HiddenActors.Reset();
 
-	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
+	AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
 	CaptureComponent->HiddenActors.Add(gameMode->Axes);
 }

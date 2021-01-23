@@ -7,7 +7,7 @@
 #include "Online/ModumateAccountManager.h"
 #include "Online/ModumateCloudConnection.h"
 #include "Misc/FileHelper.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "Objects/CutPlane.h"
 
 namespace Modumate
@@ -41,7 +41,7 @@ namespace Modumate
 			}
 		}
 
-		AEditModelGameState_CPP *gameState = World->GetGameState<AEditModelGameState_CPP>();
+		AEditModelGameState *gameState = World->GetGameState<AEditModelGameState>();
 		UModumateDocument* document = gameState->Document;
 
 		if (document->GetObjectById(CutPlaneID) != nullptr)

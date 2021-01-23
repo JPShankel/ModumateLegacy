@@ -4,7 +4,7 @@
 
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/BIM/BIMDesigner.h"
 #include "DocumentManagement/ModumateDocument.h"
@@ -42,7 +42,7 @@ void UBIMScopeWarning::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 }
 
 void UBIMScopeWarning::ConfirmScopeWarning()

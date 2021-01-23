@@ -1,8 +1,8 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/SelectionTray/SelectionTrayBlockPresetList.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "UI/ComponentAssemblyListItem.h"
 #include "Database/ModumateObjectEnums.h"
@@ -22,7 +22,7 @@ bool USelectionTrayBlockPresetList::Initialize()
 		return false;
 	}
 
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 
 	return true;
 }

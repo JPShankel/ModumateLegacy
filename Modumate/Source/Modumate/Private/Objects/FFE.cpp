@@ -8,15 +8,15 @@
 #include "ToolsAndAdjustments/Handles/AdjustFFEPointHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustFFERotateHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustFFEInvertHandle.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "BIMKernel/Core/BIMProperties.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"
+#include "UnrealClasses/ModumateObjectInstanceParts.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
-class AEditModelPlayerController_CPP;
+class AEditModelPlayerController;
 
 AMOIFFE::AMOIFFE()
 	: AModumateObjectInstance()
@@ -50,7 +50,7 @@ FQuat AMOIFFE::GetRotation() const
 	return CachedRotation;
 }
 
-void AMOIFFE::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+void AMOIFFE::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 {
 	for (int32 i = 0; i < 4; ++i)
 	{

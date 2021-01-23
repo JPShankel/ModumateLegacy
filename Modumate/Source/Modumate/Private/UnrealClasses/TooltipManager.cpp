@@ -7,8 +7,8 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/StartMenu/StartRootMenuWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/MainMenuController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/MainMenuController.h"
 #include "UI/Custom/TooltipWidget.h"
 
 
@@ -97,7 +97,7 @@ class UWidget* UTooltipManager::GenerateTooltipNonInputWidget(const FName& Toolt
 class UWidget* UTooltipManager::GenerateTooltipWithInputWidget(EInputCommand InputCommand, const class UWidget* FromWidget)
 {
 	// Since input command requires input component, the EditModelController is needed
-	AEditModelPlayerController_CPP* controller = FromWidget->GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = FromWidget->GetOwningPlayer<AEditModelPlayerController>();
 	if (!controller)
 	{
 		return nullptr;

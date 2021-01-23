@@ -8,7 +8,7 @@
 #include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/DimensionWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/LineActor.h"
 
 AGraphDimensionActor::AGraphDimensionActor(const FObjectInitializer& ObjectInitializer)

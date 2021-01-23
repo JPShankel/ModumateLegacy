@@ -2,7 +2,7 @@
 
 #include "UI/Custom/NCPNavigatorButton.h"
 #include "UI/Custom/ModumateButton.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/Custom/ModumateTextBlock.h"
 #include "UI/BIM/BIMBlockNCPSwitcher.h"
@@ -43,7 +43,7 @@ void UNCPNavigatorButton::NativeConstruct()
 
 void UNCPNavigatorButton::OnButtonPress()
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller->EditModelUserWidget->BIMPresetSwap->NCPSwitcher)
 	{
 		FBIMTagPath newNCP = ButtonNCP;

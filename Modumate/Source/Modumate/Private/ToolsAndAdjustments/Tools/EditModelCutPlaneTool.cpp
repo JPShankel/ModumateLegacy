@@ -7,10 +7,10 @@
 #include "Objects/CutPlane.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "UI/EditModelUserWidget.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 using namespace Modumate;
 
@@ -18,7 +18,7 @@ UCutPlaneTool::UCutPlaneTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
-	GameMode = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+	GameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
 }
 
 bool UCutPlaneTool::Activate()
@@ -119,7 +119,7 @@ bool UCutPlaneTool::EnterNextStage()
 		return false;
 	}
 
-	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 
 	FBox bounds = doc->CalculateProjectBounds().GetBox();

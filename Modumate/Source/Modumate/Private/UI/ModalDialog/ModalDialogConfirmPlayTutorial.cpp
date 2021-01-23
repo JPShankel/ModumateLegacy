@@ -5,7 +5,7 @@
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "ModumateCore/ModumateUserSettings.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 
 
@@ -41,7 +41,7 @@ void UModalDialogConfirmPlayTutorial::OnReleaseButtonOpenProject()
 	SetVisibility(ESlateVisibility::Collapsed);
 
 	// Open tutorial map
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller && controller->CheckSaveModel())
 	{
 		FPlatformProcess::LaunchURL(*CurrentVideoLink, nullptr, nullptr);

@@ -14,7 +14,7 @@
 #include "Modules/ModuleManager.h"
 #include "ModumateCore/ModumateThumbnailHelpers.h"
 #include "ModumateCore/ModumateUserSettings.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
 

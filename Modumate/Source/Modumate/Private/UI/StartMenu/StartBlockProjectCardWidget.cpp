@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/StartMenu/StartBlockProjectCardWidget.h"
-#include "UnrealClasses/MainMenuGameMode_CPP.h"
+#include "UnrealClasses/MainMenuGameMode.h"
 #include "Components/Image.h"
 #include "UI/Custom/ModumateTextBlock.h"
 #include "UI/Custom/ModumateButton.h"
@@ -18,7 +18,7 @@ bool UStartBlockProjectCardWidget::Initialize()
 	{
 		return false;
 	}
-	MainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode_CPP>();
+	MainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode>();
 	if (!ModumateButtonProjectCard)
 	{
 		return false;

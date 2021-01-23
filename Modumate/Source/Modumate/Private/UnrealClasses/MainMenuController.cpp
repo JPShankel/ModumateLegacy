@@ -1,9 +1,9 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "UnrealClasses/MainMenuController_CPP.h"
+#include "UnrealClasses/MainMenuController.h"
 #include "UI/StartMenu/StartRootMenuWidget.h"
 
-void AMainMenuController_CPP::BeginPlay()
+void AMainMenuController::BeginPlay()
 {
 	Super::BeginPlay();
 

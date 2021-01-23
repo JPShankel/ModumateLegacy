@@ -10,7 +10,7 @@
 #include "Drafting/ModumateDraftingElements.h"
 #include "Algo/Accumulate.h"
 
-class AEditModelPlayerController_CPP;
+class AEditModelPlayerController;
 
 AMOIStaircase::AMOIStaircase()
 	: AModumateObjectInstance()
@@ -302,7 +302,7 @@ void AMOIStaircase::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposit
 	}
 }
 
-void AMOIStaircase::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+void AMOIStaircase::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 {
 	AModumateObjectInstance *parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))

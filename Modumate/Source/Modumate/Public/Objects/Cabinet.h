@@ -27,7 +27,7 @@ struct MODUMATE_API FMOICabinetData
 	bool bFrontFaceLateralInverted = false;
 };
 
-class AEditModelPlayerController_CPP;
+class AEditModelPlayerController;
 
 class AModumateObjectInstance;
 
@@ -45,8 +45,8 @@ public:
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupDynamicGeometry() override;
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
-	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow);
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
+	virtual void ShowAdjustmentHandles(AEditModelPlayerController *Controller, bool bShow);
 	virtual bool OnSelected(bool bIsSelected) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;

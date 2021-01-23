@@ -2,9 +2,9 @@
 
 #include "UI/ComponentAssemblyListItem.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UI/Custom/ModumateButton.h"
 #include "Components/VerticalBox.h"
@@ -16,7 +16,7 @@
 #include "UI/SelectionTray/SelectionTrayWidget.h"
 #include "UI/BIM/BIMDesigner.h"
 #include "Objects/ModumateObjectInstance.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "Components/Image.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "Database/ModumateObjectEnums.h"
@@ -199,7 +199,7 @@ void UComponentAssemblyListItem::OnButtonConfirmReleased()
 		}
 		break;
 	case EComponentListItemType::SwapListItem:
-		UModumateDocument* doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+		UModumateDocument* doc = GetWorld()->GetGameState<AEditModelGameState>()->Document;
 		const FBIMAssemblySpec *assembly = doc->GetPresetCollection().GetAssemblyByGUID(ToolMode, BIMKey);
 		if (assembly)
 		{
@@ -227,7 +227,7 @@ bool UComponentAssemblyListItem::GetItemTips(TArray<FString> &OutTips)
 		return false;
 	}
 
-	UModumateDocument* doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+	UModumateDocument* doc = GetWorld()->GetGameState<AEditModelGameState>()->Document;
 	const FBIMAssemblySpec *assembly = doc->GetPresetCollection().GetAssemblyByGUID(ToolMode, BIMKey);
 	if (!assembly)
 	{
@@ -286,8 +286,8 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 	ToolMode = compListObj->Mode;
 	SwapScope = compListObj->SwapScope;
 	SwapNameType = compListObj->SwapNameType;
-	EMPlayerController = GetOwningPlayer<AEditModelPlayerController_CPP>();
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	EMPlayerController = GetOwningPlayer<AEditModelPlayerController>();
+	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	
 	// Find the preset for this list item. Note some item types do not require preset
 	const FBIMPresetInstance* preset = gameState->Document->GetPresetCollection().PresetFromGUID(BIMKey);

@@ -27,7 +27,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP* Controller;
+	class AEditModelPlayerController* Controller;
 
 	FName OwnerNodeID;
 	FVector2D DropdownOffset = FVector2D::ZeroVector;

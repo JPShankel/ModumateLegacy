@@ -19,12 +19,12 @@ public:
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
 	virtual bool ShowStructureOnSelection() const override;
 	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 
 	virtual bool OnSelected(bool bIsSelected) override;
-	virtual bool OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
+	virtual bool OnHovered(AEditModelPlayerController *controller, bool bIsHovered) override;
 	virtual void PostCreateObject(bool bNewObject) override;
 
 protected:

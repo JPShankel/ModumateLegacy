@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "EditModelToggleGravityPawn_CPP.generated.h"
+#include "EditModelToggleGravityPawn.generated.h"
 
 UCLASS()
-class MODUMATE_API AEditModelToggleGravityPawn_CPP : public ACharacter
+class MODUMATE_API AEditModelToggleGravityPawn : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this pawn's properties
-	AEditModelToggleGravityPawn_CPP();
+	AEditModelToggleGravityPawn();
 
 protected:
 	// Called when the game starts or when spawned

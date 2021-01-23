@@ -7,10 +7,10 @@
 #include "Objects/Portal.h"
 #include "DrawDebugHelpers.h"
 #include "UnrealClasses/DynamicMeshActor.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "Engine/Engine.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/UserInterfaceSettings.h"
@@ -380,9 +380,9 @@ float UModumateFunctionLibrary::GetViewportDPIScale()
 	return GetDefault<UUserInterfaceSettings>(UUserInterfaceSettings::StaticClass())->GetDPIScaleBasedOnSize(FIntPoint(X, Y));
 }
 
-FBoxSphereBounds UModumateFunctionLibrary::GetSelectedExtents(const AEditModelPlayerController_CPP * Controller)
+FBoxSphereBounds UModumateFunctionLibrary::GetSelectedExtents(const AEditModelPlayerController * Controller)
 {
-	AEditModelPlayerState_CPP *playerState = Controller->EMPlayerState;
+	AEditModelPlayerState *playerState = Controller->EMPlayerState;
 
 	TArray<FVector> selectedMOIPoints;
 	TArray<FStructurePoint> curMOIPoints;
@@ -422,7 +422,7 @@ void UModumateFunctionLibrary::DocAddHideMoiActors(const TArray<AActor*> Actors)
 {
 	if (Actors.Num() > 0)
 	{
-		AEditModelGameState_CPP *gameState = Actors[0]->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		AEditModelGameState *gameState = Actors[0]->GetWorld()->GetGameState<AEditModelGameState>();
 		UModumateDocument* doc = gameState->Document;
 
 		// First, find all descendents of the selected actor objects
@@ -471,7 +471,7 @@ void UModumateFunctionLibrary::DocUnHideAllMoiActors(const AActor* Owner)
 {
 	if (Owner != nullptr)
 	{
-		AEditModelGameState_CPP *gameState = Owner->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		AEditModelGameState *gameState = Owner->GetWorld()->GetGameState<AEditModelGameState>();
 		UModumateDocument* doc = gameState->Document;
 		doc->UnhideAllObjects(Owner->GetWorld());
 	}
@@ -481,7 +481,7 @@ FGuid UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& 
 {
 	if (TargetActor != nullptr)
 	{
-		AEditModelGameState_CPP *gameState = TargetActor->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		AEditModelGameState *gameState = TargetActor->GetWorld()->GetGameState<AEditModelGameState>();
 		UModumateDocument* doc = gameState->Document;
 		AModumateObjectInstance *moi = doc->ObjectFromActor(TargetActor);
 		

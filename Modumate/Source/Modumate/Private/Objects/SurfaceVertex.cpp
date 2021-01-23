@@ -7,8 +7,8 @@
 #include "Graph/Graph2D.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/VertexActor.h"
 
 AMOISurfaceVertex::AMOISurfaceVertex()

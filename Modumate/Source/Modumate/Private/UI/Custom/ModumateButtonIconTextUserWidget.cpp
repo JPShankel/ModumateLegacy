@@ -6,7 +6,7 @@
 #include "UI/Custom//ModumateTextBlock.h"
 #include "UnrealClasses/TooltipManager.h"
 #include "UI/Custom/ModumateButton.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 UModumateButtonIconTextUserWidget::UModumateButtonIconTextUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -44,7 +44,7 @@ void UModumateButtonIconTextUserWidget::NativeConstruct()
 
 void UModumateButtonIconTextUserWidget::OnButtonPress()
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller && InputCommand != EInputCommand::None)
 	{
 		controller->InputHandlerComponent->TryCommand(InputCommand);

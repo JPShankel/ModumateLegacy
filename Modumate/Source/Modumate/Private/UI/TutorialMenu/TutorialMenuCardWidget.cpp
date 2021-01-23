@@ -8,8 +8,8 @@
 #include "Components/Image.h"
 #include "UI/TutorialMenu/TutorialMenuWidget.h"
 #include "UI/ModalDialog/ModalDialogConfirmPlayTutorial.h"
-#include "UnrealClasses/MainMenuGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/MainMenuGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 UTutorialMenuCardWidget::UTutorialMenuCardWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -42,14 +42,14 @@ void UTutorialMenuCardWidget::NativeConstruct()
 void UTutorialMenuCardWidget::OnReleaseButtonTutorialProject()
 {
 	// If this is opened in the main app, use EMPlayerController
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller)
 	{
 		ParentTutorialMenu->ModalDialogConfirmPlayTutorialBP->BuildModalDialog(ProjectFilePath, VideoLink);
 	}
 	else // else this is from the main menu
 	{
-		AMainMenuGameMode_CPP* mainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode_CPP>();
+		AMainMenuGameMode* mainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode>();
 		if (mainMenuGameMode)
 		{
 			FPlatformProcess::LaunchURL(*VideoLink, nullptr, nullptr);

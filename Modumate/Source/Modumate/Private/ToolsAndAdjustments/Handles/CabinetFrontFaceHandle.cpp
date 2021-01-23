@@ -7,7 +7,7 @@
 #include "Objects/Cabinet.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/EditModelPlayerHUD.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
 
 
 const float ACabinetFrontFaceHandle::BaseCenterOffset = 5.0f;

@@ -5,7 +5,7 @@
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "Components/WidgetSwitcher.h"
 #include "UI/EditModelUserWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/BIM/BIMDesigner.h"
 
 
@@ -58,7 +58,7 @@ void USelectionTrayWidget::CloseToolTray()
 	SetVisibility(ESlateVisibility::Collapsed);
 	SelectionTrayBlockPresetList->ClearPresetList();
 
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller && controller->EditModelUserWidget->BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
 	{
 		controller->EditModelUserWidget->ToggleBIMDesigner(false);

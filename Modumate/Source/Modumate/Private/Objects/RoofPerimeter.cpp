@@ -10,9 +10,9 @@
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "ToolsAndAdjustments/Handles/RoofPerimeterHandles.h"
 #include "UI/RoofPerimeterPropertiesWidget.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 
 AMOIRoofPerimeter::AMOIRoofPerimeter()
@@ -55,7 +55,7 @@ void AMOIRoofPerimeter::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollision
 	bOutVisible = bOutCollisionEnabled = false;
 }
 
-void AMOIRoofPerimeter::SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller)
+void AMOIRoofPerimeter::SetupAdjustmentHandles(AEditModelPlayerController *Controller)
 {
 	if (CreateFacesHandle.IsValid())
 	{
@@ -77,7 +77,7 @@ void AMOIRoofPerimeter::SetupAdjustmentHandles(AEditModelPlayerController_CPP *C
 	}
 }
 
-void AMOIRoofPerimeter::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
+void AMOIRoofPerimeter::ShowAdjustmentHandles(AEditModelPlayerController *Controller, bool bShow)
 {
 	AModumateObjectInstance::ShowAdjustmentHandles(Controller, bShow);
 
@@ -282,7 +282,7 @@ bool AMOIRoofPerimeter::UpdateConnectedIDs()
 	}
 
 	// Update the handles regardless; this is the last opportunity to toggle visibility between face creation / retraction handles, etc.
-	auto playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	auto playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 	ShowAdjustmentHandles(playerController, bAdjustmentHandlesVisible);
 
 	PrevCachedEdgeIDs = CachedEdgeIDs;

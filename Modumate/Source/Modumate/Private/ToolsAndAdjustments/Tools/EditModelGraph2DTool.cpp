@@ -5,9 +5,9 @@
 #include "Graph/Graph2D.h"
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateObjectStatics.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 using namespace Modumate;
 
@@ -21,7 +21,7 @@ bool UGraph2DTool::Activate()
 {
 	Super::Activate();
 
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	const FGraph3D &volumeGraph = gameState->Document->GetVolumeGraph();
 
 	TSet<int32> graphObjIDs, connectedGraphIDs;

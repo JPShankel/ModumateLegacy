@@ -4,9 +4,9 @@
 
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UI/HUDDrawWidget.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 AMOIScopeBox::AMOIScopeBox()
 	: AModumateObjectInstance()
@@ -22,7 +22,7 @@ AMOIScopeBox::AMOIScopeBox()
 AActor* AMOIScopeBox::CreateActor(const FVector &loc, const FQuat &rot)
 {
 	AActor* returnActor = Super::CreateActor(loc, rot);
-	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 	auto playerState = controller ? controller->EMPlayerState : nullptr;
 	if (playerState)
 	{
@@ -33,7 +33,7 @@ AActor* AMOIScopeBox::CreateActor(const FVector &loc, const FQuat &rot)
 
 void AMOIScopeBox::PreDestroy()
 {
-	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 	auto playerState = controller ? controller->EMPlayerState : nullptr;
 	if (playerState)
 	{
@@ -45,7 +45,7 @@ void AMOIScopeBox::SetupDynamicGeometry()
 {
 	// TODO: generate plane points and extrusion from extents and transform, rather than old-school control points
 #if 0
-	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
+	AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
 	MaterialData.EngineMaterial = gameMode ? gameMode->ScopeBoxMaterial : nullptr;
 
 	float thickness = GetExtents().Y;
@@ -135,7 +135,7 @@ bool AMOIScopeBox::ShowStructureOnSelection() const
 	return false;
 }
 
-void AMOIScopeBox::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+void AMOIScopeBox::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 {
 	for (int32 i = 0; i < 4; ++i)
 	{

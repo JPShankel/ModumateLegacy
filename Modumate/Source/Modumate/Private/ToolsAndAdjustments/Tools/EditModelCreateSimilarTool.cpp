@@ -2,9 +2,9 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelCreateSimilarTool.h"
 
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 #include "DocumentManagement/ModumateCommands.h"
 

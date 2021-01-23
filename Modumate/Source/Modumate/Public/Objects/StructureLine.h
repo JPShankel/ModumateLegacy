@@ -9,7 +9,7 @@
 
 #include "StructureLine.generated.h"
 
-class AEditModelPlayerController_CPP;
+class AEditModelPlayerController;
 class ADynamicMeshActor;
 class AModumateObjectInstance;
 

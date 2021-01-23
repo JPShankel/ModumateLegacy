@@ -2,8 +2,8 @@
 
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "UI/ComponentAssemblyListItem.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UI/EditModelUserWidget.h"
@@ -53,8 +53,8 @@ void UToolTrayBlockAssembliesList::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
-	GameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
+	GameState = GetWorld()->GetGameState<AEditModelGameState>();
 }
 
 void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()

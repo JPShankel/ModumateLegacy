@@ -7,7 +7,7 @@
 #include "UI/EditModelPlayerHUD.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/HorizontalBoxSlot.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 #define LOCTEXT_NAMESPACE "UTooltipWidget"
 
@@ -39,7 +39,7 @@ void UTooltipWidget::BuildPrimaryTooltip(const FTooltipData& InData)
 
 	// Primary tooltips with inputs should only exist during edit model
 	// If main menu needs primary tooltips with inputs, use StartRootMenuWidget for UserWidgetPool
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (!controller)
 	{
 		return;

@@ -5,7 +5,7 @@
 #include "Components/Button.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UI/EditModelPlayerHUD.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "Widgets/SWidget.h"
 
 
@@ -85,7 +85,7 @@ void UAdjustmentHandleWidget::OnWidgetRebuilt()
 {
 	Super::OnWidgetRebuilt();
 
-	auto controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	auto controller = GetOwningPlayer<AEditModelPlayerController>();
 	auto playerHUD = controller ? controller->GetEditModelHUD() : nullptr;
 	if (playerHUD)
 	{
@@ -100,7 +100,7 @@ void UAdjustmentHandleWidget::OnHoverChanged(bool bNewHovered)
 	{
 		bIsButtonHovered = bNewHovered;
 
-		auto *controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+		auto *controller = GetOwningPlayer<AEditModelPlayerController>();
 		if (controller)
 		{
 			controller->OnHoverHandleWidget(this, bNewHovered);
@@ -112,7 +112,7 @@ void UAdjustmentHandleWidget::OnHoverChanged(bool bNewHovered)
 
 void UAdjustmentHandleWidget::OnPressed()
 {
-	auto *controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	auto *controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller)
 	{
 		controller->OnPressHandleWidget(this, true);

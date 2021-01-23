@@ -3,7 +3,7 @@
 #include "UI/StartMenu/StartBlockNewProjectCardWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "Kismet/GameplayStatics.h"
-#include "UnrealClasses/MainMenuController_CPP.h"
+#include "UnrealClasses/MainMenuController.h"
 #include "UI/StartMenu/StartRootMenuWidget.h"
 
 UStartBlockNewProjectCardWidget::UStartBlockNewProjectCardWidget(const FObjectInitializer& ObjectInitializer)
@@ -33,7 +33,7 @@ void UStartBlockNewProjectCardWidget::NativeConstruct()
 
 void UStartBlockNewProjectCardWidget::OnButtonReleasedNewProject()
 {
-	AMainMenuController_CPP* controller = GetOwningPlayer<AMainMenuController_CPP>();
+	AMainMenuController* controller = GetOwningPlayer<AMainMenuController>();
 	if (controller && controller->StartRootMenuWidget)
 	{
 		UGameplayStatics::OpenLevel(this, controller->StartRootMenuWidget->NewLevelName, true);

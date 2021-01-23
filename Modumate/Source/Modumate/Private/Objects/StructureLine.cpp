@@ -9,9 +9,9 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UnrealClasses/DynamicMeshActor.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 AMOIStructureLine::AMOIStructureLine()
 	: AModumateObjectInstance()

@@ -8,7 +8,7 @@
 #include "UI/Custom/ModumateButton.h"
 #include "UI/Custom/ModumateCheckBox.h"
 #include "UI/EditModelUserWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
 #include "UI/RightMenu/CutPlaneMenuBlockExport.h"
 
@@ -41,7 +41,7 @@ void UCutPlaneExportListItem::NativeConstruct()
 
 void UCutPlaneExportListItem::OnButtonMainReleased()
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller && controller->EditModelUserWidget)
 	{
 		bool newExportState = CheckBoxExport->GetCheckedState() != ECheckBoxState::Checked;

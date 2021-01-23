@@ -10,8 +10,8 @@
 #include "UI/DimensionActor.h"
 #include "UI/DimensionManager.h"
 #include "UI/EditModelPlayerHUD.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 

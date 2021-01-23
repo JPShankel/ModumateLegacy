@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/ComponentPresetListItem.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "Components/Image.h"
 
@@ -26,7 +26,7 @@ void UComponentPresetListItem::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerController_CPP* Controller, const FGuid& InGUID)
+bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerController* Controller, const FGuid& InGUID)
 {
 	if (!(Controller && IconImage))
 	{
@@ -41,7 +41,7 @@ bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerCo
 	return result;
 }
 
-bool UComponentPresetListItem::CaptureIconForBIMDesignerSwap(class AEditModelPlayerController_CPP* Controller, const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID)
+bool UComponentPresetListItem::CaptureIconForBIMDesignerSwap(class AEditModelPlayerController* Controller, const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID)
 {
 	if (!(Controller && IconImage))
 	{

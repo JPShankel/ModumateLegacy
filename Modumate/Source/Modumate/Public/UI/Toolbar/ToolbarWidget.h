@@ -27,7 +27,7 @@ protected:
 public:
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *Controller;
+	class AEditModelPlayerController *Controller;
 
 	UPROPERTY()
 	class UEditModelUserWidget *EditModelUserWidget;

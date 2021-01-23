@@ -5,14 +5,14 @@
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Components/CheckBox.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/TooltipManager.h"
 #include "Objects/CutPlane.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/EditModelUserWidget.h"
 
 
@@ -51,7 +51,7 @@ void UCutPlaneDimListItem::OnButtonMainReleased()
 
 void UCutPlaneDimListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
 {
-	AEditModelGameState_CPP *gameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
+	AEditModelGameState *gameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
 	if (gameState)
 	{
 		TArray<int32> objIDs = { ObjID };
@@ -78,7 +78,7 @@ void UCutPlaneDimListItem::OnEditableTitleCommitted(const FText& Text, ETextComm
 
 	// TODO: Detect if new name already exist
 
-	AEditModelGameState_CPP *gameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
+	AEditModelGameState *gameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
 	if (gameState)
 	{
 		AModumateObjectInstance* moi = gameState->Document->GetObjectById(ObjID);

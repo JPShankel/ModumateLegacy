@@ -4,9 +4,9 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/AdjustmentHandleAssetData.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 using namespace Modumate;
 

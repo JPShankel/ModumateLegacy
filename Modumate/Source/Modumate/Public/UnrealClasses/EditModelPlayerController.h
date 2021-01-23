@@ -10,14 +10,14 @@
 #include "Database/ModumateObjectEnums.h"
 #include "Math/Sphere.h"
 
-#include "EditModelPlayerController_CPP.generated.h"
+#include "EditModelPlayerController.generated.h"
 
 /**
  *
  */
 
 class AAdjustmentHandleActor;
-class AEditModelPlayerState_CPP;
+class AEditModelPlayerState;
 class UEditModelCameraController;
 class UEditModelInputAutomation;
 class UEditModelInputHandler;
@@ -40,12 +40,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolCreateObjectModeChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolAssemblyChanged);
 
 UCLASS(Config=Game)
-class MODUMATE_API AEditModelPlayerController_CPP : public APlayerController
+class MODUMATE_API AEditModelPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-	AEditModelPlayerController_CPP();
-	virtual ~AEditModelPlayerController_CPP();
+	AEditModelPlayerController();
+	virtual ~AEditModelPlayerController();
 	virtual void PostInitializeComponents() override;
 
 private:
@@ -162,13 +162,13 @@ public:
 	FMouseWorldHitType GetSimulatedStructureHit(const FVector& HitTarget) const;
 
 	UPROPERTY()
-	AEditModelPlayerState_CPP *EMPlayerState;
+	AEditModelPlayerState *EMPlayerState;
 
 	UPROPERTY()
-	class AEditModelPlayerPawn_CPP *EMPlayerPawn;
+	class AEditModelPlayerPawn *EMPlayerPawn;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pawn)
-	class AEditModelToggleGravityPawn_CPP *EMToggleGravityPawn;
+	class AEditModelToggleGravityPawn *EMToggleGravityPawn;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class ASkyActor *SkyActor;

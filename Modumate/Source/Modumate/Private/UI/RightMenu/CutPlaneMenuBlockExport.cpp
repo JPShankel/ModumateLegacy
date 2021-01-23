@@ -13,8 +13,8 @@
 #include "UI/RightMenu/CutPlaneDimListItemObject.h"
 #include "UI/RightMenu/CutPlaneMenuBlock.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 #define LOCTEXT_NAMESPACE "ModumateCutPlane"
 
@@ -45,7 +45,7 @@ bool UCutPlaneMenuBlockExport::Initialize()
 void UCutPlaneMenuBlockExport::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 }
 
 void UCutPlaneMenuBlockExport::OnCheckBoxHorizontalChanged(bool IsChecked)
@@ -70,7 +70,7 @@ void UCutPlaneMenuBlockExport::OnCheckBoxAllChanged(bool IsChecked)
 
 void UCutPlaneMenuBlockExport::OnButtonExportReleased()
 {
-	AEditModelGameState_CPP* gameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
+	AEditModelGameState* gameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
 	if (!gameState)
 	{
 		return;
@@ -269,7 +269,7 @@ void UCutPlaneMenuBlockExport::UpdateCutPlaneExportable(const TArray<int32>& IDs
 
 void UCutPlaneMenuBlockExport::UpdateCutPlaneExportableByType(ECutPlaneType Type, bool NewExportable)
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller && controller->EditModelUserWidget)
 	{
 		TArray<int32> idsToChange;

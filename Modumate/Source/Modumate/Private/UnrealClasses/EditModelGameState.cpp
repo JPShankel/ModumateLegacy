@@ -1,8 +1,8 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
 
-void AEditModelGameState_CPP::InitDocument()
+void AEditModelGameState::InitDocument()
 {
 	if (ensure(Document == nullptr))
 	{

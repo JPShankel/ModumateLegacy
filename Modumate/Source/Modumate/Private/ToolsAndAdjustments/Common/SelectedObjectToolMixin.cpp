@@ -3,13 +3,13 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 using namespace Modumate;
 
 const FName FSelectedObjectToolMixin::StateRequestTag(TEXT("SelectedObjectTool"));
 
-FSelectedObjectToolMixin::FSelectedObjectToolMixin(AEditModelPlayerController_CPP *InController)
+FSelectedObjectToolMixin::FSelectedObjectToolMixin(AEditModelPlayerController *InController)
 	: ControllerPtr(InController)
 {
 
@@ -24,7 +24,7 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 
 	ReleaseSelectedObjects();
 
-	AEditModelPlayerState_CPP *playerState = ControllerPtr->EMPlayerState;
+	AEditModelPlayerState *playerState = ControllerPtr->EMPlayerState;
 
 	for (auto obj : playerState->SelectedObjects)
 	{

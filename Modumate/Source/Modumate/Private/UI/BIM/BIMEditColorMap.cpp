@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/BIM/BIMEditColorMap.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/BIM/BIMEditColorPicker.h"
 #include "UI/BIM/BIMDesigner.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
@@ -21,7 +21,7 @@ bool UBIMEditColorMap::Initialize()
 		return false;
 	}
 
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 
 	return true;
 }

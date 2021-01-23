@@ -6,7 +6,7 @@
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkyLightComponent.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "SunPosition/Public/SunPosition.h"
@@ -37,7 +37,7 @@ void ASkyActor::BeginPlay()
 	UpdateComponentsWithDateTime(CurrentDateTime);
 
 	// Controller needs SkyActor for time of day changes in ViewMenu to work
-	Controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	Controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 	if (ensureAlways(Controller))
 	{
 		Controller->SkyActor = this;

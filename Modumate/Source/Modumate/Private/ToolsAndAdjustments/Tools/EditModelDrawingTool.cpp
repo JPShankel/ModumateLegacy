@@ -1,8 +1,8 @@
 #include "ToolsAndAdjustments/Tools/EditModelDrawingTool.h"
 
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 #include "UnrealClasses/LineActor.h"
 
@@ -12,7 +12,7 @@ UDrawingTool::UDrawingTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
-	GameMode = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+	GameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
 }
 
 bool UDrawingTool::Activate()

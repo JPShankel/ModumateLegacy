@@ -27,5 +27,5 @@ public:
 protected:
 
 	UPROPERTY()
-	class AEditModelGameMode_CPP* GameMode;
+	class AEditModelGameMode* GameMode;
 };

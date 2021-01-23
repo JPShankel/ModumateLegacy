@@ -20,9 +20,9 @@
 #include "UI/HUDDrawWidget.h"
 #include "UI/WidgetClassAssetData.h"
 #include "UnrealClasses/DimensionWidget.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
@@ -49,8 +49,8 @@ void AAdjustmentHandleActor::BeginPlay()
 	UWorld *world = GetWorld();
 	if (ensure(world))
 	{
-		GameState = world->GetGameState<AEditModelGameState_CPP>();
-		Controller = world->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+		GameState = world->GetGameState<AEditModelGameState>();
+		Controller = world->GetFirstPlayerController<AEditModelPlayerController>();
 		PlayerHUD = Controller->GetEditModelHUD();
 	}
 }

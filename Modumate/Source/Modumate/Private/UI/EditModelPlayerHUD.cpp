@@ -3,8 +3,8 @@
 
 #include "Components/Image.h"
 #include "UI/WidgetClassAssetData.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 
@@ -28,7 +28,7 @@ AEditModelPlayerHUD::AEditModelPlayerHUD(const FObjectInitializer& ObjectInitial
 
 void AEditModelPlayerHUD::Initialize()
 {
-	auto *controller = Cast<AEditModelPlayerController_CPP>(PlayerOwner);
+	auto *controller = Cast<AEditModelPlayerController>(PlayerOwner);
 
 	if (!ensureAlways(controller && WidgetClasses &&
 		WidgetClasses->HUDDrawWidgetClass))
@@ -49,7 +49,7 @@ void AEditModelPlayerHUD::DrawHUD()
 	Super::DrawHUD();
 }
 
-bool AEditModelPlayerHUD::StaticCameraViewScreenshot(const FVector2D &ViewportSize, AEditModelPlayerController_CPP *EMPlayerController, UImage *ImageUI)
+bool AEditModelPlayerHUD::StaticCameraViewScreenshot(const FVector2D &ViewportSize, AEditModelPlayerController *EMPlayerController, UImage *ImageUI)
 {
 	if (!EMPlayerController)
 	{

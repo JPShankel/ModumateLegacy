@@ -32,10 +32,10 @@ protected:
 	class UTextureRenderTarget2D* PreviewRT;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP* Controller;
+	class AEditModelPlayerController* Controller;
 
 	UPROPERTY()
-	class AEditModelPlayerPawn_CPP* PlayerPawn;
+	class AEditModelPlayerPawn* PlayerPawn;
 
 	int32 HoverCaptureTickCount = 0;
 	bool EnableHoverCapture = false;

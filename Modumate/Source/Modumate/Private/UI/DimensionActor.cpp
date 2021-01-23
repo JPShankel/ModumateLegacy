@@ -1,8 +1,8 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #include "UI/DimensionActor.h"
 
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/HUDDrawWidget.h"
@@ -23,7 +23,7 @@ void ADimensionActor::BeginPlay()
 	CreateWidget();
 
 	UWorld* world = GetWorld();
-	auto gameState = world ? world->GetGameState<AEditModelGameState_CPP>() : nullptr;
+	auto gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
 	Document = gameState ? gameState->Document : nullptr;
 }
 
@@ -35,7 +35,7 @@ void ADimensionActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void ADimensionActor::CreateWidget()
 {
-	TWeakObjectPtr<AEditModelPlayerController_CPP> playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	TWeakObjectPtr<AEditModelPlayerController> playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 	AEditModelPlayerHUD *playerHUD = playerController.IsValid() ? Cast<AEditModelPlayerHUD>(playerController->GetHUD()) : nullptr;
 	DimensionText = playerController->HUDDrawWidget->UserWidgetPool.GetOrCreateInstance<UDimensionWidget>(playerHUD->WidgetClasses->DimensionClass);
 
@@ -48,7 +48,7 @@ void ADimensionActor::ReleaseWidget()
 {
 	DimensionText->RemoveFromViewport();
 
-	auto playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	auto playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 	if (playerController != nullptr)
 	{
 		playerController->HUDDrawWidget->UserWidgetPool.Release(DimensionText);

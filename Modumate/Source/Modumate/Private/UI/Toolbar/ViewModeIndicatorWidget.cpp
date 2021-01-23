@@ -4,7 +4,7 @@
 #include "Components/Image.h"
 #include "UI/Custom/ModumateTextBlock.h"
 #include "UI/Custom/ModumateButton.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/TooltipManager.h"
 
 
@@ -36,7 +36,7 @@ void UViewModeIndicatorWidget::NativeConstruct()
 
 void UViewModeIndicatorWidget::OnIndicatorButtonPress()
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller)
 	{
 		controller->InputHandlerComponent->TryCommand(InputCommand);

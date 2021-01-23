@@ -12,8 +12,8 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 
 void AMOIFinish::PreDestroy()
@@ -114,7 +114,7 @@ void AMOIFinish::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints,
 	}
 }
 
-void AMOIFinish::SetupAdjustmentHandles(AEditModelPlayerController_CPP* controller)
+void AMOIFinish::SetupAdjustmentHandles(AEditModelPlayerController* controller)
 {
 	// parent handles
 	AModumateObjectInstance* parent = GetParentObject();

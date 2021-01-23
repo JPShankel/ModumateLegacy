@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/RightMenu/ViewMenuBlockSavedViews.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "ModumateCore/ModumateBrowserStatics.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
@@ -33,7 +33,7 @@ bool UViewMenuBlockSavedViews::Initialize()
 void UViewMenuBlockSavedViews::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 }
 
 void UViewMenuBlockSavedViews::OnButtonAddReleased()

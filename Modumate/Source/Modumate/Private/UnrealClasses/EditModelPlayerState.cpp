@@ -1,13 +1,13 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 #include "Database/ModumateObjectEnums.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/DimensionWidget.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/DimensionManager.h"
@@ -25,7 +25,7 @@
 
 using namespace Modumate;
 
-AEditModelPlayerState_CPP::AEditModelPlayerState_CPP()
+AEditModelPlayerState::AEditModelPlayerState()
 	: ShowDebugSnaps(false)
 	, ShowDocumentDebug(false)
 	, bShowGraphDebug(false)
@@ -40,12 +40,12 @@ AEditModelPlayerState_CPP::AEditModelPlayerState_CPP()
 	, ShowHoverEffects(false)
 {
 	//DimensionString.Visible = false;
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::AEditModelPlayerState_CPP"));
+	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::AEditModelPlayerState"));
 
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void AEditModelPlayerState_CPP::BeginPlay()
+void AEditModelPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -54,7 +54,7 @@ void AEditModelPlayerState_CPP::BeginPlay()
 	// (For example, the DebugCameraController, spawned by the CheatManager when pressing the semicolon key in non-shipping builds)
 	if (EMPlayerController == nullptr)
 	{
-		EMPlayerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+		EMPlayerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 		check(EMPlayerController);
 	}
 
@@ -63,12 +63,12 @@ void AEditModelPlayerState_CPP::BeginPlay()
 	SetViewMode(EEditViewModes::AllObjects, true);
 }
 
-void AEditModelPlayerState_CPP::Tick(float DeltaSeconds)
+void AEditModelPlayerState::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
 	if (!ensureMsgf(EMPlayerController != nullptr,
-		TEXT("AEditModelPlayerController_CPP should have initialized AEditModelPlayerState_CPP!")))
+		TEXT("AEditModelPlayerController should have initialized AEditModelPlayerState!")))
 	{
 		return;
 	}
@@ -82,13 +82,13 @@ void AEditModelPlayerState_CPP::Tick(float DeltaSeconds)
 	}
 }
 
-void AEditModelPlayerState_CPP::BatchRenderLines()
+void AEditModelPlayerState::BatchRenderLines()
 {
 	CurSelectionStructurePoints.Reset();
 	CurSelectionStructureLines.Reset();
 	CurViewGroupObjects.Reset();
 
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 
 	if (ViewGroupObject)
@@ -207,7 +207,7 @@ void AEditModelPlayerState_CPP::BatchRenderLines()
 	}
 }
 
-void AEditModelPlayerState_CPP::UpdateRenderFlags(const TSet<AModumateObjectInstance*>& ChangedObjects)
+void AEditModelPlayerState::UpdateRenderFlags(const TSet<AModumateObjectInstance*>& ChangedObjects)
 {
 	if (ChangedObjects.Num() > 0)
 	{
@@ -234,14 +234,14 @@ void AEditModelPlayerState_CPP::UpdateRenderFlags(const TSet<AModumateObjectInst
 	}
 }
 
-void AEditModelPlayerState_CPP::SetShowGraphDebug(bool bShow)
+void AEditModelPlayerState::SetShowGraphDebug(bool bShow)
 {
 	if (bShowGraphDebug != bShow)
 	{
 		bShowGraphDebug = bShow;
 
 		// TODO: replace with non-debug visibility flag for rooms; for now, just piggypack off of the room graph visibility
-		AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 		UModumateDocument* doc = gameState->Document;
 		TArray<AModumateObjectInstance *> rooms = doc->GetObjectsOfType(EObjectType::OTRoom);
 		for (AModumateObjectInstance *room : rooms)
@@ -257,18 +257,18 @@ void AEditModelPlayerState_CPP::SetShowGraphDebug(bool bShow)
 	}
 }
 
-AEditModelGameMode_CPP *AEditModelPlayerState_CPP::GetEditModelGameMode()
+AEditModelGameMode *AEditModelPlayerState::GetEditModelGameMode()
 {
-	return Cast<AEditModelGameMode_CPP>(GetWorld()->GetAuthGameMode());
+	return Cast<AEditModelGameMode>(GetWorld()->GetAuthGameMode());
 }
 
-void AEditModelPlayerState_CPP::ToggleRoomViewMode()
+void AEditModelPlayerState::ToggleRoomViewMode()
 {
 	bRoomsVisible = !bRoomsVisible;
 	UpdateObjectVisibilityAndCollision();
 }
 
-bool AEditModelPlayerState_CPP::GetSnapCursorDeltaFromRay(const FVector& RayOrigin, const FVector& RayDir, FVector& OutPosition) const
+bool AEditModelPlayerState::GetSnapCursorDeltaFromRay(const FVector& RayOrigin, const FVector& RayDir, FVector& OutPosition) const
 {
 	if (SnappedCursor.Visible)
 	{
@@ -306,12 +306,12 @@ bool AEditModelPlayerState_CPP::GetSnapCursorDeltaFromRay(const FVector& RayOrig
 	return false;
 }
 
-void AEditModelPlayerState_CPP::DebugShowWallProfiles(const TArray<AModumateObjectInstance *> &walls)
+void AEditModelPlayerState::DebugShowWallProfiles(const TArray<AModumateObjectInstance *> &walls)
 {
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::DebugShowWallProfiles"));
+	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::DebugShowWallProfiles"));
 }
 
-bool AEditModelPlayerState_CPP::ValidateSelectionsAndView()
+bool AEditModelPlayerState::ValidateSelectionsAndView()
 {
 	// TODO: revisit the necessity of this function, because it basically clears out any pointers to destroyed MOIs,
 	// which should be more consistently + correctly handled by some different pointer scheme.
@@ -321,7 +321,7 @@ bool AEditModelPlayerState_CPP::ValidateSelectionsAndView()
 	bool selectionChanged = false;
 	bool viewChanged = false;
 
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 
 	TSet<AModumateObjectInstance*> pendingDeselectObjects;
@@ -378,11 +378,11 @@ bool AEditModelPlayerState_CPP::ValidateSelectionsAndView()
 	return selectionChanged || viewChanged;
 }
 
-void AEditModelPlayerState_CPP::SelectAll()
+void AEditModelPlayerState::SelectAll()
 {
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SelectAll"));
+	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::SelectAll"));
 
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 
 	for (auto *selectedObj : SelectedObjects)
@@ -404,11 +404,11 @@ void AEditModelPlayerState_CPP::SelectAll()
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
-void AEditModelPlayerState_CPP::SelectInverse()
+void AEditModelPlayerState::SelectInverse()
 {
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SelectInverse"));
+	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::SelectInverse"));
 
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 
 	TSet<AModumateObjectInstance *> previousSelectedObjs(SelectedObjects);
@@ -433,9 +433,9 @@ void AEditModelPlayerState_CPP::SelectInverse()
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
-void AEditModelPlayerState_CPP::DeselectAll()
+void AEditModelPlayerState::DeselectAll()
 {
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::DeselectAll"));
+	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::DeselectAll"));
 
 	if (EMPlayerController->InteractionHandle)
 	{
@@ -443,7 +443,7 @@ void AEditModelPlayerState_CPP::DeselectAll()
 		EMPlayerController->InteractionHandle = nullptr;
 	}
 
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 	auto obs = doc->GetObjectInstances();
 
@@ -458,7 +458,7 @@ void AEditModelPlayerState_CPP::DeselectAll()
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
-void AEditModelPlayerState_CPP::SetActorRenderValues(AActor* actor, int32 stencilValue, bool bNeverCull)
+void AEditModelPlayerState::SetActorRenderValues(AActor* actor, int32 stencilValue, bool bNeverCull)
 {
 	USceneComponent *rootComp = actor ? actor->GetRootComponent() : nullptr;
 	if (rootComp)
@@ -481,7 +481,7 @@ void AEditModelPlayerState_CPP::SetActorRenderValues(AActor* actor, int32 stenci
 	}
 }
 
-void AEditModelPlayerState_CPP::PostSelectionChanged()
+void AEditModelPlayerState::PostSelectionChanged()
 {
 	if (!EMPlayerController || !EMPlayerController->CurrentTool)
 	{
@@ -516,7 +516,7 @@ void AEditModelPlayerState_CPP::PostSelectionChanged()
 	LastSelectedObjectSet.Append(SelectedObjects);
 }
 
-void AEditModelPlayerState_CPP::PostViewChanged()
+void AEditModelPlayerState::PostViewChanged()
 {
 	// Gather a set of objects whose render mode may have changed due to either
 	// selection, hover, or view group hierarchy
@@ -543,7 +543,7 @@ void AEditModelPlayerState_CPP::PostViewChanged()
 	allChangedObjects.Append(LastHoveredObjectSet);
 
 	// Gather all objects previously and currently having errors
-	auto* doc = GetWorld()->GetGameState<AEditModelGameState_CPP>()->Document;
+	auto* doc = GetWorld()->GetGameState<AEditModelGameState>()->Document;
 	for (auto &kvp : ObjectErrorMap)
 	{
 		if (kvp.Value.Num() > 0)
@@ -576,9 +576,9 @@ void AEditModelPlayerState_CPP::PostViewChanged()
 	FindReachableObjects(LastReachableObjectSet);
 }
 
-void AEditModelPlayerState_CPP::OnNewModel()
+void AEditModelPlayerState::OnNewModel()
 {
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::OnNewModel"));
+	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::OnNewModel"));
 	if (EMPlayerController->ToolIsInUse())
 	{
 		EMPlayerController->AbortUseTool();
@@ -608,13 +608,13 @@ void AEditModelPlayerState_CPP::OnNewModel()
 	PostOnNewModel.Broadcast();
 }
 
-void AEditModelPlayerState_CPP::SetShowHoverEffects(bool showHoverEffects)
+void AEditModelPlayerState::SetShowHoverEffects(bool showHoverEffects)
 {
 	ShowHoverEffects = showHoverEffects;
 	PostViewChanged();
 }
 
-AModumateObjectInstance *AEditModelPlayerState_CPP::GetValidHoveredObjectInView(AModumateObjectInstance *hoverTarget) const
+AModumateObjectInstance *AEditModelPlayerState::GetValidHoveredObjectInView(AModumateObjectInstance *hoverTarget) const
 {
 	AModumateObjectInstance *highestGroupUnderViewGroup = nullptr;
 	AModumateObjectInstance *nextTarget = hoverTarget;
@@ -651,9 +651,9 @@ AModumateObjectInstance *AEditModelPlayerState_CPP::GetValidHoveredObjectInView(
 	return nullptr;
 }
 
-void AEditModelPlayerState_CPP::SetHoveredObject(AModumateObjectInstance *ob)
+void AEditModelPlayerState::SetHoveredObject(AModumateObjectInstance *ob)
 {
-//	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SetHoveredObject"));
+//	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::SetHoveredObject"));
 	if (HoveredObject != ob)
 	{
 		if (HoveredObject != nullptr)
@@ -669,9 +669,9 @@ void AEditModelPlayerState_CPP::SetHoveredObject(AModumateObjectInstance *ob)
 	}
 }
 
-void AEditModelPlayerState_CPP::SetObjectSelected(AModumateObjectInstance *ob, bool selected)
+void AEditModelPlayerState::SetObjectSelected(AModumateObjectInstance *ob, bool selected)
 {
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::SetObjectSelected"));
+	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::SetObjectSelected"));
 
 	if (selected)
 	{
@@ -688,13 +688,13 @@ void AEditModelPlayerState_CPP::SetObjectSelected(AModumateObjectInstance *ob, b
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
-void AEditModelPlayerState_CPP::SetViewGroupObject(AModumateObjectInstance *ob)
+void AEditModelPlayerState::SetViewGroupObject(AModumateObjectInstance *ob)
 {
 	ViewGroupObject = ob;
 	PostViewChanged();
 }
 
-bool AEditModelPlayerState_CPP::IsObjectInCurViewGroup(AModumateObjectInstance *obj) const
+bool AEditModelPlayerState::IsObjectInCurViewGroup(AModumateObjectInstance *obj) const
 {
 	if (ViewGroupObject)
 	{
@@ -704,7 +704,7 @@ bool AEditModelPlayerState_CPP::IsObjectInCurViewGroup(AModumateObjectInstance *
 	return true;
 }
 
-AModumateObjectInstance *AEditModelPlayerState_CPP::FindHighestParentGroupInViewGroup(AModumateObjectInstance *obj) const
+AModumateObjectInstance *AEditModelPlayerState::FindHighestParentGroupInViewGroup(AModumateObjectInstance *obj) const
 {
 	if (!IsObjectInCurViewGroup(obj))
 	{
@@ -726,11 +726,11 @@ AModumateObjectInstance *AEditModelPlayerState_CPP::FindHighestParentGroupInView
 	return highestGroup;
 }
 
-void AEditModelPlayerState_CPP::FindReachableObjects(TSet<AModumateObjectInstance*> &reachableObjs) const
+void AEditModelPlayerState::FindReachableObjects(TSet<AModumateObjectInstance*> &reachableObjs) const
 {
 	reachableObjs.Reset();
 
-	auto *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	auto *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	auto* doc = gameState->Document;
 	const auto &allObjects = doc->GetObjectInstances();
 	int32 viewGroupObjID = ViewGroupObject ? ViewGroupObject->ID : 0;
@@ -767,14 +767,14 @@ void AEditModelPlayerState_CPP::FindReachableObjects(TSet<AModumateObjectInstanc
 	}
 }
 
-bool AEditModelPlayerState_CPP::IsObjectReachableInView(AModumateObjectInstance* obj) const
+bool AEditModelPlayerState::IsObjectReachableInView(AModumateObjectInstance* obj) const
 {
 	return LastReachableObjectSet.Contains(obj);
 }
 
-void AEditModelPlayerState_CPP::GetSelectorModumateObjects(TArray<AActor*>& ModumateObjects)
+void AEditModelPlayerState::GetSelectorModumateObjects(TArray<AActor*>& ModumateObjects)
 {
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::GetSelectorModumateObjects"));
+	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::GetSelectorModumateObjects"));
 	TArray<AActor*> objectRefs;
 	for (AModumateObjectInstance*& curObjectRef : SelectedObjects)
 	{
@@ -786,17 +786,17 @@ void AEditModelPlayerState_CPP::GetSelectorModumateObjects(TArray<AActor*>& Modu
 	ModumateObjects = objectRefs;
 }
 
-AActor* AEditModelPlayerState_CPP::GetViewGroupObject() const
+AActor* AEditModelPlayerState::GetViewGroupObject() const
 {
 	return ViewGroupObject ? ViewGroupObject->GetActor() : nullptr;
 }
 
-AActor* AEditModelPlayerState_CPP::GetHoveredObject() const
+AActor* AEditModelPlayerState::GetHoveredObject() const
 {
 	return HoveredObject ? HoveredObject->GetActor() : nullptr;
 }
 
-bool AEditModelPlayerState_CPP::SetErrorForObject(int32 ObjectID, FName ErrorTag, bool bIsError)
+bool AEditModelPlayerState::SetErrorForObject(int32 ObjectID, FName ErrorTag, bool bIsError)
 {
 	TSet<FName> &objectErrors = ObjectErrorMap.FindOrAdd(ObjectID);
 
@@ -819,7 +819,7 @@ bool AEditModelPlayerState_CPP::SetErrorForObject(int32 ObjectID, FName ErrorTag
 	return bChanged;
 }
 
-bool AEditModelPlayerState_CPP::ClearErrorsForObject(int32 ObjectID)
+bool AEditModelPlayerState::ClearErrorsForObject(int32 ObjectID)
 {
 	TSet<FName> *objectErrors = ObjectErrorMap.Find(ObjectID);
 
@@ -833,29 +833,29 @@ bool AEditModelPlayerState_CPP::ClearErrorsForObject(int32 ObjectID)
 	return false;
 }
 
-bool AEditModelPlayerState_CPP::DoesObjectHaveError(int32 ObjectID, FName ErrorTag) const
+bool AEditModelPlayerState::DoesObjectHaveError(int32 ObjectID, FName ErrorTag) const
 {
 	const TSet<FName> *objectErrors = ObjectErrorMap.Find(ObjectID);
 	return (objectErrors && objectErrors->Contains(ErrorTag));
 }
 
-bool AEditModelPlayerState_CPP::DoesObjectHaveAnyError(int32 ObjectID) const
+bool AEditModelPlayerState::DoesObjectHaveAnyError(int32 ObjectID) const
 {
 	const TSet<FName> *objectErrors = ObjectErrorMap.Find(ObjectID);
 	return (objectErrors && (objectErrors->Num() > 0));
 }
 
-void AEditModelPlayerState_CPP::CopySelectedToClipboard(const UModumateDocument &document)
+void AEditModelPlayerState::CopySelectedToClipboard(const UModumateDocument &document)
 {
 	// TODO: re-implement
 }
 
-void AEditModelPlayerState_CPP::Paste(UModumateDocument &document) const
+void AEditModelPlayerState::Paste(UModumateDocument &document) const
 {
 	// TODO: re-implement
 }
 
-FGuid AEditModelPlayerState_CPP::GetAssemblyForToolMode(EToolMode mode)
+FGuid AEditModelPlayerState::GetAssemblyForToolMode(EToolMode mode)
 {
 	TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(mode);
 	if (ensureAlways(tool))
@@ -865,7 +865,7 @@ FGuid AEditModelPlayerState_CPP::GetAssemblyForToolMode(EToolMode mode)
 	return FGuid();
 }
 
-void AEditModelPlayerState_CPP::SetAssemblyForToolMode(EToolMode Mode, const FGuid& AssemblyGUID)
+void AEditModelPlayerState::SetAssemblyForToolMode(EToolMode Mode, const FGuid& AssemblyGUID)
 {
 	TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(Mode);
 	if (ensureAlways(tool))
@@ -874,7 +874,7 @@ void AEditModelPlayerState_CPP::SetAssemblyForToolMode(EToolMode Mode, const FGu
 	}
 }
 
-bool AEditModelPlayerState_CPP::SetViewMode(EEditViewModes NewEditViewMode, bool bForceUpdate)
+bool AEditModelPlayerState::SetViewMode(EEditViewModes NewEditViewMode, bool bForceUpdate)
 {
 	if (((SelectedViewMode != NewEditViewMode) || bForceUpdate) && EMPlayerController && EMPlayerController->ValidViewModes.Contains(NewEditViewMode))
 	{
@@ -901,7 +901,7 @@ bool AEditModelPlayerState_CPP::SetViewMode(EEditViewModes NewEditViewMode, bool
 	return false;
 }
 
-bool AEditModelPlayerState_CPP::ChangeViewMode(int32 IndexDelta)
+bool AEditModelPlayerState::ChangeViewMode(int32 IndexDelta)
 {
 	IndexDelta = FMath::Sign(IndexDelta);
 	if (IndexDelta == 0)
@@ -933,9 +933,9 @@ bool AEditModelPlayerState_CPP::ChangeViewMode(int32 IndexDelta)
 	return false;
 }
 
-void AEditModelPlayerState_CPP::UpdateObjectVisibilityAndCollision()
+void AEditModelPlayerState::UpdateObjectVisibilityAndCollision()
 {
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 	for (AModumateObjectInstance *moi : doc->GetObjectInstances())
 	{
@@ -946,7 +946,7 @@ void AEditModelPlayerState_CPP::UpdateObjectVisibilityAndCollision()
 	}
 }
 
-bool AEditModelPlayerState_CPP::IsObjectTypeEnabledByViewMode(EObjectType ObjectType) const
+bool AEditModelPlayerState::IsObjectTypeEnabledByViewMode(EObjectType ObjectType) const
 {
 	if (SelectedViewMode == EEditViewModes::AllObjects)
 	{

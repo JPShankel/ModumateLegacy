@@ -47,7 +47,7 @@ protected:
 	FBIMNameType SwapNameType = NAME_None;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *EMPlayerController;
+	class AEditModelPlayerController *EMPlayerController;
 
 	UPROPERTY()
 	FButtonStyle NormalButtonStyle;

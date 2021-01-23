@@ -4,16 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PortalFrameActor_CPP.generated.h"
+#include "MOIGroupActor.generated.h"
+
+class AModumateObjectInstance;
 
 UCLASS()
-class APortalFrameActor_CPP : public AActor
+class MODUMATE_API AMOIGroupActor : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	APortalFrameActor_CPP();
+	AMOIGroupActor();
+
+	UPROPERTY()
+	AModumateObjectInstance *MOI;
 
 protected:
 	// Called when the game starts or when spawned
@@ -22,6 +27,10 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<FVector> GetMemberLocations();
+
 
 
 

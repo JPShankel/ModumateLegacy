@@ -1,13 +1,13 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/RightMenu/ViewMenuWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "Components/Border.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "UI/RightMenu/ComponentSavedViewListItem.h"
 #include "UI/EditModelUserWidget.h"
-#include "UnrealClasses/EditModelPlayerPawn_CPP.h"
+#include "UnrealClasses/EditModelPlayerPawn.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "Components/Image.h"
 #include "Kismet/KismetRenderingLibrary.h"
@@ -34,10 +34,10 @@ bool UViewMenuWidget::Initialize()
 void UViewMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (Controller)
 	{
-		PlayerPawn = Cast<AEditModelPlayerPawn_CPP>(Controller->GetPawn());
+		PlayerPawn = Cast<AEditModelPlayerPawn>(Controller->GetPawn());
 	}
 	PreviewRT = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), PreviewRenderSize.X, PreviewRenderSize.Y, ETextureRenderTargetFormat::RTF_RGBA8, FLinearColor::Black, true);
 }

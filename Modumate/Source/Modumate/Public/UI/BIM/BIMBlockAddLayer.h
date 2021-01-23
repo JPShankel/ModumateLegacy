@@ -30,7 +30,7 @@ protected:
 	class UBIMDesigner *ParentBIMDesigner;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *Controller;
+	class AEditModelPlayerController *Controller;
 
 public:
 

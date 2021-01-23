@@ -5,8 +5,8 @@
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/HUDDrawWidget.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 const float AJustificationHandle::DesiredWorldDist = 30.0f;
 const float AJustificationHandle::MaxScreenDist = 50.0f;

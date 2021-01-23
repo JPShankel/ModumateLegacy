@@ -3,8 +3,8 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/EditModelPlayerHUD.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 const float AAdjustInvertHandle::MaxScreenDist = 2000.0f;
 

@@ -7,8 +7,8 @@
 #include "UI/ArcActor.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UnrealClasses/DimensionWidget.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/LineActor.h"
 
 AAngleDimensionActor::AAngleDimensionActor(const FObjectInitializer& ObjectInitializer)
@@ -36,7 +36,7 @@ void AAngleDimensionActor::BeginPlay()
 	DimensionText->SetIsEditable(false);
 
 	// TODO: make the blueprint material useable and available
-	//TWeakObjectPtr<AEditModelPlayerController_CPP> playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	//TWeakObjectPtr<AEditModelPlayerController> playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 	//AEditModelPlayerHUD *playerHUD = playerController.IsValid() ? Cast<AEditModelPlayerHUD>(playerController->GetHUD()) : nullptr;
 	//PendingArc = GetWorld()->SpawnActor<AArcActor>(playerHUD->ArcClass);
 

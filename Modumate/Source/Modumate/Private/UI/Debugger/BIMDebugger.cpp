@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/Debugger/BIMDebugger.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "Components/ListView.h"
@@ -72,7 +72,7 @@ void UBIMDebugger::OnSearchFieldChanged(const FText& NewText)
 
 EBIMResult UBIMDebugger::ConstructPresetList()
 {
-	class AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	class AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (!controller)
 	{
 		return EBIMResult::Error;
@@ -105,7 +105,7 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FGuid& PresetKey, bool AddToHistor
 	DependentPresetsList->ClearListItems();
 	BIMDebugTestList->ClearChildren();
 
-	class AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	class AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller)
 	{
 		const FBIMPresetInstance* preset = controller->GetDocument()->GetPresetCollection().PresetFromGUID(PresetKey);
@@ -235,7 +235,7 @@ void UBIMDebugger::ConstructBIMDebugTestList()
 
 bool UBIMDebugger::PerformBIMDebugTest(EBIMDebugTestType BIMDebugTest)
 {
-	class AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	class AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	const FBIMPresetInstance* preset = controller ? controller->GetDocument()->GetPresetCollection().PresetFromGUID(LastSelectedKey) : nullptr;
 	if (!preset)
 	{

@@ -17,9 +17,9 @@
 #include "Drafting/ModumateDraftingElements.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/DynamicMeshActor.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 using namespace Modumate;
 
@@ -478,7 +478,7 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 	const AActor* metaActor = MetaMOI ? MetaMOI->GetActor() : nullptr;
 	const UModumateDocument* doc = MetaMOI ? MetaMOI->GetDocument() : nullptr;
 	UWorld *world = metaActor ? metaActor->GetWorld() : nullptr;
-	AEditModelPlayerController_CPP *playerController = world ? world->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
+	AEditModelPlayerController *playerController = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
 	if (playerController == nullptr)
 	{
 		return false;
@@ -573,7 +573,7 @@ bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const AModumateObjectInst
 	const AActor* surfaceActor = SurfaceMOI ? SurfaceMOI->GetActor() : nullptr;
 	const UModumateDocument* doc = SurfaceMOI ? SurfaceMOI->GetDocument() : nullptr;
 	UWorld* world = surfaceActor ? surfaceActor->GetWorld() : nullptr;
-	AEditModelPlayerController_CPP* playerController = world ? world->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
+	AEditModelPlayerController* playerController = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
 	if (playerController == nullptr)
 	{
 		return false;

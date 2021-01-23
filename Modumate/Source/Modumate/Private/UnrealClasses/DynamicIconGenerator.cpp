@@ -15,9 +15,9 @@
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/DynamicMeshActor.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "Objects/LayeredObjectInterface.h"
 
@@ -74,9 +74,9 @@ void ADynamicIconGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Gamemode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
-	GameState = Cast<AEditModelGameState_CPP>(GetWorld()->GetGameState());
-	Controller = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
+	Gamemode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
+	GameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
+	Controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
 
 	FActorSpawnParameters dynamicMeshSpawnParams;
 	dynamicMeshSpawnParams.Name = FName(TEXT("IconDynamicMeshActor"));

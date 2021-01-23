@@ -29,7 +29,7 @@ protected:
 	FBIMTagPath CurrentNCP;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *Controller;
+	class AEditModelPlayerController *Controller;
 
 public:
 

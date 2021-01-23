@@ -2,7 +2,7 @@
 
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/TooltipManager.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/Custom/ModumateTextBlock.h"
@@ -55,7 +55,7 @@ void UModumateButtonUserWidget::NativeConstruct()
 	EToolMode inputToToolMode = UEditModelInputHandler::ToolModeFromInputCommand(InputCommand);
 	if (inputToToolMode != EToolMode::VE_NONE)
 	{		
-		AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+		AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 		controller->EditModelUserWidget->ToolToButtonMap.Add(inputToToolMode, this);
 	}
 }
@@ -64,7 +64,7 @@ void UModumateButtonUserWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
 
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller && controller->EditModelUserWidget)
 	{
 		controller->EditModelUserWidget->ToolToButtonMap.Remove(UEditModelInputHandler::ToolModeFromInputCommand(InputCommand));
@@ -73,7 +73,7 @@ void UModumateButtonUserWidget::NativeDestruct()
 
 void UModumateButtonUserWidget::OnButtonPress()
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller && InputCommand != EInputCommand::None)
 	{
 		controller->InputHandlerComponent->TryCommand(InputCommand);

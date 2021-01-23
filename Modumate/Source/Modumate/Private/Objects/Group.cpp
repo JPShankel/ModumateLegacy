@@ -3,9 +3,9 @@
 #include "Objects/Group.h"
 
 #include "DocumentManagement/ModumateSnappingView.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/MOIGroupActor_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/MOIGroupActor.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 float AMOIGroup::StructuralExtentsExpansion = 20.0f;
 
@@ -50,14 +50,14 @@ bool AMOIGroup::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutS
 AActor *AMOIGroup::RestoreActor()
 {
 	UWorld* world = GetWorld();
-	auto* gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
+	auto* gameMode = world->GetAuthGameMode<AEditModelGameMode>();
 	auto* groupActorClass = gameMode ? gameMode->MOIGroupActorClass : nullptr;
 	if (!ensure(groupActorClass))
 	{
 		return nullptr;
 	}
 
-	AMOIGroupActor_CPP* groupActor = world->SpawnActor<AMOIGroupActor_CPP>(groupActorClass);
+	AMOIGroupActor* groupActor = world->SpawnActor<AMOIGroupActor>(groupActorClass);
 	groupActor->MOI = this;
 	groupActor->SetActorLocation(CachedLocation);
 

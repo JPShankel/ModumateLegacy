@@ -123,13 +123,13 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UPROPERTY()
-	class AEditModelGameMode_CPP* Gamemode;
+	class AEditModelGameMode* Gamemode;
 
 	UPROPERTY()
-	class AEditModelGameState_CPP* GameState;
+	class AEditModelGameState* GameState;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP* Controller;
+	class AEditModelPlayerController* Controller;
 
 	UPROPERTY()
 	class UMaterialInstanceDynamic* DynCustomMaterial;

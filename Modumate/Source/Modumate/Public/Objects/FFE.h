@@ -37,7 +37,7 @@ public:
 	virtual AActor *CreateActor(const FVector &loc, const FQuat &rot) override;
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) override;
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController *Controller) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;

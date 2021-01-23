@@ -2,7 +2,7 @@
 
 #include "UI/BIM/BIMBlockSlotList.h"
 #include "UI/BIM/BIMBlockNode.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "Components/VerticalBox.h"
@@ -32,7 +32,7 @@ void UBIMBlockSlotList::NativeConstruct()
 
 void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMPresetEditorNodeSharedPtr& NodePtr)
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 
 	// Release slot item widgets
 	for (auto curWidget : VerticalBoxSlots->GetAllChildren())
@@ -81,7 +81,7 @@ void UBIMBlockSlotList::BuildSlotAssignmentList(const FBIMPresetEditorNodeShared
 
 void UBIMBlockSlotList::ReleaseSlotAssignmentList()
 {
-	AEditModelPlayerController_CPP* controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	for (auto curWidget : VerticalBoxSlots->GetAllChildren())
 	{
 		UUserWidget* asUserWidget = Cast<UUserWidget>(curWidget);

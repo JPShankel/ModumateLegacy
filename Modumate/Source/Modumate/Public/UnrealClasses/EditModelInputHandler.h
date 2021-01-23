@@ -10,8 +10,8 @@
 #include "EditModelInputHandler.generated.h"
 
 
-class AEditModelGameState_CPP;
-class AEditModelPlayerController_CPP;
+class AEditModelGameState;
+class AEditModelPlayerController;
 
 // The list of all explicit input commands that can be mapped to a key chord and/or key sequence.
 // This list is a Blueprintable UENUM so that they can be activated and referenced directly by UI buttons.
@@ -227,10 +227,10 @@ public:
 	static EInputCommand InputCommandFromToolMode(EToolMode ToolMode);
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *Controller;
+	class AEditModelPlayerController *Controller;
 
 	UPROPERTY()
-	class AEditModelGameState_CPP *GameState;
+	class AEditModelGameState *GameState;
 
 	UPROPERTY(EditAnywhere)
 	UDataTable *InputCommandDataTable;

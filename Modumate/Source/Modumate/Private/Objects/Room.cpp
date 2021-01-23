@@ -3,8 +3,8 @@
 #include "Objects/Room.h"
 
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "Graph/Graph3D.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "DocumentManagement/ModumateDocument.h"
@@ -32,7 +32,7 @@ FQuat AMOIRoom::GetRotation() const
 	return FQuat::Identity;
 }
 
-bool AMOIRoom::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
+bool AMOIRoom::OnHovered(AEditModelPlayerController *controller, bool bIsHovered)
 {
 	if (!AModumateObjectInstance::OnHovered(controller, bIsHovered))
 	{

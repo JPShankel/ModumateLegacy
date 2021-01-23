@@ -66,13 +66,13 @@ protected:
 	bool Active;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP* Controller;
+	class AEditModelPlayerController* Controller;
 
 	UPROPERTY()
 	class UModumateGameInstance* GameInstance;
 
 	UPROPERTY()
-	class AEditModelGameState_CPP* GameState;
+	class AEditModelGameState* GameState;
 
 	UPROPERTY()
 	class UDimensionManager* DimensionManager;

@@ -5,7 +5,7 @@
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UI/EditModelUserWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/TutorialMenu/TutorialMenuWidget.h"
 
 
@@ -21,7 +21,7 @@ bool UToolbarTopWidget::Initialize()
 		return false;
 	}
 
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 
 	if (!(ButtonModumateHome && ButtonTopToolbarHelp))
 	{

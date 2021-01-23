@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ModumateObjectInstanceParts_CPP.generated.h"
+#include "ModumateObjectInstanceParts.generated.h"
 
 UCLASS()
-class MODUMATE_API AModumateObjectInstanceParts_CPP : public AActor
+class MODUMATE_API AModumateObjectInstanceParts : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	AModumateObjectInstanceParts_CPP();
+	AModumateObjectInstanceParts();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsActorBeingSelected;

@@ -36,10 +36,10 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP* Controller;
+	class AEditModelPlayerController* Controller;
 
 	UPROPERTY()
-	class AEditModelGameState_CPP *GameState;
+	class AEditModelGameState *GameState;
 
 	TArray<FGuid> AvailableBIMDesignerPresets;
 

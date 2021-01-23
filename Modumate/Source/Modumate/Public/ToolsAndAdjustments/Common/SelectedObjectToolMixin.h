@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 class MODUMATE_API FSelectedObjectToolMixin
 {
@@ -12,9 +12,9 @@ protected:
 
 	TSet<int32> OriginalSelectedObjects;
 	TMap<int32, FTransform> OriginalTransforms;
-	TWeakObjectPtr<AEditModelPlayerController_CPP> ControllerPtr;
+	TWeakObjectPtr<AEditModelPlayerController> ControllerPtr;
 
-	FSelectedObjectToolMixin(AEditModelPlayerController_CPP *InController = nullptr);
+	FSelectedObjectToolMixin(AEditModelPlayerController *InController = nullptr);
 
 	void AcquireSelectedObjects();
 	void ReleaseSelectedObjects();

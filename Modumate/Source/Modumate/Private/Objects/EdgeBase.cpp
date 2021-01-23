@@ -2,9 +2,9 @@
 
 #include "Objects/EdgeBase.h"
 
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/LineActor.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateObjectStatics.h"
@@ -35,7 +35,7 @@ int32 AMOIEdgeBase::GetNumCorners() const
 	return 2;
 }
 
-bool AMOIEdgeBase::OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered)
+bool AMOIEdgeBase::OnHovered(AEditModelPlayerController *controller, bool bIsHovered)
 {
 	if (!AModumateObjectInstance::OnHovered(controller, bIsHovered))
 	{
@@ -121,7 +121,7 @@ void AMOIEdgeBase::UpdateMaterial()
 {
 	if (LineActor.IsValid())
 	{
-		AEditModelGameMode_CPP* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
+		AEditModelGameMode* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
 		// Color
 		if (gameMode)
 		{

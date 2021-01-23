@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/BIM/BIMBlockNCPSwitcher.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
@@ -36,7 +36,7 @@ bool UBIMBlockNCPSwitcher::Initialize()
 void UBIMBlockNCPSwitcher::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 }
 
 void UBIMBlockNCPSwitcher::OnButtonClosePress()

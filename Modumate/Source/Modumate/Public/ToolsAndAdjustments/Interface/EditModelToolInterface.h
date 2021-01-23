@@ -9,7 +9,7 @@
 
 #include "EditModelToolInterface.generated.h"
 
-class AEditModelPlayerController_CPP;
+class AEditModelPlayerController;
 class AModumateObjectInstance;
 
 UINTERFACE(meta = (CannotImplementInterfaceInBlueprint))

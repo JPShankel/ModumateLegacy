@@ -14,9 +14,9 @@
 #include "ToolsAndAdjustments/Handles/CabinetExtrusionHandle.h"
 #include "ToolsAndAdjustments/Handles/CabinetFrontFaceHandle.h"
 #include "UnrealClasses/DimensionWidget.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/CabinetDimensionActor.h"
@@ -127,7 +127,7 @@ void AMOICabinet::SetupDynamicGeometry()
 		DynamicMeshActor.Get(), FrontFacePortalActor.Get(), bCurrentFaceValid);
 
 	// refresh handle visibility, don't destroy & recreate handles
-	AEditModelPlayerController_CPP *controller = DynamicMeshActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+	AEditModelPlayerController *controller = DynamicMeshActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 
 	// TODO: revisit the handle paradigm for cabinets
 	ShowAdjustmentHandles(controller, AdjustmentHandlesVisible);
@@ -485,7 +485,7 @@ bool AMOICabinet::UpdateCachedGeometryData()
 	return false;
 }
 
-void AMOICabinet::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+void AMOICabinet::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 {
 	int32 numBasePoints = CachedBasePoints.Num();
 	for (int32 i = 0; i <= numBasePoints; ++i)
@@ -519,7 +519,7 @@ void AMOICabinet::SetupAdjustmentHandles(AEditModelPlayerController_CPP *control
 	}
 }
 
-void AMOICabinet::ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow)
+void AMOICabinet::ShowAdjustmentHandles(AEditModelPlayerController *Controller, bool bShow)
 {
 	Super::ShowAdjustmentHandles(Controller, bShow);
 

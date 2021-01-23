@@ -69,7 +69,7 @@ public:
 	static float GetViewportDPIScale();
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	static FBoxSphereBounds GetSelectedExtents(const AEditModelPlayerController_CPP *Controller);
+	static FBoxSphereBounds GetSelectedExtents(const AEditModelPlayerController *Controller);
 
 	UFUNCTION(BlueprintCallable, Category = "System")
 	static void SetWindowTitle(const FString& ProjectName = TEXT(""));

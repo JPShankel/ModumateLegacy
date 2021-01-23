@@ -19,7 +19,7 @@ public:
 	virtual bool Initialize() override;
 
 	UPROPERTY()
-	class AMainMenuGameMode_CPP *MainMenuGameMode;
+	class AMainMenuGameMode *MainMenuGameMode;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UWrapBox *WrapBoxProjects;

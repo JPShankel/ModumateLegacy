@@ -1,6 +1,6 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
@@ -24,16 +24,16 @@
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "UnrealClasses/EditModelCameraController.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelInputAutomation.h"
 #include "UnrealClasses/EditModelInputHandler.h"
-#include "UnrealClasses/EditModelPlayerPawn_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
-#include "UnrealClasses/EditModelToggleGravityPawn_CPP.h"
+#include "UnrealClasses/EditModelPlayerPawn.h"
+#include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/EditModelToggleGravityPawn.h"
 #include "UnrealClasses/ModumateConsole.h"
 #include "UnrealClasses/ModumateGameInstance.h"
-#include "UnrealClasses/ModumateObjectInstanceParts_CPP.h"
+#include "UnrealClasses/ModumateObjectInstanceParts.h"
 #include "UnrealClasses/ModumateViewportClient.h"
 #include "UI/AdjustmentHandleWidget.h"
 #include "UI/DimensionActor.h"
@@ -68,14 +68,14 @@
 
 static Modumate::PDF::PDFResult PDFLibrary;
 
-const FString AEditModelPlayerController_CPP::InputTelemetryDirectory(TEXT("Telemetry"));
+const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetry"));
 
 using namespace Modumate;
 
 /*
 * Constructor
 */
-AEditModelPlayerController_CPP::AEditModelPlayerController_CPP()
+AEditModelPlayerController::AEditModelPlayerController()
 	: APlayerController()
 	, Document(nullptr)
 	, SnappingView(nullptr)
@@ -97,12 +97,12 @@ AEditModelPlayerController_CPP::AEditModelPlayerController_CPP()
 	DefaultViewModes = { EEditViewModes::AllObjects, EEditViewModes::Physical, EEditViewModes::MetaGraph, EEditViewModes::Separators, EEditViewModes::SurfaceGraphs };
 }
 
-AEditModelPlayerController_CPP::~AEditModelPlayerController_CPP()
+AEditModelPlayerController::~AEditModelPlayerController()
 {
 	delete SnappingView;
 }
 
-void AEditModelPlayerController_CPP::PostInitializeComponents()
+void AEditModelPlayerController::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
@@ -126,12 +126,12 @@ void AEditModelPlayerController_CPP::PostInitializeComponents()
 		gameViewport->SetHardwareCursor(EMouseCursor::Custom, AdvancedCursorPath, CursorHotspot);
 	}
 
-	// Assign our cached casted AEditModelPlayerState_CPP, and its cached casted pointer to us,
+	// Assign our cached casted AEditModelPlayerState, and its cached casted pointer to us,
 	// immediately after it's created.
-	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
+	AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
 	if ((gameMode != nullptr) && ensureAlways(PlayerState != nullptr))
 	{
-		EMPlayerState = Cast<AEditModelPlayerState_CPP>(PlayerState);
+		EMPlayerState = Cast<AEditModelPlayerState>(PlayerState);
 		EMPlayerState->EMPlayerController = this;
 	}
 }
@@ -140,14 +140,14 @@ void AEditModelPlayerController_CPP::PostInitializeComponents()
 * Unreal Event Handlers
 */
 
-void AEditModelPlayerController_CPP::BeginPlay()
+void AEditModelPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AEditModelGameState_CPP* gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	Document = gameState->Document;
 
-	EMPlayerPawn = Cast<AEditModelPlayerPawn_CPP>(GetPawn());
+	EMPlayerPawn = Cast<AEditModelPlayerPawn>(GetPawn());
 	if (ensure(EMPlayerPawn))
 	{
 		SetViewTargetWithBlend(EMPlayerPawn);
@@ -175,10 +175,10 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	UGameViewportClient* viewportClient = gameInstance->GetGameViewportClient();
 	if (viewportClient)
 	{
-		viewportClient->OnWindowCloseRequested().BindUObject(this, &AEditModelPlayerController_CPP::CheckSaveModel);
+		viewportClient->OnWindowCloseRequested().BindUObject(this, &AEditModelPlayerController::CheckSaveModel);
 	}
 
-	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
+	AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
 
 	FString recoveryFile = FPaths::Combine(gameInstance->UserSettings.GetLocalTempDir(), kModumateRecoveryFile);
 		
@@ -213,7 +213,7 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	FString lockFile = FPaths::Combine(gameInstance->UserSettings.GetLocalTempDir(), kModumateCleanShutdownFile);
 	FFileHelper::SaveStringToFile(TEXT("lock"), *lockFile);
 
-	GetWorldTimerManager().SetTimer(ControllerTimer, this, &AEditModelPlayerController_CPP::OnControllerTimer, 10.0f, true, 0.0f);
+	GetWorldTimerManager().SetTimer(ControllerTimer, this, &AEditModelPlayerController::OnControllerTimer, 10.0f, true, 0.0f);
 
 	TimeOfLastAutoSave = FDateTime::Now();
 
@@ -245,7 +245,7 @@ void AEditModelPlayerController_CPP::BeginPlay()
 	IFileManager::Get().MakeDirectory(*path);
 }
 
-bool AEditModelPlayerController_CPP::StartTelemetrySession(bool bRecordInput)
+bool AEditModelPlayerController::StartTelemetrySession(bool bRecordInput)
 {
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
 	if (!gameInstance->GetAccountManager().Get()->ShouldRecordTelemetry())
@@ -292,7 +292,7 @@ bool AEditModelPlayerController_CPP::StartTelemetrySession(bool bRecordInput)
 	return false;
 }
 
-bool AEditModelPlayerController_CPP::EndTelemetrySession()
+bool AEditModelPlayerController::EndTelemetrySession()
 {
 	if (InputAutomationComponent->IsRecording())
 	{
@@ -311,7 +311,7 @@ bool AEditModelPlayerController_CPP::EndTelemetrySession()
 	return true;
 }
 
-void AEditModelPlayerController_CPP::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void AEditModelPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
 	FString lockFile = FPaths::Combine(gameInstance->UserSettings.GetLocalTempDir(), kModumateCleanShutdownFile);
@@ -327,7 +327,7 @@ void AEditModelPlayerController_CPP::EndPlay(const EEndPlayReason::Type EndPlayR
 	Super::EndPlay(EndPlayReason);
 }
 
-bool AEditModelPlayerController_CPP::GetRequiredViewModes(EToolCategories ToolCategory, TArray<EEditViewModes>& OutViewModes) const
+bool AEditModelPlayerController::GetRequiredViewModes(EToolCategories ToolCategory, TArray<EEditViewModes>& OutViewModes) const
 {
 	OutViewModes.Reset();
 
@@ -351,17 +351,17 @@ bool AEditModelPlayerController_CPP::GetRequiredViewModes(EToolCategories ToolCa
 	}
 }
 
-bool AEditModelPlayerController_CPP::ToolIsInUse() const
+bool AEditModelPlayerController::ToolIsInUse() const
 {
 	return (CurrentTool && CurrentTool->IsInUse());
 }
 
-EToolMode AEditModelPlayerController_CPP::GetToolMode()
+EToolMode AEditModelPlayerController::GetToolMode()
 {
 	return CurrentTool ? CurrentTool->GetToolMode() : EToolMode::VE_NONE;
 }
 
-void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
+void AEditModelPlayerController::SetToolMode(EToolMode NewToolMode)
 {
 	// Don't do anything if we're trying to set the tool to our current one.
 	EToolMode curToolMode = GetToolMode();
@@ -418,7 +418,7 @@ void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
 		if (!CurrentTool->GetAssemblyGUID().IsValid())
 		{
 			FBIMAssemblySpec assembly;
-			AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+			AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 			if (gameState->Document->GetPresetCollection().TryGetDefaultAssemblyForToolMode(NewToolMode, assembly))
 			{
 				CurrentTool->SetAssemblyGUID(assembly.UniqueKey());
@@ -434,7 +434,7 @@ void AEditModelPlayerController_CPP::SetToolMode(EToolMode NewToolMode)
 	OnToolModeChanged.Broadcast();
 }
 
-void AEditModelPlayerController_CPP::AbortUseTool()
+void AEditModelPlayerController::AbortUseTool()
 {
 	if (InteractionHandle)
 	{
@@ -454,7 +454,7 @@ void AEditModelPlayerController_CPP::AbortUseTool()
 	}
 }
 
-void AEditModelPlayerController_CPP::SetToolCreateObjectMode(EToolCreateObjectMode CreateObjectMode)
+void AEditModelPlayerController::SetToolCreateObjectMode(EToolCreateObjectMode CreateObjectMode)
 {
 	if (CurrentTool)
 	{
@@ -462,7 +462,7 @@ void AEditModelPlayerController_CPP::SetToolCreateObjectMode(EToolCreateObjectMo
 	}
 }
 
-void AEditModelPlayerController_CPP::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+void AEditModelPlayerController::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	// TODO: Currently the widgets set the user's focus to "None" after committing text, which
 	// locks the user out of keyboard input.  However, mouse input is still available and clicking
@@ -521,7 +521,7 @@ void AEditModelPlayerController_CPP::OnTextCommitted(const FText& Text, ETextCom
 	}
 }
 
-void AEditModelPlayerController_CPP::SetupInputComponent()
+void AEditModelPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
@@ -530,15 +530,15 @@ void AEditModelPlayerController_CPP::SetupInputComponent()
 	if (InputComponent)
 	{
 		// Bind raw inputs, so that we have better control over input logging and forwarding than we do in Blueprint.
-		InputComponent->BindKey(EKeys::LeftMouseButton, EInputEvent::IE_Pressed, this, &AEditModelPlayerController_CPP::HandleRawLeftMouseButtonPressed);
-		InputComponent->BindKey(EKeys::LeftMouseButton, EInputEvent::IE_Released, this, &AEditModelPlayerController_CPP::HandleRawLeftMouseButtonReleased);
+		InputComponent->BindKey(EKeys::LeftMouseButton, EInputEvent::IE_Pressed, this, &AEditModelPlayerController::HandleRawLeftMouseButtonPressed);
+		InputComponent->BindKey(EKeys::LeftMouseButton, EInputEvent::IE_Released, this, &AEditModelPlayerController::HandleRawLeftMouseButtonReleased);
 
 		// Add an input to test a crash.
-		InputComponent->BindKey(FInputChord(EKeys::Backslash, true, true, true, false), EInputEvent::IE_Pressed, this, &AEditModelPlayerController_CPP::DebugCrash);
+		InputComponent->BindKey(FInputChord(EKeys::Backslash, true, true, true, false), EInputEvent::IE_Pressed, this, &AEditModelPlayerController::DebugCrash);
 
 #if !UE_BUILD_SHIPPING
 		// Add a debug command to force clean selected objects (Ctrl+F5)
-		InputComponent->BindKey(FInputChord(EKeys::F5, false, true, false, false), EInputEvent::IE_Pressed, this, &AEditModelPlayerController_CPP::CleanSelectedObjects);
+		InputComponent->BindKey(FInputChord(EKeys::F5, false, true, false, false), EInputEvent::IE_Pressed, this, &AEditModelPlayerController::CleanSelectedObjects);
 
 		// Add debug commands for input recording/playback
 		InputComponent->BindKey(FInputChord(EKeys::R, false, true, true, false), EInputEvent::IE_Pressed, InputAutomationComponent, &UEditModelInputAutomation::TryBeginRecording);
@@ -549,7 +549,7 @@ void AEditModelPlayerController_CPP::SetupInputComponent()
 	}
 }
 
-void AEditModelPlayerController_CPP::CreateTools()
+void AEditModelPlayerController::CreateTools()
 {
 	RegisterTool(CreateTool<USelectTool>());
 	RegisterTool(CreateTool<UFFETool>());
@@ -583,7 +583,7 @@ void AEditModelPlayerController_CPP::CreateTools()
 	RegisterTool(CreateTool<UMullionTool>());
 }
 
-void AEditModelPlayerController_CPP::RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool)
+void AEditModelPlayerController::RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool)
 {
 	if (!ensureAlways(NewTool))
 	{
@@ -600,7 +600,7 @@ void AEditModelPlayerController_CPP::RegisterTool(TScriptInterface<IEditModelToo
 	ModeToTool.Add(newToolMode, NewTool);
 }
 
-void AEditModelPlayerController_CPP::OnHoverHandleWidget(UAdjustmentHandleWidget* HandleWidget, bool bIsHovered)
+void AEditModelPlayerController::OnHoverHandleWidget(UAdjustmentHandleWidget* HandleWidget, bool bIsHovered)
 {
 	if (!(HandleWidget && HandleWidget->HandleActor))
 	{
@@ -640,7 +640,7 @@ void AEditModelPlayerController_CPP::OnHoverHandleWidget(UAdjustmentHandleWidget
 	}
 }
 
-void AEditModelPlayerController_CPP::OnPressHandleWidget(UAdjustmentHandleWidget* HandleWidget, bool bIsPressed)
+void AEditModelPlayerController::OnPressHandleWidget(UAdjustmentHandleWidget* HandleWidget, bool bIsPressed)
 {
 	if (!(HandleWidget && HandleWidget->HandleActor))
 	{
@@ -679,7 +679,7 @@ void AEditModelPlayerController_CPP::OnPressHandleWidget(UAdjustmentHandleWidget
 	}
 }
 
-void AEditModelPlayerController_CPP::OnLButtonDown()
+void AEditModelPlayerController::OnLButtonDown()
 {
 	// TODO: for now, using tools may create dimension strings that are incompatible with those created
 	// by the current user snap point, so we'll clear them now. In the future, we want to keep track of
@@ -727,7 +727,7 @@ void AEditModelPlayerController_CPP::OnLButtonDown()
 	}
 }
 
-void AEditModelPlayerController_CPP::OnLButtonUp()
+void AEditModelPlayerController::OnLButtonUp()
 {
 	if (CurrentTool && CurrentTool->IsInUse())
 	{
@@ -735,7 +735,7 @@ void AEditModelPlayerController_CPP::OnLButtonUp()
 	}
 }
 
-AEditModelPlayerHUD* AEditModelPlayerController_CPP::GetEditModelHUD() const
+AEditModelPlayerHUD* AEditModelPlayerController::GetEditModelHUD() const
 {
 	return GetHUD<AEditModelPlayerHUD>();
 }
@@ -744,7 +744,7 @@ AEditModelPlayerHUD* AEditModelPlayerController_CPP::GetEditModelHUD() const
 Load/Save menu
 */
 
-bool AEditModelPlayerController_CPP::SaveModel()
+bool AEditModelPlayerController::SaveModel()
 {
 	if (!CheckUserPlanAndPermission(EModumatePermission::Save))
 	{
@@ -758,7 +758,7 @@ bool AEditModelPlayerController_CPP::SaveModel()
 	return SaveModelFilePath(EMPlayerState->LastFilePath);
 }
 
-bool AEditModelPlayerController_CPP::SaveModelAs()
+bool AEditModelPlayerController::SaveModelAs()
 {
 	if (!CheckUserPlanAndPermission(EModumatePermission::Save))
 	{
@@ -792,7 +792,7 @@ bool AEditModelPlayerController_CPP::SaveModelAs()
 	return bSaveSuccess;
 }
 
-bool AEditModelPlayerController_CPP::SaveModelFilePath(const FString &filepath)
+bool AEditModelPlayerController::SaveModelFilePath(const FString &filepath)
 {
 	if (ToolIsInUse())
 	{
@@ -801,7 +801,7 @@ bool AEditModelPlayerController_CPP::SaveModelFilePath(const FString &filepath)
 
 	// Try to capture a thumbnail for the project	
 	CaptureProjectThumbnail();
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	if (gameState->Document->Save(GetWorld(), filepath, true))
 	{
 		EMPlayerState->LastFilePath = filepath;
@@ -818,7 +818,7 @@ bool AEditModelPlayerController_CPP::SaveModelFilePath(const FString &filepath)
 	}
 }
 
-bool AEditModelPlayerController_CPP::LoadModel()
+bool AEditModelPlayerController::LoadModel()
 {
 	if (EMPlayerState->ShowingFileDialog)
 	{
@@ -837,7 +837,7 @@ bool AEditModelPlayerController_CPP::LoadModel()
 
 	EMPlayerState->ShowingFileDialog = true;
 
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 
 	FString filename;
 	bool bLoadSuccess = false;
@@ -851,7 +851,7 @@ bool AEditModelPlayerController_CPP::LoadModel()
 	return bLoadSuccess;
 }
 
-bool AEditModelPlayerController_CPP::LoadModelFilePath(const FString &filename, bool bSetAsCurrentProject, bool bAddToRecents, bool bEnableAutoSave)
+bool AEditModelPlayerController::LoadModelFilePath(const FString &filename, bool bSetAsCurrentProject, bool bAddToRecents, bool bEnableAutoSave)
 {
 	EndTelemetrySession();
 	EMPlayerState->OnNewModel();
@@ -883,7 +883,7 @@ bool AEditModelPlayerController_CPP::LoadModelFilePath(const FString &filename, 
 	return bLoadSuccess;
 }
 
-bool AEditModelPlayerController_CPP::CheckSaveModel()
+bool AEditModelPlayerController::CheckSaveModel()
 {
 	if (Document->IsDirty())
 	{
@@ -903,7 +903,7 @@ bool AEditModelPlayerController_CPP::CheckSaveModel()
 	return true;
 }
 
-void AEditModelPlayerController_CPP::NewModel(bool bShouldCheckForSave)
+void AEditModelPlayerController::NewModel(bool bShouldCheckForSave)
 {
 	if (!EMPlayerState->ShowingFileDialog)
 	{
@@ -928,7 +928,7 @@ void AEditModelPlayerController_CPP::NewModel(bool bShouldCheckForSave)
 	}
 }
 
-void AEditModelPlayerController_CPP::SetThumbnailCapturer(ASceneCapture2D* InThumbnailCapturer)
+void AEditModelPlayerController::SetThumbnailCapturer(ASceneCapture2D* InThumbnailCapturer)
 {
 	ThumbnailCapturer = InThumbnailCapturer;
 	if (ThumbnailCapturer)
@@ -944,9 +944,9 @@ void AEditModelPlayerController_CPP::SetThumbnailCapturer(ASceneCapture2D* InThu
 	}
 }
 
-bool AEditModelPlayerController_CPP::CaptureProjectThumbnail()
+bool AEditModelPlayerController::CaptureProjectThumbnail()
 {
-	AEditModelGameState_CPP *gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	USceneCaptureComponent2D *captureComp = ThumbnailCapturer ? ThumbnailCapturer->GetCaptureComponent2D() : nullptr;
 	if (gameState && captureComp && captureComp->TextureTarget)
 	{
@@ -973,7 +973,7 @@ bool AEditModelPlayerController_CPP::CaptureProjectThumbnail()
 	return false;
 }
 
-bool AEditModelPlayerController_CPP::GetScreenshotFileNameWithDialog(FString &filename)
+bool AEditModelPlayerController::GetScreenshotFileNameWithDialog(FString &filename)
 {
 	if (EMPlayerState->ShowingFileDialog)
 	{
@@ -999,12 +999,12 @@ bool AEditModelPlayerController_CPP::GetScreenshotFileNameWithDialog(FString &fi
 	return bChoseFile;
 }
 
-void AEditModelPlayerController_CPP::TrySavePDF()
+void AEditModelPlayerController::TrySavePDF()
 {
 	OnSavePDF();
 }
 
-bool AEditModelPlayerController_CPP::CheckUserPlanAndPermission(EModumatePermission Permission)
+bool AEditModelPlayerController::CheckUserPlanAndPermission(EModumatePermission Permission)
 {
 #if WITH_EDITOR
 	return true;
@@ -1020,7 +1020,7 @@ bool AEditModelPlayerController_CPP::CheckUserPlanAndPermission(EModumatePermiss
 	return false;
 }
 
-bool AEditModelPlayerController_CPP::OnSavePDF()
+bool AEditModelPlayerController::OnSavePDF()
 {
 	if (!CheckUserPlanAndPermission(EModumatePermission::Export))
 	{
@@ -1088,7 +1088,7 @@ bool AEditModelPlayerController_CPP::OnSavePDF()
 	return ret;
 }
 
-bool AEditModelPlayerController_CPP::OnCreateDwg()
+bool AEditModelPlayerController::OnCreateDwg()
 {
 	if (!CheckUserPlanAndPermission(EModumatePermission::Export))
 	{
@@ -1140,7 +1140,7 @@ bool AEditModelPlayerController_CPP::OnCreateDwg()
 	return retValue;
 }
 
-void AEditModelPlayerController_CPP::DeleteActionDefault()
+void AEditModelPlayerController::DeleteActionDefault()
 {
 	ModumateCommand(
 		FModumateCommand(Commands::kDeleteSelectedObjects)
@@ -1148,7 +1148,7 @@ void AEditModelPlayerController_CPP::DeleteActionDefault()
 	);
 }
 
-void AEditModelPlayerController_CPP::DeleteActionOnlySelected()
+void AEditModelPlayerController::DeleteActionOnlySelected()
 {
 	ModumateCommand(
 		FModumateCommand(Commands::kDeleteSelectedObjects)
@@ -1156,7 +1156,7 @@ void AEditModelPlayerController_CPP::DeleteActionOnlySelected()
 	);
 }
 
-bool AEditModelPlayerController_CPP::HandleInputNumber(double inputNumber)
+bool AEditModelPlayerController::HandleInputNumber(double inputNumber)
 {
 	// This input number handler is intended as a fallback, when the player state's tools do not handle it.
 	// TODO: reconcile the back-and-forth input handling between PlayerController and PlayerState.
@@ -1208,7 +1208,7 @@ bool AEditModelPlayerController_CPP::HandleInputNumber(double inputNumber)
 	return false;
 }
 
-bool AEditModelPlayerController_CPP::HandleInvert()
+bool AEditModelPlayerController::HandleInvert()
 {
 	if (InteractionHandle != nullptr)
 	{
@@ -1223,14 +1223,14 @@ bool AEditModelPlayerController_CPP::HandleInvert()
 	return false;
 }
 
-bool AEditModelPlayerController_CPP::HandleEscapeKey()
+bool AEditModelPlayerController::HandleEscapeKey()
 {
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState_CPP::HandleEscapeKey"));
+	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::HandleEscapeKey"));
 
 	ClearUserSnapPoints();
 	EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
-	if (GetPawn<AEditModelToggleGravityPawn_CPP>())
+	if (GetPawn<AEditModelToggleGravityPawn>())
 	{
 		ToggleGravityPawn();
 	}
@@ -1269,17 +1269,17 @@ bool AEditModelPlayerController_CPP::HandleEscapeKey()
 	return false;
 }
 
-bool AEditModelPlayerController_CPP::IsShiftDown() const
+bool AEditModelPlayerController::IsShiftDown() const
 {
 	return IsInputKeyDown(EKeys::LeftShift) || IsInputKeyDown(EKeys::RightShift);
 }
 
-bool AEditModelPlayerController_CPP::IsControlDown() const
+bool AEditModelPlayerController::IsControlDown() const
 {
 	return IsInputKeyDown(EKeys::LeftControl) || IsInputKeyDown(EKeys::RightControl);
 }
 
-void AEditModelPlayerController_CPP::OnControllerTimer()
+void AEditModelPlayerController::OnControllerTimer()
 {
 	UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 
@@ -1301,7 +1301,7 @@ void AEditModelPlayerController_CPP::OnControllerTimer()
 
 DECLARE_CYCLE_STAT(TEXT("Edit tick"), STAT_ModumateEditTick, STATGROUP_Modumate)
 
-bool AEditModelPlayerController_CPP::UploadInputTelemetry() const
+bool AEditModelPlayerController::UploadInputTelemetry() const
 {
 	if (!InputAutomationComponent->IsRecording())
 	{
@@ -1331,7 +1331,7 @@ bool AEditModelPlayerController_CPP::UploadInputTelemetry() const
 	return false;
 }
 
-void AEditModelPlayerController_CPP::Tick(float DeltaTime)
+void AEditModelPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	SCOPE_CYCLE_COUNTER(STAT_ModumateEditTick);
@@ -1359,7 +1359,7 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 			//Look for the first available (of 3) backup files and delete the one following it
 			FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*oldFile);
 			FPlatformFileManager::Get().GetPlatformFile().MoveFile(*oldFile, *newFile);
-			AEditModelGameState_CPP* gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+			AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
 			gameState->Document->Save(GetWorld(), newFile, false);
 
 			TimeOfLastAutoSave = FDateTime::Now();
@@ -1379,7 +1379,7 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 	{
 		Document->DisplayDebugInfo(GetWorld());
 
-		AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
+		AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
 		TArray<FString> dbstrs = gameMode->ObjectDatabase->GetDebugInfo();
 		for (auto &str : dbstrs)
 		{
@@ -1408,7 +1408,7 @@ void AEditModelPlayerController_CPP::Tick(float DeltaTime)
 	}
 }
 
-void AEditModelPlayerController_CPP::TickInput(float DeltaTime)
+void AEditModelPlayerController::TickInput(float DeltaTime)
 {
 	// Skip input updates if there are no OS windows with active input focus
 	auto viewportClient = Cast<UModumateViewportClient>(GetWorld()->GetGameViewport());
@@ -1465,7 +1465,7 @@ void AEditModelPlayerController_CPP::TickInput(float DeltaTime)
 	}
 }
 
-FVector AEditModelPlayerController_CPP::CalculateViewLocationForSphere(const FSphere &TargetSphere, const FVector &ViewVector, float AspectRatio, float FOV)
+FVector AEditModelPlayerController::CalculateViewLocationForSphere(const FSphere &TargetSphere, const FVector &ViewVector, float AspectRatio, float FOV)
 {
 	float captureHalfFOV = 0.5f * FMath::DegreesToRadians(FOV);
 	float captureDistance = AspectRatio * TargetSphere.W / FMath::Tan(captureHalfFOV);
@@ -1475,7 +1475,7 @@ FVector AEditModelPlayerController_CPP::CalculateViewLocationForSphere(const FSp
 /*
  * This function draws affordances based on the data in the snapped cursor
  */
-void AEditModelPlayerController_CPP::AddAllOriginAffordances() const
+void AEditModelPlayerController::AddAllOriginAffordances() const
 {
 	if (EMPlayerState->SnappedCursor.HasProjectedPosition)
 	{
@@ -1504,7 +1504,7 @@ void AEditModelPlayerController_CPP::AddAllOriginAffordances() const
 * Mouse Functions
 */
 
-void AEditModelPlayerController_CPP::SetObjectSelected(const AModumateObjectInstance *ob, bool selected)
+void AEditModelPlayerController::SetObjectSelected(const AModumateObjectInstance *ob, bool selected)
 {
 	ModumateCommand(
 		FModumateCommand(Commands::kSelectObject)
@@ -1513,7 +1513,7 @@ void AEditModelPlayerController_CPP::SetObjectSelected(const AModumateObjectInst
 	);
 }
 
-void AEditModelPlayerController_CPP::HandleDigitKey(int32 DigitKey)
+void AEditModelPlayerController::HandleDigitKey(int32 DigitKey)
 {
 	FInputModeUIOnly newMode;
 	UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
@@ -1556,7 +1556,7 @@ void AEditModelPlayerController_CPP::HandleDigitKey(int32 DigitKey)
 	}
 }
 
-void AEditModelPlayerController_CPP::HandleRawLeftMouseButtonPressed()
+void AEditModelPlayerController::HandleRawLeftMouseButtonPressed()
 {
 	ClearUserSnapPoints();
 
@@ -1602,7 +1602,7 @@ void AEditModelPlayerController_CPP::HandleRawLeftMouseButtonPressed()
 	}
 }
 
-void AEditModelPlayerController_CPP::HandleRawLeftMouseButtonReleased()
+void AEditModelPlayerController::HandleRawLeftMouseButtonReleased()
 {
 	if (CurrentTool && CurrentTool->IsInUse())
 	{
@@ -1610,27 +1610,27 @@ void AEditModelPlayerController_CPP::HandleRawLeftMouseButtonReleased()
 	}
 }
 
-void AEditModelPlayerController_CPP::HandleLeftMouseButton_Implementation(bool bPressed)
+void AEditModelPlayerController::HandleLeftMouseButton_Implementation(bool bPressed)
 {
 	// TODO: handle input logic here, see OnLButtonDown, OnLButtonUp
 }
 
-void AEditModelPlayerController_CPP::SelectAll()
+void AEditModelPlayerController::SelectAll()
 {
 	ModumateCommand(FModumateCommand(Commands::kSelectAll));
 }
 
-void AEditModelPlayerController_CPP::SelectInverse()
+void AEditModelPlayerController::SelectInverse()
 {
 	ModumateCommand(FModumateCommand(Commands::kSelectInverse));
 }
 
-void AEditModelPlayerController_CPP::DeselectAll()
+void AEditModelPlayerController::DeselectAll()
 {
 	ModumateCommand(FModumateCommand(Commands::kDeselectAll));
 }
 
-bool AEditModelPlayerController_CPP::SelectObjectById(int32 ObjectID)
+bool AEditModelPlayerController::SelectObjectById(int32 ObjectID)
 {
 	const AModumateObjectInstance *moi = Document->GetObjectById(ObjectID);
 	if (moi == nullptr)
@@ -1644,7 +1644,7 @@ bool AEditModelPlayerController_CPP::SelectObjectById(int32 ObjectID)
 	return true;
 }
 
-FTransform AEditModelPlayerController_CPP::MakeUserSnapPointFromCursor(const FSnappedCursor &cursor) const
+FTransform AEditModelPlayerController::MakeUserSnapPointFromCursor(const FSnappedCursor &cursor) const
 {
 	FVector location = cursor.WorldPosition;
 	FVector normal = cursor.HitNormal;
@@ -1679,7 +1679,7 @@ FTransform AEditModelPlayerController_CPP::MakeUserSnapPointFromCursor(const FSn
 	return FTransform(rotation, location);
 }
 
-bool AEditModelPlayerController_CPP::CanMakeUserSnapPointAtCursor(const FSnappedCursor &cursor) const
+bool AEditModelPlayerController::CanMakeUserSnapPointAtCursor(const FSnappedCursor &cursor) const
 {
 	FVector potentialSnapPoint = cursor.WorldPosition;
 	if (cursor.HasAffordanceSet())
@@ -1697,7 +1697,7 @@ bool AEditModelPlayerController_CPP::CanMakeUserSnapPointAtCursor(const FSnapped
 		((cursor.SnapType == ESnapType::CT_CORNERSNAP) || (cursor.SnapType == ESnapType::CT_MIDSNAP));
 }
 
-void AEditModelPlayerController_CPP::ToggleUserSnapPoint()
+void AEditModelPlayerController::ToggleUserSnapPoint()
 {
 	const FSnappedCursor &cursor = EMPlayerState->SnappedCursor;
 
@@ -1730,7 +1730,7 @@ void AEditModelPlayerController_CPP::ToggleUserSnapPoint()
 	}
 }
 
-void AEditModelPlayerController_CPP::AddUserSnapPoint(const FTransform &snapPoint)
+void AEditModelPlayerController::AddUserSnapPoint(const FTransform &snapPoint)
 {
 	// TODO: support multiple snap points, if we want to show dimension strings based on which one is snapped to.
 	UserSnapPoints.Reset();
@@ -1743,13 +1743,13 @@ void AEditModelPlayerController_CPP::AddUserSnapPoint(const FTransform &snapPoin
 	);
 }
 
-void AEditModelPlayerController_CPP::ClearUserSnapPoints()
+void AEditModelPlayerController::ClearUserSnapPoints()
 {
 	UserSnapPoints.Reset();
 }
 
 namespace { volatile char* ptr; }
-void AEditModelPlayerController_CPP::DebugCrash()
+void AEditModelPlayerController::DebugCrash()
 {
 	UE_LOG(LogTemp, Error, TEXT("DebugCrash"));
 
@@ -1759,7 +1759,7 @@ void AEditModelPlayerController_CPP::DebugCrash()
 	}
 }
 
-void AEditModelPlayerController_CPP::CleanSelectedObjects()
+void AEditModelPlayerController::CleanSelectedObjects()
 {
 	if (!ensure(EMPlayerState && Document))
 	{
@@ -1784,7 +1784,7 @@ void AEditModelPlayerController_CPP::CleanSelectedObjects()
 	Document->CleanObjects();
 }
 
-void AEditModelPlayerController_CPP::SetViewGroupObject(const AModumateObjectInstance *ob)
+void AEditModelPlayerController::SetViewGroupObject(const AModumateObjectInstance *ob)
 {
 	if (ob && (ob->GetObjectType() == EObjectType::OTGroup))
 	{
@@ -1802,7 +1802,7 @@ void AEditModelPlayerController_CPP::SetViewGroupObject(const AModumateObjectIns
 }
 
 /* User-Document Interface for Blueprints */
-void AEditModelPlayerController_CPP::UpdateDefaultWallHeight(float newHeight)
+void AEditModelPlayerController::UpdateDefaultWallHeight(float newHeight)
 {
 	if (ensureAlways(Document != nullptr))
 	{
@@ -1810,7 +1810,7 @@ void AEditModelPlayerController_CPP::UpdateDefaultWallHeight(float newHeight)
 	}
 }
 
-float AEditModelPlayerController_CPP::GetDefaultWallHeightFromDoc() const
+float AEditModelPlayerController::GetDefaultWallHeightFromDoc() const
 {
 	if (ensureAlways(Document != nullptr))
 	{
@@ -1819,59 +1819,59 @@ float AEditModelPlayerController_CPP::GetDefaultWallHeightFromDoc() const
 	return 0.f;
 }
 
-void AEditModelPlayerController_CPP::UpdateDefaultWindowHeightWidth(float newHeight, float newWidth)
+void AEditModelPlayerController::UpdateDefaultWindowHeightWidth(float newHeight, float newWidth)
 {
 	Document->SetDefaultWindowHeightWidth(newHeight, newWidth);
 }
 
-float AEditModelPlayerController_CPP::GetDefaultWindowHeightFromDoc() const
+float AEditModelPlayerController::GetDefaultWindowHeightFromDoc() const
 {
 	return Document->GetDefaultWindowHeight();
 }
 
-float AEditModelPlayerController_CPP::GetDefaultRailingsHeightFromDoc() const
+float AEditModelPlayerController::GetDefaultRailingsHeightFromDoc() const
 {
 	return Document->GetDefaultRailHeight();
 }
 
-void AEditModelPlayerController_CPP::UpdateDefaultJustificationZ(float newValue)
+void AEditModelPlayerController::UpdateDefaultJustificationZ(float newValue)
 {
 	Document->SetDefaultJustificationZ(newValue);
 }
 
-void AEditModelPlayerController_CPP::UpdateDefaultJustificationXY(float newValue)
+void AEditModelPlayerController::UpdateDefaultJustificationXY(float newValue)
 {
 	Document->SetDefaultJustificationXY(newValue);
 }
 
-float AEditModelPlayerController_CPP::GetDefaultJustificationZ() const
+float AEditModelPlayerController::GetDefaultJustificationZ() const
 {
 	return Document->GetDefaultJustificationZ();
 }
 
-float AEditModelPlayerController_CPP::GetDefaultJustificationXY() const
+float AEditModelPlayerController::GetDefaultJustificationXY() const
 {
 	return Document->GetDefaultJustificationXY();
 }
 
-void AEditModelPlayerController_CPP::ToolAbortUse()
+void AEditModelPlayerController::ToolAbortUse()
 {
 	AbortUseTool();
 }
 
-void AEditModelPlayerController_CPP::IgnoreObjectIDForSnapping(int32 ObjectID)
+void AEditModelPlayerController::IgnoreObjectIDForSnapping(int32 ObjectID)
 {
 	SnappingIDsToIgnore.Add(ObjectID);
 	UpdateMouseTraceParams();
 }
 
-void AEditModelPlayerController_CPP::ClearIgnoredIDsForSnapping()
+void AEditModelPlayerController::ClearIgnoredIDsForSnapping()
 {
 	SnappingIDsToIgnore.Reset();
 	UpdateMouseTraceParams();
 }
 
-void AEditModelPlayerController_CPP::UpdateMouseTraceParams()
+void AEditModelPlayerController::UpdateMouseTraceParams()
 {
 	SnappingActorsToIgnore.Reset();
 	SnappingActorsToIgnore.Add(this);
@@ -1928,12 +1928,12 @@ void AEditModelPlayerController_CPP::UpdateMouseTraceParams()
 	MOITraceQueryParams.AddIgnoredActors(SnappingActorsToIgnore);
 }
 
-bool AEditModelPlayerController_CPP::LineTraceSingleAgainstMOIs(struct FHitResult& OutHit, const FVector& Start, const FVector& End) const
+bool AEditModelPlayerController::LineTraceSingleAgainstMOIs(struct FHitResult& OutHit, const FVector& Start, const FVector& End) const
 {
 	return GetWorld()->LineTraceSingleByObjectType(OutHit, Start, End, MOITraceObjectQueryParams, MOITraceQueryParams);
 }
 
-bool AEditModelPlayerController_CPP::IsCursorOverWidget() const
+bool AEditModelPlayerController::IsCursorOverWidget() const
 {
 	FSlateApplication &slateApp = FSlateApplication::Get();
 	TSharedPtr<FSlateUser> slateUser = slateApp.GetUser(0);
@@ -1977,14 +1977,14 @@ bool AEditModelPlayerController_CPP::IsCursorOverWidget() const
 	return true;
 }
 
-void AEditModelPlayerController_CPP::SetFieldOfViewCommand(float FieldOfView)
+void AEditModelPlayerController::SetFieldOfViewCommand(float FieldOfView)
 {
 	ModumateCommand(
 		FModumateCommand(Commands::kSetFOV, true)
 		.Param(Parameters::kFieldOfView, FieldOfView));
 }
 
-bool AEditModelPlayerController_CPP::GetActiveUserSnapPoint(FTransform &outSnapPoint) const
+bool AEditModelPlayerController::GetActiveUserSnapPoint(FTransform &outSnapPoint) const
 {
 	if (EMPlayerState->SnappedCursor.Visible && (UserSnapPoints.Num() > 0) &&
 		(EMPlayerState->SnappedCursor.MouseMode == EMouseMode::Location))
@@ -1996,7 +1996,7 @@ bool AEditModelPlayerController_CPP::GetActiveUserSnapPoint(FTransform &outSnapP
 	return false;
 }
 
-bool AEditModelPlayerController_CPP::DistanceBetweenWorldPointsInScreenSpace(const FVector &Point1, const FVector &Point2, float &OutScreenDist) const
+bool AEditModelPlayerController::DistanceBetweenWorldPointsInScreenSpace(const FVector &Point1, const FVector &Point2, float &OutScreenDist) const
 {
 	OutScreenDist = FLT_MAX;
 
@@ -2010,7 +2010,7 @@ bool AEditModelPlayerController_CPP::DistanceBetweenWorldPointsInScreenSpace(con
 	return false;
 }
 
-bool AEditModelPlayerController_CPP::GetScreenScaledDelta(const FVector &Origin, const FVector &Normal, const float DesiredWorldDist, const float MaxScreenDist,
+bool AEditModelPlayerController::GetScreenScaledDelta(const FVector &Origin, const FVector &Normal, const float DesiredWorldDist, const float MaxScreenDist,
 	FVector &OutWorldPos, FVector2D &OutScreenPos) const
 {
 	if (!ensure(MaxScreenDist >= 0.0f))
@@ -2062,7 +2062,7 @@ bool AEditModelPlayerController_CPP::GetScreenScaledDelta(const FVector &Origin,
 	return true;
 }
 
-FMouseWorldHitType AEditModelPlayerController_CPP::GetSimulatedStructureHit(const FVector& HitTarget) const
+FMouseWorldHitType AEditModelPlayerController::GetSimulatedStructureHit(const FVector& HitTarget) const
 {
 	FVector2D hitTargetScreenPos;
 	FVector mouseOrigin, mouseDir;
@@ -2080,7 +2080,7 @@ Called every frame, based on mouse mode set in the player state,
 we put the mouse's snapped position and projected position into
 the SnappedCursor structure, which is read by EditModelPlayerHUD_BP
 */
-void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
+void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 {
 	FVector mouseLoc, mouseDir;
 	FMouseWorldHitType baseHit, projectedHit;
@@ -2134,7 +2134,7 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 			// TODO Is getting attach actor the best way to get Moi from blueprint spawned windows and doors?
 			// AActor* attachedActor = baseHit.Actor->GetOwner();
 
-			if (baseHit.Actor->IsA(AModumateObjectInstanceParts_CPP::StaticClass()))
+			if (baseHit.Actor->IsA(AModumateObjectInstanceParts::StaticClass()))
 			{
 				actorUnderMouse = baseHit.Actor->GetOwner();
 			}
@@ -2438,13 +2438,13 @@ void AEditModelPlayerController_CPP::UpdateMouseHits(float deltaTime)
 #endif
 }
 
-FModumateFunctionParameterSet AEditModelPlayerController_CPP::ModumateCommand(const FModumateCommand &cmd)
+FModumateFunctionParameterSet AEditModelPlayerController::ModumateCommand(const FModumateCommand &cmd)
 {
 	UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 	return gameInstance->DoModumateCommand(cmd);
 }
 
-bool AEditModelPlayerController_CPP::ValidateVirtualHit(const FVector &MouseOrigin, const FVector &MouseDir,
+bool AEditModelPlayerController::ValidateVirtualHit(const FVector &MouseOrigin, const FVector &MouseDir,
 	const FVector &HitPoint, float CurObjectHitDist, float CurVirtualHitDist, float MaxScreenDist, float &OutRayDist) const
 {
 	// The virtual hit point needs to be within a maximum screen distance, and ahead of the mouse
@@ -2470,7 +2470,7 @@ bool AEditModelPlayerController_CPP::ValidateVirtualHit(const FVector &MouseOrig
 	return false;
 }
 
-bool AEditModelPlayerController_CPP::FindBestMousePointHit(const TArray<FVector> &Points,
+bool AEditModelPlayerController::FindBestMousePointHit(const TArray<FVector> &Points,
 	const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist,
 	int32 &OutBestIndex, float &OutBestRayDist) const
 {
@@ -2495,7 +2495,7 @@ bool AEditModelPlayerController_CPP::FindBestMousePointHit(const TArray<FVector>
 	return (OutBestIndex != INDEX_NONE);
 }
 
-bool AEditModelPlayerController_CPP::FindBestMouseLineHit(const TArray<TPair<FVector, FVector>> &Lines,
+bool AEditModelPlayerController::FindBestMouseLineHit(const TArray<TPair<FVector, FVector>> &Lines,
 	const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist,
 	int32 &OutBestIndex, FVector &OutBestIntersection, float &OutBestRayDist) const
 {
@@ -2545,7 +2545,7 @@ bool AEditModelPlayerController_CPP::FindBestMouseLineHit(const TArray<TPair<FVe
 	return (OutBestIndex != INDEX_NONE);
 }
 
-FMouseWorldHitType AEditModelPlayerController_CPP::GetAffordanceHit(const FVector &mouseLoc, const FVector &mouseDir, const FAffordanceFrame &affordance, bool allowZSnap) const
+FMouseWorldHitType AEditModelPlayerController::GetAffordanceHit(const FVector &mouseLoc, const FVector &mouseDir, const FAffordanceFrame &affordance, bool allowZSnap) const
 {
 	FMouseWorldHitType ret;
 	ret.Valid = false;
@@ -2599,7 +2599,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetAffordanceHit(const FVecto
 /*
 Support function returns a hit point on the sketch plane with an auto snap either to the snapping origin or the custom affordance origin
 */
-FMouseWorldHitType AEditModelPlayerController_CPP::GetSketchPlaneMouseHit(const FVector &mouseLoc, const FVector &mouseDir) const
+FMouseWorldHitType AEditModelPlayerController::GetSketchPlaneMouseHit(const FVector &mouseLoc, const FVector &mouseDir) const
 {
 	// Tool modes and handles determine for themselves if they want z-axis affordances (off sketch plane)
 
@@ -2651,7 +2651,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetSketchPlaneMouseHit(const 
 	return ret;
 }
 
-FMouseWorldHitType AEditModelPlayerController_CPP::GetUserSnapPointMouseHit(const FVector &mouseLoc, const FVector &mouseDir) const
+FMouseWorldHitType AEditModelPlayerController::GetUserSnapPointMouseHit(const FVector &mouseLoc, const FVector &mouseDir) const
 {
 	FMouseWorldHitType ret;
 	ret.Valid = false;
@@ -2686,7 +2686,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetUserSnapPointMouseHit(cons
 /*
 Support function returns an object face hit, using the engine's raycast
 */
-FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVector &mouseLoc, const FVector &mouseDir, bool bCheckSnapping) const
+FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &mouseLoc, const FVector &mouseDir, bool bCheckSnapping) const
 {
 	// Find the MOI (if any) that we hit
 	FMouseWorldHitType objectHit;
@@ -2868,7 +2868,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetObjectMouseHit(const FVect
 /*
 Support function: given any of the hits (structural, object or sketch), if the user is holding shift, project either onto the custom affordance or the snapping span (axis aligned)
 */
-FMouseWorldHitType AEditModelPlayerController_CPP::GetShiftConstrainedMouseHit(const FMouseWorldHitType &baseHit) const
+FMouseWorldHitType AEditModelPlayerController::GetShiftConstrainedMouseHit(const FMouseWorldHitType &baseHit) const
 {
 	FMouseWorldHitType ret;
 
@@ -2935,7 +2935,7 @@ FMouseWorldHitType AEditModelPlayerController_CPP::GetShiftConstrainedMouseHit(c
 	return ret;
 }
 
-FLinearColor AEditModelPlayerController_CPP::GetSnapAffordanceColor(const FAffordanceLine &a)
+FLinearColor AEditModelPlayerController::GetSnapAffordanceColor(const FAffordanceLine &a)
 {
 	FVector p = (a.EndPoint - a.StartPoint).GetSafeNormal();
 	if (FMath::IsNearlyEqual(fabsf(FVector::DotProduct(p, FVector(1, 0, 0))), 1.0f, 0.01f))
@@ -2953,7 +2953,7 @@ FLinearColor AEditModelPlayerController_CPP::GetSnapAffordanceColor(const FAffor
 	return FLinearColor(FColorList::Magenta);
 }
 
-bool AEditModelPlayerController_CPP::AddSnapAffordance(const FVector &startLoc, const FVector &endLoc, const FLinearColor &overrideColor) const
+bool AEditModelPlayerController::AddSnapAffordance(const FVector &startLoc, const FVector &endLoc, const FLinearColor &overrideColor) const
 {
 	if (startLoc.Equals(endLoc))
 	{
@@ -2971,7 +2971,7 @@ bool AEditModelPlayerController_CPP::AddSnapAffordance(const FVector &startLoc, 
 	return true;
 }
 
-void AEditModelPlayerController_CPP::AddSnapAffordancesToOrigin(const FVector &origin, const FVector &hitLocation) const
+void AEditModelPlayerController::AddSnapAffordancesToOrigin(const FVector &origin, const FVector &hitLocation) const
 {
 	FVector fromDim = hitLocation;
 	FVector toDim = FVector(fromDim.X, fromDim.Y, origin.Z);
@@ -2984,7 +2984,7 @@ void AEditModelPlayerController_CPP::AddSnapAffordancesToOrigin(const FVector &o
 	AddSnapAffordance(fromDim, toDim);
 }
 
-bool AEditModelPlayerController_CPP::GetCursorFromUserSnapPoint(const FTransform &snapPoint, FVector &outCursorPosFlat, FVector &outHeightDelta) const
+bool AEditModelPlayerController::GetCursorFromUserSnapPoint(const FTransform &snapPoint, FVector &outCursorPosFlat, FVector &outHeightDelta) const
 {
 	FVector activeSnapPointPos = snapPoint.GetLocation();
 	FQuat activeSnapPointRot = snapPoint.GetRotation();
@@ -3005,7 +3005,7 @@ bool AEditModelPlayerController_CPP::GetCursorFromUserSnapPoint(const FTransform
 	return false;
 }
 
-bool AEditModelPlayerController_CPP::HasUserSnapPointAtPos(const FVector &snapPointPos, float tolerance) const
+bool AEditModelPlayerController::HasUserSnapPointAtPos(const FVector &snapPointPos, float tolerance) const
 {
 	for (const FTransform &userSnapPoint : UserSnapPoints)
 	{
@@ -3018,7 +3018,7 @@ bool AEditModelPlayerController_CPP::HasUserSnapPointAtPos(const FVector &snapPo
 	return false;
 }
 
-void AEditModelPlayerController_CPP::UpdateUserSnapPoint()
+void AEditModelPlayerController::UpdateUserSnapPoint()
 {
 	FTransform activeUserSnapPoint;
 	FVector cursorPosFlat, cursorHeightDelta;
@@ -3047,7 +3047,7 @@ void AEditModelPlayerController_CPP::UpdateUserSnapPoint()
 	}
 }
 
-void AEditModelPlayerController_CPP::SetSelectionMode(ESelectObjectMode NewSelectionMode)
+void AEditModelPlayerController::SetSelectionMode(ESelectObjectMode NewSelectionMode)
 {
 	if (SelectionMode != NewSelectionMode)
 	{
@@ -3069,7 +3069,7 @@ void AEditModelPlayerController_CPP::SetSelectionMode(ESelectObjectMode NewSelec
 	}
 }
 
-void AEditModelPlayerController_CPP::GroupSelected(bool makeGroup)
+void AEditModelPlayerController::GroupSelected(bool makeGroup)
 {
 	if (makeGroup)
 	{
@@ -3152,12 +3152,12 @@ void AEditModelPlayerController_CPP::GroupSelected(bool makeGroup)
 	}
 }
 
-bool AEditModelPlayerController_CPP::ToggleGravityPawn()
+bool AEditModelPlayerController::ToggleGravityPawn()
 {
 	// Get required pawns
 	APlayerCameraManager* camManager = UGameplayStatics::GetPlayerCameraManager(this, 0);
 	APawn* currentPawn = UGameplayStatics::GetPlayerPawn(this, 0);
-	AEditModelGameMode_CPP *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode_CPP>();
+	AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
 	if (camManager == nullptr || EMPlayerPawn == nullptr || currentPawn == nullptr || gameMode == nullptr || gameMode->ToggleGravityPawnClass == nullptr)
 	{
 		return false;
@@ -3174,7 +3174,7 @@ bool AEditModelPlayerController_CPP::ToggleGravityPawn()
 		{
 			FActorSpawnParameters spawnParam;
 			spawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			EMToggleGravityPawn = GetWorld()->SpawnActor<AEditModelToggleGravityPawn_CPP>(gameMode->ToggleGravityPawnClass, possessLocation, yawRotOnly, spawnParam);
+			EMToggleGravityPawn = GetWorld()->SpawnActor<AEditModelToggleGravityPawn>(gameMode->ToggleGravityPawnClass, possessLocation, yawRotOnly, spawnParam);
 		}
 		EMToggleGravityPawn->SetActorLocationAndRotation(possessLocation, yawRotOnly, true);
 		Possess(EMToggleGravityPawn);
@@ -3198,7 +3198,7 @@ bool AEditModelPlayerController_CPP::ToggleGravityPawn()
 	return true;
 }
 
-void AEditModelPlayerController_CPP::HandleUndo()
+void AEditModelPlayerController::HandleUndo()
 {
 	if (EditModelUserWidget->IsBIMDesingerActive())
 	{
@@ -3214,7 +3214,7 @@ void AEditModelPlayerController_CPP::HandleUndo()
 	}
 }
 
-void AEditModelPlayerController_CPP::HandleRedo()
+void AEditModelPlayerController::HandleRedo()
 {
 	if (EditModelUserWidget->IsBIMDesingerActive())
 	{

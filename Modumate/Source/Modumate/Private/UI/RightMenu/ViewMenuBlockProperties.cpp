@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/RightMenu/ViewMenuBlockProperties.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "Components/CheckBox.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
@@ -41,7 +41,7 @@ bool UViewMenuBlockProperties::Initialize()
 void UViewMenuBlockProperties::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 }
 
 FReply UViewMenuBlockProperties::NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)

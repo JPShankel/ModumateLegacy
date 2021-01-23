@@ -9,10 +9,10 @@
 #include "Objects/FFE.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/CompoundMeshActor.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 using namespace Modumate;
 
@@ -27,7 +27,7 @@ bool UFFETool::Activate()
 	// Spawn CompoundMeshActor as cursor
 	CursorCompoundMesh = Controller->GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform::Identity);
 	CursorCompoundMesh->SetActorEnableCollision(false);
-	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 	FGuid key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
 	const FBIMAssemblySpec *obAsmPtr = doc->GetPresetCollection().GetAssemblyByGUID(EToolMode::VE_PLACEOBJECT,key);
@@ -76,7 +76,7 @@ bool UFFETool::Deactivate()
 
 bool UFFETool::FrameUpdate()
 {
-	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 	FGuid key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
 	const FBIMAssemblySpec *assembly = doc->GetPresetCollection().GetAssemblyByGUID(EToolMode::VE_PLACEOBJECT, key);
@@ -117,7 +117,7 @@ bool UFFETool::BeginUse()
 	const FSnappedCursor &snappedCursor = Controller->EMPlayerState->SnappedCursor;
 	FVector hitLoc = snappedCursor.WorldPosition;
 
-	AEditModelGameState_CPP *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	AEditModelGameState *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 	FGuid key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
 

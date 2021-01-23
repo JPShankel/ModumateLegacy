@@ -17,8 +17,8 @@
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "UI/ToolTray/ToolTrayWidget.h"
 #include "UnrealClasses/EditModelInputHandler.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UI/Debugger/BIMDebugger.h"
 #include "Components/Border.h"
 #include "UI/TutorialMenu/TutorialMenuWidget.h"
@@ -36,7 +36,7 @@ bool UEditModelUserWidget::Initialize()
 		return false;
 	}
 
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (!(ToolTrayWidget && ToolTrayWidget))
 	{
 		return false;

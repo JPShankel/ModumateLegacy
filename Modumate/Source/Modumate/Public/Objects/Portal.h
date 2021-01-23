@@ -45,7 +45,7 @@ public:
 	virtual FQuat GetRotation() const override;
 	virtual FTransform GetWorldTransform() const override;
 	virtual FVector GetCorner(int32 index) const override;
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller) override;
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
 
 	virtual FVector GetNormal() const;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
@@ -63,7 +63,7 @@ public:
 	FMOIPortalData InstanceData;
 
 protected:
-	TWeakObjectPtr<AEditModelPlayerController_CPP> Controller;
+	TWeakObjectPtr<AEditModelPlayerController> Controller;
 
 	bool SetupCompoundActorGeometry();
 	bool SetRelativeTransform(const FVector2D& InRelativePos, const FQuat& InRelativeRot);

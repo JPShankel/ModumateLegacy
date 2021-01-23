@@ -5,8 +5,8 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/VertexActor.h"
 
 AMOIVertexBase::AMOIVertexBase()
@@ -63,7 +63,7 @@ AActor *AMOIVertexBase::CreateActor(const FVector &loc, const FQuat &rot)
 	VertexActor = world->SpawnActor<AVertexActor>(AVertexActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
 
 	// Set appearance
-	AEditModelGameMode_CPP *gameMode = world->GetAuthGameMode<AEditModelGameMode_CPP>();
+	AEditModelGameMode *gameMode = world->GetAuthGameMode<AEditModelGameMode>();
 	VertexActor->SetActorMesh(gameMode->MetaPlaneVertexIconMesh);
 	VertexActor->SetHandleScaleScreenSize(DefaultHandleSize);
 

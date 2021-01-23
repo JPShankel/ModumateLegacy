@@ -1,5 +1,5 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
-#include "UnrealClasses/MainMenuGameMode_CPP.h"
+#include "UnrealClasses/MainMenuGameMode.h"
 
 #include "HAL/FileManager.h"
 #include "JsonObjectConverter.h"
@@ -15,7 +15,7 @@
 #include "ModumateCore/ModumateUserSettings.h"
 
 
-void AMainMenuGameMode_CPP::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+void AMainMenuGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 
@@ -34,7 +34,7 @@ void AMainMenuGameMode_CPP::InitGame(const FString& MapName, const FString& Opti
 	}
 }
 
-void AMainMenuGameMode_CPP::LoadRecentProjectData()
+void AMainMenuGameMode::LoadRecentProjectData()
 {
 	auto *gameInstance = GetGameInstance<UModumateGameInstance>();
 	if (gameInstance && gameInstance->UserSettings.bLoaded)
@@ -90,7 +90,7 @@ void AMainMenuGameMode_CPP::LoadRecentProjectData()
 	}
 }
 
-bool AMainMenuGameMode_CPP::GetRecentProjectData(int32 index, FString &outProjectPath, FText &outProjectName, FDateTime &outProjectTime, FSlateBrush &outDefaultThumbnail, FSlateBrush &outHoveredThumbnail) const
+bool AMainMenuGameMode::GetRecentProjectData(int32 index, FString &outProjectPath, FText &outProjectName, FDateTime &outProjectTime, FSlateBrush &outDefaultThumbnail, FSlateBrush &outHoveredThumbnail) const
 {
 	if (index < NumRecentProjects)
 	{
@@ -111,7 +111,7 @@ bool AMainMenuGameMode_CPP::GetRecentProjectData(int32 index, FString &outProjec
 	return false;
 }
 
-bool AMainMenuGameMode_CPP::OpenProject(const FString &projectPath, bool bIsTutorial)
+bool AMainMenuGameMode::OpenProject(const FString &projectPath, bool bIsTutorial)
 {
 	if (IFileManager::Get().FileExists(*projectPath))
 	{
@@ -126,7 +126,7 @@ bool AMainMenuGameMode_CPP::OpenProject(const FString &projectPath, bool bIsTuto
 	return false;
 }
 
-bool AMainMenuGameMode_CPP::OpenProjectFromPicker()
+bool AMainMenuGameMode::OpenProjectFromPicker()
 {
 	FString projectPath;
 	if (GetLoadFilename(projectPath))
@@ -137,18 +137,18 @@ bool AMainMenuGameMode_CPP::OpenProjectFromPicker()
 	return false;
 }
 
-bool AMainMenuGameMode_CPP::GetLoadFilename(FString &loadFileName)
+bool AMainMenuGameMode::GetLoadFilename(FString &loadFileName)
 {
 	return Modumate::PlatformFunctions::GetOpenFilename(loadFileName);
 }
 
-FDateTime AMainMenuGameMode_CPP::GetCurrentDateTime()
+FDateTime AMainMenuGameMode::GetCurrentDateTime()
 {
 	return FDateTime::Now();
 }
 
 
-void AMainMenuGameMode_CPP::DisplayShutdownMessage(const FString &str, const FString &caption)
+void AMainMenuGameMode::DisplayShutdownMessage(const FString &str, const FString &caption)
 {
 	Modumate::PlatformFunctions::ShowMessageBox(str, caption, Modumate::PlatformFunctions::EMessageBoxType::Okay);
 }

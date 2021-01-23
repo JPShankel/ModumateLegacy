@@ -16,16 +16,16 @@
 #include "Misc/OutputDeviceNull.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UI/HUDDrawWidget.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/LineActor.h"
-#include "UnrealClasses/ModumateObjectComponent_CPP.h"
+#include "UnrealClasses/ModumateObjectComponent.h"
 #include "UObject/ConstructorHelpers.h"
 
 using namespace Modumate;
-class AEditModelPlayerController_CPP;
+class AEditModelPlayerController;
 
 AModumateObjectInstance::AModumateObjectInstance()
 {
@@ -36,7 +36,7 @@ void AModumateObjectInstance::BeginPlay()
 	Super::BeginPlay();
 
 	UWorld* world = GetWorld();
-	auto gameState = ensure(world) ? world->GetGameState<AEditModelGameState_CPP>() : nullptr;
+	auto gameState = ensure(world) ? world->GetGameState<AEditModelGameState>() : nullptr;
 	Document = ensure(gameState) ? gameState->Document : nullptr;
 }
 
@@ -55,10 +55,10 @@ void AModumateObjectInstance::SetupMOIComponent()
 	}
 
 	// (Optionally create) and register a MOI component that can be used for looking up MOIs by ID.
-	UModumateObjectComponent_CPP *moiComponent = MeshActor->FindComponentByClass<UModumateObjectComponent_CPP>();
+	UModumateObjectComponent *moiComponent = MeshActor->FindComponentByClass<UModumateObjectComponent>();
 	if (moiComponent == nullptr)
 	{
-		moiComponent = NewObject<UModumateObjectComponent_CPP>(MeshActor.Get());
+		moiComponent = NewObject<UModumateObjectComponent>(MeshActor.Get());
 		moiComponent->RegisterComponent();
 	}
 
@@ -296,7 +296,7 @@ bool AModumateObjectInstance::OnSelected(bool bNewSelected)
 	return true;
 }
 
-bool AModumateObjectInstance::OnHovered(AEditModelPlayerController_CPP* Controller, bool bNewHovered)
+bool AModumateObjectInstance::OnHovered(AEditModelPlayerController* Controller, bool bNewHovered)
 {
 	if (bHovered == bNewHovered)
 	{
@@ -756,7 +756,7 @@ void AModumateObjectInstance::DestroyActor(bool bFullDelete)
 	}
 	else
 	{
-		auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+		auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 		ShowAdjustmentHandles(controller, false);
 
 		RequestHidden(PartialActorDestructionRequest, true);
@@ -869,7 +869,7 @@ int32 AModumateObjectInstance::GetNumCorners() const
 void AModumateObjectInstance::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
 	AActor *moiActor = GetActor();
-	auto *controller = moiActor ? moiActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
+	auto *controller = moiActor ? moiActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
 	if (controller)
 	{
 		bool bEnabledByViewMode = controller->EMPlayerState->IsObjectTypeEnabledByViewMode(GetObjectType());
@@ -880,7 +880,7 @@ void AModumateObjectInstance::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCol
 	}
 }
 
-void AModumateObjectInstance::ShowAdjustmentHandles(AEditModelPlayerController_CPP* Controller, bool bShow)
+void AModumateObjectInstance::ShowAdjustmentHandles(AEditModelPlayerController* Controller, bool bShow)
 {
 	if (bShow && !HasAdjustmentHandles())
 	{
@@ -917,7 +917,7 @@ AActor *AModumateObjectInstance::RestoreActor()
 AActor *AModumateObjectInstance::CreateActor(const FVector &loc, const FQuat &rot)
 {
 	UWorld* world = GetWorld();
-	AEditModelGameMode_CPP* gameMode = world ? world->GetAuthGameMode<AEditModelGameMode_CPP>() : nullptr;
+	AEditModelGameMode* gameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
 	if (gameMode)
 	{
 		DynamicMeshActor = world->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get(), FTransform(rot, loc));

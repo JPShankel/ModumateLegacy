@@ -101,10 +101,10 @@ public:
 	TArray<AAdjustmentHandleActor*> HandleChildren;
 
 	UPROPERTY()
-	class AEditModelGameState_CPP *GameState;
+	class AEditModelGameState *GameState;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP *Controller;
+	class AEditModelPlayerController *Controller;
 
 	UPROPERTY()
 	class AEditModelPlayerHUD *PlayerHUD;

@@ -1,7 +1,7 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
 #include "ToolsAndAdjustments/Tools/EditModelRailTool.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 URailTool::URailTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

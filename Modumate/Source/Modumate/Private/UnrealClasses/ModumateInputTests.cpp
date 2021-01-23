@@ -1,7 +1,7 @@
 #include "CoreMinimal.h"
 #include "UnrealClasses/EditModelInputAutomation.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "Misc/AutomationTest.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Paths.h"
@@ -34,8 +34,8 @@ namespace Modumate
 	{
 		UWorld *world = GetGameWorld();
 		UModumateGameInstance *gameInstance = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
-		AEditModelPlayerController_CPP *controller = world ? world->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
-		AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+		AEditModelPlayerController *controller = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+		AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 		if (ensure(controller && controller->InputAutomationComponent && gameState))
 		{
 			// Make an empty document, and turn on document debugging
@@ -80,8 +80,8 @@ namespace Modumate
 	{
 		UWorld *world = GetGameWorld();
 		UModumateGameInstance* gameInstance = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
-		AEditModelPlayerController_CPP *controller = world ? world->GetFirstPlayerController<AEditModelPlayerController_CPP>() : nullptr;
-		AEditModelGameState_CPP *gameState = world ? Cast<AEditModelGameState_CPP>(world->GetGameState()) : nullptr;
+		AEditModelPlayerController *controller = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+		AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
 		if (ensure(gameInstance && controller && controller->InputAutomationComponent && gameState))
 		{
 			if (controller->InputAutomationComponent->IsPlaying())

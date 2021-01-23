@@ -12,7 +12,7 @@
 #include "UI/HUDDrawWidget.h"
 #include "UObject/ScriptInterface.h"
 
-#include "EditModelPlayerState_CPP.generated.h"
+#include "EditModelPlayerState.generated.h"
 
 class MODUMATE_API UModumateDocument;
 class MODUMATE_API AGraphDimensionActor;
@@ -25,15 +25,15 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdateScopeBoxes);
  *
  */
 UCLASS(Config=Game)
-class MODUMATE_API AEditModelPlayerState_CPP : public APlayerState
+class MODUMATE_API AEditModelPlayerState : public APlayerState
 {
 	GENERATED_BODY()
-	AEditModelPlayerState_CPP();
+	AEditModelPlayerState();
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	friend class AEditModelPlayerController_CPP;
+	friend class AEditModelPlayerController;
 
 protected:
 	void BatchRenderLines();
@@ -72,7 +72,7 @@ public:
 	bool DebugMouseHits;
 
 	UFUNCTION(BlueprintCallable, Category = "Game")
-	AEditModelGameMode_CPP *GetEditModelGameMode();
+	AEditModelGameMode *GetEditModelGameMode();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
 	TArray<FAffordanceLine> AffordanceLines;
@@ -128,7 +128,7 @@ public:
 	void DebugShowWallProfiles(const TArray<AModumateObjectInstance *> &walls);
 
 	UPROPERTY()
-	AEditModelPlayerController_CPP *EMPlayerController;
+	AEditModelPlayerController *EMPlayerController;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UMaterialParameterCollection *MetaPlaneMatParamCollection;

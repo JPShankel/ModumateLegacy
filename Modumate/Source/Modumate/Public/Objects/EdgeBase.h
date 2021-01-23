@@ -19,7 +19,7 @@ public:
 	virtual FVector GetLocation() const override;
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const override;
-	virtual bool OnHovered(AEditModelPlayerController_CPP *controller, bool bIsHovered) override;
+	virtual bool OnHovered(AEditModelPlayerController *controller, bool bIsHovered) override;
 	virtual AActor *CreateActor(const FVector &loc, const FQuat &rot) override;
 	virtual bool OnSelected(bool bIsSelected) override;
 	virtual void GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;

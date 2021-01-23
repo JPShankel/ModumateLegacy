@@ -2,13 +2,13 @@
 #pragma once
 
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 
 #include "EditModelJoinTool.generated.h"
 
-class AEditModelGameMode_CPP;
-class AEditModelGameState_CPP;
+class AEditModelGameMode;
+class AEditModelGameState;
 class ALineActor;
 
 UCLASS()

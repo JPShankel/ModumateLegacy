@@ -22,12 +22,12 @@
 #include "Runtime/Core/Public/Misc/FileHelper.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "UI/DimensionManager.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelInputAutomation.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerPawn_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerPawn.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "UnrealClasses/TooltipManager.h"
 #include "UI/EditModelUserWidget.h"
@@ -46,7 +46,7 @@ UModumateGameInstance::UModumateGameInstance(const FObjectInitializer& ObjectIni
 
 UModumateDocument *UModumateGameInstance::GetDocument()
 {
-	AEditModelGameState_CPP *gameState = GetWorld() != nullptr ? GetWorld()->GetGameState<AEditModelGameState_CPP>() : nullptr;
+	AEditModelGameState *gameState = GetWorld() != nullptr ? GetWorld()->GetGameState<AEditModelGameState>() : nullptr;
 	if (gameState != nullptr)
 	{
 		return gameState->Document;
@@ -99,7 +99,7 @@ void UModumateGameInstance::RegisterAllCommands()
 {
 	RegisterCommand(kBIMDebug, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
 	{
-		AEditModelPlayerController_CPP* controller = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
+		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
 		if (controller && controller->EditModelUserWidget)
 		{
 			bool newShow = !controller->EditModelUserWidget->IsBIMDebuggerOn();
@@ -173,7 +173,7 @@ void UModumateGameInstance::RegisterAllCommands()
 		bool selected = params.GetValue(Parameters::kSelected);
 		if (ob != nullptr)
 		{
-			AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
+			AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 			playerState->SetObjectSelected(ob, selected);
 			return true;
 		}
@@ -182,7 +182,7 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kSelectObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
+		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		TArray<int32> obIDs = params.GetValue(Parameters::kObjectIDs);
 		bool selected = params.GetValue(Parameters::kSelected);
 
@@ -200,21 +200,21 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kSelectAll, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
+		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		playerState->SelectAll();
 		return true;
 	});
 
 	RegisterCommand(kSelectInverse, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
+		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		playerState->SelectInverse();
 		return true;
 	});
 
 	RegisterCommand(kDeselectAll, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
+		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		playerState->DeselectAll();
 		return true;
 	});
@@ -230,21 +230,21 @@ void UModumateGameInstance::RegisterAllCommands()
 			ob = GetDocument()->GetObjectById(objID);
 		}
 
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
+		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		playerState->SetViewGroupObject(ob);
 		return true;
 	});
 
 	RegisterCommand(kDeleteObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		AEditModelPlayerController_CPP *playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(playerController->PlayerState);
+		AEditModelPlayerController *playerController = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(playerController->PlayerState);
 		GetDocument()->DeleteObjects(params.GetValue(kObjectIDs), true, params.GetValue(kIncludeConnected));
 		return true;
 	});
 
 	RegisterCommand(kDeleteSelectedObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		AEditModelPlayerController_CPP *playerController = Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController());
-		AEditModelPlayerState_CPP *playerState = Cast<AEditModelPlayerState_CPP>(playerController->PlayerState);
+		AEditModelPlayerController *playerController = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(playerController->PlayerState);
 		TArray<AModumateObjectInstance*> obs = playerState->SelectedObjects.Array();
 		playerState->DeselectAll();
 
@@ -262,7 +262,7 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kDebug, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 
-		AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
+		AEditModelPlayerState* playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		FString type = params.GetValue(TEXT("type"),TEXT("document"));
 
 		bool hasShow = params.HasValue(TEXT("on"));
@@ -296,14 +296,14 @@ void UModumateGameInstance::RegisterAllCommands()
 		}
 		else if (type.Equals(TEXT("dwg")))
 		{
-			Cast<AEditModelPlayerController_CPP>(GetWorld()->GetFirstPlayerController())->OnCreateDwg();
+			Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController())->OnCreateDwg();
 		}
 		return true;
 	});
 
 	auto copySelected = [this]()
 	{
-		AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
+		AEditModelPlayerState* playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		playerState->CopySelectedToClipboard(*GetDocument());
 	};
 
@@ -315,7 +315,7 @@ void UModumateGameInstance::RegisterAllCommands()
 	RegisterCommand(kCutSelected, [copySelected, this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		copySelected();
-		AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
+		AEditModelPlayerState* playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		TArray<AModumateObjectInstance*> toBeCut = playerState->SelectedObjects.Array();
 		playerState->DeselectAll();
 		GetDocument()->DeleteObjects(toBeCut);
@@ -324,7 +324,7 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kPaste, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		AEditModelPlayerState_CPP* playerState = Cast<AEditModelPlayerState_CPP>(GetWorld()->GetFirstPlayerController()->PlayerState);
+		AEditModelPlayerState* playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		playerState->Paste(*GetDocument());
 		return true;
 	});
@@ -400,8 +400,8 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kSetFOV, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		AEditModelPlayerController_CPP *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
-		AEditModelPlayerPawn_CPP *playerPawn = playerController ? Cast<AEditModelPlayerPawn_CPP>(playerController->GetPawn()) : nullptr;
+		AEditModelPlayerController *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+		AEditModelPlayerPawn *playerPawn = playerController ? Cast<AEditModelPlayerPawn>(playerController->GetPawn()) : nullptr;
 		float newFOV = params.GetValue(Parameters::kFieldOfView);
 
 		if (playerPawn && (newFOV > 0.0f))
@@ -477,7 +477,7 @@ Modumate::FModumateFunctionParameterSet UModumateGameInstance::DoModumateCommand
 		fnOutput.SetValue(kSuccess, bSuccess);
 
 		// If we're recording input, then record this command
-		AEditModelPlayerController_CPP *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController_CPP>();
+		AEditModelPlayerController *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 		if (command.bCaptureForInput && playerController && playerController->InputAutomationComponent &&
 			playerController->InputAutomationComponent->IsRecording())
 		{

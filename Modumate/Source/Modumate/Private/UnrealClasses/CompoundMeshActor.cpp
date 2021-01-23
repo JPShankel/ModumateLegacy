@@ -17,10 +17,10 @@
 #include "ModumateCore/ModumateUnits.h"
 #include "ModumateCore/ModumateStats.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "Drafting/ModumateDraftingElements.h"
 
 DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Mesh To Lines"), STAT_ModumateMeshToLines, STATGROUP_Modumate);
@@ -694,7 +694,7 @@ bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<Modumate::FDr
 {
 		TArray<TPair<FVector, FVector>> OutEdges;
 
-		auto gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+		auto gameState = GetWorld()->GetGameState<AEditModelGameState>();
 		auto moi = gameState->Document->ObjectFromActor(this);
 		bool bIsCabinet = moi && moi->GetObjectType() == EObjectType::OTCabinet;
 		Modumate::FModumateLayerType layerType = bIsCabinet ? Modumate::FModumateLayerType::kCabinetCutCarcass
@@ -775,7 +775,7 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 		return false;  // False if equal.
 	};
 
-	auto gameState = GetWorld()->GetGameState<AEditModelGameState_CPP>();
+	auto gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	auto moi = gameState->Document->ObjectFromActor(this);
 	bool bIsCabinet = moi && moi->GetObjectType() == EObjectType::OTCabinet;
 	Modumate::FModumateLayerType layerType = bIsCabinet ? Modumate::FModumateLayerType::kCabinetBeyond

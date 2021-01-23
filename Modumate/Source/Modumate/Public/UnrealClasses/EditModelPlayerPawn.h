@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CollisionQueryParams.h"
-#include "EditModelPlayerPawn_CPP.generated.h"
+#include "EditModelPlayerPawn.generated.h"
 
 UCLASS()
-class MODUMATE_API AEditModelPlayerPawn_CPP : public ACharacter
+class MODUMATE_API AEditModelPlayerPawn : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this pawn's properties
-	AEditModelPlayerPawn_CPP(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	AEditModelPlayerPawn(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void UnPossessed() override;
@@ -31,7 +31,7 @@ protected:
 	FCollisionQueryParams CachedCollisionQueryComplexParams;
 
 	UPROPERTY()
-	class AEditModelPlayerController_CPP* EMPlayerController;
+	class AEditModelPlayerController* EMPlayerController;
 
 public:
 	// Objects types for collision detection

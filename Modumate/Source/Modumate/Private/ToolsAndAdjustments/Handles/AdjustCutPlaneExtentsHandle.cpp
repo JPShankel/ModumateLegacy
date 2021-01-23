@@ -7,9 +7,9 @@
 #include "UI/DimensionManager.h"
 #include "UI/DimensionActor.h"
 #include "UI/PendingSegmentActor.h"
-#include "UnrealClasses/EditModelGameState_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 

@@ -7,8 +7,8 @@
 
 #include "EditModelPortalTools.generated.h"
 
-class APortalFrameActor_CPP;
-class AEditModelPlayerController_CPP;
+class APortalFrameActor;
+class AEditModelPlayerController;
 class ACompoundMeshActor;
 class UModumateDocument;
 struct FBIMAssemblySpec;

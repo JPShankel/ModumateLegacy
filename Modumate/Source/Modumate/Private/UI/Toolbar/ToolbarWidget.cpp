@@ -6,7 +6,7 @@
 #include "UI/Custom/ModumateButton.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/ToolTray/ToolTrayWidget.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/BIM/BIMDesigner.h"
 
 
@@ -22,7 +22,7 @@ bool UToolbarWidget::Initialize()
 		return false;
 	}
 
-	Controller = GetOwningPlayer<AEditModelPlayerController_CPP>();
+	Controller = GetOwningPlayer<AEditModelPlayerController>();
 
 	if (!(Controller && Button_Metaplanes && Button_Separators && Button_SurfaceGraphs && Button_Attachments))
 	{

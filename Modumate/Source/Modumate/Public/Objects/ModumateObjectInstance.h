@@ -15,7 +15,7 @@
 
 class AActor;
 class AAdjustmentHandleActor;
-class AEditModelPlayerController_CPP;
+class AEditModelPlayerController;
 class UHUDDrawWidget;
 class UModumateDocument;
 
@@ -60,9 +60,9 @@ public:
 
 	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled);
 
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController_CPP *Controller) { }
-	virtual void ShowAdjustmentHandles(AEditModelPlayerController_CPP *Controller, bool bShow);
-	virtual bool OnHovered(AEditModelPlayerController_CPP* controller, bool bNewHovered);
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController *Controller) { }
+	virtual void ShowAdjustmentHandles(AEditModelPlayerController *Controller, bool bShow);
+	virtual bool OnHovered(AEditModelPlayerController* controller, bool bNewHovered);
 	virtual bool OnSelected(bool bIsSelected);
 
 	// Can be called when a new assembly is assigned or when an the existing assembly changes structure

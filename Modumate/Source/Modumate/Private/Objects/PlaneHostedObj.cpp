@@ -16,12 +16,12 @@
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "ToolsAndAdjustments/Handles/JustificationHandle.h"
-#include "UnrealClasses/EditModelGameMode_CPP.h"
-#include "UnrealClasses/EditModelPlayerController_CPP.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 
-class AEditModelPlayerController_CPP;
+class AEditModelPlayerController;
 
 using namespace Modumate::Mitering;
 
@@ -197,7 +197,7 @@ void AMOIPlaneHostedObj::GetStructuralPointsAndLines(TArray<FStructurePoint> &ou
 	}
 }
 
-void AMOIPlaneHostedObj::SetupAdjustmentHandles(AEditModelPlayerController_CPP *controller)
+void AMOIPlaneHostedObj::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 {
 	AModumateObjectInstance *parent = GetParentObject();
 	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))

@@ -2,7 +2,7 @@
 
 #pragma once
 #include "ToolsAndAdjustments/Tools/EditModelRectangleTool.h"
-#include "UnrealClasses/EditModelPlayerState_CPP.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 

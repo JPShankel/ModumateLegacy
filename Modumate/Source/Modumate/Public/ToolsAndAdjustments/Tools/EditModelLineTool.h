@@ -8,8 +8,8 @@
 
 #include "EditModelLineTool.generated.h"
 
-class AEditModelGameMode_CPP;
-class AEditModelGameState_CPP;
+class AEditModelGameMode;
+class AEditModelGameState;
 
 UCLASS()
 class MODUMATE_API ULineTool : public UEditModelToolBase
@@ -24,7 +24,7 @@ protected:
 	};
 	EState State;
 
-	TWeakObjectPtr<AEditModelGameMode_CPP> GameMode;
+	TWeakObjectPtr<AEditModelGameMode> GameMode;
 	EMouseMode OriginalMouseMode;
 
 public:
