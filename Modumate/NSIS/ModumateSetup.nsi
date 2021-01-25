@@ -107,8 +107,6 @@ Section "Modumate Files" SEC03
   File "${PATH_IN}\Modumate\Content\Paks\pakchunk0-WindowsNoEditor.sig"
   SetOutPath "$INSTDIR\Modumate\Content\Splash"
   File "${PATH_IN}\Modumate\Content\Splash\Splash.bmp"
-  SetOutPath "$INSTDIR\Modumate\Plugins\Revulytics\Binaries\ThirdParty\RevulyticsLibrary\Win64"
-  File "${PATH_IN}\Modumate\Plugins\Revulytics\Binaries\ThirdParty\RevulyticsLibrary\Win64\ruiSDK_5.5.1.x64.dll"
 SectionEnd
 
 Section -AdditionalIcons
@@ -142,7 +140,6 @@ FunctionEnd
 Section Uninstall
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\UninstallModumate.exe"
-  Delete "$INSTDIR\Modumate\Plugins\Revulytics\Binaries\ThirdParty\RevulyticsLibrary\Win64\ruiSDK_5.5.1.x64.dll"
   Delete "$INSTDIR\Modumate\Content\Splash\Splash.bmp"
   Delete "$INSTDIR\Modumate\Content\Paks\pakchunk0-WindowsNoEditor.sig"
   Delete "$INSTDIR\Modumate\Content\Paks\pakchunk0-WindowsNoEditor.pak"
