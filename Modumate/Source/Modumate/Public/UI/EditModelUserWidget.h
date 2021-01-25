@@ -13,10 +13,11 @@
  *
  */
 UENUM(BlueprintType)
-enum class ERightMenuState : uint8
+enum class ELeftMenuState : uint8
 {
 	ViewMenu,
 	CutPlaneMenu,
+	ToolMenu,
 	None
 };
 
@@ -88,7 +89,7 @@ public:
 	UPROPERTY()
 	class UModumateButtonUserWidget* CurrentActiveToolButton;
 
-	ERightMenuState CurrentRightMenuState = ERightMenuState::None;
+	ELeftMenuState CurrentLeftMenuState = ELeftMenuState::None;
 
 	UFUNCTION()
 	void EMOnSelectionObjectChanged();
@@ -102,7 +103,7 @@ public:
 
 	void EditExistingAssembly(EToolMode ToolMode, const FGuid& AssemblyGUID);
 	void ToggleBIMDesigner(bool Open);
-	void SwitchRightMenu(ERightMenuState NewMenuState);
+	void SwitchLeftMenu(ELeftMenuState NewMenuState);
 	void UpdateCutPlanesList();
 	bool RemoveCutPlaneFromList(int32 ObjID = MOD_ID_NONE);
 	bool UpdateCutPlaneInList(int32 ObjID = MOD_ID_NONE);

@@ -71,53 +71,75 @@ void UEditModelUserWidget::UpdateOnToolModeChanged()
 
 void UEditModelUserWidget::UpdateToolTray()
 {
+	SwitchLeftMenu(ELeftMenuState::ToolMenu);
+}
+
+void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState)
+{
 	if (!(Controller && ToolTrayWidget))
 	{
 		return;
 	}
-	switch (UModumateTypeStatics::GetToolCategory(Controller->GetToolMode()))
-	{
-	case EToolCategories::MetaGraph:
-		ToolTrayWidget->ChangeBlockToMetaPlaneTools();
-		break;
-	case EToolCategories::Separators:
-		ToolTrayWidget->ChangeBlockToSeparatorTools(Controller->GetToolMode());
-		break;
-	case EToolCategories::SurfaceGraphs:
-		ToolTrayWidget->ChangeBlockToSurfaceGraphTools();
-		break;
-	case EToolCategories::Attachments:
-		ToolTrayWidget->ChangeBlockToAttachmentTools(Controller->GetToolMode());
-		break;
-	default:
-		ToolTrayWidget->CloseToolTray();
-		if (Controller->GetToolMode() == EToolMode::VE_CUTPLANE)
-		{
-			SwitchRightMenu(ERightMenuState::CutPlaneMenu);
-		}
 
-		// Close BIMDesigner if it's still open
-		if (BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
-		{
-			ToggleBIMDesigner(false);
-		}
-	}
-	
-	if (CurrentActiveToolButton && UEditModelInputHandler::ToolModeFromInputCommand(CurrentActiveToolButton->InputCommand) != Controller->GetToolMode())
+	CurrentLeftMenuState = NewState;
+	// Select mode closes the tooltray
+	if (CurrentLeftMenuState == ELeftMenuState::ToolMenu && Controller->GetToolMode() == EToolMode::VE_SELECT)
 	{
-		CurrentActiveToolButton->SwitchToNormalStyle();
-		CurrentActiveToolButton = nullptr;
-	}
-	UModumateButtonUserWidget* toolToButton = ToolToButtonMap.FindRef(Controller->GetToolMode());
-	if (toolToButton)
-	{
-		CurrentActiveToolButton = toolToButton;
-		CurrentActiveToolButton->SwitchToActiveStyle();
+		CurrentLeftMenuState = ELeftMenuState::None;
 	}
 
-	if (ViewMenu && ViewMenu->ViewMenu_Block_ViewMode)
+	// Most toolmodes use tooltray menu, but cutplane uses its own cutplane menu
+	if (Controller->GetToolMode() == EToolMode::VE_CUTPLANE)
+	{
+		CurrentLeftMenuState = ELeftMenuState::CutPlaneMenu;
+	}
+
+	bool newToolTrayVisibility = CurrentLeftMenuState == ELeftMenuState::ToolMenu;
+	bool newViewMenuVisibility = CurrentLeftMenuState == ELeftMenuState::ViewMenu;
+	bool newCutPlaneMenuVisibility = CurrentLeftMenuState == ELeftMenuState::CutPlaneMenu;
+	newToolTrayVisibility ? ToolTrayWidget->OpenToolTray() : ToolTrayWidget->CloseToolTray();
+	ViewMenu->SetViewMenuVisibility(newViewMenuVisibility);
+	CutPlaneMenu->SetCutPlaneMenuVisibility(newCutPlaneMenuVisibility);
+
+	if (newToolTrayVisibility)
+	{
+		switch (UModumateTypeStatics::GetToolCategory(Controller->GetToolMode()))
+		{
+		case EToolCategories::MetaGraph:
+			ToolTrayWidget->ChangeBlockToMetaPlaneTools();
+			break;
+		case EToolCategories::Separators:
+			ToolTrayWidget->ChangeBlockToSeparatorTools(Controller->GetToolMode());
+			break;
+		case EToolCategories::SurfaceGraphs:
+			ToolTrayWidget->ChangeBlockToSurfaceGraphTools();
+			break;
+		case EToolCategories::Attachments:
+			ToolTrayWidget->ChangeBlockToAttachmentTools(Controller->GetToolMode());
+			break;
+		}
+		if (CurrentActiveToolButton && UEditModelInputHandler::ToolModeFromInputCommand(CurrentActiveToolButton->InputCommand) != Controller->GetToolMode())
+		{
+			CurrentActiveToolButton->SwitchToNormalStyle();
+			CurrentActiveToolButton = nullptr;
+		}
+		UModumateButtonUserWidget* toolToButton = ToolToButtonMap.FindRef(Controller->GetToolMode());
+		if (toolToButton)
+		{
+			CurrentActiveToolButton = toolToButton;
+			CurrentActiveToolButton->SwitchToActiveStyle();
+		}
+	}
+
+	if (newViewMenuVisibility && ViewMenu && ViewMenu->ViewMenu_Block_ViewMode)
 	{
 		ViewMenu->ViewMenu_Block_ViewMode->UpdateEnabledViewModes(Controller->ValidViewModes);
+	}
+
+	// Close BIMDesigner if it's still open
+	if (BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
+	{
+		ToggleBIMDesigner(false);
 	}
 }
 
@@ -158,18 +180,9 @@ void UEditModelUserWidget::ToggleBIMDesigner(bool Open)
 	ToolTrayWidget->ToolTrayBIMDesignerMode(Open);
 }
 
-void UEditModelUserWidget::SwitchRightMenu(ERightMenuState NewMenuState)
-{
-	CurrentRightMenuState = NewMenuState;
-	bool newViewMenuVisibility = CurrentRightMenuState == ERightMenuState::ViewMenu;
-	bool newCutPlaneMenuVisibility = CurrentRightMenuState == ERightMenuState::CutPlaneMenu;
-	ViewMenu->SetViewMenuVisibility(newViewMenuVisibility);
-	CutPlaneMenu->SetCutPlaneMenuVisibility(newCutPlaneMenuVisibility);
-}
-
 void UEditModelUserWidget::UpdateCutPlanesList()
 {
-	if (CurrentRightMenuState == ERightMenuState::CutPlaneMenu)
+	if (CurrentLeftMenuState == ELeftMenuState::CutPlaneMenu)
 	{
 		CutPlaneMenu->UpdateCutPlaneMenuBlocks();
 	}
@@ -177,7 +190,7 @@ void UEditModelUserWidget::UpdateCutPlanesList()
 
 bool UEditModelUserWidget::RemoveCutPlaneFromList(int32 ObjID /*= MOD_ID_NONE*/)
 {
-	if (CurrentRightMenuState == ERightMenuState::CutPlaneMenu)
+	if (CurrentLeftMenuState == ELeftMenuState::CutPlaneMenu)
 	{
 		return CutPlaneMenu->RemoveCutPlaneFromMenuBlock(ObjID);
 	}
@@ -186,7 +199,7 @@ bool UEditModelUserWidget::RemoveCutPlaneFromList(int32 ObjID /*= MOD_ID_NONE*/)
 
 bool UEditModelUserWidget::UpdateCutPlaneInList(int32 ObjID /*= MOD_ID_NONE*/)
 {
-	if (CurrentRightMenuState == ERightMenuState::CutPlaneMenu)
+	if (CurrentLeftMenuState == ELeftMenuState::CutPlaneMenu)
 	{
 		return CutPlaneMenu->UpdateCutPlaneParamInMenuBlock(ObjID);
 	}
@@ -210,9 +223,9 @@ void UEditModelUserWidget::ShowAlertFreeAccountDialog()
 
 void UEditModelUserWidget::UpdateViewModeIndicator(EEditViewModes NewViewMode)
 {
-	if (ToolbarWidget != nullptr && ToolbarWidget->ToolBarTopBP != nullptr && ToolbarWidget->ToolBarTopBP->ViewModeIndicator != nullptr)
+	if (ToolbarWidget != nullptr && ToolbarWidget->ToolBarTopBP != nullptr)
 	{
-		ToolbarWidget->ToolBarTopBP->ViewModeIndicator->SwitchToViewMode(NewViewMode);
+		ToolbarWidget->ToolBarTopBP->SwitchToViewMode(NewViewMode);
 	}
 
 	if (ViewMenu && ViewMenu->ViewMenu_Block_ViewMode)
@@ -263,11 +276,11 @@ void UEditModelUserWidget::ToggleTutorialMenu(bool NewVisibility)
 	TutorialsMenuWidgetBP->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 	if (NewVisibility)
 	{
-		ToolbarWidget->ToolBarTopBP->ButtonTopToolbarHelp->SwitchToActiveStyle();
+		ToolbarWidget->ButtonTopToolbarHelp->SwitchToActiveStyle();
 	}
 	else
 	{
-		ToolbarWidget->ToolBarTopBP->ButtonTopToolbarHelp->SwitchToNormalStyle();
+		ToolbarWidget->ButtonTopToolbarHelp->SwitchToNormalStyle();
 	}
 	// Test tutorial data
 	TutorialsMenuWidgetBP->BuildTutorialMenuFromLink();

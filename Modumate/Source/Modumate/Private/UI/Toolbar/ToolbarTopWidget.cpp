@@ -23,13 +23,12 @@ bool UToolbarTopWidget::Initialize()
 
 	Controller = GetOwningPlayer<AEditModelPlayerController>();
 
-	if (!(ButtonModumateHome && ButtonTopToolbarHelp))
+	if (!ButtonModumateHome)
 	{
 		return false;
 	}
 
 	ButtonModumateHome->ModumateButton->OnReleased.AddDynamic(this, &UToolbarTopWidget::OnButtonReleaseModumateHome);
-	ButtonTopToolbarHelp->ModumateButton->OnReleased.AddDynamic(this, &UToolbarTopWidget::OnButtonReleaseTopToolbarHelp);
 
 	return true;
 }
@@ -47,11 +46,11 @@ void UToolbarTopWidget::OnButtonReleaseModumateHome()
 	}
 }
 
-void UToolbarTopWidget::OnButtonReleaseTopToolbarHelp()
+void UToolbarTopWidget::SwitchToViewMode(EEditViewModes NewViewMode)
 {
-	if (Controller && Controller->EditModelUserWidget)
-	{
-		bool isVisible = Controller->EditModelUserWidget->TutorialsMenuWidgetBP->IsVisible();
-		Controller->EditModelUserWidget->ToggleTutorialMenu(!isVisible);
-	}
+	NewViewMode == EEditViewModes::MetaGraph ? Button_ViewModeMetaGraph->SwitchToActiveStyle() : Button_ViewModeMetaGraph->SwitchToNormalStyle();
+	NewViewMode == EEditViewModes::Separators ? Button_ViewModeSeparator->SwitchToActiveStyle() : Button_ViewModeSeparator->SwitchToNormalStyle();
+	NewViewMode == EEditViewModes::SurfaceGraphs ? Button_ViewModeSurfaceGraph->SwitchToActiveStyle() : Button_ViewModeSurfaceGraph->SwitchToNormalStyle();
+	NewViewMode == EEditViewModes::AllObjects ? Button_ViewModeAllObject->SwitchToActiveStyle() : Button_ViewModeAllObject->SwitchToNormalStyle();
+	NewViewMode == EEditViewModes::Physical ? Button_ViewModePhysical->SwitchToActiveStyle() : Button_ViewModePhysical->SwitchToNormalStyle();
 }

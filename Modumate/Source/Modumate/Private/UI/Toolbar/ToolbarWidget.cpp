@@ -8,6 +8,7 @@
 #include "UI/ToolTray/ToolTrayWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/BIM/BIMDesigner.h"
+#include "UI/TutorialMenu/TutorialMenuWidget.h"
 
 
 UToolbarWidget::UToolbarWidget(const FObjectInitializer& ObjectInitializer)
@@ -24,7 +25,7 @@ bool UToolbarWidget::Initialize()
 
 	Controller = GetOwningPlayer<AEditModelPlayerController>();
 
-	if (!(Controller && Button_Metaplanes && Button_Separators && Button_SurfaceGraphs && Button_Attachments))
+	if (!(Controller && Button_Metaplanes && Button_Separators && Button_SurfaceGraphs && Button_Attachments && ButtonTopToolbarHelp))
 	{
 		return false;
 	}
@@ -35,6 +36,7 @@ bool UToolbarWidget::Initialize()
 	Button_Attachments->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseAttachments);
 	Button_3DViews->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonRelease3DViews);
 	Button_CutPlanes->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseCutPlanes);
+	ButtonTopToolbarHelp->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseTopToolbarHelp);
 
 	return true;
 }
@@ -49,13 +51,8 @@ void UToolbarWidget::OnButtonReleaseMetaPlane()
 	Controller->SetToolMode(EToolMode::VE_LINE);
 	if (EditModelUserWidget->ToolTrayWidget->CurrentToolCategory != EToolCategories::MetaGraph)
 	{
+		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
 		EditModelUserWidget->ToolTrayWidget->ChangeBlockToMetaPlaneTools();
-
-		// TODO: button shouldn't be allow to be pressed when BIM Designer is opened
-		if (EditModelUserWidget->BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
-		{
-			EditModelUserWidget->ToggleBIMDesigner(false);
-		}
 	}
 }
 
@@ -63,13 +60,8 @@ void UToolbarWidget::OnButtonReleaseSeparators()
 {
 	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
 	{
+		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
 		EditModelUserWidget->ToolTrayWidget->ChangeBlockToSeparatorTools(Controller->GetToolMode());
-
-		// TODO: button shouldn't be allow to be pressed when BIM Designer is opened
-		if (EditModelUserWidget->BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
-		{
-			EditModelUserWidget->ToggleBIMDesigner(false);
-		}
 	}
 }
 
@@ -78,13 +70,8 @@ void UToolbarWidget::OnButtonReleaseSurfaceGraphs()
 	Controller->SetToolMode(EToolMode::VE_SURFACEGRAPH);
 	if (EditModelUserWidget->ToolTrayWidget->CurrentToolCategory != EToolCategories::SurfaceGraphs)
 	{
+		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
 		EditModelUserWidget->ToolTrayWidget->ChangeBlockToSurfaceGraphTools();
-
-		// TODO: button shouldn't be allow to be pressed when BIM Designer is opened
-		if (EditModelUserWidget->BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
-		{
-			EditModelUserWidget->ToggleBIMDesigner(false);
-		}
 	}
 }
 
@@ -92,42 +79,48 @@ void UToolbarWidget::OnButtonReleaseAttachments()
 {
 	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
 	{
+		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
 		EditModelUserWidget->ToolTrayWidget->ChangeBlockToAttachmentTools(Controller->GetToolMode());
-
-		// TODO: button shouldn't be allow to be pressed when BIM Designer is opened
-		if (EditModelUserWidget->BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
-		{
-			EditModelUserWidget->ToggleBIMDesigner(false);
-		}
 	}
 }
 
 void UToolbarWidget::OnButtonRelease3DViews()
 {
+	Controller->SetToolMode(EToolMode::VE_SELECT);
 	if (EditModelUserWidget)
 	{
-		if (EditModelUserWidget->CurrentRightMenuState == ERightMenuState::ViewMenu)
+		if (EditModelUserWidget->CurrentLeftMenuState == ELeftMenuState::ViewMenu)
 		{
-			EditModelUserWidget->SwitchRightMenu(ERightMenuState::None);
+			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
 		}
 		else
 		{
-			EditModelUserWidget->SwitchRightMenu(ERightMenuState::ViewMenu);
+			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::ViewMenu);
 		}
 	}
 }
 
 void UToolbarWidget::OnButtonReleaseCutPlanes()
 {
+	Controller->SetToolMode(EToolMode::VE_SELECT);
 	if (EditModelUserWidget)
 	{
-		if (EditModelUserWidget->CurrentRightMenuState == ERightMenuState::CutPlaneMenu)
+		if (EditModelUserWidget->CurrentLeftMenuState == ELeftMenuState::CutPlaneMenu)
 		{
-			EditModelUserWidget->SwitchRightMenu(ERightMenuState::None);
+			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
 		}
 		else
 		{
-			EditModelUserWidget->SwitchRightMenu(ERightMenuState::CutPlaneMenu);
+			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::CutPlaneMenu);
 		}
+	}
+}
+
+void UToolbarWidget::OnButtonReleaseTopToolbarHelp()
+{
+	if (Controller && Controller->EditModelUserWidget)
+	{
+		bool isVisible = Controller->EditModelUserWidget->TutorialsMenuWidgetBP->IsVisible();
+		Controller->EditModelUserWidget->ToggleTutorialMenu(!isVisible);
 	}
 }

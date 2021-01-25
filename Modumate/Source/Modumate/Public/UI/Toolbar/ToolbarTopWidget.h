@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Database/ModumateObjectEnums.h"
 
 #include "ToolbarTopWidget.generated.h"
 
@@ -36,15 +37,23 @@ public:
 	class UModumateButtonUserWidget* ButtonModumateHome;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget* ButtonTopToolbarHelp;
+	class UModumateButtonUserWidget* Button_ViewModeMetaGraph;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UViewModeIndicatorWidget* ViewModeIndicator;
+	class UModumateButtonUserWidget* Button_ViewModeSeparator;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_ViewModeSurfaceGraph;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_ViewModeAllObject;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_ViewModePhysical;
 
 	UFUNCTION()
 	void OnButtonReleaseModumateHome();
 
-	UFUNCTION()
-	void OnButtonReleaseTopToolbarHelp();
+	void SwitchToViewMode(EEditViewModes NewViewMode);
 
 };
