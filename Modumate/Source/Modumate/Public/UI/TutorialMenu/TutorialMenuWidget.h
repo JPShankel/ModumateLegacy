@@ -109,7 +109,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString JsonTutorialLink;
 
-	void BuildTutorialMenuFromLink();
+	void BuildTutorialMenu();
 	void OnHttpReply(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);	
 	void UpdateTutorialMenu(const FTutorialInfoArrayCollection& InTutorialInfo);
 	bool GetTutorialFilePath(const FString& TutorialFileName, FString& OutFullTutorialFilePath );

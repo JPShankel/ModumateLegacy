@@ -118,9 +118,16 @@ void UToolbarWidget::OnButtonReleaseCutPlanes()
 
 void UToolbarWidget::OnButtonReleaseTopToolbarHelp()
 {
-	if (Controller && Controller->EditModelUserWidget)
+	Controller->SetToolMode(EToolMode::VE_SELECT);
+	if (EditModelUserWidget)
 	{
-		bool isVisible = Controller->EditModelUserWidget->TutorialsMenuWidgetBP->IsVisible();
-		Controller->EditModelUserWidget->ToggleTutorialMenu(!isVisible);
+		if (EditModelUserWidget->CurrentLeftMenuState == ELeftMenuState::TutorialMenu)
+		{
+			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
+		}
+		else
+		{
+			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::TutorialMenu);
+		}
 	}
 }

@@ -97,9 +97,11 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState)
 	bool newToolTrayVisibility = CurrentLeftMenuState == ELeftMenuState::ToolMenu;
 	bool newViewMenuVisibility = CurrentLeftMenuState == ELeftMenuState::ViewMenu;
 	bool newCutPlaneMenuVisibility = CurrentLeftMenuState == ELeftMenuState::CutPlaneMenu;
+	bool newTutorialMenuVisibility = CurrentLeftMenuState == ELeftMenuState::TutorialMenu;
 	newToolTrayVisibility ? ToolTrayWidget->OpenToolTray() : ToolTrayWidget->CloseToolTray();
 	ViewMenu->SetViewMenuVisibility(newViewMenuVisibility);
 	CutPlaneMenu->SetCutPlaneMenuVisibility(newCutPlaneMenuVisibility);
+	ToggleTutorialMenu(newTutorialMenuVisibility);
 
 	if (newToolTrayVisibility)
 	{
@@ -283,5 +285,5 @@ void UEditModelUserWidget::ToggleTutorialMenu(bool NewVisibility)
 		ToolbarWidget->ButtonTopToolbarHelp->SwitchToNormalStyle();
 	}
 	// Test tutorial data
-	TutorialsMenuWidgetBP->BuildTutorialMenuFromLink();
+	TutorialsMenuWidgetBP->BuildTutorialMenu();
 }

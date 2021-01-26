@@ -18,6 +18,7 @@ enum class ELeftMenuState : uint8
 	ViewMenu,
 	CutPlaneMenu,
 	ToolMenu,
+	TutorialMenu,
 	None
 };
 

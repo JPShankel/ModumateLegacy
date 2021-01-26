@@ -37,8 +37,14 @@ void UTutorialMenuWidget::NativeConstruct()
 	TutorialTitleHeader->SetVisibility(AsStartMenuTutorial ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 }
 
-void UTutorialMenuWidget::BuildTutorialMenuFromLink()
+void UTutorialMenuWidget::BuildTutorialMenu()
 {
+	// Only need to request from online source once
+	if (CurrentTutorialMenuCardInfo.Num() > 0)
+	{
+		return;
+	}
+
 	TutorialHeaderMessageText->ChangeText(DefaultTutorialHeaderMessage);
 
 	auto httpRequest = FHttpModule::Get().CreateRequest();
