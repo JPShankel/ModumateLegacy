@@ -35,7 +35,7 @@ bool UStartRootMenuWidget::Initialize()
 	ButtonOpen->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedOpen);
 	ButtonCreateNew->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedCreateNew);
 
-	UGameViewportClient* viewportClient = ModumateGameInstance->GetGameViewportClient();
+	UGameViewportClient* viewportClient = ModumateGameInstance ? ModumateGameInstance->GetGameViewportClient() : nullptr;
 	if (viewportClient)
 	{
 		viewportClient->OnWindowCloseRequested().BindUObject(this, &UStartRootMenuWidget::ConfirmQuit);
