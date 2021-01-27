@@ -18,60 +18,15 @@ FModumateUpdater::~FModumateUpdater()
 void FModumateUpdater::ProcessLatestInstallers(const FModumateUserStatus& Status)
 {
 	const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
-	const FString& ourVersion = projectSettings->ProjectVersion;
-	const FString& latestVersion = Status.latest_modumate_version;
+	OurVersion = projectSettings->ProjectVersion;
+	LatestVersion = Status.latest_modumate_version;
 
-	if (State == Idle && !latestVersion.IsEmpty() && latestVersion != ourVersion)
-	{
-		FString installerUrl;
-		FString baseInstallerUrl;
-		for (const auto& i: Status.Installers)
-		{
-			if (i.Version == ourVersion)
-			{
-				installerUrl = i.Url;
-				break;
-			}
-			else if (i.Version.IsEmpty())
-			{
-				baseInstallerUrl = i.Url;
-			}
-		}
-
-		if (installerUrl.IsEmpty())
-		{
-			installerUrl = baseInstallerUrl;
-		}
-
-		if (!ensure(!installerUrl.IsEmpty()) )
-		{
-			// Client is out-of-date but no suitable installer for current version.
-			return;
-		}
-
-		FString downloadLocation = GetPathForInstaller(ourVersion, latestVersion) / TEXT("ModumateSetup.exe");
-		if (IFileManager::Get().FileExists(*downloadLocation))
-		{
-			State = Ready;
-			DownloadFilename = downloadLocation;
-			DownloadVersion = latestVersion;
-			NotifyUser();
-		}
-		else
-		{
-			if (StartDownload(installerUrl, downloadLocation))
-			{
-				DownloadFilename = downloadLocation;
-				DownloadVersion = latestVersion;
-				State = Downloading;
-			}
-		}
-	}
+	FetchInstallersObject();
 }
 
-FString FModumateUpdater::GetPathForInstaller(const FString& OurVersion, const FString& LatestVersion) const
+FString FModumateUpdater::GetPathForInstaller(const FString& CurrentVersion, const FString& NewestVersion) const
 {
-	FString path = FModumateUserSettings::GetLocalTempDir() / InstallerSubdir / LatestVersion / OurVersion;
+	FString path = FModumateUserSettings::GetLocalTempDir() / InstallerSubdir / NewestVersion / CurrentVersion;
 	return path;
 }
 
@@ -144,5 +99,80 @@ void FModumateUpdater::NotifyUser()
 		{
 			State = Declined;
 		}
+	}
+}
+
+void FModumateUpdater::FetchInstallersObject()
+{
+	auto cloud = GameInstance->GetCloudConnection();
+	TWeakPtr<FModumateUpdater> weakThis(AsShared());
+
+	cloud->RequestEndpoint(TEXT("/"), FModumateCloudConnection::Get,
+		[cloud](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
+		{
+			RefRequest.Get().SetURL(cloud->GetCloudRootURL() + TEXT("/static/installers"));
+			RefRequest.Get().SetHeader(TEXT("Authorization"), TEXT(""));
+		},
+		[weakThis](bool bWasSuccessful, const TSharedPtr<FJsonObject>& Response)
+		{
+			auto pinnedThis(weakThis.Pin());
+			if (pinnedThis)
+			{
+				pinnedThis->InstallersObjectCallback(bWasSuccessful, Response);
+			}
+		},
+		[](int32, const FString&) { ensure(false); });
+}
+
+void FModumateUpdater::InstallersObjectCallback(bool bWasSuccessful, const TSharedPtr<FJsonObject>& Response)
+{
+	FModumateInstallersObject installersObject;
+	if (ensure(bWasSuccessful
+		&& FJsonObjectConverter::JsonObjectToUStruct<FModumateInstallersObject>(Response.ToSharedRef(), &installersObject)) )
+	{
+		FString installerUrl;
+		FString baseInstallerUrl;
+		for (const auto& i: installersObject.Installers)
+		{
+			if (i.Version == OurVersion)
+			{
+				installerUrl = i.Url;
+				break;
+			}
+			else if (i.Version.IsEmpty())
+			{
+				baseInstallerUrl = i.Url;
+			}
+		}
+
+		if (installerUrl.IsEmpty())
+		{
+			installerUrl = baseInstallerUrl;
+		}
+
+		if (!ensure(!installerUrl.IsEmpty()))
+		{
+			// Client is out-of-date but no suitable installer for current version.
+			return;
+		}
+
+		FString downloadLocation = GetPathForInstaller(OurVersion, LatestVersion) / TEXT("ModumateSetup.exe");
+		if (IFileManager::Get().FileExists(*downloadLocation))
+		{
+			State = Ready;
+			DownloadFilename = downloadLocation;
+			DownloadVersion = LatestVersion;
+			NotifyUser();
+		}
+		else
+		{
+			if (StartDownload(installerUrl, downloadLocation))
+			{
+				DownloadFilename = downloadLocation;
+				DownloadVersion = LatestVersion;
+				State = Downloading;
+			}
+		}
+
 	}
 }

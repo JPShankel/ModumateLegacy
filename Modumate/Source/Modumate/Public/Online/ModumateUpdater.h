@@ -6,7 +6,7 @@
 
 struct FModumateUserStatus;
 
-class MODUMATE_API FModumateUpdater
+class MODUMATE_API FModumateUpdater : public TSharedFromThis<FModumateUpdater>
 {
 public:
 	FModumateUpdater(UModumateGameInstance* InGameInstance)
@@ -16,11 +16,15 @@ public:
 	void ProcessLatestInstallers(const FModumateUserStatus& Status);
 
 private:
-	FString GetPathForInstaller(const FString& OurVersion, const FString& LatestVersion) const;
+	FString GetPathForInstaller(const FString& CurrentVersion, const FString& NewestVersion) const;
 	bool StartDownload(const FString& Url, const FString& Location);
 	void RequestCompleteCallback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void NotifyUser();
+	void FetchInstallersObject();
+	void InstallersObjectCallback(bool bWasSuccessful, const TSharedPtr<FJsonObject>& Response);
 
+	FString OurVersion;
+	FString LatestVersion;
 	FString DownloadFilename;
 	FString DownloadVersion;
 	TSharedPtr<IHttpRequest, ESPMode::ThreadSafe> PendingRequest;

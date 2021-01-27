@@ -68,7 +68,10 @@ bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequest
 	Request->SetURL(GetCloudAPIURL() + Endpoint);
 	Request->SetVerb(GetRequestTypeString(RequestType));
 
-	Customizer(Request);
+	if (Customizer)
+	{
+		Customizer(Request);
+	}
 
 	return Request->ProcessRequest();
 }

@@ -74,6 +74,15 @@ struct MODUMATE_API FModumateInstallerItem
 };
 
 USTRUCT()
+struct FModumateInstallersObject
+{
+	GENERATED_BODY();
+
+	UPROPERTY()
+	TArray<FModumateInstallerItem> Installers;
+};
+
+USTRUCT()
 struct MODUMATE_API FModumateUserStatus
 {
 	GENERATED_BODY();
@@ -89,9 +98,6 @@ struct MODUMATE_API FModumateUserStatus
 
 	UPROPERTY()
 	FString latest_modumate_version;
-
-	UPROPERTY()
-	TArray<FModumateInstallerItem> Installers;
 };
 
 USTRUCT()
@@ -164,7 +170,7 @@ public:
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
 
 private:
-	TUniquePtr<FModumateUpdater> Updater;
+	TSharedPtr<FModumateUpdater> Updater;
 	FModumateUserInfo UserInfo;
 	FString LatestVersion;
 
