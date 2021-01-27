@@ -106,6 +106,9 @@ struct MODUMATE_API FModumateUserVerifyParams
 	FString RefreshToken;
 
 	UPROPERTY()
+	int32 LastDesktopLoginDateTime;
+
+	UPROPERTY()
 	FModumateUserInfo User;
 
 	UPROPERTY()
@@ -155,12 +158,17 @@ public:
 	void RequestStatus();
 	bool HasPermission(EModumatePermission requestedPermission) const;
 
+	bool IsFirstLogin() const { return bIsFirstLogin; }
+	void SetIsFirstLogin(bool IsFirst) { bIsFirstLogin = IsFirst; }
+
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
 
 private:
 	TUniquePtr<FModumateUpdater> Updater;
 	FModumateUserInfo UserInfo;
 	FString LatestVersion;
+
+	bool bIsFirstLogin = false;
 
 	FPermissionSet CurrentPermissions;
 };

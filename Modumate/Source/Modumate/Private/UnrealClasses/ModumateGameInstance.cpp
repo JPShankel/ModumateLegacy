@@ -580,6 +580,7 @@ void UModumateGameInstance::CheckCrashRecovery()
 void UModumateGameInstance::Login(const FString& UserName, const FString& Password)
 {
 	TWeakPtr<FModumateAccountManager> WeakAMS(AccountManager);
+	AccountManager->SetIsFirstLogin(false);
 	CloudConnection->Login(UserName, Password,
 		[WeakAMS](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
 		{
@@ -594,6 +595,7 @@ void UModumateGameInstance::Login(const FString& UserName, const FString& Passwo
 				FModumateUserVerifyParams verifyParams;
 				if (FJsonObjectConverter::JsonObjectToUStruct<FModumateUserVerifyParams>(Response.ToSharedRef(), &verifyParams))
 				{
+					SharedAMS->SetIsFirstLogin(verifyParams.LastDesktopLoginDateTime == 0);
 					SharedAMS->SetUserInfo(verifyParams.User);
 					SharedAMS->RequestStatus();
 				}
