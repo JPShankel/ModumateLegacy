@@ -176,6 +176,9 @@ protected:
 	// The world-space position about which we are actually rotating, which approaches OrbitTarget in order to smooth the camera
 	FVector OrbitStartProxyTarget;
 
+	// A default sphere, to allow zooming while the target sphere is invalid
+	FSphere DefaultSphere;
+
 	// Between each frame, the amount of positional offset in world space that we want to zoom, while in ECameraMovementState::Default
 	FVector FreeZoomDeltaAccumulated;
 

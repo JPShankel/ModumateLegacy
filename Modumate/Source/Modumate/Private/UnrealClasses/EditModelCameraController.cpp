@@ -42,6 +42,7 @@ UEditModelCameraController::UEditModelCameraController(const FObjectInitializer&
 	, CurMovementState(ECameraMovementState::Default)
 	, OrbitTarget(ForceInitToZero)
 	, OrbitStartProxyTarget(ForceInitToZero)
+	, DefaultSphere(FVector::ZeroVector, 100.0f)
 	, FreeZoomDeltaAccumulated(ForceInitToZero)
 	, PanLastMousePos(ForceInitToZero)
 	, PanFactors(ForceInitToZero)
@@ -824,7 +825,7 @@ void UEditModelCameraController::UpdateOrbitAnchorScale()
 
 bool UEditModelCameraController::ZoomToTargetSphere(const FSphere& TargetSphere, const FVector& NewViewForward, const FVector& NewViewUp, bool bSnapVerticalViewToAxis)
 {
-	if ((CurMovementState != ECameraMovementState::Default) || (TargetSphere.W <= 1.f))
+	if ((CurMovementState != ECameraMovementState::Default))
 	{
 		return false;
 	}
@@ -865,7 +866,7 @@ bool UEditModelCameraController::ZoomToTargetSphere(const FSphere& TargetSphere,
 	}
 
 	FVector newViewOrigin = Controller->CalculateViewLocationForSphere(
-		TargetSphere,
+		TargetSphere.W <= 1.f ? DefaultSphere : TargetSphere,
 		fixedViewForward,
 		Controller->EMPlayerPawn->CameraComponent->AspectRatio,
 		Controller->EMPlayerPawn->CameraComponent->FieldOfView);
