@@ -52,12 +52,22 @@ void UToolTrayBlockModes::ChangeToSeparatorToolsButtons(EToolMode mode)
 		buttonsToShow.Append({ ButtonMPBucket, ButtonOpeningStamp });
 		break;
 
+	case EToolMode::VE_MULLION:
+	case EToolMode::VE_STRUCTURELINE:
+		buttonsToShow.Append({ ButtonMPBucket, ButtonLine });
+		break;
+
 	default:
 		buttonsToShow.Append({ ButtonMPBucket, ButtonRectangle });
 		break;
 	}
 
 	SetButtonsState(buttonsToShow);
+}
+
+void UToolTrayBlockModes::ChangeToAttachmentToolsButtons(EToolMode mode)
+{
+	SetButtonsState({ ButtonMPBucket });
 }
 
 void UToolTrayBlockModes::SetButtonsState(const TArray<UModumateButtonUserWidget*>& ButtonsToShow)

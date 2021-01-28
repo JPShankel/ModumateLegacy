@@ -140,7 +140,7 @@ bool UToolTrayWidget::ChangeBlockToAttachmentTools(EToolMode Toolmode)
 	ToolTrayMainTitleBlock->SetText(UModumateTypeStatics::GetTextForObjectType(UModumateTypeStatics::ObjectTypeFromToolMode(controller->GetToolMode())));
 
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ToolTrayBlockModes->ChangeToSeparatorToolsButtons(controller->GetToolMode());
+	ToolTrayBlockModes->ChangeToAttachmentToolsButtons(controller->GetToolMode());
 
 	ToolTrayBlockAssembliesList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockAssembliesList->CreateAssembliesListForCurrentToolMode();

@@ -33,6 +33,9 @@ public:
 	class UWrapBox* WrapBox_Buttons;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonLine;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonRectangle;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -49,6 +52,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeToSeparatorToolsButtons(EToolMode mode);
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeToAttachmentToolsButtons(EToolMode mode);
 
 	void SetButtonsState(const TArray<UModumateButtonUserWidget*>& ButtonsToShow);
 };
