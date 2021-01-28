@@ -39,6 +39,21 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolModeChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolCreateObjectModeChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolAssemblyChanged);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnBoundInputActionEvent, FName, ActionName, EInputEvent, InputEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnBoundInputAxisEvent, FName, AxisName, float, Value);
+DECLARE_DELEGATE_TwoParams(FBoundInputActionEventDelegate, FName, EInputEvent);
+DECLARE_DELEGATE_TwoParams(FBoundInputAxisEventDelegate, FName, float);
+
+UENUM()
+enum class EInputMovementAxes : uint8
+{
+	MoveYaw,
+	MovePitch,
+	MoveForward,
+	MoveRight,
+	MoveUp
+};
+
 UCLASS(Config=Game)
 class MODUMATE_API AEditModelPlayerController : public APlayerController
 {
@@ -152,6 +167,27 @@ public:
 
 	UPROPERTY()
 	FOnToolAssemblyChanged OnToolAssemblyChanged;
+
+	UPROPERTY()
+	FOnBoundInputActionEvent HandledInputActionEvent;
+
+	UPROPERTY()
+	FOnBoundInputAxisEvent HandledInputAxisEvent;
+
+	void OnHandledInputActionName(FName ActionName, EInputEvent InputEvent);
+	void OnHandledInputAxisName(FName AxisName, float Value);
+
+	template<typename TEnum>
+	void OnHandledInputAction(TEnum ActionEnum, EInputEvent InputEvent)
+	{
+		OnHandledInputActionName(GetEnumValueShortName(ActionEnum), InputEvent);
+	}
+
+	template<typename TEnum>
+	void OnHandledInputAxis(TEnum AxisEnum, float Value)
+	{
+		OnHandledInputAxisName(GetEnumValueShortName(AxisEnum), Value);
+	}
 
 	bool DistanceBetweenWorldPointsInScreenSpace(const FVector &Point1, const FVector &Point2, float &OutScreenDist) const;
 	bool GetScreenScaledDelta(const FVector &Origin, const FVector &Normal, const float DesiredWorldDist, const float MaxScreenDist,

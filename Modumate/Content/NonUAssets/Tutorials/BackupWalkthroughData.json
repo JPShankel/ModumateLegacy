@@ -1,0 +1,535 @@
+{
+    "Beginner": [
+        {
+            "Title": "Welcome to Modumate!",
+            "Description": "It looks like it's your first time here! Let's go over the basic actions of using Modumate."
+        },
+        {
+            "Title": "Full-Screen",
+            "Description": "Press F11 to enter/exit fullscreen mode (optional, but recommended!).",
+            "AutoProceedCountdown": 3,
+            "Requirements": {
+                "CustomActionsToPerform": [
+                    "ToggleFullscreen"
+                ]
+            }
+        },
+        {
+            "Title": "Orbit",
+            "Description": "Right-click-drag in the scene to orbit around the point you hit. It will pull gently toward the center of the screen.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {
+                "InputBindingsToPerform": [
+                    "CameraOrbit-"
+                ]
+            }
+        },
+        {
+            "Title": "Pan",
+            "Description": "Middle-click-drag in the scene to pan the camera side to side.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {
+                "InputBindingsToPerform": [
+                    "CameraPan-"
+                ]
+            }
+        },
+        {
+            "Title": "Zoom",
+            "Description": "Scroll up to zoom in. Scroll down to zoom out.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {
+                "InputBindingsToPerform": [
+                    "CameraZoomIn+",
+                    "CameraZoomOut+"
+                ]
+            }
+        },
+        {
+            "Title": "Quick Views",
+            "Description": "Click the Quick Views to snap to an axis-aligned view (such as top-down), or use Ctrl + arrow keys to switch quick views.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Select Tool",
+            "Description": "The Select tool is your home base. Click objects to select them. From any other tool, press Escape or the hotkey \"SE\" to return to the Select tool.",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Massing Graph View Mode",
+            "Description": "Press F1 to view your project's Massing Graph (which is a diagram of all the assemblies in your project that separate space).",
+            "AutoProceedCountdown": 5,
+            "Requirements": {
+                "InputCommandsToPerform": [
+                    "SetViewMode_MetaGraph"
+                ]
+            }
+        },
+        {
+            "Title": "Line Tool",
+            "Description": "Click the Massing Graph Tools, then the Line tool - or type the hotkey \"LI\".",
+            "AutoProceedCountdown": 2,
+            "Requirements": {
+                "ToolModesToActivate": [
+                    "VE_LINE"
+                ]
+            }
+        },
+        {
+            "Title": "Draw A Line",
+            "Description": "Close the loop near the project's origin. Snap to one vertex, click, then snap to the other and click. Draw more edges if you want, then press Escape to stop drawing.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {
+                "ObjectTypesToCreate": [
+                    "OTMetaEdge"
+                ]
+            }
+        },
+        {
+            "Title": "Undo/Redo",
+            "Description": "Press Ctrl+Z to undo your last action, and Ctrl+Y to redo your last undone action.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {
+                "InputCommandsToPerform": [
+                    "Undo",
+                    "Redo"
+                ]
+            }
+        },
+        {
+            "Title": "Type A Distance",
+            "Description": "Start a line, Mouse along a linear snap, type 10'-0\", and press Enter.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Force A Linear Snap",
+            "Description": "Mouse along the Blue linear snap, hold Shift, snap to the top of the nearby rectangle, and click.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Rectangle Tool",
+            "Description": "Click the Massing Graph Tools, then the Rectangle tool - or type the hotkey \"RE\".",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Draw A 3-Click Rectangle",
+            "Description": "Click a start point, mouse in a direction, type 8'-0\" and press Enter, then mouse in a direction, type 15'-2 1/2\" and press Enter.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Extrude A Rectangle",
+            "Description": "Click a vertical line, mouse in a direction, type 20'-0\" and press Enter. Keep extruding rectangles, or press Escape to end the chain.",
+            "AutoProceedCountdown": 7,
+            "Requirements": {}
+        },
+        {
+            "Title": "Stretch Handles",
+            "Description": "Select a plane, click a Stretch Handle, type 4'-0\" and press Enter.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "DimStrings",
+            "Description": "Select a plane, line, or vertex, click a dark DimString, type a new length, and press Enter.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Separator View Mode",
+            "Description": "Press F2 to view your project's Separators (the BIM construction assemblies that separate spaces, like walls, floors, doors, windows, etc).",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Wall Tool",
+            "Description": "Click the Separator Tools, then the Wall tool (or type hotkey \"WA\").",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Host A Wall",
+            "Description": "Choose the Exterior Wood Stud Wall from the starter assemblies, then hover a plane in the scene, and click.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Hosting Properties",
+            "Description": "Begin to host another wall. Before clicking, press F to flip the wall over its plane, and W/A/S/D to move the wall up/left/down/right between three hosting positions: Back, Centerline, or Front.",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Host a Window",
+            "Description": "Click the Window tool (or type hotkey \"WN\"), choose the Fixed Window from the starter assemblies, then hover a plane in the scene, and click.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Switch to Surface Graph view mode",
+            "Description": "Press F3 to view your project's Surface Graphs (where you lay out regions for Attachments, like finishes and cabinets).",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Add a Surface Graph",
+            "Description": "Click the Surface Graph Tools (or type the hotkey \"SG\")., then click a surface of a Separator that does not yet have a Surface Graph.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Subdivide Surface Graph",
+            "Description": "Draw a line across your new Surface Graph.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Switch to Attachments view mode",
+            "Description": "Press F4 to view your project's Attachments (the BIM construction assemblies that decorate surfaces, like finishes, trim, cabinets, and FF&E).",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Add a Sofa",
+            "Description": "Click the Attachments Tools, then the FF&E tool (or type hotkey \"FF\"). Search \"sofa\" in the assemblies list. Click a sofa. Click in the scene.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Add a Finish",
+            "Description": "Click the Finish tool (or type hotkey \"FI\"). Pick the \"Exterior Brick Veneer\", then click on a Surface Graph face.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Modify Tile Color",
+            "Description": "Click the \"edit\" button on the Exterior Brick Veneer. Click the Thin Bricks layer. Click the Thin Brick Veneer. Change its color to be light tan. Click \"Save\". Click \"Back to Project\".",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Add a Cut Plane",
+            "Description": "Click the Cut Planes menu, then Add A Cut Plane (or type hotkey \"CP\"). Click a point in scene the plane will pass through. Click the direction the cut plane should look. Press Escape.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Export DWGs",
+            "Description": "Click the Cut Planes menu, then \"Export All Cut Planes\". Choose a save location on your PC. Open the DWGs in a CAD platform like AutoCAD.",
+            "AutoProceedCountdown": 10,
+            "Requirements": {}
+        },
+        {
+            "Title": "You've got the basics!",
+            "Description": "Congratulations, you did great! You've learned the basic tools of Modumate, and could probably start your own project now.\n\nHowever, there's still plenty more to learn, like Move, Rotate, Join, Fly, Walk, and more! We suggest moving on to the Intermediate Tutorial if you have the time. \n\n[go to main menu] [go to intermediate tutorial]"
+        }
+    ],
+    "Intermediate": [
+        {
+            "Title": "Intro",
+            "Description": "Welcome to the Intermediate tutorial! Following the Beginner tutorial, let's add more simple-but-useful commands, and some more complex topics too."
+        },
+        {
+            "Title": "Recap: The 4 Layer Hierarchy",
+            "Description": "Modumate models are a 4 layer hierarchy. Each layer hosts onto the previous layer.\nPress F1 to view the Massing Graph (a planar model of the project's spaces, space-separating assemblies, and how those assemblies connect).\nPress F2 to view Separators (assemblies that separate space, such as Walls, Floors, Roofs, Doors, Railings, etc).\nPress F3 to view Surface Graphs (planar diagrams for where Attachments go).\nPress F4 to view Attachments (assemblies that decorate surfaces, including Finishes, Trim, Cabinets, and FF&E).",
+            "AutoProceedCountdown": 10,
+            "Requirements": {}
+        },
+        {
+            "Title": "Camera Tips",
+            "Description": "The next 3 steps teach you new camera tricks.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Fly",
+            "Description": "Hold right-click, then press QWEASD - W to fly forward, S to fly back, A to fly left, D to fly right, E to fly up, and Q to fly down.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {
+                "InputBindingsToPerform": [
+                    "MoveForward+",
+                    "MoveForward-",
+                    "MoveRight+",
+                    "MoveRight-",
+                    "MoveUp+",
+                    "MoveUp-"
+                ]
+            }
+        },
+        {
+            "Title": "Walk",
+            "Description": "Put your camera over a walkable surface. Open the 3D Views menu. Toggle Gravity to \"On\". Hold right-click and move the mouse to look around. Press WASD to walk. Toggle Gravity to \"Off\" to stop walking.",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Field of View",
+            "Description": "Open the 3 Views menu. Type a new value for FOV. We suggest ~50 for exterior modeling, and 90-100 for interior modeling.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Modeling Tips",
+            "Description": "The next 12 steps teach you new Massing Graph modeling tricks.",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Add to Selection",
+            "Description": "In Select Mode, hold Shift to add objects to selection.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Remove from Selection",
+            "Description": "In Select tool, hold Ctrl to remove objects from selection.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Bounding Select",
+            "Description": "In Select tool, click-drag to the left to select bounded objects.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Crossing Select",
+            "Description": "In Select tool, click-drag to the right to select crossed objects.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Move",
+            "Description": "With objects selected, click the Move tool, click a start point for a move vector, mouse to an end point (or snap to linear axes, and/or type a distance), and click to complete the move.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Rotate",
+            "Description": "With objects selected, click the Rotate tool. Click a center of rotation. Click a reference angle. Mouse to a target angle (or snap to 90's, or type an angle). Click to complete the rotation.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Join Planes",
+            "Description": "Click the Join tool (or type hotkey \"JO\"). Click the plane to keep. Click the coplanar plane to absorb. Press escape.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Join Edges",
+            "Description": "Click the Join tool (or type hotkey \"JO\"). Click the edge to keep. Click the colinear edge to absorb. Press escape.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Delete",
+            "Description": "Select an object and press Delete.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Minimal Delete",
+            "Description": "Select a plane or edge and press Ctrl + Delete. The selected object should be deleted, but as much other content as possible should remain.",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Hide",
+            "Description": "Select an object and click Hide (or type \"HI\").",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Unhide",
+            "Description": "Click Unhide (or type \"UH\").",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "What's A Preset?",
+            "Description": "A \"Preset\" is the basic unit of our BIM. Every construction object, from Separators and Attachments right down to the layers and parts they're made of, is a Preset.",
+            "AutoProceedCountdown": 10,
+            "Requirements": {}
+        },
+        {
+            "Title": "Swap Selected Object's Preset",
+            "Description": "Press F2. Select a Separator, like a Wall. Click its assembly's Swap icon. Choose a new assembly and click its checkmark.",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Crafting Presets",
+            "Description": "The next 12 steps teach you about crafting your BIM Presets.",
+            "AutoProceedCountdown": 6,
+            "Requirements": {}
+        },
+        {
+            "Title": "Enter BIM Designer",
+            "Description": "Click the Wall tool (or press \"WA\"). Click \"Edit\" next to the Exterior Wood Stud Wall. This opens the BIM Designer.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Pan",
+            "Description": "Just like the 3D scene, middle-click and drag to pan the BIM Designer.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Zoom",
+            "Description": "Just like the 3D scene, scroll up to zoom into the BIM Designer, and scroll down to zoom out.",
+            "AutoProceedCountdown": 2,
+            "Requirements": {}
+        },
+        {
+            "Title": "Tree of Nodes (\"Parent\" and \"Child\")",
+            "Description": "The BIM Designer shows the parts of a Preset as a tree of nodes. We call these relationships \"parent\" and \"child\". A Layer is a \"child\" of a Wall. A Stud is a \"child\" of a Layer.",
+            "AutoProceedCountdown": 10,
+            "Requirements": {}
+        },
+        {
+            "Title": "Swap Preset",
+            "Description": "Click \"Swap\" on its Plywood layer. Type \"OSB\" into the swap search bar. Click the OSB layer's checkmark.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "\"Blue\" Nodes Have Unsaved Changes",
+            "Description": "The parent Wall preset has unsaved changes. It wants to know: by swapping my child, did you mean to update me, or branch off me to make a new Wall?",
+            "AutoProceedCountdown": 10,
+            "Requirements": {}
+        },
+        {
+            "Title": "Edit Name",
+            "Description": "Type \"Typical Exterior Wall\" into the Wall's Name field and press Enter.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Save As New Preset",
+            "Description": "Click \"Save As New Preset\" to save your changes. The newly-added Preset can be found at the bottom of the Wall list.",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Add Layer",
+            "Description": "Click \"Add Layer\".",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Swap Preset (again!)",
+            "Description": "Click Swap on the newly-created Layer preset. Type \"foam\" into the swap search bar. Select a foam layer's checkmark.",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Reorder Layers",
+            "Description": "Click and drag on the layer's grab handle. Drag upward until your cursor is above the waterproofing layer. Release your click.",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Save Preset",
+            "Description": "The parent Wall has unsaved changes. Click \"Save\" on the parent Wall. This overwrites the old Preset.",
+            "AutoProceedCountdown": 5,
+            "Requirements": {}
+        },
+        {
+            "Title": "Edit Dimension",
+            "Description": "Click the Wateproofing layer. Type 3/32\" into its Thickness. Rename the preset \"Typical Waterproofing\" and Save As New Preset.",
+            "AutoProceedCountdown": 10,
+            "Requirements": {}
+        },
+        {
+            "Title": "Edit Color",
+            "Description": "Click \"Swap\" on the Waterproofing layer's Color. Pick a subtle blue color. Click outside the color picker. Save the preset.",
+            "AutoProceedCountdown": 10,
+            "Requirements": {}
+        },
+        {
+            "Title": "Swap Pattern",
+            "Description": "Click on the Stud layer. Click \"Swap\" on its child Pattern. Click the checkmark next to \"19.2in O.C.\". Rename the parent layer \"Typical Exterior Studs\". Save the parent layer as a new preset.",
+            "AutoProceedCountdown": 10,
+            "Requirements": {}
+        },
+        {
+            "Title": "Swap Material",
+            "Description": "Click on the Stud layer's child Stud. Click \"Swap\" next to its Material. Scroll down and click the checkmark next to Pine. Rename the stud \"Typical Exterior Stud\" and save it as a new preset.",
+            "Requirements": {}
+        },
+        {
+            "Title": "Hosting (Offset and Flip)",
+            "Description": "The next 2 steps teach you all the ways you can offset and flip your Separators.",
+            "AutoProceedCountdown": 10,
+            "Requirements": {}
+        },
+        {
+            "Title": "Offset Up / Down / Left / Right",
+            "Description": "Select a mullion. Turn your camera so that it looks somewhat along the mullion. Press W to move the mullion up. Press S to move the mullion down. Press A to move it left. Press D to move it right.",
+            "AutoProceedCountdown": 4,
+            "Requirements": {}
+        },
+        {
+            "Title": "Flip Across / Along / Vertical",
+            "Description": "Select a brick wall. Press F to flip it across its host. Press R to reverse it along its host. Press V to flip it vertically.",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
+        },
+        {
+            "Title": "Surface Graph Fragility",
+            "Description": "The next 3 steps teach you that Surface Graphs are fragile.",
+            "AutoProceedCountdown": 8,
+            "Requirements": {}
+        },
+        {
+            "Title": "Surface Graph Fragility (pt.1)",
+            "Description": "Press F1. Draw a Massing edge that splits this wall. Press F3. notice the Surface Graphs are gone!\n\nMake sure your Massing Graph and Separators are complete before investing time in detailed Surface Graphs.",
+            "AutoProceedCountdown": 8,
+            "Requirements": {}
+        },
+        {
+            "Title": "Surface Graph Fragility (pt.2)",
+            "Description": "Press F1. Draw a Massing edge along this wall's base. Press F3. Notice the Surface Graphs are gone! \n\nMake sure your Massing Graph and Separators are complete before investing time in detailed Surface Graphs.",
+            "AutoProceedCountdown": 8,
+            "Requirements": {}
+        },
+        {
+            "Title": "Detach A Surface Graph",
+            "Description": "Press F3. Select a Surface Graph's bounding edge(s). Use the Move tool to move them off the host surface's boundary.\n\nYour surface graph is now \"detached\", and can be resized if needed, such as to host a Cabinet that straddles two Surface Graphs."
+        },
+        {
+            "Title": "Create Cabinet",
+            "Description": "Enter the Cabinet tool. Choose a Cabinet. Click a Surface Graph face. Extrude a Cabinet by typing a distance. Click the button to choose a front face."
+        },
+        {
+            "Title": "Flip / Offset Trim",
+            "Description": "Select a Trim. Press W to offset it up, and S to offset it down. Press F to flip it across its host edge."
+        },
+        {
+            "Title": "FF&E Move Handles",
+            "Description": "Select an FF&E. Click its corner handles. Move the mouse and click again, or type a distance and press Enter."
+        },
+        {
+            "Title": "FF&E Rotate Handle",
+            "Description": "Select an FF&E. Click its Rotate handle. Move the mouse and click again, or type an angle and press Enter."
+        },
+        {
+            "Title": "Save A 3D View"
+        },
+        {
+            "Title": "Hotkey Summary",
+            "Description": "Here's a handy summary of the hotkeys you've learned:\n\nCamera: F11 to fullscreen. Right-click to Orbit. Middle-click to Pan. Scroll up/down to Zoom in/out. Ctrl + Arrows to snap to axis-aligned views. Right-click + QWEASD to fly or walk. F1 / F2 / F3 / F4 to cycle between view modes.\n\nCreate tools: \nMassing Graph - \"LI\" for Line. \"RE\" for Rectangle. \nSeparators - \"WA\" for Wall. \"FL\" for Floor. \"CL\" for Ceiling. \"RF\" for Roof. \"ST\" for Stair. \"RA\" for Railing. \"DR\" for Door. \"WN\" for Window. \"SP\" for System Panel. \"MU\" for Mullion. \"BC\" for Beam/Column. \"CT\" for Countertop. \nSurface Graph - \"SG\" for Surface Graph.\nAttachments - \"FI\" for Finish. \"TR\" for Trim. \"CA\" for Cabinet. \"FF\" for FF&E.\n\nOther tools:\n\"SE\" for Select. \"MV\" for Move. \"RO\" for Rotate. \"JO\" for Join. \"HI\" for Hide. \"UH\" for Unhide. \"Delete\" for Delete. Ctrl + Z for Undo. Ctrl + Y for Redo. \"CP\" for Cut Plane."
+        },
+        {
+            "Title": "You're a natural!",
+            "Description": "You've now seen pretty much all the commands Modumate has to offer. Feel free to start your own projects from the Main Menu.\n\nHowever, if you want to learn some in-depth advanced techniques, like modeling a kitchen or a dormer, the Advanced tutorial is your best bet."
+        }
+    ]
+}

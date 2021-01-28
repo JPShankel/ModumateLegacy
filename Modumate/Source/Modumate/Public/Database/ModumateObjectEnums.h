@@ -21,8 +21,15 @@ static FORCEINLINE FName FindEnumValueFullName(const TCHAR* TypeName, TEnum Enum
 template<typename TEnum>
 static FORCEINLINE FString FindEnumValueString(const TCHAR* TypeName, TEnum EnumValue)
 {
-	static const UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TypeName, true);
-	return enumPtr ? enumPtr->GetNameStringByValue((int64)EnumValue) : FString();
+	static_assert(TIsEnum<TEnum>::Value, "Should only call this with enum types");
+	UEnum* enumClass = StaticEnum<TEnum>();
+	return enumClass ? enumClass->GetNameStringByValue((int64)EnumValue) : FString();
+}
+
+template<typename TEnum>
+static FORCEINLINE FName GetEnumValueShortName(TEnum EnumValue)
+{
+	return FName(*FindEnumValueString(TEXT(""), EnumValue));
 }
 
 template<typename TEnum>

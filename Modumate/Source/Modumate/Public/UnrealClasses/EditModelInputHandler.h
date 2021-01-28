@@ -183,10 +183,9 @@ struct MODUMATE_API FCommandTrieNode : public TSharedFromThis<FCommandTrieNode>
 };
 
 // Delegate definitions purely for passing stored arguments via UPlayerInput action bindings.
-DECLARE_DELEGATE_OneParam(FInputCommandDelegate, EInputCommand);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputCommandDelegate, EInputCommand, ExecutedCommand);
 DECLARE_DELEGATE_OneParam(FInputChordDelegate, FInputChord);
 DECLARE_DELEGATE_OneParam(FInputDigitDelegate, int32);
-
 
 // The central input handler, whose purpose is to:
 // - handle mappable input commands via key chords and/or key sequences
@@ -241,6 +240,9 @@ public:
 	UPROPERTY()
 	TMap<EInputCommand, FInputCommandData> AllInputCommandData;
 
+	UPROPERTY()
+	FInputCommandDelegate OnExecutedCommand;
+
 	void RequestInputDisabled(const FName& Requester, bool bShouldDisable);
 	bool IsInputEnabled() const;
 
@@ -258,6 +260,7 @@ protected:
 	void OnCommandReset();
 
 	void SetInputEnabled(bool bNewEnabled);
+	bool TryCommandInternal(EInputCommand Command);
 
 	UPROPERTY()
 	TArray<FInputChord> PendingPressedChords;

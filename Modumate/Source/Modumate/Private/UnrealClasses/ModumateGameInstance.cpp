@@ -22,6 +22,8 @@
 #include "Runtime/Core/Public/Misc/FileHelper.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "UI/DimensionManager.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/TutorialManager.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelInputAutomation.h"
@@ -30,7 +32,6 @@
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "UnrealClasses/TooltipManager.h"
-#include "UI/EditModelUserWidget.h"
 #include "Online/ModumateCloudConnection.h"
 
 using namespace Modumate::Commands;
@@ -83,6 +84,9 @@ void UModumateGameInstance::Init()
 		TooltipManager = NewObject<UTooltipManager>(this, TooltipManagerClass);
 		TooltipManager->Init();
 	}
+
+	TutorialManager = NewObject<UModumateTutorialManager>(this);
+	TutorialManager->Init();
 }
 
 TSharedPtr<FModumateCloudConnection> UModumateGameInstance::GetCloudConnection() const
@@ -557,6 +561,11 @@ void UModumateGameInstance::Shutdown()
 	if (TooltipManager)
 	{
 		TooltipManager->Shutdown();
+	}
+
+	if (TutorialManager)
+	{
+		TutorialManager->Shutdown();
 	}
 
 	UModumateAnalyticsStatics::ShutdownAnalytics(AnalyticsInstance);

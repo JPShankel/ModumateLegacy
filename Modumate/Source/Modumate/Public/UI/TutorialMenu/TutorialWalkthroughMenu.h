@@ -75,4 +75,7 @@ public:
 	UFUNCTION()
 	void OnReleaseButtonOutroGoBack();
 
+protected:
+	UPROPERTY()
+	class UModumateTutorialManager* TutorialManager;
 };

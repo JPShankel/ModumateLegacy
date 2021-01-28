@@ -107,6 +107,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UTooltipManager* TooltipManager;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UModumateTutorialManager* TutorialManager;
+
 	static const FString TestScriptRelativePath;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)

@@ -17,6 +17,15 @@ enum class ECameraMovementState : uint8
 	Retargeting,
 };
 
+UENUM()
+enum class EInputCameraActions : uint8
+{
+	CameraOrbit,
+	CameraPan,
+	CameraZoomIn,
+	CameraZoomOut
+};
+
 UCLASS()
 class MODUMATE_API UEditModelCameraController : public UActorComponent
 {

@@ -137,23 +137,21 @@ void UEditModelCameraController::SetupPlayerInputComponent(UInputComponent* Play
 {
 	if (ensure(PlayerInputComponent))
 	{
-		static const FName orbitActionName(TEXT("CameraOrbit"));
-		PlayerInputComponent->BindAction(orbitActionName, EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionOrbitPressed);
-		PlayerInputComponent->BindAction(orbitActionName, EInputEvent::IE_Released, this, &UEditModelCameraController::OnActionOrbitReleased);
+		PlayerInputComponent->BindAction(GetEnumValueShortName(EInputCameraActions::CameraOrbit), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionOrbitPressed);
+		PlayerInputComponent->BindAction(GetEnumValueShortName(EInputCameraActions::CameraOrbit), EInputEvent::IE_Released, this, &UEditModelCameraController::OnActionOrbitReleased);
 
-		static const FName panActionName(TEXT("CameraPan"));
-		PlayerInputComponent->BindAction(panActionName, EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionPanPressed);
-		PlayerInputComponent->BindAction(panActionName, EInputEvent::IE_Released, this, &UEditModelCameraController::OnActionPanReleased);
+		PlayerInputComponent->BindAction(GetEnumValueShortName(EInputCameraActions::CameraPan), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionPanPressed);
+		PlayerInputComponent->BindAction(GetEnumValueShortName(EInputCameraActions::CameraPan), EInputEvent::IE_Released, this, &UEditModelCameraController::OnActionPanReleased);
 
-		PlayerInputComponent->BindAction(FName(TEXT("CameraZoomIn")), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionZoomIn);
-		PlayerInputComponent->BindAction(FName(TEXT("CameraZoomOut")), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionZoomOut);
+		PlayerInputComponent->BindAction(GetEnumValueShortName(EInputCameraActions::CameraZoomIn), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionZoomIn);
+		PlayerInputComponent->BindAction(GetEnumValueShortName(EInputCameraActions::CameraZoomOut), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionZoomOut);
 
-		PlayerInputComponent->BindAxis(FName(TEXT("MoveYaw")), this, &UEditModelCameraController::OnAxisRotateYaw);
-		PlayerInputComponent->BindAxis(FName(TEXT("MovePitch")), this, &UEditModelCameraController::OnAxisRotatePitch);
+		PlayerInputComponent->BindAxis(GetEnumValueShortName(EInputMovementAxes::MoveYaw), this, &UEditModelCameraController::OnAxisRotateYaw);
+		PlayerInputComponent->BindAxis(GetEnumValueShortName(EInputMovementAxes::MovePitch), this, &UEditModelCameraController::OnAxisRotatePitch);
 
-		PlayerInputComponent->BindAxis(FName(TEXT("MoveForward")), this, &UEditModelCameraController::OnAxisMoveForward);
-		PlayerInputComponent->BindAxis(FName(TEXT("MoveRight")), this, &UEditModelCameraController::OnAxisMoveRight);
-		PlayerInputComponent->BindAxis(FName(TEXT("MoveUp")), this, &UEditModelCameraController::OnAxisMoveUp);
+		PlayerInputComponent->BindAxis(GetEnumValueShortName(EInputMovementAxes::MoveForward), this, &UEditModelCameraController::OnAxisMoveForward);
+		PlayerInputComponent->BindAxis(GetEnumValueShortName(EInputMovementAxes::MoveRight), this, &UEditModelCameraController::OnAxisMoveRight);
+		PlayerInputComponent->BindAxis(GetEnumValueShortName(EInputMovementAxes::MoveUp), this, &UEditModelCameraController::OnAxisMoveUp);
 	}
 }
 
@@ -253,31 +251,37 @@ bool UEditModelCameraController::ZoomToNextAxis(FVector2D NextAxisDirection, boo
 void UEditModelCameraController::OnActionOrbitPressed()
 {
 	SetOrbiting(true);
+	Controller->OnHandledInputAction(EInputCameraActions::CameraOrbit, EInputEvent::IE_Pressed);
 }
 
 void UEditModelCameraController::OnActionOrbitReleased()
 {
 	SetOrbiting(false);
+	Controller->OnHandledInputAction(EInputCameraActions::CameraOrbit, EInputEvent::IE_Released);
 }
 
 void UEditModelCameraController::OnActionPanPressed()
 {
 	SetPanning(true);
+	Controller->OnHandledInputAction(EInputCameraActions::CameraPan, EInputEvent::IE_Pressed);
 }
 
 void UEditModelCameraController::OnActionPanReleased()
 {
 	SetPanning(false);
+	Controller->OnHandledInputAction(EInputCameraActions::CameraPan, EInputEvent::IE_Released);
 }
 
 void UEditModelCameraController::OnActionZoomIn()
 {
 	OnZoom(-1.0f);
+	Controller->OnHandledInputAction(EInputCameraActions::CameraZoomIn, EInputEvent::IE_Pressed);
 }
 
 void UEditModelCameraController::OnActionZoomOut()
 {
 	OnZoom(1.0f);
+	Controller->OnHandledInputAction(EInputCameraActions::CameraZoomOut, EInputEvent::IE_Pressed);
 }
 
 void UEditModelCameraController::OnAxisRotateYaw(float RotateYawValue)
@@ -286,6 +290,7 @@ void UEditModelCameraController::OnAxisRotateYaw(float RotateYawValue)
 		((CurMovementState == ECameraMovementState::Orbiting) || (CurMovementState == ECameraMovementState::Flying)))
 	{
 		RotationDeltasAccumulated.X += RotateSpeed * RotateYawValue;
+		Controller->OnHandledInputAxis(EInputMovementAxes::MoveYaw, RotateYawValue);
 	}
 }
 
@@ -295,22 +300,38 @@ void UEditModelCameraController::OnAxisRotatePitch(float RotatePitchValue)
 		((CurMovementState == ECameraMovementState::Orbiting) || (CurMovementState == ECameraMovementState::Flying)))
 	{
 		RotationDeltasAccumulated.Y += RotateSpeed * RotatePitchValue;
+		Controller->OnHandledInputAxis(EInputMovementAxes::MovePitch, RotatePitchValue);
 	}
 }
 
 void UEditModelCameraController::OnAxisMoveForward(float MoveForwardValue)
 {
 	OnMoveValue(MoveForwardValue * FVector::ForwardVector);
+
+	if (MoveForwardValue != 0.0f)
+	{
+		Controller->OnHandledInputAxis(EInputMovementAxes::MoveForward, MoveForwardValue);
+	}
 }
 
 void UEditModelCameraController::OnAxisMoveRight(float MoveRightValue)
 {
 	OnMoveValue(MoveRightValue * FVector::RightVector);
+
+	if (MoveRightValue != 0.0f)
+	{
+		Controller->OnHandledInputAxis(EInputMovementAxes::MoveRight, MoveRightValue);
+	}
 }
 
 void UEditModelCameraController::OnAxisMoveUp(float MoveUpValue)
 {
 	OnMoveValue(MoveUpValue * FVector::UpVector);
+
+	if (MoveUpValue != 0.0f)
+	{
+		Controller->OnHandledInputAxis(EInputMovementAxes::MoveUp, MoveUpValue);
+	}
 }
 
 void UEditModelCameraController::OnMouseLeave(FIntPoint MousePos)

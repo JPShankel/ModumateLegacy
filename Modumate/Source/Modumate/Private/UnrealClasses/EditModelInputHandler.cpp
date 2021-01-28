@@ -165,7 +165,7 @@ void UEditModelInputHandler::SetupBindings()
 	}
 }
 
-bool UEditModelInputHandler::TryCommand(EInputCommand Command)
+bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 {
 	if (Controller == nullptr)
 	{
@@ -457,6 +457,17 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 		return false;
 	}
 	}
+}
+
+bool UEditModelInputHandler::TryCommand(EInputCommand Command)
+{
+	bool bSuccess = TryCommandInternal(Command);
+	if (bSuccess)
+	{
+		OnExecutedCommand.Broadcast(Command);
+	}
+
+	return bSuccess;
 }
 
 void UEditModelInputHandler::DoCommand(EInputCommand Command)

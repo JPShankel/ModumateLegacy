@@ -1996,6 +1996,16 @@ bool AEditModelPlayerController::GetActiveUserSnapPoint(FTransform &outSnapPoint
 	return false;
 }
 
+void AEditModelPlayerController::OnHandledInputActionName(FName ActionName, EInputEvent InputEvent)
+{
+	HandledInputActionEvent.Broadcast(ActionName, InputEvent);
+}
+
+void AEditModelPlayerController::OnHandledInputAxisName(FName AxisName, float Value)
+{
+	HandledInputAxisEvent.Broadcast(AxisName, Value);
+}
+
 bool AEditModelPlayerController::DistanceBetweenWorldPointsInScreenSpace(const FVector &Point1, const FVector &Point2, float &OutScreenDist) const
 {
 	OutScreenDist = FLT_MAX;

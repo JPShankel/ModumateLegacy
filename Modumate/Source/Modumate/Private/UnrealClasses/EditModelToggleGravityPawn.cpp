@@ -1,7 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UnrealClasses/EditModelToggleGravityPawn.h"
+
 #include "Components/InputComponent.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 // Sets default values
 AEditModelToggleGravityPawn::AEditModelToggleGravityPawn()
@@ -21,11 +23,11 @@ void AEditModelToggleGravityPawn::SetupPlayerInputComponent(UInputComponent* Pla
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis(FName(TEXT("MoveYaw")), this, &AEditModelToggleGravityPawn::OnAxisRotateYaw);
-	PlayerInputComponent->BindAxis(FName(TEXT("MovePitch")), this, &AEditModelToggleGravityPawn::OnAxisRotatePitch);
+	PlayerInputComponent->BindAxis(GetEnumValueShortName(EInputMovementAxes::MoveYaw), this, &AEditModelToggleGravityPawn::OnAxisRotateYaw);
+	PlayerInputComponent->BindAxis(GetEnumValueShortName(EInputMovementAxes::MovePitch), this, &AEditModelToggleGravityPawn::OnAxisRotatePitch);
 
-	PlayerInputComponent->BindAxis(FName(TEXT("MoveForward")), this, &AEditModelToggleGravityPawn::OnAxisMoveForward);
-	PlayerInputComponent->BindAxis(FName(TEXT("MoveRight")), this, &AEditModelToggleGravityPawn::OnAxisMoveRight);
+	PlayerInputComponent->BindAxis(GetEnumValueShortName(EInputMovementAxes::MoveForward), this, &AEditModelToggleGravityPawn::OnAxisMoveForward);
+	PlayerInputComponent->BindAxis(GetEnumValueShortName(EInputMovementAxes::MoveRight), this, &AEditModelToggleGravityPawn::OnAxisMoveRight);
 }
 
 void AEditModelToggleGravityPawn::OnAxisRotateYaw(float RotateYawValue)

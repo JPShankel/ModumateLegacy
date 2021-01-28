@@ -1,12 +1,15 @@
 // Copyright 2021 Modumate, Inc. All Rights Reserved.
 
 #include "UI/TutorialMenu/TutorialWalkthroughMenu.h"
+
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
+#include "UI/Custom/ModumateTextBlockUserWidget.h"
+#include "UI/TutorialManager.h"
 #include "UI/TutorialMenu/TutorialWalkthroughBlockIntro.h"
 #include "UI/TutorialMenu/TutorialWalkthroughBlockItem.h"
 #include "UI/TutorialMenu/TutorialWalkthroughBlockOutro.h"
-#include "UI/Custom/ModumateTextBlockUserWidget.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 UTutorialWalkthroughMenu::UTutorialWalkthroughMenu(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -32,6 +35,10 @@ bool UTutorialWalkthroughMenu::Initialize()
 	OutroWidget->ButtonOutroProceed->ModumateButton->OnReleased.AddDynamic(this, &UTutorialWalkthroughMenu::OnReleaseButtonOutroProceed);
 	OutroWidget->ButtonOutroGoBack->ModumateButton->OnReleased.AddDynamic(this, &UTutorialWalkthroughMenu::OnReleaseButtonOutroGoBack);
 
+	auto world = GetWorld();
+	auto gameInstance = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
+	TutorialManager = gameInstance ? gameInstance->TutorialManager : nullptr;
+
 	return true;
 }
 
@@ -55,7 +62,7 @@ void UTutorialWalkthroughMenu::ShowWalkthroughStep(const FText& Title, const FTe
 
 void UTutorialWalkthroughMenu::ShowCountdown(float CountdownSeconds)
 {
-
+	
 }
 
 void UTutorialWalkthroughMenu::ShowWalkthroughOutro()
@@ -65,7 +72,7 @@ void UTutorialWalkthroughMenu::ShowWalkthroughOutro()
 
 void UTutorialWalkthroughMenu::UpdateBlockVisibility(ETutorialWalkthroughBlockStage Stage)
 {
-	if (Stage == ETutorialWalkthroughBlockStage::None)
+	if ((Stage == ETutorialWalkthroughBlockStage::None) || !ensure(TutorialManager))
 	{
 		this->SetVisibility(ESlateVisibility::Collapsed);
 		return;
@@ -83,30 +90,30 @@ void UTutorialWalkthroughMenu::UpdateBlockVisibility(ETutorialWalkthroughBlockSt
 
 void UTutorialWalkthroughMenu::OnReleaseButtonIntroProceed()
 {
-	UE_LOG(LogTemp, Error, TEXT("IntroProceed"));
+	TutorialManager->AdvanceWalkthrough();
 }
 
 void UTutorialWalkthroughMenu::OnReleaseButtonIntroGoBack()
 {
-	UpdateBlockVisibility(ETutorialWalkthroughBlockStage::None);
+	TutorialManager->RewindWalkthrough();
 }
 
 void UTutorialWalkthroughMenu::OnReleaseWalkthroughButtonProceed()
 {
-	UE_LOG(LogTemp, Error, TEXT("WalkthroughProceed"));
+	TutorialManager->AdvanceWalkthrough();
 }
 
 void UTutorialWalkthroughMenu::OnReleaseButtonWalkthroughGoBack()
 {
-	UE_LOG(LogTemp, Error, TEXT("WalkthroughBack"));
+	TutorialManager->RewindWalkthrough();
 }
 
 void UTutorialWalkthroughMenu::OnReleaseButtonOutroProceed()
 {
-	UpdateBlockVisibility(ETutorialWalkthroughBlockStage::None);
+	TutorialManager->AdvanceWalkthrough();
 }
 
 void UTutorialWalkthroughMenu::OnReleaseButtonOutroGoBack()
 {
-	UE_LOG(LogTemp, Error, TEXT("OutroBack"));
+	TutorialManager->RewindWalkthrough();
 }
