@@ -152,6 +152,7 @@ bool FModumateCloudConnection::Login(const FString& Username, const FString& Pas
 			FModumateLoginParams loginParams;
 			loginParams.Password = Password;
 			loginParams.Username = Username;
+			loginParams.AppVersion = FModumateModule::Get().GetProjectDisplayVersion();
 
 			FString jsonString;
 			if (FJsonObjectConverter::UStructToJsonObjectString<FModumateLoginParams>(loginParams, jsonString, 0, 0, 0, nullptr, false))

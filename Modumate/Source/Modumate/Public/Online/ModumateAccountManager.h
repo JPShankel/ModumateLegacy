@@ -17,6 +17,9 @@ struct MODUMATE_API FModumateLoginParams
 
 	UPROPERTY()
 	FString Password;
+
+	UPROPERTY()
+	FString AppVersion;
 };
 
 USTRUCT()
