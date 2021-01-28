@@ -87,6 +87,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UTutorialWalkthroughMenu* TutorialWalkthroughMenuBP;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UViewCubeWidget* ViewCubeUserWidget;
+
 	UPROPERTY()
 	TMap<EToolMode, class UModumateButtonUserWidget*> ToolToButtonMap;
 

@@ -1,12 +1,15 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/RightMenu/ViewMenuBlockProperties.h"
-#include "UnrealClasses/EditModelPlayerController.h"
+
 #include "Components/CheckBox.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
-#include "UnrealClasses/SkyActor.h"
 #include "UI/Custom/ModumateButton.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/ViewCubeWidget.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/SkyActor.h"
 
 
 UViewMenuBlockProperties::UViewMenuBlockProperties(const FObjectInitializer& ObjectInitializer)
@@ -20,13 +23,15 @@ bool UViewMenuBlockProperties::Initialize()
 	{
 		return false;
 	}
-	if (!(ControlGravityOn && ControlGravityOff && EditableTextBox_FOV && EditableTextBox_Month && EditableTextBox_Day && 
+	if (!(ControlGravityOn && ControlGravityOff && ControlViewCubeOn && ControlViewCubeOff && EditableTextBox_FOV && EditableTextBox_Month && EditableTextBox_Day && 
 		EditableTextBox_Hour && EditableTextBox_Minute && ModumateButton_AM))
 	{
 		return false;
 	}
 	ControlGravityOn->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::OnControlGravityOnChanged);
 	ControlGravityOff->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::OnControlGravityOffChanged);
+	ControlViewCubeOn->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::OnControlViewCubeOnChanged);
+	ControlViewCubeOff->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::OnControlViewCubeOffChanged);
 	EditableTextBox_FOV->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UViewMenuBlockProperties::OnEditableTextBoxFOVCommitted);
 
 	EditableTextBox_Month->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UViewMenuBlockProperties::OnEditableTextBoxMonthCommitted);
@@ -168,6 +173,35 @@ void UViewMenuBlockProperties::ToggleGravityCheckboxes(bool NewEnable)
 	{
 		ControlGravityOn->SetVisibility(ESlateVisibility::Visible);
 		ControlGravityOff->SetVisibility(ESlateVisibility::HitTestInvisible);
+	}
+}
+
+void UViewMenuBlockProperties::OnControlViewCubeOnChanged(bool IsChecked)
+{
+	ToggleViewCubeCheckboxes(true);
+}
+
+void UViewMenuBlockProperties::OnControlViewCubeOffChanged(bool IsChecked)
+{
+	ToggleViewCubeCheckboxes(false);
+}
+
+void UViewMenuBlockProperties::ToggleViewCubeCheckboxes(bool NewEnable)
+{
+	Controller->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(NewEnable ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+
+	ControlViewCubeOn->SetIsChecked(NewEnable);
+	ControlViewCubeOff->SetIsChecked(!NewEnable);
+
+	if (NewEnable)
+	{
+		ControlViewCubeOn->SetVisibility(ESlateVisibility::HitTestInvisible);
+		ControlViewCubeOff->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		ControlViewCubeOn->SetVisibility(ESlateVisibility::Visible);
+		ControlViewCubeOff->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 }
 
