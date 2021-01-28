@@ -93,22 +93,25 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 			surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
 			auto poly = surfaceGraph->GetRootPolygon();
 
-			if (boundingVertexIDs.Num() == 0)
+			if (poly != nullptr)
 			{
-				TMap<int32, TArray<int32>> emptyBounds;
-				auto outerBounds = TPair<int32, TArray<int32>>(poly->ID, poly->VertexIDs);
-				surfaceGraph->SetBounds(outerBounds, emptyBounds);
-				surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
-			}
-
-			// associate the outer bounds with the hosting object geometry
-			for (int32 facePointIdx = 0; facePointIdx < CachedFacePoints.Num(); ++facePointIdx)
-			{
-				FVector2D prevPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
-				Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(prevPos2D);
-				if (ensure(vertex) && poly->VertexIDs.Contains(vertex->ID))
+				if (boundingVertexIDs.Num() == 0)
 				{
-					FaceIdxToVertexID.Add(facePointIdx, vertex->ID);
+					TMap<int32, TArray<int32>> emptyBounds;
+					auto outerBounds = TPair<int32, TArray<int32>>(poly->ID, poly->VertexIDs);
+					surfaceGraph->SetBounds(outerBounds, emptyBounds);
+					surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
+				}
+
+				// associate the outer bounds with the hosting object geometry
+				for (int32 facePointIdx = 0; facePointIdx < CachedFacePoints.Num(); ++facePointIdx)
+				{
+					FVector2D prevPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
+					Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(prevPos2D);
+					if (ensure(vertex) && poly->VertexIDs.Contains(vertex->ID))
+					{
+						FaceIdxToVertexID.Add(facePointIdx, vertex->ID);
+					}
 				}
 			}
 		}
