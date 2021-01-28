@@ -60,7 +60,7 @@ public:
 	class UMaterialInterface* IconMaterial;
 
 	UPROPERTY()
-	class UTexture* IconTexture;
+	class UTexture2D* IconTexture;
 
 	UFUNCTION()
 	void OnButtonSwapReleased();

@@ -28,6 +28,11 @@ UThumbnailCacheManager::UThumbnailCacheManager(const FObjectInitializer &ObjectI
 
 void UThumbnailCacheManager::Init()
 {
+	if (!bDiskEnabled)
+	{
+		return;
+	}
+
 	FString cacheDir = GetThumbnailCacheDir();
 	TArray<FString> cachedThumbnailFileNames;
 	IFileManager::Get().FindFiles(cachedThumbnailFileNames, *cacheDir, *ThumbnailImageExt);
@@ -89,7 +94,10 @@ bool UThumbnailCacheManager::IsSavingThumbnail(FName ThumbnailKey)
 
 void UThumbnailCacheManager::OnThumbnailSaved(FName ThumbnailKey, bool bSaveSuccess)
 {
-	if (ensureAlways(!ThumbnailKey.IsNone() && SavingThumbnailsByKey.Contains(ThumbnailKey)))
+	// If the callback's thumbnail key is not being saved, it could have just been canceled by being overwritten by another request.
+	// TODO: queue up thumbnail disk writes after previous overwritten results have finished,
+	// rather than assuming sequential overlapping writes complete in the order in which they were started.
+	if (ensureAlways(!ThumbnailKey.IsNone()) && SavingThumbnailsByKey.Contains(ThumbnailKey))
 	{
 		SavingThumbnailsByKey.Remove(ThumbnailKey);
 
@@ -216,13 +224,28 @@ bool UThumbnailCacheManager::SaveThumbnail(UTexture *ThumbnailTexture, FName Thu
 	}
 
 	// If we can't save the cached thumbnail to disk right now, then return.
-	if (!AllowOverwrite && (IsSavingThumbnail(ThumbnailKey) || HasSavedThumbnail(ThumbnailKey)))
+	if (IsSavingThumbnail(ThumbnailKey) || HasSavedThumbnail(ThumbnailKey))
 	{
-		return false;
+		if (AllowOverwrite)
+		{
+			SavingThumbnailsByKey.Remove(ThumbnailKey);
+			SavedThumbnailsByKey.Remove(ThumbnailKey);
+		}
+		else
+		{
+			return false;
+		}
 	}
 
-	// Actually write the converted texture to disk
-	return WriteThumbnailToDisk(OutSavedTexture, ThumbnailKey, EImageFormat::PNG, true, AllowOverwrite);
+	if (bDiskEnabled)
+	{
+		// Actually write the converted texture to disk
+		return WriteThumbnailToDisk(OutSavedTexture, ThumbnailKey, EImageFormat::PNG, true, AllowOverwrite);
+	}
+	{
+		// Otherwise, it's only an in-memory cache, so just return success
+		return true;
+	}
 }
 
 UTexture2D* UThumbnailCacheManager::CreateTexture2D(int32 SizeX, int32 SizeY, int32 NumMips /*= 1*/, EPixelFormat Format /*= PF_B8G8R8A8*/, UObject* Outer /*= nullptr*/, FName Name /*= NAME_None*/)
@@ -241,6 +264,11 @@ bool UThumbnailCacheManager::CopyViewportToTexture(UTexture2D* InTexture, UObjec
 
 bool UThumbnailCacheManager::WriteThumbnailToDisk(UTexture2D *Texture, FName ThumbnailKey, EImageFormat ImageFormat, bool bAsync, bool AllowOverwrite)
 {
+	if (!bDiskEnabled)
+	{
+		return false;
+	}
+
 	FString thumbnailPath = GetThumbnailCachePathForKey(ThumbnailKey);
 	if (Texture && (AllowOverwrite || !IFileManager::Get().FileExists(*thumbnailPath)))
 	{

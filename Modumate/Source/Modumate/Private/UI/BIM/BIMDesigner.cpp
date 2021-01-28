@@ -267,8 +267,6 @@ float UBIMDesigner::GetCurrentZoomScale() const
 
 bool UBIMDesigner::EditPresetInBIMDesigner(const FGuid& PresetID)
 {
-	Controller->DynamicIconGenerator->ReleaseSavedRenderTarget();
-
 	FBIMPresetEditorNodeSharedPtr rootNode;
 	EBIMResult getPresetResult = InstancePool.InitFromPreset(Controller->GetDocument()->GetPresetCollection(), PresetID, rootNode);
 	if (getPresetResult != EBIMResult::Success)

@@ -143,18 +143,14 @@ public:
 	UPROPERTY()
 	UTextureRenderTarget2D* IconRenderTarget;
 
-	// TODO: Temporary for storing render target until BIMKey can guarantee unique appearance
-	UPROPERTY()
-	TArray<UTextureRenderTarget2D*> BIMKeyToRenderTarget;
-
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	bool SetIconMeshForAssembly(const FGuid& AsmKey, bool bAllowOverwrite = false);
 	bool SetIconMeshForAssembly(const FGuid& AsmKey, UMaterialInterface*& OutMaterial, bool bAllowOverwrite = false);
-	bool SetIconMeshForBIMDesigner(bool UseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, UTexture*& OutTexture, const FBIMEditorNodeIDType& NodeID);
-	bool GetSavedIconFromPreset(const FGuid& PresetID, UTexture*& OutTexture);
-	UMaterialInterface* CreateMaterialForIconTexture(const FGuid& PresetID, UTexture* InTexture);
+	bool SetIconMeshForBIMDesigner(bool UseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, UTexture2D*& OutTexture, const FBIMEditorNodeIDType& NodeID);
+	bool GetSavedIconFromPreset(const FGuid& PresetID, UTexture2D*& OutTexture);
+	UMaterialInterface* CreateMaterialForIconTexture(const FGuid& PresetID, UTexture2D* InTexture);
 	bool SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex, bool bFromRootNode);
 
 	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);

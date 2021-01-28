@@ -21,6 +21,9 @@ public:
 	void Init();
 	void Shutdown();
 
+	UPROPERTY(EditAnywhere, Category = "Modumate|Thumbnails")
+	bool bDiskEnabled = false;
+
 	UFUNCTION(Category = "Modumate|Thumbnails")
 	bool HasCachedThumbnail(FName ThumbnailKey);
 

@@ -268,8 +268,8 @@ void UEditModelUserWidget::ToggleBIMPresetSwapTray(bool NewVisibility)
 	else if (Controller->GetToolMode() != EToolMode::VE_NONE)
 	{
 		BIMPresetSwap->SetVisibility(ESlateVisibility::Collapsed);
+		ToolTrayWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		SelectionTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
-		UpdateToolTray();
 	}
 }
 

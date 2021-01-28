@@ -95,7 +95,6 @@ void ADynamicIconGenerator::BeginPlay()
 
 void ADynamicIconGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	ReleaseSavedRenderTarget();
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -137,7 +136,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssembly(const FGuid& AsmKey, bool bAl
 bool ADynamicIconGenerator::SetIconMeshForAssembly(const FGuid& AsmKey, UMaterialInterface*& OutMaterial, bool bAllowOverwrite)
 {
 	OutMaterial = nullptr;
-	UTexture* iconTexture = nullptr;
+	UTexture2D* iconTexture = nullptr;
 
 	if (!bAllowOverwrite && GetSavedIconFromPreset(AsmKey, iconTexture))
 	{
@@ -154,18 +153,11 @@ bool ADynamicIconGenerator::SetIconMeshForAssembly(const FGuid& AsmKey, UMateria
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, UTexture*& OutTexture, const FBIMEditorNodeIDType& NodeID)
+bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, UTexture2D*& OutTexture, const FBIMEditorNodeIDType& NodeID)
 {
-	// TODO: Attempt to use cached icon first, make new if not available
 	OutMaterial = nullptr;
 	OutTexture = nullptr;
-#if 0
-	if (GetSavedIconFromPreset(PresetID, iconTexture))
-	{
-		// TODO: Make OutMaterial from texture
-		return true;
-	}
-#endif
+	bool bAllowCaching = false;
 
 	const FBIMPresetInstance* preset = GameState->Document->GetPresetCollection().PresetFromGUID(PresetID);
 	if (preset == nullptr)
@@ -181,11 +173,22 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 		return true;
 	case EBIMValueScope::Pattern:
 		return SetIconFromTextureAsset(PresetID, OutMaterial);
+	case EBIMValueScope::Assembly:
+		bAllowCaching = true;
+		break;
+	}
+
+	// Attempt to use cached icon first, make new if not available
+	if (bAllowCaching && GetSavedIconFromPreset(PresetID, OutTexture))
+	{
+		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
+		dynMat->SetTextureParameterValue(MaterialIconTextureParamName, OutTexture);
+		OutMaterial = dynMat;
+		return true;
 	}
 
 	// The following presets need render capture for icon
-	UTextureRenderTarget2D* renderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), RenderTargetSize, RenderTargetSize, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
-	bool captureSuccess = false;
+	bool bCaptureSuccess = false;
 	// Some object types have special rule to render root node, ex: cabinet may not need extruded mesh on non root node
 	bool fromRootNode = false;
 
@@ -248,50 +251,47 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 		if (UseDependentPreset && assemblyPartIndex > 0)
 		{
 			// TODO: Need delta system to preview swap presets
-			captureSuccess = false;
+			bCaptureSuccess = false;
 		}
 		else
 		{
-			captureSuccess = SetIconMeshForAssemblyType(Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly, renderTarget, assemblyPartIndex, fromRootNode);
+			bCaptureSuccess = SetIconMeshForAssemblyType(Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly, IconRenderTarget, assemblyPartIndex, fromRootNode);
 		}
 	}
 
 	switch (preset->NodeScope)
 	{
 	case EBIMValueScope::RawMaterial:
-		captureSuccess = SetIconMeshForRawMaterial(PresetID, renderTarget);
+		bCaptureSuccess = SetIconMeshForRawMaterial(PresetID, IconRenderTarget);
 		break;
 	case EBIMValueScope::Profile:
-		captureSuccess = SetIconMeshForProfile(PresetID, renderTarget);
+		bCaptureSuccess = SetIconMeshForProfile(PresetID, IconRenderTarget);
 		break;
 	case EBIMValueScope::Material:
-		captureSuccess = SetIconMeshForMaterial(UseDependentPreset, PresetID, NodeID, renderTarget);
+		bCaptureSuccess = SetIconMeshForMaterial(UseDependentPreset, PresetID, NodeID, IconRenderTarget);
 		break;
 	case EBIMValueScope::Module:
 	case EBIMValueScope::Gap:
-		captureSuccess = SetIconMeshForModule(UseDependentPreset, PresetID, NodeID, renderTarget);
+		bCaptureSuccess = SetIconMeshForModule(UseDependentPreset, PresetID, NodeID, IconRenderTarget);
 		break;
 	case EBIMValueScope::Mesh:
-		captureSuccess = SetIconMeshForMesh(PresetID, renderTarget);
+		bCaptureSuccess = SetIconMeshForMesh(PresetID, IconRenderTarget);
 		break;
 	case EBIMValueScope::Layer:
 		if (UseDependentPreset)
 		{
-			captureSuccess = SetIconMeshForLayerPreset(PresetID, renderTarget);
+			bCaptureSuccess = SetIconMeshForLayerPreset(PresetID, IconRenderTarget);
 		}
 		else
 		{
-			captureSuccess = SetIconMeshForLayerNodeID(NodeID, renderTarget);
+			bCaptureSuccess = SetIconMeshForLayerNodeID(NodeID, IconRenderTarget);
 		}
 		break;
 	}
-	
-	if (captureSuccess)
-	{
-		// TODO: Save texture cache, release RT resource
-		BIMKeyToRenderTarget.Add(renderTarget);
 
-		OutTexture = renderTarget;
+	bool bAllowOverwrite = true;
+	if (bCaptureSuccess && UThumbnailCacheManager::SaveThumbnailFromPresetKey(IconRenderTarget, PresetID, OutTexture, this, bAllowOverwrite))
+	{
 		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
 		dynMat->SetTextureParameterValue(MaterialIconTextureParamName, OutTexture);
 		OutMaterial = dynMat;
@@ -299,12 +299,11 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 	}
 	else
 	{
-		renderTarget->ReleaseResource();
 		return false;
 	}
 }
 
-bool ADynamicIconGenerator::GetSavedIconFromPreset(const FGuid& PresetID, UTexture*& OutTexture)
+bool ADynamicIconGenerator::GetSavedIconFromPreset(const FGuid& PresetID, UTexture2D*& OutTexture)
 {
 	OutTexture = nullptr;
 	const FBIMPresetInstance* preset = GameState->Document->GetPresetCollection().PresetFromGUID(PresetID);
@@ -313,20 +312,11 @@ bool ADynamicIconGenerator::GetSavedIconFromPreset(const FGuid& PresetID, UTextu
 		return false;
 	}
 
-	if (preset->NodeScope == EBIMValueScope::Assembly)
-	{
-		OutTexture = UThumbnailCacheManager::GetCachedThumbnailFromPresetKey(PresetID, this);
-	}
-	else
-	{
-		// TODO: support cache for other preset scope
-		return false;
-	}
-
+	OutTexture = UThumbnailCacheManager::GetCachedThumbnailFromPresetKey(PresetID, this);
 	return OutTexture != nullptr;
 }
 
-UMaterialInterface* ADynamicIconGenerator::CreateMaterialForIconTexture(const FGuid& PresetID, UTexture* InTexture)
+UMaterialInterface* ADynamicIconGenerator::CreateMaterialForIconTexture(const FGuid& PresetID, UTexture2D* InTexture)
 {
 	UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
 	dynMat->SetTextureParameterValue(MaterialIconTextureParamName, InTexture);
@@ -1167,15 +1157,6 @@ void ADynamicIconGenerator::SetCaptureCompTransformForCapture(AActor* ActorToCap
 	newTargetTransform.SetComponents(camTransform.GetRotation(), selectionViewOrigin, camTransform.GetScale3D());
 
 	SceneCaptureComp->SetWorldTransform(newTargetTransform);
-}
-
-void ADynamicIconGenerator::ReleaseSavedRenderTarget()
-{
-	for (auto curRT : BIMKeyToRenderTarget)
-	{
-		curRT->ReleaseResource();
-	}
-	BIMKeyToRenderTarget.Empty();
 }
 
 void ADynamicIconGenerator::UpdateCachedAssemblies(const TArray<FGuid>& AsmKeys)
