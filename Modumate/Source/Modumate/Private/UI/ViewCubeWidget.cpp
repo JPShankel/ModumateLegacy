@@ -6,7 +6,8 @@
 #include "UnrealClasses/EditModelPlayerCameraManager.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
-#include "Components/Button.h"
+#include "UI/Custom/ModumateButton.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
 
 UViewCubeWidget::UViewCubeWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -28,14 +29,14 @@ bool UViewCubeWidget::Initialize()
 	if (!(ButtonSnapUp && ButtonSnapDown && ButtonSnapLeft && ButtonSnapRight && ButtonSnapForward && ButtonSnapBackward))
 	{
 		return false;
-	}
+	} 
 
-	ButtonSnapUp->OnReleased.AddDynamic(this, &UViewCubeWidget::OnButtonPressedSnapUp);
-	ButtonSnapDown->OnReleased.AddDynamic(this, &UViewCubeWidget::OnButtonPressedSnapDown);
-	ButtonSnapLeft->OnReleased.AddDynamic(this, &UViewCubeWidget::OnButtonPressedSnapLeft);
-	ButtonSnapRight->OnReleased.AddDynamic(this, &UViewCubeWidget::OnButtonPressedSnapRight);
-	ButtonSnapForward->OnReleased.AddDynamic(this, &UViewCubeWidget::OnButtonPressedSnapForward);
-	ButtonSnapBackward->OnReleased.AddDynamic(this, &UViewCubeWidget::OnButtonPressedSnapBackward);
+	ButtonSnapUp->ModumateButton->OnReleased.AddDynamic(this, &UViewCubeWidget::OnButtonPressedSnapUp);
+	ButtonSnapDown->ModumateButton->OnReleased.AddDynamic(this, &UViewCubeWidget::OnButtonPressedSnapDown);
+	ButtonSnapLeft->ModumateButton->OnReleased.AddDynamic(this, &UViewCubeWidget::OnButtonPressedSnapLeft);
+	ButtonSnapRight->ModumateButton->OnReleased.AddDynamic(this, &UViewCubeWidget::OnButtonPressedSnapRight);
+	ButtonSnapForward->ModumateButton->OnReleased.AddDynamic(this, &UViewCubeWidget::OnButtonPressedSnapForward);
+	ButtonSnapBackward->ModumateButton->OnReleased.AddDynamic(this, &UViewCubeWidget::OnButtonPressedSnapBackward);
 
 	DirectionToButton.Add(FVector::UpVector, ButtonSnapUp);
 	DirectionToButton.Add(FVector::DownVector, ButtonSnapDown);
@@ -80,7 +81,6 @@ int32 UViewCubeWidget::NativePaint(const FPaintArgs& Args, const FGeometry& Allo
 
 		FWidgetTransform newTransform;
 		newTransform.Translation = TransformVector(direction * CubeSideLength);
-		newTransform.Angle = FMath::RadiansToDegrees(FMath::Atan2(newTransform.Translation.Y, newTransform.Translation.X));
 		button->SetRenderTransform(newTransform);
 
 		for (int32 i = 0; i < 4; i++)

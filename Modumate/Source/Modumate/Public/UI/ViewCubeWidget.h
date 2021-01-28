@@ -36,22 +36,22 @@ public:
 	void OnButtonPressedSnapBackward();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UButton *ButtonSnapUp;
+	class UModumateButtonUserWidget *ButtonSnapUp;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UButton *ButtonSnapDown;
+	class UModumateButtonUserWidget *ButtonSnapDown;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UButton *ButtonSnapLeft;
+	class UModumateButtonUserWidget *ButtonSnapLeft;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UButton *ButtonSnapRight;
+	class UModumateButtonUserWidget *ButtonSnapRight;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UButton *ButtonSnapForward;
+	class UModumateButtonUserWidget *ButtonSnapForward;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UButton *ButtonSnapBackward;
+	class UModumateButtonUserWidget *ButtonSnapBackward;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float LineThickness;
@@ -77,5 +77,5 @@ private:
 	class APlayerCameraManager* CameraManager;
 
 	UPROPERTY()
-	TMap<FVector, class UButton*> DirectionToButton;
+	TMap<FVector, class UModumateButtonUserWidget*> DirectionToButton;
 };
