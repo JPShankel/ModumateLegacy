@@ -20,6 +20,7 @@ public:
 
 	bool MatchesExact(const FBIMTagPath &OtherPath) const;
 	bool MatchesPartial(const FBIMTagPath& OtherPath) const;
+	bool Contains(const FString& Tag) const;
 
 	EBIMResult FromString(const FString &InString);
 	EBIMResult ToString(FString &OutString) const;

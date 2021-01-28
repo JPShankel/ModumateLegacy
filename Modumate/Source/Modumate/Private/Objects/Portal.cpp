@@ -287,8 +287,7 @@ void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>
 					for (int32 slot = 0; slot < parts.Num(); ++slot)
 					{
 						const auto& ncp = parts[slot].NodeCategoryPath;
-						if (ncp.Tags.Num() > 0
-							&& ncp.Tags.Last() == panelTag)
+						if (ncp.Contains(panelTag))
 						{
 							panelSlotIndices.Add(slot);
 						}
@@ -376,10 +375,13 @@ EDoorOperationType AMOIPortal::GetDoorType() const
 	{
 		const FBIMAssemblySpec& assembly = GetAssembly();
 		const auto& configTags = assembly.SlotConfigTagPath.Tags;
-		if (configTags.Num() > 0)
+		for (const FString& configTag: configTags)
 		{
-			int64 doorType = StaticEnum<EDoorOperationType>()->GetValueByNameString(configTags.Last());
-			return doorType == INDEX_NONE ? EDoorOperationType::None : EDoorOperationType(doorType);
+			int64 doorType = StaticEnum<EDoorOperationType>()->GetValueByNameString(configTag);
+			if (doorType != INDEX_NONE)
+			{
+				return EDoorOperationType(doorType);
+			}
 		}
 	}
 

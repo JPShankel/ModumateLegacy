@@ -72,6 +72,11 @@ bool FBIMTagPath::MatchesPartial(const FBIMTagPath& OtherPath) const
 	return true;
 }
 
+bool FBIMTagPath::Contains(const FString& Tag) const
+{
+	return Tags.Contains(Tag);
+}
+
 bool FBIMTagPath::operator==(const FBIMTagPath& RHS) const
 {
 	return RHS.Tags == Tags;
