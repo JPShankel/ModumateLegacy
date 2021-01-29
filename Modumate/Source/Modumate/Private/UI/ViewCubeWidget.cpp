@@ -102,12 +102,12 @@ int32 UViewCubeWidget::NativePaint(const FPaintArgs& Args, const FGeometry& Allo
 
 void UViewCubeWidget::OnButtonPressedSnapUp()
 {
-	Zoom(FVector::UpVector, FVector::BackwardVector);
+	Zoom(FVector::UpVector, FVector::LeftVector);
 }
 
 void UViewCubeWidget::OnButtonPressedSnapDown()
 {
-	Zoom(FVector::DownVector, FVector::ForwardVector);
+	Zoom(FVector::DownVector, FVector::LeftVector);
 }
 
 void UViewCubeWidget::OnButtonPressedSnapLeft()
