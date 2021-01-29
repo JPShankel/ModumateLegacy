@@ -26,14 +26,15 @@ PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXMidStileYOutsideZMidHeight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXMidStileYOutsideZMidBottomRail
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXBacksetDistanceXYOutsideZMidHeight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXEdgeYOutsideZMidHeight
-PRESET,,9701BCF0-657B-5345-A887-67418B11DDA9,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-CasterBarnLeft-Property_Spatiality_Slot-CasterBarnRight-Property_Spatiality_Slot-HandleXBacksetDistanceXYInsideZHandleHeight-Property_Spatiality_Slot-HandleXBacksetDistanceXYOutsideZHandleHeight-Property_Spatiality_Slot-HandleXEdgeYInsideZHandleHeight-Property_Spatiality_Slot-HandleXEdgeYOutsideZHandleHeight-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door,,Door Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
+PRESET,,9701BCF0-657B-5345-A887-67418B11DDA9,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-CasterBarnLeft-Property_Spatiality_Slot-CasterBarnRight-Property_Spatiality_Slot-HandleXBacksetDistanceXYInsideZHandleHeight-Property_Spatiality_Slot-HandleXBacksetDistanceXYOutsideZHandleHeight-Property_Spatiality_Slot-HandleXMidStileYInsideZHandleHeight-Property_Spatiality_Slot-HandleXMidStileYOutsideZHandleHeight-Property_Spatiality_Slot-HandleXEdgeYInsideZHandleHeight-Property_Spatiality_Slot-HandleXEdgeYOutsideZHandleHeight-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door,,Door Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-CasterBarnLeft
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-CasterBarnRight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXBacksetDistanceXYInsideZHandleHeight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXBacksetDistanceXYOutsideZHandleHeight
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXMidStileYInsideZHandleHeight
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXMidStileYOutsideZHandleHeight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXEdgeYInsideZHandleHeight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXEdgeYOutsideZHandleHeight
-PRESET,,,,,,,,,,,
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-Deadbolt
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-SurfaceLockLower
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-SurfaceLockUpper
