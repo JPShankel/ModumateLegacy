@@ -1,13 +1,14 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/SelectionTray/SelectionTrayWidget.h"
+
+#include "Components/WidgetSwitcher.h"
+#include "UI/BIM/BIMDesigner.h"
+#include "UI/EditModelUserWidget.h"
 #include "UI/SelectionTray/SelectionTrayBlockPresetList.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
-#include "Components/WidgetSwitcher.h"
-#include "UI/EditModelUserWidget.h"
+#include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-#include "UI/BIM/BIMDesigner.h"
-
 
 USelectionTrayWidget::USelectionTrayWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -27,6 +28,9 @@ bool USelectionTrayWidget::Initialize()
 void USelectionTrayWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	// TODO: take this out once the properties block is meaningful
+	ToolTrayBlockProperties->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void USelectionTrayWidget::OpenToolTrayForSelection()

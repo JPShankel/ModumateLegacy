@@ -38,6 +38,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UWidgetSwitcher *WidgetSwitcherTray;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UToolTrayBlockProperties *ToolTrayBlockProperties;
+
 	void OpenToolTrayForSelection();
 	void OpenToolTrayForSwap(EToolMode ToolMode, const FGuid& PresetToSwap);
 	void CloseToolTray();
