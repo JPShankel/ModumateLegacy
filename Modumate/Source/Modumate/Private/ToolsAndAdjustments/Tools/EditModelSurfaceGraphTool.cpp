@@ -6,7 +6,6 @@
 #include "ModumateCore/ModumateTargetingStatics.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "Objects/SurfaceGraph.h"
-#include "Online/ModumateAnalyticsStatics.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
@@ -71,8 +70,6 @@ bool USurfaceGraphTool::BeginUse()
 			GameState->Document->ApplyDeltas(deltas, GetWorld()))
 		{
 			HitGraphMOI = GameState->Document->GetObjectById(newSurfaceGraphID);
-
-			UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTSurfaceGraph);
 
 			return true;
 		}
@@ -497,8 +494,6 @@ bool USurfaceGraphTool::AddEdge(FVector StartPos, FVector EndPos)
 		{
 			return false;
 		}
-
-		UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTSurfaceEdge);
 	}
 
 	return true;

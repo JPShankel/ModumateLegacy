@@ -22,6 +22,7 @@ URectangleTool::URectangleTool(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, State(Neutral)
 	, bPendingPlaneValid(false)
+	, bExtrudingPlaneFromEdge(false)
 	, PendingPlaneGeom(ForceInitToZero)
 	, MinPlaneSize(1.0f)
 {
@@ -48,7 +49,25 @@ bool URectangleTool::HandleInputNumber(double n)
 	{
 		FVector dir = (pendingSegment->Point2 - pendingSegment->Point1).GetSafeNormal() * n;
 
-		return MakeObject(pendingSegment->Point1 + dir);
+		bool bSuccess = MakeObject(pendingSegment->Point1 + dir);
+		if (bSuccess)
+		{
+			static const FString eventNameSegment(TEXT("EnteredDimStringSegment"));
+			static const FString eventNamePlane(TEXT("EnteredDimStringPlane"));
+			switch (State)
+			{
+			case NewSegmentPending:
+				UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventNameSegment);
+				break;
+			case NewPlanePending:
+				UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventNamePlane);
+				break;
+			default:
+				break;
+			}
+		}
+
+		return bSuccess;
 	}
 	return true;
 }
@@ -66,6 +85,7 @@ bool URectangleTool::Activate()
 bool URectangleTool::Deactivate()
 {
 	State = Neutral;
+	bExtrudingPlaneFromEdge = false;
 	Controller->EMPlayerState->SnappedCursor.MouseMode = OriginalMouseMode;
 	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = false;
 	return UEditModelToolBase::Deactivate();
@@ -113,6 +133,7 @@ bool URectangleTool::BeginUse()
 		UModumateGeometryStatics::FindBasisVectors(axisX, axisY, normal);
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, normal, axisX);
 		State = NewPlanePending;
+		bExtrudingPlaneFromEdge = true;
 	}
 	else 
 	{
@@ -153,7 +174,41 @@ bool URectangleTool::EnterNextStage()
 	}
 	if (State == NewSegmentPending || State == NewPlanePending)
 	{
-		return MakeObject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
+		bool bSuccess = MakeObject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
+		if (bSuccess)
+		{
+			static const FString eventNameSegment(TEXT("ClickedSegment"));
+			static const FString eventNamePlane(TEXT("ClickedPlane"));
+			FString eventName;
+
+			switch (State)
+			{
+			case NewSegmentPending:
+				eventName = eventNameSegment;
+				break;
+			case NewPlanePending:
+				eventName = eventNamePlane;
+				break;
+			default:
+				break;
+			}
+
+			if (Controller->EMPlayerState->SnappedCursor.ShiftLocked)
+			{
+				static const FString eventSuffixShiftSnapped(TEXT("ShiftSnapped"));
+				eventName += eventSuffixShiftSnapped;
+			}
+
+			if (bExtrudingPlaneFromEdge)
+			{
+				static const FString eventSuffixExtrusion(TEXT("Extrusion"));
+				eventName += eventSuffixExtrusion;
+			}
+
+			UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventName);
+		}
+
+		return bSuccess;
 	}
 
 	return false;
@@ -232,11 +287,6 @@ bool URectangleTool::MakeObject(const FVector& Location)
 		return false;
 	}
 
-	if (GetToolMode() == EToolMode::VE_RECTANGLE)
-	{
-		UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTMetaPlane);
-	}
-
 	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
 	auto pendingSegment = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
 	if ((pendingSegment->Point2 - pendingSegment->Point1).IsNearlyZero())
@@ -255,6 +305,7 @@ bool URectangleTool::MakeObject(const FVector& Location)
 		FVector axisY;
 		UModumateGeometryStatics::FindBasisVectors(newAffordanceTangent, axisY, newAffordanceNormal);
 		State = NewPlanePending;
+		bExtrudingPlaneFromEdge = false;
 	}
 	else if (State == NewPlanePending)
 	{
@@ -335,6 +386,7 @@ bool URectangleTool::FrameUpdate()
 bool URectangleTool::EndUse()
 {
 	State = Neutral;
+	bExtrudingPlaneFromEdge = false;
 
 	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = false;
 

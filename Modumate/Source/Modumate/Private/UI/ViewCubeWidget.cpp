@@ -2,6 +2,7 @@
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelPlayerCameraManager.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -145,6 +146,9 @@ void UViewCubeWidget::Zoom(const FVector& InForward, const FVector& InUp)
 	{
 		Controller->CameraController->ZoomToProjectExtents(InForward, InUp);
 	}
+
+	static const FString eventName(TEXT("QuickViewSet"));
+	UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategoryView, eventName);
 }
 
 FVector2D UViewCubeWidget::TransformVector(const FVector& InVector) const

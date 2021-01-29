@@ -7,6 +7,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/LineActor.h"
@@ -242,7 +243,13 @@ void AGraphDimensionActor::OnMeasurementTextCommitted(const FText& Text, ETextCo
 					objectInfo.Add(vertexID, FTransform(vertex->Position + offset));
 				}
 			}
-			FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Document, GetWorld(), false);
+
+			bool bSuccess = FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Document, GetWorld(), false);
+			if (bSuccess)
+			{
+				static const FString eventName(TEXT("GraphEnteredDimString"));
+				UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategoryHandles, eventName);
+			}
 		}
 	}
 

@@ -9,7 +9,6 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Objects/Finish.h"
 #include "Objects/ModumateObjectInstance.h"
-#include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -52,11 +51,6 @@ bool UFinishTool::BeginUse()
 
 	TArray<FDeltaPtr> deltas;
 	bool bSuccess = GetFinishCreationDeltas(deltas) && GameState->Document->ApplyDeltas(deltas, GetWorld());
-
-	if (bSuccess)
-	{
-		UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTFinish);
-	}
 
 	return bSuccess;
 }

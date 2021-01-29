@@ -47,8 +47,9 @@ using namespace Modumate;
 
 const FName UModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
 
-UModumateDocument::UModumateDocument()
-	: NextID(1)
+UModumateDocument::UModumateDocument(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+	, NextID(1)
 	, PrePreviewNextID(1)
 	, ReservingObjectID(MOD_ID_NONE)
 	, bApplyingPreviewDeltas(false)
@@ -63,10 +64,6 @@ UModumateDocument::UModumateDocument()
 	ElevationDelta = 0;
 	DefaultWindowHeight = 91.44f;
 	DefaultDoorHeight = 0.f;
-}
-
-UModumateDocument::~UModumateDocument()
-{
 }
 
 void UModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRedo>>& FromBuffer, TArray<TSharedPtr<UndoRedo>>& ToBuffer)
@@ -359,6 +356,9 @@ bool UModumateDocument::DeleteObjectImpl(AModumateObjectInstance *ObjToDelete)
 			connectedMOI->MarkDirty(EObjectDirtyFlags::Mitering | EObjectDirtyFlags::Visuals);
 		}
 
+		DeltaCreatedObjects.FindOrAdd(ObjToDelete->GetObjectType()).Remove(ObjToDelete->ID);
+		DeltaDestroyedObjects.FindOrAdd(ObjToDelete->GetObjectType()).Add(ObjToDelete->ID);
+
 		return true;
 	}
 
@@ -423,6 +423,12 @@ AModumateObjectInstance* UModumateDocument::CreateOrRestoreObj(UWorld* World, co
 
 	newObj->SetStateData(StateData);
 	newObj->PostCreateObject(true);
+
+	if (bTrackingDeltaObjects)
+	{
+		DeltaDestroyedObjects.FindOrAdd(newObj->GetObjectType()).Remove(newObj->ID);
+		DeltaCreatedObjects.FindOrAdd(newObj->GetObjectType()).Add(newObj->ID);
+	}
 
 	return newObj;
 }
@@ -836,8 +842,10 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 	return ensure(false);
 }
 
-bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World)
+bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* World)
 {
+	StartTrackingDeltaObjects();
+
 	bIsDirty = true;
 	ClearPreviewDeltas(World, false);
 
@@ -863,6 +871,8 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *Wor
 	UpdateRoomAnalysis(World);
 
 	EndUndoRedoMacro();
+
+	EndTrackingDeltaObjects();
 
 	return true;
 }
@@ -1141,6 +1151,62 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World)
 	return true;
 }
 
+void UModumateDocument::StartTrackingDeltaObjects()
+{
+	if (!ensure(!bTrackingDeltaObjects))
+	{
+		return;
+	}
+
+	for (auto& kvp : DeltaCreatedObjects)
+	{
+		kvp.Value.Reset();
+	}
+
+	for (auto& kvp : DeltaDestroyedObjects)
+	{
+		kvp.Value.Reset();
+	}
+
+	bTrackingDeltaObjects = true;
+}
+
+void UModumateDocument::EndTrackingDeltaObjects()
+{
+	if (!ensure(bTrackingDeltaObjects))
+	{
+		return;
+	}
+
+	for (auto& kvp : DeltaCreatedObjects)
+	{
+		EObjectType objectType = kvp.Key;
+		int32 numCreatedObjects = kvp.Value.Num();
+		if (numCreatedObjects > 0)
+		{
+			UModumateAnalyticsStatics::RecordObjectCreation(this, objectType, numCreatedObjects);
+			OnAppliedMOIDeltas.Broadcast(objectType, numCreatedObjects, EMOIDeltaType::Create);
+		}
+
+		kvp.Value.Reset();
+	}
+
+	for (auto& kvp : DeltaDestroyedObjects)
+	{
+		EObjectType objectType = kvp.Key;
+		int32 numDeletedObjects = kvp.Value.Num();
+		if (numDeletedObjects > 0)
+		{
+			UModumateAnalyticsStatics::RecordObjectDeletion(this, objectType, numDeletedObjects);
+			OnAppliedMOIDeltas.Broadcast(objectType, numDeletedObjects, EMOIDeltaType::Destroy);
+		}
+
+		kvp.Value.Reset();
+	}
+
+	bTrackingDeltaObjects = false;
+}
+
 void UModumateDocument::DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis, bool bDeleteConnected)
 {
 	TArray<AModumateObjectInstance*> mois;
@@ -1309,8 +1375,6 @@ void UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 					nonGraphDerivedObjects.Add(objToDelete);
 				}
 			}
-
-			UModumateAnalyticsStatics::RecordObjectDeletion(world, objType);
 		}
 	}
 
@@ -2062,11 +2126,6 @@ void UModumateDocument::MakeNew(UWorld *World)
 	VolumeGraph.Reset();
 	TempVolumeGraph.Reset();
 	SurfaceGraphs.Reset();
-
-
-	static const FString eventCategory(TEXT("FileIO"));
-	static const FString eventNameNew(TEXT("NewDocument"));
-	UModumateAnalyticsStatics::RecordEventSimple(World, eventCategory, eventNameNew);
 
 	SetCurrentProjectPath();
 

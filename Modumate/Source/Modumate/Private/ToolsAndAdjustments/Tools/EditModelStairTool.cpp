@@ -7,7 +7,6 @@
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateStairStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "Online/ModumateAnalyticsStatics.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
 #include "UnrealClasses/DimensionWidget.h"
@@ -521,11 +520,6 @@ bool UStairTool::MakeStairs()
 		}
 
 		bSuccess = GameState->Document->ApplyDeltas(deltas, GetWorld());
-	}
-
-	if (bSuccess)
-	{
-		UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTStaircase);
 	}
 
 	return bSuccess;

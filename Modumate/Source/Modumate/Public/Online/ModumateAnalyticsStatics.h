@@ -11,6 +11,8 @@
 
 class IAnalyticsProvider;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnModumateAnalyticsEvent, const FString&, EventCategory, const FString&, EventName);
+
 UCLASS(BlueprintType)
 class MODUMATE_API UModumateAnalyticsStatics : public UBlueprintFunctionLibrary
 {
@@ -23,9 +25,12 @@ public:
 
 	static const FString EventCategoryObjects;
 	static const FString EventCategoryTools;
+	static const FString EventCategoryHandles;
 	static const FString EventCategoryPresets;
 	static const FString EventCategoryView;
 	static const FString EventCategorySession;
+
+	static FOnModumateAnalyticsEvent OnRecordedAnalyticsEvent;
 
 	static TSharedPtr<IAnalyticsProvider> InitAnalytics();
 
@@ -46,10 +51,13 @@ public:
 	static bool RecordToolUsage(UObject* WorldContextObject, EToolMode ToolMode, float UsedDuration);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
-	static bool RecordObjectCreation(UObject* WorldContextObject, EObjectType ObjectType);
+	static bool RecordSimpleToolEvent(UObject* WorldContextObject, EToolMode ToolMode, const FString& SubEventName);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
-	static bool RecordObjectDeletion(UObject* WorldContextObject, EObjectType ObjectType);
+	static bool RecordObjectCreation(UObject* WorldContextObject, EObjectType ObjectType, int32 Count);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
+	static bool RecordObjectDeletion(UObject* WorldContextObject, EObjectType ObjectType, int32 Count);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
 	static bool RecordSessionDuration(UObject* WorldContextObject, const FTimespan& SessionDuration);

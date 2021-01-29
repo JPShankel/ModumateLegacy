@@ -7,10 +7,11 @@
 
 #include "TutorialManager.generated.h"
 
-enum class EObjectType : uint8;
-enum class EToolMode : uint8;
 enum class EEditViewModes : uint8;
 enum class EInputCommand : uint8;
+enum class EMOIDeltaType : uint8;
+enum class EObjectType : uint8;
+enum class EToolMode : uint8;
 
 UENUM()
 enum class EModumateWalkthroughCategories : uint8
@@ -128,13 +129,19 @@ protected:
 	void OnToolModeChanged();
 
 	UFUNCTION()
-	void OnExecutedInputCommand(EInputCommand InputCommand);
+	void OnAppliedMOIDeltas(EObjectType ObjectType, int32 Count, EMOIDeltaType DeltaType);
 
 	UFUNCTION()
 	void OnPlayerInputAction(FName ActionName, EInputEvent InputEvent);
 
 	UFUNCTION()
 	void OnPlayerInputAxis(FName AxisName, float Value);
+
+	UFUNCTION()
+	void OnExecutedInputCommand(EInputCommand InputCommand);
+
+	UFUNCTION()
+	void OnRecordedAnalyticsEvent(const FString& EventCategory, const FString& EventName);
 
 	UFUNCTION()
 	void OnToggleFullscreen(bool bIsFullscreen);

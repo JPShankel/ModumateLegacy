@@ -5,7 +5,6 @@
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Objects/CutPlane.h"
-#include "Online/ModumateAnalyticsStatics.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -168,11 +167,6 @@ bool UCutPlaneTool::EnterNextStage()
 	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
 
 	bool bSuccess = doc->ApplyDeltas({ delta }, GetWorld());
-
-	if (bSuccess)
-	{
-		UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTCutPlane);
-	}
 
 	// Return false so that EndUse is called, returning true would chain cut plane creation
 	return false;

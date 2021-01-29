@@ -6,7 +6,6 @@
 #include "Graph/Graph3DDelta.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateRoofStatics.h"
-#include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
@@ -111,8 +110,6 @@ bool URoofPerimeterTool::Activate()
 		{
 			Controller->DeselectAll();
 			Controller->SetObjectSelected(roofPerimObj, true);
-
-			UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTRoofPerimeter);
 		}
 	}
 

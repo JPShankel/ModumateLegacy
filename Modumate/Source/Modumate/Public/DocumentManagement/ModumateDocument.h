@@ -21,6 +21,8 @@ namespace Modumate
 
 class AModumateObjectInstance;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAppliedMOIDeltas, EObjectType, ObjectType, int32, Count, EMOIDeltaType, DeltaType);
+
 UCLASS()
 class MODUMATE_API UModumateDocument : public UObject
 {
@@ -74,10 +76,12 @@ private:
 
 	TMap<EObjectDirtyFlags, TArray<AModumateObjectInstance*>> DirtyObjectMap;
 
+	bool bTrackingDeltaObjects = false;
+	TMap<EObjectType, TSet<int32>> DeltaCreatedObjects, DeltaDestroyedObjects;
+
 public:
 
-	UModumateDocument();
-	~UModumateDocument();
+	UModumateDocument(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	// Default Value Library
 	float ElevationDelta;
@@ -180,6 +184,9 @@ public:
 	void UnhideAllObjects(UWorld *world);
 	void UnhideObjectsById(UWorld *world, const TArray<int32> &ids);
 
+	UPROPERTY()
+	FOnAppliedMOIDeltas OnAppliedMOIDeltas;
+
 	// Deletion and restoration functions used internally by undo/redo-aware functions
 private:
 	bool DeleteObjectImpl(AModumateObjectInstance *ob);
@@ -209,6 +216,8 @@ public:
 private:
 	bool FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs);
 	bool PostApplyDeltas(UWorld *World);
+	void StartTrackingDeltaObjects();
+	void EndTrackingDeltaObjects();
 
 	// Helper function for ObjectFromActor
 	AModumateObjectInstance *ObjectFromSingleActor(AActor *actor);

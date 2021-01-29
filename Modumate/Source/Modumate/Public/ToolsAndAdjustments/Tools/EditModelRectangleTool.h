@@ -33,6 +33,7 @@ protected:
 	FVector PlaneBaseStart, PlaneBaseEnd; // for rectangle tool, base points are a line segment that the rectangle extrudes from
 	FArchitecturalMaterial PendingPlaneMaterial;
 	bool bPendingPlaneValid;
+	bool bExtrudingPlaneFromEdge;
 	FPlane PendingPlaneGeom;
 	float MinPlaneSize;
 

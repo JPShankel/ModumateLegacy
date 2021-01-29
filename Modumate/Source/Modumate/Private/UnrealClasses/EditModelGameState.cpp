@@ -6,6 +6,6 @@ void AEditModelGameState::InitDocument()
 {
 	if (ensure(Document == nullptr))
 	{
-		Document = NewObject<UModumateDocument>();
+		Document = NewObject<UModumateDocument>(this);
 	}
 }

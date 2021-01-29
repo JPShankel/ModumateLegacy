@@ -3,8 +3,10 @@
 #include "UI/TutorialManager.h"
 
 #include "Database/ModumateObjectEnums.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "Engine/GameViewportClient.h"
 #include "JsonObjectConverter.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "UI/EditModelUserWidget.h"
@@ -213,10 +215,14 @@ void UModumateTutorialManager::SetWalkthroughStepIndex(int32 NewStepIndex)
 bool UModumateTutorialManager::CacheObjects()
 {
 	auto world = GetOuter()->GetWorld();
+	if (world == nullptr)
+	{
+		return false;
+	}
 
 	if (Controller == nullptr)
 	{
-		Controller = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+		Controller = world->GetFirstPlayerController<AEditModelPlayerController>();
 		if (Controller == nullptr)
 		{
 			return false;
@@ -228,8 +234,14 @@ bool UModumateTutorialManager::CacheObjects()
 		Controller->InputHandlerComponent->OnExecutedCommand.AddDynamic(this, &UModumateTutorialManager::OnExecutedInputCommand);
 	}
 
-	auto gameViewport = world ? world->GetGameViewport() : nullptr;
-	if (gameViewport)
+	if (auto doc = Controller->GetDocument())
+	{
+		doc->OnAppliedMOIDeltas.AddDynamic(this, &UModumateTutorialManager::OnAppliedMOIDeltas);
+	}
+
+	UModumateAnalyticsStatics::OnRecordedAnalyticsEvent.AddDynamic(this, &UModumateTutorialManager::OnRecordedAnalyticsEvent);
+
+	if (auto gameViewport = world->GetGameViewport())
 	{
 		gameViewport->OnToggleFullscreen().AddUObject(this, &UModumateTutorialManager::OnToggleFullscreen);
 	}
@@ -263,15 +275,26 @@ void UModumateTutorialManager::OnToolModeChanged()
 	}
 }
 
-void UModumateTutorialManager::OnExecutedInputCommand(EInputCommand InputCommand)
+void UModumateTutorialManager::OnAppliedMOIDeltas(EObjectType ObjectType, int32 Count, EMOIDeltaType DeltaType)
 {
-	if (Controller)
+	if ((Count == 0) || CurWalkthroughStepReqsRemaining.IsEmpty())
 	{
-		bool bMadeProgress = (CurWalkthroughStepReqsRemaining.InputCommandsToPerform.Remove(InputCommand) > 0);
+		return;
+	}
+
+	switch (DeltaType)
+	{
+	case EMOIDeltaType::Create:
+	{
+		bool bMadeProgress = (CurWalkthroughStepReqsRemaining.ObjectTypesToCreate.Remove(ObjectType) > 0);
 		if (bMadeProgress)
 		{
 			CheckCurrentStepRequirements();
 		}
+	}
+	break;
+	default:
+		break;
 	}
 }
 
@@ -301,6 +324,29 @@ void UModumateTutorialManager::OnPlayerInputAxis(FName AxisName, float Value)
 	FName bindingName(*FString::Printf(TEXT("%s%s"), *AxisName.ToString(),
 		(Value > 0) ? TEXT("+") : TEXT("-")));
 	bool bMadeProgress = (CurWalkthroughStepReqsRemaining.InputBindingsToPerform.Remove(bindingName) > 0);
+	if (bMadeProgress)
+	{
+		CheckCurrentStepRequirements();
+	}
+}
+
+void UModumateTutorialManager::OnExecutedInputCommand(EInputCommand InputCommand)
+{
+	if (Controller)
+	{
+		bool bMadeProgress = (CurWalkthroughStepReqsRemaining.InputCommandsToPerform.Remove(InputCommand) > 0);
+		if (bMadeProgress)
+		{
+			CheckCurrentStepRequirements();
+		}
+	}
+}
+
+void UModumateTutorialManager::OnRecordedAnalyticsEvent(const FString& EventCategory, const FString& EventName)
+{
+	FName fullEventName(*(EventCategory / EventName));
+
+	bool bMadeProgress = (CurWalkthroughStepReqsRemaining.AnalyticEventsToRecord.Remove(fullEventName) > 0);
 	if (bMadeProgress)
 	{
 		CheckCurrentStepRequirements();

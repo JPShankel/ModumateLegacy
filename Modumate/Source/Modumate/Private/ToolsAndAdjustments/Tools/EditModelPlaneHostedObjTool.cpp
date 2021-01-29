@@ -5,7 +5,6 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "Objects/PlaneHostedObj.h"
-#include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -83,8 +82,6 @@ bool UPlaneHostedObjTool::BeginUse()
 		auto delta = GetObjectCreationDelta({ LastValidTargetID });
 		if (delta.IsValid() && GameState->Document->ApplyDeltas({ delta }, GetWorld()))
 		{
-			UModumateAnalyticsStatics::RecordObjectCreation(this, ObjectType);
-
 			EndUse();
 		}
 	}
@@ -305,11 +302,6 @@ bool UPlaneHostedObjTool::MakeObject(const FVector& Location)
 	}
 
 	GameState->Document->EndUndoRedoMacro();
-
-	if (bSuccess)
-	{
-		UModumateAnalyticsStatics::RecordObjectCreation(this, ObjectType);
-	}
 
 	return bSuccess;
 }

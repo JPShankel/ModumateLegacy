@@ -2,20 +2,21 @@
 
 #include "UnrealClasses/EditModelCameraController.h"
 
-#include "Framework/Application/SlateApplication.h"
 #include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Curves/CurveFloat.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "UnrealClasses/EditModelPlayerController.h"
-#include "UnrealClasses/EditModelInputHandler.h"
-#include "UnrealClasses/EditModelPlayerPawn.h"
-#include "UnrealClasses/EditModelPlayerState.h"
 #include "Engine/StaticMeshActor.h"
+#include "Framework/Application/SlateApplication.h"
 #include "Kismet/GameplayStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "UnrealClasses/ModumateViewportClient.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "Slate/SceneViewport.h"
+#include "UnrealClasses/EditModelInputHandler.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerPawn.h"
+#include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/ModumateViewportClient.h"
 #include "UnrealClient.h"
 
 UEditModelCameraController::UEditModelCameraController(const FObjectInitializer& ObjectInitializer)
@@ -235,6 +236,9 @@ bool UEditModelCameraController::ZoomToNextAxis(FVector2D NextAxisDirection, boo
 
 	if (newViewForward.IsNormalized())
 	{
+		static const FString eventName(TEXT("QuickViewNext"));
+		UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategoryView, eventName);
+
 		if (bUseSelection)
 		{
 			return ZoomToSelection(newViewForward, newViewUp);

@@ -5,6 +5,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/DimensionManager.h"
 #include "UI/DimensionActor.h"
@@ -197,7 +198,13 @@ bool AAdjustPolyEdgeHandle::HandleInputNumber(float number)
 		// deltas can be applied to the original state, and all of its dependent changes.
 		GameState->Document->CleanObjects();
 
-		FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), false);
+		bool bSuccess = FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), false);
+
+		if (bSuccess)
+		{
+			static const FString eventName(TEXT("PolyEdgeEnteredDimString"));
+			UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategoryHandles, eventName);
+		}
 
 		// TODO: the deltas should be an outparam of EndUse (and EndUse would need to be refactored)
 		if (!IsActorBeingDestroyed())

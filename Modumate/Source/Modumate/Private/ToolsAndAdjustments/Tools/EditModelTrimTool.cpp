@@ -5,7 +5,6 @@
 #include "DocumentManagement/ModumateCommands.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Objects/Trim.h"
-#include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -58,10 +57,7 @@ bool UTrimTool::BeginUse()
 
 		auto delta = MakeShared<FMOIDelta>();
 		delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
-		if (GameState->Document->ApplyDeltas({ delta }, GetWorld()))
-		{
-			UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTTrim);
-		}
+		GameState->Document->ApplyDeltas({ delta }, GetWorld());
 
 		EndUse();
 	}

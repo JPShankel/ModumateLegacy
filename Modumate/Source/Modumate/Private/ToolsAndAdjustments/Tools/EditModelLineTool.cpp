@@ -54,7 +54,14 @@ bool ULineTool::HandleInputNumber(double n)
 	{
 		FVector dir = (pendingSegment->Point2 - pendingSegment->Point1).GetSafeNormal() * n;
 
-		return MakeObject(pendingSegment->Point1 + dir);
+		bool bSuccess = MakeObject(pendingSegment->Point1 + dir);
+		if (bSuccess)
+		{
+			static const FString eventName(TEXT("EnteredDimString"));
+			UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventName);
+		}
+
+		return bSuccess;
 	}
 
 	return true;
@@ -107,7 +114,21 @@ bool ULineTool::EnterNextStage()
 	}
 	if (State == NewSegmentPending)
 	{
-		return MakeObject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
+		bool bSuccess = MakeObject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
+		if (bSuccess)
+		{
+			static const FString eventNameBase(TEXT("Clicked"));
+			FString eventName = eventNameBase;
+			if (Controller->EMPlayerState->SnappedCursor.ShiftLocked)
+			{
+				static const FString eventSuffixShiftSnapped(TEXT("ShiftSnapped"));
+				eventName += eventSuffixShiftSnapped;
+			}
+
+			UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventName);
+		}
+
+		return bSuccess;
 	}
 
 	return false;
@@ -198,8 +219,6 @@ bool ULineTool::MakeObject(const FVector& Location)
 	{
 		return false;
 	}
-
-	UModumateAnalyticsStatics::RecordObjectCreation(this, EObjectType::OTMetaEdge);
 
 	// Decide whether to end the tool's use, or continue the chain, based on axis constraint
 	const FVector& normal = Controller->EMPlayerState->SnappedCursor.AffordanceFrame.Normal;

@@ -30,22 +30,22 @@ FModumateAnalyticsEventData::FModumateAnalyticsEventData(const FString& EventNam
 	value = 1.0f;
 	inTutorial = false;
 
-	for (auto& attribute : Attributes)
+	for (const FAnalyticsEventAttribute& attribute : Attributes)
 	{
-		if ((attribute.AttrName == UModumateAnalyticsStatics::AttrNameCategory) &&
-			ensure(attribute.AttrType == FAnalyticsEventAttribute::AttrTypeEnum::String))
+		const FString& attrName = attribute.GetName();
+		const FString& attrValue = attribute.GetValue();
+
+		if (attrName == UModumateAnalyticsStatics::AttrNameCategory)
 		{
-			key = attribute.AttrValueString / EventName;
+			key = attrValue / EventName;
 		}
-		else if ((attribute.AttrName == UModumateAnalyticsStatics::AttrNameCustomValue) &&
-			(attribute.AttrType == FAnalyticsEventAttribute::AttrTypeEnum::Number))
+		else if (attrName == UModumateAnalyticsStatics::AttrNameCustomValue)
 		{
-			value = attribute.AttrValueNumber;
+			LexTryParseString(value, *attrValue);
 		}
-		else if ((attribute.AttrName == UModumateAnalyticsStatics::AttrNameInTutorial) &&
-			(attribute.AttrType == FAnalyticsEventAttribute::AttrTypeEnum::Boolean))
+		else if (attrName == UModumateAnalyticsStatics::AttrNameInTutorial)
 		{
-			inTutorial = attribute.AttrValueBool;
+			LexTryParseString(inTutorial, *attrValue);
 		}
 	}
 
