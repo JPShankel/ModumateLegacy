@@ -39,6 +39,7 @@
 #include "UI/DimensionActor.h"
 #include "UI/DimensionManager.h"
 #include "UI/EditModelUserWidget.h"
+#include "UI/TutorialManager.h"
 
 
 // Tools
@@ -243,6 +244,12 @@ void AEditModelPlayerController::BeginPlay()
 	FString path = FModumateUserSettings::GetLocalTempDir() / InputTelemetryDirectory;
 	IFileManager::Get().DeleteDirectory(*path, false, true);
 	IFileManager::Get().MakeDirectory(*path);
+
+	// Show walkthrough if necessary
+	if (gameInstance && gameInstance->TutorialManager && gameInstance->TutorialManager->FromMainMenuWalkthroughCategory != EModumateWalkthroughCategories::None)
+	{
+		gameInstance->TutorialManager->BeginWalkthrough(gameInstance->TutorialManager->FromMainMenuWalkthroughCategory);
+	}
 }
 
 bool AEditModelPlayerController::StartTelemetrySession(bool bRecordInput)

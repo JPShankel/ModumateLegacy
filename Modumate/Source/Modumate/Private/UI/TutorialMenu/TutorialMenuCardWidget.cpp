@@ -10,6 +10,7 @@
 #include "UI/ModalDialog/ModalDialogConfirmPlayTutorial.h"
 #include "UnrealClasses/MainMenuGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UI/TutorialManager.h"
 
 UTutorialMenuCardWidget::UTutorialMenuCardWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -83,13 +84,16 @@ void UTutorialMenuCardWidget::BuildTutorialCard(const FTutorialMenuInfo& InTutor
 	VideoLink = InTutorialCard.VideoLink;
 
 	// Hide play project button if file is invalid
-	bool bValidProjectFile = ParentTutorialMenu->GetTutorialFilePath(InTutorialCard.FileProject, ProjectFilePath);
-	ButtonTutorialProject->SetVisibility(bValidProjectFile ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-
-	if (!InTutorialCard.ThumbnailLink.IsEmpty())
+	if (ensure(ParentTutorialMenu->TutorialManager))
 	{
-		ImageDownloadTask = UAsyncTaskDownloadImage::DownloadImage(InTutorialCard.ThumbnailLink);
-		ImageDownloadTask->OnSuccess.AddDynamic(this, &UTutorialMenuCardWidget::OnImageDownloadedSucceed);
-		ImageDownloadTask->OnFail.AddDynamic(this, &UTutorialMenuCardWidget::OnImageDownloadedFailed);
+		bool bValidProjectFile = ParentTutorialMenu->TutorialManager->GetTutorialFilePath(InTutorialCard.FileProject, ProjectFilePath);
+		ButtonTutorialProject->SetVisibility(bValidProjectFile ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+
+		if (!InTutorialCard.ThumbnailLink.IsEmpty())
+		{
+			ImageDownloadTask = UAsyncTaskDownloadImage::DownloadImage(InTutorialCard.ThumbnailLink);
+			ImageDownloadTask->OnSuccess.AddDynamic(this, &UTutorialMenuCardWidget::OnImageDownloadedSucceed);
+			ImageDownloadTask->OnFail.AddDynamic(this, &UTutorialMenuCardWidget::OnImageDownloadedFailed);
+		}
 	}
 }

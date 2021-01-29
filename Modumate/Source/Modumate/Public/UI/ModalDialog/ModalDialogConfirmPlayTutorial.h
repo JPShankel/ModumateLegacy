@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/TutorialManager.h"
 
 #include "ModalDialogConfirmPlayTutorial.generated.h"
 
@@ -26,6 +27,7 @@ protected:
 
 	FString CurrentProjectFilePath;
 	FString CurrentVideoLink;
+	EModumateWalkthroughCategories CurrentWalkthroughCategory = EModumateWalkthroughCategories::None;
 
 public:
 
@@ -42,4 +44,5 @@ public:
 	void OnReleaseButtonCancel();
 
 	void BuildModalDialog(const FString& InProjectFilePath, const FString& InVideoLink);
+	void BuildModalDialogWalkthrough(EModumateWalkthroughCategories InWalkthroughCategory);
 };

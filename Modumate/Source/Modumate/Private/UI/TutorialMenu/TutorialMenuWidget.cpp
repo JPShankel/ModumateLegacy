@@ -15,7 +15,7 @@
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UnrealClasses/ModumateGameInstance.h"
-#include "UI/TutorialManager.h"
+#include "UI/ModalDialog/ModalDialogConfirmPlayTutorial.h"
 
 
 UTutorialMenuWidget::UTutorialMenuWidget(const FObjectInitializer& ObjectInitializer)
@@ -55,20 +55,12 @@ void UTutorialMenuWidget::NativeConstruct()
 
 void UTutorialMenuWidget::OnReleaseButtonBeginnerWalkthrough()
 {
-	if (TutorialManager)
-	{
-		// TODO: Support from start menu
-		TutorialManager->BeginWalkthrough(EModumateWalkthroughCategories::Beginner);
-	}
+	CheckOpenWalkthroughProject(EModumateWalkthroughCategories::Beginner);
 }
 
 void UTutorialMenuWidget::OnReleaseButtonIntermediateWalkthrough()
 {
-	if (TutorialManager)
-	{
-		// TODO: Support from start menu
-		TutorialManager->BeginWalkthrough(EModumateWalkthroughCategories::Intermediate);
-	}
+	CheckOpenWalkthroughProject(EModumateWalkthroughCategories::Intermediate);
 }
 
 void UTutorialMenuWidget::BuildTutorialMenu()
@@ -152,17 +144,15 @@ void UTutorialMenuWidget::UpdateTutorialMenu(const FTutorialInfoArrayCollection&
 	}
 }
 
-bool UTutorialMenuWidget::GetTutorialFilePath(const FString& TutorialFileName, FString& OutFullTutorialFilePath)
+void UTutorialMenuWidget::CheckOpenWalkthroughProject(EModumateWalkthroughCategories WalkthroughCategory)
 {
-	FString tutorialsFolderPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("Tutorials");
-	FString fullTutorialPath = tutorialsFolderPath / TutorialFileName;
-	if (IFileManager::Get().FileExists(*fullTutorialPath))
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
+	if (controller)
 	{
-		OutFullTutorialFilePath = fullTutorialPath;
-		return true;
+		ModalDialogConfirmPlayTutorialBP->BuildModalDialogWalkthrough(WalkthroughCategory);
 	}
-	else
+	else if (TutorialManager)
 	{
-		return false;
+		TutorialManager->OpenWalkthroughProject(WalkthroughCategory);
 	}
 }

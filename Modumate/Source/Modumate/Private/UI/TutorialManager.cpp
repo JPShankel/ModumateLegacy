@@ -14,6 +14,7 @@
 #include "UnrealClasses/EditModelInputHandler.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/MainMenuGameMode.h"
 
 bool FModumateWalkthroughStepReqs::IsEmpty() const
 {
@@ -176,6 +177,47 @@ const FModumateWalkthroughStepData& UModumateTutorialManager::GetCurWalkthroughS
 
 	auto& curSteps = GetCurWalkthroughSteps();
 	return curSteps.IsValidIndex(CurWalkthroughStepIdx) ? curSteps[CurWalkthroughStepIdx] : invalidStepData;
+}
+
+void UModumateTutorialManager::OpenWalkthroughProject(EModumateWalkthroughCategories WalkthroughCategory)
+{
+	// TODO: this should be from record
+	static const FString walkthroughProjectName(TEXT("Beginner Tutorial Project.mdmt"));
+	FString walkthroughFullPath;
+	GetTutorialFilePath(walkthroughProjectName, walkthroughFullPath);
+
+	auto world = GetOuter()->GetWorld();
+	// Check if this is in edit scene or main menu
+	AEditModelPlayerController* controller = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+	if (controller)
+	{
+		controller->LoadModelFilePath(walkthroughFullPath, false, false, false);
+		BeginWalkthrough(WalkthroughCategory);
+	}
+	else
+	{
+		AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
+		if (mainMenuGameMode)
+		{
+			FromMainMenuWalkthroughCategory = WalkthroughCategory;
+			mainMenuGameMode->OpenProject(walkthroughFullPath, true);
+		}
+	}
+}
+
+bool UModumateTutorialManager::GetTutorialFilePath(const FString& TutorialFileName, FString& OutFullTutorialFilePath)
+{
+	FString tutorialsFolderPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("Tutorials");
+	FString fullTutorialPath = tutorialsFolderPath / TutorialFileName;
+	if (IFileManager::Get().FileExists(*fullTutorialPath))
+	{
+		OutFullTutorialFilePath = fullTutorialPath;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void UModumateTutorialManager::SetWalkthroughStepIndex(int32 NewStepIndex)

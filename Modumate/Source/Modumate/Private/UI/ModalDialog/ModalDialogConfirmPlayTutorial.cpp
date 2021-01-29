@@ -6,6 +6,8 @@
 #include "UI/Custom/ModumateButton.h"
 #include "ModumateCore/ModumateUserSettings.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "UI/TutorialManager.h"
 
 
 
@@ -34,6 +36,8 @@ bool UModalDialogConfirmPlayTutorial::Initialize()
 void UModalDialogConfirmPlayTutorial::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+
 }
 
 void UModalDialogConfirmPlayTutorial::OnReleaseButtonOpenProject()
@@ -44,8 +48,19 @@ void UModalDialogConfirmPlayTutorial::OnReleaseButtonOpenProject()
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller && controller->CheckSaveModel())
 	{
-		FPlatformProcess::LaunchURL(*CurrentVideoLink, nullptr, nullptr);
-		controller->LoadModelFilePath(CurrentProjectFilePath, true, false, false);
+		if (CurrentWalkthroughCategory == EModumateWalkthroughCategories::None)
+		{
+			FPlatformProcess::LaunchURL(*CurrentVideoLink, nullptr, nullptr);
+			controller->LoadModelFilePath(CurrentProjectFilePath, true, false, false);
+		}
+		else
+		{
+			auto gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
+			if (gameInstance && gameInstance->TutorialManager)
+			{
+				gameInstance->TutorialManager->OpenWalkthroughProject(CurrentWalkthroughCategory);
+			}
+		}
 	}
 }
 
@@ -59,4 +74,11 @@ void UModalDialogConfirmPlayTutorial::BuildModalDialog(const FString& InProjectF
 	SetVisibility(ESlateVisibility::Visible);
 	CurrentProjectFilePath = InProjectFilePath;
 	CurrentVideoLink = InVideoLink;
+	CurrentWalkthroughCategory = EModumateWalkthroughCategories::None;
+}
+
+void UModalDialogConfirmPlayTutorial::BuildModalDialogWalkthrough(EModumateWalkthroughCategories InWalkthroughCategory)
+{
+	SetVisibility(ESlateVisibility::Visible);
+	CurrentWalkthroughCategory = InWalkthroughCategory;
 }

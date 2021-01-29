@@ -6,12 +6,12 @@
 #include "Engine/DataTable.h"
 #include "Framework/Commands/InputChord.h"
 #include "Database/ModumateObjectEnums.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 #include "EditModelInputHandler.generated.h"
 
 
 class AEditModelGameState;
-class AEditModelPlayerController;
 
 // The list of all explicit input commands that can be mapped to a key chord and/or key sequence.
 // This list is a Blueprintable UENUM so that they can be activated and referenced directly by UI buttons.

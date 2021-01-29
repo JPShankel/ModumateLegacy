@@ -111,8 +111,13 @@ public:
 	const TArray<FModumateWalkthroughStepData>& GetCurWalkthroughSteps() const;
 	const FModumateWalkthroughStepData& GetCurWalkthroughStepData() const;
 
+	void OpenWalkthroughProject(EModumateWalkthroughCategories WalkthroughCategory);
+	bool GetTutorialFilePath(const FString& TutorialFileName, FString& OutFullTutorialFilePath);
+
 	UPROPERTY()
 	FModumateWalkthroughStepCompleted OnWalkthroughStepCompleted;
+
+	EModumateWalkthroughCategories FromMainMenuWalkthroughCategory = EModumateWalkthroughCategories::None;
 
 protected:
 	UPROPERTY()

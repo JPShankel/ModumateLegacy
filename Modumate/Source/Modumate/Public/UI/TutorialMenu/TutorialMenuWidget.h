@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Interfaces/IHttpRequest.h"
+#include "UI/TutorialManager.h"
 
 #include "TutorialMenuWidget.generated.h"
 
@@ -66,9 +67,6 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY()
-	class UModumateTutorialManager* TutorialManager;
-
-	UPROPERTY()
 	TArray<FTutorialMenuInfo> CurrentTutorialMenuCardInfo;
 
 public:
@@ -118,6 +116,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString JsonTutorialLink;
 
+	UPROPERTY()
+	class UModumateTutorialManager* TutorialManager;
+
 	UFUNCTION()
 	void OnReleaseButtonBeginnerWalkthrough();
 
@@ -127,5 +128,5 @@ public:
 	void BuildTutorialMenu();
 	void OnHttpReply(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);	
 	void UpdateTutorialMenu(const FTutorialInfoArrayCollection& InTutorialInfo);
-	bool GetTutorialFilePath(const FString& TutorialFileName, FString& OutFullTutorialFilePath );
+	void CheckOpenWalkthroughProject(EModumateWalkthroughCategories WalkthroughCategory);
 };
