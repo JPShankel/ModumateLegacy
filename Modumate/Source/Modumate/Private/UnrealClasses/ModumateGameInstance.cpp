@@ -402,6 +402,18 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
+	RegisterCommand(kReplayDeltas, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
+	{
+		AEditModelPlayerController *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+		if (!playerController)
+		{
+			return false;
+		}
+
+		playerController->LoadModel(true);
+		return true;
+	});
+
 	RegisterCommand(kSetFOV, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		AEditModelPlayerController *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();

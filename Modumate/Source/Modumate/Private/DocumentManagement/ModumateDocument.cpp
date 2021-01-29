@@ -2464,6 +2464,63 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool bSetAsCurr
 	return false;
 }
 
+bool UModumateDocument::LoadDeltas(UWorld* world, const FString& path, bool bSetAsCurrentProject, bool bRecordAsRecentProject)
+{
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Load"));
+
+	//Get player state and tells it to empty selected object
+	AEditModelPlayerController* EMPlayerController = Cast<AEditModelPlayerController>(world->GetFirstPlayerController());
+	AEditModelPlayerState* EMPlayerState = EMPlayerController->EMPlayerState;
+	EMPlayerState->OnNewModel();
+
+	MakeNew(world);
+
+	AEditModelGameMode* gameMode = world->GetAuthGameMode<AEditModelGameMode>();
+
+	FModumateDatabase* objectDB = gameMode->ObjectDatabase;
+
+	FModumateDocumentHeader docHeader;
+	FMOIDocumentRecord docRec;
+
+	if (FModumateSerializationStatics::TryReadModumateDocumentRecord(path, docHeader, docRec))
+	{
+		// Load all of the deltas into the redo buffer, as if the user had undone all the way to the beginning
+		// the redo buffer expects the deltas to all be backwards
+		for (int urIdx = docRec.AppliedDeltas.Num() - 1; urIdx >= 0; urIdx--)
+		{
+			auto& deltaRecord = docRec.AppliedDeltas[urIdx];
+			TSharedPtr<UndoRedo> undoRedo = MakeShared<UndoRedo>();
+
+			for (int deltaIdx = 0; deltaIdx < deltaRecord.DeltaStructWrappers.Num(); deltaIdx++)
+			{
+				auto& structWrapper = deltaRecord.DeltaStructWrappers[deltaIdx];
+				if (!ensure(structWrapper.LoadFromJson()))
+				{
+					continue;
+				}
+
+				auto deltaPtr = structWrapper.CreateStructFromJSON<FDocumentDelta>();
+				if (deltaPtr)
+				{
+					deltaPtr->PostDeserializeStruct();
+					undoRedo->Deltas.Add(MakeShareable(deltaPtr));
+				}
+			}
+
+			// Copied from PerformUndoRedo, apply deltas to the redo buffer in this way so that 
+			// when they are popped off, they are applied in the right direction
+			TArray<FDeltaPtr> fromDeltas = undoRedo->Deltas;
+			Algo::Reverse(fromDeltas);
+
+			undoRedo->Deltas.Empty();
+			Algo::Transform(fromDeltas, undoRedo->Deltas, [](const FDeltaPtr& DeltaPtr) {return DeltaPtr->MakeInverse(); });
+			RedoBuffer.Add(undoRedo);
+		}
+	}
+
+	return true;
+}
+
 TArray<int32> UModumateDocument::CloneObjects(UWorld *world, const TArray<int32> &objs, const FTransform& offsetTransform)
 {
 	// make a list of MOI objects from the IDs, send them to the MOI version of this function return array of IDs.

@@ -818,7 +818,7 @@ bool AEditModelPlayerController::SaveModelFilePath(const FString &filepath)
 	}
 }
 
-bool AEditModelPlayerController::LoadModel()
+bool AEditModelPlayerController::LoadModel(bool bLoadOnlyDeltas)
 {
 	if (EMPlayerState->ShowingFileDialog)
 	{
@@ -844,19 +844,21 @@ bool AEditModelPlayerController::LoadModel()
 
 	if (Modumate::PlatformFunctions::GetOpenFilename(filename))
 	{
-		bLoadSuccess = LoadModelFilePath(filename, true, true, true);
+		bLoadSuccess = LoadModelFilePath(filename, true, true, true, bLoadOnlyDeltas);
 	}
 
 	EMPlayerState->ShowingFileDialog = false;
 	return bLoadSuccess;
 }
 
-bool AEditModelPlayerController::LoadModelFilePath(const FString &filename, bool bSetAsCurrentProject, bool bAddToRecents, bool bEnableAutoSave)
+bool AEditModelPlayerController::LoadModelFilePath(const FString &filename, bool bSetAsCurrentProject, bool bAddToRecents, bool bEnableAutoSave, bool bLoadOnlyDeltas)
 {
 	EndTelemetrySession();
 	EMPlayerState->OnNewModel();
 
-	bool bLoadSuccess = Document->Load(GetWorld(), filename, bSetAsCurrentProject, bAddToRecents);
+	bool bLoadSuccess = bLoadOnlyDeltas ? 
+		Document->LoadDeltas(GetWorld(), filename, bSetAsCurrentProject, bAddToRecents) :
+		Document->Load(GetWorld(), filename, bSetAsCurrentProject, bAddToRecents);
 
 	if (bLoadSuccess)
 	{

@@ -228,6 +228,7 @@ public:
 	bool SerializeRecords(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord);
 	bool Save(UWorld *world, const FString &path, bool bSetAsCurrentProject);
 	bool Load(UWorld *world, const FString &path, bool bSetAsCurrentProject, bool bRecordAsRecentProject);
+	bool LoadDeltas(UWorld *world, const FString &path, bool bSetAsCurrentProject, bool bRecordAsRecentProject); // Debug - Loads all deltas into the redo buffer for replay purposes
 	void SetCurrentProjectPath(const FString& currentProjectPath = FString());
 
 	TArray<int32> CloneObjects(UWorld *world, const TArray<int32> &obs, const FTransform& offsetTransform = FTransform::Identity);

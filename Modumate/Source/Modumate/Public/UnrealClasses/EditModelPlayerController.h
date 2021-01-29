@@ -486,8 +486,8 @@ public:
 	bool SaveModelFilePath(const FString &filepath);
 
 	UFUNCTION(BlueprintCallable, Category = Persistence)
-	bool LoadModel();
-	bool LoadModelFilePath(const FString &filename, bool bSetAsCurrentProject, bool bAddToRecents, bool bEnableAutoSave);
+	bool LoadModel(bool bLoadOnlyDeltas = false);
+	bool LoadModelFilePath(const FString &filename, bool bSetAsCurrentProject, bool bAddToRecents, bool bEnableAutoSave, bool bLoadOnlyDeltas = false);
 
 	UFUNCTION(BlueprintCallable, Category = Persistence)
 	void NewModel(bool bShouldCheckForSave);
