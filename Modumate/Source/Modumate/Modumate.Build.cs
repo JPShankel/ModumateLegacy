@@ -63,7 +63,8 @@ public class Modumate : ModuleRules
 			"GeometryAlgorithms",
 			"GeometricObjects",
 			"SunPosition",
-			"RHI"
+			"RHI",
+			"MediaAssets"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

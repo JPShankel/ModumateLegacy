@@ -33,6 +33,9 @@ protected:
 	UPROPERTY()
 	FButtonStyle ActiveButtonStyle;
 
+	UPROPERTY()
+	FButtonStyle DisabledButtonStyle;
+
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -58,6 +61,7 @@ public:
 
 	void SwitchToNormalStyle();
 	void SwitchToActiveStyle();
+	void SwitchToDisabledStyle();
 
 protected:
 

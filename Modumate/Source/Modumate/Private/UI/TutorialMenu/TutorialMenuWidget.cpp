@@ -12,6 +12,10 @@
 #include "JsonObjectConverter.h"
 #include "HAL/FileManager.h"
 #include "ModumateCore/ModumateUserSettings.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/Custom/ModumateButton.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "UI/TutorialManager.h"
 
 
 UTutorialMenuWidget::UTutorialMenuWidget(const FObjectInitializer& ObjectInitializer)
@@ -26,6 +30,18 @@ bool UTutorialMenuWidget::Initialize()
 		return false;
 	}
 
+	if (!(ButtonBeginnerWalkthrough && ButtonIntermediateWalkthrough))
+	{
+		return false;
+	}
+
+	ButtonBeginnerWalkthrough->ModumateButton->OnReleased.AddDynamic(this, &UTutorialMenuWidget::OnReleaseButtonBeginnerWalkthrough);
+	ButtonIntermediateWalkthrough->ModumateButton->OnReleased.AddDynamic(this, &UTutorialMenuWidget::OnReleaseButtonIntermediateWalkthrough);
+
+	auto world = GetWorld();
+	auto gameInstance = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
+	TutorialManager = gameInstance ? gameInstance->TutorialManager : nullptr;
+
 	return true;
 }
 
@@ -35,6 +51,24 @@ void UTutorialMenuWidget::NativeConstruct()
 
 	TitleHeader->SetVisibility(AsStartMenuTutorial ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 	TutorialTitleHeader->SetVisibility(AsStartMenuTutorial ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+}
+
+void UTutorialMenuWidget::OnReleaseButtonBeginnerWalkthrough()
+{
+	if (TutorialManager)
+	{
+		// TODO: Support from start menu
+		TutorialManager->BeginWalkthrough(EModumateWalkthroughCategories::Beginner);
+	}
+}
+
+void UTutorialMenuWidget::OnReleaseButtonIntermediateWalkthrough()
+{
+	if (TutorialManager)
+	{
+		// TODO: Support from start menu
+		TutorialManager->BeginWalkthrough(EModumateWalkthroughCategories::Intermediate);
+	}
 }
 
 void UTutorialMenuWidget::BuildTutorialMenu()

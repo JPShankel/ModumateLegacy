@@ -17,6 +17,7 @@
         {
             "Title": "Orbit",
             "Description": "Right-click-drag in the scene to orbit around the point you hit. It will pull gently toward the center of the screen.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-Orbit.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {
                 "InputBindingsToPerform": [
@@ -27,6 +28,7 @@
         {
             "Title": "Pan",
             "Description": "Middle-click-drag in the scene to pan the camera side to side.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-Pan.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {
                 "InputBindingsToPerform": [
@@ -37,6 +39,7 @@
         {
             "Title": "Zoom",
             "Description": "Scroll up to zoom in. Scroll down to zoom out.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-Zoom.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {
                 "InputBindingsToPerform": [
@@ -48,18 +51,21 @@
         {
             "Title": "Quick Views",
             "Description": "Click the Quick Views to snap to an axis-aligned view (such as top-down), or use Ctrl + arrow keys to switch quick views.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-QuickViews.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Select Tool",
             "Description": "The Select tool is your home base. Click objects to select them. From any other tool, press Escape or the hotkey \"SE\" to return to the Select tool.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-Select.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Massing Graph View Mode",
             "Description": "Press F1 to view your project's Massing Graph (which is a diagram of all the assemblies in your project that separate space).",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-MassingGraphViewMode.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {
                 "InputCommandsToPerform": [
@@ -70,6 +76,7 @@
         {
             "Title": "Line Tool",
             "Description": "Click the Massing Graph Tools, then the Line tool - or type the hotkey \"LI\".",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-LineTool.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {
                 "ToolModesToActivate": [
@@ -80,6 +87,7 @@
         {
             "Title": "Draw A Line",
             "Description": "Close the loop near the project's origin. Snap to one vertex, click, then snap to the other and click. Draw more edges if you want, then press Escape to stop drawing.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-DrawALine.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {
                 "ObjectTypesToCreate": [
@@ -90,6 +98,7 @@
         {
             "Title": "Undo/Redo",
             "Description": "Press Ctrl+Z to undo your last action, and Ctrl+Y to redo your last undone action.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-UndoRedo.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {
                 "InputCommandsToPerform": [
@@ -101,126 +110,147 @@
         {
             "Title": "Type A Distance",
             "Description": "Start a line, Mouse along a linear snap, type 10'-0\", and press Enter.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-TypeADistance.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Force A Linear Snap",
             "Description": "Mouse along the Blue linear snap, hold Shift, snap to the top of the nearby rectangle, and click.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-ForceALinearSnap.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Rectangle Tool",
             "Description": "Click the Massing Graph Tools, then the Rectangle tool - or type the hotkey \"RE\".",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-RectangleTool.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Draw A 3-Click Rectangle",
             "Description": "Click a start point, mouse in a direction, type 8'-0\" and press Enter, then mouse in a direction, type 15'-2 1/2\" and press Enter.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-DrawA3ClickRectangle.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Extrude A Rectangle",
             "Description": "Click a vertical line, mouse in a direction, type 20'-0\" and press Enter. Keep extruding rectangles, or press Escape to end the chain.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-ExtrudeARectangle.mp4",
             "AutoProceedCountdown": 7,
             "Requirements": {}
         },
         {
             "Title": "Stretch Handles",
             "Description": "Select a plane, click a Stretch Handle, type 4'-0\" and press Enter.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-StretchHandles.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "DimStrings",
             "Description": "Select a plane, line, or vertex, click a dark DimString, type a new length, and press Enter.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-DimStrings.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Separator View Mode",
             "Description": "Press F2 to view your project's Separators (the BIM construction assemblies that separate spaces, like walls, floors, doors, windows, etc).",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-SeparatorViewMode.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Wall Tool",
             "Description": "Click the Separator Tools, then the Wall tool (or type hotkey \"WA\").",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-HostAWall.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Host A Wall",
             "Description": "Choose the Exterior Wood Stud Wall from the starter assemblies, then hover a plane in the scene, and click.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-WallTool.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Hosting Properties",
             "Description": "Begin to host another wall. Before clicking, press F to flip the wall over its plane, and W/A/S/D to move the wall up/left/down/right between three hosting positions: Back, Centerline, or Front.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-HostingProperties.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Host a Window",
             "Description": "Click the Window tool (or type hotkey \"WN\"), choose the Fixed Window from the starter assemblies, then hover a plane in the scene, and click.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-HostAWindow.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Switch to Surface Graph view mode",
             "Description": "Press F3 to view your project's Surface Graphs (where you lay out regions for Attachments, like finishes and cabinets).",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-SurfaceGraphViewMode.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Add a Surface Graph",
             "Description": "Click the Surface Graph Tools (or type the hotkey \"SG\")., then click a surface of a Separator that does not yet have a Surface Graph.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-AddASurfaceGraph.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Subdivide Surface Graph",
             "Description": "Draw a line across your new Surface Graph.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-SubdivideSurfaceGraph.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Switch to Attachments view mode",
             "Description": "Press F4 to view your project's Attachments (the BIM construction assemblies that decorate surfaces, like finishes, trim, cabinets, and FF&E).",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-AttachmentsViewMode.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Add a Sofa",
             "Description": "Click the Attachments Tools, then the FF&E tool (or type hotkey \"FF\"). Search \"sofa\" in the assemblies list. Click a sofa. Click in the scene.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-AddASofa.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Add a Finish",
             "Description": "Click the Finish tool (or type hotkey \"FI\"). Pick the \"Exterior Brick Veneer\", then click on a Surface Graph face.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-AddAFinish.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Modify Tile Color",
             "Description": "Click the \"edit\" button on the Exterior Brick Veneer. Click the Thin Bricks layer. Click the Thin Brick Veneer. Change its color to be light tan. Click \"Save\". Click \"Back to Project\".",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-ModifyTileColor.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Add a Cut Plane",
             "Description": "Click the Cut Planes menu, then Add A Cut Plane (or type hotkey \"CP\"). Click a point in scene the plane will pass through. Click the direction the cut plane should look. Press Escape.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-AddACutPlane.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Export DWGs",
             "Description": "Click the Cut Planes menu, then \"Export All Cut Planes\". Choose a save location on your PC. Open the DWGs in a CAD platform like AutoCAD.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-ExportDWGs.mp4",
             "AutoProceedCountdown": 10,
             "Requirements": {}
         },

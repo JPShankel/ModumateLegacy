@@ -66,6 +66,9 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY()
+	class UModumateTutorialManager* TutorialManager;
+
+	UPROPERTY()
 	TArray<FTutorialMenuInfo> CurrentTutorialMenuCardInfo;
 
 public:
@@ -84,6 +87,12 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModalDialogConfirmPlayTutorial* ModalDialogConfirmPlayTutorialBP;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonBeginnerWalkthrough;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonIntermediateWalkthrough;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool AsStartMenuTutorial;
@@ -108,6 +117,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString JsonTutorialLink;
+
+	UFUNCTION()
+	void OnReleaseButtonBeginnerWalkthrough();
+
+	UFUNCTION()
+	void OnReleaseButtonIntermediateWalkthrough();
 
 	void BuildTutorialMenu();
 	void OnHttpReply(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);	

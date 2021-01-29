@@ -14,10 +14,10 @@
 UENUM(BlueprintType)
 enum class ETutorialWalkthroughBlockStage : uint8
 {
+	None,
 	Intro,
 	WalkthroughSteps,
-	Outro,
-	None
+	Outro
 };
 
 UCLASS()
@@ -32,6 +32,9 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+	FTimerHandle TutorialCountdownTimer;
+	int32 TutorialCountdownStep = 0;
+
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -43,8 +46,23 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UTutorialWalkthroughBlockOutro* OutroWidget;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UMediaPlayer* MediaPlayer;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UStreamMediaSource* StreamMediaSource;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString CountdownPrefix;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString CountdownSuffix;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FText WalkthroughNextText;
+
 	UFUNCTION(BlueprintCallable)
-	void ShowWalkthroughIntro();
+	void ShowWalkthroughIntro(const FText& Title, const FText& Description);
 
 	UFUNCTION(BlueprintCallable)
 	void ShowWalkthroughStep(const FText& Title, const FText& Description, const FString& VideoURL, float ProgressPCT);
@@ -53,9 +71,18 @@ public:
 	void ShowCountdown(float CountdownSeconds);
 
 	UFUNCTION(BlueprintCallable)
-	void ShowWalkthroughOutro();
+	void ShowWalkthroughOutro(const FText& Title, const FText& Description);
+
+	UFUNCTION()
+	void CheckTutorialCountdownTimer();
+
+	UFUNCTION()
+	void UpdateCountdownText();
 
 	void UpdateBlockVisibility(ETutorialWalkthroughBlockStage Stage);
+
+	UFUNCTION()
+	void OnUrlMediaOpened(FString Url);
 
 	UFUNCTION()
 	void OnReleaseButtonIntroProceed();

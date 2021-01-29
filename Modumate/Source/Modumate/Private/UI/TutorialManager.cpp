@@ -197,11 +197,11 @@ void UModumateTutorialManager::SetWalkthroughStepIndex(int32 NewStepIndex)
 		}
 		else if (CurWalkthroughStepIdx == 0)
 		{
-			WalkthroughMenu->ShowWalkthroughIntro();
+			WalkthroughMenu->ShowWalkthroughIntro(curStepData.Title, curStepData.Description);
 		}
 		else if (CurWalkthroughStepIdx == (numSteps - 1))
 		{
-			WalkthroughMenu->ShowWalkthroughOutro();
+			WalkthroughMenu->ShowWalkthroughOutro(curStepData.Title, curStepData.Description);
 		}
 		else
 		{
@@ -247,9 +247,6 @@ void UModumateTutorialManager::CheckCurrentStepRequirements()
 	auto& curStepData = GetCurWalkthroughStepData();
 	if (!curStepData.Requirements.IsEmpty() && CurWalkthroughStepReqsRemaining.IsEmpty())
 	{
-		GEngine->AddOnScreenDebugMessage(0, curStepData.AutoProceedCountdown, FColor::Green,
-			FString::Printf(TEXT("Completed %s walkthrough step \"%s\"!"), *EnumValueString(EModumateWalkthroughCategories, CurWalkthroughCategory), *curStepData.Title.ToString()));
-
 		WalkthroughMenu->ShowCountdown(curStepData.AutoProceedCountdown);
 	}
 }

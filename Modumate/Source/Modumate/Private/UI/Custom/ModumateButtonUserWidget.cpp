@@ -48,8 +48,13 @@ void UModumateButtonUserWidget::NativeConstruct()
 
 	NormalButtonStyle = ModumateButton->WidgetStyle;
 	ActiveButtonStyle = ModumateButton->WidgetStyle;
+	DisabledButtonStyle = ModumateButton->WidgetStyle;
+
 	ActiveButtonStyle.Normal = NormalButtonStyle.Pressed;
 	ActiveButtonStyle.Hovered = NormalButtonStyle.Pressed;
+
+	DisabledButtonStyle.Normal = NormalButtonStyle.Disabled;
+	DisabledButtonStyle.Hovered = NormalButtonStyle.Pressed;
 
 	// Bind this button to its toolmode if available
 	EToolMode inputToToolMode = UEditModelInputHandler::ToolModeFromInputCommand(InputCommand);
@@ -88,6 +93,11 @@ void UModumateButtonUserWidget::SwitchToNormalStyle()
 void UModumateButtonUserWidget::SwitchToActiveStyle()
 {
 	ModumateButton->SetStyle(ActiveButtonStyle);
+}
+
+void UModumateButtonUserWidget::SwitchToDisabledStyle()
+{
+	ModumateButton->SetStyle(DisabledButtonStyle);
 }
 
 UWidget* UModumateButtonUserWidget::OnTooltipWidget()
