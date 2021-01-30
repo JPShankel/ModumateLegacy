@@ -151,6 +151,9 @@ protected:
 	UFUNCTION()
 	void OnToggleFullscreen(bool bIsFullscreen);
 
+	UFUNCTION()
+	void OnControllerDestroyed(AActor* PlayerController);
+
 	EModumateWalkthroughCategories CurWalkthroughCategory = EModumateWalkthroughCategories::None;
 	int32 CurWalkthroughStepIdx = INDEX_NONE;
 	FModumateWalkthroughStepReqs CurWalkthroughStepReqsRemaining;

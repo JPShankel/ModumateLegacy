@@ -274,6 +274,7 @@ bool UModumateTutorialManager::CacheObjects()
 		Controller->HandledInputActionEvent.AddDynamic(this, &UModumateTutorialManager::OnPlayerInputAction);
 		Controller->HandledInputAxisEvent.AddDynamic(this, &UModumateTutorialManager::OnPlayerInputAxis);
 		Controller->InputHandlerComponent->OnExecutedCommand.AddDynamic(this, &UModumateTutorialManager::OnExecutedInputCommand);
+		Controller->OnDestroyed.AddDynamic(this, &UModumateTutorialManager::OnControllerDestroyed);
 	}
 
 	if (auto doc = Controller->GetDocument())
@@ -402,4 +403,10 @@ void UModumateTutorialManager::OnToggleFullscreen(bool bIsFullscreen)
 	{
 		CheckCurrentStepRequirements();
 	}
+}
+
+void UModumateTutorialManager::OnControllerDestroyed(AActor* PlayerController)
+{
+	Controller = nullptr;
+	WalkthroughMenu = nullptr;
 }

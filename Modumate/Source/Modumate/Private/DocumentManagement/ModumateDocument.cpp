@@ -356,8 +356,11 @@ bool UModumateDocument::DeleteObjectImpl(AModumateObjectInstance *ObjToDelete)
 			connectedMOI->MarkDirty(EObjectDirtyFlags::Mitering | EObjectDirtyFlags::Visuals);
 		}
 
-		DeltaCreatedObjects.FindOrAdd(ObjToDelete->GetObjectType()).Remove(ObjToDelete->ID);
-		DeltaDestroyedObjects.FindOrAdd(ObjToDelete->GetObjectType()).Add(ObjToDelete->ID);
+		if (bTrackingDeltaObjects)
+		{
+			DeltaCreatedObjects.FindOrAdd(ObjToDelete->GetObjectType()).Remove(ObjToDelete->ID);
+			DeltaDestroyedObjects.FindOrAdd(ObjToDelete->GetObjectType()).Add(ObjToDelete->ID);
+		}
 
 		return true;
 	}
