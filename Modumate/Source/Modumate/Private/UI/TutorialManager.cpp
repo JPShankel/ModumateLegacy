@@ -182,9 +182,18 @@ const FModumateWalkthroughStepData& UModumateTutorialManager::GetCurWalkthroughS
 void UModumateTutorialManager::OpenWalkthroughProject(EModumateWalkthroughCategories WalkthroughCategory)
 {
 	// TODO: this should be from record
-	static const FString walkthroughProjectName(TEXT("Beginner Tutorial Project.mdmt"));
+	static const FString beginnerProjectName(TEXT("Beginner Tutorial Project.mdmt"));
+	static const FString IntermediateProjectName(TEXT("IntermediateTutorialProject.mdmt"));
+
 	FString walkthroughFullPath;
-	GetTutorialFilePath(walkthroughProjectName, walkthroughFullPath);
+	if (WalkthroughCategory == EModumateWalkthroughCategories::Beginner)
+	{
+		GetTutorialFilePath(beginnerProjectName, walkthroughFullPath);
+	}
+	else if (WalkthroughCategory == EModumateWalkthroughCategories::Intermediate)
+	{
+		GetTutorialFilePath(IntermediateProjectName, walkthroughFullPath);
+	}
 
 	auto world = GetOuter()->GetWorld();
 	// Check if this is in edit scene or main menu

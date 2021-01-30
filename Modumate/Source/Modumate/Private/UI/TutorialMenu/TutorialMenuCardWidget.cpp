@@ -66,7 +66,11 @@ void UTutorialMenuCardWidget::OnReleaseButtonPlayVideo()
 
 void UTutorialMenuCardWidget::OnImageDownloadedSucceed(class UTexture2DDynamic* Texture)
 {
-	ImageThumbnail->SetBrushFromTextureDynamic(Texture);
+	if (ensure(Texture))
+	{
+		DownloadedTexture = Texture;
+		ImageThumbnail->SetBrushFromTextureDynamic(DownloadedTexture);
+	}
 }
 
 void UTutorialMenuCardWidget::OnImageDownloadedFailed(class UTexture2DDynamic* Texture)

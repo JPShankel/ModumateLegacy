@@ -30,6 +30,9 @@ protected:
 	UPROPERTY()
 	class UTutorialMenuWidget* ParentTutorialMenu;
 
+	UPROPERTY()
+	class UTexture2DDynamic* DownloadedTexture;
+
 	FString ProjectFilePath;
 	FString VideoLink;
 	FString TutorialTitle;

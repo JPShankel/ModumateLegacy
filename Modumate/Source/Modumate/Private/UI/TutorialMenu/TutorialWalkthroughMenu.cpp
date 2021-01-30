@@ -42,6 +42,7 @@ bool UTutorialWalkthroughMenu::Initialize()
 	OutroWidget->ButtonOutroGoBack->ModumateButton->OnReleased.AddDynamic(this, &UTutorialWalkthroughMenu::OnReleaseButtonOutroGoBack);
 
 	MediaPlayer->OnMediaOpened.AddDynamic(this, &UTutorialWalkthroughMenu::OnUrlMediaOpened);
+	MediaPlayer->OnMediaOpenFailed.AddDynamic(this, &UTutorialWalkthroughMenu::OnUrlMediaOpenFailed);
 	
 	auto world = GetWorld();
 	auto gameInstance = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
@@ -69,9 +70,6 @@ void UTutorialWalkthroughMenu::ShowWalkthroughStep(const FText& Title, const FTe
 	WalkthroughItemWidget->DescriptionText->ChangeText(Description);
 	WalkthroughItemWidget->WalkthroughProgressBar->SetPercent(ProgressPCT);
 
-	// Because tutorial video is streamed, use LoadingImage to mask previous video while waiting for new video to load
-	WalkthroughItemWidget->LoadingImage->SetVisibility(ESlateVisibility::Visible);
-
 	// Grayout next button to encourage user to try the tutorial first
 	WalkthroughItemWidget->ButtonWalkthroughProceed->SwitchToDisabledStyle();
 	WalkthroughItemWidget->ButtonWalkthroughProceed->ButtonText->SetText(WalkthroughNextText);
@@ -83,7 +81,8 @@ void UTutorialWalkthroughMenu::ShowWalkthroughStep(const FText& Title, const FTe
 	{
 		StreamMediaSource->StreamUrl = VideoURL;
 		MediaPlayer->OpenSource(StreamMediaSource);
-		MediaPlayer->Play();
+
+		ToggleMediaPlayerInteraction(false);
 	}
 }
 
@@ -140,9 +139,35 @@ void UTutorialWalkthroughMenu::UpdateBlockVisibility(ETutorialWalkthroughBlockSt
 	OutroWidget->SetVisibility(visibleOutro);
 }
 
+void UTutorialWalkthroughMenu::ToggleMediaPlayerInteraction(bool NewEnable)
+{
+	// Because tutorial video is streamed, use LoadingImage to mask previous video while waiting for new video to load
+	// Prevent user interaction to media player while it is loading
+	if (NewEnable)
+	{
+		WalkthroughItemWidget->LoadingImage->SetVisibility(ESlateVisibility::Collapsed);
+		WalkthroughItemWidget->ButtonWalkthroughProceed->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		WalkthroughItemWidget->LoadingImage->SetVisibility(ESlateVisibility::Visible);
+		WalkthroughItemWidget->ButtonWalkthroughProceed->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
 void UTutorialWalkthroughMenu::OnUrlMediaOpened(FString Url)
 {
-	WalkthroughItemWidget->LoadingImage->SetVisibility(ESlateVisibility::Collapsed);
+	ToggleMediaPlayerInteraction(true);
+	if (MediaPlayer)
+	{
+
+		MediaPlayer->Play();
+	}
+}
+
+void UTutorialWalkthroughMenu::OnUrlMediaOpenFailed(FString Url)
+{
+	ToggleMediaPlayerInteraction(true);
 }
 
 void UTutorialWalkthroughMenu::OnReleaseButtonIntroProceed()

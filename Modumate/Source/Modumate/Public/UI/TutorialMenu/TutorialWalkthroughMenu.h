@@ -80,9 +80,13 @@ public:
 	void UpdateCountdownText();
 
 	void UpdateBlockVisibility(ETutorialWalkthroughBlockStage Stage);
+	void ToggleMediaPlayerInteraction(bool NewEnable);
 
 	UFUNCTION()
 	void OnUrlMediaOpened(FString Url);
+
+	UFUNCTION()
+	void OnUrlMediaOpenFailed(FString Url);
 
 	UFUNCTION()
 	void OnReleaseButtonIntroProceed();
