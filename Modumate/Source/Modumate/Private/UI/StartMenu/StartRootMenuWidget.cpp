@@ -110,4 +110,6 @@ void UStartRootMenuWidget::ShowStartMenu()
 	Start_Home_BP->TutorialsMenuWidgetBP->BuildTutorialMenu();
 
 	OpenCreateNewButtonsBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+	Start_Home_BP->StartAbsoluteBeginners();
 }
