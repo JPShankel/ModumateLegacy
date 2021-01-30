@@ -270,26 +270,34 @@ void FModumateDatabase::ReadPresetData()
 
 		if (ensureAlways(assetPath.Len() > 0))
 		{
-			FVector nativeSize = FVector(
-				Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("NativeSizeX")),
-				Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("NativeSizeY")),
-				Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("NativeSizeZ"))
-			) * UModumateDimensionStatics::CentimetersToInches;
+			FVector meshNativeSize(ForceInitToZero);
+			FBox meshNineSlice(ForceInitToZero);
 
-			FBox nineSlice(
-				FVector(Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceX1")),
-					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceY1")),
-					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceZ1"))) * UModumateDimensionStatics::CentimetersToInches,
+			FVector presetNativeSize(ForceInitToZero);
+			if (Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeX"), presetNativeSize.X) &&
+				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeY"), presetNativeSize.Y) &&
+				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeZ"), presetNativeSize.Z))
+			{
+				meshNativeSize = presetNativeSize * UModumateDimensionStatics::CentimetersToInches;
+			}
 
-				FVector(Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceX2")),
-					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceY2")),
-					Preset.GetScopedProperty<float>(EBIMValueScope::Mesh, TEXT("SliceZ2"))) * UModumateDimensionStatics::CentimetersToInches
-			);
+			FVector presetNineSliceMin(ForceInitToZero), presetNineSliceMax(ForceInitToZero);
+			if (Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceX1"), presetNineSliceMin.X) &&
+				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceY1"), presetNineSliceMin.Y) &&
+				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceZ1"), presetNineSliceMin.Z) &&
+				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceX2"), presetNineSliceMax.X) &&
+				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceY2"), presetNineSliceMax.Y) &&
+				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceZ2"), presetNineSliceMax.Z))
+			{
+				meshNineSlice = FBox(
+					presetNineSliceMin * UModumateDimensionStatics::CentimetersToInches,
+					presetNineSliceMax * UModumateDimensionStatics::CentimetersToInches);
+			}
 
 			FString name;
 			Preset.TryGetProperty(BIMPropertyNames::Name, name);
 			FString namedDimensions = Preset.GetScopedProperty<FString>(EBIMValueScope::Mesh,BIMPropertyNames::NamedDimensions);
-			AddArchitecturalMesh(Preset.GUID, name, namedDimensions, nativeSize, nineSlice, assetPath);
+			AddArchitecturalMesh(Preset.GUID, name, namedDimensions, meshNativeSize, meshNineSlice, assetPath);
 		}
 	};
 
