@@ -2,19 +2,20 @@
 
 #include "UI/TutorialMenu/TutorialWalkthroughMenu.h"
 
-#include "UI/Custom/ModumateButtonUserWidget.h"
+#include "Components/Image.h"
+#include "Components/ProgressBar.h"
+#include "Components/SizeBox.h"
+#include "Runtime/MediaAssets/Public/MediaPlayer.h"
+#include "Runtime/MediaAssets/Public/StreamMediaSource.h"
 #include "UI/Custom/ModumateButton.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateTextBlock.h"
+#include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/TutorialManager.h"
 #include "UI/TutorialMenu/TutorialWalkthroughBlockIntro.h"
 #include "UI/TutorialMenu/TutorialWalkthroughBlockItem.h"
 #include "UI/TutorialMenu/TutorialWalkthroughBlockOutro.h"
-#include "UI/Custom/ModumateTextBlockUserWidget.h"
-#include "Runtime/MediaAssets/Public/MediaPlayer.h"
-#include "Runtime/MediaAssets/Public/StreamMediaSource.h"
-#include "Components/Image.h"
-#include "Components/ProgressBar.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
 UTutorialWalkthroughMenu::UTutorialWalkthroughMenu(const FObjectInitializer& ObjectInitializer)
@@ -84,6 +85,9 @@ void UTutorialWalkthroughMenu::ShowWalkthroughStep(const FText& Title, const FTe
 
 		ToggleMediaPlayerInteraction(false);
 	}
+
+	// Do not show video if VideoURL is empty
+	WalkthroughItemWidget->SizeBoxVideo->SetVisibility(VideoURL.IsEmpty() ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 }
 
 void UTutorialWalkthroughMenu::ShowCountdown(float CountdownSeconds)
@@ -93,11 +97,12 @@ void UTutorialWalkthroughMenu::ShowCountdown(float CountdownSeconds)
 	CheckTutorialCountdownTimer();
 }
 
-void UTutorialWalkthroughMenu::ShowWalkthroughOutro(const FText& Title, const FText& Description)
+void UTutorialWalkthroughMenu::ShowWalkthroughOutro(const FText& Title, const FText& Description, bool bShowProceedButton)
 {
 	UpdateBlockVisibility(ETutorialWalkthroughBlockStage::Outro);
 	OutroWidget->TitleText->ChangeText(Title);
 	OutroWidget->DescriptionText->ChangeText(Description);
+	OutroWidget->ButtonOutroProceed->SetVisibility(bShowProceedButton ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 }
 
 void UTutorialWalkthroughMenu::CheckTutorialCountdownTimer()
@@ -192,10 +197,12 @@ void UTutorialWalkthroughMenu::OnReleaseButtonWalkthroughGoBack()
 
 void UTutorialWalkthroughMenu::OnReleaseButtonOutroProceed()
 {
-	TutorialManager->AdvanceWalkthrough();
+	// TODO: allow for advancing to "expert" in the future
+	TutorialManager->OpenWalkthroughProject(EModumateWalkthroughCategories::Intermediate);
 }
 
 void UTutorialWalkthroughMenu::OnReleaseButtonOutroGoBack()
 {
-	TutorialManager->RewindWalkthrough();
+	static const FName mainMenuLVL(TEXT("MainMenuLVL"));
+	UGameplayStatics::OpenLevel(this, mainMenuLVL);
 }

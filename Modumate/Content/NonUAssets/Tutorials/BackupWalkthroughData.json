@@ -2,15 +2,16 @@
     "Beginner": [
         {
             "Title": "Welcome to Modumate!",
-            "Description": "It looks like it's your first time here! Let's go over the basic actions of using Modumate. This should take 4-5 minutes."
+            "Description": "It looks like it's your first time here! Let's go over the basic actions of using Modumate. This should take 4-5 minutes.",
+            "VideoFileName": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/"
         },
         {
             "Title": "Full-Screen",
             "Description": "Press F11 to enter/exit fullscreen mode (optional, but recommended!).",
             "AutoProceedCountdown": 3,
             "Requirements": {
-                "CustomActionsToPerform": [
-                    "ToggleFullscreen"
+                "AnalyticEventsToRecord": [
+                    "View/ToggleFullscreen"
                 ]
             }
         },
@@ -65,7 +66,11 @@
             "Description": "The Select tool is your home base. Click objects to select them. From any other tool, press Escape or the hotkey \"SE\" to return to the Select tool.",
             "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-Select.mp4",
             "AutoProceedCountdown": 5,
-            "Requirements": {}
+            "Requirements": {
+                "AnalyticEventsToRecord": [
+                    "Tools/SELECT_Click"
+                ]
+            }
         },
         {
             "Title": "Massing Graph View Mode",
@@ -152,7 +157,7 @@
             "AutoProceedCountdown": 3,
             "Requirements": {
                 "AnalyticEventsToRecord": [
-                    "Tools/RECTANGLE_ClickedPlane"
+                    "Tools/RECTANGLE_EnteredDimStringPlane"
                 ]
             }
         },
@@ -163,7 +168,7 @@
             "AutoProceedCountdown": 7,
             "Requirements": {
                 "AnalyticEventsToRecord": [
-                    "Tools/RECTANGLE_ClickedPlaneExtrusion"
+                    "Tools/RECTANGLE_EnteredDimStringPlaneExtrusion"
                 ]
             }
         },
@@ -227,7 +232,12 @@
             "Description": "Begin to host another wall. Before clicking, press F to flip the wall over its plane, and W/A/S/D to move the wall up/left/down/right between three hosting positions: Back, Centerline, or Front.",
             "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Beginner-HostingProperties.mp4",
             "AutoProceedCountdown": 5,
-            "Requirements": {}
+            "Requirements": {
+                "AnalyticEventsToRecord": [
+                    "Tools/WALL_HandleJustify",
+                    "Tools/WALL_HandleFlip"
+                ]
+            }
         },
         {
             "Title": "Host a Window",
@@ -341,59 +351,68 @@
         },
         {
             "Title": "You've got the basics!",
-            "Description": "Congratulations, you did great! You've learned the basic tools of Modumate, and could probably start your own project now.\n\nHowever, there's still plenty more to learn, like Move, Rotate, Join, Fly, Walk, and more! We suggest moving on to the Intermediate Tutorial if you have the time. \n\n[go to main menu] [go to intermediate tutorial]"
+            "Description": "Congratulations, you did great! You've learned the basic tools of Modumate, and could probably start your own project now.\n\nHowever, there's still plenty more to learn, like Move, Rotate, Join, Fly, Walk, and more! We suggest moving on to the Intermediate Tutorial if you have the time."
         }
     ],
     "Intermediate": [
         {
             "Title": "Intro",
-            "Description": "Welcome to the Intermediate tutorial! Following the Beginner tutorial, let's add more simple-but-useful commands, and some more complex topics too. This should take 10-12 minutes."
+            "Description": "Welcome to the Intermediate tutorial! Following the Beginner tutorial, let's add more simple-but-useful commands, and some more complex topics too. This should take 10-12 minutes.",
+            "VideoFileName": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/"
         },
         {
             "Title": "Add to Selection",
             "Description": "In Select Mode, hold Shift to add objects to selection.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-AddToSelection.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Remove from Selection",
             "Description": "In Select tool, hold Ctrl to remove objects from selection.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-RemoveFromSelection.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Bounding Select",
             "Description": "In Select tool, click-drag to the left to select bounded objects.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-BoundingSelect.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Crossing Select",
             "Description": "In Select tool, click-drag to the right to select crossed objects.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-CrossingSelect.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Hide",
             "Description": "Select an object and click Hide (or type \"HI\").",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-Hide.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Unhide",
             "Description": "Click Unhide (or type \"UH\").",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-Unhide.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Hide Upper Levels",
             "Description": "Tip: hiding upper levels is a good way to design interiors. Bounding-Select (from left to right) the roof, then Hide it (HI).",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-HideUpperLevels.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Recap: The 4 Layer Hierarchy",
             "Description": "Modumate models are a 4 layer hierarchy. Each layer hosts onto the previous layer.\nPress F1 to view the Massing Graph (a planar model of the project's spaces, space-separating assemblies, and how those assemblies connect).\nPress F2 to view Separators (assemblies that separate space, such as Walls, Floors, Roofs, Doors, Railings, etc).\nPress F3 to view Surface Graphs (planar diagrams for where Attachments go).\nPress F4 to view Attachments (assemblies that decorate surfaces, including Finishes, Trim, Cabinets, and FF&E).",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-Recap4ViewModes.mp4",
             "AutoProceedCountdown": 10,
             "Requirements": {}
         },
@@ -404,12 +423,14 @@
         {
             "Title": "Field of View",
             "Description": "Move your camera into the project. Open the 3D Views menu. Type 90 into the FOV field. We suggest ~50 for exterior modeling, and 90-100 for interior modeling.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-ChangeFOV.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Fly",
             "Description": "Hold right-click, then press Q/W/E/A/S/D - W to fly forward, S to fly back, A to fly left, D to fly right, E to fly up, and Q to fly down.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-Fly.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {
                 "InputBindingsToPerform": [
@@ -425,12 +446,14 @@
         {
             "Title": "Fly Through Blocking Walls",
             "Description": "Tip: while designing interiors, if you ever zoom out and get stuck behind a wall, just Fly forward (right-click-hold + W) to fly through it.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-FlyThroughBlockingWalls.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Walk",
             "Description": "Put your camera over the foyer. Open the 3D Views menu. Toggle Gravity to \"On\". Hold right-click and move the mouse to look around. Press W/A/S/D to walk. Toggle Gravity to \"Off\" to stop walking.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-Walk.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
@@ -441,44 +464,52 @@
         {
             "Title": "Move",
             "Description": "With objects selected, click the Move tool, click a start point for a move vector, mouse to an end point (or snap to linear axes, and/or type a distance), and click to complete the move.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-Move.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Move Massing Regions",
-            "Description": "Tip: easily change your massing by selecting many objects and Moving them. "
+            "Description": "Tip: easily change your massing by selecting many objects and Moving them. ",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-MoveMassingRegions.mp4"
         },
         {
             "Title": "Planes Must Stay Planar",
-            "Description": "Tip: you can only move objects if your Massing Planes will stay planar. Notice this vertex can only move along the line shared by both its planes."
+            "Description": "Tip: you can only move objects if your Massing Planes will stay planar. Notice this vertex can only move along the line shared by both its planes.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-PlanesMustStayPlanar.mp4"
         },
         {
             "Title": "Rotate",
             "Description": "With objects selected, click the Rotate tool. Click a center of rotation. Click a reference angle. Mouse to a target angle (or snap to 90's, or type an angle). Click to complete the rotation.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-Rotate.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Join Planes",
             "Description": "Click the Join tool (or type hotkey \"JO\"). Click the plane to keep. Click the coplanar plane to absorb. Press escape.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-JoinPlanes.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Join Edges",
             "Description": "Click the Join tool (or type hotkey \"JO\"). Click the edge to keep. Click the colinear edge to absorb. Press escape.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-JoinEdges.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Delete",
             "Description": "Select an object and press Delete.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-Delete.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Minimal Delete",
             "Description": "Select a plane or edge and press Ctrl + Delete. The selected object should be deleted, but as much other content as possible should remain.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-MinimalDelete.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
@@ -489,30 +520,35 @@
         {
             "Title": "Create A Roof Perimeter",
             "Description": "Select a planar loop of edges (or a plane) and type the hotkey \"RP\". The edges are added to a Roof Perimeter, and turn dark blue.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-CreateARoofPerimeter.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Modify Edge Properties",
             "Description": "Click the edit icon on a Roof Perimeter edge. Choose its properties, like a slope and whether that edge is gabled or hipped. Click \"Commit\".",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-ModifyEdgeProperties.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Publish Roof",
             "Description": "When you're happy with all your edges' properties, click the \"+\" button at the center of the Roof Perimeter. Massing Planes will be created.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-PublishRoof.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Unpublish Roof",
             "Description": "If you don't like your Roof, you can click any dark blue edge and click the X button at its center to unpublish the Roof and continue editing its edges.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-UnpublishRoof.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Create Eaves",
-            "Description": "Eaves can be modeled line by line, by setting out the meaningful points. Connect these meaningful points to complete the roof's eaves."
+            "Description": "Eaves can be modeled line by line, by setting out the meaningful points. Connect these meaningful points to complete the roof's eaves.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-CreateEaves.mp4"
         },
         {
             "Title": "\"Presets\" - The Basic Unit Of BIM",
@@ -520,90 +556,106 @@
         },
         {
             "Title": "What's A Preset?",
-            "Description": "A \"Preset\" is the basic unit of our BIM. Every construction object, from Separators and Attachments right down to the layers and parts they're made of, is a Preset."
+            "Description": "A \"Preset\" is the basic unit of our BIM. Every construction object, from Separators and Attachments right down to the layers and parts they're made of, is a Preset.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-PresetsTheBasicUnitOfBIM.mp4"
         },
         {
             "Title": "Enter BIM Designer",
             "Description": "Click the Wall tool (or press \"WA\"). Click \"Edit\" next to the Typical Exterior Wall. This opens the BIM Designer.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-EnterBIMDesigner.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Pan",
             "Description": "Just like the 3D scene, middle-click and drag to pan the BIM Designer.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-PanBIMDesigner.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Zoom",
             "Description": "Just like the 3D scene, scroll up to zoom into the BIM Designer, and scroll down to zoom out.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-ZoomBIMDesigner.mp4",
             "AutoProceedCountdown": 2,
             "Requirements": {}
         },
         {
             "Title": "Tree of Nodes (\"Parent\" and \"Child\")",
-            "Description": "The BIM Designer shows the parts of a Preset as a tree of nodes. We call these relationships \"parent\" and \"child\". A Layer is a \"child\" of a Wall. A Stud is a \"child\" of a Layer."
+            "Description": "The BIM Designer shows the parts of a Preset as a tree of nodes. We call these relationships \"parent\" and \"child\". A Layer is a \"child\" of a Wall. A Stud is a \"child\" of a Layer.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-TreeOfNodes.mp4"
         },
         {
             "Title": "Swap Preset",
             "Description": "Click \"Swap\" on its OSB layer. Type \"Plywood\" into the swap search bar. Click the 15/32\" Plywood layer's checkmark.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-SwapPreset.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "\"Blue\" Nodes Have Unsaved Changes",
-            "Description": "The parent Wall preset has unsaved changes. It wants to know: by swapping my child, did you mean to update me, or branch off me to make a new Wall?"
+            "Description": "The parent Wall preset has unsaved changes. It wants to know: by swapping my child, were you trying to update me, or branch off me to make a new Wall?",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-BlueMeansUnsaved.mp4"
         },
         {
             "Title": "Edit Name",
             "Description": "Type \"Typical Exterior Wall\" into the Wall's Name field and press Enter.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-EditName.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Save Preset",
             "Description": "Click \"Save Preset\" to save your changes. This will update all instances in scene.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-SavePreset.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Reorder Layers",
             "Description": "Click and drag on the layer's grab handle. Drag upward until your cursor is above the waterproofing layer. Release your click.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-ReorderLayers.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
         {
             "Title": "Cancel Unsaved Changes",
             "Description": "Click \"Cancel\" on the unsaved parent node to revert its tree to how it used to be.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-CancelUnsavedChanges.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Edit Dimension",
             "Description": "Click the Wateproofing layer. Type 1/4\" into its Thickness. Rename the preset \"Typical Waterproofing\" and Save As New Preset. Save the Wall preset.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-EditDimension.mp4",
             "AutoProceedCountdown": 10,
             "Requirements": {}
         },
         {
             "Title": "Edit Color",
             "Description": "Click \"Swap\" on the Waterproofing layer's Color. Pick a subtle blue color. Click outside the color picker. Save the preset.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-EditColor.mp4",
             "AutoProceedCountdown": 10,
             "Requirements": {}
         },
         {
             "Title": "Swap Pattern",
             "Description": "Click on the Stud layer. Click \"Swap\" on its child Pattern. Click the checkmark next to \"19.2in O.C.\". Rename the parent layer \"Typical Exterior Studs\". Save the parent layer as a new preset. Save the Wall preset.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-SwapPattern.mp4",
             "AutoProceedCountdown": 10,
             "Requirements": {}
         },
         {
             "Title": "Swap Material",
             "Description": "Click on the Stud layer's child Stud. Click \"Swap\" next to its Material. Scroll down and click the checkmark next to Pine. Rename the stud \"Typical Exterior Stud\" and save it as a new preset.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-SwapMaterial.mp4",
             "Requirements": {}
         },
         {
             "Title": "Swap Selected Object's Preset",
             "Description": "Press F2. Select a Separator, like a Wall. Click its assembly's Swap icon. Choose a new assembly and click its checkmark.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-SwapSelectedObjectPreset.mp4",
             "AutoProceedCountdown": 5,
             "Requirements": {}
         },
@@ -614,12 +666,14 @@
         {
             "Title": "Offset Up / Down / Left / Right",
             "Description": "Select the patio's post. Turn your camera so that it looks downward along the post. Press W to move the post one stop \"up\". Press S to move it down. Press A to move it left. Press D to move it right.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-OffsetWASD.mp4",
             "AutoProceedCountdown": 4,
             "Requirements": {}
         },
         {
             "Title": "Flip Across / Along / Vertical",
             "Description": "Select a brick wall. Press F to flip it across its host. Press R to reverse it along its host. Press V to flip it vertically.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-FlipFRV.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
@@ -630,47 +684,62 @@
         {
             "Title": "Surface Graph Fragility (pt.1)",
             "Description": "Press F4. Observe the finishes on this wall. Press F3. Observe the Surface Graphs they're hosted to. Press F1. Draw a Massing edge that splits this wall's plane. Press F4. notice the finishes and Surface Graphs are gone! Press Ctrl + Z to undo.\n\nMake sure your Massing Graph and Separators are complete before investing time in detailed Surface Graphs.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-SurfaceGraphFragility1.mp4",
             "AutoProceedCountdown": 8,
             "Requirements": {}
         },
         {
             "Title": "Surface Graph Fragility (pt.2)",
             "Description": "Press F1. Draw a Massing edge along this wall's base. Press F3. Notice the Surface Graphs are gone! \n\nMake sure your Massing Graph and Separators are complete before investing time in detailed Surface Graphs.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-SurfaceGraphFragility2.mp4",
             "AutoProceedCountdown": 8,
             "Requirements": {}
         },
         {
             "Title": "Detach A Surface Graph",
-            "Description": "Press F3. Select a Surface Graph's bounding edge(s). Use the Move tool to move them off the host surface's boundary.\n\nYour surface graph is now \"detached\", and can be resized if needed, such as to host a Cabinet that straddles two Surface Graphs."
+            "Description": "Press F3. Select a Surface Graph's bounding edge(s). Use the Move tool to move them off the host surface's boundary.\n\nYour surface graph is now \"detached\", and can be resized if needed, such as to host a Cabinet that straddles two Surface Graphs.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-DetachASurfaceGraph.mp4",
+            "Requirements": {}
         },
         {
-            "Title": "Create Cabinet",
-            "Description": "Enter the Cabinet tool. Choose a Cabinet. Click a Surface Graph face. Extrude a Cabinet by typing a distance. Click the button to choose a front face."
+            "Title": "Host a Cabinet",
+            "Description": "Enter the Cabinet tool. Choose a Cabinet. Click a Surface Graph face. Extrude a Cabinet by typing a distance. Click the button to choose a front face.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-AddACabinet.mp4"
         },
         {
-            "Title": "Flip / Offset Trim",
-            "Description": "Select a Trim. Press W to offset it up, or A to offset it left, or S to offset it down, or D to offset it right. Press V to flip it across its host edge."
+            "Title": "Trim Hosting (Offset and Flip)",
+            "Description": "Select a Trim. Press W to offset it up, or A to offset it left, or S to offset it down, or D to offset it right. Press V to flip it across its host edge.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-OffsetFlipTrim.mp4"
         },
         {
             "Title": "FF&E Move Handles",
-            "Description": "Select an FF&E. Click its corner handles. Move the mouse and click again, or type a distance and press Enter."
+            "Description": "Select an FF&E. Click its corner handles. Move the mouse and click again, or type a distance and press Enter.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-FFEMoveHandle.mp4"
         },
         {
             "Title": "FF&E Rotate Handle",
-            "Description": "Select an FF&E. Click its Rotate handle. Move the mouse and click again, or type an angle and press Enter."
+            "Description": "Select an FF&E. Click its Rotate handle. Move the mouse and click again, or type an angle and press Enter.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-FFERotateHandle.mp4"
         },
         {
             "Title": "Save A 3D View",
             "Description": "Open the 3D Views menu. Click the \"+\" next to 3D Views.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-SaveA3DView.mp4",
             "AutoProceedCountdown": 3,
             "Requirements": {}
         },
         {
             "Title": "Rename a 3D View",
-            "Description": "Open the 3D Views Menu. Click a saved view's Edit button. Type a new name and press Enter."
+            "Description": "Open the 3D Views Menu. Click a saved view's Edit button. Type a new name and press Enter.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-RenameA3DView.mp4",
+            "AutoProceedCountdown": 3,
+            "Requirements": {}
         },
         {
-            "Title": "Create Plans/Sections/Elevations"
+            "Title": "Create Plans/Sections/Elevations",
+            "Description": "Open the Cut Planes Menu. Click \"Draw New Cut Plane\". Click halfway up the exterior wall, then the base of the wall - a Cut Plane will be created. Click \"Edit\" on the Cut Plane, rename it \"Plan\", and press Enter. Do the same for as many sections and elevations as you'd like. Press Export. Choose a destination for the DWGs. Open the DWGs in AutoCAD or similar.",
+            "VideoURL": "https://s3-us-west-1.amazonaws.com/dynamic-content.cloud.modumate.com/walkthrough_videos/Tutorial-Walkthrough-Internediate-CreatePlansSectionsElevations.mp4",
+            "Requirements": {}
         },
         {
             "Title": "Hotkey Summary",

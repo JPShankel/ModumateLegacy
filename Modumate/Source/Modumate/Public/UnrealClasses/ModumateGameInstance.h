@@ -80,6 +80,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Tooltips)
 	TSubclassOf<class UTooltipManager> TooltipManagerClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UModumateTutorialManager> TutorialManagerClass;
+
 	UFUNCTION(BlueprintCallable)
 	ELoginStatus LoginStatus() const;
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/EngineBaseTypes.h"
+#include "Http.h"
 
 #include "TutorialManager.generated.h"
 
@@ -25,7 +26,6 @@ UENUM()
 enum class EModumateWalkthroughCustomActions : uint8
 {
 	None = 0,
-	ToggleFullscreen,
 	SurfaceGraphBreak1,
 	SurfaceGraphBreak2,
 };
@@ -81,7 +81,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FModumateWalkthroughStepCompleted, 
 DECLARE_DELEGATE_TwoParams(FInputActionDelegate, FName, EInputEvent);
 DECLARE_DELEGATE_TwoParams(FInputAxisDelegate, FName, float);
 
-UCLASS()
+UCLASS(Blueprintable)
 class MODUMATE_API UModumateTutorialManager : public UObject
 {
 	GENERATED_BODY()
@@ -114,6 +114,9 @@ public:
 	void OpenWalkthroughProject(EModumateWalkthroughCategories WalkthroughCategory);
 	bool GetTutorialFilePath(const FString& TutorialFileName, FString& OutFullTutorialFilePath);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString DynamicTutorialDataURL;
+
 	UPROPERTY()
 	FModumateWalkthroughStepCompleted OnWalkthroughStepCompleted;
 
@@ -126,6 +129,7 @@ protected:
 	UPROPERTY()
 	class UTutorialWalkthroughMenu* WalkthroughMenu = nullptr;
 
+	void OnLoadDataReply(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void SetWalkthroughStepIndex(int32 NewStepIndex);
 	bool CacheObjects();
 	void CheckCurrentStepRequirements();
@@ -149,11 +153,9 @@ protected:
 	void OnRecordedAnalyticsEvent(const FString& EventCategory, const FString& EventName);
 
 	UFUNCTION()
-	void OnToggleFullscreen(bool bIsFullscreen);
-
-	UFUNCTION()
 	void OnControllerDestroyed(AActor* PlayerController);
 
+	bool bDataLoaded = false;
 	EModumateWalkthroughCategories CurWalkthroughCategory = EModumateWalkthroughCategories::None;
 	int32 CurWalkthroughStepIdx = INDEX_NONE;
 	FModumateWalkthroughStepReqs CurWalkthroughStepReqsRemaining;

@@ -6,6 +6,7 @@
 #include "DocumentManagement/ModumateCommands.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -113,6 +114,9 @@ bool USelectTool::HandleMouseUp()
 				shouldSelect = true;
 			}
 			Controller->SetObjectSelected(newTarget, shouldSelect);
+
+			static const FString eventNameClick(TEXT("Click"));
+			UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventNameClick);
 		}
 		else if (currentViewGroup && (numSelections == 0))
 		{
@@ -423,9 +427,12 @@ bool USelectTool::ProcessDragSelect()
 		{
 			Controller->SetObjectSelected(object, newObjectsSelected);
 		}
+
+		static const FString eventNameDrag(TEXT("Drag"));
+		UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventNameDrag);
+
 		return true;
 	}
 
 	return false;
 }
-

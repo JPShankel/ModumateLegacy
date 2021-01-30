@@ -125,6 +125,8 @@ void AEditModelPlayerController::PostInitializeComponents()
 		static const FVector2D CursorHotspot(0.28125f, 0.1875f);
 		gameViewport->SetHardwareCursor(EMouseCursor::Default, SelectCursorPath, CursorHotspot);
 		gameViewport->SetHardwareCursor(EMouseCursor::Custom, AdvancedCursorPath, CursorHotspot);
+
+		gameViewport->OnToggleFullscreen().AddUObject(this, &AEditModelPlayerController::OnToggleFullscreen);
 	}
 
 	// Assign our cached casted AEditModelPlayerState, and its cached casted pointer to us,
@@ -2003,6 +2005,12 @@ bool AEditModelPlayerController::GetActiveUserSnapPoint(FTransform &outSnapPoint
 	}
 
 	return false;
+}
+
+void AEditModelPlayerController::OnToggleFullscreen(bool bIsFullscreen)
+{
+	static const FString analyticsEventName(TEXT("ToggleFullscreen"));
+	UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategoryView, analyticsEventName);
 }
 
 void AEditModelPlayerController::OnHandledInputActionName(FName ActionName, EInputEvent InputEvent)

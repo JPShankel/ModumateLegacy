@@ -4,7 +4,6 @@
 
 #include "Database/ModumateObjectEnums.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "Engine/GameViewportClient.h"
 #include "JsonObjectConverter.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Serialization/JsonReader.h"
@@ -30,12 +29,19 @@ bool FModumateWalkthroughStepReqs::IsEmpty() const
 
 void UModumateTutorialManager::Init()
 {
-	// TODO: load walkthrough data from our backend
-	FString backFilePath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("Tutorials") / TEXT("BackupWalkthroughData.json");
-	FString backupFileString;
-	if (FFileHelper::LoadFileToString(backupFileString, *backFilePath))
+	UModumateAnalyticsStatics::OnRecordedAnalyticsEvent.AddDynamic(this, &UModumateTutorialManager::OnRecordedAnalyticsEvent);
+
+	if (DynamicTutorialDataURL.IsEmpty())
 	{
-		LoadWalkthroughData(backupFileString);
+		OnLoadDataReply(FHttpRequestPtr(), FHttpResponsePtr(), false);
+	}
+	else
+	{
+		auto httpRequest = FHttpModule::Get().CreateRequest();
+		httpRequest->SetVerb("GET");
+		httpRequest->SetURL(DynamicTutorialDataURL);
+		httpRequest->OnProcessRequestComplete().BindUObject(this, &UModumateTutorialManager::OnLoadDataReply);
+		httpRequest->ProcessRequest();
 	}
 }
 
@@ -46,6 +52,7 @@ void UModumateTutorialManager::Shutdown()
 
 bool UModumateTutorialManager::LoadWalkthroughData(const FString& WalkthroughDataJSON)
 {
+	bDataLoaded = false;
 	WalkthroughStepsByCategory.Reset();
 
 	TSharedPtr<FJsonObject> jsonObject;
@@ -85,6 +92,7 @@ bool UModumateTutorialManager::LoadWalkthroughData(const FString& WalkthroughDat
 		}
 	}
 
+	bDataLoaded = true;
 	return true;
 }
 
@@ -149,6 +157,11 @@ bool UModumateTutorialManager::EndWalkthrough()
 		return false;
 	}
 
+	if (!CacheObjects())
+	{
+		return false;
+	}
+
 	SetWalkthroughStepIndex(INDEX_NONE);
 	return true;
 }
@@ -195,6 +208,10 @@ void UModumateTutorialManager::OpenWalkthroughProject(EModumateWalkthroughCatego
 		GetTutorialFilePath(IntermediateProjectName, walkthroughFullPath);
 	}
 
+	// Clear out any potentially current walkthrough state
+	CurWalkthroughCategory = EModumateWalkthroughCategories::None;
+	CurWalkthroughStepIdx = INDEX_NONE;
+
 	auto world = GetOuter()->GetWorld();
 	// Check if this is in edit scene or main menu
 	AEditModelPlayerController* controller = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
@@ -229,6 +246,24 @@ bool UModumateTutorialManager::GetTutorialFilePath(const FString& TutorialFileNa
 	}
 }
 
+void UModumateTutorialManager::OnLoadDataReply(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
+	if (bWasSuccessful)
+	{
+		FString responseJsonString = Response->GetContentAsString();
+		LoadWalkthroughData(responseJsonString);
+	}
+	else
+	{
+		FString backFilePath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("Tutorials") / TEXT("BackupWalkthroughData.json");
+		FString backupFileString;
+		if (FFileHelper::LoadFileToString(backupFileString, *backFilePath))
+		{
+			LoadWalkthroughData(backupFileString);
+		}
+	}
+}
+
 void UModumateTutorialManager::SetWalkthroughStepIndex(int32 NewStepIndex)
 {
 	auto& curSteps = GetCurWalkthroughSteps();
@@ -243,7 +278,7 @@ void UModumateTutorialManager::SetWalkthroughStepIndex(int32 NewStepIndex)
 		auto& curStepData = GetCurWalkthroughStepData();
 		CurWalkthroughStepReqsRemaining = curStepData.Requirements;
 
-		if (CurWalkthroughStepIdx == INDEX_NONE)
+		if (!curSteps.IsValidIndex(CurWalkthroughStepIdx))
 		{
 			CurWalkthroughCategory = EModumateWalkthroughCategories::None;
 			WalkthroughMenu->UpdateBlockVisibility(ETutorialWalkthroughBlockStage::None);
@@ -254,7 +289,9 @@ void UModumateTutorialManager::SetWalkthroughStepIndex(int32 NewStepIndex)
 		}
 		else if (CurWalkthroughStepIdx == (numSteps - 1))
 		{
-			WalkthroughMenu->ShowWalkthroughOutro(curStepData.Title, curStepData.Description);
+			// TODO: allow for advancing to "expert", not just from "beginner"
+			bool bShowProceedButton = (CurWalkthroughCategory == EModumateWalkthroughCategories::Beginner);
+			WalkthroughMenu->ShowWalkthroughOutro(curStepData.Title, curStepData.Description, bShowProceedButton);
 		}
 		else
 		{
@@ -284,18 +321,11 @@ bool UModumateTutorialManager::CacheObjects()
 		Controller->HandledInputAxisEvent.AddDynamic(this, &UModumateTutorialManager::OnPlayerInputAxis);
 		Controller->InputHandlerComponent->OnExecutedCommand.AddDynamic(this, &UModumateTutorialManager::OnExecutedInputCommand);
 		Controller->OnDestroyed.AddDynamic(this, &UModumateTutorialManager::OnControllerDestroyed);
-	}
 
-	if (auto doc = Controller->GetDocument())
-	{
-		doc->OnAppliedMOIDeltas.AddDynamic(this, &UModumateTutorialManager::OnAppliedMOIDeltas);
-	}
-
-	UModumateAnalyticsStatics::OnRecordedAnalyticsEvent.AddDynamic(this, &UModumateTutorialManager::OnRecordedAnalyticsEvent);
-
-	if (auto gameViewport = world->GetGameViewport())
-	{
-		gameViewport->OnToggleFullscreen().AddUObject(this, &UModumateTutorialManager::OnToggleFullscreen);
+		if (auto doc = Controller->GetDocument())
+		{
+			doc->OnAppliedMOIDeltas.AddDynamic(this, &UModumateTutorialManager::OnAppliedMOIDeltas);
+		}
 	}
 
 	if (WalkthroughMenu == nullptr)
@@ -399,15 +429,6 @@ void UModumateTutorialManager::OnRecordedAnalyticsEvent(const FString& EventCate
 	FName fullEventName(*(EventCategory / EventName));
 
 	bool bMadeProgress = (CurWalkthroughStepReqsRemaining.AnalyticEventsToRecord.Remove(fullEventName) > 0);
-	if (bMadeProgress)
-	{
-		CheckCurrentStepRequirements();
-	}
-}
-
-void UModumateTutorialManager::OnToggleFullscreen(bool bIsFullscreen)
-{
-	bool bMadeProgress = (CurWalkthroughStepReqsRemaining.CustomActionsToPerform.Remove(EModumateWalkthroughCustomActions::ToggleFullscreen) > 0);
 	if (bMadeProgress)
 	{
 		CheckCurrentStepRequirements();

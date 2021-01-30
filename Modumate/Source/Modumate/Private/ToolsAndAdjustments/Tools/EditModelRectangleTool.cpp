@@ -49,22 +49,31 @@ bool URectangleTool::HandleInputNumber(double n)
 	{
 		FVector dir = (pendingSegment->Point2 - pendingSegment->Point1).GetSafeNormal() * n;
 
+		static const FString eventNameSegment(TEXT("EnteredDimStringSegment"));
+		static const FString eventNamePlane(TEXT("EnteredDimStringPlane"));
+		FString eventName;
+		switch (State)
+		{
+		case NewSegmentPending:
+			eventName = eventNameSegment;
+			break;
+		case NewPlanePending:
+			eventName = eventNamePlane;
+			break;
+		default:
+			break;
+		}
+
+		if (bExtrudingPlaneFromEdge)
+		{
+			static const FString eventSuffixExtrusion(TEXT("Extrusion"));
+			eventName += eventSuffixExtrusion;
+		}
+
 		bool bSuccess = MakeObject(pendingSegment->Point1 + dir);
 		if (bSuccess)
 		{
-			static const FString eventNameSegment(TEXT("EnteredDimStringSegment"));
-			static const FString eventNamePlane(TEXT("EnteredDimStringPlane"));
-			switch (State)
-			{
-			case NewSegmentPending:
-				UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventNameSegment);
-				break;
-			case NewPlanePending:
-				UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventNamePlane);
-				break;
-			default:
-				break;
-			}
+			UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventName);
 		}
 
 		return bSuccess;
@@ -174,37 +183,37 @@ bool URectangleTool::EnterNextStage()
 	}
 	if (State == NewSegmentPending || State == NewPlanePending)
 	{
+		static const FString eventNameSegment(TEXT("ClickedSegment"));
+		static const FString eventNamePlane(TEXT("ClickedPlane"));
+		FString eventName;
+
+		switch (State)
+		{
+		case NewSegmentPending:
+			eventName = eventNameSegment;
+			break;
+		case NewPlanePending:
+			eventName = eventNamePlane;
+			break;
+		default:
+			break;
+		}
+
+		if (Controller->EMPlayerState->SnappedCursor.ShiftLocked)
+		{
+			static const FString eventSuffixShiftSnapped(TEXT("ShiftSnapped"));
+			eventName += eventSuffixShiftSnapped;
+		}
+
+		if (bExtrudingPlaneFromEdge)
+		{
+			static const FString eventSuffixExtrusion(TEXT("Extrusion"));
+			eventName += eventSuffixExtrusion;
+		}
+
 		bool bSuccess = MakeObject(Controller->EMPlayerState->SnappedCursor.WorldPosition);
 		if (bSuccess)
 		{
-			static const FString eventNameSegment(TEXT("ClickedSegment"));
-			static const FString eventNamePlane(TEXT("ClickedPlane"));
-			FString eventName;
-
-			switch (State)
-			{
-			case NewSegmentPending:
-				eventName = eventNameSegment;
-				break;
-			case NewPlanePending:
-				eventName = eventNamePlane;
-				break;
-			default:
-				break;
-			}
-
-			if (Controller->EMPlayerState->SnappedCursor.ShiftLocked)
-			{
-				static const FString eventSuffixShiftSnapped(TEXT("ShiftSnapped"));
-				eventName += eventSuffixShiftSnapped;
-			}
-
-			if (bExtrudingPlaneFromEdge)
-			{
-				static const FString eventSuffixExtrusion(TEXT("Extrusion"));
-				eventName += eventSuffixExtrusion;
-			}
-
 			UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventName);
 		}
 

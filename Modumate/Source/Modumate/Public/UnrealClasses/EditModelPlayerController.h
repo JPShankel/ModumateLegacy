@@ -157,6 +157,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintAssignable, meta = (Category = Snap, ToolTip = "The event that fires when we successfully finish the automatic creation of a user snap point."))
 	FUserSnapPointEvent OnFinishCreateUserSnapPoint;
 
+	UFUNCTION()
+	void OnToggleFullscreen(bool bIsFullscreen);
+
 public:
 
 	UPROPERTY()

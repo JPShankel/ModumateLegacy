@@ -85,8 +85,11 @@ void UModumateGameInstance::Init()
 		TooltipManager->Init();
 	}
 
-	TutorialManager = NewObject<UModumateTutorialManager>(this);
-	TutorialManager->Init();
+	if (ensure(TutorialManagerClass))
+	{
+		TutorialManager = NewObject<UModumateTutorialManager>(this, TutorialManagerClass);
+		TutorialManager->Init();
+	}
 }
 
 TSharedPtr<FModumateCloudConnection> UModumateGameInstance::GetCloudConnection() const

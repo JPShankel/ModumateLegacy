@@ -6,6 +6,7 @@
 #include "DocumentManagement/ModumateCommands.h"
 #include "GameFramework/InputSettings.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -334,32 +335,66 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 		return Controller->HandleInvert();
 	}
 	case EInputCommand::FlipX:
-	{
-		return currentTool->HandleFlip(EAxis::X);
-	}
 	case EInputCommand::FlipY:
-	{
-		return currentTool->HandleFlip(EAxis::Y);
-	}
 	case EInputCommand::FlipZ:
 	{
-		return currentTool->HandleFlip(EAxis::Z);
+		EAxis::Type flipAxis = EAxis::None;
+
+		switch (Command)
+		{
+		case EInputCommand::FlipX:
+			flipAxis = EAxis::X;
+			break;
+		case EInputCommand::FlipY:
+			flipAxis = EAxis::Y;
+			break;
+		case EInputCommand::FlipZ:
+			flipAxis = EAxis::Z;
+			break;
+		default:
+			break;
+		}
+
+		bool bHandled = currentTool->HandleFlip(flipAxis);
+		if (bHandled)
+		{
+			static const FString eventName(TEXT("HandleFlip"));
+			UModumateAnalyticsStatics::RecordSimpleToolEvent(this, currentTool->GetToolMode(), eventName);
+		}
+
+		return bHandled;
 	}
 	case EInputCommand::JustifyLeft:
-	{
-		return currentTool->HandleAdjustJustification(FVector2D(-1.0f, 0.0f));
-	}
 	case EInputCommand::JustifyRight:
-	{
-		return currentTool->HandleAdjustJustification(FVector2D(1.0f, 0.0f));
-	}
 	case EInputCommand::JustifyUp:
-	{
-		return currentTool->HandleAdjustJustification(FVector2D(0, 1.0f));
-	}
 	case EInputCommand::JustifyDown:
 	{
-		return currentTool->HandleAdjustJustification(FVector2D(0.0f, -1.0f));
+		FVector2D viewSpaceDirection(ForceInitToZero);
+
+		switch (Command)
+		{
+		case EInputCommand::JustifyLeft:
+			viewSpaceDirection.Set(-1.0f, 0.0f);
+			break;
+		case EInputCommand::JustifyRight:
+			viewSpaceDirection.Set(1.0f, 0.0f);
+			break;
+		case EInputCommand::JustifyUp:
+			viewSpaceDirection.Set(0.0f, 1.0f);
+			break;
+		case EInputCommand::JustifyDown:
+			viewSpaceDirection.Set(0.0f, -1.0f);
+			break;
+		}
+
+		bool bHandled = currentTool->HandleAdjustJustification(viewSpaceDirection);
+		if (bHandled)
+		{
+			static const FString eventName(TEXT("HandleJustify"));
+			UModumateAnalyticsStatics::RecordSimpleToolEvent(this, currentTool->GetToolMode(), eventName);
+		}
+
+		return bHandled;
 	}
 
 

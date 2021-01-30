@@ -71,7 +71,7 @@ public:
 	void ShowCountdown(float CountdownSeconds);
 
 	UFUNCTION(BlueprintCallable)
-	void ShowWalkthroughOutro(const FText& Title, const FText& Description);
+	void ShowWalkthroughOutro(const FText& Title, const FText& Description, bool bShowProceedButton);
 
 	UFUNCTION()
 	void CheckTutorialCountdownTimer();
