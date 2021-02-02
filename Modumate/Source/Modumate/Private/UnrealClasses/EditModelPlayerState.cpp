@@ -222,10 +222,11 @@ void AEditModelPlayerState::UpdateRenderFlags(const TSet<AModumateObjectInstance
 			bool bIsGraphType = (UModumateTypeStatics::Graph2DObjectTypeFromObjectType(type) != Modumate::EGraphObjectType::None) ||
 				(UModumateTypeStatics::Graph3DObjectTypeFromObjectType(type) != Modumate::EGraph3DObjectType::None);
 			bool bHovered = (ShowHoverEffects && !bIsGraphType && HoveredObjectDescendents.Contains(moi));
+			bool bSelected = SelectedObjects.Contains(moi);
 
-			int32 selectionValue = SelectedObjects.Contains(moi) ? 0x1 : 0x0;
+			int32 selectionValue = bSelected ? 0x1 : 0x0;
 			int32 viewGroupValue = ViewGroupDescendents.Contains(moi) ? 0x2 : 0x0;
-			int32 hoverValue = bHovered ? 0x4 : 0x0;
+			int32 hoverValue = (bHovered && !bSelected) ? 0x4 : 0x0;
 			int32 errorValue = ErrorObjects.Contains(moi) ? 0x8 : 0x0;
 			int32 stencilValue = selectionValue | viewGroupValue | hoverValue | errorValue;
 
