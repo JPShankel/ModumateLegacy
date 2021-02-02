@@ -66,7 +66,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UImage* ImageBG;
 
-	void SetViewMenuVisibility(bool NewVisible);
+	void BuildViewMenu();
 	void MouseOnHoverView(UComponentSavedViewListItem* Item);
 	void MouseEndHoverView(UComponentSavedViewListItem* Item);
 	void HoverCaptureTick();

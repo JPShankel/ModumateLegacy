@@ -51,18 +51,10 @@ void UViewMenuWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	}
 }
 
-void UViewMenuWidget::SetViewMenuVisibility(bool NewVisible)
+void UViewMenuWidget::BuildViewMenu()
 {
-	if (NewVisible)
-	{
-		this->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		ViewMenu_Block_SavedViews->UpdateSavedViewsList();
-		ViewMenu_Block_Properties->SyncTextBoxesWithSkyActorCurrentTime();
-	}
-	else
-	{
-		this->SetVisibility(ESlateVisibility::Collapsed);
-	}
+	ViewMenu_Block_SavedViews->UpdateSavedViewsList();
+	ViewMenu_Block_Properties->SyncTextBoxesWithSkyActorCurrentTime();
 }
 
 void UViewMenuWidget::MouseOnHoverView(UComponentSavedViewListItem *Item)

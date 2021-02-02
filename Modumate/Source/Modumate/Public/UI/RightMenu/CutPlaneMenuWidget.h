@@ -52,7 +52,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UCutPlaneMenuBlockExport *CutPlaneMenuBlockExport;
 
-	void SetCutPlaneMenuVisibility(bool NewVisible);
 	void UpdateCutPlaneMenuBlocks();
 	UCutPlaneDimListItemObject* GetListItemFromObjID(int32 ObjID = MOD_ID_NONE);
 	bool RemoveCutPlaneFromMenuBlock(int32 ObjID = MOD_ID_NONE);

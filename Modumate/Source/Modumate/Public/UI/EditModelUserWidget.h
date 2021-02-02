@@ -110,7 +110,7 @@ public:
 
 	void EditExistingAssembly(EToolMode ToolMode, const FGuid& AssemblyGUID);
 	void ToggleBIMDesigner(bool Open);
-	void SwitchLeftMenu(ELeftMenuState NewMenuState);
+	void SwitchLeftMenu(ELeftMenuState NewMenuState, EToolCategories OptionalToolCategory = EToolCategories::Unknown);
 	void UpdateCutPlanesList();
 	bool RemoveCutPlaneFromList(int32 ObjID = MOD_ID_NONE);
 	bool UpdateCutPlaneInList(int32 ObjID = MOD_ID_NONE);
@@ -122,5 +122,8 @@ public:
 	bool IsBIMDebuggerOn();
 	void ToggleBIMPresetSwapTray(bool NewVisibility);
 	void ToggleTutorialMenu(bool NewVisibility);
+	void ToggleCutPlaneMenu(bool NewVisibility);
+	void ToggleViewMenu(bool NewVisibility);
 	bool IsBIMDesingerActive() const;
+	bool EMUserWidgetHandleEscapeKey();
 };

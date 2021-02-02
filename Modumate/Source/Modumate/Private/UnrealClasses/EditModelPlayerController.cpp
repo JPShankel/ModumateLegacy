@@ -1276,6 +1276,10 @@ bool AEditModelPlayerController::HandleEscapeKey()
 		EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 		return true;
 	}
+	else if(EditModelUserWidget->EMUserWidgetHandleEscapeKey())
+	{
+		return true;
+	}
 
 	return false;
 }

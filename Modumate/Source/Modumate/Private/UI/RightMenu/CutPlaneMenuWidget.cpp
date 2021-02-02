@@ -33,20 +33,6 @@ void UCutPlaneMenuWidget::NativeConstruct()
 
 }
 
-void UCutPlaneMenuWidget::SetCutPlaneMenuVisibility(bool NewVisible)
-{
-	if (NewVisible)
-	{
-		this->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		UpdateCutPlaneMenuBlocks();
-	}
-	else
-	{
-		CutPlaneMenuBlockExport->SetExportMenuVisibility(false);
-		this->SetVisibility(ESlateVisibility::Collapsed);
-	}
-}
-
 void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 {
 	TArray<UCutPlaneDimListItemObject*> horizontalItems;
@@ -177,7 +163,8 @@ void UCutPlaneMenuWidget::SetCutPlaneExportMenuVisibility(bool NewVisible)
 	// If this menu is currently closed, open it
 	if (NewVisible && this->GetVisibility() == ESlateVisibility::Collapsed)
 	{
-		SetCutPlaneMenuVisibility(true);
+		SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		UpdateCutPlaneMenuBlocks();
 	}
 	CutPlaneMenuBlockExport->SetExportMenuVisibility(NewVisible);
 }

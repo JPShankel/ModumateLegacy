@@ -51,8 +51,7 @@ void UToolbarWidget::OnButtonReleaseMetaPlane()
 	Controller->SetToolMode(EToolMode::VE_LINE);
 	if (EditModelUserWidget->ToolTrayWidget->CurrentToolCategory != EToolCategories::MetaGraph)
 	{
-		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
-		EditModelUserWidget->ToolTrayWidget->ChangeBlockToMetaPlaneTools();
+		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::ToolMenu, EToolCategories::MetaGraph);
 	}
 }
 
@@ -60,8 +59,7 @@ void UToolbarWidget::OnButtonReleaseSeparators()
 {
 	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
 	{
-		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
-		EditModelUserWidget->ToolTrayWidget->ChangeBlockToSeparatorTools(Controller->GetToolMode());
+		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::ToolMenu, EToolCategories::Separators);
 	}
 }
 
@@ -70,8 +68,7 @@ void UToolbarWidget::OnButtonReleaseSurfaceGraphs()
 	Controller->SetToolMode(EToolMode::VE_SURFACEGRAPH);
 	if (EditModelUserWidget->ToolTrayWidget->CurrentToolCategory != EToolCategories::SurfaceGraphs)
 	{
-		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
-		EditModelUserWidget->ToolTrayWidget->ChangeBlockToSurfaceGraphTools();
+		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::ToolMenu, EToolCategories::SurfaceGraphs);
 	}
 }
 
@@ -79,8 +76,7 @@ void UToolbarWidget::OnButtonReleaseAttachments()
 {
 	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
 	{
-		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
-		EditModelUserWidget->ToolTrayWidget->ChangeBlockToAttachmentTools(Controller->GetToolMode());
+		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::ToolMenu, EToolCategories::Attachments);
 	}
 }
 
