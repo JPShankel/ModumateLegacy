@@ -3,7 +3,6 @@
 #include "UI/StartMenu/StartBlockHomeWidget.h"
 #include "UnrealClasses/MainMenuGameMode.h"
 #include "UnrealClasses/ModumateGameInstance.h"
-#include "Online/ModumateAccountManager.h"
 #include "Components/WrapBox.h"
 #include "UI/StartMenu/StartBlockProjectCardWidget.h"
 #include "UI/StartMenu/StartBlockNewProjectCardWidget.h"
@@ -46,16 +45,6 @@ void UStartBlockHomeWidget::OpenRecentProjectMenu()
 		{
 			WrapBoxProjects->AddChildToWrapBox(newLoadProjectCard);
 		}
-	}
-}
-
-void UStartBlockHomeWidget::StartAbsoluteBeginners()
-{
-	const auto accountManager = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetAccountManager();
-	if (accountManager && accountManager->IsFirstLogin() && !bHaveStartedBeginner)
-	{
-		bHaveStartedBeginner = true;
-		TutorialsMenuWidgetBP->OnReleaseButtonBeginnerWalkthrough();
 	}
 }
 

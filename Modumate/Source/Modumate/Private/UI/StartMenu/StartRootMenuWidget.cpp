@@ -104,12 +104,13 @@ void UStartRootMenuWidget::OnButtonReleasedCreateNew()
 
 void UStartRootMenuWidget::ShowStartMenu()
 {
-	Start_Home_BP->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	// TODO: Play widget opening animation here
-	Start_Home_BP->OpenRecentProjectMenu();
-	Start_Home_BP->TutorialsMenuWidgetBP->BuildTutorialMenu();
+	if (!GetWorld()->GetGameInstance<UModumateGameInstance>()->TutorialManager->CheckAbsoluteBeginner())
+	{
+		Start_Home_BP->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		// TODO: Play widget opening animation here
+		Start_Home_BP->OpenRecentProjectMenu();
+		Start_Home_BP->TutorialsMenuWidgetBP->BuildTutorialMenu();
 
-	OpenCreateNewButtonsBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-
-	Start_Home_BP->StartAbsoluteBeginners();
+		OpenCreateNewButtonsBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
 }

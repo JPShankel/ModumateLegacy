@@ -113,12 +113,16 @@ public:
 
 	void OpenWalkthroughProject(EModumateWalkthroughCategories WalkthroughCategory);
 	bool GetTutorialFilePath(const FString& TutorialFileName, FString& OutFullTutorialFilePath);
+	bool CheckAbsoluteBeginner();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString DynamicTutorialDataURL;
 
 	UPROPERTY()
 	FModumateWalkthroughStepCompleted OnWalkthroughStepCompleted;
+
+	UPROPERTY()
+	bool bCompletedFirstTime = false;
 
 	EModumateWalkthroughCategories FromMainMenuWalkthroughCategory = EModumateWalkthroughCategories::None;
 

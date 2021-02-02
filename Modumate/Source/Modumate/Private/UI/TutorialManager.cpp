@@ -5,6 +5,7 @@
 #include "Database/ModumateObjectEnums.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "JsonObjectConverter.h"
+#include "Online/ModumateAccountManager.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
@@ -244,6 +245,18 @@ bool UModumateTutorialManager::GetTutorialFilePath(const FString& TutorialFileNa
 	{
 		return false;
 	}
+}
+
+bool UModumateTutorialManager::CheckAbsoluteBeginner()
+{
+	const auto accountManager = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetAccountManager();
+	if (accountManager && accountManager->IsFirstLogin() && !bCompletedFirstTime)
+	{
+		bCompletedFirstTime = true;
+		OpenWalkthroughProject(EModumateWalkthroughCategories::Beginner);
+		return true;
+	}
+	return false;
 }
 
 void UModumateTutorialManager::OnLoadDataReply(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)

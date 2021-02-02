@@ -34,11 +34,7 @@ public:
 	TSubclassOf<class UStartBlockNewProjectCardWidget> NewProjectCardWidgetClass;
 
 	void OpenRecentProjectMenu();
-	void StartAbsoluteBeginners();
 
 protected:
 	virtual void NativeConstruct() override;
-
-private:
-	bool bHaveStartedBeginner = false;
 };
