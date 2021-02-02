@@ -305,7 +305,7 @@ bool AEditModelPlayerController::EndTelemetrySession()
 {
 	if (InputAutomationComponent->IsRecording())
 	{
-		UploadInputTelemetry();
+		UploadInputTelemetry(false);
 		InputAutomationComponent->EndRecording(false);
 	}
 
@@ -1312,34 +1312,42 @@ void AEditModelPlayerController::OnControllerTimer()
 
 DECLARE_CYCLE_STAT(TEXT("Edit tick"), STAT_ModumateEditTick, STATGROUP_Modumate)
 
-bool AEditModelPlayerController::UploadInputTelemetry() const
+bool AEditModelPlayerController::UploadInputTelemetry(bool bAsynchronous) const
 {
 	if (!InputAutomationComponent->IsRecording())
 	{
 		return false;
 	}
 
+	UE_LOG(LogTemp, Log, TEXT("Telemetry: Initiating save & upload"));
+
 	FString path = FModumateUserSettings::GetLocalTempDir() / InputTelemetryDirectory;
-	FString  cacheFile =  path / TelemetrySessionKey.ToString() + FEditModelInputLog::LogExtension;
-	if (!InputAutomationComponent->SaveInputLog(cacheFile))
-	{
-		return false;
-	}
+	FString cacheFile = path / TelemetrySessionKey.ToString() + FEditModelInputLog::LogExtension;
 
 	UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
-	TSharedPtr<FModumateCloudConnection> Cloud = gameInstance->GetCloudConnection();
+	TSharedPtr<FModumateCloudConnection> cloud = gameInstance->GetCloudConnection();
 
-	if (Cloud.IsValid())
-	{
-		Cloud->UploadReplay(TelemetrySessionKey.ToString(), *cacheFile, [](bool bSuccess, const TSharedPtr<FJsonObject>& Response) {
-			UE_LOG(LogTemp, Log, TEXT("Uploaded Successfully"));
-		}, [](int32 code, const FString& error) {
-			UE_LOG(LogTemp, Error, TEXT("Error: %s"), *error);
-		});
+	TFuture<bool> future = Async(EAsyncExecution::ThreadPool,
+		[sessionKey = TelemetrySessionKey, cacheFile, cloud, saveTask = InputAutomationComponent->MakeSaveLogTask(cacheFile)]()
+		{			
+			if (saveTask() && cloud.IsValid())
+			{
+				cloud->UploadReplay(sessionKey.ToString(), *cacheFile,
+					[](bool bSuccess, const TSharedPtr<FJsonObject>& Response)
+					{
+						UE_LOG(LogTemp, Log, TEXT("Telemetry: Uploaded Successfully"));
+					},
+					[](int32 code, const FString& error)
+					{
+						UE_LOG(LogTemp, Error, TEXT("Telemetry Upload Error: %s"), *error);
+					}
+				);
+			}
+			return true;
+		}
+	);
 
-		return true;
-	}
-	return false;
+	return (bAsynchronous) ? true : future.Get();
 }
 
 void AEditModelPlayerController::Tick(float DeltaTime)
@@ -1356,7 +1364,7 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 			bWantTelemetryUpload = false;
 			if (TelemetrySessionKey.IsValid())
 			{
-				UploadInputTelemetry();
+				UploadInputTelemetry(false);
 			}
 		}
 

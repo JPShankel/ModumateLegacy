@@ -163,6 +163,8 @@ public:
 	void RecordWheelScroll(float ScrollDelta);
 	void RecordMouseMove(const FVector2D& CurPos, const FVector2D& Delta);
 
+	TFunction<bool()> MakeSaveLogTask(const FString& InputLogPath) const;
+
 	UFUNCTION()
 	bool EndRecording(bool bPromptForPath);
 
@@ -220,5 +222,8 @@ protected:
 	// Need public interface for player controller record
 public:
 	bool SaveInputLog(const FString& InputLogPath);
+
+private:
+	static bool DoSaveInputLog(const FString& InputLogPath, const FEditModelInputLog& LogData);
 
 };

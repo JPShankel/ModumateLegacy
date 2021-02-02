@@ -26,12 +26,12 @@ FModumateCloudConnection::FModumateCloudConnection()
 
 FString FModumateCloudConnection::GetCloudRootURL() const
 {
-	return CVarModumateCloudAddress.GetValueOnGameThread();
+	return CVarModumateCloudAddress.GetValueOnAnyThread();
 }
 
 FString FModumateCloudConnection::GetCloudAPIURL() const
 {
-	return CVarModumateCloudAddress.GetValueOnGameThread() + TEXT("/api/v2");
+	return CVarModumateCloudAddress.GetValueOnAnyThread() + TEXT("/api/v2");
 }
 
 void FModumateCloudConnection::SetLoginStatus(ELoginStatus InLoginStatus)

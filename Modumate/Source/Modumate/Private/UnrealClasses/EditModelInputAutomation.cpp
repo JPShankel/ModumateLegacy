@@ -654,12 +654,21 @@ FString UEditModelInputAutomation::GetDefaultInputLogPath(const FString &Extensi
 	return FPaths::Combine(FPaths::ProjectSavedDir(), folderName, fileName);
 }
 
-bool UEditModelInputAutomation::SaveInputLog(const FString& InputLogPath)
+TFunction<bool()> UEditModelInputAutomation::MakeSaveLogTask(const FString& InputLogPath) const
+{
+	return [InputLogData = CurInputLogData,InputLogPath]()
+	{
+		UE_LOG(LogTemp, Log, TEXT("Telemetry: Running Input Save Log Task"));
+		return UEditModelInputAutomation::DoSaveInputLog(InputLogPath, InputLogData);
+	};
+}
+
+bool UEditModelInputAutomation::DoSaveInputLog(const FString& InputLogPath, const FEditModelInputLog& LogData)
 {
 	if (InputLogPath.EndsWith(FEditModelInputLog::LogExtension))
 	{
 		// Create a file writer for this input log
-		FArchive *archive = IFileManager::Get().CreateFileWriter(*InputLogPath);
+		FArchive* archive = IFileManager::Get().CreateFileWriter(*InputLogPath);
 		if (archive == nullptr)
 		{
 			return false;
@@ -677,7 +686,8 @@ bool UEditModelInputAutomation::SaveInputLog(const FString& InputLogPath)
 		FStructSerializerPolicies policies;
 		policies.NullValues = EStructSerializerNullValuePolicies::Ignore;
 
-		FStructSerializer::Serialize(CurInputLogData, serializerBackend, policies);
+		// Input log save may be asynchronous
+		FStructSerializer::Serialize(LogData, serializerBackend, policies);
 
 		// Save the size of the uncompressed input log struct
 		uint32 uncompressedSize = buffer.Num();
@@ -703,6 +713,12 @@ bool UEditModelInputAutomation::SaveInputLog(const FString& InputLogPath)
 	}
 
 	return false;
+}
+
+
+bool UEditModelInputAutomation::SaveInputLog(const FString& InputLogPath)
+{
+	return DoSaveInputLog(InputLogPath, CurInputLogData);
 }
 
 bool UEditModelInputAutomation::LoadInputLog(const FString& InputLogPath)

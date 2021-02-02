@@ -92,7 +92,7 @@ private:
 
 	bool StartTelemetrySession(bool bRecordInput);
 	bool EndTelemetrySession();
-	bool UploadInputTelemetry() const;
+	bool UploadInputTelemetry(bool bAsynchronous = true) const;
 
 	bool ValidateVirtualHit(const FVector &MouseOrigin, const FVector &MouseDir, const FVector &HitPoint,
 		float CurObjectHitDist, float CurVirtualHitDist, float MaxScreenDist, float &OutRayDist) const;
