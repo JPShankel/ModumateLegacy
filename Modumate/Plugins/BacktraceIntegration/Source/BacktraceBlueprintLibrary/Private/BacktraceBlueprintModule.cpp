@@ -41,9 +41,11 @@ void FBacktraceBlueprintLibrary::StartupModule()
 		BACKTRACE_LOG(BacktraceLog, Warning, *FString::Printf(TEXT("FBacktraceBlueprintLibrary -> %d"), val));
 	};
 
-#if !WITH_EDITOR && PLATFORM_WINDOWS
+	//@third party BEGIN MODUMATE - this no longer works as of UE4.25, the engine .ini files baked into CrashReportClient's .pak file are the only reliable
+#if 0
 	UpdateIniFiles();
 #endif
+	//@third-party END MODUMATE
 }
 
 void FBacktraceBlueprintLibrary::ShutdownModule()
