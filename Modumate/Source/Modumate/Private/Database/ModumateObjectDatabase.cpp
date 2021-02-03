@@ -482,18 +482,6 @@ void FModumateDatabase::ReadPresetData()
 		}
 	}
 
-	const TArray<TPair<FString, EObjectType>> stubbies({
-		TPair <FString,EObjectType>(TEXT("Part_FFE"),EObjectType::OTFurniture)
-	});
-
-	for (auto& stubby : stubbies)
-	{
-		FBIMTagPath tempTag;
-		tempTag.FromString(stubby.Key);
-		objectPaths.Add(FObjectPathRef(tempTag, stubby.Value));
-		assetTargetPaths.Add(FAddAssetPath(tempTag, addMesh));
-	}
-
 	/*
 	For every preset, load its dependent assets (if any) and set its object type based on tag path
 	*/
@@ -563,13 +551,9 @@ void FModumateDatabase::ReadPresetData()
 		}
 
 		kvp.Value.ObjectType = *ot;
-
-		// "Stubby" assemblies used for portals are temporary, don't have starter codes, so add 'em all
-		switch (*ot)
+		if (*ot == EObjectType::OTFurniture)
 		{
-			case EObjectType::OTFurniture:
-				bimCacheRecord.Starters.Add(kvp.Value.GUID);
-			break;
+			bimCacheRecord.Starters.Add(kvp.Value.GUID);
 		}
 	}
 

@@ -477,12 +477,12 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 
 		// Normal and Tangent have default values set in class def
 		FString vectorStr;
-		if (RootProperties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::Normal, vectorStr))
+		if (RootProperties.TryGetProperty(EBIMValueScope::Part, BIMPropertyNames::Normal, vectorStr))
 		{
 			ensureAlways(stringToAxis(vectorStr, Normal, Normal));
 		}
 
-		if (RootProperties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::Tangent, vectorStr))
+		if (RootProperties.TryGetProperty(EBIMValueScope::Part, BIMPropertyNames::Tangent, vectorStr))
 		{
 			ensureAlways(stringToAxis(vectorStr, Tangent, Tangent));
 		}
