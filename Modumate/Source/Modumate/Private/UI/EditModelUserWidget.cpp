@@ -72,19 +72,24 @@ void UEditModelUserWidget::UpdateOnToolModeChanged()
 
 void UEditModelUserWidget::UpdateToolTray()
 {
-	// Select mode closes the tooltray
-	if (Controller->GetToolMode() == EToolMode::VE_SELECT)
-	{
-		SwitchLeftMenu(ELeftMenuState::None);
-	}
 	// Most toolmodes use tooltray menu, but cutplane uses its own cutplane menu
-	else if (Controller->GetToolMode() == EToolMode::VE_CUTPLANE)
+	if (Controller->GetToolMode() == EToolMode::VE_CUTPLANE)
 	{
 		SwitchLeftMenu(ELeftMenuState::CutPlaneMenu);
 	}
 	else
 	{
-		SwitchLeftMenu(ELeftMenuState::ToolMenu, UModumateTypeStatics::GetToolCategory(Controller->GetToolMode()));
+		// Determine which category is the current toolmode in
+		// Select, Move, etc do not use tool tray
+		EToolCategories newToolCategory = UModumateTypeStatics::GetToolCategory(Controller->GetToolMode());
+		if (newToolCategory != EToolCategories::Unknown)
+		{
+			SwitchLeftMenu(ELeftMenuState::ToolMenu, newToolCategory);
+		}
+		else
+		{
+			SwitchLeftMenu(ELeftMenuState::None);
+		}
 	}
 }
 

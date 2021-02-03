@@ -54,9 +54,9 @@ bool UBIMBlockNode::Initialize()
 	BIMBlockNodeDirty->ButtonAddNew->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtyAddNew);
 	BIMBlockNodeDirty->ButtonCancel->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtyCancel);
 
-	if (Button_Debug)
+	if (Button_Connector)
 	{
-		Button_Debug->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDebugReleased);
+		Button_Connector->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonConnectorReleased);
 	}
 
 	return true;
@@ -181,7 +181,7 @@ void UBIMBlockNode::OnButtonDirtyCancel()
 	}
 }
 
-void UBIMBlockNode::OnButtonDebugReleased()
+void UBIMBlockNode::OnButtonConnectorReleased()
 {
 #if WITH_EDITOR
 	Controller->EditModelUserWidget->ShowBIMDebugger(true);
@@ -234,14 +234,14 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	ButtonSwapExpanded->SetVisibility(IsRootNode ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 
 #if WITH_EDITOR
-	if (Button_Debug)
+	if (Button_Connector)
 	{
 		FString debugString = 
 			FString::Printf(TEXT("ID: ")) + Node->GetInstanceID().ToString() + LINE_TERMINATOR 
 			+ preset->GUID.ToString() + LINE_TERMINATOR
 			+ PresetID.ToString() + LINE_TERMINATOR;
 		
-		Button_Debug->SetToolTipText(FText::FromString(debugString));
+		Button_Connector->SetToolTipText(FText::FromString(debugString));
 	}
 #endif
 
@@ -411,6 +411,31 @@ void UBIMBlockNode::SetNodeAsHighlighted(bool NewHighlight)
 
 	UMaterialInstanceDynamic* dynMat = ComponentPresetListItem->IconImage->GetDynamicMaterial();
 	dynMat->SetScalarParameterValue(NodeAlphaParamName, bNodeHighlight ? 1.f : 0.f);
+}
+
+void UBIMBlockNode::ToggleConnectorVisibilityToChildren(bool HasChildren)
+{
+	if (!Button_Connector)
+	{
+		return;
+	}
+
+	bool bIsExpandedSlotNode = HasChildren && bNodeHasSlotPart && !NodeCollapse;
+	// Allow connector to always be on when in editor
+	bool bAlwaysVisible = false;
+#if WITH_EDITOR
+	bAlwaysVisible = true;
+#endif
+
+	if (bAlwaysVisible || (!bIsExpandedSlotNode && HasChildren))
+	{
+		Button_Connector->SetVisibility(ESlateVisibility::Visible);
+		Button_Connector->SetRenderTranslation(FVector2D(0.f, GetEstimatedNodeSize().Y / 2.f));
+	}
+	else
+	{
+		Button_Connector->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 FVector2D UBIMBlockNode::GetEstimatedNodeSize()

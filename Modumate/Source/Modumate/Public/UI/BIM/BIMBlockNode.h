@@ -133,7 +133,7 @@ public:
 	class UWidgetSwitcher* NodeSwitcher;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
-	class UButton* Button_Debug;
+	class UButton* Button_Connector;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlockUserWidget* TitleNodeCollapsed;
@@ -190,7 +190,7 @@ public:
 	void OnButtonDirtyCancel();
 
 	UFUNCTION()
-	void OnButtonDebugReleased();
+	void OnButtonConnectorReleased();
 
 	void UpdateNodeDirty(bool NewDirty);
 	void UpdateNodeCollapse(bool NewCollapse);
@@ -201,6 +201,7 @@ public:
 	void BeginDrag();
 	void SetNodeAsHighlighted(bool NewHighlight);
 	void ResetMouseButtonOnNode() { bMouseButtonDownOnNode = false; }
+	void ToggleConnectorVisibilityToChildren(bool HasChildren);
 
 	UFUNCTION(BlueprintPure)
 	FVector2D GetEstimatedNodeSize();

@@ -625,6 +625,8 @@ void UBIMDesigner::AutoArrangeNodes()
 					}
 				}
 
+				curNode->ToggleConnectorVisibilityToChildren(childrenIDs.Num() > 0);
+
 				if (childrenIDs.Num() > 0)
 				{
 					UBIMBlockNode* childNode = IdToNodeMap.FindRef(childrenIDs[0]);
