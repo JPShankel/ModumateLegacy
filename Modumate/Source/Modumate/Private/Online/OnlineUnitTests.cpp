@@ -82,7 +82,7 @@ bool FModumateOnlineTestLogin::RunTest(const FString& Parameters)
 		return false;
 	}
 
-	gameInstance->Login(validUsername, validPassword);
+	gameInstance->Login(validUsername, validPassword, FString());
 
 	ADD_LATENT_AUTOMATION_COMMAND(FWaitForModumateLoginCommand(4.0f));
 

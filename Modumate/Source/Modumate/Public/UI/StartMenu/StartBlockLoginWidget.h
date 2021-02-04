@@ -45,6 +45,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UTextBlock *TextBlock_LoginAttemptMsg;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateCheckBox* SaveEmail;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateCheckBox* SaveCredentials;
+
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -57,6 +63,12 @@ protected:
 
 	UFUNCTION()
 	void OnTextBlockCommittedLogin(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void OnSaveEmailStateChanged(bool bIsChecked);
+
+	UFUNCTION()
+	void OnSaveCredentialsStateChanged(bool bIsChecked);
 
 	UFUNCTION()
 	void Login();

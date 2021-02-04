@@ -39,6 +39,12 @@ struct MODUMATE_API FModumateUserSettings
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	int32 TelemetryUploadFrequencySeconds = 60;
 
+	UPROPERTY()
+	FString SavedUserName;
+
+	UPROPERTY()
+	FString SavedCredentials;
+
 	bool bLoaded = false;
 	bool bDirty = false;
 

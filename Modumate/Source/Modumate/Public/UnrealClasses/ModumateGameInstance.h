@@ -90,7 +90,7 @@ public:
 	bool IsloggedIn() const;
 
 	UFUNCTION(BlueprintCallable, Category = ModumateLogin)
-	void Login(const FString& UserName, const FString& Password);
+	void Login(const FString& UserName, const FString& Password, const FString& RefreshToken, bool bSaveUserName = false, bool bSaveRefreshToken = false);
 
 	UFUNCTION(Exec, Category = ExecFunctions)
 	void Modumate(const FString &Params);

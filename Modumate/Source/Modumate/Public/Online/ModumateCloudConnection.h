@@ -35,7 +35,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		bool UploadReplay(const FString& SessionID, const FString& Filename, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 		bool UploadAnalyticsEvents(const TArray<TSharedPtr<FJsonValue>>& EventsJSON, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 
-		bool Login(const FString& Username, const FString& Password, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
+		bool Login(const FString& Username, const FString& Password, const FString& InRefreshToken, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 		bool RequestAuthTokenRefresh(const FString& InRefreshToken, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 
 		void Tick();

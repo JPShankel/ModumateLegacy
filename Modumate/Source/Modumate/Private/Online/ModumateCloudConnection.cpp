@@ -136,12 +136,12 @@ bool FModumateCloudConnection::RequestAuthTokenRefresh(const FString& InRefreshT
 	return false;
 }
 
-bool FModumateCloudConnection::Login(const FString& Username, const FString& Password, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
+bool FModumateCloudConnection::Login(const FString& Username, const FString& Password, const FString& InRefreshToken, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
 {
 	TWeakPtr<FModumateCloudConnection> WeakThisCaptured(this->AsShared());
 	return RequestEndpoint(TEXT("/auth/login"), Post,
 		// Customize request
-		[WeakThisCaptured,Password,Username](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
+		[WeakThisCaptured,Password,Username,InRefreshToken](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
 		{
 			TSharedPtr<FModumateCloudConnection> SharedThis = WeakThisCaptured.Pin();
 			if (!SharedThis.IsValid())
@@ -150,8 +150,9 @@ bool FModumateCloudConnection::Login(const FString& Username, const FString& Pas
 			}
 
 			FModumateLoginParams loginParams;
-			loginParams.Password = Password;
 			loginParams.Username = Username;
+			loginParams.Password = Password;
+			loginParams.RefreshToken = InRefreshToken;
 			loginParams.AppVersion = FModumateModule::Get().GetProjectDisplayVersion();
 
 			FString jsonString;
@@ -161,7 +162,7 @@ bool FModumateCloudConnection::Login(const FString& Username, const FString& Pas
 				RefRequest->SetContentAsString(jsonString);
 			}
 		},
-			// Handle success payload
+		// Handle success payload
 		[WeakThisCaptured,Callback,ServerErrorCallback](bool bSuccess, const TSharedPtr<FJsonObject>& Payload)
 		{
 			TSharedPtr<FModumateCloudConnection> SharedThis = WeakThisCaptured.Pin();
@@ -185,7 +186,7 @@ bool FModumateCloudConnection::Login(const FString& Username, const FString& Pas
 			}
 			Callback(bSuccess, Payload);
 		},
-			// Handle error
+		// Handle error
 		[WeakThisCaptured,ServerErrorCallback](int32 ErrorCode, const FString& ErrorString)
 		{
 			TSharedPtr<FModumateCloudConnection> SharedThis = WeakThisCaptured.Pin();

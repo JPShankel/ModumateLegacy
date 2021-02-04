@@ -20,7 +20,6 @@ namespace Modumate
 		MODUMATE_COMMAND(kScreenPrint, "screen_print");
 		MODUMATE_COMMAND(kReanalyzeGraph, "reanalyze_graph");
 		MODUMATE_COMMAND(kCleanAllObjects, "clean_all_objects");
-		MODUMATE_COMMAND(kLogin, "login");
 		MODUMATE_COMMAND(kReplayDeltas, "replay_deltas");
 
 		// Edit environment commands
@@ -102,7 +101,6 @@ namespace Modumate
 		MODUMATE_PARAM(kNumber, "number");
 		MODUMATE_PARAM(kParent, "parent");
 		MODUMATE_PARAM(kParentIDs, "parent_ids");
-		MODUMATE_PARAM(kPassword, "password");
 		MODUMATE_PARAM(kPoint1, "point1");
 		MODUMATE_PARAM(kPoint2, "point2");
 		MODUMATE_PARAM(kPresetKey, "preset_key");
@@ -124,7 +122,6 @@ namespace Modumate
 		MODUMATE_PARAM(kToolMode, "tool_mode");
 		MODUMATE_PARAM(kTransversed, "transversed");
 		MODUMATE_PARAM(kType, "type");
-		MODUMATE_PARAM(kUserName, "user_name");
 		MODUMATE_PARAM(kValues, "values");
 		MODUMATE_PARAM(kWidth, "width");
 		MODUMATE_PARAM(kWorldCoordinates, "world_coords");

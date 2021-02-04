@@ -399,12 +399,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return false;
 	});
 
-	RegisterCommand(kLogin, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		Login(params.GetValue(Parameters::kUserName), params.GetValue(Parameters::kPassword));
-		return true;
-	});
-
 	RegisterCommand(kReplayDeltas, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		AEditModelPlayerController *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
@@ -601,12 +595,15 @@ void UModumateGameInstance::CheckCrashRecovery()
 			TEXT("Recovery"), Modumate::PlatformFunctions::YesNo) == Modumate::PlatformFunctions::Yes);
 }
 
-void UModumateGameInstance::Login(const FString& UserName, const FString& Password)
+void UModumateGameInstance::Login(const FString& UserName, const FString& Password, const FString& RefreshToken, bool bSaveUserName, bool bSaveRefreshToken)
 {
 	TWeakPtr<FModumateAccountManager> WeakAMS(AccountManager);
+	TWeakObjectPtr<UModumateGameInstance> weakThis(this);
+	bool bUsingRefreshToken = (Password.IsEmpty() && !RefreshToken.IsEmpty());
+
 	AccountManager->SetIsFirstLogin(false);
-	CloudConnection->Login(UserName, Password,
-		[WeakAMS](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+	CloudConnection->Login(UserName, Password, RefreshToken,
+		[WeakAMS, weakThis, bSaveUserName, bSaveRefreshToken](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
 		{
 			if (bSuccessful)
 			{
@@ -623,6 +620,24 @@ void UModumateGameInstance::Login(const FString& UserName, const FString& Passwo
 					SharedAMS->SetUserInfo(verifyParams.User);
 					SharedAMS->RequestStatus();
 				}
+
+				if (weakThis.IsValid())
+				{
+					weakThis->UserSettings.SavedUserName.Empty();
+					weakThis->UserSettings.SavedCredentials.Empty();
+
+					if (bSaveUserName)
+					{
+						weakThis->UserSettings.SavedUserName = verifyParams.User.Email;
+
+						if (bSaveRefreshToken)
+						{
+							weakThis->UserSettings.SavedCredentials = verifyParams.RefreshToken;
+						}
+					}
+
+					weakThis->UserSettings.SaveLocally();
+				}
 			}
 			else
 			{
@@ -631,11 +646,20 @@ void UModumateGameInstance::Login(const FString& UserName, const FString& Passwo
 					TEXT("Unknown Error"), Modumate::PlatformFunctions::Okay);
 			}
 		},
-		[](int32 Code, const FString& Error)
+		[bUsingRefreshToken](int32 Code, const FString& Error)
 		{
-			Modumate::PlatformFunctions::ShowMessageBox(
-				TEXT("Incorrect user name or password"),
-				TEXT("Login Failed"), Modumate::PlatformFunctions::Okay);
+			if (bUsingRefreshToken)
+			{
+				Modumate::PlatformFunctions::ShowMessageBox(
+					TEXT("Invalid saved credentials - try re-entering user name and password."),
+					TEXT("Login Failed"), Modumate::PlatformFunctions::Okay);
+			}
+			else
+			{
+				Modumate::PlatformFunctions::ShowMessageBox(
+					TEXT("Incorrect user name or password."),
+					TEXT("Login Failed"), Modumate::PlatformFunctions::Okay);
+			}
 		}
 	);
 }
