@@ -170,7 +170,7 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 		}
 
 		// If the cached host face geometry has changed after it was created, then the surface graph may need to be updated or deleted to match the new host face
-		if (ensureAlways(numIDs > 0))
+		if (numIDs > 0)
 		{
 			bool bFoundAllVertices = true;
 			TMap<int32, FVector2D> vertexMoves;
@@ -336,6 +336,10 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 			}
 
 			doc->SetNextID(nextID, ID);
+		}
+		else
+		{
+			doc->GetDeleteObjectsDeltas(*OutSideEffectDeltas, { this });
 		}
 	}
 

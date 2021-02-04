@@ -1626,6 +1626,30 @@ bool UModumateGeometryStatics::GetEdgeIntersections(const TArray<FVector> &Posit
 	
 }
 
+void UModumateGeometryStatics::GetUniquePoints2D(const TArray<FVector2D>& InPoints, TArray<FVector2D>& OutPoints, float Tolerance)
+{
+	OutPoints.Reset();
+
+	for (auto& inPoint : InPoints)
+	{
+		bool bUniquePoint = true;
+
+		for (auto& outPoint : OutPoints)
+		{
+			if (outPoint.Equals(inPoint, Tolerance))
+			{
+				bUniquePoint = false;
+				break;
+			}
+		}
+
+		if (bUniquePoint)
+		{
+			OutPoints.Add(inPoint);
+		}
+	}
+}
+
 void UModumateGeometryStatics::GetUniquePoints(const TArray<FVector>& InPoints, TArray<FVector>& OutPoints, float Tolerance)
 {
 	OutPoints.Reset();

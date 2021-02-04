@@ -173,6 +173,7 @@ public:
 
 	static bool GetEdgeIntersections(const TArray<FVector> &Positions, const FVector &IntersectionOrigin, const FVector &IntersectionDir, TArray<Modumate::FEdgeIntersection> &OutEdgeIntersections, float Epsilon = DEFAULT_GRAPH3D_EPSILON);
 
+	static void GetUniquePoints2D(const TArray<FVector2D>& InPoints, TArray<FVector2D>& OutPoints, float Tolerance = THRESH_POINTS_ARE_NEAR);
 	static void GetUniquePoints(const TArray<FVector>& InPoints, TArray<FVector>& OutPoints, float Tolerance = THRESH_POINTS_ARE_NEAR);
 	static bool AreConsecutivePoints2DRepeated(const TArray<FVector2D> &Points, float Tolerance = KINDA_SMALL_NUMBER);
 	static bool AreConsecutivePointsRepeated(const TArray<FVector> &Points, float Tolerance = KINDA_SMALL_NUMBER);

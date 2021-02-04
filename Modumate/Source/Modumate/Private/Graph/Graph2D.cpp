@@ -124,7 +124,10 @@ namespace Modumate
 		for (auto& vertexkvp : Vertices)
 		{
 			auto& vertex = vertexkvp.Value;
-			if (Position.Equals(vertex.Position, Epsilon))
+			// TODO: the default graph epsilon is currently 0.5, which is too large for this situation
+			// this can be helped by doing some error measuring to find a better epsilon or converting
+			// the graphs to doubles
+			if (Position.Equals(vertex.Position, THRESH_POINTS_ARE_NEAR))
 			{
 				return &vertex;
 			}

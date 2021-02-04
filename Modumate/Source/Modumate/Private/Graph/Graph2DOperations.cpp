@@ -893,7 +893,9 @@ namespace Modumate
 		for (auto& kvp : InitialPolygons)
 		{
 			TArray<FGraph2DDelta> addEdgeDeltas;
-			const TArray<FVector2D>& polygonVertices = kvp.Value;
+			TArray<FVector2D> polygonVertices;
+			UModumateGeometryStatics::GetUniquePoints2D(kvp.Value, polygonVertices);
+
 			int32 numPolygonVerts = polygonVertices.Num();
 			for (int32 polyPointIdxA = 0; polyPointIdxA < numPolygonVerts; ++polyPointIdxA)
 			{
@@ -912,7 +914,7 @@ namespace Modumate
 				}
 				else
 				{
-					if (!AddEdgeDirect(addEdgesDelta, NextID, polyVertexA->ID, polyVertexB->ID))
+					if (!AddEdgeDirect(addEdgesDelta, NextID, polyVertexIDA, polyVertexIDB))
 					{
 						ApplyInverseDeltas(appliedDeltas);
 						return false;
