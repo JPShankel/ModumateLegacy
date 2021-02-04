@@ -847,6 +847,11 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 
 bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* World)
 {
+	if (Deltas.Num() == 0)
+	{
+		return true;
+	}
+
 	StartTrackingDeltaObjects();
 
 	bIsDirty = true;
@@ -1586,7 +1591,7 @@ bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 		TArray<int32> OutEdgeIDs;
 		if (numPoints == 2)
 		{
-			bValidDelta = TempVolumeGraph.GetDeltaForEdgeAdditionWithSplit(points[0], points[1], deltas, NextID, OutEdgeIDs, true);
+			bValidDelta = TempVolumeGraph.GetDeltaForEdgeAdditionWithSplit(points[0], points[1], deltas, NextID, OutEdgeIDs, true, bSplitAndUpdateFaces);
 		}
 		else
 		{
@@ -1662,7 +1667,7 @@ bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 		}
 	}
 
-	return (OutDeltaPtrs.Num() > 0);
+	return bValidDelta;
 }
 
 bool UModumateDocument::MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height)

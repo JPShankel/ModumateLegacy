@@ -145,7 +145,7 @@ namespace Modumate
 	// object addition
 	public:
 		bool GetDeltaForVertexAddition(const FVector &VertexPos, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID);
-		bool GetDeltaForEdgeAdditionWithSplit(const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs, bool bCheckFaces = false);
+		bool GetDeltaForEdgeAdditionWithSplit(const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs, bool bCheckFaces = false, bool bSplitAndUpdateEdges = true);
 		bool GetDeltaForFaceAddition(const TArray<FVector>& VertexPositions, TArray<FGraph3DDelta>& OutDeltas, int32& NextID, int32& ExistingID, const TSet<int32>& InGroupIDs = TSet<int32>(), bool bSplitAndUpdateFaces = true);
 
 	private:

@@ -243,6 +243,13 @@ bool ULineTool::GetEdgeDeltas(const FVector& StartPosition, const FVector &EndPo
 	}
 
 	TArray<int32> addedFaceIDs, addedEdgeIDs, addedVertexIDs;
-	return doc->MakeMetaObject(GetWorld(), { StartPosition, EndPosition }, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
+	bool bSuccess = doc->MakeMetaObject(GetWorld(), { StartPosition, EndPosition }, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
 		addedVertexIDs, addedEdgeIDs, addedFaceIDs, CurDeltas, !bIsPreview);
+
+	if (!bSuccess)
+	{
+		CurDeltas.Reset();
+	}
+
+	return bSuccess;
 }

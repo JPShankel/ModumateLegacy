@@ -259,7 +259,7 @@ bool URectangleTool::GetMetaObjectCreationDeltas(const FVector& Location, bool b
 
 		if (!(PlaneBaseEnd - PlaneBaseStart).IsNearlyZero())
 		{
-			doc->MakeMetaObject(GetWorld(), { PlaneBaseStart, PlaneBaseEnd }, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
+			bSuccess = doc->MakeMetaObject(GetWorld(), { PlaneBaseStart, PlaneBaseEnd }, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
 				CurAddedVertexIDs, CurAddedEdgeIDs, CurAddedFaceIDs, OutDeltaPtrs, bSplitAndUpdateFaces);
 		}
 	}
@@ -268,11 +268,16 @@ bool URectangleTool::GetMetaObjectCreationDeltas(const FVector& Location, bool b
 		// set end of the segment to the hit location
 		pendingSegment->Point2 = OutConstrainedLocation;
 		UpdatePendingPlane();
-		doc->MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
+		bSuccess = doc->MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
 			CurAddedVertexIDs, CurAddedEdgeIDs, CurAddedFaceIDs, OutDeltaPtrs, bSplitAndUpdateFaces);
 	}
 
-	return true;
+	if (!bSuccess)
+	{
+		OutDeltaPtrs.Reset();
+	}
+
+	return bSuccess;
 }
 
 bool URectangleTool::MakeObject(const FVector& Location)
@@ -285,7 +290,15 @@ bool URectangleTool::MakeObject(const FVector& Location)
 
 	doc->ClearPreviewDeltas(GetWorld());
 
+	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
+	auto pendingSegment = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
+	if (!pendingSegment)
+	{
+		return false;
+	}
+
 	FVector constrainedLocation, newAffordanceNormal, newAffordanceTangent;
+
 	if (!GetMetaObjectCreationDeltas(Location, true, constrainedLocation, CurDeltas))
 	{
 		return false;
@@ -296,8 +309,6 @@ bool URectangleTool::MakeObject(const FVector& Location)
 		return false;
 	}
 
-	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
-	auto pendingSegment = dimensionActor ? dimensionActor->GetLineActor() : nullptr;
 	if ((pendingSegment->Point2 - pendingSegment->Point1).IsNearlyZero())
 	{
 		return true;

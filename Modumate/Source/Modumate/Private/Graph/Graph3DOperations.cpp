@@ -572,7 +572,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs, bool bCheckFaces)
+	bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(const FVector& EdgeStartPos, const FVector& EdgeEndPos, TArray<FGraph3DDelta>& OutDeltas, int32& NextID, TArray<int32>& OutEdgeIDs, bool bCheckFaces, bool bSplitAndUpdateEdges)
 	{
 		OutEdgeIDs.Reset();
 
@@ -586,7 +586,7 @@ namespace Modumate
 
 		for (int32 i = 0; i < 2; ++i)
 		{
-			const FVector &vertexPosition = vertexPositions[i];
+			const FVector& vertexPosition = vertexPositions[i];
 
 			FGraph3DDelta addVertexDelta;
 			int32 vertexID = MOD_ID_NONE;
@@ -597,7 +597,7 @@ namespace Modumate
 					return false;
 				}
 
-				for (auto &kvp : addVertexDelta.VertexAdditions)
+				for (auto& kvp : addVertexDelta.VertexAdditions)
 				{
 					vertexID = kvp.Key;
 					break;
@@ -616,18 +616,46 @@ namespace Modumate
 		}
 
 		FGraphVertexPair vertexPair(vertexIDs[0], vertexIDs[1]);
-		TArray<FGraph3DDelta> splitEdgeDeltas;
-		if (GetDeltaForEdgeAdditionWithSplit(vertexPair, splitEdgeDeltas, NextID, OutEdgeIDs))
+		if (!bSplitAndUpdateEdges)
 		{
-			OutDeltas.Append(splitEdgeDeltas);
-		}
-
-		if (bCheckFaces)
-		{
-			TArray<FGraph3DDelta> updateFaceDeltas;
-			if (GetDeltasForUpdateFaces(updateFaceDeltas, NextID, OutEdgeIDs, {}))
+			FGraph3DDelta edgeDelta;
+			int32 existingID;
+			TArray<int32> parentIDs;
+			if (!GetDeltaForEdgeAddition(vertexPair, edgeDelta, NextID, existingID, parentIDs))
 			{
-				OutDeltas.Append(updateFaceDeltas);
+				if (existingID != MOD_ID_NONE)
+				{
+					OutDeltas.Reset();
+					return true;
+				}
+				return false;
+			}
+			OutDeltas.Add(edgeDelta);
+		}
+		else
+		{
+			TArray<FGraph3DDelta> splitEdgeDeltas;
+			if (GetDeltaForEdgeAdditionWithSplit(vertexPair, splitEdgeDeltas, NextID, OutEdgeIDs))
+			{
+				OutDeltas.Append(splitEdgeDeltas);
+			}
+			else
+			{
+				OutDeltas.Reset();
+				return true;
+			}
+
+			if (bCheckFaces)
+			{
+				TArray<FGraph3DDelta> updateFaceDeltas;
+				if (GetDeltasForUpdateFaces(updateFaceDeltas, NextID, OutEdgeIDs, {}))
+				{
+					OutDeltas.Append(updateFaceDeltas);
+				}
+				else
+				{
+					return false;
+				}
 			}
 		}
 
