@@ -1983,6 +1983,8 @@ bool UModumateGeometryStatics::IsLineSegmentBoundedByPoints2D(const FVector2D &S
 			{
 				// If the edge normal of the bounds is pointing away from the direction of the edge to test,
 				// then the edge is outside the polygon.
+
+				edgeDir *= bOnEdgeStart ? 1 : -1;
 				float edgeBoundsDot = edgeDir | EdgeNormals[idx];
 				if (edgeBoundsDot < 0)
 				{

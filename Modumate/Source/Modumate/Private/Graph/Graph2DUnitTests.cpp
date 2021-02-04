@@ -1196,6 +1196,14 @@ namespace Modumate
 			!graph->AddEdge(deltas, NextID, FVector2D(100.0f + (4.0f * graph->Epsilon), 50.0f), FVector2D(90.0f, 50.0f)));
 		deltas.Reset();
 
+		TestTrue(TEXT("Add Edge cutting a corner, exactly on outer bounds"),
+			graph->AddEdge(deltas, NextID, FVector2D(0.0f, 10.0f), FVector2D(10.0f, 0.0f)));
+		TestDeltasAndResetGraph(this, deltas, graph, 5);
+
+		TestTrue(TEXT("Add Edge cutting a corner in the other direction, exactly on outer bounds"),
+			graph->AddEdge(deltas, NextID, FVector2D(10.0f, 0.0f), FVector2D(0.0f, 10.0f)));
+		TestDeltasAndResetGraph(this, deltas, graph, 5);
+
 		return true;
 	}
 
