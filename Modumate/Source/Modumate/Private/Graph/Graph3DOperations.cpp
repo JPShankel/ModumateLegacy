@@ -891,11 +891,14 @@ namespace Modumate
 				{
 					OutDeltas.Add(splitEdgeDelta);
 
-					AddedEdgeIDs.Remove(edgeID);
+					if (AddedEdgeIDs.Contains(edgeID))
+					{
+						AddedEdgeIDs.Remove(edgeID);
 
-					TArray<int32> edgesAddedFromSplit;
-					splitEdgeDelta.EdgeAdditions.GenerateKeyArray(edgesAddedFromSplit);
-					AddedEdgeIDs.Append(edgesAddedFromSplit);
+						TArray<int32> edgesAddedFromSplit;
+						splitEdgeDelta.EdgeAdditions.GenerateKeyArray(edgesAddedFromSplit);
+						AddedEdgeIDs.Append(edgesAddedFromSplit);
+					}
 				}
 
 				if (!ApplyDelta(splitEdgeDelta))
