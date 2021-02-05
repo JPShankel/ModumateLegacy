@@ -607,6 +607,11 @@ void AEditModelPlayerState::OnNewModel()
 	gameInstance->DimensionManager->Reset();
 
 	PostOnNewModel.Broadcast();
+
+	if (EMPlayerController && EMPlayerController->EditModelUserWidget)
+	{
+		EMPlayerController->EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
+	}
 }
 
 void AEditModelPlayerState::SetShowHoverEffects(bool showHoverEffects)

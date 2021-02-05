@@ -87,7 +87,7 @@ void UToolbarWidget::OnButtonRelease3DViews()
 	{
 		if (EditModelUserWidget->CurrentLeftMenuState == ELeftMenuState::ViewMenu)
 		{
-			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
+			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::SelectMenu);
 		}
 		else
 		{
@@ -103,7 +103,7 @@ void UToolbarWidget::OnButtonReleaseCutPlanes()
 	{
 		if (EditModelUserWidget->CurrentLeftMenuState == ELeftMenuState::CutPlaneMenu)
 		{
-			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
+			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::SelectMenu);
 		}
 		else
 		{
@@ -119,7 +119,7 @@ void UToolbarWidget::OnButtonReleaseTopToolbarHelp()
 	{
 		if (EditModelUserWidget->CurrentLeftMenuState == ELeftMenuState::TutorialMenu)
 		{
-			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
+			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::SelectMenu);
 		}
 		else
 		{

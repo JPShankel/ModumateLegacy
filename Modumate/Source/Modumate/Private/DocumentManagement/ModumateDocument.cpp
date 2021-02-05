@@ -258,17 +258,25 @@ void UModumateDocument::UnhideAllObjects(UWorld *world)
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UnhideAllObjects"));
 
 	TSet<int32> ids = HiddenObjectsID;
+	TSet<int32> hiddenCutPlaneIds;
 
 	for (auto id : ids)
 	{
 		if (AModumateObjectInstance *obj = GetObjectById(id))
 		{
-			obj->RequestHidden(UModumateDocument::DocumentHideRequestTag, false);
-			obj->RequestCollisionDisabled(UModumateDocument::DocumentHideRequestTag, false);
+			if (obj->GetObjectType() != EObjectType::OTCutPlane)
+			{
+				obj->RequestHidden(UModumateDocument::DocumentHideRequestTag, false);
+				obj->RequestCollisionDisabled(UModumateDocument::DocumentHideRequestTag, false);
+			}
+			else
+			{
+				hiddenCutPlaneIds.Add(id);
+			}
 		}
 	}
 
-	HiddenObjectsID.Empty();
+	HiddenObjectsID = hiddenCutPlaneIds;
 	// TODO: Pending removal
 	for (AModumateObjectInstance *obj : ObjectInstanceArray)
 	{

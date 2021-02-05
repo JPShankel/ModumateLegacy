@@ -77,6 +77,10 @@ void UEditModelUserWidget::UpdateToolTray()
 	{
 		SwitchLeftMenu(ELeftMenuState::CutPlaneMenu);
 	}
+	else if (Controller->GetToolMode() == EToolMode::VE_SELECT)
+	{
+		SwitchLeftMenu(ELeftMenuState::SelectMenu);
+	}
 	else
 	{
 		// Determine which category is the current toolmode in
@@ -110,6 +114,15 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 	ToggleViewMenu(newViewMenuVisibility);
 	ToggleCutPlaneMenu(newCutPlaneMenuVisibility);
 	ToggleTutorialMenu(newTutorialMenuVisibility);
+
+	if (NewState == ELeftMenuState::SelectMenu)
+	{
+		UpdateSelectTrayVisibility();
+	}
+	else
+	{
+		SelectionTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
+	}
 
 	if (newToolTrayVisibility)
 	{
@@ -157,13 +170,10 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 
 void UEditModelUserWidget::EMOnSelectionObjectChanged()
 {
-	if (Controller->EMPlayerState->SelectedObjects.Num() == 0)
+	if (CurrentLeftMenuState == ELeftMenuState::SelectMenu ||
+		CurrentLeftMenuState == ELeftMenuState::None)
 	{
-		SelectionTrayWidget->CloseToolTray();
-	}
-	else
-	{
-		SelectionTrayWidget->OpenToolTrayForSelection();
+		SwitchLeftMenu(ELeftMenuState::SelectMenu);
 	}
 }
 
@@ -269,6 +279,18 @@ bool UEditModelUserWidget::EMUserWidgetHandleEscapeKey()
 		return true;
 	}
 	return false;
+}
+
+void UEditModelUserWidget::UpdateSelectTrayVisibility()
+{
+	if (Controller->EMPlayerState->SelectedObjects.Num() == 0)
+	{
+		SelectionTrayWidget->CloseToolTray();
+	}
+	else
+	{
+		SelectionTrayWidget->OpenToolTrayForSelection();
+	}
 }
 
 void UEditModelUserWidget::ToggleBIMPresetSwapTray(bool NewVisibility)

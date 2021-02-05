@@ -19,6 +19,7 @@ enum class ELeftMenuState : uint8
 	CutPlaneMenu,
 	ToolMenu,
 	TutorialMenu,
+	SelectMenu,
 	None
 };
 
@@ -126,4 +127,5 @@ public:
 	void ToggleViewMenu(bool NewVisibility);
 	bool IsBIMDesingerActive() const;
 	bool EMUserWidgetHandleEscapeKey();
+	void UpdateSelectTrayVisibility();
 };
