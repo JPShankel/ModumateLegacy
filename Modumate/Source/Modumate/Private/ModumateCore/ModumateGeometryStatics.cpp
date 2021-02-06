@@ -2012,9 +2012,12 @@ bool UModumateGeometryStatics::IsLineSegmentBoundedByPoints2D(const FVector2D &S
 	return false;
 }
 
-bool UModumateGeometryStatics::ArePlanesCoplanar(const FPlane& PlaneA, const FPlane& PlaneB, float Epsilon)
+bool UModumateGeometryStatics::ArePlanesCoplanar(const FPlane& PlaneA, const FPlane& PlaneB, float ParallelDotThresh, float PlanarDistEpsilon)
 {
-	return PlaneA.Equals(PlaneB, Epsilon) || PlaneA.Equals(PlaneB.Flip(), Epsilon);
+	float normalsDot = FVector(PlaneA) | FVector(PlaneB);
+	return
+		((normalsDot >= ParallelDotThresh)  && FMath::IsNearlyEqual(PlaneA.W, PlaneB.W, PlanarDistEpsilon)) ||
+		((normalsDot <= -ParallelDotThresh) && FMath::IsNearlyEqual(PlaneA.W, -PlaneB.W, PlanarDistEpsilon));
 }
 
 void UModumateGeometryStatics::GetPlaneIntersections(TArray<FVector>& OutIntersections, const TArray<FVector>& InPoints,

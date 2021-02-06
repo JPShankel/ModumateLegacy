@@ -191,7 +191,7 @@ public:
 	static bool IsLineSegmentBoundedByPoints2D(const FVector2D &StartPosition, const FVector2D &EndPosition, const TArray<FVector2D> &Positions, const TArray<FVector2D> &BoundingNormals, float Epsilon = THRESH_POINTS_ARE_NEAR);
 
 	// Compare that the given planes lie in the same plane, even if they have opposite normals.
-	static bool ArePlanesCoplanar(const FPlane& PlaneA, const FPlane& PlaneB, float Epsilon = THRESH_POINTS_ARE_NEAR);
+	static bool ArePlanesCoplanar(const FPlane& PlaneA, const FPlane& PlaneB, float ParallelDotThresh = THRESH_NORMALS_ARE_PARALLEL, float PlanarDistEpsilon = PLANAR_DOT_EPSILON);
 
 	static void GetPlaneIntersections(TArray<FVector>& OutIntersections, const TArray<FVector>& InPoints, const FPlane& InPlane, const FVector InLocation = FVector::ZeroVector);
 
