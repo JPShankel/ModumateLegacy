@@ -642,7 +642,6 @@ namespace Modumate
 			else
 			{
 				OutDeltas.Reset();
-				return true;
 			}
 
 			if (bCheckFaces)
