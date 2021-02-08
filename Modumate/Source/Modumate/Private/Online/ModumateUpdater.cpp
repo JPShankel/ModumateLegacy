@@ -150,7 +150,7 @@ void FModumateUpdater::InstallersObjectCallback(bool bWasSuccessful, const TShar
 			installerUrl = baseInstallerUrl;
 		}
 
-		if (!ensure(!installerUrl.IsEmpty()))
+		if (installerUrl.IsEmpty())
 		{
 			// Client is out-of-date but no suitable installer for current version.
 			return;

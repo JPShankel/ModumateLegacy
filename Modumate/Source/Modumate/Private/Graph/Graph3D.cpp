@@ -1977,7 +1977,32 @@ namespace Modumate
 		return false;
 	}
 
-	bool FGraph3D::Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const TSharedPtr<FGraph2D> Graph, TMap<int32, int32> &OutFace3DToPoly2D) const
+	bool FGraph3D::FindObjectsForPlane(const FVector AxisX, const FVector AxisY, const FVector Origin, const FBox2D& BoundingBox, TSet<int32>& outObjectIDs) const
+	{
+		outObjectIDs.Reset();
+		const FPlane cutPlane(Origin, Origin + AxisX, Origin + AxisY);
+		for (const auto& edgeItem: Edges)
+		{
+			const auto& edge = edgeItem.Value;
+			FVector v1(Vertices[edge.StartVertexID].Position);
+			FVector v2(Vertices[edge.EndVertexID].Position);
+			FVector intersect;
+
+			if (FMath::SegmentPlaneIntersection(v1, v2, cutPlane, intersect)
+				&& BoundingBox.IsInside(UModumateGeometryStatics::ProjectPoint2D(intersect, AxisX, AxisY, Origin)) )
+			{
+				outObjectIDs.Add(edge.ID);
+				for (const auto& face: edge.ConnectedFaces)
+				{
+					outObjectIDs.Add(FMath::Abs(face.FaceID));
+				}
+			}
+		}
+
+		return true;
+	}
+
+	bool FGraph3D::Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const TSharedPtr<FGraph2D> Graph, TMap<int32, int32>& OutFace3DToPoly2D) const
 	{
 		const TMap<int32, FGraph2DPolygon> &graphPolys = Graph->GetPolygons();
 

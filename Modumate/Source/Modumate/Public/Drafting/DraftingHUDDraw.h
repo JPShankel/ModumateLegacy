@@ -8,7 +8,7 @@
 
 namespace Modumate
 {
-	class FModumateHUDDraw : public IModumateDraftingDraw
+	class FDraftingHUDDraw : public IModumateDraftingDraw
 	{
 	public:
 		UHUDDrawWidget* HUDDrawWidget;
@@ -92,5 +92,7 @@ namespace Modumate
 			const ModumateUnitParams::FRadius &radius,
 			const FMColor &color,
 			FModumateLayerType layerType = FModumateLayerType::kDefault) override;
+
+		bool bUseDwgMode = true;
 	};
 }

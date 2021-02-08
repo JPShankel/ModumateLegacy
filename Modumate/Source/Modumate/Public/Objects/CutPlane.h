@@ -3,7 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "Objects/PlaneBase.h"
-#include "Drafting/ModumateHUDDraw.h"
+#include "Drafting/DraftingHUDDraw.h"
 #include "DocumentManagement/ModumateSceneCaptureObjectInterface.h"
 
 #include "CutPlane.generated.h"
@@ -68,7 +68,7 @@ public:
 
 	static int32 GetCutPlaneVerticalDegree(const FQuat& Rotation);
 
-	Modumate::FModumateHUDDraw DrawingInterface;
+	Modumate::FDraftingHUDDraw DrawingInterface;
 
 	// These two objects are similar in purpose and use, but there are differences between what the HUD and the PDF 
 	// can and should draw. These objects should remain separate while there isn't parity between the two interfaces.
@@ -96,4 +96,6 @@ protected:
 	TQueue<FPendingObjectRender> PendingObjectRenders;
 	FPendingObjectRender CurrentObjectRender;
 	TMap<int32, FPendingObjectRender> InprocessRenders;
+
+	bool bHUDDwgDrafting;
 };

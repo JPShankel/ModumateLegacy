@@ -118,7 +118,8 @@ namespace Modumate
 				orientation,
 				scale);
 
-			if (error != EDrawError::ErrorNone)
+			// Keep going for unimplemented. MOD-290
+			if (error != EDrawError::ErrorNone && error != EDrawError::ErrorUnimplemented)
 			{
 				return error;
 			}

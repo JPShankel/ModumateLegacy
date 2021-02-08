@@ -1,9 +1,43 @@
-#include "Drafting/ModumateHUDDraw.h"
+#include "Drafting/DraftingHUDDraw.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 
 namespace Modumate
 {
-	EDrawError FModumateHUDDraw::DrawLine(
+	static const FColor dwgColors[int32(FModumateLayerType::kFinalLayerType) + 1] =
+	{
+		FColor(0, 0, 0),		// kDefault
+		FColor(165, 82, 103),	// kSeparatorCutStructuralLayer
+		FColor(255, 0, 107),	// kSeparatorCutOuterSurface
+		FColor(165, 82, 124),	// kSeparatorCutMinorLayer
+		FColor(255, 0, 63),		// kSeparatorBeyondSurfaceEdges
+		FColor(165, 0, 41),		// kSeparatorBeyondModuleEdges
+		FColor(0, 191, 255),	// kOpeningSystemCutLine
+		FColor(0, 124, 165),	// kOpeningSystemBeyond
+		FColor(82, 145, 165),	// kOpeningSystemBehind
+		FColor(153, 153, 153),	// kOpeningSystemOperatorLine
+		FColor(255, 191, 0),	// kSeparatorCutTrim
+		FColor(255, 127, 223),	// kCabinetCutCarcass
+		FColor(162, 85, 145),	// kCabinetCutAttachment
+		FColor(165, 82,	0),		// kCabinetBeyond
+		FColor(165, 124, 82),	// kCabinetBehind
+		FColor(165, 103, 82),	// kCabinetBeyondBlockedByCountertop
+		FColor(255, 223, 127),	// kCountertopCut
+		FColor(165, 145, 82),	// kCountertopBeyond
+		FColor(223, 127, 255),	// kFfeOutline
+		FColor(191, 0, 255),	// kFfeInteriorEdges
+		FColor(255, 127, 223),	// kBeamColumnCut
+		FColor(162, 85, 145),	// kBeamColumnBeyond
+		FColor(0, 191, 255),	// kMullionCut
+		FColor(0, 124, 165),	// kMullionBeyond
+		FColor(0, 191, 255),	// kSystemPanelCut
+		FColor(0, 124, 165),	// kSystemPanelBeyond
+		FColor(255, 191, 127),	// kFinishCut
+		FColor(165, 124, 82),	// kFinishBeyond
+		FColor(255, 0, 255),	// kDebug1
+		FColor(0, 0, 255),		// kDebug2
+	};
+
+	EDrawError FDraftingHUDDraw::DrawLine(
 		const ModumateUnitParams::FXCoord &x1,
 		const ModumateUnitParams::FYCoord &y1,
 		const ModumateUnitParams::FXCoord &x2,
@@ -18,7 +52,15 @@ namespace Modumate
 		line.Thickness = thickness.AsWorldCentimeters();
 
 		// currently everything in drafting is opaque
-		line.Color = FLinearColor(color.R, color.G, color.B, 1.0f);
+		if (bUseDwgMode)
+		{
+			int32 intLayerType = int32(FMath::Clamp(layerType, FModumateLayerType::kDefault, FModumateLayerType::kFinalLayerType));
+			line.Color = dwgColors[intLayerType];
+		}
+		else
+		{
+			line.Color = FLinearColor(color.R, color.G, color.B, 1.0f);
+		}
 
 		// TODO: dash pattern is unimplemented here (would use linePattern and phase)
 
@@ -30,7 +72,7 @@ namespace Modumate
 		return EDrawError::ErrorNone;
 	}
 
-	EDrawError FModumateHUDDraw::AddText(
+	EDrawError FDraftingHUDDraw::AddText(
 		const TCHAR *text,
 		const ModumateUnitParams::FFontSize &fontSize,
 		const ModumateUnitParams::FXCoord &xpos,
@@ -45,7 +87,7 @@ namespace Modumate
 		return EDrawError::ErrorUnimplemented;
 	}
 
-	EDrawError FModumateHUDDraw::GetTextLength(
+	EDrawError FDraftingHUDDraw::GetTextLength(
 		const TCHAR *text,
 		const ModumateUnitParams::FFontSize &fontSize,
 		FModumateUnitValue &textLength,
@@ -54,7 +96,7 @@ namespace Modumate
 		return EDrawError::ErrorUnimplemented;
 	}
 
-	EDrawError FModumateHUDDraw::DrawArc(
+	EDrawError FDraftingHUDDraw::DrawArc(
 		const ModumateUnitParams::FXCoord &x,
 		const ModumateUnitParams::FYCoord &y,
 		const ModumateUnitParams::FAngle &a1,
@@ -69,7 +111,7 @@ namespace Modumate
 		return EDrawError::ErrorUnimplemented;
 	}
 
-	EDrawError FModumateHUDDraw::AddImage(
+	EDrawError FDraftingHUDDraw::AddImage(
 		const TCHAR *imageFileFullPath,
 		const ModumateUnitParams::FXCoord &x,
 		const ModumateUnitParams::FYCoord &y,
@@ -80,7 +122,7 @@ namespace Modumate
 		return EDrawError::ErrorUnimplemented;
 	}
 
-	EDrawError FModumateHUDDraw::FillPoly(
+	EDrawError FDraftingHUDDraw::FillPoly(
 		const float *points,
 		int numPoints,
 		const FMColor &color,
@@ -89,7 +131,7 @@ namespace Modumate
 		return EDrawError::ErrorUnimplemented;
 	}
 
-	EDrawError FModumateHUDDraw::DrawCircle(
+	EDrawError FDraftingHUDDraw::DrawCircle(
 		const ModumateUnitParams::FXCoord &cx,
 		const ModumateUnitParams::FYCoord &cy,
 		const ModumateUnitParams::FRadius &radius,
@@ -101,7 +143,7 @@ namespace Modumate
 		return EDrawError::ErrorUnimplemented;
 	}
 
-	EDrawError FModumateHUDDraw::FillCircle(
+	EDrawError FDraftingHUDDraw::FillCircle(
 		const ModumateUnitParams::FXCoord &cx,
 		const ModumateUnitParams::FYCoord &cy,
 		const ModumateUnitParams::FRadius &radius,

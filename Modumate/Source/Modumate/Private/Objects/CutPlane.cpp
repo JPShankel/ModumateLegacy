@@ -27,7 +27,8 @@ static constexpr float PixelsToWorldCentimeters = 0.5f;
 AMOICutPlane::AMOICutPlane()
 	: AMOIPlaneBase(),
 	EdgeSelectedColor(28.0f / 255.0f, 159.0f / 255.0f, 255.0f / 255.0f),
-	EdgeColor(73.0f / 255.0f, 179.0f / 255.0f, 255.0f / 255.0f)
+	EdgeColor(73.0f / 255.0f, 179.0f / 255.0f, 255.0f / 255.0f),
+	bHUDDwgDrafting(false)
 {
 }
 
@@ -122,6 +123,8 @@ void AMOICutPlane::UpdateDynamicGeometry()
 
 bool AMOICutPlane::OnSelected(bool bIsSelected)
 {
+	SelectedColor = bHUDDwgDrafting ? FColor::Black : FColor(0x1C, 0x9F, 0xFF);
+
 	if (!AMOIPlaneBase::OnSelected(bIsSelected))
 	{
 		return false;
@@ -187,6 +190,7 @@ void AMOICutPlane::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
 	if (PreviewHUDLines != nullptr)
 	{
 		DrawingInterface.HUDDrawWidget = HUDDrawWidget;
+		DrawingInterface.bUseDwgMode = bHUDDwgDrafting;
 		PreviewHUDLines->Draw(&DrawingInterface);
 	}
 }
@@ -446,12 +450,8 @@ void AMOICutPlane::UpdateDraftingPreview()
 
 void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting)
 {
-	CaptureActor->ResetHiddenActorsToDefault();
-	MasksActor->ClearProceduralLayers();
-
 	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
-	UModumateDocument* doc = gameState->Document;
-	auto volumeGraph = doc->GetVolumeGraph();
+	const Modumate::FGraph3D& volumeGraph = Document->GetVolumeGraph();
 	TArray<FVector2D> boxPoints;
 
 	for (auto& point : CachedPoints)
@@ -463,78 +463,36 @@ void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 	// bounding box is defined by the dimensions of the cut plane as opposed to the contents of the graph
 	FBox2D cutPlaneBox = FBox2D(boxPoints);
 
-	auto graph = MakeShared<Modumate::FGraph2D>();
-	TMap<int32, int32> objMap;
-	volumeGraph.Create2DGraph(CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, graph, objMap);
+	TSet<int32> objectIDs;
 
 	ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
 	Modumate::FMColor lineColor = Modumate::FMColor::Black;
 
-	TArray<TArray<FVector>> allMaskVerts;
+	volumeGraph.FindObjectsForPlane(AxisX, AxisY, CachedOrigin, cutPlaneBox, objectIDs);
 
-	for (auto& edgekvp : graph->GetEdges())
+	for (int32 id : objectIDs)
 	{
-		auto& edge = edgekvp.Value;
-
-		auto startVertex = graph->FindVertex(edge.StartVertexID);
-		auto endVertex = graph->FindVertex(edge.EndVertexID);
-
-		FModumateUnitCoord2D start = FModumateUnitCoord2D::WorldCentimeters(startVertex->Position);
-		FModumateUnitCoord2D end = FModumateUnitCoord2D::WorldCentimeters(endVertex->Position);
-
-		int32 metaplaneID = objMap[edge.ID];
-		auto metaplane = doc->GetObjectById(metaplaneID);
-		if (metaplane == nullptr)
+		auto metaObject = Document->GetObjectById(id);
+		if (metaObject == nullptr)
 		{
 			continue;
 		}
 
-		auto children = metaplane->GetChildObjects();
-		if (!children.Num() == 1)
+		auto children = metaObject->GetChildObjects();
+		if (children.Num() != 1)
 		{
 			continue;
 		}
-		auto wall = children[0];
-		if (wall == nullptr)
+		auto moi = children[0];
+		if (moi == nullptr)
 		{
 			continue;
 		}
-
-		TArray<TPair<FVector2D, FVector2D>> OutLines;
 
 		// TODO: this only is implemented for plane hosted objects right now, this function should be
 		// a part of ModumateObjectInstance instead and should propagate down through the children
 		TArray<TArray<FVector>> WallCutPerimeters;
-		wall->GetDraftingLines(ParentPage, CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, WallCutPerimeters);
-
-		for (auto& perimeter : WallCutPerimeters)
-		{
-			// TODO: remove this limitation
-			if (perimeter.Num() == 4)
-			{
-				allMaskVerts.Add(perimeter);
-			}
-		}
-
-		CaptureActor->CaptureComponent->HiddenActors.Add(wall->GetActor());
-
-		if (bIsDrafting)
-		{
-			for (int32 objID : wall->GetChildIDs())
-			{
-				auto moi = doc->GetObjectById(objID);
-				if (!moi) continue;
-					
-				// not used
-				TArray<TArray<FVector>> portalPerimeters;
-
-				GetDraftingLines(ParentPage, CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, portalPerimeters);
-
-				CaptureActor->CaptureComponent->HiddenActors.Add(moi->GetActor());
-			}
-
-			MasksActor->SetupMasksGeometry(allMaskVerts, CachedPlane, CachedOrigin, AxisX, AxisY);
-		}
+		moi->GetDraftingLines(ParentPage, CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, WallCutPerimeters);
 	}
 }
 

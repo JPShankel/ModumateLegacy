@@ -87,6 +87,9 @@ namespace Modumate
 		// Create 2D graph representing faces, edges, and vertices that are sliced by the cut plane
 		bool Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TSharedPtr<FGraph2D> OutGraph, TMap<int32, int32> &OutGraphIDToObjID) const;
 
+		// Gather IDs of all objects sliced by cut plane
+		bool FindObjectsForPlane(const FVector AxisX, const FVector AxisY, const FVector Origin, const FBox2D& BoundingBox, TSet<int32>& outObjectIDs) const;
+
 		void CheckTranslationValidity(const TArray<int32> &InVertexIDs, TMap<int32, bool> &OutEdgeIDToValidity) const;
 
 	private:
