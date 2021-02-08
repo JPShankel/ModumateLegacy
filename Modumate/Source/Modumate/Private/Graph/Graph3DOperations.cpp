@@ -88,7 +88,7 @@ namespace Modumate
 			// save vertices that are at the same position - after the moveVertexDelta
 			// has been applied, FindVertex will not reliably find the existingVertex
 			const FGraph3DVertex *existingVertex = FindVertex(newPos);
-			if (existingVertex != nullptr && existingVertex->ID != vertexID)
+			if (existingVertex != nullptr && existingVertex->ID != vertexID && !VertexIDs.Contains(existingVertex->ID))
 			{
 				joinableVertexIDs.Add(vertexID, existingVertex->ID);
 			}

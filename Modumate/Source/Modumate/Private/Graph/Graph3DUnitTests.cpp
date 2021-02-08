@@ -975,6 +975,10 @@ namespace Modumate
 			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(100.0f, 0.0f, 0.0f), FVector(100.0f, 100.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 6, 7);
 
+		TestTrue(TEXT("Move edge on its direction by its length."),
+			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(200.0f, 100.0f, 0.0f), FVector(200.0f, 200.0f, 0.0f) }, OutDeltas, NextID));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 8, 8);
+
 		TestTrue(TEXT("Split edge twice."), 
 			tempGraph.GetDeltaForVertexMovements(moveVertexIDs, { FVector(100.0f, 25.0f, 0.0f), FVector(100.0f, 75.0f, 0.0f) }, OutDeltas, NextID));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 8, 9);
