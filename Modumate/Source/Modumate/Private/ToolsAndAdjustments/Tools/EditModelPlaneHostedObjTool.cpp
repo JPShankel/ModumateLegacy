@@ -23,9 +23,8 @@ UPlaneHostedObjTool::UPlaneHostedObjTool(const FObjectInitializer& ObjectInitial
 	, ObjectType(EObjectType::OTNone)
 	, LastValidTargetID(MOD_ID_NONE)
 	, bWasShowingSnapCursor(true)
-	, InstanceJustification(0.0f)
 {
-	InstanceJustification = GetDefaultJustificationValue();
+	//InstanceJustification = GetDefaultJustificationValue();
 }
 
 bool UPlaneHostedObjTool::Activate()
@@ -37,7 +36,7 @@ bool UPlaneHostedObjTool::Activate()
 
 	FMOIPlaneHostedObjData newMOICustomData(FMOIPlaneHostedObjData::CurrentVersion);
 	newMOICustomData.FlipSigns.Y = GetAppliedInversionValue() ? -1.0 : 1.0f;
-	newMOICustomData.Justification = InstanceJustification;
+	//newMOICustomData.Justification_DEPRECATED = InstanceJustification;
 
 	NewMOIStateData.ObjectType = ObjectType;
 	NewMOIStateData.CustomData.SaveStructData(newMOICustomData);
@@ -199,7 +198,7 @@ bool UPlaneHostedObjTool::HandleFlip(EAxis::Type FlipAxis)
 	return newMOI && newMOI->GetFlippedState(FlipAxis, NewMOIStateData);
 }
 
-bool UPlaneHostedObjTool::HandleAdjustJustification(const FVector2D& ViewSpaceDirection)
+bool UPlaneHostedObjTool::HandleOffset(const FVector2D& ViewSpaceDirection)
 {
 	if (NewObjectIDs.Num() == 0)
 	{
@@ -212,17 +211,7 @@ bool UPlaneHostedObjTool::HandleAdjustJustification(const FVector2D& ViewSpaceDi
 		(ViewSpaceDirection.Y * cameraRotation.GetUpVector());
 
 	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
-	return newMOI && newMOI->GetJustifiedState(worldSpaceDirection, NewMOIStateData);
-}
-
-void UPlaneHostedObjTool::SetInstanceJustification(const float InJustification)
-{
-	InstanceJustification = InJustification;
-}
-
-float UPlaneHostedObjTool::GetInstanceJustification() const
-{
-	return InstanceJustification;
+	return newMOI && newMOI->GetOffsetState(worldSpaceDirection, NewMOIStateData);
 }
 
 void UPlaneHostedObjTool::OnAssemblyChanged()

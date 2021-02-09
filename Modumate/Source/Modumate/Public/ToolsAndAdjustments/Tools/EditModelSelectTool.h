@@ -27,7 +27,7 @@ public:
 	virtual bool ShowSnapCursorAffordances() override { return false; }
 	virtual bool HandleInvert() override;
 	virtual bool HandleFlip(EAxis::Type FlipAxis) override;
-	virtual bool HandleAdjustJustification(const FVector2D& ViewSpaceDirection) override;
+	virtual bool HandleOffset(const FVector2D& ViewSpaceDirection) override;
 
 	bool ProcessDragSelect();
 

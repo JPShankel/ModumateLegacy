@@ -53,10 +53,10 @@ enum class EInputCommand : uint8
 	FlipX,
 	FlipY,
 	FlipZ,
-	JustifyLeft,
-	JustifyRight,
-	JustifyUp,
-	JustifyDown,
+	OffsetLeft,
+	OffsetRight,
+	OffsetUp,
+	OffsetDown,
 
 	// Tool activation commands
 	// MUST BE CONSISTENT WITH EToolMode!

@@ -2,10 +2,12 @@
 
 #pragma once
 
-#include "UnrealClasses/CompoundMeshActor.h"
+
 #include "Database/ModumateArchitecturalMaterial.h"
-#include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "UnrealClasses/CompoundMeshActor.h"
+#include "Objects/DimensionOffset.h"
+#include "Objects/ModumateObjectInstance.h"
 
 #include "StructureLine.generated.h"
 
@@ -18,19 +20,35 @@ struct MODUMATE_API FMOIStructureLineData
 {
 	GENERATED_BODY()
 
+	FMOIStructureLineData();
+	FMOIStructureLineData(int32 InVersion);
+
+	UPROPERTY()
+	int32 Version = 0;
+
 	// FlipSigns.X refers to flipping about the extrusion's "Normal" axis, which for StructureLines is the basis X axis, and is the profile polygon's Y component.
 	// FlipSigns.Y refers to flipping along the direction of the hosting line, which only flips UVs.
 	// FlipSigns.Z refers to flipping about the extrusion's "Up" axis, which for StructureLines is the basis Y axis, and is the profile polygon's X component.
 	UPROPERTY()
 	FVector FlipSigns = FVector::OneVector;
 
-	// Justification.X refers to the offset in the extrusion's "Up" axis, which for StructureLines is the basis Y axis, and is the profile polygon's X component.
-	// Justification.Y refers to the offset in the extrusion's "Normal" axis, which for StructureLines is the basis X axis, and is the profile polygon's Y component.
+	// Justification.X referred to the offset in the extrusion's "Up" axis, which for StructureLines is the basis Y axis, and is the profile polygon's X component.
+	// Justification.Y referred to the offset in the extrusion's "Normal" axis, which for StructureLines is the basis X axis, and is the profile polygon's Y component.
+	UPROPERTY(meta = (DeprecatedProperty, DeprecationMessage = "Justification.X and Justification.Y are now stored in OffsetUp and OffsetNormal, respectively."))
+	FVector2D Justification_DEPRECATED = FVector2D(0.5f, 0.5f);
+
+	// OffsetUp refers to the offset in the extrusion's "Up" axis, which for StructureLines is the basis Y axis, and is the profile polygon's X component.
 	UPROPERTY()
-	FVector2D Justification = FVector2D(0.5f, 0.5f);
+	FDimensionOffset OffsetUp;
+
+	// OffsetNormal refers to the offset in the extrusion's "Normal" axis, which for StructureLines is the basis X axis, and is the profile polygon's Y component.
+	UPROPERTY()
+	FDimensionOffset OffsetNormal;
 
 	UPROPERTY()
 	float Rotation = 0.0f;
+
+	static constexpr int32 CurrentVersion = 1;
 };
 
 
@@ -54,13 +72,14 @@ public:
 	// Flipping the Z axis (V) flips the polygon about the "Up" axis, the basis Y axis, which is the profile polygon's X component,
 	//     negating InstanceData.FlipSigns.Z and flipping InstanceData.Justification.X.
 	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
-	virtual bool GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
+	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
 
 	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane,
 		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 		TArray<TArray<FVector>> &OutPerimeters) const override;
 
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
+	virtual void PostLoadInstanceData() override;
 
 	UPROPERTY()
 	FMOIStructureLineData InstanceData;

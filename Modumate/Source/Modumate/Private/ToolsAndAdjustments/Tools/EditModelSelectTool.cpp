@@ -257,7 +257,7 @@ bool USelectTool::HandleFlip(EAxis::Type FlipAxis)
 	return gameState->Document->ApplyDeltas({ delta }, GetWorld());
 }
 
-bool USelectTool::HandleAdjustJustification(const FVector2D& ViewSpaceDirection)
+bool USelectTool::HandleOffset(const FVector2D& ViewSpaceDirection)
 {
 	if (!Active || (Controller->EMPlayerState->SelectedObjects.Num() == 0))
 	{
@@ -275,7 +275,7 @@ bool USelectTool::HandleAdjustJustification(const FVector2D& ViewSpaceDirection)
 	// If a selected object supports justification, add it to the delta
 	for (auto obj : Controller->EMPlayerState->SelectedObjects)
 	{
-		if (obj->GetJustifiedState(worldSpaceDirection, justifiedState))
+		if (obj->GetOffsetState(worldSpaceDirection, justifiedState))
 		{
 			delta->AddMutationState(obj, obj->GetStateData(), justifiedState);
 		}

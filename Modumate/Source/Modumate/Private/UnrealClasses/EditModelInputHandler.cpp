@@ -364,30 +364,30 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 
 		return bHandled;
 	}
-	case EInputCommand::JustifyLeft:
-	case EInputCommand::JustifyRight:
-	case EInputCommand::JustifyUp:
-	case EInputCommand::JustifyDown:
+	case EInputCommand::OffsetLeft:
+	case EInputCommand::OffsetRight:
+	case EInputCommand::OffsetUp:
+	case EInputCommand::OffsetDown:
 	{
 		FVector2D viewSpaceDirection(ForceInitToZero);
 
 		switch (Command)
 		{
-		case EInputCommand::JustifyLeft:
+		case EInputCommand::OffsetLeft:
 			viewSpaceDirection.Set(-1.0f, 0.0f);
 			break;
-		case EInputCommand::JustifyRight:
+		case EInputCommand::OffsetRight:
 			viewSpaceDirection.Set(1.0f, 0.0f);
 			break;
-		case EInputCommand::JustifyUp:
+		case EInputCommand::OffsetUp:
 			viewSpaceDirection.Set(0.0f, 1.0f);
 			break;
-		case EInputCommand::JustifyDown:
+		case EInputCommand::OffsetDown:
 			viewSpaceDirection.Set(0.0f, -1.0f);
 			break;
 		}
 
-		bool bHandled = currentTool->HandleAdjustJustification(viewSpaceDirection);
+		bool bHandled = currentTool->HandleOffset(viewSpaceDirection);
 		if (bHandled)
 		{
 			static const FString eventName(TEXT("HandleJustify"));

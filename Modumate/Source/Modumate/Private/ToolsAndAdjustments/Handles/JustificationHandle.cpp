@@ -44,7 +44,7 @@ bool AJustificationHandle::BeginUse()
 		FMOIPlaneHostedObjData modifiedCustomData;
 		if (ensure(modifiedStateData.CustomData.LoadStructData(modifiedCustomData)))
 		{
-			modifiedCustomData.Justification = JustificationValue;
+			modifiedCustomData.Justification_DEPRECATED = JustificationValue;
 			modifiedStateData.CustomData.SaveStructData(modifiedCustomData);
 		}
 

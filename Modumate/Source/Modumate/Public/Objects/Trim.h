@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "UnrealClasses/CompoundMeshActor.h"
 #include "CoreMinimal.h"
 #include "Database/ModumateArchitecturalMaterial.h"
-#include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/DimensionOffset.h"
+#include "Objects/ModumateObjectInstance.h"
 
 #include "Trim.generated.h"
 
@@ -31,10 +31,16 @@ struct MODUMATE_API FMOITrimData
 	UPROPERTY()
 	FVector2D FlipSigns = FVector2D::UnitVector;
 
-	UPROPERTY()
-	float UpJustification = 0.5f;
+	UPROPERTY(meta = (DeprecatedProperty, DeprecationMessage = "UpJustification is now stored in OffsetUp."))
+	float UpJustification_DEPRECATED = 0.5f;
 
-	static constexpr int32 CurrentVersion = 1;
+	UPROPERTY()
+	FDimensionOffset OffsetNormal = FDimensionOffset::Positive;
+
+	UPROPERTY()
+	FDimensionOffset OffsetUp;
+
+	static constexpr int32 CurrentVersion = 2;
 };
 
 UCLASS()
@@ -62,7 +68,7 @@ public:
 	// Flipping the Y axis (F) flips along the hosting line, negating InstanceData.FlipSigns.X.
 	// Flipping the Z axis (V) flips across the hosting line in the hosting polygon plane, negating InstanceData.FlipSigns.Y and flipping InstanceData.UpJustification.
 	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
-	virtual bool GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
+	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
 
 	void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
@@ -76,7 +82,7 @@ public:
 protected:
 	// Cached values for the trim, derived from instance properties and the parent SurfaceEdge
 	FVector TrimStartPos, TrimEndPos, TrimNormal, TrimUp, TrimDir, TrimExtrusionFlip;
-	FVector2D UpperExtensions, OuterExtensions, ProfileJustification, ProfileFlip;
+	FVector2D UpperExtensions, OuterExtensions, ProfileOffsetDists, ProfileFlip;
 	TArray<FVector2D> CachedProfilePoints;
 	FBox2D CachedProfileExtents;
 

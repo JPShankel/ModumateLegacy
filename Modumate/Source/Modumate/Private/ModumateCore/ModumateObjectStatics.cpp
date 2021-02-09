@@ -676,10 +676,13 @@ void UModumateObjectStatics::GetPlaneHostedValues(const AModumateObjectInstance 
 	FMOIPlaneHostedObjData planeHostedObjData;
 	if (PlaneHostedObj->GetStateData().CustomData.LoadStructData(planeHostedObjData))
 	{
-		offsetPCT = planeHostedObjData.Justification;
+		OutStartOffset = (-0.5f * OutThickness) + planeHostedObjData.Offset.GetOffsetDistance(planeHostedObjData.FlipSigns.Y, OutThickness);
+	}
+	else
+	{
+		OutStartOffset = 0.0f;
 	}
 
-	OutStartOffset = -offsetPCT * OutThickness;
 	OutNormal = PlaneHostedObj->GetNormal();
 }
 
@@ -775,8 +778,8 @@ bool UModumateObjectStatics::GetFFEBoxSidePoints(const AActor *Actor, const FVec
 	return true;
 }
 
-bool UModumateObjectStatics::GetExtrusionProfilePoints(const FBIMAssemblySpec& Assembly,
-	const FVector2D& Justification, const FVector2D& FlipSigns, TArray<FVector2D>& OutProfilePoints, FBox2D& OutProfileExtents)
+bool UModumateObjectStatics::GetExtrusionProfilePoints(const FBIMAssemblySpec& Assembly, const FDimensionOffset& OffsetX, const FDimensionOffset& OffsetY,
+	const FVector2D& FlipSigns, TArray<FVector2D>& OutProfilePoints, FBox2D& OutProfileExtents)
 {
 	OutProfilePoints.Reset();
 	OutProfileExtents.Init();
@@ -804,13 +807,14 @@ bool UModumateObjectStatics::GetExtrusionProfilePoints(const FBIMAssemblySpec& A
 
 	FVector2D profileCenter = polyProfile->Extents.GetCenter();
 	FVector2D profileSize = polyProfile->Extents.GetSize() * profileScale.GetAbs();
-
-	static const FVector2D centeredJustification(0.5f, 0.5f);
-	FVector2D pointOffset = (Justification - centeredJustification) * profileSize;
+	FVector2D offsetDists(
+		OffsetX.GetOffsetDistance(FlipSigns.X, profileSize.X),
+		OffsetY.GetOffsetDistance(FlipSigns.Y, profileSize.Y)
+	);
 
 	for (const FVector2D& point : polyProfile->Points)
 	{
-		FVector2D fixedPoint2D = ((point - profileCenter) * profileScale) + pointOffset;
+		FVector2D fixedPoint2D = ((point - profileCenter) * profileScale) + offsetDists;
 		OutProfilePoints.Add(fixedPoint2D);
 		OutProfileExtents += fixedPoint2D;
 	}
@@ -818,14 +822,14 @@ bool UModumateObjectStatics::GetExtrusionProfilePoints(const FBIMAssemblySpec& A
 	return true;
 }
 
-bool UModumateObjectStatics::GetExtrusionObjectPoints(const FBIMAssemblySpec& Assembly,
-	const FVector& LineUp, const FVector& LineNormal, const FVector2D& Justification, const FVector2D& FlipSigns, TArray<FVector>& OutObjectPoints)
+bool UModumateObjectStatics::GetExtrusionObjectPoints(const FBIMAssemblySpec& Assembly, const FVector& LineUp, const FVector& LineNormal,
+	const FDimensionOffset& OffsetX, const FDimensionOffset& OffsetY, const FVector2D& FlipSigns, TArray<FVector>& OutObjectPoints)
 {
 	OutObjectPoints.Reset();
 
 	TArray<FVector2D> profilePoints;
 	FBox2D profileExtents;
-	if (!GetExtrusionProfilePoints(Assembly, Justification, FlipSigns, profilePoints, profileExtents))
+	if (!GetExtrusionProfilePoints(Assembly, OffsetX, OffsetY, FlipSigns, profilePoints, profileExtents))
 	{
 		return false;
 	}

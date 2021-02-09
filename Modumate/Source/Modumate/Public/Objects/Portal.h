@@ -1,6 +1,7 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 #pragma once
 
+#include "Objects/DimensionOffset.h"
 #include "Objects/ModumateObjectInstance.h"
 
 #include "Portal.generated.h"
@@ -16,17 +17,28 @@ struct MODUMATE_API FMOIPortalData
 {
 	GENERATED_BODY()
 
+	FMOIPortalData();
+	FMOIPortalData(int32 InVersion);
+
+	UPROPERTY()
+	int32 Version = 0;
+
 	UPROPERTY()
 	bool bNormalInverted = false;
 
 	UPROPERTY()
 	bool bLateralInverted = false;
 
+	UPROPERTY(meta = (DeprecatedProperty, DeprecationMessage = "The data formerly stored in Justification is now in Offset."))
+	float Justification_DEPRECATED = 0.0f;
+
 	UPROPERTY()
-	float Justification = 0.0f;
+	FDimensionOffset Offset;
 
 	UPROPERTY()
 	EPortalOrientation Orientation = EPortalOrientation::Up;
+
+	static constexpr int32 CurrentVersion = 1;
 };
 
 class AAdjustmentHandleActor;
@@ -52,12 +64,17 @@ public:
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
+
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
+	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
+	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
 
 	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override;
 
 	virtual void SetIsDynamic(bool bIsDynamic) override;
 	virtual bool GetIsDynamic() const override;
+
+	virtual void PostLoadInstanceData() override;
 
 	UPROPERTY()
 	FMOIPortalData InstanceData;

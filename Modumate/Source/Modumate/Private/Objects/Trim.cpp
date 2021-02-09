@@ -34,7 +34,7 @@ AMOITrim::AMOITrim()
 	, TrimExtrusionFlip(FVector::OneVector)
 	, UpperExtensions(ForceInitToZero)
 	, OuterExtensions(ForceInitToZero)
-	, ProfileJustification(ForceInitToZero)
+	, ProfileOffsetDists(ForceInitToZero)
 	, ProfileFlip(ForceInitToZero)
 {
 }
@@ -159,17 +159,12 @@ bool AMOITrim::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) co
 	int32 flipAxisIdx = (FlipAxis == EAxis::Y) ? 0 : 1;
 	modifiedTrimData.FlipSigns[flipAxisIdx] *= -1.0f;
 
-	// If we're flipping on the Z axis, we also need to flip justification so that flipping across the parent edge can be 1 action/delta.
-	if (FlipAxis == EAxis::Z)
-	{
-		modifiedTrimData.UpJustification = 1.0f - modifiedTrimData.UpJustification;
-	}
-
 	return OutState.CustomData.SaveStructData(modifiedTrimData);
 }
 
-bool AMOITrim::GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
+bool AMOITrim::GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
 {
+	// For now, we only allow adjusting trim OffsetUp, so we only need to check against one axis.
 	float projectedAdjustment = AdjustmentDirection | TrimUp;
 	if (FMath::IsNearlyZero(projectedAdjustment, THRESH_NORMALS_ARE_ORTHOGONAL))
 	{
@@ -177,11 +172,10 @@ bool AMOITrim::GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateDa
 	}
 
 	float projectedAdjustmentSign = FMath::Sign(projectedAdjustment);
-	float justificationDelta = projectedAdjustmentSign * 0.5f;
-	float newJustification = FMath::Clamp(InstanceData.UpJustification + justificationDelta, 0.0f, 1.0f);
+	EDimensionOffsetType nextOffsetType = InstanceData.OffsetUp.GetNextType(projectedAdjustmentSign, InstanceData.FlipSigns.Y);
 
 	FMOITrimData modifiedTrimData = InstanceData;
-	modifiedTrimData.UpJustification = newJustification;
+	modifiedTrimData.OffsetUp.Type = nextOffsetType;
 	OutState = GetStateData();
 
 	return OutState.CustomData.SaveStructData(modifiedTrimData);
@@ -193,7 +187,7 @@ void AMOITrim::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& 
 {
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	TArray<FVector> perimeter;
-	UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, TrimUp, TrimNormal, ProfileJustification, ProfileFlip, perimeter);
+	UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, TrimUp, TrimNormal, InstanceData.OffsetUp, InstanceData.OffsetNormal, ProfileFlip, perimeter);
 
 	if (bGetFarLines)
 	{   // Beyond lines.
@@ -237,23 +231,51 @@ void AMOITrim::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& 
 
 void AMOITrim::PostLoadInstanceData()
 {
+	bool bFixedInstanceData = false;
+
 	if (InstanceData.Version < InstanceData.CurrentVersion)
 	{
-		if (InstanceData.bUpInverted_DEPRECATED)
+		if (InstanceData.Version < 1)
 		{
-			InstanceData.FlipSigns.Y = -1.0f;
-		}
-
-		for (int32 axisIdx = 0; axisIdx < 2; ++axisIdx)
-		{
-			float& flipSign = InstanceData.FlipSigns[axisIdx];
-			if (FMath::Abs(flipSign) != 1.0f)
+			if (InstanceData.bUpInverted_DEPRECATED)
 			{
-				flipSign = 1.0f;
+				InstanceData.FlipSigns.Y = -1.0f;
+			}
+		}
+		if (InstanceData.Version < 2)
+		{
+			float flippedJustification = (InstanceData.FlipSigns.Y * (InstanceData.UpJustification_DEPRECATED - 0.5f)) + 0.5f;
+			if (FMath::IsNearlyEqual(flippedJustification, 0.0f))
+			{
+				InstanceData.OffsetUp.Type = EDimensionOffsetType::Negative;
+			}
+			else if (FMath::IsNearlyEqual(flippedJustification, 1.0f))
+			{
+				InstanceData.OffsetUp.Type = EDimensionOffsetType::Positive;
+			}
+			else
+			{
+				InstanceData.OffsetUp.Type = EDimensionOffsetType::Centered;
 			}
 		}
 
 		InstanceData.Version = InstanceData.CurrentVersion;
+		bFixedInstanceData = true;
+	}
+
+	// Check for invalid flip signs regardless of version numbers, due to non-serialization-version bugs
+	for (int32 axisIdx = 0; axisIdx < 2; ++axisIdx)
+	{
+		float& flipSign = InstanceData.FlipSigns[axisIdx];
+		if (FMath::Abs(flipSign) != 1.0f)
+		{
+			flipSign = 1.0f;
+			bFixedInstanceData = true;
+		}
+	}
+
+	if (bFixedInstanceData)
+	{
 		StateData.CustomData.SaveStructData(InstanceData);
 	}
 }
@@ -320,10 +342,9 @@ bool AMOITrim::UpdateCachedStructure()
 
 	TrimUp = (TrimDir ^ TrimNormal);
 	TrimExtrusionFlip.Set(1.0f, InstanceData.FlipSigns.X, InstanceData.FlipSigns.Y);
-	ProfileJustification.Set(InstanceData.UpJustification, 1.0f);
 	ProfileFlip.Set(InstanceData.FlipSigns.Y, 1.0f);
 
-	return UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, ProfileJustification, ProfileFlip, CachedProfilePoints, CachedProfileExtents);
+	return UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, InstanceData.OffsetUp, InstanceData.OffsetNormal, ProfileFlip, CachedProfilePoints, CachedProfileExtents);
 }
 
 bool AMOITrim::UpdateMitering()
@@ -336,5 +357,5 @@ bool AMOITrim::UpdateMitering()
 bool AMOITrim::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 {
 	return DynamicMeshActor->SetupExtrudedPolyGeometry(CachedAssembly, TrimStartPos, TrimEndPos,
-		TrimNormal, TrimUp, ProfileJustification, UpperExtensions, OuterExtensions, TrimExtrusionFlip, bRecreate, bCreateCollision);
+		TrimUp, TrimNormal, InstanceData.OffsetUp, InstanceData.OffsetNormal, UpperExtensions, OuterExtensions, TrimExtrusionFlip, bRecreate, bCreateCollision);
 }

@@ -26,7 +26,7 @@ public:
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
 	virtual bool HandleFlip(EAxis::Type FlipAxis) override;
-	virtual bool HandleAdjustJustification(const FVector2D& ViewSpaceDirection) override;
+	virtual bool HandleOffset(const FVector2D& ViewSpaceDirection) override;
 	virtual bool HasDimensionActor() override { return true; }
 
 protected:

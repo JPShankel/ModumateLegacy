@@ -289,7 +289,7 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 
 	if (newParentID != MOD_ID_NONE)
 	{
-		FMOIPortalData portalInstanceData;
+		FMOIPortalData portalInstanceData(FMOIPortalData::CurrentVersion);
 
 		FMOIStateData objectStateData(GameState->Document->GetNextAvailableID(), UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()), newParentID);
 		objectStateData.AssemblyGUID = AssemblyGUID;

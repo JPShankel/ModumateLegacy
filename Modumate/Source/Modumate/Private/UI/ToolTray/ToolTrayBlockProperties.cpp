@@ -64,7 +64,8 @@ void UToolTrayBlockProperties::ChangeBlockProperties(UEditModelToolBase* Current
 		if (auto layeredTool = Cast<UPlaneHostedObjTool>(CurrentTool))
 		{
 			bJustificationEnabled = true;
-			justificationValue = layeredTool->GetInstanceJustification();
+			// TODO: replace
+			//justificationValue = layeredTool->GetInstanceJustification();
 		}
 	}
 
@@ -164,7 +165,8 @@ void UToolTrayBlockProperties::OnInstJustificationCommitted(FString SelectedItem
 		auto currentTool = controller ? controller->CurrentTool.GetObject() : nullptr;
 		if (auto layeredTool = Cast<UPlaneHostedObjTool>(currentTool))
 		{
-			layeredTool->SetInstanceJustification(justificationValue);
+			// TODO: replace
+			//layeredTool->SetInstanceJustification(justificationValue);
 		}
 	}
 }

@@ -245,7 +245,7 @@ bool UStructureLineTool::HandleFlip(EAxis::Type FlipAxis)
 	return newMOI && newMOI->GetFlippedState(FlipAxis, NewMOIStateData);
 }
 
-bool UStructureLineTool::HandleAdjustJustification(const FVector2D& ViewSpaceDirection)
+bool UStructureLineTool::HandleOffset(const FVector2D& ViewSpaceDirection)
 {
 	if (NewObjectIDs.Num() == 0)
 	{
@@ -258,7 +258,7 @@ bool UStructureLineTool::HandleAdjustJustification(const FVector2D& ViewSpaceDir
 		(ViewSpaceDirection.Y * cameraRotation.GetUpVector());
 
 	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
-	return newMOI && newMOI->GetJustifiedState(worldSpaceDirection, NewMOIStateData);
+	return newMOI && newMOI->GetOffsetState(worldSpaceDirection, NewMOIStateData);
 }
 
 void UStructureLineTool::OnCreateObjectModeChanged()
@@ -354,7 +354,7 @@ void UStructureLineTool::ResetState()
 	ObjNormal = FVector::ZeroVector;
 	ObjUp = FVector::ZeroVector;
 
-	FMOIStructureLineData newMOICustomData;
+	FMOIStructureLineData newMOICustomData(FMOIStructureLineData::CurrentVersion);
 	NewMOIStateData.CustomData.SaveStructData(newMOICustomData);
 }
 

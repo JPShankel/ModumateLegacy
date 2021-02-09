@@ -24,6 +24,16 @@
 class AEditModelPlayerController;
 
 
+FMOIPortalData::FMOIPortalData()
+{
+}
+
+FMOIPortalData::FMOIPortalData(int32 InVersion)
+	: Version(InVersion)
+{
+}
+
+
 AMOIPortal::AMOIPortal()
 	: AModumateObjectInstance()
 	, Controller(nullptr)
@@ -165,7 +175,10 @@ bool AMOIPortal::SetRelativeTransform(const FVector2D &InRelativePos, const FQua
 		return false;
 	}
 
-	CachedWorldPos += InstanceData.Justification * parentObj->GetNormal();
+	float normalFlipSign = InstanceData.bNormalInverted ? -1.0f : 1.0f;
+	float assemblyThickness = CachedAssembly.GetRiggedAssemblyNativeSize().Y;
+	float offsetDist = (-0.5f * normalFlipSign * assemblyThickness) + InstanceData.Offset.GetOffsetDistance(normalFlipSign, assemblyThickness);
+	CachedWorldPos += offsetDist * parentObj->GetNormal();
 	portalActor->SetActorLocationAndRotation(CachedWorldPos, CachedWorldRot);
 	bHaveValidTransform = true;
 
@@ -235,12 +248,48 @@ void AMOIPortal::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 
 bool AMOIPortal::GetInvertedState(FMOIStateData& OutState) const
 {
+	return GetFlippedState(EAxis::Y, OutState);
+}
+
+bool AMOIPortal::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
+{
 	OutState = GetStateData();
 
-	FMOIPortalData modifiedTrimData = InstanceData;
-	modifiedTrimData.bNormalInverted = !modifiedTrimData.bNormalInverted;
+	FMOIPortalData modifiedPortalData = InstanceData;
+	switch (FlipAxis)
+	{
+	case EAxis::X:
+		modifiedPortalData.bLateralInverted = !modifiedPortalData.bLateralInverted;
+		break;
+	case EAxis::Y:
+		modifiedPortalData.bNormalInverted = !modifiedPortalData.bNormalInverted;
+		break;
+	case EAxis::Z:
+		break;
+	default:
+		return false;
+	}
 
-	return OutState.CustomData.SaveStructData(modifiedTrimData);
+	return OutState.CustomData.SaveStructData(modifiedPortalData);
+}
+
+bool AMOIPortal::GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
+{
+	float projectedAdjustment = AdjustmentDirection | GetNormal();
+	if (FMath::IsNearlyZero(projectedAdjustment, THRESH_NORMALS_ARE_ORTHOGONAL))
+	{
+		projectedAdjustment = 0.0f;
+	}
+
+	float projectedAdjustmentSign = FMath::Sign(projectedAdjustment);
+	float normalFlipSign = InstanceData.bNormalInverted ? -1.0f : 1.0f;
+	EDimensionOffsetType nextOffsetType = InstanceData.Offset.GetNextType(projectedAdjustmentSign, normalFlipSign);
+
+	FMOIPortalData modifiedPortalData = InstanceData;
+	modifiedPortalData.Offset.Type = nextOffsetType;
+	OutState = GetStateData();
+
+	return OutState.CustomData.SaveStructData(modifiedPortalData);
 }
 
 void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
@@ -367,6 +416,39 @@ bool AMOIPortal::GetIsDynamic() const
 		return meshActor->GetIsDynamic();
 	}
 	return false;
+}
+
+void AMOIPortal::PostLoadInstanceData()
+{
+	bool bFixedInstanceData = false;
+
+	if (InstanceData.Version < InstanceData.CurrentVersion)
+	{
+		if (InstanceData.Version < 1)
+		{
+			float flippedJustification = 1.0f - InstanceData.Justification_DEPRECATED;
+			if (FMath::IsNearlyEqual(flippedJustification, 0.0f))
+			{
+				InstanceData.Offset.Type = EDimensionOffsetType::Negative;
+			}
+			else if (FMath::IsNearlyEqual(flippedJustification, 1.0f))
+			{
+				InstanceData.Offset.Type = EDimensionOffsetType::Positive;
+			}
+			else
+			{
+				InstanceData.Offset.Type = EDimensionOffsetType::Centered;
+			}
+		}
+
+		InstanceData.Version = InstanceData.CurrentVersion;
+		bFixedInstanceData = true;
+	}
+
+	if (bFixedInstanceData)
+	{
+		StateData.CustomData.SaveStructData(InstanceData);
+	}
 }
 
 EDoorOperationType AMOIPortal::GetDoorType() const

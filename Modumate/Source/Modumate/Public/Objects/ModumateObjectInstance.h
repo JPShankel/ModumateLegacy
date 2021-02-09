@@ -85,7 +85,7 @@ public:
 
 	virtual bool GetInvertedState(FMOIStateData& OutState) const { return false; }
 	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const { return false; }
-	virtual bool GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const { return false; }
+	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const { return false; }
 	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const { return false; };
 
 	virtual TArray<FModelDimensionString> GetDimensionStrings() const { return TArray<FModelDimensionString>(); }

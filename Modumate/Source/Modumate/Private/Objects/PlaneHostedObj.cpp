@@ -278,29 +278,22 @@ bool AMOIPlaneHostedObj::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& Ou
 	float curFlipSign = modifiedPlaneHostedObjData.FlipSigns.GetComponentForAxis(FlipAxis);
 	modifiedPlaneHostedObjData.FlipSigns.SetComponentForAxis(FlipAxis, -curFlipSign);
 
-	// If we're flipping on the Y axis, we also need to flip justification so that flipping across the parent plane can be 1 action/delta.
-	if (FlipAxis == EAxis::Y)
-	{
-		modifiedPlaneHostedObjData.Justification = (1.0f - modifiedPlaneHostedObjData.Justification);
-	}
-
 	return OutState.CustomData.SaveStructData(modifiedPlaneHostedObjData);
 }
 
-bool AMOIPlaneHostedObj::GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
+bool AMOIPlaneHostedObj::GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
 {
-	float projectedAdjustment = -AdjustmentDirection | GetNormal();
+	float projectedAdjustment = AdjustmentDirection | GetNormal();
 	if (FMath::IsNearlyZero(projectedAdjustment, THRESH_NORMALS_ARE_ORTHOGONAL))
 	{
 		projectedAdjustment = 0.0f;
 	}
 
 	float projectedAdjustmentSign = FMath::Sign(projectedAdjustment);
-	float justificationDelta = projectedAdjustmentSign * 0.5f;
-	float newJustification = FMath::Clamp(InstanceData.Justification + justificationDelta, 0.0f, 1.0f);
+	EDimensionOffsetType nextOffsetType = InstanceData.Offset.GetNextType(projectedAdjustmentSign, InstanceData.FlipSigns.Y);
 
 	FMOIPlaneHostedObjData modifiedPlaneHostedObjData = InstanceData;
-	modifiedPlaneHostedObjData.Justification = newJustification;
+	modifiedPlaneHostedObjData.Offset.Type = nextOffsetType;
 	OutState = GetStateData();
 
 	return OutState.CustomData.SaveStructData(modifiedPlaneHostedObjData);
@@ -487,9 +480,28 @@ void AMOIPlaneHostedObj::PostLoadInstanceData()
 
 	if (InstanceData.Version < InstanceData.CurrentVersion)
 	{
-		if (InstanceData.bLayersInverted_DEPRECATED)
+		if (InstanceData.Version < 1)
 		{
-			InstanceData.FlipSigns.Y = -1.0f;
+			if (InstanceData.bLayersInverted_DEPRECATED)
+			{
+				InstanceData.FlipSigns.Y = -1.0f;
+			}
+		}
+		if (InstanceData.Version < 2)
+		{
+			float flippedJustification = (-InstanceData.FlipSigns.Y * (InstanceData.Justification_DEPRECATED - 0.5f)) + 0.5f;
+			if (FMath::IsNearlyEqual(flippedJustification, 0.0f))
+			{
+				InstanceData.Offset.Type = EDimensionOffsetType::Negative;
+			}
+			else if (FMath::IsNearlyEqual(flippedJustification, 1.0f))
+			{
+				InstanceData.Offset.Type = EDimensionOffsetType::Positive;
+			}
+			else 
+			{
+				InstanceData.Offset.Type = EDimensionOffsetType::Centered;
+			}
 		}
 
 		InstanceData.Version = InstanceData.CurrentVersion;

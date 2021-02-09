@@ -33,7 +33,7 @@ bool AAdjustPortalJustifyHandle::BeginUse()
 	InitialState = TargetMOI->GetStateData();
 	FMOIPortalData portalData;
 	InitialState.CustomData.LoadStructData(portalData);
-	InitialJustifyValue = portalData.Justification;
+	InitialJustifyValue = portalData.Justification_DEPRECATED;
 	return true;
 }
 
@@ -107,7 +107,7 @@ void AAdjustPortalJustifyHandle::ApplyJustification(bool preview)
 	auto newDelta = MakeShared<FMOIDelta>();
 	FMOIStateData& previewState = newDelta->AddMutationState(TargetMOI);
 	previewState.CustomData.LoadStructData(portalData);
-	portalData.Justification += CurrentDistance;
+	portalData.Justification_DEPRECATED += CurrentDistance;
 	previewState.CustomData.SaveStructData(portalData);
 	if (preview)
 	{

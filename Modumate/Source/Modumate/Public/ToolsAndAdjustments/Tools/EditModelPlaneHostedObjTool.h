@@ -31,10 +31,7 @@ public:
 	virtual bool AbortUse() override;
 	virtual bool HandleInvert() override;
 	virtual bool HandleFlip(EAxis::Type FlipAxis) override;
-	virtual bool HandleAdjustJustification(const FVector2D& ViewSpaceDirection) override;
-
-	void SetInstanceJustification(const float InJustification);
-	float GetInstanceJustification() const;
+	virtual bool HandleOffset(const FVector2D& ViewSpaceDirection) override;
 
 protected:
 	virtual void OnAssemblyChanged() override;
@@ -53,8 +50,6 @@ protected:
 	EObjectType ObjectType;
 	int32 LastValidTargetID;
 	bool bWasShowingSnapCursor;
-
-	float InstanceJustification;
 };
 
 UCLASS()

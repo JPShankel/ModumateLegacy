@@ -13,6 +13,17 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 
+
+FMOIStructureLineData::FMOIStructureLineData()
+{
+}
+
+FMOIStructureLineData::FMOIStructureLineData(int32 InVersion)
+	: Version(InVersion)
+{
+}
+
+
 AMOIStructureLine::AMOIStructureLine()
 	: AModumateObjectInstance()
 	, LineStartPos(ForceInitToZero)
@@ -67,38 +78,32 @@ bool AMOIStructureLine::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& Out
 	float curFlipSign = modifiedInstanceData.FlipSigns.GetComponentForAxis(FlipAxis);
 	modifiedInstanceData.FlipSigns.SetComponentForAxis(FlipAxis, -curFlipSign);
 
-	// If we're not flipping on the Y axis, we also need to flip justification so that flipping across the parent edge can be 1 action/delta.
-	if (FlipAxis != EAxis::Y)
-	{
-		int32 justificationIdx = (FlipAxis == EAxis::Z) ? 0 : 1;
-		float& justificationValue = modifiedInstanceData.Justification[justificationIdx];
-		justificationValue = (1.0f - justificationValue);
-	}
-
 	return OutState.CustomData.SaveStructData(modifiedInstanceData);
 }
 
-bool AMOIStructureLine::GetJustifiedState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
+bool AMOIStructureLine::GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
 {
 	FVector2D projectedAdjustments(
 		AdjustmentDirection | LineUp,
 		AdjustmentDirection | LineNormal
-		);
-	int32 justificationIdx = (FMath::Abs(projectedAdjustments.X) > FMath::Abs(projectedAdjustments.Y)) ? 0 : 1;
-	float projectedAdjustment = projectedAdjustments[justificationIdx];
-
-	OutState = GetStateData();
-	FMOIStructureLineData modifiedInstanceData = InstanceData;
-	float& justificationValue = modifiedInstanceData.Justification[justificationIdx];
-
+	);
+	int32 targetProfileAxisIdx = (FMath::Abs(projectedAdjustments.X) > FMath::Abs(projectedAdjustments.Y)) ? 0 : 1;
+	float projectedAdjustment = projectedAdjustments[targetProfileAxisIdx];
 	if (FMath::IsNearlyZero(projectedAdjustment, THRESH_NORMALS_ARE_ORTHOGONAL))
 	{
 		projectedAdjustment = 0.0f;
 	}
 
-	float projectedAdjustmentSign = FMath::Sign(projectedAdjustment);
-	float justificationDelta = projectedAdjustmentSign * 0.5f;
-	justificationValue = FMath::Clamp(justificationValue + justificationDelta, 0.0f, 1.0f);
+	float targetAdjustmentSign = FMath::Sign(projectedAdjustment);
+	float targetFlipSign = ProfileFlip[targetProfileAxisIdx];
+
+	const FDimensionOffset& curOffset = (targetProfileAxisIdx == 0) ? InstanceData.OffsetUp : InstanceData.OffsetNormal;
+	EDimensionOffsetType nextOffsetType = curOffset.GetNextType(targetAdjustmentSign, targetFlipSign);
+
+	FMOIStructureLineData modifiedInstanceData = InstanceData;
+	FDimensionOffset& nextOffset = (targetProfileAxisIdx == 0) ? modifiedInstanceData.OffsetUp : modifiedInstanceData.OffsetNormal;
+	nextOffset.Type = nextOffsetType;
+	OutState = GetStateData();
 
 	return OutState.CustomData.SaveStructData(modifiedInstanceData);
 }
@@ -123,6 +128,46 @@ void AMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &out
 		FQuat boxRot = FRotationMatrix::MakeFromXZ(LineNormal, LineUp).ToQuat();
 
 		FModumateSnappingView::GetBoundingBoxPointsAndLines(lineCenter, boxRot, 0.5f * boxExtents, outPoints, outLines);
+	}
+}
+
+void AMOIStructureLine::PostLoadInstanceData()
+{
+	bool bFixedInstanceData = false;
+
+	if (InstanceData.Version < InstanceData.CurrentVersion)
+	{
+		if (InstanceData.Version < 1)
+		{
+			for (int32 justificationAxisIdx = 0; justificationAxisIdx < 2; ++justificationAxisIdx)
+			{
+				float flipValue = InstanceData.FlipSigns[justificationAxisIdx == 0 ? 2 : 0];
+				float oldJustification = InstanceData.Justification_DEPRECATED[justificationAxisIdx];
+				float flippedJustification = (flipValue * (oldJustification - 0.5f)) + 0.5f;
+				FDimensionOffset& offsetValue = (justificationAxisIdx == 0) ? InstanceData.OffsetUp : InstanceData.OffsetNormal;
+
+				if (FMath::IsNearlyEqual(flippedJustification, 0.0f))
+				{
+					offsetValue.Type = EDimensionOffsetType::Negative;
+				}
+				else if (FMath::IsNearlyEqual(flippedJustification, 1.0f))
+				{
+					offsetValue.Type = EDimensionOffsetType::Positive;
+				}
+				else
+				{
+					offsetValue.Type = EDimensionOffsetType::Centered;
+				}
+			}
+		}
+
+		InstanceData.Version = InstanceData.CurrentVersion;
+		bFixedInstanceData = true;
+	}
+
+	if (bFixedInstanceData)
+	{
+		StateData.CustomData.SaveStructData(InstanceData);
 	}
 }
 
@@ -155,13 +200,13 @@ bool AMOIStructureLine::UpdateCachedGeometry(bool bRecreate, bool bCreateCollisi
 
 	ProfileFlip.Set(InstanceData.FlipSigns.Z, InstanceData.FlipSigns.X);
 
-	if (!UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, InstanceData.Justification, ProfileFlip, CachedProfilePoints, CachedProfileExtents))
+	if (!UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, InstanceData.OffsetUp, InstanceData.OffsetNormal, ProfileFlip, CachedProfilePoints, CachedProfileExtents))
 	{
 		return false;
 	}
 
-	DynamicMeshActor->SetupExtrudedPolyGeometry(CachedAssembly, LineStartPos, LineEndPos, LineNormal, LineUp,
-		InstanceData.Justification, UpperExtensions, OuterExtensions, InstanceData.FlipSigns, bRecreate, bCreateCollision);
+	DynamicMeshActor->SetupExtrudedPolyGeometry(CachedAssembly, LineStartPos, LineEndPos, LineUp, LineNormal,
+		InstanceData.OffsetUp, InstanceData.OffsetNormal, UpperExtensions, OuterExtensions, InstanceData.FlipSigns, bRecreate, bCreateCollision);
 
 	return true;
 }
@@ -173,7 +218,7 @@ void AMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 	OutPerimeters.Reset();
 
 	TArray<FVector> perimeter;
-	UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, LineUp, LineNormal, InstanceData.Justification, ProfileFlip, perimeter);
+	UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, LineUp, LineNormal, InstanceData.OffsetUp, InstanceData.OffsetNormal, ProfileFlip, perimeter);
 
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)

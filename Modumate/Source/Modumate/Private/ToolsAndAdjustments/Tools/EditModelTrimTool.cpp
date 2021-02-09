@@ -104,7 +104,7 @@ bool UTrimTool::FrameUpdate()
 		}
 
 		// Determine the desired flip/justification of the Trim based on the target SurfaceEdge
-		PendingTrimData.UpJustification = 0.5f;
+		PendingTrimData.OffsetUp = FDimensionOffset::Centered;
 		PendingTrimData.FlipSigns = FVector2D::UnitVector;
 		int32 adjacentPolyID = MOD_ID_NONE;
 
@@ -117,7 +117,7 @@ bool UTrimTool::FrameUpdate()
 			{
 				adjacentPolyID = boudingPoly->ID;
 
-				PendingTrimData.UpJustification = 1.0f;
+				PendingTrimData.OffsetUp = FDimensionOffset::Positive;
 				PendingTrimData.FlipSigns.Y = bBoundsForwardEdge ? 1.0f : -1.0f;
 			}
 		}
@@ -135,7 +135,7 @@ bool UTrimTool::FrameUpdate()
 					{
 						adjacentPolyID = innerBoundingPoly->ID;
 
-						PendingTrimData.UpJustification = 1.0f;
+						PendingTrimData.OffsetUp = FDimensionOffset::Positive;
 						PendingTrimData.FlipSigns.Y = bBoundsForwardEdge ? -1.0f : 1.0f;
 					}
 				}

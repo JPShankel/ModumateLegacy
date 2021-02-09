@@ -836,8 +836,9 @@ void ADynamicMeshActor::ClearProceduralLayers()
 	ProceduralSubLayers.Reset();
 }
 
-bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAssembly, const FVector& InStartPoint, const FVector& InEndPoint, const FVector& ObjNormal, const FVector& ObjUp,
-	const FVector2D& Justification, const FVector2D& UpperExtensions, const FVector2D& OuterExtensions, const FVector& InFlipSigns, bool bRecreateSection, bool bCreateCollision)
+bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAssembly, const FVector& InStartPoint, const FVector& InEndPoint,
+	const FVector& ObjUp, const FVector& ObjNormal, const FDimensionOffset& OffsetUp, const FDimensionOffset& OffsetNormal,
+	const FVector2D& UpperExtensions, const FVector2D& OuterExtensions, const FVector& InFlipSigns, bool bRecreateSection, bool bCreateCollision)
 {
 	const FSimplePolygon *polyProfile = nullptr;
 	if (!UModumateObjectStatics::GetPolygonProfile(&InAssembly, polyProfile))
@@ -863,7 +864,7 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 	TArray<FVector2D> profilePoints;
 	FBox2D profileExtents;
 	FVector2D profileFlip(InFlipSigns.Z, InFlipSigns.X);
-	if (!UModumateObjectStatics::GetExtrusionProfilePoints(InAssembly, Justification, profileFlip, profilePoints, profileExtents))
+	if (!UModumateObjectStatics::GetExtrusionProfilePoints(InAssembly, OffsetUp, OffsetNormal, profileFlip, profilePoints, profileExtents))
 	{
 		return false;
 	}
