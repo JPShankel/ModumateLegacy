@@ -19,11 +19,13 @@ UCreateSimilarTool::UCreateSimilarTool(const FObjectInitializer& ObjectInitializ
 bool UCreateSimilarTool::Activate()
 {
 	MatchTargetObject(false);
+	Controller->EMPlayerState->SetShowHoverEffects(true);
 	return UEditModelToolBase::Activate();
 }
 
 bool UCreateSimilarTool::Deactivate()
 {
+	Controller->EMPlayerState->SetShowHoverEffects(false);
 	return UEditModelToolBase::Deactivate();
 }
 
@@ -74,13 +76,14 @@ bool UCreateSimilarTool::MatchTargetObject(bool bUseMouseHoverObject)
 	else
 	{
 		const auto &selectedObjs = Controller->EMPlayerState->SelectedObjects;
-		targetObj = (selectedObjs.Num() > 0) ? *selectedObjs.CreateConstIterator() : nullptr;
+		targetObj = (selectedObjs.Num() == 1) ? *selectedObjs.CreateConstIterator() : nullptr;
 	}
 
 	if (targetObj)
 	{
 		EToolMode targetToolMode = UModumateTypeStatics::ToolModeFromObjectType(targetObj->GetObjectType());
 		Controller->EMPlayerState->SetAssemblyForToolMode(targetToolMode, targetObj->GetAssembly().UniqueKey());
+		Controller->SetToolMode(targetToolMode);
 		return true;
 	}
 
