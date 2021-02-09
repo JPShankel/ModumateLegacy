@@ -477,8 +477,9 @@ bool UStairTool::MakeStairs()
 {
 	TArray<int32> hostPlaneIDs;
 	bool bMakePlane = (LastValidTargetID == MOD_ID_NONE);
-	bool bSuccess = false;
 	TArray<FDeltaPtr> deltas;
+
+	//TODO: refactor UStairTool as UPlaneHostedObjectTool?
 
 	if (bMakePlane)
 	{
@@ -508,21 +509,45 @@ bool UStairTool::MakeStairs()
 	{
 		int32 nextID = GameState->Document->GetNextAvailableID();
 
-		auto newStairsDelta = MakeShared<FMOIDelta>();
-		deltas.Add(newStairsDelta);
-
 		for (int32 hostPlaneID : hostPlaneIDs)
 		{
-			// TODO: fill in custom instance data for stairs, once we define and rely on it
-			FMOIStateData newStairState(nextID++, EObjectType::OTStaircase, hostPlaneID);
-			newStairState.AssemblyGUID = AssemblyGUID;
-			newStairsDelta->AddCreateDestroyState(newStairState, EMOIDeltaType::Create);
+			auto delta = MakeShared<FMOIDelta>();
+			deltas.Add(delta);
+
+			bool bCreateNewObject = true;
+
+			AModumateObjectInstance* parentMOI = GameState->Document->GetObjectById(hostPlaneID);
+
+			if (parentMOI && ensure(parentMOI->GetObjectType() == EObjectType::OTMetaPlane))
+			{
+				for (auto child : parentMOI->GetChildObjects())
+				{
+					if (child->GetObjectType() == EObjectType::OTStaircase)
+					{
+						bCreateNewObject = false;
+						FMOIStateData& newState = delta->AddMutationState(child);
+						newState.AssemblyGUID = AssemblyGUID;
+					}
+					else
+					{
+						delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
+					}
+				}
+			}
+
+			if (bCreateNewObject)
+			{
+				// TODO: fill in custom instance data for stairs, once we define and rely on it
+				FMOIStateData newStairState(nextID++, EObjectType::OTStaircase, hostPlaneID);
+				newStairState.AssemblyGUID = AssemblyGUID;
+				delta->AddCreateDestroyState(newStairState, EMOIDeltaType::Create);
+			}
 		}
 
-		bSuccess = GameState->Document->ApplyDeltas(deltas, GetWorld());
+		return GameState->Document->ApplyDeltas(deltas, GetWorld());
 	}
 
-	return bSuccess;
+	return false;
 }
 
 bool UStairTool::ValidatePlaneTarget(const AModumateObjectInstance *PlaneTarget)
