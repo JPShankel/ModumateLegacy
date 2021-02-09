@@ -391,26 +391,51 @@ bool UStructureLineTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEd
 		}
 	}
 
-	TSharedPtr<FMOIDelta> structureLineDelta;
-	int32 nextStructureLineID = GameState->Document->GetNextAvailableID();
+	TSharedPtr<FMOIDelta> delta;
+	int32 nextID = GameState->Document->GetNextAvailableID();
+
+	// Follows the pattern established in UPlaneHostedObjTool
 	for (int32 targetEdgeID : targetEdgeIDs)
 	{
-		NewMOIStateData.ID = nextStructureLineID++;
-		NewMOIStateData.ObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
-		NewMOIStateData.ParentID = targetEdgeID;
-		NewMOIStateData.AssemblyGUID = AssemblyGUID;
-
-		NewObjectIDs.Add(NewMOIStateData.ID);
-
-		if (!structureLineDelta.IsValid())
+		if (!delta.IsValid())
 		{
-			structureLineDelta = MakeShared<FMOIDelta>();
+			delta = MakeShared<FMOIDelta>();
+			OutDeltaPtrs.Add(delta);
 		}
-		structureLineDelta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
-	}
-	if (structureLineDelta.IsValid())
-	{
-		OutDeltaPtrs.Add(structureLineDelta);
+
+		bool bCreateNewObject = true;
+		AModumateObjectInstance* parentMOI = GameState->Document->GetObjectById(targetEdgeID);
+
+		EObjectType objectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
+
+		if (parentMOI && ensure(parentMOI->GetObjectType() == EObjectType::OTMetaEdge))
+		{
+			for (auto child : parentMOI->GetChildObjects())
+			{
+				if (child->GetObjectType() == objectType)
+				{
+					FMOIStateData& newState = delta->AddMutationState(child);
+					newState.AssemblyGUID = AssemblyGUID;
+					bCreateNewObject = false;
+				}
+				else
+				{
+					delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
+				}
+			}
+		}
+
+		if (bCreateNewObject)
+		{
+			NewMOIStateData.ID = nextID++;
+			NewMOIStateData.ObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
+			NewMOIStateData.ParentID = targetEdgeID;
+			NewMOIStateData.AssemblyGUID = AssemblyGUID;
+
+			NewObjectIDs.Add(NewMOIStateData.ID);
+
+			delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
+		}
 	}
 
 	return true;
