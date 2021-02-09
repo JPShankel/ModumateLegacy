@@ -47,9 +47,6 @@ public:
 	UPROPERTY()
 	class UMaterialInterface* IconMaterial;
 
-	UPROPERTY()
-	class UTexture2D* IconTexture;
-
 	bool CaptureIconFromPresetKey(class AEditModelPlayerController* Controller, const FGuid& InGUID);
 	bool CaptureIconForBIMDesignerSwap(class AEditModelPlayerController* Controller, const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID);
 };

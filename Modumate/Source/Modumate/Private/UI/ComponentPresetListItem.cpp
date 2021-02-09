@@ -47,7 +47,7 @@ bool UComponentPresetListItem::CaptureIconForBIMDesignerSwap(class AEditModelPla
 	{
 		return false;
 	}
-	bool result = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(true, InGUID, IconMaterial, IconTexture, NodeID);
+	bool result = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(true, InGUID, IconMaterial, NodeID);
 	if (result)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);

@@ -58,6 +58,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Modumate|Thumbnails")
 	bool SaveThumbnail(UTexture *ThumbnailTexture, FName ThumbnailKey, UTexture2D*& OutSavedTexture, bool AllowOverwrite = false);
 
+	static bool GetThumbnailFromTexture(UTexture* ThumbnailTexture, FName ThumbnailKey, UTexture2D*& OutSavedTexture, UObject* Outer);
+
 	UFUNCTION(BlueprintCallable, Category = "Modumate|Texture")
 	static UTexture2D* CreateTexture2D(int32 SizeX, int32 SizeY, int32 NumMips = 1, EPixelFormat Format = PF_B8G8R8A8, UObject* Outer = nullptr, FName Name = NAME_None);
 

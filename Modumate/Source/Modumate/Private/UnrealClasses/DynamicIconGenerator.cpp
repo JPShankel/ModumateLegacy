@@ -153,11 +153,9 @@ bool ADynamicIconGenerator::SetIconMeshForAssembly(const FGuid& AsmKey, UMateria
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, UTexture2D*& OutTexture, const FBIMEditorNodeIDType& NodeID)
+bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, const FBIMEditorNodeIDType& NodeID, bool bCanCache)
 {
 	OutMaterial = nullptr;
-	OutTexture = nullptr;
-	bool bAllowCaching = false;
 
 	const FBIMPresetInstance* preset = GameState->Document->GetPresetCollection().PresetFromGUID(PresetID);
 	if (preset == nullptr)
@@ -173,16 +171,14 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 		return true;
 	case EBIMValueScope::Pattern:
 		return SetIconFromTextureAsset(PresetID, OutMaterial);
-	case EBIMValueScope::Assembly:
-		bAllowCaching = true;
-		break;
 	}
 
 	// Attempt to use cached icon first, make new if not available
-	if (bAllowCaching && GetSavedIconFromPreset(PresetID, OutTexture))
+	UTexture2D* outTexture = nullptr;
+	if (bCanCache && GetSavedIconFromPreset(PresetID, outTexture))
 	{
 		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
-		dynMat->SetTextureParameterValue(MaterialIconTextureParamName, OutTexture);
+		dynMat->SetTextureParameterValue(MaterialIconTextureParamName, outTexture);
 		OutMaterial = dynMat;
 		return true;
 	}
@@ -289,18 +285,28 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 		break;
 	}
 
-	bool bAllowOverwrite = true;
-	if (bCaptureSuccess && UThumbnailCacheManager::SaveThumbnailFromPresetKey(IconRenderTarget, PresetID, OutTexture, this, bAllowOverwrite))
+	if (bCaptureSuccess)
 	{
-		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
-		dynMat->SetTextureParameterValue(MaterialIconTextureParamName, OutTexture);
-		OutMaterial = dynMat;
-		return true;
+		// Always convert RenderTarget into texture2D
+		// Dirty nodes or other temporary icons should not be cached
+		if (bCanCache)
+		{
+			UThumbnailCacheManager::SaveThumbnailFromPresetKey(IconRenderTarget, PresetID, outTexture, this, true);
+		}
+		else
+		{
+			UThumbnailCacheManager::GetThumbnailFromTexture(IconRenderTarget, NodeID, outTexture, this);
+		}
+
+		if (outTexture)
+		{
+			UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
+			dynMat->SetTextureParameterValue(MaterialIconTextureParamName, outTexture);
+			OutMaterial = dynMat;
+			return true;
+		}
 	}
-	else
-	{
-		return false;
-	}
+	return false;
 }
 
 bool ADynamicIconGenerator::GetSavedIconFromPreset(const FGuid& PresetID, UTexture2D*& OutTexture)

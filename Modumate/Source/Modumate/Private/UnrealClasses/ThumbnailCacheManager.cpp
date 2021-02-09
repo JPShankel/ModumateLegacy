@@ -203,24 +203,10 @@ bool UThumbnailCacheManager::SaveThumbnail(UTexture *ThumbnailTexture, FName Thu
 			return false;
 		}
 
-		OutSavedTexture = Cast<UTexture2D>(ThumbnailTexture);
-		UTextureRenderTarget2D *renderTargetSource = Cast<UTextureRenderTarget2D>(ThumbnailTexture);
-
-		if (!ensureAlwaysMsgf((OutSavedTexture != nullptr) || (renderTargetSource != nullptr),
-			TEXT("Unsupported texture type for object %s, key %s; neither UTexture2D nor UTextureRenderTarget2D!"),
-			*ThumbnailTexture->GetName(), *ThumbnailKey.ToString()))
+		if (GetThumbnailFromTexture(ThumbnailTexture, ThumbnailKey, OutSavedTexture, this))
 		{
-			return false;
+			CachedThumbnailTextures.Add(ThumbnailKey, OutSavedTexture);
 		}
-
-		if (renderTargetSource)
-		{
-			// If the source is a render target, then it must be converted to a texture first
-			OutSavedTexture = FModumateThumbnailHelpers::CreateTexture2DFromRT(renderTargetSource, this, ThumbnailKey, EObjectFlags::RF_NoFlags);
-			OutSavedTexture->SRGB = true;
-		}
-
-		CachedThumbnailTextures.Add(ThumbnailKey, OutSavedTexture);
 	}
 
 	// If we can't save the cached thumbnail to disk right now, then return.
@@ -246,6 +232,28 @@ bool UThumbnailCacheManager::SaveThumbnail(UTexture *ThumbnailTexture, FName Thu
 		// Otherwise, it's only an in-memory cache, so just return success
 		return true;
 	}
+}
+
+bool UThumbnailCacheManager::GetThumbnailFromTexture(UTexture* ThumbnailTexture, FName ThumbnailKey, UTexture2D*& OutSavedTexture, UObject* Outer)
+{
+	OutSavedTexture = Cast<UTexture2D>(ThumbnailTexture);
+	UTextureRenderTarget2D* renderTargetSource = Cast<UTextureRenderTarget2D>(ThumbnailTexture);
+
+	if (!ensureAlwaysMsgf((OutSavedTexture != nullptr) || (renderTargetSource != nullptr),
+		TEXT("Unsupported texture type for object %s, key %s; neither UTexture2D nor UTextureRenderTarget2D!"),
+		*ThumbnailTexture->GetName(), *ThumbnailKey.ToString()))
+	{
+		return false;
+	}
+
+	if (renderTargetSource)
+	{
+		// If the source is a render target, then it must be converted to a texture first
+		OutSavedTexture = FModumateThumbnailHelpers::CreateTexture2DFromRT(renderTargetSource, Outer, ThumbnailKey, EObjectFlags::RF_NoFlags);
+		OutSavedTexture->SRGB = true;
+	}
+
+	return true;
 }
 
 UTexture2D* UThumbnailCacheManager::CreateTexture2D(int32 SizeX, int32 SizeY, int32 NumMips /*= 1*/, EPixelFormat Format /*= PF_B8G8R8A8*/, UObject* Outer /*= nullptr*/, FName Name /*= NAME_None*/)

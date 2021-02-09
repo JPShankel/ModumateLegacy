@@ -156,9 +156,6 @@ public:
 	UPROPERTY()
 	class UMaterialInterface* IconMaterial;
 
-	UPROPERTY()
-	class UTexture2D* IconTexture;
-
 	FGuid PresetID;
 	FBIMEditorNodeIDType ID;
 	FBIMEditorNodeIDType ParentID;

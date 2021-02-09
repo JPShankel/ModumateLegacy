@@ -343,7 +343,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	ComponentPresetListItem->GrabHandleImage->SetVisibility(reorderHandleVisibility);
 
 	bool bCaptureSuccess = false;
-	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetID, IconMaterial, IconTexture, ID);
+	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetID, IconMaterial, ID, !NodeDirty);
 	if (bCaptureSuccess)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);

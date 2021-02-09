@@ -89,7 +89,7 @@ void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner
 	}
 
 	// Icon
-	bool bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetGUID, IconMaterial, IconTexture, BIM_ID_NONE);
+	bool bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetGUID, IconMaterial, BIM_ID_NONE);
 	if (bCaptureSuccess)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);

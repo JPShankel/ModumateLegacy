@@ -148,7 +148,7 @@ public:
 
 	bool SetIconMeshForAssembly(const FGuid& AsmKey, bool bAllowOverwrite = false);
 	bool SetIconMeshForAssembly(const FGuid& AsmKey, UMaterialInterface*& OutMaterial, bool bAllowOverwrite = false);
-	bool SetIconMeshForBIMDesigner(bool UseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, UTexture2D*& OutTexture, const FBIMEditorNodeIDType& NodeID);
+	bool SetIconMeshForBIMDesigner(bool UseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, const FBIMEditorNodeIDType& NodeID, bool bSaveToCache = true);
 	bool GetSavedIconFromPreset(const FGuid& PresetID, UTexture2D*& OutTexture);
 	UMaterialInterface* CreateMaterialForIconTexture(const FGuid& PresetID, UTexture2D* InTexture);
 	bool SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex, bool bFromRootNode);
