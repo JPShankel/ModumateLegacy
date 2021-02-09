@@ -419,11 +419,19 @@ namespace Modumate
 
 					if (newFace && oldFace)
 					{
-						bool bMatchingNormals = FVector::Coincident(
+						bool bMatchingNormalsParallel = FVector::Parallel(
+							FVector(oldFace->CachedPlane), FVector(newFace->CachedPlane));
+						bool bMatchingNormalsCoincident = FVector::Coincident(
 							FVector(oldFace->CachedPlane), FVector(newFace->CachedPlane));
 
+						// Manufacture the new face normals matching the old face
+						if (bMatchingNormalsParallel && !bMatchingNormalsCoincident)
+						{
+							Algo::Reverse(faceDelta.FaceAdditions[addedFaceID].Vertices);
+						}
+
 						bool bFullyContained, bPartiallyContained;
-						if (bMatchingNormals && 
+						if (bMatchingNormalsParallel && 
 							GetFaceContainment(oldFace->ID, newFace->ID, bFullyContained, bPartiallyContained) &&
 							!bFullyContained && bPartiallyContained)
 						{

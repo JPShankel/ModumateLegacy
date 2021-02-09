@@ -1284,6 +1284,47 @@ namespace Modumate
 		return true;
 	}
 
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphSplitFaceBothDirections, "Modumate.Graph.3D.SplitFaceBothDirections", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateGraphSplitFaceBothDirections::RunTest(const FString& Parameters)
+	{
+		FGraph3D graph;
+		FGraph3D tempGraph;
+
+		TArray<FGraph3DDelta> OutDeltas;
+		int32 NextID = 1;
+		int32 ExistingID = 0;
+	
+		int32 expectedFaces = 7;
+		int32 expectedVertices = 16;
+		int32 expectedEdges = 21;
+
+		if (!LoadGraph(TEXT("Graph/MGSplitBug.mdmt"), graph, NextID))
+		{
+			return false;
+		}
+		TestGraph(this, graph, expectedFaces, expectedVertices, expectedEdges);
+		FGraph3D::CloneFromGraph(tempGraph, graph);
+
+		TArray<int32> OutEdgeIDs;
+
+		auto startVertex1 = graph.FindVertex(1732);
+		auto endVertex1 = graph.FindVertex(1733);
+
+		auto startVertex2 = graph.FindVertex(3503);
+		auto endVertex2 = graph.FindVertex(3504);
+
+		if (!(startVertex1 && startVertex2 && endVertex1 && endVertex2))
+		{
+			return false;
+		}
+
+		TestTrue(TEXT("Add edge that used to not split."),
+			tempGraph.GetDeltaForEdgeAdditionWithSplit((startVertex1->Position + endVertex1->Position) * 0.5f, (startVertex2->Position + endVertex2->Position) * 0.5f, OutDeltas, NextID, OutEdgeIDs, true));
+		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 8, 18, 24);
+
+		return true;
+	}
+
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphOverlappingFaces, "Modumate.Graph.3D.OverlappingFaces", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 		bool FModumateGraphOverlappingFaces::RunTest(const FString& Parameters)
 	{

@@ -1,0 +1,5888 @@
+{
+	"ModumateHeader":
+	{
+		"version": 9,
+		"thumbnail": "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"
+	},
+	"ModumateObjects":
+	{
+		"objectData": [
+			{
+				"iD": 3509,
+				"objectType": "OTWallSegment",
+				"parentId": 3508,
+				"assemblyKey": "",
+				"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+				"customData":
+				{
+					"structName": "MOIPlaneHostedObjData",
+					"structJson":
+					{
+						"version": 1,
+						"flipSigns":
+						{
+							"x": 1,
+							"y": 1,
+							"z": 1
+						},
+						"justification": 1,
+						"overrideOriginIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 4182,
+				"objectType": "OTFloorSegment",
+				"parentId": 4181,
+				"assemblyKey": "",
+				"assemblyGUId": "42FC21676B069841BBC65AB67EBD8A3E",
+				"customData":
+				{
+					"structName": "MOIPlaneHostedObjData",
+					"structJson":
+					{
+						"version": 1,
+						"flipSigns":
+						{
+							"x": 1,
+							"y": -1,
+							"z": 1
+						},
+						"justification": 1,
+						"overrideOriginIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 4205,
+				"objectType": "OTSurfaceGraph",
+				"parentId": 4182,
+				"assemblyKey": "",
+				"assemblyGUId": "00000000000000000000000000000000",
+				"customData":
+				{
+					"structName": "MOISurfaceGraphData",
+					"structJson":
+					{
+						"parentFaceIndex": 0
+					}
+				}
+			},
+			{
+				"iD": 4271,
+				"objectType": "OTCabinet",
+				"parentId": 4269,
+				"assemblyKey": "",
+				"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+				"customData":
+				{
+					"structName": "MOICabinetData",
+					"structJson":
+					{
+						"extrusionDist": 91.44000244140625,
+						"frontFaceIndex": 3,
+						"bFrontFaceLateralInverted": false
+					}
+				}
+			},
+			{
+				"iD": 4272,
+				"objectType": "OTCabinet",
+				"parentId": 4270,
+				"assemblyKey": "",
+				"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+				"customData":
+				{
+					"structName": "MOICabinetData",
+					"structJson":
+					{
+						"extrusionDist": 91.44000244140625,
+						"frontFaceIndex": 1,
+						"bFrontFaceLateralInverted": false
+					}
+				}
+			},
+			{
+				"iD": 4273,
+				"objectType": "OTCabinet",
+				"parentId": 4258,
+				"assemblyKey": "",
+				"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+				"customData":
+				{
+					"structName": "MOICabinetData",
+					"structJson":
+					{
+						"extrusionDist": 91.4400634765625,
+						"frontFaceIndex": 1,
+						"bFrontFaceLateralInverted": false
+					}
+				}
+			},
+			{
+				"iD": 4274,
+				"objectType": "OTCabinet",
+				"parentId": 4246,
+				"assemblyKey": "",
+				"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+				"customData":
+				{
+					"structName": "MOICabinetData",
+					"structJson":
+					{
+						"extrusionDist": 91.4400634765625,
+						"frontFaceIndex": 1,
+						"bFrontFaceLateralInverted": false
+					}
+				}
+			},
+			{
+				"iD": 1738,
+				"objectType": "OTWallSegment",
+				"parentId": 1737,
+				"assemblyKey": "",
+				"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+				"customData":
+				{
+					"structName": "MOIPlaneHostedObjData",
+					"structJson":
+					{
+						"version": 1,
+						"flipSigns":
+						{
+							"x": 1,
+							"y": 1,
+							"z": 1
+						},
+						"justification": 1,
+						"overrideOriginIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 8648,
+				"objectType": "OTWallSegment",
+				"parentId": 8647,
+				"assemblyKey": "",
+				"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+				"customData":
+				{
+					"structName": "MOIPlaneHostedObjData",
+					"structJson":
+					{
+						"version": 1,
+						"flipSigns":
+						{
+							"x": 1,
+							"y": 1,
+							"z": 1
+						},
+						"justification": 1,
+						"overrideOriginIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 10308,
+				"objectType": "OTFloorSegment",
+				"parentId": 10307,
+				"assemblyKey": "",
+				"assemblyGUId": "86EF5B85D4500B45A557777CE53BE6E9",
+				"customData":
+				{
+					"structName": "MOIPlaneHostedObjData",
+					"structJson":
+					{
+						"version": 1,
+						"flipSigns":
+						{
+							"x": 1,
+							"y": -1,
+							"z": 1
+						},
+						"justification": 1,
+						"overrideOriginIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 10340,
+				"objectType": "OTWallSegment",
+				"parentId": 10338,
+				"assemblyKey": "",
+				"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+				"customData":
+				{
+					"structName": "MOIPlaneHostedObjData",
+					"structJson":
+					{
+						"version": 1,
+						"flipSigns":
+						{
+							"x": 1,
+							"y": 1,
+							"z": 1
+						},
+						"justification": 1,
+						"overrideOriginIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 10341,
+				"objectType": "OTWallSegment",
+				"parentId": 10339,
+				"assemblyKey": "",
+				"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+				"customData":
+				{
+					"structName": "MOIPlaneHostedObjData",
+					"structJson":
+					{
+						"version": 1,
+						"flipSigns":
+						{
+							"x": 1,
+							"y": 1,
+							"z": 1
+						},
+						"justification": 1,
+						"overrideOriginIndex": -1
+					}
+				}
+			},
+			{
+				"iD": 4194,
+				"objectType": "OTSurfaceGraph",
+				"parentId": 3509,
+				"assemblyKey": "",
+				"assemblyGUId": "00000000000000000000000000000000",
+				"customData":
+				{
+					"structName": "MOISurfaceGraphData",
+					"structJson":
+					{
+						"parentFaceIndex": 1
+					}
+				}
+			},
+			{
+				"iD": 4183,
+				"objectType": "OTSurfaceGraph",
+				"parentId": 1738,
+				"assemblyKey": "",
+				"assemblyGUId": "00000000000000000000000000000000",
+				"customData":
+				{
+					"structName": "MOISurfaceGraphData",
+					"structJson":
+					{
+						"parentFaceIndex": 1
+					}
+				}
+			}
+		],
+		"currentToolAssemblyGUIdMap":
+		{
+			"VE_PLACEOBJECT": "00000000000000000000000000000000",
+			"VE_WALL": "AA0881C885B1124786E275ABB472C778",
+			"VE_FLOOR": "86EF5B85D4500B45A557777CE53BE6E9",
+			"VE_DOOR": "00000000000000000000000000000000",
+			"VE_WINDOW": "00000000000000000000000000000000",
+			"VE_STAIR": "00000000000000000000000000000000",
+			"VE_RAIL": "00000000000000000000000000000000",
+			"VE_CABINET": "499F3847BCCFE0468BE91D371F035BFD",
+			"VE_FINISH": "00000000000000000000000000000000",
+			"VE_COUNTERTOP": "00000000000000000000000000000000",
+			"VE_STRUCTURELINE": "00000000000000000000000000000000",
+			"VE_TRIM": "00000000000000000000000000000000",
+			"VE_ROOF_FACE": "00000000000000000000000000000000",
+			"VE_CEILING": "00000000000000000000000000000000"
+		},
+		"presetCollection":
+		{
+			"version": 4,
+			"nodeDescriptors":
+			{
+			},
+			"presetsByGUId":
+			{
+			}
+		},
+		"cameraViews": [],
+		"customGraph2DRecords":
+		{
+		},
+		"surfaceGraphs":
+		{
+			"4205":
+			{
+				"vertices":
+				{
+					"4206":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"4207":
+					{
+						"x": 0,
+						"y": -287.65496826171875
+					},
+					"4208":
+					{
+						"x": 592.4549560546875,
+						"y": -287.65496826171875
+					},
+					"4209":
+					{
+						"x": 592.45501708984375,
+						"y": 0
+					},
+					"4221":
+					{
+						"x": 592.4549560546875,
+						"y": -91.44000244140625
+					},
+					"4222":
+					{
+						"x": 226.69500732421875,
+						"y": -91.44000244140625
+					},
+					"4228":
+					{
+						"x": 226.69500732421875,
+						"y": 0
+					},
+					"4235":
+					{
+						"x": 318.135009765625,
+						"y": -91.44000244140625
+					},
+					"4240":
+					{
+						"x": 318.135009765625,
+						"y": 0
+					},
+					"4247":
+					{
+						"x": 409.57501220703125,
+						"y": 0
+					},
+					"4252":
+					{
+						"x": 409.57501220703125,
+						"y": -91.44000244140625
+					},
+					"4259":
+					{
+						"x": 501.0150146484375,
+						"y": -91.44000244140625
+					},
+					"4264":
+					{
+						"x": 501.0150146484375,
+						"y": 0
+					}
+				},
+				"edges":
+				{
+					"4210":
+					{
+						"vertexIds": [ 4206, 4207 ]
+					},
+					"4211":
+					{
+						"vertexIds": [ 4207, 4208 ]
+					},
+					"4242":
+					{
+						"vertexIds": [ 4240, 4228 ]
+					},
+					"4231":
+					{
+						"vertexIds": [ 4222, 4228 ]
+					},
+					"4224":
+					{
+						"vertexIds": [ 4221, 4209 ]
+					},
+					"4223":
+					{
+						"vertexIds": [ 4208, 4221 ]
+					},
+					"4230":
+					{
+						"vertexIds": [ 4228, 4206 ]
+					},
+					"4243":
+					{
+						"vertexIds": [ 4235, 4240 ]
+					},
+					"4237":
+					{
+						"vertexIds": [ 4235, 4222 ]
+					},
+					"4255":
+					{
+						"vertexIds": [ 4247, 4252 ]
+					},
+					"4254":
+					{
+						"vertexIds": [ 4252, 4235 ]
+					},
+					"4249":
+					{
+						"vertexIds": [ 4247, 4240 ]
+					},
+					"4267":
+					{
+						"vertexIds": [ 4259, 4264 ]
+					},
+					"4266":
+					{
+						"vertexIds": [ 4264, 4247 ]
+					},
+					"4261":
+					{
+						"vertexIds": [ 4259, 4252 ]
+					},
+					"4260":
+					{
+						"vertexIds": [ 4221, 4259 ]
+					},
+					"4265":
+					{
+						"vertexIds": [ 4209, 4264 ]
+					}
+				},
+				"polygons":
+				{
+					"4246":
+					{
+						"vertexIds": [ 4222, 4228, 4240, 4235 ]
+					},
+					"4262":
+					{
+						"vertexIds": [ 4207, 4206, 4228, 4222, 4235, 4252, 4259, 4221, 4208 ]
+					},
+					"4258":
+					{
+						"vertexIds": [ 4235, 4240, 4247, 4252 ]
+					},
+					"4268":
+					{
+						"vertexIds": [ 4206, 4207, 4208, 4221, 4209, 4264, 4247, 4240, 4228 ]
+					},
+					"4270":
+					{
+						"vertexIds": [ 4252, 4247, 4264, 4259 ]
+					},
+					"4269":
+					{
+						"vertexIds": [ 4209, 4221, 4259, 4264 ]
+					}
+				}
+			},
+			"4194":
+			{
+				"vertices":
+				{
+					"4195":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"4196":
+					{
+						"x": -287.65496826171875,
+						"y": 0
+					},
+					"4197":
+					{
+						"x": -287.65496826171875,
+						"y": 243.83999633789062
+					},
+					"4198":
+					{
+						"x": 0,
+						"y": 243.83999633789062
+					},
+					"4216":
+					{
+						"x": -91.44000244140625,
+						"y": 243.83999633789062
+					}
+				},
+				"edges":
+				{
+					"4199":
+					{
+						"vertexIds": [ 4195, 4196 ]
+					},
+					"4200":
+					{
+						"vertexIds": [ 4196, 4197 ]
+					},
+					"4202":
+					{
+						"vertexIds": [ 4198, 4195 ]
+					},
+					"4218":
+					{
+						"vertexIds": [ 4216, 4198 ]
+					},
+					"4217":
+					{
+						"vertexIds": [ 4197, 4216 ]
+					}
+				},
+				"polygons":
+				{
+					"4219":
+					{
+						"vertexIds": [ 4195, 4196, 4197, 4216, 4198 ]
+					},
+					"4220":
+					{
+						"vertexIds": [ 4196, 4195, 4198, 4216, 4197 ]
+					}
+				}
+			},
+			"4183":
+			{
+				"vertices":
+				{
+					"4184":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"4185":
+					{
+						"x": 0,
+						"y": -243.83998107910156
+					},
+					"4186":
+					{
+						"x": -592.45489501953125,
+						"y": -243.83998107910156
+					},
+					"4187":
+					{
+						"x": -592.4549560546875,
+						"y": 0
+					}
+				},
+				"edges":
+				{
+					"4188":
+					{
+						"vertexIds": [ 4184, 4185 ]
+					},
+					"4189":
+					{
+						"vertexIds": [ 4185, 4186 ]
+					},
+					"4190":
+					{
+						"vertexIds": [ 4186, 4187 ]
+					},
+					"4191":
+					{
+						"vertexIds": [ 4187, 4184 ]
+					}
+				},
+				"polygons":
+				{
+					"4192":
+					{
+						"vertexIds": [ 4184, 4185, 4186, 4187 ]
+					},
+					"4193":
+					{
+						"vertexIds": [ 4185, 4184, 4187, 4186 ]
+					}
+				}
+			}
+		},
+		"usedPresetGUIds":
+		{
+		},
+		"appliedDeltas": [
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"571":
+								{
+									"x": 387.35870361328125,
+									"y": -670.3984375,
+									"z": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"572":
+								{
+									"x": 387.35870361328125,
+									"y": -670.3984375,
+									"z": 243.83999633789062
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"573":
+								{
+									"vertices": [ 571, 572 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"1732":
+								{
+									"x": 996.95867919921875,
+									"y": -670.3984375,
+									"z": 243.83999633789062
+								},
+								"1733":
+								{
+									"x": 996.95867919921875,
+									"y": -670.3984375,
+									"z": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"1734":
+								{
+									"vertices": [ 572, 1732 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"1735":
+								{
+									"vertices": [ 1732, 1733 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"1736":
+								{
+									"vertices": [ 1733, 571 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+								"1737":
+								{
+									"vertices": [ 571, 572, 1732, 1733 ],
+									"parentObjIds": [ 0 ],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 1738,
+										"objectType": "OTWallSegment",
+										"parentId": 1737,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 1738,
+										"objectType": "OTWallSegment",
+										"parentId": 1737,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"3503":
+								{
+									"x": 996.95867919921875,
+									"y": -975.19842529296875,
+									"z": 243.83999633789062
+								},
+								"3504":
+								{
+									"x": 996.95867919921875,
+									"y": -975.19842529296875,
+									"z": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"3505":
+								{
+									"vertices": [ 1732, 3503 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"3506":
+								{
+									"vertices": [ 3503, 3504 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"3507":
+								{
+									"vertices": [ 3504, 1733 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+								"3508":
+								{
+									"vertices": [ 1732, 3503, 3504, 1733 ],
+									"parentObjIds": [ 0 ],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 3509,
+										"objectType": "OTWallSegment",
+										"parentId": 3508,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 3509,
+										"objectType": "OTWallSegment",
+										"parentId": 3508,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4178":
+								{
+									"x": 387.35870361328125,
+									"y": -975.19842529296875,
+									"z": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4179":
+								{
+									"vertices": [ 571, 4178 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"4180":
+								{
+									"vertices": [ 4178, 3504 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+								"4181":
+								{
+									"vertices": [ 571, 4178, 3504, 1733 ],
+									"parentObjIds": [ 0 ],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 4182,
+										"objectType": "OTFloorSegment",
+										"parentId": 4181,
+										"assemblyKey": "",
+										"assemblyGUId": "42FC21676B069841BBC65AB67EBD8A3E",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": -1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 4182,
+										"objectType": "OTFloorSegment",
+										"parentId": 4181,
+										"assemblyKey": "",
+										"assemblyGUId": "42FC21676B069841BBC65AB67EBD8A3E",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": -1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 4183,
+										"objectType": "OTSurfaceGraph",
+										"parentId": 1738,
+										"assemblyKey": "",
+										"assemblyGUId": "00000000000000000000000000000000",
+										"customData":
+										{
+											"structName": "MOISurfaceGraphData",
+											"structJson":
+											{
+												"parentFaceIndex": 1
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 4183,
+										"objectType": "OTSurfaceGraph",
+										"parentId": 1738,
+										"assemblyKey": "",
+										"assemblyGUId": "00000000000000000000000000000000",
+										"customData":
+										{
+											"structName": "MOISurfaceGraphData",
+											"structJson":
+											{
+												"parentFaceIndex": 1
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4183,
+							"deltaType": "Add",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4183,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4184":
+								{
+									"x": 0,
+									"y": 0
+								},
+								"4185":
+								{
+									"x": 0,
+									"y": -243.83998107910156
+								},
+								"4186":
+								{
+									"x": -592.45489501953125,
+									"y": -243.83998107910156
+								},
+								"4187":
+								{
+									"x": -592.4549560546875,
+									"y": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4183,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4188":
+								{
+									"vertices": [ 4184, 4185 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4183,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4189":
+								{
+									"vertices": [ 4185, 4186 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4183,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4190":
+								{
+									"vertices": [ 4186, 4187 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4183,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4191":
+								{
+									"vertices": [ 4187, 4184 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4183,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+								"4192":
+								{
+									"vertices": [ 4184, 4185, 4186, 4187 ],
+									"parentObjIds": []
+								},
+								"4193":
+								{
+									"vertices": [ 4185, 4184, 4187, 4186 ],
+									"parentObjIds": []
+								}
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 4194,
+										"objectType": "OTSurfaceGraph",
+										"parentId": 3509,
+										"assemblyKey": "",
+										"assemblyGUId": "00000000000000000000000000000000",
+										"customData":
+										{
+											"structName": "MOISurfaceGraphData",
+											"structJson":
+											{
+												"parentFaceIndex": 1
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 4194,
+										"objectType": "OTSurfaceGraph",
+										"parentId": 3509,
+										"assemblyKey": "",
+										"assemblyGUId": "00000000000000000000000000000000",
+										"customData":
+										{
+											"structName": "MOISurfaceGraphData",
+											"structJson":
+											{
+												"parentFaceIndex": 1
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4194,
+							"deltaType": "Add",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4194,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4195":
+								{
+									"x": 0,
+									"y": 0
+								},
+								"4196":
+								{
+									"x": -287.65496826171875,
+									"y": 0
+								},
+								"4197":
+								{
+									"x": -287.65496826171875,
+									"y": 243.83999633789062
+								},
+								"4198":
+								{
+									"x": 0,
+									"y": 243.83999633789062
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4194,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4199":
+								{
+									"vertices": [ 4195, 4196 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4194,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4200":
+								{
+									"vertices": [ 4196, 4197 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4194,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4201":
+								{
+									"vertices": [ 4197, 4198 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4194,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4202":
+								{
+									"vertices": [ 4198, 4195 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4194,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+								"4203":
+								{
+									"vertices": [ 4195, 4196, 4197, 4198 ],
+									"parentObjIds": []
+								},
+								"4204":
+								{
+									"vertices": [ 4196, 4195, 4198, 4197 ],
+									"parentObjIds": []
+								}
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 4205,
+										"objectType": "OTSurfaceGraph",
+										"parentId": 4182,
+										"assemblyKey": "",
+										"assemblyGUId": "00000000000000000000000000000000",
+										"customData":
+										{
+											"structName": "MOISurfaceGraphData",
+											"structJson":
+											{
+												"parentFaceIndex": 0
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 4205,
+										"objectType": "OTSurfaceGraph",
+										"parentId": 4182,
+										"assemblyKey": "",
+										"assemblyGUId": "00000000000000000000000000000000",
+										"customData":
+										{
+											"structName": "MOISurfaceGraphData",
+											"structJson":
+											{
+												"parentFaceIndex": 0
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Add",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4206":
+								{
+									"x": 0,
+									"y": 0
+								},
+								"4207":
+								{
+									"x": 0,
+									"y": -287.65496826171875
+								},
+								"4208":
+								{
+									"x": 592.4549560546875,
+									"y": -287.65496826171875
+								},
+								"4209":
+								{
+									"x": 592.45501708984375,
+									"y": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4210":
+								{
+									"vertices": [ 4206, 4207 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4211":
+								{
+									"vertices": [ 4207, 4208 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4212":
+								{
+									"vertices": [ 4208, 4209 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4213":
+								{
+									"vertices": [ 4209, 4206 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+								"4214":
+								{
+									"vertices": [ 4206, 4207, 4208, 4209 ],
+									"parentObjIds": []
+								},
+								"4215":
+								{
+									"vertices": [ 4207, 4206, 4209, 4208 ],
+									"parentObjIds": []
+								}
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4194,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4216":
+								{
+									"x": -91.44000244140625,
+									"y": 243.83999633789062
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4194,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4217":
+								{
+									"vertices": [ 4197, 4216 ],
+									"parentObjIds": [ 4201 ]
+								},
+								"4218":
+								{
+									"vertices": [ 4216, 4198 ],
+									"parentObjIds": [ 4201 ]
+								}
+							},
+							"edgeDeletions":
+							{
+								"4201":
+								{
+									"vertices": [ 4197, 4198 ],
+									"parentObjIds": [ 4217, 4218 ]
+								}
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+								"4203":
+								{
+									"vertices": [ 4195, 4196, 4197, 4198 ],
+									"parentObjIds": []
+								},
+								"4204":
+								{
+									"vertices": [ 4196, 4195, 4198, 4197 ],
+									"parentObjIds": []
+								}
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4194,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+								"4219":
+								{
+									"vertices": [ 4195, 4196, 4197, 4216, 4198 ],
+									"parentObjIds": [ 4203 ]
+								},
+								"4220":
+								{
+									"vertices": [ 4196, 4195, 4198, 4216, 4197 ],
+									"parentObjIds": []
+								}
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4221":
+								{
+									"x": 592.4549560546875,
+									"y": -91.44000244140625
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4222":
+								{
+									"x": 226.69500732421875,
+									"y": -91.44000244140625
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4223":
+								{
+									"vertices": [ 4208, 4221 ],
+									"parentObjIds": [ 4212 ]
+								},
+								"4224":
+								{
+									"vertices": [ 4221, 4209 ],
+									"parentObjIds": [ 4212 ]
+								}
+							},
+							"edgeDeletions":
+							{
+								"4212":
+								{
+									"vertices": [ 4208, 4209 ],
+									"parentObjIds": [ 4223, 4224 ]
+								}
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+								"4214":
+								{
+									"vertices": [ 4206, 4207, 4208, 4209 ],
+									"parentObjIds": []
+								},
+								"4215":
+								{
+									"vertices": [ 4207, 4206, 4209, 4208 ],
+									"parentObjIds": []
+								}
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4225":
+								{
+									"vertices": [ 4221, 4222 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+								"4226":
+								{
+									"vertices": [ 4206, 4207, 4208, 4221, 4209 ],
+									"parentObjIds": [ 4214 ]
+								},
+								"4227":
+								{
+									"vertices": [ 4207, 4206, 4209, 4221, 4222, 4221, 4208 ],
+									"parentObjIds": []
+								}
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4228":
+								{
+									"x": 226.69500732421875,
+									"y": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4229":
+								{
+									"vertices": [ 4209, 4228 ],
+									"parentObjIds": [ 4213 ]
+								},
+								"4230":
+								{
+									"vertices": [ 4228, 4206 ],
+									"parentObjIds": [ 4213 ]
+								}
+							},
+							"edgeDeletions":
+							{
+								"4213":
+								{
+									"vertices": [ 4209, 4206 ],
+									"parentObjIds": [ 4229, 4230 ]
+								}
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+								"4226":
+								{
+									"vertices": [ 4206, 4207, 4208, 4221, 4209 ],
+									"parentObjIds": []
+								},
+								"4227":
+								{
+									"vertices": [ 4207, 4206, 4209, 4221, 4222, 4221, 4208 ],
+									"parentObjIds": []
+								}
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4231":
+								{
+									"vertices": [ 4222, 4228 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+								"4232":
+								{
+									"vertices": [ 4206, 4207, 4208, 4221, 4209, 4228 ],
+									"parentObjIds": [ 4226 ]
+								},
+								"4233":
+								{
+									"vertices": [ 4207, 4206, 4228, 4222, 4221, 4208 ],
+									"parentObjIds": []
+								},
+								"4234":
+								{
+									"vertices": [ 4221, 4222, 4228, 4209 ],
+									"parentObjIds": [ 4227 ]
+								}
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4235":
+								{
+									"x": 318.135009765625,
+									"y": -91.44000244140625
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4236":
+								{
+									"vertices": [ 4221, 4235 ],
+									"parentObjIds": [ 4225 ]
+								},
+								"4237":
+								{
+									"vertices": [ 4235, 4222 ],
+									"parentObjIds": [ 4225 ]
+								}
+							},
+							"edgeDeletions":
+							{
+								"4225":
+								{
+									"vertices": [ 4221, 4222 ],
+									"parentObjIds": [ 4236, 4237 ]
+								}
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+								"4234":
+								{
+									"vertices": [ 4221, 4222, 4228, 4209 ],
+									"parentObjIds": []
+								},
+								"4233":
+								{
+									"vertices": [ 4207, 4206, 4228, 4222, 4221, 4208 ],
+									"parentObjIds": []
+								}
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+								"4238":
+								{
+									"vertices": [ 4207, 4206, 4228, 4222, 4235, 4221, 4208 ],
+									"parentObjIds": []
+								},
+								"4239":
+								{
+									"vertices": [ 4222, 4228, 4209, 4221, 4235 ],
+									"parentObjIds": [ 4234 ]
+								}
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4240":
+								{
+									"x": 318.135009765625,
+									"y": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4241":
+								{
+									"vertices": [ 4209, 4240 ],
+									"parentObjIds": [ 4229 ]
+								},
+								"4242":
+								{
+									"vertices": [ 4240, 4228 ],
+									"parentObjIds": [ 4229 ]
+								}
+							},
+							"edgeDeletions":
+							{
+								"4229":
+								{
+									"vertices": [ 4209, 4228 ],
+									"parentObjIds": [ 4241, 4242 ]
+								}
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+								"4232":
+								{
+									"vertices": [ 4206, 4207, 4208, 4221, 4209, 4228 ],
+									"parentObjIds": []
+								},
+								"4239":
+								{
+									"vertices": [ 4222, 4228, 4209, 4221, 4235 ],
+									"parentObjIds": []
+								}
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4243":
+								{
+									"vertices": [ 4235, 4240 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+								"4244":
+								{
+									"vertices": [ 4206, 4207, 4208, 4221, 4209, 4240, 4228 ],
+									"parentObjIds": [ 4232 ]
+								},
+								"4245":
+								{
+									"vertices": [ 4240, 4209, 4221, 4235 ],
+									"parentObjIds": [ 4239 ]
+								},
+								"4246":
+								{
+									"vertices": [ 4222, 4228, 4240, 4235 ],
+									"parentObjIds": [ 4239 ]
+								}
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4247":
+								{
+									"x": 409.57501220703125,
+									"y": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4248":
+								{
+									"vertices": [ 4209, 4247 ],
+									"parentObjIds": [ 4241 ]
+								},
+								"4249":
+								{
+									"vertices": [ 4247, 4240 ],
+									"parentObjIds": [ 4241 ]
+								}
+							},
+							"edgeDeletions":
+							{
+								"4241":
+								{
+									"vertices": [ 4209, 4240 ],
+									"parentObjIds": [ 4248, 4249 ]
+								}
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+								"4244":
+								{
+									"vertices": [ 4206, 4207, 4208, 4221, 4209, 4240, 4228 ],
+									"parentObjIds": []
+								},
+								"4245":
+								{
+									"vertices": [ 4240, 4209, 4221, 4235 ],
+									"parentObjIds": []
+								}
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+								"4250":
+								{
+									"vertices": [ 4206, 4207, 4208, 4221, 4209, 4247, 4240, 4228 ],
+									"parentObjIds": [ 4244 ]
+								},
+								"4251":
+								{
+									"vertices": [ 4209, 4221, 4235, 4240, 4247 ],
+									"parentObjIds": [ 4245 ]
+								}
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4252":
+								{
+									"x": 409.57501220703125,
+									"y": -91.44000244140625
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4253":
+								{
+									"vertices": [ 4221, 4252 ],
+									"parentObjIds": [ 4236 ]
+								},
+								"4254":
+								{
+									"vertices": [ 4252, 4235 ],
+									"parentObjIds": [ 4236 ]
+								}
+							},
+							"edgeDeletions":
+							{
+								"4236":
+								{
+									"vertices": [ 4221, 4235 ],
+									"parentObjIds": [ 4253, 4254 ]
+								}
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+								"4251":
+								{
+									"vertices": [ 4209, 4221, 4235, 4240, 4247 ],
+									"parentObjIds": []
+								},
+								"4238":
+								{
+									"vertices": [ 4207, 4206, 4228, 4222, 4235, 4221, 4208 ],
+									"parentObjIds": []
+								}
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4255":
+								{
+									"vertices": [ 4247, 4252 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+								"4256":
+								{
+									"vertices": [ 4207, 4206, 4228, 4222, 4235, 4252, 4221, 4208 ],
+									"parentObjIds": []
+								},
+								"4257":
+								{
+									"vertices": [ 4209, 4221, 4252, 4247 ],
+									"parentObjIds": []
+								},
+								"4258":
+								{
+									"vertices": [ 4235, 4240, 4247, 4252 ],
+									"parentObjIds": [ 4251 ]
+								}
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4259":
+								{
+									"x": 501.0150146484375,
+									"y": -91.44000244140625
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4260":
+								{
+									"vertices": [ 4221, 4259 ],
+									"parentObjIds": [ 4253 ]
+								},
+								"4261":
+								{
+									"vertices": [ 4259, 4252 ],
+									"parentObjIds": [ 4253 ]
+								}
+							},
+							"edgeDeletions":
+							{
+								"4253":
+								{
+									"vertices": [ 4221, 4252 ],
+									"parentObjIds": [ 4260, 4261 ]
+								}
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+								"4257":
+								{
+									"vertices": [ 4209, 4221, 4252, 4247 ],
+									"parentObjIds": []
+								},
+								"4256":
+								{
+									"vertices": [ 4207, 4206, 4228, 4222, 4235, 4252, 4221, 4208 ],
+									"parentObjIds": []
+								}
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+								"4262":
+								{
+									"vertices": [ 4207, 4206, 4228, 4222, 4235, 4252, 4259, 4221, 4208 ],
+									"parentObjIds": []
+								},
+								"4263":
+								{
+									"vertices": [ 4209, 4221, 4259, 4252, 4247 ],
+									"parentObjIds": []
+								}
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"4264":
+								{
+									"x": 501.0150146484375,
+									"y": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4265":
+								{
+									"vertices": [ 4209, 4264 ],
+									"parentObjIds": [ 4248 ]
+								},
+								"4266":
+								{
+									"vertices": [ 4264, 4247 ],
+									"parentObjIds": [ 4248 ]
+								}
+							},
+							"edgeDeletions":
+							{
+								"4248":
+								{
+									"vertices": [ 4209, 4247 ],
+									"parentObjIds": [ 4265, 4266 ]
+								}
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+								"4250":
+								{
+									"vertices": [ 4206, 4207, 4208, 4221, 4209, 4247, 4240, 4228 ],
+									"parentObjIds": []
+								},
+								"4263":
+								{
+									"vertices": [ 4209, 4221, 4259, 4252, 4247 ],
+									"parentObjIds": []
+								}
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"4267":
+								{
+									"vertices": [ 4259, 4264 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 4205,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+								"4268":
+								{
+									"vertices": [ 4206, 4207, 4208, 4221, 4209, 4264, 4247, 4240, 4228 ],
+									"parentObjIds": [ 4250 ]
+								},
+								"4269":
+								{
+									"vertices": [ 4209, 4221, 4259, 4264 ],
+									"parentObjIds": [ 4263 ]
+								},
+								"4270":
+								{
+									"vertices": [ 4252, 4247, 4264, 4259 ],
+									"parentObjIds": [ 4263 ]
+								}
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 4271,
+										"objectType": "OTCabinet",
+										"parentId": 4269,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.44000244140625,
+												"frontFaceIndex": -1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 4271,
+										"objectType": "OTCabinet",
+										"parentId": 4269,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.44000244140625,
+												"frontFaceIndex": -1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 4271,
+										"objectType": "OTCabinet",
+										"parentId": 4269,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.44000244140625,
+												"frontFaceIndex": -1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 4271,
+										"objectType": "OTCabinet",
+										"parentId": 4269,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.44000244140625,
+												"frontFaceIndex": 3,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"deltaType": "Mutate"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 4272,
+										"objectType": "OTCabinet",
+										"parentId": 4270,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.44000244140625,
+												"frontFaceIndex": -1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 4272,
+										"objectType": "OTCabinet",
+										"parentId": 4270,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.44000244140625,
+												"frontFaceIndex": -1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 4272,
+										"objectType": "OTCabinet",
+										"parentId": 4270,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.44000244140625,
+												"frontFaceIndex": -1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 4272,
+										"objectType": "OTCabinet",
+										"parentId": 4270,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.44000244140625,
+												"frontFaceIndex": 1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"deltaType": "Mutate"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 4273,
+										"objectType": "OTCabinet",
+										"parentId": 4258,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.4400634765625,
+												"frontFaceIndex": -1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 4273,
+										"objectType": "OTCabinet",
+										"parentId": 4258,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.4400634765625,
+												"frontFaceIndex": -1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 4273,
+										"objectType": "OTCabinet",
+										"parentId": 4258,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.4400634765625,
+												"frontFaceIndex": -1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 4273,
+										"objectType": "OTCabinet",
+										"parentId": 4258,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.4400634765625,
+												"frontFaceIndex": 1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"deltaType": "Mutate"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 4274,
+										"objectType": "OTCabinet",
+										"parentId": 4246,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.4400634765625,
+												"frontFaceIndex": -1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 4274,
+										"objectType": "OTCabinet",
+										"parentId": 4246,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.4400634765625,
+												"frontFaceIndex": -1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 4274,
+										"objectType": "OTCabinet",
+										"parentId": 4246,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.4400634765625,
+												"frontFaceIndex": -1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 4274,
+										"objectType": "OTCabinet",
+										"parentId": 4246,
+										"assemblyKey": "",
+										"assemblyGUId": "499F3847BCCFE0468BE91D371F035BFD",
+										"customData":
+										{
+											"structName": "MOICabinetData",
+											"structJson":
+											{
+												"extrusionDist": 91.4400634765625,
+												"frontFaceIndex": 1,
+												"bFrontFaceLateralInverted": false
+											}
+										}
+									},
+									"deltaType": "Mutate"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"5106":
+								{
+									"x": 902.12677001953125,
+									"y": -1280.33251953125,
+									"z": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"5107":
+								{
+									"x": 902.12677001953125,
+									"y": -1280.33251953125,
+									"z": 243.83999633789062
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"5108":
+								{
+									"vertices": [ 5106, 5107 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"8642":
+								{
+									"x": 292.52685546875,
+									"y": -1280.33251953125,
+									"z": 243.83999633789062
+								},
+								"8643":
+								{
+									"x": 292.52685546875,
+									"y": -1280.33251953125,
+									"z": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"8644":
+								{
+									"vertices": [ 5107, 8642 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"8645":
+								{
+									"vertices": [ 8642, 8643 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"8646":
+								{
+									"vertices": [ 8643, 5106 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+								"8647":
+								{
+									"vertices": [ 5106, 5107, 8642, 8643 ],
+									"parentObjIds": [ 0 ],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 8648,
+										"objectType": "OTWallSegment",
+										"parentId": 8647,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 8648,
+										"objectType": "OTWallSegment",
+										"parentId": 8647,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"9621":
+								{
+									"x": 902.12677001953125,
+									"y": -1585.1324462890625,
+									"z": 243.83999633789062
+								},
+								"9622":
+								{
+									"x": 902.12677001953125,
+									"y": -1585.1324462890625,
+									"z": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"9623":
+								{
+									"vertices": [ 5107, 9621 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"9624":
+								{
+									"vertices": [ 9621, 9622 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"9625":
+								{
+									"vertices": [ 9622, 5106 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+								"9626":
+								{
+									"vertices": [ 5106, 5107, 9621, 9622 ],
+									"parentObjIds": [ 0 ],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 9627,
+										"objectType": "OTWallSegment",
+										"parentId": 9626,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 9627,
+										"objectType": "OTWallSegment",
+										"parentId": 9626,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"10304":
+								{
+									"x": 292.52685546875,
+									"y": -1585.1324462890625,
+									"z": 0
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"10305":
+								{
+									"vertices": [ 9622, 10304 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"10306":
+								{
+									"vertices": [ 10304, 8643 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+								"10307":
+								{
+									"vertices": [ 5106, 9622, 10304, 8643 ],
+									"parentObjIds": [ 0 ],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 10308,
+										"objectType": "OTFloorSegment",
+										"parentId": 10307,
+										"assemblyKey": "",
+										"assemblyGUId": "86EF5B85D4500B45A557777CE53BE6E9",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": -1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 10308,
+										"objectType": "OTFloorSegment",
+										"parentId": 10307,
+										"assemblyKey": "",
+										"assemblyGUId": "86EF5B85D4500B45A557777CE53BE6E9",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": -1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 10320,
+										"objectType": "OTSurfaceGraph",
+										"parentId": 9627,
+										"assemblyKey": "",
+										"assemblyGUId": "00000000000000000000000000000000",
+										"customData":
+										{
+											"structName": "MOISurfaceGraphData",
+											"structJson":
+											{
+												"parentFaceIndex": 1
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 10320,
+										"objectType": "OTSurfaceGraph",
+										"parentId": 9627,
+										"assemblyKey": "",
+										"assemblyGUId": "00000000000000000000000000000000",
+										"customData":
+										{
+											"structName": "MOISurfaceGraphData",
+											"structJson":
+											{
+												"parentFaceIndex": 1
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 10320,
+							"deltaType": "Add",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 10320,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"10321":
+								{
+									"x": 0,
+									"y": 0
+								},
+								"10322":
+								{
+									"x": 0,
+									"y": -223.51998901367188
+								},
+								"10323":
+								{
+									"x": -304.7999267578125,
+									"y": -223.51998901367188
+								},
+								"10324":
+								{
+									"x": -304.7999267578125,
+									"y": -7.62939453125e-06
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 10320,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"10325":
+								{
+									"vertices": [ 10321, 10322 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 10320,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"10326":
+								{
+									"vertices": [ 10322, 10323 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 10320,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"10327":
+								{
+									"vertices": [ 10323, 10324 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 10320,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"10328":
+								{
+									"vertices": [ 10324, 10321 ],
+									"parentObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 10320,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+								"10329":
+								{
+									"vertices": [ 10321, 10322, 10323, 10324 ],
+									"parentObjIds": []
+								},
+								"10330":
+								{
+									"vertices": [ 10322, 10321, 10324, 10323 ],
+									"parentObjIds": []
+								}
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"10331":
+								{
+									"x": 902.12677001953125,
+									"y": -1280.33251953125,
+									"z": 163.70338439941406
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+								"10332":
+								{
+									"x": 902.12677001953125,
+									"y": -1585.1324462890625,
+									"z": 163.70338439941406
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"10333":
+								{
+									"vertices": [ 10331, 10332 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"10334":
+								{
+									"vertices": [ 5106, 10331 ],
+									"parentObjIds": [ 5108 ],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"10335":
+								{
+									"vertices": [ 10331, 5107 ],
+									"parentObjIds": [ 5108 ],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+								"5108":
+								{
+									"vertices": [ 5106, 5107 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceAdditions":
+							{
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+								"9626":
+								{
+									"map":
+									{
+										"0": 10331
+									}
+								},
+								"8647":
+								{
+									"map":
+									{
+										"0": 10331
+									}
+								}
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"10336":
+								{
+									"vertices": [ 9621, 10332 ],
+									"parentObjIds": [ 9624 ],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"10337":
+								{
+									"vertices": [ 10332, 9622 ],
+									"parentObjIds": [ 9624 ],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+								"9624":
+								{
+									"vertices": [ 9621, 9622 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceAdditions":
+							{
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+								"9626":
+								{
+									"map":
+									{
+										"3": 10332
+									}
+								}
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+								"10338":
+								{
+									"vertices": [ 5107, 9621, 10332, 10331 ],
+									"parentObjIds": [ 9626 ],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 10340,
+										"objectType": "OTWallSegment",
+										"parentId": 10338,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 10340,
+										"objectType": "OTWallSegment",
+										"parentId": 10338,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+								"10339":
+								{
+									"vertices": [ 5106, 10331, 10332, 9622 ],
+									"parentObjIds": [ 9626 ],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 10341,
+										"objectType": "OTWallSegment",
+										"parentId": 10339,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 10341,
+										"objectType": "OTWallSegment",
+										"parentId": 10339,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"deltaType": "Create"
+								}
+							]
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+							},
+							"faceDeletions":
+							{
+								"9626":
+								{
+									"vertices": [ 5106, 10331, 5107, 9621, 10332, 9622 ],
+									"parentObjIds": [ 10338, 10339 ],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexAdditions":
+							{
+							},
+							"faceVertexRemovals":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 9627,
+										"objectType": "OTWallSegment",
+										"parentId": 9626,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 9627,
+										"objectType": "OTWallSegment",
+										"parentId": 9626,
+										"assemblyKey": "",
+										"assemblyGUId": "AA0881C885B1124786E275ABB472C778",
+										"customData":
+										{
+											"structName": "MOIPlaneHostedObjData",
+											"structJson":
+											{
+												"version": 1,
+												"flipSigns":
+												{
+													"x": 1,
+													"y": 1,
+													"z": 1
+												},
+												"justification": 1,
+												"overrideOriginIndex": -1
+											}
+										}
+									},
+									"deltaType": "Destroy"
+								}
+							]
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 10320,
+							"deltaType": "Edit",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+								"10321":
+								{
+									"x": 0,
+									"y": 0
+								},
+								"10322":
+								{
+									"x": 0,
+									"y": -223.51998901367188
+								},
+								"10323":
+								{
+									"x": -304.7999267578125,
+									"y": -223.51998901367188
+								},
+								"10324":
+								{
+									"x": -304.7999267578125,
+									"y": -7.62939453125e-06
+								}
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+								"10325":
+								{
+									"vertices": [ 10321, 10322 ],
+									"parentObjIds": []
+								},
+								"10326":
+								{
+									"vertices": [ 10322, 10323 ],
+									"parentObjIds": []
+								},
+								"10327":
+								{
+									"vertices": [ 10323, 10324 ],
+									"parentObjIds": []
+								},
+								"10328":
+								{
+									"vertices": [ 10324, 10321 ],
+									"parentObjIds": []
+								}
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+								"10329":
+								{
+									"vertices": [ 10321, 10322, 10323, 10324 ],
+									"parentObjIds": []
+								},
+								"10330":
+								{
+									"vertices": [ 10322, 10321, 10324, 10323 ],
+									"parentObjIds": []
+								}
+							}
+						}
+					},
+					{
+						"structName": "Graph2DDelta",
+						"structJson":
+						{
+							"iD": 10320,
+							"deltaType": "Remove",
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"polygonAdditions":
+							{
+							},
+							"polygonDeletions":
+							{
+							}
+						}
+					},
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": [
+								{
+									"oldState":
+									{
+										"iD": 10320,
+										"objectType": "OTSurfaceGraph",
+										"parentId": 9627,
+										"assemblyKey": "",
+										"assemblyGUId": "00000000000000000000000000000000",
+										"customData":
+										{
+											"structName": "MOISurfaceGraphData",
+											"structJson":
+											{
+												"parentFaceIndex": 1
+											}
+										}
+									},
+									"newState":
+									{
+										"iD": 10320,
+										"objectType": "OTSurfaceGraph",
+										"parentId": 9627,
+										"assemblyKey": "",
+										"assemblyGUId": "00000000000000000000000000000000",
+										"customData":
+										{
+											"structName": "MOISurfaceGraphData",
+											"structJson":
+											{
+												"parentFaceIndex": 1
+											}
+										}
+									},
+									"deltaType": "Destroy"
+								}
+							]
+						}
+					}
+				]
+			}
+		],
+		"volumeGraph":
+		{
+			"vertices":
+			{
+				"571":
+				{
+					"iD": 571,
+					"position":
+					{
+						"x": 387.35870361328125,
+						"y": -670.3984375,
+						"z": 0
+					}
+				},
+				"572":
+				{
+					"iD": 572,
+					"position":
+					{
+						"x": 387.35870361328125,
+						"y": -670.3984375,
+						"z": 243.83999633789062
+					}
+				},
+				"1733":
+				{
+					"iD": 1733,
+					"position":
+					{
+						"x": 996.95867919921875,
+						"y": -670.3984375,
+						"z": 0
+					}
+				},
+				"1732":
+				{
+					"iD": 1732,
+					"position":
+					{
+						"x": 996.95867919921875,
+						"y": -670.3984375,
+						"z": 243.83999633789062
+					}
+				},
+				"3503":
+				{
+					"iD": 3503,
+					"position":
+					{
+						"x": 996.95867919921875,
+						"y": -975.19842529296875,
+						"z": 243.83999633789062
+					}
+				},
+				"3504":
+				{
+					"iD": 3504,
+					"position":
+					{
+						"x": 996.95867919921875,
+						"y": -975.19842529296875,
+						"z": 0
+					}
+				},
+				"4178":
+				{
+					"iD": 4178,
+					"position":
+					{
+						"x": 387.35870361328125,
+						"y": -975.19842529296875,
+						"z": 0
+					}
+				},
+				"5106":
+				{
+					"iD": 5106,
+					"position":
+					{
+						"x": 902.12677001953125,
+						"y": -1280.33251953125,
+						"z": 0
+					}
+				},
+				"5107":
+				{
+					"iD": 5107,
+					"position":
+					{
+						"x": 902.12677001953125,
+						"y": -1280.33251953125,
+						"z": 243.83999633789062
+					}
+				},
+				"8642":
+				{
+					"iD": 8642,
+					"position":
+					{
+						"x": 292.52685546875,
+						"y": -1280.33251953125,
+						"z": 243.83999633789062
+					}
+				},
+				"8643":
+				{
+					"iD": 8643,
+					"position":
+					{
+						"x": 292.52685546875,
+						"y": -1280.33251953125,
+						"z": 0
+					}
+				},
+				"9621":
+				{
+					"iD": 9621,
+					"position":
+					{
+						"x": 902.12677001953125,
+						"y": -1585.1324462890625,
+						"z": 243.83999633789062
+					}
+				},
+				"9622":
+				{
+					"iD": 9622,
+					"position":
+					{
+						"x": 902.12677001953125,
+						"y": -1585.1324462890625,
+						"z": 0
+					}
+				},
+				"10331":
+				{
+					"iD": 10331,
+					"position":
+					{
+						"x": 902.12677001953125,
+						"y": -1280.33251953125,
+						"z": 163.70338439941406
+					}
+				},
+				"10304":
+				{
+					"iD": 10304,
+					"position":
+					{
+						"x": 292.52685546875,
+						"y": -1585.1324462890625,
+						"z": 0
+					}
+				},
+				"10332":
+				{
+					"iD": 10332,
+					"position":
+					{
+						"x": 902.12677001953125,
+						"y": -1585.1324462890625,
+						"z": 163.70338439941406
+					}
+				}
+			},
+			"edges":
+			{
+				"573":
+				{
+					"iD": 573,
+					"startVertexId": 571,
+					"endVertexId": 572,
+					"groupIds": []
+				},
+				"1736":
+				{
+					"iD": 1736,
+					"startVertexId": 1733,
+					"endVertexId": 571,
+					"groupIds": []
+				},
+				"8646":
+				{
+					"iD": 8646,
+					"startVertexId": 8643,
+					"endVertexId": 5106,
+					"groupIds": []
+				},
+				"1734":
+				{
+					"iD": 1734,
+					"startVertexId": 572,
+					"endVertexId": 1732,
+					"groupIds": []
+				},
+				"3505":
+				{
+					"iD": 3505,
+					"startVertexId": 1732,
+					"endVertexId": 3503,
+					"groupIds": []
+				},
+				"3507":
+				{
+					"iD": 3507,
+					"startVertexId": 3504,
+					"endVertexId": 1733,
+					"groupIds": []
+				},
+				"4180":
+				{
+					"iD": 4180,
+					"startVertexId": 4178,
+					"endVertexId": 3504,
+					"groupIds": []
+				},
+				"4179":
+				{
+					"iD": 4179,
+					"startVertexId": 571,
+					"endVertexId": 4178,
+					"groupIds": []
+				},
+				"10337":
+				{
+					"iD": 10337,
+					"startVertexId": 10332,
+					"endVertexId": 9622,
+					"groupIds": []
+				},
+				"8644":
+				{
+					"iD": 8644,
+					"startVertexId": 5107,
+					"endVertexId": 8642,
+					"groupIds": []
+				},
+				"8645":
+				{
+					"iD": 8645,
+					"startVertexId": 8642,
+					"endVertexId": 8643,
+					"groupIds": []
+				},
+				"1735":
+				{
+					"iD": 1735,
+					"startVertexId": 1732,
+					"endVertexId": 1733,
+					"groupIds": []
+				},
+				"9623":
+				{
+					"iD": 9623,
+					"startVertexId": 5107,
+					"endVertexId": 9621,
+					"groupIds": []
+				},
+				"9625":
+				{
+					"iD": 9625,
+					"startVertexId": 9622,
+					"endVertexId": 5106,
+					"groupIds": []
+				},
+				"10333":
+				{
+					"iD": 10333,
+					"startVertexId": 10331,
+					"endVertexId": 10332,
+					"groupIds": []
+				},
+				"10306":
+				{
+					"iD": 10306,
+					"startVertexId": 10304,
+					"endVertexId": 8643,
+					"groupIds": []
+				},
+				"10305":
+				{
+					"iD": 10305,
+					"startVertexId": 9622,
+					"endVertexId": 10304,
+					"groupIds": []
+				},
+				"10335":
+				{
+					"iD": 10335,
+					"startVertexId": 10331,
+					"endVertexId": 5107,
+					"groupIds": []
+				},
+				"10334":
+				{
+					"iD": 10334,
+					"startVertexId": 5106,
+					"endVertexId": 10331,
+					"groupIds": []
+				},
+				"10336":
+				{
+					"iD": 10336,
+					"startVertexId": 9621,
+					"endVertexId": 10332,
+					"groupIds": []
+				},
+				"3506":
+				{
+					"iD": 3506,
+					"startVertexId": 3503,
+					"endVertexId": 3504,
+					"groupIds": []
+				}
+			},
+			"faces":
+			{
+				"1737":
+				{
+					"iD": 1737,
+					"vertexIds": [ 571, 572, 1732, 1733 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"3508":
+				{
+					"iD": 3508,
+					"vertexIds": [ 1732, 3503, 3504, 1733 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"4181":
+				{
+					"iD": 4181,
+					"vertexIds": [ 571, 4178, 3504, 1733 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"8647":
+				{
+					"iD": 8647,
+					"vertexIds": [ 5106, 10331, 5107, 8642, 8643 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"10307":
+				{
+					"iD": 10307,
+					"vertexIds": [ 5106, 9622, 10304, 8643 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"10338":
+				{
+					"iD": 10338,
+					"vertexIds": [ 5107, 9621, 10332, 10331 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"10339":
+				{
+					"iD": 10339,
+					"vertexIds": [ 5106, 10331, 10332, 9622 ],
+					"groupIds": [],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				}
+			}
+		}
+	}
+}
