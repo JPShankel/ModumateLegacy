@@ -795,7 +795,7 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 		{   // Component has been nine-sliced.
 			TArray<FVector> vertices;
 			TArray<int32> indices;
-
+			TArray<FEdge> componentEdges;
 			for (int32 slice = 9 * component; slice < 9 * (component + 1); ++slice)
 			{
 				UProceduralMeshComponent* meshComponent = NineSliceLowLODComps[slice];
@@ -805,7 +805,7 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 					continue;
 				}
 
-				const FTransform localToWorld = meshComponent->GetRelativeTransform() * actorToWorld;
+				const FTransform sliceToLocal = meshComponent->GetRelativeTransform();
 				int numSections = meshComponent->GetNumSections();
 				for (int section = 0; section < numSections; ++section)
 				{
@@ -824,7 +824,7 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 
 					for (int32 v = 0; v < numVertices; ++v)
 					{
-						vertices.Add(localToWorld.TransformPosition(sectionVertices[v].Position));
+						vertices.Add(sliceToLocal.TransformPosition(sectionVertices[v].Position));
 					}
 					for (int32 i = 0; i < numIndices; ++i)
 					{
@@ -835,10 +835,14 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 
 			}
 
-			// Nine-slicing can introduce significant shifts in vertices and edges,
-			// so use increased epsilon of 6 mm.
-			DraftingLinesFromTriangles(vertices, indices, viewNormal, portalEdges, 0.6f);
+			// Use epsilon of 0.25 mm:
+			FVector viewNormalLocal = actorToWorld.InverseTransformVector(viewNormal);
+			DraftingLinesFromTriangles(vertices, indices, viewNormalLocal, componentEdges, 0.025f);
 
+			for (const auto& edge: componentEdges)
+			{
+				portalEdges.Add(FEdge(actorToWorld.TransformPosition(edge.Vertex[0]), actorToWorld.TransformPosition(edge.Vertex[1])));
+			}
 		}
 		else
 		{
@@ -958,10 +962,11 @@ void ACompoundMeshActor::DraftingLinesFromTriangles(const TArray<FVector>& Verti
 {
 	SCOPE_MS_ACCUMULATOR(STAT_ModumateMeshToLines);
 
-	const float EpsilonSquare = Epsilon * Epsilon;
-	static constexpr float angleThreshold = 0.9205f;  // 23 degrees
+	const double EpsilonSquare = (double) Epsilon * Epsilon;
+	static constexpr double angleThreshold = 0.9205;  // 23 degrees
+	FVector3d viewDir(ViewDirection);
 
-	static auto lexicalVectorCompare = [](const FVector& a, const FVector& b)
+	static auto lexicalVectorCompare = [](const FVector3d& a, const FVector3d& b)
 	{
 		if (a.X == b.X)
 		{
@@ -976,9 +981,9 @@ void ACompoundMeshActor::DraftingLinesFromTriangles(const TArray<FVector>& Verti
 
 	struct FLocalEdge
 	{
-		FVector A;
-		FVector B;
-		FVector N;
+		FVector3d A;
+		FVector3d B;
+		FVector3d N;
 		bool bIsValid { true };
 		operator bool() const { return bIsValid; }
 		void Normalize() { if (lexicalVectorCompare(B, A)) { Swap(A, B); } }
@@ -998,14 +1003,14 @@ void ACompoundMeshActor::DraftingLinesFromTriangles(const TArray<FVector>& Verti
 	for (int32 triangle = 0; triangle < numTriangles; ++triangle)
 	{
 
-		FVector vert0 = Vertices[Indices[triangle * 3]];
-		FVector vert1 = Vertices[Indices[triangle * 3 + 1]];
-		FVector vert2 = Vertices[Indices[triangle * 3 + 2]];
-		if (FVector::DistSquared(vert0, vert1) > EpsilonSquare && FVector::DistSquared(vert0, vert2) > EpsilonSquare
-			&& FVector::DistSquared(vert1, vert2) > EpsilonSquare)
+		FVector3d vert0 = Vertices[Indices[triangle * 3]];
+		FVector3d vert1 = Vertices[Indices[triangle * 3 + 1]];
+		FVector3d vert2 = Vertices[Indices[triangle * 3 + 2]];
+		if (vert0.DistanceSquared(vert1) > EpsilonSquare && vert0.DistanceSquared(vert2) > EpsilonSquare
+			&& vert1.DistanceSquared(vert2) > EpsilonSquare)
 		{
-			FVector triNormal = ((vert2 - vert0) ^ (vert1 - vert0)).GetSafeNormal();
-			if ((ViewDirection | triNormal) <= 0.0f)
+			FVector3d triNormal = ((vert2 - vert0).Cross(vert1 - vert0)).Normalized();
+			if (viewDir.Dot(triNormal) <= 0.0)
 			{
 				edges.Add({ vert0, vert1, triNormal });
 				edges.Add({ vert1, vert2, triNormal });
@@ -1027,8 +1032,8 @@ void ACompoundMeshActor::DraftingLinesFromTriangles(const TArray<FVector>& Verti
 		{
 			auto& edge1 = edges[e1];
 			auto& edge2 = edges[e2];
-			if (FVector::DistSquared(edge1.A, edge2.A) < EpsilonSquare && FVector::DistSquared(edge1.B, edge2.B) < EpsilonSquare
-				&& FMath::Abs(edge1.N | edge2.N) > angleThreshold)
+			if (edge1.A.DistanceSquared(edge2.A) < EpsilonSquare && edge1.B.DistanceSquared(edge2.B) < EpsilonSquare
+				&& FMath::Abs(edge1.N.Dot(edge2.N)) > angleThreshold)
 			{
 				edge1.bIsValid = false;
 				edge2.bIsValid = false;
@@ -1040,7 +1045,7 @@ void ACompoundMeshActor::DraftingLinesFromTriangles(const TArray<FVector>& Verti
 	{
 		if (edge)
 		{
-			outEdges.Emplace(edge.A, edge.B);
+			outEdges.Emplace(FVector(edge.A), FVector(edge.B));
 		}
 	}
 
