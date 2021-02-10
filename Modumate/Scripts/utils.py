@@ -297,7 +297,14 @@ def get_project_version():
 
 	config = configparser.ConfigParser(strict=False)
 	config_path = os.path.join(cwd, '../Config/DefaultGame.ini')
-	config.read(config_path, encoding='utf-16')
+	encodings = ['utf-16', 'utf-8']
+	for encoding_type in encodings:
+		try:
+			config.read(config_path, encoding=encoding_type)
+			break
+		except UnicodeError:
+			pass
+
 	project_version = config.get('/Script/EngineSettings.GeneralProjectSettings', 'ProjectVersion')
 	print(project_version)
 
