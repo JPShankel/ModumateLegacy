@@ -46,20 +46,16 @@ void UModalDialogConfirmPlayTutorial::OnReleaseButtonOpenProject()
 
 	// Open tutorial map
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
-	if (controller && controller->CheckSaveModel())
+	auto gameInstance = controller ? controller->GetGameInstance<UModumateGameInstance>() : nullptr;
+	if (controller && controller->CheckSaveModel() && gameInstance && gameInstance->TutorialManager)
 	{
 		if (CurrentWalkthroughCategory == EModumateWalkthroughCategories::None)
 		{
-			FPlatformProcess::LaunchURL(*CurrentVideoLink, nullptr, nullptr);
-			controller->LoadModelFilePath(CurrentProjectFilePath, true, false, false);
+			gameInstance->TutorialManager->OpenVideoTutorial(CurrentProjectFilePath, CurrentVideoLink);
 		}
 		else
 		{
-			auto gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
-			if (gameInstance && gameInstance->TutorialManager)
-			{
-				gameInstance->TutorialManager->OpenWalkthroughProject(CurrentWalkthroughCategory);
-			}
+			gameInstance->TutorialManager->OpenWalkthroughProject(CurrentWalkthroughCategory);
 		}
 	}
 }

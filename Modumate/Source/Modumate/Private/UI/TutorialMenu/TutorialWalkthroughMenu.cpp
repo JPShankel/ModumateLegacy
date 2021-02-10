@@ -110,7 +110,7 @@ void UTutorialWalkthroughMenu::CheckTutorialCountdownTimer()
 	// If countdown has reached 0, enter the next walkthrough
 	if (TutorialCountdownStep == 0)
 	{
-		TutorialManager->AdvanceWalkthrough();
+		TutorialManager->AdvanceWalkthrough(false);
 	}
 	else
 	{
@@ -177,17 +177,18 @@ void UTutorialWalkthroughMenu::OnUrlMediaOpenFailed(FString Url)
 
 void UTutorialWalkthroughMenu::OnReleaseButtonIntroProceed()
 {
-	TutorialManager->AdvanceWalkthrough();
+	TutorialManager->AdvanceWalkthrough(false);
 }
 
 void UTutorialWalkthroughMenu::OnReleaseButtonIntroGoBack()
 {
-	TutorialManager->RewindWalkthrough();
+	TutorialManager->EndWalkthrough(true);
 }
 
 void UTutorialWalkthroughMenu::OnReleaseWalkthroughButtonProceed()
 {
-	TutorialManager->AdvanceWalkthrough();
+	bool bSkipped = !GetWorld()->GetTimerManager().IsTimerActive(TutorialCountdownTimer);
+	TutorialManager->AdvanceWalkthrough(bSkipped);
 }
 
 void UTutorialWalkthroughMenu::OnReleaseButtonWalkthroughGoBack()
@@ -197,12 +198,16 @@ void UTutorialWalkthroughMenu::OnReleaseButtonWalkthroughGoBack()
 
 void UTutorialWalkthroughMenu::OnReleaseButtonOutroProceed()
 {
+	TutorialManager->EndWalkthrough(false);
+
 	// TODO: allow for advancing to "expert" in the future
 	TutorialManager->OpenWalkthroughProject(EModumateWalkthroughCategories::Intermediate);
 }
 
 void UTutorialWalkthroughMenu::OnReleaseButtonOutroGoBack()
 {
+	TutorialManager->EndWalkthrough(false);
+
 	static const FName mainMenuLVL(TEXT("MainMenuLVL"));
 	UGameplayStatics::OpenLevel(this, mainMenuLVL);
 }

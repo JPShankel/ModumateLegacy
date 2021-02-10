@@ -98,13 +98,16 @@ public:
 	bool BeginWalkthrough(EModumateWalkthroughCategories WalkthroughCategory);
 
 	UFUNCTION()
-	bool AdvanceWalkthrough();
+	bool AdvanceWalkthrough(bool bSkipped);
 
 	UFUNCTION()
 	bool RewindWalkthrough();
 
 	UFUNCTION()
-	bool EndWalkthrough();
+	bool EndWalkthrough(bool bSkipped);
+
+	UFUNCTION()
+	bool OpenVideoTutorial(const FString& ProjectFilePath, const FString& VideoURL);
 
 	UFUNCTION()
 	bool RecordWalkthroughCustomAction(EModumateWalkthroughCustomActions CustomAction);
@@ -135,9 +138,10 @@ protected:
 	class UTutorialWalkthroughMenu* WalkthroughMenu = nullptr;
 
 	void OnLoadDataReply(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-	void SetWalkthroughStepIndex(int32 NewStepIndex);
+	void SetWalkthroughStepIndex(int32 NewStepIndex, bool bSkipped);
 	bool CacheObjects();
 	void CheckCurrentStepRequirements();
+	void ResetWalkthroughState();
 
 	UFUNCTION()
 	void OnToolModeChanged();
@@ -164,6 +168,8 @@ protected:
 	EModumateWalkthroughCategories CurWalkthroughCategory = EModumateWalkthroughCategories::None;
 	int32 CurWalkthroughStepIdx = INDEX_NONE;
 	FModumateWalkthroughStepReqs CurWalkthroughStepReqsRemaining;
+	FDateTime CurWalkthroughStartTime = FDateTime::MinValue();
+	FDateTime CurWalkthroughStepStartTime = FDateTime::MinValue();
 
 	TMap<EModumateWalkthroughCategories, TArray<FModumateWalkthroughStepData>> WalkthroughStepsByCategory;
 };

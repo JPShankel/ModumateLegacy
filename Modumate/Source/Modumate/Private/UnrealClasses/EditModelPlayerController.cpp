@@ -247,10 +247,12 @@ void AEditModelPlayerController::BeginPlay()
 	IFileManager::Get().DeleteDirectory(*path, false, true);
 	IFileManager::Get().MakeDirectory(*path);
 
-	// Show walkthrough if necessary
-	if (gameInstance && gameInstance->TutorialManager && gameInstance->TutorialManager->FromMainMenuWalkthroughCategory != EModumateWalkthroughCategories::None)
+	// Begin a walkthrough if requested from the main menu, then clear out the request.
+	if (gameInstance && gameInstance->TutorialManager &&
+		(gameInstance->TutorialManager->FromMainMenuWalkthroughCategory != EModumateWalkthroughCategories::None))
 	{
 		gameInstance->TutorialManager->BeginWalkthrough(gameInstance->TutorialManager->FromMainMenuWalkthroughCategory);
+		gameInstance->TutorialManager->FromMainMenuWalkthroughCategory = EModumateWalkthroughCategories::None;
 	}
 }
 

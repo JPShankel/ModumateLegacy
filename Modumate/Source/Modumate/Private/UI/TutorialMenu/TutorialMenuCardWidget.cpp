@@ -1,16 +1,17 @@
 // Copyright 2021 Modumate, Inc. All Rights Reserved.
 
 #include "UI/TutorialMenu/TutorialMenuCardWidget.h"
-#include "UI/Custom/ModumateTextBlockUserWidget.h"
-#include "UI/Custom/ModumateButtonUserWidget.h"
-#include "UI/Custom/ModumateButton.h"
+
 #include "Blueprint/AsyncTaskDownloadImage.h"
 #include "Components/Image.h"
-#include "UI/TutorialMenu/TutorialMenuWidget.h"
+#include "UI/Custom/ModumateButton.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/ModalDialog/ModalDialogConfirmPlayTutorial.h"
-#include "UnrealClasses/MainMenuGameMode.h"
-#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/TutorialManager.h"
+#include "UI/TutorialMenu/TutorialMenuWidget.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/MainMenuGameMode.h"
 
 UTutorialMenuCardWidget::UTutorialMenuCardWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -42,26 +43,24 @@ void UTutorialMenuCardWidget::NativeConstruct()
 
 void UTutorialMenuCardWidget::OnReleaseButtonTutorialProject()
 {
-	// If this is opened in the main app, use EMPlayerController
+	// If this is opened in the main app, build a confirmation dialog so the user has an opportunity to save their work
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
-	if (controller)
+	if (controller && ensure(ParentTutorialMenu && ParentTutorialMenu->ModalDialogConfirmPlayTutorialBP))
 	{
 		ParentTutorialMenu->ModalDialogConfirmPlayTutorialBP->BuildModalDialog(ProjectFilePath, VideoLink);
 	}
-	else // else this is from the main menu
+	else if (ensure(ParentTutorialMenu && ParentTutorialMenu->TutorialManager)) // otherwise, open the video tutorial immediately
 	{
-		AMainMenuGameMode* mainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode>();
-		if (mainMenuGameMode)
-		{
-			FPlatformProcess::LaunchURL(*VideoLink, nullptr, nullptr);
-			mainMenuGameMode->OpenProject(ProjectFilePath, true);
-		}
+		ParentTutorialMenu->TutorialManager->OpenVideoTutorial(ProjectFilePath, VideoLink);
 	}
 }
 
 void UTutorialMenuCardWidget::OnReleaseButtonPlayVideo()
 {
-	FPlatformProcess::LaunchURL(*VideoLink, nullptr, nullptr);
+	if (ensure(ParentTutorialMenu && ParentTutorialMenu->TutorialManager))
+	{
+		ParentTutorialMenu->TutorialManager->OpenVideoTutorial(ProjectFilePath, VideoLink);
+	}
 }
 
 void UTutorialMenuCardWidget::OnImageDownloadedSucceed(class UTexture2DDynamic* Texture)

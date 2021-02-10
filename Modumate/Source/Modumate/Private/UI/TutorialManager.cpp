@@ -110,12 +110,18 @@ bool UModumateTutorialManager::BeginWalkthrough(EModumateWalkthroughCategories W
 	}
 
 	CurWalkthroughCategory = WalkthroughCategory;
-	SetWalkthroughStepIndex(0);
+	CurWalkthroughStartTime = FDateTime::Now();
+	UModumateAnalyticsStatics::SetInTutorial(true);
+	SetWalkthroughStepIndex(0, false);
+
+	static const FString eventNamePrefix(TEXT("BeginWalkthrough_"));
+	FString eventName = eventNamePrefix + GetEnumValueString(CurWalkthroughCategory);
+	UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Tutorials, eventName);
 
 	return true;
 }
 
-bool UModumateTutorialManager::AdvanceWalkthrough()
+bool UModumateTutorialManager::AdvanceWalkthrough(bool bSkipped)
 {
 	if (CurWalkthroughCategory == EModumateWalkthroughCategories::None)
 	{
@@ -129,7 +135,19 @@ bool UModumateTutorialManager::AdvanceWalkthrough()
 	}
 
 	OnWalkthroughStepCompleted.Broadcast(CurWalkthroughCategory, CurWalkthroughStepIdx);
-	SetWalkthroughStepIndex(CurWalkthroughStepIdx + 1);
+
+	// Record an event for skipping/completing the event, and how long it took
+	FDateTime curTime = FDateTime::Now();
+	FTimespan stepTime = curTime - CurWalkthroughStepStartTime;
+
+	static const TCHAR* skippedStepFormat = TEXT("SkippedWalkthroughStep_{0}_{1}");
+	static const TCHAR* completedStepFormat = TEXT("CompletedWalkthroughStep_{0}_{1}");
+	const TCHAR* eventFormat = bSkipped ? skippedStepFormat : completedStepFormat;
+
+	FString eventName = FString::Format(eventFormat, { GetEnumValueString(CurWalkthroughCategory), CurWalkthroughStepIdx });
+	UModumateAnalyticsStatics::RecordEventCustomFloat(this, EModumateAnalyticsCategory::Tutorials, eventName, stepTime.GetTotalSeconds());
+
+	SetWalkthroughStepIndex(CurWalkthroughStepIdx + 1, bSkipped);
 
 	return true;
 }
@@ -147,23 +165,80 @@ bool UModumateTutorialManager::RewindWalkthrough()
 		return false;
 	}
 
-	SetWalkthroughStepIndex(CurWalkthroughStepIdx - 1);
+	SetWalkthroughStepIndex(CurWalkthroughStepIdx - 1, true);
 	return true;
 }
 
-bool UModumateTutorialManager::EndWalkthrough()
+bool UModumateTutorialManager::EndWalkthrough(bool bSkipped)
 {
 	if (CurWalkthroughCategory == EModumateWalkthroughCategories::None)
 	{
 		return false;
 	}
 
-	if (!CacheObjects())
+	// Record an event for skipping/completing the walkthrough, and how long it took
+	FTimespan walkthroughTime = FDateTime::Now() - CurWalkthroughStartTime;
+
+	static const FString skippedWalkthroughPrefix(TEXT("SkippedWalkthrough_"));
+	static const FString completedWalkthroughPrefix(TEXT("CompletedWalkthrough_"));
+	const FString& eventPrefix = bSkipped ? skippedWalkthroughPrefix : completedWalkthroughPrefix;
+	FString eventName = eventPrefix + GetEnumValueString(CurWalkthroughCategory);
+	UModumateAnalyticsStatics::RecordEventCustomFloat(this, EModumateAnalyticsCategory::Tutorials, eventName, walkthroughTime.GetTotalSeconds());
+
+	ResetWalkthroughState();
+	UModumateAnalyticsStatics::SetInTutorial(false);
+
+	if (CacheObjects())
+	{
+		WalkthroughMenu->UpdateBlockVisibility(ETutorialWalkthroughBlockStage::None);
+	}
+
+	return true;
+}
+
+bool UModumateTutorialManager::OpenVideoTutorial(const FString& ProjectFilePath, const FString& VideoURL)
+{
+	if (ProjectFilePath.IsEmpty() && VideoURL.IsEmpty())
 	{
 		return false;
 	}
 
-	SetWalkthroughStepIndex(INDEX_NONE);
+	if (!ProjectFilePath.IsEmpty())
+	{
+		auto world = GetOuter()->GetWorld();
+		// Check if this is in edit scene or main menu
+		AEditModelPlayerController* controller = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+		AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
+		if (controller)
+		{
+			if (!controller->LoadModelFilePath(ProjectFilePath, true, false, false))
+			{
+				return false;
+			}
+		}
+		else if (mainMenuGameMode)
+		{
+			if (!mainMenuGameMode->OpenProject(ProjectFilePath, true))
+			{
+				return false;
+			}
+		}
+	}
+
+	if (!VideoURL.IsEmpty())
+	{
+		FPlatformProcess::LaunchURL(*VideoURL, nullptr, nullptr);
+
+		int32 urlLastSlashIdx;
+		if (VideoURL.FindLastChar(TEXT('/'), urlLastSlashIdx))
+		{
+			static const FString eventNamePrefix(TEXT("OpenedVideoTutorial_"));
+			FString videoID = VideoURL.RightChop(urlLastSlashIdx + 1);
+			FString eventName = eventNamePrefix + videoID;
+			UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Tutorials, eventName);
+		}
+	}
+
 	return true;
 }
 
@@ -195,6 +270,11 @@ const FModumateWalkthroughStepData& UModumateTutorialManager::GetCurWalkthroughS
 
 void UModumateTutorialManager::OpenWalkthroughProject(EModumateWalkthroughCategories WalkthroughCategory)
 {
+	if (CurWalkthroughCategory != EModumateWalkthroughCategories::None)
+	{
+		EndWalkthrough(true);
+	}
+
 	// TODO: this should be from record
 	static const FString beginnerProjectName(TEXT("Beginner Tutorial Project.mdmt"));
 	static const FString IntermediateProjectName(TEXT("IntermediateTutorialProject.mdmt"));
@@ -208,10 +288,6 @@ void UModumateTutorialManager::OpenWalkthroughProject(EModumateWalkthroughCatego
 	{
 		GetTutorialFilePath(IntermediateProjectName, walkthroughFullPath);
 	}
-
-	// Clear out any potentially current walkthrough state
-	CurWalkthroughCategory = EModumateWalkthroughCategories::None;
-	CurWalkthroughStepIdx = INDEX_NONE;
 
 	auto world = GetOuter()->GetWorld();
 	// Check if this is in edit scene or main menu
@@ -277,7 +353,7 @@ void UModumateTutorialManager::OnLoadDataReply(FHttpRequestPtr Request, FHttpRes
 	}
 }
 
-void UModumateTutorialManager::SetWalkthroughStepIndex(int32 NewStepIndex)
+void UModumateTutorialManager::SetWalkthroughStepIndex(int32 NewStepIndex, bool bSkipped)
 {
 	auto& curSteps = GetCurWalkthroughSteps();
 	int32 numSteps = curSteps.Num();
@@ -285,6 +361,7 @@ void UModumateTutorialManager::SetWalkthroughStepIndex(int32 NewStepIndex)
 	if (CurWalkthroughStepIdx != NewStepIndex)
 	{
 		CurWalkthroughStepIdx = NewStepIndex;
+		CurWalkthroughStepStartTime = FDateTime::Now();
 
 		float progressPCT = (numSteps > 0) ? (float)CurWalkthroughStepIdx / numSteps : 1.0f;
 
@@ -293,8 +370,7 @@ void UModumateTutorialManager::SetWalkthroughStepIndex(int32 NewStepIndex)
 
 		if (!curSteps.IsValidIndex(CurWalkthroughStepIdx))
 		{
-			CurWalkthroughCategory = EModumateWalkthroughCategories::None;
-			WalkthroughMenu->UpdateBlockVisibility(ETutorialWalkthroughBlockStage::None);
+			EndWalkthrough(bSkipped);
 		}
 		else if (CurWalkthroughStepIdx == 0)
 		{
@@ -356,6 +432,15 @@ void UModumateTutorialManager::CheckCurrentStepRequirements()
 	{
 		WalkthroughMenu->ShowCountdown(curStepData.AutoProceedCountdown);
 	}
+}
+
+void UModumateTutorialManager::ResetWalkthroughState()
+{
+	CurWalkthroughCategory = EModumateWalkthroughCategories::None;
+	CurWalkthroughStepIdx = INDEX_NONE;
+	CurWalkthroughStepReqsRemaining = FModumateWalkthroughStepReqs();
+	CurWalkthroughStartTime = FDateTime::MinValue();
+	CurWalkthroughStepStartTime = FDateTime::MinValue();
 }
 
 void UModumateTutorialManager::OnToolModeChanged()
