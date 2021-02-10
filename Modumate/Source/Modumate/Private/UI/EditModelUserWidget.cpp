@@ -295,6 +295,8 @@ void UEditModelUserWidget::UpdateSelectTrayVisibility()
 
 void UEditModelUserWidget::ToggleBIMPresetSwapTray(bool NewVisibility)
 {
+	// TODO: Closing swap tray should look back to previous left menu state
+
 	if (NewVisibility)
 	{
 		BIMPresetSwap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -305,7 +307,7 @@ void UEditModelUserWidget::ToggleBIMPresetSwapTray(bool NewVisibility)
 	{
 		BIMPresetSwap->SetVisibility(ESlateVisibility::Collapsed);
 		ToolTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
-		EMOnSelectionObjectChanged();
+		SelectionTrayWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else if (Controller->GetToolMode() != EToolMode::VE_NONE)
 	{
