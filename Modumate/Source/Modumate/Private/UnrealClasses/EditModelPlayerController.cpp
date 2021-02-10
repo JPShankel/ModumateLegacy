@@ -817,7 +817,7 @@ bool AEditModelPlayerController::SaveModelFilePath(const FString &filepath)
 		Modumate::PlatformFunctions::ShowMessageBox(*FString::Printf(TEXT("Saved as %s"),*EMPlayerState->LastFilePath), TEXT("Save Model"), Modumate::PlatformFunctions::Okay);
 
 		static const FString eventName(TEXT("SaveDocument"));
-		UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategorySession, eventName);
+		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Session, eventName);
 		return true;
 	}
 	else
@@ -872,7 +872,7 @@ bool AEditModelPlayerController::LoadModelFilePath(const FString &filename, bool
 	if (bLoadSuccess)
 	{
 		static const FString LoadDocumentEventName(TEXT("LoadDocument"));
-		UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategorySession, LoadDocumentEventName);
+		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Session, LoadDocumentEventName);
 
 		// TODO: always record input, and remove this flag, when we can upload the loaded document as the start of the input telemetry log
 		StartTelemetrySession(false);
@@ -926,7 +926,7 @@ void AEditModelPlayerController::NewModel(bool bShouldCheckForSave)
 		EndTelemetrySession();
 
 		static const FString NewDocumentEventName(TEXT("NewDocument"));
-		UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategorySession, NewDocumentEventName);
+		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Session, NewDocumentEventName);
 
 		EMPlayerState->OnNewModel();
 		Document->MakeNew(GetWorld());
@@ -2022,7 +2022,7 @@ bool AEditModelPlayerController::GetActiveUserSnapPoint(FTransform &outSnapPoint
 void AEditModelPlayerController::OnToggleFullscreen(bool bIsFullscreen)
 {
 	static const FString analyticsEventName(TEXT("ToggleFullscreen"));
-	UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategoryView, analyticsEventName);
+	UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::View, analyticsEventName);
 }
 
 void AEditModelPlayerController::OnHandledInputActionName(FName ActionName, EInputEvent InputEvent)
@@ -2165,7 +2165,7 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 			if (EMPlayerState->ShowDebugSnaps && hitMOI)
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("OBJECT HIT #%d, %s"),
-					hitMOI->ID, *EnumValueString(EObjectType, hitMOI->GetObjectType())
+					hitMOI->ID, *GetEnumValueString(hitMOI->GetObjectType())
 				));
 			}
 			projectedHit = GetShiftConstrainedMouseHit(baseHit);
@@ -2245,7 +2245,7 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 					if (hitMOI)
 					{
 						GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("STRUCTURAL MOI %d, %s"),
-							hitMOI->ID, *EnumValueString(EObjectType, hitMOI->GetObjectType())));
+							hitMOI->ID, *GetEnumValueString(hitMOI->GetObjectType())));
 					}
 				}
 
@@ -3232,7 +3232,7 @@ bool AEditModelPlayerController::ToggleGravityPawn()
 	}
 
 	static const FString analyticsEventName(TEXT("ToggleGravity"));
-	UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategoryView, analyticsEventName);
+	UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::View, analyticsEventName);
 
 	return true;
 }

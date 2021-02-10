@@ -979,7 +979,7 @@ bool AEditModelPlayerState::IsObjectTypeEnabledByViewMode(EObjectType ObjectType
 		case EObjectType::OTScopeBox:
 			return true;
 		default:
-			ensureMsgf(false, TEXT("Unhandled uncategorized object type: %s!"), *EnumValueString(EObjectType, ObjectType));
+			ensureMsgf(false, TEXT("Unhandled uncategorized object type: %s!"), *GetEnumValueString(ObjectType));
 			return false;
 		}
 	default:

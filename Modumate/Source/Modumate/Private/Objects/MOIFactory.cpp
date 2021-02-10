@@ -58,7 +58,7 @@ UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 	case EObjectType::OTMullion: return AMOIMullion::StaticClass();
 	default:
 	{
-		FString objectTypeString = EnumValueString(EObjectType, ObjectType);
+		FString objectTypeString = GetEnumValueString(ObjectType);
 		ensureAlwaysMsgf(false, TEXT("Tried to create a MOI from an unsupported ObjectType: %s!"),
 			*objectTypeString);
 		return nullptr;

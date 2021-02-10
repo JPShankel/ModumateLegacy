@@ -148,7 +148,7 @@ void UViewCubeWidget::Zoom(const FVector& InForward, const FVector& InUp)
 	}
 
 	static const FString eventName(TEXT("QuickViewSet"));
-	UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategoryView, eventName);
+	UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::View, eventName);
 }
 
 FVector2D UViewCubeWidget::TransformVector(const FVector& InVector) const

@@ -104,7 +104,7 @@ void UEditModelInputHandler::SetupBindings()
 			FInputCommandData &data = AllInputCommandData.FindOrAdd(Row.Command);
 
 			data.Command = Row.Command;
-			data.ActionName = FName(*EnumValueString(EInputCommand, data.Command));
+			data.ActionName = FName(*GetEnumValueString(data.Command));
 			data.Title = data.Title.IsEmpty() ? Row.Title : data.Title;
 			data.EnabledDescription = data.EnabledDescription.IsEmpty() ? Row.EnabledDescription : data.EnabledDescription;
 			data.DisabledDescription = data.DisabledDescription.IsEmpty() ? Row.DisabledDescription : data.DisabledDescription;
@@ -488,7 +488,7 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	}
 	default:
 	{
-		ensureAlwaysMsgf(false, TEXT("Invalid/unhandled input command: %s"), *EnumValueString(EInputCommand, Command));
+		ensureAlwaysMsgf(false, TEXT("Invalid/unhandled input command: %s"), *GetEnumValueString(Command));
 		return false;
 	}
 	}

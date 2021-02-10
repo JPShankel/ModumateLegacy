@@ -446,7 +446,7 @@ void FModumateDatabase::ReadPresetData()
 		FString cell = NCPRows[row][objectTypeI];
 		if (!cell.IsEmpty())
 		{
-			EObjectType ot = EnumValueByString(EObjectType, cell);
+			EObjectType ot = GetEnumValueByString<EObjectType>(cell);
 			objectPaths.Add(FObjectPathRef(tagPath, ot));
 		}
 

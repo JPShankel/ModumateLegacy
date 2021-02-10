@@ -4,6 +4,7 @@
 
 #include "Analytics.h"
 #include "Interfaces/IAnalyticsProvider.h"
+#include "Database/ModumateObjectEnums.h"
 #include "UnrealClasses/Modumate.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
@@ -12,13 +13,6 @@
 const FString UModumateAnalyticsStatics::AttrNameCategory(TEXT("Category"));
 const FString UModumateAnalyticsStatics::AttrNameCustomValue(TEXT("CustomValue"));
 const FString UModumateAnalyticsStatics::AttrNameInTutorial(TEXT("InTutorial"));
-
-const FString UModumateAnalyticsStatics::EventCategoryObjects(TEXT("Objects"));
-const FString UModumateAnalyticsStatics::EventCategoryTools(TEXT("Tools"));
-const FString UModumateAnalyticsStatics::EventCategoryHandles(TEXT("Handles"));
-const FString UModumateAnalyticsStatics::EventCategoryPresets(TEXT("Presets"));
-const FString UModumateAnalyticsStatics::EventCategoryView(TEXT("View"));
-const FString UModumateAnalyticsStatics::EventCategorySession(TEXT("Session"));
 
 FOnModumateAnalyticsEvent UModumateAnalyticsStatics::OnRecordedAnalyticsEvent;
 bool UModumateAnalyticsStatics::bInTutorial = false;
@@ -80,12 +74,12 @@ void UModumateAnalyticsStatics::SetInTutorial(bool bNewIntutorial)
 	UModumateAnalyticsStatics::bInTutorial = bNewIntutorial;
 }
 
-bool UModumateAnalyticsStatics::RecordEventSimple(UObject* WorldContextObject, const FString &EventCategory, const FString &EventName)
+bool UModumateAnalyticsStatics::RecordEventSimple(UObject* WorldContextObject, EModumateAnalyticsCategory EventCategory, const FString &EventName)
 {
 	if (IAnalyticsProvider *analytics = GetAnalyticsFromWorld(WorldContextObject))
 	{
 		TArray<FAnalyticsEventAttribute> eventAttributes;
-		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameCategory, EventCategory));
+		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameCategory, GetEnumValueString(EventCategory)));
 		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameInTutorial, UModumateAnalyticsStatics::bInTutorial));
 
 		analytics->RecordEvent(EventName, eventAttributes);
@@ -97,12 +91,12 @@ bool UModumateAnalyticsStatics::RecordEventSimple(UObject* WorldContextObject, c
 	return false;
 }
 
-bool UModumateAnalyticsStatics::RecordEventCustomFloat(UObject* WorldContextObject, const FString &EventCategory, const FString &EventName, float CustomValue)
+bool UModumateAnalyticsStatics::RecordEventCustomFloat(UObject* WorldContextObject, EModumateAnalyticsCategory EventCategory, const FString &EventName, float CustomValue)
 {
 	if (IAnalyticsProvider *analytics = GetAnalyticsFromWorld(WorldContextObject))
 	{
 		TArray<FAnalyticsEventAttribute> eventAttributes;
-		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameCategory, EventCategory));
+		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameCategory, GetEnumValueString(EventCategory)));
 		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameCustomValue, CustomValue));
 		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameInTutorial, UModumateAnalyticsStatics::bInTutorial));
 
@@ -117,36 +111,36 @@ bool UModumateAnalyticsStatics::RecordEventCustomFloat(UObject* WorldContextObje
 
 bool UModumateAnalyticsStatics::RecordToolUsage(UObject* WorldContextObject, EToolMode ToolMode, float UsedDuration)
 {
-	FString toolModeEnumString = EnumValueString(EToolMode, ToolMode);
+	FString toolModeEnumString = GetEnumValueString(ToolMode);
 	FString eventName = FString::Printf(TEXT("TimeUsedTool_%s"), *toolModeEnumString.RightChop(3));
-	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EventCategoryTools, eventName, UsedDuration);
+	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EModumateAnalyticsCategory::Tools, eventName, UsedDuration);
 }
 
 bool UModumateAnalyticsStatics::RecordSimpleToolEvent(UObject* WorldContextObject, EToolMode ToolMode, const FString& SubEventName)
 {
-	FString toolModeEnumString = EnumValueString(EToolMode, ToolMode);
+	FString toolModeEnumString = GetEnumValueString(ToolMode);
 	FString eventName = FString::Printf(TEXT("%s_%s"), *toolModeEnumString.RightChop(3), *SubEventName);
-	return UModumateAnalyticsStatics::RecordEventSimple(WorldContextObject, EventCategoryTools, eventName);
+	return UModumateAnalyticsStatics::RecordEventSimple(WorldContextObject, EModumateAnalyticsCategory::Tools, eventName);
 }
 
 bool UModumateAnalyticsStatics::RecordObjectCreation(UObject* WorldContextObject, EObjectType ObjectType, int32 Count)
 {
-	FString objectEnumString = EnumValueString(EObjectType, ObjectType);
+	FString objectEnumString = GetEnumValueString(ObjectType);
 	FString eventName = FString::Printf(TEXT("CreatedObject_%s"), *objectEnumString.RightChop(2));
-	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EventCategoryObjects, eventName, Count);
+	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EModumateAnalyticsCategory::Objects, eventName, Count);
 }
 
 bool UModumateAnalyticsStatics::RecordObjectDeletion(UObject* WorldContextObject, EObjectType ObjectType, int32 Count)
 {
-	FString objectEnumString = EnumValueString(EObjectType, ObjectType);
+	FString objectEnumString = GetEnumValueString(ObjectType);
 	FString eventName = FString::Printf(TEXT("DeletedObject_%s"), *objectEnumString.RightChop(2));
-	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EventCategoryObjects, eventName, Count);
+	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EModumateAnalyticsCategory::Objects, eventName, Count);
 }
 
 bool UModumateAnalyticsStatics::RecordSessionDuration(UObject* WorldContextObject, const FTimespan& SessionDuration)
 {
 	static const FString eventName(TEXT("SessionDuration"));
-	bool bEventSuccess = UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EventCategorySession, eventName, SessionDuration.GetTotalSeconds());
+	bool bEventSuccess = UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EModumateAnalyticsCategory::Session, eventName, SessionDuration.GetTotalSeconds());
 
 	if (IAnalyticsProvider* analytics = GetAnalyticsFromWorld(WorldContextObject))
 	{
@@ -159,17 +153,17 @@ bool UModumateAnalyticsStatics::RecordSessionDuration(UObject* WorldContextObjec
 bool UModumateAnalyticsStatics::RecordPresetCreation(UObject* WorldContextObject)
 {
 	static const FString eventName(TEXT("Create"));
-	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EventCategoryPresets, eventName, 1.0f);
+	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EModumateAnalyticsCategory::Presets, eventName, 1.0f);
 }
 
 bool UModumateAnalyticsStatics::RecordPresetUpdate(UObject* WorldContextObject)
 {
 	static const FString eventName(TEXT("Update"));
-	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EventCategoryPresets, eventName, 1.0f);
+	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EModumateAnalyticsCategory::Presets, eventName, 1.0f);
 }
 
 bool UModumateAnalyticsStatics::RecordPresetDeletion(UObject* WorldContextObject)
 {
 	static const FString eventName(TEXT("Delete"));
-	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EventCategoryPresets, eventName, 1.0f);
+	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EModumateAnalyticsCategory::Presets, eventName, 1.0f);
 }

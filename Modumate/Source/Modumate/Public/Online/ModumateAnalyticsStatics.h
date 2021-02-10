@@ -11,7 +11,20 @@
 
 class IAnalyticsProvider;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnModumateAnalyticsEvent, const FString&, EventCategory, const FString&, EventName);
+UENUM()
+enum class EModumateAnalyticsCategory : uint8
+{
+	None,
+	Objects,
+	Tools,
+	Handles,
+	Presets,
+	View,
+	Session,
+	Tutorials
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnModumateAnalyticsEvent, EModumateAnalyticsCategory, EventCategory, const FString&, EventName);
 
 UCLASS(BlueprintType)
 class MODUMATE_API UModumateAnalyticsStatics : public UBlueprintFunctionLibrary
@@ -22,13 +35,6 @@ public:
 	static const FString AttrNameCategory;
 	static const FString AttrNameCustomValue;
 	static const FString AttrNameInTutorial;
-
-	static const FString EventCategoryObjects;
-	static const FString EventCategoryTools;
-	static const FString EventCategoryHandles;
-	static const FString EventCategoryPresets;
-	static const FString EventCategoryView;
-	static const FString EventCategorySession;
 
 	static FOnModumateAnalyticsEvent OnRecordedAnalyticsEvent;
 
@@ -42,10 +48,10 @@ public:
 	static void SetInTutorial(bool bNewIntutorial);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
-	static bool RecordEventSimple(UObject* WorldContextObject, const FString &EventCategory, const FString &EventName);
+	static bool RecordEventSimple(UObject* WorldContextObject, EModumateAnalyticsCategory EventCategory, const FString &EventName);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
-	static bool RecordEventCustomFloat(UObject* WorldContextObject, const FString &EventCategory, const FString &EventName, float CustomValue);
+	static bool RecordEventCustomFloat(UObject* WorldContextObject, EModumateAnalyticsCategory EventCategory, const FString &EventName, float CustomValue);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
 	static bool RecordToolUsage(UObject* WorldContextObject, EToolMode ToolMode, float UsedDuration);

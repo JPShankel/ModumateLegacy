@@ -96,8 +96,8 @@ EBIMResult FBIMCSVReader::ProcessInputPinRow(const TArray<const TCHAR*>& Row, in
 
 	FName target = Row[6];
 	
-	EBIMPinTarget targetEnum = FindEnumValueByName<EBIMPinTarget>(TEXT("EBIMPinTarget"), target);
-	if (targetEnum != EBIMPinTarget::None)
+	EBIMPinTarget targetEnum = EBIMPinTarget::None;
+	if (FindEnumValueByName(target, targetEnum))
 	{
 		childAttachment.PinTarget = targetEnum;
 	}
@@ -141,8 +141,8 @@ EBIMResult FBIMCSVReader::ProcessTagPathRow(const TArray<const TCHAR*>& Row, int
 		//When we encounter a new DataType column, set up the corresponding state
 		if (cell.ParseIntoArray(dataType, TEXT("=")) && dataType[0].Equals(TEXT("DataType")))
 		{
-			ECSVMatrixNames matrixName = FindEnumValueByName<ECSVMatrixNames>(TEXT("ECSVMatrixNames"), *dataType[1]);
-			if (matrixName != ECSVMatrixNames::Error)
+			ECSVMatrixNames matrixName = ECSVMatrixNames::Error;
+			if (FindEnumValueByName(*dataType[1], matrixName))
 			{
 				PresetMatrices.Add(FPresetMatrix(matrixName, i + 1));
 				currentRange = PresetMatrices.Num() - 1;
@@ -280,7 +280,8 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				FBIMPresetMaterialChannelBinding materialBinding;
 				for (int32 i = 0; i < presetMatrix.Columns.Num(); ++i)
 				{
-					EMaterialChannelFields targetEnum = EnumValueByString(EMaterialChannelFields, presetMatrix.Columns[i]);
+					const FString& fieldString = presetMatrix.Columns[i];
+					EMaterialChannelFields targetEnum = GetEnumValueByString<EMaterialChannelFields>(fieldString);
 					switch (targetEnum)
 					{
 						case EMaterialChannelFields::AppliesToChannel:
@@ -604,7 +605,7 @@ EBIMResult FBIMCSVReader::ProcessPropertyDeclarationRow(const TArray<const TCHAR
 	EBIMValueType propertyTypeEnum;
 	FBIMPropertyKey qualifiedName = Row[6];
 
-	if (!TryFindEnumValueByName<EBIMValueType>(TEXT("EBIMValueType"), propertyTypeName, propertyTypeEnum))
+	if (!FindEnumValueByName(propertyTypeName, propertyTypeEnum))
 	{
 		return EBIMResult::Error;
 	}

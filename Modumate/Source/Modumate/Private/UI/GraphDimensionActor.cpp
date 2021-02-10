@@ -248,7 +248,7 @@ void AGraphDimensionActor::OnMeasurementTextCommitted(const FText& Text, ETextCo
 			if (bSuccess)
 			{
 				static const FString eventName(TEXT("GraphEnteredDimString"));
-				UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategoryHandles, eventName);
+				UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Handles, eventName);
 			}
 		}
 	}

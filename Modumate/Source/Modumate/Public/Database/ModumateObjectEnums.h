@@ -3,60 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "UObject/ObjectMacros.h"
 #include "Graph/Graph2DTypes.h"
 #include "Graph/Graph3DTypes.h"
+#include "ModumateCore/EnumHelpers.h"
+#include "UObject/ObjectMacros.h"
 
 #include "ModumateObjectEnums.generated.h"
-
-
-template<typename TEnum>
-static FORCEINLINE FName FindEnumValueFullName(const TCHAR* TypeName, TEnum EnumValue)
-{
-	static const UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TypeName, true);
-	return enumPtr ? enumPtr->GetNameByValue((int64)EnumValue) : NAME_None;
-}
-
-template<typename TEnum>
-static FORCEINLINE FString FindEnumValueString(const TCHAR* TypeName, TEnum EnumValue)
-{
-	static_assert(TIsEnum<TEnum>::Value, "Should only call this with enum types");
-	UEnum* enumClass = StaticEnum<TEnum>();
-	return enumClass ? enumClass->GetNameStringByValue((int64)EnumValue) : FString();
-}
-
-template<typename TEnum>
-static FORCEINLINE FName GetEnumValueShortName(TEnum EnumValue)
-{
-	return FName(*FindEnumValueString(TEXT(""), EnumValue));
-}
-
-template<typename TEnum>
-static FORCEINLINE TEnum FindEnumValueByName(const TCHAR* TypeName, FName NameValue)
-{
-	static const UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TypeName, true);
-	return static_cast<TEnum>(enumPtr ? enumPtr->GetValueByName(NameValue) : 0);
-}
-
-template<typename TEnum>
-static FORCEINLINE bool TryFindEnumValueByName(const TCHAR* TypeName, FName NameValue, TEnum &OutValue)
-{
-	static const UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TypeName, true);
-	int64 enumIntValue = enumPtr ? enumPtr->GetValueByName(NameValue) : INDEX_NONE;
-	if (enumIntValue != INDEX_NONE)
-	{
-		OutValue = static_cast<TEnum>(enumIntValue);
-		return true;
-	}
-	return false;
-}
-
-#define EnumValueFullName(EnumType, EnumValue) FindEnumValueFullName<EnumType>(TEXT(#EnumType), EnumValue)
-#define EnumValueString(EnumType, EnumValue) FindEnumValueString<EnumType>(TEXT(#EnumType), EnumValue)
-#define EnumValueByString(EnumType, StringValue) FindEnumValueByName<EnumType>(TEXT(#EnumType), FName(*StringValue))
-#define TryEnumValueByString(EnumType, StringValue, OutValue) TryFindEnumValueByName<EnumType>(TEXT(#EnumType), FName(*StringValue), OutValue)
-#define TryEnumValueByName(EnumType, NameValue, OutValue) TryFindEnumValueByName<EnumType>(TEXT(#EnumType), NameValue, OutValue)
 
 
 // Collision defines, for easier usage in code.

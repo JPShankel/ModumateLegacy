@@ -237,7 +237,7 @@ bool UEditModelCameraController::ZoomToNextAxis(FVector2D NextAxisDirection, boo
 	if (newViewForward.IsNormalized())
 	{
 		static const FString eventName(TEXT("QuickViewNext"));
-		UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategoryView, eventName);
+		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::View, eventName);
 
 		if (bUseSelection)
 		{

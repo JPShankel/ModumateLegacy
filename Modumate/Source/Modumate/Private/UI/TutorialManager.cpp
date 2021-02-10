@@ -437,9 +437,9 @@ void UModumateTutorialManager::OnExecutedInputCommand(EInputCommand InputCommand
 	}
 }
 
-void UModumateTutorialManager::OnRecordedAnalyticsEvent(const FString& EventCategory, const FString& EventName)
+void UModumateTutorialManager::OnRecordedAnalyticsEvent(EModumateAnalyticsCategory EventCategory, const FString& EventName)
 {
-	FName fullEventName(*(EventCategory / EventName));
+	FName fullEventName(*(GetEnumValueString(EventCategory) / EventName));
 
 	bool bMadeProgress = (CurWalkthroughStepReqsRemaining.AnalyticEventsToRecord.Remove(fullEventName) > 0);
 	if (bMadeProgress)

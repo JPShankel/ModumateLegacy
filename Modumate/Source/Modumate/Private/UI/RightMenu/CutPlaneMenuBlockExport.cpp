@@ -102,7 +102,7 @@ void UCutPlaneMenuBlockExport::OnButtonExportReleased()
 	gameState->Document->ApplyDeltas({ newDelta }, GetWorld());
 
 	static const FString analyticsEventName(TEXT("ExportDWG"));
-	UModumateAnalyticsStatics::RecordEventSimple(Controller, UModumateAnalyticsStatics::EventCategoryView, analyticsEventName);
+	UModumateAnalyticsStatics::RecordEventSimple(Controller, EModumateAnalyticsCategory::View, analyticsEventName);
 
 	Controller->OnCreateDwg();
 }

@@ -112,7 +112,7 @@ bool UModumateRoomStatics::GetRoomConfig(const AModumateObjectInstance *RoomObj,
 
 	FString areaTypeString;
 	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::AreaType, areaTypeString) &&
-		TryEnumValueByString(EAreaType, areaTypeString, OutRoomConfig.AreaType) && bSuccess;
+		FindEnumValueByString(areaTypeString, OutRoomConfig.AreaType) && bSuccess;
 
 	bSuccess = RoomObj->TryGetProperty(EBIMValueScope::Room, BIMPropertyNames::LoadFactorSpecialCalc, OutRoomConfig.LoadFactorSpecialCalc) && bSuccess;
 #endif
@@ -149,7 +149,7 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(AModumateObjectInstance *RoomObj
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::Name, roomConfig->DisplayName.ToString());
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantsNumber, 0.0f);
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::OccupantLoadFactor, roomConfig->OccupantLoadFactor);
-	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::AreaType, EnumValueString(EAreaType, roomConfig->AreaType));
+	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::AreaType, FindEnumValueString(roomConfig->AreaType));
 	RoomObj->SetProperty(EBIMValueScope::Room, BIMPropertyNames::LoadFactorSpecialCalc, roomConfig->LoadFactorSpecialCalc.ToString());
 
 	// Mark the room as dirty, so that it will re-calculate area, update derived properties, and update its material.

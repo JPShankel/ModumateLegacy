@@ -58,7 +58,7 @@ bool FWaitForModumateLoginCommand::Update()
 	}
 	default:
 	{
-		UE_LOG(LogUnitTest, Error, TEXT("Error! Invalid login state: %s"), *EnumValueString(ELoginStatus, loginStatus));
+		UE_LOG(LogUnitTest, Error, TEXT("Error! Invalid login state: %s"), *GetEnumValueString(loginStatus));
 		return true;
 	}
 	}

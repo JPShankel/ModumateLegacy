@@ -7,22 +7,22 @@ struct MODUMATE_API FBIMPropertySheetRecord;
 
 FBIMNameType BIMNameFromValueType(EBIMValueType InValueType)
 {
-	return *EnumValueString(EBIMValueType, InValueType);
+	return GetEnumValueShortName(InValueType);
 }
 
 EBIMValueType BIMValueTypeFromName(const FBIMNameType &InName)
 {
-	return EnumValueByString(EBIMValueType, InName.ToString());
+	return GetEnumValueByName<EBIMValueType>(InName);
 }
 
 FBIMNameType BIMNameFromValueScope(EBIMValueScope InScope)
 {
-	return *EnumValueString(EBIMValueScope, InScope);
+	return GetEnumValueShortName(InScope);
 }
 
 EBIMValueScope BIMValueScopeFromName(const FBIMNameType &InName)
 {
-	return EnumValueByString(EBIMValueScope, InName.ToString());
+	return GetEnumValueByName<EBIMValueScope>(InName);
 }
 
 FBIMPropertyKey::FBIMPropertyKey(EBIMValueScope InScope, const FBIMNameType& InName) :

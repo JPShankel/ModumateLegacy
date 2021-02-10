@@ -49,7 +49,7 @@ void UBIMDebugTestItem::BuildDebugTestItem(class UBIMDebugger* OuterBIMDebugger,
 {
 	ParentDebugger = OuterBIMDebugger;
 	BIMDebugTestType = InBIMDebugTestType;
-	TestItemName = *EnumValueString(EBIMDebugTestType, InBIMDebugTestType);
+	TestItemName = *GetEnumValueString(InBIMDebugTestType);
 	MainText->SetText(FText::FromString(FString::Printf(TEXT("Run - ")) + TestItemName));
 	ModumateButtonMain->SetBackgroundColor(FLinearColor::White);
 }

@@ -2034,8 +2034,8 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 					if (!((cleanedFlags & flagToClean) == EObjectDirtyFlags::None))
 					{
 						UE_LOG(LogTemp, Error, TEXT("Already cleaned %s ID #%d flag %s this frame!"),
-							*EnumValueString(EObjectType, objToClean->GetObjectType()), objToClean->ID,
-							*EnumValueString(EObjectDirtyFlags, flagToClean));
+							*GetEnumValueString(objToClean->GetObjectType()), objToClean->ID,
+							*GetEnumValueString(flagToClean));
 					}
 
 					bool bCleaned = objToClean->RouteCleanObject(flagToClean, OutSideEffectDeltas);
@@ -2052,7 +2052,7 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 				}
 
 			} while (bModifiedAnyObjects &&
-				ensureMsgf(--sameFlagSafeguard > 0, TEXT("Infinite loop detected while cleaning objects with flag %s, breaking!"), *EnumValueString(EObjectDirtyFlags, flagToClean)));
+				ensureMsgf(--sameFlagSafeguard > 0, TEXT("Infinite loop detected while cleaning objects with flag %s, breaking!"), *GetEnumValueString(flagToClean)));
 
 			totalObjectCleans += objectCleans;
 		}
@@ -2464,7 +2464,7 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool bSetAsCurr
 		{
 			if (EMPlayerState->DoesObjectHaveAnyError(obj->ID))
 			{
-				FString objectTypeString = EnumValueString(EObjectType, obj->GetObjectType());
+				FString objectTypeString = GetEnumValueString(obj->GetObjectType());
 				UE_LOG(LogTemp, Warning, TEXT("MOI %d (%s) has an error!"), obj->ID, *objectTypeString);
 			}
 		}
@@ -2982,7 +2982,7 @@ void UModumateDocument::DisplayDebugInfo(UWorld* world)
 	for (int32 objectTypeIdx = 0; objectTypeIdx < objectTypeEnum->NumEnums(); ++objectTypeIdx)
 	{
 		EObjectType objectType = static_cast<EObjectType>(objectTypeEnum->GetValueByIndex(objectTypeIdx));
-		displayObjectCount(objectType, *EnumValueString(EObjectType, objectType));
+		displayObjectCount(objectType, *GetEnumValueString(objectType));
 	}
 
 	TSet<FGuid> asms;

@@ -203,7 +203,7 @@ bool AAdjustPolyEdgeHandle::HandleInputNumber(float number)
 		if (bSuccess)
 		{
 			static const FString eventName(TEXT("PolyEdgeEnteredDimString"));
-			UModumateAnalyticsStatics::RecordEventSimple(this, UModumateAnalyticsStatics::EventCategoryHandles, eventName);
+			UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Handles, eventName);
 		}
 
 		// TODO: the deltas should be an outparam of EndUse (and EndUse would need to be refactored)

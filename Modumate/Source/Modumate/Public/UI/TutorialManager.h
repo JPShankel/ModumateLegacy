@@ -10,6 +10,7 @@
 
 enum class EEditViewModes : uint8;
 enum class EInputCommand : uint8;
+enum class EModumateAnalyticsCategory : uint8;
 enum class EMOIDeltaType : uint8;
 enum class EObjectType : uint8;
 enum class EToolMode : uint8;
@@ -154,7 +155,7 @@ protected:
 	void OnExecutedInputCommand(EInputCommand InputCommand);
 
 	UFUNCTION()
-	void OnRecordedAnalyticsEvent(const FString& EventCategory, const FString& EventName);
+	void OnRecordedAnalyticsEvent(EModumateAnalyticsCategory EventCategory, const FString& EventName);
 
 	UFUNCTION()
 	void OnControllerDestroyed(AActor* PlayerController);

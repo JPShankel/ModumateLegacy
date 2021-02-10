@@ -172,7 +172,7 @@ bool UModumateBrowserStatics::SaveCameraView(UObject* WorldContextObject, UCamer
 	}
 
 	static const FString analyticsEventName(TEXT("SaveCameraView"));
-	UModumateAnalyticsStatics::RecordEventSimple(WorldContextObject, UModumateAnalyticsStatics::EventCategoryView, analyticsEventName);
+	UModumateAnalyticsStatics::RecordEventSimple(WorldContextObject, EModumateAnalyticsCategory::View, analyticsEventName);
 
 	return true;
 }
