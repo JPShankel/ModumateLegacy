@@ -343,7 +343,9 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	ComponentPresetListItem->GrabHandleImage->SetVisibility(reorderHandleVisibility);
 
 	bool bCaptureSuccess = false;
-	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetID, IconMaterial, ID, !NodeDirty);
+	// TODO Wesley: use cached icon only when node is not dirty. 
+	// Find out why non-assembly icons are not using the correct cached texture 
+	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetID, IconMaterial, ID, false);
 	if (bCaptureSuccess)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);
