@@ -107,6 +107,10 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 	for (auto& kvp : OriginalTransforms)
 	{
 		AModumateObjectInstance* targetMOI = doc->GetObjectById(kvp.Key);
+		if (!ensureAlways(targetMOI))
+		{
+			continue;
+		}
 
 		objectInfo.Add(kvp.Key, targetMOI->GetWorldTransform());
 	}
