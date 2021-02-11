@@ -59,7 +59,7 @@ void UTutorialMenuCardWidget::OnReleaseButtonPlayVideo()
 {
 	if (ensure(ParentTutorialMenu && ParentTutorialMenu->TutorialManager))
 	{
-		ParentTutorialMenu->TutorialManager->OpenVideoTutorial(ProjectFilePath, VideoLink);
+		ParentTutorialMenu->TutorialManager->OpenVideoTutorial(FString(), VideoLink);
 	}
 }
 
