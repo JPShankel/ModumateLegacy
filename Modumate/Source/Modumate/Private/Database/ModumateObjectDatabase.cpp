@@ -220,6 +220,11 @@ void FModumateDatabase::ReadPresetData()
 	}
 	const static FString BIMCacheFile = TEXT("_bimCache.json");
 	FModumateBIMCacheRecord bimCacheRecord;
+
+#if !UE_BUILD_SHIPPING
+	bool bWantUnitTest = false;
+#endif
+
 	if (!ReadBIMCache(BIMCacheFile, bimCacheRecord))
 	{
 		TArray<FString> errors;
@@ -228,10 +233,15 @@ void FModumateDatabase::ReadPresetData()
 		{
 			return;
 		}
-		ensureAlways(errors.Num() == 0);
-		bimCacheRecord.Presets = BIMPresetCollection;
-		bimCacheRecord.Starters = starters;
-		WriteBIMCache(BIMCacheFile, bimCacheRecord);
+		if (ensureAlways(errors.Num() == 0))
+		{
+			bimCacheRecord.Presets = BIMPresetCollection;
+			bimCacheRecord.Starters = starters;
+			WriteBIMCache(BIMCacheFile, bimCacheRecord);
+#if !UE_BUILD_SHIPPING
+			bWantUnitTest = true;
+#endif
+		}
 	}
 	else
 	{
@@ -581,6 +591,13 @@ void FModumateDatabase::ReadPresetData()
 			BIMPresetCollection.DefaultAssembliesByObjectType.Add(outSpec.ObjectType, outSpec);
 		}
 	}
+
+#if !UE_BUILD_SHIPPING
+	if (bWantUnitTest)
+	{
+		ensureAlways(UnitTest());
+	}
+#endif
 }
 
 TArray<FString> FModumateDatabase::GetDebugInfo()
