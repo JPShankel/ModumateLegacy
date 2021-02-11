@@ -382,13 +382,10 @@ bool URectangleTool::UpdatePreview()
 	}
 
 	UpdatePendingPlane();
-	if (GameState->Document->StartPreviewing())
-	{
-		GameState->Document->ClearPreviewDeltas(GetWorld());
-		return GetMetaObjectCreationDeltas(hitLoc, false, hitLoc, CurDeltas);
-	}
 
-	return true;
+	GameState->Document->StartPreviewing();
+
+	return GetMetaObjectCreationDeltas(hitLoc, false, hitLoc, CurDeltas);
 }
 
 bool URectangleTool::FrameUpdate()
