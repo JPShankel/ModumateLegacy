@@ -86,6 +86,7 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumatePointerTests, "Modumate.Core.Pointers", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::LowPriority)
 		bool FModumatePointerTests::RunTest(const FString& Parameters)
 	{
+		static bool bLogResults = UE_BUILD_DEBUG;
 		for (int32 i = 0; i < 16; ++i)
 		{
 			auto container = MakeShared<FPointerTestContainer>(i);
@@ -93,7 +94,7 @@ namespace Modumate
 			for (int32 j = 0; j < 16; ++j)
 			{
 				auto member = container->AddMember(j);
-				if (ensure(member))
+				if (ensure(member) && bLogResults)
 				{
 					UE_LOG(LogTemp, Log, TEXT("Added member ID %d to container ID %d"), member->ID, container->ID);
 				}
