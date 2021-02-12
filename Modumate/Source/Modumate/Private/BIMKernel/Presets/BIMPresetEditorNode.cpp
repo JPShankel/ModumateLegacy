@@ -358,3 +358,28 @@ bool FBIMPresetEditorNode::ValidateNode() const
 	}
 	return WorkingPresetCopy.ValidatePreset();
 }
+
+/*
+* The property form binds a display name (ie "Color") to a qualified property (ie. "Color.HexValue")
+* FormIntToProperty on the preset provides the fixed set of bindings that all presets of this type always have
+* VisibleNamedDimensions is calculated for rigged assemblies using the layout system and provides properties
+* which may or may not be visible depending on whether other parts need to reference them (ie HandleHeight)
+*/
+EBIMResult FBIMPresetEditorNode::GetPropertyForm(TMap<FString, FBIMNameType>& OutForm) const
+{
+	// The fixed form is defined in the CSV files
+	OutForm = WorkingPresetCopy.FormItemToProperty;
+
+	// VisibleNamedDimensions determined by layout walk
+	for (auto& namedDim : VisibleNamedDimensions)
+	{
+		FPartNamedDimension* partDim = FBIMPartSlotSpec::NamedDimensionMap.Find(namedDim);
+		if (partDim != nullptr && partDim->UIType != EPartSlotDimensionUIType::Hidden)
+		{
+			FBIMPropertyKey propKey(EBIMValueScope::Dimension, *namedDim);
+			OutForm.Add(partDim->DisplayName.ToString(), propKey.QN());
+		}
+	}
+	return EBIMResult::Success;
+}
+

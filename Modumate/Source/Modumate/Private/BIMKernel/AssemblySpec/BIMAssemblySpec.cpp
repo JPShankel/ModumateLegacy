@@ -253,12 +253,13 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		FBIMPartSlotSpec& partSpec = Parts.AddDefaulted_GetRef();
 		partSpec.ParentSlotIndex = INDEX_NONE;
 		partSpec.NodeCategoryPath = assemblyPreset->MyTagPath;
+		partSpec.GetNamedDimensionValuesFromPreset(assemblyPreset);
 		partSpec.Translation = FVectorExpression(TEXT("0"), TEXT("0"), TEXT("0"));
 		partSpec.Size = FVectorExpression(TEXT("Self.ScaledSizeX"), TEXT("Self.ScaledSizeY"), TEXT("Self.ScaledSizeZ"));
 #if WITH_EDITOR //for debugging
 		partSpec.DEBUGNodeScope = EBIMValueScope::Assembly;
-		partSpec.DEBUG_GUID = PresetGUID;
 #endif
+		partSpec.PresetGUID = PresetGUID;
 	}
 
 	// For each part in the iterator queue, add a part to the assembly list, set its parents and add children to back of queue
@@ -277,14 +278,14 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			FBIMPartSlotSpec& partSpec = Parts.AddDefaulted_GetRef();
 			partSpec.ParentSlotIndex = partIterator.ParentSlotIndex;
 			partSpec.NodeCategoryPath = partPreset->MyTagPath;
+			partSpec.GetNamedDimensionValuesFromPreset(partPreset);
 			ensureAlways(slotPreset->Properties.TryGetProperty(EBIMValueScope::Slot, BIMPropertyNames::ID, partSpec.SlotID));
 
 #if WITH_EDITOR //for debugging
 			partSpec.DEBUGNodeScope = partPreset->NodeScope;
-			partSpec.DEBUGPresetKey = partPreset->PresetID;
-			partSpec.DEBUGSlotGUID = partIterator.Slot.SlotPresetGUID;
-			partSpec.DEBUG_GUID = partPreset->GUID;
 #endif
+			partSpec.SlotGUID = partIterator.Slot.SlotPresetGUID;
+			partSpec.PresetGUID = partPreset->GUID;
 			// If this child has a mesh asset ID, this fetch the mesh and use it 
 			FGuid meshAsset;
 			if (partPreset->Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshAsset))

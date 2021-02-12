@@ -268,7 +268,11 @@ float UBIMDesigner::GetCurrentZoomScale() const
 bool UBIMDesigner::EditPresetInBIMDesigner(const FGuid& PresetID)
 {
 	FBIMPresetEditorNodeSharedPtr rootNode;
-	EBIMResult getPresetResult = InstancePool.InitFromPreset(Controller->GetDocument()->GetPresetCollection(), PresetID, rootNode);
+	EBIMResult getPresetResult = InstancePool.InitFromPreset(
+		Controller->GetDocument()->GetPresetCollection(), 
+		*GetWorld()->GetAuthGameMode<AEditModelGameMode>()->ObjectDatabase,		
+		PresetID,
+		rootNode);
 	if (getPresetResult != EBIMResult::Success)
 	{
 		return false;

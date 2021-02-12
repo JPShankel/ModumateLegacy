@@ -1,99 +1,101 @@
-TYPENAME,,NamedDimension,,,,,,,
-,,Definition,,,,,,,
-,,PropertyType,,PropertyName,,PropertyScope.Value,,,
-PROPERTY,,String,,Name,,DisplayName,,,
-PROPERTY,,Dimension,,,,DefaultValue,,,
-PROPERTY,,String,,,,UIGroup,,,
-PROPERTY,,String,,Description,,Description,,,
-,,Presets,,,,,,,
-TAGPATHS,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,DisplayName,DefaultValue,UIGroup,Description
-PRESET,,Depth,,NamedDimension,,Depth,4in,Major,
-PRESET,,Diameter,,NamedDimension,,Diameter,6in,Major,
-PRESET,,Length,,NamedDimension,,Length,24in,Major,
-PRESET,,Height,,NamedDimension,,Height,4in,Major,
-PRESET,,Thickness,,NamedDimension,,Thickness,0.5in,Major,
-PRESET,,Width,,NamedDimension,,Width,6in,Major,
-PRESET,,ToeKickDepth,,NamedDimension,,Toe Kick Depth,3.5in,Major,
-PRESET,,ToeKickHeight,,NamedDimension,,Toe Kick Height,4in,Major,
-,,,,,,,,,
-PRESET,,BacksetDistanceX,,NamedDimension,,Backset,2.75in,Minor,How far from the active edge of the panel should this attachment be?
-PRESET,,BevelWidth,,NamedDimension,,Bevel Width,0.1875in,Minor,How much are the edges of a prismic module cut/beveled?
-PRESET,,DeadboltDistanceZ,,NamedDimension,,Deadbolt Height,42in,Minor,How far above the base of the frame is the deadbolt?
-PRESET,,DividerZ1Distance,,NamedDimension,,1st Divider Height,12in,Major,How far above the base of the frame is the top of its lowest panel?
-PRESET,,DividerZ2Distance,,NamedDimension,,2nd Divider Height,18in,Major,How far above the base of the frame is the top of its second-lowest panel?
-PRESET,,DividerZ3Distance,,NamedDimension,,3rd Divider Height,24in,Major,How far above the base of the frame is the top of its third-lowest panel?
-PRESET,,FlangeThickness,,NamedDimension,,Flange Thickness,0.5in,Minor,How thick are the top/bottom sections of an I-beam?
-PRESET,,HandleDistanceZ,,NamedDimension,,Handle Height,36in,Minor,How far above the base of the frame is the handle?
-PRESET,,HangoffSizeX1,,NamedDimension,,Overhang (Left),0in,Minor,How far outside the reference area does a frame's left extents hang? (e.g. a nailing fin)
-PRESET,,HangoffSizeX2,,NamedDimension,,Overhang (Right),0in,Minor,How far outside the reference area does a frame's right extents hang? (e.g. a nailing fin)
-PRESET,,HangoffSizeZ1,,NamedDimension,,Overhang (Bottom),0in,Minor,How far outside the reference area does a frame's bottom extents hang? (e.g. a nailing fin)
-PRESET,,HangoffSizeZ2,,NamedDimension,,Overhang (Top),0in,Minor,How far outside the reference area does a frame's top extents hang? (e.g. a nailing fin)
-PRESET,,HeadSizeZ,,NamedDimension,,Head Size,1in,Minor,How far into the reference area does a frame's top/head intrude?
-PRESET,,HingeBottomDistanceZ,,NamedDimension,,Bottom Hinge Height,12in,Major,How far above the base of the frame is its lowest hinge?
-PRESET,,HingeTopDistanceZ,,NamedDimension,,Top Hinge Height,6in,Major,How far below the top of the frame is its highest hinge?
-PRESET,,JambLeftSizeX,,NamedDimension,,Jamb Size (Left),1in,Minor,How far into the reference area does a frame's left side intrude?
-PRESET,,JambRIghtSizeX,,NamedDimension,,Jamb Size (Right),1in,Minor,How far into the reference area does a frame's right side intrude?
-PRESET,,KnockerDistanceZ,,NamedDimension,,Knocker Height,54in,Minor,How far above the base of the frame is the knocker?
-PRESET,,MailSlotDistanceZ,,NamedDimension,,Mail Slot Height,12in,Minor,How far above the base of the frame is the mail slot?
-PRESET,,OverrunLeftSizeX,,NamedDimension,,Left Overrun,4in,Minor,How far to the left of the conceptual area does the barn track extend?
-PRESET,,OverrunRightSizeX,,NamedDimension,,Right Overrun,4in,Minor,How far to the right of the conceptual area does the barn track extend?
-PRESET,,PanelDistanceY,,NamedDimension,,Panel Depth-in-Frame,0in,Minor,"How far from the frame's origin, in Y, should the panel's origin be?"
-PRESET,,PanelEdgeInsetDistanceX,,NamedDimension,,Panel Inset Distance,0.25in,Minor,"How far from the hinge's mount point, in X, is the panel edge?"
-PRESET,,PanelEdgeInsetDistanceXZ,,NamedDimension,,Panel Edge Inset Distance,0.25in,Minor,how far from its reference area are an overlay panel's edges inset? (this will be 1/2 of the gap between overlay panels)
-PRESET,,PanelHangDistanceZ,,NamedDimension,,Panel Hang Distance,5in,Minor,how far below a barn door's track is the top of its panel?
-PRESET,,PeepholeLowerDistanceZ,,NamedDimension,,Peephole Height (Lower),48in,Minor,How far above the base of the frame is the lower peephole?
-PRESET,,PeepholeUpperDistanceZ,,NamedDimension,,Peephole Height (Upper),60in,Minor,How far above the base of the frame is the upper peephole?
-PRESET,,RailBottomSizeZ,,NamedDimension,,Bottom Rail Width,5in,Minor,How tall is the bottom rail of this panel?
-PRESET,,RailTopSizeZ,,NamedDimension,,Top Rail Width,5in,Minor,How tall is the top rail of this panel?
-PRESET,,RailDistanceY,,NamedDimension,,Rail Distance-Off-Wall,3in,Minor,"How far from the barn track's wall anchor point, in Y, is the line where the wheels travel?"
-PRESET,,RailDistanceZ,,NamedDimension,,Height from Anchor to Rail,3in,Minor,"How far from the barn track's wall anchor point, in Z, is the line where the wheels travel?"
-PRESET,,Recess,,NamedDimension,,Recess,0.125in,Minor,How far back is the material recessed from its neighbors?
-PRESET,,SillSizeZ,,NamedDimension,,Sill Size,1in,Minor,How far into the reference area does a frame's bottom/sill intrude?
-PRESET,,StileLeftSizeX,,NamedDimension,,Left Stile Width,5in,Minor,How tall is the left stile of this panel?
-PRESET,,StileRightSizeX,,NamedDimension,,Right Stile Width,5in,Minor,How tall is the right stile of this panel?
-PRESET,,SurfaceLockLowerDistanceZ,,NamedDimension,,Surface Lock Height (Lower),48in,Minor,How far above the base of the frame is the lower surface lock?
-PRESET,,SurfaceLockUpperDistanceZ,,NamedDimension,,Surface Lock Height (Upper),54in,Minor,How far above the base of the frame is the upper surface lock?
-PRESET,,Track1JambLeftSizeX,,NamedDimension,,Track 1 Jamb Size (Left),0.25in,Minor,How far into the reference area does a frame's Track1's left side intrude?
-PRESET,,Track1JambRightSizeX,,NamedDimension,,Track 1 Jamb Size (Right),0.25in,Minor,How far into the reference area does a frame's Track1's right side intrude?
-PRESET,,Track1DistanceY,,NamedDimension,,Track 1 Depth-In-Frame,1.5in,Minor,"How far from the frame's origin, in Y, should the Track1 panel's origin be?"
-PRESET,,Track1SizeY,,NamedDimension,,Track 1 Thickness,0.25in,Minor,"How large, in Y, should the panel be to sit snugly in Track 1?"
-PRESET,,Track1SillSizeZ,,NamedDimension,,Track 1 Sill Size,0.25in,Minor,How far into the reference area does a frame's Track1's sill intrude?
-PRESET,,Track1HeadSizeZ,,NamedDimension,,Track 1 Head Size,0.25in,Minor,How far into the reference area does a frame's Track1's head intrude?
-PRESET,,Track2JambLeftSizeX,,NamedDimension,,Track 2 Jamb Size (Left),0.25in,Minor,How far into the reference area does a frame's Track2's left side intrude?
-PRESET,,Track2JambRightSizeX,,NamedDimension,,Track 2 Jamb Size (Right),0.25in,Minor,How far into the reference area does a frame's Track2's right side intrude?
-PRESET,,Track2DistanceY,,NamedDimension,,Track 2 Depth-In-Frame,3in,Minor,"How far from the frame's origin, in Y, should the Track2 panel's origin be?"
-PRESET,,Track2SizeY,,NamedDimension,,Track 2 Thickness,0.25in,Minor,"How large, in Y, should the panel be to sit snugly in Track 2?"
-PRESET,,Track2SillSizeZ,,NamedDimension,,Track 2 Sill Size,0.25in,Minor,How far into the reference area does a frame's Track2's sill intrude?
-PRESET,,Track2HeadSizeZ,,NamedDimension,,Track 2 Head Size,0.25in,Minor,How far into the reference area does a frame's Track2's head intrude?
-PRESET,,Track3JambLeftSizeX,,NamedDimension,,Track 3 Jamb Size (Left),0.25in,Minor,How far into the reference area does a frame's Track3's left side intrude?
-PRESET,,Track3JambRightSizeX,,NamedDimension,,Track 3 Jamb Size (Right),0.25in,Minor,How far into the reference area does a frame's Track3's right side intrude?
-PRESET,,Track3DistanceY,,NamedDimension,,Track 3 Depth-In-Frame,4.5in,Minor,"How far from the frame's origin, in Y, should the Track3 panel's origin be?"
-PRESET,,Track3SizeY,,NamedDimension,,Track 3 Thickness,0.25in,Minor,"How large, in Y, should the panel be to sit snugly in Track 3?"
-PRESET,,Track3SillSizeZ,,NamedDimension,,Track 3 Sill Size,0.25in,Minor,How far into the reference area does a frame's Track3's sill intrude?
-PRESET,,Track3HeadSizeZ,,NamedDimension,,Track 3 Head Size,0.25in,Minor,How far into the reference area does a frame's Track3's head intrude?
-PRESET,,Track4JambLeftSizeX,,NamedDimension,,Track 4 Jamb Size (Left),0.25in,Minor,How far into the reference area does a frame's Track4's left side intrude?
-PRESET,,Track4JambRightSizeX,,NamedDimension,,Track 4 Jamb Size (Right),0.25in,Minor,How far into the reference area does a frame's Track4's right side intrude?
-PRESET,,Track4DistanceY,,NamedDimension,,Track 4 Depth-In-Frame,6in,Minor,"How far from the frame's origin, in Y, should the Track4 panel's origin be?"
-PRESET,,Track4SizeY,,NamedDimension,,Track 4 Thickness,0.25in,Minor,"How large, in Y, should the panel be to sit snugly in Track 4?"
-PRESET,,Track4SillSizeZ,,NamedDimension,,Track 4 Sill Size,0.25in,Minor,How far into the reference area does a frame's Track4's sill intrude?
-PRESET,,Track4HeadSizeZ,,NamedDimension,,Track 4 Head Size,0.25in,Minor,How far into the reference area does a frame's Track4's head intrude?
-PRESET,,TrackScreenJambLeftSizeX,,NamedDimension,,Screen Track Jamb Size (Left),0.25in,Minor,How far into the reference area does a frame's ScreenTrack's left side intrude?
-PRESET,,TrackScreenJambRightSizeX,,NamedDimension,,Screen Track Jamb Size (Right),0.25in,Minor,How far into the reference area does a frame's ScreenTrack's right side intrude?
-PRESET,,TrackScreenDistanceY,,NamedDimension,,Screen Track Depth-In-Frame,7.5in,Minor,"How far from the frame's origin, in Y, should the ScreenTrack panel's origin be?"
-PRESET,,TrackScreenSizeY,,NamedDimension,,Screen Track Thickness,0.25in,Minor,"How large, in Y, should the panel be to sit snugly in ScreenTrack?"
-PRESET,,TrackScreenSillSizeZ,,NamedDimension,,Screen Track Sill Size,0.25in,Minor,How far into the reference area does a frame's ScreenTrack's sill intrude?
-PRESET,,TrackScreenHeadSizeZ,,NamedDimension,,Screen Track Head Size,0.25in,Minor,How far into the reference area does a frame's ScreenTrack's head intrude?
-PRESET,,TreadDepthIdeal,,NamedDimension,,Ideal Tread Depth,11in,Minor,What depth should a stair's treads be as close as possible to?
-PRESET,,UndercutDistanceZ,,NamedDimension,,Undercut,0.75in,Minor,How far above the top of the frame's sill is the base of the panel?
-PRESET,,WebThickness,,NamedDimension,,Web Thickness,0.25in,Minor,How thick is the middle section of an I-beam?
-,,,,,,,,,
-PRESET,,IconDepth,,NamedDimension,,Icon Depth,4in,Preview,How deep is the preview icon for this Preset?
-PRESET,,IconHeight,,NamedDimension,,Icon Height,36in,Preview,How tall is the preview icon for this Preset?
-PRESET,,IconLength,,NamedDimension,,Icon Length,48in,Preview,How long is the preview icon for this Preset?
-PRESET,,IconRise,,NamedDimension,,Icon Rise,36in,Preview,How long is the preview icon for this Preset?
-PRESET,,IconRun,,NamedDimension,,Icon Run,66in,Preview,How long is the preview icon for this Preset?
-PRESET,,IconWidth,,NamedDimension,,Icon Width,36in,Preview,How wide is the preview icon for this Preset?
-,,,,,,,,,
-PRESET,,NativeSizeX,,NamedDimension,,Native Size (X),12in,Hidden,"What is this asset's native size, in X?"
-PRESET,,NativeSizeY,,NamedDimension,,Native Size (Y),12in,Hidden,"What is this asset's native size, in Y?"
-PRESET,,NativeSizeZ,,NamedDimension,,Native Size (Z),12in,Hidden,"What is this asset's native size, in Z?"
+TYPENAME,,NamedDimension,,Dimension,,,,,,,
+,,Definition,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,
+PROPERTY,,String,,Name,,Dimension.DisplayName,,,,,
+PROPERTY,,Dimension,,,,Dimension.DefaultValue,,,,,
+PROPERTY,,String,,,,Dimension.UIGroup,,,,,
+PROPERTY,,String,,Description,,Dimension.Description,,,,,
+,,Presets,,,,,,,,,
+TAGPATHS,DataType=ID,ID,DataType=GUID,GUID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.DisplayName,Dimension.DefaultValue,Dimension.UIGroup,Dimension.Description
+PRESET,,Depth,,37E27C11-A7C8-E14E-9E99-3D4067D28E44,,NamedDimension,,Depth,4in,Major,
+PRESET,,Diameter,,EECBFC01-118B-6545-9A18-745CC1A04DCA,,NamedDimension,,Diameter,6in,Major,
+PRESET,,Length,,F6143975-A937-EA44-BBBE-D4566F973C48,,NamedDimension,,Length,24in,Major,
+PRESET,,Height,,D6FF03D3-48B6-8D44-845E-42D6DC240D87,,NamedDimension,,Height,4in,Major,
+PRESET,,Thickness,,AC8BFA34-6551-AC4E-828A-0B1EF5B19784,,NamedDimension,,Thickness,0.5in,Major,
+PRESET,,Width,,74AC189B-150E-F145-BD0B-7B6C4A6C2573,,NamedDimension,,Width,6in,Major,
+PRESET,,ToeKickDepth,,65F86F1E-1B59-6940-9AC9-DC5F9A0F94CC,,NamedDimension,,Toe Kick Depth,3.5in,Major,
+PRESET,,ToeKickHeight,,4B3F99FE-4391-B142-A996-046AB117F691,,NamedDimension,,Toe Kick Height,4in,Major,
+,,,,,,,,,,,
+PRESET,,BacksetDistanceX,,2621239E-B499-B343-AD05-3CDFCF8A1BA3,,NamedDimension,,Backset,2.75in,Minor,How far from the active edge of the panel should this attachment be?
+PRESET,,BevelWidth,,A0217336-6F72-844A-B583-11ADA04F7C7C,,NamedDimension,,Bevel Width,0.1875in,Minor,How much are the edges of a prismic module cut/beveled?
+PRESET,,DeadboltDistanceZ,,91E24BAF-1D38-A441-9AAE-D3B44B9FD8D3,,NamedDimension,,Deadbolt Height,42in,Minor,How far above the base of the frame is the deadbolt?
+PRESET,,DividerZ1Distance,,EBBBCC89-8FC8-1149-B43F-B0D0C5817FE5,,NamedDimension,,1st Divider Height,12in,Major,How far above the base of the frame is the top of its lowest panel?
+PRESET,,DividerZ2Distance,,6523B663-6F23-4B44-B420-EE1C58A13077,,NamedDimension,,2nd Divider Height,18in,Major,How far above the base of the frame is the top of its second-lowest panel?
+PRESET,,DividerZ3Distance,,0F874E45-D89F-9443-83DB-2169C96DE9FD,,NamedDimension,,3rd Divider Height,24in,Major,How far above the base of the frame is the top of its third-lowest panel?
+PRESET,,FlangeThickness,,71EA7C96-D509-3447-AF45-8AF04C12C8BA,,NamedDimension,,Flange Thickness,0.5in,Minor,How thick are the top/bottom sections of an I-beam?
+PRESET,,HandleDistanceZ,,200D0D5A-B993-574C-AFEB-DB5FEB3FDF5A,,NamedDimension,,Handle Height,36in,Minor,How far above the base of the frame is the handle?
+PRESET,,HangoffSizeX1,,9596E853-C4FC-E342-8405-9AD64B852112,,NamedDimension,,Overhang (Left),0in,Minor,How far outside the reference area does a frame's left extents hang? (e.g. a nailing fin)
+PRESET,,HangoffSizeX2,,9564CB6A-21E5-CC4D-BC88-3E901BA184BB,,NamedDimension,,Overhang (Right),0in,Minor,How far outside the reference area does a frame's right extents hang? (e.g. a nailing fin)
+PRESET,,HangoffSizeZ1,,81F1F66F-2A45-7C45-A7DF-2AC8D8B6FEBC,,NamedDimension,,Overhang (Bottom),0in,Minor,How far outside the reference area does a frame's bottom extents hang? (e.g. a nailing fin)
+PRESET,,HangoffSizeZ2,,1D253244-FAAD-5744-A3AB-A05D9D9F234A,,NamedDimension,,Overhang (Top),0in,Minor,How far outside the reference area does a frame's top extents hang? (e.g. a nailing fin)
+PRESET,,HeadSizeZ,,417FFA3F-5F90-0049-8244-D002AD9D8F7A,,NamedDimension,,Head Size,1in,Minor,How far into the reference area does a frame's top/head intrude?
+PRESET,,HingeBottomDistanceZ,,8C30EA9A-2A3D-1042-9B81-C02859E1AD7C,,NamedDimension,,Bottom Hinge Height,12in,Major,How far above the base of the frame is its lowest hinge?
+PRESET,,HingeTopDistanceZ,,1DA271FF-FCF3-2A4E-9C5D-A57FEA8FDA03,,NamedDimension,,Top Hinge Height,6in,Major,How far below the top of the frame is its highest hinge?
+PRESET,,JambLeftSizeX,,8A8643DE-38D6-4040-B985-CCBA7C314E34,,NamedDimension,,Jamb Size (Left),1in,Minor,How far into the reference area does a frame's left side intrude?
+PRESET,,JambRIghtSizeX,,65496461-9A6F-7041-9A63-3ABC439EA918,,NamedDimension,,Jamb Size (Right),1in,Minor,How far into the reference area does a frame's right side intrude?
+PRESET,,KnockerDistanceZ,,7A00DB9C-D4B5-AB40-B34C-FA57EA99AFD4,,NamedDimension,,Knocker Height,54in,Minor,How far above the base of the frame is the knocker?
+PRESET,,MailSlotDistanceZ,,C3CE0B6F-CF20-9A44-922C-5EC4A4668FE0,,NamedDimension,,Mail Slot Height,12in,Minor,How far above the base of the frame is the mail slot?
+PRESET,,OverrunLeftSizeX,,281754AA-24CE-2C4C-ACE7-AFB2A71861BB,,NamedDimension,,Left Overrun,4in,Minor,How far to the left of the conceptual area does the barn track extend?
+PRESET,,OverrunRightSizeX,,F774761A-012A-F74E-8240-FBC20FFB13EE,,NamedDimension,,Right Overrun,4in,Minor,How far to the right of the conceptual area does the barn track extend?
+PRESET,,PanelDistanceY,,78B7050F-D46F-C144-95E6-0D2043C1C828,,NamedDimension,,Panel Depth-in-Frame,0in,Minor,"How far from the frame's origin, in Y, should the panel's origin be?"
+PRESET,,PanelEdgeInsetDistanceX,,5A0EEC17-CD65-1A40-95B5-498D3B3A915F,,NamedDimension,,Panel Inset Distance,0.25in,Minor,"How far from the hinge's mount point, in X, is the panel edge?"
+PRESET,,PanelEdgeInsetDistanceXZ,,ED7FF084-CDA4-C94C-9410-E17383EBFDB3,,NamedDimension,,Panel Edge Inset Distance,0.25in,Minor,how far from its reference area are an overlay panel's edges inset? (this will be 1/2 of the gap between overlay panels)
+PRESET,,PanelHangDistanceZ,,3E7AACE5-B0F0-B14F-9811-0CBD8C24C1DF,,NamedDimension,,Panel Hang Distance,5in,Minor,how far below a barn door's track is the top of its panel?
+PRESET,,PeepholeLowerDistanceZ,,461B5C2F-2AC5-E94A-B653-842EDE7C0555,,NamedDimension,,Peephole Height (Lower),48in,Minor,How far above the base of the frame is the lower peephole?
+PRESET,,PeepholeUpperDistanceZ,,3067BD23-6C51-764F-B5F0-6E00785E5C84,,NamedDimension,,Peephole Height (Upper),60in,Minor,How far above the base of the frame is the upper peephole?
+PRESET,,RailBottomSizeZ,,9F994870-0CF2-0A4A-BAA2-069A85BFF48F,,NamedDimension,,Bottom Rail Width,5in,Minor,How tall is the bottom rail of this panel?
+PRESET,,RailTopSizeZ,,46BA5EA4-8DB5-1441-AEF1-A95D701E62B6,,NamedDimension,,Top Rail Width,5in,Minor,How tall is the top rail of this panel?
+PRESET,,RailDistanceY,,2C402B50-991D-C842-888D-AFDC55441E51,,NamedDimension,,Rail Distance-Off-Wall,3in,Minor,"How far from the barn track's wall anchor point, in Y, is the line where the wheels travel?"
+PRESET,,RailDistanceZ,,EAE13F91-66EB-6B4E-A654-4E44DE142FEE,,NamedDimension,,Height from Anchor to Rail,3in,Minor,"How far from the barn track's wall anchor point, in Z, is the line where the wheels travel?"
+PRESET,,Recess,,5F0B461A-CB98-AD4E-ACAA-6A69D48DE6A3,,NamedDimension,,Recess,0.125in,Minor,How far back is the material recessed from its neighbors?
+PRESET,,SillSizeZ,,DA988073-F2DC-C742-80DB-A8430F45D501,,NamedDimension,,Sill Size,1in,Minor,How far into the reference area does a frame's bottom/sill intrude?
+PRESET,,StileLeftSizeX,,5171D9AC-7945-CF44-8D28-6E05394E21C1,,NamedDimension,,Left Stile Width,5in,Minor,How tall is the left stile of this panel?
+PRESET,,StileRightSizeX,,60A640C4-5ED8-9A46-96CF-1A38529BE82B,,NamedDimension,,Right Stile Width,5in,Minor,How tall is the right stile of this panel?
+PRESET,,SurfaceLockLowerDistanceZ,,9471372A-58B4-6046-A289-7CFDA5C7D98A,,NamedDimension,,Surface Lock Height (Lower),48in,Minor,How far above the base of the frame is the lower surface lock?
+PRESET,,SurfaceLockUpperDistanceZ,,DA53952F-FA29-BE4A-A916-27A8C385CCFC,,NamedDimension,,Surface Lock Height (Upper),54in,Minor,How far above the base of the frame is the upper surface lock?
+PRESET,,Track1JambLeftSizeX,,7D2EFFFB-613F-1640-BA28-04266D2C8690,,NamedDimension,,Track 1 Jamb Size (Left),0.25in,Minor,How far into the reference area does a frame's Track1's left side intrude?
+PRESET,,Track1JambRightSizeX,,7FDA4DE5-209B-314F-925E-EDBA877D59CD,,NamedDimension,,Track 1 Jamb Size (Right),0.25in,Minor,How far into the reference area does a frame's Track1's right side intrude?
+PRESET,,Track1DistanceY,,04BF4007-FD13-3049-9B41-3E5BD3DDBAF3,,NamedDimension,,Track 1 Depth-In-Frame,1.5in,Minor,"How far from the frame's origin, in Y, should the Track1 panel's origin be?"
+PRESET,,Track1SizeY,,E0006119-4721-D542-A80B-6475C981F13B,,NamedDimension,,Track 1 Thickness,0.25in,Minor,"How large, in Y, should the panel be to sit snugly in Track 1?"
+PRESET,,Track1SillSizeZ,,AA964D3C-5351-DD43-AD46-18968CA6B10F,,NamedDimension,,Track 1 Sill Size,0.25in,Minor,How far into the reference area does a frame's Track1's sill intrude?
+PRESET,,Track1HeadSizeZ,,6A4AF7C8-FFED-F64E-AB10-FAC9E3E1834D,,NamedDimension,,Track 1 Head Size,0.25in,Minor,How far into the reference area does a frame's Track1's head intrude?
+PRESET,,Track2JambLeftSizeX,,EAAFE0B0-F6D9-A343-BEA1-86F7BB984B8D,,NamedDimension,,Track 2 Jamb Size (Left),0.25in,Minor,How far into the reference area does a frame's Track2's left side intrude?
+PRESET,,Track2JambRightSizeX,,56F910F2-59EC-D544-807A-59C7200EBEA8,,NamedDimension,,Track 2 Jamb Size (Right),0.25in,Minor,How far into the reference area does a frame's Track2's right side intrude?
+PRESET,,Track2DistanceY,,347CFFD4-B927-F049-B02E-8FE655E04E33,,NamedDimension,,Track 2 Depth-In-Frame,3in,Minor,"How far from the frame's origin, in Y, should the Track2 panel's origin be?"
+PRESET,,Track2SizeY,,398FF087-5879-964E-A5B8-18DC6450F7E6,,NamedDimension,,Track 2 Thickness,0.25in,Minor,"How large, in Y, should the panel be to sit snugly in Track 2?"
+PRESET,,Track2SillSizeZ,,1292FA28-806E-8E4F-9DA9-A4DEB1851EF6,,NamedDimension,,Track 2 Sill Size,0.25in,Minor,How far into the reference area does a frame's Track2's sill intrude?
+PRESET,,Track2HeadSizeZ,,0FE24A1E-9FEA-874C-8A6D-B1B443409A35,,NamedDimension,,Track 2 Head Size,0.25in,Minor,How far into the reference area does a frame's Track2's head intrude?
+PRESET,,Track3JambLeftSizeX,,491C346C-7396-EF42-B816-A5B5C7019112,,NamedDimension,,Track 3 Jamb Size (Left),0.25in,Minor,How far into the reference area does a frame's Track3's left side intrude?
+PRESET,,Track3JambRightSizeX,,409D2458-1CED-3549-9CB9-593E2F5D2A8D,,NamedDimension,,Track 3 Jamb Size (Right),0.25in,Minor,How far into the reference area does a frame's Track3's right side intrude?
+PRESET,,Track3DistanceY,,04C3FF94-E762-2B48-A917-E7A2ABA87150,,NamedDimension,,Track 3 Depth-In-Frame,4.5in,Minor,"How far from the frame's origin, in Y, should the Track3 panel's origin be?"
+PRESET,,Track3SizeY,,3486C383-2C94-BB4F-9EF5-D72121198F95,,NamedDimension,,Track 3 Thickness,0.25in,Minor,"How large, in Y, should the panel be to sit snugly in Track 3?"
+PRESET,,Track3SillSizeZ,,55654CE3-56A6-B044-8AC1-66A599F9E0E2,,NamedDimension,,Track 3 Sill Size,0.25in,Minor,How far into the reference area does a frame's Track3's sill intrude?
+PRESET,,Track3HeadSizeZ,,4D95C03E-5F7E-924D-91CB-9B4E2C0DFB0E,,NamedDimension,,Track 3 Head Size,0.25in,Minor,How far into the reference area does a frame's Track3's head intrude?
+PRESET,,Track4JambLeftSizeX,,4BAC028A-EE34-6841-A976-48BA96002807,,NamedDimension,,Track 4 Jamb Size (Left),0.25in,Minor,How far into the reference area does a frame's Track4's left side intrude?
+PRESET,,Track4JambRightSizeX,,89955F78-B76A-6147-AE68-61407AE3CBEE,,NamedDimension,,Track 4 Jamb Size (Right),0.25in,Minor,How far into the reference area does a frame's Track4's right side intrude?
+PRESET,,Track4DistanceY,,68D6B934-58BA-0B46-AFC0-40A07E823E5F,,NamedDimension,,Track 4 Depth-In-Frame,6in,Minor,"How far from the frame's origin, in Y, should the Track4 panel's origin be?"
+PRESET,,Track4SizeY,,03F0D461-C076-184C-8183-14ACB9B9C4C7,,NamedDimension,,Track 4 Thickness,0.25in,Minor,"How large, in Y, should the panel be to sit snugly in Track 4?"
+PRESET,,Track4SillSizeZ,,C26FA25F-B4C5-734B-A880-5EE50AE55D59,,NamedDimension,,Track 4 Sill Size,0.25in,Minor,How far into the reference area does a frame's Track4's sill intrude?
+PRESET,,Track4HeadSizeZ,,6AFBC01D-BCBD-8447-BFE0-C040FC18E437,,NamedDimension,,Track 4 Head Size,0.25in,Minor,How far into the reference area does a frame's Track4's head intrude?
+PRESET,,TrackScreenJambLeftSizeX,,85645C3A-2847-7A43-98DE-155478C5CFB7,,NamedDimension,,Screen Track Jamb Size (Left),0.25in,Minor,How far into the reference area does a frame's ScreenTrack's left side intrude?
+PRESET,,TrackScreenJambRightSizeX,,925891CE-3F7B-5A49-B481-304F7998604A,,NamedDimension,,Screen Track Jamb Size (Right),0.25in,Minor,How far into the reference area does a frame's ScreenTrack's right side intrude?
+PRESET,,TrackScreenDistanceY,,04134F89-FC65-CB45-91AC-9278543E6675,,NamedDimension,,Screen Track Depth-In-Frame,7.5in,Minor,"How far from the frame's origin, in Y, should the ScreenTrack panel's origin be?"
+PRESET,,TrackScreenSizeY,,D1B13D53-9D39-6248-B6FD-5CDBF66FB3BC,,NamedDimension,,Screen Track Thickness,0.25in,Minor,"How large, in Y, should the panel be to sit snugly in ScreenTrack?"
+PRESET,,TrackScreenSillSizeZ,,800838FF-71A0-B543-8662-FD2D40A11279,,NamedDimension,,Screen Track Sill Size,0.25in,Minor,How far into the reference area does a frame's ScreenTrack's sill intrude?
+PRESET,,TrackScreenHeadSizeZ,,B052BE65-4674-DA45-BDCF-E8490B09B7DE,,NamedDimension,,Screen Track Head Size,0.25in,Minor,How far into the reference area does a frame's ScreenTrack's head intrude?
+PRESET,,TreadDepthIdeal,,19603A4E-B772-C44B-8D17-A70FD9D0BCD9,,NamedDimension,,Ideal Tread Depth,11in,Minor,What depth should a stair's treads be as close as possible to?
+PRESET,,UndercutDistanceZ,,7155BB8A-CF67-B245-A584-BBA6A4CF6F71,,NamedDimension,,Undercut,0.75in,Minor,How far above the top of the frame's sill is the base of the panel?
+PRESET,,WebThickness,,0BD81BDD-84FF-E140-8DEB-F54E568861D1,,NamedDimension,,Web Thickness,0.25in,Minor,How thick is the middle section of an I-beam?
+,,,,,,,,,,,
+PRESET,,IconDepth,,C51CC6BD-B3F0-3C46-B605-8A482953D4FC,,NamedDimension,,Icon Depth,4in,Preview,How deep is the preview icon for this Preset?
+PRESET,,IconHeight,,76275081-82F8-754C-86AA-3F9C777C9E44,,NamedDimension,,Icon Height,36in,Preview,How tall is the preview icon for this Preset?
+PRESET,,IconLength,,A84E7BEC-8D9A-8D4A-9994-0CBB4D9A8F87,,NamedDimension,,Icon Length,48in,Preview,How long is the preview icon for this Preset?
+PRESET,,IconRise,,4290039B-60CC-554F-801E-8C5D2C4A4593,,NamedDimension,,Icon Rise,36in,Preview,How long is the preview icon for this Preset?
+PRESET,,IconRun,,88DD34C1-9BB1-494E-80C4-A00E059BB93A,,NamedDimension,,Icon Run,66in,Preview,How long is the preview icon for this Preset?
+PRESET,,IconWidth,,E773490E-EF28-004A-8C1E-0C0F45582D7C,,NamedDimension,,Icon Width,36in,Preview,How wide is the preview icon for this Preset?
+,,,,,,,,,,,
+PRESET,,NativeSizeX,,7D50BDAB-6A9B-B448-9785-5BBBA8CDFEFE,,NamedDimension,,Native Size (X),12in,Hidden,"What is this asset's native size, in X?"
+PRESET,,NativeSizeY,,77CC2136-0FE5-634D-9A4C-E7C319742C8B,,NamedDimension,,Native Size (Y),12in,Hidden,"What is this asset's native size, in Y?"
+PRESET,,NativeSizeZ,,A662E568-D719-B543-99CB-E2BDECFD9B63,,NamedDimension,,Native Size (Z),12in,Hidden,"What is this asset's native size, in Z?"
+,,,,,,,,,,,
+PRESET,,TrackDistanceZ,,F03A6F01-9BE0-FC46-894D-D024467098F3,,NamedDimension,,Track Distance (Z),6in,Minor,

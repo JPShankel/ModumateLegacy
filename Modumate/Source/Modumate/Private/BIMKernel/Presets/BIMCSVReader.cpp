@@ -270,6 +270,20 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					{
 						Preset.Properties.SetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, guid->ToString());
 						Preset.FormItemToProperty.Add(TEXT("Mesh"), FBIMPropertyKey(EBIMValueScope::Mesh, BIMPropertyNames::AssetID).QN());
+
+						/*
+						* Meshes provide default values for named dimensions required by parts
+						*/
+						const FBIMPresetInstance* meshPreset = OutPresets.PresetFromGUID(*guid);
+						if (ensureAlways(meshPreset != nullptr))
+						{
+							meshPreset->Properties.ForEachProperty([this](const FBIMPropertyKey& Key, float Value) {
+								if (Key.Scope == EBIMValueScope::Dimension && !Preset.Properties.HasProperty<float>(EBIMValueScope::Dimension,Key.Name))
+								{
+									Preset.Properties.SetProperty(Key.Scope, Key.Name, Value);
+								}
+							});
+						}
 					}
 				}
 			}

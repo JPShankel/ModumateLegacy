@@ -11,7 +11,7 @@ struct FBIMAssemblySpec;
 class MODUMATE_API FBIMPartLayout
 {
 private:
-	bool TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, int32 InPartIndex, const FString& InVar, float& OutVal, TArray<FString>& OutErrors) const;
+	bool TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, int32 InPartIndex, const FString& InVar, float& OutVal, TArray<FString>& OutErrors);
 
 public:
 	struct FPartSlotInstance
@@ -19,6 +19,12 @@ public:
 		FVector FlipVector = FVector::OneVector;
 		TMap<FString, float> VariableValues;
 		FVector Location, Rotation, Size;
+
+		// Named dimensions are only visible for edit if they are needed in a layout formula
+		TArray<FString> VisibleNamedDimensions;
+
+		FGuid PresetGUID;
+		FGuid SlotGUID;
 	};
 
 	TArray<FPartSlotInstance> PartSlotInstances;

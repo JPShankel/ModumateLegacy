@@ -32,7 +32,7 @@ private:
 public:
 
 	EBIMResult ResetInstances();
-	EBIMResult InitFromPreset(const FBIMPresetCollection& PresetCollection, const FGuid& PresetGUID, FBIMPresetEditorNodeSharedPtr &OutRootNode);
+	EBIMResult InitFromPreset(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, const FGuid& PresetGUID, FBIMPresetEditorNodeSharedPtr &OutRootNode);
 
 	EBIMResult DestroyNodeInstance(const FBIMPresetEditorNodeSharedPtr& Instance, TArray<FBIMEditorNodeIDType>& OutDestroyed);
 	EBIMResult DestroyNodeInstance(const FBIMEditorNodeIDType& InstanceID, TArray<FBIMEditorNodeIDType>& OutDestroyed);

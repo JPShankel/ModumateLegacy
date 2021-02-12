@@ -68,7 +68,10 @@ public:
 	FGuid MyParentPartSlot;
 	TArray<FBIMPresetEditorNodeWeakPtr> PartNodes;
 
+	TArray<FString> VisibleNamedDimensions;
 	bool bWantAddButton = false;
+
+	EBIMResult GetPropertyForm(TMap<FString, FBIMNameType>& OutForm) const;
 
 	FBIMEditorNodeIDType GetInstanceID() const;
 

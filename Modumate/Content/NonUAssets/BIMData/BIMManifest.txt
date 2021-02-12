@@ -1,3 +1,4 @@
+NamedDimensionTable.csv
 0-02_RawMaterial.csv
 0-04_Profile.csv
 0-05_Mesh.csv

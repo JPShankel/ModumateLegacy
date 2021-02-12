@@ -146,6 +146,22 @@ bool FBIMPropertySheet::TryGetProperty(EBIMValueScope InScope, const FBIMNameTyp
 	return false;
 }
 
+void FBIMPropertySheet::ForEachProperty(const TFunction<void(const FBIMPropertyKey& PropKey, float Value)>& InFunc) const
+{
+	for (auto& kvp : NumberMap)
+	{
+		InFunc(FBIMPropertyKey(kvp.Key), kvp.Value);
+	}
+}
+
+void FBIMPropertySheet::ForEachProperty(const TFunction<void(const FBIMPropertyKey& PropKey, const FString& Value)>& InFunc) const
+{
+	for (auto& kvp : StringMap)
+	{
+		InFunc(FBIMPropertyKey(kvp.Key), kvp.Value);
+	}
+}
+
 // Todo: re-evaluate as an enum when variable catalog stabilizes
 namespace BIMPropertyNames
 {
@@ -162,11 +178,14 @@ namespace BIMPropertyNames
 	const FBIMNameType ConceptualSizeY = TEXT("ConceptualSizeY");
 	const FBIMNameType Configuration = TEXT("Configuration");
 	const FBIMNameType CraftingIconAssetFilePath = TEXT("CraftingIconAssetFilePath");
+	const FBIMNameType DefaultValue = TEXT("DefaultValue");
 	const FBIMNameType Depth = TEXT("Depth");
+	const FBIMNameType Description = TEXT("Description");
 	const FBIMNameType Diameter = TEXT("Diameter");
 	const FBIMNameType DimensionSetComments = TEXT("DimensionSetComments");
 	const FBIMNameType DimensionSetName = TEXT("DimensionSetName");
 	const FBIMNameType Dimensions = TEXT("Dimensions");
+	const FBIMNameType DisplayName = TEXT("DisplayName");
 	const FBIMNameType EngineMaterial = TEXT("EngineMaterial");
 	const FBIMNameType Extents = TEXT("Extents");
 	const FBIMNameType Form = TEXT("Form");
@@ -209,5 +228,6 @@ namespace BIMPropertyNames
 	const FBIMNameType TreadDepthIdeal = TEXT("TreadDepthIdeal");
 	const FBIMNameType TrimProfile = TEXT("TrimProfile");
 	const FBIMNameType UseGroupType = TEXT("UseGroupType");
+	const FBIMNameType UIGroup = TEXT("UIGroup");
 	const FBIMNameType Width = TEXT("Width");
 }

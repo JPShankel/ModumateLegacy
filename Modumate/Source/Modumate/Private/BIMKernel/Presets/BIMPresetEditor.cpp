@@ -6,6 +6,7 @@
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "ModumateCore/ModumateScriptProcessor.h"
 #include "DocumentManagement/ModumateCommands.h"
+#include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 #include "Algo/Accumulate.h"
 #include "Algo/Transform.h"
 #include "Algo/Compare.h"
@@ -102,18 +103,6 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 		}
 	};
 
-	TArray<FPresetTreeIterator> iteratorStack;
-	if (!SlotAssignment.IsValid())
-	{
-		iteratorStack.Push(FPresetTreeIterator(ParentID, PresetGUID, ParentSetIndex, ParentSetPosition));
-	}
-	else
-	{
-		iteratorStack.Push(FPresetTreeIterator(ParentID, PresetGUID, SlotAssignment));
-	}
-
-	FBIMPresetEditorNodeSharedPtr returnVal = nullptr;
-	TArray<FBIMPresetEditorNodeSharedPtr> createdInstances;
 	FBIMPresetEditorNodeSharedPtr parent = InstanceFromID(ParentID);
 
 	if (parent.IsValid())
@@ -132,9 +121,37 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 		}
 	}
 
-	while (iteratorStack.Num() > 0)
+	FBIMPresetEditorNodeSharedPtr returnVal = nullptr;
+	TArray<FBIMPresetEditorNodeSharedPtr> createdInstances;
+
+	// "Child" presets are layers, "Part" presets are parts of rigged assemblies
+	// Iterate over children depth first, so all details of a child layer are processed before moving on
+	// Iterate over parts breadth first, so all parts associated with a preset are processed in the order they appear in the assembly spec
+	TArray<FPresetTreeIterator> childStack;
+	TQueue<FPresetTreeIterator> partQueue;
+
+	if (!SlotAssignment.IsValid())
 	{
-		FPresetTreeIterator iterator = iteratorStack.Pop();
+		childStack.Push(FPresetTreeIterator(ParentID, PresetGUID, ParentSetIndex, ParentSetPosition));
+	}
+	else
+	{
+		partQueue.Enqueue(FPresetTreeIterator(ParentID, PresetGUID, SlotAssignment));
+	}
+
+	while (childStack.Num() > 0 || !partQueue.IsEmpty())
+	{
+		FPresetTreeIterator iterator;
+		
+		// Process all parts before moving on to next child (which may or may not have parts)
+		if (!partQueue.IsEmpty())
+		{
+			partQueue.Dequeue(iterator);
+		}
+		else
+		{
+			iterator = childStack.Pop();
+		}
 
 		const FBIMPresetInstance* preset = PresetCollection.PresetFromGUID(iterator.PresetID);
 		if (!ensureAlways(preset != nullptr))
@@ -178,16 +195,15 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 			auto& childPreset = preset->ChildPresets[i];
 			if (ensureAlways(childPreset.PresetGUID.IsValid()))
 			{
-				iteratorStack.Push(FPresetTreeIterator(instance->GetInstanceID(), childPreset.PresetGUID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition));
+				childStack.Push(FPresetTreeIterator(instance->GetInstanceID(), childPreset.PresetGUID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition));
 			}
 		}
 
-		for (int32 i = preset->PartSlots.Num() - 1; i >= 0; --i)
+		for (const auto& partPreset: preset->PartSlots)
 		{
-			auto& partPreset = preset->PartSlots[i];
 			if (partPreset.PartPresetGUID.IsValid())
 			{
-				iteratorStack.Push(FPresetTreeIterator(instance->GetInstanceID(), partPreset.PartPresetGUID, partPreset.SlotPresetGUID));
+				partQueue.Enqueue(FPresetTreeIterator(instance->GetInstanceID(), partPreset.PartPresetGUID, partPreset.SlotPresetGUID));
 			}
 		}
 	}
@@ -537,7 +553,6 @@ bool FBIMPresetEditor::GetSortedNodeIDs(TArray<FBIMEditorNodeIDType> &OutNodeIDs
 			}
 		}
 	}
-
 	return false;
 }
 
@@ -581,12 +596,59 @@ EBIMResult FBIMPresetEditor::DestroyNodeInstance(const FBIMEditorNodeIDType& Ins
 	return DestroyNodeInstance(InstanceFromID(InstanceID), OutDestroyed);
 }
 
-EBIMResult FBIMPresetEditor::InitFromPreset(const FBIMPresetCollection& PresetCollection, const FGuid& PresetGUID, FBIMPresetEditorNodeSharedPtr& OutRootNode)
+EBIMResult FBIMPresetEditor::InitFromPreset(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, const FGuid& PresetGUID, FBIMPresetEditorNodeSharedPtr& OutRootNode)
 {
 	ResetInstances();
 	OutRootNode = CreateNodeInstanceFromPreset(PresetCollection, BIM_ID_NONE, PresetGUID, 0, 0);
+
+	if (!OutRootNode.IsValid())
+	{
+		return EBIMResult::Error;
+	}
+
 	SortAndValidate();
-	return OutRootNode.IsValid() ? EBIMResult::Success : EBIMResult::Error;
+
+	// If we have part nodes, run a layout and collect the visible named dimensions for each part
+	if (OutRootNode->PartNodes.Num() > 0)
+	{
+		FBIMAssemblySpec assemblySpec;
+		if (CreateAssemblyFromNodes(PresetCollection, InDB, assemblySpec) == EBIMResult::Success)
+		{
+			FBIMPartLayout layout;
+			layout.FromAssembly(assemblySpec, FVector::OneVector);
+
+			// Part slot instances, editor nodes and the assembly part list must corespond
+			// This condition is checked in the automated test of the preset database
+			if (ensureAlways(layout.PartSlotInstances.Num() == InstancePool.Num() && layout.PartSlotInstances.Num() == assemblySpec.Parts.Num()))
+			{
+				for (int32 i = 0; i < layout.PartSlotInstances.Num(); ++i)
+				{
+					const auto& part = assemblySpec.Parts[i];
+					const auto& slot = layout.PartSlotInstances[i];
+					if (ensureAlways(part.PresetGUID == slot.PresetGUID && part.SlotGUID == slot.SlotGUID))
+					{
+						auto inst = InstancePool[i];
+						// Visible named dimensions are keys into the NamedDimensions map of the underlying preset
+						inst->VisibleNamedDimensions = slot.VisibleNamedDimensions;
+					}
+					else
+					{
+						return EBIMResult::Error;
+					}
+				}
+			}
+			else
+			{
+				return EBIMResult::Error;
+			}
+		}
+		else
+		{
+			return EBIMResult::Error;
+		}
+	}
+
+	return EBIMResult::Success;
 }
 
 EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& InstanceID, const FGuid& PresetGUID)

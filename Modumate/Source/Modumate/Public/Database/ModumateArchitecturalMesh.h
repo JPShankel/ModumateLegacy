@@ -32,17 +32,5 @@ struct FArchitecturalMesh
 	FBox NineSliceBox = FBox(ForceInit);
 
 	FGuid UniqueKey() const { return Key; }
-
-	TMap<FString, FModumateUnitValue> NamedDimensions;
-
-	void ReadNamedDimensions(const FString& InNamedDimensions);
 };
 
-template<>
-struct TStructOpsTypeTraits<FArchitecturalMesh> : public TStructOpsTypeTraitsBase2<FArchitecturalMesh>
-{
-	enum
-	{
-		// Override default traits here
-	};
-};

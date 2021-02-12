@@ -42,6 +42,12 @@ EBIMResult FBIMPresetCollection::GetAllDescendentPresets(const FGuid& PresetID, 
 				presetStack.Push(part.PartPresetGUID);
 			}
 		}
+
+		FGuid meshAsset;
+		if (preset->Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshAsset))
+		{
+			OutPresets.AddUnique(meshAsset);
+		}
 	}
 	return EBIMResult::Success;
 }

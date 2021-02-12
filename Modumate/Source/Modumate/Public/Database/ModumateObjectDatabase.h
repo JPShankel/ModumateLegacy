@@ -15,8 +15,9 @@
 
 #include "ModumateObjectDatabase.generated.h"
 
-static constexpr int32 BIMCacheCurrentVersion = 2;
+static constexpr int32 BIMCacheCurrentVersion = 3;
 // Version 2: deprecate FBIMKeys for FGuids
+// Version 3: move named parameters from meshes to presets
 
 USTRUCT()
 struct FModumateBIMCacheRecord
@@ -44,7 +45,7 @@ private:
 	TModumateDataCollection<FLayerPattern> Patterns;
 
 	void AddArchitecturalMaterial(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
-	void AddArchitecturalMesh(const FGuid& Key, const FString& Name, const FString& InNamedParameters, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath);
+	void AddArchitecturalMesh(const FGuid& Key, const FString& Name, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath);
 	void AddSimpleMesh(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 	void AddStaticIconTexture(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 

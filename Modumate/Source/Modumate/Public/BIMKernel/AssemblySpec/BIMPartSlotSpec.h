@@ -20,6 +20,35 @@
 
 class FModumateDatabase;
 
+struct FBIMPresetInstance;
+
+UENUM()
+enum class EPartSlotDimensionUIType : uint8
+{
+	Major = 0,
+	Minor,
+	Preview,
+	Hidden
+};
+
+USTRUCT()
+struct MODUMATE_API FPartNamedDimension
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	EPartSlotDimensionUIType UIType;
+
+	UPROPERTY()
+	FModumateUnitValue DefaultValue;
+
+	UPROPERTY()
+	FText DisplayName;
+
+	UPROPERTY()
+	FText Description;
+};
+
 /*
 An assembly part slot contains a mesh and local transform
 TODO: transforms will be derived from hosting plane/moi parameters...to be hard coded initially
@@ -37,15 +66,17 @@ private:
 
 	EBIMResult BuildFromProperties(const FModumateDatabase& InDB);
 
+public:
+
 #if WITH_EDITOR
-	// For debugging
-	FBIMKey DEBUGPresetKey;
-	FGuid DEBUGSlotGUID;
 	EBIMValueScope DEBUGNodeScope;
-	FGuid DEBUG_GUID;
 #endif
 
-public:
+	UPROPERTY()
+	FGuid PresetGUID;
+
+	UPROPERTY()
+	FGuid SlotGUID;
 
 	UPROPERTY()
 	FVectorExpression Translation;
@@ -74,7 +105,11 @@ public:
 	UPROPERTY()
 	TMap<FName, FArchitecturalMaterial> ChannelMaterials;
 
-	static TMap<FString, FModumateUnitValue> DefaultNamedParameterMap;
-	static bool TryGetDefaultNamedParameter(const FString& Name, FModumateUnitValue& OutVal);
+	UPROPERTY()
+	TMap<FString, FModumateUnitValue> NamedDimensionValues;
 
+	void GetNamedDimensionValuesFromPreset(const FBIMPresetInstance* Preset);
+
+	static TMap<FString, FPartNamedDimension> NamedDimensionMap;
+	static bool TryGetDefaultNamedDimension(const FString& Name, FModumateUnitValue& OutVal);
 };

@@ -28,7 +28,7 @@ const FString FBIMPartLayout::Parent = TEXT("Parent");
 
 // Given a starting part and a fully qualified path to a value, navigate to the source and retrieve the value
 // TODO: cache values and add to a global scope map 
-bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, int32 InPartIndex, const FString& InVar, float& OutVal, TArray<FString>& OutErrors) const
+bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, int32 InPartIndex, const FString& InVar, float& OutVal, TArray<FString>& OutErrors)
 {
 	// An input var will be a fully qualified value like "Parent.Panel.LocationX"
 	// For a qualified var with N elements, the first N-1 describe slot navigation and the final value is a variable on that slot
@@ -93,10 +93,11 @@ bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, 
 	// After we've gotten to the destination slot, look for our unqualified value (ie "SizeX") or return 0
 	const float* returnVal = PartSlotInstances[currentSlot].VariableValues.Find(scopes.Last());
 
+	PartSlotInstances[currentSlot].VisibleNamedDimensions.AddUnique(scopes.Last());
 	if (returnVal == nullptr)
 	{
 		FModumateUnitValue unitVal;
-		if (ensureAlwaysMsgf(FBIMPartSlotSpec::TryGetDefaultNamedParameter(scopes.Last(), unitVal), TEXT("COULD NOT FIND BIM VALUE %s"), *InVar))
+		if (ensureAlwaysMsgf(FBIMPartSlotSpec::TryGetDefaultNamedDimension(scopes.Last(), unitVal), TEXT("COULD NOT FIND BIM VALUE %s"), *InVar))
 		{
 			OutVal = unitVal.AsWorldCentimeters();
 			return true;
@@ -122,6 +123,12 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 	// The first part is created as a parent to the others with no bespoke sizing operation
 	// Children will depend on its scaled size (native*scale)
 	// This is the one and only input of InScale to the derived placement math
+
+	for (auto& kvp : InAssemblySpec.Parts[0].NamedDimensionValues)
+	{
+		PartSlotInstances[0].VariableValues.Add(kvp.Key, kvp.Value.AsWorldCentimeters());
+	}
+
 	FVector assemblyNativeSize = InAssemblySpec.GetRiggedAssemblyNativeSize();
 
 	PartSlotInstances[0].VariableValues.Add(NativeSizeX, assemblyNativeSize.X);
@@ -132,7 +139,6 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 	PartSlotInstances[0].VariableValues.Add(ScaledSizeX, assemblyNativeSize.X);
 	PartSlotInstances[0].VariableValues.Add(ScaledSizeY, assemblyNativeSize.Y);
 	PartSlotInstances[0].VariableValues.Add(ScaledSizeZ, assemblyNativeSize.Z);
-
 
 	// First pass, acquire all the a-priori information for these parts, including their meshes and their initial size values
 	for (int32 slotIdx = 1; slotIdx < numSlots; ++slotIdx)
@@ -153,6 +159,11 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 			}
 		}
 
+		for (auto& kvp : InAssemblySpec.Parts[slotIdx].NamedDimensionValues)
+		{
+			PartSlotInstances[slotIdx].VariableValues.Add(kvp.Key, kvp.Value.AsWorldCentimeters());
+		}
+
 		// The initial size value for parts with meshes is the mesh's native size
 		// This value is recalculated down below but may depend on this initial value
 		if (ensureAlways(useMesh->EngineMesh.IsValid()))
@@ -161,13 +172,6 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeX, nativeSize.X);
 			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeY, nativeSize.Y);
 			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeZ, nativeSize.Z);
-
-			// Meshes have idiosyncratic named dimensions depending on what they are
-			// If the mesh is not valid, NamedDimensions will be empty, so safe to proceed
-			for (auto& kvp : InAssemblySpec.Parts[slotIdx].Mesh.NamedDimensions)
-			{
-				PartSlotInstances[slotIdx].VariableValues.Add(kvp.Key, kvp.Value.AsWorldCentimeters());
-			}
 		}
 	}
 
@@ -204,6 +208,8 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 	{
 		const FBIMPartSlotSpec& assemblyPart = InAssemblySpec.Parts[slotIdx];
 
+		PartSlotInstances[slotIdx].PresetGUID = InAssemblySpec.Parts[slotIdx].PresetGUID;
+		PartSlotInstances[slotIdx].SlotGUID = InAssemblySpec.Parts[slotIdx].SlotGUID;
 		// Convert flip boolean to scale factor.
 		PartSlotInstances[slotIdx].FlipVector = FVector(
 			assemblyPart.Flip[0] ? -1.0f : 1.0f,

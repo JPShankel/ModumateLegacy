@@ -83,11 +83,14 @@ namespace BIMPropertyNames
 	extern const FBIMNameType ConceptualSizeY;
 	extern const FBIMNameType Configuration;
 	extern const FBIMNameType CraftingIconAssetFilePath;
+	extern const FBIMNameType DefaultValue;
 	extern const FBIMNameType Depth;
+	extern const FBIMNameType Description;
 	extern const FBIMNameType Diameter;
 	extern const FBIMNameType DimensionSetComments;
 	extern const FBIMNameType DimensionSetName;
 	extern const FBIMNameType Dimensions;
+	extern const FBIMNameType DisplayName;
 	extern const FBIMNameType EngineMaterial;
 	extern const FBIMNameType Extents;
 	extern const FBIMNameType Form;
@@ -129,6 +132,7 @@ namespace BIMPropertyNames
 	extern const FBIMNameType ToeKickHeight;
 	extern const FBIMNameType TreadDepthIdeal;
 	extern const FBIMNameType TrimProfile;
+	extern const FBIMNameType UIGroup;
 	extern const FBIMNameType UseGroupType;
 	extern const FBIMNameType Width;
 }
@@ -211,6 +215,9 @@ public:
 
 		return false;
 	}
+
+	void ForEachProperty(const TFunction<void(const FBIMPropertyKey& Key, float Value)>& InFunc) const;
+	void ForEachProperty(const TFunction<void(const FBIMPropertyKey& Key, const FString& Value)>& InFunc) const;
 
 	// These overrides provide common conversions between text and numerical types using template func
 	bool TryGetProperty(EBIMValueScope Scope, const FBIMNameType& Name, FName& OutT) const;

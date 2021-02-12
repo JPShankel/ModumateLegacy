@@ -42,7 +42,7 @@ void FModumateDatabase::AddSimpleMesh(const FGuid& Key, const FString& Name, con
 	SimpleMeshes.AddData(mesh);
 }
 
-void FModumateDatabase::AddArchitecturalMesh(const FGuid& Key, const FString& Name, const FString& InNamedParams, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath)
+void FModumateDatabase::AddArchitecturalMesh(const FGuid& Key, const FString& Name, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath)
 {
 	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
 	{
@@ -54,7 +54,6 @@ void FModumateDatabase::AddArchitecturalMesh(const FGuid& Key, const FString& Na
 	mesh.NativeSize = InNativeSize;
 	mesh.NineSliceBox = InNineSliceBox;
 	mesh.Key = Key;
-	mesh.ReadNamedDimensions(InNamedParams);
 
 	mesh.EngineMesh = Cast<UStaticMesh>(AssetPath.TryLoad());
 	if (ensureAlways(mesh.EngineMesh.IsValid()))
@@ -200,24 +199,6 @@ In the meantime, we read a manifest of CSV files and look for expected presets t
 */
 void FModumateDatabase::ReadPresetData()
 {
-	// Parts may have unique values like "JambLeftSizeX" or "PeepholeDistanceZ"
-	// If a part is expected to have one of these values but doesn't, we provide defaults here
-	TArray<FString> partDefaultVals;
-	if (FFileHelper::LoadFileToStringArray(partDefaultVals, *(ManifestDirectoryPath / TEXT("DefaultPartParams.txt"))))
-	{
-		FBIMPartSlotSpec::DefaultNamedParameterMap.Empty();
-		for (auto& partValStr : partDefaultVals)
-		{
-			partValStr.RemoveSpacesInline();
-			TArray<FString> partValPair;
-			partValStr.ParseIntoArray(partValPair, TEXT("="));
-			if (ensureAlways(partValPair.Num() == 2))
-			{
-				float inches = FCString::Atof(*partValPair[1].TrimStartAndEnd());
-				FBIMPartSlotSpec::DefaultNamedParameterMap.Add(partValPair[0].TrimStartAndEnd(), FModumateUnitValue::WorldInches(inches));
-			}
-		}
-	}
 	const static FString BIMCacheFile = TEXT("_bimCache.json");
 	FModumateBIMCacheRecord bimCacheRecord;
 
@@ -247,6 +228,72 @@ void FModumateDatabase::ReadPresetData()
 	{
 		BIMPresetCollection = bimCacheRecord.Presets;
 		BIMPresetCollection.PostLoad();
+	}
+
+	TArray<FGuid> namedDimensionPresets;
+	
+	// Parts may have unique values like "JambLeftSizeX" or "PeepholeDistanceZ"
+	// If a part is expected to have one of these values but doesn't, we provide defaults here
+	// TODO: typesafe NCPs...bare string for now
+	if (ensureAlways(BIMPresetCollection.GetPresetsForNCP(FBIMTagPath(TEXT("NamedDimension")), namedDimensionPresets) == EBIMResult::Success))
+	{
+		for (auto& ndp : namedDimensionPresets)
+		{
+			const FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(ndp);
+
+			if (ensureAlways(preset != nullptr))
+			{
+				FPartNamedDimension& dimension = FBIMPartSlotSpec::NamedDimensionMap.Add(preset->PresetID.ToString());
+
+				float numProp;
+				if (preset->TryGetProperty(BIMPropertyNames::DefaultValue, numProp))
+				{
+					dimension.DefaultValue = FModumateUnitValue::WorldCentimeters(numProp);
+				}
+
+				FString stringProp;
+				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::UIGroup, stringProp)))
+				{
+					dimension.UIType = GetEnumValueByString<EPartSlotDimensionUIType>(stringProp);
+				}
+
+				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::DisplayName, stringProp)))
+				{
+					dimension.DisplayName = FText::FromString(stringProp);
+				}
+
+				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::Description, stringProp)))
+				{
+					dimension.Description = FText::FromString(stringProp);
+				}
+			}
+		}
+	}
+
+	/*
+	* Presets that either have or are themselves parts are given default values for named dimensions so they can be edited if visible 
+	*/
+	TArray<FGuid> dimensionedPresets;
+	BIMPresetCollection.GetPresetsByPredicate([](const FBIMPresetInstance& Preset) 
+		{
+			return Preset.TypeDefinition.Scope == EBIMValueScope::Part || Preset.SlotConfigPresetGUID.IsValid();
+		}
+		,dimensionedPresets);
+
+	for (auto& dimPreset : dimensionedPresets)
+	{
+		FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(dimPreset);
+		if (ensureAlways(preset != nullptr))
+		{
+			for (auto& kvp : FBIMPartSlotSpec::NamedDimensionMap)
+			{
+				FBIMPropertyKey propKey(EBIMValueScope::Dimension, *kvp.Key);
+				if (!preset->Properties.HasProperty<float>(propKey.Scope, propKey.Name))
+				{
+					preset->Properties.SetProperty(propKey.Scope, propKey.Name, kvp.Value.DefaultValue.AsWorldCentimeters());
+				}
+			}
+		}
 	}
 
 	FString NCPString;
@@ -306,8 +353,7 @@ void FModumateDatabase::ReadPresetData()
 
 			FString name;
 			Preset.TryGetProperty(BIMPropertyNames::Name, name);
-			FString namedDimensions = Preset.GetScopedProperty<FString>(EBIMValueScope::Mesh,BIMPropertyNames::NamedDimensions);
-			AddArchitecturalMesh(Preset.GUID, name, namedDimensions, meshNativeSize, meshNineSlice, assetPath);
+			AddArchitecturalMesh(Preset.GUID, name, meshNativeSize, meshNineSlice, assetPath);
 		}
 	};
 
@@ -651,7 +697,7 @@ bool FModumateDatabase::UnitTest()
 		{
 			FBIMPresetEditor editor;
 			FBIMPresetEditorNodeSharedPtr root;
-			success = ensureAlways(editor.InitFromPreset(BIMPresetCollection, kvp.Value.RootPreset, root) == EBIMResult::Success) && success;
+			success = ensureAlways(editor.InitFromPreset(BIMPresetCollection, *this, kvp.Value.RootPreset, root) == EBIMResult::Success) && success;
 
 			FBIMAssemblySpec editSpec;
 			success = ensureAlways(editor.CreateAssemblyFromNodes(BIMPresetCollection, *this, editSpec) == EBIMResult::Success) && success;
