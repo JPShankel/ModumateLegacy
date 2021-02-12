@@ -888,11 +888,12 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 
 	SavePendingPreset = node->WorkingPresetCopy;
 
+	SavePendingPreset.Edited = true;
+
 	if (SaveAs)
 	{
 		// Creating new preset, do not check for affected presets
 		Controller->GetDocument()->MakeNewGUIDForPreset(SavePendingPreset);
-		SavePendingPreset.ReadOnly = false;
 
 		TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeDelta(SavePendingPreset);
 		Controller->GetDocument()->ApplyDeltas({presetDelta},GetWorld());
@@ -931,11 +932,6 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 		SelectedNodeID = InstanceID;
 		UpdateBIMDesigner();
 		return true;
-	}
-	else if (SavePendingPreset.ReadOnly)
-	{
-		// This preset is read-only, can't be saved
-		return false;
 	}
 	else
 	{

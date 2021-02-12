@@ -126,7 +126,7 @@ public:
 	// TODO: roll fields below into type definition and make it the top level UPROPERTY
 	FBIMPresetTypeDefinition TypeDefinition;
 
-	bool ReadOnly = true;
+	bool Edited = false;
 
 	UPROPERTY()
 	FBIMPropertySheet Properties;

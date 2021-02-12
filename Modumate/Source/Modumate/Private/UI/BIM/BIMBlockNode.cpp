@@ -252,7 +252,6 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	}
 
 	// Node status
-	BIMBlockNodeDirty->ButtonSave->SetVisibility(Node->WorkingPresetCopy.ReadOnly ? ESlateVisibility::Hidden : ESlateVisibility::SelfHitTestInvisible);
 	UpdateNodeDirty(Node->GetPresetStatus() == EBIMPresetEditorNodeStatus::Dirty);
 
 	// Build instance properties

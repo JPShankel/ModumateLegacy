@@ -601,15 +601,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		}
 	}
 
-	for (auto& kvp : DocRecord.PresetCollection.PresetsByGUID)
-	{
-		if (!PresetsByGUID.Contains(kvp.Key))
-		{
-			FBIMPresetInstance editedPreset = kvp.Value;
-			editedPreset.ReadOnly = false;
-			AddPreset(editedPreset);
-		}
-	}
+	PresetsByGUID.Append(DocRecord.PresetCollection.PresetsByGUID);
 
 	// If any presets fail to build their assembly, remove them
 	// They'll be replaced by the fallback system and will not be written out again
@@ -643,8 +635,8 @@ bool FBIMPresetCollection::SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord)
 {
 	for (auto& kvp : PresetsByGUID)
 	{
-		// ReadOnly presets have not been edited
-		if (!kvp.Value.ReadOnly)
+		// Only save presets that have been edited, the rest are in the shared db
+		if (kvp.Value.Edited)
 		{
 			DocRecord.PresetCollection.AddPreset(kvp.Value);
 			if (!DocRecord.PresetCollection.NodeDescriptors.Contains(kvp.Value.NodeType))
