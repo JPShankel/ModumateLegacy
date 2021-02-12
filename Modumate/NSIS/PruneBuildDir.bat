@@ -10,4 +10,5 @@ del %INSTALL_ROOT%\Manifest_DebugFiles_Win64.txt
 del %INSTALL_ROOT%\Manifest_NonUFSFiles_Win64.txt
 del %INSTALL_ROOT%\Modumate\Binaries\Win64\Modumate-Win64-Shipping.pdb
 del %INSTALL_ROOT%\Engine\Binaries\Win64\CrashReportClient.pdb
+del %INSTALL_ROOT%\Engine\Binaries\Win64\turbojpeg.dll
 rmdir /S /Q %INSTALL_ROOT%\Engine\Content
