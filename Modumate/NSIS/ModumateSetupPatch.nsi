@@ -44,7 +44,7 @@ Unicode True
 !define PATH_OUT "${PATH_OUT_ROOT}/${PRODUCT_VERSION}"
 !system 'md "${PATH_OUT}"'
 
-; !finalize '.\SignInstaller.bat "%1"'
+!finalize '.\SignInstaller.bat "%1"'
 
 ; MUI end ------
 
@@ -56,7 +56,7 @@ ShowInstDetails show
 ShowUnInstDetails show
 
 !define PATCH_INSTALL_ROOT "$INSTDIR"
-!define PATCH_SOURCE_ROOT "${BUILD_DIR}\${PRODUCT_VERSION}\WindowsNoEditor"
+!define PATCH_SOURCE_ROOT "${BUILD_DIR}\..\Release\${PRODUCT_VERSION}\WindowsNoEditor"
 !define PATCH_FILES_ROOT "${BUILD_DIR}\patchFiles"
 !include "${BUILD_DIR}\patchFiles.nsi"
 
