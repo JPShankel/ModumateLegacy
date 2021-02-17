@@ -41,6 +41,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName TooltipID_CheckBoxVisibility;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName TooltipID_CheckBoxCullModel;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UCheckBox* CheckBoxVisibility;
 
@@ -56,6 +59,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonEdit;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateCheckBox* CheckBoxCullModel;
+
 	UFUNCTION()
 	void OnButtonMainReleased();
 
@@ -68,6 +74,9 @@ public:
 	UFUNCTION()
 	void OnEditableTitleCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
+	UFUNCTION()
+	void OnCheckBoxCullModelChanged(bool IsChecked);
+
 	// UserObjectListEntry interface
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 
@@ -79,4 +88,7 @@ protected:
 
 	UFUNCTION()
 	UWidget* OnCheckBoxTooltipWidget();
+
+	UFUNCTION()
+	UWidget* OnCheckBoxCullModelTooltipWidget();
 };

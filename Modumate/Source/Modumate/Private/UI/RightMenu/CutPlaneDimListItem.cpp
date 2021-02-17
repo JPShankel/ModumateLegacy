@@ -14,6 +14,7 @@
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/EditModelUserWidget.h"
+#include "UI/Custom/ModumateCheckBox.h"
 
 
 UCutPlaneDimListItem::UCutPlaneDimListItem(const FObjectInitializer& ObjectInitializer)
@@ -35,6 +36,8 @@ bool UCutPlaneDimListItem::Initialize()
 	CheckBoxVisibility->ToolTipWidgetDelegate.BindDynamic(this, &UCutPlaneDimListItem::OnCheckBoxTooltipWidget);
 	ButtonEdit->ModumateButton->OnReleased.AddDynamic(this, &UCutPlaneDimListItem::OnButtonEditReleased);
 	TextTitleEditable->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UCutPlaneDimListItem::OnEditableTitleCommitted);
+	CheckBoxCullModel->OnCheckStateChanged.AddDynamic(this, &UCutPlaneDimListItem::OnCheckBoxCullModelChanged);
+	CheckBoxCullModel->ToolTipWidgetDelegate.BindDynamic(this, &UCutPlaneDimListItem::OnCheckBoxCullModelTooltipWidget);
 
 	return true;
 }
@@ -97,6 +100,15 @@ void UCutPlaneDimListItem::OnEditableTitleCommitted(const FText& Text, ETextComm
 	}
 }
 
+void UCutPlaneDimListItem::OnCheckBoxCullModelChanged(bool IsChecked)
+{
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
+	if (controller)
+	{
+		controller->SetCurrentCullingCutPlane(IsChecked ? ObjID: MOD_ID_NONE);
+	}
+}
+
 void UCutPlaneDimListItem::OnButtonEditReleased()
 {
 	TextTitleEditable->ModumateEditableTextBox->SetKeyboardFocus();
@@ -111,6 +123,8 @@ void UCutPlaneDimListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 	}
 	UpdateVisibilityAndName(cutPlaneItemObject->Visibility, cutPlaneItemObject->DisplayName);
 	ObjID = cutPlaneItemObject->ObjId;
+	CheckBoxCullModel->SetCheckedState(
+		cutPlaneItemObject->bIsCulling ? ECheckBoxState::Checked : ECheckBoxState::Unchecked);
 
 	switch (cutPlaneItemObject->CutPlaneType)
 	{
@@ -151,5 +165,10 @@ void UCutPlaneDimListItem::UpdateVisibilityAndName(bool NewVisible, const FStrin
 UWidget* UCutPlaneDimListItem::OnCheckBoxTooltipWidget()
 {
 	return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID_CheckBoxVisibility, this);
+}
+
+UWidget* UCutPlaneDimListItem::OnCheckBoxCullModelTooltipWidget()
+{
+	return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID_CheckBoxCullModel, this);
 }
 

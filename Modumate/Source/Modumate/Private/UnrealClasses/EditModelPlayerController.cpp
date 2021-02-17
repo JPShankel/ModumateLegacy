@@ -13,7 +13,6 @@
 #include "Engine/SceneCapture2D.h"
 #include "Framework/Application/SlateApplication.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateStats.h"
 #include "ModumateCore/ModumateThumbnailHelpers.h"
 #include "ModumateCore/PlatformFunctions.h"
@@ -40,6 +39,8 @@
 #include "UI/DimensionManager.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/TutorialManager.h"
+#include "Objects/CutPlane.h"
+#include "UI/RightMenu/CutPlaneMenuWidget.h"
 
 
 // Tools
@@ -1955,7 +1956,32 @@ void AEditModelPlayerController::UpdateMouseTraceParams()
 
 bool AEditModelPlayerController::LineTraceSingleAgainstMOIs(struct FHitResult& OutHit, const FVector& Start, const FVector& End) const
 {
-	return GetWorld()->LineTraceSingleByObjectType(OutHit, Start, End, MOITraceObjectQueryParams, MOITraceQueryParams);
+	bool bResultSuccess = GetWorld()->LineTraceSingleByObjectType(OutHit, Start, End, MOITraceObjectQueryParams, MOITraceQueryParams);
+	
+	//If a cutplane is currently culling, check if hit loc is in front of it
+	if (bResultSuccess && CurrentCullingCutPlaneID != MOD_ID_NONE)
+	{
+		const AModumateObjectInstance* cutPlaneMoi = Document->GetObjectById(CurrentCullingCutPlaneID);
+		if (cutPlaneMoi && cutPlaneMoi->GetObjectType() == EObjectType::OTCutPlane)
+		{
+			FVector loc = cutPlaneMoi->GetLocation();
+			FVector dir = cutPlaneMoi->GetNormal();
+			FPlane cutPlaneCheck = FPlane(loc, dir);
+			if (bResultSuccess && cutPlaneCheck.PlaneDot(OutHit.Location) > KINDA_SMALL_NUMBER)
+			{
+				// Start a new line trace starting from intersection of cut plane
+				FVector intersect = FMath::RayPlaneIntersection(Start, (End - Start).GetSafeNormal(), cutPlaneCheck);
+				bResultSuccess = GetWorld()->LineTraceSingleByObjectType(OutHit, intersect, End, MOITraceObjectQueryParams, MOITraceQueryParams);
+				
+				// Check again if hit is in front of cut plane. ex: Looking from behind a cut plane but hitting a location in front of the cut plane
+				if (bResultSuccess && cutPlaneCheck.PlaneDot(OutHit.Location) > KINDA_SMALL_NUMBER)
+				{
+					return false;
+				}
+			}
+		}
+	}
+	return bResultSuccess;
 }
 
 bool AEditModelPlayerController::IsCursorOverWidget() const
@@ -3237,6 +3263,59 @@ bool AEditModelPlayerController::ToggleGravityPawn()
 	UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::View, analyticsEventName);
 
 	return true;
+}
+
+void AEditModelPlayerController::SetCurrentCullingCutPlane(int32 ObjID /*= MOD_ID_NONE*/)
+{
+	// Stop previous culling cutplane from culling
+	AModumateObjectInstance* previousCullingMoi = Document->GetObjectById(CurrentCullingCutPlaneID);
+	if (previousCullingMoi)
+	{
+		AMOICutPlane* previousCutPlane = Cast<AMOICutPlane>(previousCullingMoi);
+		if (previousCutPlane)
+		{
+			previousCutPlane->SetIsCulling(false);
+		}
+	}
+
+	// Update the menu
+	CurrentCullingCutPlaneID = ObjID;
+
+	// Ask new culling cutplane to cull
+	AModumateObjectInstance* newCullingMoi = Document->GetObjectById(CurrentCullingCutPlaneID);
+	if (newCullingMoi)
+	{
+		AMOICutPlane* newCutPlane = Cast<AMOICutPlane>(newCullingMoi);
+		if (newCutPlane)
+		{
+			newCutPlane->SetIsCulling(true);
+		}
+	}
+	UpdateCutPlaneCullingMaterialInst(CurrentCullingCutPlaneID);
+	EditModelUserWidget->CutPlaneMenu->UpdateCutPlaneMenuBlocks();
+}
+
+void AEditModelPlayerController::UpdateCutPlaneCullingMaterialInst(int32 ObjID /*= MOD_ID_NONE*/)
+{
+	FVector planePos = FVector::ZeroVector;
+	FVector rotAxis = FVector::ZeroVector;
+	float enableValue = 0.f;
+
+	AModumateObjectInstance* moi = Document->GetObjectById(ObjID);
+	if (moi && moi->GetObjectType() == EObjectType::OTCutPlane)
+	{
+		planePos = moi->GetLocation();
+		rotAxis = moi->GetNormal();
+		enableValue = 1.f;
+	}
+
+	if (CutPlaneCullingMaterialCollection)
+	{
+		UMaterialParameterCollectionInstance* cullingInst = GetWorld()->GetParameterCollectionInstance(CutPlaneCullingMaterialCollection);
+		cullingInst->SetVectorParameterValue(TEXT("Position"), planePos);
+		cullingInst->SetVectorParameterValue(TEXT("Axis"), rotAxis);
+		cullingInst->SetScalarParameterValue(TEXT("EnableValue"), enableValue);
+	}
 }
 
 void AEditModelPlayerController::HandleUndo()

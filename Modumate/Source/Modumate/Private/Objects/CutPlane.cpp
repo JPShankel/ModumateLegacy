@@ -446,6 +446,16 @@ void AMOICutPlane::UpdateDraftingPreview()
 	DrawingInterface.CurrentAxisX = CachedAxisX;
 	DrawingInterface.CurrentAxisY = CachedAxisY * -1.0f;
 	DrawingInterface.CurrentOrigin = CachedOrigin;
+
+	if (bIsCulling)
+	{
+		UWorld* world = GetWorld();
+		auto controller = world->GetFirstPlayerController<AEditModelPlayerController>();
+		if (controller)
+		{
+			controller->UpdateCutPlaneCullingMaterialInst(ID);
+		}
+	}
 }
 
 void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting)

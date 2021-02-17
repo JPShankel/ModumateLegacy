@@ -544,5 +544,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Menu)
 	class ADynamicIconGenerator *DynamicIconGenerator;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "CutPlane")
+	UMaterialParameterCollection* CutPlaneCullingMaterialCollection;
 
+	int32 CurrentCullingCutPlaneID = MOD_ID_NONE;
+
+	void SetCurrentCullingCutPlane(int32 ObjID = MOD_ID_NONE);
+	void UpdateCutPlaneCullingMaterialInst(int32 ObjID = MOD_ID_NONE);
 };

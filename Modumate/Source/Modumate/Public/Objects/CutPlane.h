@@ -66,7 +66,10 @@ public:
 	virtual void PreDestroy() override;
 	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 
-	static int32 GetCutPlaneVerticalDegree(const FQuat& Rotation);
+	static int32 GetCutPlaneVerticalDegree(const FQuat& Rotation);	
+	void SetIsCulling(bool NewIsCulling) { bIsCulling = NewIsCulling; };
+	bool GetIsCulling() const { return bIsCulling; };
+
 
 	Modumate::FDraftingHUDDraw DrawingInterface;
 
@@ -98,4 +101,5 @@ protected:
 	TMap<int32, FPendingObjectRender> InprocessRenders;
 
 	bool bHUDDwgDrafting;
+	bool bIsCulling = false;
 };

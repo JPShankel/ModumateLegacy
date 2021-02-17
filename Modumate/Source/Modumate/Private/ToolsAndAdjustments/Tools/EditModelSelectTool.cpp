@@ -339,6 +339,20 @@ bool USelectTool::ProcessDragSelect()
 		const auto &snapCorners = snappingView->Corners;
 		const auto &snapLines = snappingView->LineSegments;
 
+		bool bCheckCulling = false;
+		FPlane cutPlaneCheck = FPlane::ZeroVector;
+
+		if (Controller->CurrentCullingCutPlaneID != MOD_ID_NONE)
+		{
+			const AModumateObjectInstance* cutPlaneMoi = doc->GetObjectById(Controller->CurrentCullingCutPlaneID);
+			if (cutPlaneMoi && cutPlaneMoi->GetObjectType() == EObjectType::OTCutPlane)
+			{
+				cutPlaneCheck = FPlane(cutPlaneMoi->GetLocation(), cutPlaneMoi->GetNormal());
+				bCheckCulling = true;
+			}
+		}
+
+
 		for (const auto &kvp : snappingView->SnapIndicesByObjectID)
 		{
 			int32 objectID = kvp.Key;
@@ -365,7 +379,14 @@ bool USelectTool::ProcessDragSelect()
 					UGameplayStatics::ProjectWorldToScreen(Controller, snapCornerPos, snapCornerScreenPos) &&
 					screenSelectRect.IsInside(snapCornerScreenPos))
 				{
-					objInSelection = true;
+					if (bCheckCulling)
+					{
+						objInSelection = cutPlaneCheck.PlaneDot(snapCornerPos) < KINDA_SMALL_NUMBER;
+					}
+					else
+					{
+						objInSelection = true;
+					}
 				}
 				else if (requireEnclosure)
 				{
@@ -390,8 +411,21 @@ bool USelectTool::ProcessDragSelect()
 						UGameplayStatics::ProjectWorldToScreen(Controller, snapLine.P2, snapLineScreenEnd) &&
 						UModumateFunctionLibrary::LineBoxIntersection(screenSelectRect, snapLineScreenStart, snapLineScreenEnd))
 					{
-						objInSelection = true;
-						break;
+						if (bCheckCulling)
+						{
+							objInSelection = cutPlaneCheck.PlaneDot(snapLine.P1) < KINDA_SMALL_NUMBER && 
+								cutPlaneCheck.PlaneDot(snapLine.P2) < KINDA_SMALL_NUMBER;
+						}
+						else
+						{
+							objInSelection = true;
+						}
+
+						if (objInSelection)
+						{
+							break;
+						}
+
 					}
 				}
 			}
