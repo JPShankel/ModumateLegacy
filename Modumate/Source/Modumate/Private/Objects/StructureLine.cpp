@@ -3,11 +3,16 @@
 #include "Objects/StructureLine.h"
 
 #include "Algo/ForEach.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
+#include "UI/Properties/InstPropWidgetFlip.h"
+#include "UI/Properties/InstPropWidgetOffset.h"
+#include "UI/Properties/InstPropWidgetRotation.h"
+#include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -108,6 +113,37 @@ bool AMOIStructureLine::GetOffsetState(const FVector& AdjustmentDirection, FMOIS
 	return OutState.CustomData.SaveStructData(modifiedInstanceData);
 }
 
+void AMOIStructureLine::RegisterInstanceDataUI(UToolTrayBlockProperties* PropertiesUI)
+{
+	static const FString flipPropertyName(TEXT("Flip"));
+	if (auto flipField = PropertiesUI->RequestPropertyField<UInstPropWidgetFlip>(this, flipPropertyName))
+	{
+		flipField->RegisterValue(this, EAxisList::XYZ);
+		flipField->ValueChangedEvent.AddDynamic(this, &AMOIStructureLine::OnInstPropUIChangedFlip);
+	}
+
+	static const FString offsetNormalPropertyName(TEXT("Offset X"));
+	if (auto offsetNormalField = PropertiesUI->RequestPropertyField<UInstPropWidgetOffset>(this, offsetNormalPropertyName))
+	{
+		offsetNormalField->RegisterValue(this, InstanceData.OffsetNormal);
+		offsetNormalField->ValueChangedEvent.AddDynamic(this, &AMOIStructureLine::OnInstPropUIChangedOffsetNormal);
+	}
+
+	static const FString offsetUpPropertyName(TEXT("Offset Y"));
+	if (auto offsetUpField = PropertiesUI->RequestPropertyField<UInstPropWidgetOffset>(this, offsetUpPropertyName))
+	{
+		offsetUpField->RegisterValue(this, InstanceData.OffsetUp);
+		offsetUpField->ValueChangedEvent.AddDynamic(this, &AMOIStructureLine::OnInstPropUIChangedOffsetUp);
+	}
+
+	static const FString rotationPropertyName(TEXT("Rotation"));
+	if (auto rotationField = PropertiesUI->RequestPropertyField<UInstPropWidgetRotation>(this, rotationPropertyName))
+	{
+		rotationField->RegisterValue(this, InstanceData.Rotation);
+		rotationField->ValueChangedEvent.AddDynamic(this, &AMOIStructureLine::OnInstPropUIChangedRotation);
+	}
+}
+
 void AMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	// For snapping, we want to attach to the underlying line itself
@@ -161,6 +197,11 @@ void AMOIStructureLine::PostLoadInstanceData()
 			}
 		}
 
+		if (InstanceData.Version < 2)
+		{
+			Swap(InstanceData.FlipSigns.Y, InstanceData.FlipSigns.Z);
+		}
+
 		InstanceData.Version = InstanceData.CurrentVersion;
 		bFixedInstanceData = true;
 	}
@@ -168,6 +209,63 @@ void AMOIStructureLine::PostLoadInstanceData()
 	if (bFixedInstanceData)
 	{
 		StateData.CustomData.SaveStructData(InstanceData);
+	}
+}
+
+void AMOIStructureLine::OnInstPropUIChangedFlip(int32 FlippedAxisInt)
+{
+	EAxis::Type flippedAxis = static_cast<EAxis::Type>(FlippedAxisInt);
+	if (Document)
+	{
+		auto deltaPtr = MakeShared<FMOIDelta>();
+		auto& newStateData = deltaPtr->AddMutationState(this);
+		auto newInstanceData = InstanceData;
+		newInstanceData.FlipSigns.SetComponentForAxis(flippedAxis, -newInstanceData.FlipSigns.GetComponentForAxis(flippedAxis));
+		newStateData.CustomData.SaveStructData(newInstanceData);
+
+		Document->ApplyDeltas({ deltaPtr }, GetWorld());
+	}
+}
+
+void AMOIStructureLine::OnInstPropUIChangedOffsetUp(const FDimensionOffset& NewValue)
+{
+	if (Document && (InstanceData.OffsetUp != NewValue))
+	{
+		auto deltaPtr = MakeShared<FMOIDelta>();
+		auto& newStateData = deltaPtr->AddMutationState(this);
+		auto newInstanceData = InstanceData;
+		newInstanceData.OffsetUp = NewValue;
+		newStateData.CustomData.SaveStructData(newInstanceData);
+
+		Document->ApplyDeltas({ deltaPtr }, GetWorld());
+	}
+}
+
+void AMOIStructureLine::OnInstPropUIChangedOffsetNormal(const FDimensionOffset& NewValue)
+{
+	if (Document && (InstanceData.OffsetNormal != NewValue))
+	{
+		auto deltaPtr = MakeShared<FMOIDelta>();
+		auto& newStateData = deltaPtr->AddMutationState(this);
+		auto newInstanceData = InstanceData;
+		newInstanceData.OffsetNormal = NewValue;
+		newStateData.CustomData.SaveStructData(newInstanceData);
+
+		Document->ApplyDeltas({ deltaPtr }, GetWorld());
+	}
+}
+
+void AMOIStructureLine::OnInstPropUIChangedRotation(float NewValue)
+{
+	if (Document && (InstanceData.Rotation != NewValue))
+	{
+		auto deltaPtr = MakeShared<FMOIDelta>();
+		auto& newStateData = deltaPtr->AddMutationState(this);
+		auto newInstanceData = InstanceData;
+		newInstanceData.Rotation = NewValue;
+		newStateData.CustomData.SaveStructData(newInstanceData);
+
+		Document->ApplyDeltas({ deltaPtr }, GetWorld());
 	}
 }
 
@@ -193,12 +291,12 @@ bool AMOIStructureLine::UpdateCachedGeometry(bool bRecreate, bool bCreateCollisi
 	UModumateGeometryStatics::FindBasisVectors(LineNormal, LineUp, LineDir);
 	if (InstanceData.Rotation != 0.0f)
 	{
-		FQuat rotation(LineDir, FMath::DegreesToRadians(InstanceData.Rotation));
+		FQuat rotation(InstanceData.FlipSigns.Z * LineDir, FMath::DegreesToRadians(InstanceData.Rotation));
 		LineNormal = rotation * LineNormal;
 		LineUp = rotation * LineUp;
 	}
 
-	ProfileFlip.Set(InstanceData.FlipSigns.Z, InstanceData.FlipSigns.X);
+	ProfileFlip.Set(InstanceData.FlipSigns.Y, InstanceData.FlipSigns.X);
 
 	if (!UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, InstanceData.OffsetUp, InstanceData.OffsetNormal, ProfileFlip, CachedProfilePoints, CachedProfileExtents))
 	{

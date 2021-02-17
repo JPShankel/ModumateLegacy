@@ -2,16 +2,14 @@
 
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
 
-#include "Components/ComboBoxString.h"
-#include "Components/HorizontalBox.h"
-#include "ModumateCore/ModumateDimensionStatics.h"
-#include "ToolsAndAdjustments/Tools/EditModelRectangleTool.h"
-#include "ToolsAndAdjustments/Tools/EditModelPlaneHostedObjTool.h"
-#include "ToolsAndAdjustments/Tools/EditModelPortalTools.h"
-#include "UI/Custom/ModumateDropDownUserWidget.h"
-#include "UI/Custom/ModumateEditableTextBox.h"
-#include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
+#include "Components/VerticalBox.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "UI/Properties/InstPropWidgetBase.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
+
+// TODO: remove after generalized tool API
+#include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
 
 UToolTrayBlockProperties::UToolTrayBlockProperties(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -25,148 +23,102 @@ bool UToolTrayBlockProperties::Initialize()
 		return false;
 	}
 
-	if (!ensure(HorizontalBoxInstWidth && HorizontalBoxInstHeight && HorizontalBoxInstSillHeight && HorizontalBoxInstJustification &&
-		EditableTextBoxInstWidth && EditableTextBoxInstHeight && EditableTextBoxInstSillHeight &&
-		DropDownInstJustification))
+	for (TSubclassOf<UInstPropWidgetBase> instPropBP : InstanceProperyBlueprints)
+	{
+		UClass* instPropBPClass = instPropBP.Get();
+		UClass* instPropNativeClass = instPropBPClass ? instPropBP->GetSuperClass() : nullptr;
+		if (instPropNativeClass && (instPropNativeClass->GetSuperClass() == UInstPropWidgetBase::StaticClass()))
+		{
+			InstPropClassesFromNativeClasses.Add(instPropNativeClass, instPropBPClass);
+		}
+	}
+
+	if (!ensure(PropertiesListBox && (InstPropClassesFromNativeClasses.Num() > 0) && (InstPropClassesFromNativeClasses.Num() == InstanceProperyBlueprints.Num())))
 	{
 		return false;
 	}
-
-	EditableTextBoxInstWidth->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UToolTrayBlockProperties::OnInstWidthTextCommitted);
-	EditableTextBoxInstHeight->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UToolTrayBlockProperties::OnInstHeightTextCommitted);
-	EditableTextBoxInstSillHeight->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UToolTrayBlockProperties::OnInstSillHeightTextCommitted);
-	DropDownInstJustification->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UToolTrayBlockProperties::OnInstJustificationCommitted);
 
 	return true;
 }
 
 void UToolTrayBlockProperties::ChangeBlockProperties(UEditModelToolBase* CurrentTool)
 {
-	bool bWidthEnabled = false, bHeightEnabled = false, bSillHeightEnabled = false, bJustificationEnabled = false;
-	float widthValue = 0.0f, heightValue = 0.0f, sillHeightValue = 0.0f, justificationValue = 0.0f;
-
-	if (auto portalTool = Cast<UPortalToolBase>(CurrentTool))
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
+	if (!ensure(controller && controller->EMPlayerState && CurrentTool))
 	{
-		bWidthEnabled = true;
-		widthValue = portalTool->GetInstanceWidth();
-
-		bHeightEnabled = true;
-		heightValue = portalTool->GetInstanceHeight();
-
-		if (portalTool->GetToolMode() == EToolMode::VE_WINDOW)
-		{
-			bSillHeightEnabled = true;
-			sillHeightValue = portalTool->GetInstanceBottomOffset();
-		}
+		return;
 	}
-	else if (auto metaPlaneTool = Cast<URectangleTool>(CurrentTool))
+
+	// Clear out all of the previous instance properties, so that they can be re-registered
+	auto propertyEntries = PropertiesListBox->GetAllChildren();
+	int32 maxNumRegistrations = 0;
+	for (auto propertyEntry : propertyEntries)
 	{
-		if (auto layeredTool = Cast<UPlaneHostedObjTool>(CurrentTool))
+		if (auto instPropEntry = Cast<UInstPropWidgetBase>(propertyEntry))
 		{
-			bJustificationEnabled = true;
-			// TODO: replace
-			//justificationValue = layeredTool->GetInstanceJustification();
+			instPropEntry->ResetInstProp();
+			instPropEntry->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
 
-	HorizontalBoxInstWidth->SetVisibility(bWidthEnabled ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-	if (bWidthEnabled)
+	// TODO: generalize the UEditModelToolBase API
+	if (auto selectTool = Cast<USelectTool>(CurrentTool))
 	{
-		FString widthString = UModumateDimensionStatics::DecimalToFractionString(widthValue * UModumateDimensionStatics::CentimetersToInches, true);
-		EditableTextBoxInstWidth->ModumateEditableTextBox->SetText(FText::FromString(widthString));
-	}
-
-	HorizontalBoxInstHeight->SetVisibility(bHeightEnabled ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-	if (bHeightEnabled)
-	{
-		FString heightString = UModumateDimensionStatics::DecimalToFractionString(heightValue * UModumateDimensionStatics::CentimetersToInches, true);
-		EditableTextBoxInstHeight->ModumateEditableTextBox->SetText(FText::FromString(heightString));
-	}
-
-	HorizontalBoxInstSillHeight->SetVisibility(bSillHeightEnabled ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-	if (bSillHeightEnabled)
-	{
-		FString sillHeightString = UModumateDimensionStatics::DecimalToFractionString(sillHeightValue * UModumateDimensionStatics::CentimetersToInches, true);
-		EditableTextBoxInstSillHeight->ModumateEditableTextBox->SetText(FText::FromString(sillHeightString));
-	}
-
-	HorizontalBoxInstJustification->SetVisibility(bJustificationEnabled ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-	if (bJustificationEnabled)
-	{
-		FString justificationString = (justificationValue == 0.0f) ? FString(TEXT("Exterior")) :
-			((justificationValue == 1.0f) ? FString(TEXT("Interior")) : FString(TEXT("Centerline")));
-		DropDownInstJustification->ComboBoxStringJustification->SetSelectedOption(justificationString);
-	}
-}
-
-void UToolTrayBlockProperties::NativeConstruct()
-{
-	Super::NativeConstruct();
-}
-
-void UToolTrayBlockProperties::OnInstWidthTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
-{
-	if (CommitMethod == ETextCommit::OnEnter)
-	{
-		AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
-		auto currentTool = controller ? controller->CurrentTool.GetObject() : nullptr;
-		if (auto portalTool = Cast<UPortalToolBase>(controller->CurrentTool.GetObject()))
+		maxNumRegistrations = controller->EMPlayerState->SelectedObjects.Num();
+		for (auto selectedMOI : controller->EMPlayerState->SelectedObjects)
 		{
-			auto enteredDimension = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString());
-			portalTool->SetInstanceWidth(enteredDimension.Centimeters);
+			if (selectedMOI)
+			{
+				selectedMOI->RegisterInstanceDataUI(this);
+			}
+		}
+	}
+
+	// For all instance property members, set their visibility to whether their value has been consistently registered
+	bool bAnyRegistrations = maxNumRegistrations > 0;
+	propertyEntries = PropertiesListBox->GetAllChildren();
+	for (auto propertyEntry : propertyEntries)
+	{
+		if (auto instPropEntry = Cast<UInstPropWidgetBase>(propertyEntry))
+		{
+			bool bVisible = bAnyRegistrations && (instPropEntry->GetNumRegistrations() == maxNumRegistrations);
+			instPropEntry->SetVisibility(bVisible ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+			if (bVisible)
+			{
+				instPropEntry->DisplayValue();
+			}
 		}
 	}
 }
 
-void UToolTrayBlockProperties::OnInstHeightTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+UInstPropWidgetBase* UToolTrayBlockProperties::RequestPropertyField(UObject* PropertySource, const FString& PropertyName, UClass* FieldClass)
 {
-	if (CommitMethod == ETextCommit::OnEnter)
+	if (InstPropClassesFromNativeClasses.Contains(FieldClass))
 	{
-		AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
-		auto currentTool = controller ? controller->CurrentTool.GetObject() : nullptr;
-		auto enteredDimension = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString());
+		FieldClass = InstPropClassesFromNativeClasses[FieldClass];
+	}
 
-		if (auto portalTool = Cast<UPortalToolBase>(currentTool))
+	UInstPropWidgetBase* propertyField = RequestedPropertyFields.FindRef(PropertyName);
+	if (propertyField)
+	{
+		if (ensure(propertyField->GetClass() == FieldClass))
 		{
-			portalTool->SetInstanceHeight(enteredDimension.Centimeters);
+			return propertyField;
+		}
+		else
+		{
+			return nullptr;
 		}
 	}
-}
 
-void UToolTrayBlockProperties::OnInstSillHeightTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
-{
-	if (CommitMethod == ETextCommit::OnEnter)
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
+	propertyField = controller ? controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UInstPropWidgetBase>(FieldClass) : nullptr;
+	if (ensure(propertyField))
 	{
-		AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
-		auto currentTool = controller ? controller->CurrentTool.GetObject() : nullptr;
-		if (auto portalTool = Cast<UPortalToolBase>(currentTool))
-		{
-			auto enteredDimension = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString());
-			portalTool->SetInstanceBottomOffset(enteredDimension.Centimeters);
-		}
+		RequestedPropertyFields.Add(PropertyName, propertyField);
+		PropertiesListBox->AddChildToVerticalBox(propertyField);
+		propertyField->SetPropertyTitle(FText::FromString(PropertyName));
 	}
-}
 
-void UToolTrayBlockProperties::OnInstJustificationCommitted(FString SelectedItem, ESelectInfo::Type SelectionType)
-{
-	if (SelectionType == ESelectInfo::OnMouseClick)
-	{
-		float justificationValue = .5f;
-		if (SelectedItem == "Exterior")
-		{
-			justificationValue = 0.f;
-		}
-		else if (SelectedItem == "Interior")
-		{
-			justificationValue = 1.f;
-		}
-
-		AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
-		auto currentTool = controller ? controller->CurrentTool.GetObject() : nullptr;
-		if (auto layeredTool = Cast<UPlaneHostedObjTool>(currentTool))
-		{
-			// TODO: replace
-			//layeredTool->SetInstanceJustification(justificationValue);
-		}
-	}
+	return propertyField;
 }

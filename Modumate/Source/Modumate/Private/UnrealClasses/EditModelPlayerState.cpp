@@ -376,6 +376,11 @@ bool AEditModelPlayerState::ValidateSelectionsAndView()
 		PostViewChanged();
 	}
 
+	if (SelectedObjects.Num() > 0)
+	{
+		EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
+	}
+
 	return selectionChanged || viewChanged;
 }
 

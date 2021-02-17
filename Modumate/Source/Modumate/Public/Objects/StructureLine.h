@@ -27,8 +27,8 @@ struct MODUMATE_API FMOIStructureLineData
 	int32 Version = 0;
 
 	// FlipSigns.X refers to flipping about the extrusion's "Normal" axis, which for StructureLines is the basis X axis, and is the profile polygon's Y component.
-	// FlipSigns.Y refers to flipping along the direction of the hosting line, which only flips UVs.
-	// FlipSigns.Z refers to flipping about the extrusion's "Up" axis, which for StructureLines is the basis Y axis, and is the profile polygon's X component.
+	// FlipSigns.Y refers to flipping about the extrusion's "Up" axis, which for StructureLines is the basis Y axis, and is the profile polygon's X component.
+	// FlipSigns.Z refers to flipping along the direction of the hosting line, which only flips UVs.
 	UPROPERTY()
 	FVector FlipSigns = FVector::OneVector;
 
@@ -48,7 +48,7 @@ struct MODUMATE_API FMOIStructureLineData
 	UPROPERTY()
 	float Rotation = 0.0f;
 
-	static constexpr int32 CurrentVersion = 1;
+	static constexpr int32 CurrentVersion = 2;
 };
 
 
@@ -73,6 +73,7 @@ public:
 	//     negating InstanceData.FlipSigns.Z and flipping InstanceData.Justification.X.
 	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
 	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
+	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) override;
 
 	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane,
 		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
@@ -89,6 +90,18 @@ protected:
 	FVector2D UpperExtensions, OuterExtensions, ProfileFlip;
 	TArray<FVector2D> CachedProfilePoints;
 	FBox2D CachedProfileExtents;
+
+	UFUNCTION()
+	void OnInstPropUIChangedFlip(int32 FlippedAxisInt);
+
+	UFUNCTION()
+	void OnInstPropUIChangedOffsetUp(const FDimensionOffset& NewValue);
+
+	UFUNCTION()
+	void OnInstPropUIChangedOffsetNormal(const FDimensionOffset& NewValue);
+
+	UFUNCTION()
+	void OnInstPropUIChangedRotation(float NewValue);
 
 	bool UpdateCachedGeometry(bool bRecreate, bool bCreateCollision);
 };

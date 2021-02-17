@@ -12,10 +12,14 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateMitering.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/MOIDelta.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "ToolsAndAdjustments/Handles/JustificationHandle.h"
+#include "UI/Properties/InstPropWidgetFlip.h"
+#include "UI/Properties/InstPropWidgetOffset.h"
+#include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
@@ -297,6 +301,23 @@ bool AMOIPlaneHostedObj::GetOffsetState(const FVector& AdjustmentDirection, FMOI
 	OutState = GetStateData();
 
 	return OutState.CustomData.SaveStructData(modifiedPlaneHostedObjData);
+}
+
+void AMOIPlaneHostedObj::RegisterInstanceDataUI(UToolTrayBlockProperties* PropertiesUI)
+{
+	static const FString flipPropertyName(TEXT("Flip"));
+	if (auto flipField = PropertiesUI->RequestPropertyField<UInstPropWidgetFlip>(this, flipPropertyName))
+	{
+		flipField->RegisterValue(this, EAxisList::XYZ);
+		flipField->ValueChangedEvent.AddDynamic(this, &AMOIPlaneHostedObj::OnInstPropUIChangedFlip);
+	}
+
+	static const FString offsetPropertyName(TEXT("Offset"));
+	if (auto offsetField = PropertiesUI->RequestPropertyField<UInstPropWidgetOffset>(this, offsetPropertyName))
+	{
+		offsetField->RegisterValue(this, InstanceData.Offset);
+		offsetField->ValueChangedEvent.AddDynamic(this, &AMOIPlaneHostedObj::OnInstPropUIChangedOffset);
+	}
 }
 
 void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
@@ -727,5 +748,33 @@ void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraf
 			}
 		}
 	}
+}
 
+void AMOIPlaneHostedObj::OnInstPropUIChangedFlip(int32 FlippedAxisInt)
+{
+	EAxis::Type flippedAxis = static_cast<EAxis::Type>(FlippedAxisInt);
+	if (Document)
+	{
+		auto deltaPtr = MakeShared<FMOIDelta>();
+		auto& newStateData = deltaPtr->AddMutationState(this);
+		auto newInstanceData = InstanceData;
+		newInstanceData.FlipSigns.SetComponentForAxis(flippedAxis, -newInstanceData.FlipSigns.GetComponentForAxis(flippedAxis));
+		newStateData.CustomData.SaveStructData(newInstanceData);
+
+		Document->ApplyDeltas({ deltaPtr }, GetWorld());
+	}
+}
+
+void AMOIPlaneHostedObj::OnInstPropUIChangedOffset(const FDimensionOffset& NewValue)
+{
+	if (Document && (InstanceData.Offset != NewValue))
+	{
+		auto deltaPtr = MakeShared<FMOIDelta>();
+		auto& newStateData = deltaPtr->AddMutationState(this);
+		auto newInstanceData = InstanceData;
+		newInstanceData.Offset = NewValue;
+		newStateData.CustomData.SaveStructData(newInstanceData);
+
+		Document->ApplyDeltas({ deltaPtr }, GetWorld());
+	}
 }

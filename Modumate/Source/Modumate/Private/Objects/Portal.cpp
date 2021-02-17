@@ -15,6 +15,9 @@
 #include "ToolsAndAdjustments/Handles/AdjustPortalReverseHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPortalJustifyHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPortalOrientHandle.h"
+#include "UI/Properties/InstPropWidgetFlip.h"
+#include "UI/Properties/InstPropWidgetOffset.h"
+#include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -292,13 +295,30 @@ bool AMOIPortal::GetOffsetState(const FVector& AdjustmentDirection, FMOIStateDat
 	return OutState.CustomData.SaveStructData(modifiedPortalData);
 }
 
+void AMOIPortal::RegisterInstanceDataUI(UToolTrayBlockProperties* PropertiesUI)
+{
+	static const FString flipPropertyName(TEXT("Flip"));
+	if (auto flipField = PropertiesUI->RequestPropertyField<UInstPropWidgetFlip>(this, flipPropertyName))
+	{
+		flipField->RegisterValue(this, EAxisList::XY);
+		flipField->ValueChangedEvent.AddDynamic(this, &AMOIPortal::OnInstPropUIChangedFlip);
+	}
+
+	static const FString offsetPropertyName(TEXT("Offset"));
+	if (auto offsetField = PropertiesUI->RequestPropertyField<UInstPropWidgetOffset>(this, offsetPropertyName))
+	{
+		offsetField->RegisterValue(this, InstanceData.Offset);
+		offsetField->ValueChangedEvent.AddDynamic(this, &AMOIPortal::OnInstPropUIChangedOffset);
+	}
+}
+
 void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
 {
 	bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
 	if (bGetFarLines)
 	{
-			actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox);
+		actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox);
 	}
 	else
 	{
@@ -468,4 +488,43 @@ EDoorOperationType AMOIPortal::GetDoorType() const
 	}
 
 	return EDoorOperationType::None;
+}
+
+void AMOIPortal::OnInstPropUIChangedFlip(int32 FlippedAxisInt)
+{
+	EAxis::Type flippedAxis = static_cast<EAxis::Type>(FlippedAxisInt);
+	if (Document)
+	{
+		auto deltaPtr = MakeShared<FMOIDelta>();
+		auto& newStateData = deltaPtr->AddMutationState(this);
+		auto newInstanceData = InstanceData;
+		switch (flippedAxis)
+		{
+		case EAxis::X:
+			newInstanceData.bLateralInverted = !newInstanceData.bLateralInverted;
+			break;
+		case EAxis::Y:
+			newInstanceData.bNormalInverted = !newInstanceData.bNormalInverted;
+			break;
+		default:
+			break;
+		}
+		newStateData.CustomData.SaveStructData(newInstanceData);
+
+		Document->ApplyDeltas({ deltaPtr }, GetWorld());
+	}
+}
+
+void AMOIPortal::OnInstPropUIChangedOffset(const FDimensionOffset& NewValue)
+{
+	if (Document && (InstanceData.Offset != NewValue))
+	{
+		auto deltaPtr = MakeShared<FMOIDelta>();
+		auto& newStateData = deltaPtr->AddMutationState(this);
+		auto newInstanceData = InstanceData;
+		newInstanceData.Offset = NewValue;
+		newStateData.CustomData.SaveStructData(newInstanceData);
+
+		Document->ApplyDeltas({ deltaPtr }, GetWorld());
+	}
 }

@@ -13,6 +13,18 @@ FDimensionOffset::FDimensionOffset(EDimensionOffsetType InType, float InCustomVa
 {
 }
 
+bool FDimensionOffset::operator==(const FDimensionOffset& Other) const
+{
+	return
+		(Type == Other.Type) &&
+		(CustomValue == Other.CustomValue);
+}
+
+bool FDimensionOffset::operator!=(const FDimensionOffset& Other) const
+{
+	return !(*this == Other);
+}
+
 float FDimensionOffset::GetOffsetDistance(float FlipSign, float TargetThickness) const
 {
 	switch (Type)

@@ -3,6 +3,7 @@
 #include "UI/SelectionTray/SelectionTrayWidget.h"
 
 #include "Components/WidgetSwitcher.h"
+#include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/SelectionTray/SelectionTrayBlockPresetList.h"
@@ -28,9 +29,6 @@ bool USelectionTrayWidget::Initialize()
 void USelectionTrayWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	// TODO: take this out once the properties block is meaningful
-	ToolTrayBlockProperties->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void USelectionTrayWidget::OpenToolTrayForSelection()
@@ -40,6 +38,18 @@ void USelectionTrayWidget::OpenToolTrayForSelection()
 	WidgetSwitcherTray->SetActiveWidgetIndex(0);
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	SelectionTrayBlockPresetList->BuildPresetListFromSelection();
+
+	auto controller = GetOwningPlayer<AEditModelPlayerController>();
+	auto currentTool = controller ? Cast<UEditModelToolBase>(controller->CurrentTool.GetObject()) : nullptr;
+	if (currentTool && (currentTool->GetToolMode() == EToolMode::VE_SELECT))
+	{
+		ToolTrayBlockProperties->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		ToolTrayBlockProperties->ChangeBlockProperties(currentTool);
+	}
+	else
+	{
+		ToolTrayBlockProperties->SetVisibility(ESlateVisibility::Collapsed);
+	}
 
 	// TODO: Set menu animation here
 }

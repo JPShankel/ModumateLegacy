@@ -58,18 +58,18 @@ public:
 	virtual FVector GetCorner(int32 index) const;
 	virtual int32 GetNumCorners() const;
 
-	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled);
+	virtual void GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled);
 
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController *Controller) { }
-	virtual void ShowAdjustmentHandles(AEditModelPlayerController *Controller, bool bShow);
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController* Controller) { }
+	virtual void ShowAdjustmentHandles(AEditModelPlayerController* Controller, bool bShow);
 	virtual bool OnHovered(AEditModelPlayerController* controller, bool bNewHovered);
 	virtual bool OnSelected(bool bIsSelected);
 
 	// Can be called when a new assembly is assigned or when an the existing assembly changes structure
 	virtual void OnAssemblyChanged();
 
-	virtual AActor *RestoreActor();
-	virtual AActor *CreateActor(const FVector &loc, const FQuat &rot);
+	virtual AActor* RestoreActor();
+	virtual AActor* CreateActor(const FVector& loc, const FQuat& rot);
 	virtual void PostCreateObject(bool bNewObject);
 	virtual void PreDestroy();
 
@@ -77,7 +77,7 @@ public:
 
 	virtual void SetupDynamicGeometry() { }
 	virtual void UpdateDynamicGeometry() { }
-	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const { }
+	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping = false, bool bForSelection = false) const { }
 
 	virtual bool IsSelectableByUser() const { return true; }
 	virtual bool ShowStructureOnSelection() const { return true; }
@@ -87,6 +87,7 @@ public:
 	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const { return false; }
 	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const { return false; }
 	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const { return false; };
+	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) {}
 
 	virtual TArray<FModelDimensionString> GetDimensionStrings() const { return TArray<FModelDimensionString>(); }
 
@@ -95,8 +96,8 @@ public:
 	virtual ISceneCaptureObject* GetSceneCaptureInterface() { return nullptr; }
 
 	// Drafting
-	virtual void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget) { };
-	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const { };
+	virtual void AddDraftingLines(UHUDDrawWidget* HUDDrawWidget) { };
+	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane, const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox, TArray<TArray<FVector>>& OutPerimeters) const { };
 
 	virtual void SetIsDynamic(bool bIsDynamic) { }
 	virtual bool GetIsDynamic() const { return false; }
@@ -112,7 +113,7 @@ protected:
 	TWeakObjectPtr<AActor> MeshActor = nullptr;
 
 	UPROPERTY()
-	UModumateDocument *Document = nullptr;
+	UModumateDocument* Document = nullptr;
 
 	FMOIStateData StateData;
 

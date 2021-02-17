@@ -69,6 +69,7 @@ public:
 	// Flipping the Z axis (V) flips across the hosting line in the hosting polygon plane, negating InstanceData.FlipSigns.Y and flipping InstanceData.UpJustification.
 	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
 	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
+	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) override;
 
 	void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
@@ -85,6 +86,12 @@ protected:
 	FVector2D UpperExtensions, OuterExtensions, ProfileOffsetDists, ProfileFlip;
 	TArray<FVector2D> CachedProfilePoints;
 	FBox2D CachedProfileExtents;
+
+	UFUNCTION()
+	void OnInstPropUIChangedFlip(int32 FlippedAxisInt);
+
+	UFUNCTION()
+	void OnInstPropUIChangedOffsetUp(const FDimensionOffset& NewValue);
 
 	bool UpdateCachedStructure();
 	bool UpdateMitering();

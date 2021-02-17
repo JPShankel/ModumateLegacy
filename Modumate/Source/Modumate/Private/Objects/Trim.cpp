@@ -3,10 +3,14 @@
 #include "Objects/Trim.h"
 
 #include "Algo/ForEach.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
+#include "UI/Properties/InstPropWidgetFlip.h"
+#include "UI/Properties/InstPropWidgetOffset.h"
+#include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -143,7 +147,7 @@ bool AMOITrim::GetIsDynamic() const
 
 bool AMOITrim::GetInvertedState(FMOIStateData& OutState) const
 {
-	return GetFlippedState(EAxis::Z, OutState);
+	return GetFlippedState(EAxis::Y, OutState);
 }
 
 bool AMOITrim::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
@@ -156,7 +160,7 @@ bool AMOITrim::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) co
 	OutState = GetStateData();
 
 	FMOITrimData modifiedTrimData = InstanceData;
-	int32 flipAxisIdx = (FlipAxis == EAxis::Y) ? 0 : 1;
+	int32 flipAxisIdx = (FlipAxis == EAxis::Z) ? 0 : 1;
 	modifiedTrimData.FlipSigns[flipAxisIdx] *= -1.0f;
 
 	return OutState.CustomData.SaveStructData(modifiedTrimData);
@@ -179,6 +183,23 @@ bool AMOITrim::GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData&
 	OutState = GetStateData();
 
 	return OutState.CustomData.SaveStructData(modifiedTrimData);
+}
+
+void AMOITrim::RegisterInstanceDataUI(UToolTrayBlockProperties* PropertiesUI)
+{
+	static const FString flipPropertyName(TEXT("Flip"));
+	if (auto flipField = PropertiesUI->RequestPropertyField<UInstPropWidgetFlip>(this, flipPropertyName))
+	{
+		flipField->RegisterValue(this, EAxisList::YZ);
+		flipField->ValueChangedEvent.AddDynamic(this, &AMOITrim::OnInstPropUIChangedFlip);
+	}
+
+	static const FString offsetUpPropertyName(TEXT("Offset Y"));
+	if (auto offsetUpField = PropertiesUI->RequestPropertyField<UInstPropWidgetOffset>(this, offsetUpPropertyName))
+	{
+		offsetUpField->RegisterValue(this, InstanceData.OffsetUp);
+		offsetUpField->ValueChangedEvent.AddDynamic(this, &AMOITrim::OnInstPropUIChangedOffsetUp);
+	}
 }
 
 void AMOITrim::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
@@ -280,6 +301,36 @@ void AMOITrim::PostLoadInstanceData()
 	}
 }
 
+void AMOITrim::OnInstPropUIChangedFlip(int32 FlippedAxisInt)
+{
+	EAxis::Type flippedAxis = static_cast<EAxis::Type>(FlippedAxisInt);
+	if (Document)
+	{
+		auto deltaPtr = MakeShared<FMOIDelta>();
+		auto& newStateData = deltaPtr->AddMutationState(this);
+		auto newInstanceData = InstanceData;
+		float& newFlipSign = (flippedAxis == EAxis::X) ? newInstanceData.FlipSigns.X : newInstanceData.FlipSigns.Y;
+		newFlipSign *= -1.0f;
+		newStateData.CustomData.SaveStructData(newInstanceData);
+
+		Document->ApplyDeltas({ deltaPtr }, GetWorld());
+	}
+}
+
+void AMOITrim::OnInstPropUIChangedOffsetUp(const FDimensionOffset& NewValue)
+{
+	if (Document && (InstanceData.OffsetUp != NewValue))
+	{
+		auto deltaPtr = MakeShared<FMOIDelta>();
+		auto& newStateData = deltaPtr->AddMutationState(this);
+		auto newInstanceData = InstanceData;
+		newInstanceData.OffsetUp = NewValue;
+		newStateData.CustomData.SaveStructData(newInstanceData);
+
+		Document->ApplyDeltas({ deltaPtr }, GetWorld());
+	}
+}
+
 bool AMOITrim::UpdateCachedStructure()
 {
 	const UModumateDocument* doc = GetDocument();
@@ -341,7 +392,7 @@ bool AMOITrim::UpdateCachedStructure()
 	TrimNormal = surfaceGraphMOI->GetNormal();
 
 	TrimUp = (TrimDir ^ TrimNormal);
-	TrimExtrusionFlip.Set(1.0f, InstanceData.FlipSigns.X, InstanceData.FlipSigns.Y);
+	TrimExtrusionFlip.Set(1.0f, InstanceData.FlipSigns.Y, InstanceData.FlipSigns.X);
 	ProfileFlip.Set(InstanceData.FlipSigns.Y, 1.0f);
 
 	return UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, InstanceData.OffsetUp, InstanceData.OffsetNormal, ProfileFlip, CachedProfilePoints, CachedProfileExtents);

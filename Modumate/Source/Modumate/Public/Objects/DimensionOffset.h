@@ -29,6 +29,9 @@ struct MODUMATE_API FDimensionOffset
 	UPROPERTY()
 	float CustomValue = 0.0f;
 
+	bool operator==(const FDimensionOffset& Other) const;
+	bool operator!=(const FDimensionOffset& Other) const;
+
 	float GetOffsetDistance(float FlipSign, float TargetThickness) const;
 	EDimensionOffsetType GetNextType(int32 Delta, float FlipSign) const;
 
@@ -36,3 +39,13 @@ struct MODUMATE_API FDimensionOffset
 	static FDimensionOffset Centered;
 	static FDimensionOffset Negative;
 };
+
+template<>
+struct TStructOpsTypeTraits<FDimensionOffset> : public TStructOpsTypeTraitsBase2<FDimensionOffset>
+{
+	enum
+	{
+		WithIdenticalViaEquality = true
+	};
+};
+

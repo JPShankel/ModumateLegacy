@@ -863,7 +863,7 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 
 	TArray<FVector2D> profilePoints;
 	FBox2D profileExtents;
-	FVector2D profileFlip(InFlipSigns.Z, InFlipSigns.X);
+	FVector2D profileFlip(InFlipSigns.Y, InFlipSigns.X);
 	if (!UModumateObjectStatics::GetExtrusionProfilePoints(InAssembly, OffsetUp, OffsetNormal, profileFlip, profilePoints, profileExtents))
 	{
 		return false;
@@ -898,7 +898,7 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 	};
 
 	static constexpr float uvScale = 0.01f;
-	const FVector2D uvFactor(uvScale * FMath::Sign(InFlipSigns.Y), uvScale);
+	const FVector2D uvFactor(uvScale * FMath::Sign(InFlipSigns.Z), uvScale);
 	auto fixExtrudedTriUVs = [this, uvFactor](const FVector2D &uv1, const FVector2D &uv2, const FVector2D &uv3)
 	{
 		int32 numUVs = uv0.Num();
