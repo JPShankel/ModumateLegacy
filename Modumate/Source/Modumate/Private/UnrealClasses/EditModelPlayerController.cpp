@@ -1967,14 +1967,14 @@ bool AEditModelPlayerController::LineTraceSingleAgainstMOIs(struct FHitResult& O
 			FVector loc = cutPlaneMoi->GetLocation();
 			FVector dir = cutPlaneMoi->GetNormal();
 			FPlane cutPlaneCheck = FPlane(loc, dir);
-			if (bResultSuccess && cutPlaneCheck.PlaneDot(OutHit.Location) > KINDA_SMALL_NUMBER)
+			if (bResultSuccess && cutPlaneCheck.PlaneDot(OutHit.Location) < PLANAR_DOT_EPSILON)
 			{
 				// Start a new line trace starting from intersection of cut plane
 				FVector intersect = FMath::RayPlaneIntersection(Start, (End - Start).GetSafeNormal(), cutPlaneCheck);
 				bResultSuccess = GetWorld()->LineTraceSingleByObjectType(OutHit, intersect, End, MOITraceObjectQueryParams, MOITraceQueryParams);
 				
 				// Check again if hit is in front of cut plane. ex: Looking from behind a cut plane but hitting a location in front of the cut plane
-				if (bResultSuccess && cutPlaneCheck.PlaneDot(OutHit.Location) > KINDA_SMALL_NUMBER)
+				if (bResultSuccess && cutPlaneCheck.PlaneDot(OutHit.Location) < PLANAR_DOT_EPSILON)
 				{
 					return false;
 				}
@@ -3265,7 +3265,7 @@ bool AEditModelPlayerController::ToggleGravityPawn()
 	return true;
 }
 
-void AEditModelPlayerController::SetCurrentCullingCutPlane(int32 ObjID /*= MOD_ID_NONE*/)
+void AEditModelPlayerController::SetCurrentCullingCutPlane(int32 ObjID /*= MOD_ID_NONE*/, bool bRefreshMenu /*= true*/)
 {
 	// Stop previous culling cutplane from culling
 	AModumateObjectInstance* previousCullingMoi = Document->GetObjectById(CurrentCullingCutPlaneID);
@@ -3292,7 +3292,10 @@ void AEditModelPlayerController::SetCurrentCullingCutPlane(int32 ObjID /*= MOD_I
 		}
 	}
 	UpdateCutPlaneCullingMaterialInst(CurrentCullingCutPlaneID);
-	EditModelUserWidget->CutPlaneMenu->UpdateCutPlaneMenuBlocks();
+	if (bRefreshMenu)
+	{
+		EditModelUserWidget->CutPlaneMenu->UpdateCutPlaneMenuBlocks();
+	}
 }
 
 void AEditModelPlayerController::UpdateCutPlaneCullingMaterialInst(int32 ObjID /*= MOD_ID_NONE*/)
@@ -3305,7 +3308,7 @@ void AEditModelPlayerController::UpdateCutPlaneCullingMaterialInst(int32 ObjID /
 	if (moi && moi->GetObjectType() == EObjectType::OTCutPlane)
 	{
 		planePos = moi->GetLocation();
-		rotAxis = moi->GetNormal();
+		rotAxis = moi->GetNormal() * -1.f;
 		enableValue = 1.f;
 	}
 

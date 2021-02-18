@@ -44,4 +44,5 @@ protected:
 	FString GetNextName() const;
 
 	float DefaultPlaneDimension = 100.0f;
+	int32 RecentCreatedCutPlaneID = MOD_ID_NONE;
 };

@@ -381,7 +381,7 @@ bool USelectTool::ProcessDragSelect()
 				{
 					if (bCheckCulling)
 					{
-						objInSelection = cutPlaneCheck.PlaneDot(snapCornerPos) < KINDA_SMALL_NUMBER;
+						objInSelection = cutPlaneCheck.PlaneDot(snapCornerPos) > PLANAR_DOT_EPSILON;
 					}
 					else
 					{
@@ -413,8 +413,8 @@ bool USelectTool::ProcessDragSelect()
 					{
 						if (bCheckCulling)
 						{
-							objInSelection = cutPlaneCheck.PlaneDot(snapLine.P1) < KINDA_SMALL_NUMBER && 
-								cutPlaneCheck.PlaneDot(snapLine.P2) < KINDA_SMALL_NUMBER;
+							objInSelection = cutPlaneCheck.PlaneDot(snapLine.P1) > PLANAR_DOT_EPSILON &&
+								cutPlaneCheck.PlaneDot(snapLine.P2) > PLANAR_DOT_EPSILON;
 						}
 						else
 						{

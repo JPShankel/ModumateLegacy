@@ -78,6 +78,10 @@ void AMOICutPlane::PreDestroy()
 	if (controller && controller->EditModelUserWidget)
 	{
 		controller->EditModelUserWidget->RemoveCutPlaneFromList(ID);
+		if (controller->CurrentCullingCutPlaneID == ID)
+		{
+			controller->SetCurrentCullingCutPlane(MOD_ID_NONE, false);
+		}
 	}
 	AMOIPlaneBase::PreDestroy();
 }

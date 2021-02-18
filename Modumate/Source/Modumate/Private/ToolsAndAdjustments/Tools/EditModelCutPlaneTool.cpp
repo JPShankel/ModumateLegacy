@@ -167,7 +167,10 @@ bool UCutPlaneTool::EnterNextStage()
 	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
 
 	bool bSuccess = doc->ApplyDeltas({ delta }, GetWorld());
-
+	if (bSuccess)
+	{
+		RecentCreatedCutPlaneID = stateData.ID;
+	}
 	// Return false so that EndUse is called, returning true would chain cut plane creation
 	return false;
 }
@@ -183,6 +186,7 @@ bool UCutPlaneTool::EndUse()
 	PendingPlanePoints.Reset();
 
 	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = false;
+	Controller->SetCurrentCullingCutPlane(RecentCreatedCutPlaneID);
 
 	return UEditModelToolBase::EndUse();
 }
