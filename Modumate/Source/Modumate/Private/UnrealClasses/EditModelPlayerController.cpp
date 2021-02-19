@@ -45,6 +45,7 @@
 
 // Tools
 #include "ToolsAndAdjustments/Tools/EditModelCabinetTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelCopyTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelCreateSimilarTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelCutPlaneTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelDrawingTool.h"
@@ -55,6 +56,7 @@
 #include "ToolsAndAdjustments/Tools/EditModelLineTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelRectangleTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelMoveTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelPasteTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelPlaneHostedObjTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelPortalTools.h"
 #include "ToolsAndAdjustments/Tools/EditModelRailTool.h"
@@ -587,6 +589,8 @@ void AEditModelPlayerController::CreateTools()
 	RegisterTool(CreateTool<UScopeBoxTool>());
 	RegisterTool(CreateTool<UJoinTool>());
 	RegisterTool(CreateTool<UCreateSimilarTool>());
+	RegisterTool(CreateTool<UCopyTool>());
+	RegisterTool(CreateTool<UPasteTool>());
 	RegisterTool(CreateTool<UStructureLineTool>());
 	RegisterTool(CreateTool<UDrawingTool>());
 	RegisterTool(CreateTool<UGraph2DTool>());

@@ -1678,6 +1678,27 @@ bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 	return bValidDelta;
 }
 
+bool UModumateDocument::PasteMetaObjects(const FGraph3DRecord* InRecord, TArray<FDeltaPtr>& OutDeltaPtrs, const FVector& Offset, bool bIsPreview)
+{
+	// TODO: either have CopiedToPastedIDs as output or generalize to handle other types of objects in here
+
+	// TODO: CopedToPastedIDs should be TMap<int32, TArray<int32>> to handle split objects
+	TMap<int32, int32> CopiedToPastedIDs;
+
+	// TODO: potentially make this function a bool
+	TArray<FGraph3DDelta> OutDeltas;
+	TempVolumeGraph.GetDeltasForPaste(InRecord, Offset, NextID, CopiedToPastedIDs, OutDeltas, bIsPreview);
+
+	TArray<int32> OutVertices, OutEdges, OutFaces;
+	if (!FinalizeGraphDeltas(OutDeltas, OutDeltaPtrs, OutVertices, OutEdges, OutFaces))
+	{
+		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		return false;
+	}
+
+	return true;
+}
+
 bool UModumateDocument::MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height)
 {
 	// TODO: reimplement

@@ -102,6 +102,9 @@ namespace Modumate
 		void Load(const FGraph3DRecord* InGraph3DRecord);
 		void Save(FGraph3DRecord* OutGraph3DRecord);
 
+		void SaveSubset(const TArray<int32> InObjectIDs, FGraph3DRecord* OutGraph3DRecord) const;
+		void GetDeltasForPaste(const FGraph3DRecord* InGraph3DRecord, const FVector& InOffset, int32 &NextID, TMap<int32, int32> CopiedToPastedIDs, TArray<FGraph3DDelta>& OutDeltas, bool bIsPreview);
+
 		bool Validate();
 
 		bool CleanGraph(TArray<int32> &OutCleanedVertices, TArray<int32> &OutCleanedEdges, TArray<int32> &OutCleanedFaces);

@@ -85,6 +85,8 @@ enum class EInputCommand : uint8
 	ActivateTool_ScopeBox,
 	ActivateTool_Join,
 	ActivateTool_CreateSimilar,
+	ActivateTool_Copy,
+	ActivateTool_Paste,
 	ActivateTool_StructureLine,
 	ActivateTool_Drawing,
 	ActivateTool_Graph2D,

@@ -1,6 +1,7 @@
 #include "ModumateCore/ModumateObjectDeltaStatics.h"
 
 #include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumateSerialization.h"
 #include "Graph/Graph2DDelta.h"
 #include "Graph/Graph3DTypes.h"
 #include "ModumateCore/ModumateObjectStatics.h"
@@ -198,4 +199,12 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 	}
 
 	return true;
+}
+
+void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs, UModumateDocument* doc, FMOIDocumentRecord* OutRecord)
+{
+	auto& graph = doc->GetVolumeGraph(); 
+	graph.SaveSubset(InObjectIDs, &OutRecord->VolumeGraph);
+
+	// TODO: save other types of objects
 }
