@@ -44,17 +44,23 @@ bool FStructDataWrapper::SaveStructData(UScriptStruct* StructDef, const void* Sr
 	return true;
 }
 
-bool FStructDataWrapper::LoadStructData(UScriptStruct* StructDef, void* DestStructPtr) const
+bool FStructDataWrapper::LoadStructData(UScriptStruct* StructDef, void* DestStructPtr, bool bResetStruct) const
 {
 	if ((StructDef == nullptr) || (DestStructPtr == nullptr) || (StructDef != CachedStructDef))
 	{
 		return false;
 	}
 
+	if (bResetStruct)
+	{
+		CachedStructDef->DestroyStruct(DestStructPtr);
+		InitializeStruct(DestStructPtr);
+	}
+
 	FMemoryReader reader(StructCborBuffer);
 	FCborStructDeserializerBackend deserializerBackend(reader);
 
-	return FStructDeserializer::Deserialize(DestStructPtr, *StructDef, deserializerBackend);
+	return FStructDeserializer::Deserialize(DestStructPtr, *CachedStructDef, deserializerBackend);
 }
 
 bool FStructDataWrapper::SaveJsonFromCbor()
@@ -84,7 +90,6 @@ bool FStructDataWrapper::SaveCborFromJson()
 		return false;
 	}
 
-	
 	bool bSuccess = CreateStructFromJSONRaw(TempStructBuffer) && SaveStructDataCbor(TempStructBuffer);
 
 	FreeTempStruct();
@@ -172,7 +177,7 @@ bool FStructDataWrapper::SaveStructDataCbor(const void* SrcStructPtr)
 	return (StructCborBuffer.Num() > 0);
 }
 
-uint8* FStructDataWrapper::CreateInitStructRaw()
+void* FStructDataWrapper::CreateInitStructRaw()
 {
 	if ((CachedStructDef == nullptr) || !ensure(CachedStructDef->IsNative()))
 	{
@@ -181,25 +186,13 @@ uint8* FStructDataWrapper::CreateInitStructRaw()
 
 	// Allocate space for the struct
 	const int32 RequiredAllocSize = CachedStructDef->GetStructureSize();
-	uint8* structPtr = (uint8*)FMemory::Malloc(RequiredAllocSize, CachedStructDef->GetMinAlignment());
-
-	// Perform the correct constructor, which initially zeroes out the allocated memory
-	CachedStructDef->InitializeStruct(structPtr);
-
-	// Perform script-based construction if necessary
-	if (CachedStructDef->StructFlags & STRUCT_PostScriptConstruct)
-	{
-		UScriptStruct::ICppStructOps* structOps = CachedStructDef->GetCppStructOps();
-		if (ensure(structOps))
-		{
-			structOps->PostScriptConstruct(structPtr);
-		}
-	}
+	void* structPtr = FMemory::Malloc(RequiredAllocSize, CachedStructDef->GetMinAlignment());
+	InitializeStruct(structPtr);
 
 	return structPtr;
 }
 
-bool FStructDataWrapper::CreateStructFromJSONRaw(uint8* OutStructPtr)
+bool FStructDataWrapper::CreateStructFromJSONRaw(void* OutStructPtr)
 {
 	return StructJson.JsonObject.IsValid() && CachedStructDef &&
 		FJsonObjectConverter::JsonObjectToUStruct(StructJson.JsonObject.ToSharedRef(), CachedStructDef, OutStructPtr);
@@ -207,8 +200,30 @@ bool FStructDataWrapper::CreateStructFromJSONRaw(uint8* OutStructPtr)
 
 bool FStructDataWrapper::CreateInternalStruct()
 {
-	TempStructBuffer = CreateInitStructRaw();
+	TempStructBuffer = (uint8*)CreateInitStructRaw();
 	return (TempStructBuffer != nullptr);
+}
+
+bool FStructDataWrapper::InitializeStruct(void* OutStructPtr) const
+{
+	if (CachedStructDef == nullptr)
+	{
+		return false;
+	}
+
+	CachedStructDef->InitializeStruct(OutStructPtr);
+
+	// Perform script-based construction if necessary
+	if (CachedStructDef->StructFlags & STRUCT_PostScriptConstruct)
+	{
+		UScriptStruct::ICppStructOps* structOps = CachedStructDef->GetCppStructOps();
+		if (ensure(structOps))
+		{
+			structOps->PostScriptConstruct(OutStructPtr);
+		}
+	}
+
+	return true;
 }
 
 void FStructDataWrapper::FreeTempStruct()

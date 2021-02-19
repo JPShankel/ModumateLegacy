@@ -27,11 +27,11 @@ struct MODUMATE_API FStructDataWrapper
 		return SaveStructData(InStructType::StaticStruct(), &InStruct, bSaveJson);
 	}
 
-	bool LoadStructData(UScriptStruct* StructDef, void* DestStructPtr) const;
+	bool LoadStructData(UScriptStruct* StructDef, void* DestStructPtr, bool bResetStruct = false) const;
 	template<typename OutStructType>
-	bool LoadStructData(OutStructType& OutStruct) const
+	bool LoadStructData(OutStructType& OutStruct, bool bResetStruct = false) const
 	{
-		return LoadStructData(OutStructType::StaticStruct(), &OutStruct);
+		return LoadStructData(OutStructType::StaticStruct(), &OutStruct, bResetStruct);
 	}
 
 	// TODO: these three Save* helper functions should be unnecessary if we can more deeply customize JSON and/or CBOR serialization behavior.
@@ -69,9 +69,10 @@ private:
 	bool UpdateStructDefFromName();
 	bool SaveStructDataJson(const void* StructPtr);
 	bool SaveStructDataCbor(const void* StructPtr);
-	uint8* CreateInitStructRaw();
-	bool CreateStructFromJSONRaw(uint8* OutStructPtr);
+	void* CreateInitStructRaw();
+	bool CreateStructFromJSONRaw(void* OutStructPtr);
 	bool CreateInternalStruct();
+	bool InitializeStruct(void* OutStructPtr) const;
 	void FreeTempStruct();
 
 	UPROPERTY()

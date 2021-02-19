@@ -569,6 +569,7 @@ bool AModumateObjectInstance::SetStateData(const FMOIStateData& NewStateData)
 
 	StateData = NewStateData;
 
+	// TODO: distinguish errors due to missing instance data vs. mismatched types or versions
 	UpdateInstanceData();
 
 	// TODO: selectively dirty the object based on implementation, based on which custom data was modified
@@ -599,7 +600,8 @@ bool AModumateObjectInstance::UpdateInstanceData()
 
 	if (GetInstanceDataStruct(customStructDef, customStructPtr))
 	{
-		bLoadedStructData = StateData.CustomData.LoadStructData(customStructDef, customStructPtr);
+		// Reset the struct here, so that any containers in the instance data are cleared out before they are populated via deserialization.
+		bLoadedStructData = StateData.CustomData.LoadStructData(customStructDef, customStructPtr, true);
 	}
 
 	if (bLoadedStructData)
@@ -825,9 +827,6 @@ void AModumateObjectInstance::PostCreateObject(bool bNewObject)
 		ensureAlways(!bNewObject);
 		bDestroyed = false;
 	}
-
-	// TODO: distinguish errors due to missing instance data vs. mismatched types or versions
-	UpdateInstanceData();
 
 	// This isn't strictly necessary, but it will save some flag cleaning if the parent already exists at the time of creation.
 	if (AModumateObjectInstance* parentObj = GetParentObject())
