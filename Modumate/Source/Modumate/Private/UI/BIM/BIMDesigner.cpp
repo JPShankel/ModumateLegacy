@@ -904,7 +904,7 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 
 		if (!node->ParentInstance.IsValid())
 		{
-			CraftingAssembly.RootPreset = SavePendingPreset.GUID;
+			CraftingAssembly.PresetGUID = SavePendingPreset.GUID;
 		}
 		else
 		{

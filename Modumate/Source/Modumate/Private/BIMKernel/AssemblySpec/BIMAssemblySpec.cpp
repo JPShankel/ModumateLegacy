@@ -14,11 +14,11 @@
 #include "Algo/Accumulate.h"
 #include "Containers/Queue.h"
 
-EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FGuid& PresetGUID)
+EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FGuid& InPresetGUID)
 {
 	Reset();
 	EBIMResult ret = EBIMResult::Success;
-	RootPreset = PresetGUID;
+	PresetGUID = InPresetGUID;
 
 	/*
 	We build an assembly spec by iterating through the tree of presets and assigning BIM values to specific targets like structural layers, risers, treads, etc		
@@ -115,19 +115,19 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			switch (presetIterator.Target)
 			{
 			case ELayerTarget::Assembly:
-				Layers.AddDefaulted_GetRef();
-				presetIterator.TargetLayer = &Layers.Last();
+				presetIterator.TargetLayer = &Layers.AddDefaulted_GetRef();
 				presetIterator.TargetProperties = &Layers.Last().LayerProperties;
+				presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
 				break;
 			case ELayerTarget::TreadLayer:
-				TreadLayers.AddDefaulted_GetRef();
-				presetIterator.TargetLayer = &TreadLayers.Last();
+				presetIterator.TargetLayer = &TreadLayers.AddDefaulted_GetRef();
 				presetIterator.TargetProperties = &TreadLayers.Last().LayerProperties;
+				presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
 				break;
 			case ELayerTarget::RiserLayer:
-				RiserLayers.AddDefaulted_GetRef();
-				presetIterator.TargetLayer = &RiserLayers.Last();
+				presetIterator.TargetLayer = &RiserLayers.AddDefaulted_GetRef();
 				presetIterator.TargetProperties = &RiserLayers.Last().LayerProperties;
+				presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
 				break;
 			default:
 				ensureAlways(false);
@@ -156,7 +156,9 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		{
 			if (Layers.Num() == 0 && TreadLayers.Num() == 0 && RiserLayers.Num() == 0)
 			{
-				presetIterator.TargetProperties = &Extrusions.AddDefaulted_GetRef().Properties;
+				auto &extrusion = Extrusions.AddDefaulted_GetRef();
+				presetIterator.TargetProperties = &extrusion.Properties;
+				extrusion.PresetGUID = presetIterator.PresetGUID;
 			}
 		}
 		// Color can be applied to a number of targets, so just set the asset to the current property sheet and DoMakeAssembly will sort it

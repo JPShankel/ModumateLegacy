@@ -42,4 +42,7 @@ public:
 	
 	UPROPERTY()
 	FVector Scale { FVector::OneVector };
+
+	UPROPERTY()
+	FGuid PresetGUID;
 };

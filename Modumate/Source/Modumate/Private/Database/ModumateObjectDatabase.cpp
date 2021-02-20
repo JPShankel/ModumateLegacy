@@ -697,13 +697,13 @@ bool FModumateDatabase::UnitTest()
 		{
 			FBIMPresetEditor editor;
 			FBIMPresetEditorNodeSharedPtr root;
-			success = ensureAlways(editor.InitFromPreset(BIMPresetCollection, *this, kvp.Value.RootPreset, root) == EBIMResult::Success) && success;
+			success = ensureAlways(editor.InitFromPreset(BIMPresetCollection, *this, kvp.Value.PresetGUID, root) == EBIMResult::Success) && success;
 
 			FBIMAssemblySpec editSpec;
 			success = ensureAlways(editor.CreateAssemblyFromNodes(BIMPresetCollection, *this, editSpec) == EBIMResult::Success) && success;
 
 			FBIMAssemblySpec makeSpec;
-			success = ensureAlways(makeSpec.FromPreset(*this, BIMPresetCollection, editSpec.RootPreset) == EBIMResult::Success) && success;
+			success = ensureAlways(makeSpec.FromPreset(*this, BIMPresetCollection, editSpec.PresetGUID) == EBIMResult::Success) && success;
 
 			success = ensureAlways(FBIMAssemblySpec::StaticStruct()->CompareScriptStruct(&editSpec, &kvp.Value, PPF_None)) && success;
 			success = ensureAlways(FBIMAssemblySpec::StaticStruct()->CompareScriptStruct(&makeSpec, &kvp.Value, PPF_None)) && success;

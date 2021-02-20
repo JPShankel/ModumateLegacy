@@ -164,7 +164,7 @@ struct FLightConfiguration
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FGuid Key;
+	FGuid PresetGUID;
 
 	UPROPERTY()
 	float LightIntensity = 0.f;
@@ -178,5 +178,5 @@ struct FLightConfiguration
 	UPROPERTY()
 	bool bAsSpotLight = false;
 
-	FGuid UniqueKey() const { return Key; }
+	FGuid UniqueKey() const { return PresetGUID; }
 };

@@ -56,4 +56,7 @@ public:
 
 	UPROPERTY()
 	FLayerPatternGap Gap;
+
+	UPROPERTY()
+	FGuid PresetGUID;
 };

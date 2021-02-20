@@ -829,7 +829,7 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 
 		for (auto& moi : ObjectInstanceArray)
 		{
-			if (affectedAssemblies.Contains(moi->GetAssembly().RootPreset))
+			if (affectedAssemblies.Contains(moi->GetAssembly().PresetGUID))
 			{
 				moi->OnAssemblyChanged();
 			}

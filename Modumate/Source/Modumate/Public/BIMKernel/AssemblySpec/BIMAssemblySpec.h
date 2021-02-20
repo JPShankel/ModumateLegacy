@@ -47,7 +47,7 @@ public:
 	EObjectType ObjectType = EObjectType::OTNone;
 
 	UPROPERTY()
-	FGuid RootPreset;
+	FGuid PresetGUID;
 
 	UPROPERTY()
 	TArray<FBIMLayerSpec> Layers;
@@ -95,11 +95,11 @@ public:
 	float TreadDepthCentimeters = 0.0f;
 
 	// For DataCollection support in preset manager
-	FGuid UniqueKey() const { return RootPreset; }
+	FGuid UniqueKey() const { return PresetGUID; }
 
 	EBIMResult Reset();
 
-	EBIMResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FGuid& PresetID);
+	EBIMResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FGuid& InPresetID);
 
 	FModumateUnitValue CalculateThickness() const;
 
