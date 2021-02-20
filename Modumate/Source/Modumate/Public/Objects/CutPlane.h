@@ -49,6 +49,7 @@ public:
 	virtual void UpdateDynamicGeometry() override;
 	virtual bool OnSelected(bool bIsSelected) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
+	virtual bool UseStructureDataForCollision() const override { return true; }
 
 	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;
 	virtual void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget) override;

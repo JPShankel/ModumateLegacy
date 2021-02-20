@@ -94,6 +94,10 @@ void AMOICutPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabl
 	{
 		controller->EditModelUserWidget->UpdateCutPlaneInList(ID);
 	}
+	if (bOutVisible)
+	{
+		UpdateDraftingPreview();
+	}
 }
 
 int32 AMOICutPlane::GetCutPlaneVerticalDegree(const FQuat& Rotation)
@@ -113,8 +117,8 @@ void AMOICutPlane::SetupDynamicGeometry()
 	// TODO: Migrate to CleanObject
 	UpdateCachedGeometryData();
 
-	DynamicMeshActor->SetupPlaneGeometry(CachedPoints, MaterialData, true, true);
-
+	//TODO: Potentially remove SetupPlaneGeometry?
+	//DynamicMeshActor->SetupPlaneGeometry(CachedPoints, MaterialData, true, true);
 	UpdateVisuals();
 }
 
@@ -122,7 +126,8 @@ void AMOICutPlane::UpdateDynamicGeometry()
 {
 	UpdateCachedGeometryData();
 
-	DynamicMeshActor->SetupPlaneGeometry(CachedPoints, MaterialData, false, true);
+	//TODO: Potentially remove SetupPlaneGeometry?
+	//DynamicMeshActor->SetupPlaneGeometry(CachedPoints, MaterialData, false, true);
 }
 
 bool AMOICutPlane::OnSelected(bool bIsSelected)
@@ -132,15 +137,6 @@ bool AMOICutPlane::OnSelected(bool bIsSelected)
 	if (!AMOIPlaneBase::OnSelected(bIsSelected))
 	{
 		return false;
-	}
-
-	if (bIsSelected)
-	{
-		UpdateDraftingPreview();
-	}
-	else
-	{
-		PreviewHUDLines = nullptr;
 	}
 
 	return true;
@@ -437,7 +433,7 @@ void AMOICutPlane::UpdateDraftingPreview()
 {
 	PreviewHUDLines = nullptr;
 
-	if (!IsSelected())
+	if (!IsVisible())
 	{
 		return;
 	}
@@ -477,14 +473,16 @@ void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 	// bounding box is defined by the dimensions of the cut plane as opposed to the contents of the graph
 	FBox2D cutPlaneBox = FBox2D(boxPoints);
 
-	TSet<int32> objectIDs;
+	TSet<int32> graphObjectIDs;
+	TArray<AModumateObjectInstance*> draftingObjectMois;
 
 	ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
 	Modumate::FMColor lineColor = Modumate::FMColor::Black;
 
-	volumeGraph.FindObjectsForPlane(AxisX, AxisY, CachedOrigin, cutPlaneBox, objectIDs);
+	volumeGraph.FindObjectsForPlane(AxisX, AxisY, CachedOrigin, cutPlaneBox, graphObjectIDs);
 
-	for (int32 id : objectIDs)
+	// Do not get lines if any of the objects is dirty
+	for (int32 id : graphObjectIDs)
 	{
 		auto metaObject = Document->GetObjectById(id);
 		if (metaObject == nullptr)
@@ -502,7 +500,18 @@ void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 		{
 			continue;
 		}
+		if (moi->IsDirty(EObjectDirtyFlags::Visuals))
+		{
+			return;
+		}
+		else
+		{
+			draftingObjectMois.Add(moi);
+		}
+	}
 
+	for (auto moi : draftingObjectMois)
+	{
 		// TODO: this only is implemented for plane hosted objects right now, this function should be
 		// a part of ModumateObjectInstance instead and should propagate down through the children
 		TArray<TArray<FVector>> WallCutPerimeters;
