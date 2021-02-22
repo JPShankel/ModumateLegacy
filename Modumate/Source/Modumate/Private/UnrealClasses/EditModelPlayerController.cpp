@@ -69,6 +69,7 @@
 #include "ToolsAndAdjustments/Tools/EditModelSurfaceGraphTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelTrimTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelWandTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelBackgroundImageTool.h"
 
 static Modumate::PDF::PDFResult PDFLibrary;
 
@@ -597,6 +598,7 @@ void AEditModelPlayerController::CreateTools()
 	RegisterTool(CreateTool<USurfaceGraphTool>());
 	RegisterTool(CreateTool<UPanelTool>());
 	RegisterTool(CreateTool<UMullionTool>());
+	RegisterTool(CreateTool<UBackgroundImageTool>());
 }
 
 void AEditModelPlayerController::RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool)

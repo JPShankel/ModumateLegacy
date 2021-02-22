@@ -82,6 +82,7 @@ EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 	case EToolMode::VE_SURFACEGRAPH: return EObjectType::OTSurfaceGraph;
 	case EToolMode::VE_PANEL: return EObjectType::OTSystemPanel;
 	case EToolMode::VE_MULLION: return EObjectType::OTMullion;
+	case EToolMode::VE_BACKGROUNDIMAGE: return EObjectType::OTBackgroundImage;
 	}
 	return EObjectType::OTUnknown;
 }
@@ -119,6 +120,7 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTRoofPerimeter: return EToolMode::VE_ROOF_PERIMETER;
 	case EObjectType::OTSystemPanel: return EToolMode::VE_PANEL;
 	case EObjectType::OTMullion: return EToolMode::VE_MULLION;
+	case EObjectType::OTBackgroundImage: return EToolMode::VE_BACKGROUNDIMAGE;
 	case EObjectType::OTUnknown: return EToolMode::VE_NONE;
 	};
 	return EToolMode::VE_NONE;
@@ -184,6 +186,8 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTSystemPanels", "System Panels") : LOCTEXT("OTSystemPanel", "System Panel");
 	case EObjectType::OTMullion:
 		return bPlural ? LOCTEXT("OTMullions", "Mullions") : LOCTEXT("OTMullion", "Mullion");
+	case EObjectType::OTBackgroundImage:
+		return bPlural ? LOCTEXT("OTBackgroundImages", "Background Images") : LOCTEXT("OTBackgroundImage", "Background Image");
 	case EObjectType::OTUnknown:
 	default:
 		return bPlural ? LOCTEXT("OTUnknowns", "Unknowns") : LOCTEXT("OTUnknown", "Unknown");

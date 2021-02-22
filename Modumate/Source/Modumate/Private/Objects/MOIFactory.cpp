@@ -23,6 +23,7 @@
 #include "Objects/SurfaceVertex.h"
 #include "Objects/Trim.h"
 #include "Objects/Mullion.h"
+#include "Objects/BackgroundImage.h"
 
 UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 {
@@ -56,6 +57,7 @@ UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 	case EObjectType::OTStructureLine: return AMOIStructureLine::StaticClass();
 	case EObjectType::OTRoofPerimeter: return AMOIRoofPerimeter::StaticClass();
 	case EObjectType::OTMullion: return AMOIMullion::StaticClass();
+	case EObjectType::OTBackgroundImage: return AMOIBackgroundImage::StaticClass();
 	default:
 	{
 		FString objectTypeString = GetEnumValueString(ObjectType);

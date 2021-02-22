@@ -67,6 +67,7 @@ enum class EToolMode : uint8
 	VE_CEILING,
 	VE_PANEL,
 	VE_MULLION,
+	VE_BACKGROUNDIMAGE
 };
 
 UENUM(BlueprintType)
@@ -102,6 +103,7 @@ enum class EObjectType : uint8
 	OTCeiling,
 	OTSystemPanel,
 	OTMullion,
+	OTBackgroundImage,
 	OTUnknown
 };
 

@@ -127,6 +127,11 @@ bool AMOIPlaneBase::OnHovered(AEditModelPlayerController *controller, bool bIsHo
 
 void AMOIPlaneBase::PostCreateObject(bool bNewObject)
 {
+	AEditModelGameMode* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
+	if (gameMode)
+	{
+		MaterialData.EngineMaterial = gameMode->MetaPlaneMaterial;
+	}
 	AModumateObjectInstance::PostCreateObject(bNewObject);
 
 	UpdateConnectedVisuals();
@@ -141,27 +146,22 @@ void AMOIPlaneBase::UpdateMaterial()
 {
 	if (DynamicMeshActor.IsValid())
 	{
-		AEditModelGameMode* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
 		// Color
-		if (gameMode)
+		if (IsSelected())
 		{
-			MaterialData.EngineMaterial = gameMode->MetaPlaneMaterial;
-			if (IsSelected())
-			{
-				MaterialData.Color = SelectedColor;
-			}
-			else if (IsHovered())
-			{
-				MaterialData.Color = HoveredColor;
-			}
-			else
-			{
-				MaterialData.Color = BaseColor;
-			}
-
-			DynamicMeshActor->CachedMIDs.SetNumZeroed(1);
-			UModumateFunctionLibrary::SetMeshMaterial(DynamicMeshActor->Mesh, MaterialData, 0, &DynamicMeshActor->CachedMIDs[0]);
+			MaterialData.Color = SelectedColor;
 		}
+		else if (IsHovered())
+		{
+			MaterialData.Color = HoveredColor;
+		}
+		else
+		{
+			MaterialData.Color = BaseColor;
+		}
+
+		DynamicMeshActor->CachedMIDs.SetNumZeroed(1);
+		UModumateFunctionLibrary::SetMeshMaterial(DynamicMeshActor->Mesh, MaterialData, 0, &DynamicMeshActor->CachedMIDs[0]);
 	}
 }
 

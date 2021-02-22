@@ -5,7 +5,6 @@
 #include "Algo/Transform.h"
 #include "BIMKernel/Core/BIMProperties.h"
 #include "Database/ModumateObjectDatabase.h"
-#include "Drafting/APDFLLib.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "Dom/JsonObject.h"
 #include "Drafting/DraftingManager.h"
@@ -300,10 +299,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		else if (type.Equals(TEXT("ddl2")))
 		{
 			playerState->bDevelopDDL2Data = hasShow ? show : !playerState->bDevelopDDL2Data;
-		}
-		else if (type.Equals(TEXT("dwg")))
-		{
-			Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController())->OnCreateDwg();
 		}
 		return true;
 	});

@@ -982,6 +982,7 @@ bool AEditModelPlayerState::IsObjectTypeEnabledByViewMode(EObjectType ObjectType
 			return bRoomsVisible;
 		case EObjectType::OTCutPlane:
 		case EObjectType::OTScopeBox:
+		case EObjectType::OTBackgroundImage:
 			return true;
 		default:
 			ensureMsgf(false, TEXT("Unhandled uncategorized object type: %s!"), *GetEnumValueString(ObjectType));

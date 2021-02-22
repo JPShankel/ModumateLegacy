@@ -47,8 +47,7 @@ bool UInstPropWidgetBase::IsValueConsistent() const
 
 void UInstPropWidgetBase::SetPropertyTitle(const FText& TitleText)
 {
-	FText formattedTitleText = FText::FormatOrdered(LOCTEXT("PropertyTitle", "{0}:"), TitleText);
-	PropertyTitle->ModumateTextBlock->SetText(formattedTitleText);
+	PropertyTitle->ModumateTextBlock->SetText(TitleText);
 }
 
 const FText& UInstPropWidgetBase::GetMixedDisplayText()

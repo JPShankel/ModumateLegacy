@@ -25,10 +25,9 @@ protected:
 	virtual bool GetHandleWidgetStyle(const USlateWidgetStyleAsset*& OutButtonStyle, FVector2D &OutWidgetSize, FVector2D &OutMainButtonOffset) const override;
 
 protected:
-	void UpdateTransform(float Offset);
-	void ApplyExtents(bool bIsPreview);
+	virtual void UpdateTransform(float Offset);
+	virtual void ApplyExtents(bool bIsPreview);
 
-private:
 	FVector2D LastValidExtents;
 	FVector2D OriginalExtents;
 	FVector LastValidLocation;
