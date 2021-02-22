@@ -5,8 +5,10 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/EdgeDetailObj.h"
 #include "Objects/MiterNode.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
+#include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/LineActor.h"
@@ -14,6 +16,9 @@
 
 AMOIMetaEdge::AMOIMetaEdge()
 	: AMOIEdgeBase()
+	, CachedEdgeDetailMOI(nullptr)
+	, CachedEdgeDetailDataID()
+	, CachedEdgeDetailConditionHash(0)
 	, BaseDefaultColor(FColor::Black)
 	, BaseGroupedColor(FColor(0x0D, 0x0B, 0x55))
 	, HoverDefaultColor(FColor::Black)
@@ -55,10 +60,21 @@ bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 	break;
 	case EObjectDirtyFlags::Mitering:
 	{
-		// TODO: clean the miter details by performing the mitering for this edge's connected plane-hosted objects
+		// clean the miter flag by performing the mitering for this edge's connected plane-hosted objects
 		if (!CachedMiterData.GatherDetails(this))
 		{
 			return false;
+		}
+
+		CacheEdgeDetail();
+
+		// If this edge has a detail whose condition no longer applies to this edge's current status, then delete the detail as a side effect.
+		if (CachedEdgeDetailMOI && (CachedEdgeDetailMOI->InstanceData.CachedConditionHash != CachedEdgeDetailConditionHash) && OutSideEffectDeltas)
+		{
+			auto deleteObjectDelta = MakeShared<FMOIDelta>();
+			deleteObjectDelta->AddCreateDestroyState(CachedEdgeDetailMOI->GetStateData(), EMOIDeltaType::Destroy);
+			OutSideEffectDeltas->Add(deleteObjectDelta);
+			ResetEdgeDetail();
 		}
 
 		CachedMiterData.CalculateMitering();
@@ -122,8 +138,97 @@ void AMOIMetaEdge::ShowAdjustmentHandles(AEditModelPlayerController* Controller,
 	}
 }
 
+void AMOIMetaEdge::RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI)
+{
+	// TODO: enable for shipping builds when edge detail serialization is stable and backed by BIM
+#if !UE_BUILD_SHIPPING
+
+	// If there are no miter participants, then the edge cannot have a detail
+	// (and if it did, it should have been deleted)
+	if (CachedMiterData.SortedMiterIDs.Num() == 0)
+	{
+		return;
+	}
+
+	int32 edgeDetailID = CachedEdgeDetailMOI ? CachedEdgeDetailMOI->ID : MOD_ID_NONE;
+
+	static const FString edgeDetailPropertyName(TEXT("Detail"));
+	if (auto edgeDetailField = PropertiesUI->RequestPropertyField<UInstPropWidgetEdgeDetail>(this, edgeDetailPropertyName))
+	{
+		edgeDetailField->RegisterValue(this, edgeDetailID);
+		edgeDetailField->ButtonPressedEvent.AddDynamic(this, &AMOIMetaEdge::OnInstPropEdgeDetailButtonPress);
+	}
+#endif
+}
+
 const FMiterData& AMOIMetaEdge::GetMiterData() const
 {
 	return CachedMiterData;
 }
 
+void AMOIMetaEdge::ResetEdgeDetail()
+{
+	CachedEdgeDetailDataID.Invalidate();
+	CachedEdgeDetailMOI = nullptr;
+	CachedEdgeDetailConditionHash = 0;
+}
+
+void AMOIMetaEdge::CacheEdgeDetail()
+{
+	ResetEdgeDetail();
+
+	for (int32 childID : CachedChildIDs)
+	{
+		auto childDetailObj = Cast<AMOIEdgeDetail>(Document->GetObjectById(childID));
+		if (childDetailObj && ensureMsgf(CachedEdgeDetailMOI == nullptr, TEXT("Massing Edge #%d has more than one child Edge Detail!"), ID))
+		{
+			CachedEdgeDetailMOI = childDetailObj;
+		}
+	}
+
+	if (CachedEdgeDetailMOI)
+	{
+		CachedEdgeDetailDataID = CachedEdgeDetailMOI->GetAssembly().UniqueKey();
+	}
+
+	FEdgeDetailData currentEdgeDetail(GetMiterInterface());
+	CachedEdgeDetailConditionHash = currentEdgeDetail.CachedConditionHash;
+}
+
+void AMOIMetaEdge::OnInstPropEdgeDetailButtonPress(EEdgeDetailWidgetActions EdgeDetailAction)
+{
+	switch (EdgeDetailAction)
+	{
+	case EEdgeDetailWidgetActions::Swap:
+	{
+		if (CachedEdgeDetailMOI == nullptr)
+		{
+			auto makeDetailDelta = MakeShared<FMOIDelta>();
+
+			FMOIStateData newDetailState(Document->GetNextAvailableID(), EObjectType::OTEdgeDetail, ID);
+			FEdgeDetailData newDetailInstanceData(GetMiterInterface());
+			newDetailState.CustomData.SaveStructData(newDetailInstanceData);
+
+			makeDetailDelta->AddCreateDestroyState(newDetailState, EMOIDeltaType::Create);
+			Document->ApplyDeltas({ makeDetailDelta }, GetWorld());
+
+			// TODO: create an edge detail assembly & preset, rather than just a MOI with edge detail instance data
+		}
+	}
+		break;
+	case EEdgeDetailWidgetActions::Edit:
+		break;
+	case EEdgeDetailWidgetActions::Delete:
+		if (CachedEdgeDetailMOI != nullptr)
+		{
+			auto deleteDetailDelta = MakeShared<FMOIDelta>();
+			deleteDetailDelta->AddCreateDestroyState(CachedEdgeDetailMOI->GetStateData(), EMOIDeltaType::Destroy);
+			Document->ApplyDeltas({ deleteDetailDelta }, GetWorld());
+
+			// TODO: delete the edge detail preset itself, and propagate that change to any other edges that may share this detail
+		}
+		break;
+	default:
+		break;
+	}
+}

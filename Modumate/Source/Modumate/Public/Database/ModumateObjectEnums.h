@@ -104,6 +104,7 @@ enum class EObjectType : uint8
 	OTSystemPanel,
 	OTMullion,
 	OTBackgroundImage,
+	OTEdgeDetail,
 	OTUnknown
 };
 

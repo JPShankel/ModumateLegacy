@@ -31,6 +31,7 @@ struct FCachedLayerDimsByType
 	float TotalFinishedWidth = 0.0f;
 
 	TArray<float, TInlineAllocator<8>> LayerOffsets;
+	TArray<float, TInlineAllocator<8>> LayerThicknesses;
 
 	bool HasStructuralLayers() const;
 	bool HasStartMembrane() const;

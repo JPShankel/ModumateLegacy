@@ -75,7 +75,7 @@ void URoofPerimeterPropertiesWidget::UpdateEditFields()
 	}
 
 	const AModumateObjectInstance *targetPerimeter = GameState->Document->GetObjectById(TargetPerimeterID);
-	if (!ensure(targetPerimeter && targetPerimeter->GetStateData().CustomData.LoadStructData(TempInitialCombinedProperties)))
+	if (!ensure(targetPerimeter && targetPerimeter->GetStateData().CustomData.LoadStructData(TempInitialCombinedProperties, true)))
 	{
 		return;
 	}

@@ -4,6 +4,7 @@
 
 #include "Objects/Cabinet.h"
 #include "Objects/CutPlane.h"
+#include "Objects/EdgeDetailObj.h"
 #include "Objects/FFE.h"
 #include "Objects/Finish.h"
 #include "Objects/Group.h"
@@ -58,6 +59,7 @@ UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 	case EObjectType::OTRoofPerimeter: return AMOIRoofPerimeter::StaticClass();
 	case EObjectType::OTMullion: return AMOIMullion::StaticClass();
 	case EObjectType::OTBackgroundImage: return AMOIBackgroundImage::StaticClass();
+	case EObjectType::OTEdgeDetail: return AMOIEdgeDetail::StaticClass();
 	default:
 	{
 		FString objectTypeString = GetEnumValueString(ObjectType);

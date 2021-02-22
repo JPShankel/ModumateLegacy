@@ -44,6 +44,7 @@ void FCachedLayerDimsByType::UpdateLayersFromAssembly(const TArray<FBIMLayerSpec
 	EndFinishThickness = StartFinishThickness = TotalUnfinishedWidth = 0.0f;
 
 	LayerOffsets.Reset();
+	LayerThicknesses.Reset();
 
 	if (!ensureAlways(NumLayers > 0))
 	{
@@ -58,6 +59,7 @@ void FCachedLayerDimsByType::UpdateLayersFromAssembly(const TArray<FBIMLayerSpec
 		LayerOffsets.Add(curThickness);
 		const FBIMLayerSpec &layer = AssemblyLayers[layerIdx];
 		float layerThickness = layer.ThicknessCentimeters;
+		LayerThicknesses.Add(layerThickness);
 
 		if ((layer.Function == ELayerFunction::Membrane) && (StructuralLayerStartIdx == INDEX_NONE))
 		{

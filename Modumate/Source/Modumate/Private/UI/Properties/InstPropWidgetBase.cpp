@@ -21,6 +21,8 @@ bool UInstPropWidgetBase::Initialize()
 		return false;
 	}
 
+	bInstPropInitialized = true;
+
 	return true;
 }
 
@@ -28,6 +30,11 @@ void UInstPropWidgetBase::ResetInstProp()
 {
 	NumRegistrations = 0;
 	bConsistentValue = true;
+}
+
+bool UInstPropWidgetBase::IsInstPropInitialized() const
+{
+	return bInstPropInitialized;
 }
 
 bool UInstPropWidgetBase::IsRegistered() const

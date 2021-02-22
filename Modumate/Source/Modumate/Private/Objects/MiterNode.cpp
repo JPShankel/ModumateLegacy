@@ -5,9 +5,12 @@
 #include "Graph/Graph3D.h"
 #include "Graph/Graph3DEdge.h"
 #include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/EdgeDetailData.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Graph/Graph3DTypes.h"
+#include "Objects/EdgeDetailObj.h"
 #include "Objects/LayeredObjectInterface.h"
+#include "Objects/MetaEdge.h"
 #include "ModumateCore/ModumateMitering.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "ModumateCore/ModumateObjectStatics.h"
@@ -22,7 +25,7 @@ FMiterParticipantData::FMiterParticipantData(const struct FMiterData *InMiterDat
 {
 	Reset();
 
-	if (!ensure(InMiterData && InMiterData->MOI && InMiterData->GraphEdge &&
+	if (!ensure(InMiterData && InMiterData->MOI.IsValid() && InMiterData->GraphEdge &&
 		(EdgeFaceIndex >= 0) && (EdgeFaceIndex < InMiterData->GraphEdge->ConnectedFaces.Num())))
 	{
 		return;
@@ -255,8 +258,47 @@ bool FMiterData::GatherDetails(const AModumateObjectInstance *InMiterObject)
 
 bool FMiterData::CalculateMitering()
 {
-	bool bTotalMiterSuccess = true;
 	int32 numParticipants = ParticipantsByID.Num();
+
+	auto metaEdge = Cast<AMOIMetaEdge>(MOI.Get());
+	auto edgeDetailMOI = metaEdge ? metaEdge->CachedEdgeDetailMOI : nullptr;
+	FEdgeDetailData* edgeDetailData = edgeDetailMOI ? &edgeDetailMOI->InstanceData : nullptr;
+	int32 numDetailParticipants = edgeDetailData ? edgeDetailData->Overrides.Num() : 0;
+
+	// If there is an edge detail that overrides layer extension data for this miter node,
+	// then let it populate the data rather than our miter algorithm.
+	if (edgeDetailData && ensureMsgf(numParticipants == numDetailParticipants,
+		TEXT("Cannot apply a miter detail with %d participants to an edge that has %d participants!"),
+		numDetailParticipants, numParticipants))
+	{
+		for (int32 participantIdx = 0; participantIdx < numParticipants; ++participantIdx)
+		{
+			int32 participantID = SortedMiterIDs[participantIdx];
+			if (!ensure(ParticipantsByID.Contains(participantID)))
+			{
+				return false;
+			}
+
+			FMiterParticipantData& miterParticipant = ParticipantsByID[participantID];
+			int32 numParticipantLayers = miterParticipant.LayerExtensions.Num();
+
+			const FEdgeDetailOverrides& edgeDetailOverrides = edgeDetailData->Overrides[participantIdx];
+			int32 numDetailOverrideLayers = edgeDetailOverrides.LayerExtensions.Num();
+
+			if (!ensureMsgf(numParticipantLayers == numDetailOverrideLayers,
+				TEXT("Cannot apply miter detail extensions at index %d with %d layer extensions to participant with %d layers!"),
+				participantIdx, numDetailOverrideLayers, numParticipantLayers))
+			{
+				return false;
+			}
+
+			miterParticipant.LayerExtensions = edgeDetailOverrides.LayerExtensions;
+		}
+
+		return true;
+	}
+
+	bool bTotalMiterSuccess = true;
 
 	// Now, for each object, extend its structural layer group
 	for (int32 i = 0; i < numParticipants; ++i)

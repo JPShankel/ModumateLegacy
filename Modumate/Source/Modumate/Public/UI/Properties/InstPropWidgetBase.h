@@ -21,6 +21,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlockUserWidget* PropertyTitle;
 
+	bool IsInstPropInitialized() const;
 	bool IsRegistered() const;
 	int32 GetNumRegistrations() const;
 	bool IsValueConsistent() const;
@@ -39,6 +40,7 @@ protected:
 	// Keeps track of value consistency and registrations, to know whether the property should be visible or displayed as inconsistent.
 	void OnRegisteredValue(UObject* Source, bool bValueEqualsCurrent);
 
+	bool bInstPropInitialized = false;
 	int32 NumRegistrations = 0;
 	bool bConsistentValue = true;
 };

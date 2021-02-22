@@ -43,6 +43,9 @@ bool UToolTrayBlockProperties::Initialize()
 
 void UToolTrayBlockProperties::ChangeBlockProperties(UEditModelToolBase* CurrentTool)
 {
+	// Start off as collapsed, until we have more than 0 enabled properties
+	SetVisibility(ESlateVisibility::Collapsed);
+
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (!ensure(controller && controller->EMPlayerState && CurrentTool))
 	{
@@ -76,6 +79,7 @@ void UToolTrayBlockProperties::ChangeBlockProperties(UEditModelToolBase* Current
 
 	// For all instance property members, set their visibility to whether their value has been consistently registered
 	bool bAnyRegistrations = maxNumRegistrations > 0;
+	bool bAnyPropertiesEnabled = false;
 	propertyEntries = PropertiesListBox->GetAllChildren();
 	for (auto propertyEntry : propertyEntries)
 	{
@@ -86,13 +90,24 @@ void UToolTrayBlockProperties::ChangeBlockProperties(UEditModelToolBase* Current
 			if (bVisible)
 			{
 				instPropEntry->DisplayValue();
+				bAnyPropertiesEnabled = true;
 			}
 		}
+	}
+
+	if (bAnyPropertiesEnabled)
+	{
+		SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 }
 
 UInstPropWidgetBase* UToolTrayBlockProperties::RequestPropertyField(UObject* PropertySource, const FString& PropertyName, UClass* FieldClass)
 {
+	if (!ensure(FieldClass))
+	{
+		return nullptr;
+	}
+
 	if (InstPropClassesFromNativeClasses.Contains(FieldClass))
 	{
 		FieldClass = InstPropClassesFromNativeClasses[FieldClass];
@@ -113,11 +128,17 @@ UInstPropWidgetBase* UToolTrayBlockProperties::RequestPropertyField(UObject* Pro
 
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	propertyField = controller ? controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UInstPropWidgetBase>(FieldClass) : nullptr;
-	if (ensure(propertyField))
+	if (ensure(propertyField && propertyField->IsInstPropInitialized()))
 	{
 		RequestedPropertyFields.Add(PropertyName, propertyField);
 		PropertiesListBox->AddChildToVerticalBox(propertyField);
 		propertyField->SetPropertyTitle(FText::FromString(PropertyName));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to initialize Instance Property widget of class %s; ")
+			TEXT("is it a valid native child of UInstPropWidgetBase, or did you add its Blueprint child class to UToolTrayBlockProperties.InstanceProperyBlueprints?"),
+			*FieldClass->GetName());
 	}
 
 	return propertyField;

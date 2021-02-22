@@ -95,7 +95,7 @@ struct MODUMATE_API FMiterParticipantData
 struct MODUMATE_API FMiterData
 {
 	// The pointer to the actual miter edge object
-	const AModumateObjectInstance* MOI = nullptr;
+	TWeakObjectPtr<const AModumateObjectInstance> MOI = nullptr;
 
 	// The pointer to the actual graph edge for this object
 	const Modumate::FGraph3DEdge* GraphEdge = nullptr;

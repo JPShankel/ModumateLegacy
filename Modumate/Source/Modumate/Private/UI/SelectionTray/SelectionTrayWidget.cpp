@@ -43,7 +43,6 @@ void USelectionTrayWidget::OpenToolTrayForSelection()
 	auto currentTool = controller ? Cast<UEditModelToolBase>(controller->CurrentTool.GetObject()) : nullptr;
 	if (currentTool && (currentTool->GetToolMode() == EToolMode::VE_SELECT))
 	{
-		ToolTrayBlockProperties->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		ToolTrayBlockProperties->ChangeBlockProperties(currentTool);
 	}
 	else
