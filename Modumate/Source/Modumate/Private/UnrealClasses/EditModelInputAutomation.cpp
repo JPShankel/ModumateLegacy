@@ -412,6 +412,11 @@ bool UEditModelInputAutomation::ResizeWindowForViewportSize(int32 Width, int32 H
 		FVector2D newWindowSize = window->GetWindowSizeFromClientSize(viewportSize);
 
 		SceneViewport->ResizeFrame(static_cast<uint32>(newWindowSize.X), static_cast<uint32>(newWindowSize.Y), EWindowMode::Windowed);
+
+		// Force the window to the front, to make sure it gets mouse focus.
+		window->HACK_ForceToFront();
+		window->GetNativeWindow()->SetWindowFocus();
+		window->BringToFront(true);
 	}
 
 	return true;
