@@ -15,7 +15,54 @@ PRESET,,,,,,,,,,,Property_Spatiality_Slot-HingeFramed3of3
 PRESET,,E1931F1C-067E-5947-A4A7-E707E8CACC87,,Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-FramelessBracket1of3-Property_Spatiality_Slot-FramelessBracket2of3-Property_Spatiality_Slot-FramelessBracket3of3,,Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed,,3-Hinge Set (Frameless),,,Property_Spatiality_Slot-FramelessBracket1of3
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-FramelessBracket2of3
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-FramelessBracket3of3
-PRESET,,D2AB6A51-CA8C-3544-BF63-8A2403847276,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-CasterBarnLeft-Property_Spatiality_Slot-CasterBarnRight-Property_Spatiality_Slot-HandleUpperFixedXZ-Property_Spatiality_Slot-HandleLowerFixedXZ-Property_Spatiality_Slot-HandleXMidWidthYOutsideZMidHeight-Property_Spatiality_Slot-HandleXMidStileYOutsideZMidTopRail-Property_Spatiality_Slot-HandleXMidStileYOutsideZMidHeight-Property_Spatiality_Slot-HandleXMidStileYOutsideZMidBottomRail-Property_Spatiality_Slot-HandleXBacksetDistanceXYOutsideZMidHeight-Property_Spatiality_Slot-HandleXEdgeYOutsideZMidHeight,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet,,Cabinet Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
+PRESET,,7924E5EA-F57F-BE4F-9518-F441EF36AEA9,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinZ0.5,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Colonial 1x2),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinZ0.5
+PRESET,,B6D0BC57-D226-CD47-B968-A269E2AB8FC1,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.33-Property_Spatiality_Slot-MuntinX0.67,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Colonial 1x3),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinX0.33
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinX0.67
+PRESET,,64CED41B-5B96-8249-9388-6E5B57E19BD8,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.25-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinX0.75,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Colonial 1x4),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinX0.25
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinX0.5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinX0.75
+PRESET,,C15F3F89-F71B-0441-8D3A-94EBA864A849,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.5,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Colonial 2x1),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinX0.5
+PRESET,,9A7A73B8-6AAF-EC45-A45C-3D69F23A906A,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinZ0.5,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Colonial 2x2),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinX0.5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.5
+PRESET,,E334A485-B43D-E440-83E9-0F2649D566FF,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinZ0.33-Property_Spatiality_Slot-MuntinZ0.67,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Colonial 2x3),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinX0.5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.33
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.67
+PRESET,,12867E18-8646-3540-B5BD-45754C6484DE,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinZ0.25-Property_Spatiality_Slot-MuntinZ0.5-Property_Spatiality_Slot-MuntinZ0.75,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Colonial 2x4),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinX0.5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.25
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.75
+PRESET,,7EA248CA-0996-CA4B-948B-FDE32C918F78,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.33-Property_Spatiality_Slot-MuntinX0.67-Property_Spatiality_Slot-MuntinZ0.5,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Colonial 3x2),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinX0.33
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinX0.67
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.5
+PRESET,,8BE3E3E0-623C-5F4D-AC22-5238D530141D,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.33-Property_Spatiality_Slot-MuntinX0.67-Property_Spatiality_Slot-MuntinZ0.33-Property_Spatiality_Slot-MuntinZ0.67,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Colonial 3x3),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinX0.33
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinX0.67
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.33
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.67
+PRESET,,47CD90BF-5452-A74B-A531-D468B020D7BD,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.33-Property_Spatiality_Slot-MuntinX0.67-Property_Spatiality_Slot-MuntinZ0.25-Property_Spatiality_Slot-MuntinZ0.5-Property_Spatiality_Slot-MuntinZ0.75,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Colonial 3x4),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinX0.33
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinX0.67
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.25
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.75
+PRESET,,31B50A5F-D5A5-A549-A2AB-A263502FA7D4,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.25-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinX0.75-Property_Spatiality_Slot-MuntinZ0.5,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Colonial 4x2),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinX0.25
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinX0.5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinX0.75
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.5
+PRESET,,1F9BD97D-8BA0-6D47-8A4D-2AAAC59312EE,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.25-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinX0.75-Property_Spatiality_Slot-MuntinZ0.33-Property_Spatiality_Slot-MuntinZ0.67,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Colonial 4x3),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinX0.25
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinX0.5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinX0.75
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.33
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.67
+PRESET,,A51A54F8-1C12-AC48-A816-13D8F99591EE,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.25-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinX0.75-Property_Spatiality_Slot-MuntinZ0.25-Property_Spatiality_Slot-MuntinZ0.5-Property_Spatiality_Slot-MuntinZ0.75,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Colonial 4x4),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinX0.25
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinX0.5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinX0.75
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.25
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.75
+PRESET,,0B011E71-964E-0C4F-AF28-DD912B962BDD,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.2-Property_Spatiality_Slot-MuntinX0.8-Property_Spatiality_Slot-MuntinZ0.2-Property_Spatiality_Slot-MuntinZ0.8,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,Muntin Set (Prairie),Self.Muntin.NativeSizeY,,Property_Spatiality_Slot-MuntinX0.2
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinX0.8
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.2
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.8
+PRESET,,D2AB6A51-CA8C-3544-BF63-8A2403847276,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-CasterBarnLeft-Property_Spatiality_Slot-CasterBarnRight-Property_Spatiality_Slot-HandleUpperFixedXZ-Property_Spatiality_Slot-HandleLowerFixedXZ-Property_Spatiality_Slot-HandleXMidWidthYOutsideZMidHeight-Property_Spatiality_Slot-HandleXMidStileYOutsideZMidTopRail-Property_Spatiality_Slot-HandleXMidStileYOutsideZMidHeight-Property_Spatiality_Slot-HandleXMidStileYOutsideZMidBottomRail-Property_Spatiality_Slot-HandleXBacksetDistanceXYOutsideZMidHeight-Property_Spatiality_Slot-HandleXEdgeYOutsideZMidHeight-Property_Spatiality_Slot-AssemblyMuntinSetBack-Property_Spatiality_Slot-AssemblyMuntinSetFront,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet,,Cabinet Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-CasterBarnLeft
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-CasterBarnRight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleUpperFixedXZ
@@ -26,7 +73,9 @@ PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXMidStileYOutsideZMidHeight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXMidStileYOutsideZMidBottomRail
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXBacksetDistanceXYOutsideZMidHeight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXEdgeYOutsideZMidHeight
-PRESET,,9701BCF0-657B-5345-A887-67418B11DDA9,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-CasterBarnLeft-Property_Spatiality_Slot-CasterBarnRight-Property_Spatiality_Slot-HandleXBacksetDistanceXYInsideZHandleHeight-Property_Spatiality_Slot-HandleXBacksetDistanceXYOutsideZHandleHeight-Property_Spatiality_Slot-HandleXMidStileYInsideZHandleHeight-Property_Spatiality_Slot-HandleXMidStileYOutsideZHandleHeight-Property_Spatiality_Slot-HandleXEdgeYInsideZHandleHeight-Property_Spatiality_Slot-HandleXEdgeYOutsideZHandleHeight-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door,,Door Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyMuntinSetBack
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyMuntinSetFront
+PRESET,,9701BCF0-657B-5345-A887-67418B11DDA9,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-CasterBarnLeft-Property_Spatiality_Slot-CasterBarnRight-Property_Spatiality_Slot-HandleXBacksetDistanceXYInsideZHandleHeight-Property_Spatiality_Slot-HandleXBacksetDistanceXYOutsideZHandleHeight-Property_Spatiality_Slot-HandleXMidStileYInsideZHandleHeight-Property_Spatiality_Slot-HandleXMidStileYOutsideZHandleHeight-Property_Spatiality_Slot-HandleXEdgeYInsideZHandleHeight-Property_Spatiality_Slot-HandleXEdgeYOutsideZHandleHeight-Property_Spatiality_Slot-AssemblyMuntinSetBack-Property_Spatiality_Slot-AssemblyMuntinSetCenter-Property_Spatiality_Slot-AssemblyMuntinSetFront-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door,,Door Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-CasterBarnLeft
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-CasterBarnRight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXBacksetDistanceXYInsideZHandleHeight
@@ -35,6 +84,9 @@ PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXMidStileYInsideZHandleHeight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXMidStileYOutsideZHandleHeight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXEdgeYInsideZHandleHeight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleXEdgeYOutsideZHandleHeight
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyMuntinSetBack
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyMuntinSetCenter
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyMuntinSetFront
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-Deadbolt
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-SurfaceLockLower
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-SurfaceLockUpper
@@ -42,7 +94,10 @@ PRESET,,,,,,,,,,,Property_Spatiality_Slot-PeepholeLower
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-PeepholeUpper
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-Knocker
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-MailSlot
-PRESET,,895FD728-BB63-6046-A5D1-A7CCC6FA16AC,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window,,Window Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
+PRESET,,895FD728-BB63-6046-A5D1-A7CCC6FA16AC,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSetBack-Property_Spatiality_Slot-AssemblyMuntinSetCenter-Property_Spatiality_Slot-AssemblyMuntinSetFront-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window,,Window Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyMuntinSetBack
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyMuntinSetCenter
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyMuntinSetFront
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-SurfaceLockLower
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-SurfaceLockUpper

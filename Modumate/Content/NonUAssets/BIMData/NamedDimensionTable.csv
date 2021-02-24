@@ -35,6 +35,12 @@ PRESET,,JambLeftSizeX,,8A8643DE-38D6-4040-B985-CCBA7C314E34,,NamedDimension,,Jam
 PRESET,,JambRIghtSizeX,,65496461-9A6F-7041-9A63-3ABC439EA918,,NamedDimension,,Jamb Size (Right),1in,Minor,How far into the reference area does a frame's right side intrude?
 PRESET,,KnockerDistanceZ,,7A00DB9C-D4B5-AB40-B34C-FA57EA99AFD4,,NamedDimension,,Knocker Height,54in,Minor,How far above the base of the frame is the knocker?
 PRESET,,MailSlotDistanceZ,,C3CE0B6F-CF20-9A44-922C-5EC4A4668FE0,,NamedDimension,,Mail Slot Height,12in,Minor,How far above the base of the frame is the mail slot?
+PRESET,,MuntinZoneX1,,0928120A-4693-A643-93D5-AD8D6CF8DD5D,,NamedDimension,,Muntin Zone Inset (Left),5in,Minor,How far in from the left side do the muntins end?
+PRESET,,MuntinZoneX2,,CF60DA85-1D2C-0D48-9D3C-8A63D218AC14,,NamedDimension,,Muntin Zone Inset (Right),5in,Minor,How far in from the right side do the muntins end?
+PRESET,,MuntinZoneY1,,28227ECD-1756-0145-BC9A-9279C08811DB,,NamedDimension,,Muntin Zone Depth (Back),0.375in,Minor,How far in Y from the back of the panel are the back muntins?
+PRESET,,MuntinZoneY2,,D728C676-4728-9B41-AF02-F0B37D5895DA,,NamedDimension,,Muntin Zone Depth (Front),1.5in,Minor,How far in Y from the back of the panel are the front muntins?
+PRESET,,MuntinZoneZ1,,78FDE804-7911-894B-BB39-16A31846930F,,NamedDimension,,Muntin Zone Inset (Bottom),5in,Minor,How far up from the bottom side do the muntins end?
+PRESET,,MuntinZoneZ2,,123CE0AE-1E60-9F4D-B0EC-E0CC7E05FF54,,NamedDimension,,Muntin Zone Inset (Top),5in,Minor,How far below the top side do the muntins end?
 PRESET,,OverrunLeftSizeX,,281754AA-24CE-2C4C-ACE7-AFB2A71861BB,,NamedDimension,,Left Overrun,4in,Minor,How far to the left of the conceptual area does the barn track extend?
 PRESET,,OverrunRightSizeX,,F774761A-012A-F74E-8240-FBC20FFB13EE,,NamedDimension,,Right Overrun,4in,Minor,How far to the right of the conceptual area does the barn track extend?
 PRESET,,PanelDistanceY,,78B7050F-D46F-C144-95E6-0D2043C1C828,,NamedDimension,,Panel Depth-in-Frame,0in,Minor,"How far from the frame's origin, in Y, should the panel's origin be?"
