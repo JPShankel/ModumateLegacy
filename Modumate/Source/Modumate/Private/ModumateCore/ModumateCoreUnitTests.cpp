@@ -10,6 +10,7 @@
 #include "CompGeom/PolygonTriangulation.h"
 #include "JsonObjectConverter.h"
 #include "MathUtil.h"
+#include "ModumateCore/EdgeDetailData.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/LayerGeomDef.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
@@ -1661,6 +1662,86 @@ namespace Modumate
 		TArray<int32> outListC = { 5, 2, 3, 2 };
 		TestTrue(TEXT("ListC can not be normalized"), !UModumateFunctionLibrary::NormalizeIDs(inListC));
 		TestEqual(TEXT("ListC didn't get normalized"), inListC, outListC);
+
+		return true;
+	}
+
+	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateEdgeDetailHashTest, "Modumate.Details.EdgeHash", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
+		bool FModumateEdgeDetailHashTest::RunTest(const FString& Parameters)
+	{
+		TArray<int32> orientationIndices;
+		auto conditionSorter = [](const FEdgeDetailCondition& A, const FEdgeDetailCondition& B) -> bool {
+			return A.Angle < B.Angle;
+		};
+
+		// Make a simple test edge detail
+		FEdgeDetailData edgeDetail1;
+		edgeDetail1.Conditions = {
+			FEdgeDetailCondition{30, 0, {1, 1}},
+			FEdgeDetailCondition{300, 0, {1, 2}},
+			FEdgeDetailCondition{345, -1, {1}}
+		};
+		edgeDetail1.Conditions.Sort(conditionSorter);
+		FEdgeDetailData::NormalizeConditionAngles(edgeDetail1.Conditions);
+		edgeDetail1.UpdateConditionHash();
+
+		// Rotate the original edge detail conditions by various amounts to test hash rotational invariance
+		TArray<float> testRotations = { 60, 135, 180 };
+		for (float testRotation : testRotations)
+		{
+			FEdgeDetailData edgeDetailRotated = edgeDetail1;
+			for (auto& condition : edgeDetailRotated.Conditions)
+			{
+				condition.Angle = FRotator::ClampAxis(condition.Angle + testRotation);
+			}
+			edgeDetailRotated.Conditions.Sort(conditionSorter);
+			FEdgeDetailData::NormalizeConditionAngles(edgeDetailRotated.Conditions);
+			edgeDetailRotated.UpdateConditionHash();
+
+			TestTrue(*FString::Printf(TEXT("Edge detail rotated %.0f degrees preserves hash"), testRotation), edgeDetailRotated.CompareConditions(edgeDetail1, orientationIndices));
+			TestTrue(*FString::Printf(TEXT("Edge detail rotated %.0f degrees equal by 1 rotation"), testRotation),
+				(orientationIndices.Num() == 1) && (orientationIndices[0] != 0) && (orientationIndices[0] < 3));
+		}
+
+		// Make the original edge detail, but with (manually) flipped conditions
+		FEdgeDetailData edgeDetailFlipped;
+		edgeDetailFlipped.Conditions = {
+			FEdgeDetailCondition{360 - 345, 1, {1}},
+			FEdgeDetailCondition{360 - 300, 0, {2, 1}},
+			FEdgeDetailCondition{360 - 30, 0, {1, 1}}
+		};
+		edgeDetailFlipped.Conditions.Sort(conditionSorter);
+		FEdgeDetailData::NormalizeConditionAngles(edgeDetailFlipped.Conditions);
+		edgeDetailFlipped.UpdateConditionHash();
+
+		TestTrue(TEXT("Flipped edge detail preserves hash"), edgeDetailFlipped.CompareConditions(edgeDetail1, orientationIndices));
+		TestTrue(TEXT("Flipped edge detail equal by 1 flip"), (orientationIndices.Num() == 1) && (orientationIndices[0] >= 3));
+
+		// Make a plus-sign edge detail with full symmetry
+		FEdgeDetailData edgeDetailPlus;
+		edgeDetailPlus.Conditions = {
+			FEdgeDetailCondition{0, 0, {1, 1}},
+			FEdgeDetailCondition{90, 0, {1, 1}},
+			FEdgeDetailCondition{180, 0, {1, 1}},
+			FEdgeDetailCondition{270, 0, {1, 1}}
+		};
+		edgeDetailPlus.Conditions.Sort(conditionSorter);
+		FEdgeDetailData::NormalizeConditionAngles(edgeDetailPlus.Conditions);
+		edgeDetailPlus.UpdateConditionHash();
+
+		// Rotate the plus-sign edge detail
+		float plusRotation = 135;
+		FEdgeDetailData edgeDetailPlusRotated = edgeDetailPlus;
+		for (auto& condition : edgeDetailPlusRotated.Conditions)
+		{
+			condition.Angle = FRotator::ClampAxis(condition.Angle + plusRotation);
+		}
+		edgeDetailPlusRotated.Conditions.Sort(conditionSorter);
+		FEdgeDetailData::NormalizeConditionAngles(edgeDetailPlusRotated.Conditions);
+		edgeDetailPlusRotated.UpdateConditionHash();
+
+		TestTrue(TEXT("Rotated plus edge detail preserves hash"), edgeDetailPlusRotated.CompareConditions(edgeDetailPlus, orientationIndices));
+		TestEqual(TEXT("Rotated plus edge detail equal by all rotations and flips"), orientationIndices.Num(), 8);
 
 		return true;
 	}

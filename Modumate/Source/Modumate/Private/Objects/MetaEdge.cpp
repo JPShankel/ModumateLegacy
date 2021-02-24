@@ -217,6 +217,24 @@ void AMOIMetaEdge::OnInstPropEdgeDetailButtonPress(EEdgeDetailWidgetActions Edge
 	}
 		break;
 	case EEdgeDetailWidgetActions::Edit:
+	{
+		if (CachedEdgeDetailMOI != nullptr)
+		{
+			TArray<int32> orientationIndices;
+			auto metaEdges = Document->GetObjectsOfType(EObjectType::OTMetaEdge);
+			for (auto* moi : metaEdges)
+			{
+				auto* metaEdge = Cast<AMOIMetaEdge>(moi);
+				if (metaEdge && (metaEdge != this) && metaEdge->CachedEdgeDetailMOI &&
+					CachedEdgeDetailMOI->InstanceData.CompareConditions(metaEdge->CachedEdgeDetailMOI->InstanceData, orientationIndices))
+				{
+					UE_LOG(LogTemp, Log, TEXT("Edge Detail #%d (hash %08X) matches Edge Detail #%d with orientations: [%s]"),
+						CachedEdgeDetailMOI->ID, CachedEdgeDetailConditionHash, metaEdge->CachedEdgeDetailMOI->ID,
+						*FString::JoinBy(orientationIndices, TEXT(", "), [](const int32& o) {return FString::Printf(TEXT("%d"), o); }));
+				}
+			}
+		}
+	}
 		break;
 	case EEdgeDetailWidgetActions::Delete:
 		if (CachedEdgeDetailMOI != nullptr)

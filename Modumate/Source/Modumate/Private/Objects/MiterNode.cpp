@@ -249,7 +249,7 @@ bool FMiterData::GatherDetails(const AModumateObjectInstance *InMiterObject)
 
 	// Sort the participants by angle
 	SortedMiterIDs.Sort([this](const int32 &IDA, const int32 &IDB) {
-		return ParticipantsByID[IDA].MiterAngle > ParticipantsByID[IDB].MiterAngle;
+		return ParticipantsByID[IDA].MiterAngle < ParticipantsByID[IDB].MiterAngle;
 	});
 
 	// Return whether we gathered all of the necessary data for mitering
@@ -343,7 +343,7 @@ bool FMiterData::ExtendLayerGroup(int32 ParticipantIndex, EMiterLayerGroup Miter
 	// Extend the start and end side only as far as they would need to miter with adjacent participants.
 	// Determine which direction to iterate to the next and previous miter participants,
 	// based on the way the source participant is oriented around the miter edge.
-	int32 nextDelta = participant.bPlaneNormalCW ? 1 : -1;
+	int32 nextDelta = participant.bPlaneNormalCW ? -1 : 1;
 	int32 prevDelta = -nextDelta;
 
 	// Determine which direction to traverse the angularly-sorted list of miter participants,

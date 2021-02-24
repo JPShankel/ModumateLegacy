@@ -79,7 +79,7 @@ namespace Modumate
 
 		float absAngle = FMath::RadiansToDegrees(FMath::Acos(EdgeFaceDir | CachedRefNorm));
 		float angleCross = (EdgeFaceDir ^ CachedRefNorm) | CachedDir;
-		float faceAngle = (angleCross > 0.0f) ? absAngle : (360.0f - absAngle);
+		float faceAngle = FRotator::ClampAxis((angleCross >= 0.0f) ? absAngle : (360.0f - absAngle));
 
 		ConnectedFaces.Add(FEdgeFaceConnection(FaceID, EdgeFaceDir, faceAngle, bContained));
 		bDirty = true;
