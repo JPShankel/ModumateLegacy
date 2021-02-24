@@ -875,63 +875,14 @@ namespace Modumate
 			}
 		}
 
-		for (auto &kvp : Delta.FaceVertexAdditions)
+		for (auto& kvp : Delta.FaceVertexIDUpdates)
 		{
 			auto face = FindFace(kvp.Key);
-			auto addIDs = kvp.Value.Map;
 
 			// TODO: sometimes the face is removed as well by this point
 			if (face == nullptr) continue;
 
-			int32 numVertices = face->VertexIDs.Num();
-			int32 addIdx = 0;
-
-			TArray<int32> newVertexIDs;
-
-			// -1 should be provided as the index for a vertex being added to the front of the 
-			// VertexIDs list, because in the following loop the ID is added after the existing value at that index
-			int32 addToFrontIdx = -1;
-			if (addIDs.Contains(addToFrontIdx))
-			{
-				newVertexIDs.Add(addIDs[addToFrontIdx]);
-			}
-
-			for (int32 vertexIdx = 0; vertexIdx < numVertices; vertexIdx++)
-			{
-				newVertexIDs.Add(face->VertexIDs[vertexIdx]);
-				if (addIDs.Contains(vertexIdx))
-				{
-					// this prevents double-adding the vertex 
-					if (face->VertexIDs.Contains(addIDs[vertexIdx])) continue;
-
-					newVertexIDs.Add(addIDs[vertexIdx]);
-				}
-			}
-
-			face->VertexIDs = newVertexIDs;
-			face->Dirty(false);
-		}
-
-		for (auto &kvp : Delta.FaceVertexRemovals)
-		{
-			auto face = FindFace(kvp.Key);
-			if (!ensure(face))
-			{
-				return false;
-			}
-
-			TArray<int32> removeIDs;
-			kvp.Value.Map.GenerateValueArray(removeIDs);
-
-			TArray<int32> newVertexIDs;
-			for (int32 vertexIdx = 0; vertexIdx < face->VertexIDs.Num(); vertexIdx++)
-			{
-				if (!removeIDs.Contains(face->VertexIDs[vertexIdx]))
-				{
-					newVertexIDs.Add(face->VertexIDs[vertexIdx]);
-				}
-			}
-			face->VertexIDs = newVertexIDs;
+			face->VertexIDs = kvp.Value.NextVertexIDs;
 			face->Dirty(false);
 		}
 

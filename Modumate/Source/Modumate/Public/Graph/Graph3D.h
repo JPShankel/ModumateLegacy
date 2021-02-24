@@ -15,6 +15,7 @@ struct FGraph3DRecordV1;
 typedef FGraph3DRecordV1 FGraph3DRecord;
 struct FGraph3DDelta;
 struct FGraph3DGroupIDsDelta;
+struct FGraph3DFaceVertexIDsDelta;
 
 namespace Modumate
 {
@@ -197,6 +198,7 @@ namespace Modumate
 
 		bool GetDeltaForFaceVertexAddition(int32 EdgeIDToRemove, int32 FaceID, int32 VertexIDToAdd, FGraph3DDelta &OutDelta);
 		bool GetDeltaForFaceVertexRemoval(int32 VertexIDToRemove, FGraph3DDelta &OutDelta);
+		FGraph3DFaceVertexIDsDelta& FindOrAddVertexUpdates(FGraph3DDelta& OutDelta, int32 FaceID);
 
 		bool GetDeltaForVertexList(TArray<int32> &OutVertexIDs, const TArray<FVector> &InVertexPositions, FGraph3DDelta &OutDelta, int32 &NextID);
 

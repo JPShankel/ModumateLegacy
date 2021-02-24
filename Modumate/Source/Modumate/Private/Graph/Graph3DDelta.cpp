@@ -57,6 +57,23 @@ bool FGraph3DFaceContainmentDelta::IsEmpty() const
 		(ContainedFaceIDsToRemove.Num() == 0);
 }
 
+FGraph3DFaceVertexIDsDelta::FGraph3DFaceVertexIDsDelta()
+{
+
+}
+
+FGraph3DFaceVertexIDsDelta::FGraph3DFaceVertexIDsDelta(TArray<int32> InPrevVertexIDs, TArray<int32> InNextVertexIDs)
+	: PrevVertexIDs(InPrevVertexIDs)
+	, NextVertexIDs(InNextVertexIDs)
+{
+
+}
+
+FGraph3DFaceVertexIDsDelta FGraph3DFaceVertexIDsDelta::MakeInverse() const
+{
+	return FGraph3DFaceVertexIDsDelta(NextVertexIDs, PrevVertexIDs);
+}
+
 FGraph3DObjDelta::FGraph3DObjDelta()
 {
 
@@ -104,8 +121,7 @@ void FGraph3DDelta::Reset()
 	FaceDeletions.Reset();
 	FaceContainmentUpdates.Reset();
 
-	FaceVertexAdditions.Reset();
-	FaceVertexRemovals.Reset();
+	FaceVertexIDUpdates.Reset();
 }
 
 bool FGraph3DDelta::IsEmpty()
@@ -125,8 +141,7 @@ bool FGraph3DDelta::IsEmpty()
 			return false;
 		}
 	}
-	if (FaceVertexAdditions.Num() > 0) return false;
-	if (FaceVertexRemovals.Num() > 0) return false;
+	if (FaceVertexIDUpdates.Num() > 0) return false;
 
 	return true;
 }
@@ -198,8 +213,10 @@ TSharedPtr<FGraph3DDelta> FGraph3DDelta::MakeGraphInverse() const
 	inverse->EdgeAdditions = EdgeDeletions;
 	inverse->EdgeDeletions = EdgeAdditions;
 
-	inverse->FaceVertexAdditions = FaceVertexRemovals;
-	inverse->FaceVertexRemovals = FaceVertexAdditions;
+	for (const auto& kvp : FaceVertexIDUpdates)
+	{
+		inverse->FaceVertexIDUpdates.Add(kvp.Key, kvp.Value.MakeInverse());
+	}
 
 	for (const auto& kvp : FaceContainmentUpdates)
 	{

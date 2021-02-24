@@ -87,6 +87,23 @@ struct MODUMATE_API FGraph3DFaceContainmentDelta
 	bool IsEmpty() const;
 };
 
+USTRUCT()
+struct MODUMATE_API FGraph3DFaceVertexIDsDelta
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<int32> PrevVertexIDs;
+
+	UPROPERTY()
+	TArray<int32> NextVertexIDs;
+
+	FGraph3DFaceVertexIDsDelta();
+	FGraph3DFaceVertexIDsDelta(TArray<int32> InPrevVertexIDs, TArray<int32> InNextVertexIDs);
+
+	FGraph3DFaceVertexIDsDelta MakeInverse() const;
+};
+
 // A struct that completely describes a change to the 3D graph
 USTRUCT()
 struct MODUMATE_API FGraph3DDelta : public FDocumentDelta
@@ -119,12 +136,8 @@ struct MODUMATE_API FGraph3DDelta : public FDocumentDelta
 	UPROPERTY()
 	TMap<int32, FGraph3DFaceContainmentDelta> FaceContainmentUpdates;
 
-	// map from faceID to a map from vertex index to new ID
 	UPROPERTY()
-	TMap<int32, FModumateIntMap> FaceVertexAdditions;
-
-	UPROPERTY()
-	TMap<int32, FModumateIntMap> FaceVertexRemovals;
+	TMap<int32, FGraph3DFaceVertexIDsDelta> FaceVertexIDUpdates;
 
 	// Updates to GroupIDs for graph objects
 	UPROPERTY()

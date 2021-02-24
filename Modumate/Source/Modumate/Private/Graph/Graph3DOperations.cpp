@@ -930,19 +930,13 @@ namespace Modumate
 		{
 			if (connection.FaceID != FaceID && !connection.bContained)
 			{
+				auto face = FindFace(connection.FaceID);
+				auto& faceVertexIDUpdate = FindOrAddVertexUpdates(OutDelta, connection.FaceID);
 				bool bForward;
-				int32 edgeIdx = FindFace(connection.FaceID)->FindEdgeIndex(edge->ID, bForward);
-				if (!OutDelta.FaceVertexAdditions.Contains(connection.FaceID))
-				{
-					OutDelta.FaceVertexAdditions.Add(connection.FaceID, FModumateIntMap());
-				}
+				int32 edgeIdx = face->FindEdgeIndex(edge->ID, bForward);
 				if (ensureAlways(edgeIdx != -1))
 				{
-					if (OutDelta.FaceVertexAdditions[connection.FaceID].Map.Contains(edgeIdx))
-					{
-						return false;
-					}
-					OutDelta.FaceVertexAdditions[connection.FaceID].Map.Add(edgeIdx, VertexIDToAdd);
+					faceVertexIDUpdate.NextVertexIDs.Insert(VertexIDToAdd, edgeIdx+1);
 				}
 			}
 		}
@@ -978,26 +972,26 @@ namespace Modumate
 			}
 
 			int32 vertexIdx = face->VertexIDs.Find(VertexIDToRemove);
-			if (!OutDelta.FaceVertexRemovals.Contains(faceID))
-			{
-				OutDelta.FaceVertexRemovals.Add(faceID, FModumateIntMap());
-			}
-
-			// when removing vertices, ApplyDelta only looks for the ID of the vertex to remove
-			// the index is only important for undo - and adding in vertices will add the vertex after the index provided.
-			// since removing the vertex reduces the size of the list by 1, adding it back in the same place with undo
-			// requires providing the index before its current index
+			auto& faceVertexIDUpdate = FindOrAddVertexUpdates(OutDelta, face->ID);
 			if (ensureAlways(vertexIdx != -1))
 			{
-				if (OutDelta.FaceVertexRemovals[faceID].Map.Contains(vertexIdx))
-				{
-					return false;
-				}
-				OutDelta.FaceVertexRemovals[faceID].Map.Add(vertexIdx-1, VertexIDToRemove);
+				faceVertexIDUpdate.NextVertexIDs.RemoveAt(vertexIdx);
 			}
 		}
 
 		return true;
+	}
+
+	FGraph3DFaceVertexIDsDelta& FGraph3D::FindOrAddVertexUpdates(FGraph3DDelta& OutDelta, int32 FaceID)
+	{
+		auto face = FindFace(FaceID);
+		check(face);
+
+		if (OutDelta.FaceVertexIDUpdates.Contains(FaceID))
+		{
+			return OutDelta.FaceVertexIDUpdates[FaceID];
+		}
+		return OutDelta.FaceVertexIDUpdates.Add(face->ID, FGraph3DFaceVertexIDsDelta(face->VertexIDs, face->VertexIDs));
 	}
 
 	bool FGraph3D::GetDeltaForVertexList(TArray<int32> &OutVertexIDs, const TArray<FVector> &InVertexPositions, FGraph3DDelta& OutDelta, int32 &NextID)
@@ -1154,11 +1148,8 @@ namespace Modumate
 				return false;
 			}
 
-			auto& faceVertexAdditions = OutDelta.FaceVertexAdditions.FindOrAdd(faceID);
-			faceVertexAdditions.Map.Add(oldVertexIdx, SavedVertexID);
-
-			auto& faceVertexRemovals = OutDelta.FaceVertexRemovals.FindOrAdd(faceID);
-			faceVertexRemovals.Map.Add(oldVertexIdx, RemovedVertexID);
+			auto& faceVertexIDUpdate = FindOrAddVertexUpdates(OutDelta, face->ID);
+			faceVertexIDUpdate.NextVertexIDs[oldVertexIdx] = SavedVertexID;
 		}
 
 		// TODO: check for coincident faces
