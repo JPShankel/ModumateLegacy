@@ -20,6 +20,7 @@ public:
 
 	void Init();
 	void Shutdown();
+	void ClearCachedThumbnails();
 
 	UPROPERTY(EditAnywhere, Category = "Modumate|Thumbnails")
 	bool bDiskEnabled = false;

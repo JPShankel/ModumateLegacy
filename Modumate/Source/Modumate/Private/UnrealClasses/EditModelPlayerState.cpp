@@ -21,6 +21,7 @@
 #include "Database/ModumateObjectDatabase.h"
 #include "Algo/Transform.h"
 #include "UI/EditModelUserWidget.h"
+#include "UnrealClasses/ThumbnailCacheManager.h"
 
 
 using namespace Modumate;
@@ -610,6 +611,7 @@ void AEditModelPlayerState::OnNewModel()
 
 	auto gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 	gameInstance->DimensionManager->Reset();
+	gameInstance->ThumbnailCacheManager->ClearCachedThumbnails();
 
 	PostOnNewModel.Broadcast();
 

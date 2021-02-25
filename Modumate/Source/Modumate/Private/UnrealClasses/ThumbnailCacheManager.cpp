@@ -77,6 +77,13 @@ void UThumbnailCacheManager::Shutdown()
 {
 }
 
+void UThumbnailCacheManager::ClearCachedThumbnails()
+{
+	CachedThumbnailTextures.Empty();
+	SavingThumbnailsByKey.Empty();
+	SavedThumbnailsByKey.Empty();
+}
+
 bool UThumbnailCacheManager::HasCachedThumbnail(FName ThumbnailKey)
 {
 	return CachedThumbnailTextures.Contains(ThumbnailKey);
