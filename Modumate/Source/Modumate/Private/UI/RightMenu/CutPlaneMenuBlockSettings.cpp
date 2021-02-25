@@ -8,6 +8,7 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
+#include "UI/Custom/ModumateCheckBox.h"
 
 
 using namespace Modumate;
@@ -24,13 +25,14 @@ bool UCutPlaneMenuBlockSettings::Initialize()
 		return false;
 	}
 
-	if (!(ButtonShowHideAll && ButtonExportAll))
+	if (!(ButtonShowHideAll && ButtonExportAll && ToggleCutPlaneColor))
 	{
 		return false;
 	}
 
 	ButtonShowHideAll->ModumateButton->OnReleased.AddDynamic(this, &UCutPlaneMenuBlockSettings::OnButtonShowHideAllReleased);
 	ButtonExportAll->ModumateButton->OnReleased.AddDynamic(this, &UCutPlaneMenuBlockSettings::OnButtonExportAllReleased);
+	ToggleCutPlaneColor->OnCheckStateChanged.AddDynamic(this, &UCutPlaneMenuBlockSettings::OnToggleCutPlaneColorChanged);
 
 	return true;
 }
@@ -68,4 +70,9 @@ void UCutPlaneMenuBlockSettings::OnButtonShowHideAllReleased()
 void UCutPlaneMenuBlockSettings::OnButtonExportAllReleased()
 {
 	Controller->EditModelUserWidget->CutPlaneMenu->SetCutPlaneExportMenuVisibility(true);
+}
+
+void UCutPlaneMenuBlockSettings::OnToggleCutPlaneColorChanged(bool bIsChecked)
+{
+	Controller->ToggleAllCutPlanesColor(bIsChecked);
 }

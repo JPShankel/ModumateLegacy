@@ -41,9 +41,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonIconTextUserWidget *ButtonExportAll;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateCheckBox* ToggleCutPlaneColor;
+
 	UFUNCTION()
 	void OnButtonShowHideAllReleased();
 
 	UFUNCTION()
 	void OnButtonExportAllReleased();
+
+	UFUNCTION()
+	void OnToggleCutPlaneColorChanged(bool bIsChecked);
 };

@@ -28,7 +28,7 @@ AMOICutPlane::AMOICutPlane()
 	: AMOIPlaneBase(),
 	EdgeSelectedColor(28.0f / 255.0f, 159.0f / 255.0f, 255.0f / 255.0f),
 	EdgeColor(73.0f / 255.0f, 179.0f / 255.0f, 255.0f / 255.0f),
-	bHUDDwgDrafting(false)
+	bHUDDwgDrafting(true)
 {
 }
 

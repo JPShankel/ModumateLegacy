@@ -70,6 +70,7 @@ public:
 	static int32 GetCutPlaneVerticalDegree(const FQuat& Rotation);	
 	void SetIsCulling(bool NewIsCulling) { bIsCulling = NewIsCulling; };
 	bool GetIsCulling() const { return bIsCulling; };
+	void SetHUDDwgDrafting(bool NewEnable) { bHUDDwgDrafting = NewEnable; };
 
 
 	Modumate::FDraftingHUDDraw DrawingInterface;

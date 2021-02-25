@@ -2797,6 +2797,19 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 	float bestVirtualHitDist;
 	FVector bestLineIntersection;
 
+	// Create parameters for culling if a cut plane is currently culling
+	bool bHasCullingCutPlane = false;
+	FPlane cutPlaneCheck;
+	if (CurrentCullingCutPlaneID != MOD_ID_NONE)
+	{
+		const AModumateObjectInstance* cutPlaneMoi = Document->GetObjectById(CurrentCullingCutPlaneID);
+		if (cutPlaneMoi && cutPlaneMoi->GetObjectType() == EObjectType::OTCutPlane)
+		{
+			bHasCullingCutPlane = true;
+			cutPlaneCheck = FPlane(cutPlaneMoi->GetLocation(), cutPlaneMoi->GetNormal());
+		}
+	}
+
 	// After tracing for a direct hit result against a MOI, now check if it would be overridden by a snap point or line if desired
 	if (bCheckSnapping)
 	{
@@ -2891,16 +2904,39 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 				{
 					for (auto line : tempLinesForCollision)
 					{
-						CurHitLineMOIs.Add(moi);
-						CurHitLineLocations.Add(TPair<FVector, FVector>(line.P1, line.P2));
+						// If there's a culling cutplane, check if line segment should be intersected by cutplane
+						if (bHasCullingCutPlane && moi->GetObjectType() != EObjectType::OTCutPlane)
+						{
+							// Only check line if either or both points are in front of the cutplane
+							bool bP1IsBehind = cutPlaneCheck.PlaneDot(line.P1) < PLANAR_DOT_EPSILON;
+							bool bP2IsBehind = cutPlaneCheck.PlaneDot(line.P2) < PLANAR_DOT_EPSILON;
+							if (!(bP1IsBehind && bP2IsBehind))
+							{
+								FVector intersect = FMath::RayPlaneIntersection(line.P1, (line.P2 - line.P1).GetSafeNormal(), cutPlaneCheck);
+								FVector newP1 = bP1IsBehind ? intersect : line.P1;
+								FVector newP2 = bP2IsBehind ? intersect : line.P2;
+
+								CurHitLineMOIs.Add(moi);
+								CurHitLineLocations.Add(TPair<FVector, FVector>(newP1, newP2));
+							}
+						}
+						else
+						{
+							CurHitLineMOIs.Add(moi);
+							CurHitLineLocations.Add(TPair<FVector, FVector>(line.P1, line.P2));
+						}
 					}
 				}
 				else
 				{
 					for (auto point : tempPointsForCollision)
 					{
-						CurHitPointMOIs.Add(moi);
-						CurHitPointLocations.Add(point.Point);
+						if (!(bHasCullingCutPlane && 
+							cutPlaneCheck.PlaneDot(point.Point) < PLANAR_DOT_EPSILON))
+						{
+							CurHitPointMOIs.Add(moi);
+							CurHitPointLocations.Add(point.Point);
+						}
 					}
 				}
 			}
@@ -3324,6 +3360,21 @@ void AEditModelPlayerController::UpdateCutPlaneCullingMaterialInst(int32 ObjID /
 		cullingInst->SetVectorParameterValue(TEXT("Position"), planePos);
 		cullingInst->SetVectorParameterValue(TEXT("Axis"), rotAxis);
 		cullingInst->SetScalarParameterValue(TEXT("EnableValue"), enableValue);
+	}
+}
+
+void AEditModelPlayerController::ToggleAllCutPlanesColor(bool bEnable)
+{
+	TArray<AModumateObjectInstance*> mois = Document->GetObjectsOfType(EObjectType::OTCutPlane);
+	for (auto moi : mois)
+	{
+		AMOICutPlane* cp = Cast<AMOICutPlane>(moi);
+		if (cp)
+		{
+			cp->SetHUDDwgDrafting(bEnable);
+			bool bOutVisible; bool bOutCollisionEnabled;
+			cp->GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
+		}
 	}
 }
 

@@ -5,6 +5,7 @@
 #include "Engine/StaticMesh.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "DocumentManagement/ModumateDocument.h"
 
 // Sets default values
 AVertexActor::AVertexActor()
@@ -89,6 +90,23 @@ void AVertexActor::SetMOILocation(const FVector &NewMOILocation)
 
 void AVertexActor::UpdateVisuals()
 {
+	// If there's a culling cutplane, check if this vertex is on the correct side first
+	if (Controller->CurrentCullingCutPlaneID != MOD_ID_NONE)
+	{
+		const AModumateObjectInstance* cutPlaneMoi = Controller->GetDocument()->GetObjectById(Controller->CurrentCullingCutPlaneID);
+		if (cutPlaneMoi && cutPlaneMoi->GetObjectType() == EObjectType::OTCutPlane)
+		{
+			FPlane cutPlaneCheck = FPlane(cutPlaneMoi->GetLocation(), cutPlaneMoi->GetNormal());
+			if (cutPlaneCheck.PlaneDot(MoiLocation) < PLANAR_DOT_EPSILON)
+			{
+				MeshComp->SetVisibility(false);
+				MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				return;
+			}
+		}
+	}
+
+	// If this vertex is not cull by the cutplane, check if it's being occluded by objects
 	FHitResult hitResult;
 	FVector dirToCamera = (CameraLocation - MoiLocation).GetSafeNormal();
 	static float occlusionEpsilon = 0.1f;
