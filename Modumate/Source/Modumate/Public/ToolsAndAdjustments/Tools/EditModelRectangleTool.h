@@ -65,5 +65,5 @@ protected:
 	void UpdatePendingPlane();
 	bool ConstrainHitPoint(FVector &hitPoint);
 
-	TArray<int32> CurAddedVertexIDs, CurAddedEdgeIDs, CurAddedFaceIDs;
+	TArray<int32> CurAddedEdgeIDs, CurAddedFaceIDs;
 };

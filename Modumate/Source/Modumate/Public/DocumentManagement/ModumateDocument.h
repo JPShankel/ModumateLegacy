@@ -129,9 +129,7 @@ public:
 	float GetDefaultJustificationXY() const { return DefaultJustificationXY; } // return DJXY from private;
 
 	int32 MakeRoom(UWorld *World, const TArray<FGraphSignedID> &FaceIDs);
-	bool MakeMetaObject(UWorld *world, const TArray<FVector> &points, const TArray<int32> &IDs, EObjectType objectType, int32 parentID,
-		TArray<int32>& OutAddedVertexIDs, TArray<int32>& OutAddedEdgeIDs, TArray<int32>& OutAddedFaceIDs, TArray<FDeltaPtr>& OutDeltaPtrs,
-		bool bSplitAndUpdateFaces = true, bool bReturnOnlyParallel = false);
+	bool MakeMetaObject(UWorld *world, const TArray<FVector> &points, TArray<int32>& OutObjectIDs, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitAndUpdateFaces = true);
 
 	bool PasteMetaObjects(const FGraph3DRecord* InRecord, TArray<FDeltaPtr>& OutDeltaPtrs, TMap<int32, TArray<int32>>& OutCopiedToPastedIDs, const FVector &Offset, bool bIsPreview);
 
@@ -216,7 +214,7 @@ public:
 	void UpdateVolumeGraphObjects(UWorld *World);
 
 private:
-	bool FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs);
+	bool FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas);
 	bool PostApplyDeltas(UWorld *World);
 	void StartTrackingDeltaObjects();
 	void EndTrackingDeltaObjects();

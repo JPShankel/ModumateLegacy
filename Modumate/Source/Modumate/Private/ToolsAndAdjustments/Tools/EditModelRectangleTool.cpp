@@ -228,7 +228,6 @@ bool URectangleTool::GetMetaObjectCreationDeltas(const FVector& Location, bool b
 	OutConstrainedLocation = Location;
 	OutDeltaPtrs.Reset();
 
-	CurAddedVertexIDs.Reset();
 	CurAddedEdgeIDs.Reset();
 	CurAddedFaceIDs.Reset();
 
@@ -259,8 +258,7 @@ bool URectangleTool::GetMetaObjectCreationDeltas(const FVector& Location, bool b
 
 		if (!(PlaneBaseEnd - PlaneBaseStart).IsNearlyZero())
 		{
-			bSuccess = doc->MakeMetaObject(GetWorld(), { PlaneBaseStart, PlaneBaseEnd }, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
-				CurAddedVertexIDs, CurAddedEdgeIDs, CurAddedFaceIDs, OutDeltaPtrs, bSplitAndUpdateFaces);
+			bSuccess = doc->MakeMetaObject(GetWorld(), { PlaneBaseStart, PlaneBaseEnd }, CurAddedEdgeIDs, OutDeltaPtrs, bSplitAndUpdateFaces);
 		}
 	}
 	else if (State == NewPlanePending)
@@ -268,8 +266,7 @@ bool URectangleTool::GetMetaObjectCreationDeltas(const FVector& Location, bool b
 		// set end of the segment to the hit location
 		pendingSegment->Point2 = OutConstrainedLocation;
 		UpdatePendingPlane();
-		bSuccess = doc->MakeMetaObject(GetWorld(), PendingPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
-			CurAddedVertexIDs, CurAddedEdgeIDs, CurAddedFaceIDs, OutDeltaPtrs, bSplitAndUpdateFaces);
+		bSuccess = doc->MakeMetaObject(GetWorld(), PendingPlanePoints, CurAddedFaceIDs, OutDeltaPtrs, bSplitAndUpdateFaces);
 	}
 
 	if (!bSuccess)

@@ -1093,7 +1093,7 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 	}
 }
 
-bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas, TArray<int32> &OutAddedFaceIDs, TArray<int32> &OutAddedVertexIDs, TArray<int32> &OutAddedEdgeIDs)
+bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas)
 {
 	FGraph3D moiTempGraph;
 	FGraph3D::CloneFromGraph(moiTempGraph, VolumeGraph);
@@ -1106,45 +1106,8 @@ bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDelta
 			return false;
 		}
 
-		for (auto &kvp : delta.FaceAdditions)
-		{
-			if (kvp.Value.ParentObjIDs.Num() == 1 && GetObjectById(kvp.Value.ParentObjIDs[0]) == nullptr)
-			{
-				OutAddedFaceIDs.Add(kvp.Key);
-			}
-		}
-		for (auto &kvp : delta.VertexAdditions)
-		{
-			OutAddedVertexIDs.Add(kvp.Key);
-		}
-		for (auto &kvp : delta.EdgeAdditions)
-		{
-			OutAddedEdgeIDs.Add(kvp.Key);
-		}
-
-		for (auto &kvp : delta.FaceDeletions)
-		{
-			OutAddedFaceIDs.Remove(kvp.Key);
-		}
-		for (auto &kvp : delta.VertexDeletions)
-		{
-			OutAddedVertexIDs.Remove(kvp.Key);
-		}
-		for (auto &kvp : delta.EdgeDeletions)
-		{
-			OutAddedEdgeIDs.Remove(kvp.Key);
-		}
-
 		OutDeltas.Add(MakeShared<FGraph3DDelta>(delta));
 		OutDeltas.Append(sideEffectDeltas);
-	}
-
-	for (int32 faceID : OutAddedFaceIDs)
-	{
-		if (moiTempGraph.FindOverlappingFace(faceID) != MOD_ID_NONE)
-		{
-			return false;
-		}
 	}
 
 	return true;
@@ -1478,8 +1441,7 @@ bool UModumateDocument::GetVertexMovementDeltas(const TArray<int32>& VertexIDs, 
 		return false;
 	}
 
-	TArray<int32> faceIDs, vertexIDs, edgeIDs;
-	if (!FinalizeGraphDeltas(deltas, OutDeltas, faceIDs, vertexIDs, edgeIDs))
+	if (!FinalizeGraphDeltas(deltas, OutDeltas))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;
@@ -1498,8 +1460,7 @@ bool UModumateDocument::GetPreviewVertexMovementDeltas(const TArray<int32>& Vert
 		return false;
 	}
 
-	TArray<int32> faceIDs, vertexIDs, edgeIDs;
-	if (!FinalizeGraphDeltas(deltas, OutDeltas, faceIDs, vertexIDs, edgeIDs))
+	if (!FinalizeGraphDeltas(deltas, OutDeltas))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;
@@ -1539,9 +1500,8 @@ bool UModumateDocument::JoinMetaObjects(UWorld *World, const TArray<int32> &Obje
 		return false;
 	}
 
-	TArray<int32> faceIDs, vertexIDs, edgeIDs;
 	TArray<FDeltaPtr> deltaPtrs;
-	if (!FinalizeGraphDeltas(graphDeltas, deltaPtrs, faceIDs, vertexIDs, edgeIDs))
+	if (!FinalizeGraphDeltas(graphDeltas, deltaPtrs))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;
@@ -1559,117 +1519,44 @@ int32 UModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &F
 	return MOD_ID_NONE;
 }
 
-bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& points, const TArray<int32>& IDs, EObjectType objectType, int32 parentID,
-	TArray<int32>& OutAddedVertexIDs, TArray<int32>& OutAddedEdgeIDs, TArray<int32>& OutAddedFaceIDs, TArray<FDeltaPtr>& OutDeltaPtrs,
-	bool bSplitAndUpdateFaces, bool bReturnOnlyParallel)
+bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& points,
+	TArray<int32>& OutObjectIDs, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitAndUpdateFaces)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeMetaObject"));
-	OutAddedVertexIDs.Reset();
-	OutAddedEdgeIDs.Reset();
-	OutAddedFaceIDs.Reset();
+	OutObjectIDs.Reset();
 	OutDeltaPtrs.Reset();
 
-	EGraph3DObjectType graphObjectType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
-	if (!ensureAlways(graphObjectType != EGraph3DObjectType::None))
+	bool bValidDelta = false;
+	int32 numPoints = points.Num();
+
+	TArray<FGraph3DDelta> deltas;
+	int32 id = MOD_ID_NONE;
+
+	if (numPoints == 1)
+	{
+		FGraph3DDelta graphDelta;
+		bValidDelta = (numPoints == 1) && TempVolumeGraph.GetDeltaForVertexAddition(points[0], graphDelta, NextID, id);
+		OutObjectIDs = { id };
+		deltas = { graphDelta };
+	}
+	else if (numPoints == 2)
+	{
+		bValidDelta = TempVolumeGraph.GetDeltaForEdgeAdditionWithSplit(points[0], points[1], deltas, NextID, OutObjectIDs, true, bSplitAndUpdateFaces);
+	}
+	else if (numPoints >= 3)
+	{
+		bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(points, deltas, NextID, OutObjectIDs, TSet<int32>(), bSplitAndUpdateFaces);
+	}
+	else
 	{
 		return false;
 	}
 
-	bool bValidDelta = false;
-	int32 numPoints = points.Num();
-	int32 numIDs = IDs.Num();
-	FGraph3DDelta graphDelta;
-	TArray<FGraph3DDelta> deltas;
-	int32 id = MOD_ID_NONE;
-
-	switch (graphObjectType)
-	{
-	case EGraph3DObjectType::Vertex:
-	{
-		bValidDelta = (numPoints == 1) && TempVolumeGraph.GetDeltaForVertexAddition(points[0], graphDelta, NextID, id);
-		if (!bValidDelta && (id != MOD_ID_NONE))
-		{
-			OutAddedVertexIDs.Add(id);
-		}
-		deltas = { graphDelta };
-	}
-	break;
-	case EGraph3DObjectType::Edge:
-	{
-		TArray<int32> OutEdgeIDs;
-		if (numPoints == 2)
-		{
-			bValidDelta = TempVolumeGraph.GetDeltaForEdgeAdditionWithSplit(points[0], points[1], deltas, NextID, OutEdgeIDs, true, bSplitAndUpdateFaces);
-		}
-		else
-		{
-			bValidDelta = false;
-		}
-	}
-	break;
-	case EGraph3DObjectType::Face:
-	{
-		TArray<int32> tempAddedFaces;
-		if (numPoints >= 3)
-		{
-			bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(points, deltas, NextID, tempAddedFaces, TSet<int32>(), bSplitAndUpdateFaces);
-		}
-	}
-	break;
-	default:
-		break;
-	}
-
-	if (!bValidDelta || !FinalizeGraphDeltas(deltas, OutDeltaPtrs, OutAddedFaceIDs, OutAddedVertexIDs, OutAddedEdgeIDs))
+	if (!bValidDelta || !FinalizeGraphDeltas(deltas, OutDeltaPtrs))
 	{
 		// delta will be false if the object exists, out object ids should contain the existing id
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;
-	}
-
-	// If requested, return only the added graph elements that are parallel to the input.
-	if (bReturnOnlyParallel)
-	{
-		switch (graphObjectType)
-		{
-		case EGraph3DObjectType::Edge:
-		{
-			FVector inputDir = (points.Num() == 2) ? (points[1] - points[0]).GetSafeNormal() : FVector::ZeroVector;
-			int32 totalAddedEdges = OutAddedEdgeIDs.Num();
-			for (int32 addedEdgeIdx = totalAddedEdges - 1; addedEdgeIdx >= 0; --addedEdgeIdx)
-			{
-				if (auto addedGraphEdge = TempVolumeGraph.FindEdge(OutAddedEdgeIDs[addedEdgeIdx]))
-				{
-					if (!FVector::Parallel(addedGraphEdge->CachedDir, inputDir))
-					{
-						OutAddedEdgeIDs.RemoveAt(addedEdgeIdx);
-					}
-				}
-			}
-		}
-		break;
-		case EGraph3DObjectType::Face:
-		{
-			FPlane inputPlane;
-			if (UModumateGeometryStatics::GetPlaneFromPoints(points, inputPlane))
-			{
-				int32 totalAddedFaces = OutAddedFaceIDs.Num();
-				for (int32 addedFaceIdx = totalAddedFaces - 1; addedFaceIdx >= 0; --addedFaceIdx)
-				{
-					if (auto addedGraphFace = TempVolumeGraph.FindFace(OutAddedFaceIDs[addedFaceIdx]))
-					{
-						if (!UModumateGeometryStatics::ArePlanesCoplanar(addedGraphFace->CachedPlane, inputPlane))
-						{
-							OutAddedFaceIDs.RemoveAt(addedFaceIdx);
-						}
-					}
-				}
-			}
-		}
-		break;
-		default:
-			break;
-		}
 	}
 
 	return bValidDelta;
@@ -1681,8 +1568,7 @@ bool UModumateDocument::PasteMetaObjects(const FGraph3DRecord* InRecord, TArray<
 	TArray<FGraph3DDelta> OutDeltas;
 	TempVolumeGraph.GetDeltasForPaste(InRecord, Offset, NextID, OutDeltas, OutCopiedToPastedIDs, bIsPreview);
 
-	TArray<int32> OutVertices, OutEdges, OutFaces;
-	if (!FinalizeGraphDeltas(OutDeltas, OutDeltaPtrs, OutVertices, OutEdges, OutFaces))
+	if (!FinalizeGraphDeltas(OutDeltas, OutDeltaPtrs))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 		return false;

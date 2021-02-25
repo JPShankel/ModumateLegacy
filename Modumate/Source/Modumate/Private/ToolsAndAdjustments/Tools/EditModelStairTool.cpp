@@ -493,9 +493,8 @@ bool UStairTool::MakeStairs()
 			RunStartPos + totalRunDelta + totalRiseDelta
 		});
 
-		TArray<int32> addedVertexIDs, addedEdgeIDs, addedFaceIDs;
-		if (GameState->Document->MakeMetaObject(GetWorld(), newPlanePoints, {}, EObjectType::OTMetaPlane, Controller->EMPlayerState->GetViewGroupObjectID(),
-			addedVertexIDs, addedEdgeIDs, addedFaceIDs, deltas))
+		TArray<int32> addedFaceIDs;
+		if (GameState->Document->MakeMetaObject(GetWorld(), newPlanePoints, addedFaceIDs, deltas))
 		{
 			hostPlaneIDs = addedFaceIDs;
 		}

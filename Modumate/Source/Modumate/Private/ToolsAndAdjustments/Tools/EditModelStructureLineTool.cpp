@@ -383,9 +383,7 @@ bool UStructureLineTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEd
 		}
 
 		TArray<FVector> points({ LineStartPos, LineEndPos });
-		TArray<int32> addedVertexIDs, addedFaceIDs;
-		if (!GameState->Document->MakeMetaObject(Controller->GetWorld(), points, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
-			addedVertexIDs, targetEdgeIDs, addedFaceIDs, OutDeltaPtrs, bSplitFaces, true))
+		if (!GameState->Document->MakeMetaObject(Controller->GetWorld(), points, targetEdgeIDs, OutDeltaPtrs, bSplitFaces))
 		{
 			return false;
 		}

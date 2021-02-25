@@ -242,9 +242,8 @@ bool ULineTool::GetEdgeDeltas(const FVector& StartPosition, const FVector &EndPo
 		return false;
 	}
 
-	TArray<int32> addedFaceIDs, addedEdgeIDs, addedVertexIDs;
-	bool bSuccess = doc->MakeMetaObject(GetWorld(), { StartPosition, EndPosition }, {}, EObjectType::OTMetaEdge, Controller->EMPlayerState->GetViewGroupObjectID(),
-		addedVertexIDs, addedEdgeIDs, addedFaceIDs, CurDeltas, !bIsPreview);
+	TArray<int32> addedEdgeIDs;
+	bool bSuccess = doc->MakeMetaObject(GetWorld(), { StartPosition, EndPosition }, addedEdgeIDs, CurDeltas, !bIsPreview);
 
 	if (!bSuccess)
 	{
