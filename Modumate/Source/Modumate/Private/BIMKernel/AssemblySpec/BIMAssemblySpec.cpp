@@ -310,7 +310,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 				{
 					FArchitecturalMaterial newMat = *material;
 					newMat.Color = matBinding.ColorHexValue.IsEmpty() ? FColor::White : FColor::FromHex(matBinding.ColorHexValue);
-					partSpec.ChannelMaterials.Add(*matBinding.Channel, newMat);
+					partSpec.ChannelMaterials.Add(matBinding.Channel, newMat);
 				}
 			}	
 

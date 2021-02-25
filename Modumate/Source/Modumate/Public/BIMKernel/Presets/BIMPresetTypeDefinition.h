@@ -6,6 +6,7 @@
 
 #include "BIMKernel/Core/BIMProperties.h"
 #include "BIMKernel/Core/BIMEnums.h"
+#include "BIMKernel/Presets/BIMPresetEditorForm.h"
 
 #include "BIMPresetTypeDefinition.generated.h"
 
@@ -76,7 +77,7 @@ struct MODUMATE_API FBIMPresetTypeDefinition
 	EBIMValueScope Scope = EBIMValueScope::None;
 	
 	UPROPERTY()
-	TMap<FString, FName> FormItemToProperty;
+	FBIMPresetForm FormTemplate;
 
 	UPROPERTY()
 	TArray<FBIMPresetNodePinSet> PinSets;

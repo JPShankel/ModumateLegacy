@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "BIMKernel/Core/BIMProperties.h"
+#include "BIMKernel/Presets/BIMPresetTypeDefinition.h"
 
 #include "BIMEditColorPicker.generated.h"
 
@@ -32,8 +32,7 @@ protected:
 	FName OwnerNodeID;
 	FVector2D DropdownOffset = FVector2D::ZeroVector;
 	FString CurrentColorHex;
-	EBIMValueScope SwapScope = EBIMValueScope::None;
-	FBIMNameType SwapNameType = NAME_None;
+	FBIMPresetFormElement FormElement;
 	FLinearColor CurrentHSV = FLinearColor::Black;
 
 public:
@@ -74,7 +73,7 @@ public:
 	UFUNCTION()
 	void OnHexTextBoxCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
-	void BuildColorPicker(class UBIMDesigner* OuterBIMDesigner, const FName& InOwnerNodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FString& InColorBIMKey, const FVector2D& InDropdownOffset);
+	void BuildColorPicker(class UBIMDesigner* OuterBIMDesigner, const FName& InOwnerNodeID, const FBIMPresetFormElement& InFormElement, const FVector2D& InDropdownOffset);
 	void UpdateColorPicker();
 	void EditColorFromHue(float InHueValue);
 	void EditColorFromSaturationAndBrightness(float InSaturation, float InBrightness);

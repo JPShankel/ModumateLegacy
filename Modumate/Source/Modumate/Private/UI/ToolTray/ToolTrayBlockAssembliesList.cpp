@@ -84,12 +84,11 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 	}
 }
 
-void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FGuid& ParentPresetID, const FGuid& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType)
+void UToolTrayBlockAssembliesList::CreatePresetListInNodeForSwap(const FGuid& ParentPresetID, const FGuid& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const FBIMPresetFormElement& InFormElement)
 {
 	SwapType = ESwapType::SwapFromNode;
 	CurrentNodeForSwap = NodeID;
-	SwapScope = InScope;
-	SwapNameType = InNameType;
+	FormElement = InFormElement;
 
 	if (Controller && GameState)
 	{
@@ -143,9 +142,8 @@ void UToolTrayBlockAssembliesList::AddBIMDesignerPresetsToList()
 			newCompListObj->ItemType = EComponentListItemType::SwapDesignerPreset;
 			newCompListObj->Mode = Controller->GetToolMode();
 			newCompListObj->UniqueKey = curPreset;
+			newCompListObj->FormElement = FormElement;
 			newCompListObj->BIMNodeInstanceID = CurrentNodeForSwap;
-			newCompListObj->SwapScope = SwapScope;
-			newCompListObj->SwapNameType = SwapNameType;
 			AssembliesList->AddItem(newCompListObj);
 		}
 	}

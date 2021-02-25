@@ -47,8 +47,7 @@ protected:
 	FBIMEditorNodeIDType CurrentNodeForSwap;
 	EToolMode SwapSelectionToolMode = EToolMode::VE_NONE;
 	FGuid SwapSelectionPresetID;
-	EBIMValueScope SwapScope = EBIMValueScope::None;
-	FBIMNameType SwapNameType = NAME_None;
+	FBIMPresetFormElement FormElement;
 
 public:
 	UPROPERTY()
@@ -78,7 +77,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateAssembliesListForCurrentToolMode();
 
-	void CreatePresetListInNodeForSwap(const FGuid& ParentPresetID, const FGuid& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType);
+	void CreatePresetListInNodeForSwap(const FGuid& ParentPresetID, const FGuid& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const FBIMPresetFormElement& InFormElement);
 	void CreatePresetListForSwapFronNCP(const FBIMTagPath& InNCP);
 	void AddBIMDesignerPresetsToList();
 	void CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FGuid& PresetID);

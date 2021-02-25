@@ -365,21 +365,23 @@ bool FBIMPresetEditorNode::ValidateNode() const
 * VisibleNamedDimensions is calculated for rigged assemblies using the layout system and provides properties
 * which may or may not be visible depending on whether other parts need to reference them (ie HandleHeight)
 */
-EBIMResult FBIMPresetEditorNode::GetPropertyForm(TMap<FString, FBIMNameType>& OutForm) const
+EBIMResult FBIMPresetEditorNode::GetPresetForm(FBIMPresetForm& OutForm) const
 {
-	// The fixed form is defined in the CSV files
-	OutForm = WorkingPresetCopy.FormItemToProperty;
-
-	// VisibleNamedDimensions determined by layout walk
-	for (auto& namedDim : VisibleNamedDimensions)
+	if (WorkingPresetCopy.GetForm(OutForm) == EBIMResult::Success)
 	{
-		FPartNamedDimension* partDim = FBIMPartSlotSpec::NamedDimensionMap.Find(namedDim);
-		if (partDim != nullptr && partDim->UIType != EPartSlotDimensionUIType::Hidden)
+		// VisibleNamedDimensions determined by layout walk
+		for (auto& namedDim : VisibleNamedDimensions)
 		{
-			FBIMPropertyKey propKey(EBIMValueScope::Dimension, *namedDim);
-			OutForm.Add(partDim->DisplayName.ToString(), propKey.QN());
+			FPartNamedDimension* partDim = FBIMPartSlotSpec::NamedDimensionMap.Find(namedDim);
+			if (partDim != nullptr && partDim->UIType != EPartSlotDimensionUIType::Hidden)
+			{
+				OutForm.AddPropertyElement(partDim->DisplayName, *namedDim, EBIMPresetEditorField::DimensionProperty);
+			}
 		}
+
+		return EBIMResult::Success;
 	}
-	return EBIMResult::Success;
+
+	return EBIMResult::Error;
 }
 

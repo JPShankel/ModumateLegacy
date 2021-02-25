@@ -4,7 +4,7 @@
 
 #include "DocumentManagement/DocumentDelta.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
-#include "BIMPresetDelta.generated.h"
+#include "BIMPresetDocumentDelta.generated.h"
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetDelta : public FDocumentDelta

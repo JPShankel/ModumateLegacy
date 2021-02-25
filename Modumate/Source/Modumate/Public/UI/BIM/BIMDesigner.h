@@ -156,7 +156,7 @@ public:
 	FGuid GetPresetID(const FBIMEditorNodeIDType& InstanceID);
 	bool DeleteNode(const FBIMEditorNodeIDType& InstanceID);
 	bool AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
-	bool SetNodeProperty(const FBIMEditorNodeIDType& NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value);
+	bool ApplyBIMFormElement(const FBIMEditorNodeIDType& NodeID, const FBIMPresetFormElement& FormElement);
 	bool GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, const FBIMEditorNodeIDType& NodeID);
 	bool SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& InstanceID);
 	bool ConfirmSavePendingPreset();

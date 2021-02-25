@@ -45,11 +45,11 @@ void UBIMBlockDropdownPreset::NativeConstruct()
 void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 {
 	// Open color picker
-	if (SwapScope == EBIMValueScope::Color)
+	if (FormElement.FormElementWidgetType == EBIMFormElementWidget::ColorPicker)
 	{
 		FVector2D colorDropdownOffset = DropdownOffset + FVector2D(0.f, OwnerNode->FormItemSize);
 		Controller->EditModelUserWidget->BIMDesigner->BIM_EditColorBP->BuildColorPicker(
-			ParentBIMDesigner, OwnerNode->ID, SwapScope, SwapNameType, HexValue, colorDropdownOffset);
+			ParentBIMDesigner, OwnerNode->ID, FormElement, colorDropdownOffset);
 		return;
 	}
 
@@ -67,16 +67,15 @@ void UBIMBlockDropdownPreset::OnButtonSwapReleased()
 	Controller->EditModelUserWidget->BIMPresetSwap->ResetSearchBox();
 
 	// Generate list of presets
-	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(ownerNodePresetID, PresetGUID, OwnerNode->ID, SwapScope, SwapNameType);
+	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(ownerNodePresetID, PresetGUID, OwnerNode->ID, FormElement);
 }
 
-void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FGuid& InPresetID, const FVector2D& InDropdownOffset)
+void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const FBIMPresetFormElement& InFormElement,  const FVector2D& InDropdownOffset)
 {
 	ParentBIMDesigner = OuterBIMDesigner;
 	OwnerNode = InOwnerNode;
-	SwapScope = InScope;
-	SwapNameType = InNameType;
-	PresetGUID = InPresetID;
+	FormElement = InFormElement;
+	FGuid::Parse(InFormElement.StringRepresentation, PresetGUID);
 	DropdownOffset = InDropdownOffset;
 
 	const FBIMPresetInstance* preset = Controller->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
@@ -97,21 +96,19 @@ void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner
 	IconImage->SetVisibility(bCaptureSuccess ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
 
-void UBIMBlockDropdownPreset::BuildDropdownFromColor(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const FString& InHex, const FVector2D& InDropdownOffset)
+void UBIMBlockDropdownPreset::BuildDropdownFromColor(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const FBIMPresetFormElement& InFormElement, const FVector2D& InDropdownOffset)
 {
 	ParentBIMDesigner = OuterBIMDesigner;
 	OwnerNode = InOwnerNode;
-	SwapScope = EBIMValueScope::Color;
-	SwapNameType = BIMPropertyNames::HexValue;
-	HexValue = InHex;
+	FormElement = InFormElement;
 	DropdownOffset = InDropdownOffset;
 
 	// Set text and label
-	TextTitle->ChangeText(FText::FromName(BIMNameFromValueScope(SwapScope)));
-	PresetText->ChangeText(FText::FromString(HexValue.Left(6)));
+	TextTitle->ChangeText(FormElement.DisplayName);
+	PresetText->ChangeText(FText::FromString(FormElement.StringRepresentation.Left(6)));
 
 	// Icon
-	bool bCaptureSuccess = Controller->DynamicIconGenerator->SetIconFromColor(HexValue, IconMaterial);
+	bool bCaptureSuccess = Controller->DynamicIconGenerator->SetIconFromColor(FormElement.StringRepresentation.Left(6), IconMaterial);
 	if (bCaptureSuccess)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);

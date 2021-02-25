@@ -8,6 +8,7 @@
 #include "BIMKernel/Core/BIMTagPath.h"
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetTypeDefinition.h"
+#include "BIMKernel/Presets/BIMPresetMaterialBinding.h"
 
 #include "BIMPresetInstance.generated.h"
 
@@ -73,47 +74,17 @@ struct MODUMATE_API FBIMPresetPartSlot
 	}
 };
 
-USTRUCT()
-struct MODUMATE_API FBIMPresetMaterialChannelBinding
-{
-	GENERATED_BODY()
 
-	UPROPERTY()
-	FString Channel;
-
-	UPROPERTY()
-	FBIMKey InnerMaterial;
-
-	UPROPERTY()
-	FBIMKey SurfaceMaterial;
-
-	UPROPERTY()
-	FGuid InnerMaterialGUID;
-
-	UPROPERTY()
-	FGuid SurfaceMaterialGUID;
-
-	UPROPERTY()
-	FString ColorHexValue;
-
-	UPROPERTY()
-	FString ColorTintVariationHexValue;
-};
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetInstance
 {
 	GENERATED_BODY()
 
-private:
+	// TODO: roll fields below into type definition and make it the top level UPROPERTY
+	FBIMPresetTypeDefinition TypeDefinition;
 
-	//for direct access to properties
-	friend class FBIMPresetEditor;
-	friend struct FBIMAssemblySpec;
-	friend class FBIMPresetEditorNode;
-
-
-public:
+	bool Edited = false;
 
 	//TODO: Debug data must be UPROPERTY() to serialize in cache, cannot be conditionally compiled out
 	//To be deprecated with move to SQL
@@ -123,16 +94,11 @@ public:
 	UPROPERTY()
 	int32 DEBUG_SourceRow = 0;
 
-	// TODO: roll fields below into type definition and make it the top level UPROPERTY
-	FBIMPresetTypeDefinition TypeDefinition;
-
-	bool Edited = false;
+	UPROPERTY()
+	FBIMPresetForm PresetForm;
 
 	UPROPERTY()
 	FBIMPropertySheet Properties;
-
-	UPROPERTY()
-	TMap<FString, FName> FormItemToProperty;
 
 	UPROPERTY()
 	FText CategoryTitle = FText::FromString(TEXT("Unknown Category"));
@@ -179,6 +145,8 @@ public:
 	UPROPERTY()
 	FBIMTagPath MyTagPath;
 
+	// TODO: Generalize custom data (ie MaterialBindings) that only applies to some presets
+	// Future work will introduce construction details and quantity estimation parameters
 	UPROPERTY()
 	TArray<FBIMPresetMaterialChannelBinding> MaterialChannelBindings;
 
@@ -209,6 +177,10 @@ public:
 	{
 		return Properties.TryGetProperty(NodeScope, Name, OutT);
 	}
+
+	EBIMResult GetForm(FBIMPresetForm& OutForm) const;
+	EBIMResult MakeDeltaForFormElement(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const;
+	EBIMResult ApplyDelta(const FBIMPresetEditorDelta& Delta);
 
 	// Sort child nodes by PinSetIndex and PinSetPosition so serialization will be consistent
 	EBIMResult SortChildPresets();

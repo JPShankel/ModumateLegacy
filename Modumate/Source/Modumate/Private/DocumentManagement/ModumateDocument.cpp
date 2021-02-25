@@ -23,7 +23,7 @@
 #include "ModumateCore/ModumateMitering.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/PlatformFunctions.h"
-#include "BIMKernel/Presets/BIMPresetDelta.h"
+#include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Objects/MOIFactory.h"
 #include "Objects/SurfaceGraph.h"
 #include "Online/ModumateAnalyticsStatics.h"

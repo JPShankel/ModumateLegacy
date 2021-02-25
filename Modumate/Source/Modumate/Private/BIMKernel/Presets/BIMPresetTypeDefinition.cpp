@@ -48,22 +48,9 @@ bool FBIMPresetTypeDefinition::Matches(const FBIMPresetTypeDefinition& OtherDefi
 		return false;
 	}
 
-	if (FormItemToProperty.Num() != OtherDefinition.FormItemToProperty.Num())
+	if (!FormTemplate.Matches(OtherDefinition.FormTemplate))
 	{
 		return false;
-	}
-
-	for (auto& kvp : OtherDefinition.FormItemToProperty)
-	{
-		const FName* propertyBinding = FormItemToProperty.Find(kvp.Key);
-		if (propertyBinding == nullptr)
-		{
-			return false;
-		}
-		if (!propertyBinding->IsEqual(kvp.Value))
-		{
-			return false;
-		}
 	}
 
 	if (PinSets.Num() != OtherDefinition.PinSets.Num())

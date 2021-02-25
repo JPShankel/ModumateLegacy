@@ -11,7 +11,8 @@
 
 #include "BIMPresetCollection.generated.h"
 
-static constexpr int32 BIMPresetCollectionCurrentVersion = 4;
+static constexpr int32 BIMPresetCollectionCurrentVersion = 5;
+// Version 5 - FBIMPresetForm & BIM deltas
 
 struct FBIMPresetDelta;
 
@@ -57,8 +58,6 @@ struct MODUMATE_API FBIMPresetCollection
 
 	EBIMResult GetAllDescendentPresets(const FGuid& PresetGUID, TArray<FGuid>& OutPresets) const;
 	EBIMResult GetAllAncestorPresets(const FGuid& PresetGUID, TArray<FGuid>& OutPresets) const;
-
-	EBIMResult GetPropertyFormForPreset(const FGuid& PresetGUID, TMap<FString, FBIMNameType> &OutForm) const;
 
 	EBIMResult GetPresetsByPredicate(const TFunction<bool(const FBIMPresetInstance& Preset)>& Predicate,TArray<FGuid>& OutPresets) const;
 	EBIMResult GetPresetsForSlot(const FGuid& SlotPresetGUID,TArray<FGuid>& OutPresets) const;

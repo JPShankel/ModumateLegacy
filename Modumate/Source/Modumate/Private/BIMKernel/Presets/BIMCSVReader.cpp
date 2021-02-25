@@ -212,7 +212,6 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				Preset.NodeType = NodeType.TypeName;
 				Preset.NodeScope = NodeType.Scope;
 				Preset.TypeDefinition = NodeType;
-				Preset.FormItemToProperty = NodeType.FormItemToProperty;
 			}
 		}
 	}
@@ -254,7 +253,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					if (ensureAlways(guid != nullptr))
 					{
 						Preset.Properties.SetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID, guid->ToString());
-						Preset.FormItemToProperty.Add(TEXT("Profile"), FBIMPropertyKey(EBIMValueScope::Profile, BIMPropertyNames::AssetID).QN());
+						Preset.PresetForm.AddPropertyElement(FText::FromString(TEXT("Profile")), FBIMPropertyKey(EBIMValueScope::Profile, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
 					}
 				}
 			}
@@ -269,10 +268,12 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					if (ensureAlways(guid != nullptr))
 					{
 						Preset.Properties.SetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, guid->ToString());
-						Preset.FormItemToProperty.Add(TEXT("Mesh"), FBIMPropertyKey(EBIMValueScope::Mesh, BIMPropertyNames::AssetID).QN());
+						Preset.PresetForm.AddPropertyElement(FText::FromString(TEXT("Mesh")), FBIMPropertyKey(EBIMValueScope::Mesh, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
 
 						/*
 						* Meshes provide default values for named dimensions required by parts
+						* No need to add these properties to the form template 
+						* The node editor builds forms only for named dimensions that are visible
 						*/
 						const FBIMPresetInstance* meshPreset = OutPresets.PresetFromGUID(*guid);
 						if (ensureAlways(meshPreset != nullptr))
@@ -338,7 +339,6 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 							if (!hexValue.IsEmpty())
 							{
 								Preset.Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, hexValue);
-								Preset.FormItemToProperty.Add(TEXT("Color"), FBIMPropertyKey(EBIMValueScope::Color, BIMPropertyNames::HexValue).QN());
 								materialBinding.ColorHexValue = hexValue;
 							}
 						}
@@ -359,7 +359,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					};
 				}
 
-				if (!materialBinding.Channel.IsEmpty())
+				if (!materialBinding.Channel.IsNone())
 				{
 					Preset.MaterialChannelBindings.Add(materialBinding);
 
@@ -368,11 +368,31 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					if (ensureAlways(material.IsValid()))
 					{
 						Preset.Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, material.ToString());
-						Preset.FormItemToProperty.Add(TEXT("Material"), FBIMPropertyKey(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID).QN());
 					}
 
 					Preset.Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, materialBinding.ColorHexValue.IsEmpty() ? FColor::White.ToHex() : materialBinding.ColorHexValue);
-					Preset.FormItemToProperty.Add(TEXT("Color"), FBIMPropertyKey(EBIMValueScope::Color, BIMPropertyNames::HexValue).QN());
+
+					FString displayName = materialBinding.Channel.ToString() + TEXT(":");
+
+					if (materialBinding.InnerMaterialGUID.IsValid())
+					{
+						Preset.PresetForm.AddMaterialBindingElement(FText::FromString(displayName + TEXT("Inner Material")), materialBinding.Channel, EMaterialChannelFields::InnerMaterial);
+					}
+
+					if (materialBinding.SurfaceMaterialGUID.IsValid())
+					{
+						Preset.PresetForm.AddMaterialBindingElement(FText::FromString(displayName + TEXT("Surface Material")), materialBinding.Channel, EMaterialChannelFields::SurfaceMaterial);
+					}
+
+					if (!materialBinding.ColorHexValue.IsEmpty())
+					{
+						Preset.PresetForm.AddMaterialBindingElement(FText::FromString(displayName + TEXT("Tint")), materialBinding.Channel, EMaterialChannelFields::ColorTint);
+					}
+
+					if (!materialBinding.ColorTintVariationHexValue.IsEmpty())
+					{
+						Preset.PresetForm.AddMaterialBindingElement(FText::FromString(displayName + TEXT("Tint Variation")), materialBinding.Channel, EMaterialChannelFields::ColorTintVariation);
+					}
 				}
 			}
 			break;
@@ -384,7 +404,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				{
 					FModumateFormattedDimension measurement = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 1]);
 					Preset.Properties.SetProperty(EBIMValueScope::Dimension, dimName, measurement.Centimeters);
-					Preset.FormItemToProperty.Add(Row[presetMatrix.First], FBIMPropertyKey(EBIMValueScope::Dimension, dimName).QN());
+					Preset.PresetForm.AddPropertyElement(FText::FromString(Row[presetMatrix.First]), FBIMPropertyKey(EBIMValueScope::Dimension, dimName).QN(), EBIMPresetEditorField::DimensionProperty);
 				}
 			}
 			break;
@@ -614,30 +634,30 @@ EBIMResult FBIMCSVReader::ProcessPropertyDeclarationRow(const TArray<const TCHAR
 {
 	//Row Format:
 	//[PROPERTY][][Property Type][][Property Name][][Property Value]
-	FName propertyTypeName = Row[2];
-	FString displayName = Row[4];
+	FName propertyTypeName(Row[2]);
+	FString displayName(Row[4]);
 	EBIMValueType propertyTypeEnum;
-	FBIMPropertyKey qualifiedName = Row[6];
+	FBIMPropertyKey propertyKey(Row[6]);
 
 	if (!FindEnumValueByName(propertyTypeName, propertyTypeEnum))
 	{
 		return EBIMResult::Error;
 	}
 
-	PropertyTypeMap.Add(qualifiedName.QN(), propertyTypeEnum);
+	PropertyTypeMap.Add(propertyKey.QN(), propertyTypeEnum);
 
-	if (qualifiedName.Scope == EBIMValueScope::None)
+	if (propertyKey.Scope == EBIMValueScope::None)
 	{
 		return EBIMResult::Error;
 	}
 	else
 	{
-		NodeType.Properties.SetProperty(qualifiedName.Scope, qualifiedName.Name, FString());
+		NodeType.Properties.SetProperty(propertyKey.Scope, propertyKey.Name, FString());
 
 		//Properties are only visible in the editor if they nave display names
 		if (!displayName.IsEmpty())
 		{
-			NodeType.FormItemToProperty.Add(displayName, qualifiedName.QN());
+			NodeType.FormTemplate.AddPropertyElement(FText::FromString(displayName), propertyKey.QN(), EBIMPresetEditorField::TextProperty);
 		}
 	}
 	return EBIMResult::Success;

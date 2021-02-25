@@ -151,7 +151,7 @@ void UBIMBlockNode::OnButtonSwapReleased()
 	Controller->EditModelUserWidget->BIMPresetSwap->ResetSearchBox();
 
 	// Generate list of presets
-	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(parentPresetID, PresetID, ID, EBIMValueScope::None, NAME_None);
+	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(parentPresetID, PresetID, ID, FBIMPresetFormElement());
 }
 
 void UBIMBlockNode::OnButtonDeleteReleased()
@@ -256,66 +256,54 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 
 	// Build instance properties
 	VerticalBoxProperties->ClearChildren();
-	TMap<FString, FBIMNameType> properties;
-	Node->GetPropertyForm(properties);
-	for (auto& curProperty : properties)
+	FBIMPresetForm presetForm;
+	Node->GetPresetForm(presetForm);
+	for (auto& curProperty : presetForm.Elements)
 	{
 		// TODO: Need more format info to determine if this should be drop-down
 		// For now just use dropdown if propertyValue.Name == BIMPropertyNames::AssetID
-		FBIMPropertyKey propertyValue(curProperty.Value);
-		if (propertyValue.Name == BIMPropertyNames::AssetID || propertyValue.Name == BIMPropertyNames::HexValue)
+		switch (curProperty.FormElementWidgetType)
 		{
-			UBIMBlockDropdownPreset* newDropdown = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockDropdownPreset>(BIMBlockDropdownPresetClass);
-			if (newDropdown)
+			case EBIMFormElementWidget::ColorPicker:
+			case EBIMFormElementWidget::GUIDSwap:
 			{
-				// The location of the dropdown menu if the swap button is pressed
-				FVector2D dropDownOffset = FVector2D::ZeroVector;
-				dropDownOffset.Y += ExpandedImageSize;
-				dropDownOffset.Y += (FormItemSize * VerticalBoxProperties->GetAllChildren().Num());
+				UBIMBlockDropdownPreset* newDropdown = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockDropdownPreset>(BIMBlockDropdownPresetClass);
+				if (newDropdown)
+				{
+					// The location of the dropdown menu if the swap button is pressed
+					FVector2D dropDownOffset = FVector2D::ZeroVector;
+					dropDownOffset.Y += ExpandedImageSize;
+					dropDownOffset.Y += (FormItemSize * VerticalBoxProperties->GetAllChildren().Num());
 
-				// Store preset into new dropdown
-				if (propertyValue.Name == BIMPropertyNames::HexValue)
-				{
-					// As color
-					FName propertyColorName;
-					Node->WorkingPresetCopy.Properties.TryGetProperty(propertyValue.Scope, propertyValue.Name, propertyColorName);
-					newDropdown->BuildDropdownFromColor(ParentBIMDesigner, this, propertyColorName.ToString(), dropDownOffset);
-				}
-				else
-				{
-					FGuid propertyPresetKey;
-					Node->WorkingPresetCopy.Properties.TryGetProperty(propertyValue.Scope, propertyValue.Name, propertyPresetKey);
-					newDropdown->BuildDropdownFromPropertyPreset(ParentBIMDesigner, this, propertyValue.Scope, propertyValue.Name, propertyPresetKey, dropDownOffset);
-				}
-				VerticalBoxProperties->AddChildToVerticalBox(newDropdown);
-			}
-		}
-		else
-		{
-			UBIMBlockUserEnterable* newEnterable = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockUserEnterable>(BIMBlockUserEnterableClass);
-			if (newEnterable)
-			{
-				// Text title
-				newEnterable->Text_Title->ChangeText(FText::FromString(curProperty.Key));
-
-				// Text value: user enter-able
-				FBIMPropertyKey value(curProperty.Value);
-				FString valueString;
-				if (!Node->WorkingPresetCopy.Properties.TryGetProperty(value.Scope, value.Name, valueString))
-				{
-					FModumateUnitValue unitValue;
-					if (Node->WorkingPresetCopy.Properties.TryGetProperty(value.Scope, value.Name, unitValue))
+					// Store preset into new dropdown
+					if (curProperty.FormElementWidgetType == EBIMFormElementWidget::ColorPicker)
 					{
-						TArray<int32> imperialsInches;
-						UModumateDimensionStatics::CentimetersToImperialInches(unitValue.AsWorldCentimeters(), imperialsInches);
-						valueString = UModumateDimensionStatics::ImperialInchesToDimensionStringText(imperialsInches).ToString();
+						newDropdown->BuildDropdownFromColor(ParentBIMDesigner, this, curProperty, dropDownOffset);
 					}
+					else
+					{
+						newDropdown->BuildDropdownFromPropertyPreset(ParentBIMDesigner, this, curProperty, dropDownOffset);
+					}
+					VerticalBoxProperties->AddChildToVerticalBox(newDropdown);
 				}
-
-				newEnterable->BuildEnterableFieldFromProperty(ParentBIMDesigner, ID, value.Scope, value.Name, valueString);
-				VerticalBoxProperties->AddChildToVerticalBox(newEnterable);
 			}
-		}
+			break;
+
+			case EBIMFormElementWidget::TextEntry:
+			{
+				UBIMBlockUserEnterable* newEnterable = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockUserEnterable>(BIMBlockUserEnterableClass);
+				if (newEnterable)
+				{
+					// Text title
+					newEnterable->Text_Title->ChangeText(curProperty.DisplayName);
+					newEnterable->BuildEnterableFieldFromProperty(ParentBIMDesigner, ID, curProperty);
+					VerticalBoxProperties->AddChildToVerticalBox(newEnterable);
+				}
+			}
+			break;
+
+			default: ensureAlways(false);
+		};
 	}
 
 	// Additional panel for this node if it is part of rigged assembly

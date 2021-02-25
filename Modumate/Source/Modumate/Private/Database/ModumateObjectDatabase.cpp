@@ -276,7 +276,7 @@ void FModumateDatabase::ReadPresetData()
 	TArray<FGuid> dimensionedPresets;
 	BIMPresetCollection.GetPresetsByPredicate([](const FBIMPresetInstance& Preset) 
 		{
-			return Preset.TypeDefinition.Scope == EBIMValueScope::Part || Preset.SlotConfigPresetGUID.IsValid();
+			return Preset.NodeScope == EBIMValueScope::Part || Preset.SlotConfigPresetGUID.IsValid();
 		}
 		,dimensionedPresets);
 

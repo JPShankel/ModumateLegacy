@@ -3,6 +3,7 @@
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 #include "DocumentManagement/ModumateCommands.h"
 
 bool FBIMPresetPinAttachment::operator==(const FBIMPresetPinAttachment &OtherAttachment) const
@@ -78,6 +79,11 @@ bool FBIMPresetInstance::Matches(const FBIMPresetInstance &OtherPreset) const
 		}
 	}
 
+	if (MaterialChannelBindings != OtherPreset.MaterialChannelBindings)
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -126,7 +132,6 @@ bool FBIMPresetInstance::HasOpenPin() const
 	// By convention, only the last pin will have additions
 	return (TypeDefinition.PinSets.Num() > 0 && TypeDefinition.PinSets.Last().MaxCount == INDEX_NONE);
 }
-
 
 EBIMResult FBIMPresetInstance::AddChildPreset(const FGuid& ChildPresetID, int32 PinSetIndex, int32 PinSetPosition)
 {
@@ -188,7 +193,6 @@ EBIMResult FBIMPresetInstance::SetPartPreset(const FGuid& SlotPreset, const FGui
 	return EBIMResult::Error;
 }
 
-
 bool FBIMPresetInstance::ValidatePreset() const
 {
 	if (ChildPresets.Num() > 0)
@@ -211,3 +215,247 @@ bool FBIMPresetInstance::ValidatePreset() const
 	}
 	return true;
 }
+
+
+EBIMResult FBIMPresetInstance::ApplyDelta(const FBIMPresetEditorDelta& Delta)
+{
+	if (Delta.FieldType == EBIMPresetEditorField::MaterialBinding)
+	{
+		for (auto& binding : MaterialChannelBindings)
+		{
+			if (binding.Channel.IsEqual(Delta.FieldName))
+			{
+				switch (Delta.MaterialChannelSubField)
+				{
+				case EMaterialChannelFields::InnerMaterial:
+				{
+					FGuid::Parse(Delta.NewStringRepresentation,binding.InnerMaterialGUID);
+					return EBIMResult::Success;
+				}
+				break;
+
+				case EMaterialChannelFields::SurfaceMaterial:
+				{
+					FGuid::Parse(Delta.NewStringRepresentation, binding.SurfaceMaterialGUID);
+					Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, Delta.NewStringRepresentation);
+					return EBIMResult::Success;
+				}
+				break;
+
+				case EMaterialChannelFields::ColorTint:
+				{
+					binding.ColorHexValue = Delta.NewStringRepresentation;
+					Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, binding.ColorHexValue);
+					return EBIMResult::Success;
+				}
+				break;
+
+				case EMaterialChannelFields::ColorTintVariation:
+				{
+					binding.ColorTintVariationHexValue = Delta.NewStringRepresentation;
+					return EBIMResult::Success;
+				}
+				break;
+
+				default: return EBIMResult::Error;
+				};
+			}
+		}
+		return EBIMResult::Error;
+	}
+
+	switch (Delta.FieldType)
+	{
+		case EBIMPresetEditorField::AssetProperty:
+		case EBIMPresetEditorField::TextProperty:
+		{
+			FBIMPropertyKey propKey(Delta.FieldName);
+			Properties.SetProperty(propKey.Scope, propKey.Name, Delta.NewStringRepresentation);
+		}
+		break;
+
+		case EBIMPresetEditorField::NumberProperty:
+		{
+			FBIMPropertyKey propKey(Delta.FieldName);
+			Properties.SetProperty(propKey.Scope, propKey.Name, FCString::Atof(*Delta.NewStringRepresentation));
+		}
+		break;
+
+		case EBIMPresetEditorField::DimensionProperty:
+		{
+			FBIMPropertyKey propKey(Delta.FieldName);
+			Properties.SetProperty(propKey.Scope, propKey.Name, FCString::Atof(*Delta.NewStringRepresentation));
+		}
+		break;
+	};
+
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const
+{
+	OutDelta.FieldType = FormElement.FieldType;
+	OutDelta.NewStringRepresentation = FormElement.StringRepresentation;
+	OutDelta.FieldName = *FormElement.FieldName;
+	OutDelta.MaterialChannelSubField = FormElement.MaterialChannelSubField;
+
+	if (FormElement.FieldType == EBIMPresetEditorField::MaterialBinding)
+	{
+		for (auto& binding : MaterialChannelBindings)
+		{
+			if (binding.Channel.IsEqual(*FormElement.FieldName))
+			{
+				switch (FormElement.MaterialChannelSubField)
+				{
+					case EMaterialChannelFields::InnerMaterial:
+					{
+						OutDelta.OldStringRepresentation = binding.InnerMaterialGUID.ToString();
+						return EBIMResult::Success;
+					}
+					break;
+
+					case EMaterialChannelFields::SurfaceMaterial:
+					{
+						OutDelta.OldStringRepresentation = binding.SurfaceMaterialGUID.ToString();
+						return EBIMResult::Success;
+					}
+					break;
+
+					case EMaterialChannelFields::ColorTint:
+					{
+						OutDelta.OldStringRepresentation = binding.ColorHexValue;
+						return EBIMResult::Success;
+					}
+					break;
+
+					case EMaterialChannelFields::ColorTintVariation:
+					{
+						OutDelta.OldStringRepresentation = binding.ColorTintVariationHexValue;
+						return EBIMResult::Success;
+					}
+					break;
+
+					default: return EBIMResult::Error;
+				};
+			}
+		}
+		return EBIMResult::Error;
+	}
+
+	switch (FormElement.FieldType)
+	{
+		case EBIMPresetEditorField::DimensionProperty:
+		{
+			float v;
+			FBIMPropertyKey propKey(*FormElement.FieldName);
+			if (ensureAlways(Properties.TryGetProperty(propKey.Scope, propKey.Name, v)))
+			{
+				TArray<int32> imperialsInches;
+				UModumateDimensionStatics::CentimetersToImperialInches(v, imperialsInches);
+				OutDelta.OldStringRepresentation = UModumateDimensionStatics::ImperialInchesToDimensionStringText(imperialsInches).ToString();
+			}
+		}
+		break;
+		case EBIMPresetEditorField::NumberProperty:
+		{
+			float v;
+			FBIMPropertyKey propKey(*FormElement.FieldName);
+			if (Properties.TryGetProperty(propKey.Scope, propKey.Name, v))
+			{
+				OutDelta.OldStringRepresentation = FString::Printf(TEXT("%f"), v);
+			}
+		}
+		break;
+		case EBIMPresetEditorField::TextProperty:
+		case EBIMPresetEditorField::AssetProperty:
+		{
+			FBIMPropertyKey propKey(*FormElement.FieldName);
+			ensureAlways(Properties.TryGetProperty(propKey.Scope, propKey.Name, OutDelta.OldStringRepresentation));
+		}
+		break;
+		default: ensureAlways(false); return EBIMResult::Error;
+	};
+
+	return EBIMResult::Error;
+}
+
+EBIMResult FBIMPresetInstance::GetForm(FBIMPresetForm& OutForm) const
+{
+	OutForm = TypeDefinition.FormTemplate;
+	OutForm.Elements.Append(PresetForm.Elements);
+
+	for (auto& element : OutForm.Elements)
+	{
+		if (element.FieldType == EBIMPresetEditorField::MaterialBinding)
+		{
+			for (auto& binding : MaterialChannelBindings)
+			{
+				if (binding.Channel.IsEqual(*element.FieldName))
+				{
+					switch (element.MaterialChannelSubField)
+					{
+					case EMaterialChannelFields::InnerMaterial:
+						element.StringRepresentation = binding.InnerMaterialGUID.ToString();
+						break;
+
+					case EMaterialChannelFields::SurfaceMaterial:
+						element.StringRepresentation = binding.SurfaceMaterialGUID.ToString();
+						break;
+
+					case EMaterialChannelFields::ColorTint:
+						element.StringRepresentation = binding.ColorHexValue;
+						break;
+
+					case EMaterialChannelFields::ColorTintVariation:
+						element.StringRepresentation = binding.ColorTintVariationHexValue;
+						break;
+
+					default: ensureAlways(false);
+					};
+				}
+			}
+			continue;
+		}
+
+		switch (element.FieldType)
+		{
+			case EBIMPresetEditorField::DimensionProperty:
+			{
+				float v;
+				FBIMPropertyKey propKey(*element.FieldName);
+				if (ensureAlways(Properties.TryGetProperty<float>(propKey.Scope, propKey.Name, v)))
+				{
+					element.StringRepresentation = FString::Printf(TEXT("%f"), v);
+					TArray<int32> imperialsInches;
+					UModumateDimensionStatics::CentimetersToImperialInches(v, imperialsInches);
+					element.StringRepresentation = UModumateDimensionStatics::ImperialInchesToDimensionStringText(imperialsInches).ToString();
+				}
+			}
+			break;
+
+			case EBIMPresetEditorField::NumberProperty:
+			{
+				float v;
+				FBIMPropertyKey propKey(*element.FieldName);
+				if (ensureAlways(Properties.TryGetProperty<float>(propKey.Scope, propKey.Name, v)))
+				{
+					element.StringRepresentation = FString::Printf(TEXT("%f"), v);
+				}
+			}
+			break;
+
+			case EBIMPresetEditorField::TextProperty:
+			case EBIMPresetEditorField::AssetProperty:
+			default:
+			{
+				FBIMPropertyKey propKey(*element.FieldName);
+				ensureAlways(Properties.TryGetProperty<FString>(propKey.Scope, propKey.Name, element.StringRepresentation));
+			}
+			break;
+		};
+	}
+
+	return EBIMResult::Success;
+}
+
+

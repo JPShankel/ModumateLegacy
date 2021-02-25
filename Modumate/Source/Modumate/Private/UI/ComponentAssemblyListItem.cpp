@@ -187,15 +187,15 @@ void UComponentAssemblyListItem::OnButtonConfirmReleased()
 	case EComponentListItemType::SwapDesignerPreset:
 		EMPlayerController->EditModelUserWidget->ToggleBIMPresetSwapTray(false);
 		// This swap can be either from node, or from one the properties inside this node
-		// If this item has a SwapScope and SwapNameType, then it is swapping a property
-		// else is swapping the node
-		if (SwapScope == EBIMValueScope::None && SwapNameType == NAME_None)
+		// If the form item is uninitialized, then we're swapping the whole preset, otherwise it's a property or custom data field
+		if (FormElement.FieldType == EBIMPresetEditorField::None)
 		{
 			result = EMPlayerController->EditModelUserWidget->BIMDesigner->SetPresetForNodeInBIMDesigner(BIMInstanceID, BIMKey);
 		}
 		else
 		{
-			result = EMPlayerController->EditModelUserWidget->BIMDesigner->SetNodeProperty(BIMInstanceID, SwapScope, SwapNameType, BIMKey.ToString());
+			FormElement.StringRepresentation = BIMKey.ToString();
+			result = EMPlayerController->EditModelUserWidget->BIMDesigner->ApplyBIMFormElement(BIMInstanceID, FormElement);
 		}
 		break;
 	case EComponentListItemType::SwapListItem:
@@ -284,8 +284,7 @@ void UComponentAssemblyListItem::NativeOnListItemObjectSet(UObject* ListItemObje
 
 	BIMKey = compListObj->UniqueKey;
 	ToolMode = compListObj->Mode;
-	SwapScope = compListObj->SwapScope;
-	SwapNameType = compListObj->SwapNameType;
+	FormElement = compListObj->FormElement;
 	EMPlayerController = GetOwningPlayer<AEditModelPlayerController>();
 	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	

@@ -7,7 +7,7 @@
 #include "Blueprint/IUserObjectListEntry.h"
 #include "Database/ModumateObjectEnums.h"
 #include "BIMKernel/Core/BIMKey.h"
-#include "BIMKernel/Core/BIMProperties.h"
+#include "BIMKernel/Presets/BIMPresetTypeDefinition.h"
 #include "BIMKernel/Presets/BIMPresetEditorNode.h"
 #include "ComponentAssemblyListItem.generated.h"
 
@@ -43,8 +43,8 @@ protected:
 	EComponentListItemType ItemType = EComponentListItemType::None;
 	FBIMEditorNodeIDType BIMInstanceID;
 	bool bIsNonAssemblyObjectSelectItem = false;
-	EBIMValueScope SwapScope = EBIMValueScope::None;
-	FBIMNameType SwapNameType = NAME_None;
+
+	FBIMPresetFormElement FormElement;
 
 	UPROPERTY()
 	class AEditModelPlayerController *EMPlayerController;

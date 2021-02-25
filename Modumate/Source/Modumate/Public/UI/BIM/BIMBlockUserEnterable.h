@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "BIMKernel/Core/BIMEnums.h"
-#include "BIMKernel/Core/BIMProperties.h"
 #include "BIMKernel/Presets/BIMPresetEditorNode.h"
 
 #include "BIMBlockUserEnterable.generated.h"
@@ -31,8 +30,8 @@ protected:
 	UPROPERTY()
 	class UBIMDesigner *ParentBIMDesigner;
 
-	EBIMValueScope Scope = EBIMValueScope::None;
-	FBIMNameType NameTpye = NAME_None;
+	FBIMPresetFormElement FormElement;
+
 	FBIMEditorNodeIDType NodeID;
 	FString OriginalValueString;
 
@@ -47,5 +46,5 @@ public:
 	UFUNCTION()
 	void OnEditableTextBoxCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
-	void BuildEnterableFieldFromProperty(class UBIMDesigner *OuterBIMDesigner, const FBIMEditorNodeIDType& InNodeID, const EBIMValueScope &InScope, const FBIMNameType &InNameType, const FString &InValue);
+	void BuildEnterableFieldFromProperty(class UBIMDesigner *OuterBIMDesigner, const FBIMEditorNodeIDType& InNodeID, const FBIMPresetFormElement& InFormElement);
 };

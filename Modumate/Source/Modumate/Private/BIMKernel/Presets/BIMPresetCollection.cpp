@@ -3,7 +3,7 @@
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "BIMKernel/Presets/BIMCSVReader.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
-#include "BIMKernel/Presets/BIMPresetDelta.h"
+#include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/ModumateScriptProcessor.h"
@@ -77,18 +77,6 @@ EObjectType FBIMPresetCollection::GetPresetObjectType(const FGuid& PresetID) con
 		return EObjectType::OTNone;
 	}
 	return preset->ObjectType;
-}
-
-EBIMResult FBIMPresetCollection::GetPropertyFormForPreset(const FGuid& PresetID, TMap<FString, FBIMNameType> &OutForm) const
-{
-	const FBIMPresetInstance* preset = PresetFromGUID(PresetID);
-	if (preset == nullptr)
-	{
-		return EBIMResult::Error;
-	}
-
-	OutForm = preset->FormItemToProperty;
-	return EBIMResult::Success;
 }
 
 EBIMResult FBIMPresetCollection::GetPresetsByPredicate(const TFunction<bool(const FBIMPresetInstance& Preset)>& Predicate, TArray<FGuid>& OutPresets) const
@@ -168,12 +156,12 @@ EBIMResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPath, co
 		{
 			OutMessages.Add(FString::Printf(TEXT("No node definition")));
 		}
-		else
+
+		// tableData.NodeType may be updated by the tag path row, which contains matrices that can add to the form template
+		if (ensureAlways(tableData.ProcessTagPathRow(Row, RowNumber, OutMessages) == EBIMResult::Success))
 		{
 			NodeDescriptors.Add(tableData.NodeType.TypeName, tableData.NodeType);
 		}
-
-		ensureAlways(tableData.ProcessTagPathRow(Row, RowNumber, OutMessages) == EBIMResult::Success);
 	});
 
 	processor.AddRule(kPreset, [&OutMessages, &OutStarters, &tableData, &ManifestFile, this](const TArray<const TCHAR*> &Row, int32 RowNumber)

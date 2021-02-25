@@ -55,16 +55,6 @@ enum class ECSVMatrixNames : uint8
 	Error = 255
 };
 
-UENUM()
-enum class EMaterialChannelFields : uint8
-{
-	AppliesToChannel,
-	InnerMaterial,
-	SurfaceMaterial,
-	ColorTint,
-	ColorTintVariation,
-	Error=255
-};
 
 struct MODUMATE_API FBIMCSVReader
 {

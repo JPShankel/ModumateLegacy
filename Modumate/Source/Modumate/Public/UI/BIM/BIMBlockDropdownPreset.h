@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "BIMKernel/Core/BIMKey.h"
-#include "BIMKernel/Core/BIMProperties.h"
+#include "BIMKernel/Presets/BIMPresetTypeDefinition.h"
 
 #include "BIMBlockDropdownPreset.generated.h"
 
@@ -38,9 +38,7 @@ protected:
 
 	FVector2D DropdownOffset = FVector2D::ZeroVector;
 	FGuid PresetGUID;
-	FString HexValue;
-	EBIMValueScope SwapScope = EBIMValueScope::None;
-	FBIMNameType SwapNameType = NAME_None;
+	FBIMPresetFormElement FormElement;
 
 public:
 
@@ -62,6 +60,6 @@ public:
 	UFUNCTION()
 	void OnButtonSwapReleased();
 
-	void BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FGuid& InPresetID, const FVector2D& InDropdownOffset);
-	void BuildDropdownFromColor(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const FString& InHex, const FVector2D& InDropdownOffset);
+	void BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const FBIMPresetFormElement& InFormElement, const FVector2D& InDropdownOffset);
+	void BuildDropdownFromColor(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const FBIMPresetFormElement& InFormElement, const FVector2D& InDropdownOffset);
 };

@@ -115,40 +115,25 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FGuid& PresetKey, bool AddToHistor
 			TextGUID->SetText(FText::FromString(preset->GUID.ToString()));
 			TextBIMKey->SetText(FText::FromString(PresetKey.ToString()));
 
-			TMap<FString, FBIMNameType> properties;
-			controller->GetDocument()->GetPresetCollection().GetPropertyFormForPreset(PresetKey, properties);
+			FBIMPresetForm propertyForm;
+			if (preset->GetForm(propertyForm) != EBIMResult::Success)
+			{
+				return EBIMResult::Error;
+			}
 
-			for (auto& kvp : properties)
+			for (auto& element : propertyForm.Elements)
 			{
 				UBIMDebugPresetListItemObj* newPresetObj = NewObject<UBIMDebugPresetListItemObj>(this);
-
-				// Get this property scope, name, and value
-				FBIMPropertyKey propertyValue(kvp.Value);
-				FGuid propertyPresetKey;
-				FModumateUnitValue unitValue;
-				bool bPropertyIsPreset = preset->Properties.TryGetProperty(propertyValue.Scope, propertyValue.Name, propertyPresetKey);
-				if (!bPropertyIsPreset)
-				{
-					preset->Properties.TryGetProperty(propertyValue.Scope, propertyValue.Name, unitValue);
-				}
-
-				// Convert value into string
-				FString stringValue;
-				if (bPropertyIsPreset)
-				{
-					stringValue = propertyPresetKey.ToString();
-				}
-				else
-				{
-					TArray<int32> imperialsInches;
-					UModumateDimensionStatics::CentimetersToImperialInches(unitValue.AsWorldCentimeters(), imperialsInches);
-					stringValue = UModumateDimensionStatics::ImperialInchesToDimensionStringText(imperialsInches).ToString();
-				}
-
 				// Build new item
-				FString itemNameString = propertyValue.QN().ToString() + FString::Printf(TEXT(": ")) + stringValue;
+				FString itemNameString = element.DisplayName.ToString() + TEXT(": ") + element.StringRepresentation;
+
+				bool bPropertyIsPreset = element.FieldType == EBIMPresetEditorField::AssetProperty;
+
 				newPresetObj->DisplayName = FText::FromString(itemNameString);
-				newPresetObj->PresetKey = propertyPresetKey;
+
+				// TODO: preset keys in form elements for debugging, disable for now
+				newPresetObj->PresetKey = FGuid();// propertyPresetKey;
+
 				newPresetObj->bItemIsPreset = bPropertyIsPreset;
 				newPresetObj->bIsFromHistoryMenu = false;
 				newPresetObj->ParentDebugger = this;
@@ -160,11 +145,11 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FGuid& PresetKey, bool AddToHistor
 			preset->MyTagPath.ToString(tagPathString);
 
 			FString otherDebugString =
-				FString::Printf(TEXT("SourceFile: ")) + preset->DEBUG_SourceFile + LINE_TERMINATOR
-				+ FString::Printf(TEXT("SourceRow: ")) + FString::FromInt(preset->DEBUG_SourceRow) + LINE_TERMINATOR
-				+ FString::Printf(TEXT("SlotConfigPresetID: ")) + preset->SlotConfigPresetGUID.ToString() + LINE_TERMINATOR
-				+ FString::Printf(TEXT("CategoryTitle: ")) + preset->CategoryTitle.ToString() + LINE_TERMINATOR
-				+ FString::Printf(TEXT("MyTagPath: ")) + tagPathString + LINE_TERMINATOR;
+				TEXT("SourceFile: ") + preset->DEBUG_SourceFile + LINE_TERMINATOR
+				+ TEXT("SourceRow: ") + FString::FromInt(preset->DEBUG_SourceRow) + LINE_TERMINATOR
+				+ TEXT("SlotConfigPresetID: ") + preset->SlotConfigPresetGUID.ToString() + LINE_TERMINATOR
+				+ TEXT("CategoryTitle: ") + preset->CategoryTitle.ToString() + LINE_TERMINATOR
+				+ TEXT("MyTagPath: ") + tagPathString + LINE_TERMINATOR;
 
 			TextOtherInfo->SetText(FText::FromString(otherDebugString));
 

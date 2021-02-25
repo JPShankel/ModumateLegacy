@@ -83,13 +83,12 @@ void UBIMEditColorPicker::OnHexTextBoxCommitted(const FText& Text, ETextCommit::
 	}
 }
 
-void UBIMEditColorPicker::BuildColorPicker(class UBIMDesigner* OuterBIMDesigner, const FName& InOwnerNodeID, const EBIMValueScope& InScope, const FBIMNameType& InNameType, const FString& InColorBIMKey, const FVector2D& InDropdownOffset)
+void UBIMEditColorPicker::BuildColorPicker(class UBIMDesigner* OuterBIMDesigner, const FName& InOwnerNodeID, const FBIMPresetFormElement& InFormElement, const FVector2D& InDropdownOffset)
 {
 	ParentBIMDesigner = OuterBIMDesigner;
 	OwnerNodeID = InOwnerNodeID;
-	SwapScope = InScope;
-	SwapNameType = InNameType;
-	CurrentColorHex = InColorBIMKey;
+	FormElement = InFormElement;
+	CurrentColorHex = FormElement.StringRepresentation;
 	DropdownOffset = InDropdownOffset;
 
 	// Convert color key from hex
@@ -202,7 +201,8 @@ void UBIMEditColorPicker::UpdateCurrentHSV(const FLinearColor& InCurrentHSV)
 void UBIMEditColorPicker::UpdateParentNodeProperty()
 {
 	FColor readColor = CurrentHSV.HSVToLinearRGB().ToFColor(true);
-	ParentBIMDesigner->SetNodeProperty(OwnerNodeID, SwapScope, SwapNameType, readColor.ToHex());
+	FormElement.StringRepresentation = readColor.ToHex();
+	ParentBIMDesigner->ApplyBIMFormElement(OwnerNodeID, FormElement);
 
 	// Reopen color picker after BIM Designer update from SetNodeProperty
 	UpdateColorPicker();

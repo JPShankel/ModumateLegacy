@@ -71,7 +71,7 @@ public:
 	TArray<FString> VisibleNamedDimensions;
 	bool bWantAddButton = false;
 
-	EBIMResult GetPropertyForm(TMap<FString, FBIMNameType>& OutForm) const;
+	EBIMResult GetPresetForm(FBIMPresetForm& OutForm) const;
 
 	FBIMEditorNodeIDType GetInstanceID() const;
 

@@ -14,7 +14,7 @@
 #include "UI/BIM/BIMBlockAddLayer.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
-#include "BIMKernel/Presets/BIMPresetDelta.h"
+#include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Components/Sizebox.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
@@ -773,26 +773,24 @@ bool UBIMDesigner::AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const
 	return true;
 }
 
-bool UBIMDesigner::SetNodeProperty(const FBIMEditorNodeIDType& NodeID, const EBIMValueScope &Scope, const FBIMNameType &NameType, const FString &Value)
+bool UBIMDesigner::ApplyBIMFormElement(const FBIMEditorNodeIDType& NodeID, const FBIMPresetFormElement& FormElement)
 {
 	FBIMPresetEditorNodeSharedPtr instPtr = InstancePool.InstanceFromID(NodeID);
 	if (!instPtr.IsValid())
 	{
 		return false;
 	}
-	// TODO: Need property form system, for now check on EBIMValueScope::Dimension
-	if (Scope == EBIMValueScope::Dimension)
+
+	// TODO: return delta added to undo/redo stack
+	FBIMPresetEditorDelta delta;
+	if (ensureAlways(instPtr->WorkingPresetCopy.MakeDeltaForFormElement(FormElement, delta) == EBIMResult::Success))
 	{
-		FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(Value);
-		instPtr->WorkingPresetCopy.Properties.SetProperty(Scope, NameType, dim.Centimeters);
-	}
-	else
-	{
-		instPtr->WorkingPresetCopy.Properties.SetProperty(Scope, NameType, Value);
+		instPtr->WorkingPresetCopy.ApplyDelta(delta);
 	}
 
 	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
+
 	return true;
 }
 
