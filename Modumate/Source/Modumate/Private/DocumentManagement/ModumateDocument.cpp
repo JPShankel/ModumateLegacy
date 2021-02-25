@@ -1609,13 +1609,10 @@ bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 	break;
 	case EGraph3DObjectType::Face:
 	{
+		TArray<int32> tempAddedFaces;
 		if (numPoints >= 3)
 		{
-			bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(points, deltas, NextID, id, TSet<int32>(), bSplitAndUpdateFaces);
-			if (!bValidDelta && (id != MOD_ID_NONE))
-			{
-				OutAddedFaceIDs.Add(id);
-			}
+			bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(points, deltas, NextID, tempAddedFaces, TSet<int32>(), bSplitAndUpdateFaces);
 		}
 	}
 	break;
@@ -1678,16 +1675,11 @@ bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 	return bValidDelta;
 }
 
-bool UModumateDocument::PasteMetaObjects(const FGraph3DRecord* InRecord, TArray<FDeltaPtr>& OutDeltaPtrs, const FVector& Offset, bool bIsPreview)
+bool UModumateDocument::PasteMetaObjects(const FGraph3DRecord* InRecord, TArray<FDeltaPtr>& OutDeltaPtrs, TMap<int32, TArray<int32>>& OutCopiedToPastedIDs, const FVector &Offset, bool bIsPreview)
 {
-	// TODO: either have CopiedToPastedIDs as output or generalize to handle other types of objects in here
-
-	// TODO: CopedToPastedIDs should be TMap<int32, TArray<int32>> to handle split objects
-	TMap<int32, int32> CopiedToPastedIDs;
-
 	// TODO: potentially make this function a bool
 	TArray<FGraph3DDelta> OutDeltas;
-	TempVolumeGraph.GetDeltasForPaste(InRecord, Offset, NextID, CopiedToPastedIDs, OutDeltas, bIsPreview);
+	TempVolumeGraph.GetDeltasForPaste(InRecord, Offset, NextID, OutDeltas, OutCopiedToPastedIDs, bIsPreview);
 
 	TArray<int32> OutVertices, OutEdges, OutFaces;
 	if (!FinalizeGraphDeltas(OutDeltas, OutDeltaPtrs, OutVertices, OutEdges, OutFaces))

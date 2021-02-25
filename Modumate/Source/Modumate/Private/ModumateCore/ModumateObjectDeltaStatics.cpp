@@ -203,8 +203,87 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 
 void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs, UModumateDocument* doc, FMOIDocumentRecord* OutRecord)
 {
+	TSet<int32> volumeGraphIDs;
+	TSet<int32> separatorIDs;
+
 	auto& graph = doc->GetVolumeGraph(); 
-	graph.SaveSubset(InObjectIDs, &OutRecord->VolumeGraph);
+
+	for (int32 id : InObjectIDs)
+	{
+		auto moi = doc->GetObjectById(id);
+		Modumate::EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(moi->GetObjectType());
+		if (!ensureAlways(moi != nullptr))
+		{
+			continue;
+		}
+
+		if (auto graphObject = graph.FindObject(id))
+		{
+			volumeGraphIDs.Add(id);
+		}
+		else if (auto parentGraphObject = graph.FindObject(moi->GetParentID()))
+		{
+			volumeGraphIDs.Add(parentGraphObject->ID);
+			separatorIDs.Add(moi->ID);
+		}
+	}
+
+	graph.SaveSubset(volumeGraphIDs, &OutRecord->VolumeGraph);
+
+	for (int32 separatorID : separatorIDs)
+	{
+		auto obj = doc->GetObjectById(separatorID);
+
+		FMOIStateData& stateData = obj->GetStateData();
+		stateData.CustomData.SaveJsonFromCbor();
+		OutRecord->ObjectData.Add(stateData);
+	}
 
 	// TODO: save other types of objects
+}
+
+bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecord, const FVector &InOffset, UModumateDocument* doc, UWorld* World, bool bIsPreview)
+{
+	TMap<int32, TArray<int32>> copiedToPastedObjIDs;
+
+	TArray<FDeltaPtr> OutDeltas;
+	if (!doc->PasteMetaObjects(&InRecord->VolumeGraph, OutDeltas, copiedToPastedObjIDs, InOffset, bIsPreview))
+	{
+		return false;
+	}
+
+	int32 nextID = doc->GetNextAvailableID();
+
+	auto separatorDelta = MakeShared<FMOIDelta>();
+	for(auto & objRec : InRecord->ObjectData)
+	{
+		if (!copiedToPastedObjIDs.Contains(objRec.ParentID))
+		{
+			continue;
+		}
+
+		for (int32 parentID : copiedToPastedObjIDs[objRec.ParentID])
+		{
+			FMOIStateData stateData;
+			stateData.ID = nextID++;
+
+			stateData.ObjectType = objRec.ObjectType;
+			stateData.ParentID = parentID;
+			stateData.AssemblyGUID = objRec.AssemblyGUID;
+			stateData.CustomData = objRec.CustomData;
+
+			separatorDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+
+			auto& pastedIDs = copiedToPastedObjIDs.FindOrAdd(objRec.ID);
+			pastedIDs.Add(stateData.ID);
+		}
+	}
+
+	OutDeltas.Add(separatorDelta);
+
+	bIsPreview ? 
+		doc->ApplyPreviewDeltas(OutDeltas, World) :
+		doc->ApplyDeltas(OutDeltas, World);
+
+	return true;
 }

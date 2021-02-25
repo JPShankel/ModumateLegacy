@@ -64,8 +64,8 @@ bool ACreateRoofFacesHandle::BeginUse()
 			int32 numPolyVerts = (vertIdxEnd - vertIdxStart) + 1;
 			TArray<FVector> polyVerts(combinedPolyVertsPtr + vertIdxStart, numPolyVerts);
 
-			int32 existingFaceID;
-			bool bAddedFace = tempVolumeGraph.GetDeltaForFaceAddition(polyVerts, graphDeltas, nextID, existingFaceID, groupIDs);
+			TArray<int32> addedFaceIDs;
+			bool bAddedFace = tempVolumeGraph.GetDeltaForFaceAddition(polyVerts, graphDeltas, nextID, addedFaceIDs, groupIDs);
 			bAnyFaceFailure = bAnyFaceFailure || !bAddedFace;
 
 			vertIdxStart = vertIdxEnd + 1;

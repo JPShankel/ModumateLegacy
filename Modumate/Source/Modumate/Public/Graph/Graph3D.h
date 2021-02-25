@@ -103,8 +103,8 @@ namespace Modumate
 		void Load(const FGraph3DRecord* InGraph3DRecord);
 		void Save(FGraph3DRecord* OutGraph3DRecord);
 
-		void SaveSubset(const TArray<int32> InObjectIDs, FGraph3DRecord* OutGraph3DRecord) const;
-		void GetDeltasForPaste(const FGraph3DRecord* InGraph3DRecord, const FVector& InOffset, int32 &NextID, TMap<int32, int32> CopiedToPastedIDs, TArray<FGraph3DDelta>& OutDeltas, bool bIsPreview);
+		void SaveSubset(const TSet<int32> InObjectIDs, FGraph3DRecord* OutGraph3DRecord) const;
+		void GetDeltasForPaste(const FGraph3DRecord* InGraph3DRecord, const FVector& InOffset, int32 &NextID, TArray<FGraph3DDelta>& OutDeltas, TMap<int32, TArray<int32>>& OutCopiedToPastedIDs, bool bIsPreview);
 
 		bool Validate();
 
@@ -151,9 +151,9 @@ namespace Modumate
 
 	// object addition
 	public:
-		bool GetDeltaForVertexAddition(const FVector &VertexPos, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID);
+		bool GetDeltaForVertexAddition(const FVector &VertexPos, FGraph3DDelta &OutDelta, int32 &NextID, int32 &OutVertexID);
 		bool GetDeltaForEdgeAdditionWithSplit(const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs, bool bCheckFaces = false, bool bSplitAndUpdateEdges = true);
-		bool GetDeltaForFaceAddition(const TArray<FVector>& VertexPositions, TArray<FGraph3DDelta>& OutDeltas, int32& NextID, int32& ExistingID, const TSet<int32>& InGroupIDs = TSet<int32>(), bool bSplitAndUpdateFaces = true);
+		bool GetDeltaForFaceAddition(const TArray<FVector>& VertexPositions, TArray<FGraph3DDelta>& OutDeltas, int32& NextID, TArray<int32> &OutFaceIDs, const TSet<int32>& InGroupIDs = TSet<int32>(), bool bSplitAndUpdateFaces = true);
 
 	private:
 		bool GetDeltaForEdgeAddition(const FGraphVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> &ParentIDs = TArray<int32>());
@@ -191,7 +191,7 @@ namespace Modumate
 		bool GetDeltaForMultipleEdgeAdditions(const FGraphVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, const TArray<int32> &ParentIDs = TArray<int32>());
 		bool GetDeltaForEdgeAdditionWithSplit(const FGraphVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs);
 
-		bool GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, const TArray<int32>& EdgeIDs, const TArray<int32>& FaceIDs, const TArray<FPlane>& InPlanes = TArray<FPlane>(), bool bAddNewFaces = true);
+		bool GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, TArray<int32> &OutAddedFaceIDs, int32 &NextID, const TArray<int32>& EdgeIDs, const TArray<int32>& FaceIDs, const TArray<FPlane>& InPlanes = TArray<FPlane>(), bool bAddNewFaces = true);
 
 		// provides deltas for splitting edges and adjusting faces after a graph operation
 		bool GetDeltasForEdgeSplits(TArray<FGraph3DDelta> &OutDeltas, TArray<int32> &AddedEdgeIDs, int32 &NextID);

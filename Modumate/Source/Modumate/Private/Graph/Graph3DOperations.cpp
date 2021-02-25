@@ -9,25 +9,25 @@
 
 namespace Modumate
 {
-	bool FGraph3D::GetDeltaForVertexAddition(const FVector &VertexPos, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID)
+	bool FGraph3D::GetDeltaForVertexAddition(const FVector &VertexPos, FGraph3DDelta &OutDelta, int32 &NextID, int32 &OutVertexID)
 	{
 		const FGraph3DVertex *existingVertex = FindVertex(VertexPos);
 		int32 existingDeltaVertexID = OutDelta.FindAddedVertex(VertexPos);
 
 		if (existingVertex)
 		{
-			ExistingID = existingVertex->ID;
+			OutVertexID = existingVertex->ID;
 			return false;
 		}
 		else if (existingDeltaVertexID != MOD_ID_NONE)
 		{
-			ExistingID = existingDeltaVertexID;
+			OutVertexID = existingDeltaVertexID;
 			return false;
 		}
 		else
 		{
-			int32 addedVertexID = NextID++;
-			OutDelta.VertexAdditions.Add(addedVertexID, VertexPos);
+			OutVertexID = NextID++;
+			OutDelta.VertexAdditions.Add(OutVertexID, VertexPos);
 			return true;
 		}
 	}
@@ -168,7 +168,8 @@ namespace Modumate
 		}
 
 		TArray<FGraph3DDelta> updateFaceDeltas;
-		if (GetDeltasForUpdateFaces(updateFaceDeltas, NextID, newEdges.Array(), connectedFaceIDs.Array(), {}, false))
+		TArray<int32> addedFaceIDs;
+		if (GetDeltasForUpdateFaces(updateFaceDeltas, addedFaceIDs, NextID, newEdges.Array(), connectedFaceIDs.Array(), {}, false))
 		{
 			OutDeltas.Append(updateFaceDeltas);
 		}
@@ -328,7 +329,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, const TArray<int32>& EdgeIDs, const TArray<int32>& FaceIDs, const TArray<FPlane>& InPlanes, bool bAddNewFaces)
+	bool FGraph3D::GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, TArray<int32> &OutAddedFaceIDs, int32 &NextID, const TArray<int32>& EdgeIDs, const TArray<int32>& FaceIDs, const TArray<FPlane>& InPlanes, bool bAddNewFaces)
 	{
 		int32 existingID;
 
@@ -479,6 +480,11 @@ namespace Modumate
 			if (!oldFaces.Contains(faceID))
 			{
 				updateContainmentFaceIDs.Add(faceID);
+			}
+			else
+			{
+				OutAddedFaceIDs.Remove(faceID);
+				OutAddedFaceIDs.Append(oldToNewFaceIDs[faceID]);
 			}
 		}
 
@@ -638,6 +644,10 @@ namespace Modumate
 				}
 				return false;
 			}
+			else if (existingID != MOD_ID_NONE)
+			{
+				OutEdgeIDs = { existingID };
+			}
 			OutDeltas.Add(edgeDelta);
 		}
 		else
@@ -655,7 +665,8 @@ namespace Modumate
 			if (bCheckFaces)
 			{
 				TArray<FGraph3DDelta> updateFaceDeltas;
-				if (GetDeltasForUpdateFaces(updateFaceDeltas, NextID, OutEdgeIDs, {}))
+				TArray<int32> addedFaceIDs;
+				if (GetDeltasForUpdateFaces(updateFaceDeltas, addedFaceIDs, NextID, OutEdgeIDs, {}))
 				{
 					OutDeltas.Append(updateFaceDeltas);
 				}
@@ -724,7 +735,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltaForFaceAddition(const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, int32 &ExistingID, const TSet<int32> &InGroupIDs, bool bSplitAndUpdateFaces)
+	bool FGraph3D::GetDeltaForFaceAddition(const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutFaceIDs, const TSet<int32> &InGroupIDs, bool bSplitAndUpdateFaces)
 	{
 		TArray<int32> newVertices;
 		FGraph3DDelta OutDelta;
@@ -732,6 +743,7 @@ namespace Modumate
 
 		TArray<int32> sharedEdgeIDs;
 
+		int32 ExistingID;
 		int32 addedFaceID;
 		TArray<int32> parentIds = { MOD_ID_NONE };
 		TMap<int32, int32> edgeMap;
@@ -750,6 +762,7 @@ namespace Modumate
 		}
 
 		OutDeltas.Add(OutDelta);
+		OutFaceIDs = { addedFaceID };
 
 		if (!bSplitAndUpdateFaces)
 		{
@@ -804,7 +817,7 @@ namespace Modumate
 			planeConstraints.Add(planeConstraint);
 		}
 		TArray<FGraph3DDelta> updateFaceDeltas;
-		if (GetDeltasForUpdateFaces(updateFaceDeltas, NextID, newFaceEdgesArray, { addedFaceID }, planeConstraints, false))
+		if (GetDeltasForUpdateFaces(updateFaceDeltas, OutFaceIDs, NextID, newFaceEdgesArray, { addedFaceID }, planeConstraints, false))
 		{
 			OutDeltas.Append(updateFaceDeltas);
 		}

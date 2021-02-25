@@ -17,4 +17,6 @@ public:
 	static bool MoveTransformableIDs(const TMap<int32, FTransform>& ObjectMovements, UModumateDocument *doc, UWorld *World, bool bIsPreview);
 
 	static void SaveSelection(const TArray<int32>& InObjectIDs, UModumateDocument* doc, FMOIDocumentRecord* OutRecord);
+
+	static bool PasteObjects(const FMOIDocumentRecord* InRecord, const FVector& InOffset, UModumateDocument* doc, UWorld* World, bool bIsPreview);
 };

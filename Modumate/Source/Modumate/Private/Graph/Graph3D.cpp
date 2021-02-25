@@ -1530,7 +1530,7 @@ namespace Modumate
 		}
 	}
 
-	void FGraph3D::SaveSubset(const TArray<int32> InObjectIDs, FGraph3DRecord* OutGraph3DRecord) const
+	void FGraph3D::SaveSubset(const TSet<int32> InObjectIDs, FGraph3DRecord* OutGraph3DRecord) const
 	{
 		OutGraph3DRecord->Vertices.Reset();
 		OutGraph3DRecord->Edges.Reset();
@@ -1582,20 +1582,15 @@ namespace Modumate
 		}
 	}
 
-	void FGraph3D::GetDeltasForPaste(const FGraph3DRecord* InGraph3DRecord, const FVector& InOffset, int32 &NextID, TMap<int32, int32> CopiedToPastedIDs, TArray<FGraph3DDelta>& OutDeltas, bool bIsPreview)
+	void FGraph3D::GetDeltasForPaste(const FGraph3DRecord* InGraph3DRecord, const FVector& InOffset, int32 &NextID, TArray<FGraph3DDelta>& OutDeltas, TMap<int32, TArray<int32>>& OutCopiedToPastedIDs, bool bIsPreview)
 	{
 		FGraph3DDelta vertexDelta;
+		TSet<int32> addedVertices;
 		for (auto& kvp : InGraph3DRecord->Vertices)
 		{
-			int32 existingID;
-			if (GetDeltaForVertexAddition(kvp.Value.Position + InOffset, vertexDelta, NextID, existingID))
-			{
-				CopiedToPastedIDs.Add(kvp.Key, NextID - 1);
-			}
-			else
-			{
-				CopiedToPastedIDs.Add(kvp.Key, existingID);
-			}
+			int32 outVertexID;
+			GetDeltaForVertexAddition(kvp.Value.Position + InOffset, vertexDelta, NextID, outVertexID);
+			OutCopiedToPastedIDs.Add(kvp.Key, { outVertexID });
 		}
 		ApplyDelta(vertexDelta);
 
@@ -1608,42 +1603,42 @@ namespace Modumate
 			faceDeltas.Reset();
 			positions.Reset();
 
-			int32 existingID;
+			TArray<int32> addedFaceIDs;
 			for (int32 id : kvp.Value.VertexIDs)
 			{
-				int32 originalID = CopiedToPastedIDs[id];
+				int32 originalID = OutCopiedToPastedIDs[id][0];
 				positions.Add(FindVertex(originalID)->Position);
 			}
 
-			if (GetDeltaForFaceAddition(positions, faceDeltas, NextID, existingID, TSet<int32>(), !bIsPreview))
+			if (GetDeltaForFaceAddition(positions, faceDeltas, NextID, addedFaceIDs, TSet<int32>(), !bIsPreview))
 			{
+				OutCopiedToPastedIDs.Add(kvp.Key, addedFaceIDs);
 				OutDeltas.Append(faceDeltas);
 			}
 		}
 
 		for (auto& kvp : InGraph3DRecord->Edges)
 		{
-			if (CopiedToPastedIDs.Contains(kvp.Key))
+			if (OutCopiedToPastedIDs.Contains(kvp.Key))
 			{
 				continue;
 			}
 
 			TArray<FGraph3DDelta> edgeDeltas;
 			TArray<int32> addedEdgeIDs;
-			int32 startVertexID = CopiedToPastedIDs[kvp.Value.StartVertexID];
-			int32 endVertexID = CopiedToPastedIDs[kvp.Value.EndVertexID];
+			int32 startVertexID = OutCopiedToPastedIDs[kvp.Value.StartVertexID][0];
+			int32 endVertexID = OutCopiedToPastedIDs[kvp.Value.EndVertexID][0];
 			FVector startPosition = FindVertex(startVertexID)->Position;
 			FVector endPosition = FindVertex(endVertexID)->Position;
 			bool bOutSameDirection = false;
 			if (auto edge = FindEdgeByVertices(startVertexID, endVertexID, bOutSameDirection))
 			{
-				CopiedToPastedIDs.Add(kvp.Key, edge->ID);
+				OutCopiedToPastedIDs.Add(kvp.Key, { edge->ID });
 			}
 			else if (GetDeltaForEdgeAdditionWithSplit(startPosition, endPosition,
 				edgeDeltas, NextID, addedEdgeIDs, false, !bIsPreview))
 			{
-				// TODO: fails if edge is split, also addedEdgeIDs may not be populated
-				CopiedToPastedIDs.Add(kvp.Key, addedEdgeIDs.Num() == 0 ? 0 : addedEdgeIDs[0]);
+				OutCopiedToPastedIDs.Add(kvp.Key, addedEdgeIDs);
 
 				OutDeltas.Append(edgeDeltas);
 			}

@@ -84,9 +84,7 @@ bool UPasteTool::FrameUpdate()
 		
 	GameState->Document->StartPreviewing();
 
-	GameState->Document->PasteMetaObjects(&CurrentRecord.VolumeGraph, CurDeltas, currentOffset, true);
-
-	GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
+	FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, currentOffset, GameState->Document, GetWorld(), true);
 
 	return true;
 }
@@ -101,11 +99,7 @@ bool UPasteTool::EnterNextStage()
 
 	CurDeltas.Reset();
 	GameState->Document->ClearPreviewDeltas(GetWorld());
-	if (!GameState->Document->PasteMetaObjects(&CurrentRecord.VolumeGraph, CurDeltas, currentOffset, false))
-	{
-		return false;
-	}
-	GameState->Document->ApplyDeltas(CurDeltas, GetWorld());
+	FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, currentOffset, GameState->Document, GetWorld(), false);
 
 	return true;
 }
