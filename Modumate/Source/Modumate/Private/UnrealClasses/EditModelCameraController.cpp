@@ -28,6 +28,7 @@ UEditModelCameraController::UEditModelCameraController(const FObjectInitializer&
 	, ZoomPercentSpeed(0.2f)
 	, ZoomMinStepDist(10.0f)
 	, ZoomMinDistance(20.0f)
+	, bEnforceFreeZoomMinDist(false)
 	, ZoomMaxTotalDistance(525600.0f)
 	, OrbitMovementLerpCurve(nullptr)
 	, OrbitMaxPitch(90.0f)
@@ -580,17 +581,20 @@ void UEditModelCameraController::OnZoom(float ZoomSign)
 		// Accumulate the free zoom target delta
 		FVector newZoomDelta = FreeZoomDeltaAccumulated - (zoomDistDelta * dirToTarget);
 
-		// But don't zoom closer than ZoomMinDistance to the target if we're zooming in
-		const FVector accumulatedGoalPos = origin + newZoomDelta;
-		const FVector accumulatedDeltaFromTarget = target - accumulatedGoalPos;
-		const float accumulatedDistFromTarget = accumulatedDeltaFromTarget | dirToTarget;
-		if ((accumulatedDistFromTarget < ZoomMinDistance) && (ZoomSign < 0.0f))
+		// But don't zoom closer than ZoomMinDistance to the target if we're zooming in and it's enforced during free-zooming
+		if (bEnforceFreeZoomMinDist)
 		{
-			newZoomDelta = (target - ZoomMinDistance * dirToTarget) - origin;
-			float newZoomForwardDist = newZoomDelta | dirToTarget;
-			if (newZoomForwardDist < 0.0f)
+			const FVector accumulatedGoalPos = origin + newZoomDelta;
+			const FVector accumulatedDeltaFromTarget = target - accumulatedGoalPos;
+			const float accumulatedDistFromTarget = accumulatedDeltaFromTarget | dirToTarget;
+			if ((accumulatedDistFromTarget < ZoomMinDistance) && (ZoomSign < 0.0f))
 			{
-				newZoomDelta = FVector::ZeroVector;
+				newZoomDelta = (target - ZoomMinDistance * dirToTarget) - origin;
+				float newZoomForwardDist = newZoomDelta | dirToTarget;
+				if (newZoomForwardDist < 0.0f)
+				{
+					newZoomDelta = FVector::ZeroVector;
+				}
 			}
 		}
 
