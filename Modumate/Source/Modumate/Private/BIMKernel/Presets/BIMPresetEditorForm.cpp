@@ -3,9 +3,9 @@
 #include "BIMKernel/Presets/BIMPresetEditorForm.h"
 
 
-bool FBIMPresetForm::Matches(const FBIMPresetForm& OtherForm) const
+bool FBIMPresetForm::operator==(const FBIMPresetForm& RHS) const
 {
-	if (Elements.Num() != OtherForm.Elements.Num())
+	if (Elements.Num() != RHS.Elements.Num())
 	{
 		return false;
 	}
@@ -13,7 +13,7 @@ bool FBIMPresetForm::Matches(const FBIMPresetForm& OtherForm) const
 	for (int32 i = 0; i < Elements.Num(); ++i)
 	{
 		const auto& elem1 = Elements[i];
-		const auto& elem2 = OtherForm.Elements[i];
+		const auto& elem2 = RHS.Elements[i];
 		if (!elem1.DisplayName.EqualTo(elem2.DisplayName))
 		{
 			return false;
@@ -36,6 +36,11 @@ bool FBIMPresetForm::Matches(const FBIMPresetForm& OtherForm) const
 	}
 
 	return true;
+}
+
+bool FBIMPresetForm::operator!=(const FBIMPresetForm& RHS) const
+{
+	return !(*this == RHS);
 }
 
 EBIMResult FBIMPresetForm::AddPropertyElement(const FText& DisplayName, const FName& FieldName, EBIMPresetEditorField FieldType)

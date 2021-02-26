@@ -194,5 +194,6 @@ struct MODUMATE_API FBIMPresetInstance
 
 	bool ValidatePreset() const;
 
-	bool Matches(const FBIMPresetInstance& OtherPreset) const;
+	bool operator==(const FBIMPresetInstance& RHS) const;
+	bool operator!=(const FBIMPresetInstance& RHS) const;
 };

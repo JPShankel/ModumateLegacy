@@ -13,51 +13,51 @@ bool FBIMPresetPinAttachment::operator==(const FBIMPresetPinAttachment &OtherAtt
 		PresetGUID == OtherAttachment.PresetGUID;
 }
 
-bool FBIMPresetInstance::Matches(const FBIMPresetInstance &OtherPreset) const
+bool FBIMPresetInstance::operator==(const FBIMPresetInstance &RHS) const
 {
-	if (NodeType != OtherPreset.NodeType)
+	if (NodeType != RHS.NodeType)
 	{
 		return false;
 	}
 
-	if (GUID != OtherPreset.GUID)
+	if (GUID != RHS.GUID)
 	{
 		return false;
 	}
 
-	if (PartSlots.Num() != OtherPreset.PartSlots.Num())
+	if (PartSlots.Num() != RHS.PartSlots.Num())
 	{
 		return false;
 	}
 
-	if (ChildPresets.Num() != OtherPreset.ChildPresets.Num())
+	if (ChildPresets.Num() != RHS.ChildPresets.Num())
 	{
 		return false;
 	}
 
-	if (ParentTagPaths.Num() != OtherPreset.ParentTagPaths.Num())
+	if (ParentTagPaths.Num() != RHS.ParentTagPaths.Num())
 	{
 		return false;
 	}
 
-	if (SlotConfigPresetGUID != OtherPreset.SlotConfigPresetGUID)
+	if (SlotConfigPresetGUID != RHS.SlotConfigPresetGUID)
 	{
 		return false;
 	}
 
-	if (MyTagPath != OtherPreset.MyTagPath)
+	if (MyTagPath != RHS.MyTagPath)
 	{
 		return false;
 	}
 
-	if (!Properties.Matches(OtherPreset.Properties))
+	if (Properties != RHS.Properties)
 	{
 		return false;
 	}
 
 	for (int32 i=0;i<PartSlots.Num();++i)
 	{
-		if (OtherPreset.PartSlots[i] != PartSlots[i])
+		if (RHS.PartSlots[i] != PartSlots[i])
 		{
 			return false;
 		}
@@ -65,7 +65,7 @@ bool FBIMPresetInstance::Matches(const FBIMPresetInstance &OtherPreset) const
 
 	for (auto& cp : ChildPresets)
 	{
-		if (!OtherPreset.ChildPresets.Contains(cp))
+		if (!RHS.ChildPresets.Contains(cp))
 		{
 			return false;
 		}
@@ -73,18 +73,23 @@ bool FBIMPresetInstance::Matches(const FBIMPresetInstance &OtherPreset) const
 
 	for (auto &ptp : ParentTagPaths)
 	{
-		if (!OtherPreset.ParentTagPaths.Contains(ptp))
+		if (!RHS.ParentTagPaths.Contains(ptp))
 		{
 			return false;
 		}
 	}
 
-	if (MaterialChannelBindings != OtherPreset.MaterialChannelBindings)
+	if (MaterialChannelBindings != RHS.MaterialChannelBindings)
 	{
 		return false;
 	}
 
 	return true;
+}
+
+bool FBIMPresetInstance::operator!=(const FBIMPresetInstance& RHS) const
+{
+	return !(*this == RHS);
 }
 
 EBIMResult FBIMPresetInstance::SortChildPresets()

@@ -48,8 +48,6 @@ struct MODUMATE_API FBIMPresetCollection
 
 	EBIMResult PostLoad();
 
-	bool Matches(const FBIMPresetCollection& OtherCollection) const;
-
 	EObjectType GetPresetObjectType(const FGuid& PresetID) const;
 
 	EBIMResult GetNCPForPreset(const FGuid& InPresetID, FBIMTagPath& OutNCP) const;
@@ -84,4 +82,6 @@ struct MODUMATE_API FBIMPresetCollection
 	bool SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord) const;
 	bool ReadPresetsFromDocRecord(const FModumateDatabase& InDB, const FMOIDocumentRecord& DocRecord);
 
+	bool operator==(const FBIMPresetCollection& RHS) const;
+	bool operator!=(const FBIMPresetCollection& RHS) const;
 };

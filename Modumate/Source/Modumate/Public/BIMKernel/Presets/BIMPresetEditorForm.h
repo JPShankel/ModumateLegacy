@@ -96,5 +96,6 @@ struct MODUMATE_API FBIMPresetForm
 	EBIMResult AddPropertyElement(const FText& DisplayName, const FName& FieldName, EBIMPresetEditorField FieldType);
 	EBIMResult AddMaterialBindingElement(const FText& DisplayName, const FName& ChannelName, EMaterialChannelFields MaterialSubField);
 
-	bool Matches(const FBIMPresetForm& OtherForm) const;
+	bool operator==(const FBIMPresetForm& RHS) const;
+	bool operator!=(const FBIMPresetForm& RHS) const;
 };

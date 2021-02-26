@@ -49,7 +49,8 @@ struct MODUMATE_API FBIMPresetNodePinSet
 	FBIMPresetNodePinSet(FName InSetName, int32 InMinCount, int32 InMaxCount);
 	FBIMPresetNodePinSet();
 
-	bool Matches(const FBIMPresetNodePinSet& OtherPinSet) const;
+	bool operator==(const FBIMPresetNodePinSet& RHS) const;
+	bool operator!=(const FBIMPresetNodePinSet& RHS) const;
 };
 
 /*
@@ -85,5 +86,6 @@ struct MODUMATE_API FBIMPresetTypeDefinition
 	UPROPERTY()
 	FBIMPropertySheet Properties;
 
-	bool Matches(const FBIMPresetTypeDefinition& OtherDefinition) const;
+	bool operator==(const FBIMPresetTypeDefinition& RHS) const;
+	bool operator!=(const FBIMPresetTypeDefinition& RHS) const;
 };

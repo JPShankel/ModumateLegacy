@@ -62,7 +62,7 @@ EBIMResult FBIMPresetEditorNode::GatherAllChildNodes(TArray<FBIMPresetEditorNode
 // The preset on a crafting node is 'dirty' if the node's properties or input pins is inconsistent with the values in its preset
 EBIMPresetEditorNodeStatus FBIMPresetEditorNode::GetPresetStatus() const
 {
-	if (OriginalPresetCopy.Matches(WorkingPresetCopy))
+	if (OriginalPresetCopy == WorkingPresetCopy)
 	{
 		return EBIMPresetEditorNodeStatus::UpToDate;
 	}

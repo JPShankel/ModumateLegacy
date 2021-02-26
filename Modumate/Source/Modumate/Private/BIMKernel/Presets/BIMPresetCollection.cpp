@@ -351,45 +351,42 @@ EBIMResult FBIMPresetCollection::GenerateBIMKeyForPreset(const FGuid& PresetID, 
 	return EBIMResult::Success;
 }
 
-bool FBIMPresetCollection::Matches(const FBIMPresetCollection& OtherCollection) const
+bool FBIMPresetCollection::operator==(const FBIMPresetCollection& RHS) const
 {
-	if (NodeDescriptors.Num() != OtherCollection.NodeDescriptors.Num())
+	if (NodeDescriptors.Num() != RHS.NodeDescriptors.Num())
 	{
 		return false;
 	}
 
-	for (const auto& kvp : OtherCollection.NodeDescriptors)
+	for (const auto& kvp : RHS.NodeDescriptors)
 	{
 		const FBIMPresetTypeDefinition* typeDef = NodeDescriptors.Find(kvp.Key);
-		if (typeDef == nullptr)
-		{
-			return false;
-		}
-		if (!typeDef->Matches(kvp.Value))
+		if (typeDef == nullptr || *typeDef != kvp.Value)
 		{
 			return false;
 		}
 	}
 
-	if (PresetsByGUID.Num() != OtherCollection.PresetsByGUID.Num())
+	if (PresetsByGUID.Num() != RHS.PresetsByGUID.Num())
 	{
 		return false;
 	}
 
-	for (const auto& kvp : OtherCollection.PresetsByGUID)
+	for (const auto& kvp : RHS.PresetsByGUID)
 	{
 		const FBIMPresetInstance* preset = PresetFromGUID(kvp.Key);
-		if (preset == nullptr)
-		{
-			return false;
-		}
-		if (!preset->Matches(kvp.Value))
+		if (preset == nullptr || *preset != kvp.Value)
 		{
 			return false;
 		}
 	}
 
 	return true;
+}
+
+bool FBIMPresetCollection::operator!=(const FBIMPresetCollection& RHS) const
+{
+	return !(*this == RHS);
 }
 
 EBIMResult FBIMPresetCollection::GetNCPForPreset(const FGuid& InPresetGUID, FBIMTagPath& OutNCP) const

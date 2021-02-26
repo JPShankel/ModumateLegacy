@@ -11,24 +11,24 @@ FBIMPresetNodePinSet::FBIMPresetNodePinSet() :
 {
 }
 
-bool FBIMPresetNodePinSet::Matches(const FBIMPresetNodePinSet& OtherPinSet) const
+bool FBIMPresetNodePinSet::operator==(const FBIMPresetNodePinSet& RHS) const
 {
-	if (!SetName.IsEqual(OtherPinSet.SetName))
+	if (!SetName.IsEqual(RHS.SetName))
 	{
 		return false;
 	}
 
-	if (MinCount != OtherPinSet.MinCount)
+	if (MinCount != RHS.MinCount)
 	{
 		return false;
 	}
 
-	if (MaxCount != OtherPinSet.MaxCount)
+	if (MaxCount != RHS.MaxCount)
 	{
 		return false;
 	}
 
-	if (PinTarget != OtherPinSet.PinTarget)
+	if (PinTarget != RHS.PinTarget)
 	{
 		return false;
 	}
@@ -36,40 +36,50 @@ bool FBIMPresetNodePinSet::Matches(const FBIMPresetNodePinSet& OtherPinSet) cons
 	return true;
 }
 
-bool FBIMPresetTypeDefinition::Matches(const FBIMPresetTypeDefinition& OtherDefinition) const
+bool FBIMPresetNodePinSet::operator!=(const FBIMPresetNodePinSet& RHS) const
 {
-	if (!TypeName.IsEqual(OtherDefinition.TypeName))
+	return !(*this == RHS);
+}
+
+bool FBIMPresetTypeDefinition::operator==(const FBIMPresetTypeDefinition& RHS) const
+{
+	if (!TypeName.IsEqual(RHS.TypeName))
 	{
 		return false;
 	}
 
-	if (Scope != OtherDefinition.Scope)
+	if (Scope != RHS.Scope)
 	{
 		return false;
 	}
 
-	if (!FormTemplate.Matches(OtherDefinition.FormTemplate))
+	if (FormTemplate != RHS.FormTemplate)
 	{
 		return false;
 	}
 
-	if (PinSets.Num() != OtherDefinition.PinSets.Num())
+	if (PinSets.Num() != RHS.PinSets.Num())
 	{
 		return false;
 	}
 
 	for (int32 i = 0; i < PinSets.Num(); ++i)
 	{
-		if (!PinSets[i].Matches(OtherDefinition.PinSets[i]))
+		if (PinSets[i] != RHS.PinSets[i])
 		{
 			return false;
 		}
 	}
 
-	if (!Properties.Matches(OtherDefinition.Properties))
+	if (Properties != RHS.Properties)
 	{
 		return false;
 	}
 
 	return true;
+}
+
+bool FBIMPresetTypeDefinition::operator!=(const FBIMPresetTypeDefinition& RHS) const
+{
+	return !(*this == RHS);
 }

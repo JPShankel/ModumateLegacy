@@ -46,20 +46,20 @@ FBIMNameType FBIMPropertyKey::QN() const
 	return *FString::Printf(TEXT("%s.%s"), *BIMNameFromValueScope(Scope).ToString(),*(Name.ToString()));
 }
 
-bool FBIMPropertySheet::Matches(const FBIMPropertySheet& PropSheet) const
+bool FBIMPropertySheet::operator==(const FBIMPropertySheet& RHS) const
 {
-	if (StringMap.Num() != PropSheet.StringMap.Num())
+	if (StringMap.Num() != RHS.StringMap.Num())
 	{
 		return false;
 	}
-	if (NumberMap.Num() != PropSheet.NumberMap.Num())
+	if (NumberMap.Num() != RHS.NumberMap.Num())
 	{
 		return false;
 	}
 
 	for (auto& kvp : StringMap)
 	{
-		const FString* theirString = PropSheet.StringMap.Find(kvp.Key);
+		const FString* theirString = RHS.StringMap.Find(kvp.Key);
 		if (theirString == nullptr || !theirString->Equals(kvp.Value))
 		{
 			return false;
@@ -68,7 +68,7 @@ bool FBIMPropertySheet::Matches(const FBIMPropertySheet& PropSheet) const
 
 	for (auto& kvp : NumberMap)
 	{
-		const float* theirNum = PropSheet.NumberMap.Find(kvp.Key);
+		const float* theirNum = RHS.NumberMap.Find(kvp.Key);
 		// Properties may come in from a database or a saved document file, may be an epsilon
 		if (theirNum == nullptr || !FMath::IsNearlyEqual(kvp.Value, *theirNum))
 		{
@@ -77,6 +77,10 @@ bool FBIMPropertySheet::Matches(const FBIMPropertySheet& PropSheet) const
 	}
 
 	return true;
+}
+bool FBIMPropertySheet::operator!=(const FBIMPropertySheet& RHS) const
+{
+	return !(*this == RHS);
 }
 
 EBIMResult FBIMPropertySheet::AddProperties(const FBIMPropertySheet& PropSheet)

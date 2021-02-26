@@ -228,5 +228,6 @@ public:
 	
 	EBIMResult AddProperties(const FBIMPropertySheet& PropSheet);
 
-	bool Matches(const FBIMPropertySheet& PropSheet) const;
+	bool operator==(const FBIMPropertySheet& RHS) const;
+	bool operator!=(const FBIMPropertySheet& RHS) const;
 };
