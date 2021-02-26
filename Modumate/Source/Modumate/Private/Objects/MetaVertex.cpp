@@ -5,7 +5,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateObjectStatics.h"
-#include "UnrealClasses/VertexActor.h"
+
 
 AMOIMetaVertex::AMOIMetaVertex()
 	: AMOIVertexBase()
@@ -24,7 +24,7 @@ bool AMOIMetaVertex::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 			return false;
 		}
 
-		VertexActor->SetMOILocation(vertex->Position);
+		SetActorLocation(vertex->Position);
 	}
 	break;
 	case EObjectDirtyFlags::Visuals:

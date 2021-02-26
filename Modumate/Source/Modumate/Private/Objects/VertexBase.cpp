@@ -2,25 +2,24 @@
 
 #include "Objects/VertexBase.h"
 
+#include "Components/StaticMeshComponent.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-#include "UnrealClasses/VertexActor.h"
 
 AMOIVertexBase::AMOIVertexBase()
-	: AModumateObjectInstance()
+	: Super()
 	, SelectedColor(0x00, 0x35, 0xFF)
 	, BaseColor(0x00, 0x00, 0x00)
-	, DefaultHandleSize(0.0004f)
-	, SelectedHandleSize(0.0006f)
+	, CurColor(0x00, 0x00, 0x00)
+	, DefaultScreenSize(4.0f)
+	, HoveredScreenSize(6.0f)
+	, CurScreenSize(4.0f)
 {
-}
-
-FVector AMOIVertexBase::GetLocation() const
-{
-	return VertexActor.IsValid() ? VertexActor->MoiLocation : FVector::ZeroVector;
+	VertexMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VertexMeshComp"));
+	VertexMeshComp->SetupAttachment(GetRootComponent());
 }
 
 FVector AMOIVertexBase::GetCorner(int32 index) const
@@ -31,19 +30,16 @@ FVector AMOIVertexBase::GetCorner(int32 index) const
 
 int32 AMOIVertexBase::GetNumCorners() const
 {
-	return VertexActor.IsValid() ? 1 : 0;
+	return 1;
 }
 
 void AMOIVertexBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
 {
-	if (VertexActor.IsValid())
-	{
-		UModumateObjectStatics::GetNonPhysicalEnabledFlags(this, bOutVisible, bOutCollisionEnabled);
+	UModumateObjectStatics::GetNonPhysicalEnabledFlags(this, bOutVisible, bOutCollisionEnabled);
 
-		VertexActor->SetActorHiddenInGame(!bOutVisible);
-		VertexActor->SetActorTickEnabled(bOutVisible);
-		VertexActor->SetActorEnableCollision(bOutCollisionEnabled);
-	}
+	SetActorHiddenInGame(!bOutVisible);
+	SetActorTickEnabled(bOutVisible);
+	SetActorEnableCollision(bOutCollisionEnabled);
 }
 
 void AMOIVertexBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
@@ -59,43 +55,65 @@ void AMOIVertexBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoi
 
 AActor *AMOIVertexBase::CreateActor(const FVector &loc, const FQuat &rot)
 {
-	UWorld* world = GetWorld();
-	VertexActor = world->SpawnActor<AVertexActor>(AVertexActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-
-	// Set appearance
-	AEditModelGameMode *gameMode = world->GetAuthGameMode<AEditModelGameMode>();
-	VertexActor->SetActorMesh(gameMode->MetaPlaneVertexIconMesh);
-	VertexActor->SetHandleScaleScreenSize(DefaultHandleSize);
-
-	FArchitecturalMaterial material;
-	material.EngineMaterial = gameMode ? gameMode->VertexMaterial : nullptr;
-	material.Color = BaseColor;
-	VertexActor->SetActorMaterial(material);
-
-	return VertexActor.Get();
+	SetActorLocation(loc);
+	return this;
 }
 
-bool AMOIVertexBase::OnSelected(bool bIsSelected)
+bool AMOIVertexBase::OnHovered(AEditModelPlayerController* controller, bool bNewHovered)
 {
-	if (!AModumateObjectInstance::OnSelected(bIsSelected))
+	if (!Super::OnHovered(controller, bNewHovered))
 	{
 		return false;
 	}
 
-	UpdateVisuals();
+	CurScreenSize = bHovered ? HoveredScreenSize : DefaultScreenSize;
+	UpdateVertexMesh();
 
-	if (VertexActor.IsValid())
+	return true;
+}
+
+bool AMOIVertexBase::OnSelected(bool bIsSelected)
+{
+	if (!Super::OnSelected(bIsSelected))
 	{
-		VertexActor->SetHandleScaleScreenSize(bIsSelected ? SelectedHandleSize : DefaultHandleSize);
-
-		VertexActor->Material.Color = bIsSelected ? SelectedColor : BaseColor;
-
-		UModumateFunctionLibrary::SetMeshMaterial(VertexActor->MeshComp, VertexActor->Material, 0);
+		return false;
 	}
+
+	CurScreenSize = bIsSelected ? HoveredScreenSize : DefaultScreenSize;
+	CurColor = bIsSelected ? SelectedColor : BaseColor;
+	UpdateVertexMesh();
 
 	return true;
 }
 
 void AMOIVertexBase::GetTangents(TArray<FVector>& OutTangents) const
 {
+}
+
+void AMOIVertexBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	auto gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
+	VertexMeshComp->SetStaticMesh(gameMode->VertexMesh);
+	VertexMeshComp->SetMaterial(0, gameMode->VertexMaterial);
+
+	VertexMeshComp->SetCollisionObjectType(COLLISION_HANDLE);
+
+	// Allow outline to be draw over the handle mesh
+	VertexMeshComp->SetRenderCustomDepth(true);
+	VertexMeshComp->SetCustomDepthStencilValue(1);
+
+	// Disable shadows because they are expensive, and there are a lot of these things
+	VertexMeshComp->SetCastShadow(false);
+
+	CurColor = BaseColor;
+	CurScreenSize = DefaultScreenSize;
+	UpdateVertexMesh();
+}
+
+void AMOIVertexBase::UpdateVertexMesh()
+{
+	FLinearColor nonSRGBColor = CurColor.ReinterpretAsLinear();
+	VertexMeshComp->SetCustomPrimitiveDataVector4(0, FVector4(nonSRGBColor.R, nonSRGBColor.G, nonSRGBColor.B, CurScreenSize));
 }

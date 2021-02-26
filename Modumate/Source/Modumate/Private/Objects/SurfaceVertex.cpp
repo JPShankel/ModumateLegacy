@@ -9,7 +9,6 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
-#include "UnrealClasses/VertexActor.h"
 
 AMOISurfaceVertex::AMOISurfaceVertex()
 	: AMOIVertexBase()
@@ -26,7 +25,7 @@ FVector AMOISurfaceVertex::GetLocation() const
 bool AMOISurfaceVertex::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	auto surfaceGraphObj = GetParentObject();
-	if (!ensure(surfaceGraphObj && VertexActor.IsValid()))
+	if (!ensure(surfaceGraphObj))
 	{
 		return false;
 	}
@@ -42,7 +41,7 @@ bool AMOISurfaceVertex::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 				FTransform surfaceGraphTransform = surfaceGraphObj->GetWorldTransform();
 				CachedDeprojectedLocation = UModumateGeometryStatics::Deproject2DPointTransform(surfaceVertex->Position, surfaceGraphTransform);
 				FVector offsetLocation = CachedDeprojectedLocation + (surfaceGraphTransform.GetRotation().GetAxisZ() * AMOISurfaceGraph::VisualNormalOffset);
-				VertexActor->SetMOILocation(offsetLocation);
+				SetActorLocation(offsetLocation);
 
 				// Mark the connected edges and polygons dirty
 				for (FGraphSignedID connectedEdgeID : surfaceVertex->Edges)

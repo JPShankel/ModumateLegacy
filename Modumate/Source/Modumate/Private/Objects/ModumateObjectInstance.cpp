@@ -739,7 +739,11 @@ static const FName PartialActorDestructionRequest(TEXT("DestroyActorPartial"));
 
 void AModumateObjectInstance::DestroyActor(bool bFullDelete)
 {
-	if (bFullDelete)
+	bool bSelfMeshActor = (MeshActor.Get() == this);
+
+	// Don't perform a full deletion if MeshActor is the MOI itself.
+	// TODO: support this pattern better, now that MOIs are actors and this type of inheritance makes more sense for lightweight MOIs.
+	if (bFullDelete && !bSelfMeshActor)
 	{
 		ClearAdjustmentHandles();
 
@@ -756,13 +760,14 @@ void AModumateObjectInstance::DestroyActor(bool bFullDelete)
 			MeshActor.Reset();
 		}
 	}
-	else
+	else if (!bPartiallyDestroyed)
 	{
 		auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 		ShowAdjustmentHandles(controller, false);
 
 		RequestHidden(PartialActorDestructionRequest, true);
 		RequestCollisionDisabled(PartialActorDestructionRequest, true);
+		bPartiallyDestroyed = true;
 	}
 }
 
@@ -803,6 +808,7 @@ void AModumateObjectInstance::RestoreMOI()
 	{
 		RequestHidden(PartialActorDestructionRequest, false);
 		RequestCollisionDisabled(PartialActorDestructionRequest, false);
+		bPartiallyDestroyed = false;
 	}
 	else
 	{

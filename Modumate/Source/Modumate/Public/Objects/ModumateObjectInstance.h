@@ -130,6 +130,7 @@ protected:
 	bool bHovered = false;
 	bool bSelected = false;
 	bool bPreviewOperationMode = false;
+	bool bPartiallyDestroyed = false;
 
 	// Sets of named requests to hide or disable collision on this MOI, which allows
 	// multiple systems to independently and safely request modifying the

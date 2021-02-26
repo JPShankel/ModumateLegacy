@@ -80,7 +80,7 @@ public:
 	UMaterialInterface *VertexMaterial;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UStaticMesh *MetaPlaneVertexIconMesh;
+	UStaticMesh* VertexMesh;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UMaterialInterface *BillboardTextureMaterial;
