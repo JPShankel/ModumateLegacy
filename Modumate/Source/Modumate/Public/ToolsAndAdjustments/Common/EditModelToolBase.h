@@ -54,6 +54,8 @@ public:
 	// TODO: potentially duplicate with handles
 	virtual bool HasDimensionActor() { return false; }
 
+	virtual bool CycleMode() { return false; }
+
 protected:
 	UFUNCTION()
 	void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);

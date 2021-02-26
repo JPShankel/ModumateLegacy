@@ -106,6 +106,7 @@ enum class EInputCommand : uint8
 	// Non-tool modal commands
 	NextViewMode,
 	PrevViewMode,
+	NextDrawingMode,
 	SetViewMode_MetaGraph,
 	SetViewMode_Separators,
 	SetViewMode_SurfaceGraphs,

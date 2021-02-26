@@ -1,6 +1,7 @@
 #include "ToolsAndAdjustments/Common/SelectedObjectToolMixin.h"
 
 #include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelPlayerState.h"
@@ -23,6 +24,7 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 	}
 
 	ReleaseSelectedObjects();
+	CurrentRecord = FMOIDocumentRecord();
 
 	AEditModelPlayerState *playerState = ControllerPtr->EMPlayerState;
 
@@ -34,6 +36,8 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 	TSet<int32> vertexIDs;
 	FModumateObjectDeltaStatics::GetTransformableIDs(OriginalSelectedObjects.Array(), ControllerPtr->GetDocument(), vertexIDs);
 	auto doc = ControllerPtr->GetDocument();
+
+	FModumateObjectDeltaStatics::SaveSelection(OriginalSelectedObjects.Array(), doc, &CurrentRecord);
 
 	for (int32 id : vertexIDs)
 	{
@@ -103,19 +107,22 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 	UModumateDocument* doc = ControllerPtr->GetDocument();
 	UWorld* world = ControllerPtr->GetWorld();
 
-	TMap<int32, FTransform> objectInfo;
-	for (auto& kvp : OriginalTransforms)
+	if (!bPaste)
 	{
-		AModumateObjectInstance* targetMOI = doc->GetObjectById(kvp.Key);
-		if (!ensureAlways(targetMOI))
+		TMap<int32, FTransform> objectInfo;
+		for (auto& kvp : OriginalTransforms)
 		{
-			continue;
+			AModumateObjectInstance* targetMOI = doc->GetObjectById(kvp.Key);
+			if (!ensureAlways(targetMOI))
+			{
+				continue;
+			}
+
+			objectInfo.Add(kvp.Key, targetMOI->GetWorldTransform());
 		}
 
-		objectInfo.Add(kvp.Key, targetMOI->GetWorldTransform());
+		FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, world, false);
 	}
-
-	FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, world, false);
 
 	ReleaseSelectedObjects();
 

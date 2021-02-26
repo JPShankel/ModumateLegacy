@@ -29,4 +29,5 @@ public:
 	virtual bool AbortUse() override;
 	virtual bool HandleControlKey(bool pressed) override;
 	virtual bool HasDimensionActor() { return true; };
+	virtual bool CycleMode() override;
 };

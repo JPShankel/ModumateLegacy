@@ -101,15 +101,22 @@ bool UMoveObjectTool::FrameUpdate()
 		if (doc != nullptr)
 		{
 			FVector offset = hitLoc - AnchorPoint;
-			TMap<int32, FTransform> objectInfo;
-			for (auto& kvp : OriginalTransforms)
+			if (!bPaste)
 			{
-				objectInfo.Add(kvp.Key, FTransform(kvp.Value.GetRotation(), kvp.Value.GetTranslation() + offset));;
-			}
+				TMap<int32, FTransform> objectInfo;
+				for (auto& kvp : OriginalTransforms)
+				{
+					objectInfo.Add(kvp.Key, FTransform(kvp.Value.GetRotation(), kvp.Value.GetTranslation() + offset));;
+				}
 
-			if (!FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), true))
+				if (!FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), true))
+				{
+					return false;
+				}
+			}
+			else
 			{
-				return false;
+				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, offset, doc, Controller->GetWorld(), true);
 			}
 		}
 
@@ -129,15 +136,22 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 			direction.Normalize();
 			FVector offset = direction * n;
 
-			TMap<int32, FTransform> objectInfo;
-			for (auto& kvp : OriginalTransforms)
+			if (!bPaste)
 			{
-				objectInfo.Add(kvp.Key, FTransform(kvp.Value.GetRotation(), kvp.Value.GetTranslation() + offset));;
-			}
+				TMap<int32, FTransform> objectInfo;
+				for (auto& kvp : OriginalTransforms)
+				{
+					objectInfo.Add(kvp.Key, FTransform(kvp.Value.GetRotation(), kvp.Value.GetTranslation() + offset));;
+				}
 
-			if (!FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), false))
+				if (!FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), false))
+				{
+					return false;
+				}
+			}
+			else
 			{
-				return false;
+				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, offset, doc, Controller->GetWorld(), true);
 			}
 		}
 	}
@@ -153,9 +167,21 @@ bool UMoveObjectTool::EndUse()
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
 
-	if (Controller->EMPlayerState->SnappedCursor.Visible)
+	if (!bPaste)
 	{
-		ReleaseObjectsAndApplyDeltas();
+		if (Controller->EMPlayerState->SnappedCursor.Visible)
+		{
+			ReleaseObjectsAndApplyDeltas();
+		}
+	}
+	else
+	{
+		const FVector& hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+		FVector offset = hitLoc - AnchorPoint;
+		GameState->Document->ClearPreviewDeltas(GetWorld());
+		FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, offset, GameState->Document, Controller->GetWorld(), false);
+
+		ReleaseSelectedObjects();
 	}
 
 	return Super::EndUse();
@@ -175,3 +201,8 @@ bool UMoveObjectTool::HandleControlKey(bool pressed)
 	return true;
 }
 
+bool UMoveObjectTool::CycleMode()
+{
+	ToggleIsPasting();
+	return true;
+}

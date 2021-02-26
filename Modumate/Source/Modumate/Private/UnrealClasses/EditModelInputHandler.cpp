@@ -430,6 +430,10 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	{
 		return Controller->EMPlayerState->ChangeViewMode(-1);
 	}
+	case EInputCommand::NextDrawingMode:
+	{
+		return Controller->CurrentTool->CycleMode();
+	}
 	case EInputCommand::SetViewMode_MetaGraph:
 	{
 		return Controller->EMPlayerState->SetViewMode(EEditViewModes::MetaGraph);

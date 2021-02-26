@@ -48,4 +48,5 @@ public:
 	virtual EToolCreateObjectMode GetCreateObjectMode() const = 0;
 	virtual void SetAssemblyGUID(const FGuid &InAssemblyKey) = 0;
 	virtual FGuid GetAssemblyGUID() const = 0;
+	virtual bool CycleMode() = 0;
 };
