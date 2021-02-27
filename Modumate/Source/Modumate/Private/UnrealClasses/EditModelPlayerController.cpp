@@ -1973,14 +1973,14 @@ bool AEditModelPlayerController::LineTraceSingleAgainstMOIs(struct FHitResult& O
 			FVector loc = cutPlaneMoi->GetLocation();
 			FVector dir = cutPlaneMoi->GetNormal();
 			FPlane cutPlaneCheck = FPlane(loc, dir);
-			if (bResultSuccess && cutPlaneCheck.PlaneDot(OutHit.Location) < PLANAR_DOT_EPSILON)
+			if (bResultSuccess && cutPlaneCheck.PlaneDot(OutHit.Location) < -PLANAR_DOT_EPSILON)
 			{
 				// Start a new line trace starting from intersection of cut plane
 				FVector intersect = FMath::RayPlaneIntersection(Start, (End - Start).GetSafeNormal(), cutPlaneCheck);
 				bResultSuccess = GetWorld()->LineTraceSingleByObjectType(OutHit, intersect, End, MOITraceObjectQueryParams, MOITraceQueryParams);
 				
 				// Check again if hit is in front of cut plane. ex: Looking from behind a cut plane but hitting a location in front of the cut plane
-				if (bResultSuccess && cutPlaneCheck.PlaneDot(OutHit.Location) < PLANAR_DOT_EPSILON)
+				if (bResultSuccess && cutPlaneCheck.PlaneDot(OutHit.Location) < -PLANAR_DOT_EPSILON)
 				{
 					return false;
 				}
@@ -2797,19 +2797,6 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 	float bestVirtualHitDist;
 	FVector bestLineIntersection;
 
-	// Create parameters for culling if a cut plane is currently culling
-	bool bHasCullingCutPlane = false;
-	FPlane cutPlaneCheck;
-	if (CurrentCullingCutPlaneID != MOD_ID_NONE)
-	{
-		const AModumateObjectInstance* cutPlaneMoi = Document->GetObjectById(CurrentCullingCutPlaneID);
-		if (cutPlaneMoi && cutPlaneMoi->GetObjectType() == EObjectType::OTCutPlane)
-		{
-			bHasCullingCutPlane = true;
-			cutPlaneCheck = FPlane(cutPlaneMoi->GetLocation(), cutPlaneMoi->GetNormal());
-		}
-	}
-
 	// After tracing for a direct hit result against a MOI, now check if it would be overridden by a snap point or line if desired
 	if (bCheckSnapping)
 	{
@@ -2889,6 +2876,8 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 		CurHitPointLocations.Reset();
 		CurHitLineMOIs.Reset();
 		CurHitLineLocations.Reset();
+		FPlane cullingPlane = GetCurrentCullingPlane();
+
 		static TArray<FStructurePoint> tempPointsForCollision;
 		static TArray<FStructureLine> tempLinesForCollision;
 		// TODO: we know this is inefficient, should replace with an interface that allows for optimization
@@ -2897,46 +2886,23 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 		{
 			if (moi && moi->IsCollisionEnabled() && moi->UseStructureDataForCollision())
 			{
-				moi->RouteGetStructuralPointsAndLines(tempPointsForCollision, tempLinesForCollision, false, false);
+				moi->RouteGetStructuralPointsAndLines(tempPointsForCollision, tempLinesForCollision, false, false, cullingPlane);
 
 				// Structural points and lines used for cursor hit collision are mutually exclusive
 				if (tempLinesForCollision.Num() > 0)
 				{
 					for (auto line : tempLinesForCollision)
 					{
-						// If there's a culling cutplane, check if line segment should be intersected by cutplane
-						if (bHasCullingCutPlane && moi->GetObjectType() != EObjectType::OTCutPlane)
-						{
-							// Only check line if either or both points are in front of the cutplane
-							bool bP1IsBehind = cutPlaneCheck.PlaneDot(line.P1) < PLANAR_DOT_EPSILON;
-							bool bP2IsBehind = cutPlaneCheck.PlaneDot(line.P2) < PLANAR_DOT_EPSILON;
-							if (!(bP1IsBehind && bP2IsBehind))
-							{
-								FVector intersect = FMath::RayPlaneIntersection(line.P1, (line.P2 - line.P1).GetSafeNormal(), cutPlaneCheck);
-								FVector newP1 = bP1IsBehind ? intersect : line.P1;
-								FVector newP2 = bP2IsBehind ? intersect : line.P2;
-
-								CurHitLineMOIs.Add(moi);
-								CurHitLineLocations.Add(TPair<FVector, FVector>(newP1, newP2));
-							}
-						}
-						else
-						{
-							CurHitLineMOIs.Add(moi);
-							CurHitLineLocations.Add(TPair<FVector, FVector>(line.P1, line.P2));
-						}
+						CurHitLineMOIs.Add(moi);
+						CurHitLineLocations.Add(TPair<FVector, FVector>(line.P1, line.P2));
 					}
 				}
 				else
 				{
 					for (auto point : tempPointsForCollision)
 					{
-						if (!(bHasCullingCutPlane && 
-							cutPlaneCheck.PlaneDot(point.Point) < PLANAR_DOT_EPSILON))
-						{
-							CurHitPointMOIs.Add(moi);
-							CurHitPointLocations.Add(point.Point);
-						}
+						CurHitPointMOIs.Add(moi);
+						CurHitPointLocations.Add(point.Point);
 					}
 				}
 			}
@@ -3376,6 +3342,14 @@ void AEditModelPlayerController::ToggleAllCutPlanesColor(bool bEnable)
 			cp->GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
 		}
 	}
+}
+
+FPlane AEditModelPlayerController::GetCurrentCullingPlane() const
+{
+	auto cullingCutPlaneMOI = (Document && (CurrentCullingCutPlaneID != MOD_ID_NONE)) ? Document->GetObjectById(CurrentCullingCutPlaneID) : nullptr;
+	return (cullingCutPlaneMOI && ensure(cullingCutPlaneMOI->GetObjectType() == EObjectType::OTCutPlane)) ?
+		FPlane(cullingCutPlaneMOI->GetLocation(), cullingCutPlaneMOI->GetNormal()) :
+		FPlane(ForceInitToZero);
 }
 
 void AEditModelPlayerController::HandleUndo()

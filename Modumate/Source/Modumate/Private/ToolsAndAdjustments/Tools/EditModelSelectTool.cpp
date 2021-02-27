@@ -339,20 +339,6 @@ bool USelectTool::ProcessDragSelect()
 		const auto &snapCorners = snappingView->Corners;
 		const auto &snapLines = snappingView->LineSegments;
 
-		bool bCheckCulling = false;
-		FPlane cutPlaneCheck = FPlane::ZeroVector;
-
-		if (Controller->CurrentCullingCutPlaneID != MOD_ID_NONE)
-		{
-			const AModumateObjectInstance* cutPlaneMoi = doc->GetObjectById(Controller->CurrentCullingCutPlaneID);
-			if (cutPlaneMoi && cutPlaneMoi->GetObjectType() == EObjectType::OTCutPlane)
-			{
-				cutPlaneCheck = FPlane(cutPlaneMoi->GetLocation(), cutPlaneMoi->GetNormal());
-				bCheckCulling = true;
-			}
-		}
-
-
 		for (const auto &kvp : snappingView->SnapIndicesByObjectID)
 		{
 			int32 objectID = kvp.Key;
@@ -379,14 +365,7 @@ bool USelectTool::ProcessDragSelect()
 					UGameplayStatics::ProjectWorldToScreen(Controller, snapCornerPos, snapCornerScreenPos) &&
 					screenSelectRect.IsInside(snapCornerScreenPos))
 				{
-					if (bCheckCulling)
-					{
-						objInSelection = cutPlaneCheck.PlaneDot(snapCornerPos) > PLANAR_DOT_EPSILON;
-					}
-					else
-					{
-						objInSelection = true;
-					}
+					objInSelection = true;
 				}
 				else if (requireEnclosure)
 				{
@@ -411,15 +390,7 @@ bool USelectTool::ProcessDragSelect()
 						UGameplayStatics::ProjectWorldToScreen(Controller, snapLine.P2, snapLineScreenEnd) &&
 						UModumateFunctionLibrary::LineBoxIntersection(screenSelectRect, snapLineScreenStart, snapLineScreenEnd))
 					{
-						if (bCheckCulling)
-						{
-							objInSelection = cutPlaneCheck.PlaneDot(snapLine.P1) > PLANAR_DOT_EPSILON &&
-								cutPlaneCheck.PlaneDot(snapLine.P2) > PLANAR_DOT_EPSILON;
-						}
-						else
-						{
-							objInSelection = true;
-						}
+						objInSelection = true;
 
 						if (objInSelection)
 						{
@@ -441,17 +412,18 @@ bool USelectTool::ProcessDragSelect()
 		// is entirely contained within one of the faces formed by an object's control points
 		if (!requireEnclosure)
 		{
-			TArray<FHitResult> hitResults;
-			if (Controller->GetWorld()->LineTraceMultiByChannel(hitResults, mouseLoc, mouseLoc + Controller->MaxRaycastDist * mouseDir, ECC_Camera))
+			FHitResult hitResult;
+			FVector traceStart = mouseLoc;
+			while (Controller->LineTraceSingleAgainstMOIs(hitResult, traceStart, traceStart + Controller->MaxRaycastDist * mouseDir) &&
+				(hitResult.Distance > RAY_INTERSECT_TOLERANCE))
 			{
-				for (const auto &hitResult : hitResults)
+				AModumateObjectInstance* object = doc->ObjectFromActor(hitResult.GetActor());
+				if (object && Controller->EMPlayerState->IsObjectReachableInView(object))
 				{
-					AModumateObjectInstance *object = doc->ObjectFromActor(hitResult.GetActor());
-					if (object && Controller->EMPlayerState->IsObjectReachableInView(object))
-					{
-						objectsInSelection.Add(object);
-					}
+					objectsInSelection.Add(object);
 				}
+
+				traceStart = hitResult.Location;
 			}
 		}
 

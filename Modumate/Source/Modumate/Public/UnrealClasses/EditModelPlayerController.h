@@ -552,4 +552,5 @@ public:
 	void SetCurrentCullingCutPlane(int32 ObjID = MOD_ID_NONE, bool bRefreshMenu = true);
 	void UpdateCutPlaneCullingMaterialInst(int32 ObjID = MOD_ID_NONE);
 	void ToggleAllCutPlanesColor(bool bEnable);
+	FPlane GetCurrentCullingPlane() const;
 };

@@ -383,16 +383,17 @@ float UModumateFunctionLibrary::GetViewportDPIScale()
 FBoxSphereBounds UModumateFunctionLibrary::GetSelectedExtents(const AEditModelPlayerController * Controller)
 {
 	AEditModelPlayerState *playerState = Controller->EMPlayerState;
+	FPlane cullingPlane = Controller->GetCurrentCullingPlane();
 
 	TArray<FVector> selectedMOIPoints;
 	TArray<FStructurePoint> curMOIPoints;
 	TArray<FStructureLine> curMOILines;
 
-	for (const AModumateObjectInstance* moi : playerState->SelectedObjects)
+	for (AModumateObjectInstance* moi : playerState->SelectedObjects)
 	{
 		curMOIPoints.Reset();
 		curMOILines.Reset();
-		moi->RouteGetStructuralPointsAndLines(curMOIPoints, curMOILines);
+		moi->RouteGetStructuralPointsAndLines(curMOIPoints, curMOILines, false, false, cullingPlane);
 
 		for (const FStructurePoint &point : curMOIPoints)
 		{

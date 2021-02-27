@@ -27,9 +27,10 @@ void FModumateSnappingView::UpdateSnapPoints(const TSet<int32> &idsToIgnore, int
 	LineSegments.Reset();
 	SnapIndicesByObjectID.Reset();
 
-	const auto &objects = Document->GetObjectInstances();
+	auto &objects = Document->GetObjectInstances();
+	FPlane cullingPlane = Controller->GetCurrentCullingPlane();
 
-	for (const auto *object : objects)
+	for (auto *object : objects)
 	{
 		ECollisionChannel objectCollisionType = UModumateTypeStatics::CollisionTypeFromObjectType(object->GetObjectType());
 		bool bObjectInMouseQuery = (collisionChannelMask & ECC_TO_BITFIELD(objectCollisionType)) != 0;
@@ -44,7 +45,7 @@ void FModumateSnappingView::UpdateSnapPoints(const TSet<int32> &idsToIgnore, int
 			CurObjCorners.Reset();
 			CurObjLineSegments.Reset();
 
-			object->RouteGetStructuralPointsAndLines(CurObjCorners, CurObjLineSegments, bForSnapping, bForSelection);
+			object->RouteGetStructuralPointsAndLines(CurObjCorners, CurObjLineSegments, bForSnapping, bForSelection, cullingPlane);
 
 			objectSnapIndices.NumCorners = CurObjCorners.Num();
 			objectSnapIndices.NumLines = CurObjLineSegments.Num();

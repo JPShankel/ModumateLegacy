@@ -156,6 +156,8 @@ protected:
 	void DestroyActor(bool bFullDelete);
 
 	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
+	TArray<FStructurePoint> CachedStructurePoints;
+	TArray<FStructureLine> CachedStructureLines;
 
 public:
 	FMOIStateData& GetStateData();
@@ -203,7 +205,8 @@ public:
 	bool RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas);
 
 	void UpdateGeometry();
-	void RouteGetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const;
+	void RouteGetStructuralPointsAndLines(TArray<FStructurePoint>& OutPoints, TArray<FStructureLine>& OutLines,
+		bool bForSnapping = false, bool bForSelection = false, const FPlane& CullingPlane = FPlane(ForceInitToZero));
 
 	const FBIMAssemblySpec &GetAssembly() const;
 	void SetAssemblyLayersReversed(bool bNewLayersReversed);

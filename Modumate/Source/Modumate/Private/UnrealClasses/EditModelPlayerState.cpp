@@ -91,6 +91,7 @@ void AEditModelPlayerState::BatchRenderLines()
 
 	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
+	FPlane cullingPlane = EMPlayerController->GetCurrentCullingPlane();
 
 	if (ViewGroupObject)
 	{
@@ -98,7 +99,7 @@ void AEditModelPlayerState::BatchRenderLines()
 		while (curViewGroupObj)
 		{
 			CurViewGroupObjects.Add(curViewGroupObj);
-			curViewGroupObj->RouteGetStructuralPointsAndLines(TempObjectStructurePoints, TempObjectStructureLines);
+			curViewGroupObj->RouteGetStructuralPointsAndLines(TempObjectStructurePoints, TempObjectStructureLines, false, false, cullingPlane);
 			CurSelectionStructurePoints.Append(TempObjectStructurePoints);
 			CurSelectionStructureLines.Append(TempObjectStructureLines);
 			curViewGroupObj = curViewGroupObj->GetParentObject();
@@ -107,11 +108,11 @@ void AEditModelPlayerState::BatchRenderLines()
 
 	if ((SelectedObjects.Num() > 0))
 	{
-		for (const auto *selectedObj : SelectedObjects)
+		for (auto *selectedObj : SelectedObjects)
 		{
 			if (selectedObj && selectedObj->ShowStructureOnSelection())
 			{
-				selectedObj->RouteGetStructuralPointsAndLines(TempObjectStructurePoints, TempObjectStructureLines);
+				selectedObj->RouteGetStructuralPointsAndLines(TempObjectStructurePoints, TempObjectStructureLines, false, false, cullingPlane);
 				CurSelectionStructurePoints.Append(TempObjectStructurePoints);
 				CurSelectionStructureLines.Append(TempObjectStructureLines);
 			}

@@ -715,23 +715,54 @@ void AModumateObjectInstance::UpdateGeometry()
 	SetIsDynamic(origDynamicStatus);
 }
 
-void AModumateObjectInstance::RouteGetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
+void AModumateObjectInstance::RouteGetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines,
+	bool bForSnapping, bool bForSelection, const FPlane& CullingPlane)
 {
+	// First, update the cached points/lines so they can be processed by the culling plane.
+	// TODO: could these actually be cached so they don't need to be recomputed until the object is dirty?
+	CachedStructurePoints.Reset();
+	CachedStructureLines.Reset();
+	GetStructuralPointsAndLines(CachedStructurePoints, CachedStructureLines, bForSnapping, bForSelection);
+
 	outPoints.Reset();
 	outLines.Reset();
 
-	GetStructuralPointsAndLines(outPoints, outLines, bForSnapping, bForSelection);
+	bool bUseCullingPlane = CullingPlane.IsValid() && (GetObjectType() != EObjectType::OTCutPlane);
 
-	// Make sure that the output correctly references this MOI,
-	// since some implementations may copy structure from other connected MOIs.
-	for (FStructurePoint &point : outPoints)
+	// Now, filter the cached points/lines based on the input culling plane (if any)
+	for (FStructurePoint& point : CachedStructurePoints)
 	{
-		point.ObjID = ID;
+		if (!bUseCullingPlane || (CullingPlane.PlaneDot(point.Point) > -PLANAR_DOT_EPSILON))
+		{
+			point.ObjID = ID;
+			outPoints.Add(point);
+		}
 	}
 
-	for (FStructureLine &line : outLines)
+	for (FStructureLine& line : CachedStructureLines)
 	{
 		line.ObjID = ID;
+
+		if (!bUseCullingPlane)
+		{
+			outLines.Add(line);
+		}
+		else
+		{
+			// Only check line if either or both points are in front of the culling plane
+			bool bP1IsBehind = CullingPlane.PlaneDot(line.P1) < -PLANAR_DOT_EPSILON;
+			bool bP2IsBehind = CullingPlane.PlaneDot(line.P2) < -PLANAR_DOT_EPSILON;
+			if (!bP1IsBehind || !bP2IsBehind)
+			{
+				FVector lineDir = (line.P2 - line.P1).GetSafeNormal();
+				FVector intersect = FMath::RayPlaneIntersection(line.P1, lineDir, CullingPlane);
+				FVector newP1 = bP1IsBehind ? intersect : line.P1;
+				FVector newP2 = bP2IsBehind ? intersect : line.P2;
+
+				outPoints.Add(FStructurePoint(intersect, lineDir, bP2IsBehind ? line.CP1 : line.CP2, -1, line.ObjID));
+				outLines.Add(FStructureLine(newP1, newP2, line.CP1, line.CP2, line.ObjID));
+			}
+		}
 	}
 }
 
