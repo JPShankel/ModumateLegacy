@@ -69,7 +69,10 @@ struct MODUMATE_API FBIMPresetCollection
 	EBIMResult ForEachPreset(const TFunction<void(const FBIMPresetInstance& Preset)>& Operation) const;
 	EBIMResult GetAvailablePresetsForSwap(const FGuid& ParentPresetID, const FGuid& PresetIDToSwap, TArray<FGuid>& OutAvailablePresets) const;
 
-	TSharedPtr<FBIMPresetDelta> MakeDelta(FBIMPresetInstance& UpdatedPreset) const;
+	EBIMResult GetBlankPresetForObjectType(EObjectType ObjectType, FBIMPresetInstance& OutPreset) const;
+
+	TSharedPtr<FBIMPresetDelta> MakeUpdateDelta(FBIMPresetInstance& UpdatedPreset) const;
+	TSharedPtr<FBIMPresetDelta> MakeCreateNewDelta(FBIMPresetInstance& NewPreset);
 
 	bool TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FGuid& PresetID, FBIMAssemblySpec& OutAssembly) const;
 	bool TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FBIMAssemblySpec& OutAssembly) const;

@@ -5,6 +5,8 @@
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateUserSettings.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/EdgeDetailData.h"
+#include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "Misc/FileHelper.h"
 #include "Serialization/Csv/CsvParser.h"
@@ -157,6 +159,11 @@ bool FModumateDatabase::ReadBIMCache(const FString& CacheFile, FModumateBIMCache
 		return false;
 	}
 
+	for (auto& kvp : OutCache.Presets.PresetsByGUID)
+	{
+		kvp.Value.CustomData.SaveCborFromJson();
+	}
+
 	return true;
 }
 
@@ -218,6 +225,7 @@ void FModumateDatabase::ReadPresetData()
 		{
 			bimCacheRecord.Presets = BIMPresetCollection;
 			bimCacheRecord.Starters = starters;
+
 			WriteBIMCache(BIMCacheFile, bimCacheRecord);
 #if !UE_BUILD_SHIPPING
 			bWantUnitTest = true;
@@ -592,6 +600,8 @@ void FModumateDatabase::ReadPresetData()
 
 		// Set object type
 		EObjectType *ot = nullptr;
+		FString pathString;
+		kvp.Value.MyTagPath.ToString(pathString);
 		for (auto& tagPath : objectPaths)
 		{
 			if (tagPath.Key.MatchesPartial(kvp.Value.MyTagPath))
@@ -709,5 +719,23 @@ bool FModumateDatabase::UnitTest()
 			success = ensureAlways(FBIMAssemblySpec::StaticStruct()->CompareScriptStruct(&makeSpec, &kvp.Value, PPF_None)) && success;
 		}
 	}
+
+	FBIMPresetInstance edgePreset;
+	BIMPresetCollection.GetBlankPresetForObjectType(EObjectType::OTEdgeDetail, edgePreset);
+	success = !edgePreset.GUID.IsValid() && success;
+
+	auto createEdgeDelta = BIMPresetCollection.MakeCreateNewDelta(edgePreset);
+	success = !createEdgeDelta->OldState.GUID.IsValid() && success;
+	success = createEdgeDelta->NewState.GUID.IsValid() && success;
+
+	// Note: ApplyDelta is in Document...simulate effect here
+	success = (BIMPresetCollection.AddPreset(createEdgeDelta->NewState) == EBIMResult::Success) && success;
+	const FBIMPresetInstance* edgeInst = BIMPresetCollection.PresetFromGUID(createEdgeDelta->NewState.GUID);
+	success = (edgeInst != nullptr) && success;
+
+	auto updateEdgeDelta = BIMPresetCollection.MakeUpdateDelta(createEdgeDelta->NewState);
+	success = (updateEdgeDelta->OldState.GUID == updateEdgeDelta->NewState.GUID) && success;
+	success = updateEdgeDelta->NewState.GUID.IsValid() && success;
+
 	return success;
 }

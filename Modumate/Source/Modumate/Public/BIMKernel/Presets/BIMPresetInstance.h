@@ -9,6 +9,7 @@
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetTypeDefinition.h"
 #include "BIMKernel/Presets/BIMPresetMaterialBinding.h"
+#include "ModumateCore/StructDataWrapper.h"
 
 #include "BIMPresetInstance.generated.h"
 
@@ -73,8 +74,6 @@ struct MODUMATE_API FBIMPresetPartSlot
 		return !(*this == RHS);
 	}
 };
-
-
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetInstance
@@ -149,6 +148,9 @@ struct MODUMATE_API FBIMPresetInstance
 	// Future work will introduce construction details and quantity estimation parameters
 	UPROPERTY()
 	TArray<FBIMPresetMaterialChannelBinding> MaterialChannelBindings;
+
+	UPROPERTY()
+	FStructDataWrapper CustomData;
 
 	bool HasProperty(const FBIMNameType& Name) const;
 

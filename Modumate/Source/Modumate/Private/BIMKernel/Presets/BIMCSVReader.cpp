@@ -3,6 +3,7 @@
 #include "BIMKernel/Presets/BIMCSVReader.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/EdgeDetailData.h"
 #include "Database/ModumateObjectEnums.h"
 
 TMap<FBIMKey, FGuid> FBIMCSVReader::KeyGuidMap;
@@ -244,6 +245,12 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 	{
 		switch (presetMatrix.Name)
 		{
+			case ECSVMatrixNames::EdgeDetail:
+			{
+				Preset.CustomData.SaveStructData(FEdgeDetailData(), true);
+			}
+			break;
+
 			case ECSVMatrixNames::Profile:
 			{
 				FBIMKey profileKey(NormalizeCell(Row[presetMatrix.First]));

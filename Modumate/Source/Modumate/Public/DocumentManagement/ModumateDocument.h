@@ -273,6 +273,7 @@ public:
 	bool MakeNewGUIDForPreset(FBIMPresetInstance& Preset);
 
 	const FBIMPresetCollection& GetPresetCollection() const;
+	FBIMPresetCollection& GetPresetCollection();
 
 private:
 	TSharedPtr<Modumate::FModumateDraftingView> CurrentDraftingView = nullptr;

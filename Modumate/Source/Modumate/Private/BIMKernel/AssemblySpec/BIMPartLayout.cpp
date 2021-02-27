@@ -166,12 +166,18 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 
 		// The initial size value for parts with meshes is the mesh's native size
 		// This value is recalculated down below but may depend on this initial value
-		if (ensureAlways(useMesh->EngineMesh.IsValid()))
+		if (useMesh->EngineMesh.IsValid())
 		{
 			FVector nativeSize = useMesh->NativeSize * UModumateDimensionStatics::InchesToCentimeters;
 			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeX, nativeSize.X);
 			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeY, nativeSize.Y);
 			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeZ, nativeSize.Z);
+		}
+		else
+		{
+			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeX, 0.0f);
+			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeY, 0.0f);
+			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeZ, 0.0f);
 		}
 	}
 
@@ -251,15 +257,15 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 		PartSlotInstances[slotIdx].VariableValues.Add(RotationY, PartSlotInstances[slotIdx].Rotation.Y);
 		PartSlotInstances[slotIdx].VariableValues.Add(RotationZ, PartSlotInstances[slotIdx].Rotation.Z);
 	}
-
 	// The root slot never has a mesh or is flipped by a parent, so start at 1
 	for (int32 slotIdx = 1; slotIdx < numSlots; ++slotIdx)
 	{
 		FPartSlotInstance& slotRef = PartSlotInstances[slotIdx];
 		FPartSlotInstance& parentRef = PartSlotInstances[InAssemblySpec.Parts[slotIdx].ParentSlotIndex];
 
-		// Flips propagate down the child list...a flip of a flip is unflipped
+		// Flips and orientations propagate down the child list...a flip of a flip is unflipped
 		slotRef.FlipVector *= parentRef.FlipVector;
+		slotRef.Rotation += parentRef.Rotation;
 
 		// TODO: reformulate for flip-around-own-origin instead of flip-around-parent
 		if (InAssemblySpec.Parts[slotIdx].Mesh.EngineMesh.IsValid())

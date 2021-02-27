@@ -16,7 +16,7 @@ PRESET,,Width,,74AC189B-150E-F145-BD0B-7B6C4A6C2573,,NamedDimension,,Width,6in,M
 PRESET,,ToeKickDepth,,65F86F1E-1B59-6940-9AC9-DC5F9A0F94CC,,NamedDimension,,Toe Kick Depth,3.5in,Major,
 PRESET,,ToeKickHeight,,4B3F99FE-4391-B142-A996-046AB117F691,,NamedDimension,,Toe Kick Height,4in,Major,
 ,,,,,,,,,,,
-PRESET,,BacksetDistanceX,,2621239E-B499-B343-AD05-3CDFCF8A1BA3,,NamedDimension,,Backset,2.75in,Minor,How far from the active edge of the panel should this attachment be?
+PRESET,,BacksetDistanceX,,2621239E-B499-B343-AD05-3CDFCF8A1BA3,,NamedDimension,,Backset,2.75in,Minor,How far in from the active edge of the panel should backset attachments be?
 PRESET,,BevelWidth,,A0217336-6F72-844A-B583-11ADA04F7C7C,,NamedDimension,,Bevel Width,0.1875in,Minor,How much are the edges of a prismic module cut/beveled?
 PRESET,,DeadboltDistanceZ,,91E24BAF-1D38-A441-9AAE-D3B44B9FD8D3,,NamedDimension,,Deadbolt Height,42in,Minor,How far above the base of the frame is the deadbolt?
 PRESET,,DividerZ1Distance,,EBBBCC89-8FC8-1149-B43F-B0D0C5817FE5,,NamedDimension,,1st Divider Height,12in,Major,How far above the base of the frame is the top of its lowest panel?
@@ -24,6 +24,8 @@ PRESET,,DividerZ2Distance,,6523B663-6F23-4B44-B420-EE1C58A13077,,NamedDimension,
 PRESET,,DividerZ3Distance,,0F874E45-D89F-9443-83DB-2169C96DE9FD,,NamedDimension,,3rd Divider Height,24in,Major,How far above the base of the frame is the top of its third-lowest panel?
 PRESET,,FlangeThickness,,71EA7C96-D509-3447-AF45-8AF04C12C8BA,,NamedDimension,,Flange Thickness,0.5in,Minor,How thick are the top/bottom sections of an I-beam?
 PRESET,,HandleDistanceZ,,200D0D5A-B993-574C-AFEB-DB5FEB3FDF5A,,NamedDimension,,Handle Height,36in,Minor,How far above the base of the frame is the handle?
+PRESET,,HandleInsetX,,353DF1FB-B279-AF41-AB8C-EFE90F17E7AA,,NamedDimension,,Handle Inset X,0in,Minor,How far in from the right side should the handle be inset?
+PRESET,,HandleInsetZ,,26852A5E-7583-0A46-AD39-309483CB8F4D,,NamedDimension,,Handle Inset Z,0in,Minor,How far in from the top or bottom should be handle be inset?
 PRESET,,HangoffSizeX1,,9596E853-C4FC-E342-8405-9AD64B852112,,NamedDimension,,Overhang (Left),0in,Minor,How far outside the reference area does a frame's left extents hang? (e.g. a nailing fin)
 PRESET,,HangoffSizeX2,,9564CB6A-21E5-CC4D-BC88-3E901BA184BB,,NamedDimension,,Overhang (Right),0in,Minor,How far outside the reference area does a frame's right extents hang? (e.g. a nailing fin)
 PRESET,,HangoffSizeZ1,,81F1F66F-2A45-7C45-A7DF-2AC8D8B6FEBC,,NamedDimension,,Overhang (Bottom),0in,Minor,How far outside the reference area does a frame's bottom extents hang? (e.g. a nailing fin)
@@ -35,12 +37,30 @@ PRESET,,JambLeftSizeX,,8A8643DE-38D6-4040-B985-CCBA7C314E34,,NamedDimension,,Jam
 PRESET,,JambRIghtSizeX,,65496461-9A6F-7041-9A63-3ABC439EA918,,NamedDimension,,Jamb Size (Right),1in,Minor,How far into the reference area does a frame's right side intrude?
 PRESET,,KnockerDistanceZ,,7A00DB9C-D4B5-AB40-B34C-FA57EA99AFD4,,NamedDimension,,Knocker Height,54in,Minor,How far above the base of the frame is the knocker?
 PRESET,,MailSlotDistanceZ,,C3CE0B6F-CF20-9A44-922C-5EC4A4668FE0,,NamedDimension,,Mail Slot Height,12in,Minor,How far above the base of the frame is the mail slot?
-PRESET,,MuntinZoneX1,,0928120A-4693-A643-93D5-AD8D6CF8DD5D,,NamedDimension,,Muntin Zone Inset (Left),5in,Minor,How far in from the left side do the muntins end?
-PRESET,,MuntinZoneX2,,CF60DA85-1D2C-0D48-9D3C-8A63D218AC14,,NamedDimension,,Muntin Zone Inset (Right),5in,Minor,How far in from the right side do the muntins end?
-PRESET,,MuntinZoneY1,,28227ECD-1756-0145-BC9A-9279C08811DB,,NamedDimension,,Muntin Zone Depth (Back),0.375in,Minor,How far in Y from the back of the panel are the back muntins?
-PRESET,,MuntinZoneY2,,D728C676-4728-9B41-AF02-F0B37D5895DA,,NamedDimension,,Muntin Zone Depth (Front),1.5in,Minor,How far in Y from the back of the panel are the front muntins?
-PRESET,,MuntinZoneZ1,,78FDE804-7911-894B-BB39-16A31846930F,,NamedDimension,,Muntin Zone Inset (Bottom),5in,Minor,How far up from the bottom side do the muntins end?
-PRESET,,MuntinZoneZ2,,123CE0AE-1E60-9F4D-B0EC-E0CC7E05FF54,,NamedDimension,,Muntin Zone Inset (Top),5in,Minor,How far below the top side do the muntins end?
+PRESET,,MuntinZone1X1,,0928120A-4693-A643-93D5-AD8D6CF8DD5D,,NamedDimension,,Muntin Zone 1 Inset (Left),5in,Minor,How far in from the left side do the muntins end?
+PRESET,,MuntinZone1X2,,CF60DA85-1D2C-0D48-9D3C-8A63D218AC14,,NamedDimension,,Muntin Zone 1 Inset (Right),5in,Minor,How far in from the right side do the muntins end?
+PRESET,,MuntinZone1Y1,,28227ECD-1756-0145-BC9A-9279C08811DB,,NamedDimension,,Muntin Zone 1 Depth (Back),0.375in,Minor,How far in Y from the back of the panel are the back muntins?
+PRESET,,MuntinZone1Y2,,D728C676-4728-9B41-AF02-F0B37D5895DA,,NamedDimension,,Muntin Zone 1 Depth (Front),1.5in,Minor,How far in Y from the back of the panel are the front muntins?
+PRESET,,MuntinZone1Z1,,78FDE804-7911-894B-BB39-16A31846930F,,NamedDimension,,Muntin Zone 1 Inset (Bottom),5in,Minor,How far up from the bottom side do the muntins end?
+PRESET,,MuntinZone1Z2,,123CE0AE-1E60-9F4D-B0EC-E0CC7E05FF54,,NamedDimension,,Muntin Zone 1 Inset (Top),5in,Minor,How far below the top side do the muntins end?
+PRESET,,MuntinZone2X1,,50E3D5F6-297C-6841-80DA-0012489175E2,,NamedDimension,,Muntin Zone 2 Inset (Left),5in,Minor,How far in from the left side do the muntins end?
+PRESET,,MuntinZone2X2,,226EC505-86F9-F749-8F6C-F90456BEEA62,,NamedDimension,,Muntin Zone 2 Inset (Right),5in,Minor,How far in from the right side do the muntins end?
+PRESET,,MuntinZone2Y1,,17952033-18F5-5E42-8FFE-95A0D3A03FF2,,NamedDimension,,Muntin Zone 2 Depth (Back),0.375in,Minor,How far in Y from the back of the panel are the back muntins?
+PRESET,,MuntinZone2Y2,,1923DD6B-F2A8-AB4B-8560-FFA39E85F32D,,NamedDimension,,Muntin Zone 2 Depth (Front),1.5in,Minor,How far in Y from the back of the panel are the front muntins?
+PRESET,,MuntinZone2Z1,,30DEAB14-3491-4E48-BCF8-A4061648831B,,NamedDimension,,Muntin Zone 2 Inset (Bottom),5in,Minor,How far up from the bottom side do the muntins end?
+PRESET,,MuntinZone2Z2,,761700FF-6C60-B040-95DF-571B6B55B11B,,NamedDimension,,Muntin Zone 2 Inset (Top),5in,Minor,How far below the top side do the muntins end?
+PRESET,,MuntinZone3X1,,6991E686-5DF9-2F4D-B0EF-9647A13D2FF5,,NamedDimension,,Muntin Zone 3 Inset (Left),5in,Minor,How far in from the left side do the muntins end?
+PRESET,,MuntinZone3X2,,4E610326-4B68-8747-9BE9-4E22CF41B824,,NamedDimension,,Muntin Zone 3 Inset (Right),5in,Minor,How far in from the right side do the muntins end?
+PRESET,,MuntinZone3Y1,,F1B75A03-8C89-464D-93BD-9C07906A4151,,NamedDimension,,Muntin Zone 3 Depth (Back),0.375in,Minor,How far in Y from the back of the panel are the back muntins?
+PRESET,,MuntinZone3Y2,,235BF370-01D5-A043-AC86-6ABD2AF6FADB,,NamedDimension,,Muntin Zone 3 Depth (Front),1.5in,Minor,How far in Y from the back of the panel are the front muntins?
+PRESET,,MuntinZone3Z1,,36887C04-BEEF-C049-B8DB-2DF3303DD4FA,,NamedDimension,,Muntin Zone 3 Inset (Bottom),5in,Minor,How far up from the bottom side do the muntins end?
+PRESET,,MuntinZone3Z2,,89079C36-3F84-2E45-9F22-F8ED8DA3017A,,NamedDimension,,Muntin Zone 3 Inset (Top),5in,Minor,How far below the top side do the muntins end?
+PRESET,,MuntinZone4X1,,DF20592A-2269-BB41-B97E-A6689A8B0870,,NamedDimension,,Muntin Zone 4 Inset (Left),5in,Minor,How far in from the left side do the muntins end?
+PRESET,,MuntinZone4X2,,9C2BB073-DE5E-CF43-9423-59AC2FED7C8C,,NamedDimension,,Muntin Zone 4 Inset (Right),5in,Minor,How far in from the right side do the muntins end?
+PRESET,,MuntinZone4Y1,,CD9D617E-2934-4F42-963D-B2057721DAA5,,NamedDimension,,Muntin Zone 4 Depth (Back),0.375in,Minor,How far in Y from the back of the panel are the back muntins?
+PRESET,,MuntinZone4Y2,,7988B27C-26AE-E945-B4A9-D2FBBA6A5F2D,,NamedDimension,,Muntin Zone 4 Depth (Front),1.5in,Minor,How far in Y from the back of the panel are the front muntins?
+PRESET,,MuntinZone4Z1,,3C1145CF-88DF-934E-8DDB-74ACCBB2A0DB,,NamedDimension,,Muntin Zone 4 Inset (Bottom),5in,Minor,How far up from the bottom side do the muntins end?
+PRESET,,MuntinZone4Z2,,83DE3A61-35F4-494E-8235-9C9F0A690569,,NamedDimension,,Muntin Zone 4 Inset (Top),5in,Minor,How far below the top side do the muntins end?
 PRESET,,OverrunLeftSizeX,,281754AA-24CE-2C4C-ACE7-AFB2A71861BB,,NamedDimension,,Left Overrun,4in,Minor,How far to the left of the conceptual area does the barn track extend?
 PRESET,,OverrunRightSizeX,,F774761A-012A-F74E-8240-FBC20FFB13EE,,NamedDimension,,Right Overrun,4in,Minor,How far to the right of the conceptual area does the barn track extend?
 PRESET,,PanelDistanceY,,78B7050F-D46F-C144-95E6-0D2043C1C828,,NamedDimension,,Panel Depth-in-Frame,0in,Minor,"How far from the frame's origin, in Y, should the panel's origin be?"

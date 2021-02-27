@@ -451,7 +451,7 @@ EBIMResult FBIMPresetCollection::RemovePreset(const FGuid& InGUID)
 	return EBIMResult::Error;
 }
 
-TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeDelta(FBIMPresetInstance& UpdatedPreset) const
+TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeUpdateDelta(FBIMPresetInstance& UpdatedPreset) const
 {
 	TSharedPtr<FBIMPresetDelta> presetDelta = MakeShared<FBIMPresetDelta>();
 
@@ -463,6 +463,16 @@ TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeDelta(FBIMPresetInstance& 
 	}
 
 	return presetDelta;
+}
+
+TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeCreateNewDelta(FBIMPresetInstance& NewPreset)
+{
+	if (ensureAlways(!NewPreset.GUID.IsValid()))
+	{
+		GetAvailableGUID(NewPreset.GUID);
+		return MakeUpdateDelta(NewPreset);
+	}
+	return nullptr;
 }
 
 EBIMResult FBIMPresetCollection::ForEachPreset(const TFunction<void(const FBIMPresetInstance& Preset)>& Operation) const
@@ -599,6 +609,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 	TSet<FGuid> incompletePresets;
 	for (auto& kvp : PresetsByGUID)
 	{
+		kvp.Value.CustomData.SaveCborFromJson();
 		if (kvp.Value.ObjectType != EObjectType::OTNone)
 		{
 			FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(kvp.Value.ObjectType);
@@ -629,7 +640,9 @@ bool FBIMPresetCollection::SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord)
 		// Only save presets that have been edited, the rest are in the shared db
 		if (kvp.Value.Edited)
 		{
-			DocRecord.PresetCollection.AddPreset(kvp.Value);
+			auto serializedPreset = kvp.Value;
+			serializedPreset.CustomData.SaveJsonFromCbor();
+			DocRecord.PresetCollection.AddPreset(serializedPreset);
 			if (!DocRecord.PresetCollection.NodeDescriptors.Contains(kvp.Value.NodeType))
 			{
 				const FBIMPresetTypeDefinition* typeDef = NodeDescriptors.Find(kvp.Value.NodeType);
@@ -642,4 +655,24 @@ bool FBIMPresetCollection::SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord)
 	}
 
 	return true;
+}
+
+EBIMResult FBIMPresetCollection::GetBlankPresetForObjectType(EObjectType ObjectType, FBIMPresetInstance& OutPreset) const
+{
+	TArray<FGuid> guids;
+	GetPresetsByPredicate([ObjectType](const FBIMPresetInstance& Preset) {return Preset.ObjectType == ObjectType; },guids);
+
+	// TODO: ensure the first preset is a reasonable blank
+	if (guids.Num() > 0)
+	{
+		const FBIMPresetInstance* preset = PresetFromGUID(guids[0]);
+		if (preset != nullptr)
+		{
+			OutPreset = *preset;
+			OutPreset.GUID.Invalidate();
+			OutPreset.Edited = true;
+			return EBIMResult::Success;
+		}
+	}
+	return EBIMResult::Error;
 }

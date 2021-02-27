@@ -1,0 +1,6 @@
+TYPENAME,,0EdgeDetail,,Assembly,,,,
+,,Definition,,,,,,
+,,PropertyType,,PropertyName,,,,
+,,Presets,,,,,,
+TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=EdgeDetail,YOLO
+PRESET,,43973CA3-6E06-9C40-A2AB-2700335C80A1,,Property_Spatiality_ConnectionDetail_Edge-Property_Spatiality_ConnectionDetail_Edge-1,,Property_Spatiality_ConnectionDetail_Edge,,1

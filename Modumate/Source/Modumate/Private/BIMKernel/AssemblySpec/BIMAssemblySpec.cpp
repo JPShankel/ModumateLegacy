@@ -68,6 +68,12 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		return EBIMResult::Error;
 	}
 
+	// TODO: a more general custom data iterator when we get more use cases
+	if (assemblyPreset->ObjectType == EObjectType::OTEdgeDetail)
+	{
+		ensureAlways(assemblyPreset->CustomData.LoadStructData(EdgeDetailData));
+	}
+
 	if (assemblyPreset->SlotConfigPresetGUID.IsValid())
 	{
 		const FBIMPresetInstance* slotConfigPreset = PresetCollection.PresetFromGUID(assemblyPreset->SlotConfigPresetGUID);
@@ -646,6 +652,11 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 
 	case EObjectType::OTCabinet:
 		return MakeCabinetAssembly(InDB);
+
+	case EObjectType::OTEdgeDetail:
+		// Edge detail assemblies carry data directly from their preset, no construction step
+		// TODO: when property sheets are deprecated, construction should become unnecessary for other types as well
+		return EBIMResult::Success;
 
 	default:
 		ensureAlways(false);

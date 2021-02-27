@@ -52,9 +52,9 @@ enum class ECSVMatrixNames : uint8
 	Slots,
 	StartsInProject,
 	SubcategoryPath,
+	EdgeDetail,
 	Error = 255
 };
-
 
 struct MODUMATE_API FBIMCSVReader
 {

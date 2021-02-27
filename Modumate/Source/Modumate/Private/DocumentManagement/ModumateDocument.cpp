@@ -3153,6 +3153,11 @@ const FBIMPresetCollection& UModumateDocument::GetPresetCollection() const
 	return BIMPresetCollection;
 }
 
+FBIMPresetCollection& UModumateDocument::GetPresetCollection()
+{
+	return BIMPresetCollection;
+}
+
 bool UModumateDocument::MakeNewGUIDForPreset(FBIMPresetInstance& Preset)
 {
 	return BIMPresetCollection.GetAvailableGUID(Preset.GUID) == EBIMResult::Success;

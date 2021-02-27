@@ -14,6 +14,8 @@
 
 #include "Database/ModumateDataCollection.h"
 
+#include "ModumateCore/EdgeDetailData.h"
+
 #include "BIMAssemblySpec.generated.h"
 
 struct FBIMPresetCollection;
@@ -93,6 +95,9 @@ public:
 	
 	UPROPERTY()
 	float TreadDepthCentimeters = 0.0f;
+
+	UPROPERTY()
+	FEdgeDetailData EdgeDetailData;
 
 	// For DataCollection support in preset manager
 	FGuid UniqueKey() const { return PresetGUID; }
