@@ -27,10 +27,6 @@ public:
 protected:
 	virtual void OnWidgetRebuilt() override;
 
-	// TODO: potentially have this used by more things depending on how 
-	// unique this format is
-	void SanitizeInput(float InLength, FText &OutText);
-
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UEditableTextBox *Measurement;

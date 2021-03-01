@@ -16,36 +16,31 @@ class MODUMATE_API UModumateDimensionStatics : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Modumate Unit Conversion", meta = (ToolTip = "Try to parse a string that contains a number input from a user, in a localization-aware manner."))
-	static bool TryParseInputNumber(const FString &NumberString, float &OutValue);
+	// Efficient and culture aware number formatting and parsing, to convert a string containing a culture correct decimal representation of a number into an actual number.
+	template<typename T>
+	static typename TEnableIf<TIsArithmetic<T>::Value, bool>::Type
+	TryParseNumber(const FString& NumberString, T& OutValue, bool bEnableGrouping = true)
+	{
+		return FastDecimalFormat::StringToNumber(
+			*NumberString,
+			FInternationalization::Get().GetCurrentCulture()->GetDecimalNumberFormattingRules(),
+			bEnableGrouping ? FNumberParsingOptions::DefaultWithGrouping() : FNumberParsingOptions::DefaultNoGrouping(),
+			OutValue);
+	}
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Unit Conversion")
 	static FModumateFormattedDimension StringToFormattedDimension(const FString &dimStr);
 
-	UFUNCTION(BlueprintCallable, Category = "Modumate Unit Conversion")
-	static float StringToMetric(FString inputString, bool assumeLoneNumberAsFeet=false);
-
-	// THIS IS ONLY USEFUL FOR StringToMetric. Look for forward slash and treat it as divide.
-	UFUNCTION()
-	static TArray<FString> StringToMetricCheckSlash(TArray<FString> inputStringGroup);
-
 	// Convert any decimal values into string array. [0] = Whole Number, [1] = Numerator. [2] = Denominator
 	UFUNCTION(BlueprintCallable, Category = "Modumate Unit Conversion")
-	static TArray<FString> DecimalToFraction(float inputFloat, int32 maxDenom = 64);
+	static TArray<FString> DecimalToFraction_DEPRECATED(float inputFloat, int32 maxDenom = 64);
 
 	// Convert decimal values into string from non-zero values in above function with format: "{0} {1}/{2}"
 	UFUNCTION(BlueprintCallable, Category = "Modumate Unit Conversion")
-	static FString DecimalToFractionString(float inches, bool bFormat = false, bool bSplitWholeNumber = false, int32 maxDenom = 64);
+	static FString DecimalToFractionString_DEPRECATED(float inches, bool bFormat = false, bool bSplitWholeNumber = false, int32 maxDenom = 64);
 
-	// Convert cm to imperial units (ft, in, numerator and denominator)
-	UFUNCTION(BlueprintCallable, Category = "Modumate Unit Conversion")
-	static FModumateImperialUnits CentimeterToImperial(const float centimeter, const int32 maxDenominator = 64);
-
-	UFUNCTION(BlueprintCallable)
-	static void CentimetersToImperialInches(float Centimeters, UPARAM(ref) TArray<int32>& Imperial);
-
-	UFUNCTION(BlueprintCallable)
-	static FText ImperialInchesToDimensionStringText(UPARAM(ref) TArray<int32>& Imperial);
+	UFUNCTION()
+	static FText CentimetersToImperialText(float Centimeters, int32 MaxDenom = 64);
 
 	static constexpr float InchesToCentimeters = 2.54f;
 	static constexpr float CentimetersToInches = 1.0f / InchesToCentimeters;

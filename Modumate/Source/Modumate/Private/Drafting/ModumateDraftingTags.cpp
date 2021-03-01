@@ -471,8 +471,8 @@ FMaterialTagSequence::FMaterialTagSequence(const FBIMAssemblySpec &Assembly)
 	for (auto layer : Assembly.Layers)
 	{
 		FModumateUnitValue t = FModumateUnitValue::WorldCentimeters(layer.ThicknessCentimeters);
-		FString imperial = UModumateDimensionStatics::DecimalToFractionString(t.AsWorldInches());
-		auto imperialList = UModumateDimensionStatics::DecimalToFraction(t.AsWorldInches());
+		FString imperial = UModumateDimensionStatics::DecimalToFractionString_DEPRECATED(t.AsWorldInches());
+		auto imperialList = UModumateDimensionStatics::DecimalToFraction_DEPRECATED(t.AsWorldInches());
 		TotalThickness += t.AsWorldInches();
 
 		// crafting preset namecode/namesequence

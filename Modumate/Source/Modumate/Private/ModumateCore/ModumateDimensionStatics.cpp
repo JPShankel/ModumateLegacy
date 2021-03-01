@@ -15,47 +15,67 @@ using namespace Modumate;
 
 #define LOCTEXT_NAMESPACE "ModumateDimensions"
 
-bool UModumateDimensionStatics::TryParseInputNumber(const FString &NumberString, float &OutValue)
-{
-	FCultureRef culture = FInternationalization::Get().GetCurrentCulture();
-
-	return FastDecimalFormat::StringToNumber(*NumberString, culture->GetDecimalNumberFormattingRules(), FNumberParsingOptions::DefaultWithGrouping(), OutValue);
-}
-
 FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimension(const FString &dimStr)
 {
-	std::wstring dimCStr = *dimStr;
+	float sign = 1.0f;
+
+	// Before we get into regex, determine the sign of the string (which can only appear at the beginning, otherwise it would be in subsequent regex)
+	FString trimmedDimStr = dimStr.TrimStartAndEnd();
+
+	FModumateFormattedDimension result;
+	result.Format = EDimensionFormat::Error;
+	result.FormattedString = trimmedDimStr;
+	result.Centimeters = 0;
+
+	if (trimmedDimStr.IsEmpty())
+	{
+		return result;
+	}
+	if (trimmedDimStr[0] == TEXT('-'))
+	{
+		sign = -1.0f;
+		trimmedDimStr.RemoveAt(0);
+	}
+	else if (trimmedDimStr[0] == TEXT('+'))
+	{
+		trimmedDimStr.RemoveAt(0);
+	}
+
+	std::wstring dimCStr = *trimmedDimStr;
+
+	//Combines multi-unit strings
+	static std::wstring multiUnitSeparator = L"[\\s-]+";
 
 	//Matches any integer...bare integers are interpreted as feet
-	static std::wstring integerString = L"\\d+";
+	static std::wstring integerString = L"[,\\d]+";
 	static std::wregex integerPattern(integerString);
 
 	//Integer feet ie '9ft'
 	static std::wstring wholeFeetString = L"(" + integerString + L")" + L"(ft|')";
 	static std::wregex wholeFeetPattern(wholeFeetString);
 
-	static std::wstring decimalString = L"\\d*(\\.\\d+)?";
+	static std::wstring decimalString = L"[,\\.\\d*]+";
 
 	//Decimal inches ie 1in or 2.3" (can be integer)
 	static std::wstring wholeInchesString = L"(" + integerString + L")" + L"(in|\")";
 	static std::wregex inchesDecimal(L"(" + decimalString + L")(in|\")");
 
 	//Feet with a whole number of inches, ie '3ft 6in'
-	static std::wregex feetWholeInchesPattern(wholeFeetString + L"\\s+" + wholeInchesString);
+	static std::wregex feetWholeInchesPattern(wholeFeetString + multiUnitSeparator + wholeInchesString);
 
 	//A simple fraction of inches (no whole number part) ie '3/8in'
 	static std::wstring inchesSimpleFractionString = L"(" + integerString + L")" + L"/" + L"(" + integerString + L")(in|\")";
 	static std::wregex inchesSimpleFractionPattern(inchesSimpleFractionString);
 
 	// Whole number of feet with simple fraction of inches ie '2ft 3/4in'
-	static std::wregex feetSimpleFractionInchesPattern(wholeFeetString + L"\\s+" + inchesSimpleFractionString);
+	static std::wregex feetSimpleFractionInchesPattern(wholeFeetString + multiUnitSeparator + inchesSimpleFractionString);
 
 	//A complex fraction of inches with whole and frac part ie '5 3/8in'
 	static std::wstring inchesComplexFractionString = L"(" + integerString + L")\\s+(" + integerString + L")" + L"/" + L"(" + integerString + L")(in|\")";
 	static std::wregex inchesComplexFractionPattern(inchesComplexFractionString);
 
 	// Whole number of feet with complex fraction of inches ie '2ft 4 3/4in'
-	static std::wregex feetComplexFractionInchesPattern(wholeFeetString + L"\\s+" + inchesComplexFractionString);
+	static std::wregex feetComplexFractionInchesPattern(wholeFeetString + multiUnitSeparator + inchesComplexFractionString);
 
 	//Metric recognizes decimal places, decimal numbers are integers with optional mantissa
 	static std::wregex decimalPattern(decimalString);
@@ -73,522 +93,238 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	static std::wregex justMillimetersPattern(L"(" + decimalString + L")mm");
 
 	//Meters and centimeters with meters as an integer, ie '2m 45.3cm' 
-	static std::wregex metersAndCentimetersPattern(L"(" + integerString + L")m\\s+(" + decimalString + L")cm");
-
-	FModumateFormattedDimension ret;
-	ret.FormattedString = dimStr;
+	static std::wregex metersAndCentimetersPattern(L"(" + integerString + L")m" + multiUnitSeparator + L"(" + decimalString + L")cm");
 
 	std::wsmatch match;
+	int32 parsedIntA = 0, parsedIntB = 0, parsedIntC = 0, parsedIntD = 0;
+	double parsedDecimalA = 0.0, parsedDecimalB = 0.0;
 
 	// Bare integers are assumed to be plain feet
 	if (std::regex_match(dimCStr, match, integerPattern))
 	{
-		ret.Format = EDimensionFormat::JustFeet;
-		ret.Centimeters = FCString::Atof(*dimStr) * InchesToCentimeters * 12;
-		return ret;
+		if (UModumateDimensionStatics::TryParseNumber(dimCStr.c_str(), parsedIntA))
+		{
+			result.Format = EDimensionFormat::JustFeet;
+			result.Centimeters = sign * parsedIntA * InchesToCentimeters * 12;
+			return result;
+		}
+		else
+		{
+			return result;
+		}
 	}
 
 	// Bare decimal values are assumed to be plain feet
 	if (std::regex_match(dimCStr, match, decimalPattern))
 	{
-		ret.Format = EDimensionFormat::JustFeet;
-		ret.Centimeters = FCString::Atof(*dimStr) * InchesToCentimeters * 12;
-		return ret;
+		if (UModumateDimensionStatics::TryParseNumber(dimCStr.c_str(), parsedDecimalA))
+		{
+			result.Format = EDimensionFormat::JustFeet;
+			result.Centimeters = sign * parsedDecimalA * InchesToCentimeters * 12;
+			return result;
+		}
+		else
+		{
+			return result;
+		}
 	}
 
 	// Simple fractions with 'in' or " ie 1/2in or 3/4"
 	if (std::regex_match(dimCStr, match, inchesSimpleFractionPattern))
 	{
-		if (match.size() > 2)
+		if ((match.size() > 2) &&
+			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedIntA) &&
+			UModumateDimensionStatics::TryParseNumber(match[2].str().c_str(), parsedIntB))
 		{
-			float numer = FCString::Atof(match[1].str().c_str());
-			float denom = FCString::Atof(match[2].str().c_str());
+			float numer = (float)parsedIntA;
+			float denom = (float)parsedIntB;
 			if (!FMath::IsNearlyZero(denom))
 			{
-				ret.Format = EDimensionFormat::JustInches;
-				ret.Centimeters = (numer / denom)* InchesToCentimeters;
-			}
-			else
-			{
-				ret.Format = EDimensionFormat::Error;
+				result.Format = EDimensionFormat::JustInches;
+				result.Centimeters = sign * (numer / denom) * InchesToCentimeters;
 			}
 		}
-		else
-		{
-			ret.Format = EDimensionFormat::Error;
-		}
-		return ret;
+
+		return result;
 	}
 
 	// Simple fractions with 'in' or " ie 3 1/2in or 5 3/4"
 	if (std::regex_match(dimCStr, match, inchesComplexFractionPattern))
 	{
-		if (match.size() > 3)
+		if ((match.size() > 3) &&
+			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedIntA) &&
+			UModumateDimensionStatics::TryParseNumber(match[2].str().c_str(), parsedIntB) &&
+			UModumateDimensionStatics::TryParseNumber(match[3].str().c_str(), parsedIntC))
 		{
-			float whole = FCString::Atof(match[1].str().c_str());
-			float numer = FCString::Atof(match[2].str().c_str());
-			float denom = FCString::Atof(match[3].str().c_str());
+			float whole = (float)parsedIntA;
+			float numer = (float)parsedIntB;
+			float denom = (float)parsedIntC;
 			if (!FMath::IsNearlyZero(denom))
 			{
-				ret.Format = EDimensionFormat::JustInches;
-				ret.Centimeters = (whole + (numer / denom))* InchesToCentimeters;
-			}
-			else
-			{
-				ret.Format = EDimensionFormat::Error;
+				result.Format = EDimensionFormat::JustInches;
+				result.Centimeters = sign * (whole + (numer / denom)) * InchesToCentimeters;
 			}
 		}
-		else
-		{
-			ret.Format = EDimensionFormat::Error;
-		}
-		return ret;
+
+		return result;
 	}
 
 	// Decimal value with 'in' or " ie 1.2in or 3.4"
 	if (std::regex_match(dimCStr, match, inchesDecimal))
 	{
-		if (match.size() > 1)
+		if ((match.size() > 1) &&
+			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedDecimalA))
 		{
-			ret.Format = EDimensionFormat::JustInches;
-			ret.Centimeters = FCString::Atof(match[1].str().c_str()) * InchesToCentimeters;
+			result.Format = EDimensionFormat::JustInches;
+			result.Centimeters = sign * parsedDecimalA * InchesToCentimeters;
 		}
-		else
-		{
-			ret.Format = EDimensionFormat::Error;
-		}
-		return ret;
+
+		return result;
 	}
 
 	// A whole number of qualified feet, ie 3ft
 	if (std::regex_match(dimCStr, match, wholeFeetPattern))
 	{
-		if (match.size() > 1)
+		if ((match.size() > 1) &&
+			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedIntA))
 		{
-			ret.Format = EDimensionFormat::JustFeet;
-			ret.Centimeters = FCString::Atoi(match[1].str().c_str()) * 12 * InchesToCentimeters;
+			result.Format = EDimensionFormat::JustFeet;
+			result.Centimeters = sign * parsedIntA * 12 * InchesToCentimeters;
 		}
-		else
-		{
-			ret.Format = EDimensionFormat::Error;
-		}
-		return ret;
+
+		return result;
 	}
 
 	// A whole number of qualified feet and qualified inches, ie 3ft 5in
 	if (std::regex_match(dimCStr, match, feetWholeInchesPattern))
 	{
-		if (match.size() > 3)
+		if ((match.size() > 3) &&
+			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedIntA) &&
+			UModumateDimensionStatics::TryParseNumber(match[3].str().c_str(), parsedIntB))
 		{
-			ret.Format = EDimensionFormat::FeetAndInches;
-			float feet = FCString::Atof(match[1].str().c_str());
-			float inches = FCString::Atof(match[3].str().c_str());
-			ret.Centimeters = (feet * 12 + inches) * InchesToCentimeters;
+			result.Format = EDimensionFormat::FeetAndInches;
+			float feet = (float)parsedIntA;
+			float inches = (float)parsedIntB;
+			result.Centimeters = sign * (feet * 12 + inches) * InchesToCentimeters;
 		}
-		else
-		{
-			ret.Format = EDimensionFormat::Error;
-		}
-		return ret;
+
+		return result;
 	}
 
 	// A whole number of qualified feet and a simple fraction of inches, ie 3ft 1/2in
 	if (std::regex_match(dimCStr, match, feetSimpleFractionInchesPattern))
 	{
-		if (match.size() > 4)
+		if ((match.size() > 4) &&
+			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedIntA) &&
+			UModumateDimensionStatics::TryParseNumber(match[3].str().c_str(), parsedIntB) &&
+			UModumateDimensionStatics::TryParseNumber(match[4].str().c_str(), parsedIntC))
 		{
-			ret.Format = EDimensionFormat::FeetAndInches;
-			float numer = FCString::Atof(match[3].str().c_str());
-			float denom = FCString::Atof(match[4].str().c_str());
-			float feet = FCString::Atof(match[1].str().c_str());
+			float feet = (float)parsedIntA;
+			float numer = (float)parsedIntB;
+			float denom = (float)parsedIntC;
 			if (!FMath::IsNearlyZero(denom))
 			{
-				ret.Centimeters = (feet * 12.0f + (numer / denom)) * InchesToCentimeters;
-			}
-			else
-			{
-				ret.Format = EDimensionFormat::Error;
+				result.Format = EDimensionFormat::FeetAndInches;
+				result.Centimeters = sign * (feet * 12.0f + (numer / denom)) * InchesToCentimeters;
 			}
 		}
-		else
-		{
-			ret.Format = EDimensionFormat::Error;
-		}
-		return ret;
+
+		return result;
 	}
 
 	// A whole number of feet and a complex fraction of inches, ie 6ft 3 1/4in
 	if (std::regex_match(dimCStr, match, feetComplexFractionInchesPattern))
 	{
-		if (match.size() > 6)
+		if ((match.size() > 6) &&
+			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedIntA) &&
+			UModumateDimensionStatics::TryParseNumber(match[3].str().c_str(), parsedIntB) &&
+			UModumateDimensionStatics::TryParseNumber(match[4].str().c_str(), parsedIntC) &&
+			UModumateDimensionStatics::TryParseNumber(match[5].str().c_str(), parsedIntD))
 		{
-			ret.Format = EDimensionFormat::FeetAndInches;
-			float wholeFrac = FCString::Atof(match[3].str().c_str());
-			float numer = FCString::Atof(match[4].str().c_str());
-			float denom = FCString::Atof(match[5].str().c_str());
-			float feet = FCString::Atof(match[1].str().c_str());
+			float feet = (float)parsedIntA;
+			float wholeFrac = (float)parsedIntB;
+			float numer = (float)parsedIntC;
+			float denom = (float)parsedIntD;
 			if (!FMath::IsNearlyZero(denom))
 			{
-				ret.Centimeters = (feet * 12 + wholeFrac + (numer / denom)) * InchesToCentimeters;
-			}
-			else
-			{
-				ret.Format = EDimensionFormat::Error;
+				result.Format = EDimensionFormat::FeetAndInches;
+				result.Centimeters = sign * (feet * 12 + wholeFrac + (numer / denom)) * InchesToCentimeters;
 			}
 		}
-		else
-		{
-			ret.Format = EDimensionFormat::Error;
-		}
-		return ret;
+
+		return result;
 	}
 
 	// A decimal value of feet, ie 1.234ft
 	if (std::regex_match(dimCStr, match, justFeetPattern))
 	{
-		if (match.size() > 1)
+		if ((match.size() > 1) &&
+			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedDecimalA))
 		{
-			ret.Format = EDimensionFormat::JustFeet;
-			ret.Centimeters = FCString::Atof(match[1].str().c_str()) * InchesToCentimeters * 12;
+			result.Format = EDimensionFormat::JustFeet;
+			result.Centimeters = sign * parsedDecimalA * InchesToCentimeters * 12;
 		}
-		else
-		{
-			ret.Format = EDimensionFormat::Error;
-		}
-		return ret;
+
+		return result;
 	}
 
 	// A decimal value of meters, ie 1.234m
 	if (std::regex_match(dimCStr, match, justMetersPattern))
 	{
-		if (match.size() > 1)
+		if ((match.size() > 1) &&
+			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedDecimalA))
 		{
-			ret.Format = EDimensionFormat::JustMeters;
-			ret.Centimeters = FCString::Atof(match[1].str().c_str()) * 100.0f;
+			result.Format = EDimensionFormat::JustMeters;
+			result.Centimeters = sign * parsedDecimalA * 100.0f;
 		}
-		else
-		{
-			ret.Format = EDimensionFormat::Error;
-		}
-		return ret;
+
+		return result;
 	}
 
 	// A decimal value of centimeters, ie 1.234cm
 	if (std::regex_match(dimCStr, match, justCentimetersPattern))
 	{
-		if (match.size() > 1)
+		if ((match.size() > 1) &&
+			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedDecimalA))
 		{
-			ret.Format = EDimensionFormat::JustCentimeters;
-			ret.Centimeters = FCString::Atof(match[1].str().c_str());
+			result.Format = EDimensionFormat::JustCentimeters;
+			result.Centimeters = sign * parsedDecimalA;
 		}
-		else
-		{
-			ret.Format = EDimensionFormat::Error;
-		}
-		return ret;
+
+		return result;
 	}
 
 	// A decimal value of millimeters, ie 1.234mm
 	if (std::regex_match(dimCStr, match, justMillimetersPattern))
 	{
-		if (match.size() > 1)
+		if ((match.size() > 1) &&
+			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedDecimalA))
 		{
-			ret.Format = EDimensionFormat::JustMillimeters;
-			ret.Centimeters = FCString::Atof(match[1].str().c_str()) * 0.1f;
+			result.Format = EDimensionFormat::JustMillimeters;
+			result.Centimeters = sign * parsedDecimalA * 0.1f;
 		}
-		else
-		{
-			ret.Format = EDimensionFormat::Error;
-		}
-		return ret;
+
+		return result;
 	}
 
 	// A number of meters and centimeters, ie 3m 16.2cm
 	if (std::regex_match(dimCStr, match, metersAndCentimetersPattern))
 	{
-		if (match.size() > 2)
+		if ((match.size() > 2) &&
+			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedDecimalA) &&
+			UModumateDimensionStatics::TryParseNumber(match[2].str().c_str(), parsedDecimalB))
 		{
-			ret.Format = EDimensionFormat::MetersAndCentimeters;
-			ret.Centimeters = FCString::Atof(match[1].str().c_str()) * 100.0f + FCString::Atof(match[2].str().c_str());
+			result.Format = EDimensionFormat::MetersAndCentimeters;
+			result.Centimeters = sign * parsedDecimalA * 100.0f + parsedDecimalB;
 		}
-		else
-		{
-			ret.Format = EDimensionFormat::Error;
-		}
-		return ret;
+
+		return result;
 	}
 
-	ret.Format = EDimensionFormat::Error;
-	ret.Centimeters = 0;
-
-	return ret;
+	return result;
 }
 
-float UModumateDimensionStatics::StringToMetric(FString inputString, bool assumeLoneNumberAsFeet)
-{
-	// Is the number start with negative?
-	TArray<FString> inputArray = UKismetStringLibrary::GetCharacterArrayFromString(inputString);
-	int32 negativeSignIndex = -1;
-	int32 firstNumberIndex = -1;
-	for (int32 i = 0; i < inputArray.Num(); i++)
-	{
-		if (inputArray[i] == TEXT("-"))
-		{
-			negativeSignIndex = i;
-		}
-		if (UKismetStringLibrary::IsNumeric(inputArray[i]))
-		{
-			firstNumberIndex = i;
-			break;
-		}
-	}
-	bool isNegative = (negativeSignIndex == 0) && (firstNumberIndex == 0);
-
-	// Enter unit name here
-	TArray<FString> FootNames = { TEXT("feet"), TEXT("foot"), TEXT("ft."), TEXT("ft"), TEXT("'") };
-	TArray<FString> InchNames = { TEXT("inches"), TEXT("inch"), TEXT("in."), TEXT("in"), TEXT("\"") };
-	TArray<FString> DecimeterNames = { TEXT("decimeter"), TEXT("deci"), TEXT("dm."), TEXT("dm"), TEXT("d") };
-	TArray<FString> CentimeterNames = { TEXT("centimeter"), TEXT("centi"), TEXT("cm."), TEXT("cm"), TEXT("c") };
-	TArray<FString> MeterNames = { TEXT("meter"), TEXT("m."), TEXT("m") };
-
-	FString TotalString = inputString;
-	TArray<FString> TotalStringGroup;
-	FString SubStringGroup;
-	float CurNumber = 0.0;
-	TArray<float> SubNumbers;
-	TArray<float> SubNumbersRemain;
-	TArray<int32> SubNumberRmainIndex;
-	int32 CurNumIndex;
-	float Resultcm = 0.0;
-
-	// Replace signs with appropriate char for recognizing string spacing
-	TotalString = UKismetStringLibrary::Replace(TotalString, TEXT("+"), TEXT(" + "), ESearchCase::IgnoreCase);
-	TotalString = UKismetStringLibrary::Replace(TotalString, TEXT("-"), TEXT("'"), ESearchCase::IgnoreCase);
-
-	// Feet symbols replacement
-	for (FString& FootName : FootNames)
-	{
-		TotalString = UKismetStringLibrary::Replace(TotalString, FootName, TEXT(" ' "), ESearchCase::IgnoreCase);
-	}
-
-	// Inches symbols replacement
-	for (FString& InchName : InchNames)
-	{
-		TotalString = UKismetStringLibrary::Replace(TotalString, InchName, TEXT(" \" "), ESearchCase::IgnoreCase);
-	}
-
-	// Decimeter symbols replacement
-	for (FString& DeciName : DecimeterNames)
-	{
-		TotalString = UKismetStringLibrary::Replace(TotalString, DeciName, TEXT(" d "), ESearchCase::IgnoreCase);
-	}
-
-	// Centimeter symbols replacement
-	for (FString& CentiName : CentimeterNames)
-	{
-		TotalString = UKismetStringLibrary::Replace(TotalString, CentiName, TEXT(" c "), ESearchCase::IgnoreCase);
-	}
-
-	// Meter symbols replacement
-	for (FString& MeterName : MeterNames)
-	{
-		TotalString = UKismetStringLibrary::Replace(TotalString, MeterName, TEXT(" m "), ESearchCase::IgnoreCase);
-	}
-
-	// Separate each letter into an array, and then group only numbers together
-	TArray<FString> inputStringIndArray = UKismetStringLibrary::GetCharacterArrayFromString(TotalString);
-
-	for (int32 i = 0; i < inputStringIndArray.Num(); i++)
-	{
-		bool bIsNumeric = UKismetStringLibrary::IsNumeric(inputStringIndArray[i]);
-
-		if (bIsNumeric)
-		{
-			SubStringGroup = SubStringGroup + inputStringIndArray[i];
-			if (i == (inputStringIndArray.Num() - 1))
-			{
-				TotalStringGroup.Add(SubStringGroup);
-				SubStringGroup = "";
-			}
-		}
-		else
-		{
-			SubStringGroup = SubStringGroup + inputStringIndArray[i];
-
-			if ((UKismetStringLibrary::TrimTrailing(UKismetStringLibrary::Trim(SubStringGroup))).Len() > 0)
-			{
-				TotalStringGroup.Add(SubStringGroup);
-				SubStringGroup = "";
-			}
-			else
-			{
-				SubStringGroup = "";
-			}
-		}
-
-	}
-
-	// Find slashes characters and treat them like math division
-	TotalStringGroup = StringToMetricCheckSlash(TotalStringGroup);
-
-	// If input is alone without specify feet or inches, assume is feet
-	if (assumeLoneNumberAsFeet && TotalStringGroup.Num() == 1)
-	{
-		if (UKismetStringLibrary::IsNumeric(UKismetStringLibrary::TrimTrailing(UKismetStringLibrary::Trim(TotalStringGroup[0]))))
-		{
-			return FCString::Atof(*TotalStringGroup[0]) * 12 * InchesToCentimeters;
-		}
-	}
-
-	// Find the number values and look at the next character to calculate for unit conversion
-	for (int32 i = 0; i < TotalStringGroup.Num(); i++)
-	{
-		FString CurString = TotalStringGroup[i];
-
-		if (UKismetStringLibrary::IsNumeric(UKismetStringLibrary::TrimTrailing(UKismetStringLibrary::Trim(CurString))))
-		{
-			if (CurNumber == 0.0)
-			{
-				CurNumber = FCString::Atof(*CurString);
-				CurNumIndex = i;
-			}
-			else
-			{
-				SubNumbersRemain.Add(CurNumber);
-				SubNumberRmainIndex.Add(CurNumIndex);
-				CurNumber = FCString::Atof(*CurString);
-				CurNumIndex = i;
-			}
-		}
-
-		else if (UKismetStringLibrary::Contains(CurString, TEXT("'"), false, false))
-		{
-			SubNumbers.Add(CurNumber * 12 * InchesToCentimeters);
-			CurNumber = 0.0;
-			CurNumIndex = i;
-		}
-
-		else if (UKismetStringLibrary::Contains(CurString, TEXT("\""), false, false))
-		{
-			SubNumbers.Add(CurNumber * InchesToCentimeters);
-			CurNumber = 0.0;
-			CurNumIndex = i;
-		}
-
-		else if (UKismetStringLibrary::Contains(CurString, TEXT("d"), false, false))
-		{
-			SubNumbers.Add(CurNumber * 10.0);
-			CurNumber = 0.0;
-			CurNumIndex = i;
-		}
-
-		else if (UKismetStringLibrary::Contains(CurString, TEXT("c"), false, false))
-		{
-			SubNumbers.Add(CurNumber * 1.0);
-			CurNumber = 0.0;
-			CurNumIndex = i;
-		}
-
-		else if (UKismetStringLibrary::Contains(CurString, TEXT("m"), false, false))
-		{
-			SubNumbers.Add(CurNumber * 100.0);
-			CurNumber = 0.0;
-			CurNumIndex = i;
-		}
-
-		else if (CurNumber == 0.0)
-		{
-
-		}
-
-		else
-		{
-			SubNumbers.Add(CurNumber * InchesToCentimeters);
-			CurNumber = 0.0;
-			CurNumIndex = i;
-		}
-	}
-
-	// If last string is numeric, treat it as inches
-	if (CurNumber != 0.0)
-	{
-		SubNumbers.Add(CurNumber * InchesToCentimeters);
-		CurNumber = 0.0;
-	}
-
-	// Look for numeric string in context of its spacing and + sign
-	for (int32 i = 0; i < SubNumbersRemain.Num(); i++)
-	{
-		if ((UKismetStringLibrary::Contains(TotalStringGroup[SubNumberRmainIndex[i] + 1], TEXT("+"), false, false)))
-		{
-			SubNumbers.Add(SubNumbersRemain[i] * InchesToCentimeters);
-		}
-		else
-		{
-			SubNumbers.Add(SubNumbersRemain[i] * 12 * InchesToCentimeters);
-		}
-	}
-
-	for (float& num : SubNumbers)
-	{
-		Resultcm = Resultcm + num;
-	}
-
-	if (isNegative)
-	{
-		Resultcm = Resultcm * -1.f;
-	}
-
-	return Resultcm;
-}
-
-TArray<FString> UModumateDimensionStatics::StringToMetricCheckSlash(TArray<FString> inputStringGroup)
-{
-	TArray<FString> StringGroup = inputStringGroup;
-	TArray<FString> FinalStringGroup;
-
-	for (int32 i = 0; i < StringGroup.Num(); i++)
-	{
-		if (UKismetStringLibrary::Contains(StringGroup[i], TEXT("/"), false, false))
-		{
-			float SlashReplaceValue = FCString::Atof(*StringGroup[i]);
-
-			//int32 Sizestep = FMath::Clamp(i-1, 0, 10000);
-			//FString SampleString = StringGroup[FMath::Clamp(i - 1, 0, 10000)];
-			FString SampleString = UKismetStringLibrary::TrimTrailing(UKismetStringLibrary::Trim(StringGroup[FMath::Clamp(i - 1, 0, 10000)]));
-
-			float DivideValue = SlashReplaceValue / FCString::Atof(*StringGroup[i + 1]);
-
-			if (UKismetStringLibrary::IsNumeric(SampleString))
-			{
-				StringGroup[i] = FString::SanitizeFloat(FCString::Atof(*SampleString) + DivideValue);
-				StringGroup[i + 1] = TEXT("na");
-				StringGroup[i - 1] = TEXT("na");
-			}
-			else
-			{
-				StringGroup[i] = FString::SanitizeFloat(DivideValue);
-				StringGroup[i + 1] = TEXT("na");
-			}
-		}
-	}
-
-	for (FString& InString : StringGroup)
-	{
-		if (UKismetStringLibrary::Contains(InString, TEXT("na"), false, false))
-		{
-
-		}
-		else
-		{
-			FinalStringGroup.Add(InString);
-		}
-	}
-
-	return FinalStringGroup;
-}
-
-TArray<FString> UModumateDimensionStatics::DecimalToFraction(float inputFloat, int32 maxDenom)
+TArray<FString> UModumateDimensionStatics::DecimalToFraction_DEPRECATED(float inputFloat, int32 maxDenom)
 {
 	TArray<FString> FinalStrings = { TEXT("0"), TEXT("0,"), TEXT("0") };
 
@@ -634,166 +370,76 @@ TArray<FString> UModumateDimensionStatics::DecimalToFraction(float inputFloat, i
 	return FinalStrings;
 }
 
-FString UModumateDimensionStatics::DecimalToFractionString(float inches, bool bFormat, bool bSplitWholeNumber, int32 maxDenom)
+FString UModumateDimensionStatics::DecimalToFractionString_DEPRECATED(float inches, bool bFormat, bool bSplitWholeNumber, int32 maxDenom)
 {
-	TArray<FString> imperial = UModumateDimensionStatics::DecimalToFraction(inches, maxDenom);
-
-	FString result;
-	if (imperial[0] != "0")
-	{
-		if (bSplitWholeNumber && inches > 12.0f)
-		{
-			int32 feet = (int32)inches / 12;
-			result = FString::FromInt(feet);
-			if (bFormat)
-			{
-				result += "'";
-			}
-			result += " - " + FString::FromInt((int)inches - feet * 12);
-		}
-		else
-		{
-			result = imperial[0];
-		}
-	}
-	if (imperial[1] != "0")
-	{
-		if (imperial[0] != "0")
-		{
-			result += " ";
-		}
-		result += imperial[1] + "/" + imperial[2];
-	}
-
-	if (bFormat)
-	{
-		result += "\"";
-	}
-
-	return result;
+	return UModumateDimensionStatics::CentimetersToImperialText(inches * UModumateDimensionStatics::InchesToCentimeters, maxDenom).ToString();
 }
 
-FModumateImperialUnits UModumateDimensionStatics::CentimeterToImperial(const float centimeter, const int32 maxDenominator)
+FText UModumateDimensionStatics::CentimetersToImperialText(float Length, int32 MaxDenom)
 {
-	FModumateImperialUnits returnUnit;
-	TArray<FString> fractions = DecimalToFraction((centimeter / InchesToCentimeters), maxDenominator);
-	const float fInch = FCString::Atof(*fractions[0]);
-	const int32 roundInch = round(fInch) / InchesPerFoot;
-	const int32 roundModInch = round(fmod(fInch, InchesPerFoot));
-
-	// If numerator or denominator is 0, then only return FeetWhole and InchesWhole
-	if (fractions[1] == "0" || fractions[2] == "0")
+	bool bNegative = Length < 0;
+	if (bNegative)
 	{
-		if (fmod(fInch, InchesPerFoot) == 0.f)  // Can inches turn to feet without inches?
+		Length *= -1.0f;
+	}
+
+	Length *= UModumateDimensionStatics::CentimetersToInches;
+
+	int32 feet = Length / 12;
+
+	Length -= (feet * 12);
+
+	int32 inches = Length;
+
+	Length -= inches;
+
+	Length *= MaxDenom;
+
+	// rounding here allows for rounding based on the tolerance
+	// (ex. rounding to the nearest 1/64")
+	int32 numerator = FMath::RoundHalfToZero(Length);
+	int32 denominator = MaxDenom;
+	while (numerator % 2 == 0 && numerator != 0)
+	{
+		numerator /= 2;
+		denominator /= 2;
+	}
+	// carry
+	if (denominator == 1)
+	{
+		inches++;
+		numerator = 0;
+	}
+	if (inches == 12)
+	{
+		feet++;
+		inches -= 12;
+	}
+
+	FText signText = bNegative ? FText::FromString(TEXT("-")) : FText::GetEmpty();
+	FText feetText = feet != 0 ? FText::Format(LOCTEXT("feet", "{0}'"), feet) : FText::GetEmpty();
+	FText inchesText;
+
+	if (numerator != 0)
+	{
+		if (inches != 0)
 		{
-			returnUnit.FeetWhole = FString::SanitizeFloat(round(fInch) / InchesPerFoot); // Feet only
+			inchesText = FText::Format(LOCTEXT("inches_with_frac", "{0} {1}/{2}\""), inches, numerator, denominator);
 		}
 		else
 		{
-			// Use inches only if it's under or equal 12 inches
-			if (roundInch == 0)
-			{
-				returnUnit.InchesWhole = FString::SanitizeFloat(roundModInch);
-			}
-			else
-			{
-				returnUnit.FeetWhole = FString::SanitizeFloat(roundInch);
-				returnUnit.InchesWhole = FString::SanitizeFloat(roundModInch);
-			}
+			inchesText = FText::Format(LOCTEXT("inches_only_frac", "{0}/{1}\""), numerator, denominator);
 		}
 	}
 	else
 	{
-		if (fractions[0] == "0") // If there's no whole number, use fraction only
-		{
-			returnUnit.InchesNumerator = fractions[1];
-			returnUnit.InchesDenominator = fractions[2];
-		}
-		else
-		{
-			if (fInch > InchesPerFoot) // If more than 12 inches, use both both feet and inches
-			{
-				returnUnit.FeetWhole = FString::SanitizeFloat(roundInch);
-				returnUnit.InchesWhole = FString::SanitizeFloat(roundModInch);
-				returnUnit.InchesNumerator = fractions[1];
-				returnUnit.InchesDenominator = fractions[2];
-			}
-			else // Only use inches
-			{
-				returnUnit.InchesWhole = fractions[0];
-				returnUnit.InchesNumerator = fractions[1];
-				returnUnit.InchesDenominator = fractions[2];
-			}
-		}
+		inchesText = FText::Format(LOCTEXT("inches", "{0}\""), inches);
 	}
-	return returnUnit;
-}
 
-void UModumateDimensionStatics::CentimetersToImperialInches(float Centimeters, TArray<int32>& ReturnImperial)
-{
-	ReturnImperial.Empty();
-	float Inches = CentimetersToInches * Centimeters;
-	int32 NonDecimal = (int32)Inches;
-	float Decimal = FMath::Abs(Inches - NonDecimal);
-	ReturnImperial.Add(NonDecimal / 12);
-	ReturnImperial.Add(NonDecimal % 12);
-	if (Decimal >= 0.875)
-	{
-		ReturnImperial[0] = ReturnImperial[0] + (ReturnImperial[1] + 1) / 12;
-		ReturnImperial[1] = (ReturnImperial[1] + 1) % 12;
-		return;
-	}
-	else if (Decimal <= 0.125)
-	{
-		return;
-	}
-	else
-	{
-		for (int32 num = 1; num < 8; num++)
-		{
-			if ((float)num / 8 <= Decimal && Decimal <= (float)(num + 1) / 8)
-			{
-				//GEngine->AddOnScreenDebugMessage(0, 0.5f, FColor::Red, *FString::SanitizeFloat((float)num / denom));
-				//GEngine->AddOnScreenDebugMessage(0, 0.5f, FColor::Red, *FString::SanitizeFloat((float)(num + 1) / denom));
-				float ManhatDistFromLowToDec = FMath::Abs((float)num / 8 - Decimal);
-				float ManhatDistFromDecToHigh = FMath::Abs((float)(num + 1) / 8 - Decimal);
+	// if there are both feet and inches, separate with a hyphen, otherwise use the one that exists
+	FText feetInchJoinText = (!feetText.IsEmpty() && !inchesText.IsEmpty()) ? FText::FromString(TEXT("-")) : FText::GetEmpty();
 
-				if (ManhatDistFromLowToDec < ManhatDistFromDecToHigh)
-				{
-					int32 Gcd = FMath::GreatestCommonDivisor(num, 8);
-					ReturnImperial.Add(num / Gcd);
-					ReturnImperial.Add(8 / Gcd);
-					return;
-				}
-				else
-				{
-					int32 Gcd = FMath::GreatestCommonDivisor(num + 1, 8);
-					ReturnImperial.Add((num + 1) / Gcd);
-					ReturnImperial.Add(8 / Gcd);
-					return;
-				}
-			}
-		}
-		return;
-	}
-}
-
-FText UModumateDimensionStatics::ImperialInchesToDimensionStringText(TArray<int32>& Imperial)
-{
-	int32 numParts = Imperial.Num();
-	switch (numParts)
-	{
-	case 2:
-		return FText::Format(LOCTEXT("imperial_whole_numbers", "{0}' {1}\""),
-			FText::AsNumber(Imperial[0]), FText::AsNumber(Imperial[1]));
-	case 4:
-		return FText::Format(LOCTEXT("imperial_fractions", "{0}' {1} {2}/{3}\""),
-			FText::AsNumber(Imperial[0]), FText::AsNumber(Imperial[1]),
-			FText::AsNumber(Imperial[2]), FText::AsNumber(Imperial[3]));
-	default:
-		ensureMsgf(false, TEXT("Input imperial inches array much be of length 2 or 4, it is: %d"), numParts);
-		return FText::GetEmpty();
-	}
+	return FText::Format(LOCTEXT("feet_and_inches", "{0}{1}{2}{3}"), signText, feetText, feetInchJoinText, inchesText);
 }
 
 #undef LOCTEXT_NAMESPACE

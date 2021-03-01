@@ -86,13 +86,10 @@ void UCutPlaneExportListItem::BuildAsVerticalCutPlaneItem(const FQuat& Rotation)
 
 void UCutPlaneExportListItem::BuildAsHorizontalCutPlaneItem(const FVector& Location)
 {
-	TArray<int32> imperialsInches;
-	UModumateDimensionStatics::CentimetersToImperialInches(Location.Z, imperialsInches);
-	TextDimension->ChangeText(UModumateDimensionStatics::ImperialInchesToDimensionStringText(imperialsInches));
+	TextDimension->ChangeText(UModumateDimensionStatics::CentimetersToImperialText(Location.Z));
 }
 
 UWidget* UCutPlaneExportListItem::OnTooltipWidget()
 {
 	return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID, this);
 }
-

@@ -70,7 +70,7 @@ namespace Modumate {
 			row.Add(MakeDraftingText(FText::FromString(assembly.DisplayName)));
 
 			// Thickness
-			FText thickness = FText::FromString(UModumateDimensionStatics::DecimalToFractionString(tag->TotalThickness));
+			FText thickness = FText::FromString(UModumateDimensionStatics::DecimalToFractionString_DEPRECATED(tag->TotalThickness));
 
 			thickness = FText::Format(InchesFormat, thickness);
 

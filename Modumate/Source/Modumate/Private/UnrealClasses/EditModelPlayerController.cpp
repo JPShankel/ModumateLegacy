@@ -494,21 +494,28 @@ void AEditModelPlayerController::OnTextCommitted(const FText& Text, ETextCommit:
 	}
 
 	EToolMode curToolMode = GetToolMode();
-	float v = 0.f;
+	double lengthCM = 0.f;
+	bool bParseSuccess = false;
+
 	// Most cases input is in imperial unit, unless is specific handle or tool mode
 	if (curToolMode == EToolMode::VE_ROTATE || // Rotate tool uses degree
 		(InteractionHandle && !InteractionHandle->HasDistanceTextInput()))
 	{
-		UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), v);
+		bParseSuccess = UModumateDimensionStatics::TryParseNumber(Text.ToString(), lengthCM);
 	}
 	else
 	{
-		v = UModumateDimensionStatics::StringToMetric(Text.ToString(), true);
+		auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString());
+		if (dimension.Format != EDimensionFormat::Error)
+		{
+			bParseSuccess = true;
+			lengthCM = dimension.Centimeters;
+		}
 	}
 
 	const float MAX_DIMENSION = 525600 * 12 * 2.54;
 
-	if (v != 0.0f && v <= MAX_DIMENSION)
+	if (bParseSuccess && (lengthCM != 0.0f) && (lengthCM <= MAX_DIMENSION))
 	{
 		// First, try to use the player controller's input number handling,
 		// in case a user snap point is taking input.
@@ -522,7 +529,7 @@ void AEditModelPlayerController::OnTextCommitted(const FText& Text, ETextCommit:
 
 		if (InteractionHandle)
 		{
-			if (InteractionHandle->HandleInputNumber(v))
+			if (InteractionHandle->HandleInputNumber(lengthCM))
 			{
 				InteractionHandle = nullptr;
 				return;
@@ -530,7 +537,7 @@ void AEditModelPlayerController::OnTextCommitted(const FText& Text, ETextCommit:
 		}
 		else if (CurrentTool && CurrentTool->IsInUse())
 		{
-			CurrentTool->HandleInputNumber(v);
+			CurrentTool->HandleInputNumber(lengthCM);
 			return;
 		}
 	}

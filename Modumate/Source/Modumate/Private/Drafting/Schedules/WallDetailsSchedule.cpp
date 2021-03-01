@@ -77,7 +77,7 @@ namespace Modumate {
 			// column widths are implicitly set by subsequent rows
 			topRow.Add(MakeShareable(new FDraftingComposite()));
 
-			FText thickness = FText::FromString(UModumateDimensionStatics::DecimalToFractionString(materialLayers->TotalThickness));
+			FText thickness = FText::FromString(UModumateDimensionStatics::DecimalToFractionString_DEPRECATED(materialLayers->TotalThickness));
 			topRow.Add(MakeDraftingText(FText::Format(InchesFormat, thickness)));
 
 			// Pattern, Module(s), Gap, and Comments columns are blank
@@ -116,8 +116,8 @@ namespace Modumate {
 				materialTag->Sequence = FText::FromString(layer.PresetSequence);
 
 				FModumateUnitValue thicknessUnits = FModumateUnitValue::WorldCentimeters(layer.ThicknessCentimeters);
-				FString imperial = UModumateDimensionStatics::DecimalToFractionString(thicknessUnits.AsWorldInches());
-				auto imperialList = UModumateDimensionStatics::DecimalToFraction(thicknessUnits.AsWorldInches());
+				FString imperial = UModumateDimensionStatics::DecimalToFractionString_DEPRECATED(thicknessUnits.AsWorldInches());
+				auto imperialList = UModumateDimensionStatics::DecimalToFraction_DEPRECATED(thicknessUnits.AsWorldInches());
 				materialTag->ThicknessFraction = imperialList;
 
 				materialTag->InitializeBounds(drawingInterface);

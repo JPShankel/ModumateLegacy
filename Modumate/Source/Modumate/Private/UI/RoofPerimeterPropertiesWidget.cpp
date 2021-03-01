@@ -153,8 +153,8 @@ void URoofPerimeterPropertiesWidget::OnSlopeEditorFractionTextCommitted(const FT
 {
 	if (CommitMethod != ETextCommit::OnCleared)
 	{
-		float numeratorValue;
-		if (UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), numeratorValue))
+		double numeratorValue;
+		if (UModumateDimensionStatics::TryParseNumber(Text.ToString(), numeratorValue))
 		{
 			float slopeValue = numeratorValue / 12.0f;
 			SetEdgeSlope(slopeValue);
@@ -171,8 +171,8 @@ void URoofPerimeterPropertiesWidget::OnSlopeEditorDegreesTextCommitted(const FTe
 {
 	if (CommitMethod != ETextCommit::OnCleared)
 	{
-		float degreesValue;
-		if (UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), degreesValue))
+		double degreesValue;
+		if (UModumateDimensionStatics::TryParseNumber(Text.ToString(), degreesValue))
 		{
 			float slopeValue = FMath::Tan(FMath::DegreesToRadians(degreesValue));
 			SetEdgeSlope(slopeValue);
@@ -190,8 +190,8 @@ void URoofPerimeterPropertiesWidget::OnOverhangEditorTextCommitted(const FText& 
 	if (CommitMethod != ETextCommit::OnCleared)
 	{
 		// TODO: parse the text from a formatted dimension, rather than the raw cm value
-		float OverhangValueCM;
-		if (UModumateDimensionStatics::TryParseInputNumber(Text.ToString(), OverhangValueCM) && (OverhangValueCM >= 0.0f))
+		double OverhangValueCM;
+		if (UModumateDimensionStatics::TryParseNumber(Text.ToString(), OverhangValueCM) && (OverhangValueCM >= 0.0f))
 		{
 			CurrentProperties.bOverridden = true;
 			CurrentProperties.Overhang = OverhangValueCM;

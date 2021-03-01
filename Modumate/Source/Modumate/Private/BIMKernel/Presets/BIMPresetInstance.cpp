@@ -276,25 +276,38 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FBIMPresetEditorDelta& Delta)
 		{
 			FBIMPropertyKey propKey(Delta.FieldName);
 			Properties.SetProperty(propKey.Scope, propKey.Name, Delta.NewStringRepresentation);
+			return EBIMResult::Success;
 		}
 		break;
 
 		case EBIMPresetEditorField::NumberProperty:
 		{
 			FBIMPropertyKey propKey(Delta.FieldName);
-			Properties.SetProperty(propKey.Scope, propKey.Name, FCString::Atof(*Delta.NewStringRepresentation));
+			float v;
+			if (LexTryParseString(v, *Delta.NewStringRepresentation))
+			{
+				Properties.SetProperty(propKey.Scope, propKey.Name, v);
+				return EBIMResult::Success;
+			}
 		}
 		break;
 
 		case EBIMPresetEditorField::DimensionProperty:
 		{
 			FBIMPropertyKey propKey(Delta.FieldName);
-			Properties.SetProperty(propKey.Scope, propKey.Name, FCString::Atof(*Delta.NewStringRepresentation));
+			auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Delta.NewStringRepresentation);
+			if (dimension.Format != EDimensionFormat::Error)
+			{
+				Properties.SetProperty(propKey.Scope, propKey.Name, dimension.Centimeters);
+				return EBIMResult::Success;
+			}
 		}
 		break;
+
+		default: return EBIMResult::Error;
 	};
 
-	return EBIMResult::Success;
+	return EBIMResult::Error;
 }
 
 EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const
@@ -355,9 +368,8 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 			FBIMPropertyKey propKey(*FormElement.FieldName);
 			if (ensureAlways(Properties.TryGetProperty(propKey.Scope, propKey.Name, v)))
 			{
-				TArray<int32> imperialsInches;
-				UModumateDimensionStatics::CentimetersToImperialInches(v, imperialsInches);
-				OutDelta.OldStringRepresentation = UModumateDimensionStatics::ImperialInchesToDimensionStringText(imperialsInches).ToString();
+				OutDelta.OldStringRepresentation = UModumateDimensionStatics::CentimetersToImperialText(v).ToString();
+				return EBIMResult::Success;
 			}
 		}
 		break;
@@ -367,7 +379,8 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 			FBIMPropertyKey propKey(*FormElement.FieldName);
 			if (Properties.TryGetProperty(propKey.Scope, propKey.Name, v))
 			{
-				OutDelta.OldStringRepresentation = FString::Printf(TEXT("%f"), v);
+				OutDelta.OldStringRepresentation = FString::SanitizeFloat(v);
+				return EBIMResult::Success;
 			}
 		}
 		break;
@@ -375,7 +388,10 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 		case EBIMPresetEditorField::AssetProperty:
 		{
 			FBIMPropertyKey propKey(*FormElement.FieldName);
-			ensureAlways(Properties.TryGetProperty(propKey.Scope, propKey.Name, OutDelta.OldStringRepresentation));
+			if (ensureAlways(Properties.TryGetProperty(propKey.Scope, propKey.Name, OutDelta.OldStringRepresentation)))
+			{
+				return EBIMResult::Success;
+			}
 		}
 		break;
 		default: ensureAlways(false); return EBIMResult::Error;
@@ -430,10 +446,7 @@ EBIMResult FBIMPresetInstance::GetForm(FBIMPresetForm& OutForm) const
 				FBIMPropertyKey propKey(*element.FieldName);
 				if (ensureAlways(Properties.TryGetProperty<float>(propKey.Scope, propKey.Name, v)))
 				{
-					element.StringRepresentation = FString::Printf(TEXT("%f"), v);
-					TArray<int32> imperialsInches;
-					UModumateDimensionStatics::CentimetersToImperialInches(v, imperialsInches);
-					element.StringRepresentation = UModumateDimensionStatics::ImperialInchesToDimensionStringText(imperialsInches).ToString();
+					element.StringRepresentation = UModumateDimensionStatics::CentimetersToImperialText(v).ToString();
 				}
 			}
 			break;
@@ -444,7 +457,7 @@ EBIMResult FBIMPresetInstance::GetForm(FBIMPresetForm& OutForm) const
 				FBIMPropertyKey propKey(*element.FieldName);
 				if (ensureAlways(Properties.TryGetProperty<float>(propKey.Scope, propKey.Name, v)))
 				{
-					element.StringRepresentation = FString::Printf(TEXT("%f"), v);
+					element.StringRepresentation = FString::SanitizeFloat(v);
 				}
 			}
 			break;

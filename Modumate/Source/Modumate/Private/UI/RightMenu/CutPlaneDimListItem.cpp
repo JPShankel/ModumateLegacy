@@ -151,9 +151,7 @@ void UCutPlaneDimListItem::BuildAsVerticalCutPlaneItem(const FQuat& Rotation)
 
 void UCutPlaneDimListItem::BuildAsHorizontalCutPlaneItem(const FVector& Location)
 {
-	TArray<int32> imperialsInches;
-	UModumateDimensionStatics::CentimetersToImperialInches(Location.Z, imperialsInches);
-	TextDimension->ChangeText(UModumateDimensionStatics::ImperialInchesToDimensionStringText(imperialsInches));
+	TextDimension->ChangeText(UModumateDimensionStatics::CentimetersToImperialText(Location.Z));
 }
 
 void UCutPlaneDimListItem::UpdateVisibilityAndName(bool NewVisible, const FString& NewName)

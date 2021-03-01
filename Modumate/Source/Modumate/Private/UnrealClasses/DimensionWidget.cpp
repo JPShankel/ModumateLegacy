@@ -84,67 +84,11 @@ void UDimensionWidget::UpdateDegreeTransform(const FVector2D position, FVector2D
 	UpdateDegreeText(angle);
 }
 
-void UDimensionWidget::SanitizeInput(float InLength, FText &OutText)
-{
-	// TODO: this is assuming the input is in cm, because that's how the data is stored in the volume graph
-	InLength /= UModumateDimensionStatics::InchesToCentimeters;
-
-	// TODO: potentially this is a project setting
-	int32 tolerance = 64;
-
-	int32 feet = InLength / 12;
-
-	InLength -= (feet * 12);
-
-	int32 inches = InLength;
-
-	InLength -= inches;
-
-	InLength *= tolerance;
-
-	// rounding here allows for rounding based on the tolerance
-	// (ex. rounding to the nearest 1/64")
-	int32 numerator = FMath::RoundHalfToZero(InLength);
-	int32 denominator = tolerance;
-	while (numerator % 2 == 0 && numerator != 0)
-	{
-		numerator /= 2;
-		denominator /= 2;
-	}
-	// carry
-	if (denominator == 1)
-	{
-		inches++;
-		numerator = 0;
-	}
-	if (inches == 12)
-	{
-		feet++;
-		inches -= 12;
-	}
-
-	FText feetText = feet != 0 ? FText::Format(LOCTEXT("feet", "{0}'-"), feet) : FText();
-	FText inchesText;
-
-	if (numerator != 0)
-	{
-		inchesText = FText::Format(LOCTEXT("inches_frac", "{0} {1}/{2}\""), inches, numerator, denominator);
-	}
-	else
-	{
-		inchesText = FText::Format(LOCTEXT("inches", "{0}\""), inches);
-	}
-
-	// if there are both feet and inches, separate with a dash, otherwise use the one that exists
-	OutText = FText::Format(LOCTEXT("feet_and_inches", "{0}{1}"), feetText, inchesText);
-}
-
 void UDimensionWidget::UpdateText(float length)
 {
 	if (length != LastMeasurement)
 	{
-		FText newText;
-		SanitizeInput(length, newText);
+		FText newText = UModumateDimensionStatics::CentimetersToImperialText(length);
 		Measurement->SetText(newText);
 		LastCommittedText = newText;
 		LastMeasurement = length;

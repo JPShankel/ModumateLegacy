@@ -154,14 +154,18 @@ bool FModumateDatabase::ReadBIMCache(const FString& CacheFile, FModumateBIMCache
 		return false;
 	}
 
-	if (OutCache.Version < BIMCacheCurrentVersion)
+	// Only the current version of BIM cache is supported; both older and newer versions may ungracefully fail during the CustomData post-load step.
+	if (OutCache.Version != BIMCacheCurrentVersion)
 	{
 		return false;
 	}
 
 	for (auto& kvp : OutCache.Presets.PresetsByGUID)
 	{
-		kvp.Value.CustomData.SaveCborFromJson();
+		if (!kvp.Value.CustomData.SaveCborFromJson())
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -223,6 +227,7 @@ void FModumateDatabase::ReadPresetData()
 		}
 		if (ensureAlways(errors.Num() == 0))
 		{
+			bimCacheRecord = FModumateBIMCacheRecord();
 			bimCacheRecord.Presets = BIMPresetCollection;
 			bimCacheRecord.Starters = starters;
 

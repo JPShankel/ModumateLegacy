@@ -82,10 +82,7 @@ void UInstPropWidgetOffset::DisplayValue()
 	{
 		CustomValueTitle->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		CustomValueText->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-
-		TArray<int32> imperialsInches;
-		UModumateDimensionStatics::CentimetersToImperialInches(CurrentValue.CustomValue, imperialsInches);
-		CustomValueText->ModumateEditableTextBox->SetText(UModumateDimensionStatics::ImperialInchesToDimensionStringText(imperialsInches));
+		CustomValueText->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToImperialText(CurrentValue.CustomValue));
 	}
 	else
 	{
