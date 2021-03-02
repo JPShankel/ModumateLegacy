@@ -3,7 +3,7 @@
 #include "BIMKernel/Presets/BIMPresetMaterialBinding.h"
 
 
-bool FBIMPresetMaterialChannelBinding::operator==(const FBIMPresetMaterialChannelBinding& RHS) const
+bool FBIMPresetMaterialBinding::operator==(const FBIMPresetMaterialBinding& RHS) const
 {
 	return Channel == RHS.Channel &&
 		InnerMaterialGUID == RHS.InnerMaterialGUID &&
@@ -12,7 +12,7 @@ bool FBIMPresetMaterialChannelBinding::operator==(const FBIMPresetMaterialChanne
 		ColorTintVariationHexValue == RHS.ColorTintVariationHexValue;
 }
 
-bool FBIMPresetMaterialChannelBinding::operator!=(const FBIMPresetMaterialChannelBinding& RHS) const
+bool FBIMPresetMaterialBinding::operator!=(const FBIMPresetMaterialBinding& RHS) const
 {
 	return !(*this == RHS);
 }

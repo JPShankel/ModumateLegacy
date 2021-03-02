@@ -144,11 +144,6 @@ struct MODUMATE_API FBIMPresetInstance
 	UPROPERTY()
 	FBIMTagPath MyTagPath;
 
-	// TODO: Generalize custom data (ie MaterialBindings) that only applies to some presets
-	// Future work will introduce construction details and quantity estimation parameters
-	UPROPERTY()
-	TArray<FBIMPresetMaterialChannelBinding> MaterialChannelBindings;
-
 	UPROPERTY()
 	FStructDataWrapper CustomData;
 

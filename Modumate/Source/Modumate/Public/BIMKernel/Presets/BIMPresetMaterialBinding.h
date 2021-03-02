@@ -6,7 +6,6 @@
 
 #include "BIMPresetMaterialBinding.generated.h"
 
-
 UENUM()
 enum class EMaterialChannelFields : uint8
 {
@@ -20,7 +19,7 @@ enum class EMaterialChannelFields : uint8
 };
 
 USTRUCT()
-struct MODUMATE_API FBIMPresetMaterialChannelBinding
+struct MODUMATE_API FBIMPresetMaterialBinding
 {
 	GENERATED_BODY()
 
@@ -39,6 +38,15 @@ struct MODUMATE_API FBIMPresetMaterialChannelBinding
 	UPROPERTY()
 	FString ColorTintVariationHexValue;
 
-	bool operator==(const FBIMPresetMaterialChannelBinding& RHS) const;
-	bool operator!=(const FBIMPresetMaterialChannelBinding& RHS) const;
+	bool operator==(const FBIMPresetMaterialBinding& RHS) const;
+	bool operator!=(const FBIMPresetMaterialBinding& RHS) const;
+};
+
+USTRUCT()
+struct MODUMATE_API FBIMPresetMaterialBindingSet
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FBIMPresetMaterialBinding> MaterialBindings;
 };

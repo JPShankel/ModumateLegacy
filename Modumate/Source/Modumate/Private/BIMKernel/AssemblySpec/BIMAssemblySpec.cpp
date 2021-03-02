@@ -308,17 +308,22 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 				partSpec.Mesh = *mesh;
 			}
 
-			for (auto& matBinding : partPreset->MaterialChannelBindings)
+			FBIMPresetMaterialBindingSet bindingSet;
+			if (partPreset->CustomData.LoadStructData(bindingSet))
 			{
-				FGuid matKey = matBinding.SurfaceMaterialGUID.IsValid() ? matBinding.SurfaceMaterialGUID : matBinding.InnerMaterialGUID;
-				const FArchitecturalMaterial* material = InDB.GetArchitecturalMaterialByGUID(matKey);
-				if (ensureAlways(material != nullptr))
+				for (auto& matBinding : bindingSet.MaterialBindings)
 				{
-					FArchitecturalMaterial newMat = *material;
-					newMat.Color = matBinding.ColorHexValue.IsEmpty() ? FColor::White : FColor::FromHex(matBinding.ColorHexValue);
-					partSpec.ChannelMaterials.Add(matBinding.Channel, newMat);
+					FGuid matKey = matBinding.SurfaceMaterialGUID.IsValid() ? matBinding.SurfaceMaterialGUID : matBinding.InnerMaterialGUID;
+					const FArchitecturalMaterial* material = InDB.GetArchitecturalMaterialByGUID(matKey);
+					if (ensureAlways(material != nullptr))
+					{
+						FArchitecturalMaterial newMat = *material;
+						newMat.Color = matBinding.ColorHexValue.IsEmpty() ? FColor::White : FColor::FromHex(matBinding.ColorHexValue);
+						partSpec.ChannelMaterials.Add(matBinding.Channel, newMat);
+					}
 				}
-			}	
+			}
+
 
 			// Find which slot this child belongs to and fetch transform data
 			for (auto& childSlot : slotConfigPreset->ChildPresets)

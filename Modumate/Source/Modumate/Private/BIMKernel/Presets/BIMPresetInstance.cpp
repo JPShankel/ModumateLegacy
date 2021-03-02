@@ -79,7 +79,7 @@ bool FBIMPresetInstance::operator==(const FBIMPresetInstance &RHS) const
 		}
 	}
 
-	if (MaterialChannelBindings != RHS.MaterialChannelBindings)
+	if (CustomData != RHS.CustomData)
 	{
 		return false;
 	}
@@ -226,7 +226,12 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FBIMPresetEditorDelta& Delta)
 {
 	if (Delta.FieldType == EBIMPresetEditorField::MaterialBinding)
 	{
-		for (auto& binding : MaterialChannelBindings)
+		FBIMPresetMaterialBindingSet bindingSet;
+		if (!CustomData.LoadStructData(bindingSet))
+		{
+			return EBIMResult::Error;
+		}
+		for (auto& binding : bindingSet.MaterialBindings)
 		{
 			if (binding.Channel.IsEqual(Delta.FieldName))
 			{
@@ -235,6 +240,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FBIMPresetEditorDelta& Delta)
 				case EMaterialChannelFields::InnerMaterial:
 				{
 					FGuid::Parse(Delta.NewStringRepresentation,binding.InnerMaterialGUID);
+					CustomData.SaveStructData(bindingSet, true);
 					return EBIMResult::Success;
 				}
 				break;
@@ -243,6 +249,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FBIMPresetEditorDelta& Delta)
 				{
 					FGuid::Parse(Delta.NewStringRepresentation, binding.SurfaceMaterialGUID);
 					Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, Delta.NewStringRepresentation);
+					CustomData.SaveStructData(bindingSet, true);
 					return EBIMResult::Success;
 				}
 				break;
@@ -251,6 +258,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FBIMPresetEditorDelta& Delta)
 				{
 					binding.ColorHexValue = Delta.NewStringRepresentation;
 					Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, binding.ColorHexValue);
+					CustomData.SaveStructData(bindingSet, true);
 					return EBIMResult::Success;
 				}
 				break;
@@ -258,6 +266,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FBIMPresetEditorDelta& Delta)
 				case EMaterialChannelFields::ColorTintVariation:
 				{
 					binding.ColorTintVariationHexValue = Delta.NewStringRepresentation;
+					CustomData.SaveStructData(bindingSet, true);
 					return EBIMResult::Success;
 				}
 				break;
@@ -319,7 +328,12 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 
 	if (FormElement.FieldType == EBIMPresetEditorField::MaterialBinding)
 	{
-		for (auto& binding : MaterialChannelBindings)
+		FBIMPresetMaterialBindingSet bindingSet;
+		if (!CustomData.LoadStructData(bindingSet))
+		{
+			return EBIMResult::Error;
+		}
+		for (auto& binding : bindingSet.MaterialBindings)
 		{
 			if (binding.Channel.IsEqual(*FormElement.FieldName))
 			{
@@ -409,7 +423,12 @@ EBIMResult FBIMPresetInstance::GetForm(FBIMPresetForm& OutForm) const
 	{
 		if (element.FieldType == EBIMPresetEditorField::MaterialBinding)
 		{
-			for (auto& binding : MaterialChannelBindings)
+			FBIMPresetMaterialBindingSet bindingSet;
+			if (!CustomData.LoadStructData(bindingSet))
+			{
+				return EBIMResult::Error;
+			}
+			for (auto& binding : bindingSet.MaterialBindings)
 			{
 				if (binding.Channel.IsEqual(*element.FieldName))
 				{

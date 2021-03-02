@@ -75,6 +75,7 @@ struct MODUMATE_API FBIMCSVReader
 	FBIMPresetInstance Preset;
 
 	TMap<FBIMNameType, EBIMValueType> PropertyTypeMap;
+	FBIMPresetMaterialBindingSet MaterialBindingSet;
 
 	static TMap<FBIMKey, FGuid> KeyGuidMap;
 	static TMap<FGuid, FBIMKey> GuidKeyMap;

@@ -610,6 +610,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 	for (auto& kvp : PresetsByGUID)
 	{
 		kvp.Value.CustomData.SaveCborFromJson();
+
 		if (kvp.Value.ObjectType != EObjectType::OTNone)
 		{
 			FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(kvp.Value.ObjectType);

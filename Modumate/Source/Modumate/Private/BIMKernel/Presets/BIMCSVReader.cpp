@@ -188,6 +188,11 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 			{
 				if (!Preset.PresetID.IsNone())
 				{
+					if (MaterialBindingSet.MaterialBindings.Num() > 0)
+					{
+						Preset.CustomData.SaveStructData(MaterialBindingSet, true);
+					}
+
 					Preset.TryGetProperty(BIMPropertyNames::Name, Preset.DisplayName);
 					if (OutPresets.PresetFromGUID(Preset.GUID)==nullptr)
 					{
@@ -200,6 +205,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				}
 	
 				Preset = FBIMPresetInstance();
+				MaterialBindingSet.MaterialBindings.Reset();
 
 				Preset.DEBUG_SourceFile = CurrentFile;
 				Preset.DEBUG_SourceRow = RowNumber;
@@ -299,7 +305,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 			case ECSVMatrixNames::Material :
 			{
-				FBIMPresetMaterialChannelBinding materialBinding;
+				FBIMPresetMaterialBinding materialBinding;
 				for (int32 i = 0; i < presetMatrix.Columns.Num(); ++i)
 				{
 					const FString& fieldString = presetMatrix.Columns[i];
@@ -368,7 +374,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 				if (!materialBinding.Channel.IsNone())
 				{
-					Preset.MaterialChannelBindings.Add(materialBinding);
+					MaterialBindingSet.MaterialBindings.Add(materialBinding);
 
 					FGuid material = materialBinding.SurfaceMaterialGUID.IsValid() ? materialBinding.SurfaceMaterialGUID : materialBinding.InnerMaterialGUID;
 
