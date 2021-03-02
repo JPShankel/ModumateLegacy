@@ -97,7 +97,7 @@ bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, 
 	if (returnVal == nullptr)
 	{
 		FModumateUnitValue unitVal;
-		if (ensureAlwaysMsgf(FBIMPartSlotSpec::TryGetDefaultNamedDimension(scopes.Last(), unitVal), TEXT("COULD NOT FIND BIM VALUE %s"), *InVar))
+ 		if (ensureAlwaysMsgf(FBIMPartSlotSpec::TryGetDefaultNamedDimension(scopes.Last(), unitVal), TEXT("COULD NOT FIND BIM VALUE %s"), *InVar))
 		{
 			OutVal = unitVal.AsWorldCentimeters();
 			return true;

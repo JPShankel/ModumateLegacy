@@ -34,9 +34,9 @@ PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.5
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.67
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.75
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.8
-PRESET,,D2AB6A51-CA8C-3544-BF63-8A2403847276,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-CasterBarnLeft-Property_Spatiality_Slot-CasterBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet,,Cabinet Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
-PRESET,,,,,,,,,,,Property_Spatiality_Slot-CasterBarnLeft
-PRESET,,,,,,,,,,,Property_Spatiality_Slot-CasterBarnRight
+PRESET,,D2AB6A51-CA8C-3544-BF63-8A2403847276,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet,,Cabinet Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-RollerBarnLeft
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-RollerBarnRight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleCenterTop
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleCenterMidHeight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleCenterBottom
@@ -44,9 +44,13 @@ PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleRightTop
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleRightMidHeight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleRightBottom
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyMuntinSet1
-PRESET,,9701BCF0-657B-5345-A887-67418B11DDA9,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-CasterBarnLeft-Property_Spatiality_Slot-CasterBarnRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door,,Door Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
-PRESET,,,,,,,,,,,Property_Spatiality_Slot-CasterBarnLeft
-PRESET,,,,,,,,,,,Property_Spatiality_Slot-CasterBarnRight
+PRESET,,9701BCF0-657B-5345-A887-67418B11DDA9,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door,,Door Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-RollerBarnLeft
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-RollerBarnRight
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-RollerOverheadTopLeft
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-RollerOverheadBottomLeft
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-RollerOverheadTopRight
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-RollerOverheadBottomRight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyHandleSet
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyMuntinSet1
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyMuntinSet2
@@ -64,6 +68,15 @@ PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyMuntinSet1
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-SurfaceLockLower
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-SurfaceLockUpper
+PRESET,,51EA2D04-0F8E-F946-8370-E29B0A14E8EE,,Property_Spatiality_Rig_SlotConfig_2FlexDims_PanelSet-Property_Spatiality_Slot-AssemblyPanelOverheadSectional1of4-Property_Spatiality_Slot-AssemblyPanelOverheadSectional2of4-Property_Spatiality_Slot-AssemblyPanelOverheadSectional3of4-Property_Spatiality_Slot-AssemblyPanelOverheadSectional4of4-Property_Spatiality_Slot-AssemblyPanelOverheadSectional1of5-Property_Spatiality_Slot-AssemblyPanelOverheadSectional2of5-Property_Spatiality_Slot-AssemblyPanelOverheadSectional3of5-Property_Spatiality_Slot-AssemblyPanelOverheadSectional4of5-Property_Spatiality_Slot-AssemblyPanelOverheadSectional5of5-Property_Spatiality_Slot-Frame,,Property_Spatiality_Rig_SlotConfig_2FlexDims_PanelSet,,"Panel Set (Overhead, 4 Sections)",Self.AssemblyPanelOverheadSectional1of4.Panel.NativeSizeY,,Property_Spatiality_Slot-AssemblyPanelOverheadSectional1of4
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelOverheadSectional2of4
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelOverheadSectional3of4
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelOverheadSectional4of4
+PRESET,,FA36AE6B-EE8B-1C48-8116-8E92C9DBAEF1,,Property_Spatiality_Rig_SlotConfig_2FlexDims_PanelSet-Property_Spatiality_Slot-AssemblyPanelOverheadSectional1of5-Property_Spatiality_Slot-AssemblyPanelOverheadSectional2of5-Property_Spatiality_Slot-AssemblyPanelOverheadSectional3of5-Property_Spatiality_Slot-AssemblyPanelOverheadSectional4of5-Property_Spatiality_Slot-AssemblyPanelOverheadSectional5of5-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-TrackBarnSingle-Property_Spatiality_Slot-AssemblyPanelBarn1of1-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-TrackBarnDouble,,Property_Spatiality_Rig_SlotConfig_2FlexDims_PanelSet,,"Panel Set (Overhead, 5 Sections)",Self.AssemblyPanelOverheadSectional1of5.Panel.NativeSizeY,,Property_Spatiality_Slot-AssemblyPanelOverheadSectional1of5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelOverheadSectional2of5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelOverheadSectional3of5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelOverheadSectional4of5
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelOverheadSectional5of5
 PRESET,,C20753C6-044C-614D-BDF3-B2F6E976F010,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Barn-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-TrackBarnSingle-Property_Spatiality_Slot-AssemblyPanelBarn1of1,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Barn,,Barn (Single),Self.Frame.NativeSizeY+Self.TrackBarnSingle.RailDistanceY+(1/2)*Self.AssemblyPanelBarn1of1.NativeSizeY,,Property_Spatiality_Slot-Frame
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-TrackBarnSingle
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelBarn1of1
@@ -81,6 +94,8 @@ PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelFramelessLeftBottom1of1
 PRESET,,3D91A68D-B854-3B40-9DB3-10CBE51B804F,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Hung-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelHung1of2-Property_Spatiality_Slot-AssemblyPanelHung2of2,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Hung,,Hung (Double),Self.FrameSliding.NativeSizeY,,Property_Spatiality_Slot-FrameSliding
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelHung1of2
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelHung2of2
+PRESET,,69A1D281-14EA-3245-81B6-E6193327C6E5,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_OverheadSectional-Property_Spatiality_Slot-AssemblyPanelSetOverhead-Property_Spatiality_Slot-AssemblyTrackSetOverhead,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_OverheadSectional,,Overhead Sectional,AssemblyTrackSetOverhead.TrackOverheadLeft.Track1SizeY,,Property_Spatiality_Slot-AssemblyPanelSetOverhead
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyTrackSetOverhead
 PRESET,,343EE2F2-6478-3B41-95F0-07DF7AB5A442,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1of1,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay,,Overlay (Single),Self.Frame.NativeSizeY+Self.AssemblyPanelOverlay1of1.Panel.NativeSizeY,,Property_Spatiality_Slot-Frame
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelOverlay1of1
 PRESET,,554D3B70-EAB5-0C40-B8D4-9DFBC66876C9,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay,,Overlay (Double),Self.Frame.NativeSizeY+Self.AssemblyPanelOverlayLeft.Panel.NativeSizeY,,Property_Spatiality_Slot-Frame
@@ -134,6 +149,8 @@ PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyHingeSetInsetLeft
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyHingeSetInsetRight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelSwingLeft
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelSwingRight
+PRESET,,C617DB68-393A-2345-BB83-C9B41B35961C,,Property_Spatiality_Rig_SlotConfig_3FlexDims_TrackSet-Property_Spatiality_Slot-TrackOverheadLeft-Property_Spatiality_Slot-TrackOverheadRight,,Property_Spatiality_Rig_SlotConfig_3FlexDims_TrackSet,,Track Set (for Overhead Doors),Self.TrackOverheadLeft.Track1SizeY,,Property_Spatiality_Slot-TrackOverheadLeft
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-TrackOverheadRight
 PRESET,,601B590D-33EF-AD4A-A9E8-12205B99C4D4,,Property_Spatiality_Rig_SlotConfig_0FlexDims_FFESet_TableAndChairs-Property_Spatiality_Slot-TableInTableAndChairs-Property_Spatiality_Slot-ChairAtTable1111_1-Property_Spatiality_Slot-ChairAtTable1111_2-Property_Spatiality_Slot-ChairAtTable1111_3-Property_Spatiality_Slot-ChairAtTable1111_4,,Property_Spatiality_Rig_SlotConfig_0FlexDims_FFESet_TableAndChairs,,4 Chairs (1 + 1 + 1 + 1),,,Property_Spatiality_Slot-TableInTableAndChairs
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-ChairAtTable1111_1
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-ChairAtTable1111_2
