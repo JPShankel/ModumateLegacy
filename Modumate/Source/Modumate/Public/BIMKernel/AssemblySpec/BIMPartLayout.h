@@ -18,7 +18,7 @@ public:
 	{
 		FVector FlipVector = FVector::OneVector;
 		TMap<FString, float> VariableValues;
-		FVector Location, Rotation, Size;
+		FVector Location, Rotation, Size, ParentRelativeLocation;
 
 		// Named dimensions are only visible for edit if they are needed in a layout formula
 		TArray<FString> VisibleNamedDimensions;

@@ -256,23 +256,29 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 		PartSlotInstances[slotIdx].VariableValues.Add(RotationX, PartSlotInstances[slotIdx].Rotation.X);
 		PartSlotInstances[slotIdx].VariableValues.Add(RotationY, PartSlotInstances[slotIdx].Rotation.Y);
 		PartSlotInstances[slotIdx].VariableValues.Add(RotationZ, PartSlotInstances[slotIdx].Rotation.Z);
+
+		// Preserve untransformed parent delta so we can calculate our final position after propagating rotations and flips
+		int32 parentIndex = InAssemblySpec.Parts[slotIdx].ParentSlotIndex;
+		if (parentIndex != INDEX_NONE)
+		{
+			FPartSlotInstance& slotRef = PartSlotInstances[slotIdx];
+			const FPartSlotInstance& parentRef = PartSlotInstances[parentIndex];
+			slotRef.ParentRelativeLocation = slotRef.Location - parentRef.Location;
+		}
 	}
+
 	// The root slot never has a mesh or is flipped by a parent, so start at 1
 	for (int32 slotIdx = 1; slotIdx < numSlots; ++slotIdx)
 	{
 		FPartSlotInstance& slotRef = PartSlotInstances[slotIdx];
-		FPartSlotInstance& parentRef = PartSlotInstances[InAssemblySpec.Parts[slotIdx].ParentSlotIndex];
+		const FPartSlotInstance& parentRef = PartSlotInstances[InAssemblySpec.Parts[slotIdx].ParentSlotIndex];
+
+		FQuat parentRot = FQuat::MakeFromEuler(parentRef.Rotation);		
+		slotRef.Location = parentRef.Location + parentRot.RotateVector(slotRef.ParentRelativeLocation * parentRef.FlipVector);
 
 		// Flips and orientations propagate down the child list...a flip of a flip is unflipped
 		slotRef.FlipVector *= parentRef.FlipVector;
 		slotRef.Rotation += parentRef.Rotation;
-
-		// TODO: reformulate for flip-around-own-origin instead of flip-around-parent
-		if (InAssemblySpec.Parts[slotIdx].Mesh.EngineMesh.IsValid())
-		{
-			FVector locationDelta = slotRef.Location - parentRef.Location;
-			slotRef.Location = parentRef.Location + (locationDelta*slotRef.FlipVector);
-		}
 	}
 
 	return ensureAlwaysMsgf(formulaErrors.Num() == 0,TEXT("Errors found in rigged assembly formulas")) ? EBIMResult::Success : EBIMResult::Error;
