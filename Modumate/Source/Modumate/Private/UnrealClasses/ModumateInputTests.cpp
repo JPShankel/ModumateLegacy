@@ -144,7 +144,6 @@ namespace Modumate
 					{
 						// TODO: clean up this logic; this is copied from the post-deserialization behavior in UModumateDocument::Load,
 						// but it's less costly than creating and loading an entirely separate document, with MOIs and all.
-						MOIState.CustomData.SaveCborFromJson();
 						referenceMOIStates.Add(MOIState.ID, MOIState);
 					}
 

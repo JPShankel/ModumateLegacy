@@ -266,3 +266,8 @@ void FEdgeDetailData::FillFromMiterNode(const IMiterNode* MiterNode)
 	NormalizeConditionAngles(Conditions);
 	UpdateConditionHash();
 }
+
+void FEdgeDetailData::PostSerialize(const FArchive& Ar)
+{
+	UpdateConditionHash();
+}

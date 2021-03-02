@@ -149,23 +149,21 @@ bool FModumateDatabase::ReadBIMCache(const FString& CacheFile, FModumateBIMCache
 		return false;
 	}
 
+	auto cacheObRef = cacheOb->ToSharedRef();
+
+	// Only the current version of BIM cache is supported; both older and newer versions may ungracefully fail during JSON deserialization.
+	// Grab the version from the JSON before full deserialization, to prevent potential future errors.
+	const static FString versionFieldName(TEXT("Version"));
+	int32 cacheVersion;
+	if (!cacheObRef->TryGetNumberField(versionFieldName, cacheVersion) ||
+		(OutCache.Version != BIMCacheCurrentVersion))
+	{
+		return false;
+	}
+
 	if (!FJsonObjectConverter::JsonObjectToUStruct<FModumateBIMCacheRecord>(cacheOb->ToSharedRef(), &OutCache))
 	{
 		return false;
-	}
-
-	// Only the current version of BIM cache is supported; both older and newer versions may ungracefully fail during the CustomData post-load step.
-	if (OutCache.Version != BIMCacheCurrentVersion)
-	{
-		return false;
-	}
-
-	for (auto& kvp : OutCache.Presets.PresetsByGUID)
-	{
-		if (!kvp.Value.CustomData.SaveCborFromJson())
-		{
-			return false;
-		}
 	}
 
 	return true;

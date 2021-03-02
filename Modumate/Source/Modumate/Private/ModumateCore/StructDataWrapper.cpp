@@ -44,23 +44,24 @@ bool FStructDataWrapper::SaveStructData(UScriptStruct* StructDef, const void* Sr
 	return true;
 }
 
-bool FStructDataWrapper::LoadStructData(UScriptStruct* StructDef, void* DestStructPtr, bool bResetStruct) const
+bool FStructDataWrapper::LoadStructData(UScriptStruct* StructDef, void* OutStructPtr, bool bResetStruct) const
 {
-	if ((StructDef == nullptr) || (DestStructPtr == nullptr) || (StructDef != CachedStructDef))
+	if ((StructDef == nullptr) || (OutStructPtr == nullptr) || (StructDef != CachedStructDef))
 	{
 		return false;
 	}
 
 	if (bResetStruct)
 	{
-		CachedStructDef->DestroyStruct(DestStructPtr);
-		InitializeStruct(DestStructPtr);
+		CachedStructDef->DestroyStruct(OutStructPtr);
+		InitializeStruct(OutStructPtr);
 	}
 
 	FMemoryReader reader(StructCborBuffer);
 	FCborStructDeserializerBackend deserializerBackend(reader);
 
-	return FStructDeserializer::Deserialize(DestStructPtr, *CachedStructDef, deserializerBackend);
+	return FStructDeserializer::Deserialize(OutStructPtr, *CachedStructDef, deserializerBackend) &&
+		PostDeserializeStruct(OutStructPtr);
 }
 
 bool FStructDataWrapper::SaveJsonFromCbor()
@@ -117,6 +118,15 @@ bool FStructDataWrapper::operator==(const FStructDataWrapper& Other) const
 bool FStructDataWrapper::operator!=(const FStructDataWrapper& Other) const
 {
 	return !(*this == Other);
+}
+
+void FStructDataWrapper::PostSerialize(const FArchive& Ar)
+{
+	// If we're loading from JSON, then the JSON object should be valid, but we shouldn't have CBOR data yet, so finish doing that now.
+	if (!StructName.IsNone() && StructJson && (StructCborBuffer.Num() == 0))
+	{
+		SaveCborFromJson();
+	}
 }
 
 bool FStructDataWrapper::UpdateStructDefFromName()
@@ -194,8 +204,9 @@ void* FStructDataWrapper::CreateInitStructRaw()
 
 bool FStructDataWrapper::CreateStructFromJSONRaw(void* OutStructPtr)
 {
-	return StructJson.JsonObject.IsValid() && CachedStructDef &&
-		FJsonObjectConverter::JsonObjectToUStruct(StructJson.JsonObject.ToSharedRef(), CachedStructDef, OutStructPtr);
+	return  StructJson.JsonObject.IsValid() && CachedStructDef &&
+		FJsonObjectConverter::JsonObjectToUStruct(StructJson.JsonObject.ToSharedRef(), CachedStructDef, OutStructPtr) &&
+		PostDeserializeStruct(OutStructPtr);
 }
 
 bool FStructDataWrapper::CreateInternalStruct()
@@ -220,6 +231,32 @@ bool FStructDataWrapper::InitializeStruct(void* OutStructPtr) const
 		if (ensure(structOps))
 		{
 			structOps->PostScriptConstruct(OutStructPtr);
+		}
+	}
+
+	return true;
+}
+
+bool FStructDataWrapper::PostDeserializeStruct(void* OutStructPtr) const
+{
+	// Execute PostSerialize if necessary
+	if ((CachedStructDef == nullptr) || (OutStructPtr == nullptr))
+	{
+		return false;
+	}
+
+	if (CachedStructDef->StructFlags & STRUCT_PostSerializeNative)
+	{
+		UScriptStruct::ICppStructOps* structOps = CachedStructDef->GetCppStructOps();
+		if (ensure(structOps))
+		{
+			FArchive dummyArchive;
+			structOps->PostSerialize(dummyArchive, OutStructPtr);
+			return true;
+		}
+		else
+		{
+			return false;
 		}
 	}
 

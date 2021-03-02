@@ -85,6 +85,9 @@ struct FEdgeDetailData
 	// Fill conditions and overrides from the participants and extensions of an already-evaluated miter node.
 	void FillFromMiterNode(const IMiterNode* MiterNode);
 
+	// Function that's supposed to be automatically called after struct [de]serialization, to make sure the cached hash is up-to-date.
+	void PostSerialize(const FArchive& Ar);
+
 	UPROPERTY(meta = (ToolTip = "All conditions of participants in an edge detail, that must be match in order for overrides to apply."))
 	TArray<FEdgeDetailCondition> Conditions;
 
@@ -97,3 +100,13 @@ protected:
 	static TArray<FEdgeDetailCondition> TempOrientedConditions;
 	static TArray<uint32> TempOrientedConditionHashes;
 };
+
+template<>
+struct TStructOpsTypeTraits<FEdgeDetailData> : public TStructOpsTypeTraitsBase2<FEdgeDetailData>
+{
+	enum
+	{
+		WithPostSerialize = true
+	};
+};
+

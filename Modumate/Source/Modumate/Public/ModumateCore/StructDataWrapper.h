@@ -42,7 +42,7 @@ struct MODUMATE_API FStructDataWrapper
 	// If we've only loaded from JSON, we must load internal struct reflection data before we can serialize to CBOR.
 	bool LoadFromJson();
 
-	// If CBOR wasn't loaded during deserialization (not currently possible from JSON), it must be generated before copying into structs.
+	// If CBOR wasn't loaded during deserialization, it must be generated before copying into structs.
 	bool SaveCborFromJson();
 
 	// If only the JSON string was loaded during deserialization (from CBOR), the JSON object and CBOR buffer must be saved.
@@ -65,6 +65,9 @@ struct MODUMATE_API FStructDataWrapper
 	bool operator==(const FStructDataWrapper& Other) const;
 	bool operator!=(const FStructDataWrapper& Other) const;
 
+	// Function that's supposed to be automatically called after struct [de]serialization, for keeping CBOR and JSON data up to date
+	void PostSerialize(const FArchive& Ar);
+
 private:
 	bool UpdateStructDefFromName();
 	bool SaveStructDataJson(const void* StructPtr);
@@ -73,6 +76,7 @@ private:
 	bool CreateStructFromJSONRaw(void* OutStructPtr);
 	bool CreateInternalStruct();
 	bool InitializeStruct(void* OutStructPtr) const;
+	bool PostDeserializeStruct(void* OutStructPtr) const;
 	void FreeTempStruct();
 
 	UPROPERTY()
@@ -86,4 +90,13 @@ private:
 	uint8* TempStructBuffer = nullptr;
 
 	static TMap<FName, UScriptStruct*> FoundStructDefs;
+};
+
+template<>
+struct TStructOpsTypeTraits<FStructDataWrapper> : public TStructOpsTypeTraitsBase2<FStructDataWrapper>
+{
+	enum
+	{
+		WithPostSerialize = true
+	};
 };

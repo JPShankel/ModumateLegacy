@@ -88,12 +88,3 @@ FStructDataWrapper FMOIDelta::SerializeStruct()
 
 	return FStructDataWrapper(StaticStruct(), this, true);
 }
-
-void FMOIDelta::PostDeserializeStruct()
-{
-	for (FMOIDeltaState& statePair : States)
-	{
-		statePair.OldState.CustomData.SaveCborFromJson();
-		statePair.NewState.CustomData.SaveCborFromJson();
-	}
-}
