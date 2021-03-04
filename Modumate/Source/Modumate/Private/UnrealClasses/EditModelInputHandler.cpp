@@ -223,11 +223,6 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	{
 		return Controller->TakeScreenshot();
 	}
-	case EInputCommand::SavePDF:
-	{
-		Controller->TrySavePDF();
-		return true;
-	}
 	case EInputCommand::EscapeKey:
 	{
 		Controller->HandleEscapeKey();

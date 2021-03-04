@@ -244,8 +244,7 @@ public:
 	TArray<AModumateObjectInstance *> CloneObjects(UWorld *world, const TArray<AModumateObjectInstance *> &obs, const FTransform& offsetTransform = FTransform::Identity);
 	int32 CloneObject(UWorld *world, const AModumateObjectInstance *original);
 
-	bool ExportPDF(UWorld *world, const TCHAR *filepath, const FVector &origin, const FVector &normal);
-	bool ExportDWG(UWorld *world, const TCHAR *filepath);
+	bool ExportDWG(UWorld* World, const TCHAR* Filepath);
 
 	void Undo(UWorld *World);
 	void Redo(UWorld *World);

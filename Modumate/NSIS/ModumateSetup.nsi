@@ -100,8 +100,6 @@ SectionEnd
 Section "Modumate Files" SEC03
   SetOutPath "$INSTDIR\Modumate\Binaries\Win64"
   File "${PATH_IN}\Modumate\Binaries\Win64\Modumate-Win64-Shipping.exe"
-  File "${PATH_IN}\Modumate\Binaries\Win64\PDFNetC.dll"
-  File "${PATH_IN}\Modumate\Binaries\Win64\PDFNetDotNetCore.dll"
   File "${PATH_IN}\Modumate\Binaries\Win64\turbojpeg.dll"
   SetOutPath "$INSTDIR\Modumate\Content\Paks"
   File "${PATH_IN}\Modumate\Content\Paks\pakchunk0-WindowsNoEditor.pak"

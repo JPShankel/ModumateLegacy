@@ -37,12 +37,19 @@
 
 #define LOCTEXT_NAMESPACE "ModumateDraftingView"
 
-using namespace Modumate::PDF;
 using namespace Modumate;
-
 
 namespace Modumate { 
 
+FMColor FMColor::Black = FMColor(0, 0, 0);
+FMColor FMColor::White = FMColor(1, 1, 1);
+FMColor FMColor::Gray32 = FMColor(32.0f / 255.0f, 32.0f / 255.0f, 32.0f / 255.0f);
+FMColor FMColor::Gray64 = FMColor(64.0f / 255.0f, 64.0f / 255.0f, 64.0f / 255.0f);
+FMColor FMColor::Gray96 = FMColor(96.0f / 255.0f, 96.0f / 255.0f, 96.0f / 255.0f);
+FMColor FMColor::Gray128 = FMColor(128.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f);
+FMColor FMColor::Gray144 = FMColor(144.0f / 255.0f, 144.0f / 255.0f, 144.0f / 255.0f);
+FMColor FMColor::Gray160 = FMColor(160.0f / 255.0f, 160.0f / 255.0f, 160.0f / 255.0f);
+FMColor FMColor::Gray208 = FMColor(208.0f / 255.0f, 208.0f / 255.0f, 208.0f / 255.0f);
 
 FModumateDraftingView::~FModumateDraftingView()
 {
@@ -278,13 +285,14 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 	}
 	TArray<AModumateObjectInstance*> scopeBoxes = Document->GetObjectsOfType(EObjectType::OTScopeBox);
 
-	if (ExportType == kPDF)
+	if (ExportType == kDWG)
 	{
-		DrawingInterface = MakeShared<FModumatePDFDraw>();
+		DrawingInterface = MakeShared<FModumateLineCorral>();
 	}
 	else
 	{
-		DrawingInterface = MakeShared<FModumateLineCorral>();
+		//TODO: error code
+		return;
 	}
 
 	draftMan->CurrentDraftingView = this;

@@ -2128,17 +2128,6 @@ TArray<const AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(EObje
 	return outObjectsOfType;
 }
 
-bool UModumateDocument::ExportPDF(UWorld *world, const TCHAR *filepath, const FVector &origin, const FVector &normal)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ExportPDF"));
-
-	CurrentDraftingView = MakeShared<FModumateDraftingView>(world, this, FModumateDraftingView::kPDF);
-	CurrentDraftingView->CurrentFilePath = FString(filepath);
-	CurrentDraftingView->GeneratePagesFromCutPlanes(world);
-
-	return true;
-}
-
 bool UModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ExportDWG"));

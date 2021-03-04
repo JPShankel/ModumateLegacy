@@ -21,7 +21,7 @@ namespace Modumate
 	class MODUMATE_API FModumateDraftingView
 	{
 	public:
-		enum DraftType {kPDF, kDWG};
+		enum DraftType {kDWG};
 		FModumateDraftingView(UWorld *world, UModumateDocument *doc, DraftType draftType);
 		virtual ~FModumateDraftingView();
 

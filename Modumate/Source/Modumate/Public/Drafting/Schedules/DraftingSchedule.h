@@ -1,6 +1,5 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
-#include "Drafting/APDFLLib.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "Drafting/ModumateDraftingDraw.h"
 #include "Drafting/ModumateDraftingElements.h"

@@ -345,13 +345,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
-	RegisterCommand(kDraft, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-
-		UModumateDocument* doc = GetDocument();
-		doc->ExportPDF(GetWorld(), *(FPaths::ProjectDir() / TEXT("test.pdf")),FVector::ZeroVector, FVector::ZeroVector);
-		return true;
-	});
-
 	RegisterCommand(kReanalyzeGraph, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		UModumateDocument* doc = GetDocument();

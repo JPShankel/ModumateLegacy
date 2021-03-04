@@ -8,8 +8,6 @@
 #include "CoreMinimal.h"
 #include "UnrealClasses/Modumate.h"
 
-using namespace Modumate::PDF;
-
 namespace Modumate { 
 
 

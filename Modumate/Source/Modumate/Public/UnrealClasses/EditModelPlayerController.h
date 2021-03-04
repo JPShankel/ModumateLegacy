@@ -501,9 +501,6 @@ public:
 	bool OnSavePDF();
 	bool OnCreateDwg();
 
-	UFUNCTION(BlueprintCallable, Category = Persistence)
-	void TrySavePDF();
-
 	// Check user plan & permission, show modal dialog if user doesn't have sufficient status and return false
 	UFUNCTION(BlueprintCallable, Category = Persistence)
 	bool CheckUserPlanAndPermission(EModumatePermission Permission);

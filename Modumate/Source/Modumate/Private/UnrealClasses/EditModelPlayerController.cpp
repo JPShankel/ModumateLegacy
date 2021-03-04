@@ -7,7 +7,6 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/EditableTextBox.h"
 #include "Database/ModumateObjectDatabase.h"
-#include "Drafting/APDFLLib.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Engine/SceneCapture2D.h"
@@ -71,8 +70,6 @@
 #include "ToolsAndAdjustments/Tools/EditModelWandTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelBackgroundImageTool.h"
 
-static Modumate::PDF::PDFResult PDFLibrary;
-
 const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetry"));
 
 using namespace Modumate;
@@ -110,9 +107,6 @@ AEditModelPlayerController::~AEditModelPlayerController()
 void AEditModelPlayerController::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	// Init the PDF library once the application has actually started
-	PDFLibrary = Modumate::PDF::InitLibrary();
 
 	// Cache our raycasting parameters
 	static const FName HandleTraceTag(TEXT("HandleTrace"));
@@ -1026,11 +1020,6 @@ bool AEditModelPlayerController::GetScreenshotFileNameWithDialog(FString &filena
 	return bChoseFile;
 }
 
-void AEditModelPlayerController::TrySavePDF()
-{
-	OnSavePDF();
-}
-
 bool AEditModelPlayerController::CheckUserPlanAndPermission(EModumatePermission Permission)
 {
 #if WITH_EDITOR
@@ -1045,74 +1034,6 @@ bool AEditModelPlayerController::CheckUserPlanAndPermission(EModumatePermission 
 	// TODO: Check if user is on paid plan
 	EditModelUserWidget->ShowAlertFreeAccountDialog();
 	return false;
-}
-
-bool AEditModelPlayerController::OnSavePDF()
-{
-	if (!CheckUserPlanAndPermission(EModumatePermission::Export))
-	{
-		return false;
-	}
-
-	if (EMPlayerState->ShowingFileDialog)
-	{
-		return false;
-	}
-
-	if (ToolIsInUse())
-	{
-		AbortUseTool();
-	}
-
-
-	if (PDFLibrary.ErrorCode != Modumate::EDrawError::ErrorNone)
-	{
-		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString("Could Not Init PDF Library")));
-		return false;
-	}
-
-	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
-	if (!gameInstance)
-	{
-		return false;
-	}
-
-	static const FText dialogTitle = FText::FromString(FString(TEXT("PDF Creation")) );
-	if (!gameInstance->IsloggedIn())
-	{
-		FMessageDialog::Open(EAppMsgType::Ok,
-			FText::FromString(FString(TEXT("You must be logged in to export to a PDF file") )),
-			&dialogTitle);
-		return false;
-	}
-
-	EMPlayerState->ShowingFileDialog = true;
-
-	FString filename;
-	bool ret = true;
-
-	if (Modumate::PlatformFunctions::GetSaveFilename(filename, INDEX_PDFFILE))
-	{
-		FString root, libDir;
-#if WITH_EDITOR
-		root = FPaths::GetPath(FPaths::GetProjectFilePath());
-		libDir = FPaths::Combine(root, L"APDFL/DLLs");
-#else
-		root = FPaths::ProjectDir();
-		libDir = FPaths::Combine(root, L"Binaries/Win64");
-#endif
-		libDir = FPaths::ConvertRelativePathToFull(libDir);
-
-
-		if (!Document->ExportPDF(GetWorld(), *filename, FVector::ZeroVector, FVector::ZeroVector))
-		{
-			FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString("PDF Export Failed")));
-			ret = false;
-		}
-	}
-
-	EMPlayerState->ShowingFileDialog = false;
-	return ret;
 }
 
 bool AEditModelPlayerController::OnCreateDwg()

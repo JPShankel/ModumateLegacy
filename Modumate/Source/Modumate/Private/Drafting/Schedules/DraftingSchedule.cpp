@@ -6,8 +6,6 @@
 
 #define LOCTEXT_NAMESPACE "ModumateSchedule"
 
-using namespace Modumate::PDF;
-
 namespace Modumate {
 
 	FDraftingSchedule::~FDraftingSchedule() 
