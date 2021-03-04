@@ -151,14 +151,14 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 			}
 			else
 			{
-				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, offset, doc, Controller->GetWorld(), true);
+				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, offset, doc, Controller->GetWorld(), false);
 			}
 		}
 	}
 
 	ReleaseSelectedObjects();
 
-	return Super::PostEndOrAbort();
+	return PostEndOrAbort();
 }
 
 bool UMoveObjectTool::EndUse()
@@ -194,6 +194,12 @@ bool UMoveObjectTool::AbortUse()
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
 	return Super::AbortUse();
+}
+
+bool UMoveObjectTool::PostEndOrAbort()
+{
+	bPaste = false;
+	return Super::PostEndOrAbort();
 }
 
 bool UMoveObjectTool::HandleControlKey(bool pressed)

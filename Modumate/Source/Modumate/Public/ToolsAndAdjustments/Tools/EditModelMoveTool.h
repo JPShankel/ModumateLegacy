@@ -27,6 +27,7 @@ public:
 	virtual bool HandleInputNumber(double n) override;
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
+	virtual bool PostEndOrAbort() override;
 	virtual bool HandleControlKey(bool pressed) override;
 	virtual bool HasDimensionActor() { return true; };
 	virtual bool CycleMode() override;
