@@ -244,7 +244,13 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 
 bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecord, const FVector &InOffset, UModumateDocument* doc, UWorld* World, bool bIsPreview)
 {
+
 	TMap<int32, TArray<int32>> copiedToPastedObjIDs;
+
+	if (bIsPreview)
+	{
+		doc->StartPreviewing();
+	}
 
 	TArray<FDeltaPtr> OutDeltas;
 	if (!doc->PasteMetaObjects(&InRecord->VolumeGraph, OutDeltas, copiedToPastedObjIDs, InOffset, bIsPreview))
