@@ -1636,7 +1636,7 @@ namespace Modumate
 				OutCopiedToPastedIDs.Add(kvp.Key, { edge->ID });
 			}
 			else if (GetDeltaForEdgeAdditionWithSplit(startPosition, endPosition,
-				edgeDeltas, NextID, addedEdgeIDs, false, !bIsPreview))
+				edgeDeltas, NextID, addedEdgeIDs, true, !bIsPreview))
 			{
 				OutCopiedToPastedIDs.Add(kvp.Key, addedEdgeIDs);
 
