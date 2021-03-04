@@ -593,6 +593,68 @@ namespace Modumate
 		return true;
 	}
 
+	bool FGraph2D::SaveSubset(const TSet<int32>& InObjectIDs, FGraph2DRecord* OutRecord)
+	{
+		OutRecord->Vertices.Reset();
+		OutRecord->Edges.Reset();
+		OutRecord->Polygons.Reset();
+
+		for (int32 id : InObjectIDs)
+		{
+			if (auto vertex = FindVertex(id))
+			{
+				OutRecord->Vertices.Add(id, vertex->Position);
+			}
+			else if (auto edge = FindEdge(id))
+			{
+				auto currentEdgeRecord = FGraph2DEdgeRecord();
+				currentEdgeRecord.VertexIDs = { edge->StartVertexID, edge->EndVertexID };
+				OutRecord->Edges.Add(id, currentEdgeRecord);
+
+				auto startVertex = FindVertex(edge->StartVertexID);
+				auto endVertex = FindVertex(edge->EndVertexID);
+				if (!ensure(startVertex && endVertex))
+				{
+					continue;
+				}
+
+				OutRecord->Vertices.FindOrAdd(startVertex->ID, startVertex->Position);
+				OutRecord->Vertices.FindOrAdd(endVertex->ID, endVertex->Position);
+			}
+			else if (auto poly = FindPolygon(id))
+			{
+				auto currentFaceRecord = FGraph2DPolygonRecord();
+				currentFaceRecord.VertexIDs = poly->VertexIDs;
+				OutRecord->Polygons.Add(id, currentFaceRecord);
+
+				for (int32 vertexID : poly->VertexIDs)
+				{
+					auto polyVertex = FindVertex(vertexID);
+					if (!ensure(polyVertex))
+					{
+						continue;
+					}
+
+					OutRecord->Vertices.FindOrAdd(polyVertex->ID, polyVertex->Position);
+				}
+
+				for (int32 edgeID : poly->Edges)
+				{
+					auto polyEdge = FindEdge(edgeID);
+					if (!ensure(polyEdge))
+					{
+						continue;
+					}
+					auto currentEdgeRecord = FGraph2DEdgeRecord();
+					currentEdgeRecord.VertexIDs = { polyEdge->StartVertexID, polyEdge->EndVertexID };
+					OutRecord->Edges.FindOrAdd(polyEdge->ID, currentEdgeRecord);
+				}
+			}
+		}
+
+		return true;
+	}
+
 	void FGraph2D::CheckTranslationValidity(const TArray<int32>& InVertexIDs, TMap<int32, bool>& OutEdgeIDToValidity) const
 	{
 		TSet<int32> connectedEdges;

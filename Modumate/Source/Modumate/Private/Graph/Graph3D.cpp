@@ -1584,6 +1584,11 @@ namespace Modumate
 
 	void FGraph3D::GetDeltasForPaste(const FGraph3DRecord* InGraph3DRecord, const FVector& InOffset, int32 &NextID, TArray<FGraph3DDelta>& OutDeltas, TMap<int32, TArray<int32>>& OutCopiedToPastedIDs, bool bIsPreview)
 	{
+		if (!ensureAlways(InGraph3DRecord))
+		{
+			return;
+		}
+
 		FGraph3DDelta vertexDelta;
 		TSet<int32> addedVertices;
 		for (auto& kvp : InGraph3DRecord->Vertices)

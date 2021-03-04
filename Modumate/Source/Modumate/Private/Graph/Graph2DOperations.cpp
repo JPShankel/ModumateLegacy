@@ -2,6 +2,7 @@
 
 #include "Graph/Graph2D.h"
 
+#include "DocumentManagement/ModumateSerialization.h"
 #include "Graph/Graph2DDelta.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 
@@ -119,6 +120,69 @@ namespace Modumate
 		}
 
 		if (!ValidateAgainstBounds())
+		{
+			ApplyInverseDeltas(OutDeltas);
+			return false;
+		}
+
+		// return graph in its original state
+		ApplyInverseDeltas(OutDeltas);
+
+		return true;
+	}
+
+	bool FGraph2D::PasteObjects(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, const FGraph2DRecord* InRecord, TMap<int32, TArray<int32>>& OutCopiedToPastedIDs)
+	{
+		if (!ensureAlways(InRecord))
+		{
+			return false;
+		}
+
+		FGraph2DDelta vertexDelta(ID);
+		for (auto& kvp : InRecord->Vertices)
+		{
+			const FGraph2DVertex *existingVertex = FindVertex(kvp.Value);
+			if (existingVertex != nullptr)
+			{
+				OutCopiedToPastedIDs.Add(kvp.Key, { existingVertex->ID });
+			}
+			else
+			{
+				AddVertexDirect(vertexDelta, NextID, kvp.Value);
+				OutCopiedToPastedIDs.Add(kvp.Key, { NextID - 1 });
+			}
+		}
+
+		ApplyDelta(vertexDelta);
+		OutDeltas.Add(vertexDelta);
+
+		for (auto& kvp : InRecord->Edges)
+		{
+			if (!ensure(kvp.Value.VertexIDs.Num() == 2))
+			{
+				return false;
+			}
+
+			int32 startVertexID = OutCopiedToPastedIDs[kvp.Value.VertexIDs[0]][0];
+			int32 endVertexID = OutCopiedToPastedIDs[kvp.Value.VertexIDs[1]][0];
+			auto startVertex = FindVertex(startVertexID);
+			auto endVertex = FindVertex(endVertexID);
+
+			TArray<FGraph2DDelta> edgeDeltas;
+			if (!AddEdgesBetweenVertices(edgeDeltas, NextID, startVertexID, endVertexID))
+			{
+				ApplyInverseDeltas(OutDeltas);
+			}
+			OutDeltas.Append(edgeDeltas);
+
+			TSet<int32> outEdges;
+			AggregateAddedEdges(edgeDeltas, outEdges, startVertex->Position, endVertex->Position);
+
+			OutCopiedToPastedIDs.Add(kvp.Key, outEdges.Array());
+		}
+
+		// TODO: associate with input polygons
+		if (!CalculatePolygons(OutDeltas, NextID))
 		{
 			ApplyInverseDeltas(OutDeltas);
 			return false;

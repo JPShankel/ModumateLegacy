@@ -205,6 +205,7 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 {
 	TSet<int32> volumeGraphIDs;
 	TSet<int32> separatorIDs;
+	TMap<int32, TSet<int32>> surfaceGraphIDToObjIDs;
 
 	auto& graph = doc->GetVolumeGraph(); 
 
@@ -226,6 +227,27 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 			volumeGraphIDs.Add(parentGraphObject->ID);
 			separatorIDs.Add(moi->ID);
 		}
+		else if (auto surfaceGraph = doc->FindSurfaceGraphByObjID(id))
+		{
+			if (surfaceGraph == nullptr)
+			{
+				continue;
+			}
+
+			auto surfaceGraphObject = surfaceGraph->FindObject(id);
+			if (surfaceGraphObject == nullptr)
+			{
+				surfaceGraphObject = surfaceGraph->FindObject(moi->GetParentID());
+				if (surfaceGraphObject == nullptr)
+				{
+					continue;
+				}
+			}
+
+			auto& surfaceGraphSubset = surfaceGraphIDToObjIDs.FindOrAdd(surfaceGraph->GetID());
+			surfaceGraphSubset.Add(surfaceGraphObject->ID);
+		}
+
 	}
 
 	graph.SaveSubset(volumeGraphIDs, &OutRecord->VolumeGraph);
@@ -239,7 +261,24 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 		OutRecord->ObjectData.Add(stateData);
 	}
 
-	// TODO: save other types of objects
+	for (auto& kvp : surfaceGraphIDToObjIDs)
+	{
+		FGraph2DRecord currentRecord;
+		auto surfaceGraph = doc->FindSurfaceGraph(kvp.Key);
+
+		if (!surfaceGraph->SaveSubset(kvp.Value, &currentRecord))
+		{
+			continue;
+		}
+
+		auto obj = doc->GetObjectById(kvp.Key);
+
+		FMOIStateData& stateData = obj->GetStateData();
+		stateData.CustomData.SaveJsonFromCbor();
+		OutRecord->ObjectData.Add(stateData);
+
+		OutRecord->SurfaceGraphs.Add(kvp.Key, currentRecord);
+	}
 }
 
 bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecord, const FVector &InOffset, UModumateDocument* doc, UWorld* World, bool bIsPreview)
@@ -258,6 +297,12 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 		return false;
 	}
 
+	// TODO: separate path for pure surface graph paste
+	if (OutDeltas.Num() == 0)
+	{
+		return false;
+	}
+
 	int32 nextID = doc->GetNextAvailableID();
 
 	auto separatorDelta = MakeShared<FMOIDelta>();
@@ -268,7 +313,14 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 			continue;
 		}
 
-		for (int32 parentID : copiedToPastedObjIDs[objRec.ParentID])
+		// TODO: surface graph splitting
+		auto& newParents = copiedToPastedObjIDs[objRec.ParentID];
+		if (objRec.ObjectType == EObjectType::OTSurfaceGraph && newParents.Num() > 1)
+		{
+			continue;
+		}
+
+		for (int32 parentID : newParents)
 		{
 			FMOIStateData stateData;
 			stateData.ID = nextID++;
@@ -287,9 +339,36 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 
 	OutDeltas.Add(separatorDelta);
 
+	// the graphs need to exist, they may not at first
+	for (auto& sgRec : InRecord->SurfaceGraphs)
+	{
+		if (!copiedToPastedObjIDs.Contains(sgRec.Key) || copiedToPastedObjIDs[sgRec.Key].Num() == 0)
+		{
+			continue;
+		}
+
+		auto tempGraph = MakeShared<Modumate::FGraph2D>(copiedToPastedObjIDs[sgRec.Key][0]);
+		TArray<FGraph2DDelta> sgDeltas;
+
+		if (!tempGraph->PasteObjects(sgDeltas, nextID, &sgRec.Value, copiedToPastedObjIDs))
+		{
+			continue;
+		}
+
+		FGraph2DDelta addDelta(tempGraph->GetID());
+		addDelta.DeltaType = EGraph2DDeltaType::Add;
+		OutDeltas.Add(MakeShared<FGraph2DDelta>(addDelta));
+			
+		for (auto& delta : sgDeltas)
+		{
+			OutDeltas.Add(MakeShared<FGraph2DDelta>(delta));
+		}
+	}
+
 	bIsPreview ? 
 		doc->ApplyPreviewDeltas(OutDeltas, World) :
 		doc->ApplyDeltas(OutDeltas, World);
+
 
 	return true;
 }
