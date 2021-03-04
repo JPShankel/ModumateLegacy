@@ -7,6 +7,7 @@
 #include "BIMKernel/Core/BIMProperties.h"
 #include "BIMKernel/Core/BIMEnums.h"
 #include "BIMKernel/Core/BIMKey.h"
+#include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "ModumateCore/ModumateUnits.h"
@@ -59,4 +60,7 @@ public:
 
 	UPROPERTY()
 	FGuid PresetGUID;
+
+	UPROPERTY()
+	EPresetMeasurementMethod MeasurementMethod = EPresetMeasurementMethod::None;
 };

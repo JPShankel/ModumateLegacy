@@ -9,6 +9,7 @@
 #include "BIMKernel/Core/BIMEnums.h"
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Core/BIMTagPath.h"
+#include "BIMKernel/Presets/BIMPresetInstance.h"
 
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateUnits.h"
@@ -107,6 +108,9 @@ public:
 
 	UPROPERTY()
 	TMap<FString, FModumateUnitValue> NamedDimensionValues;
+
+	UPROPERTY()
+	EPresetMeasurementMethod MeasurementMethod = EPresetMeasurementMethod::None;
 
 	void GetNamedDimensionValuesFromPreset(const FBIMPresetInstance* Preset);
 

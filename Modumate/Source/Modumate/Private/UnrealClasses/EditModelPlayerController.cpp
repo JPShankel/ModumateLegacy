@@ -1340,11 +1340,6 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 		Document->DisplayDebugInfo(GetWorld());
 
 		AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
-		TArray<FString> dbstrs = gameMode->ObjectDatabase->GetDebugInfo();
-		for (auto &str : dbstrs)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Red, str, false);
-		}
 
 		for (auto &sob : EMPlayerState->SelectedObjects)
 		{

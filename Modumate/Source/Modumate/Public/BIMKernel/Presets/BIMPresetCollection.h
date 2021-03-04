@@ -47,6 +47,8 @@ struct MODUMATE_API FBIMPresetCollection
 	TSet<FBIMTagPath> AllNCPs;
 
 	EBIMResult PostLoad();
+	EBIMResult ProcessNamedDimensions();
+	EBIMResult ProcessStarterAssemblies(const FModumateDatabase& AssetDatabase, const TArray<FGuid>& StarterPresets);
 
 	EObjectType GetPresetObjectType(const FGuid& PresetID) const;
 

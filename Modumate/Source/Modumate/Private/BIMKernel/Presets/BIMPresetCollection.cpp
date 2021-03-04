@@ -235,6 +235,134 @@ EBIMResult FBIMPresetCollection::PostLoad()
 	return EBIMResult::Success;
 }
 
+EBIMResult FBIMPresetCollection::ProcessNamedDimensions()
+{
+	TArray<FGuid> namedDimensionPresets;
+
+	// Parts may have unique values like "JambLeftSizeX" or "PeepholeDistanceZ"
+	// If a part is expected to have one of these values but doesn't, we provide defaults here
+	// TODO: typesafe NCPs...bare string for now
+	EBIMResult res = EBIMResult::Success;
+	if (ensureAlways(GetPresetsForNCP(FBIMTagPath(TEXT("NamedDimension")), namedDimensionPresets) == EBIMResult::Success))
+	{
+		for (auto& ndp : namedDimensionPresets)
+		{
+			const FBIMPresetInstance* preset = PresetFromGUID(ndp);
+
+			if (ensureAlways(preset != nullptr))
+			{
+				FPartNamedDimension& dimension = FBIMPartSlotSpec::NamedDimensionMap.Add(preset->PresetID.ToString());
+
+				float numProp;
+				if (preset->TryGetProperty(BIMPropertyNames::DefaultValue, numProp))
+				{
+					dimension.DefaultValue = FModumateUnitValue::WorldCentimeters(numProp);
+				}
+				else
+				{
+					res = EBIMResult::Error;
+				}
+
+				FString stringProp;
+				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::UIGroup, stringProp)))
+				{
+					dimension.UIType = GetEnumValueByString<EPartSlotDimensionUIType>(stringProp);
+				}
+				else
+				{
+					res = EBIMResult::Error;
+				}
+
+				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::DisplayName, stringProp)))
+				{
+					dimension.DisplayName = FText::FromString(stringProp);
+				}
+				else
+				{
+					res = EBIMResult::Error;
+				}
+
+				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::Description, stringProp)))
+				{
+					dimension.Description = FText::FromString(stringProp);
+				}
+				else
+				{
+					res = EBIMResult::Error;
+				}
+			}
+			else
+			{
+				res = EBIMResult::Error;
+			}
+		}
+	}
+
+	/*
+	* Presets that either have or are themselves parts are given default values for named dimensions so they can be edited if visible
+	*/
+	TArray<FGuid> dimensionedPresets;
+	GetPresetsByPredicate([](const FBIMPresetInstance& Preset)
+	{
+		return Preset.NodeScope == EBIMValueScope::Part || Preset.SlotConfigPresetGUID.IsValid();
+	}
+	, dimensionedPresets);
+
+	for (auto& dimPreset : dimensionedPresets)
+	{
+		FBIMPresetInstance* preset = PresetFromGUID(dimPreset);
+		if (ensureAlways(preset != nullptr))
+		{
+			for (auto& kvp : FBIMPartSlotSpec::NamedDimensionMap)
+			{
+				FBIMPropertyKey propKey(EBIMValueScope::Dimension, *kvp.Key);
+				if (!preset->Properties.HasProperty<float>(propKey.Scope, propKey.Name))
+				{
+					preset->Properties.SetProperty(propKey.Scope, propKey.Name, kvp.Value.DefaultValue.AsWorldCentimeters());
+				}
+			}
+		}
+	}
+
+	return res;
+}
+
+EBIMResult FBIMPresetCollection::ProcessStarterAssemblies(const FModumateDatabase& AssetDatabase, const TArray<FGuid>& StarterPresets)
+{
+	/*
+	Now build every preset that was returned in 'starters' by the manifest parse and add it to the project
+	*/
+	EBIMResult res = EBIMResult::Success;
+	for (auto& starter : StarterPresets)
+	{
+		const FBIMPresetInstance* preset = PresetFromGUID(starter);
+
+		// TODO: "starter" presets currently only refer to complete assemblies, will eventually include presets to be shopped from the marketplace
+		if (ensureAlways(preset != nullptr) && preset->ObjectType == EObjectType::OTNone)
+		{
+			continue;
+		}
+
+		FBIMAssemblySpec outSpec;
+		
+		EBIMResult fromRes = outSpec.FromPreset(AssetDatabase, *this, preset->GUID);
+		if (fromRes != EBIMResult::Success)
+		{
+			res = fromRes;
+		}
+		
+		outSpec.ObjectType = preset->ObjectType;
+		UpdateProjectAssembly(outSpec);
+
+		if (!DefaultAssembliesByObjectType.Contains(outSpec.ObjectType))
+		{
+			DefaultAssembliesByObjectType.Add(outSpec.ObjectType, outSpec);
+		}
+	}
+	return res;
+}
+
+
 EBIMResult FBIMPresetCollection::GetAvailableGUID(FGuid& OutGUID)
 {
 	int32 sanity = 0;

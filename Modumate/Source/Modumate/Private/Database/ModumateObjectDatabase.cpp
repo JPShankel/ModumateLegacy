@@ -241,71 +241,12 @@ void FModumateDatabase::ReadPresetData()
 		BIMPresetCollection.PostLoad();
 	}
 
-	TArray<FGuid> namedDimensionPresets;
-	
-	// Parts may have unique values like "JambLeftSizeX" or "PeepholeDistanceZ"
-	// If a part is expected to have one of these values but doesn't, we provide defaults here
-	// TODO: typesafe NCPs...bare string for now
-	if (ensureAlways(BIMPresetCollection.GetPresetsForNCP(FBIMTagPath(TEXT("NamedDimension")), namedDimensionPresets) == EBIMResult::Success))
-	{
-		for (auto& ndp : namedDimensionPresets)
-		{
-			const FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(ndp);
-
-			if (ensureAlways(preset != nullptr))
-			{
-				FPartNamedDimension& dimension = FBIMPartSlotSpec::NamedDimensionMap.Add(preset->PresetID.ToString());
-
-				float numProp;
-				if (preset->TryGetProperty(BIMPropertyNames::DefaultValue, numProp))
-				{
-					dimension.DefaultValue = FModumateUnitValue::WorldCentimeters(numProp);
-				}
-
-				FString stringProp;
-				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::UIGroup, stringProp)))
-				{
-					dimension.UIType = GetEnumValueByString<EPartSlotDimensionUIType>(stringProp);
-				}
-
-				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::DisplayName, stringProp)))
-				{
-					dimension.DisplayName = FText::FromString(stringProp);
-				}
-
-				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::Description, stringProp)))
-				{
-					dimension.Description = FText::FromString(stringProp);
-				}
-			}
-		}
-	}
-
 	/*
-	* Presets that either have or are themselves parts are given default values for named dimensions so they can be edited if visible 
+	* TODO/WIP: post load processing to be broken down and driven by a more general NCP system
+	* For now, roll the stages into separate functions to de-blob...work in progress
 	*/
-	TArray<FGuid> dimensionedPresets;
-	BIMPresetCollection.GetPresetsByPredicate([](const FBIMPresetInstance& Preset) 
-		{
-			return Preset.NodeScope == EBIMValueScope::Part || Preset.SlotConfigPresetGUID.IsValid();
-		}
-		,dimensionedPresets);
 
-	for (auto& dimPreset : dimensionedPresets)
-	{
-		FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(dimPreset);
-		if (ensureAlways(preset != nullptr))
-		{
-			for (auto& kvp : FBIMPartSlotSpec::NamedDimensionMap)
-			{
-				FBIMPropertyKey propKey(EBIMValueScope::Dimension, *kvp.Key);
-				if (!preset->Properties.HasProperty<float>(propKey.Scope, propKey.Name))
-				{
-					preset->Properties.SetProperty(propKey.Scope, propKey.Name, kvp.Value.DefaultValue.AsWorldCentimeters());
-				}
-			}
-		}
-	}
+	ensureAlways(BIMPresetCollection.ProcessNamedDimensions() == EBIMResult::Success);
 
 	FString NCPString;
 	FString NCPPath = ManifestDirectoryPath / TEXT("NCPTable.csv");
@@ -449,13 +390,16 @@ void FModumateDatabase::ReadPresetData()
 	Find the columns containing object type and asset destination (which db) for each preset type
 	*/
 	const FString objectTypeS = TEXT("ObjectType");
-	int32 objectTypeI = -1;
+	int32 objectTypeI = INDEX_NONE;
 
 	const FString assetTypeS = TEXT("AssetType");
-	int32 assetTypeI = -1;
+	int32 assetTypeI = INDEX_NONE;
 
 	const FString bimDesignerTitle = TEXT("BIMDesigner-NodeTitle");
-	int32 bimDesignerTitleI = -1;
+	int32 bimDesignerTitleI = INDEX_NONE;
+
+	const FString measurementMethodTitle = TEXT("MeasurementMethods");
+	int32 bimMeasurementMethodI = INDEX_NONE;
 
 	for (int32 column = 0; column < NCPRows[0].Num(); ++column)
 	{
@@ -470,6 +414,10 @@ void FModumateDatabase::ReadPresetData()
 		else if (bimDesignerTitle.Equals(NCPRows[0][column]))
 		{
 			bimDesignerTitleI = column;
+		}
+		else if (measurementMethodTitle.Equals(NCPRows[0][column]))
+		{
+			bimMeasurementMethodI = column;
 		}
 	}
 
@@ -496,7 +444,7 @@ void FModumateDatabase::ReadPresetData()
 	TArray<FObjectPathRef> objectPaths;
 
 	typedef TPair<FBIMTagPath, FString> FTagTitleRef;
-	TArray<FTagTitleRef> tagTitles;
+	TArray<FTagTitleRef> tagTitles,tagMeasurements;
 
 	for (int32 row = 1; row < NCPRows.Num(); ++row)
 	{
@@ -533,6 +481,12 @@ void FModumateDatabase::ReadPresetData()
 		{
 			tagTitles.Add(FTagTitleRef(tagPath, cell));
 		}
+
+		cell = NCPRows[row][bimMeasurementMethodI];
+		if (!cell.IsEmpty())
+		{
+			tagMeasurements.Add(FTagTitleRef(tagPath, cell));
+		}
 	}
 
 	// More specific matches further down the table
@@ -545,6 +499,16 @@ void FModumateDatabase::ReadPresetData()
 			if (preset.Value.MyTagPath.MatchesPartial(tag.Key))
 			{
 				preset.Value.CategoryTitle = FText::FromString(tag.Value);
+			}
+		}
+		for (auto& tag : tagMeasurements)
+		{
+			if (preset.Value.MyTagPath.MatchesPartial(tag.Key))
+			{
+				if (!ensureAlways(FindEnumValueByString<EPresetMeasurementMethod>(tag.Value, preset.Value.MeasurementMethod)))
+				{
+					preset.Value.MeasurementMethod = EPresetMeasurementMethod::None;
+				}
 			}
 		}
 	}
@@ -626,30 +590,7 @@ void FModumateDatabase::ReadPresetData()
 		}
 	}
 
-	/*
-	Now build every preset that was returned in 'starters' by the manifest parse and add it to the project
-	*/
-	for (auto &starter : bimCacheRecord.Starters)
-	{
-		const FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(starter);
-
-		// TODO: "starter" presets currently only refer to complete assemblies, will eventually include presets to be shopped from the marketplace
-		if (ensureAlways(preset != nullptr) && preset->ObjectType == EObjectType::OTNone)
-		{
-			continue;
-		}
-
-		FBIMAssemblySpec outSpec;
-		outSpec.FromPreset(*this, BIMPresetCollection, preset->GUID);
-		outSpec.ObjectType = preset->ObjectType;
-		BIMPresetCollection.UpdateProjectAssembly(outSpec);
-
-		// TODO: default assemblies added to allow interim loading during assembly refactor, to be eliminated
-		if (!BIMPresetCollection.DefaultAssembliesByObjectType.Contains(outSpec.ObjectType))
-		{
-			BIMPresetCollection.DefaultAssembliesByObjectType.Add(outSpec.ObjectType, outSpec);
-		}
-	}
+	ensureAlways(BIMPresetCollection.ProcessStarterAssemblies(*this, bimCacheRecord.Starters) == EBIMResult::Success);
 
 #if !UE_BUILD_SHIPPING
 	if (bWantUnitTest)
@@ -657,13 +598,6 @@ void FModumateDatabase::ReadPresetData()
 		ensureAlways(UnitTest());
 	}
 #endif
-}
-
-TArray<FString> FModumateDatabase::GetDebugInfo()
-{
-	// TODO: fill in debug info for console display
-	TArray<FString> ret;
-	return ret;
 }
 
 /*

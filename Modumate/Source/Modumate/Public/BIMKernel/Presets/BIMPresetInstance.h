@@ -75,6 +75,28 @@ struct MODUMATE_API FBIMPresetPartSlot
 	}
 };
 
+UENUM()
+enum class EPresetMeasurementMethod : uint8
+{
+	None=0,
+	Part,
+	FFE,
+	ModuleLinear,
+	ModulePlanar,
+	ModuleVolumetric,
+	GapLinear,
+	GapPlanar,
+	GapVolumetric,
+	Layer,
+	LayerMass,
+	AssemblyLayered,
+	AssemblyLinear,
+	AssemblyRigged,
+	AssemblyStair,
+	AssemblyCabinet,
+	Error = 255
+};
+
 USTRUCT()
 struct MODUMATE_API FBIMPresetInstance
 {
@@ -143,6 +165,9 @@ struct MODUMATE_API FBIMPresetInstance
 
 	UPROPERTY()
 	FBIMTagPath MyTagPath;
+
+	UPROPERTY()
+	EPresetMeasurementMethod MeasurementMethod = EPresetMeasurementMethod::None;
 
 	UPROPERTY()
 	FStructDataWrapper CustomData;

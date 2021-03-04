@@ -68,15 +68,12 @@ public:
 
 	const FBIMPresetCollection& GetPresetCollection() const { return BIMPresetCollection; }
 
-
 	// Data Access
 	const FArchitecturalMesh* GetArchitecturalMeshByGUID(const FGuid& Key) const;
 	const FArchitecturalMaterial* GetArchitecturalMaterialByGUID(const FGuid& Key) const;
 	const FSimpleMeshRef* GetSimpleMeshByGUID(const FGuid& Key) const;
 	const FStaticIconTexture* GetStaticIconTextureByGUID(const FGuid& Key) const;
 	const FLayerPattern* GetPatternByGUID(const FGuid& Key) const;
-
-	TArray<FString> GetDebugInfo();
 
 	bool ReadBIMCache(const FString& CacheFile, FModumateBIMCacheRecord& OutCache);
 	bool WriteBIMCache(const FString& CacheFile, const FModumateBIMCacheRecord& InCache) const;

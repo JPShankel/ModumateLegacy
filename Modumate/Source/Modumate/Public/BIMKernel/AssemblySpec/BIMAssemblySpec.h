@@ -99,6 +99,9 @@ public:
 	UPROPERTY()
 	FEdgeDetailData EdgeDetailData;
 
+	UPROPERTY()
+	EPresetMeasurementMethod MeasurementMethod = EPresetMeasurementMethod::None;
+
 	// For DataCollection support in preset manager
 	FGuid UniqueKey() const { return PresetGUID; }
 

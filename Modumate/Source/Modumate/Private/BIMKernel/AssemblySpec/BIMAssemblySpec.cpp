@@ -68,6 +68,8 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		return EBIMResult::Error;
 	}
 
+	MeasurementMethod = assemblyPreset->MeasurementMethod;
+
 	// TODO: a more general custom data iterator when we get more use cases
 	if (assemblyPreset->ObjectType == EObjectType::OTEdgeDetail)
 	{
@@ -123,16 +125,19 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			case ELayerTarget::Assembly:
 				presetIterator.TargetLayer = &Layers.AddDefaulted_GetRef();
 				presetIterator.TargetProperties = &Layers.Last().LayerProperties;
+				presetIterator.TargetLayer->MeasurementMethod = presetIterator.Preset->MeasurementMethod;
 				presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
 				break;
 			case ELayerTarget::TreadLayer:
 				presetIterator.TargetLayer = &TreadLayers.AddDefaulted_GetRef();
 				presetIterator.TargetProperties = &TreadLayers.Last().LayerProperties;
+				presetIterator.TargetLayer->MeasurementMethod = presetIterator.Preset->MeasurementMethod;
 				presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
 				break;
 			case ELayerTarget::RiserLayer:
 				presetIterator.TargetLayer = &RiserLayers.AddDefaulted_GetRef();
 				presetIterator.TargetProperties = &RiserLayers.Last().LayerProperties;
+				presetIterator.TargetLayer->MeasurementMethod = presetIterator.Preset->MeasurementMethod;
 				presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
 				break;
 			default:
@@ -286,6 +291,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			FBIMPartSlotSpec& partSpec = Parts.AddDefaulted_GetRef();
 			partSpec.ParentSlotIndex = partIterator.ParentSlotIndex;
 			partSpec.NodeCategoryPath = partPreset->MyTagPath;
+			partSpec.MeasurementMethod = partPreset->MeasurementMethod;
 			partSpec.GetNamedDimensionValuesFromPreset(partPreset);
 			ensureAlways(slotPreset->Properties.TryGetProperty(EBIMValueScope::Slot, BIMPropertyNames::ID, partSpec.SlotID));
 
@@ -323,7 +329,6 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 					}
 				}
 			}
-
 
 			// Find which slot this child belongs to and fetch transform data
 			for (auto& childSlot : slotConfigPreset->ChildPresets)
