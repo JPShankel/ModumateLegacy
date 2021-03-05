@@ -80,6 +80,7 @@ enum class EPresetMeasurementMethod : uint8
 {
 	None=0,
 	Part,
+	PartBySizeGroup,
 	FFE,
 	ModuleLinear,
 	ModulePlanar,
