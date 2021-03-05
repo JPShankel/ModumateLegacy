@@ -202,6 +202,7 @@ struct MODUMATE_API FBIMPresetInstance
 	}
 
 	EBIMResult GetForm(FBIMPresetForm& OutForm) const;
+	EBIMResult UpdateFormElements(FBIMPresetForm& RefForm) const;
 	EBIMResult MakeDeltaForFormElement(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const;
 	EBIMResult ApplyDelta(const FModumateDatabase& InDB, const FBIMPresetEditorDelta& Delta);
 

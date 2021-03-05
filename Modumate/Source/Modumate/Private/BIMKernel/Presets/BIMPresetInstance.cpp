@@ -427,11 +427,8 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 	return EBIMResult::Error;
 }
 
-EBIMResult FBIMPresetInstance::GetForm(FBIMPresetForm& OutForm) const
+EBIMResult FBIMPresetInstance::UpdateFormElements(FBIMPresetForm& OutForm) const
 {
-	OutForm = TypeDefinition.FormTemplate;
-	OutForm.Elements.Append(PresetForm.Elements);
-
 	for (auto& element : OutForm.Elements)
 	{
 		if (element.FieldType == EBIMPresetEditorField::MaterialBinding)
@@ -472,40 +469,46 @@ EBIMResult FBIMPresetInstance::GetForm(FBIMPresetForm& OutForm) const
 
 		switch (element.FieldType)
 		{
-			case EBIMPresetEditorField::DimensionProperty:
+		case EBIMPresetEditorField::DimensionProperty:
+		{
+			float v;
+			FBIMPropertyKey propKey(*element.FieldName);
+			if (ensureAlways(Properties.TryGetProperty<float>(propKey.Scope, propKey.Name, v)))
 			{
-				float v;
-				FBIMPropertyKey propKey(*element.FieldName);
-				if (ensureAlways(Properties.TryGetProperty<float>(propKey.Scope, propKey.Name, v)))
-				{
-					element.StringRepresentation = UModumateDimensionStatics::CentimetersToImperialText(v).ToString();
-				}
+				element.StringRepresentation = UModumateDimensionStatics::CentimetersToImperialText(v).ToString();
 			}
-			break;
+		}
+		break;
 
-			case EBIMPresetEditorField::NumberProperty:
+		case EBIMPresetEditorField::NumberProperty:
+		{
+			float v;
+			FBIMPropertyKey propKey(*element.FieldName);
+			if (ensureAlways(Properties.TryGetProperty<float>(propKey.Scope, propKey.Name, v)))
 			{
-				float v;
-				FBIMPropertyKey propKey(*element.FieldName);
-				if (ensureAlways(Properties.TryGetProperty<float>(propKey.Scope, propKey.Name, v)))
-				{
-					element.StringRepresentation = FString::SanitizeFloat(v);
-				}
+				element.StringRepresentation = FString::SanitizeFloat(v);
 			}
-			break;
+		}
+		break;
 
-			case EBIMPresetEditorField::TextProperty:
-			case EBIMPresetEditorField::AssetProperty:
-			default:
-			{
-				FBIMPropertyKey propKey(*element.FieldName);
-				ensureAlways(Properties.TryGetProperty<FString>(propKey.Scope, propKey.Name, element.StringRepresentation));
-			}
-			break;
+		case EBIMPresetEditorField::TextProperty:
+		case EBIMPresetEditorField::AssetProperty:
+		default:
+		{
+			FBIMPropertyKey propKey(*element.FieldName);
+			ensureAlways(Properties.TryGetProperty<FString>(propKey.Scope, propKey.Name, element.StringRepresentation));
+		}
+		break;
 		};
 	}
-
 	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetInstance::GetForm(FBIMPresetForm& OutForm) const
+{
+	OutForm = TypeDefinition.FormTemplate;
+	OutForm.Elements.Append(PresetForm.Elements);
+	return UpdateFormElements(OutForm);
 }
 
 /*

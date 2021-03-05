@@ -375,11 +375,12 @@ EBIMResult FBIMPresetEditorNode::GetPresetForm(FBIMPresetForm& OutForm) const
 			FPartNamedDimension* partDim = FBIMPartSlotSpec::NamedDimensionMap.Find(namedDim);
 			if (partDim != nullptr && partDim->UIType != EPartSlotDimensionUIType::Hidden)
 			{
-				OutForm.AddPropertyElement(partDim->DisplayName, *namedDim, EBIMPresetEditorField::DimensionProperty);
+				FBIMPropertyKey propKey(EBIMValueScope::Dimension, *namedDim);
+				OutForm.AddPropertyElement(partDim->DisplayName, propKey.QN(), EBIMPresetEditorField::DimensionProperty);
 			}
 		}
 
-		return EBIMResult::Success;
+		return WorkingPresetCopy.UpdateFormElements(OutForm);
 	}
 
 	return EBIMResult::Error;
