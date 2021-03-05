@@ -77,6 +77,8 @@ public:
 
 	virtual void PostLoadInstanceData() override;
 
+	bool ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const override;
+
 	UPROPERTY()
 	FMOIPortalData InstanceData;
 

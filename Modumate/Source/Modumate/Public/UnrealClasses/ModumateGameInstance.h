@@ -17,6 +17,7 @@ static const TCHAR *kModumateCleanShutdownFile = TEXT("_modumateDidNotShutDownCl
 class MODUMATE_API UModumateDocument;
 class MODUMATE_API FModumateAccountManager;
 class MODUMATE_API FModumateCloudConnection;
+class MODUMATE_API FQuantitiesManager;
 
 class IAnalyticsProvider;
 
@@ -53,6 +54,7 @@ private:
 	TSharedPtr<IAnalyticsProvider> AnalyticsInstance;
 	TSharedPtr<FModumateAccountManager> AccountManager;
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
+	TSharedPtr<FQuantitiesManager> QuantitiesManager;
 
 	UModumateDocument *GetDocument();
 
@@ -76,6 +78,7 @@ public:
 
 	TSharedPtr<FModumateAccountManager> GetAccountManager() const;
 	TSharedPtr<FModumateCloudConnection> GetCloudConnection() const;
+	TSharedPtr<FQuantitiesManager> GetQuantitiesManager() const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Tooltips)
 	TSubclassOf<class UTooltipManager> TooltipManagerClass;

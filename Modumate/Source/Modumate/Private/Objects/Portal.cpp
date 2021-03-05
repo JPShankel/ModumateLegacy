@@ -8,6 +8,7 @@
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateObjectStatics.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 #include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
@@ -22,6 +23,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateObjectInstanceParts.h"
+#include "Quantities/QuantitiesVisitor.h"
 
 
 class AEditModelPlayerController;
@@ -469,6 +471,29 @@ void AMOIPortal::PostLoadInstanceData()
 	{
 		StateData.CustomData.SaveStructData(InstanceData);
 	}
+}
+
+bool AMOIPortal::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+{
+	const FBIMAssemblySpec& assembly = CachedAssembly;
+	auto assemblyGuid = assembly.UniqueKey();
+	const Modumate::FGraph3D& graph = Document->GetVolumeGraph();
+	const Modumate::FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
+
+	if (!hostingFace)
+	{
+		return false;
+	}
+
+	float width = (hostingFace->Cached2DPositions[2] - hostingFace->Cached2DPositions[1]).Size();
+	float height = (hostingFace->Cached2DPositions[1] - hostingFace->Cached2DPositions[0]).Size();
+	int32 namingWidth = FMath::RoundToInt(width * UModumateDimensionStatics::CentimetersToInches);
+	int32 namingHeight = FMath::RoundToInt(height * UModumateDimensionStatics::CentimetersToInches);
+	FString name = FString::FromInt(namingWidth) + TEXT("x") + FString::FromInt(namingHeight);
+	// Count one for parent window type regardless of size.
+	QuantitiesVisitor.AddQuantity(assemblyGuid, FGuid(), 1.0f);
+	QuantitiesVisitor.AddPartsQuantity(name, assembly.Parts, assemblyGuid);
+	return true;
 }
 
 EDoorOperationType AMOIPortal::GetDoorType() const

@@ -142,6 +142,8 @@ struct MODUMATE_API FLayerPattern
 
 	UPROPERTY()
 	FString ParameterizedExtents;
+
+	FVector Extents { ForceInit };
 	
 	UPROPERTY()
 	TArray<FPatternModuleTemplate> ParameterizedModuleDimensions;

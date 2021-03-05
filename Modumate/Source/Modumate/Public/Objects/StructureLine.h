@@ -82,6 +82,8 @@ public:
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
 	virtual void PostLoadInstanceData() override;
 
+	bool ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const override;
+
 	UPROPERTY()
 	FMOIStructureLineData InstanceData;
 

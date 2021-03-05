@@ -45,6 +45,7 @@ public:
 	virtual bool GetIsDynamic() const override;
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
 	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;
+	bool ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const override;
 
 	UPROPERTY()
 	FMOIFFEData InstanceData;

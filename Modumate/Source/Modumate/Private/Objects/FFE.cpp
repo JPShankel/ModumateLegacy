@@ -15,6 +15,7 @@
 #include "UnrealClasses/ModumateObjectInstanceParts.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Quantities/QuantitiesVisitor.h"
 
 class AEditModelPlayerController;
 
@@ -166,4 +167,11 @@ bool AMOIFFE::GetTransformedLocationState(const FTransform Transform, FMOIStateD
 	modifiedFFEData.Rotation = Transform.GetRotation();
 
 	return OutState.CustomData.SaveStructData(modifiedFFEData);
+}
+
+bool AMOIFFE::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+{
+	QuantitiesVisitor.AddQuantity(CachedAssembly.UniqueKey(), 1.0f);
+
+	return true;
 }

@@ -32,6 +32,7 @@
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "UnrealClasses/TooltipManager.h"
 #include "Online/ModumateCloudConnection.h"
+#include "Quantities/QuantitiesManager.h"
 
 using namespace Modumate::Commands;
 using namespace Modumate::Parameters;
@@ -89,11 +90,18 @@ void UModumateGameInstance::Init()
 		TutorialManager = NewObject<UModumateTutorialManager>(this, TutorialManagerClass);
 		TutorialManager->Init();
 	}
+
+	QuantitiesManager = MakeShared<FQuantitiesManager>(this);
 }
 
 TSharedPtr<FModumateCloudConnection> UModumateGameInstance::GetCloudConnection() const
 {
 	return CloudConnection;
+}
+
+TSharedPtr<FQuantitiesManager> UModumateGameInstance::GetQuantitiesManager() const
+{
+	return QuantitiesManager;
 }
 
 TSharedPtr<FModumateAccountManager> UModumateGameInstance::GetAccountManager() const
@@ -300,6 +308,13 @@ void UModumateGameInstance::RegisterAllCommands()
 		{
 			playerState->bDevelopDDL2Data = hasShow ? show : !playerState->bDevelopDDL2Data;
 		}
+#if WITH_EDITOR
+		else if (type.Equals(TEXT("quantities")))
+		{
+			GetWorld()->GetFirstPlayerController<AEditModelPlayerController>()->OnCreateQuantitiesCsv();
+		}
+#endif
+
 		return true;
 	});
 

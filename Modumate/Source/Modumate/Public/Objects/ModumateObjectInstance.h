@@ -18,6 +18,7 @@ class AAdjustmentHandleActor;
 class AEditModelPlayerController;
 class UHUDDrawWidget;
 class UModumateDocument;
+class FQuantitiesVisitor;
 
 namespace Modumate {
 	class FDraftingComposite;
@@ -101,6 +102,9 @@ public:
 
 	virtual void SetIsDynamic(bool bIsDynamic) { }
 	virtual bool GetIsDynamic() const { return false; }
+
+	// Quantity estimates
+	virtual bool ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const { return true; }
 
 protected:
 

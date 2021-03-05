@@ -181,6 +181,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			if (ensureAlways(presetIterator.TargetLayer != nullptr))
 			{
 				presetIterator.TargetProperties = &presetIterator.TargetLayer->ModuleProperties.AddDefaulted_GetRef();
+				presetIterator.TargetProperties->SetProperty(EBIMValueScope::Module, BIMPropertyNames::AssetID, presetIterator.Preset->GUID.ToString());
 				// Applies to unpatterned layers, okay if it fails for patterned
 				presetIterator.Preset->CustomData.LoadStructData(presetIterator.TargetLayer->ModuleMaterialBindingSet);
 			}

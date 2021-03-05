@@ -500,6 +500,7 @@ public:
 
 	bool OnSavePDF();
 	bool OnCreateDwg();
+	bool OnCreateQuantitiesCsv();
 
 	// Check user plan & permission, show modal dialog if user doesn't have sufficient status and return false
 	UFUNCTION(BlueprintCallable, Category = Persistence)

@@ -630,17 +630,6 @@ FString UModumateFunctionLibrary::GetHexFromColor(FColor Color)
 	return Color.ToHex();
 }
 
-void UModumateFunctionLibrary::PopulatePatternModuleVariables(TMap<FString, float> &patternExprVars, const FVector &moduleDims, int32 moduleIdx)
-{
-	auto makeModuleDimensionKey = [](int32 idx, const TCHAR* dimensionPrefix) {
-		return (idx == 0) ? FString(dimensionPrefix) : FString::Printf(TEXT("%s%d"), dimensionPrefix, idx + 1);
-	};
-
-	patternExprVars.Add(makeModuleDimensionKey(moduleIdx, TEXT("L")), moduleDims.X);
-	patternExprVars.Add(makeModuleDimensionKey(moduleIdx, TEXT("W")), moduleDims.Y);
-	patternExprVars.Add(makeModuleDimensionKey(moduleIdx, TEXT("H")), moduleDims.Z);
-}
-
 bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshComponent *MeshComponent, const FBIMLayerSpec &Layer,
 	const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial, UMaterialInstanceDynamic** CachedMIDPtr)
 {
@@ -668,37 +657,6 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 			numModuleTiles <= TilingMaterials.Num()) &&
 			TilingMaterials[numModuleTiles - 1])
 		{
-			TMap<FString, float> patternExprVars;
-			patternExprVars.Add(FString(TEXT("G")), Layer.Gap.GapExtents.X);
-
-			// Define the dimension parameters for each module definition
-			for (int32 moduleIdx = 0; moduleIdx < pattern.ModuleCount; ++moduleIdx)
-			{
-				auto &moduleData = Layer.Modules[moduleIdx];
-
-				// Define L, W, and H since some 3D patterns can be applied to 2D modules,
-				// so make sure all extents are defined for all modules.
-				FVector moduleDims = moduleData.ModuleExtents;
-				if (moduleDims.Z == 0.0f)
-				{
-					moduleDims.Z = moduleDims.Y;
-				}
-
-				PopulatePatternModuleVariables(patternExprVars, moduleDims, moduleIdx);
-			}
-
-			FString extentsExpressions = pattern.ParameterizedExtents;
-			extentsExpressions.RemoveFromStart(TEXT("("));
-			extentsExpressions.RemoveFromEnd(TEXT(")"));
-
-			FString patternWidthExpr, patternHeightExpr;
-			FVector patternExtentsValue(ForceInitToZero);
-			if (extentsExpressions.Split(commaStr, &patternWidthExpr, &patternHeightExpr))
-			{
-				patternExtentsValue.X = Modumate::Expression::Evaluate(patternExprVars, patternWidthExpr);
-				patternExtentsValue.Y = Modumate::Expression::Evaluate(patternExprVars, patternHeightExpr);
-			}
-
 			// Get (or create) the MaterialInstanceDynamic for the desired tiling material on the target layer mesh.
 			UMaterialInterface *tilingMaterial = TilingMaterials[numModuleTiles - 1];
 			UMaterialInstanceDynamic* MID = Cast<UMaterialInstanceDynamic>(MeshComponent->GetMaterial(0));
@@ -713,7 +671,7 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 			}
 
 			// Set the extents
-			MID->SetVectorParameterValue(patternExtentsParamName, patternExtentsValue);
+			MID->SetVectorParameterValue(patternExtentsParamName, pattern.Extents);
 
 			// If the layer specifies a gap background material, then set its parameters here
 			auto *layerGapMat = Layer.Gap.Material.EngineMaterial.Get();
@@ -748,10 +706,10 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 				auto &moduleInstData = pattern.ParameterizedModuleDimensions[moduleInstIdx];
 
 				moduleInstParams.Dimensions = FLinearColor(
-					Modumate::Expression::Evaluate(patternExprVars, moduleInstData.ModuleXExpr),
-					Modumate::Expression::Evaluate(patternExprVars, moduleInstData.ModuleYExpr),
-					Modumate::Expression::Evaluate(patternExprVars, moduleInstData.ModuleWidthExpr),
-					Modumate::Expression::Evaluate(patternExprVars, moduleInstData.ModuleHeightExpr)
+					Modumate::Expression::Evaluate(Layer.CachedPatternExprVars, moduleInstData.ModuleXExpr),
+					Modumate::Expression::Evaluate(Layer.CachedPatternExprVars, moduleInstData.ModuleYExpr),
+					Modumate::Expression::Evaluate(Layer.CachedPatternExprVars, moduleInstData.ModuleWidthExpr),
+					Modumate::Expression::Evaluate(Layer.CachedPatternExprVars, moduleInstData.ModuleHeightExpr)
 				);
 
 				// TODO: populate texture and color details from real data

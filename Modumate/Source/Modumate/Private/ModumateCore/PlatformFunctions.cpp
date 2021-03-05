@@ -29,7 +29,8 @@ namespace Modumate
 		{ L"PDF Files (*.pdf)",       L"*.pdf"  },
 		{ L"PNG Files (*.png)",       L"*.png"  },
 		{ L"DWG Files (*.zip)",       L"*.zip"  },
-		{ L"Input Log Files (*.ilog)",       L"*.ilog"  }
+		{ L"Input Log Files (*.ilog)",       L"*.ilog"  },
+		{ L"CSV Files (*.csv)",       L"*.csv"  }
 	};
 
 	const COMDLG_FILTERSPEC c_rgSaveProjectFileType[] =
@@ -55,6 +56,11 @@ namespace Modumate
 	const COMDLG_FILTERSPEC c_rgSaveILogFileType[] =
 	{
 		{ L"Input Log Files (*.ilog)",    L"*.ilog"  }
+	};
+
+	const COMDLG_FILTERSPEC c_rgSaveCsvFileType[] =
+	{
+		{ L"CSV Files (*.csv)",       L"*.csv"  }
 	};
 
 
@@ -339,6 +345,10 @@ namespace Modumate
 							else if (fileType == INDEX_ILOGFILE)
 							{
 								hr = pfd->SetFileTypes(ARRAYSIZE(c_rgSaveILogFileType), c_rgSaveILogFileType);
+							}
+							else if (fileType == INDEX_CSVFILE)
+							{
+								hr = pfd->SetFileTypes(ARRAYSIZE(c_rgSaveCsvFileType), c_rgSaveCsvFileType);
 							}
 
 							if (SUCCEEDED(hr))

@@ -17,6 +17,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "Quantities/QuantitiesVisitor.h"
 
 
 FMOIStructureLineData::FMOIStructureLineData()
@@ -210,6 +211,25 @@ void AMOIStructureLine::PostLoadInstanceData()
 	{
 		StateData.CustomData.SaveStructData(InstanceData);
 	}
+}
+
+bool AMOIStructureLine::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+{
+	const FBIMAssemblySpec& assembly = CachedAssembly;
+	auto assemblyGuid = assembly.UniqueKey();
+	const Modumate::FGraph3D& graph = Document->GetVolumeGraph();
+	const Modumate::FGraph3DEdge* hostingEdge = graph.FindEdge(GetParentID());
+	if (!hostingEdge)
+	{
+		return false;
+	}
+
+	const Modumate::FGraph3DVertex* startVertex = graph.FindVertex(hostingEdge->StartVertexID);
+	const Modumate::FGraph3DVertex* endVertex = graph.FindVertex(hostingEdge->EndVertexID);
+	float length = (startVertex->Position - endVertex->Position).Size();
+	QuantitiesVisitor.AddQuantity(assemblyGuid, 1.0f, length);
+
+	return true;
 }
 
 void AMOIStructureLine::OnInstPropUIChangedFlip(int32 FlippedAxisInt)

@@ -2,6 +2,7 @@
 
 #include "BIMKernel/AssemblySpec/BIMLayerSpec.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Database/ModumateObjectDatabase.h"
 
 EBIMResult FBIMLayerSpec::BuildFromProperties(const FModumateDatabase& InDB)
@@ -27,7 +28,7 @@ EBIMResult FBIMLayerSpec::BuildFromProperties(const FModumateDatabase& InDB)
 }
 
 /*
-TODO: an "unpatterened" layer (ie abstract, cast in place concrete, etc), just has a material and thickness.
+TODO: an "unpatterned" layer (ie abstract, cast in place concrete, etc), just has a material and thickness.
 As we refactor patterns, we would like "unpatterened" layers to consist of a single module with a single dimension (thickness)
 */
 EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
@@ -53,7 +54,7 @@ EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
 }
 
 /*
-TODO: a "patterened" layer reads properties corresponding to the DDL 1.0 table entries for patterns
+TODO: a "patterned" layer reads properties corresponding to the DDL 1.0 table entries for patterns
 The parameters established here are accessed in UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer
 We want to refactor this for new patterns
 */
@@ -106,6 +107,8 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 		}
 
 		modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, module.ModuleExtents.Z);
+		modProps.TryGetProperty(EBIMValueScope::Module, BIMPropertyNames::AssetID, module.Key);
+		modProps.TryGetProperty(EBIMValueScope::Module, BIMPropertyNames::Name, module.DisplayName);
 	}
 
 	/*
@@ -134,6 +137,59 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 		ThicknessCentimeters = Modules[0].ModuleExtents.Z;
 	}
 
+	EvaluateParameterizedPatternExtents();
+
 	return EBIMResult::Success;
 }
 
+void FBIMLayerSpec::PopulatePatternModuleVariables(TMap<FString, float>& patternExprVars, const FVector& moduleDims, int32 moduleIdx)
+{
+	auto makeModuleDimensionKey = [](int32 idx, const TCHAR* dimensionPrefix) {
+		return (idx == 0) ? FString(dimensionPrefix) : FString::Printf(TEXT("%s%d"), dimensionPrefix, idx + 1);
+	};
+
+	patternExprVars.Add(makeModuleDimensionKey(moduleIdx, TEXT("L")), moduleDims.X);
+	patternExprVars.Add(makeModuleDimensionKey(moduleIdx, TEXT("W")), moduleDims.Y);
+	patternExprVars.Add(makeModuleDimensionKey(moduleIdx, TEXT("H")), moduleDims.Z);
+}
+
+void FBIMLayerSpec::EvaluateParameterizedPatternExtents()
+{
+	CachedPatternExprVars.Add(FString(TEXT("G")), Gap.GapExtents.X);
+	// Define the dimension parameters for each module definition
+	for (int32 moduleIdx = 0; moduleIdx < Pattern.ModuleCount; ++moduleIdx)
+	{
+		auto& moduleData = Modules[moduleIdx];
+
+		// Define L, W, and H since some 3D patterns can be applied to 2D modules,
+		// so make sure all extents are defined for all modules.
+		FVector moduleDims = moduleData.ModuleExtents;
+		if (moduleDims.Z == 0.0f)
+		{
+			moduleDims.Z = moduleDims.Y;
+		}
+
+		PopulatePatternModuleVariables(CachedPatternExprVars, moduleDims, moduleIdx);
+	}
+
+	float fixedExtent;
+
+	FString extentsExpressions = Pattern.ParameterizedExtents;
+	if (LexTryParseString(fixedExtent, *extentsExpressions))
+	{
+		Pattern.Extents.X = fixedExtent;
+		Pattern.Extents.Y = fixedExtent;
+	}
+	else
+	{
+		extentsExpressions.RemoveFromStart(TEXT("("));
+		extentsExpressions.RemoveFromEnd(TEXT(")"));
+		FString patternWidthExpr, patternHeightExpr;
+
+		if (extentsExpressions.Split(TEXT(","), &patternWidthExpr, &patternHeightExpr))
+		{
+			Pattern.Extents.X = Modumate::Expression::Evaluate(CachedPatternExprVars, patternWidthExpr);
+			Pattern.Extents.Y = Modumate::Expression::Evaluate(CachedPatternExprVars, patternHeightExpr);
+		}
+	}
+}

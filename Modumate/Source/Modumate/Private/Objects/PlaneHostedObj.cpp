@@ -9,6 +9,7 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "Graph/Graph3D.h"
+#include "Graph/Graph3DFace.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateMitering.h"
 #include "ModumateCore/ModumateObjectStatics.h"
@@ -23,6 +24,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "Quantities/QuantitiesVisitor.h"
 
 
 class AEditModelPlayerController;
@@ -777,4 +779,25 @@ void AMOIPlaneHostedObj::OnInstPropUIChangedOffset(const FDimensionOffset& NewVa
 
 		Document->ApplyDeltas({ deltaPtr }, GetWorld());
 	}
+}
+
+bool AMOIPlaneHostedObj::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+{
+	const FBIMAssemblySpec& assembly = CachedAssembly;
+	const int32 numLayers = assembly.Layers.Num();
+	auto assemblyGuid = assembly.UniqueKey();
+	const Modumate::FGraph3D& graph = Document->GetVolumeGraph();
+	const Modumate::FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
+	if (!ensure(hostingFace))
+	{
+		return false;
+	}
+
+	float assemblyArea = QuantitiesVisitor.AreaOfFace(*hostingFace);
+	float assemblyLength = StateData.ObjectType == EObjectType::OTWallSegment ? QuantitiesVisitor.LengthOfWallFace(*hostingFace)
+		: 0.0f;
+	QuantitiesVisitor.AddQuantity(assemblyGuid, 0.0f, assemblyLength, assemblyArea);
+	QuantitiesVisitor.AddLayersQuantity(LayerGeometries, assembly.Layers, assemblyGuid);
+
+	return true;
 }

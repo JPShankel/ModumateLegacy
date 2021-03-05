@@ -103,7 +103,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Modumate System")
 	static FString GetProjectVersion();
 
-	static void PopulatePatternModuleVariables(TMap<FString, float> &patternExprVars, const FVector &moduleDims, int32 moduleIdx);
+	static void EvaluateParameterizedPatternExtents(FBIMLayerSpec& Layer);
 
 	static bool ApplyTileMaterialToMeshFromLayer(UProceduralMeshComponent *MeshComponent, const FBIMLayerSpec &Layer,
 		const TArray<UMaterialInterface*> &TilingMaterials, UMaterialInterface *MasterPBRMaterial, UMaterialInstanceDynamic** CachedMIDPtr = nullptr);

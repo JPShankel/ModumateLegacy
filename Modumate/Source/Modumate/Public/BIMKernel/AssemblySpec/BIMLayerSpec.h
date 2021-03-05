@@ -41,6 +41,8 @@ private:
 	EBIMResult BuildUnpatternedLayer(const FModumateDatabase& InDB);
 	EBIMResult BuildPatternedLayer(const FModumateDatabase& InDB);
 	EBIMResult BuildFromProperties(const FModumateDatabase& InDB);
+	void EvaluateParameterizedPatternExtents();
+	static void PopulatePatternModuleVariables(TMap<FString, float>& patternExprVars, const FVector& moduleDims, int32 moduleIdx);
 
 public:
 	UPROPERTY()
@@ -68,6 +70,8 @@ public:
 	UPROPERTY()
 	FGuid PresetGUID;
 
+	TMap<FString, float> CachedPatternExprVars;
+  
 	UPROPERTY()
 	EPresetMeasurementMethod MeasurementMethod = EPresetMeasurementMethod::None;
 };

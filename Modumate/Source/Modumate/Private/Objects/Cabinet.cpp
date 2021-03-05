@@ -23,6 +23,7 @@
 #include "UI/DimensionActor.h"
 #include "UI/DimensionManager.h"
 #include "UI/EditModelPlayerHUD.h"
+#include "Quantities/QuantitiesVisitor.h"
 
 
 AMOICabinet::AMOICabinet()
@@ -457,6 +458,15 @@ bool AMOICabinet::UpdateCabinetActors(const FBIMAssemblySpec& Assembly, const TA
 		CabinetFaceActor->SetActorEnableCollision(false);
 	}
 
+	return true;
+}
+
+bool AMOICabinet::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+{
+	const FBIMAssemblySpec& assembly = CachedAssembly;
+	auto assemblyGuid = assembly.UniqueKey();
+	float volume = QuantitiesVisitor.AreaOfPoly(CachedBasePoints) * CachedExtrusionDelta.Size();
+	QuantitiesVisitor.AddQuantity(assemblyGuid, 1.0f, 0.0f, 0.0f, volume);
 	return true;
 }
 

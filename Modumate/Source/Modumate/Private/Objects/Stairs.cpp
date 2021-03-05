@@ -9,6 +9,8 @@
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "Algo/Accumulate.h"
+#include "Quantities/QuantitiesVisitor.h"
+#include "DocumentManagement/ModumateDocument.h"
 
 class AEditModelPlayerController;
 
@@ -108,6 +110,38 @@ void AMOIStaircase::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposi
 	{
 		GetInPlaneLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox);
 	}
+}
+
+bool AMOIStaircase::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+{
+	const FBIMAssemblySpec& assembly = CachedAssembly;
+	const FGuid& assemblyKey = assembly.UniqueKey();
+	const int32 numTreads = CachedTreadPolys.Num();
+	const int32 numRisers = assembly.RiserLayers.Num() > 0 ? CachedRiserPolys.Num() : 0;
+	if (numTreads == 0)
+	{
+		return true;
+	}
+
+	const Modumate::FGraph3D& graph = Document->GetVolumeGraph();
+	const Modumate::FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
+	if (!ensure(hostingFace))
+	{
+		return false;
+	}
+	FVector stairVector(hostingFace->CachedPositions[2] - hostingFace->CachedPositions[1]);
+
+	float treadArea = QuantitiesVisitor.AreaOfLayer(TreadLayers[0]);
+	float riserArea = numRisers > 0 ? QuantitiesVisitor.AreaOfLayer(RiserLayers[0]): 0.0f;
+
+	QuantitiesVisitor.AddQuantity(assemblyKey, 1.0f, stairVector.Size(), treadArea * numTreads + riserArea * numRisers);
+	QuantitiesVisitor.AddLayersQuantity(TreadLayers, assembly.TreadLayers, assemblyKey, numTreads);
+	if (numRisers > 0)
+	{
+		QuantitiesVisitor.AddLayersQuantity(RiserLayers, assembly.RiserLayers, assemblyKey, numRisers);
+	}
+
+	return true;
 }
 
 void AMOIStaircase::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,

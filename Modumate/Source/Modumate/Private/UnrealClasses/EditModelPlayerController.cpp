@@ -40,6 +40,7 @@
 #include "UI/TutorialManager.h"
 #include "Objects/CutPlane.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
+#include "Quantities/QuantitiesManager.h"
 
 
 // Tools
@@ -73,6 +74,8 @@
 const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetry"));
 
 using namespace Modumate;
+
+#define LOCTEXT_NAMESPACE "ModumateDialog"
 
 /*
 * Constructor
@@ -1056,7 +1059,7 @@ bool AEditModelPlayerController::OnCreateDwg()
 		return false;
 	}
 
-	static const FText dialogTitle = FText::FromString(FString(TEXT("DWG Creation")));
+	static const FText dialogTitle = LOCTEXT("DWGCreationText", "DWG Creation");
 	if (!gameInstance->IsloggedIn())
 	{
 		FMessageDialog::Open(EAppMsgType::Ok,
@@ -1074,7 +1077,49 @@ bool AEditModelPlayerController::OnCreateDwg()
 
 		if (!Document->ExportDWG(GetWorld(), *filename))
 		{
-			FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString(TEXT("DWG Creation Failed")) ),
+			FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("DWGCreationFailText", "DWG Creation Failed"),
+				&dialogTitle);
+			retValue = false;
+		}
+
+	}
+	else
+	{
+		EMPlayerState->ShowingFileDialog = false;
+	}
+
+	return retValue;
+}
+
+bool AEditModelPlayerController::OnCreateQuantitiesCsv()
+{
+	if (ToolIsInUse())
+	{
+		AbortUseTool();
+	}
+
+	bool retValue = true;
+
+	// TODO: check permission/quota.
+
+	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (!gameInstance)
+	{
+		return false;
+	}
+
+	static const FText dialogTitle = LOCTEXT("QuantityEstimateCSVText", "Quantity Estimate CSV");
+
+	FString filename;
+	EMPlayerState->ShowingFileDialog = true;
+	if (Modumate::PlatformFunctions::GetSaveFilename(filename, INDEX_CSVFILE))
+	{
+		EMPlayerState->ShowingFileDialog = false;
+
+		if (!gameInstance->GetQuantitiesManager()->CalculateAllQuantities()
+			|| !gameInstance->GetQuantitiesManager()->CreateReport(filename))
+		{
+			FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("QuantityEstimateCreateFail", "Quantity Estimate CSV Creation Failed"),
 				&dialogTitle);
 			retValue = false;
 		}
@@ -3306,3 +3351,5 @@ void AEditModelPlayerController::HandleRedo()
 		EMPlayerState->ValidateSelectionsAndView();
 	}
 }
+
+#undef LOCTEXT_NAMESPACE
