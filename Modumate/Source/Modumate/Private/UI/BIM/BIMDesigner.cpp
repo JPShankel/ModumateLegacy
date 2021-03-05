@@ -422,7 +422,6 @@ void UBIMDesigner::AutoArrangeNodes()
 					newAddButton->ParentID = curInstance->ParentInstance.Pin()->GetInstanceID();
 					newAddButton->PresetID = curInstance->WorkingPresetCopy.GUID;
 					newAddButton->ParentSetIndex = curInstance->MyParentPinSetIndex;
-					newAddButton->ParentSetPosition = curInstance->MyParentPinSetPosition + 1;
 
 					CanvasPanelForNodes->AddChildToCanvas(newAddButton);
 					UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(newAddButton);
@@ -759,11 +758,11 @@ bool UBIMDesigner::DeleteNode(const FBIMEditorNodeIDType& InstanceID)
 	return true;
 }
 
-bool UBIMDesigner::AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
+bool UBIMDesigner::AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex)
 {
 	FBIMPresetEditorNodeSharedPtr newNode = InstancePool.CreateNodeInstanceFromPreset(
 		Controller->GetDocument()->GetPresetCollection(),
-		ParentID, PresetID, ParentSetIndex, ParentSetPosition);
+		ParentID, PresetID, ParentSetIndex, INDEX_NONE);
 	if (!newNode.IsValid())
 	{
 		return false;

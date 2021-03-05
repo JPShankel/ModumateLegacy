@@ -298,7 +298,11 @@ EBIMResult FBIMPresetEditorNode::SortChildren()
 	UpdateAddButtons();
 
 #if WITH_EDITOR
-	ensureAlways(ValidateNode());
+	if (!ensureAlways(ValidateNode()))
+	{
+		// Breakpoint here to analyze why it failed
+		ValidateNode();
+	}
 #endif
 
 	return ensureAlways(ChildNodes.Num() == WorkingPresetCopy.ChildPresets.Num()) ? EBIMResult::Success : EBIMResult::Error;

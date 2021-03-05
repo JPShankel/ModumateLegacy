@@ -39,8 +39,7 @@ public:
 
 	FBIMEditorNodeIDType ParentID;
 	FGuid PresetID;
-	int32 ParentSetIndex = -1;
-	int32 ParentSetPosition = -1;
+	int32 ParentSetIndex = INDEX_NONE;
 
 	UFUNCTION()
 	void OnButtonAddReleased();

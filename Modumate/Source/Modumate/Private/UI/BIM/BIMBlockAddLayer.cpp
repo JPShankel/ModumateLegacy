@@ -39,6 +39,6 @@ void UBIMBlockAddLayer::OnButtonAddReleased()
 {
 	if (Controller)
 	{
-		Controller->EditModelUserWidget->BIMDesigner->AddNodeFromPreset(ParentID, PresetID, ParentSetIndex, ParentSetPosition);
+		Controller->EditModelUserWidget->BIMDesigner->AddNodeFromPreset(ParentID, PresetID, ParentSetIndex);
 	}
 }

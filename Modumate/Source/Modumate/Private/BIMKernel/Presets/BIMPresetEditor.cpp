@@ -105,6 +105,18 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 
 	FBIMPresetEditorNodeSharedPtr parent = InstanceFromID(ParentID);
 
+	if (ParentSetPosition == INDEX_NONE)
+	{
+		ParentSetPosition = 0;
+		for (auto& child : parent->WorkingPresetCopy.ChildPresets)
+		{
+			if (child.ParentPinSetIndex == ParentSetIndex)
+			{
+				ParentSetPosition = FMath::Max(ParentSetPosition,child.ParentPinSetPosition+1);
+			}
+		}
+	}
+
 	if (parent.IsValid())
 	{
 		// Presets are assigned either to a part slot or a pin, but not both

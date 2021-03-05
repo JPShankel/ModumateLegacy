@@ -155,7 +155,7 @@ public:
 	void DrawConnectSplineForMiniNode(const FPaintContext& context, class UBIMBlockNode* StartNode, class UBIMBlockMiniNode* MiniNode) const;
 	FGuid GetPresetID(const FBIMEditorNodeIDType& InstanceID);
 	bool DeleteNode(const FBIMEditorNodeIDType& InstanceID);
-	bool AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
+	bool AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex);
 	bool ApplyBIMFormElement(const FBIMEditorNodeIDType& NodeID, const FBIMPresetFormElement& FormElement);
 	bool GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, const FBIMEditorNodeIDType& NodeID);
 	bool SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& InstanceID);
