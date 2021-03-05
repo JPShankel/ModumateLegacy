@@ -5,6 +5,7 @@
 #include "BIMKernel/AssemblySpec/BIMLayerSpec.h"
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
+#include "BIMKernel/Presets/BIMPresetMaterialBinding.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
@@ -68,13 +69,11 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		return EBIMResult::Error;
 	}
 
-	MeasurementMethod = assemblyPreset->MeasurementMethod;
-
-	// TODO: a more general custom data iterator when we get more use cases
-	if (assemblyPreset->ObjectType == EObjectType::OTEdgeDetail)
+	switch (assemblyPreset->ObjectType)
 	{
-		ensureAlways(assemblyPreset->CustomData.LoadStructData(EdgeDetailData));
-	}
+		case EObjectType::OTEdgeDetail: ensureAlways(assemblyPreset->CustomData.LoadStructData(EdgeDetailData)); break;
+		case EObjectType::OTCabinet: ensureAlways(assemblyPreset->CustomData.LoadStructData(MaterialBindingSet)); break;
+	};
 
 	if (assemblyPreset->SlotConfigPresetGUID.IsValid())
 	{
@@ -127,18 +126,21 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 				presetIterator.TargetProperties = &Layers.Last().LayerProperties;
 				presetIterator.TargetLayer->MeasurementMethod = presetIterator.Preset->MeasurementMethod;
 				presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
+				presetIterator.Preset->CustomData.LoadStructData(presetIterator.TargetLayer->ModuleMaterialBindingSet);
 				break;
 			case ELayerTarget::TreadLayer:
 				presetIterator.TargetLayer = &TreadLayers.AddDefaulted_GetRef();
 				presetIterator.TargetProperties = &TreadLayers.Last().LayerProperties;
 				presetIterator.TargetLayer->MeasurementMethod = presetIterator.Preset->MeasurementMethod;
 				presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
+				presetIterator.Preset->CustomData.LoadStructData(presetIterator.TargetLayer->ModuleMaterialBindingSet);
 				break;
 			case ELayerTarget::RiserLayer:
 				presetIterator.TargetLayer = &RiserLayers.AddDefaulted_GetRef();
 				presetIterator.TargetProperties = &RiserLayers.Last().LayerProperties;
 				presetIterator.TargetLayer->MeasurementMethod = presetIterator.Preset->MeasurementMethod;
 				presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
+				presetIterator.Preset->CustomData.LoadStructData(presetIterator.TargetLayer->ModuleMaterialBindingSet);
 				break;
 			default:
 				ensureAlways(false);
@@ -170,14 +172,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 				auto &extrusion = Extrusions.AddDefaulted_GetRef();
 				presetIterator.TargetProperties = &extrusion.Properties;
 				extrusion.PresetGUID = presetIterator.PresetGUID;
-			}
-		}
-		// Color can be applied to a number of targets, so just set the asset to the current property sheet and DoMakeAssembly will sort it
-		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Color)
-		{
-			if (ensureAlways(presetIterator.TargetProperties != nullptr))
-			{
-				presetIterator.TargetProperties->SetProperty(EBIMValueScope::Color, BIMPropertyNames::AssetID, presetIterator.Preset->GUID.ToString());
+				presetIterator.Preset->CustomData.LoadStructData(MaterialBindingSet);
 			}
 		}
 		// When we encounter a module, we'll expect children to apply color, material and dimension data
@@ -186,6 +181,8 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			if (ensureAlways(presetIterator.TargetLayer != nullptr))
 			{
 				presetIterator.TargetProperties = &presetIterator.TargetLayer->ModuleProperties.AddDefaulted_GetRef();
+				// Applies to unpatterned layers, okay if it fails for patterned
+				presetIterator.Preset->CustomData.LoadStructData(presetIterator.TargetLayer->ModuleMaterialBindingSet);
 			}
 		}
 		// Gaps have the same rules as modules
@@ -194,6 +191,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			if (ensureAlways(presetIterator.TargetLayer != nullptr))
 			{
 				presetIterator.TargetProperties = &presetIterator.TargetLayer->GapProperties;
+				presetIterator.Preset->CustomData.LoadStructData(presetIterator.TargetLayer->GapMaterialBindingSet);
 			}
 		}
 
@@ -319,12 +317,9 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			{
 				for (auto& matBinding : bindingSet.MaterialBindings)
 				{
-					FGuid matKey = matBinding.SurfaceMaterialGUID.IsValid() ? matBinding.SurfaceMaterialGUID : matBinding.InnerMaterialGUID;
-					const FArchitecturalMaterial* material = InDB.GetArchitecturalMaterialByGUID(matKey);
-					if (ensureAlways(material != nullptr))
+					FArchitecturalMaterial newMat;
+					if (ensureAlways(matBinding.GetEngineMaterial(InDB, newMat) == EBIMResult::Success))
 					{
-						FArchitecturalMaterial newMat = *material;
-						newMat.Color = matBinding.ColorHexValue.IsEmpty() ? FColor::White : FColor::FromHex(matBinding.ColorHexValue);
 						partSpec.ChannelMaterials.Add(matBinding.Channel, newMat);
 					}
 				}
@@ -445,20 +440,13 @@ EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FModumateDatabase& InDB)
 
 	// Cabinets consist of a list of parts (per rigged assembly) and a single material added to an extrusion for the prism
 	FGuid materialAsset;
-	if (ensureAlways(RootProperties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, materialAsset)))
+	if (ensureAlways(MaterialBindingSet.MaterialBindings.Num() > 0))
 	{
-		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByGUID(materialAsset);
-		if (ensureAlways(mat != nullptr))
+		const auto& binding = MaterialBindingSet.MaterialBindings[0];
+
+		FBIMExtrusionSpec& extrusion = Extrusions.AddDefaulted_GetRef();
+		if (ensureAlways(binding.GetEngineMaterial(InDB, extrusion.Material) == EBIMResult::Success))
 		{
-			FBIMExtrusionSpec& extrusion = Extrusions.AddDefaulted_GetRef();
-			extrusion.Material = *mat;
-
-			FString colorHexValue;
-			if (RootProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue) && !colorHexValue.IsEmpty())
-			{
-				extrusion.Material.Color = FColor::FromHex(colorHexValue);
-			}
-
 #if WITH_EDITOR
 			FBIMPartLayout layout;
 			ensureAlways(layout.FromAssembly(*this, FVector::OneVector) == EBIMResult::Success);
@@ -574,29 +562,28 @@ EBIMResult FBIMAssemblySpec::MakeLayeredAssembly(const FModumateDatabase& InDB)
 
 EBIMResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& InDB)
 {
-	for (auto& extrusion : Extrusions)
+	if (!ensureAlways(MaterialBindingSet.MaterialBindings.Num() > 0))
 	{
-		FGuid materialAsset;
-		if (extrusion.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, materialAsset))
+		return EBIMResult::Error;
+	}
+
+	const auto& binding = MaterialBindingSet.MaterialBindings[0];
+
+	FArchitecturalMaterial newMat;
+	if (ensureAlways(binding.GetEngineMaterial(InDB, newMat) == EBIMResult::Success))
+	{
+		for (auto& extrusion : Extrusions)
 		{
-			const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByGUID(materialAsset);
-			if (ensureAlways(mat != nullptr))
+			extrusion.Material = newMat;
+			EBIMResult res = extrusion.BuildFromProperties(InDB);
+			if (!ensureAlways(res == EBIMResult::Success))
 			{
-				extrusion.Material = *mat;
-				FString colorHexValue;
-				if (extrusion.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue))
-				{
-					extrusion.Material.Color = FColor::FromHex(colorHexValue);
-				}
+				return res;
 			}
 		}
-		EBIMResult res = extrusion.BuildFromProperties(InDB);
-		if (!ensureAlways(res == EBIMResult::Success))
-		{
-			return res;
-		}
+		return EBIMResult::Success;
 	}
-	return EBIMResult::Success;
+	return EBIMResult::Error;
 }
 
 FModumateUnitValue FBIMAssemblySpec::CalculateThickness() const

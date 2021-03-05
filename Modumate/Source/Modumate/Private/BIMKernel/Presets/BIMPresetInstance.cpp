@@ -248,6 +248,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FBIMPresetEditorDelta& Delta)
 				case EMaterialChannelFields::SurfaceMaterial:
 				{
 					FGuid::Parse(Delta.NewStringRepresentation, binding.SurfaceMaterialGUID);
+					// TODO: material and color properties still used in icon generation...remove when icongen is refactored
 					Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, Delta.NewStringRepresentation);
 					CustomData.SaveStructData(bindingSet, true);
 					return EBIMResult::Success;
@@ -257,6 +258,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FBIMPresetEditorDelta& Delta)
 				case EMaterialChannelFields::ColorTint:
 				{
 					binding.ColorHexValue = Delta.NewStringRepresentation;
+					// TODO: material and color properties still used in icon generation...remove when icongen is refactored
 					Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, binding.ColorHexValue);
 					CustomData.SaveStructData(bindingSet, true);
 					return EBIMResult::Success;

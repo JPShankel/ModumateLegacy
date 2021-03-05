@@ -32,34 +32,23 @@ As we refactor patterns, we would like "unpatterened" layers to consist of a sin
 */
 EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
 {
-	FGuid materialKey;
-	if (ensureAlways(LayerProperties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, materialKey)))
+	FModumateUnitValue dimension = FModumateUnitValue::WorldCentimeters(0.0f);
+	if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, dimension))
 	{
-		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByGUID(materialKey);
-		if (ensureAlways(mat != nullptr && mat->EngineMaterial.IsValid()))
+		if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, dimension))
 		{
-			FLayerPatternModule& module = Modules.AddDefaulted_GetRef();
-			module.Material = *mat;
-
-			FString colorHexValue;
-
-			if (LayerProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue) && !colorHexValue.IsEmpty())
-			{
-				module.Material.Color = FColor::FromHex(colorHexValue);
-			}
-
-			FModumateUnitValue dimension = FModumateUnitValue::WorldCentimeters(0.0f);
-			if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, dimension))
-			{
-				if (!LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, dimension))
-				{
-					LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, dimension);
-				}
-			}
-			ThicknessCentimeters = dimension.AsWorldCentimeters();
-			return EBIMResult::Success;
+			LayerProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, dimension);
 		}
 	}
+	ThicknessCentimeters = dimension.AsWorldCentimeters();
+
+	if (ModuleMaterialBindingSet.MaterialBindings.Num() > 0)
+	{
+		const auto& binding = ModuleMaterialBindingSet.MaterialBindings[0];
+		FLayerPatternModule& module = Modules.AddDefaulted_GetRef();
+		return binding.GetEngineMaterial(InDB, module.Material);
+	}
+
 	return EBIMResult::Error;
 }
 
@@ -70,36 +59,31 @@ We want to refactor this for new patterns
 */
 EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 {
+	if (!ensureAlways(ModuleMaterialBindingSet.MaterialBindings.Num() == ModuleProperties.Num()))
+	{
+		return EBIMResult::Error;
+	}
+
 	/*
 	ModuleProperties contain the properties for each uniquely materialed module in the pattern
 	Patterns with more than one module shape may have only one module definition but multiple sets of module parameters (ie Stack Bond)
 	*/
-	for (auto& modProps : ModuleProperties)
+	for (auto& modBinding : ModuleMaterialBindingSet.MaterialBindings)
 	{
 		FLayerPatternModule& module = Modules.AddDefaulted_GetRef();
+		ensureAlways(modBinding.GetEngineMaterial(InDB, module.Material) == EBIMResult::Success);
+	}
 
-		// Get the material and color for this module
-		FGuid rawMaterialKey;
-		if (ensureAlways(modProps.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey)))
-		{
-			const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByGUID(rawMaterialKey);
-			if (ensureAlways(mat != nullptr))
-			{
-				module.Material = *mat;
-				FString colorHexValue;
-				if (modProps.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue) && !colorHexValue.IsEmpty())
-				{
-					module.Material.Color = FColor::FromHex(colorHexValue);
-				}
-			}
-		}
+	/*
+	TODO: Module dimension sets come in multiple formats
+	We need to reconcile those against the actual targets for X, Y & Z
+	For now "everyone has a depth or a length and a thickness and a width" is a reasonable approximation
+	*/		
+	for (int32 i=0;i<Modules.Num();++i)
+	{
+		FLayerPatternModule& module = Modules[i];
+		const FBIMPropertySheet& modProps = ModuleProperties[i];
 
-		/*
-		TODO: Module dimension sets come in multiple formats
-		We need to reconcile those against the actual targets for X, Y & Z
-		For now "everyone has a depth or a length and a thickness and a width" is a reasonable approximation
-		*/
-		
 		FModumateUnitValue bevelWidth;
 		if (modProps.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::BevelWidth, bevelWidth))
 		{
@@ -129,23 +113,9 @@ EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 	Should we combine modules and gaps into a single concept? 
 	*/
 
-	FGuid gapStr;
-	if (GapProperties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, gapStr))
+	if (GapMaterialBindingSet.MaterialBindings.Num() > 0)
 	{
-		// Fetch material & color per module
-		const FArchitecturalMaterial* mat = InDB.GetArchitecturalMaterialByGUID(gapStr);
-		if (ensureAlways(mat != nullptr))
-		{
-			Gap.Material = *mat;
-			FString colorHexValue;
-			if (GapProperties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue) && !colorHexValue.IsEmpty())
-			{
-				Gap.Material.Color = FColor::FromHex(colorHexValue);
-			}
-		}
-		/*
-		Gap dimensions are reliably defined
-		*/
+		ensureAlways(GapMaterialBindingSet.MaterialBindings[0].GetEngineMaterial(InDB, Gap.Material) == EBIMResult::Success);
 		ensureAlways(GapProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, Gap.GapExtents.X));
 		ensureAlways(GapProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Recess, Gap.GapExtents.Y));
 	}

@@ -99,6 +99,10 @@ public:
 	UPROPERTY()
 	FEdgeDetailData EdgeDetailData;
 
+	// Cabinets have material bindings at the assembly level
+	UPROPERTY()
+	FBIMPresetMaterialBindingSet MaterialBindingSet;
+
 	UPROPERTY()
 	EPresetMeasurementMethod MeasurementMethod = EPresetMeasurementMethod::None;
 

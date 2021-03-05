@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BIMKernel/Core/BIMEnums.h"
 
 #include "BIMPresetMaterialBinding.generated.h"
 
@@ -17,6 +18,9 @@ enum class EMaterialChannelFields : uint8
 	ColorTintVariation,
 	Error = 255
 };
+
+class FModumateDatabase;
+struct FArchitecturalMaterial;
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetMaterialBinding
@@ -37,6 +41,8 @@ struct MODUMATE_API FBIMPresetMaterialBinding
 
 	UPROPERTY()
 	FString ColorTintVariationHexValue;
+
+	EBIMResult GetEngineMaterial(const FModumateDatabase& DB, FArchitecturalMaterial& OutMaterial) const;
 
 	bool operator==(const FBIMPresetMaterialBinding& RHS) const;
 	bool operator!=(const FBIMPresetMaterialBinding& RHS) const;

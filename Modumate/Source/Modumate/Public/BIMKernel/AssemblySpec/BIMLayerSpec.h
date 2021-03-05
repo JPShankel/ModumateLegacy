@@ -9,6 +9,7 @@
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
+#include "BIMKernel/Presets/BIMPresetMaterialBinding.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "BIMLayerSpec.generated.h"
@@ -30,6 +31,12 @@ private:
 
 	UPROPERTY()
 	FBIMPropertySheet GapProperties;
+
+	UPROPERTY()
+	FBIMPresetMaterialBindingSet ModuleMaterialBindingSet;
+
+	UPROPERTY()
+	FBIMPresetMaterialBindingSet GapMaterialBindingSet;
 
 	EBIMResult BuildUnpatternedLayer(const FModumateDatabase& InDB);
 	EBIMResult BuildPatternedLayer(const FModumateDatabase& InDB);
