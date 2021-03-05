@@ -562,9 +562,9 @@ EBIMResult FBIMAssemblySpec::MakeLayeredAssembly(const FModumateDatabase& InDB)
 
 EBIMResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& InDB)
 {
-	if (!ensureAlways(MaterialBindingSet.MaterialBindings.Num() > 0))
+	if (MaterialBindingSet.MaterialBindings.Num() == 0)
 	{
-		return EBIMResult::Error;
+		return EBIMResult::Success;
 	}
 
 	const auto& binding = MaterialBindingSet.MaterialBindings[0];

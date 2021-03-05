@@ -381,28 +381,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					}
 
 					Preset.Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, materialBinding.ColorHexValue.IsEmpty() ? FColor::White.ToHex() : materialBinding.ColorHexValue);
-
-					FString displayName = materialBinding.Channel.ToString() + TEXT(":");
-
-					if (materialBinding.InnerMaterialGUID.IsValid())
-					{
-						Preset.PresetForm.AddMaterialBindingElement(FText::FromString(displayName + TEXT("Inner Material")), materialBinding.Channel, EMaterialChannelFields::InnerMaterial);
-					}
-
-					if (materialBinding.SurfaceMaterialGUID.IsValid())
-					{
-						Preset.PresetForm.AddMaterialBindingElement(FText::FromString(displayName + TEXT("Surface Material")), materialBinding.Channel, EMaterialChannelFields::SurfaceMaterial);
-					}
-
-					if (!materialBinding.ColorHexValue.IsEmpty())
-					{
-						Preset.PresetForm.AddMaterialBindingElement(FText::FromString(displayName + TEXT("Tint")), materialBinding.Channel, EMaterialChannelFields::ColorTint);
-					}
-
-					if (!materialBinding.ColorTintVariationHexValue.IsEmpty())
-					{
-						Preset.PresetForm.AddMaterialBindingElement(FText::FromString(displayName + TEXT("Tint Variation")), materialBinding.Channel, EMaterialChannelFields::ColorTintVariation);
-					}
+					bindingSet.SetFormElements(Preset.PresetForm);
 				}
 			}
 			break;

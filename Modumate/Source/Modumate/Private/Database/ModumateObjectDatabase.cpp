@@ -202,6 +202,11 @@ void FModumateDatabase::AddStaticIconTexture(const FGuid& Key, const FString& Na
 	}
 }
 
+FGuid FModumateDatabase::GetDefaultMaterialGUID() const
+{
+	return DefaultMaterialGUID;
+}
+
 /*
 This function is in development pending a complete data import/access plan
 In the meantime, we read a manifest of CSV files and look for expected presets to populate tools
@@ -589,6 +594,11 @@ void FModumateDatabase::ReadPresetData()
 			bimCacheRecord.Starters.Add(kvp.Value.GUID);
 		}
 	}
+
+	FGuid abstractMaterialGuid;
+	FGuid::Parse(TEXT("09F17296-2023-944C-A1E7-EEDFE28680E9"), DefaultMaterialGUID);
+	const FArchitecturalMaterial* abstractMaterial = GetArchitecturalMaterialByGUID(DefaultMaterialGUID);
+	ensureAlways(abstractMaterial != nullptr);
 
 	ensureAlways(BIMPresetCollection.ProcessStarterAssemblies(*this, bimCacheRecord.Starters) == EBIMResult::Success);
 

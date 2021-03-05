@@ -785,7 +785,7 @@ bool UBIMDesigner::ApplyBIMFormElement(const FBIMEditorNodeIDType& NodeID, const
 	FBIMPresetEditorDelta delta;
 	if (ensureAlways(instPtr->WorkingPresetCopy.MakeDeltaForFormElement(FormElement, delta) == EBIMResult::Success))
 	{
-		instPtr->WorkingPresetCopy.ApplyDelta(delta);
+		instPtr->WorkingPresetCopy.ApplyDelta(*GetWorld()->GetAuthGameMode<AEditModelGameMode>()->ObjectDatabase,delta);
 	}
 
 	UpdateCraftingAssembly();

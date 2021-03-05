@@ -48,6 +48,7 @@ struct MODUMATE_API FBIMPresetMaterialBinding
 	bool operator!=(const FBIMPresetMaterialBinding& RHS) const;
 };
 
+struct FBIMPresetForm;
 USTRUCT()
 struct MODUMATE_API FBIMPresetMaterialBindingSet
 {
@@ -55,4 +56,6 @@ struct MODUMATE_API FBIMPresetMaterialBindingSet
 
 	UPROPERTY()
 	TArray<FBIMPresetMaterialBinding> MaterialBindings;
+
+	EBIMResult SetFormElements(FBIMPresetForm& RefForm) const;
 };

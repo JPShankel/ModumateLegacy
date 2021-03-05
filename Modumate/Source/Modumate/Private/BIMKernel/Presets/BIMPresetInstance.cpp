@@ -3,6 +3,7 @@
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
+#include "Database/ModumateObjectDatabase.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "DocumentManagement/ModumateCommands.h"
 
@@ -221,8 +222,7 @@ bool FBIMPresetInstance::ValidatePreset() const
 	return true;
 }
 
-
-EBIMResult FBIMPresetInstance::ApplyDelta(const FBIMPresetEditorDelta& Delta)
+EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FBIMPresetEditorDelta& Delta)
 {
 	if (Delta.FieldType == EBIMPresetEditorField::MaterialBinding)
 	{
@@ -283,6 +283,17 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FBIMPresetEditorDelta& Delta)
 	switch (Delta.FieldType)
 	{
 		case EBIMPresetEditorField::AssetProperty:
+		{
+			FBIMPropertyKey propKey(Delta.FieldName);
+			Properties.SetProperty(propKey.Scope, propKey.Name, Delta.NewStringRepresentation);
+			FGuid guid;
+			if (FGuid::Parse(Delta.NewStringRepresentation, guid))
+			{
+				SetMaterialChannelsForMesh(InDB, guid);
+			}
+			return EBIMResult::Success;
+		}
+		break;
 		case EBIMPresetEditorField::TextProperty:
 		{
 			FBIMPropertyKey propKey(Delta.FieldName);
@@ -497,4 +508,64 @@ EBIMResult FBIMPresetInstance::GetForm(FBIMPresetForm& OutForm) const
 	return EBIMResult::Success;
 }
 
+/*
+* When a new mesh is assigned to a preset with material channels:
+* 1. Remove any current channels the new mesh does not carry
+* 2. Add default mappings for any channels in the new mesh that the preset doesn't have
+*/
+EBIMResult FBIMPresetInstance::SetMaterialChannelsForMesh(const FModumateDatabase& InDB, const FGuid& InMeshGuid)
+{
+	FBIMPresetMaterialBindingSet bindingSet;
 
+	if (!CustomData.LoadStructData(bindingSet))
+	{
+		return EBIMResult::Error;
+	}
+
+	const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByGUID(InMeshGuid);
+	if (mesh == nullptr || !mesh->EngineMesh.IsValid())
+	{
+		return EBIMResult::Error;
+	}
+
+	// Gather all the named channels from the engine mesh
+	TArray<FName> staticMats;
+	Algo::Transform(mesh->EngineMesh.Get()->StaticMaterials, staticMats,
+		[](const FStaticMaterial& StaticMaterial) 
+		{
+			return StaticMaterial.MaterialSlotName; 
+		});
+		
+	// Preserve material bindings that are in the new mesh
+	bindingSet.MaterialBindings = bindingSet.MaterialBindings.FilterByPredicate(
+		[staticMats](const FBIMPresetMaterialBinding& Binding)
+		{
+			return staticMats.Contains(Binding.Channel);
+		});
+
+	// Gather all of the named channels from the preset
+	TArray<FName> bindingMats;
+	Algo::Transform(bindingSet.MaterialBindings, bindingMats,
+		[](const FBIMPresetMaterialBinding& Binding)
+		{
+			return Binding.Channel; 
+		});
+
+
+	FGuid defaultMaterialGuid = InDB.GetDefaultMaterialGUID();
+	// Add default bindings for any new channels
+	for (auto& staticMat : staticMats)
+	{
+		if (!bindingMats.Contains(staticMat))
+		{
+			FBIMPresetMaterialBinding& newBinding = bindingSet.MaterialBindings.AddDefaulted_GetRef();
+			newBinding.Channel = staticMat;
+			newBinding.ColorHexValue = FColor::White.ToHex();
+			newBinding.InnerMaterialGUID = defaultMaterialGuid;
+		}
+	}
+
+	CustomData.SaveStructData(bindingSet,true);
+
+	return bindingSet.SetFormElements(PresetForm);
+}

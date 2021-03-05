@@ -203,17 +203,20 @@ struct MODUMATE_API FBIMPresetInstance
 
 	EBIMResult GetForm(FBIMPresetForm& OutForm) const;
 	EBIMResult MakeDeltaForFormElement(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const;
-	EBIMResult ApplyDelta(const FBIMPresetEditorDelta& Delta);
+	EBIMResult ApplyDelta(const FModumateDatabase& InDB, const FBIMPresetEditorDelta& Delta);
 
 	// Sort child nodes by PinSetIndex and PinSetPosition so serialization will be consistent
 	EBIMResult SortChildPresets();
 
 	EBIMResult AddChildPreset(const FGuid& ChildPresetGUID, int32 PinSetIndex, int32 PinSetPosition);
 	EBIMResult RemoveChildPreset(int32 PinSetIndex, int32 PinSetPosition);
-	EBIMResult SetPartPreset(const FGuid& SlotPresetGUID, const FGuid& PartPresetGUID);
-	bool HasPin(int32 PinSetIndex, int32 PinSetPosition) const;
 
+	EBIMResult SetPartPreset(const FGuid& SlotPresetGUID, const FGuid& PartPresetGUID);
+
+	bool HasPin(int32 PinSetIndex, int32 PinSetPosition) const;
 	bool HasOpenPin() const;
+
+	EBIMResult SetMaterialChannelsForMesh(const FModumateDatabase& InDB, const FGuid& InMeshGuid);
 
 	bool ValidatePreset() const;
 

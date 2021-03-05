@@ -15,11 +15,12 @@
 
 #include "ModumateObjectDatabase.generated.h"
 
-static constexpr int32 BIMCacheCurrentVersion = 5;
+static constexpr int32 BIMCacheCurrentVersion = 6;
 // Version 2: deprecate FBIMKeys for FGuids
 // Version 3: move named parameters from meshes to presets
 // Version 4: material binding editor
 // Version 5: deprecate material bindings and use custom data instead
+// Version 6: derive material channels from meshes
 
 USTRUCT()
 struct FModumateBIMCacheRecord
@@ -55,6 +56,8 @@ private:
 
 	FString ManifestDirectoryPath;
 
+	FGuid DefaultMaterialGUID;
+
 public:
 
 	FModumateDatabase();
@@ -74,6 +77,8 @@ public:
 	const FSimpleMeshRef* GetSimpleMeshByGUID(const FGuid& Key) const;
 	const FStaticIconTexture* GetStaticIconTextureByGUID(const FGuid& Key) const;
 	const FLayerPattern* GetPatternByGUID(const FGuid& Key) const;
+
+	FGuid GetDefaultMaterialGUID() const;
 
 	bool ReadBIMCache(const FString& CacheFile, FModumateBIMCacheRecord& OutCache);
 	bool WriteBIMCache(const FString& CacheFile, const FModumateBIMCacheRecord& InCache) const;
