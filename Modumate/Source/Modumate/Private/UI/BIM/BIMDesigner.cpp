@@ -985,7 +985,7 @@ void UBIMDesigner::ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 Sl
 			{
 				TArray<FGuid> swapPresets;
 				Controller->GetDocument()->GetPresetCollection().GetPresetsForSlot(nodeParent->OriginalPresetCopy.PartSlots[SlotID].SlotPresetGUID, swapPresets);
-				if (swapPresets.Num() > 0)
+				if (ensureAlwaysMsgf(swapPresets.Num() > 0,TEXT("Could not find swap for slot. Bad NCP match?")))
 				{
 					newPartPreset = swapPresets[0];
 				}
