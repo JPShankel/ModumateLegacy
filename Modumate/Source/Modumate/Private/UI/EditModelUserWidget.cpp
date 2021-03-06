@@ -161,8 +161,9 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 		ViewMenu->ViewMenu_Block_ViewMode->UpdateEnabledViewModes(Controller->ValidViewModes);
 	}
 
-	// Close BIMDesigner if it's still open
-	if (BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
+	// Close BIMDesigner if the new state isn't select menu
+	if (NewState != ELeftMenuState::SelectMenu &&
+		BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
 	{
 		ToggleBIMDesigner(false);
 	}
