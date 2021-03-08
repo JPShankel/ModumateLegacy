@@ -231,15 +231,16 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 		if (Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly.ObjectType == EObjectType::OTStaircase)
 		{
 			EBIMPinTarget target;
-			Controller->EditModelUserWidget->BIMDesigner->InstancePool.GetBIMPinTargetForChildNode(NodeID, target);
-
-			if (target == EBIMPinTarget::Tread)
+			if (ensureAlways(Controller->EditModelUserWidget->BIMDesigner->InstancePool.GetBIMPinTargetForChildNode(NodeID, target) == EBIMResult::Success))
 			{
-				assemblyPartIndex = StairLayerTreadAssemblyPartIndex;
-			}
-			else if (target == EBIMPinTarget::Riser)
-			{
-				assemblyPartIndex = StairLayerRiserAssemblyPartIndex;
+				if (target == EBIMPinTarget::Tread)
+				{
+					assemblyPartIndex = StairLayerTreadAssemblyPartIndex;
+				}
+				else if (target == EBIMPinTarget::Riser)
+				{
+					assemblyPartIndex = StairLayerRiserAssemblyPartIndex;
+				}
 			}
 		}
 
@@ -633,19 +634,26 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 	
 	// Instead of MOI as planeParent, icon uses specific dimension for stair model
 	TArray<FVector> runPlanePoints;
-	runPlanePoints.Add(FVector::ZeroVector);
-	runPlanePoints.Add(FVector(0.f, StairDimension.Y, 0.f));
-	runPlanePoints.Add(FVector(StairDimension.X, StairDimension.Y, StairDimension.Z));
-	runPlanePoints.Add(FVector(StairDimension.X, 0.f, StairDimension.Z));
 
 	// Tread 'depth' is horizontal run from nose to nose.
 	float goalTreadDepth = Assembly.TreadDepthCentimeters;
+
+	// If rendering just treads or just risers, only draw one stair
+	FVector stairDim = (bMakeTread && bMakeRiser) ? 
+		StairDimension :
+		// Cut depth in half to zoom in a bit
+		FVector(goalTreadDepth, StairDimension.Y*0.5f, goalTreadDepth);
+
+	runPlanePoints.Add(FVector::ZeroVector);
+	runPlanePoints.Add(FVector(0.f, stairDim.Y, 0.f));
+	runPlanePoints.Add(FVector(stairDim.X, stairDim.Y, stairDim.Z));
+	runPlanePoints.Add(FVector(stairDim.X, 0.f, stairDim.Z));
 
 	// Calculate the polygons that make up the outer surfaces of each tread and riser of the linear stair run
 	float stepRun, stepRise;
 	bool bCachedUseRisers = Assembly.RiserLayers.Num() != 0;
 	bool bCachedStartRiser = true;
-	bool bCachedEndRiser = true;
+	bool bCachedEndRiser = bMakeTread; // If we're just showing the riser, show only one
 	TArray<TArray<FVector>> cachedTreadPolys;
 	TArray<TArray<FVector>> cachedRiserPolys;
 

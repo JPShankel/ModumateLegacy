@@ -823,7 +823,8 @@ EBIMResult FBIMPresetEditor::GetBIMPinTargetForChildNode(const FBIMEditorNodeIDT
 	auto childPtr = child->Pin();
 	if (!childPtr->ParentInstance.IsValid())
 	{
-		return EBIMResult::Error;
+		OutTarget = EBIMPinTarget::Default;
+		return EBIMResult::Success;
 	}
 
 	// Find myself in my parent's sibling list and get the target stored on that pin
