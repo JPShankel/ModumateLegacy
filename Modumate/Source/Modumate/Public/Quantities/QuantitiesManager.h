@@ -24,5 +24,8 @@ private:
 	TWeakObjectPtr<UModumateGameInstance> GameInstance;
 	TUniquePtr<FQuantitiesVisitor> CurrentQuantities;
 
+	struct FReportItem;
+	void PostProcessSizeGroups(TArray<FReportItem>& ReportItems);
+
 	static FString CsvEscape(const FString& String);
 };

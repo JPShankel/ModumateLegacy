@@ -671,7 +671,7 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 			}
 
 			// Set the extents
-			MID->SetVectorParameterValue(patternExtentsParamName, pattern.Extents);
+			MID->SetVectorParameterValue(patternExtentsParamName, pattern.CachedExtents);
 
 			// If the layer specifies a gap background material, then set its parameters here
 			auto *layerGapMat = Layer.Gap.Material.EngineMaterial.Get();

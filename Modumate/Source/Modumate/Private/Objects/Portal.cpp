@@ -490,8 +490,6 @@ bool AMOIPortal::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
 	int32 namingWidth = FMath::RoundToInt(width * UModumateDimensionStatics::CentimetersToInches);
 	int32 namingHeight = FMath::RoundToInt(height * UModumateDimensionStatics::CentimetersToInches);
 	FString name = FString::FromInt(namingWidth) + TEXT("x") + FString::FromInt(namingHeight);
-	// Count one for parent window type regardless of size.
-	QuantitiesVisitor.AddQuantity(assemblyGuid, FGuid(), 1.0f);
 	QuantitiesVisitor.AddPartsQuantity(name, assembly.Parts, assemblyGuid);
 	return true;
 }

@@ -42,19 +42,27 @@ bool FQuantitiesManager::CalculateAllQuantities()
 	return !bool(errorMoi);
 }
 
-namespace
-{	// Report helper class
-	struct FReportItem
-	{
-		FString Name;
-		EBIMValueScope ItemScope;
-		FText Category;
-		int32 CategorySort;
-		FQuantity Quantity;
-		TArray<FReportItem> UsedIn;
-		TArray<FReportItem> Uses;
-	};
+// Report helper class
+struct FQuantitiesManager::FReportItem
+{
+	FString Name;
+	FString Subname;
+	FString NameForSorting;
+	EBIMValueScope ItemScope;
+	FText Category;
+	int32 CategorySort;
+	FQuantity Quantity;
+	TArray<FReportItem> UsedIn;
+	TArray<FReportItem> Uses;
 
+	FString GetName() const
+	{
+		return Subname.IsEmpty() ? Name : Name + TEXT(" (") + Subname + TEXT(")");
+	}
+};
+
+namespace
+{
 	int CategoryToPriority(const FText& Cat)
 	{
 		static const FText categories[] =
@@ -108,6 +116,15 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 	};
 	const FQuantitiesVisitor::QuantitiesMap& quantities = CurrentQuantities->GetQuantities();
 
+	auto isTopLevelPortal = [](const FBIMPresetInstance* preset)
+	{
+		static const FText windowCategory = FText::FromString(TEXT("Window"));
+		static const FText doorCategory = FText::FromString(TEXT("Door"));
+
+		return preset->CategoryTitle.EqualTo(windowCategory)
+			|| preset->CategoryTitle.EqualTo(doorCategory);
+	};
+
 	for (auto& quantity: quantities)
 	{
 		itemToQuantityKeys.FindOrAdd(quantity.Key.Item).Add(quantity.Key);
@@ -123,8 +140,13 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 			continue;
 		}
 
+		bool bReportUsesPresets = true;
+		bool bReportUsedInPresets = true;
+
 		FReportItem reportItem;
-		reportItem.Name = preset->DisplayName.ToString() + item.Key;
+		reportItem.Name = preset->DisplayName.ToString();
+		reportItem.Subname = item.Key.Subname;
+		reportItem.NameForSorting = reportItem.Name + item.Key;
 
 		reportItem.ItemScope = preset->NodeScope;
 		reportItem.Category = preset->CategoryTitle;
@@ -132,26 +154,30 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 
 		FQuantity accumulatedQuantity;
 		// Loop over parent ('Used In') items:
-		for (FQuantityKey& parent: item.Value)
+		if (bReportUsedInPresets)
 		{
-			FQuantity perParentQuantity = quantities[parent];
-			accumulatedQuantity += perParentQuantity;
-			if (reportItem.ItemScope == EBIMValueScope::Module)
+			for (FQuantityKey& parent : item.Value)
 			{
-				perParentQuantity.Area = 0.0f;
-			}
-
-			if (parent.Parent.Id.IsValid())
-			{
-				const FBIMPresetInstance* parentPreset = presets.PresetFromGUID(parent.Parent.Id);
-				if (!ensure(parentPreset))
+				FQuantity perParentQuantity = quantities[parent];
+				accumulatedQuantity += perParentQuantity;
+				if (reportItem.ItemScope == EBIMValueScope::Module)
 				{
-					continue;
+					perParentQuantity.Area = 0.0f;
 				}
-				FReportItem subItem;
-				subItem.Name = parentPreset->DisplayName.ToString() + parent.Parent;
-				subItem.Quantity = perParentQuantity;
-				reportItem.UsedIn.Add(MoveTemp(subItem));
+
+				if (parent.Parent.Id.IsValid())
+				{
+					const FBIMPresetInstance* parentPreset = presets.PresetFromGUID(parent.Parent.Id);
+					if (!ensure(parentPreset))
+					{
+						continue;
+					}
+					FReportItem subItem;
+					subItem.Name = parentPreset->DisplayName.ToString();
+					subItem.Subname = parent.Parent.Subname;
+					subItem.Quantity = perParentQuantity;
+					reportItem.UsedIn.Add(MoveTemp(subItem));
+				}
 			}
 		}
 
@@ -163,7 +189,7 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 
 		const TArray<FQuantityKey>* usesPresets = parentToQuantityKeys.Find({ itemGuid, item.Key.Subname });
 		// Loop over child ('Uses') items:
-		if (usesPresets)
+		if (usesPresets && bReportUsesPresets)
 		{
 			for (const FQuantityKey& usesPreset: *usesPresets)
 			{
@@ -173,7 +199,8 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 					continue;
 				}
 				FReportItem subItem;
-				subItem.Name = childPreset->DisplayName.ToString() + usesPreset.Item;
+				subItem.Name = childPreset->DisplayName.ToString();
+				subItem.Subname = usesPreset.Item.Subname;
 				subItem.Quantity = quantities[usesPreset];
 				reportItem.Uses.Add(MoveTemp(subItem));
 			}
@@ -184,9 +211,11 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 	topReportItems.Sort([](const FReportItem& a, const FReportItem& b)
 	{
 		return  a.CategorySort == b.CategorySort ?
-			(a.Category.EqualTo(b.Category) ? a.Name < b.Name : a.Category.CompareTo(b.Category) < 0)
+			(a.Category.EqualTo(b.Category) ? a.NameForSorting < b.NameForSorting : a.Category.CompareTo(b.Category) < 0)
 			: a.CategorySort < b.CategorySort;
 	});
+
+	PostProcessSizeGroups(topReportItems);
 
 	// Now generate the CSV contents.
 	FString csvContents;
@@ -202,13 +231,13 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 			currentCategory = item.Category;
 			csvContents += currentCategory.ToString() + TEXT(",,,,,,,,\n");
 		}
-		csvContents += CsvEscape(item.Name) + TEXT(",,,,") + printCsvQuantities(item.Quantity) + TEXT(",\n");
+		csvContents += CsvEscape(item.GetName()) + TEXT(",,,,") + printCsvQuantities(item.Quantity) + TEXT(",\n");
 		if (item.UsedIn.Num() > 0)
 		{
 			csvContents += FString(TEXT(",Used In Presets:,,,,,,,\n"));
 			for (auto& usedInItem: item.UsedIn)
 			{
-				csvContents += FString(TEXT(",")) + CsvEscape(usedInItem.Name) + TEXT(",,,")
+				csvContents += FString(TEXT(",")) + CsvEscape(usedInItem.GetName()) + TEXT(",,,")
 					+ printCsvQuantities(usedInItem.Quantity) + TEXT(",\n");
 			}
 		}
@@ -217,7 +246,7 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 			csvContents += FString(TEXT(",Uses Presets:,,,,,,,\n"));
 			for (auto& usesItem: item.Uses)
 			{
-				csvContents += FString(TEXT(",")) + CsvEscape(usesItem.Name) + TEXT(",,,")
+				csvContents += FString(TEXT(",")) + CsvEscape(usesItem.GetName()) + TEXT(",,,")
 					+ printCsvQuantities(usesItem.Quantity) + TEXT(",\n");
 			}
 
@@ -229,12 +258,42 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 
 float FQuantitiesManager::GetModuleUnitsInArea(const FBIMPresetInstance* Preset, const FLayerPatternModule* Module, float Area)
 {
-	//float width = Preset->GetScopedProperty<float>(EBIMValueScope::Dimension, BIMPropertyNames::Width);
-	//float length  = Preset->GetScopedProperty<float>(EBIMValueScope::Dimension, BIMPropertyNames::Length);
 	float length = Module->ModuleExtents.X;
 	float height = Module->ModuleExtents.Z;
 	float unitArea =  length * height;
 	return FMath::IsFinite(unitArea) && unitArea != 0.0f ? Area / unitArea : 0.0f;
+}
+
+// For items that have subnames (eg. size-class) create a new header item
+// and just give subnames for those items.
+void FQuantitiesManager::PostProcessSizeGroups(TArray<FReportItem>& ReportItems)
+{
+	for (int32 i = 0; i < ReportItems.Num(); ++i)
+	{
+		if (!ReportItems[i].Subname.IsEmpty())
+		{
+			int32 j = i;
+			FQuantity sectionTotal;
+			while (j < ReportItems.Num()
+				&& ReportItems[i].Name == ReportItems[j].Name)
+			{
+				sectionTotal += ReportItems[j].Quantity;
+				++j;
+			}
+			FReportItem& header = ReportItems.InsertDefaulted_GetRef(i++);
+			header.Name = ReportItems[i].Name;
+			header.NameForSorting = header.Name;
+			header.Category = ReportItems[i].Category;
+			header.CategorySort = ReportItems[i].CategorySort;
+			header.Quantity = sectionTotal;
+			for (; i <= j; ++i)
+			{
+				ReportItems[i].Name = ReportItems[i].Subname;
+				ReportItems[i].Subname.Empty();
+			}
+			--i;
+		}
+	}
 }
 
 FString FQuantitiesManager::CsvEscape(const FString& String)

@@ -13,6 +13,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/LayerGeomDef.h"
 #include "Graph/Graph3DFace.h"
+#include "Polygon2.h"
 
 uint32 GetTypeHash(const FQuantityKey& Key)
 {
@@ -68,14 +69,20 @@ void FQuantitiesVisitor::AddPartsQuantity(const FString& Name, const TArray<FBIM
 {
 	for (const auto& part : Parts)
 	{
+		EPresetMeasurementMethod  method = part.MeasurementMethod;
+		FString partName = method == EPresetMeasurementMethod::None || method == EPresetMeasurementMethod::PartBySizeGroup
+			? Name : FString();
 		if (part.ParentSlotIndex >= 0)
 		{
-			AddQuantity(part.PresetGUID, Name, Parts[part.ParentSlotIndex].PresetGUID, Name, 1.0f);
-
+			const auto& parentPart = Parts[part.ParentSlotIndex];
+			EPresetMeasurementMethod parentmethod = parentPart.MeasurementMethod;
+			FString parentPartName = parentmethod == EPresetMeasurementMethod::None || parentmethod == EPresetMeasurementMethod::PartBySizeGroup
+				? Name : FString();
+			AddQuantity(part.PresetGUID, partName, parentPart.PresetGUID, parentPartName, 1.0f);
 		}
 		else
 		{
-			AddQuantity(part.PresetGUID, Name, ParentGuid, FString(), 1.0f);
+			AddQuantity(part.PresetGUID, partName, ParentGuid, FString(), 1.0f);
 		}
 	}
 }
@@ -94,24 +101,13 @@ void FQuantitiesVisitor::GetQuantitiesForModule(const FBIMLayerSpec* LayerSpec, 
 	{
 		if (pattern.ThicknessDimensionPropertyName == nameWidth)
 		{
-			float unitArea = pattern.Extents.X * pattern.Extents.Y / pattern.ParameterizedModuleDimensions.Num();
+			float unitArea = pattern.CachedExtents.X * pattern.CachedExtents.Y / pattern.ParameterizedModuleDimensions.Num();
 			OutQuantity.Count += Area / unitArea;
 		}
 		else if (pattern.ThicknessDimensionPropertyName == nameDepth)
-		{	// 1D layer; map pattern name for now.
-			// This should cover all current default presets.
-			static const TMap<FString, float> nameToPeriodMap =
-			{ 
-				{TEXT("12-Inch O.C."), 12 * UModumateDimensionStatics::InchesToCentimeters},
-				{TEXT("16-Inch O.C."), 16 * UModumateDimensionStatics::InchesToCentimeters},
-				{TEXT("19.2-Inch O.C."), 19.2f * UModumateDimensionStatics::InchesToCentimeters},
-				{TEXT("24-Inch O.C."), 24 * UModumateDimensionStatics::InchesToCentimeters}
-			};
-			const float* period = nameToPeriodMap.Find(pattern.DisplayName.ToString());
-			if (period)
-			{
-				OutQuantity.Linear += Area / *period;
-			}
+		{
+			float period = pattern.CachedExtents.X * UModumateDimensionStatics::InchesToCentimeters;
+			OutQuantity.Linear += Area / period;
 		}
 	}
 }
@@ -172,7 +168,14 @@ float FQuantitiesVisitor::LengthOfWallFace(const Modumate::FGraph3DFace& Face)
 
 float FQuantitiesVisitor::AreaOfLayer(const FLayerGeomDef& LayerGeom)
 {
-	return AreaOfPoly(LayerGeom.UniquePointsA);
+	float area = 0.0f;
+	area += AreaOfPoly(LayerGeom.UniquePointsA);
+	for (const auto& hole : LayerGeom.CachedHoles2D)
+	{
+		area -= AreaOfPoly(hole.Points);
+	}
+
+	return FMath::Max(0.0f, area);
 }
 
 float FQuantitiesVisitor::AreaOfPoly(const TArray<FVector>& Poly)
@@ -182,6 +185,16 @@ float FQuantitiesVisitor::AreaOfPoly(const TArray<FVector>& Poly)
 	for (const auto& vert : Poly)
 	{
 		polygon.InsertVertex(i++, vert);
+	}
+	return polygon.Area();
+}
+
+float FQuantitiesVisitor::AreaOfPoly(const TArray<FVector2D>& Poly)
+{
+	FPolygon2f polygon;
+	for (const auto& vert : Poly)
+	{
+		polygon.AppendVertex(vert);
 	}
 	return polygon.Area();
 }

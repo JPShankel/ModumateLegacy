@@ -80,6 +80,7 @@ public:
 	static float LengthOfWallFace(const Modumate::FGraph3DFace& Face);
 	static float AreaOfLayer(const FLayerGeomDef& LayerGeom);
 	static float AreaOfPoly(const TArray<FVector>& Poly);
+	static float AreaOfPoly(const TArray<FVector2D>& Poly);
 
 private:
 	FQuantitiesManager* QuantitiesManager;

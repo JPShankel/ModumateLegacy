@@ -177,8 +177,8 @@ void FBIMLayerSpec::EvaluateParameterizedPatternExtents()
 	FString extentsExpressions = Pattern.ParameterizedExtents;
 	if (LexTryParseString(fixedExtent, *extentsExpressions))
 	{
-		Pattern.Extents.X = fixedExtent;
-		Pattern.Extents.Y = fixedExtent;
+		Pattern.CachedExtents.X = fixedExtent;
+		Pattern.CachedExtents.Y = fixedExtent;
 	}
 	else
 	{
@@ -188,8 +188,8 @@ void FBIMLayerSpec::EvaluateParameterizedPatternExtents()
 
 		if (extentsExpressions.Split(TEXT(","), &patternWidthExpr, &patternHeightExpr))
 		{
-			Pattern.Extents.X = Modumate::Expression::Evaluate(CachedPatternExprVars, patternWidthExpr);
-			Pattern.Extents.Y = Modumate::Expression::Evaluate(CachedPatternExprVars, patternHeightExpr);
+			Pattern.CachedExtents.X = Modumate::Expression::Evaluate(CachedPatternExprVars, patternWidthExpr);
+			Pattern.CachedExtents.Y = Modumate::Expression::Evaluate(CachedPatternExprVars, patternHeightExpr);
 		}
 	}
 }
