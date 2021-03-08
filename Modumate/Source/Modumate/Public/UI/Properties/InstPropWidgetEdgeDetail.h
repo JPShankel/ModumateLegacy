@@ -40,12 +40,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonDelete;
 
-	int32 CurrentValue;
+	TSet<int32> CurrentEdgeIDs;
+	TSet<FGuid> CurrentPresetValues;
+	uint32 CurrentConditionValue;
 
 	UPROPERTY()
 	FOnInstPropEdgeDetailButtonPress ButtonPressedEvent;
 
-	void RegisterValue(UObject* Source, int32 DetailID);
+	void RegisterValue(UObject* Source, int32 EdgeID, const FGuid& DetailPresetID, uint32 DetailConditionHash);
 
 protected:
 	virtual void BroadcastValueChanged() override;
@@ -58,6 +60,8 @@ protected:
 
 	UFUNCTION()
 	void OnClickedDelete();
+
+	static bool TryMakeUniquePresetDisplayName(const struct FBIMPresetCollection& PresetCollection, const struct FEdgeDetailData& NewDetailData, FText& OutDisplayName);
 
 	EEdgeDetailWidgetActions LastClickedAction = EEdgeDetailWidgetActions::None;
 };

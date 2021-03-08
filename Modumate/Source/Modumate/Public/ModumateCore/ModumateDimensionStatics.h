@@ -40,7 +40,13 @@ public:
 	static FString DecimalToFractionString_DEPRECATED(float inches, bool bFormat = false, bool bSplitWholeNumber = false, int32 maxDenom = 64);
 
 	UFUNCTION()
+	static FText InchesToImperialText(float Inches, int32 MaxDenom = 64);
+
+	UFUNCTION()
 	static FText CentimetersToImperialText(float Centimeters, int32 MaxDenom = 64);
+
+	UFUNCTION()
+	static float CentimetersToInches64(float Centimeters);
 
 	static constexpr float InchesToCentimeters = 2.54f;
 	static constexpr float CentimetersToInches = 1.0f / InchesToCentimeters;

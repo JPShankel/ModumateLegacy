@@ -375,15 +375,13 @@ FString UModumateDimensionStatics::DecimalToFractionString_DEPRECATED(float inch
 	return UModumateDimensionStatics::CentimetersToImperialText(inches * UModumateDimensionStatics::InchesToCentimeters, maxDenom).ToString();
 }
 
-FText UModumateDimensionStatics::CentimetersToImperialText(float Length, int32 MaxDenom)
+FText UModumateDimensionStatics::InchesToImperialText(float Length, int32 MaxDenom)
 {
 	bool bNegative = Length < 0;
 	if (bNegative)
 	{
 		Length *= -1.0f;
 	}
-
-	Length *= UModumateDimensionStatics::CentimetersToInches;
 
 	int32 feet = Length / 12;
 
@@ -440,6 +438,16 @@ FText UModumateDimensionStatics::CentimetersToImperialText(float Length, int32 M
 	FText feetInchJoinText = (!feetText.IsEmpty() && !inchesText.IsEmpty()) ? FText::FromString(TEXT("-")) : FText::GetEmpty();
 
 	return FText::Format(LOCTEXT("feet_and_inches", "{0}{1}{2}{3}"), signText, feetText, feetInchJoinText, inchesText);
+}
+
+FText UModumateDimensionStatics::CentimetersToImperialText(float Length, int32 MaxDenom)
+{
+	return UModumateDimensionStatics::InchesToImperialText(Length * UModumateDimensionStatics::CentimetersToInches, MaxDenom);
+}
+
+float UModumateDimensionStatics::CentimetersToInches64(float Centimeters)
+{
+	return FMath::RoundHalfFromZero(64.0f * Centimeters * UModumateDimensionStatics::CentimetersToInches) / 64.0f;
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -6,6 +6,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Objects/MiterNode.h"
 
+#define LOCTEXT_NAMESPACE "ModumateEdgeDetail"
 
 FEdgeDetailCondition::FEdgeDetailCondition()
 {
@@ -19,6 +20,13 @@ FEdgeDetailCondition::FEdgeDetailCondition(const FMiterParticipantData* MiterPar
 			MiterParticipantData->MiterAngle,
 			MiterParticipantData->LayerStartOffset + 0.5f * MiterParticipantData->LayerDims.TotalUnfinishedWidth,
 			MiterParticipantData->LayerDims.LayerThicknesses);
+
+		// Normalize all participants as if they're coming in clockwise, from the perspective of the miter edge coordinate system.
+		if (!MiterParticipantData->bPlaneNormalCW)
+		{
+			Offset = (Offset == 0.0f) ? Offset : -Offset;
+			Algo::Reverse(LayerThicknesses);
+		}
 	}
 }
 
@@ -31,17 +39,11 @@ void FEdgeDetailCondition::SetData(float InAngle, float InOffset, const TArray<f
 {
 	// For readability and consistency, save condition angles to the nearest degree,
 	// and serialize input dimensions that are in centimeters as inches to the nearest 64th.
-
 	Angle = FMath::RoundHalfFromZero(InAngle);
-
-	auto convertCmToIn64 = [](float DimensionCM) -> float {
-		return FMath::RoundHalfFromZero(64.0f * DimensionCM * UModumateDimensionStatics::CentimetersToInches) / 64.0f;
-	};
-
-	Offset = convertCmToIn64(InOffset);
+	Offset = UModumateDimensionStatics::CentimetersToInches64(InOffset);
 
 	LayerThicknesses.Reset();
-	Algo::Transform(InLayerThicknesses, LayerThicknesses, convertCmToIn64);
+	Algo::Transform(InLayerThicknesses, LayerThicknesses, UModumateDimensionStatics::CentimetersToInches64);
 }
 
 void FEdgeDetailCondition::Invert()
@@ -82,6 +84,16 @@ FEdgeDetailOverrides::FEdgeDetailOverrides(const FMiterParticipantData* MiterPar
 	if (ensure(MiterParticipantData))
 	{
 		LayerExtensions = MiterParticipantData->LayerExtensions;
+
+		// Normalize all participants as if they're coming in clockwise, from the perspective of the miter edge coordinate system.
+		if (!MiterParticipantData->bPlaneNormalCW)
+		{
+			Algo::Reverse(LayerExtensions);
+			for (FVector2D& layerExtension : LayerExtensions)
+			{
+				Swap(layerExtension.X, layerExtension.Y);
+			}
+		}
 	}
 }
 
@@ -271,3 +283,36 @@ void FEdgeDetailData::PostSerialize(const FArchive& Ar)
 {
 	UpdateConditionHash();
 }
+
+FText FEdgeDetailData::MakeShortDisplayText(int32 Index) const
+{
+	FText entireFormat = LOCTEXT("ShortDisplayEntireFormat", "{0}-Participant{1}{2}");
+	FText angleFormat = LOCTEXT("ShortDisplayWholeAngleFormat", ", {0}");
+	FText indexFormat = LOCTEXT("ShortDisplayIndexFormat", ", #{0}");
+
+	int32 numParticipants = Conditions.Num();
+	FText numParticipantsText = FText::AsNumber(numParticipants);
+
+	FText angleText = FText::GetEmpty();
+	if (numParticipants > 1)
+	{
+		static const FNumberFormattingOptions angleNumberFormatOptions = FNumberFormattingOptions().SetMaximumFractionalDigits(0);
+		static TArray<FText> tempAnglePartTexts;
+		tempAnglePartTexts.Reset();
+
+		for (int32 conditionIdx = 1; conditionIdx < numParticipants; ++conditionIdx)
+		{
+			FText anglePartText = FText::Format(LOCTEXT("ShortDisplayAnglePartFormat", "{0}°"),
+				FText::AsNumber(Conditions[conditionIdx].Angle, &angleNumberFormatOptions));
+			tempAnglePartTexts.Add(anglePartText);
+		}
+
+		angleText = FText::Format(angleFormat, FText::Join(LOCTEXT("ShortDisplayAngleDelim", "-"), tempAnglePartTexts));
+	}
+
+	FText indexText = (Index == INDEX_NONE) ? FText::GetEmpty() : FText::Format(indexFormat, FText::AsNumber(Index));
+	
+	return FText::Format(entireFormat, numParticipantsText, angleText, indexText);
+}
+
+#undef LOCTEXT_NAMESPACE

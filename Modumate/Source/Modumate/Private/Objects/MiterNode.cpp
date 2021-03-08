@@ -262,7 +262,7 @@ bool FMiterData::CalculateMitering()
 
 	auto metaEdge = Cast<AMOIMetaEdge>(MOI.Get());
 	auto edgeDetailMOI = metaEdge ? metaEdge->CachedEdgeDetailMOI : nullptr;
-	FEdgeDetailData* edgeDetailData = edgeDetailMOI ? &edgeDetailMOI->InstanceData : nullptr;
+	const FEdgeDetailData* edgeDetailData = edgeDetailMOI ? &edgeDetailMOI->GetAssembly().EdgeDetailData : nullptr;
 	int32 numDetailParticipants = edgeDetailData ? edgeDetailData->Overrides.Num() : 0;
 
 	// If there is an edge detail that overrides layer extension data for this miter node,
@@ -292,7 +292,17 @@ bool FMiterData::CalculateMitering()
 				return false;
 			}
 
+			// Edge detail overrides are normalized as if all participants are coming in with CW orientation,
+			// so if the detail is applying to a miter participant that's CCW, we need to adjust the extensions.
 			miterParticipant.LayerExtensions = edgeDetailOverrides.LayerExtensions;
+			if (!miterParticipant.bPlaneNormalCW)
+			{
+				Algo::Reverse(miterParticipant.LayerExtensions);
+				for (FVector2D& layerExtension : miterParticipant.LayerExtensions)
+				{
+					Swap(layerExtension.X, layerExtension.Y);
+				}
+			}
 		}
 
 		return true;

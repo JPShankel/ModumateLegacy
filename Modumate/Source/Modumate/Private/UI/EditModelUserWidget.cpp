@@ -290,7 +290,7 @@ void UEditModelUserWidget::UpdateSelectTrayVisibility()
 	}
 	else
 	{
-		SelectionTrayWidget->OpenToolTrayForSelection();
+		SelectionTrayWidget->UpdateFromSelection();
 	}
 }
 

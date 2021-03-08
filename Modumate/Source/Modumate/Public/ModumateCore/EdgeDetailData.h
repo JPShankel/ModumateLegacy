@@ -88,6 +88,8 @@ struct FEdgeDetailData
 	// Function that's supposed to be automatically called after struct [de]serialization, to make sure the cached hash is up-to-date.
 	void PostSerialize(const FArchive& Ar);
 
+	FText MakeShortDisplayText(int32 Index = INDEX_NONE) const;
+
 	UPROPERTY(meta = (ToolTip = "All conditions of participants in an edge detail, that must be match in order for overrides to apply."))
 	TArray<FEdgeDetailCondition> Conditions;
 

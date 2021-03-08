@@ -2,10 +2,22 @@
 
 #pragma once
 
-#include "ModumateCore/EdgeDetailData.h"
 #include "Objects/ModumateObjectInstance.h"
 
 #include "EdgeDetailObj.generated.h"
+
+
+USTRUCT()
+struct MODUMATE_API FMOIEdgeDetailData
+{
+	GENERATED_BODY()
+
+	FMOIEdgeDetailData();
+	FMOIEdgeDetailData(int32 InOrientationIndex);
+
+	UPROPERTY()
+	int32 OrientationIndex = INDEX_NONE;
+};
 
 UCLASS()
 class MODUMATE_API AMOIEdgeDetail : public AModumateObjectInstance
@@ -13,10 +25,8 @@ class MODUMATE_API AMOIEdgeDetail : public AModumateObjectInstance
 	GENERATED_BODY()
 
 public:
-	// TODO: replace this from being InstanceData to being stored in its FBIMAssemblySpec, from a shareable preset
-	UPROPERTY()
-	FEdgeDetailData InstanceData;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 
-protected:
-	virtual void PostLoadInstanceData() override;
+	UPROPERTY()
+	FMOIEdgeDetailData InstanceData;
 };

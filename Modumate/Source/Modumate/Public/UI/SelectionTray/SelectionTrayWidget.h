@@ -27,6 +27,11 @@ protected:
 
 	FGuid CurrentPresetToSwap;
 
+	FGuid CurrentDetailPreset;
+	TSet<int32> CurrentDetailEdgeIDs;
+
+	bool GetDetailFromSelection(FGuid& OutDetailPreset, TSet<int32>& OutEdgeIDs);
+
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -41,11 +46,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UToolTrayBlockProperties *ToolTrayBlockProperties;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UDetailDesignerContainer* DetailDesigner;
+
 	void OpenToolTrayForSelection();
 	void OpenToolTrayForSwap(EToolMode ToolMode, const FGuid& PresetToSwap);
+	void OpenToolTrayDetailDesigner(const FGuid& DetailPreset, const TSet<int32>& EdgeIDs);
+	void UpdateFromSelection();
+	void StartDetailDesignerFromSelection();
 	void CloseToolTray();
 	const FGuid& GetCurrentPresetToSwap() const { return CurrentPresetToSwap; }
-
-protected:
-
 };

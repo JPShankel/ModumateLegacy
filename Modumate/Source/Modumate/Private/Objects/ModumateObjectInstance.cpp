@@ -937,6 +937,7 @@ void AModumateObjectInstance::ShowAdjustmentHandles(AEditModelPlayerController* 
 void AModumateObjectInstance::OnAssemblyChanged()
 {
 	CachedAssembly.Reset();
+	UpdateAssemblyFromKey();
 	MarkDirty(EObjectDirtyFlags::Structure);
 }
 

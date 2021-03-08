@@ -2,12 +2,16 @@
 
 #include "Objects/MetaEdge.h"
 
+#include "BIMKernel/Presets/BIMPresetCollection.h"
+#include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Objects/EdgeDetailObj.h"
 #include "Objects/MiterNode.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/SelectionTray/SelectionTrayWidget.h"
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
@@ -69,7 +73,7 @@ bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 		CacheEdgeDetail();
 
 		// If this edge has a detail whose condition no longer applies to this edge's current status, then delete the detail as a side effect.
-		if (CachedEdgeDetailMOI && (CachedEdgeDetailMOI->InstanceData.CachedConditionHash != CachedEdgeDetailConditionHash) && OutSideEffectDeltas)
+		if (CachedEdgeDetailMOI && (CachedEdgeDetailMOI->GetAssembly().EdgeDetailData.CachedConditionHash != CachedEdgeDetailConditionHash) && OutSideEffectDeltas)
 		{
 			auto deleteObjectDelta = MakeShared<FMOIDelta>();
 			deleteObjectDelta->AddCreateDestroyState(CachedEdgeDetailMOI->GetStateData(), EMOIDeltaType::Destroy);
@@ -150,13 +154,14 @@ void AMOIMetaEdge::RegisterInstanceDataUI(class UToolTrayBlockProperties* Proper
 		return;
 	}
 
-	int32 edgeDetailID = CachedEdgeDetailMOI ? CachedEdgeDetailMOI->ID : MOD_ID_NONE;
-
 	static const FString edgeDetailPropertyName(TEXT("Detail"));
 	if (auto edgeDetailField = PropertiesUI->RequestPropertyField<UInstPropWidgetEdgeDetail>(this, edgeDetailPropertyName))
 	{
-		edgeDetailField->RegisterValue(this, edgeDetailID);
-		edgeDetailField->ButtonPressedEvent.AddDynamic(this, &AMOIMetaEdge::OnInstPropEdgeDetailButtonPress);
+		edgeDetailField->RegisterValue(this, ID, CachedEdgeDetailDataID, CachedEdgeDetailConditionHash);
+		if (false)
+		{
+			edgeDetailField->ButtonPressedEvent.AddDynamic(this, &AMOIMetaEdge::OnInstPropEdgeDetailButtonPress);
+		}
 	}
 #endif
 }
@@ -201,41 +206,97 @@ void AMOIMetaEdge::OnInstPropEdgeDetailButtonPress(EEdgeDetailWidgetActions Edge
 	{
 	case EEdgeDetailWidgetActions::Swap:
 	{
-		if (CachedEdgeDetailMOI == nullptr)
+		auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+		controller->EditModelUserWidget->SelectionTrayWidget->StartDetailDesignerFromSelection();
+
+		if (false)//CachedEdgeDetailMOI == nullptr)
 		{
-			auto makeDetailDelta = MakeShared<FMOIDelta>();
+			auto& presetCollection = Document->GetPresetCollection();
+			FEdgeDetailData testDetailData;
+			TArray<FGuid> existingPresets;
+			EBIMResult searchResult = presetCollection.GetPresetsByPredicate([this, &testDetailData](const FBIMPresetInstance& Preset) {
+				return Preset.CustomData.LoadStructData(testDetailData, true) && (testDetailData.CachedConditionHash == CachedEdgeDetailConditionHash); },
+				existingPresets);
+			if ((searchResult == EBIMResult::Success) && (existingPresets.Num() > 0))
+			{
+				UE_LOG(LogTemp, Log, TEXT("There are %d other edge detail presets with the same condition!"), existingPresets.Num());
+			}
 
-			FMOIStateData newDetailState(Document->GetNextAvailableID(), EObjectType::OTEdgeDetail, ID);
-			FEdgeDetailData newDetailInstanceData(GetMiterInterface());
-			newDetailState.CustomData.SaveStructData(newDetailInstanceData);
+			FEdgeDetailData newDetailData(GetMiterInterface());
+			FBIMPresetInstance newDetailPreset;
+			if ((presetCollection.GetBlankPresetForObjectType(EObjectType::OTEdgeDetail, newDetailPreset) == EBIMResult::Success) &&
+				newDetailPreset.CustomData.SaveStructData(newDetailData))
+			{
+				TArray<FDeltaPtr> deltas;
 
-			makeDetailDelta->AddCreateDestroyState(newDetailState, EMOIDeltaType::Create);
-			Document->ApplyDeltas({ makeDetailDelta }, GetWorld());
+				auto makedetailPresetDelta = presetCollection.MakeCreateNewDelta(newDetailPreset);
+				deltas.Add(makedetailPresetDelta);
 
-			// TODO: create an edge detail assembly & preset, rather than just a MOI with edge detail instance data
+				auto makeDetailMOIDelta = MakeShared<FMOIDelta>();
+				FMOIStateData newDetailState(Document->GetNextAvailableID(), EObjectType::OTEdgeDetail, ID);
+				newDetailState.AssemblyGUID = newDetailPreset.GUID;
+				makeDetailMOIDelta->AddCreateDestroyState(newDetailState, EMOIDeltaType::Create);
+				deltas.Add(makeDetailMOIDelta);
+
+				Document->ApplyDeltas(deltas, GetWorld());
+			}
 		}
 	}
 		break;
 	case EEdgeDetailWidgetActions::Edit:
 	{
-		if (CachedEdgeDetailMOI != nullptr)
+		auto& presetCollection = Document->GetPresetCollection();
+		FBIMPresetInstance* currentDetailPreset = presetCollection.PresetFromGUID(CachedEdgeDetailDataID);
+		if (CachedEdgeDetailMOI && currentDetailPreset)
 		{
+			const FEdgeDetailData& curEdgeDetailData = CachedEdgeDetailMOI->GetAssembly().EdgeDetailData;
+			const FString& detailName = currentDetailPreset->DisplayName.ToString();
+
 			TArray<int32> orientationIndices;
+			FEdgeDetailData testDetailData;
+			TArray<FGuid> existingPresets;
+			EBIMResult searchResult = presetCollection.GetPresetsByPredicate([this, &testDetailData](const FBIMPresetInstance& Preset) {
+				return (CachedEdgeDetailDataID != Preset.GUID) && Preset.CustomData.LoadStructData(testDetailData, true) && (testDetailData.CachedConditionHash == CachedEdgeDetailConditionHash); },
+				existingPresets);
+			int32 numMatchingPresets = existingPresets.Num();
+			UE_LOG(LogTemp, Log, TEXT("There are %d other edge detail presets with the same condition!"), numMatchingPresets);
+
+			if ((searchResult == EBIMResult::Success) && (numMatchingPresets > 0))
+			{
+				FBIMAssemblySpec otherDetailAssembly;
+				for (auto& otherDetailGUID : existingPresets)
+				{
+					FBIMPresetInstance* otherDetailPreset = presetCollection.PresetFromGUID(otherDetailGUID);
+					if (otherDetailPreset &&
+						presetCollection.TryGetProjectAssemblyForPreset(EObjectType::OTEdgeDetail, otherDetailGUID, otherDetailAssembly) &&
+						curEdgeDetailData.CompareConditions(otherDetailAssembly.EdgeDetailData, orientationIndices))
+					{
+						UE_LOG(LogTemp, Log, TEXT("Edge Detail #%d (hash %08X, preset \"%s\") matches Edge Detail Preset \"%s\" with orientations: [%s]"),
+							CachedEdgeDetailMOI->ID, CachedEdgeDetailConditionHash, *detailName, *otherDetailPreset->DisplayName.ToString(),
+							*FString::JoinBy(orientationIndices, TEXT(", "), [](const int32& o) {return FString::Printf(TEXT("%d"), o); }));
+					}
+				}
+			}
+
 			auto metaEdges = Document->GetObjectsOfType(EObjectType::OTMetaEdge);
 			for (auto* moi : metaEdges)
 			{
-				auto* metaEdge = Cast<AMOIMetaEdge>(moi);
-				if (metaEdge && (metaEdge != this) && metaEdge->CachedEdgeDetailMOI &&
-					CachedEdgeDetailMOI->InstanceData.CompareConditions(metaEdge->CachedEdgeDetailMOI->InstanceData, orientationIndices))
+				auto miterNode = moi ? moi->GetMiterInterface() : nullptr;
+				if (miterNode && (moi != this))
 				{
-					UE_LOG(LogTemp, Log, TEXT("Edge Detail #%d (hash %08X) matches Edge Detail #%d with orientations: [%s]"),
-						CachedEdgeDetailMOI->ID, CachedEdgeDetailConditionHash, metaEdge->CachedEdgeDetailMOI->ID,
-						*FString::JoinBy(orientationIndices, TEXT(", "), [](const int32& o) {return FString::Printf(TEXT("%d"), o); }));
+					FEdgeDetailData otherEdgeDetailData(miterNode);
+					if (curEdgeDetailData.CompareConditions(otherEdgeDetailData, orientationIndices))
+					{
+						UE_LOG(LogTemp, Log, TEXT("Edge Detail #%d (hash %08X, preset \"%s\") matched by Edge #%d conditions with orientations: [%s]"),
+							CachedEdgeDetailMOI->ID, CachedEdgeDetailConditionHash, *detailName, moi->ID,
+							*FString::JoinBy(orientationIndices, TEXT(", "), [](const int32& o) {return FString::Printf(TEXT("%d"), o); }));
+					}
 				}
 			}
 		}
 	}
 		break;
+#if 0
 	case EEdgeDetailWidgetActions::Delete:
 		if (CachedEdgeDetailMOI != nullptr)
 		{
@@ -246,6 +307,7 @@ void AMOIMetaEdge::OnInstPropEdgeDetailButtonPress(EEdgeDetailWidgetActions Edge
 			// TODO: delete the edge detail preset itself, and propagate that change to any other edges that may share this detail
 		}
 		break;
+#endif
 	default:
 		break;
 	}
