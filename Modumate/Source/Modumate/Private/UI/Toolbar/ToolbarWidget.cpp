@@ -37,6 +37,7 @@ bool UToolbarWidget::Initialize()
 	Button_3DViews->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonRelease3DViews);
 	Button_CutPlanes->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseCutPlanes);
 	ButtonTopToolbarHelp->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseTopToolbarHelp);
+	Button_Browser->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseBrowser);
 
 	return true;
 }
@@ -124,6 +125,22 @@ void UToolbarWidget::OnButtonReleaseTopToolbarHelp()
 		else
 		{
 			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::TutorialMenu);
+		}
+	}
+}
+
+void UToolbarWidget::OnButtonReleaseBrowser()
+{
+	Controller->SetToolMode(EToolMode::VE_SELECT);
+	if (EditModelUserWidget)
+	{
+		if (EditModelUserWidget->CurrentLeftMenuState == ELeftMenuState::BrowserMenu)
+		{
+			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::SelectMenu);
+		}
+		else
+		{
+			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::BrowserMenu);
 		}
 	}
 }

@@ -24,6 +24,32 @@ protected:
 
 	virtual void NativeConstruct() override;
 
+	UPROPERTY()
+	class AEditModelPlayerController* EMPlayerController;
+
+	bool bIsDescendentlist;
+	FGuid PresetGUID;
+
 public:
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButton* MainButton;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UVerticalBox* DynamicObjectList;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateTextBlockUserWidget* MainText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UPresetCardMain> PresetCardMainClass;
+
+	UFUNCTION()
+	void OnMainButtonReleased();
+
+	// Builder
+	void BuildAsDescendentList(const FGuid& InGUID, bool bAsExpandedList);
+	void BuildAsAncestorList(const FGuid& InGUID, bool bAsExpandedList);
+
+	void EmptyList();
 };

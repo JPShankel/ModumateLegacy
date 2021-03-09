@@ -24,6 +24,7 @@
 #include "Components/Border.h"
 #include "UI/TutorialMenu/TutorialMenuWidget.h"
 #include "UI/BIM/BIMScopeWarning.h"
+#include "UI/LeftMenu/BrowserMenuWidget.h"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -110,10 +111,12 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 	bool newViewMenuVisibility = CurrentLeftMenuState == ELeftMenuState::ViewMenu;
 	bool newCutPlaneMenuVisibility = CurrentLeftMenuState == ELeftMenuState::CutPlaneMenu;
 	bool newTutorialMenuVisibility = CurrentLeftMenuState == ELeftMenuState::TutorialMenu;
+	bool newBrowserMenuVisibility = CurrentLeftMenuState == ELeftMenuState::BrowserMenu;
 	newToolTrayVisibility ? ToolTrayWidget->OpenToolTray() : ToolTrayWidget->CloseToolTray();
 	ToggleViewMenu(newViewMenuVisibility);
 	ToggleCutPlaneMenu(newCutPlaneMenuVisibility);
 	ToggleTutorialMenu(newTutorialMenuVisibility);
+	ToggleBrowserMenu(newBrowserMenuVisibility);
 
 	if (NewState == ELeftMenuState::SelectMenu)
 	{
@@ -358,5 +361,19 @@ void UEditModelUserWidget::ToggleViewMenu(bool NewVisibility)
 	else
 	{
 		ToolbarWidget->Button_3DViews->SwitchToNormalStyle();
+	}
+}
+
+void UEditModelUserWidget::ToggleBrowserMenu(bool NewVisibility)
+{
+	BrowserMenuWidget->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (NewVisibility)
+	{
+		ToolbarWidget->Button_Browser->SwitchToActiveStyle();
+		BrowserMenuWidget->BuildBrowserMenu();
+	}
+	else
+	{
+		ToolbarWidget->Button_Browser->SwitchToNormalStyle();
 	}
 }

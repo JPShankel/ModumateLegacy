@@ -53,11 +53,14 @@ struct MODUMATE_API FBIMPresetCollection
 	EObjectType GetPresetObjectType(const FGuid& PresetID) const;
 
 	EBIMResult GetNCPForPreset(const FGuid& InPresetID, FBIMTagPath& OutNCP) const;
-	EBIMResult GetPresetsForNCP(const FBIMTagPath& InNCP, TArray<FGuid>& OutPresets) const;
+	EBIMResult GetPresetsForNCP(const FBIMTagPath& InNCP, TArray<FGuid>& OutPresets, bool bExactMatch = false) const;
 	EBIMResult GetNCPSubcategories(const FBIMTagPath& InNCP, TArray<FString>& OutSubcats) const;
 
 	EBIMResult GetAllDescendentPresets(const FGuid& PresetGUID, TArray<FGuid>& OutPresets) const;
 	EBIMResult GetAllAncestorPresets(const FGuid& PresetGUID, TArray<FGuid>& OutPresets) const;
+
+	EBIMResult GetDescendentPresets(const FGuid& InPresetGUID, TArray<FGuid>& OutPresets) const;
+	EBIMResult GetAncestorPresets(const FGuid& InPresetGUID, TArray<FGuid>& OutPresets) const;
 
 	EBIMResult GetPresetsByPredicate(const TFunction<bool(const FBIMPresetInstance& Preset)>& Predicate,TArray<FGuid>& OutPresets) const;
 	EBIMResult GetPresetsForSlot(const FGuid& SlotPresetGUID,TArray<FGuid>& OutPresets) const;

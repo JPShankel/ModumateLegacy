@@ -51,6 +51,9 @@ public:
 	class UModumateButtonUserWidget *Button_CutPlanes;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_Browser;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UToolbarTopWidget *ToolBarTopBP;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -76,5 +79,8 @@ public:
 
 	UFUNCTION()
 	void OnButtonReleaseTopToolbarHelp();
+
+	UFUNCTION()
+	void OnButtonReleaseBrowser();
 
 };

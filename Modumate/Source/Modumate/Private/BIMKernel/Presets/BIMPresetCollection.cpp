@@ -69,6 +69,48 @@ EBIMResult FBIMPresetCollection::GetAllAncestorPresets(const FGuid& PresetGUID, 
 	return EBIMResult::Success;
 }
 
+EBIMResult FBIMPresetCollection::GetDescendentPresets(const FGuid& InPresetGUID, TArray<FGuid>& OutPresets) const
+{
+	const FBIMPresetInstance* preset = PresetFromGUID(InPresetGUID);
+	if (!ensureAlways(preset != nullptr))
+	{
+		return EBIMResult::Error;
+	}
+
+	for (auto& childPreset : preset->ChildPresets)
+	{
+		OutPresets.AddUnique(childPreset.PresetGUID);
+	}
+	for (auto& partSlot : preset->PartSlots)
+	{
+		OutPresets.AddUnique(partSlot.PartPresetGUID);
+	}
+
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetCollection::GetAncestorPresets(const FGuid& InPresetGUID, TArray<FGuid>& OutPresets) const
+{
+	for (auto& curPreset : PresetsByGUID)
+	{
+		for (auto& curChildPreset : curPreset.Value.ChildPresets)
+		{
+			if (curChildPreset.PresetGUID == InPresetGUID)
+			{
+				OutPresets.AddUnique(curPreset.Value.GUID);
+			}
+		}
+		for (auto& curPartSlot : curPreset.Value.PartSlots)
+		{
+			if (curPartSlot.PartPresetGUID == InPresetGUID)
+			{
+				OutPresets.AddUnique(curPreset.Value.GUID);
+			}
+		}
+	}
+	return EBIMResult::Success;
+}
+
 EObjectType FBIMPresetCollection::GetPresetObjectType(const FGuid& PresetID) const
 {
 	const FBIMPresetInstance* preset = PresetFromGUID(PresetID);
@@ -528,12 +570,22 @@ EBIMResult FBIMPresetCollection::GetNCPForPreset(const FGuid& InPresetGUID, FBIM
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMPresetCollection::GetPresetsForNCP(const FBIMTagPath& InNCP, TArray<FGuid>& OutPresets) const
+EBIMResult FBIMPresetCollection::GetPresetsForNCP(const FBIMTagPath& InNCP, TArray<FGuid>& OutPresets, bool bExactMatch) const
 {
-	return GetPresetsByPredicate([InNCP](const FBIMPresetInstance& Preset) 
+	if (bExactMatch)
 	{
-		return Preset.MyTagPath.Tags.Num() >= InNCP.Tags.Num() && Preset.MyTagPath.MatchesPartial(InNCP);
-	},OutPresets);
+		return GetPresetsByPredicate([InNCP](const FBIMPresetInstance& Preset)
+			{
+				return Preset.MyTagPath.Tags.Num() >= InNCP.Tags.Num() && Preset.MyTagPath.MatchesExact(InNCP);
+			}, OutPresets);
+	}
+	else
+	{
+		return GetPresetsByPredicate([InNCP](const FBIMPresetInstance& Preset)
+			{
+				return Preset.MyTagPath.Tags.Num() >= InNCP.Tags.Num() && Preset.MyTagPath.MatchesPartial(InNCP);
+			}, OutPresets);
+	}
 }
 
 EBIMResult FBIMPresetCollection::GetNCPSubcategories(const FBIMTagPath& InNCP, TArray<FString>& OutSubcats) const

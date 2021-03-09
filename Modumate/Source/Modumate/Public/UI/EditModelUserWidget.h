@@ -20,6 +20,7 @@ enum class ELeftMenuState : uint8
 	ToolMenu,
 	TutorialMenu,
 	SelectMenu,
+	BrowserMenu,
 	None
 };
 
@@ -91,6 +92,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UViewCubeWidget* ViewCubeUserWidget;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UBrowserMenuWidget* BrowserMenuWidget;
+
 	UPROPERTY()
 	TMap<EToolMode, class UModumateButtonUserWidget*> ToolToButtonMap;
 
@@ -125,6 +129,7 @@ public:
 	void ToggleTutorialMenu(bool NewVisibility);
 	void ToggleCutPlaneMenu(bool NewVisibility);
 	void ToggleViewMenu(bool NewVisibility);
+	void ToggleBrowserMenu(bool NewVisibility);
 	bool IsBIMDesingerActive() const;
 	bool EMUserWidgetHandleEscapeKey();
 	void UpdateSelectTrayVisibility();

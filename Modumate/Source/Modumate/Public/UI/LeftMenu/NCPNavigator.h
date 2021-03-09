@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "PresetCardPropertyList.generated.h"
+#include "NCPNavigator.generated.h"
 
 /**
  *
@@ -12,12 +12,12 @@
 
 
 UCLASS()
-class MODUMATE_API UPresetCardPropertyList : public UUserWidget
+class MODUMATE_API UNCPNavigator : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	UPresetCardPropertyList(const FObjectInitializer& ObjectInitializer);
+	UNCPNavigator(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
 protected:
@@ -28,9 +28,12 @@ protected:
 	class AEditModelPlayerController* EMPlayerController;
 
 public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UVerticalBox* DynamicPropertyList;
 
-	// Builder
-	void BuildAsPropertyList(const FGuid& InGUID);
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UVerticalBox* DynamicMainList;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UNCPButton> NCPButtonClass;
+
+	void BuildNCPNavigator();
 };

@@ -208,7 +208,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 				}
 			}
 		}
-		if (!nodeInst->ParentInstance.Pin())
+		if (nodeInst && !nodeInst->ParentInstance.Pin())
 		{
 			fromRootNode = true;
 		}
