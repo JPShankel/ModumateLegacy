@@ -242,6 +242,7 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 				{
 					continue;
 				}
+				separatorIDs.Add(id);
 			}
 
 			auto& surfaceGraphSubset = surfaceGraphIDToObjIDs.FindOrAdd(surfaceGraph->GetID());
@@ -305,6 +306,7 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 
 	int32 nextID = doc->GetNextAvailableID();
 
+	// first pass - separators and surface graph base MOIs
 	auto separatorDelta = MakeShared<FMOIDelta>();
 	for(auto & objRec : InRecord->ObjectData)
 	{
@@ -364,6 +366,41 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 			OutDeltas.Add(MakeShared<FGraph2DDelta>(delta));
 		}
 	}
+
+	// second pass - attachments
+	auto attachmentDelta = MakeShared<FMOIDelta>();
+	for(auto & objRec : InRecord->ObjectData)
+	{
+		// already done in separator pass
+		if (copiedToPastedObjIDs.Contains(objRec.ID))
+		{
+			continue;
+		}
+
+		if (!copiedToPastedObjIDs.Contains(objRec.ParentID))
+		{
+			continue;
+		}
+
+		auto& newParents = copiedToPastedObjIDs[objRec.ParentID];
+		for (int32 parentID : newParents)
+		{
+			FMOIStateData stateData;
+			stateData.ID = nextID++;
+
+			stateData.ObjectType = objRec.ObjectType;
+			stateData.ParentID = parentID;
+			stateData.AssemblyGUID = objRec.AssemblyGUID;
+			stateData.CustomData = objRec.CustomData;
+
+			attachmentDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+
+			auto& pastedIDs = copiedToPastedObjIDs.FindOrAdd(objRec.ID);
+			pastedIDs.Add(stateData.ID);
+		}
+	}
+
+	OutDeltas.Add(attachmentDelta);
 
 	bIsPreview ? 
 		doc->ApplyPreviewDeltas(OutDeltas, World) :

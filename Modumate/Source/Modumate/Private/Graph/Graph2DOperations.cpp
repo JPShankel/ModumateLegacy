@@ -176,11 +176,45 @@ namespace Modumate
 			OutCopiedToPastedIDs.Add(kvp.Key, outEdges.Array());
 		}
 
-		// TODO: associate with input polygons
 		if (!CalculatePolygons(OutDeltas, NextID))
 		{
 			ApplyInverseDeltas(OutDeltas);
 			return false;
+		}
+
+		// find edges that were pasted to find the related polys that were created during CalculatePolygons
+		for (auto& kvp : InRecord->Polygons)
+		{
+			TSet<int32> relatedPolys;
+
+			auto& vertexIDs = kvp.Value.VertexIDs;
+			int32 numVertices = vertexIDs.Num();
+
+			if (numVertices < 3)
+			{
+				continue;
+			}
+
+			for (int32 idx = 0; idx < numVertices; idx++)
+			{
+				int32 nextIdx = (idx + 1) % numVertices;
+				if (!(OutCopiedToPastedIDs.Contains(vertexIDs[idx]) && OutCopiedToPastedIDs.Contains(vertexIDs[nextIdx])))
+				{
+					continue;
+				}
+
+				// TODO: for pure surface graph paste, edges may be split and this will need to be more robust
+				bool bForward;
+				auto edge = FindEdgeByVertices(OutCopiedToPastedIDs[vertexIDs[idx]][0], OutCopiedToPastedIDs[vertexIDs[nextIdx]][0], bForward);
+				if (!edge)
+				{
+					continue;
+				}
+
+				relatedPolys.Add(bForward ? edge->LeftPolyID : edge->RightPolyID);
+			}
+
+			OutCopiedToPastedIDs.Add(kvp.Key, relatedPolys.Array());
 		}
 
 		// return graph in its original state
