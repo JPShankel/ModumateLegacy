@@ -111,6 +111,20 @@ namespace Modumate
 		}
 	}
 
+	int32 FGraph2DPolygon::FindEdgeIndex(FGraphSignedID edgeID, bool& bOutSameDirection, int32 startIndex) const
+	{
+		for (int32 edgeIdx = startIndex; edgeIdx < Edges.Num(); edgeIdx++)
+		{
+			int32 id = Edges[edgeIdx];
+			if (FMath::Abs(id) == FMath::Abs(edgeID))
+			{
+				bOutSameDirection = (id == edgeID);
+				return edgeIdx;
+			}
+		}
+		return INDEX_NONE;
+	}
+
 	int32 FGraph2DPolygon::FindPerimeterEdgeIndex(FGraphSignedID edgeID, bool& bOutSameDirection) const
 	{
 		for (int32 edgeIdx = 0; edgeIdx < CachedPerimeterEdgeIDs.Num(); edgeIdx++)
@@ -168,7 +182,7 @@ namespace Modumate
 
 			bool bCurEdgeForward;
 			auto edge = graph->FindEdgeByVertices(vertexID, nextVertexID, bCurEdgeForward);
-			if (!ensureAlways(edge))
+			if (edge == nullptr)
 			{
 				return;
 			}

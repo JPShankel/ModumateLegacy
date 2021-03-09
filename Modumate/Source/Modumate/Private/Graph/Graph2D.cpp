@@ -744,6 +744,16 @@ namespace Modumate
 				return false;
 			}
 			appliedDelta.EdgeAdditions.Add(kvp);
+
+			if (kvp.Value.ParentObjIDs.Num() > 0)
+			{
+				auto oldEdge = FindEdge(kvp.Value.ParentObjIDs[0]);
+				if (oldEdge)
+				{
+					newEdge->LeftPolyID = oldEdge->LeftPolyID;
+					newEdge->RightPolyID = oldEdge->RightPolyID;
+				}
+			}
 		}
 
 		for (auto &kvp : Delta.EdgeDeletions)
@@ -789,6 +799,18 @@ namespace Modumate
 				return false;
 			}
 			appliedDelta.PolygonDeletions.Add(kvp);
+		}
+
+		for (auto& kvp : Delta.PolygonIDUpdates)
+		{
+			auto poly = FindPolygon(kvp.Key);
+			if (!poly)
+			{
+				continue;
+			}
+
+			poly->VertexIDs = kvp.Value.NextVertexIDs;
+			poly->Dirty(false);
 		}
 
 		for (int32 vertexID : BoundingPolygon.Value)

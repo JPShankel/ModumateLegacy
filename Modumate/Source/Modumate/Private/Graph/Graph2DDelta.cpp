@@ -14,6 +14,23 @@ FGraph2DObjDelta::FGraph2DObjDelta(const TArray<int32>& InVertices, const TArray
 	, ParentObjIDs(InParents)
 { }
 
+FGraph2DFaceVertexIDsDelta::FGraph2DFaceVertexIDsDelta()
+{
+
+}
+
+FGraph2DFaceVertexIDsDelta::FGraph2DFaceVertexIDsDelta(const TArray<int32> &InPrevVertexIDs, const TArray<int32> &InNextVertexIDs)
+	: PrevVertexIDs(InPrevVertexIDs)
+	, NextVertexIDs(InNextVertexIDs)
+{
+
+}
+
+FGraph2DFaceVertexIDsDelta FGraph2DFaceVertexIDsDelta::MakeInverse() const
+{
+	return FGraph2DFaceVertexIDsDelta(NextVertexIDs, PrevVertexIDs);
+}
+
 FGraph2DDelta::FGraph2DDelta()
 { }
 
@@ -34,6 +51,7 @@ void FGraph2DDelta::Reset()
 
 	PolygonAdditions.Reset();
 	PolygonDeletions.Reset();
+	PolygonIDUpdates.Reset();
 }
 
 bool FGraph2DDelta::IsEmpty() const
@@ -45,6 +63,7 @@ bool FGraph2DDelta::IsEmpty() const
 	if (EdgeDeletions.Num() > 0) return false;
 	if (PolygonAdditions.Num() > 0) return false;
 	if (PolygonDeletions.Num() > 0) return false;
+	if (PolygonIDUpdates.Num() > 0) return false;
 
 	return true;
 }
@@ -111,6 +130,11 @@ void FGraph2DDelta::Invert()
 	Swap(VertexAdditions, VertexDeletions);
 	Swap(EdgeAdditions, EdgeDeletions);
 	Swap(PolygonAdditions, PolygonDeletions);
+
+	for (auto& kvp : PolygonIDUpdates)
+	{
+		PolygonIDUpdates[kvp.Key] = kvp.Value.MakeInverse();
+	}
 }
 
 TSharedPtr<FGraph2DDelta> FGraph2DDelta::MakeGraphInverse() const

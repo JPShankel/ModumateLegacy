@@ -54,16 +54,14 @@ namespace Modumate
 	bool FGraph2D::AddEdge(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D StartPosition, const FVector2D EndPosition)
 	{
 		TArray<int32> addedIDs;
-		TSet<int32> addedVertexIDs;
 
 		// start by adding or finding the vertices at the input positions
 		for (auto& position : { StartPosition, EndPosition })
 		{
 			FGraph2DDelta addVertexDelta(ID);
+			TSet<int32> addedVertexIDs;
 			addedVertexIDs.Reset();
-
 			const FGraph2DVertex *existingVertex = FindVertex(position);
-
 			if (existingVertex == nullptr)
 			{
 				if (!AddVertexDirect(addVertexDelta, NextID, position))
@@ -73,28 +71,25 @@ namespace Modumate
 
 				AggregateAddedVertices({ addVertexDelta }, addedVertexIDs);
 
-				if (!ensureAlways(addedVertexIDs.Num() == 1))
+				if (!addVertexDelta.IsEmpty())
 				{
-					return false;
+					if (!ApplyDelta(addVertexDelta))
+					{
+						ApplyInverseDeltas(OutDeltas);
+						return false;
+					}
+
+					OutDeltas.Add(addVertexDelta);
 				}
+
 				addedIDs.Add(addedVertexIDs.Array()[0]);
 			}
 			else
 			{
 				addedIDs.Add(existingVertex->ID);
 			}
-
-			if (!addVertexDelta.IsEmpty())
-			{
-				if (!ApplyDelta(addVertexDelta))
-				{
-					ApplyInverseDeltas(OutDeltas);
-					return false;
-				}
-
-				OutDeltas.Add(addVertexDelta);
-			}
 		}
+
 
 		if (!ensureAlways(addedIDs.Num() == 2))
 		{
@@ -418,6 +413,13 @@ namespace Modumate
 			// store that as the ParentObjIDs in the delta
 			updateEdgesDelta.EdgeAdditions.GenerateKeyArray(
 				updateEdgesDelta.EdgeDeletions[existingEdge->ID].ParentObjIDs);
+
+			TArray<int32> verticesBetweenEdge;
+			for (int32 idx = 1; idx < numVertices - 1; idx++)
+			{
+				verticesBetweenEdge.Add(sortedNewVertices[idx].Value);
+			}
+			AddVerticesToFace(updateEdgesDelta, existingEdge->ID, verticesBetweenEdge);
 		}
 
 		if (!updateEdgesDelta.IsEmpty())
@@ -484,29 +486,101 @@ namespace Modumate
 		for (int32 edgeID : edgeIDsToDelete)
 		{
 			auto edge = FindEdge(edgeID);
-			if (edge != nullptr)
+			if (edge == nullptr)
 			{
-				// delete connected vertices that are not connected to any edge that is not being deleted
-				for (auto vertexID : { edge->StartVertexID, edge->EndVertexID })
-				{
-					auto vertex = FindVertex(vertexID);
-					if (vertex != nullptr)
-					{
-						bool bDeleteVertex = true;
-						for (int32 connectedEdgeID : vertex->Edges)
-						{
-							if (!edgeIDsToDelete.Contains(FMath::Abs(connectedEdgeID)))
-							{
-								bDeleteVertex = false;
-							}
-						}
+				continue;
+			}
 
-						if (bDeleteVertex)
-						{
-							vertexIDsToDelete.Add(FMath::Abs(vertexID));
-						}
-						adjacentVertexIDs.Add(FMath::Abs(vertexID));
+			// delete connected vertices that are not connected to any edge that is not being deleted
+			for (auto vertexID : { edge->StartVertexID, edge->EndVertexID })
+			{
+				auto vertex = FindVertex(vertexID);
+				if (vertex == nullptr)
+				{
+					continue;
+				}
+
+				bool bDeleteVertex = true;
+				for (int32 connectedEdgeID : vertex->Edges)
+				{
+					if (!edgeIDsToDelete.Contains(FMath::Abs(connectedEdgeID)))
+					{
+						bDeleteVertex = false;
 					}
+				}
+
+				if (bDeleteVertex)
+				{
+					vertexIDsToDelete.Add(FMath::Abs(vertexID));
+				}
+				adjacentVertexIDs.Add(FMath::Abs(vertexID));
+			}
+
+			polyIDsToDelete.Add(edge->LeftPolyID);
+			polyIDsToDelete.Add(edge->RightPolyID);
+		}
+
+		for (int32 polyID : polyIDsToDelete)
+		{
+			auto poly = FindPolygon(polyID);
+			if (!poly)
+			{
+				continue;
+			}
+
+			for (int32 edgeID : poly->Edges)
+			{
+				// already deleted
+				if (edgeIDsToDelete.Contains(FMath::Abs(edgeID)))
+				{
+					continue;
+				}
+
+				auto edge = FindEdge(edgeID);
+				if (!edge)
+				{
+					continue;
+				}
+			}
+
+			for (int32 vertexID : poly->VertexIDs)
+			{
+				// already deleted
+				if (vertexIDsToDelete.Contains(FMath::Abs(vertexID)))
+				{
+					continue;
+				}
+
+				bool bDeleteVertex = true;
+				auto vertex = FindVertex(vertexID);
+				if (!vertex)
+				{
+					continue;
+				}
+
+				for (int32 edgeID : vertex->Edges)
+				{
+					if (!edgeIDsToDelete.Contains(FMath::Abs(edgeID)))
+					{
+						bDeleteVertex = false;
+						break;
+					}
+
+					auto edge = FindEdge(edgeID);
+					if (!edge)
+					{
+						continue;
+					}
+
+					if (!polyIDsToDelete.Contains(edge->LeftPolyID) || !polyIDsToDelete.Contains(edge->RightPolyID))
+					{
+						bDeleteVertex = false;
+						break;
+					}
+				}
+				if (bDeleteVertex)
+				{
+					vertexIDsToDelete.Add(FMath::Abs(vertexID));
 				}
 			}
 		}
@@ -553,7 +627,7 @@ namespace Modumate
 		}
 
 		FGraph2DDelta deleteDelta(ID);
-		if (!DeleteObjectsDirect(deleteDelta, vertexIDsToDelete, edgeIDsToDelete) || deleteDelta.IsEmpty())
+		if (!DeleteObjectsDirect(deleteDelta, vertexIDsToDelete, edgeIDsToDelete, polyIDsToDelete) || deleteDelta.IsEmpty())
 		{
 			return false;
 		}
@@ -613,7 +687,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph2D::DeleteObjectsDirect(FGraph2DDelta &OutDelta, const TSet<int32> &VertexIDs, const TSet<int32> &EdgeIDs)
+	bool FGraph2D::DeleteObjectsDirect(FGraph2DDelta &OutDelta, const TSet<int32> &VertexIDs, const TSet<int32> &EdgeIDs, const TSet<int32> &PolyIDs)
 	{
 		for (int32 vertexID : VertexIDs)
 		{
@@ -635,17 +709,17 @@ namespace Modumate
 			}
 
 			OutDelta.EdgeDeletions.Add(edge->ID, FGraph2DObjDelta({ edge->StartVertexID, edge->EndVertexID }));
-
-			// Since polygons can't be directly added or deleted, maintaining polygons is a side-effect that
-			// is accomplished here.
-			for (int32 polyID : { edge->LeftPolyID, edge->RightPolyID })
+		}
+		
+		for (int32 polyID : PolyIDs)
+		{
+			auto poly = FindPolygon(polyID);
+			if (!ensureAlways(poly != nullptr))
 			{
-				auto poly = FindPolygon(polyID);
-				if (poly != nullptr && !OutDelta.PolygonDeletions.Contains(poly->ID))
-				{
-					OutDelta.PolygonDeletions.Add(poly->ID, FGraph2DObjDelta(poly->VertexIDs, {}));
-				}
+				continue;
 			}
+
+			OutDelta.PolygonDeletions.Add(poly->ID, FGraph2DObjDelta(poly->VertexIDs));
 		}
 
 		return true;
@@ -666,6 +740,12 @@ namespace Modumate
 		auto splitVertex = FindVertex(SplittingVertexID);
 
 		if (!ensureAlways(startVertex != nullptr && endVertex != nullptr && splitVertex != nullptr))
+		{
+			return false;
+		}
+
+		TArray<int32> verticesToAdd = { SplittingVertexID };
+		if (!AddVerticesToFace(OutDelta, edge->ID, verticesToAdd))
 		{
 			return false;
 		}
@@ -695,6 +775,116 @@ namespace Modumate
 		}
 
 		return true;
+	}
+
+	bool FGraph2D::AddVerticesToFace(FGraph2DDelta &OutDelta, int32 EdgeIDToRemove, const TArray<int32>& VertexIDsToAdd)
+	{
+		auto edge = FindEdge(EdgeIDToRemove);
+		if (edge == nullptr)
+		{
+			return false;
+		}
+		TSet<int32> polyIDs;
+		polyIDs.Add(edge->LeftPolyID);
+		polyIDs.Add(edge->RightPolyID);
+
+		TArray<int32> reversed = VertexIDsToAdd;
+		Algo::Reverse(reversed);
+
+		for (int32 polyID : polyIDs)
+		{
+			auto poly = FindPolygon(polyID);
+			if (poly == nullptr)
+			{
+				continue;
+			}
+
+			auto& polyIDUpdate = FindOrAddVertexUpdates(OutDelta, polyID);
+			int32 posIdx = poly->Edges.Find(edge->ID);
+			int32 negIdx = poly->Edges.Find(-edge->ID);
+
+			TArray<int32> idxs = { posIdx, negIdx };
+			idxs.Sort();
+
+			int offset = 1;
+			for (int32 idx : idxs)
+			{
+				if (idx == INDEX_NONE)
+				{
+					continue;
+				}
+
+				if (idx == negIdx)
+				{
+					polyIDUpdate.NextVertexIDs.Insert(reversed, idx + offset);
+					offset += VertexIDsToAdd.Num();
+				}
+				else
+				{
+					polyIDUpdate.NextVertexIDs.Insert(VertexIDsToAdd, idx + offset);
+					offset += VertexIDsToAdd.Num();
+				}
+			}
+		}
+
+		return true;
+	}
+
+	bool FGraph2D::RemoveVertexFromFace(FGraph2DDelta& OutDelta, int32 VertexIDToRemove)
+	{
+		auto vertex = FindVertex(VertexIDToRemove);
+		if (vertex == nullptr)
+		{
+			return false;
+		}
+
+		if (vertex->Edges.Num() != 2)
+		{
+			return false;
+		}
+
+		TSet<int32> connectedPolyIDs;
+		for (int32 edgeID : vertex->Edges)
+		{
+			auto edge = FindEdge(edgeID);
+			if (!edge)
+			{
+				continue;
+			}
+
+			connectedPolyIDs.Add(FMath::Abs(edge->LeftPolyID));
+			connectedPolyIDs.Add(FMath::Abs(edge->RightPolyID));
+		}
+
+		for (int32 polyID : connectedPolyIDs)
+		{
+			auto poly = FindPolygon(polyID);
+			if (!poly)
+			{
+				continue;
+			}
+
+			int32 vertexIdx = poly->VertexIDs.Find(VertexIDToRemove);
+			auto& polyVertexIDUpdate = FindOrAddVertexUpdates(OutDelta, poly->ID);
+			if (ensureAlways(vertexIdx != -1))
+			{
+				polyVertexIDUpdate.NextVertexIDs.RemoveAt(vertexIdx);
+			}
+		}
+
+		return true;
+	}
+
+	FGraph2DFaceVertexIDsDelta& FGraph2D::FindOrAddVertexUpdates(FGraph2DDelta& OutDelta, int32 PolyID)
+	{
+		auto poly = FindPolygon(PolyID);
+		check(poly);
+
+		if (OutDelta.PolygonIDUpdates.Contains(PolyID))
+		{
+			return OutDelta.PolygonIDUpdates[PolyID];
+		}
+		return OutDelta.PolygonIDUpdates.Add(poly->ID, FGraph2DFaceVertexIDsDelta(poly->VertexIDs, poly->VertexIDs));
 	}
 
 	bool FGraph2D::MoveVertices(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const TMap<int32, FVector2D>& NewVertexPositions)
@@ -1199,9 +1389,30 @@ namespace Modumate
 			int32 otherVertexID = (oldVertex->ID == edge->StartVertexID) ? edge->EndVertexID : edge->StartVertexID;
 
 			// new edge connects the other vertex of the edge to the vertex that is saved in the join
-			if (!AddEdgeDirect(OutDelta, NextID, otherVertexID, SavedVertexID))
+			if (!AddEdgeDirect(OutDelta, NextID, otherVertexID, SavedVertexID, { edgeID }))
 			{
 				return false;
+			}
+
+			TSet<int32> polys;
+			polys.Add(edge->LeftPolyID);
+			polys.Add(edge->RightPolyID);
+			for (int32 polyID : polys)
+			{
+				auto poly = FindPolygon(polyID);
+				if (!poly)
+				{
+					continue;
+				}
+
+				int32 oldVertexIdx = poly->VertexIDs.Find(RemovedVertexID);
+				if (oldVertexIdx == INDEX_NONE)
+				{
+					return false;
+				}
+
+				auto& polyIDUpdate = FindOrAddVertexUpdates(OutDelta, poly->ID);
+				polyIDUpdate.NextVertexIDs[oldVertexIdx] = SavedVertexID;
 			}
 		}
 
@@ -1234,6 +1445,7 @@ namespace Modumate
 				dirtyEdges.Add(-edge.ID);
 			}
 		}
+
 
 		if (bDebugCheck)
 		{
@@ -1301,7 +1513,13 @@ namespace Modumate
 					updatePolygonsDelta.PolygonDeletions.Add(previousID, FGraph2DObjDelta(polygon->VertexIDs, { addedPolyID }));
 				}
 			}
+			else if (bEdgesOnSamePoly)
+			{
+				auto& update = FindOrAddVertexUpdates(updatePolygonsDelta, polyID);
+				update.NextVertexIDs = curVertexIDs;
+			}
 		}
+
 
 		// Clear edge-polygon dirty flags, so that subsequent calls to CalculatePolygons would be no-ops
 		for (auto& edgekvp : Edges)
@@ -1316,6 +1534,60 @@ namespace Modumate
 				return false;
 			}
 			OutDeltas.Add(updatePolygonsDelta);
+		}
+
+		FGraph2DDelta deletePolysDelta(ID);
+		for (auto& dirtykvp : Polygons)
+		{
+			FGraph2DPolygon& dirtyPoly = dirtykvp.Value;
+			if (!dirtyPoly.bDerivedDataDirty)
+			{
+				continue;
+			}
+
+			bool bDeletePoly = false;
+			for (int32 idx = 0; idx < dirtyPoly.VertexIDs.Num(); idx++)
+			{
+				int32 startVertexID = dirtyPoly.VertexIDs[idx];
+				int32 endVertexID = dirtyPoly.VertexIDs[(idx + 1) % dirtyPoly.VertexIDs.Num()];
+
+				bool bOutForward;
+				auto edge = FindEdgeByVertices(startVertexID, endVertexID, bOutForward);
+				
+				if (!edge)
+				{
+					bDeletePoly = true;
+					break;
+				}
+
+				int32 currentPolyID = bOutForward ? edge->LeftPolyID : edge->RightPolyID;
+
+				auto poly = FindPolygon(currentPolyID);
+				if (!poly || poly->ID == dirtyPoly.ID)
+				{
+					continue;
+				}
+				else
+				{
+					bDeletePoly = true;
+					break;
+				}
+
+			}
+
+			if (bDeletePoly)
+			{
+				deletePolysDelta.PolygonDeletions.Add(dirtykvp.Key, FGraph2DObjDelta(dirtykvp.Value.VertexIDs));
+			}
+		}
+
+		if (!deletePolysDelta.IsEmpty())
+		{
+			if (!ApplyDelta(deletePolysDelta))
+			{
+				return false;
+			}
+			OutDeltas.Add(deletePolysDelta);
 		}
 
 		return true;

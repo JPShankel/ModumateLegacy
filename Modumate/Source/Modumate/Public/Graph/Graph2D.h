@@ -236,7 +236,7 @@ namespace Modumate
 		bool AddEdgeDirect(FGraph2DDelta &OutDelta, int32 &NextID, const int32 StartVertexID, const int32 EndVertexID, const TArray<int32> &ParentIDs = TArray<int32>());
 
 		// Create Delta that delete precisely the provided objects
-		bool DeleteObjectsDirect(FGraph2DDelta &OutDelta, const TSet<int32> &VertexIDs, const TSet<int32> &EdgeIDs);
+		bool DeleteObjectsDirect(FGraph2DDelta &OutDelta, const TSet<int32> &VertexIDs, const TSet<int32> &EdgeIDs, const TSet<int32> &PolyIDs = TSet<int32>());
 
 
 		// These helper functions account for side-effects caused by the public functions and apply the deltas that they create,
@@ -245,6 +245,15 @@ namespace Modumate
 		// Create and apply a Delta that replaces the edge with two edges - an edge from the start vertex to the split vertex, 
 		// and an edge from the split vertex to the end vertex.
 		bool SplitEdge(FGraph2DDelta &OutDelta, int32 &NextID, int32 EdgeID, int32 SplittingVertexID);
+
+		// Given an edge that is being split, add vertices that are splitting the edge to update the connected faces.
+		bool AddVerticesToFace(FGraph2DDelta &OutDelta, int32 EdgeIDToRemove, const TArray<int32>& VertexIDsToAdd);
+
+		// Update a face by removing a vertex.  TODO: currently unused, would be used for joining co-linear edges.
+		bool RemoveVertexFromFace(FGraph2DDelta &OutDelta, int32 VertexIDToRemove);
+
+		// Get the entry for updating the vertex ID list in the delta.
+		FGraph2DFaceVertexIDsDelta& FindOrAddVertexUpdates(FGraph2DDelta& OutDelta, int32 PolyID);
 
 		// Creates and applies Deltas that split edges if the provided vertices are on them.  This helper function should be called
 		// after adding vertices directly to maintain the graph's assumption that nothing overlaps.

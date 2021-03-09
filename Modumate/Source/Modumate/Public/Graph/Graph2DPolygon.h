@@ -31,6 +31,7 @@ namespace Modumate
 
 		bool IsInside(int32 OtherPolyID) const;
 		void SetContainingPoly(int32 NewContainingPolyID);
+		int32 FindEdgeIndex(FGraphSignedID edgeID, bool& bOutSameDirection, int32 startIndex = 0) const;
 		int32 FindPerimeterEdgeIndex(FGraphSignedID edgeID, bool& bOutSameDirection) const;
 
 		void SetVertices(const TArray<int32> &Vertices);

@@ -62,6 +62,23 @@ struct FGraph2DHostedObjectDelta
 	{ }
 };
 
+USTRUCT()
+struct MODUMATE_API FGraph2DFaceVertexIDsDelta
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<int32> PrevVertexIDs;
+
+	UPROPERTY()
+	TArray<int32> NextVertexIDs;
+
+	FGraph2DFaceVertexIDsDelta();
+	FGraph2DFaceVertexIDsDelta(const TArray<int32> &InPrevVertexIDs, const TArray<int32> &InNextVertexIDs);
+
+	FGraph2DFaceVertexIDsDelta MakeInverse() const;
+};
+
 // TODO: generalize FGraph3DHostedObjDelta for use here as well
 
 // A struct that completely describes a change to the 2D graph
@@ -98,6 +115,9 @@ struct MODUMATE_API FGraph2DDelta : public FDocumentDelta
 
 	UPROPERTY()
 	TMap<int32, FGraph2DObjDelta> PolygonDeletions;
+
+	UPROPERTY()
+	TMap<int32, FGraph2DFaceVertexIDsDelta> PolygonIDUpdates;
 
 	FGraph2DDelta();
 	FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType = EGraph2DDeltaType::Edit);
