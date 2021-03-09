@@ -11,6 +11,8 @@
 
 // Incoming image sized to min 20'.
 const FModumateUnitValue AMOIBackgroundImage::DefaultSize(FModumateUnitValue::WorldInches(20 * 12.0f));
+const FModumateUnitValue AMOIBackgroundImage::PlaneDisplacement(FModumateUnitValue::WorldCentimeters(0.5f));
+
 const FColor AMOIBackgroundImage::UnselectedColor(120, 120, 120);
 const FColor AMOIBackgroundImage::SelectedColor(250, 250, 250);
 
@@ -109,6 +111,11 @@ bool AMOIBackgroundImage::GetTransformedLocationState(const FTransform Transform
 	return OutState.CustomData.SaveStructData(moiData);
 }
 
+void AMOIBackgroundImage::PreDestroy()
+{
+	CachedFilename.Empty();
+}
+
 void AMOIBackgroundImage::UpdateCachedGeometryData()
 {
 	FVector halfSize = FVector(InstanceData.Scale * ImageScale * ImageSize / 2.0f, 0);
@@ -173,7 +180,11 @@ void AMOIBackgroundImage::CreateActorMesh(UProceduralMeshComponent* Mesh)
 	TArray<FProcMeshTangent> tangents;
 	TArray<FLinearColor> vertexColors;
 
-	vertices = CachedPoints;
+	// Z-fighting:
+	FVector displacement = CachedPlane * PlaneDisplacement.AsWorldCentimeters();
+
+	vertices = { CachedPoints[0] + displacement, CachedPoints[1] + displacement,
+		CachedPoints[2] + displacement, CachedPoints[3] + displacement };
 	normals = { CachedPlane, CachedPlane, CachedPlane, CachedPlane };
 	uv0 = { {0.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f}, {0.0f, 0.0f } };
 	tangents.Init(FProcMeshTangent((vertices[1] - vertices[0]).GetSafeNormal(), false), 4);

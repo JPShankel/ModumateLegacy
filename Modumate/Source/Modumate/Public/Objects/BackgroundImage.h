@@ -36,6 +36,7 @@ public:
 	virtual void SetupDynamicGeometry() override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController* controller) override;
 	virtual void GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
+	void PreDestroy() override;
 
 	virtual void RegisterInstanceDataUI(UToolTrayBlockProperties* PropertiesUI) override;
 	UFUNCTION()
@@ -65,6 +66,7 @@ protected:
 	float ImageScale = 0.0f;
 
 	static const FModumateUnitValue DefaultSize;
+	static const FModumateUnitValue PlaneDisplacement;
 	static const FColor UnselectedColor;
 	static const FColor SelectedColor;
 };
