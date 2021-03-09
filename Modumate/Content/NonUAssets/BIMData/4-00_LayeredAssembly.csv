@@ -666,12 +666,12 @@ PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickn
 PRESET,,292CE425-AE96-DE42-81FD-8E0A47D276E9,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Tile_Porcelain-Length-4in-Width-4in-Thickness-0.25in-BevelWidth-0.0625in-Finish1-0RawMaterial-Porcelain-E6E3DE
-0LayerPattern_2D-Flemish Bond
+0LayerPattern_2D-Cascading Thirds
 Part_1FlexDim2Fixed_Gap2D-Width-0.25in-Recess-0.1875in-Finish1-0RawMaterial-Mortar-C6C6C6
 3AA00245-3658-FD48-A67E-C2E074DFBDC5
 292CE425-AE96-DE42-81FD-8E0A47D276E9",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Porcelain Tile,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Tile_Porcelain-Length-4in-Width-4in-Thickness-0.25in-BevelWidth-0.0625in-Finish1-0RawMaterial-Porcelain-E6E3DE
-0LayerPattern_2D-Flemish Bond
+0LayerPattern_2D-Cascading Thirds
 Part_1FlexDim2Fixed_Gap2D-Width-0.25in-Recess-0.1875in-Finish1-0RawMaterial-Mortar-C6C6C6
 3AA00245-3658-FD48-A67E-C2E074DFBDC5",
 PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.5in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-AC998D-8250982F-E629-C84C-B1FB-F4F2801C1A4A,
@@ -835,12 +835,12 @@ Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
 PRESET,,C2070799-E69D-8F4E-9213-0BE69A89AD4B,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-4in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Calacatta)-FFFFFF
-0LayerPattern_2D-Flemish Bond
+0LayerPattern_2D-Stack Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.125in-Finish1-0RawMaterial-Mortar-C6C6C6
 1D91D075-D2B9-794B-A356-339F3BDA80DE
 C2070799-E69D-8F4E-9213-0BE69A89AD4B",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,Stone Tile,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-4in-Width-3in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Marble (Calacatta)-FFFFFF
-0LayerPattern_2D-Flemish Bond
+0LayerPattern_2D-Stack Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.125in-Finish1-0RawMaterial-Mortar-C6C6C6
 1D91D075-D2B9-794B-A356-339F3BDA80DE",
 PRESET,,,,,,,,,,IconHeight,64in,,,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.75in-Finish1-0RawMaterial-Concrete (Fine Aggregate)-ABA283-49836543-CCED-E34E-B3E7-E4480E480FA1,
@@ -1052,12 +1052,12 @@ PRESET,,,,,,,,,,IconWidth,12in,,,,,
 PRESET,,2B7F4608-5F7A-0143-8384-00643D584333,,"Assembly_2FlexDims1Fixed_PlanarGroup_Tread
 Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-12in-Width-24in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Limestone (White)-FFFFFF
-0LayerPattern_2D-English Bond
+0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
 5BF678FD-9CB4-614E-AD79-D0F5C697707B
 2B7F4608-5F7A-0143-8384-00643D584333",,Assembly_2FlexDims1Fixed_PlanarGroup_Tread,,Limestone Tread,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-12in-Width-24in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Limestone (White)-FFFFFF
-0LayerPattern_2D-English Bond
+0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
 5BF678FD-9CB4-614E-AD79-D0F5C697707B",
 PRESET,,,,,,,,,,IconWidth,12in,,,,,
@@ -1143,12 +1143,12 @@ PRESET,,,,,,,,,,IconWidth,12in,,,,,
 PRESET,,A976B689-C570-9C4B-837B-9B4DFC731CE5,,"Assembly_2FlexDims1Fixed_PlanarGroup_Riser
 Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-12in-Width-24in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Limestone (White)-FFFFFF
-0LayerPattern_2D-English Bond
+0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
 5BF678FD-9CB4-614E-AD79-D0F5C697707B
 A976B689-C570-9C4B-837B-9B4DFC731CE5",,Assembly_2FlexDims1Fixed_PlanarGroup_Riser,,Limestone Riser,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Tile_Stone-Length-12in-Width-24in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Limestone (White)-FFFFFF
-0LayerPattern_2D-English Bond
+0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
 5BF678FD-9CB4-614E-AD79-D0F5C697707B",
 PRESET,,,,,,,,,,IconWidth,12in,,,,,

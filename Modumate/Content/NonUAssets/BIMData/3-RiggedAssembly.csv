@@ -10,7 +10,7 @@ Property_Spatiality_Slot-HandleInterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-E9DD1F07-C411-2842-9C56-0BF4998DB20E
 Property_Spatiality_Slot-HandleExterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-E9DD1F07-C411-2842-9C56-0BF4998DB20E
-1794574D-6E12-F140-B0DD-045D0540F1BD",,Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet,,Knob Handle Set (Light),,,,,X,,Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior,Property_Spatiality_Slot-HandleInterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-E9DD1F07-C411-2842-9C56-0BF4998DB20E,,-,-,-,-,-,-,-,-,-,-,-,-
+1794574D-6E12-F140-B0DD-045D0540F1BD",,Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet,,Knob Handle Set,,,,,X,,Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior,Property_Spatiality_Slot-HandleInterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-E9DD1F07-C411-2842-9C56-0BF4998DB20E,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-HandleExterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-E9DD1F07-C411-2842-9C56-0BF4998DB20E,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,A4F7679A-2930-E743-AFEB-18DF33CEE6FA,,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
@@ -18,24 +18,32 @@ Property_Spatiality_Slot-HandleInterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5
 Property_Spatiality_Slot-HandleExterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5
-A4F7679A-2930-E743-AFEB-18DF33CEE6FA",,Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet,,Lever Handle Set (Dark),,,,,X,,Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior,Property_Spatiality_Slot-HandleInterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5,,-,-,-,-,-,-,-,-,-,-,-,-
+A4F7679A-2930-E743-AFEB-18DF33CEE6FA",,Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet,,Lever Handle Set,,,,,X,,Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior,Property_Spatiality_Slot-HandleInterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-HandleExterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,67C68842-10DD-E442-84E8-7CE4C052C2B0,,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
-67C68842-10DD-E442-84E8-7CE4C052C2B0",,Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet,,Lateral Pull Handle Set (Light),,,,,X,,Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior,Property_Spatiality_Slot-HandleInterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-HandleExterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE,,-,-,-,-,-,-,-,-,-,-,-,-
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
+67C68842-10DD-E442-84E8-7CE4C052C2B0",,Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet,,Lateral Pull Handle Set 1,,,,,X,,Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior,Property_Spatiality_Slot-HandleInterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-HandleExterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,9EE8B998-6627-8445-9B56-040FE93F058A,,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
-9EE8B998-6627-8445-9B56-040FE93F058A",,Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet,,Lateral Pull Handle Set (Dark),,,,,X,,Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior,Property_Spatiality_Slot-HandleInterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-HandleExterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53,,-,-,-,-,-,-,-,-,-,-,-,-
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
+9EE8B998-6627-8445-9B56-040FE93F058A",,Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet,,Lateral Pull Handle Set 2,,,,,X,,Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior,Property_Spatiality_Slot-HandleInterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-HandleExterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,C645B4F3-2F2E-5448-9614-E62DFE7A32E2,,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
+Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
+Property_Spatiality_Slot-HandleInterior
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-332520-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Property_Spatiality_Slot-HandleExterior
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
+C645B4F3-2F2E-5448-9614-E62DFE7A32E2",,Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet,,Lateral Pull Handle Set 3,,,,,X,,Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior,Property_Spatiality_Slot-HandleInterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-332520-3D97F141-CCA6-8B41-86F3-1BDC5D425E53,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-HandleExterior,Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,47879559-EEF0-274F-84B7-C1BB4939C174,,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -64,12 +72,12 @@ PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-HingeFramed3of3,Part_0FlexDims3Fi
 PRESET,,70743C31-3B93-7346-AEFF-72B89C85BD3E,,"Assembly_1FlexDim2Fixed_LinearRig_HingeSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HingeFramed1of3-Property_Spatiality_Slot-HingeFramed2of3-Property_Spatiality_Slot-HingeFramed3of3
 Property_Spatiality_Slot-HingeFramed1of3
-Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23
+Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-332520-EF3F113F-BA4F-0547-A380-FEF960A52F23
 Property_Spatiality_Slot-HingeFramed2of3
-Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23
-70743C31-3B93-7346-AEFF-72B89C85BD3E",,Assembly_1FlexDim2Fixed_LinearRig_HingeSet,,"3-Hinge Set, Patrician Bronze",,Height,80in,,X,,Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HingeFramed1of3-Property_Spatiality_Slot-HingeFramed2of3-Property_Spatiality_Slot-HingeFramed3of3,Property_Spatiality_Slot-HingeFramed1of3,Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-HingeFramed2of3,Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-HingeFramed3of3,Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23,,-,-,-,-,-,-,-,-,-,-,-,-
+Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-332520-EF3F113F-BA4F-0547-A380-FEF960A52F23
+70743C31-3B93-7346-AEFF-72B89C85BD3E",,Assembly_1FlexDim2Fixed_LinearRig_HingeSet,,"3-Hinge Set, Patrician Bronze",,Height,80in,,X,,Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HingeFramed1of3-Property_Spatiality_Slot-HingeFramed2of3-Property_Spatiality_Slot-HingeFramed3of3,Property_Spatiality_Slot-HingeFramed1of3,Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-332520-EF3F113F-BA4F-0547-A380-FEF960A52F23,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-HingeFramed2of3,Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-332520-EF3F113F-BA4F-0547-A380-FEF960A52F23,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-HingeFramed3of3,Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-332520-EF3F113F-BA4F-0547-A380-FEF960A52F23,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,8FFEA168-5CDA-114A-8F83-010013714A46,,"Assembly_1FlexDim2Fixed_LinearRig_HingeSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-FramelessBracket1of3-Property_Spatiality_Slot-FramelessBracket2of3-Property_Spatiality_Slot-FramelessBracket3of3
 Property_Spatiality_Slot-FramelessBracket1of3
@@ -95,7 +103,7 @@ Part_1FlexDim2Fixed_Muntin_Internal-Property_Spatiality_Mesh_Muntin_Internal-Mun
 928897F7-81B2-2646-83BD-B353BEA73291",,Assembly_1FlexDim2Fixed_LinearRig_MuntinCompound,,Compound Muntin 1 (Wide),,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_1FlexDim_MuntinCompound-Property_Spatiality_Slot-MuntinPartialBack-Property_Spatiality_Slot-MuntinPartialCenter-Property_Spatiality_Slot-MuntinPartialFront,Property_Spatiality_Slot-MuntinPartialBack,Part_1FlexDim2Fixed_Muntin_SurfaceMounted-Property_Spatiality_Mesh_Muntin_Surface-Muntin-02.Muntin-02'-Finish1-0RawMaterial-Oak (Red)-0RawMaterial-Paint-F3F1ED-7EFCF87C-C937-E242-9887-790E50757DB4,,,,,,,,,,,,,
 PRESET,,,,,,,,,,Height,48in,,,,,Property_Spatiality_Slot-MuntinPartialCenter,Part_1FlexDim2Fixed_Muntin_Internal-Property_Spatiality_Mesh_Muntin_Internal-Muntin-Spacer-02.Muntin-Spacer-02'-Finish1-0RawMaterial-Aluminum-CCCCCC-7179F161-00FE-E847-8153-E5595263B311,,,,,,,,,,,,,
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-MuntinPartialFront,Part_1FlexDim2Fixed_Muntin_SurfaceMounted-Property_Spatiality_Mesh_Muntin_Surface-Muntin-02.Muntin-02'-Finish1-0RawMaterial-Oak (Red)-0RawMaterial-Paint-F3F1ED-7EFCF87C-C937-E242-9887-790E50757DB4,,,,,,,,,,,,,
-PRESET,,6548D126-7B5D-A945-B0BB-B9BC382B3CD3,,"Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet
+PRESET,,6548D126-7B5D-A945-B0BB-B9BC382B3CD3,,"Assembly_2FlexDims1Fixed_PlanarRig_MuntinSet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.2-Property_Spatiality_Slot-MuntinX0.25-Property_Spatiality_Slot-MuntinX0.33-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinX0.67-Property_Spatiality_Slot-MuntinX0.75-Property_Spatiality_Slot-MuntinX0.8-Property_Spatiality_Slot-MuntinZ0.2-Property_Spatiality_Slot-MuntinZ0.25-Property_Spatiality_Slot-MuntinZ0.33-Property_Spatiality_Slot-MuntinZ0.5-Property_Spatiality_Slot-MuntinZ0.67-Property_Spatiality_Slot-MuntinZ0.75-Property_Spatiality_Slot-MuntinZ0.8
 Property_Spatiality_Slot-MuntinX0.33
 Assembly_1FlexDim2Fixed_LinearRig_MuntinCompound
@@ -129,7 +137,7 @@ Part_1FlexDim2Fixed_Muntin_SurfaceMounted-Property_Spatiality_Mesh_Muntin_Surfac
 Property_Spatiality_Slot-MuntinPartialCenter
 Part_1FlexDim2Fixed_Muntin_Internal-Property_Spatiality_Mesh_Muntin_Internal-Muntin-Spacer-02.Muntin-Spacer-02'-Finish1-0RawMaterial-Aluminum-CCCCCC-7179F161-00FE-E847-8153-E5595263B311
 928897F7-81B2-2646-83BD-B353BEA73291
-6548D126-7B5D-A945-B0BB-B9BC382B3CD3",,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,"Muntin Set, 3x3",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.2-Property_Spatiality_Slot-MuntinX0.25-Property_Spatiality_Slot-MuntinX0.33-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinX0.67-Property_Spatiality_Slot-MuntinX0.75-Property_Spatiality_Slot-MuntinX0.8-Property_Spatiality_Slot-MuntinZ0.2-Property_Spatiality_Slot-MuntinZ0.25-Property_Spatiality_Slot-MuntinZ0.33-Property_Spatiality_Slot-MuntinZ0.5-Property_Spatiality_Slot-MuntinZ0.67-Property_Spatiality_Slot-MuntinZ0.75-Property_Spatiality_Slot-MuntinZ0.8,Property_Spatiality_Slot-MuntinX0.33,"Assembly_1FlexDim2Fixed_LinearRig_MuntinCompound
+6548D126-7B5D-A945-B0BB-B9BC382B3CD3",,Assembly_2FlexDims1Fixed_PlanarRig_MuntinSet,,"Muntin Set, 3x3",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.2-Property_Spatiality_Slot-MuntinX0.25-Property_Spatiality_Slot-MuntinX0.33-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinX0.67-Property_Spatiality_Slot-MuntinX0.75-Property_Spatiality_Slot-MuntinX0.8-Property_Spatiality_Slot-MuntinZ0.2-Property_Spatiality_Slot-MuntinZ0.25-Property_Spatiality_Slot-MuntinZ0.33-Property_Spatiality_Slot-MuntinZ0.5-Property_Spatiality_Slot-MuntinZ0.67-Property_Spatiality_Slot-MuntinZ0.75-Property_Spatiality_Slot-MuntinZ0.8,Property_Spatiality_Slot-MuntinX0.33,"Assembly_1FlexDim2Fixed_LinearRig_MuntinCompound
 Property_Spatiality_Rig_SlotConfig_1FlexDim_MuntinCompound-Property_Spatiality_Slot-MuntinPartialBack-Property_Spatiality_Slot-MuntinPartialCenter-Property_Spatiality_Slot-MuntinPartialFront
 Property_Spatiality_Slot-MuntinPartialBack
 Part_1FlexDim2Fixed_Muntin_SurfaceMounted-Property_Spatiality_Mesh_Muntin_Surface-Muntin-02.Muntin-02'-Finish1-0RawMaterial-Oak (Red)-0RawMaterial-Paint-F3F1ED-7EFCF87C-C937-E242-9887-790E50757DB4
@@ -157,7 +165,7 @@ Part_1FlexDim2Fixed_Muntin_SurfaceMounted-Property_Spatiality_Mesh_Muntin_Surfac
 Property_Spatiality_Slot-MuntinPartialCenter
 Part_1FlexDim2Fixed_Muntin_Internal-Property_Spatiality_Mesh_Muntin_Internal-Muntin-Spacer-02.Muntin-Spacer-02'-Finish1-0RawMaterial-Aluminum-CCCCCC-7179F161-00FE-E847-8153-E5595263B311
 928897F7-81B2-2646-83BD-B353BEA73291",,,,,,,,,,,,,
-PRESET,,0B451960-7081-B748-B8BC-76860A0B14A4,,"Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet
+PRESET,,0B451960-7081-B748-B8BC-76860A0B14A4,,"Assembly_2FlexDims1Fixed_PlanarRig_MuntinSet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.2-Property_Spatiality_Slot-MuntinX0.25-Property_Spatiality_Slot-MuntinX0.33-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinX0.67-Property_Spatiality_Slot-MuntinX0.75-Property_Spatiality_Slot-MuntinX0.8-Property_Spatiality_Slot-MuntinZ0.2-Property_Spatiality_Slot-MuntinZ0.25-Property_Spatiality_Slot-MuntinZ0.33-Property_Spatiality_Slot-MuntinZ0.5-Property_Spatiality_Slot-MuntinZ0.67-Property_Spatiality_Slot-MuntinZ0.75-Property_Spatiality_Slot-MuntinZ0.8
 Property_Spatiality_Slot-MuntinX0.2
 Assembly_1FlexDim2Fixed_LinearRig_MuntinCompound
@@ -191,7 +199,7 @@ Part_1FlexDim2Fixed_Muntin_SurfaceMounted-Property_Spatiality_Mesh_Muntin_Surfac
 Property_Spatiality_Slot-MuntinPartialCenter
 Part_1FlexDim2Fixed_Muntin_Internal-Property_Spatiality_Mesh_Muntin_Internal-Muntin-Spacer-02.Muntin-Spacer-02'-Finish1-0RawMaterial-Aluminum-CCCCCC-7179F161-00FE-E847-8153-E5595263B311
 928897F7-81B2-2646-83BD-B353BEA73291
-0B451960-7081-B748-B8BC-76860A0B14A4",,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet,,"Muntin Set, Prairie",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.2-Property_Spatiality_Slot-MuntinX0.25-Property_Spatiality_Slot-MuntinX0.33-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinX0.67-Property_Spatiality_Slot-MuntinX0.75-Property_Spatiality_Slot-MuntinX0.8-Property_Spatiality_Slot-MuntinZ0.2-Property_Spatiality_Slot-MuntinZ0.25-Property_Spatiality_Slot-MuntinZ0.33-Property_Spatiality_Slot-MuntinZ0.5-Property_Spatiality_Slot-MuntinZ0.67-Property_Spatiality_Slot-MuntinZ0.75-Property_Spatiality_Slot-MuntinZ0.8,Property_Spatiality_Slot-MuntinX0.2,"Assembly_1FlexDim2Fixed_LinearRig_MuntinCompound
+0B451960-7081-B748-B8BC-76860A0B14A4",,Assembly_2FlexDims1Fixed_PlanarRig_MuntinSet,,"Muntin Set, Prairie",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.2-Property_Spatiality_Slot-MuntinX0.25-Property_Spatiality_Slot-MuntinX0.33-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinX0.67-Property_Spatiality_Slot-MuntinX0.75-Property_Spatiality_Slot-MuntinX0.8-Property_Spatiality_Slot-MuntinZ0.2-Property_Spatiality_Slot-MuntinZ0.25-Property_Spatiality_Slot-MuntinZ0.33-Property_Spatiality_Slot-MuntinZ0.5-Property_Spatiality_Slot-MuntinZ0.67-Property_Spatiality_Slot-MuntinZ0.75-Property_Spatiality_Slot-MuntinZ0.8,Property_Spatiality_Slot-MuntinX0.2,"Assembly_1FlexDim2Fixed_LinearRig_MuntinCompound
 Property_Spatiality_Rig_SlotConfig_1FlexDim_MuntinCompound-Property_Spatiality_Slot-MuntinPartialBack-Property_Spatiality_Slot-MuntinPartialCenter-Property_Spatiality_Slot-MuntinPartialFront
 Property_Spatiality_Slot-MuntinPartialBack
 Part_1FlexDim2Fixed_Muntin_SurfaceMounted-Property_Spatiality_Mesh_Muntin_Surface-Muntin-02.Muntin-02'-Finish1-0RawMaterial-Oak (Red)-0RawMaterial-Paint-F3F1ED-7EFCF87C-C937-E242-9887-790E50757DB4
@@ -224,9 +232,9 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleRightTop
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20-009E91EC-32D4-EE41-BFF5-5E995A416F1A
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-332520-009E91EC-32D4-EE41-BFF5-5E995A416F1A
 6C152402-7F36-C249-8F61-E6B3BAD47D40",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet,,"Cabinet Panel With Upper Handle, Walnut",,Width,24in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-HandleRightTop,Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20-009E91EC-32D4-EE41-BFF5-5E995A416F1A,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-HandleRightTop,Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-332520-009E91EC-32D4-EE41-BFF5-5E995A416F1A,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,2A004688-AFD7-E143-8B54-784F75BF4A06,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1
 Property_Spatiality_Slot-Panel
@@ -240,17 +248,17 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleRightBottom
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-331F20-9CE454B8-9AD4-E148-B635-C4D1CED9FB81
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-332520-9CE454B8-9AD4-E148-B635-C4D1CED9FB81
 37380FE8-DD2B-094F-B386-6EBF5FB9C9D3",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet,,"Cabinet Panel With Lower Handle, Walnut",,Width,24in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-HandleRightBottom,Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-331F20-9CE454B8-9AD4-E148-B635-C4D1CED9FB81,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-HandleRightBottom,Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-332520-9CE454B8-9AD4-E148-B635-C4D1CED9FB81,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,0DE7E3A2-2EA0-F94D-B178-EDC644368366,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleCenterMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20-B0833FCD-C935-A441-A707-4AA71CFA8858
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-332520-B0833FCD-C935-A441-A707-4AA71CFA8858
 0DE7E3A2-2EA0-F94D-B178-EDC644368366",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet,,"Cabinet Panel With Center Handle, Walnut",,Width,24in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-HandleCenterMidHeight,Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20-B0833FCD-C935-A441-A707-4AA71CFA8858,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-HandleCenterMidHeight,Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-332520-B0833FCD-C935-A441-A707-4AA71CFA8858,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,778109D9-179C-2A4C-B030-D765B3A22974,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1
 Property_Spatiality_Slot-Panel
@@ -272,9 +280,9 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-03.Cabinet-Panel-03'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-ABABAB-31FE5001-2F72-8A42-A06D-FA6B76625BD1
 Property_Spatiality_Slot-HandleRightMidHeight
-Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh_HandleStatic_LateralPull_Cabinet-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-331F20-7CB22EC7-E589-744A-B60B-D92DE48E17D3
+Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh_HandleStatic_LateralPull_Cabinet-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-332520-7CB22EC7-E589-744A-B60B-D92DE48E17D3
 4BEAD776-1C4D-1F4E-891C-7001C8F64A0A",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet,,"Cabinet Sliding Panel, Grey",,Width,24in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-03.Cabinet-Panel-03'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-ABABAB-31FE5001-2F72-8A42-A06D-FA6B76625BD1,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-HandleRightMidHeight,Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh_HandleStatic_LateralPull_Cabinet-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-331F20-7CB22EC7-E589-744A-B60B-D92DE48E17D3,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-HandleRightMidHeight,Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh_HandleStatic_LateralPull_Cabinet-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-332520-7CB22EC7-E589-744A-B60B-D92DE48E17D3,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,8FB49731-8812-2D4D-986E-B7C83BE5B06D,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
@@ -287,25 +295,25 @@ PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-RollerBarnRight,Part_0FlexDims3Fi
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyHandleSet,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
-67C68842-10DD-E442-84E8-7CE4C052C2B0",,-,-,-,-,-,-,-,-,-,-,-,-
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
+9EE8B998-6627-8445-9B56-040FE93F058A",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,AFADCF1C-5CAA-D840-8E15-84F8D7E335ED,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-03.Door-Panel-Swing-03'-Finish1-0RawMaterial-Ash-FFFFFF-DC29608C-418E-FA4D-9E28-47BF0046A2CC
 Property_Spatiality_Slot-RollerBarnLeft
-Part_0FlexDims3Fixed_Roller_Barn-Property_Spatiality_Mesh_Roller_Barn-Door-Roller-Barn-01.Door-Roller-Barn-01'-Finish1-0RawMaterial-Aluminum-331F20-E7DD9D49-A04F-8A44-921F-C570AC421B3E
+Part_0FlexDims3Fixed_Roller_Barn-Property_Spatiality_Mesh_Roller_Barn-Door-Roller-Barn-01.Door-Roller-Barn-01'-Finish1-0RawMaterial-Aluminum-332520-E7DD9D49-A04F-8A44-921F-C570AC421B3E
 AFADCF1C-5CAA-D840-8E15-84F8D7E335ED",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door,,"Barn Door Panel 2, Ash",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-03.Door-Panel-Swing-03'-Finish1-0RawMaterial-Ash-FFFFFF-DC29608C-418E-FA4D-9E28-47BF0046A2CC,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-RollerBarnLeft,Part_0FlexDims3Fixed_Roller_Barn-Property_Spatiality_Mesh_Roller_Barn-Door-Roller-Barn-01.Door-Roller-Barn-01'-Finish1-0RawMaterial-Aluminum-331F20-E7DD9D49-A04F-8A44-921F-C570AC421B3E,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-RollerBarnRight,Part_0FlexDims3Fixed_Roller_Barn-Property_Spatiality_Mesh_Roller_Barn-Door-Roller-Barn-01.Door-Roller-Barn-01'-Finish1-0RawMaterial-Aluminum-331F20-E7DD9D49-A04F-8A44-921F-C570AC421B3E,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-RollerBarnLeft,Part_0FlexDims3Fixed_Roller_Barn-Property_Spatiality_Mesh_Roller_Barn-Door-Roller-Barn-01.Door-Roller-Barn-01'-Finish1-0RawMaterial-Aluminum-332520-E7DD9D49-A04F-8A44-921F-C570AC421B3E,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-RollerBarnRight,Part_0FlexDims3Fixed_Roller_Barn-Property_Spatiality_Mesh_Roller_Barn-Door-Roller-Barn-01.Door-Roller-Barn-01'-Finish1-0RawMaterial-Aluminum-332520-E7DD9D49-A04F-8A44-921F-C570AC421B3E,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyHandleSet,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 67C68842-10DD-E442-84E8-7CE4C052C2B0",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,9D08CBF4-51B9-AC41-A416-403CE9AE59B9,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
@@ -315,17 +323,17 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 9EE8B998-6627-8445-9B56-040FE93F058A
 9D08CBF4-51B9-AC41-A416-403CE9AE59B9",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door,,"Pocket Door Panel 1, Walnut",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-01.Door-Panel-Swing-01'-Finish1-0RawMaterial-Walnut-FFFFFF-C4CEE33E-2F53-1C42-AE4C-DBFFD2516CA9,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyHandleSet,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 9EE8B998-6627-8445-9B56-040FE93F058A",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,4D1B3FE7-E3C5-6A4A-99AD-A531A56A30DD,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
@@ -335,17 +343,17 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 9EE8B998-6627-8445-9B56-040FE93F058A
 4D1B3FE7-E3C5-6A4A-99AD-A531A56A30DD",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door,,"Pocket Door Panel 1, Paint",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-01.Door-Panel-Swing-01'-Finish1-0RawMaterial-Oak (Red)-0RawMaterial-Paint-F3F1ED-20B38E19-230A-6E49-A635-B62DA5D1F81C,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyHandleSet,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 9EE8B998-6627-8445-9B56-040FE93F058A",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,45138B6D-7D49-C041-8605-9783637999EB,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
@@ -355,17 +363,17 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 9EE8B998-6627-8445-9B56-040FE93F058A
 45138B6D-7D49-C041-8605-9783637999EB",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door,,"Pocket Door Panel 2, Ash",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-03.Door-Panel-Swing-03'-Finish1-0RawMaterial-Ash-FFFFFF-DC29608C-418E-FA4D-9E28-47BF0046A2CC,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyHandleSet,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 9EE8B998-6627-8445-9B56-040FE93F058A",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,8D9C57C0-BFA3-794F-B92A-CA4FA24F2F07,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
@@ -375,24 +383,24 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 67C68842-10DD-E442-84E8-7CE4C052C2B0
 8D9C57C0-BFA3-794F-B92A-CA4FA24F2F07",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door,,White Sliding Door Panel (Active),,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Sliding-01.Door-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-0RawMaterial-Paint-F3F1ED-9E6E29EB-A9A1-5843-8515-E6149230BD4D,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyHandleSet,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 67C68842-10DD-E442-84E8-7CE4C052C2B0",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,6B761CEA-1DF7-994A-93DB-8683FD01DD24,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Sliding-01.Door-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-0RawMaterial-Paint-F3F1ED-9E6E29EB-A9A1-5843-8515-E6149230BD4D
 Property_Spatiality_Slot-AssemblyMuntinSet1
-Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet
+Assembly_2FlexDims1Fixed_PlanarRig_MuntinSet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.2-Property_Spatiality_Slot-MuntinX0.25-Property_Spatiality_Slot-MuntinX0.33-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinX0.67-Property_Spatiality_Slot-MuntinX0.75-Property_Spatiality_Slot-MuntinX0.8-Property_Spatiality_Slot-MuntinZ0.2-Property_Spatiality_Slot-MuntinZ0.25-Property_Spatiality_Slot-MuntinZ0.33-Property_Spatiality_Slot-MuntinZ0.5-Property_Spatiality_Slot-MuntinZ0.67-Property_Spatiality_Slot-MuntinZ0.75-Property_Spatiality_Slot-MuntinZ0.8
 Property_Spatiality_Slot-MuntinX0.33
 Assembly_1FlexDim2Fixed_LinearRig_MuntinCompound
@@ -428,7 +436,7 @@ Part_1FlexDim2Fixed_Muntin_Internal-Property_Spatiality_Mesh_Muntin_Internal-Mun
 928897F7-81B2-2646-83BD-B353BEA73291
 6548D126-7B5D-A945-B0BB-B9BC382B3CD3
 6B761CEA-1DF7-994A-93DB-8683FD01DD24",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door,,White Sliding Door Panel (Passive),,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Sliding-01.Door-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-0RawMaterial-Paint-F3F1ED-9E6E29EB-A9A1-5843-8515-E6149230BD4D,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyMuntinSet1,"Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet
+PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyMuntinSet1,"Assembly_2FlexDims1Fixed_PlanarRig_MuntinSet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.2-Property_Spatiality_Slot-MuntinX0.25-Property_Spatiality_Slot-MuntinX0.33-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinX0.67-Property_Spatiality_Slot-MuntinX0.75-Property_Spatiality_Slot-MuntinX0.8-Property_Spatiality_Slot-MuntinZ0.2-Property_Spatiality_Slot-MuntinZ0.25-Property_Spatiality_Slot-MuntinZ0.33-Property_Spatiality_Slot-MuntinZ0.5-Property_Spatiality_Slot-MuntinZ0.67-Property_Spatiality_Slot-MuntinZ0.75-Property_Spatiality_Slot-MuntinZ0.8
 Property_Spatiality_Slot-MuntinX0.33
 Assembly_1FlexDim2Fixed_LinearRig_MuntinCompound
@@ -471,17 +479,17 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 67C68842-10DD-E442-84E8-7CE4C052C2B0
 4330E1C7-2DD4-9C40-A108-59989ABB617C",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door,,Bronze Sliding Door Panel (Active),,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Sliding-02.Door-Panel-Sliding-02'-Finish1-0RawMaterial-Aluminum-2B3033-Finish2-0RawMaterial-Glass-D6DAD8-2A7F4A26-4C94-B749-ACC4-904DD5E1192C,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyHandleSet,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 67C68842-10DD-E442-84E8-7CE4C052C2B0",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,5F6D7F68-DC41-9F45-92A5-3E525AFF1205,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
@@ -536,7 +544,7 @@ PRESET,,BA31CB0A-E904-B34F-BDDA-6C904B66770C,,"Assembly_2FlexDims1Fixed_PlanarRi
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-01.Door-Panel-Swing-01'-Finish1-0RawMaterial-Walnut-FFFFFF-C4CEE33E-2F53-1C42-AE4C-DBFFD2516CA9
-Property_Spatiality_Slot-AssemblyMuntinSet3
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -545,7 +553,7 @@ Property_Spatiality_Slot-HandleExterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5
 A4F7679A-2930-E743-AFEB-18DF33CEE6FA
 BA31CB0A-E904-B34F-BDDA-6C904B66770C",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door,,"Solid Swing Door Panel with Deadbolt, Walnut",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-01.Door-Panel-Swing-01'-Finish1-0RawMaterial-Walnut-FFFFFF-C4CEE33E-2F53-1C42-AE4C-DBFFD2516CA9,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyMuntinSet3,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
+PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyHandleSet,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5
@@ -557,7 +565,7 @@ PRESET,,BB7C2F60-0025-9D41-A2C2-90F2C8CFFC02,,"Assembly_2FlexDims1Fixed_PlanarRi
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-05.Door-Panel-Swing-05'-Finish1-0RawMaterial-Maple-FFFFFF-03F74AFE-65A0-DB45-9983-7D93AD02AE71
-Property_Spatiality_Slot-SurfaceLockLower
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -566,21 +574,21 @@ Property_Spatiality_Slot-HandleExterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5
 A4F7679A-2930-E743-AFEB-18DF33CEE6FA
 Property_Spatiality_Slot-Deadbolt
-Part_0FlexDims3Fixed_LockDeadbolt-Property_Spatiality_Mesh_LockDeadbolt-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'-Finish1-0RawMaterial-Aluminum-331F20-C13CD443-0811-F64B-9EB8-1061B248AE1E
+Part_0FlexDims3Fixed_LockDeadbolt-Property_Spatiality_Mesh_LockDeadbolt-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'-Finish1-0RawMaterial-Aluminum-332520-C13CD443-0811-F64B-9EB8-1061B248AE1E
 BB7C2F60-0025-9D41-A2C2-90F2C8CFFC02",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door,,"Paneled Swing Door Panel with Deadbolt, Ash",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-05.Door-Panel-Swing-05'-Finish1-0RawMaterial-Maple-FFFFFF-03F74AFE-65A0-DB45-9983-7D93AD02AE71,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-SurfaceLockLower,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
+PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyHandleSet,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5
 Property_Spatiality_Slot-HandleExterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5
 A4F7679A-2930-E743-AFEB-18DF33CEE6FA",,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-Deadbolt,Part_0FlexDims3Fixed_LockDeadbolt-Property_Spatiality_Mesh_LockDeadbolt-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'-Finish1-0RawMaterial-Aluminum-331F20-C13CD443-0811-F64B-9EB8-1061B248AE1E,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-Deadbolt,Part_0FlexDims3Fixed_LockDeadbolt-Property_Spatiality_Mesh_LockDeadbolt-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'-Finish1-0RawMaterial-Aluminum-332520-C13CD443-0811-F64B-9EB8-1061B248AE1E,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,700782D8-D9E6-0B4C-B194-28BB5E8D7EA5,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-05.Door-Panel-Swing-05'-Finish1-0RawMaterial-Maple-FFFFFF-03F74AFE-65A0-DB45-9983-7D93AD02AE71
-Property_Spatiality_Slot-PeepholeUpper
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -589,7 +597,7 @@ Property_Spatiality_Slot-HandleExterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-E9DD1F07-C411-2842-9C56-0BF4998DB20E
 1794574D-6E12-F140-B0DD-045D0540F1BD
 700782D8-D9E6-0B4C-B194-28BB5E8D7EA5",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door,,"Paneled Swing Door Panel, Ash",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-05.Door-Panel-Swing-05'-Finish1-0RawMaterial-Maple-FFFFFF-03F74AFE-65A0-DB45-9983-7D93AD02AE71,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-PeepholeUpper,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
+PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyHandleSet,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-E9DD1F07-C411-2842-9C56-0BF4998DB20E
@@ -600,7 +608,7 @@ PRESET,,1B3082C9-A86F-E14B-89A9-9870AF68F40A,,"Assembly_2FlexDims1Fixed_PlanarRi
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-01.Door-Panel-Swing-01'-Finish1-0RawMaterial-Oak (Red)-0RawMaterial-Paint-F3F1ED-20B38E19-230A-6E49-A635-B62DA5D1F81C
-Property_Spatiality_Slot-MailSlot
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -609,7 +617,7 @@ Property_Spatiality_Slot-HandleExterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-E9DD1F07-C411-2842-9C56-0BF4998DB20E
 1794574D-6E12-F140-B0DD-045D0540F1BD
 1B3082C9-A86F-E14B-89A9-9870AF68F40A",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door,,"Solid Swing Door Panel, Paint, White",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-01.Door-Panel-Swing-01'-Finish1-0RawMaterial-Oak (Red)-0RawMaterial-Paint-F3F1ED-20B38E19-230A-6E49-A635-B62DA5D1F81C,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-MailSlot,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
+PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyHandleSet,"Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Knob-01.Door-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-E9DD1F07-C411-2842-9C56-0BF4998DB20E
@@ -1032,8 +1040,8 @@ PRESET,,,,,,,,,,Height,48in,,,,,,,,,,,,,,,,,,,
 PRESET,,134A1331-9CDC-BA42-81E2-3D59EB244EA3,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
 Property_Spatiality_Slot-Panel
-Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-01.Window-Panel-Fixed-01'-Finish1-0RawMaterial-Aluminum-331F20-542A588F-E64B-1245-A746-44A42B3FC83A
-134A1331-9CDC-BA42-81E2-3D59EB244EA3",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window,,"Fixed Window Panel 1, Aluminum, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-01.Window-Panel-Fixed-01'-Finish1-0RawMaterial-Aluminum-331F20-542A588F-E64B-1245-A746-44A42B3FC83A,,-,-,-,-,-,-,-,-,-,-,-,-
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-01.Window-Panel-Fixed-01'-Finish1-0RawMaterial-Aluminum-332520-542A588F-E64B-1245-A746-44A42B3FC83A
+134A1331-9CDC-BA42-81E2-3D59EB244EA3",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window,,"Fixed Window Panel 1, Aluminum, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-01.Window-Panel-Fixed-01'-Finish1-0RawMaterial-Aluminum-332520-542A588F-E64B-1245-A746-44A42B3FC83A,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,48in,,,,,,,,,,,,,,,,,,,
 PRESET,,1F3EAD87-8B9D-154D-92C6-F57247AC055A,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
@@ -1044,8 +1052,8 @@ PRESET,,,,,,,,,,Height,48in,,,,,,,,,,,,,,,,,,,
 PRESET,,B8000FBB-5BA8-BA4E-A13F-7F4D3D94197C,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
 Property_Spatiality_Slot-Panel
-Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-02.Window-Panel-Fixed-02'-Finish1-0RawMaterial-Aluminum-331F20-F7E919E3-B5CD-D443-B713-68565AEC6523
-B8000FBB-5BA8-BA4E-A13F-7F4D3D94197C",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window,,"Fixed Window Panel 2, Aluminum, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-02.Window-Panel-Fixed-02'-Finish1-0RawMaterial-Aluminum-331F20-F7E919E3-B5CD-D443-B713-68565AEC6523,,-,-,-,-,-,-,-,-,-,-,-,-
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-02.Window-Panel-Fixed-02'-Finish1-0RawMaterial-Aluminum-332520-F7E919E3-B5CD-D443-B713-68565AEC6523
+B8000FBB-5BA8-BA4E-A13F-7F4D3D94197C",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window,,"Fixed Window Panel 2, Aluminum, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-02.Window-Panel-Fixed-02'-Finish1-0RawMaterial-Aluminum-332520-F7E919E3-B5CD-D443-B713-68565AEC6523,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,48in,,,,,,,,,,,,,,,,,,,
 PRESET,,49C0138A-5C39-D442-A9E5-ECF50A07C01E,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
@@ -1056,8 +1064,8 @@ PRESET,,,,,,,,,,Height,48in,,,,,,,,,,,,,,,,,,,
 PRESET,,2EE60155-018B-0343-A07D-493271A46E1A,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
 Property_Spatiality_Slot-Panel
-Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-331F20-FF32530D-A7AD-8244-B64A-110CCEBA902B
-2EE60155-018B-0343-A07D-493271A46E1A",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window,,"Hung Window Panel, Aluminum, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-331F20-FF32530D-A7AD-8244-B64A-110CCEBA902B,,-,-,-,-,-,-,-,-,-,-,-,-
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-332520-FF32530D-A7AD-8244-B64A-110CCEBA902B
+2EE60155-018B-0343-A07D-493271A46E1A",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window,,"Hung Window Panel, Aluminum, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-332520-FF32530D-A7AD-8244-B64A-110CCEBA902B,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,48in,,,,,,,,,,,,,,,,,,,
 PRESET,,DA29F64C-CC84-EB45-8EE7-24B5266E2554,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
@@ -1070,11 +1078,11 @@ PRESET,,,,,,,,,,Height,48in,,,,,Property_Spatiality_Slot-SurfaceLockXMiddleYInsi
 PRESET,,8F6AC592-9172-1145-84E8-0340482A2205,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
 Property_Spatiality_Slot-Panel
-Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-331F20-FF32530D-A7AD-8244-B64A-110CCEBA902B
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-332520-FF32530D-A7AD-8244-B64A-110CCEBA902B
 Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop
-Part_0FlexDims3Fixed_LockSurface-Property_Spatiality_Mesh_LockSurface-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'-Finish1-0RawMaterial-Steel-331F20-9DF143E5-4D55-6243-BC7C-2364CEC61411
-8F6AC592-9172-1145-84E8-0340482A2205",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window,,"Hung Window Panel (With Lock), Aluminum, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-331F20-FF32530D-A7AD-8244-B64A-110CCEBA902B,,-,-,-,-,-,-,-,-,-,-,-,-
-PRESET,,,,,,,,,,Height,48in,,,,,Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop,Part_0FlexDims3Fixed_LockSurface-Property_Spatiality_Mesh_LockSurface-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'-Finish1-0RawMaterial-Steel-331F20-9DF143E5-4D55-6243-BC7C-2364CEC61411,,-,-,-,-,-,-,-,-,-,-,-,-
+Part_0FlexDims3Fixed_LockSurface-Property_Spatiality_Mesh_LockSurface-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'-Finish1-0RawMaterial-Steel-332520-9DF143E5-4D55-6243-BC7C-2364CEC61411
+8F6AC592-9172-1145-84E8-0340482A2205",,Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window,,"Hung Window Panel (With Lock), Aluminum, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper,Property_Spatiality_Slot-Panel,Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-332520-FF32530D-A7AD-8244-B64A-110CCEBA902B,,-,-,-,-,-,-,-,-,-,-,-,-
+PRESET,,,,,,,,,,Height,48in,,,,,Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop,Part_0FlexDims3Fixed_LockSurface-Property_Spatiality_Mesh_LockSurface-Door-Lock-SurfaceLatch-Bolt-01.Door-Lock-SurfaceLatch-Bolt-01'-Finish1-0RawMaterial-Steel-332520-9DF143E5-4D55-6243-BC7C-2364CEC61411,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,8495E8FA-BB65-C94A-A98E-B6E6458FF848,,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
 Property_Spatiality_Slot-Panel
@@ -1090,7 +1098,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleRightTop
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20-009E91EC-32D4-EE41-BFF5-5E995A416F1A
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-332520-009E91EC-32D4-EE41-BFF5-5E995A416F1A
 6C152402-7F36-C249-8F61-E6B3BAD47D40
 239F3527-6F23-B84F-A83F-70CD6F75D7A8",,Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace,,"Single Swing (Lower), Walnut",,Width,24in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1of1,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Walnut-FFFFFF-1138C284-4C6C-0A4E-8B0D-FFF87A5275DA,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-AssemblyPanelOverlay1of1,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
@@ -1098,7 +1106,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleRightTop
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20-009E91EC-32D4-EE41-BFF5-5E995A416F1A
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-332520-009E91EC-32D4-EE41-BFF5-5E995A416F1A
 6C152402-7F36-C249-8F61-E6B3BAD47D40",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,29E59AD2-2516-A84D-B514-30F3EC64FFDF,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight
@@ -1110,7 +1118,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleRightTop
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20-009E91EC-32D4-EE41-BFF5-5E995A416F1A
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-332520-009E91EC-32D4-EE41-BFF5-5E995A416F1A
 6C152402-7F36-C249-8F61-E6B3BAD47D40
 29E59AD2-2516-A84D-B514-30F3EC64FFDF",,Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace,,"Double Swing (Lower), Walnut",,Width,24in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Walnut-FFFFFF-1138C284-4C6C-0A4E-8B0D-FFF87A5275DA,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-AssemblyPanelOverlayLeft,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
@@ -1118,14 +1126,14 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleRightTop
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20-009E91EC-32D4-EE41-BFF5-5E995A416F1A
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-332520-009E91EC-32D4-EE41-BFF5-5E995A416F1A
 6C152402-7F36-C249-8F61-E6B3BAD47D40",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelOverlayRight,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleRightTop
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-331F20-009E91EC-32D4-EE41-BFF5-5E995A416F1A
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-01.Cabinet-Handle-Knob-01'-Finish1-0RawMaterial-Aluminum-332520-009E91EC-32D4-EE41-BFF5-5E995A416F1A
 6C152402-7F36-C249-8F61-E6B3BAD47D40",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,0173F3D3-A151-6043-A30D-43B8DDBE418C,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1of1
@@ -1184,7 +1192,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleRightBottom
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-331F20-9CE454B8-9AD4-E148-B635-C4D1CED9FB81
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-332520-9CE454B8-9AD4-E148-B635-C4D1CED9FB81
 37380FE8-DD2B-094F-B386-6EBF5FB9C9D3
 BB46C0DF-37E4-2545-99A9-11BDA3052821",,Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace,,"Single Swing (Upper), Walnut",,Width,24in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1of1,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Walnut-FFFFFF-1138C284-4C6C-0A4E-8B0D-FFF87A5275DA,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-AssemblyPanelOverlay1of1,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
@@ -1192,7 +1200,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleRightBottom
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-331F20-9CE454B8-9AD4-E148-B635-C4D1CED9FB81
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-332520-9CE454B8-9AD4-E148-B635-C4D1CED9FB81
 37380FE8-DD2B-094F-B386-6EBF5FB9C9D3",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,E03301AE-A43D-484A-8AB6-BEEC04EEF25D,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight
@@ -1204,7 +1212,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleRightBottom
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-331F20-9CE454B8-9AD4-E148-B635-C4D1CED9FB81
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-332520-9CE454B8-9AD4-E148-B635-C4D1CED9FB81
 37380FE8-DD2B-094F-B386-6EBF5FB9C9D3
 E03301AE-A43D-484A-8AB6-BEEC04EEF25D",,Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace,,Double Swing (Upper),,Width,24in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlayLeft-Property_Spatiality_Slot-AssemblyPanelOverlayRight,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Walnut-FFFFFF-1138C284-4C6C-0A4E-8B0D-FFF87A5275DA,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-AssemblyPanelOverlayLeft,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
@@ -1212,14 +1220,14 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleRightBottom
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-331F20-9CE454B8-9AD4-E148-B635-C4D1CED9FB81
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-332520-9CE454B8-9AD4-E148-B635-C4D1CED9FB81
 37380FE8-DD2B-094F-B386-6EBF5FB9C9D3",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelOverlayRight,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleRightBottom
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-331F20-9CE454B8-9AD4-E148-B635-C4D1CED9FB81
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Knob_Cabinet-Cabinet-Handle-Knob-04.Cabinet-Handle-Knob-04'-Finish1-0RawMaterial-Aluminum-332520-9CE454B8-9AD4-E148-B635-C4D1CED9FB81
 37380FE8-DD2B-094F-B386-6EBF5FB9C9D3",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,A59E3635-EB79-A340-BD52-60BE1C366524,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1of1
@@ -1231,7 +1239,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleCenterMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20-B0833FCD-C935-A441-A707-4AA71CFA8858
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-332520-B0833FCD-C935-A441-A707-4AA71CFA8858
 0DE7E3A2-2EA0-F94D-B178-EDC644368366
 A59E3635-EB79-A340-BD52-60BE1C366524",,Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace,,Single Drawer,,Width,24in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay1of1,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Walnut-FFFFFF-1138C284-4C6C-0A4E-8B0D-FFF87A5275DA,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-AssemblyPanelOverlay1of1,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
@@ -1239,7 +1247,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleCenterMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20-B0833FCD-C935-A441-A707-4AA71CFA8858
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-332520-B0833FCD-C935-A441-A707-4AA71CFA8858
 0DE7E3A2-2EA0-F94D-B178-EDC644368366",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,2048E1BB-0D38-F648-8455-5EBBC6070D0A,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical1-Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical2
@@ -1251,7 +1259,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleCenterMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20-B0833FCD-C935-A441-A707-4AA71CFA8858
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-332520-B0833FCD-C935-A441-A707-4AA71CFA8858
 0DE7E3A2-2EA0-F94D-B178-EDC644368366
 2048E1BB-0D38-F648-8455-5EBBC6070D0A",,Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace,,Two Drawers,,Width,24in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical1-Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical2,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Cabinet-Frame-Framed-01.Cabinet-Frame-Framed-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Walnut-FFFFFF-1138C284-4C6C-0A4E-8B0D-FFF87A5275DA,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical1,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
@@ -1259,14 +1267,14 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_S
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleCenterMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20-B0833FCD-C935-A441-A707-4AA71CFA8858
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-332520-B0833FCD-C935-A441-A707-4AA71CFA8858
 0DE7E3A2-2EA0-F94D-B178-EDC644368366",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,DividerZ1Distance,20in,,,,,Property_Spatiality_Slot-AssemblyPanelOverlay2Vertical2,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-01.Cabinet-Panel-01'-Finish1-0RawMaterial-Walnut-FFFFFF-7172D565-9965-0B49-92A2-4F121CADE148
 Property_Spatiality_Slot-HandleCenterMidHeight
-Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-331F20-B0833FCD-C935-A441-A707-4AA71CFA8858
+Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleStatic_Pull_Cabinet-Cabinet-Handle-Pull-06.Cabinet-Handle-Pull-06'-Finish1-0RawMaterial-Aluminum-332520-B0833FCD-C935-A441-A707-4AA71CFA8858
 0DE7E3A2-2EA0-F94D-B178-EDC644368366",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,FD26A637-CA07-6542-8F3D-CEB680499330,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Overlay-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelOverlay3Vertical1-Property_Spatiality_Slot-AssemblyPanelOverlay3Vertical2-Property_Spatiality_Slot-AssemblyPanelOverlay3Vertical3
@@ -1380,29 +1388,29 @@ Part_0FlexDims3Fixed_HandleStatic_Pull_Cabinet-Property_Spatiality_Mesh_HandleSt
 PRESET,,33C2AE2C-15CA-3344-AB71-E7DDDD915529,,"Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Sliding-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelSlidingXX_1-Property_Spatiality_Slot-AssemblyPanelSlidingXX_2
 Property_Spatiality_Slot-FrameSliding
-Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_FrameSliding-Cabinet-Frame-Sliding-01.Cabinet-Frame-Sliding-01'-Finish1-0RawMaterial-Aluminum-0RawMaterial-Paint-FEF1ED-3AE67709-0542-2241-8D11-9A3132139E8B
+Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_FrameSliding-Cabinet-Frame-Sliding-01.Cabinet-Frame-Sliding-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-FEF1ED-3AE67709-0542-2241-8D11-9A3132139E8B
 Property_Spatiality_Slot-AssemblyPanelSlidingXX_1
 Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-03.Cabinet-Panel-03'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-ABABAB-31FE5001-2F72-8A42-A06D-FA6B76625BD1
 Property_Spatiality_Slot-HandleRightMidHeight
-Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh_HandleStatic_LateralPull_Cabinet-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-331F20-7CB22EC7-E589-744A-B60B-D92DE48E17D3
+Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh_HandleStatic_LateralPull_Cabinet-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-332520-7CB22EC7-E589-744A-B60B-D92DE48E17D3
 4BEAD776-1C4D-1F4E-891C-7001C8F64A0A
-33C2AE2C-15CA-3344-AB71-E7DDDD915529",,Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace,,Two-Door Sliding,,Width,48in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Sliding-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelSlidingXX_1-Property_Spatiality_Slot-AssemblyPanelSlidingXX_2,Property_Spatiality_Slot-FrameSliding,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_FrameSliding-Cabinet-Frame-Sliding-01.Cabinet-Frame-Sliding-01'-Finish1-0RawMaterial-Aluminum-0RawMaterial-Paint-FEF1ED-3AE67709-0542-2241-8D11-9A3132139E8B,,-,-,-,-,-,-,-,-,-,-,-,-
+33C2AE2C-15CA-3344-AB71-E7DDDD915529",,Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace,,Two-Door Sliding,,Width,48in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Sliding-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelSlidingXX_1-Property_Spatiality_Slot-AssemblyPanelSlidingXX_2,Property_Spatiality_Slot-FrameSliding,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_FrameSliding-Cabinet-Frame-Sliding-01.Cabinet-Frame-Sliding-01'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-FEF1ED-3AE67709-0542-2241-8D11-9A3132139E8B,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,36in,,,,,Property_Spatiality_Slot-AssemblyPanelSlidingXX_1,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-03.Cabinet-Panel-03'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-ABABAB-31FE5001-2F72-8A42-A06D-FA6B76625BD1
 Property_Spatiality_Slot-HandleRightMidHeight
-Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh_HandleStatic_LateralPull_Cabinet-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-331F20-7CB22EC7-E589-744A-B60B-D92DE48E17D3
+Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh_HandleStatic_LateralPull_Cabinet-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-332520-7CB22EC7-E589-744A-B60B-D92DE48E17D3
 4BEAD776-1C4D-1F4E-891C-7001C8F64A0A",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelSlidingXX_2,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Cabinet-Property_Spatiality_Mesh_Panel_Cabinet-Cabinet-Panel-03.Cabinet-Panel-03'-Finish1-0RawMaterial-Plywood-0RawMaterial-Paint-ABABAB-31FE5001-2F72-8A42-A06D-FA6B76625BD1
 Property_Spatiality_Slot-HandleRightMidHeight
-Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh_HandleStatic_LateralPull_Cabinet-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-331F20-7CB22EC7-E589-744A-B60B-D92DE48E17D3
+Part_0FlexDims3Fixed_HandleStatic_LateralPull_Cabinet-Property_Spatiality_Mesh_HandleStatic_LateralPull_Cabinet-Cabinet-Handle-LateralPull-01-HighLOD.Cabinet-Handle-LateralPull-01-HighLOD'-Finish1-0RawMaterial-Aluminum-332520-7CB22EC7-E589-744A-B60B-D92DE48E17D3
 4BEAD776-1C4D-1F4E-891C-7001C8F64A0A",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,51BAB696-B7CE-D641-A345-7AF9653A3E25,,"Assembly_2FlexDims1Fixed_PlanarRig_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Barn-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-TrackBarnSingle-Property_Spatiality_Slot-AssemblyPanelBarn1of1
@@ -1432,14 +1440,14 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-03.Door-Panel-Swing-03'-Finish1-0RawMaterial-Ash-FFFFFF-DC29608C-418E-FA4D-9E28-47BF0046A2CC
 Property_Spatiality_Slot-RollerBarnLeft
-Part_0FlexDims3Fixed_Roller_Barn-Property_Spatiality_Mesh_Roller_Barn-Door-Roller-Barn-01.Door-Roller-Barn-01'-Finish1-0RawMaterial-Aluminum-331F20-E7DD9D49-A04F-8A44-921F-C570AC421B3E
+Part_0FlexDims3Fixed_Roller_Barn-Property_Spatiality_Mesh_Roller_Barn-Door-Roller-Barn-01.Door-Roller-Barn-01'-Finish1-0RawMaterial-Aluminum-332520-E7DD9D49-A04F-8A44-921F-C570AC421B3E
 AFADCF1C-5CAA-D840-8E15-84F8D7E335ED",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelBarnRight,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-03.Door-Panel-Swing-03'-Finish1-0RawMaterial-Ash-FFFFFF-DC29608C-418E-FA4D-9E28-47BF0046A2CC
 Property_Spatiality_Slot-RollerBarnLeft
-Part_0FlexDims3Fixed_Roller_Barn-Property_Spatiality_Mesh_Roller_Barn-Door-Roller-Barn-01.Door-Roller-Barn-01'-Finish1-0RawMaterial-Aluminum-331F20-E7DD9D49-A04F-8A44-921F-C570AC421B3E
+Part_0FlexDims3Fixed_Roller_Barn-Property_Spatiality_Mesh_Roller_Barn-Door-Roller-Barn-01.Door-Roller-Barn-01'-Finish1-0RawMaterial-Aluminum-332520-E7DD9D49-A04F-8A44-921F-C570AC421B3E
 AFADCF1C-5CAA-D840-8E15-84F8D7E335ED",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,EC17EF71-CFEE-344D-BAFF-010CB8FBA837,,"Assembly_2FlexDims1Fixed_PlanarRig_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Fixed-Property_Spatiality_Slot-AssemblyFramelessBracketSetLeftofLeft-Property_Spatiality_Slot-AssemblyPanelFramelessLeft1of1
@@ -1535,9 +1543,9 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 9EE8B998-6627-8445-9B56-040FE93F058A
 4D1B3FE7-E3C5-6A4A-99AD-A531A56A30DD
 707555F9-3F9B-974D-98A5-07A66B52917A",,Assembly_2FlexDims1Fixed_PlanarRig_Door,,"Single Pocket Door, Paint, White",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Pocket-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelPocket1of1,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Door-Frame-Pocket-Single-01.Door-Frame-Pocket-Single-01'-Finish1-0RawMaterial-Spruce-Pine-Fir-0RawMaterial-Paint-F3F1ED-4C012FBF-CC2D-604B-96E7-AA2C4C4E7E92,,-,-,-,-,-,-,-,-,-,-,-,-
@@ -1549,9 +1557,9 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 9EE8B998-6627-8445-9B56-040FE93F058A
 4D1B3FE7-E3C5-6A4A-99AD-A531A56A30DD",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,D48E04DC-FE2B-5A4D-BC15-17476B8E3F10,,"Assembly_2FlexDims1Fixed_PlanarRig_Door
@@ -1567,9 +1575,9 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 9EE8B998-6627-8445-9B56-040FE93F058A
 9D08CBF4-51B9-AC41-A416-403CE9AE59B9
 D48E04DC-FE2B-5A4D-BC15-17476B8E3F10",,Assembly_2FlexDims1Fixed_PlanarRig_Door,,"Double Pocket Door, Walnut",,Width,72in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Pocket-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelPocketLeft-Property_Spatiality_Slot-AssemblyPanelPocketRight,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Door-Frame-Pocket-Double-01.Door-Frame-Pocket-Double-01'-Finish1-0RawMaterial-Spruce-Pine-Fir-0RawMaterial-Walnut-FFFFFF-A5347A59-1D17-D043-B5AC-FA118CDB7782,,-,-,-,-,-,-,-,-,-,-,-,-
@@ -1581,9 +1589,9 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 9EE8B998-6627-8445-9B56-040FE93F058A
 9D08CBF4-51B9-AC41-A416-403CE9AE59B9",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelPocketRight,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
@@ -1594,9 +1602,9 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-02.Door-Handle-LateralPull-02'-Finish1-0RawMaterial-Aluminum-331F20-3D97F141-CCA6-8B41-86F3-1BDC5D425E53
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-332520-A813721E-6A6F-4F47-9513-BE1D2FD46F65
 9EE8B998-6627-8445-9B56-040FE93F058A
 9D08CBF4-51B9-AC41-A416-403CE9AE59B9",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,CD1A419A-82BE-E54A-95C1-F7945C8C4212,,"Assembly_2FlexDims1Fixed_PlanarRig_Door
@@ -1612,9 +1620,9 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 67C68842-10DD-E442-84E8-7CE4C052C2B0
 8D9C57C0-BFA3-794F-B92A-CA4FA24F2F07
 CD1A419A-82BE-E54A-95C1-F7945C8C4212",,Assembly_2FlexDims1Fixed_PlanarRig_Door,,Two Panel Sliding Door (Light),,Width,72in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Sliding-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelSlidingXO_1-Property_Spatiality_Slot-AssemblyPanelSlidingXO_2,Property_Spatiality_Slot-FrameSliding,Part_2FlexDims1Fixed_FrameSliding-Property_Spatiality_Mesh_FrameSliding-Door-Frame-Sliding-TwoTrack-01.Door-Frame-Sliding-TwoTrack-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-51C89FBE-2FBD-9C47-A351-58BE841EA00F,,-,-,-,-,-,-,-,-,-,-,-,-
@@ -1626,9 +1634,9 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 67C68842-10DD-E442-84E8-7CE4C052C2B0
 8D9C57C0-BFA3-794F-B92A-CA4FA24F2F07",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelSlidingXO_2,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
@@ -1636,7 +1644,7 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Sliding-01.Door-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-0RawMaterial-Paint-F3F1ED-9E6E29EB-A9A1-5843-8515-E6149230BD4D
 Property_Spatiality_Slot-AssemblyMuntinSet1
-Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet
+Assembly_2FlexDims1Fixed_PlanarRig_MuntinSet
 Property_Spatiality_Rig_SlotConfig_2FlexDims_MuntinSet-Property_Spatiality_Slot-MuntinX0.2-Property_Spatiality_Slot-MuntinX0.25-Property_Spatiality_Slot-MuntinX0.33-Property_Spatiality_Slot-MuntinX0.5-Property_Spatiality_Slot-MuntinX0.67-Property_Spatiality_Slot-MuntinX0.75-Property_Spatiality_Slot-MuntinX0.8-Property_Spatiality_Slot-MuntinZ0.2-Property_Spatiality_Slot-MuntinZ0.25-Property_Spatiality_Slot-MuntinZ0.33-Property_Spatiality_Slot-MuntinZ0.5-Property_Spatiality_Slot-MuntinZ0.67-Property_Spatiality_Slot-MuntinZ0.75-Property_Spatiality_Slot-MuntinZ0.8
 Property_Spatiality_Slot-MuntinX0.33
 Assembly_1FlexDim2Fixed_LinearRig_MuntinCompound
@@ -1706,9 +1714,9 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 67C68842-10DD-E442-84E8-7CE4C052C2B0
 4330E1C7-2DD4-9C40-A108-59989ABB617C
 39887891-917C-3446-A2A2-A91C471FEAF8",,Assembly_2FlexDims1Fixed_PlanarRig_Door,,Two Panel Sliding Door (Dark),,Width,72in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Sliding-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelSlidingXO_1-Property_Spatiality_Slot-AssemblyPanelSlidingXO_2,Property_Spatiality_Slot-FrameSliding,Part_2FlexDims1Fixed_FrameSliding-Property_Spatiality_Mesh_FrameSliding-Door-Frame-Sliding-TwoTrack-01.Door-Frame-Sliding-TwoTrack-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-51C89FBE-2FBD-9C47-A351-58BE841EA00F,,-,-,-,-,-,-,-,-,-,-,-,-
@@ -1720,9 +1728,9 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 67C68842-10DD-E442-84E8-7CE4C052C2B0
 4330E1C7-2DD4-9C40-A108-59989ABB617C",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelSlidingXO_2,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
@@ -1749,9 +1757,9 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 67C68842-10DD-E442-84E8-7CE4C052C2B0
 4330E1C7-2DD4-9C40-A108-59989ABB617C
 Property_Spatiality_Slot-AssemblyPanelSlidingOXXO_3
@@ -1763,9 +1771,9 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 67C68842-10DD-E442-84E8-7CE4C052C2B0
 4330E1C7-2DD4-9C40-A108-59989ABB617C
 Property_Spatiality_Slot-AssemblyPanelSlidingOXXO_4
@@ -1788,9 +1796,9 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 67C68842-10DD-E442-84E8-7CE4C052C2B0
 4330E1C7-2DD4-9C40-A108-59989ABB617C",,,,,,,,,,,,,
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelSlidingOXXO_3,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
@@ -1801,9 +1809,9 @@ Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 Property_Spatiality_Slot-HandleExterior
-Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-03.Door-Handle-LateralPull-03'-Finish1-0RawMaterial-Aluminum-FFFFFF-05E6327A-930C-4147-9D7F-F528EAEF1CBE
+Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_LateralPull_Door-Door-Handle-LateralPull-01.Door-Handle-LateralPull-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-8177FF55-0B7B-5E46-8259-F53F97A02100
 67C68842-10DD-E442-84E8-7CE4C052C2B0
 4330E1C7-2DD4-9C40-A108-59989ABB617C",,,,,,,,,,,,,
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelSlidingOXXO_4,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
@@ -1828,7 +1836,7 @@ Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-01.Door-Panel-Swing-01'-Finish1-0RawMaterial-Oak (Red)-0RawMaterial-Paint-F3F1ED-20B38E19-230A-6E49-A635-B62DA5D1F81C
-Property_Spatiality_Slot-MailSlot
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -1849,7 +1857,7 @@ PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelSwing1of1,"Assembly_
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-01.Door-Panel-Swing-01'-Finish1-0RawMaterial-Oak (Red)-0RawMaterial-Paint-F3F1ED-20B38E19-230A-6E49-A635-B62DA5D1F81C
-Property_Spatiality_Slot-MailSlot
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -1875,7 +1883,7 @@ Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-01.Door-Panel-Swing-01'-Finish1-0RawMaterial-Walnut-FFFFFF-C4CEE33E-2F53-1C42-AE4C-DBFFD2516CA9
-Property_Spatiality_Slot-AssemblyMuntinSet3
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -1896,7 +1904,7 @@ PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelSwing1of1,"Assembly_
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-01.Door-Panel-Swing-01'-Finish1-0RawMaterial-Walnut-FFFFFF-C4CEE33E-2F53-1C42-AE4C-DBFFD2516CA9
-Property_Spatiality_Slot-AssemblyMuntinSet3
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -1922,7 +1930,7 @@ Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-05.Door-Panel-Swing-05'-Finish1-0RawMaterial-Maple-FFFFFF-03F74AFE-65A0-DB45-9983-7D93AD02AE71
-Property_Spatiality_Slot-SurfaceLockLower
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -1931,7 +1939,7 @@ Property_Spatiality_Slot-HandleExterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5
 A4F7679A-2930-E743-AFEB-18DF33CEE6FA
 Property_Spatiality_Slot-Deadbolt
-Part_0FlexDims3Fixed_LockDeadbolt-Property_Spatiality_Mesh_LockDeadbolt-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'-Finish1-0RawMaterial-Aluminum-331F20-C13CD443-0811-F64B-9EB8-1061B248AE1E
+Part_0FlexDims3Fixed_LockDeadbolt-Property_Spatiality_Mesh_LockDeadbolt-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'-Finish1-0RawMaterial-Aluminum-332520-C13CD443-0811-F64B-9EB8-1061B248AE1E
 BB7C2F60-0025-9D41-A2C2-90F2C8CFFC02
 11BF7C71-5041-AB4F-A580-9FBF9C45C200",,Assembly_2FlexDims1Fixed_PlanarRig_Door,,"Paneled Swing Door, Ash",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Swing_Framed-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyHingeSetInsetLeft-Property_Spatiality_Slot-AssemblyPanelSwing1of1,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Door-Frame-Swing-Interior-SingleRabbetWood.Door-Frame-Swing-Interior-SingleRabbetWood'-Finish1-0RawMaterial-Spruce-Pine-Fir-0RawMaterial-Ash-FFFFFF-81D9F2B1-04E0-7541-8125-CA8D1D0BA8EE,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyHingeSetInsetLeft,"Assembly_1FlexDim2Fixed_LinearRig_HingeSet
@@ -1945,7 +1953,7 @@ PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelSwing1of1,"Assembly_
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-05.Door-Panel-Swing-05'-Finish1-0RawMaterial-Maple-FFFFFF-03F74AFE-65A0-DB45-9983-7D93AD02AE71
-Property_Spatiality_Slot-SurfaceLockLower
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -1954,7 +1962,7 @@ Property_Spatiality_Slot-HandleExterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5
 A4F7679A-2930-E743-AFEB-18DF33CEE6FA
 Property_Spatiality_Slot-Deadbolt
-Part_0FlexDims3Fixed_LockDeadbolt-Property_Spatiality_Mesh_LockDeadbolt-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'-Finish1-0RawMaterial-Aluminum-331F20-C13CD443-0811-F64B-9EB8-1061B248AE1E
+Part_0FlexDims3Fixed_LockDeadbolt-Property_Spatiality_Mesh_LockDeadbolt-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'-Finish1-0RawMaterial-Aluminum-332520-C13CD443-0811-F64B-9EB8-1061B248AE1E
 BB7C2F60-0025-9D41-A2C2-90F2C8CFFC02",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,C9B888EB-A32F-6248-B15D-BC3EC4A97617,,"Assembly_2FlexDims1Fixed_PlanarRig_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Swing_Framed-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyHingeSetInsetLeft-Property_Spatiality_Slot-AssemblyPanelSwing1of1
@@ -2011,24 +2019,24 @@ Property_Spatiality_Slot-AssemblyHingeSetInsetLeft
 Assembly_1FlexDim2Fixed_LinearRig_HingeSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HingeFramed1of3-Property_Spatiality_Slot-HingeFramed2of3-Property_Spatiality_Slot-HingeFramed3of3
 Property_Spatiality_Slot-HingeFramed1of3
-Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23
+Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-332520-EF3F113F-BA4F-0547-A380-FEF960A52F23
 Property_Spatiality_Slot-HingeFramed2of3
-Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23
+Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-332520-EF3F113F-BA4F-0547-A380-FEF960A52F23
 70743C31-3B93-7346-AEFF-72B89C85BD3E
 Property_Spatiality_Slot-AssemblyHingeSetInsetRight
 Assembly_1FlexDim2Fixed_LinearRig_HingeSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HingeFramed1of3-Property_Spatiality_Slot-HingeFramed2of3-Property_Spatiality_Slot-HingeFramed3of3
 Property_Spatiality_Slot-HingeFramed1of3
-Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23
+Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-332520-EF3F113F-BA4F-0547-A380-FEF960A52F23
 Property_Spatiality_Slot-HingeFramed2of3
-Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23
+Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-332520-EF3F113F-BA4F-0547-A380-FEF960A52F23
 70743C31-3B93-7346-AEFF-72B89C85BD3E
 Property_Spatiality_Slot-AssemblyPanelSwingLeft
 Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-05.Door-Panel-Swing-05'-Finish1-0RawMaterial-Maple-FFFFFF-03F74AFE-65A0-DB45-9983-7D93AD02AE71
-Property_Spatiality_Slot-SurfaceLockLower
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -2037,14 +2045,14 @@ Property_Spatiality_Slot-HandleExterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5
 A4F7679A-2930-E743-AFEB-18DF33CEE6FA
 Property_Spatiality_Slot-Deadbolt
-Part_0FlexDims3Fixed_LockDeadbolt-Property_Spatiality_Mesh_LockDeadbolt-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'-Finish1-0RawMaterial-Aluminum-331F20-C13CD443-0811-F64B-9EB8-1061B248AE1E
+Part_0FlexDims3Fixed_LockDeadbolt-Property_Spatiality_Mesh_LockDeadbolt-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'-Finish1-0RawMaterial-Aluminum-332520-C13CD443-0811-F64B-9EB8-1061B248AE1E
 BB7C2F60-0025-9D41-A2C2-90F2C8CFFC02
 Property_Spatiality_Slot-AssemblyPanelSwingRight
 Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-05.Door-Panel-Swing-05'-Finish1-0RawMaterial-Maple-FFFFFF-03F74AFE-65A0-DB45-9983-7D93AD02AE71
-Property_Spatiality_Slot-PeepholeUpper
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -2057,22 +2065,22 @@ Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Doo
 PRESET,,,,,,,,,,Height,80in,,,,,Property_Spatiality_Slot-AssemblyHingeSetInsetLeft,"Assembly_1FlexDim2Fixed_LinearRig_HingeSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HingeFramed1of3-Property_Spatiality_Slot-HingeFramed2of3-Property_Spatiality_Slot-HingeFramed3of3
 Property_Spatiality_Slot-HingeFramed1of3
-Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23
+Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-332520-EF3F113F-BA4F-0547-A380-FEF960A52F23
 Property_Spatiality_Slot-HingeFramed2of3
-Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23
+Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-332520-EF3F113F-BA4F-0547-A380-FEF960A52F23
 70743C31-3B93-7346-AEFF-72B89C85BD3E",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyHingeSetInsetRight,"Assembly_1FlexDim2Fixed_LinearRig_HingeSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HingeFramed1of3-Property_Spatiality_Slot-HingeFramed2of3-Property_Spatiality_Slot-HingeFramed3of3
 Property_Spatiality_Slot-HingeFramed1of3
-Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23
+Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-332520-EF3F113F-BA4F-0547-A380-FEF960A52F23
 Property_Spatiality_Slot-HingeFramed2of3
-Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-331F20-EF3F113F-BA4F-0547-A380-FEF960A52F23
+Part_0FlexDims3Fixed_Hinge-Property_Spatiality_Mesh_Hinge-Door-Hinge-Swing-01.Door-Hinge-Swing-01'-Finish1-0RawMaterial-Aluminum-332520-EF3F113F-BA4F-0547-A380-FEF960A52F23
 70743C31-3B93-7346-AEFF-72B89C85BD3E",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelSwingLeft,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-05.Door-Panel-Swing-05'-Finish1-0RawMaterial-Maple-FFFFFF-03F74AFE-65A0-DB45-9983-7D93AD02AE71
-Property_Spatiality_Slot-SurfaceLockLower
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -2081,13 +2089,13 @@ Property_Spatiality_Slot-HandleExterior
 Part_0FlexDims3Fixed_HandleStatic-Property_Spatiality_Mesh_HandleStatic_Knob_Door-Door-Handle-Lever-19.Door-Handle-Lever-19'-Finish1-0RawMaterial-Aluminum-222222-9DC71713-E272-A545-AF4C-15D07348B7A5
 A4F7679A-2930-E743-AFEB-18DF33CEE6FA
 Property_Spatiality_Slot-Deadbolt
-Part_0FlexDims3Fixed_LockDeadbolt-Property_Spatiality_Mesh_LockDeadbolt-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'-Finish1-0RawMaterial-Aluminum-331F20-C13CD443-0811-F64B-9EB8-1061B248AE1E
+Part_0FlexDims3Fixed_LockDeadbolt-Property_Spatiality_Mesh_LockDeadbolt-Door-Lock-Deadbolt-02.Door-Lock-Deadbolt-02'-Finish1-0RawMaterial-Aluminum-332520-C13CD443-0811-F64B-9EB8-1061B248AE1E
 BB7C2F60-0025-9D41-A2C2-90F2C8CFFC02",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelSwingRight,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Door-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-RollerOverheadTopLeft-Property_Spatiality_Slot-RollerOverheadBottomLeft-Property_Spatiality_Slot-RollerOverheadTopRight-Property_Spatiality_Slot-RollerOverheadBottomRight-Property_Spatiality_Slot-AssemblyHandleSet-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-AssemblyMuntinSet2-Property_Spatiality_Slot-AssemblyMuntinSet3-Property_Spatiality_Slot-AssemblyMuntinSet4-Property_Spatiality_Slot-Deadbolt-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper-Property_Spatiality_Slot-PeepholeLower-Property_Spatiality_Slot-PeepholeUpper-Property_Spatiality_Slot-Knocker-Property_Spatiality_Slot-MailSlot
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Door-Property_Spatiality_Mesh_Panel_Door-Door-Panel-Swing-05.Door-Panel-Swing-05'-Finish1-0RawMaterial-Maple-FFFFFF-03F74AFE-65A0-DB45-9983-7D93AD02AE71
-Property_Spatiality_Slot-PeepholeUpper
+Property_Spatiality_Slot-AssemblyHandleSet
 Assembly_0FlexDims3Fixed_VolumetricRig_HandleSet
 Property_Spatiality_Rig_SlotConfig_1FlexDim_HingeSet_Swing_Framed-Property_Spatiality_Slot-HandleInterior-Property_Spatiality_Slot-HandleExterior
 Property_Spatiality_Slot-HandleInterior
@@ -2387,18 +2395,18 @@ Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-P
 PRESET,,DFDF96AA-A20E-E641-B398-65EFB8DE1766,,"Assembly_2FlexDims1Fixed_PlanarRig_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Fixed-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelFixed1of1
 Property_Spatiality_Slot-Frame
-Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Window-Frame-Fixed-01.Window-Frame-Fixed-01'-Finish1-0RawMaterial-Aluminum-331F20-F3E6D587-99F7-F14C-9928-BAA8B649AF5A
+Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Window-Frame-Fixed-01.Window-Frame-Fixed-01'-Finish1-0RawMaterial-Aluminum-332520-F3E6D587-99F7-F14C-9928-BAA8B649AF5A
 Property_Spatiality_Slot-AssemblyPanelFixed1of1
 Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
 Property_Spatiality_Slot-Panel
-Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-01.Window-Panel-Fixed-01'-Finish1-0RawMaterial-Aluminum-331F20-542A588F-E64B-1245-A746-44A42B3FC83A
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-01.Window-Panel-Fixed-01'-Finish1-0RawMaterial-Aluminum-332520-542A588F-E64B-1245-A746-44A42B3FC83A
 134A1331-9CDC-BA42-81E2-3D59EB244EA3
-DFDF96AA-A20E-E641-B398-65EFB8DE1766",,Assembly_2FlexDims1Fixed_PlanarRig_Window,,"Fixed Window 1, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Fixed-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelFixed1of1,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Window-Frame-Fixed-01.Window-Frame-Fixed-01'-Finish1-0RawMaterial-Aluminum-331F20-F3E6D587-99F7-F14C-9928-BAA8B649AF5A,,-,-,-,-,-,-,-,-,-,-,-,-
+DFDF96AA-A20E-E641-B398-65EFB8DE1766",,Assembly_2FlexDims1Fixed_PlanarRig_Window,,"Fixed Window 1, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Fixed-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelFixed1of1,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Window-Frame-Fixed-01.Window-Frame-Fixed-01'-Finish1-0RawMaterial-Aluminum-332520-F3E6D587-99F7-F14C-9928-BAA8B649AF5A,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,48in,,,,,Property_Spatiality_Slot-AssemblyPanelFixed1of1,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
 Property_Spatiality_Slot-Panel
-Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-01.Window-Panel-Fixed-01'-Finish1-0RawMaterial-Aluminum-331F20-542A588F-E64B-1245-A746-44A42B3FC83A
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-01.Window-Panel-Fixed-01'-Finish1-0RawMaterial-Aluminum-332520-542A588F-E64B-1245-A746-44A42B3FC83A
 134A1331-9CDC-BA42-81E2-3D59EB244EA3",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,CBDDEBF0-9CD5-7F4D-B642-C45E1B197E29,,"Assembly_2FlexDims1Fixed_PlanarRig_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Fixed-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelFixed1of1
@@ -2419,18 +2427,18 @@ Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-P
 PRESET,,E1833BB4-4DAA-6E42-88E1-B6CB4BD0F8E7,,"Assembly_2FlexDims1Fixed_PlanarRig_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Fixed-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelFixed1of1
 Property_Spatiality_Slot-Frame
-Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Window-Frame-Fixed-02.Window-Frame-Fixed-02'-Finish1-0RawMaterial-Aluminum-331F20-5ED19043-7DF4-0A45-B7DF-1F2F916FF8D4
+Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Window-Frame-Fixed-02.Window-Frame-Fixed-02'-Finish1-0RawMaterial-Aluminum-332520-5ED19043-7DF4-0A45-B7DF-1F2F916FF8D4
 Property_Spatiality_Slot-AssemblyPanelFixed1of1
 Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
 Property_Spatiality_Slot-Panel
-Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-02.Window-Panel-Fixed-02'-Finish1-0RawMaterial-Aluminum-331F20-F7E919E3-B5CD-D443-B713-68565AEC6523
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-02.Window-Panel-Fixed-02'-Finish1-0RawMaterial-Aluminum-332520-F7E919E3-B5CD-D443-B713-68565AEC6523
 B8000FBB-5BA8-BA4E-A13F-7F4D3D94197C
-E1833BB4-4DAA-6E42-88E1-B6CB4BD0F8E7",,Assembly_2FlexDims1Fixed_PlanarRig_Window,,"Fixed Window 2, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Fixed-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelFixed1of1,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Window-Frame-Fixed-02.Window-Frame-Fixed-02'-Finish1-0RawMaterial-Aluminum-331F20-5ED19043-7DF4-0A45-B7DF-1F2F916FF8D4,,-,-,-,-,-,-,-,-,-,-,-,-
+E1833BB4-4DAA-6E42-88E1-B6CB4BD0F8E7",,Assembly_2FlexDims1Fixed_PlanarRig_Window,,"Fixed Window 2, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Fixed-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelFixed1of1,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Window-Frame-Fixed-02.Window-Frame-Fixed-02'-Finish1-0RawMaterial-Aluminum-332520-5ED19043-7DF4-0A45-B7DF-1F2F916FF8D4,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,48in,,,,,Property_Spatiality_Slot-AssemblyPanelFixed1of1,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
 Property_Spatiality_Slot-Panel
-Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-02.Window-Panel-Fixed-02'-Finish1-0RawMaterial-Aluminum-331F20-F7E919E3-B5CD-D443-B713-68565AEC6523
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Fixed-02.Window-Panel-Fixed-02'-Finish1-0RawMaterial-Aluminum-332520-F7E919E3-B5CD-D443-B713-68565AEC6523
 B8000FBB-5BA8-BA4E-A13F-7F4D3D94197C",,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,77B4C57F-E2BB-4F4B-AE7D-C82CFC191A28,,"Assembly_2FlexDims1Fixed_PlanarRig_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Fixed-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelFixed1of1
@@ -2443,11 +2451,11 @@ PRESET,,,,,,,,,,Height,48in,,,,,Property_Spatiality_Slot-AssemblyPanelFixed1of1,
 PRESET,,2E579269-966D-2745-929F-BA1E5E310586,,"Assembly_2FlexDims1Fixed_PlanarRig_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Fixed-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelFixed1of1
 Property_Spatiality_Slot-Frame
-Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Window-Frame-Simple-01.Window-Frame-Simple-01'-Finish1-0RawMaterial-Aluminum-331F20-B0A223E8-A16D-C147-841E-D64F7906C191
+Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Window-Frame-Simple-01.Window-Frame-Simple-01'-Finish1-0RawMaterial-Aluminum-332520-B0A223E8-A16D-C147-841E-D64F7906C191
 Property_Spatiality_Slot-AssemblyPanelFixed1of1
-Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Simple-01.Window-Panel-Simple-01'-Finish1-0RawMaterial-Aluminum-331F20-045D8870-51CB-3C49-A851-13AE0B434AA6
-2E579269-966D-2745-929F-BA1E5E310586",,Assembly_2FlexDims1Fixed_PlanarRig_Window,,"Simple Window, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Fixed-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelFixed1of1,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Window-Frame-Simple-01.Window-Frame-Simple-01'-Finish1-0RawMaterial-Aluminum-331F20-B0A223E8-A16D-C147-841E-D64F7906C191,,-,-,-,-,-,-,-,-,5in,-,-,-
-PRESET,,,,,,,,,,Height,48in,,,,,Property_Spatiality_Slot-AssemblyPanelFixed1of1,Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Simple-01.Window-Panel-Simple-01'-Finish1-0RawMaterial-Aluminum-331F20-045D8870-51CB-3C49-A851-13AE0B434AA6,,-,-,-,-,-,-,-,-,5in,-,-,-
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Simple-01.Window-Panel-Simple-01'-Finish1-0RawMaterial-Aluminum-332520-045D8870-51CB-3C49-A851-13AE0B434AA6
+2E579269-966D-2745-929F-BA1E5E310586",,Assembly_2FlexDims1Fixed_PlanarRig_Window,,"Simple Window, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Fixed-Property_Spatiality_Slot-Frame-Property_Spatiality_Slot-AssemblyPanelFixed1of1,Property_Spatiality_Slot-Frame,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_Frame-Window-Frame-Simple-01.Window-Frame-Simple-01'-Finish1-0RawMaterial-Aluminum-332520-B0A223E8-A16D-C147-841E-D64F7906C191,,-,-,-,-,-,-,-,-,5in,-,-,-
+PRESET,,,,,,,,,,Height,48in,,,,,Property_Spatiality_Slot-AssemblyPanelFixed1of1,Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Simple-01.Window-Panel-Simple-01'-Finish1-0RawMaterial-Aluminum-332520-045D8870-51CB-3C49-A851-13AE0B434AA6,,-,-,-,-,-,-,-,-,5in,-,-,-
 PRESET,,5C4F93C8-08A3-F044-9F54-B8060BD17855,,"Assembly_2FlexDims1Fixed_PlanarRig_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Hung-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelHung1of2-Property_Spatiality_Slot-AssemblyPanelHung2of2
 Property_Spatiality_Slot-FrameSliding
@@ -2472,29 +2480,29 @@ Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-P
 PRESET,,CED6D070-F1C3-7D4D-9F5A-3C10EF56D538,,"Assembly_2FlexDims1Fixed_PlanarRig_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Hung-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelHung1of2-Property_Spatiality_Slot-AssemblyPanelHung2of2
 Property_Spatiality_Slot-FrameSliding
-Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_FrameSliding-Window-Frame-Hung-02.Window-Frame-Hung-02'-Finish1-0RawMaterial-Aluminum-331F20-759E6F2B-6962-8047-B455-BCBC770EBD83
+Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_FrameSliding-Window-Frame-Hung-02.Window-Frame-Hung-02'-Finish1-0RawMaterial-Aluminum-332520-759E6F2B-6962-8047-B455-BCBC770EBD83
 Property_Spatiality_Slot-AssemblyPanelHung1of2
 Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
 Property_Spatiality_Slot-Panel
-Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-331F20-FF32530D-A7AD-8244-B64A-110CCEBA902B
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-332520-FF32530D-A7AD-8244-B64A-110CCEBA902B
 2EE60155-018B-0343-A07D-493271A46E1A
 Property_Spatiality_Slot-AssemblyPanelHung2of2
 Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
 Property_Spatiality_Slot-Panel
-Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-331F20-FF32530D-A7AD-8244-B64A-110CCEBA902B
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-332520-FF32530D-A7AD-8244-B64A-110CCEBA902B
 2EE60155-018B-0343-A07D-493271A46E1A
-CED6D070-F1C3-7D4D-9F5A-3C10EF56D538",,Assembly_2FlexDims1Fixed_PlanarRig_Window,,"Hung Window 1, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Hung-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelHung1of2-Property_Spatiality_Slot-AssemblyPanelHung2of2,Property_Spatiality_Slot-FrameSliding,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_FrameSliding-Window-Frame-Hung-02.Window-Frame-Hung-02'-Finish1-0RawMaterial-Aluminum-331F20-759E6F2B-6962-8047-B455-BCBC770EBD83,,-,-,-,-,-,-,-,-,-,-,-,-
+CED6D070-F1C3-7D4D-9F5A-3C10EF56D538",,Assembly_2FlexDims1Fixed_PlanarRig_Window,,"Hung Window 1, Patrician Bronze",,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Hung-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelHung1of2-Property_Spatiality_Slot-AssemblyPanelHung2of2,Property_Spatiality_Slot-FrameSliding,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_FrameSliding-Window-Frame-Hung-02.Window-Frame-Hung-02'-Finish1-0RawMaterial-Aluminum-332520-759E6F2B-6962-8047-B455-BCBC770EBD83,,-,-,-,-,-,-,-,-,-,-,-,-
 ,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelHung1of2,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
 Property_Spatiality_Slot-Panel
-Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-331F20-FF32530D-A7AD-8244-B64A-110CCEBA902B
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-332520-FF32530D-A7AD-8244-B64A-110CCEBA902B
 2EE60155-018B-0343-A07D-493271A46E1A",,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,Property_Spatiality_Slot-AssemblyPanelHung2of2,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
 Property_Spatiality_Slot-Panel
-Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-331F20-FF32530D-A7AD-8244-B64A-110CCEBA902B
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-332520-FF32530D-A7AD-8244-B64A-110CCEBA902B
 2EE60155-018B-0343-A07D-493271A46E1A",,,,,,,,,,,,,
 PRESET,,59B69ED1-E975-6547-A759-E8EB0B5C70A7,,"Assembly_2FlexDims1Fixed_PlanarRig_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Sliding-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelSlidingXO_1-Property_Spatiality_Slot-AssemblyPanelSlidingXO_2
