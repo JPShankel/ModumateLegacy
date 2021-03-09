@@ -72,6 +72,7 @@ namespace
 			FText::FromString(TEXT("System Panel")), FText::FromString(TEXT("Stair")),
 			FText::FromString(TEXT("Door")), FText::FromString(TEXT("Window")),
 			FText::FromString(TEXT("Beam / Column")), FText::FromString(TEXT("Mullion")),
+			FText::FromString(TEXT("Finish")), FText::FromString(TEXT("Trim")),
 			FText::FromString(TEXT("Layer")), FText::FromString(TEXT("Module")),
 			FText::FromString(TEXT("Gap")), FText::FromString(TEXT("Floor Cabinet")),
 			FText::FromString(TEXT("FF&E")),

@@ -94,17 +94,15 @@ float FQuantitiesVisitor::GetModuleUnitsInArea(const FBIMPresetInstance* Preset,
 
 void FQuantitiesVisitor::GetQuantitiesForModule(const FBIMLayerSpec* LayerSpec, float Area, FQuantity& OutQuantity)
 {
-	static const FName nameDepth{ TEXT("Depth") };
-	static const FName nameWidth{ TEXT("Width") };
 	const FLayerPattern& pattern = LayerSpec->Pattern;
 	if (pattern.ModuleCount > 0)
 	{
-		if (pattern.ThicknessDimensionPropertyName == nameWidth)
+		if (pattern.ParameterizedModuleDimensions.Num() > 0)
 		{
 			float unitArea = pattern.CachedExtents.X * pattern.CachedExtents.Y / pattern.ParameterizedModuleDimensions.Num();
 			OutQuantity.Count += Area / unitArea;
 		}
-		else if (pattern.ThicknessDimensionPropertyName == nameDepth)
+		else
 		{
 			float period = pattern.CachedExtents.X * UModumateDimensionStatics::InchesToCentimeters;
 			OutQuantity.Linear += Area / period;
@@ -149,6 +147,11 @@ float FQuantitiesVisitor::AreaOfFace(const Modumate::FGraph3DFace& Face)
 		poly.InsertVertex(i++, vert);
 	}
 	return poly.Area();
+}
+
+float FQuantitiesVisitor::AreaOfFace(const Modumate::FGraph2DPolygon& Face)
+{
+	return AreaOfPoly(Face.CachedPerimeterPoints);
 }
 
 float FQuantitiesVisitor::LengthOfWallFace(const Modumate::FGraph3DFace& Face)

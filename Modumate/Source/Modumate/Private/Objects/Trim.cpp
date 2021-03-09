@@ -11,6 +11,7 @@
 #include "UI/Properties/InstPropWidgetFlip.h"
 #include "UI/Properties/InstPropWidgetOffset.h"
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
+#include "Quantities/QuantitiesVisitor.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -299,6 +300,17 @@ void AMOITrim::PostLoadInstanceData()
 	{
 		StateData.CustomData.SaveStructData(InstanceData);
 	}
+}
+
+bool AMOITrim::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+{
+	const FBIMAssemblySpec& assembly = CachedAssembly;
+	auto assemblyGuid = assembly.UniqueKey();
+
+	float trimLength = (TrimEndPos - TrimStartPos).Size();
+	QuantitiesVisitor.AddQuantity(assemblyGuid, 1.0f, trimLength);
+
+	return true;
 }
 
 void AMOITrim::OnInstPropUIChangedFlip(int32 FlippedAxisInt)

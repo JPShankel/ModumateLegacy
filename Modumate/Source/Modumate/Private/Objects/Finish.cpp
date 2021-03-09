@@ -14,6 +14,7 @@
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "Quantities/QuantitiesVisitor.h"
 
 
 void AMOIFinish::PreDestroy()
@@ -165,6 +166,31 @@ void AMOIFinish::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>
 	{
 		GetInPlaneLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox);
 	}
+}
+
+bool AMOIFinish::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+{
+	const FBIMAssemblySpec& assembly = CachedAssembly;
+	auto assemblyGuid = assembly.UniqueKey();
+	const int32 hostingPolyId = GetParentID();
+	TSharedPtr<Modumate::FGraph2D> graph = Document->FindSurfaceGraphByObjID(GetParentID());
+	if (!ensure(graph.IsValid()) )
+	{
+		return false;
+	}
+	const Modumate::FGraph2DPolygon* hostingFace = graph->FindPolygon(GetParentID());
+	
+	if (!ensure(hostingFace))
+	{
+		return false;
+	}
+
+	float assemblyArea = QuantitiesVisitor.AreaOfFace(*hostingFace);
+	QuantitiesVisitor.AddQuantity(assemblyGuid, 0.0f, 0.0f, assemblyArea);
+	const ADynamicMeshActor* actor = CastChecked< ADynamicMeshActor>(GetActor());
+	QuantitiesVisitor.AddLayersQuantity(actor->LayerGeometries, assembly.Layers, assemblyGuid);
+
+	return true;
 }
 
 void AMOIFinish::UpdateConnectedEdges()

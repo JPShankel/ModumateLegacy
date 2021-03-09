@@ -45,10 +45,12 @@ struct FBIMPresetInstance;
 struct FBIMLayerSpec;
 struct FBIMPartSlotSpec;
 struct FLayerPatternModule;
+struct FPolyHole3D;
 
 namespace Modumate
 {
 	class FGraph3DFace;
+	class FGraph2DPolygon;
 }
 
 class MODUMATE_API FQuantitiesVisitor
@@ -68,7 +70,8 @@ public:
 	void AddAreaQuantity(const FGuid& ItemGuid, float Area);
 	void AddAreaQuantity(const FGuid& ItemGuid, const FGuid& ParentGuid, float Area);
 
-	void AddLayersQuantity(const TArray<FLayerGeomDef>& Layers, const TArray<FBIMLayerSpec>& LayerSpecs, const FGuid& ParentGuid, float Multiplier = 1.0f);
+	void AddLayersQuantity(const TArray<FLayerGeomDef>& Layers, const TArray<FBIMLayerSpec>& LayerSpecs,
+		const FGuid& ParentGuid, float Multiplier = 1.0f);
 	void AddPartsQuantity(const FString& Name, const TArray<FBIMPartSlotSpec>& Parts, const FGuid& ParentGuid = FGuid());
 
 	float GetModuleUnitsInArea(const FBIMPresetInstance* Preset, const FLayerPatternModule* Module, float Area);
@@ -77,6 +80,7 @@ public:
 	const QuantitiesMap& GetQuantities() const { return Quantities; }
 
 	static float AreaOfFace(const Modumate::FGraph3DFace& Face);
+	static float AreaOfFace(const Modumate::FGraph2DPolygon& Face);
 	static float LengthOfWallFace(const Modumate::FGraph3DFace& Face);
 	static float AreaOfLayer(const FLayerGeomDef& LayerGeom);
 	static float AreaOfPoly(const TArray<FVector>& Poly);

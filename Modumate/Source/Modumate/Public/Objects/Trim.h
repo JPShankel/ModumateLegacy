@@ -75,6 +75,8 @@ public:
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 		TArray<TArray<FVector>>& OutPerimeters) const override;
 
+	bool ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const override;
+
 	virtual void PostLoadInstanceData() override;
 
 	UPROPERTY()
