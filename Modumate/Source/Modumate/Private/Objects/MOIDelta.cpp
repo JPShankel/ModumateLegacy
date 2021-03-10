@@ -34,7 +34,10 @@ FMOIStateData& FMOIDelta::AddMutationState(const AModumateObjectInstance* Object
 
 void FMOIDelta::AddMutationState(const AModumateObjectInstance* Object, const FMOIStateData& OldState, const FMOIStateData& NewState)
 {
-	States.Add(FMOIDeltaState{ OldState, NewState, EMOIDeltaType::Mutate });
+	if (OldState != NewState)
+	{
+		States.Add(FMOIDeltaState{ OldState, NewState, EMOIDeltaType::Mutate });
+	}
 }
 
 void FMOIDelta::AddMutationStates(const TArray<AModumateObjectInstance*>& Objects)

@@ -22,6 +22,9 @@ bool UDetailDesignerLayerData::Initialize()
 		return false;
 	}
 
+	ExtensionFront->ModumateEditableTextBox->SelectAllTextWhenFocused = true;
+	ExtensionBack->ModumateEditableTextBox->SelectAllTextWhenFocused = true;
+
 	ExtensionFront->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UDetailDesignerLayerData::OnExtensionFrontTextCommitted);
 	ExtensionBack->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UDetailDesignerLayerData::OnExtensionBackTextCommitted);
 
@@ -33,12 +36,17 @@ void UDetailDesignerLayerData::PopulateLayerData(int32 InParticipantIndex, int32
 	DetailParticipantIndex = InParticipantIndex;
 	DetailLayerIndex = InLayerIndex;
 	CurrentExtensions = InExtensions;
+
+	ExtensionFront->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToImperialText(CurrentExtensions.X));
+	ExtensionBack->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToImperialText(CurrentExtensions.Y));
 }
 
 bool UDetailDesignerLayerData::OnExtensionTextCommitted(int32 ExtensionIdx, const FString& String)
 {
 	auto enteredDimension = UModumateDimensionStatics::StringToFormattedDimension(String);
-	if ((enteredDimension.Format != EDimensionFormat::Error) && ensure((ExtensionIdx == 0) || (ExtensionIdx == 1)))
+	if ((enteredDimension.Format != EDimensionFormat::Error) && ensure((ExtensionIdx == 0) || (ExtensionIdx == 1)) &&
+		!UModumateDimensionStatics::CentimetersToImperialText(CurrentExtensions[ExtensionIdx]).ToString().Equals(String) &&
+		!FMath::IsNearlyEqual(CurrentExtensions[ExtensionIdx], enteredDimension.Centimeters))
 	{
 		CurrentExtensions[ExtensionIdx] = enteredDimension.Centimeters;
 		OnExtensionChanged.Broadcast(DetailParticipantIndex, DetailLayerIndex, CurrentExtensions);
@@ -50,17 +58,17 @@ bool UDetailDesignerLayerData::OnExtensionTextCommitted(int32 ExtensionIdx, cons
 
 void UDetailDesignerLayerData::OnExtensionFrontTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	if (CommitMethod == ETextCommit::OnEnter)
+	if ((CommitMethod == ETextCommit::OnCleared) || !OnExtensionTextCommitted(0, Text.ToString()))
 	{
-		OnExtensionTextCommitted(0, Text.ToString());
+		PopulateLayerData(DetailParticipantIndex, DetailLayerIndex, CurrentExtensions);
 	}
 }
 
 void UDetailDesignerLayerData::OnExtensionBackTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	if (CommitMethod == ETextCommit::OnEnter)
+	if ((CommitMethod == ETextCommit::OnCleared) || !OnExtensionTextCommitted(1, Text.ToString()))
 	{
-		OnExtensionTextCommitted(1, Text.ToString());
+		PopulateLayerData(DetailParticipantIndex, DetailLayerIndex, CurrentExtensions);
 	}
 }
 

@@ -43,16 +43,21 @@ public:
 	TSubclassOf<UUserWidget> ParticipantSeparatorLineClass;
 
 	UFUNCTION()
+	void ClearEditor();
+
+	UFUNCTION()
 	void BuildEditor(const FGuid& InDetailPresetID, const TSet<int32>& InEdgeIDs);
 
 protected:
 	FGuid DetailPresetID;
 	TSet<int32> EdgeIDs;
-	int32 OrientationIdx;
-	TArray<bool> ParticipantsReversed;
+	int32 OrientationIdx = INDEX_NONE;
 
 	UFUNCTION()
 	void OnPressedCancel();
+
+	UFUNCTION()
+	void OnPresetNameEdited(const FText& Text, ETextCommit::Type CommitMethod);
 
 	UFUNCTION()
 	void OnLayerExtensionChanged(int32 ParticipantIndex, int32 LayerIndex, FVector2D NewExtensions);

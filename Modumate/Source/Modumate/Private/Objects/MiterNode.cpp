@@ -271,6 +271,9 @@ bool FMiterData::CalculateMitering()
 		TEXT("Cannot apply a miter detail with %d participants to an edge that has %d participants!"),
 		numDetailParticipants, numParticipants))
 	{
+		FEdgeDetailData orientedDetailData = *edgeDetailData;
+		orientedDetailData.OrientData(edgeDetailMOI->InstanceData.OrientationIndex);
+
 		for (int32 participantIdx = 0; participantIdx < numParticipants; ++participantIdx)
 		{
 			int32 participantID = SortedMiterIDs[participantIdx];
@@ -282,7 +285,7 @@ bool FMiterData::CalculateMitering()
 			FMiterParticipantData& miterParticipant = ParticipantsByID[participantID];
 			int32 numParticipantLayers = miterParticipant.LayerExtensions.Num();
 
-			const FEdgeDetailOverrides& edgeDetailOverrides = edgeDetailData->Overrides[participantIdx];
+			const FEdgeDetailOverrides& edgeDetailOverrides = orientedDetailData.Overrides[participantIdx];
 			int32 numDetailOverrideLayers = edgeDetailOverrides.LayerExtensions.Num();
 
 			if (!ensureMsgf(numParticipantLayers == numDetailOverrideLayers,

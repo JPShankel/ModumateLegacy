@@ -40,16 +40,29 @@ bool UDetailDesignerContainer::Initialize()
 	}
 
 	ButtonCancel->ModumateButton->OnClicked.AddDynamic(this, &UDetailDesignerContainer::OnPressedCancel);
+	PresetName->EditText->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UDetailDesignerContainer::OnPresetNameEdited);
 
 	return true;
 }
 
+void UDetailDesignerContainer::ClearEditor()
+{
+	ParticipantsList->ClearChildren();
+	DetailPresetID.Invalidate();
+	EdgeIDs.Reset();
+	OrientationIdx = INDEX_NONE;
+}
+
 void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const TSet<int32>& InEdgeIDs)
 {
+	int32 numEdgeIDs = InEdgeIDs.Num();
+	if ((DetailPresetID != InDetailPresetID) || (InEdgeIDs.Intersect(EdgeIDs).Num() != numEdgeIDs))
+	{
+		ClearEditor();
+	}
+
 	DetailPresetID = InDetailPresetID;
 	EdgeIDs = InEdgeIDs;
-
-	ParticipantsList->ClearChildren();
 
 	auto controller = GetOwningPlayer<AEditModelPlayerController>();
 	auto document = controller ? controller->GetDocument() : nullptr;
@@ -79,19 +92,13 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 	// TODO: determine if we can display participant data if our selection all has the same detail orientation;
 	// for now, only show it if 1 edge is selected.
 	TArray<FBIMAssemblySpec> participantAssemblies;
-	ParticipantsReversed.Reset();
 	int32 edgeID = (EdgeIDs.Num() == 1) ? *EdgeIDs.CreateConstIterator() : MOD_ID_NONE;
 	auto edgeObj = Cast<AMOIMetaEdge>(document->GetObjectById(edgeID));
 	OrientationIdx = (edgeObj && edgeObj->CachedEdgeDetailMOI) ? edgeObj->CachedEdgeDetailMOI->InstanceData.OrientationIndex : INDEX_NONE;
-	bool bOrientationIsReversed = (OrientationIdx >= numParticipants);
 	if (OrientationIdx != INDEX_NONE)
 	{
-		// TODO: shuffle participants based on orientation, don't just flip
-		if ((OrientationIdx % numParticipants) != 0)
-		{
-			UE_LOG(LogTemp, Log, TEXT("Detail \"%s\" (%s) is applied to edge #%d with orientation index %d"),
-				*detailPreset->DisplayName.ToString(), *DetailPresetID.ToString(EGuidFormats::Short), edgeID, OrientationIdx);
-		}
+		bool bOrientationIsReversed = (OrientationIdx >= numParticipants);
+		int32 rotationIdx = OrientationIdx % numParticipants;
 
 		auto& miterData = edgeObj->GetMiterData();
 		for (int32 participantID : miterData.SortedMiterIDs)
@@ -102,17 +109,30 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 				return;
 			}
 
-			participantAssemblies.Add(participantObj->GetAssembly());
 			auto& miterParticipant = miterData.ParticipantsByID[participantID];
-			ParticipantsReversed.Add(!miterParticipant.bPlaneNormalCW);
+			auto participantAssembly = participantObj->GetAssembly();
+			if (!miterParticipant.bPlaneNormalCW ^ bOrientationIsReversed)
+			{
+				participantAssembly.ReverseLayers();
+			}
+
+			participantAssemblies.Add(participantAssembly);
 		}
 
 		if (bOrientationIsReversed)
 		{
 			Algo::Reverse(participantAssemblies);
 		}
+
+		for (int32 i = 0; i < rotationIdx; ++i)
+		{
+			auto firstAssembly = participantAssemblies[0];
+			participantAssemblies.Add(firstAssembly);
+			participantAssemblies.RemoveAt(0, 1, false);
+		}
 	}
 
+	int32 participantWidgetIdx = 0;
 	TMap<EObjectType, int32> participantsByType;
 	for (int32 participantIdx = 0; participantIdx < numParticipants; ++participantIdx)
 	{
@@ -122,7 +142,6 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 		FBIMAssemblySpec* participantAssembly = (OrientationIdx != INDEX_NONE) ? &participantAssemblies[participantIdx] : nullptr;
 		EObjectType participantType = participantAssembly ? participantAssembly->ObjectType : EObjectType::OTNone;
 		int32& typeIndex = participantsByType.FindOrAdd(participantType, 0);
-		bool bParticipantReversed = participantAssembly && ParticipantsReversed[participantIdx];
 		typeIndex++;
 
 		// If we're referencing a real assembly, double-check that it matches the reported number of layers
@@ -133,8 +152,12 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 		}
 
 		// Create a header for the participant, with its participant number, thickness, and optional assembly name
-		auto presetTitle = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UDetailDesignerAssemblyTitle>(ParticipantTitleClass);
-		ParticipantsList->AddChildToVerticalBox(presetTitle);
+		auto presetTitle = Cast<UDetailDesignerAssemblyTitle>(ParticipantsList->GetChildAt(participantWidgetIdx++));
+		if (presetTitle == nullptr)
+		{
+			presetTitle = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UDetailDesignerAssemblyTitle>(ParticipantTitleClass);
+			ParticipantsList->AddChildToVerticalBox(presetTitle);
+		}
 
 		FText numberPrefix = participantAssembly ? UModumateTypeStatics::GetTextForObjectType(participantType) : LOCTEXT("AssemblyAnonPrefix", "Participant");
 		float totalThicknessInches = Algo::Accumulate(detailCondition.LayerThicknesses, 0.0f);
@@ -146,14 +169,23 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 		presetTitle->AssemblyTitle->ModumateTextBlock->SetText(assemblyTitle);
 
 		// Create a header for the layer rows
-		auto presetColumnTitles = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UUserWidget>(ParticipantColumnTitlesClass);
-		ParticipantsList->AddChildToVerticalBox(presetColumnTitles);
+		auto presetColumnTitles = ParticipantsList->GetChildAt(participantWidgetIdx++);
+		if ((presetColumnTitles == nullptr) || !presetColumnTitles->IsA(ParticipantColumnTitlesClass.Get()))
+		{
+			presetColumnTitles = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UUserWidget>(ParticipantColumnTitlesClass);
+			ParticipantsList->AddChildToVerticalBox(presetColumnTitles);
+		}
 
 		// Create a row for each layer of the participant
 		for (int32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
 		{
-			auto presetLayerData = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UDetailDesignerLayerData>(ParticipantLayerDataClass);
-			ParticipantsList->AddChildToVerticalBox(presetLayerData);
+			auto presetLayerData = Cast<UDetailDesignerLayerData>(ParticipantsList->GetChildAt(participantWidgetIdx++));
+			if (presetLayerData == nullptr)
+			{
+				presetLayerData = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UDetailDesignerLayerData>(ParticipantLayerDataClass);
+				presetLayerData->OnExtensionChanged.AddDynamic(this, &UDetailDesignerContainer::OnLayerExtensionChanged);
+				ParticipantsList->AddChildToVerticalBox(presetLayerData);
+			}
 
 			float layerThicknessInches = detailCondition.LayerThicknesses[layerIdx];
 
@@ -161,8 +193,7 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 			if (participantAssembly)
 			{
 				// Double-check that if we're referencing a real assembly, that it has the right layers
-				int32 assemblyLayerIdx = (bOrientationIsReversed ^ bParticipantReversed) ? (numLayers - 1 - layerIdx) : layerIdx;
-				auto& participantLayer = participantAssembly->Layers[assemblyLayerIdx];
+				auto& participantLayer = participantAssembly->Layers[layerIdx];
 				auto layerPreset = presetCollection.PresetFromGUID(participantLayer.PresetGUID);
 				if (!ensure(layerPreset &&
 					FMath::IsNearlyEqual(layerThicknessInches, UModumateDimensionStatics::CentimetersToInches64(participantLayer.ThicknessCentimeters))))
@@ -176,21 +207,17 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 			presetLayerData->LayerName->ModumateTextBlock->SetText(layerTitle);
 
 			presetLayerData->LayerThickness->ModumateTextBlock->SetText(UModumateDimensionStatics::InchesToImperialText(layerThicknessInches));
-
-			FVector2D extensions = detailOverride.LayerExtensions[layerIdx];
-			if (bOrientationIsReversed)
-			{
-				Swap(extensions.X, extensions.Y);
-			}
-
-			presetLayerData->ExtensionFront->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToImperialText(extensions.X));
-			presetLayerData->ExtensionBack->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToImperialText(extensions.Y));
-
-			presetLayerData->PopulateLayerData(participantIdx, layerIdx, extensions);
-			presetLayerData->OnExtensionChanged.AddDynamic(this, &UDetailDesignerContainer::OnLayerExtensionChanged);
+			presetLayerData->PopulateLayerData(participantIdx, layerIdx, detailOverride.LayerExtensions[layerIdx]);
 		}
 
-		ParticipantsList->AddChildToVerticalBox(controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UUserWidget>(ParticipantSeparatorLineClass));
+		if (participantIdx < (numParticipants - 1))
+		{
+			auto participantSeparator = ParticipantsList->GetChildAt(participantWidgetIdx++);
+			if ((participantSeparator == nullptr) || !participantSeparator->IsA(ParticipantSeparatorLineClass.Get()))
+			{
+				ParticipantsList->AddChildToVerticalBox(controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UUserWidget>(ParticipantSeparatorLineClass));
+			}
+		}
 	}
 }
 
@@ -200,6 +227,30 @@ void UDetailDesignerContainer::OnPressedCancel()
 	{
 		controller->EditModelUserWidget->SelectionTrayWidget->OpenToolTrayForSelection();
 	}
+}
+
+void UDetailDesignerContainer::OnPresetNameEdited(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	auto controller = GetOwningPlayer<AEditModelPlayerController>();
+	auto document = controller ? controller->GetDocument() : nullptr;
+	if (!ensure(document) || (CommitMethod == ETextCommit::OnCleared))
+	{
+		return;
+	}
+
+	auto detailPreset = document->GetPresetCollection().PresetFromGUID(DetailPresetID);
+	if (!ensure(detailPreset))
+	{
+		return;
+	}
+
+	// Make a delta for modifying the display name of the current preset
+	auto detailPresetDelta = MakeShared<FBIMPresetDelta>();
+	detailPresetDelta->OldState = *detailPreset;
+	detailPresetDelta->NewState = *detailPreset;
+	detailPresetDelta->NewState.DisplayName = Text;
+
+	document->ApplyDeltas({ detailPresetDelta }, controller->GetWorld());
 }
 
 void UDetailDesignerContainer::OnLayerExtensionChanged(int32 ParticipantIndex, int32 LayerIndex, FVector2D NewExtensions)
@@ -228,19 +279,11 @@ void UDetailDesignerContainer::OnLayerExtensionChanged(int32 ParticipantIndex, i
 	detailPresetDelta->OldState = *detailPreset;
 	detailPresetDelta->NewState = *detailPreset;
 
-	if (ParticipantsReversed.IsValidIndex(ParticipantIndex) && ParticipantsReversed[ParticipantIndex])
-	{
-		Swap(NewExtensions.X, NewExtensions.Y);
-	}
-
 	detailData.Overrides[ParticipantIndex].LayerExtensions[LayerIndex] = NewExtensions;
 	if (!ensure(detailPresetDelta->NewState.CustomData.SaveStructData(detailData)))
 	{
 		return;
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("Detail \"%s\" (%s) participant #%d layer #%d new extensions: [%.2f, %.2f]"),
-		*detailPreset->DisplayName.ToString(), *DetailPresetID.ToString(EGuidFormats::Short), ParticipantIndex, LayerIndex, NewExtensions.X, NewExtensions.Y);
 
 	document->ApplyDeltas({ detailPresetDelta }, controller->GetWorld());
 }

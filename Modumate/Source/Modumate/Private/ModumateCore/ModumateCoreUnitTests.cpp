@@ -1702,6 +1702,11 @@ namespace Modumate
 			FEdgeDetailCondition{300, 0, {1, 2}},
 			FEdgeDetailCondition{345, -1, {1}}
 		};
+		edgeDetail1.Overrides = {
+			FEdgeDetailOverrides(),
+			FEdgeDetailOverrides(),
+			FEdgeDetailOverrides()
+		};
 		edgeDetail1.Conditions.Sort(conditionSorter);
 		FEdgeDetailData::NormalizeConditionAngles(edgeDetail1.Conditions);
 		edgeDetail1.UpdateConditionHash();
@@ -1731,6 +1736,11 @@ namespace Modumate
 			FEdgeDetailCondition{360 - 300, 0, {2, 1}},
 			FEdgeDetailCondition{360 - 30, 0, {1, 1}}
 		};
+		edgeDetailFlipped.Overrides = {
+			FEdgeDetailOverrides(),
+			FEdgeDetailOverrides(),
+			FEdgeDetailOverrides()
+		};
 		edgeDetailFlipped.Conditions.Sort(conditionSorter);
 		FEdgeDetailData::NormalizeConditionAngles(edgeDetailFlipped.Conditions);
 		edgeDetailFlipped.UpdateConditionHash();
@@ -1745,6 +1755,12 @@ namespace Modumate
 			FEdgeDetailCondition{90, 0, {1, 1}},
 			FEdgeDetailCondition{180, 0, {1, 1}},
 			FEdgeDetailCondition{270, 0, {1, 1}}
+		};
+		edgeDetailPlus.Overrides = {
+			FEdgeDetailOverrides(),
+			FEdgeDetailOverrides(),
+			FEdgeDetailOverrides(),
+			FEdgeDetailOverrides()
 		};
 		edgeDetailPlus.Conditions.Sort(conditionSorter);
 		FEdgeDetailData::NormalizeConditionAngles(edgeDetailPlus.Conditions);

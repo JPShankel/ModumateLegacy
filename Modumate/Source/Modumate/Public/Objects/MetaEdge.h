@@ -35,7 +35,4 @@ protected:
 
 	void ResetEdgeDetail();
 	void CacheEdgeDetail();
-
-	UFUNCTION()
-	void OnInstPropEdgeDetailButtonPress(EEdgeDetailWidgetActions EdgeDetailAction);
 };

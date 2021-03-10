@@ -54,6 +54,7 @@ public:
 	void OpenToolTrayDetailDesigner(const FGuid& DetailPreset, const TSet<int32>& EdgeIDs);
 	void UpdateFromSelection();
 	void StartDetailDesignerFromSelection();
+	void CloseDetailDesigner();
 	void CloseToolTray();
 	const FGuid& GetCurrentPresetToSwap() const { return CurrentPresetToSwap; }
 };

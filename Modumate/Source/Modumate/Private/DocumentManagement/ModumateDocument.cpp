@@ -87,6 +87,7 @@ void UModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 		int32 toBufferSize = ToBuffer.Num();
 #endif
 
+		CleanObjects(nullptr);
 		PostApplyDeltas(World);
 		UpdateRoomAnalysis(World);
 
@@ -879,7 +880,6 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	{
 		delta->ApplyTo(this, World);
 	}
-	PostApplyDeltas(World);
 
 	CalculateSideEffectDeltas(ur->Deltas, World);
 
@@ -921,7 +921,6 @@ bool UModumateDocument::ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWor
 	{
 		delta->ApplyTo(this, World);
 	}
-	PostApplyDeltas(World);
 
 	CalculateSideEffectDeltas(PreviewDeltas, World);
 

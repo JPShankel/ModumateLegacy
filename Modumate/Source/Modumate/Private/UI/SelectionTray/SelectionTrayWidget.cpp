@@ -80,8 +80,7 @@ bool USelectionTrayWidget::GetDetailFromSelection(FGuid& OutDetailPreset, TSet<i
 
 void USelectionTrayWidget::OpenToolTrayForSelection()
 {
-	CurrentDetailPreset.Invalidate();
-	CurrentDetailEdgeIDs.Reset();
+	CloseDetailDesigner();
 
 	// Switcher switches between which widget to display, depending on child order
 	// SelectionTray is in first index, SwapTray is second, DetailDesigner is third
@@ -105,6 +104,8 @@ void USelectionTrayWidget::OpenToolTrayForSelection()
 
 void USelectionTrayWidget::OpenToolTrayForSwap(EToolMode ToolMode, const FGuid& PresetToSwap)
 {
+	CloseDetailDesigner();
+
 	// Switcher switches between which widget to display, depending on child order
 	// SelectionTray is in first index, SwapTray is second, DetailDesigner is third
 	WidgetSwitcherTray->SetActiveWidgetIndex(1);
@@ -156,14 +157,20 @@ void USelectionTrayWidget::StartDetailDesignerFromSelection()
 	}
 }
 
+void USelectionTrayWidget::CloseDetailDesigner()
+{
+	CurrentDetailPreset.Invalidate();
+	CurrentDetailEdgeIDs.Reset();
+	DetailDesigner->ClearEditor();
+}
+
 void USelectionTrayWidget::CloseToolTray()
 {
 	// TODO: Set menu animation here
 	SetVisibility(ESlateVisibility::Collapsed);
 	SelectionTrayBlockPresetList->ClearPresetList();
 
-	CurrentDetailPreset.Invalidate();
-	CurrentDetailEdgeIDs.Reset();
+	CloseDetailDesigner();
 
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller && controller->EditModelUserWidget->BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)

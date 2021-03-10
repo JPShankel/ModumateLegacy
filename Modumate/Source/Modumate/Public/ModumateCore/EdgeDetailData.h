@@ -56,6 +56,8 @@ struct FEdgeDetailOverrides
 	UPROPERTY(meta = (ToolTip = "The extension/retraction of the start and end (in X and Y respectively) of each layer of a separator participant."))
 	TArray<FVector2D> LayerExtensions;
 
+	void Invert();
+
 	friend uint32 GetTypeHash(const FEdgeDetailOverrides& EdgeDetailOverrides);
 };
 
@@ -67,8 +69,8 @@ struct FEdgeDetailData
 	FEdgeDetailData();
 	FEdgeDetailData(const IMiterNode* MiterNode);
 
-	// Generate an oriented list of conditions, for both direct comparison and hash calculation.
-	void OrientConditions(int32 OrientationIdx, TArray<FEdgeDetailCondition>& OutConditions) const;
+	// Generate an oriented detail data, for both direct comparison/application and hash calculation.
+	void OrientData(int32 OrientationIdx);
 
 	// Return whether conditions are the same hash, and find which orientation(s), if any, allow the target detail conditions to match the provided other detail.
 	bool CompareConditions(const FEdgeDetailData& OtherDetail, TArray<int32>& OutOrientationIndices) const;
@@ -99,7 +101,7 @@ struct FEdgeDetailData
 	uint32 CachedConditionHash = 0;
 
 protected:
-	static TArray<FEdgeDetailCondition> TempOrientedConditions;
+	static FEdgeDetailData TempOrientedDetail;
 	static TArray<uint32> TempOrientedConditionHashes;
 };
 

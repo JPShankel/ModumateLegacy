@@ -11,9 +11,9 @@ UENUM()
 enum class EEdgeDetailWidgetActions : uint8
 {
 	None,
+	Create,
 	Swap,
-	Edit,
-	Delete
+	Edit
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInstPropEdgeDetailButtonPress, EEdgeDetailWidgetActions, EdgeDetailAction);
@@ -32,13 +32,13 @@ public:
 	class UModumateTextBlockUserWidget* DetailName;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonCreate;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonSwap;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonEdit;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget* ButtonDelete;
 
 	TSet<int32> CurrentEdgeIDs;
 	TSet<FGuid> CurrentPresetValues;
@@ -51,15 +51,16 @@ public:
 
 protected:
 	virtual void BroadcastValueChanged() override;
+	bool OnCreateOrSwap(FGuid NewDetailPresetID);
+
+	UFUNCTION()
+	void OnClickedCreate();
 
 	UFUNCTION()
 	void OnClickedSwap();
 
 	UFUNCTION()
 	void OnClickedEdit();
-
-	UFUNCTION()
-	void OnClickedDelete();
 
 	static bool TryMakeUniquePresetDisplayName(const struct FBIMPresetCollection& PresetCollection, const struct FEdgeDetailData& NewDetailData, FText& OutDisplayName);
 

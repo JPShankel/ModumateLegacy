@@ -88,12 +88,17 @@ FEdgeDetailOverrides::FEdgeDetailOverrides(const FMiterParticipantData* MiterPar
 		// Normalize all participants as if they're coming in clockwise, from the perspective of the miter edge coordinate system.
 		if (!MiterParticipantData->bPlaneNormalCW)
 		{
-			Algo::Reverse(LayerExtensions);
-			for (FVector2D& layerExtension : LayerExtensions)
-			{
-				Swap(layerExtension.X, layerExtension.Y);
-			}
+			Invert();
 		}
+	}
+}
+
+void FEdgeDetailOverrides::Invert()
+{
+	Algo::Reverse(LayerExtensions);
+	for (FVector2D& layerExtension : LayerExtensions)
+	{
+		Swap(layerExtension.X, layerExtension.Y);
 	}
 }
 
@@ -105,7 +110,7 @@ uint32 GetTypeHash(const FEdgeDetailOverrides& EdgeDetailOverrides)
 }
 
 
-TArray<FEdgeDetailCondition> FEdgeDetailData::TempOrientedConditions;
+FEdgeDetailData FEdgeDetailData::TempOrientedDetail;
 TArray<uint32> FEdgeDetailData::TempOrientedConditionHashes;
 
 FEdgeDetailData::FEdgeDetailData()
@@ -117,38 +122,45 @@ FEdgeDetailData::FEdgeDetailData(const IMiterNode* MiterNode)
 	FillFromMiterNode(MiterNode);
 }
 
-void FEdgeDetailData::OrientConditions(int32 OrientationIdx, TArray<FEdgeDetailCondition>& OutConditions) const
+void FEdgeDetailData::OrientData(int32 OrientationIdx)
 {
-	OutConditions = Conditions;
-	int32 numConditions = Conditions.Num();
+	int32 numParticipants = Conditions.Num();
 
-	if ((numConditions == 0) || (OrientationIdx == 0) || !Conditions.IsValidIndex(OrientationIdx / 2))
+	if ((OrientationIdx == 0) ||
+		!ensure((numParticipants > 0) && (numParticipants == Overrides.Num()) &&
+			(OrientationIdx != INDEX_NONE) && (OrientationIdx < 2 * numParticipants)))
 	{
 		return;
 	}
 
-	int32 rotationIdx = OrientationIdx % numConditions;
-	bool bFlipped = OrientationIdx >= numConditions;
+	int32 rotationIdx = OrientationIdx % numParticipants;
+	bool bFlipped = OrientationIdx >= numParticipants;
 
 	if (bFlipped)
 	{
-		Algo::Reverse(OutConditions);
-		NormalizeConditionAngles(OutConditions);
-		for (auto& condition : OutConditions)
+		Algo::Reverse(Conditions);
+		Algo::Reverse(Overrides);
+		NormalizeConditionAngles(Conditions);
+		for (int32 participantIdx = 0; participantIdx < numParticipants; ++participantIdx)
 		{
-			condition.Invert();
+			Conditions[participantIdx].Invert();
+			Overrides[participantIdx].Invert();
 		}
 	}
 
-	// Rotate the conditions a number of times based on which rotation index we're given
+	// Rotate the conditions and overrides a number of times based on which rotation index we're given
 	for (int32 i = 0; i < rotationIdx; ++i)
 	{
-		FEdgeDetailCondition firstCondition = OutConditions[0];
-		OutConditions.Add(firstCondition);
-		OutConditions.RemoveAt(0, 1, false);
+		FEdgeDetailCondition firstCondition = Conditions[0];
+		Conditions.Add(firstCondition);
+		Conditions.RemoveAt(0, 1, false);
+
+		FEdgeDetailOverrides firstOverrides = Overrides[0];
+		Overrides.Add(firstOverrides);
+		Overrides.RemoveAt(0, 1, false);
 	}
 
-	NormalizeConditionAngles(OutConditions);
+	NormalizeConditionAngles(Conditions);
 }
 
 bool FEdgeDetailData::CompareConditions(const FEdgeDetailData& OtherDetail, TArray<int32>& OutOrientationIndices) const
@@ -171,9 +183,10 @@ bool FEdgeDetailData::CompareConditions(const FEdgeDetailData& OtherDetail, TArr
 	// Otherwise, figure out which combination of flipping and/or rotation makes this set of conditions equal to the other set of conditions.
 	for (int32 orientationIdx = 0; orientationIdx < 2 * numConditions; ++orientationIdx)
 	{
-		OrientConditions(orientationIdx, TempOrientedConditions);
+		TempOrientedDetail = *this;
+		TempOrientedDetail.OrientData(orientationIdx);
 
-		if (TempOrientedConditions == OtherDetail.Conditions)
+		if (TempOrientedDetail.Conditions == OtherDetail.Conditions)
 		{
 			OutOrientationIndices.Add(orientationIdx);
 		}
@@ -222,8 +235,9 @@ uint32 FEdgeDetailData::CalculateConditionHash() const
 	for (int32 orientationIdx = 0; orientationIdx < 2 * numConditions; ++orientationIdx)
 	{
 		uint32 orientationHash = 0;
-		OrientConditions(orientationIdx, TempOrientedConditions);
-		for (const FEdgeDetailCondition& condition : TempOrientedConditions)
+		TempOrientedDetail = *this;
+		TempOrientedDetail.OrientData(orientationIdx);
+		for (const FEdgeDetailCondition& condition : TempOrientedDetail.Conditions)
 		{
 			orientationHash = HashCombine(orientationHash, GetTypeHash(condition));
 		}
