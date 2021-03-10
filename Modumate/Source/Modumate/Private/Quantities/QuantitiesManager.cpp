@@ -98,7 +98,7 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 	TArray<FReportItem> topReportItems;
 
 	auto gameInstance = GameInstance.Get();
-	if (!gameInstance || !gameInstance->GetWorld())
+	if (!gameInstance || !gameInstance->GetWorld() || !CurrentQuantities.IsValid())
 	{
 		return false;
 	}
@@ -255,6 +255,23 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 	}
 
 	return FFileHelper::SaveStringToFile(csvContents, *Filename);
+}
+
+FQuantity FQuantitiesManager::QuantityForOnePreset(const FGuid& PresetId) const
+{
+	FQuantity quantity;
+	if (CurrentQuantities.IsValid())
+	{
+		for (const auto& item : CurrentQuantities->GetQuantities())
+		{
+			if (item.Key.Item.Id == PresetId)
+			{
+				quantity += item.Value;
+			}
+		}
+	}
+
+	return quantity;
 }
 
 float FQuantitiesManager::GetModuleUnitsInArea(const FBIMPresetInstance* Preset, const FLayerPatternModule* Module, float Area)

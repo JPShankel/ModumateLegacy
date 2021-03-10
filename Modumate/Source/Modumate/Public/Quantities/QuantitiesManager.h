@@ -8,6 +8,7 @@
 class FQuantitiesVisitor;
 struct FBIMPresetInstance;
 struct FLayerPatternModule;
+struct FQuantity;
 
 class MODUMATE_API FQuantitiesManager
 {
@@ -17,6 +18,7 @@ public:
 	bool CalculateAllQuantities();
 	// Create a CSV-format spreadsheet with quantity summations (MOD-379).
 	bool CreateReport(const FString& Filename);
+	FQuantity QuantityForOnePreset(const FGuid& PresetId) const;
 
 	static float GetModuleUnitsInArea(const FBIMPresetInstance* Preset, const FLayerPatternModule* Module, float Area);
 
