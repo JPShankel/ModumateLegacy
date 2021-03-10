@@ -1,4 +1,4 @@
-TG_MyNode+CategoryPath,DisplayName,Tooltip,ObjectType,AssetType,ToolTrayAndBIMDesigner-PresetCard,BIMDesigner-NodeTitle,StopNCPTraversal,MeasurementMethods,,Procedural Name,Exceptions,,,,,,,,,
+TG_MyNode+CategoryPath,DisplayName,Tooltip,ObjectType,AssetType,ToolTrayAndBIMDesignerPresetCard,BIMDesignerNodeTitle,StopNCPTraversal,MeasurementMethods,,Procedural Name,Exceptions,,,,,,,,,
 Property,Properties,All Properties about objects.,,,,,,,,,,,Property,,,,,,,
 Property_Materiality,Materiality,"All properties about materiality (e.g. material, color, surface treatment).",,,,,,,,,,,,Materiality,,,,,,
 Property_Materiality_Material,Materials,,,,,,X,,,,,,,,Material,,,,,

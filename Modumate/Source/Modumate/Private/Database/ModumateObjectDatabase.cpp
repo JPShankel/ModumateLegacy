@@ -156,7 +156,7 @@ bool FModumateDatabase::ReadBIMCache(const FString& CacheFile, FModumateBIMCache
 	const static FString versionFieldName(TEXT("Version"));
 	int32 cacheVersion;
 	if (!cacheObRef->TryGetNumberField(versionFieldName, cacheVersion) ||
-		(OutCache.Version != BIMCacheCurrentVersion))
+		(cacheVersion != BIMCacheCurrentVersion))
 	{
 		return false;
 	}
@@ -230,11 +230,33 @@ void FModumateDatabase::ReadPresetData()
 		}
 		if (ensureAlways(errors.Num() == 0))
 		{
-			bimCacheRecord = FModumateBIMCacheRecord();
-			bimCacheRecord.Presets = BIMPresetCollection;
-			bimCacheRecord.Starters = starters;
+			FString NCPString;
+			FString NCPPath = ManifestDirectoryPath / TEXT("NCPTable.csv");
+			if (!ensureAlways(FFileHelper::LoadFileToString(NCPString, *NCPPath)))
+			{
+				return;
+			}
 
-			WriteBIMCache(BIMCacheFile, bimCacheRecord);
+			FCsvParser NCPParsed(NCPString);
+			const FCsvParser::FRows& NCPRows = NCPParsed.GetRows();
+
+			if (ensureAlways(BIMPresetCollection.PresetTaxonomy.LoadCSVRows(NCPRows) == EBIMResult::Success))
+			{
+				bimCacheRecord = FModumateBIMCacheRecord();
+				bimCacheRecord.Version = BIMCacheCurrentVersion;
+				bimCacheRecord.Presets = BIMPresetCollection;
+
+				TArray<FGuid> furniture;
+				BIMPresetCollection.GetPresetsByPredicate(
+					[](const FBIMPresetInstance& Preset) {return Preset.ObjectType == EObjectType::OTFurniture; },
+					furniture);
+
+				bimCacheRecord.Starters = starters;
+				bimCacheRecord.Starters.Append(furniture);
+				bimCacheRecord.PresetTaxonomy = BIMPresetCollection.PresetTaxonomy;
+
+				WriteBIMCache(BIMCacheFile, bimCacheRecord);
+			}
 #if !UE_BUILD_SHIPPING
 			bWantUnitTest = true;
 #endif
@@ -243,358 +265,35 @@ void FModumateDatabase::ReadPresetData()
 	else
 	{
 		BIMPresetCollection = bimCacheRecord.Presets;
-		BIMPresetCollection.PostLoad();
+		BIMPresetCollection.PresetTaxonomy = bimCacheRecord.PresetTaxonomy;
 	}
 
-	/*
-	* TODO/WIP: post load processing to be broken down and driven by a more general NCP system
-	* For now, roll the stages into separate functions to de-blob...work in progress
-	*/
+	ensureAlways(BIMPresetCollection.PostLoad() == EBIMResult::Success);
 
-	ensureAlways(BIMPresetCollection.ProcessNamedDimensions() == EBIMResult::Success);
-
-	FString NCPString;
-	FString NCPPath = ManifestDirectoryPath / TEXT("NCPTable.csv");
-	if (!ensureAlways(FFileHelper::LoadFileToString(NCPString, *NCPPath)))
-	{
-		return;
-	}
-
-	FCsvParser NCPParsed(NCPString);
-	const FCsvParser::FRows &NCPRows = NCPParsed.GetRows();
-
-	/*
-	Presets make reference to raw assets, like meshes and engine materials, stored in the object database
-	and keyed by a given ID. The NCP table indicates which preset types have AssetPath/AssetID pairs to be
-	loaded and bound to the object database. This map binds tag paths to asset load functions.
-
-	The map is stored as an array of pairs instead of an actual map because tags are checked with partial matches
-
-	Future plan: these relations will be used to build a SQL database
-
-	*/
-
-	typedef TFunction<void(const FBIMPresetInstance &Preset)> FAddAssetFunction;
-	typedef TPair<FBIMTagPath, FAddAssetFunction> FAddAssetPath;
-	TArray<FAddAssetPath> assetTargetPaths;
-
-	FAddAssetFunction addMesh = [this](const FBIMPresetInstance& Preset)
-	{
-		FString assetPath = Preset.GetScopedProperty<FString>(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
-
-		if (ensureAlways(assetPath.Len() > 0))
-		{
-			FVector meshNativeSize(ForceInitToZero);
-			FBox meshNineSlice(ForceInitToZero);
-
-			FVector presetNativeSize(ForceInitToZero);
-			if (Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeX"), presetNativeSize.X) &&
-				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeY"), presetNativeSize.Y) &&
-				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeZ"), presetNativeSize.Z))
-			{
-				meshNativeSize = presetNativeSize * UModumateDimensionStatics::CentimetersToInches;
-			}
-
-			FVector presetNineSliceMin(ForceInitToZero), presetNineSliceMax(ForceInitToZero);
-			if (Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceX1"), presetNineSliceMin.X) &&
-				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceY1"), presetNineSliceMin.Y) &&
-				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceZ1"), presetNineSliceMin.Z) &&
-				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceX2"), presetNineSliceMax.X) &&
-				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceY2"), presetNineSliceMax.Y) &&
-				Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceZ2"), presetNineSliceMax.Z))
-			{
-				meshNineSlice = FBox(
-					presetNineSliceMin * UModumateDimensionStatics::CentimetersToInches,
-					presetNineSliceMax * UModumateDimensionStatics::CentimetersToInches);
-			}
-
-			FString name;
-			Preset.TryGetProperty(BIMPropertyNames::Name, name);
-			AddArchitecturalMesh(Preset.GUID, name, meshNativeSize, meshNineSlice, assetPath);
-		}
-	};
-
-	FAddAssetFunction addRawMaterial = [this](const FBIMPresetInstance& Preset)
-	{
-		FString assetPath;
-		Preset.TryGetProperty(BIMPropertyNames::AssetPath,assetPath);
-		if (assetPath.Len() != 0)
-		{
-			FString matName;
-			if (ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
-			{
-				AddArchitecturalMaterial(Preset.GUID, matName, assetPath);
-			}
-		}
-	};
-
-	FAddAssetFunction addMaterial = [this](const FBIMPresetInstance& Preset)
-	{
-		FGuid rawMaterial;
-
-		for (auto& cp : Preset.ChildPresets)
-		{
-			const FBIMPresetInstance* childPreset = BIMPresetCollection.PresetFromGUID(cp.PresetGUID);
-			if (childPreset != nullptr)
-			{
-				if (childPreset->NodeScope == EBIMValueScope::RawMaterial)
-				{
-					rawMaterial = cp.PresetGUID;
-				}
-			}
-		}
-
-		if (rawMaterial.IsValid())
-		{
-			const FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(rawMaterial);
-			if (preset != nullptr)
-			{
-				FString assetPath, matName;
-				if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::AssetPath, assetPath) 
-					&& Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
-				{
-					AddArchitecturalMaterial(Preset.GUID, matName, assetPath);
-				}
-			}
-		}
-	};
-
-	FAddAssetFunction addProfile = [this](const FBIMPresetInstance& Preset)
-	{
-		FString assetPath;
-		Preset.TryGetProperty(BIMPropertyNames::AssetPath,assetPath);
-		if (assetPath.Len() != 0)
-		{
-			FString name;
-			if (ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Name, name)))
-			{
-				AddSimpleMesh(Preset.GUID, name, assetPath);
-			}
-		}
-	};
-
-	FAddAssetFunction addPattern = [this](const FBIMPresetInstance& Preset)
-	{
-		FLayerPattern newPattern;
-		newPattern.InitFromCraftingPreset(Preset);
-		Patterns.AddData(newPattern);
-
-		FString assetPath;
-		Preset.TryGetProperty(BIMPropertyNames::CraftingIconAssetFilePath, assetPath);
-		if (assetPath.Len() > 0)
-		{
-			FString iconName;
-			if (Preset.TryGetProperty(BIMPropertyNames::Name, iconName))
-			{
-				AddStaticIconTexture(Preset.GUID, iconName, assetPath);
-			}
-		}
-	};
-
-	/*
-	Find the columns containing object type and asset destination (which db) for each preset type
-	*/
-	const FString objectTypeS = TEXT("ObjectType");
-	int32 objectTypeI = INDEX_NONE;
-
-	const FString assetTypeS = TEXT("AssetType");
-	int32 assetTypeI = INDEX_NONE;
-
-	const FString bimDesignerTitle = TEXT("BIMDesigner-NodeTitle");
-	int32 bimDesignerTitleI = INDEX_NONE;
-
-	const FString measurementMethodTitle = TEXT("MeasurementMethods");
-	int32 bimMeasurementMethodI = INDEX_NONE;
-
-	for (int32 column = 0; column < NCPRows[0].Num(); ++column)
-	{
-		if (objectTypeS.Equals(NCPRows[0][column]))
-		{
-			objectTypeI = column;
-		}
-		else if (assetTypeS.Equals(NCPRows[0][column]))
-		{
-			assetTypeI = column;
-		}
-		else if (bimDesignerTitle.Equals(NCPRows[0][column]))
-		{
-			bimDesignerTitleI = column;
-		}
-		else if (measurementMethodTitle.Equals(NCPRows[0][column]))
-		{
-			bimMeasurementMethodI = column;
-		}
-	}
-
-	/*
-	Now, for each row, record what kind of object it creates (store in objectPaths) and what if any assets it loads (assetTargetPaths)
-	*/
-	const FString colorTag = TEXT("Color");
-	const FString meshTag = TEXT("Mesh");
-	const FString profileTag = TEXT("Profile");
-	const FString rawMaterialTag = TEXT("RawMaterial");
-	const FString materialTag = TEXT("Material");
-	const FString patternTag = TEXT("Pattern");
-
-	typedef TFunction<void(const FBIMTagPath &TagPath)> FAssetTargetAssignment;
-	TMap<FString, FAssetTargetAssignment> assetTargetMap;
-
-	assetTargetMap.Add(meshTag, [addMesh, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addMesh)); });
-	assetTargetMap.Add(profileTag, [addProfile, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addProfile)); });
-	assetTargetMap.Add(rawMaterialTag, [addRawMaterial, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addRawMaterial)); });
-	assetTargetMap.Add(materialTag, [addMaterial, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addMaterial)); });
-	assetTargetMap.Add(patternTag, [addPattern, &assetTargetPaths](const FBIMTagPath& TagPath) {assetTargetPaths.Add(FAddAssetPath(TagPath, addPattern)); });
-
-	typedef TPair<FBIMTagPath, EObjectType> FObjectPathRef;
-	TArray<FObjectPathRef> objectPaths;
-
-	typedef TPair<FBIMTagPath, FString> FTagTitleRef;
-	TArray<FTagTitleRef> tagTitles,tagMeasurements;
-
-	for (int32 row = 1; row < NCPRows.Num(); ++row)
-	{
-		FString tagStr = FString(NCPRows[row][0]).Replace(TEXT(" "), TEXT(""));
-		if (tagStr.IsEmpty())
-		{
-			continue;
-		}
-
-		FBIMTagPath tagPath;
-		tagPath.FromString(tagStr);
-
-		// Get the object type cell and add it to the object map if applicable
-		FString cell = NCPRows[row][objectTypeI];
-		if (!cell.IsEmpty())
-		{
-			EObjectType ot = GetEnumValueByString<EObjectType>(cell);
-			objectPaths.Add(FObjectPathRef(tagPath, ot));
-		}
-
-		// Add asset loader if applicable
-		cell = NCPRows[row][assetTypeI];
-		if (!cell.IsEmpty())
-		{
-			FAssetTargetAssignment *assignment = assetTargetMap.Find(cell);
-			if (assignment != nullptr)
-			{
-				(*assignment)(tagPath);
-			}
-		}
-
-		cell = NCPRows[row][bimDesignerTitleI];
-		if (!cell.IsEmpty())
-		{
-			tagTitles.Add(FTagTitleRef(tagPath, cell));
-		}
-
-		cell = NCPRows[row][bimMeasurementMethodI];
-		if (!cell.IsEmpty())
-		{
-			tagMeasurements.Add(FTagTitleRef(tagPath, cell));
-		}
-	}
-
-	// More specific matches further down the table
-	Algo::Reverse(tagTitles);
-
+	// If this preset implies an asset type, load it
 	for (auto& preset : BIMPresetCollection.PresetsByGUID)
 	{
-		for (auto& tag : tagTitles)
+		switch (preset.Value.AssetType)
 		{
-			if (preset.Value.MyTagPath.MatchesPartial(tag.Key))
-			{
-				preset.Value.CategoryTitle = FText::FromString(tag.Value);
-			}
-		}
-		for (auto& tag : tagMeasurements)
-		{
-			if (preset.Value.MyTagPath.MatchesPartial(tag.Key))
-			{
-				if (!ensureAlways(FindEnumValueByString<EPresetMeasurementMethod>(tag.Value, preset.Value.MeasurementMethod)))
-				{
-					preset.Value.MeasurementMethod = EPresetMeasurementMethod::None;
-				}
-			}
-		}
-	}
-
-	/*
-	For every preset, load its dependent assets (if any) and set its object type based on tag path
-	*/
-	for (auto &kvp : BIMPresetCollection.PresetsByGUID)
-	{
-		if (kvp.Value.SlotConfigPresetGUID.IsValid())
-		{
-			const FBIMPresetInstance* slotConfig = BIMPresetCollection.PresetFromGUID(kvp.Value.SlotConfigPresetGUID);
-			if (!ensureAlways(slotConfig != nullptr))
-			{
-				continue;
-			}
-
-			TArray<FBIMPresetPartSlot> EmptySlots;
-			for (auto& configSlot : slotConfig->ChildPresets)
-			{
-				const FBIMPresetInstance* slotPreset = BIMPresetCollection.PresetFromGUID(configSlot.PresetGUID);
-				if (!ensureAlways(slotPreset != nullptr))
-				{
-					continue;
-				}
-
-				FBIMPresetPartSlot* partSlot = kvp.Value.PartSlots.FindByPredicate([slotPreset](const FBIMPresetPartSlot& PartSlot)
-				{
-					if (PartSlot.SlotPresetGUID == slotPreset->GUID)
-					{
-						return true;
-					}
-					return false;
-				});
-
-				if (partSlot == nullptr)
-				{
-					FBIMPresetPartSlot& newSlot = EmptySlots.AddDefaulted_GetRef();
-					newSlot.SlotPresetGUID = slotPreset->GUID;
-				}
-			}
-
-			if (EmptySlots.Num() > 0)
-			{
-				kvp.Value.PartSlots.Append(EmptySlots);
-			}
-		}
-		// Load assets (mesh, material, profile or color)
-		for (auto& assetFunc : assetTargetPaths)
-		{
-			if (kvp.Value.MyTagPath.MatchesPartial(assetFunc.Key))
-			{
-				assetFunc.Value(kvp.Value);
-			}
-		}
-
-		// Set object type
-		EObjectType *ot = nullptr;
-		FString pathString;
-		kvp.Value.MyTagPath.ToString(pathString);
-		for (auto& tagPath : objectPaths)
-		{
-			if (tagPath.Key.MatchesPartial(kvp.Value.MyTagPath))
-			{
-				ot = &tagPath.Value;
+			case EBIMAssetType::Mesh:
+				AddMeshFromPreset(preset.Value);
 				break;
-			}
-		}
-
-		if (ot == nullptr)
-		{
-			continue;
-		}
-
-		kvp.Value.ObjectType = *ot;
-		if (*ot == EObjectType::OTFurniture)
-		{
-			bimCacheRecord.Starters.Add(kvp.Value.GUID);
-		}
+			case EBIMAssetType::Profile:
+				AddProfileFromPreset(preset.Value);
+				break;
+			case EBIMAssetType::RawMaterial:
+				AddRawMaterialFromPreset(preset.Value);
+				break;
+			case EBIMAssetType::Material:
+				AddMaterialFromPreset(preset.Value);
+				break;
+			case EBIMAssetType::Pattern:
+				AddPatternFromPreset(preset.Value);
+				break;
+		};
 	}
 
+	// When swapping a mesh, a preset may inherit material mappings it does not yet define, so we need a default material
 	FGuid abstractMaterialGuid;
 	FGuid::Parse(TEXT("09F17296-2023-944C-A1E7-EEDFE28680E9"), DefaultMaterialGUID);
 	const FArchitecturalMaterial* abstractMaterial = GetArchitecturalMaterialByGUID(DefaultMaterialGUID);
@@ -609,6 +308,128 @@ void FModumateDatabase::ReadPresetData()
 	}
 #endif
 }
+
+bool FModumateDatabase::AddMeshFromPreset(const FBIMPresetInstance& Preset)
+{
+	FString assetPath = Preset.GetScopedProperty<FString>(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
+
+	if (ensureAlways(assetPath.Len() > 0))
+	{
+		FVector meshNativeSize(ForceInitToZero);
+		FBox meshNineSlice(ForceInitToZero);
+
+		FVector presetNativeSize(ForceInitToZero);
+		if (Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeX"), presetNativeSize.X) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeY"), presetNativeSize.Y) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeZ"), presetNativeSize.Z))
+		{
+			meshNativeSize = presetNativeSize * UModumateDimensionStatics::CentimetersToInches;
+		}
+
+		FVector presetNineSliceMin(ForceInitToZero), presetNineSliceMax(ForceInitToZero);
+		if (Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceX1"), presetNineSliceMin.X) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceY1"), presetNineSliceMin.Y) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceZ1"), presetNineSliceMin.Z) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceX2"), presetNineSliceMax.X) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceY2"), presetNineSliceMax.Y) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceZ2"), presetNineSliceMax.Z))
+		{
+			meshNineSlice = FBox(
+				presetNineSliceMin * UModumateDimensionStatics::CentimetersToInches,
+				presetNineSliceMax * UModumateDimensionStatics::CentimetersToInches);
+		}
+
+		FString name;
+		Preset.TryGetProperty(BIMPropertyNames::Name, name);
+		AddArchitecturalMesh(Preset.GUID, name, meshNativeSize, meshNineSlice, assetPath);
+	}
+	return true;
+};
+
+bool FModumateDatabase::AddRawMaterialFromPreset(const FBIMPresetInstance& Preset)
+{
+	FString assetPath;
+	Preset.TryGetProperty(BIMPropertyNames::AssetPath, assetPath);
+	if (assetPath.Len() != 0)
+	{
+		FString matName;
+		if (ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
+		{
+			AddArchitecturalMaterial(Preset.GUID, matName, assetPath);
+			return true;
+		}
+	}
+	return false;
+};
+
+bool FModumateDatabase::AddMaterialFromPreset(const FBIMPresetInstance& Preset)
+{
+	FGuid rawMaterial;
+
+	for (auto& cp : Preset.ChildPresets)
+	{
+		const FBIMPresetInstance* childPreset = BIMPresetCollection.PresetFromGUID(cp.PresetGUID);
+		if (childPreset != nullptr)
+		{
+			if (childPreset->NodeScope == EBIMValueScope::RawMaterial)
+			{
+				rawMaterial = cp.PresetGUID;
+			}
+		}
+	}
+
+	if (rawMaterial.IsValid())
+	{
+		const FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(rawMaterial);
+		if (preset != nullptr)
+		{
+			FString assetPath, matName;
+			if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::AssetPath, assetPath)
+				&& Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
+			{
+				AddArchitecturalMaterial(Preset.GUID, matName, assetPath);
+				return true;
+			}
+		}
+	}
+	return false;
+};
+
+bool FModumateDatabase::AddProfileFromPreset(const FBIMPresetInstance& Preset)
+{
+	FString assetPath;
+	Preset.TryGetProperty(BIMPropertyNames::AssetPath, assetPath);
+	if (assetPath.Len() != 0)
+	{
+		FString name;
+		if (ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Name, name)))
+		{
+			AddSimpleMesh(Preset.GUID, name, assetPath);
+			return true;
+		}
+	}
+	return false;
+};
+
+bool FModumateDatabase::AddPatternFromPreset(const FBIMPresetInstance& Preset)
+{
+	FLayerPattern newPattern;
+	newPattern.InitFromCraftingPreset(Preset);
+	Patterns.AddData(newPattern);
+
+	FString assetPath;
+	Preset.TryGetProperty(BIMPropertyNames::CraftingIconAssetFilePath, assetPath);
+	if (assetPath.Len() > 0)
+	{
+		FString iconName;
+		if (Preset.TryGetProperty(BIMPropertyNames::Name, iconName))
+		{
+			AddStaticIconTexture(Preset.GUID, iconName, assetPath);
+			return true;
+		}
+	}
+	return false;
+};
 
 /*
 Data Access

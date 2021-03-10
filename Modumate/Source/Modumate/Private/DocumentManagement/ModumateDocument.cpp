@@ -2286,7 +2286,7 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool bSetAsCurr
 
 	if (FModumateSerializationStatics::TryReadModumateDocumentRecord(path, docHeader, docRec))
 	{
-		BIMPresetCollection.ReadPresetsFromDocRecord(*objectDB, docRec);
+		BIMPresetCollection.ReadPresetsFromDocRecord(*objectDB, docHeader.Version, docRec);
 
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.

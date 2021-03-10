@@ -12,15 +12,17 @@
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
+#include "BIMKernel/Presets/BIMPresetNCPTaxonomy.h"
 
 #include "ModumateObjectDatabase.generated.h"
 
-static constexpr int32 BIMCacheCurrentVersion = 6;
+static constexpr int32 BIMCacheCurrentVersion = 7;
 // Version 2: deprecate FBIMKeys for FGuids
 // Version 3: move named parameters from meshes to presets
 // Version 4: material binding editor
 // Version 5: deprecate material bindings and use custom data instead
 // Version 6: derive material channels from meshes
+// Version 7: taxonomy in preset collection
 
 USTRUCT()
 struct FModumateBIMCacheRecord
@@ -28,13 +30,16 @@ struct FModumateBIMCacheRecord
 	GENERATED_BODY()
 
 	UPROPERTY()
-	int32 Version = BIMCacheCurrentVersion;
+	int32 Version;
 
 	UPROPERTY()
 	FBIMPresetCollection Presets;
 
 	UPROPERTY()
 	TArray<FGuid> Starters;
+
+	UPROPERTY()
+	FBIMPresetNCPTaxonomy PresetTaxonomy;
 };
 
 class MODUMATE_API FModumateDatabase
@@ -57,6 +62,12 @@ private:
 	FString ManifestDirectoryPath;
 
 	FGuid DefaultMaterialGUID;
+
+	bool AddMeshFromPreset(const FBIMPresetInstance& Preset);
+	bool AddRawMaterialFromPreset(const FBIMPresetInstance& Preset);
+	bool AddMaterialFromPreset(const FBIMPresetInstance& Preset);
+	bool AddProfileFromPreset(const FBIMPresetInstance& Preset);
+	bool AddPatternFromPreset(const FBIMPresetInstance& Preset);
 
 public:
 

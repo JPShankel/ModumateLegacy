@@ -87,3 +87,39 @@ enum class ELayerFormat : uint8
 	Tile
 };
 
+
+UENUM()
+enum class EPresetMeasurementMethod : uint8
+{
+	None = 0,
+	Part,
+	PartBySizeGroup,
+	FFE,
+	ModuleLinear,
+	ModulePlanar,
+	ModuleVolumetric,
+	GapLinear,
+	GapPlanar,
+	GapVolumetric,
+	Layer,
+	LayerMass,
+	AssemblyLayered,
+	AssemblyLinear,
+	AssemblyRigged,
+	AssemblyStair,
+	AssemblyCabinet,
+	Error = 255
+};
+
+UENUM()
+enum class EBIMAssetType : uint8
+{
+	None,
+	Mesh,
+	RawMaterial,
+	Profile,
+	Pattern,
+	Material,
+	Color,
+	Error = 255
+};

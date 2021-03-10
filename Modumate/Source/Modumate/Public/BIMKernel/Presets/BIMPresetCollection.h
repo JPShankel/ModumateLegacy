@@ -8,11 +8,13 @@
 #include "BIMKernel/Presets/BIMPresetTypeDefinition.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
+#include "BIMKernel/Presets/BIMPresetNCPTaxonomy.h"
 
 #include "BIMPresetCollection.generated.h"
 
-static constexpr int32 BIMPresetCollectionCurrentVersion = 5;
+static constexpr int32 BIMPresetCollectionCurrentVersion = 6;
 // Version 5 - FBIMPresetForm & BIM deltas
+// Version 6 - Taxonomy added to collection
 
 struct FBIMPresetDelta;
 
@@ -33,6 +35,10 @@ struct MODUMATE_API FBIMPresetCollection
 
 	UPROPERTY()
 	TMap<FGuid, FBIMPresetInstance> PresetsByGUID;
+
+	// Not a UPROPERTY because we don't want it to serialize in saved games
+	// Copied from the object database for convenience
+	FBIMPresetNCPTaxonomy PresetTaxonomy;
 
 	FBIMPresetInstance* PresetFromGUID(const FGuid& InGUID);
 	const FBIMPresetInstance* PresetFromGUID(const FGuid& InGUID) const;
@@ -88,7 +94,7 @@ struct MODUMATE_API FBIMPresetCollection
 	const FBIMAssemblySpec* GetAssemblyByGUID(EToolMode Mode, const FGuid& Key) const;
 
 	bool SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord) const;
-	bool ReadPresetsFromDocRecord(const FModumateDatabase& InDB, const FMOIDocumentRecord& DocRecord);
+	bool ReadPresetsFromDocRecord(const FModumateDatabase& InDB, int32 DocRecordVersion, const FMOIDocumentRecord& DocRecord);
 
 	bool operator==(const FBIMPresetCollection& RHS) const;
 	bool operator!=(const FBIMPresetCollection& RHS) const;

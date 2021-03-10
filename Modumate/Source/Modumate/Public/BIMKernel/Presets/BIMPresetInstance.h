@@ -9,6 +9,7 @@
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetTypeDefinition.h"
 #include "BIMKernel/Presets/BIMPresetMaterialBinding.h"
+#include "BIMKernel/Presets/BIMPresetNCPTaxonomy.h"
 #include "ModumateCore/StructDataWrapper.h"
 
 #include "BIMPresetInstance.generated.h"
@@ -75,28 +76,6 @@ struct MODUMATE_API FBIMPresetPartSlot
 	}
 };
 
-UENUM()
-enum class EPresetMeasurementMethod : uint8
-{
-	None=0,
-	Part,
-	PartBySizeGroup,
-	FFE,
-	ModuleLinear,
-	ModulePlanar,
-	ModuleVolumetric,
-	GapLinear,
-	GapPlanar,
-	GapVolumetric,
-	Layer,
-	LayerMass,
-	AssemblyLayered,
-	AssemblyLinear,
-	AssemblyRigged,
-	AssemblyStair,
-	AssemblyCabinet,
-	Error = 255
-};
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetInstance
@@ -123,10 +102,10 @@ struct MODUMATE_API FBIMPresetInstance
 	FBIMPropertySheet Properties;
 
 	UPROPERTY()
-	FText CategoryTitle = FText::FromString(TEXT("Unknown Category"));
+	FText CategoryTitle;
 
 	UPROPERTY()
-	FText DisplayName = FText::FromString(TEXT("Unknown Preset"));
+	FText DisplayName;
 
 	UPROPERTY()
 	EBIMValueScope NodeScope;
@@ -169,6 +148,9 @@ struct MODUMATE_API FBIMPresetInstance
 
 	UPROPERTY()
 	EPresetMeasurementMethod MeasurementMethod = EPresetMeasurementMethod::None;
+
+	UPROPERTY()
+	EBIMAssetType AssetType = EBIMAssetType::None;
 
 	UPROPERTY()
 	FStructDataWrapper CustomData;

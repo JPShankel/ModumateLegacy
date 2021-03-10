@@ -272,9 +272,82 @@ EBIMResult FBIMPresetCollection::PostLoad()
 		{
 			kvp.Value.TypeDefinition = *typeDef;
 		}
+
+		// Set up unpopulated slots of rigged assemblies
+		if (kvp.Value.SlotConfigPresetGUID.IsValid())
+		{
+			const FBIMPresetInstance* slotConfig = PresetFromGUID(kvp.Value.SlotConfigPresetGUID);
+			if (!ensureAlways(slotConfig != nullptr))
+			{
+				continue;
+			}
+
+			TArray<FBIMPresetPartSlot> EmptySlots;
+			for (auto& configSlot : slotConfig->ChildPresets)
+			{
+				const FBIMPresetInstance* slotPreset = PresetFromGUID(configSlot.PresetGUID);
+				if (!ensureAlways(slotPreset != nullptr))
+				{
+					continue;
+				}
+
+				FBIMPresetPartSlot* partSlot = kvp.Value.PartSlots.FindByPredicate([slotPreset](const FBIMPresetPartSlot& PartSlot)
+				{
+					if (PartSlot.SlotPresetGUID == slotPreset->GUID)
+					{
+						return true;
+					}
+					return false;
+				});
+
+				if (partSlot == nullptr)
+				{
+					FBIMPresetPartSlot& newSlot = EmptySlots.AddDefaulted_GetRef();
+					newSlot.SlotPresetGUID = slotPreset->GUID;
+				}
+			}
+
+			if (EmptySlots.Num() > 0)
+			{
+				kvp.Value.PartSlots.Append(EmptySlots);
+			}
+		}
+
+		TArray<FBIMPresetTaxonomyNode> taxonomyNodes;
+		// Get metadata from NCP taxonomy...partial matches are in order from specific to general
+		if (PresetTaxonomy.GetAllPartialMatches(kvp.Value.MyTagPath, taxonomyNodes) == EBIMResult::Success)
+		{
+			for (auto& node : taxonomyNodes)
+			{
+				if (kvp.Value.CategoryTitle.IsEmpty())
+				{
+					kvp.Value.CategoryTitle = node.DesignerTitle;
+				}
+
+				if (kvp.Value.MeasurementMethod == EPresetMeasurementMethod::None)
+				{
+					kvp.Value.MeasurementMethod = node.MeasurementMethod;
+				}
+
+				if (kvp.Value.ObjectType == EObjectType::OTNone)
+				{
+					kvp.Value.ObjectType = node.ObjectType;
+				}
+
+				if (kvp.Value.DisplayName.IsEmpty())
+				{
+					kvp.Value.DisplayName = node.DisplayName;
+				}
+
+				if (kvp.Value.AssetType == EBIMAssetType::None)
+				{
+					kvp.Value.AssetType = node.AssetType;
+				}
+			}
+		}
 	}
 
-	return EBIMResult::Success;
+	return ProcessNamedDimensions();
 }
 
 EBIMResult FBIMPresetCollection::ProcessNamedDimensions()
@@ -770,9 +843,11 @@ const FBIMAssemblySpec* FBIMPresetCollection::GetAssemblyByGUID(EToolMode ToolMo
 	}
 }
 
-bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InDB, const FMOIDocumentRecord& DocRecord)
+bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InDB, int32 DocRecordVersion,const FMOIDocumentRecord& DocRecord)
 {
 	*this = InDB.GetPresetCollection();
+
+	PresetTaxonomy = InDB.GetPresetCollection().PresetTaxonomy;
 
 	for (auto& kvp : DocRecord.PresetCollection.NodeDescriptors)
 	{
