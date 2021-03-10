@@ -948,21 +948,16 @@ void UModumateDocument::ClearPreviewDeltas(UWorld *World, bool bFastClear)
 		bSlowClearingPreviewDeltas = true;
 	}
 
-	if (PreviewDeltas.Num() > 0)
+	TArray<FDeltaPtr> inversePreviewDeltas = PreviewDeltas;
+	Algo::Reverse(inversePreviewDeltas);
+
+	// First, apply the input deltas, generated from the first pass of user intent
+	for (auto& delta : inversePreviewDeltas)
 	{
-		TArray<FDeltaPtr> inversePreviewDeltas = PreviewDeltas;
-		Algo::Reverse(inversePreviewDeltas);
-
-		// First, apply the input deltas, generated from the first pass of user intent
-		for (auto& delta : inversePreviewDeltas)
-		{
-			delta->MakeInverse()->ApplyTo(this, World);
-		}
-
-		PostApplyDeltas(World);
-
-		PreviewDeltas.Reset();
+		delta->MakeInverse()->ApplyTo(this, World);
 	}
+
+	PreviewDeltas.Reset();
 
 	if (bSlowClearingPreviewDeltas)
 	{
@@ -989,6 +984,7 @@ void UModumateDocument::ClearPreviewDeltas(UWorld *World, bool bFastClear)
 	bSlowClearingPreviewDeltas = false;
 
 	CleanObjects(nullptr);
+	PostApplyDeltas(World);
 }
 
 void UModumateDocument::CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWorld* World)
@@ -1114,14 +1110,6 @@ bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDelta
 
 bool UModumateDocument::PostApplyDeltas(UWorld *World)
 {
-	UpdateVolumeGraphObjects(World);
-	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
-
-	for (auto& kvp : SurfaceGraphs)
-	{
-		kvp.Value->CleanDirtyObjects(true);
-	}
-
 	// Now that objects may have been deleted, validate the player state so that none of them are incorrectly referenced.
 	AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(World->GetFirstPlayerController()->PlayerState);
 	playerState->ValidateSelectionsAndView();
@@ -1897,6 +1885,14 @@ void UModumateDocument::SetNextID(int32 ID, int32 reservingObjID)
 
 bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
+	UpdateVolumeGraphObjects(GetWorld());
+	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+
+	for (auto& kvp : SurfaceGraphs)
+	{
+		kvp.Value->CleanDirtyObjects(true);
+	}
+
 	static TMap<int32, EObjectDirtyFlags> curCleanedFlags;
 	curCleanedFlags.Reset();
 
