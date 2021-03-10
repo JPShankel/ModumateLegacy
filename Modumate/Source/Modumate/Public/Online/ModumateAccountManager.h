@@ -142,6 +142,21 @@ struct MODUMATE_API FModumateAnalyticsEvent
 	int64 Timestamp;
 };
 
+USTRUCT()
+struct MODUMATE_API FModumateServiceInfo
+{
+	GENERATED_BODY();
+
+	UPROPERTY()
+	bool Allowed;
+
+	UPROPERTY()
+	bool Limited;
+
+	UPROPERTY()
+	float Remaining;
+};
+
 enum class ELoginStatus : uint8;
 
 UENUM(BlueprintType)
@@ -172,6 +187,9 @@ public:
 
 	bool IsFirstLogin() const { return bIsFirstLogin; }
 	void SetIsFirstLogin(bool IsFirst) { bIsFirstLogin = IsFirst; }
+
+	// Request quota remaining for a particular service (eg. 'quantityestimates') from AMS.
+	bool RequestServiceRemaining(const FString& ServiceName, const TFunction<void(FString, bool, bool, int32)>& Callback);
 
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
 

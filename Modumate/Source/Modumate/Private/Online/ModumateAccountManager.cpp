@@ -61,6 +61,36 @@ bool FModumateAccountManager::HasPermission(EModumatePermission requestedPermiss
 	return CurrentPermissions.Contains(requestedPermission);
 }
 
+bool FModumateAccountManager::RequestServiceRemaining(const FString& ServiceName, const TFunction<void(FString, bool, bool, int32)>& Callback)
+{
+	if (!CloudConnection->IsLoggedIn())
+	{
+		return false;
+	}
+
+	return CloudConnection->RequestEndpoint(TEXT("/service/") + ServiceName + TEXT("/usage"), FModumateCloudConnection::Get,
+		[](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
+			{ },
+		[Callback, ServiceName](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+		{
+			if (bSuccessful && Response.IsValid())
+			{
+				FModumateServiceInfo serviceInfo;
+				if (FJsonObjectConverter::JsonObjectToUStruct<FModumateServiceInfo>(Response.ToSharedRef(), &serviceInfo))
+				{
+					Callback(ServiceName, true, serviceInfo.Limited, FMath::RoundToInt(serviceInfo.Remaining));
+					return;
+				}
+			}
+			Callback(ServiceName, false, false, 0);
+		},
+		[Callback, ServiceName](int32 ErrorCode, const FString& ErrorString)
+		{
+			Callback(ServiceName, false, false, 0);
+		}
+	);
+}
+
 void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserStatus)
 {
 	// TODO: process announcements:
