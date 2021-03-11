@@ -326,9 +326,9 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 {
 	OutPerimeters.Reset();
 
-	ModumateUnitParams::FThickness innerThickness = ModumateUnitParams::FThickness::Points(0.125f);
-	ModumateUnitParams::FThickness structureThickness = ModumateUnitParams::FThickness::Points(0.375f);
-	ModumateUnitParams::FThickness outerThickness = ModumateUnitParams::FThickness::Points(0.25f);
+	ModumateUnitParams::FThickness innerThickness = ModumateUnitParams::FThickness::Points(0.375f);
+	ModumateUnitParams::FThickness structureThickness = ModumateUnitParams::FThickness::Points(1.125f);
+	ModumateUnitParams::FThickness outerThickness = ModumateUnitParams::FThickness::Points(0.75f);
 
 	Modumate::FMColor innerColor = Modumate::FMColor::Gray64;
 	Modumate::FMColor outerColor = Modumate::FMColor::Gray32;

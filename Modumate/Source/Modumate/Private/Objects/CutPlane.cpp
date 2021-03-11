@@ -476,9 +476,6 @@ void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 	TSet<int32> graphObjectIDs;
 	TArray<AModumateObjectInstance*> draftingObjectMois;
 
-	ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
-	Modumate::FMColor lineColor = Modumate::FMColor::Black;
-
 	volumeGraph.FindObjectsForPlane(AxisX, AxisY, CachedOrigin, cutPlaneBox, graphObjectIDs);
 
 	// Do not get lines if any of the objects is dirty

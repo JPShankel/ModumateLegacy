@@ -326,7 +326,7 @@ void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>
 	{
 		bool bLinesDrawn = actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin);
 
-		ModumateUnitParams::FThickness defaultThickness = ModumateUnitParams::FThickness::Points(0.1f);
+		ModumateUnitParams::FThickness defaultThickness = ModumateUnitParams::FThickness::Points(0.3f);
 		Modumate::FMColor defaultColor = Modumate::FMColor::Gray64;
 		Modumate::FMColor swingColor = Modumate::FMColor::Gray160;
 		static constexpr float defaultDoorOpeningDegrees = 90.0f;

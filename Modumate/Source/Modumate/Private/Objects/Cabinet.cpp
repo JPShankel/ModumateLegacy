@@ -581,7 +581,7 @@ void AMOICabinet::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentP
 	const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 	TArray<TArray<FVector>> &OutPerimeters) const
 {
-	static const ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.25f);
+	static const ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.75f);
 	static const FMColor lineColor = FMColor::Black;
 	static FModumateLayerType dwgLayerType = FModumateLayerType::kCabinetCutCarcass;
 	OutPerimeters.Reset();

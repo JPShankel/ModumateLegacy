@@ -924,7 +924,7 @@ void UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(const TSharedPtr<
 				TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
 					FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
 					FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
-					ModumateUnitParams::FThickness::Points(0.25f), Modumate::FMColor::Black);
+					ModumateUnitParams::FThickness::Points(0.75f), Modumate::FMColor::Black);
 				ParentPage->Children.Add(line);
 				line->SetLayerTypeRecursive(LayerType);
 			}

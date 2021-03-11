@@ -231,7 +231,7 @@ void AMOIStaircase::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite
 void AMOIStaircase::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
-	static const ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.25f);
+	static const ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.75f);
 	static const Modumate::FMColor lineColor = Modumate::FMColor::Gray96;
 	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kSeparatorCutOuterSurface;
 

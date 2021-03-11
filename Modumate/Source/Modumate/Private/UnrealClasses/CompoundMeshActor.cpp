@@ -723,7 +723,7 @@ bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<Modumate::FDr
 
 		}
 
-		ModumateUnitParams::FThickness defaultThickness = ModumateUnitParams::FThickness::Points(0.1f);
+		ModumateUnitParams::FThickness defaultThickness = ModumateUnitParams::FThickness::Points(0.3f);
 		Modumate::FMColor defaultColor = Modumate::FMColor::Gray64;
 		Modumate::FMColor swingColor = Modumate::FMColor::Gray160;
 		static constexpr float defaultDoorOpeningDegrees = 90.0f;

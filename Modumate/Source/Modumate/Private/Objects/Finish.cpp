@@ -245,7 +245,7 @@ void AMOIFinish::MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags EdgeDirtyFlags
 void AMOIFinish::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
-	static const ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.05f);
+	static const ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
 	static const Modumate::FMColor lineColor = Modumate::FMColor::Gray144;
 	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kFinishCut;
 
