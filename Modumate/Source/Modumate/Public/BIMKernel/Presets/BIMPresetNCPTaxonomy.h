@@ -62,4 +62,5 @@ struct FBIMPresetNCPTaxonomy
 
 	EBIMResult GetFirstPartialMatch(const FBIMTagPath& TagPath, FBIMPresetTaxonomyNode& OutNode) const;
 	EBIMResult GetAllPartialMatches(const FBIMTagPath& TagPath, TArray<FBIMPresetTaxonomyNode>& OutNodes) const;
+	EBIMResult GetExactMatch(const FBIMTagPath& TagPath, FBIMPresetTaxonomyNode& OutNode) const;
 };

@@ -12,6 +12,8 @@
 #include "UI/PresetCard/PresetCardObjectList.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "UI/PresetCard/PresetCardItemObject.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "Quantities/QuantitiesManager.h"
 
 UPresetCardMain::UPresetCardMain(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -50,11 +52,11 @@ void UPresetCardMain::OnMainButtonReleased()
 	}
 	else
 	{
-		BuildAsBrowserCollapsedPresetCard(PresetGUID);
+		BuildAsBrowserCollapsedPresetCard(PresetGUID, true);
 	}
 }
 
-void UPresetCardMain::BuildAsBrowserCollapsedPresetCard(const FGuid& InPresetKey)
+void UPresetCardMain::BuildAsBrowserCollapsedPresetCard(const FGuid& InPresetKey, bool bAllowInteraction)
 {
 	PresetGUID = InPresetKey;
 
@@ -68,16 +70,18 @@ void UPresetCardMain::BuildAsBrowserCollapsedPresetCard(const FGuid& InPresetKey
 		newHeaderWidget->BuildAsBrowserHeader(PresetGUID, BIM_ID_NONE); //TODO: Support non-assembly with NodeID?
 	}
 
+	SetVisibility(bAllowInteraction ? ESlateVisibility::Visible : ESlateVisibility::HitTestInvisible);
+
 	// Set padding
 	UBorderSlot* mainBorderSlot = UWidgetLayoutLibrary::SlotAsBorderSlot(MainBorder);
 	if (mainBorderSlot)
 	{
-		mainBorderSlot->SetPadding(0.f);
+		mainBorderSlot->SetPadding(MainBorderSlotCollapsedPadding);
 	}
 	UBorderSlot* mainVerticalBoxSlot = UWidgetLayoutLibrary::SlotAsBorderSlot(MainVerticalBox);
 	if (mainVerticalBoxSlot)
 	{
-		mainVerticalBoxSlot->SetPadding(0.f);
+		mainVerticalBoxSlot->SetPadding(MainVerticalBoxSlotCollapsedPadding);
 	}
 }
 
@@ -99,7 +103,7 @@ void UPresetCardMain::BuildAsBrowserSelectedPresetCard(const FGuid& InPresetKey)
 	if (newPropertyListWidget)
 	{
 		DynamicVerticalBox->AddChildToVerticalBox(newPropertyListWidget);
-		newPropertyListWidget->BuildAsPropertyList(PresetGUID);
+		newPropertyListWidget->BuildAsPropertyList(PresetGUID, false);
 	}
 
 	UPresetCardObjectList* newDescendentList = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardObjectList>(PresetCardObjectListClass);
@@ -120,12 +124,18 @@ void UPresetCardMain::BuildAsBrowserSelectedPresetCard(const FGuid& InPresetKey)
 	UBorderSlot* mainBorderSlot = UWidgetLayoutLibrary::SlotAsBorderSlot(MainBorder);
 	if (mainBorderSlot)
 	{
-		mainBorderSlot->SetPadding(6.f);
+		mainBorderSlot->SetPadding(MainBorderSlotSelectedPadding);
 	}
 	UBorderSlot* mainVerticalBoxSlot = UWidgetLayoutLibrary::SlotAsBorderSlot(MainVerticalBox);
 	if (mainVerticalBoxSlot)
 	{
-		mainVerticalBoxSlot->SetPadding(FMargin(0.f, 0.f, 0.f, 12.f));
+		mainVerticalBoxSlot->SetPadding(MainVerticalBoxSlotSelectedPadding);
+	}
+
+	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (gameInstance && gameInstance->GetQuantitiesManager())
+	{
+		// TODO Quantites estimate
 	}
 }
 
@@ -150,5 +160,5 @@ void UPresetCardMain::NativeOnListItemObjectSet(UObject* ListItemObject)
 		return;
 	}
 
-	BuildAsBrowserCollapsedPresetCard(itemObj->PresetGuid);
+	BuildAsBrowserCollapsedPresetCard(itemObj->PresetGuid, true);
 }

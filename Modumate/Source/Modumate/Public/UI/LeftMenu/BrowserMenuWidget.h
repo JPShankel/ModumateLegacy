@@ -24,10 +24,21 @@ protected:
 
 	virtual void NativeConstruct() override;
 
+	UPROPERTY()
+	class AEditModelPlayerController* EMPlayerController;
+
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UNCPNavigator* NCPNavigatorWidget;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UBrowserBlockSettings* BrowserBlockSettingsWidget;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UBrowserBlockExport* BrowserBlockExportWidget;
+
 	void BuildBrowserMenu();
+	void ToggleExportWidgetMenu(bool bEnable);
+	void AskToExportEstimates();
 };

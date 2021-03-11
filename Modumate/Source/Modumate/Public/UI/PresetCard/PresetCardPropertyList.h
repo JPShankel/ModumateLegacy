@@ -27,10 +27,23 @@ protected:
 	UPROPERTY()
 	class AEditModelPlayerController* EMPlayerController;
 
+	FGuid PresetGUID;
+
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox* DynamicPropertyList;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButton* MainButton;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UPresetCardPropertyText> PresetCardPropertyTextClass;
+
+	UFUNCTION()
+	void OnMainButtonReleased();
+
 	// Builder
-	void BuildAsPropertyList(const FGuid& InGUID);
+	void BuildAsPropertyList(const FGuid& InGUID, bool bAsExpandedList);
+
+	void EmptyList();
 };

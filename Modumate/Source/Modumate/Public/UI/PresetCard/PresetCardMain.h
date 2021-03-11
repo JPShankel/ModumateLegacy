@@ -11,6 +11,14 @@
  *
  */
 
+UENUM(BlueprintType)
+enum class EPresetCardType : uint8
+{
+	BrowserCollapsed,
+	BrowserCollapsedNonInteract,
+	BrowserSelected,
+	None
+};
 
 UCLASS()
 class MODUMATE_API UPresetCardMain : public UUserWidget, public IUserObjectListEntry
@@ -45,6 +53,18 @@ public:
 	class UVerticalBox* MainVerticalBox;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FMargin MainBorderSlotCollapsedPadding = FMargin(0.f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FMargin MainVerticalBoxSlotCollapsedPadding = FMargin(0.f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FMargin MainBorderSlotSelectedPadding = FMargin(6.f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FMargin MainVerticalBoxSlotSelectedPadding = FMargin(0.f, 0.f, 0.f, 12.f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UPresetCardHeader> PresetCardHeaderSelectedClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -60,7 +80,7 @@ public:
 	void OnMainButtonReleased();
 
 	// Builder
-	void BuildAsBrowserCollapsedPresetCard(const FGuid& InPresetKey);
+	void BuildAsBrowserCollapsedPresetCard(const FGuid& InPresetKey, bool bAllowInteraction);
 	void BuildAsBrowserSelectedPresetCard(const FGuid& InPresetKey);
 
 	void ClearWidgetPool(class UPanelWidget* Widget);

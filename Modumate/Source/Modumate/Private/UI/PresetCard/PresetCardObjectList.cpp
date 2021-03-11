@@ -76,7 +76,7 @@ void UPresetCardObjectList::BuildAsDescendentList(const FGuid& InGUID, bool bAsE
 			if (newPresetWidget)
 			{
 				DynamicObjectList->AddChildToVerticalBox(newPresetWidget);
-				newPresetWidget->BuildAsBrowserCollapsedPresetCard(newPreset);
+				newPresetWidget->BuildAsBrowserCollapsedPresetCard(newPreset, false);
 			}
 		}
 	}
@@ -103,7 +103,7 @@ void UPresetCardObjectList::BuildAsAncestorList(const FGuid& InGUID, bool bAsExp
 			if (newPresetWidget)
 			{
 				DynamicObjectList->AddChildToVerticalBox(newPresetWidget);
-				newPresetWidget->BuildAsBrowserCollapsedPresetCard(newPreset);
+				newPresetWidget->BuildAsBrowserCollapsedPresetCard(newPreset, false);
 			}
 		}
 	}

@@ -110,3 +110,16 @@ EBIMResult FBIMPresetNCPTaxonomy::GetAllPartialMatches(const FBIMTagPath& TagPat
 	}
 	return EBIMResult::Success;
 }
+
+EBIMResult FBIMPresetNCPTaxonomy::GetExactMatch(const FBIMTagPath& TagPath, FBIMPresetTaxonomyNode& OutNode) const
+{
+	for (auto& node : Nodes)
+	{
+		if (node.TagPath.MatchesExact(TagPath))
+		{
+			OutNode = node;
+			return EBIMResult::Success;
+		}
+	}
+	return EBIMResult::Error;
+}

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "BIMKernel/Core/BIMTagPath.h"
 #include "NCPNavigator.generated.h"
 
 /**
@@ -27,13 +28,24 @@ protected:
 	UPROPERTY()
 	class AEditModelPlayerController* EMPlayerController;
 
+	UPROPERTY()
+	class AEditModelGameState* EMGameState;
+
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox* DynamicMainList;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateEditableTextBoxUserWidget* SearchBarWidget;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UNCPButton> NCPButtonClass;
 
 	void BuildNCPNavigator();
+	bool IsPresetAvailableForSearch(const FGuid& PresetGuid);
+	bool IsNCPAvailableForSearch(const FBIMTagPath& NCPTag);
+
+	UFUNCTION()
+	void OnSearchBarChanged(const FText& NewText);
 };

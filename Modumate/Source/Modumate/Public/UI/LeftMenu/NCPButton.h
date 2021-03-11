@@ -28,6 +28,9 @@ protected:
 	UPROPERTY()
 	class AEditModelPlayerController* EMPlayerController;
 
+	UPROPERTY()
+	class UNCPNavigator* ParentNCPNavigator;
+
 	FBIMTagPath NCPTag;
 	int32 TagOrder;
 	bool bExpanded = false;
@@ -49,6 +52,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FSlateColor NonSelectedColor;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TagPaddingSize = 24.f;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox* DynamicNCPList;
 
@@ -62,7 +68,7 @@ public:
 	void OnButtonPress();
 
 	void EmptyLists();
-	void BuildButton(const FBIMTagPath& InNCP, int32 InTagOrder, bool bBuildAsExpanded = false);
+	void BuildButton(class UNCPNavigator* InParentNCPNavigator, const FBIMTagPath& InNCP, int32 InTagOrder, bool bBuildAsExpanded = false);
 	void BuildSubButtons();
 	void ToggleTextColor(bool bAsSelected);
 };
