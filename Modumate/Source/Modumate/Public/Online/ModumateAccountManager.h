@@ -191,6 +191,9 @@ public:
 	// Request quota remaining for a particular service (eg. 'quantityestimates') from AMS.
 	bool RequestServiceRemaining(const FString& ServiceName, const TFunction<void(FString, bool, bool, int32)>& Callback);
 
+	// Notify server of a single use of a service against its quota.
+	void NotifyServiceUse(const FString& ServiceName);
+
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
 
 private:

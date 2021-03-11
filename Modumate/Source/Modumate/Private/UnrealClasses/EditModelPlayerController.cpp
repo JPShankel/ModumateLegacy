@@ -1112,18 +1112,22 @@ bool AEditModelPlayerController::OnCreateQuantitiesCsv()
 
 	FString filename;
 	EMPlayerState->ShowingFileDialog = true;
+	auto quantitiesManager = gameInstance->GetQuantitiesManager();
 	if (Modumate::PlatformFunctions::GetSaveFilename(filename, INDEX_CSVFILE))
 	{
 		EMPlayerState->ShowingFileDialog = false;
 
-		if (!gameInstance->GetQuantitiesManager()->CalculateAllQuantities()
-			|| !gameInstance->GetQuantitiesManager()->CreateReport(filename))
+		if (!quantitiesManager->CalculateAllQuantities()
+			|| !quantitiesManager->CreateReport(filename))
 		{
 			FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("QuantityEstimateCreateFail", "Quantity Estimate CSV Creation Failed"),
 				&dialogTitle);
 			retValue = false;
 		}
-
+		else
+		{
+			gameInstance->GetAccountManager()->NotifyServiceUse(TEXT("quantityestimates"));
+		}
 	}
 	else
 	{

@@ -91,6 +91,30 @@ bool FModumateAccountManager::RequestServiceRemaining(const FString& ServiceName
 	);
 }
 
+void FModumateAccountManager::NotifyServiceUse(const FString& ServiceName)
+{
+	if (!CloudConnection->IsLoggedIn())
+	{
+		return;
+	}
+	
+	CloudConnection->RequestEndpoint(TEXT("/service/") + ServiceName, FModumateCloudConnection::Post,
+		[](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
+		{},
+		[](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+		{
+			if (!bSuccessful)
+			{
+				UE_LOG(LogTemp, Error, TEXT("FModumateAccountManager::NotifyServiceUse() unsuccessful"));
+			}
+		},
+		[](int32 ErrorCode, const FString& ErrorString)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Request Status Error: %s"), *ErrorString);
+		}
+	);
+}
+
 void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserStatus)
 {
 	// TODO: process announcements:
