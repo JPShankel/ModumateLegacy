@@ -843,7 +843,7 @@ const FBIMAssemblySpec* FBIMPresetCollection::GetAssemblyByGUID(EToolMode ToolMo
 	}
 }
 
-bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InDB, int32 DocRecordVersion,const FMOIDocumentRecord& DocRecord)
+bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InDB, int32 DocRecordVersion, const FMOIDocumentRecord& DocRecord)
 {
 	*this = InDB.GetPresetCollection();
 
@@ -857,7 +857,44 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		}
 	}
 
-	PresetsByGUID.Append(DocRecord.PresetCollection.PresetsByGUID);
+	constexpr int32 firstMaterialBindingVersion = 10;
+	if (DocRecordVersion < firstMaterialBindingVersion)
+	{
+		// Presets in these scopes have material binding sets
+		const TSet<EBIMValueScope> materialPresets({ EBIMValueScope::Module,EBIMValueScope::Layer,EBIMValueScope::Gap,EBIMValueScope::Assembly });
+		
+		TMap<FGuid, FBIMPresetInstance> fixedPresets = DocRecord.PresetCollection.PresetsByGUID;
+		for (auto& kvp : fixedPresets)
+		{
+			// If this is an over-write of an OOTB, get the updated version and use its data
+			const FBIMPresetInstance* updated = InDB.GetPresetCollection().PresetFromGUID(kvp.Key);
+			if (updated != nullptr)
+			{
+				kvp.Value.CustomData = updated->CustomData;
+			}
+			// Otherwise, make new material binding data from the color and material properties
+			else if (materialPresets.Contains(kvp.Value.NodeScope))
+			{
+				FGuid matGUID;
+				if (kvp.Value.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, matGUID))
+				{
+					FBIMPresetMaterialBindingSet bindingSet;
+					auto& binding = bindingSet.MaterialBindings.AddDefaulted_GetRef();
+					binding.InnerMaterialGUID = matGUID;
+					if (!kvp.Value.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, binding.ColorHexValue))
+					{
+						binding.ColorHexValue = FColor::White.ToHex();
+					}		
+					kvp.Value.CustomData.SaveStructData(bindingSet, true);
+				}
+			}
+		}
+		PresetsByGUID.Append(fixedPresets);
+	}
+	else
+	{
+		PresetsByGUID.Append(DocRecord.PresetCollection.PresetsByGUID);
+	}
 
 	// If any presets fail to build their assembly, remove them
 	// They'll be replaced by the fallback system and will not be written out again

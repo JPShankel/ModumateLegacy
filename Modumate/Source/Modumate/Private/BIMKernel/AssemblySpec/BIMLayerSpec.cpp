@@ -43,11 +43,23 @@ EBIMResult FBIMLayerSpec::BuildUnpatternedLayer(const FModumateDatabase& InDB)
 	}
 	ThicknessCentimeters = dimension.AsWorldCentimeters();
 
-	if (ModuleMaterialBindingSet.MaterialBindings.Num() > 0)
+	if (ensureAlways(ModuleMaterialBindingSet.MaterialBindings.Num() > 0))
 	{
 		const auto& binding = ModuleMaterialBindingSet.MaterialBindings[0];
 		FLayerPatternModule& module = Modules.AddDefaulted_GetRef();
-		return binding.GetEngineMaterial(InDB, module.Material);
+		if (binding.GetEngineMaterial(InDB, module.Material) != EBIMResult::Success)
+		{
+			const FArchitecturalMaterial* material = InDB.GetArchitecturalMaterialByGUID(InDB.GetDefaultMaterialGUID());
+			if (ensureAlways(material != nullptr))
+			{
+				module.Material = *material;
+				return EBIMResult::Success;
+			}
+		}
+		else
+		{
+			return EBIMResult::Success;
+		}
 	}
 
 	return EBIMResult::Error;

@@ -67,8 +67,11 @@ void AMOIStaircase::SetupDynamicGeometry()
 
 	const auto& assemblySpec = GetAssembly();
 	CachedTreadDims.UpdateLayersFromAssembly(assemblySpec.TreadLayers);
-	CachedRiserDims.UpdateLayersFromAssembly(assemblySpec.RiserLayers);
 	bCachedUseRisers = assemblySpec.RiserLayers.Num() != 0;
+	if (bCachedUseRisers)
+	{
+		CachedRiserDims.UpdateLayersFromAssembly(assemblySpec.RiserLayers);
+	}
 	TreadRun = assemblySpec.TreadDepthCentimeters;
 
 	// Tread 'depth' is horizontal run from nose to nose.

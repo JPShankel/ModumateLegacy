@@ -344,7 +344,7 @@ bool FModumateDatabase::AddMeshFromPreset(const FBIMPresetInstance& Preset)
 		AddArchitecturalMesh(Preset.GUID, name, meshNativeSize, meshNineSlice, assetPath);
 	}
 	return true;
-};
+}
 
 bool FModumateDatabase::AddRawMaterialFromPreset(const FBIMPresetInstance& Preset)
 {
@@ -360,7 +360,7 @@ bool FModumateDatabase::AddRawMaterialFromPreset(const FBIMPresetInstance& Prese
 		}
 	}
 	return false;
-};
+}
 
 bool FModumateDatabase::AddMaterialFromPreset(const FBIMPresetInstance& Preset)
 {
@@ -393,7 +393,7 @@ bool FModumateDatabase::AddMaterialFromPreset(const FBIMPresetInstance& Preset)
 		}
 	}
 	return false;
-};
+}
 
 bool FModumateDatabase::AddProfileFromPreset(const FBIMPresetInstance& Preset)
 {
@@ -409,7 +409,7 @@ bool FModumateDatabase::AddProfileFromPreset(const FBIMPresetInstance& Preset)
 		}
 	}
 	return false;
-};
+}
 
 bool FModumateDatabase::AddPatternFromPreset(const FBIMPresetInstance& Preset)
 {
@@ -429,7 +429,7 @@ bool FModumateDatabase::AddPatternFromPreset(const FBIMPresetInstance& Preset)
 		}
 	}
 	return false;
-};
+}
 
 /*
 Data Access
