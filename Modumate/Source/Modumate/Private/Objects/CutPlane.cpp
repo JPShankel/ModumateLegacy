@@ -86,17 +86,30 @@ void AMOICutPlane::PreDestroy()
 	AMOIPlaneBase::PreDestroy();
 }
 
+bool AMOICutPlane::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+{
+	switch (DirtyFlag)
+	{
+	case EObjectDirtyFlags::Structure:
+		UpdateCachedGeometryData();
+		// TODO: re-enable this when it wouldn't be redundant with UModumateDocument::PostApplyDeltas.
+		//MarkDirty(EObjectDirtyFlags::Visuals);
+		return true;
+	case EObjectDirtyFlags::Visuals:
+		UpdateVisuals();
+		return UpdateDraftingPreview();
+	default:
+		return true;
+	}
+}
+
 void AMOICutPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	AMOIPlaneBase::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
+	Super::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
 	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 	if (controller && controller->EditModelUserWidget)
 	{
 		controller->EditModelUserWidget->UpdateCutPlaneInList(ID);
-	}
-	if (bOutVisible)
-	{
-		UpdateDraftingPreview();
 	}
 }
 
@@ -110,24 +123,6 @@ int32 AMOICutPlane::GetCutPlaneVerticalDegree(const FQuat& Rotation)
 		degree += 360;
 	}
 	return degree % 180;
-}
-
-void AMOICutPlane::SetupDynamicGeometry()
-{
-	// TODO: Migrate to CleanObject
-	UpdateCachedGeometryData();
-
-	//TODO: Potentially remove SetupPlaneGeometry?
-	//DynamicMeshActor->SetupPlaneGeometry(CachedPoints, MaterialData, true, true);
-	UpdateVisuals();
-}
-
-void AMOICutPlane::UpdateDynamicGeometry()
-{
-	UpdateCachedGeometryData();
-
-	//TODO: Potentially remove SetupPlaneGeometry?
-	//DynamicMeshActor->SetupPlaneGeometry(CachedPoints, MaterialData, false, true);
 }
 
 bool AMOICutPlane::OnSelected(bool bIsSelected)
@@ -425,23 +420,24 @@ void AMOICutPlane::UpdateCachedGeometryData()
 	};
 
 	CachedOrigin = CachedPoints[0];
-
-	UpdateDraftingPreview();
 }
 
-void AMOICutPlane::UpdateDraftingPreview()
+bool AMOICutPlane::UpdateDraftingPreview()
 {
 	PreviewHUDLines = nullptr;
 
 	if (!IsVisible())
 	{
-		return;
+		return true;
 	}
 	PreviewHUDLines = MakeShared<Modumate::FDraftingComposite>();
 
 	FVector axisY = CachedAxisY * -1.0f;
 
-	GetForegroundLines(PreviewHUDLines, CachedAxisX, axisY);
+	if (!GetForegroundLines(PreviewHUDLines, CachedAxisX, axisY))
+	{
+		return false;
+	}
 
 	DrawingInterface.CurrentAxisX = CachedAxisX;
 	DrawingInterface.CurrentAxisY = CachedAxisY * -1.0f;
@@ -456,9 +452,11 @@ void AMOICutPlane::UpdateDraftingPreview()
 			controller->UpdateCutPlaneCullingMaterialInst(ID);
 		}
 	}
+
+	return true;
 }
 
-void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting)
+bool AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting)
 {
 	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	const Modumate::FGraph3D& volumeGraph = Document->GetVolumeGraph();
@@ -487,24 +485,19 @@ void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 			continue;
 		}
 
-		auto children = metaObject->GetChildObjects();
-		if (children.Num() != 1)
+		auto graphChildren = metaObject->GetChildObjects();
+		for (AModumateObjectInstance* graphChild : graphChildren)
 		{
-			continue;
+			if ((graphChild == nullptr) || graphChild->IsDirty(EObjectDirtyFlags::Visuals))
+			{
+				// Returning false here allows us to wait to call GetDraftingLines
+				// until everything this CutPlane is dependent on is visually-clean, for correctness.
+				// TODO: Optimize CleanObjects to save CutPlanes for last.
+				return false;
+			}
 		}
-		auto moi = children[0];
-		if (moi == nullptr)
-		{
-			continue;
-		}
-		if (moi->IsDirty(EObjectDirtyFlags::Visuals))
-		{
-			return;
-		}
-		else
-		{
-			draftingObjectMois.Add(moi);
-		}
+
+		draftingObjectMois.Append(graphChildren);
 	}
 
 	for (auto moi : draftingObjectMois)
@@ -514,6 +507,8 @@ void AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 		TArray<TArray<FVector>> WallCutPerimeters;
 		moi->GetDraftingLines(ParentPage, CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, WallCutPerimeters);
 	}
+
+	return true;
 }
 
 void AMOICutPlane::CaptureComplete()

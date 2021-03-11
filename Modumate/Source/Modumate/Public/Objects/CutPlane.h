@@ -45,8 +45,6 @@ class MODUMATE_API AMOICutPlane : public AMOIPlaneBase, public ISceneCaptureObje
 public:
 	AMOICutPlane();
 
-	virtual void SetupDynamicGeometry() override;
-	virtual void UpdateDynamicGeometry() override;
 	virtual bool OnSelected(bool bIsSelected) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
 	virtual bool UseStructureDataForCollision() const override { return true; }
@@ -65,6 +63,7 @@ public:
 	virtual AActor* CreateActor(const FVector& loc, const FQuat& rot) override;
 	virtual void PostCreateObject(bool bNewObject) override;
 	virtual void PreDestroy() override;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 
 	static int32 GetCutPlaneVerticalDegree(const FQuat& Rotation);	
@@ -88,8 +87,8 @@ public:
 protected:
 	virtual float GetAlpha() const override;
 	void UpdateCachedGeometryData();
-	void UpdateDraftingPreview();
-	void GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting = false);
+	bool UpdateDraftingPreview();
+	bool GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting = false);
 	void ConvertToOutlines(const FString& renderTargetFilename);
 
 	TWeakObjectPtr<ACutPlaneCaptureActor> CaptureActor;

@@ -300,10 +300,10 @@ void UModumateDocument::UnhideObjectsById(UWorld *world, const TArray<int32> &id
 			HiddenObjectsID.Remove(id);
 		}
 	}
-	// TODO: Pending removal
+
 	for (AModumateObjectInstance *obj : ObjectInstanceArray)
 	{
-		obj->UpdateVisuals();
+		obj->MarkDirty(EObjectDirtyFlags::Visuals);
 	}
 }
 
@@ -1114,6 +1114,14 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World)
 	// Now that objects may have been deleted, validate the player state so that none of them are incorrectly referenced.
 	AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(World->GetFirstPlayerController()->PlayerState);
 	playerState->ValidateSelectionsAndView();
+
+	// TODO: Find a better way to determine what objects were or are now dependents of CutPlanes,
+	// so we don't always have to update them in order to have always-correct lines.
+	TArray<AModumateObjectInstance*> cutPlanes = GetObjectsOfType(EObjectType::OTCutPlane);
+	for (auto cutPlane : cutPlanes)
+	{
+		cutPlane->MarkDirty(EObjectDirtyFlags::Visuals);
+	}
 
 	return true;
 }
