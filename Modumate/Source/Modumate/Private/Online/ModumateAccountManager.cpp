@@ -15,6 +15,9 @@ FModumateAccountManager::FModumateAccountManager(TSharedPtr<FModumateCloudConnec
 
 FModumateAccountManager::~FModumateAccountManager() = default;
 
+const FString FModumateAccountManager::ServiceQuantityEstimates(TEXT("quantityestimates"));
+const FString FModumateAccountManager::ServiceDwg(TEXT("jsontodwg"));
+
 void FModumateAccountManager::RequestStatus()
 {
 	if (!CloudConnection->IsLoggedIn())

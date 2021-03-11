@@ -196,6 +196,10 @@ public:
 
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
 
+	// Services:
+	static const FString ServiceQuantityEstimates;
+	static const FString ServiceDwg;
+
 private:
 	TSharedPtr<FModumateUpdater> Updater;
 	FModumateUserInfo UserInfo;

@@ -33,8 +33,6 @@ bool UBrowserBlockExport::Initialize()
 void UBrowserBlockExport::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	//ExportRemainText->ChangeText(FText::FromString("fdgajld"));
 }
 
 void UBrowserBlockExport::OnButtonExportReleased()
