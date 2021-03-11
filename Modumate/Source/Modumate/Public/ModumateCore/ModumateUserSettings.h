@@ -49,6 +49,7 @@ struct MODUMATE_API FModumateUserSettings
 	bool bDirty = false;
 
 	static FString GetLocalSavePath();
+	static FString GetRestrictedSavePath();
 	static FString GetLocalTempDir();
 
 	void RecordRecentProject(const FString &projectPath, bool bAutoSave = true);

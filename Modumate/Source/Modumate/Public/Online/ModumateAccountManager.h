@@ -159,8 +159,23 @@ struct MODUMATE_API FModumateServiceInfo
 
 enum class ELoginStatus : uint8;
 
+// Must be kept up-to-date with the ModumateCloud backend, specifically the Config.PERMISSIONS strings.
 UENUM(BlueprintType)
-enum class EModumatePermission : uint8 { None, View, Edit, Save, Export };
+enum class EModumatePermission : uint8
+{
+	None,
+	ProjectView,
+	ProjectEdit,
+	ProjectSave,
+	ProjectSaveOne,
+	ProjectNew,
+	ProjectDelete,
+	WorkspaceCreate,
+	WorkspaceUpdate,
+	WorkspaceInvite,
+	WorkspaceRemove,
+	ServiceJsontodwg
+};
 
 class FModumateCloudConnection;
 class FModumateUpdater;

@@ -211,7 +211,7 @@ bool UModumateTutorialManager::OpenVideoTutorial(const FString& ProjectFilePath,
 		AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
 		if (controller)
 		{
-			if (!controller->LoadModelFilePath(ProjectFilePath, true, false, false))
+			if (!controller->LoadModelFilePath(ProjectFilePath, false, false, false))
 			{
 				return false;
 			}

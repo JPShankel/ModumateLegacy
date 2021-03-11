@@ -18,6 +18,7 @@
 
 class AAdjustmentHandleActor;
 class AEditModelPlayerState;
+enum class EModumatePermission : uint8;
 class UEditModelCameraController;
 class UEditModelInputAutomation;
 class UEditModelInputHandler;
@@ -502,9 +503,10 @@ public:
 	bool OnCreateDwg();
 	bool OnCreateQuantitiesCsv();
 
-	// Check user plan & permission, show modal dialog if user doesn't have sufficient status and return false
-	UFUNCTION(BlueprintCallable, Category = Persistence)
-	bool CheckUserPlanAndPermission(EModumatePermission Permission);
+	// Check user plan & permission, and if user doesn't have sufficient status then show a modal dialog and return false.
+	// The modal dialog has an optional confirm button and confirmation callback.
+	bool CheckUserPlanAndPermission(EModumatePermission Permission, const FText& NoPermissionText = FText::GetEmpty(),
+		const FText& ConfirmText = FText::GetEmpty(), const TFunction<void()>& ConfirmCallback = nullptr);
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	bool TakeScreenshot();

@@ -237,14 +237,9 @@ void UEditModelUserWidget::RefreshAssemblyList()
 	ToolTrayWidget->ToolTrayBlockAssembliesList->CreateAssembliesListForCurrentToolMode();
 }
 
-void UEditModelUserWidget::ShowAlertPausedAccountDialog()
+void UEditModelUserWidget::ShowAlertFreeAccountDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& ConfirmCallback)
 {
-	AlertPausedAccountDialogWidget->SetVisibility(ESlateVisibility::Visible);
-}
-
-void UEditModelUserWidget::ShowAlertFreeAccountDialog()
-{
-	AlertFreeAccountDialogWidget->SetVisibility(ESlateVisibility::Visible);
+	AlertFreeAccountDialogWidget->ShowDialog(AlertText, ConfirmText, ConfirmCallback);
 }
 
 void UEditModelUserWidget::UpdateViewModeIndicator(EEditViewModes NewViewMode)

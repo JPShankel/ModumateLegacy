@@ -75,9 +75,6 @@ public:
 	class UAlertAccountDialogWidget* AlertFreeAccountDialogWidget;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UAlertAccountDialogWidget* AlertPausedAccountDialogWidget;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UToolTrayBlockAssembliesList* BIMPresetSwap;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -120,8 +117,7 @@ public:
 	bool RemoveCutPlaneFromList(int32 ObjID = MOD_ID_NONE);
 	bool UpdateCutPlaneInList(int32 ObjID = MOD_ID_NONE);
 	void RefreshAssemblyList();
-	void ShowAlertPausedAccountDialog();
-	void ShowAlertFreeAccountDialog();
+	void ShowAlertFreeAccountDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& ConfirmCallback);
 	void UpdateViewModeIndicator(EEditViewModes NewViewMode);
 	void ShowBIMDebugger(bool NewVisible);
 	bool IsBIMDebuggerOn();

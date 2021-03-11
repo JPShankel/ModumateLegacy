@@ -5,6 +5,8 @@
 #include "Database/ModumateDataTables.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "GameFramework/InputSettings.h"
+#include "GameMapsSettings.h"
+#include "HAL/PlatformMisc.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
@@ -205,6 +207,24 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	case EInputCommand::SaveAs:
 	{
 		Controller->SaveModelAs();
+		return true;
+	}
+	case EInputCommand::MainMenu:
+	{
+		if (Controller->CheckSaveModel())
+		{
+			FString mainMenuMap = UGameMapsSettings::GetGameDefaultMap();
+			UGameplayStatics::OpenLevel(this, FName(*mainMenuMap));
+		}
+
+		return true;
+	}
+	case EInputCommand::Exit:
+	{
+		if (Controller->CheckSaveModel())
+		{
+			FPlatformMisc::RequestExit(false);
+		}
 		return true;
 	}
 	case EInputCommand::Undo:

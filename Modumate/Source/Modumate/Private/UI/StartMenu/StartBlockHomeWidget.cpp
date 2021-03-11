@@ -1,12 +1,15 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/StartMenu/StartBlockHomeWidget.h"
+
+#include "Components/WrapBox.h"
+#include "Misc/FileHelper.h"
+#include "Online/ModumateAccountManager.h"
+#include "UI/StartMenu/StartBlockNewProjectCardWidget.h"
+#include "UI/StartMenu/StartBlockProjectCardWidget.h"
+#include "UI/TutorialMenu/TutorialMenuWidget.h"
 #include "UnrealClasses/MainMenuGameMode.h"
 #include "UnrealClasses/ModumateGameInstance.h"
-#include "Components/WrapBox.h"
-#include "UI/StartMenu/StartBlockProjectCardWidget.h"
-#include "UI/StartMenu/StartBlockNewProjectCardWidget.h"
-#include "UI/TutorialMenu/TutorialMenuWidget.h"
 
 UStartBlockHomeWidget::UStartBlockHomeWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -32,7 +35,20 @@ void UStartBlockHomeWidget::OpenRecentProjectMenu()
 	}
 	WrapBoxProjects->ClearChildren();
 
-	UStartBlockNewProjectCardWidget *newProjectCard = CreateWidget<UStartBlockNewProjectCardWidget>(this, NewProjectCardWidgetClass);
+	bool bShowNewProjectCard = true;
+
+	// Hide the New Project card if we don't have permission to save multiple projects,
+	// and if the local restricted project already exists. If so, it is guaranteed to exist in the recent project list.
+	auto gameInstance = MainMenuGameMode->GetGameInstance<UModumateGameInstance>();
+	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
+	FString restrictedSavePath = FModumateUserSettings::GetRestrictedSavePath();
+	if (accountManager.IsValid() && !accountManager->HasPermission(EModumatePermission::ProjectSave) &&
+		IFileManager::Get().FileExists(*restrictedSavePath))
+	{
+		bShowNewProjectCard = false;
+	}
+
+	UStartBlockNewProjectCardWidget* newProjectCard = bShowNewProjectCard ? CreateWidget<UStartBlockNewProjectCardWidget>(this, NewProjectCardWidgetClass) : nullptr;
 	if (newProjectCard)
 	{
 		WrapBoxProjects->AddChildToWrapBox(newProjectCard);

@@ -203,15 +203,6 @@ void AEditModelPlayerController::BeginPlay()
 		bEnableAutoSave = !gameMode->bPendingProjectIsTutorial;
 	}
 
-	if (!fileLoadPath.IsEmpty())
-	{
-		LoadModelFilePath(fileLoadPath, bSetAsCurrentProject, bAddToRecents, bEnableAutoSave);
-	}
-	else
-	{
-		NewModel(false);
-	}
-
 	EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
 	FString lockFile = FPaths::Combine(gameInstance->UserSettings.GetLocalTempDir(), kModumateCleanShutdownFile);
@@ -247,6 +238,17 @@ void AEditModelPlayerController::BeginPlay()
 	FString path = FModumateUserSettings::GetLocalTempDir() / InputTelemetryDirectory;
 	IFileManager::Get().DeleteDirectory(*path, false, true);
 	IFileManager::Get().MakeDirectory(*path);
+
+	// Defer project loading until we've finished initializing everything else that it might need
+	// (such as the EditModelUserWidget for displaying warnings)
+	if (!fileLoadPath.IsEmpty())
+	{
+		LoadModelFilePath(fileLoadPath, bSetAsCurrentProject, bAddToRecents, bEnableAutoSave);
+	}
+	else
+	{
+		NewModel(false);
+	}
 
 	// Begin a walkthrough if requested from the main menu, then clear out the request.
 	if (gameInstance && gameInstance->TutorialManager &&
@@ -768,7 +770,8 @@ Load/Save menu
 
 bool AEditModelPlayerController::SaveModel()
 {
-	if (!CheckUserPlanAndPermission(EModumatePermission::Save))
+	FText saveAsAlert = LOCTEXT("PermissionAlertSaveOne", "Your plan doesn't allow you to save projects.\nUpgrade your plan to save projects.");
+	if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSaveOne, saveAsAlert))
 	{
 		return false;
 	}
@@ -782,7 +785,8 @@ bool AEditModelPlayerController::SaveModel()
 
 bool AEditModelPlayerController::SaveModelAs()
 {
-	if (!CheckUserPlanAndPermission(EModumatePermission::Save))
+	FText saveAsAlert = LOCTEXT("PermissionAlertSaveAs", "Your plan only allows you to save one project at a time with Save.\nUpgrade your plan to save as many versions and projects as you'd like.");
+	if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSave, saveAsAlert))
 	{
 		return false;
 	}
@@ -821,13 +825,21 @@ bool AEditModelPlayerController::SaveModelFilePath(const FString &filepath)
 		AbortUseTool();
 	}
 
-	// Try to capture a thumbnail for the project	
+	bool bShowPath = CheckUserPlanAndPermission(EModumatePermission::ProjectSave);
+	FText filePathText = FText::FromString(filepath);
+
+	// Try to capture a thumbnail for the project
 	CaptureProjectThumbnail();
+
 	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	if (gameState->Document->Save(GetWorld(), filepath, true))
 	{
+		FString saveTitleString = LOCTEXT("SaveSuccessTitle", "Save Project").ToString();
+		FText saveMessageFormat = bShowPath ? LOCTEXT("SaveSuccessWithPath", "Saved as {0}") : LOCTEXT("SaveSuccessWithoutPath", "Saved successfully.");
+		FString saveMessageString = FText::Format(saveMessageFormat, filePathText).ToString();
+
 		EMPlayerState->LastFilePath = filepath;
-		Modumate::PlatformFunctions::ShowMessageBox(*FString::Printf(TEXT("Saved as %s"),*EMPlayerState->LastFilePath), TEXT("Save Model"), Modumate::PlatformFunctions::Okay);
+		Modumate::PlatformFunctions::ShowMessageBox(saveMessageString, saveTitleString, Modumate::PlatformFunctions::Okay);
 
 		static const FString eventName(TEXT("SaveDocument"));
 		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Session, eventName);
@@ -835,7 +847,11 @@ bool AEditModelPlayerController::SaveModelFilePath(const FString &filepath)
 	}
 	else
 	{
-		Modumate::PlatformFunctions::ShowMessageBox(*FString::Printf(TEXT("COULD NOT SAVE %s"), *EMPlayerState->LastFilePath), TEXT("Save Model"), Modumate::PlatformFunctions::Okay);
+		FString saveTitleString = LOCTEXT("SaveFailureTitle", "Error!").ToString();
+		FText saveMessageFormat = bShowPath ? LOCTEXT("SaveFailureWithPath", "Could not save as {0}") : LOCTEXT("SaveFailureWithoutPath", "Could not save project.");
+		FString saveMessageString = FText::Format(saveMessageFormat, filePathText).ToString();
+
+		Modumate::PlatformFunctions::ShowMessageBox(saveMessageString, saveTitleString, Modumate::PlatformFunctions::Okay);
 		return false;
 	}
 }
@@ -895,9 +911,24 @@ bool AEditModelPlayerController::LoadModelFilePath(const FString &filename, bool
 		bCurProjectAutoSaves = bEnableAutoSave;
 	}
 
+	FString newFilePath = filename;
+	if (bLoadSuccess && bAddToRecents)
+	{
+		// If we're loading a project from an unrestricted location, then potentially show a permissions warning if the user won't be able to save it in-place.
+		FString restrictedSavePath = FModumateUserSettings::GetRestrictedSavePath();
+		if (filename != restrictedSavePath)
+		{
+			FText noMultiSaveAlertText = LOCTEXT("PermissionAlertSaveAsOnLoad", "Your plan only allows you to save one project at a time; saving this project will overwrite your only project.\nUpgrade your plan to save as many projects as you'd like.");
+			if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSave, noMultiSaveAlertText))
+			{
+				newFilePath = restrictedSavePath;
+			}
+		}
+	}
+
 	if (bLoadSuccess && bSetAsCurrentProject)
 	{
-		EMPlayerState->LastFilePath = filename;
+		EMPlayerState->LastFilePath = newFilePath;
 	}
 	else
 	{
@@ -914,7 +945,7 @@ bool AEditModelPlayerController::CheckSaveModel()
 		Modumate::PlatformFunctions::EMessageBoxResponse resp = Modumate::PlatformFunctions::ShowMessageBox(TEXT("Save current model?"), TEXT("Save"), Modumate::PlatformFunctions::YesNoCancel);
 		if (resp == Modumate::PlatformFunctions::Yes)
 		{
-			if (!SaveModelAs())
+			if (!SaveModel())
 			{
 				return false;
 			}
@@ -931,9 +962,28 @@ void AEditModelPlayerController::NewModel(bool bShouldCheckForSave)
 {
 	if (!EMPlayerState->ShowingFileDialog)
 	{
-		if (bShouldCheckForSave && !CheckSaveModel())
+		if (bShouldCheckForSave)
 		{
-			return;
+			if (!CheckSaveModel())
+			{
+				return;
+			}
+
+			// If the user doesn't have permission to save multiple projects, then we want to confirm that making a new model
+			FText saveAsAlert = LOCTEXT("PermissionAlertSaveAsOnNew", "Your plan only allows you to save one project at a time.\nMaking a new document will overwrite your existing project, would you like to proceed?\nUpgrade your plan to make as many projects as you'd like.");
+			FText confirmText = LOCTEXT("PermissionConfirmSaveAsOnNew", "Make New");
+			auto weakThis = MakeWeakObjectPtr<AEditModelPlayerController>(this);
+			auto deferredNewModel = [weakThis]() {
+				if (weakThis.IsValid())
+				{
+					weakThis->NewModel(false);
+				}
+			};
+
+			if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSave, saveAsAlert, confirmText, deferredNewModel))
+			{
+				return;
+			}
 		}
 
 		EndTelemetrySession();
@@ -1023,25 +1073,37 @@ bool AEditModelPlayerController::GetScreenshotFileNameWithDialog(FString &filena
 	return bChoseFile;
 }
 
-bool AEditModelPlayerController::CheckUserPlanAndPermission(EModumatePermission Permission)
+bool AEditModelPlayerController::CheckUserPlanAndPermission(EModumatePermission Permission, const FText& NoPermissionText, const FText& ConfirmText, const TFunction<void()>& ConfirmCallback)
 {
-#if WITH_EDITOR
-	return true;
-#endif
 	// TODO: Check if user is still login, refresh and request permission status
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
-	if (ensure(gameInstance) && gameInstance->GetAccountManager().Get()->HasPermission(Permission))
+
+#if WITH_EDITOR
+	// Bypass permission checking in the editor, only if we haven't logged in.
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (cloudConnection.IsValid() && !cloudConnection->IsLoggedIn())
 	{
 		return true;
 	}
-	// TODO: Check if user is on paid plan
-	EditModelUserWidget->ShowAlertFreeAccountDialog();
+#endif
+
+	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
+	if (accountManager.IsValid() && accountManager->HasPermission(Permission))
+	{
+		return true;
+	}
+
+	if (EditModelUserWidget && !NoPermissionText.IsEmpty())
+	{
+		EditModelUserWidget->ShowAlertFreeAccountDialog(NoPermissionText, ConfirmText, ConfirmCallback);
+	}
+
 	return false;
 }
 
 bool AEditModelPlayerController::OnCreateDwg()
 {
-	if (!CheckUserPlanAndPermission(EModumatePermission::Export))
+	if (!CheckUserPlanAndPermission(EModumatePermission::ServiceJsontodwg))
 	{
 		return false;
 	}

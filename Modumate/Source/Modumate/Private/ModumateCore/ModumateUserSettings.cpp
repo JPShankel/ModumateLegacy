@@ -16,6 +16,14 @@ FString FModumateUserSettings::GetLocalSavePath()
 	return FPaths::Combine(FPlatformProcess::UserSettingsDir(), FApp::GetProjectName(), FileName);
 }
 
+FString FModumateUserSettings::GetRestrictedSavePath()
+{
+	static const FString savedFolder(TEXT("Saved"));
+	static const FString projectFolder(TEXT("LocalProjects"));
+	static const FString restrictedSaveFile(TEXT("Free Project.mdmt"));
+	return FPaths::Combine(FPlatformProcess::UserSettingsDir(), FApp::GetProjectName(), savedFolder, projectFolder, restrictedSaveFile);
+}
+
 FString FModumateUserSettings::GetLocalTempDir()
 {
 	return FPaths::Combine(FPlatformProcess::UserTempDir(), TEXT("Modumate"));
@@ -104,6 +112,29 @@ bool FModumateUserSettings::LoadLocally()
 	}
 
 	bool bConversionSuccess = FJsonObjectConverter::JsonObjectToUStruct<FModumateUserSettings>(settingsJson.ToSharedRef(), this);
+
+	// To make sure that the local restricted project always shows up in the list of free projects, hack it into recent projects if it isn't already there.
+	FString restrictedSavePath = GetRestrictedSavePath();
+	if (fileManager.FileExists(*restrictedSavePath))
+	{
+		bool bRestrictedProjectInRecent = false;
+		for (auto& recentProject : RecentProjects)
+		{
+			if (recentProject.ProjectPath == restrictedSavePath)
+			{
+				bRestrictedProjectInRecent = true;
+				break;
+			}
+		}
+
+		if (!bRestrictedProjectInRecent)
+		{
+			FRecentProject restrictedProjectEntry;
+			restrictedProjectEntry.ProjectPath = restrictedSavePath;
+			restrictedProjectEntry.Timestamp = FDateTime::Now();
+			RecentProjects.Insert(restrictedProjectEntry, 0);
+		}
+	}
 
 	// Only support Version 0 for now.
 	bConversionSuccess = bConversionSuccess && ensureAlways(Version == 0);

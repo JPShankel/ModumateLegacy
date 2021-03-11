@@ -5,6 +5,7 @@
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
 #include "Components/SizeBox.h"
+#include "GameMapsSettings.h"
 #include "Runtime/MediaAssets/Public/MediaPlayer.h"
 #include "Runtime/MediaAssets/Public/StreamMediaSource.h"
 #include "UI/Custom/ModumateButton.h"
@@ -208,6 +209,6 @@ void UTutorialWalkthroughMenu::OnReleaseButtonOutroGoBack()
 {
 	TutorialManager->EndWalkthrough(false);
 
-	static const FName mainMenuLVL(TEXT("MainMenuLVL"));
-	UGameplayStatics::OpenLevel(this, mainMenuLVL);
+	FString mainMenuMap = UGameMapsSettings::GetGameDefaultMap();
+	UGameplayStatics::OpenLevel(this, FName(*mainMenuMap));
 }

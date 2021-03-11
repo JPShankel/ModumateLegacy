@@ -120,15 +120,49 @@ void FModumateAccountManager::NotifyServiceUse(const FString& ServiceName)
 
 void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserStatus)
 {
+	static const FString permissionSeparator(TEXT("."));
+	static const FString permissionWildcard(TEXT("*"));
+
 	// TODO: process announcements:
 	CurrentPermissions.Empty();
 
-	for (const FString& perm: UserStatus.Permissions)
+	auto permissionEnum = StaticEnum<EModumatePermission>();
+	int32 numPermissions = permissionEnum->NumEnums();
+	if (permissionEnum->ContainsExistingMax())
 	{
-		auto permissionIndex = StaticEnum<EModumatePermission>()->GetValueByNameString(perm);
-		if (permissionIndex != INDEX_NONE)
+		numPermissions--;
+	}
+
+	// Add specific enum permissions to the local account based on incoming server-formatted permission strings,
+	// which are lowercase and can have wildcards after the category.
+	FString permissionCategory, permissionSpecific;
+	for (const FString& permissionServerString: UserStatus.Permissions)
+	{
+		if (permissionServerString.Split(permissionSeparator, &permissionCategory, &permissionSpecific) &&
+			(permissionCategory.Len() > 0) && (permissionSpecific.Len() > 0))
 		{
-			CurrentPermissions.Add(EModumatePermission(permissionIndex));
+			permissionCategory[0] = FChar::ToUpper(permissionCategory[0]);
+			permissionSpecific[0] = FChar::ToUpper(permissionSpecific[0]);
+
+			if (permissionSpecific == permissionWildcard)
+			{
+				for (int32 permissionIdx = 0; permissionIdx < numPermissions; ++permissionIdx)
+				{
+					if (permissionEnum->GetNameStringByIndex(permissionIdx).StartsWith(permissionCategory))
+					{
+						CurrentPermissions.Add(static_cast<EModumatePermission>(permissionEnum->GetValueByIndex(permissionIdx)));
+					}
+				}
+			}
+			else
+			{
+				FString permissionEnumString = permissionCategory + permissionSpecific;
+				int64 searchResult = permissionEnum->GetValueByNameString(permissionEnumString, EGetByNameFlags::CaseSensitive);
+				if (searchResult != INDEX_NONE)
+				{
+					CurrentPermissions.Add(static_cast<EModumatePermission>(searchResult));
+				}
+			}
 		}
 	}
 

@@ -11,6 +11,7 @@
  *
  */
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAlertAccountPressedConfirm);
 
 UCLASS()
 class MODUMATE_API UAlertAccountDialogWidget : public UUserWidget
@@ -25,15 +26,30 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateTextBlockUserWidget* AlertTextBlock;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonInfoLink;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonConfirm;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonDismiss;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAlertAccountPressedConfirm OnPressedConfirm;
+
+	void ShowDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback);
+
+protected:
 
 	UFUNCTION()
 	void OnReleaseButtonInfoLink();
+
+	UFUNCTION()
+	void OnReleaseButtonConfirm();
 
 	UFUNCTION()
 	void OnReleaseButtonDismiss();
@@ -41,6 +57,5 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString ButtonInfoLinkURL;
 
-protected:
-
+	TFunction<void()> ConfirmCallback;
 };

@@ -2,25 +2,27 @@
 
 #include "UnrealClasses/EditModelPlayerState.h"
 
+#include "Algo/Transform.h"
+#include "Database/ModumateObjectDatabase.h"
 #include "Database/ModumateObjectEnums.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateConsoleCommand.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateUserSettings.h"
+#include "Online/ModumateAccountManager.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+#include "UI/DimensionManager.h"
+#include "UI/EditModelPlayerHUD.h"
+#include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-#include "UnrealClasses/ModumateGameInstance.h"
-#include "UI/EditModelPlayerHUD.h"
-#include "UI/DimensionManager.h"
 #include "UnrealClasses/LineActor.h"
-#include "Online/ModumateAnalyticsStatics.h"
-#include "DocumentManagement/ModumateCommands.h"
-#include "ModumateCore/ModumateConsoleCommand.h"
-#include "ModumateCore/ModumateDimensionStatics.h"
-#include "DocumentManagement/ModumateDocument.h"
-#include "ModumateCore/ModumateFunctionLibrary.h"
-#include "Database/ModumateObjectDatabase.h"
-#include "Algo/Transform.h"
-#include "UI/EditModelUserWidget.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 
 
@@ -607,6 +609,11 @@ void AEditModelPlayerState::OnNewModel()
 	LastReachableObjectSet.Reset();
 	ObjectErrorMap.Reset();
 	LastFilePath.Empty();
+
+	if (!EMPlayerController->CheckUserPlanAndPermission(EModumatePermission::ProjectSave))
+	{
+		LastFilePath = FModumateUserSettings::GetRestrictedSavePath();
+	}
 
 	PostViewChanged();
 
