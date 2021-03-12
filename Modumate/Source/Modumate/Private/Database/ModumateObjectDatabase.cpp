@@ -172,6 +172,7 @@ bool FModumateDatabase::ReadBIMCache(const FString& CacheFile, FModumateBIMCache
 bool FModumateDatabase::WriteBIMCache(const FString& CacheFile, const FModumateBIMCacheRecord& InCache) const
 {
 	FString cacheFile = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), CacheFile);
+	FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*cacheFile);
 
 	TSharedPtr<FJsonObject> jsonOb = MakeShared<FJsonObject>();
 	TSharedPtr<FJsonObject> cacheOb = FJsonObjectConverter::UStructToJsonObject<FModumateBIMCacheRecord>(InCache);
