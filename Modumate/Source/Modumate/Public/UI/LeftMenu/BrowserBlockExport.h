@@ -25,7 +25,6 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonExport;
 
@@ -33,7 +32,13 @@ public:
 	class UModumateButtonUserWidget* ButtonCancel;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UVerticalBox* LimitedExportBox;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlockUserWidget* ExportRemainText;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class URichTextBlock* UpgradeText;
 
 	UPROPERTY()
 	class UBrowserMenuWidget* ParentBrowserMenuWidget;

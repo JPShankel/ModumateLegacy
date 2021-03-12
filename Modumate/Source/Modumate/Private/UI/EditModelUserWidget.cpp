@@ -2,6 +2,8 @@
 
 #include "UI/EditModelUserWidget.h"
 
+#include "Components/Border.h"
+#include "Online/ModumateCloudConnection.h"
 #include "UI/BIM/BIMBlockDialogBox.h"
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/Custom/ModumateButton.h"
@@ -21,10 +23,12 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UI/Debugger/BIMDebugger.h"
-#include "Components/Border.h"
 #include "UI/TutorialMenu/TutorialMenuWidget.h"
 #include "UI/BIM/BIMScopeWarning.h"
 #include "UI/LeftMenu/BrowserMenuWidget.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+
+#define LOCTEXT_NAMESPACE "ModumateWidgets"
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -292,6 +296,21 @@ void UEditModelUserWidget::UpdateSelectTrayVisibility()
 	}
 }
 
+FText UEditModelUserWidget::GetPlanUpgradeRichText()
+{
+	auto gameInstance = Controller->GetGameInstance<UModumateGameInstance>();
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (!ensure(cloudConnection.IsValid()))
+	{
+		return FText::GetEmpty();
+	}
+
+	FText upgradeTextFormat = LOCTEXT("PlanUpgradeFormat", "<a href=\"{0}\">Upgrade</> your plan for unlimited exports.");
+	static const FString upgradeURLSuffix(TEXT("workspace/plans"));
+	FString upgradeURLFull = cloudConnection->GetCloudRootURL() / upgradeURLSuffix;
+	return FText::Format(upgradeTextFormat, FText::FromString(upgradeURLFull));
+}
+
 void UEditModelUserWidget::ToggleBIMPresetSwapTray(bool NewVisibility)
 {
 	// TODO: Closing swap tray should look back to previous left menu state
@@ -372,3 +391,5 @@ void UEditModelUserWidget::ToggleBrowserMenu(bool NewVisibility)
 		ToolbarWidget->Button_Browser->SwitchToNormalStyle();
 	}
 }
+
+#undef LOCTEXT_NAMESPACE

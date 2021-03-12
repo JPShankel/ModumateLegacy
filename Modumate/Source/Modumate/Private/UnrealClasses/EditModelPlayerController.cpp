@@ -1148,12 +1148,13 @@ bool AEditModelPlayerController::OnCreateDwg()
 	else
 	{
 		EMPlayerState->ShowingFileDialog = false;
+		retValue = false;
 	}
 
 	return retValue;
 }
 
-bool AEditModelPlayerController::OnCreateQuantitiesCsv()
+bool AEditModelPlayerController::OnCreateQuantitiesCsv(const TFunction<void(FString, bool)>& UsageNotificationCallback)
 {
 	if (ToolIsInUse())
 	{
@@ -1161,8 +1162,6 @@ bool AEditModelPlayerController::OnCreateQuantitiesCsv()
 	}
 
 	bool retValue = true;
-
-	// TODO: check permission/quota.
 
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
 	if (!gameInstance)
@@ -1188,7 +1187,7 @@ bool AEditModelPlayerController::OnCreateQuantitiesCsv()
 		}
 		else
 		{
-			gameInstance->GetAccountManager()->NotifyServiceUse(TEXT("quantityestimates"));
+			gameInstance->GetAccountManager()->NotifyServiceUse(FModumateAccountManager::ServiceQuantityEstimates, UsageNotificationCallback);
 		}
 	}
 	else

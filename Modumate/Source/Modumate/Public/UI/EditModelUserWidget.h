@@ -129,4 +129,5 @@ public:
 	bool IsBIMDesingerActive() const;
 	bool EMUserWidgetHandleEscapeKey();
 	void UpdateSelectTrayVisibility();
+	FText GetPlanUpgradeRichText();
 };

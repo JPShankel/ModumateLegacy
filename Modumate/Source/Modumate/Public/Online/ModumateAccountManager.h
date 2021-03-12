@@ -207,7 +207,7 @@ public:
 	bool RequestServiceRemaining(const FString& ServiceName, const TFunction<void(FString, bool, bool, int32)>& Callback);
 
 	// Notify server of a single use of a service against its quota.
-	void NotifyServiceUse(const FString& ServiceName);
+	void NotifyServiceUse(const FString& ServiceName, const TFunction<void(FString, bool)>& Callback = nullptr);
 
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
 

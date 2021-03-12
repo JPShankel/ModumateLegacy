@@ -40,6 +40,15 @@ public:
 	class UListView* ListOther;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UVerticalBox* LimitedExportBox;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateTextBlockUserWidget* LimitedExportText;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class URichTextBlock* UpgradeText;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonExport;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -81,4 +90,12 @@ public:
 
 	void UpdateCutPlaneExportable(const TArray<int32>& IDs, bool NewExportable);
 	void UpdateCutPlaneExportableByType(ECutPlaneType Type, bool NewExportable);
+
+protected:
+	void CalculateRemainingExports();
+
+	bool bCalculatingExports = false;
+	bool bExportsLimited = false;
+	bool bExportsEnabled = false;
+	int32 ExportsRemaining = 0;
 };
