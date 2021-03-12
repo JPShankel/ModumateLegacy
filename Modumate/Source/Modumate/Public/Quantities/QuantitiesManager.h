@@ -22,11 +22,12 @@ public:
 
 	static float GetModuleUnitsInArea(const FBIMPresetInstance* Preset, const FLayerPatternModule* Module, float Area);
 
+	struct FReportItem;
+
 private:
 	TWeakObjectPtr<UModumateGameInstance> GameInstance;
 	TUniquePtr<FQuantitiesVisitor> CurrentQuantities;
 
-	struct FReportItem;
 	void PostProcessSizeGroups(TArray<FReportItem>& ReportItems);
 
 	static FString CsvEscape(const FString& String);

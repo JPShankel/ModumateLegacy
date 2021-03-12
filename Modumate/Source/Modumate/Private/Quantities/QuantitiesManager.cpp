@@ -54,6 +54,8 @@ struct FQuantitiesManager::FReportItem
 	FQuantity Quantity;
 	TArray<FReportItem> UsedIn;
 	TArray<FReportItem> Uses;
+	FString Preface;
+	int32 Indentlevel = 0;
 
 	FString GetName() const
 	{
@@ -63,31 +65,28 @@ struct FQuantitiesManager::FReportItem
 
 namespace
 {
-	int CategoryToPriority(const FText& Cat)
+	struct FNcpTree
 	{
-		static const FText categories[] =
+		TMap<FString, TUniquePtr<FNcpTree>> Children;
+		TArray<int32> Items;
+		FString NcpDisplayName;  // Display name for this leaf in the NCP tree.
+		void AddItem(int32 NewItemIndex, const FBIMTagPath& ItemPath, int32 PathIndex = 0)
 		{
-			FText::FromString(TEXT("Wall")), FText::FromString(TEXT("Floor")),
-			FText::FromString(TEXT("Ceiling")), FText::FromString(TEXT("Roof")),
-			FText::FromString(TEXT("System Panel")), FText::FromString(TEXT("Stair")),
-			FText::FromString(TEXT("Door")), FText::FromString(TEXT("Window")),
-			FText::FromString(TEXT("Beam / Column")), FText::FromString(TEXT("Mullion")),
-			FText::FromString(TEXT("Finish")), FText::FromString(TEXT("Trim")),
-			FText::FromString(TEXT("Layer")), FText::FromString(TEXT("Module")),
-			FText::FromString(TEXT("Gap")), FText::FromString(TEXT("Floor Cabinet")),
-			FText::FromString(TEXT("FF&E")),
-		};
-
-		static constexpr int32 numCategories = sizeof (categories) / sizeof(FText);
-		for (int32 i = 0; i < numCategories; ++i)
-		{
-			if (Cat.EqualTo(categories[i]))
+			if (PathIndex == ItemPath.Tags.Num())
 			{
-				return i;
+				Items.Add(NewItemIndex);
+			}
+			else
+			{
+				auto child = Children.Find(ItemPath.Tags[PathIndex]);
+				if (!child)
+				{
+					child = &Children.Add(ItemPath.Tags[PathIndex], MakeUnique<FNcpTree>());
+				}
+				(*child)->AddItem(NewItemIndex, ItemPath, ++PathIndex);
 			}
 		}
-		return numCategories;
-	}
+	};
 }
 
 bool FQuantitiesManager::CreateReport(const FString& Filename)
@@ -96,6 +95,7 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 	TMap<FQuantityItemId, TArray<FQuantityKey>> itemToQuantityKeys;
 	TMap<FQuantityItemId, TArray<FQuantityKey>> parentToQuantityKeys;
 	TArray<FReportItem> topReportItems;
+	FNcpTree ncpTree;
 
 	auto gameInstance = GameInstance.Get();
 	if (!gameInstance || !gameInstance->GetWorld() || !CurrentQuantities.IsValid())
@@ -115,16 +115,8 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 			+ TEXT(",") + (Q.Area != 0.0f ? FString::Printf(format, Q.Area / 929.0f) : FString())
 			+ TEXT(",") + (Q.Linear != 0.0f ? FString::Printf(format, Q.Linear / 30.48f) : FString());
 	};
+
 	const FQuantitiesVisitor::QuantitiesMap& quantities = CurrentQuantities->GetQuantities();
-
-	auto isTopLevelPortal = [](const FBIMPresetInstance* preset)
-	{
-		static const FText windowCategory = FText::FromString(TEXT("Window"));
-		static const FText doorCategory = FText::FromString(TEXT("Door"));
-
-		return preset->CategoryTitle.EqualTo(windowCategory)
-			|| preset->CategoryTitle.EqualTo(doorCategory);
-	};
 
 	for (auto& quantity: quantities)
 	{
@@ -144,6 +136,10 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 		bool bReportUsesPresets = true;
 		bool bReportUsedInPresets = true;
 
+		FBIMTagPath itemNcp;
+		presets.GetNCPForPreset(itemGuid, itemNcp);
+		ensure(itemNcp.Tags.Num() > 0);
+
 		FReportItem reportItem;
 		reportItem.Name = preset->DisplayName.ToString();
 		reportItem.Subname = item.Key.Subname;
@@ -151,7 +147,6 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 
 		reportItem.ItemScope = preset->NodeScope;
 		reportItem.Category = preset->CategoryTitle;
-		reportItem.CategorySort = CategoryToPriority(reportItem.Category);
 
 		FQuantity accumulatedQuantity;
 		// Loop over parent ('Used In') items:
@@ -206,48 +201,92 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 				reportItem.Uses.Add(MoveTemp(subItem));
 			}
 		}
-		topReportItems.Add(MoveTemp(reportItem));
+ 		ncpTree.AddItem(topReportItems.Add(MoveTemp(reportItem)), itemNcp);
 	}
 
-	topReportItems.Sort([](const FReportItem& a, const FReportItem& b)
+	TFunction<void(FNcpTree*, int32&)> treeDepth = [&treeDepth](const FNcpTree* tree, int& depth)
 	{
-		return  a.CategorySort == b.CategorySort ?
-			(a.Category.EqualTo(b.Category) ? a.NameForSorting < b.NameForSorting : a.Category.CompareTo(b.Category) < 0)
-			: a.CategorySort < b.CategorySort;
-	});
+		int32 maxDepth = 0;
+		for (const auto& child : tree->Children)
+		{
+			int32 childDepth;
+			treeDepth(child.Value.Get(), childDepth);
+			maxDepth = FMath::Max(maxDepth, childDepth);
+		}
+		depth = maxDepth + 1;
+	};
 
-	PostProcessSizeGroups(topReportItems);
+	int32 categoryIndent;
+	treeDepth(&ncpTree, categoryIndent);
+	--categoryIndent;
+
+	auto commas = [](int32 n) {FString s; return s.Append(TEXT(",,,,,,,,,,,,,,,,,,,,,"), n); };
+	
+	FBIMTagPath currentTagPath;
+	FString CsvHeaderLines;
+	TArray<FReportItem> treeReportItems;
+
+	TFunction<void(FNcpTree*,int32)> processTreeItems = [&](FNcpTree* tree, int32 depth)
+	{
+		for (const auto& child: tree->Children)
+		{
+			currentTagPath.Tags.Add(child.Key);
+			CsvHeaderLines += commas(depth);
+			FString& nodeName = child.Value->NcpDisplayName;
+			if (nodeName.IsEmpty())
+			{
+				FBIMPresetTaxonomyNode ncpNode;
+				presets.PresetTaxonomy.GetExactMatch(currentTagPath, ncpNode);
+				nodeName = ncpNode.DisplayName.ToString();
+			}
+			CsvHeaderLines += CsvEscape(nodeName) + TEXT("\n");
+			processTreeItems(child.Value.Get(), depth + 1);
+			currentTagPath.Tags.SetNum(currentTagPath.Tags.Num() - 1);
+		}
+		for (int32 i : tree->Items)
+		{
+			FReportItem item = topReportItems[i];
+			if (!CsvHeaderLines.IsEmpty())
+			{
+				item.Preface = CsvHeaderLines;
+				CsvHeaderLines.Empty();
+			}
+			item.Indentlevel = depth;
+			treeReportItems.Add(item);
+		}
+	};
+
+	// Walk tree creating new FReportItem list in treeReportItems.
+	processTreeItems(&ncpTree, 0);
+
+	// Process sized items (eg. portals).
+	PostProcessSizeGroups(treeReportItems);
 
 	// Now generate the CSV contents.
 	FString csvContents;
-	
-	csvContents += TEXT("TOTAL ESTIMATES,,,,Count,ft^3,ft^2,ft,\n");
+	csvContents += TEXT("TOTAL ESTIMATES") + commas(categoryIndent + 4) + TEXT("Count,ft^3,ft^2,ft,\n");
 
-	FText currentCategory;
-	for (auto& item: topReportItems)
+	for (auto& item : treeReportItems)
 	{
 		csvContents += TEXT("\n");
-		if (!item.Category.EqualTo(currentCategory))
-		{
-			currentCategory = item.Category;
-			csvContents += currentCategory.ToString() + TEXT(",,,,,,,,\n");
-		}
-		csvContents += CsvEscape(item.GetName()) + TEXT(",,,,") + printCsvQuantities(item.Quantity) + TEXT(",\n");
+		csvContents += item.Preface;
+		int32 depth = item.Indentlevel;
+		csvContents += commas(depth) + CsvEscape(item.GetName()) + commas(categoryIndent - depth + 4) + printCsvQuantities(item.Quantity) + TEXT(",\n");
 		if (item.UsedIn.Num() > 0)
 		{
-			csvContents += FString(TEXT(",Used In Presets:,,,,,,,\n"));
-			for (auto& usedInItem: item.UsedIn)
+			csvContents += commas(depth + 1) + FString(TEXT("Used In Presets:,,,,,,,\n"));
+			for (auto& usedInItem : item.UsedIn)
 			{
-				csvContents += FString(TEXT(",")) + CsvEscape(usedInItem.GetName()) + TEXT(",,,")
+				csvContents += commas(depth + 1) + CsvEscape(usedInItem.GetName()) + commas(categoryIndent - depth + 3)
 					+ printCsvQuantities(usedInItem.Quantity) + TEXT(",\n");
 			}
 		}
 		if (item.Uses.Num() > 0)
 		{
-			csvContents += FString(TEXT(",Uses Presets:,,,,,,,\n"));
-			for (auto& usesItem: item.Uses)
+			csvContents += commas(depth + 1) + FString(TEXT("Uses Presets:,,,,,,,\n"));
+			for (auto& usesItem : item.Uses)
 			{
-				csvContents += FString(TEXT(",")) + CsvEscape(usesItem.GetName()) + TEXT(",,,")
+				csvContents += commas(depth + 1) + CsvEscape(usesItem.GetName()) + commas(categoryIndent - depth + 3)
 					+ printCsvQuantities(usesItem.Quantity) + TEXT(",\n");
 			}
 
@@ -304,6 +343,8 @@ void FQuantitiesManager::PostProcessSizeGroups(TArray<FReportItem>& ReportItems)
 			header.Category = ReportItems[i].Category;
 			header.CategorySort = ReportItems[i].CategorySort;
 			header.Quantity = sectionTotal;
+			header.Preface = ReportItems[i].Preface;
+			header.Indentlevel = ReportItems[i].Indentlevel;
 			for (; i <= j; ++i)
 			{
 				ReportItems[i].Name = ReportItems[i].Subname;
