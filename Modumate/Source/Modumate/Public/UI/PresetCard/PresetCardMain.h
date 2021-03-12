@@ -52,17 +52,17 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox* MainVerticalBox;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FMargin MainBorderSlotCollapsedPadding = FMargin(0.f);
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UImage* DropShadowImage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FMargin MainVerticalBoxSlotCollapsedPadding = FMargin(0.f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FMargin MainBorderSlotSelectedPadding = FMargin(6.f);
+	FMargin MainVerticalBoxSlotSelectedPadding = FMargin(0.f, 0.f, 0.f, 12.f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FMargin MainVerticalBoxSlotSelectedPadding = FMargin(0.f, 0.f, 0.f, 12.f);
+	FLinearColor UserInteractionDisableBGColor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UPresetCardHeader> PresetCardHeaderSelectedClass;
@@ -83,6 +83,7 @@ public:
 	void BuildAsBrowserCollapsedPresetCard(const FGuid& InPresetKey, bool bAllowInteraction);
 	void BuildAsBrowserSelectedPresetCard(const FGuid& InPresetKey);
 
+	void ToggleMainButtonInteraction(bool bEnable);
 	void ClearWidgetPool(class UPanelWidget* Widget);
 
 	// UserObjectListEntry interface

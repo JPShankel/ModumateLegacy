@@ -91,3 +91,5 @@ void UBrowserMenuWidget::AskToExportEstimates()
 		EMPlayerController->OnCreateQuantitiesCsv();
 	}
 }
+
+#undef LOCTEXT_NAMESPACE

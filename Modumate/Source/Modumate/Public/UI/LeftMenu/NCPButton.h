@@ -53,7 +53,10 @@ public:
 	FSlateColor NonSelectedColor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float TagPaddingSize = 24.f;
+	float ButtonPaddingSizePerNCPorder = 12.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FMargin PresetCardPadding;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox* DynamicNCPList;

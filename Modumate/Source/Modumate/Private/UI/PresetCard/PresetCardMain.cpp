@@ -14,6 +14,7 @@
 #include "UI/PresetCard/PresetCardItemObject.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "Quantities/QuantitiesManager.h"
+#include "Components/Image.h"
 
 UPresetCardMain::UPresetCardMain(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -69,20 +70,17 @@ void UPresetCardMain::BuildAsBrowserCollapsedPresetCard(const FGuid& InPresetKey
 		MainButton->AddChild(newHeaderWidget);
 		newHeaderWidget->BuildAsBrowserHeader(PresetGUID, BIM_ID_NONE); //TODO: Support non-assembly with NodeID?
 	}
-
-	SetVisibility(bAllowInteraction ? ESlateVisibility::Visible : ESlateVisibility::HitTestInvisible);
+	ToggleMainButtonInteraction(bAllowInteraction);
 
 	// Set padding
-	UBorderSlot* mainBorderSlot = UWidgetLayoutLibrary::SlotAsBorderSlot(MainBorder);
-	if (mainBorderSlot)
-	{
-		mainBorderSlot->SetPadding(MainBorderSlotCollapsedPadding);
-	}
 	UBorderSlot* mainVerticalBoxSlot = UWidgetLayoutLibrary::SlotAsBorderSlot(MainVerticalBox);
 	if (mainVerticalBoxSlot)
 	{
 		mainVerticalBoxSlot->SetPadding(MainVerticalBoxSlotCollapsedPadding);
 	}
+
+	// Drop shadow
+	DropShadowImage->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UPresetCardMain::BuildAsBrowserSelectedPresetCard(const FGuid& InPresetKey)
@@ -98,6 +96,7 @@ void UPresetCardMain::BuildAsBrowserSelectedPresetCard(const FGuid& InPresetKey)
 		MainButton->AddChild(newHeaderWidget);
 		newHeaderWidget->BuildAsBrowserHeader(PresetGUID, BIM_ID_NONE); //TODO: Support non-assembly with NodeID?
 	}
+	ToggleMainButtonInteraction(true);
 
 	UPresetCardPropertyList* newPropertyListWidget = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardPropertyList>(PresetCardPropertyListClass);
 	if (newPropertyListWidget)
@@ -121,21 +120,33 @@ void UPresetCardMain::BuildAsBrowserSelectedPresetCard(const FGuid& InPresetKey)
 	}
 
 	// Set padding
-	UBorderSlot* mainBorderSlot = UWidgetLayoutLibrary::SlotAsBorderSlot(MainBorder);
-	if (mainBorderSlot)
-	{
-		mainBorderSlot->SetPadding(MainBorderSlotSelectedPadding);
-	}
 	UBorderSlot* mainVerticalBoxSlot = UWidgetLayoutLibrary::SlotAsBorderSlot(MainVerticalBox);
 	if (mainVerticalBoxSlot)
 	{
 		mainVerticalBoxSlot->SetPadding(MainVerticalBoxSlotSelectedPadding);
 	}
 
+	// Drop shadow
+	DropShadowImage->SetVisibility(ESlateVisibility::HitTestInvisible);
+
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
 	if (gameInstance && gameInstance->GetQuantitiesManager())
 	{
-		// TODO Quantites estimate
+		// TODO Quantities estimate
+	}
+}
+
+void UPresetCardMain::ToggleMainButtonInteraction(bool bEnable)
+{
+	if (bEnable)
+	{
+		MainButton->SetBackgroundColor(FLinearColor::White);
+		SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		MainButton->SetBackgroundColor(bEnable ? FLinearColor::White : UserInteractionDisableBGColor);
+		SetVisibility(bEnable ? ESlateVisibility::Visible : ESlateVisibility::HitTestInvisible);
 	}
 }
 

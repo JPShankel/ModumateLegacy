@@ -84,7 +84,7 @@ void UNCPButton::BuildButton(class UNCPNavigator* InParentNCPNavigator, const FB
 
 	// Add paddding to text
 	UVerticalBoxSlot* verticalBoxSlot = UWidgetLayoutLibrary::SlotAsVerticalBoxSlot(ButtonText);
-	verticalBoxSlot->SetPadding(FMargin(TagOrder * TagPaddingSize, 0.f, 0.f, 0.f));
+	verticalBoxSlot->SetPadding(FMargin(TagOrder * ButtonPaddingSizePerNCPorder, 0.f, 0.f, 0.f));
 
 	if (ensureAlways(NCPTag.Tags.Num() > 0))
 	{
@@ -127,6 +127,10 @@ void UNCPButton::BuildSubButtons()
 			{
 				DynamicNCPList->AddChildToVerticalBox(newPresetWidget);
 				newPresetWidget->BuildAsBrowserCollapsedPresetCard(newPreset, true);
+
+				// Add paddding to preset widget
+				UVerticalBoxSlot* verticalBoxSlot = UWidgetLayoutLibrary::SlotAsVerticalBoxSlot(newPresetWidget);
+				verticalBoxSlot->SetPadding(PresetCardPadding);
 			}
 		}
 	}
