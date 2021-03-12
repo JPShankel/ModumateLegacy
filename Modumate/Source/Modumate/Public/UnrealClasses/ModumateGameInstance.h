@@ -26,16 +26,12 @@ enum class ELoginStatus : uint8
 {
 	None = 0,
 	Disconnected,
-	HaveValidRefreshToken,
 	Connected,
 	WaitingForRefreshToken,
-	WaitingForVerify,
 	WaitingForReverify,
-	InvalidEmail,
-	InvalidPassword,
+	InvalidCredentials,
 	UserDisabled,
-	ConnectionError,
-	UnknownError
+	ConnectionError
 };
 
 /**

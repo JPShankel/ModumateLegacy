@@ -38,6 +38,7 @@ using namespace Modumate::Commands;
 using namespace Modumate::Parameters;
 using namespace Modumate;
 
+#define LOCTEXT_NAMESPACE "ModumateGameInstance"
 
 const FString UModumateGameInstance::TestScriptRelativePath(TEXT("TestScripts"));
 
@@ -651,17 +652,18 @@ void UModumateGameInstance::Login(const FString& UserName, const FString& Passwo
 		},
 		[bUsingRefreshToken](int32 Code, const FString& Error)
 		{
+			FText messageTitle = LOCTEXT("LoginFailedTitle", "Login Failed");
 			if (bUsingRefreshToken)
 			{
 				Modumate::PlatformFunctions::ShowMessageBox(
-					TEXT("Invalid saved credentials - try re-entering user name and password."),
-					TEXT("Login Failed"), Modumate::PlatformFunctions::Okay);
+					LOCTEXT("LoginFailedInvalidToken", "Your saved credentials have expired - please re-enter your password.").ToString(),
+					messageTitle.ToString(), Modumate::PlatformFunctions::Okay);
 			}
 			else
 			{
 				Modumate::PlatformFunctions::ShowMessageBox(
-					TEXT("Incorrect user name or password."),
-					TEXT("Login Failed"), Modumate::PlatformFunctions::Okay);
+					LOCTEXT("LoginFailedInvalidPassword", "Incorrect user name or password.").ToString(),
+					messageTitle.ToString(), Modumate::PlatformFunctions::Okay);
 			}
 		}
 	);
@@ -676,3 +678,5 @@ bool UModumateGameInstance::IsloggedIn() const
 {
 	return CloudConnection->IsLoggedIn();
 }
+
+#undef LOCTEXT_NAMESPACE

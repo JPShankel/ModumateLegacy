@@ -71,12 +71,12 @@ void UStartBlockLoginWidget::NativeTick(const FGeometry& MyGeometry, float InDel
 	{
 		switch (ModumateGameInstance->LoginStatus())
 		{
-		case ELoginStatus::InvalidEmail:
-		case ELoginStatus::InvalidPassword:
+		case ELoginStatus::InvalidCredentials:
 			TextBlock_LoginAttemptMsg->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 			break;
 		default:
 			TextBlock_LoginAttemptMsg->SetVisibility(ESlateVisibility::Collapsed);
+			break;
 		}
 	}
 }

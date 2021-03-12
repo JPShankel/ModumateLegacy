@@ -44,7 +44,6 @@ bool FWaitForModumateLoginCommand::Update()
 		return true;
 	}
 	case ELoginStatus::WaitingForRefreshToken:
-	case ELoginStatus::WaitingForVerify:
 	{
 		if (elapsed < Timeout)
 		{

@@ -20,7 +20,7 @@ const FString FModumateAccountManager::ServiceDwg(TEXT("jsontodwg"));
 
 void FModumateAccountManager::RequestStatus()
 {
-	if (!CloudConnection->IsLoggedIn())
+	if (!CloudConnection->IsLoggedIn(true))
 	{
 		return;
 	}
@@ -179,7 +179,11 @@ void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserS
 
 	Updater->ProcessLatestInstallers(UserStatus);
 
-	if (!UserStatus.Active)
+	if (UserStatus.Active)
+	{
+		CloudConnection->SetLoginStatus(ELoginStatus::Connected);
+	}
+	else
 	{
 		CloudConnection->SetLoginStatus(ELoginStatus::UserDisabled);
 	}

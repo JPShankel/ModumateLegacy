@@ -22,7 +22,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 
 		void SetLoginStatus(ELoginStatus InLoginStatus);
 		ELoginStatus GetLoginStatus() const;
-		bool IsLoggedIn() const { return LoginStatus == ELoginStatus::Connected; }
+		bool IsLoggedIn(bool bAllowCurrentLoggingIn = false) const;
 
 		using FRequestCustomizer = TFunction<void(TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)>;
 		using FSuccessCallback = TFunction<void(bool,const TSharedPtr<FJsonObject>&)>;

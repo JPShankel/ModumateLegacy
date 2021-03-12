@@ -44,6 +44,20 @@ ELoginStatus FModumateCloudConnection::GetLoginStatus() const
 	return LoginStatus;
 }
 
+bool FModumateCloudConnection::IsLoggedIn(bool bAllowCurrentLoggingIn) const
+{
+	switch (LoginStatus)
+	{
+	case ELoginStatus::Connected:
+	case ELoginStatus::WaitingForReverify:
+		return true;
+	case ELoginStatus::WaitingForRefreshToken:
+		return bAllowCurrentLoggingIn;
+	default:
+		return false;
+	}
+}
+
 FString FModumateCloudConnection::GetRequestTypeString(ERequestType RequestType)
 {
 	switch (RequestType)
@@ -178,7 +192,6 @@ bool FModumateCloudConnection::Login(const FString& Username, const FString& Pas
 			{
 				SharedThis->RefreshToken = verifyParams.RefreshToken;
 				SharedThis->AuthToken = verifyParams.AuthToken;
-				SharedThis->LoginStatus = ELoginStatus::Connected;
 			}
 			else
 			{
@@ -194,7 +207,8 @@ bool FModumateCloudConnection::Login(const FString& Username, const FString& Pas
 			{
 				return;
 			}
-			SharedThis->LoginStatus = ELoginStatus::ConnectionError;
+			bool bInvalidCredentials = (ErrorCode == 401);
+			SharedThis->LoginStatus = bInvalidCredentials ? ELoginStatus::InvalidCredentials : ELoginStatus::ConnectionError;
 			ServerErrorCallback(ErrorCode, ErrorString);
 		});
 
