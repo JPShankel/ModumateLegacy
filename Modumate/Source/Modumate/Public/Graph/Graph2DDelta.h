@@ -96,6 +96,9 @@ struct MODUMATE_API FGraph2DDelta : public FDocumentDelta
 	EGraph2DDeltaType DeltaType = EGraph2DDeltaType::Edit;
 
 	UPROPERTY()
+	float Epsilon = DEFAULT_GRAPH_EPSILON;
+
+	UPROPERTY()
 	TMap<int32, FVector2DPair> VertexMovements;
 
 	UPROPERTY()
@@ -120,7 +123,7 @@ struct MODUMATE_API FGraph2DDelta : public FDocumentDelta
 	TMap<int32, FGraph2DFaceVertexIDsDelta> PolygonIDUpdates;
 
 	FGraph2DDelta();
-	FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType = EGraph2DDeltaType::Edit);
+	FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType = EGraph2DDeltaType::Edit, float InEpsilon = DEFAULT_GRAPH_EPSILON);
 
 	void Reset();
 	bool IsEmpty() const;

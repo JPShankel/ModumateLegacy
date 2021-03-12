@@ -398,7 +398,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfa
 	else
 	{
 		OutSurfaceGraphID = NextID++;
-		HitSurfaceGraph = MakeShared<FGraph2D>(OutSurfaceGraphID);
+		HitSurfaceGraph = MakeShared<FGraph2D>(OutSurfaceGraphID, THRESH_POINTS_ARE_NEAR);
 	}
 
 	// Create the delta for adding the surface graph object, if it didn't already exist
@@ -417,7 +417,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfa
 		surfaceObjectDelta->AddCreateDestroyState(surfaceStateData, EMOIDeltaType::Create);
 
 		OutDeltas.Add(surfaceObjectDelta);
-		OutDeltas.Add(MakeShared<FGraph2DDelta>(HitSurfaceGraph->GetID(), EGraph2DDeltaType::Add));
+		OutDeltas.Add(MakeShared<FGraph2DDelta>(HitSurfaceGraph->GetID(), EGraph2DDeltaType::Add, THRESH_POINTS_ARE_NEAR));
 	}
 
 	// Make sure we have valid geometry from the target

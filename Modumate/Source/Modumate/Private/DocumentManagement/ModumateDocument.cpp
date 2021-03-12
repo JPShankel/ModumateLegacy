@@ -504,7 +504,7 @@ void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		{
 			return;
 		}
-		targetSurfaceGraph = SurfaceGraphs.Add(Delta.ID, MakeShared<FGraph2D>(Delta.ID));
+		targetSurfaceGraph = SurfaceGraphs.Add(Delta.ID, MakeShared<FGraph2D>(Delta.ID, Delta.Epsilon));
 		break;
 	case EGraph2DDeltaType::Edit:
 	case EGraph2DDeltaType::Remove:

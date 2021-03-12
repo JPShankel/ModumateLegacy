@@ -34,9 +34,10 @@ FGraph2DFaceVertexIDsDelta FGraph2DFaceVertexIDsDelta::MakeInverse() const
 FGraph2DDelta::FGraph2DDelta()
 { }
 
-FGraph2DDelta::FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType)
+FGraph2DDelta::FGraph2DDelta(int32 InID, EGraph2DDeltaType InDeltaType, float InEpsilon)
 	: ID(InID)
 	, DeltaType(InDeltaType)
+	, Epsilon(InEpsilon)
 {
 }
 
