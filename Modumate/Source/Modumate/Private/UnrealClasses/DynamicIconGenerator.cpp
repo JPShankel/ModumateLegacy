@@ -290,6 +290,11 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 					{
 						// No need for a delta here as we're not updating the document
 						slot.PartPresetGUID = PresetID;
+						const FBIMPresetInstance *original = CachedPresetCollection.PresetFromGUID(parentPreset.GUID);
+						if (!ensureAlways(original != nullptr))
+						{
+							break;
+						}
 						CachedPresetCollection.AddPreset(parentPreset);
 
 						// Make an assembly with the altered preset
@@ -301,16 +306,20 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 						{
 							FBIMPartLayout::bEnsureOnFormulaError = bEnsureOnFormulaError;
 							bCaptureSuccess = SetIconMeshForAssemblyType(assemblySpec, IconRenderTarget, assemblyPartIndex, fromRootNode);
+
+							// Restore the cached preset collection
+							CachedPresetCollection.AddPreset(*original);
 						}
 						else
 						{
 							FBIMPartLayout::bEnsureOnFormulaError = bEnsureOnFormulaError;
 							OutMaterial = IconSwapWarningMaterial;
+
+							// Restore the cached preset collection
+							CachedPresetCollection.AddPreset(*original);
 							return true;
 						}
 
-						// Restore the cached preset collection
-						CachedPresetCollection.AddPreset(parentNode->WorkingPresetCopy);
 						break;
 					}
 				}
