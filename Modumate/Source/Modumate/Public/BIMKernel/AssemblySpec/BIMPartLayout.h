@@ -30,6 +30,8 @@ public:
 	TArray<FPartSlotInstance> PartSlotInstances;
 	EBIMResult FromAssembly(const FBIMAssemblySpec& InAssemblySpec, const FVector& InScale);
 
+	static bool bEnsureOnFormulaError;
+
 	float CabinetPanelAssemblyConceptualSizeY = 0.0f;
 
 	static const FString ScaledSizeX;

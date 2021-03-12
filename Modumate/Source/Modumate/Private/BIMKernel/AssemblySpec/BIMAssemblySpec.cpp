@@ -516,12 +516,8 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 		partSlot.ParentSlotIndex = INDEX_NONE;
 	}
 
-#if WITH_EDITOR
 	FBIMPartLayout layout;
-	ensureAlways(layout.FromAssembly(*this, FVector::OneVector) == EBIMResult::Success);
-#endif
-
-	return EBIMResult::Success;
+	return layout.FromAssembly(*this, FVector::OneVector);
 }
 
 EBIMResult FBIMAssemblySpec::MakeLayeredAssembly(const FModumateDatabase& InDB)

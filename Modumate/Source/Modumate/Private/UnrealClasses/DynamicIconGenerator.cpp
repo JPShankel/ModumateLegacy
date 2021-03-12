@@ -90,6 +90,11 @@ void ADynamicIconGenerator::BeginPlay()
 
 	DynCustomMaterial = IconSphereMesh->CreateDynamicMaterialInstance(0, CustomMaterialBase);
 
+	if (GameState && GameState->Document)
+	{
+		CachedPresetCollection = GameState->Document->GetPresetCollection();
+	}
+
 	IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), RenderTargetSize, RenderTargetSize, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
 }
 
@@ -107,12 +112,12 @@ void ADynamicIconGenerator::Tick(float DeltaTime)
 
 bool ADynamicIconGenerator::SetIconMeshForAssembly(const FGuid& AsmKey, bool bAllowOverwrite)
 {
-	const FBIMPresetInstance* childPreset = GameState->Document->GetPresetCollection().PresetFromGUID(AsmKey);
+	const FBIMPresetInstance* childPreset = CachedPresetCollection.PresetFromGUID(AsmKey);
 	if (childPreset == nullptr)
 	{
 		return false;
 	}
-	const FAssemblyDataCollection* db = GameState->Document->GetPresetCollection().AssembliesByObjectType.Find(childPreset->ObjectType);
+	const FAssemblyDataCollection* db = CachedPresetCollection.AssembliesByObjectType.Find(childPreset->ObjectType);
 	if (db == nullptr)
 	{
 		return false;
@@ -157,7 +162,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 {
 	OutMaterial = nullptr;
 
-	const FBIMPresetInstance* preset = GameState->Document->GetPresetCollection().PresetFromGUID(PresetID);
+	const FBIMPresetInstance* preset = CachedPresetCollection.PresetFromGUID(PresetID);
 	if (preset == nullptr)
 	{
 		return false;
@@ -202,12 +207,13 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 			{
 				if (partSlots[i].SlotPresetGUID == nodeInst->MyParentPartSlot)
 				{
-					const FBIMPresetInstance* slotPreset = GameState->Document->GetPresetCollection().PresetFromGUID(partSlots[i].SlotPresetGUID);
+					const FBIMPresetInstance* slotPreset = CachedPresetCollection.PresetFromGUID(partSlots[i].SlotPresetGUID);
 					slotPreset->Properties.TryGetProperty(EBIMValueScope::Slot, BIMPropertyNames::ID, slotID);
 					break;
 				}
 			}
 		}
+
 		if (nodeInst && !nodeInst->ParentInstance.Pin())
 		{
 			fromRootNode = true;
@@ -247,8 +253,72 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 		// Check if this icon is used for slot based swapping menu
 		if (UseDependentPreset && assemblyPartIndex > 0)
 		{
-			// TODO: Need delta system to preview swap presets
-			bCaptureSuccess = false;
+			/*
+			* To render a swapped part on a given assembly, we:
+			* 1) Find the part's parent preset
+			* 2) Swap in the candidate
+			* 3) Update the cached preset collection
+			* 4) Make an assembly
+			* 5) Render an icon for it
+			* 6) Restore the cached preset collection
+			*/
+			auto partNode = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+			if (partNode.IsValid() && partNode.Get()->ParentInstance.IsValid())
+			{
+				const FBIMAssemblySpec& craftingSpec = Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly;
+				if (!ensureAlways(assemblyPartIndex < craftingSpec.Parts.Num()))
+				{
+					return false;
+				}
+
+				FGuid slotGUID = craftingSpec.Parts[assemblyPartIndex].SlotGUID;
+
+				auto parentNode = partNode.Get()->ParentInstance.Pin();
+
+				// A swapped part better have a parent
+				if (!ensureAlways(parentNode))
+				{
+					return false;
+				}
+
+				// Make a copy of the parent node's preset and swap in the candidate part
+				FBIMPresetInstance parentPreset = parentNode->WorkingPresetCopy;
+				bCaptureSuccess = false;
+				for (auto& slot : parentPreset.PartSlots)
+				{
+					if (slot.SlotPresetGUID == slotGUID)
+					{
+						// No need for a delta here as we're not updating the document
+						slot.PartPresetGUID = PresetID;
+						CachedPresetCollection.AddPreset(parentPreset);
+
+						// Make an assembly with the altered preset
+						FBIMAssemblySpec assemblySpec;
+						// Turn off verbose error reporting, needed for data validation but annoying for icons that are allowed to fail
+						bool bEnsureOnFormulaError = FBIMPartLayout::bEnsureOnFormulaError;
+						FBIMPartLayout::bEnsureOnFormulaError = false;
+						if (assemblySpec.FromPreset(*Gamemode->ObjectDatabase, CachedPresetCollection, craftingSpec.PresetGUID) == EBIMResult::Success)
+						{
+							FBIMPartLayout::bEnsureOnFormulaError = bEnsureOnFormulaError;
+							bCaptureSuccess = SetIconMeshForAssemblyType(assemblySpec, IconRenderTarget, assemblyPartIndex, fromRootNode);
+						}
+						else
+						{
+							FBIMPartLayout::bEnsureOnFormulaError = bEnsureOnFormulaError;
+							OutMaterial = IconSwapWarningMaterial;
+							return true;
+						}
+
+						// Restore the cached preset collection
+						CachedPresetCollection.AddPreset(parentNode->WorkingPresetCopy);
+						break;
+					}
+				}
+				if (!bCaptureSuccess)
+				{
+					return false;
+				}
+			}
 		}
 		else
 		{
@@ -313,7 +383,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 bool ADynamicIconGenerator::GetSavedIconFromPreset(const FGuid& PresetID, UTexture2D*& OutTexture)
 {
 	OutTexture = nullptr;
-	const FBIMPresetInstance* preset = GameState->Document->GetPresetCollection().PresetFromGUID(PresetID);
+	const FBIMPresetInstance* preset = CachedPresetCollection.PresetFromGUID(PresetID);
 	if (preset == nullptr)
 	{
 		return false;
@@ -846,13 +916,13 @@ bool ADynamicIconGenerator::SetIconMeshForPart(bool UseDependentPreset, const FG
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	if (UseDependentPreset)
 	{
-		const FBIMPresetInstance* preset = GameState->Document->GetPresetCollection().PresetFromGUID(PresetID);
+		const FBIMPresetInstance* preset = CachedPresetCollection.PresetFromGUID(PresetID);
 		preset->Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
 		preset->Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
 		// Get mesh key from child preset
 		for (const auto& curChild : preset->ChildPresets)
 		{
-			const FBIMPresetInstance* curChildPreset = GameState->Document->GetPresetCollection().PresetFromGUID(curChild.PresetGUID);
+			const FBIMPresetInstance* curChildPreset = CachedPresetCollection.PresetFromGUID(curChild.PresetGUID);
 			if (curChildPreset->NodeScope == EBIMValueScope::Mesh)
 			{
 				meshKey = curChild.PresetGUID;
@@ -869,7 +939,7 @@ bool ADynamicIconGenerator::SetIconMeshForPart(bool UseDependentPreset, const FG
 		inst->GatherAllChildNodes(childrenNodes);
 		for (const auto& child : childrenNodes)
 		{
-			const FBIMPresetInstance* preset = GameState->Document->GetPresetCollection().PresetFromGUID(child->WorkingPresetCopy.GUID);
+			const FBIMPresetInstance* preset = CachedPresetCollection.PresetFromGUID(child->WorkingPresetCopy.GUID);
 			if (preset->NodeScope == EBIMValueScope::Mesh)
 			{
 				meshKey = child->WorkingPresetCopy.GUID;
@@ -929,7 +999,7 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(bool UseDependentPreset, cons
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	if (UseDependentPreset)
 	{
-		const FBIMPresetInstance* preset = GameState->Document->GetPresetCollection().PresetFromGUID(PresetID);
+		const FBIMPresetInstance* preset = CachedPresetCollection.PresetFromGUID(PresetID);
 		preset->Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
 		preset->Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
 	}
@@ -979,7 +1049,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(bool UseDependentPreset, const 
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	if (UseDependentPreset)
 	{
-		const FBIMPresetInstance* preset = GameState->Document->GetPresetCollection().PresetFromGUID(PresetID);
+		const FBIMPresetInstance* preset = CachedPresetCollection.PresetFromGUID(PresetID);
 		preset->Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
 		preset->Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
 		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, width);
@@ -1048,7 +1118,7 @@ bool ADynamicIconGenerator::SetIconMeshForLayerNodeID(const FBIMEditorNodeIDType
 {
 	FBIMAssemblySpec assembly;
 	Controller->EditModelUserWidget->BIMDesigner->InstancePool.CreateAssemblyFromLayerNode(
-		Controller->GetDocument()->GetPresetCollection(),
+		CachedPresetCollection,
 		*Gamemode->ObjectDatabase, NodeID, assembly);
 	return SetIconMeshForWallAssembly(assembly, InRenderTarget);
 }
@@ -1057,7 +1127,7 @@ bool ADynamicIconGenerator::SetIconMeshForLayerPreset(const FGuid& PresetID, UTe
 {
 	FBIMAssemblySpec assembly;
 	EObjectType objType = EObjectType::OTWallSegment; // TODO: Get object type, default to wall for now
-	EBIMResult result = Controller->GetDocument()->GetPresetCollection().CreateAssemblyFromLayerPreset(*Gamemode->ObjectDatabase, PresetID, objType, assembly);
+	EBIMResult result = CachedPresetCollection.CreateAssemblyFromLayerPreset(*Gamemode->ObjectDatabase, PresetID, objType, assembly);
 	return SetIconMeshForWallAssembly(assembly, InRenderTarget);
 }
 

@@ -26,6 +26,8 @@ const FString FBIMPartLayout::RotationZ = TEXT("RotationZ");
 const FString FBIMPartLayout::Self = TEXT("Self");
 const FString FBIMPartLayout::Parent = TEXT("Parent");
 
+bool FBIMPartLayout::bEnsureOnFormulaError = true;
+
 // Given a starting part and a fully qualified path to a value, navigate to the source and retrieve the value
 // TODO: cache values and add to a global scope map 
 bool FBIMPartLayout::TryGetValueForPart(const FBIMAssemblySpec& InAssemblySpec, int32 InPartIndex, const FString& InVar, float& OutVal, TArray<FString>& OutErrors)
@@ -281,5 +283,13 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 		slotRef.Rotation += parentRef.Rotation;
 	}
 
-	return ensureAlwaysMsgf(formulaErrors.Num() == 0,TEXT("Errors found in rigged assembly formulas")) ? EBIMResult::Success : EBIMResult::Error;
+	// Set to true on data read for formula debugging, false when icon generator creates swap lists (which can fail gracefully)
+	if (bEnsureOnFormulaError)
+	{
+		return ensureAlwaysMsgf(formulaErrors.Num() == 0, TEXT("Errors found in rigged assembly formulas")) ? EBIMResult::Success : EBIMResult::Error;
+	}
+	else
+	{
+		return formulaErrors.Num() == 0 ? EBIMResult::Success : EBIMResult::Error;
+	}
 }

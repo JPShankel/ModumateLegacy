@@ -826,6 +826,7 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
 		if (controller && controller->DynamicIconGenerator)
 		{
+			controller->DynamicIconGenerator->CachedPresetCollection = BIMPresetCollection;
 			controller->DynamicIconGenerator->UpdateCachedAssemblies(affectedAssemblies);
 		}
 
@@ -2027,6 +2028,13 @@ void UModumateDocument::MakeNew(UWorld *World)
 
 	AEditModelGameMode* gameMode = Cast<AEditModelGameMode>(World->GetAuthGameMode());
 	BIMPresetCollection = gameMode->ObjectDatabase->GetPresetCollection();
+
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
+	if (controller && controller->DynamicIconGenerator)
+	{
+		controller->DynamicIconGenerator->CachedPresetCollection = BIMPresetCollection;
+	}
+
 	
 	// Clear drafting render directories
 	UModumateGameInstance *modGameInst = World ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
@@ -2292,6 +2300,7 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool bSetAsCurr
 	if (FModumateSerializationStatics::TryReadModumateDocumentRecord(path, docHeader, docRec))
 	{
 		BIMPresetCollection.ReadPresetsFromDocRecord(*objectDB, docHeader.Version, docRec);
+		EMPlayerController->DynamicIconGenerator->CachedPresetCollection = BIMPresetCollection;
 
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.

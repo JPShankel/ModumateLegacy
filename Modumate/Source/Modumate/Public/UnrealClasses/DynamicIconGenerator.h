@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetEditorNode.h"
+#include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "Database/ModumateObjectEnums.h"
 #include "DynamicIconGenerator.generated.h"
 
@@ -65,6 +66,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
 	UMaterialInterface* IconDimensionMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
+	UMaterialInterface* IconSwapWarningMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
 	FName MaterialIconTextureParamName = TEXT("Texture");
@@ -142,6 +146,8 @@ public:
 
 	UPROPERTY()
 	UTextureRenderTarget2D* IconRenderTarget;
+
+	FBIMPresetCollection CachedPresetCollection;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
