@@ -151,6 +151,7 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 			}
 			else
 			{
+				doc->ClearPreviewDeltas(doc->GetWorld());
 				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, offset, doc, Controller->GetWorld(), false);
 			}
 		}
