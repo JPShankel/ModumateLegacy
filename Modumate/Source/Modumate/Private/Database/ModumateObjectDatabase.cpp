@@ -247,6 +247,8 @@ void FModumateDatabase::ReadPresetData()
 				bimCacheRecord.Version = BIMCacheCurrentVersion;
 				bimCacheRecord.Presets = BIMPresetCollection;
 
+				ensureAlways(BIMPresetCollection.PostLoad() == EBIMResult::Success);
+
 				TArray<FGuid> furniture;
 				BIMPresetCollection.GetPresetsByPredicate(
 					[](const FBIMPresetInstance& Preset) {return Preset.ObjectType == EObjectType::OTFurniture; },
@@ -267,9 +269,9 @@ void FModumateDatabase::ReadPresetData()
 	{
 		BIMPresetCollection = bimCacheRecord.Presets;
 		BIMPresetCollection.PresetTaxonomy = bimCacheRecord.PresetTaxonomy;
+		ensureAlways(BIMPresetCollection.PostLoad() == EBIMResult::Success);
 	}
 
-	ensureAlways(BIMPresetCollection.PostLoad() == EBIMResult::Success);
 
 	// If this preset implies an asset type, load it
 	for (auto& preset : BIMPresetCollection.PresetsByGUID)
