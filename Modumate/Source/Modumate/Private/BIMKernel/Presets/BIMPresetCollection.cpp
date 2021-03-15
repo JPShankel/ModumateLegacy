@@ -857,11 +857,9 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		}
 	}
 
-	constexpr int32 firstMaterialBindingVersion = 10;
+	constexpr int32 firstMaterialBindingVersion = 11;
 	if (DocRecordVersion < firstMaterialBindingVersion)
 	{
-		// Presets in these scopes have material binding sets
-		const TSet<EBIMValueScope> materialPresets({ EBIMValueScope::Module,EBIMValueScope::Layer,EBIMValueScope::Gap,EBIMValueScope::Assembly });
 		
 		TMap<FGuid, FBIMPresetInstance> fixedPresets = DocRecord.PresetCollection.PresetsByGUID;
 		for (auto& kvp : fixedPresets)
@@ -873,20 +871,64 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 				kvp.Value.CustomData = updated->CustomData;
 			}
 			// Otherwise, make new material binding data from the color and material properties
-			else if (materialPresets.Contains(kvp.Value.NodeScope))
+			else 
 			{
 				FGuid matGUID;
-				if (kvp.Value.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, matGUID))
+				// If we have deprecated channels, translate them
+				if (kvp.Value.MaterialChannelBindings_DEPRECATED.Num() > 0)
 				{
 					FBIMPresetMaterialBindingSet bindingSet;
-					auto& binding = bindingSet.MaterialBindings.AddDefaulted_GetRef();
-					binding.InnerMaterialGUID = matGUID;
-					if (!kvp.Value.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, binding.ColorHexValue))
+					for (auto& matChannel : kvp.Value.MaterialChannelBindings_DEPRECATED)
 					{
-						binding.ColorHexValue = FColor::White.ToHex();
-					}		
+						auto& binding = bindingSet.MaterialBindings.AddDefaulted_GetRef();
+						binding.Channel = *matChannel.Channel;
+						binding.ColorHexValue = matChannel.Channel;
+						binding.SurfaceMaterialGUID = matChannel.SurfaceMaterialGUID;
+						binding.InnerMaterialGUID = matChannel.InnerMaterialGUID;
+					}
 					kvp.Value.CustomData.SaveStructData(bindingSet, true);
 				}
+#if !UE_BUILD_SHIPPING				
+				// Otherwise bind the material property to each of the channels in the form
+				// This contingency is internal to the Modumate development team
+				// Customer projects will not have this condition
+				else
+				{
+					if (!kvp.Value.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, matGUID))
+					{  
+						matGUID = InDB.GetDefaultMaterialGUID();
+					}
+
+					FString colorHexValue;
+					if (!kvp.Value.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue))
+					{
+						colorHexValue = FColor::White.ToHex();
+					}
+
+					TSet<FName> channels;
+					for (auto& formElement : kvp.Value.PresetForm.Elements)
+					{
+						if (formElement.FieldType == EBIMPresetEditorField::MaterialBinding)
+						{
+							channels.Add(*formElement.FieldName);
+						}
+					}
+
+					if (channels.Num() > 0)
+					{
+						FBIMPresetMaterialBindingSet bindingSet;
+						for (auto& channel : channels)
+						{
+							auto& binding = bindingSet.MaterialBindings.AddDefaulted_GetRef();
+							binding.Channel = channel;
+							binding.InnerMaterialGUID = matGUID;
+							binding.ColorHexValue = colorHexValue;
+						}
+
+						kvp.Value.CustomData.SaveStructData(bindingSet, true);
+					}
+				}
+#endif
 			}
 		}
 		PresetsByGUID.Append(fixedPresets);

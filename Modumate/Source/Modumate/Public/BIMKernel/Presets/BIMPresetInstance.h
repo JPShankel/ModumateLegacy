@@ -76,6 +76,32 @@ struct MODUMATE_API FBIMPresetPartSlot
 	}
 };
 
+USTRUCT()
+struct MODUMATE_API FBIMPresetMaterialChannelBinding
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString Channel;
+
+	UPROPERTY()
+	FBIMKey InnerMaterial;
+
+	UPROPERTY()
+	FBIMKey SurfaceMaterial;
+
+	UPROPERTY()
+	FGuid InnerMaterialGUID;
+
+	UPROPERTY()
+	FGuid SurfaceMaterialGUID;
+
+	UPROPERTY()
+	FString ColorHexValue;
+
+	UPROPERTY()
+	FString ColorTintVariationHexValue;
+};
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetInstance
@@ -145,6 +171,9 @@ struct MODUMATE_API FBIMPresetInstance
 
 	UPROPERTY()
 	FBIMTagPath MyTagPath;
+
+	UPROPERTY()
+	TArray<FBIMPresetMaterialChannelBinding> MaterialChannelBindings_DEPRECATED;
 
 	UPROPERTY()
 	EPresetMeasurementMethod MeasurementMethod = EPresetMeasurementMethod::None;

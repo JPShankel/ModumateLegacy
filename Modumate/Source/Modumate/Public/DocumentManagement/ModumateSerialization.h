@@ -313,7 +313,8 @@ namespace Modumate
 	// Version 8: Empty FName keys serialized as "None", BIMKeys as empty string
 	// Version 9: Object state data serialized directly, deprecated FMOIDataRecord
 	// Version 10: BIM Taxonomy present in serialized presets
-	static const int32 DocVersion = 10;
+	// Version 11: Fix lost material bindings
+	static const int32 DocVersion = 11;
 
 	static const TCHAR * DocObjectInstanceField = TEXT("ModumateObjects");
 	static const TCHAR * DocHeaderField = TEXT("ModumateHeader");
