@@ -2,11 +2,15 @@
 
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateSerialization.h"
+#include "DocumentManagement/ObjIDReservationHandle.h"
 #include "Graph/Graph2DDelta.h"
 #include "Graph/Graph3DTypes.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Objects/CutPlane.h"
 #include "Objects/FFE.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObjectIDs, UModumateDocument *doc, TSet<int32>& OutTransformableIDs)
 {
@@ -282,9 +286,17 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 	}
 }
 
-bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecord, const FVector &InOffset, UModumateDocument* doc, UWorld* World, bool bIsPreview)
+bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecord, const FVector &InOrigin, UModumateDocument* doc, AEditModelPlayerController *Controller, bool bIsPreview)
 {
+	if (!InRecord)
+	{
+		return false;
+	}
 
+	const FVector &hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+	const FVector offset = hitLoc - InOrigin;
+
+	auto World = Controller->GetWorld();
 	TMap<int32, TArray<int32>> copiedToPastedObjIDs;
 
 	if (bIsPreview)
@@ -292,8 +304,37 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 		doc->StartPreviewing();
 	}
 
+	if (InRecord->VolumeGraph.Vertices.Num() == 0 &&
+		InRecord->VolumeGraph.Edges.Num() == 0 &&
+		InRecord->VolumeGraph.Faces.Num() == 0 &&
+		InRecord->SurfaceGraphs.Num() == 1)
+	{
+		FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
+		auto *cursorHitMOI = doc->ObjectFromActor(cursor.Actor);
+		if (!cursorHitMOI)
+		{
+			return false;
+		}
+		
+		TArray<FDeltaPtr> OutDeltas;
+		{
+			FObjIDReservationHandle objIDReservation(doc, cursorHitMOI->ID);
+			int32& nextID = objIDReservation.NextID;
+			if (!PasteObjectsWithinSurfaceGraph(InRecord, InOrigin, OutDeltas, doc, nextID, Controller, bIsPreview))
+			{
+				return false;
+			}
+		}
+		
+		bIsPreview ? 
+			doc->ApplyPreviewDeltas(OutDeltas, Controller->GetWorld()) :
+			doc->ApplyDeltas(OutDeltas, Controller->GetWorld());
+		
+		return true;
+	}
+
 	TArray<FDeltaPtr> OutDeltas;
-	if (!doc->PasteMetaObjects(&InRecord->VolumeGraph, OutDeltas, copiedToPastedObjIDs, InOffset, bIsPreview))
+	if (!doc->PasteMetaObjects(&InRecord->VolumeGraph, OutDeltas, copiedToPastedObjIDs, offset, bIsPreview))
 	{
 		return false;
 	}
@@ -405,6 +446,97 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 	bIsPreview ? 
 		doc->ApplyPreviewDeltas(OutDeltas, World) :
 		doc->ApplyDeltas(OutDeltas, World);
+
+
+	return true;
+}
+
+bool FModumateObjectDeltaStatics::PasteObjectsWithinSurfaceGraph(const FMOIDocumentRecord* InRecord, const FVector& InOrigin, TArray<FDeltaPtr>& OutDeltas, UModumateDocument* doc, int32 &nextID, class AEditModelPlayerController* Controller, bool bIsPreview)
+{
+	FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
+	const FVector &hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+
+	auto *cursorHitMOI = doc->ObjectFromActor(cursor.Actor);
+	if (!cursorHitMOI)
+	{
+		return false;
+	}
+
+	auto surfaceGraph = doc->FindSurfaceGraphByObjID(cursorHitMOI->ID);
+	if (!surfaceGraph)
+	{
+		return false;
+	}
+
+	TMap<int32, TArray<int32>> copiedToPastedObjIDs;
+	TArray<FGraph2DDelta> sgDeltas;
+
+	auto iterator = InRecord->SurfaceGraphs.CreateConstIterator();
+	FGraph2DRecord surfaceGraphRecord = iterator->Value;
+
+	int32 originalID = iterator->Key;
+	auto originalSurfaceGraphMoi = doc->GetObjectById(originalID);
+	auto surfaceGraphMoi = doc->GetObjectById(surfaceGraph->GetID());
+	if (!originalSurfaceGraphMoi || !surfaceGraphMoi)
+	{
+		return false;
+	}
+
+	FTransform originalTransform = FTransform(originalSurfaceGraphMoi->GetRotation(), originalSurfaceGraphMoi->GetLocation());
+	FVector originalX = originalTransform.GetUnitAxis(EAxis::X);
+	FVector originalY = originalTransform.GetUnitAxis(EAxis::Y);
+	FVector2D origin = UModumateGeometryStatics::ProjectPoint2D(InOrigin, originalX, originalY, originalTransform.GetLocation());
+
+	FTransform currentTransform = FTransform(surfaceGraphMoi->GetRotation(), surfaceGraphMoi->GetLocation());
+	FVector currentX = currentTransform.GetUnitAxis(EAxis::X);
+	FVector currentY = currentTransform.GetUnitAxis(EAxis::Y);
+	FVector2D current = UModumateGeometryStatics::ProjectPoint2D(hitLoc, currentX, currentY, currentTransform.GetLocation());
+
+	FVector2D offset = current - origin;
+
+	if (!surfaceGraph->PasteObjects(sgDeltas, nextID, &surfaceGraphRecord, copiedToPastedObjIDs, bIsPreview, offset))
+	{
+		return false;
+	}
+
+	for (auto& delta : sgDeltas)
+	{
+		OutDeltas.Add(MakeShared<FGraph2DDelta>(delta));
+	}
+
+	auto attachmentDelta = MakeShared<FMOIDelta>();
+	for (auto& objRec : InRecord->ObjectData)
+	{
+		// already done in separator pass
+		if (copiedToPastedObjIDs.Contains(objRec.ID))
+		{
+			continue;
+		}
+
+		if (!copiedToPastedObjIDs.Contains(objRec.ParentID))
+		{
+			continue;
+		}
+
+		auto& newParents = copiedToPastedObjIDs[objRec.ParentID];
+		for (int32 parentID : newParents)
+		{
+			FMOIStateData stateData;
+			stateData.ID = nextID++;
+
+			stateData.ObjectType = objRec.ObjectType;
+			stateData.ParentID = parentID;
+			stateData.AssemblyGUID = objRec.AssemblyGUID;
+			stateData.CustomData = objRec.CustomData;
+
+			attachmentDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+
+			auto& pastedIDs = copiedToPastedObjIDs.FindOrAdd(objRec.ID);
+			pastedIDs.Add(stateData.ID);
+		}
+	}
+
+	OutDeltas.Add(attachmentDelta);
 
 
 	return true;

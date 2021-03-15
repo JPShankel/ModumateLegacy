@@ -34,6 +34,8 @@ namespace Modumate
 		FGraph2DEdge *FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward);
 		const FGraph2DEdge* FindEdgeByVertices(int32 VertexIDA, int32 VertexIDB, bool &bOutForward) const;
 
+		bool FindEdgesBetweenVertices(int32 VertexIDA, int32 VertexIDB, TArray<int32>& OutEdges);
+
 		FGraph2DPolygon* FindPolygon(int32 PolygonID);
 		const FGraph2DPolygon* FindPolygon(int32 PolygonID) const;
 
@@ -198,7 +200,7 @@ namespace Modumate
 		// crosses any existing edges, several edges will be created 
 		bool AddEdge(TArray<FGraph2DDelta> &OutDeltas, int32 &NextID, const FVector2D StartPosition, const FVector2D EndPosition);
 
-		bool PasteObjects(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, const FGraph2DRecord* InRecord, TMap<int32, TArray<int32>>& OutCopiedToPastedIDs);
+		bool PasteObjects(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, const FGraph2DRecord* InRecord, TMap<int32, TArray<int32>>& OutCopiedToPastedIDs, bool bIsPreview = false, const FVector2D &InOffset = FVector2D::ZeroVector);
 
 		// Create Deltas that delete all objects provided and also all objects that are invalidated by the deletions -
 		// For example, vertices that are no longer connected to any edges are also deleted.  

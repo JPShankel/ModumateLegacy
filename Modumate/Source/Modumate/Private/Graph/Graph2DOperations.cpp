@@ -126,7 +126,7 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph2D::PasteObjects(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, const FGraph2DRecord* InRecord, TMap<int32, TArray<int32>>& OutCopiedToPastedIDs)
+	bool FGraph2D::PasteObjects(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, const FGraph2DRecord* InRecord, TMap<int32, TArray<int32>>& OutCopiedToPastedIDs, bool bIsPreview, const FVector2D &InOffset)
 	{
 		if (!ensureAlways(InRecord))
 		{
@@ -136,14 +136,15 @@ namespace Modumate
 		FGraph2DDelta vertexDelta(ID);
 		for (auto& kvp : InRecord->Vertices)
 		{
-			const FGraph2DVertex *existingVertex = FindVertex(kvp.Value);
+			FVector2D position = kvp.Value + InOffset;
+			const FGraph2DVertex *existingVertex = FindVertex(position);
 			if (existingVertex != nullptr)
 			{
 				OutCopiedToPastedIDs.Add(kvp.Key, { existingVertex->ID });
 			}
 			else
 			{
-				AddVertexDirect(vertexDelta, NextID, kvp.Value);
+				AddVertexDirect(vertexDelta, NextID, position);
 				OutCopiedToPastedIDs.Add(kvp.Key, { NextID - 1 });
 			}
 		}
@@ -162,21 +163,51 @@ namespace Modumate
 			int32 endVertexID = OutCopiedToPastedIDs[kvp.Value.VertexIDs[1]][0];
 			auto startVertex = FindVertex(startVertexID);
 			auto endVertex = FindVertex(endVertexID);
-
-			TArray<FGraph2DDelta> edgeDeltas;
-			if (!AddEdgesBetweenVertices(edgeDeltas, NextID, startVertexID, endVertexID))
+			if (bIsPreview)
 			{
-				ApplyInverseDeltas(OutDeltas);
+				bool bOutForward;
+				const FGraph2DEdge *existingEdge = FindEdgeByVertices(startVertexID, endVertexID, bOutForward);
+				if (existingEdge)
+				{
+					OutCopiedToPastedIDs.Add(kvp.Key, { existingEdge->ID });
+				}
+				else
+				{
+					FGraph2DDelta addEdgeDelta(ID);
+					AddEdgeDirect(addEdgeDelta, NextID, startVertexID, endVertexID);
+					if (!ApplyDelta(addEdgeDelta))
+					{
+						return false;
+					}
+					OutDeltas.Add(addEdgeDelta);
+					OutCopiedToPastedIDs.Add(kvp.Key, { NextID - 1 });
+				}
 			}
-			OutDeltas.Append(edgeDeltas);
+			else
+			{
+				TArray<FGraph2DDelta> edgeDeltas;
+				if (!AddEdgesBetweenVertices(edgeDeltas, NextID, startVertexID, endVertexID))
+				{
+					ApplyInverseDeltas(OutDeltas);
+					return false;
+				}
+				OutDeltas.Append(edgeDeltas);
 
-			TSet<int32> outEdges;
-			AggregateAddedEdges(edgeDeltas, outEdges, startVertex->Position, endVertex->Position);
+				TSet<int32> outEdges;
+				AggregateAddedEdges(edgeDeltas, outEdges, startVertex->Position, endVertex->Position);
 
-			OutCopiedToPastedIDs.Add(kvp.Key, outEdges.Array());
+				OutCopiedToPastedIDs.Add(kvp.Key, outEdges.Array());
+			}
+
 		}
 
 		if (!CalculatePolygons(OutDeltas, NextID))
+		{
+			ApplyInverseDeltas(OutDeltas);
+			return false;
+		}
+
+		if (!ValidateAgainstBounds())
 		{
 			ApplyInverseDeltas(OutDeltas);
 			return false;
@@ -203,15 +234,29 @@ namespace Modumate
 					continue;
 				}
 
-				// TODO: for pure surface graph paste, edges may be split and this will need to be more robust
-				bool bForward;
-				auto edge = FindEdgeByVertices(OutCopiedToPastedIDs[vertexIDs[idx]][0], OutCopiedToPastedIDs[vertexIDs[nextIdx]][0], bForward);
-				if (!edge)
+				TArray<int32> outEdges;
+				if (!FindEdgesBetweenVertices(OutCopiedToPastedIDs[vertexIDs[idx]][0], OutCopiedToPastedIDs[vertexIDs[nextIdx]][0], outEdges))
 				{
 					continue;
 				}
 
-				relatedPolys.Add(bForward ? edge->LeftPolyID : edge->RightPolyID);
+				for (int32 edgeID : outEdges)
+				{
+					auto relatedEdge = FindEdge(edgeID);
+					if (!relatedEdge)
+					{
+						continue;
+					}
+
+					int32 relatedPolyID = edgeID > 0 ? relatedEdge->LeftPolyID : relatedEdge->RightPolyID;
+					auto relatedPoly = FindPolygon(relatedPolyID);
+					if (!relatedPoly)
+					{
+						continue;
+					}
+
+					relatedPolys.Add(relatedPolyID);
+				}
 			}
 
 			OutCopiedToPastedIDs.Add(kvp.Key, relatedPolys.Array());

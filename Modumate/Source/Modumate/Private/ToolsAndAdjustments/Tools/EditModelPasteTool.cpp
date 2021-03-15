@@ -47,20 +47,56 @@ bool UPasteTool::Activate()
 		return false;
 	}
 
-	for (auto& vertexRecord : CurrentRecord.VolumeGraph.Vertices)
+	if (CurrentRecord.VolumeGraph.Vertices.Num() > 0)
 	{
-		auto& pos = vertexRecord.Value.Position;
-
-		if (PasteOrigin.IsZero())
+		for (auto& vertexRecord : CurrentRecord.VolumeGraph.Vertices)
 		{
-			PasteOrigin = pos;
+			auto& pos = vertexRecord.Value.Position;
+
+			if (PasteOrigin.IsZero())
+			{
+				PasteOrigin = pos;
+			}
+
+			// prefer negative X (left), positive y (towards screen), then negative z (down)
+			bool bLess = (pos.X < PasteOrigin.X) ? true : (pos.Y > PasteOrigin.Y) ? true : (pos.Z < PasteOrigin.Z);
+			if (bLess)
+			{
+				PasteOrigin = pos;
+			}
 		}
+	}
+	else if (CurrentRecord.SurfaceGraphs.Num() == 1)
+	{
+		// TODO: doesn't work between files because it requires the original surface graph to exist
+		// this could be solved by saving a paste origin in the record
 
-		// prefer negative X (left), positive y (towards screen), then negative z (down)
-		bool bLess = (pos.X < PasteOrigin.X) ? true : (pos.Y > PasteOrigin.Y) ? true : (pos.Z < PasteOrigin.Z);
-		if (bLess)
+		auto iterator = CurrentRecord.SurfaceGraphs.CreateConstIterator();
+		auto originalSurfaceGraphMoi = GameState->Document->GetObjectById(iterator->Key);
+		if (originalSurfaceGraphMoi)
 		{
-			PasteOrigin = pos;
+			FVector2D pasteOrigin2D = FVector2D::ZeroVector;
+			for (auto& vertexRecord : iterator->Value.Vertices)
+			{
+				auto& pos = vertexRecord.Value;
+
+				if (pasteOrigin2D.IsZero())
+				{
+					pasteOrigin2D = pos;
+				}
+
+				bool bLess = (pos.X < pasteOrigin2D.X) ? true : (pos.Y < PasteOrigin.Y);
+				if (bLess)
+				{
+					pasteOrigin2D = pos;
+				}
+			}
+
+			FTransform originalTransform = FTransform(originalSurfaceGraphMoi->GetRotation(), originalSurfaceGraphMoi->GetLocation());
+			FVector originalX = originalTransform.GetUnitAxis(EAxis::X);
+			FVector originalY = originalTransform.GetUnitAxis(EAxis::Y);
+
+			PasteOrigin = UModumateGeometryStatics::Deproject2DPoint(pasteOrigin2D, originalX, originalY, originalTransform.GetLocation());
 		}
 	}
 
@@ -76,15 +112,8 @@ bool UPasteTool::FrameUpdate()
 	}
 
 	CurDeltas.Reset();
-
-	FVector currentOffset;
-
-	FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-	currentOffset = hitLoc - PasteOrigin;
-		
 	GameState->Document->StartPreviewing();
-
-	FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, currentOffset, GameState->Document, GetWorld(), true);
+	FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, PasteOrigin, GameState->Document, Controller, true);
 
 	return true;
 }
@@ -93,13 +122,9 @@ bool UPasteTool::EnterNextStage()
 {
 	Super::EnterNextStage();
 
-	FVector currentOffset;
-	FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-	currentOffset = hitLoc - PasteOrigin;
-
 	CurDeltas.Reset();
 	GameState->Document->ClearPreviewDeltas(GetWorld());
-	FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, currentOffset, GameState->Document, GetWorld(), false);
+	FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, PasteOrigin, GameState->Document, Controller, false);
 
 	return true;
 }

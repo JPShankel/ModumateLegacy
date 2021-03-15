@@ -99,6 +99,67 @@ namespace Modumate
 		return nullptr;
 	}
 
+	bool FGraph2D::FindEdgesBetweenVertices(int32 VertexIDA, int32 VertexIDB, TArray<int32>& OutEdges)
+	{
+		auto startVertex = FindVertex(VertexIDA);
+		auto endVertex = FindVertex(VertexIDB);
+		if (!startVertex || !endVertex)
+		{
+			return false;
+		}
+		
+		FVector2D direction = (endVertex->Position - startVertex->Position).GetSafeNormal();
+
+		int32 nextVertexID = startVertex->ID;
+		while (nextVertexID != endVertex->ID)
+		{
+			auto currentVertex = FindVertex(nextVertexID);
+			if (currentVertex == nullptr)
+			{
+				return false;
+			}
+
+			bool foundParallelEdge = false;
+			for (int32 edgeID : currentVertex->Edges)
+			{
+				auto edge = FindEdge(edgeID);
+				if (!edge)
+				{
+					continue;
+				}
+
+				int32 sign = 0;
+				int32 otherVertexID = MOD_ID_NONE;
+				if (currentVertex->ID == edge->StartVertexID)
+				{
+					sign = 1;
+					otherVertexID = edge->EndVertexID;
+				}
+				else
+				{
+					sign = -1;
+					otherVertexID = edge->StartVertexID;
+				}
+
+				// check coincident
+				if (((edge->CachedEdgeDir * sign) | direction) > THRESH_NORMALS_ARE_PARALLEL)
+				{
+					foundParallelEdge = true;
+					nextVertexID = otherVertexID;
+					OutEdges.Add(edgeID);
+					break;
+				}
+			}
+
+			if (!foundParallelEdge)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	FGraph2DVertex* FGraph2D::FindVertex(int32 VertexID)
 	{ 
 		return Vertices.Find(VertexID); 

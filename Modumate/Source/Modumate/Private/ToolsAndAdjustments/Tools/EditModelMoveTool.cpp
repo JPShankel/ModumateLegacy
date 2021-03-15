@@ -116,7 +116,7 @@ bool UMoveObjectTool::FrameUpdate()
 			}
 			else
 			{
-				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, offset, doc, Controller->GetWorld(), true);
+				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, AnchorPoint, doc, Controller, true);
 			}
 		}
 
@@ -135,6 +135,7 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 			FVector direction = hitLoc - AnchorPoint;
 			direction.Normalize();
 			FVector offset = direction * n;
+			Controller->EMPlayerState->SnappedCursor.WorldPosition = AnchorPoint + offset;
 
 			if (!bPaste)
 			{
@@ -152,7 +153,7 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 			else
 			{
 				doc->ClearPreviewDeltas(doc->GetWorld());
-				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, offset, doc, Controller->GetWorld(), false);
+				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, AnchorPoint, doc, Controller, false);
 			}
 		}
 	}
@@ -177,10 +178,8 @@ bool UMoveObjectTool::EndUse()
 	}
 	else
 	{
-		const FVector& hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-		FVector offset = hitLoc - AnchorPoint;
 		GameState->Document->ClearPreviewDeltas(GetWorld());
-		FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, offset, GameState->Document, Controller->GetWorld(), false);
+		FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, AnchorPoint, GameState->Document, Controller, false);
 
 		ReleaseSelectedObjects();
 	}
