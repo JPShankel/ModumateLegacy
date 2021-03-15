@@ -4,6 +4,7 @@
 #include "Quantities/QuantitiesVisitor.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
+#include <algorithm>
 
 FQuantitiesManager::FQuantitiesManager(UModumateGameInstance* GameInstanceIn)
 	: GameInstance(GameInstanceIn)
@@ -49,8 +50,6 @@ struct FQuantitiesManager::FReportItem
 	FString Subname;
 	FString NameForSorting;
 	EBIMValueScope ItemScope;
-	FText Category;
-	int32 CategorySort;
 	FQuantity Quantity;
 	TArray<FReportItem> UsedIn;
 	TArray<FReportItem> Uses;
@@ -63,31 +62,43 @@ struct FQuantitiesManager::FReportItem
 	}
 };
 
-namespace
+struct FQuantitiesManager::FNcpTree
 {
-	struct FNcpTree
+	FString Tag;
+	TArray<FNcpTree> Children;
+	int32 Position = 0;  // Node position in taxonomy list for sorting.
+	TArray<int32> Items;
+
+	bool operator==(const FString& Rhs) const { return Tag == Rhs; }
+
+	void AddItem(int32 NewItemIndex, const FBIMTagPath& ItemPath, int32 SortIndex, int32 PathIndex = 0)
 	{
-		TMap<FString, TUniquePtr<FNcpTree>> Children;
-		TArray<int32> Items;
-		FString NcpDisplayName;  // Display name for this leaf in the NCP tree.
-		void AddItem(int32 NewItemIndex, const FBIMTagPath& ItemPath, int32 PathIndex = 0)
+		if (PathIndex == ItemPath.Tags.Num())
 		{
-			if (PathIndex == ItemPath.Tags.Num())
-			{
-				Items.Add(NewItemIndex);
-			}
-			else
-			{
-				auto child = Children.Find(ItemPath.Tags[PathIndex]);
-				if (!child)
-				{
-					child = &Children.Add(ItemPath.Tags[PathIndex], MakeUnique<FNcpTree>());
-				}
-				(*child)->AddItem(NewItemIndex, ItemPath, ++PathIndex);
-			}
+			Items.Add(NewItemIndex);
 		}
-	};
-}
+		else
+		{
+			auto* child = Children.FindByKey(ItemPath.Tags[PathIndex]);
+			if (!child)
+			{
+				int32 newLocation = 0;
+				for (const auto& c: Children)
+				{
+					if (SortIndex <= c.Position)
+					{
+						break;
+					}
+					++newLocation;
+				}
+				child = &Children.InsertDefaulted_GetRef(newLocation);
+				child->Tag = ItemPath.Tags[PathIndex];
+				child->Position = SortIndex;
+			}
+			child->AddItem(NewItemIndex, ItemPath, SortIndex, ++PathIndex);
+		}
+	}
+};
 
 bool FQuantitiesManager::CreateReport(const FString& Filename)
 {
@@ -146,7 +157,6 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 		reportItem.NameForSorting = reportItem.Name + item.Key;
 
 		reportItem.ItemScope = preset->NodeScope;
-		reportItem.Category = preset->CategoryTitle;
 
 		FQuantity accumulatedQuantity;
 		// Loop over parent ('Used In') items:
@@ -201,46 +211,35 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 				reportItem.Uses.Add(MoveTemp(subItem));
 			}
 		}
- 		ncpTree.AddItem(topReportItems.Add(MoveTemp(reportItem)), itemNcp);
+
+		int32 sortIndex = presets.PresetTaxonomy.GetNodePosition(itemNcp);
+		if (ensure(sortIndex >= 0))
+		{
+			ncpTree.AddItem(topReportItems.Add(MoveTemp(reportItem)), itemNcp, sortIndex);
+		}
 	}
 
-	TFunction<void(FNcpTree*, int32&)> treeDepth = [&treeDepth](const FNcpTree* tree, int& depth)
-	{
-		int32 maxDepth = 0;
-		for (const auto& child : tree->Children)
-		{
-			int32 childDepth;
-			treeDepth(child.Value.Get(), childDepth);
-			maxDepth = FMath::Max(maxDepth, childDepth);
-		}
-		depth = maxDepth + 1;
-	};
-
 	int32 categoryIndent;
-	treeDepth(&ncpTree, categoryIndent);
+	categoryIndent = TreeDepth(ncpTree);
 	--categoryIndent;
 
-	auto commas = [](int32 n) {FString s; return s.Append(TEXT(",,,,,,,,,,,,,,,,,,,,,"), n); };
-	
+	auto commas = [](int32 n) { TArray<TCHAR> s; s.Init(*TEXT(","), n); return FString(n, s.GetData()); };
+
 	FBIMTagPath currentTagPath;
 	FString CsvHeaderLines;
 	TArray<FReportItem> treeReportItems;
 
 	TFunction<void(FNcpTree*,int32)> processTreeItems = [&](FNcpTree* tree, int32 depth)
 	{
-		for (const auto& child: tree->Children)
+		for (auto& child: tree->Children)
 		{
-			currentTagPath.Tags.Add(child.Key);
+			currentTagPath.Tags.Add(child.Tag);
 			CsvHeaderLines += commas(depth);
-			FString& nodeName = child.Value->NcpDisplayName;
-			if (nodeName.IsEmpty())
-			{
-				FBIMPresetTaxonomyNode ncpNode;
-				presets.PresetTaxonomy.GetExactMatch(currentTagPath, ncpNode);
-				nodeName = ncpNode.DisplayName.ToString();
-			}
+			FBIMPresetTaxonomyNode ncpNode;
+			presets.PresetTaxonomy.GetExactMatch(currentTagPath, ncpNode);
+			FString nodeName = ncpNode.DisplayName.ToString();
 			CsvHeaderLines += CsvEscape(nodeName) + TEXT("\n");
-			processTreeItems(child.Value.Get(), depth + 1);
+			processTreeItems(&child, depth + 1);
 			currentTagPath.Tags.SetNum(currentTagPath.Tags.Num() - 1);
 		}
 		for (int32 i : tree->Items)
@@ -321,10 +320,42 @@ float FQuantitiesManager::GetModuleUnitsInArea(const FBIMPresetInstance* Preset,
 	return FMath::IsFinite(unitArea) && unitArea != 0.0f ? Area / unitArea : 0.0f;
 }
 
+int32 FQuantitiesManager::TreeDepth(const FNcpTree& Tree)
+{
+	int32 depth = 0;
+	for (const auto& child : Tree.Children)
+	{
+		depth = FMath::Max(depth, TreeDepth(child));
+	}
+	return depth + 1;
+}
+
 // For items that have subnames (eg. size-class) create a new header item
 // and just give subnames for those items.
 void FQuantitiesManager::PostProcessSizeGroups(TArray<FReportItem>& ReportItems)
 {
+	// Sort blocks of same NCP for determinism and to bring sized parts together.
+	for (int32 i = 0; i < ReportItems.Num(); ++i)
+	{
+		int32 j = i;
+		while (++j < ReportItems.Num())
+		{
+			if (!ReportItems[j].Preface.IsEmpty())
+			{
+				break;
+			}
+		}
+
+		FString preface = ReportItems[i].Preface;
+		ReportItems[i].Preface.Empty();
+
+		// Using STL sort as I don't see a way for UE4 sort to just sort a subrange.
+		std::sort(&ReportItems[i], &ReportItems[0] + j, [](const FReportItem& a, const FReportItem& b)
+			{return a.NameForSorting < b.NameForSorting; });
+
+		ReportItems[i].Preface = preface;
+	}
+
 	for (int32 i = 0; i < ReportItems.Num(); ++i)
 	{
 		if (!ReportItems[i].Subname.IsEmpty())
@@ -340,10 +371,9 @@ void FQuantitiesManager::PostProcessSizeGroups(TArray<FReportItem>& ReportItems)
 			FReportItem& header = ReportItems.InsertDefaulted_GetRef(i++);
 			header.Name = ReportItems[i].Name;
 			header.NameForSorting = header.Name;
-			header.Category = ReportItems[i].Category;
-			header.CategorySort = ReportItems[i].CategorySort;
 			header.Quantity = sectionTotal;
 			header.Preface = ReportItems[i].Preface;
+			ReportItems[i].Preface.Empty();
 			header.Indentlevel = ReportItems[i].Indentlevel;
 			for (; i <= j; ++i)
 			{

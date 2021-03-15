@@ -25,9 +25,12 @@ public:
 	struct FReportItem;
 
 private:
+	struct FNcpTree;
+
 	TWeakObjectPtr<UModumateGameInstance> GameInstance;
 	TUniquePtr<FQuantitiesVisitor> CurrentQuantities;
 
+	int32 TreeDepth(const FNcpTree& Tree);
 	void PostProcessSizeGroups(TArray<FReportItem>& ReportItems);
 
 	static FString CsvEscape(const FString& String);

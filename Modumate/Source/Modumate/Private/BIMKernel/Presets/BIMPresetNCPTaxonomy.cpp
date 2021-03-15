@@ -77,11 +77,7 @@ EBIMResult FBIMPresetNCPTaxonomy::LoadCSVRows(const FCsvParser::FRows& Rows)
 		}
 	}
 
-	// Sort so more specific matches are earlier in the list, ie Part->DoorKnob->Indoor will appear before Part->DoorKnob
-	Algo::Sort(Nodes, [](const FBIMPresetTaxonomyNode& LHS, const FBIMPresetTaxonomyNode& RHS)
-	{
-		return LHS.TagPath.Tags.Num() > RHS.TagPath.Tags.Num();
-	});
+	// Order of entires in array used for quantity-estimates CSV file.
 
 	return EBIMResult::Success;
 }
@@ -122,4 +118,16 @@ EBIMResult FBIMPresetNCPTaxonomy::GetExactMatch(const FBIMTagPath& TagPath, FBIM
 		}
 	}
 	return EBIMResult::Error;
+}
+
+int32 FBIMPresetNCPTaxonomy::GetNodePosition(const FBIMTagPath& TagPath) const
+{
+	for (const auto& node : Nodes)
+	{
+		if (node.TagPath.MatchesExact(TagPath))
+		{
+			return &node - &Nodes[0];
+		}
+	}
+	return INDEX_NONE;
 }
