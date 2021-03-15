@@ -39,6 +39,9 @@ struct MODUMATE_API FModumateUserSettings
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	int32 TelemetryUploadFrequencySeconds = 60;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	int32 SaveFileUndoHistoryLength = 256;
+
 	UPROPERTY()
 	FString SavedUserName;
 

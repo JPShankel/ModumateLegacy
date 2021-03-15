@@ -2220,8 +2220,18 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 
 	OutDocumentRecord.CameraViews = SavedCameraViews;
 
-	for (auto& ur : UndoBuffer)
+	// Potentially limit the number of undo records to save, based on user preferences
+	auto* gameInstance = World->GetGameInstance<UModumateGameInstance>();
+	int32 numUndoRecords = UndoBuffer.Num();
+	int32 numUndoRecordsToSave = numUndoRecords;
+	if (gameInstance && (gameInstance->UserSettings.SaveFileUndoHistoryLength >= 0))
 	{
+		numUndoRecordsToSave = FMath::Min(numUndoRecords, gameInstance->UserSettings.SaveFileUndoHistoryLength);
+	}
+
+	for (int32 i = (numUndoRecords - numUndoRecordsToSave); i < numUndoRecords; ++i)
+	{
+		auto& ur = UndoBuffer[i];
 		OutDocumentRecord.AppliedDeltas.Add(FDeltasRecord(ur->Deltas));
 	}
 
