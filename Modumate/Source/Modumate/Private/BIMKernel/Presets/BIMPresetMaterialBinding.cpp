@@ -5,6 +5,8 @@
 #include "Database/ModumateObjectDatabase.h"
 #include "BIMKernel/Presets/BIMPresetEditorForm.h"
 
+#define LOCTEXT_NAMESPACE "ModumatePresetMaterialBindings"
+
 EBIMResult FBIMPresetMaterialBindingSet::SetFormElements(FBIMPresetForm& RefForm) const
 {
 	RefForm.Elements = RefForm.Elements.FilterByPredicate(
@@ -19,22 +21,22 @@ EBIMResult FBIMPresetMaterialBindingSet::SetFormElements(FBIMPresetForm& RefForm
 
 		if (binding.InnerMaterialGUID.IsValid())
 		{
-			RefForm.AddMaterialBindingElement(FText::FromString(FString::Printf(TEXT("Inner%d"), i)), binding.Channel, EMaterialChannelFields::InnerMaterial);
+			RefForm.AddMaterialBindingElement(FText::Format(LOCTEXT("InnerMaterial", "Inner Material {0}"), i + 1), binding.Channel, EMaterialChannelFields::InnerMaterial);
 		}
 
 		if (binding.SurfaceMaterialGUID.IsValid())
 		{
-			RefForm.AddMaterialBindingElement(FText::FromString(FString::Printf(TEXT("Surface%d"), i)), binding.Channel, EMaterialChannelFields::SurfaceMaterial);
+			RefForm.AddMaterialBindingElement(FText::Format(LOCTEXT("SurfaceMaterial", "Surface Material {0}"), i + 1),binding.Channel, EMaterialChannelFields::SurfaceMaterial);
 		}
 
 		if (!binding.ColorHexValue.IsEmpty())
 		{
-			RefForm.AddMaterialBindingElement(FText::FromString(FString::Printf(TEXT("Tint%d"), i)), binding.Channel, EMaterialChannelFields::ColorTint);
+			RefForm.AddMaterialBindingElement(FText::Format(LOCTEXT("Tint", "Tint {0}"), i + 1), binding.Channel, EMaterialChannelFields::ColorTint);
 		}
 
 		if (!binding.ColorTintVariationHexValue.IsEmpty())
 		{
-			RefForm.AddMaterialBindingElement(FText::FromString(FString::Printf(TEXT("TintVar%d"), i)), binding.Channel, EMaterialChannelFields::ColorTintVariation);
+			RefForm.AddMaterialBindingElement(FText::Format(LOCTEXT("TintVariation", "Tint Variation {0}"), i + 1), binding.Channel, EMaterialChannelFields::ColorTintVariation);
 		}
 	}
 
@@ -73,3 +75,5 @@ EBIMResult FBIMPresetMaterialBinding::GetEngineMaterial(const FModumateDatabase&
 	OutMaterial.Color = ColorHexValue.IsEmpty() ? FColor::White : FColor::FromHex(ColorHexValue);
 	return EBIMResult::Success;
 }
+
+#undef LOCTEXT_NAMESPACE

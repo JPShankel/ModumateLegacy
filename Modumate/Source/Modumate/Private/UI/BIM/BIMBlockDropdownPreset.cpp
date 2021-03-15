@@ -78,12 +78,11 @@ void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner
 	FGuid::Parse(InFormElement.StringRepresentation, PresetGUID);
 	DropdownOffset = InDropdownOffset;
 
-	const FBIMPresetInstance* preset = Controller->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
 
-	// Set text and label
+	TextTitle->ChangeText(InFormElement.DisplayName);
+	const FBIMPresetInstance* preset = Controller->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
 	if (preset != nullptr)
 	{
-		TextTitle->ChangeText(preset->CategoryTitle);
 		PresetText->ChangeText(preset->DisplayName);
 	}
 
