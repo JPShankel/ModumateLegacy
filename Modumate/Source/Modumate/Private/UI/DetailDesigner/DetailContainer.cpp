@@ -238,19 +238,15 @@ void UDetailDesignerContainer::OnPresetNameEdited(const FText& Text, ETextCommit
 		return;
 	}
 
-	auto detailPreset = document->GetPresetCollection().PresetFromGUID(DetailPresetID);
-	if (!ensure(detailPreset))
+	// Make a delta for modifying the display name of the current preset
+	auto presetDelta = document->GetPresetCollection().MakeUpdateDelta(DetailPresetID, this);
+	if (!ensure(presetDelta))
 	{
 		return;
 	}
 
-	// Make a delta for modifying the display name of the current preset
-	auto detailPresetDelta = MakeShared<FBIMPresetDelta>();
-	detailPresetDelta->OldState = *detailPreset;
-	detailPresetDelta->NewState = *detailPreset;
-	detailPresetDelta->NewState.DisplayName = Text;
-
-	document->ApplyDeltas({ detailPresetDelta }, controller->GetWorld());
+	presetDelta->NewState.DisplayName = Text;
+	document->ApplyDeltas({ presetDelta }, controller->GetWorld());
 }
 
 void UDetailDesignerContainer::OnLayerExtensionChanged(int32 ParticipantIndex, int32 LayerIndex, FVector2D NewExtensions)
@@ -264,28 +260,25 @@ void UDetailDesignerContainer::OnLayerExtensionChanged(int32 ParticipantIndex, i
 
 	auto& presetCollection = document->GetPresetCollection();
 
-	// Reload the detail from our current preset, and make sure it can support the incoming extension values
+	// Make a delta for modifying the extensions of the current preset,
+	// and make sure it can support the incoming extension values.
 	// TODO: cache the detail data instead if it's safe
 	FEdgeDetailData detailData;
-	auto detailPreset = presetCollection.PresetFromGUID(DetailPresetID);
-	if (!ensure(detailPreset && detailPreset->CustomData.LoadStructData(detailData) &&
+	auto presetDelta = document->GetPresetCollection().MakeUpdateDelta(DetailPresetID, this);
+	if (!ensure(presetDelta && presetDelta->NewState.CustomData.LoadStructData(detailData) &&
 		detailData.Overrides.IsValidIndex(ParticipantIndex) &&
 		detailData.Overrides[ParticipantIndex].LayerExtensions.IsValidIndex(LayerIndex)))
 	{
 		return;
 	}
 
-	auto detailPresetDelta = MakeShared<FBIMPresetDelta>();
-	detailPresetDelta->OldState = *detailPreset;
-	detailPresetDelta->NewState = *detailPreset;
-
 	detailData.Overrides[ParticipantIndex].LayerExtensions[LayerIndex] = NewExtensions;
-	if (!ensure(detailPresetDelta->NewState.CustomData.SaveStructData(detailData)))
+	if (!ensure(presetDelta->NewState.CustomData.SaveStructData(detailData)))
 	{
 		return;
 	}
 
-	document->ApplyDeltas({ detailPresetDelta }, controller->GetWorld());
+	document->ApplyDeltas({ presetDelta }, controller->GetWorld());
 }
 
 #undef LOCTEXT_NAMESPACE

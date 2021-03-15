@@ -2095,6 +2095,12 @@ void AEditModelPlayerController::OnToggleFullscreen(bool bIsFullscreen)
 void AEditModelPlayerController::OnHandledInputActionName(FName ActionName, EInputEvent InputEvent)
 {
 	HandledInputActionEvent.Broadcast(ActionName, InputEvent);
+
+	if (InputEvent == IE_Pressed)
+	{
+		FString analyticsEventName = FString::Printf(TEXT("Action_%s"), *ActionName.ToString());
+		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Input, analyticsEventName);
+	}
 }
 
 void AEditModelPlayerController::OnHandledInputAxisName(FName AxisName, float Value)

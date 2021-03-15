@@ -193,7 +193,7 @@ bool UInstPropWidgetEdgeDetail::OnCreateOrSwap(FGuid NewDetailPresetID)
 		// Try to make a unique display name for this detail preset
 		TryMakeUniquePresetDisplayName(presetCollection, newDetailData, newDetailPreset.DisplayName);
 
-		auto makedetailPresetDelta = presetCollection.MakeCreateNewDelta(newDetailPreset);
+		auto makedetailPresetDelta = presetCollection.MakeCreateNewDelta(newDetailPreset, this);
 		NewDetailPresetID = newDetailPreset.GUID;
 		deltas.Add(makedetailPresetDelta);
 	}

@@ -3,6 +3,7 @@
 #include "Online/ModumateAnalyticsStatics.h"
 
 #include "Analytics.h"
+#include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "Interfaces/IAnalyticsProvider.h"
 #include "Database/ModumateObjectEnums.h"
 #include "UnrealClasses/Modumate.h"
@@ -150,20 +151,27 @@ bool UModumateAnalyticsStatics::RecordSessionDuration(UObject* WorldContextObjec
 	return bEventSuccess;
 }
 
-bool UModumateAnalyticsStatics::RecordPresetCreation(UObject* WorldContextObject)
+bool UModumateAnalyticsStatics::RecordPresetCreation(UObject* WorldContextObject, const FBIMPresetInstance* PresetInstance)
 {
-	static const FString eventName(TEXT("Create"));
+	FString eventName = UModumateAnalyticsStatics::GetPresetEventName(TEXT("Create"), PresetInstance);
 	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EModumateAnalyticsCategory::Presets, eventName, 1.0f);
 }
 
-bool UModumateAnalyticsStatics::RecordPresetUpdate(UObject* WorldContextObject)
+bool UModumateAnalyticsStatics::RecordPresetUpdate(UObject* WorldContextObject, const FBIMPresetInstance* PresetInstance)
 {
-	static const FString eventName(TEXT("Update"));
+	FString eventName = UModumateAnalyticsStatics::GetPresetEventName(TEXT("Update"), PresetInstance);
 	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EModumateAnalyticsCategory::Presets, eventName, 1.0f);
 }
 
-bool UModumateAnalyticsStatics::RecordPresetDeletion(UObject* WorldContextObject)
+bool UModumateAnalyticsStatics::RecordPresetDeletion(UObject* WorldContextObject, const FBIMPresetInstance* PresetInstance)
 {
-	static const FString eventName(TEXT("Delete"));
+	FString eventName = UModumateAnalyticsStatics::GetPresetEventName(TEXT("Delete"), PresetInstance);
 	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EModumateAnalyticsCategory::Presets, eventName, 1.0f);
+}
+
+FString UModumateAnalyticsStatics::GetPresetEventName(const TCHAR* Prefix, const FBIMPresetInstance* PresetInstance)
+{
+	FString nodeScopeString = GetEnumValueString(PresetInstance ? PresetInstance->NodeScope : EBIMValueScope::None);
+	FString objectTypeString = GetEnumValueString(PresetInstance ? PresetInstance->ObjectType : EObjectType::OTNone).RightChop(2);
+	return FString::Printf(TEXT("%s_%s_%s"), Prefix, *nodeScopeString, *objectTypeString);
 }

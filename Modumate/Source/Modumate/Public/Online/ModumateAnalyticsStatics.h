@@ -21,8 +21,11 @@ enum class EModumateAnalyticsCategory : uint8
 	Presets,
 	View,
 	Session,
-	Tutorials
+	Tutorials,
+	Input
 };
+
+struct FBIMPresetInstance;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnModumateAnalyticsEvent, EModumateAnalyticsCategory, EventCategory, const FString&, EventName);
 
@@ -68,15 +71,12 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
 	static bool RecordSessionDuration(UObject* WorldContextObject, const FTimespan& SessionDuration);
 
-	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
-	static bool RecordPresetCreation(UObject* WorldContextObject);
-
-	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
-	static bool RecordPresetUpdate(UObject* WorldContextObject);
-
-	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
-	static bool RecordPresetDeletion(UObject* WorldContextObject);
+	static bool RecordPresetCreation(UObject* WorldContextObject, const FBIMPresetInstance* PresetInstance);
+	static bool RecordPresetUpdate(UObject* WorldContextObject, const FBIMPresetInstance* PresetInstance);
+	static bool RecordPresetDeletion(UObject* WorldContextObject, const FBIMPresetInstance* PresetInstance);
 
 protected:
+	static FString GetPresetEventName(const TCHAR* Prefix, const FBIMPresetInstance* PresetInstance);
+
 	static bool bInTutorial;
 };

@@ -1,12 +1,14 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "BIMKernel/Presets/BIMPresetCollection.h"
-#include "BIMKernel/Presets/BIMCSVReader.h"
+
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
+#include "BIMKernel/Presets/BIMCSVReader.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/ModumateScriptProcessor.h"
+#include "Online/ModumateAnalyticsStatics.h"
 
 /*
 Given a preset ID, recurse through all its children and gather all other presets that this one depends on
@@ -704,7 +706,7 @@ EBIMResult FBIMPresetCollection::RemovePreset(const FGuid& InGUID)
 	return EBIMResult::Error;
 }
 
-TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeUpdateDelta(FBIMPresetInstance& UpdatedPreset) const
+TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeUpdateDelta(const FBIMPresetInstance& UpdatedPreset, UObject* AnalyticsWorldContextObject) const
 {
 	TSharedPtr<FBIMPresetDelta> presetDelta = MakeShared<FBIMPresetDelta>();
 
@@ -715,14 +717,36 @@ TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeUpdateDelta(FBIMPresetInst
 		presetDelta->OldState = *oldPreset;
 	}
 
+	if (AnalyticsWorldContextObject)
+	{
+		UModumateAnalyticsStatics::RecordPresetUpdate(AnalyticsWorldContextObject, oldPreset);
+	}
+
 	return presetDelta;
 }
 
-TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeCreateNewDelta(FBIMPresetInstance& NewPreset)
+TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeUpdateDelta(const FGuid& PresetID, UObject* AnalyticsWorldContextObject) const
+{
+	const FBIMPresetInstance* currentPreset = PresetsByGUID.Find(PresetID);
+	if (currentPreset == nullptr)
+	{
+		return nullptr;
+	}
+
+	return MakeUpdateDelta(*currentPreset, AnalyticsWorldContextObject);
+}
+
+TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeCreateNewDelta(FBIMPresetInstance& NewPreset, UObject* AnalyticsWorldContextObject)
 {
 	if (ensureAlways(!NewPreset.GUID.IsValid()))
 	{
 		GetAvailableGUID(NewPreset.GUID);
+
+		if (AnalyticsWorldContextObject)
+		{
+			UModumateAnalyticsStatics::RecordPresetCreation(AnalyticsWorldContextObject, &NewPreset);
+		}
+
 		return MakeUpdateDelta(NewPreset);
 	}
 	return nullptr;

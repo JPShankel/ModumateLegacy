@@ -188,7 +188,7 @@ void FAnalyticsProviderModumate::RecordEvent(const FString& EventName, const TAr
 			UploadBufferedEvents();
 		}
 
-		UE_LOG(LogModumateAnalytics, Display, TEXT("Analytics event (%s) buffered with (%d) attributes"), *EventName, Attributes.Num());
+		UE_LOG(LogModumateAnalytics, Display, TEXT("Buffered analytics event (%s)"), *eventData.key);
 	}
 	else
 	{

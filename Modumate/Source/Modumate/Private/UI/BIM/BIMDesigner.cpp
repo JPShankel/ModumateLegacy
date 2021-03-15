@@ -895,7 +895,7 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 	{
 		// Creating new preset, do not check for affected presets
 		SavePendingPreset.GUID.Invalidate();
-		TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeCreateNewDelta(SavePendingPreset);
+		TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeCreateNewDelta(SavePendingPreset, this);
 		Controller->GetDocument()->ApplyDeltas({presetDelta},GetWorld());
 
 		if (!node->ParentInstance.IsValid())
@@ -925,8 +925,6 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 			}
 		}
 		node->WorkingPresetCopy = SavePendingPreset;
-		UModumateAnalyticsStatics::RecordPresetCreation(this);
-
 		node->OriginalPresetCopy = node->WorkingPresetCopy;
 
 		SelectedNodeID = InstanceID;
@@ -954,9 +952,8 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 
 bool UBIMDesigner::ConfirmSavePendingPreset()
 {
-	TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeUpdateDelta(SavePendingPreset);
+	TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeUpdateDelta(SavePendingPreset, this);
 	Controller->GetDocument()->ApplyDeltas({ presetDelta }, GetWorld());
-	UModumateAnalyticsStatics::RecordPresetUpdate(this);
 
 	FBIMPresetEditorNodeSharedPtr node = InstancePool.InstanceFromID(SavePendingInstanceID);
 	if (!ensureAlways(node.IsValid()))

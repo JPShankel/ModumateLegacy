@@ -519,6 +519,9 @@ bool UEditModelInputHandler::TryCommand(EInputCommand Command)
 	if (bSuccess)
 	{
 		OnExecutedCommand.Broadcast(Command);
+
+		FString analyticsEventName = FString::Printf(TEXT("Command_%s"), *GetEnumValueString(Command));
+		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Input, analyticsEventName);
 	}
 
 	return bSuccess;
