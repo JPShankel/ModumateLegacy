@@ -19,7 +19,7 @@ AMOIVertexBase::AMOIVertexBase()
 	, CurScreenSize(4.0f)
 {
 	VertexMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VertexMeshComp"));
-	VertexMeshComp->SetupAttachment(GetRootComponent());
+	SetRootComponent(VertexMeshComp);
 }
 
 FVector AMOIVertexBase::GetCorner(int32 index) const

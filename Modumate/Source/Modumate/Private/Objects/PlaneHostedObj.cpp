@@ -154,6 +154,16 @@ bool AMOIPlaneHostedObj::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 		}
 
 		UpdateMeshWithLayers(false, true);
+
+		// Mark SurfaceGraph children as structurally dirty, since their bounds may have changed as a result of re-mitering.
+		for (int32 childID : CachedChildIDs)
+		{
+			AModumateObjectInstance* childObj = Document->GetObjectById(childID);
+			if (childObj && (childObj->GetObjectType() == EObjectType::OTSurfaceGraph))
+			{
+				childObj->MarkDirty(EObjectDirtyFlags::Structure);
+			}
+		}
 	}
 	break;
 	case EObjectDirtyFlags::Visuals:

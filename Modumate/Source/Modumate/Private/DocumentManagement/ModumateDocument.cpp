@@ -536,22 +536,22 @@ void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 	surfaceGraphObj->MarkDirty(EObjectDirtyFlags::Structure);
 
 	// add objects
-	for (auto &kvp : Delta.VertexAdditions)
-	{
-		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTSurfaceVertex, surfaceGraphID));
-	}
-
-	for (auto &kvp : Delta.EdgeAdditions)
-	{
-		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTSurfaceEdge, surfaceGraphID));
-	}
-
 	for (auto &kvp : Delta.PolygonAdditions)
 	{
 		// It would be ideal to only create SurfacePolgyon objects for interior polygons, but if we don't then the graph will try creating
 		// deltas that use IDs that the document will try to re-purpose for other objects.
 		// TODO: allow allocating IDs from graph deltas in a way that the document can't use them
 		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTSurfacePolygon, surfaceGraphID));
+	}
+
+	for (auto& kvp : Delta.EdgeAdditions)
+	{
+		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTSurfaceEdge, surfaceGraphID));
+	}
+
+	for (auto& kvp : Delta.VertexAdditions)
+	{
+		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTSurfaceVertex, surfaceGraphID));
 	}
 
 	// finalize objects after all of them have been added
@@ -636,12 +636,12 @@ void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 	TArray<int32> modifiedVertices, modifiedEdges, modifiedPolygons;
 	if (targetSurfaceGraph->ClearModifiedObjects(modifiedVertices, modifiedEdges, modifiedPolygons))
 	{
-		for (int32 vertexID : modifiedVertices)
+		for (int32 polygonID : modifiedPolygons)
 		{
-			AModumateObjectInstance* vertexObj = GetObjectById(vertexID);
-			if (ensureAlways(vertexObj && (vertexObj->GetObjectType() == EObjectType::OTSurfaceVertex)))
+			AModumateObjectInstance* polygonObj = GetObjectById(polygonID);
+			if (ensureAlways(polygonObj && (polygonObj->GetObjectType() == EObjectType::OTSurfacePolygon)))
 			{
-				vertexObj->MarkDirty(EObjectDirtyFlags::Structure);
+				polygonObj->MarkDirty(EObjectDirtyFlags::Structure);
 			}
 		}
 
@@ -654,12 +654,12 @@ void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 			}
 		}
 
-		for (int32 polygonID : modifiedPolygons)
+		for (int32 vertexID : modifiedVertices)
 		{
-			AModumateObjectInstance *polygonObj = GetObjectById(polygonID);
-			if (ensureAlways(polygonObj && (polygonObj->GetObjectType() == EObjectType::OTSurfacePolygon)))
+			AModumateObjectInstance* vertexObj = GetObjectById(vertexID);
+			if (ensureAlways(vertexObj && (vertexObj->GetObjectType() == EObjectType::OTSurfaceVertex)))
 			{
-				polygonObj->MarkDirty(EObjectDirtyFlags::Structure);
+				vertexObj->MarkDirty(EObjectDirtyFlags::Structure);
 			}
 		}
 	}
