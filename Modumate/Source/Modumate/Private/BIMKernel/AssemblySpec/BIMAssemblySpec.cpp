@@ -63,6 +63,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	TQueue<FPartIterator> partIteratorQueue;
 
 	const FBIMPresetInstance* assemblyPreset = PresetCollection.PresetFromGUID(PresetGUID);
+	const FBIMPresetInstance* dimensionsPreset = assemblyPreset;
 
 	if (!ensureAlways(assemblyPreset != nullptr))
 	{
@@ -196,8 +197,18 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			}
 		}
 
-		// Having analyzed the preset and retargeted (if necessary) the properties, apply all of the preset's properties to the target
-		presetIterator.TargetProperties->AddProperties(presetIterator.Preset->Properties);
+		// If we're targeting a cabinet, this is the cabinet's face which means:
+		// 1) We want to derive named dimensions from this preset and not the top level assembly
+		// 2) We do not want to clobber the top level assembly's properties with the face's
+		// We need this exception because cabinet faces are the only complex assemblies that are attached as a child instead of a part
+		if (presetIterator.Target == ELayerTarget::Cabinet)
+		{
+			dimensionsPreset = presetIterator.Preset;
+		}
+		else
+		{
+			presetIterator.TargetProperties->AddProperties(presetIterator.Preset->Properties);
+		}
 
 		// Add our own children to DFS stack
 		// Iterate in reverse order because stack operations are LIFO
@@ -265,7 +276,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		FBIMPartSlotSpec& partSpec = Parts.AddDefaulted_GetRef();
 		partSpec.ParentSlotIndex = INDEX_NONE;
 		partSpec.NodeCategoryPath = assemblyPreset->MyTagPath;
-		partSpec.GetNamedDimensionValuesFromPreset(assemblyPreset);
+		partSpec.GetNamedDimensionValuesFromPreset(dimensionsPreset);
 		partSpec.Translation = FVectorExpression(TEXT("0"), TEXT("0"), TEXT("0"));
 		partSpec.Size = FVectorExpression(TEXT("Self.ScaledSizeX"), TEXT("Self.ScaledSizeY"), TEXT("Self.ScaledSizeZ"));
 #if WITH_EDITOR //for debugging
