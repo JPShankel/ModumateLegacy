@@ -31,20 +31,27 @@ protected:
 	UPROPERTY()
 	class AEditModelGameState* EMGameState;
 
-public:
+	TArray<FBIMTagPath> SelectedTags;
+	TArray<FGuid> SearchFilteredPresets;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UVerticalBox* DynamicMainList;
+public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateEditableTextBoxUserWidget* SearchBarWidget;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class UNCPButton> NCPButtonClass;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UListView* DynamicMainListView;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FString> StarterNCPTagStrings;
 
 	void BuildNCPNavigator();
-	bool IsPresetAvailableForSearch(const FGuid& PresetGuid);
+	void BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 TagOrder);
 	bool IsNCPAvailableForSearch(const FBIMTagPath& NCPTag);
+	void CacheSearchFilteredPresets(const TArray<FBIMTagPath>& SourceNCPTags);
+
+	void ToggleNCPTagAsSelected(const FBIMTagPath& NCPTag, bool bAsSelected);
+	void RefreshDynamicMainListView();
 
 	UFUNCTION()
 	void OnSearchBarChanged(const FText& NewText);

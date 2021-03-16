@@ -11,10 +11,11 @@
 #include "UI/PresetCard/PresetCardPropertyList.h"
 #include "UI/PresetCard/PresetCardObjectList.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
-#include "UI/PresetCard/PresetCardItemObject.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "Quantities/QuantitiesManager.h"
 #include "Components/Image.h"
+#include "UI/LeftMenu/NCPNavigator.h"
+#include "UI/LeftMenu/BrowserItemObj.h"
 
 UPresetCardMain::UPresetCardMain(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -47,6 +48,10 @@ void UPresetCardMain::NativeConstruct()
 void UPresetCardMain::OnMainButtonReleased()
 {
 	bool bExpandList = DynamicVerticalBox->GetChildrenCount() == 0;
+	
+	// ItemObjs need to be updated so that widgets remain open during scrolling in listview
+	ParentBrowserItemObj->bPresetCardExpanded = bExpandList;
+	
 	if (bExpandList)
 	{
 		BuildAsBrowserSelectedPresetCard(PresetGUID);
@@ -54,6 +59,10 @@ void UPresetCardMain::OnMainButtonReleased()
 	else
 	{
 		BuildAsBrowserCollapsedPresetCard(PresetGUID, true);
+	}
+	if (ensure(ParentNCPNavigator))
+	{
+		ParentNCPNavigator->RefreshDynamicMainListView();
 	}
 }
 
@@ -136,6 +145,12 @@ void UPresetCardMain::BuildAsBrowserSelectedPresetCard(const FGuid& InPresetKey)
 	}
 }
 
+void UPresetCardMain::SetParentWidgets(class UNCPNavigator* InParentNCPNavigator, class UBrowserItemObj* InBrowserItemObj)
+{
+	ParentNCPNavigator = InParentNCPNavigator;
+	ParentBrowserItemObj = InBrowserItemObj;
+}
+
 void UPresetCardMain::ToggleMainButtonInteraction(bool bEnable)
 {
 	if (bEnable)
@@ -161,15 +176,4 @@ void UPresetCardMain::ClearWidgetPool(class UPanelWidget* Widget)
 		}
 	}
 	Widget->ClearChildren();
-}
-
-void UPresetCardMain::NativeOnListItemObjectSet(UObject* ListItemObject)
-{
-	UPresetCardItemObject* itemObj = Cast<UPresetCardItemObject>(ListItemObject);
-	if (!itemObj)
-	{
-		return;
-	}
-
-	BuildAsBrowserCollapsedPresetCard(itemObj->PresetGuid, true);
 }

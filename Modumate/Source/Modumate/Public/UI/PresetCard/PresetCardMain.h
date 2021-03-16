@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Blueprint/IUserObjectListEntry.h"
 #include "PresetCardMain.generated.h"
 
 /**
@@ -21,7 +20,7 @@ enum class EPresetCardType : uint8
 };
 
 UCLASS()
-class MODUMATE_API UPresetCardMain : public UUserWidget, public IUserObjectListEntry
+class MODUMATE_API UPresetCardMain : public UUserWidget
 {
 	GENERATED_BODY()
 
@@ -36,6 +35,12 @@ protected:
 	UPROPERTY()
 	class AEditModelPlayerController* EMPlayerController;
 
+	UPROPERTY()
+	class UNCPNavigator* ParentNCPNavigator;
+
+	UPROPERTY()
+	class UBrowserItemObj* ParentBrowserItemObj;
+
 	FGuid PresetGUID;
 
 public:
@@ -45,9 +50,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox* DynamicVerticalBox;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UBorder* MainBorder;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox* MainVerticalBox;
@@ -82,10 +84,8 @@ public:
 	// Builder
 	void BuildAsBrowserCollapsedPresetCard(const FGuid& InPresetKey, bool bAllowInteraction);
 	void BuildAsBrowserSelectedPresetCard(const FGuid& InPresetKey);
+	void SetParentWidgets(class UNCPNavigator* InParentNCPNavigator, class UBrowserItemObj* InBrowserItemObj);
 
 	void ToggleMainButtonInteraction(bool bEnable);
 	void ClearWidgetPool(class UPanelWidget* Widget);
-
-	// UserObjectListEntry interface
-	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 };

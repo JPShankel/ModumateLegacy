@@ -6,8 +6,6 @@
 #include "UI/Custom/ModumateTextBlock.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "UI/EditModelPlayerHUD.h"
-#include "Components/VerticalBox.h"
 #include "UI/PresetCard/PresetCardMain.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/VerticalBoxSlot.h"
@@ -48,29 +46,10 @@ void UNCPButton::NativeConstruct()
 
 void UNCPButton::OnButtonPress()
 {
-	bExpanded = !bExpanded;
-	ToggleTextColor(bExpanded);
-	if (bExpanded)
+	if (ParentNCPNavigator)
 	{
-		BuildSubButtons();
+		ParentNCPNavigator->ToggleNCPTagAsSelected(NCPTag, !bExpanded);
 	}
-	else
-	{
-		EmptyLists();
-	}
-}
-
-void UNCPButton::EmptyLists()
-{
-	for (auto& curWidget : DynamicNCPList->GetAllChildren())
-	{
-		UUserWidget* asUserWidget = Cast<UUserWidget>(curWidget);
-		if (asUserWidget)
-		{
-			EMPlayerController->HUDDrawWidget->UserWidgetPool.Release(asUserWidget);
-		}
-	}
-	DynamicNCPList->ClearChildren();
 }
 
 void UNCPButton::BuildButton(class UNCPNavigator* InParentNCPNavigator, const FBIMTagPath& InNCP, int32 InTagOrder, bool bBuildAsExpanded)
@@ -80,7 +59,6 @@ void UNCPButton::BuildButton(class UNCPNavigator* InParentNCPNavigator, const FB
 	TagOrder = InTagOrder;
 	bExpanded = bBuildAsExpanded;
 	ToggleTextColor(bExpanded);
-	EmptyLists();
 
 	// Add paddding to text
 	UVerticalBoxSlot* verticalBoxSlot = UWidgetLayoutLibrary::SlotAsVerticalBoxSlot(ButtonText);
@@ -90,7 +68,7 @@ void UNCPButton::BuildButton(class UNCPNavigator* InParentNCPNavigator, const FB
 	{
 		FBIMPresetTaxonomyNode taxNode;
 		EMPlayerController->GetDocument()->GetPresetCollection().PresetTaxonomy.GetExactMatch(NCPTag, taxNode);
-		if (ensureAlways(!taxNode.DisplayName.IsEmpty()))
+		if (!taxNode.DisplayName.IsEmpty())
 		{
 			ButtonText->SetText(taxNode.DisplayName);
 		}
@@ -98,56 +76,6 @@ void UNCPButton::BuildButton(class UNCPNavigator* InParentNCPNavigator, const FB
 		{
 			FString lastTagString = InNCP.Tags[InNCP.Tags.Num() - 1];
 			ButtonText->SetText(FText::FromString(lastTagString));
-		}
-
-		if (bExpanded)
-		{
-			BuildSubButtons();
-		}
-	}
-}
-
-void UNCPButton::BuildSubButtons()
-{
-	// Find subcategories under CurrentNCP at tag order
-	FBIMTagPath partialPath;
-	NCPTag.GetPartialPath(TagOrder + 1, partialPath);
-	TArray<FString> subCats;
-	EMPlayerController->GetDocument()->GetPresetCollection().GetNCPSubcategories(partialPath, subCats);
-
-	// Build presets
-	TArray<FGuid> availablePresets;
-	EMPlayerController->GetDocument()->GetPresetCollection().GetPresetsForNCP(NCPTag, availablePresets, true);
-	for (auto& newPreset : availablePresets)
-	{
-		if (ParentNCPNavigator->IsPresetAvailableForSearch(newPreset))
-		{
-			UPresetCardMain* newPresetWidget = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardMain>(PresetCardMainClass);
-			if (newPresetWidget)
-			{
-				DynamicNCPList->AddChildToVerticalBox(newPresetWidget);
-				newPresetWidget->BuildAsBrowserCollapsedPresetCard(newPreset, true);
-
-				// Add paddding to preset widget
-				UVerticalBoxSlot* verticalBoxSlot = UWidgetLayoutLibrary::SlotAsVerticalBoxSlot(newPresetWidget);
-				verticalBoxSlot->SetPadding(PresetCardPadding);
-			}
-		}
-	}
-
-	// Build a new NCP for each subcategory
-	for (int32 i = 0; i < subCats.Num(); ++i)
-	{
-		FString partialPathString;
-		partialPath.ToString(partialPathString);
-		FString newPathString = partialPathString + FString::Printf(TEXT("_")) + subCats[i];
-		FBIMTagPath newTagPath(newPathString);
-
-		if (ParentNCPNavigator->IsNCPAvailableForSearch(newTagPath))
-		{
-			UNCPButton* newButton = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UNCPButton>(NCPButtonClass);
-			newButton->BuildButton(ParentNCPNavigator, newTagPath, TagOrder + 1);
-			DynamicNCPList->AddChildToVerticalBox(newButton);
 		}
 	}
 }

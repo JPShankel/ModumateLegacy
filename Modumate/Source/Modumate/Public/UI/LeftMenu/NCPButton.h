@@ -55,23 +55,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ButtonPaddingSizePerNCPorder = 12.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FMargin PresetCardPadding;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UVerticalBox* DynamicNCPList;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class UNCPButton> NCPButtonClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class UPresetCardMain> PresetCardMainClass;
-
 	UFUNCTION()
 	void OnButtonPress();
 
-	void EmptyLists();
 	void BuildButton(class UNCPNavigator* InParentNCPNavigator, const FBIMTagPath& InNCP, int32 InTagOrder, bool bBuildAsExpanded = false);
-	void BuildSubButtons();
 	void ToggleTextColor(bool bAsSelected);
 };

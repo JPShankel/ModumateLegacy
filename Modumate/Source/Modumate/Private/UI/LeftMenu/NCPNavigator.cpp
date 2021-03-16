@@ -4,12 +4,13 @@
 #include "UI/LeftMenu/NCPButton.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/EditModelPlayerHUD.h"
-#include "Components/VerticalBox.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "Kismet/KismetStringLibrary.h"
+#include "UI/LeftMenu/BrowserItemObj.h"
+#include "Components/ListView.h"
 
 
 UNCPNavigator::UNCPNavigator(const FObjectInitializer& ObjectInitializer)
@@ -46,64 +47,143 @@ void UNCPNavigator::NativeConstruct()
 
 void UNCPNavigator::BuildNCPNavigator()
 {
-	for (auto& curWidget : DynamicMainList->GetAllChildren())
+	DynamicMainListView->ClearListItems();
+
+	TArray<FBIMTagPath> sourceNCPTags;
+	for (auto& curNCPTagString : StarterNCPTagStrings)
 	{
-		UUserWidget* asUserWidget = Cast<UUserWidget>(curWidget);
-		if (asUserWidget)
-		{
-			EMPlayerController->HUDDrawWidget->UserWidgetPool.Release(asUserWidget);
-		}
+		FBIMTagPath newTagPath;
+		newTagPath.FromString(curNCPTagString);
+		sourceNCPTags.Add(newTagPath);
 	}
-	DynamicMainList->ClearChildren();
+	CacheSearchFilteredPresets(sourceNCPTags);
 
-	// TODO: Blueprintable string array for root NCP?
-
-	// Build first "Assembly" button in NCP
-	FBIMTagPath rootPath;
-	rootPath.FromString("Assembly");
-	UNCPButton* newButton = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UNCPButton>(NCPButtonClass);
-	newButton->BuildButton(this, rootPath, 0, true);
-	DynamicMainList->AddChildToVerticalBox(newButton);
-
-
-	// Build first "Part" button in NCP
-	FBIMTagPath partRootPath;
-	partRootPath.FromString("Part");
-	UNCPButton* newPartButton = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UNCPButton>(NCPButtonClass);
-	newPartButton->BuildButton(this, partRootPath, 0, true);
-	DynamicMainList->AddChildToVerticalBox(newPartButton);
+	for (auto& curSourceNCPTag : sourceNCPTags)
+	{
+		UBrowserItemObj* newAssemblyItemObj = NewObject<UBrowserItemObj>(this);
+		newAssemblyItemObj->ParentNCPNavigator = this;
+		newAssemblyItemObj->bAsPresetCard = false;
+		newAssemblyItemObj->NCPTag = curSourceNCPTag;
+		newAssemblyItemObj->TagOrder = 0;
+		newAssemblyItemObj->bNCPButtonExpanded = true;
+		DynamicMainListView->AddItem(newAssemblyItemObj);
+		BuildBrowserItemSubObjs(curSourceNCPTag, 0);
+	}
 }
 
-bool UNCPNavigator::IsPresetAvailableForSearch(const FGuid& PresetGuid)
+void UNCPNavigator::BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 TagOrder)
 {
-	FString searchSubString = SearchBarWidget->ModumateEditableTextBox->GetText().ToString();
-	if (searchSubString.Len() == 0)
+	// Build presets
+	TArray<FGuid> availablePresets;
+	EMPlayerController->GetDocument()->GetPresetCollection().GetPresetsForNCP(ParentNCP, availablePresets, true);
+	for (auto& newPreset : availablePresets)
 	{
-		return true;
-	}
-	if (EMGameState)
-	{
-		const FBIMPresetInstance* preset = EMGameState->Document->GetPresetCollection().PresetFromGUID(PresetGuid);
-		if (preset)
+		if (SearchFilteredPresets.Contains(newPreset))
 		{
-			return UKismetStringLibrary::Contains(preset->DisplayName.ToString(), searchSubString);
+			UBrowserItemObj* newItemObj = NewObject<UBrowserItemObj>(this);
+			newItemObj->ParentNCPNavigator = this;
+			newItemObj->bAsPresetCard = true;
+			newItemObj->PresetGuid = newPreset;
+			newItemObj->bPresetCardExpanded = false;
+			DynamicMainListView->AddItem(newItemObj);
 		}
 	}
-	return false;
+
+	// Find subcategories under CurrentNCP at tag order
+	FBIMTagPath partialPath;
+	ParentNCP.GetPartialPath(TagOrder + 1, partialPath);
+	TArray<FString> subCats;
+	EMPlayerController->GetDocument()->GetPresetCollection().GetNCPSubcategories(partialPath, subCats);
+
+	// Build a new NCP for each subcategory
+	for (int32 i = 0; i < subCats.Num(); ++i)
+	{
+		FString partialPathString;
+		partialPath.ToString(partialPathString);
+		FString newPathString = partialPathString + FString(TEXT("_")) + subCats[i];
+		FBIMTagPath newTagPath(newPathString);
+
+		if (IsNCPAvailableForSearch(newTagPath))
+		{
+			UBrowserItemObj* newItemObj = NewObject<UBrowserItemObj>(this);
+			newItemObj->ParentNCPNavigator = this;
+			newItemObj->bAsPresetCard = false;
+			newItemObj->NCPTag = newTagPath;
+			newItemObj->TagOrder = TagOrder + 1;
+			DynamicMainListView->AddItem(newItemObj);
+
+			// If NCP in subcategory is selected, that NCP is expanded
+			if (SelectedTags.Contains(newTagPath) ||
+				SearchBarWidget->ModumateEditableTextBox->GetText().ToString().Len() > 0)
+			{
+				newItemObj->bNCPButtonExpanded = true;
+				BuildBrowserItemSubObjs(newTagPath, TagOrder + 1);
+			}
+			else
+			{
+				newItemObj->bNCPButtonExpanded = false;
+			}
+		}
+	}
 }
 
 bool UNCPNavigator::IsNCPAvailableForSearch(const FBIMTagPath& NCPTag)
 {
 	TArray<FGuid> availableBIMDesignerPresets;
 	EMPlayerController->GetDocument()->GetPresetCollection().GetPresetsForNCP(NCPTag, availableBIMDesignerPresets, false);
+
+	// This NCP is available if its presets is available for search
 	for (auto& curPreset : availableBIMDesignerPresets)
 	{
-		if (IsPresetAvailableForSearch(curPreset))
+		if (SearchFilteredPresets.Contains(curPreset))
 		{
 			return true;
 		}
 	}
 	return false;
+}
+
+void UNCPNavigator::CacheSearchFilteredPresets(const TArray<FBIMTagPath>& SourceNCPTags)
+{
+	SearchFilteredPresets.Reset();
+	FString searchSubString = SearchBarWidget->ModumateEditableTextBox->GetText().ToString();
+
+	// Preset is available if its display name contains string from searchbar
+	for (auto& curNCPTag : SourceNCPTags)
+	{
+		TArray<FGuid> availableBIMDesignerPresets;
+		EMPlayerController->GetDocument()->GetPresetCollection().GetPresetsForNCP(curNCPTag, availableBIMDesignerPresets, false);
+		for (auto& curPreset : availableBIMDesignerPresets)
+		{
+			const FBIMPresetInstance* presetInst = EMGameState->Document->GetPresetCollection().PresetFromGUID(curPreset);
+			if (presetInst)
+			{
+				if (searchSubString.Len() == 0 ||
+					(UKismetStringLibrary::Contains(presetInst->DisplayName.ToString(), searchSubString)))
+				{
+					SearchFilteredPresets.Add(presetInst->GUID);
+				}
+			}
+		}
+	}
+}
+
+void UNCPNavigator::ToggleNCPTagAsSelected(const FBIMTagPath& NCPTag, bool bAsSelected)
+{
+	if (bAsSelected)
+	{
+		SelectedTags.AddUnique(NCPTag);
+	}
+	else
+	{
+		SelectedTags.Remove(NCPTag);
+	}
+	BuildNCPNavigator();
+}
+
+void UNCPNavigator::RefreshDynamicMainListView()
+{
+	DynamicMainListView->RequestRefresh();
 }
 
 void UNCPNavigator::OnSearchBarChanged(const FText& NewText)
