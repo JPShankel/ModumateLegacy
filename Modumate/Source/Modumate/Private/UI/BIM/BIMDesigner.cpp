@@ -159,7 +159,8 @@ void UBIMDesigner::PerformDrag()
 
 bool UBIMDesigner::UpdateCraftingAssembly()
 {
-	return InstancePool.CreateAssemblyFromNodes(Controller->GetDocument()->GetPresetCollection(),
+	UpdateCachedPresetCollection();
+	return InstancePool.CreateAssemblyFromNodes(CachedPresetCollection,
 		*GetWorld()->GetAuthGameMode<AEditModelGameMode>()->ObjectDatabase, CraftingAssembly) == EBIMResult::Success;
 }
 
@@ -267,9 +268,11 @@ float UBIMDesigner::GetCurrentZoomScale() const
 
 bool UBIMDesigner::EditPresetInBIMDesigner(const FGuid& PresetID)
 {
+	UpdateCachedPresetCollection();
+
 	FBIMPresetEditorNodeSharedPtr rootNode;
 	EBIMResult getPresetResult = InstancePool.InitFromPreset(
-		Controller->GetDocument()->GetPresetCollection(), 
+		CachedPresetCollection,
 		*GetWorld()->GetAuthGameMode<AEditModelGameMode>()->ObjectDatabase,		
 		PresetID,
 		rootNode);
@@ -285,7 +288,8 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FGuid& PresetID)
 
 bool UBIMDesigner::SetPresetForNodeInBIMDesigner(const FBIMEditorNodeIDType& InstanceID, const FGuid& PresetID)
 {
-	EBIMResult result = InstancePool.SetNewPresetForNode(Controller->GetDocument()->GetPresetCollection(), InstanceID, PresetID);
+	UpdateCachedPresetCollection();
+	EBIMResult result = InstancePool.SetNewPresetForNode(CachedPresetCollection, InstanceID, PresetID);
 	if (result != EBIMResult::Success)
 	{
 		return false;
@@ -304,8 +308,10 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 		return;
 	}
 
+	UpdateCachedPresetCollection();
+
 	EBIMResult asmResult = InstancePool.CreateAssemblyFromNodes(
-		Controller->GetDocument()->GetPresetCollection(),
+		CachedPresetCollection,
 		*GetWorld()->GetAuthGameMode<AEditModelGameMode>()->ObjectDatabase, CraftingAssembly);
 
 	bool bAssemblyHasPart = false;
@@ -760,8 +766,10 @@ bool UBIMDesigner::DeleteNode(const FBIMEditorNodeIDType& InstanceID)
 
 bool UBIMDesigner::AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex)
 {
+	UpdateCachedPresetCollection();
+
 	FBIMPresetEditorNodeSharedPtr newNode = InstancePool.CreateNodeInstanceFromPreset(
-		Controller->GetDocument()->GetPresetCollection(),
+		CachedPresetCollection,
 		ParentID, PresetID, ParentSetIndex, INDEX_NONE);
 	if (!newNode.IsValid())
 	{
@@ -989,7 +997,8 @@ void UBIMDesigner::ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 Sl
 			}
 			if (newPartPreset.IsValid())
 			{
-				result = InstancePool.SetPartPreset(Controller->GetDocument()->GetPresetCollection(), ParentID, SlotID, newPartPreset);
+				UpdateCachedPresetCollection();
+				result = InstancePool.SetPartPreset(CachedPresetCollection, ParentID, SlotID, newPartPreset);
 			}
 		}
 		else
@@ -1016,4 +1025,13 @@ void UBIMDesigner::CheckMouseButtonDownOnBIMDesigner()
 void UBIMDesigner::ToggleColorPickerVisibility(bool NewVisibility)
 {
 	BIM_EditColorBP->SetVisibility(NewVisibility ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+}
+
+void UBIMDesigner::UpdateCachedPresetCollection()
+{
+	CachedPresetCollection = Controller->GetDocument()->GetPresetCollection();
+	for (auto& inst : InstancePool.GetInstancePool())
+	{
+		CachedPresetCollection.AddPreset(inst->WorkingPresetCopy);
+	}
 }

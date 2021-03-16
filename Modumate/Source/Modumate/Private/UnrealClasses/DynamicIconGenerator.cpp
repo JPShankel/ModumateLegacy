@@ -158,7 +158,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssembly(const FGuid& AsmKey, UMateria
 	return false;
 }
 
-bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, const FBIMEditorNodeIDType& NodeID, bool bCanCache)
+bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool bUseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, const FBIMEditorNodeIDType& NodeID, bool bCanCache)
 {
 	OutMaterial = nullptr;
 
@@ -167,6 +167,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 	{
 		return false;
 	}
+
 
 	// First go through the presets that don't need render capture for icon
 	switch (preset->NodeScope)
@@ -193,12 +194,19 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 	// Some object types have special rule to render root node, ex: cabinet may not need extruded mesh on non root node
 	bool fromRootNode = false;
 
+	FBIMPresetInstance originalPreset = *preset;
+	const FBIMPresetEditorNodeSharedPtr nodeInst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+	if (nodeInst)
+	{
+		CachedPresetCollection.AddPreset(nodeInst->WorkingPresetCopy);
+	}
+
+
 	// TODO: Ideally this function will be in FBIMPresetEditor, in InstancePool of BIMDesigner
 	// If this assembly is a part of its parent assembly, find the partID associated with the meshes needed to isolate for render
 	if (preset->NodeScope == EBIMValueScope::Assembly || preset->NodeScope == EBIMValueScope::Part)
 	{
 		FString slotID;
-		const FBIMPresetEditorNodeSharedPtr nodeInst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
 		if (nodeInst && nodeInst->ParentInstance.Pin())
 		{
 			TArray<FBIMPresetPartSlot> partSlots;
@@ -251,7 +259,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 		}
 
 		// Check if this icon is used for slot based swapping menu
-		if (UseDependentPreset && assemblyPartIndex > 0)
+		if (bUseDependentPreset && assemblyPartIndex > 0)
 		{
 			/*
 			* To render a swapped part on a given assembly, we:
@@ -268,6 +276,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 				const FBIMAssemblySpec& craftingSpec = Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly;
 				if (!ensureAlways(assemblyPartIndex < craftingSpec.Parts.Num()))
 				{
+					CachedPresetCollection.AddPreset(originalPreset);
 					return false;
 				}
 
@@ -278,6 +287,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 				// A swapped part better have a parent
 				if (!ensureAlways(parentNode))
 				{
+					CachedPresetCollection.AddPreset(originalPreset);
 					return false;
 				}
 
@@ -317,6 +327,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 
 							// Restore the cached preset collection
 							CachedPresetCollection.AddPreset(*original);
+							CachedPresetCollection.AddPreset(originalPreset);
 							return true;
 						}
 
@@ -325,6 +336,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 				}
 				if (!bCaptureSuccess)
 				{
+					CachedPresetCollection.AddPreset(originalPreset);
 					return false;
 				}
 			}
@@ -344,17 +356,17 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 		bCaptureSuccess = SetIconMeshForProfile(PresetID, IconRenderTarget);
 		break;
 	case EBIMValueScope::Material:
-		bCaptureSuccess = SetIconMeshForMaterial(UseDependentPreset, PresetID, NodeID, IconRenderTarget);
+		bCaptureSuccess = SetIconMeshForMaterial(bUseDependentPreset, PresetID, NodeID, IconRenderTarget);
 		break;
 	case EBIMValueScope::Module:
 	case EBIMValueScope::Gap:
-		bCaptureSuccess = SetIconMeshForModule(UseDependentPreset, PresetID, NodeID, IconRenderTarget);
+		bCaptureSuccess = SetIconMeshForModule(bUseDependentPreset, PresetID, NodeID, IconRenderTarget);
 		break;
 	case EBIMValueScope::Mesh:
 		bCaptureSuccess = SetIconMeshForMesh(PresetID, IconRenderTarget);
 		break;
 	case EBIMValueScope::Layer:
-		if (UseDependentPreset)
+		if (bUseDependentPreset)
 		{
 			bCaptureSuccess = SetIconMeshForLayerPreset(PresetID, IconRenderTarget);
 		}
@@ -364,6 +376,8 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool UseDependentPreset, c
 		}
 		break;
 	}
+
+	CachedPresetCollection.AddPreset(originalPreset);
 
 	if (bCaptureSuccess)
 	{

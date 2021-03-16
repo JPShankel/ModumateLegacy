@@ -7,6 +7,7 @@
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "BIMKernel/Core/BIMKey.h"
+#include "BIMKernel/Presets/BIMPresetCollection.h"
 
 #include "BIMDesigner.generated.h"
 
@@ -35,6 +36,12 @@ protected:
 	bool DragTick = false;
 	FVector2D LastMousePosition = FVector2D::ZeroVector;
 	bool DragReset = true;
+
+	/*
+	* The BIM designer uses a cached copy of the preset collection from the document so it can generate icons for uncommitted changes
+	*/
+	FBIMPresetCollection CachedPresetCollection;
+	void UpdateCachedPresetCollection();
 
 	UPROPERTY()
 	class UBIMBlockNode* RootNode;

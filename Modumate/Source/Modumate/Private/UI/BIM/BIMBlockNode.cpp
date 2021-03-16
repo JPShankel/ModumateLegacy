@@ -218,15 +218,12 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	bNodeHasSlotPart = bAsSlot;
 	TitleNodeCollapsed->ChangeText(Node->CategoryTitle);
 	TitleNodeExpanded->ChangeText(Node->CategoryTitle);
-	const FBIMPresetInstance* preset = Controller->GetDocument()->GetPresetCollection().PresetFromGUID(PresetID);
-	if (preset != nullptr)
+
+	FText presetDisplayName;
+	if (Node->WorkingPresetCopy.TryGetProperty(BIMPropertyNames::Name, presetDisplayName))
 	{
-		FText presetDisplayName;
-		if (Node->WorkingPresetCopy.TryGetProperty(BIMPropertyNames::Name, presetDisplayName))
-		{
-			ComponentPresetListItem->MainText->ChangeText(presetDisplayName);
-			Preset_Name->ChangeText(presetDisplayName);
-		}
+		ComponentPresetListItem->MainText->ChangeText(presetDisplayName);
+		Preset_Name->ChangeText(presetDisplayName);
 	}
 
 	// Can't swap in root node
@@ -238,7 +235,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	{
 		FString debugString = 
 			FString::Printf(TEXT("ID: ")) + Node->GetInstanceID().ToString() + LINE_TERMINATOR 
-			+ preset->GUID.ToString() + LINE_TERMINATOR
+			+ Node->WorkingPresetCopy.GUID.ToString() + LINE_TERMINATOR
 			+ PresetID.ToString() + LINE_TERMINATOR;
 		
 		Button_Connector->SetToolTipText(FText::FromString(debugString));
