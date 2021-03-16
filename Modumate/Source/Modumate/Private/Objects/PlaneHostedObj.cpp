@@ -386,10 +386,21 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 					continue;
 				}
 
-				auto dwgLayerType = layerTypeMinorSurface;
+				Modumate::FModumateLayerType dwgLayerType;
+				ModumateUnitParams::FThickness lineThickness;
+				Modumate::FMColor lineColor(Modumate::FMColor::Black);
+
 				if (usePointsA && layerIdx == 0 || !usePointsA && layerIdx == numLayers - 1)
 				{
 					dwgLayerType = layerTypeOuterSurface;
+					lineThickness = outerThickness;
+					lineColor = outerColor;
+				}
+				else
+				{
+					dwgLayerType = layerTypeMinorSurface;
+					lineThickness = innerThickness;
+					lineColor = innerColor;
 				}
 
 				TArray<FVector> intersections;
@@ -398,25 +409,6 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 				intersections.Sort(UModumateGeometryStatics::Points3dSorter);
 				// we can make mask perimeters when there are an even amount of intersection between a simple polygon and a plane
 				bool bMakeMaskPerimeter = (intersections.Num() % 2 == 0);
-
-				ModumateUnitParams::FThickness lineThickness;
-				Modumate::FMColor lineColor = innerColor;
-				if (FMath::IsNearlyEqual(currentThickness, CachedLayerDims.StructureWidthStart) ||
-					FMath::IsNearlyEqual(currentThickness, CachedLayerDims.StructureWidthEnd, KINDA_SMALL_NUMBER))
-				{
-					lineThickness = structureThickness;
-					lineColor = structureColor;
-				}
-				else if (layerIdx == 0 || layerIdx == LayerGeometries.Num())
-				{
-					lineThickness = outerThickness;
-					lineColor = outerColor;
-				}
-				else
-				{
-					lineThickness = innerThickness;
-					lineColor = innerColor;
-				}
 
 				int32 linePoint = 0;
 
@@ -485,7 +477,7 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 								TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
 									FModumateUnitCoord2D::WorldCentimeters(clippedStart),
 									FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
-									lineThickness, lineColor);
+									outerThickness, outerColor);
 								ParentPage->Children.Add(line);
 								line->SetLayerTypeRecursive(layerTypeOuterSurface);
 							}
@@ -494,7 +486,7 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 								TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
 									FModumateUnitCoord2D::WorldCentimeters(clippedStart),
 									FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
-									lineThickness, lineColor);
+									outerThickness, outerColor);
 								ParentPage->Children.Add(line);
 								line->SetLayerTypeRecursive(layerTypeOuterSurface);
 							}
