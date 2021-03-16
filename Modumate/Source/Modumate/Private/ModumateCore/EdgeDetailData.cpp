@@ -122,6 +122,13 @@ FEdgeDetailData::FEdgeDetailData(const IMiterNode* MiterNode)
 	FillFromMiterNode(MiterNode);
 }
 
+void FEdgeDetailData::Reset()
+{
+	Conditions.Reset();
+	Overrides.Reset();
+	CachedConditionHash = 0;
+}
+
 void FEdgeDetailData::OrientData(int32 OrientationIdx)
 {
 	int32 numParticipants = Conditions.Num();
@@ -262,9 +269,7 @@ void FEdgeDetailData::UpdateConditionHash()
 
 void FEdgeDetailData::FillFromMiterNode(const IMiterNode* MiterNode)
 {
-	Conditions.Reset();
-	Overrides.Reset();
-	CachedConditionHash = 0;
+	Reset();
 
 	if (!ensure(MiterNode))
 	{

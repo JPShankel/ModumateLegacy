@@ -1,6 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
 
+#include "ModumateCore/EdgeDetailData.h"
 #include "Objects/EdgeBase.h"
 #include "Objects/MiterNode.h"
 #include "UI/Properties/InstPropWidgetEdgeDetail.h"
@@ -29,6 +30,7 @@ public:
 
 protected:
 	FMiterData CachedMiterData;
+	FEdgeDetailData CachedEdgeDetailData;
 	FGuid CachedEdgeDetailDataID;
 	uint32 CachedEdgeDetailConditionHash;
 	FColor BaseDefaultColor, BaseGroupedColor, HoverDefaultColor, HoverGroupedColor;

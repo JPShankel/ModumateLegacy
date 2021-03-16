@@ -69,6 +69,8 @@ struct FEdgeDetailData
 	FEdgeDetailData();
 	FEdgeDetailData(const IMiterNode* MiterNode);
 
+	void Reset();
+
 	// Generate an oriented detail data, for both direct comparison/application and hash calculation.
 	void OrientData(int32 OrientationIdx);
 

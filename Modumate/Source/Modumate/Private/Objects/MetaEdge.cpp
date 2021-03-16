@@ -72,13 +72,34 @@ bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 
 		CacheEdgeDetail();
 
-		// If this edge has a detail whose condition no longer applies to this edge's current status, then delete the detail as a side effect.
-		if (CachedEdgeDetailMOI && (CachedEdgeDetailMOI->GetAssembly().EdgeDetailData.CachedConditionHash != CachedEdgeDetailConditionHash) && OutSideEffectDeltas)
+		// If this edge has a detail, we may need to update it if conditions have changed.
+		if (CachedEdgeDetailMOI && OutSideEffectDeltas)
 		{
-			auto deleteObjectDelta = MakeShared<FMOIDelta>();
-			deleteObjectDelta->AddCreateDestroyState(CachedEdgeDetailMOI->GetStateData(), EMOIDeltaType::Destroy);
-			OutSideEffectDeltas->Add(deleteObjectDelta);
-			ResetEdgeDetail();
+			// If the current orientation is no longer valid, see if there is another valid one.
+			TArray<int32> tempDetailOrientations;
+			if (CachedEdgeDetailMOI->GetAssembly().EdgeDetailData.CompareConditions(CachedEdgeDetailData, tempDetailOrientations) && (tempDetailOrientations.Num() > 0))
+			{
+				if (!tempDetailOrientations.Contains(CachedEdgeDetailMOI->InstanceData.OrientationIndex))
+				{
+					auto updateOrientationDelta = MakeShared<FMOIDelta>();
+					auto& newStateData = updateOrientationDelta->AddMutationState(CachedEdgeDetailMOI);
+					FMOIEdgeDetailData newDetailInstanceData = CachedEdgeDetailMOI->InstanceData;
+					newDetailInstanceData.OrientationIndex = tempDetailOrientations[0];
+					if (ensure(newStateData.CustomData.SaveStructData(newDetailInstanceData)))
+					{
+						OutSideEffectDeltas->Add(updateOrientationDelta);
+						ResetEdgeDetail();
+					}
+				}
+			}
+			// If there is no valid orientation for the saved detail, then delete the detail.
+			else
+			{
+				auto deleteObjectDelta = MakeShared<FMOIDelta>();
+				deleteObjectDelta->AddCreateDestroyState(CachedEdgeDetailMOI->GetStateData(), EMOIDeltaType::Destroy);
+				OutSideEffectDeltas->Add(deleteObjectDelta);
+				ResetEdgeDetail();
+			}
 		}
 
 		CachedMiterData.CalculateMitering();
@@ -165,6 +186,7 @@ const FMiterData& AMOIMetaEdge::GetMiterData() const
 
 void AMOIMetaEdge::ResetEdgeDetail()
 {
+	CachedEdgeDetailData.Reset();
 	CachedEdgeDetailDataID.Invalidate();
 	CachedEdgeDetailMOI = nullptr;
 	CachedEdgeDetailConditionHash = 0;
@@ -188,6 +210,6 @@ void AMOIMetaEdge::CacheEdgeDetail()
 		CachedEdgeDetailDataID = CachedEdgeDetailMOI->GetAssembly().UniqueKey();
 	}
 
-	FEdgeDetailData currentEdgeDetail(GetMiterInterface());
-	CachedEdgeDetailConditionHash = currentEdgeDetail.CachedConditionHash;
+	CachedEdgeDetailData.FillFromMiterNode(GetMiterInterface());
+	CachedEdgeDetailConditionHash = CachedEdgeDetailData.CachedConditionHash;
 }

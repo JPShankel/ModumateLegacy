@@ -106,6 +106,7 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 			auto participantObj = document->GetObjectById(participantID);
 			if (!ensure(participantObj))
 			{
+				ClearEditor();
 				return;
 			}
 
@@ -122,6 +123,14 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 		if (bOrientationIsReversed)
 		{
 			Algo::Reverse(participantAssemblies);
+		}
+		else
+		{
+			// Since we are orienting the edge's data to match the preset, rather than the preset to match the edge (which is the case when applying a detail),
+			// we may need to rotate in the opposite direction. A reversed orientation cancels this out, so for example:
+			// A 4-participant edge detail preset 1234 with orientation 1 to match edge 2341 must then rotate the edge's miter participants 3 times to match the preset.
+			// The same preset 1234 with orientation 5 to match to match edge 3214 can still rotate the edge's miter participants 5 times to match the preset.
+			rotationIdx = (numParticipants - rotationIdx) % numParticipants;
 		}
 
 		for (int32 i = 0; i < rotationIdx; ++i)
@@ -148,6 +157,7 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 		int32 numLayers = detailCondition.LayerThicknesses.Num();
 		if (participantAssembly && !ensure(numLayers == participantAssembly->Layers.Num()))
 		{
+			ClearEditor();
 			return;
 		}
 
@@ -165,7 +175,7 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 		FText assemblyNameText = participantAssembly ? FText::Format(LOCTEXT("AssemblyNameFormat", ", {0}"), FText::FromString(participantAssembly->DisplayName)) : FText::GetEmpty();
 
 		FText assemblyTitle = FText::Format(LOCTEXT("AssemblyTitleFormat", "{0} {1}, ({2}){3}"),
-			numberPrefix, participantIdx + 1, totalThicknessText, assemblyNameText);
+			numberPrefix, typeIndex, totalThicknessText, assemblyNameText);
 		presetTitle->AssemblyTitle->ModumateTextBlock->SetText(assemblyTitle);
 
 		// Create a header for the layer rows
@@ -198,6 +208,7 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 				if (!ensure(layerPreset &&
 					FMath::IsNearlyEqual(layerThicknessInches, UModumateDimensionStatics::CentimetersToInches64(participantLayer.ThicknessCentimeters))))
 				{
+					ClearEditor();
 					return;
 				}
 
