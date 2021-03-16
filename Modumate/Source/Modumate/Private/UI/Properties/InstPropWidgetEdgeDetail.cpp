@@ -63,7 +63,7 @@ void UInstPropWidgetEdgeDetail::DisplayValue()
 	{
 		if (numDetailPresets == 0)
 		{
-			DetailName->ModumateTextBlock->SetText(noDetailText);
+			DetailName->ChangeText(noDetailText);
 		}
 		else if (bSinglePresetID)
 		{
@@ -73,27 +73,27 @@ void UInstPropWidgetEdgeDetail::DisplayValue()
 				FBIMPresetInstance* detailPresetInst = controller ? controller->GetDocument()->GetPresetCollection().PresetFromGUID(detailPresetID) : nullptr;
 				if (detailPresetInst)
 				{
-					DetailName->ModumateTextBlock->SetText(detailPresetInst->DisplayName);
+					DetailName->ChangeText(detailPresetInst->DisplayName);
 					bAllowEdit = true;
 				}
 				else
 				{
-					DetailName->ModumateTextBlock->SetText(LOCTEXT("EdgeDetail_Unknown", "Unknown"));
+					DetailName->ChangeText(LOCTEXT("EdgeDetail_Unknown", "Unknown"));
 				}
 			}
 			else
 			{
-				DetailName->ModumateTextBlock->SetText(noDetailText);
+				DetailName->ChangeText(noDetailText);
 			}
 		}
 		else if (numDetailPresets > 1)
 		{
-			DetailName->ModumateTextBlock->SetText(LOCTEXT("EdgeDetail_MixedValues", "Mixed Values"));
+			DetailName->ChangeText(LOCTEXT("EdgeDetail_MixedValues", "Mixed Values"));
 		}
 	}
 	else
 	{
-		DetailName->ModumateTextBlock->SetText(LOCTEXT("EdgeDetail_MixedConditions", "Mixed Conditions"));
+		DetailName->ChangeText(LOCTEXT("EdgeDetail_MixedConditions", "Mixed Conditions"));
 	}
 
 	ButtonCreate->SetVisibility(bAllowCreate ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
