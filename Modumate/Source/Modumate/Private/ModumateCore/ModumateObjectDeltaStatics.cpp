@@ -171,10 +171,7 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 				continue;
 			}
 
-			for (auto& delta : surfaceGraphDeltas)
-			{
-				deltas.Add(MakeShareable(new FGraph2DDelta{ delta }));
-			}
+			doc->FinalizeGraph2DDeltas(surfaceGraphDeltas, nextID, deltas);
 		}
 	}
 	else
@@ -402,10 +399,7 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 		addDelta.DeltaType = EGraph2DDeltaType::Add;
 		OutDeltas.Add(MakeShared<FGraph2DDelta>(addDelta));
 			
-		for (auto& delta : sgDeltas)
-		{
-			OutDeltas.Add(MakeShared<FGraph2DDelta>(delta));
-		}
+		doc->FinalizeGraph2DDeltas(sgDeltas, nextID, OutDeltas);
 	}
 
 	// second pass - attachments
@@ -498,11 +492,7 @@ bool FModumateObjectDeltaStatics::PasteObjectsWithinSurfaceGraph(const FMOIDocum
 	{
 		return false;
 	}
-
-	for (auto& delta : sgDeltas)
-	{
-		OutDeltas.Add(MakeShared<FGraph2DDelta>(delta));
-	}
+	doc->FinalizeGraph2DDeltas(sgDeltas, nextID, OutDeltas);
 
 	auto attachmentDelta = MakeShared<FMOIDelta>();
 	for (auto& objRec : InRecord->ObjectData)

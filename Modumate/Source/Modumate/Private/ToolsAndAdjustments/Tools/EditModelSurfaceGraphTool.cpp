@@ -457,10 +457,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfa
 	// We no longer need neither an existing target surface graph, or a temporary one used to create deltas.
 	HitSurfaceGraph.Reset();
 
-	for (FGraph2DDelta& graphDelta : fillGraphDeltas)
-	{
-		OutDeltas.Add(MakeShared<FGraph2DDelta>(graphDelta));
-	}
+	GameState->Document->FinalizeGraph2DDeltas(fillGraphDeltas, NextID, OutDeltas);
 
 	return (OutDeltas.Num() > 0);
 }
@@ -486,9 +483,7 @@ bool USurfaceGraphTool::AddEdge(FVector StartPos, FVector EndPos)
 	if (addEdgeDeltas.Num() > 0)
 	{
 		TArray<FDeltaPtr> deltaPtrs;
-		Algo::Transform(addEdgeDeltas, deltaPtrs, [](const FGraph2DDelta &graphDelta) {
-			return MakeShared<FGraph2DDelta>(graphDelta);
-		});
+		GameState->Document->FinalizeGraph2DDeltas(addEdgeDeltas, nextID, deltaPtrs);
 
 		if (!GameState->Document->ApplyDeltas(deltaPtrs, GetWorld()))
 		{

@@ -276,10 +276,7 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 					GraphVertexToBoundVertex.Remove(id);
 				}
 
-				for (auto& delta : deleteDeltas)
-				{
-					validSideEffectDeltas.Add(MakeShared<FGraph2DDelta>(delta));
-				}
+				doc->FinalizeGraph2DDeltas(deleteDeltas, nextID, validSideEffectDeltas);
 
 				// adds
 				TArray<int32> addIDs;
@@ -302,11 +299,7 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 						doc->SetNextID(doc->GetNextAvailableID(), ID);
 						return true;
 					}
-
-					for (auto& delta : boundsDeltas)
-					{
-						validSideEffectDeltas.Add(MakeShared<FGraph2DDelta>(delta));
-					}
+					doc->FinalizeGraph2DDeltas(boundsDeltas, nextID, validSideEffectDeltas);
 				}
 			}
 
@@ -324,10 +317,7 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 			if (bValidGraph)
 			{
 				OutSideEffectDeltas->Append(validSideEffectDeltas);
-				for (auto& delta : moveDeltas)
-				{
-					OutSideEffectDeltas->Add(MakeShared<FGraph2DDelta>(delta));
-				}
+				doc->FinalizeGraph2DDeltas(moveDeltas, nextID, *OutSideEffectDeltas);
 			}
 			// Otherwise, delete the surface graph if it cannot be preserved after the underlying geometry changes
 			else

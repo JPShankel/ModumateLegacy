@@ -163,42 +163,19 @@ namespace Modumate
 			int32 endVertexID = OutCopiedToPastedIDs[kvp.Value.VertexIDs[1]][0];
 			auto startVertex = FindVertex(startVertexID);
 			auto endVertex = FindVertex(endVertexID);
-			if (bIsPreview)
+
+			TArray<FGraph2DDelta> edgeDeltas;
+			if (!AddEdgesBetweenVertices(edgeDeltas, NextID, startVertexID, endVertexID))
 			{
-				bool bOutForward;
-				const FGraph2DEdge *existingEdge = FindEdgeByVertices(startVertexID, endVertexID, bOutForward);
-				if (existingEdge)
-				{
-					OutCopiedToPastedIDs.Add(kvp.Key, { existingEdge->ID });
-				}
-				else
-				{
-					FGraph2DDelta addEdgeDelta(ID);
-					AddEdgeDirect(addEdgeDelta, NextID, startVertexID, endVertexID);
-					if (!ApplyDelta(addEdgeDelta))
-					{
-						return false;
-					}
-					OutDeltas.Add(addEdgeDelta);
-					OutCopiedToPastedIDs.Add(kvp.Key, { NextID - 1 });
-				}
+				ApplyInverseDeltas(OutDeltas);
+				return false;
 			}
-			else
-			{
-				TArray<FGraph2DDelta> edgeDeltas;
-				if (!AddEdgesBetweenVertices(edgeDeltas, NextID, startVertexID, endVertexID))
-				{
-					ApplyInverseDeltas(OutDeltas);
-					return false;
-				}
-				OutDeltas.Append(edgeDeltas);
+			OutDeltas.Append(edgeDeltas);
 
-				TSet<int32> outEdges;
-				AggregateAddedEdges(edgeDeltas, outEdges, startVertex->Position, endVertex->Position);
+			TSet<int32> outEdges;
+			AggregateAddedEdges(edgeDeltas, outEdges, startVertex->Position, endVertex->Position);
 
-				OutCopiedToPastedIDs.Add(kvp.Key, outEdges.Array());
-			}
-
+			OutCopiedToPastedIDs.Add(kvp.Key, outEdges.Array());
 		}
 
 		if (!CalculatePolygons(OutDeltas, NextID))

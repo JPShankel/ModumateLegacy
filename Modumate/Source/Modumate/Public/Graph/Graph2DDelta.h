@@ -38,30 +38,6 @@ enum class EGraph2DDeltaType
 	Remove,
 };
 
-// TODO: this is redundant with FGraph3DHostedObjectDelta
-USTRUCT()
-struct FGraph2DHostedObjectDelta
-{
-	GENERATED_BODY()
-		
-	UPROPERTY()
-	int32 PreviousHostedObjID = MOD_ID_NONE;
-
-	UPROPERTY()
-	int32 PreviousParentID = MOD_ID_NONE;
-
-	UPROPERTY()
-	int32 NextParentID = MOD_ID_NONE;
-
-	FGraph2DHostedObjectDelta() = default;
-
-	FGraph2DHostedObjectDelta(int32 prevHostedObjID, int32 prevParentID, int32 nextParentID)
-		: PreviousHostedObjID(prevHostedObjID)
-		, PreviousParentID(prevParentID)
-		, NextParentID(nextParentID)
-	{ }
-};
-
 USTRUCT()
 struct MODUMATE_API FGraph2DFaceVertexIDsDelta
 {

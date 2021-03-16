@@ -136,7 +136,8 @@ public:
 	bool MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height);
 
 	// Allocates IDs for new objects, finds new parent IDs for objects, and marks objects for deletion after another graph operation
-	bool FinalizeGraph2DDelta(const FGraph2DDelta &Delta, TMap<int32, FGraph2DHostedObjectDelta> &OutParentIDUpdates);
+	bool FinalizeGraph2DDeltas(const TArray<FGraph2DDelta> &InDeltas, int32 &InNextID, TArray<FDeltaPtr> &OutDeltas);
+	bool FinalizeGraph2DDelta(const FGraph2DDelta &Delta, int32 &InNextID, TArray<FDeltaPtr> &OutSideEffectDeltas);
 	bool FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, const FGraph3DDelta &Delta, TArray<FDeltaPtr> &OutSideEffectDeltas);
 
 	bool GetVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas);
