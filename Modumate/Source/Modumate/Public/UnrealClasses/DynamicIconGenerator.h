@@ -139,8 +139,8 @@ protected:
 	class UMaterialInstanceDynamic* DynCustomMaterial;
 
 private:
-	int32 StairLayerTreadAssemblyPartIndex = 1;
-	int32 StairLayerRiserAssemblyPartIndex = 2;
+	int32 StairLayerTreadAssemblyPartIndex = -1;
+	int32 StairLayerRiserAssemblyPartIndex = -2;
 
 public:
 
