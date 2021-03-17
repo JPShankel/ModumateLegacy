@@ -309,12 +309,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		{
 			playerState->bDevelopDDL2Data = hasShow ? show : !playerState->bDevelopDDL2Data;
 		}
-#if WITH_EDITOR
-		else if (type.Equals(TEXT("quantities")))
-		{
-			GetWorld()->GetFirstPlayerController<AEditModelPlayerController>()->OnCreateQuantitiesCsv();
-		}
-#endif
 
 		return true;
 	});

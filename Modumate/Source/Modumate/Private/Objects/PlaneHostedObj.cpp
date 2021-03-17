@@ -685,8 +685,16 @@ void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraf
 
 		};
 
-		addPerimeterLines(LayerGeometries[0].OriginalPointsA);
-		addPerimeterLines(LayerGeometries[numLayers - 1].OriginalPointsB);
+		// Perimeter lines:
+		for (int32 layer = 0; layer < numLayers; ++layer)
+		{
+			if (layer == 0
+				|| LayerGeometries[layer].OriginalPointsA != LayerGeometries[layer - 1].OriginalPointsB)
+			{
+				addPerimeterLines(LayerGeometries[layer].OriginalPointsA);
+			}
+			addPerimeterLines(LayerGeometries[layer].OriginalPointsB);
+		}
 
 		auto addOpeningLines = [&backgroundLines](const FLayerGeomDef& layer, FVector parentLocation, bool bSideA)
 		{
@@ -705,9 +713,11 @@ void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraf
 
 		};
 
+		// Opening perimeter lines (front & back):
 		addOpeningLines(LayerGeometries[0], parentLocation, true);
 		addOpeningLines(LayerGeometries[numLayers - 1], parentLocation, false);
 
+		// Opening corner lines:
 		for (const auto& hole : LayerGeometries[0].Holes3D)
 		{
 			for (const auto& p : hole.Points)
@@ -718,13 +728,24 @@ void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraf
 			}
 		}
 
-		// Corner lines.
+		// Perimeter corner lines.
 		int32 numPoints = LayerGeometries[0].OriginalPointsA.Num();
-		for (int32 p = 0; p < numPoints; ++p)
+		for (int32 corner = 0; corner < numPoints; ++corner)
 		{
-			FEdge line(LayerGeometries[0].OriginalPointsA[p] + parentLocation,
-				LayerGeometries[numLayers - 1].OriginalPointsB[p] + parentLocation);
-			backgroundLines.Emplace(line, layerType);
+			FVector previousPoint = LayerGeometries[0].OriginalPointsA[corner] + parentLocation;
+			for (const auto layer: LayerGeometries)
+			{
+				FVector pA = layer.OriginalPointsA[corner] + parentLocation;
+				FVector pB = layer.OriginalPointsB[corner] + parentLocation;
+				if (previousPoint != pA)
+				{
+					FEdge line(previousPoint, pA);
+					backgroundLines.Emplace(line, layerType);
+				}
+				FEdge line(pA, pB);
+				backgroundLines.Emplace(line, layerType);
+				previousPoint = pB;
+			}
 		}
 
 		FVector2D boxClipped0;
