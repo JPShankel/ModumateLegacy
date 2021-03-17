@@ -47,7 +47,7 @@ void AMOIStaircase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoin
 	const AModumateObjectInstance *planeParent = GetParentObject();
 	if (planeParent)
 	{
-		planeParent->GetStructuralPointsAndLines(outPoints, outLines, true);
+		planeParent->GetStructuralPointsAndLines(outPoints, outLines, bForSnapping, bForSelection);
 	}
 }
 
