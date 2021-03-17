@@ -478,7 +478,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				FString ncp = Row[presetMatrix.First];
 				if (!ncp.IsEmpty())
 				{
-					Preset.MyTagPath.FromString(Row[presetMatrix.First]);
+					Preset.MyTagPath.FromString(NormalizeCell(ncp));
 				}
 			}
 			break;

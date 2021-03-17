@@ -881,12 +881,17 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		}
 	}
 
-	constexpr int32 firstMaterialBindingVersion = 11;
-	if (DocRecordVersion < firstMaterialBindingVersion)
+	constexpr int32 presetFixVersion = 12;
+	if (DocRecordVersion < presetFixVersion)
 	{		
 		TMap<FGuid, FBIMPresetInstance> fixedPresets = DocRecord.PresetCollection.PresetsByGUID;
 		for (auto& kvp : fixedPresets)
 		{
+			FString ncp;
+			kvp.Value.MyTagPath.ToString(ncp);
+			ncp = FString(ncp.Replace(TEXT(" "), TEXT("")));
+			kvp.Value.MyTagPath.FromString(ncp);
+
 			// If this is an over-write of an OOTB, get the updated version and use its data
 			const FBIMPresetInstance* updated = InDB.GetPresetCollection().PresetFromGUID(kvp.Key);
 			if (updated != nullptr)

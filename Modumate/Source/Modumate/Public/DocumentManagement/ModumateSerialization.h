@@ -314,7 +314,8 @@ namespace Modumate
 	// Version 9: Object state data serialized directly, deprecated FMOIDataRecord
 	// Version 10: BIM Taxonomy present in serialized presets
 	// Version 11: Fix lost material bindings
-	static const int32 DocVersion = 11;
+	// Version 12: Strip custom preset NCPs of spaces
+	static const int32 DocVersion = 12;
 
 	static const TCHAR * DocObjectInstanceField = TEXT("ModumateObjects");
 	static const TCHAR * DocHeaderField = TEXT("ModumateHeader");
