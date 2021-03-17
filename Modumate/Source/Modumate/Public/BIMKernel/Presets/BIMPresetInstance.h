@@ -184,6 +184,9 @@ struct MODUMATE_API FBIMPresetInstance
 	UPROPERTY()
 	FStructDataWrapper CustomData;
 
+	UPROPERTY()
+	TMap<FString, FName> FormItemToProperty_DEPRECATED;
+
 	bool HasProperty(const FBIMNameType& Name) const;
 
 	template<class T>

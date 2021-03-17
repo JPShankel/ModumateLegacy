@@ -883,8 +883,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 
 	constexpr int32 firstMaterialBindingVersion = 11;
 	if (DocRecordVersion < firstMaterialBindingVersion)
-	{
-		
+	{		
 		TMap<FGuid, FBIMPresetInstance> fixedPresets = DocRecord.PresetCollection.PresetsByGUID;
 		for (auto& kvp : fixedPresets)
 		{
@@ -953,6 +952,64 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 					}
 				}
 #endif
+			}
+
+			/*
+			* Upgrade deprecated BIM form
+			*/
+			if (kvp.Value.FormItemToProperty_DEPRECATED.Num() > 0)
+			{
+				FBIMPresetMaterialBindingSet bindingSet;
+				static const FName defaultChannel = TEXT("Finish1");
+
+				// Deprecated map of form display text to property QN
+				for (auto& fitp : kvp.Value.FormItemToProperty_DEPRECATED)
+				{
+					FBIMPropertyKey propKey(fitp.Value);
+
+					switch (propKey.Scope)
+					{
+
+					// Dimensions and meshes are properties
+					case EBIMValueScope::Dimension:
+						kvp.Value.PresetForm.AddPropertyElement(FText::FromString(fitp.Key), fitp.Value, EBIMPresetEditorField::DimensionProperty);
+						break;
+
+					case EBIMValueScope::Mesh:
+					case EBIMValueScope::Profile:
+						kvp.Value.PresetForm.AddPropertyElement(FText::FromString(fitp.Key), fitp.Value, EBIMPresetEditorField::AssetProperty);
+						break;
+
+					// Colors and materials require upgraded material bindings
+					case EBIMValueScope::Color:
+						if (bindingSet.MaterialBindings.Num() == 0)
+						{
+							bindingSet.MaterialBindings.AddDefaulted();
+							bindingSet.MaterialBindings.Last().InnerMaterialGUID = InDB.GetDefaultMaterialGUID();
+							bindingSet.MaterialBindings.Last().Channel = defaultChannel;
+						}
+						kvp.Value.PresetForm.AddMaterialBindingElement(FText::FromString(fitp.Key), defaultChannel, EMaterialChannelFields::ColorTint);
+						ensureAlways(kvp.Value.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, bindingSet.MaterialBindings.Last().ColorHexValue));
+						break;
+
+					case EBIMValueScope::RawMaterial:
+						if (bindingSet.MaterialBindings.Num() == 0)
+						{
+							bindingSet.MaterialBindings.AddDefaulted();
+							bindingSet.MaterialBindings.Last().ColorHexValue = FColor::White.ToString();
+							bindingSet.MaterialBindings.Last().Channel = defaultChannel;
+						}
+						kvp.Value.PresetForm.AddMaterialBindingElement(FText::FromString(fitp.Key), defaultChannel, EMaterialChannelFields::InnerMaterial);
+						ensureAlways(kvp.Value.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, bindingSet.MaterialBindings.Last().InnerMaterialGUID));
+						break;
+					};
+				}
+
+				// If we got a material binding, set custom data for it
+				if (bindingSet.MaterialBindings.Num() == 1)
+				{
+					kvp.Value.CustomData.SaveStructData(bindingSet, true);
+				}
 			}
 		}
 		PresetsByGUID.Append(fixedPresets);
