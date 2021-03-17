@@ -343,6 +343,14 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(bool bUseDependentPreset, 
 		}
 		else
 		{
+			// If this preset is rendering as assembly, make sure it's the same object type
+			// ex: Prevent wall preset form being render as stair tread assembly 
+			if (preset->ObjectType != EObjectType::OTNone && 
+				preset->ObjectType != Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly.ObjectType)
+			{
+				OutMaterial = IconSwapWarningMaterial;
+				return true;
+			}
 			bCaptureSuccess = SetIconMeshForAssemblyType(Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly, IconRenderTarget, assemblyPartIndex, fromRootNode);
 		}
 	}
