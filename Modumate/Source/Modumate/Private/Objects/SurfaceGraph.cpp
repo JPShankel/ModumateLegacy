@@ -108,9 +108,13 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 				{
 					FVector2D prevPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
 					Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(prevPos2D);
-					if (ensure(vertex) && poly->VertexIDs.Contains(vertex->ID))
+					if ((vertex) && poly->VertexIDs.Contains(vertex->ID))
 					{
 						FaceIdxToVertexID.Add(facePointIdx, vertex->ID);
+					}
+					else
+					{
+						bLinked = false;
 					}
 				}
 			}
@@ -183,7 +187,7 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 			// For now, only attempt to generate new vertex movement positions for points that are part of the surface graph bounds,
 			// and are included in the surface graph's mounting face point list
 			int32 numCachedFacePoints = CachedFacePoints.Num();
-			if (numCachedFacePoints != numIDs)
+			if (numCachedFacePoints != numIDs && bLinked)
 			{
 				bFoundAllVertices = false;
 			}
