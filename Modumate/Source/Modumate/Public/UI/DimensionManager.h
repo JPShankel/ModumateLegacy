@@ -50,7 +50,9 @@ private:
 	TArray<int32> LastSelectedEdgeIDs;
 	TArray<int32> CurrentGraphDimensionStrings;
 
+	UPROPERTY()
 	TMap<int32, ADimensionActor*> DimensionActors;
+
 	int32 ActiveActorID = MOD_ID_NONE;
 	int32 NextID = 1;
 };

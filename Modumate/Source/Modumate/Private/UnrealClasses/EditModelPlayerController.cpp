@@ -333,6 +333,8 @@ void AEditModelPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReaso
 	GetWorldTimerManager().ClearTimer(ControllerTimer);
 
 	EndTelemetrySession();
+	auto dimensionManager = gameInstance->DimensionManager;
+	dimensionManager->Reset();
 
 	// Clean up input telemetry files
 	FString path = FModumateUserSettings::GetLocalTempDir() / InputTelemetryDirectory;
