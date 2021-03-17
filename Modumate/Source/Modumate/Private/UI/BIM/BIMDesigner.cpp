@@ -1003,6 +1003,14 @@ void UBIMDesigner::ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 Sl
 		}
 		else
 		{
+			// To turn off slot, make sure it is not being connected to a node that's currently selected
+			// If the node is selected, use its parent for selection
+			FBIMEditorNodeIDType connectedNodeID;
+			EBIMResult nodeFoundResult = nodeParent->FindNodeIDConnectedToSlot(nodeParent->OriginalPresetCopy.PartSlots[SlotID].SlotPresetGUID, connectedNodeID);
+			if (nodeFoundResult == EBIMResult::Success && connectedNodeID == SelectedNodeID)
+			{
+				SelectedNodeID = ParentID;
+			}
 			result = InstancePool.ClearPartPreset(ParentID, SlotID);
 		}
 
