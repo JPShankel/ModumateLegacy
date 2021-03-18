@@ -22,6 +22,8 @@ public:
 	virtual bool FrameUpdate() override;
 
 protected:
+	bool GetTrimCreationDeltas(int32 InTargetEdgeID, int32& NextID, TArray<FDeltaPtr>& OutDeltas) const;
+
 	int32 TargetEdgeID;
 	FVector TargetEdgeStartPos, TargetEdgeEndPos;
 

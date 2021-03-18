@@ -2807,7 +2807,11 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 	float objectHitDist = FLT_MAX;
 	FHitResult hitSingleResult;
 	AActor *directHitActor = nullptr;
+	const AModumateObjectInstance* directHitMOI = nullptr;
 	FVector directHitNormal(ForceInitToZero);
+	TArray<int32> directHitPlaneNeighbors;
+	bool bDirectHitPlane = false;
+
 	if (LineTraceSingleAgainstMOIs(hitSingleResult, mouseLoc, mouseLoc + MaxRaycastDist * mouseDir))
 	{
 		objectHit.Valid = true;
@@ -2815,15 +2819,17 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 		objectHit.Location = hitSingleResult.Location;
 		objectHit.Normal = hitSingleResult.Normal;
 
-		const AModumateObjectInstance* moi = Document->ObjectFromActor(objectHit.Actor.Get());
-		EObjectType objectType = moi ? moi->GetObjectType() : EObjectType::OTNone;
+		directHitMOI = Document->ObjectFromActor(objectHit.Actor.Get());
+		EObjectType objectType = directHitMOI ? directHitMOI->GetObjectType() : EObjectType::OTNone;
 		// TODO: this should be an interface function or there should be a way to find the planar object types
 		if ((objectType == EObjectType::OTMetaPlane) || (objectType == EObjectType::OTSurfacePolygon))
 		{
-			FVector moiNormal = moi->GetNormal();
-			FPlane plane = FPlane(moi->GetLocation(), moiNormal);
+			FVector moiNormal = directHitMOI->GetNormal();
+			FPlane plane = FPlane(directHitMOI->GetLocation(), moiNormal);
 			objectHit.Normal = (moiNormal | objectHit.Normal) > 0 ? moiNormal : -moiNormal;
 			objectHit.Location = FVector::PointPlaneProject(objectHit.Location, plane);
+			directHitMOI->GetConnectedIDs(directHitPlaneNeighbors);
+			bDirectHitPlane = true;
 		}
 
 		objectHit.SnapType = ESnapType::CT_FACESELECT;
@@ -2842,8 +2848,10 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 	if (bCheckSnapping)
 	{
 		// Update the snapping view (lines and points that can be snapped to)
+		// If we directly hit a planar MOI, then only get snapping points from its neighbors
 		int32 mouseQueryBitfield = MOITraceObjectQueryParams.GetQueryBitfield();
-		SnappingView->UpdateSnapPoints(SnappingIDsToIgnore, mouseQueryBitfield, true, false);
+		auto* snappingViewIDList = bDirectHitPlane ? &directHitPlaneNeighbors : nullptr;
+		SnappingView->UpdateSnapPoints(SnappingIDsToIgnore, mouseQueryBitfield, true, false, snappingViewIDList);
 
 		CurHitPointLocations.Reset();
 		CurHitLineLocations.Reset();
@@ -2923,8 +2931,12 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 		static TArray<FStructureLine> tempLinesForCollision;
 		// TODO: we know this is inefficient, should replace with an interface that allows for optimization
 		// (like not needing to iterate over every single object in the scene)
-		for (AModumateObjectInstance *moi : Document->GetObjectInstances())
+		// If we directly hit a planar MOI, then only test structure-point/line-based collision of its neighbors.
+		auto& allObjects = Document->GetObjectInstances();
+		int32 numObjects = bDirectHitPlane ? directHitPlaneNeighbors.Num() : allObjects.Num();
+		for (int32 objIdx = 0; objIdx < numObjects; ++objIdx)
 		{
+			auto* moi = bDirectHitPlane ? Document->GetObjectById(directHitPlaneNeighbors[objIdx]) : allObjects[objIdx];
 			if (moi && moi->IsCollisionEnabled() && moi->UseStructureDataForCollision())
 			{
 				moi->RouteGetStructuralPointsAndLines(tempPointsForCollision, tempLinesForCollision, false, false, cullingPlane);

@@ -20,18 +20,26 @@ FModumateSnappingView::~FModumateSnappingView()
 
 }
 
-void FModumateSnappingView::UpdateSnapPoints(const TSet<int32> &idsToIgnore, int32 collisionChannelMask, bool bForSnapping, bool bForSelection)
+void FModumateSnappingView::UpdateSnapPoints(const TSet<int32> &idsToIgnore, int32 collisionChannelMask, bool bForSnapping, bool bForSelection, const TArray<int32>* idsToUse)
 {
 	SCOPE_CYCLE_COUNTER(STAT_ModumateSnapPoints);
 	Corners.Reset();
 	LineSegments.Reset();
 	SnapIndicesByObjectID.Reset();
 
-	auto &objects = Document->GetObjectInstances();
+	auto& objects = Document->GetObjectInstances();
 	FPlane cullingPlane = Controller->GetCurrentCullingPlane();
 
-	for (auto *object : objects)
+	// If idsToUse is provided, then iterate through that list rather than the list of all objects provided by the Document.
+	int32 numObjects = idsToUse ? idsToUse->Num() : objects.Num();
+	for (int32 objIdx = 0; objIdx < numObjects; ++objIdx)
 	{
+		auto* object = idsToUse ? Document->GetObjectById((*idsToUse)[objIdx]) : objects[objIdx];
+		if (object == nullptr)
+		{
+			continue;
+		}
+
 		ECollisionChannel objectCollisionType = UModumateTypeStatics::CollisionTypeFromObjectType(object->GetObjectType());
 		bool bObjectInMouseQuery = (collisionChannelMask & ECC_TO_BITFIELD(objectCollisionType)) != 0;
 

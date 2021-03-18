@@ -40,7 +40,7 @@ public:
 
 	TMap<int32, FSnapIndices> SnapIndicesByObjectID;
 
-	void UpdateSnapPoints(const TSet<int32> &idsToIgnore, int32 collisionChannelMask = ~0, bool bForSnapping = false, bool bForSelection = false);
+	void UpdateSnapPoints(const TSet<int32>& idsToIgnore, int32 collisionChannelMask = ~0, bool bForSnapping = false, bool bForSelection = false, const TArray<int32>* idsToUse = nullptr);
 
 	// Get the points and lines for a bounding box.
 	// Optionally constrain them to a single side of the box based on a unit axis.

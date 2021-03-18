@@ -188,6 +188,22 @@ void AModumateObjectInstance::GetConnectedIDs(TArray<int32> &connectedIDs) const
 				{
 					connectedIDs.Add(FMath::Abs(directedEdgeID));
 				}
+
+				for (int32 containedFaceID : graphFace->ContainedFaceIDs)
+				{
+					if (const FGraph3DFace* containedFace = graph.FindFace(containedFaceID))
+					{
+						for (int32 vertexID : containedFace->VertexIDs)
+						{
+							connectedIDs.Add(vertexID);
+						}
+
+						for (FGraphSignedID directedEdgeID : containedFace->EdgeIDs)
+						{
+							connectedIDs.Add(FMath::Abs(directedEdgeID));
+						}
+					}
+				}
 			}
 			return;
 		default:
@@ -228,7 +244,7 @@ void AModumateObjectInstance::GetConnectedIDs(TArray<int32> &connectedIDs) const
 				}
 				return;
 			case EObjectType::OTSurfacePolygon:
-				if (const FGraph2DPolygon *polygon = surfaceGraph->FindPolygon(ID))
+				if (const FGraph2DPolygon* polygon = surfaceGraph->FindPolygon(ID))
 				{
 					for (int32 vertexID : polygon->VertexIDs)
 					{
@@ -238,6 +254,22 @@ void AModumateObjectInstance::GetConnectedIDs(TArray<int32> &connectedIDs) const
 					for (FGraphSignedID directedEdgeID : polygon->Edges)
 					{
 						connectedIDs.Add(FMath::Abs(directedEdgeID));
+					}
+
+					for (int32 containedPolyID : polygon->ContainedPolyIDs)
+					{
+						if (const FGraph2DPolygon* containedPoly = surfaceGraph->FindPolygon(containedPolyID))
+						{
+							for (int32 vertexID : containedPoly->VertexIDs)
+							{
+								connectedIDs.Add(vertexID);
+							}
+
+							for (FGraphSignedID directedEdgeID : containedPoly->Edges)
+							{
+								connectedIDs.Add(FMath::Abs(directedEdgeID));
+							}
+						}
 					}
 				}
 				return;

@@ -49,16 +49,12 @@ bool UTrimTool::Deactivate()
 
 bool UTrimTool::BeginUse()
 {
-	if (TargetEdgeID != MOD_ID_NONE)
+	GameState->Document->ClearPreviewDeltas(Controller->GetWorld());
+
+	int32 nextID = GameState->Document->GetNextAvailableID();
+	if (GetTrimCreationDeltas(TargetEdgeID, nextID, CurDeltas))
 	{
-		FMOIStateData stateData(GameState->Document->GetNextAvailableID(), EObjectType::OTTrim, TargetEdgeID);
-		stateData.AssemblyGUID = AssemblyGUID;
-		stateData.CustomData.SaveStructData(PendingTrimData);
-
-		auto delta = MakeShared<FMOIDelta>();
-		delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
-		GameState->Document->ApplyDeltas({ delta }, GetWorld());
-
+		GameState->Document->ApplyDeltas(CurDeltas, GetWorld());
 		EndUse();
 	}
 	else
@@ -76,10 +72,12 @@ bool UTrimTool::FrameUpdate()
 	TargetEdgeID = MOD_ID_NONE;
 	PendingTrimData = FMOITrimData(FMOITrimData::CurrentVersion);
 
-	if (!ensure(Controller && GameState))
+	if (!ensure(Controller && Controller->EMPlayerState && GameState && GameState->Document))
 	{
 		return false;
 	}
+
+	GameState->Document->StartPreviewing();
 
 	const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
 	const AModumateObjectInstance* targetMOI = GameState->Document->ObjectFromActor(cursor.Actor);
@@ -152,6 +150,32 @@ bool UTrimTool::FrameUpdate()
 			Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(TargetEdgeStartPos, TargetEdgeEndPos, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness));
 		}
 	}
+
+	int32 nextID = GameState->Document->GetNextAvailableID();
+	if (GetTrimCreationDeltas(TargetEdgeID, nextID, CurDeltas))
+	{
+		GameState->Document->ApplyPreviewDeltas(CurDeltas, Controller->GetWorld());
+	}
+
+	return true;
+}
+
+bool UTrimTool::GetTrimCreationDeltas(int32 InTargetEdgeID, int32& NextID, TArray<FDeltaPtr>& OutDeltas) const
+{
+	OutDeltas.Reset();
+
+	if (InTargetEdgeID == MOD_ID_NONE)
+	{
+		return false;
+	}
+
+	FMOIStateData stateData(NextID++, EObjectType::OTTrim, InTargetEdgeID);
+	stateData.AssemblyGUID = AssemblyGUID;
+	stateData.CustomData.SaveStructData(PendingTrimData);
+
+	auto delta = MakeShared<FMOIDelta>();
+	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+	OutDeltas.Add(delta);
 
 	return true;
 }
