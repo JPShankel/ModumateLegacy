@@ -258,6 +258,11 @@ void AMOIFinish::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>&
 	const TArray<FLayerGeomDef>& layers = actor->LayerGeometries;
 	const int32 numLayers = layers.Num();
 
+	if (numLayers == 0)
+	{
+		return;
+	}
+
 	TArray<FVector2D> previousLinePoints;
 	float currentThickness = 0.0f;
 

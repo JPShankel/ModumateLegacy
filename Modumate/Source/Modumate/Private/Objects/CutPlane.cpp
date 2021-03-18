@@ -495,6 +495,39 @@ bool AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 				// TODO: Optimize CleanObjects to save CutPlanes for last.
 				return false;
 			}
+
+			auto graphGrandchildren = graphChild->GetChildObjects();
+			for (auto* grandchild: graphGrandchildren)
+			{
+				if (grandchild->GetObjectType() == EObjectType::OTSurfaceGraph)
+				{	// Add any surface-graph MOIS, such as finishes & trim.
+					if (grandchild->IsDirty(EObjectDirtyFlags::Visuals))
+					{
+						return false;
+					}
+
+					auto surfaceGraph = Document->FindSurfaceGraph(grandchild->ID);
+					if (surfaceGraph)
+					{
+						const auto& surfaceObjects = surfaceGraph->GetAllObjects();
+
+						for (const auto& object: surfaceObjects)
+						{
+							if (object.Value == Modumate::EGraphObjectType::Vertex)
+							{
+								continue;
+							}
+
+							AModumateObjectInstance* surfaceMoi = Document->GetObjectById(object.Key);
+							if (ensure(surfaceMoi))
+							{
+								draftingObjectMois.Append(surfaceMoi->GetChildObjects());
+							}
+						}
+					}
+				}
+			}
+
 		}
 
 		draftingObjectMois.Append(graphChildren);
