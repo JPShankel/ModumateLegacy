@@ -17,6 +17,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/CabinetDimensionActor.h"
@@ -560,8 +561,9 @@ bool AMOICabinet::OnSelected(bool bIsSelected)
 		return false;
 	}
 	auto dimensionManager = gameInstance->DimensionManager;
+	AEditModelPlayerState* emPlayerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 
-	if (bIsSelected)
+	if (bIsSelected && dimensionManager && emPlayerState && emPlayerState->SelectedObjects.Num() == 1)
 	{
 		auto dimensionActor = Cast<ACabinetDimensionActor>(dimensionManager->AddDimensionActor(ACabinetDimensionActor::StaticClass()));
 		dimensionActor->CabinetID = ID;
