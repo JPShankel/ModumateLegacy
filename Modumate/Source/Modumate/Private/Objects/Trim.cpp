@@ -209,7 +209,11 @@ void AMOITrim::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& 
 {
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	TArray<FVector> perimeter;
-	UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, TrimUp, TrimNormal, InstanceData.OffsetUp, InstanceData.OffsetNormal, ProfileFlip, perimeter);
+	if (!UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, TrimUp, TrimNormal,
+		InstanceData.OffsetUp, InstanceData.OffsetNormal, ProfileFlip, perimeter))
+	{
+		return;
+	}
 
 	if (bGetFarLines)
 	{   // Beyond lines.
