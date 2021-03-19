@@ -208,7 +208,7 @@ void AEditModelPlayerController::BeginPlay()
 	FString lockFile = FPaths::Combine(gameInstance->UserSettings.GetLocalTempDir(), kModumateCleanShutdownFile);
 	FFileHelper::SaveStringToFile(TEXT("lock"), *lockFile);
 
-	GetWorldTimerManager().SetTimer(ControllerTimer, this, &AEditModelPlayerController::OnControllerTimer, 10.0f, true, 0.0f);
+	GetWorldTimerManager().SetTimer(ControllerTimer, this, &AEditModelPlayerController::OnControllerTimer, 1.0f, true, 0.0f);
 
 	TimeOfLastAutoSave = FDateTime::Now();
 

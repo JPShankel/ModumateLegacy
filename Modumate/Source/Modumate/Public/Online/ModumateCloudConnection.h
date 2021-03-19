@@ -29,7 +29,8 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		using FErrorCallback = TFunction<void(int32, const FString&)>;
 
 		enum ERequestType { Get, Delete, Put, Post };
-		bool RequestEndpoint(const FString& Endpoint, ERequestType RequestType, const FRequestCustomizer& Customizer, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
+		bool RequestEndpoint(const FString& Endpoint, ERequestType RequestType, const FRequestCustomizer& Customizer, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback,
+			bool bRefreshTokenOnAuthFailure = true);
 
 		bool CreateReplay(const FString& SessionID, const FString& Version, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 		bool UploadReplay(const FString& SessionID, const FString& Filename, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
@@ -41,13 +42,13 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		void Tick();
 
 	private:
-		TSharedRef<IHttpRequest, ESPMode::ThreadSafe> MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
+		TSharedRef<IHttpRequest, ESPMode::ThreadSafe> MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure = true);
 
 		static FString GetRequestTypeString(ERequestType RequestType);
 
 		FString AuthToken;
 		FString RefreshToken;
 		ELoginStatus LoginStatus = ELoginStatus::Disconnected;
-		FDateTime AuthTokenTimestamp;
+		FDateTime AuthTokenTimestamp = FDateTime(0);
 		const static FTimespan AuthTokenTimeout;
 };

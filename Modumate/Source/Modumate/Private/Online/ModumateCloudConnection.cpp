@@ -18,10 +18,11 @@ TAutoConsoleVariable<FString> CVarModumateCloudAddress(
 
 
 // Period for requesting refresh of AuthToken.
-const FTimespan FModumateCloudConnection::AuthTokenTimeout = { 0, 10 /* min */, 0 };
+const FTimespan FModumateCloudConnection::AuthTokenTimeout = { 0, 5 /* min */, 0 };
 
 FModumateCloudConnection::FModumateCloudConnection()
 {
+	AuthTokenTimestamp = FDateTime::Now();
 }
 
 FString FModumateCloudConnection::GetCloudRootURL() const
@@ -70,14 +71,15 @@ FString FModumateCloudConnection::GetRequestTypeString(ERequestType RequestType)
 	return TEXT("POST");
 }
 
-bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequestType RequestType, const FRequestCustomizer& Customizer, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
+bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequestType RequestType, const FRequestCustomizer& Customizer, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback,
+	bool bRefreshTokenOnAuthFailure)
 {
 	if (!ensureAlways(Endpoint.Len() > 0 && Endpoint[0] == TCHAR('/')))
 	{
 		return false;
 	}
 
-	auto Request = MakeRequest(Callback, ServerErrorCallback);
+	auto Request = MakeRequest(Callback, ServerErrorCallback, bRefreshTokenOnAuthFailure);
 
 	Request->SetURL(GetCloudAPIURL() + Endpoint);
 	Request->SetVerb(GetRequestTypeString(RequestType));
@@ -144,7 +146,8 @@ bool FModumateCloudConnection::RequestAuthTokenRefresh(const FString& InRefreshT
 			Callback(bSuccess, Payload);
 		},
 
-		ServerErrorCallback
+		ServerErrorCallback,
+		false
 	);
 
 	return false;
@@ -192,6 +195,7 @@ bool FModumateCloudConnection::Login(const FString& Username, const FString& Pas
 			{
 				SharedThis->RefreshToken = verifyParams.RefreshToken;
 				SharedThis->AuthToken = verifyParams.AuthToken;
+				SharedThis->AuthTokenTimestamp = FDateTime::Now();
 			}
 			else
 			{
@@ -210,7 +214,8 @@ bool FModumateCloudConnection::Login(const FString& Username, const FString& Pas
 			bool bInvalidCredentials = (ErrorCode == 401);
 			SharedThis->LoginStatus = bInvalidCredentials ? ELoginStatus::InvalidCredentials : ELoginStatus::ConnectionError;
 			ServerErrorCallback(ErrorCode, ErrorString);
-		});
+		},
+		false);
 
 	return false;
 }
@@ -244,12 +249,14 @@ bool FModumateCloudConnection::UploadReplay(const FString& SessionID, const FStr
 	return Request->ProcessRequest();
 }
 
-TSharedRef<IHttpRequest, ESPMode::ThreadSafe> FModumateCloudConnection::MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
+TSharedRef<IHttpRequest, ESPMode::ThreadSafe> FModumateCloudConnection::MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure)
 {
+	TWeakPtr<FModumateCloudConnection> weakThisCaptured(AsShared());
 	auto Request = FHttpModule::Get().CreateRequest();
-	Request->OnProcessRequestComplete().BindLambda([Callback, ServerErrorCallback](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+	Request->OnProcessRequestComplete().BindLambda([Callback, ServerErrorCallback, weakThisCaptured, bRefreshTokenOnAuthFailure](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 	{
-		if (bWasSuccessful) 
+		TSharedPtr<FModumateCloudConnection> sharedThis = weakThisCaptured.Pin();
+		if (bWasSuccessful && sharedThis.IsValid())
 		{
 			FString content = Response->GetContentAsString();
 			auto JsonResponse = TJsonReaderFactory<>::Create(content);
@@ -263,6 +270,14 @@ TSharedRef<IHttpRequest, ESPMode::ThreadSafe> FModumateCloudConnection::MakeRequ
 			}
 			else
 			{
+				// If any request fails due to bad auth, then reset the auth token timestamp so that we re-verify the next chance we get.
+				// TODO: For many requests, it might make more sense to immediately refresh the token from within this function,
+				// and re-try the original request so the callback has a chance to come back successfully.
+				if ((code == 401) && bRefreshTokenOnAuthFailure)
+				{
+					sharedThis->AuthTokenTimestamp = FDateTime(0);
+				}
+
 				ServerErrorCallback(code, responseValue && responseValue->AsObject() ? responseValue->AsObject()->GetStringField(TEXT("error")) : TEXT("null response"));
 			}
 		}
@@ -306,7 +321,8 @@ bool FModumateCloudConnection::UploadAnalyticsEvents(const TArray<TSharedPtr<FJs
 
 void FModumateCloudConnection::Tick()
 {
-	if (LoginStatus == ELoginStatus::Connected && FDateTime::Now() - AuthTokenTimestamp > AuthTokenTimeout)
+	FTimespan timeSinceLastAuth = (FDateTime::Now() - AuthTokenTimestamp);
+	if ((LoginStatus == ELoginStatus::Connected) && (timeSinceLastAuth > AuthTokenTimeout))
 	{
 		AuthTokenTimestamp = FDateTime::Now();
 		RequestAuthTokenRefresh(RefreshToken, [](bool, const TSharedPtr<FJsonObject>&) {}, [](int32, const FString&) {});
