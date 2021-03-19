@@ -1,7 +1,6 @@
 // Copyright 2021 Modumate, Inc. All Rights Reserved.
 
 #include "Quantities/QuantitiesManager.h"
-#include "Quantities/QuantitiesVisitor.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include <algorithm>
@@ -41,6 +40,63 @@ bool FQuantitiesManager::CalculateAllQuantities()
 	}
 
 	return !bool(errorMoi);
+}
+
+void FQuantitiesManager::ProcessQuantityTree()
+{
+	const FQuantitiesVisitor::QuantitiesMap& quantitiesMap = CurrentQuantities->GetQuantities();
+	AllQuantities.Empty();
+	UsedByQuantities.Empty();
+	UsesQuantities.Empty();
+	ItemsByGuid.Empty();
+
+	TMap<FQuantityItemId, TArray<FQuantityKey>> itemToQuantityKeys;
+	TMap<FQuantityItemId, TArray<FQuantityKey>> parentToQuantityKeys;
+
+	for (auto& quantity: quantitiesMap)
+	{
+		itemToQuantityKeys.FindOrAdd(quantity.Key.Item).Add(quantity.Key);
+		parentToQuantityKeys.FindOrAdd(quantity.Key.Parent).Add(quantity.Key);
+		ItemsByGuid.FindOrAdd(quantity.Key.Item.Id).Add(quantity.Key.Item);
+	}
+
+	for (const auto& item: itemToQuantityKeys)
+	{
+		FQuantity& allQuantity = AllQuantities.FindOrAdd(item.Key);
+		auto& usedByQuantity = UsedByQuantities.FindOrAdd(item.Key);
+		for (const FQuantityKey& itemKey: item.Value)
+		{
+			const FQuantity& oneQuantity = quantitiesMap[itemKey];
+			allQuantity += oneQuantity;
+			if (itemKey.Parent.Id.IsValid())
+			{
+				usedByQuantity.FindOrAdd(itemKey.Parent) += oneQuantity;
+				UsesQuantities.FindOrAdd(itemKey.Parent).FindOrAdd(item.Key) += oneQuantity;
+			}
+		}
+	}
+}
+
+void FQuantitiesManager::GetQuantityTree(const TMap<FQuantityItemId, FQuantity>*& OutAllQuantities,
+	const TMap<FQuantityItemId, TMap<FQuantityItemId, FQuantity>>*& OutUsedByQuantities,
+	const TMap<FQuantityItemId, TMap<FQuantityItemId, FQuantity>>*& OutUsesQuantities) const
+{
+	OutAllQuantities = &AllQuantities;
+	OutUsedByQuantities = &UsedByQuantities;
+	OutUsesQuantities = &UsesQuantities;
+}
+
+TArray<FQuantityItemId> FQuantitiesManager::GetItemsForGuid(const FGuid& PresetId) const
+{
+	const auto* itemList = ItemsByGuid.Find(PresetId);
+	if (itemList)
+	{
+		return itemList->Array();
+	}
+	else
+	{
+		return TArray<FQuantityItemId>();
+	}
 }
 
 // Report helper class
@@ -108,6 +164,8 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 	TArray<FReportItem> topReportItems;
 	FNcpTree ncpTree;
 
+	ProcessQuantityTree();
+
 	auto gameInstance = GameInstance.Get();
 	if (!gameInstance || !gameInstance->GetWorld() || !CurrentQuantities.IsValid())
 	{
@@ -129,13 +187,7 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 
 	const FQuantitiesVisitor::QuantitiesMap& quantities = CurrentQuantities->GetQuantities();
 
-	for (auto& quantity: quantities)
-	{
-		itemToQuantityKeys.FindOrAdd(quantity.Key.Item).Add(quantity.Key);
-		parentToQuantityKeys.FindOrAdd(quantity.Key.Parent).Add(quantity.Key);
-	}
-
-	for (auto& item: itemToQuantityKeys)
+	for (auto& item: AllQuantities)
 	{
 		const FGuid& itemGuid = item.Key.Id;
 		const FBIMPresetInstance* preset = presets.PresetFromGUID(itemGuid);
@@ -143,9 +195,6 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 		{
 			continue;
 		}
-
-		bool bReportUsesPresets = true;
-		bool bReportUsedInPresets = true;
 
 		FBIMTagPath itemNcp;
 		presets.GetNCPForPreset(itemGuid, itemNcp);
@@ -157,58 +206,48 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 		reportItem.NameForSorting = reportItem.Name + item.Key;
 
 		reportItem.ItemScope = preset->NodeScope;
-
-		FQuantity accumulatedQuantity;
-		// Loop over parent ('Used In') items:
-		if (bReportUsedInPresets)
-		{
-			for (FQuantityKey& parent : item.Value)
-			{
-				FQuantity perParentQuantity = quantities[parent];
-				accumulatedQuantity += perParentQuantity;
-				if (reportItem.ItemScope == EBIMValueScope::Module)
-				{
-					perParentQuantity.Area = 0.0f;
-				}
-
-				if (parent.Parent.Id.IsValid())
-				{
-					const FBIMPresetInstance* parentPreset = presets.PresetFromGUID(parent.Parent.Id);
-					if (!ensure(parentPreset))
-					{
-						continue;
-					}
-					FReportItem subItem;
-					subItem.Name = parentPreset->DisplayName.ToString();
-					subItem.Subname = parent.Parent.Subname;
-					subItem.Quantity = perParentQuantity;
-					reportItem.UsedIn.Add(MoveTemp(subItem));
-				}
-			}
-		}
-
+		reportItem.Quantity = item.Value;
 		if (reportItem.ItemScope == EBIMValueScope::Module)
 		{
-			accumulatedQuantity.Area = 0.0f;
+			reportItem.Quantity.Area = 0.0f;
 		}
-		reportItem.Quantity = accumulatedQuantity;
 
-		const TArray<FQuantityKey>* usesPresets = parentToQuantityKeys.Find({ itemGuid, item.Key.Subname });
-		// Loop over child ('Uses') items:
-		if (usesPresets && bReportUsesPresets)
+		// 'Used By Presets:'
+		TMap<FQuantityItemId, FQuantity>* usedByPresets = UsedByQuantities.Find(item.Key);
+		if (usedByPresets)
 		{
-			for (const FQuantityKey& usesPreset: *usesPresets)
+			for (auto& usedByPreset: *usedByPresets)
 			{
-				const FBIMPresetInstance* childPreset = presets.PresetFromGUID(usesPreset.Item.Id);
+				const FBIMPresetInstance* parentPreset = presets.PresetFromGUID(usedByPreset.Key.Id);
+				if (!ensure(parentPreset))
+				{
+					continue;
+				}
+				FReportItem subItem;
+				subItem.Name = parentPreset->DisplayName.ToString();
+				subItem.Subname = usedByPreset.Key.Subname;
+				subItem.Quantity = usedByPreset.Value;
+				reportItem.UsedIn.Add(MoveTemp(subItem));
+			}
+
+		}
+
+		// 'Uses Presets:'
+		TMap<FQuantityItemId, FQuantity>* usesPresets = UsesQuantities.Find(item.Key);
+		if (usesPresets)
+		{
+			for (auto& usesPreset: *usesPresets)
+			{
+				const FBIMPresetInstance* childPreset = presets.PresetFromGUID(usesPreset.Key.Id);
 				if (!ensure(childPreset))
 				{
 					continue;
 				}
 				FReportItem subItem;
 				subItem.Name = childPreset->DisplayName.ToString();
-				subItem.Subname = usesPreset.Item.Subname;
-				subItem.Quantity = quantities[usesPreset];
-				reportItem.Uses.Add(MoveTemp(subItem));
+				subItem.Subname = usesPreset.Key.Subname;
+				subItem.Quantity = usesPreset.Value;
+				reportItem.UsedIn.Add(MoveTemp(subItem));
 			}
 		}
 
@@ -298,14 +337,13 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 FQuantity FQuantitiesManager::QuantityForOnePreset(const FGuid& PresetId) const
 {
 	FQuantity quantity;
-	if (CurrentQuantities.IsValid())
+
+	const auto* guidItems = ItemsByGuid.Find(PresetId);
+	if (guidItems)
 	{
-		for (const auto& item : CurrentQuantities->GetQuantities())
+		for (const auto& itemId : *guidItems)
 		{
-			if (item.Key.Item.Id == PresetId)
-			{
-				quantity += item.Value;
-			}
+			quantity += AllQuantities[itemId];
 		}
 	}
 
