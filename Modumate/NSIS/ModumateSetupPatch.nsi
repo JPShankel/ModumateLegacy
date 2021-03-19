@@ -89,6 +89,7 @@ Section -Post
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
   Delete "$INSTDIR\Modumate\Binaries\Win64\PDFNetDotNetCore.dll"
   Delete "$INSTDIR\Modumate\Binaries\Win64\PDFNetC.dll"
+  Delete "$INSTDIR\Modumate\Binaries\Win64\Modumate-Win64-Shipping.pdb"
 SectionEnd
 
 Function un.onUninstSuccess
@@ -112,6 +113,7 @@ Section Uninstall
   Delete "$INSTDIR\Modumate\Binaries\Win64\PDFNetC.dll"
   Delete "$INSTDIR\Modumate\Binaries\Win64\turbojpeg.dll"
   Delete "$INSTDIR\Modumate\Binaries\Win64\Modumate-Win64-Shipping.exe"
+  Delete "$INSTDIR\Modumate\Binaries\Win64\Modumate-Win64-Shipping.pdb"
   Delete "$INSTDIR\Engine\Programs\CrashReportClient\Content\Paks\CrashReportClient.pak"
   Delete "$INSTDIR\Engine\Extras\Redist\en-us\UE4PrereqSetup_x64.exe"
   Delete "$INSTDIR\Engine\Content\SlateDebug\Fonts\LastResort.ttf"

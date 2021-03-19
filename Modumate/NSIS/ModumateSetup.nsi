@@ -126,6 +126,8 @@ Section -Post
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
   Delete "$INSTDIR\Modumate\Binaries\Win64\PDFNetDotNetCore.dll"
   Delete "$INSTDIR\Modumate\Binaries\Win64\PDFNetC.dll"
+  Delete "$INSTDIR\Modumate\Binaries\Win64\Modumate-Win64-Shipping.pdb"
+  Delete "$INSTDIR\Engine\Binaries\Win64\CrashReportClient.pdb"
 SectionEnd
 
 Function un.onUninstSuccess
@@ -148,11 +150,13 @@ Section Uninstall
   Delete "$INSTDIR\Modumate\Binaries\Win64\PDFNetC.dll"
   Delete "$INSTDIR\Modumate\Binaries\Win64\turbojpeg.dll"
   Delete "$INSTDIR\Modumate\Binaries\Win64\Modumate-Win64-Shipping.exe"
+  Delete "$INSTDIR\Modumate\Binaries\Win64\Modumate-Win64-Shipping.pdb"
   Delete "$INSTDIR\Engine\Programs\CrashReportClient\Content\Paks\CrashReportClient.pak"
   Delete "$INSTDIR\Engine\Extras\Redist\en-us\UE4PrereqSetup_x64.exe"
   Delete "$INSTDIR\Engine\Content\SlateDebug\Fonts\LastResort.ttf"
   Delete "$INSTDIR\Engine\Content\SlateDebug\Fonts\LastResort.tps"
   Delete "$INSTDIR\Engine\Binaries\Win64\CrashReportClient.exe"
+  Delete "$INSTDIR\Engine\Binaries\Win64\CrashReportClient.pdb"
   Delete "$INSTDIR\Engine\Binaries\ThirdParty\Windows\XAudio2_9\x64\xaudio2_9redist.dll"
   Delete "$INSTDIR\Engine\Binaries\ThirdParty\Vorbis\Win64\VS2015\libvorbis_64.dll"
   Delete "$INSTDIR\Engine\Binaries\ThirdParty\Vorbis\Win64\VS2015\libvorbisfile_64.dll"
