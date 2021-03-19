@@ -122,9 +122,9 @@ bool UTrimTool::FrameUpdate()
 
 		if (adjacentPolyID == MOD_ID_NONE)
 		{
-			for (auto& innerBoundsKVP : targetSurfaceGraph->GetInnerBounds())
+			for (int32 innerBoundsID : targetSurfaceGraph->GetInnerBounds())
 			{
-				auto innerBoundingPoly = targetSurfaceGraph->FindPolygon(innerBoundsKVP.Key);
+				auto innerBoundingPoly = targetSurfaceGraph->FindPolygon(innerBoundsID);
 				if (innerBoundingPoly && (innerBoundingPoly->Edges.Contains(targetMOI->ID) || innerBoundingPoly->Edges.Contains(-targetMOI->ID)))
 				{
 					bool bBoundsForwardEdge = innerBoundingPoly->Edges.Contains(targetMOI->ID);

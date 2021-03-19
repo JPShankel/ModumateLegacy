@@ -60,6 +60,7 @@ namespace Modumate
 		int32 GetID() const;
 		int32 GetNextObjID() const;
 		int32 GetRootPolygonID() const;
+		int32 GetOuterBoundsPolygonID() const;
 		FGraph2DPolygon *GetRootPolygon();
 		const FGraph2DPolygon *GetRootPolygon() const;
 
@@ -90,8 +91,8 @@ namespace Modumate
 
 		// vertices and edges in the graph must be inside the bounding vertices,
 		// and outside the bounding contained vertices
-		TPair<int32, TArray<int32>> BoundingPolygon;
-		TMap<int32, TArray<int32>> BoundingContainedPolygons;
+		int32 BoundingPolygonID;
+		TArray<int32> BoundingContainedPolygonIDs;
 
 	private:
 
@@ -168,7 +169,7 @@ namespace Modumate
 
 		int32 GetOuterBoundingPolyID() const;
 		void GetOuterBoundsIDs(TArray<int32> &OutVertexIDs) const;
-		const TMap<int32, TArray<int32>>& GetInnerBounds() const;
+		const TArray<int32>& GetInnerBounds() const;
 
 		bool IsOuterBoundsDirty();
 		void ClearOuterBoundsDirty();
@@ -217,7 +218,7 @@ namespace Modumate
 
 		// Set lists of vertex IDs to represent the bounds of the surface graph.  All vertices and edges must be inside the 
 		// OuterBounds (inclusive) and outside all InnerBounds (inclusive).
-		bool SetBounds(TPair<int32, TArray<int32>> &OuterBounds, TMap<int32, TArray<int32>> &InnerBounds);
+		bool SetBounds(int32 &OuterBoundsID, TArray<int32>& InnerBoundsIDs);
 
 		// Create Deltas for an empty graph resulting in adding the specified polygons.
 		// If using as bounds, the bounds will be set based on the resulting polygons.

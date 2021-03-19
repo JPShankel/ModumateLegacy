@@ -91,15 +91,14 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 			// TODO: should the outer bounds always be the same as the root polygon?
 			TArray<int32> boundingVertexIDs;
 			surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
-			auto poly = surfaceGraph->GetRootPolygon();
+			auto poly = surfaceGraph->FindPolygon(surfaceGraph->GetOuterBoundsPolygonID());
 
 			if (poly != nullptr)
 			{
 				if (boundingVertexIDs.Num() == 0)
 				{
-					TMap<int32, TArray<int32>> emptyBounds;
-					auto outerBounds = TPair<int32, TArray<int32>>(poly->ID, poly->VertexIDs);
-					surfaceGraph->SetBounds(outerBounds, emptyBounds);
+					TArray<int32> emptyBounds;
+					surfaceGraph->SetBounds(poly->ID, emptyBounds);
 					surfaceGraph->GetOuterBoundsIDs(boundingVertexIDs);
 				}
 

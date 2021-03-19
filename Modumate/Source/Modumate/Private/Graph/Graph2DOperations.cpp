@@ -645,19 +645,29 @@ namespace Modumate
 		if (bCheckBounds)
 		{
 			bool bDeletedVertexOnBounds = false;
-			for (int32 outerBoundsVertexID : BoundingPolygon.Value)
+			auto outerBoundsPoly = FindPolygon(BoundingPolygonID);
+			if (outerBoundsPoly)
 			{
-				if (adjacentVertexIDs.Contains(outerBoundsVertexID))
+				for (int32 outerBoundsVertexID : outerBoundsPoly->VertexIDs)
 				{
-					bDeletedVertexOnBounds = true;
-					break;
+					if (adjacentVertexIDs.Contains(outerBoundsVertexID))
+					{
+						bDeletedVertexOnBounds = true;
+						break;
+					}
 				}
 			}
 			if (!bDeletedVertexOnBounds)
 			{
-				for (auto& kvp : BoundingContainedPolygons)
+				for (int32 polyID : BoundingContainedPolygonIDs)
 				{
-					for (int32 innerBoundsVertexID : kvp.Value)
+					auto innerBoundsPoly = FindPolygon(polyID);
+					if (!innerBoundsPoly)
+					{
+						continue;
+					}
+
+					for (int32 innerBoundsVertexID : innerBoundsPoly->VertexIDs)
 					{
 						if (adjacentVertexIDs.Contains(innerBoundsVertexID))
 						{
@@ -672,13 +682,16 @@ namespace Modumate
 			{
 				vertexIDsToDelete.Reset();
 				edgeIDsToDelete.Reset();
+				polyIDsToDelete.Reset();
 
-				TArray<int32> deleteVerticesArray, deleteEdgesArray;
+				TArray<int32> deleteVerticesArray, deleteEdgesArray, deletePolysArray;
 				Vertices.GenerateKeyArray(deleteVerticesArray);
 				Edges.GenerateKeyArray(deleteEdgesArray);
+				Polygons.GenerateKeyArray(deletePolysArray);
 
 				vertexIDsToDelete.Append(deleteVerticesArray);
 				edgeIDsToDelete.Append(deleteEdgesArray);
+				polyIDsToDelete.Append(deletePolysArray);
 			}
 		}
 
@@ -717,7 +730,7 @@ namespace Modumate
 		// TODO: allow for auto-updating the bounds, i.e. after joining two exterior colinear edges.
 		else
 		{
-			auto innerBounds = BoundingContainedPolygons;
+			auto innerBounds = BoundingContainedPolygonIDs;
 			for (int32 polyID : polyIDsToDelete)
 			{
 				if (innerBounds.Contains(polyID))
@@ -732,7 +745,7 @@ namespace Modumate
 				return false;
 			}
 
-			if (!SetBounds(BoundingPolygon, innerBounds))
+			if (!SetBounds(BoundingPolygonID, innerBounds))
 			{
 				ApplyInverseDeltas(OutDeltas);
 				return false;
@@ -1124,23 +1137,10 @@ namespace Modumate
 		return MoveVertices(OutDeltas, NextID, newVertexPositions);
 	}
 
-	bool FGraph2D::SetBounds(TPair<int32, TArray<int32>> &OuterBounds, TMap<int32, TArray<int32>> &InnerBounds)
+	bool FGraph2D::SetBounds(int32 &OuterBoundsID, TArray<int32>& InnerBoundsIDs)
 	{
-		// test to make sure provided polygons are valid
-		if (!(BoundingPolygon.Value.Num() == 0 && OuterBounds.Value.Num() == 0) && OuterBounds.Value.Num() < 3)
-		{
-			return false;
-		}
-		for (auto& kvp : InnerBounds)
-		{
-			if (kvp.Value.Num() < 3)
-			{
-				return false;
-			}
-		}
-
-		BoundingPolygon = OuterBounds;
-		BoundingContainedPolygons = InnerBounds;
+		BoundingPolygonID = OuterBoundsID;
+		BoundingContainedPolygonIDs = InnerBoundsIDs;
 
 		return true;
 	}
@@ -1255,7 +1255,7 @@ namespace Modumate
 			return false;
 		}
 
-		FGraph2DPolygon* outerPolygon = GetRootPolygon();
+		FGraph2DPolygon* outerPolygon = FindPolygon(GetOuterBoundsPolygonID());
 		if (outerPolygon)
 		{
 			OutRootPolyID = outerPolygon->ID;
@@ -1270,14 +1270,14 @@ namespace Modumate
 				ApplyInverseDeltas(appliedDeltas);
 				return false;
 			}
-			TPair<int32, TArray<int32>> outerBounds(outerPolygon->ID, outerPolygon->CachedPerimeterVertexIDs);
+			int32 outerBounds = outerPolygon->ID;
 
-			TMap<int32, TArray<int32>> innerBounds;
+			TArray<int32> innerBounds;
 			for (auto& kvp : Polygons)
 			{
-				if ((kvp.Key != outerPolygon->ID) && kvp.Value.bInterior)
+				if ((kvp.Key != outerPolygon->ID) && kvp.Value.bInterior && kvp.Value.ContainingPolyID != MOD_ID_NONE)
 				{
-					innerBounds.Add(kvp.Key, kvp.Value.CachedPerimeterVertexIDs);
+					innerBounds.Add(kvp.Key);
 				}
 			}
 
@@ -1397,7 +1397,7 @@ namespace Modumate
 
 		OutFaceToPoly = graphFaceToSurfacePoly;
 
-		BoundingContainedPolygons.Reset();
+		BoundingContainedPolygonIDs.Reset();
 		for (auto& kvp : graphFaceToSurfacePoly)
 		{
 			auto poly = FindPolygon(kvp.Value);
@@ -1406,7 +1406,7 @@ namespace Modumate
 				continue;
 			}
 
-			BoundingContainedPolygons.Add(poly->ID, poly->VertexIDs);
+			BoundingContainedPolygonIDs.Add(poly->ID);
 		}
 
 		return true;
@@ -1566,6 +1566,10 @@ namespace Modumate
 						continue;
 					}
 
+					if (BoundingContainedPolygonIDs.Find(previousID) != INDEX_NONE || BoundingPolygonID == previousID)
+					{
+						return false;
+					}
 					updatePolygonsDelta.PolygonDeletions.Add(previousID, FGraph2DObjDelta(polygon->VertexIDs, { addedPolyID }));
 				}
 			}
@@ -1651,14 +1655,16 @@ namespace Modumate
 
 	bool FGraph2D::IsVertexIDBounding(int32 VertexID)
 	{
-		if (BoundingPolygon.Value.Find(VertexID) != INDEX_NONE)
+		auto boundingPoly = FindPolygon(BoundingPolygonID);
+		if (boundingPoly && boundingPoly->VertexIDs.Find(VertexID) != INDEX_NONE)
 		{
 			return true;
 		}
 
-		for (auto& kvp : BoundingContainedPolygons)
+		for (int32 innerPolyID : BoundingContainedPolygonIDs)
 		{
-			if (kvp.Value.Find(VertexID) != INDEX_NONE)
+			auto innerPoly = FindPolygon(innerPolyID);
+			if (innerPoly && innerPoly->VertexIDs.Find(VertexID) != INDEX_NONE)
 			{
 				return true;
 			}

@@ -506,6 +506,29 @@ namespace Modumate
 		return NextObjID;
 	}
 
+	int32 FGraph2D::GetOuterBoundsPolygonID() const
+	{
+		int32 resultID = MOD_ID_NONE;
+
+		for (auto& kvp : Polygons)
+		{
+			auto& polygon = kvp.Value;
+			if (!polygon.bInterior && (polygon.ContainingPolyID == MOD_ID_NONE))
+			{
+				if (resultID == MOD_ID_NONE)
+				{
+					resultID = kvp.Key;
+				}
+				else
+				{
+					return MOD_ID_NONE;
+				}
+			}
+		}
+
+		return resultID;
+	}
+
 	int32 FGraph2D::GetRootPolygonID() const
 	{
 		int32 resultID = MOD_ID_NONE;
@@ -871,12 +894,16 @@ namespace Modumate
 			poly->Dirty(false);
 		}
 
-		for (int32 vertexID : BoundingPolygon.Value)
+		auto boundingPoly = FindPolygon(BoundingPolygonID);
+		if (boundingPoly)
 		{
-			if (Delta.VertexMovements.Contains(vertexID))
+			for (int32 vertexID : boundingPoly->VertexIDs)
 			{
-				bBoundsDirty = true;
-				break;
+				if (Delta.VertexMovements.Contains(vertexID))
+				{
+					bBoundsDirty = true;
+					break;
+				}
 			}
 		}
 
@@ -987,8 +1014,8 @@ namespace Modumate
 
 	void FGraph2D::ClearBounds()
 	{
-		BoundingPolygon = TPair<int32, TArray<int32>>();
-		BoundingContainedPolygons.Reset();
+		BoundingPolygonID = MOD_ID_NONE;
+		BoundingContainedPolygonIDs.Reset();
 	}
 
 	bool FGraph2D::TraverseEdges(FGraphSignedID StartingEdgeID, TArray<FGraphSignedID>& OutEdgeIDs, TArray<int32>& OutVertexIDs,
@@ -1071,9 +1098,14 @@ namespace Modumate
 
 	bool FGraph2D::ValidateAgainstBounds()
 	{
-		if (BoundingPolygon.Value.Num() == 0) 
+		if (BoundingPolygonID == MOD_ID_NONE) 
 		{
 			return true;
+		}
+		auto boundingPoly = FindPolygon(BoundingPolygonID);
+		if (!boundingPoly)
+		{
+			return false;
 		}
 
 		// Convert the vertices saved in the bounds into BoundsInformation structs
@@ -1090,7 +1122,7 @@ namespace Modumate
 		{
 			auto vertex = &vertexkvp.Value;
 
-			if (BoundingPolygon.Value.Find(vertex->ID) == INDEX_NONE)
+			if (boundingPoly->VertexIDs.Find(vertex->ID) == INDEX_NONE)
 			{
 				if (!ensure(UModumateGeometryStatics::TestPointInPolygon(vertex->Position, CachedOuterBounds.Positions, pointInPolyResult, Epsilon)) ||
 					(!pointInPolyResult.bInside && !pointInPolyResult.bOverlaps))
@@ -1100,12 +1132,18 @@ namespace Modumate
 			}
 
 			int32 holeIdx = 0;
-			for (auto& kvp : BoundingContainedPolygons)
+			for (int32 innerPolyID : BoundingContainedPolygonIDs)
 			{
+				auto innerPoly = FindPolygon(innerPolyID);
+				if (!innerPoly)
+				{
+					continue;
+				}
+
 				auto& bounds = CachedInnerBounds[holeIdx];
 				// Checking the holes should be exclusive - being on the edge of the hole is valid
 
-				if (kvp.Value.Find(vertex->ID) == INDEX_NONE)
+				if (innerPoly->VertexIDs.Find(vertex->ID) == INDEX_NONE)
 				{
 					if (!ensure(UModumateGeometryStatics::TestPointInPolygon(vertex->Position, bounds.Positions, pointInPolyResult)) ||
 						(pointInPolyResult.bInside && !pointInPolyResult.bOverlaps))
@@ -1164,7 +1202,13 @@ namespace Modumate
 		CachedOuterBounds.EdgeNormals.Reset();
 		CachedInnerBounds.Reset();
 
-		for (int32 vertexID : BoundingPolygon.Value)
+		auto boundsPoly = FindPolygon(BoundingPolygonID);
+		if (!boundsPoly)
+		{
+			return true;
+		}
+
+		for (int32 vertexID : boundsPoly->VertexIDs)
 		{
 			auto vertex = FindVertex(vertexID);
 			if (vertex == nullptr)
@@ -1175,12 +1219,17 @@ namespace Modumate
 			CachedOuterBounds.Positions.Add(vertex->Position);
 		}
 
-		for (auto& kvp : BoundingContainedPolygons)
+		for (int32 innerPolyID : BoundingContainedPolygonIDs)
 		{
-			auto& hole = kvp.Value;
+			auto innerPoly = FindPolygon(innerPolyID);
+			if (!innerPoly)
+			{
+				continue;
+			}
+
 			auto& bounds = CachedInnerBounds.AddDefaulted_GetRef();
 
-			for (int32 vertexID : hole)
+			for (int32 vertexID : innerPoly->VertexIDs)
 			{
 				auto vertex = FindVertex(vertexID);
 				if (vertex == nullptr)
@@ -1390,17 +1439,20 @@ namespace Modumate
 
 	int32 FGraph2D::GetOuterBoundingPolyID() const
 	{
-		return BoundingPolygon.Key;
+		return BoundingPolygonID;
 	}
 
 	void FGraph2D::GetOuterBoundsIDs(TArray<int32> &OutVertexIDs) const
 	{
-		OutVertexIDs = BoundingPolygon.Value;
+		if (auto poly = FindPolygon(BoundingPolygonID))
+		{
+			OutVertexIDs = poly->VertexIDs;
+		}
 	}
 
-	const TMap<int32, TArray<int32>>& FGraph2D::GetInnerBounds() const
+	const TArray<int32>& FGraph2D::GetInnerBounds() const
 	{
-		return BoundingContainedPolygons;
+		return BoundingContainedPolygonIDs;
 	}
 
 	bool FGraph2D::IsOuterBoundsDirty()
