@@ -589,7 +589,7 @@ void AMOIPlaneHostedObj::UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalcul
 		CachedHoles.Add(FPolyHole3D(TempHoleRelativePoints));
 	}
 
-	if (!FMiterHelpers::UpdateMiteredLayerGeoms(this, planeFace, &CachedHoles, LayerGeometries))
+	if (!FMiterHelpers::UpdateMiteredLayerGeoms(this, planeFace, &CachedHoles, LayerGeometries, CachedExtendedSurfaceFaces))
 	{
 		return;
 	}

@@ -38,7 +38,7 @@ namespace Modumate
 		}
 
 		bool FMiterHelpers::UpdateMiteredLayerGeoms(const AModumateObjectInstance *PlaneHostedObj, const FGraph3DFace *PlaneFace,
-			const TArray<FPolyHole3D> *Holes, TArray<FLayerGeomDef> &OutLayerGeometries)
+			const TArray<FPolyHole3D> *Holes, TArray<FLayerGeomDef> &OutLayerGeometries, TPair<TArray<FVector>, TArray<FVector>>& OutExtendedSurfaceFaces)
 		{
 			const AModumateObjectInstance *parentPlane = PlaneHostedObj ? PlaneHostedObj->GetParentObject() : nullptr;
 			if (!ensureAlways(PlaneHostedObj && parentPlane && PlaneFace))
@@ -61,15 +61,23 @@ namespace Modumate
 			const auto& layers = PlaneHostedObj->GetAssembly().Layers;
 			int32 numLayers = layers.Num();
 			OutLayerGeometries.SetNum(numLayers);
+			OutExtendedSurfaceFaces.Key.Reset();
+			OutExtendedSurfaceFaces.Value.Reset();
+
+			if (numLayers == 0)
+			{
+				return false;
+			}
 
 			const UModumateDocument* doc = PlaneHostedObj->GetDocument();
 
 			// Collate the edge extensions by layer, so that we can build each layer's geometry independently.
 			// Sourcing them from the miter node interface allows separate miter logic to determine
 			// how layers can be extended independently from each other.
+			// In addition, keep track of the extensions for the starting/ending surface faces, which may have been extended separately from the starting/ending layer(s).
 			TArray<TArray<FVector2D>> edgeExtensionsByLayer;
-			edgeExtensionsByLayer.SetNum(numLayers);
-			for (int32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
+			edgeExtensionsByLayer.SetNum(numLayers + 1);
+			for (int32 layerIdx = 0; layerIdx <= numLayers; ++layerIdx)
 			{
 				edgeExtensionsByLayer[layerIdx].SetNumZeroed(numPoints);
 			}
@@ -95,6 +103,8 @@ namespace Modumate
 				{
 					edgeExtensionsByLayer[layerIdx][edgeIdx] = participantData->LayerExtensions[layerIdx];
 				}
+
+				edgeExtensionsByLayer[numLayers][edgeIdx] = participantData->SurfaceExtensions;
 			}
 
 			float curThickness = 0.0f;
@@ -107,13 +117,22 @@ namespace Modumate
 			// object, that take both adjacent edge's retractions into account.
 			bool bAllLayersValid = true;
 			TArray<FVector> layerPointsA, layerPointsB;
-			for (int32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
+			for (int32 layerIdx = 0; layerIdx <= numLayers; ++layerIdx)
 			{
-				const FBIMLayerSpec& layer = layers[layerIdx];
-				float layerStartPCT = curThickness / totalThickness;
-				float layerThickness = layer.ThicknessCentimeters;
-				curThickness += layerThickness;
-				float layerEndPCT = curThickness / totalThickness;
+				float layerStartPCT = 0.0f;
+				float layerEndPCT = 1.0f;
+
+				// Also, for an extra iteration that looks at the surface-hosting faces on either side of the layered geometry,
+				// treat them like infinitely-thin layers at 0% and 100% of the thickness of the assembly for mitering purposes.
+				bool bExtendingSurface = (layerIdx == numLayers);
+				if (!bExtendingSurface)
+				{
+					const FBIMLayerSpec& layer = layers[layerIdx];
+					layerStartPCT = curThickness / totalThickness;
+					float layerThickness = layer.ThicknessCentimeters;
+					curThickness += layerThickness;
+					layerEndPCT = curThickness / totalThickness;
+				}
 
 				FVector layerStartDelta = FMath::Lerp(curStartDelta, curEndDelta, layerStartPCT);
 				FVector layerEndDelta = FMath::Lerp(curStartDelta, curEndDelta, layerEndPCT);
@@ -280,9 +299,25 @@ namespace Modumate
 					}
 				}
 
-				FLayerGeomDef& layerGeomDef = OutLayerGeometries[layerIdx];
-				layerGeomDef.Init(layerPointsA, layerPointsB, planeNormal, layerAxisX, Holes, true);
-				bAllLayersValid &= layerGeomDef.bValid;
+				// For surface-hosting faces, output a polygon that will be used directly by SurfaceGraphs,
+				// rather than creating triangulate-able FLayerGeoms.
+				if (bExtendingSurface)
+				{
+					UModumateGeometryStatics::GetUniquePoints(layerPointsA, OutExtendedSurfaceFaces.Key, RAY_INTERSECT_TOLERANCE);
+					bool bValidSurfaceStart = UModumateGeometryStatics::IsPolygonValid(OutExtendedSurfaceFaces.Key);
+
+					UModumateGeometryStatics::GetUniquePoints(layerPointsB, OutExtendedSurfaceFaces.Value, RAY_INTERSECT_TOLERANCE);
+					bool bValidSurfaceEnd = UModumateGeometryStatics::IsPolygonValid(OutExtendedSurfaceFaces.Value);
+					
+					bAllLayersValid &= (bValidSurfaceStart && bValidSurfaceEnd);
+				}
+				// For each actual layer, create a triangulate-able FLayerGeom.
+				else
+				{
+					FLayerGeomDef& layerGeomDef = OutLayerGeometries[layerIdx];
+					layerGeomDef.Init(layerPointsA, layerPointsB, planeNormal, layerAxisX, Holes, true);
+					bAllLayersValid &= layerGeomDef.bValid;
+				}
 			}
 
 			return bAllLayersValid;

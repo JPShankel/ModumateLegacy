@@ -247,7 +247,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 		{
 			case ECSVMatrixNames::EdgeDetail:
 			{
-				Preset.CustomData.SaveStructData(FEdgeDetailData(), true);
+				Preset.CustomData.SaveStructData(FEdgeDetailData(FEdgeDetailData::CurrentVersion), true);
 			}
 			break;
 

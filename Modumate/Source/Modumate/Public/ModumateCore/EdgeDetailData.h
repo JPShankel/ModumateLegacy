@@ -56,6 +56,9 @@ struct FEdgeDetailOverrides
 	UPROPERTY(meta = (ToolTip = "The extension/retraction of the start and end (in X and Y respectively) of each layer of a separator participant."))
 	TArray<FVector2D> LayerExtensions;
 
+	UPROPERTY(meta = (ToolTip = "The extension/retraction of the start and end Surface-hosting sides (in X and Y respectively) of a separator."))
+	FVector2D SurfaceExtensions = FVector2D::ZeroVector;
+
 	void Invert();
 
 	friend uint32 GetTypeHash(const FEdgeDetailOverrides& EdgeDetailOverrides);
@@ -67,6 +70,7 @@ struct FEdgeDetailData
 	GENERATED_BODY()
 
 	FEdgeDetailData();
+	FEdgeDetailData(int32 InVersion);
 	FEdgeDetailData(const IMiterNode* MiterNode);
 
 	void Reset();
@@ -94,11 +98,18 @@ struct FEdgeDetailData
 
 	FText MakeShortDisplayText(int32 Index = INDEX_NONE) const;
 
+	UPROPERTY()
+	int32 Version = 0;
+
 	UPROPERTY(meta = (ToolTip = "All conditions of participants in an edge detail, that must be match in order for overrides to apply."))
 	TArray<FEdgeDetailCondition> Conditions;
 
 	UPROPERTY(meta = (ToolTip = "All per-participant data to override, given that all participants match conditions."))
 	TArray<FEdgeDetailOverrides> Overrides;
+
+	// Version 0: initial version, implicitly loaded from when Version was missing
+	// Version 1: FEdgeDetailOverrides now has SurfaceExtensions
+	static constexpr int32 CurrentVersion = 1;
 
 	uint32 CachedConditionHash = 0;
 

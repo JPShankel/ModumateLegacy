@@ -81,6 +81,9 @@ struct MODUMATE_API FMiterParticipantData
 	// For each layer, the mitered extension values for the start and of the layer
 	TArray<FVector2D> LayerExtensions;
 
+	// For the start and end of a miter participant that can host Surfaces, extension of the eligable Surface face.
+	FVector2D SurfaceExtensions;
+
 	FMiterParticipantData();
 	FMiterParticipantData(const struct FMiterData *InMiterData, int32 EdgeFaceIndex);
 	void Reset();

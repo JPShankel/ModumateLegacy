@@ -84,6 +84,7 @@ FEdgeDetailOverrides::FEdgeDetailOverrides(const FMiterParticipantData* MiterPar
 	if (ensure(MiterParticipantData))
 	{
 		LayerExtensions = MiterParticipantData->LayerExtensions;
+		SurfaceExtensions = MiterParticipantData->SurfaceExtensions;
 
 		// Normalize all participants as if they're coming in clockwise, from the perspective of the miter edge coordinate system.
 		if (!MiterParticipantData->bPlaneNormalCW)
@@ -100,20 +101,28 @@ void FEdgeDetailOverrides::Invert()
 	{
 		Swap(layerExtension.X, layerExtension.Y);
 	}
+	Swap(SurfaceExtensions.X, SurfaceExtensions.Y);
 }
 
 uint32 GetTypeHash(const FEdgeDetailOverrides& EdgeDetailOverrides)
 {
 	int32 numLayers = EdgeDetailOverrides.LayerExtensions.Num();
 	uint32 currentHash = GetTypeHash(numLayers);
-	return FCrc::MemCrc32(EdgeDetailOverrides.LayerExtensions.GetData(), numLayers * EdgeDetailOverrides.LayerExtensions.GetTypeSize(), currentHash);
+	currentHash = FCrc::MemCrc32(EdgeDetailOverrides.LayerExtensions.GetData(), numLayers * EdgeDetailOverrides.LayerExtensions.GetTypeSize(), currentHash);
+	currentHash = HashCombine(currentHash, GetTypeHash(EdgeDetailOverrides.SurfaceExtensions));
+	return currentHash;
 }
 
 
-FEdgeDetailData FEdgeDetailData::TempOrientedDetail;
+FEdgeDetailData FEdgeDetailData::TempOrientedDetail(FEdgeDetailData::CurrentVersion);
 TArray<uint32> FEdgeDetailData::TempOrientedConditionHashes;
 
 FEdgeDetailData::FEdgeDetailData()
+{
+}
+
+FEdgeDetailData::FEdgeDetailData(int32 InVersion)
+	: Version(InVersion)
 {
 }
 
@@ -276,6 +285,8 @@ void FEdgeDetailData::FillFromMiterNode(const IMiterNode* MiterNode)
 		return;
 	}
 
+	Version = FEdgeDetailData::CurrentVersion;
+
 	const FMiterData& miterData = MiterNode->GetMiterData();
 	if (miterData.SortedMiterIDs.Num() == 0)
 	{
@@ -300,6 +311,25 @@ void FEdgeDetailData::FillFromMiterNode(const IMiterNode* MiterNode)
 
 void FEdgeDetailData::PostSerialize(const FArchive& Ar)
 {
+	if (Version < CurrentVersion)
+	{
+		// For detail overrides missing SurfaceExtensions, default them to the outer values of LayerExtensions
+		if (Version < 1)
+		{
+			for (auto& detailOverrides : Overrides)
+			{
+				int32 numLayers = detailOverrides.LayerExtensions.Num();
+				if (numLayers > 0)
+				{
+					detailOverrides.SurfaceExtensions.X = detailOverrides.LayerExtensions[0].X;
+					detailOverrides.SurfaceExtensions.Y = detailOverrides.LayerExtensions.Last().Y;
+				}
+			}
+		}
+
+		Version = CurrentVersion;
+	}
+
 	UpdateConditionHash();
 }
 

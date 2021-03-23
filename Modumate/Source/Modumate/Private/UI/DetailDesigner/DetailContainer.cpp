@@ -176,7 +176,7 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 
 		FText assemblyTitle = FText::Format(LOCTEXT("AssemblyTitleFormat", "{0} {1}, ({2}){3}"),
 			numberPrefix, typeIndex, totalThicknessText, assemblyNameText);
-		presetTitle->AssemblyTitle->ModumateTextBlock->SetText(assemblyTitle);
+		presetTitle->AssemblyTitle->ChangeText(assemblyTitle);
 
 		// Create a header for the layer rows
 		auto presetColumnTitles = ParticipantsList->GetChildAt(participantWidgetIdx++);
@@ -186,8 +186,9 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 			ParticipantsList->AddChildToVerticalBox(presetColumnTitles);
 		}
 
-		// Create a row for each layer of the participant
-		for (int32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
+		// Create a row for each layer of the participant, as well as an extra one for the SurfaceExtensions values.
+		// TODO: If we clean up the UI to use two rows for the SurfaceExtensions (one for start, one for end), then this would need to create two additional UI entries.
+		for (int32 layerIdx = 0; layerIdx <= numLayers; ++layerIdx)
 		{
 			auto presetLayerData = Cast<UDetailDesignerLayerData>(ParticipantsList->GetChildAt(participantWidgetIdx++));
 			if (presetLayerData == nullptr)
@@ -197,28 +198,37 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 				ParticipantsList->AddChildToVerticalBox(presetLayerData);
 			}
 
-			float layerThicknessInches = detailCondition.LayerThicknesses[layerIdx];
-
-			FText layerTitle = FText::Format(LOCTEXT("LayerTitle", "Layer {0}"), layerIdx + 1);
-			if (participantAssembly)
+			if (layerIdx == numLayers)
 			{
-				// Double-check that if we're referencing a real assembly, that it has the right layers
-				auto& participantLayer = participantAssembly->Layers[layerIdx];
-				auto layerPreset = presetCollection.PresetFromGUID(participantLayer.PresetGUID);
-				if (!ensure(layerPreset &&
-					FMath::IsNearlyEqual(layerThicknessInches, UModumateDimensionStatics::CentimetersToInches64(participantLayer.ThicknessCentimeters))))
+				presetLayerData->LayerName->ChangeText(LOCTEXT("SurfaceTitle", "Surface Extensions"));
+				presetLayerData->LayerThickness->SetVisibility(ESlateVisibility::Collapsed);
+				presetLayerData->PopulateLayerData(participantIdx, layerIdx, detailOverride.SurfaceExtensions);
+			}
+			else
+			{
+				float layerThicknessInches = detailCondition.LayerThicknesses[layerIdx];
+
+				FText layerTitle = FText::Format(LOCTEXT("LayerTitle", "Layer {0}"), layerIdx + 1);
+				if (participantAssembly)
 				{
-					ClearEditor();
-					return;
+					// Double-check that if we're referencing a real assembly, that it has the right layers
+					auto& participantLayer = participantAssembly->Layers[layerIdx];
+					auto layerPreset = presetCollection.PresetFromGUID(participantLayer.PresetGUID);
+					if (!ensure(layerPreset &&
+						FMath::IsNearlyEqual(layerThicknessInches, UModumateDimensionStatics::CentimetersToInches64(participantLayer.ThicknessCentimeters))))
+					{
+						ClearEditor();
+						return;
+					}
+
+					layerTitle = layerPreset->DisplayName;
 				}
 
-				layerTitle = layerPreset->DisplayName;
+				presetLayerData->LayerName->ChangeText(layerTitle);
+				presetLayerData->LayerThickness->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+				presetLayerData->LayerThickness->ChangeText(UModumateDimensionStatics::InchesToImperialText(layerThicknessInches));
+				presetLayerData->PopulateLayerData(participantIdx, layerIdx, detailOverride.LayerExtensions[layerIdx]);
 			}
-
-			presetLayerData->LayerName->ModumateTextBlock->SetText(layerTitle);
-
-			presetLayerData->LayerThickness->ModumateTextBlock->SetText(UModumateDimensionStatics::InchesToImperialText(layerThicknessInches));
-			presetLayerData->PopulateLayerData(participantIdx, layerIdx, detailOverride.LayerExtensions[layerIdx]);
 		}
 
 		if (participantIdx < (numParticipants - 1))
@@ -277,13 +287,29 @@ void UDetailDesignerContainer::OnLayerExtensionChanged(int32 ParticipantIndex, i
 	FEdgeDetailData detailData;
 	auto presetDelta = document->GetPresetCollection().MakeUpdateDelta(DetailPresetID, this);
 	if (!ensure(presetDelta && presetDelta->NewState.CustomData.LoadStructData(detailData) &&
-		detailData.Overrides.IsValidIndex(ParticipantIndex) &&
-		detailData.Overrides[ParticipantIndex].LayerExtensions.IsValidIndex(LayerIndex)))
+		detailData.Overrides.IsValidIndex(ParticipantIndex)))
 	{
 		return;
 	}
 
-	detailData.Overrides[ParticipantIndex].LayerExtensions[LayerIndex] = NewExtensions;
+	auto& overrideParticipant = detailData.Overrides[ParticipantIndex];
+
+	int32 numLayers = overrideParticipant.LayerExtensions.Num();
+	if (!ensure((LayerIndex >= 0) && (LayerIndex <= numLayers)))
+	{
+		return;
+	}
+
+	
+	if (LayerIndex < numLayers)
+	{
+		overrideParticipant.LayerExtensions[LayerIndex] = NewExtensions;
+	}
+	else
+	{
+		overrideParticipant.SurfaceExtensions = NewExtensions;
+	}
+
 	if (!ensure(presetDelta->NewState.CustomData.SaveStructData(detailData)))
 	{
 		return;

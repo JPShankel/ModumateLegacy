@@ -74,6 +74,9 @@ public:
 
 	bool ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const override;
 
+	const TArray<FLayerGeomDef>& GetLayerGeoms() const { return LayerGeometries; }
+	const TPair<TArray<FVector>, TArray<FVector>>& GetExtendedSurfaceFaces() const { return CachedExtendedSurfaceFaces; }
+
 	UPROPERTY()
 	FMOIPlaneHostedObjData InstanceData;
 
@@ -96,6 +99,7 @@ protected:
 	FCachedLayerDimsByType CachedLayerDims;
 	TArray<FLayerGeomDef> LayerGeometries;
 	TArray<FPolyHole3D> CachedHoles;
+	TPair<TArray<FVector>, TArray<FVector>> CachedExtendedSurfaceFaces;
 	mutable TArray<FVector> TempHoleRelativePoints;
 
 	TArray<FVector2D> CachedLayerEdgeExtensions;

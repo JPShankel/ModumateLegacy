@@ -195,101 +195,84 @@ bool UModumateObjectStatics::GetGeometryFromFaceIndex(const AModumateObjectInsta
 {
 	OutFacePoints.Reset();
 
-	if ((Host == nullptr) || (FaceIndex == INDEX_NONE))
+	auto planeHostedObj = Cast<AMOIPlaneHostedObj>(Host);
+	if ((planeHostedObj == nullptr) || (FaceIndex == INDEX_NONE))
 	{
 		return false;
 	}
 
-	switch (Host->GetObjectType())
+	const AModumateObjectInstance *hostParent = Host->GetParentObject();
+	if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)) ||
+		hostParent->IsDirty(EObjectDirtyFlags::Structure) || hostParent->IsDirty(EObjectDirtyFlags::Mitering))
 	{
-	case EObjectType::OTRoofFace:
-	case EObjectType::OTWallSegment:
-	case EObjectType::OTFloorSegment:
-	case EObjectType::OTCeiling:
-	case EObjectType::OTRailSegment:
-	case EObjectType::OTSystemPanel:
-	{
-		const AModumateObjectInstance *hostParent = Host->GetParentObject();
-		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)) ||
-			hostParent->IsDirty(EObjectDirtyFlags::Structure) || hostParent->IsDirty(EObjectDirtyFlags::Mitering))
-		{
-			return false;
-		}
-
-		FVector hostLocation = hostParent->GetLocation();
-		FVector hostNormal = hostParent->GetNormal();
-		int32 numCorners = hostParent->GetNumCorners();
-		if (numCorners < 3)
-		{
-			return false;
-		}
-
-		if (FaceIndex < 2)
-		{
-			auto meshActor = Cast<ADynamicMeshActor>(Host->GetActor());
-			if (!ensure(meshActor && (meshActor->LayerGeometries.Num() > 0)))
-			{
-				return false;
-			}
-
-			bool bOnStartingSide = (FaceIndex != 0);
-			auto& layerPoints = bOnStartingSide ? meshActor->LayerGeometries[0].UniquePointsA : meshActor->LayerGeometries.Last().UniquePointsB;
-			for (auto& layerPoint : layerPoints)
-			{
-				OutFacePoints.Add(hostLocation + layerPoint);
-			}
-
-			OutNormal = hostNormal * (bOnStartingSide ? -1.0f : 1.0f);
-			UModumateGeometryStatics::FindBasisVectors(OutFaceAxisX, OutFaceAxisY, OutNormal);
-
-			return true;
-		}
-		else if (FaceIndex < (numCorners + 2))
-		{
-			int32 bottomStartCornerIdx = FaceIndex - 2;
-			int32 bottomEndCornerIdx = (bottomStartCornerIdx + 1) % numCorners;
-			int32 topStartCornerIdx = bottomStartCornerIdx + numCorners;
-			int32 topEndCornerIdx = bottomEndCornerIdx + numCorners;
-
-			FVector bottomStartCorner = Host->GetCorner(bottomStartCornerIdx);
-			FVector bottomEndCorner = Host->GetCorner(bottomEndCornerIdx);
-			FVector topStartCorner = Host->GetCorner(topStartCornerIdx);
-			FVector topEndCorner = Host->GetCorner(topEndCornerIdx);
-
-			FVector bottomEdgeDir = (bottomEndCorner - bottomStartCorner).GetSafeNormal();
-			FVector topEdgeDir = (topEndCorner - topStartCorner).GetSafeNormal();
-			if (!FVector::Parallel(bottomEdgeDir, topEdgeDir) || !bottomEdgeDir.IsNormalized() || !topEdgeDir.IsNormalized())
-			{
-				return false;
-			}
-
-			FVector startEdgeDir = (topStartCorner - bottomStartCorner).GetSafeNormal();
-			FVector endEdgeDir = (topEndCorner - bottomEndCorner).GetSafeNormal();
-			FVector startNormal = (bottomEdgeDir ^ startEdgeDir).GetSafeNormal();
-			FVector endNormal = (bottomEdgeDir ^ endEdgeDir).GetSafeNormal();
-			if (!FVector::Coincident(startNormal, endNormal) || !startNormal.IsNormalized() || !endNormal.IsNormalized())
-			{
-				return false;
-			}
-
-			OutFacePoints.Add(bottomStartCorner);
-			OutFacePoints.Add(bottomEndCorner);
-			OutFacePoints.Add(topEndCorner);
-			OutFacePoints.Add(topStartCorner);
-
-			OutNormal = startNormal;
-			OutFaceAxisX = bottomEdgeDir;
-			OutFaceAxisY = OutNormal ^ OutFaceAxisX;
-
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
-	break;
-	default:
+
+	FVector hostLocation = hostParent->GetLocation();
+	FVector hostNormal = hostParent->GetNormal();
+	int32 numCorners = hostParent->GetNumCorners();
+	if (numCorners < 3)
+	{
+		return false;
+	}
+
+	if (FaceIndex < 2)
+	{
+		bool bOnStartingSide = (FaceIndex != 0);
+
+		auto& extendedSurfaceFaces = planeHostedObj->GetExtendedSurfaceFaces();
+		auto& extendedSurfaceFace = bOnStartingSide ? extendedSurfaceFaces.Key : extendedSurfaceFaces.Value;
+		for (auto& facePoint : extendedSurfaceFace)
+		{
+			OutFacePoints.Add(hostLocation + facePoint);
+		}
+
+		OutNormal = hostNormal * (bOnStartingSide ? -1.0f : 1.0f);
+		UModumateGeometryStatics::FindBasisVectors(OutFaceAxisX, OutFaceAxisY, OutNormal);
+
+		return true;
+	}
+	else if (FaceIndex < (numCorners + 2))
+	{
+		int32 bottomStartCornerIdx = FaceIndex - 2;
+		int32 bottomEndCornerIdx = (bottomStartCornerIdx + 1) % numCorners;
+		int32 topStartCornerIdx = bottomStartCornerIdx + numCorners;
+		int32 topEndCornerIdx = bottomEndCornerIdx + numCorners;
+
+		FVector bottomStartCorner = Host->GetCorner(bottomStartCornerIdx);
+		FVector bottomEndCorner = Host->GetCorner(bottomEndCornerIdx);
+		FVector topStartCorner = Host->GetCorner(topStartCornerIdx);
+		FVector topEndCorner = Host->GetCorner(topEndCornerIdx);
+
+		FVector bottomEdgeDir = (bottomEndCorner - bottomStartCorner).GetSafeNormal();
+		FVector topEdgeDir = (topEndCorner - topStartCorner).GetSafeNormal();
+		if (!FVector::Parallel(bottomEdgeDir, topEdgeDir) || !bottomEdgeDir.IsNormalized() || !topEdgeDir.IsNormalized())
+		{
+			return false;
+		}
+
+		FVector startEdgeDir = (topStartCorner - bottomStartCorner).GetSafeNormal();
+		FVector endEdgeDir = (topEndCorner - bottomEndCorner).GetSafeNormal();
+		FVector startNormal = (bottomEdgeDir ^ startEdgeDir).GetSafeNormal();
+		FVector endNormal = (bottomEdgeDir ^ endEdgeDir).GetSafeNormal();
+		if (!FVector::Coincident(startNormal, endNormal) || !startNormal.IsNormalized() || !endNormal.IsNormalized())
+		{
+			return false;
+		}
+
+		OutFacePoints.Add(bottomStartCorner);
+		OutFacePoints.Add(bottomEndCorner);
+		OutFacePoints.Add(topEndCorner);
+		OutFacePoints.Add(topStartCorner);
+
+		OutNormal = startNormal;
+		OutFaceAxisX = bottomEdgeDir;
+		OutFaceAxisY = OutNormal ^ OutFaceAxisX;
+
+		return true;
+	}
+	else
+	{
 		return false;
 	}
 }

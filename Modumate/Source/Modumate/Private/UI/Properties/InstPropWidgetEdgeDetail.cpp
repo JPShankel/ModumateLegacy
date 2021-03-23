@@ -162,7 +162,7 @@ bool UInstPropWidgetEdgeDetail::OnCreateOrSwap(FGuid NewDetailPresetID)
 
 			if (bPopulatedDetailData)
 			{
-				FEdgeDetailData curDetailData(edgeMOI->GetMiterInterface());
+				FEdgeDetailData curDetailData(FEdgeDetailData::CurrentVersion);
 				if (!ensure(newDetailData.CompareConditions(curDetailData, tempDetailOrientations) && (tempDetailOrientations.Num() > 0)))
 				{
 					return false;

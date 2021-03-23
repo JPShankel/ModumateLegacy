@@ -78,7 +78,9 @@ FMiterParticipantData::FMiterParticipantData(const struct FMiterData *InMiterDat
 		int32 layerGroupStartIdx, layerGroupEndIdx;
 		GetLayerOffsetIndices(layerGroup, layerGroupStartIdx, layerGroupEndIdx);
 
-		HaveLayerGroup[layerGroupIdx] = (layerGroupStartIdx != layerGroupEndIdx);
+		// TODO: refactor the concept of "layer groups" when we can author custom miter groups/priorities for each layer.
+		// For now, since all layers come in as Structure by default, PreStructure and PostStructure will be repurposed for Surface extensions.
+		HaveLayerGroup[layerGroupIdx] = (layerGroup != EMiterLayerGroup::Structure) || (layerGroupStartIdx != layerGroupEndIdx);
 
 		float layerGroupStartOffset = LayerStartOffset + LayerDims.LayerOffsets[layerGroupStartIdx];
 		float layerGroupEndOffset = LayerStartOffset + LayerDims.LayerOffsets[layerGroupEndIdx];
@@ -89,6 +91,7 @@ FMiterParticipantData::FMiterParticipantData(const struct FMiterData *InMiterDat
 	}
 
 	LayerExtensions.AddZeroed(LayerDims.NumLayers);
+	SurfaceExtensions = FVector2D::ZeroVector;
 
 	bValid = true;
 }
@@ -115,6 +118,7 @@ void FMiterParticipantData::Reset()
 	}
 
 	LayerExtensions.Reset();
+	SurfaceExtensions = FVector2D::ZeroVector;
 }
 
 void FMiterParticipantData::GetLayerOffsetIndices(EMiterLayerGroup MiterLayerGroup, int32 &OutLayerStartIdx, int32 &OutLayerEndIdx)
@@ -145,16 +149,36 @@ void FMiterParticipantData::FinishLayerGroupExtension(EMiterLayerGroup MiterLaye
 	int32 layerGroupStartIdx, layerGroupEndIdx;
 	GetLayerOffsetIndices(MiterLayerGroup, layerGroupStartIdx, layerGroupEndIdx);
 
-	float groupThickness = (LayerDims.LayerOffsets[layerGroupEndIdx] - LayerDims.LayerOffsets[layerGroupStartIdx]);
-	float layerGroupProgress = 0.0f;
-	for (int32 layerIdx = layerGroupStartIdx; layerIdx < layerGroupEndIdx; ++layerIdx)
+	switch (MiterLayerGroup)
 	{
-		float layerThickness = LayerDims.LayerOffsets[layerIdx + 1] - LayerDims.LayerOffsets[layerIdx];
-		float layerStartAlpha = layerGroupProgress / groupThickness;
-		layerGroupProgress += layerThickness;
-		float layerEndAlpha = layerGroupProgress / groupThickness;
-		LayerExtensions[layerIdx].X = FMath::Lerp(groupExtensions.X, groupExtensions.Y, layerStartAlpha);
-		LayerExtensions[layerIdx].Y = FMath::Lerp(groupExtensions.X, groupExtensions.Y, layerEndAlpha);
+	case EMiterLayerGroup::PreStructure:
+	{
+		SurfaceExtensions.X = groupExtensions.X;
+		break;
+	}
+	case EMiterLayerGroup::PostStructure:
+	{
+		SurfaceExtensions.Y = groupExtensions.Y;
+		break;
+	}
+	case EMiterLayerGroup::Structure:
+	{
+		float groupThickness = (LayerDims.LayerOffsets[layerGroupEndIdx] - LayerDims.LayerOffsets[layerGroupStartIdx]);
+		float layerGroupProgress = 0.0f;
+		for (int32 layerIdx = layerGroupStartIdx; layerIdx < layerGroupEndIdx; ++layerIdx)
+		{
+			float layerThickness = LayerDims.LayerOffsets[layerIdx + 1] - LayerDims.LayerOffsets[layerIdx];
+			ensure(FMath::IsNearlyEqual(layerThickness, LayerDims.LayerThicknesses[layerIdx]));
+			float layerStartAlpha = layerGroupProgress / groupThickness;
+			layerGroupProgress += layerThickness;
+			float layerEndAlpha = layerGroupProgress / groupThickness;
+			LayerExtensions[layerIdx].X = FMath::Lerp(groupExtensions.X, groupExtensions.Y, layerStartAlpha);
+			LayerExtensions[layerIdx].Y = FMath::Lerp(groupExtensions.X, groupExtensions.Y, layerEndAlpha);
+		}
+		break;
+	}
+	default:
+		break;
 	}
 }
 
@@ -298,6 +322,7 @@ bool FMiterData::CalculateMitering()
 			// Edge detail overrides are normalized as if all participants are coming in with CW orientation,
 			// so if the detail is applying to a miter participant that's CCW, we need to adjust the extensions.
 			miterParticipant.LayerExtensions = edgeDetailOverrides.LayerExtensions;
+			miterParticipant.SurfaceExtensions = edgeDetailOverrides.SurfaceExtensions;
 			if (!miterParticipant.bPlaneNormalCW)
 			{
 				Algo::Reverse(miterParticipant.LayerExtensions);
@@ -305,6 +330,8 @@ bool FMiterData::CalculateMitering()
 				{
 					Swap(layerExtension.X, layerExtension.Y);
 				}
+
+				Swap(miterParticipant.SurfaceExtensions.X, miterParticipant.SurfaceExtensions.Y);
 			}
 		}
 

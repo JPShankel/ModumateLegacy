@@ -21,6 +21,7 @@
 AMOIMetaEdge::AMOIMetaEdge()
 	: AMOIEdgeBase()
 	, CachedEdgeDetailMOI(nullptr)
+	, CachedEdgeDetailData(FEdgeDetailData::CurrentVersion)
 	, CachedEdgeDetailDataID()
 	, CachedEdgeDetailConditionHash(0)
 	, BaseDefaultColor(FColor::Black)
