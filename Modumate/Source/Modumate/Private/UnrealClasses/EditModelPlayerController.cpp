@@ -1180,8 +1180,7 @@ bool AEditModelPlayerController::OnCreateQuantitiesCsv(const TFunction<void(FStr
 	{
 		EMPlayerState->ShowingFileDialog = false;
 
-		if (!quantitiesManager->CalculateAllQuantities()
-			|| !quantitiesManager->CreateReport(filename))
+		if (!quantitiesManager->CreateReport(filename))
 		{
 			FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("QuantityEstimateCreateFail", "Quantity Estimate CSV Creation Failed"),
 				&dialogTitle);

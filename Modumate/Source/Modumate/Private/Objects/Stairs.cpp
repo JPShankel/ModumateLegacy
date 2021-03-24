@@ -9,7 +9,7 @@
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "Algo/Accumulate.h"
-#include "Quantities/QuantitiesVisitor.h"
+#include "Quantities/QuantitiesManager.h"
 #include "DocumentManagement/ModumateDocument.h"
 
 class AEditModelPlayerController;
@@ -115,7 +115,13 @@ void AMOIStaircase::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposi
 	}
 }
 
-bool AMOIStaircase::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+bool AMOIStaircase::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
+{
+	QuantitiesVisitor.Add(CachedQuantities);
+	return true;
+}
+
+void AMOIStaircase::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	const FGuid& assemblyKey = assembly.UniqueKey();
@@ -123,28 +129,28 @@ bool AMOIStaircase::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) con
 	const int32 numRisers = assembly.RiserLayers.Num() > 0 ? CachedRiserPolys.Num() : 0;
 	if (numTreads == 0)
 	{
-		return true;
+		return;
 	}
 
 	const Modumate::FGraph3D& graph = Document->GetVolumeGraph();
 	const Modumate::FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
 	if (!ensure(hostingFace))
 	{
-		return false;
+		return;
 	}
+	CachedQuantities.Empty();
 	FVector stairVector(hostingFace->CachedPositions[2] - hostingFace->CachedPositions[1]);
 
-	float treadArea = QuantitiesVisitor.AreaOfLayer(TreadLayers[0]);
-	float riserArea = numRisers > 0 ? QuantitiesVisitor.AreaOfLayer(RiserLayers[0]): 0.0f;
+	float treadArea = FQuantitiesCollection::AreaOfLayer(TreadLayers[0]);
+	float riserArea = numRisers > 0 ? FQuantitiesCollection::AreaOfLayer(RiserLayers[0]) : 0.0f;
 
-	QuantitiesVisitor.AddQuantity(assemblyKey, 1.0f, stairVector.Size(), treadArea * numTreads + riserArea * numRisers);
-	QuantitiesVisitor.AddLayersQuantity(TreadLayers, assembly.TreadLayers, assemblyKey, numTreads);
+	CachedQuantities.AddQuantity(assemblyKey, 1.0f, stairVector.Size(), treadArea * numTreads + riserArea * numRisers);
+	CachedQuantities.AddLayersQuantity(TreadLayers, assembly.TreadLayers, assemblyKey, numTreads);
 	if (numRisers > 0)
 	{
-		QuantitiesVisitor.AddLayersQuantity(RiserLayers, assembly.RiserLayers, assemblyKey, numRisers);
+		CachedQuantities.AddLayersQuantity(RiserLayers, assembly.RiserLayers, assemblyKey, numRisers);
 	}
-
-	return true;
+	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
 }
 
 void AMOIStaircase::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,

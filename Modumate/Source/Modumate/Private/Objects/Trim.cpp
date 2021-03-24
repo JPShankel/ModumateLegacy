@@ -11,7 +11,7 @@
 #include "UI/Properties/InstPropWidgetFlip.h"
 #include "UI/Properties/InstPropWidgetOffset.h"
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
-#include "Quantities/QuantitiesVisitor.h"
+#include "Quantities/QuantitiesManager.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -306,13 +306,20 @@ void AMOITrim::PostLoadInstanceData()
 	}
 }
 
-bool AMOITrim::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+void AMOITrim::PreDestroy()
+{
+	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
+}
+
+bool AMOITrim::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
 
 	float trimLength = (TrimEndPos - TrimStartPos).Size();
 	QuantitiesVisitor.AddQuantity(assemblyGuid, 1.0f, trimLength);
+
+	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
 
 	return true;
 }
@@ -425,4 +432,9 @@ bool AMOITrim::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 {
 	return DynamicMeshActor->SetupExtrudedPolyGeometry(CachedAssembly, TrimStartPos, TrimEndPos,
 		TrimUp, TrimNormal, InstanceData.OffsetUp, InstanceData.OffsetNormal, UpperExtensions, OuterExtensions, TrimExtrusionFlip, bRecreate, bCreateCollision);
+}
+
+void AMOITrim::UpdateQuantities()
+{
+	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
 }

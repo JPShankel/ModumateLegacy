@@ -57,7 +57,8 @@ public:
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController* Controller) override;
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
-	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
+	virtual void PreDestroy() override;
+	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 
 	virtual void SetIsDynamic(bool bIsDynamic) override;
 	virtual bool GetIsDynamic() const override;
@@ -75,7 +76,7 @@ public:
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 		TArray<TArray<FVector>>& OutPerimeters) const override;
 
-	bool ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const override;
+	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;
 
 	virtual void PostLoadInstanceData() override;
 
@@ -98,4 +99,5 @@ protected:
 	bool UpdateCachedStructure();
 	bool UpdateMitering();
 	bool InternalUpdateGeometry(bool bRecreate, bool bCreateCollision);
+	virtual void UpdateQuantities() override;
 };

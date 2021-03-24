@@ -45,7 +45,7 @@ public:
 	virtual bool GetIsDynamic() const override;
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
 	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;
-	bool ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const override;
+	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;
 
 	UPROPERTY()
 	FMOIFFEData InstanceData;
@@ -58,4 +58,6 @@ protected:
 	FQuat CachedRotation;
 	FVector CachedFaceNormal;
 	TArray<int32> CachedFaceIndices;
+
+	virtual void UpdateQuantities() override;
 };

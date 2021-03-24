@@ -23,7 +23,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateObjectInstanceParts.h"
-#include "Quantities/QuantitiesVisitor.h"
+#include "Quantities/QuantitiesManager.h"
 
 
 class AEditModelPlayerController;
@@ -473,7 +473,13 @@ void AMOIPortal::PostLoadInstanceData()
 	}
 }
 
-bool AMOIPortal::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+bool AMOIPortal::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
+{
+	QuantitiesVisitor.Add(CachedQuantities);
+	return true;
+}
+
+void AMOIPortal::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
@@ -482,7 +488,7 @@ bool AMOIPortal::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
 
 	if (!hostingFace)
 	{
-		return false;
+		return;
 	}
 
 	float width = (hostingFace->Cached2DPositions[2] - hostingFace->Cached2DPositions[1]).Size();
@@ -490,8 +496,9 @@ bool AMOIPortal::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
 	int32 namingWidth = FMath::RoundToInt(width * UModumateDimensionStatics::CentimetersToInches);
 	int32 namingHeight = FMath::RoundToInt(height * UModumateDimensionStatics::CentimetersToInches);
 	FString name = FString::FromInt(namingWidth) + TEXT("x") + FString::FromInt(namingHeight);
-	QuantitiesVisitor.AddPartsQuantity(name, assembly.Parts, assemblyGuid);
-	return true;
+
+	CachedQuantities.AddPartsQuantity(name, assembly.Parts, assemblyGuid);
+	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
 }
 
 EDoorOperationType AMOIPortal::GetDoorType() const

@@ -16,6 +16,7 @@
 #include "Misc/OutputDeviceNull.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UI/HUDDrawWidget.h"
+#include "Quantities/QuantitiesManager.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -537,6 +538,14 @@ bool AModumateObjectInstance::RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArr
 
 			// Let the implementation handle all the specific cleaning
 			bSuccess = CleanObject(DirtyFlag, OutSideEffectDeltas);
+
+			if (bSuccess && !Document->IsPreviewingDeltas() &&
+				(DirtyFlag == EObjectDirtyFlags::Structure || DirtyFlag == EObjectDirtyFlags::Mitering))
+			{
+				// Update use of quantities by this MOI.
+				UpdateQuantities();
+			}
+
 		}
 
 		if (bSuccess)
@@ -1003,7 +1012,14 @@ AActor *AModumateObjectInstance::CreateActor(const FVector &loc, const FQuat &ro
 
 void AModumateObjectInstance::PreDestroy()
 {
-
+	if (CachedQuantities.Num() != 0)
+	{
+		UModumateGameInstance* gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
+		if (gameInstance != nullptr)
+		{
+			gameInstance->GetQuantitiesManager()->SetDirtyBit();
+		}
+	}
 }
 
 bool AModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)

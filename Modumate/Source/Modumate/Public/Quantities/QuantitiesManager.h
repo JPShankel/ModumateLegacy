@@ -3,7 +3,7 @@
 #pragma once
 
 #include "UnrealClasses/ModumateGameInstance.h"
-#include "Quantities/QuantitiesVisitor.h"
+#include "Quantities/QuantitiesCollection.h"
 
 class MODUMATE_API FQuantitiesManager
 {
@@ -14,12 +14,13 @@ public:
 	void ProcessQuantityTree();
 	void GetQuantityTree(const TMap<FQuantityItemId, FQuantity>*& OutAllQuantities,
 		const TMap<FQuantityItemId, TMap<FQuantityItemId, FQuantity>>*& OutUsedByQuantities,
-		const TMap<FQuantityItemId, TMap<FQuantityItemId, FQuantity>>*& OutUsesQuantities) const;
-	TArray<FQuantityItemId> GetItemsForGuid(const FGuid& PresetId) const;
+		const TMap<FQuantityItemId, TMap<FQuantityItemId, FQuantity>>*& OutUsesQuantities);
+	TArray<FQuantityItemId> GetItemsForGuid(const FGuid& PresetId);
+	void SetDirtyBit(bool bValue = true) { bQuantitiesDirty = bValue; }
 
 	// Create a CSV-format spreadsheet with quantity summations (MOD-379).
 	bool CreateReport(const FString& Filename);
-	FQuantity QuantityForOnePreset(const FGuid& PresetId) const;
+	FQuantity QuantityForOnePreset(const FGuid& PresetId);
 
 	static float GetModuleUnitsInArea(const FBIMPresetInstance* Preset, const FLayerPatternModule* Module, float Area);
 
@@ -29,7 +30,9 @@ private:
 	struct FNcpTree;
 
 	TWeakObjectPtr<UModumateGameInstance> GameInstance;
-	TUniquePtr<FQuantitiesVisitor> CurrentQuantities;
+	TUniquePtr<FQuantitiesCollection> CurrentQuantities;
+
+	bool bQuantitiesDirty = true;
 
 	// Processed state
 	TMap<FQuantityItemId, FQuantity> AllQuantities;

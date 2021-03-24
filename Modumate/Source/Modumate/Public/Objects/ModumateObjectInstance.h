@@ -9,6 +9,7 @@
 #include "Objects/MOIDelta.h"
 #include "Objects/MOIState.h"
 #include "Objects/MOIStructureData.h"
+#include "Quantities/QuantitiesCollection.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 
 #include "ModumateObjectInstance.generated.h"
@@ -18,7 +19,7 @@ class AAdjustmentHandleActor;
 class AEditModelPlayerController;
 class UHUDDrawWidget;
 class UModumateDocument;
-class FQuantitiesVisitor;
+class FQuantitiesCollection;
 
 namespace Modumate {
 	class FDraftingComposite;
@@ -104,7 +105,7 @@ public:
 	virtual bool GetIsDynamic() const { return false; }
 
 	// Quantity estimates
-	virtual bool ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const { return true; }
+	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const { return true; }
 
 protected:
 
@@ -162,6 +163,9 @@ protected:
 	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
 	TArray<FStructurePoint> CachedStructurePoints;
 	TArray<FStructureLine> CachedStructureLines;
+
+	FQuantitiesCollection CachedQuantities;
+	virtual void UpdateQuantities() { };
 
 public:
 	FMOIStateData& GetStateData();

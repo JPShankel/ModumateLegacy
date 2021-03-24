@@ -77,7 +77,7 @@ public:
 
 	virtual void PostLoadInstanceData() override;
 
-	bool ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const override;
+	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;
 
 	UPROPERTY()
 	FMOIPortalData InstanceData;
@@ -95,6 +95,8 @@ protected:
 
 	UFUNCTION()
 	void OnInstPropUIChangedOffset(const FDimensionOffset& NewValue);
+
+	virtual void UpdateQuantities() override;
 
 	FVector2D CachedRelativePos;
 	FVector CachedWorldPos;

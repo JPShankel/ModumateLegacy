@@ -32,6 +32,7 @@
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
+#include "Quantities/QuantitiesManager.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"

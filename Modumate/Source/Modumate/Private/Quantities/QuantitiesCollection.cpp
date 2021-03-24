@@ -1,6 +1,6 @@
 // Copyright 2021 Modumate, Inc. All Rights Reserved.
 
-#include "Quantities/QuantitiesVisitor.h"
+#include "Quantities/QuantitiesCollection.h"
 
 #include "Quantities/QuantitiesManager.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
@@ -25,25 +25,21 @@ uint32 GetTypeHash(const FQuantityItemId& ItemId)
 	return GetTypeHash(ItemId.Id) ^ GetTypeHash(ItemId.Subname);
 }
 
-FQuantitiesVisitor::FQuantitiesVisitor(FQuantitiesManager* Manager)
-	: QuantitiesManager(Manager)
-{ }
-
-void FQuantitiesVisitor::AddAreaQuantity(const FGuid& ItemGuid, float Area)
+void FQuantitiesCollection::AddAreaQuantity(const FGuid& ItemGuid, float Area)
 {
 	FQuantityKey key = { {ItemGuid} };
 	FQuantity value = { 0.0f, 0.0f, Area, 0.0f };
 	Quantities.FindOrAdd(key) += value;
 }
 
-void FQuantitiesVisitor::AddAreaQuantity(const FGuid& ItemGuid, const FGuid& ParentGuid, float Area)
+void FQuantitiesCollection::AddAreaQuantity(const FGuid& ItemGuid, const FGuid& ParentGuid, float Area)
 {
 	FQuantityKey key = { {ItemGuid}, {ParentGuid} };
 	FQuantity value = { 0.0f, 0.0f, Area, 0.0f };
 	Quantities.FindOrAdd(key) += value;
 }
 
-void FQuantitiesVisitor::AddLayersQuantity(const TArray<FLayerGeomDef>& Layers, const TArray<FBIMLayerSpec>& LayerSpecs, const FGuid& ParentGuid, float Multiplier /*= 1.0f*/)
+void FQuantitiesCollection::AddLayersQuantity(const TArray<FLayerGeomDef>& Layers, const TArray<FBIMLayerSpec>& LayerSpecs, const FGuid& ParentGuid, float Multiplier /*= 1.0f*/)
 {
 	const int32 numLayers = Layers.Num();
 	for (int32 layer = 0; layer < numLayers; ++layer)
@@ -65,7 +61,7 @@ void FQuantitiesVisitor::AddLayersQuantity(const TArray<FLayerGeomDef>& Layers, 
 	}
 }
 
-void FQuantitiesVisitor::AddPartsQuantity(const FString& Name, const TArray<FBIMPartSlotSpec>& Parts, const FGuid& ParentGuid /*= FGuid()*/)
+void FQuantitiesCollection::AddPartsQuantity(const FString& Name, const TArray<FBIMPartSlotSpec>& Parts, const FGuid& ParentGuid /*= FGuid()*/)
 {
 	for (const auto& part : Parts)
 	{
@@ -87,12 +83,7 @@ void FQuantitiesVisitor::AddPartsQuantity(const FString& Name, const TArray<FBIM
 	}
 }
 
-float FQuantitiesVisitor::GetModuleUnitsInArea(const FBIMPresetInstance* Preset, const FLayerPatternModule* Module, float Area)
-{
-	return QuantitiesManager->GetModuleUnitsInArea(Preset, Module, Area);
-}
-
-void FQuantitiesVisitor::GetQuantitiesForModule(const FBIMLayerSpec* LayerSpec, float Area, FQuantity& OutQuantity)
+void FQuantitiesCollection::GetQuantitiesForModule(const FBIMLayerSpec* LayerSpec, float Area, FQuantity& OutQuantity)
 {
 	const FLayerPattern& pattern = LayerSpec->Pattern;
 	if (pattern.ModuleCount > 0)
@@ -110,27 +101,36 @@ void FQuantitiesVisitor::GetQuantitiesForModule(const FBIMLayerSpec* LayerSpec, 
 	}
 }
 
-void FQuantitiesVisitor::AddQuantity(const FGuid& ItemGuid, float Count, float Linear /*= 0.0f*/, float Area /*= 0.0f*/, float Volume /*= 0.0f*/)
+FQuantitiesCollection& FQuantitiesCollection::Add(const FQuantitiesCollection& Other)
+{
+	for (const auto& q: Other.Quantities)
+	{
+		Quantities.FindOrAdd(q.Key) += q.Value;
+	}
+	return *this;
+}
+
+void FQuantitiesCollection::AddQuantity(const FGuid& ItemGuid, float Count, float Linear /*= 0.0f*/, float Area /*= 0.0f*/, float Volume /*= 0.0f*/)
 {
 	FQuantityKey key = { {ItemGuid} };
 	FQuantity value = { Count, Linear, Area, Volume };
 	Quantities.FindOrAdd(key) += value;
 }
 
-void FQuantitiesVisitor::AddQuantity(const FGuid& ItemGuid, const FGuid& ParentGuid, float Count, float Linear /*= 0.0f*/, float Area /*= 0.0f*/, float Volume /*= 0.0f*/)
+void FQuantitiesCollection::AddQuantity(const FGuid& ItemGuid, const FGuid& ParentGuid, float Count, float Linear /*= 0.0f*/, float Area /*= 0.0f*/, float Volume /*= 0.0f*/)
 {
 	FQuantityKey key = { {ItemGuid}, {ParentGuid} };
 	FQuantity value = { Count, Linear, Area, Volume };
 	Quantities.FindOrAdd(key) += value;
 }
 
-void FQuantitiesVisitor::AddQuantity(const FGuid& ItemGuid, const FGuid& ParentGuid, const FQuantity& Quantity)
+void FQuantitiesCollection::AddQuantity(const FGuid& ItemGuid, const FGuid& ParentGuid, const FQuantity& Quantity)
 {
 	FQuantityKey key = { {ItemGuid}, {ParentGuid} };
 	Quantities.FindOrAdd(key) += Quantity;
 }
 
-void FQuantitiesVisitor::AddQuantity(const FGuid& ItemGuid, const FString& ItemSubname, const FGuid& ParentGuid,
+void FQuantitiesCollection::AddQuantity(const FGuid& ItemGuid, const FString& ItemSubname, const FGuid& ParentGuid,
 	const FString& ParentSubname, float Count, float Linear, float Area, float Volume)
 {
 	FQuantityKey key = { {ItemGuid, ItemSubname}, {ParentGuid, ParentSubname} };
@@ -138,7 +138,7 @@ void FQuantitiesVisitor::AddQuantity(const FGuid& ItemGuid, const FString& ItemS
 	Quantities.FindOrAdd(key) += value;
 }
 
-float FQuantitiesVisitor::AreaOfFace(const Modumate::FGraph3DFace& Face)
+float FQuantitiesCollection::AreaOfFace(const Modumate::FGraph3DFace& Face)
 {
 	FPoly poly;
 	int32 i = 0;
@@ -149,12 +149,12 @@ float FQuantitiesVisitor::AreaOfFace(const Modumate::FGraph3DFace& Face)
 	return poly.Area();
 }
 
-float FQuantitiesVisitor::AreaOfFace(const Modumate::FGraph2DPolygon& Face)
+float FQuantitiesCollection::AreaOfFace(const Modumate::FGraph2DPolygon& Face)
 {
 	return AreaOfPoly(Face.CachedPerimeterPoints);
 }
 
-float FQuantitiesVisitor::LengthOfWallFace(const Modumate::FGraph3DFace& Face)
+float FQuantitiesCollection::LengthOfWallFace(const Modumate::FGraph3DFace& Face)
 {
 	FVector2D normal(Face.CachedPlane.Y, -Face.CachedPlane.X);
 	normal.Normalize();
@@ -169,7 +169,7 @@ float FQuantitiesVisitor::LengthOfWallFace(const Modumate::FGraph3DFace& Face)
 	return maxProj - minProj;
 }
 
-float FQuantitiesVisitor::AreaOfLayer(const FLayerGeomDef& LayerGeom)
+float FQuantitiesCollection::AreaOfLayer(const FLayerGeomDef& LayerGeom)
 {
 	float area = 0.0f;
 	area += AreaOfPoly(LayerGeom.UniquePointsA);
@@ -181,7 +181,7 @@ float FQuantitiesVisitor::AreaOfLayer(const FLayerGeomDef& LayerGeom)
 	return FMath::Max(0.0f, area);
 }
 
-float FQuantitiesVisitor::AreaOfPoly(const TArray<FVector>& Poly)
+float FQuantitiesCollection::AreaOfPoly(const TArray<FVector>& Poly)
 {
 	FPoly polygon;
 	int32 i = 0;
@@ -192,7 +192,7 @@ float FQuantitiesVisitor::AreaOfPoly(const TArray<FVector>& Poly)
 	return polygon.Area();
 }
 
-float FQuantitiesVisitor::AreaOfPoly(const TArray<FVector2D>& Poly)
+float FQuantitiesCollection::AreaOfPoly(const TArray<FVector2D>& Poly)
 {
 	FPolygon2f polygon;
 	for (const auto& vert : Poly)

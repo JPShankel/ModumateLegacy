@@ -82,7 +82,7 @@ public:
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
 	virtual void PostLoadInstanceData() override;
 
-	bool ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const override;
+	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;
 
 	UPROPERTY()
 	FMOIStructureLineData InstanceData;
@@ -106,4 +106,6 @@ protected:
 	void OnInstPropUIChangedRotation(float NewValue);
 
 	bool UpdateCachedGeometry(bool bRecreate, bool bCreateCollision);
+
+	virtual void UpdateQuantities() override;
 };

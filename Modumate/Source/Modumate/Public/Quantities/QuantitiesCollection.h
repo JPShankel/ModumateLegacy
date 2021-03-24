@@ -53,10 +53,10 @@ namespace Modumate
 	class FGraph2DPolygon;
 }
 
-class MODUMATE_API FQuantitiesVisitor
+class MODUMATE_API FQuantitiesCollection
 {
 public:
-	FQuantitiesVisitor(FQuantitiesManager* Manager);
+	FQuantitiesCollection() { }
 
 	using QuantitiesMap = TMap<FQuantityKey, FQuantity>;
 
@@ -74,10 +74,12 @@ public:
 		const FGuid& ParentGuid, float Multiplier = 1.0f);
 	void AddPartsQuantity(const FString& Name, const TArray<FBIMPartSlotSpec>& Parts, const FGuid& ParentGuid = FGuid());
 
-	float GetModuleUnitsInArea(const FBIMPresetInstance* Preset, const FLayerPatternModule* Module, float Area);
 	void GetQuantitiesForModule(const FBIMLayerSpec* LayerSpec, float Area, FQuantity& OutQuantity);
+	void Empty() { Quantities.Reset(); }
+	FQuantitiesCollection& Add(const FQuantitiesCollection& Other);
 
 	const QuantitiesMap& GetQuantities() const { return Quantities; }
+	int32 Num() const { return Quantities.Num(); }
 
 	static float AreaOfFace(const Modumate::FGraph3DFace& Face);
 	static float AreaOfFace(const Modumate::FGraph2DPolygon& Face);
@@ -87,6 +89,7 @@ public:
 	static float AreaOfPoly(const TArray<FVector2D>& Poly);
 
 private:
-	FQuantitiesManager* QuantitiesManager;
 	QuantitiesMap Quantities;
 };
+
+using FQuantitiesMap = FQuantitiesCollection::QuantitiesMap;

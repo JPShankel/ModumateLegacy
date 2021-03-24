@@ -72,7 +72,7 @@ public:
 		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 		TArray<TArray<FVector>> &OutPerimeters) const override;
 
-	bool ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const override;
+	bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;
 
 	const TArray<FLayerGeomDef>& GetLayerGeoms() const { return LayerGeometries; }
 	const TPair<TArray<FVector>, TArray<FVector>>& GetExtendedSurfaceFaces() const { return CachedExtendedSurfaceFaces; }
@@ -105,4 +105,6 @@ protected:
 	TArray<FVector2D> CachedLayerEdgeExtensions;
 	TArray<AModumateObjectInstance *> CachedParentConnectedMOIs;
 	TArray<AModumateObjectInstance *> CachedConnectedEdges;
+
+	virtual void UpdateQuantities() override;
 };

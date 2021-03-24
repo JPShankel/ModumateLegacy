@@ -17,7 +17,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
-#include "Quantities/QuantitiesVisitor.h"
+#include "Quantities/QuantitiesManager.h"
 
 
 FMOIStructureLineData::FMOIStructureLineData()
@@ -213,7 +213,13 @@ void AMOIStructureLine::PostLoadInstanceData()
 	}
 }
 
-bool AMOIStructureLine::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+bool AMOIStructureLine::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
+{
+	QuantitiesVisitor.Add(CachedQuantities);
+	return true;
+}
+
+void AMOIStructureLine::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
@@ -221,15 +227,16 @@ bool AMOIStructureLine::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor)
 	const Modumate::FGraph3DEdge* hostingEdge = graph.FindEdge(GetParentID());
 	if (!hostingEdge)
 	{
-		return false;
+		return;
 	}
 
+	CachedQuantities.Empty();
 	const Modumate::FGraph3DVertex* startVertex = graph.FindVertex(hostingEdge->StartVertexID);
 	const Modumate::FGraph3DVertex* endVertex = graph.FindVertex(hostingEdge->EndVertexID);
 	float length = (startVertex->Position - endVertex->Position).Size();
-	QuantitiesVisitor.AddQuantity(assemblyGuid, 1.0f, length);
+	CachedQuantities.AddQuantity(assemblyGuid, 1.0f, length);
 
-	return true;
+	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
 }
 
 void AMOIStructureLine::OnInstPropUIChangedFlip(int32 FlippedAxisInt)

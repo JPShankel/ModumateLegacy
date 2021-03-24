@@ -14,12 +14,13 @@
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
-#include "Quantities/QuantitiesVisitor.h"
+#include "Quantities/QuantitiesManager.h"
 
 
 void AMOIFinish::PreDestroy()
 {
 	MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags::Structure);
+	Super::PreDestroy();
 }
 
 FVector AMOIFinish::GetCorner(int32 index) const
@@ -168,29 +169,35 @@ void AMOIFinish::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>
 	}
 }
 
-bool AMOIFinish::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+bool AMOIFinish::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
+{
+	QuantitiesVisitor.Add(CachedQuantities);
+	return true;
+}
+
+void AMOIFinish::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
 	const int32 hostingPolyId = GetParentID();
 	TSharedPtr<Modumate::FGraph2D> graph = Document->FindSurfaceGraphByObjID(GetParentID());
-	if (!ensure(graph.IsValid()) )
+	if (!ensure(graph.IsValid()))
 	{
-		return false;
+		return;
 	}
 	const Modumate::FGraph2DPolygon* hostingFace = graph->FindPolygon(GetParentID());
-	
+
 	if (!ensure(hostingFace))
 	{
-		return false;
+		return;
 	}
 
-	float assemblyArea = QuantitiesVisitor.AreaOfFace(*hostingFace);
-	QuantitiesVisitor.AddQuantity(assemblyGuid, 0.0f, 0.0f, assemblyArea);
+	CachedQuantities.Empty();
+	float assemblyArea = FQuantitiesCollection::AreaOfFace(*hostingFace);
+	CachedQuantities.AddQuantity(assemblyGuid, 0.0f, 0.0f, assemblyArea);
 	const ADynamicMeshActor* actor = CastChecked< ADynamicMeshActor>(GetActor());
-	QuantitiesVisitor.AddLayersQuantity(actor->LayerGeometries, assembly.Layers, assemblyGuid);
-
-	return true;
+	CachedQuantities.AddLayersQuantity(actor->LayerGeometries, assembly.Layers, assemblyGuid);
+	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
 }
 
 void AMOIFinish::UpdateConnectedEdges()

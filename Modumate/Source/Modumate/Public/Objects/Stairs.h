@@ -28,13 +28,14 @@ public:
 		TArray<TArray<FVector>>& OutPerimeters) const override;
 
 
-	bool ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const override;
+	bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;
 
 protected:
 	void GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const;
 	void GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const;
+	virtual void UpdateQuantities() override;
 
 	bool bCachedUseRisers, bCachedStartRiser, bCachedEndRiser;
 	TArray<TArray<FVector>> CachedTreadPolys;

@@ -24,7 +24,7 @@
 #include "UI/DimensionActor.h"
 #include "UI/DimensionManager.h"
 #include "UI/EditModelPlayerHUD.h"
-#include "Quantities/QuantitiesVisitor.h"
+#include "Quantities/QuantitiesManager.h"
 
 
 AMOICabinet::AMOICabinet()
@@ -70,6 +70,7 @@ void AMOICabinet::PreDestroy()
 		dimensionManager->ReleaseDimensionActor(ExtrusionDimensionActorID);
 		ExtrusionDimensionActorID = MOD_ID_NONE;
 	}
+	Super::PreDestroy();
 }
 
 bool AMOICabinet::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
@@ -462,13 +463,22 @@ bool AMOICabinet::UpdateCabinetActors(const FBIMAssemblySpec& Assembly, const TA
 	return true;
 }
 
-bool AMOICabinet::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+bool AMOICabinet::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
+{
+	QuantitiesVisitor.Add(CachedQuantities);
+	return true;
+}
+
+void AMOICabinet::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
-	float volume = QuantitiesVisitor.AreaOfPoly(CachedBasePoints) * CachedExtrusionDelta.Size();
-	QuantitiesVisitor.AddQuantity(assemblyGuid, 1.0f, 0.0f, 0.0f, volume);
-	return true;
+	float volume = FQuantitiesCollection::AreaOfPoly(CachedBasePoints) * CachedExtrusionDelta.Size();
+
+	CachedQuantities.Empty();
+	CachedQuantities.AddQuantity(assemblyGuid, 1.0f, 0.0f, 0.0f, volume);
+
+	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
 }
 
 bool AMOICabinet::UpdateCachedGeometryData()

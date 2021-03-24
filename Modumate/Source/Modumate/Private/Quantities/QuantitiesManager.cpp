@@ -13,6 +13,11 @@ FQuantitiesManager::~FQuantitiesManager() = default;
 
 bool FQuantitiesManager::CalculateAllQuantities()
 {
+	if (!bQuantitiesDirty)
+	{
+		return true;
+	}
+
 	auto gameInstance = GameInstance.Get();
 	if (!gameInstance)
 	{
@@ -25,8 +30,8 @@ bool FQuantitiesManager::CalculateAllQuantities()
 	}
 
 	UModumateDocument* doc = world->GetGameState<AEditModelGameState>()->Document;
-	FQuantitiesVisitor quantities(this);
-	CurrentQuantities.Reset(new FQuantitiesVisitor(this));
+	FQuantitiesCollection quantities;
+	CurrentQuantities.Reset(new FQuantitiesCollection);
 
 	const auto& mois = doc->GetObjectInstances();
 	const AModumateObjectInstance* errorMoi = nullptr;
@@ -39,12 +44,16 @@ bool FQuantitiesManager::CalculateAllQuantities()
 		}
 	}
 
+	ProcessQuantityTree();
+
+	SetDirtyBit(false);
+
 	return !bool(errorMoi);
 }
 
 void FQuantitiesManager::ProcessQuantityTree()
 {
-	const FQuantitiesVisitor::QuantitiesMap& quantitiesMap = CurrentQuantities->GetQuantities();
+	const FQuantitiesCollection::QuantitiesMap& quantitiesMap = CurrentQuantities->GetQuantities();
 	AllQuantities.Empty();
 	UsedByQuantities.Empty();
 	UsesQuantities.Empty();
@@ -79,15 +88,19 @@ void FQuantitiesManager::ProcessQuantityTree()
 
 void FQuantitiesManager::GetQuantityTree(const TMap<FQuantityItemId, FQuantity>*& OutAllQuantities,
 	const TMap<FQuantityItemId, TMap<FQuantityItemId, FQuantity>>*& OutUsedByQuantities,
-	const TMap<FQuantityItemId, TMap<FQuantityItemId, FQuantity>>*& OutUsesQuantities) const
+	const TMap<FQuantityItemId, TMap<FQuantityItemId, FQuantity>>*& OutUsesQuantities)
 {
+	CalculateAllQuantities();
+
 	OutAllQuantities = &AllQuantities;
 	OutUsedByQuantities = &UsedByQuantities;
 	OutUsesQuantities = &UsesQuantities;
 }
 
-TArray<FQuantityItemId> FQuantitiesManager::GetItemsForGuid(const FGuid& PresetId) const
+TArray<FQuantityItemId> FQuantitiesManager::GetItemsForGuid(const FGuid& PresetId)
 {
+	CalculateAllQuantities();
+
 	const auto* itemList = ItemsByGuid.Find(PresetId);
 	if (itemList)
 	{
@@ -164,7 +177,7 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 	TArray<FReportItem> topReportItems;
 	FNcpTree ncpTree;
 
-	ProcessQuantityTree();
+	CalculateAllQuantities();
 
 	auto gameInstance = GameInstance.Get();
 	if (!gameInstance || !gameInstance->GetWorld() || !CurrentQuantities.IsValid())
@@ -185,7 +198,7 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 			+ TEXT(",") + (Q.Linear != 0.0f ? FString::Printf(format, Q.Linear / 30.48f) : FString());
 	};
 
-	const FQuantitiesVisitor::QuantitiesMap& quantities = CurrentQuantities->GetQuantities();
+	const FQuantitiesCollection::QuantitiesMap& quantities = CurrentQuantities->GetQuantities();
 
 	for (auto& item: AllQuantities)
 	{
@@ -334,8 +347,10 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 	return FFileHelper::SaveStringToFile(csvContents, *Filename);
 }
 
-FQuantity FQuantitiesManager::QuantityForOnePreset(const FGuid& PresetId) const
+FQuantity FQuantitiesManager::QuantityForOnePreset(const FGuid& PresetId)
 {
+	CalculateAllQuantities();
+
 	FQuantity quantity;
 
 	const auto* guidItems = ItemsByGuid.Find(PresetId);
@@ -354,7 +369,7 @@ float FQuantitiesManager::GetModuleUnitsInArea(const FBIMPresetInstance* Preset,
 {
 	float length = Module->ModuleExtents.X;
 	float height = Module->ModuleExtents.Z;
-	float unitArea =  length * height;
+	float unitArea = length * height;
 	return FMath::IsFinite(unitArea) && unitArea != 0.0f ? Area / unitArea : 0.0f;
 }
 

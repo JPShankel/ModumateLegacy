@@ -24,7 +24,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
-#include "Quantities/QuantitiesVisitor.h"
+#include "Quantities/QuantitiesManager.h"
 
 
 class AEditModelPlayerController;
@@ -119,6 +119,7 @@ FVector AMOIPlaneHostedObj::GetNormal() const
 void AMOIPlaneHostedObj::PreDestroy()
 {
 	MarkEdgesMiterDirty();
+	Super::PreDestroy();
 }
 
 bool AMOIPlaneHostedObj::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
@@ -815,7 +816,13 @@ void AMOIPlaneHostedObj::OnInstPropUIChangedOffset(const FDimensionOffset& NewVa
 	}
 }
 
-bool AMOIPlaneHostedObj::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor) const
+bool AMOIPlaneHostedObj::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
+{
+	QuantitiesVisitor.Add(CachedQuantities);
+	return true;
+}
+
+void AMOIPlaneHostedObj::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	const int32 numLayers = assembly.Layers.Num();
@@ -824,14 +831,15 @@ bool AMOIPlaneHostedObj::ProcessQuantities(FQuantitiesVisitor& QuantitiesVisitor
 	const Modumate::FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
 	if (!ensure(hostingFace))
 	{
-		return false;
+		return;
 	}
 
-	float assemblyArea = QuantitiesVisitor.AreaOfFace(*hostingFace);
-	float assemblyLength = StateData.ObjectType == EObjectType::OTWallSegment ? QuantitiesVisitor.LengthOfWallFace(*hostingFace)
+	CachedQuantities.Empty();
+	float assemblyArea = FQuantitiesCollection::AreaOfFace(*hostingFace);
+	float assemblyLength = StateData.ObjectType == EObjectType::OTWallSegment ? FQuantitiesCollection::LengthOfWallFace(*hostingFace)
 		: 0.0f;
-	QuantitiesVisitor.AddQuantity(assemblyGuid, 0.0f, assemblyLength, assemblyArea);
-	QuantitiesVisitor.AddLayersQuantity(LayerGeometries, assembly.Layers, assemblyGuid);
 
-	return true;
+	CachedQuantities.AddQuantity(assemblyGuid, 0.0f, assemblyLength, assemblyArea);
+	CachedQuantities.AddLayersQuantity(LayerGeometries, assembly.Layers, assemblyGuid);
+	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
 }
