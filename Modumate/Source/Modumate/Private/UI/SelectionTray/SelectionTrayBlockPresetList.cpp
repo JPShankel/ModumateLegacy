@@ -8,6 +8,7 @@
 #include "Database/ModumateObjectEnums.h"
 #include "Components/ListView.h"
 #include "UI/ComponentListObject.h"
+#include "UI/PresetCard/PresetCardItemObject.h"
 
 
 USelectionTrayBlockPresetList::USelectionTrayBlockPresetList(const FObjectInitializer& ObjectInitializer)
@@ -46,40 +47,45 @@ void USelectionTrayBlockPresetList::BuildPresetListFromSelection()
 			FString objectTypeHash = FMD5::HashAnsiString(*objectTypeString);
 			FGuid::Parse(objectTypeHash, itemKey);
 		}
-		UComponentListObject* compItem = ComponentItemMap.FindRef(itemKey);
-		if (compItem)
+		UPresetCardItemObject* presetItem = PresetItemMap.FindRef(itemKey);
+		if (presetItem)
 		{
 			int32 numberOfObj = numberOfObjectsWithKey.FindRef(itemKey);
 			numberOfObjectsWithKey.Add(itemKey, numberOfObj + 1);
-			compItem->SelectionItemCount = numberOfObj + 1;
+			presetItem->SelectionItemCount = numberOfObj + 1;
 
-			UUserWidget* entryWidget = AssembliesList->GetEntryWidgetFromItem(compItem);
+			UUserWidget* entryWidget = AssembliesList->GetEntryWidgetFromItem(presetItem);
 			if (entryWidget)
 			{
-				UComponentAssemblyListItem* compListWidget = Cast<UComponentAssemblyListItem>(entryWidget);
+				UPresetCardMain* compListWidget = Cast<UPresetCardMain>(entryWidget);
 				if (compListWidget)
 				{
-					compListWidget->UpdateSelectionItemCount(compItem->SelectionItemCount);
+					compListWidget->UpdateSelectionItemCount(presetItem->SelectionItemCount);
 				}
 			}
 		}
 		else
 		{
-			UComponentListObject* newCompListObj = NewObject<UComponentListObject>(this);
-			newCompListObj->ItemType = EComponentListItemType::SelectionListItem;
-			newCompListObj->Mode = UModumateTypeStatics::ToolModeFromObjectType(curObject->GetObjectType());
-			newCompListObj->ObjType = curObject->GetObjectType();
-			newCompListObj->UniqueKey = itemKey;
-			newCompListObj->SelectionItemCount = 1;
-			AssembliesList->AddItem(newCompListObj);
-			ComponentItemMap.Add(itemKey, newCompListObj);
-			numberOfObjectsWithKey.Add(itemKey, newCompListObj->SelectionItemCount);
+			UPresetCardItemObject* newPresetCardItemObj = NewObject<UPresetCardItemObject>(this);
+			newPresetCardItemObj->PresetCardType = EPresetCardType::SelectTray;
+			newPresetCardItemObj->ParentSelectionTrayBlockPresetList = this;
+			newPresetCardItemObj->ObjectType = curObject->GetObjectType();
+			newPresetCardItemObj->PresetGuid = itemKey;
+			newPresetCardItemObj->SelectionItemCount = 1;
+			AssembliesList->AddItem(newPresetCardItemObj);
+			PresetItemMap.Add(itemKey, newPresetCardItemObj);
+			numberOfObjectsWithKey.Add(itemKey, newPresetCardItemObj->SelectionItemCount);
 		}
 	}
 }
 
 void USelectionTrayBlockPresetList::ClearPresetList()
 {
-	ComponentItemMap.Empty();
+	PresetItemMap.Empty();
 	AssembliesList->ClearListItems();
+}
+
+void USelectionTrayBlockPresetList::RefreshAssembliesListView()
+{
+	AssembliesList->RequestRefresh();
 }

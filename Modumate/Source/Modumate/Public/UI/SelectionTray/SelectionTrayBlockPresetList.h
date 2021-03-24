@@ -25,16 +25,17 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY()
-	TMap<FGuid, class UComponentListObject*> ComponentItemMap;
+	TMap<FGuid, class UPresetCardItemObject*> PresetItemMap;
 
 public:
 	UPROPERTY()
 	class AEditModelPlayerController *Controller;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UListView *AssembliesList;
+	class UListView* AssembliesList;
 
 	void BuildPresetListFromSelection();
 	void ClearPresetList();
+	void RefreshAssembliesListView();
 
 };

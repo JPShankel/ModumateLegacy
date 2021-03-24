@@ -37,14 +37,14 @@ void UBrowserItemWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 	{
 		PresetCardMainWidget->SetVisibility(ESlateVisibility::Visible);
 		NCPButtonWidget->SetVisibility(ESlateVisibility::Collapsed);
-		PresetCardMainWidget->SetParentWidgets(itemObj->ParentNCPNavigator, itemObj);
+		PresetCardMainWidget->SetAsBrowserPresetCard(itemObj->ParentNCPNavigator, itemObj);
 		if (itemObj->bPresetCardExpanded)
 		{
-			PresetCardMainWidget->BuildAsBrowserSelectedPresetCard(itemObj->PresetGuid);
+			PresetCardMainWidget->BuildAsExpandedPresetCard(itemObj->PresetGuid);
 		}
 		else
 		{
-			PresetCardMainWidget->BuildAsBrowserCollapsedPresetCard(itemObj->PresetGuid, true);
+			PresetCardMainWidget->BuildAsCollapsedPresetCard(itemObj->PresetGuid, true);
 		}
 	}
 	else

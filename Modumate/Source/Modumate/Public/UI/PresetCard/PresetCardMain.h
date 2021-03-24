@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/IUserObjectListEntry.h"
+#include "Database/ModumateObjectEnums.h"
 #include "PresetCardMain.generated.h"
 
 /**
@@ -13,14 +15,13 @@
 UENUM(BlueprintType)
 enum class EPresetCardType : uint8
 {
-	BrowserCollapsed,
-	BrowserCollapsedNonInteract,
-	BrowserSelected,
+	Browser,
+	SelectTray,
 	None
 };
 
 UCLASS()
-class MODUMATE_API UPresetCardMain : public UUserWidget
+class MODUMATE_API UPresetCardMain : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 
@@ -39,9 +40,22 @@ protected:
 	class UNCPNavigator* ParentNCPNavigator;
 
 	UPROPERTY()
+	class USelectionTrayBlockPresetList* ParentSelectionTrayBlockPresetList;
+
+	UPROPERTY()
 	class UBrowserItemObj* ParentBrowserItemObj;
 
+	UPROPERTY()
+	class UPresetCardItemObject* ParentPresetCardItemObj;
+
 	FGuid PresetGUID;
+	bool bAllowInteraction = true;
+	EPresetCardType CurrentPresetCardType = EPresetCardType::None;
+
+	// For SelectTray type preset card
+	bool bBuildAsObjectTypeSelect = false;
+	EObjectType SelectedObjectType;
+	int32 SelectCount = 0;
 
 public:
 
@@ -78,14 +92,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UPresetCardObjectList> PresetCardObjectListClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UPresetCardQuantityList> PresetCardQuantityListClass;
+
 	UFUNCTION()
 	void OnMainButtonReleased();
 
 	// Builder
-	void BuildAsBrowserCollapsedPresetCard(const FGuid& InPresetKey, bool bAllowInteraction);
-	void BuildAsBrowserSelectedPresetCard(const FGuid& InPresetKey);
-	void SetParentWidgets(class UNCPNavigator* InParentNCPNavigator, class UBrowserItemObj* InBrowserItemObj);
+	void BuildAsCollapsedPresetCard(const FGuid& InPresetKey, bool bInAllowInteraction);
+	void BuildAsExpandedPresetCard(const FGuid& InPresetKey);
+	void SetAsBrowserPresetCard(class UNCPNavigator* InParentNCPNavigator, class UBrowserItemObj* InBrowserItemObj);
+
+	void UpdateSelectionItemCount(int32 ItemCount);
 
 	void ToggleMainButtonInteraction(bool bEnable);
 	void ClearWidgetPool(class UPanelWidget* Widget);
+
+	// UserObjectListEntry interface
+	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 };

@@ -163,7 +163,7 @@ void UComponentAssemblyListItem::OnButtonEditReleased()
 {
 	if (EMPlayerController)
 	{
-		EMPlayerController->EditModelUserWidget->EditExistingAssembly(ToolMode, BIMKey);
+		EMPlayerController->EditModelUserWidget->EditExistingAssembly(BIMKey);
 	}
 }
 
