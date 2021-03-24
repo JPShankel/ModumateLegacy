@@ -171,7 +171,7 @@ void UBIMBlockNode::OnButtonDirtyAddNew()
 
 void UBIMBlockNode::OnButtonDirtyCancel()
 {
-	EBIMResult result = ParentBIMDesigner->InstancePool.SetNewPresetForNode(Controller->GetDocument()->GetPresetCollection(), ID, PresetID);
+	EBIMResult result = ParentBIMDesigner->InstancePool.SetNewPresetForNode(ID, PresetID);
 	if (result == EBIMResult::Success)
 	{
 		ParentBIMDesigner->UpdateCraftingAssembly();
@@ -329,7 +329,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	bool bCaptureSuccess = false;
 	// TODO Wesley: use cached icon only when node is not dirty. 
 	// Find out why non-assembly icons are not using the correct cached texture 
-	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetID, IconMaterial, ID, false);
+	bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(OuterBIMDesigner->InstancePool.PresetCollectionProxy,false, PresetID, IconMaterial, ID, false);
 	if (bCaptureSuccess)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);

@@ -126,13 +126,14 @@ bool UPresetCardHeader::CaptureIcon(const FGuid& InGUID, const FBIMEditorNodeIDT
 	}
 
 	bool result = false;
+	
 	if (bAsAssembly)
 	{
-		result = EMPlayerController->DynamicIconGenerator->SetIconMeshForAssembly(InGUID, IconMaterial);
+		result = EMPlayerController->DynamicIconGenerator->SetIconMeshForAssembly(FBIMPresetCollectionProxy(EMPlayerController->GetDocument()->GetPresetCollection()),InGUID, IconMaterial);
 	}
 	else
 	{
-		result = EMPlayerController->DynamicIconGenerator->SetIconMeshForBIMDesigner(true, InGUID, IconMaterial, NodeID);
+		result = EMPlayerController->DynamicIconGenerator->SetIconMeshForBIMDesigner(FBIMPresetCollectionProxy(EMPlayerController->GetDocument()->GetPresetCollection()),true, InGUID, IconMaterial, NodeID);
 	}
 
 	if (result)

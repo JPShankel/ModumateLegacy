@@ -75,7 +75,6 @@ struct MODUMATE_API FBIMPresetCollection
 	EBIMResult GetAvailableGUID(FGuid& OutGUID);
 
 	EBIMResult LoadCSVManifest(const FString& ManifestPath, const FString& ManifestFile, TArray<FGuid>& OutStarters, TArray<FString>& OutMessages);
-	EBIMResult CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FGuid& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec) const;
 
 	EBIMResult ForEachPreset(const TFunction<void(const FBIMPresetInstance& Preset)>& Operation) const;
 	EBIMResult GetAvailablePresetsForSwap(const FGuid& ParentPresetID, const FGuid& PresetIDToSwap, TArray<FGuid>& OutAvailablePresets) const;
@@ -99,4 +98,21 @@ struct MODUMATE_API FBIMPresetCollection
 
 	bool operator==(const FBIMPresetCollection& RHS) const;
 	bool operator!=(const FBIMPresetCollection& RHS) const;
+};
+
+class MODUMATE_API FBIMPresetCollectionProxy
+{
+private:
+	const FBIMPresetCollection* BaseCollection = nullptr;
+	TMap<FGuid, FBIMPresetInstance> OverriddenPresets;
+
+public:
+	FBIMPresetCollectionProxy();
+	FBIMPresetCollectionProxy(const FBIMPresetCollection& InCollection);
+	const FBIMPresetInstance* PresetFromGUID(const FGuid& InGUID) const;
+	const FBIMAssemblySpec* AssemblySpecFromGUID(EObjectType ObjectType,const FGuid& InGUID) const;
+
+	EBIMResult CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FGuid& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec);
+
+	EBIMResult OverridePreset(const FBIMPresetInstance& PresetInstance);
 };

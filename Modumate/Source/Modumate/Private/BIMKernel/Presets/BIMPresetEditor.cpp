@@ -67,12 +67,12 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::GetRootInstance()
 	return nullptr;
 }
 
-FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
+FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex, int32 ParentSetPosition)
 {
-	return CreateNodeInstanceFromPreset(PresetCollection, ParentID, PresetID, ParentSetIndex, ParentSetPosition, FGuid());
+	return CreateNodeInstanceFromPreset(ParentID, PresetID, ParentSetIndex, ParentSetPosition, FGuid());
 }
 
-FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& ParentID, const FGuid& PresetGUID, int32 ParentSetIndex, int32 ParentSetPosition, const FGuid& SlotAssignment)
+FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(const FBIMEditorNodeIDType& ParentID, const FGuid& PresetGUID, int32 ParentSetIndex, int32 ParentSetPosition, const FGuid& SlotAssignment)
 {
 	if (!ensureAlways(PresetGUID.IsValid()))
 	{
@@ -165,7 +165,7 @@ FBIMPresetEditorNodeSharedPtr FBIMPresetEditor::CreateNodeInstanceFromPreset(con
 			iterator = childStack.Pop();
 		}
 
-		const FBIMPresetInstance* preset = PresetCollection.PresetFromGUID(iterator.PresetID);
+		const FBIMPresetInstance* preset = PresetCollectionProxy.PresetFromGUID(iterator.PresetID);
 		if (!ensureAlways(preset != nullptr))
 		{
 			return nullptr;
@@ -310,56 +310,30 @@ bool FBIMPresetEditor::ValidatePool() const
 	return ret;
 }
 
-EBIMResult FBIMPresetEditor::CreateAssemblyFromNodes(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec)
+EBIMResult FBIMPresetEditor::CreateAssemblyFromNodes(const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec)
 {
-	EBIMResult result = EBIMResult::Error;
-	// Get root node
 	FBIMPresetEditorNodeSharedPtr rootNode;
 	for (const auto &inst : InstancePool)
 	{
+		PresetCollectionProxy.OverridePreset(inst->WorkingPresetCopy);
 		if (inst->ParentInstance == nullptr)
 		{
 			rootNode = inst;
-			break;
 		}
 	}
-	// Make assembly from root node
+
 	if (rootNode.IsValid())
 	{
-		// Build the preset collection must reflect the dirty state of the node
-		// Clean presets should never override dirty presets regardless of node order
-		// Therefore dirty presets are added unconditional, and clean presets are added only if they don't already exist
-
-		FBIMPresetCollection previewCollection;
-		TArray<FGuid> dependentPresets;
-		for (auto& instance : InstancePool)
-		{
-			previewCollection.AddPreset(instance->WorkingPresetCopy);
-			PresetCollection.GetAllDescendentPresets(instance->WorkingPresetCopy.GUID, dependentPresets);
-		}
-
-		for (auto& depPres : dependentPresets)
-		{
-			const FBIMPresetInstance* depPreset = PresetCollection.PresetFromGUID(depPres);
-			if (ensureAlways(depPreset != nullptr))
-			{
-				previewCollection.AddPreset(*depPreset);
-			}
-		}
-
-		result = OutAssemblySpec.FromPreset(InDB, previewCollection, rootNode->WorkingPresetCopy.GUID);
+		return OutAssemblySpec.FromPreset(InDB, PresetCollectionProxy, rootNode->WorkingPresetCopy.GUID);
 	}
-	return result;
+	return EBIMResult::Error;
 }
 
 /*
 Build a layered assembly based on a single layer, used by the icon generator to produce layer previews
 */
-EBIMResult FBIMPresetEditor::CreateAssemblyFromLayerNode(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, const FBIMEditorNodeIDType& LayerNodeID, FBIMAssemblySpec& OutAssemblySpec)
+EBIMResult FBIMPresetEditor::CreateAssemblyFromLayerNode(const FModumateDatabase& InDB, const FBIMEditorNodeIDType& LayerNodeID, FBIMAssemblySpec& OutAssemblySpec)
 {
-	// Because FBIMAssemblySpec::FromPreset must have an assembly scope, we're 'borrowing' the preset from root node, then presets from layer node 
-	FBIMPresetCollection previewCollection;
-
 	// Add layer node preset
 	FBIMPresetEditorNodeSharedPtr layerNode = InstanceFromID(LayerNodeID);
 	if (!layerNode.IsValid())
@@ -391,20 +365,9 @@ EBIMResult FBIMPresetEditor::CreateAssemblyFromLayerNode(const FBIMPresetCollect
 			break;
 		}
 	}
-
-	// Add the temp assembly and layer presets
-	previewCollection.AddPreset(assemblyPreset);
-	previewCollection.AddPreset(layerNode->WorkingPresetCopy);
-
-	// Add presets from children of the layer node 
-	TArray<FBIMPresetEditorNodeSharedPtr> childrenNodes;
-	layerNode->GatherAllChildNodes(childrenNodes);
-	for (auto& child : childrenNodes)
-	{
-		previewCollection.AddPreset(child->WorkingPresetCopy);
-	}
+	PresetCollectionProxy.OverridePreset(assemblyPreset);
 	
-	return OutAssemblySpec.FromPreset(InDB, previewCollection, assemblyPreset.GUID);
+	return OutAssemblySpec.FromPreset(InDB, PresetCollectionProxy, assemblyPreset.GUID);
 }
 
 EBIMResult FBIMPresetEditor::ReorderChildNode(const FBIMEditorNodeIDType& ChildNode, int32 FromPosition, int32 ToPosition)
@@ -608,10 +571,10 @@ EBIMResult FBIMPresetEditor::DestroyNodeInstance(const FBIMEditorNodeIDType& Ins
 	return DestroyNodeInstance(InstanceFromID(InstanceID), OutDestroyed);
 }
 
-EBIMResult FBIMPresetEditor::InitFromPreset(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, const FGuid& PresetGUID, FBIMPresetEditorNodeSharedPtr& OutRootNode)
+EBIMResult FBIMPresetEditor::InitFromPreset(const FModumateDatabase& InDB, const FGuid& PresetGUID, FBIMPresetEditorNodeSharedPtr& OutRootNode)
 {
 	ResetInstances();
-	OutRootNode = CreateNodeInstanceFromPreset(PresetCollection, BIM_ID_NONE, PresetGUID, 0, 0);
+	OutRootNode = CreateNodeInstanceFromPreset(BIM_ID_NONE, PresetGUID, 0, 0);
 
 	if (!OutRootNode.IsValid())
 	{
@@ -624,7 +587,7 @@ EBIMResult FBIMPresetEditor::InitFromPreset(const FBIMPresetCollection& PresetCo
 	if (OutRootNode->PartNodes.Num() > 0)
 	{
 		FBIMAssemblySpec assemblySpec;
-		if (CreateAssemblyFromNodes(PresetCollection, InDB, assemblySpec) == EBIMResult::Success)
+		if (CreateAssemblyFromNodes(InDB, assemblySpec) == EBIMResult::Success)
 		{
 			FBIMPartLayout layout;
 			layout.FromAssembly(assemblySpec, FVector::OneVector);
@@ -663,7 +626,7 @@ EBIMResult FBIMPresetEditor::InitFromPreset(const FBIMPresetCollection& PresetCo
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& InstanceID, const FGuid& PresetGUID)
+EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMEditorNodeIDType& InstanceID, const FGuid& PresetGUID)
 {
 	FBIMPresetEditorNodeSharedPtr inst = InstanceFromID(InstanceID);
 
@@ -691,7 +654,7 @@ EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMPresetCollection& Pre
 		DestroyNodeInstance(child, destroyed);
 	}
 
-	const FBIMPresetInstance* preset = PresetCollection.PresetFromGUID(PresetGUID);
+	const FBIMPresetInstance* preset = PresetCollectionProxy.PresetFromGUID(PresetGUID);
 
 	if (!ensureAlways(preset != nullptr))
 	{
@@ -733,7 +696,7 @@ EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMPresetCollection& Pre
 	{
 		if (childPreset.PresetGUID.IsValid())
 		{
-			CreateNodeInstanceFromPreset(PresetCollection, InstanceID, childPreset.PresetGUID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition);
+			CreateNodeInstanceFromPreset(InstanceID, childPreset.PresetGUID, childPreset.ParentPinSetIndex, childPreset.ParentPinSetPosition);
 		}
 	}
 
@@ -741,7 +704,7 @@ EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMPresetCollection& Pre
 	{
 		if (partPreset.PartPresetGUID.IsValid())
 		{
-			CreateNodeInstanceFromPreset(PresetCollection, inst->GetInstanceID(), partPreset.PartPresetGUID, INDEX_NONE, INDEX_NONE, partPreset.SlotPresetGUID);
+			CreateNodeInstanceFromPreset(inst->GetInstanceID(), partPreset.PartPresetGUID, INDEX_NONE, INDEX_NONE, partPreset.SlotPresetGUID);
 		}
 	}
 
@@ -750,7 +713,7 @@ EBIMResult FBIMPresetEditor::SetNewPresetForNode(const FBIMPresetCollection& Pre
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMPresetEditor::SetPartPreset(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& ParentID, int32 SlotID, const FGuid& PartPreset)
+EBIMResult FBIMPresetEditor::SetPartPreset(const FBIMEditorNodeIDType& ParentID, int32 SlotID, const FGuid& PartPreset)
 {
 	const FBIMPresetEditorNodeSharedPtr nodeParent = InstanceFromID(ParentID);
 
@@ -767,13 +730,13 @@ EBIMResult FBIMPresetEditor::SetPartPreset(const FBIMPresetCollection& PresetCol
 		auto partNodePinned = partNode.Pin();
 		if (partNodePinned->MyParentPartSlot == slotPreset)
 		{
-			SetNewPresetForNode(PresetCollection, partNodePinned->GetInstanceID(), PartPreset);
+			SetNewPresetForNode(partNodePinned->GetInstanceID(), PartPreset);
 			return EBIMResult::Success;
 		}
 	}
 
 	// If we don't already have this part, create a new node
-	if (CreateNodeInstanceFromPreset(PresetCollection, ParentID, PartPreset, INDEX_NONE, INDEX_NONE, slotPreset).IsValid())
+	if (CreateNodeInstanceFromPreset(ParentID, PartPreset, INDEX_NONE, INDEX_NONE, slotPreset).IsValid())
 	{
 		nodeParent->SortChildren();
 		return EBIMResult::Success;

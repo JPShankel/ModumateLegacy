@@ -142,21 +142,21 @@ private:
 	int32 StairLayerTreadAssemblyPartIndex = -1;
 	int32 StairLayerRiserAssemblyPartIndex = -2;
 
+	UMaterialInterface* CreateMaterialForIconTexture(UTexture2D* InTexture);
+
+
 public:
 
 	UPROPERTY()
 	UTextureRenderTarget2D* IconRenderTarget;
 
-	FBIMPresetCollection CachedPresetCollection;
-
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	bool SetIconMeshForAssembly(const FGuid& AsmKey, bool bAllowOverwrite = false);
-	bool SetIconMeshForAssembly(const FGuid& AsmKey, UMaterialInterface*& OutMaterial, bool bAllowOverwrite = false);
-	bool SetIconMeshForBIMDesigner(bool UseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, const FBIMEditorNodeIDType& NodeID, bool bSaveToCache = true);
+	bool SetIconMeshForAssembly(const FBIMPresetCollectionProxy& PresetCollection, const FGuid& AsmKey, bool bAllowOverwrite = false);
+	bool SetIconMeshForAssembly(const FBIMPresetCollectionProxy& PresetCollection, const FGuid& AsmKey, UMaterialInterface*& OutMaterial, bool bAllowOverwrite = false);
+	bool SetIconMeshForBIMDesigner(const FBIMPresetCollectionProxy& PresetCollection,bool bUseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, const FBIMEditorNodeIDType& NodeID, bool bSaveToCache = true);
 	bool GetSavedIconFromPreset(const FGuid& PresetID, UTexture2D*& OutTexture);
-	UMaterialInterface* CreateMaterialForIconTexture(const FGuid& PresetID, UTexture2D* InTexture);
 	bool SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex, bool bFromRootNode);
 
 	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
@@ -171,11 +171,11 @@ public:
 	bool SetIconMeshForRawMaterial(const FGuid& MaterialKey, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForProfile(const FGuid& ProfileKey, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForMesh(const FGuid& MeshKey, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForPart(bool UseDependentPreset, const FGuid& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForMaterial(bool UseDependentPreset, const FGuid& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForModule(bool UseDependentPreset, const FGuid& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForLayerNodeID(const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
-	bool SetIconMeshForLayerPreset(const FGuid& PresetID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForPart(const FBIMPresetCollectionProxy& PresetCollection,bool UseDependentPreset, const FGuid& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForMaterial(const FBIMPresetCollectionProxy& PresetCollection, bool UseDependentPreset, const FGuid& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForModule(const FBIMPresetCollectionProxy& PresetCollection, bool UseDependentPreset, const FGuid& PresetID, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForLayerNodeID(const FBIMPresetCollectionProxy& PresetCollection, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget);
+	bool SetIconMeshForLayerPreset(const FBIMPresetCollectionProxy& PresetCollection, const FGuid& PresetID, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconFromColor(const FBIMKey& ColorHex, UMaterialInterface*& OutMaterial);
 
 	void GetWallSliceLocationNormal(int32 CurrentLayer, int32 NumberOfLayers, const FVector& Cp1, const FVector& Cp2, float Height, FVector& OutLocation, FVector& OutNormal);
@@ -187,9 +187,10 @@ public:
 
 	void SetCaptureCompTransformForCapture(AActor* ActorToCapture, float SizeScale, bool OnlyCollidingComponents);
 
+	void UpdateCachedAssemblies(const FBIMPresetCollectionProxy& PresetCollection, const TArray<FGuid>& AsmKeys);
+
 	// TODO: This is a temp function for releasing saved render targets related to BIM presets	
 	// When BIMKey can guarantee unique appearance, then BIMKeyToRenderTarget array and this function can be removed	
 	void ReleaseSavedRenderTarget();
 
-	void UpdateCachedAssemblies(const TArray<FGuid>& AsmKeys);
 };

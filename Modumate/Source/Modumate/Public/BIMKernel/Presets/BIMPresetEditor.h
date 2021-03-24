@@ -5,6 +5,7 @@
 #include "Database/ModumateObjectEnums.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/Presets/BIMPresetEditorNode.h"
+#include "BIMKernel/Presets/BIMPresetCollection.h"
 
 /*
 	Crafting trees are acyclical networks of crafting node instances
@@ -31,20 +32,22 @@ private:
 
 public:
 
+	FBIMPresetCollectionProxy PresetCollectionProxy;
+
 	EBIMResult ResetInstances();
-	EBIMResult InitFromPreset(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, const FGuid& PresetGUID, FBIMPresetEditorNodeSharedPtr &OutRootNode);
+	EBIMResult InitFromPreset(const FModumateDatabase& InDB, const FGuid& PresetGUID, FBIMPresetEditorNodeSharedPtr &OutRootNode);
 
 	EBIMResult DestroyNodeInstance(const FBIMPresetEditorNodeSharedPtr& Instance, TArray<FBIMEditorNodeIDType>& OutDestroyed);
 	EBIMResult DestroyNodeInstance(const FBIMEditorNodeIDType& InstanceID, TArray<FBIMEditorNodeIDType>& OutDestroyed);
 
-	FBIMPresetEditorNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex, int32 ParentSetPosition, const FGuid& SlotAssignment);
-	FBIMPresetEditorNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
+	FBIMPresetEditorNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex, int32 ParentSetPosition, const FGuid& SlotAssignment);
+	FBIMPresetEditorNodeSharedPtr CreateNodeInstanceFromPreset(const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex, int32 ParentSetPosition);
 
 	const TArray<FBIMPresetEditorNodeSharedPtr> &GetInstancePool() const { return InstancePool; }
 
-	EBIMResult SetNewPresetForNode(const FBIMPresetCollection &PresetCollection, const FBIMEditorNodeIDType& InstanceID, const FGuid &PresetID);
+	EBIMResult SetNewPresetForNode(const FBIMEditorNodeIDType& InstanceID, const FGuid &PresetID);
 
-	EBIMResult SetPartPreset(const FBIMPresetCollection& PresetCollection, const FBIMEditorNodeIDType& ParentID, int32 SlotID, const FGuid& PartPreset);
+	EBIMResult SetPartPreset(const FBIMEditorNodeIDType& ParentID, int32 SlotID, const FGuid& PartPreset);
 	EBIMResult ClearPartPreset(const FBIMEditorNodeIDType& ParentID, int32 SlotID);
 
 	const FBIMPresetEditorNodeSharedPtr InstanceFromID(const FBIMEditorNodeIDType& InstanceID) const;
@@ -57,8 +60,8 @@ public:
 
 	bool ValidatePool() const;
 
-	EBIMResult CreateAssemblyFromNodes(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec);
-	EBIMResult CreateAssemblyFromLayerNode(const FBIMPresetCollection& PresetCollection, const FModumateDatabase& InDB, const FBIMEditorNodeIDType& LayerNodeID, FBIMAssemblySpec& OutAssemblySpec);
+	EBIMResult CreateAssemblyFromNodes(const FModumateDatabase& InDB, FBIMAssemblySpec& OutAssemblySpec);
+	EBIMResult CreateAssemblyFromLayerNode(const FModumateDatabase& InDB, const FBIMEditorNodeIDType& LayerNodeID, FBIMAssemblySpec& OutAssemblySpec);
 	EBIMResult ReorderChildNode(const FBIMEditorNodeIDType& ChildNode, int32 FromPosition, int32 ToPosition);
 	EBIMResult FindNodeParentLineage(const FBIMEditorNodeIDType& NodeID, TArray<FBIMEditorNodeIDType>& OutLineage);
 

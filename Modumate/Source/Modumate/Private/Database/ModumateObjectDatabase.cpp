@@ -466,6 +466,7 @@ const FLayerPattern* FModumateDatabase::GetPatternByGUID(const FGuid& GUID) cons
 bool FModumateDatabase::UnitTest()
 {
 	bool success = BIMPresetCollection.AssembliesByObjectType.Num() > 0;
+	FBIMPresetCollectionProxy presetCollection(BIMPresetCollection);
 	for (auto& kvdp : BIMPresetCollection.AssembliesByObjectType)
 	{
 		// Furniture is not crafted
@@ -478,13 +479,14 @@ bool FModumateDatabase::UnitTest()
 		{
 			FBIMPresetEditor editor;
 			FBIMPresetEditorNodeSharedPtr root;
-			success = ensureAlways(editor.InitFromPreset(BIMPresetCollection, *this, kvp.Value.PresetGUID, root) == EBIMResult::Success) && success;
+			editor.PresetCollectionProxy = presetCollection;
+			success = ensureAlways(editor.InitFromPreset(*this, kvp.Value.PresetGUID, root) == EBIMResult::Success) && success;
 
 			FBIMAssemblySpec editSpec;
-			success = ensureAlways(editor.CreateAssemblyFromNodes(BIMPresetCollection, *this, editSpec) == EBIMResult::Success) && success;
+			success = ensureAlways(editor.CreateAssemblyFromNodes(*this, editSpec) == EBIMResult::Success) && success;
 
 			FBIMAssemblySpec makeSpec;
-			success = ensureAlways(makeSpec.FromPreset(*this, BIMPresetCollection, editSpec.PresetGUID) == EBIMResult::Success) && success;
+			success = ensureAlways(makeSpec.FromPreset(*this, FBIMPresetCollectionProxy(BIMPresetCollection), editSpec.PresetGUID) == EBIMResult::Success) && success;
 
 			success = ensureAlways(FBIMAssemblySpec::StaticStruct()->CompareScriptStruct(&editSpec, &kvp.Value, PPF_None)) && success;
 			success = ensureAlways(FBIMAssemblySpec::StaticStruct()->CompareScriptStruct(&makeSpec, &kvp.Value, PPF_None)) && success;

@@ -40,7 +40,6 @@ protected:
 	/*
 	* The BIM designer uses a cached copy of the preset collection from the document so it can generate icons for uncommitted changes
 	*/
-	FBIMPresetCollection CachedPresetCollection;
 	void UpdateCachedPresetCollection();
 
 	UPROPERTY()

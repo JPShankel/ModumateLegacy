@@ -80,14 +80,14 @@ void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner
 
 
 	TextTitle->ChangeText(InFormElement.DisplayName);
-	const FBIMPresetInstance* preset = Controller->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
+	const FBIMPresetInstance* preset = OuterBIMDesigner->InstancePool.PresetCollectionProxy.PresetFromGUID(PresetGUID);
 	if (preset != nullptr)
 	{
 		PresetText->ChangeText(preset->DisplayName);
 	}
 
 	// Icon
-	bool bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(false, PresetGUID, IconMaterial, BIM_ID_NONE);
+	bool bCaptureSuccess = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(OuterBIMDesigner->InstancePool.PresetCollectionProxy,false, PresetGUID, IconMaterial, BIM_ID_NONE);
 	if (bCaptureSuccess)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);

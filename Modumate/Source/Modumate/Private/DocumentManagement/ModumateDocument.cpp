@@ -755,7 +755,7 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 			}
 			
 			FBIMAssemblySpec newSpec;
-			if (ensureAlways(newSpec.FromPreset(*gameMode->ObjectDatabase, BIMPresetCollection, affectedPreset) == EBIMResult::Success))
+			if (ensureAlways(newSpec.FromPreset(*gameMode->ObjectDatabase, FBIMPresetCollectionProxy(BIMPresetCollection), affectedPreset) == EBIMResult::Success))
 			{
 				affectedAssemblies.Add(affectedPreset);
 				BIMPresetCollection.UpdateProjectAssembly(newSpec);
@@ -765,8 +765,7 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
 		if (controller && controller->DynamicIconGenerator)
 		{
-			controller->DynamicIconGenerator->CachedPresetCollection = BIMPresetCollection;
-			controller->DynamicIconGenerator->UpdateCachedAssemblies(affectedAssemblies);
+			controller->DynamicIconGenerator->UpdateCachedAssemblies(FBIMPresetCollectionProxy(GetPresetCollection()),affectedAssemblies);
 		}
 
 		for (auto& moi : ObjectInstanceArray)
@@ -2002,10 +2001,10 @@ void UModumateDocument::MakeNew(UWorld *World)
 	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
 	if (controller && controller->DynamicIconGenerator)
 	{
-		controller->DynamicIconGenerator->CachedPresetCollection = BIMPresetCollection;
+		TArray<FGuid> affectedAssemblies;
+		controller->DynamicIconGenerator->UpdateCachedAssemblies(FBIMPresetCollectionProxy(GetPresetCollection()), affectedAssemblies);
 	}
 
-	
 	// Clear drafting render directories
 	UModumateGameInstance *modGameInst = World ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
 	UDraftingManager *draftMan = modGameInst ? modGameInst->DraftingManager : nullptr;
@@ -2280,7 +2279,6 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool bSetAsCurr
 	if (FModumateSerializationStatics::TryReadModumateDocumentRecord(path, docHeader, docRec))
 	{
 		BIMPresetCollection.ReadPresetsFromDocRecord(*objectDB, docHeader.Version, docRec);
-		EMPlayerController->DynamicIconGenerator->CachedPresetCollection = BIMPresetCollection;
 
 		// Load the connectivity graphs now, which contain associations between object IDs,
 		// so that any objects whose geometry setup needs to know about connectivity can find it.

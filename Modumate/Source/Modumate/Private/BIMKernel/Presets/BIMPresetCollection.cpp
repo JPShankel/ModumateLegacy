@@ -462,7 +462,7 @@ EBIMResult FBIMPresetCollection::ProcessStarterAssemblies(const FModumateDatabas
 
 		FBIMAssemblySpec outSpec;
 		
-		EBIMResult fromRes = outSpec.FromPreset(AssetDatabase, *this, preset->GUID);
+		EBIMResult fromRes = outSpec.FromPreset(AssetDatabase, FBIMPresetCollectionProxy(*this), preset->GUID);
 		if (fromRes != EBIMResult::Success)
 		{
 			res = fromRes;
@@ -495,51 +495,6 @@ EBIMResult FBIMPresetCollection::GetAvailableGUID(FGuid& OutGUID)
 	}
 	UsedGUIDs.Add(OutGUID);
 	return EBIMResult::Success;
-}
-
-EBIMResult FBIMPresetCollection::CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FGuid& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec) const
-{
-	FBIMPresetCollection previewCollection;
-
-	// Build a temporary top-level assembly preset to host the single layer
-	FBIMPresetInstance assemblyPreset;
-	assemblyPreset.PresetID = FBIMKey(TEXT("TempIconPreset"));
-	assemblyPreset.GUID = FGuid::NewGuid();
-	assemblyPreset.NodeScope = EBIMValueScope::Assembly;
-
-	// Give the temporary assembly a single layer child
-	FBIMPresetPinAttachment &attachment = assemblyPreset.ChildPresets.AddDefaulted_GetRef();
-	attachment.ParentPinSetIndex = 0;
-	attachment.ParentPinSetPosition = 0;
-	attachment.PresetGUID = LayerPresetKey;
-	assemblyPreset.ObjectType = ObjectType;
-
-	// Add the temp assembly and layer presets
-	previewCollection.AddPreset(assemblyPreset);
-
-	const FBIMPresetInstance* layerPreset = PresetFromGUID(LayerPresetKey);
-	if (ensureAlways(layerPreset != nullptr))
-	{
-		previewCollection.AddPreset(*layerPreset);
-	}
-	else
-	{
-		return EBIMResult::Error;
-	}
-
-	// Add presets from dependents
-	TArray<FGuid> outpresetKeys;
-	GetAllDescendentPresets(LayerPresetKey, outpresetKeys);
-	for (auto& curPreset : outpresetKeys)
-	{
-		const FBIMPresetInstance* original = PresetFromGUID(curPreset);
-		if (ensureAlways(original != nullptr))
-		{
-			previewCollection.AddPreset(*original);
-		}
-	}
-
-	return OutAssemblySpec.FromPreset(InDB, previewCollection, assemblyPreset.GUID);
 }
 
 EBIMResult FBIMPresetCollection::GenerateBIMKeyForPreset(const FGuid& PresetID, FBIMKey& OutKey) const
@@ -1033,7 +988,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		{
 			FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(kvp.Value.ObjectType);
 			FBIMAssemblySpec newSpec;
-			if (newSpec.FromPreset(InDB, *this, kvp.Value.GUID) == EBIMResult::Success)
+			if (newSpec.FromPreset(InDB, FBIMPresetCollectionProxy(*this), kvp.Value.GUID) == EBIMResult::Success)
 			{
 				db.AddData(newSpec);
 			}
@@ -1094,4 +1049,62 @@ EBIMResult FBIMPresetCollection::GetBlankPresetForObjectType(EObjectType ObjectT
 		}
 	}
 	return EBIMResult::Error;
+}
+
+FBIMPresetCollectionProxy::FBIMPresetCollectionProxy(const FBIMPresetCollection& InCollection) : BaseCollection(&InCollection)
+{}
+
+FBIMPresetCollectionProxy::FBIMPresetCollectionProxy()
+{}
+
+const FBIMPresetInstance* FBIMPresetCollectionProxy::PresetFromGUID(const FGuid& InGUID) const
+{
+	const FBIMPresetInstance* preset = OverriddenPresets.Find(InGUID);
+	if (preset == nullptr && BaseCollection != nullptr)
+	{
+		preset = BaseCollection->PresetFromGUID(InGUID);
+	}
+	return preset;
+}
+
+EBIMResult FBIMPresetCollectionProxy::OverridePreset(const FBIMPresetInstance& PresetInstance)
+{
+	OverriddenPresets.Add(PresetInstance.GUID, PresetInstance);
+	return EBIMResult::Success;
+}
+
+const FBIMAssemblySpec* FBIMPresetCollectionProxy::AssemblySpecFromGUID(EObjectType ObjectType, const FGuid& InGUID) const
+{
+	if (BaseCollection != nullptr)
+	{
+		const FAssemblyDataCollection* db = BaseCollection->AssembliesByObjectType.Find(ObjectType);
+		if (db != nullptr)
+		{
+			return db->GetData(InGUID);
+		}
+	}
+	return nullptr;
+}
+
+
+EBIMResult FBIMPresetCollectionProxy::CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FGuid& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec)
+{
+
+	// Build a temporary top-level assembly preset to host the single layer
+	FBIMPresetInstance assemblyPreset;
+	assemblyPreset.PresetID = FBIMKey(TEXT("TempIconPreset"));
+	assemblyPreset.GUID = FGuid::NewGuid();
+	assemblyPreset.NodeScope = EBIMValueScope::Assembly;
+
+	// Give the temporary assembly a single layer child
+	FBIMPresetPinAttachment& attachment = assemblyPreset.ChildPresets.AddDefaulted_GetRef();
+	attachment.ParentPinSetIndex = 0;
+	attachment.ParentPinSetPosition = 0;
+	attachment.PresetGUID = LayerPresetKey;
+	assemblyPreset.ObjectType = ObjectType;
+
+	// Add the temp assembly and layer presets
+	OverridePreset(assemblyPreset);
+
+	return OutAssemblySpec.FromPreset(InDB, *this, assemblyPreset.GUID);
 }

@@ -2,6 +2,7 @@
 
 #include "UI/ComponentPresetListItem.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "Components/Image.h"
 
@@ -33,7 +34,8 @@ bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerCo
 		return false;
 	}
 	UMaterialInterface* iconMat = nullptr;
-	bool result = Controller->DynamicIconGenerator->SetIconMeshForAssembly(InGUID, iconMat);
+
+	bool result = Controller->DynamicIconGenerator->SetIconMeshForAssembly(FBIMPresetCollectionProxy(Controller->GetDocument()->GetPresetCollection()),InGUID, iconMat);
 	if (result)
 	{
 		IconImage->SetBrushFromMaterial(iconMat);
@@ -47,7 +49,8 @@ bool UComponentPresetListItem::CaptureIconForBIMDesignerSwap(class AEditModelPla
 	{
 		return false;
 	}
-	bool result = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(true, InGUID, IconMaterial, NodeID);
+
+	bool result = Controller->DynamicIconGenerator->SetIconMeshForBIMDesigner(FBIMPresetCollectionProxy(Controller->GetDocument()->GetPresetCollection()), true, InGUID, IconMaterial, NodeID);
 	if (result)
 	{
 		IconImage->SetBrushFromMaterial(IconMaterial);

@@ -15,7 +15,7 @@
 #include "Algo/Accumulate.h"
 #include "Containers/Queue.h"
 
-EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FGuid& InPresetGUID)
+EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, const FGuid& InPresetGUID)
 {
 	Reset();
 	EBIMResult ret = EBIMResult::Success;
@@ -610,7 +610,7 @@ FModumateUnitValue FBIMAssemblySpec::CalculateThickness() const
 	));
 }
 
-EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection)
+EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection)
 {
 	RootProperties.TryGetProperty(EBIMValueScope::Assembly,BIMPropertyNames::Name, DisplayName);
 	RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Comments, Comments);

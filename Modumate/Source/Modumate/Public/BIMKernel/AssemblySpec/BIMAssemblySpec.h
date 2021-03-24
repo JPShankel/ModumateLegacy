@@ -20,6 +20,7 @@
 
 struct FBIMPresetCollection;
 class FModumateDatabase;
+class FBIMPresetCollectionProxy;
 
 /*
 Assemblies have three categories of subcomponent: layers, part slots and extrusions
@@ -38,7 +39,7 @@ private:
 	EBIMResult MakeExtrudedAssembly(const FModumateDatabase& InDB);
 	EBIMResult MakeRiggedAssembly(const FModumateDatabase& InDB);	
 	EBIMResult MakeCabinetAssembly(const FModumateDatabase& InDB);
-	EBIMResult DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection);
+	EBIMResult DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection);
 
 	UPROPERTY()
 	FBIMPropertySheet RootProperties;
@@ -111,7 +112,7 @@ public:
 
 	EBIMResult Reset();
 
-	EBIMResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollection& PresetCollection, const FGuid& InPresetID);
+	EBIMResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, const FGuid& InPresetID);
 
 	FModumateUnitValue CalculateThickness() const;
 
