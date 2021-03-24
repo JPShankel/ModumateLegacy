@@ -11,6 +11,8 @@
 #include "UI/TutorialMenu/TutorialMenuWidget.h"
 #include "ModumateCore/PlatformFunctions.h"
 
+#define LOCTEXT_NAMESPACE "ModumateRootMenuWidget"
+
 UStartRootMenuWidget::UStartRootMenuWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, UserWidgetPool(*this)
@@ -25,7 +27,7 @@ bool UStartRootMenuWidget::Initialize()
 	}
 
 	ModumateGameInstance = Cast<UModumateGameInstance>(GetGameInstance());
-	if (!(ButtonHelp && ButtonQuit && ButtonOpen && ButtonCreateNew))
+	if (!(ButtonHelp && ButtonQuit && ButtonOpen))
 	{
 		return false;
 	}
@@ -33,7 +35,6 @@ bool UStartRootMenuWidget::Initialize()
 	ButtonHelp->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedHelp);
 	ButtonQuit->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedQuit);
 	ButtonOpen->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedOpen);
-	ButtonCreateNew->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedCreateNew);
 
 	UGameViewportClient* viewportClient = ModumateGameInstance ? ModumateGameInstance->GetGameViewportClient() : nullptr;
 	if (viewportClient)
@@ -46,7 +47,10 @@ bool UStartRootMenuWidget::Initialize()
 
 bool UStartRootMenuWidget::ConfirmQuit() const
 {
-	return Modumate::PlatformFunctions::ShowMessageBox(TEXT("Quit? Are you sure?"), TEXT("Quit"), Modumate::PlatformFunctions::YesNo) == Modumate::PlatformFunctions::EMessageBoxResponse::Yes;
+	FText quitConfirmMsg = LOCTEXT("QuitConfirmMessage", "Are you sure you want to quit Modumate?");
+	FText quitConfirmCaption = LOCTEXT("QuitConfirmCaption", "Quit");
+	auto confirmResponse = Modumate::PlatformFunctions::ShowMessageBox(quitConfirmMsg.ToString(), quitConfirmCaption.ToString(), Modumate::PlatformFunctions::YesNo);
+	return confirmResponse == Modumate::PlatformFunctions::EMessageBoxResponse::Yes;
 }
 
 void UStartRootMenuWidget::NativeConstruct()
@@ -97,11 +101,6 @@ void UStartRootMenuWidget::OnButtonReleasedOpen()
 	}
 }
 
-void UStartRootMenuWidget::OnButtonReleasedCreateNew()
-{
-	UGameplayStatics::OpenLevel(this, NewLevelName, true);
-}
-
 void UStartRootMenuWidget::ShowStartMenu()
 {
 	if (!GetWorld()->GetGameInstance<UModumateGameInstance>()->TutorialManager->CheckAbsoluteBeginner())
@@ -114,3 +113,5 @@ void UStartRootMenuWidget::ShowStartMenu()
 		OpenCreateNewButtonsBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 }
+
+#undef LOCTEXT_NAMESPACE

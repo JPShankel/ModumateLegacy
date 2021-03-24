@@ -43,9 +43,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonOpen;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButtonUserWidget* ButtonCreateNew;
-
 	UPROPERTY(Transient)
 	FUserWidgetPool UserWidgetPool;
 
@@ -62,9 +59,6 @@ protected:
 
 	UFUNCTION()
 	void OnButtonReleasedOpen();
-
-	UFUNCTION()
-	void OnButtonReleasedCreateNew();
 
 	UFUNCTION()
 	bool ConfirmQuit() const;
