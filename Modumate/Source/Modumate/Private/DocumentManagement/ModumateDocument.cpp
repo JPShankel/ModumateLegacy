@@ -920,12 +920,13 @@ void UModumateDocument::ClearPreviewDeltas(UWorld *World, bool bFastClear)
 	}
 
 	NextID = PrePreviewNextID;
-	bApplyingPreviewDeltas = false;
-	bFastClearingPreviewDeltas = false;
-	bSlowClearingPreviewDeltas = false;
 
 	CleanObjects(nullptr);
 	PostApplyDeltas(World);
+
+	bApplyingPreviewDeltas = false;
+	bFastClearingPreviewDeltas = false;
+	bSlowClearingPreviewDeltas = false;
 }
 
 void UModumateDocument::CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWorld* World)
