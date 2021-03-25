@@ -41,7 +41,7 @@ void FQuantitiesCollection::AddAreaQuantity(const FGuid& ItemGuid, const FGuid& 
 
 void FQuantitiesCollection::AddLayersQuantity(const TArray<FLayerGeomDef>& Layers, const TArray<FBIMLayerSpec>& LayerSpecs, const FGuid& ParentGuid, float Multiplier /*= 1.0f*/)
 {
-	const int32 numLayers = Layers.Num();
+	const int32 numLayers = FMath::Min(Layers.Num(), LayerSpecs.Num());
 	for (int32 layer = 0; layer < numLayers; ++layer)
 	{
 		const FBIMLayerSpec& layerSpec = LayerSpecs[layer];

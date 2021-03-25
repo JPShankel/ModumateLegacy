@@ -55,6 +55,10 @@ public:
 	UPROPERTY()
 	FMOIBackgroundImageData InstanceData;
 
+
+	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines,
+		bool bForSnapping, bool bForSelection) const override;
+
 protected:
 	void UpdateCachedGeometryData();
 	void UpdateImageData();

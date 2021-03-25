@@ -13,8 +13,8 @@
 const FModumateUnitValue AMOIBackgroundImage::DefaultSize(FModumateUnitValue::WorldInches(20 * 12.0f));
 const FModumateUnitValue AMOIBackgroundImage::PlaneDisplacement(FModumateUnitValue::WorldCentimeters(0.5f));
 
-const FColor AMOIBackgroundImage::UnselectedColor(120, 120, 120);
-const FColor AMOIBackgroundImage::SelectedColor(250, 250, 250);
+const FColor AMOIBackgroundImage::UnselectedColor(230, 230, 230);
+const FColor AMOIBackgroundImage::SelectedColor(110, 200, 230);
 
 
 AMOIBackgroundImage::AMOIBackgroundImage()
@@ -111,6 +111,11 @@ bool AMOIBackgroundImage::GetTransformedLocationState(const FTransform Transform
 	return OutState.CustomData.SaveStructData(moiData);
 }
 
+void AMOIBackgroundImage::GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping, bool bForSelection) const
+{
+	Super::GetStructuralPointsAndLines(outPoints, outLines, false, bForSelection);
+}
+
 void AMOIBackgroundImage::PreDestroy()
 {
 	CachedFilename.Empty();
@@ -148,6 +153,8 @@ bool AMOIBackgroundImage::UpdateImage(const FString& ImageFile)
 	static const FName baseColorParam(TEXT("BaseColor"));
 	static const FName colorMultiplierParam(TEXT("ColorMultiplier"));
 	static const FName UVScaleParam(TEXT("UVScale"));
+	static const FName MrsaParam(TEXT("MRSAMultiplier"));
+	static const FLinearColor MrsaValue(0.0f, 0.8f, 0.2f, 1.0f);
 
 	UTexture2D* imageTexture = UKismetRenderingLibrary::ImportFileAsTexture2D(GetWorld(), ImageFile);
 	if (!imageTexture)
@@ -167,6 +174,7 @@ bool AMOIBackgroundImage::UpdateImage(const FString& ImageFile)
 	}
 	MID->SetTextureParameterValue(baseColorParam, imageTexture);
 	MID->SetScalarParameterValue(UVScaleParam, 1.0f);
+	MID->SetVectorParameterValue(MrsaParam, MrsaValue);
 
 	return true;
 }
