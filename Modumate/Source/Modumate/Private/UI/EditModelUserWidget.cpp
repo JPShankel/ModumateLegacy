@@ -27,6 +27,7 @@
 #include "UI/BIM/BIMScopeWarning.h"
 #include "UI/LeftMenu/BrowserMenuWidget.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "UI/LeftMenu/SwapMenuWidget.h"
 
 #define LOCTEXT_NAMESPACE "ModumateWidgets"
 
@@ -109,6 +110,7 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 		return;
 	}
 
+	PreviousLeftMenuState = CurrentLeftMenuState;
 	CurrentLeftMenuState = NewState;
 
 	bool newToolTrayVisibility = CurrentLeftMenuState == ELeftMenuState::ToolMenu;
@@ -116,11 +118,13 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 	bool newCutPlaneMenuVisibility = CurrentLeftMenuState == ELeftMenuState::CutPlaneMenu;
 	bool newTutorialMenuVisibility = CurrentLeftMenuState == ELeftMenuState::TutorialMenu;
 	bool newBrowserMenuVisibility = CurrentLeftMenuState == ELeftMenuState::BrowserMenu;
+	bool newSwapMenuVisibility = CurrentLeftMenuState == ELeftMenuState::SwapMenu;
 	newToolTrayVisibility ? ToolTrayWidget->OpenToolTray() : ToolTrayWidget->CloseToolTray();
 	ToggleViewMenu(newViewMenuVisibility);
 	ToggleCutPlaneMenu(newCutPlaneMenuVisibility);
 	ToggleTutorialMenu(newTutorialMenuVisibility);
 	ToggleBrowserMenu(newBrowserMenuVisibility);
+	ToggleSwapMenu(newSwapMenuVisibility);
 
 	if (NewState == ELeftMenuState::SelectMenu)
 	{
@@ -179,6 +183,7 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 void UEditModelUserWidget::EMOnSelectionObjectChanged()
 {
 	if (CurrentLeftMenuState == ELeftMenuState::SelectMenu ||
+		CurrentLeftMenuState == ELeftMenuState::SwapMenu ||
 		CurrentLeftMenuState == ELeftMenuState::None)
 	{
 		SwitchLeftMenu(ELeftMenuState::SelectMenu);
@@ -389,6 +394,15 @@ void UEditModelUserWidget::ToggleBrowserMenu(bool NewVisibility)
 	else
 	{
 		ToolbarWidget->Button_Browser->SwitchToNormalStyle();
+	}
+}
+
+void UEditModelUserWidget::ToggleSwapMenu(bool NewVisibility)
+{
+	SwapMenuWidget->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (NewVisibility)
+	{
+		SwapMenuWidget->BuildSwapMenu();
 	}
 }
 

@@ -17,6 +17,7 @@ enum class EPresetCardType : uint8
 {
 	Browser,
 	SelectTray,
+	Swap,
 	None
 };
 
@@ -101,7 +102,7 @@ public:
 	// Builder
 	void BuildAsCollapsedPresetCard(const FGuid& InPresetKey, bool bInAllowInteraction);
 	void BuildAsExpandedPresetCard(const FGuid& InPresetKey);
-	void SetAsBrowserPresetCard(class UNCPNavigator* InParentNCPNavigator, class UBrowserItemObj* InBrowserItemObj);
+	void SetAsNCPNavigatorPresetCard(class UNCPNavigator* InParentNCPNavigator, class UBrowserItemObj* InBrowserItemObj, EPresetCardType InPresetCardType);
 
 	void UpdateSelectionItemCount(int32 ItemCount);
 

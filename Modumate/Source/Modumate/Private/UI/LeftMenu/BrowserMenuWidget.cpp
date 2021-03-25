@@ -41,7 +41,7 @@ void UBrowserMenuWidget::NativeConstruct()
 
 void UBrowserMenuWidget::BuildBrowserMenu()
 {
-	NCPNavigatorWidget->BuildNCPNavigator();
+	NCPNavigatorWidget->BuildNCPNavigator(EPresetCardType::Browser);
 
 	ToggleExportWidgetMenu(false);
 }

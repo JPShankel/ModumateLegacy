@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BIMKernel/Core/BIMTagPath.h"
+#include "UI/PresetCard/PresetCardMain.h"
 
 #include "BrowserItemObj.generated.h"
 
@@ -18,6 +19,7 @@ public:
 	UPROPERTY()
 	class UNCPNavigator* ParentNCPNavigator;
 
+	EPresetCardType PresetCardType = EPresetCardType::None;
 	bool bAsPresetCard = false;
 
 	// As NCPButton

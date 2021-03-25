@@ -21,6 +21,7 @@ enum class ELeftMenuState : uint8
 	TutorialMenu,
 	SelectMenu,
 	BrowserMenu,
+	SwapMenu,
 	None
 };
 
@@ -92,12 +93,16 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UBrowserMenuWidget* BrowserMenuWidget;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class USwapMenuWidget* SwapMenuWidget;
+
 	UPROPERTY()
 	TMap<EToolMode, class UModumateButtonUserWidget*> ToolToButtonMap;
 
 	UPROPERTY()
 	class UModumateButtonUserWidget* CurrentActiveToolButton;
 
+	ELeftMenuState PreviousLeftMenuState = ELeftMenuState::None;
 	ELeftMenuState CurrentLeftMenuState = ELeftMenuState::None;
 
 	UFUNCTION()
@@ -126,6 +131,7 @@ public:
 	void ToggleCutPlaneMenu(bool NewVisibility);
 	void ToggleViewMenu(bool NewVisibility);
 	void ToggleBrowserMenu(bool NewVisibility);
+	void ToggleSwapMenu(bool NewVisibility);
 	bool IsBIMDesingerActive() const;
 	bool EMUserWidgetHandleEscapeKey();
 	void UpdateSelectTrayVisibility();

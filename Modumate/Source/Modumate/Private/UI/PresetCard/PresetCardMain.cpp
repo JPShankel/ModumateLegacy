@@ -111,6 +111,9 @@ void UPresetCardMain::BuildAsCollapsedPresetCard(const FGuid& InPresetKey, bool 
 				newHeaderWidget->BuildAsSelectTrayPresetCard(PresetGUID, SelectCount);
 			}
 			break;
+		case EPresetCardType::Swap:
+			newHeaderWidget->BuildAsSwapHeader(PresetGUID, BIM_ID_NONE);
+			break;
 		case EPresetCardType::Browser:
 		default:
 			newHeaderWidget->BuildAsBrowserHeader(PresetGUID, BIM_ID_NONE); //TODO: Support non-assembly with NodeID?
@@ -152,6 +155,9 @@ void UPresetCardMain::BuildAsExpandedPresetCard(const FGuid& InPresetKey)
 			{
 				newHeaderWidget->BuildAsSelectTrayPresetCard(PresetGUID, SelectCount);
 			}
+			break;
+		case EPresetCardType::Swap:
+			newHeaderWidget->BuildAsSwapHeader(PresetGUID, BIM_ID_NONE);
 			break;
 		case EPresetCardType::Browser:
 		default:
@@ -200,11 +206,11 @@ void UPresetCardMain::BuildAsExpandedPresetCard(const FGuid& InPresetKey)
 	DropShadowImage->SetVisibility(ESlateVisibility::HitTestInvisible);
 }
 
-void UPresetCardMain::SetAsBrowserPresetCard(class UNCPNavigator* InParentNCPNavigator, class UBrowserItemObj* InBrowserItemObj)
+void UPresetCardMain::SetAsNCPNavigatorPresetCard(class UNCPNavigator* InParentNCPNavigator, class UBrowserItemObj* InBrowserItemObj, EPresetCardType InPresetCardType)
 {
 	ParentNCPNavigator = InParentNCPNavigator;
 	ParentBrowserItemObj = InBrowserItemObj;
-	CurrentPresetCardType = EPresetCardType::Browser;
+	CurrentPresetCardType = InPresetCardType;
 }
 
 void UPresetCardMain::UpdateSelectionItemCount(int32 ItemCount)

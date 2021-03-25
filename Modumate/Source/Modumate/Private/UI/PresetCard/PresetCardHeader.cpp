@@ -2,6 +2,7 @@
 
 #include "UI/PresetCard/PresetCardHeader.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "Components/Image.h"
@@ -10,6 +11,8 @@
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
+#include "UI/LeftMenu/SwapMenuWidget.h"
+#include "UI/LeftMenu/NCPNavigator.h"
 
 #define LOCTEXT_NAMESPACE "PresetCardHeader"
 
@@ -57,6 +60,19 @@ void UPresetCardHeader::BuildAsBrowserHeader(const FGuid& InGUID, const FBIMEdit
 	}
 }
 
+void UPresetCardHeader::BuildAsSwapHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID)
+{
+	PresetGUID = InGUID;
+	const FBIMPresetInstance* preset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
+	if (preset)
+	{
+		CaptureIcon(PresetGUID, NodeID, preset->NodeScope == EBIMValueScope::Assembly);
+		ItemDisplayName = preset->DisplayName;
+		MainText->ChangeText(ItemDisplayName);
+		UpdateButtonSetByPresetCardType(EPresetCardType::Swap);
+	}
+}
+
 void UPresetCardHeader::BuildAsSelectTrayPresetCard(const FGuid& InGUID, int32 ItemCount)
 {
 	PresetGUID = InGUID;
@@ -95,6 +111,12 @@ void UPresetCardHeader::UpdateButtonSetByPresetCardType(EPresetCardType InPreset
 		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
 		ButtonEdit->SetVisibility(ESlateVisibility::Visible);
 		ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
+		break;
+	case EPresetCardType::Swap:
+		ButtonSwap->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonEdit->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonConfirm->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EPresetCardType::None:
 	default:
@@ -154,12 +176,51 @@ void UPresetCardHeader::OnButtonEditReleased()
 
 void UPresetCardHeader::OnButtonSwapReleased()
 {
+	if (!EMPlayerController)
+	{
+		return;
+	}
+	FBIMTagPath ncpForSwap;
+	EMPlayerController->GetDocument()->GetPresetCollection().GetNCPForPreset(PresetGUID, ncpForSwap);
+	if (ensureAlways(ncpForSwap.Tags.Num() > 0))
+	{
+		EMPlayerController->EditModelUserWidget->SwapMenuWidget->NCPNavigatorWidget->ResetSelectedAndSearchTag();
+		
+		// Matching NCP buttons should be expanded during swap
+		for (int32 i = 0; i < ncpForSwap.Tags.Num(); ++i)
+		{
+			FBIMTagPath partialTag;
+			ncpForSwap.GetPartialPath(i + 1, partialTag);
+			EMPlayerController->EditModelUserWidget->SwapMenuWidget->NCPNavigatorWidget->ToggleNCPTagAsSelected(partialTag, true);
+		}
 
+		EMPlayerController->EditModelUserWidget->SwapMenuWidget->SetSwapMenuAsSelection(PresetGUID);
+		EMPlayerController->EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::SwapMenu);
+
+		EMPlayerController->EditModelUserWidget->SwapMenuWidget->NCPNavigatorWidget->ScrollPresetToView(PresetGUID);
+	}
 }
 
 void UPresetCardHeader::OnButtonConfirmReleased()
 {
-
+	const FBIMPresetInstance* preset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
+	if (preset)
+	{
+		const FBIMAssemblySpec* assembly = EMPlayerController->GetDocument()->GetPresetCollection().GetAssemblyByGUID(
+			UModumateTypeStatics::ToolModeFromObjectType(preset->ObjectType), preset->GUID);
+		if (assembly)
+		{
+			TArray<int32> selectedObjIDs;
+			for (auto& moi : EMPlayerController->EMPlayerState->SelectedObjects)
+			{
+				if (moi->GetAssembly().UniqueKey() == EMPlayerController->EditModelUserWidget->SwapMenuWidget->GetPresetGUIDToSwap())
+				{
+					selectedObjIDs.Add(moi->ID);
+				}
+			}
+			EMPlayerController->GetDocument()->SetAssemblyForObjects(GetWorld(), selectedObjIDs, *assembly);
+		}
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

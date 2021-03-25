@@ -45,8 +45,9 @@ void UNCPNavigator::NativeConstruct()
 	EMGameState = GetWorld()->GetGameState<AEditModelGameState>();
 }
 
-void UNCPNavigator::BuildNCPNavigator()
+void UNCPNavigator::BuildNCPNavigator(EPresetCardType BuildAsType)
 {
+	CurrentPresetCardType = BuildAsType;
 	DynamicMainListView->ClearListItems();
 
 	TArray<FBIMTagPath> sourceNCPTags;
@@ -62,6 +63,7 @@ void UNCPNavigator::BuildNCPNavigator()
 	{
 		UBrowserItemObj* newAssemblyItemObj = NewObject<UBrowserItemObj>(this);
 		newAssemblyItemObj->ParentNCPNavigator = this;
+		newAssemblyItemObj->PresetCardType = CurrentPresetCardType;
 		newAssemblyItemObj->bAsPresetCard = false;
 		newAssemblyItemObj->NCPTag = curSourceNCPTag;
 		newAssemblyItemObj->TagOrder = 0;
@@ -82,6 +84,7 @@ void UNCPNavigator::BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 
 		{
 			UBrowserItemObj* newItemObj = NewObject<UBrowserItemObj>(this);
 			newItemObj->ParentNCPNavigator = this;
+			newItemObj->PresetCardType = CurrentPresetCardType;
 			newItemObj->bAsPresetCard = true;
 			newItemObj->PresetGuid = newPreset;
 			newItemObj->bPresetCardExpanded = false;
@@ -107,6 +110,7 @@ void UNCPNavigator::BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 
 		{
 			UBrowserItemObj* newItemObj = NewObject<UBrowserItemObj>(this);
 			newItemObj->ParentNCPNavigator = this;
+			newItemObj->PresetCardType = CurrentPresetCardType;
 			newItemObj->bAsPresetCard = false;
 			newItemObj->NCPTag = newTagPath;
 			newItemObj->TagOrder = TagOrder + 1;
@@ -178,7 +182,7 @@ void UNCPNavigator::ToggleNCPTagAsSelected(const FBIMTagPath& NCPTag, bool bAsSe
 	{
 		SelectedTags.Remove(NCPTag);
 	}
-	BuildNCPNavigator();
+	BuildNCPNavigator(CurrentPresetCardType);
 }
 
 void UNCPNavigator::RefreshDynamicMainListView()
@@ -186,7 +190,26 @@ void UNCPNavigator::RefreshDynamicMainListView()
 	DynamicMainListView->RequestRefresh();
 }
 
+void UNCPNavigator::ResetSelectedAndSearchTag()
+{
+	SelectedTags.Reset();
+	SearchBarWidget->ModumateEditableTextBox->SetText(FText::GetEmpty());
+}
+
+void UNCPNavigator::ScrollPresetToView(const FGuid PresetToView)
+{
+	for (auto& curItem : DynamicMainListView->GetListItems())
+	{
+		UBrowserItemObj* asBrowserItem = Cast<UBrowserItemObj>(curItem);
+		if (asBrowserItem && asBrowserItem->PresetGuid == PresetToView)
+		{
+			DynamicMainListView->RequestScrollItemIntoView(curItem);
+			return;
+		}
+	}
+}
+
 void UNCPNavigator::OnSearchBarChanged(const FText& NewText)
 {
-	BuildNCPNavigator();
+	BuildNCPNavigator(CurrentPresetCardType);
 }

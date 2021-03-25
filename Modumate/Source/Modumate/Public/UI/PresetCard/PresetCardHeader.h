@@ -58,6 +58,7 @@ public:
 
 	// Builder
 	void BuildAsBrowserHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID);
+	void BuildAsSwapHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID);
 	void BuildAsSelectTrayPresetCard(const FGuid& InGUID, int32 ItemCount);
 	void BuildAsSelectTrayPresetCardObjectType(EObjectType InObjectType, int32 ItemCount);
 

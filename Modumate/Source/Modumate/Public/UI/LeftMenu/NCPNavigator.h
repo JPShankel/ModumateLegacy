@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "BIMKernel/Core/BIMTagPath.h"
+#include "UI/PresetCard/PresetCardMain.h"
 #include "NCPNavigator.generated.h"
 
 /**
@@ -34,6 +35,8 @@ protected:
 	TArray<FBIMTagPath> SelectedTags;
 	TArray<FGuid> SearchFilteredPresets;
 
+	EPresetCardType CurrentPresetCardType = EPresetCardType::None;
+
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -45,13 +48,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FString> StarterNCPTagStrings;
 
-	void BuildNCPNavigator();
+	void BuildNCPNavigator(EPresetCardType BuildAsType);
 	void BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 TagOrder);
 	bool IsNCPAvailableForSearch(const FBIMTagPath& NCPTag);
 	void CacheSearchFilteredPresets(const TArray<FBIMTagPath>& SourceNCPTags);
 
 	void ToggleNCPTagAsSelected(const FBIMTagPath& NCPTag, bool bAsSelected);
 	void RefreshDynamicMainListView();
+	void ResetSelectedAndSearchTag();
+	void ScrollPresetToView(const FGuid PresetToView);
 
 	UFUNCTION()
 	void OnSearchBarChanged(const FText& NewText);
