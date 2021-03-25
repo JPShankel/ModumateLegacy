@@ -605,69 +605,75 @@ void AMOICabinet::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentP
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
 	{   // Cut-plane lines:
-		TArray<TPair<FVector2D, FVector2D>> cutPlaneLines;
-		TArray<FVector2D> previousPoints;
-		int32 numLayerSides = LayerGeometries.Num() * 2;
-		for (int32 layerIdx = 0; layerIdx < numLayerSides; layerIdx++)
+		// Cabinet carcass:
+		const int32 numLayers = LayerGeometries.Num();
+		for (int32 layer = 0; layer < numLayers; ++layer)
 		{
-			bool usePointsA = layerIdx % 2 == 0;
-			const TArray<FVector> layerPoints = usePointsA ? LayerGeometries[layerIdx / 2].OriginalPointsA : LayerGeometries[layerIdx / 2].OriginalPointsB;
 			TArray<FVector2D> intersections;
-			int32 numPoints = layerPoints.Num();
-			for (int32 point = 0; point < numPoints; ++point)
+			auto intersect = [&](FVector a, FVector b, bool& bAdded)
 			{
-				FVector vertex1 = actorOrigin + layerPoints[point];
-				FVector vertex2 = actorOrigin + layerPoints[(point + 1) % numPoints];
-
 				FVector intersection;
-				if (FMath::SegmentPlaneIntersection(vertex1, vertex2, Plane, intersection))
+				if (FMath::SegmentPlaneIntersection(a + actorOrigin, b + actorOrigin, Plane, intersection))
 				{
 					intersections.Add(UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersection));
+					bAdded = true;
+				}
+
+			};
+
+			const auto& layerGeom = LayerGeometries[layer];
+			const int32 numSides = layerGeom.OriginalPointsA.Num();
+			bool bIntersectA = false;
+			bool bAdded = false;
+			for (int32 side = 0; side < numSides; ++side)
+			{
+				const int32 side2 = (side + 1) % numSides;
+				intersect(layerGeom.OriginalPointsA[side], layerGeom.OriginalPointsB[side], bAdded);
+				if (bIntersectA)
+				{
+					bAdded = false;
+					intersect(layerGeom.OriginalPointsB[side], layerGeom.OriginalPointsB[side2], bAdded);
+					if (bAdded)
+					{
+						bIntersectA = false;
+					}
+					intersect(layerGeom.OriginalPointsA[side], layerGeom.OriginalPointsA[side2], bAdded);
+				}
+				else
+				{
+					intersect(layerGeom.OriginalPointsA[side], layerGeom.OriginalPointsA[side2], bIntersectA);
+					intersect(layerGeom.OriginalPointsB[side], layerGeom.OriginalPointsB[side2], bAdded);
 				}
 			}
+
+			TArray<TPair<FVector2D, FVector2D>> cutPlaneLines;
 
 			const int numIntersections = intersections.Num();
-			if (numIntersections % 2 == 0)
+			for (int32 line = 0; line < numIntersections; ++line)
 			{
-				for (int32 line = 0; line < numIntersections; line += 2)
+				cutPlaneLines.Emplace(intersections[line], intersections[(line + 1) % numIntersections]);
+			}
+
+			for (const auto& line : cutPlaneLines)
+			{
+				FVector2D lineStart(line.Key);
+				FVector2D lineEnd(line.Value);
+				FVector2D clippedStart;
+				FVector2D clippedEnd;
+
+				if (UModumateFunctionLibrary::ClipLine2DToRectangle(lineStart, lineEnd, BoundingBox, clippedStart, clippedEnd))
 				{
-					cutPlaneLines.Emplace(intersections[line], intersections[line + 1]);
+					TSharedPtr<Modumate::FDraftingLine> clippedLine = MakeShared<Modumate::FDraftingLine>(
+						FModumateUnitCoord2D::WorldCentimeters(clippedStart),
+						FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
+						lineThickness, lineColor);
+					ParentPage->Children.Add(clippedLine);
+					clippedLine->SetLayerTypeRecursive(dwgLayerType);
 				}
 			}
 
-			if (usePointsA)
-			{
-				previousPoints = intersections;
-			}
-			else
-			{
-				for (int32 p = 0; p < intersections.Num() && p < previousPoints.Num(); ++p)
-				{
-					if (p < previousPoints.Num())
-					{
-						cutPlaneLines.Emplace(previousPoints[p], intersections[p]);
-					}
-				}
-			}
 		}
 
-		for (const auto& line : cutPlaneLines)
-		{
-			FVector2D lineStart(line.Key);
-			FVector2D lineEnd(line.Value);
-			FVector2D clippedStart;
-			FVector2D clippedEnd;
-
-			if (UModumateFunctionLibrary::ClipLine2DToRectangle(lineStart, lineEnd, BoundingBox, clippedStart, clippedEnd))
-			{
-				TSharedPtr<Modumate::FDraftingLine> clippedLine = MakeShared<Modumate::FDraftingLine>(
-					FModumateUnitCoord2D::WorldCentimeters(clippedStart),
-					FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
-					lineThickness, lineColor);
-				ParentPage->Children.Add(clippedLine);
-				clippedLine->SetLayerTypeRecursive(dwgLayerType);
-			}
-		}
 
 		// Cabinet door:
 		if (FrontFacePortalActor.IsValid())
