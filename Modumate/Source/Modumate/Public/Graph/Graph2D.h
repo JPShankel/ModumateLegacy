@@ -59,10 +59,10 @@ namespace Modumate
 
 		int32 GetID() const;
 		int32 GetNextObjID() const;
-		int32 GetRootPolygonID() const;
-		int32 GetOuterBoundsPolygonID() const;
-		FGraph2DPolygon *GetRootPolygon();
-		const FGraph2DPolygon *GetRootPolygon() const;
+		int32 GetRootInteriorPolyID() const;
+		int32 GetRootExteriorPolyID() const;
+		FGraph2DPolygon *GetRootInteriorPolygon();
+		const FGraph2DPolygon *GetRootInteriorPolygon() const;
 
 		const TMap<int32, FGraph2DEdge> &GetEdges() const { return Edges; }
 		const TMap<int32, FGraph2DVertex> &GetVertices() const { return Vertices; }
@@ -225,7 +225,7 @@ namespace Modumate
 		bool PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, 
 			TMap<int32, TArray<FVector2D>>& InitialPolygons, TMap<int32, TArray<int32>>& FaceToVertices, 
 			TMap<int32, int32>& OutFaceToPoly, TMap<int32, int32>& OutGraphToSurfaceVertices,
-			bool bUseAsBounds, int32& OutRootPolyID);
+			bool bUseAsBounds, int32& OutRootInteriorPolyID);
 		
 		bool FindVerticesAndPolygons(const TMap<int32, TArray<FVector2D>>& InitialPolygons, TMap<int32, int32>& OutFaceToPoly, TMap<int32, int32>& OutGraphToSurfaceVertices, const TArray<int32>& InEdges);
 

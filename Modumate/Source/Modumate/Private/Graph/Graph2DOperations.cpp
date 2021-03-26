@@ -1146,7 +1146,7 @@ namespace Modumate
 	}
 
 	bool FGraph2D::PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& NextID, TMap<int32, TArray<FVector2D>>& InitialPolygons, TMap<int32, TArray<int32>>& FaceToVertices,
-			TMap<int32, int32>& OutFaceToPoly, TMap<int32, int32>& OutGraphToSurfaceVertices, bool bUseAsBounds, int32& OutRootPolyID)
+			TMap<int32, int32>& OutFaceToPoly, TMap<int32, int32>& OutGraphToSurfaceVertices, bool bUseAsBounds, int32& OutRootInteriorPolyID)
 	{
 		if (InitialPolygons.Num() == 0)
 		{
@@ -1255,27 +1255,28 @@ namespace Modumate
 			return false;
 		}
 
-		FGraph2DPolygon* outerPolygon = FindPolygon(GetOuterBoundsPolygonID());
-		if (outerPolygon)
-		{
-			OutRootPolyID = outerPolygon->ID;
-		}
+		// Populate the root interior polygon (if it exists, which is not the case for a shape such as a figure-8), for creating polygon-hosted MOIs.
+		OutRootInteriorPolyID = GetRootInteriorPolyID();
+
+		// Find the root exterior polygon (if it exists, which should be true for all graphs with >0 polygons),
+		// for setting bounds that will persist even if the graph is split.
+		FGraph2DPolygon* rootExteriorPolygon = FindPolygon(GetRootExteriorPolyID());
 
 		// Now, optionally set the bounds based on the resulting polygons
 		if (bUseAsBounds)
 		{
 			// We require that the graph has a well-defined root polygon (one that contains all the others) in order to set bounds
-			if (outerPolygon == nullptr)
+			if (rootExteriorPolygon == nullptr)
 			{
 				ApplyInverseDeltas(appliedDeltas);
 				return false;
 			}
-			int32 outerBounds = outerPolygon->ID;
+			int32 outerBounds = rootExteriorPolygon->ID;
 
 			TArray<int32> innerBounds;
 			for (auto& kvp : Polygons)
 			{
-				if ((kvp.Key != outerPolygon->ID) && kvp.Value.bInterior && kvp.Value.ContainingPolyID != MOD_ID_NONE)
+				if ((kvp.Key != rootExteriorPolygon->ID) && kvp.Value.bInterior && kvp.Value.ContainingPolyID != MOD_ID_NONE)
 				{
 					innerBounds.Add(kvp.Key);
 				}

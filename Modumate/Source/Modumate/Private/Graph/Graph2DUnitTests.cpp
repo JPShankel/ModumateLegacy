@@ -862,7 +862,7 @@ namespace Modumate
 		TestDeltas(this, deltas, graph, 2, 4, 4);
 
 		// Make current vertices into the bounds
-		int32 outerBounds = graph->GetOuterBoundsPolygonID();
+		int32 outerBounds = graph->GetRootExteriorPolyID();
 		TArray<int32> innerbounds;
 
 		TestTrue(TEXT("Add Bounds"),
@@ -985,7 +985,7 @@ namespace Modumate
 			TestDeltas(this, deltas, graph, 2, 5, 5);
 
 			// Make current vertices into the bounds
-			int32 outerBounds = graph->GetOuterBoundsPolygonID();
+			int32 outerBounds = graph->GetRootExteriorPolyID();
 			TArray<int32> innerBounds;
 
 			TestTrue(TEXT("Add Bounds"),
@@ -1105,7 +1105,7 @@ namespace Modumate
 		TestDeltas(this, deltas, graph, 2, 4, 4);
 
 		// Make current vertices into the bounds
-		int32 outerBounds = graph->GetOuterBoundsPolygonID();
+		int32 outerBounds = graph->GetRootExteriorPolyID();
 		TArray<int32> innerBounds;
 
 		TestTrue(TEXT("Add Edge"),
@@ -1519,7 +1519,7 @@ namespace Modumate
 		TestDeltas(this, deltas, graph, 2, 4, 4);
 
 		// Make current vertices into the bounds
-		int32 outerBounds = graph->GetOuterBoundsPolygonID();
+		int32 outerBounds = graph->GetRootExteriorPolyID();
 		TArray<int32> innerBounds;
 
 		TestTrue(TEXT("Add Bounds"),

@@ -1828,7 +1828,7 @@ namespace Modumate
 			return false;
 		}
 
-		int32 exteriorPolyID = OutGraph->GetRootPolygonID();
+		int32 exteriorPolyID = OutGraph->GetRootInteriorPolyID();
 		bool bFullyConnected = (exteriorPolyID != MOD_ID_NONE);
 
 		// Check the connected requirement, which detects if there are multiple exterior polygons that indicate disconnected graphs

@@ -506,7 +506,7 @@ namespace Modumate
 		return NextObjID;
 	}
 
-	int32 FGraph2D::GetOuterBoundsPolygonID() const
+	int32 FGraph2D::GetRootExteriorPolyID() const
 	{
 		int32 resultID = MOD_ID_NONE;
 
@@ -529,7 +529,7 @@ namespace Modumate
 		return resultID;
 	}
 
-	int32 FGraph2D::GetRootPolygonID() const
+	int32 FGraph2D::GetRootInteriorPolyID() const
 	{
 		int32 resultID = MOD_ID_NONE;
 
@@ -579,14 +579,14 @@ namespace Modumate
 		return MOD_ID_NONE;
 	}
 
-	FGraph2DPolygon *FGraph2D::GetRootPolygon()
+	FGraph2DPolygon *FGraph2D::GetRootInteriorPolygon()
 	{
-		return FindPolygon(GetRootPolygonID());
+		return FindPolygon(GetRootInteriorPolyID());
 	}
 
-	const FGraph2DPolygon *FGraph2D::GetRootPolygon() const
+	const FGraph2DPolygon *FGraph2D::GetRootInteriorPolygon() const
 	{
-		return FindPolygon(GetRootPolygonID());
+		return FindPolygon(GetRootInteriorPolyID());
 	}
 
 	bool FGraph2D::ToDataRecord(FGraph2DRecord* OutRecord, bool bSaveOpenPolygons, bool bSaveExteriorPolygons) const

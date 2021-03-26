@@ -63,10 +63,10 @@ bool USurfaceGraphTool::BeginUse()
 	// before starting any poly-line drawing.
 	if (HitGraphHostMOI && (HitFaceIndex != INDEX_NONE) && (HitGraphMOI == nullptr))
 	{
-		int32 newSurfaceGraphID, newRootPolyID;
+		int32 newSurfaceGraphID, newRootInteriorPolyID;
 		TArray<FDeltaPtr> deltas;
 		int32 nextID = GameState->Document->GetNextAvailableID();
-		if (CreateGraphFromFaceTarget(nextID, newSurfaceGraphID, newRootPolyID, deltas) &&
+		if (CreateGraphFromFaceTarget(nextID, newSurfaceGraphID, newRootInteriorPolyID, deltas) &&
 			GameState->Document->ApplyDeltas(deltas, GetWorld()))
 		{
 			HitGraphMOI = GameState->Document->GetObjectById(newSurfaceGraphID);
@@ -375,10 +375,10 @@ bool USurfaceGraphTool::CompleteSegment()
 	return true;
 }
 
-bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfaceGraphID, int32& OutRootPolyID, TArray<FDeltaPtr>& OutDeltas)
+bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfaceGraphID, int32& OutRootInteriorPolyID, TArray<FDeltaPtr>& OutDeltas)
 {
 	OutSurfaceGraphID = MOD_ID_NONE;
-	OutRootPolyID = MOD_ID_NONE;
+	OutRootInteriorPolyID = MOD_ID_NONE;
 
 	if (!(HitGraphHostMOI && (HitFaceIndex != INDEX_NONE)))
 	{
@@ -449,7 +449,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfa
 
 	TArray<FGraph2DDelta> fillGraphDeltas;
 	TMap<int32, int32> outFaceToPoly, outGraphToSurfaceVertices;
-	if (!HitSurfaceGraph->PopulateFromPolygons(fillGraphDeltas, NextID, graphPolygonsToAdd, graphFaceToVertices, outFaceToPoly, outGraphToSurfaceVertices, true, OutRootPolyID))
+	if (!HitSurfaceGraph->PopulateFromPolygons(fillGraphDeltas, NextID, graphPolygonsToAdd, graphFaceToVertices, outFaceToPoly, outGraphToSurfaceVertices, true, OutRootInteriorPolyID))
 	{
 		return false;
 	}
