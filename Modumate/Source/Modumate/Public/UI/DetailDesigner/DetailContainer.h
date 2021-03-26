@@ -4,6 +4,9 @@
 
 #include "Blueprint/UserWidget.h"
 
+#include "Components/VerticalBox.h"
+#include "UI/EditModelPlayerHUD.h"
+
 #include "DetailContainer.generated.h"
 
 
@@ -40,18 +43,36 @@ public:
 	TSubclassOf<class UDetailDesignerLayerData> ParticipantLayerDataClass;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<class UDetailDesignerLayerData> ParticipantRiggedDataClass;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<UUserWidget> ParticipantSeparatorLineClass;
 
 	UFUNCTION()
 	void ClearEditor();
 
 	UFUNCTION()
-	void BuildEditor(const FGuid& InDetailPresetID, const TSet<int32>& InEdgeIDs);
+	bool BuildEditor(const FGuid& InDetailPresetID, const TSet<int32>& InEdgeIDs);
 
 protected:
 	FGuid DetailPresetID;
 	TSet<int32> EdgeIDs;
 	int32 OrientationIdx = INDEX_NONE;
+
+	template <typename UserWidgetT = UUserWidget>
+	UserWidgetT* GetOrCreateParticipantWidget(int32 EntryIdx, AEditModelPlayerHUD* PlayerHUD, TSubclassOf<UserWidgetT> WidgetClass)
+	{
+		UserWidgetT* participantWidget = Cast<UserWidgetT>(ParticipantsList->GetChildAt(EntryIdx));
+		if ((participantWidget == nullptr) || !participantWidget->IsA(WidgetClass))
+		{
+			ClearParticipantEntries(EntryIdx);
+			participantWidget = PlayerHUD->GetOrCreateWidgetInstance<UserWidgetT>(WidgetClass);
+			ParticipantsList->AddChildToVerticalBox(participantWidget);
+		}
+		return participantWidget;
+	}
+
+	void ClearParticipantEntries(int32 StartIndex = 0);
 
 	UFUNCTION()
 	void OnPressedCancel();

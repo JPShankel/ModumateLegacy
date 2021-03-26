@@ -7,7 +7,7 @@
 #include "DetailLayerData.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnExtensionChanged, int32, ParticipantIndex, int32, LayerIndex, FVector2D, NewExtensions);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLayerExtensionChanged, int32, ParticipantIndex, int32, LayerIndex, FVector2D, NewExtensions);
 
 UCLASS(BlueprintType)
 class MODUMATE_API UDetailDesignerLayerData : public UUserWidget
@@ -30,10 +30,10 @@ public:
 	class UModumateEditableTextBoxUserWidget* ExtensionBack;
 
 	UPROPERTY()
-	FOnExtensionChanged OnExtensionChanged;
+	FOnLayerExtensionChanged OnExtensionChanged;
 
 	UFUNCTION()
-	void PopulateLayerData(int32 InParticipantIndex, int32 InLayerIndex, const FVector2D& InExtensions);
+	void PopulateLayerData(int32 InParticipantIndex, int32 InLayerIndex, const FVector2D& InExtensions, bool bInFrontEnabled, bool bInBackEnabled);
 
 protected:
 	UPROPERTY()
@@ -44,6 +44,12 @@ protected:
 
 	UPROPERTY()
 	FVector2D CurrentExtensions = FVector2D::ZeroVector;
+
+	UPROPERTY()
+	bool bFrontEnabled = true;
+
+	UPROPERTY()
+	bool bBackEnabled = true;
 
 	UFUNCTION()
 	bool OnExtensionTextCommitted(int32 ExtensionIdx, const FString& String);

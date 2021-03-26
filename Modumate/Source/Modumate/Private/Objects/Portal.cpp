@@ -9,12 +9,10 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "Objects/MiterNode.h"
 #include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
-#include "ToolsAndAdjustments/Handles/AdjustPortalInvertHandle.h"
-#include "ToolsAndAdjustments/Handles/AdjustPortalReverseHandle.h"
-#include "ToolsAndAdjustments/Handles/AdjustPortalJustifyHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPortalOrientHandle.h"
 #include "UI/Properties/InstPropWidgetFlip.h"
 #include "UI/Properties/InstPropWidgetOffset.h"
@@ -46,6 +44,7 @@ AMOIPortal::AMOIPortal()
 	, CachedWorldPos(ForceInitToZero)
 	, CachedRelativeRot(ForceInit)
 	, CachedWorldRot(ForceInit)
+	, CachedThickness(0.0f)
 	, bHaveValidTransform(false)
 {
 }
@@ -69,96 +68,192 @@ FVector AMOIPortal::GetNormal() const
 
 bool AMOIPortal::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-	if (!AModumateObjectInstance::CleanObject(DirtyFlag, OutSideEffectDeltas))
-	{
-		return false;
-	}
-
 	switch (DirtyFlag)
 	{
 	case EObjectDirtyFlags::Structure:
 	{
-		auto *parentObj = GetParentObject();
-		if (parentObj)
-		{
-			const Modumate::FGraph3DFace * parentFace = GetDocument()->GetVolumeGraph().FindFace(parentObj->ID);
+		UpdateCachedThickness();
 
-			parentObj->MarkDirty(EObjectDirtyFlags::Visuals);
-		}
-		else
+		// When structure (assembly, offset, or plane structure) changes, mark neighboring
+		// edges as miter-dirty, so they can re-evaluate details with the new edge conditions.
+		if (!MarkEdgesMiterDirty())
 		{
 			return false;
 		}
+
+		MarkDirty(EObjectDirtyFlags::Mitering);
+		break;
 	}
-	break;
+	case EObjectDirtyFlags::Mitering:
+	{
+		// Make sure all connected edges have resolved mitering,
+		// so we can apply any resolved edge details that might apply to this portal.
+		for (AModumateObjectInstance* connectedEdge : CachedConnectedEdges)
+		{
+			if (connectedEdge->IsDirty(EObjectDirtyFlags::Mitering))
+			{
+				return false;
+			}
+		}
+
+		return SetupCompoundActorGeometry() && SetRelativeTransform(CachedRelativePos, CachedRelativeRot);
+	}
+	case EObjectDirtyFlags::Visuals:
+		UpdateVisuals();
+		break;
+	default:
+		break;
 	}
 
 	return true;
 }
 
-void AMOIPortal::SetupDynamicGeometry()
+void AMOIPortal::UpdateCachedThickness()
 {
-	SetupCompoundActorGeometry();
-	SetRelativeTransform(CachedRelativePos, CachedRelativeRot);
+	CachedThickness = CachedAssembly.GetRiggedAssemblyNativeSize().Y;
+
+	FBIMLayerSpec& proxyLayer = (CachedProxyLayers.Num() == 0) ? CachedProxyLayers.AddDefaulted_GetRef() : CachedProxyLayers[0];
+	proxyLayer.ThicknessCentimeters = CachedThickness;
+
+	CachedLayerDims.UpdateLayersFromAssembly(CachedProxyLayers);
 }
 
-void AMOIPortal::UpdateDynamicGeometry()
+bool AMOIPortal::MarkEdgesMiterDirty()
 {
-	SetupDynamicGeometry();
+	CachedParentConnectedMOIs.Reset();
+	CachedConnectedEdges.Reset();
+
+	const AModumateObjectInstance* planeParent = GetParentObject();
+	if (planeParent == nullptr)
+	{
+		return false;
+	}
+
+	planeParent->GetConnectedMOIs(CachedParentConnectedMOIs);
+
+	for (AModumateObjectInstance* planeConnectedMOI : CachedParentConnectedMOIs)
+	{
+		if (planeConnectedMOI && (planeConnectedMOI->GetObjectType() == EObjectType::OTMetaEdge))
+		{
+			CachedConnectedEdges.Add(planeConnectedMOI);
+			planeConnectedMOI->MarkDirty(EObjectDirtyFlags::Mitering);
+		}
+	}
+
+	return (CachedConnectedEdges.Num() > 0);
+}
+
+bool AMOIPortal::GetOffsetFaceBounds(FBox2D& OutOffsetBounds, FVector2D& OutOffset)
+{
+	OutOffsetBounds.Init();
+	OutOffset = FVector2D::ZeroVector;
+
+	const Modumate::FGraph3DFace* parentFace = Document->GetVolumeGraph().FindFace(GetParentID());
+	if (parentFace == nullptr)
+	{
+		return false;
+	}
+
+	// Get size of parent metaplane, accounting for edge details that may have extended/retracted neighboring edges
+	int32 numEdges = parentFace->EdgeIDs.Num();
+	TArray<FVector2D> facePoints = parentFace->Cached2DPositions;
+
+	for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
+	{
+		int32 edgeID = FMath::Abs(parentFace->EdgeIDs[edgeIdx]);
+		AModumateObjectInstance* edgeObj = Document->GetObjectById(edgeID);
+		const IMiterNode* miterNode = edgeObj ? edgeObj->GetMiterInterface() : nullptr;
+		if (!ensure(miterNode))
+		{
+			return false;
+		}
+
+		const FMiterData& miterData = miterNode->GetMiterData();
+		const FMiterParticipantData* participantData = miterData.ParticipantsByID.Find(ID);
+		if (!ensure(participantData))
+		{
+			return false;
+		}
+
+		const FVector2D& edgeDir = parentFace->Cached2DEdgeNormals[edgeIdx];
+
+		// Portals are only affected by edge details that extend one "layer" of the participant, which in this case is the whole side of the assembly.
+		FVector2D edgeExtension(ForceInitToZero);
+		if (participantData->LayerExtensions.Num() == 1)
+		{
+			const FVector2D& layerExtension = participantData->LayerExtensions[0];
+			edgeExtension = -0.5f * (layerExtension.X + layerExtension.Y) * edgeDir;
+		}
+
+		FVector2D& curPoint = facePoints[edgeIdx];
+		FVector2D& nextPoint = facePoints[(edgeIdx + 1) % numEdges];
+		curPoint += edgeExtension;
+		nextPoint += edgeExtension;
+		OutOffset += edgeExtension;
+	}
+
+	OutOffsetBounds = FBox2D(facePoints);
+
+	return true;
 }
 
 bool AMOIPortal::SetupCompoundActorGeometry()
 {
 	bool bResult = false;
-	if (ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(GetActor()))
+
+	ACompoundMeshActor* cma = Cast<ACompoundMeshActor>(GetActor());
+	if (cma == nullptr)
 	{
-		FVector scale(FVector::OneVector);
-		int32 parentID = GetParentID();
-		if (parentID != MOD_ID_NONE)
+		return false;
+	}
+
+	FBox2D offsetBounds;
+	FVector2D positionOffset;
+	if (!GetOffsetFaceBounds(offsetBounds, positionOffset))
+	{
+		return false;
+	}
+
+	FVector scale(FVector::OneVector);
+	float lateralInvertFactor = InstanceData.bLateralInverted ? -1.0f : 1.0f;
+	float normalInvertFactor = InstanceData.bNormalInverted ? -1.0f : 1.0f;
+	int32 numRotations = (int32)InstanceData.Orientation;
+	FQuat localRotation = FQuat::MakeFromEuler(FVector(0.0f, 90.0f * numRotations, 0.0f));
+	FVector2D offsetFaceSize = offsetBounds.GetSize();
+	FVector2D offsetFaceExtent = offsetBounds.GetExtent();
+
+	FVector2D localPosition(lateralInvertFactor * -offsetFaceExtent.X, offsetFaceExtent.Y);
+	localPosition += 0.5f * positionOffset;
+
+	auto localPosition3d = localRotation.RotateVector(FVector(localPosition.Y, 0.0f, localPosition.X));
+	localPosition = FVector2D(localPosition3d.Z, localPosition3d.X);
+
+	const FBIMAssemblySpec& assembly = GetAssembly();
+	FVector nativeSize = assembly.GetRiggedAssemblyNativeSize();
+	if (!nativeSize.IsZero())
+	{	// Assume first part for native size.
+		if (numRotations % 2 == 0)
 		{
-			const Modumate::FGraph3DFace * parentFace = GetDocument()->GetVolumeGraph().FindFace(parentID);
-			// Get size of parent metaplane.
-			if (parentFace != nullptr)
-			{
-				float lateralInvertFactor = InstanceData.bLateralInverted ? -1.0f : 1.0f;
-				float normalInvertFactor = InstanceData.bNormalInverted ? -1.0f : 1.0f;
-				int32 numRotations = (int32)InstanceData.Orientation;
-				FQuat localRotation = FQuat::MakeFromEuler(FVector(0.0f, 90.0f * numRotations, 0.0f));
-				FBox2D faceSize(parentFace->Cached2DPositions);
-				FVector2D planeSize = faceSize.GetSize();
-				FVector2D localPosition(lateralInvertFactor * -faceSize.GetExtent().X, faceSize.GetExtent().Y);
-				auto localPosition3d = localRotation.RotateVector(FVector(localPosition.Y, 0.0f, localPosition.X));
-				localPosition = FVector2D(localPosition3d.Z, localPosition3d.X);
-
-
-				const FBIMAssemblySpec& assembly = GetAssembly();
-				FVector nativeSize = assembly.GetRiggedAssemblyNativeSize();
-				if (!nativeSize.IsZero())
-				{	// Assume first part for native size.
-					if (numRotations % 2 == 0)
-					{
-						scale.X = planeSize.X / nativeSize.X * lateralInvertFactor;
-						scale.Y *= normalInvertFactor;
-						scale.Z = planeSize.Y / nativeSize.Z;
-					}
-					else
-					{
-						scale.X = planeSize.Y / nativeSize.X * lateralInvertFactor;
-						scale.Y *= normalInvertFactor;
-						scale.Z = planeSize.X / nativeSize.Z;
-						localPosition.X = localPosition.X * planeSize.X / planeSize.Y;
-						localPosition.Y = localPosition.Y * planeSize.Y / planeSize.X;
-					}
-
-					SetRelativeTransform(localPosition, localRotation);
-
-					bResult = true;
-				}
-			}
+			scale.X = offsetFaceSize.X / nativeSize.X * lateralInvertFactor;
+			scale.Y *= normalInvertFactor;
+			scale.Z = offsetFaceSize.Y / nativeSize.Z;
+		}
+		else
+		{
+			scale.X = offsetFaceSize.Y / nativeSize.X * lateralInvertFactor;
+			scale.Y *= normalInvertFactor;
+			scale.Z = offsetFaceSize.X / nativeSize.Z;
+			localPosition.X = localPosition.X * offsetFaceSize.X / offsetFaceSize.Y;
+			localPosition.Y = localPosition.Y * offsetFaceSize.Y / offsetFaceSize.X;
 		}
 
-		cma->MakeFromAssembly(GetAssembly(), scale, InstanceData.bLateralInverted, true);
+		CachedRelativePos = localPosition;
+		CachedRelativeRot = localRotation;
+		bResult = true;
 	}
+
+	cma->MakeFromAssembly(GetAssembly(), scale, InstanceData.bLateralInverted, true);
+
 	return bResult;
 }
 
@@ -181,8 +276,7 @@ bool AMOIPortal::SetRelativeTransform(const FVector2D &InRelativePos, const FQua
 	}
 
 	float normalFlipSign = InstanceData.bNormalInverted ? -1.0f : 1.0f;
-	float assemblyThickness = CachedAssembly.GetRiggedAssemblyNativeSize().Y;
-	float offsetDist = (-0.5f * normalFlipSign * assemblyThickness) + InstanceData.Offset.GetOffsetDistance(normalFlipSign, assemblyThickness);
+	float offsetDist = (-0.5f * normalFlipSign * CachedThickness) + InstanceData.Offset.GetOffsetDistance(normalFlipSign, CachedThickness);
 	CachedWorldPos += offsetDist * parentObj->GetNormal();
 	portalActor->SetActorLocationAndRotation(CachedWorldPos, CachedWorldRot);
 	bHaveValidTransform = true;
@@ -242,9 +336,6 @@ void AMOIPortal::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 		edgeHandle->SetTargetMOI(parent);
 	}
 
-	MakeHandle<AAdjustPortalInvertHandle>();
-	MakeHandle<AAdjustPortalJustifyHandle>();
-	MakeHandle<AAdjustPortalReverseHandle>();
 	auto cwOrientHandle = MakeHandle<AAdjustPortalOrientHandle>();
 	cwOrientHandle->CounterClockwise = false;
 	auto ccwOrientHandle = MakeHandle<AAdjustPortalOrientHandle>();
@@ -499,6 +590,11 @@ void AMOIPortal::UpdateQuantities()
 
 	CachedQuantities.AddPartsQuantity(name, assembly.Parts, assemblyGuid);
 	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
+}
+
+void AMOIPortal::PreDestroy()
+{
+	MarkEdgesMiterDirty();
 }
 
 EDoorOperationType AMOIPortal::GetDoorType() const

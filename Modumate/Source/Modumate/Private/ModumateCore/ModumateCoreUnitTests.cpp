@@ -1698,9 +1698,9 @@ namespace Modumate
 		// Make a simple test edge detail
 		FEdgeDetailData edgeDetail1;
 		edgeDetail1.Conditions = {
-			FEdgeDetailCondition{30, 0, {1, 1}},
-			FEdgeDetailCondition{300, 0, {1, 2}},
-			FEdgeDetailCondition{345, -1, {1}}
+			FEdgeDetailCondition{30, 0, {1, 1}, EDetailParticipantType::Layered},
+			FEdgeDetailCondition{300, 0, {1, 2}, EDetailParticipantType::Layered},
+			FEdgeDetailCondition{345, -1, {1}, EDetailParticipantType::Layered}
 		};
 		edgeDetail1.Overrides = {
 			FEdgeDetailOverrides(),
@@ -1732,9 +1732,9 @@ namespace Modumate
 		// Make the original edge detail, but with (manually) flipped conditions
 		FEdgeDetailData edgeDetailFlipped;
 		edgeDetailFlipped.Conditions = {
-			FEdgeDetailCondition{360 - 345, 1, {1}},
-			FEdgeDetailCondition{360 - 300, 0, {2, 1}},
-			FEdgeDetailCondition{360 - 30, 0, {1, 1}}
+			FEdgeDetailCondition{360 - 345, 1, {1}, EDetailParticipantType::Layered},
+			FEdgeDetailCondition{360 - 300, 0, {2, 1}, EDetailParticipantType::Layered},
+			FEdgeDetailCondition{360 - 30, 0, {1, 1}, EDetailParticipantType::Layered}
 		};
 		edgeDetailFlipped.Overrides = {
 			FEdgeDetailOverrides(),
@@ -1751,10 +1751,10 @@ namespace Modumate
 		// Make a plus-sign edge detail with full symmetry
 		FEdgeDetailData edgeDetailPlus;
 		edgeDetailPlus.Conditions = {
-			FEdgeDetailCondition{0, 0, {1, 1}},
-			FEdgeDetailCondition{90, 0, {1, 1}},
-			FEdgeDetailCondition{180, 0, {1, 1}},
-			FEdgeDetailCondition{270, 0, {1, 1}}
+			FEdgeDetailCondition{0, 0, {1, 1}, EDetailParticipantType::Layered},
+			FEdgeDetailCondition{90, 0, {1, 1}, EDetailParticipantType::Layered},
+			FEdgeDetailCondition{180, 0, {1, 1}, EDetailParticipantType::Layered},
+			FEdgeDetailCondition{270, 0, {1, 1}, EDetailParticipantType::Layered}
 		};
 		edgeDetailPlus.Overrides = {
 			FEdgeDetailOverrides(),

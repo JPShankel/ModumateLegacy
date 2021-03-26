@@ -82,6 +82,7 @@ public:
 
 protected:
 	virtual void PostLoadInstanceData() override;
+	virtual void UpdateQuantities() override;
 
 	void UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalculateEdgeExtensions);
 	void UpdateConnectedEdges();
@@ -103,8 +104,10 @@ protected:
 	mutable TArray<FVector> TempHoleRelativePoints;
 
 	TArray<FVector2D> CachedLayerEdgeExtensions;
-	TArray<AModumateObjectInstance *> CachedParentConnectedMOIs;
-	TArray<AModumateObjectInstance *> CachedConnectedEdges;
 
-	virtual void UpdateQuantities() override;
+	UPROPERTY()
+	TArray<AModumateObjectInstance*> CachedParentConnectedMOIs;
+
+	UPROPERTY()
+	TArray<AModumateObjectInstance*> CachedConnectedEdges;
 };

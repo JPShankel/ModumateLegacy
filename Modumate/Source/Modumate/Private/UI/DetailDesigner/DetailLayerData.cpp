@@ -31,14 +31,33 @@ bool UDetailDesignerLayerData::Initialize()
 	return true;
 }
 
-void UDetailDesignerLayerData::PopulateLayerData(int32 InParticipantIndex, int32 InLayerIndex, const FVector2D& InExtensions)
+void UDetailDesignerLayerData::PopulateLayerData(int32 InParticipantIndex, int32 InLayerIndex, const FVector2D& InExtensions, bool bInFrontEnabled, bool bInBackEnabled)
 {
 	DetailParticipantIndex = InParticipantIndex;
 	DetailLayerIndex = InLayerIndex;
 	CurrentExtensions = InExtensions;
+	bFrontEnabled = bInFrontEnabled;
+	bBackEnabled = bInBackEnabled;
 
-	ExtensionFront->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToImperialText(CurrentExtensions.X));
-	ExtensionBack->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToImperialText(CurrentExtensions.Y));
+	if (bFrontEnabled)
+	{
+		ExtensionFront->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToImperialText(CurrentExtensions.X));
+		ExtensionFront->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	else
+	{
+		ExtensionFront->SetVisibility(ESlateVisibility::Collapsed);
+	}
+
+	if (bBackEnabled)
+	{
+		ExtensionBack->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToImperialText(CurrentExtensions.Y));
+		ExtensionBack->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	else
+	{
+		ExtensionBack->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 bool UDetailDesignerLayerData::OnExtensionTextCommitted(int32 ExtensionIdx, const FString& String)
@@ -60,7 +79,7 @@ void UDetailDesignerLayerData::OnExtensionFrontTextCommitted(const FText& Text, 
 {
 	if ((CommitMethod == ETextCommit::OnCleared) || !OnExtensionTextCommitted(0, Text.ToString()))
 	{
-		PopulateLayerData(DetailParticipantIndex, DetailLayerIndex, CurrentExtensions);
+		PopulateLayerData(DetailParticipantIndex, DetailLayerIndex, CurrentExtensions, bFrontEnabled, bBackEnabled);
 	}
 }
 
@@ -68,7 +87,7 @@ void UDetailDesignerLayerData::OnExtensionBackTextCommitted(const FText& Text, E
 {
 	if ((CommitMethod == ETextCommit::OnCleared) || !OnExtensionTextCommitted(1, Text.ToString()))
 	{
-		PopulateLayerData(DetailParticipantIndex, DetailLayerIndex, CurrentExtensions);
+		PopulateLayerData(DetailParticipantIndex, DetailLayerIndex, CurrentExtensions, bFrontEnabled, bBackEnabled);
 	}
 }
 

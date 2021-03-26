@@ -11,8 +11,10 @@
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
+#include "Objects/LayeredObjectInterface.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "Objects/PlaneHostedObj.h"
+#include "Objects/Portal.h"
 #include "Objects/SurfaceGraph.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "UnrealClasses/CompoundMeshActor.h"
@@ -137,35 +139,21 @@ bool UModumateObjectStatics::GetWorldTransformOnPlanarObj(
 	const FVector2D &RelativePos, const FQuat &RelativeRot,
 	FVector &OutWorldPos, FQuat &OutWorldRot)
 {
-	const AModumateObjectInstance *metaPlaneObject = nullptr;
-	if (PlanarObj->GetObjectType() == EObjectType::OTMetaPlane)
+	if (PlanarObj->GetObjectType() != EObjectType::OTMetaPlane)
 	{
-		metaPlaneObject = PlanarObj;
-	}
-	else
-	{
-		metaPlaneObject = PlanarObj->GetParentObject();
-		if (metaPlaneObject == nullptr || metaPlaneObject->GetObjectType() != EObjectType::OTMetaPlane)
-		{
-			return false;
-		}
+		return false;
 	}
 
-	FVector hostOrigin = metaPlaneObject->GetLocation();
-	FVector hostNormal = metaPlaneObject->GetNormal();
-	FQuat hostRot = metaPlaneObject->GetRotation();
+	FVector hostOrigin = PlanarObj->GetLocation();
+	FVector hostNormal = PlanarObj->GetNormal();
+	FQuat hostRot = PlanarObj->GetRotation();
 
 	// TODO: support more than just portal-style "flipped or not" relative rotation about Z
 	bool bSameNormals = RelativeRot.IsIdentity(KINDA_SMALL_NUMBER);
 
-	FVector startExtrusionDelta, endExtrusionDelta;
-	UModumateObjectStatics::GetExtrusionDeltas(PlanarObj, startExtrusionDelta, endExtrusionDelta);
-	const FVector &extrusionDelta = bSameNormals ? endExtrusionDelta : startExtrusionDelta;
-
 	OutWorldPos = hostOrigin +
 		(hostRot.GetAxisX() * RelativePos.X) +
-		(hostRot.GetAxisY() * RelativePos.Y) +
-		extrusionDelta;
+		(hostRot.GetAxisY() * RelativePos.Y);
 	
 	// Portal rotation should be +Z up, +Y away from the wall, and +X along the wall.
 	OutWorldRot = FRotationMatrix::MakeFromYZ(hostNormal, -hostRot.GetAxisY()).ToQuat() * RelativeRot;
@@ -651,32 +639,53 @@ void UModumateObjectStatics::GetGraphIDsFromMOIs(const TSet<AModumateObjectInsta
 	}
 }
 
-void UModumateObjectStatics::GetPlaneHostedValues(const AModumateObjectInstance *PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal)
+bool UModumateObjectStatics::GetPlaneHostedValues(const AModumateObjectInstance* PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal)
 {
-	OutThickness = PlaneHostedObj->CalculateThickness();
+	OutThickness = 0.0f;
+	OutStartOffset = 0.0f;
+	OutNormal = PlaneHostedObj->GetNormal();
+
+	auto layeredObj = PlaneHostedObj->GetLayeredInterface();
+	if (layeredObj == nullptr)
+	{
+		return false;
+	}
+
+	OutThickness = layeredObj->GetCachedLayerDims().TotalUnfinishedWidth;
 	float offsetPCT = 0.0f;
 
 	FMOIPlaneHostedObjData planeHostedObjData;
+	FMOIPortalData portalData;
 	if (PlaneHostedObj->GetStateData().CustomData.LoadStructData(planeHostedObjData))
 	{
 		OutStartOffset = (-0.5f * OutThickness) + planeHostedObjData.Offset.GetOffsetDistance(planeHostedObjData.FlipSigns.Y, OutThickness);
+	}
+	else if (PlaneHostedObj->GetStateData().CustomData.LoadStructData(portalData))
+	{
+		OutStartOffset = (-0.5f * OutThickness) + portalData.Offset.GetOffsetDistance(portalData.bNormalInverted ? -1.0f : 1.0f, OutThickness);
 	}
 	else
 	{
 		OutStartOffset = 0.0f;
 	}
 
-	OutNormal = PlaneHostedObj->GetNormal();
+	return true;
 }
 
-void UModumateObjectStatics::GetExtrusionDeltas(const AModumateObjectInstance *PlaneHostedObj, FVector &OutStartDelta, FVector &OutEndDelta)
+bool UModumateObjectStatics::GetExtrusionDeltas(const AModumateObjectInstance *PlaneHostedObj, FVector &OutStartDelta, FVector &OutEndDelta)
 {
 	float thickness, startOffset;
 	FVector normal;
-	GetPlaneHostedValues(PlaneHostedObj, thickness, startOffset, normal);
+	if (!GetPlaneHostedValues(PlaneHostedObj, thickness, startOffset, normal))
+	{
+		OutStartDelta = FVector::ZeroVector;
+		OutEndDelta = FVector::ZeroVector;
+		return false;
+	}
 
 	OutStartDelta = startOffset * normal;
 	OutEndDelta = (startOffset + thickness) * normal;
+	return true;
 }
 
 bool UModumateObjectStatics::GetMountedTransform(const FVector &MountOrigin, const FVector &MountNormal,

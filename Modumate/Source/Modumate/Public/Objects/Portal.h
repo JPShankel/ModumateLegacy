@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Objects/DimensionOffset.h"
+#include "Objects/LayeredObjectInterface.h"
 #include "Objects/ModumateObjectInstance.h"
 
 #include "Portal.generated.h"
@@ -45,7 +46,7 @@ class AAdjustmentHandleActor;
 class AModumateObjectInstance;
 
 UCLASS()
-class MODUMATE_API AMOIPortal : public AModumateObjectInstance
+class MODUMATE_API AMOIPortal : public AModumateObjectInstance, public ILayeredObject
 {
 	GENERATED_BODY()
 
@@ -61,9 +62,11 @@ public:
 
 	virtual FVector GetNormal() const;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
-	virtual void SetupDynamicGeometry() override;
-	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
+	virtual void PreDestroy() override;
+
+	virtual const ILayeredObject* GetLayeredInterface() const override { return this; }
+	virtual const FCachedLayerDimsByType& GetCachedLayerDims() const override { return CachedLayerDims; }
 
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
 	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
@@ -85,6 +88,9 @@ public:
 protected:
 	TWeakObjectPtr<AEditModelPlayerController> Controller;
 
+	void UpdateCachedThickness();
+	bool MarkEdgesMiterDirty();
+	bool GetOffsetFaceBounds(FBox2D& OutOffsetBounds, FVector2D& OutOffset);
 	bool SetupCompoundActorGeometry();
 	bool SetRelativeTransform(const FVector2D& InRelativePos, const FQuat& InRelativeRot);
 
@@ -101,5 +107,14 @@ protected:
 	FVector2D CachedRelativePos;
 	FVector CachedWorldPos;
 	FQuat CachedRelativeRot, CachedWorldRot;
+	float CachedThickness;
+	TArray<FBIMLayerSpec> CachedProxyLayers;
+	FCachedLayerDimsByType CachedLayerDims;
 	bool bHaveValidTransform;
+
+	UPROPERTY()
+	TArray<AModumateObjectInstance*> CachedParentConnectedMOIs;
+
+	UPROPERTY()
+	TArray<AModumateObjectInstance*> CachedConnectedEdges;
 };

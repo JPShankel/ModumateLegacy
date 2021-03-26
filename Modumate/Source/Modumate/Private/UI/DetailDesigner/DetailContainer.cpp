@@ -53,7 +53,7 @@ void UDetailDesignerContainer::ClearEditor()
 	OrientationIdx = INDEX_NONE;
 }
 
-void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const TSet<int32>& InEdgeIDs)
+bool UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const TSet<int32>& InEdgeIDs)
 {
 	int32 numEdgeIDs = InEdgeIDs.Num();
 	if ((DetailPresetID != InDetailPresetID) || (InEdgeIDs.Intersect(EdgeIDs).Num() != numEdgeIDs))
@@ -66,9 +66,10 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 
 	auto controller = GetOwningPlayer<AEditModelPlayerController>();
 	auto document = controller ? controller->GetDocument() : nullptr;
-	if (!ensure(document))
+	auto playerHUD = controller ? controller->GetEditModelHUD() : nullptr;
+	if (!ensure(document && playerHUD))
 	{
-		return;
+		return false;
 	}
 
 	auto& presetCollection = document->GetPresetCollection();
@@ -77,13 +78,13 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 	auto detailPreset = presetCollection.PresetFromGUID(DetailPresetID);
 	if (!ensure(detailPreset && detailPreset->CustomData.LoadStructData(detailData)))
 	{
-		return;
+		return false;
 	}
 
 	int32 numParticipants = detailData.Conditions.Num();
 	if (!ensure((numParticipants == detailData.Overrides.Num()) && (numParticipants > 0)))
 	{
-		return;
+		return false;
 	}
 
 	PresetName->EditText->ModumateEditableTextBox->SetText(detailPreset->DisplayName);
@@ -106,8 +107,7 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 			auto participantObj = document->GetObjectById(participantID);
 			if (!ensure(participantObj))
 			{
-				ClearEditor();
-				return;
+				return false;
 			}
 
 			auto& miterParticipant = miterData.ParticipantsByID[participantID];
@@ -148,97 +148,136 @@ void UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 		const auto& detailCondition = detailData.Conditions[participantIdx];
 		const auto& detailOverride = detailData.Overrides[participantIdx];
 
+		EDetailParticipantType participantDetailType = detailCondition.Type;
 		FBIMAssemblySpec* participantAssembly = (OrientationIdx != INDEX_NONE) ? &participantAssemblies[participantIdx] : nullptr;
-		EObjectType participantType = participantAssembly ? participantAssembly->ObjectType : EObjectType::OTNone;
-		int32& typeIndex = participantsByType.FindOrAdd(participantType, 0);
-		typeIndex++;
+		EObjectType participantObjectType = participantAssembly ? participantAssembly->ObjectType : EObjectType::OTNone;
+		int32& objectTypeIndex = participantsByType.FindOrAdd(participantObjectType, 0);
+		objectTypeIndex++;
 
-		// If we're referencing a real assembly, double-check that it matches the reported number of layers
-		int32 numLayers = detailCondition.LayerThicknesses.Num();
-		if (participantAssembly && !ensure(numLayers == participantAssembly->Layers.Num()))
+		// If we're referencing a real assembly, double-check that the condition layers match the desired participant type.
+		int32 numDetailLayers = detailCondition.LayerThicknesses.Num();
+		int32 numAssemblyLayers = participantAssembly ? participantAssembly->Layers.Num() : numDetailLayers;
+		switch (participantDetailType)
 		{
-			ClearEditor();
-			return;
+		case EDetailParticipantType::Layered:
+			if (participantAssembly && !ensure(numDetailLayers == numAssemblyLayers))
+			{
+				return false;
+			}
+			break;
+		case EDetailParticipantType::Rigged:
+		case EDetailParticipantType::Extruded:
+			if ((numDetailLayers != 1) || (participantAssembly && !ensure(numAssemblyLayers == 0)))
+			{
+				return false;
+			}
+			break;
+		case EDetailParticipantType::None:
+		default:
+			return false;
 		}
 
 		// Create a header for the participant, with its participant number, thickness, and optional assembly name
-		auto presetTitle = Cast<UDetailDesignerAssemblyTitle>(ParticipantsList->GetChildAt(participantWidgetIdx++));
-		if (presetTitle == nullptr)
-		{
-			presetTitle = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UDetailDesignerAssemblyTitle>(ParticipantTitleClass);
-			ParticipantsList->AddChildToVerticalBox(presetTitle);
-		}
+		auto presetTitle = GetOrCreateParticipantWidget<UDetailDesignerAssemblyTitle>(participantWidgetIdx++, playerHUD, ParticipantTitleClass);
 
-		FText numberPrefix = participantAssembly ? UModumateTypeStatics::GetTextForObjectType(participantType) : LOCTEXT("AssemblyAnonPrefix", "Participant");
+		FText numberPrefix = participantAssembly ? UModumateTypeStatics::GetTextForObjectType(participantObjectType) : LOCTEXT("AssemblyAnonPrefix", "Participant");
 		float totalThicknessInches = Algo::Accumulate(detailCondition.LayerThicknesses, 0.0f);
 		FText totalThicknessText = UModumateDimensionStatics::InchesToImperialText(totalThicknessInches);
 		FText assemblyNameText = participantAssembly ? FText::Format(LOCTEXT("AssemblyNameFormat", ", {0}"), FText::FromString(participantAssembly->DisplayName)) : FText::GetEmpty();
 
 		FText assemblyTitle = FText::Format(LOCTEXT("AssemblyTitleFormat", "{0} {1}, ({2}){3}"),
-			numberPrefix, typeIndex, totalThicknessText, assemblyNameText);
+			numberPrefix, objectTypeIndex, totalThicknessText, assemblyNameText);
 		presetTitle->AssemblyTitle->ChangeText(assemblyTitle);
 
-		// Create a header for the layer rows
-		auto presetColumnTitles = ParticipantsList->GetChildAt(participantWidgetIdx++);
-		if ((presetColumnTitles == nullptr) || !presetColumnTitles->IsA(ParticipantColumnTitlesClass.Get()))
+		// Create a header for layered rows
+		if (participantDetailType == EDetailParticipantType::Layered)
 		{
-			presetColumnTitles = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UUserWidget>(ParticipantColumnTitlesClass);
-			ParticipantsList->AddChildToVerticalBox(presetColumnTitles);
+			GetOrCreateParticipantWidget(participantWidgetIdx++, playerHUD, ParticipantColumnTitlesClass);
 		}
 
-		// Create a row for each layer of the participant, as well as an extra one for the SurfaceExtensions values.
-		// TODO: If we clean up the UI to use two rows for the SurfaceExtensions (one for start, one for end), then this would need to create two additional UI entries.
-		for (int32 layerIdx = 0; layerIdx <= numLayers; ++layerIdx)
+		// Create a row for each layer of the participant, as well as two extras for the SurfaceExtensions front and back values.
+		// For the purposes of indexing layers in conditions/details, the layer index of surface extensions is numDetailLayers + 1,
+		// but the front and back values are displayed and edited separately for convenience.
+		int32 numDetailEntries = (participantDetailType == EDetailParticipantType::Layered) ? numDetailLayers + 2 : 1;
+		for (int32 detailEntryIdx = 0; detailEntryIdx < numDetailEntries; ++detailEntryIdx)
 		{
-			auto presetLayerData = Cast<UDetailDesignerLayerData>(ParticipantsList->GetChildAt(participantWidgetIdx++));
-			if (presetLayerData == nullptr)
-			{
-				presetLayerData = controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UDetailDesignerLayerData>(ParticipantLayerDataClass);
-				presetLayerData->OnExtensionChanged.AddDynamic(this, &UDetailDesignerContainer::OnLayerExtensionChanged);
-				ParticipantsList->AddChildToVerticalBox(presetLayerData);
-			}
+			auto presetLayerData = GetOrCreateParticipantWidget<UDetailDesignerLayerData>(participantWidgetIdx++, playerHUD, ParticipantLayerDataClass);
+			presetLayerData->OnExtensionChanged.Clear();
+			presetLayerData->OnExtensionChanged.AddDynamic(this, &UDetailDesignerContainer::OnLayerExtensionChanged);
 
-			if (layerIdx == numLayers)
+			FText layerTitle = FText::GetEmpty();
+			FVector2D extensionValues(ForceInitToZero);
+			bool extensionsEnabled[2] = { true, true };
+
+			if (participantDetailType == EDetailParticipantType::Layered)
 			{
-				presetLayerData->LayerName->ChangeText(LOCTEXT("SurfaceTitle", "Surface Extensions"));
-				presetLayerData->LayerThickness->SetVisibility(ESlateVisibility::Collapsed);
-				presetLayerData->PopulateLayerData(participantIdx, layerIdx, detailOverride.SurfaceExtensions);
+				if ((detailEntryIdx == 0) || (detailEntryIdx == (numDetailEntries - 1)))
+				{
+					layerTitle = LOCTEXT("SurfaceTitle", "Surface Extension");
+					presetLayerData->LayerThickness->SetVisibility(ESlateVisibility::Collapsed);
+					extensionValues = detailOverride.SurfaceExtensions;
+					int32 extensionIndexToDisable = (detailEntryIdx == 0) ? 1 : 0;
+					extensionsEnabled[extensionIndexToDisable] = false;
+				}
+				else
+				{
+					int32 layerIndex = detailEntryIdx - 1;
+					float layerThicknessInches = detailCondition.LayerThicknesses[layerIndex];
+
+					layerTitle = FText::Format(LOCTEXT("LayerTitle", "Layer {0}"), layerIndex + 1);
+					if (participantAssembly)
+					{
+						if (!ensure(participantAssembly->Layers.IsValidIndex(layerIndex)))
+						{
+							return false;
+						}
+
+						// Double-check that if we're referencing a real assembly, that it has the right layers
+						auto& participantLayer = participantAssembly->Layers[layerIndex];
+						auto layerPreset = presetCollection.PresetFromGUID(participantLayer.PresetGUID);
+						if (!ensure(layerPreset &&
+							FMath::IsNearlyEqual(layerThicknessInches, UModumateDimensionStatics::CentimetersToInches64(participantLayer.ThicknessCentimeters))))
+						{
+							return false;
+						}
+
+						layerTitle = layerPreset->DisplayName;
+					}
+
+					presetLayerData->LayerThickness->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+					presetLayerData->LayerThickness->ChangeText(UModumateDimensionStatics::InchesToImperialText(layerThicknessInches));
+					extensionValues = detailOverride.LayerExtensions[layerIndex];
+				}
 			}
 			else
 			{
-				float layerThicknessInches = detailCondition.LayerThicknesses[layerIdx];
-
-				FText layerTitle = FText::Format(LOCTEXT("LayerTitle", "Layer {0}"), layerIdx + 1);
-				if (participantAssembly)
-				{
-					// Double-check that if we're referencing a real assembly, that it has the right layers
-					auto& participantLayer = participantAssembly->Layers[layerIdx];
-					auto layerPreset = presetCollection.PresetFromGUID(participantLayer.PresetGUID);
-					if (!ensure(layerPreset &&
-						FMath::IsNearlyEqual(layerThicknessInches, UModumateDimensionStatics::CentimetersToInches64(participantLayer.ThicknessCentimeters))))
-					{
-						ClearEditor();
-						return;
-					}
-
-					layerTitle = layerPreset->DisplayName;
-				}
-
-				presetLayerData->LayerName->ChangeText(layerTitle);
-				presetLayerData->LayerThickness->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-				presetLayerData->LayerThickness->ChangeText(UModumateDimensionStatics::InchesToImperialText(layerThicknessInches));
-				presetLayerData->PopulateLayerData(participantIdx, layerIdx, detailOverride.LayerExtensions[layerIdx]);
+				layerTitle = LOCTEXT("NonLayerTitle", "Extension:");
+				presetLayerData->LayerThickness->SetVisibility(ESlateVisibility::Collapsed);
+				extensionValues = detailOverride.LayerExtensions[detailEntryIdx];
+				extensionsEnabled[1] = false;
 			}
+
+			presetLayerData->LayerName->ChangeText(layerTitle);
+			presetLayerData->PopulateLayerData(participantIdx, detailEntryIdx, extensionValues, extensionsEnabled[0], extensionsEnabled[1]);
 		}
 
 		if (participantIdx < (numParticipants - 1))
 		{
-			auto participantSeparator = ParticipantsList->GetChildAt(participantWidgetIdx++);
-			if ((participantSeparator == nullptr) || !participantSeparator->IsA(ParticipantSeparatorLineClass.Get()))
-			{
-				ParticipantsList->AddChildToVerticalBox(controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UUserWidget>(ParticipantSeparatorLineClass));
-			}
+			GetOrCreateParticipantWidget(participantWidgetIdx++, playerHUD, ParticipantSeparatorLineClass);
 		}
+	}
+
+	ClearParticipantEntries(participantWidgetIdx);
+
+	return true;
+}
+
+void UDetailDesignerContainer::ClearParticipantEntries(int32 StartIndex)
+{
+	int32 numEntries = ParticipantsList->GetChildrenCount();
+	for (int32 entryIdx = numEntries - 1; entryIdx >= StartIndex; --entryIdx)
+	{
+		ParticipantsList->RemoveChildAt(entryIdx);
 	}
 }
 
@@ -270,7 +309,7 @@ void UDetailDesignerContainer::OnPresetNameEdited(const FText& Text, ETextCommit
 	document->ApplyDeltas({ presetDelta }, controller->GetWorld());
 }
 
-void UDetailDesignerContainer::OnLayerExtensionChanged(int32 ParticipantIndex, int32 LayerIndex, FVector2D NewExtensions)
+void UDetailDesignerContainer::OnLayerExtensionChanged(int32 ParticipantIndex, int32 DetailEntryIdx, FVector2D NewExtensions)
 {
 	auto controller = GetOwningPlayer<AEditModelPlayerController>();
 	auto document = controller ? controller->GetDocument() : nullptr;
@@ -292,22 +331,35 @@ void UDetailDesignerContainer::OnLayerExtensionChanged(int32 ParticipantIndex, i
 		return;
 	}
 
+	const auto& condition = detailData.Conditions[ParticipantIndex];
 	auto& overrideParticipant = detailData.Overrides[ParticipantIndex];
-
+	EDetailParticipantType participantType = condition.Type;
+	int32 layerIndex = INDEX_NONE;
 	int32 numLayers = overrideParticipant.LayerExtensions.Num();
-	if (!ensure((LayerIndex >= 0) && (LayerIndex <= numLayers)))
-	{
-		return;
-	}
 
-	
-	if (LayerIndex < numLayers)
+	if (participantType == EDetailParticipantType::Layered)
 	{
-		overrideParticipant.LayerExtensions[LayerIndex] = NewExtensions;
+		int32 numEntries = numLayers + 2;
+		if ((DetailEntryIdx == 0) || (DetailEntryIdx == (numEntries - 1)))
+		{
+			int32 surfaceExtensionIdx = (DetailEntryIdx == 0) ? 0 : 1;
+			overrideParticipant.SurfaceExtensions[surfaceExtensionIdx] = NewExtensions[surfaceExtensionIdx];
+		}
+		else
+		{
+			layerIndex = DetailEntryIdx - 1;
+		}
 	}
 	else
 	{
-		overrideParticipant.SurfaceExtensions = NewExtensions;
+		// For non-layered extensions, both values must be equal, but only X values come in, so set Y to X for consistency.
+		layerIndex = DetailEntryIdx;
+		NewExtensions.Y = NewExtensions.X;
+	}
+
+	if (layerIndex != INDEX_NONE)
+	{
+		overrideParticipant.LayerExtensions[layerIndex] = NewExtensions;
 	}
 
 	if (!ensure(presetDelta->NewState.CustomData.SaveStructData(detailData)))

@@ -72,11 +72,11 @@ public:
 	// the thickness of the assembly,
 	// the distance along its normal vector from which the rest of its layers are positioned,
 	// and the plane normal.
-	static void GetPlaneHostedValues(const AModumateObjectInstance *PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal);
+	static bool GetPlaneHostedValues(const AModumateObjectInstance *PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal);
 
 	// Given a plane hosted object, find the outermost delta vectors from the plane to its layer extents.
 	// This does not include finishes or other hosted children (yet).
-	static void GetExtrusionDeltas(const AModumateObjectInstance *PlaneHostedObj, FVector &OutStartDelta, FVector &OutEndDelta);
+	static bool GetExtrusionDeltas(const AModumateObjectInstance *PlaneHostedObj, FVector &OutStartDelta, FVector &OutEndDelta);
 
 	// FF&E
 	static bool GetMountedTransform(const FVector &MountOrigin, const FVector &MountNormal,

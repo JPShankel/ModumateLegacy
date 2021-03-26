@@ -5,6 +5,7 @@
 #include "Misc/Crc.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Objects/MiterNode.h"
+#include "Objects/ModumateObjectInstance.h"
 
 #define LOCTEXT_NAMESPACE "ModumateEdgeDetail"
 
@@ -16,10 +17,14 @@ FEdgeDetailCondition::FEdgeDetailCondition(const FMiterParticipantData* MiterPar
 {
 	if (ensure(MiterParticipantData))
 	{
+		EObjectType participantObjectType = MiterParticipantData->MOI ? MiterParticipantData->MOI->GetObjectType() : EObjectType::OTNone;
+		EDetailParticipantType participantType = ObjectTypeToParticipantType(participantObjectType);
+
 		SetData(
 			MiterParticipantData->MiterAngle,
 			MiterParticipantData->LayerStartOffset + 0.5f * MiterParticipantData->LayerDims.TotalUnfinishedWidth,
-			MiterParticipantData->LayerDims.LayerThicknesses);
+			MiterParticipantData->LayerDims.LayerThicknesses,
+			participantType);
 
 		// Normalize all participants as if they're coming in clockwise, from the perspective of the miter edge coordinate system.
 		if (!MiterParticipantData->bPlaneNormalCW)
@@ -30,12 +35,12 @@ FEdgeDetailCondition::FEdgeDetailCondition(const FMiterParticipantData* MiterPar
 	}
 }
 
-FEdgeDetailCondition::FEdgeDetailCondition(float InAngle, float InOffset, const TArray<float, TInlineAllocator<8>>& InLayerThicknesses)
+FEdgeDetailCondition::FEdgeDetailCondition(float InAngle, float InOffset, const TArray<float, TInlineAllocator<8>>& InLayerThicknesses, EDetailParticipantType InType)
 {
-	SetData(InAngle, InOffset, InLayerThicknesses);
+	SetData(InAngle, InOffset, InLayerThicknesses, InType);
 }
 
-void FEdgeDetailCondition::SetData(float InAngle, float InOffset, const TArray<float, TInlineAllocator<8>>& InLayerThicknesses)
+void FEdgeDetailCondition::SetData(float InAngle, float InOffset, const TArray<float, TInlineAllocator<8>>& InLayerThicknesses, EDetailParticipantType InType)
 {
 	// For readability and consistency, save condition angles to the nearest degree,
 	// and serialize input dimensions that are in centimeters as inches to the nearest 64th.
@@ -44,6 +49,8 @@ void FEdgeDetailCondition::SetData(float InAngle, float InOffset, const TArray<f
 
 	LayerThicknesses.Reset();
 	Algo::Transform(InLayerThicknesses, LayerThicknesses, UModumateDimensionStatics::CentimetersToInches64);
+
+	Type = InType;
 }
 
 void FEdgeDetailCondition::Invert()
@@ -55,7 +62,7 @@ void FEdgeDetailCondition::Invert()
 
 bool FEdgeDetailCondition::operator==(const FEdgeDetailCondition& Other) const
 {
-	return (Angle == Other.Angle) && (Offset == Other.Offset) && (LayerThicknesses == Other.LayerThicknesses);
+	return (Angle == Other.Angle) && (Offset == Other.Offset) && (LayerThicknesses == Other.LayerThicknesses) && (Type == Other.Type);
 }
 
 bool FEdgeDetailCondition::operator!=(const FEdgeDetailCondition& Other) const
@@ -71,7 +78,36 @@ uint32 GetTypeHash(const FEdgeDetailCondition& EdgeDetailContition)
 	int32 numLayers = EdgeDetailContition.LayerThicknesses.Num();
 	currentHash = HashCombine(currentHash, GetTypeHash(numLayers));
 	currentHash = FCrc::MemCrc32(EdgeDetailContition.LayerThicknesses.GetData(), numLayers * EdgeDetailContition.LayerThicknesses.GetTypeSize(), currentHash);
+
+	currentHash = HashCombine(currentHash, GetTypeHash(EdgeDetailContition.Type));
+
 	return currentHash;
+}
+
+EDetailParticipantType FEdgeDetailCondition::ObjectTypeToParticipantType(EObjectType ObjectType)
+{
+	switch (ObjectType)
+	{
+	case EObjectType::OTWallSegment:
+	case EObjectType::OTRailSegment:
+	case EObjectType::OTFloorSegment:
+	case EObjectType::OTCeiling:
+	case EObjectType::OTRoofFace:
+	case EObjectType::OTStaircase:
+	case EObjectType::OTFinish:
+	case EObjectType::OTCountertop:
+	case EObjectType::OTSystemPanel:
+		return EDetailParticipantType::Layered;
+	case EObjectType::OTDoor:
+	case EObjectType::OTWindow:
+		return EDetailParticipantType::Rigged;
+	case EObjectType::OTTrim:
+	case EObjectType::OTStructureLine:
+	case EObjectType::OTMullion:
+		return EDetailParticipantType::Extruded;
+	default:
+		return EDetailParticipantType::None;
+	}
 }
 
 
@@ -323,6 +359,18 @@ void FEdgeDetailData::PostSerialize(const FArchive& Ar)
 				{
 					detailOverrides.SurfaceExtensions.X = detailOverrides.LayerExtensions[0].X;
 					detailOverrides.SurfaceExtensions.Y = detailOverrides.LayerExtensions.Last().Y;
+				}
+			}
+		}
+
+		// For detail conditions missing Type, default them to layered assemblies, since that was the only type previously supported.
+		if (Version < 2)
+		{
+			for (auto& detailCondition : Conditions)
+			{
+				if (detailCondition.Type == EDetailParticipantType::None)
+				{
+					detailCondition.Type = EDetailParticipantType::Layered;
 				}
 			}
 		}

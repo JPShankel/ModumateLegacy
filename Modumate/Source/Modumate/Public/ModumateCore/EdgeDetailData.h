@@ -6,8 +6,18 @@
 
 #include "EdgeDetailData.generated.h"
 
+enum class EObjectType : uint8;
 struct FMiterParticipantData;
 class IMiterNode;
+
+UENUM()
+enum class EDetailParticipantType : uint8
+{
+	None,
+	Layered,
+	Rigged,
+	Extruded
+};
 
 USTRUCT()
 struct FEdgeDetailCondition
@@ -16,8 +26,8 @@ struct FEdgeDetailCondition
 
 	FEdgeDetailCondition();
 	FEdgeDetailCondition(const FMiterParticipantData* MiterParticipantData);
-	FEdgeDetailCondition(float InAngle, float InOffset, const TArray<float, TInlineAllocator<8>>& InLayerThicknesses);
-	void SetData(float InAngle, float InOffset, const TArray<float, TInlineAllocator<8>>& InLayerThicknesses);
+	FEdgeDetailCondition(float InAngle, float InOffset, const TArray<float, TInlineAllocator<8>>& InLayerThicknesses, EDetailParticipantType InType);
+	void SetData(float InAngle, float InOffset, const TArray<float, TInlineAllocator<8>>& InLayerThicknesses, EDetailParticipantType InType);
 
 	void Invert();
 
@@ -30,9 +40,14 @@ struct FEdgeDetailCondition
 	UPROPERTY(meta = (ToolTip = "The ordered thicknesses (rounded to the 64th of an inch) of a separator participant, potentially affected by its own flip value."))
 	TArray<float> LayerThicknesses;
 
+	UPROPERTY(meta = (ToolTip = "The type of participant that provides the condition, i.e. to distinguish Walls from Windows from Mullions"))
+	EDetailParticipantType Type = EDetailParticipantType::None;
+
 	bool operator==(const FEdgeDetailCondition& Other) const;
 	bool operator!=(const FEdgeDetailCondition& Other) const;
 	friend uint32 GetTypeHash(const FEdgeDetailCondition& EdgeDetailContition);
+
+	static EDetailParticipantType ObjectTypeToParticipantType(EObjectType ObjectType);
 };
 
 template<>
@@ -109,7 +124,8 @@ struct FEdgeDetailData
 
 	// Version 0: initial version, implicitly loaded from when Version was missing
 	// Version 1: FEdgeDetailOverrides now has SurfaceExtensions
-	static constexpr int32 CurrentVersion = 1;
+	// Version 2: FEdgeDetailCondition now has Type
+	static constexpr int32 CurrentVersion = 2;
 
 	uint32 CachedConditionHash = 0;
 

@@ -124,7 +124,10 @@ void USelectionTrayWidget::OpenToolTrayDetailDesigner(const FGuid& DetailPreset,
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	CurrentDetailPreset = DetailPreset;
 	CurrentDetailEdgeIDs = EdgeIDs;
-	DetailDesigner->BuildEditor(CurrentDetailPreset, CurrentDetailEdgeIDs);
+	if (!DetailDesigner->BuildEditor(CurrentDetailPreset, CurrentDetailEdgeIDs))
+	{
+		DetailDesigner->ClearEditor();
+	}
 }
 
 void USelectionTrayWidget::UpdateFromSelection()
