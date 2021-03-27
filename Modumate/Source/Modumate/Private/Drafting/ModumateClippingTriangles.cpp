@@ -224,6 +224,7 @@ namespace Modumate
 					{
 						vertices[v] = localToWorld.TransformPosition(vertices[v]);
 					}
+					AddLayeredCutPlaneTriangles(layerGeoms, localToWorld);
 				}
 			}
 
@@ -731,6 +732,113 @@ namespace Modumate
 			{
 				child->PostProcess(GlobalPosition);
 				GlobalPosition += SubtreeSize[i];
+			}
+		}
+	}
+
+	// Add obscuring quads in the cut plane to hide beyond lines within layered objects.
+	void FModumateClippingTriangles::AddLayeredCutPlaneTriangles(const TArray<FLayerGeomDef>& LayerGeoms, const FTransform& LocalToWorld)
+	{
+		if (LayerGeoms.Num() == 0)
+		{
+			return;
+		}
+
+		const FLayerGeomDef& layer1 = LayerGeoms[0];
+		const FLayerGeomDef& layer2 = LayerGeoms.Last();
+		TArray<FVector> layerA = layer1.OriginalPointsA;
+		TArray<FVector> layerB = layer2.OriginalPointsB;
+
+		const FMatrix localToView = LocalToWorld.ToMatrixWithScale() * TransformMatrix;
+		for (auto& v: layerA)
+		{
+			v = localToView.TransformPosition(v);
+		}
+		for (auto& v: layerB)
+		{
+			v = localToView.TransformPosition(v);
+		}
+
+		const int32 numPoints = layerA.Num();
+
+		TArray<FVector3d> intersectionsA;
+		TArray<FVector3d> intersectionsB;
+
+		// Intersect wih z = 0.
+		auto intersect = [](const FVector3d& v1, const FVector3d& v2, TArray<FVector3d>& intersections)
+		{
+			FVector3d intersection;
+			if((v1.Z < 0.0) ^ (v2.Z < 0.0))
+			{
+				FVector3d d(v2 - v1);
+				intersection = v1 - d * (v1.Z / d.Z);
+				intersection.Z = triangleEpsilon;
+				intersections.Add(intersection);
+			}
+
+		};
+
+		for (int32 point = 0; point < numPoints; ++point)
+		{
+			const int32 point2 = (point + 1) % numPoints;
+			intersect(layerA[point], layerA[point2], intersectionsA);
+			intersect(layerB[point], layerB[point2], intersectionsB);
+		}
+
+
+		if (intersectionsA.Num() > 0 && intersectionsA.Num() == intersectionsB.Num() && intersectionsA.Num() % 2 == 0)
+		{
+			const FVector3d spanDelta = intersectionsA.Last() - intersectionsA[0];
+
+			const int32 numHoles = layer1.CachedHoles2D.Num();
+
+			for (int32 holeIndex = 0; holeIndex < numHoles; ++holeIndex)
+			{
+				const auto& hole1 = layer1.CachedHoles2D[holeIndex].Points;
+				const auto& hole2 = layer2.CachedHoles2D[holeIndex].Points;
+				const int32 numCorners = hole1.Num();
+				for (int32 point = 0; point < numCorners; ++point)
+				{
+					int32 point2 = (point + 1) % numCorners;
+					FVector p1 = localToView.TransformPosition(layer1.Deproject2DPoint(hole1[point], true));
+					FVector p2 = localToView.TransformPosition(layer1.Deproject2DPoint(hole1[point2], true));
+					intersect(p1, p2, intersectionsA);
+					p1 = localToView.TransformPosition(layer2.Deproject2DPoint(hole1[point], false));
+					p2 = localToView.TransformPosition(layer2.Deproject2DPoint(hole1[point2], false));
+					intersect(p1, p2, intersectionsB);
+				}
+			}
+		
+			if (intersectionsA.Num() == intersectionsB.Num() && intersectionsA.Num() % 2 == 0)
+			{
+				if (FMath::Abs(spanDelta.X) > FMath::Abs(spanDelta.Y))
+				{
+					intersectionsA.Sort([](const FVector3d& a, const FVector3d& b)
+					{ return a.X < b.X; });
+					intersectionsB.Sort([](const FVector3d& a, const FVector3d& b)
+					{ return a.X < b.X; });
+				}
+				else
+				{
+					intersectionsA.Sort([](const FVector3d& a, const FVector3d& b)
+					{ return a.Y < b.Y; });
+					intersectionsB.Sort([](const FVector3d& a, const FVector3d& b)
+					{ return a.Y < b.Y; });
+				}
+
+				for (int32 i = 0; i < intersectionsA.Num(); i += 2)
+				{
+					FModumateOccluder occluder1(intersectionsA[i], intersectionsB[i], intersectionsB[i + 1]);
+					FModumateOccluder occluder2(intersectionsA[i], intersectionsB[i + 1], intersectionsA[i + 1]);
+					if (occluder1.Area2D > minTriangleArea)
+					{
+						Occluders.Add(occluder1);
+					}
+					if (occluder2.Area2D > minTriangleArea)
+					{
+						Occluders.Add(occluder2);
+					}
+				}
 			}
 		}
 	}

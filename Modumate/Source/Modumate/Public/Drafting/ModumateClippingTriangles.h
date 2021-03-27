@@ -8,6 +8,7 @@
 class UModumateDocument;
 class AModumateObjectInstance;
 class FModumateViewLineSegment;
+struct FLayerGeomDef;
 
 namespace Modumate
 {
@@ -30,6 +31,7 @@ namespace Modumate
 	private:
 		bool IsPointInFront(FVector Point) const;
 		void BuildAccelerationStructure();
+		void AddLayeredCutPlaneTriangles(const TArray<FLayerGeomDef>& LayerGeoms, const FTransform& LocalToWorld);
 		FVector3d Position;
 		FVector3d Normal;
 		FMatrix TransformMatrix;
