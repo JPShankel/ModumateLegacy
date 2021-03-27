@@ -33,13 +33,17 @@ int32 AMOIVertexBase::GetNumCorners() const
 	return 1;
 }
 
-void AMOIVertexBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
+bool AMOIVertexBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
 {
-	UModumateObjectStatics::GetNonPhysicalEnabledFlags(this, bOutVisible, bOutCollisionEnabled);
+	if (!UModumateObjectStatics::GetNonPhysicalEnabledFlags(this, bOutVisible, bOutCollisionEnabled))
+	{
+		return false;
+	}
 
 	SetActorHiddenInGame(!bOutVisible);
-	SetActorTickEnabled(bOutVisible);
 	SetActorEnableCollision(bOutCollisionEnabled);
+
+	return true;
 }
 
 void AMOIVertexBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const

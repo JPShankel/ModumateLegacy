@@ -21,7 +21,7 @@ public:
 	virtual FQuat GetRotation() const override { return FQuat::Identity; }
 	virtual FVector GetCorner(int32 index) const override;
 	virtual int32 GetNumCorners() const override;
-	virtual void GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
+	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual AActor *CreateActor(const FVector &loc, const FQuat &rot) override;
 	virtual bool OnHovered(AEditModelPlayerController* controller, bool bNewHovered) override;

@@ -25,7 +25,7 @@ public:
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override { return FQuat::Identity; }
 	virtual FVector GetCorner(int32 index) const override;
-	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual bool GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController *Controller) override;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController *Controller, bool bShow) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;

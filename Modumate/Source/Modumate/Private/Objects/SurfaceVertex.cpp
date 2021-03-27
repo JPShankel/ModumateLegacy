@@ -71,8 +71,7 @@ bool AMOISurfaceVertex::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 			break;
 		}
 		case EObjectDirtyFlags::Visuals:
-			UpdateVisuals();
-			break;
+			return TryUpdateVisuals();
 		default:
 			break;
 	}

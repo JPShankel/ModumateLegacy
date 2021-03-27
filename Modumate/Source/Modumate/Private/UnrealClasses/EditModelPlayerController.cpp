@@ -1500,6 +1500,8 @@ void AEditModelPlayerController::TickInput(float DeltaTime)
 
 		if (InteractionHandle != nullptr)
 		{
+			QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateHandleUpdateUse);
+
 			if (!InteractionHandle->UpdateUse())
 			{
 				InteractionHandle->EndUse();
@@ -1508,6 +1510,8 @@ void AEditModelPlayerController::TickInput(float DeltaTime)
 		}
 		else if (CurrentTool != nullptr)
 		{
+			QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateToolFrameUpdate);
+
 			CurrentTool->FrameUpdate();
 			if (CurrentTool->IsInUse() && CurrentTool->ShowSnapCursorAffordances())
 			{
@@ -2195,6 +2199,8 @@ the SnappedCursor structure, which is read by EditModelPlayerHUD_BP
 */
 void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 {
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateUpdateMouseHits);
+
 	FVector mouseLoc, mouseDir;
 	FMouseWorldHitType baseHit, projectedHit;
 
@@ -3147,6 +3153,8 @@ bool AEditModelPlayerController::HasUserSnapPointAtPos(const FVector &snapPointP
 
 void AEditModelPlayerController::UpdateUserSnapPoint()
 {
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateUpdateSnaps);
+
 	FTransform activeUserSnapPoint;
 	FVector cursorPosFlat, cursorHeightDelta;
 	if (GetActiveUserSnapPoint(activeUserSnapPoint) && GetCursorFromUserSnapPoint(activeUserSnapPoint, cursorPosFlat, cursorHeightDelta))

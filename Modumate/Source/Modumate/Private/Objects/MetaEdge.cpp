@@ -126,7 +126,7 @@ bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 			}
 		}
 
-		UpdateVisuals();
+		return TryUpdateVisuals();
 	}
 	break;
 	default:

@@ -962,7 +962,7 @@ void AEditModelPlayerState::UpdateObjectVisibilityAndCollision()
 	{
 		if (moi)
 		{
-			moi->UpdateVisuals();
+			moi->MarkDirty(EObjectDirtyFlags::Visuals);
 		}
 	}
 }

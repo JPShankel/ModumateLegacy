@@ -21,7 +21,7 @@ public:
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
 	virtual bool ShowStructureOnSelection() const override;
-	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual bool GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 
 	virtual bool OnSelected(bool bIsSelected) override;
 	virtual bool OnHovered(AEditModelPlayerController *controller, bool bIsHovered) override;
@@ -30,7 +30,7 @@ public:
 protected:
 	virtual float GetAlpha() const;
 	virtual void UpdateMaterial();
-	virtual void UpdateConnectedVisuals();
+	virtual void MarkConnectedVisualsDirty();
 
 	FArchitecturalMaterial MaterialData;
 	FColor SelectedColor, HoveredColor, BaseColor;

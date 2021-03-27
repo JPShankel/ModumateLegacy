@@ -70,6 +70,8 @@ UModumateDocument::UModumateDocument(const FObjectInitializer& ObjectInitializer
 
 void UModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRedo>>& FromBuffer, TArray<TSharedPtr<UndoRedo>>& ToBuffer)
 {
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentUndoRedo);
+
 	if (FromBuffer.Num() > 0)
 	{
 		TSharedPtr <UndoRedo> ur = FromBuffer.Last(0);
@@ -280,10 +282,10 @@ void UModumateDocument::UnhideAllObjects(UWorld *world)
 	}
 
 	HiddenObjectsID = hiddenCutPlaneIds;
-	// TODO: Pending removal
+
 	for (AModumateObjectInstance *obj : ObjectInstanceArray)
 	{
-		obj->UpdateVisuals();
+		obj->MarkDirty(EObjectDirtyFlags::Visuals);
 	}
 }
 
@@ -534,7 +536,7 @@ void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 	}
 
 	// mark the surface graph dirty, so that its children can update their visual and world-coordinate-space representations
-	surfaceGraphObj->MarkDirty(EObjectDirtyFlags::Structure);
+	surfaceGraphObj->MarkDirty(EObjectDirtyFlags::All);
 
 	// add objects
 	for (auto &kvp : Delta.PolygonAdditions)
@@ -849,6 +851,8 @@ bool UModumateDocument::ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWor
 {
 	ClearPreviewDeltas(World, true);
 
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentApplyPreviewDeltas);
+
 	if (!bApplyingPreviewDeltas)
 	{
 		StartPreviewing();
@@ -874,6 +878,8 @@ bool UModumateDocument::IsPreviewingDeltas() const
 
 void UModumateDocument::ClearPreviewDeltas(UWorld *World, bool bFastClear)
 {
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentClearPreviewDeltas);
+
 	if (!bApplyingPreviewDeltas || !ensure(!bFastClearingPreviewDeltas && !bSlowClearingPreviewDeltas))
 	{
 		return;
@@ -930,6 +936,8 @@ void UModumateDocument::ClearPreviewDeltas(UWorld *World, bool bFastClear)
 
 void UModumateDocument::CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWorld* World)
 {
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentCalculateSideEffectDeltas);
+
 	// Next, clean objects while gathering potential side effect deltas,
 	// apply side effect deltas, and add them to the undo/redo-able list of deltas.
 	// Prevent infinite loops, but allow for iteration due to multiple levels of dependency.
@@ -1051,6 +1059,8 @@ bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDelta
 
 bool UModumateDocument::PostApplyDeltas(UWorld *World)
 {
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentPostApplyDeltas);
+
 	// Now that objects may have been deleted, validate the player state so that none of them are incorrectly referenced.
 	AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(World->GetFirstPlayerController()->PlayerState);
 	playerState->ValidateSelectionsAndView();
@@ -1864,6 +1874,8 @@ void UModumateDocument::SetNextID(int32 ID, int32 reservingObjID)
 
 bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentCleanObjects);
+
 	UpdateVolumeGraphObjects(GetWorld());
 	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 

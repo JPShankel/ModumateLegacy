@@ -88,8 +88,7 @@ bool AMOICabinet::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* Ou
 	}
 		break;
 	case EObjectDirtyFlags::Visuals:
-		UpdateVisuals();
-		break;
+		return TryUpdateVisuals();
 	default:
 		break;
 	}
@@ -97,9 +96,12 @@ bool AMOICabinet::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* Ou
 	return true;
 }
 
-void AMOICabinet::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
+bool AMOICabinet::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	Super::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
+	if (!Super::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled))
+	{
+		return false;
+	}
 
 	if (FrontFacePortalActor.IsValid())
 	{
@@ -107,6 +109,8 @@ void AMOICabinet::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnable
 		FrontFacePortalActor->SetActorHiddenInGame(!bHasFrontFace || !bOutVisible);
 		FrontFacePortalActor->SetActorEnableCollision(bHasFrontFace && bOutCollisionEnabled);
 	}
+
+	return true;
 }
 
 void AMOICabinet::SetupDynamicGeometry()

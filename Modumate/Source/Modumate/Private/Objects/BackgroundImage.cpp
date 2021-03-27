@@ -36,18 +36,10 @@ void AMOIBackgroundImage::PostCreateObject(bool bNewObject)
 
 void AMOIBackgroundImage::SetupDynamicGeometry()
 {
-	UpdateVisuals();
+	TryUpdateVisuals();
 	UpdateImageData();
 	UpdateCachedGeometryData();
 	CreateActorMesh(DynamicMeshActor->Mesh);
-}
-
-void AMOIBackgroundImage::SetupAdjustmentHandles(AEditModelPlayerController* controller)
-{ }
-
-void AMOIBackgroundImage::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
-{
-	Super::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
 }
 
 void AMOIBackgroundImage::RegisterInstanceDataUI(UToolTrayBlockProperties* PropertiesUI)

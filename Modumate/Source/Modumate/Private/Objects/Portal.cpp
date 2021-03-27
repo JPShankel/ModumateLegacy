@@ -99,8 +99,7 @@ bool AMOIPortal::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* Out
 		return SetupCompoundActorGeometry() && SetRelativeTransform(CachedRelativePos, CachedRelativeRot);
 	}
 	case EObjectDirtyFlags::Visuals:
-		UpdateVisuals();
-		break;
+		return TryUpdateVisuals();
 	default:
 		break;
 	}

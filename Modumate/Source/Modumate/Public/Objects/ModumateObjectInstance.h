@@ -60,7 +60,7 @@ public:
 	virtual FVector GetCorner(int32 index) const;
 	virtual int32 GetNumCorners() const;
 
-	virtual void GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled);
+	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled);
 
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController* Controller) { }
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController* Controller, bool bShow);
@@ -252,7 +252,7 @@ public:
 
 	// Function exposed to explicitly request objects to re-evaluate the visibility and collision,
 	// in cases where it's affected by global state rather than just the above per-object requests.
-	void UpdateVisuals();
+	bool TryUpdateVisuals();
 
 	// Class Data
 	EObjectType GetObjectType() const;

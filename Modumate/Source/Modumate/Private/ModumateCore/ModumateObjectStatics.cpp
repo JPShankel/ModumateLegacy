@@ -342,10 +342,11 @@ bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const UModumateDocument*
 }
 
 bool UModumateObjectStatics::GetEdgeFaceConnections(const Modumate::FGraph3DEdge* GraphEdge, const UModumateDocument* Doc,
-	bool& bOutConnectedToAnyFace, bool& bOutConnectedToValidFace)
+	bool& bOutConnectedToAnyFace, bool& bOutConnectedToValidFace, bool& bOutConnectedToVisibleChild)
 {
 	bOutConnectedToAnyFace = false;
 	bOutConnectedToValidFace = false;
+	bOutConnectedToVisibleChild = false;
 
 	if ((GraphEdge == nullptr) || (Doc == nullptr))
 	{
@@ -357,21 +358,17 @@ bool UModumateObjectStatics::GetEdgeFaceConnections(const Modumate::FGraph3DEdge
 		const auto *connectedFaceMOI = Doc->GetObjectById(FMath::Abs(edgeFaceConn.FaceID));
 		if (connectedFaceMOI && (connectedFaceMOI->GetObjectType() == EObjectType::OTMetaPlane))
 		{
-			bOutConnectedToAnyFace = true;
-
-			// TODO: if the evaluation is expensive, or should be dependent on data that requires cleaning,
-			// then this should require `connectedFaceMOI->IsDirty(EObjectDirtyFlags::Visuals)` to be true, and return false otherwise.
-			bool bConnectedFaceVisible, bConnectedFaceCollidable;
-			if (!GetMetaObjEnabledFlags(connectedFaceMOI, bConnectedFaceVisible, bConnectedFaceCollidable))
+			if (connectedFaceMOI->IsDirty(EObjectDirtyFlags::Visuals))
 			{
 				return false;
 			}
 
-			if (bConnectedFaceVisible)
-			{
-				bOutConnectedToValidFace = true;
-				break;
-			}
+			bOutConnectedToAnyFace = true;
+			bOutConnectedToValidFace |= connectedFaceMOI->IsVisible();
+
+			auto& faceChildIDs = connectedFaceMOI->GetChildIDs();
+			auto faceChild = (faceChildIDs.Num() == 1) ? Doc->GetObjectById(faceChildIDs[0]) : nullptr;
+			bOutConnectedToVisibleChild |= (faceChild && faceChild->IsVisible());
 		}
 	}
 
@@ -379,10 +376,11 @@ bool UModumateObjectStatics::GetEdgeFaceConnections(const Modumate::FGraph3DEdge
 }
 
 bool UModumateObjectStatics::GetEdgePolyConnections(const Modumate::FGraph2DEdge* SurfaceEdge, const UModumateDocument* Doc,
-	bool& bOutConnectedToAnyPolygon, bool& bOutConnectedToValidPolygon)
+	bool& bOutConnectedToAnyPolygon, bool& bOutConnectedToVisiblePolygon, bool& bOutConnectedToVisibleChild)
 {
 	bOutConnectedToAnyPolygon = false;
-	bOutConnectedToValidPolygon = false;
+	bOutConnectedToVisiblePolygon = false;
+	bOutConnectedToVisibleChild = false;
 
 	if ((SurfaceEdge == nullptr) || (Doc == nullptr))
 	{
@@ -405,21 +403,17 @@ bool UModumateObjectStatics::GetEdgePolyConnections(const Modumate::FGraph2DEdge
 		const auto* connectedPolyMOI = Doc->GetObjectById(adjacentPoly->ID);
 		if (connectedPolyMOI && (connectedPolyMOI->GetObjectType() == EObjectType::OTSurfacePolygon))
 		{
-			bOutConnectedToAnyPolygon = true;
-
-			// TODO: if the evaluation is expensive, or should be dependent on data that requires cleaning,
-			// then this should require `connectedFaceMOI->IsDirty(EObjectDirtyFlags::Visuals)` to be true, and return false otherwise.
-			bool bConnectedPolyVisible, bConnectedPolyCollidable;
-			if (!GetSurfaceObjEnabledFlags(connectedPolyMOI, bConnectedPolyVisible, bConnectedPolyCollidable))
+			if (connectedPolyMOI->IsDirty(EObjectDirtyFlags::Visuals))
 			{
 				return false;
 			}
 
-			if (bConnectedPolyVisible)
-			{
-				bOutConnectedToValidPolygon = true;
-				break;
-			}
+			bOutConnectedToAnyPolygon = true;
+			bOutConnectedToVisiblePolygon |= connectedPolyMOI->IsVisible();
+
+			auto& polyChildIDs = connectedPolyMOI->GetChildIDs();
+			auto polyChild = (polyChildIDs.Num() == 1) ? Doc->GetObjectById(polyChildIDs[0]) : nullptr;
+			bOutConnectedToVisibleChild |= (polyChild && polyChild->IsVisible());
 		}
 	}
 
@@ -446,6 +440,14 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 {
 	bOutVisible = bOutCollisionEnabled = false;
 
+	// For objects that are already destroyed, report that we correctly determined that they should be disabled.
+	// This only needs its own logic because we want to keep around actors of destroyed MOIs, and correctly disable them,
+	// in case they need to be reused quickly for subsequent preview deltas or doing undo/redo.
+	if (MetaMOI && MetaMOI->IsDestroyed())
+	{
+		return true;
+	}
+
 	const AActor* metaActor = MetaMOI ? MetaMOI->GetActor() : nullptr;
 	const UModumateDocument* doc = MetaMOI ? MetaMOI->GetDocument() : nullptr;
 	UWorld *world = metaActor ? metaActor->GetWorld() : nullptr;
@@ -465,7 +467,8 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 
 	// We may need to use children / sibling children connectivity to disable visibility and/or collision.
 	bool bConnectedToAnyFace = false;
-	bool bConnectedToValidFace = false;
+	bool bConnectedToVisibleFace = false;
+	bool bConnectedToVisibleChild = false;
 	bool bHasChildren = (MetaMOI->GetChildIDs().Num() > 0);
 
 	EToolCategories curToolCategory = UModumateTypeStatics::GetToolCategory(playerController->GetToolMode());
@@ -483,27 +486,28 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 
 		for (FGraphSignedID connectedEdgeID : graphVertex->ConnectedEdgeIDs)
 		{
-			bool bEdgeConnectedToAnyFace, bEdgeConnectedToValidFace;
-			if (!GetEdgeFaceConnections(volumeGraph.FindEdge(connectedEdgeID), doc, bEdgeConnectedToAnyFace, bEdgeConnectedToValidFace))
+			bool bEdgeConnectedToAnyFace, bEdgeConnectedToVisibleFace, bEdgeConnectedToVisibleChild;
+			if (!GetEdgeFaceConnections(volumeGraph.FindEdge(connectedEdgeID), doc, bEdgeConnectedToAnyFace, bEdgeConnectedToVisibleFace, bEdgeConnectedToVisibleChild))
 			{
 				return false;
 			}
 
 			bConnectedToAnyFace |= bEdgeConnectedToAnyFace;
-			bConnectedToValidFace |= bEdgeConnectedToValidFace;
+			bConnectedToVisibleFace |= bEdgeConnectedToVisibleFace;
+			bConnectedToVisibleChild |= bEdgeConnectedToVisibleChild;
 		}
 
 		bOutVisible =
 			(bMetaViewMode || (bHybridViewMode && !bHasChildren)) &&
-			(!bConnectedToAnyFace || bConnectedToValidFace);
-		bOutCollisionEnabled = bOutVisible || bInCompatibleToolCategory;
+			(!bConnectedToAnyFace || bConnectedToVisibleFace);
+		bOutCollisionEnabled = bOutVisible || (bInCompatibleToolCategory && bConnectedToVisibleChild);
 		break;
 	}
 	case EObjectType::OTMetaEdge:
 	{
 		auto *graphEdge = volumeGraph.FindEdge(objID);
 
-		if (!GetEdgeFaceConnections(graphEdge, doc, bConnectedToAnyFace, bConnectedToValidFace))
+		if (!GetEdgeFaceConnections(graphEdge, doc, bConnectedToAnyFace, bConnectedToVisibleFace, bConnectedToVisibleChild))
 		{
 			return false;
 		}
@@ -519,8 +523,8 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 		{
 			bOutVisible =
 				(bMetaViewMode || (bHybridViewMode && !bHasChildren)) &&
-				(!bConnectedToAnyFace || bConnectedToValidFace);
-			bOutCollisionEnabled = bOutVisible || bInCompatibleToolCategory;
+				(!bConnectedToAnyFace || bConnectedToVisibleFace);
+			bOutCollisionEnabled = bOutVisible || (bInCompatibleToolCategory && bConnectedToVisibleChild);
 		}
 		break;
 	}
@@ -541,6 +545,14 @@ bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const AModumateObjectInst
 {
 	bOutVisible = bOutCollisionEnabled = false;
 
+	// For objects that are already destroyed, report that we correctly determined that they should be disabled.
+	// This only needs its own logic because we want to keep around actors of destroyed MOIs, and correctly disable them,
+	// in case they need to be reused quickly for subsequent preview deltas or doing undo/redo.
+	if (SurfaceMOI && SurfaceMOI->IsDestroyed())
+	{
+		return true;
+	}
+
 	const AActor* surfaceActor = SurfaceMOI ? SurfaceMOI->GetActor() : nullptr;
 	const UModumateDocument* doc = SurfaceMOI ? SurfaceMOI->GetDocument() : nullptr;
 	UWorld* world = surfaceActor ? surfaceActor->GetWorld() : nullptr;
@@ -560,7 +572,8 @@ bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const AModumateObjectInst
 
 	// We may need to use children / sibling children connectivity to disable visibility and/or collision.
 	bool bConnectedToAnyPolygon = false;
-	bool bConnectedToValidPolygon = false;
+	bool bConnectedToVisiblePolygon = false;
+	bool bConnectedToVisibleChild = false;
 	bool bHasChildren = (SurfaceMOI->GetChildIDs().Num() > 0);
 
 	EToolCategories curToolCategory = UModumateTypeStatics::GetToolCategory(playerController->GetToolMode());
@@ -578,35 +591,37 @@ bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const AModumateObjectInst
 
 		for (FGraphSignedID connectedEdgeID : surfaceVertex->Edges)
 		{
-			bool bEdgeConnectedToAnyPolygon, bEdgeConnectedToValidPolygon;
-			if (!GetEdgePolyConnections(surfaceGraph->FindEdge(connectedEdgeID), doc, bEdgeConnectedToAnyPolygon, bEdgeConnectedToValidPolygon))
+			bool bEdgeConnectedToAnyPolygon, bEdgeConnectedToVisiblePolygon, bEdgeConnectedToVisibleChild;
+			if (!GetEdgePolyConnections(surfaceGraph->FindEdge(connectedEdgeID), doc,
+				bEdgeConnectedToAnyPolygon, bEdgeConnectedToVisiblePolygon, bEdgeConnectedToVisibleChild))
 			{
 				return false;
 			}
 
 			bConnectedToAnyPolygon |= bEdgeConnectedToAnyPolygon;
-			bConnectedToValidPolygon |= bEdgeConnectedToValidPolygon;
+			bConnectedToVisiblePolygon |= bEdgeConnectedToVisiblePolygon;
+			bConnectedToVisibleChild |= bEdgeConnectedToVisibleChild;
 		}
 
 		bOutVisible =
 			(bSurfaceViewMode || (bHybridViewMode && !bHasChildren)) &&
-			(!bConnectedToAnyPolygon || bConnectedToValidPolygon);
-		bOutCollisionEnabled = bOutVisible || bInCompatibleToolCategory;
+			(!bConnectedToAnyPolygon || bConnectedToVisiblePolygon);
+		bOutCollisionEnabled = bOutVisible || (bInCompatibleToolCategory && bConnectedToVisibleChild);
 		break;
 	}
 	case EObjectType::OTSurfaceEdge:
 	{
 		auto* surfaceEdge = surfaceGraph->FindEdge(objID);
 
-		if (!GetEdgePolyConnections(surfaceEdge, doc, bConnectedToAnyPolygon, bConnectedToValidPolygon))
+		if (!GetEdgePolyConnections(surfaceEdge, doc, bConnectedToAnyPolygon, bConnectedToVisiblePolygon, bConnectedToVisibleChild))
 		{
 			return false;
 		}
 
 		bOutVisible =
 			(bSurfaceViewMode || (bHybridViewMode && !bHasChildren)) &&
-			(!bConnectedToAnyPolygon || bConnectedToValidPolygon);
-		bOutCollisionEnabled = bOutVisible || bInCompatibleToolCategory;
+			(!bConnectedToAnyPolygon || bConnectedToVisiblePolygon);
+		bOutCollisionEnabled = bOutVisible || (bInCompatibleToolCategory && bConnectedToVisibleChild);
 		break;
 	}
 	case EObjectType::OTSurfacePolygon:

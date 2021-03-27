@@ -54,8 +54,6 @@ public:
 	virtual FVector GetNormal() const override;
 	virtual void PreDestroy() override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
-	virtual void SetupDynamicGeometry() override;
-	virtual void UpdateDynamicGeometry() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
 	virtual bool OnSelected(bool bIsSelected) override;

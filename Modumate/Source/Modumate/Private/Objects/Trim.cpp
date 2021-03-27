@@ -103,8 +103,7 @@ bool AMOITrim::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSi
 		return InternalUpdateGeometry(bRecreateMesh, bCreateCollision);
 	}
 	case EObjectDirtyFlags::Visuals:
-		UpdateVisuals();
-		return true;
+		return TryUpdateVisuals();
 	default:
 		return true;
 	}

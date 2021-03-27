@@ -42,7 +42,8 @@ bool AMOIEdgeBase::OnHovered(AEditModelPlayerController *controller, bool bIsHov
 		return false;
 	}
 
-	UpdateVisuals();
+	MarkDirty(EObjectDirtyFlags::Visuals);
+
 	return true;
 }
 
@@ -51,7 +52,7 @@ AActor *AMOIEdgeBase::CreateActor(const FVector &loc, const FQuat &rot)
 	LineActor = GetWorld()->SpawnActor<ALineActor>();
 	LineActor->SetIsHUD(false);
 	LineActor->MakeGeometry();
-	LineActor->UpdateVisuals(false);
+	LineActor->UpdateLineVisuals(false);
 	return LineActor.Get();
 }
 
@@ -62,24 +63,32 @@ bool AMOIEdgeBase::OnSelected(bool bIsSelected)
 		return false;
 	}
 
-	UpdateVisuals();
+	MarkDirty(EObjectDirtyFlags::Visuals);
+
 	return true;
 }
 
-void AMOIEdgeBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
+bool AMOIEdgeBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
 {
-	if (LineActor.IsValid())
+	if (!LineActor.IsValid())
 	{
-		UModumateObjectStatics::GetNonPhysicalEnabledFlags(this, bOutVisible, bOutCollisionEnabled);
-
-		LineActor->SetVisibilityInApp(bOutVisible);
-		LineActor->SetActorEnableCollision(bOutCollisionEnabled);
-
-		if (bOutVisible)
-		{
-			UpdateMaterial();
-		}
+		return false;
 	}
+
+	if (!UModumateObjectStatics::GetNonPhysicalEnabledFlags(this, bOutVisible, bOutCollisionEnabled))
+	{
+		return false;
+	}
+
+	LineActor->SetVisibilityInApp(bOutVisible);
+	LineActor->SetActorEnableCollision(bOutCollisionEnabled);
+
+	if (bOutVisible)
+	{
+		UpdateMaterial();
+	}
+
+	return true;
 }
 
 void AMOIEdgeBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
@@ -140,7 +149,7 @@ void AMOIEdgeBase::UpdateMaterial()
 				color = BaseColor;
 			}
 
-			LineActor->UpdateVisuals(true, GetThicknessMultiplier(), color);
+			LineActor->UpdateLineVisuals(true, GetThicknessMultiplier(), color);
 		}
 	}
 }

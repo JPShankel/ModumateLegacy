@@ -375,7 +375,7 @@ bool URectangleTool::UpdatePreview()
 		}
 
 		pendingSegment->Point2 = hitLoc;
-		pendingSegment->UpdateVisuals(false);
+		pendingSegment->UpdateLineVisuals(false);
 	}
 
 	UpdatePendingPlane();

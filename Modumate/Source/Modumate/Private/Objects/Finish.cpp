@@ -82,8 +82,7 @@ bool AMOIFinish::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* Out
 	}
 		break;
 	case EObjectDirtyFlags::Visuals:
-		UpdateVisuals();
-		break;
+		return TryUpdateVisuals();
 	default:
 		break;
 	}

@@ -13,7 +13,7 @@ class MODUMATE_API AMOISurfacePolygon : public AMOIPlaneBase
 public:
 	AMOISurfacePolygon();
 
-	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual bool GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 
 protected:

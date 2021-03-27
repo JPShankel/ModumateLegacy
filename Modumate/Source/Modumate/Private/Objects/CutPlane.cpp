@@ -96,21 +96,26 @@ bool AMOICutPlane::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 		//MarkDirty(EObjectDirtyFlags::Visuals);
 		return true;
 	case EObjectDirtyFlags::Visuals:
-		UpdateVisuals();
-		return UpdateDraftingPreview();
+		return TryUpdateVisuals() && UpdateDraftingPreview();
 	default:
 		return true;
 	}
 }
 
-void AMOICutPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
+bool AMOICutPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	Super::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
+	if (!Super::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled))
+	{
+		return false;
+	}
+
 	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 	if (controller && controller->EditModelUserWidget)
 	{
 		controller->EditModelUserWidget->UpdateCutPlaneInList(ID);
 	}
+
+	return true;
 }
 
 int32 AMOICutPlane::GetCutPlaneVerticalDegree(const FQuat& Rotation)

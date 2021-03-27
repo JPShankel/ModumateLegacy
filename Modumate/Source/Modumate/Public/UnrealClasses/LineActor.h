@@ -60,7 +60,7 @@ public:
 	void SetIsHUD(bool bRenderScreenSpace);
 	void SetVisibilityInApp(bool bVisible);
 
-	void UpdateVisuals(bool bConnected, float ThicknessMultiplier = 1.0f, FColor NewColor = FColor::Black);
+	void UpdateLineVisuals(bool bConnected, float ThicknessMultiplier = 1.0f, FColor NewColor = FColor::Black);
 
 private:
 	bool bIsHUD = true;

@@ -64,7 +64,7 @@ public:
 	virtual void PostCreateObject(bool bNewObject) override;
 	virtual void PreDestroy() override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
-	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual bool GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 
 	static int32 GetCutPlaneVerticalDegree(const FQuat& Rotation);	
 	void SetIsCulling(bool NewIsCulling) { bIsCulling = NewIsCulling; };

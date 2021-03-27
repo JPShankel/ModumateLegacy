@@ -18,27 +18,34 @@ AMOISurfacePolygon::AMOISurfacePolygon()
 
 }
 
-void AMOISurfacePolygon::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
+bool AMOISurfacePolygon::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	if (DynamicMeshActor.IsValid())
+	if (!DynamicMeshActor.IsValid())
 	{
-		bool bPreviouslyVisible = IsVisible();
-
-		UModumateObjectStatics::GetSurfaceObjEnabledFlags(this, bOutVisible, bOutCollisionEnabled);
-
-		DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
-		DynamicMeshActor->SetActorEnableCollision(bOutCollisionEnabled);
-
-		if (bOutVisible)
-		{
-			AMOIPlaneBase::UpdateMaterial();
-		}
-
-		if (bPreviouslyVisible != bOutVisible)
-		{
-			UpdateConnectedVisuals();
-		}
+		return false;
 	}
+
+	bool bPreviouslyVisible = IsVisible();
+
+	if (!UModumateObjectStatics::GetSurfaceObjEnabledFlags(this, bOutVisible, bOutCollisionEnabled))
+	{
+		return false;
+	}
+
+	DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
+	DynamicMeshActor->SetActorEnableCollision(bOutCollisionEnabled);
+
+	if (bOutVisible)
+	{
+		AMOIPlaneBase::UpdateMaterial();
+	}
+
+	if (bPreviouslyVisible != bOutVisible)
+	{
+		MarkConnectedVisualsDirty();
+	}
+
+	return true;
 }
 
 bool AMOISurfacePolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
@@ -92,8 +99,7 @@ bool AMOISurfacePolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 		DynamicMeshActor->SetupMetaPlaneGeometry(CachedOffsetPoints, MaterialData, GetAlpha(), true, &CachedOffsetHoles, bEnableCollision);
 	}
 	case EObjectDirtyFlags::Visuals:
-		UpdateVisuals();
-		break;
+		return TryUpdateVisuals();
 	default:
 		break;
 	}

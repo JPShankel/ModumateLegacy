@@ -93,14 +93,19 @@ bool AMOIPlaneBase::ShowStructureOnSelection() const
 	return false;
 }
 
-void AMOIPlaneBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
+bool AMOIPlaneBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
 {
-	AModumateObjectInstance::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled);
+	if (!AModumateObjectInstance::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled))
+	{
+		return false;
+	}
 
 	if (bOutVisible)
 	{
 		UpdateMaterial();
 	}
+
+	return true;
 }
 
 bool AMOIPlaneBase::OnSelected(bool bIsSelected)
@@ -110,7 +115,8 @@ bool AMOIPlaneBase::OnSelected(bool bIsSelected)
 		return false;
 	}
 
-	UpdateVisuals();
+	MarkDirty(EObjectDirtyFlags::Visuals);
+
 	return true;
 }
 
@@ -121,7 +127,8 @@ bool AMOIPlaneBase::OnHovered(AEditModelPlayerController *controller, bool bIsHo
 		return false;
 	}
 
-	UpdateVisuals();
+	MarkDirty(EObjectDirtyFlags::Visuals);
+
 	return true;
 }
 
@@ -134,7 +141,7 @@ void AMOIPlaneBase::PostCreateObject(bool bNewObject)
 	}
 	AModumateObjectInstance::PostCreateObject(bNewObject);
 
-	UpdateConnectedVisuals();
+	MarkConnectedVisualsDirty();
 }
 
 float AMOIPlaneBase::GetAlpha() const
@@ -165,9 +172,10 @@ void AMOIPlaneBase::UpdateMaterial()
 	}
 }
 
-void AMOIPlaneBase::UpdateConnectedVisuals()
+void AMOIPlaneBase::MarkConnectedVisualsDirty()
 {
-	UpdateVisuals();
+	MarkDirty(EObjectDirtyFlags::Visuals);
+
 	// Update the visuals of all of our connected edges
 	GetConnectedMOIs(TempConnectedMOIs);
 	for (AModumateObjectInstance* connectedMOI : TempConnectedMOIs)

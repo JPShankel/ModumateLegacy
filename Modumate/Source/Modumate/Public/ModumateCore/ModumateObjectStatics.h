@@ -58,9 +58,9 @@ public:
 
 	// Meta/Surface Objects
 	static bool GetEdgeFaceConnections(const Modumate::FGraph3DEdge* GraphEdge, const UModumateDocument* Doc,
-		bool& bOutConnectedToAnyFace, bool& bOutConnectedToValidFace);
+		bool& bOutConnectedToAnyFace, bool& bOutConnectedToVisibleFace, bool& bOutConnectedToVisibleChild);
 	static bool GetEdgePolyConnections(const Modumate::FGraph2DEdge* SurfaceEdge, const UModumateDocument* Doc,
-		bool& bOutConnectedToAnyPolygon, bool& bOutConnectedToValidPolygon);
+		bool& bOutConnectedToAnyPolygon, bool& bOutConnectedToVisiblePolygon, bool& bOutConnectedToVisibleChild);
 
 	static bool GetNonPhysicalEnabledFlags(const AModumateObjectInstance* NonPhysicalMOI, bool& bOutVisible, bool& bOutCollisionEnabled);
 	static bool GetMetaObjEnabledFlags(const AModumateObjectInstance* MetaMOI, bool& bOutVisible, bool& bOutCollisionEnabled);

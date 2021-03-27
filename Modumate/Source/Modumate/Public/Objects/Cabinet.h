@@ -43,7 +43,7 @@ public:
 	virtual FVector GetNormal() const override;
 	virtual void PreDestroy() override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
-	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual bool GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController *Controller, bool bShow);

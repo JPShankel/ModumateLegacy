@@ -29,9 +29,10 @@ bool AMOIMetaVertex::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 	break;
 	case EObjectDirtyFlags::Visuals:
 	{
-		UpdateVisuals();
+		return TryUpdateVisuals();
 	}
-	break;
+	default:
+		break;
 	}
 
 	return true;

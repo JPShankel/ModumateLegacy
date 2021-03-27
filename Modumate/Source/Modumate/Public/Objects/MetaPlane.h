@@ -13,7 +13,7 @@ class MODUMATE_API AMOIMetaPlane : public AMOIPlaneBase
 public:
 	AMOIMetaPlane();
 
-	virtual void GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual bool GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupDynamicGeometry() override;
 
 protected:

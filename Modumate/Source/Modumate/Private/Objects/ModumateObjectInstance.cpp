@@ -45,6 +45,16 @@ void AModumateObjectInstance::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	DestroyMOI(true);
 
+	// Clear dirty flags, since we won't be able to clean the object later
+	DirtyFlags = EObjectDirtyFlags::None;
+	if (Document)
+	{
+		for (EObjectDirtyFlags dirtyFlag : UModumateTypeStatics::OrderedDirtyFlags)
+		{
+			Document->RegisterDirtyObject(dirtyFlag, this, false);
+		}
+	}
+
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -128,11 +138,14 @@ bool AModumateObjectInstance::HasChildID(int32 ChildID) const
 
 void AModumateObjectInstance::AddCachedChildID(int32 ChildID)
 {
-	const AModumateObjectInstance* childObj = Document->GetObjectById(ChildID);
+	AModumateObjectInstance* childObj = Document->GetObjectById(ChildID);
 	if (!bDestroyed && ensure(!HasChildID(ChildID) && childObj && (childObj->GetParentID() == ID)))
 	{
 		CachedChildIDs.Add(ChildID);
 		MarkDirty(EObjectDirtyFlags::Structure);
+
+		// Make sure the new child inherits any dirty flags the parent already has, in case it wasn't already dirtied.
+		childObj->MarkDirty(DirtyFlags);
 	}
 }
 
@@ -360,7 +373,7 @@ void AModumateObjectInstance::RequestHidden(const FName &Requester, bool bReques
 
 	if (bWasRequestedHidden != IsRequestedHidden())
 	{
-		UpdateVisuals();
+		MarkDirty(EObjectDirtyFlags::Visuals);
 	}
 }
 
@@ -384,13 +397,13 @@ void AModumateObjectInstance::RequestCollisionDisabled(const FName &Requester, b
 
 	if (bWasCollisionRequestedDisabled != IsCollisionRequestedDisabled())
 	{
-		UpdateVisuals();
+		MarkDirty(EObjectDirtyFlags::Visuals);
 	}
 }
 
-void AModumateObjectInstance::UpdateVisuals()
+bool AModumateObjectInstance::TryUpdateVisuals()
 {
-	GetUpdatedVisuals(bVisible, bCollisionEnabled);
+	return GetUpdatedVisuals(bVisible, bCollisionEnabled);
 }
 
 void AModumateObjectInstance::ClearAdjustmentHandles()
@@ -459,6 +472,11 @@ float AModumateObjectInstance::CalculateThickness() const
 
 void AModumateObjectInstance::MarkDirty(EObjectDirtyFlags NewDirtyFlags)
 {
+	if (bDestroyed)
+	{
+		return;
+	}
+
 	for (EObjectDirtyFlags dirtyFlag : UModumateTypeStatics::OrderedDirtyFlags)
 	{
 		if (((NewDirtyFlags & dirtyFlag) == dirtyFlag) && !IsDirty(dirtyFlag))
@@ -466,6 +484,17 @@ void AModumateObjectInstance::MarkDirty(EObjectDirtyFlags NewDirtyFlags)
 			DirtyFlags |= dirtyFlag;
 			Document->RegisterDirtyObject(dirtyFlag, this, true);
 			SetIsDynamic(true);
+		}
+	}
+
+	// Recursively propagate dirty flags to children as early as possible,
+	// since delaying this until the cleaning stage itself allows the middle of the tree to be initially skipped,
+	// and the bottom of the tree to be redundantly cleaned. (i.e. modifying a MetaPlane and a SurfacePolygon in the same frame)
+	for (int32 childID : CachedChildIDs)
+	{
+		if (auto childObj = Document->GetObjectById(childID))
+		{
+			childObj->MarkDirty(NewDirtyFlags);
 		}
 	}
 }
@@ -498,7 +527,7 @@ bool AModumateObjectInstance::RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArr
 		bool bValidObjectToClean = true;
 
 		// We can't clean objects that were destroyed after they were marked dirty; they should have already cleared their dirty flags.
-		if (!ensureAlways(!bDestroyed))
+		if (!ensure(!bDestroyed))
 		{
 			return false;
 		}
@@ -550,18 +579,13 @@ bool AModumateObjectInstance::RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArr
 
 		if (bSuccess)
 		{
-			// Now mark the children as dirty with the same flag, since this parent just cleaned itself.
-			// Also take this opportunity to clean up the cached list of children, in case any had changed parents.
+			// Clean up the cached list of children, in case any had changed parents.
 			int32 curNumChildren = CachedChildIDs.Num();
 			for (int32 childIdx = curNumChildren - 1; childIdx >= 0; --childIdx)
 			{
 				int32 childID = CachedChildIDs[childIdx];
 				AModumateObjectInstance* childObj = Document->GetObjectById(childID);
-				if (childObj && !childObj->IsDestroyed() && (childObj->GetParentID() == ID))
-				{
-					childObj->MarkDirty(DirtyFlag);
-				}
-				else
+				if ((childObj == nullptr) || childObj->IsDestroyed() || (childObj->GetParentID() != ID))
 				{
 					CachedChildIDs.RemoveAt(childIdx);
 				}
@@ -840,6 +864,8 @@ void AModumateObjectInstance::DestroyActor(bool bFullDelete)
 		RequestHidden(PartialActorDestructionRequest, true);
 		RequestCollisionDisabled(PartialActorDestructionRequest, true);
 		bPartiallyDestroyed = true;
+
+		TryUpdateVisuals();
 	}
 }
 
@@ -943,18 +969,22 @@ int32 AModumateObjectInstance::GetNumCorners() const
 	return 0;
 }
 
-void AModumateObjectInstance::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
+bool AModumateObjectInstance::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
 	AActor *moiActor = GetActor();
 	auto *controller = moiActor ? moiActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
-	if (controller)
+	if ((controller == nullptr) || (controller->EMPlayerState == nullptr))
 	{
-		bool bEnabledByViewMode = controller->EMPlayerState->IsObjectTypeEnabledByViewMode(GetObjectType());
-		bOutVisible = !IsRequestedHidden() && bEnabledByViewMode;
-		bOutCollisionEnabled = !IsCollisionRequestedDisabled() && bEnabledByViewMode;
-		moiActor->SetActorHiddenInGame(!bOutVisible);
-		moiActor->SetActorEnableCollision(bOutCollisionEnabled);
+		return false;
 	}
+
+	bool bEnabledByViewMode = controller->EMPlayerState->IsObjectTypeEnabledByViewMode(GetObjectType());
+	bOutVisible = !IsRequestedHidden() && bEnabledByViewMode;
+	bOutCollisionEnabled = !IsCollisionRequestedDisabled() && bEnabledByViewMode;
+	moiActor->SetActorHiddenInGame(!bOutVisible);
+	moiActor->SetActorEnableCollision(bOutCollisionEnabled);
+
+	return true;
 }
 
 void AModumateObjectInstance::ShowAdjustmentHandles(AEditModelPlayerController* Controller, bool bShow)
@@ -1030,8 +1060,7 @@ bool AModumateObjectInstance::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FD
 		SetupDynamicGeometry();
 		break;
 	case EObjectDirtyFlags::Visuals:
-		UpdateVisuals();
-		break;
+		return TryUpdateVisuals();
 	default:
 		break;
 	}

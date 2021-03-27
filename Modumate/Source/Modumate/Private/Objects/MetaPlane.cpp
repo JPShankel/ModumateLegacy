@@ -15,27 +15,34 @@ AMOIMetaPlane::AMOIMetaPlane()
 
 }
 
-void AMOIMetaPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
+bool AMOIMetaPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
-	if (DynamicMeshActor.IsValid())
+	if (!DynamicMeshActor.IsValid())
 	{
-		bool bPreviouslyVisible = IsVisible();
-
-		UModumateObjectStatics::GetMetaObjEnabledFlags(this, bOutVisible, bOutCollisionEnabled);
-
-		DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
-		DynamicMeshActor->SetActorEnableCollision(bOutCollisionEnabled);
-
-		if (bOutVisible)
-		{
-			AMOIPlaneBase::UpdateMaterial();
-		}
-
-		if (bPreviouslyVisible != bOutVisible)
-		{
-			UpdateConnectedVisuals();
-		}
+		return false;
 	}
+
+	bool bPreviouslyVisible = IsVisible();
+
+	if (!UModumateObjectStatics::GetMetaObjEnabledFlags(this, bOutVisible, bOutCollisionEnabled))
+	{
+		return false;
+	}
+
+	DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
+	DynamicMeshActor->SetActorEnableCollision(bOutCollisionEnabled);
+
+	if (bOutVisible)
+	{
+		AMOIPlaneBase::UpdateMaterial();
+	}
+
+	if (bPreviouslyVisible != bOutVisible)
+	{
+		MarkConnectedVisualsDirty();
+	}
+
+	return true;
 }
 
 void AMOIMetaPlane::SetupDynamicGeometry()
@@ -53,7 +60,7 @@ void AMOIMetaPlane::SetupDynamicGeometry()
 
 	DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, GetAlpha(), true, &CachedHoles, bEnableCollision);
 
-	UpdateVisuals();
+	MarkDirty(EObjectDirtyFlags::Visuals);
 }
 
 void AMOIMetaPlane::UpdateCachedGraphData()

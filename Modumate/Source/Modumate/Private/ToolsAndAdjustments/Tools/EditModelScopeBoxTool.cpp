@@ -79,7 +79,7 @@ bool UScopeBoxTool::FrameUpdate()
 			FVector currentPoint = cursor.SketchPlaneProject(hitLoc);
 
 			PendingSegment->Point2 = hitLoc;
-			PendingSegment->UpdateVisuals(false);
+			PendingSegment->UpdateLineVisuals(false);
 
 			if ((currentPoint - Origin).IsNearlyZero())
 			{

@@ -28,11 +28,8 @@ bool AMOIStaircase::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* 
 	case EObjectDirtyFlags::Structure:
 		SetupDynamicGeometry();
 		break;
-
 	case EObjectDirtyFlags::Visuals:
-		UpdateVisuals();
-		break;
-
+		return TryUpdateVisuals();
 	default:
 		break;
 	}

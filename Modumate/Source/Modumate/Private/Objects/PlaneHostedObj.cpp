@@ -169,20 +169,13 @@ bool AMOIPlaneHostedObj::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 	break;
 	case EObjectDirtyFlags::Visuals:
 	{
-		UpdateVisuals();
+		return TryUpdateVisuals();
 	}
-	break;
+	default:
+		break;
 	}
 
 	return true;
-}
-
-void AMOIPlaneHostedObj::SetupDynamicGeometry()
-{
-}
-
-void AMOIPlaneHostedObj::UpdateDynamicGeometry()
-{
 }
 
 void AMOIPlaneHostedObj::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
@@ -274,7 +267,7 @@ bool AMOIPlaneHostedObj::OnSelected(bool bIsSelected)
 		parent->GetConnectedMOIs(connectedMOIs);
 		for (AModumateObjectInstance *connectedMOI : connectedMOIs)
 		{
-			connectedMOI->UpdateVisuals();
+			connectedMOI->MarkDirty(EObjectDirtyFlags::Visuals);
 		}
 	}
 

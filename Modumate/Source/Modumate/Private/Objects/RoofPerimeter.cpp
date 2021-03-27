@@ -49,10 +49,11 @@ FVector AMOIRoofPerimeter::GetCorner(int32 index) const
 	return GetLocation();
 }
 
-void AMOIRoofPerimeter::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
+bool AMOIRoofPerimeter::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
 {
 	// RoofPerimeters are only seen and interacted with via their edges.
 	bOutVisible = bOutCollisionEnabled = false;
+	return true;
 }
 
 void AMOIRoofPerimeter::SetupAdjustmentHandles(AEditModelPlayerController *Controller)
@@ -186,8 +187,7 @@ bool AMOIRoofPerimeter::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 		break;
 	}
 	case EObjectDirtyFlags::Visuals:
-		UpdateVisuals();
-		break;
+		return TryUpdateVisuals();
 	default:
 		break;
 	}

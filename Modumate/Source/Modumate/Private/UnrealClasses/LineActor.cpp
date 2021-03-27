@@ -119,7 +119,7 @@ void ALineActor::SetVisibilityInApp(bool bVisible)
 	SetActorHiddenInGame(!bVisibleInApp);
 }
 
-void ALineActor::UpdateVisuals(bool bConnected, float ThicknessMultiplier, FColor NewColor)
+void ALineActor::UpdateLineVisuals(bool bConnected, float ThicknessMultiplier, FColor NewColor)
 {
 	float newThickness = 2.0f * ThicknessMultiplier;
 	bool bUpdateThickness = newThickness != Thickness;

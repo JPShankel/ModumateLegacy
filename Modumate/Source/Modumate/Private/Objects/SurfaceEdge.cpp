@@ -64,8 +64,7 @@ bool AMOISurfaceEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>
 		break;
 	}
 	case EObjectDirtyFlags::Visuals:
-		UpdateVisuals();
-		break;
+		return TryUpdateVisuals();
 	default:
 		break;
 	}

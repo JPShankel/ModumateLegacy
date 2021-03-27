@@ -34,8 +34,6 @@ public:
 
 	virtual void PostCreateObject(bool bNewObject) override;
 	virtual void SetupDynamicGeometry() override;
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController* controller) override;
-	virtual void GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
 	void PreDestroy() override;
 
 	virtual void RegisterInstanceDataUI(UToolTrayBlockProperties* PropertiesUI) override;
