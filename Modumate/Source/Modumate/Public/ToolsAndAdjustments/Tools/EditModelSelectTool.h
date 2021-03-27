@@ -31,12 +31,12 @@ public:
 
 	bool ProcessDragSelect();
 
-	float DoubleClickTime = 0.2f;
-	float MinDragDist = 1.0f;
-
 protected:
 	TMap<const AModumateObjectInstance*, float> LastObjectSelectionAttemptTimes;
 	AModumateObjectInstance *InitialClickedObject;
 	FVector2D InitialClickLocation;
 	bool Dragging;
+
+	float DoubleClickTime = 0.2f;
+	float MinDragDist = 5.0f;
 };
