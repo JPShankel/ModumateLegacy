@@ -35,6 +35,7 @@ namespace Modumate
 		FColor(165, 124, 82),	// kFinishBeyond
 		FColor(255, 0, 255),	// kDebug1
 		FColor(0, 0, 255),		// kDebug2
+		FColor(127, 0, 31),		// kSeparatorCutEndCaps
 	};
 
 	EDrawError FDraftingHUDDraw::DrawLine(

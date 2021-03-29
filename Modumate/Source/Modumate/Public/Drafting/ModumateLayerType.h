@@ -38,7 +38,8 @@ namespace Modumate
 		kFinishBeyond,
 		kDebug1,
 		kDebug2,
-		kFinalLayerType = kDebug2
+		kSeparatorCutEndCaps,
+		kFinalLayerType = kSeparatorCutEndCaps
 	};
 
 }

@@ -346,22 +346,26 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 
 		Modumate::FModumateLayerType layerTypeOuterSurface;
 		Modumate::FModumateLayerType layerTypeMinorSurface;
+		Modumate::FModumateLayerType layerTypeEndCaps;
 
 		switch (GetObjectType())
 		{
 		case EObjectType::OTCountertop:
 			layerTypeOuterSurface = Modumate::FModumateLayerType::kCountertopCut;
 			layerTypeMinorSurface = layerTypeOuterSurface;
+			layerTypeEndCaps = layerTypeOuterSurface;
 			break;
 
 		case EObjectType::OTSystemPanel:
 			layerTypeOuterSurface = Modumate::FModumateLayerType::kSystemPanelCut;
 			layerTypeMinorSurface = layerTypeOuterSurface;
+			layerTypeEndCaps = layerTypeOuterSurface;
 			break;
 
 		default:
 			layerTypeOuterSurface = Modumate::FModumateLayerType::kSeparatorCutOuterSurface;
 			layerTypeMinorSurface = Modumate::FModumateLayerType::kSeparatorCutMinorLayer;
+			layerTypeEndCaps = Modumate::FModumateLayerType::kSeparatorCutEndCaps;
 			break;
 		}
 
@@ -473,7 +477,7 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 									FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 									outerThickness, outerColor);
 								ParentPage->Children.Add(line);
-								line->SetLayerTypeRecursive(layerTypeOuterSurface);
+								line->SetLayerTypeRecursive(layerTypeEndCaps);
 							}
 							if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint + 1], rangeEnd, BoundingBox, clippedStart, clippedEnd))
 							{
@@ -482,7 +486,7 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 									FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 									outerThickness, outerColor);
 								ParentPage->Children.Add(line);
-								line->SetLayerTypeRecursive(layerTypeOuterSurface);
+								line->SetLayerTypeRecursive(layerTypeEndCaps);
 							}
 						}
 						previousLinePoints.SetNum(FMath::Max(linePoint + 2, previousLinePoints.Num()));
