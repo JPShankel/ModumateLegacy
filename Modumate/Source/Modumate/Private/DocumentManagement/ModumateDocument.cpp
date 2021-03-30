@@ -3159,3 +3159,14 @@ bool UModumateDocument::MakeNewGUIDForPreset(FBIMPresetInstance& Preset)
 {
 	return BIMPresetCollection.GetAvailableGUID(Preset.GUID) == EBIMResult::Success;
 }
+
+bool UModumateDocument::DuplicatePreset(UWorld* World, const FGuid& OriginalPreset, FBIMPresetInstance& OutPreset)
+{
+	TSharedPtr<FBIMPresetDelta> delta = BIMPresetCollection.MakeDuplicateDelta(OriginalPreset, OutPreset);
+	if (delta.IsValid() && ApplyDeltas({ delta },World))
+	{
+		OutPreset = delta->NewState;
+		return true;
+	}
+	return false;
+}

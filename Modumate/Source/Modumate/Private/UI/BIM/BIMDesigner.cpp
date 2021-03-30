@@ -26,6 +26,7 @@
 #include "UI/BIM/BIMEditColorPicker.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "UI/BIM/BIMScopeWarning.h"
+#include "UI/SelectionTray/SelectionTrayWidget.h"
 
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
@@ -708,7 +709,19 @@ void UBIMDesigner::DrawConnectSplineForNodes(const FPaintContext& context, class
 
 	TArray<FVector2D> splinePts = { startPoint, FVector2D(startX, startPoint.Y), FVector2D(endX, endPoint.Y), endPoint };
 
+	// TODO: this works in standalone but leaves a margin in PIE
+	FSlateRect rect = GetCachedGeometry().GetLayoutBoundingRect();
+	FVector2D position = GetCachedGeometry().GetAbsolutePosition();
+
+	context.OutDrawElements.PushClip(FSlateClippingZone(
+		rect.GetTopLeft() - position,
+		rect.GetTopRight() - position,
+		rect.GetBottomLeft() - position,
+		rect.GetBottomRight() - position));
+
 	UModumateSlateHelper::DrawCubicBezierSplineBP(context, splinePts, StartNode->bNodeHighlight ? NodeSplineHighlightedColor : NodeSplineFadeColor, NodeSplineThickness);
+
+	context.OutDrawElements.PopClip();
 }
 
 void UBIMDesigner::DrawConnectSplineForMiniNode(const FPaintContext& context, class UBIMBlockNode* StartNode, class UBIMBlockMiniNode* MiniNode) const
@@ -733,7 +746,19 @@ void UBIMDesigner::DrawConnectSplineForMiniNode(const FPaintContext& context, cl
 
 	TArray<FVector2D> splinePts = { startPoint, FVector2D(startX, startPoint.Y), FVector2D(endX, endPoint.Y), endPoint };
 
+	// TODO: this works in standalone but leaves a margin in PIE
+	FSlateRect rect = GetCachedGeometry().GetLayoutBoundingRect();
+	FVector2D position = GetCachedGeometry().GetAbsolutePosition();
+
+	context.OutDrawElements.PushClip(FSlateClippingZone(
+		rect.GetTopLeft() - position,
+		rect.GetTopRight() - position,
+		rect.GetBottomLeft() - position,
+		rect.GetBottomRight() - position));
+
 	UModumateSlateHelper::DrawCubicBezierSplineBP(context, splinePts, StartNode->bNodeHighlight ? NodeSplineHighlightedColor : NodeSplineFadeColor, NodeSplineThickness);
+
+	context.OutDrawElements.PopClip();
 }
 
 FGuid UBIMDesigner::GetPresetID(const FBIMEditorNodeIDType& InstanceID)

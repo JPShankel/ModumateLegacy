@@ -185,6 +185,16 @@ void UNCPNavigator::ToggleNCPTagAsSelected(const FBIMTagPath& NCPTag, bool bAsSe
 	BuildNCPNavigator(CurrentPresetCardType);
 }
 
+void UNCPNavigator::SetNCPTagPathAsSelected(const FBIMTagPath& NCPTag)
+{
+	for (int32 i = 0; i < NCPTag.Tags.Num(); ++i)
+	{
+		FBIMTagPath partialTag;
+		NCPTag.GetPartialPath(i + 1, partialTag);
+		ToggleNCPTagAsSelected(partialTag, true);
+	}
+}
+
 void UNCPNavigator::RefreshDynamicMainListView()
 {
 	DynamicMainListView->RequestRefresh();

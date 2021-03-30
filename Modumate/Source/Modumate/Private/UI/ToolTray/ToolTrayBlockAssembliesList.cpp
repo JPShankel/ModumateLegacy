@@ -19,6 +19,7 @@
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "UI/BIM/BIMBlockNCPNavigator.h"
+#include "UI/PresetCard/PresetCardItemObject.h"
 
 UToolTrayBlockAssembliesList::UToolTrayBlockAssembliesList(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -72,11 +73,12 @@ void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
 				{
 					if (IsPresetAvailableForSearch(Preset.GUID))
 					{
-						UComponentListObject* newCompListObj = NewObject<UComponentListObject>(this);
-						newCompListObj->ItemType = EComponentListItemType::AssemblyListItem;
-						newCompListObj->Mode = Controller->GetToolMode();
-						newCompListObj->UniqueKey = Preset.GUID;
-						AssembliesList->AddItem(newCompListObj);
+						UPresetCardItemObject* newPresetCardItemObj = NewObject<UPresetCardItemObject>(this);
+						newPresetCardItemObj->PresetCardType = EPresetCardType::AssembliesList;
+						newPresetCardItemObj->ObjectType = Preset.ObjectType;
+						newPresetCardItemObj->PresetGuid = Preset.GUID;
+						newPresetCardItemObj->ParentToolTrayBlockAssembliesList = this;
+						AssembliesList->AddItem(newPresetCardItemObj);
 					}
 				}
 			}
@@ -207,6 +209,11 @@ bool UToolTrayBlockAssembliesList::IsPresetAvailableForSearch(const FGuid& Prese
 void UToolTrayBlockAssembliesList::ResetSearchBox()
 {
 	Text_SearchBar->ModumateEditableTextBox->SetText(FText::GetEmpty());
+}
+
+void UToolTrayBlockAssembliesList::RefreshAssembliesListView()
+{
+	AssembliesList->RequestRefresh();
 }
 
 void UToolTrayBlockAssembliesList::OnButtonAddReleased()

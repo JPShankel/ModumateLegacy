@@ -28,8 +28,6 @@ public:
 	USwapMenuWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
-	FGuid PresetGUIDToSwap;
-
 protected:
 
 	virtual void NativeConstruct() override;
@@ -37,15 +35,19 @@ protected:
 	UPROPERTY()
 	class AEditModelPlayerController* EMPlayerController;
 
-	ESwapMenuType CurrentSwapMenuType = ESwapMenuType::None;
-	FBIMEditorNodeIDType SwapBIMNodeID;
-
 public:
+
+	ESwapMenuType CurrentSwapMenuType = ESwapMenuType::None;
+	FGuid PresetGUIDToSwap;
+	FGuid ParentPresetGUIDToSwap;
+	FBIMEditorNodeIDType BIMNodeIDToSwap;
+	FBIMPresetFormElement BIMPresetFormElementToSwap;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UNCPNavigator* NCPNavigatorWidget;
 
 	void SetSwapMenuAsSelection(FGuid InPresetGUIDToSwap);
+	void SetSwapMenuAsFromNode(const FGuid& InParentPresetGUID, const FGuid& InPresetGUIDToSwap, const FBIMEditorNodeIDType& InNodeID, const FBIMPresetFormElement& InFormElement);
 	void BuildSwapMenu();
 
 	const FGuid& GetPresetGUIDToSwap() const { return PresetGUIDToSwap; }

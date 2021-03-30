@@ -172,9 +172,8 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 		ViewMenu->ViewMenu_Block_ViewMode->UpdateEnabledViewModes(Controller->ValidViewModes);
 	}
 
-	// Close BIMDesigner if the new state isn't select menu
-	if (NewState != ELeftMenuState::SelectMenu &&
-		BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
+	// Close BIMDesigner if the new state isn't swap menu
+	if (NewState != ELeftMenuState::SwapMenu)
 	{
 		ToggleBIMDesigner(false);
 	}
@@ -192,6 +191,7 @@ void UEditModelUserWidget::EMOnSelectionObjectChanged()
 
 void UEditModelUserWidget::EditExistingAssembly(const FGuid& AssemblyGUID)
 {
+	SwitchLeftMenu(ELeftMenuState::None);
 	ToggleBIMDesigner(true);
 	BIMDesigner->EditPresetInBIMDesigner(AssemblyGUID);
 }
@@ -212,7 +212,6 @@ void UEditModelUserWidget::ToggleBIMDesigner(bool Open)
 		ToggleBIMPresetSwapTray(false);
 		ScopeWarningWidget->DismissScopeWarning();
 	}
-	ToolTrayWidget->ToolTrayBIMDesignerMode(Open);
 }
 
 void UEditModelUserWidget::UpdateCutPlanesList()
@@ -318,25 +317,15 @@ FText UEditModelUserWidget::GetPlanUpgradeRichText()
 
 void UEditModelUserWidget::ToggleBIMPresetSwapTray(bool NewVisibility)
 {
-	// TODO: Closing swap tray should look back to previous left menu state
-
 	if (NewVisibility)
 	{
 		BIMPresetSwap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		ToolTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
 		SelectionTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
-	else if (Controller->GetToolMode() == EToolMode::VE_SELECT)
+	else
 	{
 		BIMPresetSwap->SetVisibility(ESlateVisibility::Collapsed);
-		ToolTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
-		SelectionTrayWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	}
-	else if (Controller->GetToolMode() != EToolMode::VE_NONE)
-	{
-		BIMPresetSwap->SetVisibility(ESlateVisibility::Collapsed);
-		ToolTrayWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		SelectionTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 

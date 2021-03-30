@@ -26,6 +26,8 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/Debugger/BIMDebugger.h"
+#include "UI/LeftMenu/SwapMenuWidget.h"
+#include "UI/LeftMenu/NCPNavigator.h"
 
 UBIMBlockNode::UBIMBlockNode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -144,14 +146,19 @@ void UBIMBlockNode::OnButtonSwapReleased()
 	{
 		parentPresetID = ParentBIMDesigner->GetPresetID(ParentID);
 	}
-	// Move swap menu to be in front of this node
-	Controller->EditModelUserWidget->ToggleBIMPresetSwapTray(true);
 
-	// Reset the search box in preset list
-	Controller->EditModelUserWidget->BIMPresetSwap->ResetSearchBox();
+	FBIMTagPath ncpForSwap;
+	Controller->GetDocument()->GetPresetCollection().GetNCPForPreset(PresetID, ncpForSwap);
+	if (ensureAlways(ncpForSwap.Tags.Num() > 0))
+	{
+		Controller->EditModelUserWidget->SwapMenuWidget->NCPNavigatorWidget->ResetSelectedAndSearchTag();
+		Controller->EditModelUserWidget->SwapMenuWidget->NCPNavigatorWidget->SetNCPTagPathAsSelected(ncpForSwap);
 
-	// Generate list of presets
-	Controller->EditModelUserWidget->BIMPresetSwap->CreatePresetListInNodeForSwap(parentPresetID, PresetID, ID, FBIMPresetFormElement());
+		Controller->EditModelUserWidget->SwapMenuWidget->SetSwapMenuAsFromNode(parentPresetID, PresetID, ID, FBIMPresetFormElement());
+		Controller->EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::SwapMenu);
+
+		Controller->EditModelUserWidget->SwapMenuWidget->NCPNavigatorWidget->ScrollPresetToView(PresetID);
+	}
 }
 
 void UBIMBlockNode::OnButtonDeleteReleased()

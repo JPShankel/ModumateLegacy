@@ -35,7 +35,7 @@ bool UComponentAssemblyListItem::Initialize()
 		return false;
 	}
 
-	if (!(ModumateButtonMain && ButtonEdit && ButtonSwap && ButtonConfirm))
+	if (!(ModumateButtonMain && ButtonEdit && ButtonSwap && ButtonConfirm && ButtonDuplicate))
 	{
 		return false;
 	}
@@ -44,6 +44,7 @@ bool UComponentAssemblyListItem::Initialize()
 	ButtonEdit->ModumateButton->OnReleased.AddDynamic(this, &UComponentAssemblyListItem::OnButtonEditReleased);
 	ButtonSwap->ModumateButton->OnReleased.AddDynamic(this, &UComponentAssemblyListItem::OnButtonSwapReleased);
 	ButtonConfirm->ModumateButton->OnReleased.AddDynamic(this, &UComponentAssemblyListItem::OnButtonConfirmReleased);
+	ButtonDuplicate->ModumateButton->OnReleased.AddDynamic(this, &UComponentAssemblyListItem::OnButtonDuplicateReleased);
 
 	return true;
 }
@@ -80,24 +81,28 @@ void UComponentAssemblyListItem::UpdateItemType(EComponentListItemType NewItemTy
 		ButtonTrash->SetVisibility(ESlateVisibility::Visible);
 		ButtonEdit->SetVisibility(ESlateVisibility::Visible);
 		ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonDuplicate->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EComponentListItemType::SelectionListItem:
 		ButtonSwap->SetVisibility(bIsNonAssemblyObjectSelectItem ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
 		ButtonEdit->SetVisibility(bIsNonAssemblyObjectSelectItem ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 		ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
+		ButtonDuplicate->SetVisibility(ESlateVisibility::Collapsed);
 		break;
 	case EComponentListItemType::SwapListItem:
 		ButtonSwap->SetVisibility(ESlateVisibility::Collapsed);
 		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
 		ButtonEdit->SetVisibility(ESlateVisibility::Collapsed);
 		ButtonConfirm->SetVisibility(ESlateVisibility::Visible);
+		ButtonDuplicate->SetVisibility(ESlateVisibility::Collapsed);
 		break;
 	case EComponentListItemType::SwapDesignerPreset:
 		ButtonSwap->SetVisibility(ESlateVisibility::Collapsed);
 		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
 		ButtonEdit->SetVisibility(ESlateVisibility::Collapsed);
 		ButtonConfirm->SetVisibility(ESlateVisibility::Visible);
+		ButtonDuplicate->SetVisibility(ESlateVisibility::Visible);
 		break;
 	}
 }
@@ -157,6 +162,54 @@ void UComponentAssemblyListItem::OnModumateButtonMainReleased()
 	{
 		EMPlayerController->EMPlayerState->SetAssemblyForToolMode(ToolMode, BIMKey);
 	}
+}
+
+FGuid UComponentAssemblyListItem::DuplicatePreset() const
+{
+	UModumateDocument* doc = GetWorld()->GetGameState<AEditModelGameState>()->Document;
+	FBIMPresetInstance newPreset;
+	auto delta = doc->GetPresetCollection().MakeDuplicateDelta(BIMKey, newPreset);
+	if (ensureAlways(delta != nullptr))
+	{
+		ensureAlways(doc->ApplyPresetDelta(*delta, GetWorld()));
+		return newPreset.GUID;
+	}
+	return FGuid();
+}
+
+void UComponentAssemblyListItem::OnButtonDuplicateReleased()
+{
+	switch (ItemType)
+	{
+	case EComponentListItemType::AssemblyListItem:
+	{
+		FGuid duplicate = DuplicatePreset();
+		if (ensureAlways(duplicate.IsValid() && EMPlayerController))
+		{
+			EMPlayerController->EditModelUserWidget->EditExistingAssembly(duplicate);
+		}
+	}
+	break;
+
+	case EComponentListItemType::SwapDesignerPreset:
+	{
+		FGuid duplicate = DuplicatePreset();
+		EMPlayerController->EditModelUserWidget->ToggleBIMPresetSwapTray(false);
+		if (ensureAlways(duplicate.IsValid()))
+		{
+			if (FormElement.FieldType == EBIMPresetEditorField::None)
+			{
+				EMPlayerController->EditModelUserWidget->BIMDesigner->SetPresetForNodeInBIMDesigner(BIMInstanceID, duplicate);
+			}
+			else
+			{
+				FormElement.StringRepresentation = BIMKey.ToString();
+				EMPlayerController->EditModelUserWidget->BIMDesigner->ApplyBIMFormElement(BIMInstanceID, FormElement);
+			}
+		}
+	}
+	break;
+	};
 }
 
 void UComponentAssemblyListItem::OnButtonEditReleased()

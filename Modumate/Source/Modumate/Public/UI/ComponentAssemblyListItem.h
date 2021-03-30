@@ -55,6 +55,8 @@ protected:
 	UPROPERTY()
 	FButtonStyle ActiveButtonStyle;
 
+	FGuid DuplicatePreset() const;
+
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -76,6 +78,9 @@ public:
 	class UModumateButtonUserWidget *ButtonConfirm;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonDuplicate;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox *VerticalBoxProperties;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -92,6 +97,9 @@ public:
 
 	UFUNCTION()
 	void OnButtonConfirmReleased();
+
+	UFUNCTION()
+	void OnButtonDuplicateReleased();
 
 	void UpdateItemType(EComponentListItemType NewItemType);
 	void UpdateSelectionItemCount(int32 ItemCount);

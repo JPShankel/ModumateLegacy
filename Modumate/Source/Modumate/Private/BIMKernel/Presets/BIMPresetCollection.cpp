@@ -10,6 +10,9 @@
 #include "ModumateCore/ModumateScriptProcessor.h"
 #include "Online/ModumateAnalyticsStatics.h"
 
+#define LOCTEXT_NAMESPACE "ModumatePresetMaterialBindings"
+
+
 /*
 Given a preset ID, recurse through all its children and gather all other presets that this one depends on
 */
@@ -691,6 +694,34 @@ TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeUpdateDelta(const FGuid& P
 	return MakeUpdateDelta(*currentPreset, AnalyticsWorldContextObject);
 }
 
+TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeDuplicateDelta(const FGuid& OriginalID, FBIMPresetInstance& NewPreset, UObject* AnalyticsWorldContextObject)
+{
+	const FBIMPresetInstance* original = PresetFromGUID(OriginalID);
+	if (!ensureAlways(original != nullptr))
+	{
+		return nullptr;
+	}
+
+	if (ensureAlways(!NewPreset.GUID.IsValid()))
+	{
+		NewPreset = *original;
+		NewPreset.DisplayName = FText::Format(LOCTEXT("DisplayName", "Duplicate of {0}"), NewPreset.DisplayName);
+		NewPreset.Properties.SetProperty(NewPreset.NodeScope, BIMPropertyNames::Name, NewPreset.DisplayName.ToString());
+
+		GetAvailableGUID(NewPreset.GUID);
+
+		if (AnalyticsWorldContextObject)
+		{
+			UModumateAnalyticsStatics::RecordPresetDuplication(AnalyticsWorldContextObject, &NewPreset);
+		}
+
+		return MakeUpdateDelta(NewPreset);
+	}
+
+	return nullptr;
+}
+
+
 TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeCreateNewDelta(FBIMPresetInstance& NewPreset, UObject* AnalyticsWorldContextObject)
 {
 	if (ensureAlways(!NewPreset.GUID.IsValid()))
@@ -1108,3 +1139,5 @@ EBIMResult FBIMPresetCollectionProxy::CreateAssemblyFromLayerPreset(const FModum
 
 	return OutAssemblySpec.FromPreset(InDB, *this, assemblyPreset.GUID);
 }
+
+#undef LOCTEXT_NAMESPACE

@@ -2,6 +2,7 @@
 
 #include "UI/PresetCard/PresetCardMain.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/Custom/ModumateButton.h"
@@ -18,6 +19,9 @@
 #include "UI/PresetCard/PresetCardQuantityList.h"
 #include "UI/PresetCard/PresetCardItemObject.h"
 #include "UI/SelectionTray/SelectionTrayBlockPresetList.h"
+#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
+#include "UI/LeftMenu/SwapMenuWidget.h"
+#include "UI/EditModelUserWidget.h"
 
 UPresetCardMain::UPresetCardMain(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -84,7 +88,14 @@ void UPresetCardMain::OnMainButtonReleased()
 			ParentSelectionTrayBlockPresetList->RefreshAssembliesListView();
 		}
 	}
-
+	else if (CurrentPresetCardType == EPresetCardType::AssembliesList)
+	{
+		EMPlayerController->EMPlayerState->SetAssemblyForToolMode(EMPlayerController->GetToolMode(), PresetGUID);
+		if (ensure(ParentToolTrayBlockAssembliesList))
+		{
+			ParentToolTrayBlockAssembliesList->RefreshAssembliesListView();
+		}
+	}
 }
 
 void UPresetCardMain::BuildAsCollapsedPresetCard(const FGuid& InPresetKey, bool bInAllowInteraction)
@@ -112,7 +123,17 @@ void UPresetCardMain::BuildAsCollapsedPresetCard(const FGuid& InPresetKey, bool 
 			}
 			break;
 		case EPresetCardType::Swap:
-			newHeaderWidget->BuildAsSwapHeader(PresetGUID, BIM_ID_NONE);
+			if (EMPlayerController->EditModelUserWidget->SwapMenuWidget->CurrentSwapMenuType == ESwapMenuType::SwapFromSelection)
+			{
+				newHeaderWidget->BuildAsSwapHeader(PresetGUID, BIM_ID_NONE);
+			}
+			else
+			{
+				newHeaderWidget->BuildAsSwapHeader(PresetGUID, EMPlayerController->EditModelUserWidget->SwapMenuWidget->BIMNodeIDToSwap);
+			}
+			break;
+		case EPresetCardType::AssembliesList:
+			newHeaderWidget->BuildAsAssembliesListHeader(PresetGUID);
 			break;
 		case EPresetCardType::Browser:
 		default:
@@ -157,7 +178,17 @@ void UPresetCardMain::BuildAsExpandedPresetCard(const FGuid& InPresetKey)
 			}
 			break;
 		case EPresetCardType::Swap:
-			newHeaderWidget->BuildAsSwapHeader(PresetGUID, BIM_ID_NONE);
+			if (EMPlayerController->EditModelUserWidget->SwapMenuWidget->CurrentSwapMenuType == ESwapMenuType::SwapFromSelection)
+			{
+				newHeaderWidget->BuildAsSwapHeader(PresetGUID, BIM_ID_NONE);
+			}
+			else
+			{
+				newHeaderWidget->BuildAsSwapHeader(PresetGUID, EMPlayerController->EditModelUserWidget->SwapMenuWidget->BIMNodeIDToSwap);
+			}
+			break;
+		case EPresetCardType::AssembliesList:
+			newHeaderWidget->BuildAsAssembliesListHeader(PresetGUID);
 			break;
 		case EPresetCardType::Browser:
 		default:
@@ -219,6 +250,12 @@ void UPresetCardMain::UpdateSelectionItemCount(int32 ItemCount)
 	BuildAsCollapsedPresetCard(PresetGUID, true);
 }
 
+bool UPresetCardMain::IsCurrentToolAssembly()
+{
+	FGuid currentAssembly = EMPlayerController->EMPlayerState->GetAssemblyForToolMode(EMPlayerController->GetToolMode());
+	return currentAssembly == PresetGUID;
+}
+
 void UPresetCardMain::ToggleMainButtonInteraction(bool bEnable)
 {
 	if (bEnable)
@@ -265,6 +302,18 @@ void UPresetCardMain::NativeOnListItemObjectSet(UObject* ListItemObject)
 		SelectCount = ParentPresetCardItemObj->SelectionItemCount;
 		ParentSelectionTrayBlockPresetList = ParentPresetCardItemObj->ParentSelectionTrayBlockPresetList;
 		if (ParentPresetCardItemObj->bPresetCardExpanded)
+		{
+			BuildAsExpandedPresetCard(PresetGUID);
+		}
+		else
+		{
+			BuildAsCollapsedPresetCard(PresetGUID, true);
+		}
+	}
+	else if (CurrentPresetCardType == EPresetCardType::AssembliesList)
+	{
+		ParentToolTrayBlockAssembliesList = ParentPresetCardItemObj->ParentToolTrayBlockAssembliesList;
+		if (IsCurrentToolAssembly())
 		{
 			BuildAsExpandedPresetCard(PresetGUID);
 		}

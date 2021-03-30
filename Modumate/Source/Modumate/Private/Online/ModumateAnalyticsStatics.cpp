@@ -169,6 +169,13 @@ bool UModumateAnalyticsStatics::RecordPresetDeletion(UObject* WorldContextObject
 	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EModumateAnalyticsCategory::Presets, eventName, 1.0f);
 }
 
+bool UModumateAnalyticsStatics::RecordPresetDuplication(UObject* WorldContextObject, const FBIMPresetInstance* PresetInstance)
+{
+	FString eventName = UModumateAnalyticsStatics::GetPresetEventName(TEXT("Duplicate"), PresetInstance);
+	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EModumateAnalyticsCategory::Presets, eventName, 1.0f);
+}
+
+
 FString UModumateAnalyticsStatics::GetPresetEventName(const TCHAR* Prefix, const FBIMPresetInstance* PresetInstance)
 {
 	FString nodeScopeString = GetEnumValueString(PresetInstance ? PresetInstance->NodeScope : EBIMValueScope::None);

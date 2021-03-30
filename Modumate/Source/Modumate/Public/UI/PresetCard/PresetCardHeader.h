@@ -32,6 +32,9 @@ protected:
 
 	FGuid PresetGUID;
 	FText ItemDisplayName;
+	EPresetCardType PresetCardType = EPresetCardType::None;
+
+	void ConfirmGUID(const FGuid& InGUID);
 
 public:
 
@@ -53,6 +56,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonConfirm;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonDuplicate;
+
 	UPROPERTY()
 	class UMaterialInterface* IconMaterial;
 
@@ -61,6 +67,7 @@ public:
 	void BuildAsSwapHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID);
 	void BuildAsSelectTrayPresetCard(const FGuid& InGUID, int32 ItemCount);
 	void BuildAsSelectTrayPresetCardObjectType(EObjectType InObjectType, int32 ItemCount);
+	void BuildAsAssembliesListHeader(const FGuid& InGUID);
 
 	void UpdateButtonSetByPresetCardType(EPresetCardType InPresetCardType);
 	void UpdateSelectionHeaderItemCount(int32 ItemCount);
@@ -74,4 +81,7 @@ public:
 
 	UFUNCTION()
 	void OnButtonConfirmReleased();
+
+	UFUNCTION()
+	void OnButtonDuplicateReleased();
 };

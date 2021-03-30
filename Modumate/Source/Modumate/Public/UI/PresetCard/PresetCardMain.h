@@ -18,6 +18,7 @@ enum class EPresetCardType : uint8
 	Browser,
 	SelectTray,
 	Swap,
+	AssembliesList,
 	None
 };
 
@@ -42,6 +43,9 @@ protected:
 
 	UPROPERTY()
 	class USelectionTrayBlockPresetList* ParentSelectionTrayBlockPresetList;
+
+	UPROPERTY()
+	class UToolTrayBlockAssembliesList* ParentToolTrayBlockAssembliesList;
 
 	UPROPERTY()
 	class UBrowserItemObj* ParentBrowserItemObj;
@@ -105,6 +109,7 @@ public:
 	void SetAsNCPNavigatorPresetCard(class UNCPNavigator* InParentNCPNavigator, class UBrowserItemObj* InBrowserItemObj, EPresetCardType InPresetCardType);
 
 	void UpdateSelectionItemCount(int32 ItemCount);
+	bool IsCurrentToolAssembly();
 
 	void ToggleMainButtonInteraction(bool bEnable);
 	void ClearWidgetPool(class UPanelWidget* Widget);

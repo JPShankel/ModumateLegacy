@@ -74,6 +74,7 @@ public:
 	static bool RecordPresetCreation(UObject* WorldContextObject, const FBIMPresetInstance* PresetInstance);
 	static bool RecordPresetUpdate(UObject* WorldContextObject, const FBIMPresetInstance* PresetInstance);
 	static bool RecordPresetDeletion(UObject* WorldContextObject, const FBIMPresetInstance* PresetInstance);
+	static bool RecordPresetDuplication(UObject* WorldContextObject, const FBIMPresetInstance* PresetInstance);
 
 protected:
 	static FString GetPresetEventName(const TCHAR* Prefix, const FBIMPresetInstance* PresetInstance);

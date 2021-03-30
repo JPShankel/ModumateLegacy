@@ -84,6 +84,7 @@ struct MODUMATE_API FBIMPresetCollection
 	TSharedPtr<FBIMPresetDelta> MakeUpdateDelta(const FBIMPresetInstance& UpdatedPreset, UObject* AnalyticsWorldContextObject = nullptr) const;
 	TSharedPtr<FBIMPresetDelta> MakeUpdateDelta(const FGuid& PresetID, UObject* AnalyticsWorldContextObject = nullptr) const;
 	TSharedPtr<FBIMPresetDelta> MakeCreateNewDelta(FBIMPresetInstance& NewPreset, UObject* AnalyticsWorldContextObject = nullptr);
+	TSharedPtr<FBIMPresetDelta> MakeDuplicateDelta(const FGuid& OriginalID, FBIMPresetInstance& NewPreset, UObject* AnalyticsWorldContextObject = nullptr);
 
 	bool TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FGuid& PresetID, FBIMAssemblySpec& OutAssembly) const;
 	bool TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FBIMAssemblySpec& OutAssembly) const;

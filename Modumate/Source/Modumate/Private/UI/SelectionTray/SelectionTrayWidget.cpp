@@ -174,10 +174,4 @@ void USelectionTrayWidget::CloseToolTray()
 	SelectionTrayBlockPresetList->ClearPresetList();
 
 	CloseDetailDesigner();
-
-	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
-	if (controller && controller->EditModelUserWidget->BIMDesigner->GetVisibility() != ESlateVisibility::Collapsed)
-	{
-		controller->EditModelUserWidget->ToggleBIMDesigner(false);
-	}
 }

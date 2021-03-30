@@ -83,6 +83,7 @@ public:
 	void CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FGuid& PresetID);
 	bool IsPresetAvailableForSearch(const FGuid& PresetKey);
 	void ResetSearchBox();
+	void RefreshAssembliesListView();
 
 	UFUNCTION()
 	void OnButtonAddReleased();

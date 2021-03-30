@@ -273,6 +273,7 @@ public:
 
 	// Generates a GUID...non-const because all generated guids are stored to avoid (infinitessimal) chance of duplication
 	bool MakeNewGUIDForPreset(FBIMPresetInstance& Preset);
+	bool DuplicatePreset(UWorld* World, const FGuid& OriginalPreset, FBIMPresetInstance& OutPreset);
 
 	const FBIMPresetCollection& GetPresetCollection() const;
 	FBIMPresetCollection& GetPresetCollection();

@@ -54,6 +54,7 @@ public:
 	void CacheSearchFilteredPresets(const TArray<FBIMTagPath>& SourceNCPTags);
 
 	void ToggleNCPTagAsSelected(const FBIMTagPath& NCPTag, bool bAsSelected);
+	void SetNCPTagPathAsSelected(const FBIMTagPath& NCPTag);
 	void RefreshDynamicMainListView();
 	void ResetSelectedAndSearchTag();
 	void ScrollPresetToView(const FGuid PresetToView);

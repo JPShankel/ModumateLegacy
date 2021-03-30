@@ -32,6 +32,15 @@ void USwapMenuWidget::SetSwapMenuAsSelection(FGuid InPresetGUIDToSwap)
 	CurrentSwapMenuType = ESwapMenuType::SwapFromSelection;
 }
 
+void USwapMenuWidget::SetSwapMenuAsFromNode(const FGuid& InParentPresetGUID, const FGuid& InPresetGUIDToSwap, const FBIMEditorNodeIDType& InNodeID, const FBIMPresetFormElement& InFormElement)
+{
+	PresetGUIDToSwap = InPresetGUIDToSwap;
+	ParentPresetGUIDToSwap = InParentPresetGUID;
+	BIMNodeIDToSwap = InNodeID;
+	BIMPresetFormElementToSwap = InFormElement;
+	CurrentSwapMenuType = ESwapMenuType::SwapFromNode;
+}
+
 void USwapMenuWidget::BuildSwapMenu()
 {
 	NCPNavigatorWidget->BuildNCPNavigator(EPresetCardType::Swap);
