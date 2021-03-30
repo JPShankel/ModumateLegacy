@@ -82,5 +82,7 @@ protected:
 
 	int32 ExtrusionDimensionActorID;
 
+	FBox GetBoundingBox() const;
+
 	virtual void UpdateQuantities() override;
 };

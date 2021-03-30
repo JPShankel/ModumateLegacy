@@ -526,7 +526,9 @@ bool AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 							AModumateObjectInstance* surfaceMoi = Document->GetObjectById(object.Key);
 							if (ensure(surfaceMoi))
 							{
-								draftingObjectMois.Append(surfaceMoi->GetChildObjects());
+								draftingObjectMois.Append(surfaceMoi->GetChildObjects().FilterByPredicate(
+									[](const AModumateObjectInstance* moi)
+								{ return moi->GetObjectType() != EObjectType::OTCabinet; }));
 							}
 						}
 					}
@@ -537,6 +539,9 @@ bool AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 
 		draftingObjectMois.Append(graphChildren);
 	}
+
+	// Add cabinets globally.
+	draftingObjectMois.Append(Document->GetObjectsOfType(EObjectType::OTCabinet));
 
 	for (auto moi : draftingObjectMois)
 	{

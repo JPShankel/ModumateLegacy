@@ -473,6 +473,17 @@ bool AMOICabinet::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) co
 	return true;
 }
 
+FBox AMOICabinet::GetBoundingBox() const
+{
+	FBox box(ForceInit);
+	const int32 numPoints = 2 * GetNumCorners();
+	for (int p = 0; p < numPoints; ++p)
+	{
+		box += GetCorner(p);
+	}
+	return box;
+}
+
 void AMOICabinet::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
@@ -609,6 +620,13 @@ void AMOICabinet::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentP
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
 	{   // Cut-plane lines:
+
+		const FBox boundingBox = GetBoundingBox();
+		if (!FMath::PlaneAABBIntersection(Plane, boundingBox))
+		{
+			return;
+		}
+
 		// Cabinet carcass:
 		const int32 numLayers = LayerGeometries.Num();
 		for (int32 layer = 0; layer < numLayers; ++layer)

@@ -362,6 +362,7 @@ bool UModumateDocument::DeleteObjectImpl(AModumateObjectInstance *ObjToDelete)
 
 		ObjectInstanceArray.Remove(ObjToDelete);
 		ObjectsByID.Remove(objID);
+		ObjectsByType.FindOrAdd(ObjToDelete->GetObjectType()).Remove(objID);
 
 		// Update mitering, visibility & collision enabled on neighbors, in case they were dependent on this MOI.
 		for (AModumateObjectInstance *connectedMOI : connectedMOIs)
@@ -388,6 +389,7 @@ bool UModumateDocument::RestoreObjectImpl(AModumateObjectInstance *obj)
 		DeletedObjects.Remove(obj->ID);
 		ObjectInstanceArray.AddUnique(obj);
 		ObjectsByID.Add(obj->ID, obj);
+		ObjectsByType.FindOrAdd(obj->GetObjectType()).Add(obj->ID);
 		obj->RestoreMOI();
 
 		return true;
@@ -436,6 +438,7 @@ AModumateObjectInstance* UModumateDocument::CreateOrRestoreObj(UWorld* World, co
 
 	ObjectInstanceArray.AddUnique(newObj);
 	ObjectsByID.Add(StateData.ID, newObj);
+	ObjectsByType.FindOrAdd(StateData.ObjectType).Add(StateData.ID);
 
 	newObj->SetStateData(StateData);
 	newObj->PostCreateObject(true);
@@ -1987,6 +1990,7 @@ void UModumateDocument::MakeNew(UWorld *World)
 	{
 		AModumateObjectInstance* obj = ObjectInstanceArray[i];
 
+		ObjectsByType.FindOrAdd(obj->GetObjectType()).Remove(obj->ID);
 		ObjectsByID.Remove(obj->ID);
 		ObjectInstanceArray.RemoveAt(i, 1, false);
 
@@ -2071,10 +2075,21 @@ AModumateObjectInstance *UModumateDocument::ObjectFromActor(AActor *actor)
 
 TArray<AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(EObjectType type)
 {
-	return ObjectInstanceArray.FilterByPredicate([type](AModumateObjectInstance *moi)
+	TArray<AModumateObjectInstance*> objects;
+	auto* objectsOfType = ObjectsByType.Find(type);
+	if (objectsOfType)
 	{
-		return moi->GetObjectType() == type;
-	});
+		for (int32 objectID : *objectsOfType)
+		{
+			AModumateObjectInstance* obj = GetObjectById(objectID);
+			if (obj)
+			{
+				objects.Add(obj);
+			}
+		}
+	}
+
+	return objects;
 }
 
 TArray<const AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(const FObjectTypeSet& types) const
@@ -2105,20 +2120,21 @@ void UModumateDocument::GetObjectIdsByAssembly(const FGuid& AssemblyKey, TArray<
 
 TArray<const AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(EObjectType type) const
 {
-//	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::GetObjectsOfType"));
+	TArray<const AModumateObjectInstance*> objects;
+	auto* objectsOfType = ObjectsByType.Find(type);
+	if (objectsOfType)
+	{
+		for (int32 objectID : *objectsOfType)
+		{
+			const AModumateObjectInstance* obj = GetObjectById(objectID);
+			if (obj)
+			{
+				objects.Add(obj);
+			}
+		}
+	}
 
-	TArray< const AModumateObjectInstance *> outObjectsOfType;
-	Algo::Transform(
-			ObjectInstanceArray.FilterByPredicate([type](AModumateObjectInstance *moi)
-			{
-				return moi->GetObjectType() == type;
-			}), 
-		outObjectsOfType,
-			[](AModumateObjectInstance *moi)
-			{
-				return moi;
-			});
-	return outObjectsOfType;
+	return objects;
 }
 
 bool UModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)

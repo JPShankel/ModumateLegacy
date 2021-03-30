@@ -52,6 +52,8 @@ private:
 	UPROPERTY()
 	TMap<int32, AModumateObjectInstance*> DeletedObjects;
 
+	TMap <EObjectType, TSet<int32>> ObjectsByType;
+
 	float DefaultWallHeight;
 	float DefaultRailHeight = 106.68f;
 	float DefaultCabinetHeight = 87.63f;
