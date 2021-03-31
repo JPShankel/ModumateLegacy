@@ -37,6 +37,8 @@ protected:
 	FVector2D LastMousePosition = FVector2D::ZeroVector;
 	bool DragReset = true;
 
+	FBIMEditorNodeIDType GetNodeParentID(const FBIMEditorNodeIDType& InstanceID) const;
+
 	/*
 	* The BIM designer uses a cached copy of the preset collection from the document so it can generate icons for uncommitted changes
 	*/
@@ -150,10 +152,11 @@ public:
 	TMap<FName, class UBIMBlockNode*> IdToNodeMap;
 
 	bool UpdateCraftingAssembly();
+	bool RefreshNodes();
 	void ToggleCollapseExpandNodes();
 	void SetNodeAsSelected(const FBIMEditorNodeIDType& InstanceID);
 	float GetCurrentZoomScale() const;
-	bool EditPresetInBIMDesigner(const FGuid& PresetID);
+	bool EditPresetInBIMDesigner(const FGuid& PresetID, bool bCenterOnRootNode);
 	bool SetPresetForNodeInBIMDesigner(const FBIMEditorNodeIDType& InstanceID, const FGuid& PresetID);
 	void UpdateBIMDesigner(bool AutoAdjustToRootNode = false);
 	void AutoArrangeNodes();

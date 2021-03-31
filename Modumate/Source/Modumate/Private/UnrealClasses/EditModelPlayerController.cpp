@@ -35,6 +35,7 @@
 #include "UnrealClasses/ModumateViewportClient.h"
 #include "UI/AdjustmentHandleWidget.h"
 #include "UI/DimensionActor.h"
+#include "UI/BIM/BIMDesigner.h"
 #include "UI/DimensionManager.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/TutorialManager.h"
@@ -3414,11 +3415,6 @@ FPlane AEditModelPlayerController::GetCurrentCullingPlane() const
 
 void AEditModelPlayerController::HandleUndo()
 {
-	if (EditModelUserWidget->IsBIMDesingerActive())
-	{
-		return; 
-	}
-
 	UModumateDocument* doc = GetDocument();
 
 	if (doc && !doc->IsPreviewingDeltas())
@@ -3426,21 +3422,26 @@ void AEditModelPlayerController::HandleUndo()
 		doc->Undo(GetWorld());
 		EMPlayerState->ValidateSelectionsAndView();
 	}
+
+	if (EditModelUserWidget->IsBIMDesingerActive())
+	{
+		EditModelUserWidget->BIMDesigner->RefreshNodes();
+	}
 }
 
 void AEditModelPlayerController::HandleRedo()
 {
-	if (EditModelUserWidget->IsBIMDesingerActive())
-	{
-		return;
-	}
-
 	UModumateDocument* doc = GetDocument();
 
 	if (doc && !doc->IsPreviewingDeltas())
 	{
 		doc->Redo(GetWorld());
 		EMPlayerState->ValidateSelectionsAndView();
+	}
+
+	if (EditModelUserWidget->IsBIMDesingerActive())
+	{
+		EditModelUserWidget->BIMDesigner->RefreshNodes();
 	}
 }
 

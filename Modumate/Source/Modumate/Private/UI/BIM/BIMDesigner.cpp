@@ -266,7 +266,16 @@ float UBIMDesigner::GetCurrentZoomScale() const
 	return ScaleBoxForNodes->UserSpecifiedScale;
 }
 
-bool UBIMDesigner::EditPresetInBIMDesigner(const FGuid& PresetID)
+bool UBIMDesigner::RefreshNodes()
+{
+	if (CraftingAssembly.PresetGUID.IsValid())
+	{
+		return EditPresetInBIMDesigner(CraftingAssembly.PresetGUID, false);
+	}
+	return false;
+}
+
+bool UBIMDesigner::EditPresetInBIMDesigner(const FGuid& PresetID, bool bCenterOnRootNode)
 {
 	InstancePool.PresetCollectionProxy = FBIMPresetCollectionProxy(Controller->GetDocument()->GetPresetCollection());
 
@@ -281,8 +290,20 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FGuid& PresetID)
 	}
 	// Since this is a new pool, root node should be the new selected
 	SelectedNodeID = rootNode->GetInstanceID();
-	UpdateBIMDesigner(true);
+	UpdateBIMDesigner(bCenterOnRootNode);
 	return true;
+}
+
+FBIMEditorNodeIDType UBIMDesigner::GetNodeParentID(const FBIMEditorNodeIDType& InstanceID) const
+{
+	auto node = InstancePool.InstanceFromID(InstanceID);
+
+	if (!ensureAlways(node.IsValid()))
+	{
+		return BIM_ID_NONE;
+	}
+
+	return node->ParentInstance.IsValid() ? node->ParentInstance.Pin()->GetInstanceID() : BIM_ID_NONE;
 }
 
 bool UBIMDesigner::SetPresetForNodeInBIMDesigner(const FBIMEditorNodeIDType& InstanceID, const FGuid& PresetID)
@@ -294,6 +315,11 @@ bool UBIMDesigner::SetPresetForNodeInBIMDesigner(const FBIMEditorNodeIDType& Ins
 		return false;
 	}
 	UpdateCraftingAssembly();
+	FBIMEditorNodeIDType parentID = GetNodeParentID(InstanceID);
+	if (!parentID.IsNone())
+	{
+		SavePresetFromNode(false, parentID);
+	}
 	UpdateBIMDesigner();
 	return true;
 }
@@ -773,6 +799,8 @@ FGuid UBIMDesigner::GetPresetID(const FBIMEditorNodeIDType& InstanceID)
 
 bool UBIMDesigner::DeleteNode(const FBIMEditorNodeIDType& InstanceID)
 {
+	FBIMEditorNodeIDType parentID = GetNodeParentID(InstanceID);
+
 	TArray<FBIMEditorNodeIDType> outDestroyed;
 	EBIMResult result = InstancePool.DestroyNodeInstance(InstanceID, outDestroyed);
 	if (result != EBIMResult::Success)
@@ -780,6 +808,10 @@ bool UBIMDesigner::DeleteNode(const FBIMEditorNodeIDType& InstanceID)
 		return false;
 	}
 	UpdateCraftingAssembly();
+	if (!parentID.IsNone())
+	{
+		SavePresetFromNode(false, parentID);
+	}
 	UpdateBIMDesigner();
 	SetNodeAsSelected(RootNode->ID);
 	return true;
@@ -795,6 +827,7 @@ bool UBIMDesigner::AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const
 	{
 		return false;
 	}
+	SavePresetFromNode(false, ParentID);
 	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
 	return true;
@@ -823,7 +856,7 @@ bool UBIMDesigner::ApplyBIMFormElement(const FBIMEditorNodeIDType& NodeID, const
 			}
 		}
 	}
-
+	SavePresetFromNode(false, NodeID);
 	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
 
@@ -901,6 +934,13 @@ bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition
 		if (result == EBIMResult::Success)
 		{
 			UpdateCraftingAssembly();
+
+			FBIMEditorNodeIDType parentID = GetNodeParentID(NodeID);
+			if (!parentID.IsNone())
+			{
+				SavePresetFromNode(false, parentID);
+			}
+
 			UpdateBIMDesigner();
 			return true;
 		}
@@ -972,18 +1012,7 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 	{
 		// Check if there are presets being affected by this change
 		SavePendingInstanceID = InstanceID;
-		TArray<FGuid> affectedGUID;
-		Controller->GetDocument()->GetPresetCollection().GetAllAncestorPresets(SavePendingPreset.GUID, affectedGUID);
-		if (affectedGUID.Num() > 0)
-		{
-			// Use scope warning message if there is at least one affected preset
-			Controller->EditModelUserWidget->ScopeWarningWidget->BuildScopeWarning(affectedGUID);
-			return false;
-		}
-		else
-		{
-			return ConfirmSavePendingPreset();
-		}
+		return ConfirmSavePendingPreset();
 	}
 }
 
@@ -1045,6 +1074,7 @@ void UBIMDesigner::ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 Sl
 
 		if (result == EBIMResult::Success)
 		{
+			SavePresetFromNode(false, ParentID);
 			UpdateBIMDesigner();
 		}
 	}
