@@ -92,7 +92,7 @@ public:
 	float NodeVerticalSpacing = 20.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float RootNodeHorizontalPosition = 500.f;
+	float RootNodeHorizontalPosition = 100.f;
 
 	// Spacing for Add layer button under this node, if adding is allowed from its parent node
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

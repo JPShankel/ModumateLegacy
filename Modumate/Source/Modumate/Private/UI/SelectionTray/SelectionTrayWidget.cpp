@@ -102,20 +102,6 @@ void USelectionTrayWidget::OpenToolTrayForSelection()
 	// TODO: Set menu animation here
 }
 
-void USelectionTrayWidget::OpenToolTrayForSwap(EToolMode ToolMode, const FGuid& PresetToSwap)
-{
-	CloseDetailDesigner();
-
-	// Switcher switches between which widget to display, depending on child order
-	// SelectionTray is in first index, SwapTray is second, DetailDesigner is third
-	WidgetSwitcherTray->SetActiveWidgetIndex(1);
-	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	CurrentPresetToSwap = PresetToSwap;
-	SelectionTray_Block_Swap->CreatePresetListInAssembliesListForSwap(ToolMode, PresetToSwap);
-
-	// TODO: Set menu animation here
-}
-
 void USelectionTrayWidget::OpenToolTrayDetailDesigner(const FGuid& DetailPreset, const TSet<int32>& EdgeIDs)
 {
 	// Switcher switches between which widget to display, depending on child order

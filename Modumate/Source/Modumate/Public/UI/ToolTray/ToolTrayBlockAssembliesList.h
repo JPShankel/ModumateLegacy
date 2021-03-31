@@ -14,15 +14,6 @@
  *
  */
 
-UENUM(BlueprintType)
-enum class ESwapType : uint8
-{
-	SwapFromNode,
-	SwapFromAssemblyList,
-	SwapFromSelection,
-	None
-};
-
 UCLASS()
 class MODUMATE_API UToolTrayBlockAssembliesList : public UUserWidget
 {
@@ -42,8 +33,6 @@ protected:
 	class AEditModelGameState *GameState;
 
 	TArray<FGuid> AvailableBIMDesignerPresets;
-
-	ESwapType SwapType = ESwapType::None;
 	FBIMEditorNodeIDType CurrentNodeForSwap;
 	EToolMode SwapSelectionToolMode = EToolMode::VE_NONE;
 	FGuid SwapSelectionPresetID;
@@ -60,36 +49,20 @@ public:
 	class UModumateButtonUserWidget *ButtonAdd;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
-	class UModumateButtonUserWidget *ButtonCancel;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UComponentPresetListItem* ComponentPresetItem;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateEditableTextBoxUserWidget* Text_SearchBar;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
-	class UBIMBlockNCPNavigator* NCPNavigator;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
-	class UBIMBlockNCPSwitcher* NCPSwitcher;
-
 	UFUNCTION(BlueprintCallable)
 	void CreateAssembliesListForCurrentToolMode();
 
-	void CreatePresetListInNodeForSwap(const FGuid& ParentPresetID, const FGuid& PresetIDToSwap, const FBIMEditorNodeIDType& NodeID, const FBIMPresetFormElement& InFormElement);
-	void CreatePresetListForSwapFronNCP(const FBIMTagPath& InNCP);
-	void AddBIMDesignerPresetsToList();
-	void CreatePresetListInAssembliesListForSwap(EToolMode ToolMode, const FGuid& PresetID);
 	bool IsPresetAvailableForSearch(const FGuid& PresetKey);
 	void ResetSearchBox();
 	void RefreshAssembliesListView();
 
 	UFUNCTION()
 	void OnButtonAddReleased();
-
-	UFUNCTION()
-	void OnButtonCancelReleased();
 
 	UFUNCTION()
 	void OnSearchBarChanged(const FText& NewText);

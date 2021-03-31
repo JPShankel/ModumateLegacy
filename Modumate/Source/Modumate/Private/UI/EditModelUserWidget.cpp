@@ -110,8 +110,11 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 		return;
 	}
 
-	PreviousLeftMenuState = CurrentLeftMenuState;
-	CurrentLeftMenuState = NewState;
+	if (NewState != CurrentLeftMenuState)
+	{
+		PreviousLeftMenuState = CurrentLeftMenuState;
+		CurrentLeftMenuState = NewState;
+	}
 
 	bool newToolTrayVisibility = CurrentLeftMenuState == ELeftMenuState::ToolMenu;
 	bool newViewMenuVisibility = CurrentLeftMenuState == ELeftMenuState::ViewMenu;
@@ -209,7 +212,6 @@ void UEditModelUserWidget::ToggleBIMDesigner(bool Open)
 		// TODO: Replace with closing animation
 		BIMDesigner->SetVisibility(ESlateVisibility::Collapsed);
 		BIMBlockDialogBox->SetVisibility(ESlateVisibility::Collapsed);
-		ToggleBIMPresetSwapTray(false);
 		ScopeWarningWidget->DismissScopeWarning();
 	}
 }
@@ -313,20 +315,6 @@ FText UEditModelUserWidget::GetPlanUpgradeRichText()
 	static const FString upgradeURLSuffix(TEXT("workspace/plans"));
 	FString upgradeURLFull = cloudConnection->GetCloudRootURL() / upgradeURLSuffix;
 	return FText::Format(upgradeTextFormat, FText::FromString(upgradeURLFull));
-}
-
-void UEditModelUserWidget::ToggleBIMPresetSwapTray(bool NewVisibility)
-{
-	if (NewVisibility)
-	{
-		BIMPresetSwap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		ToolTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
-		SelectionTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
-	}
-	else
-	{
-		BIMPresetSwap->SetVisibility(ESlateVisibility::Collapsed);
-	}
 }
 
 void UEditModelUserWidget::ToggleTutorialMenu(bool NewVisibility)

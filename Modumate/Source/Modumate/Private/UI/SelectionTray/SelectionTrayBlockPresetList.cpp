@@ -4,10 +4,8 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "Objects/ModumateObjectInstance.h"
-#include "UI/ComponentAssemblyListItem.h"
 #include "Database/ModumateObjectEnums.h"
 #include "Components/ListView.h"
-#include "UI/ComponentListObject.h"
 #include "UI/PresetCard/PresetCardItemObject.h"
 
 

@@ -76,9 +76,6 @@ public:
 	class UAlertAccountDialogWidget* AlertFreeAccountDialogWidget;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UToolTrayBlockAssembliesList* BIMPresetSwap;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UTutorialMenuWidget* TutorialsMenuWidgetBP;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -126,7 +123,6 @@ public:
 	void UpdateViewModeIndicator(EEditViewModes NewViewMode);
 	void ShowBIMDebugger(bool NewVisible);
 	bool IsBIMDebuggerOn();
-	void ToggleBIMPresetSwapTray(bool NewVisibility);
 	void ToggleTutorialMenu(bool NewVisibility);
 	void ToggleCutPlaneMenu(bool NewVisibility);
 	void ToggleViewMenu(bool NewVisibility);

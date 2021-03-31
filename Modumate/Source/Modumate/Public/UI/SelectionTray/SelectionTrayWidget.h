@@ -38,9 +38,6 @@ public:
 	class USelectionTrayBlockPresetList *SelectionTrayBlockPresetList;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UToolTrayBlockAssembliesList *SelectionTray_Block_Swap;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UWidgetSwitcher *WidgetSwitcherTray;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -50,7 +47,6 @@ public:
 	class UDetailDesignerContainer* DetailDesigner;
 
 	void OpenToolTrayForSelection();
-	void OpenToolTrayForSwap(EToolMode ToolMode, const FGuid& PresetToSwap);
 	void OpenToolTrayDetailDesigner(const FGuid& DetailPreset, const TSet<int32>& EdgeIDs);
 	void UpdateFromSelection();
 	void StartDetailDesignerFromSelection();
