@@ -62,6 +62,7 @@ protected:
 
 	FVector InstanceStampSize;
 	float InstanceBottomOffset;
+	bool bWasShowingSnapCursor;
 };
 
 UCLASS()

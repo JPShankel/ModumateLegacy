@@ -103,6 +103,7 @@ bool UPlaneHostedObjTool::FrameUpdate()
 
 	CurDeltas.Reset();
 	FDeltaPtr previewDelta;
+	Controller->EMPlayerState->bShowSnappedCursor = GetCreateObjectMode() != EToolCreateObjectMode::Apply;
 	if (GetCreateObjectMode() == EToolCreateObjectMode::Apply)
 	{
 		// Determine whether we can apply the plane hosted object to a plane targeted by the cursor
@@ -142,8 +143,6 @@ bool UPlaneHostedObjTool::FrameUpdate()
 			previewDelta = GetObjectCreationDelta({ LastValidTargetID });
 		}
 
-		// Don't show the snap cursor if we're targeting a plane.
-		Controller->EMPlayerState->bShowSnappedCursor = (LastValidTargetID == MOD_ID_NONE);
 	}
 	else if (UpdatePreview())
 	{

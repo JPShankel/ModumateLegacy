@@ -42,6 +42,7 @@ bool UPortalToolBase::Activate()
 	Controller->DeselectAll();
 	Controller->EMPlayerState->SetHoveredObject(nullptr);
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
+	bWasShowingSnapCursor = Controller->EMPlayerState->bShowSnappedCursor;
 	Active = true;
 	return true;
 }
@@ -49,6 +50,7 @@ bool UPortalToolBase::Activate()
 bool UPortalToolBase::Deactivate()
 {
 	GameState->Document->ClearPreviewDeltas(GameState->GetWorld());
+	Controller->EMPlayerState->bShowSnappedCursor = bWasShowingSnapCursor;
 
 	Active = false;
 	return true;
@@ -64,6 +66,8 @@ bool UPortalToolBase::FrameUpdate()
 	AModumateObjectInstance *targetPlaneMOI = nullptr;
 	const auto &snapCursor = Controller->EMPlayerState->SnappedCursor;
 	FVector hitLoc = snapCursor.WorldPosition;
+
+	Controller->EMPlayerState->bShowSnappedCursor = CreateObjectMode != EToolCreateObjectMode::Apply;
 
 	CurTargetPlaneID = MOD_ID_NONE;
 
