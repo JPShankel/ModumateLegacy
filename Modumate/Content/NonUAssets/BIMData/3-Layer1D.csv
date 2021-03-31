@@ -250,10 +250,10 @@ Part_1FlexDim2Fixed_Gap2D-Width-0.5625in-Recess-0.25in-Finish1-0RawMaterial-Alum
 C1B7A20F-DC60-E547-AE85-A5DFC0860855",,Assembly_2FlexDims1Fixed_PlanarPattern,,"12x16in Metal Panels, Running Bond",,IconLength,64in,,0LayerPattern_2D-Running Bond,,,,,0LayerPattern_2D-Running Bond,Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-16in-Width-12in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Aluminum-D0C0A9,Part_1FlexDim2Fixed_Gap2D-Width-0.5625in-Recess-0.25in-Finish1-0RawMaterial-Aluminum-F2F2F2,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,6C052049-68FD-C94E-B418-80835A0A9893,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-180in-Width-36in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Zinc-013119
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-180in-Width-36in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Zinc-8F9092
 0LayerPattern_2D-Soldier Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
-6C052049-68FD-C94E-B418-80835A0A9893",,Assembly_2FlexDims1Fixed_PlanarPattern,,"36x180in Zinc Panels, Grid",,IconLength,64in,,0LayerPattern_2D-Soldier Bond,,,,,0LayerPattern_2D-Soldier Bond,Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-180in-Width-36in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Zinc-013119,Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+6C052049-68FD-C94E-B418-80835A0A9893",,Assembly_2FlexDims1Fixed_PlanarPattern,,"36x180in Zinc Panels, Grid",,IconLength,64in,,0LayerPattern_2D-Soldier Bond,,,,,0LayerPattern_2D-Soldier Bond,Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Metal-Length-180in-Width-36in-Thickness-1in-BevelWidth-0.125in-Finish1-0RawMaterial-Zinc-8F9092,Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,55F34BBF-9A73-B744-B610-49EF26889D8B,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_OSB (Oriented Strand Board)-Length-96in-Width-48in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Strands-FFFFFF
