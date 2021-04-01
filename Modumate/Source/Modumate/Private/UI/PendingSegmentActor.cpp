@@ -42,6 +42,11 @@ void APendingSegmentActor::Tick(float DeltaTime)
 
 	FVector2D projStart, projEnd, edgeDirection, offsetDirection;
 
+	if (DimensionText->Measurement->HasKeyboardFocus())
+	{
+		return;
+	}
+
 	auto controller = DimensionText->GetOwningPlayer();
 	FVector lineCenter = (PendingSegment->Point2 + PendingSegment->Point1) / 2.0f;
 

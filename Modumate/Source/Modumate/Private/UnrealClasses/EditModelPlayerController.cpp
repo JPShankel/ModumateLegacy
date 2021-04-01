@@ -1408,6 +1408,12 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	SCOPE_CYCLE_COUNTER(STAT_ModumateEditTick);
 
+	if (bResetFocusToGameViewport)
+	{
+		bResetFocusToGameViewport = false;
+		FSlateApplication::Get().SetAllUserFocusToGameViewport();
+	}
+
 	// Don't perform hitchy functions while tools or handles are in use
 	if (InteractionHandle == nullptr && !ToolIsInUse())
 	{
@@ -1484,6 +1490,15 @@ void AEditModelPlayerController::TickInput(float DeltaTime)
 		return;
 	}
 
+	// Skip input updates if the dimension widget has keyboard focus.
+	UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
+	UDimensionManager* dimensionManager = gameInstance->DimensionManager;
+	ADimensionActor* dimensionActor = dimensionManager->GetActiveActor();
+	if (dimensionActor && dimensionActor->DimensionText->Measurement->HasKeyboardFocus())
+	{
+		return;
+	}
+
 	bIsCursorAtAnyWidget = IsCursorOverWidget();
 	FSnappedCursor &cursor = EMPlayerState->SnappedCursor;
 
@@ -1529,11 +1544,6 @@ void AEditModelPlayerController::TickInput(float DeltaTime)
 	// this step is meant only to clean objects whose client side representations need updating after underlying data changes.
 	Document->CleanObjects(nullptr);
 
-	if (bResetFocusToGameViewport)
-	{
-		bResetFocusToGameViewport = false;
-		FSlateApplication::Get().SetAllUserFocusToGameViewport();
-	}
 }
 
 FVector AEditModelPlayerController::CalculateViewLocationForSphere(const FSphere &TargetSphere, const FVector &ViewVector, float AspectRatio, float FOV)
