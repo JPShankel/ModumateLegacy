@@ -55,14 +55,14 @@ bool UPasteTool::Activate()
 
 			if (PasteOrigin.IsZero())
 			{
-				PasteOrigin = pos;
+				PasteOrigin = FVector(pos);
 			}
 
 			// prefer negative X (left), positive y (towards screen), then negative z (down)
 			bool bLess = (pos.X < PasteOrigin.X) ? true : (pos.Y > PasteOrigin.Y) ? true : (pos.Z < PasteOrigin.Z);
 			if (bLess)
 			{
-				PasteOrigin = pos;
+				PasteOrigin = FVector(pos);
 			}
 		}
 	}

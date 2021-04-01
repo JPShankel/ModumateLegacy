@@ -117,9 +117,9 @@ namespace Modumate
 	{
 		// Struct 1 property comparison
 
-		FModumateTestStruct1 testStruct1A{ false, 1.0 / 2.54, {1, 2, 3, 4} };
-		FModumateTestStruct1 testStruct1B{ true, 1.0 / 2.54, {1, 0, 3, 4} };
-		FModumateTestStruct1 testStruct1C{ true, 1.0 / 2.54, {1, 2, 3, 4} };
+		FModumateTestStruct1 testStruct1A{ false, 1.0 / 2.54, FVec2d(2.54, 1.6), {1, 2, 3, 4} };
+		FModumateTestStruct1 testStruct1B{ true, 1.0 / 2.54, FVec2d(2.54, 1.6), {1, 0, 3, 4} };
+		FModumateTestStruct1 testStruct1C{ true, 1.0 / 2.54, FVec2d(2.54, 6.1), {1, 2, 3, 4} };
 
 		for (TFieldIterator<FProperty> propIter(FModumateTestStruct1::StaticStruct()); propIter; ++propIter)
 		{
@@ -146,6 +146,12 @@ namespace Modumate
 				TestFalse(TEXT("A.Integers != B.Integers"), bPropsEqualAB);
 				TestFalse(TEXT("B.Integers != C.Integers"), bPropsEqualBC);
 				TestTrue(TEXT("A.Integers == C.Integers"), bPropsEqualAC);
+			}
+			else if (propName.Equals(TEXT("Vector")))
+			{
+				TestTrue(TEXT("A.Vector == B.Vector"), bPropsEqualAB);
+				TestFalse(TEXT("B.Vector != C.Vector"), bPropsEqualBC);
+				TestFalse(TEXT("A.Vector != C.Vector"), bPropsEqualAC);
 			}
 		}
 
@@ -212,8 +218,8 @@ namespace Modumate
 	IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateUStructComparisonTest, "Modumate.Core.Serialization.UStructComparison", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::LowPriority)
 		bool FModumateUStructComparisonTest::RunTest(const FString& Parameters)
 	{
-		FModumateTestStruct1 testStruct1A{ false, 1.0 / 2.54, {1, 2, 3, 4} };
-		FModumateTestStruct1 testStruct1B{ true, 1.0 / 2.54, {1, 0, 3, 4} };
+		FModumateTestStruct1 testStruct1A{ false, 1.0 / 2.54, FVec2d(1.1, 2.2), {1, 2, 3, 4} };
+		FModumateTestStruct1 testStruct1B{ true, 1.0 / 2.54, FVec2d(1.3, 2.2), {1, 0, 3, 4} };
 
 		FModumateTestStruct2 testStruct2A;
 		testStruct2A.VectorMap.Add(FName(TEXT("Handle")), FVector(6.0f, 36.0f, 0.0f));
@@ -245,6 +251,7 @@ namespace Modumate
 		auto testObject1Original = NewObject<UModumateTestObject1>();
 		testObject1Original->InstanceData.bValue = true;
 		testObject1Original->InstanceData.Number = 1.0 / 2.54;
+		testObject1Original->InstanceData.Vector = FVec2d::One();
 		testObject1Original->InstanceData.Integers = { 1, 2, 3, 4 };
 		UModumateTestObjectBase* testObject1OriginalBase = testObject1Original;
 
@@ -277,7 +284,7 @@ namespace Modumate
 
 		// Make a "MOI" and edit some of its instance data
 		auto testObject1Original = NewObject<UModumateTestObject1>();
-		testObject1Original->InstanceData = FModumateTestStruct1{ false, 1.0 / 2.54, {1, 2, 3, 4} };
+		testObject1Original->InstanceData = FModumateTestStruct1{ false, 1.0 / 2.54, FVec2d::One(), {1, 2, 3, 4} };
 
 		// Save
 		{

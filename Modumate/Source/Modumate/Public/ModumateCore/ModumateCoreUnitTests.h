@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ModumateCore/StructDataWrapper.h"
+#include "VectorTypes.h"
 
 #include "ModumateCoreUnitTests.generated.h"
 
@@ -76,9 +77,12 @@ struct MODUMATE_API FModumateTestStruct1
 	double Number;
 
 	UPROPERTY()
+	FVec2d Vector;
+
+	UPROPERTY()
 	TArray<int32> Integers;
 
-	bool operator==(const FModumateTestStruct1& RHS) const { return (bValue == RHS.bValue) && (Number == RHS.Number) && (Integers == RHS.Integers); }
+	bool operator==(const FModumateTestStruct1& RHS) const { return (bValue == RHS.bValue) && (Number == RHS.Number) && (Vector == RHS.Vector) && (Integers == RHS.Integers); }
 	bool operator!=(const FModumateTestStruct1& RHS) const { return !(*this == RHS); }
 };
 

@@ -1492,7 +1492,7 @@ namespace Modumate
 
 		for (auto &kvp : InGraph3DRecord->Vertices)
 		{
-			AddVertex(kvp.Value.Position, kvp.Key, TSet<int32>());
+			AddVertex(FVector(kvp.Value.Position), kvp.Key, TSet<int32>());
 		}
 
 		for (auto &kvp : InGraph3DRecord->Edges)
@@ -1594,7 +1594,7 @@ namespace Modumate
 		for (auto& kvp : InGraph3DRecord->Vertices)
 		{
 			int32 outVertexID;
-			GetDeltaForVertexAddition(kvp.Value.Position + InOffset, vertexDelta, NextID, outVertexID);
+			GetDeltaForVertexAddition(FVector(kvp.Value.Position) + InOffset, vertexDelta, NextID, outVertexID);
 			OutCopiedToPastedIDs.Add(kvp.Key, { outVertexID });
 		}
 		ApplyDelta(vertexDelta);

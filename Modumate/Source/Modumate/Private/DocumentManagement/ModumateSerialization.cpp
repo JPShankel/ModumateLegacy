@@ -4,7 +4,7 @@
 
 FGraph3DVertexRecordV1::FGraph3DVertexRecordV1()
 	: ID(MOD_ID_NONE)
-	, Position(ForceInitToZero)
+	, Position()
 { }
 
 FGraph3DVertexRecordV1::FGraph3DVertexRecordV1(int32 InID, const FVector& InPosition)

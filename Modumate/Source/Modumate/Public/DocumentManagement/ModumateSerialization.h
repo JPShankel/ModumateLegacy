@@ -11,6 +11,7 @@
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
+#include "VectorTypes.h"
 
 #include "ModumateSerialization.generated.h"
 
@@ -95,7 +96,7 @@ struct FGraph3DVertexRecordV1
 	int32 ID;
 
 	UPROPERTY()
-	FVector Position;
+	FVec3d Position;
 
 	// Currently, vertices to not take advantage of group ids
 	// if that changes, the data record will need a property for them here
