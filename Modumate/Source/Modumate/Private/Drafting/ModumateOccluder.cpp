@@ -2,14 +2,14 @@
 
 #include "Drafting/ModumateOccluder.h"
 
-FModumateOccluder::FModumateOccluder(const FVector3d& A, const FVector3d& B, const FVector3d& C)
+FModumateOccluder::FModumateOccluder(const FVec3d& A, const FVec3d& B, const FVec3d& C)
 {
 	Vertices[0] = A;
 	Vertices[1] = B;
 	Vertices[2] = C;
 
-	FVector2d u((double*)(B - A));
-	FVector2d v((double*)(C - A));
+	FVec2d u((double*)(B - A));
+	FVec2d v((double*)(C - A));
 	double d = u.Cross(v);
 	if (d < 0.0)
 	{	// Ensure right handed
@@ -29,25 +29,25 @@ FModumateOccluder::FModumateOccluder(const FVector3d& A, const FVector3d& B, con
 	MinZ = FMath::Min3(Vertices[0].Z, Vertices[1].Z, Vertices[2].Z) - boxExpansion;
 }
 
-double FModumateOccluder::DepthAtPoint(FVector2d Point) const
+double FModumateOccluder::DepthAtPoint(FVec2d Point) const
 {
-	FVector2d alphaBeta = BarycentricMx * (Point - FVector2d((const double*)(Vertices[0])) );
+	FVec2d alphaBeta = BarycentricMx * (Point - FVec2d((const double*)(Vertices[0])) );
 	return (1.0 - alphaBeta.X - alphaBeta.Y) * Vertices[0].Z + alphaBeta.X * Vertices[1].Z + alphaBeta.Y * Vertices[2].Z;
 }
 
-double FModumateOccluder::DepthAtPoint(FVector3d Point) const
+double FModumateOccluder::DepthAtPoint(FVec3d Point) const
 {
-	return DepthAtPoint(FVector2d((double*) Point));
+	return DepthAtPoint(FVec2d((double*) Point));
 }
 
-bool FModumateOccluder::IsWithinTriangle(FVector2d Point) const
+bool FModumateOccluder::IsWithinTriangle(FVec2d Point) const
 {
-	FVector2d alphaBeta = BarycentricMx * (Point - FVector2d((const double*)(Vertices[0])));
+	FVec2d alphaBeta = BarycentricMx * (Point - FVec2d((const double*)(Vertices[0])));
 	return FMath::IsWithin(alphaBeta.X, 0.0, 1.0) && FMath::IsWithin(alphaBeta.Y, 0.0, 1.0)
 		&& alphaBeta.X + alphaBeta.Y < 1.0;
 }
 
-bool FModumateOccluder::IsWithinTriangle(FVector3d Point) const
+bool FModumateOccluder::IsWithinTriangle(FVec3d Point) const
 {
-	return IsWithinTriangle(FVector2d((double*)Point));
+	return IsWithinTriangle(FVec2d((double*)Point));
 }

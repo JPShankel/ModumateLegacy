@@ -32,8 +32,8 @@ namespace Modumate
 		bool IsPointInFront(FVector Point) const;
 		void BuildAccelerationStructure();
 		void AddLayeredCutPlaneTriangles(const TArray<FLayerGeomDef>& LayerGeoms, const FTransform& LocalToWorld);
-		FVector3d Position;
-		FVector3d Normal;
+		FVec3d Position;
+		FVec3d Normal;
 		FMatrix TransformMatrix;
 		float Scale;
 

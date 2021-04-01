@@ -28,9 +28,6 @@ DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Drafting Clip Kernel"), STAT_Modum
 
 namespace Modumate
 {
-	using Vec2 = FVector2D;
-	using DVec2 = FVector2d;  // Double
-
 	static constexpr double triangleEpsilon = 0.1;  // Push triangles back slightly.
 	static constexpr double minTriangleArea = 0.02;  // Cull degenerate triangles.
 	static constexpr double minOccluderAreaForCulling = 10.0;  // Don't bother with smaller than this triangles
@@ -279,7 +276,7 @@ namespace Modumate
 	namespace
 	{
 		// Solve a.v1 + b.v2 = v3.
-		DVec2 Intersect2V(const DVec2& v1, const DVec2& v2, const DVec2& v3)
+		FVec2d Intersect2V(const FVec2d& v1, const FVec2d& v2, const FVec2d& v3)
 		{
 			double d = v1.Cross(v2);
 			if (d == 0)
@@ -291,8 +288,8 @@ namespace Modumate
 
 		inline bool LineBoxIntersection(const FModumateViewLineSegment& Line, const FBox2D& Box)
 		{
-			Vec2 startPoint(DVec2((const double*)Line.Start ));
-			Vec2 endPoint(DVec2((const double*)Line.End ));
+			FVector2D startPoint(FVec2d((const double*)Line.Start ));
+			FVector2D endPoint(FVec2d((const double*)Line.End ));
 			return UModumateFunctionLibrary::LineBoxIntersection(Box, startPoint, endPoint);
 		}
 	}
@@ -433,12 +430,12 @@ namespace Modumate
 			SCOPE_MS_ACCUMULATOR(STAT_ModumateDraftClipKernel);
 			++numberClipKernels;
 
-			DVec2 a((double*)(viewLine.Start));
+			FVec2d a((double*)(viewLine.Start));
 			FVector3d delta3d(viewLine.End - viewLine.Start);
-			DVec2 dir(delta3d.X, delta3d.Y);
-			DVec2 q((const double*)occluder.Vertices[0]);
-			DVec2 u(DVec2((const double*)occluder.Vertices[1]) - q);
-			DVec2 v(DVec2((const double*)occluder.Vertices[2]) - q);
+			FVec2d dir(delta3d.X, delta3d.Y);
+			FVec2d q((const double*)occluder.Vertices[0]);
+			FVec2d u(FVec2d((const double*)occluder.Vertices[1]) - q);
+			FVec2d v(FVec2d((const double*)occluder.Vertices[2]) - q);
 			// Epsilon for eroding clipped line away in view-space:
 			FVector3d vecEps(dir.Normalized() * (LineClipEpsilon * Scale));
 			vecEps.Z = vecEps.Length() / dir.Length() * delta3d.Z;
@@ -447,9 +444,9 @@ namespace Modumate
 			FVector3d depthVectorOffset = delta3d.Normalized() * triangleEpsilon * 4.0;
 
 			// Intersect line with all triangle sides.
-			DVec2 t1Alpha = Intersect2V(dir, -u, q - a);
-			DVec2 t2Beta = Intersect2V(dir, -v, q - a);
-			DVec2 t3Gamma = Intersect2V(dir, u - v, DVec2((const double*)occluder.Vertices[1]) - a);
+			FVec2d t1Alpha = Intersect2V(dir, -u, q - a);
+			FVec2d t2Beta = Intersect2V(dir, -v, q - a);
+			FVec2d t3Gamma = Intersect2V(dir, u - v, FVec2d((const double*)occluder.Vertices[1]) - a);
 
 			double t1 = t1Alpha.X;
 			double t2 = t2Beta.X;
@@ -463,7 +460,7 @@ namespace Modumate
 
 			if (!bIntersectU && !bIntersectV && !bIntersectW)
 			{   // No line-segment/triangle intersections.
-				DVec2 midPoint(a + 0.5 * dir);
+				FVec2d midPoint(a + 0.5 * dir);
 
 				if (occluder.IsWithinTriangle(midPoint))
 				{
@@ -543,7 +540,7 @@ namespace Modumate
 			else if (bIntersectW)
 			{
 				FVector3d intersect = viewLine.Start + t3 * viewLine.AsVector();
-				if ((a - DVec2((const double*)occluder.Vertices[1])).Cross(v - u) > 0.0)
+				if ((a - FVec2d((const double*)occluder.Vertices[1])).Cross(v - u) > 0.0)
 				{
 					FVector3d intersectForDepth = intersect + depthVectorOffset;
 					double triangleZ = occluder.DepthAtPoint(intersectForDepth);
@@ -614,13 +611,13 @@ namespace Modumate
 		if (NodeDepth < MaxTreeDepth)
 		{
 			const FBox2D& occluderBB = NewOccluder->BoundingBox;
-			const Vec2 centre = NodeBox.GetCenter();
+			const FVector2D centre = NodeBox.GetCenter();
 
 			const FBox2D childBoxes[4] =
 			{
 				{NodeBox.Min, centre},
-				{Vec2(centre.X, NodeBox.Min.Y), Vec2(NodeBox.Max.X, centre.Y)},
-				{Vec2(NodeBox.Min.X, centre.Y), Vec2(centre.X, NodeBox.Max.Y)},
+				{FVector2D(centre.X, NodeBox.Min.Y), FVector2D(NodeBox.Max.X, centre.Y)},
+				{FVector2D(NodeBox.Min.X, centre.Y), FVector2D(centre.X, NodeBox.Max.Y)},
 				{centre, NodeBox.Max}
 			};
 
