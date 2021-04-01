@@ -10,6 +10,9 @@ void UModumateSlateHelper::DrawSplineBP(const FPaintContext& context, const TArr
 	{
 		return;
 	}
+
+	context.OutDrawElements.PushClip(FSlateClippingZone(context.AllottedGeometry));
+
 	FSlateDrawElement::MakeSpline(
 		context.OutDrawElements,
 		context.MaxLayer,
@@ -19,6 +22,8 @@ void UModumateSlateHelper::DrawSplineBP(const FPaintContext& context, const TArr
 		points[2], //end
 		points[3], //endDir
 		thickness, ESlateDrawEffect::None, color);
+
+	context.OutDrawElements.PopClip();
 }
 
 void UModumateSlateHelper::DrawCubicBezierSplineBP(const FPaintContext& context, const TArray<FVector2D>& points, const FLinearColor& color, float thickness)
@@ -27,6 +32,9 @@ void UModumateSlateHelper::DrawCubicBezierSplineBP(const FPaintContext& context,
 	{
 		return;
 	}
+
+	context.OutDrawElements.PushClip(FSlateClippingZone(context.AllottedGeometry));
+
 	FSlateDrawElement::MakeCubicBezierSpline(
 		context.OutDrawElements,
 		context.MaxLayer,
@@ -36,4 +44,6 @@ void UModumateSlateHelper::DrawCubicBezierSplineBP(const FPaintContext& context,
 		points[2],
 		points[3],
 		thickness, ESlateDrawEffect::None, color);
+
+	context.OutDrawElements.PopClip();
 }
