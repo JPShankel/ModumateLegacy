@@ -11,8 +11,7 @@ int32 FBIMPresetEditorNode::InstanceCount = 0;
 
 FBIMPresetEditorNode::FBIMPresetEditorNode(const FBIMEditorNodeIDType& InInstanceID, int32 InPinSetIndex, int32 InPinSetPosition,const FBIMPresetInstance& InPreset) :
 	InstanceID(InInstanceID),
-	OriginalPresetCopy(InPreset),
-	WorkingPresetCopy(InPreset),
+	Preset(InPreset),
 	MyParentPinSetIndex(InPinSetIndex),
 	MyParentPinSetPosition(InPinSetPosition)
 {
@@ -30,7 +29,7 @@ FBIMEditorNodeIDType FBIMPresetEditorNode::GetInstanceID() const
 
 EBIMResult FBIMPresetEditorNode::GetPartSlots(TArray<FBIMPresetPartSlot>& OutPartSlots) const
 {
-	OutPartSlots = WorkingPresetCopy.PartSlots;
+	OutPartSlots = Preset.PartSlots;
 	return EBIMResult::Success;
 }
 
@@ -59,19 +58,9 @@ EBIMResult FBIMPresetEditorNode::GatherAllChildNodes(TArray<FBIMPresetEditorNode
 	return EBIMResult::Success;
 }
 
-// The preset on a crafting node is 'dirty' if the node's properties or input pins is inconsistent with the values in its preset
-EBIMPresetEditorNodeStatus FBIMPresetEditorNode::GetPresetStatus() const
-{
-	if (OriginalPresetCopy == WorkingPresetCopy)
-	{
-		return EBIMPresetEditorNodeStatus::UpToDate;
-	}
-	return EBIMPresetEditorNodeStatus::Dirty;
-}
-
 int32 FBIMPresetEditorNode::GetNumChildrenOnPin(int32 InPin) const
 {
-	return Algo::Accumulate(WorkingPresetCopy.ChildPresets, 0, [InPin](int32 Sum, const FBIMPresetPinAttachment& Pin)
+	return Algo::Accumulate(Preset.ChildPresets, 0, [InPin](int32 Sum, const FBIMPresetPinAttachment& Pin)
 	{
 		if (Pin.ParentPinSetIndex == InPin)
 		{
@@ -88,9 +77,9 @@ bool FBIMPresetEditorNode::CanRemoveChild(const FBIMPresetEditorNodeSharedPtrCon
 		return false;
 	}
 
-	if (ensureAlways(Child->MyParentPinSetIndex != INDEX_NONE && Child->MyParentPinSetIndex < WorkingPresetCopy.TypeDefinition.PinSets.Num()))
+	if (ensureAlways(Child->MyParentPinSetIndex != INDEX_NONE && Child->MyParentPinSetIndex < Preset.TypeDefinition.PinSets.Num()))
 	{
-		return GetNumChildrenOnPin(Child->MyParentPinSetIndex) > WorkingPresetCopy.TypeDefinition.PinSets[Child->MyParentPinSetIndex].MinCount;
+		return GetNumChildrenOnPin(Child->MyParentPinSetIndex) > Preset.TypeDefinition.PinSets[Child->MyParentPinSetIndex].MinCount;
 	}
 
 	return false;
@@ -128,9 +117,9 @@ EBIMResult FBIMPresetEditorNode::FindChild(const FBIMEditorNodeIDType& ChildID, 
 		return EBIMResult::Error;
 	}
 
-	for (auto& checkChild : WorkingPresetCopy.ChildPresets)
+	for (auto& checkChild : Preset.ChildPresets)
 	{
-		if (checkChild.PresetGUID == foundChildNode->WorkingPresetCopy.GUID)
+		if (checkChild.PresetGUID == foundChildNode->Preset.GUID)
 		{
 			OutPinSetIndex = checkChild.ParentPinSetIndex;
 			OutPinSetPosition = checkChild.ParentPinSetPosition;
@@ -219,7 +208,7 @@ EBIMResult FBIMPresetEditorNode::DetachSelfFromParent()
 		if (childToRemove.IsValid())
 		{
 			pinnedParent->ChildNodes.Remove(childToRemove);
-			pinnedParent->WorkingPresetCopy.RemoveChildPreset(MyParentPinSetIndex, MyParentPinSetPosition);
+			pinnedParent->Preset.RemoveChildPreset(MyParentPinSetIndex, MyParentPinSetPosition);
 		}
 		else
 		{
@@ -234,7 +223,7 @@ EBIMResult FBIMPresetEditorNode::DetachSelfFromParent()
 			if (childToRemove.IsValid())
 			{
 				pinnedParent->PartNodes.Remove(childToRemove);
-				pinnedParent->WorkingPresetCopy.SetPartPreset(childToRemove.Pin()->MyParentPartSlot, FGuid());
+				pinnedParent->Preset.SetPartPreset(childToRemove.Pin()->MyParentPartSlot, FGuid());
 			}
 		}
 
@@ -251,13 +240,13 @@ EBIMResult FBIMPresetEditorNode::AddChildPreset(const FBIMPresetEditorNodeShared
 	ChildNodes.Last().Pin()->MyParentPinSetIndex = PinSetIndex;
 	ChildNodes.Last().Pin()->MyParentPinSetPosition = PinSetPosition;
 	ChildNodes.Last().Pin()->ParentInstance = AsShared();
-	WorkingPresetCopy.AddChildPreset(Child->WorkingPresetCopy.GUID, PinSetIndex, PinSetPosition);
+	Preset.AddChildPreset(Child->Preset.GUID, PinSetIndex, PinSetPosition);
 	return SortChildren();
 }
 
 EBIMResult FBIMPresetEditorNode::SortChildren()
 {
-	WorkingPresetCopy.SortChildPresets();
+	Preset.SortChildPresets();
 
 	ChildNodes.Sort([](const FBIMPresetEditorNodeWeakPtr& LHS, const FBIMPresetEditorNodeWeakPtr& RHS)
 	{
@@ -285,7 +274,7 @@ EBIMResult FBIMPresetEditorNode::SortChildren()
 
 	PartNodes.Empty();
 
-	for (auto& presetPart : WorkingPresetCopy.PartSlots)
+	for (auto& presetPart : Preset.PartSlots)
 	{
 		auto* slotNode = slotMap.Find(presetPart.SlotPresetGUID);
 		// Will be null for empty slots
@@ -305,7 +294,7 @@ EBIMResult FBIMPresetEditorNode::SortChildren()
 	}
 #endif
 
-	return ensureAlways(ChildNodes.Num() == WorkingPresetCopy.ChildPresets.Num()) ? EBIMResult::Success : EBIMResult::Error;
+	return ensureAlways(ChildNodes.Num() == Preset.ChildPresets.Num()) ? EBIMResult::Success : EBIMResult::Error;
 }
 
 EBIMResult FBIMPresetEditorNode::UpdateAddButtons()
@@ -316,14 +305,14 @@ EBIMResult FBIMPresetEditorNode::UpdateAddButtons()
 		{
 			ChildNodes[i].Pin()->bWantAddButton = false;
 		}
-		ChildNodes.Last().Pin()->bWantAddButton = WorkingPresetCopy.HasOpenPin();
+		ChildNodes.Last().Pin()->bWantAddButton = Preset.HasOpenPin();
 	}
 	return EBIMResult::Success;
 }
 
 bool FBIMPresetEditorNode::ValidateNode() const
 {
-	if (WorkingPresetCopy.ChildPresets.Num() != ChildNodes.Num())
+	if (Preset.ChildPresets.Num() != ChildNodes.Num())
 	{
 		return false;
 	}
@@ -338,8 +327,8 @@ bool FBIMPresetEditorNode::ValidateNode() const
 	{
 		// Child nodes should mirror child presets in the working copy
 		FBIMPresetEditorNodeSharedPtr childPtr = ChildNodes[i].Pin();
-		if (childPtr->MyParentPinSetIndex != WorkingPresetCopy.ChildPresets[i].ParentPinSetIndex ||
-			childPtr->MyParentPinSetPosition != WorkingPresetCopy.ChildPresets[i].ParentPinSetPosition)
+		if (childPtr->MyParentPinSetIndex != Preset.ChildPresets[i].ParentPinSetIndex ||
+			childPtr->MyParentPinSetPosition != Preset.ChildPresets[i].ParentPinSetPosition)
 		{
 			return false;
 		}
@@ -360,7 +349,7 @@ bool FBIMPresetEditorNode::ValidateNode() const
 
 		previousPtr = childPtr;
 	}
-	return WorkingPresetCopy.ValidatePreset();
+	return Preset.ValidatePreset();
 }
 
 /*
@@ -371,7 +360,7 @@ bool FBIMPresetEditorNode::ValidateNode() const
 */
 EBIMResult FBIMPresetEditorNode::GetPresetForm(FBIMPresetForm& OutForm) const
 {
-	if (WorkingPresetCopy.GetForm(OutForm) == EBIMResult::Success)
+	if (Preset.GetForm(OutForm) == EBIMResult::Success)
 	{
 		// VisibleNamedDimensions determined by layout walk
 		for (auto& namedDim : VisibleNamedDimensions)
@@ -384,7 +373,7 @@ EBIMResult FBIMPresetEditorNode::GetPresetForm(FBIMPresetForm& OutForm) const
 			}
 		}
 
-		return WorkingPresetCopy.UpdateFormElements(OutForm);
+		return Preset.UpdateFormElements(OutForm);
 	}
 
 	return EBIMResult::Error;

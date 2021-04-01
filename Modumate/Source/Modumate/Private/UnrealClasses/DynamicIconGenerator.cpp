@@ -273,7 +273,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMPresetCollection
 				}
 
 				// Make a copy of the parent node's preset and swap in the candidate part
-				FBIMPresetInstance parentPreset = parentNode->WorkingPresetCopy;
+				FBIMPresetInstance parentPreset = parentNode->Preset;
 				bCaptureSuccess = false;
 				for (auto& slot : parentPreset.PartSlots)
 				{
@@ -926,17 +926,17 @@ bool ADynamicIconGenerator::SetIconMeshForPart(const FBIMPresetCollectionProxy& 
 	else
 	{
 		const FBIMPresetEditorNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
-		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
-		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
+		inst->Preset.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
+		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
 		// Get mesh key from child node
 		TArray<FBIMPresetEditorNodeSharedPtr> childrenNodes;
 		inst->GatherAllChildNodes(childrenNodes);
 		for (const auto& child : childrenNodes)
 		{
-			const FBIMPresetInstance* preset = PresetCollection.PresetFromGUID(child->WorkingPresetCopy.GUID);
+			const FBIMPresetInstance* preset = PresetCollection.PresetFromGUID(child->Preset.GUID);
 			if (preset->NodeScope == EBIMValueScope::Mesh)
 			{
-				meshKey = child->WorkingPresetCopy.GUID;
+				meshKey = child->Preset.GUID;
 			}
 		}
 	}
@@ -1000,8 +1000,8 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(const FBIMPresetCollectionPro
 	else
 	{
 		const FBIMPresetEditorNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
-		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
-		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
+		inst->Preset.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
+		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
 	}
 
 	// Step 3: Get assets from key
@@ -1054,12 +1054,12 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 	else
 	{
 		const FBIMPresetEditorNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
-		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
-		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
-		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, width);
-		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, length);
-		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, depth);
-		inst->WorkingPresetCopy.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, height);
+		inst->Preset.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
+		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
+		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, width);
+		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, length);
+		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, depth);
+		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, height);
 	}
 
 	// Step 3: Get assets from key, and size from dimension

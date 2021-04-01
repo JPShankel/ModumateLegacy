@@ -24,7 +24,6 @@
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UI/Debugger/BIMDebugger.h"
 #include "UI/TutorialMenu/TutorialMenuWidget.h"
-#include "UI/BIM/BIMScopeWarning.h"
 #include "UI/LeftMenu/BrowserMenuWidget.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/LeftMenu/SwapMenuWidget.h"
@@ -212,7 +211,6 @@ void UEditModelUserWidget::ToggleBIMDesigner(bool Open)
 		// TODO: Replace with closing animation
 		BIMDesigner->SetVisibility(ESlateVisibility::Collapsed);
 		BIMBlockDialogBox->SetVisibility(ESlateVisibility::Collapsed);
-		ScopeWarningWidget->DismissScopeWarning();
 	}
 }
 

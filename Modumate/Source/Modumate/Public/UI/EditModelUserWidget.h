@@ -79,9 +79,6 @@ public:
 	class UTutorialMenuWidget* TutorialsMenuWidgetBP;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UBIMScopeWarning* ScopeWarningWidget;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UTutorialWalkthroughMenu* TutorialWalkthroughMenuBP;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))

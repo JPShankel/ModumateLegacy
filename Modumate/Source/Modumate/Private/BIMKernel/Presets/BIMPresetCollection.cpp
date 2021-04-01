@@ -669,6 +669,7 @@ TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeUpdateDelta(const FBIMPres
 	TSharedPtr<FBIMPresetDelta> presetDelta = MakeShared<FBIMPresetDelta>();
 
 	presetDelta->NewState = UpdatedPreset;
+	presetDelta->NewState.Edited = true;
 	const FBIMPresetInstance* oldPreset = PresetsByGUID.Find(UpdatedPreset.GUID);
 	if (oldPreset != nullptr)
 	{

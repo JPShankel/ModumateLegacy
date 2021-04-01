@@ -62,10 +62,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
 	float SlotNodeWidthCollapsed = 432.f;
 
-	// Size of the tab on top of the node during dirty state
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
-	float DirtyTabSize = 100.f;
-
 	// Size of the node during collapse state
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EstimateSize")
 	float CollapsedNodeSize = 120.f;
@@ -124,12 +120,6 @@ public:
 	class UVerticalBox* VerticalBoxProperties;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UBIMBlockNodeDirtyTab* BIMBlockNodeDirty;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UBorder* DirtyStateBorder;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UWidgetSwitcher* NodeSwitcher;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
@@ -161,7 +151,6 @@ public:
 	FBIMEditorNodeIDType ParentID;
 
 	bool IsRootNode = false;
-	bool NodeDirty = false;
 	bool NodeCollapse = true;
 	bool bNodeHasSlotPart = false;
 	bool bNodeHighlight = false;
@@ -178,18 +167,8 @@ public:
 	void OnButtonDeleteReleased();
 
 	UFUNCTION()
-	void OnButtonDirtySave();
-
-	UFUNCTION()
-	void OnButtonDirtyAddNew();
-
-	UFUNCTION()
-	void OnButtonDirtyCancel();
-
-	UFUNCTION()
 	void OnButtonConnectorReleased();
 
-	void UpdateNodeDirty(bool NewDirty);
 	void UpdateNodeCollapse(bool NewCollapse);
 	void UpdateNodeHidden(bool NewHide);
 	bool BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPresetEditorNodeSharedPtr &Node, bool bAsSlot);

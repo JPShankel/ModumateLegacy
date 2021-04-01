@@ -5,14 +5,6 @@
 #include "CoreMinimal.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 
-UENUM()
-enum class EBIMPresetEditorNodeStatus : uint8
-{
-	None = 0,
-	UpToDate,
-	Dirty,
-	Pending
-};
 
 class FBIMPresetEditorNode;
 
@@ -58,9 +50,9 @@ public:
 	};
 
 	FBIMPresetEditorNodeWeakPtr ParentInstance;
-	FText CategoryTitle = FText::FromString(TEXT("Unknown Category"));
+	FText CategoryTitle;
 
-	FBIMPresetInstance OriginalPresetCopy, WorkingPresetCopy;
+	FBIMPresetInstance Preset;
 	int32 MyParentPinSetIndex = INDEX_NONE;
 	int32 MyParentPinSetPosition = INDEX_NONE;
 	TArray<FBIMPresetEditorNodeWeakPtr> ChildNodes;
@@ -74,8 +66,6 @@ public:
 	EBIMResult GetPresetForm(FBIMPresetForm& OutForm) const;
 
 	FBIMEditorNodeIDType GetInstanceID() const;
-
-	EBIMPresetEditorNodeStatus GetPresetStatus() const;
 
 	bool CanRemoveChild(const FBIMPresetEditorNodeSharedPtrConst& Child) const;
 	bool CanReorderChild(const FBIMPresetEditorNodeSharedPtrConst& Child) const;

@@ -25,7 +25,6 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "UI/BIM/BIMEditColorPicker.h"
 #include "Online/ModumateAnalyticsStatics.h"
-#include "UI/BIM/BIMScopeWarning.h"
 #include "UI/SelectionTray/SelectionTrayWidget.h"
 
 
@@ -318,7 +317,7 @@ bool UBIMDesigner::SetPresetForNodeInBIMDesigner(const FBIMEditorNodeIDType& Ins
 	FBIMEditorNodeIDType parentID = GetNodeParentID(InstanceID);
 	if (!parentID.IsNone())
 	{
-		SavePresetFromNode(false, parentID);
+		SavePresetFromNode(parentID);
 	}
 	UpdateBIMDesigner();
 	return true;
@@ -344,7 +343,6 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 
 	// Should clear any editing menu
 	ToggleColorPickerVisibility(false);
-	Controller->EditModelUserWidget->ScopeWarningWidget->DismissScopeWarning();
 
 	// Remove and release old nodes
 	for (auto& curNodeWidget : BIMBlockNodes)
@@ -449,7 +447,7 @@ void UBIMDesigner::AutoArrangeNodes()
 					NodesWithAddLayerButton.Add(nodeWithAddButton, newAddButton);
 
 					newAddButton->ParentID = curInstance->ParentInstance.Pin()->GetInstanceID();
-					newAddButton->PresetID = curInstance->WorkingPresetCopy.GUID;
+					newAddButton->PresetID = curInstance->Preset.GUID;
 					newAddButton->ParentSetIndex = curInstance->MyParentPinSetIndex;
 
 					CanvasPanelForNodes->AddChildToCanvas(newAddButton);
@@ -718,10 +716,6 @@ void UBIMDesigner::DrawConnectSplineForNodes(const FPaintContext& context, class
 		if (slotListItem)
 		{
 			float slotOffset = SlotListStartOffset;
-			if (StartNode->NodeDirty)
-			{
-				slotOffset += SlotListDirtyTabSize;
-			}
 			startNodePos.Y = canvasSlotStart->GetPosition().Y + slotOffset + (slotListItem->SlotIndex * SlotListItemHeight);
 		}
 	}
@@ -792,7 +786,7 @@ FGuid UBIMDesigner::GetPresetID(const FBIMEditorNodeIDType& InstanceID)
 	FBIMPresetEditorNodeSharedPtr instPtr = InstancePool.InstanceFromID(InstanceID);
 	if (ensureAlways(instPtr.IsValid()))
 	{
-		return instPtr->WorkingPresetCopy.GUID;
+		return instPtr->Preset.GUID;
 	}
 	return FGuid();
 }
@@ -800,7 +794,6 @@ FGuid UBIMDesigner::GetPresetID(const FBIMEditorNodeIDType& InstanceID)
 bool UBIMDesigner::DeleteNode(const FBIMEditorNodeIDType& InstanceID)
 {
 	FBIMEditorNodeIDType parentID = GetNodeParentID(InstanceID);
-
 	TArray<FBIMEditorNodeIDType> outDestroyed;
 	EBIMResult result = InstancePool.DestroyNodeInstance(InstanceID, outDestroyed);
 	if (result != EBIMResult::Success)
@@ -810,7 +803,7 @@ bool UBIMDesigner::DeleteNode(const FBIMEditorNodeIDType& InstanceID)
 	UpdateCraftingAssembly();
 	if (!parentID.IsNone())
 	{
-		SavePresetFromNode(false, parentID);
+		SavePresetFromNode(parentID);
 	}
 	UpdateBIMDesigner();
 	SetNodeAsSelected(RootNode->ID);
@@ -827,7 +820,7 @@ bool UBIMDesigner::AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const
 	{
 		return false;
 	}
-	SavePresetFromNode(false, ParentID);
+	SavePresetFromNode(ParentID);
 	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
 	return true;
@@ -843,20 +836,20 @@ bool UBIMDesigner::ApplyBIMFormElement(const FBIMEditorNodeIDType& NodeID, const
 
 	// TODO: return delta added to undo/redo stack
 	FBIMPresetEditorDelta delta;
-	if (ensureAlways(instPtr->WorkingPresetCopy.MakeDeltaForFormElement(FormElement, delta) == EBIMResult::Success))
+	if (ensureAlways(instPtr->Preset.MakeDeltaForFormElement(FormElement, delta) == EBIMResult::Success))
 	{
-		instPtr->WorkingPresetCopy.ApplyDelta(*GetWorld()->GetAuthGameMode<AEditModelGameMode>()->ObjectDatabase,delta);
+		instPtr->Preset.ApplyDelta(*GetWorld()->GetAuthGameMode<AEditModelGameMode>()->ObjectDatabase,delta);
 
 		// If this preset is used elsewhere in the graph, update all copies to match this edit
 		for (auto& other : InstancePool.GetInstancePool())
 		{
-			if (other != instPtr && other->WorkingPresetCopy.GUID == instPtr->WorkingPresetCopy.GUID)
+			if (other != instPtr && other->Preset.GUID == instPtr->Preset.GUID)
 			{
-				other->WorkingPresetCopy = instPtr->WorkingPresetCopy;
+				other->Preset = instPtr->Preset;
 			}
 		}
 	}
-	SavePresetFromNode(false, NodeID);
+	SavePresetFromNode(NodeID);
 	UpdateCraftingAssembly();
 	UpdateBIMDesigner();
 
@@ -938,7 +931,7 @@ bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition
 			FBIMEditorNodeIDType parentID = GetNodeParentID(NodeID);
 			if (!parentID.IsNone())
 			{
-				SavePresetFromNode(false, parentID);
+				SavePresetFromNode(parentID);
 			}
 
 			UpdateBIMDesigner();
@@ -949,7 +942,7 @@ bool UBIMDesigner::GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition
 	return false;
 }
 
-bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& InstanceID)
+bool UBIMDesigner::SavePresetFromNode(const FBIMEditorNodeIDType& InstanceID)
 {
 	FBIMPresetEditorNodeSharedPtr node = InstancePool.InstanceFromID(InstanceID);
 	if (!ensureAlways(node.IsValid()))
@@ -959,77 +952,15 @@ bool UBIMDesigner::SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& I
 
 	// Update its DisplayName from property
 	FText presetDisplayName;
-	if (node->WorkingPresetCopy.TryGetProperty(BIMPropertyNames::Name, presetDisplayName))
+	if (node->Preset.TryGetProperty(BIMPropertyNames::Name, presetDisplayName))
 	{
-		node->WorkingPresetCopy.DisplayName = presetDisplayName;
+		node->Preset.DisplayName = presetDisplayName;
 	}
 
-	SavePendingPreset = node->WorkingPresetCopy;
-
-	SavePendingPreset.Edited = true;
-
-	if (SaveAs)
-	{
-		// Creating new preset, do not check for affected presets
-		SavePendingPreset.GUID.Invalidate();
-		TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeCreateNewDelta(SavePendingPreset, this);
-		Controller->GetDocument()->ApplyDeltas({presetDelta},GetWorld());
-
-		if (!node->ParentInstance.IsValid())
-		{
-			CraftingAssembly.PresetGUID = SavePendingPreset.GUID;
-		}
-		else
-		{
-			FBIMPresetEditorNodeSharedPtr parent = node->ParentInstance.Pin();
-
-			if (node->MyParentPartSlot.IsValid())
-			{
-				TArray<FBIMPresetPartSlot> partSlots;
-				parent->GetPartSlots(partSlots);
-
-				for (int32 i = 0; i < partSlots.Num(); ++i)
-				{
-					if (partSlots[i].SlotPresetGUID == node->MyParentPartSlot)
-					{
-						InstancePool.SetPartPreset(parent->GetInstanceID(),i, SavePendingPreset.GUID);
-					}
-				}
-			}
-			else
-			{
-				InstancePool.SetNewPresetForNode(node->GetInstanceID(), SavePendingPreset.GUID);
-			}
-		}
-		node->WorkingPresetCopy = SavePendingPreset;
-		node->OriginalPresetCopy = node->WorkingPresetCopy;
-
-		SelectedNodeID = InstanceID;
-		UpdateBIMDesigner();
-		return true;
-	}
-	else
-	{
-		// Check if there are presets being affected by this change
-		SavePendingInstanceID = InstanceID;
-		return ConfirmSavePendingPreset();
-	}
-}
-
-bool UBIMDesigner::ConfirmSavePendingPreset()
-{
-	TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeUpdateDelta(SavePendingPreset, this);
+	TSharedPtr<FBIMPresetDelta> presetDelta = Controller->GetDocument()->GetPresetCollection().MakeUpdateDelta(node->Preset, this);
 	Controller->GetDocument()->ApplyDeltas({ presetDelta }, GetWorld());
 
-	FBIMPresetEditorNodeSharedPtr node = InstancePool.InstanceFromID(SavePendingInstanceID);
-	if (!ensureAlways(node.IsValid()))
-	{
-		return false;
-	}
-
-	node->OriginalPresetCopy = node->WorkingPresetCopy;
-
-	SelectedNodeID = SavePendingInstanceID;
+	SelectedNodeID = InstanceID;
 	UpdateBIMDesigner();
 	return true;
 }
@@ -1043,11 +974,11 @@ void UBIMDesigner::ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 Sl
 		if (NewEnable)
 		{
 			// TODO: get default preset for slot
-			FGuid newPartPreset = nodeParent->OriginalPresetCopy.PartSlots[SlotID].PartPresetGUID;
+			FGuid newPartPreset = nodeParent->Preset.PartSlots[SlotID].PartPresetGUID;
 			if (!newPartPreset.IsValid())
 			{
 				TArray<FGuid> swapPresets;
-				Controller->GetDocument()->GetPresetCollection().GetPresetsForSlot(nodeParent->OriginalPresetCopy.PartSlots[SlotID].SlotPresetGUID, swapPresets);
+				Controller->GetDocument()->GetPresetCollection().GetPresetsForSlot(nodeParent->Preset.PartSlots[SlotID].SlotPresetGUID, swapPresets);
 				if (ensureAlwaysMsgf(swapPresets.Num() > 0,TEXT("Could not find swap for slot. Bad NCP match?")))
 				{
 					newPartPreset = swapPresets[0];
@@ -1064,7 +995,7 @@ void UBIMDesigner::ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 Sl
 			// To turn off slot, make sure it is not being connected to a node that's currently selected
 			// If the node is selected, use its parent for selection
 			FBIMEditorNodeIDType connectedNodeID;
-			EBIMResult nodeFoundResult = nodeParent->FindNodeIDConnectedToSlot(nodeParent->OriginalPresetCopy.PartSlots[SlotID].SlotPresetGUID, connectedNodeID);
+			EBIMResult nodeFoundResult = nodeParent->FindNodeIDConnectedToSlot(nodeParent->Preset.PartSlots[SlotID].SlotPresetGUID, connectedNodeID);
 			if (nodeFoundResult == EBIMResult::Success && connectedNodeID == SelectedNodeID)
 			{
 				SelectedNodeID = ParentID;
@@ -1074,7 +1005,7 @@ void UBIMDesigner::ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 Sl
 
 		if (result == EBIMResult::Success)
 		{
-			SavePresetFromNode(false, ParentID);
+			SavePresetFromNode(ParentID);
 			UpdateBIMDesigner();
 		}
 	}
@@ -1099,6 +1030,6 @@ void UBIMDesigner::UpdateCachedPresetCollection()
 	InstancePool.PresetCollectionProxy = FBIMPresetCollectionProxy(Controller->GetDocument()->GetPresetCollection());
 	for (auto& inst : InstancePool.GetInstancePool())
 	{
-		InstancePool.PresetCollectionProxy.OverridePreset(inst->WorkingPresetCopy);
+		InstancePool.PresetCollectionProxy.OverridePreset(inst->Preset);
 	}
 }

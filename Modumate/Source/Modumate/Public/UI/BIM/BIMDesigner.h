@@ -59,9 +59,6 @@ protected:
 	UPROPERTY()
 	TArray<class UBIMBlockMiniNode*> MiniNodes;
 
-	FBIMPresetInstance SavePendingPreset;
-	FBIMEditorNodeIDType SavePendingInstanceID;
-
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FKey DragKey = EKeys::MiddleMouseButton;
@@ -167,8 +164,7 @@ public:
 	bool AddNodeFromPreset(const FBIMEditorNodeIDType& ParentID, const FGuid& PresetID, int32 ParentSetIndex);
 	bool ApplyBIMFormElement(const FBIMEditorNodeIDType& NodeID, const FBIMPresetFormElement& FormElement);
 	bool GetNodeForReorder(const FVector2D &OriginalNodeCanvasPosition, const FBIMEditorNodeIDType& NodeID);
-	bool SavePresetFromNode(bool SaveAs, const FBIMEditorNodeIDType& InstanceID);
-	bool ConfirmSavePendingPreset();
+	bool SavePresetFromNode(const FBIMEditorNodeIDType& InstanceID);
 	void ToggleSlotNode(const FBIMEditorNodeIDType& ParentID, int32 SlotID, bool NewEnable);
 	void CheckMouseButtonDownOnBIMDesigner();
 	void ToggleColorPickerVisibility(bool NewVisibility);

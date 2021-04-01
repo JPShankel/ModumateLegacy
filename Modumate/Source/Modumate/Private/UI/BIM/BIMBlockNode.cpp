@@ -20,7 +20,6 @@
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
-#include "UI/BIM/BIMBlockNodeDirtyTab.h"
 #include "UI/BIM/BIMBlockSlotList.h"
 #include "UI/BIM/BIMBlockDropdownPreset.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
@@ -43,7 +42,7 @@ bool UBIMBlockNode::Initialize()
 
 	Controller = GetOwningPlayer<AEditModelPlayerController>();
 
-	if (!(ButtonSwapCollapsed && ButtonSwapExpanded && ButtonDeleteCollapsed && ButtonDeleteExpanded && BIMBlockNodeDirty))
+	if (!(ButtonSwapCollapsed && ButtonSwapExpanded && ButtonDeleteCollapsed && ButtonDeleteExpanded))
 	{
 		return false;
 	}
@@ -52,9 +51,6 @@ bool UBIMBlockNode::Initialize()
 	ButtonSwapExpanded->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonSwapReleased);
 	ButtonDeleteCollapsed->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDeleteReleased);
 	ButtonDeleteExpanded->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDeleteReleased);
-	BIMBlockNodeDirty->ButtonSave->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtySave);
-	BIMBlockNodeDirty->ButtonAddNew->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtyAddNew);
-	BIMBlockNodeDirty->ButtonCancel->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDirtyCancel);
 
 	if (Button_Connector)
 	{
@@ -166,42 +162,12 @@ void UBIMBlockNode::OnButtonDeleteReleased()
 	ParentBIMDesigner->DeleteNode(ID);
 }
 
-void UBIMBlockNode::OnButtonDirtySave()
-{
-	ParentBIMDesigner->SavePresetFromNode(false, ID);
-}
-
-void UBIMBlockNode::OnButtonDirtyAddNew()
-{
-	ParentBIMDesigner->SavePresetFromNode(true, ID);
-}
-
-void UBIMBlockNode::OnButtonDirtyCancel()
-{
-	EBIMResult result = ParentBIMDesigner->InstancePool.SetNewPresetForNode(ID, PresetID);
-	if (result == EBIMResult::Success)
-	{
-		ParentBIMDesigner->UpdateCraftingAssembly();
-		// Mark this node as the last selected node
-		ParentBIMDesigner->SelectedNodeID = ID;
-		ParentBIMDesigner->UpdateBIMDesigner();
-	}
-}
-
 void UBIMBlockNode::OnButtonConnectorReleased()
 {
 #if WITH_EDITOR
 	Controller->EditModelUserWidget->ShowBIMDebugger(true);
 	Controller->EditModelUserWidget->BIMDebugger->DebugBIMPreset(PresetID);
 #endif
-}
-
-void UBIMBlockNode::UpdateNodeDirty(bool NewDirty)
-{
-	NodeDirty = NewDirty;
-	ESlateVisibility newVisibility = NodeDirty ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed;
-	BIMBlockNodeDirty->SetVisibility(newVisibility);
-	DirtyStateBorder->SetVisibility(newVisibility);
 }
 
 void UBIMBlockNode::UpdateNodeCollapse(bool NewCollapse)
@@ -221,13 +187,13 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 {
 	IsRootNode = Node->ParentInstance == nullptr;
 	ParentBIMDesigner = OuterBIMDesigner;
-	PresetID = Node->WorkingPresetCopy.GUID;
+	PresetID = Node->Preset.GUID;
 	bNodeHasSlotPart = bAsSlot;
 	TitleNodeCollapsed->ChangeText(Node->CategoryTitle);
 	TitleNodeExpanded->ChangeText(Node->CategoryTitle);
 
 	FText presetDisplayName;
-	if (Node->WorkingPresetCopy.TryGetProperty(BIMPropertyNames::Name, presetDisplayName))
+	if (Node->Preset.TryGetProperty(BIMPropertyNames::Name, presetDisplayName))
 	{
 		ComponentPresetListItem->MainText->ChangeText(presetDisplayName);
 		Preset_Name->ChangeText(presetDisplayName);
@@ -242,7 +208,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	{
 		FString debugString = 
 			FString::Printf(TEXT("ID: ")) + Node->GetInstanceID().ToString() + LINE_TERMINATOR 
-			+ Node->WorkingPresetCopy.GUID.ToString() + LINE_TERMINATOR
+			+ Node->Preset.GUID.ToString() + LINE_TERMINATOR
 			+ PresetID.ToString() + LINE_TERMINATOR;
 		
 		Button_Connector->SetToolTipText(FText::FromString(debugString));
@@ -254,9 +220,6 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	{
 		ParentID = Node->ParentInstance.Pin()->GetInstanceID();
 	}
-
-	// Node status
-	UpdateNodeDirty(Node->GetPresetStatus() == EBIMPresetEditorNodeStatus::Dirty);
 
 	// Build instance properties
 	VerticalBoxProperties->ClearChildren();
@@ -439,11 +402,6 @@ FVector2D UBIMBlockNode::GetEstimatedNodeSize()
 	}
 
 	float estimatedSize = 0.f;
-
-	if (NodeDirty)
-	{
-		estimatedSize += DirtyTabSize;
-	}
 
 	if (NodeCollapse)
 	{

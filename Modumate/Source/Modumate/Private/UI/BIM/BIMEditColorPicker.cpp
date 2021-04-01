@@ -113,10 +113,6 @@ void UBIMEditColorPicker::UpdateColorPicker()
 	if (nodeCanvasSlot && swapCanvasSlot)
 	{
 		FVector2D newPosition = nodeCanvasSlot->GetPosition();
-		if (OwnerNode->NodeDirty)
-		{
-			newPosition.Y += OwnerNode->DirtyTabSize;
-		}
 		newPosition += DropdownOffset;
 		swapCanvasSlot->SetPosition(newPosition);
 	}
