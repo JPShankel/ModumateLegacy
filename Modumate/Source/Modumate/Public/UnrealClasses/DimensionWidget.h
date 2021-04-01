@@ -4,6 +4,8 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Fonts/SlateFontInfo.h"
+#include "Math/UnitConversion.h"
+#include "ModumateCore/ModumateDimensionString.h"
 
 #include "DimensionWidget.generated.h"
 
@@ -41,6 +43,9 @@ public:
 	int32 PixelOffset;
 
 private:
+	EDimensionUnits DisplayUnitType = EDimensionUnits::DU_Imperial;
+	EUnit DisplayOverrideUnit = EUnit::Unspecified;
+
 	FText LastCommittedText;
 	float LastMeasurement;
 };

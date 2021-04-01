@@ -82,7 +82,7 @@ void UInstPropWidgetOffset::DisplayValue()
 	{
 		CustomValueTitle->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		CustomValueText->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		CustomValueText->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToImperialText(CurrentValue.CustomValue));
+		CustomValueText->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToDisplayText(CurrentValue.CustomValue));
 	}
 	else
 	{

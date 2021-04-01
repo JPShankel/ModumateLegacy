@@ -209,13 +209,14 @@ bool ULineTool::MakeObject(const FVector& Location)
 
 	FVector constrainedStartPoint = pendingSegment->Point1;
 
-	if (State == NewSegmentPending && pendingSegment != nullptr &&
-		(FVector::Dist(constrainedStartPoint, Location) >= 1.0f))
+	bool bValidDeltas = false;
+	if ((State == NewSegmentPending) && (pendingSegment != nullptr) &&
+		(FVector::Dist(constrainedStartPoint, Location) >= doc->GetVolumeGraph().Epsilon))
 	{
-		GetEdgeDeltas(constrainedStartPoint, Location, false);
+		bValidDeltas = GetEdgeDeltas(constrainedStartPoint, Location, false);
 	}
 
-	if (!doc->ApplyDeltas(CurDeltas, GetWorld()))
+	if (!bValidDeltas || !doc->ApplyDeltas(CurDeltas, GetWorld()))
 	{
 		return false;
 	}

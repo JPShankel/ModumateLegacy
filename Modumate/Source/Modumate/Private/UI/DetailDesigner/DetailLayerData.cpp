@@ -41,7 +41,7 @@ void UDetailDesignerLayerData::PopulateLayerData(int32 InParticipantIndex, int32
 
 	if (bFrontEnabled)
 	{
-		ExtensionFront->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToImperialText(CurrentExtensions.X));
+		ExtensionFront->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToDisplayText(CurrentExtensions.X));
 		ExtensionFront->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else
@@ -51,7 +51,7 @@ void UDetailDesignerLayerData::PopulateLayerData(int32 InParticipantIndex, int32
 
 	if (bBackEnabled)
 	{
-		ExtensionBack->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToImperialText(CurrentExtensions.Y));
+		ExtensionBack->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToDisplayText(CurrentExtensions.Y));
 		ExtensionBack->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else
@@ -63,11 +63,12 @@ void UDetailDesignerLayerData::PopulateLayerData(int32 InParticipantIndex, int32
 bool UDetailDesignerLayerData::OnExtensionTextCommitted(int32 ExtensionIdx, const FString& String)
 {
 	auto enteredDimension = UModumateDimensionStatics::StringToFormattedDimension(String);
+	float enteredCentimetersFloat = static_cast<float>(enteredDimension.Centimeters);
 	if ((enteredDimension.Format != EDimensionFormat::Error) && ensure((ExtensionIdx == 0) || (ExtensionIdx == 1)) &&
-		!UModumateDimensionStatics::CentimetersToImperialText(CurrentExtensions[ExtensionIdx]).ToString().Equals(String) &&
-		!FMath::IsNearlyEqual(CurrentExtensions[ExtensionIdx], enteredDimension.Centimeters))
+		!UModumateDimensionStatics::CentimetersToDisplayText(CurrentExtensions[ExtensionIdx]).ToString().Equals(String) &&
+		!FMath::IsNearlyEqual(CurrentExtensions[ExtensionIdx], enteredCentimetersFloat))
 	{
-		CurrentExtensions[ExtensionIdx] = enteredDimension.Centimeters;
+		CurrentExtensions[ExtensionIdx] = enteredCentimetersFloat;
 		OnExtensionChanged.Broadcast(DetailParticipantIndex, DetailLayerIndex, CurrentExtensions);
 		return true;
 	}

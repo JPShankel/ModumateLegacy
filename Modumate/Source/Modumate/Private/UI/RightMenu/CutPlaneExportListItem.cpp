@@ -86,7 +86,7 @@ void UCutPlaneExportListItem::BuildAsVerticalCutPlaneItem(const FQuat& Rotation)
 
 void UCutPlaneExportListItem::BuildAsHorizontalCutPlaneItem(const FVector& Location)
 {
-	TextDimension->ChangeText(UModumateDimensionStatics::CentimetersToImperialText(Location.Z));
+	TextDimension->ChangeText(UModumateDimensionStatics::CentimetersToDisplayText(Location.Z));
 }
 
 UWidget* UCutPlaneExportListItem::OnTooltipWidget()

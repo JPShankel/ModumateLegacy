@@ -320,7 +320,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FB
 			auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Delta.NewStringRepresentation);
 			if (dimension.Format != EDimensionFormat::Error)
 			{
-				Properties.SetProperty(propKey.Scope, propKey.Name, dimension.Centimeters);
+				Properties.SetProperty(propKey.Scope, propKey.Name, static_cast<float>(dimension.Centimeters));
 				return EBIMResult::Success;
 			}
 		}
@@ -395,7 +395,7 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 			FBIMPropertyKey propKey(*FormElement.FieldName);
 			if (ensureAlways(Properties.TryGetProperty(propKey.Scope, propKey.Name, v)))
 			{
-				OutDelta.OldStringRepresentation = UModumateDimensionStatics::CentimetersToImperialText(v).ToString();
+				OutDelta.OldStringRepresentation = UModumateDimensionStatics::CentimetersToDisplayText(v).ToString();
 				return EBIMResult::Success;
 			}
 		}
@@ -475,7 +475,7 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(FBIMPresetForm& OutForm) const
 			FBIMPropertyKey propKey(*element.FieldName);
 			if (ensureAlways(Properties.TryGetProperty<float>(propKey.Scope, propKey.Name, v)))
 			{
-				element.StringRepresentation = UModumateDimensionStatics::CentimetersToImperialText(v).ToString();
+				element.StringRepresentation = UModumateDimensionStatics::CentimetersToDisplayText(v).ToString();
 			}
 		}
 		break;

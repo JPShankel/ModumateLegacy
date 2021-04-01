@@ -392,7 +392,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				if (!dimName.IsNone())
 				{
 					FModumateFormattedDimension measurement = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 1]);
-					Preset.Properties.SetProperty(EBIMValueScope::Dimension, dimName, measurement.Centimeters);
+					Preset.Properties.SetProperty(EBIMValueScope::Dimension, dimName, static_cast<float>(measurement.Centimeters));
 					Preset.PresetForm.AddPropertyElement(FText::FromString(Row[presetMatrix.First]), FBIMPropertyKey(EBIMValueScope::Dimension, dimName).QN(), EBIMPresetEditorField::DimensionProperty);
 				}
 			}
@@ -453,7 +453,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 							case EBIMValueType::Dimension:
 							{
-								Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, UModumateDimensionStatics::StringToFormattedDimension(cell).Centimeters);
+								Preset.SetScopedProperty(propSpec.Scope, propSpec.Name, static_cast<float>(UModumateDimensionStatics::StringToFormattedDimension(cell).Centimeters));
 							}
 							break;
 

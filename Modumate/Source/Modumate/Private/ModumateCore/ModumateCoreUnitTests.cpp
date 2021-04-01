@@ -1598,61 +1598,64 @@ namespace Modumate
 		{
 			FString dimStr;
 			EDimensionFormat expectedFormat;
-			float expectedCentimeters;
+			double expectedCentimeters;
 
-			TestCase(const TCHAR *ds, EDimensionFormat ef, float ec) : dimStr(ds), expectedFormat(ef), expectedCentimeters(ec) {};
+			TestCase(const TCHAR *ds, EDimensionFormat ef, double ec) : dimStr(ds), expectedFormat(ef), expectedCentimeters(ec) {};
 		};
+
+		static constexpr double parseTolerance = 1.0e-6;
 
 		static TArray<TestCase> testCases = { 
 			{TEXT("1"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 1 * 12},
 			{TEXT(" -1 "),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * -1 * 12},
 			{TEXT(" +1 "),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 1 * 12},
 			{TEXT("33"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 33 * 12},
-			{TEXT("1.2"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 1.2f * 12},
-			{TEXT("0.1"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 0.1f * 12},
-			{TEXT("1."),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 1.0f * 12},
-			{TEXT(".1"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 0.1f * 12},
+			{TEXT("1.2"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 1.2 * 12},
+			{TEXT("0.1"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 0.1 * 12},
+			{TEXT("1."),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 1.0 * 12},
+			{TEXT(".1"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 0.1 * 12},
 			{TEXT("4'"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 4 * 12},
 			{TEXT("15ft"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 15 * 12},
 			{TEXT("2.3ft"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 2.3 * 12},
+			{TEXT("2.3'"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 2.3 * 12},
 			{TEXT("-2.3ft"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * -2.3 * 12},
-			{TEXT("-2,301.25ft"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * -2301.25f * 12},
+			{TEXT("-2,301.25ft"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * -2301.25 * 12},
 			{TEXT("3\""),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * 3},
-			{TEXT(" .5\""),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * 0.5f},
-			{TEXT("3.2\""),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * 3.2f},
+			{TEXT(" .5\""),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * 0.5},
+			{TEXT("3.2\""),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * 3.2},
 			{TEXT("7in"),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * 7},
-			{TEXT("3 7/8\""),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * (3.0f + (7.0f/8.0f))},
-			{TEXT("7 3/4in"),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * (7.0f + (3.0f/4.0f))},
-			{TEXT("-7 3/4in"),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * -(7.0f + (3.0f / 4.0f))},
+			{TEXT("3 7/8\""),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * (3.0 + (7.0/8.0))},
+			{TEXT("7 3/4in"),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * (7.0 + (3.0/4.0))},
+			{TEXT("-7 3/4in"),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * -(7.0 + (3.0 / 4.0))},
 			{TEXT("1' 5\""),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12+5)},
 			{TEXT("1' - 5\""),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12 + 5)},
 			{TEXT("1'-5\""),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12 + 5)},
 			{TEXT("1'--5\""),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12 + 5)},
 			{TEXT("5ft 8in"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12 * 5 + 8)},
 			{TEXT("5ft - 8in"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12 * 5 + 8)},
-			{TEXT("4' 3/8\""),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12.0f * 4.0f + (3.0f/8.0f))},
-			{TEXT("4' - 3/8\""),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12.0f * 4.0f + (3.0f / 8.0f))},
-			{TEXT("11ft 5 1/2in"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12.0f * 11.0f + 5.0f + (1.0f / 2.0f))},
-			{TEXT("-11ft 5 1/2in"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * -(12.0f * 11.0f + 5.0f + (1.0f / 2.0f))},
-			{TEXT("1,100ft 5 1/2in"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12.0f * 1100.0f + 5.0f + (1.0f / 2.0f))},
-			{TEXT("8' 2 5/8\""),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12.0f * 8.0f + 2.0f + (5.0f / 8.0f))},
-			{TEXT("6m"),EDimensionFormat::JustMeters,600.0f},
-			{TEXT("23mm"),EDimensionFormat::JustMillimeters,2.3f},
-			{TEXT("1.6m"),EDimensionFormat::JustMeters,160.0f},
-			{TEXT("8cm"),EDimensionFormat::JustCentimeters,8.0f},
-			{TEXT(" 9.6cm"),EDimensionFormat::JustCentimeters,9.6f},
-			{TEXT("-9.6cm"),EDimensionFormat::JustCentimeters,-9.6f},
-			{TEXT("6m 3cm"),EDimensionFormat::MetersAndCentimeters,603.0f},
-			{TEXT("1m 4.5cm"),EDimensionFormat::MetersAndCentimeters,104.5f},
-			{TEXT("1m - 4.5cm"),EDimensionFormat::MetersAndCentimeters,104.5f},
-			{TEXT("1,000m - 4.5cm"),EDimensionFormat::MetersAndCentimeters,100004.5f},
-			{TEXT("zed"),EDimensionFormat::Error,0.0f},
-			{TEXT("2.3maynard"),EDimensionFormat::Error,0.0f},
-			{TEXT("11ft 2cm"),EDimensionFormat::Error,0.0f},
-			{TEXT("7 -3/4in"),EDimensionFormat::Error,0.0f},
-			{TEXT(",ft"),EDimensionFormat::Error,0.0f},
-			{TEXT(".ft"),EDimensionFormat::Error,0.0f},
-			{TEXT("0..1ft"),EDimensionFormat::Error,0.0f},
+			{TEXT("4' 3/8\""),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12.0 * 4.0 + (3.0/8.0))},
+			{TEXT("4' - 3/8\""),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12.0 * 4.0 + (3.0 / 8.0))},
+			{TEXT("11ft 5 1/2in"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12.0 * 11.0 + 5.0 + (1.0 / 2.0))},
+			{TEXT("-11ft 5 1/2in"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * -(12.0 * 11.0 + 5.0 + (1.0 / 2.0))},
+			{TEXT("1,100ft 5 1/2in"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12.0 * 1100.0 + 5.0 + (1.0 / 2.0))},
+			{TEXT("8' 2 5/8\""),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12.0 * 8.0 + 2.0 + (5.0 / 8.0))},
+			{TEXT("6m"),EDimensionFormat::JustMeters,600.0},
+			{TEXT("23mm"),EDimensionFormat::JustMillimeters,2.3},
+			{TEXT("1.6m"),EDimensionFormat::JustMeters,160.0},
+			{TEXT("8cm"),EDimensionFormat::JustCentimeters,8.0},
+			{TEXT(" 9.6cm"),EDimensionFormat::JustCentimeters,9.6},
+			{TEXT("-9.6cm"),EDimensionFormat::JustCentimeters,-9.6},
+			{TEXT("6m 3cm"),EDimensionFormat::MetersAndCentimeters,603.0},
+			{TEXT("1m 4.5cm"),EDimensionFormat::MetersAndCentimeters,104.5},
+			{TEXT("1m - 4.5cm"),EDimensionFormat::MetersAndCentimeters,104.5},
+			{TEXT("1,000m - 4.5cm"),EDimensionFormat::MetersAndCentimeters,100004.5},
+			{TEXT("zed"),EDimensionFormat::Error,0.0},
+			{TEXT("2.3maynard"),EDimensionFormat::Error,0.0},
+			{TEXT("11ft 2cm"),EDimensionFormat::Error,0.0},
+			{TEXT("7 -3/4in"),EDimensionFormat::Error,0.0},
+			{TEXT(",ft"),EDimensionFormat::Error,0.0},
+			{TEXT(".ft"),EDimensionFormat::Error,0.0},
+			{TEXT("0..1ft"),EDimensionFormat::Error,0.0},
 		};
 
 		int32 testIdx = 0;
@@ -1660,7 +1663,7 @@ namespace Modumate
 		{
 			FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(tc.dimStr);
 			ensureAlways(TestTrue(FString::Printf(TEXT("test %d"), testIdx), dim.Format == tc.expectedFormat));
-			ensureAlways(TestTrue(FString::Printf(TEXT("test %d %f %f"), testIdx, dim.Centimeters, tc.expectedCentimeters), FMath::IsNearlyEqual(dim.Centimeters, tc.expectedCentimeters, KINDA_SMALL_NUMBER)));
+			ensureAlways(TestTrue(FString::Printf(TEXT("test %d %f %f"), testIdx, dim.Centimeters, tc.expectedCentimeters), FMath::IsNearlyEqual(dim.Centimeters, tc.expectedCentimeters, parseTolerance)));
 			testIdx++;
 		}
 		return true;

@@ -3,6 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Math/UnitConversion.h"
+#include "ModumateCore/ModumateDimensionString.h"
+
 #include "ModumateUserSettings.generated.h"
 
 USTRUCT(BlueprintType)
@@ -47,6 +50,12 @@ struct MODUMATE_API FModumateUserSettings
 
 	UPROPERTY()
 	FString SavedCredentials;
+
+	UPROPERTY()
+	EDimensionUnits PreferredDimensionType = EDimensionUnits::DU_Imperial;
+
+	UPROPERTY()
+	EUnit PreferredDimensionUnit = EUnit::Unspecified;
 
 	bool bLoaded = false;
 	bool bDirty = false;

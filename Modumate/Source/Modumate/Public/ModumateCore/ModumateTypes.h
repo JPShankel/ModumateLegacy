@@ -333,7 +333,7 @@ struct MODUMATE_API FModumateFormattedDimension
 	EDimensionFormat Format = EDimensionFormat::None;
 
 	FString FormattedString;
-	float Centimeters = 0.0f;
+	double Centimeters = 0.0f;
 };
 
 UENUM(BlueprintType)

@@ -182,7 +182,7 @@ bool UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 
 		FText numberPrefix = participantAssembly ? UModumateTypeStatics::GetTextForObjectType(participantObjectType) : LOCTEXT("AssemblyAnonPrefix", "Participant");
 		float totalThicknessInches = Algo::Accumulate(detailCondition.LayerThicknesses, 0.0f);
-		FText totalThicknessText = UModumateDimensionStatics::InchesToImperialText(totalThicknessInches);
+		FText totalThicknessText = UModumateDimensionStatics::InchesToDisplayText(totalThicknessInches);
 		FText assemblyNameText = participantAssembly ? FText::Format(LOCTEXT("AssemblyNameFormat", ", {0}"), FText::FromString(participantAssembly->DisplayName)) : FText::GetEmpty();
 
 		FText assemblyTitle = FText::Format(LOCTEXT("AssemblyTitleFormat", "{0} {1}, ({2}){3}"),
@@ -245,7 +245,7 @@ bool UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 					}
 
 					presetLayerData->LayerThickness->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-					presetLayerData->LayerThickness->ChangeText(UModumateDimensionStatics::InchesToImperialText(layerThicknessInches));
+					presetLayerData->LayerThickness->ChangeText(UModumateDimensionStatics::InchesToDisplayText(layerThicknessInches));
 					extensionValues = detailOverride.LayerExtensions[layerIndex];
 				}
 			}

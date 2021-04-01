@@ -4,7 +4,9 @@
 #include "ModumateCore/ModumateUnits.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/ModumateUserSettings.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 #define LOCTEXT_NAMESPACE "UDimensionWidget"
 
@@ -24,6 +26,14 @@ bool UDimensionWidget::Initialize()
 	if (Measurement == nullptr)
 	{
 		return false;
+	}
+
+	auto controller = GetOwningPlayer<AEditModelPlayerController>();
+	auto gameInstance = controller ? controller->GetGameInstance<UModumateGameInstance>() : nullptr;
+	if (gameInstance)
+	{
+		DisplayUnitType = gameInstance->UserSettings.PreferredDimensionType;
+		DisplayOverrideUnit = gameInstance->UserSettings.PreferredDimensionUnit;
 	}
 
 	Measurement->AllowContextMenu = false;
@@ -88,7 +98,7 @@ void UDimensionWidget::UpdateText(float length)
 {
 	if (length != LastMeasurement)
 	{
-		FText newText = UModumateDimensionStatics::CentimetersToImperialText(length);
+		FText newText = UModumateDimensionStatics::CentimetersToDisplayText(length, DisplayUnitType, DisplayOverrideUnit);
 		Measurement->SetText(newText);
 		LastCommittedText = newText;
 		LastMeasurement = length;
