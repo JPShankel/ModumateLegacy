@@ -221,7 +221,8 @@ public:
 	void TickInput(float DeltaTime);
 
 	void AddAllOriginAffordances() const;
-	void SetObjectSelected(const AModumateObjectInstance *ob, bool selected);
+	void SetObjectSelected(AModumateObjectInstance *ob, bool bSelected, bool bDeselectOthers);
+	void SetObjectsSelected(TSet<AModumateObjectInstance*>& Obs, bool bSelected, bool bDeselectOthers);
 
 	UFUNCTION()
 	void OnControllerTimer();
@@ -250,9 +251,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Selection)
 	void DeselectAll();
-
-	UFUNCTION(BlueprintCallable, Category = Selection)
-	bool SelectObjectById(int32 ObjectID);
 
 	UFUNCTION(Category = Selection)
 	FTransform MakeUserSnapPointFromCursor(const FSnappedCursor &cursor) const;

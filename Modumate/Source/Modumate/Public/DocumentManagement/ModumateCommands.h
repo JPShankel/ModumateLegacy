@@ -34,17 +34,11 @@ namespace Modumate
 		// Selected Objects
 		MODUMATE_COMMAND(kDeleteSelectedObjects, "delete_selected");
 		MODUMATE_COMMAND(kDeleteObjects, "delete_objects");
-		MODUMATE_COMMAND(kSelectObject, "select_object");
-		MODUMATE_COMMAND(kSelectObjects, "select_objects");
-		MODUMATE_COMMAND(kSelectAll, "select_all");
-		MODUMATE_COMMAND(kSelectInverse, "select_inverse");
-		MODUMATE_COMMAND(kDeselectAll, "deselect_all");
 		MODUMATE_COMMAND(kCutSelected, "cut_selected");
 		MODUMATE_COMMAND(kCopySelected, "copy_selected");
 		MODUMATE_COMMAND(kPaste, "paste");
 		MODUMATE_COMMAND(kCloneObjects, "clone_objects");
 		MODUMATE_COMMAND(kRestoreDeletedObjects, "restore_deleted_objects");
-
 
 		// BIM
 		MODUMATE_COMMAND(kBIMDebug, "bim_debug");

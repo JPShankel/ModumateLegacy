@@ -1610,13 +1610,16 @@ void AEditModelPlayerController::AddAllOriginAffordances() const
 * Mouse Functions
 */
 
-void AEditModelPlayerController::SetObjectSelected(const AModumateObjectInstance *ob, bool selected)
+void AEditModelPlayerController::SetObjectsSelected(TSet<AModumateObjectInstance*>& Obs, bool bSelected, bool bDeselectOthers)
 {
-	ModumateCommand(
-		FModumateCommand(Commands::kSelectObject)
-		.Param(Parameters::kObjectID, ob->ID)
-		.Param(Parameters::kSelected, selected)
-	);
+	EMPlayerState->SetObjectsSelected(Obs, bSelected, bDeselectOthers);
+}
+
+void AEditModelPlayerController::SetObjectSelected(AModumateObjectInstance *Ob, bool bSelected, bool bDeselectOthers)
+{
+	TSet< AModumateObjectInstance*> obSet;
+	obSet.Add(Ob);
+	SetObjectsSelected(obSet, bSelected, bDeselectOthers);
 }
 
 void AEditModelPlayerController::HandleDigitKey(int32 DigitKey)
@@ -1723,31 +1726,17 @@ void AEditModelPlayerController::HandleLeftMouseButton_Implementation(bool bPres
 
 void AEditModelPlayerController::SelectAll()
 {
-	ModumateCommand(FModumateCommand(Commands::kSelectAll));
+	EMPlayerState->SelectAll();
 }
 
 void AEditModelPlayerController::SelectInverse()
 {
-	ModumateCommand(FModumateCommand(Commands::kSelectInverse));
+	EMPlayerState->SelectInverse();
 }
 
 void AEditModelPlayerController::DeselectAll()
 {
-	ModumateCommand(FModumateCommand(Commands::kDeselectAll));
-}
-
-bool AEditModelPlayerController::SelectObjectById(int32 ObjectID)
-{
-	const AModumateObjectInstance *moi = Document->GetObjectById(ObjectID);
-	if (moi == nullptr)
-	{
-		return false;
-	}
-
-	DeselectAll();
-	SetObjectSelected(moi, true);
-
-	return true;
+	EMPlayerState->DeselectAll();
 }
 
 FTransform AEditModelPlayerController::MakeUserSnapPointFromCursor(const FSnappedCursor &cursor) const
@@ -3289,8 +3278,7 @@ void AEditModelPlayerController::GroupSelected(bool makeGroup)
 			int32 groupID = output.GetValue(Parameters::kObjectID);
 			if (auto *groupObj = Document->GetObjectById(groupID))
 			{
-				DeselectAll();
-				SetObjectSelected(groupObj, true);
+				SetObjectSelected(groupObj, true, true);
 			}
 
 			Document->EndUndoRedoMacro();

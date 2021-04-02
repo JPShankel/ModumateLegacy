@@ -185,9 +185,22 @@ void UEditModelUserWidget::EMOnSelectionObjectChanged()
 {
 	if (CurrentLeftMenuState == ELeftMenuState::SelectMenu ||
 		CurrentLeftMenuState == ELeftMenuState::SwapMenu ||
+		CurrentLeftMenuState == ELeftMenuState::ToolMenu ||
 		CurrentLeftMenuState == ELeftMenuState::None)
 	{
-		SwitchLeftMenu(ELeftMenuState::SelectMenu);
+		if (!BIMDesigner->IsVisible())
+		{
+			SwitchLeftMenu(ELeftMenuState::SelectMenu);
+		}
+		else if (Controller->EMPlayerState->SelectedObjects.Num()==1)
+		{
+			// If the BIM designer is visible and we've made a single selection, edit it
+			auto it = Controller->EMPlayerState->SelectedObjects.CreateConstIterator();
+			if (it && (*it)->GetAssembly().PresetGUID != BIMDesigner->CraftingAssembly.PresetGUID)
+			{
+				BIMDesigner->EditPresetInBIMDesigner((*it)->GetAssembly().PresetGUID, false);
+			}
+		}
 	}
 }
 

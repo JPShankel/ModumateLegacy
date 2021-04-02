@@ -443,7 +443,7 @@ void AEditModelPlayerState::SelectInverse()
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
-void AEditModelPlayerState::DeselectAll()
+void AEditModelPlayerState::DeselectAll(bool bNotifyWidget)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::DeselectAll"));
 
@@ -465,7 +465,12 @@ void AEditModelPlayerState::DeselectAll()
 	SelectedObjects.Empty();
 
 	PostSelectionChanged();
-	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
+	
+	// Don't notify the widget if we're just deselecting in anticipation of selecting
+	if (bNotifyWidget)
+	{
+		EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
+	}
 }
 
 void AEditModelPlayerState::SetActorRenderValues(AActor* actor, int32 stencilValue, bool bNeverCull)
@@ -690,11 +695,34 @@ void AEditModelPlayerState::SetHoveredObject(AModumateObjectInstance *ob)
 	}
 }
 
-void AEditModelPlayerState::SetObjectSelected(AModumateObjectInstance *ob, bool selected)
+void AEditModelPlayerState::SetObjectsSelected(TSet<AModumateObjectInstance*>& Obs, bool bSelected, bool bDeselectOthers)
+{
+	if (bDeselectOthers)
+	{
+		DeselectAll(false);
+	}
+
+	for (auto& ob : Obs)
+	{
+		if (bSelected)
+		{
+			SelectedObjects.Add(ob);
+		}
+		else
+		{
+			SelectedObjects.Remove(ob);
+		}
+		ob->OnSelected(bSelected);
+	}
+	PostSelectionChanged();
+	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
+}
+
+void AEditModelPlayerState::SetObjectSelected(AModumateObjectInstance *ob, bool bSelected, bool bDeselectOthers)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::SetObjectSelected"));
 
-	if (selected)
+	if (bSelected)
 	{
 		SelectedObjects.Add(ob);
 	}
@@ -703,7 +731,7 @@ void AEditModelPlayerState::SetObjectSelected(AModumateObjectInstance *ob, bool 
 		SelectedObjects.Remove(ob);
 	}
 
-	ob->OnSelected(selected);
+	ob->OnSelected(bSelected);
 
 	PostSelectionChanged();
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();

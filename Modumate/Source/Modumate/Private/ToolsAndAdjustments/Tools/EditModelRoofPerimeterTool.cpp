@@ -108,8 +108,7 @@ bool URoofPerimeterTool::Activate()
 		AModumateObjectInstance *roofPerimObj = bAppliedDeltas ? doc->GetObjectById(perimeterID) : nullptr;
 		if (roofPerimObj)
 		{
-			Controller->DeselectAll();
-			Controller->SetObjectSelected(roofPerimObj, true);
+			Controller->SetObjectSelected(roofPerimObj, true, true);
 		}
 	}
 

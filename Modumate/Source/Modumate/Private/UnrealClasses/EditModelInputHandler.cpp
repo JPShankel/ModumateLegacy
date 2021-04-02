@@ -268,17 +268,17 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	}
 	case EInputCommand::SelectAll:
 	{
-		Controller->ModumateCommand(FModumateCommand(Commands::kSelectAll));
+		Controller->SelectAll();
 		return true;
 	}
 	case EInputCommand::SelectInverse:
 	{
-		Controller->ModumateCommand(FModumateCommand(Commands::kSelectInverse));
+		Controller->SelectInverse();
 		return true;
 	}
 	case EInputCommand::Deselect:
 	{
-		Controller->ModumateCommand(FModumateCommand(Commands::kDeselectAll));
+		Controller->DeselectAll();
 		return true;
 	}
 	case EInputCommand::DeleteDefault:

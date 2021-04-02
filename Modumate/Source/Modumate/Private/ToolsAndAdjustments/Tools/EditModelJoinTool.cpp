@@ -87,7 +87,7 @@ bool UJoinTool::HandleMouseUp()
 			}
 		}
 
-		Controller->EMPlayerState->SetObjectSelected(newTarget, true);
+		Controller->EMPlayerState->SetObjectSelected(newTarget, true, false);
 		// TODO: OnSelected shows the adjustment handles, and we don't want them shown here.
 		// preferably there would be a way to show the metaplane as selected without showing the adjustment handles
 		newTarget->ShowAdjustmentHandles(Controller, false);
@@ -130,7 +130,7 @@ bool UJoinTool::HandleMouseUp()
 			}
 		}
 
-		Controller->EMPlayerState->SetObjectSelected(newTarget, true);
+		Controller->EMPlayerState->SetObjectSelected(newTarget, true, false);
 	}
 
 	return true;

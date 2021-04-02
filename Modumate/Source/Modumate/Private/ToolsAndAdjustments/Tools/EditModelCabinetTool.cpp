@@ -276,8 +276,7 @@ bool UCabinetTool::EnterNextStage()
 	AModumateObjectInstance *cabinetObj = bAppliedDeltas ? GameState->Document->GetObjectById(stateData.ID) : nullptr;
 	if (cabinetObj)
 	{
-		Controller->DeselectAll();
-		Controller->SetObjectSelected(cabinetObj, true);
+		Controller->SetObjectSelected(cabinetObj, true, true);
 		cabinetObj->ShowAdjustmentHandles(Controller, true);
 	}
 

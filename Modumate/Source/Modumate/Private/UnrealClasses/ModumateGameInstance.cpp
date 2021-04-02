@@ -182,58 +182,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return bSuccess;
 	});
 
-	RegisterCommand(kSelectObject, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		AModumateObjectInstance *ob = GetDocument()->GetObjectById(params.GetValue(kObjectID));
-		bool selected = params.GetValue(Parameters::kSelected);
-		if (ob != nullptr)
-		{
-			AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-			playerState->SetObjectSelected(ob, selected);
-			return true;
-		}
-		return false;
-	});
-
-	RegisterCommand(kSelectObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		TArray<int32> obIDs = params.GetValue(Parameters::kObjectIDs);
-		bool selected = params.GetValue(Parameters::kSelected);
-
-		for (auto obID : obIDs)
-		{
-			AModumateObjectInstance *ob = GetDocument()->GetObjectById(obID);
-			if (ob != nullptr)
-			{
-				playerState->SetObjectSelected(ob,selected);
-			}
-		}
-		return true;
-	});
-
-
-	RegisterCommand(kSelectAll, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		playerState->SelectAll();
-		return true;
-	});
-
-	RegisterCommand(kSelectInverse, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		playerState->SelectInverse();
-		return true;
-	});
-
-	RegisterCommand(kDeselectAll, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		playerState->DeselectAll();
-		return true;
-	});
-
 	RegisterCommand(kViewGroupObject, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		int32 objID = params.GetValue(kObjectID);

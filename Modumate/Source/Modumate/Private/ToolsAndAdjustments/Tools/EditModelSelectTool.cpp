@@ -104,16 +104,19 @@ bool USelectTool::HandleMouseUp()
 
 		if (newTarget)
 		{
-			bool shouldSelect = !newTargetIsSelected;
+			bool bShouldSelect = !newTargetIsSelected;
 			if (Controller->IsControlDown())
 			{
-				shouldSelect = false;
+				bShouldSelect = false;
 			}
 			if (Controller->IsShiftDown())
 			{
-				shouldSelect = true;
+				bShouldSelect = true;
 			}
-			Controller->SetObjectSelected(newTarget, shouldSelect);
+
+			bool bDeselectOthers = !Controller->IsControlDown() && !Controller->IsShiftDown();
+
+			Controller->SetObjectSelected(newTarget, bShouldSelect, bDeselectOthers);
 
 			static const FString eventNameClick(TEXT("Click"));
 			UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventNameClick);
@@ -306,10 +309,6 @@ bool USelectTool::ProcessDragSelect()
 	FVector2D curMousePosition;
 	if (IsInUse() && Dragging && Controller->GetMousePosition(curMousePosition.X, curMousePosition.Y))
 	{
-		if (!Controller->IsShiftDown() && !Controller->IsControlDown())
-		{
-			Controller->EMPlayerState->DeselectAll();
-		}
 
 		AEditModelGameState *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
 		UModumateDocument* doc = gameState->Document;
@@ -427,12 +426,11 @@ bool USelectTool::ProcessDragSelect()
 			}
 		}
 
-		bool newObjectsSelected = !Controller->IsControlDown();
-		// actually perform the selection on the filtered objects
-		for (auto *object : objectsInSelection)
-		{
-			Controller->SetObjectSelected(object, newObjectsSelected);
-		}
+		bool bSetObjectsSelected = !Controller->IsControlDown();
+
+		bool bDeselectOthers = (!Controller->IsShiftDown() && bSetObjectsSelected);
+
+		Controller->SetObjectsSelected(objectsInSelection, bSetObjectsSelected, bDeselectOthers);
 
 		static const FString eventNameDrag(TEXT("Drag"));
 		UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventNameDrag);

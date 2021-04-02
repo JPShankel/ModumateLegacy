@@ -108,7 +108,9 @@ public:
 	void SetShowHoverEffects(bool showHoverEffects);
 	AModumateObjectInstance *GetValidHoveredObjectInView(AModumateObjectInstance *hoverTarget) const;
 	void SetHoveredObject(AModumateObjectInstance *ob);
-	void SetObjectSelected(AModumateObjectInstance *ob, bool selected);
+	void SetObjectSelected(AModumateObjectInstance *ob, bool bSelected, bool bDeselectOthers);
+	void SetObjectsSelected(TSet<AModumateObjectInstance*>& Obs, bool bSelected, bool bDeselectOthers);
+
 	void SetViewGroupObject(AModumateObjectInstance *ob);
 	bool IsObjectInCurViewGroup(AModumateObjectInstance *ob) const;
 	AModumateObjectInstance *FindHighestParentGroupInViewGroup(AModumateObjectInstance *ob) const;
@@ -117,7 +119,7 @@ public:
 	bool ValidateSelectionsAndView();
 	void SelectAll();
 	void SelectInverse();
-	void DeselectAll();
+	void DeselectAll(bool bNotifyWidget = true);
 	void SetActorRenderValues(AActor* actor, int32 stencilValue, bool bNeverCull);
 	void PostSelectionChanged();
 	void PostViewChanged();
