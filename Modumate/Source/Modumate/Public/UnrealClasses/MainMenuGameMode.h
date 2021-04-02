@@ -39,8 +39,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Files")
 	bool GetRecentProjectData(int32 index, FString &outProjectPath, FText &outProjectName, FDateTime &outProjectTime, FSlateBrush &outDefaultThumbnail, FSlateBrush &outHoveredThumbnail) const;
 
+	UFUNCTION()
+	void OpenEditModelLevel();
+
 	UFUNCTION(BlueprintCallable, Category = "Files")
-	bool OpenProject(const FString &projectPath, bool bIsTutorial);
+	bool OpenProject(const FString& ProjectPath);
 
 	UFUNCTION(BlueprintCallable, Category = "Files")
 	bool OpenProjectFromPicker();

@@ -50,13 +50,10 @@ void FEditModelInputLog::Reset(float CurTimeSeconds)
 
 UEditModelInputAutomation::UEditModelInputAutomation(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, FrameCaptureDuration(1.0f / 30.0f)
 	, CurState(EInputAutomationState::None)
 	, CurAutomationTime(0.0f)
 	, CurAutomationFrame(0)
 	, CurPacketIndex(0)
-	, LastFrameCaptureTime(0.0f)
-	, FrameCaptureIndex(0)
 	, bCapturingFrames(false)
 	, PlaybackSpeed(1.0f)
 	, SceneViewport(nullptr)
@@ -133,11 +130,6 @@ void UEditModelInputAutomation::TickComponent(float DeltaTime, enum ELevelTick T
 
 		CurAutomationTime = nextAutomationTime;
 		CurAutomationFrame = nextAutomationFrame;
-
-		if (bCapturingFrames && ((CurAutomationTime - LastFrameCaptureTime) > FrameCaptureDuration))
-		{
-			CaptureFrame();
-		}
 
 		if (CurPacketIndex >= totalNumPackets)
 		{
@@ -322,7 +314,7 @@ void UEditModelInputAutomation::TryEndRecording()
 	EndRecording(true);
 }
 
-bool UEditModelInputAutomation::BeginPlaybackPrompt(bool bCaptureFrames, float InPlaybackSpeed)
+bool UEditModelInputAutomation::BeginPlaybackPrompt(bool bCaptureFrames, float InPlaybackSpeed, bool bExitOnFrameCaptured)
 {
 	FString inputLogPath;
 	if (Modumate::PlatformFunctions::GetOpenFilename(inputLogPath, false))
@@ -333,7 +325,7 @@ bool UEditModelInputAutomation::BeginPlaybackPrompt(bool bCaptureFrames, float I
 	return false;
 }
 
-bool UEditModelInputAutomation::BeginPlayback(const FString& InputLogPath, bool bCaptureFrames, float InPlaybackSpeed)
+bool UEditModelInputAutomation::BeginPlayback(const FString& InputLogPath, bool bCaptureFrames, float InPlaybackSpeed, bool bExitOnFrameCaptured)
 {
 	if ((CurState != EInputAutomationState::None) || !LoadInputLog(InputLogPath))
 	{
@@ -354,14 +346,32 @@ bool UEditModelInputAutomation::BeginPlayback(const FString& InputLogPath, bool 
 	CurAutomationTime = 0.0f;
 	CurAutomationFrame = 0;
 	CurPacketIndex = 0;
-	LastFrameCaptureTime = 0.0f;
-	FrameCaptureIndex = 0;
 	bCapturingFrames = bCaptureFrames;
 	PlaybackSpeed = InPlaybackSpeed;
+	bWillExitOnFrameCaptured = bCapturingFrames && bExitOnFrameCaptured;
 	LastLogPath = InputLogPath;
 	PrimaryComponentTick.SetTickFunctionEnable(true);
 	GEngine->bForceDisableFrameRateSmoothing = true;
 	GEngine->bUseFixedFrameRate = true;
+
+	if (bCapturingFrames)
+	{
+		// Use a software-based cursor so it renders into the frame capture
+		GameViewport->SetUseSoftwareCursorWidgets(true);
+
+		// This option is required for correct frame times (it seems like it should be default?)
+		static const FString encoderTimeParam(TEXT("GameplayMediaEncoder.UseAppTime"));
+		bool bIsForcedAppTime = FParse::Param(FCommandLine::Get(), *encoderTimeParam);
+		if (!bIsForcedAppTime)
+		{
+			static const FString paramPrefix(TEXT(" -"));
+			FCommandLine::Append(*(paramPrefix + encoderTimeParam));
+		}
+
+		// Start recording a video of the playback session, up to a maximum duration of the reported session length
+		float totalLogDuration = (CurInputLogData.RecordEndTime - CurInputLogData.RecordStartTime);
+		EMPlayerController->ConsoleCommand(FString::Printf(TEXT("HighlightRecorder.Start %.1f"), totalLogDuration + 1.0f));
+	}
 
 	return true;
 }
@@ -388,6 +398,30 @@ bool UEditModelInputAutomation::EndPlayback()
 	PrimaryComponentTick.SetTickFunctionEnable(false);
 	GEngine->bForceDisableFrameRateSmoothing = false;
 	GEngine->bUseFixedFrameRate = false;
+
+	if (bCapturingFrames)
+	{
+		const static FString frameCaptureExt(TEXT(".mp4"));
+
+		FString logPathPart, logFileNamePart, logExtPart;
+		FPaths::Split(LastLogPath, logPathPart, logFileNamePart, logExtPart);
+		logFileNamePart.RemoveSpacesInline();
+		FString frameCaptureFileName = logFileNamePart + frameCaptureExt;
+
+		// Delete an existing file if it's been exported before
+		FrameCapturePath = FPaths::VideoCaptureDir() / frameCaptureFileName;
+		IFileManager::Get().Delete(*FrameCapturePath, false, false, true);
+
+		// Try to save the recording, which will end up in in the Saved/VideoCaptures directory
+		EMPlayerController->ConsoleCommand(FString::Printf(TEXT("HighlightRecorder.Save %s %.1f"), *frameCaptureFileName, CurAutomationTime));
+		GameViewport->SetUseSoftwareCursorWidgets(false);
+		bCapturingFrames = false;
+
+		if (bWillExitOnFrameCaptured)
+		{
+			GetWorld()->GetTimerManager().SetTimer(FrameCaptureSaveTimer, this, &UEditModelInputAutomation::CheckFrameCaptureSaved, true, 1.0f);
+		}
+	}
 
 	return true;
 }
@@ -422,6 +456,14 @@ bool UEditModelInputAutomation::ResizeWindowForViewportSize(int32 Width, int32 H
 	return true;
 }
 
+void UEditModelInputAutomation::CheckFrameCaptureSaved()
+{
+	if (!FrameCapturePath.IsEmpty() && FPaths::FileExists(FrameCapturePath) && bWillExitOnFrameCaptured)
+	{
+		FPlatformMisc::RequestExit(false);
+	}
+}
+
 bool UEditModelInputAutomation::FindViewport()
 {
 	// Try to find the scene viewport, whether this is inside the editor or not.
@@ -452,7 +494,10 @@ bool UEditModelInputAutomation::FindViewport()
 	}
 #endif
 
-	return (SceneViewport != nullptr);
+	UWorld* world = GetWorld();
+	GameViewport = world ? world->GetGameViewport() : nullptr;
+
+	return (SceneViewport != nullptr) && (GameViewport != nullptr);
 }
 
 FEditModelInputPacket &UEditModelInputAutomation::AddRecordingPacket(EInputPacketType Type)
@@ -728,71 +773,81 @@ bool UEditModelInputAutomation::SaveInputLog(const FString& InputLogPath)
 
 bool UEditModelInputAutomation::LoadInputLog(const FString& InputLogPath)
 {
+	static const TCHAR* errorTitle = TEXT("Input Log Load Failure");
 	TArray<uint8> buffer, compressedBuffer;
 
-	if (InputLogPath.EndsWith(FEditModelInputLog::LogExtension))
+	if (!InputLogPath.EndsWith(FEditModelInputLog::LogExtension))
 	{
-		auto archive = TUniquePtr<FArchive>(IFileManager::Get().CreateFileReader(*InputLogPath));
-		if (archive == nullptr)
-		{
-			return false;
-		}
-
-		// Test that the footer is in place, so we know we didn't fail mid-write
-		const int64 totalSize = archive->TotalSize();
-		if (totalSize >= sizeof(FGuid))
-		{
-			FGuid serializedFooter;
-			archive->Seek(totalSize - sizeof(FGuid));
-			*archive << serializedFooter;
-			archive->Seek(0);
-			if (serializedFooter != FEditModelInputLog::LogFileFooter)
-			{
-				return false;
-			}
-		}
-
-		// Read the version
-		uint32 savedVersion = 0;
-		archive->SerializeIntPacked(savedVersion);
-		if (savedVersion != FEditModelInputLog::CurInputLogVersion)
-		{
-			return false;
-		}
-
-		// Read the compressed input log
-		uint32 uncompressedSize = 0;
-		archive->SerializeIntPacked(uncompressedSize);
-
-		if (uncompressedSize == 0)
-		{
-			return false;
-		}
-
-		buffer.AddZeroed(uncompressedSize);
-		archive->SerializeCompressed(buffer.GetData(), uncompressedSize, NAME_Zlib, COMPRESS_BiasMemory, true);
-
-		// Deserialize the input log struct
-		FMemoryReader reader(buffer);
-		FCborStructDeserializerBackend deserializerBackend(reader);
-
-		FStructDeserializerPolicies policies;
-		policies.MissingFields = EStructDeserializerErrorPolicies::Ignore;
-
-		CurInputLogData.Reset(0.0f);
-		return FStructDeserializer::Deserialize(CurInputLogData, deserializerBackend, policies);
+		FPlatformMisc::MessageBoxExt(EAppMsgType::Ok, *FString::Printf(TEXT("Input log file must end in %s\n"), *FEditModelInputLog::LogExtension), errorTitle);
+		return false;
 	}
 
-	return false;
-}
+	auto archive = TUniquePtr<FArchive>(IFileManager::Get().CreateFileReader(*InputLogPath));
+	if (archive == nullptr)
+	{
+		FPlatformMisc::MessageBoxExt(EAppMsgType::Ok, *FString::Printf(TEXT("Cannot load input log from path:\n%s\n"), *InputLogPath), errorTitle);
+		return false;
+	}
 
-void UEditModelInputAutomation::CaptureFrame()
-{
-	FString screenshotFilename = FString::Printf(TEXT("InputPlaybackFrame%05i.png"), FrameCaptureIndex);
-	bool bShowUI = true;
-	bool bAddFilenameSuffix = false;
-	FScreenshotRequest::RequestScreenshot(screenshotFilename, bShowUI, bAddFilenameSuffix);
+	// Test that the footer is in place, so we know we didn't fail mid-write
+	const int64 totalSize = archive->TotalSize();
+	if (totalSize >= sizeof(FGuid))
+	{
+		FGuid serializedFooter;
+		archive->Seek(totalSize - sizeof(FGuid));
+		*archive << serializedFooter;
+		archive->Seek(0);
+		if (serializedFooter != FEditModelInputLog::LogFileFooter)
+		{
+			FPlatformMisc::MessageBoxExt(EAppMsgType::Ok, *FString::Printf(TEXT("Input log file missing footer; did it fail to download?\n%s\n"), *InputLogPath), errorTitle);
+			return false;
+		}
+	}
 
-	LastFrameCaptureTime = CurAutomationTime;
-	++FrameCaptureIndex;
+	// Read the version
+	uint32 savedVersion = 0;
+	archive->SerializeIntPacked(savedVersion);
+	if (savedVersion != FEditModelInputLog::CurInputLogVersion)
+	{
+		FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
+			*FString::Printf(TEXT("Input log is incorrect version: %d; current version: %d\n%s\n"),
+				savedVersion, FEditModelInputLog::CurInputLogVersion , *InputLogPath),
+			errorTitle);
+		return false;
+	}
+
+	// Read the compressed input log
+	uint32 uncompressedSize = 0;
+	archive->SerializeIntPacked(uncompressedSize);
+
+	if (uncompressedSize == 0)
+	{
+		FPlatformMisc::MessageBoxExt(EAppMsgType::Ok, *FString::Printf(TEXT("Input log file is empty:\n%s\n"), *InputLogPath), errorTitle);
+		return false;
+	}
+
+	buffer.AddZeroed(uncompressedSize);
+	archive->SerializeCompressed(buffer.GetData(), uncompressedSize, NAME_Zlib, COMPRESS_BiasMemory, true);
+
+	// Deserialize the input log struct
+	FMemoryReader reader(buffer);
+	FCborStructDeserializerBackend deserializerBackend(reader);
+
+	FStructDeserializerPolicies policies;
+	policies.MissingFields = EStructDeserializerErrorPolicies::Ignore;
+
+	CurInputLogData.Reset(0.0f);
+	if (!FStructDeserializer::Deserialize(CurInputLogData, deserializerBackend, policies))
+	{
+		FPlatformMisc::MessageBoxExt(EAppMsgType::Ok, *FString::Printf(TEXT("Input log file failed to deserialize:\n%s\n"), *InputLogPath), errorTitle);
+		return false;
+	}
+
+	// If end time didn't save, then set it to be based on the packets rather than the overall recording time
+	if ((CurInputLogData.RecordEndTime == 0.0f) && (CurInputLogData.InputPackets.Num() > 0))
+	{
+		CurInputLogData.RecordEndTime = (CurInputLogData.InputPackets.Last().TimeSeconds - CurInputLogData.RecordStartTime);
+	}
+
+	return true;
 }

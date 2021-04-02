@@ -128,6 +128,8 @@ public:
 	UPROPERTY()
 	bool bCompletedFirstTime = false;
 
+	// State to carry through from starting the app to when the model editing begins.
+	bool bOpeningTutorialProject = false;
 	EModumateWalkthroughCategories FromMainMenuWalkthroughCategory = EModumateWalkthroughCategories::None;
 
 protected:

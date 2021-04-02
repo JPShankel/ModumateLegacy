@@ -102,12 +102,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Editing")
 	TSubclassOf<class ACutPlaneCaptureActor> CutPlaneCaptureActorClass;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Loading")
-	FString PendingProjectPath;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Loading")
-	bool bPendingProjectIsTutorial;
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Actors")
 	AActor *Axes;
 

@@ -61,6 +61,7 @@ private:
 public:
 	virtual void Init() override;
 	virtual void Shutdown() override;
+	virtual void StartGameInstance() override;
 
 	void RegisterAllCommands();
 
@@ -116,4 +117,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool RecoveringFromCrash = false;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	FString PendingProjectPath;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	FString PendingInputLogPath;
 };

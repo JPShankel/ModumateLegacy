@@ -117,20 +117,6 @@ void AEditModelPlayerController::PostInitializeComponents()
 	HandleTraceQueryParams = FCollisionQueryParams(HandleTraceTag, SCENE_QUERY_STAT_ONLY(EditModelPlayerController), false);
 	HandleTraceObjectQueryParams = FCollisionObjectQueryParams(COLLISION_HANDLE);
 
-	// Load all of our hardware cursors here, so they can be used by the base PlayerController
-	UWorld *world = GetWorld();
-	UGameViewportClient *gameViewport = world ? world->GetGameViewport() : nullptr;
-	if (gameViewport)
-	{
-		static const FName SelectCursorPath(TEXT("NonUAssets/Cursors/Cursor_select_basic"));
-		static const FName AdvancedCursorPath(TEXT("NonUAssets/Cursors/Cursor_select_advanced"));
-		static const FVector2D CursorHotspot(0.28125f, 0.1875f);
-		gameViewport->SetHardwareCursor(EMouseCursor::Default, SelectCursorPath, CursorHotspot);
-		gameViewport->SetHardwareCursor(EMouseCursor::Custom, AdvancedCursorPath, CursorHotspot);
-
-		gameViewport->OnToggleFullscreen().AddUObject(this, &AEditModelPlayerController::OnToggleFullscreen);
-	}
-
 	// Assign our cached casted AEditModelPlayerState, and its cached casted pointer to us,
 	// immediately after it's created.
 	AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
@@ -176,17 +162,38 @@ void AEditModelPlayerController::BeginPlay()
 	bool bEnableAutoSave = true;
 
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (!ensure(gameInstance && gameInstance->TutorialManager))
+	{
+		return;
+	}
 
 	UGameViewportClient* viewportClient = gameInstance->GetGameViewportClient();
 	if (viewportClient)
 	{
 		viewportClient->OnWindowCloseRequested().BindUObject(this, &AEditModelPlayerController::CheckSaveModel);
+		viewportClient->OnToggleFullscreen().AddUObject(this, &AEditModelPlayerController::OnToggleFullscreen);
+
+		static const FName SelectCursorPath(TEXT("NonUAssets/Cursors/Cursor_select_basic"));
+		static const FVector2D CursorHotspot(0.28125f, 0.1875f);
+		viewportClient->SetHardwareCursor(EMouseCursor::Default, SelectCursorPath, CursorHotspot);
+
+		// Also allow creating a software cursor that can be visible during frame capture
+		if (SoftwareCursorWidgetClass && (SoftwareCursorWidget == nullptr))
+		{
+			SoftwareCursorWidget = GetEditModelHUD()->GetOrCreateWidgetInstance(SoftwareCursorWidgetClass);
+			if (ensure(SoftwareCursorWidget))
+			{
+				viewportClient->AddCursorWidget(EMouseCursor::Default, SoftwareCursorWidget);
+			}
+		}
+
+		viewportClient->SetUseSoftwareCursorWidgets(false);
 	}
 
 	AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
 
 	FString recoveryFile = FPaths::Combine(gameInstance->UserSettings.GetLocalTempDir(), kModumateRecoveryFile);
-		
+
 	if (gameInstance->RecoveringFromCrash)
 	{
 		gameInstance->RecoveringFromCrash = false;
@@ -198,11 +205,15 @@ void AEditModelPlayerController::BeginPlay()
 	}
 	else
 	{
-		fileLoadPath = gameMode->PendingProjectPath;
+		fileLoadPath = gameInstance->PendingProjectPath;
 		bSetAsCurrentProject = true;
-		bAddToRecents = !gameMode->bPendingProjectIsTutorial;
-		bEnableAutoSave = !gameMode->bPendingProjectIsTutorial;
+		bAddToRecents = !gameInstance->TutorialManager->bOpeningTutorialProject;
+		bEnableAutoSave = !gameInstance->TutorialManager->bOpeningTutorialProject;
 	}
+
+	// Now that we've determined whether there was a pending project, or if it was a tutorial, we can clear the flags.
+	gameInstance->PendingProjectPath.Empty();
+	gameInstance->TutorialManager->bOpeningTutorialProject = false;
 
 	EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
@@ -252,8 +263,7 @@ void AEditModelPlayerController::BeginPlay()
 	}
 
 	// Begin a walkthrough if requested from the main menu, then clear out the request.
-	if (gameInstance && gameInstance->TutorialManager &&
-		(gameInstance->TutorialManager->FromMainMenuWalkthroughCategory != EModumateWalkthroughCategories::None))
+	if (gameInstance->TutorialManager->FromMainMenuWalkthroughCategory != EModumateWalkthroughCategories::None)
 	{
 		gameInstance->TutorialManager->BeginWalkthrough(gameInstance->TutorialManager->FromMainMenuWalkthroughCategory);
 		gameInstance->TutorialManager->FromMainMenuWalkthroughCategory = EModumateWalkthroughCategories::None;
@@ -1001,7 +1011,22 @@ void AEditModelPlayerController::NewModel(bool bShouldCheckForSave)
 		bWantAutoSave = false;
 		bCurProjectAutoSaves = true;
 
-		StartTelemetrySession(true);
+		// If we're starting with an input log that we want to load, then try to play it back now.
+		bool bPlayingBackInput = false;
+		auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+		if (ensure(gameInstance && InputAutomationComponent) && !gameInstance->PendingInputLogPath.IsEmpty())
+		{
+			bPlayingBackInput = InputAutomationComponent->BeginPlayback(gameInstance->PendingInputLogPath, true, 1.0f, true);
+		}
+
+		if (bPlayingBackInput)
+		{
+			gameInstance->PendingInputLogPath.Empty();
+		}
+		else
+		{
+			StartTelemetrySession(true);
+		}
 	}
 }
 

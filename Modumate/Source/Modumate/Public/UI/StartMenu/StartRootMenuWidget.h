@@ -64,4 +64,6 @@ protected:
 	bool ConfirmQuit() const;
 
 	void ShowStartMenu();
+
+	bool bHasUserLoggedIn = false;
 };

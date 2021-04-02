@@ -139,9 +139,6 @@ public:
 	bool PreProcessMouseButtonUpEvent(const FPointerEvent& MouseEvent);
 	bool PreProcessMouseWheelEvent(const FPointerEvent& InWheelEvent);
 
-	UPROPERTY()
-	float FrameCaptureDuration;
-
 	UFUNCTION(BlueprintPure)
 	EInputAutomationState GetCurrentState() const { return CurState; }
 
@@ -172,10 +169,10 @@ public:
 	void TryEndRecording();
 
 	UFUNCTION()
-	bool BeginPlaybackPrompt(bool bCaptureFrames, float InPlaybackSpeed = 1.0f);
+	bool BeginPlaybackPrompt(bool bCaptureFrames, float InPlaybackSpeed = 1.0f, bool bExitOnFrameCaptured = false);
 
 	UFUNCTION()
-	bool BeginPlayback(const FString& InputLogPath, bool bCaptureFrames, float InPlaybackSpeed = 1.0f);
+	bool BeginPlayback(const FString& InputLogPath, bool bCaptureFrames, float InPlaybackSpeed = 1.0f, bool bExitOnFrameCaptured = false);
 
 	UFUNCTION()
 	void TryBeginPlaybackPrompt();
@@ -201,15 +198,22 @@ protected:
 	int32 CurAutomationFrame;
 	int32 CurPacketIndex;
 	FEditModelInputLog CurInputLogData;
-	float LastFrameCaptureTime;
-	int32 FrameCaptureIndex;
 	bool bCapturingFrames;
 	float PlaybackSpeed;
+	bool bWillExitOnFrameCaptured;
+	FTimerHandle FrameCaptureSaveTimer;
 	FString LastLogPath;
+	FString FrameCapturePath;
 	class FSceneViewport* SceneViewport;
 
 	UPROPERTY()
 	class AEditModelPlayerController *EMPlayerController;
+
+	UPROPERTY()
+	class UGameViewportClient* GameViewport;
+
+	UFUNCTION()
+	void CheckFrameCaptureSaved();
 
 	bool FindViewport();
 	FEditModelInputPacket &AddRecordingPacket(EInputPacketType Type);
@@ -217,7 +221,6 @@ protected:
 	bool SimulateInput(const FEditModelInputPacket& InputPacket);
 	FString GetDefaultInputLogPath(const FString &Extension);
 	bool LoadInputLog(const FString& InputLogPath);
-	void CaptureFrame();
 
 	// Need public interface for player controller record
 public:

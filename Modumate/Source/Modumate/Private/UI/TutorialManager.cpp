@@ -205,23 +205,34 @@ bool UModumateTutorialManager::OpenVideoTutorial(const FString& ProjectFilePath,
 
 	if (!ProjectFilePath.IsEmpty())
 	{
-		auto world = GetOuter()->GetWorld();
+		bOpeningTutorialProject = true;
+
 		// Check if this is in edit scene or main menu
+		auto world = GetOuter()->GetWorld();
 		AEditModelPlayerController* controller = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
 		AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
 		if (controller)
 		{
 			if (!controller->LoadModelFilePath(ProjectFilePath, false, false, false))
 			{
-				return false;
+				bOpeningTutorialProject = false;
 			}
 		}
 		else if (mainMenuGameMode)
 		{
-			if (!mainMenuGameMode->OpenProject(ProjectFilePath, true))
+			if (!mainMenuGameMode->OpenProject(ProjectFilePath))
 			{
-				return false;
+				bOpeningTutorialProject = false;
 			}
+		}
+		else
+		{
+			bOpeningTutorialProject = false;
+		}
+
+		if (!bOpeningTutorialProject)
+		{
+			return false;
 		}
 	}
 
@@ -289,22 +300,25 @@ void UModumateTutorialManager::OpenWalkthroughProject(EModumateWalkthroughCatego
 		GetTutorialFilePath(IntermediateProjectName, walkthroughFullPath);
 	}
 
-	auto world = GetOuter()->GetWorld();
+	bOpeningTutorialProject = true;
+
 	// Check if this is in edit scene or main menu
+	auto world = GetOuter()->GetWorld();
 	AEditModelPlayerController* controller = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+	AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
 	if (controller)
 	{
 		controller->LoadModelFilePath(walkthroughFullPath, false, false, false);
 		BeginWalkthrough(WalkthroughCategory);
 	}
+	else if (mainMenuGameMode)
+	{
+		FromMainMenuWalkthroughCategory = WalkthroughCategory;
+		mainMenuGameMode->OpenProject(walkthroughFullPath);
+	}
 	else
 	{
-		AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
-		if (mainMenuGameMode)
-		{
-			FromMainMenuWalkthroughCategory = WalkthroughCategory;
-			mainMenuGameMode->OpenProject(walkthroughFullPath, true);
-		}
+		bOpeningTutorialProject = false;
 	}
 }
 

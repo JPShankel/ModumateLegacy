@@ -37,7 +37,7 @@ void UStartBlockProjectCardWidget::OnButtonReleasedProjectCard()
 {
 	if (MainMenuGameMode && ProjectPath.Len() > 0)
 	{
-		MainMenuGameMode->OpenProject(ProjectPath, false);
+		MainMenuGameMode->OpenProject(ProjectPath);
 	}
 }
 

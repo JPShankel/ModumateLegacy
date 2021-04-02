@@ -578,6 +578,44 @@ void UModumateGameInstance::Shutdown()
 	UModumateAnalyticsStatics::ShutdownAnalytics(AnalyticsInstance);
 }
 
+void UModumateGameInstance::StartGameInstance()
+{
+	static const FString projectExtension(TEXT("mdmt"));
+	static const FString inputLogExtension(TEXT("ilog"));
+
+	// Determine whether there's a file that should be opened as soon as possible, before the command line argument might be interpreted by the default GameInstance.
+	IFileManager& fileManger = IFileManager::Get();
+	const TCHAR* commandLine = FCommandLine::Get();
+	FString potentialFilePath;
+	if (FParse::Token(commandLine, potentialFilePath, 0) && fileManger.FileExists(*potentialFilePath))
+	{
+		FString filePathPart, fileNamePart, fileExtPart;
+		FPaths::Split(potentialFilePath, filePathPart, fileNamePart, fileExtPart);
+
+		bool bUseFile = true;
+		if (fileExtPart == projectExtension)
+		{
+			PendingProjectPath = potentialFilePath;
+		}
+		else if (fileExtPart == inputLogExtension)
+		{
+			PendingInputLogPath = potentialFilePath;
+		}
+		else
+		{
+			bUseFile = false;
+		}
+
+		if (bUseFile)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Command line specified file: \"%s\""), *PendingProjectPath);
+			FCommandLine::Set(TEXT(""));
+		}
+	}
+
+	Super::StartGameInstance();
+}
+
 void UModumateGameInstance::CheckCrashRecovery()
 {
 	FString recoveryFile = FPaths::Combine(UserSettings.GetLocalTempDir(), kModumateRecoveryFile);

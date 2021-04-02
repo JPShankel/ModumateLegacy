@@ -397,13 +397,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Snap)
 	float SnapOcclusionEpsilon = 1.0f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Input)
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> SoftwareCursorWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* SoftwareCursorWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	UEditModelInputAutomation* InputAutomationComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Input)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	UEditModelInputHandler* InputHandlerComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 	UEditModelCameraController* CameraController;
 
 	UPROPERTY()

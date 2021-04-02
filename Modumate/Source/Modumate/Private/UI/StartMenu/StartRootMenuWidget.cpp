@@ -35,6 +35,7 @@ bool UStartRootMenuWidget::Initialize()
 	ButtonHelp->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedHelp);
 	ButtonQuit->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedQuit);
 	ButtonOpen->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedOpen);
+	bHasUserLoggedIn = false;
 
 	UGameViewportClient* viewportClient = ModumateGameInstance ? ModumateGameInstance->GetGameViewportClient() : nullptr;
 	if (viewportClient)
@@ -62,10 +63,19 @@ void UStartRootMenuWidget::NativeTick(const FGeometry& MyGeometry, float InDelta
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	// Open project menu when user is connected
-	if (ModumateGameInstance && ModumateGameInstance->LoginStatus() == ELoginStatus::Connected)
+	// Move on to the next step once the user is logged in
+	if (!bHasUserLoggedIn && ModumateGameInstance && (ModumateGameInstance->LoginStatus() == ELoginStatus::Connected))
 	{
-		if (Start_Home_BP && Start_Home_BP->GetVisibility() == ESlateVisibility::Collapsed)
+		bHasUserLoggedIn = true;
+		auto* mainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode>();
+
+		// If there's a pending project or input log that came from the command line, then open it directly.
+		if (ensure(mainMenuGameMode) && (!ModumateGameInstance->PendingProjectPath.IsEmpty() || !ModumateGameInstance->PendingInputLogPath.IsEmpty()))
+		{
+			mainMenuGameMode->OpenEditModelLevel();
+		}
+		// Otherwise, if the user isn't forced into the starting walkthrough, then show the start menu.
+		else if (!GetWorld()->GetGameInstance<UModumateGameInstance>()->TutorialManager->CheckAbsoluteBeginner())
 		{
 			ShowStartMenu();
 		}
@@ -103,7 +113,7 @@ void UStartRootMenuWidget::OnButtonReleasedOpen()
 
 void UStartRootMenuWidget::ShowStartMenu()
 {
-	if (!GetWorld()->GetGameInstance<UModumateGameInstance>()->TutorialManager->CheckAbsoluteBeginner())
+	if (Start_Home_BP && (Start_Home_BP->GetVisibility() == ESlateVisibility::Collapsed))
 	{
 		Start_Home_BP->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		// TODO: Play widget opening animation here

@@ -48,35 +48,6 @@ void AEditModelGameMode::InitGame(const FString& MapName, const FString& Options
 	}
 	databaseLoadTime *= 1000.0;
 	UE_LOG(LogPerformance, Log, TEXT("Object database loaded in %d ms"), int(databaseLoadTime + 0.5));
-
-	PendingProjectPath.Empty();
-	const static FString projectPathKey(TEXT("LoadFile"));
-	if (UGameplayStatics::HasOption(Options, projectPathKey))
-	{
-		FString projectPathOption = UGameplayStatics::ParseOption(Options, projectPathKey);
-		if (IFileManager::Get().FileExists(*projectPathOption))
-		{
-			PendingProjectPath = projectPathOption;
-		}
-		else if (!FParse::QuotedString(*projectPathOption, PendingProjectPath))
-		{
-			PendingProjectPath.Empty();
-		}
-	}
-
-	bPendingProjectIsTutorial = false;
-	const static FString tutorialProjectKey(TEXT("IsTutorial"));
-	if (UGameplayStatics::HasOption(Options, tutorialProjectKey))
-	{
-		FString tutorialProjectValue = UGameplayStatics::ParseOption(Options, tutorialProjectKey);
-		bPendingProjectIsTutorial = tutorialProjectValue.ToBool();
-	}
-
-	if (!PendingProjectPath.IsEmpty() && IFileManager::Get().FileExists(*PendingProjectPath))
-	{
-		UE_LOG(LogTemp, Log, TEXT("Will open %s: \"%s\""),
-			bPendingProjectIsTutorial ? TEXT("tutorial") : TEXT("project"), *PendingProjectPath);
-	}
 }
 
 void AEditModelGameMode::InitGameState()

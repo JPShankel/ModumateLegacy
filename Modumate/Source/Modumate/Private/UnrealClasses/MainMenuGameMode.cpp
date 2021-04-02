@@ -19,18 +19,17 @@ void AMainMenuGameMode::InitGame(const FString& MapName, const FString& Options,
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 
-	FString projectPath;
-	if (FParse::Value(FCommandLine::Get(), TEXT("-Project="), projectPath))
-	{
-		bool bIsTutorial = false;
-		FParse::Bool(FCommandLine::Get(), TEXT("-IsTutorial="), bIsTutorial);
+	LoadRecentProjectData();
 
-		UE_LOG(LogCallTrace, Log, TEXT("Command line specified project: \"%s\""), *projectPath);
-		OpenProject(projectPath, bIsTutorial);
-	}
-	else
+	// If there's a file to open, and there are saved credentials, then try to log in so the file can automatically be opened.
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (gameInstance &&
+		(!gameInstance->PendingProjectPath.IsEmpty() || !gameInstance->PendingInputLogPath.IsEmpty()) &&
+		gameInstance->UserSettings.bLoaded &&
+		!gameInstance->UserSettings.SavedUserName.IsEmpty() &&
+		!gameInstance->UserSettings.SavedCredentials.IsEmpty())
 	{
-		LoadRecentProjectData();
+		gameInstance->Login(gameInstance->UserSettings.SavedUserName, FString(), gameInstance->UserSettings.SavedCredentials, true, true);
 	}
 }
 
@@ -111,15 +110,19 @@ bool AMainMenuGameMode::GetRecentProjectData(int32 index, FString &outProjectPat
 	return false;
 }
 
-bool AMainMenuGameMode::OpenProject(const FString &projectPath, bool bIsTutorial)
+void AMainMenuGameMode::OpenEditModelLevel()
 {
-	if (IFileManager::Get().FileExists(*projectPath))
-	{
-		const FName editModelLevelName(TEXT("EditModelLVL"));
+	const FName editModelLevelName(TEXT("EditModelLVL"));
+	UGameplayStatics::OpenLevel(this, editModelLevelName, false);
+}
 
-		FString levelOptions = FString::Printf(TEXT("LoadFile=\"%s\"?IsTutorial=%s"), *projectPath,
-			bIsTutorial ? *FCoreTexts::Get().True.ToString() : *FCoreTexts::Get().False.ToString());
-		UGameplayStatics::OpenLevel(this, editModelLevelName, false, levelOptions);
+bool AMainMenuGameMode::OpenProject(const FString& ProjectPath)
+{
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (gameInstance && IFileManager::Get().FileExists(*ProjectPath))
+	{
+		gameInstance->PendingProjectPath = ProjectPath;
+		OpenEditModelLevel();
 		return true;
 	}
 
@@ -131,7 +134,7 @@ bool AMainMenuGameMode::OpenProjectFromPicker()
 	FString projectPath;
 	if (GetLoadFilename(projectPath))
 	{
-		return OpenProject(projectPath, false);
+		return OpenProject(projectPath);
 	}
 
 	return false;
@@ -146,7 +149,6 @@ FDateTime AMainMenuGameMode::GetCurrentDateTime()
 {
 	return FDateTime::Now();
 }
-
 
 void AMainMenuGameMode::DisplayShutdownMessage(const FString &str, const FString &caption)
 {
