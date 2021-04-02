@@ -63,15 +63,16 @@ public:
 	class UMaterialInterface* IconMaterial;
 
 	// Builder
-	void BuildAsBrowserHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID);
-	void BuildAsSwapHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID);
-	void BuildAsSelectTrayPresetCard(const FGuid& InGUID, int32 ItemCount);
-	void BuildAsSelectTrayPresetCardObjectType(EObjectType InObjectType, int32 ItemCount);
-	void BuildAsAssembliesListHeader(const FGuid& InGUID);
+	void BuildAsBrowserHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID, bool bAllowOptions = true);
+	void BuildAsSwapHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID, bool bAllowOptions = true);
+	void BuildAsSelectTrayPresetCard(const FGuid& InGUID, int32 ItemCount, bool bAllowOptions = true);
+	void BuildAsSelectTrayPresetCardObjectType(EObjectType InObjectType, int32 ItemCount, bool bAllowOptions = true);
+	void BuildAsAssembliesListHeader(const FGuid& InGUID, bool bAllowOptions = true);
 
-	void UpdateButtonSetByPresetCardType(EPresetCardType InPresetCardType);
+	void UpdateOptionButtonSetByPresetCardType(EPresetCardType InPresetCardType, bool bHideAllOnly);
 	void UpdateSelectionHeaderItemCount(int32 ItemCount);
 	bool CaptureIcon(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID, bool bAsAssembly);
+	void UpdateEditButtonIfPresetIsEditable();
 
 	UFUNCTION()
 	void OnButtonEditReleased();

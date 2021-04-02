@@ -49,7 +49,7 @@ void UPresetCardHeader::NativeConstruct()
 	EMPlayerController = GetOwningPlayer<AEditModelPlayerController>();
 }
 
-void UPresetCardHeader::BuildAsBrowserHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID)
+void UPresetCardHeader::BuildAsBrowserHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID, bool bAllowOptions)
 {
 	PresetGUID = InGUID;
 	const FBIMPresetInstance* preset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
@@ -58,11 +58,11 @@ void UPresetCardHeader::BuildAsBrowserHeader(const FGuid& InGUID, const FBIMEdit
 		CaptureIcon(PresetGUID, NodeID, preset->NodeScope == EBIMValueScope::Assembly);
 		ItemDisplayName = preset->DisplayName;
 		MainText->ChangeText(ItemDisplayName);
-		UpdateButtonSetByPresetCardType(EPresetCardType::Browser);
+		UpdateOptionButtonSetByPresetCardType(EPresetCardType::Browser, !bAllowOptions);
 	}
 }
 
-void UPresetCardHeader::BuildAsSwapHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID)
+void UPresetCardHeader::BuildAsSwapHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID, bool bAllowOptions)
 {
 	PresetGUID = InGUID;
 	const FBIMPresetInstance* preset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
@@ -75,11 +75,11 @@ void UPresetCardHeader::BuildAsSwapHeader(const FGuid& InGUID, const FBIMEditorN
 		CaptureIcon(PresetGUID, NodeID, bCaptureIconAsAssembly);
 		ItemDisplayName = preset->DisplayName;
 		MainText->ChangeText(ItemDisplayName);
-		UpdateButtonSetByPresetCardType(EPresetCardType::Swap);
+		UpdateOptionButtonSetByPresetCardType(EPresetCardType::Swap, !bAllowOptions);
 	}
 }
 
-void UPresetCardHeader::BuildAsSelectTrayPresetCard(const FGuid& InGUID, int32 ItemCount)
+void UPresetCardHeader::BuildAsSelectTrayPresetCard(const FGuid& InGUID, int32 ItemCount, bool bAllowOptions)
 {
 	PresetGUID = InGUID;
 	const FBIMPresetInstance* preset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
@@ -88,20 +88,21 @@ void UPresetCardHeader::BuildAsSelectTrayPresetCard(const FGuid& InGUID, int32 I
 		CaptureIcon(PresetGUID, BIM_ID_NONE, true); // Only full assembly object are allowed to be selected in scene
 		ItemDisplayName = preset->DisplayName;
 		UpdateSelectionHeaderItemCount(ItemCount);
-		UpdateButtonSetByPresetCardType(EPresetCardType::SelectTray);
+		UpdateOptionButtonSetByPresetCardType(EPresetCardType::SelectTray, !bAllowOptions);
 	}
 }
 
-void UPresetCardHeader::BuildAsSelectTrayPresetCardObjectType(EObjectType InObjectType, int32 ItemCount)
+void UPresetCardHeader::BuildAsSelectTrayPresetCardObjectType(EObjectType InObjectType, int32 ItemCount, bool bAllowOptions)
 {
+	PresetGUID = FGuid();
 	ItemDisplayName = UModumateTypeStatics::GetTextForObjectType(InObjectType);
 	UpdateSelectionHeaderItemCount(ItemCount);
 
 	// PresetCards that represent objectType do not have interactions
-	UpdateButtonSetByPresetCardType(EPresetCardType::None);
+	UpdateOptionButtonSetByPresetCardType(EPresetCardType::None, !bAllowOptions);
 }
 
-void UPresetCardHeader::BuildAsAssembliesListHeader(const FGuid& InGUID)
+void UPresetCardHeader::BuildAsAssembliesListHeader(const FGuid& InGUID, bool bAllowOptions)
 {
 	PresetGUID = InGUID;
 	const FBIMPresetInstance* preset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
@@ -110,51 +111,44 @@ void UPresetCardHeader::BuildAsAssembliesListHeader(const FGuid& InGUID)
 		CaptureIcon(PresetGUID, BIM_ID_NONE, true);
 		ItemDisplayName = preset->DisplayName;
 		MainText->ChangeText(ItemDisplayName);
-		UpdateButtonSetByPresetCardType(EPresetCardType::AssembliesList);
+		UpdateOptionButtonSetByPresetCardType(EPresetCardType::AssembliesList, !bAllowOptions);
 	}
 }
 
-void UPresetCardHeader::UpdateButtonSetByPresetCardType(EPresetCardType InPresetCardType)
+void UPresetCardHeader::UpdateOptionButtonSetByPresetCardType(EPresetCardType InPresetCardType, bool bHideAllOnly)
 {
 	// TODO: Create button widget as needed by EPresetCardType
 	PresetCardType = InPresetCardType;
+
+	ButtonSwap->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonEdit->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonDuplicate->SetVisibility(ESlateVisibility::Collapsed);
+
+	if (bHideAllOnly)
+	{
+		return;
+	}
+
 	switch (InPresetCardType)
 	{
 	case EPresetCardType::Browser:
-		ButtonSwap->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonEdit->SetVisibility(ESlateVisibility::Visible);
-		ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonDuplicate->SetVisibility(ESlateVisibility::Visible);
+		UpdateEditButtonIfPresetIsEditable();
 		break;
 	case EPresetCardType::SelectTray:
 		ButtonSwap->SetVisibility(ESlateVisibility::Visible);
-		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonEdit->SetVisibility(ESlateVisibility::Visible);
-		ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonDuplicate->SetVisibility(ESlateVisibility::Collapsed);
+		UpdateEditButtonIfPresetIsEditable();
 		break;
 	case EPresetCardType::Swap:
-		ButtonSwap->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonEdit->SetVisibility(ESlateVisibility::Collapsed);
 		ButtonConfirm->SetVisibility(ESlateVisibility::Visible);
-		ButtonDuplicate->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EPresetCardType::AssembliesList:
-		ButtonSwap->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonEdit->SetVisibility(ESlateVisibility::Visible);
-		ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
+		UpdateEditButtonIfPresetIsEditable();
 		ButtonDuplicate->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EPresetCardType::None:
 	default:
-		ButtonSwap->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonTrash->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonEdit->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
-		ButtonDuplicate->SetVisibility(ESlateVisibility::Collapsed);
 		break;
 	}
 }
@@ -195,6 +189,17 @@ bool UPresetCardHeader::CaptureIcon(const FGuid& InGUID, const FBIMEditorNodeIDT
 	}
 	IconImageSmall->SetVisibility(result ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 	return result;
+}
+
+void UPresetCardHeader::UpdateEditButtonIfPresetIsEditable()
+{
+	const FBIMPresetInstance* preset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
+	if (preset && preset->NodeScope == EBIMValueScope::Assembly)
+	{
+		ButtonEdit->SetVisibility(ESlateVisibility::Visible);
+		return;
+	}
+	ButtonEdit->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UPresetCardHeader::OnButtonEditReleased()

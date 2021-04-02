@@ -54,7 +54,7 @@ void UNCPNavigator::BuildNCPNavigator(EPresetCardType BuildAsType)
 	for (auto& curNCPTagString : StarterNCPTagStrings)
 	{
 		FBIMTagPath newTagPath;
-		newTagPath.FromString(curNCPTagString);
+		newTagPath.FromString(curNCPTagString.Key);
 		sourceNCPTags.Add(newTagPath);
 	}
 	CacheSearchFilteredPresets(sourceNCPTags);
@@ -67,9 +67,21 @@ void UNCPNavigator::BuildNCPNavigator(EPresetCardType BuildAsType)
 		newAssemblyItemObj->bAsPresetCard = false;
 		newAssemblyItemObj->NCPTag = curSourceNCPTag;
 		newAssemblyItemObj->TagOrder = 0;
-		newAssemblyItemObj->bNCPButtonExpanded = true;
+
+		// Check which NCP button should be opened
+		bool bSourceTagIsOpen = SelectedTags.Contains(curSourceNCPTag);
+		if (!bSourceTagIsOpen)
+		{
+			FString tagString;
+			curSourceNCPTag.ToString(tagString);
+			bSourceTagIsOpen = StarterNCPTagStrings.FindRef(tagString);
+		}
+		newAssemblyItemObj->bNCPButtonExpanded = bSourceTagIsOpen;
 		DynamicMainListView->AddItem(newAssemblyItemObj);
-		BuildBrowserItemSubObjs(curSourceNCPTag, 0);
+		if (bSourceTagIsOpen)
+		{
+			BuildBrowserItemSubObjs(curSourceNCPTag, 0);
+		}
 	}
 }
 

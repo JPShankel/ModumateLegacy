@@ -45,8 +45,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UListView* DynamicMainListView;
 
+	// String of the NCP, and whether it should be opened by default
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FString> StarterNCPTagStrings;
+	TMap<FString, bool> StarterNCPTagStrings;
 
 	void BuildNCPNavigator(EPresetCardType BuildAsType);
 	void BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 TagOrder);

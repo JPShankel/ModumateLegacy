@@ -55,7 +55,8 @@ void UPresetCardMain::OnMainButtonReleased()
 {
 	bool bExpandList = DynamicVerticalBox->GetChildrenCount() == 0;
 	
-	if (CurrentPresetCardType == EPresetCardType::Browser)
+	if (CurrentPresetCardType == EPresetCardType::Browser ||
+		CurrentPresetCardType == EPresetCardType::Swap)
 	{
 		// ItemObjs need to be updated so that widgets remain open during scrolling in listview
 		ParentBrowserItemObj->bPresetCardExpanded = bExpandList;
@@ -115,29 +116,29 @@ void UPresetCardMain::BuildAsCollapsedPresetCard(const FGuid& InPresetKey, bool 
 		case EPresetCardType::SelectTray:
 			if (bBuildAsObjectTypeSelect)
 			{
-				newHeaderWidget->BuildAsSelectTrayPresetCardObjectType(SelectedObjectType, SelectCount);
+				newHeaderWidget->BuildAsSelectTrayPresetCardObjectType(SelectedObjectType, SelectCount, bAllowInteraction);
 			}
 			else
 			{
-				newHeaderWidget->BuildAsSelectTrayPresetCard(PresetGUID, SelectCount);
+				newHeaderWidget->BuildAsSelectTrayPresetCard(PresetGUID, SelectCount, bAllowInteraction);
 			}
 			break;
 		case EPresetCardType::Swap:
 			if (EMPlayerController->EditModelUserWidget->SwapMenuWidget->CurrentSwapMenuType == ESwapMenuType::SwapFromSelection)
 			{
-				newHeaderWidget->BuildAsSwapHeader(PresetGUID, BIM_ID_NONE);
+				newHeaderWidget->BuildAsSwapHeader(PresetGUID, BIM_ID_NONE, bAllowInteraction);
 			}
 			else
 			{
-				newHeaderWidget->BuildAsSwapHeader(PresetGUID, EMPlayerController->EditModelUserWidget->SwapMenuWidget->BIMNodeIDToSwap);
+				newHeaderWidget->BuildAsSwapHeader(PresetGUID, EMPlayerController->EditModelUserWidget->SwapMenuWidget->BIMNodeIDToSwap, bAllowInteraction);
 			}
 			break;
 		case EPresetCardType::AssembliesList:
-			newHeaderWidget->BuildAsAssembliesListHeader(PresetGUID);
+			newHeaderWidget->BuildAsAssembliesListHeader(PresetGUID, bAllowInteraction);
 			break;
 		case EPresetCardType::Browser:
 		default:
-			newHeaderWidget->BuildAsBrowserHeader(PresetGUID, BIM_ID_NONE); //TODO: Support non-assembly with NodeID?
+			newHeaderWidget->BuildAsBrowserHeader(PresetGUID, BIM_ID_NONE, bAllowInteraction); //TODO: Support non-assembly with NodeID?
 			break;
 		}
 	}
