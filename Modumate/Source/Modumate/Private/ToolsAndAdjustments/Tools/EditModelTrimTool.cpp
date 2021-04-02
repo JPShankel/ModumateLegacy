@@ -104,39 +104,28 @@ bool UTrimTool::FrameUpdate()
 		// Determine the desired flip/justification of the Trim based on the target SurfaceEdge
 		PendingTrimData.OffsetUp = FDimensionOffset::Centered;
 		PendingTrimData.FlipSigns = FVector2D::UnitVector;
-		int32 adjacentPolyID = MOD_ID_NONE;
 
-		auto boudingPoly = targetSurfaceGraph->FindPolygon(targetSurfaceGraph->GetOuterBoundingPolyID());
-		if (boudingPoly)
+		TArray<int32> boundingPolyIDs;
+		boundingPolyIDs.Add(targetSurfaceGraph->GetOuterBoundingPolyID());
+		boundingPolyIDs.Append(targetSurfaceGraph->GetInnerBounds());
+
+		for (int32 boundingPolyID : boundingPolyIDs)
 		{
-			bool bBoundsForwardEdge = boudingPoly->Edges.Contains(targetMOI->ID);
-			bool bBoundsReverseEdge = boudingPoly->Edges.Contains(-targetMOI->ID);
+			auto boundingPoly = targetSurfaceGraph->FindPolygon(boundingPolyID);
+			if (boundingPoly == nullptr)
+			{
+				continue;
+			}
+
+			bool bBoundsForwardEdge = boundingPoly->Edges.Contains(targetMOI->ID);
+			bool bBoundsReverseEdge = boundingPoly->Edges.Contains(-targetMOI->ID);
 			if (bBoundsForwardEdge || bBoundsReverseEdge)
 			{
-				adjacentPolyID = boudingPoly->ID;
-
+				// The trim's normal (Y) needs to be flipped in order to either:
+				// - Flip to be the opposite of an exterior outer bounding polygon's edge, whose normal faces outward
+				// - Flip to be the opposite of an interior inner bounding polygon's edge, whose normal faces inward
 				PendingTrimData.OffsetUp = FDimensionOffset::Positive;
-				PendingTrimData.FlipSigns.Y = bBoundsForwardEdge ? 1.0f : -1.0f;
-			}
-		}
-
-		if (adjacentPolyID == MOD_ID_NONE)
-		{
-			for (int32 innerBoundsID : targetSurfaceGraph->GetInnerBounds())
-			{
-				auto innerBoundingPoly = targetSurfaceGraph->FindPolygon(innerBoundsID);
-				if (innerBoundingPoly && (innerBoundingPoly->Edges.Contains(targetMOI->ID) || innerBoundingPoly->Edges.Contains(-targetMOI->ID)))
-				{
-					bool bBoundsForwardEdge = innerBoundingPoly->Edges.Contains(targetMOI->ID);
-					bool bBoundsReverseEdge = innerBoundingPoly->Edges.Contains(-targetMOI->ID);
-					if (bBoundsForwardEdge || bBoundsReverseEdge)
-					{
-						adjacentPolyID = innerBoundingPoly->ID;
-
-						PendingTrimData.OffsetUp = FDimensionOffset::Positive;
-						PendingTrimData.FlipSigns.Y = bBoundsForwardEdge ? -1.0f : 1.0f;
-					}
-				}
+				PendingTrimData.FlipSigns.Y = bBoundsForwardEdge ? -1.0f : 1.0f;
 			}
 		}
 

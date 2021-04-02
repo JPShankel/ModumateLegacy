@@ -838,7 +838,7 @@ void ADynamicMeshActor::ClearProceduralLayers()
 
 bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAssembly, const FVector& InStartPoint, const FVector& InEndPoint,
 	const FVector& ObjUp, const FVector& ObjNormal, const FDimensionOffset& OffsetUp, const FDimensionOffset& OffsetNormal,
-	const FVector2D& UpperExtensions, const FVector2D& OuterExtensions, const FVector& InFlipSigns, bool bRecreateSection, bool bCreateCollision)
+	const FVector2D& Extensions, const FVector& InFlipSigns, bool bRecreateSection, bool bCreateCollision)
 {
 	const FSimplePolygon *polyProfile = nullptr;
 	if (!UModumateObjectStatics::GetPolygonProfile(&InAssembly, polyProfile))
@@ -877,22 +877,15 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 	uv0.Reset();
 	vertexColors.Reset();
 
-	auto offsetPoint = [extrusionDir, ObjNormal, ObjUp, profileExtents, UpperExtensions, OuterExtensions]
+	// TODO: determine the best format for providing an arbitrary angle to use to offset each end of the mesh,
+	// or potentially specify entire custom end cap geometry.
+	auto offsetPoint = [extrusionDir, ObjNormal, ObjUp, profileExtents, Extensions]
 	(const FVector &worldPoint, const FVector2D &polyPoint, bool bAtStart)
 	{
 		FVector2D profileExtentsSize = profileExtents.GetSize();
 		FVector2D pointRelative = polyPoint - profileExtents.Min;
 		FVector2D pointPCT = (profileExtentsSize.GetMin() > 0.0f) ? (pointRelative / profileExtentsSize) : FVector2D::ZeroVector;
-		float lengthExtension = 0.0f;
-
-		if (bAtStart)
-		{
-			lengthExtension = (-pointPCT.X * UpperExtensions.X) + (-pointPCT.Y * OuterExtensions.X);
-		}
-		else
-		{
-			lengthExtension = (pointPCT.X * UpperExtensions.Y) + (pointPCT.Y * OuterExtensions.Y);
-		}
+		float lengthExtension = bAtStart ? -Extensions.X : Extensions.Y;
 
 		return worldPoint + (lengthExtension * extrusionDir) + (polyPoint.Y * ObjNormal) + (polyPoint.X * ObjUp);
 	};

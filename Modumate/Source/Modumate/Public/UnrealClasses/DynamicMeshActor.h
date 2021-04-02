@@ -121,7 +121,7 @@ public:
 
 	bool SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAssembly, const FVector& InStartPoint, const FVector& InEndPoint,
 		const FVector& ObjUp, const FVector& ObjNormal, const FDimensionOffset& OffsetUp, const FDimensionOffset& OffsetNormal,
-		const FVector2D& UpperExtensions = FVector2D::ZeroVector, const FVector2D& OuterExtensions = FVector2D::ZeroVector, const FVector& InFlipSigns = FVector::OneVector, bool bRecreateSection = true, bool bCreateCollision = true);
+		const FVector2D& Extensions = FVector2D::ZeroVector, const FVector& InFlipSigns = FVector::OneVector, bool bRecreateSection = true, bool bCreateCollision = true);
 
 	void SetupMasksGeometry(const TArray<TArray<FVector>> &Polygons, const FPlane &Plane, const FVector &Origin, const FVector &AxisX, const FVector &AxisY);
 

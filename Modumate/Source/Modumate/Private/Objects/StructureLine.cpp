@@ -10,6 +10,7 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UI/Properties/InstPropWidgetFlip.h"
+#include "UI/Properties/InstPropWidgetLinearDimension.h"
 #include "UI/Properties/InstPropWidgetOffset.h"
 #include "UI/Properties/InstPropWidgetRotation.h"
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
@@ -143,6 +144,26 @@ void AMOIStructureLine::RegisterInstanceDataUI(UToolTrayBlockProperties* Propert
 		rotationField->RegisterValue(this, InstanceData.Rotation);
 		rotationField->ValueChangedEvent.AddDynamic(this, &AMOIStructureLine::OnInstPropUIChangedRotation);
 	}
+
+	static const FString extensionPropertyNames[] = { FString(TEXT("Start Extension")), FString(TEXT("End Extension")) };
+	UInstPropWidgetLinearDimension* extensionFields[] = { nullptr, nullptr };
+	for (int32 extensionIdx = 0; extensionIdx < 2; ++extensionIdx)
+	{
+		const FString& extensionPropertyName = extensionPropertyNames[extensionIdx];
+		auto extensionField = PropertiesUI->RequestPropertyField<UInstPropWidgetLinearDimension>(this, extensionPropertyName);
+		if (ensure(extensionField))
+		{
+			extensionField->RegisterValue(this, InstanceData.Extensions[extensionIdx]);
+			extensionFields[extensionIdx] = extensionField;
+		}
+		else
+		{
+			return;
+		}
+	}
+
+	extensionFields[0]->ValueChangedEvent.AddDynamic(this, &AMOIStructureLine::OnInstPropUIChangedExtensionStart);
+	extensionFields[1]->ValueChangedEvent.AddDynamic(this, &AMOIStructureLine::OnInstPropUIChangedExtensionEnd);
 }
 
 void AMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
@@ -296,6 +317,30 @@ void AMOIStructureLine::OnInstPropUIChangedRotation(float NewValue)
 	}
 }
 
+void AMOIStructureLine::OnInstPropUIChangedExtension(float NewValue, int32 ExtensionIdx)
+{
+	if (Document && (ExtensionIdx >= 0) && (ExtensionIdx <= 1) && (InstanceData.Extensions[ExtensionIdx] != NewValue))
+	{
+		auto deltaPtr = MakeShared<FMOIDelta>();
+		auto& newStateData = deltaPtr->AddMutationState(this);
+		auto newInstanceData = InstanceData;
+		newInstanceData.Extensions[ExtensionIdx] = NewValue;
+		newStateData.CustomData.SaveStructData(newInstanceData);
+
+		Document->ApplyDeltas({ deltaPtr }, GetWorld());
+	}
+}
+
+void AMOIStructureLine::OnInstPropUIChangedExtensionStart(float NewValue)
+{
+	OnInstPropUIChangedExtension(NewValue, 0);
+}
+
+void AMOIStructureLine::OnInstPropUIChangedExtensionEnd(float NewValue)
+{
+	OnInstPropUIChangedExtension(NewValue, 1);
+}
+
 bool AMOIStructureLine::UpdateCachedGeometry(bool bRecreate, bool bCreateCollision)
 {
 	const FSimplePolygon* profile = nullptr;
@@ -331,7 +376,7 @@ bool AMOIStructureLine::UpdateCachedGeometry(bool bRecreate, bool bCreateCollisi
 	}
 
 	DynamicMeshActor->SetupExtrudedPolyGeometry(CachedAssembly, LineStartPos, LineEndPos, LineUp, LineNormal,
-		InstanceData.OffsetUp, InstanceData.OffsetNormal, UpperExtensions, OuterExtensions, InstanceData.FlipSigns, bRecreate, bCreateCollision);
+		InstanceData.OffsetUp, InstanceData.OffsetNormal, InstanceData.Extensions, InstanceData.FlipSigns, bRecreate, bCreateCollision);
 
 	return true;
 }

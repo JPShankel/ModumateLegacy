@@ -627,11 +627,10 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FBIMAssemblySpec &A
 	FVector meshNormal = Assembly.ObjectType == EObjectType::OTStructureLine ? FVector::LeftVector : FVector::RightVector;
 	FVector meshUp = Assembly.ObjectType == EObjectType::OTStructureLine ? FVector::DownVector : FVector::UpVector;
 
-	FVector2D upperExtensions = FVector2D::ZeroVector;
-	FVector2D outerExtensions = FVector2D::ZeroVector;
+	FVector2D extensions = FVector2D::ZeroVector;
 
 	IconDynamicMeshActor->SetupExtrudedPolyGeometry(Assembly, meshStartPos, meshEndPos,
-		meshUp, meshNormal, FDimensionOffset::Centered, FDimensionOffset::Centered, upperExtensions, outerExtensions, FVector::OneVector, true, false);
+		meshUp, meshNormal, FDimensionOffset::Centered, FDimensionOffset::Centered, extensions, FVector::OneVector, true, false);
 	IconDynamicMeshActor->SetActorRelativeTransform(FTransform::Identity);
 
 	// Step 2: Set camera transform and actor for capture
@@ -844,7 +843,7 @@ bool ADynamicIconGenerator::SetIconMeshForProfile(const FGuid& ProfileKey, UText
 	FVector meshUp = asBeamProfile ? FVector::DownVector : FVector::UpVector;
 
 	IconDynamicMeshActor->SetupExtrudedPolyGeometry(obAsm, meshStartPos, meshEndPos,
-		meshUp, meshNormal, FDimensionOffset::Centered, FDimensionOffset::Centered, FVector2D::ZeroVector, FVector2D::ZeroVector, FVector::OneVector, true, false);
+		meshUp, meshNormal, FDimensionOffset::Centered, FDimensionOffset::Centered, FVector2D::ZeroVector, FVector::OneVector, true, false);
 	IconDynamicMeshActor->SetActorRelativeTransform(FTransform::Identity);
 
 	// Step 2: Set camera transform and actor for capture

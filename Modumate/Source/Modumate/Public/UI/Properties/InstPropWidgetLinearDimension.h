@@ -7,18 +7,33 @@
 #include "InstPropWidgetLinearDimension.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInstPropDimensionSet, float, NewValue);
+
 UCLASS()
 class MODUMATE_API UInstPropWidgetLinearDimension : public UInstPropWidgetBase
 {
 	GENERATED_BODY()
 
 public:
-	virtual bool Initialize() override { return Super::Initialize(); }
+	virtual bool Initialize() override;
+	virtual void ResetInstProp() override;
+	virtual void DisplayValue() override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateEditableTextBoxUserWidget* DimensionText;
 
-protected:
+	UPROPERTY()
+	float CurrentValue;
+
+	UPROPERTY()
+	FOnInstPropDimensionSet ValueChangedEvent;
+
 	UFUNCTION()
-	void OnDimensionTextCommitted(const FText& NewText, ETextCommit::Type CommitMethod) { }
+	void RegisterValue(UObject* Source, float DimensionValue);
+
+protected:
+	virtual void BroadcastValueChanged() override;
+
+	UFUNCTION()
+	void OnDimensionTextCommitted(const FText& NewText, ETextCommit::Type CommitMethod);
 };

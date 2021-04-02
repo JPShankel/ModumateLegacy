@@ -48,6 +48,9 @@ struct MODUMATE_API FMOIStructureLineData
 	UPROPERTY()
 	float Rotation = 0.0f;
 
+	UPROPERTY()
+	FVector2D Extensions = FVector2D::ZeroVector;
+
 	static constexpr int32 CurrentVersion = 2;
 };
 
@@ -104,6 +107,14 @@ protected:
 
 	UFUNCTION()
 	void OnInstPropUIChangedRotation(float NewValue);
+
+	void OnInstPropUIChangedExtension(float NewValue, int32 ExtensionIdx);
+
+	UFUNCTION()
+	void OnInstPropUIChangedExtensionStart(float NewValue);
+
+	UFUNCTION()
+	void OnInstPropUIChangedExtensionEnd(float NewValue);
 
 	bool UpdateCachedGeometry(bool bRecreate, bool bCreateCollision);
 

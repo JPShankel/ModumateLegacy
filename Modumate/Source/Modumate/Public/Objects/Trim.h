@@ -40,6 +40,9 @@ struct MODUMATE_API FMOITrimData
 	UPROPERTY()
 	FDimensionOffset OffsetUp;
 
+	UPROPERTY()
+	FVector2D Extensions;
+
 	static constexpr int32 CurrentVersion = 2;
 };
 
@@ -95,6 +98,14 @@ protected:
 
 	UFUNCTION()
 	void OnInstPropUIChangedOffsetUp(const FDimensionOffset& NewValue);
+
+	void OnInstPropUIChangedExtension(float NewValue, int32 ExtensionIdx);
+
+	UFUNCTION()
+	void OnInstPropUIChangedExtensionStart(float NewValue);
+
+	UFUNCTION()
+	void OnInstPropUIChangedExtensionEnd(float NewValue);
 
 	bool UpdateCachedStructure();
 	bool UpdateMitering();

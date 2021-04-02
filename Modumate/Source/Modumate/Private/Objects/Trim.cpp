@@ -9,6 +9,7 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
 #include "UI/Properties/InstPropWidgetFlip.h"
+#include "UI/Properties/InstPropWidgetLinearDimension.h"
 #include "UI/Properties/InstPropWidgetOffset.h"
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "Quantities/QuantitiesManager.h"
@@ -200,6 +201,26 @@ void AMOITrim::RegisterInstanceDataUI(UToolTrayBlockProperties* PropertiesUI)
 		offsetUpField->RegisterValue(this, InstanceData.OffsetUp);
 		offsetUpField->ValueChangedEvent.AddDynamic(this, &AMOITrim::OnInstPropUIChangedOffsetUp);
 	}
+
+	static const FString extensionPropertyNames[] = { FString(TEXT("Start Extension")), FString(TEXT("End Extension")) };
+	UInstPropWidgetLinearDimension* extensionFields[] = { nullptr, nullptr };
+	for (int32 extensionIdx = 0; extensionIdx < 2; ++extensionIdx)
+	{
+		const FString& extensionPropertyName = extensionPropertyNames[extensionIdx];
+		auto extensionField = PropertiesUI->RequestPropertyField<UInstPropWidgetLinearDimension>(this, extensionPropertyName);
+		if (ensure(extensionField))
+		{
+			extensionField->RegisterValue(this, InstanceData.Extensions[extensionIdx]);
+			extensionFields[extensionIdx] = extensionField;
+		}
+		else
+		{
+			return;
+		}
+	}
+
+	extensionFields[0]->ValueChangedEvent.AddDynamic(this, &AMOITrim::OnInstPropUIChangedExtensionStart);
+	extensionFields[1]->ValueChangedEvent.AddDynamic(this, &AMOITrim::OnInstPropUIChangedExtensionEnd);
 }
 
 void AMOITrim::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
@@ -353,6 +374,30 @@ void AMOITrim::OnInstPropUIChangedOffsetUp(const FDimensionOffset& NewValue)
 	}
 }
 
+void AMOITrim::OnInstPropUIChangedExtension(float NewValue, int32 ExtensionIdx)
+{
+	if (Document && (ExtensionIdx >= 0) && (ExtensionIdx <= 1) && (InstanceData.Extensions[ExtensionIdx] != NewValue))
+	{
+		auto deltaPtr = MakeShared<FMOIDelta>();
+		auto& newStateData = deltaPtr->AddMutationState(this);
+		auto newInstanceData = InstanceData;
+		newInstanceData.Extensions[ExtensionIdx] = NewValue;
+		newStateData.CustomData.SaveStructData(newInstanceData);
+
+		Document->ApplyDeltas({ deltaPtr }, GetWorld());
+	}
+}
+
+void AMOITrim::OnInstPropUIChangedExtensionStart(float NewValue)
+{
+	OnInstPropUIChangedExtension(NewValue, 0);
+}
+
+void AMOITrim::OnInstPropUIChangedExtensionEnd(float NewValue)
+{
+	OnInstPropUIChangedExtension(NewValue, 1);
+}
+
 bool AMOITrim::UpdateCachedStructure()
 {
 	const UModumateDocument* doc = GetDocument();
@@ -430,7 +475,7 @@ bool AMOITrim::UpdateMitering()
 bool AMOITrim::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 {
 	return DynamicMeshActor->SetupExtrudedPolyGeometry(CachedAssembly, TrimStartPos, TrimEndPos,
-		TrimUp, TrimNormal, InstanceData.OffsetUp, InstanceData.OffsetNormal, UpperExtensions, OuterExtensions, TrimExtrusionFlip, bRecreate, bCreateCollision);
+		TrimUp, TrimNormal, InstanceData.OffsetUp, InstanceData.OffsetNormal, InstanceData.Extensions, TrimExtrusionFlip, bRecreate, bCreateCollision);
 }
 
 void AMOITrim::UpdateQuantities()

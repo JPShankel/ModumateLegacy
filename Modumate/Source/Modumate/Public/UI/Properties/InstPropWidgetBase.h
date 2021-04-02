@@ -21,6 +21,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlockUserWidget* PropertyTitle;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 NumDisplayDecimalDigits = 4;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 DisplayFractionDenomPow = 6;
+
 	bool IsInstPropInitialized() const;
 	bool IsRegistered() const;
 	int32 GetNumRegistrations() const;
