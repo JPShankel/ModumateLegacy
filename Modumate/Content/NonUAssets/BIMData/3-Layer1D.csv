@@ -220,16 +220,16 @@ Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
 F888B3B5-8749-1A42-B763-45301043168C",,Assembly_2FlexDims1Fixed_PlanarPattern,,"6x120in Fiber-Cement Panels, Random Stagger Bond",,IconLength,64in,,0LayerPattern_2D-Random Stagger,,,,,0LayerPattern_2D-Random Stagger,Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Fiber Cement-Length-120in-Width-6in-Thickness-0.75in-BevelWidth-0.5in-Finish1-0RawMaterial-Fibre Cement-DFE2E7,Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,51270EA5-F048-0D47-BA83-3E2CF16CCD13,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.5in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
-51270EA5-F048-0D47-BA83-3E2CF16CCD13",,Assembly_2FlexDims1Fixed_PlanarPattern,,1/2in Gypsum Boards (Type X),,IconLength,64in,,0LayerPattern_2D-Soldier Bond,,,,,0LayerPattern_2D-Soldier Bond,Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.5in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1,Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+51270EA5-F048-0D47-BA83-3E2CF16CCD13",,Assembly_2FlexDims1Fixed_PlanarPattern,,1/2in Gypsum Boards (Type X),,IconLength,64in,,0LayerPattern_2D-Soldier Bond,,,,,0LayerPattern_2D-Soldier Bond,Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.5in-BevelWidth-0in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1,Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,CAB213E5-892C-FA44-B4B9-2021AEDCE20A,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-oin-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1
 0LayerPattern_2D-Soldier Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
-CAB213E5-892C-FA44-B4B9-2021AEDCE20A",,Assembly_2FlexDims1Fixed_PlanarPattern,,5/8in Gypsum Boards (Type X),,IconLength,64in,,0LayerPattern_2D-Soldier Bond,,,,,0LayerPattern_2D-Soldier Bond,Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-0.0625in-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1,Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+CAB213E5-892C-FA44-B4B9-2021AEDCE20A",,Assembly_2FlexDims1Fixed_PlanarPattern,,5/8in Gypsum Boards (Type X),,IconLength,64in,,0LayerPattern_2D-Soldier Bond,,,,,0LayerPattern_2D-Soldier Bond,Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Gypsum-Length-96in-Width-48in-Thickness-0.625in-BevelWidth-oin-Finish1-0RawMaterial-Gypsum (Type X)-D6D7D1,Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,991F8604-0217-7646-8E58-DDE8965BAFD2,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_MDF (Medium-Density Fiberboard)-Length-96in-Width-48in-Thickness-0.5in-BevelWidth-0.125in-Finish1-0RawMaterial-Wood Particles-FFFFFF
