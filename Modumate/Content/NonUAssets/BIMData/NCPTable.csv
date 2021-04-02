@@ -339,7 +339,7 @@ Assembly_2FlexDims1Fixed_PlanarRig_Panel_Cabinet,for Cabinets,,,,,,,AssemblyRigg
 Assembly_2FlexDims1Fixed_PlanarRig_Panel_Door,for Doors,,,,,,,AssemblyRigged,,,,,,,,,Door,,,
 Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window,for Windows,,,,,,,AssemblyRigged,,,,,,,,,Window,,,
 Assembly_2FlexDims1Fixed_PlanarRig_PanelSet,Panel Sets,Panel Sets are multiple sectional panel assemblies acting as one Panel (e.g. garage doors).,,,,Panel,,AssemblyRigged,,,,,,,,PanelSet,,,,
-Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace,Cabinet Faces,"Cabinet Faces are a collection of panel assemblies and a frame (and, often, hinges). It goes on the front of a cabinet carcass.",,,,Face,,AssemblyRigged,,,,,,,,CabinetFace,,,,
+Assembly_2FlexDims1Fixed_PlanarRig_CabinetFace,Cabinet Faces,"Cabinet Faces are a collection of panel assemblies and a frame (and, often, hinges). It goes on the front of a cabinet carcass.",OTDoor,,,Face,,AssemblyRigged,,,,,,,,CabinetFace,,,,
 Assembly_2FlexDims1Fixed_PlanarRig_CabinetFloor,for Floor Cabinets,,,,,Floor Cabinet,,AssemblyRigged,,,,,,,,CabinetFloor,,,,
 Assembly_2FlexDims1Fixed_PlanarRig_CabinetWall,for Wall Cabinets,,,,,Wall Cabinet,,AssemblyRigged,,,,,,,,CabinetWall,,,,
 Assembly_2FlexDims1Fixed_PlanarRig_Door,Doors,"Doors are a collection of panel assemblies and a frame (and, often, hinges).",OTDoor,,Opening,Door,,AssemblyRigged,,none,,,,,,Door,,,,

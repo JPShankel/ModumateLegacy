@@ -93,6 +93,7 @@ void FModumateDatabase::AddArchitecturalMaterial(const FGuid& Key, const FString
 */
 static constexpr TCHAR* BIMCacheRecordField = TEXT("BIMCacheRecord");
 static constexpr TCHAR* BIMManifestFileName = TEXT("BIMManifest.txt");
+static constexpr TCHAR* BIMNCPFileName = TEXT("NCPTable.csv");
 
 bool FModumateDatabase::ReadBIMCache(const FString& CacheFile, FModumateBIMCacheRecord& OutCache)
 {
@@ -106,10 +107,15 @@ bool FModumateDatabase::ReadBIMCache(const FString& CacheFile, FModumateBIMCache
 #if WITH_EDITOR
 	FString manifestFilePath = FPaths::Combine(*ManifestDirectoryPath, BIMManifestFileName);
 	FDateTime cacheDate = IFileManager::Get().GetTimeStamp(*cacheFile);
-
 	FDateTime manifestDate = IFileManager::Get().GetTimeStamp(*manifestFilePath);
-
 	if (manifestDate > cacheDate)
+	{
+		return false;
+	}
+
+	FString ncpFilePath = FPaths::Combine(*ManifestDirectoryPath, BIMNCPFileName);
+	FDateTime ncpFileDate = IFileManager::Get().GetTimeStamp(*ncpFilePath);
+	if (ncpFileDate > cacheDate)
 	{
 		return false;
 	}
@@ -232,7 +238,7 @@ void FModumateDatabase::ReadPresetData()
 		if (ensureAlways(errors.Num() == 0))
 		{
 			FString NCPString;
-			FString NCPPath = ManifestDirectoryPath / TEXT("NCPTable.csv");
+			FString NCPPath = FPaths::Combine(*ManifestDirectoryPath, BIMNCPFileName);
 			if (!ensureAlways(FFileHelper::LoadFileToString(NCPString, *NCPPath)))
 			{
 				return;

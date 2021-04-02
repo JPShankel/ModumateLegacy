@@ -106,12 +106,22 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			continue;
 		}
 
-		// Set the object type for this assembly, should only happen once 
-		if (presetIterator.Preset->ObjectType != EObjectType::OTNone && ensureAlways(ObjectType == EObjectType::OTNone))
+		// We should only encounter a single object type in the child tree UNLESS we're making a cabinet and we encounter a door
+		if (presetIterator.Preset->ObjectType != EObjectType::OTNone)
 		{
-			ObjectType = presetIterator.Preset->ObjectType;
+			if (ObjectType == EObjectType::OTNone)
+			{
+				ObjectType = presetIterator.Preset->ObjectType;
+			}
+			else
+			{
+				if (!ensureAlways(ObjectType == EObjectType::OTCabinet && presetIterator.Preset->ObjectType == EObjectType::OTDoor))
+				{
+					ret = EBIMResult::Error;
+				}
+			}
 		}
-
+			
 		/*
 		Every preset has a scope (defined in the CSV sheets)
 		Based on the scope of the current preset, determine how to modify the iterator and set properties		
