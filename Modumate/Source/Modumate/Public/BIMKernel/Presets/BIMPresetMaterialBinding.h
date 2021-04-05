@@ -40,7 +40,7 @@ struct MODUMATE_API FBIMPresetMaterialBinding
 	FString ColorHexValue;
 
 	UPROPERTY()
-	FString ColorTintVariationHexValue;
+	float ColorTintVariationPercent = 0;
 
 	EBIMResult GetEngineMaterial(const FModumateDatabase& DB, FArchitecturalMaterial& OutMaterial) const;
 

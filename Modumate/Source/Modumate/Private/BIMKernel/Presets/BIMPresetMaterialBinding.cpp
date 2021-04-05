@@ -32,10 +32,6 @@ EBIMResult FBIMPresetMaterialBindingSet::SetFormElements(FBIMPresetForm& RefForm
 		if (!binding.ColorHexValue.IsEmpty())
 		{
 			RefForm.AddMaterialBindingElement(FText::Format(LOCTEXT("Tint", "Tint {0}"), i + 1), binding.Channel, EMaterialChannelFields::ColorTint);
-		}
-
-		if (!binding.ColorTintVariationHexValue.IsEmpty())
-		{
 			RefForm.AddMaterialBindingElement(FText::Format(LOCTEXT("TintVariation", "Tint Variation {0}"), i + 1), binding.Channel, EMaterialChannelFields::ColorTintVariation);
 		}
 	}
@@ -49,7 +45,7 @@ bool FBIMPresetMaterialBinding::operator==(const FBIMPresetMaterialBinding& RHS)
 		InnerMaterialGUID == RHS.InnerMaterialGUID &&
 		SurfaceMaterialGUID == RHS.SurfaceMaterialGUID &&
 		ColorHexValue == RHS.ColorHexValue &&
-		ColorTintVariationHexValue == RHS.ColorTintVariationHexValue;
+		FMath::IsNearlyEqual(ColorTintVariationPercent,RHS.ColorTintVariationPercent);
 }
 
 bool FBIMPresetMaterialBinding::operator!=(const FBIMPresetMaterialBinding& RHS) const

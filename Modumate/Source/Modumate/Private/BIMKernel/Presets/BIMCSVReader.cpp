@@ -353,11 +353,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 						case EMaterialChannelFields::ColorTintVariation:
 						{
-							FString hexValue(Row[presetMatrix.First + i]);
-							if (!hexValue.IsEmpty())
-							{
-								materialBinding.ColorTintVariationHexValue = hexValue;
-							}
+							LexTryParseString(materialBinding.ColorTintVariationPercent, Row[presetMatrix.First + i]);
 						}
 						break;
 

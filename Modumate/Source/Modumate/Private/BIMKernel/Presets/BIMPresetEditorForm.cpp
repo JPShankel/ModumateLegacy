@@ -99,8 +99,11 @@ EBIMResult FBIMPresetForm::AddMaterialBindingElement(const FText& DisplayName, c
 			break;
 
 		case EMaterialChannelFields::ColorTint:
-		case EMaterialChannelFields::ColorTintVariation:
 			newElement.FormElementWidgetType = EBIMFormElementWidget::ColorPicker;
+			break;
+
+		case EMaterialChannelFields::ColorTintVariation:
+			newElement.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
 			break;
 
 		default: ensureAlways(false); return EBIMResult::Error;

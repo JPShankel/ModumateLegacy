@@ -267,7 +267,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FB
 
 				case EMaterialChannelFields::ColorTintVariation:
 				{
-					binding.ColorTintVariationHexValue = Delta.NewStringRepresentation;
+					LexTryParseString(binding.ColorTintVariationPercent,*Delta.NewStringRepresentation);
 					CustomData.SaveStructData(bindingSet, true);
 					return EBIMResult::Success;
 				}
@@ -375,7 +375,7 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 
 					case EMaterialChannelFields::ColorTintVariation:
 					{
-						OutDelta.OldStringRepresentation = binding.ColorTintVariationHexValue;
+						OutDelta.OldStringRepresentation = FString::Printf(TEXT("%0.2f"),binding.ColorTintVariationPercent);
 						return EBIMResult::Success;
 					}
 					break;
@@ -457,7 +457,7 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(FBIMPresetForm& OutForm) const
 						break;
 
 					case EMaterialChannelFields::ColorTintVariation:
-						element.StringRepresentation = binding.ColorTintVariationHexValue;
+						element.StringRepresentation = FString::Printf(TEXT("%0.2f"),binding.ColorTintVariationPercent);
 						break;
 
 					default: ensureAlways(false);
