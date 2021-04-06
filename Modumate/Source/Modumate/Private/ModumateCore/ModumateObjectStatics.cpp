@@ -853,6 +853,11 @@ void UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(const TSharedPtr<
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox, const TArray<FVector>& Perimeter,
 	const FVector& StartPosition, const FVector& EndPosition, Modumate::FModumateLayerType LayerType, float Epsilon /*= 0.0f*/)
 {
+	if (Perimeter.Num() == 0)
+	{
+		return;
+	}
+
 	FVector startCap(Perimeter.Last(0) + StartPosition);
 	FVector endCap(Perimeter.Last(0) + EndPosition);
 

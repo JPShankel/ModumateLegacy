@@ -388,7 +388,11 @@ void AMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 	OutPerimeters.Reset();
 
 	TArray<FVector> perimeter;
-	UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, LineUp, LineNormal, InstanceData.OffsetUp, InstanceData.OffsetNormal, ProfileFlip, perimeter);
+	if (!UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, LineUp, LineNormal, InstanceData.OffsetUp,
+		InstanceData.OffsetNormal, ProfileFlip, perimeter))
+	{
+		return;
+	}
 
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
