@@ -304,9 +304,10 @@ void UPresetCardHeader::ConfirmGUID(const FGuid& InGUID)
 	}
 	else if (PresetCardType == EPresetCardType::AssembliesList)
 	{
-		if (EMPlayerController)
+		if (EMPlayerController && EMPlayerController->EMPlayerState && EMPlayerController->EditModelUserWidget)
 		{
-			EMPlayerController->EditModelUserWidget->EditExistingAssembly(InGUID);
+			EMPlayerController->EMPlayerState->SetAssemblyForToolMode(EMPlayerController->GetToolMode(), InGUID);
+			EMPlayerController->EditModelUserWidget->RefreshAssemblyList(true);
 		}
 	}
 }

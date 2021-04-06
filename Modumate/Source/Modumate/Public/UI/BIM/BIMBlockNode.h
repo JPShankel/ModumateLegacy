@@ -116,6 +116,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonDeleteCollapsed;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonDuplicateExpanded;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonDuplicateCollapsed;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UVerticalBox* VerticalBoxProperties;
 
@@ -168,6 +174,9 @@ public:
 
 	UFUNCTION()
 	void OnButtonConnectorReleased();
+
+	UFUNCTION()
+	void OnButtonDuplicateReleased();
 
 	void UpdateNodeCollapse(bool NewCollapse);
 	void UpdateNodeHidden(bool NewHide);

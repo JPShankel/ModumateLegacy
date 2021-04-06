@@ -3,6 +3,7 @@
 #include "UI/EditModelUserWidget.h"
 
 #include "Components/Border.h"
+#include "Components/ListView.h"
 #include "Online/ModumateCloudConnection.h"
 #include "UI/BIM/BIMBlockDialogBox.h"
 #include "UI/BIM/BIMDesigner.h"
@@ -19,6 +20,7 @@
 #include "UI/Toolbar/ViewModeIndicatorWidget.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "UI/ToolTray/ToolTrayWidget.h"
+#include "UI/PresetCard/PresetCardItemObject.h"
 #include "UnrealClasses/EditModelInputHandler.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
@@ -253,9 +255,33 @@ bool UEditModelUserWidget::UpdateCutPlaneInList(int32 ObjID /*= MOD_ID_NONE*/)
 	return false;
 }
 
-void UEditModelUserWidget::RefreshAssemblyList()
+void UEditModelUserWidget::RefreshAssemblyList(bool bScrollToSelected)
 {
 	ToolTrayWidget->ToolTrayBlockAssembliesList->CreateAssembliesListForCurrentToolMode();
+
+	if (!bScrollToSelected || !Controller || !Controller->CurrentTool)
+	{
+		return;
+	}
+
+	FGuid toolGuid =  Controller->CurrentTool->GetAssemblyGUID();
+	int32 selectedIndex = INDEX_NONE;
+	
+	const auto& items = ToolTrayWidget->ToolTrayBlockAssembliesList->AssembliesList->GetListItems();
+	for (int32 i=0;i<items.Num();++i)
+	{
+		UPresetCardItemObject* cardItemObject = Cast<UPresetCardItemObject>(items[i]);
+		if (cardItemObject->PresetGuid == toolGuid)
+		{
+			selectedIndex = i;
+			break;
+		}
+	}
+
+	if (selectedIndex != INDEX_NONE)
+	{
+		ToolTrayWidget->ToolTrayBlockAssembliesList->AssembliesList->ScrollIndexIntoView(selectedIndex);
+	}
 }
 
 void UEditModelUserWidget::ShowAlertFreeAccountDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& ConfirmCallback)

@@ -42,7 +42,7 @@ bool UBIMBlockNode::Initialize()
 
 	Controller = GetOwningPlayer<AEditModelPlayerController>();
 
-	if (!(ButtonSwapCollapsed && ButtonSwapExpanded && ButtonDeleteCollapsed && ButtonDeleteExpanded))
+	if (!(ButtonSwapCollapsed && ButtonSwapExpanded && ButtonDeleteCollapsed && ButtonDeleteExpanded && ButtonDuplicateCollapsed && ButtonDuplicateExpanded))
 	{
 		return false;
 	}
@@ -51,6 +51,8 @@ bool UBIMBlockNode::Initialize()
 	ButtonSwapExpanded->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonSwapReleased);
 	ButtonDeleteCollapsed->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDeleteReleased);
 	ButtonDeleteExpanded->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDeleteReleased);
+	ButtonDuplicateCollapsed->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDuplicateReleased);
+	ButtonDuplicateExpanded->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockNode::OnButtonDuplicateReleased);
 
 	if (Button_Connector)
 	{
@@ -131,6 +133,15 @@ void UBIMBlockNode::PerformDrag()
 	{
 		DragReset = true;
 		ParentBIMDesigner->GetNodeForReorder(PreDragCanvasPosition, ID);
+	}
+}
+
+void UBIMBlockNode::OnButtonDuplicateReleased()
+{
+	FBIMPresetInstance newPreset;
+	if (ensureAlways(Controller->GetDocument()->DuplicatePreset(GetWorld(), PresetID, newPreset)))
+	{
+		ParentBIMDesigner->SetPresetForNodeInBIMDesigner(ID, newPreset.GUID);
 	}
 }
 

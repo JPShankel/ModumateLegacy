@@ -115,7 +115,7 @@ public:
 	void UpdateCutPlanesList();
 	bool RemoveCutPlaneFromList(int32 ObjID = MOD_ID_NONE);
 	bool UpdateCutPlaneInList(int32 ObjID = MOD_ID_NONE);
-	void RefreshAssemblyList();
+	void RefreshAssemblyList(bool bScrollToSelected = false);
 	void ShowAlertFreeAccountDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& ConfirmCallback);
 	void UpdateViewModeIndicator(EEditViewModes NewViewMode);
 	void ShowBIMDebugger(bool NewVisible);
