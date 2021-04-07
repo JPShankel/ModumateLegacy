@@ -141,6 +141,7 @@ void UBIMBlockNode::OnButtonDuplicateReleased()
 	FBIMPresetInstance newPreset;
 	if (ensureAlways(Controller->GetDocument()->DuplicatePreset(GetWorld(), PresetID, newPreset)))
 	{
+		// Note: SetPresetForNodeInBIMDesigner call will destroy this object
 		ParentBIMDesigner->SetPresetForNodeInBIMDesigner(ID, newPreset.GUID);
 	}
 }

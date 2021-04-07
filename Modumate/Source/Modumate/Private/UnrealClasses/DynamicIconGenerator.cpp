@@ -631,7 +631,14 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FBIMAssemblySpec &A
 
 	IconDynamicMeshActor->SetupExtrudedPolyGeometry(Assembly, meshStartPos, meshEndPos,
 		meshUp, meshNormal, FDimensionOffset::Centered, FDimensionOffset::Centered, extensions, FVector::OneVector, true, false);
-	IconDynamicMeshActor->SetActorRelativeTransform(FTransform::Identity);
+
+	// View beams and columns head on, trim and mullions side on
+	FTransform transform = FTransform::Identity;
+	if (Assembly.ObjectType == EObjectType::OTStructureLine)
+	{
+		transform.SetRotation(FQuat::MakeFromEuler(FVector(0, 0, 90)));
+	}
+	IconDynamicMeshActor->SetActorRelativeTransform(transform);
 
 	// Step 2: Set camera transform and actor for capture
 	FTransform originalCaptureCompTransform = SceneCaptureComp->GetRelativeTransform();
