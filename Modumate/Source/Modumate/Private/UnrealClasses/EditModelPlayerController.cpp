@@ -2588,6 +2588,92 @@ FModumateFunctionParameterSet AEditModelPlayerController::ModumateCommand(const 
 	return gameInstance->DoModumateCommand(cmd);
 }
 
+bool AEditModelPlayerController::SnapDistAlongAffordance(FVector& SnappedPosition, const FVector& AffordanceOrigin, const FVector& AffordanceDir) const
+{
+	// About how many pixels should the cursor snap between, based on the current camera distance and preferred snap units?
+	static constexpr float screenSpaceIncrement = 8.0f;
+
+	// What is the minimum camera distance to target point that will affect screen-scaled snapping?
+	static constexpr float minCamDist = 2.0f;
+
+	// Determine the lowest we're willing to snap, in world units, based on user preferences
+	float worldMinIncrement = 0.0f;
+	TArray<float> incrementMultipliers;
+	EDimensionUnits snapDimensionType = EDimensionUnits::DU_Imperial;
+	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (gameInstance && gameInstance->UserSettings.bLoaded)
+	{
+		snapDimensionType = gameInstance->UserSettings.PreferredDimensionType;
+	}
+
+	switch (snapDimensionType)
+	{
+	case EDimensionUnits::DU_Imperial:
+		worldMinIncrement = 0.125f * UModumateDimensionStatics::InchesToCentimeters;
+		// 1/8", 1/4", 1/2", 1", 2", 4", 6", 1' ... 2', 4', 8' ...
+		incrementMultipliers = { 1, 2, 4, 8, 16, 32, 48, 96 };
+		break;
+	case EDimensionUnits::DU_Metric:
+		// 1mm, 2mm, 5mm, 1cm, 2.5cm, 5cm, 10cm, 25cm, 50cm, 1m ... 2m, 4m, 8m ...
+		incrementMultipliers = { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 };
+		worldMinIncrement = 0.1f;
+		break;
+	default:
+		return false;
+	}
+
+	// Based on camera distance and FOV, find the screen-space-to-world-space factor so we can find the world snap increment.
+	int32 viewportX, viewportY;
+	GetViewportSize(viewportX, viewportY);
+	APlayerCameraManager* camManager = UGameplayStatics::GetPlayerCameraManager(this, 0);
+	FVector camPos = camManager->GetCameraLocation();
+	float distFromCam = FMath::Max(FVector::Dist(SnappedPosition, camPos), minCamDist);
+	float screenToWorldFactor = 2.0f * distFromCam * FMath::Tan(FMath::DegreesToRadians(0.5f * camManager->GetFOVAngle())) / viewportX;
+	float worldSpaceIncrement = screenToWorldFactor * screenSpaceIncrement;
+
+	// Find the largest increment that is smaller than the world-space scaled version of the screen space snap increment
+	int32 multiplierIdx = 0;
+	int32 numMultipliers = incrementMultipliers.Num();
+	float curMultiplier = incrementMultipliers[multiplierIdx];
+	float lastMultiplier = curMultiplier;
+	while ((curMultiplier * worldMinIncrement) < worldSpaceIncrement)
+	{
+		lastMultiplier = curMultiplier;
+
+		if (multiplierIdx < (numMultipliers - 1))
+		{
+			curMultiplier = incrementMultipliers[++multiplierIdx];
+		}
+		else
+		{
+			curMultiplier *= 2;
+		}
+	}
+	worldSpaceIncrement = worldMinIncrement * lastMultiplier;
+
+	// Using the appropriately screen-scaled world-space snap increment, snap the position along the affordance ray.
+	FVector deltaFromOrigin = SnappedPosition - AffordanceOrigin;
+	float distanceAlongAffordance = 0.0f;
+	FVector snapDir = AffordanceDir;
+
+	// If a normalized affordance direction is specified, then snap along that ray;
+	// otherwise, snap along whatever ray the mouse is pointing relative to the origin.
+	if (AffordanceDir.IsNormalized())
+	{
+		distanceAlongAffordance = deltaFromOrigin | AffordanceDir;
+	}
+	else
+	{
+		distanceAlongAffordance = deltaFromOrigin.Size();
+		snapDir = FMath::IsNearlyZero(distanceAlongAffordance) ? FVector::ZeroVector : (deltaFromOrigin / distanceAlongAffordance);
+	}
+
+	distanceAlongAffordance = worldSpaceIncrement * FMath::RoundHalfFromZero(distanceAlongAffordance / worldSpaceIncrement);
+	SnappedPosition = AffordanceOrigin + (distanceAlongAffordance * snapDir);
+
+	return true;
+}
+
 bool AEditModelPlayerController::ValidateVirtualHit(const FVector &MouseOrigin, const FVector &MouseDir,
 	const FVector &HitPoint, float CurObjectHitDist, float CurVirtualHitDist, float MaxScreenDist, float &OutRayDist) const
 {
@@ -2718,12 +2804,16 @@ FMouseWorldHitType AEditModelPlayerController::GetAffordanceHit(const FVector &m
 
 		for (int32 i = 0; i < affordanceDimensions; ++i)
 		{
+			const FVector& affordanceDir = customBasis[i];
 			FVector affordanceIntercept, mouseIntercept;
 			float distance = 0.0f;
-			if (UModumateGeometryStatics::FindShortestDistanceBetweenRays(affordance.Origin, customBasis[i], mouseLoc, mouseDir, affordanceIntercept, mouseIntercept, distance))
+			if (UModumateGeometryStatics::FindShortestDistanceBetweenRays(affordance.Origin, affordanceDir, mouseLoc, mouseDir, affordanceIntercept, mouseIntercept, distance))
 			{
 				if (DistanceBetweenWorldPointsInScreenSpace(affordanceIntercept, mouseIntercept, screenSpaceDist) && (screenSpaceDist < SnapLineMaxScreenDistance))
 				{
+					// Quantize the snap location along the affordance direction
+					SnapDistAlongAffordance(affordanceIntercept, affordance.Origin, affordanceDir);
+
 					// If this is the first hit or closer than the last one...
 					if (!ret.Valid || (affordanceIntercept - mouseLoc).Size() < (ret.Location - mouseLoc).Size())
 					{
@@ -2785,6 +2875,11 @@ FMouseWorldHitType AEditModelPlayerController::GetSketchPlaneMouseHit(const FVec
 	{
 		ret.Valid = EMPlayerState->SnappedCursor.TryGetRaySketchPlaneIntersection(mouseLoc, mouseDir, ret.Location);
 		ret.Normal = EMPlayerState->SnappedCursor.AffordanceFrame.Normal;
+
+		if (ret.Valid && EMPlayerState->SnappedCursor.HasAffordanceSet())
+		{
+			SnapDistAlongAffordance(ret.Location, EMPlayerState->SnappedCursor.AffordanceFrame.Origin, FVector::ZeroVector);
+		}
 	}
 
 	if (ret.Valid)
@@ -2841,6 +2936,7 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 	FVector directHitNormal(ForceInitToZero);
 	TArray<int32> directHitPlaneNeighbors;
 	bool bDirectHitPlane = false;
+	const FSnappedCursor& cursor = EMPlayerState->SnappedCursor;
 
 	if (LineTraceSingleAgainstMOIs(hitSingleResult, mouseLoc, mouseLoc + MaxRaycastDist * mouseDir))
 	{
@@ -2946,6 +3042,14 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 			{
 				objectHit.Valid = false;
 			}
+		}
+		// If the face hit hasn't been overridden by a point or edge, then see if it's on a set affordance plane,
+		// in which case it might be a line segment whose distance should be snapped.
+		else if (cursor.HasAffordanceSet() &&
+			FVector::Parallel(cursor.AffordanceFrame.Normal, objectHit.Normal) &&
+			FMath::IsNearlyZero(FPlane(cursor.AffordanceFrame.Origin, cursor.AffordanceFrame.Normal).PlaneDot(objectHit.Location), PLANAR_DOT_EPSILON))
+		{
+			SnapDistAlongAffordance(objectHit.Location, cursor.AffordanceFrame.Origin, FVector::ZeroVector);
 		}
 	}
 	// Otherwise, map all of the point- and line-based (virtual) MOIs to locations that can be used to determine a hit result
