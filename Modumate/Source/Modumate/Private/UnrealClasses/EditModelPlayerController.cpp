@@ -3,6 +3,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 
 #include "Algo/Accumulate.h"
+#include "Algo/Copy.h"
 #include "Algo/Transform.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/EditableTextBox.h"
@@ -2012,6 +2013,8 @@ void AEditModelPlayerController::UpdateMouseTraceParams()
 	case EToolMode::VE_FINISH:
 	case EToolMode::VE_TRIM:
 	case EToolMode::VE_CABINET:
+		MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_META_MOI);
+		break;
 	case EToolMode::VE_PLACEOBJECT:
 	case EToolMode::VE_COUNTERTOP:
 	default:
@@ -2925,16 +2928,16 @@ FMouseWorldHitType AEditModelPlayerController::GetUserSnapPointMouseHit(const FV
 /*
 Support function returns an object face hit, using the engine's raycast
 */
-FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &mouseLoc, const FVector &mouseDir, bool bCheckSnapping) const
+FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& mouseLoc, const FVector& mouseDir, bool bCheckSnapping) const
 {
 	// Find the MOI (if any) that we hit
 	FMouseWorldHitType objectHit;
 	float objectHitDist = FLT_MAX;
 	FHitResult hitSingleResult;
-	AActor *directHitActor = nullptr;
+	AActor* directHitActor = nullptr;
 	const AModumateObjectInstance* directHitMOI = nullptr;
 	FVector directHitNormal(ForceInitToZero);
-	TArray<int32> directHitPlaneNeighbors;
+	TSet<int32> directHitPlaneNeighbors;
 	bool bDirectHitPlane = false;
 	const FSnappedCursor& cursor = EMPlayerState->SnappedCursor;
 
@@ -2954,7 +2957,10 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 			FPlane plane = FPlane(directHitMOI->GetLocation(), moiNormal);
 			objectHit.Normal = (moiNormal | objectHit.Normal) > 0 ? moiNormal : -moiNormal;
 			objectHit.Location = FVector::PointPlaneProject(objectHit.Location, plane);
-			directHitMOI->GetConnectedIDs(directHitPlaneNeighbors);
+
+			TArray<int32> connectedIDs;
+			directHitMOI->GetConnectedIDs(connectedIDs);
+			directHitPlaneNeighbors.Append(connectedIDs);
 			bDirectHitPlane = true;
 		}
 
@@ -2969,24 +2975,45 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 	int32 bestVirtualHitIndex;
 	float bestVirtualHitDist;
 	FVector bestLineIntersection;
+	FPlane objectHitPlane(objectHit.Location, objectHit.Normal);
+	int32 mouseQueryBitfield = MOITraceObjectQueryParams.GetQueryBitfield();
+
+	// If we've directly hit a plane, then we want to exclude objects that are coplanar and disconnected.
+	auto validateStructurePoint = [bDirectHitPlane, objectHitPlane, &directHitPlaneNeighbors](const FStructurePoint& StructurePoint) -> bool
+	{
+		return !bDirectHitPlane || directHitPlaneNeighbors.Contains(StructurePoint.ObjID) ||
+			!FMath::IsNearlyZero(objectHitPlane.PlaneDot(StructurePoint.Point), PLANAR_DOT_EPSILON);
+	};
+	auto validateStructureLine = [bDirectHitPlane, objectHitPlane, &directHitPlaneNeighbors](const FStructureLine& StructureLine) -> bool
+	{
+		return !bDirectHitPlane || directHitPlaneNeighbors.Contains(StructureLine.ObjID) ||
+			!FMath::IsNearlyZero(objectHitPlane.PlaneDot(StructureLine.P1), PLANAR_DOT_EPSILON) ||
+			!FMath::IsNearlyZero(objectHitPlane.PlaneDot(StructureLine.P2), PLANAR_DOT_EPSILON);
+	};
+	static TArray<FStructurePoint> tempStructurePoints;
+	static TArray<FStructureLine> tempStructureLines;
+	tempStructurePoints.Reset();
+	tempStructureLines.Reset();
 
 	// After tracing for a direct hit result against a MOI, now check if it would be overridden by a snap point or line if desired
 	if (bCheckSnapping)
 	{
 		// Update the snapping view (lines and points that can be snapped to)
-		// If we directly hit a planar MOI, then only get snapping points from its neighbors
-		int32 mouseQueryBitfield = MOITraceObjectQueryParams.GetQueryBitfield();
-		auto* snappingViewIDList = bDirectHitPlane ? &directHitPlaneNeighbors : nullptr;
-		SnappingView->UpdateSnapPoints(SnappingIDsToIgnore, mouseQueryBitfield, true, false, snappingViewIDList);
+		SnappingView->UpdateSnapPoints(SnappingIDsToIgnore, mouseQueryBitfield, true, false);
 
+		// First, filter the snapping view based on eligible objects, now that we can filter them based on their snapping data
+		Algo::CopyIf(SnappingView->Corners, tempStructurePoints, validateStructurePoint);
+		Algo::CopyIf(SnappingView->LineSegments, tempStructureLines, validateStructureLine);
+
+		// Then, transform them to raw positions for the purposes of hit selection
 		CurHitPointLocations.Reset();
 		CurHitLineLocations.Reset();
-		Algo::Transform(SnappingView->Corners, CurHitPointLocations, [](const FStructurePoint &point) { return point.Point; });
-		Algo::Transform(SnappingView->LineSegments, CurHitLineLocations,[](const FStructureLine &line) { return TPair<FVector, FVector>(line.P1, line.P2); });
+		Algo::Transform(tempStructurePoints, CurHitPointLocations, [](const FStructurePoint &point) { return point.Point; });
+		Algo::Transform(tempStructureLines, CurHitLineLocations,[](const FStructureLine &line) { return TPair<FVector, FVector>(line.P1, line.P2); });
 
 		if (FindBestMousePointHit(CurHitPointLocations, mouseLoc, mouseDir, objectHitDist, bestVirtualHitIndex, bestVirtualHitDist))
 		{
-			FStructurePoint &bestPoint = SnappingView->Corners[bestVirtualHitIndex];
+			FStructurePoint &bestPoint = tempStructurePoints[bestVirtualHitIndex];
 
 			objectHit.Valid = true;
 			objectHit.Location = bestPoint.Point;
@@ -3015,7 +3042,7 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 		}
 		else if (FindBestMouseLineHit(CurHitLineLocations, mouseLoc, mouseDir, objectHitDist, bestVirtualHitIndex, bestLineIntersection, bestVirtualHitDist))
 		{
-			FStructureLine &bestLine = SnappingView->LineSegments[bestVirtualHitIndex];
+			FStructureLine &bestLine = tempStructureLines[bestVirtualHitIndex];
 
 			objectHit.Valid = true;
 			objectHit.Location = bestLineIntersection;
@@ -3061,35 +3088,41 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector &
 		CurHitLineLocations.Reset();
 		FPlane cullingPlane = GetCurrentCullingPlane();
 
-		static TArray<FStructurePoint> tempPointsForCollision;
-		static TArray<FStructureLine> tempLinesForCollision;
 		// TODO: we know this is inefficient, should replace with an interface that allows for optimization
 		// (like not needing to iterate over every single object in the scene)
-		// If we directly hit a planar MOI, then only test structure-point/line-based collision of its neighbors.
 		auto& allObjects = Document->GetObjectInstances();
-		int32 numObjects = bDirectHitPlane ? directHitPlaneNeighbors.Num() : allObjects.Num();
-		for (int32 objIdx = 0; objIdx < numObjects; ++objIdx)
+		for (auto* moi : allObjects)
 		{
-			auto* moi = bDirectHitPlane ? Document->GetObjectById(directHitPlaneNeighbors[objIdx]) : allObjects[objIdx];
-			if (moi && moi->IsCollisionEnabled() && moi->UseStructureDataForCollision())
+			// Use the same collision compatibility checks that the snapping view uses;
+			// namely, whether collision is enabled and if the type of physics collision would've been allowed for direct raycasting
+			ECollisionChannel objectCollisionType = UModumateTypeStatics::CollisionTypeFromObjectType(moi->GetObjectType());
+			bool bObjectInMouseQuery = (mouseQueryBitfield & ECC_TO_BITFIELD(objectCollisionType)) != 0;
+
+			if (moi && moi->IsCollisionEnabled() && moi->UseStructureDataForCollision() && bObjectInMouseQuery)
 			{
-				moi->RouteGetStructuralPointsAndLines(tempPointsForCollision, tempLinesForCollision, false, false, cullingPlane);
+				moi->RouteGetStructuralPointsAndLines(tempStructurePoints, tempStructureLines, false, false, cullingPlane);
 
 				// Structural points and lines used for cursor hit collision are mutually exclusive
-				if (tempLinesForCollision.Num() > 0)
+				if (tempStructureLines.Num() > 0)
 				{
-					for (auto line : tempLinesForCollision)
+					for (auto line : tempStructureLines)
 					{
-						CurHitLineMOIs.Add(moi);
-						CurHitLineLocations.Add(TPair<FVector, FVector>(line.P1, line.P2));
+						if (validateStructureLine(line))
+						{
+							CurHitLineMOIs.Add(moi);
+							CurHitLineLocations.Add(TPair<FVector, FVector>(line.P1, line.P2));
+						}
 					}
 				}
 				else
 				{
-					for (auto point : tempPointsForCollision)
+					for (auto point : tempStructurePoints)
 					{
-						CurHitPointMOIs.Add(moi);
-						CurHitPointLocations.Add(point.Point);
+						if (validateStructurePoint(point))
+						{
+							CurHitPointMOIs.Add(moi);
+							CurHitPointLocations.Add(point.Point);
+						}
 					}
 				}
 			}
