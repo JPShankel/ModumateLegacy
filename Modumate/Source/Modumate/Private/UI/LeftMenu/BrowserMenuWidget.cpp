@@ -61,8 +61,8 @@ void UBrowserMenuWidget::ToggleExportWidgetMenu(bool bEnable)
 		if (gameInstance->GetAccountManager()->RequestServiceRemaining(FModumateAccountManager::ServiceQuantityEstimates,
 			[browserBlockExportWeak](FString ServiceName, bool bSuccess, bool bLimited, int32 Remaining)
 			{
-				UBrowserBlockExport* BrowserBlockExportWidget = browserBlockExportWeak.Get();
-				if (!BrowserBlockExportWidget)
+				UBrowserBlockExport* browserBlockExportWidget = browserBlockExportWeak.Get();
+				if (!browserBlockExportWidget)
 				{
 					return;
 				}
@@ -73,17 +73,17 @@ void UBrowserMenuWidget::ToggleExportWidgetMenu(bool bEnable)
 						LOCTEXT("ExportsRemainingSome", "This will use 1 of {0} remaining exports.") :
 						LOCTEXT("ExportsRemainingNone", "You have no exports remaining.");
 
-					BrowserBlockExportWidget->LimitedExportBox->SetVisibility(bLimited ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-					BrowserBlockExportWidget->ExportRemainText->ChangeText(bLimited ? FText::Format(remainingFormat, Remaining) : FText::GetEmpty());
-					BrowserBlockExportWidget->UpgradeText->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-					BrowserBlockExportWidget->ButtonExport->SetIsEnabled(!bLimited || (Remaining > 0));
+					browserBlockExportWidget->LimitedExportBox->SetVisibility(bLimited ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+					browserBlockExportWidget->ExportRemainText->ChangeText(bLimited ? FText::Format(remainingFormat, Remaining) : FText::GetEmpty());
+					browserBlockExportWidget->UpgradeText->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+					browserBlockExportWidget->ButtonExport->SetIsEnabled(!bLimited || (Remaining > 0));
 				}
 				else
 				{
-					BrowserBlockExportWidget->LimitedExportBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-					BrowserBlockExportWidget->ExportRemainText->ChangeText(LOCTEXT("ExportsError", "Exports are unavailable."));
-					BrowserBlockExportWidget->UpgradeText->SetVisibility(ESlateVisibility::Collapsed);
-					BrowserBlockExportWidget->ButtonExport->SetIsEnabled(false);
+					browserBlockExportWidget->LimitedExportBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+					browserBlockExportWidget->ExportRemainText->ChangeText(LOCTEXT("ExportsError", "Exports are unavailable."));
+					browserBlockExportWidget->UpgradeText->SetVisibility(ESlateVisibility::Collapsed);
+					browserBlockExportWidget->ButtonExport->SetIsEnabled(false);
 				}
 			}))
 		{

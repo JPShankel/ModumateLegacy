@@ -419,7 +419,7 @@ bool UEditModelInputAutomation::EndPlayback()
 
 		if (bWillExitOnFrameCaptured)
 		{
-			GetWorld()->GetTimerManager().SetTimer(FrameCaptureSaveTimer, this, &UEditModelInputAutomation::CheckFrameCaptureSaved, true, 1.0f);
+			GetWorld()->GetTimerManager().SetTimer(FrameCaptureSaveTimer, this, &UEditModelInputAutomation::CheckFrameCaptureSaved, 1.0f, true);
 		}
 	}
 

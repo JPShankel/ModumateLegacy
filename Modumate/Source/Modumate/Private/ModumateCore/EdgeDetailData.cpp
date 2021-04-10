@@ -399,7 +399,7 @@ FText FEdgeDetailData::MakeShortDisplayText(int32 Index) const
 
 		for (int32 conditionIdx = 1; conditionIdx < numParticipants; ++conditionIdx)
 		{
-			FText anglePartText = FText::Format(LOCTEXT("ShortDisplayAnglePartFormat", "{0}°"),
+			FText anglePartText = FText::Format(LOCTEXT("ShortDisplayAnglePartFormat", "{0}\u00B0"),
 				FText::AsNumber(Conditions[conditionIdx].Angle, &angleNumberFormatOptions));
 			tempAnglePartTexts.Add(anglePartText);
 		}

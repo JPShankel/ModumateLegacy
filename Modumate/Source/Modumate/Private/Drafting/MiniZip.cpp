@@ -6,6 +6,8 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 
+#if PLATFORM_WINDOWS
+
 #include "zlib/zlib-1.2.5/Src/contrib/minizip/zip.h"
 
 // UE4's prebuilt zlib includes the contributed zip & unzip functionality for handling zip archives.
@@ -53,3 +55,17 @@ namespace Modumate
 	}
 
 }
+
+#else
+
+// TODO: Modify UE4's zlib so that we can take advantage of the features we need, while also using its cross-platform compilation rules and libraries
+
+namespace Modumate
+{
+    bool FMiniZip::CreateArchive(const FString& archiveFilename)
+    {
+        return false;
+    }
+}
+
+#endif

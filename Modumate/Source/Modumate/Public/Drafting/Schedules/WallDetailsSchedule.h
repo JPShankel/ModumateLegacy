@@ -7,9 +7,9 @@ class MODUMATE_API UModumateDocument;
 
 namespace Modumate {
 
-	class MODUMATE_API IModumateDraftingDraw;
-	class MODUMATE_API FScheduleGrid;
-	class MODUMATE_API FImagePrimitive;
+	class IModumateDraftingDraw;
+	class FScheduleGrid;
+	class FImagePrimitive;
 
 	class FWallDetailsSchedule : public FDraftingSchedule
 	{

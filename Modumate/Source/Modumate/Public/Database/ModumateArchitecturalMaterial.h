@@ -62,12 +62,3 @@ struct MODUMATE_API FStaticIconTexture
 	// TODO: Like FArchitecturalMaterial, check if texture will be lazy-loaded.
 	bool IsValid() const { return Texture.IsValid(); }
 };
-
-template<>
-struct TStructOpsTypeTraits<FArchitecturalMaterial> : public TStructOpsTypeTraitsBase2<FArchitecturalMaterial>
-{
-	enum
-	{
-		// Override default traits here
-	};
-};

@@ -410,7 +410,7 @@ FVector2D UBIMBlockNode::GetEstimatedNodeSize()
 {
 	if (bNodeIsHidden)
 	{
-		return 0.f;
+		return FVector2D::ZeroVector;
 	}
 
 	float estimatedSize = 0.f;

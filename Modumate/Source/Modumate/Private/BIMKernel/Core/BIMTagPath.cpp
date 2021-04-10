@@ -2,7 +2,7 @@
 
 #include "BIMKernel/Core/BIMTagPath.h"
 
-static constexpr TCHAR* BIMTagPathSeparator = TEXT("_");
+static constexpr TCHAR BIMTagPathSeparator[] = TEXT("_");
 
 EBIMResult FBIMTagPath::FromString(const FString &InString)
 {

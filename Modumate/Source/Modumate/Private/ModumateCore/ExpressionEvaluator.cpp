@@ -141,7 +141,7 @@ namespace Modumate
 			// First, determine the common units of the variables in the expression, so they can be converted to the same type
 			EModumateUnitType commonUnit = EModumateUnitType::WorldCentimeters;
 			int32 maxUnitUsage = 0;
-			int32 unitUsage[EModumateUnitType::NUM];
+			int32 unitUsage[(int32)EModumateUnitType::NUM];
 			FMemory::Memset(unitUsage, 0);
 
 			for (auto &kvp : Vars)
@@ -314,15 +314,15 @@ namespace Modumate
 		}
 
 		// Variables are dot-qualified paths of arbitrary length, ie: "Parent.Frame.JambSizeX"
-		bool Modumate::Expression::ExtractVariables(const FString &ExprString, TArray<FString>& OutVariables)
+		bool ExtractVariables(const FString &ExprString, TArray<FString>& OutVariables)
 		{
 			// Note: do not clear the container, this is meant to be called across multiple expressions
 			static const std::wregex varMatch(L"[a-zA-Z][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*");
 			std::wsmatch match;
-			std::wstring exprWString = *ExprString;
+			std::wstring exprWString(TCHAR_TO_WCHAR(*ExprString));
 			while (std::regex_search(exprWString, match, varMatch))
 			{
-				OutVariables.AddUnique(match[0].str().c_str());
+				OutVariables.AddUnique(FString(WCHAR_TO_TCHAR(match[0].str().c_str())));
 				exprWString = match.suffix();
 			}
 			return true;

@@ -5,21 +5,6 @@ using UnrealBuildTool;
 
 public class Modumate : ModuleRules
 {
-	private string ModulePath
-	{
-		get { return ModuleDirectory; }
-	}
-
-	private string BinariesPath
-	{
-		get { return Path.GetFullPath(Path.Combine(ModulePath, "../../Binaries/Win64")); }
-	}
-
-	private string WinLibPath
-	{
-		get { return Path.GetFullPath(Path.Combine(ModulePath, "../../WinLib")); }
-	}
-
 	public Modumate(ReadOnlyTargetRules Target) : base(Target)
 	{
 		// Exceptions enabled for third party libraries that rely on our code catching their exceptions.
@@ -64,12 +49,15 @@ public class Modumate : ModuleRules
 			PrivateDependencyModuleNames.Add("UnrealEd");
 		}
 
-		LoadWinLibs();
+        if (Target.Platform == UnrealTargetPlatform.Win64)
+        {
+            LoadWinLibs();
+        }
 	}
 
 	public bool LoadWinLibs()
 	{
-		PublicAdditionalLibraries.Add(Path.Combine(WinLibPath, "ShLwApi.lib"));
+		PublicAdditionalLibraries.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "../../WinLib/ShLwApi.lib")));
 		PublicDefinitions.Add(string.Format("WITH_WINLIB_BINDING={0}", 1));
 		return true;
 	}

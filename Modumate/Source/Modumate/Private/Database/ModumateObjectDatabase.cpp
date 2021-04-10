@@ -91,9 +91,9 @@ void FModumateDatabase::AddArchitecturalMaterial(const FGuid& Key, const FString
 /*
 * TODO: Refactor for FArchive binary format
 */
-static constexpr TCHAR* BIMCacheRecordField = TEXT("BIMCacheRecord");
-static constexpr TCHAR* BIMManifestFileName = TEXT("BIMManifest.txt");
-static constexpr TCHAR* BIMNCPFileName = TEXT("NCPTable.csv");
+static constexpr TCHAR BIMCacheRecordField[] = TEXT("BIMCacheRecord");
+static constexpr TCHAR BIMManifestFileName[] = TEXT("BIMManifest.txt");
+static constexpr TCHAR BIMNCPFileName[] = TEXT("NCPTable.csv");
 
 bool FModumateDatabase::ReadBIMCache(const FString& CacheFile, FModumateBIMCacheRecord& OutCache)
 {

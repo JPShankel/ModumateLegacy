@@ -36,6 +36,9 @@ struct MODUMATE_API FMiterHitResult
 // A collection of data required to miter a plane-hosted object for a given edge
 struct MODUMATE_API FMiterParticipantData
 {
+    // TODO: replace this with variable number of groups when we support miter data coming from BIM
+    static constexpr int32 MaxNumLayerGroups = 3;
+    
 	// Whether all of the data has been successfully initialized
 	bool bValid = false;
 
@@ -67,16 +70,16 @@ struct MODUMATE_API FMiterParticipantData
 	FCachedLayerDimsByType LayerDims;
 
 	// For each layer group, whether the plane-hosted object has any layers in it
-	bool HaveLayerGroup[EMiterLayerGroup::Num];
+	bool HaveLayerGroup[MaxNumLayerGroups];
 
 	// For each layer group, the 2D-projected origin points of the start and end sides of the layer group, offset from the miter center.
-	TPair<FVector2D, FVector2D> LayerGroupOrigins2D[EMiterLayerGroup::Num];
+	TPair<FVector2D, FVector2D> LayerGroupOrigins2D[MaxNumLayerGroups];
 
 	// For each layer group, if it has been extended in the miter
-	bool HaveExtendedLayerGroup[EMiterLayerGroup::Num];
+	bool HaveExtendedLayerGroup[MaxNumLayerGroups];
 
 	// For each layer group, the mitered extension values for the start and end of the group
-	FVector2D LayerGroupExtensions[EMiterLayerGroup::Num];
+	FVector2D LayerGroupExtensions[MaxNumLayerGroups];
 
 	// For each layer, the mitered extension values for the start and of the layer
 	TArray<FVector2D> LayerExtensions;

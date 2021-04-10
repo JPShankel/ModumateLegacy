@@ -1,0 +1,3 @@
+# OSX specific global file ignores
+.DS_Store
+

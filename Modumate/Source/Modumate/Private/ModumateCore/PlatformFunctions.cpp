@@ -494,4 +494,34 @@ namespace Modumate
 	}
 }}
 
+#else
+
+// TODO: implement these functions for non-Windows platforms, or use/integration UE4's cross-platform alternatives
+
+namespace Modumate
+{
+    namespace PlatformFunctions {
+    
+    bool GetOpenFilename(FString &filename, bool bUseDefaultFilters)
+    {
+        return false;
+    }
+    
+    bool GetSaveFilename(FString &filename, unsigned int fileType)
+    {
+        return false;
+    }
+    
+    FString GetStringValueFromHKCU(const FString &regSubKey, const FString &regValue)
+    {
+        return FString();
+    }
+    
+    EMessageBoxResponse ShowMessageBox(const FString &msg, const FString &caption, EMessageBoxType type)
+    {
+        return Cancel;
+    }
+    
+}}
+
 #endif

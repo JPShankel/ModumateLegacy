@@ -41,7 +41,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 		trimmedDimStr.RemoveAt(0);
 	}
 
-	std::wstring dimCStr = *trimmedDimStr;
+    std::wstring dimCStr(TCHAR_TO_WCHAR(*trimmedDimStr));
 
 	//Combines multi-unit strings
 	static std::wstring multiUnitSeparator = L"[\\s-]+";
@@ -102,11 +102,16 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	std::wsmatch match;
 	int32 parsedIntA = 0, parsedIntB = 0, parsedIntC = 0, parsedIntD = 0;
 	double parsedDecimalA = 0.0, parsedDecimalB = 0.0;
+    
+    auto getMatchString = [&match](int32 MatchIndex)
+    {
+        return FString(WCHAR_TO_TCHAR(match[MatchIndex].str().c_str()));
+    };
 
 	// Bare integers are assumed to be plain feet
 	if (std::regex_match(dimCStr, match, integerPattern))
 	{
-		if (UModumateDimensionStatics::TryParseNumber(dimCStr.c_str(), parsedIntA))
+		if (UModumateDimensionStatics::TryParseNumber(trimmedDimStr, parsedIntA))
 		{
 			result.Format = EDimensionFormat::JustFeet;
 			result.Centimeters = sign * parsedIntA * InchesToCentimeters * InchesPerFoot;
@@ -121,7 +126,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	// Bare decimal values are assumed to be plain feet
 	if (std::regex_match(dimCStr, match, decimalPattern))
 	{
-		if (UModumateDimensionStatics::TryParseNumber(dimCStr.c_str(), parsedDecimalA))
+		if (UModumateDimensionStatics::TryParseNumber(trimmedDimStr, parsedDecimalA))
 		{
 			result.Format = EDimensionFormat::JustFeet;
 			result.Centimeters = sign * parsedDecimalA * InchesToCentimeters * InchesPerFoot;
@@ -137,8 +142,8 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	if (std::regex_match(dimCStr, match, inchesSimpleFractionPattern))
 	{
 		if ((match.size() > 2) &&
-			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedIntA) &&
-			UModumateDimensionStatics::TryParseNumber(match[2].str().c_str(), parsedIntB))
+			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedIntA) &&
+			UModumateDimensionStatics::TryParseNumber(getMatchString(2), parsedIntB))
 		{
 			float numer = (float)parsedIntA;
 			float denom = (float)parsedIntB;
@@ -156,9 +161,9 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	if (std::regex_match(dimCStr, match, inchesComplexFractionPattern))
 	{
 		if ((match.size() > 3) &&
-			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedIntA) &&
-			UModumateDimensionStatics::TryParseNumber(match[2].str().c_str(), parsedIntB) &&
-			UModumateDimensionStatics::TryParseNumber(match[3].str().c_str(), parsedIntC))
+			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedIntA) &&
+			UModumateDimensionStatics::TryParseNumber(getMatchString(2), parsedIntB) &&
+			UModumateDimensionStatics::TryParseNumber(getMatchString(3), parsedIntC))
 		{
 			float whole = (float)parsedIntA;
 			float numer = (float)parsedIntB;
@@ -177,7 +182,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	if (std::regex_match(dimCStr, match, inchesDecimal))
 	{
 		if ((match.size() > 1) &&
-			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedDecimalA))
+			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedDecimalA))
 		{
 			result.Format = EDimensionFormat::JustInches;
 			result.Centimeters = sign * parsedDecimalA * InchesToCentimeters;
@@ -190,7 +195,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	if (std::regex_match(dimCStr, match, wholeFeetPattern))
 	{
 		if ((match.size() > 1) &&
-			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedIntA))
+			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedIntA))
 		{
 			result.Format = EDimensionFormat::JustFeet;
 			result.Centimeters = sign * parsedIntA * InchesPerFoot * InchesToCentimeters;
@@ -203,8 +208,8 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	if (std::regex_match(dimCStr, match, feetWholeInchesPattern))
 	{
 		if ((match.size() > 3) &&
-			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedIntA) &&
-			UModumateDimensionStatics::TryParseNumber(match[3].str().c_str(), parsedIntB))
+			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedIntA) &&
+			UModumateDimensionStatics::TryParseNumber(getMatchString(3), parsedIntB))
 		{
 			result.Format = EDimensionFormat::FeetAndInches;
 			float feet = (float)parsedIntA;
@@ -219,9 +224,9 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	if (std::regex_match(dimCStr, match, feetSimpleFractionInchesPattern))
 	{
 		if ((match.size() > 4) &&
-			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedIntA) &&
-			UModumateDimensionStatics::TryParseNumber(match[3].str().c_str(), parsedIntB) &&
-			UModumateDimensionStatics::TryParseNumber(match[4].str().c_str(), parsedIntC))
+			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedIntA) &&
+			UModumateDimensionStatics::TryParseNumber(getMatchString(3), parsedIntB) &&
+			UModumateDimensionStatics::TryParseNumber(getMatchString(4), parsedIntC))
 		{
 			float feet = (float)parsedIntA;
 			float numer = (float)parsedIntB;
@@ -240,10 +245,10 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	if (std::regex_match(dimCStr, match, feetComplexFractionInchesPattern))
 	{
 		if ((match.size() > 6) &&
-			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedIntA) &&
-			UModumateDimensionStatics::TryParseNumber(match[3].str().c_str(), parsedIntB) &&
-			UModumateDimensionStatics::TryParseNumber(match[4].str().c_str(), parsedIntC) &&
-			UModumateDimensionStatics::TryParseNumber(match[5].str().c_str(), parsedIntD))
+			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedIntA) &&
+			UModumateDimensionStatics::TryParseNumber(getMatchString(3), parsedIntB) &&
+			UModumateDimensionStatics::TryParseNumber(getMatchString(4), parsedIntC) &&
+			UModumateDimensionStatics::TryParseNumber(getMatchString(5), parsedIntD))
 		{
 			float feet = (float)parsedIntA;
 			float wholeFrac = (float)parsedIntB;
@@ -263,7 +268,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	if (std::regex_match(dimCStr, match, justFeetPattern))
 	{
 		if ((match.size() > 1) &&
-			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedDecimalA))
+			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedDecimalA))
 		{
 			result.Format = EDimensionFormat::JustFeet;
 			result.Centimeters = sign * parsedDecimalA * InchesToCentimeters * InchesPerFoot;
@@ -276,7 +281,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	if (std::regex_match(dimCStr, match, justMetersPattern))
 	{
 		if ((match.size() > 1) &&
-			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedDecimalA))
+			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedDecimalA))
 		{
 			result.Format = EDimensionFormat::JustMeters;
 			result.Centimeters = sign * parsedDecimalA * 100.0;
@@ -289,7 +294,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	if (std::regex_match(dimCStr, match, justCentimetersPattern))
 	{
 		if ((match.size() > 1) &&
-			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedDecimalA))
+			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedDecimalA))
 		{
 			result.Format = EDimensionFormat::JustCentimeters;
 			result.Centimeters = sign * parsedDecimalA;
@@ -302,7 +307,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	if (std::regex_match(dimCStr, match, justMillimetersPattern))
 	{
 		if ((match.size() > 1) &&
-			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedDecimalA))
+			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedDecimalA))
 		{
 			result.Format = EDimensionFormat::JustMillimeters;
 			result.Centimeters = sign * parsedDecimalA * 0.1;
@@ -315,8 +320,8 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	if (std::regex_match(dimCStr, match, metersAndCentimetersPattern))
 	{
 		if ((match.size() > 2) &&
-			UModumateDimensionStatics::TryParseNumber(match[1].str().c_str(), parsedDecimalA) &&
-			UModumateDimensionStatics::TryParseNumber(match[2].str().c_str(), parsedDecimalB))
+			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedDecimalA) &&
+			UModumateDimensionStatics::TryParseNumber(getMatchString(2), parsedDecimalB))
 		{
 			result.Format = EDimensionFormat::MetersAndCentimeters;
 			result.Centimeters = sign * parsedDecimalA * 100.0 + parsedDecimalB;

@@ -41,12 +41,4 @@ public:
 	{
 		DataMap.Reset();
 	}
-
-	template<class R>
-	TArray<R> GetDataRecords() const
-	{
-		TArray<R> records;
-		Algo::Transform(DataMap, records, [](const FDataMap::ElementType &kvp) {return kvp.Value.ToDataRecord(); });
-		return records;
-	}
 };

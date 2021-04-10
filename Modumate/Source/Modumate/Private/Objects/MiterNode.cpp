@@ -72,7 +72,7 @@ FMiterParticipantData::FMiterParticipantData(const struct FMiterData *InMiterDat
 		return;
 	}
 
-	for (int32 layerGroupIdx = 0; layerGroupIdx < (int32)EMiterLayerGroup::Num; ++layerGroupIdx)
+	for (int32 layerGroupIdx = 0; layerGroupIdx < MaxNumLayerGroups; ++layerGroupIdx)
 	{
 		EMiterLayerGroup layerGroup = (EMiterLayerGroup)layerGroupIdx;
 		int32 layerGroupStartIdx, layerGroupEndIdx;
@@ -108,7 +108,7 @@ void FMiterParticipantData::Reset()
 	Normal2D = FVector2D::ZeroVector;
 	LayerDims = FCachedLayerDimsByType();
 
-	for (int32 layerGroupIdx = 0; layerGroupIdx < (int32)EMiterLayerGroup::Num; ++layerGroupIdx)
+	for (int32 layerGroupIdx = 0; layerGroupIdx < MaxNumLayerGroups; ++layerGroupIdx)
 	{
 		HaveLayerGroup[layerGroupIdx] = false;
 		LayerGroupOrigins2D[layerGroupIdx].Key = FVector2D::ZeroVector;

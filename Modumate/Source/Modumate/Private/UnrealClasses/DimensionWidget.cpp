@@ -111,7 +111,7 @@ void UDimensionWidget::UpdateDegreeText(float angle)
 	{
 		FNumberFormattingOptions options;
 		options.MaximumFractionalDigits = 1;
-		FText newText = FText::Format(LOCTEXT("degrees", "{0}°"), FText::AsNumber(angle, &options));
+		FText newText = FText::Format(LOCTEXT("degrees", "{0}\u00B0"), FText::AsNumber(angle, &options));
 		Measurement->SetText(newText);
 		LastCommittedText = newText;
 		LastMeasurement = angle;

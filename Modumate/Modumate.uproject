@@ -76,7 +76,9 @@
 		}
 	],
 	"TargetPlatforms": [
-		"WindowsNoEditor"
+		"WindowsNoEditor",
+		"MacNoEditor",
+		"LinuxNoEditor"
 	],
 	"PostBuildSteps":
 	{

@@ -12,7 +12,7 @@ bool FModumateScriptProcessor::AddRule(const FString &Rule, const FRuleHandler &
 {
 	FRuleMapping mapping;
 	mapping.RuleString = Rule;
-	mapping.RulePattern = std::wregex(*Rule);
+	mapping.RulePattern = std::wregex(TCHAR_TO_WCHAR(*Rule));
 	// Lambdas don't pass well by value, so make a dynamic copy
 	mapping.Action = OnRule;
 	mapping.AllowSuffix = AllowSuffix;
@@ -26,7 +26,7 @@ If a given rulemapping matches the input line, call the action
 bool FModumateScriptProcessor::TryRule(const FRuleMapping *RuleMapping, const FString &Line, int32 LineNum, const FErrorReporter &ErrorReporter) const
 {
 	std::wsmatch m;
-	std::wstring wsLine(*Line);
+	std::wstring wsLine(TCHAR_TO_WCHAR(*Line));
 	if (RuleMapping != nullptr)
 	{
 		if (RuleMapping->AllowSuffix ? std::regex_search(wsLine, m, RuleMapping->RulePattern) : std::regex_match(wsLine, m, RuleMapping->RulePattern))
@@ -202,7 +202,7 @@ bool FModumateScriptProcessorUnitTest::RunTest(const FString &Parameters)
 			{
 				if (match.suffix().str().length() > 0)
 				{
-					suffices.Add(match.suffix().str().c_str());
+					suffices.Add(FString(WCHAR_TO_TCHAR(match.suffix().str().c_str())));
 				}
 			},
 			true);

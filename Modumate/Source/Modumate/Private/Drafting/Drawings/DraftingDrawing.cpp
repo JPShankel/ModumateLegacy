@@ -141,7 +141,7 @@ namespace Modumate {
 			}
 
 			auto children = metaplane->GetChildObjects();
-			if (!children.Num() == 1)
+			if (children.Num() != 1)
 			{
 				continue;
 			}

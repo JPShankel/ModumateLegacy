@@ -1510,7 +1510,7 @@ namespace Modumate
 			return false;
 		}
 
-		if (!outVector.Y == 0.0f)
+		if (outVector.Y != 0.0f)
 		{
 			return false;
 		}

@@ -543,9 +543,9 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 
 EBIMResult FBIMAssemblySpec::MakeLayeredAssembly(const FModumateDatabase& InDB)
 {
-	auto buildLayers = [InDB](TArray<FBIMLayerSpec>& Layers)
+	auto buildLayers = [InDB](TArray<FBIMLayerSpec>& LayersToBuild)
 	{
-		for (auto& layer : Layers)
+		for (auto& layer : LayersToBuild)
 		{
 			EBIMResult res = layer.BuildFromProperties(InDB);
 			if (res != EBIMResult::Success)
