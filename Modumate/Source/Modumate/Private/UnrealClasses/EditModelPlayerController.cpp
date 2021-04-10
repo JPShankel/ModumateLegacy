@@ -2937,8 +2937,8 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 	AActor* directHitActor = nullptr;
 	const AModumateObjectInstance* directHitMOI = nullptr;
 	FVector directHitNormal(ForceInitToZero);
-	TSet<int32> directHitPlaneNeighbors;
-	bool bDirectHitPlane = false;
+	TSet<int32> directHitPolyNeighbors;
+	bool bDirectHitPolygon = false;
 	const FSnappedCursor& cursor = EMPlayerState->SnappedCursor;
 
 	if (LineTraceSingleAgainstMOIs(hitSingleResult, mouseLoc, mouseLoc + MaxRaycastDist * mouseDir))
@@ -2958,10 +2958,16 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 			objectHit.Normal = (moiNormal | objectHit.Normal) > 0 ? moiNormal : -moiNormal;
 			objectHit.Location = FVector::PointPlaneProject(objectHit.Location, plane);
 
-			TArray<int32> connectedIDs;
-			directHitMOI->GetConnectedIDs(connectedIDs);
-			directHitPlaneNeighbors.Append(connectedIDs);
-			bDirectHitPlane = true;
+			// If we've directly hit a polygon, then we want to exclude objects that are coplanar and disconnected.
+			// Note: this is only necessary and useful for SurfacePolygons, because multiple SurfaceEdges are allowed to be colinear and coexist,
+			// and peninsula/contained edges are considered connected only for SurfacePolygons rather than MetaPlanes.
+			if (objectType == EObjectType::OTSurfacePolygon)
+			{
+				TArray<int32> connectedIDs;
+				directHitMOI->GetConnectedIDs(connectedIDs);
+				directHitPolyNeighbors.Append(connectedIDs);
+				bDirectHitPolygon = true;
+			}
 		}
 
 		objectHit.SnapType = ESnapType::CT_FACESELECT;
@@ -2978,15 +2984,15 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 	FPlane objectHitPlane(objectHit.Location, objectHit.Normal);
 	int32 mouseQueryBitfield = MOITraceObjectQueryParams.GetQueryBitfield();
 
-	// If we've directly hit a plane, then we want to exclude objects that are coplanar and disconnected.
-	auto validateStructurePoint = [bDirectHitPlane, objectHitPlane, &directHitPlaneNeighbors](const FStructurePoint& StructurePoint) -> bool
+	// Validate all points/lines if we've directly hit a polygon.
+	auto validateStructurePoint = [bDirectHitPolygon, objectHitPlane, &directHitPolyNeighbors](const FStructurePoint& StructurePoint) -> bool
 	{
-		return !bDirectHitPlane || directHitPlaneNeighbors.Contains(StructurePoint.ObjID) ||
+		return !bDirectHitPolygon || directHitPolyNeighbors.Contains(StructurePoint.ObjID) ||
 			!FMath::IsNearlyZero(objectHitPlane.PlaneDot(StructurePoint.Point), PLANAR_DOT_EPSILON);
 	};
-	auto validateStructureLine = [bDirectHitPlane, objectHitPlane, &directHitPlaneNeighbors](const FStructureLine& StructureLine) -> bool
+	auto validateStructureLine = [bDirectHitPolygon, objectHitPlane, &directHitPolyNeighbors](const FStructureLine& StructureLine) -> bool
 	{
-		return !bDirectHitPlane || directHitPlaneNeighbors.Contains(StructureLine.ObjID) ||
+		return !bDirectHitPolygon || directHitPolyNeighbors.Contains(StructureLine.ObjID) ||
 			!FMath::IsNearlyZero(objectHitPlane.PlaneDot(StructureLine.P1), PLANAR_DOT_EPSILON) ||
 			!FMath::IsNearlyZero(objectHitPlane.PlaneDot(StructureLine.P2), PLANAR_DOT_EPSILON);
 	};
