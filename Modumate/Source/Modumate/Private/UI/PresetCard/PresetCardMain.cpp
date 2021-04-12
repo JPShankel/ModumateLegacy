@@ -133,6 +133,9 @@ void UPresetCardMain::BuildAsCollapsedPresetCard(const FGuid& InPresetKey, bool 
 				newHeaderWidget->BuildAsSwapHeader(PresetGUID, EMPlayerController->EditModelUserWidget->SwapMenuWidget->BIMNodeIDToSwap, bAllowInteraction);
 			}
 			break;
+		case EPresetCardType::Delete:
+			newHeaderWidget->BuildAsDeleteHeader(PresetGUID, BIM_ID_NONE, bAllowInteraction); //TODO: Support non-assembly with NodeID?
+			break;
 		case EPresetCardType::AssembliesList:
 			newHeaderWidget->BuildAsAssembliesListHeader(PresetGUID, bAllowInteraction);
 			break;

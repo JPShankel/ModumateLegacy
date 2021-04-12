@@ -92,7 +92,7 @@ void UNCPNavigator::BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 
 	EMPlayerController->GetDocument()->GetPresetCollection().GetPresetsForNCP(ParentNCP, availablePresets, true);
 	for (auto& newPreset : availablePresets)
 	{
-		if (SearchFilteredPresets.Contains(newPreset))
+		if (!IgnoredPresets.Contains(newPreset) && SearchFilteredPresets.Contains(newPreset))
 		{
 			UBrowserItemObj* newItemObj = NewObject<UBrowserItemObj>(this);
 			newItemObj->ParentNCPNavigator = this;
@@ -229,6 +229,16 @@ void UNCPNavigator::ScrollPresetToView(const FGuid PresetToView)
 			return;
 		}
 	}
+}
+
+void UNCPNavigator::AddToIgnoredPresets(const TArray<FGuid>& InPresets)
+{
+	IgnoredPresets.Append(InPresets);
+}
+
+void UNCPNavigator::EmptyIgnoredPresets()
+{
+	IgnoredPresets.Empty();
 }
 
 void UNCPNavigator::OnSearchBarChanged(const FText& NewText)

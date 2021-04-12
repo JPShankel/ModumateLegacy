@@ -22,6 +22,7 @@ enum class ELeftMenuState : uint8
 	SelectMenu,
 	BrowserMenu,
 	SwapMenu,
+	DeleteMenu,
 	None
 };
 
@@ -90,6 +91,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class USwapMenuWidget* SwapMenuWidget;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UDeleteMenuWidget* DeleteMenuWidget;
+
 	UPROPERTY()
 	TMap<EToolMode, class UModumateButtonUserWidget*> ToolToButtonMap;
 
@@ -116,7 +120,7 @@ public:
 	bool RemoveCutPlaneFromList(int32 ObjID = MOD_ID_NONE);
 	bool UpdateCutPlaneInList(int32 ObjID = MOD_ID_NONE);
 	void RefreshAssemblyList(bool bScrollToSelected = false);
-	void ShowAlertFreeAccountDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& ConfirmCallback);
+	void ShowAlertFreeAccountDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& ConfirmCallback, bool bShowLinkButton = true);
 	void UpdateViewModeIndicator(EEditViewModes NewViewMode);
 	void ShowBIMDebugger(bool NewVisible);
 	bool IsBIMDebuggerOn();
@@ -125,6 +129,7 @@ public:
 	void ToggleViewMenu(bool NewVisibility);
 	void ToggleBrowserMenu(bool NewVisibility);
 	void ToggleSwapMenu(bool NewVisibility);
+	void ToggleDeleteMenu(bool NewVisibility);
 	bool IsBIMDesingerActive() const;
 	bool EMUserWidgetHandleEscapeKey();
 	void UpdateSelectTrayVisibility();

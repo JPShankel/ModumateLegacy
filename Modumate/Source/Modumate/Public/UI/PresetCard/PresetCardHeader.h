@@ -65,6 +65,7 @@ public:
 	// Builder
 	void BuildAsBrowserHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID, bool bAllowOptions = true);
 	void BuildAsSwapHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID, bool bAllowOptions = true);
+	void BuildAsDeleteHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID, bool bAllowOptions);
 	void BuildAsSelectTrayPresetCard(const FGuid& InGUID, int32 ItemCount, bool bAllowOptions = true);
 	void BuildAsSelectTrayPresetCardObjectType(EObjectType InObjectType, int32 ItemCount, bool bAllowOptions = true);
 	void BuildAsAssembliesListHeader(const FGuid& InGUID, bool bAllowOptions = true);
@@ -79,6 +80,9 @@ public:
 
 	UFUNCTION()
 	void OnButtonSwapReleased();
+
+	UFUNCTION()
+	void OnButtonTrashReleased();
 
 	UFUNCTION()
 	void OnButtonConfirmReleased();

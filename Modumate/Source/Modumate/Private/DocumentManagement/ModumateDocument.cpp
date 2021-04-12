@@ -33,6 +33,7 @@
 #include "Serialization/JsonSerializer.h"
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "Quantities/QuantitiesManager.h"
+#include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -792,6 +793,13 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 		{
 			BIMPresetCollection.RemoveProjectAssemblyForPreset(PresetDelta.OldState.GUID);
 		}
+
+		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
+		if (controller)
+		{
+			controller->EditModelUserWidget->RefreshAssemblyList();
+		}
+
 		return true;
 	}
 
@@ -3169,4 +3177,76 @@ bool UModumateDocument::DuplicatePreset(UWorld* World, const FGuid& OriginalPres
 		return true;
 	}
 	return false;
+}
+
+bool UModumateDocument::PresetIsInUse(const FGuid& InPreset) const
+{
+	const FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(InPreset);
+	if (preset == nullptr)
+	{
+		return false;
+	}
+
+	if (preset->ObjectType != EObjectType::OTNone)
+	{
+		TArray<const AModumateObjectInstance*> obs = GetObjectsOfType(preset->ObjectType);
+		for (auto ob : obs)
+		{
+			if (ob->GetAssembly().PresetGUID == InPreset)
+			{
+				return true;
+			}
+		}
+	}
+
+	TArray<FGuid> ancestors;
+	if (BIMPresetCollection.GetAllAncestorPresets(InPreset, ancestors) == EBIMResult::Success)
+	{
+		return ancestors.Num() > 0;
+	}
+
+	return false;
+}
+
+void UModumateDocument::DeletePreset(UWorld* World, const FGuid& DeleteGUID, const FGuid& ReplacementGUID)
+{
+	if (!ensureAlways(ReplacementGUID != DeleteGUID))
+	{
+		return;
+	}
+
+	TArray<FDeltaPtr> deltas;
+	const FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(DeleteGUID);
+
+	if (preset == nullptr)
+	{
+		return;
+	}
+
+	TArray<AModumateObjectInstance*> obs = GetObjectsOfType(preset->ObjectType).FilterByPredicate(
+		[DeleteGUID](const AModumateObjectInstance* MOI) {return MOI->GetAssembly().PresetGUID == DeleteGUID; });
+
+	if (obs.Num() > 0)
+	{
+		if (ReplacementGUID.IsValid())
+		{
+			auto delta = MakeShared<FMOIDelta>();
+			for (auto ob : obs)
+			{
+				auto& newState = delta->AddMutationState(ob);
+				newState.AssemblyGUID = ReplacementGUID;
+			}
+			deltas.Add(delta);
+		}
+		else
+		{
+			GetDeleteObjectsDeltas(deltas, obs);
+		}
+	}
+
+	if (BIMPresetCollection.MakeDeleteDeltas(DeleteGUID, ReplacementGUID, deltas) == EBIMResult::Success)
+	{
+		// If we're replacing a top level assembly, add an assembly delta for all affected MOIs
+		ApplyDeltas(deltas, World);
+	}
 }

@@ -278,6 +278,9 @@ public:
 	const FBIMPresetCollection& GetPresetCollection() const;
 	FBIMPresetCollection& GetPresetCollection();
 
+	bool PresetIsInUse(const FGuid& InPreset) const;
+	void DeletePreset(UWorld* World, const FGuid& DeleteGUID, const FGuid& ReplacementGUID = FGuid());
+
 private:
 	TSharedPtr<Modumate::FModumateDraftingView> CurrentDraftingView = nullptr;
 	FBIMPresetCollection BIMPresetCollection;

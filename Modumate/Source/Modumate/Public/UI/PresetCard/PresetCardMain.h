@@ -19,6 +19,7 @@ enum class EPresetCardType : uint8
 	SelectTray,
 	Swap,
 	AssembliesList,
+	Delete,
 	None
 };
 

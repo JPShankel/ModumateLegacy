@@ -34,6 +34,7 @@ protected:
 
 	TArray<FBIMTagPath> SelectedTags;
 	TArray<FGuid> SearchFilteredPresets;
+	TArray<FGuid> IgnoredPresets;
 
 	EPresetCardType CurrentPresetCardType = EPresetCardType::None;
 
@@ -59,6 +60,9 @@ public:
 	void RefreshDynamicMainListView();
 	void ResetSelectedAndSearchTag();
 	void ScrollPresetToView(const FGuid PresetToView);
+
+	void AddToIgnoredPresets(const TArray<FGuid>& InPresets);
+	void EmptyIgnoredPresets();
 
 	UFUNCTION()
 	void OnSearchBarChanged(const FText& NewText);

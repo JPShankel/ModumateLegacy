@@ -46,9 +46,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UNCPNavigator* NCPNavigatorWidget;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonClose;
+
 	void SetSwapMenuAsSelection(FGuid InPresetGUIDToSwap);
 	void SetSwapMenuAsFromNode(const FGuid& InParentPresetGUID, const FGuid& InPresetGUIDToSwap, const FBIMEditorNodeIDType& InNodeID, const FBIMPresetFormElement& InFormElement);
 	void BuildSwapMenu();
 
 	const FGuid& GetPresetGUIDToSwap() const { return PresetGUIDToSwap; }
+
+	UFUNCTION()
+	void OnReleaseButtonClose();
 };

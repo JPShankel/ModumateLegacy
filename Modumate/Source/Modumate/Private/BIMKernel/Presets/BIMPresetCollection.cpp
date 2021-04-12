@@ -1083,6 +1083,60 @@ EBIMResult FBIMPresetCollection::GetBlankPresetForObjectType(EObjectType ObjectT
 	return EBIMResult::Error;
 }
 
+EBIMResult FBIMPresetCollection::MakeDeleteDeltas(const FGuid& DeleteGUID, const FGuid& ReplacementGUID, TArray<FDeltaPtr>& OutDeltas, UObject* AnalyticsWorldContextObject)
+{
+	const FBIMPresetInstance* presetToDelete = PresetFromGUID(DeleteGUID);
+
+	if (!ensureAlways(presetToDelete != nullptr))
+	{
+		return EBIMResult::Error;
+	}
+
+	TArray<FGuid> ancestors;
+	if (ReplacementGUID.IsValid() && GetAncestorPresets(DeleteGUID,ancestors) == EBIMResult::Success)
+	{
+		FBIMKey replacementBIMKey;
+		const FBIMPresetInstance* replacementInst = PresetFromGUID(ReplacementGUID);
+		if (ensureAlways(replacementInst != nullptr))
+		{
+			replacementBIMKey = replacementInst->PresetID;
+		}
+
+		for (auto& ancestor : ancestors)
+		{
+			const FBIMPresetInstance* presetInstance = PresetFromGUID(ancestor);
+			if (ensureAlways(presetInstance != nullptr))
+			{
+				TSharedPtr<FBIMPresetDelta> presetDelta = MakeShared<FBIMPresetDelta>();
+				OutDeltas.Add(presetDelta);
+				presetDelta->OldState = *presetInstance;
+				presetDelta->NewState = *presetInstance;
+				for (auto& child : presetDelta->NewState.ChildPresets)
+				{
+					if (child.PresetGUID == DeleteGUID)
+					{
+						child.PresetGUID = ReplacementGUID;
+					}
+				}
+				for (auto& part : presetDelta->NewState.PartSlots)
+				{
+					if (part.PartPresetGUID == DeleteGUID)
+					{
+						part.PartPresetGUID = ReplacementGUID;
+						part.PartPreset = replacementBIMKey;
+					}
+				}
+			}
+		}
+	}
+
+	TSharedPtr<FBIMPresetDelta> presetDelta = MakeShared<FBIMPresetDelta>();
+	OutDeltas.Add(presetDelta);
+	presetDelta->OldState = *presetToDelete;
+
+	return EBIMResult::Success;
+}
+
 FBIMPresetCollectionProxy::FBIMPresetCollectionProxy(const FBIMPresetCollection& InCollection) : BaseCollection(&InCollection)
 {}
 
@@ -1117,7 +1171,6 @@ const FBIMAssemblySpec* FBIMPresetCollectionProxy::AssemblySpecFromGUID(EObjectT
 	}
 	return nullptr;
 }
-
 
 EBIMResult FBIMPresetCollectionProxy::CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FGuid& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec)
 {

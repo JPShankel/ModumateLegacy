@@ -14,6 +14,7 @@
 #include "UI/LeftMenu/SwapMenuWidget.h"
 #include "UI/LeftMenu/NCPNavigator.h"
 #include "UI/BIM/BIMDesigner.h"
+#include "UI/LeftMenu/DeleteMenuWidget.h"
 
 #define LOCTEXT_NAMESPACE "PresetCardHeader"
 
@@ -39,6 +40,7 @@ bool UPresetCardHeader::Initialize()
 	ButtonSwap->ModumateButton->OnReleased.AddDynamic(this, &UPresetCardHeader::OnButtonSwapReleased);
 	ButtonConfirm->ModumateButton->OnReleased.AddDynamic(this, &UPresetCardHeader::OnButtonConfirmReleased);
 	ButtonDuplicate->ModumateButton->OnReleased.AddDynamic(this, &UPresetCardHeader::OnButtonDuplicateReleased);
+	ButtonTrash->ModumateButton->OnReleased.AddDynamic(this, &UPresetCardHeader::OnButtonTrashReleased);
 	
 	return true;
 }
@@ -76,6 +78,19 @@ void UPresetCardHeader::BuildAsSwapHeader(const FGuid& InGUID, const FBIMEditorN
 		ItemDisplayName = preset->DisplayName;
 		MainText->ChangeText(ItemDisplayName);
 		UpdateOptionButtonSetByPresetCardType(EPresetCardType::Swap, !bAllowOptions);
+	}
+}
+
+void UPresetCardHeader::BuildAsDeleteHeader(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID, bool bAllowOptions)
+{
+	PresetGUID = InGUID;
+	const FBIMPresetInstance* preset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
+	if (preset)
+	{
+		CaptureIcon(PresetGUID, NodeID, preset->NodeScope == EBIMValueScope::Assembly);
+		ItemDisplayName = preset->DisplayName;
+		MainText->ChangeText(ItemDisplayName);
+		UpdateOptionButtonSetByPresetCardType(EPresetCardType::Delete, !bAllowOptions);
 	}
 }
 
@@ -133,20 +148,20 @@ void UPresetCardHeader::UpdateOptionButtonSetByPresetCardType(EPresetCardType In
 
 	switch (InPresetCardType)
 	{
-	case EPresetCardType::Browser:
-		UpdateEditButtonIfPresetIsEditable();
-		break;
 	case EPresetCardType::SelectTray:
 		ButtonSwap->SetVisibility(ESlateVisibility::Visible);
 		UpdateEditButtonIfPresetIsEditable();
 		break;
 	case EPresetCardType::Swap:
+	case EPresetCardType::Delete:
 		ButtonConfirm->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EPresetCardType::AssembliesList:
 		UpdateEditButtonIfPresetIsEditable();
 		ButtonDuplicate->SetVisibility(ESlateVisibility::Visible);
+		ButtonTrash->SetVisibility(ESlateVisibility::Visible);
 		break;
+	case EPresetCardType::Browser:
 	case EPresetCardType::None:
 	default:
 		break;
@@ -237,20 +252,43 @@ void UPresetCardHeader::OnButtonSwapReleased()
 	if (ensureAlways(ncpForSwap.Tags.Num() > 0))
 	{
 		EMPlayerController->EditModelUserWidget->SwapMenuWidget->NCPNavigatorWidget->ResetSelectedAndSearchTag();
-		
-		// Matching NCP buttons should be expanded during swap
-		for (int32 i = 0; i < ncpForSwap.Tags.Num(); ++i)
-		{
-			FBIMTagPath partialTag;
-			ncpForSwap.GetPartialPath(i + 1, partialTag);
-			EMPlayerController->EditModelUserWidget->SwapMenuWidget->NCPNavigatorWidget->ToggleNCPTagAsSelected(partialTag, true);
-		}
 
 		EMPlayerController->EditModelUserWidget->SwapMenuWidget->SetSwapMenuAsSelection(PresetGUID);
 		EMPlayerController->EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::SwapMenu);
 		EMPlayerController->EditModelUserWidget->SwapMenuWidget->NCPNavigatorWidget->SetNCPTagPathAsSelected(ncpForSwap);
 
 		EMPlayerController->EditModelUserWidget->SwapMenuWidget->NCPNavigatorWidget->ScrollPresetToView(PresetGUID);
+	}
+}
+
+void UPresetCardHeader::OnButtonTrashReleased()
+{
+	if (ensureAlways(EMPlayerController && 
+		EMPlayerController->EditModelUserWidget && 
+		EMPlayerController->EditModelUserWidget->DeleteMenuWidget))
+	{
+		UDeleteMenuWidget* deleteWidget = EMPlayerController->EditModelUserWidget->DeleteMenuWidget;
+
+		// If this preset does not affect any other preset, then just display the modal dialog for delete
+		TArray<FGuid> allAncestorPresets;
+		if (!EMPlayerController->GetDocument()->PresetIsInUse(PresetGUID))
+		{
+			deleteWidget->SetPresetToDelete(PresetGUID, FGuid());
+			deleteWidget->BuildDeleteModalDialog();
+			return;
+		}
+
+		// Otherwise, this preset needs to be replaced
+		FBIMTagPath ncpForReplace;
+		EMPlayerController->GetDocument()->GetPresetCollection().GetNCPForPreset(PresetGUID, ncpForReplace);
+		if (ensureAlways(ncpForReplace.Tags.Num() > 0))
+		{
+			EMPlayerController->EditModelUserWidget->DeleteMenuWidget->NCPNavigatorWidget->ResetSelectedAndSearchTag();
+
+			deleteWidget->SetPresetToDelete(PresetGUID, FGuid());
+			EMPlayerController->EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::DeleteMenu);
+			EMPlayerController->EditModelUserWidget->DeleteMenuWidget->NCPNavigatorWidget->SetNCPTagPathAsSelected(ncpForReplace);
+		}
 	}
 }
 
@@ -308,6 +346,17 @@ void UPresetCardHeader::ConfirmGUID(const FGuid& InGUID)
 		{
 			EMPlayerController->EMPlayerState->SetAssemblyForToolMode(EMPlayerController->GetToolMode(), InGUID);
 			EMPlayerController->EditModelUserWidget->RefreshAssemblyList(true);
+		}
+	}
+	else if (PresetCardType == EPresetCardType::Delete)
+	{
+		if (ensureAlways(EMPlayerController && 
+			EMPlayerController->EditModelUserWidget && 
+			EMPlayerController->EditModelUserWidget->DeleteMenuWidget))
+		{
+			UDeleteMenuWidget* deleteWidget = EMPlayerController->EditModelUserWidget->DeleteMenuWidget;
+			deleteWidget->SetPresetToDelete(deleteWidget->GetPresetGUIDToDelete(), PresetGUID);
+			deleteWidget->BuildDeleteModalDialog();
 		}
 	}
 }

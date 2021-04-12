@@ -41,7 +41,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnAlertAccountPressedConfirm OnPressedConfirm;
 
-	void ShowDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback);
+	void ShowDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback, bool bShowLinkButton = true);
 
 protected:
 

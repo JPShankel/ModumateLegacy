@@ -43,16 +43,7 @@ void UBIMBlockDialogBox::OnReleaseButton_VariableText_GreyOutline()
 {
 	if (Controller && Controller->EditModelUserWidget)
 	{
-		// ToolMenu requires specific category
-		if (Controller->EditModelUserWidget->PreviousLeftMenuState == ELeftMenuState::ToolMenu)
-		{
-			EToolCategories toolCategory = UModumateTypeStatics::GetToolCategory(Controller->GetToolMode());
-			Controller->EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::ToolMenu, toolCategory);
-		}
-		else
-		{
-			Controller->EditModelUserWidget->SwitchLeftMenu(Controller->EditModelUserWidget->PreviousLeftMenuState);
-		}
+		Controller->EditModelUserWidget->SwitchLeftMenu(Controller->EditModelUserWidget->PreviousLeftMenuState);
 	}
 }
 

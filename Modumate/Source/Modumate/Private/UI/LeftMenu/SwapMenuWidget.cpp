@@ -4,6 +4,9 @@
 
 #include "UI/LeftMenu/NCPNavigator.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UI/EditmodelUserWidget.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/Custom/ModumateButton.h"
 
 USwapMenuWidget::USwapMenuWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -16,6 +19,13 @@ bool USwapMenuWidget::Initialize()
 	{
 		return false;
 	}
+
+	if (!ButtonClose)
+	{
+		return false;
+	}
+
+	ButtonClose->ModumateButton->OnReleased.AddDynamic(this, &USwapMenuWidget::OnReleaseButtonClose);
 
 	return true;
 }
@@ -44,4 +54,9 @@ void USwapMenuWidget::SetSwapMenuAsFromNode(const FGuid& InParentPresetGUID, con
 void USwapMenuWidget::BuildSwapMenu()
 {
 	NCPNavigatorWidget->BuildNCPNavigator(EPresetCardType::Swap);
+}
+
+void USwapMenuWidget::OnReleaseButtonClose()
+{
+	EMPlayerController->EditModelUserWidget->SwitchLeftMenu(EMPlayerController->EditModelUserWidget->PreviousLeftMenuState);
 }

@@ -40,9 +40,11 @@ void UAlertAccountDialogWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UAlertAccountDialogWidget::ShowDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback)
+void UAlertAccountDialogWidget::ShowDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback, bool bShowLinkButton)
 {
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+	ButtonInfoLink->SetVisibility(bShowLinkButton ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 
 	bool bShowConfirm = !ConfirmText.IsEmpty();
 	ButtonConfirm->GetParent()->SetVisibility(bShowConfirm ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);

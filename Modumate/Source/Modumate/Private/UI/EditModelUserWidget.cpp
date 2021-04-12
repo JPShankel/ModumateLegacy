@@ -29,6 +29,7 @@
 #include "UI/LeftMenu/BrowserMenuWidget.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/LeftMenu/SwapMenuWidget.h"
+#include "UI/LeftMenu/DeleteMenuWidget.h"
 
 #define LOCTEXT_NAMESPACE "ModumateWidgets"
 
@@ -123,12 +124,14 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 	bool newTutorialMenuVisibility = CurrentLeftMenuState == ELeftMenuState::TutorialMenu;
 	bool newBrowserMenuVisibility = CurrentLeftMenuState == ELeftMenuState::BrowserMenu;
 	bool newSwapMenuVisibility = CurrentLeftMenuState == ELeftMenuState::SwapMenu;
+	bool newDeleteMenuVisibility = CurrentLeftMenuState == ELeftMenuState::DeleteMenu;
 	newToolTrayVisibility ? ToolTrayWidget->OpenToolTray() : ToolTrayWidget->CloseToolTray();
 	ToggleViewMenu(newViewMenuVisibility);
 	ToggleCutPlaneMenu(newCutPlaneMenuVisibility);
 	ToggleTutorialMenu(newTutorialMenuVisibility);
 	ToggleBrowserMenu(newBrowserMenuVisibility);
 	ToggleSwapMenu(newSwapMenuVisibility);
+	ToggleDeleteMenu(newDeleteMenuVisibility);
 
 	if (NewState == ELeftMenuState::SelectMenu)
 	{
@@ -141,7 +144,14 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 
 	if (newToolTrayVisibility)
 	{
-		switch (AsToolCategory)
+		// ToolMenu requires specific category, check if it's unknown
+		EToolCategories switchToToolCategory = AsToolCategory;
+		if (switchToToolCategory == EToolCategories::Unknown)
+		{
+			switchToToolCategory = UModumateTypeStatics::GetToolCategory(Controller->GetToolMode());
+		}
+
+		switch (switchToToolCategory)
 		{
 		case EToolCategories::MetaGraph:
 			ToolTrayWidget->ChangeBlockToMetaPlaneTools();
@@ -284,9 +294,9 @@ void UEditModelUserWidget::RefreshAssemblyList(bool bScrollToSelected)
 	}
 }
 
-void UEditModelUserWidget::ShowAlertFreeAccountDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& ConfirmCallback)
+void UEditModelUserWidget::ShowAlertFreeAccountDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& ConfirmCallback, bool bShowLinkButton)
 {
-	AlertFreeAccountDialogWidget->ShowDialog(AlertText, ConfirmText, ConfirmCallback);
+	AlertFreeAccountDialogWidget->ShowDialog(AlertText, ConfirmText, ConfirmCallback, bShowLinkButton);
 }
 
 void UEditModelUserWidget::UpdateViewModeIndicator(EEditViewModes NewViewMode)
@@ -417,6 +427,15 @@ void UEditModelUserWidget::ToggleSwapMenu(bool NewVisibility)
 	if (NewVisibility)
 	{
 		SwapMenuWidget->BuildSwapMenu();
+	}
+}
+
+void UEditModelUserWidget::ToggleDeleteMenu(bool NewVisibility)
+{
+	DeleteMenuWidget->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (NewVisibility)
+	{
+		DeleteMenuWidget->BuildDeleteMenu();
 	}
 }
 
