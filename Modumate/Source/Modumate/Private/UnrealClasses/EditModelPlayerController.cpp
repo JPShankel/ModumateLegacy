@@ -1315,6 +1315,7 @@ bool AEditModelPlayerController::HandleEscapeKey()
 
 	ClearUserSnapPoints();
 	EMPlayerState->SnappedCursor.ClearAffordanceFrame();
+	EditModelUserWidget->ToggleBIMDesigner(false);
 
 	if (GetPawn<AEditModelToggleGravityPawn>())
 	{
