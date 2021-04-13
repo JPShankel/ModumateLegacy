@@ -241,6 +241,11 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FB
 				{
 					FGuid::Parse(Delta.NewStringRepresentation,binding.InnerMaterialGUID);
 					CustomData.SaveStructData(bindingSet, true);
+					//If we don't have a surface material, the inner material is visible
+					if (!binding.SurfaceMaterialGUID.IsValid())
+					{
+						Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, Delta.NewStringRepresentation);
+					}
 					return EBIMResult::Success;
 				}
 				break;
