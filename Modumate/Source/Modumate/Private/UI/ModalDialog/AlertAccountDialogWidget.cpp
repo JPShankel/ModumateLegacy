@@ -23,14 +23,18 @@ bool UAlertAccountDialogWidget::Initialize()
 		return false;
 	}
 
-	if (!(AlertTextBlock && ButtonInfoLink && ButtonConfirm && ButtonDismiss))
+	if (!(AlertTextBlock && ButtonConfirm && ButtonDismiss))
 	{
 		return false;
 	}
 
-	ButtonInfoLink->ModumateButton->OnReleased.AddDynamic(this, &UAlertAccountDialogWidget::OnReleaseButtonInfoLink);
 	ButtonConfirm->ModumateButton->OnReleased.AddDynamic(this, &UAlertAccountDialogWidget::OnReleaseButtonConfirm);
 	ButtonDismiss->ModumateButton->OnReleased.AddDynamic(this, &UAlertAccountDialogWidget::OnReleaseButtonDismiss);
+
+	if (ButtonInfoLink)
+	{
+		ButtonInfoLink->ModumateButton->OnReleased.AddDynamic(this, &UAlertAccountDialogWidget::OnReleaseButtonInfoLink);
+	}
 
 	return true;
 }
@@ -40,12 +44,9 @@ void UAlertAccountDialogWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UAlertAccountDialogWidget::ShowDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback, bool bShowLinkButton)
+void UAlertAccountDialogWidget::ShowDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback)
 {
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-
-	ButtonInfoLink->SetVisibility(bShowLinkButton ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-
 	bool bShowConfirm = !ConfirmText.IsEmpty();
 	ButtonConfirm->GetParent()->SetVisibility(bShowConfirm ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 	ButtonConfirm->ButtonText->SetText(ConfirmText);

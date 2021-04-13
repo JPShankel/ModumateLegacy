@@ -5,6 +5,7 @@
 #include "UI/LeftMenu/NCPNavigator.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/EditModelUserWidget.h"
+#include "UI/ModalDialog/ModalDialogWidget.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
@@ -77,7 +78,7 @@ void UDeleteMenuWidget::BuildDeleteModalDialog()
 			weakThis->ModalDeleteButtonConfirmReleased();
 		}
 	};
-	EMPlayerController->EditModelUserWidget->ShowAlertFreeAccountDialog(descText, confirmText, deferredDelete, false);
+	EMPlayerController->EditModelUserWidget->ModalDialogWidgetBP->ShowDeletePresetDialog(descText, confirmText, deferredDelete);
 }
 
 void UDeleteMenuWidget::ModalDeleteButtonConfirmReleased()

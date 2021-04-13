@@ -9,7 +9,6 @@
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
-#include "UI/ModalDialog/AlertAccountDialogWidget.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
 #include "UI/RightMenu/CutPlaneMenuBlockExport.h"
 #include "UI/RightMenu/ViewMenuBlockViewMode.h"
@@ -292,11 +291,6 @@ void UEditModelUserWidget::RefreshAssemblyList(bool bScrollToSelected)
 	{
 		ToolTrayWidget->ToolTrayBlockAssembliesList->AssembliesList->ScrollIndexIntoView(selectedIndex);
 	}
-}
-
-void UEditModelUserWidget::ShowAlertFreeAccountDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& ConfirmCallback, bool bShowLinkButton)
-{
-	AlertFreeAccountDialogWidget->ShowDialog(AlertText, ConfirmText, ConfirmCallback, bShowLinkButton);
 }
 
 void UEditModelUserWidget::UpdateViewModeIndicator(EEditViewModes NewViewMode)

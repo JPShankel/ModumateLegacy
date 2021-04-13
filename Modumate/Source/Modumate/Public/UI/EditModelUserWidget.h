@@ -74,7 +74,7 @@ public:
 	class UCutPlaneMenuWidget *CutPlaneMenu;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UAlertAccountDialogWidget* AlertFreeAccountDialogWidget;
+	class UModalDialogWidget* ModalDialogWidgetBP;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UTutorialMenuWidget* TutorialsMenuWidgetBP;
@@ -120,7 +120,6 @@ public:
 	bool RemoveCutPlaneFromList(int32 ObjID = MOD_ID_NONE);
 	bool UpdateCutPlaneInList(int32 ObjID = MOD_ID_NONE);
 	void RefreshAssemblyList(bool bScrollToSelected = false);
-	void ShowAlertFreeAccountDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& ConfirmCallback, bool bShowLinkButton = true);
 	void UpdateViewModeIndicator(EEditViewModes NewViewMode);
 	void ShowBIMDebugger(bool NewVisible);
 	bool IsBIMDebuggerOn();

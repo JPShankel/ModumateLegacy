@@ -39,6 +39,7 @@
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/DimensionManager.h"
 #include "UI/EditModelUserWidget.h"
+#include "UI/ModalDialog/ModalDialogWidget.h"
 #include "UI/TutorialManager.h"
 #include "Objects/CutPlane.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
@@ -1124,7 +1125,7 @@ bool AEditModelPlayerController::CheckUserPlanAndPermission(EModumatePermission 
 
 	if (EditModelUserWidget && !NoPermissionText.IsEmpty())
 	{
-		EditModelUserWidget->ShowAlertFreeAccountDialog(NoPermissionText, ConfirmText, ConfirmCallback);
+		EditModelUserWidget->ModalDialogWidgetBP->ShowAlertAccountDialog(NoPermissionText, ConfirmText, ConfirmCallback);
 	}
 
 	return false;
