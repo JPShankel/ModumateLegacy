@@ -69,6 +69,7 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 
 	TMap<int32, FVector> vertex3DMovements;
 	TMap<int32, TMap<int32, FVector2D>> combinedVertex2DMovements;
+	TMap<int32, FTransform> nongraphMovements;
 
 	auto& graph = doc->GetVolumeGraph();
 
@@ -131,6 +132,10 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 				vertex2DMovements.Add(surfaceGraphObject->ID, UModumateGeometryStatics::ProjectPoint2D(kvp.Value.GetTranslation(), faceAxisX, faceAxisY, faceOrigin));
 			}
 		}
+		else
+		{
+			nongraphMovements.Add(kvp);
+		}
 	}
 
 	TArray<FDeltaPtr> deltas;
@@ -174,17 +179,15 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 			doc->FinalizeGraph2DDeltas(surfaceGraphDeltas, nextID, deltas);
 		}
 	}
-	else
+
+	for (auto& kvp : nongraphMovements)
 	{
-		for (auto& kvp : ObjectMovements)
+		AModumateObjectInstance* moi = doc->GetObjectById(kvp.Key);
+		FMOIDelta delta;
+		auto& currentData = delta.AddMutationState(moi);
+		if (moi->GetTransformedLocationState(kvp.Value, currentData))
 		{
-			AModumateObjectInstance* moi = doc->GetObjectById(kvp.Key);
-			FMOIDelta delta;
-			auto& currentData = delta.AddMutationState(moi);
-			if (moi->GetTransformedLocationState(kvp.Value, currentData))
-			{
-				deltas.Add(MakeShared<FMOIDelta>(delta));
-			}
+			deltas.Add(MakeShared<FMOIDelta>(delta));
 		}
 	}
 
