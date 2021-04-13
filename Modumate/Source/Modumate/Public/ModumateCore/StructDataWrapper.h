@@ -50,7 +50,7 @@ struct MODUMATE_API FStructDataWrapper
 
 	// Allocate an actual struct, created and loaded from JSON (rather than filling out an existing one from CBOR with LoadStructData)
 	template<typename OutStructType>
-	OutStructType* CreateStructFromJSON()
+	OutStructType* CreateStructFromJSON() const
 	{
 		auto result = CreateInitStructRaw();
 		if (result)
@@ -72,8 +72,8 @@ private:
 	bool UpdateStructDefFromName();
 	bool SaveStructDataJson(const void* StructPtr);
 	bool SaveStructDataCbor(const void* StructPtr);
-	void* CreateInitStructRaw();
-	bool CreateStructFromJSONRaw(void* OutStructPtr);
+	void* CreateInitStructRaw() const;
+	bool CreateStructFromJSONRaw(void* OutStructPtr) const;
 	bool CreateInternalStruct();
 	bool InitializeStruct(void* OutStructPtr) const;
 	bool PostDeserializeStruct(void* OutStructPtr) const;

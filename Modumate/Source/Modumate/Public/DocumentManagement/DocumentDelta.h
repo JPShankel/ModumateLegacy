@@ -37,6 +37,19 @@ struct MODUMATE_API FDeltasRecord
 	FDeltasRecord();
 	FDeltasRecord(const TArray<FDeltaPtr>& InDeltas);
 
+	bool IsEmpty() const;
+	bool operator==(const FDeltasRecord& Other) const;
+	bool operator!=(const FDeltasRecord& Other) const;
+
 	UPROPERTY()
 	TArray<FStructDataWrapper> DeltaStructWrappers;
+};
+
+template<>
+struct TStructOpsTypeTraits<FDeltasRecord> : public TStructOpsTypeTraitsBase2<FDeltasRecord>
+{
+	enum
+	{
+		WithIdenticalViaEquality = true
+	};
 };

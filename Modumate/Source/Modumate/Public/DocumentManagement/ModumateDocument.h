@@ -239,9 +239,14 @@ public:
 	void MakeNew(UWorld *World);
 	bool SerializeRecords(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord);
 	bool Save(UWorld *world, const FString &path, bool bSetAsCurrentProject);
-	bool Load(UWorld *world, const FString &path, bool bSetAsCurrentProject, bool bRecordAsRecentProject);
+	bool LoadRecord(UWorld* world, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord);
+	bool LoadFile(UWorld *world, const FString &path, bool bSetAsCurrentProject, bool bRecordAsRecentProject);
 	bool LoadDeltas(UWorld *world, const FString &path, bool bSetAsCurrentProject, bool bRecordAsRecentProject); // Debug - Loads all deltas into the redo buffer for replay purposes
 	void SetCurrentProjectPath(const FString& currentProjectPath = FString());
+
+	// Expose the serialized structs that were most recently used to either load or save the document
+	const FModumateDocumentHeader& GetLastSerializedHeader() const { return CachedHeader; }
+	const FMOIDocumentRecord& GetLastSerializedRecord() const { return CachedRecord; }
 
 	TArray<int32> CloneObjects(UWorld *world, const TArray<int32> &obs, const FTransform& offsetTransform = FTransform::Identity);
 	TArray<AModumateObjectInstance *> CloneObjects(UWorld *world, const TArray<AModumateObjectInstance *> &obs, const FTransform& offsetTransform = FTransform::Identity);
@@ -285,4 +290,7 @@ private:
 	TSharedPtr<Modumate::FModumateDraftingView> CurrentDraftingView = nullptr;
 	FBIMPresetCollection BIMPresetCollection;
 	bool bIsDirty = true;
+
+	FModumateDocumentHeader CachedHeader;
+	FMOIDocumentRecord CachedRecord;
 };

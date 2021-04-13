@@ -50,6 +50,7 @@ enum class EInputCommand : uint8
 	ToggleUserSnapPoint,
 	ZoomExtents,
 	ZoomSelected,
+	ToggleFullscreen,
 
 	Invert,
 	FlipX,

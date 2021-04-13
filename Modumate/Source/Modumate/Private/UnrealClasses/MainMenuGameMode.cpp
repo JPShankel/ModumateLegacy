@@ -149,8 +149,3 @@ FDateTime AMainMenuGameMode::GetCurrentDateTime()
 {
 	return FDateTime::Now();
 }
-
-void AMainMenuGameMode::DisplayShutdownMessage(const FString &str, const FString &caption)
-{
-	Modumate::PlatformFunctions::ShowMessageBox(str, caption, Modumate::PlatformFunctions::EMessageBoxType::Okay);
-}

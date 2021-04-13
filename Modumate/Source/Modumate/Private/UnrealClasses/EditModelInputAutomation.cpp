@@ -4,6 +4,7 @@
 
 #include "Backends/CborStructDeserializerBackend.h"
 #include "Backends/CborStructSerializerBackend.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "HAL/FileManager.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Misc/Compression.h"
@@ -13,10 +14,12 @@
 #include "Slate/SceneViewport.h"
 #include "StructDeserializer.h"
 #include "StructSerializer.h"
+#include "UI/TutorialManager.h"
 #include "UnrealClasses/AutomationCaptureInputProcessor.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerPawn.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "Widgets/SViewport.h"
 #include "Widgets/SWindow.h"
 
@@ -30,21 +33,34 @@ DEFINE_LOG_CATEGORY(LogInputAutomation);
 
 bool FEditModelInputPacket::CompareFrameState(const FEditModelInputPacket &Other) const
 {
-	return (MouseScreenPos == Other.MouseScreenPos) &&
+	return (CameraTransform.Equals(Other.CameraTransform)) &&
+		(MouseScreenPos == Other.MouseScreenPos) &&
+		(NewViewportSize == Other.NewViewportSize) &&
 		(bCursorVisible == Other.bCursorVisible) &&
 		(bMouseInWorld == Other.bMouseInWorld);
 }
 
-const uint32 FEditModelInputLog::CurInputLogVersion = 2;
+// Version 3: add deltas as a fallback if input desyncs, viewport resizing, tutorial data, and previous projects
+const uint32 FEditModelInputLog::CurInputLogVersion = 3;
 const FString FEditModelInputLog::LogExtension(TEXT(".ilog"));
 const FGuid FEditModelInputLog::LogFileFooter(0x8958689A, 0x9f624172, 0xAA5D7B46, 0xA834850C);
 
 void FEditModelInputLog::Reset(float CurTimeSeconds)
 {
-	ViewportSize = FIntPoint::ZeroValue;
+	ViewportSize = FIntPoint::NoneValue;
 	StartCameraTransform.SetIdentity();
 	RecordStartTime = CurTimeSeconds;
 	InputPackets.Reset();
+	CloudRequests.Reset();
+	bRecordedUserData = false;
+	UserInfo = FModumateUserInfo();
+	UserStatus = FModumateUserStatus();
+	LoadedWalkthroughCategoryName = NAME_None;
+	bTutorialProject = false;
+	bLoadedDocument = false;
+	LoadedDocPath.Empty();
+	LoadedDocHeader = FModumateDocumentHeader();
+	LoadedDocRecord = FMOIDocumentRecord();
 	RecordEndTime = RecordStartTime;
 }
 
@@ -55,8 +71,14 @@ UEditModelInputAutomation::UEditModelInputAutomation(const FObjectInitializer& O
 	, CurAutomationFrame(0)
 	, CurPacketIndex(0)
 	, bCapturingFrames(false)
+	, FrameCaptureVideoIndex(INDEX_NONE)
+	, FrameCaptureStartTime(0.0f)
 	, PlaybackSpeed(1.0f)
+	, bWillExitOnFrameCaptured(false)
 	, SceneViewport(nullptr)
+	, bShouldPlayRecordedDeltas(false)
+	, bApplyingRecordedDeltas(false)
+	, bVerifyingDeltas(false)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bStartWithTickEnabled = false;
@@ -98,34 +120,48 @@ void UEditModelInputAutomation::TickComponent(float DeltaTime, enum ELevelTick T
 	break;
 	case EInputAutomationState::Playing:
 	{
-		float totalLogDuration = (CurInputLogData.RecordEndTime - CurInputLogData.RecordStartTime);
-		int32 currentLogPCT = FMath::CeilToInt(100.0 * CurAutomationTime / totalLogDuration);
-
-		FString curLogFilename = FPaths::GetBaseFilename(LastLogPath, true);
-		FString debugMessage = FString::Printf(TEXT("\u25B6 Playing input (%s) - %s - %d%%"), *curLogFilename, *automationTimeStr, currentLogPCT);
-		GEngine->AddOnScreenDebugMessage(0, 0.0f, FColor::Green, debugMessage);
-
-		float nextAutomationTime = CurAutomationTime + (PlaybackSpeed * DeltaTime);
-		float nextAutomationFrame = CurAutomationFrame + static_cast<int32>(PlaybackSpeed);
-
-		// Search for the next packet(s) to use, based on the frame method (fixed vs. variable)
+		float nextAutomationTime = CurAutomationTime;
+		float nextAutomationFrame = CurAutomationFrame;
 		int32 totalNumPackets = CurInputLogData.InputPackets.Num();
-		while (CurPacketIndex < totalNumPackets)
+
+		// Allow waiting some time before starting the playback for real.
+		if (CurAutomationTime < 0.0f)
 		{
-			const FEditModelInputPacket &nextPacket = CurInputLogData.InputPackets[CurPacketIndex];
+			FString debugMessage = FString::Printf(TEXT("Playing input in %d..."), FMath::CeilToInt(-CurAutomationTime));
+			GEngine->AddOnScreenDebugMessage(0, 0.0f, FColor::Green, debugMessage);
 
-			if ((GEngine->bUseFixedFrameRate && (nextPacket.TimeFrame > CurAutomationFrame)) ||
-				(!GEngine->bUseFixedFrameRate && (nextPacket.TimeSeconds > CurAutomationTime)))
+			nextAutomationTime += DeltaTime;
+		}
+		else
+		{
+			float totalLogDuration = (CurInputLogData.RecordEndTime - CurInputLogData.RecordStartTime);
+			int32 currentLogPCT = FMath::CeilToInt(100.0 * CurAutomationTime / totalLogDuration);
+
+			FString curLogFilename = FPaths::GetBaseFilename(LastLogPath, true);
+			FString debugMessage = FString::Printf(TEXT("\u25B6 Playing input (%s) - %s - %d%%"), *curLogFilename, *automationTimeStr, currentLogPCT);
+			GEngine->AddOnScreenDebugMessage(0, 0.0f, FColor::Green, debugMessage);
+
+			nextAutomationTime = CurAutomationTime + (PlaybackSpeed * DeltaTime);
+			nextAutomationFrame = CurAutomationFrame + static_cast<int32>(PlaybackSpeed);
+
+			// Search for the next packet(s) to use, based on the frame method (fixed vs. variable)
+			while (CurPacketIndex < totalNumPackets)
 			{
-				break;
+				const FEditModelInputPacket& nextPacket = CurInputLogData.InputPackets[CurPacketIndex];
+
+				if ((GEngine->bUseFixedFrameRate && (nextPacket.TimeFrame > CurAutomationFrame)) ||
+					(!GEngine->bUseFixedFrameRate && (nextPacket.TimeSeconds > CurAutomationTime)))
+				{
+					break;
+				}
+
+				float packetDeltaTime = nextPacket.TimeSeconds - CurAutomationTime;
+				PlayBackPacket(nextPacket, packetDeltaTime);
+
+				CurAutomationTime = nextPacket.TimeSeconds;
+				CurAutomationFrame = nextPacket.TimeFrame;
+				CurPacketIndex++;
 			}
-
-			float packetDeltaTime = nextPacket.TimeSeconds - CurAutomationTime;
-			PlayBackPacket(nextPacket, packetDeltaTime);
-
-			CurAutomationTime = nextPacket.TimeSeconds;
-			CurAutomationFrame = nextPacket.TimeFrame;
-			CurPacketIndex++;
 		}
 
 		CurAutomationTime = nextAutomationTime;
@@ -188,7 +224,8 @@ bool UEditModelInputAutomation::PreProcessMouseWheelEvent(const FPointerEvent& I
 
 bool UEditModelInputAutomation::BeginRecording()
 {
-	if ((CurState != EInputAutomationState::None) || (SceneViewport == nullptr))
+	auto gameInstance = EMPlayerController->GetGameInstance<UModumateGameInstance>();
+	if ((CurState != EInputAutomationState::None) || (SceneViewport == nullptr) || (gameInstance == nullptr))
 	{
 		return false;
 	}
@@ -204,6 +241,12 @@ bool UEditModelInputAutomation::BeginRecording()
 	GEngine->bForceDisableFrameRateSmoothing = true;
 	GEngine->bUseFixedFrameRate = true;
 
+	auto cloudConnection = gameInstance->GetCloudConnection();
+	if (cloudConnection.IsValid())
+	{
+		cloudConnection->SetAutomationHandler(this);
+	}
+
 	UE_LOG(LogInputAutomation, Log, TEXT("Started recording!"));
 
 	PrimaryComponentTick.SetTickFunctionEnable(true);
@@ -217,6 +260,32 @@ void UEditModelInputAutomation::TryBeginRecording()
 	{
 		UE_LOG(LogInputAutomation, Error, TEXT("Failed to begin recording input!"));
 	}
+}
+
+void UEditModelInputAutomation::RecordLoadedProject(const FString& LoadedDocPath, const FModumateDocumentHeader& LoadedDocHeader, const FMOIDocumentRecord& LoadedDocRecord)
+{
+	CurInputLogData.bLoadedDocument = true;
+	CurInputLogData.LoadedDocPath = LoadedDocPath;
+	CurInputLogData.LoadedDocHeader = LoadedDocHeader;
+	CurInputLogData.LoadedDocRecord = LoadedDocRecord;
+}
+
+void UEditModelInputAutomation::RecordLoadedTutorial(bool bLoadedTutorialProject)
+{
+	CurInputLogData.bTutorialProject = bLoadedTutorialProject;
+}
+
+void UEditModelInputAutomation::RecordLoadedWalkthrough(FName LoadedWalkthroughCategoryName)
+{
+	CurInputLogData.bTutorialProject = !LoadedWalkthroughCategoryName.IsNone();
+	CurInputLogData.LoadedWalkthroughCategoryName = LoadedWalkthroughCategoryName;
+}
+
+void UEditModelInputAutomation::RecordUserData(const FModumateUserInfo& UserInfo, const FModumateUserStatus& UserStatus)
+{
+	CurInputLogData.bRecordedUserData = true;
+	CurInputLogData.UserInfo = UserInfo;
+	CurInputLogData.UserStatus = UserStatus;
 }
 
 void UEditModelInputAutomation::RecordCommand(const FString &CommandString)
@@ -261,6 +330,110 @@ void UEditModelInputAutomation::RecordMouseMove(const FVector2D& CurPos, const F
 	curPacket.MouseDelta = Delta;
 }
 
+void UEditModelInputAutomation::RecordDeltas(const TArray<FDeltaPtr>& Deltas)
+{
+	if (Deltas.Num() == 0)
+	{
+		return;
+	}
+
+	FEditModelInputPacket& curPacket = AddRecordingPacket(EInputPacketType::Deltas);
+	curPacket.Deltas = FDeltasRecord(Deltas);
+}
+
+bool UEditModelInputAutomation::VerifyAppliedDeltas(const TArray<FDeltaPtr>& Deltas)
+{
+	// We shouldn't be verifying deltas unless we're playing back, and not playing deltas from the log directly
+	UModumateDocument* document = EMPlayerController ? EMPlayerController->GetDocument() : nullptr;
+	int32 numAppliedDeltas = Deltas.Num();
+	if (!IsPlaying() || bShouldPlayRecordedDeltas || (numAppliedDeltas == 0) || (document == nullptr))
+	{
+		return false;
+	}
+
+	bool bSuccess = true;
+	bVerifyingDeltas = true;
+
+	// If there are deltas from a recorded packet that match these applied deltas, then we're all good.
+	FDeltasRecord appliedDeltas(Deltas);
+	FDeltasRecord recordedDeltas;
+	bool bDeltasVerified = RecordedDeltasToVerify.Dequeue(recordedDeltas) && (recordedDeltas == appliedDeltas);
+
+	// If not, then undo the deltas that have been applied in error.
+	if (!bDeltasVerified)
+	{
+		UE_LOG(LogInputAutomation, Error, TEXT("Applied %d deltas on [frame %d, time %.2f] that didn't match recorded deltas!"),
+			numAppliedDeltas, CurAutomationFrame, CurAutomationTime);
+
+		document->Undo(GetWorld());
+
+		// Next, apply the deltas that were recorded but can't be trusted to come from simulated input in the future.
+		do
+		{
+			bool bSuccessfulApplication = ApplyDeltaRecord(recordedDeltas);
+
+			// We can't recover from failing to apply recorded deltas.
+			if (!ensure(bSuccessfulApplication))
+			{
+				bSuccess = false;
+				EndPlayback();
+				break;
+			}
+
+		} while (RecordedDeltasToVerify.Dequeue(recordedDeltas));
+
+		// Finally, enable delta playback since we're desynchronized from input, and reset to a neutral input state
+		StartPlayingRecordedDeltas();
+	}
+
+	bVerifyingDeltas = false;
+	return bSuccess;
+}
+
+bool UEditModelInputAutomation::ApplyDeltaRecord(const FDeltasRecord& DeltasRecord)
+{
+	UModumateDocument* document = EMPlayerController ? EMPlayerController->GetDocument() : nullptr;
+	if (document == nullptr)
+	{
+		return false;
+	}
+
+	// Empty records are vacuously successful
+	if (DeltasRecord.IsEmpty())
+	{
+		return true;
+	}
+
+	TArray<FDeltaPtr> deltasToApply;
+	for (auto& structWrapper : DeltasRecord.DeltaStructWrappers)
+	{
+		if (auto deltaPtr = structWrapper.CreateStructFromJSON<FDocumentDelta>())
+		{
+			deltasToApply.Add(MakeShareable(deltaPtr));
+		}
+	}
+
+	bApplyingRecordedDeltas = true;
+	bool bApplicationSuccess = document->ApplyDeltas(deltasToApply, GetWorld());
+	bApplyingRecordedDeltas = false;
+	return bApplicationSuccess;
+}
+
+bool UEditModelInputAutomation::PostApplyUserDeltas(const TArray<FDeltaPtr>& Deltas)
+{
+	if (IsRecording())
+	{
+		RecordDeltas(Deltas);
+		return true;
+	}
+	else if (ShouldDocumentVerifyDeltas())
+	{
+		return VerifyAppliedDeltas(Deltas);
+	}
+
+	return false;
+}
+
 bool UEditModelInputAutomation::EndRecording(bool bPromptForPath)
 {
 	if (CurState != EInputAutomationState::Recording)
@@ -302,6 +475,13 @@ bool UEditModelInputAutomation::EndRecording(bool bPromptForPath)
 	GEngine->bForceDisableFrameRateSmoothing = false;
 	GEngine->bUseFixedFrameRate = false;
 
+	auto gameInstance = EMPlayerController->GetGameInstance<UModumateGameInstance>();
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (cloudConnection.IsValid())
+	{
+		cloudConnection->SetAutomationHandler(nullptr);
+	}
+
 	UE_LOG(LogInputAutomation, Log, TEXT("Finished recording!"));
 
 	CurState = EInputAutomationState::None;
@@ -327,7 +507,9 @@ bool UEditModelInputAutomation::BeginPlaybackPrompt(bool bCaptureFrames, float I
 
 bool UEditModelInputAutomation::BeginPlayback(const FString& InputLogPath, bool bCaptureFrames, float InPlaybackSpeed, bool bExitOnFrameCaptured)
 {
-	if ((CurState != EInputAutomationState::None) || !LoadInputLog(InputLogPath))
+	auto gameInstance = EMPlayerController->GetGameInstance<UModumateGameInstance>();
+	UModumateDocument* document = EMPlayerController ? EMPlayerController->GetDocument() : nullptr;
+	if ((CurState != EInputAutomationState::None) || !LoadInputLog(InputLogPath) || !ensure(document && gameInstance))
 	{
 		return false;
 	}
@@ -339,23 +521,64 @@ bool UEditModelInputAutomation::BeginPlayback(const FString& InputLogPath, bool 
 		return false;
 	}
 
+	if (CurInputLogData.bLoadedDocument)
+	{
+		if (!document->LoadRecord(GetWorld(), CurInputLogData.LoadedDocHeader, CurInputLogData.LoadedDocRecord))
+		{
+			return false;
+		}
+	}
+
+	EModumateWalkthroughCategories walkthroughCategory = EModumateWalkthroughCategories::None;
+	if (gameInstance->TutorialManager && !CurInputLogData.LoadedWalkthroughCategoryName.IsNone() &&
+		FindEnumValueByName(CurInputLogData.LoadedWalkthroughCategoryName, walkthroughCategory))
+	{
+		gameInstance->TutorialManager->BeginWalkthrough(walkthroughCategory);
+	}
+
+	auto cloudConnection = gameInstance->GetCloudConnection();
+	if (cloudConnection.IsValid())
+	{
+		cloudConnection->SetAutomationHandler(this);
+	}
+
+	if (CurInputLogData.bRecordedUserData)
+	{
+		auto accountManager = gameInstance->GetAccountManager();
+		if (accountManager.IsValid())
+		{
+			accountManager->SetUserInfo(CurInputLogData.UserInfo);
+			accountManager->ProcessUserStatus(CurInputLogData.UserStatus, false);
+		}
+	}
+
 	EMPlayerController->EMPlayerPawn->CameraComponent->SetComponentToWorld(CurInputLogData.StartCameraTransform);
 	EMPlayerController->CameraController->bUpdateCameraTransform = false;
 
+	// Delay input playback, to account for resources that may still be loading, video capture initialization, etc.
+	static constexpr float FrameCaptureDelay = 2.0f;
+
 	CurState = EInputAutomationState::Playing;
-	CurAutomationTime = 0.0f;
+	CurAutomationTime = -FrameCaptureDelay;
 	CurAutomationFrame = 0;
 	CurPacketIndex = 0;
 	bCapturingFrames = bCaptureFrames;
+	FrameCaptureVideoIndex = INDEX_NONE;
 	PlaybackSpeed = InPlaybackSpeed;
 	bWillExitOnFrameCaptured = bCapturingFrames && bExitOnFrameCaptured;
 	LastLogPath = InputLogPath;
+	bShouldPlayRecordedDeltas = false;
+	bApplyingRecordedDeltas = false;
+	bVerifyingDeltas = false;
+	RecordedDeltasToVerify.Empty();
 	PrimaryComponentTick.SetTickFunctionEnable(true);
 	GEngine->bForceDisableFrameRateSmoothing = true;
 	GEngine->bUseFixedFrameRate = true;
 
 	if (bCapturingFrames)
 	{
+		FrameCaptureVideoIndex = 0;
+
 		// Use a software-based cursor so it renders into the frame capture
 		GameViewport->SetUseSoftwareCursorWidgets(true);
 
@@ -369,8 +592,7 @@ bool UEditModelInputAutomation::BeginPlayback(const FString& InputLogPath, bool 
 		}
 
 		// Start recording a video of the playback session, up to a maximum duration of the reported session length
-		float totalLogDuration = (CurInputLogData.RecordEndTime - CurInputLogData.RecordStartTime);
-		EMPlayerController->ConsoleCommand(FString::Printf(TEXT("HighlightRecorder.Start %.1f"), totalLogDuration + 1.0f));
+		StartRecordingFrames();
 	}
 
 	return true;
@@ -401,19 +623,8 @@ bool UEditModelInputAutomation::EndPlayback()
 
 	if (bCapturingFrames)
 	{
-		const static FString frameCaptureExt(TEXT(".mp4"));
+		SaveRecordedFrames();
 
-		FString logPathPart, logFileNamePart, logExtPart;
-		FPaths::Split(LastLogPath, logPathPart, logFileNamePart, logExtPart);
-		logFileNamePart.RemoveSpacesInline();
-		FString frameCaptureFileName = logFileNamePart + frameCaptureExt;
-
-		// Delete an existing file if it's been exported before
-		FrameCapturePath = FPaths::VideoCaptureDir() / frameCaptureFileName;
-		IFileManager::Get().Delete(*FrameCapturePath, false, false, true);
-
-		// Try to save the recording, which will end up in in the Saved/VideoCaptures directory
-		EMPlayerController->ConsoleCommand(FString::Printf(TEXT("HighlightRecorder.Save %s %.1f"), *frameCaptureFileName, CurAutomationTime));
 		GameViewport->SetUseSoftwareCursorWidgets(false);
 		bCapturingFrames = false;
 
@@ -421,6 +632,13 @@ bool UEditModelInputAutomation::EndPlayback()
 		{
 			GetWorld()->GetTimerManager().SetTimer(FrameCaptureSaveTimer, this, &UEditModelInputAutomation::CheckFrameCaptureSaved, 1.0f, true);
 		}
+	}
+
+	auto gameInstance = EMPlayerController->GetGameInstance<UModumateGameInstance>();
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (cloudConnection.IsValid())
+	{
+		cloudConnection->SetAutomationHandler(nullptr);
 	}
 
 	return true;
@@ -454,6 +672,83 @@ bool UEditModelInputAutomation::ResizeWindowForViewportSize(int32 Width, int32 H
 	}
 
 	return true;
+}
+
+bool UEditModelInputAutomation::StartPlayingRecordedDeltas()
+{
+	if (IsPlaying() && !bShouldPlayRecordedDeltas)
+	{
+		bShouldPlayRecordedDeltas = true;
+		EMPlayerController->SetToolMode(EToolMode::VE_SELECT);
+		EMPlayerController->DeselectAll();
+		return true;
+	}
+
+	return false;
+}
+
+bool UEditModelInputAutomation::ShouldDocumentSkipDeltas() const
+{
+	return IsPlaying() && bShouldPlayRecordedDeltas && !bApplyingRecordedDeltas;
+}
+
+bool UEditModelInputAutomation::ShouldDocumentVerifyDeltas() const
+{
+	return IsPlaying() && !bShouldPlayRecordedDeltas && !bVerifyingDeltas;
+}
+
+bool UEditModelInputAutomation::RecordRequest(FHttpRequestRef Request, int32 RequestIdx)
+{
+	if (!IsRecording() || !ensure(!CurInputLogData.CloudRequests.Contains(RequestIdx)))
+	{
+		return false;
+	}
+
+	FLoggedCloudRequest& loggedRequest = CurInputLogData.CloudRequests.Add(RequestIdx);
+	loggedRequest.Index = RequestIdx;
+	loggedRequest.URL = Request->GetURL();
+	loggedRequest.RequestTimeSeconds = CurAutomationTime;
+	loggedRequest.RequestTimeFrame = CurAutomationFrame;
+
+	return true;
+}
+
+bool UEditModelInputAutomation::RecordResponse(FHttpRequestRef Request, int32 RequestIdx, bool bConnectionSuccess, int32 ResponseCode, const FString& ResponseContent)
+{
+	if (!IsRecording() || !ensure(CurInputLogData.CloudRequests.Contains(RequestIdx)))
+	{
+		return false;
+	}
+
+	FLoggedCloudRequest& loggedRequest = CurInputLogData.CloudRequests[RequestIdx];
+	loggedRequest.bConnectionSuccess = bConnectionSuccess;
+	loggedRequest.ResponseCode = ResponseCode;
+	loggedRequest.ResponseContent = ResponseContent;
+	loggedRequest.ResponseTimeSeconds = CurAutomationTime;
+	loggedRequest.ResponseTimeFrame = CurAutomationFrame;
+
+	return true;
+}
+
+bool UEditModelInputAutomation::GetResponse(FHttpRequestRef Request, int32 RequestIdx, bool& bOutSuccess, int32& OutCode, FString& OutContent, float& OutResponseTime)
+{
+	if (!IsPlaying() || !CurInputLogData.CloudRequests.Contains(RequestIdx))
+	{
+		return false;
+	}
+
+	FLoggedCloudRequest& loggedRequest = CurInputLogData.CloudRequests[RequestIdx];
+	bOutSuccess = loggedRequest.bConnectionSuccess;
+	OutCode = loggedRequest.ResponseCode;
+	OutContent = loggedRequest.ResponseContent;
+	OutResponseTime = FMath::Max(0.0f, loggedRequest.ResponseTimeSeconds - loggedRequest.RequestTimeSeconds) / PlaybackSpeed;
+
+	return true;
+}
+
+FTimerManager& UEditModelInputAutomation::GetTimerManager() const
+{
+	return GetWorld()->GetTimerManager();
 }
 
 void UEditModelInputAutomation::CheckFrameCaptureSaved()
@@ -503,7 +798,33 @@ bool UEditModelInputAutomation::FindViewport()
 FEditModelInputPacket &UEditModelInputAutomation::AddRecordingPacket(EInputPacketType Type)
 {
 	CurPacketIndex = CurInputLogData.InputPackets.Num();
-	FEditModelInputPacket &newPacket = CurInputLogData.InputPackets.AddDefaulted_GetRef();
+
+	int32 overridePacketIndex = INDEX_NONE;
+	if (Type == EInputPacketType::Deltas)
+	{
+		// For consistency, always add Delta packets before other Input packets that happen simultaneously.
+		// This allows us to know that while simulating input, recorded deltas will always be queued up before any simulated deltas occur from input.
+		for (int32 latestSimultaneousInputIdx = CurPacketIndex - 1; latestSimultaneousInputIdx >= 0; --latestSimultaneousInputIdx)
+		{
+			auto& testPacket = CurInputLogData.InputPackets[latestSimultaneousInputIdx];
+			if ((testPacket.TimeSeconds == CurAutomationTime) &&
+				(testPacket.TimeFrame == CurAutomationFrame))
+			{
+				if (testPacket.Type == EInputPacketType::Input)
+				{
+					overridePacketIndex = latestSimultaneousInputIdx;
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+
+	FEditModelInputPacket& newPacket = (overridePacketIndex == INDEX_NONE) ?
+		CurInputLogData.InputPackets.AddDefaulted_GetRef() :
+		CurInputLogData.InputPackets.InsertDefaulted_GetRef(overridePacketIndex);
 
 	newPacket.Type = Type;
 	newPacket.TimeSeconds = CurAutomationTime;
@@ -511,6 +832,9 @@ FEditModelInputPacket &UEditModelInputAutomation::AddRecordingPacket(EInputPacke
 	
 	// Populate the packet with the current frame state values we can retrieve from here.
 	newPacket.CameraTransform = EMPlayerController->EMPlayerPawn->CameraComponent->GetComponentTransform();
+
+	// Keep track of the viewport size
+	EMPlayerController->GetViewportSize(newPacket.NewViewportSize.X, newPacket.NewViewportSize.Y);
 
 	// Keep track of whether the mouse cursor is visible.
 	newPacket.bCursorVisible = EMPlayerController->bShowMouseCursor;
@@ -540,6 +864,21 @@ bool UEditModelInputAutomation::PlayBackPacket(const FEditModelInputPacket &Inpu
 	{
 		// Update state that's captured every frame
 		EMPlayerController->EMPlayerPawn->CameraComponent->SetComponentToWorld(InputPacket.CameraTransform);
+
+		FIntPoint curViewportSize;
+		EMPlayerController->GetViewportSize(curViewportSize.X, curViewportSize.Y);
+		if (curViewportSize != InputPacket.NewViewportSize)
+		{
+			SaveRecordedFrames();
+
+			if (!ResizeWindowForViewportSize(InputPacket.NewViewportSize.X, InputPacket.NewViewportSize.Y))
+			{
+				return false;
+			}
+
+			StartRecordingFrames();
+		}
+
 		return true;
 	}
 	case EInputPacketType::Input:
@@ -556,6 +895,25 @@ bool UEditModelInputAutomation::PlayBackPacket(const FEditModelInputPacket &Inpu
 		}
 
 		EMPlayerController->ModumateCommand(Modumate::FModumateCommand::FromJSONString(InputPacket.CommandString));
+		return true;
+	}
+	case EInputPacketType::Deltas:
+	{
+		UModumateDocument* document = EMPlayerController->GetDocument();
+		UWorld* world = GetWorld();
+
+		// If we're taking control of delta application, then apply them directly to the document
+		if (bShouldPlayRecordedDeltas)
+		{
+			return ApplyDeltaRecord(InputPacket.Deltas);
+		}
+		// Otherwise, make sure that the recorded deltas correspond to those that were generated by the document
+		else
+		{
+			RecordedDeltasToVerify.Enqueue(InputPacket.Deltas);
+			return true;
+		}
+
 		return true;
 	}
 	default:
@@ -575,6 +933,12 @@ bool UEditModelInputAutomation::SimulateInput(const FEditModelInputPacket& Input
 	if (!slateUser.IsValid())
 	{
 		return false;
+	}
+
+	// If we're playing back deltas rather than relying on simulated input, then don't bother to play input events that could interact with state
+	if (bShouldPlayRecordedDeltas && (InputPacket.ActionType != EInputActionType::MouseMove))
+	{
+		return true;
 	}
 
 	// Generate fake inputs to Slate at the lowest level, as if they're coming from pumping OS input event messages
@@ -773,19 +1137,18 @@ bool UEditModelInputAutomation::SaveInputLog(const FString& InputLogPath)
 
 bool UEditModelInputAutomation::LoadInputLog(const FString& InputLogPath)
 {
-	static const TCHAR* errorTitle = TEXT("Input Log Load Failure");
 	TArray<uint8> buffer, compressedBuffer;
 
 	if (!InputLogPath.EndsWith(FEditModelInputLog::LogExtension))
 	{
-		FPlatformMisc::MessageBoxExt(EAppMsgType::Ok, *FString::Printf(TEXT("Input log file must end in %s\n"), *FEditModelInputLog::LogExtension), errorTitle);
+		UE_LOG(LogTemp, Error, TEXT("Input log file must end in %s\n"), *FEditModelInputLog::LogExtension);
 		return false;
 	}
 
 	auto archive = TUniquePtr<FArchive>(IFileManager::Get().CreateFileReader(*InputLogPath));
 	if (archive == nullptr)
 	{
-		FPlatformMisc::MessageBoxExt(EAppMsgType::Ok, *FString::Printf(TEXT("Cannot load input log from path:\n%s\n"), *InputLogPath), errorTitle);
+		UE_LOG(LogTemp, Error, TEXT("Cannot load input log from path:\n%s\n"), *InputLogPath);
 		return false;
 	}
 
@@ -799,7 +1162,7 @@ bool UEditModelInputAutomation::LoadInputLog(const FString& InputLogPath)
 		archive->Seek(0);
 		if (serializedFooter != FEditModelInputLog::LogFileFooter)
 		{
-			FPlatformMisc::MessageBoxExt(EAppMsgType::Ok, *FString::Printf(TEXT("Input log file missing footer; did it fail to download?\n%s\n"), *InputLogPath), errorTitle);
+			UE_LOG(LogTemp, Error, TEXT("Input log file missing footer; did it fail to download?\n%s\n"), *InputLogPath);
 			return false;
 		}
 	}
@@ -809,10 +1172,8 @@ bool UEditModelInputAutomation::LoadInputLog(const FString& InputLogPath)
 	archive->SerializeIntPacked(savedVersion);
 	if (savedVersion != FEditModelInputLog::CurInputLogVersion)
 	{
-		FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
-			*FString::Printf(TEXT("Input log is incorrect version: %d; current version: %d\n%s\n"),
-				savedVersion, FEditModelInputLog::CurInputLogVersion , *InputLogPath),
-			errorTitle);
+		UE_LOG(LogTemp, Error, TEXT("Input log is incorrect version: %d; current version: %d\n%s\n"),
+			savedVersion, FEditModelInputLog::CurInputLogVersion , *InputLogPath);
 		return false;
 	}
 
@@ -822,7 +1183,7 @@ bool UEditModelInputAutomation::LoadInputLog(const FString& InputLogPath)
 
 	if (uncompressedSize == 0)
 	{
-		FPlatformMisc::MessageBoxExt(EAppMsgType::Ok, *FString::Printf(TEXT("Input log file is empty:\n%s\n"), *InputLogPath), errorTitle);
+		UE_LOG(LogTemp, Error, TEXT("Input log file is empty:\n%s\n"), *InputLogPath);
 		return false;
 	}
 
@@ -839,7 +1200,7 @@ bool UEditModelInputAutomation::LoadInputLog(const FString& InputLogPath)
 	CurInputLogData.Reset(0.0f);
 	if (!FStructDeserializer::Deserialize(CurInputLogData, deserializerBackend, policies))
 	{
-		FPlatformMisc::MessageBoxExt(EAppMsgType::Ok, *FString::Printf(TEXT("Input log file failed to deserialize:\n%s\n"), *InputLogPath), errorTitle);
+		UE_LOG(LogTemp, Error, TEXT("Input log file failed to deserialize:\n%s\n"), *InputLogPath);
 		return false;
 	}
 
@@ -850,4 +1211,41 @@ bool UEditModelInputAutomation::LoadInputLog(const FString& InputLogPath)
 	}
 
 	return true;
+}
+
+void UEditModelInputAutomation::StartRecordingFrames()
+{
+	if (!bCapturingFrames)
+	{
+		return;
+	}
+
+	float MaxRecordingTime = (CurInputLogData.RecordEndTime - CurInputLogData.RecordStartTime) - CurAutomationTime;
+	EMPlayerController->ConsoleCommand(FString::Printf(TEXT("HighlightRecorder.Start %.1f"), MaxRecordingTime));
+	FrameCaptureStartTime = CurAutomationTime;
+}
+
+void UEditModelInputAutomation::SaveRecordedFrames()
+{
+	if (!bCapturingFrames)
+	{
+		return;
+	}
+
+	FString logPathPart, logFileNamePart, logExtPart;
+	FPaths::Split(LastLogPath, logPathPart, logFileNamePart, logExtPart);
+	logFileNamePart.RemoveSpacesInline();
+	FString frameCaptureFileName = FString::Printf(TEXT("%s-%d.mp4"), *logFileNamePart, FrameCaptureVideoIndex);
+
+	// Delete an existing file if it's been exported before
+	FrameCapturePath = FPaths::VideoCaptureDir() / frameCaptureFileName;
+	IFileManager::Get().Delete(*FrameCapturePath, false, false, true);
+
+	// Try to save the recording (with a little extra buffer), which will end up in in the Saved/VideoCaptures directory
+	static constexpr float frameCaptureExtraSaveDuration = 1.0f;
+	float frameCaptureDuration = frameCaptureExtraSaveDuration + CurAutomationTime - FrameCaptureStartTime;
+	EMPlayerController->ConsoleCommand(FString::Printf(TEXT("HighlightRecorder.Save %s %.1f"), *frameCaptureFileName, frameCaptureDuration));
+	EMPlayerController->ConsoleCommand(FString(TEXT("HighlightRecorder.Stop")));
+
+	FrameCaptureVideoIndex++;
 }

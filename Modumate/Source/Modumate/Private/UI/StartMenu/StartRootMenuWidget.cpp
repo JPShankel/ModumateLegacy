@@ -50,8 +50,8 @@ bool UStartRootMenuWidget::ConfirmQuit() const
 {
 	FText quitConfirmMsg = LOCTEXT("QuitConfirmMessage", "Are you sure you want to quit Modumate?");
 	FText quitConfirmCaption = LOCTEXT("QuitConfirmCaption", "Quit");
-	auto confirmResponse = Modumate::PlatformFunctions::ShowMessageBox(quitConfirmMsg.ToString(), quitConfirmCaption.ToString(), Modumate::PlatformFunctions::YesNo);
-	return confirmResponse == Modumate::PlatformFunctions::EMessageBoxResponse::Yes;
+	auto confirmResponse = FPlatformMisc::MessageBoxExt(EAppMsgType::OkCancel, *quitConfirmMsg.ToString(), *quitConfirmCaption.ToString());
+	return confirmResponse == EAppReturnType::Ok;
 }
 
 void UStartRootMenuWidget::NativeConstruct()

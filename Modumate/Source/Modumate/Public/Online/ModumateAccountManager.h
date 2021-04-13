@@ -43,7 +43,7 @@ struct MODUMATE_API FModumateUserInfo
 	FString Uid;
 
 	UPROPERTY()
-	int32 Points;
+	int32 Points = 0;
 
 	UPROPERTY()
 	FString Zipcode;
@@ -94,7 +94,7 @@ struct MODUMATE_API FModumateUserStatus
 	GENERATED_BODY();
 
 	UPROPERTY()
-	bool Active;
+	bool Active = false;
 
 	UPROPERTY()
 	TArray<FModumateUserNotification> Notifications;
@@ -189,13 +189,15 @@ public:
 
 	using FPermissionSet = TSet<EModumatePermission>;
 
-	FString GetFirstname() const { return UserInfo.Firstname; }
-	FString GetLastname() const { return UserInfo.Lastname; }
-	FString GetEmail() const { return UserInfo.Email; }
+	FString GetFirstname() const { return CachedUserInfo.Firstname; }
+	FString GetLastname() const { return CachedUserInfo.Lastname; }
+	FString GetEmail() const { return CachedUserInfo.Email; }
+	const FModumateUserInfo& GetUserInfo() const { return CachedUserInfo; }
+	const FModumateUserStatus& GetUserStatus() const { return CachedUserStatus; }
 	bool ShouldRecordTelemetry() const;
 
-	void SetUserInfo(const FModumateUserInfo& InUserInfo) { UserInfo = InUserInfo; }
-	void ProcessUserStatus(const FModumateUserStatus& UserStatus);
+	void SetUserInfo(const FModumateUserInfo& InUserInfo) { CachedUserInfo = InUserInfo; }
+	void ProcessUserStatus(const FModumateUserStatus& UserStatus, bool bQueryUpdateInstallers);
 
 	void RequestStatus();
 	bool HasPermission(EModumatePermission requestedPermission) const;
@@ -217,7 +219,8 @@ public:
 
 private:
 	TSharedPtr<FModumateUpdater> Updater;
-	FModumateUserInfo UserInfo;
+	FModumateUserInfo CachedUserInfo;
+	FModumateUserStatus CachedUserStatus;
 	FString LatestVersion;
 
 	bool bIsFirstLogin = false;

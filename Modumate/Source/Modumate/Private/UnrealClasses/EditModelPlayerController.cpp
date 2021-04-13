@@ -214,8 +214,9 @@ void AEditModelPlayerController::BeginPlay()
 	}
 
 	// Now that we've determined whether there was a pending project, or if it was a tutorial, we can clear the flags.
-	gameInstance->PendingProjectPath.Empty();
+	bool bOpeningTutorialProject = gameInstance->TutorialManager->bOpeningTutorialProject;
 	gameInstance->TutorialManager->bOpeningTutorialProject = false;
+	gameInstance->PendingProjectPath.Empty();
 
 	EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 
@@ -270,9 +271,14 @@ void AEditModelPlayerController::BeginPlay()
 		gameInstance->TutorialManager->BeginWalkthrough(gameInstance->TutorialManager->FromMainMenuWalkthroughCategory);
 		gameInstance->TutorialManager->FromMainMenuWalkthroughCategory = EModumateWalkthroughCategories::None;
 	}
+
+	if (InputAutomationComponent && InputAutomationComponent->IsRecording())
+	{
+		InputAutomationComponent->RecordLoadedTutorial(bOpeningTutorialProject);
+	}
 }
 
-bool AEditModelPlayerController::StartTelemetrySession(bool bRecordInput)
+bool AEditModelPlayerController::StartTelemetrySession(bool bRecordLoadedDocument)
 {
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
 	if (!gameInstance->GetAccountManager().Get()->ShouldRecordTelemetry())
@@ -285,14 +291,14 @@ bool AEditModelPlayerController::StartTelemetrySession(bool bRecordInput)
 	TelemetrySessionKey = FGuid::NewGuid();
 	SessionStartTime = FDateTime::Now();
 
-	if (!bRecordInput)
-	{
-		return true;
-	}
-
 	if (InputAutomationComponent->BeginRecording())
 	{
 		TimeOfLastUpload = FDateTime::Now();
+
+		if (bRecordLoadedDocument)
+		{
+			InputAutomationComponent->RecordLoadedProject(Document->CurrentProjectPath, Document->GetLastSerializedHeader(), Document->GetLastSerializedRecord());
+		}
 
 		const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
 		if (!ensureAlways(projectSettings != nullptr))
@@ -301,19 +307,24 @@ bool AEditModelPlayerController::StartTelemetrySession(bool bRecordInput)
 		}
 		const FString& projectVersion = projectSettings->ProjectVersion;
 
-		TSharedPtr<FModumateCloudConnection> Cloud = gameInstance->GetCloudConnection();
-
-		if (Cloud.IsValid())
+		TSharedPtr<FModumateCloudConnection> cloudConnection = gameInstance->GetCloudConnection();
+		if (cloudConnection.IsValid())
 		{
-			Cloud->CreateReplay(TelemetrySessionKey.ToString(), *projectVersion, [](bool bSuccess, const TSharedPtr<FJsonObject>& Response) {
+			cloudConnection->CreateReplay(TelemetrySessionKey.ToString(), *projectVersion, [](bool bSuccess, const TSharedPtr<FJsonObject>& Response) {
 				UE_LOG(LogTemp, Log, TEXT("Created Successfully"));
 
 			}, [](int32 code, const FString& error) {
 				UE_LOG(LogTemp, Error, TEXT("Error: %s"), *error);
 			});
-
-			return true;
 		}
+
+		TSharedPtr<FModumateAccountManager> accountManager = gameInstance->GetAccountManager();
+		if (accountManager.IsValid())
+		{
+			InputAutomationComponent->RecordUserData(accountManager->GetUserInfo(), accountManager->GetUserStatus());
+		}
+
+		return true;
 	}
 
 	return false;
@@ -806,7 +817,7 @@ bool AEditModelPlayerController::SaveModelAs()
 		return false;
 	}
 
-	if (EMPlayerState->ShowingFileDialog)
+	if (!CanShowFileDialog())
 	{
 		return false;
 	}
@@ -854,7 +865,9 @@ bool AEditModelPlayerController::SaveModelFilePath(const FString &filepath)
 		FString saveMessageString = FText::Format(saveMessageFormat, filePathText).ToString();
 
 		EMPlayerState->LastFilePath = filepath;
-		Modumate::PlatformFunctions::ShowMessageBox(saveMessageString, saveTitleString, Modumate::PlatformFunctions::Okay);
+
+		// TODO: replace with our own modal dialog box
+		ShowMessageBox(EAppMsgType::Ok, *saveMessageString, *saveTitleString);
 
 		static const FString eventName(TEXT("SaveDocument"));
 		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Session, eventName);
@@ -866,17 +879,24 @@ bool AEditModelPlayerController::SaveModelFilePath(const FString &filepath)
 		FText saveMessageFormat = bShowPath ? LOCTEXT("SaveFailureWithPath", "Could not save as {0}") : LOCTEXT("SaveFailureWithoutPath", "Could not save project.");
 		FString saveMessageString = FText::Format(saveMessageFormat, filePathText).ToString();
 
-		Modumate::PlatformFunctions::ShowMessageBox(saveMessageString, saveTitleString, Modumate::PlatformFunctions::Okay);
+		// TODO: replace with our own modal dialog box
+		ShowMessageBox(EAppMsgType::Ok, *saveMessageString, *saveTitleString);
 		return false;
 	}
 }
 
 bool AEditModelPlayerController::LoadModel(bool bLoadOnlyDeltas)
 {
-	if (EMPlayerState->ShowingFileDialog)
+	if (!CanShowFileDialog())
 	{
 		return false;
 	}
+
+	// End the entire telemetry session if we're about to load, since this will either:
+	// - end the session early if the user canceled, or
+	// - restart the session as soon as the user confirms loading a different document
+	// TODO: if we want to avoid ending early in the event that the user cancels the load, we need to capture dialog state.
+	EndTelemetrySession();
 
 	if (ToolIsInUse())
 	{
@@ -908,35 +928,34 @@ bool AEditModelPlayerController::LoadModelFilePath(const FString &filename, bool
 {
 	EndTelemetrySession();
 	EMPlayerState->OnNewModel();
+	FString newFilePath = filename;
 
 	bool bLoadSuccess = bLoadOnlyDeltas ? 
 		Document->LoadDeltas(GetWorld(), filename, bSetAsCurrentProject, bAddToRecents) :
-		Document->Load(GetWorld(), filename, bSetAsCurrentProject, bAddToRecents);
+		Document->LoadFile(GetWorld(), filename, bSetAsCurrentProject, bAddToRecents);
 
 	if (bLoadSuccess)
 	{
 		static const FString LoadDocumentEventName(TEXT("LoadDocument"));
 		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Session, LoadDocumentEventName);
 
-		// TODO: always record input, and remove this flag, when we can upload the loaded document as the start of the input telemetry log
-		StartTelemetrySession(false);
+		StartTelemetrySession(true);
 
 		TimeOfLastAutoSave = FDateTime::Now();
 		bWantAutoSave = false;
 		bCurProjectAutoSaves = bEnableAutoSave;
-	}
 
-	FString newFilePath = filename;
-	if (bLoadSuccess && bAddToRecents)
-	{
-		// If we're loading a project from an unrestricted location, then potentially show a permissions warning if the user won't be able to save it in-place.
-		FString restrictedSavePath = FModumateUserSettings::GetRestrictedSavePath();
-		if (filename != restrictedSavePath)
+		if (bAddToRecents)
 		{
-			FText noMultiSaveAlertText = LOCTEXT("PermissionAlertSaveAsOnLoad", "Your plan only allows you to save one project at a time; saving this project will overwrite your only project.\nUpgrade your plan to save as many projects as you'd like.");
-			if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSave, noMultiSaveAlertText))
+			// If we're loading a project from an unrestricted location, then potentially show a permissions warning if the user won't be able to save it in-place.
+			FString restrictedSavePath = FModumateUserSettings::GetRestrictedSavePath();
+			if (filename != restrictedSavePath)
 			{
-				newFilePath = restrictedSavePath;
+				FText noMultiSaveAlertText = LOCTEXT("PermissionAlertSaveAsOnLoad", "Your plan only allows you to save one project at a time; saving this project will overwrite your only project.\nUpgrade your plan to save as many projects as you'd like.");
+				if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSave, noMultiSaveAlertText))
+				{
+					newFilePath = restrictedSavePath;
+				}
 			}
 		}
 	}
@@ -957,15 +976,19 @@ bool AEditModelPlayerController::CheckSaveModel()
 {
 	if (Document->IsDirty())
 	{
-		Modumate::PlatformFunctions::EMessageBoxResponse resp = Modumate::PlatformFunctions::ShowMessageBox(TEXT("Save current model?"), TEXT("Save"), Modumate::PlatformFunctions::YesNoCancel);
-		if (resp == Modumate::PlatformFunctions::Yes)
+		const FString& saveConfirmationText = LOCTEXT("SaveConfirmationMessage", "Save current model?").ToString();
+		const FString& saveConfirmationTitle = LOCTEXT("SaveConfirmationTitle", "Save").ToString();
+
+		// TODO: replace with our own modal dialog box
+		auto resp = ShowMessageBox(EAppMsgType::YesNoCancel, *saveConfirmationText, *saveConfirmationTitle);
+		if (resp == EAppReturnType::Yes)
 		{
 			if (!SaveModel())
 			{
 				return false;
 			}
 		}
-		if (resp == Modumate::PlatformFunctions::Cancel)
+		if (resp == EAppReturnType::Cancel)
 		{
 			return false;
 		}
@@ -975,60 +998,62 @@ bool AEditModelPlayerController::CheckSaveModel()
 
 void AEditModelPlayerController::NewModel(bool bShouldCheckForSave)
 {
-	if (!EMPlayerState->ShowingFileDialog)
+	if (!CanShowFileDialog())
 	{
-		if (bShouldCheckForSave)
+		return;
+	}
+
+	if (bShouldCheckForSave)
+	{
+		if (!CheckSaveModel())
 		{
-			if (!CheckSaveModel())
+			return;
+		}
+
+		// If the user doesn't have permission to save multiple projects, then we want to confirm that making a new model
+		FText saveAsAlert = LOCTEXT("PermissionAlertSaveAsOnNew", "Your plan only allows you to save one project at a time.\nMaking a new document will overwrite your existing project, would you like to proceed?\nUpgrade your plan to make as many projects as you'd like.");
+		FText confirmText = LOCTEXT("PermissionConfirmSaveAsOnNew", "Make New");
+		auto weakThis = MakeWeakObjectPtr<AEditModelPlayerController>(this);
+		auto deferredNewModel = [weakThis]() {
+			if (weakThis.IsValid())
 			{
-				return;
+				weakThis->NewModel(false);
 			}
+		};
 
-			// If the user doesn't have permission to save multiple projects, then we want to confirm that making a new model
-			FText saveAsAlert = LOCTEXT("PermissionAlertSaveAsOnNew", "Your plan only allows you to save one project at a time.\nMaking a new document will overwrite your existing project, would you like to proceed?\nUpgrade your plan to make as many projects as you'd like.");
-			FText confirmText = LOCTEXT("PermissionConfirmSaveAsOnNew", "Make New");
-			auto weakThis = MakeWeakObjectPtr<AEditModelPlayerController>(this);
-			auto deferredNewModel = [weakThis]() {
-				if (weakThis.IsValid())
-				{
-					weakThis->NewModel(false);
-				}
-			};
-
-			if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSave, saveAsAlert, confirmText, deferredNewModel))
-			{
-				return;
-			}
-		}
-
-		EndTelemetrySession();
-
-		static const FString NewDocumentEventName(TEXT("NewDocument"));
-		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Session, NewDocumentEventName);
-
-		EMPlayerState->OnNewModel();
-		Document->MakeNew(GetWorld());
-
-		TimeOfLastAutoSave = FDateTime::Now();
-		bWantAutoSave = false;
-		bCurProjectAutoSaves = true;
-
-		// If we're starting with an input log that we want to load, then try to play it back now.
-		bool bPlayingBackInput = false;
-		auto* gameInstance = GetGameInstance<UModumateGameInstance>();
-		if (ensure(gameInstance && InputAutomationComponent) && !gameInstance->PendingInputLogPath.IsEmpty())
+		if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSave, saveAsAlert, confirmText, deferredNewModel))
 		{
-			bPlayingBackInput = InputAutomationComponent->BeginPlayback(gameInstance->PendingInputLogPath, true, 1.0f, true);
+			return;
 		}
+	}
 
-		if (bPlayingBackInput)
-		{
-			gameInstance->PendingInputLogPath.Empty();
-		}
-		else
-		{
-			StartTelemetrySession(true);
-		}
+	EndTelemetrySession();
+
+	static const FString NewDocumentEventName(TEXT("NewDocument"));
+	UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Session, NewDocumentEventName);
+
+	EMPlayerState->OnNewModel();
+	Document->MakeNew(GetWorld());
+
+	TimeOfLastAutoSave = FDateTime::Now();
+	bWantAutoSave = false;
+	bCurProjectAutoSaves = true;
+
+	// If we're starting with an input log that we want to load, then try to play it back now.
+	bool bPlayingBackInput = false;
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (ensure(gameInstance && InputAutomationComponent) && !gameInstance->PendingInputLogPath.IsEmpty())
+	{
+		bPlayingBackInput = InputAutomationComponent->BeginPlayback(gameInstance->PendingInputLogPath, true, 1.0f, true);
+	}
+
+	if (bPlayingBackInput)
+	{
+		gameInstance->PendingInputLogPath.Empty();
+	}
+	else
+	{
+		StartTelemetrySession(false);
 	}
 }
 
@@ -1079,7 +1104,7 @@ bool AEditModelPlayerController::CaptureProjectThumbnail()
 
 bool AEditModelPlayerController::GetScreenshotFileNameWithDialog(FString &filename)
 {
-	if (EMPlayerState->ShowingFileDialog)
+	if (!CanShowFileDialog())
 	{
 		return false;
 	}
@@ -1855,6 +1880,27 @@ void AEditModelPlayerController::DebugCrash()
 	{
 		memset((void*)ptr, 0x42, 1024 * 1024 * 20);
 	}
+}
+
+EAppReturnType::Type AEditModelPlayerController::ShowMessageBox(EAppMsgType::Type MsgType, const TCHAR* Text, const TCHAR* Caption)
+{
+	// Skip message boxes if we're playing back input, since we won't be able to dismiss them with a timer on the game thread.
+	// TODO: we could record and play back the actual responses to the message boxes, but they so far don't often make an impact on the recorded session content.
+	if (InputAutomationComponent && InputAutomationComponent->IsPlaying())
+	{
+		UE_LOG(LogTemp, Log, TEXT("SKIPPING MESSAGE BOX (type %d) - \"%s\" - \"%s\""), static_cast<int32>(MsgType), Caption, Text);
+		return EAppReturnType::Ok;
+	}
+
+	// Otherwise forward to the current platform's implementation of message boxes
+	return FPlatformMisc::MessageBoxExt(MsgType, Text, Caption);
+}
+
+bool AEditModelPlayerController::CanShowFileDialog()
+{
+	// If we're using input automation to play back input, then don't bother to show the dialog, since it shouldn't affect the current session.
+	// TODO: capture the modal dialog action in case we want to know whether it was confirmed or canceled.
+	return !EMPlayerState->ShowingFileDialog && ((InputAutomationComponent == nullptr) || !InputAutomationComponent->IsPlaying());
 }
 
 void AEditModelPlayerController::CleanSelectedObjects()

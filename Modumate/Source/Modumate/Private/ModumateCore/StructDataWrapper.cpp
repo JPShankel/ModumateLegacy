@@ -187,7 +187,7 @@ bool FStructDataWrapper::SaveStructDataCbor(const void* SrcStructPtr)
 	return (StructCborBuffer.Num() > 0);
 }
 
-void* FStructDataWrapper::CreateInitStructRaw()
+void* FStructDataWrapper::CreateInitStructRaw() const
 {
 	if ((CachedStructDef == nullptr) || !ensure(CachedStructDef->IsNative()))
 	{
@@ -202,9 +202,9 @@ void* FStructDataWrapper::CreateInitStructRaw()
 	return structPtr;
 }
 
-bool FStructDataWrapper::CreateStructFromJSONRaw(void* OutStructPtr)
+bool FStructDataWrapper::CreateStructFromJSONRaw(void* OutStructPtr) const
 {
-	return  StructJson.JsonObject.IsValid() && CachedStructDef &&
+	return StructJson.JsonObject.IsValid() && CachedStructDef &&
 		FJsonObjectConverter::JsonObjectToUStruct(StructJson.JsonObject.ToSharedRef(), CachedStructDef, OutStructPtr) &&
 		PostDeserializeStruct(OutStructPtr);
 }

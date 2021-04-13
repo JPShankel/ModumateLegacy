@@ -1,8 +1,8 @@
 {
 	"ModumateHeader":
 	{
-		"version": 9,
-		"thumbnail": "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"
+		"version": 12,
+		"thumbnail": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAEAAQADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD0ry/al8v2q55dL5ddfOebylLy/al8urnl0eVRzhylQR0eXVzy6BFRzhylPy6PLq75VAip84cpT8qjyvarvl+1KI/ajnFylLy/ajy/ar3l+1Aio5w5Sl5XtQIvar3lUeV7Uc4cpSEXtSiL2q75VKIqOcOUpeVS+VV3yqPLFHOHKUvKpfKq6I6XyvajnDlKPlUvlVe8ql8r2o5w5Sj5VL5VXvKo8qjnDlKXle1L5ftV0Q0eVRzhylLyval8r2q75XtR5XtRzhylMRUvlVcEdL5VLnDlKXlUeVV4R0eV7Ue0DlKuwUuwVU85qXzmrluzt9kWtgpQlVPPajz2o5mHsi4EFKEFUvPal+0NRzMXsi5sFKEFUvtD0faXo5mHsi8EpdlUftL0faX9qOZh7IvhKNgqh9qf2pftT+1HMw9kXxH7Uvl1n/a3o+1v7UczD2RoiOl8us77ZJ7UfbJPajmYeyNHy6UJWb9tk9qPtsntRzMPZGn5dAjFZn22T2pftslHMw9kafl0ojFZf22T0FH22T0FHMw9kauwUBBWV9tk9qPtsntRzMPYmtsFGwVk/bZPaj7bJ7UXYeyNYIKXYKyPtsntR9tk9qOZh7E2Ng9qNorH+2yUfbZKLsPYmxgUbR61j/bZPaj7bJRdh7Eq0UUUjcKKKKACiiigAooooAKKKKACiiigAoopM84oAPTiloooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiikBBGQcigABB6HNLSAADA4ApaEC8wooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKaVBIz27UmJ+QrAMMHpS0UUx26hRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUh4B4z7Uig8ljyfyFK+thX1sAUlst26D0p1FFCVgSsFFFFMYUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAU1iQOBk9qGY52r97+VKOB1z71N76Im99ECggcnJ9aWiiqWhSVgooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKaWJbavbqfSvEPC/ws+J/wARPE0uteIdTufDMNtM6xTMXDR5Ugi1iVh8nCgtuUMDkFzmvoK00u2sLK0SKa98Q3sEItJ5I4/LtZLks0fmSNGjFMTQsjiPeYvMJddoDKmmS03scl428QxeFfC2oa1PA9wlqqkRIQC7MwVRk9Blhk84GeD0rzb4VfF6+8YeNP7DvdKjjF5vNl9l3MybVZysmT83yr95QOR0wfl+kb/wNoWueHW0jXtGtpbYobbCzyPI0KyqyZn+WTLeVE7DJ+YYJfG4xeB/hp4R8DXVzdeFtFisrm5QRySmWSVygOdoMjMVBOCQMZwM5wMMow/7Nvv+fK5/79N/hWJ401B/CfhbUtc1C0nE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"
 	},
 	"ModumateObjects":
 	{
@@ -44,7 +44,7 @@
 		},
 		"presetCollection":
 		{
-			"version": 4,
+			"version": 6,
 			"nodeDescriptors":
 			{
 			},
@@ -99,10 +99,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -144,10 +141,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -191,10 +185,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -218,7 +209,7 @@
 								"4":
 								{
 									"x": 2000,
-									"y": -1000,
+									"y": -609.59991455078125,
 									"z": 0
 								}
 							},
@@ -240,10 +231,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -287,10 +275,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -313,8 +298,8 @@
 							{
 								"6":
 								{
-									"x": 500,
-									"y": -1000,
+									"x": 500.0001220703125,
+									"y": -609.59991455078125,
 									"z": 0
 								}
 							},
@@ -336,10 +321,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -383,10 +365,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -410,7 +389,7 @@
 								"8":
 								{
 									"x": 0,
-									"y": -1000,
+									"y": -609.59991455078125,
 									"z": 0
 								}
 							},
@@ -432,10 +411,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -479,10 +455,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -530,10 +503,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -577,56 +547,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-								"11":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -713,10 +634,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -765,7 +683,7 @@
 								"13":
 								{
 									"x": 0,
-									"y": -500,
+									"y": -304.79995727539062,
 									"z": 0
 								}
 							},
@@ -787,10 +705,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -834,10 +749,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -897,18 +809,13 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
+							"faceVertexIdUpdates":
 							{
 								"11":
 								{
-									"map":
-									{
-										"4": 13
-									}
+									"prevVertexIds": [ 1, 2, 4, 6, 8 ],
+									"nextVertexIds": [ 1, 2, 4, 6, 8, 13 ]
 								}
-							},
-							"faceVertexRemovals":
-							{
 							},
 							"groupIdsUpdates":
 							{
@@ -951,10 +858,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -998,10 +902,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -1045,63 +946,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-								"17":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								},
-								"18":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -1124,15 +969,21 @@
 							{
 								"19":
 								{
-									"x": 499.99993896484375,
-									"y": -500.00003051757812,
-									"z": 250.00001525878906
+									"x": 304.7999267578125,
+									"y": -304.79995727539062,
+									"z": 152.39999389648438
 								},
 								"20":
 								{
-									"x": 1499.999755859375,
-									"y": -500.00003051757812,
-									"z": 250.00001525878906
+									"x": 500.00006103515625,
+									"y": -304.79995727539062,
+									"z": 152.39999389648438
+								},
+								"21":
+								{
+									"x": 1695.19970703125,
+									"y": -304.79995727539062,
+									"z": 152.39999389648438
 								}
 							},
 							"vertexDeletions":
@@ -1140,7 +991,7 @@
 							},
 							"edgeAdditions":
 							{
-								"21":
+								"22":
 								{
 									"vertices": [ 1, 19 ],
 									"parentObjIds": [],
@@ -1148,7 +999,7 @@
 									"containingObjId": 0,
 									"containedObjIds": []
 								},
-								"22":
+								"23":
 								{
 									"vertices": [ 19, 20 ],
 									"parentObjIds": [],
@@ -1156,110 +1007,17 @@
 									"containingObjId": 0,
 									"containedObjIds": []
 								},
-								"23":
+								"24":
 								{
-									"vertices": [ 20, 2 ],
+									"vertices": [ 20, 21 ],
 									"parentObjIds": [],
 									"groupIds": [],
 									"containingObjId": 0,
 									"containedObjIds": []
-								}
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-								"24":
-								{
-									"vertices": [ 1, 19, 20, 2 ],
-									"parentObjIds": [ 0 ],
-									"groupIds": [ 12 ],
-									"containingObjId": 0,
-									"containedObjIds": []
-								}
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-								"24":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
+								},
 								"25":
 								{
-									"vertices": [ 13, 19 ],
+									"vertices": [ 21, 2 ],
 									"parentObjIds": [],
 									"groupIds": [],
 									"containingObjId": 0,
@@ -1273,7 +1031,7 @@
 							{
 								"26":
 								{
-									"vertices": [ 1, 13, 19 ],
+									"vertices": [ 1, 19, 20, 21, 2 ],
 									"parentObjIds": [ 0 ],
 									"groupIds": [ 12 ],
 									"containingObjId": 0,
@@ -1286,56 +1044,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-								"26":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -1360,551 +1069,34 @@
 							{
 								"27":
 								{
-									"vertices": [ 8, 19 ],
-									"parentObjIds": [],
-									"groupIds": [],
-									"containingObjId": 0,
-									"containedObjIds": []
-								}
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-								"28":
-								{
-									"vertices": [ 8, 19, 13 ],
-									"parentObjIds": [ 0 ],
-									"groupIds": [ 12 ],
-									"containingObjId": 0,
-									"containedObjIds": []
-								}
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-								"28":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-								"29":
-								{
-									"vertices": [ 6, 19 ],
-									"parentObjIds": [],
-									"groupIds": [],
-									"containingObjId": 0,
-									"containedObjIds": []
-								}
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-								"30":
-								{
-									"vertices": [ 6, 19, 8 ],
-									"parentObjIds": [ 0 ],
-									"groupIds": [ 12 ],
-									"containingObjId": 0,
-									"containedObjIds": []
-								}
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-								"30":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-								"31":
-								{
-									"vertices": [ 4, 20 ],
-									"parentObjIds": [],
-									"groupIds": [],
-									"containingObjId": 0,
-									"containedObjIds": []
-								}
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-								"32":
-								{
-									"vertices": [ 4, 20, 19, 6 ],
-									"parentObjIds": [ 0 ],
-									"groupIds": [ 12 ],
-									"containingObjId": 0,
-									"containedObjIds": []
-								}
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-								"32":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-								"33":
-								{
-									"vertices": [ 2, 20, 4 ],
-									"parentObjIds": [ 0 ],
-									"groupIds": [ 12 ],
-									"containingObjId": 0,
-									"containedObjIds": []
-								}
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-								"33":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					}
-				]
-			},
-			{
-				"deltaStructWrappers": [
-					{
-						"structName": "MOIDelta",
-						"structJson":
-						{
-							"states": []
-						}
-					},
-					{
-						"structName": "MOIDelta",
-						"structJson":
-						{
-							"states": []
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-								"19":
-								{
-									"x": 499.99993896484375,
-									"y": -500.00003051757812,
-									"z": 250.00001525878906
-								},
-								"20":
-								{
-									"x": 1499.999755859375,
-									"y": -500.00003051757812,
-									"z": 250.00001525878906
-								}
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-								"21":
-								{
-									"vertices": [ 1, 19 ],
-									"parentObjIds": [],
-									"groupIds": [],
-									"containingObjId": 0,
-									"containedObjIds": []
-								},
-								"22":
-								{
-									"vertices": [ 19, 20 ],
-									"parentObjIds": [],
-									"groupIds": [],
-									"containingObjId": 0,
-									"containedObjIds": []
-								},
-								"23":
-								{
-									"vertices": [ 20, 2 ],
-									"parentObjIds": [],
-									"groupIds": [],
-									"containingObjId": 0,
-									"containedObjIds": []
-								},
-								"25":
-								{
 									"vertices": [ 13, 19 ],
 									"parentObjIds": [],
 									"groupIds": [],
 									"containingObjId": 0,
 									"containedObjIds": []
-								},
-								"27":
-								{
-									"vertices": [ 8, 19 ],
-									"parentObjIds": [],
-									"groupIds": [],
-									"containingObjId": 0,
-									"containedObjIds": []
-								},
-								"29":
-								{
-									"vertices": [ 6, 19 ],
-									"parentObjIds": [],
-									"groupIds": [],
-									"containingObjId": 0,
-									"containedObjIds": []
-								},
-								"31":
-								{
-									"vertices": [ 4, 20 ],
-									"parentObjIds": [],
-									"groupIds": [],
-									"containingObjId": 0,
-									"containedObjIds": []
 								}
+							},
+							"edgeDeletions":
+							{
 							},
 							"faceAdditions":
 							{
-							},
-							"faceDeletions":
-							{
-								"24":
-								{
-									"vertices": [ 1, 19, 20, 2 ],
-									"parentObjIds": [],
-									"groupIds": [ 12 ],
-									"containingObjId": 0,
-									"containedObjIds": []
-								},
-								"26":
-								{
-									"vertices": [ 1, 13, 19 ],
-									"parentObjIds": [],
-									"groupIds": [ 12 ],
-									"containingObjId": 0,
-									"containedObjIds": []
-								},
 								"28":
 								{
-									"vertices": [ 8, 19, 13 ],
-									"parentObjIds": [],
-									"groupIds": [ 12 ],
-									"containingObjId": 0,
-									"containedObjIds": []
-								},
-								"30":
-								{
-									"vertices": [ 6, 19, 8 ],
-									"parentObjIds": [],
-									"groupIds": [ 12 ],
-									"containingObjId": 0,
-									"containedObjIds": []
-								},
-								"32":
-								{
-									"vertices": [ 4, 20, 19, 6 ],
-									"parentObjIds": [],
-									"groupIds": [ 12 ],
-									"containingObjId": 0,
-									"containedObjIds": []
-								},
-								"33":
-								{
-									"vertices": [ 2, 20, 4 ],
-									"parentObjIds": [],
+									"vertices": [ 1, 13, 19 ],
+									"parentObjIds": [ 0 ],
 									"groupIds": [ 12 ],
 									"containingObjId": 0,
 									"containedObjIds": []
 								}
+							},
+							"faceDeletions":
+							{
 							},
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -1913,16 +1105,57 @@
 						}
 					},
 					{
-						"structName": "MOIDelta",
+						"structName": "Graph3DDelta",
 						"structJson":
 						{
-							"states": []
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"29":
+								{
+									"vertices": [ 8, 19 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+								"30":
+								{
+									"vertices": [ 8, 19, 13 ],
+									"parentObjIds": [ 0 ],
+									"groupIds": [ 12 ],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexIdUpdates":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
 						}
-					}
-				]
-			},
-			{
-				"deltaStructWrappers": [
+					},
 					{
 						"structName": "Graph3DDelta",
 						"structJson":
@@ -1931,246 +1164,401 @@
 							{
 							},
 							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"31":
+								{
+									"vertices": [ 6, 20 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+								"32":
+								{
+									"vertices": [ 6, 20, 19, 8 ],
+									"parentObjIds": [ 0 ],
+									"groupIds": [ 12 ],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexIdUpdates":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"33":
+								{
+									"vertices": [ 4, 21 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
 							{
 								"34":
 								{
-									"x": 499.99993896484375,
-									"y": -500.00003051757812,
-									"z": 250.00001525878906
+									"vertices": [ 4, 21, 20, 6 ],
+									"parentObjIds": [ 0 ],
+									"groupIds": [ 12 ],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexIdUpdates":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+								"35":
+								{
+									"vertices": [ 2, 21, 4 ],
+									"parentObjIds": [ 0 ],
+									"groupIds": [ 12 ],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexIdUpdates":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": []
+						}
+					},
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": []
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+								"19":
+								{
+									"x": 304.7999267578125,
+									"y": -304.79995727539062,
+									"z": 152.39999389648438
+								},
+								"20":
+								{
+									"x": 500.00006103515625,
+									"y": -304.79995727539062,
+									"z": 152.39999389648438
+								},
+								"21":
+								{
+									"x": 1695.19970703125,
+									"y": -304.79995727539062,
+									"z": 152.39999389648438
+								}
+							},
+							"edgeAdditions":
+							{
+							},
+							"edgeDeletions":
+							{
+								"22":
+								{
+									"vertices": [ 1, 19 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"23":
+								{
+									"vertices": [ 19, 20 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"24":
+								{
+									"vertices": [ 20, 21 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"25":
+								{
+									"vertices": [ 21, 2 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"27":
+								{
+									"vertices": [ 13, 19 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"29":
+								{
+									"vertices": [ 8, 19 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"31":
+								{
+									"vertices": [ 6, 20 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"33":
+								{
+									"vertices": [ 4, 21 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceAdditions":
+							{
+							},
+							"faceDeletions":
+							{
+								"26":
+								{
+									"vertices": [ 1, 19, 20, 21, 2 ],
+									"parentObjIds": [],
+									"groupIds": [ 12 ],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"28":
+								{
+									"vertices": [ 1, 13, 19 ],
+									"parentObjIds": [],
+									"groupIds": [ 12 ],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"30":
+								{
+									"vertices": [ 8, 19, 13 ],
+									"parentObjIds": [],
+									"groupIds": [ 12 ],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"32":
+								{
+									"vertices": [ 6, 20, 19, 8 ],
+									"parentObjIds": [],
+									"groupIds": [ 12 ],
+									"containingObjId": 0,
+									"containedObjIds": []
+								},
+								"34":
+								{
+									"vertices": [ 4, 21, 20, 6 ],
+									"parentObjIds": [],
+									"groupIds": [ 12 ],
+									"containingObjId": 0,
+									"containedObjIds": []
 								},
 								"35":
 								{
-									"x": 1499.999755859375,
-									"y": -500.00003051757812,
-									"z": 250.00001525878906
+									"vertices": [ 2, 21, 4 ],
+									"parentObjIds": [],
+									"groupIds": [ 12 ],
+									"containingObjId": 0,
+									"containedObjIds": []
 								}
 							},
-							"vertexDeletions":
+							"faceContainmentUpdates":
 							{
 							},
-							"edgeAdditions":
+							"faceVertexIdUpdates":
+							{
+							},
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "MOIDelta",
+						"structJson":
+						{
+							"states": []
+						}
+					}
+				]
+			},
+			{
+				"deltaStructWrappers": [
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
 							{
 								"36":
 								{
-									"vertices": [ 1, 34 ],
-									"parentObjIds": [],
-									"groupIds": [],
-									"containingObjId": 0,
-									"containedObjIds": []
+									"x": 304.7999267578125,
+									"y": -304.79995727539062,
+									"z": 152.39999389648438
 								},
 								"37":
 								{
-									"vertices": [ 34, 35 ],
+									"x": 500.00006103515625,
+									"y": -304.79995727539062,
+									"z": 152.39999389648438
+								},
+								"38":
+								{
+									"x": 1695.19970703125,
+									"y": -304.79995727539062,
+									"z": 152.39999389648438
+								}
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"39":
+								{
+									"vertices": [ 1, 36 ],
 									"parentObjIds": [],
 									"groupIds": [],
 									"containingObjId": 0,
 									"containedObjIds": []
 								},
-								"38":
-								{
-									"vertices": [ 35, 2 ],
-									"parentObjIds": [],
-									"groupIds": [],
-									"containingObjId": 0,
-									"containedObjIds": []
-								}
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-								"39":
-								{
-									"vertices": [ 1, 34, 35, 2 ],
-									"parentObjIds": [ 0 ],
-									"groupIds": [ 12 ],
-									"containingObjId": 0,
-									"containedObjIds": []
-								}
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-								"39":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
 								"40":
 								{
-									"vertices": [ 13, 34 ],
+									"vertices": [ 36, 37 ],
 									"parentObjIds": [],
 									"groupIds": [],
 									"containingObjId": 0,
 									"containedObjIds": []
-								}
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
+								},
 								"41":
 								{
-									"vertices": [ 1, 13, 34 ],
-									"parentObjIds": [ 0 ],
-									"groupIds": [ 12 ],
+									"vertices": [ 37, 38 ],
+									"parentObjIds": [],
+									"groupIds": [],
 									"containingObjId": 0,
 									"containedObjIds": []
-								}
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-								"41":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
+								},
 								"42":
 								{
-									"vertices": [ 8, 34 ],
+									"vertices": [ 38, 2 ],
 									"parentObjIds": [],
 									"groupIds": [],
 									"containingObjId": 0,
@@ -2184,7 +1572,7 @@
 							{
 								"43":
 								{
-									"vertices": [ 8, 34, 13 ],
+									"vertices": [ 1, 36, 37, 38, 2 ],
 									"parentObjIds": [ 0 ],
 									"groupIds": [ 12 ],
 									"containingObjId": 0,
@@ -2197,56 +1585,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-								"43":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -2271,7 +1610,7 @@
 							{
 								"44":
 								{
-									"vertices": [ 6, 34 ],
+									"vertices": [ 13, 36 ],
 									"parentObjIds": [],
 									"groupIds": [],
 									"containingObjId": 0,
@@ -2285,7 +1624,7 @@
 							{
 								"45":
 								{
-									"vertices": [ 6, 34, 8 ],
+									"vertices": [ 1, 13, 36 ],
 									"parentObjIds": [ 0 ],
 									"groupIds": [ 12 ],
 									"containingObjId": 0,
@@ -2298,56 +1637,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-								"45":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -2372,7 +1662,7 @@
 							{
 								"46":
 								{
-									"vertices": [ 4, 35 ],
+									"vertices": [ 8, 36 ],
 									"parentObjIds": [],
 									"groupIds": [],
 									"containingObjId": 0,
@@ -2386,7 +1676,7 @@
 							{
 								"47":
 								{
-									"vertices": [ 4, 35, 34, 6 ],
+									"vertices": [ 8, 36, 13 ],
 									"parentObjIds": [ 0 ],
 									"groupIds": [ 12 ],
 									"containingObjId": 0,
@@ -2399,10 +1689,7 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -2424,62 +1711,24 @@
 							{
 							},
 							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
-							{
-							},
-							"faceDeletions":
-							{
-							},
-							"faceContainmentUpdates":
-							{
-								"47":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
-							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
-							{
-							},
-							"groupIdsUpdates":
-							{
-							}
-						}
-					},
-					{
-						"structName": "Graph3DDelta",
-						"structJson":
-						{
-							"vertexMovements":
-							{
-							},
-							"vertexAdditions":
-							{
-							},
-							"vertexDeletions":
-							{
-							},
-							"edgeAdditions":
-							{
-							},
-							"edgeDeletions":
-							{
-							},
-							"faceAdditions":
 							{
 								"48":
 								{
-									"vertices": [ 2, 35, 4 ],
+									"vertices": [ 6, 37 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+								"49":
+								{
+									"vertices": [ 6, 37, 36, 8 ],
 									"parentObjIds": [ 0 ],
 									"groupIds": [ 12 ],
 									"containingObjId": 0,
@@ -2492,10 +1741,59 @@
 							"faceContainmentUpdates":
 							{
 							},
-							"faceVertexAdditions":
+							"faceVertexIdUpdates":
 							{
 							},
-							"faceVertexRemovals":
+							"groupIdsUpdates":
+							{
+							}
+						}
+					},
+					{
+						"structName": "Graph3DDelta",
+						"structJson":
+						{
+							"vertexMovements":
+							{
+							},
+							"vertexAdditions":
+							{
+							},
+							"vertexDeletions":
+							{
+							},
+							"edgeAdditions":
+							{
+								"50":
+								{
+									"vertices": [ 4, 38 ],
+									"parentObjIds": [],
+									"groupIds": [],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"edgeDeletions":
+							{
+							},
+							"faceAdditions":
+							{
+								"51":
+								{
+									"vertices": [ 4, 38, 37, 6 ],
+									"parentObjIds": [ 0 ],
+									"groupIds": [ 12 ],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
+							},
+							"faceDeletions":
+							{
+							},
+							"faceContainmentUpdates":
+							{
+							},
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -2524,24 +1822,22 @@
 							},
 							"faceAdditions":
 							{
+								"52":
+								{
+									"vertices": [ 2, 38, 4 ],
+									"parentObjIds": [ 0 ],
+									"groupIds": [ 12 ],
+									"containingObjId": 0,
+									"containedObjIds": []
+								}
 							},
 							"faceDeletions":
 							{
 							},
 							"faceContainmentUpdates":
 							{
-								"48":
-								{
-									"prevContainingFaceId": 0,
-									"nextContainingFaceId": 0,
-									"containedFaceIdsToAdd": [],
-									"containedFaceIdsToRemove": []
-								}
 							},
-							"faceVertexAdditions":
-							{
-							},
-							"faceVertexRemovals":
+							"faceVertexIdUpdates":
 							{
 							},
 							"groupIdsUpdates":
@@ -2582,7 +1878,7 @@
 					"position":
 					{
 						"x": 2000,
-						"y": -1000,
+						"y": -609.59991455078125,
 						"z": 0
 					}
 				},
@@ -2591,8 +1887,8 @@
 					"iD": 6,
 					"position":
 					{
-						"x": 500,
-						"y": -1000,
+						"x": 500.0001220703125,
+						"y": -609.59991455078125,
 						"z": 0
 					}
 				},
@@ -2602,7 +1898,7 @@
 					"position":
 					{
 						"x": 0,
-						"y": -1000,
+						"y": -609.59991455078125,
 						"z": 0
 					}
 				},
@@ -2612,28 +1908,38 @@
 					"position":
 					{
 						"x": 0,
-						"y": -500,
+						"y": -304.79995727539062,
 						"z": 0
 					}
 				},
-				"35":
+				"38":
 				{
-					"iD": 35,
+					"iD": 38,
 					"position":
 					{
-						"x": 1499.999755859375,
-						"y": -500.00003051757812,
-						"z": 250.00001525878906
+						"x": 1695.19970703125,
+						"y": -304.79995727539062,
+						"z": 152.39999389648438
 					}
 				},
-				"34":
+				"37":
 				{
-					"iD": 34,
+					"iD": 37,
 					"position":
 					{
-						"x": 499.99993896484375,
-						"y": -500.00003051757812,
-						"z": 250.00001525878906
+						"x": 500.00006103515625,
+						"y": -304.79995727539062,
+						"z": 152.39999389648438
+					}
+				},
+				"36":
+				{
+					"iD": 36,
+					"position":
+					{
+						"x": 304.7999267578125,
+						"y": -304.79995727539062,
+						"z": 152.39999389648438
 					}
 				}
 			},
@@ -2667,11 +1973,11 @@
 					"endVertexId": 8,
 					"groupIds": [ 12 ]
 				},
-				"46":
+				"50":
 				{
-					"iD": 46,
+					"iD": 50,
 					"startVertexId": 4,
-					"endVertexId": 35,
+					"endVertexId": 38,
 					"groupIds": []
 				},
 				"14":
@@ -2681,13 +1987,6 @@
 					"endVertexId": 13,
 					"groupIds": []
 				},
-				"16":
-				{
-					"iD": 16,
-					"startVertexId": 13,
-					"endVertexId": 1,
-					"groupIds": [ 12 ]
-				},
 				"15":
 				{
 					"iD": 15,
@@ -2695,55 +1994,69 @@
 					"endVertexId": 13,
 					"groupIds": [ 12 ]
 				},
+				"16":
+				{
+					"iD": 16,
+					"startVertexId": 13,
+					"endVertexId": 1,
+					"groupIds": [ 12 ]
+				},
+				"48":
+				{
+					"iD": 48,
+					"startVertexId": 6,
+					"endVertexId": 37,
+					"groupIds": []
+				},
+				"46":
+				{
+					"iD": 46,
+					"startVertexId": 8,
+					"endVertexId": 36,
+					"groupIds": []
+				},
 				"44":
 				{
 					"iD": 44,
-					"startVertexId": 6,
-					"endVertexId": 34,
+					"startVertexId": 13,
+					"endVertexId": 36,
 					"groupIds": []
 				},
 				"42":
 				{
 					"iD": 42,
-					"startVertexId": 8,
-					"endVertexId": 34,
+					"startVertexId": 38,
+					"endVertexId": 2,
+					"groupIds": []
+				},
+				"41":
+				{
+					"iD": 41,
+					"startVertexId": 37,
+					"endVertexId": 38,
 					"groupIds": []
 				},
 				"40":
 				{
 					"iD": 40,
-					"startVertexId": 13,
-					"endVertexId": 34,
+					"startVertexId": 36,
+					"endVertexId": 37,
 					"groupIds": []
 				},
-				"38":
+				"39":
 				{
-					"iD": 38,
-					"startVertexId": 35,
-					"endVertexId": 2,
-					"groupIds": []
-				},
-				"37":
-				{
-					"iD": 37,
-					"startVertexId": 34,
-					"endVertexId": 35,
-					"groupIds": []
-				},
-				"36":
-				{
-					"iD": 36,
+					"iD": 39,
 					"startVertexId": 1,
-					"endVertexId": 34,
+					"endVertexId": 36,
 					"groupIds": []
 				}
 			},
 			"faces":
 			{
-				"48":
+				"52":
 				{
-					"iD": 48,
-					"vertexIds": [ 2, 35, 4 ],
+					"iD": 52,
+					"vertexIds": [ 2, 38, 4 ],
 					"groupIds": [ 12 ],
 					"containingFaceId": 0,
 					"containedFaceIds": []
@@ -2764,10 +2077,26 @@
 					"containingFaceId": 0,
 					"containedFaceIds": []
 				},
+				"51":
+				{
+					"iD": 51,
+					"vertexIds": [ 4, 38, 37, 6 ],
+					"groupIds": [ 12 ],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
+				"49":
+				{
+					"iD": 49,
+					"vertexIds": [ 6, 37, 36, 8 ],
+					"groupIds": [ 12 ],
+					"containingFaceId": 0,
+					"containedFaceIds": []
+				},
 				"47":
 				{
 					"iD": 47,
-					"vertexIds": [ 4, 35, 34, 6 ],
+					"vertexIds": [ 8, 36, 13 ],
 					"groupIds": [ 12 ],
 					"containingFaceId": 0,
 					"containedFaceIds": []
@@ -2775,7 +2104,7 @@
 				"45":
 				{
 					"iD": 45,
-					"vertexIds": [ 6, 34, 8 ],
+					"vertexIds": [ 1, 13, 36 ],
 					"groupIds": [ 12 ],
 					"containingFaceId": 0,
 					"containedFaceIds": []
@@ -2783,23 +2112,7 @@
 				"43":
 				{
 					"iD": 43,
-					"vertexIds": [ 8, 34, 13 ],
-					"groupIds": [ 12 ],
-					"containingFaceId": 0,
-					"containedFaceIds": []
-				},
-				"41":
-				{
-					"iD": 41,
-					"vertexIds": [ 1, 13, 34 ],
-					"groupIds": [ 12 ],
-					"containingFaceId": 0,
-					"containedFaceIds": []
-				},
-				"39":
-				{
-					"iD": 39,
-					"vertexIds": [ 1, 34, 35, 2 ],
+					"vertexIds": [ 1, 36, 37, 38, 2 ],
 					"groupIds": [ 12 ],
 					"containingFaceId": 0,
 					"containedFaceIds": []

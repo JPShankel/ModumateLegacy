@@ -36,6 +36,7 @@
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelInputAutomation.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/LineActor.h"
@@ -95,6 +96,12 @@ void UModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 		CleanObjects(nullptr);
 		PostApplyDeltas(World);
 		UpdateRoomAnalysis(World);
+
+		AEditModelPlayerController* controller = World ? World->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+		if (controller && controller->InputAutomationComponent)
+		{
+			controller->InputAutomationComponent->PostApplyUserDeltas(ur->Deltas);
+		}
 
 		AEditModelPlayerState* EMPlayerState = Cast<AEditModelPlayerState>(World->GetFirstPlayerController()->PlayerState);
 		EMPlayerState->RefreshActiveAssembly();
@@ -809,9 +816,17 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 
 bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* World)
 {
+	// Vacuous success if there are no deltas to apply
 	if (Deltas.Num() == 0)
 	{
 		return true;
+	}
+
+	// Fail immediately if we're playing back recorded input
+	AEditModelPlayerController* controller = World ? World->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+	if (controller && controller->InputAutomationComponent && controller->InputAutomationComponent->ShouldDocumentSkipDeltas())
+	{
+		return false;
 	}
 
 	StartTrackingDeltaObjects();
@@ -843,6 +858,11 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 
 	EndTrackingDeltaObjects();
 
+	if (controller && controller->InputAutomationComponent)
+	{
+		controller->InputAutomationComponent->PostApplyUserDeltas(ur->Deltas);
+	}
+
 	return true;
 }
 
@@ -861,6 +881,13 @@ bool UModumateDocument::StartPreviewing()
 bool UModumateDocument::ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World)
 {
 	ClearPreviewDeltas(World, true);
+
+	// Skip preview deltas if the input automation is playing back recorded deltas, because they might interfere with one another
+	AEditModelPlayerController* controller = World ? World->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+	if (controller && controller->InputAutomationComponent && controller->InputAutomationComponent->ShouldDocumentSkipDeltas())
+	{
+		return false;
+	}
 
 	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentApplyPreviewDeltas);
 
@@ -2245,18 +2272,18 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 
 bool UModumateDocument::Save(UWorld* World, const FString& FilePath, bool bSetAsCurrentProject)
 {
-	FModumateDocumentHeader docHeader;
-	FMOIDocumentRecord docRecord;
-	if (!SerializeRecords(World, docHeader, docRecord))
+	CachedHeader = FModumateDocumentHeader();
+	CachedRecord = FMOIDocumentRecord();
+	if (!SerializeRecords(World, CachedHeader, CachedRecord))
 	{
 		return false;
 	}
 
 	TSharedPtr<FJsonObject> FileJson = MakeShared<FJsonObject>();
 	TSharedPtr<FJsonObject> HeaderJson = MakeShared<FJsonObject>();
-	FileJson->SetObjectField(DocHeaderField, FJsonObjectConverter::UStructToJsonObject<FModumateDocumentHeader>(docHeader));
+	FileJson->SetObjectField(DocHeaderField, FJsonObjectConverter::UStructToJsonObject<FModumateDocumentHeader>(CachedHeader));
 
-	TSharedPtr<FJsonObject> docOb = FJsonObjectConverter::UStructToJsonObject<FMOIDocumentRecord>(docRecord);
+	TSharedPtr<FJsonObject> docOb = FJsonObjectConverter::UStructToJsonObject<FMOIDocumentRecord>(CachedRecord);
 	FileJson->SetObjectField(DocObjectInstanceField, docOb);
 
 	FString ProjectJsonString;
@@ -2294,9 +2321,9 @@ const AModumateObjectInstance *UModumateDocument::GetObjectById(int32 id) const
 	return ObjectsByID.FindRef(id);
 }
 
-bool UModumateDocument::Load(UWorld *world, const FString &path, bool bSetAsCurrentProject, bool bRecordAsRecentProject)
+bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord)
 {
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Load"));
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::LoadRecord"));
 
 	//Get player state and tells it to empty selected object
 	AEditModelPlayerController* EMPlayerController = Cast<AEditModelPlayerController>(world->GetFirstPlayerController());
@@ -2309,139 +2336,151 @@ bool UModumateDocument::Load(UWorld *world, const FString &path, bool bSetAsCurr
 
 	FModumateDatabase* objectDB = gameMode->ObjectDatabase;
 
-	FModumateDocumentHeader docHeader;
-	FMOIDocumentRecord docRec;
+	BIMPresetCollection.ReadPresetsFromDocRecord(*objectDB, InHeader.Version, InDocumentRecord);
 
-	if (FModumateSerializationStatics::TryReadModumateDocumentRecord(path, docHeader, docRec))
+	// Load the connectivity graphs now, which contain associations between object IDs,
+	// so that any objects whose geometry setup needs to know about connectivity can find it.
+	VolumeGraph.Load(&InDocumentRecord.VolumeGraph);
+	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+
+	// Load all of the surface graphs now
+	for (const auto& kvp : InDocumentRecord.SurfaceGraphs)
 	{
-		BIMPresetCollection.ReadPresetsFromDocRecord(*objectDB, docHeader.Version, docRec);
-
-		// Load the connectivity graphs now, which contain associations between object IDs,
-		// so that any objects whose geometry setup needs to know about connectivity can find it.
-		VolumeGraph.Load(&docRec.VolumeGraph);
-		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
-
-		// Load all of the surface graphs now
-		for (const auto& kvp : docRec.SurfaceGraphs)
+		const FGraph2DRecord& surfaceGraphRecord = kvp.Value;
+		TSharedPtr<FGraph2D> surfaceGraph = MakeShared<FGraph2D>(kvp.Key);
+		if (surfaceGraph->FromDataRecord(&surfaceGraphRecord))
 		{
-			const FGraph2DRecord& surfaceGraphRecord = kvp.Value;
-			TSharedPtr<FGraph2D> surfaceGraph = MakeShared<FGraph2D>(kvp.Key);
-			if (surfaceGraph->FromDataRecord(&surfaceGraphRecord))
-			{
-				SurfaceGraphs.Add(kvp.Key, surfaceGraph);
-			}
+			SurfaceGraphs.Add(kvp.Key, surfaceGraph);
 		}
-
-		SavedCameraViews = docRec.CameraViews;
-
-		// Create the MOIs whose state data was stored
-		NextID = 1;
-		for (auto& stateData : docRec.ObjectData)
-		{
-			CreateOrRestoreObj(world, stateData);
-		}
-
-		// Create MOIs reflected from the volume graph
-		for (const auto& kvp : VolumeGraph.GetAllObjects())
-		{
-			EObjectType objectType = UModumateTypeStatics::ObjectTypeFromGraph3DType(kvp.Value);
-			if (ensure(!ObjectsByID.Contains(kvp.Key)) && (objectType != EObjectType::OTNone))
-			{
-				CreateOrRestoreObj(world, FMOIStateData(kvp.Key, objectType));
-			}
-		}
-
-		// Create MOIs reflected from the surface graphs
-		for (const auto& surfaceGraphKVP : SurfaceGraphs)
-		{
-			if (surfaceGraphKVP.Value.IsValid())
-			{
-				for (const auto& surfaceGraphObjKVP : surfaceGraphKVP.Value->GetAllObjects())
-				{
-					EObjectType objectType = UModumateTypeStatics::ObjectTypeFromGraph2DType(surfaceGraphObjKVP.Value);
-					if (ensure(!ObjectsByID.Contains(surfaceGraphObjKVP.Key)) && (objectType != EObjectType::OTNone))
-					{
-						CreateOrRestoreObj(world, FMOIStateData(surfaceGraphObjKVP.Key, objectType, surfaceGraphKVP.Key));
-					}
-				}
-			}
-		}
-
-		// Now that all objects have been created and parented correctly, we can clean all of them.
-		// This should take care of anything that depends on relationships between objects, like mitering.
-		CleanObjects(nullptr);
-
-		// Check for objects that have errors, as a result of having been loaded and cleaned.
-		// TODO: prompt the user to fix, or delete, these objects
-		for (auto* obj : ObjectInstanceArray)
-		{
-			if (EMPlayerState->DoesObjectHaveAnyError(obj->ID))
-			{
-				FString objectTypeString = GetEnumValueString(obj->GetObjectType());
-				UE_LOG(LogTemp, Warning, TEXT("MOI %d (%s) has an error!"), obj->ID, *objectTypeString);
-			}
-		}
-
-		for (auto& cta : docRec.CurrentToolAssemblyGUIDMap)
-		{
-			TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(cta.Key);
-			if (ensureAlways(tool))
-			{
-				const FBIMAssemblySpec *obAsm = GetPresetCollection().GetAssemblyByGUID(cta.Key, cta.Value);
-				if (obAsm != nullptr)
-				{
-					tool->SetAssemblyGUID(obAsm->UniqueKey());
-				}
-			}
-		}
-
-		// Just in case the loaded document's rooms don't match up with our current room analysis logic, do that now.
-		UpdateRoomAnalysis(world);
-
-		// Hide all cut planes on load
-		TArray<AModumateObjectInstance*> cutPlanes = GetObjectsOfType(EObjectType::OTCutPlane);
-		TArray<int32> hideCutPlaneIds;
-		for (auto curCutPlane : cutPlanes)
-		{
-			hideCutPlaneIds.Add(curCutPlane->ID);
-		}
-		AddHideObjectsById(world, hideCutPlaneIds);
-
-		ClearUndoBuffer();
-
-		// Load undo/redo buffer
-		for (auto& deltaRecord : docRec.AppliedDeltas)
-		{
-			TSharedPtr<UndoRedo> undoRedo = MakeShared<UndoRedo>();
-
-			for (auto& structWrapper : deltaRecord.DeltaStructWrappers)
-			{
-				auto deltaPtr = structWrapper.CreateStructFromJSON<FDocumentDelta>();
-				if (deltaPtr)
-				{
-					undoRedo->Deltas.Add(MakeShareable(deltaPtr));
-				}
-			}
-
-			UndoBuffer.Add(undoRedo);
-		}
-
-		if (bSetAsCurrentProject)
-		{
-			SetCurrentProjectPath(path);
-		}
-
-		auto* gameInstance = world->GetGameInstance<UModumateGameInstance>();
-		if (bRecordAsRecentProject && gameInstance)
-		{
-			gameInstance->UserSettings.RecordRecentProject(path, true);
-		}
-
-		bIsDirty = false;
-
-		return true;
 	}
-	return false;
+
+	SavedCameraViews = InDocumentRecord.CameraViews;
+
+	// Create the MOIs whose state data was stored
+	NextID = 1;
+	for (auto& stateData : InDocumentRecord.ObjectData)
+	{
+		CreateOrRestoreObj(world, stateData);
+	}
+
+	// Create MOIs reflected from the volume graph
+	for (const auto& kvp : VolumeGraph.GetAllObjects())
+	{
+		EObjectType objectType = UModumateTypeStatics::ObjectTypeFromGraph3DType(kvp.Value);
+		if (ensure(!ObjectsByID.Contains(kvp.Key)) && (objectType != EObjectType::OTNone))
+		{
+			CreateOrRestoreObj(world, FMOIStateData(kvp.Key, objectType));
+		}
+	}
+
+	// Create MOIs reflected from the surface graphs
+	for (const auto& surfaceGraphKVP : SurfaceGraphs)
+	{
+		if (surfaceGraphKVP.Value.IsValid())
+		{
+			for (const auto& surfaceGraphObjKVP : surfaceGraphKVP.Value->GetAllObjects())
+			{
+				EObjectType objectType = UModumateTypeStatics::ObjectTypeFromGraph2DType(surfaceGraphObjKVP.Value);
+				if (ensure(!ObjectsByID.Contains(surfaceGraphObjKVP.Key)) && (objectType != EObjectType::OTNone))
+				{
+					CreateOrRestoreObj(world, FMOIStateData(surfaceGraphObjKVP.Key, objectType, surfaceGraphKVP.Key));
+				}
+			}
+		}
+	}
+
+	// Now that all objects have been created and parented correctly, we can clean all of them.
+	// This should take care of anything that depends on relationships between objects, like mitering.
+	CleanObjects(nullptr);
+
+	// Check for objects that have errors, as a result of having been loaded and cleaned.
+	// TODO: prompt the user to fix, or delete, these objects
+	for (auto* obj : ObjectInstanceArray)
+	{
+		if (EMPlayerState->DoesObjectHaveAnyError(obj->ID))
+		{
+			FString objectTypeString = GetEnumValueString(obj->GetObjectType());
+			UE_LOG(LogTemp, Warning, TEXT("MOI %d (%s) has an error!"), obj->ID, *objectTypeString);
+		}
+	}
+
+	for (auto& cta : InDocumentRecord.CurrentToolAssemblyGUIDMap)
+	{
+		TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(cta.Key);
+		if (ensureAlways(tool))
+		{
+			const FBIMAssemblySpec *obAsm = GetPresetCollection().GetAssemblyByGUID(cta.Key, cta.Value);
+			if (obAsm != nullptr)
+			{
+				tool->SetAssemblyGUID(obAsm->UniqueKey());
+			}
+		}
+	}
+
+	// Just in case the loaded document's rooms don't match up with our current room analysis logic, do that now.
+	UpdateRoomAnalysis(world);
+
+	// Hide all cut planes on load
+	TArray<AModumateObjectInstance*> cutPlanes = GetObjectsOfType(EObjectType::OTCutPlane);
+	TArray<int32> hideCutPlaneIds;
+	for (auto curCutPlane : cutPlanes)
+	{
+		hideCutPlaneIds.Add(curCutPlane->ID);
+	}
+	AddHideObjectsById(world, hideCutPlaneIds);
+
+	ClearUndoBuffer();
+
+	// Load undo/redo buffer
+	for (auto& deltaRecord : InDocumentRecord.AppliedDeltas)
+	{
+		TSharedPtr<UndoRedo> undoRedo = MakeShared<UndoRedo>();
+
+		for (auto& structWrapper : deltaRecord.DeltaStructWrappers)
+		{
+			auto deltaPtr = structWrapper.CreateStructFromJSON<FDocumentDelta>();
+			if (deltaPtr)
+			{
+				undoRedo->Deltas.Add(MakeShareable(deltaPtr));
+			}
+		}
+
+		UndoBuffer.Add(undoRedo);
+	}
+
+	bIsDirty = false;
+
+	return true;
+}
+
+bool UModumateDocument::LoadFile(UWorld* world, const FString& path, bool bSetAsCurrentProject, bool bRecordAsRecentProject)
+{
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::LoadFile"));
+
+	CachedHeader = FModumateDocumentHeader();
+	CachedRecord = FMOIDocumentRecord();
+	if (!FModumateSerializationStatics::TryReadModumateDocumentRecord(path, CachedHeader, CachedRecord))
+	{
+		return false;
+	}
+
+	if (!LoadRecord(world, CachedHeader, CachedRecord))
+	{
+		return false;
+	}
+
+	if (bSetAsCurrentProject)
+	{
+		SetCurrentProjectPath(path);
+	}
+
+	auto* gameInstance = world->GetGameInstance<UModumateGameInstance>();
+	if (bRecordAsRecentProject && gameInstance)
+	{
+		gameInstance->UserSettings.RecordRecentProject(path, true);
+	}
+
+	return true;
 }
 
 bool UModumateDocument::LoadDeltas(UWorld* world, const FString& path, bool bSetAsCurrentProject, bool bRecordAsRecentProject)
@@ -2459,16 +2498,15 @@ bool UModumateDocument::LoadDeltas(UWorld* world, const FString& path, bool bSet
 
 	FModumateDatabase* objectDB = gameMode->ObjectDatabase;
 
-	FModumateDocumentHeader docHeader;
-	FMOIDocumentRecord docRec;
-
-	if (FModumateSerializationStatics::TryReadModumateDocumentRecord(path, docHeader, docRec))
+	CachedHeader = FModumateDocumentHeader();
+	CachedRecord = FMOIDocumentRecord();
+	if (FModumateSerializationStatics::TryReadModumateDocumentRecord(path, CachedHeader, CachedRecord))
 	{
 		// Load all of the deltas into the redo buffer, as if the user had undone all the way to the beginning
 		// the redo buffer expects the deltas to all be backwards
-		for (int urIdx = docRec.AppliedDeltas.Num() - 1; urIdx >= 0; urIdx--)
+		for (int urIdx = CachedRecord.AppliedDeltas.Num() - 1; urIdx >= 0; urIdx--)
 		{
-			auto& deltaRecord = docRec.AppliedDeltas[urIdx];
+			auto& deltaRecord = CachedRecord.AppliedDeltas[urIdx];
 			TSharedPtr<UndoRedo> undoRedo = MakeShared<UndoRedo>();
 
 			for (int deltaIdx = 0; deltaIdx < deltaRecord.DeltaStructWrappers.Num(); deltaIdx++)

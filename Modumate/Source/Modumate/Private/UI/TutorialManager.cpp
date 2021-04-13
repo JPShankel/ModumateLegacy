@@ -11,6 +11,7 @@
 #include "Serialization/JsonSerializer.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/TutorialMenu/TutorialWalkthroughMenu.h"
+#include "UnrealClasses/EditModelInputAutomation.h"
 #include "UnrealClasses/EditModelInputHandler.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
@@ -117,6 +118,13 @@ bool UModumateTutorialManager::BeginWalkthrough(EModumateWalkthroughCategories W
 	static const FString eventNamePrefix(TEXT("BeginWalkthrough_"));
 	FString eventName = eventNamePrefix + GetEnumValueString(CurWalkthroughCategory);
 	UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Tutorials, eventName);
+
+	UWorld* world = GetWorld();
+	AEditModelPlayerController* controller = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+	if (controller && controller->InputAutomationComponent && controller->InputAutomationComponent->IsRecording())
+	{
+		controller->InputAutomationComponent->RecordLoadedWalkthrough(GetEnumValueShortName(WalkthroughCategory));
+	}
 
 	return true;
 }

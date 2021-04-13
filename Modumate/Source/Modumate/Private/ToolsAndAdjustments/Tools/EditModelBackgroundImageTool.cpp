@@ -3,9 +3,10 @@
 #include "ToolsAndAdjustments/Tools/EditModelBackgroundImageTool.h"
 
 #include "ModumateCore/PlatformFunctions.h"
-#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelInputAutomation.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "Objects/BackgroundImage.h"
 
 
@@ -122,6 +123,15 @@ bool UBackgroundImageTool::EnterNextStage()
 
 	if (!Controller->EMPlayerState->SnappedCursor.Visible)
 	{
+		return false;
+	}
+
+	// If we're playing back recorded input, then skip the open file dialog since we won't be able to do anything with it.
+	// TODO: we could potentially categorize a file open as an input event that records the contents of the opened file;
+	// we could do that work if we wanted to make this more bulletproof for common / more use cases, but so far this is an edge case.
+	if (Controller->InputAutomationComponent->IsPlaying())
+	{
+		Controller->InputAutomationComponent->StartPlayingRecordedDeltas();
 		return false;
 	}
 

@@ -12,6 +12,7 @@
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelInputAutomation.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerPawn.h"
 #include "UnrealClasses/EditModelPlayerState.h"
@@ -344,6 +345,18 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	case EInputCommand::ZoomSelected:
 	{
 		return Controller->CameraController->ZoomToSelection(FVector::ZeroVector, FVector::ZeroVector);
+	}
+	case EInputCommand::ToggleFullscreen:
+	{
+		// Ignore the fullscreen command if we're playing back input, because fullscreen misbehaves during playback sessions.
+		// (Video recording breaks, playback machine desktop size might not match recording machine desktop size, etc.)
+		if (Controller->InputAutomationComponent && Controller->InputAutomationComponent->IsPlaying())
+		{
+			return true;
+		}
+
+		auto viewport = GetWorld()->GetGameViewport();
+		return viewport->HandleToggleFullscreenCommand();
 	}
 	case EInputCommand::Invert:
 	{

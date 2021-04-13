@@ -41,7 +41,7 @@ struct MODUMATE_API FMOITrimData
 	FDimensionOffset OffsetUp;
 
 	UPROPERTY()
-	FVector2D Extensions;
+	FVector2D Extensions = FVector2D::ZeroVector;
 
 	static constexpr int32 CurrentVersion = 2;
 };

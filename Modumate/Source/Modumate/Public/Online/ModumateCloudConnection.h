@@ -7,6 +7,15 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "JsonUtilities.h"
 
+class MODUMATE_API ICloudConnectionAutomation
+{
+public:
+	virtual bool RecordRequest(FHttpRequestRef Request, int32 RequestIdx) = 0;
+	virtual bool RecordResponse(FHttpRequestRef Request, int32 RequestIdx, bool bConnectionSuccess, int32 ResponseCode, const FString& ResponseContent) = 0;
+	virtual bool GetResponse(FHttpRequestRef Request, int32 RequestIdx, bool& bOutSuccess, int32& OutCode, FString& OutContent, float& OutResponseTime) = 0;
+	virtual FTimerManager& GetTimerManager() const = 0;
+};
+
 /**
  * Client to Cloud Connection Manager. Authentication details are passed automatically with all required requests.
  */
@@ -24,7 +33,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		ELoginStatus GetLoginStatus() const;
 		bool IsLoggedIn(bool bAllowCurrentLoggingIn = false) const;
 
-		using FRequestCustomizer = TFunction<void(TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)>;
+		using FRequestCustomizer = TFunction<void(FHttpRequestRef& RefRequest)>;
 		using FSuccessCallback = TFunction<void(bool,const TSharedPtr<FJsonObject>&)>;
 		using FErrorCallback = TFunction<void(int32, const FString&)>;
 
@@ -41,8 +50,12 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 
 		void Tick();
 
+		void SetAutomationHandler(ICloudConnectionAutomation* InAutomationHandler);
+
 	private:
-		TSharedRef<IHttpRequest, ESPMode::ThreadSafe> MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure = true);
+		FHttpRequestRef MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure = true, int32* OutRequestAutomationIndexPtr = nullptr);
+		void HandleRequestResponse(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure,
+			bool bSuccessfulConnection, int32 ResponseCode, const FString& ResponseContent);
 
 		static FString GetRequestTypeString(ERequestType RequestType);
 
@@ -50,5 +63,8 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		FString RefreshToken;
 		ELoginStatus LoginStatus = ELoginStatus::Disconnected;
 		FDateTime AuthTokenTimestamp = FDateTime(0);
+		int32 NextRequestAutomationIndex = 0;
+		ICloudConnectionAutomation* AutomationHandler = nullptr;
+
 		const static FTimespan AuthTokenTimeout;
 };

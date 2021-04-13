@@ -79,7 +79,8 @@ bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequest
 		return false;
 	}
 
-	auto Request = MakeRequest(Callback, ServerErrorCallback, bRefreshTokenOnAuthFailure);
+	int32 requestAutomationIndex = INDEX_NONE;
+	auto Request = MakeRequest(Callback, ServerErrorCallback, bRefreshTokenOnAuthFailure, &requestAutomationIndex);
 
 	Request->SetURL(GetCloudAPIURL() + Endpoint);
 	Request->SetVerb(GetRequestTypeString(RequestType));
@@ -87,6 +88,34 @@ bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequest
 	if (Customizer)
 	{
 		Customizer(Request);
+	}
+
+	// Allow an automation handler to log the request, and potentially simulate the stored response to the request.
+	if (AutomationHandler)
+	{
+		AutomationHandler->RecordRequest(Request, requestAutomationIndex);
+
+		// If we're playing back the response as it was logged, then set a timer to handle the response as if we actually received it.
+		float responseTime;
+		bool bAutomatedSuccess;
+		int32 automatedCode;
+		FString automatedContent;
+		if (AutomationHandler->GetResponse(Request, requestAutomationIndex, bAutomatedSuccess, automatedCode, automatedContent, responseTime))
+		{
+			TWeakPtr<FModumateCloudConnection> weakThisCaptured(this->AsShared());
+			FTimerManager& timerManager = AutomationHandler->GetTimerManager();
+			FTimerHandle responseHandlerTimer;
+
+			timerManager.SetTimer(responseHandlerTimer, [weakThisCaptured, Callback, ServerErrorCallback, bRefreshTokenOnAuthFailure, requestAutomationIndex, bAutomatedSuccess, automatedCode, automatedContent]() {
+				TSharedPtr<FModumateCloudConnection> sharedThis = weakThisCaptured.Pin();
+				if (sharedThis.IsValid())
+				{
+					sharedThis->HandleRequestResponse(Callback, ServerErrorCallback, bRefreshTokenOnAuthFailure, bAutomatedSuccess, automatedCode, automatedContent);
+				}
+				}, responseTime, false);
+
+			return true;
+		}
 	}
 
 	return Request->ProcessRequest();
@@ -211,7 +240,7 @@ bool FModumateCloudConnection::Login(const FString& Username, const FString& Pas
 			{
 				return;
 			}
-			bool bInvalidCredentials = (ErrorCode == 401);
+			bool bInvalidCredentials = (ErrorCode == EHttpResponseCodes::Denied);
 			SharedThis->LoginStatus = bInvalidCredentials ? ELoginStatus::InvalidCredentials : ELoginStatus::ConnectionError;
 			ServerErrorCallback(ErrorCode, ErrorString);
 		},
@@ -249,37 +278,34 @@ bool FModumateCloudConnection::UploadReplay(const FString& SessionID, const FStr
 	return Request->ProcessRequest();
 }
 
-TSharedRef<IHttpRequest, ESPMode::ThreadSafe> FModumateCloudConnection::MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure)
+TSharedRef<IHttpRequest, ESPMode::ThreadSafe> FModumateCloudConnection::MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback,
+	bool bRefreshTokenOnAuthFailure, int32* OutRequestAutomationIndexPtr)
 {
+	int32 curRequestAutomationIdx = INDEX_NONE;
+	if (OutRequestAutomationIndexPtr)
+	{
+		curRequestAutomationIdx = NextRequestAutomationIndex++;
+		*OutRequestAutomationIndexPtr = curRequestAutomationIdx;
+	}
+
 	TWeakPtr<FModumateCloudConnection> weakThisCaptured(AsShared());
 	auto Request = FHttpModule::Get().CreateRequest();
-	Request->OnProcessRequestComplete().BindLambda([Callback, ServerErrorCallback, weakThisCaptured, bRefreshTokenOnAuthFailure](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+	Request->OnProcessRequestComplete().BindLambda([Callback, ServerErrorCallback, weakThisCaptured, bRefreshTokenOnAuthFailure, curRequestAutomationIdx]
+	(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 	{
+		int32 code = Response->GetResponseCode();
+		FString content = Response->GetContentAsString();
 		TSharedPtr<FModumateCloudConnection> sharedThis = weakThisCaptured.Pin();
-		if (bWasSuccessful && sharedThis.IsValid())
+
+		if (sharedThis.IsValid())
 		{
-			FString content = Response->GetContentAsString();
-			auto JsonResponse = TJsonReaderFactory<>::Create(content);
-			TSharedPtr<FJsonValue> responseValue;
-			FJsonSerializer::Deserialize(JsonResponse, responseValue);
-
-			int32 code = Response->GetResponseCode();
-			if (code == 200)
+			// If there's an automation handler, then store the response we get for this request so we can potentially play it back.
+			if (sharedThis->AutomationHandler && Request.IsValid() && (curRequestAutomationIdx != INDEX_NONE))
 			{
-				Callback(true, responseValue ? responseValue->AsObject() : nullptr);
+				sharedThis->AutomationHandler->RecordResponse(Request.ToSharedRef(), curRequestAutomationIdx, bWasSuccessful, code, content);
 			}
-			else
-			{
-				// If any request fails due to bad auth, then reset the auth token timestamp so that we re-verify the next chance we get.
-				// TODO: For many requests, it might make more sense to immediately refresh the token from within this function,
-				// and re-try the original request so the callback has a chance to come back successfully.
-				if ((code == 401) && bRefreshTokenOnAuthFailure)
-				{
-					sharedThis->AuthTokenTimestamp = FDateTime(0);
-				}
 
-				ServerErrorCallback(code, responseValue && responseValue->AsObject() ? responseValue->AsObject()->GetStringField(TEXT("error")) : TEXT("null response"));
-			}
+			sharedThis->HandleRequestResponse(Callback, ServerErrorCallback, bRefreshTokenOnAuthFailure, bWasSuccessful, code, content);
 		}
 	});
 
@@ -293,6 +319,31 @@ TSharedRef<IHttpRequest, ESPMode::ThreadSafe> FModumateCloudConnection::MakeRequ
 	}
 
 	return Request;
+}
+
+void FModumateCloudConnection::HandleRequestResponse(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure,
+	bool bSuccessfulConnection, int32 ResponseCode, const FString& ResponseContent)
+{
+	auto JsonResponse = TJsonReaderFactory<>::Create(ResponseContent);
+	TSharedPtr<FJsonValue> responseValue;
+	FJsonSerializer::Deserialize(JsonResponse, responseValue);
+
+	if (ResponseCode == EHttpResponseCodes::Ok)
+	{
+		Callback(true, responseValue ? responseValue->AsObject() : nullptr);
+	}
+	else
+	{
+		// If any request fails due to bad auth, then reset the auth token timestamp so that we re-verify the next chance we get.
+		// TODO: For many requests, it might make more sense to immediately refresh the token from within this function,
+		// and re-try the original request so the callback has a chance to come back successfully.
+		if ((ResponseCode == EHttpResponseCodes::Denied) && bRefreshTokenOnAuthFailure)
+		{
+			AuthTokenTimestamp = FDateTime(0);
+		}
+
+		ServerErrorCallback(ResponseCode, responseValue && responseValue->AsObject() ? responseValue->AsObject()->GetStringField(TEXT("error")) : TEXT("null response"));
+	}
 }
 
 bool FModumateCloudConnection::UploadAnalyticsEvents(const TArray<TSharedPtr<FJsonValue>>& EventsJSON, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
@@ -327,4 +378,10 @@ void FModumateCloudConnection::Tick()
 		AuthTokenTimestamp = FDateTime::Now();
 		RequestAuthTokenRefresh(RefreshToken, [](bool, const TSharedPtr<FJsonObject>&) {}, [](int32, const FString&) {});
 	}
+}
+
+void FModumateCloudConnection::SetAutomationHandler(ICloudConnectionAutomation* InAutomationHandler)
+{
+	AutomationHandler = InAutomationHandler;
+	NextRequestAutomationIndex = 0;
 }

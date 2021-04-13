@@ -4,8 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Containers/Queue.h"
+#include "DocumentManagement/DocumentDelta.h"
+#include "DocumentManagement/ModumateSerialization.h"
 #include "Framework/Commands/InputChord.h"
 #include "Input/Events.h"
+#include "Online/ModumateAccountManager.h"
+#include "Online/ModumateCloudConnection.h"
 
 #include "EditModelInputAutomation.generated.h"
 
@@ -18,7 +23,8 @@ enum class EInputPacketType : uint8
 	None,
 	FrameState,
 	Input,
-	Command
+	Command,
+	Deltas
 };
 
 UENUM()
@@ -71,6 +77,9 @@ struct MODUMATE_API FEditModelInputPacket
 	FVector2D MouseDelta = FVector2D::ZeroVector;
 
 	UPROPERTY()
+	FIntPoint NewViewportSize = FIntPoint::NoneValue;
+
+	UPROPERTY()
 	bool bCursorVisible = true;
 
 	UPROPERTY()
@@ -79,13 +88,52 @@ struct MODUMATE_API FEditModelInputPacket
 	UPROPERTY()
 	FString CommandString;
 
+	UPROPERTY()
+	FDeltasRecord Deltas;
+
 	bool CompareFrameState(const FEditModelInputPacket &Other) const;
+};
+
+USTRUCT()
+struct MODUMATE_API FLoggedCloudRequest
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	int32 Index = INDEX_NONE;
+
+	UPROPERTY()
+	FString URL;
+
+	UPROPERTY()
+	float RequestTimeSeconds = 0.0f;
+
+	UPROPERTY()
+	int32 RequestTimeFrame = 0;
+
+	UPROPERTY()
+	bool bConnectionSuccess = false;
+
+	UPROPERTY()
+	int32 ResponseCode = 0;
+
+	UPROPERTY()
+	FString ResponseContent;
+
+	UPROPERTY()
+	float ResponseTimeSeconds = 0.0f;
+
+	UPROPERTY()
+	int32 ResponseTimeFrame = 0;
 };
 
 USTRUCT()
 struct MODUMATE_API FEditModelInputLog
 {
 	GENERATED_BODY()
+
+	UPROPERTY()
+	int32 ChunkIndex = 0;
 
 	UPROPERTY()
 	FIntPoint ViewportSize;
@@ -98,6 +146,36 @@ struct MODUMATE_API FEditModelInputLog
 
 	UPROPERTY()
 	TArray<FEditModelInputPacket> InputPackets;
+
+	UPROPERTY()
+	TMap<int32, FLoggedCloudRequest> CloudRequests;
+
+	UPROPERTY()
+	bool bRecordedUserData = false;
+
+	UPROPERTY()
+	FModumateUserInfo UserInfo;
+
+	UPROPERTY()
+	FModumateUserStatus UserStatus;
+
+	UPROPERTY()
+	bool bTutorialProject;
+
+	UPROPERTY()
+	FName LoadedWalkthroughCategoryName;
+
+	UPROPERTY()
+	bool bLoadedDocument = false;
+
+	UPROPERTY()
+	FString LoadedDocPath;
+
+	UPROPERTY()
+	FModumateDocumentHeaderV2 LoadedDocHeader;
+	
+	UPROPERTY()
+	FMOIDocumentRecordV4 LoadedDocRecord;
 
 	UPROPERTY()
 	float RecordEndTime;
@@ -119,7 +197,7 @@ enum class EInputAutomationState : uint8
 };
 
 UCLASS(Config = Game)
-class MODUMATE_API UEditModelInputAutomation : public UActorComponent
+class MODUMATE_API UEditModelInputAutomation : public UActorComponent, public ICloudConnectionAutomation
 {
 	GENERATED_BODY()
 
@@ -154,11 +232,21 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsRecording() const { return CurState == EInputAutomationState::Recording; }
 
+	void RecordLoadedProject(const FString& LoadedDocPath, const FModumateDocumentHeader& LoadedDocHeader, const FMOIDocumentRecord& LoadedDocRecord);
+	void RecordLoadedTutorial(bool bLoadedTutorialProject);
+	void RecordLoadedWalkthrough(FName LoadedWalkthroughCategoryName);
+	void RecordUserData(const FModumateUserInfo& UserInfo, const FModumateUserStatus& UserStatus);
 	void RecordCommand(const FString &CommandString);
 	void RecordButton(const FKey& InputKey, EInputEvent InputEvent);
 	void RecordCharInput(const TCHAR InputChar, bool bIsRepeat);
 	void RecordWheelScroll(float ScrollDelta);
 	void RecordMouseMove(const FVector2D& CurPos, const FVector2D& Delta);
+	void RecordDeltas(const TArray<FDeltaPtr>& Deltas);
+
+	bool VerifyAppliedDeltas(const TArray<FDeltaPtr>& Deltas);
+	bool ApplyDeltaRecord(const FDeltasRecord& DeltasRecord);
+
+	bool PostApplyUserDeltas(const TArray<FDeltaPtr>& Deltas);
 
 	TFunction<bool()> MakeSaveLogTask(const FString& InputLogPath) const;
 
@@ -189,7 +277,25 @@ public:
 	UFUNCTION()
 	bool ResizeWindowForViewportSize(int32 Width, int32 Height);
 
+	UFUNCTION()
+	bool IsPlayingRecordedDeltas() const { return IsPlaying() && bShouldPlayRecordedDeltas; }
+
+	UFUNCTION()
+	bool StartPlayingRecordedDeltas();
+
+	UFUNCTION()
+	bool ShouldDocumentSkipDeltas() const;
+
+	UFUNCTION()
+	bool ShouldDocumentVerifyDeltas() const;
+
 	const FString &GetLastLogPath() const { return LastLogPath; }
+
+	// ICloudConnectionAutomation interface
+	virtual bool RecordRequest(FHttpRequestRef Request, int32 RequestIdx) override;
+	virtual bool RecordResponse(FHttpRequestRef Request, int32 RequestIdx, bool bConnectionSuccess, int32 ResponseCode, const FString& ResponseContent) override;
+	virtual bool GetResponse(FHttpRequestRef Request, int32 RequestIdx, bool& bOutSuccess, int32& OutCode, FString& OutContent, float& OutResponseTime) override;
+	virtual FTimerManager& GetTimerManager() const override;
 
 protected:
 	TSharedPtr<class FAutomationCaptureInputProcessor> InputProcessor;
@@ -199,12 +305,19 @@ protected:
 	int32 CurPacketIndex;
 	FEditModelInputLog CurInputLogData;
 	bool bCapturingFrames;
+	int32 FrameCaptureVideoIndex;
+	float FrameCaptureStartTime;
 	float PlaybackSpeed;
 	bool bWillExitOnFrameCaptured;
 	FTimerHandle FrameCaptureSaveTimer;
 	FString LastLogPath;
 	FString FrameCapturePath;
 	class FSceneViewport* SceneViewport;
+
+	bool bShouldPlayRecordedDeltas;
+	bool bApplyingRecordedDeltas;
+	bool bVerifyingDeltas;
+	TQueue<FDeltasRecord> RecordedDeltasToVerify;
 
 	UPROPERTY()
 	class AEditModelPlayerController *EMPlayerController;
@@ -221,6 +334,8 @@ protected:
 	bool SimulateInput(const FEditModelInputPacket& InputPacket);
 	FString GetDefaultInputLogPath(const FString &Extension);
 	bool LoadInputLog(const FString& InputLogPath);
+	void StartRecordingFrames();
+	void SaveRecordedFrames();
 
 	// Need public interface for player controller record
 public:

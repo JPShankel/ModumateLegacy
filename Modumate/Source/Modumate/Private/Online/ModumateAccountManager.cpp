@@ -43,7 +43,7 @@ void FModumateAccountManager::RequestStatus()
 				FModumateUserStatus status;
 				if (FJsonObjectConverter::JsonObjectToUStruct<FModumateUserStatus>(Response.ToSharedRef(),&status))
 				{
-					SharedThis->ProcessUserStatus(status);
+					SharedThis->ProcessUserStatus(status, true);
 				}
 			}
 		},
@@ -56,7 +56,7 @@ void FModumateAccountManager::RequestStatus()
 }
 bool FModumateAccountManager::ShouldRecordTelemetry() const
 { 
-	return CloudConnection && CloudConnection->IsLoggedIn() && UserInfo.Analytics;
+	return CloudConnection && CloudConnection->IsLoggedIn() && CachedUserInfo.Analytics;
 }
 
 bool FModumateAccountManager::HasPermission(EModumatePermission requestedPermission) const
@@ -123,8 +123,10 @@ void FModumateAccountManager::NotifyServiceUse(const FString& ServiceName, const
 	);
 }
 
-void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserStatus)
+void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserStatus, bool bQueryUpdateInstallers)
 {
+	CachedUserStatus = UserStatus;
+
 	static const FString permissionSeparator(TEXT("."));
 	static const FString permissionWildcard(TEXT("*"));
 
@@ -141,7 +143,7 @@ void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserS
 	// Add specific enum permissions to the local account based on incoming server-formatted permission strings,
 	// which are lowercase and can have wildcards after the category.
 	FString permissionCategory, permissionSpecific;
-	for (const FString& permissionServerString: UserStatus.Permissions)
+	for (const FString& permissionServerString: CachedUserStatus.Permissions)
 	{
 		if (permissionServerString.Split(permissionSeparator, &permissionCategory, &permissionSpecific) &&
 			(permissionCategory.Len() > 0) && (permissionSpecific.Len() > 0))
@@ -171,15 +173,18 @@ void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserS
 		}
 	}
 
-	FString version = UserStatus.latest_modumate_version;
+	FString version = CachedUserStatus.latest_modumate_version;
 	if (!version.IsEmpty())
 	{
 		LatestVersion = version;
 	}
 
-	Updater->ProcessLatestInstallers(UserStatus);
+	if (bQueryUpdateInstallers)
+	{
+		Updater->ProcessLatestInstallers(CachedUserStatus);
+	}
 
-	if (UserStatus.Active)
+	if (CachedUserStatus.Active)
 	{
 		CloudConnection->SetLoginStatus(ELoginStatus::Connected);
 	}

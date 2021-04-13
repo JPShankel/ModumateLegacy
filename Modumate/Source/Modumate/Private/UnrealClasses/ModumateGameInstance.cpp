@@ -569,14 +569,15 @@ void UModumateGameInstance::CheckCrashRecovery()
 	FString recoveryFile = FPaths::Combine(UserSettings.GetLocalTempDir(), kModumateRecoveryFile);
 	FString lockFile = FPaths::Combine(UserSettings.GetLocalTempDir(), kModumateCleanShutdownFile);
 
+	const FString& recoveryMessage = LOCTEXT("CrashRecoveryMessage", "It looks like Modumate did not shut down cleanly. Would you like to recover your auto-save file?").ToString();
+	const FString& recoveryTitle = LOCTEXT("CrashRecoveryTitle", "Recovery").ToString();
+
 	// We have both a lock and a recovery file and the user wants to load it
 	// This value is checked in the main menu widget which then decides whether to show the opening menu or go straight to edit level mode
 	// Edit level mode checks this value on BeginPlay
 	RecoveringFromCrash = FPaths::FileExists(lockFile)
 		&& FPaths::FileExists(recoveryFile)
-		&& (Modumate::PlatformFunctions::ShowMessageBox(
-			TEXT("Looks like Modumate did not shut down cleanly. Would you like to recover your auto-save file?"),
-			TEXT("Recovery"), Modumate::PlatformFunctions::YesNo) == Modumate::PlatformFunctions::Yes);
+		&& (FPlatformMisc::MessageBoxExt(EAppMsgType::YesNo, *recoveryMessage, *recoveryTitle) == EAppReturnType::Yes);
 }
 
 void UModumateGameInstance::Login(const FString& UserName, const FString& Password, const FString& RefreshToken, bool bSaveUserName, bool bSaveRefreshToken)
@@ -625,25 +626,34 @@ void UModumateGameInstance::Login(const FString& UserName, const FString& Passwo
 			}
 			else
 			{
-				Modumate::PlatformFunctions::ShowMessageBox(
+				FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
 					TEXT("Unknown network error"),
-					TEXT("Unknown Error"), Modumate::PlatformFunctions::Okay);
+					TEXT("Unknown Error"));
 			}
 		},
 		[bUsingRefreshToken](int32 Code, const FString& Error)
 		{
 			FText messageTitle = LOCTEXT("LoginFailedTitle", "Login Failed");
-			if (bUsingRefreshToken)
+			if (Code == EHttpResponseCodes::Denied)
 			{
-				Modumate::PlatformFunctions::ShowMessageBox(
-					LOCTEXT("LoginFailedInvalidToken", "Your saved credentials have expired - please re-enter your password.").ToString(),
-					messageTitle.ToString(), Modumate::PlatformFunctions::Okay);
+				if (bUsingRefreshToken)
+				{
+					FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
+						*LOCTEXT("LoginFailedInvalidToken", "Your saved credentials have expired - please re-enter your password.").ToString(),
+						*messageTitle.ToString());
+				}
+				else
+				{
+					FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
+						*LOCTEXT("LoginFailedInvalidPassword", "Incorrect user name or password.").ToString(),
+						*messageTitle.ToString());
+				}
 			}
 			else
 			{
-				Modumate::PlatformFunctions::ShowMessageBox(
-					LOCTEXT("LoginFailedInvalidPassword", "Incorrect user name or password.").ToString(),
-					messageTitle.ToString(), Modumate::PlatformFunctions::Okay);
+				FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
+					*LOCTEXT("LoginFailedConnection", "Cannot reach Modumate - please check your internet or try again in a few minutes.").ToString(),
+					*messageTitle.ToString());
 			}
 		}
 	);

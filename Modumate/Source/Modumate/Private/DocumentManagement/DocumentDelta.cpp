@@ -21,3 +21,18 @@ FDeltasRecord::FDeltasRecord(const TArray<FDeltaPtr>& InDeltas)
 		DeltaStructWrappers.Add(deltaPtr->SerializeStruct());
 	}
 }
+
+bool FDeltasRecord::IsEmpty() const
+{
+	return (DeltaStructWrappers.Num() == 0);
+}
+
+bool FDeltasRecord::operator==(const FDeltasRecord& Other) const
+{
+	return DeltaStructWrappers == Other.DeltaStructWrappers;
+}
+
+bool FDeltasRecord::operator!=(const FDeltasRecord& Other) const
+{
+	return !(*this == Other);
+}

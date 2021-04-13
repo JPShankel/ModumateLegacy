@@ -54,9 +54,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Date Time")
 	FDateTime GetCurrentDateTime();
 
-	UFUNCTION(BlueprintCallable, Category = "License")
-	void DisplayShutdownMessage(const FString &str, const FString &caption);
-
 protected:
 	TArray<FString> RecentProjectPaths;
 	TArray<FText> RecentProjectNames;

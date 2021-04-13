@@ -91,7 +91,7 @@ private:
 	FDateTime SessionStartTime;
 	static const FString InputTelemetryDirectory;
 
-	bool StartTelemetrySession(bool bRecordInput);
+	bool StartTelemetrySession(bool bRecordLoadedDocument);
 	bool EndTelemetrySession();
 	bool UploadInputTelemetry(bool bAsynchronous = true) const;
 
@@ -273,6 +273,10 @@ public:
 
 	UFUNCTION()
 	void DebugCrash();
+
+	EAppReturnType::Type ShowMessageBox(EAppMsgType::Type MsgType, const TCHAR* Text, const TCHAR* Caption);
+
+	bool CanShowFileDialog();
 
 	UFUNCTION()
 	void CleanSelectedObjects();

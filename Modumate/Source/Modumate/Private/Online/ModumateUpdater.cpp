@@ -79,11 +79,11 @@ void FModumateUpdater::NotifyUser()
 		const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
 		const FString& currentVersion = projectSettings->ProjectVersion;
 
-		auto response = Modumate::PlatformFunctions::ShowMessageBox(FString::Printf(
+		auto response = FPlatformMisc::MessageBoxExt(EAppMsgType::OkCancel, *FString::Printf(
 			TEXT("A new release of Modumate (v%s) has been downloaded (you are currently using v%s). "
 				"We recommend upgrading immediately.\n\nDo you wish to upgrade now?"), *DownloadVersion, *currentVersion),
-			TEXT("Modumate Upgrade"), Modumate::PlatformFunctions::OkayCancel);
-		if (response == Modumate::PlatformFunctions::Yes)
+			TEXT("Modumate Upgrade"));
+		if (response == EAppReturnType::Ok)
 		{
 			// Run via cmd as it's a UAC executable.
 			FPlatformProcess::CreateProc(TEXT("cmd.exe"), *(TEXT("/c \"") + DownloadFilename + TEXT("\"")), false, false, false, nullptr, 0, TEXT("/"), nullptr);
