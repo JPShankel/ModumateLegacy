@@ -54,8 +54,8 @@ PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,BF634294-BBE0-4643-AD6C-C51DF35BFABE,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 0LayerPattern_1D-16-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-BF634294-BBE0-4643-AD6C-C51DF35BFABE",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x6s @ 16in O.C. (Insulated),,IconLength,64in,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,0LayerPattern_1D-16-Inch O.C.,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Fiber Glass Wool-EDE79C
+BF634294-BBE0-4643-AD6C-C51DF35BFABE",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x6s @ 16in O.C. (Insulated),,IconLength,64in,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,0LayerPattern_1D-16-Inch O.C.,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Fiber Glass Wool-EDE79C,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,20F179D9-6D3F-4746-A632-199EE7278AB5,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
@@ -279,6 +279,12 @@ Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thi
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
 8AAAFBBF-8CB7-0D46-9BFB-AD57AEB08BAE",,Assembly_2FlexDims1Fixed_PlanarPattern,,15/32in Plywood Boards,,IconLength,64in,,0LayerPattern_2D-Running Bond,,,,,0LayerPattern_2D-Running Bond,Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.46875in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-FFFFFF,Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,F4759892-13D2-C84A-BB52-8A29A074D130,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.71875in-BevelWidth-0in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+F4759892-13D2-C84A-BB52-8A29A074D130",,Assembly_2FlexDims1Fixed_PlanarPattern,,23/32in Plywood Boards,,IconLength,64in,,0LayerPattern_2D-Running Bond,,,,,0LayerPattern_2D-Running Bond,Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.71875in-BevelWidth-0in-Finish1-0RawMaterial-Plywood-FFFFFF,Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,F04D30DA-0328-644B-81B1-7C411CA7325E,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Plank_Engineered Wood-Length-32in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-0RawMaterial-Teak-FFFFFF
 0LayerPattern_2D-Running Bond
@@ -290,6 +296,12 @@ Part_0FlexDims3Fixed_ModulePlanar_Plank_Engineered Wood-Length-32in-Width-5in-Th
 0LayerPattern_2D-Cascading Thirds
 Part_1FlexDim2Fixed_Gap2D-Width-0.125in-Recess-0in-Finish1-0RawMaterial-Mortar-C6C6C6
 2A34A3D2-D703-9E43-923B-00FF9C6797DE",,Assembly_2FlexDims1Fixed_PlanarPattern,,"5x32in Engineered Teak Planks, Cascading Thirds",,IconLength,64in,,0LayerPattern_2D-Cascading Thirds,,,,,0LayerPattern_2D-Cascading Thirds,Part_0FlexDims3Fixed_ModulePlanar_Plank_Engineered Wood-Length-32in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-0RawMaterial-Teak-FFFFFF,Part_1FlexDim2Fixed_Gap2D-Width-0.125in-Recess-0in-Finish1-0RawMaterial-Mortar-C6C6C6,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,6F6E032F-850E-354A-BB0A-A4514790B6EC,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Plank_Engineered Wood-Length-32in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-0RawMaterial-Bamboo-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0.125in-Recess-0in-Finish1-0RawMaterial-Mortar-C6C6C6
+6F6E032F-850E-354A-BB0A-A4514790B6EC",,Assembly_2FlexDims1Fixed_PlanarPattern,,"5x32in Engineered Bamboo Planks, Running Bond",,IconLength,64in,,0LayerPattern_2D-Running Bond,,,,,0LayerPattern_2D-Running Bond,Part_0FlexDims3Fixed_ModulePlanar_Plank_Engineered Wood-Length-32in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-0RawMaterial-Bamboo-FFFFFF,Part_1FlexDim2Fixed_Gap2D-Width-0.125in-Recess-0in-Finish1-0RawMaterial-Mortar-C6C6C6,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,20A08085-FD5E-374A-8382-901CAAF065FF,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Plank_Wood-Length-48in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cedar (White)-FFFFFF
