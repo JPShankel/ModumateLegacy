@@ -3,6 +3,7 @@
 #include "Drafting/Drawings/DrawingArea.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Drafting/ModumateDraftingTags.h"
+#include "Drafting/ModumateDimensions.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "Algo/Copy.h"
@@ -261,6 +262,7 @@ namespace Modumate {
 		TArray<FVector2D> cached2DPositions;
 		FVector origin = intersection[0];
 		UModumateGeometryStatics::AnalyzeCachedPositions(intersection, plane, axisX, axisY, cached2DPositions, center);
+		const bool bHorizontalPlan = FVector::Parallel(plane, FVector::UpVector);
 
 		TArray<FVector2D> boxPoints;
 		for (auto& point : intersection)
@@ -279,7 +281,7 @@ namespace Modumate {
 		TSharedPtr<FDraftingComposite> foregroundLines = MakeShareable(new FDraftingComposite());
 		TArray<TArray<FVector>> outPerimeters;
 
-		if (!FVector::Parallel(cutPlane->GetNormal(), FVector::UpVector))
+		if (!bHorizontalPlan)
 		{
 			axisX *= -1.0f;
 			axisY *= -1.0f;
@@ -288,12 +290,29 @@ namespace Modumate {
 
 		foregroundLines->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);
 
-		if (!FVector::Parallel(FVector(plane), FVector::UpVector))
+		if (!bHorizontalPlan)
 		{
 			foregroundLines->MoveXTo(dimensions.X);
 			foregroundLines->MoveYTo(dimensions.Y);
 		}
 		totalPage->Children.Add(foregroundLines);
+
+		// TODO: Enable plan dimensions MOD-726.
+#if 0
+		TSharedPtr<FDraftingComposite> planDimensions = MakeShared<FDraftingComposite>();
+		planDimensions->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);
+		FModumateDimensions dimensionsCreator;
+
+		if (dimensionsCreator.AddDimensionsFromCutPlane(planDimensions, Doc, plane, origin, axisX))
+		{
+			if (!bHorizontalPlan)
+			{
+				planDimensions->MoveXTo(dimensions.X);
+				planDimensions->MoveYTo(dimensions.Y);
+			}
+			totalPage->Children.Add(planDimensions);
+		}
+#endif
 
 		section->Children.Add(totalPage);
 

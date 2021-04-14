@@ -39,7 +39,10 @@ namespace Modumate
 		kDebug1,
 		kDebug2,
 		kSeparatorCutEndCaps,
-		kFinalLayerType = kSeparatorCutEndCaps
+		kDimensionMassing,
+		kDimensionFraming,
+		kDimensionOpening,
+		kFinalLayerType = kDimensionOpening
 	};
 
 }

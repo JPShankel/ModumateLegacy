@@ -293,4 +293,32 @@ namespace Modumate
 		}
 	}
 
+	Modumate::EDrawError FModumateDwgDraw::AddDimension(
+		const ModumateUnitParams::FXCoord& startx,
+		const ModumateUnitParams::FXCoord& starty,
+		const ModumateUnitParams::FXCoord& endx,
+		const ModumateUnitParams::FXCoord& endy,
+		const ModumateUnitParams::FXCoord& positionx,
+		const ModumateUnitParams::FXCoord& positiony,
+		const FMColor& color,
+		FModumateLayerType layerType /*= FModumateLayerType::kDefault*/)
+	{
+		FValueArray dimParams;
+		dimParams.Add(MakeShared<FJsonValueNumber>(startx.AsWorldInches()));
+		dimParams.Add(MakeShared<FJsonValueNumber>(starty.AsWorldInches()));
+		dimParams.Add(MakeShared<FJsonValueNumber>(endx.AsWorldInches()));
+		dimParams.Add(MakeShared<FJsonValueNumber>(endy.AsWorldInches()));
+		dimParams.Add(MakeShared<FJsonValueNumber>(positionx.AsWorldInches()));
+		dimParams.Add(MakeShared<FJsonValueNumber>(positiony.AsWorldInches()));
+
+		dimParams.Add(ColorToJson(color));
+		dimParams.Add(MakeShared<FJsonValueNumber>(int(layerType)));
+
+		auto dimensionJsonObject = MakeShared<FJsonObject>();
+		dimensionJsonObject->SetArrayField("dimension", dimParams);
+		JsonDocument.Last().Add(MakeShared<FJsonValueObject>(dimensionJsonObject));
+
+		return EDrawError::ErrorNone;
+	}
+
 }

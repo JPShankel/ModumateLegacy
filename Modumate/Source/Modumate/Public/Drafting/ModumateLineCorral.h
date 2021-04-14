@@ -96,6 +96,13 @@ public:
 
 	static int LinePriorities[];
 
+
+	virtual Modumate::EDrawError AddDimension(const ModumateUnitParams::FXCoord& startx,
+		const ModumateUnitParams::FXCoord& starty,
+		const ModumateUnitParams::FXCoord& endx, const ModumateUnitParams::FXCoord& endy,
+		const ModumateUnitParams::FXCoord& positionx, const ModumateUnitParams::FXCoord& positiony, const Modumate::FMColor& color,
+		Modumate::FModumateLayerType layerType = Modumate::FModumateLayerType::kDefault) override;
+
 private:
 	static const Modumate::FModumateLayerType LayerTypeOrder[];
 	static TAtomic<int32> InitPriorities;

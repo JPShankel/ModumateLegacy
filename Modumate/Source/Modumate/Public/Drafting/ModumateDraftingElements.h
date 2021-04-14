@@ -435,4 +435,23 @@ namespace Modumate
 	public:
 		FString Path;
 	};
+
+	class FDimensionPrimitive : public FDraftingElement
+	{
+	public:
+		FDimensionPrimitive(FModumateUnitCoord2D start, FModumateUnitCoord2D end, FModumateUnitCoord2D position, FMColor color = FMColor::Black);
+
+		virtual ~FDimensionPrimitive() { }
+
+		virtual EDrawError Draw(IModumateDraftingDraw* drawingInterface,
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
+			float scale = 1.0f) override;
+
+	public:
+		FModumateUnitCoord2D Start;
+		FModumateUnitCoord2D End;
+		FModumateUnitCoord2D StringPosition;
+		FMColor Color;
+	};
 }

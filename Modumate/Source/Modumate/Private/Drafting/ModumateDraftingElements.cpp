@@ -105,7 +105,7 @@ namespace Modumate
 		ApplyTransform(drawingInterface, position, orientation, scale);
 
 		// draw all children with the calculated basis
-		for (auto child : Children)
+		for (auto& child : Children)
 		{
 			// skip drawing the child if the bounding box is disjoint from the viewport
 			if (child->BoundingBox.bIsValid && drawingInterface->Viewport.bIsValid && !drawingInterface->Viewport.Intersect(child->BoundingBox))
@@ -142,7 +142,7 @@ namespace Modumate
 			return error;
 		}
 
-		for (auto child : Children)
+		for (auto& child : Children)
 		{
 			error = child->InitializeBounds(drawingInterface);
 
@@ -899,4 +899,48 @@ namespace Modumate
 
 		return EDrawError::ErrorNone;
 	}
+
+	FDimensionPrimitive::FDimensionPrimitive(FModumateUnitCoord2D start,
+		FModumateUnitCoord2D end,
+		FModumateUnitCoord2D position,
+		FMColor color /*= FMColor::Black*/)
+		: Start(start), End(end), StringPosition(position), Color(color)
+	{ }
+
+	Modumate::EDrawError FDimensionPrimitive::Draw(IModumateDraftingDraw* drawingInterface,
+		FModumateUnitCoord2D position /*= FModumateUnitCoord2D()*/,
+		ModumateUnitParams::FAngle orientation /*= ModumateUnitParams::FAngle::Radians(0)*/,
+		float scale /*= 1.0f*/)
+	{
+		EDrawError error = EDrawError::ErrorNone;
+		if (drawingInterface == nullptr)
+		{
+			error = EDrawError::ErrorBadParam;
+			return error;
+		}
+
+		ApplyTransform(drawingInterface, position, orientation, scale);
+
+		FVector2D pos(position.X.AsWorldCentimeters(drawingInterface->DrawingScale), position.Y.AsWorldCentimeters(drawingInterface->DrawingScale));
+		FTransform2D xform(FQuat2D(orientation.AsRadians()) );
+		xform.Concatenate(FTransform2D(scale));
+		xform.SetTranslation(pos);
+
+		FVector2D P1(Start.X.AsWorldCentimeters(drawingInterface->DrawingScale), Start.Y.AsWorldCentimeters(drawingInterface->DrawingScale));
+		FVector2D P2(End.X.AsWorldCentimeters(drawingInterface->DrawingScale), End.Y.AsWorldCentimeters(drawingInterface->DrawingScale));
+		FVector2D P3(StringPosition.X.AsWorldCentimeters(drawingInterface->DrawingScale), StringPosition.Y.AsWorldCentimeters(drawingInterface->DrawingScale));
+		P1 = xform.TransformPoint(P1);
+		P2 = xform.TransformPoint(P2);
+		P3 = xform.TransformPoint(P3);
+
+		return drawingInterface->AddDimension(
+			ModumateUnitParams::FXCoord::WorldCentimeters(P1.X),
+			ModumateUnitParams::FXCoord::WorldCentimeters(P1.Y),
+			ModumateUnitParams::FXCoord::WorldCentimeters(P2.X),
+			ModumateUnitParams::FXCoord::WorldCentimeters(P2.Y),
+			ModumateUnitParams::FXCoord::WorldCentimeters(P3.X),
+			ModumateUnitParams::FXCoord::WorldCentimeters(P3.Y),
+			Color, LayerType);
+	}
+
 }

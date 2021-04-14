@@ -100,6 +100,9 @@ namespace Modumate
 
 		const TArray<FString>& GetImages() const { return ImageFilepaths; }
 
+
+		virtual EDrawError AddDimension(const ModumateUnitParams::FXCoord& startx, const ModumateUnitParams::FXCoord& starty, const ModumateUnitParams::FXCoord& endx, const ModumateUnitParams::FXCoord& endy, const ModumateUnitParams::FXCoord& positionx, const ModumateUnitParams::FXCoord& positiony, const FMColor& color, FModumateLayerType layerType = FModumateLayerType::kDefault) override;
+
 	private:
 		using FJsonValuePtr = TSharedPtr<FJsonValue>;
 		using FValueArray = TArray<FJsonValuePtr>;

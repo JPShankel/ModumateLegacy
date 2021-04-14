@@ -195,6 +195,11 @@ Modumate::EDrawError FModumateLineCorral::FillCircle(
 	return Next->FillCircle(cx, cy, radius, color, layerType);
 }
 
+Modumate::EDrawError FModumateLineCorral::AddDimension(const ModumateUnitParams::FXCoord& startx, const ModumateUnitParams::FXCoord& starty, const ModumateUnitParams::FXCoord& endx, const ModumateUnitParams::FXCoord& endy, const ModumateUnitParams::FXCoord& positionx, const ModumateUnitParams::FXCoord& positiony, const FMColor& color, FModumateLayerType layerType /*= FModumateLayerType::kDefault*/)
+{
+	return Next->AddDimension(startx, starty, endx, endy, positionx, positiony, color, layerType);
+}
+
 bool FModumateLineCorral::StartPage(int32 pageNumber, float widthInches, float heightInches, FString pageName)
 {
 	ProcessLines();

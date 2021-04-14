@@ -154,6 +154,17 @@ namespace Modumate
 			FModumateLayerType layerType = FModumateLayerType::kDefault
 		) = 0;
 
+		virtual EDrawError AddDimension(
+			const ModumateUnitParams::FXCoord& startx,
+			const ModumateUnitParams::FXCoord& starty,
+			const ModumateUnitParams::FXCoord& endx,
+			const ModumateUnitParams::FXCoord& endy,
+			const ModumateUnitParams::FXCoord& positionx,
+			const ModumateUnitParams::FXCoord& positiony,
+			const FMColor &color,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
+		) { return EDrawError::ErrorNone; }
+
 		virtual bool StartPage(int32 pageNumber, float widthInches, float heightInches, FString pageName = FString())
 		{ return true; }
 
