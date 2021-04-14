@@ -381,7 +381,7 @@ TArray<FString> UModumateDimensionStatics::DecimalToFraction_DEPRECATED(float in
 
 FString UModumateDimensionStatics::DecimalToFractionString_DEPRECATED(float inches, bool bFormat, bool bSplitWholeNumber, EDimensionUnits UnitType, EUnit OverrideUnit, int32 maxDenom)
 {
-	return UModumateDimensionStatics::CentimetersToDisplayText(inches * UModumateDimensionStatics::InchesToCentimeters, UnitType, OverrideUnit, maxDenom).ToString();
+	return UModumateDimensionStatics::CentimetersToDisplayText(inches * UModumateDimensionStatics::InchesToCentimeters, 1, UnitType, OverrideUnit, maxDenom).ToString();
 }
 
 bool UModumateDimensionStatics::RoundDecimal(double InValue, double& OutRounded, int32 NumRoundingDigits, double Tolerance)
@@ -452,7 +452,7 @@ bool UModumateDimensionStatics::RoundFraction(double InValue, int32& OutInteger,
 	return true;
 }
 
-FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, EDimensionUnits UnitType, EUnit OverrideUnit,
+FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, int32 Dimensionality, EDimensionUnits UnitType, EUnit OverrideUnit,
 	int32 MaxDenomPower, double FractionalTolerance, int32 NumRoundingDigits, int32 NumDisplayDigits)
 {
 	bool bNegative = LengthInches < 0;
@@ -460,6 +460,15 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, EDimen
 	{
 		LengthInches *= -1.0;
 	}
+
+	FText dimPrefix;
+	FText feetIndicator,inchesIndicator;
+	switch (Dimensionality)
+	{
+	case 2: dimPrefix = LOCTEXT("Dimensionality2", "sq."); feetIndicator = LOCTEXT("DimensionalityFt", "ft."); inchesIndicator = LOCTEXT("DimensionalityIn", "in."); break;
+	case 3: dimPrefix = LOCTEXT("Dimensionality3", "cu."); feetIndicator = LOCTEXT("DimensionalityFt", "ft."); inchesIndicator = LOCTEXT("DimensionalityIn", "in."); break;
+	default: feetIndicator = LOCTEXT("DimensionalitySingleQuote", "'"); inchesIndicator = LOCTEXT("DimensionalityDoubleQuote", "\"");
+	};
 
 	// Set up the fallback decimal formatting for both imperial and metric formats.
 	FNumberFormattingOptions decimalFormat;
@@ -471,38 +480,39 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, EDimen
 	{
 	case EDimensionUnits::DU_Imperial:
 	{
-		double lengthFeet = LengthInches / InchesPerFoot;
+		double inchesPerFootDim = FMath::Pow(InchesPerFoot, Dimensionality);
+		double lengthFeet = LengthInches / inchesPerFootDim;
 		int32 lengthFeetComponent = FMath::TruncToInt(lengthFeet);
-		double lengthInchesComponent = LengthInches - (lengthFeetComponent * InchesPerFoot);
+		double lengthInchesComponent = LengthInches - (lengthFeetComponent * inchesPerFootDim);
 
 		// First, try to express the inches component of the length as a mixed number, potentially starting with the feet beforehand.
 		int32 inchesInt, inchesNumerator, inchesDenom;
 		if (RoundFraction(lengthInchesComponent, inchesInt, inchesNumerator, inchesDenom, MaxDenomPower, FractionalTolerance))
 		{
-			if (inchesInt == InchesPerFoot)
+			if (inchesInt == inchesPerFootDim)
 			{
 				lengthFeetComponent++;
 				inchesInt = 0;
 			}
 
 			FText signText = bNegative ? FText::FromString(TEXT("-")) : FText::GetEmpty();
-			FText feetText = (lengthFeetComponent > 0) ? FText::Format(LOCTEXT("feet", "{0}'"), lengthFeetComponent) : FText::GetEmpty();
+			FText feetText = (lengthFeetComponent > 0) ? FText::Format(LOCTEXT("feet", "{0}{1}{2}"), lengthFeetComponent, dimPrefix,feetIndicator) : FText::GetEmpty();
 			FText inchesText;
 
 			if (inchesNumerator != 0)
 			{
 				if (inchesInt != 0)
 				{
-					inchesText = FText::Format(LOCTEXT("inches_with_frac", "{0} {1}/{2}\""), inchesInt, inchesNumerator, inchesDenom);
+					inchesText = FText::Format(LOCTEXT("inches_with_frac", "{0} {1}/{2}{3}{4})"), inchesInt, inchesNumerator, inchesDenom, dimPrefix,inchesIndicator);
 				}
 				else
 				{
-					inchesText = FText::Format(LOCTEXT("inches_only_frac", "{0}/{1}\""), inchesNumerator, inchesDenom);
+					inchesText = FText::Format(LOCTEXT("inches_only_frac", "{0}/{1}{3}{4}"), inchesNumerator, inchesDenom, dimPrefix,inchesIndicator);
 				}
 			}
 			else
 			{
-				inchesText = FText::Format(LOCTEXT("inches", "{0}\""), inchesInt);
+				inchesText = FText::Format(LOCTEXT("inches", "{0}{1}{2}"), inchesInt, dimPrefix,inchesIndicator);
 			}
 
 			// if there are both feet and inches, separate with a hyphen, otherwise use the one that exists
@@ -530,19 +540,19 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, EDimen
 		if (lengthFeetComponent > 0)
 		{
 			decimalLength = lengthFeet;
-			decimalSuffix = LOCTEXT("decimal_feet_suffix", "'");
+			decimalSuffix = FText::Format(LOCTEXT("decimal_feet_suffix", "{0}{1}"), dimPrefix,feetIndicator);
 			decimalFormat.MaximumFractionalDigits++;
 		}
 		else
 		{
 			decimalLength = LengthInches;
-			decimalSuffix = LOCTEXT("decimal_inches_suffix", "\"");
+			decimalSuffix = FText::Format(LOCTEXT("decimal_inches_suffix", "{0}{1}"), dimPrefix,inchesIndicator);
 		}
 	}
 	break;
 	case EDimensionUnits::DU_Metric:
 	{
-		double lengthCM = LengthInches * UModumateDimensionStatics::InchesToCentimeters;
+		double lengthCM = LengthInches * FMath::Pow(UModumateDimensionStatics::InchesToCentimeters,Dimensionality);
 		double lengthCMRounded;
 		if (RoundDecimal(lengthCM, lengthCMRounded, NumRoundingDigits))
 		{
@@ -571,16 +581,16 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, EDimen
 		switch (displayUnit)
 		{
 		case EUnit::Millimeters:
-			conversionFromCM = 10.0;
-			decimalSuffix = LOCTEXT("MetricSuffixMM", "mm");
+			conversionFromCM = FMath::Pow(10.0,Dimensionality);
+			decimalSuffix = Dimensionality > 1 ? FText::Format(LOCTEXT("MetricSuffixMM", "mm{0}"),Dimensionality) : LOCTEXT("MetricSuffixMM", "mm");
 			decimalFormat.MaximumFractionalDigits--;
 			break;
 		case EUnit::Centimeters:
 			decimalSuffix = LOCTEXT("MetricSuffixCM", "cm");
 			break;
 		case EUnit::Meters:
-			conversionFromCM = 0.01;
-			decimalSuffix = LOCTEXT("MetricSuffixM", "m");
+			conversionFromCM = FMath::Pow(0.01,Dimensionality);
+			decimalSuffix = Dimensionality > 1 ? FText::Format(LOCTEXT("MetricSuffixM", "m{0}"), Dimensionality) : LOCTEXT("MetricSuffixM", "m");
 			decimalFormat.MaximumFractionalDigits += 2;
 			break;
 		default:
@@ -597,10 +607,10 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, EDimen
 	return FText::Format(LOCTEXT("decimal_format", "{0}{1}"), FText::AsNumber(decimalLength, &decimalFormat), decimalSuffix);
 }
 
-FText UModumateDimensionStatics::CentimetersToDisplayText(double LengthCM,
+FText UModumateDimensionStatics::CentimetersToDisplayText(double LengthCM, int32 Dimensionality,
 	EDimensionUnits UnitType, EUnit OverrideUnit, int32 MaxDenomPower, double FractionalTolerance, int32 NumRoundingDigits, int32 NumDisplayDigits)
 {
-	return UModumateDimensionStatics::InchesToDisplayText(LengthCM * UModumateDimensionStatics::CentimetersToInches,
+	return UModumateDimensionStatics::InchesToDisplayText(LengthCM * FMath::Pow(UModumateDimensionStatics::CentimetersToInches,Dimensionality), Dimensionality,
 		UnitType, OverrideUnit, MaxDenomPower, FractionalTolerance, NumRoundingDigits, NumDisplayDigits);
 }
 

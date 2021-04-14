@@ -98,7 +98,7 @@ void UDimensionWidget::UpdateText(float length)
 {
 	if (length != LastMeasurement)
 	{
-		FText newText = UModumateDimensionStatics::CentimetersToDisplayText(length, DisplayUnitType, DisplayOverrideUnit);
+		FText newText = UModumateDimensionStatics::CentimetersToDisplayText(length, 1, DisplayUnitType, DisplayOverrideUnit);
 		Measurement->SetText(newText);
 		LastCommittedText = newText;
 		LastMeasurement = length;

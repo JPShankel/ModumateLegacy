@@ -66,12 +66,14 @@ public:
 	static bool RoundFraction(double InValue, int32& OutInteger, int32& OutNumerator, int32& OutDenom, int32 MaxDenomPower = DefaultFractionMaxDenomPow, double Tolerance = DefaultRoundingTolerance);
 
 	UFUNCTION()
-	static FText InchesToDisplayText(double LengthInches, EDimensionUnits UnitType = EDimensionUnits::DU_Imperial, EUnit OverrideUnit = EUnit::Unspecified,
-		int32 MaxDenomPower = DefaultFractionMaxDenomPow, double FractionalTolerance = DefaultRoundingTolerance, int32 NumRoundingDigits = DefaultRoundingDigits, int32 NumDisplayDigits = DefaultDisplayDigits);
+	static FText InchesToDisplayText(double LengthInches, int32 Dimensionality = 1, EDimensionUnits UnitType = EDimensionUnits::DU_Imperial, EUnit OverrideUnit = EUnit::Unspecified,
+		int32 MaxDenomPower = DefaultFractionMaxDenomPow, double FractionalTolerance = DefaultRoundingTolerance, int32 NumRoundingDigits = DefaultRoundingDigits, 
+		int32 NumDisplayDigits = DefaultDisplayDigits);
 
 	UFUNCTION()
-	static FText CentimetersToDisplayText(double LengthCM, EDimensionUnits UnitType = EDimensionUnits::DU_Imperial, EUnit OverrideUnit = EUnit::Unspecified,
-		int32 MaxDenomPower = DefaultFractionMaxDenomPow, double FractionalTolerance = DefaultRoundingTolerance, int32 NumRoundingDigits = DefaultRoundingDigits, int32 NumDisplayDigits = DefaultDisplayDigits);
+	static FText CentimetersToDisplayText(double LengthCM, int32 Dimensionality = 1, EDimensionUnits UnitType = EDimensionUnits::DU_Imperial, EUnit OverrideUnit = EUnit::Unspecified,
+		int32 MaxDenomPower = DefaultFractionMaxDenomPow, double FractionalTolerance = DefaultRoundingTolerance, int32 NumRoundingDigits = DefaultRoundingDigits, 
+		int32 NumDisplayDigits = DefaultDisplayDigits);
 
 	UFUNCTION()
 	static float CentimetersToInches64(double Centimeters);

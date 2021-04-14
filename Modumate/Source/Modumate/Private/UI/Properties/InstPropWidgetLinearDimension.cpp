@@ -45,7 +45,7 @@ void UInstPropWidgetLinearDimension::DisplayValue()
 			return;
 		}
 
-		FText valueText = UModumateDimensionStatics::CentimetersToDisplayText(CurrentValue,
+		FText valueText = UModumateDimensionStatics::CentimetersToDisplayText(CurrentValue,1,
 			gameInstance->UserSettings.PreferredDimensionType, gameInstance->UserSettings.PreferredDimensionUnit,
 			DisplayFractionDenomPow,
 			UModumateDimensionStatics::DefaultRoundingTolerance, UModumateDimensionStatics::DefaultRoundingDigits,

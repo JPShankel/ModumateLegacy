@@ -42,6 +42,9 @@ public:
 	class UImage* IconImageSmall;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UOverlay* OverlayIconSmall;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlockUserWidget* MainText;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))

@@ -9,6 +9,7 @@
 #include "Components/VerticalBox.h"
 #include "Components/Border.h"
 #include "Components/BorderSlot.h"
+#include "Graph/Graph3DFace.h"
 #include "UI/PresetCard/PresetCardHeader.h"
 #include "UI/PresetCard/PresetCardPropertyList.h"
 #include "UI/PresetCard/PresetCardObjectList.h"
@@ -17,6 +18,7 @@
 #include "UI/LeftMenu/NCPNavigator.h"
 #include "UI/LeftMenu/BrowserItemObj.h"
 #include "UI/PresetCard/PresetCardQuantityList.h"
+#include "UI/PresetCard/PresetCardMetaDimension.h"
 #include "UI/PresetCard/PresetCardItemObject.h"
 #include "UI/SelectionTray/SelectionTrayBlockPresetList.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
@@ -202,32 +204,75 @@ void UPresetCardMain::BuildAsExpandedPresetCard(const FGuid& InPresetKey)
 	}
 	ToggleMainButtonInteraction(true);
 
-	UPresetCardPropertyList* newPropertyListWidget = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardPropertyList>(PresetCardPropertyListClass);
-	if (newPropertyListWidget)
+	// If the GUID is a preset, this is a MOI with an assembly so build property list
+	if (EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID))
 	{
-		DynamicVerticalBox->AddChildToVerticalBox(newPropertyListWidget);
-		newPropertyListWidget->BuildAsPropertyList(PresetGUID, false);
-	}
+		UPresetCardPropertyList* newPropertyListWidget = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardPropertyList>(PresetCardPropertyListClass);
+		if (newPropertyListWidget)
+		{
+			DynamicVerticalBox->AddChildToVerticalBox(newPropertyListWidget);
+			newPropertyListWidget->BuildAsPropertyList(PresetGUID, false);
+		}
 
-	UPresetCardObjectList* newDescendentList = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardObjectList>(PresetCardObjectListClass);
-	if (newDescendentList)
-	{
-		DynamicVerticalBox->AddChildToVerticalBox(newDescendentList);
-		newDescendentList->BuildAsDescendentList(PresetGUID, false);
-	}
+		UPresetCardObjectList* newDescendentList = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardObjectList>(PresetCardObjectListClass);
+		if (newDescendentList)
+		{
+			DynamicVerticalBox->AddChildToVerticalBox(newDescendentList);
+			newDescendentList->BuildAsDescendentList(PresetGUID, false);
+		}
 
-	UPresetCardObjectList* newAncestorList = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardObjectList>(PresetCardObjectListClass);
-	if (newAncestorList)
-	{
-		DynamicVerticalBox->AddChildToVerticalBox(newAncestorList);
-		newAncestorList->BuildAsAncestorList(PresetGUID, false);
-	}
+		UPresetCardObjectList* newAncestorList = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardObjectList>(PresetCardObjectListClass);
+		if (newAncestorList)
+		{
+			DynamicVerticalBox->AddChildToVerticalBox(newAncestorList);
+			newAncestorList->BuildAsAncestorList(PresetGUID, false);
+		}
 
-	UPresetCardQuantityList* newQuantityList = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardQuantityList>(PresetCardQuantityListClass);
-	if (newQuantityList)
+		UPresetCardQuantityList* newQuantityList = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardQuantityList>(PresetCardQuantityListClass);
+		if (newQuantityList)
+		{
+			DynamicVerticalBox->AddChildToVerticalBox(newQuantityList);
+			newQuantityList->BuildAsQuantityList(PresetGUID, false);
+		}
+	}
+	// Otherwise, if this is a meta edge or plane, build a dimension card...meta vertices have no card
+	else if (ParentPresetCardItemObj && (ParentPresetCardItemObj->ObjectType == EObjectType::OTMetaEdge || ParentPresetCardItemObj->ObjectType == EObjectType::OTMetaPlane))
 	{
-		DynamicVerticalBox->AddChildToVerticalBox(newQuantityList);
-		newQuantityList->BuildAsQuantityList(PresetGUID, false);
+		UPresetCardMetaDimension* newDimensionWidget = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardMetaDimension>(PresetCardMetaDimensionClass);
+		if (newDimensionWidget)
+		{
+			DynamicVerticalBox->AddChildToVerticalBox(newDimensionWidget);
+			TSet<AModumateObjectInstance*>& obs = EMPlayerController->EMPlayerState->SelectedObjects;
+			auto* doc = EMPlayerController->GetDocument();
+			if (ParentPresetCardItemObj->ObjectType == EObjectType::OTMetaPlane)
+			{
+				float totalArea = 0.0f;
+				for (auto& ob : obs)
+				{
+					if (ob->GetAssembly().ObjectType == EObjectType::OTMetaPlane)
+					{
+						const Modumate::FGraph3DFace* face = doc->GetVolumeGraph().FindFace(ob->ID);
+						if (ensureAlways(face != nullptr))
+						{
+							totalArea += face->CalculateArea();
+						}
+					}
+				}
+				newDimensionWidget->BuildAsMetaDimension(ParentPresetCardItemObj->ObjectType, totalArea);
+			}
+			else if (ParentPresetCardItemObj->ObjectType == EObjectType::OTMetaEdge)
+			{
+				float totalLength = 0.0f;
+				for (auto& ob : obs)
+				{
+					if (ob->GetAssembly().ObjectType == EObjectType::OTMetaEdge && ob->GetNumCorners() > 1)
+					{
+						totalLength += (ob->GetCorner(0) - ob->GetCorner(1)).Size();
+					}
+				}
+				newDimensionWidget->BuildAsMetaDimension(ParentPresetCardItemObj->ObjectType, totalLength);
+			}
+		}
 	}
 
 	// Set padding

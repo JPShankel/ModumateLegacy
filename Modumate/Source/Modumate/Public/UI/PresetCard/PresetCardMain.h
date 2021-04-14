@@ -101,6 +101,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UPresetCardQuantityList> PresetCardQuantityListClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UPresetCardMetaDimension> PresetCardMetaDimensionClass;
+
 	UFUNCTION()
 	void OnMainButtonReleased();
 

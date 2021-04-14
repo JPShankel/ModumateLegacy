@@ -4,6 +4,8 @@
 
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Graph/Graph2D.h"
+#include "Polygon2.h"
+#include "Algo/Accumulate.h"
 
 namespace Modumate
 {
@@ -524,5 +526,17 @@ namespace Modumate
 		}
 
 		return true;
+	}
+
+	float FGraph3DFace::CalculateArea() const
+	{
+		auto verticesToTPoly = [](const TArray<FVector2D>& Vertices)
+		{
+			TArray<FVector2f> convertedVertices;
+			Algo::Transform(Vertices, convertedVertices, [](const FVector2D& Vector) {return Vector; });
+			return FPolygon2f(convertedVertices).Area();
+		};
+
+		return verticesToTPoly(Cached2DPositions) - Algo::TransformAccumulate(Cached2DHoles, [verticesToTPoly](const FPolyHole2D& hole) { return verticesToTPoly(hole.Points); },0.0f);
 	}
 }

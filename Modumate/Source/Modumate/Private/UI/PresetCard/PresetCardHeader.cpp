@@ -6,6 +6,7 @@
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "Components/Image.h"
+#include "Components/Overlay.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
@@ -140,6 +141,7 @@ void UPresetCardHeader::UpdateOptionButtonSetByPresetCardType(EPresetCardType In
 	ButtonEdit->SetVisibility(ESlateVisibility::Collapsed);
 	ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
 	ButtonDuplicate->SetVisibility(ESlateVisibility::Collapsed);
+	OverlayIconSmall->SetVisibility(ESlateVisibility::Collapsed);
 
 	if (bHideAllOnly)
 	{
@@ -151,14 +153,17 @@ void UPresetCardHeader::UpdateOptionButtonSetByPresetCardType(EPresetCardType In
 	case EPresetCardType::SelectTray:
 		ButtonSwap->SetVisibility(ESlateVisibility::Visible);
 		UpdateEditButtonIfPresetIsEditable();
+		OverlayIconSmall->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EPresetCardType::Swap:
 	case EPresetCardType::Delete:
 		ButtonConfirm->SetVisibility(ESlateVisibility::Visible);
+		OverlayIconSmall->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EPresetCardType::AssembliesList:
 		UpdateEditButtonIfPresetIsEditable();
 		ButtonDuplicate->SetVisibility(ESlateVisibility::Visible);
+		OverlayIconSmall->SetVisibility(ESlateVisibility::Visible);
 		ButtonTrash->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EPresetCardType::Browser:
