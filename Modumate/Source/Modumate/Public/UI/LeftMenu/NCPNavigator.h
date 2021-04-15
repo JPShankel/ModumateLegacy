@@ -64,6 +64,8 @@ public:
 	void AddToIgnoredPresets(const TArray<FGuid>& InPresets);
 	void EmptyIgnoredPresets();
 
+	void GetTopTraversalPath(const FBIMTagPath& InNCP, FBIMTagPath& TopTraversalNCP);
+
 	UFUNCTION()
 	void OnSearchBarChanged(const FText& NewText);
 };

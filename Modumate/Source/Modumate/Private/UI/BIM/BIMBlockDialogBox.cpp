@@ -43,7 +43,7 @@ void UBIMBlockDialogBox::OnReleaseButton_VariableText_GreyOutline()
 {
 	if (Controller && Controller->EditModelUserWidget)
 	{
-		Controller->EditModelUserWidget->SwitchLeftMenu(Controller->EditModelUserWidget->PreviousLeftMenuState);
+		Controller->EditModelUserWidget->ToggleBIMDesigner(false);
 	}
 }
 

@@ -56,7 +56,8 @@ void UPresetCardMain::NativeConstruct()
 void UPresetCardMain::OnMainButtonReleased()
 {	
 	if (CurrentPresetCardType == EPresetCardType::Browser ||
-		CurrentPresetCardType == EPresetCardType::Swap)
+		CurrentPresetCardType == EPresetCardType::Swap ||
+		CurrentPresetCardType == EPresetCardType::Delete)
 	{
 		// ItemObjs need to be updated so that widgets remain open during scrolling in listview
 		ParentBrowserItemObj->bPresetCardExpanded = !ParentBrowserItemObj->bPresetCardExpanded;

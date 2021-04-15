@@ -186,7 +186,8 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 	}
 
 	// Close BIMDesigner if the new state isn't swap menu
-	if (NewState != ELeftMenuState::SwapMenu)
+	// Do not close BIM Designer on None, as it is handled by escape key
+	if (!(NewState == ELeftMenuState::SwapMenu || NewState == ELeftMenuState::None))
 	{
 		ToggleBIMDesigner(false);
 	}

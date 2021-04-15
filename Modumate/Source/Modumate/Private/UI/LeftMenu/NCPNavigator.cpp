@@ -3,6 +3,9 @@
 #include "UI/LeftMenu/NCPNavigator.h"
 #include "UI/LeftMenu/NCPButton.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/LeftMenu/DeleteMenuWidget.h"
+#include "UI/LeftMenu/SwapMenuWidget.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
@@ -51,12 +54,39 @@ void UNCPNavigator::BuildNCPNavigator(EPresetCardType BuildAsType)
 	DynamicMainListView->ClearListItems();
 
 	TArray<FBIMTagPath> sourceNCPTags;
-	for (auto& curNCPTagString : StarterNCPTagStrings)
+	// Delete and swap navigator starts with NCPTraversal stopper
+	// Other navigators start with browser like full list
+	if (CurrentPresetCardType == EPresetCardType::Delete ||
+		CurrentPresetCardType == EPresetCardType::Swap)
 	{
-		FBIMTagPath newTagPath;
-		newTagPath.FromString(curNCPTagString.Key);
-		sourceNCPTags.Add(newTagPath);
+		FBIMTagPath curNCP;
+		if (CurrentPresetCardType == EPresetCardType::Delete)
+		{
+			// NCP from delete
+			EMPlayerController->GetDocument()->GetPresetCollection().GetNCPForPreset(
+				EMPlayerController->EditModelUserWidget->DeleteMenuWidget->GetPresetGUIDToDelete(), curNCP);
+		}
+		else
+		{
+			// NCP from swap
+			EMPlayerController->GetDocument()->GetPresetCollection().GetNCPForPreset(
+				EMPlayerController->EditModelUserWidget->SwapMenuWidget->GetPresetGUIDToSwap(), curNCP);
+		}
+		FBIMTagPath traverseNCP;
+		GetTopTraversalPath(curNCP, traverseNCP);
+		sourceNCPTags.Add(traverseNCP);
 	}
+	else
+	{
+		// Full list
+		for (auto& curNCPTagString : StarterNCPTagStrings)
+		{
+			FBIMTagPath newTagPath;
+			newTagPath.FromString(curNCPTagString.Key);
+			sourceNCPTags.Add(newTagPath);
+		}
+	}
+
 	CacheSearchFilteredPresets(sourceNCPTags);
 
 	for (auto& curSourceNCPTag : sourceNCPTags)
@@ -66,7 +96,7 @@ void UNCPNavigator::BuildNCPNavigator(EPresetCardType BuildAsType)
 		newAssemblyItemObj->PresetCardType = CurrentPresetCardType;
 		newAssemblyItemObj->bAsPresetCard = false;
 		newAssemblyItemObj->NCPTag = curSourceNCPTag;
-		newAssemblyItemObj->TagOrder = 0;
+		newAssemblyItemObj->TagOrder = curSourceNCPTag.Tags.Num() - 1;
 
 		// Check which NCP button should be opened
 		bool bSourceTagIsOpen = SelectedTags.Contains(curSourceNCPTag);
@@ -80,7 +110,7 @@ void UNCPNavigator::BuildNCPNavigator(EPresetCardType BuildAsType)
 		DynamicMainListView->AddItem(newAssemblyItemObj);
 		if (bSourceTagIsOpen)
 		{
-			BuildBrowserItemSubObjs(curSourceNCPTag, 0);
+			BuildBrowserItemSubObjs(curSourceNCPTag, curSourceNCPTag.Tags.Num() - 1);
 		}
 	}
 }
@@ -239,6 +269,30 @@ void UNCPNavigator::AddToIgnoredPresets(const TArray<FGuid>& InPresets)
 void UNCPNavigator::EmptyIgnoredPresets()
 {
 	IgnoredPresets.Empty();
+}
+
+void UNCPNavigator::GetTopTraversalPath(const FBIMTagPath& InNCP, FBIMTagPath& TopTraversalNCP)
+{
+	bool bCanTraverse = true;
+	TopTraversalNCP = InNCP;
+	while (bCanTraverse)
+	{
+		FBIMPresetTaxonomyNode taxNode;
+		EMPlayerController->GetDocument()->GetPresetCollection().PresetTaxonomy.GetExactMatch(TopTraversalNCP, taxNode);
+		bCanTraverse = TopTraversalNCP.Tags.Num() > 1 && taxNode.BlockUpwardTraversal;
+		if (bCanTraverse)
+		{
+			FBIMTagPath partialPath;
+			if (TopTraversalNCP.GetPartialPath(TopTraversalNCP.Tags.Num() - 1, partialPath) == EBIMResult::Success)
+			{
+				TopTraversalNCP = partialPath;
+			}
+			else
+			{
+				bCanTraverse = false;
+			}
+		}
+	}
 }
 
 void UNCPNavigator::OnSearchBarChanged(const FText& NewText)
