@@ -817,7 +817,12 @@ void AModumateObjectInstance::RouteGetStructuralPointsAndLines(TArray<FStructure
 			// Only check line if either or both points are in front of the culling plane
 			bool bP1IsBehind = CullingPlane.PlaneDot(line.P1) < -PLANAR_DOT_EPSILON;
 			bool bP2IsBehind = CullingPlane.PlaneDot(line.P2) < -PLANAR_DOT_EPSILON;
-			if (!bP1IsBehind || !bP2IsBehind)
+
+			if (!bP1IsBehind && !bP2IsBehind)
+			{
+				outLines.Add(line);
+			}
+			else if (!bP1IsBehind || !bP2IsBehind)
 			{
 				FVector lineDir = (line.P2 - line.P1).GetSafeNormal();
 				FVector intersect = FMath::RayPlaneIntersection(line.P1, lineDir, CullingPlane);
