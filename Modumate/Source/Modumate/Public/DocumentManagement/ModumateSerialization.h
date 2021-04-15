@@ -316,7 +316,8 @@ namespace Modumate
 	// Version 10: BIM Taxonomy present in serialized presets
 	// Version 11: Fix lost material bindings
 	// Version 12: Strip custom preset NCPs of spaces
-	static const int32 DocVersion = 12;
+	// Version 13: BIM patterns converted from child pins to properties
+	static const int32 DocVersion = 13;
 
 	static const TCHAR * DocObjectInstanceField = TEXT("ModumateObjects");
 	static const TCHAR * DocHeaderField = TEXT("ModumateHeader");

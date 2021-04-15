@@ -44,6 +44,7 @@ enum class ECSVMatrixNames : uint8
 	Material,
 	Mesh,
 	MyCategoryPath,
+	Pattern,
 	ParentCategoryPath,
 	Profile,
 	Properties,

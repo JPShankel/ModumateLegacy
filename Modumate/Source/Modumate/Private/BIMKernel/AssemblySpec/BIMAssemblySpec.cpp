@@ -157,16 +157,16 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 				ensureAlways(false);
 				break;
 			};
-		}
-		// Patterns only apply to layers, so we can go ahead and look it up and assign it to the target
-		// TODO: if patterns gain a wider scope, we may just need to track it as a property
-		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Pattern)
-		{
-			const FLayerPattern* pattern = InDB.GetPatternByGUID(presetIterator.PresetGUID);
 
-			if (ensureAlways(pattern != nullptr && presetIterator.TargetLayer != nullptr))
+			FString patternGuidString;
+			FGuid patternGuid;
+			if (presetIterator.Preset->Properties.TryGetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, patternGuidString) && FGuid::Parse(patternGuidString, patternGuid))
 			{
-				presetIterator.TargetLayer->Pattern = *pattern;
+				const FLayerPattern* pattern = InDB.GetPatternByGUID(patternGuid);
+				if (ensureAlways(pattern != nullptr && presetIterator.TargetLayer != nullptr))
+				{
+					presetIterator.TargetLayer->Pattern = *pattern;
+				}
 			}
 		}
 		// TODO: until we can combine extrusions and layers, ignore extrusions on layered assemblies

@@ -9,6 +9,8 @@
 TMap<FBIMKey, FGuid> FBIMCSVReader::KeyGuidMap;
 TMap<FGuid, FBIMKey> FBIMCSVReader::GuidKeyMap;
 
+#define LOCTEXT_NAMESPACE "BIMCSV"
+
 FBIMCSVReader::FBIMCSVReader()
 {
 }
@@ -251,6 +253,22 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 			}
 			break;
 
+			// TODO: expand this matrix when new pattern language is developed...for now, just tuck the pattern 1.0 guid
+			case ECSVMatrixNames::Pattern:
+			{
+				FBIMKey profileKey(NormalizeCell(Row[presetMatrix.First]));
+				if (!profileKey.IsNone())
+				{
+					const FGuid* patternGuid = KeyGuidMap.Find(profileKey);
+					if (ensureAlways(patternGuid != nullptr))
+					{
+						Preset.Properties.SetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, patternGuid->ToString());
+						Preset.PresetForm.AddPropertyElement(LOCTEXT("BIMPattern","Pattern"), FBIMPropertyKey(EBIMValueScope::Pattern, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
+					}
+				}
+			}
+			break;
+
 			case ECSVMatrixNames::Profile:
 			{
 				FBIMKey profileKey(NormalizeCell(Row[presetMatrix.First]));
@@ -260,7 +278,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					if (ensureAlways(guid != nullptr))
 					{
 						Preset.Properties.SetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID, guid->ToString());
-						Preset.PresetForm.AddPropertyElement(FText::FromString(TEXT("Profile")), FBIMPropertyKey(EBIMValueScope::Profile, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
+						Preset.PresetForm.AddPropertyElement(LOCTEXT("BIMProfile","Profile"), FBIMPropertyKey(EBIMValueScope::Profile, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
 					}
 				}
 			}
@@ -647,3 +665,5 @@ EBIMResult FBIMCSVReader::ProcessPropertyDeclarationRow(const TArray<const TCHAR
 	}
 	return EBIMResult::Success;
 }
+
+#undef LOCTEXT_NAMESPACE

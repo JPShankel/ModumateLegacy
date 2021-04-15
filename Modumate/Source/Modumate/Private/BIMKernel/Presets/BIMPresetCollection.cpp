@@ -10,8 +10,7 @@
 #include "ModumateCore/ModumateScriptProcessor.h"
 #include "Online/ModumateAnalyticsStatics.h"
 
-#define LOCTEXT_NAMESPACE "ModumatePresetMaterialBindings"
-
+#define LOCTEXT_NAMESPACE "BIMPresetCollection"
 
 /*
 Given a preset ID, recurse through all its children and gather all other presets that this one depends on
@@ -250,6 +249,7 @@ EBIMResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPath, co
 			// Make sure the last preset we were reading ends up in the map
 			if (tableData.Preset.GUID.IsValid())
 			{
+				tableData.Preset.TryGetProperty(BIMPropertyNames::Name, tableData.Preset.DisplayName);
 				AddPreset(tableData.Preset);
 				FBIMCSVReader::KeyGuidMap.Add(tableData.Preset.PresetID, tableData.Preset.GUID);
 				FBIMCSVReader::GuidKeyMap.Add(tableData.Preset.GUID, tableData.Preset.PresetID);
@@ -868,7 +868,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		}
 	}
 
-	constexpr int32 presetFixVersion = 12;
+	constexpr int32 presetFixVersion = 13;
 	if (DocRecordVersion < presetFixVersion)
 	{		
 		TMap<FGuid, FBIMPresetInstance> fixedPresets = DocRecord.PresetCollection.PresetsByGUID;
@@ -878,6 +878,23 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 			kvp.Value.MyTagPath.ToString(ncp);
 			ncp = FString(ncp.Replace(TEXT(" "), TEXT("")));
 			kvp.Value.MyTagPath.FromString(ncp);
+
+			// Prior to version 13, patterns were stored as children. Convert to property.
+			for (int32 i = 0; i < kvp.Value.ChildPresets.Num(); ++i)
+			{
+				const FBIMPresetInstance* child = fixedPresets.Find(kvp.Value.ChildPresets[i].PresetGUID);
+				if (child == nullptr)
+				{
+					child = InDB.GetPresetCollection().PresetFromGUID(kvp.Value.ChildPresets[i].PresetGUID);
+				}
+				if (child && child->NodeScope == EBIMValueScope::Pattern)
+				{
+					kvp.Value.Properties.SetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, child->GUID.ToString());
+					kvp.Value.PresetForm.AddPropertyElement(LOCTEXT("BIMPattern", "Pattern"), FBIMPropertyKey(EBIMValueScope::Pattern, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
+					kvp.Value.RemoveChildPreset(kvp.Value.ChildPresets[i].ParentPinSetIndex, kvp.Value.ChildPresets[i].ParentPinSetPosition);
+					break;
+				}
+			}
 
 			// If this is an over-write of an OOTB, get the updated version and use its data
 			const FBIMPresetInstance* updated = InDB.GetPresetCollection().PresetFromGUID(kvp.Key);
