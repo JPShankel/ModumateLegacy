@@ -1064,21 +1064,38 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 	FVector vSize = FVector::OneVector;
 
 	const FArchitecturalMaterial* aMat = Gamemode->ObjectDatabase->GetArchitecturalMaterialByGUID(rawMaterialKey);
-	if (width.AsWorldCentimeters() > 0)
-	{
-		vSize.Y = width.AsWorldCentimeters();
-	}
-	if (length.AsWorldCentimeters() > 0)
-	{
-		vSize.X = length.AsWorldCentimeters();
-	}
-	if (depth.AsWorldCentimeters() > 0)
-	{
-		vSize.Y = depth.AsWorldCentimeters();
-	}
+	// 3-dimensional modules
 	if (height.AsWorldCentimeters() > 0)
 	{
 		vSize.Z = height.AsWorldCentimeters();
+		if (width.AsWorldCentimeters() > 0)
+		{
+			vSize.Y = width.AsWorldCentimeters();
+		}
+		if (length.AsWorldCentimeters() > 0)
+		{
+			vSize.X = length.AsWorldCentimeters();
+		}
+		if (depth.AsWorldCentimeters() > 0)
+		{
+			vSize.Y = depth.AsWorldCentimeters();
+		}
+	}
+	else
+	{
+		if (width.AsWorldCentimeters() > 0)
+		{
+			vSize.X = width.AsWorldCentimeters();
+		}
+		if (length.AsWorldCentimeters() > 0)
+		{
+			vSize.Z = length.AsWorldCentimeters();
+		}
+		else if (depth.AsWorldCentimeters() > 0)
+		{
+			vSize.Z = depth.AsWorldCentimeters();
+		}
+		vSize.Y = (vSize.Z + vSize.X) * 4;
 	}
 
 	// Step 4: Set assets
