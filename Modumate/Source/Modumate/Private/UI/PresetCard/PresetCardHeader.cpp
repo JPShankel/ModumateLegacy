@@ -101,6 +101,7 @@ void UPresetCardHeader::BuildAsSelectTrayPresetCard(const FGuid& InGUID, int32 I
 	const FBIMPresetInstance* preset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
 	if (preset)
 	{
+		OverlayIconSmall->SetVisibility(ESlateVisibility::Visible);
 		CaptureIcon(PresetGUID, BIM_ID_NONE, true); // Only full assembly object are allowed to be selected in scene
 		ItemDisplayName = preset->DisplayName;
 		UpdateSelectionHeaderItemCount(ItemCount);
@@ -114,8 +115,9 @@ void UPresetCardHeader::BuildAsSelectTrayPresetCardObjectType(EObjectType InObje
 	ItemDisplayName = UModumateTypeStatics::GetTextForObjectType(InObjectType);
 	UpdateSelectionHeaderItemCount(ItemCount);
 
-	// PresetCards that represent objectType do not have interactions
+	// PresetCards that represent objectType do not have interactions and icons
 	UpdateOptionButtonSetByPresetCardType(EPresetCardType::None, !bAllowOptions);
+	OverlayIconSmall->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UPresetCardHeader::BuildAsAssembliesListHeader(const FGuid& InGUID, bool bAllowOptions)
@@ -141,7 +143,6 @@ void UPresetCardHeader::UpdateOptionButtonSetByPresetCardType(EPresetCardType In
 	ButtonEdit->SetVisibility(ESlateVisibility::Collapsed);
 	ButtonConfirm->SetVisibility(ESlateVisibility::Collapsed);
 	ButtonDuplicate->SetVisibility(ESlateVisibility::Collapsed);
-	OverlayIconSmall->SetVisibility(ESlateVisibility::Collapsed);
 
 	if (bHideAllOnly)
 	{
@@ -153,17 +154,14 @@ void UPresetCardHeader::UpdateOptionButtonSetByPresetCardType(EPresetCardType In
 	case EPresetCardType::SelectTray:
 		ButtonSwap->SetVisibility(ESlateVisibility::Visible);
 		UpdateEditButtonIfPresetIsEditable();
-		OverlayIconSmall->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EPresetCardType::Swap:
 	case EPresetCardType::Delete:
 		ButtonConfirm->SetVisibility(ESlateVisibility::Visible);
-		OverlayIconSmall->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EPresetCardType::AssembliesList:
 		UpdateEditButtonIfPresetIsEditable();
 		ButtonDuplicate->SetVisibility(ESlateVisibility::Visible);
-		OverlayIconSmall->SetVisibility(ESlateVisibility::Visible);
 		ButtonTrash->SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EPresetCardType::Browser:

@@ -54,15 +54,13 @@ void UPresetCardMain::NativeConstruct()
 }
 
 void UPresetCardMain::OnMainButtonReleased()
-{
-	bool bExpandList = DynamicVerticalBox->GetChildrenCount() == 0;
-	
+{	
 	if (CurrentPresetCardType == EPresetCardType::Browser ||
 		CurrentPresetCardType == EPresetCardType::Swap)
 	{
 		// ItemObjs need to be updated so that widgets remain open during scrolling in listview
-		ParentBrowserItemObj->bPresetCardExpanded = bExpandList;
-		if (bExpandList)
+		ParentBrowserItemObj->bPresetCardExpanded = !ParentBrowserItemObj->bPresetCardExpanded;
+		if (ParentBrowserItemObj->bPresetCardExpanded)
 		{
 			BuildAsExpandedPresetCard(PresetGUID);
 		}
@@ -77,8 +75,8 @@ void UPresetCardMain::OnMainButtonReleased()
 	}
 	else if(CurrentPresetCardType == EPresetCardType::SelectTray)
 	{
-		ParentPresetCardItemObj->bPresetCardExpanded = bExpandList;
-		if (bExpandList)
+		ParentPresetCardItemObj->bPresetCardExpanded = !ParentPresetCardItemObj->bPresetCardExpanded;
+		if (ParentPresetCardItemObj->bPresetCardExpanded)
 		{
 			BuildAsExpandedPresetCard(PresetGUID);
 		}
