@@ -63,7 +63,8 @@ namespace Modumate {
 		DrawingContent = TWeakPtr<FDrawingArea>(viewArea);
 
 		Children.Add(viewArea);
-		Children.Add(MakeShareable(new FDraftingRectangle(Dimensions)));
+		// Don't draw page rectangle:
+		//Children.Add(MakeShareable(new FDraftingRectangle(Dimensions)));
 
 		return true;
 	}
@@ -94,6 +95,7 @@ namespace Modumate {
 		// for now, the entire cut plane is used instead of using the scope box at all
 #if 0
 		auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
+		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(controlPoints[0], AxisX, AxisY, cutPlaneOrigin);
 		FVector scopeBoxOrigin = cutPlaneOrigin + (scopeBoxOrigin2D.X * AxisX) + (scopeBoxOrigin2D.Y * AxisY);
 		controlPoints = scopeBox->GetControlPoints();
 #else
@@ -103,7 +105,6 @@ namespace Modumate {
 		controlPoints.Add(sceneBounds.Min);
 		controlPoints.Add(sceneBounds.Max);
 #endif
-		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(controlPoints[0], AxisX, AxisY, cutPlaneOrigin);
 
 		TArray<FVector2D> boxPoints;
 		for (auto& point : controlPoints)
@@ -118,7 +119,7 @@ namespace Modumate {
 
 		auto graph = MakeShared<FGraph2D>();
 		TMap<int32, int32> objMap;
-		auto volumeGraph = Doc->GetVolumeGraph();
+		const auto& volumeGraph = Doc->GetVolumeGraph();
 		volumeGraph.Create2DGraph(plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, graph, objMap);
 
 		ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
@@ -227,10 +228,6 @@ namespace Modumate {
 		TSharedPtr<FDraftingComposite> totalPage = MakeShareable(new FDraftingComposite());
 		TSharedPtr<FDraftingComposite> section = MakeShareable(new FDraftingComposite());
 
-		// Create image primitive background
-		FString file;
-		UDraftingManager::GetImageFullPath(CaptureObjID, file);
-
 		auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
 #if 0
 		auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
@@ -241,10 +238,10 @@ namespace Modumate {
 		
 
 		FPlane plane = FPlane(cutPlane->GetCorner(0), cutPlane->GetNormal());
-		bool bValidIntersection = true;
 		int32 numPoints = 4;
 		TArray<FVector> intersection;
 #if 0
+		bool bValidIntersection = true;
 		intersection.SetNumZeroed(numPoints);
 		for (int32 cornerIdx = 0; cornerIdx < numPoints; cornerIdx++)
 		{
@@ -279,13 +276,13 @@ namespace Modumate {
 		FModumateUnitCoord2D dimensions = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::WorldCentimeters(orthoWidth), ModumateUnitParams::FYCoord::WorldCentimeters(orthoHeight));
 
 		TSharedPtr<FDraftingComposite> foregroundLines = MakeShareable(new FDraftingComposite());
-		TArray<TArray<FVector>> outPerimeters;
 
 		if (!bHorizontalPlan)
 		{
 			axisX *= -1.0f;
 			axisY *= -1.0f;
 		}
+
 		GetForegroundLines(foregroundLines, axisX, axisY, true);
 
 		foregroundLines->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);

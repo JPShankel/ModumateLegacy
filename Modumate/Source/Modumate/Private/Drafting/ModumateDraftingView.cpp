@@ -323,6 +323,14 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 		TSharedPtr<FFloorplan> floorplan = MakeShareable(new FFloorplan(Document, world, TPair<int32, int32>(cutPlane->ID, MOD_ID_NONE)));
 		floorplan->InitializeDimensions(presentationSeriesSize - (drawingMargin*2.0f), drawingMargin);
 		floorplan->SetLocalPosition(pageMargin);
+		if (ExportType == kDWG)
+		{   // For DWGs don't clip to the paper dimensions MOD-779.
+			auto viewArea = floorplan->DrawingContent.Pin();
+			if (viewArea)
+			{
+				viewArea->bClipped = false;
+			}
+		}
 
 		page->Children.Add(floorplan);
 		page->Dimensions = presentationSeriesSize;
