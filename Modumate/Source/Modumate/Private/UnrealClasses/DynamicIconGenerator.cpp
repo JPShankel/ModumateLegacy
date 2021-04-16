@@ -1036,7 +1036,8 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 		width = FModumateUnitValue::WorldCentimeters(0), 
 		length = FModumateUnitValue::WorldCentimeters(0),
 		depth = FModumateUnitValue::WorldCentimeters(0),
-		height = FModumateUnitValue::WorldCentimeters(0);
+		height = FModumateUnitValue::WorldCentimeters(0),
+		thickness = FModumateUnitValue::WorldCentimeters(0);
 
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	if (UseDependentPreset)
@@ -1048,6 +1049,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, length);
 		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, depth);
 		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, height);
+		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, thickness);
 	}
 	else
 	{
@@ -1058,13 +1060,15 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, length);
 		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, depth);
 		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, height);
+		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, thickness);
 	}
 
 	// Step 3: Get assets from key, and size from dimension
 	FVector vSize = FVector::OneVector;
 
 	const FArchitecturalMaterial* aMat = Gamemode->ObjectDatabase->GetArchitecturalMaterialByGUID(rawMaterialKey);
-	// 3-dimensional modules
+	// TODO: we need a common system to rationalize module dimensions
+	// 3-dimensional brick modules
 	if (height.AsWorldCentimeters() > 0)
 	{
 		vSize.Z = height.AsWorldCentimeters();
@@ -1081,6 +1085,20 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 			vSize.Y = depth.AsWorldCentimeters();
 		}
 	}
+	// 3-dimensional shingles
+	else if (thickness.AsWorldCentimeters() > 0)
+	{
+		vSize.Y = thickness.AsWorldCentimeters();
+		if (width.AsWorldCentimeters() > 0)
+		{
+			vSize.Z = width.AsWorldCentimeters();
+		}
+		if (length.AsWorldCentimeters() > 0)
+		{
+			vSize.X = length.AsWorldCentimeters();
+		}
+	}
+	// 2-dimensional shingles
 	else
 	{
 		if (width.AsWorldCentimeters() > 0)
