@@ -503,11 +503,11 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, int32 
 			{
 				if (inchesInt != 0)
 				{
-					inchesText = FText::Format(LOCTEXT("inches_with_frac", "{0} {1}/{2}{3}{4})"), inchesInt, inchesNumerator, inchesDenom, dimPrefix,inchesIndicator);
+					inchesText = FText::Format(LOCTEXT("inches_with_frac", "{0} {1}/{2}{3}{4}"), inchesInt, inchesNumerator, inchesDenom, dimPrefix,inchesIndicator);
 				}
 				else
 				{
-					inchesText = FText::Format(LOCTEXT("inches_only_frac", "{0}/{1}{3}{4}"), inchesNumerator, inchesDenom, dimPrefix,inchesIndicator);
+					inchesText = FText::Format(LOCTEXT("inches_only_frac", "{0}/{1}{2}{3}"), inchesNumerator, inchesDenom, dimPrefix,inchesIndicator);
 				}
 			}
 			else
