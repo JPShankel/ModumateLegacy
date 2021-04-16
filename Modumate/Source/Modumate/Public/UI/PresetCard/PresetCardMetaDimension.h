@@ -34,5 +34,5 @@ public:
 	class UModumateTextBlockUserWidget* MetaObjectType;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateTextBlockUserWidget* DimensionValue;
+	class UModumateEditableTextBoxUserWidget* DimensionValue;
 };

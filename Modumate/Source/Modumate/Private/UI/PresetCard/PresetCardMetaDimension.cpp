@@ -2,6 +2,7 @@
 
 #include "UI/PresetCard/PresetCardMetaDimension.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
+#include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 
 #define LOCTEXT_NAMESPACE "PresetCardMetaDimension"
