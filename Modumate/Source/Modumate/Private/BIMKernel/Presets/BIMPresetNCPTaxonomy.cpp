@@ -44,6 +44,12 @@ EBIMResult FBIMPresetNCPTaxonomy::LoadCSVRows(const FCsvParser::FRows& Rows)
 			}
 			switch (kvp.Value)
 			{
+				case EBIMTaxonomyColumn::StopNCPTraversal:
+					{
+						// set to false by default, non-empty sets to true
+						newNode.BlockUpwardTraversal = true;
+					}
+					break;
 				case EBIMTaxonomyColumn::ObjectType:
 					if (!ensureAlways(FindEnumValueByName(*cell, newNode.ObjectType)))
 					{

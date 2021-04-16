@@ -16,7 +16,7 @@
 
 #include "ModumateObjectDatabase.generated.h"
 
-static constexpr int32 BIMCacheCurrentVersion = 10;
+static constexpr int32 BIMCacheCurrentVersion = 11;
 // Version 2: deprecate FBIMKeys for FGuids
 // Version 3: move named parameters from meshes to presets
 // Version 4: material binding editor
@@ -26,6 +26,7 @@ static constexpr int32 BIMCacheCurrentVersion = 10;
 // Version 8: strip NCP whitespace on CSV read
 // Version 9: color tint variation as a percentage
 // Version 10: patterns converted from child pins to properties
+// Version 11: add upward blocker to taxonomy explorer
 
 USTRUCT()
 struct FModumateBIMCacheRecord

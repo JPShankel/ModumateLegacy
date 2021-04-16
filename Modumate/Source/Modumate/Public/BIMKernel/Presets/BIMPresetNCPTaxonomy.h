@@ -17,7 +17,8 @@ enum class EBIMTaxonomyColumn : uint8
 	AssetType,
 	BIMDesignerNodeTitle,
 	MeasurementMethods,
-	DisplayName
+	DisplayName,
+	StopNCPTraversal
 };
 
 USTRUCT()
