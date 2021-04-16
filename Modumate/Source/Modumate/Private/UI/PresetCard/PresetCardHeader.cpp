@@ -71,7 +71,6 @@ void UPresetCardHeader::BuildAsSwapHeader(const FGuid& InGUID, const FBIMEditorN
 	const FBIMPresetInstance* preset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
 	if (preset)
 	{
-		CaptureIcon(PresetGUID, NodeID, preset->NodeScope == EBIMValueScope::Assembly);
 		// Swap can happen from BIM Designer or select menu
 		// Assume icon is assembly if NodeID == none, which happens anytime outside of BIM Designer
 		bool bCaptureIconAsAssembly = NodeID == BIM_ID_NONE;
@@ -101,7 +100,6 @@ void UPresetCardHeader::BuildAsSelectTrayPresetCard(const FGuid& InGUID, int32 I
 	const FBIMPresetInstance* preset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
 	if (preset)
 	{
-		OverlayIconSmall->SetVisibility(ESlateVisibility::Visible);
 		CaptureIcon(PresetGUID, BIM_ID_NONE, true); // Only full assembly object are allowed to be selected in scene
 		ItemDisplayName = preset->DisplayName;
 		UpdateSelectionHeaderItemCount(ItemCount);
@@ -190,6 +188,13 @@ bool UPresetCardHeader::CaptureIcon(const FGuid& InGUID, const FBIMEditorNodeIDT
 		return false;
 	}
 
+	const auto& preset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(InGUID);
+	if (!preset)
+	{
+		OverlayIconSmall->SetVisibility(ESlateVisibility::Collapsed);
+		return false;
+	}
+
 	bool result = false;
 	
 	if (bAsAssembly)
@@ -205,7 +210,7 @@ bool UPresetCardHeader::CaptureIcon(const FGuid& InGUID, const FBIMEditorNodeIDT
 	{
 		IconImageSmall->SetBrushFromMaterial(IconMaterial);
 	}
-	IconImageSmall->SetVisibility(result ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	OverlayIconSmall->SetVisibility(result ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 	return result;
 }
 
