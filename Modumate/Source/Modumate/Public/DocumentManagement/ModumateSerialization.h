@@ -5,6 +5,7 @@
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "Database/ModumateObjectEnums.h"
 #include "DocumentManagement/DocumentDelta.h"
+#include "DocumentManagement/DocumentSettings.h"
 #include "DocumentManagement/ModumateCameraView.h"
 #include "JsonObjectConverter.h"
 #include "Objects/MOIState.h"
@@ -272,6 +273,9 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 
 	UPROPERTY()
 	TArray<FDeltasRecord> AppliedDeltas;
+
+	UPROPERTY()
+	FDocumentSettings Settings;
 
 	void FromVersion3(const FMOIDocumentRecordV3 &v3);
 };

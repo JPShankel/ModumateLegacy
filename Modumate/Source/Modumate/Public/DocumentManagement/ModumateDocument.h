@@ -4,6 +4,7 @@
 
 #include "Database/ModumateObjectDatabase.h"
 #include "DocumentManagement/DocumentDelta.h"
+#include "DocumentManagement/DocumentSettings.h"
 #include "DocumentManagement/ModumateCameraView.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "Graph/Graph2D.h"
@@ -213,6 +214,7 @@ public:
 	void ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World);
 	bool ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World);
 	bool ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWorld* World);
+	bool ApplySettingsDelta(const FDocumentSettingDelta& SettingsDelta, UWorld* World);
 
 	void UpdateVolumeGraphObjects(UWorld *World);
 
@@ -286,9 +288,12 @@ public:
 	bool PresetIsInUse(const FGuid& InPreset) const;
 	void DeletePreset(UWorld* World, const FGuid& DeleteGUID, const FGuid& ReplacementGUID = FGuid());
 
+	const FDocumentSettings& GetCurrentSettings() const { return CurrentSettings; }
+
 private:
 	TSharedPtr<Modumate::FModumateDraftingView> CurrentDraftingView = nullptr;
 	FBIMPresetCollection BIMPresetCollection;
+	FDocumentSettings CurrentSettings;
 	bool bIsDirty = true;
 
 	FModumateDocumentHeader CachedHeader;

@@ -39,6 +39,7 @@ void ADimensionActor::CreateWidget()
 	AEditModelPlayerHUD *playerHUD = playerController.IsValid() ? Cast<AEditModelPlayerHUD>(playerController->GetHUD()) : nullptr;
 	DimensionText = playerController->HUDDrawWidget->UserWidgetPool.GetOrCreateInstance<UDimensionWidget>(playerHUD->WidgetClasses->DimensionClass);
 
+	DimensionText->ResetWidget();
 	DimensionText->SetVisibility(ESlateVisibility::Visible);
 	DimensionText->AddToViewport();
 	DimensionText->SetPositionInViewport(FVector2D(0.0f, 0.0f));

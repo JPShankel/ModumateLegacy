@@ -528,15 +528,15 @@ namespace Modumate
 		return true;
 	}
 
-	float FGraph3DFace::CalculateArea() const
+	double FGraph3DFace::CalculateArea() const
 	{
 		auto verticesToTPoly = [](const TArray<FVector2D>& Vertices)
 		{
-			TArray<FVector2f> convertedVertices;
+			TArray<FVec2d> convertedVertices;
 			Algo::Transform(Vertices, convertedVertices, [](const FVector2D& Vector) {return Vector; });
-			return FPolygon2f(convertedVertices).Area();
+			return FPolygon2d(convertedVertices).Area();
 		};
 
-		return verticesToTPoly(Cached2DPositions) - Algo::TransformAccumulate(Cached2DHoles, [verticesToTPoly](const FPolyHole2D& hole) { return verticesToTPoly(hole.Points); },0.0f);
+		return verticesToTPoly(Cached2DPositions) - Algo::TransformAccumulate(Cached2DHoles, [verticesToTPoly](const FPolyHole2D& hole) { return verticesToTPoly(hole.Points); }, 0.0);
 	}
 }

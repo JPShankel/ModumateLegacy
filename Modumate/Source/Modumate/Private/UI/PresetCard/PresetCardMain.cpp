@@ -248,7 +248,7 @@ void UPresetCardMain::BuildAsExpandedPresetCard(const FGuid& InPresetKey)
 			auto* doc = EMPlayerController->GetDocument();
 			if (ParentPresetCardItemObj->ObjectType == EObjectType::OTMetaPlane)
 			{
-				float totalArea = 0.0f;
+				double totalArea = 0.0;
 				for (auto& ob : obs)
 				{
 					if (ob->GetAssembly().ObjectType == EObjectType::OTMetaPlane)

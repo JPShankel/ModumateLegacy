@@ -2642,32 +2642,38 @@ FModumateFunctionParameterSet AEditModelPlayerController::ModumateCommand(const 
 bool AEditModelPlayerController::SnapDistAlongAffordance(FVector& SnappedPosition, const FVector& AffordanceOrigin, const FVector& AffordanceDir) const
 {
 	// About how many pixels should the cursor snap between, based on the current camera distance and preferred snap units?
-	static constexpr float screenSpaceIncrement = 8.0f;
+	static constexpr double screenSpaceIncrement = 8.0;
 
 	// What is the minimum camera distance to target point that will affect screen-scaled snapping?
-	static constexpr float minCamDist = 2.0f;
+	static constexpr float minCamDist = 2.0;
 
 	// Determine the lowest we're willing to snap, in world units, based on user preferences
-	float worldMinIncrement = 0.0f;
-	TArray<float> incrementMultipliers;
+	double worldMinIncrement = 0.0;
+	TArray<int32> incrementMultipliers;
 	EDimensionUnits snapDimensionType = EDimensionUnits::DU_Imperial;
-	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
-	if (gameInstance && gameInstance->UserSettings.bLoaded)
+	UModumateDocument* document = GetDocument();
+	if (document)
 	{
-		snapDimensionType = gameInstance->UserSettings.PreferredDimensionType;
+		auto& docSettings = document->GetCurrentSettings();
+		snapDimensionType = docSettings.DimensionType;
+		worldMinIncrement = docSettings.MinimumDistanceIncrement;
 	}
 
 	switch (snapDimensionType)
 	{
 	case EDimensionUnits::DU_Imperial:
-		worldMinIncrement = 0.125f * UModumateDimensionStatics::InchesToCentimeters;
-		// 1/8", 1/4", 1/2", 1", 2", 4", 6", 1' ... 2', 4', 8' ...
-		incrementMultipliers = { 1, 2, 4, 8, 16, 32, 48, 96 };
+		incrementMultipliers = FDocumentSettings::ImperialDistIncrementMultipliers;
+		if (worldMinIncrement == 0.0)
+		{
+			worldMinIncrement = FDocumentSettings::MinImperialDistIncrementCM;
+		}
 		break;
 	case EDimensionUnits::DU_Metric:
-		// 1mm, 2mm, 5mm, 1cm, 2.5cm, 5cm, 10cm, 25cm, 50cm, 1m ... 2m, 4m, 8m ...
-		incrementMultipliers = { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 };
-		worldMinIncrement = 0.1f;
+		incrementMultipliers = FDocumentSettings::MetricDistIncrementMultipliers;
+		if (worldMinIncrement == 0.0)
+		{
+			worldMinIncrement = FDocumentSettings::MinMetricDistIncrementCM;
+		}
 		break;
 	default:
 		return false;
@@ -2679,14 +2685,14 @@ bool AEditModelPlayerController::SnapDistAlongAffordance(FVector& SnappedPositio
 	APlayerCameraManager* camManager = UGameplayStatics::GetPlayerCameraManager(this, 0);
 	FVector camPos = camManager->GetCameraLocation();
 	float distFromCam = FMath::Max(FVector::Dist(SnappedPosition, camPos), minCamDist);
-	float screenToWorldFactor = 2.0f * distFromCam * FMath::Tan(FMath::DegreesToRadians(0.5f * camManager->GetFOVAngle())) / viewportX;
-	float worldSpaceIncrement = screenToWorldFactor * screenSpaceIncrement;
+	double screenToWorldFactor = 2.0 * distFromCam * FMath::Tan(FMath::DegreesToRadians(0.5 * camManager->GetFOVAngle())) / viewportX;
+	double worldSpaceIncrement = screenToWorldFactor * screenSpaceIncrement;
 
 	// Find the largest increment that is smaller than the world-space scaled version of the screen space snap increment
 	int32 multiplierIdx = 0;
 	int32 numMultipliers = incrementMultipliers.Num();
-	float curMultiplier = incrementMultipliers[multiplierIdx];
-	float lastMultiplier = curMultiplier;
+	int32 curMultiplier = incrementMultipliers[multiplierIdx];
+	int32 lastMultiplier = curMultiplier;
 	while ((curMultiplier * worldMinIncrement) < worldSpaceIncrement)
 	{
 		lastMultiplier = curMultiplier;

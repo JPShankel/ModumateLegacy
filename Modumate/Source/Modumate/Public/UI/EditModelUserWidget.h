@@ -94,6 +94,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UDeleteMenuWidget* DeleteMenuWidget;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateSettingsMenu* SettingsMenuWidget;
+
 	UPROPERTY()
 	TMap<EToolMode, class UModumateButtonUserWidget*> ToolToButtonMap;
 
@@ -129,6 +132,7 @@ public:
 	void ToggleBrowserMenu(bool NewVisibility);
 	void ToggleSwapMenu(bool NewVisibility);
 	void ToggleDeleteMenu(bool NewVisibility);
+	void ToggleSettingsWindow(bool NewVisibility);
 	bool IsBIMDesingerActive() const;
 	bool EMUserWidgetHandleEscapeKey();
 	void UpdateSelectTrayVisibility();

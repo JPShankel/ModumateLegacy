@@ -20,5 +20,5 @@ public:
 public:
 	FVector WorldPosition;
 	FVector WorldDirection;
-	float CurrentAngle;
+	double CurrentAngle;
 };

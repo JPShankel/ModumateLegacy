@@ -9,6 +9,14 @@
 
 #include "DimensionWidget.generated.h"
 
+UENUM()
+enum class EDimensionDisplayType : uint8
+{
+	None,
+	Linear,
+	Angular
+};
+
 UCLASS()
 class MODUMATE_API UDimensionWidget : public UUserWidget
 {
@@ -20,11 +28,13 @@ public:
 
 	void SetIsEditable(bool bIsEditable);
 
-	void UpdateLengthTransform(const FVector2D position, const FVector2D edgeDirection, const FVector2D offsetDirection, float length);
-	void UpdateDegreeTransform(const FVector2D position, const FVector2D offsetDirection, float angle);
-	void UpdateText(float length);
-	void UpdateDegreeText(float angle);
+	void UpdateLengthTransform(const FVector2D& Position, const FVector2D& EdgeDirection, const FVector2D& OffsetDirection, double Length);
+	void UpdateDegreeTransform(const FVector2D& Position, const FVector2D& OffsetDirection, double Angle);
+	void UpdateText(double Length, bool bForce = false);
+	void UpdateDegreeText(double Angle, bool bForce = false);
+	void UpdateUnits();
 	void ResetText();
+	void ResetWidget();
 
 protected:
 	virtual void OnWidgetRebuilt() override;
@@ -47,5 +57,6 @@ private:
 	EUnit DisplayOverrideUnit = EUnit::Unspecified;
 
 	FText LastCommittedText;
-	float LastMeasurement;
+	double LastMeasurement = 0.0;
+	EDimensionDisplayType LastDisplayType = EDimensionDisplayType::None;
 };

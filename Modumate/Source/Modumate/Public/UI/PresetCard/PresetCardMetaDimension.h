@@ -28,7 +28,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-	void BuildAsMetaDimension(EObjectType ObjectType, float InDimensionValue);
+	void BuildAsMetaDimension(EObjectType ObjectType, double InDimensionValue);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlockUserWidget* MetaObjectType;

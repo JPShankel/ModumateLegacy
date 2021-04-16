@@ -27,7 +27,7 @@ void UPresetCardMetaDimension::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UPresetCardMetaDimension::BuildAsMetaDimension(EObjectType ObjectType, float InDimensionValue)
+void UPresetCardMetaDimension::BuildAsMetaDimension(EObjectType ObjectType, double InDimensionValue)
 {
 	switch (ObjectType)
 	{

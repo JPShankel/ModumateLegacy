@@ -51,12 +51,6 @@ struct MODUMATE_API FModumateUserSettings
 	UPROPERTY()
 	FString SavedCredentials;
 
-	UPROPERTY()
-	EDimensionUnits PreferredDimensionType = EDimensionUnits::DU_Imperial;
-
-	UPROPERTY()
-	EUnit PreferredDimensionUnit = EUnit::Unspecified;
-
 	bool bLoaded = false;
 	bool bDirty = false;
 

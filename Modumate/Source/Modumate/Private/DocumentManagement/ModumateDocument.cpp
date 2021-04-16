@@ -33,6 +33,7 @@
 #include "Serialization/JsonSerializer.h"
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "Quantities/QuantitiesManager.h"
+#include "UI/DimensionManager.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -812,6 +813,22 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 
 	// Who sent us a delta with no guids?
 	return ensure(false);
+}
+
+bool UModumateDocument::ApplySettingsDelta(const FDocumentSettingDelta& SettingsDelta, UWorld* World)
+{
+	if (CurrentSettings != SettingsDelta.NextSettings)
+	{
+		CurrentSettings = SettingsDelta.NextSettings;
+
+		auto* gameInstance = World->GetGameInstance<UModumateGameInstance>();
+		if (gameInstance && gameInstance->DimensionManager)
+		{
+			gameInstance->DimensionManager->UpdateAllUnits();
+		}
+	}
+
+	return true;
 }
 
 bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* World)
@@ -2267,6 +2284,8 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 		OutDocumentRecord.AppliedDeltas.Add(FDeltasRecord(ur->Deltas));
 	}
 
+	OutDocumentRecord.Settings = CurrentSettings;
+
 	return true;
 }
 
@@ -2447,6 +2466,8 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 
 		UndoBuffer.Add(undoRedo);
 	}
+
+	CurrentSettings = InDocumentRecord.Settings;
 
 	bIsDirty = false;
 

@@ -27,6 +27,7 @@ enum class EInputCommand : uint8
 	Save,
 	SaveAs,
 	MainMenu,
+	Settings,
 	Exit,
 	Undo,
 	Redo,

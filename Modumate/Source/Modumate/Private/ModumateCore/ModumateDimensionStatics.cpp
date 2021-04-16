@@ -5,6 +5,7 @@
 #include "Internationalization/Text.h"
 #include "Internationalization/Culture.h"
 #include "Internationalization/FastDecimalFormat.h"
+#include "MathUtil.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
@@ -476,6 +477,13 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, int32 
 	double decimalLength = 0.0;
 	FText decimalSuffix = FText::GetEmpty();
 
+	// Make the tolerance more forgiving for higher dimensionalities, since we lose precision when squaring/cubing dimensions.
+	double decimalTolerance = DefaultRoundingTolerance;
+	if (Dimensionality != 1)
+	{
+		decimalTolerance = FMathd::Pow(decimalTolerance, 1.0 / Dimensionality);
+	}
+
 	switch (UnitType)
 	{
 	case EDimensionUnits::DU_Imperial:
@@ -487,7 +495,7 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, int32 
 
 		// First, try to express the inches component of the length as a mixed number, potentially starting with the feet beforehand.
 		int32 inchesInt, inchesNumerator, inchesDenom;
-		if (RoundFraction(lengthInchesComponent, inchesInt, inchesNumerator, inchesDenom, MaxDenomPower, FractionalTolerance))
+		if ((Dimensionality == 1) && RoundFraction(lengthInchesComponent, inchesInt, inchesNumerator, inchesDenom, MaxDenomPower, FractionalTolerance))
 		{
 			if (inchesInt == inchesPerFootDim)
 			{
@@ -526,9 +534,9 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, int32 
 		// but not if it's off by more than the desired number of digits (e.g. sqrt(2)" -> 1.41421356237309505")
 		FNumberFormattingOptions numberFormat;
 		double inchesComponentDecimal;
-		if (RoundDecimal(lengthInchesComponent, inchesComponentDecimal, NumRoundingDigits))
+		if (RoundDecimal(lengthInchesComponent, inchesComponentDecimal, NumRoundingDigits, decimalTolerance))
 		{
-			if (inchesComponentDecimal == InchesPerFoot)
+			if (inchesComponentDecimal == inchesPerFootDim)
 			{
 				lengthFeetComponent++;
 				inchesComponentDecimal = 0.0;
@@ -554,7 +562,7 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, int32 
 	{
 		double lengthCM = LengthInches * FMath::Pow(UModumateDimensionStatics::InchesToCentimeters,Dimensionality);
 		double lengthCMRounded;
-		if (RoundDecimal(lengthCM, lengthCMRounded, NumRoundingDigits))
+		if (RoundDecimal(lengthCM, lengthCMRounded, NumRoundingDigits, decimalTolerance))
 		{
 			decimalFormat.MaximumFractionalDigits = NumRoundingDigits;
 		}

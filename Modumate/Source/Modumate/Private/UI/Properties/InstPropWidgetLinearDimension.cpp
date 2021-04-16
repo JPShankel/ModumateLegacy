@@ -2,11 +2,11 @@
 
 #include "UI/Properties/InstPropWidgetLinearDimension.h"
 
+#include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-#include "UnrealClasses/ModumateGameInstance.h"
 
 
 bool UInstPropWidgetLinearDimension::Initialize()
@@ -39,14 +39,15 @@ void UInstPropWidgetLinearDimension::DisplayValue()
 	if (bConsistentValue)
 	{
 		auto controller = GetOwningPlayer<AEditModelPlayerController>();
-		auto gameInstance = controller ? controller->GetGameInstance<UModumateGameInstance>() : nullptr;
-		if (!ensure(gameInstance && gameInstance->UserSettings.bLoaded))
+		auto document = controller ? controller->GetDocument() : nullptr;
+		if (!ensure(document))
 		{
 			return;
 		}
 
-		FText valueText = UModumateDimensionStatics::CentimetersToDisplayText(CurrentValue,1,
-			gameInstance->UserSettings.PreferredDimensionType, gameInstance->UserSettings.PreferredDimensionUnit,
+		auto& documentSettings = document->GetCurrentSettings();
+		FText valueText = UModumateDimensionStatics::CentimetersToDisplayText(CurrentValue, 1,
+			documentSettings.DimensionType, documentSettings.DimensionUnit,
 			DisplayFractionDenomPow,
 			UModumateDimensionStatics::DefaultRoundingTolerance, UModumateDimensionStatics::DefaultRoundingDigits,
 			NumDisplayDecimalDigits);

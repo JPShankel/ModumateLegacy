@@ -9,6 +9,7 @@
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/ModumateSettingsMenu.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
 #include "UI/RightMenu/CutPlaneMenuBlockExport.h"
 #include "UI/RightMenu/ViewMenuBlockViewMode.h"
@@ -324,6 +325,13 @@ bool UEditModelUserWidget::IsBIMDesingerActive() const
 
 bool UEditModelUserWidget::EMUserWidgetHandleEscapeKey()
 {
+	// TODO: formalize escape handling and modality - any modal widget that intends to take focus should be able to handle escape here,
+	// ideally without explicit enumeration here.
+	if (SettingsMenuWidget->IsVisible())
+	{
+		ToggleSettingsWindow(false);
+	}
+
 	if (CurrentLeftMenuState != ELeftMenuState::None)
 	{
 		SwitchLeftMenu(ELeftMenuState::None);
@@ -431,6 +439,15 @@ void UEditModelUserWidget::ToggleDeleteMenu(bool NewVisibility)
 	if (NewVisibility)
 	{
 		DeleteMenuWidget->BuildDeleteMenu();
+	}
+}
+
+void UEditModelUserWidget::ToggleSettingsWindow(bool NewVisibility)
+{
+	SettingsMenuWidget->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (NewVisibility)
+	{
+		SettingsMenuWidget->UpdateFromCurrentSettings();
 	}
 }
 

@@ -42,6 +42,8 @@ public:
 	ADimensionActor *GetActiveActor();
 	void SetActiveActorID(int32 ID);
 
+	void UpdateAllUnits();
+
 private:
 
 	int32 LastSelectedObjID;

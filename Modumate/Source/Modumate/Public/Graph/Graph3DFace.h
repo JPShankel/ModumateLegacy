@@ -56,7 +56,7 @@ namespace Modumate
 		virtual EGraph3DObjectType GetType() const override { return EGraph3DObjectType::Face; }
 		virtual void GetVertexIDs(TArray<int32>& OutVertexIDs) const override;
 
-		float CalculateArea() const;
+		double CalculateArea() const;
 
 	private:
 		bool AssignVertices(const TArray<int32> &InVertexIDs);

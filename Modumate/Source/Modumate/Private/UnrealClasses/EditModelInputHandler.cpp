@@ -10,6 +10,8 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/ModumateSettingsMenu.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelInputAutomation.h"
@@ -218,6 +220,11 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 			UGameplayStatics::OpenLevel(this, FName(*mainMenuMap));
 		}
 
+		return true;
+	}
+	case EInputCommand::Settings:
+	{
+		Controller->EditModelUserWidget->ToggleSettingsWindow(!Controller->EditModelUserWidget->SettingsMenuWidget->IsVisible());
 		return true;
 	}
 	case EInputCommand::Exit:

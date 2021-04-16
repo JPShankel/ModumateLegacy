@@ -223,3 +223,15 @@ void UDimensionManager::SetActiveActorID(int32 ID)
 {
 	ActiveActorID = ID;
 }
+
+void UDimensionManager::UpdateAllUnits()
+{
+	for (auto& kvp : DimensionActors)
+	{
+		ADimensionActor* dimensionActor = kvp.Value;
+		if (dimensionActor && dimensionActor->DimensionText)
+		{
+			dimensionActor->DimensionText->UpdateUnits();
+		}
+	}
+}
