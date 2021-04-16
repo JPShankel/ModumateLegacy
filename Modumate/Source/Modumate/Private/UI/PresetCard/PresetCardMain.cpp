@@ -192,6 +192,9 @@ void UPresetCardMain::BuildAsExpandedPresetCard(const FGuid& InPresetKey)
 				newHeaderWidget->BuildAsSwapHeader(PresetGUID, EMPlayerController->EditModelUserWidget->SwapMenuWidget->BIMNodeIDToSwap);
 			}
 			break;
+		case EPresetCardType::Delete:
+			newHeaderWidget->BuildAsDeleteHeader(PresetGUID, BIM_ID_NONE, bAllowInteraction); //TODO: Support delete preset with NodeID?
+			break;
 		case EPresetCardType::AssembliesList:
 			newHeaderWidget->BuildAsAssembliesListHeader(PresetGUID);
 			break;
