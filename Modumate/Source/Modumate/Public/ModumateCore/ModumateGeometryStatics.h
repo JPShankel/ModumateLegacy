@@ -7,7 +7,9 @@
 #include "Database/ModumateSimpleMesh.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "Graph/Graph3DTypes.h"
+#include "SegmentTypes.h"
 #include "VectorTypes.h"
+#include "VectorUtil.h"
 
 #include "ModumateGeometryStatics.generated.h"
 
@@ -178,7 +180,7 @@ public:
 	static bool AreConsecutivePoints2DRepeated(const TArray<FVector2D> &Points, float Tolerance = KINDA_SMALL_NUMBER);
 	static bool AreConsecutivePointsRepeated(const TArray<FVector> &Points, float Tolerance = KINDA_SMALL_NUMBER);
 
-	static bool IsPolygon2DValid(const TArray<FVector2D> &Points2D, class FFeedbackContext* InWarn = nullptr);
+	static bool IsPolygon2DValid(const TArray<FVector2D> &Points2D, class FFeedbackContext* InWarn = nullptr, float DistEpsilon = KINDA_SMALL_NUMBER, float DotEpsilon = PLANAR_DOT_EPSILON);
 	static bool IsPolygonValid(const TArray<FVector> &Points, FPlane PolyPlane = FPlane(ForceInitToZero), class FFeedbackContext* InWarn = nullptr);
 
 	static bool IsLineSegmentWithin2D(const FEdge& OuterLine, const FEdge& InnerLine, float epsilon = THRESH_POINTS_ARE_NEAR);

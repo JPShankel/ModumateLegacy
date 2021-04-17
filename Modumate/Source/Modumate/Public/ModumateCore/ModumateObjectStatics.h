@@ -90,18 +90,18 @@ public:
 	// Extruded objects polygon utilities
 
 	// OffsetX/OffsetY and FlipSigns have their X and Y components set to correspond to the X and Y components of the profile polygon.
-	//     The counter-intuitive case of a Trim extruded along the bottom of a vertical wall would then have the counter-intuitive names:
-	//     - "Up" axis pointing in world +Z and corresponding to the polygon's X axis
-	//     - "Normal" axis pointing in world XY and corresponding to the polygon's Y axis
+	//     The case of a Trim extruded along the bottom of a vertical wall would then have the names:
+	//     - "Normal" axis pointing in world XY and corresponding to the polygon's X axis
+	//     - "Up" axis pointing in world +Z and corresponding to the polygon's Y axis
 	// GetExtrusionProfilePoints centrally interprets a polygon's shape and the assembly's specified scale factor, and outputs
 	// OutProfilePoints in the polygon's coordinate axes, where the origin represents the hosting line.
 	static bool GetExtrusionProfilePoints(const FBIMAssemblySpec& Assembly, const FDimensionOffset& OffsetX, const FDimensionOffset& OffsetY,
 		const FVector2D& FlipSigns, TArray<FVector2D>& OutProfilePoints, FBox2D& OutProfileExtents);
 
-	// GetExtrusionObjectPoints first interpret's an extrusion in polygon space, and then outputs
+	// GetExtrusionObjectPoints first interprets an extrusion in polygon space, and then outputs
 	// OutObjectPoints in the object's specified coordinate axes (which may be rotated by the object beforehand).
 	// OutObjectPoints are expected only be offset from world space by a position along the hosting line.
-	static bool GetExtrusionObjectPoints(const FBIMAssemblySpec& Assembly, const FVector& LineUp, const FVector& LineNormal,
+	static bool GetExtrusionObjectPoints(const FBIMAssemblySpec& Assembly, const FVector& LineNormal, const FVector& LineUp,
 		const FDimensionOffset& OffsetX, const FDimensionOffset& OffsetY, const FVector2D& FlipSigns, TArray<FVector>& OutObjectPoints);
 
 	// Extruded objects drafting

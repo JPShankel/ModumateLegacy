@@ -125,8 +125,8 @@ void AMOITrim::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, T
 	{
 		FVector2D profileSize = CachedProfileExtents.GetSize();
 		FVector2D profileCenter = CachedProfileExtents.GetCenter();
-		FVector lineCenter = 0.5f * (TrimStartPos + TrimEndPos) + (profileCenter.X * TrimUp) + (profileCenter.Y * TrimNormal);
-		FVector boxExtents(profileSize.Y, FVector::Dist(TrimStartPos, TrimEndPos), profileSize.X);
+		FVector lineCenter = 0.5f * (TrimStartPos + TrimEndPos) + (profileCenter.X * TrimNormal) + (profileCenter.Y * TrimUp);
+		FVector boxExtents(profileSize.X, FVector::Dist(TrimStartPos, TrimEndPos), profileSize.Y);
 		FQuat boxRot = FRotationMatrix::MakeFromXZ(TrimNormal, TrimUp).ToQuat();
 
 		FModumateSnappingView::GetBoundingBoxPointsAndLines(lineCenter, boxRot, 0.5f * boxExtents, outPoints, outLines);
@@ -229,8 +229,8 @@ void AMOITrim::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& 
 {
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	TArray<FVector> perimeter;
-	if (!UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, TrimUp, TrimNormal,
-		InstanceData.OffsetUp, InstanceData.OffsetNormal, ProfileFlip, perimeter))
+	if (!UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, TrimNormal, TrimUp,
+		InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, perimeter))
 	{
 		return;
 	}
@@ -460,9 +460,9 @@ bool AMOITrim::UpdateCachedStructure()
 
 	TrimUp = (TrimDir ^ TrimNormal);
 	TrimExtrusionFlip.Set(1.0f, InstanceData.FlipSigns.Y, InstanceData.FlipSigns.X);
-	ProfileFlip.Set(InstanceData.FlipSigns.Y, 1.0f);
+	ProfileFlip.Set(1.0f, InstanceData.FlipSigns.Y);
 
-	return UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, InstanceData.OffsetUp, InstanceData.OffsetNormal, ProfileFlip, CachedProfilePoints, CachedProfileExtents);
+	return UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, CachedProfilePoints, CachedProfileExtents);
 }
 
 bool AMOITrim::UpdateMitering()
@@ -475,7 +475,7 @@ bool AMOITrim::UpdateMitering()
 bool AMOITrim::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 {
 	return DynamicMeshActor->SetupExtrudedPolyGeometry(CachedAssembly, TrimStartPos, TrimEndPos,
-		TrimUp, TrimNormal, InstanceData.OffsetUp, InstanceData.OffsetNormal, InstanceData.Extensions, TrimExtrusionFlip, bRecreate, bCreateCollision);
+		TrimNormal, TrimUp, InstanceData.OffsetNormal, InstanceData.OffsetUp, InstanceData.Extensions, TrimExtrusionFlip, bRecreate, bCreateCollision);
 }
 
 void AMOITrim::UpdateQuantities()

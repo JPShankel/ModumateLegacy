@@ -622,7 +622,7 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FBIMAssemblySpec &A
 	FVector2D extensions = FVector2D::ZeroVector;
 
 	IconDynamicMeshActor->SetupExtrudedPolyGeometry(Assembly, meshStartPos, meshEndPos,
-		meshUp, meshNormal, FDimensionOffset::Centered, FDimensionOffset::Centered, extensions, FVector::OneVector, true, false);
+		meshNormal, meshUp, FDimensionOffset::Centered, FDimensionOffset::Centered, extensions, FVector::OneVector, true, false);
 
 	// View beams and columns head on, trim and mullions side on
 	FTransform transform = FTransform::Identity;
@@ -838,11 +838,11 @@ bool ADynamicIconGenerator::SetIconMeshForProfile(const FGuid& ProfileKey, UText
 	FVector meshEndPos = FVector(-1.f, 0.f, 0.f);
 	// Profile assets orientation is different in BeamColumns vs trim
 	bool asBeamProfile = Controller->EditModelUserWidget->BIMDesigner->CraftingAssembly.ObjectType == EObjectType::OTStructureLine;
-	FVector meshNormal = asBeamProfile ? FVector::LeftVector : FVector::RightVector;
-	FVector meshUp = asBeamProfile ? FVector::DownVector : FVector::UpVector;
+	FVector meshNormal = FVector::RightVector;
+	FVector meshUp = FVector::UpVector;
 
 	IconDynamicMeshActor->SetupExtrudedPolyGeometry(obAsm, meshStartPos, meshEndPos,
-		meshUp, meshNormal, FDimensionOffset::Centered, FDimensionOffset::Centered, FVector2D::ZeroVector, FVector::OneVector, true, false);
+		meshNormal, meshUp, FDimensionOffset::Centered, FDimensionOffset::Centered, FVector2D::ZeroVector, FVector::OneVector, true, false);
 	IconDynamicMeshActor->SetActorRelativeTransform(FTransform::Identity);
 
 	// Step 2: Set camera transform and actor for capture

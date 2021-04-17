@@ -2036,36 +2036,21 @@ void AEditModelPlayerController::UpdateMouseTraceParams()
 	MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_HANDLE);
 
 	EToolMode curToolMode = CurrentTool ? CurrentTool->GetToolMode() : EToolMode::VE_NONE;
-	switch (curToolMode)
+	EToolCategories curToolCategory = UModumateTypeStatics::GetToolCategory(curToolMode);
+	switch (curToolCategory)
 	{
-	case EToolMode::VE_WALL:
-	case EToolMode::VE_FLOOR:
-	case EToolMode::VE_CEILING:
-	case EToolMode::VE_ROOF_FACE:
-	case EToolMode::VE_RAIL:
-	case EToolMode::VE_STAIR:
-	case EToolMode::VE_RECTANGLE:
+	case EToolCategories::MetaGraph:
+	case EToolCategories::Separators:
 		MOITraceObjectQueryParams = FCollisionObjectQueryParams(COLLISION_META_MOI);
 		break;
-	case EToolMode::VE_DOOR:
-	case EToolMode::VE_WINDOW:
-		MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_SURFACE_MOI);
-		MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_DECORATOR_MOI);
-		break;
-	case EToolMode::VE_SURFACEGRAPH:
+	case EToolCategories::SurfaceGraphs:
 		if (CurrentTool->IsInUse())
 		{
 			MOITraceObjectQueryParams = FCollisionObjectQueryParams(COLLISION_SURFACE_MOI);
 		}
 		break;
-	case EToolMode::VE_FINISH:
-	case EToolMode::VE_TRIM:
-	case EToolMode::VE_CABINET:
+	case EToolCategories::Attachments:
 		MOITraceObjectQueryParams.RemoveObjectTypesToQuery(COLLISION_META_MOI);
-		break;
-	case EToolMode::VE_PLACEOBJECT:
-	case EToolMode::VE_COUNTERTOP:
-	default:
 		break;
 	}
 

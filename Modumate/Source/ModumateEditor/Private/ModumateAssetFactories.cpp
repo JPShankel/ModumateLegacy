@@ -131,13 +131,20 @@ bool USimpleMeshImportFactory::ImportFromOBJ(class USimpleMeshData* TargetObject
 			FString triStr1A, triStr1B;
 			FString triStr2A, triStr2B;
 			FString triStr3A, triStr3B;
-			if ((numTokens == 4) &&
-				objTokens[1].Split(triSplitStr, &triStr1A, &triStr1B) && triStr1A.Equals(triStr1B) &&
-				objTokens[2].Split(triSplitStr, &triStr2A, &triStr2B) && triStr1A.Equals(triStr1B) &&
-				objTokens[3].Split(triSplitStr, &triStr3A, &triStr3B) && triStr1A.Equals(triStr1B) &&
-				LexTryParseString(triIdx1, *triStr1A) && (triIdx1 >= 1) &&
-				LexTryParseString(triIdx2, *triStr2A) && (triIdx2 >= 1) &&
-				LexTryParseString(triIdx3, *triStr3A) && (triIdx3 >= 1))
+			if ((numTokens == 4) && (
+				(	// Accept primary format "f 1 2 3"
+					LexTryParseString(triIdx1, *objTokens[1]) && (triIdx1 >= 1) &&
+					LexTryParseString(triIdx2, *objTokens[2]) && (triIdx2 >= 1) &&
+					LexTryParseString(triIdx3, *objTokens[3]) && (triIdx3 >= 1)
+				) ||
+				(	// Accept secondary format "f 1/1 2/2 3/3"
+					objTokens[1].Split(triSplitStr, &triStr1A, &triStr1B) && triStr1A.Equals(triStr1B) &&
+					objTokens[2].Split(triSplitStr, &triStr2A, &triStr2B) && triStr1A.Equals(triStr1B) &&
+					objTokens[3].Split(triSplitStr, &triStr3A, &triStr3B) && triStr1A.Equals(triStr1B) &&
+					LexTryParseString(triIdx1, *triStr1A) && (triIdx1 >= 1) &&
+					LexTryParseString(triIdx2, *triStr2A) && (triIdx2 >= 1) &&
+					LexTryParseString(triIdx3, *triStr3A) && (triIdx3 >= 1)
+				)))
 			{
 				int32 indices[] = { triIdx1, triIdx2, triIdx3 };
 				for (int32 &triIdx : indices)

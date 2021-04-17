@@ -26,22 +26,22 @@ struct MODUMATE_API FMOIStructureLineData
 	UPROPERTY()
 	int32 Version = 0;
 
-	// FlipSigns.X refers to flipping about the extrusion's "Normal" axis, which for StructureLines is the basis X axis, and is the profile polygon's Y component.
-	// FlipSigns.Y refers to flipping about the extrusion's "Up" axis, which for StructureLines is the basis Y axis, and is the profile polygon's X component.
+	// FlipSigns.X refers to flipping about the extrusion's "Normal" axis, which for StructureLines is the basis X axis, and is the profile polygon's X component.
+	// FlipSigns.Y refers to flipping about the extrusion's "Up" axis, which for StructureLines is the basis Y axis, and is the profile polygon's Y component.
 	// FlipSigns.Z refers to flipping along the direction of the hosting line, which only flips UVs.
 	UPROPERTY()
 	FVector FlipSigns = FVector::OneVector;
 
-	// Justification.X referred to the offset in the extrusion's "Up" axis, which for StructureLines is the basis Y axis, and is the profile polygon's X component.
-	// Justification.Y referred to the offset in the extrusion's "Normal" axis, which for StructureLines is the basis X axis, and is the profile polygon's Y component.
+	// Justification.X referred to the offset in the extrusion's "Up" axis, which for StructureLines is the basis Y axis, and is the profile polygon's Y component.
+	// Justification.Y referred to the offset in the extrusion's "Normal" axis, which for StructureLines is the basis X axis, and is the profile polygon's X component.
 	UPROPERTY(meta = (DeprecatedProperty, DeprecationMessage = "Justification.X and Justification.Y are now stored in OffsetUp and OffsetNormal, respectively."))
 	FVector2D Justification_DEPRECATED = FVector2D(0.5f, 0.5f);
 
-	// OffsetUp refers to the offset in the extrusion's "Up" axis, which for StructureLines is the basis Y axis, and is the profile polygon's X component.
+	// OffsetUp refers to the offset in the extrusion's "Up" axis, which for StructureLines is the basis Y axis, and is the profile polygon's Y component.
 	UPROPERTY()
 	FDimensionOffset OffsetUp;
 
-	// OffsetNormal refers to the offset in the extrusion's "Normal" axis, which for StructureLines is the basis X axis, and is the profile polygon's Y component.
+	// OffsetNormal refers to the offset in the extrusion's "Normal" axis, which for StructureLines is the basis X axis, and is the profile polygon's X component.
 	UPROPERTY()
 	FDimensionOffset OffsetNormal;
 
@@ -51,7 +51,7 @@ struct MODUMATE_API FMOIStructureLineData
 	UPROPERTY()
 	FVector2D Extensions = FVector2D::ZeroVector;
 
-	static constexpr int32 CurrentVersion = 2;
+	static constexpr int32 CurrentVersion = 3;
 };
 
 

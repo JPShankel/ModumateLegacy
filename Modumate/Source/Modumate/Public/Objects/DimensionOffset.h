@@ -34,6 +34,7 @@ struct MODUMATE_API FDimensionOffset
 
 	float GetOffsetDistance(float FlipSign, float TargetThickness) const;
 	EDimensionOffsetType GetNextType(int32 Delta, float FlipSign) const;
+	void Invert();
 
 	static FDimensionOffset Positive;
 	static FDimensionOffset Centered;

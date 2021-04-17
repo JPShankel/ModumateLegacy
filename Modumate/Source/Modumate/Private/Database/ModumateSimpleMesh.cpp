@@ -21,7 +21,9 @@ void FSimplePolygon::UpdateExtents()
 
 bool FSimplePolygon::ValidateSimple(FFeedbackContext* InWarn) const
 {
-	return UModumateGeometryStatics::IsPolygon2DValid(Points, InWarn);
+	// Use a smaller dot epsilon for these polygons, since they're being validated directly from parsed data rather than from geometry calculations.
+	static constexpr float polyDotEpsilon = 0.01f;
+	return UModumateGeometryStatics::IsPolygon2DValid(Points, InWarn, KINDA_SMALL_NUMBER, polyDotEpsilon);
 }
 
 bool USimpleMeshData::SetSourcePath(const FString &FullFilePath)

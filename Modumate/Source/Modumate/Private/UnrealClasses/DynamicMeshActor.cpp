@@ -837,7 +837,7 @@ void ADynamicMeshActor::ClearProceduralLayers()
 }
 
 bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAssembly, const FVector& InStartPoint, const FVector& InEndPoint,
-	const FVector& ObjUp, const FVector& ObjNormal, const FDimensionOffset& OffsetUp, const FDimensionOffset& OffsetNormal,
+	const FVector& ObjNormal, const FVector& ObjUp, const FDimensionOffset& OffsetNormal, const FDimensionOffset& OffsetUp,
 	const FVector2D& Extensions, const FVector& InFlipSigns, bool bRecreateSection, bool bCreateCollision)
 {
 	const FSimplePolygon *polyProfile = nullptr;
@@ -863,8 +863,8 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 
 	TArray<FVector2D> profilePoints;
 	FBox2D profileExtents;
-	FVector2D profileFlip(InFlipSigns.Y, InFlipSigns.X);
-	if (!UModumateObjectStatics::GetExtrusionProfilePoints(InAssembly, OffsetUp, OffsetNormal, profileFlip, profilePoints, profileExtents))
+	FVector2D profileFlip(InFlipSigns.X, InFlipSigns.Y);
+	if (!UModumateObjectStatics::GetExtrusionProfilePoints(InAssembly, OffsetNormal, OffsetUp, profileFlip, profilePoints, profileExtents))
 	{
 		return false;
 	}
@@ -887,7 +887,7 @@ bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAsse
 		FVector2D pointPCT = (profileExtentsSize.GetMin() > 0.0f) ? (pointRelative / profileExtentsSize) : FVector2D::ZeroVector;
 		float lengthExtension = bAtStart ? -Extensions.X : Extensions.Y;
 
-		return worldPoint + (lengthExtension * extrusionDir) + (polyPoint.Y * ObjNormal) + (polyPoint.X * ObjUp);
+		return worldPoint + (lengthExtension * extrusionDir) + (polyPoint.X * ObjNormal) + (polyPoint.Y * ObjUp);
 	};
 
 	static constexpr float uvScale = 0.01f;

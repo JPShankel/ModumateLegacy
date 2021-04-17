@@ -868,9 +868,9 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		}
 	}
 
-	constexpr int32 presetFixVersion = 13;
+	constexpr int32 presetFixVersion = 14;
 	if (DocRecordVersion < presetFixVersion)
-	{		
+	{
 		TMap<FGuid, FBIMPresetInstance> fixedPresets = DocRecord.PresetCollection.PresetsByGUID;
 		for (auto& kvp : fixedPresets)
 		{
@@ -1018,6 +1018,28 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 				if (bindingSet.MaterialBindings.Num() == 1)
 				{
 					kvp.Value.CustomData.SaveStructData(bindingSet, true);
+				}
+			}
+
+			// Prior to version 14, trim width and depth needed to be swapped for non-Trim linear extrusions
+			if (DocRecordVersion < 14)
+			{
+				switch (kvp.Value.ObjectType)
+				{
+				case EObjectType::OTMullion:
+				case EObjectType::OTStructureLine:
+				{
+					float extrusionWidth, extrusionDepth;
+					if (kvp.Value.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, extrusionWidth) &&
+						kvp.Value.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, extrusionDepth))
+					{
+						kvp.Value.Properties.SetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, extrusionDepth);
+						kvp.Value.Properties.SetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, extrusionWidth);
+					}
+					break;
+				}
+				default:
+					break;
 				}
 			}
 		}

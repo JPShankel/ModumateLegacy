@@ -91,8 +91,8 @@ bool AMOIStructureLine::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& Out
 bool AMOIStructureLine::GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
 {
 	FVector2D projectedAdjustments(
-		AdjustmentDirection | LineUp,
-		AdjustmentDirection | LineNormal
+		AdjustmentDirection | LineNormal,
+		AdjustmentDirection | LineUp
 	);
 	int32 targetProfileAxisIdx = (FMath::Abs(projectedAdjustments.X) > FMath::Abs(projectedAdjustments.Y)) ? 0 : 1;
 	float projectedAdjustment = projectedAdjustments[targetProfileAxisIdx];
@@ -104,11 +104,11 @@ bool AMOIStructureLine::GetOffsetState(const FVector& AdjustmentDirection, FMOIS
 	float targetAdjustmentSign = FMath::Sign(projectedAdjustment);
 	float targetFlipSign = ProfileFlip[targetProfileAxisIdx];
 
-	const FDimensionOffset& curOffset = (targetProfileAxisIdx == 0) ? InstanceData.OffsetUp : InstanceData.OffsetNormal;
+	const FDimensionOffset& curOffset = (targetProfileAxisIdx == 0) ? InstanceData.OffsetNormal : InstanceData.OffsetUp;
 	EDimensionOffsetType nextOffsetType = curOffset.GetNextType(targetAdjustmentSign, targetFlipSign);
 
 	FMOIStructureLineData modifiedInstanceData = InstanceData;
-	FDimensionOffset& nextOffset = (targetProfileAxisIdx == 0) ? modifiedInstanceData.OffsetUp : modifiedInstanceData.OffsetNormal;
+	FDimensionOffset& nextOffset = (targetProfileAxisIdx == 0) ? modifiedInstanceData.OffsetNormal : modifiedInstanceData.OffsetUp;
 	nextOffset.Type = nextOffsetType;
 	OutState = GetStateData();
 
@@ -181,8 +181,8 @@ void AMOIStructureLine::GetStructuralPointsAndLines(TArray<FStructurePoint> &out
 	{
 		FVector2D profileSize = CachedProfileExtents.GetSize();
 		FVector2D profileCenter = CachedProfileExtents.GetCenter();
-		FVector lineCenter = 0.5f * (LineStartPos + LineEndPos) + (profileCenter.X * LineUp) + (profileCenter.Y * LineNormal);
-		FVector boxExtents(profileSize.Y, FVector::Dist(LineStartPos, LineEndPos), profileSize.X);
+		FVector lineCenter = 0.5f * (LineStartPos + LineEndPos) + (profileCenter.X * LineNormal) + (profileCenter.Y * LineUp);
+		FVector boxExtents(profileSize.X, FVector::Dist(LineStartPos, LineEndPos), profileSize.Y);
 		FQuat boxRot = FRotationMatrix::MakeFromXZ(LineNormal, LineUp).ToQuat();
 
 		FModumateSnappingView::GetBoundingBoxPointsAndLines(lineCenter, boxRot, 0.5f * boxExtents, outPoints, outLines);
@@ -202,7 +202,7 @@ void AMOIStructureLine::PostLoadInstanceData()
 				float flipValue = InstanceData.FlipSigns[justificationAxisIdx == 0 ? 2 : 0];
 				float oldJustification = InstanceData.Justification_DEPRECATED[justificationAxisIdx];
 				float flippedJustification = (flipValue * (oldJustification - 0.5f)) + 0.5f;
-				FDimensionOffset& offsetValue = (justificationAxisIdx == 0) ? InstanceData.OffsetUp : InstanceData.OffsetNormal;
+				FDimensionOffset& offsetValue = (justificationAxisIdx == 0) ? InstanceData.OffsetNormal : InstanceData.OffsetUp;
 
 				if (FMath::IsNearlyEqual(flippedJustification, 0.0f))
 				{
@@ -222,6 +222,14 @@ void AMOIStructureLine::PostLoadInstanceData()
 		if (InstanceData.Version < 2)
 		{
 			Swap(InstanceData.FlipSigns.Y, InstanceData.FlipSigns.Z);
+		}
+
+		// In order to support flat (direction in XY) linear extrusions with a basis Y axis in Z+, we needed to negate the computed basis axes.
+		// This means that old linear extrusions offsets need to be negated.
+		if (InstanceData.Version < 3)
+		{
+			InstanceData.OffsetNormal.Invert();
+			InstanceData.OffsetUp.Invert();
 		}
 
 		InstanceData.Version = InstanceData.CurrentVersion;
@@ -360,7 +368,12 @@ bool AMOIStructureLine::UpdateCachedGeometry(bool bRecreate, bool bCreateCollisi
 	LineEndPos = parentObj->GetCorner(1);
 	LineDir = (LineEndPos - LineStartPos).GetSafeNormal();
 
+	// FindBasisVectors is intended to generate Y-axes that align with -Z, if the input Z-axis is on the XY-axis.
+	// StructureLines are choosing their basis vectors arbitrarily, but we know that they would prefer their Y-axis to align with +Z if their extrusion doesn't already align with the Z axis.
 	UModumateGeometryStatics::FindBasisVectors(LineNormal, LineUp, LineDir);
+	LineNormal *= -1.0f;
+	LineUp *= -1.0f;
+
 	if (InstanceData.Rotation != 0.0f)
 	{
 		FQuat rotation(InstanceData.FlipSigns.Z * LineDir, FMath::DegreesToRadians(InstanceData.Rotation));
@@ -368,15 +381,15 @@ bool AMOIStructureLine::UpdateCachedGeometry(bool bRecreate, bool bCreateCollisi
 		LineUp = rotation * LineUp;
 	}
 
-	ProfileFlip.Set(InstanceData.FlipSigns.Y, InstanceData.FlipSigns.X);
+	ProfileFlip.Set(InstanceData.FlipSigns.X, InstanceData.FlipSigns.Y);
 
-	if (!UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, InstanceData.OffsetUp, InstanceData.OffsetNormal, ProfileFlip, CachedProfilePoints, CachedProfileExtents))
+	if (!UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, CachedProfilePoints, CachedProfileExtents))
 	{
 		return false;
 	}
 
-	DynamicMeshActor->SetupExtrudedPolyGeometry(CachedAssembly, LineStartPos, LineEndPos, LineUp, LineNormal,
-		InstanceData.OffsetUp, InstanceData.OffsetNormal, InstanceData.Extensions, InstanceData.FlipSigns, bRecreate, bCreateCollision);
+	DynamicMeshActor->SetupExtrudedPolyGeometry(CachedAssembly, LineStartPos, LineEndPos, LineNormal, LineUp,
+		InstanceData.OffsetNormal, InstanceData.OffsetUp, InstanceData.Extensions, InstanceData.FlipSigns, bRecreate, bCreateCollision);
 
 	return true;
 }
@@ -388,8 +401,8 @@ void AMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 	OutPerimeters.Reset();
 
 	TArray<FVector> perimeter;
-	if (!UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, LineUp, LineNormal, InstanceData.OffsetUp,
-		InstanceData.OffsetNormal, ProfileFlip, perimeter))
+	if (!UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, LineNormal, LineUp,
+		InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, perimeter))
 	{
 		return;
 	}

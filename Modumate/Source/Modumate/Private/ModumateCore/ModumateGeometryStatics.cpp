@@ -447,64 +447,78 @@ bool UModumateGeometryStatics::GetPlaneFromPoints(const TArray<FVector> &Points,
 }
 
 // It would be nice to use FMath::SegmentIntersection2D directly, but we need to handle zero-length segments, variable epsilon values, and parallel segments
-bool UModumateGeometryStatics::SegmentIntersection2D(const FVector2D& SegmentStartA, const FVector2D& SegmentEndA, const FVector2D& SegmentStartB, const FVector2D& SegmentEndB, FVector2D& OutIntersectionPoint, bool& bOutOverlapping, float Tolerance)
+bool UModumateGeometryStatics::SegmentIntersection2D(
+	const FVector2D& SegmentStartAFloat, const FVector2D& SegmentEndAFloat,
+	const FVector2D& SegmentStartBFloat, const FVector2D& SegmentEndBFloat,
+	FVector2D& OutIntersectionPoint, bool& bOutOverlapping, float FloatTolerance)
 {
-	bOutOverlapping = false;
-	float signedTolerance = Tolerance;
-	Tolerance = FMath::Abs(Tolerance);
+	// TODO: remove these argument conversions and *float names once the arguments are double-precision, when every client is operating in doubles
+	// Alternative TODO: replace this with IntrLine2Line2/IntrSegment2Segment2 if it handles our same required degenerate edge cases
+	FVec2d
+		SegmentStartA(SegmentStartAFloat),
+		SegmentEndA(SegmentEndAFloat),
+		SegmentStartB(SegmentStartBFloat),
+		SegmentEndB(SegmentEndBFloat);
 
-	FVector2D segmentADelta = SegmentEndA - SegmentStartA;
-	float segmentALength = segmentADelta.Size();
-	FVector2D segmentADir = FMath::IsNearlyZero(segmentALength, Tolerance) ? FVector2D::ZeroVector : (segmentADelta / segmentALength);
-	FVector2D segmentBDelta = SegmentEndB - SegmentStartB;
-	float segmentBLength = segmentBDelta.Size();
-	FVector2D segmentBDir = FMath::IsNearlyZero(segmentBLength, Tolerance) ? FVector2D::ZeroVector : (segmentBDelta / segmentBLength);
+	FSegment2d segmentA(SegmentStartA, SegmentEndA);
+	FSegment2d segmentB(SegmentStartB, SegmentEndB);
+
+	bOutOverlapping = false;
+	double signedTolerance = (double)FloatTolerance;
+	double Tolerance = FMath::Abs(signedTolerance);
+
+	FVec2d segmentADelta = SegmentEndA - SegmentStartA;
+	double segmentALength = segmentADelta.Length();
+	FVec2d segmentADir = (FMath::Abs(segmentALength) <= Tolerance) ? FVec2d::Zero() : (segmentADelta / segmentALength);
+	FVec2d segmentBDelta = SegmentEndB - SegmentStartB;
+	double segmentBLength = segmentBDelta.Length();
+	FVec2d segmentBDir = (FMath::Abs(segmentBLength) <= Tolerance) ? FVec2d::Zero() : (segmentBDelta / segmentBLength);
 
 	// First, check degenerate zero-length segments by seeing if points are equal, or if one point lies on another segment
-	if (segmentADir.IsZero() && segmentBDir.IsZero())
+	if (!segmentADir.IsNormalized() && !segmentBDir.IsNormalized())
 	{
-		if (SegmentStartA.Equals(SegmentStartB, Tolerance))
+		if (VectorUtil::EpsilonEqual(SegmentStartA, SegmentStartB, Tolerance))
 		{
-			OutIntersectionPoint = SegmentStartA;
+			OutIntersectionPoint = FVector2D(SegmentStartA);
 			return true;
 		}
 		return false;
 	}
-	else if (segmentADir.IsZero())
+	else if (!segmentADir.IsNormalized())
 	{
-		FVector2D pointAOnSegmentB = FMath::ClosestPointOnSegment2D(SegmentStartA, SegmentStartB, SegmentEndB);
-		if (pointAOnSegmentB.Equals(SegmentStartA, Tolerance))
+		FVec2d pointAOnSegmentB = segmentB.NearestPoint(SegmentStartA);
+		if (VectorUtil::EpsilonEqual(pointAOnSegmentB, SegmentStartA, Tolerance))
 		{
-			OutIntersectionPoint = SegmentStartA;
+			OutIntersectionPoint = FVector2D(SegmentStartA);
 			return true;
 		}
 		return false;
 	}
-	else if (segmentBDir.IsZero())
+	else if (!segmentBDir.IsNormalized())
 	{
-		FVector2D pointBOnSegmentA = FMath::ClosestPointOnSegment2D(SegmentStartB, SegmentStartA, SegmentEndA);
-		if (pointBOnSegmentA.Equals(SegmentStartB, Tolerance))
+		FVec2d pointBOnSegmentA = segmentA.NearestPoint(SegmentStartB);
+		if (VectorUtil::EpsilonEqual(pointBOnSegmentA, SegmentStartB, Tolerance))
 		{
-			OutIntersectionPoint = SegmentStartB;
+			OutIntersectionPoint = FVector2D(SegmentStartB);
 			return true;
 		}
 		return false;
 	}
 
 	// If the segments are parallel, then they may be overlapping in ways in which ray intersection can't handle, so handle it here
-	float segmentDirsDot = segmentADir | segmentBDir;
-	FVector2D startsDelta = (SegmentStartB - SegmentStartA);
+	double segmentDirsDot = segmentADir.Dot(segmentBDir);
+	FVec2d startsDelta = (SegmentStartB - SegmentStartA);
 
 	if (FMath::Abs(segmentDirsDot) >= THRESH_NORMALS_ARE_PARALLEL)
 	{
-		float segBStartDistOnA = startsDelta | segmentADir;
-		float segBEndDistOnA = (SegmentEndB - SegmentStartA) | segmentADir;
-		float segBMinDistOnA = FMath::Min(segBStartDistOnA, segBEndDistOnA);
-		float segBMaxDistOnA = FMath::Max(segBStartDistOnA, segBEndDistOnA);
+		double segBStartDistOnA = startsDelta.Dot(segmentADir);
+		double segBEndDistOnA = (SegmentEndB - SegmentStartA).Dot(segmentADir);
+		double segBMinDistOnA = FMath::Min(segBStartDistOnA, segBEndDistOnA);
+		double segBMaxDistOnA = FMath::Max(segBStartDistOnA, segBEndDistOnA);
 
 		// If the segment points don't lie on the same line, then they can't overlap
-		FVector2D segBStartOnA = SegmentStartA + (segBStartDistOnA * segmentADir);
-		if (!SegmentStartB.Equals(segBStartOnA, Tolerance))
+		FVec2d segBStartOnA = SegmentStartA + (segBStartDistOnA * segmentADir);
+		if (!VectorUtil::EpsilonEqual(SegmentStartB, segBStartOnA, Tolerance))
 		{
 			return false;
 		}
@@ -515,51 +529,61 @@ bool UModumateGeometryStatics::SegmentIntersection2D(const FVector2D& SegmentSta
 		}
 
 		bOutOverlapping = true;
-		float overlapMinDistOnA = FMath::Max(segBMinDistOnA, 0.0f);
-		float overlapMaxDistOnA = FMath::Min(segBMaxDistOnA, segmentALength);
-		float overlapCenterDistOnA = 0.5f * (overlapMinDistOnA + overlapMaxDistOnA);
-		OutIntersectionPoint = SegmentStartA + (overlapCenterDistOnA * segmentADir);
+		double overlapMinDistOnA = FMath::Max(segBMinDistOnA, 0.0);
+		double overlapMaxDistOnA = FMath::Min(segBMaxDistOnA, segmentALength);
+		double overlapCenterDistOnA = 0.5 * (overlapMinDistOnA + overlapMaxDistOnA);
+		OutIntersectionPoint = FVector2D(SegmentStartA + (overlapCenterDistOnA * segmentADir));
 		return true;
 	}
 	// Otherwise, calculate the intersection directly since we know we won't divide by zero
 	else
 	{
-		FVector2D segmentANormal(-segmentADir.Y, segmentADir.X);
-		FVector2D segmentBNormal(-segmentBDir.Y, segmentBDir.X);
+		FVec2d segmentANormal = segmentADir.Perp();
+		FVec2d segmentBNormal = segmentBDir.Perp();
 
 		// Compute intersection between rays, using FMath::RayPlaneIntersection as a basis
-		// float Distance = (( PlaneOrigin - RayOrigin ) | PlaneNormal) / (RayDirection | PlaneNormal);
-		float intersectionADist = (startsDelta | segmentBNormal) / (segmentADir | segmentBNormal);
-		float intersectionBDist = (-startsDelta | segmentANormal) / (segmentBDir | segmentANormal);
+		// Distance = (( PlaneOrigin - RayOrigin ) | PlaneNormal) / (RayDirection | PlaneNormal);
+		double intersectionADist = startsDelta.Dot(segmentBNormal) / segmentADir.Dot(segmentBNormal);
+		double intersectionBDist = -startsDelta.Dot(segmentANormal) / segmentBDir.Dot(segmentANormal);
 
-		FVector2D intersectionAPoint = SegmentStartA + (intersectionADist * segmentADir);
-		FVector2D intersectionBPoint = SegmentStartB + (intersectionBDist * segmentBDir);
-		if (!ensure(intersectionAPoint.Equals(intersectionBPoint, Tolerance)))
+		FVec2d intersectionAPoint = SegmentStartA + (intersectionADist * segmentADir);
+		FVec2d intersectionBPoint = SegmentStartB + (intersectionBDist * segmentBDir);
+		if (!ensure(VectorUtil::EpsilonEqual(intersectionAPoint, intersectionBPoint, Tolerance)))
 		{
 			return false;
 		}
 
-		OutIntersectionPoint = intersectionAPoint;
+		OutIntersectionPoint = FVector2D(intersectionAPoint);
 		return FMath::IsWithinInclusive(intersectionADist, -signedTolerance, segmentALength + signedTolerance) &&
 			FMath::IsWithinInclusive(intersectionBDist, -signedTolerance, segmentBLength + signedTolerance);
 	}
 }
 
-bool UModumateGeometryStatics::RayIntersection2D(const FVector2D& RayOriginA, const FVector2D& RayDirectionA, const FVector2D& RayOriginB, const FVector2D& RayDirectionB,
-	FVector2D& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool bRequirePositive, float Tolerance)
+bool UModumateGeometryStatics::RayIntersection2D(
+	const FVector2D& RayOriginAFloat, const FVector2D& RayDirectionAFloat,
+	const FVector2D& RayOriginBFloat, const FVector2D& RayDirectionBFloat,
+	FVector2D& OutIntersectionPoint, float &OutRayADist, float &OutRayBDist, bool bRequirePositive, float ToleranceFloat)
 {
+	// TODO: remove these argument conversions and *float names once the arguments are double-precision, when every client is operating in doubles
+	FVec2d
+		RayOriginA(RayOriginAFloat),
+		RayDirectionA(RayDirectionAFloat),
+		RayOriginB(RayOriginBFloat),
+		RayDirectionB(RayDirectionBFloat);
+
+	double Tolerance = (double)ToleranceFloat;
 	OutRayADist = OutRayBDist = 0.0f;
 
 	// First, check if the rays start at the same origin
-	FVector2D originDelta = RayOriginB - RayOriginA;
-	float originDist = originDelta.Size();
+	FVec2d originDelta = RayOriginB - RayOriginA;
+	double originDist = originDelta.Length();
 
-	float rayADotB = RayDirectionA | RayDirectionB;
+	double rayADotB = RayDirectionA.Dot(RayDirectionB);
 	bool bParallel = (FMath::Abs(rayADotB) > THRESH_NORMALS_ARE_PARALLEL);
 
-	if (FMath::IsNearlyZero(originDist, Tolerance))
+	if (FMath::Abs(originDist) <= Tolerance)
 	{
-		OutIntersectionPoint = RayOriginA;
+		OutIntersectionPoint = FVector2D(RayOriginA);
 		return true;
 	}
 
@@ -567,32 +591,32 @@ bool UModumateGeometryStatics::RayIntersection2D(const FVector2D& RayOriginA, co
 	if (bParallel)
 	{
 		// Check if the rays are colinear; if not, then they can't intersect
-		float originBOnRayADist = originDelta | RayDirectionA;
-		FVector2D originBOnRayAPoint = RayOriginA + (originBOnRayADist * RayDirectionA);
+		double originBOnRayADist = originDelta.Dot(RayDirectionA);
+		FVec2d originBOnRayAPoint = RayOriginA + (originBOnRayADist * RayDirectionA);
 
-		float originAOnRayBDist = -originDelta | RayDirectionB;
-		FVector2D originAOnRayBPoint = RayOriginB + (originAOnRayBDist * RayDirectionB);
+		double originAOnRayBDist = -originDelta.Dot(RayDirectionB);
+		FVec2d originAOnRayBPoint = RayOriginB + (originAOnRayBDist * RayDirectionB);
 
-		float rayDist = FVector2D::Distance(RayOriginB, originBOnRayAPoint);
+		double rayDist = RayOriginB.Distance(originBOnRayAPoint);
 		if (rayDist > Tolerance)
 		{
 			return false;
 		}
 
 		// Coincident colinear rays
-		if (rayADotB > 0.0f)
+		if (rayADotB > 0.0)
 		{
 			ensureAlways(FMath::Sign(originBOnRayADist) != FMath::Sign(originAOnRayBDist));
 
-			OutRayADist = FMath::Max(originBOnRayADist, 0.0f);
-			OutRayBDist = FMath::Max(originAOnRayBDist, 0.0f);
+			OutRayADist = FMath::Max(originBOnRayADist, 0.0);
+			OutRayBDist = FMath::Max(originAOnRayBDist, 0.0);
 			if (originBOnRayADist > -Tolerance)
 			{
-				OutIntersectionPoint = RayOriginB;
+				OutIntersectionPoint = FVector2D(RayOriginB);
 			}
 			else
 			{
-				OutIntersectionPoint = RayOriginA;
+				OutIntersectionPoint = FVector2D(RayOriginA);
 			}
 
 			return true;
@@ -600,24 +624,24 @@ bool UModumateGeometryStatics::RayIntersection2D(const FVector2D& RayOriginA, co
 		// Anti-parallel colinear rays
 		else
 		{
-			ensureAlways(FMath::IsNearlyEqual(originBOnRayADist, originAOnRayBDist, Tolerance));
+			ensureAlways(VectorUtil::EpsilonEqual(originBOnRayADist, originAOnRayBDist, Tolerance));
 
-			OutIntersectionPoint = 0.5f * (RayOriginA + RayOriginB);
-			OutRayADist = 0.5f * originBOnRayADist;
-			OutRayBDist = 0.5f * originAOnRayBDist;
+			OutIntersectionPoint = FVector2D(0.5 * (RayOriginA + RayOriginB));
+			OutRayADist = 0.5 * originBOnRayADist;
+			OutRayBDist = 0.5 * originAOnRayBDist;
 
 			return (originBOnRayADist > -Tolerance) || !bRequirePositive;
 		}
 	}
 
 	// Determine ray perpendicular vectors, for intersection
-	FVector2D rayNormalA(-RayDirectionA.Y, RayDirectionA.X);
-	FVector2D rayNormalB(-RayDirectionB.Y, RayDirectionB.X);
+	FVec2d rayNormalA = RayDirectionA.Perp();
+	FVec2d rayNormalB = RayDirectionB.Perp();
 
 	// Compute intersection between rays, using FMath::RayPlaneIntersection as a basis
-	// float Distance = (( PlaneOrigin - RayOrigin ) | PlaneNormal) / (RayDirection | PlaneNormal);
-	OutRayADist = (originDelta | rayNormalB) / (RayDirectionA | rayNormalB);
-	OutRayBDist = (-originDelta | rayNormalA) / (RayDirectionB | rayNormalA);
+	// Distance = (( PlaneOrigin - RayOrigin ) | PlaneNormal) / (RayDirection | PlaneNormal);
+	OutRayADist = originDelta.Dot(rayNormalB) / RayDirectionA.Dot(rayNormalB);
+	OutRayBDist = -originDelta.Dot(rayNormalA) / RayDirectionB.Dot(rayNormalA);
 
 	// Potentially throw out results that are behind the origins of the rays
 	if (bRequirePositive && ((OutRayADist < -Tolerance) || (OutRayBDist < -Tolerance)))
@@ -626,14 +650,14 @@ bool UModumateGeometryStatics::RayIntersection2D(const FVector2D& RayOriginA, co
 	}
 
 	// Ensure that intersection points are consistent
-	FVector2D rayAOnBPoint = RayOriginA + (OutRayADist * RayDirectionA);
-	FVector2D rayBOnAPoint = RayOriginB + (OutRayBDist * RayDirectionB);
-	if (!rayAOnBPoint.Equals(rayBOnAPoint, Tolerance))
+	FVec2d rayAOnBPoint = RayOriginA + (OutRayADist * RayDirectionA);
+	FVec2d rayBOnAPoint = RayOriginB + (OutRayBDist * RayDirectionB);
+	if (!VectorUtil::EpsilonEqual(rayAOnBPoint, rayBOnAPoint, Tolerance))
 	{
 		return false;
 	}
 
-	OutIntersectionPoint = rayAOnBPoint;
+	OutIntersectionPoint = FVector2D(rayAOnBPoint);
 	return true;
 }
 
@@ -1704,7 +1728,7 @@ bool UModumateGeometryStatics::AreConsecutivePointsRepeated(const TArray<FVector
 	return false;
 }
 
-bool UModumateGeometryStatics::IsPolygon2DValid(const TArray<FVector2D> &Points, FFeedbackContext* InWarn)
+bool UModumateGeometryStatics::IsPolygon2DValid(const TArray<FVector2D> &Points, FFeedbackContext* InWarn, float DistEpsilon, float DotEpsilon)
 {
 	int32 numPoints = Points.Num();
 
@@ -1719,7 +1743,7 @@ bool UModumateGeometryStatics::IsPolygon2DValid(const TArray<FVector2D> &Points,
 		const FVector2D &segAStart = Points[segIdxAStart];
 		const FVector2D &segAEnd = Points[segIdxAEnd];
 
-		if (segAStart.Equals(segAEnd))
+		if (segAStart.Equals(segAEnd, DistEpsilon))
 		{
 			if (InWarn)
 			{
@@ -1739,7 +1763,7 @@ bool UModumateGeometryStatics::IsPolygon2DValid(const TArray<FVector2D> &Points,
 			const FVector2D &segBStart = Points[segIdxBStart];
 			const FVector2D &segBEnd = Points[segIdxBEnd];
 
-			if (segAStart.Equals(segBStart))
+			if (segAStart.Equals(segBStart, DistEpsilon))
 			{
 				if (InWarn)
 				{
@@ -1749,11 +1773,11 @@ bool UModumateGeometryStatics::IsPolygon2DValid(const TArray<FVector2D> &Points,
 				return false;
 			}
 
-			if (!segAStart.Equals(segBEnd) && !segAEnd.Equals(segBStart) && !segAEnd.Equals(segBEnd))
+			if (!segAStart.Equals(segBEnd, DistEpsilon) && !segAEnd.Equals(segBStart, DistEpsilon) && !segAEnd.Equals(segBEnd, DistEpsilon))
 			{
 				FVector2D intersectionPoint;
 				bool bSegmentsOverlap;
-				if (UModumateGeometryStatics::SegmentIntersection2D(segAStart, segAEnd, segBStart, segBEnd, intersectionPoint, bSegmentsOverlap, RAY_INTERSECT_TOLERANCE))
+				if (UModumateGeometryStatics::SegmentIntersection2D(segAStart, segAEnd, segBStart, segBEnd, intersectionPoint, bSegmentsOverlap, DotEpsilon))
 				{
 					if (InWarn)
 					{

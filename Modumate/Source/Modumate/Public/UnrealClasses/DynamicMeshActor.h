@@ -120,7 +120,7 @@ public:
 		const FVector2D& UVFlip = FVector2D(1.0f, 1.0f), float UVRotOffset = 0.0f);
 
 	bool SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAssembly, const FVector& InStartPoint, const FVector& InEndPoint,
-		const FVector& ObjUp, const FVector& ObjNormal, const FDimensionOffset& OffsetUp, const FDimensionOffset& OffsetNormal,
+		const FVector& ObjNormal, const FVector& ObjUp, const FDimensionOffset& OffsetNormal, const FDimensionOffset& OffsetUp,
 		const FVector2D& Extensions = FVector2D::ZeroVector, const FVector& InFlipSigns = FVector::OneVector, bool bRecreateSection = true, bool bCreateCollision = true);
 
 	void SetupMasksGeometry(const TArray<TArray<FVector>> &Polygons, const FPlane &Plane, const FVector &Origin, const FVector &AxisX, const FVector &AxisY);

@@ -67,3 +67,21 @@ EDimensionOffsetType FDimensionOffset::GetNextType(int32 Delta, float FlipSign) 
 		return Type;
 	}
 }
+
+void FDimensionOffset::Invert()
+{
+	switch (Type)
+	{
+	case EDimensionOffsetType::Negative:
+		Type = EDimensionOffsetType::Positive;
+		break;
+	case EDimensionOffsetType::Positive:
+		Type = EDimensionOffsetType::Negative;
+		break;
+	case EDimensionOffsetType::Custom:
+		CustomValue *= -1.0f;
+		break;
+	default:
+		break;
+	}
+}

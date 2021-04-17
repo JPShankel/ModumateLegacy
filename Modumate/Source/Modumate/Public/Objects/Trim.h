@@ -27,16 +27,18 @@ struct MODUMATE_API FMOITrimData
 	bool bUpInverted_DEPRECATED = false;
 
 	// FlipSigns.X refers to flipping along the direction of the hosting line, which only flips UVs.
-	// FlipSigns.Y refers to flipping about the extrusion's "Up" axis, which for Trim is along the hosting polygon, and is the profile polygon's X component.
+	// FlipSigns.Y refers to flipping about the extrusion's "Up" axis, which for Trim is along the hosting polygon, and is the profile polygon's Y component.
 	UPROPERTY()
 	FVector2D FlipSigns = FVector2D::UnitVector;
 
 	UPROPERTY(meta = (DeprecatedProperty, DeprecationMessage = "UpJustification is now stored in OffsetUp."))
 	float UpJustification_DEPRECATED = 0.5f;
 
+	// Offset along the extrusion's "Normal" axis, which is the profile polygon's X component.
 	UPROPERTY()
 	FDimensionOffset OffsetNormal = FDimensionOffset::Positive;
 
+	// Offset along the extrusion's "Up" axis, which is the profile polygon's Y component.
 	UPROPERTY()
 	FDimensionOffset OffsetUp;
 

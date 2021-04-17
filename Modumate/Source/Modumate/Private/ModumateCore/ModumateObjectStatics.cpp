@@ -829,7 +829,7 @@ bool UModumateObjectStatics::GetExtrusionProfilePoints(const FBIMAssemblySpec& A
 	return true;
 }
 
-bool UModumateObjectStatics::GetExtrusionObjectPoints(const FBIMAssemblySpec& Assembly, const FVector& LineUp, const FVector& LineNormal,
+bool UModumateObjectStatics::GetExtrusionObjectPoints(const FBIMAssemblySpec& Assembly, const FVector& LineNormal, const FVector& LineUp,
 	const FDimensionOffset& OffsetX, const FDimensionOffset& OffsetY, const FVector2D& FlipSigns, TArray<FVector>& OutObjectPoints)
 {
 	OutObjectPoints.Reset();
@@ -843,7 +843,7 @@ bool UModumateObjectStatics::GetExtrusionObjectPoints(const FBIMAssemblySpec& As
 
 	for (const FVector2D& profilePoint : profilePoints)
 	{
-		OutObjectPoints.Add((profilePoint.X * LineUp) + (profilePoint.Y * LineNormal));
+		OutObjectPoints.Add((profilePoint.X * LineNormal) + (profilePoint.Y * LineUp));
 	}
 
 	return true;
@@ -950,7 +950,6 @@ TArray<FEdge> UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(const FPla
 {
 	const FVector viewNormal = Plane;
 	TArray<FEdge> beamEdges;
-	FVector LineUp, LineNormal;
 
 	int32 numEdges = Perimeter.Num();
 	int32 closestPoint = 0;
