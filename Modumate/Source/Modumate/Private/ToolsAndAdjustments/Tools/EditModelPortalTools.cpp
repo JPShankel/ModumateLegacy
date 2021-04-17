@@ -33,7 +33,7 @@ UPortalToolBase::UPortalToolBase(const FObjectInitializer& ObjectInitializer)
 	, InstanceStampSize(FVector::ZeroVector)
 	, InstanceBottomOffset(0.0f)
 {
-	CreateObjectMode = EToolCreateObjectMode::Stamp;
+	CreateObjectMode = EToolCreateObjectMode::Apply;
 }
 
 bool UPortalToolBase::Activate()
