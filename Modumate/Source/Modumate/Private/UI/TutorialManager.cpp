@@ -401,7 +401,7 @@ void UModumateTutorialManager::SetWalkthroughStepIndex(int32 NewStepIndex, bool 
 		else if (CurWalkthroughStepIdx == (numSteps - 1))
 		{
 			// TODO: allow for advancing to "expert", not just from "beginner"
-			bool bShowProceedButton = (CurWalkthroughCategory == EModumateWalkthroughCategories::Beginner);
+			bool bShowProceedButton = false;
 			WalkthroughMenu->ShowWalkthroughOutro(curStepData.Title, curStepData.Description, bShowProceedButton);
 		}
 		else
