@@ -835,7 +835,7 @@ bool AEditModelPlayerController::SaveModelAs()
 	// Open the save file dialog and actually perform the save
 	FString filename;
 	bool bSaveSuccess = false;
-	if (Modumate::PlatformFunctions::GetSaveFilename(filename, INDEX_MODFILE))
+	if (FModumatePlatform::GetSaveFilename(filename, FModumatePlatform::INDEX_MODFILE))
 	{
 		EMPlayerState->ShowingFileDialog = false;
 		bSaveSuccess = SaveModelFilePath(filename);
@@ -915,7 +915,7 @@ bool AEditModelPlayerController::LoadModel(bool bLoadOnlyDeltas)
 	FString filename;
 	bool bLoadSuccess = false;
 
-	if (Modumate::PlatformFunctions::GetOpenFilename(filename))
+	if (FModumatePlatform::GetOpenFilename(filename))
 	{
 		bLoadSuccess = LoadModelFilePath(filename, true, true, true, bLoadOnlyDeltas);
 	}
@@ -1118,7 +1118,7 @@ bool AEditModelPlayerController::GetScreenshotFileNameWithDialog(FString &filena
 
 	// Open the file dialog
 	bool bChoseFile = false;
-	if (Modumate::PlatformFunctions::GetSaveFilename(filename, INDEX_PNGFILE))
+	if (FModumatePlatform::GetSaveFilename(filename, FModumatePlatform::INDEX_PNGFILE))
 	{
 		bChoseFile = true;
 	}
@@ -1188,7 +1188,7 @@ bool AEditModelPlayerController::OnCreateDwg()
 	EMPlayerState->ShowingFileDialog = true;
 
 	FString filename;
-	if (Modumate::PlatformFunctions::GetSaveFilename(filename, INDEX_DWGFILE))
+	if (FModumatePlatform::GetSaveFilename(filename, FModumatePlatform::INDEX_DWGFILE))
 	{
 		EMPlayerState->ShowingFileDialog = false;
 
@@ -1229,7 +1229,7 @@ bool AEditModelPlayerController::OnCreateQuantitiesCsv(const TFunction<void(FStr
 	FString filename;
 	EMPlayerState->ShowingFileDialog = true;
 	auto quantitiesManager = gameInstance->GetQuantitiesManager();
-	if (Modumate::PlatformFunctions::GetSaveFilename(filename, INDEX_CSVFILE))
+	if (FModumatePlatform::GetSaveFilename(filename, FModumatePlatform::INDEX_CSVFILE))
 	{
 		EMPlayerState->ShowingFileDialog = false;
 

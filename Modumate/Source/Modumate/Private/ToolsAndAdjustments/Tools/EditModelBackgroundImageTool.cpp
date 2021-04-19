@@ -136,7 +136,7 @@ bool UBackgroundImageTool::EnterNextStage()
 	}
 
 	FString imageFilename;
-	if (!Modumate::PlatformFunctions::GetOpenFilename(imageFilename, false) || imageFilename.IsEmpty())
+	if (!FModumatePlatform::GetOpenFilename(imageFilename, false) || imageFilename.IsEmpty())
 	{
 		return false;
 	}

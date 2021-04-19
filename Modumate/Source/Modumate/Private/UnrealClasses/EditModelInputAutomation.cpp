@@ -447,7 +447,7 @@ bool UEditModelInputAutomation::EndRecording(bool bPromptForPath)
 	FString newLogPath;
 	if (bPromptForPath)
 	{
-		if (!Modumate::PlatformFunctions::GetSaveFilename(newLogPath, INDEX_ILOGFILE))
+		if (!FModumatePlatform::GetSaveFilename(newLogPath, FModumatePlatform::INDEX_ILOGFILE))
 		{
 			bTrySaveFile = false;
 		}
@@ -497,7 +497,7 @@ void UEditModelInputAutomation::TryEndRecording()
 bool UEditModelInputAutomation::BeginPlaybackPrompt(bool bCaptureFrames, float InPlaybackSpeed, bool bExitOnFrameCaptured)
 {
 	FString inputLogPath;
-	if (Modumate::PlatformFunctions::GetOpenFilename(inputLogPath, false))
+	if (FModumatePlatform::GetOpenFilename(inputLogPath, false))
 	{
 		return BeginPlayback(inputLogPath, bCaptureFrames, InPlaybackSpeed);
 	}

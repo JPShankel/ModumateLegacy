@@ -3,43 +3,39 @@
 
 #include "CoreMinimal.h"
 
-/**
- *
- */
-const unsigned int INDEX_MODFILE = 1;
-const unsigned int INDEX_PDFFILE = 2;
-const unsigned int INDEX_PNGFILE = 3;
-const unsigned int INDEX_DWGFILE = 4;
-const unsigned int INDEX_ILOGFILE = 5;
-const unsigned int INDEX_CSVFILE = 6;
 
-namespace Modumate
+struct FModumatePlatform
 {
-	namespace PlatformFunctions
+	static constexpr uint32 INDEX_MODFILE = 1;
+	static constexpr uint32 INDEX_PDFFILE = 2;
+	static constexpr uint32 INDEX_PNGFILE = 3;
+	static constexpr uint32 INDEX_DWGFILE = 4;
+	static constexpr uint32 INDEX_ILOGFILE = 5;
+	static constexpr uint32 INDEX_CSVFILE = 6;
+	
+	static const TArray<FString> FileExtensions;
+	
+	static bool GetOpenFilename(FString &filename, bool bUseDefaultFilters = true);
+	static bool GetSaveFilename(FString &filename, unsigned int filter);
+
+	enum EMessageBoxResponse
 	{
+		Cancel,
+		Yes,
+		No,
+		Retry
+	};
 
-		bool GetOpenFilename(FString &filename, bool bUseDefaultFilters = true);
-		bool GetSaveFilename(FString &filename, unsigned int filter);
+	enum EMessageBoxType
+	{
+		Okay,
+		OkayCancel,
+		YesNo,
+		YesNoCancel,
+		RetryCancel
+	};
 
-		enum EMessageBoxResponse
-		{
-			Cancel,
-			Yes,
-			No,
-			Retry
-		};
+	static EMessageBoxResponse ShowMessageBox(const FString &msg, const FString &caption,EMessageBoxType type);
 
-		enum EMessageBoxType
-		{
-			Okay,
-			OkayCancel,
-			YesNo,
-			YesNoCancel,
-			RetryCancel
-		};
-
-		EMessageBoxResponse ShowMessageBox(const FString &msg, const FString &caption,EMessageBoxType type);
-
-		FString GetStringValueFromHKCU(const FString &regSubKey, const FString &regValue);
-	}
-}
+	FString GetStringValueFromHKCU(const FString &regSubKey, const FString &regValue);
+};

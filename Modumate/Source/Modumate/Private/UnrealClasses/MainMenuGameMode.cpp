@@ -142,7 +142,7 @@ bool AMainMenuGameMode::OpenProjectFromPicker()
 
 bool AMainMenuGameMode::GetLoadFilename(FString &loadFileName)
 {
-	return Modumate::PlatformFunctions::GetOpenFilename(loadFileName);
+	return FModumatePlatform::GetOpenFilename(loadFileName);
 }
 
 FDateTime AMainMenuGameMode::GetCurrentDateTime()
