@@ -294,8 +294,7 @@ namespace Modumate {
 		}
 		totalPage->Children.Add(foregroundLines);
 
-		// TODO: Enable plan dimensions MOD-726.
-#if 0
+		// Plan dimensions MOD-726.
 		TSharedPtr<FDraftingComposite> planDimensions = MakeShared<FDraftingComposite>();
 		planDimensions->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);
 		FModumateDimensions dimensionsCreator;
@@ -309,7 +308,6 @@ namespace Modumate {
 			}
 			totalPage->Children.Add(planDimensions);
 		}
-#endif
 
 		section->Children.Add(totalPage);
 
