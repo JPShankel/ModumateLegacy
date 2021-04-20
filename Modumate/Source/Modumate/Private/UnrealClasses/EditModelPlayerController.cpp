@@ -141,19 +141,26 @@ void AEditModelPlayerController::BeginPlay()
 	Document = gameState->Document;
 
 	EMPlayerPawn = Cast<AEditModelPlayerPawn>(GetPawn());
+#if !UE_SERVER
 	if (ensure(EMPlayerPawn))
 	{
 		SetViewTargetWithBlend(EMPlayerPawn);
 	}
+#endif
 
 	SnappingView = new FModumateSnappingView(Document, this);
 
 	CreateTools();
 	SetToolMode(EToolMode::VE_SELECT);
 
+#if !UE_SERVER
 	auto* playerHUD = GetEditModelHUD();
-	playerHUD->Initialize();
-	HUDDrawWidget = playerHUD->HUDDrawWidget;
+	if (ensure(playerHUD))
+	{
+		playerHUD->Initialize();
+		HUDDrawWidget = playerHUD->HUDDrawWidget;
+	}
+#endif
 
 	// If we have a crash recovery, load that 
 	// otherwise if the game mode started with a pending project (if it came from the command line, for example) then load it immediately. 
@@ -229,16 +236,21 @@ void AEditModelPlayerController::BeginPlay()
 
 	// Create icon generator in the farthest corner of the universe
 	// TODO: Ideally the scene capture comp should capture itself only, but UE4 lacks that feature, for now...
-	DynamicIconGenerator = GetWorld()->SpawnActor<ADynamicIconGenerator>(DynamicIconGeneratorClass);
+	FActorSpawnParameters iconGeneratorSpawnParams;
+	iconGeneratorSpawnParams.Name = FName(*FString::Printf(TEXT("%s_DynamicIconGenerator"), *GetName()));
+	DynamicIconGenerator = GetWorld()->SpawnActor<ADynamicIconGenerator>(DynamicIconGeneratorClass, iconGeneratorSpawnParams);
 	if (ensureAlways(DynamicIconGenerator))
 	{
 		DynamicIconGenerator->SetActorLocation(FVector(-100000.f, -100000.f, -100000.f));
 	}
+
+#if !UE_SERVER
 	EditModelUserWidget = CreateWidget<UEditModelUserWidget>(this, EditModelUserWidgetClass);
 	if (ensureAlways(EditModelUserWidget))
 	{
 		EditModelUserWidget->AddToViewport(1);
 	}
+#endif
 
 #if !UE_BUILD_SHIPPING
 	// Now that we've registered our commands, register them in the UE4 console's autocompletion list

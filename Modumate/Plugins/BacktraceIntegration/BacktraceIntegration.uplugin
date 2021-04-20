@@ -10,7 +10,7 @@
 	"DocsURL": "https://documentation.backtrace.io",
 	"MarketplaceURL": "com.epicgames.launcher: //ue/marketplace/content/66f20b48cf6741e3a47a1fad7d118651",
 	"SupportURL": "https://backtrace.io",
-	"EngineVersion": "4.26.0",
+	"EngineVersion": "4.26.1",
 	"CanContainContent": true,
 	"IsBetaVersion": true,
 	"Installed": true,

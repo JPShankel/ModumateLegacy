@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2021 Modumate, Inc. All Rights Reserved.
 
 using System.IO;
 using UnrealBuildTool;
@@ -49,10 +49,10 @@ public class Modumate : ModuleRules
 			PrivateDependencyModuleNames.Add("UnrealEd");
 		}
 
-        if (Target.Platform == UnrealTargetPlatform.Win64)
-        {
-            LoadWinLibs();
-        }
+		if (Target.Platform == UnrealTargetPlatform.Win64)
+		{
+			LoadWinLibs();
+		}
 	}
 
 	public bool LoadWinLibs()

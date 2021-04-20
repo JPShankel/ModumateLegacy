@@ -15,7 +15,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
-#include "Components/Sizebox.h"
+#include "Components/SizeBox.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "UI/BIM/BIMBlockSlotList.h"
@@ -217,7 +217,7 @@ void UBIMDesigner::SetNodeAsSelected(const FBIMEditorNodeIDType& InstanceID)
 	{
 		TArray<FBIMPresetEditorNodeSharedPtr> childNodes;
 		selectedInst->GatherAllChildNodes(childNodes);
-		for (const auto curNode : childNodes)
+		for (const auto& curNode : childNodes)
 		{
 			selectedNodeChildren.Add(curNode->GetInstanceID());
 		}

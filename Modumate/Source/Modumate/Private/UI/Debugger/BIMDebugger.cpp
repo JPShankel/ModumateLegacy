@@ -12,7 +12,7 @@
 #include "Components/MultiLineEditableText.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
-#include "UI/Debugger/BIMDebugTestITem.h"
+#include "UI/Debugger/BIMDebugTestItem.h"
 #include "Components/VerticalBox.h"
 
 UBIMDebugger::UBIMDebugger(const FObjectInitializer& ObjectInitializer)

@@ -58,9 +58,6 @@ void UPresetCardPropertyList::BuildAsPropertyList(const FGuid& InGUID, bool bAsE
 			preset->GetForm(presetForm);
 			for (auto& curElem : presetForm.Elements)
 			{
-				curElem.DisplayName;
-				curElem.StringRepresentation;
-
 				UPresetCardPropertyText* newText = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardPropertyText>(PresetCardPropertyTextClass);
 				if (newText)
 				{

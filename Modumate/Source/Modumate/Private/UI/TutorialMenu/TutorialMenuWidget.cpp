@@ -6,7 +6,7 @@
 #include "UI/TutorialMenu/TutorialMenuCardWidget.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/VerticalBoxSlot.h"
-#include "Components/Sizebox.h"
+#include "Components/SizeBox.h"
 #include "HttpModule.h"
 #include "Runtime/Online/HTTP/Public/Http.h"
 #include "JsonObjectConverter.h"

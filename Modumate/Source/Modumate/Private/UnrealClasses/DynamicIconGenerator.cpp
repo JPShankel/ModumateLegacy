@@ -30,6 +30,7 @@ ADynamicIconGenerator::ADynamicIconGenerator()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	SetRootComponent(Root);
 
 	// Setup spring arm and capture
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -1238,5 +1239,9 @@ void ADynamicIconGenerator::UpdateCachedAssemblies(const FBIMPresetCollectionPro
 	{
 		SetIconMeshForAssembly(PresetCollection, key, true);
 	}
-	Controller->EditModelUserWidget->RefreshAssemblyList();
+
+	if (Controller && Controller->EditModelUserWidget)
+	{
+		Controller->EditModelUserWidget->RefreshAssemblyList();
+	}
 }

@@ -79,7 +79,7 @@ int32 UModumateTargetingStatics::GetFaceIndexFromTargetHit(const AModumateObject
 
 				FPointInPolyResult pointInPolyResult;
 				if (UModumateGeometryStatics::TestPointInPolygon(projectedHitPoint, sidePoints2D, pointInPolyResult) &&
-					pointInPolyResult.bInside || pointInPolyResult.bOverlaps)
+					(pointInPolyResult.bInside || pointInPolyResult.bOverlaps))
 				{
 					return 2 + curBottomIdx;
 				}

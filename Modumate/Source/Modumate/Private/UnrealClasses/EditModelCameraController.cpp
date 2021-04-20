@@ -65,6 +65,10 @@ void UEditModelCameraController::BeginPlay()
 {
 	Super::BeginPlay();
 
+#if UE_SERVER
+	return;
+#endif
+
 	UWorld *world = GetWorld();
 	Controller = Cast<AEditModelPlayerController>(GetOwner());
 	ViewportClient = Cast<UModumateViewportClient>(GetWorld()->GetGameViewport());

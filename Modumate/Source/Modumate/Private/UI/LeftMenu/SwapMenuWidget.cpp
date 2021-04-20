@@ -4,7 +4,7 @@
 
 #include "UI/LeftMenu/NCPNavigator.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-#include "UI/EditmodelUserWidget.h"
+#include "UI/EditModelUserWidget.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 

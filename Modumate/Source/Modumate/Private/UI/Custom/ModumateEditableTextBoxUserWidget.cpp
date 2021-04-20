@@ -3,7 +3,7 @@
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/ModumateUIStatics.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
-#include "Components/Sizebox.h"
+#include "Components/SizeBox.h"
 
 UModumateEditableTextBoxUserWidget::UModumateEditableTextBoxUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

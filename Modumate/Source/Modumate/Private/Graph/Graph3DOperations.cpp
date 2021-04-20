@@ -1630,6 +1630,7 @@ namespace Modumate
 
 	bool FGraph3D::GetDeltasForReduceEdges(TArray<FGraph3DDelta> &OutDeltas, int32 FaceID, int32 &NextID)
 	{
+		// TODO: refactor/clean & comment this logic; repeating a for loop within a while loop (without re-initializing the index) is awkward.
 		bool bAttemptEdgeJoin = true;
 		int32 edgeIdx = 0;
 		while (bAttemptEdgeJoin)
@@ -1644,7 +1645,7 @@ namespace Modumate
 			int32 numEdges = face->EdgeIDs.Num();
 
 			FGraph3DDelta joinEdgeDelta;
-			for (edgeIdx; edgeIdx < numEdges; edgeIdx++)
+			for (; edgeIdx < numEdges; edgeIdx++)
 			{
 				int32 currentEdgeID = face->EdgeIDs[edgeIdx];
 				int32 nextEdgeID = face->EdgeIDs[(edgeIdx + 1) % numEdges];

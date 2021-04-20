@@ -14,6 +14,7 @@
 
 // Sets default values
 ASkyActor::ASkyActor()
+	: Controller(nullptr)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -36,12 +37,14 @@ void ASkyActor::BeginPlay()
 	CurrentDateTime = FDateTime(StartYear, StartMonth, StartDay, StartHour, StartMinute);
 	UpdateComponentsWithDateTime(CurrentDateTime);
 
+#if !UE_SERVER
 	// Controller needs SkyActor for time of day changes in ViewMenu to work
 	Controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 	if (ensureAlways(Controller))
 	{
 		Controller->SkyActor = this;
 	}
+#endif
 }
 
 // Called every frame

@@ -3,11 +3,11 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class ModumateTarget : TargetRules
+public class ModumateServerTarget : TargetRules
 {
-	public ModumateTarget(TargetInfo Target) : base(Target)
+	public ModumateServerTarget(TargetInfo Target) : base(Target)
 	{
-		Type = TargetType.Game;
+		Type = TargetType.Server;
 		DefaultBuildSettings = BuildSettingsVersion.Latest;
 		ExtraModuleNames.AddRange( new string[] { "Modumate" } );
 	}

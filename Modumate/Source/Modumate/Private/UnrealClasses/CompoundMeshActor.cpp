@@ -989,7 +989,7 @@ void ACompoundMeshActor::DraftingLinesFromTriangles(const TArray<FVector>& Verti
 		void Normalize() { if (lexicalVectorCompare(B, A)) { Swap(A, B); } }
 		bool operator==(const FLocalEdge& rhs) const
 		{
-			return A == rhs.A && B == rhs.B || A == rhs.B && B == rhs.A;
+			return ((A == rhs.A) && (B == rhs.B)) || ((A == rhs.B) && (B == rhs.A));
 		}
 		bool operator<(const FLocalEdge& rhs) const
 		{

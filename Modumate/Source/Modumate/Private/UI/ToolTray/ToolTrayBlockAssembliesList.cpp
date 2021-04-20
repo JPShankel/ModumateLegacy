@@ -8,7 +8,7 @@
 #include "UI/EditModelUserWidget.h"
 #include "Components/ListView.h"
 #include "UI/BIM/BIMDesigner.h"
-#include "Components/Sizebox.h"
+#include "Components/SizeBox.h"
 #include "UI/SelectionTray/SelectionTrayWidget.h"
 #include "UI/ComponentPresetListItem.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"

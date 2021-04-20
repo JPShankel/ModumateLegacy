@@ -1002,7 +1002,7 @@ TArray<FEdge> UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(const FPla
 		if (!previousNormal.IsZero())
 		{
 			bool bSilhouette = bFacing ^ bPreviousFacing;
-			if (bSilhouette || bFacing && (normal | previousNormal) <= facetThreshold)
+			if (bSilhouette || (bFacing && ((normal | previousNormal) <= facetThreshold)))
 			{
 				FVector draftLineStart(p1 + StartPosition);
 				FVector draftLineEnd(p1 + EndPosition);

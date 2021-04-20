@@ -656,7 +656,7 @@ FString FModumatePlatform::GetStringValueFromHKCU(const FString &regSubKey, cons
 	return FString();
 }
 
-FModumatePlatform:: FModumatePlatform::ShowMessageBox(const FString &msg, const FString &caption, EMessageBoxType type)
+FModumatePlatform::EMessageBoxResponse FModumatePlatform::ShowMessageBox(const FString &msg, const FString &caption, EMessageBoxType type)
 {
 	return Cancel;
 }

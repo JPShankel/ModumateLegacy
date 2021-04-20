@@ -388,7 +388,7 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 				ModumateUnitParams::FThickness lineThickness;
 				Modumate::FMColor lineColor(Modumate::FMColor::Black);
 
-				if (usePointsA && layerIdx == 0 || !usePointsA && layerIdx == numLayers - 1)
+				if ((usePointsA && (layerIdx == 0)) || (!usePointsA && (layerIdx == numLayers - 1)))
 				{
 					dwgLayerType = layerTypeOuterSurface;
 					lineThickness = outerThickness;
@@ -731,7 +731,7 @@ void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraf
 		for (int32 corner = 0; corner < numPoints; ++corner)
 		{
 			FVector previousPoint = LayerGeometries[0].OriginalPointsA[corner] + parentLocation;
-			for (const auto layer: LayerGeometries)
+			for (const auto& layer: LayerGeometries)
 			{
 				FVector pA = layer.OriginalPointsA[corner] + parentLocation;
 				FVector pB = layer.OriginalPointsB[corner] + parentLocation;
