@@ -16,6 +16,7 @@ private:
 
 	TArray<FVector2D> GridPoints;
 	TArray<FVector> Vertices;
+	TArray<FVector2D> Vertices2D;
 	TArray<FVector> Normals;
 	TArray<int32> Triangles;
 	TArray<FVector2D> UV0;
@@ -39,15 +40,11 @@ public:
 	UProceduralMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Ysize = 64;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Xsize = 64;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float VertSize = 100.f;
 
 	UFUNCTION(BlueprintCallable)
-	void SetupTerrainGeometry(const TArray<FVector>& points, bool bRecreateMesh, bool bCreateCollision = true);
+	void SetupTerrainGeometry(const TArray<FVector>& PerimeterPoints, const TArray<FVector>& HeightPoints, bool bRecreateMesh, bool bCreateCollision = true);
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateTerrainGeometryFromPoints(const TArray<FVector>& points);
+	void UpdateTerrainGeometryFromPoints(const TArray<FVector>& HeightPoints);
 };
