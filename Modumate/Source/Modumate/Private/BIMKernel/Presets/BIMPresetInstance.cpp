@@ -577,3 +577,69 @@ EBIMResult FBIMPresetInstance::SetMaterialChannelsForMesh(const FModumateDatabas
 
 	return bindingSet.SetFormElements(PresetForm);
 }
+
+EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions) const
+{
+	static const FBIMTagPath planarModule(TEXT("Part_0FlexDims3Fixed_ModulePlanar"));
+	static const FBIMTagPath studModule(TEXT("Part_1FlexDim2Fixed_ModuleLinear"));
+	static const FBIMTagPath brickModule(TEXT("Part_0FlexDims3Fixed_ModuleVolumetric"));
+	static const FBIMTagPath gapModule2D(TEXT("Part_1FlexDim2Fixed_Gap2D"));
+	static const FBIMTagPath gapModule1D(TEXT("Part_1FlexDim2Fixed_Gap1D"));
+
+	/*
+	* TODO: module dimensions to be refactored to have standardized terms in BIM data (DimX, DimY and DimZ)
+	* In the meantime, this function will translate colloqiual property names base on the NCP of the module
+	* When the data upgrade step is required, this function will translate old modular dimensions into the standardized scheme
+	*/
+	if (NodeScope == EBIMValueScope::Module || NodeScope == EBIMValueScope::Gap)
+	{
+		if (planarModule.MatchesPartial(MyTagPath))
+		{
+			if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, OutDimensions.X) &&
+				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, OutDimensions.Y) &&
+				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, OutDimensions.Z))
+			{
+				return EBIMResult::Success;
+			}
+
+		}
+		else if (studModule.MatchesPartial(MyTagPath))
+		{
+			OutDimensions.Y = 0.0f;
+			if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, OutDimensions.X))
+			{
+				if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, OutDimensions.Z) ||
+					Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, OutDimensions.Z))
+				{
+					return EBIMResult::Success;
+				}
+			}
+		}
+		else if (brickModule.MatchesPartial(MyTagPath))
+		{
+			if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, OutDimensions.X) &&
+				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, OutDimensions.Y) &&
+				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, OutDimensions.Z))
+			{
+				return EBIMResult::Success;
+			}
+		}
+		else if (gapModule1D.MatchesPartial(MyTagPath))
+		{
+			OutDimensions = FVector::ZeroVector;
+			return EBIMResult::Success;
+		}
+		else if (gapModule2D.MatchesPartial(MyTagPath))
+		{
+			OutDimensions.Z = 0;
+			if (
+				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, OutDimensions.X) &&
+				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Recess, OutDimensions.Y)
+				)
+			{
+				return EBIMResult::Success;
+			}
+		}
+	}
+	return EBIMResult::Error;
+}

@@ -1040,82 +1040,47 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 		thickness = FModumateUnitValue::WorldCentimeters(0);
 
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
+	FVector vSize = FVector::ZeroVector;
 	if (UseDependentPreset)
 	{
 		const FBIMPresetInstance* preset = PresetCollection.PresetFromGUID(PresetID);
+		if (!ensureAlways(preset != nullptr) || preset->GetModularDimensions(vSize) != EBIMResult::Success)
+		{
+			return false;
+		}
 		preset->Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
 		preset->Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
-		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, width);
-		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, length);
-		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, depth);
-		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, height);
-		preset->Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, thickness);
 	}
 	else
 	{
 		const FBIMPresetEditorNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
+		if (!ensureAlways(inst != nullptr) || inst->Preset.GetModularDimensions(vSize) != EBIMResult::Success)
+		{
+			return false;
+		}
 		inst->Preset.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, rawMaterialKey);
 		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue);
-		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, width);
-		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, length);
-		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, depth);
-		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, height);
-		inst->Preset.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, thickness);
 	}
 
 	// Step 3: Get assets from key, and size from dimension
-	FVector vSize = FVector::OneVector;
-
-	const FArchitecturalMaterial* aMat = Gamemode->ObjectDatabase->GetArchitecturalMaterialByGUID(rawMaterialKey);
-	// TODO: we need a common system to rationalize module dimensions
-	// 3-dimensional brick modules
-	if (height.AsWorldCentimeters() > 0)
+	if (vSize.IsZero())
 	{
-		vSize.Z = height.AsWorldCentimeters();
-		if (width.AsWorldCentimeters() > 0)
-		{
-			vSize.Y = width.AsWorldCentimeters();
-		}
-		if (length.AsWorldCentimeters() > 0)
-		{
-			vSize.X = length.AsWorldCentimeters();
-		}
-		if (depth.AsWorldCentimeters() > 0)
-		{
-			vSize.Y = depth.AsWorldCentimeters();
-		}
+		// If we have no dimensions, assume a cube
+		vSize = FVector::OneVector;
 	}
-	// 3-dimensional shingles
-	else if (thickness.AsWorldCentimeters() > 0)
-	{
-		vSize.Y = thickness.AsWorldCentimeters();
-		if (width.AsWorldCentimeters() > 0)
-		{
-			vSize.Z = width.AsWorldCentimeters();
-		}
-		if (length.AsWorldCentimeters() > 0)
-		{
-			vSize.X = length.AsWorldCentimeters();
-		}
-	}
-	// 2-dimensional shingles
+	// A 0.0f dimension indicates that the MOI sets the size (ie the Y dimension in studs), so give a default length for appearance
 	else
 	{
-		if (width.AsWorldCentimeters() > 0)
+		for (int32 i = 0; i < 3; ++i)
 		{
-			vSize.X = width.AsWorldCentimeters();
+			if (vSize[i] == 0.0f)
+			{
+				vSize[i] = 4 * vSize.Size();
+			}
 		}
-		if (length.AsWorldCentimeters() > 0)
-		{
-			vSize.Z = length.AsWorldCentimeters();
-		}
-		else if (depth.AsWorldCentimeters() > 0)
-		{
-			vSize.Z = depth.AsWorldCentimeters();
-		}
-		vSize.Y = (vSize.Z + vSize.X) * 4;
 	}
 
+	const FArchitecturalMaterial* aMat = Gamemode->ObjectDatabase->GetArchitecturalMaterialByGUID(rawMaterialKey);
 	// Step 4: Set assets
 	if (aMat != nullptr)
 	{

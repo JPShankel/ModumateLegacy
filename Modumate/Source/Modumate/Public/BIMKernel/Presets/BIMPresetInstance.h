@@ -235,6 +235,8 @@ struct MODUMATE_API FBIMPresetInstance
 
 	bool ValidatePreset() const;
 
+	EBIMResult GetModularDimensions(FVector& OutDimensions) const;
+
 	bool operator==(const FBIMPresetInstance& RHS) const;
 	bool operator!=(const FBIMPresetInstance& RHS) const;
 };
