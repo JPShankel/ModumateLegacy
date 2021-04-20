@@ -14,7 +14,7 @@ namespace Modumate
 	class FModumateAutotraceConnect
 	{
 	public:
-		bool ConvertImageFromFile(const FString& filename, int32 renderID, AMOICutPlane* cutPlane, int32 cutPlaneID, UWorld* world);
+		bool ConvertImageFromFile(const FString& filename, int32 renderID, int32 cutPlaneID, TWeakObjectPtr<UWorld> world);
 
 	private:
 		struct ResponseHandler;

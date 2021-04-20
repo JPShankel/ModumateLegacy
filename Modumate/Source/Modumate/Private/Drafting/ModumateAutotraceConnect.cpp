@@ -15,8 +15,7 @@ namespace Modumate
 	struct FModumateAutotraceConnect::ResponseHandler
 	{
 		void operator()(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-		UWorld* World;
-		AMOICutPlane* CutPlane;
+		TWeakObjectPtr<UWorld> World;
 		int32 CutPlaneID { 0 };
 		int32 RenderID{ 0 };
 
@@ -41,16 +40,26 @@ namespace Modumate
 			}
 		}
 
-		AEditModelGameState *gameState = World->GetGameState<AEditModelGameState>();
+		if (!World.IsValid())
+		{
+			return;
+		}
+		UWorld* worldPtr = World.Get();
+		AEditModelGameState* gameState = worldPtr->GetGameState<AEditModelGameState>();
+		if (!gameState)
+		{
+			return;
+		}
 		UModumateDocument* document = gameState->Document;
 
-		if (document->GetObjectById(CutPlaneID) != nullptr)
+		AMOICutPlane* cutPlane = Cast<AMOICutPlane>(document->GetObjectById(CutPlaneID));
+		if (cutPlane)
 		{	// Cut plane exists.
-			CutPlane->TraceRequestComplete(RenderID, MoveTemp(jsonResponse));
+			cutPlane->TraceRequestComplete(RenderID, MoveTemp(jsonResponse));
 		}
 	}
 
-	bool FModumateAutotraceConnect::ConvertImageFromFile(const FString& filename, int32 renderID, AMOICutPlane* cutPlane, int32 cutPlaneID, UWorld* world)
+	bool FModumateAutotraceConnect::ConvertImageFromFile(const FString& filename, int32 renderID, int32 cutPlaneID, TWeakObjectPtr<UWorld> world)
 	{
 		TArray<uint8> pngFile;
 		if (!FFileHelper::LoadFileToArray(pngFile, *filename))
@@ -58,14 +67,13 @@ namespace Modumate
 			return false;
 		}
 
-		UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
+		UModumateGameInstance* gameInstance = world.Get()->GetGameInstance<UModumateGameInstance>();
 		const auto accountManager = gameInstance->GetAccountManager();
 
 		auto request = FHttpModule::Get().CreateRequest();
 		ResponseHandler handler;
 		handler.World = world;
 		handler.CutPlaneID = cutPlaneID;
-		handler.CutPlane = cutPlane;
 		handler.RenderID = renderID;
 		request->OnProcessRequestComplete().BindLambda(handler);
 

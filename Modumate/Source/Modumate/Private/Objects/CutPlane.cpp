@@ -605,7 +605,7 @@ void AMOICutPlane::ConvertToOutlines(const FString& renderTargetFilename)
 {
 	Modumate::FModumateAutotraceConnect autotraceServer;
 
-	if (autotraceServer.ConvertImageFromFile(renderTargetFilename, CurrentObjectRender.LocalId, this, ID, GetWorld()))
+	if (autotraceServer.ConvertImageFromFile(renderTargetFilename, CurrentObjectRender.LocalId, ID, GetWorld()))
 	{
 		InprocessRenders.Add(CurrentObjectRender.LocalId, CurrentObjectRender);
 		++PendingTraceRequests;
