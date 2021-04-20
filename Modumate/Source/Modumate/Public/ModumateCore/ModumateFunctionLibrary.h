@@ -72,7 +72,7 @@ public:
 	static FBoxSphereBounds GetSelectedExtents(const AEditModelPlayerController *Controller);
 
 	UFUNCTION(BlueprintCallable, Category = "System")
-	static void SetWindowTitle(const FString& ProjectName = TEXT(""));
+	static void SetWindowTitle(const FString& ProjectName = TEXT(""), const FText& ProjectSuffix = FText::GetEmpty());
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
 	static void DocAddHideMoiActors(const TArray<AActor*> Actors);

@@ -333,15 +333,9 @@ protected:
 	bool PlayBackPacket(const FEditModelInputPacket &InputPacket, float DeltaTime);
 	bool SimulateInput(const FEditModelInputPacket& InputPacket);
 	FString GetDefaultInputLogPath(const FString &Extension);
-	bool LoadInputLog(const FString& InputLogPath);
 	void StartRecordingFrames();
 	void SaveRecordedFrames();
 
-	// Need public interface for player controller record
-public:
-	bool SaveInputLog(const FString& InputLogPath);
-
-private:
-	static bool DoSaveInputLog(const FString& InputLogPath, const FEditModelInputLog& LogData);
-
+	static bool LoadInputLog(const FString& InputLogPath, FEditModelInputLog& OutLogData);
+	static bool SaveInputLog(const FString& InputLogPath, const FEditModelInputLog& LogData);
 };

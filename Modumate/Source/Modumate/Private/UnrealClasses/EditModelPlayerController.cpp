@@ -330,11 +330,11 @@ bool AEditModelPlayerController::StartTelemetrySession(bool bRecordLoadedDocumen
 	return false;
 }
 
-bool AEditModelPlayerController::EndTelemetrySession()
+bool AEditModelPlayerController::EndTelemetrySession(bool bAsyncUpload)
 {
 	if (InputAutomationComponent->IsRecording())
 	{
-		UploadInputTelemetry(false);
+		UploadInputTelemetry(bAsyncUpload);
 		InputAutomationComponent->EndRecording(false);
 	}
 
@@ -356,7 +356,7 @@ void AEditModelPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReaso
 	FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*lockFile);
 	GetWorldTimerManager().ClearTimer(ControllerTimer);
 
-	EndTelemetrySession();
+	EndTelemetrySession(false);
 	auto dimensionManager = gameInstance->DimensionManager;
 	dimensionManager->Reset();
 
@@ -858,7 +858,7 @@ bool AEditModelPlayerController::SaveModelFilePath(const FString &filepath)
 	CaptureProjectThumbnail();
 
 	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
-	if (gameState->Document->Save(GetWorld(), filepath, true))
+	if (gameState->Document->SaveFile(GetWorld(), filepath, true))
 	{
 		FString saveTitleString = LOCTEXT("SaveSuccessTitle", "Save Project").ToString();
 		FText saveMessageFormat = bShowPath ? LOCTEXT("SaveSuccessWithPath", "Saved as {0}") : LOCTEXT("SaveSuccessWithoutPath", "Saved successfully.");
@@ -974,7 +974,7 @@ bool AEditModelPlayerController::LoadModelFilePath(const FString &filename, bool
 
 bool AEditModelPlayerController::CheckSaveModel()
 {
-	if (Document->IsDirty())
+	if (Document->IsDirty(true))
 	{
 		const FString& saveConfirmationText = LOCTEXT("SaveConfirmationMessage", "Save current model?").ToString();
 		const FString& saveConfirmationTitle = LOCTEXT("SaveConfirmationTitle", "Save").ToString();
@@ -1402,15 +1402,18 @@ void AEditModelPlayerController::OnControllerTimer()
 
 	FTimespan ts(FDateTime::Now().GetTicks() - TimeOfLastAutoSave.GetTicks());
 
-	if (ts.GetTotalSeconds() > gameInstance->UserSettings.AutoBackupFrequencySeconds && gameInstance->UserSettings.AutoBackup)
+	if ((ts.GetTotalSeconds() > gameInstance->UserSettings.AutoBackupFrequencySeconds) &&
+		gameInstance->UserSettings.AutoBackup && bCurProjectAutoSaves &&
+		Document && Document->IsDirty(false))
 	{
-		bWantAutoSave = gameInstance->UserSettings.AutoBackup && bCurProjectAutoSaves;
+		bWantAutoSave = true;
 	}
 
 	ts = FTimespan(FDateTime::Now().GetTicks() - TimeOfLastUpload.GetTicks());
-	if (ts.GetTotalSeconds() > gameInstance->UserSettings.TelemetryUploadFrequencySeconds)
+	if ((ts.GetTotalSeconds() > gameInstance->UserSettings.TelemetryUploadFrequencySeconds) &&
+		gameInstance->GetAccountManager().Get()->ShouldRecordTelemetry())
 	{
-		bWantTelemetryUpload = gameInstance->GetAccountManager().Get()->ShouldRecordTelemetry();
+		bWantTelemetryUpload = true;
 	}
 
 	gameInstance->GetCloudConnection()->Tick();
@@ -1425,27 +1428,30 @@ bool AEditModelPlayerController::UploadInputTelemetry(bool bAsynchronous) const
 		return false;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("Telemetry: Initiating save & upload"));
-
 	FString path = FModumateUserSettings::GetLocalTempDir() / InputTelemetryDirectory;
 	FString cacheFile = path / TelemetrySessionKey.ToString() + FEditModelInputLog::LogExtension;
+
+	double ilogStartTime = FPlatformTime::Seconds();
+	UE_LOG(LogTemp, Log, TEXT("Telemetry: saving & uploading %s..."), *cacheFile);
 
 	UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 	TSharedPtr<FModumateCloudConnection> cloud = gameInstance->GetCloudConnection();
 
 	TFuture<bool> future = Async(EAsyncExecution::ThreadPool,
-		[sessionKey = TelemetrySessionKey, cacheFile, cloud, saveTask = InputAutomationComponent->MakeSaveLogTask(cacheFile)]()
-		{			
+		[sessionKey = TelemetrySessionKey, cacheFile, cloud, ilogStartTime, saveTask = InputAutomationComponent->MakeSaveLogTask(cacheFile)]()
+		{
 			if (saveTask() && cloud.IsValid())
 			{
 				cloud->UploadReplay(sessionKey.ToString(), *cacheFile,
-					[](bool bSuccess, const TSharedPtr<FJsonObject>& Response)
+					[ilogStartTime, cacheFile](bool bSuccess, const TSharedPtr<FJsonObject>& Response)
 					{
-						UE_LOG(LogTemp, Log, TEXT("Telemetry: Uploaded Successfully"));
+						int32 saveUploadDurationMS = FMath::RoundToInt((FPlatformTime::Seconds() - ilogStartTime) * 1000.0);
+						int64 fileSizeKB = IFileManager::Get().FileSize(*cacheFile) / 1024;
+						UE_LOG(LogTemp, Log, TEXT("Telemetry: Upload success after %dms (%lldkB)"), saveUploadDurationMS, fileSizeKB);
 					},
 					[](int32 code, const FString& error)
 					{
-						UE_LOG(LogTemp, Error, TEXT("Telemetry Upload Error: %s"), *error);
+						UE_LOG(LogTemp, Error, TEXT("Telemetry: Upload error: %s"), *error);
 					}
 				);
 			}
@@ -1453,7 +1459,15 @@ bool AEditModelPlayerController::UploadInputTelemetry(bool bAsynchronous) const
 		}
 	);
 
-	return (bAsynchronous) ? true : future.Get();
+	if (bAsynchronous)
+	{
+		return true;
+	}
+	else
+	{
+		future.Wait();
+		return future.Get();
+	}
 }
 
 void AEditModelPlayerController::Tick(float DeltaTime)
@@ -1476,7 +1490,7 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 			bWantTelemetryUpload = false;
 			if (TelemetrySessionKey.IsValid())
 			{
-				UploadInputTelemetry(false);
+				UploadInputTelemetry(true);
 			}
 		}
 
@@ -1491,7 +1505,7 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 			FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*oldFile);
 			FPlatformFileManager::Get().GetPlatformFile().MoveFile(*oldFile, *newFile);
 			AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
-			gameState->Document->Save(GetWorld(), newFile, false);
+			gameState->Document->SaveFile(GetWorld(), newFile, false, true);
 
 			TimeOfLastAutoSave = FDateTime::Now();
 			bWantAutoSave = false;

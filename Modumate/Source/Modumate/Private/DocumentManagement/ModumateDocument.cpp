@@ -49,6 +49,7 @@
 using namespace Modumate::Mitering;
 using namespace Modumate;
 
+#define LOCTEXT_NAMESPACE "ModumateDocument"
 
 const FName UModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
 
@@ -111,6 +112,10 @@ void UModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 		ensureAlways(fromBufferSize == FromBuffer.Num());
 		ensureAlways(toBufferSize == ToBuffer.Num());
 #endif
+
+		// TODO: keep track of document dirtiness by a unique identifier of which delta is at the top of the stack,
+		// but that refactor could wait until the multiplayer refactor which would also affect the definition of autosave.
+		SetDirtyFlags(true);
 	}
 }
 
@@ -848,7 +853,7 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 
 	StartTrackingDeltaObjects();
 
-	bIsDirty = true;
+	SetDirtyFlags(true);
 	ClearPreviewDeltas(World, false);
 
 	ClearRedoBuffer();
@@ -1898,6 +1903,19 @@ FBoxSphereBounds UModumateDocument::CalculateProjectBounds() const
 	return projectBounds;
 }
 
+bool UModumateDocument::IsDirty(bool bUserFile) const
+{
+	return bUserFile ? bUserFileDirty : bAutoSaveDirty;
+}
+
+void UModumateDocument::SetDirtyFlags(bool bNewDirty)
+{
+	bUserFileDirty = bNewDirty;
+	bAutoSaveDirty = bNewDirty;
+
+	UpdateWindowTitle();
+}
+
 int32 UModumateDocument::GetNextAvailableID() const 
 { 
 	return NextID; 
@@ -2093,7 +2111,7 @@ void UModumateDocument::MakeNew(UWorld *World)
 
 	SetCurrentProjectPath();
 
-	bIsDirty = false;
+	SetDirtyFlags(false);
 }
 
 const AModumateObjectInstance *UModumateDocument::ObjectFromActor(const AActor *actor) const
@@ -2289,20 +2307,16 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 	return true;
 }
 
-bool UModumateDocument::Save(UWorld* World, const FString& FilePath, bool bSetAsCurrentProject)
+
+bool UModumateDocument::SaveRecords(const FString& FilePath, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord)
 {
-	CachedHeader = FModumateDocumentHeader();
-	CachedRecord = FMOIDocumentRecord();
-	if (!SerializeRecords(World, CachedHeader, CachedRecord))
-	{
-		return false;
-	}
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentSaveRecords);
 
 	TSharedPtr<FJsonObject> FileJson = MakeShared<FJsonObject>();
 	TSharedPtr<FJsonObject> HeaderJson = MakeShared<FJsonObject>();
-	FileJson->SetObjectField(DocHeaderField, FJsonObjectConverter::UStructToJsonObject<FModumateDocumentHeader>(CachedHeader));
+	FileJson->SetObjectField(DocHeaderField, FJsonObjectConverter::UStructToJsonObject<FModumateDocumentHeader>(InHeader));
 
-	TSharedPtr<FJsonObject> docOb = FJsonObjectConverter::UStructToJsonObject<FMOIDocumentRecord>(CachedRecord);
+	TSharedPtr<FJsonObject> docOb = FJsonObjectConverter::UStructToJsonObject<FMOIDocumentRecord>(InDocumentRecord);
 	FileJson->SetObjectField(DocObjectInstanceField, docOb);
 
 	FString ProjectJsonString;
@@ -2314,20 +2328,71 @@ bool UModumateDocument::Save(UWorld* World, const FString& FilePath, bool bSetAs
 		return false;
 	}
 
-	bool bFileSaveSuccess = FFileHelper::SaveStringToFile(ProjectJsonString, *FilePath);
+	return FFileHelper::SaveStringToFile(ProjectJsonString, *FilePath);
+}
 
-	if (bFileSaveSuccess && bSetAsCurrentProject)
+bool UModumateDocument::SaveFile(UWorld* World, const FString& FilePath, bool bUserFile, bool bAsync, const TFunction<void(bool)>& OnSaveFunction)
+{
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentSaveFile);
+
+	double saveStartTime = FPlatformTime::Seconds();
+	UE_LOG(LogTemp, Log, TEXT("Saving to %s..."), *FilePath);
+
+	CachedHeader = FModumateDocumentHeader();
+	CachedRecord = FMOIDocumentRecord();
+	if (!SerializeRecords(World, CachedHeader, CachedRecord))
 	{
-		SetCurrentProjectPath(FilePath);
-		bIsDirty = false;
-
-		if (auto* gameInstance = World->GetGameInstance<UModumateGameInstance>())
-		{
-			gameInstance->UserSettings.RecordRecentProject(FilePath, true);
-		}
+		return false;
 	}
 
-	return bFileSaveSuccess;
+	bool bFileSaveSuccess = false;
+	auto weakThis = MakeWeakObjectPtr<UModumateDocument>(this);
+	auto weakWorld = MakeWeakObjectPtr<UWorld>(World);
+
+	TFuture<bool> saveFuture = Async(EAsyncExecution::ThreadPool,
+		[FilePath, DocHeaderCopy = CachedHeader, DocRecordCopy = CachedRecord, &bFileSaveSuccess]()
+		{
+			bFileSaveSuccess = SaveRecords(FilePath, DocHeaderCopy, DocRecordCopy);
+			return bFileSaveSuccess;
+		},
+		[FilePath, bAsync, bUserFile, OnSaveFunction, saveStartTime, &bFileSaveSuccess, weakThis, weakWorld]()
+		{
+			if (weakThis.IsValid() && weakWorld.IsValid())
+			{
+				if (bFileSaveSuccess)
+				{
+					int32 saveDurationMS = FMath::RoundToInt((FPlatformTime::Seconds() - saveStartTime) * 1000.0);
+					int64 fileSizeKB = IFileManager::Get().FileSize(*FilePath) / 1024;
+					UE_LOG(LogTemp, Log, TEXT("Document %ssave success after %dms (%lldkB)"),
+						bAsync ? TEXT("async ") : TEXT(""), saveDurationMS, fileSizeKB);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Error, TEXT("Document error while saving to: %s"), *FilePath);
+				}
+
+				if (bFileSaveSuccess)
+				{
+					weakThis->RecordSavedProject(weakWorld.Get(), FilePath, bUserFile);
+				}
+
+				if (OnSaveFunction)
+				{
+					OnSaveFunction(bFileSaveSuccess);
+				}
+			}
+		}
+		);
+
+	if (bAsync)
+	{
+		return true;
+	}
+	else
+	{
+		saveFuture.Wait();
+		return saveFuture.Get();
+	}
 }
 
 AModumateObjectInstance *UModumateDocument::GetObjectById(int32 id)
@@ -2469,7 +2534,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 
 	CurrentSettings = InDocumentRecord.Settings;
 
-	bIsDirty = false;
+	SetDirtyFlags(false);
 
 	return true;
 }
@@ -2632,7 +2697,7 @@ void UModumateDocument::SetCurrentProjectPath(const FString& currentProjectPath)
 		FPaths::Split(CurrentProjectPath, projectDir, CurrentProjectName, projectExt);
 	}
 
-	UModumateFunctionLibrary::SetWindowTitle(CurrentProjectName);
+	UpdateWindowTitle();
 }
 
 void UModumateDocument::UpdateMitering(UWorld *world, const TArray<int32> &dirtyObjIDs)
@@ -3309,3 +3374,33 @@ void UModumateDocument::DeletePreset(UWorld* World, const FGuid& DeleteGUID, con
 		ApplyDeltas(deltas, World);
 	}
 }
+
+void UModumateDocument::UpdateWindowTitle()
+{
+	if (!CurrentProjectName.IsEmpty())
+	{
+		FText projectSuffix = bUserFileDirty ? LOCTEXT("DirtyProjectSuffix", "*") : FText::GetEmpty();
+		UModumateFunctionLibrary::SetWindowTitle(CurrentProjectName, projectSuffix);
+	}
+}
+
+void UModumateDocument::RecordSavedProject(UWorld* World, const FString& FilePath, bool bUserFile)
+{
+	if (bUserFile)
+	{
+		bUserFileDirty = false;
+
+		SetCurrentProjectPath(FilePath);
+
+		if (auto* gameInstance = World->GetGameInstance<UModumateGameInstance>())
+		{
+			gameInstance->UserSettings.RecordRecentProject(FilePath, true);
+		}
+	}
+	else
+	{
+		bAutoSaveDirty = false;
+	}
+}
+
+#undef LOCTEXT_NAMESPACE

@@ -434,6 +434,14 @@ bool UEditModelInputAutomation::PostApplyUserDeltas(const TArray<FDeltaPtr>& Del
 	return false;
 }
 
+TFunction<bool()> UEditModelInputAutomation::MakeSaveLogTask(const FString& InputLogPath) const
+{
+	return [InputLogData = CurInputLogData, InputLogPath]()
+	{
+		return UEditModelInputAutomation::SaveInputLog(InputLogPath, InputLogData);
+	};
+}
+
 bool UEditModelInputAutomation::EndRecording(bool bPromptForPath)
 {
 	if (CurState != EInputAutomationState::Recording)
@@ -460,7 +468,7 @@ bool UEditModelInputAutomation::EndRecording(bool bPromptForPath)
 	bool bEndSuccess = true;
 	if (bTrySaveFile)
 	{
-		bEndSuccess = SaveInputLog(newLogPath);
+		bEndSuccess = SaveInputLog(newLogPath, CurInputLogData);
 		if (bEndSuccess)
 		{
 			LastLogPath = newLogPath;
@@ -509,7 +517,7 @@ bool UEditModelInputAutomation::BeginPlayback(const FString& InputLogPath, bool 
 {
 	auto gameInstance = EMPlayerController->GetGameInstance<UModumateGameInstance>();
 	UModumateDocument* document = EMPlayerController ? EMPlayerController->GetDocument() : nullptr;
-	if ((CurState != EInputAutomationState::None) || !LoadInputLog(InputLogPath) || !ensure(document && gameInstance))
+	if ((CurState != EInputAutomationState::None) || !LoadInputLog(InputLogPath, CurInputLogData) || !ensure(document && gameInstance))
 	{
 		return false;
 	}
@@ -1068,17 +1076,48 @@ FString UEditModelInputAutomation::GetDefaultInputLogPath(const FString &Extensi
 	return FPaths::Combine(FPaths::ProjectSavedDir(), folderName, fileName);
 }
 
-TFunction<bool()> UEditModelInputAutomation::MakeSaveLogTask(const FString& InputLogPath) const
+
+void UEditModelInputAutomation::StartRecordingFrames()
 {
-	return [InputLogData = CurInputLogData,InputLogPath]()
+	if (!bCapturingFrames)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Telemetry: Running Input Save Log Task"));
-		return UEditModelInputAutomation::DoSaveInputLog(InputLogPath, InputLogData);
-	};
+		return;
+	}
+
+	float MaxRecordingTime = (CurInputLogData.RecordEndTime - CurInputLogData.RecordStartTime) - CurAutomationTime;
+	EMPlayerController->ConsoleCommand(FString::Printf(TEXT("HighlightRecorder.Start %.1f"), MaxRecordingTime));
+	FrameCaptureStartTime = CurAutomationTime;
 }
 
-bool UEditModelInputAutomation::DoSaveInputLog(const FString& InputLogPath, const FEditModelInputLog& LogData)
+void UEditModelInputAutomation::SaveRecordedFrames()
 {
+	if (!bCapturingFrames)
+	{
+		return;
+	}
+
+	FString logPathPart, logFileNamePart, logExtPart;
+	FPaths::Split(LastLogPath, logPathPart, logFileNamePart, logExtPart);
+	logFileNamePart.RemoveSpacesInline();
+	FString frameCaptureFileName = FString::Printf(TEXT("%s-%d.mp4"), *logFileNamePart, FrameCaptureVideoIndex);
+
+	// Delete an existing file if it's been exported before
+	FrameCapturePath = FPaths::VideoCaptureDir() / frameCaptureFileName;
+	IFileManager::Get().Delete(*FrameCapturePath, false, false, true);
+
+	// Try to save the recording (with a little extra buffer), which will end up in in the Saved/VideoCaptures directory
+	static constexpr float frameCaptureExtraSaveDuration = 1.0f;
+	float frameCaptureDuration = frameCaptureExtraSaveDuration + CurAutomationTime - FrameCaptureStartTime;
+	EMPlayerController->ConsoleCommand(FString::Printf(TEXT("HighlightRecorder.Save %s %.1f"), *frameCaptureFileName, frameCaptureDuration));
+	EMPlayerController->ConsoleCommand(FString(TEXT("HighlightRecorder.Stop")));
+
+	FrameCaptureVideoIndex++;
+}
+
+bool UEditModelInputAutomation::SaveInputLog(const FString& InputLogPath, const FEditModelInputLog& LogData)
+{
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateSaveInputLog);
+
 	if (InputLogPath.EndsWith(FEditModelInputLog::LogExtension))
 	{
 		// Create a file writer for this input log
@@ -1088,54 +1127,63 @@ bool UEditModelInputAutomation::DoSaveInputLog(const FString& InputLogPath, cons
 			return false;
 		}
 
-		// Save the version
-		uint32 curLogVersion = FEditModelInputLog::CurInputLogVersion;
-		archive->SerializeIntPacked(curLogVersion);
+		TArray<uint8> uncompressedBuffer;
+		uint32 uncompressedSize = 0;
 
-		// Serialize the input log struct
-		TArray<uint8> buffer, compressedBuffer;
-		FMemoryWriter writer(buffer);
-		FCborStructSerializerBackend serializerBackend(writer, EStructSerializerBackendFlags::Default);
-
-		FStructSerializerPolicies policies;
-		policies.NullValues = EStructSerializerNullValuePolicies::Ignore;
-
-		// Input log save may be asynchronous
-		FStructSerializer::Serialize(LogData, serializerBackend, policies);
-
-		// Save the size of the uncompressed input log struct
-		uint32 uncompressedSize = buffer.Num();
-		archive->SerializeIntPacked(uncompressedSize);
-
-		// Save the compressed input log struct
-		archive->SerializeCompressed(buffer.GetData(), uncompressedSize, NAME_Zlib, COMPRESS_BiasMemory);
-
-		// Save the footer, so we know we didn't fail mid-write
-		FGuid footerGuid = FEditModelInputLog::LogFileFooter;
-		*archive << footerGuid;
-
-		// Save the file
-		bool bSaveSuccess = false;
-		if (!archive->IsError() && !archive->IsCriticalError())
 		{
-			archive->Flush();
-			bSaveSuccess = archive->Close();
+			QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateSerializeInputLog);
+
+			// Save the version
+			uint32 curLogVersion = FEditModelInputLog::CurInputLogVersion;
+			archive->SerializeIntPacked(curLogVersion);
+
+			// Serialize the input log struct
+			FMemoryWriter writer(uncompressedBuffer);
+			FCborStructSerializerBackend serializerBackend(writer, EStructSerializerBackendFlags::Default);
+
+			FStructSerializerPolicies policies;
+			policies.NullValues = EStructSerializerNullValuePolicies::Ignore;
+
+			// Input log save may be asynchronous
+			FStructSerializer::Serialize(LogData, serializerBackend, policies);
+
+			// Save the size of the uncompressed input log struct
+			uncompressedSize = uncompressedBuffer.Num();
+			archive->SerializeIntPacked(uncompressedSize);
 		}
 
-		delete archive;
+		{
+			QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateCompressInputLog);
+
+			// Save the compressed input log struct
+			archive->SerializeCompressed(uncompressedBuffer.GetData(), uncompressedSize, NAME_Zlib, COMPRESS_BiasMemory);
+		}
+
+		bool bSaveSuccess = false;
+		{
+			QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateWriteInputLog);
+
+			// Save the footer, so we know we didn't fail mid-write
+			FGuid footerGuid = FEditModelInputLog::LogFileFooter;
+			*archive << footerGuid;
+
+			// Save the file
+			if (!archive->IsError() && !archive->IsCriticalError())
+			{
+				archive->Flush();
+				bSaveSuccess = archive->Close();
+			}
+
+			delete archive;
+		}
+
 		return bSaveSuccess;
 	}
 
 	return false;
 }
 
-
-bool UEditModelInputAutomation::SaveInputLog(const FString& InputLogPath)
-{
-	return DoSaveInputLog(InputLogPath, CurInputLogData);
-}
-
-bool UEditModelInputAutomation::LoadInputLog(const FString& InputLogPath)
+bool UEditModelInputAutomation::LoadInputLog(const FString& InputLogPath, FEditModelInputLog& OutLogData)
 {
 	TArray<uint8> buffer, compressedBuffer;
 
@@ -1197,55 +1245,18 @@ bool UEditModelInputAutomation::LoadInputLog(const FString& InputLogPath)
 	FStructDeserializerPolicies policies;
 	policies.MissingFields = EStructDeserializerErrorPolicies::Ignore;
 
-	CurInputLogData.Reset(0.0f);
-	if (!FStructDeserializer::Deserialize(CurInputLogData, deserializerBackend, policies))
+	OutLogData.Reset(0.0f);
+	if (!FStructDeserializer::Deserialize(OutLogData, deserializerBackend, policies))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Input log file failed to deserialize:\n%s\n"), *InputLogPath);
 		return false;
 	}
 
 	// If end time didn't save, then set it to be based on the packets rather than the overall recording time
-	if ((CurInputLogData.RecordEndTime == 0.0f) && (CurInputLogData.InputPackets.Num() > 0))
+	if ((OutLogData.RecordEndTime == 0.0f) && (OutLogData.InputPackets.Num() > 0))
 	{
-		CurInputLogData.RecordEndTime = (CurInputLogData.InputPackets.Last().TimeSeconds - CurInputLogData.RecordStartTime);
+		OutLogData.RecordEndTime = (OutLogData.InputPackets.Last().TimeSeconds - OutLogData.RecordStartTime);
 	}
 
 	return true;
-}
-
-void UEditModelInputAutomation::StartRecordingFrames()
-{
-	if (!bCapturingFrames)
-	{
-		return;
-	}
-
-	float MaxRecordingTime = (CurInputLogData.RecordEndTime - CurInputLogData.RecordStartTime) - CurAutomationTime;
-	EMPlayerController->ConsoleCommand(FString::Printf(TEXT("HighlightRecorder.Start %.1f"), MaxRecordingTime));
-	FrameCaptureStartTime = CurAutomationTime;
-}
-
-void UEditModelInputAutomation::SaveRecordedFrames()
-{
-	if (!bCapturingFrames)
-	{
-		return;
-	}
-
-	FString logPathPart, logFileNamePart, logExtPart;
-	FPaths::Split(LastLogPath, logPathPart, logFileNamePart, logExtPart);
-	logFileNamePart.RemoveSpacesInline();
-	FString frameCaptureFileName = FString::Printf(TEXT("%s-%d.mp4"), *logFileNamePart, FrameCaptureVideoIndex);
-
-	// Delete an existing file if it's been exported before
-	FrameCapturePath = FPaths::VideoCaptureDir() / frameCaptureFileName;
-	IFileManager::Get().Delete(*FrameCapturePath, false, false, true);
-
-	// Try to save the recording (with a little extra buffer), which will end up in in the Saved/VideoCaptures directory
-	static constexpr float frameCaptureExtraSaveDuration = 1.0f;
-	float frameCaptureDuration = frameCaptureExtraSaveDuration + CurAutomationTime - FrameCaptureStartTime;
-	EMPlayerController->ConsoleCommand(FString::Printf(TEXT("HighlightRecorder.Save %s %.1f"), *frameCaptureFileName, frameCaptureDuration));
-	EMPlayerController->ConsoleCommand(FString(TEXT("HighlightRecorder.Stop")));
-
-	FrameCaptureVideoIndex++;
 }

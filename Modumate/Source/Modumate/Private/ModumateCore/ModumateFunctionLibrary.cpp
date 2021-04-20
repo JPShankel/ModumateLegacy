@@ -405,15 +405,15 @@ FBoxSphereBounds UModumateFunctionLibrary::GetSelectedExtents(const AEditModelPl
 	return selectionBounds;
 }
 
-void UModumateFunctionLibrary::SetWindowTitle(const FString& ProjectName)
+void UModumateFunctionLibrary::SetWindowTitle(const FString& ProjectName, const FText& ProjectSuffix)
 {
 	FText AppNameText = FText::FromString(FApp::GetProjectName());
 	FText WindowTitle = AppNameText;
 
 	if (!ProjectName.IsEmpty())
 	{
-		static const FText WindowTitleFormat = FText::FromString(TEXT("{0} - {1}"));
-		WindowTitle = FText::Format(WindowTitleFormat, FText::FromString(ProjectName), AppNameText);
+		static const FText WindowTitleFormat = FText::FromString(TEXT("{0}{1} - {2}"));
+		WindowTitle = FText::Format(WindowTitleFormat, FText::FromString(ProjectName), ProjectSuffix, AppNameText);
 	}
 
 	UKismetSystemLibrary::SetWindowTitle(WindowTitle);

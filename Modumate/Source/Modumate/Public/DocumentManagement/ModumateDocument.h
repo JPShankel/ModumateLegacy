@@ -238,13 +238,14 @@ public:
 	void RestoreDeletedObjects(const TArray<int32> &ids);
 	void DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
 
-	void MakeNew(UWorld *World);
+	void MakeNew(UWorld* World);
 	bool SerializeRecords(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord);
-	bool Save(UWorld *world, const FString &path, bool bSetAsCurrentProject);
-	bool LoadRecord(UWorld* world, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord);
-	bool LoadFile(UWorld *world, const FString &path, bool bSetAsCurrentProject, bool bRecordAsRecentProject);
-	bool LoadDeltas(UWorld *world, const FString &path, bool bSetAsCurrentProject, bool bRecordAsRecentProject); // Debug - Loads all deltas into the redo buffer for replay purposes
-	void SetCurrentProjectPath(const FString& currentProjectPath = FString());
+	static bool SaveRecords(const FString& FilePath, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord);
+	bool SaveFile(UWorld* World, const FString& FilePath, bool bUserFile, bool bAsync = false, const TFunction<void (bool)>& OnSaveFunction = nullptr);
+	bool LoadRecord(UWorld* World, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord);
+	bool LoadFile(UWorld* World, const FString& Path, bool bSetAsCurrentProject, bool bRecordAsRecentProject);
+	bool LoadDeltas(UWorld* World, const FString& Path, bool bSetAsCurrentProject, bool bRecordAsRecentProject); // Debug - Loads all deltas into the redo buffer for replay purposes
+	void SetCurrentProjectPath(const FString& CurrentProjectPath = FString());
 
 	// Expose the serialized structs that were most recently used to either load or save the document
 	const FModumateDocumentHeader& GetLastSerializedHeader() const { return CachedHeader; }
@@ -264,7 +265,8 @@ public:
 
 	FBoxSphereBounds CalculateProjectBounds() const;
 
-	bool IsDirty() const { return bIsDirty; }
+	bool IsDirty(bool bUserFile = true) const;
+	void SetDirtyFlags(bool bNewDirty);
 
 	void DisplayDebugInfo(UWorld* world);
 	void DrawDebugVolumeGraph(UWorld* world);
@@ -294,8 +296,14 @@ private:
 	TSharedPtr<Modumate::FModumateDraftingView> CurrentDraftingView = nullptr;
 	FBIMPresetCollection BIMPresetCollection;
 	FDocumentSettings CurrentSettings;
-	bool bIsDirty = true;
+
+	// TODO: refactor the different types of dirtiness into flags if we add more with multiplayer, but until then we know there are only two types of dirtiness.
+	bool bUserFileDirty = true;
+	bool bAutoSaveDirty = true;
 
 	FModumateDocumentHeader CachedHeader;
 	FMOIDocumentRecord CachedRecord;
+
+	void UpdateWindowTitle();
+	void RecordSavedProject(UWorld* World, const FString& FilePath, bool bUserFile);
 };

@@ -92,7 +92,7 @@ private:
 	static const FString InputTelemetryDirectory;
 
 	bool StartTelemetrySession(bool bRecordLoadedDocument);
-	bool EndTelemetrySession();
+	bool EndTelemetrySession(bool bAsyncUpload = true);
 	bool UploadInputTelemetry(bool bAsynchronous = true) const;
 
 	bool SnapDistAlongAffordance(FVector& SnappedPosition, const FVector& AffordanceOrigin, const FVector& AffordanceDir) const;
