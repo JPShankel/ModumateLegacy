@@ -7,8 +7,7 @@
 #include "Misc/Paths.h"
 
 #if PLATFORM_WINDOWS
-
-#include "zlib/zlib-1.2.5/Src/contrib/minizip/zip.h"
+#include "Drafting/MiniZip/zip.h"
 
 // UE4's prebuilt zlib includes the contributed zip & unzip functionality for handling zip archives.
 // UE4 does not appear to cleanly expose the API, hence the fragile #include above.
