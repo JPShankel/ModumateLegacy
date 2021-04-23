@@ -2515,21 +2515,24 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 
 	ClearUndoBuffer();
 
-	// Load undo/redo buffer
-	for (auto& deltaRecord : InDocumentRecord.AppliedDeltas)
+	// Load undo/redo buffer if the file version is consistent, otherwise deltas are not supported
+	if (DocVersion == InHeader.Version)
 	{
-		TSharedPtr<UndoRedo> undoRedo = MakeShared<UndoRedo>();
-
-		for (auto& structWrapper : deltaRecord.DeltaStructWrappers)
+		for (auto& deltaRecord : InDocumentRecord.AppliedDeltas)
 		{
-			auto deltaPtr = structWrapper.CreateStructFromJSON<FDocumentDelta>();
-			if (deltaPtr)
-			{
-				undoRedo->Deltas.Add(MakeShareable(deltaPtr));
-			}
-		}
+			TSharedPtr<UndoRedo> undoRedo = MakeShared<UndoRedo>();
 
-		UndoBuffer.Add(undoRedo);
+			for (auto& structWrapper : deltaRecord.DeltaStructWrappers)
+			{
+				auto deltaPtr = structWrapper.CreateStructFromJSON<FDocumentDelta>();
+				if (deltaPtr)
+				{
+					undoRedo->Deltas.Add(MakeShareable(deltaPtr));
+				}
+			}
+
+			UndoBuffer.Add(undoRedo);
+		}
 	}
 
 	CurrentSettings = InDocumentRecord.Settings;
