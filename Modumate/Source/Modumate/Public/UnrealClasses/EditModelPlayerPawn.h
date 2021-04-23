@@ -44,6 +44,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class USceneCaptureComponent2D *CameraCaptureComponent2D;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class USceneCaptureComponent2D* ScreenshotTaker;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

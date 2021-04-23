@@ -212,7 +212,10 @@ public:
 	class AEditModelToggleGravityPawn *EMToggleGravityPawn;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class ASkyActor *SkyActor;
+	class ASkyActor* SkyActor;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class AAxesActor* AxesActor;
 
 	// Event overrides
 	virtual void BeginPlay() override;
@@ -517,7 +520,7 @@ public:
 	bool CheckUserPlanAndPermission(EModumatePermission Permission, const FText& NoPermissionText = FText::GetEmpty(),
 		const FText& ConfirmText = FText::GetEmpty(), const TFunction<void()>& ConfirmCallback = nullptr);
 
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	UFUNCTION(BlueprintCallable)
 	bool TakeScreenshot();
 
 	UFUNCTION()
@@ -533,7 +536,7 @@ public:
 	bool CaptureProjectThumbnail();
 
 	UFUNCTION(BlueprintCallable)
-	bool GetScreenshotFileNameWithDialog(FString &filename);
+	bool GetScreenshotFileNameWithDialog(FString& Filepath, FString &Filename);
 
 	UPROPERTY()
 	class ASceneCapture2D* ThumbnailCapturer;

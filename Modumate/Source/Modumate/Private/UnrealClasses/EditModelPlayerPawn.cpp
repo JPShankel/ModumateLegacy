@@ -33,6 +33,9 @@ AEditModelPlayerPawn::AEditModelPlayerPawn(const FObjectInitializer& ObjectIniti
 
 	CameraCaptureComponent2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("CameraCaptureComponent2D"));
 	CameraCaptureComponent2D->SetupAttachment(RootComponent);
+
+	ScreenshotTaker = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("ScreenshotTaker"));
+	ScreenshotTaker->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned

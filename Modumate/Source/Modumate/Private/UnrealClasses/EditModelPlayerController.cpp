@@ -34,6 +34,7 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/ModumateObjectInstanceParts.h"
 #include "UnrealClasses/ModumateViewportClient.h"
+#include "UnrealClasses/AxesActor.h"
 #include "UI/AdjustmentHandleWidget.h"
 #include "UI/DimensionActor.h"
 #include "UI/BIM/BIMDesigner.h"
@@ -44,6 +45,8 @@
 #include "Objects/CutPlane.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
 #include "Quantities/QuantitiesManager.h"
+
+#include "Kismet/KismetRenderingLibrary.h"
 
 
 // Tools
@@ -1114,7 +1117,7 @@ bool AEditModelPlayerController::CaptureProjectThumbnail()
 	return false;
 }
 
-bool AEditModelPlayerController::GetScreenshotFileNameWithDialog(FString &filename)
+bool AEditModelPlayerController::GetScreenshotFileNameWithDialog(FString& Filepath, FString& Filename)
 {
 	if (!CanShowFileDialog())
 	{
@@ -1130,10 +1133,16 @@ bool AEditModelPlayerController::GetScreenshotFileNameWithDialog(FString &filena
 
 	// Open the file dialog
 	bool bChoseFile = false;
-	if (FModumatePlatform::GetSaveFilename(filename, FModumatePlatform::INDEX_PNGFILE))
+	FString fullFilePath;
+	if (FModumatePlatform::GetSaveFilename(fullFilePath, FModumatePlatform::INDEX_PNGFILE))
 	{
 		bChoseFile = true;
 	}
+
+	// Parse file path
+	FString nameString, extensionString;
+	FPaths::Split(fullFilePath, Filepath, nameString, extensionString);
+	Filename = FPaths::SetExtension(nameString, extensionString);
 
 	EMPlayerState->ShowingFileDialog = false;
 
@@ -1262,6 +1271,53 @@ bool AEditModelPlayerController::OnCreateQuantitiesCsv(const TFunction<void(FStr
 	}
 
 	return retValue;
+}
+
+bool AEditModelPlayerController::TakeScreenshot()
+{
+	// Get path from dialog
+	FString filePath, fileName;
+	if (!GetScreenshotFileNameWithDialog(filePath, fileName))
+	{
+		return false;
+	}
+
+	// Set screenshot taker to the same condition as the current camera
+	APlayerCameraManager* cameraManager = this->PlayerCameraManager;
+	if (ensureAlways(cameraManager && EMPlayerPawn && EMPlayerPawn->ScreenshotTaker))
+	{
+		EMPlayerPawn->ScreenshotTaker->SetWorldTransform(cameraManager->GetActorTransform());
+		EMPlayerPawn->ScreenshotTaker->FOVAngle = cameraManager->GetFOVAngle();
+	}
+	else
+	{
+		return false;
+	}
+
+	// Create render target
+	// Support customize screenshot res?
+	int32 screenshotWidth = 1920;
+	int32 screenshotHeight = 1080;
+	UTextureRenderTarget2D* screenshotRT = UKismetRenderingLibrary::CreateRenderTarget2D(this, screenshotWidth, screenshotHeight, ETextureRenderTargetFormat::RTF_RGBA8_SRGB);
+	EMPlayerPawn->ScreenshotTaker->TextureTarget = screenshotRT;
+
+	// Hide axes
+	if (ensureAlways(AxesActor))
+	{
+		AxesActor->SetActorHiddenInGame(true);
+	}
+
+	// Capture and export
+	EMPlayerPawn->ScreenshotTaker->CaptureScene();
+	UKismetRenderingLibrary::ExportRenderTarget(this, screenshotRT, filePath, fileName);
+
+	// Unhide axes
+	if (AxesActor)
+	{
+		AxesActor->SetActorHiddenInGame(false);
+	}
+
+	return true;
 }
 
 void AEditModelPlayerController::DeleteActionDefault()
