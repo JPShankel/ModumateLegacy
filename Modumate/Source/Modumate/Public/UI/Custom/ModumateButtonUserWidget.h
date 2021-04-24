@@ -47,8 +47,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UModumateTextBlock* ButtonText;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
+	class UImage* ButtonImage;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText ButtonTextOverride;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UTexture2D* ButtonImageOverride;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	EInputCommand InputCommand;

@@ -6,6 +6,7 @@
 #include "UnrealClasses/TooltipManager.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/Custom/ModumateTextBlock.h"
+#include "Components/Image.h"
 
 UModumateButtonUserWidget::UModumateButtonUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -30,6 +31,11 @@ bool UModumateButtonUserWidget::Initialize()
 	if (ButtonText)
 	{
 		ButtonText->SetText(ButtonTextOverride);
+	}
+
+	if (ButtonImageOverride && ButtonImage)
+	{
+		ButtonImage->SetBrushFromTexture(ButtonImageOverride);
 	}
 
 	return true;
