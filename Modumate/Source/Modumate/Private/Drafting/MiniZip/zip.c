@@ -40,6 +40,13 @@
 #   include <errno.h>
 #endif
 
+//@third party BEGIN MODUMATE - disable clang-specific warnings
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmisleading-indentation"
+#pragma clang diagnostic ignored "-Wparentheses-equality"
+#endif
+//@third party END MODUMATE
 
 #ifndef local
 #  define local static
@@ -2002,3 +2009,9 @@ extern int ZEXPORT zipRemoveExtraInfoBlock (char* pData, int* dataLen, short sHe
 
   return retVal;
 }
+
+//@third party BEGIN MODUMATE - re-enable default warnings
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+//@third party END MODUMATE
