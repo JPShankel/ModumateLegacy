@@ -1268,8 +1268,25 @@ void UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 				}
 			}
 
+			// If deleting a single edge attempt a join instead (MOD-786):
+			if (graph3DDelta.EdgeDeletions.Num() == 1 && graph3DDelta.FaceDeletions.Num() == 2)
+			{
+				TArray<FGraph3DDelta> graphJoinDeltas;
+				TArray<int32> deletedFaceIDs;
+				graph3DDelta.FaceDeletions.GetKeys(deletedFaceIDs);
+				if (TempVolumeGraph.GetDeltasForObjectJoin(graphJoinDeltas, deletedFaceIDs, NextID, EGraph3DObjectType::Face))
+				{
+					TArray<FDeltaPtr> deltaPtrs;
+					if (FinalizeGraphDeltas(graphJoinDeltas, deltaPtrs))
+					{
+						OutDeltas.Append(deltaPtrs);
+					}
+					return;
+				}
+			}
 			graph3DDeltas.Add(MakeShared<FGraph3DDelta>(graph3DDelta));
 		}
+
 	}
 
 	// Group surface graph elements by surface graph, so we can generate deltas for each surface graph separately
