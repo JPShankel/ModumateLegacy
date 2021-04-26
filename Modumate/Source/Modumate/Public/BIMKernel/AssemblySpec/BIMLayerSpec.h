@@ -22,27 +22,13 @@ struct MODUMATE_API FBIMLayerSpec
 	GENERATED_BODY()
 	friend struct FBIMAssemblySpec;
 private:
-	
-	UPROPERTY()
-	FBIMPropertySheet LayerProperties;
 
-	UPROPERTY()
-	TArray<FBIMPropertySheet> ModuleProperties;
-
-	UPROPERTY()
-	FBIMPropertySheet GapProperties;
-
-	UPROPERTY()
-	FBIMPresetMaterialBindingSet ModuleMaterialBindingSet;
-
-	UPROPERTY()
-	FBIMPresetMaterialBindingSet GapMaterialBindingSet;
-
-	EBIMResult BuildUnpatternedLayer(const FModumateDatabase& InDB);
 	EBIMResult BuildPatternedLayer(const FModumateDatabase& InDB);
 	EBIMResult BuildFromProperties(const FModumateDatabase& InDB);
 	void EvaluateParameterizedPatternExtents();
 	static void PopulatePatternModuleVariables(TMap<FString, float>& patternExprVars, const FVector& moduleDims, int32 moduleIdx);
+
+	EBIMResult UpdatePatternFromPreset(const FModumateDatabase& InDB, const FBIMPresetInstance& Preset);
 
 public:
 	UPROPERTY()

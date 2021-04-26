@@ -23,12 +23,6 @@ struct MODUMATE_API FLayerPatternModule
 	FGuid Key;
 
 	UPROPERTY()
-	FText DisplayName = FText::GetEmpty();
-
-	UPROPERTY()
-	TArray<ELayerFormat> SupportedFormats;
-
-	UPROPERTY()
 	FVector ModuleExtents = FVector::ZeroVector;
 
 	UPROPERTY()
@@ -49,16 +43,10 @@ struct MODUMATE_API FLayerPatternGap
 	FGuid Key;
 
 	UPROPERTY()
-	FText DisplayName = FText::GetEmpty();
-
-	UPROPERTY()
 	FVector2D GapExtents = FVector2D::ZeroVector;
 
 	UPROPERTY()
 	FArchitecturalMaterial Material;
-
-	UPROPERTY()
-	TArray<ELayerFormat> SupportedFormats;
 
 	FGuid UniqueKey() const { return Key; }
 };
@@ -130,9 +118,6 @@ struct MODUMATE_API FLayerPattern
 
 	UPROPERTY()
 	FText DisplayName = FText::GetEmpty();
-
-	UPROPERTY()
-	TArray<ELayerFormat> SupportedFormats;
 
 	UPROPERTY()
 	int32 ModuleCount = 0;

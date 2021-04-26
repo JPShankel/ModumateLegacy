@@ -134,77 +134,41 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			{
 			case ELayerTarget::Assembly:
 				presetIterator.TargetLayer = &Layers.AddDefaulted_GetRef();
-				presetIterator.TargetProperties = &Layers.Last().LayerProperties;
-				presetIterator.TargetLayer->MeasurementMethod = presetIterator.Preset->MeasurementMethod;
-				presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
-				presetIterator.Preset->CustomData.LoadStructData(presetIterator.TargetLayer->ModuleMaterialBindingSet);
 				break;
 			case ELayerTarget::TreadLayer:
 				presetIterator.TargetLayer = &TreadLayers.AddDefaulted_GetRef();
-				presetIterator.TargetProperties = &TreadLayers.Last().LayerProperties;
-				presetIterator.TargetLayer->MeasurementMethod = presetIterator.Preset->MeasurementMethod;
-				presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
-				presetIterator.Preset->CustomData.LoadStructData(presetIterator.TargetLayer->ModuleMaterialBindingSet);
 				break;
 			case ELayerTarget::RiserLayer:
 				presetIterator.TargetLayer = &RiserLayers.AddDefaulted_GetRef();
-				presetIterator.TargetProperties = &RiserLayers.Last().LayerProperties;
-				presetIterator.TargetLayer->MeasurementMethod = presetIterator.Preset->MeasurementMethod;
-				presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
-				presetIterator.Preset->CustomData.LoadStructData(presetIterator.TargetLayer->ModuleMaterialBindingSet);
 				break;
 			default:
 				ensureAlways(false);
+				continue;
 				break;
 			};
 
-			FString patternGuidString;
-			FGuid patternGuid;
-			if (presetIterator.Preset->Properties.TryGetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, patternGuidString) && FGuid::Parse(patternGuidString, patternGuid))
+			presetIterator.TargetProperties = nullptr;
+			presetIterator.TargetLayer->MeasurementMethod = presetIterator.Preset->MeasurementMethod;
+			presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
+			presetIterator.TargetLayer->UpdatePatternFromPreset(InDB, *presetIterator.Preset);
+		}
+		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Module || presetIterator.Preset->NodeScope == EBIMValueScope::Gap)
+		{
+			if (ensureAlways(presetIterator.TargetLayer != nullptr))
 			{
-				const FLayerPattern* pattern = InDB.GetPatternByGUID(patternGuid);
-				if (ensureAlways(pattern != nullptr && presetIterator.TargetLayer != nullptr))
-				{
-					presetIterator.TargetLayer->Pattern = *pattern;
-				}
+				presetIterator.TargetLayer->UpdatePatternFromPreset(InDB, *presetIterator.Preset);
 			}
 		}
-		// TODO: until we can combine extrusions and layers, ignore extrusions on layered assemblies
-		// This limits extrusions to Trim, Beams, Columns and Mullions for the time being
-		// For extrusions not hosted on a metabeam, we will need assembly-level geometric data
 		else if (
 			presetIterator.Preset->ObjectType == EObjectType::OTStructureLine ||
 			presetIterator.Preset->ObjectType == EObjectType::OTMullion ||
 			presetIterator.Preset->ObjectType == EObjectType::OTTrim
 			)
 		{
-			if (Layers.Num() == 0 && TreadLayers.Num() == 0 && RiserLayers.Num() == 0)
-			{
-				auto &extrusion = Extrusions.AddDefaulted_GetRef();
-				presetIterator.TargetProperties = &extrusion.Properties;
-				extrusion.PresetGUID = presetIterator.PresetGUID;
-				presetIterator.Preset->CustomData.LoadStructData(MaterialBindingSet);
-			}
-		}
-		// When we encounter a module, we'll expect children to apply color, material and dimension data
-		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Module)
-		{
-			if (ensureAlways(presetIterator.TargetLayer != nullptr))
-			{
-				presetIterator.TargetProperties = &presetIterator.TargetLayer->ModuleProperties.AddDefaulted_GetRef();
-				presetIterator.TargetProperties->SetProperty(EBIMValueScope::Module, BIMPropertyNames::AssetID, presetIterator.Preset->GUID.ToString());
-				// Applies to unpatterned layers, okay if it fails for patterned
-				presetIterator.Preset->CustomData.LoadStructData(presetIterator.TargetLayer->ModuleMaterialBindingSet);
-			}
-		}
-		// Gaps have the same rules as modules
-		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Gap)
-		{
-			if (ensureAlways(presetIterator.TargetLayer != nullptr))
-			{
-				presetIterator.TargetProperties = &presetIterator.TargetLayer->GapProperties;
-				presetIterator.Preset->CustomData.LoadStructData(presetIterator.TargetLayer->GapMaterialBindingSet);
-			}
+			auto &extrusion = Extrusions.AddDefaulted_GetRef();
+			presetIterator.TargetProperties = &extrusion.Properties;
+			extrusion.PresetGUID = presetIterator.PresetGUID;
+			presetIterator.Preset->CustomData.LoadStructData(MaterialBindingSet);
 		}
 
 		// If we're targeting a cabinet, this is the cabinet's face which means:
@@ -215,7 +179,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		{
 			dimensionsPreset = presetIterator.Preset;
 		}
-		else
+		else if (presetIterator.TargetProperties != nullptr)
 		{
 			presetIterator.TargetProperties->AddProperties(presetIterator.Preset->Properties);
 		}

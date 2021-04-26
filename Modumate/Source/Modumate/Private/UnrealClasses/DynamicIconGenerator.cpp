@@ -1042,10 +1042,11 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 
 	// Step 2: Should this icon be using its dependent presets, or use preset values from its children node?
 	FVector vSize = FVector::ZeroVector;
+	float bevelWidth;
 	if (UseDependentPreset)
 	{
 		const FBIMPresetInstance* preset = PresetCollection.PresetFromGUID(PresetID);
-		if (!ensureAlways(preset != nullptr) || preset->GetModularDimensions(vSize) != EBIMResult::Success)
+		if (!ensureAlways(preset != nullptr) || preset->GetModularDimensions(vSize, bevelWidth) != EBIMResult::Success)
 		{
 			return false;
 		}
@@ -1055,7 +1056,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 	else
 	{
 		const FBIMPresetEditorNodeSharedPtr inst = Controller->EditModelUserWidget->BIMDesigner->InstancePool.InstanceFromID(NodeID);
-		if (!ensureAlways(inst != nullptr) || inst->Preset.GetModularDimensions(vSize) != EBIMResult::Success)
+		if (!ensureAlways(inst != nullptr) || inst->Preset.GetModularDimensions(vSize, bevelWidth) != EBIMResult::Success)
 		{
 			return false;
 		}
