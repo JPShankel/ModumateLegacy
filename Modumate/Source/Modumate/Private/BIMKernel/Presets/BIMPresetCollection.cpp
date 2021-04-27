@@ -868,180 +868,20 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		}
 	}
 
-	constexpr int32 presetFixVersion = 14;
-	if (DocRecordVersion < presetFixVersion)
+	if (DocRecordVersion < Modumate::DocVersion)
 	{
 		TMap<FGuid, FBIMPresetInstance> fixedPresets = DocRecord.PresetCollection.PresetsByGUID;
+
+		FBIMPresetCollectionProxy proxyCollection(*this);
+		
 		for (auto& kvp : fixedPresets)
 		{
-			FString ncp;
-			kvp.Value.MyTagPath.ToString(ncp);
-			ncp = FString(ncp.Replace(TEXT(" "), TEXT("")));
-			kvp.Value.MyTagPath.FromString(ncp);
+			proxyCollection.OverridePreset(kvp.Value);
+		}
 
-			// Prior to version 13, patterns were stored as children. Convert to property.
-			for (int32 i = 0; i < kvp.Value.ChildPresets.Num(); ++i)
-			{
-				const FBIMPresetInstance* child = fixedPresets.Find(kvp.Value.ChildPresets[i].PresetGUID);
-				if (child == nullptr)
-				{
-					child = InDB.GetPresetCollection().PresetFromGUID(kvp.Value.ChildPresets[i].PresetGUID);
-				}
-				if (child && child->NodeScope == EBIMValueScope::Pattern)
-				{
-					kvp.Value.Properties.SetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, child->GUID.ToString());
-					kvp.Value.PresetForm.AddPropertyElement(LOCTEXT("BIMPattern", "Pattern"), FBIMPropertyKey(EBIMValueScope::Pattern, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
-					kvp.Value.RemoveChildPreset(kvp.Value.ChildPresets[i].ParentPinSetIndex, kvp.Value.ChildPresets[i].ParentPinSetPosition);
-					break;
-				}
-			}
-
-			// If this is an over-write of an OOTB, get the updated version and use its data
-			const FBIMPresetInstance* updated = InDB.GetPresetCollection().PresetFromGUID(kvp.Key);
-			if (updated != nullptr)
-			{
-				kvp.Value.CustomData = updated->CustomData;
-			}
-			// Otherwise, make new material binding data from the color and material properties
-			else 
-			{
-				FGuid matGUID;
-				// If we have deprecated channels, translate them
-				if (kvp.Value.MaterialChannelBindings_DEPRECATED.Num() > 0)
-				{
-					FBIMPresetMaterialBindingSet bindingSet;
-					for (auto& matChannel : kvp.Value.MaterialChannelBindings_DEPRECATED)
-					{
-						auto& binding = bindingSet.MaterialBindings.AddDefaulted_GetRef();
-						binding.Channel = *matChannel.Channel;
-						binding.ColorHexValue = matChannel.Channel;
-						binding.SurfaceMaterialGUID = matChannel.SurfaceMaterialGUID;
-						binding.InnerMaterialGUID = matChannel.InnerMaterialGUID;
-					}
-					kvp.Value.CustomData.SaveStructData(bindingSet, true);
-				}
-#if !UE_BUILD_SHIPPING				
-				// Otherwise bind the material property to each of the channels in the form
-				// This contingency is internal to the Modumate development team
-				// Customer projects will not have this condition
-				else
-				{
-					if (!kvp.Value.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, matGUID))
-					{  
-						matGUID = InDB.GetDefaultMaterialGUID();
-					}
-
-					FString colorHexValue;
-					if (!kvp.Value.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, colorHexValue))
-					{
-						colorHexValue = FColor::White.ToHex();
-					}
-
-					TSet<FName> channels;
-					for (auto& formElement : kvp.Value.PresetForm.Elements)
-					{
-						if (formElement.FieldType == EBIMPresetEditorField::MaterialBinding)
-						{
-							channels.Add(*formElement.FieldName);
-						}
-					}
-
-					if (channels.Num() > 0)
-					{
-						FBIMPresetMaterialBindingSet bindingSet;
-						for (auto& channel : channels)
-						{
-							auto& binding = bindingSet.MaterialBindings.AddDefaulted_GetRef();
-							binding.Channel = channel;
-							binding.InnerMaterialGUID = matGUID;
-							binding.ColorHexValue = colorHexValue;
-						}
-
-						kvp.Value.CustomData.SaveStructData(bindingSet, true);
-					}
-				}
-#endif
-			}
-
-			/*
-			* Upgrade deprecated BIM form
-			*/
-			if (kvp.Value.FormItemToProperty_DEPRECATED.Num() > 0)
-			{
-				FBIMPresetMaterialBindingSet bindingSet;
-				static const FName defaultChannel = TEXT("Finish1");
-
-				// Deprecated map of form display text to property QN
-				for (auto& fitp : kvp.Value.FormItemToProperty_DEPRECATED)
-				{
-					FBIMPropertyKey propKey(fitp.Value);
-
-					switch (propKey.Scope)
-					{
-
-					// Dimensions and meshes are properties
-					case EBIMValueScope::Dimension:
-						kvp.Value.PresetForm.AddPropertyElement(FText::FromString(fitp.Key), fitp.Value, EBIMPresetEditorField::DimensionProperty);
-						break;
-
-					case EBIMValueScope::Mesh:
-					case EBIMValueScope::Profile:
-						kvp.Value.PresetForm.AddPropertyElement(FText::FromString(fitp.Key), fitp.Value, EBIMPresetEditorField::AssetProperty);
-						break;
-
-					// Colors and materials require upgraded material bindings
-					case EBIMValueScope::Color:
-						if (bindingSet.MaterialBindings.Num() == 0)
-						{
-							bindingSet.MaterialBindings.AddDefaulted();
-							bindingSet.MaterialBindings.Last().InnerMaterialGUID = InDB.GetDefaultMaterialGUID();
-							bindingSet.MaterialBindings.Last().Channel = defaultChannel;
-						}
-						kvp.Value.PresetForm.AddMaterialBindingElement(FText::FromString(fitp.Key), defaultChannel, EMaterialChannelFields::ColorTint);
-						ensureAlways(kvp.Value.Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, bindingSet.MaterialBindings.Last().ColorHexValue));
-						break;
-
-					case EBIMValueScope::RawMaterial:
-						if (bindingSet.MaterialBindings.Num() == 0)
-						{
-							bindingSet.MaterialBindings.AddDefaulted();
-							bindingSet.MaterialBindings.Last().ColorHexValue = FColor::White.ToString();
-							bindingSet.MaterialBindings.Last().Channel = defaultChannel;
-						}
-						kvp.Value.PresetForm.AddMaterialBindingElement(FText::FromString(fitp.Key), defaultChannel, EMaterialChannelFields::InnerMaterial);
-						ensureAlways(kvp.Value.Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, bindingSet.MaterialBindings.Last().InnerMaterialGUID));
-						break;
-					};
-				}
-
-				// If we got a material binding, set custom data for it
-				if (bindingSet.MaterialBindings.Num() == 1)
-				{
-					kvp.Value.CustomData.SaveStructData(bindingSet, true);
-				}
-			}
-
-			// Prior to version 14, trim width and depth needed to be swapped for non-Trim linear extrusions
-			if (DocRecordVersion < 14)
-			{
-				switch (kvp.Value.ObjectType)
-				{
-				case EObjectType::OTMullion:
-				case EObjectType::OTStructureLine:
-				{
-					float extrusionWidth, extrusionDepth;
-					if (kvp.Value.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, extrusionWidth) &&
-						kvp.Value.Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, extrusionDepth))
-					{
-						kvp.Value.Properties.SetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, extrusionDepth);
-						kvp.Value.Properties.SetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, extrusionWidth);
-					}
-					break;
-				}
-				default:
-					break;
-				}
-			}
+		for (auto& kvp : fixedPresets)
+		{
+			kvp.Value.UpgradeData(InDB,proxyCollection, DocRecordVersion);
 		}
 		PresetsByGUID.Append(fixedPresets);
 	}
@@ -1086,7 +926,12 @@ bool FBIMPresetCollection::SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord)
 		if (kvp.Value.Edited)
 		{
 			auto serializedPreset = kvp.Value;
-			serializedPreset.CustomData.SaveJsonFromCbor();
+
+			for (auto& customData : serializedPreset.CustomDataByClassName)
+			{
+				customData.Value.SaveJsonFromCbor();
+			}
+
 			DocRecord.PresetCollection.AddPreset(serializedPreset);
 			if (!DocRecord.PresetCollection.NodeDescriptors.Contains(kvp.Value.NodeType))
 			{

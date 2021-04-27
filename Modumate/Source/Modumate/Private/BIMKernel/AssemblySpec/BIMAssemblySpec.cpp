@@ -72,8 +72,8 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 
 	switch (assemblyPreset->ObjectType)
 	{
-		case EObjectType::OTEdgeDetail: ensureAlways(assemblyPreset->CustomData.LoadStructData(EdgeDetailData)); break;
-		case EObjectType::OTCabinet: ensureAlways(assemblyPreset->CustomData.LoadStructData(MaterialBindingSet)); break;
+		case EObjectType::OTEdgeDetail: ensureAlways(assemblyPreset->TryGetCustomData(EdgeDetailData)); break;
+		case EObjectType::OTCabinet: ensureAlways(assemblyPreset->TryGetCustomData(MaterialBindingSet)); break;
 	};
 
 	if (assemblyPreset->SlotConfigPresetGUID.IsValid())
@@ -168,7 +168,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			auto &extrusion = Extrusions.AddDefaulted_GetRef();
 			presetIterator.TargetProperties = &extrusion.Properties;
 			extrusion.PresetGUID = presetIterator.PresetGUID;
-			presetIterator.Preset->CustomData.LoadStructData(MaterialBindingSet);
+			presetIterator.Preset->TryGetCustomData(MaterialBindingSet);
 		}
 
 		// If we're targeting a cabinet, this is the cabinet's face which means:
@@ -299,7 +299,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			}
 
 			FBIMPresetMaterialBindingSet bindingSet;
-			if (partPreset->CustomData.LoadStructData(bindingSet))
+			if (partPreset->TryGetCustomData(bindingSet))
 			{
 				for (auto& matBinding : bindingSet.MaterialBindings)
 				{

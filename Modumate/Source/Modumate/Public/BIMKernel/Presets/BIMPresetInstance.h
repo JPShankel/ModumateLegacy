@@ -24,6 +24,7 @@ other presets are attached to each pin
 For example, a 3x4x7 inch red clay brick would be an instance of BRICK with clay, red and 3x4x7 child presets attached
 */
 struct FBIMPresetCollection;
+class FBIMPresetCollectionProxy;
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetPinAttachment
@@ -182,10 +183,37 @@ struct MODUMATE_API FBIMPresetInstance
 	EBIMAssetType AssetType = EBIMAssetType::None;
 
 	UPROPERTY()
-	FStructDataWrapper CustomData;
+	FStructDataWrapper CustomData_DEPRECATED;
 
 	UPROPERTY()
 	TMap<FString, FName> FormItemToProperty_DEPRECATED;
+
+	UPROPERTY()
+	TMap<FName, FStructDataWrapper> CustomDataByClassName;
+
+	template<class T>
+	bool TryGetCustomData(T& OutData) const
+	{
+		const FStructDataWrapper* wrapper = CustomDataByClassName.Find(T::StaticStruct()->GetFName());
+		if (wrapper != nullptr)
+		{
+			return (*wrapper).LoadStructData(OutData);
+		}
+		return false;
+	}
+
+	template<class T>
+	EBIMResult SetCustomData(const T& InData)
+	{
+		FStructDataWrapper structWrapper;
+		if (ensureAlways(structWrapper.SaveStructData(InData, true)))
+		{
+			CustomDataByClassName.Add(T::StaticStruct()->GetFName(),structWrapper);
+			return EBIMResult::Success;
+		}
+		ensureAlways(false);
+		return EBIMResult::Error;
+	}
 
 	bool HasProperty(const FBIMNameType& Name) const;
 
@@ -236,6 +264,8 @@ struct MODUMATE_API FBIMPresetInstance
 	bool ValidatePreset() const;
 
 	EBIMResult GetModularDimensions(FVector& OutDimensions, float& OutBevelWidth) const;
+
+	EBIMResult UpgradeData(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, int32 DocVersion);
 
 	bool operator==(const FBIMPresetInstance& RHS) const;
 	bool operator!=(const FBIMPresetInstance& RHS) const;

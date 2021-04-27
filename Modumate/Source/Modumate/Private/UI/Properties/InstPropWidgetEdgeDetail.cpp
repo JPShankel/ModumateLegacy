@@ -136,7 +136,7 @@ bool UInstPropWidgetEdgeDetail::OnCreateOrSwap(FGuid NewDetailPresetID)
 		swapPresetInstance = presetCollection.PresetFromGUID(NewDetailPresetID);
 
 		// If we passed in a new preset ID, it better already be in the preset collection and have detail data.
-		if (!ensure(swapPresetInstance && swapPresetInstance->CustomData.LoadStructData(newDetailData)))
+		if (!ensure(swapPresetInstance && swapPresetInstance->TryGetCustomData(newDetailData)))
 		{
 			return false;
 		}
@@ -185,7 +185,7 @@ bool UInstPropWidgetEdgeDetail::OnCreateOrSwap(FGuid NewDetailPresetID)
 	{
 		FBIMPresetInstance newDetailPreset;
 		if (!ensure((presetCollection.GetBlankPresetForObjectType(EObjectType::OTEdgeDetail, newDetailPreset) == EBIMResult::Success) &&
-			newDetailPreset.CustomData.SaveStructData(newDetailData)))
+			newDetailPreset.SetCustomData(newDetailData)==EBIMResult::Success))
 		{
 			return false;
 		}
@@ -278,7 +278,7 @@ void UInstPropWidgetEdgeDetail::OnClickedSwap()
 		// cycle through edge details that are valid for the given selection
 		FEdgeDetailData testDetailData;
 		EBIMResult searchResult = presetCollection.GetPresetsByPredicate([this, &testDetailData](const FBIMPresetInstance& Preset) {
-			return Preset.CustomData.LoadStructData(testDetailData, true) &&
+			return Preset.TryGetCustomData(testDetailData) &&
 				(testDetailData.CachedConditionHash == CurrentConditionValue); },
 			validDetailPresetIDs);
 

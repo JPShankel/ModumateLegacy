@@ -249,7 +249,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 		{
 			case ECSVMatrixNames::EdgeDetail:
 			{
-				Preset.CustomData.SaveStructData(FEdgeDetailData(FEdgeDetailData::CurrentVersion), true);
+				Preset.SetCustomData(FEdgeDetailData(FEdgeDetailData::CurrentVersion));
 			}
 			break;
 
@@ -383,9 +383,9 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				if (!materialBinding.Channel.IsNone())
 				{
 					FBIMPresetMaterialBindingSet bindingSet;
-					Preset.CustomData.LoadStructData(bindingSet); // okay that this fails on first binding
+					Preset.TryGetCustomData(bindingSet); // okay that this fails on first binding
 					bindingSet.MaterialBindings.Add(materialBinding);
-					Preset.CustomData.SaveStructData(bindingSet, true);
+					Preset.SetCustomData(bindingSet);
 
 					FGuid material = materialBinding.SurfaceMaterialGUID.IsValid() ? materialBinding.SurfaceMaterialGUID : materialBinding.InnerMaterialGUID;
 

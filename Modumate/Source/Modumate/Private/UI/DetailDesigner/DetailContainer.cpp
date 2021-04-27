@@ -76,7 +76,7 @@ bool UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 
 	FEdgeDetailData detailData;
 	auto detailPreset = presetCollection.PresetFromGUID(DetailPresetID);
-	if (!ensure(detailPreset && detailPreset->CustomData.LoadStructData(detailData)))
+	if (!ensure(detailPreset && detailPreset->TryGetCustomData(detailData)))
 	{
 		return false;
 	}
@@ -325,7 +325,7 @@ void UDetailDesignerContainer::OnLayerExtensionChanged(int32 ParticipantIndex, i
 	// TODO: cache the detail data instead if it's safe
 	FEdgeDetailData detailData;
 	auto presetDelta = document->GetPresetCollection().MakeUpdateDelta(DetailPresetID, this);
-	if (!ensure(presetDelta && presetDelta->NewState.CustomData.LoadStructData(detailData) &&
+	if (!ensure(presetDelta && presetDelta->NewState.TryGetCustomData(detailData) &&
 		detailData.Overrides.IsValidIndex(ParticipantIndex)))
 	{
 		return;
@@ -362,7 +362,7 @@ void UDetailDesignerContainer::OnLayerExtensionChanged(int32 ParticipantIndex, i
 		overrideParticipant.LayerExtensions[layerIndex] = NewExtensions;
 	}
 
-	if (!ensure(presetDelta->NewState.CustomData.SaveStructData(detailData)))
+	if (!ensure(presetDelta->NewState.SetCustomData(detailData) == EBIMResult::Success))
 	{
 		return;
 	}

@@ -80,7 +80,7 @@ bool FBIMPresetInstance::operator==(const FBIMPresetInstance &RHS) const
 		}
 	}
 
-	if (CustomData != RHS.CustomData)
+	if (!CustomDataByClassName.OrderIndependentCompareEqual(RHS.CustomDataByClassName))
 	{
 		return false;
 	}
@@ -227,7 +227,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FB
 	if (Delta.FieldType == EBIMPresetEditorField::MaterialBinding)
 	{
 		FBIMPresetMaterialBindingSet bindingSet;
-		if (!CustomData.LoadStructData(bindingSet))
+		if (!TryGetCustomData(bindingSet))
 		{
 			return EBIMResult::Error;
 		}
@@ -240,7 +240,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FB
 				case EMaterialChannelFields::InnerMaterial:
 				{
 					FGuid::Parse(Delta.NewStringRepresentation,binding.InnerMaterialGUID);
-					CustomData.SaveStructData(bindingSet, true);
+					SetCustomData(bindingSet);
 					//If we don't have a surface material, the inner material is visible
 					if (!binding.SurfaceMaterialGUID.IsValid())
 					{
@@ -255,7 +255,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FB
 					FGuid::Parse(Delta.NewStringRepresentation, binding.SurfaceMaterialGUID);
 					// TODO: material and color properties still used in icon generation...remove when icongen is refactored
 					Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, Delta.NewStringRepresentation);
-					CustomData.SaveStructData(bindingSet, true);
+					SetCustomData(bindingSet);
 					return EBIMResult::Success;
 				}
 				break;
@@ -265,7 +265,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FB
 					binding.ColorHexValue = Delta.NewStringRepresentation;
 					// TODO: material and color properties still used in icon generation...remove when icongen is refactored
 					Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, binding.ColorHexValue);
-					CustomData.SaveStructData(bindingSet, true);
+					SetCustomData(bindingSet);
 					return EBIMResult::Success;
 				}
 				break;
@@ -273,7 +273,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FB
 				case EMaterialChannelFields::ColorTintVariation:
 				{
 					LexTryParseString(binding.ColorTintVariationPercent,*Delta.NewStringRepresentation);
-					CustomData.SaveStructData(bindingSet, true);
+					SetCustomData(bindingSet);
 					return EBIMResult::Success;
 				}
 				break;
@@ -347,7 +347,7 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 	if (FormElement.FieldType == EBIMPresetEditorField::MaterialBinding)
 	{
 		FBIMPresetMaterialBindingSet bindingSet;
-		if (!CustomData.LoadStructData(bindingSet))
+		if (!TryGetCustomData(bindingSet))
 		{
 			return EBIMResult::Error;
 		}
@@ -439,7 +439,7 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(FBIMPresetForm& OutForm) const
 		if (element.FieldType == EBIMPresetEditorField::MaterialBinding)
 		{
 			FBIMPresetMaterialBindingSet bindingSet;
-			if (!CustomData.LoadStructData(bindingSet))
+			if (!TryGetCustomData(bindingSet))
 			{
 				return EBIMResult::Error;
 			}
@@ -525,7 +525,7 @@ EBIMResult FBIMPresetInstance::SetMaterialChannelsForMesh(const FModumateDatabas
 {
 	FBIMPresetMaterialBindingSet bindingSet;
 
-	if (!CustomData.LoadStructData(bindingSet))
+	if (!TryGetCustomData(bindingSet))
 	{
 		return EBIMResult::Error;
 	}
@@ -573,7 +573,7 @@ EBIMResult FBIMPresetInstance::SetMaterialChannelsForMesh(const FModumateDatabas
 		}
 	}
 
-	CustomData.SaveStructData(bindingSet,true);
+	SetCustomData(bindingSet);
 
 	return bindingSet.SetFormElements(PresetForm);
 }

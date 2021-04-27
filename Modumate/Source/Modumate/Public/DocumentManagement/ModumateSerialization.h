@@ -322,7 +322,8 @@ namespace Modumate
 	// Version 12: Strip custom preset NCPs of spaces
 	// Version 13: BIM patterns converted from child pins to properties
 	// Version 14: Linear extrusion width/depth values were swapped, and effectively only canceled out for Trim, so Mullion/Beam/Column dimensions need to be swapped
-	static const int32 DocVersion = 14;
+	// Version 15: Support for multiple custom data entries in presets
+	static const int32 DocVersion = 15;
 
 	static const TCHAR * DocObjectInstanceField = TEXT("ModumateObjects");
 	static const TCHAR * DocHeaderField = TEXT("ModumateHeader");
