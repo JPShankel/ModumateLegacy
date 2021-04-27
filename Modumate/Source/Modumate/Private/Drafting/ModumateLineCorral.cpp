@@ -195,9 +195,29 @@ Modumate::EDrawError FModumateLineCorral::FillCircle(
 	return Next->FillCircle(cx, cy, radius, color, layerType);
 }
 
-Modumate::EDrawError FModumateLineCorral::AddDimension(const ModumateUnitParams::FXCoord& startx, const ModumateUnitParams::FXCoord& starty, const ModumateUnitParams::FXCoord& endx, const ModumateUnitParams::FXCoord& endy, const ModumateUnitParams::FXCoord& positionx, const ModumateUnitParams::FXCoord& positiony, const FMColor& color, FModumateLayerType layerType /*= FModumateLayerType::kDefault*/)
+Modumate::EDrawError FModumateLineCorral::AddDimension(
+	const ModumateUnitParams::FXCoord& startx,
+	const ModumateUnitParams::FXCoord& starty,
+	const ModumateUnitParams::FXCoord& endx,
+	const ModumateUnitParams::FXCoord& endy,
+	const ModumateUnitParams::FXCoord& positionx,
+	const ModumateUnitParams::FXCoord& positiony,
+	const FMColor& color,FModumateLayerType layerType /*= FModumateLayerType::kDefault*/)
 {
 	return Next->AddDimension(startx, starty, endx, endy, positionx, positiony, color, layerType);
+}
+
+Modumate::EDrawError FModumateLineCorral::AddAngularDimension(
+	const ModumateUnitParams::FXCoord& startx,
+	const ModumateUnitParams::FXCoord& starty,
+	const ModumateUnitParams::FXCoord& endx,
+	const ModumateUnitParams::FXCoord& endy,
+	const ModumateUnitParams::FXCoord& centerx,
+	const ModumateUnitParams::FXCoord& centery,
+	const FMColor& color,
+	FModumateLayerType layerType /*= FModumateLayerType::kDefault*/)
+{
+	return Next->AddAngularDimension(startx, starty, endx, endy, centerx, centery, color, layerType);
 }
 
 bool FModumateLineCorral::StartPage(int32 pageNumber, float widthInches, float heightInches, FString pageName)

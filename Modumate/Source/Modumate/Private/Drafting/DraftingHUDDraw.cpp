@@ -153,4 +153,18 @@ namespace Modumate
 	{
 		return EDrawError::ErrorUnimplemented;
 	}
+
+	EDrawError FDraftingHUDDraw::AddAngularDimension(
+		const ModumateUnitParams::FXCoord& startx,
+		const ModumateUnitParams::FXCoord& starty,
+		const ModumateUnitParams::FXCoord& endx,
+		const ModumateUnitParams::FXCoord& endy,
+		const ModumateUnitParams::FXCoord& centerx,
+		const ModumateUnitParams::FXCoord& centery,
+		const FMColor& color,
+		FModumateLayerType layerType /*= FModumateLayerType::kDefault*/)
+	{
+		return EDrawError::ErrorUnimplemented;
+	}
+
 }

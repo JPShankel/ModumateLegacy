@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ModumateCore/ModumateTypes.h"
 #include "VectorTypes.h"
 
 class UModumateDocument;
@@ -27,7 +28,7 @@ public:
 	FVec2d TextPosition;
 	FVec2d Dir;
 	double Length = 0.0;
-	int32 Graph2DID = 0;
+	int32 Graph2DID[2] = { MOD_ID_NONE, MOD_ID_NONE };
 	int32 MetaplaneID = 0;
 	int32 Depth = INT_MAX;  // Graph hops from perimeter, filled in by breadth-first search.
 	bool bActive = false;
@@ -41,6 +42,18 @@ public:
 	FVector2<bool> StartFixed = { false, false };
 	FVector2<bool> EndFixed = { false, false };
 	TArray<int32> Connections[2];  // start, end connected dimensions, by index number.
+};
+
+class FModumateAngularDimension
+{
+public:
+	FModumateAngularDimension() = default;
+	FModumateAngularDimension(FVec2d StartPosition, FVec2d EndPosition, FVec2d CenterPosition)
+		: Start(StartPosition), End(EndPosition), Center(CenterPosition) { }
+
+	FVec2d Start;
+	FVec2d End;
+	FVec2d Center;
 };
 
 class FModumateDimensions
@@ -58,10 +71,14 @@ private:
 	void PropagateHorizontalStatus(int32 d, int32 vert);
 	void PropagateVerticalStatus(int32 d, int32 vert);
 	void DropLongestOpeningDimension(const TArray<int32>* OpeningIds);
+	void AddAngularDimensions(const TArray<int32>& Group);
+	void CreateAngularDimension(int32 Edge1, int32 Vertex, int32 Edge2);
 
 	TSharedPtr<Modumate::FGraph2D> CutGraph;
 	TMap<int32, int32> GraphIDToObjID;
+	TMap<int32, int32> GraphIDToDimID;
 	TArray<FModumateDimension> Dimensions;
+	TArray<FModumateAngularDimension> AngularDimensions;
 
 	static constexpr double OpeningDimOffset = 56.0;
 	static constexpr double FramingDimOffset = 76.0;

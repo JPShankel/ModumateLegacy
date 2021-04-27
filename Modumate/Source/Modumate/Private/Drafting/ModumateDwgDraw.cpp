@@ -321,4 +321,32 @@ namespace Modumate
 		return EDrawError::ErrorNone;
 	}
 
+	Modumate::EDrawError FModumateDwgDraw::AddAngularDimension(
+		const ModumateUnitParams::FXCoord& startx,
+		const ModumateUnitParams::FXCoord& starty,
+		const ModumateUnitParams::FXCoord& endx,
+		const ModumateUnitParams::FXCoord& endy,
+		const ModumateUnitParams::FXCoord& centerx,
+		const ModumateUnitParams::FXCoord& centery,
+		const FMColor& color,
+		FModumateLayerType layerType /*= FModumateLayerType::kDefault*/)
+	{
+		FValueArray dimParams;
+		dimParams.Add(MakeShared<FJsonValueNumber>(startx.AsWorldInches()));
+		dimParams.Add(MakeShared<FJsonValueNumber>(starty.AsWorldInches()));
+		dimParams.Add(MakeShared<FJsonValueNumber>(endx.AsWorldInches()));
+		dimParams.Add(MakeShared<FJsonValueNumber>(endy.AsWorldInches()));
+		dimParams.Add(MakeShared<FJsonValueNumber>(centerx.AsWorldInches()));
+		dimParams.Add(MakeShared<FJsonValueNumber>(centery.AsWorldInches()));
+
+		dimParams.Add(ColorToJson(color));
+		dimParams.Add(MakeShared<FJsonValueNumber>(int(layerType)));
+
+		auto angularDimensionJsonObject = MakeShared<FJsonObject>();
+		angularDimensionJsonObject->SetArrayField("angulardimension", dimParams);
+		JsonDocument.Last().Add(MakeShared<FJsonValueObject>(angularDimensionJsonObject));
+
+		return EDrawError::ErrorNone;
+	}
+
 }

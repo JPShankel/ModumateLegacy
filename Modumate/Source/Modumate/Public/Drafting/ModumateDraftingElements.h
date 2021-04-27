@@ -454,4 +454,24 @@ namespace Modumate
 		FModumateUnitCoord2D StringPosition;
 		FMColor Color;
 	};
+
+	class FAngularDimensionPrimitive : public FDraftingElement
+	{
+	public:
+		FAngularDimensionPrimitive(FModumateUnitCoord2D start, FModumateUnitCoord2D end, FModumateUnitCoord2D center, FMColor color = FMColor::Black);
+
+		virtual ~FAngularDimensionPrimitive() { }
+
+		virtual EDrawError Draw(IModumateDraftingDraw* drawingInterface,
+			FModumateUnitCoord2D position = FModumateUnitCoord2D(),
+			ModumateUnitParams::FAngle orientation = ModumateUnitParams::FAngle::Radians(0),
+			float scale = 1.0f) override;
+
+	public:
+		FModumateUnitCoord2D Start;
+		FModumateUnitCoord2D End;
+		FModumateUnitCoord2D Center;
+		FMColor Color;
+	};
+
 }

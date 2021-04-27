@@ -97,11 +97,27 @@ public:
 	static int LinePriorities[];
 
 
-	virtual Modumate::EDrawError AddDimension(const ModumateUnitParams::FXCoord& startx,
+	virtual Modumate::EDrawError AddDimension(
+		const ModumateUnitParams::FXCoord& startx,
 		const ModumateUnitParams::FXCoord& starty,
-		const ModumateUnitParams::FXCoord& endx, const ModumateUnitParams::FXCoord& endy,
-		const ModumateUnitParams::FXCoord& positionx, const ModumateUnitParams::FXCoord& positiony, const Modumate::FMColor& color,
-		Modumate::FModumateLayerType layerType = Modumate::FModumateLayerType::kDefault) override;
+		const ModumateUnitParams::FXCoord& endx,
+		const ModumateUnitParams::FXCoord& endy,
+		const ModumateUnitParams::FXCoord& positionx,
+		const ModumateUnitParams::FXCoord& positiony,
+		const Modumate::FMColor& color,
+		Modumate::FModumateLayerType layerType = Modumate::FModumateLayerType::kDefault
+	) override;
+
+	virtual Modumate::EDrawError AddAngularDimension(
+		const ModumateUnitParams::FXCoord& startx,
+		const ModumateUnitParams::FXCoord& starty,
+		const ModumateUnitParams::FXCoord& endx,
+		const ModumateUnitParams::FXCoord& endy,
+		const ModumateUnitParams::FXCoord& centerx,
+		const ModumateUnitParams::FXCoord& centery,
+		const Modumate::FMColor& color,
+		Modumate::FModumateLayerType layerType = Modumate::FModumateLayerType::kDefault
+	) override;
 
 private:
 	static const Modumate::FModumateLayerType LayerTypeOrder[];

@@ -5,6 +5,7 @@
 #include "Algo/AllOf.h"
 #include "Algo/Replace.h"
 #include "Algo/RemoveIf.h"
+#include "Algo/ForEach.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Graph/Graph2D.h"
 #include "Drafting/ModumateDraftingElements.h"
@@ -13,9 +14,10 @@
 namespace
 {
 	TSet<EObjectType> portalTypes = { EObjectType::OTWindow, EObjectType::OTDoor, EObjectType::OTSystemPanel };
+
 	constexpr bool AreParallel(const FVec2d& a, const FVec2d& b)
 	{
-		return FMath::Abs(a.Normalized().Dot(b.Normalized()) ) > 1.0 - KINDA_SMALL_NUMBER;
+		return FMath::Abs(a.Normalized().Dot(b.Normalized())) > THRESH_NORMALS_ARE_PARALLEL;
 	}
 }
 
@@ -39,7 +41,7 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDrafti
 	// Plane bounds for whole project:
 	FBoxSphereBounds projectBounds = Doc->CalculateProjectBounds();
 	FBox box = projectBounds.GetBox();
-	box.ExpandBy(1.01);
+	box = box.ExpandBy(1.01);
 	FVector extrema[] = { box.Min, {box.Min.X, box.Min.Y, box.Max.Z},
 		{box.Min.X, box.Max.Y, box.Min.Z}, {box.Min.X, box.Max.Y, box.Max.Z},
 		{box.Max.X, box.Min.Y, box.Min.Z}, {box.Max.X, box.Min.Y, box.Max.Z},
@@ -54,8 +56,11 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDrafti
 	CutGraph = MakeShared<Modumate::FGraph2D>();
 	GraphIDToObjID.Empty();
 	graph.Create2DGraph(Plane, AxisX, axisY, Origin, projectBoundingBox, CutGraph, GraphIDToObjID);
+	CutGraph->CleanDirtyObjects(false);
 
 	Dimensions.Empty();
+	AngularDimensions.Empty();
+	GraphIDToDimID.Empty();
 
 	const auto& vertMap = CutGraph->GetVertices();
 
@@ -66,7 +71,9 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDrafti
 		FVec2d b = vertMap.Find(edge.EndVertexID)->Position;
 
 		FModumateDimension dimension(a, b);
-		dimension.Graph2DID = edgePair.Key;
+		dimension.Graph2DID[0] = edgePair.Key;
+		dimension.Graph2DID[1] = edgePair.Key;
+		GraphIDToDimID.FindOrAdd(edgePair.Key) = Dimensions.Num();
 		dimension.MetaplaneID = GraphIDToObjID[edgePair.Key];
 
 		const AModumateObjectInstance* planeMoi = Doc->GetObjectById(dimension.MetaplaneID);
@@ -110,7 +117,7 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDrafti
 			}
 
 			FVec2d positionOffset = dim.Dir * offset;
-			if (dim.LineSide == FModumateDimension::Right)
+			if (dim.LineSide == FModumateDimension::Left)
 			{
 				positionOffset = -positionOffset;
 			}
@@ -125,6 +132,18 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDrafti
 			dimPrim->SetLayerTypeRecursive(layerType);
 		}
 	}
+
+	for (const auto& angularDim : AngularDimensions)
+	{
+		TSharedPtr<Modumate::FAngularDimensionPrimitive> angularDimPrim = MakeShared<Modumate::FAngularDimensionPrimitive>(
+			FModumateUnitCoord2D::WorldCentimeters(FVector2D(angularDim.Start)),
+			FModumateUnitCoord2D::WorldCentimeters(FVector2D(angularDim.End)),
+			FModumateUnitCoord2D::WorldCentimeters(FVector2D(angularDim.Center))
+			);
+		Page->Children.Add(angularDimPrim);
+		angularDimPrim->SetLayerTypeRecursive(Modumate::FModumateLayerType::kDimensionFraming);
+	}
+
 	return true;
 }
 
@@ -134,19 +153,19 @@ void FModumateDimensions::ProcessDimensions()
 	const auto& verts = CutGraph->GetVertices();
 
 	auto findByEdge = [&](int32 id)
-		{ return Dimensions.FindByPredicate([id](FModumateDimension& d) { return d.Graph2DID == id; }); };
+		{ return Dimensions.FindByPredicate([id](FModumateDimension& d) { return d.Graph2DID[0] == id; }); };
 
 	// Fill in connectivity from Graph2D.
 	for (auto& d: Dimensions)
 	{
-		const Modumate::FGraph2DEdge& edge = edges[d.Graph2DID];
+		const Modumate::FGraph2DEdge& edge = edges[d.Graph2DID[0]];
 		const Modumate::FGraph2DVertex* vert[2] = { &verts[edge.StartVertexID], &verts[edge.EndVertexID] };
 		for (int32 i = 0; i < 2; ++i)
 		{
 			for (FGraphSignedID edgeIDSigned: vert[i]->Edges)
 			{
 				int32 edgeID = FMath::Abs(edgeIDSigned);
-				if (edgeID != d.Graph2DID)
+				if (edgeID != d.Graph2DID[0])
 				{
 					d.Connections[i].Add(findByEdge(edgeID) - &Dimensions[0]);
 				}
@@ -274,6 +293,8 @@ void FModumateDimensions::ProcessConnectedGroup(const TSet<int32>& Group)
 					newDim.Connections[0] = firstDim.Connections[outerVerts[0]];
 					newDim.Connections[1] = lastDim.Connections[outerVerts[1]];
 					newDim.LineSide = firstDim.LineSide;
+					newDim.Graph2DID[0] = firstDim.Graph2DID[outerVerts[0]];
+					newDim.Graph2DID[1] = lastDim.Graph2DID[outerVerts[1]];
 
 					int32 newDimIndex = Dimensions.Num();
 					Dimensions.Add(newDim);
@@ -390,7 +411,7 @@ void FModumateDimensions::ProcessConnectedGroup(const TSet<int32>& Group)
 			{
 				currentPoint = dim.Points[1 - i];
 				current = SmallestConnectedEdgeAngle(currentPoint, i == 0 ? -dim.Dir : dim.Dir, dim.Connections[1 - i]);
-				dim.LineSide = i == 0 ? FModumateDimension::Left : FModumateDimension::Right;  // Text always outside perim
+				dim.LineSide = i == 0 ? FModumateDimension::Right : FModumateDimension::Left;  // Text always outside perim
 				break;
 			}
 
@@ -494,8 +515,11 @@ void FModumateDimensions::ProcessConnectedGroup(const TSet<int32>& Group)
 
 		}
 	}
+
+	// 5. Add any angular dimensions.
+	AddAngularDimensions(framingDimensions);
 	
-	// 5. Combine linear perimeter dimensions into massing dimensions.
+	// 6. Combine linear perimeter dimensions into massing dimensions.
 	for (int32 startP  = 0; startP < perimeterArray.Num();)
 	{
 		int32 dimIndex = perimeterArray[startP];
@@ -512,12 +536,14 @@ void FModumateDimensions::ProcessConnectedGroup(const TSet<int32>& Group)
 		FModumateDimension massingDim(startPoint, nextPoint);
 		massingDim.DimensionType = FModumateDimension::Massing;
 		massingDim.bActive = true;
-		massingDim.LineSide = Dimensions[perimeterArray[startP]].LineSide;
+		massingDim.LineSide = FModumateDimension::Right;
 		Dimensions.Add(massingDim);
+
 		if (endP - startP == 1)
 		{   // If containing single framing dimension then drop that dimension.
 			Dimensions[perimeterArray[startP]].bActive = false;
 		}
+
 		startP = endP;
 		startPoint = nextPoint;
 	}
@@ -626,4 +652,95 @@ void FModumateDimensions::DropLongestOpeningDimension(const TArray<int32>* Openi
 			Dimensions[d].bActive = d != longestIndex;
 		}
 	}
+}
+
+void FModumateDimensions::AddAngularDimensions(const TArray<int32>& Group)
+{
+	TSet<int32> processedEdges;
+
+	static constexpr float thresholdDegrees = 1.0f;
+
+	auto IsCalledoutAngle = [](float angleDegrees)
+	{
+		return (angleDegrees >= thresholdDegrees && angleDegrees <= (90.0f - thresholdDegrees))
+		|| (angleDegrees >= (90.0f + thresholdDegrees) && angleDegrees <= (180.0f - thresholdDegrees));
+	};
+
+	for (int32 edge : Group)
+	{
+		const auto& dim = Dimensions[edge];
+		for (int vertex = 0; vertex < 2; ++vertex)
+		{
+			int32 edgeID = dim.Graph2DID[vertex];
+			TArray<int32> graph2dVertexIDs;
+			const Modumate::FGraph2DEdge* graphEdge = CutGraph->FindEdge(edgeID);
+			float angle;
+			CutGraph->GetEdgeAngle(edgeID, angle);
+			if (vertex == 1)
+			{
+				angle += 180.0f;
+			}
+
+
+			graphEdge->GetVertexIDs(graph2dVertexIDs);
+			TArray<int32> adjacentEdges = CutGraph->FindVertex(graph2dVertexIDs[vertex])->Edges;
+			Algo::ForEach(adjacentEdges, [](int32& a) { a = FMath::Abs(a); });
+			const int32 numEdges = adjacentEdges.Num();
+
+			if (numEdges > 1)
+			{
+				const int32 e = adjacentEdges.Find(edgeID);
+				ensureAlways(e != INDEX_NONE);
+				const Modumate::FGraph2DEdge* graphEdge0 = CutGraph->FindEdge(adjacentEdges[(e + 1) % numEdges]);
+				if (!processedEdges.Contains(graphEdge0->ID))
+				{
+					float angle0;
+					CutGraph->GetEdgeAngle(graphEdge0->ID, angle0);
+					if (graph2dVertexIDs[vertex] != graphEdge0->StartVertexID)
+					{
+						angle0 += 180.0f;
+					}
+					float diff = FRotator::ClampAxis(angle0 - angle);
+					if (IsCalledoutAngle(diff))
+					{
+						CreateAngularDimension(edge, vertex, GraphIDToDimID[graphEdge0->ID]);
+					}
+				}
+
+				const Modumate::FGraph2DEdge* graphEdge1 = CutGraph->FindEdge(adjacentEdges[(e + numEdges - 1) % numEdges]);
+				if (!processedEdges.Contains(graphEdge1->ID))
+				{
+					float angle1;
+					CutGraph->GetEdgeAngle(graphEdge1->ID, angle1);
+					if (graph2dVertexIDs[vertex] != graphEdge1->StartVertexID)
+					{
+						angle1 += 180.0f;
+					}
+					float diff = FRotator::ClampAxis(angle - angle1);
+					if (IsCalledoutAngle(diff))
+					{
+						int32 otherVertex = graph2dVertexIDs[vertex] == graphEdge1->StartVertexID ? 0 : 1;
+						CreateAngularDimension(GraphIDToDimID[graphEdge1->ID], otherVertex, edge);
+					}
+				}
+
+				processedEdges.Add(graphEdge->ID);
+			}
+		}
+	}
+
+}
+
+// Add a new angular dimension from Vertex1 of Edge1 to its incident edge Edge2.
+void FModumateDimensions::CreateAngularDimension(int32 Edge1, int32 Vertex1, int32 Edge2)
+{
+	static constexpr double pointOffset = 20.0;  // World units
+	FVec2d center = Dimensions[Edge1].Points[Vertex1];
+	FVec2d startPos = Vertex1 == 0 ? center + pointOffset * Dimensions[Edge1].Dir
+		: center - pointOffset * Dimensions[Edge1].Dir;
+
+	const auto& dim2 = Dimensions[Edge2];
+	FVec2d endPos = dim2.Points[0] == center ? center + pointOffset * dim2.Dir
+		: center - pointOffset * dim2.Dir;
+	AngularDimensions.Emplace(startPos, endPos, center);
 }

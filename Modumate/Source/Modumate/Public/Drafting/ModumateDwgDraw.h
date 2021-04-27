@@ -91,6 +91,28 @@ namespace Modumate
 			FModumateLayerType layerType = FModumateLayerType::kDefault
 		) override;
 
+		virtual EDrawError AddDimension(
+			const ModumateUnitParams::FXCoord& startx,
+			const ModumateUnitParams::FXCoord& starty,
+			const ModumateUnitParams::FXCoord& endx,
+			const ModumateUnitParams::FXCoord& endy,
+			const ModumateUnitParams::FXCoord& positionx,
+			const ModumateUnitParams::FXCoord& positiony,
+			const FMColor& color,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
+		) override;
+
+		virtual EDrawError AddAngularDimension(
+			const ModumateUnitParams::FXCoord& startx,
+			const ModumateUnitParams::FXCoord& starty,
+			const ModumateUnitParams::FXCoord& endx,
+			const ModumateUnitParams::FXCoord& endy,
+			const ModumateUnitParams::FXCoord& centerx,
+			const ModumateUnitParams::FXCoord& centery,
+			const FMColor& color,
+			FModumateLayerType layerType = FModumateLayerType::kDefault
+		) override;
+
 		virtual bool StartPage(int32 pageNumber, float widthInches, float heightInches, FString pageName = FString()) override;
 		virtual bool SaveDocument(const FString& filename) override;
 
@@ -99,9 +121,6 @@ namespace Modumate
 		FString GetPageName(int index) const;
 
 		const TArray<FString>& GetImages() const { return ImageFilepaths; }
-
-
-		virtual EDrawError AddDimension(const ModumateUnitParams::FXCoord& startx, const ModumateUnitParams::FXCoord& starty, const ModumateUnitParams::FXCoord& endx, const ModumateUnitParams::FXCoord& endy, const ModumateUnitParams::FXCoord& positionx, const ModumateUnitParams::FXCoord& positiony, const FMColor& color, FModumateLayerType layerType = FModumateLayerType::kDefault) override;
 
 	private:
 		using FJsonValuePtr = TSharedPtr<FJsonValue>;
