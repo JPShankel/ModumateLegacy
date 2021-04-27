@@ -41,6 +41,7 @@ bool UMoveObjectTool::BeginUse()
 	Super::BeginUse();
 
 	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = true;
+	bCtrlIsPressed = false;
 
 	AcquireSelectedObjects();
 
@@ -100,6 +101,19 @@ bool UMoveObjectTool::FrameUpdate()
 		UModumateDocument* doc = Controller->GetDocument();
 		if (doc != nullptr)
 		{
+			if (Controller->IsControlDown())
+			{
+				if (!bCtrlIsPressed)
+				{
+					ToggleIsPasting();
+					bCtrlIsPressed = true;
+				}
+			}
+			else
+			{
+				bCtrlIsPressed = false;
+			}
+
 			FVector offset = hitLoc - AnchorPoint;
 			if (!bPaste)
 			{
@@ -137,7 +151,7 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 			FVector offset = direction * n;
 			Controller->EMPlayerState->SnappedCursor.WorldPosition = AnchorPoint + offset;
 
-			if (!bPaste)
+			if (!bPaste && !Controller->IsControlDown())
 			{
 				TMap<int32, FTransform> objectInfo;
 				for (auto& kvp : OriginalTransforms)
@@ -165,26 +179,29 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 
 bool UMoveObjectTool::EndUse()
 {
-	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = false;
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
 
 	if (!bPaste)
 	{
+		Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = false;
 		if (Controller->EMPlayerState->SnappedCursor.Visible)
 		{
 			ReleaseObjectsAndApplyDeltas();
 		}
+
+		return Super::EndUse();
 	}
 	else
 	{
 		GameState->Document->ClearPreviewDeltas(GetWorld());
 		FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, AnchorPoint, GameState->Document, Controller, false);
 
-		ReleaseSelectedObjects();
+		AnchorPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorPoint, Controller->EMPlayerState->SnappedCursor.HitNormal, Controller->EMPlayerState->SnappedCursor.HitTangent);
 	}
 
-	return Super::EndUse();
+	return true;
 }
 
 bool UMoveObjectTool::AbortUse()
@@ -200,15 +217,4 @@ bool UMoveObjectTool::PostEndOrAbort()
 {
 	bPaste = false;
 	return Super::PostEndOrAbort();
-}
-
-bool UMoveObjectTool::HandleControlKey(bool pressed)
-{
-	return true;
-}
-
-bool UMoveObjectTool::CycleMode()
-{
-	ToggleIsPasting();
-	return true;
 }

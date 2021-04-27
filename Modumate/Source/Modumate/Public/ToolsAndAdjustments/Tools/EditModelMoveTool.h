@@ -15,6 +15,7 @@ class MODUMATE_API UMoveObjectTool : public UEditModelToolBase, public FSelected
 
 private:
 	FVector AnchorPoint;
+	bool bCtrlIsPressed = false;
 
 public:
 	UMoveObjectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
@@ -28,7 +29,5 @@ public:
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
 	virtual bool PostEndOrAbort() override;
-	virtual bool HandleControlKey(bool pressed) override;
 	virtual bool HasDimensionActor() { return true; };
-	virtual bool CycleMode() override;
 };
