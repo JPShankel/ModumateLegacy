@@ -323,6 +323,8 @@ bool URectangleTool::MakeObject(const FVector& Location)
 		UModumateGeometryStatics::FindBasisVectors(newAffordanceTangent, axisY, newAffordanceNormal);
 		State = NewPlanePending;
 		bExtrudingPlaneFromEdge = false;
+		constrainedLocation = PlaneBaseStart;
+		pendingSegment->Point1 = constrainedLocation;
 	}
 	else if (State == NewPlanePending)
 	{
