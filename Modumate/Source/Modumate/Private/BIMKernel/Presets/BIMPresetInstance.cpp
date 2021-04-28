@@ -7,6 +7,9 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "DocumentManagement/ModumateCommands.h"
 
+#define LOCTEXT_NAMESPACE "BIMPresetInstance"
+
+
 bool FBIMPresetPinAttachment::operator==(const FBIMPresetPinAttachment &OtherAttachment) const
 {
 	return ParentPinSetIndex == OtherAttachment.ParentPinSetIndex &&
@@ -663,3 +666,166 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 	}
 	return EBIMResult::Error;
 }
+
+EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, int32 DocVersion)
+{
+	// Prior to version 11, material bindings were a named member, not custom data
+	if (DocVersion < 11)
+	{
+		FGuid matGUID;
+		// If we have deprecated channels, translate them
+		if (MaterialChannelBindings_DEPRECATED.Num() > 0)
+		{
+			FBIMPresetMaterialBindingSet bindingSet;
+			for (auto& matChannel : MaterialChannelBindings_DEPRECATED)
+			{
+				auto& binding = bindingSet.MaterialBindings.AddDefaulted_GetRef();
+				binding.Channel = *matChannel.Channel;
+				binding.ColorHexValue = matChannel.Channel;
+				binding.SurfaceMaterialGUID = matChannel.SurfaceMaterialGUID;
+				binding.InnerMaterialGUID = matChannel.InnerMaterialGUID;
+			}
+			SetCustomData(bindingSet);
+		}
+
+		// Prior to version 11, BIM forms were simple arrays of text/property pairs, upgrade to rich form
+		if (FormItemToProperty_DEPRECATED.Num() > 0)
+		{
+			FBIMPresetMaterialBindingSet bindingSet;
+			TryGetCustomData(bindingSet); // okay if this fails
+
+			static const FName defaultChannel = TEXT("Finish1");
+
+			// Deprecated map of form display text to property QN
+			for (auto& fitp : FormItemToProperty_DEPRECATED)
+			{
+				FBIMPropertyKey propKey(fitp.Value);
+
+				switch (propKey.Scope)
+				{
+					// Dimensions and meshes are properties
+				case EBIMValueScope::Dimension:
+					PresetForm.AddPropertyElement(FText::FromString(fitp.Key), fitp.Value, EBIMPresetEditorField::DimensionProperty);
+					break;
+
+				case EBIMValueScope::Mesh:
+				case EBIMValueScope::Profile:
+					PresetForm.AddPropertyElement(FText::FromString(fitp.Key), fitp.Value, EBIMPresetEditorField::AssetProperty);
+					break;
+
+					// Colors and materials require upgraded material bindings
+				case EBIMValueScope::Color:
+					if (bindingSet.MaterialBindings.Num() == 0)
+					{
+						bindingSet.MaterialBindings.AddDefaulted();
+						bindingSet.MaterialBindings.Last().InnerMaterialGUID = InDB.GetDefaultMaterialGUID();
+						bindingSet.MaterialBindings.Last().Channel = defaultChannel;
+					}
+					PresetForm.AddMaterialBindingElement(FText::FromString(fitp.Key), defaultChannel, EMaterialChannelFields::ColorTint);
+					ensureAlways(Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, bindingSet.MaterialBindings.Last().ColorHexValue));
+					break;
+
+				case EBIMValueScope::RawMaterial:
+					if (bindingSet.MaterialBindings.Num() == 0)
+					{
+						bindingSet.MaterialBindings.AddDefaulted();
+						bindingSet.MaterialBindings.Last().ColorHexValue = FColor::White.ToString();
+						bindingSet.MaterialBindings.Last().Channel = defaultChannel;
+					}
+					PresetForm.AddMaterialBindingElement(FText::FromString(fitp.Key), defaultChannel, EMaterialChannelFields::InnerMaterial);
+					ensureAlways(Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, bindingSet.MaterialBindings.Last().InnerMaterialGUID));
+					break;
+				};
+			}
+
+			// If we got a material binding, set custom data for it
+			if (bindingSet.MaterialBindings.Num() == 1)
+			{
+				SetCustomData(bindingSet);
+			}
+		}
+	}
+
+	// Prior to version 12, some NCPs had spaces
+	if (DocVersion < 12)
+	{
+		FString ncp;
+		MyTagPath.ToString(ncp);
+		MyTagPath.FromString(FString(ncp.Replace(TEXT(" "), TEXT(""))));
+	}
+
+	// Prior to version 13, patterns were stored as children. Convert to property.
+	if (DocVersion < 13)
+	{
+		for (auto& childPin : ChildPresets)
+		{
+			const FBIMPresetInstance* child = PresetCollection.PresetFromGUID(childPin.PresetGUID);
+			if (ensureAlways(child) && child->NodeScope == EBIMValueScope::Pattern)
+			{
+				Properties.SetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, child->GUID.ToString());
+				PresetForm.AddPropertyElement(LOCTEXT("BIMPattern", "Pattern"), FBIMPropertyKey(EBIMValueScope::Pattern, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
+				RemoveChildPreset(childPin.ParentPinSetIndex, childPin.ParentPinSetPosition);
+				break;
+			}
+		}
+	}
+
+	// Prior to version 14, beams and columns had their dimensions reversed
+	if (DocVersion < 14)
+	{
+		switch (ObjectType)
+		{
+		case EObjectType::OTMullion:
+		case EObjectType::OTStructureLine:
+		{
+			float extrusionWidth, extrusionDepth;
+			if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, extrusionWidth) &&
+				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, extrusionDepth))
+			{
+				Properties.SetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, extrusionDepth);
+				Properties.SetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, extrusionWidth);
+			}
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
+	// Prior to version 15, Presets only had a single custom data member, either material binding or edge detail
+	if (DocVersion < 15)
+	{
+		if (CustomData_DEPRECATED.IsValid())
+		{
+			FBIMPresetMaterialBindingSet bindingSet;
+			if (CustomData_DEPRECATED.LoadStructData(bindingSet))
+			{
+				SetCustomData(bindingSet);
+			}
+			else
+			{
+				FEdgeDetailData edgeDetailData;
+				if (CustomData_DEPRECATED.LoadStructData(edgeDetailData))
+				{
+					SetCustomData(edgeDetailData);
+				}
+			}
+		}
+	}
+
+	// Prior to version 16, layers did not have miter priority data
+	if (DocVersion < 16 && NodeScope == EBIMValueScope::Layer)
+	{
+		FBIMLayerPriority layerPriority;
+		if (ensureAlways(!TryGetCustomData(layerPriority)))
+		{
+			layerPriority.PriorityGroup = EBIMLayerPriorityGroup::Structure;
+			layerPriority.PriorityValue = 0;
+			SetCustomData(layerPriority);
+		}
+	}
+
+	return EBIMResult::Success;
+}
+
+#undef LOCTEXT_NAMESPACE

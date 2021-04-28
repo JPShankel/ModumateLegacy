@@ -253,6 +253,18 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 			}
 			break;
 
+			case ECSVMatrixNames::MiterPriority:
+			{
+				FString group = NormalizeCell(Row[presetMatrix.First]);
+				FBIMLayerPriority miterPriority;
+
+				if (FindEnumValueByString(group, miterPriority.PriorityGroup) && LexTryParseString(miterPriority.PriorityValue, Row[presetMatrix.First + 1]))
+				{
+					Preset.SetCustomData(miterPriority);
+				}				
+			}
+			break;
+
 			// TODO: expand this matrix when new pattern language is developed...for now, just tuck the pattern 1.0 guid
 			case ECSVMatrixNames::Pattern:
 			{

@@ -323,7 +323,8 @@ namespace Modumate
 	// Version 13: BIM patterns converted from child pins to properties
 	// Version 14: Linear extrusion width/depth values were swapped, and effectively only canceled out for Trim, so Mullion/Beam/Column dimensions need to be swapped
 	// Version 15: Support for multiple custom data entries in presets
-	static const int32 DocVersion = 15;
+	// Version 16: Miter priority in layers
+	static const int32 DocVersion = 16;
 
 	static const TCHAR * DocObjectInstanceField = TEXT("ModumateObjects");
 	static const TCHAR * DocHeaderField = TEXT("ModumateHeader");

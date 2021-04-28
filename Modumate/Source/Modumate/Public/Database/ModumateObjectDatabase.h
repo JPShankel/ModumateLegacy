@@ -16,7 +16,7 @@
 
 #include "ModumateObjectDatabase.generated.h"
 
-static constexpr int32 BIMCacheCurrentVersion = 12;
+static constexpr int32 BIMCacheCurrentVersion = 13;
 // Version 2: deprecate FBIMKeys for FGuids
 // Version 3: move named parameters from meshes to presets
 // Version 4: material binding editor
@@ -28,6 +28,7 @@ static constexpr int32 BIMCacheCurrentVersion = 12;
 // Version 10: patterns converted from child pins to properties
 // Version 11: add upward blocker to taxonomy explorer
 // Version 12: support for multiple custom data entries
+// Version 13: support for miter priority in layer specs
 
 USTRUCT()
 struct FModumateBIMCacheRecord

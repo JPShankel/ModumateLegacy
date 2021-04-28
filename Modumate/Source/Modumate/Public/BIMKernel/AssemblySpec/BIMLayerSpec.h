@@ -16,6 +16,31 @@
 
 class FModumateDatabase;
 
+UENUM()
+enum class EBIMLayerPriorityGroup
+{
+	Structure,
+	Substrate,
+	Insulation,
+	Membrane,
+	Carpentry,
+	Finish,
+	Void,
+	Other
+};
+
+USTRUCT()
+struct MODUMATE_API FBIMLayerPriority
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	EBIMLayerPriorityGroup PriorityGroup;
+
+	UPROPERTY()
+	int32 PriorityValue;
+};
+
 USTRUCT()
 struct MODUMATE_API FBIMLayerSpec
 {
@@ -55,6 +80,9 @@ public:
 
 	UPROPERTY()
 	FGuid PresetGUID;
+
+	UPROPERTY()
+	FBIMLayerPriority LayerPriority;
 
 	TMap<FString, float> CachedPatternExprVars;
   
