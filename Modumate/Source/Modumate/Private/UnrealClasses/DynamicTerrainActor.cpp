@@ -4,16 +4,26 @@
 #include "IntpThinPlateSpline2.h"
 #include "ConstrainedDelaunay2.h"
 
+// To use SimpleDynamicMeshComponent:
+// Add "ModelingComponents" and "DynamicMesh" to Build.cs
+// Enable ModelingToolsEditorMode.uplugin
+//#include "SimpleDynamicMeshComponent.h"
+
 // Sets default values
 ADynamicTerrainActor::ADynamicTerrainActor()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
 	Mesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
 	RootComponent = Mesh;
-
 	Mesh->bUseAsyncCooking = true;
 	Mesh->SetMobility(EComponentMobility::Movable);
+
+	// Uncomment to test SimpleDynamicMesh
+	//SimpleDynamicMesh = CreateDefaultSubobject<USimpleDynamicMeshComponent>(TEXT("GeneratedMesh"));
+	//RootComponent = SimpleDynamicMesh;
+	//SimpleDynamicMesh->TangentsType = EDynamicMeshTangentCalcType::AutoCalculated;
 }
 
 // Called when the game starts or when spawned
@@ -110,11 +120,37 @@ void ADynamicTerrainActor::SetupTerrainGeometry(const TArray<FVector>& Perimeter
 	{
 		Vertices.Add(FVector(Vertices2D[i].X, Vertices2D[i].Y, zOffsets[i]));
 		Normals.Add(FVector::UpVector);
-		UV0.Add(FVector2D(Vertices2D[i].X, Vertices2D[i].Y) / VertSize);
+		UV0.Add(FVector2D(Vertices2D[i].X, Vertices2D[i].Y) / UVSize);
 		Tangents.Add(FProcMeshTangent(0, 1, 0));
-		VertexColors.Add(FLinearColor::White);
+		VertexColors.Add(FLinearColor::Black);
 	}
+
 	Mesh->CreateMeshSection_LinearColor(0, Vertices, Triangles, Normals, UV0, VertexColors, Tangents, bCreateCollision);
+	Mesh->SetMaterial(0, TerrainMaterial);
+
+	// Uncomment to test SimpleDynamicMesh
+	/*
+	SimpleDynamicMesh->GetMesh()->EnableVertexColors(FLinearColor::Black);
+	SimpleDynamicMesh->GetMesh()->EnableVertexUVs(FVector2f::Zero());
+	for (int32 i = 0; i < Vertices2D.Num(); i++)
+	{
+		FVector3d position = FVector(Vertices2D[i].X, Vertices2D[i].Y, zOffsets[i]);
+		FVector3f normal = FVector::UpVector;
+		FVector3f color = FLinearColor::White;
+		FVector2f uv = (FVector2f(Vertices2D[i].X, Vertices2D[i].Y) / UVSize) * 100.f;
+
+		FVertexInfo newVert(position, normal, color, uv);
+		SimpleDynamicMesh->GetMesh()->AppendVertex(newVert);
+	}
+
+	for (auto& curTri : cdt.Triangles)
+	{
+		SimpleDynamicMesh->GetMesh()->AppendTriangle(FIndex3i(curTri.A, curTri.B, curTri.C));
+	}
+
+	SimpleDynamicMesh->NotifyMeshUpdated();
+	SimpleDynamicMesh->SetMaterial(0, TerrainMaterial);
+	*/
 }
 
 void ADynamicTerrainActor::UpdateTerrainGeometryFromPoints(const TArray<FVector>& HeightPoints)
@@ -138,6 +174,21 @@ void ADynamicTerrainActor::UpdateTerrainGeometryFromPoints(const TArray<FVector>
 	for (int32 i = 0; i < Vertices2D.Num(); i++)
 	{
 		Vertices.Add(FVector(Vertices2D[i].X, Vertices2D[i].Y, zOffsets[i]));
+	}
+
+	Mesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, UV0, VertexColors, Tangents);
+}
+
+void ADynamicTerrainActor::UpdateVertexColorByLocation(const FVector& Location, const FLinearColor& NewColor, float Radius, float Alpha)
+{
+	FVector2D origin2D = FVector2D(Location.X, Location.Y);
+	for (int32 i = 0; i < Vertices2D.Num(); i++)
+	{
+		if ((Vertices2D[i] - origin2D).Size() < Radius)
+		{
+			FLinearColor newColor = (Alpha * (NewColor - VertexColors[i])) + VertexColors[i];
+			VertexColors[i] = newColor;
+		}
 	}
 
 	Mesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, UV0, VertexColors, Tangents);

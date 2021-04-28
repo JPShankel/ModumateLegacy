@@ -31,6 +31,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Uncomment to test SimpleDynamicMesh
+	//class USimpleDynamicMeshComponent* SimpleDynamicMesh = nullptr;
 
 public:
 	// Called every frame
@@ -40,11 +42,20 @@ public:
 	UProceduralMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float VertSize = 100.f;
+	int32 VertSize = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 UVSize = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMaterialInterface* TerrainMaterial;
 
 	UFUNCTION(BlueprintCallable)
 	void SetupTerrainGeometry(const TArray<FVector>& PerimeterPoints, const TArray<FVector>& HeightPoints, bool bRecreateMesh, bool bCreateCollision = true);
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateTerrainGeometryFromPoints(const TArray<FVector>& HeightPoints);
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateVertexColorByLocation(const FVector& Location, const FLinearColor& NewColor, float Radius, float Alpha);
 };
