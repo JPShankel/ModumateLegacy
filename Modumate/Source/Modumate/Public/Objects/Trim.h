@@ -59,8 +59,6 @@ public:
 	virtual FQuat GetRotation() const override;
 	virtual FVector GetNormal() const override;
 
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController* Controller) override;
-
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void PreDestroy() override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping = false, bool bForSelection = false) const override;

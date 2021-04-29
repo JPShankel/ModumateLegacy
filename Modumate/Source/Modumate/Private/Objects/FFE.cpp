@@ -58,9 +58,6 @@ void AMOIFFE::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 		auto ffePointHandle = MakeHandle<AAdjustFFEPointHandle>();
 		ffePointHandle->SetTargetIndex(i);
 	}
-
-	auto ffeRotateHandle = MakeHandle<AAdjustFFERotateHandle>();
-	auto ffeInvertHandle = MakeHandle<AAdjustFFEInvertHandle>();
 }
 
 void AMOIFFE::SetupDynamicGeometry()

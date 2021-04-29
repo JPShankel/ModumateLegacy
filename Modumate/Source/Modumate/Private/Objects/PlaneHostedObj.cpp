@@ -231,27 +231,6 @@ void AMOIPlaneHostedObj::SetupAdjustmentHandles(AEditModelPlayerController *cont
 		edgeHandle->SetTargetIndex(i);
 		edgeHandle->SetTargetMOI(parent);
 	}
-
-	// Make justification handles
-	TArray<AAdjustmentHandleActor*> rootHandleChildren;
-
-	auto frontJustificationHandle = MakeHandle<AJustificationHandle>();
-	frontJustificationHandle->SetJustification(0.0f);
-	rootHandleChildren.Add(frontJustificationHandle);
-
-	auto backJustificationHandle = MakeHandle<AJustificationHandle>();
-	backJustificationHandle->SetJustification(1.0f);
-	rootHandleChildren.Add(backJustificationHandle);
-
-	auto invertHandle = MakeHandle<AAdjustInvertHandle>();
-
-	auto rootJustificationHandle = MakeHandle<AJustificationHandle>();
-	rootJustificationHandle->SetJustification(0.5f);
-	rootJustificationHandle->HandleChildren = rootHandleChildren;
-	for (auto& child : rootHandleChildren)
-	{
-		child->HandleParent = rootJustificationHandle;
-	}
 }
 
 bool AMOIPlaneHostedObj::OnSelected(bool bIsSelected)

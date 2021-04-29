@@ -72,11 +72,6 @@ FVector AMOITrim::GetNormal() const
 	return TrimUp;
 }
 
-void AMOITrim::SetupAdjustmentHandles(AEditModelPlayerController* Controller)
-{
-	MakeHandle<AAdjustInvertHandle>();
-}
-
 bool AMOITrim::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	switch (DirtyFlag)
