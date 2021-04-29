@@ -111,25 +111,47 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDrafti
 				layerType = Modumate::FModumateLayerType::kDimensionMassing;
 				break;
 
+			case FModumateDimension::Bridging:
+				offset = BridgingDimOffset;
+				layerType = Modumate::FModumateLayerType::kDimensionMassing;
+				break;
+
+			case FModumateDimension::Reference:
+				layerType = Modumate::FModumateLayerType::KDimensionReference;
+				break;
+
 			default:
 				ensure(false);
 				break;
 			}
 
-			FVec2d positionOffset = dim.Dir * offset;
-			if (dim.LineSide == FModumateDimension::Left)
+			if (dim.DimensionType == FModumateDimension::Reference)
 			{
-				positionOffset = -positionOffset;
+				TSharedPtr<Modumate::FDraftingLine> refLine = MakeShared<Modumate::FDraftingLine>(
+					FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.Points[0])),
+					FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.Points[1])),
+					ModumateUnitParams::FThickness::Points(0.25f)
+					);
+				Page->Children.Add(refLine);
+				refLine->SetLayerTypeRecursive(layerType);
 			}
-			dim.TextPosition = (dim.Points[0] + dim.Points[1]) / 2 + FVec2d(positionOffset.Y, -positionOffset.X);
+			else
+			{
+				FVec2d positionOffset = dim.Dir * offset;
+				if (dim.LineSide == FModumateDimension::Left)
+				{
+					positionOffset = -positionOffset;
+				}
+				dim.TextPosition = (dim.Points[0] + dim.Points[1]) / 2 + FVec2d(positionOffset.Y, -positionOffset.X);
 
-			TSharedPtr<Modumate::FDimensionPrimitive> dimPrim = MakeShared<Modumate::FDimensionPrimitive>(
-				FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.Points[0])),
-				FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.Points[1])),
-				FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.TextPosition)),
-				Modumate::FMColor::Black);
-			Page->Children.Add(dimPrim);
-			dimPrim->SetLayerTypeRecursive(layerType);
+				TSharedPtr<Modumate::FDimensionPrimitive> dimPrim = MakeShared<Modumate::FDimensionPrimitive>(
+					FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.Points[0])),
+					FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.Points[1])),
+					FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.TextPosition)),
+					Modumate::FMColor::Black);
+				Page->Children.Add(dimPrim);
+				dimPrim->SetLayerTypeRecursive(layerType);
+			}
 		}
 	}
 
@@ -186,6 +208,8 @@ void FModumateDimensions::ProcessDimensions()
 	{
 		ProcessConnectedGroup(group);
 	}
+
+	ConnectIslands(planIslands);
 
 }
 
@@ -654,17 +678,34 @@ void FModumateDimensions::DropLongestOpeningDimension(const TArray<int32>* Openi
 	}
 }
 
+// Add a new angular dimension from Vertex1 of Edge1 to its incident edge Edge2.
+void FModumateDimensions::CreateAngularDimension(int32 Edge1, int32 Vertex1, int32 Edge2)
+{
+	static constexpr double pointOffset = 20.0;  // World units
+	FVec2d center = Dimensions[Edge1].Points[Vertex1];
+	FVec2d startPos = Vertex1 == 0 ? center + pointOffset * Dimensions[Edge1].Dir
+		: center - pointOffset * Dimensions[Edge1].Dir;
+
+	const auto& dim2 = Dimensions[Edge2];
+	FVec2d endPos = dim2.Points[0] == center ? center + pointOffset * dim2.Dir
+		: center - pointOffset * dim2.Dir;
+	AngularDimensions.Emplace(startPos, endPos, center);
+}
+
+namespace
+{
+	static constexpr float thresholdDegrees = 1.0f;
+
+	constexpr bool IsCalledoutAngle(float angleDegrees)
+	{
+		return (angleDegrees >= thresholdDegrees && angleDegrees <= (90.0f - thresholdDegrees))
+			|| (angleDegrees >= (90.0f + thresholdDegrees) && angleDegrees <= (180.0f - thresholdDegrees));
+	}
+}
+
 void FModumateDimensions::AddAngularDimensions(const TArray<int32>& Group)
 {
 	TSet<int32> processedEdges;
-
-	static constexpr float thresholdDegrees = 1.0f;
-
-	auto IsCalledoutAngle = [](float angleDegrees)
-	{
-		return (angleDegrees >= thresholdDegrees && angleDegrees <= (90.0f - thresholdDegrees))
-		|| (angleDegrees >= (90.0f + thresholdDegrees) && angleDegrees <= (180.0f - thresholdDegrees));
-	};
 
 	for (int32 edge : Group)
 	{
@@ -731,16 +772,155 @@ void FModumateDimensions::AddAngularDimensions(const TArray<int32>& Group)
 
 }
 
-// Add a new angular dimension from Vertex1 of Edge1 to its incident edge Edge2.
-void FModumateDimensions::CreateAngularDimension(int32 Edge1, int32 Vertex1, int32 Edge2)
+namespace
 {
-	static constexpr double pointOffset = 20.0;  // World units
-	FVec2d center = Dimensions[Edge1].Points[Vertex1];
-	FVec2d startPos = Vertex1 == 0 ? center + pointOffset * Dimensions[Edge1].Dir
-		: center - pointOffset * Dimensions[Edge1].Dir;
+	struct BridgeSpec
+	{
+		int32 DimA;
+		int32 VertA;
+		int32 DimB;
+		int32 VertB;
+		bool operator==(const BridgeSpec& rhs) const
+		{
+			return (DimA == rhs.DimA && VertA == rhs.VertA && DimB == rhs.DimB && VertB == rhs.VertB)
+				|| (DimA == rhs.DimB && VertA == rhs.VertB && DimB == rhs.DimA && VertB == rhs.VertA);
+		}
+	};
 
-	const auto& dim2 = Dimensions[Edge2];
-	FVec2d endPos = dim2.Points[0] == center ? center + pointOffset * dim2.Dir
-		: center - pointOffset * dim2.Dir;
-	AngularDimensions.Emplace(startPos, endPos, center);
+}
+
+void FModumateDimensions::ConnectIslands(const TArray<TSet<int32>>& plans)
+{
+	const int32 numPlans = plans.Num();
+	if (numPlans < 2)
+	{
+		return;
+	}
+
+	TArray<BridgeSpec> bridges;
+
+	for (int32 plan = 0; plan < numPlans; ++plan)
+	{
+		TArray<int32> otherDimensions;
+		for (int32 p = 1; p < numPlans; ++p)
+		{
+			otherDimensions.Append(plans[(plan + p) % numPlans].Array());
+		}
+
+		double minDist2 = TMathUtilConstants<double>::MaxReal;
+		double minDist = TMathUtilConstants<double>::MaxReal;
+		int32 minPlan1Dim = INDEX_NONE;
+		int32 minPlan2Dim = INDEX_NONE;
+		int32 minVert1 = INDEX_NONE;
+		int32 minVert2 = INDEX_NONE;
+
+		// Brute-force search for closest pair -
+		for (int32 plan1Dimension : plans[plan])
+		{
+			for (int planVertex = 0; planVertex < 2; ++planVertex)
+			{
+				FVec2d plan1Position = Dimensions[plan1Dimension].Points[planVertex];
+				for (int32 plan2Dimension : otherDimensions)
+				{
+					for (int32 plan2Vertex = 0; plan2Vertex < 2; ++plan2Vertex)
+					{
+						if (FMath::Abs(Dimensions[plan2Dimension].Points[plan2Vertex].X - plan1Position.X) < minDist)
+						{
+							FVec2d delta = Dimensions[plan2Dimension].Points[plan2Vertex] - plan1Position;
+							double dist2 = plan1Position.DistanceSquared(Dimensions[plan2Dimension].Points[plan2Vertex]);
+							if (dist2 < minDist2)
+							{
+								minDist2 = dist2;
+								minDist = FMathd::Sqrt(dist2);
+
+								minPlan1Dim = plan1Dimension;
+								minPlan2Dim = plan2Dimension;
+								minVert1 = planVertex;
+								minVert2 = plan2Vertex;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (minPlan1Dim != INDEX_NONE)
+		{
+			BridgeSpec newBridge = { minPlan1Dim, minVert1, minPlan2Dim, minVert2 };
+			if (!bridges.Contains(newBridge))
+			{
+				FModumateDimension bridgingDim(Dimensions[minPlan1Dim].Points[minVert1], Dimensions[minPlan2Dim].Points[minVert2]);
+				bridgingDim.DimensionType = FModumateDimension::Bridging;
+				bridgingDim.bActive = true;
+				Dimensions.Add(bridgingDim);
+
+				bridges.Add(newBridge);
+			}
+		}
+	}
+
+	for (const auto& bridge : bridges)
+	{
+		FVec2d v1(Dimensions[bridge.DimA].Points[bridge.VertA]);
+		FVec2d v2(Dimensions[bridge.DimB].Points[bridge.VertB]);
+
+		FModumateDimension bridgingDim(v1, v2);
+		bridgingDim.DimensionType = FModumateDimension::Bridging;
+		bridgingDim.bActive = true;
+		Dimensions.Add(bridgingDim);
+
+		FModumateDimension referenceDim(v1, v2);
+		referenceDim.DimensionType = FModumateDimension::Reference;
+		referenceDim.bActive = true;
+		int32 refDimIndex = Dimensions.Add(referenceDim);
+
+		FVec2d dir(referenceDim.Dir);
+		float angle = FRotator::ClampAxis(FMath::RadiansToDegrees(FMathd::Atan2(dir.Y, dir.X)) );
+
+		for (int32 bridgeVertex = 0; bridgeVertex < 2; ++bridgeVertex)
+		{
+			int32 currentVert = bridgeVertex == 0 ? bridge.VertA : bridge.VertB;
+			int32 edgeID = bridgeVertex == 0 ? Dimensions[bridge.DimA].Graph2DID[currentVert]
+				: Dimensions[bridge.DimB].Graph2DID[currentVert];
+
+			Modumate::FGraph2DEdge* graphEdge = CutGraph->FindEdge(edgeID);
+			TArray<int32> graphVerts;
+			graphEdge->GetVertexIDs(graphVerts);
+			TArray<int32> adjacentEdges = CutGraph->FindVertex(graphVerts[currentVert])->Edges;
+			float minAngle = 400.0f, maxAngle = -1.0f;
+			int32 minEdge = INDEX_NONE, maxEdge = INDEX_NONE;
+			for (int32 edge : adjacentEdges)
+			{
+				float adjacentAngle;
+				CutGraph->GetEdgeAngle(edge, adjacentAngle);
+				float angleDiff = FRotator::ClampAxis(adjacentAngle - angle);
+				if (angleDiff < minAngle)
+				{
+					minAngle = angleDiff;
+					minEdge = edge;
+				}
+				if (angleDiff > maxAngle)
+				{
+					maxAngle = angleDiff;
+					maxEdge = edge;
+				}
+
+			}
+
+			if (IsCalledoutAngle(minAngle))
+			{
+				CreateAngularDimension(refDimIndex, bridgeVertex, GraphIDToDimID[FMath::Abs(minEdge)]);
+			}
+
+			maxAngle = 360.0f - maxAngle;
+			if (IsCalledoutAngle(maxAngle))
+			{
+				CreateAngularDimension(GraphIDToDimID[FMath::Abs(maxEdge)], maxEdge > 0 ? 0 : 1, refDimIndex);
+			}
+
+			// Reference line angle from 2nd point:
+			angle = FRotator::ClampAxis(angle + 180.0f);
+		}
+
+	}
 }

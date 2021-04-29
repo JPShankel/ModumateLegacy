@@ -288,6 +288,7 @@ namespace Modumate
 			ModumateUnitParams::FThickness thickness,
 			FMColor color = FMColor::Black,
 			LinePattern linePattern = LinePattern(),
+
 			ModumateUnitParams::FPhase phase = ModumateUnitParams::FPhase::Points(0));
 	};
 

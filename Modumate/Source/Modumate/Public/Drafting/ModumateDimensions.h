@@ -35,7 +35,7 @@ public:
 	bool bHorizontal = false;
 	bool bVertical = false;
 	bool bPortal = false;
-	enum EType { Opening, Framing, Massing };
+	enum EType { Opening, Framing, Massing, Bridging, Reference };
 	enum ESide { Left, Right };
 	EType DimensionType = Framing;
 	ESide LineSide = Left;
@@ -73,6 +73,7 @@ private:
 	void DropLongestOpeningDimension(const TArray<int32>* OpeningIds);
 	void AddAngularDimensions(const TArray<int32>& Group);
 	void CreateAngularDimension(int32 Edge1, int32 Vertex, int32 Edge2);
+	void ConnectIslands(const TArray<TSet<int32>>& plans);
 
 	TSharedPtr<Modumate::FGraph2D> CutGraph;
 	TMap<int32, int32> GraphIDToObjID;
@@ -83,4 +84,5 @@ private:
 	static constexpr double OpeningDimOffset = 56.0;
 	static constexpr double FramingDimOffset = 76.0;
 	static constexpr double MassingDimOffset = 96.0;
+	static constexpr double BridgingDimOffset = 30.0;
 };

@@ -42,7 +42,8 @@ namespace Modumate
 		kDimensionMassing,
 		kDimensionFraming,
 		kDimensionOpening,
-		kFinalLayerType = kDimensionOpening
+		KDimensionReference,
+		kFinalLayerType = KDimensionReference
 	};
 
 }
