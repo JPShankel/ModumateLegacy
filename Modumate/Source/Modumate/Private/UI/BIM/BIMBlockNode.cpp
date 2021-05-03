@@ -25,8 +25,10 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/Debugger/BIMDebugger.h"
+#include "UI/Custom/ModumateDropDownUserWidget.h"
 #include "UI/LeftMenu/SwapMenuWidget.h"
 #include "UI/LeftMenu/NCPNavigator.h"
+#include "Components/ComboBoxString.h"
 
 UBIMBlockNode::UBIMBlockNode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -245,6 +247,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 		{
 			case EBIMFormElementWidget::ColorPicker:
 			case EBIMFormElementWidget::GUIDSwap:
+			case EBIMFormElementWidget::EnumSelect:
 			{
 				UBIMBlockDropdownPreset* newDropdown = Controller->GetEditModelHUD()->GetOrCreateWidgetInstance<UBIMBlockDropdownPreset>(BIMBlockDropdownPresetClass);
 				if (newDropdown)
@@ -259,9 +262,13 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 					{
 						newDropdown->BuildDropdownFromColor(ParentBIMDesigner, this, curProperty, dropDownOffset);
 					}
-					else
+					else if (curProperty.FormElementWidgetType == EBIMFormElementWidget::GUIDSwap)
 					{
 						newDropdown->BuildDropdownFromPropertyPreset(ParentBIMDesigner, this, curProperty, dropDownOffset);
+					}
+					else 
+					{
+						newDropdown->BuildDropdownFromStringList(ParentBIMDesigner, this, curProperty, dropDownOffset);
 					}
 					VerticalBoxProperties->AddChildToVerticalBox(newDropdown);
 				}

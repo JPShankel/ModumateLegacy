@@ -54,12 +54,19 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonSwap;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateDropDownUserWidget* DropdownList;
+
 	UPROPERTY()
 	class UMaterialInterface* IconMaterial;
 
 	UFUNCTION()
 	void OnButtonSwapReleased();
 
+	UFUNCTION()
+	void OnDropdownListSelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
+
 	void BuildDropdownFromPropertyPreset(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const FBIMPresetFormElement& InFormElement, const FVector2D& InDropdownOffset);
 	void BuildDropdownFromColor(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const FBIMPresetFormElement& InFormElement, const FVector2D& InDropdownOffset);
+	void BuildDropdownFromStringList(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const FBIMPresetFormElement& InFormElement, const FVector2D& InDropdownOffset);
 };

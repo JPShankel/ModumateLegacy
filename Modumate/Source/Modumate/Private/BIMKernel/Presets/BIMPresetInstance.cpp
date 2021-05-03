@@ -5,6 +5,7 @@
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/EnumHelpers.h"
 #include "DocumentManagement/ModumateCommands.h"
 
 #define LOCTEXT_NAMESPACE "BIMPresetInstance"
@@ -225,71 +226,108 @@ bool FBIMPresetInstance::ValidatePreset() const
 	return true;
 }
 
-EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FBIMPresetEditorDelta& Delta)
+EBIMResult FBIMPresetInstance::HandleMaterialBindingDelta(const FBIMPresetEditorDelta& Delta)
 {
-	if (Delta.FieldType == EBIMPresetEditorField::MaterialBinding)
+	FBIMPresetMaterialBindingSet bindingSet;
+	if (!TryGetCustomData(bindingSet))
 	{
-		FBIMPresetMaterialBindingSet bindingSet;
-		if (!TryGetCustomData(bindingSet))
-		{
-			return EBIMResult::Error;
-		}
-		for (auto& binding : bindingSet.MaterialBindings)
-		{
-			if (binding.Channel.IsEqual(Delta.FieldName))
-			{
-				switch (Delta.MaterialChannelSubField)
-				{
-				case EMaterialChannelFields::InnerMaterial:
-				{
-					FGuid::Parse(Delta.NewStringRepresentation,binding.InnerMaterialGUID);
-					SetCustomData(bindingSet);
-					//If we don't have a surface material, the inner material is visible
-					if (!binding.SurfaceMaterialGUID.IsValid())
-					{
-						Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, Delta.NewStringRepresentation);
-					}
-					return EBIMResult::Success;
-				}
-				break;
-
-				case EMaterialChannelFields::SurfaceMaterial:
-				{
-					FGuid::Parse(Delta.NewStringRepresentation, binding.SurfaceMaterialGUID);
-					// TODO: material and color properties still used in icon generation...remove when icongen is refactored
-					Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, Delta.NewStringRepresentation);
-					SetCustomData(bindingSet);
-					return EBIMResult::Success;
-				}
-				break;
-
-				case EMaterialChannelFields::ColorTint:
-				{
-					binding.ColorHexValue = Delta.NewStringRepresentation;
-					// TODO: material and color properties still used in icon generation...remove when icongen is refactored
-					Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, binding.ColorHexValue);
-					SetCustomData(bindingSet);
-					return EBIMResult::Success;
-				}
-				break;
-
-				case EMaterialChannelFields::ColorTintVariation:
-				{
-					LexTryParseString(binding.ColorTintVariationPercent,*Delta.NewStringRepresentation);
-					SetCustomData(bindingSet);
-					return EBIMResult::Success;
-				}
-				break;
-
-				default: return EBIMResult::Error;
-				};
-			}
-		}
 		return EBIMResult::Error;
 	}
+	for (auto& binding : bindingSet.MaterialBindings)
+	{
+		if (binding.Channel.IsEqual(Delta.FieldName))
+		{
+			switch (Delta.MaterialChannelSubField)
+			{
+			case EMaterialChannelFields::InnerMaterial:
+			{
+				FGuid::Parse(Delta.NewStringRepresentation, binding.InnerMaterialGUID);
+				SetCustomData(bindingSet);
+				//If we don't have a surface material, the inner material is visible
+				if (!binding.SurfaceMaterialGUID.IsValid())
+				{
+					Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, Delta.NewStringRepresentation);
+				}
+				return EBIMResult::Success;
+			}
+			break;
 
+			case EMaterialChannelFields::SurfaceMaterial:
+			{
+				FGuid::Parse(Delta.NewStringRepresentation, binding.SurfaceMaterialGUID);
+				// TODO: material and color properties still used in icon generation...remove when icongen is refactored
+				Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, Delta.NewStringRepresentation);
+				SetCustomData(bindingSet);
+				return EBIMResult::Success;
+			}
+			break;
+
+			case EMaterialChannelFields::ColorTint:
+			{
+				binding.ColorHexValue = Delta.NewStringRepresentation;
+				// TODO: material and color properties still used in icon generation...remove when icongen is refactored
+				Properties.SetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, binding.ColorHexValue);
+				SetCustomData(bindingSet);
+				return EBIMResult::Success;
+			}
+			break;
+
+			case EMaterialChannelFields::ColorTintVariation:
+			{
+				LexTryParseString(binding.ColorTintVariationPercent, *Delta.NewStringRepresentation);
+				SetCustomData(bindingSet);
+				return EBIMResult::Success;
+			}
+			break;
+
+			default: return EBIMResult::Error;
+			};
+		}
+	}
+	return EBIMResult::Error;
+}
+
+EBIMResult FBIMPresetInstance::HandleLayerPriorityGroupDelta(const FBIMPresetEditorDelta& Delta)
+{
+	FBIMPresetLayerPriority layerPriority;
+	if (TryGetCustomData(layerPriority) && FindEnumValueByString(Delta.NewStringRepresentation,layerPriority.PriorityGroup))
+	{
+		SetCustomData(layerPriority);
+		return EBIMResult::Success;
+	}
+	return EBIMResult::Error;
+}
+
+EBIMResult FBIMPresetInstance::HandleLayerPriorityValueDelta(const FBIMPresetEditorDelta& Delta)
+{
+	FBIMPresetLayerPriority layerPriority;
+	if (TryGetCustomData(layerPriority) && LexTryParseString(layerPriority.PriorityValue, *Delta.NewStringRepresentation))
+	{
+		SetCustomData(layerPriority);
+		return EBIMResult::Success;
+	}
+	return EBIMResult::Error;
+}
+
+EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FBIMPresetEditorDelta& Delta)
+{
 	switch (Delta.FieldType)
 	{
+		case EBIMPresetEditorField::LayerPriorityGroup:
+		{
+			return HandleLayerPriorityGroupDelta(Delta);
+		}
+
+		case EBIMPresetEditorField::LayerPriorityValue:
+		{
+			return HandleLayerPriorityValueDelta(Delta);
+		}
+
+		case EBIMPresetEditorField::MaterialBinding:
+		{
+			return HandleMaterialBindingDelta(Delta);
+		}
+
 		case EBIMPresetEditorField::AssetProperty:
 		{
 			FBIMPropertyKey propKey(Delta.FieldName);
@@ -340,6 +378,55 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FB
 	return EBIMResult::Error;
 }
 
+EBIMResult FBIMPresetInstance::MakeMaterialBindingDelta(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const
+{
+	FBIMPresetMaterialBindingSet bindingSet;
+	if (!TryGetCustomData(bindingSet))
+	{
+		return EBIMResult::Error;
+	}
+	for (auto& binding : bindingSet.MaterialBindings)
+	{
+		if (binding.Channel.IsEqual(*FormElement.FieldName))
+		{
+			switch (FormElement.MaterialChannelSubField)
+			{
+			case EMaterialChannelFields::InnerMaterial:
+			{
+				OutDelta.OldStringRepresentation = binding.InnerMaterialGUID.ToString();
+				return EBIMResult::Success;
+			}
+			break;
+
+			case EMaterialChannelFields::SurfaceMaterial:
+			{
+				OutDelta.OldStringRepresentation = binding.SurfaceMaterialGUID.ToString();
+				return EBIMResult::Success;
+			}
+			break;
+
+			case EMaterialChannelFields::ColorTint:
+			{
+				OutDelta.OldStringRepresentation = binding.ColorHexValue;
+				return EBIMResult::Success;
+			}
+			break;
+
+			case EMaterialChannelFields::ColorTintVariation:
+			{
+				OutDelta.OldStringRepresentation = FString::Printf(TEXT("%0.2f"), binding.ColorTintVariationPercent);
+				return EBIMResult::Success;
+			}
+			break;
+
+			default: return EBIMResult::Error;
+			};
+		}
+	}
+	return EBIMResult::Error;
+}
+
+
 EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const
 {
 	OutDelta.FieldType = FormElement.FieldType;
@@ -347,56 +434,34 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 	OutDelta.FieldName = *FormElement.FieldName;
 	OutDelta.MaterialChannelSubField = FormElement.MaterialChannelSubField;
 
-	if (FormElement.FieldType == EBIMPresetEditorField::MaterialBinding)
-	{
-		FBIMPresetMaterialBindingSet bindingSet;
-		if (!TryGetCustomData(bindingSet))
-		{
-			return EBIMResult::Error;
-		}
-		for (auto& binding : bindingSet.MaterialBindings)
-		{
-			if (binding.Channel.IsEqual(*FormElement.FieldName))
-			{
-				switch (FormElement.MaterialChannelSubField)
-				{
-					case EMaterialChannelFields::InnerMaterial:
-					{
-						OutDelta.OldStringRepresentation = binding.InnerMaterialGUID.ToString();
-						return EBIMResult::Success;
-					}
-					break;
-
-					case EMaterialChannelFields::SurfaceMaterial:
-					{
-						OutDelta.OldStringRepresentation = binding.SurfaceMaterialGUID.ToString();
-						return EBIMResult::Success;
-					}
-					break;
-
-					case EMaterialChannelFields::ColorTint:
-					{
-						OutDelta.OldStringRepresentation = binding.ColorHexValue;
-						return EBIMResult::Success;
-					}
-					break;
-
-					case EMaterialChannelFields::ColorTintVariation:
-					{
-						OutDelta.OldStringRepresentation = FString::Printf(TEXT("%0.2f"),binding.ColorTintVariationPercent);
-						return EBIMResult::Success;
-					}
-					break;
-
-					default: return EBIMResult::Error;
-				};
-			}
-		}
-		return EBIMResult::Error;
-	}
-
 	switch (FormElement.FieldType)
 	{
+		case EBIMPresetEditorField::LayerPriorityGroup:
+		{
+			FBIMPresetLayerPriority layerPriority;
+			if (TryGetCustomData(layerPriority))
+			{
+				OutDelta.OldStringRepresentation = GetEnumValueString<EBIMPresetLayerPriorityGroup>(layerPriority.PriorityGroup);
+				return EBIMResult::Success;
+			}
+		}
+		break;
+
+		case EBIMPresetEditorField::LayerPriorityValue:
+		{
+			FBIMPresetLayerPriority layerPriority;
+			if (TryGetCustomData(layerPriority))
+			{
+				OutDelta.OldStringRepresentation = FString::Printf(TEXT("%d"), layerPriority.PriorityValue);
+				return EBIMResult::Success;
+			}
+		}
+		break;
+
+		case EBIMPresetEditorField::MaterialBinding:
+		{
+			return MakeMaterialBindingDelta(FormElement, OutDelta);
+		}
 		case EBIMPresetEditorField::DimensionProperty:
 		{
 			float v;
@@ -477,6 +542,26 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(FBIMPresetForm& OutForm) const
 
 		switch (element.FieldType)
 		{
+		case EBIMPresetEditorField::LayerPriorityValue:
+		{
+			FBIMPresetLayerPriority layerPriority;
+			if (ensureAlways(TryGetCustomData(layerPriority)))
+			{
+				element.StringRepresentation = FString::Printf(TEXT("%d"), layerPriority.PriorityValue);
+			}
+		}
+		break;
+
+		case EBIMPresetEditorField::LayerPriorityGroup:
+		{
+			FBIMPresetLayerPriority layerPriority;
+			if (ensureAlways(TryGetCustomData(layerPriority)))
+			{
+				element.StringRepresentation = GetEnumValueString<EBIMPresetLayerPriorityGroup>(layerPriority.PriorityGroup);
+			}
+		}
+		break;
+
 		case EBIMPresetEditorField::DimensionProperty:
 		{
 			float v;
@@ -580,7 +665,6 @@ EBIMResult FBIMPresetInstance::SetMaterialChannelsForMesh(const FModumateDatabas
 
 	return bindingSet.SetFormElements(PresetForm);
 }
-
 
 EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, float& OutBevelWidth) const
 {
@@ -816,10 +900,10 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const 
 	// Prior to version 16, layers did not have miter priority data
 	if (DocVersion < 16 && NodeScope == EBIMValueScope::Layer)
 	{
-		FBIMLayerPriority layerPriority;
+		FBIMPresetLayerPriority layerPriority;
 		if (ensureAlways(!TryGetCustomData(layerPriority)))
 		{
-			layerPriority.PriorityGroup = EBIMLayerPriorityGroup::Structure;
+			layerPriority.PriorityGroup = EBIMPresetLayerPriorityGroup::Structure;
 			layerPriority.PriorityValue = 0;
 			SetCustomData(layerPriority);
 		}

@@ -10,36 +10,12 @@
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
 #include "BIMKernel/Presets/BIMPresetMaterialBinding.h"
+#include "BIMKernel/Presets/BIMPresetLayerPriority.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "BIMLayerSpec.generated.h"
 
 class FModumateDatabase;
-
-UENUM()
-enum class EBIMLayerPriorityGroup
-{
-	Structure,
-	Substrate,
-	Insulation,
-	Membrane,
-	Carpentry,
-	Finish,
-	Void,
-	Other
-};
-
-USTRUCT()
-struct MODUMATE_API FBIMLayerPriority
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	EBIMLayerPriorityGroup PriorityGroup;
-
-	UPROPERTY()
-	int32 PriorityValue;
-};
 
 USTRUCT()
 struct MODUMATE_API FBIMLayerSpec
@@ -82,7 +58,7 @@ public:
 	FGuid PresetGUID;
 
 	UPROPERTY()
-	FBIMLayerPriority LayerPriority;
+	FBIMPresetLayerPriority LayerPriority;
 
 	TMap<FString, float> CachedPatternExprVars;
   

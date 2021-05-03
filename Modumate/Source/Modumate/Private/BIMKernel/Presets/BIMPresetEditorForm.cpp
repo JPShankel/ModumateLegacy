@@ -2,6 +2,8 @@
 
 #include "BIMKernel/Presets/BIMPresetEditorForm.h"
 
+#define LOCTEXT_NAMESPACE "BIMPresetEditorForm"
+
 
 bool FBIMPresetForm::operator==(const FBIMPresetForm& RHS) const
 {
@@ -113,3 +115,31 @@ EBIMResult FBIMPresetForm::AddMaterialBindingElement(const FText& DisplayName, c
 	}
 	return EBIMResult::Error;
 }
+
+EBIMResult FBIMPresetForm::AddLayerPriorityGroupElement()
+{
+	FBIMPresetFormElement& newElement = Elements.AddDefaulted_GetRef();
+	newElement.DisplayName = LOCTEXT("MiterGroup","Miter Group");
+	newElement.FieldType = EBIMPresetEditorField::LayerPriorityGroup;
+	newElement.FormElementWidgetType = EBIMFormElementWidget::EnumSelect;
+
+	UEnum* enumClass = StaticEnum<EBIMPresetLayerPriorityGroup>();
+	// the last entry is an internal 'MAX' value
+	for (int32 i=0;i<enumClass->NumEnums()-1;++i)
+	{
+		newElement.SelectionOptions.Add(enumClass->GetNameStringByIndex(i));
+	}
+
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetForm::AddLayerPriorityValueElement()
+{
+	FBIMPresetFormElement& newElement = Elements.AddDefaulted_GetRef();
+	newElement.DisplayName = LOCTEXT("MiterPriority","Miter Priority");
+	newElement.FieldType = EBIMPresetEditorField::LayerPriorityValue;
+	newElement.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
+ 	return EBIMResult::Success;
+}
+
+#undef LOCTEXT_NAMESPACE

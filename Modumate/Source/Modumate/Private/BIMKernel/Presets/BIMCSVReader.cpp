@@ -256,10 +256,11 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 			case ECSVMatrixNames::MiterPriority:
 			{
 				FString group = NormalizeCell(Row[presetMatrix.First]);
-				FBIMLayerPriority miterPriority;
+				FBIMPresetLayerPriority miterPriority;
 
 				if (FindEnumValueByString(group, miterPriority.PriorityGroup) && LexTryParseString(miterPriority.PriorityValue, Row[presetMatrix.First + 1]))
 				{
+					miterPriority.SetFormElements(Preset.PresetForm);
 					Preset.SetCustomData(miterPriority);
 				}				
 			}

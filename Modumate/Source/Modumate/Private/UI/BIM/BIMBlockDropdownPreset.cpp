@@ -6,7 +6,9 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/Custom/ModumateDropDownUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
+#include "UI/Custom/ModumateComboBoxString.h"
 #include "Components/Image.h"
 #include "UI/BIM/BIMBlockNode.h"
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
@@ -30,11 +32,14 @@ bool UBIMBlockDropdownPreset::Initialize()
 
 	Controller = GetOwningPlayer<AEditModelPlayerController>();
 	
-	if (!ButtonSwap)
+	if (!(ButtonSwap && DropdownList && DropdownList->ComboBoxStringJustification)) 
 	{
 		return false;
 	}
+
 	ButtonSwap->ModumateButton->OnReleased.AddDynamic(this, &UBIMBlockDropdownPreset::OnButtonSwapReleased);
+
+	DropdownList->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UBIMBlockDropdownPreset::OnDropdownListSelectionChanged);
 
 	return true;
 }
@@ -85,6 +90,10 @@ void UBIMBlockDropdownPreset::BuildDropdownFromPropertyPreset(class UBIMDesigner
 	FGuid::Parse(InFormElement.StringRepresentation, PresetGUID);
 	DropdownOffset = InDropdownOffset;
 
+	PresetText->SetVisibility(ESlateVisibility::Visible);
+	IconImage->SetVisibility(ESlateVisibility::Visible);
+	DropdownList->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonSwap->SetVisibility(ESlateVisibility::Visible);
 
 	TextTitle->ChangeText(InFormElement.DisplayName);
 	const FBIMPresetInstance* preset = OuterBIMDesigner->InstancePool.PresetCollectionProxy.PresetFromGUID(PresetGUID);
@@ -113,6 +122,11 @@ void UBIMBlockDropdownPreset::BuildDropdownFromColor(class UBIMDesigner* OuterBI
 	TextTitle->ChangeText(FormElement.DisplayName);
 	PresetText->ChangeText(FText::FromString(FormElement.StringRepresentation.Left(6)));
 
+	PresetText->SetVisibility(ESlateVisibility::Visible);
+	IconImage->SetVisibility(ESlateVisibility::Visible);
+	DropdownList->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonSwap->SetVisibility(ESlateVisibility::Visible);
+
 	// Icon
 	bool bCaptureSuccess = Controller->DynamicIconGenerator->SetIconFromColor(FormElement.StringRepresentation.Left(6), IconMaterial);
 	if (bCaptureSuccess)
@@ -120,4 +134,37 @@ void UBIMBlockDropdownPreset::BuildDropdownFromColor(class UBIMDesigner* OuterBI
 		IconImage->SetBrushFromMaterial(IconMaterial);
 	}
 	IconImage->SetVisibility(bCaptureSuccess ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+}
+
+void UBIMBlockDropdownPreset::BuildDropdownFromStringList(class UBIMDesigner* OuterBIMDesigner, UBIMBlockNode* InOwnerNode, const FBIMPresetFormElement& InFormElement, const FVector2D& InDropdownOffset)
+{
+	ParentBIMDesigner = OuterBIMDesigner;
+	OwnerNode = InOwnerNode;
+	FormElement = InFormElement;
+	DropdownOffset = InDropdownOffset;
+
+	// Set text and label
+	TextTitle->ChangeText(FormElement.DisplayName);
+
+	PresetText->SetVisibility(ESlateVisibility::Collapsed);
+	IconImage->SetVisibility(ESlateVisibility::Collapsed);
+	DropdownList->SetVisibility(ESlateVisibility::Visible);
+	ButtonSwap->SetVisibility(ESlateVisibility::Collapsed);
+
+	DropdownList->ComboBoxStringJustification->ClearOptions();
+	for (auto& option : InFormElement.SelectionOptions)
+	{
+		DropdownList->ComboBoxStringJustification->AddOption(option);
+	}
+
+	DropdownList->ComboBoxStringJustification->SetSelectedOption(InFormElement.StringRepresentation);
+}
+
+void UBIMBlockDropdownPreset::OnDropdownListSelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
+{
+	if (!SelectedItem.IsEmpty() && !FormElement.StringRepresentation.Equals(SelectedItem))
+	{
+		FormElement.StringRepresentation = SelectedItem;
+		ParentBIMDesigner->ApplyBIMFormElement(OwnerNode->ID, FormElement);
+	}
 }

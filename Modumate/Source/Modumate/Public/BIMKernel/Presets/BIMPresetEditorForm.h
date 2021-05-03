@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BIMKernel/Presets/BIMPresetMaterialBinding.h"
+#include "BIMKernel/Presets/BIMPresetLayerPriority.h"
 #include "BIMKernel/Core/BIMEnums.h"
 
 #include "BIMPresetEditorForm.generated.h"
@@ -19,9 +20,10 @@ enum class EBIMPresetEditorField : uint8
 	NumberProperty,
 	AssetProperty,
 	DimensionProperty,
-	MaterialBinding
+	MaterialBinding,
+	LayerPriorityGroup,
+	LayerPriorityValue
 };
-
 
 /* TODO:
 * It is unclear at this stage whether editor deltas will be in their own undo/redo space or integrated with the document
@@ -49,6 +51,9 @@ struct MODUMATE_API FBIMPresetEditorDelta
 	UPROPERTY()
 	EMaterialChannelFields MaterialChannelSubField = EMaterialChannelFields::None;
 
+	UPROPERTY()
+	EBIMPresetLayerPriorityGroup LayerPriorityGroup = EBIMPresetLayerPriorityGroup::Other;
+
 	FBIMPresetEditorDelta Inverted() const;
 };
 
@@ -57,6 +62,7 @@ enum class EBIMFormElementWidget : uint8
 {
 	None = 0,
 	TextEntry,
+	EnumSelect,
 	GUIDSwap,
 	ColorPicker
 };
@@ -79,6 +85,9 @@ struct MODUMATE_API FBIMPresetFormElement
 	FString StringRepresentation;
 
 	UPROPERTY()
+	TArray<FString> SelectionOptions;
+
+	UPROPERTY()
 	EMaterialChannelFields MaterialChannelSubField = EMaterialChannelFields::None;
 
 	UPROPERTY()
@@ -95,6 +104,8 @@ struct MODUMATE_API FBIMPresetForm
 
 	EBIMResult AddPropertyElement(const FText& DisplayName, const FName& FieldName, EBIMPresetEditorField FieldType);
 	EBIMResult AddMaterialBindingElement(const FText& DisplayName, const FName& ChannelName, EMaterialChannelFields MaterialSubField);
+	EBIMResult AddLayerPriorityGroupElement();
+	EBIMResult AddLayerPriorityValueElement();
 
 	bool operator==(const FBIMPresetForm& RHS) const;
 	bool operator!=(const FBIMPresetForm& RHS) const;
