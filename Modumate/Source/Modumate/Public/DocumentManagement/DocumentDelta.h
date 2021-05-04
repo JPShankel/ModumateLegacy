@@ -9,6 +9,7 @@
 
 class UWorld;
 class UModumateDocument;
+enum class EMOIDeltaType : uint8;
 
 
 USTRUCT()
@@ -22,6 +23,19 @@ public:
 	virtual bool ApplyTo(UModumateDocument* doc, UWorld* world) const { return false; };
 	virtual TSharedPtr<FDocumentDelta> MakeInverse() const { return nullptr; };
 	virtual FStructDataWrapper SerializeStruct();
+	virtual void GetAffectedObjects(TArray<TPair<int32, EMOIDeltaType>>& OutAffectedObjects) const { }
+
+protected:
+	// Generic helper for populated the results of GetAffectedObjects
+	template<typename ValueType>
+	FORCEINLINE static void AddAffectedIDs(
+		const TMap<int32, ValueType>& DeltaMap, EMOIDeltaType DeltaType, TArray<TPair<int32, EMOIDeltaType>>& OutAffectedObjects)
+	{
+		for (auto& kvp : DeltaMap)
+		{
+			OutAffectedObjects.Add(TPair<int32, EMOIDeltaType>(kvp.Key, DeltaType));
+		}
+	}
 
 	// TODO: potentially, int32 ID if it is useful here
 };

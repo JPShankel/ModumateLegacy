@@ -139,14 +139,16 @@ public:
 	bool MakeScopeBoxObject(UWorld *world, const TArray<FVector> &points, TArray<int32> &OutObjIDs, const float Height);
 
 	// Allocates IDs for new objects, finds new parent IDs for objects, and marks objects for deletion after another graph operation
-	bool FinalizeGraph2DDeltas(const TArray<FGraph2DDelta> &InDeltas, int32 &InNextID, TArray<FDeltaPtr> &OutDeltas);
-	bool FinalizeGraph2DDelta(const FGraph2DDelta &Delta, int32 &InNextID, TArray<FDeltaPtr> &OutSideEffectDeltas);
+	bool FinalizeGraph2DDeltas(const TArray<FGraph2DDelta>& InDeltas, int32& InNextID, TArray<FDeltaPtr>& OutDeltas) const;
+	bool FinalizeGraph2DDelta(const FGraph2DDelta& Delta, int32& InNextID, TArray<FDeltaPtr>& OutSideEffectDeltas) const;
 	bool FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, const FGraph3DDelta &Delta, TArray<FDeltaPtr> &OutSideEffectDeltas);
 
 	bool GetVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas);
 	bool MoveMetaVertices(UWorld* World, const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions);
 
 	bool JoinMetaObjects(UWorld *World, const TArray<int32> &ObjectIDs);
+
+	bool GetGraph2DDeletionDeltas(int32 Graph2DID, int32& InNextID, TArray<FDeltaPtr>& OutDeltas) const;
 
 	int32 MakeGroupObject(UWorld *world, const TArray<int32> &ids, bool combineWithExistingGroups, int32 parentID);
 	void UnmakeGroupObjects(UWorld *world, const TArray<int32> &groupIds);
@@ -234,7 +236,7 @@ public:
 	AModumateObjectInstance *TryGetDeletedObject(int32 id);
 
 	void DeleteObjects(const TArray<AModumateObjectInstance*> &initialObjectsToDelete, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
-	void GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, const TArray<AModumateObjectInstance*> &initialObjectsToDelete, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
+	bool GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, const TArray<AModumateObjectInstance*> &initialObjectsToDelete, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
 	void RestoreDeletedObjects(const TArray<int32> &ids);
 	void DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
 

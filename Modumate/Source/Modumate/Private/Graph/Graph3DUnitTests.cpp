@@ -1,5 +1,6 @@
 #include "CoreMinimal.h"
 
+#include "Algo/Transform.h"
 #include "DocumentManagement/DocumentDelta.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "Graph/Graph3D.h"
@@ -1452,16 +1453,52 @@ namespace Modumate
 		TestTrue(TEXT("Add second face"),
 			tempGraph.GetDeltaForFaceAddition(secondVertices, OutDeltas, NextID, outFaceIDs));
 		TestDeltas(this, OutDeltas, graph, tempGraph, 2, 6, 7);
+		int32 secondFaceID = (outFaceIDs.Num() == 1) ? outFaceIDs[0] : MOD_ID_NONE;
 
-		OutDeltas.AddDefaulted();
 		TestTrue(TEXT("Delete face, including connected edges and vertices"),
-			tempGraph.GetDeltaForDeleteObjects({ firstFaceID }, OutDeltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ firstFaceID }, OutDeltas, NextID, true));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 4, 4);
 
-		OutDeltas.AddDefaulted();
 		TestTrue(TEXT("Delete face, excluding connected edges and vertices"),
-			tempGraph.GetDeltaForDeleteObjects({ firstFaceID }, OutDeltas[0], false));
+			tempGraph.GetDeltaForDeleteObjects({ firstFaceID }, OutDeltas, NextID, false));
 		TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 6, 7);
+
+		// a third face that is coplanar to the second face
+		TArray<FVector> thirdVertices = {
+			FVector(100.0f, 0.0f, 0.0f),
+			FVector(200.0f, 0.0f, 0.0f),
+			FVector(200.0f, 0.0f, 100.0f),
+			FVector(100.0f, 0.0f, 100.0f)
+		};
+
+		TestTrue(TEXT("Add third face, coplanar to second"),
+			tempGraph.GetDeltaForFaceAddition(thirdVertices, OutDeltas, NextID, outFaceIDs));
+		TestDeltas(this, OutDeltas, graph, tempGraph, 3, 8, 10);
+		int32 thirdFaceID = (outFaceIDs.Num() == 1) ? outFaceIDs[0] : MOD_ID_NONE;
+
+		auto* secondFace = graph.FindFace(secondFaceID);
+		auto* thirdFace = graph.FindFace(thirdFaceID);
+		int32 sharedEdgeID = MOD_ID_NONE;
+		if (secondFace && thirdFace)
+		{
+			TSet<int32> secondFaceEdgeIDs, thirdFaceEdgeIDs;
+			auto absFn = [](FGraphSignedID SignedID) { return FMath::Abs(SignedID); };
+			Algo::Transform(secondFace->EdgeIDs, secondFaceEdgeIDs, absFn);
+			Algo::Transform(thirdFace->EdgeIDs, thirdFaceEdgeIDs, absFn);
+			TSet<int32> sharedEdgeIDs = secondFaceEdgeIDs.Intersect(thirdFaceEdgeIDs);
+			sharedEdgeID = (sharedEdgeIDs.Num() == 1) ? *sharedEdgeIDs.CreateConstIterator() : MOD_ID_NONE;
+		}
+
+		if (TestTrue(TEXT("One shared edge"), sharedEdgeID != MOD_ID_NONE))
+		{
+			TestTrue(TEXT("Delete shared edge, delete connected faces by default"),
+				tempGraph.GetDeltaForDeleteObjects({ sharedEdgeID }, OutDeltas, NextID, true));
+			TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 1, 4, 4);
+
+			TestTrue(TEXT("Delete shared edge, attempt to join connected faces"),
+				tempGraph.GetDeltaForDeleteObjects({ sharedEdgeID }, OutDeltas, NextID, true, true));
+			TestDeltasAndResetGraph(this, OutDeltas, graph, tempGraph, 2, 7, 8);
+		}
 
 		return true;
 	}
@@ -1905,9 +1942,8 @@ namespace Modumate
 		TestEqual(TEXT("InnerFace is contained by OuterFace"), innerFace->ContainingFaceID, outerFaceID);
 
 		deltas.Reset();
-		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete face, including connected edges and vertices"),
-			tempGraph.GetDeltaForDeleteObjects({ innerFaceID }, deltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ innerFaceID }, deltas, NextID, true));
 
 		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
 
@@ -1983,9 +2019,8 @@ namespace Modumate
 		TestEqual(TEXT("InnerFace is contained by OuterFace"), innerFace->ContainingFaceID, outerFaceID);
 
 		deltas.Reset();
-		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete outer face"),
-			tempGraph.GetDeltaForDeleteObjects({ outerFaceID }, deltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ outerFaceID }, deltas, nextID, true));
 
 		TestDeltas(this, deltas, graph, tempGraph, 1, 4, 4);
 
@@ -2627,9 +2662,8 @@ namespace Modumate
 		auto innerRightFace = graph.FindFace(innerRightFaceID);
 
 		// remove and undo remove outer face
-		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete outer face"),
-			tempGraph.GetDeltaForDeleteObjects({ outerFaceID }, deltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ outerFaceID }, deltas, nextID, true));
 		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12, false);
 
 		TestTrue(TEXT("Middle face is not contained"), 
@@ -2648,9 +2682,8 @@ namespace Modumate
 			outerFace->CachedHoles.Num() == 1);
 
 		// remove and undo remove middle face
-		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete middle face"),
-			tempGraph.GetDeltaForDeleteObjects({ middleFaceID }, deltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ middleFaceID }, deltas, nextID, true));
 		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12, false);
 
 		TestTrue(TEXT("Inner faces are contained by outer face"), 
@@ -2669,9 +2702,8 @@ namespace Modumate
 			outerFace->CachedHoles.Num() == 1);
 
 		// remove and undo remove inner face
-		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete inner face"),
-			tempGraph.GetDeltaForDeleteObjects({ innerLeftFaceID }, deltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ innerLeftFaceID }, deltas, nextID, true));
 		TestDeltas(this, deltas, graph, tempGraph, 3, 12, 12, false);
 
 		TestTrue(TEXT("Middle face contains remaining inner face"),
@@ -2692,9 +2724,8 @@ namespace Modumate
 			middleFace->ContainingFaceID == outerFaceID);
 
 		// remove and undo remove two faces, one that contains the other
-		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete two faces"),
-			tempGraph.GetDeltaForDeleteObjects({ middleFaceID, innerLeftFaceID }, deltas[0], true));
+			tempGraph.GetDeltaForDeleteObjects({ middleFaceID, innerLeftFaceID }, deltas, nextID, true));
 		TestDeltas(this, deltas, graph, tempGraph, 2, 8, 8, false);
 
 		TestTrue(TEXT("Outer face contains remaining inner face"),
@@ -3133,9 +3164,8 @@ namespace Modumate
 		}
 
 		// delete contained face, but not the edges, and test the connected faces
-		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete face, excluding connected edges and vertices"),
-			tempGraph.GetDeltaForDeleteObjects({ innerFaceID }, deltas[0], false));
+			tempGraph.GetDeltaForDeleteObjects({ innerFaceID }, deltas, NextID, false));
 		TestDeltas(this, deltas, graph, tempGraph, 1, 8, 8, false);
 
 		for (int32 edgeID : innerEdges)
@@ -3171,9 +3201,8 @@ namespace Modumate
 		edge = graph.FindEdge(edgeID);
 		TestTrue(TEXT("test edge connections"), edge->ConnectedFaces.Num() == 3);
 
-		deltas.AddDefaulted();
 		TestTrue(TEXT("Delete face, excluding connected edges and vertices"),
-			tempGraph.GetDeltaForDeleteObjects({ innerFaceID }, deltas[0], false));
+			tempGraph.GetDeltaForDeleteObjects({ innerFaceID }, deltas, NextID, false));
 		TestDeltas(this, deltas, graph, tempGraph, 2, 10, 11, false);
 
 		edge = graph.FindEdge(edgeID);

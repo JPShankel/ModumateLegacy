@@ -115,4 +115,5 @@ struct MODUMATE_API FGraph2DDelta : public FDocumentDelta
 	virtual FDeltaPtr MakeInverse() const override;
 	virtual bool ApplyTo(UModumateDocument *doc, UWorld *world) const override;
 	virtual FStructDataWrapper SerializeStruct() override { return FStructDataWrapper(StaticStruct(), this, true); }
+	virtual void GetAffectedObjects(TArray<TPair<int32, EMOIDeltaType>>& OutAffectedObjects) const override;
 };

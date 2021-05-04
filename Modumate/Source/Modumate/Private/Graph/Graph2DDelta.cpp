@@ -155,3 +155,30 @@ bool FGraph2DDelta::ApplyTo(UModumateDocument* doc, UWorld* world) const
 	doc->ApplyGraph2DDelta(*this, world);
 	return true;
 }
+
+void FGraph2DDelta::GetAffectedObjects(TArray<TPair<int32, EMOIDeltaType>>& OutAffectedObjects) const
+{
+	Super::GetAffectedObjects(OutAffectedObjects);
+
+	AddAffectedIDs(VertexMovements, EMOIDeltaType::Mutate, OutAffectedObjects);
+	AddAffectedIDs(VertexAdditions, EMOIDeltaType::Create, OutAffectedObjects);
+	AddAffectedIDs(VertexDeletions, EMOIDeltaType::Destroy, OutAffectedObjects);
+	AddAffectedIDs(EdgeAdditions, EMOIDeltaType::Create, OutAffectedObjects);
+	AddAffectedIDs(EdgeDeletions, EMOIDeltaType::Destroy, OutAffectedObjects);
+	AddAffectedIDs(PolygonAdditions, EMOIDeltaType::Create, OutAffectedObjects);
+	AddAffectedIDs(PolygonDeletions, EMOIDeltaType::Destroy, OutAffectedObjects);
+	AddAffectedIDs(PolygonIDUpdates, EMOIDeltaType::Mutate, OutAffectedObjects);
+
+	switch (DeltaType)
+	{
+	case EGraph2DDeltaType::Add:
+		OutAffectedObjects.Add(TPair <int32, EMOIDeltaType>(ID, EMOIDeltaType::Create));
+		break;
+	case EGraph2DDeltaType::Edit:
+		OutAffectedObjects.Add(TPair <int32, EMOIDeltaType>(ID, EMOIDeltaType::Mutate));
+		break;
+	case EGraph2DDeltaType::Remove:
+		OutAffectedObjects.Add(TPair <int32, EMOIDeltaType>(ID, EMOIDeltaType::Destroy));
+		break;
+	}
+}

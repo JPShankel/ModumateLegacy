@@ -1361,10 +1361,8 @@ namespace Modumate
 			(otherFace->ContainingFaceID == face->ID ? otherFace->ID : MOD_ID_NONE));
 		if (containedFaceID != MOD_ID_NONE)
 		{
-			FGraph3DDelta deleteDelta;
 			TArray<int32> deletedFaceIDs = { containedFaceID };
-			GetDeltaForDeleteObjects(deletedFaceIDs, deleteDelta, true);
-			OutDeltas.Add(deleteDelta);
+			GetDeltaForDeleteObjects(deletedFaceIDs, OutDeltas, NextID, true, false);
 
 			return true;
 		}
@@ -1679,8 +1677,62 @@ namespace Modumate
 		return true;
 	}
 
-	bool FGraph3D::GetDeltaForDeleteObjects(const TArray<int32>& ObjectIDsToDelete, FGraph3DDelta& OutDelta, bool bGatherEdgesFromFaces)
+	bool FGraph3D::GetDeltaForDeleteObjects(const TArray<int32>& ObjectIDsToDelete, TArray<FGraph3DDelta>& OutDeltas, int32& NextID, bool bGatherEdgesFromFaces, bool bAttemptJoin)
 	{
+		// If we are deleting objects that split graph objects that can be joined, then join them rather than deleting the adjacent objects.
+		// TODO: make this logic more sophisticated: each edge and vertex that is being deleted could potentially cause a join,
+		// but for now it's easier to have binary logic where joining behavior only happens if that's all that should happen.
+		TSet<int32> objIDsToJoin;
+		EGraph3DObjectType joinType = EGraph3DObjectType::None;
+
+		if (bAttemptJoin)
+		{
+			for (int32 objIDToDelete : ObjectIDsToDelete)
+			{
+				auto* vertexToDelete = FindVertex(objIDToDelete);
+				auto* edgeToDelete = FindEdge(objIDToDelete);
+
+				if (vertexToDelete && ((joinType == EGraph3DObjectType::None) || (joinType == EGraph3DObjectType::Edge)) &&
+					(vertexToDelete->ConnectedEdgeIDs.Num() == 2))
+				{
+					auto* joinEdgeA = FindEdge(vertexToDelete->ConnectedEdgeIDs[0]);
+					auto* joinEdgeB = FindEdge(vertexToDelete->ConnectedEdgeIDs[1]);
+					if (joinEdgeA && joinEdgeB && FVector::Parallel(joinEdgeA->CachedDir, joinEdgeB->CachedDir))
+					{
+						objIDsToJoin.Add(joinEdgeA->ID);
+						objIDsToJoin.Add(joinEdgeB->ID);
+						joinType = EGraph3DObjectType::Edge;
+					}
+				}
+				else if (edgeToDelete && ((joinType == EGraph3DObjectType::None) || (joinType == EGraph3DObjectType::Face)) &&
+					(edgeToDelete->ConnectedFaces.Num() == 2))
+				{
+					auto& edgeFaceA = edgeToDelete->ConnectedFaces[0];
+					auto& edgeFaceB = edgeToDelete->ConnectedFaces[1];
+					if (FVector::Coincident(edgeFaceA.EdgeFaceDir, -edgeFaceB.EdgeFaceDir))
+					{
+						objIDsToJoin.Add(FMath::Abs(edgeFaceA.FaceID));
+						objIDsToJoin.Add(FMath::Abs(edgeFaceB.FaceID));
+						joinType = EGraph3DObjectType::Face;
+					}
+				}
+				else
+				{
+					joinType = EGraph3DObjectType::None;
+					break;
+				}
+			}
+		}
+
+		// If the objects to delete can join their neighbors, then only perform that operation.
+		if ((joinType != EGraph3DObjectType::None) && (objIDsToJoin.Num() == 2))
+		{
+			return GetDeltasForObjectJoin(OutDeltas, objIDsToJoin.Array(), NextID, joinType);
+		}
+
+		// Otherwise, proceed with a standard deletion of the desired objects (and potentially their neighbors)
+		FGraph3DDelta& deleteDelta = OutDeltas.AddDefaulted_GetRef();
+
 		TSet<int32> vertexIDsToDelete, edgeIDsToDelete, faceIDsToDelete;
 		TSet<int32> tempGroupMembers, groupIDsToAdd, groupIDsToRemove;
 
@@ -1698,7 +1750,7 @@ namespace Modumate
 					groupIDsToRemove.Add(objectIDToDelete);
 					for (int32 groupMember : tempGroupMembers)
 					{
-						OutDelta.GroupIDsUpdates.Add(groupMember, FGraph3DGroupIDsDelta(groupIDsToAdd, groupIDsToRemove));
+						deleteDelta.GroupIDsUpdates.Add(groupMember, FGraph3DGroupIDsDelta(groupIDsToAdd, groupIDsToRemove));
 					}
 				}
 				break;
@@ -1879,7 +1931,7 @@ namespace Modumate
 			}
 		}
 
-		return GetDeltaForDeleteObjects(allVerticesToDelete, allEdgesToDelete, allFacesToDelete, OutDelta);
+		return GetDeltaForDeleteObjects(allVerticesToDelete, allEdgesToDelete, allFacesToDelete, deleteDelta);
 	}
 
 	bool FGraph3D::GetDeltaForDeleteObjects(const TSet<const FGraph3DVertex *> &VerticesToDelete, const TSet<const FGraph3DEdge *> &EdgesToDelete, const TSet<const FGraph3DFace *> &FacesToDelete, FGraph3DDelta &OutDelta)

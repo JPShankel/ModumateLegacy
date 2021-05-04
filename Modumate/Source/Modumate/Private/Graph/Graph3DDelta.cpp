@@ -1,4 +1,7 @@
+// Copyright 2021 Modumate, Inc. All Rights Reserved.
+
 #include "Graph/Graph3DDelta.h"
+#include "Database/ModumateObjectEnums.h"
 #include "DocumentManagement/ModumateDocument.h"
 
 
@@ -243,4 +246,20 @@ bool FGraph3DDelta::ApplyTo(UModumateDocument* doc, UWorld* world) const
 {
 	doc->ApplyGraph3DDelta(*this, world);
 	return true;
+}
+
+void FGraph3DDelta::GetAffectedObjects(TArray<TPair<int32, EMOIDeltaType>>& OutAffectedObjects) const
+{
+	Super::GetAffectedObjects(OutAffectedObjects);
+
+	AddAffectedIDs(VertexMovements, EMOIDeltaType::Mutate, OutAffectedObjects);
+	AddAffectedIDs(VertexAdditions, EMOIDeltaType::Create, OutAffectedObjects);
+	AddAffectedIDs(VertexDeletions, EMOIDeltaType::Destroy, OutAffectedObjects);
+	AddAffectedIDs(EdgeAdditions, EMOIDeltaType::Create, OutAffectedObjects);
+	AddAffectedIDs(EdgeDeletions, EMOIDeltaType::Destroy, OutAffectedObjects);
+	AddAffectedIDs(FaceAdditions, EMOIDeltaType::Create, OutAffectedObjects);
+	AddAffectedIDs(FaceDeletions, EMOIDeltaType::Destroy, OutAffectedObjects);
+	AddAffectedIDs(FaceContainmentUpdates, EMOIDeltaType::Mutate, OutAffectedObjects);
+	AddAffectedIDs(FaceVertexIDUpdates, EMOIDeltaType::Mutate, OutAffectedObjects);
+	AddAffectedIDs(GroupIDsUpdates, EMOIDeltaType::Mutate, OutAffectedObjects);
 }

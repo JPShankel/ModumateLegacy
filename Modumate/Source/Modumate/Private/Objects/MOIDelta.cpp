@@ -91,3 +91,13 @@ FStructDataWrapper FMOIDelta::SerializeStruct()
 
 	return FStructDataWrapper(StaticStruct(), this, true);
 }
+
+void FMOIDelta::GetAffectedObjects(TArray<TPair<int32, EMOIDeltaType>>& OutAffectedObjects) const
+{
+	Super::GetAffectedObjects(OutAffectedObjects);
+
+	for (const FMOIDeltaState& statePair : States)
+	{
+		OutAffectedObjects.Add(TPair<int32, EMOIDeltaType>(statePair.OldState.ID, statePair.DeltaType));
+	}
+}
