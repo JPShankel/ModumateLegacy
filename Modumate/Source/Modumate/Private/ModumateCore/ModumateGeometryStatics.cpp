@@ -252,7 +252,7 @@ bool UModumateGeometryStatics::FindPointFurthestFromPolyEdge(const TArray<FVecto
 }
 
 bool UModumateGeometryStatics::TriangulateVerticesGTE(const TArray<FVector2D>& Vertices, const TArray<FPolyHole2D>& Holes,
-	TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid)
+	TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid, TArray<FVector2D>* OutOptionalCDTVertices, FDynamicGraph2<float>* OptionalGraphPoints)
 {
 	OutTriangles.Reset();
 	if (OutCombinedVertices)
@@ -293,6 +293,11 @@ bool UModumateGeometryStatics::TriangulateVerticesGTE(const TArray<FVector2D>& V
 	TConstrainedDelaunay2<float> cdt;
 	cdt.bOutputCCW = true;
 	cdt.Add(polygon);
+	if (OptionalGraphPoints)
+	{
+		cdt.bOutputCCW = false; // TODO: No idea why. Maybe is the order of the gridpoint added
+		cdt.Add(*OptionalGraphPoints);
+	}
 	if (!cdt.Triangulate())
 	{
 		return false;
@@ -303,6 +308,15 @@ bool UModumateGeometryStatics::TriangulateVerticesGTE(const TArray<FVector2D>& V
 		OutTriangles.Add(triangle.A);
 		OutTriangles.Add(triangle.B);
 		OutTriangles.Add(triangle.C);
+	}
+
+	if (OutOptionalCDTVertices)
+	{
+		OutOptionalCDTVertices->Reset();
+		for (auto& curVert : cdt.Vertices)
+		{
+			OutOptionalCDTVertices->Add(FVector2D(curVert.X, curVert.Y));
+		}
 	}
 
 	return true;

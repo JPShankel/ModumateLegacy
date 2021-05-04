@@ -10,6 +10,7 @@
 #include "SegmentTypes.h"
 #include "VectorTypes.h"
 #include "VectorUtil.h"
+#include "Curve/DynamicGraph2.h"
 
 #include "ModumateGeometryStatics.generated.h"
 
@@ -103,10 +104,12 @@ public:
 	 * @param[out] OutTriangles: the triplets of indices of vertices that represent the triangulation of the input polygon
 	 * @param[out, optional] OutCombinedVertices: an optional convenience list that combines Vertices and the points in Holes together, as referenced by the indices in OutTriangles
 	 * @param[in, optional] bCheckValid: whether to perform validity and intersection checks on the input polygon and holes
+	 * @param[out, optional] OutOptionalCDTVertices: Vertices calculated by TConstrainedDelaunay2.
+	 * @param[in, optional] OptionalGraphPoints: Additional vertices that are neither perimeter nor hole vertices.
 	 * @result: whether we could triangulate the polygon at all; fails on invalid input polygon/holes.
 	 */
 	static bool TriangulateVerticesGTE(const TArray<FVector2D>& Vertices, const TArray<FPolyHole2D>& Holes,
-		TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid = true);
+		TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid = true, TArray<FVector2D>* OutOptionalCDTVertices = nullptr, FDynamicGraph2<float>* OptionalGraphPoints = nullptr);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool SegmentIntersection2D(const FVector2D& SegmentStartA, const FVector2D& SegmentEndA, const FVector2D& SegmentStartB, const FVector2D& SegmentEndB, FVector2D& OutIntersectionPoint, bool& bOutOverlapping, float Tolerance = RAY_INTERSECT_TOLERANCE);

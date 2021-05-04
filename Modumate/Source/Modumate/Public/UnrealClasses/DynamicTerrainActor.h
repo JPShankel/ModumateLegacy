@@ -58,4 +58,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateVertexColorByLocation(const FVector& Location, const FLinearColor& NewColor, float Radius, float Alpha);
+
+
+
+	UFUNCTION(BlueprintCallable)
+	void TestSetupTerrainGeometryGTE(const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FVector2D>& HolePoints, bool bCreateCollision = true);
+
 };

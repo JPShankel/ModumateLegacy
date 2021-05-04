@@ -3,6 +3,8 @@
 #include "UnrealClasses/DynamicTerrainActor.h"
 #include "IntpThinPlateSpline2.h"
 #include "ConstrainedDelaunay2.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "KismetProceduralMeshLibrary.h"
 
 // To use SimpleDynamicMeshComponent:
 // Add "ModelingComponents" and "DynamicMesh" to Build.cs
@@ -170,11 +172,13 @@ void ADynamicTerrainActor::UpdateTerrainGeometryFromPoints(const TArray<FVector>
 		return;
 	}
 
-	// Setup procedural mesh
+	// Update vertices
 	for (int32 i = 0; i < Vertices2D.Num(); i++)
 	{
 		Vertices.Add(FVector(Vertices2D[i].X, Vertices2D[i].Y, zOffsets[i]));
 	}
+	// Uncomment below to update normals and tangents (expensive)
+	//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UV0, Normals, Tangents);
 
 	Mesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, UV0, VertexColors, Tangents);
 }
@@ -192,4 +196,60 @@ void ADynamicTerrainActor::UpdateVertexColorByLocation(const FVector& Location, 
 	}
 
 	Mesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, UV0, VertexColors, Tangents);
+}
+
+void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FVector2D>& HolePoints, bool bCreateCollision /*= true*/)
+{
+	Vertices.Empty();
+	Vertices2D.Empty();
+	Triangles.Empty();
+	UV0.Empty();
+	Normals.Empty();
+	VertexColors.Empty();
+	Tangents.Empty();
+
+	TArray<FPolyHole2D> inHoles = { FPolyHole2D(HolePoints) };
+	FBox2D box2D(PerimeterPoints);
+
+	// GTE
+	int32 numX = (box2D.Max.X - box2D.Min.X) / VertSize;
+	int32 numY = (box2D.Max.Y - box2D.Min.Y) / VertSize;
+	FDynamicGraph2<float> inGridPoints;
+	for (int32 xId = 0; xId < numX; xId++)
+	{
+		for (int32 yId = 0; yId < numY; yId++)
+		{
+			float xV = (xId * VertSize) + box2D.Min.X;
+			float yV = (yId * VertSize) + box2D.Min.Y;
+			inGridPoints.AppendVertex(FVector2f(xV, yV));
+		}
+	}
+
+	TArray<FVector2D> gteCombinedVertices;
+	if (!UModumateGeometryStatics::TriangulateVerticesGTE(PerimeterPoints, inHoles, Triangles, &gteCombinedVertices, true, &Vertices2D, &inGridPoints))
+	{
+		return;
+	}
+
+	// tps
+	FThinPlateSpline2 tps;
+	TArray<float> zOffsets;
+	if (!tps.Calculate(HeightPoints, Vertices2D, 0, zOffsets))
+	{
+		return;
+	}
+
+	// Setup procedural mesh
+	for (int32 i = 0; i < Vertices2D.Num(); i++)
+	{
+		Vertices.Add(FVector(Vertices2D[i].X, Vertices2D[i].Y, zOffsets[i]));
+		UV0.Add(FVector2D(Vertices2D[i].X, Vertices2D[i].Y) / UVSize);
+		VertexColors.Add(FLinearColor::Black);
+	}
+	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UV0, Normals, Tangents);
+
+	Mesh->CreateMeshSection_LinearColor(0, Vertices, Triangles, Normals, UV0, VertexColors, Tangents, bCreateCollision);
+	Mesh->SetMaterial(0, TerrainMaterial);
+
+	return;
 }
