@@ -18,7 +18,7 @@ class MODUMATE_API UGraph2DTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UGraph2DTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UGraph2DTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_GRAPH2D; }
 	virtual bool Activate() override;

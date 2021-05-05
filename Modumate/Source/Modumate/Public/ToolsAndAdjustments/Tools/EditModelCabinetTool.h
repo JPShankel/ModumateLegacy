@@ -14,7 +14,7 @@ class MODUMATE_API UCabinetTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UCabinetTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UCabinetTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_CABINET; }
 	virtual bool Activate() override;

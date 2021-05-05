@@ -28,7 +28,7 @@ protected:
 	EMouseMode OriginalMouseMode;
 
 public:
-	ULineTool(const FObjectInitializer& ObjectInitializer);
+	ULineTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_LINE; }
 	virtual void Initialize() override;

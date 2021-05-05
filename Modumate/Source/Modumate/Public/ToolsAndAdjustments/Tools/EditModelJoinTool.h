@@ -17,7 +17,7 @@ class MODUMATE_API UJoinTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UJoinTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UJoinTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_JOIN; }
 	virtual bool Activate() override;

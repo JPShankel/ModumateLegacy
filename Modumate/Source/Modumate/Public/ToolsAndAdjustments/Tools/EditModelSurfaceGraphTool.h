@@ -15,7 +15,7 @@ class MODUMATE_API USurfaceGraphTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	USurfaceGraphTool(const FObjectInitializer& ObjectInitializer);
+	USurfaceGraphTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_SURFACEGRAPH; }
 	virtual bool Activate() override;

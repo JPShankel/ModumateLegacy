@@ -21,7 +21,7 @@ class MODUMATE_API AAdjustmentHandleActor : public AActor
 
 public:
 	// Sets default values for this actor's properties
-	AAdjustmentHandleActor(const FObjectInitializer &ObjectInitializer);
+	AAdjustmentHandleActor();
 
 protected:
 	//~ Begin AActor Interface

@@ -8,8 +8,8 @@
 
 #include "DocumentManagement/ModumateCommands.h"
 
-UDrawingTool::UDrawingTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UDrawingTool::UDrawingTool()
+	: Super()
 {
 	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
 	GameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;

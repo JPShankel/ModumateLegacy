@@ -12,7 +12,7 @@ class MODUMATE_API AAdjustBackgroundImageExtentsHandle : public AAdjustCutPlaneE
 	GENERATED_BODY()
 
 public:
-	explicit AAdjustBackgroundImageExtentsHandle(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	explicit AAdjustBackgroundImageExtentsHandle();
 
 	virtual bool BeginUse() override;
 

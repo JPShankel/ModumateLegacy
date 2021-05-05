@@ -18,8 +18,8 @@
 
 using namespace Modumate;
 
-URectangleTool::URectangleTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+URectangleTool::URectangleTool()
+	: Super()
 	, State(Neutral)
 	, bPendingPlaneValid(false)
 	, bExtrudingPlaneFromEdge(false)

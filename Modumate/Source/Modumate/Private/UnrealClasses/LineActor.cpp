@@ -13,8 +13,8 @@
 #include "UnrealClasses/EditModelPlayerState.h"
 
 // Sets default values
-ALineActor::ALineActor(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+ALineActor::ALineActor()
+	: Super()
 	, Color(FColor::Black)
 	, Thickness(1.0f)
 {

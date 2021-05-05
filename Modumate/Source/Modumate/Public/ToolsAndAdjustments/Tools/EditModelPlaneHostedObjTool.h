@@ -19,7 +19,7 @@ class MODUMATE_API UPlaneHostedObjTool : public URectangleTool
 
 public:
 
-	UPlaneHostedObjTool(const FObjectInitializer& ObjectInitializer);
+	UPlaneHostedObjTool();
 
 	virtual bool Activate() override;
 	virtual bool HandleInputNumber(double n) override;
@@ -58,7 +58,7 @@ class MODUMATE_API UWallTool : public UPlaneHostedObjTool
 	GENERATED_BODY()
 
 public:
-	UWallTool(const FObjectInitializer& ObjectInitializer);
+	UWallTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_WALL; }
 };
@@ -69,7 +69,7 @@ class MODUMATE_API UFloorTool : public UPlaneHostedObjTool
 	GENERATED_BODY()
 
 public:
-	UFloorTool(const FObjectInitializer& ObjectInitializer);
+	UFloorTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_FLOOR; }
 };
@@ -80,7 +80,7 @@ class MODUMATE_API URoofFaceTool : public UPlaneHostedObjTool
 	GENERATED_BODY()
 
 public:
-	URoofFaceTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	URoofFaceTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_ROOF_FACE; }
 
@@ -92,7 +92,7 @@ class MODUMATE_API UCeilingTool : public UPlaneHostedObjTool
 	GENERATED_BODY()
 
 public:
-	UCeilingTool(const FObjectInitializer& ObjectInitializer);
+	UCeilingTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_CEILING; }
 };
@@ -103,7 +103,7 @@ class MODUMATE_API UCountertopTool : public UPlaneHostedObjTool
 	GENERATED_BODY()
 
 public:
-	UCountertopTool(const FObjectInitializer& ObjectInitializer);
+	UCountertopTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_COUNTERTOP; }
 };
@@ -114,7 +114,7 @@ class MODUMATE_API UPanelTool : public UPlaneHostedObjTool
 	GENERATED_BODY()
 
 public:
-	UPanelTool(const FObjectInitializer& ObjectInitializer);
+	UPanelTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_PANEL; }
 };

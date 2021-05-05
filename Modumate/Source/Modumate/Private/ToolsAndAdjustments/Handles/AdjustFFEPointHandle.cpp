@@ -10,8 +10,8 @@
 
 using namespace Modumate;
 
-AAdjustFFEPointHandle::AAdjustFFEPointHandle(const FObjectInitializer &ObjectInitializer)
-	: Super(ObjectInitializer)
+AAdjustFFEPointHandle::AAdjustFFEPointHandle()
+	: Super()
 	, AssemblyNormal(FVector::UpVector)
 	, AssemblyTangent(FVector::RightVector)
 	, LocalHandlePos(ForceInitToZero)

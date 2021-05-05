@@ -16,8 +16,8 @@
 
 using namespace Modumate;
 
-UFinishTool::UFinishTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UFinishTool::UFinishTool()
+	: Super()
 { }
 
 bool UFinishTool::Activate()

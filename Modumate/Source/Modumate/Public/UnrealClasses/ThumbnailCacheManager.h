@@ -12,7 +12,7 @@
 UCLASS()
 class MODUMATE_API UThumbnailCacheManager : public UObject
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
 	static const FString ThumbnailCacheDirName;

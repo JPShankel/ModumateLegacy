@@ -17,7 +17,7 @@ private:
 	AStaticMeshActor * Cursor;
 	ACompoundMeshActor* CursorCompoundMesh;
 public:
-	UFFETool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UFFETool();
 
 	FBIMAssemblySpec CurrentFFEAssembly;
 

@@ -14,8 +14,8 @@
 
 using namespace Modumate;
 
-USelectTool::USelectTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+USelectTool::USelectTool()
+	: Super()
 	, InitialClickedObject(nullptr)
 	, InitialClickLocation(ForceInitToZero)
 	, Dragging(false)

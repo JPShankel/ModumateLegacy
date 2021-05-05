@@ -22,8 +22,8 @@
 
 using namespace Modumate;
 
-UEditModelInputHandler::UEditModelInputHandler(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UEditModelInputHandler::UEditModelInputHandler()
+	: Super()
 	, SequenceResetTime(1.0f)
 {
 }

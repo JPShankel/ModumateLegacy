@@ -12,7 +12,7 @@ class MODUMATE_API AAdjustCutPlaneExtentsHandle : public AAdjustmentHandleActor
 	GENERATED_BODY()
 
 public:
-	AAdjustCutPlaneExtentsHandle(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	AAdjustCutPlaneExtentsHandle();
 
 	virtual bool BeginUse() override;
 	virtual bool UpdateUse() override;

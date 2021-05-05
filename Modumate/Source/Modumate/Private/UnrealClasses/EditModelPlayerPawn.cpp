@@ -9,8 +9,8 @@
 #include "Database/ModumateObjectEnums.h"
 
 // Sets default values
-AEditModelPlayerPawn::AEditModelPlayerPawn(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+AEditModelPlayerPawn::AEditModelPlayerPawn()
+	: Super()
 	, EMPlayerController(nullptr)
 	, bHaveEverBeenPossessed(false)
 {

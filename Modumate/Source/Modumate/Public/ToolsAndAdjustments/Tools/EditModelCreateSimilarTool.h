@@ -17,7 +17,7 @@ class MODUMATE_API UCreateSimilarTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UCreateSimilarTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UCreateSimilarTool();
 
 public:
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_CREATESIMILAR; }

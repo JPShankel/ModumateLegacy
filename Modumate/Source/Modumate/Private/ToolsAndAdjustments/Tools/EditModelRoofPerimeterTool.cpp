@@ -12,8 +12,8 @@
 
 using namespace Modumate;
 
-URoofPerimeterTool::URoofPerimeterTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+URoofPerimeterTool::URoofPerimeterTool()
+	: Super()
 {
 	SelectedGraph = MakeShared<FGraph2D>();
 }

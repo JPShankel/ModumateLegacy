@@ -19,7 +19,7 @@ class MODUMATE_API UPortalToolBase : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UPortalToolBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UPortalToolBase();
 
 	virtual bool Activate() override;
 	virtual bool Deactivate() override;
@@ -71,7 +71,7 @@ class MODUMATE_API UDoorTool : public UPortalToolBase
 	GENERATED_BODY()
 
 public:
-	UDoorTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UDoorTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_DOOR; }
 };
@@ -82,7 +82,7 @@ class MODUMATE_API UWindowTool : public UPortalToolBase
 	GENERATED_BODY()
 
 public:
-	UWindowTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UWindowTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_WINDOW; }
 };

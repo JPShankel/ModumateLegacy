@@ -12,8 +12,8 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/LineActor.h"
 
-ULineTool::ULineTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+ULineTool::ULineTool()
+	: Super()
 	, State(Neutral)
 {
 	UWorld *world = Controller ? Controller->GetWorld() : nullptr;

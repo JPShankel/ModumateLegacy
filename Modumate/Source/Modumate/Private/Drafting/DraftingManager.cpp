@@ -10,11 +10,6 @@
 const FString UDraftingManager::CutPlaneDirName(TEXT("CutPlaneRenders"));
 const FString UDraftingManager::CutPlaneImageExt(TEXT(".png"));
 
-UDraftingManager::UDraftingManager(const FObjectInitializer &ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-}
-
 void UDraftingManager::Init()
 {
 	// it is preferable for this to happen on shutdown, but check here as well just in case

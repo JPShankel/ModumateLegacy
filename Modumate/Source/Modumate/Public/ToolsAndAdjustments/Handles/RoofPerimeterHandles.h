@@ -52,7 +52,7 @@ class MODUMATE_API AEditRoofEdgeHandle : public AAdjustmentHandleActor
 	GENERATED_BODY()
 
 public:
-	AEditRoofEdgeHandle(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	AEditRoofEdgeHandle();
 
 	virtual bool BeginUse() override;
 	virtual bool UpdateUse() override;

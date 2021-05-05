@@ -13,8 +13,8 @@
 
 using namespace Modumate;
 
-UCutPlaneTool::UCutPlaneTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UCutPlaneTool::UCutPlaneTool()
+	: Super()
 {
 	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
 	GameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;

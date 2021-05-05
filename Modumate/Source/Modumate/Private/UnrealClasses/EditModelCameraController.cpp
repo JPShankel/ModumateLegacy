@@ -19,8 +19,8 @@
 #include "UnrealClasses/ModumateViewportClient.h"
 #include "UnrealClient.h"
 
-UEditModelCameraController::UEditModelCameraController(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UEditModelCameraController::UEditModelCameraController()
+	: Super()
 	, bUpdateCameraTransform(true)
 	, RotateSpeed(5.0f)
 	, bUseSmoothZoom(true)

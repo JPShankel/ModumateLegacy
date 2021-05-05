@@ -64,8 +64,8 @@ void FEditModelInputLog::Reset(float CurTimeSeconds)
 	RecordEndTime = RecordStartTime;
 }
 
-UEditModelInputAutomation::UEditModelInputAutomation(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UEditModelInputAutomation::UEditModelInputAutomation()
+	: Super()
 	, CurState(EInputAutomationState::None)
 	, CurAutomationTime(0.0f)
 	, CurAutomationFrame(0)

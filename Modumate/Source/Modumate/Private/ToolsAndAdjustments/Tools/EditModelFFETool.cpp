@@ -15,8 +15,8 @@
 
 using namespace Modumate;
 
-UFFETool::UFFETool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UFFETool::UFFETool()
+	: Super()
 	, Cursor(nullptr)
 {}
 

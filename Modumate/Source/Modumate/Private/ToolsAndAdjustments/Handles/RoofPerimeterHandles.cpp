@@ -158,8 +158,8 @@ bool ARetractRoofFacesHandle::GetHandleWidgetStyle(const USlateWidgetStyleAsset*
 }
 
 
-AEditRoofEdgeHandle::AEditRoofEdgeHandle(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+AEditRoofEdgeHandle::AEditRoofEdgeHandle()
+	: Super()
 	, TargetEdgeID(MOD_ID_NONE)
 {
 

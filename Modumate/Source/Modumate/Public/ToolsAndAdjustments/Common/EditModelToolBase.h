@@ -22,7 +22,7 @@ class MODUMATE_API UEditModelToolBase : public UObject, public IEditModelToolInt
 
 public:
 
-	UEditModelToolBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UEditModelToolBase();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_NONE; }
 	virtual void Initialize() override {};

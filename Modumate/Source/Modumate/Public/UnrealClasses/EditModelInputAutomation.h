@@ -202,7 +202,7 @@ class MODUMATE_API UEditModelInputAutomation : public UActorComponent, public IC
 	GENERATED_BODY()
 
 public:
-	UEditModelInputAutomation(const FObjectInitializer& ObjectInitializer);
+	UEditModelInputAutomation();
 
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;

@@ -32,7 +32,7 @@ class MODUMATE_API UEditModelCameraController : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	UEditModelCameraController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UEditModelCameraController();
 
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;

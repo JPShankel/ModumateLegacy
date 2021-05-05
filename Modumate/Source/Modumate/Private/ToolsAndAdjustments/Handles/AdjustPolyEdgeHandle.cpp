@@ -17,8 +17,8 @@
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
-AAdjustPolyEdgeHandle::AAdjustPolyEdgeHandle(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+AAdjustPolyEdgeHandle::AAdjustPolyEdgeHandle()
+	: Super()
 	, PolyPlane(ForceInitToZero)
 {
 }

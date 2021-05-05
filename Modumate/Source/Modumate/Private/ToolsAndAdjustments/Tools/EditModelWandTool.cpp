@@ -10,8 +10,8 @@
 
 using namespace Modumate;
 
-UWandTool::UWandTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UWandTool::UWandTool()
+	: Super()
 {}
 
 bool UWandTool::Activate()

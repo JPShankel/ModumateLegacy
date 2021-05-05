@@ -12,7 +12,7 @@ class MODUMATE_API AAdjustPolyEdgeHandle : public AAdjustmentHandleActor
 	GENERATED_BODY()
 
 public:
-	AAdjustPolyEdgeHandle(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	AAdjustPolyEdgeHandle();
 
 	virtual bool BeginUse() override;
 	virtual bool UpdateUse() override;

@@ -53,8 +53,8 @@ using namespace Modumate;
 
 const FName UModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
 
-UModumateDocument::UModumateDocument(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UModumateDocument::UModumateDocument()
+	: Super()
 	, NextID(1)
 	, PrePreviewNextID(1)
 	, ReservingObjectID(MOD_ID_NONE)

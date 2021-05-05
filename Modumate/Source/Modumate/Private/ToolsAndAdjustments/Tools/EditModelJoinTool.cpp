@@ -10,8 +10,8 @@
 
 using namespace Modumate;
 
-UJoinTool::UJoinTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UJoinTool::UJoinTool()
+	: Super()
 {
 
 }

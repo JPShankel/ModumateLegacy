@@ -19,8 +19,8 @@
 
 using namespace Modumate;
 
-UPortalToolBase::UPortalToolBase(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UPortalToolBase::UPortalToolBase()
+	: Super()
 	, CurTargetPlaneID(MOD_ID_NONE)
 	, bUseBottomOffset(true)
 	, WorldPos(FVector::ZeroVector)
@@ -328,16 +328,16 @@ bool UPortalToolBase::CalculateNativeSize()
 }
 
 
-UDoorTool::UDoorTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UDoorTool::UDoorTool()
+	: Super()
 {
 	InstanceStampSize = FVector(91.44f, 0.0f, 203.2f);
 	InstanceBottomOffset = 0.0f;
 }
 
 
-UWindowTool::UWindowTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UWindowTool::UWindowTool()
+	: Super()
 {
 	InstanceStampSize = FVector(50.f, 0.0f, 100.f);
 	InstanceBottomOffset = 91.44f;

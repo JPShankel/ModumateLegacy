@@ -3,8 +3,8 @@
 #include "ToolsAndAdjustments/Tools/EditModelRailTool.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 
-URailTool::URailTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+URailTool::URailTool()
+	: Super()
 {
 	ObjectType = EObjectType::OTRailSegment;
 }

@@ -12,7 +12,7 @@ class MODUMATE_API UTrimTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UTrimTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UTrimTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_TRIM; }
 	virtual bool Activate() override;

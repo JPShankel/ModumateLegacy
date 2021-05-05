@@ -13,7 +13,7 @@ class MODUMATE_API UWandTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UWandTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UWandTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_WAND; }
 	virtual bool Activate() override;

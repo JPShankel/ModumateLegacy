@@ -18,7 +18,7 @@ private:
 	bool bCtrlIsPressed = false;
 
 public:
-	UMoveObjectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UMoveObjectTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_MOVEOBJECT; }
 	virtual bool Activate() override;

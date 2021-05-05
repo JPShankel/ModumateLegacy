@@ -35,7 +35,7 @@ private:
 	bool bClockwise = true;
 
 public:
-	URotateObjectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	URotateObjectTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_ROTATE; }
 	virtual bool Activate() override;

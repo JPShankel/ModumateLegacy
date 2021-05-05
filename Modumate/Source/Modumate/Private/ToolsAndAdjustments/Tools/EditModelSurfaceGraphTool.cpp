@@ -18,8 +18,8 @@
 
 using namespace Modumate;
 
-USurfaceGraphTool::USurfaceGraphTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+USurfaceGraphTool::USurfaceGraphTool()
+	: Super()
 	, HitGraphHostMOI(nullptr)
 	, HitGraphMOI(nullptr)
 	, HitSurfaceGraph(nullptr)

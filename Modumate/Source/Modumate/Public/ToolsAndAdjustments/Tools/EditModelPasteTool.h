@@ -20,7 +20,7 @@ class MODUMATE_API UPasteTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UPasteTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UPasteTool();
 
 public:
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_PASTE; }

@@ -24,7 +24,7 @@ struct MODUMATE_API FTooltipData
 UCLASS(Blueprintable)
 class MODUMATE_API UTooltipManager : public UObject
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
 

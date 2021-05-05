@@ -40,7 +40,7 @@ protected:
 	virtual float GetDefaultPlaneHeight() const;
 
 public:
-	URectangleTool(const FObjectInitializer& ObjectInitializer);
+	URectangleTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_RECTANGLE; }
 	virtual bool Activate() override;

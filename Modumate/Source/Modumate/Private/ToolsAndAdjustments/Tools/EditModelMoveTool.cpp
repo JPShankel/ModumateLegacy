@@ -13,8 +13,8 @@
 
 using namespace Modumate;
 
-UMoveObjectTool::UMoveObjectTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UMoveObjectTool::UMoveObjectTool()
+	: Super()
 	, FSelectedObjectToolMixin(Controller)
 {}
 

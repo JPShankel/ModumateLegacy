@@ -16,8 +16,8 @@
 
 using namespace Modumate;
 
-UPlaneHostedObjTool::UPlaneHostedObjTool(const FObjectInitializer& ObjectInitializer)
-	: URectangleTool(ObjectInitializer)
+UPlaneHostedObjTool::UPlaneHostedObjTool()
+	: Super()
 	, bInverted(false)
 	, bRequireHoverMetaPlane(false)
 	, ObjectType(EObjectType::OTNone)
@@ -360,38 +360,38 @@ bool UPlaneHostedObjTool::GetAppliedInversionValue()
 }
 
 
-UWallTool::UWallTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UWallTool::UWallTool()
+	: Super()
 {
 	ObjectType = EObjectType::OTWallSegment;
 }
 
-UFloorTool::UFloorTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UFloorTool::UFloorTool()
+	: Super()
 {
 	ObjectType = EObjectType::OTFloorSegment;
 }
 
-URoofFaceTool::URoofFaceTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+URoofFaceTool::URoofFaceTool()
+	: Super()
 {
 	ObjectType = EObjectType::OTRoofFace;
 }
 
-UCeilingTool::UCeilingTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UCeilingTool::UCeilingTool()
+	: Super()
 {
 	ObjectType = EObjectType::OTCeiling;
 }
 
-UCountertopTool::UCountertopTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UCountertopTool::UCountertopTool()
+	: Super()
 {
 	ObjectType = EObjectType::OTCountertop;
 }
 
-UPanelTool::UPanelTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UPanelTool::UPanelTool()
+	: Super()
 {
 	ObjectType = EObjectType::OTSystemPanel;
 }

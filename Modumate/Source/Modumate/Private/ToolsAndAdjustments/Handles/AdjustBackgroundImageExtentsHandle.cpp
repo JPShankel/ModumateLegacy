@@ -9,8 +9,8 @@
 
 
 
-AAdjustBackgroundImageExtentsHandle::AAdjustBackgroundImageExtentsHandle(const FObjectInitializer& ObjectInitializer /*= FObjectInitializer::Get()*/)
-	: Super(ObjectInitializer)
+AAdjustBackgroundImageExtentsHandle::AAdjustBackgroundImageExtentsHandle()
+	: Super()
 { }
 
 bool AAdjustBackgroundImageExtentsHandle::BeginUse()

@@ -21,11 +21,6 @@
 const FString UThumbnailCacheManager::ThumbnailCacheDirName(TEXT("ThumbnailCache"));
 const FString UThumbnailCacheManager::ThumbnailImageExt(TEXT(".png"));
 
-UThumbnailCacheManager::UThumbnailCacheManager(const FObjectInitializer &ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-}
-
 void UThumbnailCacheManager::Init()
 {
 	if (!bDiskEnabled)

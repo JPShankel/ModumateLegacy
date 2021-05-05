@@ -23,7 +23,7 @@ class MODUMATE_API ALineActor : public AStaticMeshActor
 
 public:
 	// Sets default values for this actor's properties
-	ALineActor(const FObjectInitializer& ObjectInitializer);
+	ALineActor();
 
 	bool MakeGeometry();
 	bool UpdateTransform();

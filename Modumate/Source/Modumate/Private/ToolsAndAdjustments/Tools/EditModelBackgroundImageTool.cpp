@@ -10,8 +10,8 @@
 #include "Objects/BackgroundImage.h"
 
 
-UBackgroundImageTool::UBackgroundImageTool(const FObjectInitializer& ObjectInitializer /*= FObjectInitializer::Get()*/)
-	: Super(ObjectInitializer)
+UBackgroundImageTool::UBackgroundImageTool()
+	: Super()
 {
 	auto* world = GetWorld();
 	if (world)

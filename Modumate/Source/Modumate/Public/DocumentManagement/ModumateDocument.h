@@ -84,7 +84,7 @@ private:
 
 public:
 
-	UModumateDocument(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UModumateDocument();
 
 	// Default Value Library
 	float ElevationDelta;

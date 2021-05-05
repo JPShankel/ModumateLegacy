@@ -22,8 +22,8 @@
 /*
 * Tool Modes
 */
-UEditModelToolBase::UEditModelToolBase(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UEditModelToolBase::UEditModelToolBase()
+	: Super()
 	, InUse(false)
 	, Active(false)
 	, Controller(nullptr)

@@ -14,7 +14,7 @@ class MODUMATE_API AEditModelPlayerPawn : public ACharacter
 
 public:
 	// Sets default values for this pawn's properties
-	AEditModelPlayerPawn(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	AEditModelPlayerPawn();
 
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void UnPossessed() override;

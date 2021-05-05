@@ -12,7 +12,7 @@ class MODUMATE_API AAdjustFFEPointHandle : public AAdjustmentHandleActor
 	GENERATED_BODY()
 
 public:
-	AAdjustFFEPointHandle(const FObjectInitializer &ObjectInitializer = FObjectInitializer::Get());
+	AAdjustFFEPointHandle();
 
 	virtual bool BeginUse() override;
 	virtual bool UpdateUse() override;

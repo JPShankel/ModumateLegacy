@@ -17,7 +17,7 @@ class MODUMATE_API UScopeBoxTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UScopeBoxTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UScopeBoxTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_SCOPEBOX; }
 	virtual bool Activate() override;

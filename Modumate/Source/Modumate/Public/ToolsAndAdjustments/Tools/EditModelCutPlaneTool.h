@@ -16,7 +16,7 @@ class MODUMATE_API UCutPlaneTool : public UEditModelToolBase
 {
 	GENERATED_BODY()
 public:
-	UCutPlaneTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UCutPlaneTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_CUTPLANE; }
 	virtual bool Activate() override;

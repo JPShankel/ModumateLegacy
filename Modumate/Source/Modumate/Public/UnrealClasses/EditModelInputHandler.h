@@ -206,7 +206,7 @@ class MODUMATE_API UEditModelInputHandler : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	UEditModelInputHandler(const FObjectInitializer& ObjectInitializer);
+	UEditModelInputHandler();
 	virtual void BeginPlay() override;
 
 	void SetupBindings();

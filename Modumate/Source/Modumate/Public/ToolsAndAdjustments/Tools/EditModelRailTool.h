@@ -11,7 +11,7 @@ class MODUMATE_API URailTool : public UPlaneHostedObjTool
 	GENERATED_BODY()
 
 public:
-	URailTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	URailTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_RAIL; }
 

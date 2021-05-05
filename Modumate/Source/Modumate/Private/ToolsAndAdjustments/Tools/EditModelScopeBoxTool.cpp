@@ -11,8 +11,8 @@
 
 using namespace Modumate;
 
-UScopeBoxTool::UScopeBoxTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UScopeBoxTool::UScopeBoxTool()
+	: Super()
 {
 	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
 	GameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;

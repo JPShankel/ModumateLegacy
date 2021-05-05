@@ -10,8 +10,8 @@
 
 using namespace Modumate;
 
-UCopyTool::UCopyTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UCopyTool::UCopyTool()
+	: Super()
 {
 
 }

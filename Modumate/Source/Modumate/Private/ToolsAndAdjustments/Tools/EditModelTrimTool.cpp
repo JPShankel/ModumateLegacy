@@ -13,8 +13,8 @@
 
 using namespace Modumate;
 
-UTrimTool::UTrimTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UTrimTool::UTrimTool()
+	: Super()
 	, TargetEdgeID(MOD_ID_NONE)
 	, TargetEdgeStartPos(ForceInitToZero)
 	, TargetEdgeEndPos(ForceInitToZero)

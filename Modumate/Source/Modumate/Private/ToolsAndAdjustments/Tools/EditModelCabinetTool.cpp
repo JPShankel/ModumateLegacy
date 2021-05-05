@@ -18,8 +18,8 @@
 
 using namespace Modumate;
 
-UCabinetTool::UCabinetTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UCabinetTool::UCabinetTool()
+	: Super()
 	, TargetPolygonID(MOD_ID_NONE)
 	, BaseOrigin(ForceInitToZero)
 	, BaseNormal(ForceInitToZero)

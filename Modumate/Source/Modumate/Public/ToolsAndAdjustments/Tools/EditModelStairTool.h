@@ -21,7 +21,7 @@ class MODUMATE_API UStairTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UStairTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UStairTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_STAIR; }
 	virtual bool Activate() override;

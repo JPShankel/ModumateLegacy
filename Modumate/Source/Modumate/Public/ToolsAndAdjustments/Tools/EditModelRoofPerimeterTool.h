@@ -12,7 +12,7 @@ class MODUMATE_API URoofPerimeterTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	URoofPerimeterTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	URoofPerimeterTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_ROOF_PERIMETER; }
 	virtual bool Activate() override;

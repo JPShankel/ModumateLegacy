@@ -16,8 +16,8 @@
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
-AAdjustFFERotateHandle::AAdjustFFERotateHandle(const FObjectInitializer &ObjectInitializer)
-	: Super(ObjectInitializer)
+AAdjustFFERotateHandle::AAdjustFFERotateHandle()
+	: Super()
 	, AssemblyNormal(FVector::UpVector)
 	, AssemblyTangent(FVector::RightVector)
 { }

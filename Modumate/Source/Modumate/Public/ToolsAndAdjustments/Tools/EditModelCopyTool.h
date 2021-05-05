@@ -17,7 +17,7 @@ class MODUMATE_API UCopyTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UCopyTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UCopyTool();
 
 public:
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_COPY; }

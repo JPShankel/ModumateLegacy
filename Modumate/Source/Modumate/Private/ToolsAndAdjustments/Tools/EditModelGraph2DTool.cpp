@@ -11,8 +11,8 @@
 
 using namespace Modumate;
 
-UGraph2DTool::UGraph2DTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UGraph2DTool::UGraph2DTool()
+	: Super()
 {
 	SelectedGraph = MakeShared<FGraph2D>();
 }

@@ -13,8 +13,8 @@
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
-AAdjustCutPlaneExtentsHandle::AAdjustCutPlaneExtentsHandle(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+AAdjustCutPlaneExtentsHandle::AAdjustCutPlaneExtentsHandle()
+	: Super()
 {
 
 }

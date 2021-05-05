@@ -15,7 +15,7 @@ class MODUMATE_API USelectTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	USelectTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	USelectTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_SELECT; }
 	virtual bool Activate() override;

@@ -20,8 +20,8 @@
 
 using namespace Modumate;
 
-UStairTool::UStairTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UStairTool::UStairTool()
+	: Super()
 	, CurrentState(Starting)
 	, bWasShowingSnapCursor(false)
 	, OriginalMouseMode(EMouseMode::Location)

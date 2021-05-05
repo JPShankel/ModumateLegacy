@@ -11,8 +11,8 @@
 
 using namespace Modumate;
 
-UPasteTool::UPasteTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UPasteTool::UPasteTool()
+	: Super()
 {
 
 }

@@ -13,7 +13,7 @@ class MODUMATE_API UFinishTool : public USurfaceGraphTool
 	GENERATED_BODY()
 
 public:
-	UFinishTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UFinishTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_FINISH; }
 	virtual bool Activate() override;

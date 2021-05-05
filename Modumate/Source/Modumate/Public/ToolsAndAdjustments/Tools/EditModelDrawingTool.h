@@ -11,7 +11,7 @@ class MODUMATE_API UDrawingTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UDrawingTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UDrawingTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_DRAWING; }
 	virtual bool Activate() override;

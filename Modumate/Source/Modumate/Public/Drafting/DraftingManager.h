@@ -19,7 +19,7 @@ typedef TPair<int32, int32> SceneCaptureID;
 UCLASS()
 class MODUMATE_API UDraftingManager : public UObject
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
 	static const FString CutPlaneDirName;

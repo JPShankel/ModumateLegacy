@@ -14,7 +14,7 @@ class MODUMATE_API UStructureLineTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UStructureLineTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UStructureLineTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_STRUCTURELINE; }
 	virtual bool Activate() override;

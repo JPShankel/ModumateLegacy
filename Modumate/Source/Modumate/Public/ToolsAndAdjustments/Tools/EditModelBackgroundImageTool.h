@@ -15,7 +15,7 @@ class MODUMATE_API UBackgroundImageTool: public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	explicit UBackgroundImageTool(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	explicit UBackgroundImageTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_BACKGROUNDIMAGE; }
 

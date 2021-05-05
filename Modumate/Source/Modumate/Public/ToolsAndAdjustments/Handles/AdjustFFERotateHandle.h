@@ -14,7 +14,7 @@ class MODUMATE_API AAdjustFFERotateHandle : public AAdjustmentHandleActor
 	GENERATED_BODY()
 
 public:
-	AAdjustFFERotateHandle(const FObjectInitializer &ObjectInitializer = FObjectInitializer::Get());
+	AAdjustFFERotateHandle();
 
 	virtual bool BeginUse() override;
 	virtual bool UpdateUse() override;

@@ -19,8 +19,8 @@
 
 using namespace Modumate;
 
-UStructureLineTool::UStructureLineTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UStructureLineTool::UStructureLineTool()
+	: Super()
 	, bWasShowingSnapCursor(false)
 	, OriginalMouseMode(EMouseMode::Location)
 	, bWantedVerticalSnap(false)

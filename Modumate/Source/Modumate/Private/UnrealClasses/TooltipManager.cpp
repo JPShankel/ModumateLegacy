@@ -13,11 +13,6 @@
 
 
 
-UTooltipManager::UTooltipManager(const FObjectInitializer &ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-}
-
 void UTooltipManager::Init()
 {
 	if (TooltipNonInputDataTable)

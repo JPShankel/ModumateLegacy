@@ -19,8 +19,8 @@
 
 using namespace Modumate;
 
-URotateObjectTool::URotateObjectTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+URotateObjectTool::URotateObjectTool()
+	: Super()
 	, FSelectedObjectToolMixin(Controller)
 	, AnchorPoint(ForceInitToZero)
 	, AngleAnchor(ForceInitToZero)

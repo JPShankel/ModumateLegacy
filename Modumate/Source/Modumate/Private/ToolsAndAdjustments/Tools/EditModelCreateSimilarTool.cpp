@@ -10,8 +10,8 @@
 
 using namespace Modumate;
 
-UCreateSimilarTool::UCreateSimilarTool(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UCreateSimilarTool::UCreateSimilarTool()
+	: Super()
 {
 
 }
