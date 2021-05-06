@@ -41,6 +41,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UProceduralMeshComponent* Mesh;
 
+	UPROPERTY()
+	class UHierarchicalInstancedStaticMeshComponent* GrassMesh;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 VertSize = 100;
 
@@ -49,6 +52,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMaterialInterface* TerrainMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* GrassStaticMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector GrassMeshOffset = FVector(0.f, 0.f, -10.f);
 
 	UFUNCTION(BlueprintCallable)
 	void SetupTerrainGeometry(const TArray<FVector>& PerimeterPoints, const TArray<FVector>& HeightPoints, bool bRecreateMesh, bool bCreateCollision = true);
@@ -64,4 +73,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void TestSetupTerrainGeometryGTE(const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FVector2D>& HolePoints, bool bCreateCollision = true);
 
+	void UpdateInstancedMeshes();
+	bool GetRandomPointsOnTriangleSurface(int32 Tri1, int32 Tri2, int32 Tri3, int32 NumOfOutPoints, TArray<FVector>& OutPoints);
 };

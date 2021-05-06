@@ -5,6 +5,7 @@
 #include "ConstrainedDelaunay2.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "KismetProceduralMeshLibrary.h"
+#include "Components/HierarchicalInstancedStaticMeshComponent.h"
 
 // To use SimpleDynamicMeshComponent:
 // Add "ModelingComponents" and "DynamicMesh" to Build.cs
@@ -21,6 +22,12 @@ ADynamicTerrainActor::ADynamicTerrainActor()
 	RootComponent = Mesh;
 	Mesh->bUseAsyncCooking = true;
 	Mesh->SetMobility(EComponentMobility::Movable);
+
+	GrassMesh = CreateDefaultSubobject<UHierarchicalInstancedStaticMeshComponent>(TEXT("GrassMesh"));
+	GrassMesh->AttachToComponent(Mesh, FAttachmentTransformRules::KeepRelativeTransform);
+	GrassMesh->SetMobility(EComponentMobility::Movable);
+	GrassMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GrassMesh->bUseAsOccluder = false;
 
 	// Uncomment to test SimpleDynamicMesh
 	//SimpleDynamicMesh = CreateDefaultSubobject<USimpleDynamicMeshComponent>(TEXT("GeneratedMesh"));
@@ -181,6 +188,7 @@ void ADynamicTerrainActor::UpdateTerrainGeometryFromPoints(const TArray<FVector>
 	//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UV0, Normals, Tangents);
 
 	Mesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, UV0, VertexColors, Tangents);
+	UpdateInstancedMeshes();
 }
 
 void ADynamicTerrainActor::UpdateVertexColorByLocation(const FVector& Location, const FLinearColor& NewColor, float Radius, float Alpha)
@@ -250,6 +258,47 @@ void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(const TArray<FVector2D>& 
 
 	Mesh->CreateMeshSection_LinearColor(0, Vertices, Triangles, Normals, UV0, VertexColors, Tangents, bCreateCollision);
 	Mesh->SetMaterial(0, TerrainMaterial);
+	GrassMesh->SetStaticMesh(GrassStaticMesh);
+
+	UpdateInstancedMeshes();
 
 	return;
+}
+
+void ADynamicTerrainActor::UpdateInstancedMeshes()
+{
+	GrassMesh->ClearInstances();
+
+	for (int32 i = 0; i < Triangles.Num(); i += 3)
+	{
+		TArray<FVector> randLocs;
+		if (GetRandomPointsOnTriangleSurface(Triangles[i], Triangles[i + 1], Triangles[i + 2], 5, randLocs))
+		{
+			for (FVector& curLoc : randLocs)
+			{
+				GrassMesh->AddInstanceWorldSpace(FTransform(
+					FRotator(0.f, FMath::FRand() * 360.f, 0.f),
+					curLoc + GrassMeshOffset,
+					FVector::OneVector
+				));
+			}
+		}
+	}
+}
+
+bool ADynamicTerrainActor::GetRandomPointsOnTriangleSurface(int32 TriA, int32 TriB, int32 TriC, int32 NumOfOutPoints, TArray<FVector>& OutPoints)
+{
+	if (!ensureAlways(Vertices.IsValidIndex(TriA) && Vertices.IsValidIndex(TriB) && Vertices.IsValidIndex(TriC)))
+	{
+		return false;
+	}
+
+	for (int32 i = 0; i < NumOfOutPoints; ++i)
+	{
+		FVector lerpAB = Vertices[TriA] + FMath::FRand() * (Vertices[TriB] - Vertices[TriA]);
+		FVector lerpABC = lerpAB + FMath::FRand() * (Vertices[TriC] - lerpAB);
+		OutPoints.Add(lerpABC);
+	}
+
+	return true;
 }
