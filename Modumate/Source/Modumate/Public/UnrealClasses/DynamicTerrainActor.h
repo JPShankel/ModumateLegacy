@@ -73,6 +73,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void TestSetupTerrainGeometryGTE(const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FVector2D>& HolePoints, bool bCreateCollision = true);
 
-	void UpdateInstancedMeshes();
+	void UpdateInstancedMeshes(bool bRecreateMesh);
 	bool GetRandomPointsOnTriangleSurface(int32 Tri1, int32 Tri2, int32 Tri3, int32 NumOfOutPoints, TArray<FVector>& OutPoints);
 };

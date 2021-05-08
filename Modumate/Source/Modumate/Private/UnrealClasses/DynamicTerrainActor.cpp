@@ -188,7 +188,7 @@ void ADynamicTerrainActor::UpdateTerrainGeometryFromPoints(const TArray<FVector>
 	//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UV0, Normals, Tangents);
 
 	Mesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, UV0, VertexColors, Tangents);
-	UpdateInstancedMeshes();
+	UpdateInstancedMeshes(false);
 }
 
 void ADynamicTerrainActor::UpdateVertexColorByLocation(const FVector& Location, const FLinearColor& NewColor, float Radius, float Alpha)
@@ -260,29 +260,44 @@ void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(const TArray<FVector2D>& 
 	Mesh->SetMaterial(0, TerrainMaterial);
 	GrassMesh->SetStaticMesh(GrassStaticMesh);
 
-	UpdateInstancedMeshes();
+	UpdateInstancedMeshes(true);
 
 	return;
 }
 
-void ADynamicTerrainActor::UpdateInstancedMeshes()
+void ADynamicTerrainActor::UpdateInstancedMeshes(bool bRecreateMesh)
 {
-	GrassMesh->ClearInstances();
+	if (bRecreateMesh)
+	{
+		GrassMesh->ClearInstances();
+	}
+
+	int32 numInstMeshes = 5;
+	TArray<FTransform> randTransforms;
 
 	for (int32 i = 0; i < Triangles.Num(); i += 3)
 	{
 		TArray<FVector> randLocs;
-		if (GetRandomPointsOnTriangleSurface(Triangles[i], Triangles[i + 1], Triangles[i + 2], 5, randLocs))
+		GetRandomPointsOnTriangleSurface(Triangles[i], Triangles[i + 1], Triangles[i + 2], numInstMeshes, randLocs);
+		for (FVector& curLoc : randLocs)
 		{
-			for (FVector& curLoc : randLocs)
-			{
-				GrassMesh->AddInstanceWorldSpace(FTransform(
-					FRotator(0.f, FMath::FRand() * 360.f, 0.f),
-					curLoc + GrassMeshOffset,
-					FVector::OneVector
-				));
-			}
+			randTransforms.Add(FTransform(
+				FRotator(0.f, FMath::FRand() * 360.f, 0.f),
+				curLoc + GrassMeshOffset,
+				FVector::OneVector));
 		}
+	}
+
+	if (bRecreateMesh)
+	{
+		for (FTransform& curTransform : randTransforms)
+		{
+			GrassMesh->AddInstanceWorldSpace(curTransform);
+		}
+	}
+	else
+	{
+		GrassMesh->BatchUpdateInstancesTransforms(0, randTransforms, true, false, true);
 	}
 }
 
