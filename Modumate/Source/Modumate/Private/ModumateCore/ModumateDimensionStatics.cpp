@@ -16,22 +16,26 @@ using namespace Modumate;
 
 #define LOCTEXT_NAMESPACE "ModumateDimensions"
 
-FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimension(const FString &dimStr)
+/*
+* TODO: metric strings still use explicit pattern matching
+* This is to be rolled in with the tokenized imperial parser below
+*/
+static FModumateFormattedDimension StringToFormattedDimensionMetric(const FString& dimStr)
 {
-	double sign = 1.0;
-
-	// Before we get into regex, determine the sign of the string (which can only appear at the beginning, otherwise it would be in subsequent regex)
-	FString trimmedDimStr = dimStr.TrimStartAndEnd();
+	FString trimmedDimStr = dimStr.TrimStartAndEnd().Replace(TEXT(","), TEXT(""));
 
 	FModumateFormattedDimension result;
 	result.Format = EDimensionFormat::Error;
 	result.FormattedString = trimmedDimStr;
 	result.Centimeters = 0;
 
+	double sign = 1.0;
+
 	if (trimmedDimStr.IsEmpty())
 	{
 		return result;
 	}
+
 	if (trimmedDimStr[0] == TEXT('-'))
 	{
 		sign = -1.0;
@@ -42,7 +46,8 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 		trimmedDimStr.RemoveAt(0);
 	}
 
-    std::wstring dimCStr(TCHAR_TO_WCHAR(*trimmedDimStr));
+	std::wstring dimCStr(TCHAR_TO_WCHAR(*trimmedDimStr));
+
 
 	//Combines multi-unit strings
 	static std::wstring multiUnitSeparator = L"[\\s-]+";
@@ -51,42 +56,8 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	static std::wstring integerString = L"[,\\d]+";
 	static std::wregex integerPattern(integerString);
 
-	//Imperial unit suffixes
-	static std::wstring feetSuffix = L"(ft|')";
-	static std::wstring inchesSuffix = L"(in|\")";
-
-	//Integer feet ie '9ft'
-	static std::wstring wholeFeetString = L"(" + integerString + L")" + feetSuffix;
-	static std::wregex wholeFeetPattern(wholeFeetString);
-
 	static std::wstring decimalString = L"[,\\.\\d*]+";
-
-	//Decimal inches ie 1in or 2.3" (can be integer)
-	static std::wstring wholeInchesString = L"(" + integerString + L")" + L"(in|\")";
-	static std::wregex inchesDecimal(L"(" + decimalString + L")" + inchesSuffix);
-
-	//Feet with a whole number of inches, ie '3ft 6in'
-	static std::wregex feetWholeInchesPattern(wholeFeetString + multiUnitSeparator + wholeInchesString);
-
-	//A simple fraction of inches (no whole number part) ie '3/8in'
-	static std::wstring inchesSimpleFractionString = L"(" + integerString + L")" + L"/" + L"(" + integerString + L")" + inchesSuffix;
-	static std::wregex inchesSimpleFractionPattern(inchesSimpleFractionString);
-
-	// Whole number of feet with simple fraction of inches ie '2ft 3/4in'
-	static std::wregex feetSimpleFractionInchesPattern(wholeFeetString + multiUnitSeparator + inchesSimpleFractionString);
-
-	//A complex fraction of inches with whole and frac part ie '5 3/8in'
-	static std::wstring inchesComplexFractionString = L"(" + integerString + L")\\s+(" + integerString + L")" + L"/" + L"(" + integerString + L")" + inchesSuffix;
-	static std::wregex inchesComplexFractionPattern(inchesComplexFractionString);
-
-	// Whole number of feet with complex fraction of inches ie '2ft 4 3/4in'
-	static std::wregex feetComplexFractionInchesPattern(wholeFeetString + multiUnitSeparator + inchesComplexFractionString);
-
-	//Metric recognizes decimal places, decimal numbers are integers with optional mantissa
 	static std::wregex decimalPattern(decimalString);
-
-	//Plain feet, ie '1.2ft'
-	static std::wregex justFeetPattern(L"(" + decimalString + L")" + feetSuffix);
 
 	//Plain meters, ie '1.2m'
 	static std::wregex justMetersPattern(L"(" + decimalString + L")m");
@@ -103,180 +74,11 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	std::wsmatch match;
 	int32 parsedIntA = 0, parsedIntB = 0, parsedIntC = 0, parsedIntD = 0;
 	double parsedDecimalA = 0.0, parsedDecimalB = 0.0;
-    
-    auto getMatchString = [&match](int32 MatchIndex)
-    {
-        return FString(WCHAR_TO_TCHAR(match[MatchIndex].str().c_str()));
-    };
 
-	// Bare integers are assumed to be plain feet
-	if (std::regex_match(dimCStr, match, integerPattern))
+	auto getMatchString = [&match](int32 MatchIndex)
 	{
-		if (UModumateDimensionStatics::TryParseNumber(trimmedDimStr, parsedIntA))
-		{
-			result.Format = EDimensionFormat::JustFeet;
-			result.Centimeters = sign * parsedIntA * InchesToCentimeters * InchesPerFoot;
-			return result;
-		}
-		else
-		{
-			return result;
-		}
-	}
-
-	// Bare decimal values are assumed to be plain feet
-	if (std::regex_match(dimCStr, match, decimalPattern))
-	{
-		if (UModumateDimensionStatics::TryParseNumber(trimmedDimStr, parsedDecimalA))
-		{
-			result.Format = EDimensionFormat::JustFeet;
-			result.Centimeters = sign * parsedDecimalA * InchesToCentimeters * InchesPerFoot;
-			return result;
-		}
-		else
-		{
-			return result;
-		}
-	}
-
-	// Simple fractions with 'in' or " ie 1/2in or 3/4"
-	if (std::regex_match(dimCStr, match, inchesSimpleFractionPattern))
-	{
-		if ((match.size() > 2) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedIntA) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(2), parsedIntB))
-		{
-			float numer = (float)parsedIntA;
-			float denom = (float)parsedIntB;
-			if (!FMath::IsNearlyZero(denom))
-			{
-				result.Format = EDimensionFormat::JustInches;
-				result.Centimeters = sign * (numer / denom) * InchesToCentimeters;
-			}
-		}
-
-		return result;
-	}
-
-	// Simple fractions with 'in' or " ie 3 1/2in or 5 3/4"
-	if (std::regex_match(dimCStr, match, inchesComplexFractionPattern))
-	{
-		if ((match.size() > 3) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedIntA) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(2), parsedIntB) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(3), parsedIntC))
-		{
-			float whole = (float)parsedIntA;
-			float numer = (float)parsedIntB;
-			float denom = (float)parsedIntC;
-			if (!FMath::IsNearlyZero(denom))
-			{
-				result.Format = EDimensionFormat::JustInches;
-				result.Centimeters = sign * (whole + (numer / denom)) * InchesToCentimeters;
-			}
-		}
-
-		return result;
-	}
-
-	// Decimal value with 'in' or " ie 1.2in or 3.4"
-	if (std::regex_match(dimCStr, match, inchesDecimal))
-	{
-		if ((match.size() > 1) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedDecimalA))
-		{
-			result.Format = EDimensionFormat::JustInches;
-			result.Centimeters = sign * parsedDecimalA * InchesToCentimeters;
-		}
-
-		return result;
-	}
-
-	// A whole number of qualified feet, ie 3ft
-	if (std::regex_match(dimCStr, match, wholeFeetPattern))
-	{
-		if ((match.size() > 1) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedIntA))
-		{
-			result.Format = EDimensionFormat::JustFeet;
-			result.Centimeters = sign * parsedIntA * InchesPerFoot * InchesToCentimeters;
-		}
-
-		return result;
-	}
-
-	// A whole number of qualified feet and qualified inches, ie 3ft 5in
-	if (std::regex_match(dimCStr, match, feetWholeInchesPattern))
-	{
-		if ((match.size() > 3) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedIntA) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(3), parsedIntB))
-		{
-			result.Format = EDimensionFormat::FeetAndInches;
-			float feet = (float)parsedIntA;
-			float inches = (float)parsedIntB;
-			result.Centimeters = sign * ((feet * InchesPerFoot) + inches) * InchesToCentimeters;
-		}
-
-		return result;
-	}
-
-	// A whole number of qualified feet and a simple fraction of inches, ie 3ft 1/2in
-	if (std::regex_match(dimCStr, match, feetSimpleFractionInchesPattern))
-	{
-		if ((match.size() > 4) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedIntA) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(3), parsedIntB) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(4), parsedIntC))
-		{
-			float feet = (float)parsedIntA;
-			float numer = (float)parsedIntB;
-			float denom = (float)parsedIntC;
-			if (!FMath::IsNearlyZero(denom))
-			{
-				result.Format = EDimensionFormat::FeetAndInches;
-				result.Centimeters = sign * ((feet * InchesPerFoot) + (numer / denom)) * InchesToCentimeters;
-			}
-		}
-
-		return result;
-	}
-
-	// A whole number of feet and a complex fraction of inches, ie 6ft 3 1/4in
-	if (std::regex_match(dimCStr, match, feetComplexFractionInchesPattern))
-	{
-		if ((match.size() > 6) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedIntA) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(3), parsedIntB) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(4), parsedIntC) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(5), parsedIntD))
-		{
-			float feet = (float)parsedIntA;
-			float wholeFrac = (float)parsedIntB;
-			float numer = (float)parsedIntC;
-			float denom = (float)parsedIntD;
-			if (!FMath::IsNearlyZero(denom))
-			{
-				result.Format = EDimensionFormat::FeetAndInches;
-				result.Centimeters = sign * ((feet * InchesPerFoot) + wholeFrac + (numer / denom)) * InchesToCentimeters;
-			}
-		}
-
-		return result;
-	}
-
-	// A decimal value of feet, ie 1.234ft
-	if (std::regex_match(dimCStr, match, justFeetPattern))
-	{
-		if ((match.size() > 1) &&
-			UModumateDimensionStatics::TryParseNumber(getMatchString(1), parsedDecimalA))
-		{
-			result.Format = EDimensionFormat::JustFeet;
-			result.Centimeters = sign * parsedDecimalA * InchesToCentimeters * InchesPerFoot;
-		}
-
-		return result;
-	}
+		return FString(WCHAR_TO_TCHAR(match[MatchIndex].str().c_str()));
+	};
 
 	// A decimal value of meters, ie 1.234m
 	if (std::regex_match(dimCStr, match, justMetersPattern))
@@ -330,6 +132,379 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 
 		return result;
 	}
+	return result;
+}
+
+/*
+* The Big Picture:
+* The initial implentation of dimension string matching follwed the pattern given in the metric function above:
+* Legal patterns for dimension strings were explicitly matched one at a time
+* This pattern makes it difficult to resolve ambiguous input or badly formed but clearly intended input
+* 
+* For imperial units (and soon for metric as well), we switch to a tokenzing strategy, where we analyze the 
+* beginning of the input stream, match it against legal input (a number or a unit designation) and then
+* generate a result from the parse record.
+* 
+* The stages of analysis are broken down as:
+* 
+* Preprocesor stage: gross-level removal or alteration of known patterns from the input string
+* Tokenization stage: process input string tokens and produce a record of the value and units found
+* Grammar stage: analyze the unit/value record to extract feet and inches as well as report any errors 
+* Compilation stage: with feet and inches isolated, produce an output in centimeters
+* 
+*/
+
+FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimension(const FString &DimStr)
+{
+	/*
+	* TODO: roll metric into tokenized algorithm below...meantime just check first if we are in metric
+	*/
+	FModumateFormattedDimension result = StringToFormattedDimensionMetric(DimStr);
+
+	if (result.Format != EDimensionFormat::Error)
+	{
+		return result;
+	}
+
+	/*
+	* Preprocessor stage...do any gross-level input grooming here
+	*/
+
+	// Before we get into regex, filter commas and dashes out
+	FString trimmedDimStr = DimStr.TrimStartAndEnd().Replace(TEXT(","), TEXT("")).
+		Replace(TEXT("ft"), TEXT("'")).
+		Replace(TEXT("in"), TEXT("\"")).
+		Replace(TEXT("FT"), TEXT("'")).
+		Replace(TEXT("IN"), TEXT("\""));
+
+	// Dashes preceeded by a space and followed by a numeral are minus signs, the rest are treated spaces
+	for (int32 i = trimmedDimStr.Len() - 1; i >= 0 ; --i)
+	{
+		if (trimmedDimStr[i] == TCHAR('-'))
+		{
+			if ((i>0 && trimmedDimStr[i - 1] != TCHAR(' ')) || !FChar::IsDigit(trimmedDimStr[i + 1]))
+			{
+				trimmedDimStr[i] = TCHAR(' ');
+			}
+		}
+	}
+
+	if (trimmedDimStr.IsEmpty())
+	{
+		return result;
+	}
+
+	// Format set to 'Error' so we can bail during tokenization
+	result.Format = EDimensionFormat::Error;
+	result.FormattedString = trimmedDimStr;
+	result.Centimeters = 0;
+
+	/*
+	* Tokenization stage
+	*/
+	std::wstring dimCStr(TCHAR_TO_WCHAR(*trimmedDimStr));
+
+	static const std::wregex fractionPattern(L"[\\d]+/[\\d]+");
+	static const std::wregex floatPattern(L"[-+]?([,\\d]*[.][0-9]+|[,\\d]+[.][0-9]*)");
+	static const std::wregex integerPattern(L"[-+]?[,\\d]+");
+	static const std::wregex feetPattern(L"(ft|')+");
+	static const std::wregex inchesPattern(L"(in|\")+");
+	static const std::wregex garbagePattern(L"[a-zA-Z\\s]+");
+
+	/*
+	* Keep a record of the values we resolve during tokenization
+	*/
+	enum EUnit
+	{
+		None = 0,
+		Feet,
+		Inches
+	};
+
+	struct FDimension
+	{
+		EUnit Unit;
+		double Value;
+		bool IsFraction = false;
+	};
+
+	TArray<FDimension> dimensionParse;
+
+	/*
+	* Apply tokenization rules in priority order, looping until nothing clicks or we run out of input
+	* The regex_search pattern used below will find a token if it is at the beginning of the input string (prefix length is zero)
+	* This provides lex-style tokenization parsing which can tolerate components coming in in different orders or having garbage characters
+	* 
+	* The default state of the return value (result) is Error, so when we encounter an illegal parse, we imply return result as-is
+	*/
+	while (dimCStr.length() > 0)
+	{
+		std::wsmatch sm;
+
+		//"Garbage" is any random string value that's not a unit designator or part of a number
+		if (std::regex_search(dimCStr, sm, garbagePattern) && sm.prefix().length() == 0)
+		{
+			dimCStr = sm.suffix();
+			continue;
+		}
+
+		// Find fractions before any other number type
+		if (std::regex_search(dimCStr, sm, fractionPattern) && sm.prefix().length() == 0)
+		{
+			std::wstring frac = sm[0].str();
+			auto split = frac.find(L'/');
+			std::wstring numer = frac.substr(0, split);
+			std::wstring denom = frac.substr(split+1, frac.length());
+			double numerV, denomV;
+			if (LexTryParseString(numerV, WCHAR_TO_TCHAR(numer.c_str())) && LexTryParseString(denomV, WCHAR_TO_TCHAR(denom.c_str())))
+			{
+				if (FMath::IsNearlyZero(denomV))
+				{
+					return result;
+				}
+
+				double v = numerV / denomV;
+				if (dimensionParse.Num() > 0 && (dimensionParse.Last().Unit == EUnit::None || dimensionParse.Last().Unit == EUnit::Inches))
+				{
+					if (dimensionParse.Last().Value < 0.0)
+					{
+						dimensionParse.Last().Value -= v;
+					}
+					else
+					{
+						dimensionParse.Last().Value += v;
+					}
+				}
+				else
+				{
+					FDimension& dim = dimensionParse.AddDefaulted_GetRef();
+					dim.Unit = EUnit::None;
+					dim.IsFraction = true;
+					dim.Value = v;
+				}
+			}
+			dimCStr = sm.suffix();
+			continue;
+		}
+
+		// Find floats before ints because a float's int portion will misreport
+		if (std::regex_search(dimCStr, sm, floatPattern) && sm.prefix().length() == 0)
+		{
+			double v;
+			if (LexTryParseString(v,WCHAR_TO_TCHAR(sm[0].str().c_str())))
+			{
+				if (dimensionParse.Num() > 0 && dimensionParse.Last().Unit == EUnit::None)
+				{
+					dimensionParse.Last().Unit = EUnit::Feet;
+				}
+				FDimension& dim = dimensionParse.AddDefaulted_GetRef();
+				dim.Unit = EUnit::None;
+				dim.Value = v;
+			}
+			dimCStr = sm.suffix();
+			continue;
+		}
+
+		// If we don't have a fraction or a float, see if we have a bare int
+		if (std::regex_search(dimCStr, sm, integerPattern) && sm.prefix().length()==0)
+		{
+			double v;
+			if (LexTryParseString(v,WCHAR_TO_TCHAR(sm[0].str().c_str())))
+			{
+				if (dimensionParse.Num() > 0 && dimensionParse.Last().Unit == EUnit::None)
+				{
+					dimensionParse.Last().Unit = EUnit::Feet;
+				}
+				FDimension& dim = dimensionParse.AddDefaulted_GetRef();
+				dim.Unit = EUnit::None;
+				dim.Value = v;
+			}
+			dimCStr = sm.suffix();
+			continue;
+		}
+
+		// See if we're specifying feet
+		if (std::regex_search(dimCStr, sm, feetPattern) && sm.prefix().length() == 0)
+		{
+			if (dimensionParse.Num() != 0)
+			{
+				if (dimensionParse.Last().Unit == EUnit::Inches)
+				{
+					return result;
+				}
+				dimensionParse.Last().Unit = EUnit::Feet;
+			}
+			dimCStr = sm.suffix();
+			continue;
+		}
+
+		// See if we're specifying inches
+		if (std::regex_search(dimCStr, sm, inchesPattern) && sm.prefix().length() == 0)
+		{
+			if (dimensionParse.Num() != 0)
+			{
+				if (dimensionParse.Last().Unit == EUnit::Feet)
+				{
+					return result;
+				}
+				dimensionParse.Last().Unit = EUnit::Inches;
+			}
+			dimCStr = sm.suffix();
+			continue;
+		}
+
+		// If we didn't match any of the rules above, we're done finding input
+		break;
+	}
+
+	/*
+	* Grammar analysis
+	*/
+
+	//If we found no components or were unable to parse the whole string, return error	
+	if (dimensionParse.Num() == 0 || dimCStr.length() > 0)
+	{
+		return result;
+	}
+
+	/*
+	* Scan the parse record for feet and inches components and set final output appropriately
+	* TODO: implement as a data-driven finite state machine?
+	*/
+	double feetV = 0, inchesV = 0;
+	for (auto& dim : dimensionParse)
+	{
+		if (dim.Unit == EUnit::Feet)
+		{
+			feetV = dim.Value;
+			switch (result.Format)
+			{
+			// Encountering the same unit twice is an error
+			case EDimensionFormat::FeetAndInches:
+			case EDimensionFormat::JustFeet:
+			{
+				result.Format = EDimensionFormat::Error;
+				return result;
+			}
+			break;
+			case EDimensionFormat::JustInches:
+			{
+				result.Format = EDimensionFormat::FeetAndInches;
+			}
+			break;
+
+			// We'll still be in the error state if no units were specified
+			case EDimensionFormat::Error:
+			{
+				result.Format = EDimensionFormat::JustFeet;
+			}
+			break;
+			};
+		}
+
+		if (dim.Unit == EUnit::Inches)
+		{
+			inchesV = dim.Value;
+			switch (result.Format)
+			{
+				// Encountering the same unit twice is an error
+			case EDimensionFormat::FeetAndInches:
+			case EDimensionFormat::JustInches:
+			{
+				result.Format = EDimensionFormat::Error;
+				return result;
+			}
+			case EDimensionFormat::JustFeet:
+			{
+				result.Format = EDimensionFormat::FeetAndInches;
+			}
+			break;
+			// We'll still be in the error state if no units were specified
+			case EDimensionFormat::Error:
+			{
+				result.Format = EDimensionFormat::JustInches;
+			}
+			break;
+			}
+		}
+
+		if (dim.Unit == EUnit::None)
+		{
+			switch (result.Format)
+			{
+			case EDimensionFormat::FeetAndInches:
+			{
+				result.Format = EDimensionFormat::Error;
+				return result;
+			}
+			case EDimensionFormat::JustFeet:
+			{
+				inchesV = dim.Value;
+				result.Format = EDimensionFormat::FeetAndInches;
+			}
+			break;
+			case EDimensionFormat::JustInches:
+			{
+				feetV = dim.Value;
+				result.Format = EDimensionFormat::FeetAndInches;
+			}
+			break;
+			case EDimensionFormat::Error:
+			{
+				if (dim.IsFraction)
+				{
+					inchesV = dim.Value;
+					result.Format = EDimensionFormat::JustInches;
+				}
+				else
+				{
+					feetV = dim.Value;
+					result.Format = EDimensionFormat::JustFeet;
+				}
+			}
+			break;
+			}
+		}
+	}
+
+	/*
+	* Compilation stage: resolve final unit values
+	*/
+
+	//Fractional portions of feet are converted to inches
+	float feetDecimalInches = 0;
+	if (feetV < 0.0)
+	{
+		inchesV = -inchesV;
+
+		feetDecimalInches = (-feetV - FMath::FloorToDouble(-feetV));
+		feetV = -floor(-feetV);
+	}
+	else
+	{
+		feetDecimalInches = (feetV - FMath::FloorToDouble(feetV));
+		feetV = FMath::FloorToDouble(feetV);
+	}
+
+	feetDecimalInches *= InchesPerFoot;
+	if (feetV < 0.0)
+	{
+		inchesV -= feetDecimalInches;
+	}
+	else
+	{
+		inchesV += feetDecimalInches;
+	}
+
+	/*
+	*	If a 'JustFeet' value produces inches from its fractional part, promote to FeetAndInches
+	*/
+	if (result.Format == EDimensionFormat::JustFeet && !FMath::IsNearlyZero(inchesV))
+	{
+		result.Format = EDimensionFormat::FeetAndInches;
+	}
+
+	result.Centimeters = (InchesPerFoot * feetV + inchesV) * InchesToCentimeters;
 
 	return result;
 }

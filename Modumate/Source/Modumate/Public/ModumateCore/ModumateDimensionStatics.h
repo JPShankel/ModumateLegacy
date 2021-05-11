@@ -48,7 +48,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Unit Conversion")
-	static FModumateFormattedDimension StringToFormattedDimension(const FString &dimStr);
+	static FModumateFormattedDimension StringToFormattedDimension(const FString &DimStr);
 
 	// Convert any decimal values into string array. [0] = Whole Number, [1] = Numerator. [2] = Denominator
 	UFUNCTION(BlueprintCallable, Category = "Modumate Unit Conversion")
