@@ -214,13 +214,6 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	/*
 	* Keep a record of the values we resolve during tokenization
 	*/
-	enum EUnit
-	{
-		None = 0,
-		Feet,
-		Inches
-	};
-
 	struct FDimension
 	{
 		EUnit Unit;
@@ -264,7 +257,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 				}
 
 				double v = numerV / denomV;
-				if (dimensionParse.Num() > 0 && (dimensionParse.Last().Unit == EUnit::None || dimensionParse.Last().Unit == EUnit::Inches))
+				if (dimensionParse.Num() > 0 && (dimensionParse.Last().Unit == EUnit::Unspecified || dimensionParse.Last().Unit == EUnit::Inches))
 				{
 					if (dimensionParse.Last().Value < 0.0)
 					{
@@ -278,7 +271,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 				else
 				{
 					FDimension& dim = dimensionParse.AddDefaulted_GetRef();
-					dim.Unit = EUnit::None;
+					dim.Unit = EUnit::Unspecified;
 					dim.IsFraction = true;
 					dim.Value = v;
 				}
@@ -293,12 +286,12 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 			double v;
 			if (LexTryParseString(v,WCHAR_TO_TCHAR(sm[0].str().c_str())))
 			{
-				if (dimensionParse.Num() > 0 && dimensionParse.Last().Unit == EUnit::None)
+				if (dimensionParse.Num() > 0 && dimensionParse.Last().Unit == EUnit::Unspecified)
 				{
 					dimensionParse.Last().Unit = EUnit::Feet;
 				}
 				FDimension& dim = dimensionParse.AddDefaulted_GetRef();
-				dim.Unit = EUnit::None;
+				dim.Unit = EUnit::Unspecified;
 				dim.Value = v;
 			}
 			dimCStr = sm.suffix();
@@ -311,12 +304,12 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 			double v;
 			if (LexTryParseString(v,WCHAR_TO_TCHAR(sm[0].str().c_str())))
 			{
-				if (dimensionParse.Num() > 0 && dimensionParse.Last().Unit == EUnit::None)
+				if (dimensionParse.Num() > 0 && dimensionParse.Last().Unit == EUnit::Unspecified)
 				{
 					dimensionParse.Last().Unit = EUnit::Feet;
 				}
 				FDimension& dim = dimensionParse.AddDefaulted_GetRef();
-				dim.Unit = EUnit::None;
+				dim.Unit = EUnit::Unspecified;
 				dim.Value = v;
 			}
 			dimCStr = sm.suffix();
@@ -428,7 +421,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 			}
 		}
 
-		if (dim.Unit == EUnit::None)
+		if (dim.Unit == EUnit::Unspecified)
 		{
 			switch (result.Format)
 			{
