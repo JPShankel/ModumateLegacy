@@ -14,8 +14,8 @@
 #include "UI/Custom/ModumateTextBlock.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/EditModelUserWidget.h"
-#include "UI/RightMenu/CutPlaneDimListItemObject.h"
-#include "UI/RightMenu/CutPlaneMenuBlock.h"
+#include "UI/RightMenu/GeneralListItemObject.h"
+#include "UI/RightMenu/GeneralListItemMenuBlock.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -95,7 +95,7 @@ void UCutPlaneMenuBlockExport::OnButtonExportReleased()
 	// Get all CutPlanes regardless of type by specifying ECutPlaneType::None
 	for (auto curID : cutPlaneIds)
 	{
-		UCutPlaneDimListItemObject* item = Controller->EditModelUserWidget->CutPlaneMenu->GetListItemFromObjID(curID);
+		UGeneralListItemObject* item = Controller->EditModelUserWidget->CutPlaneMenu->GetListItemFromObjID(curID);
 		if (item)
 		{
 			AModumateObjectInstance* moi = gameState->Document->GetObjectById(curID);
@@ -152,15 +152,15 @@ void UCutPlaneMenuBlockExport::UpdateExportMenu()
 	ListOther->ClearListItems();
 
 	// Export menu is similar to its parent CutPlaneMenu. Since the only difference is to show bIsExported, they can use the same list items.
-	for (auto curItem : Controller->EditModelUserWidget->CutPlaneMenu->CutPlaneMenuBlockHorizontal->CutPlanesList->GetListItems())
+	for (auto curItem : Controller->EditModelUserWidget->CutPlaneMenu->CutPlaneMenuBlockHorizontal->GeneralItemsList->GetListItems())
 	{
 		ListHorizontal->AddItem(curItem);
 	}
-	for (auto curItem : Controller->EditModelUserWidget->CutPlaneMenu->CutPlaneMenuBlockVertical->CutPlanesList->GetListItems())
+	for (auto curItem : Controller->EditModelUserWidget->CutPlaneMenu->CutPlaneMenuBlockVertical->GeneralItemsList->GetListItems())
 	{
 		ListVertical->AddItem(curItem);
 	}
-	for (auto curItem : Controller->EditModelUserWidget->CutPlaneMenu->CutPlaneMenuBlockOther->CutPlanesList->GetListItems())
+	for (auto curItem : Controller->EditModelUserWidget->CutPlaneMenu->CutPlaneMenuBlockOther->GeneralItemsList->GetListItems())
 	{
 		ListOther->AddItem(curItem);
 	}
@@ -182,7 +182,7 @@ void UCutPlaneMenuBlockExport::UpdateCategoryCheckboxes()
 
 	for (auto curId : cutPlaneIDs)
 	{
-		UCutPlaneDimListItemObject* item = Controller->EditModelUserWidget->CutPlaneMenu->GetListItemFromObjID(curId);
+		UGeneralListItemObject* item = Controller->EditModelUserWidget->CutPlaneMenu->GetListItemFromObjID(curId);
 		if (item)
 		{
 			switch (item->CutPlaneType)
@@ -303,7 +303,7 @@ void UCutPlaneMenuBlockExport::UpdateCutPlaneExportable(const TArray<int32>& IDs
 {
 	for (auto curID : IDs)
 	{
-		UCutPlaneDimListItemObject* item = Controller->EditModelUserWidget->CutPlaneMenu->GetListItemFromObjID(curID);
+		UGeneralListItemObject* item = Controller->EditModelUserWidget->CutPlaneMenu->GetListItemFromObjID(curID);
 		if (item)
 		{
 			item->CanExport = NewExportable;

@@ -12,6 +12,7 @@
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UI/ToolTray/ToolTrayBlockTools.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UI/RightMenu/GeneralListItemMenuBlock.h"
 
 UToolTrayWidget::UToolTrayWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -148,12 +149,39 @@ bool UToolTrayWidget::ChangeBlockToAttachmentTools(EToolMode Toolmode)
 	return true;
 }
 
+bool UToolTrayWidget::ChangeBlockToSiteTools()
+{
+	OpenToolTray();
+	CurrentToolCategory = EToolCategories::SiteTools;
+	ToolTrayMainTitleBlock->SetText(UModumateTypeStatics::GetToolCategoryText(EToolCategories::SiteTools));
+	HideAllToolTrayBlocks();
+	ToolTrayBlockTools->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ToolTrayBlockTools->ChangeToSiteToolsButtons();
+	if (EditModelUserWidget)
+	{
+		EditModelUserWidget->ToolbarWidget->Button_SiteTools->SwitchToActiveStyle();
+	}
+
+	ToolTrayBlockModes->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ToolTrayBlockModes->ChangeToSiteToolsButtons();
+
+	ToolTrayBlockProperties->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	// TODO: Hook up site tool
+	//ToolTrayBlockProperties->ChangeBlockProperties(Cast<UEditModelToolBase>(controller->CurrentTool.GetObject()));
+
+	// TODO: Fill terrain list
+	ToolTrayBlockTerrainList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+	return true;
+}
+
 void UToolTrayWidget::HideAllToolTrayBlocks()
 {
 	ToolTrayBlockTools->SetVisibility(ESlateVisibility::Collapsed);
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::Collapsed);
 	ToolTrayBlockProperties->SetVisibility(ESlateVisibility::Collapsed);
 	ToolTrayBlockAssembliesList->SetVisibility(ESlateVisibility::Collapsed);
+	ToolTrayBlockTerrainList->SetVisibility(ESlateVisibility::Collapsed);
 	if (EditModelUserWidget)
 	{
 		EditModelUserWidget->ToolbarWidget->Button_Metaplanes->SwitchToNormalStyle();

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "UI/RightMenu/CutPlaneDimListItem.h"
+#include "UI/RightMenu/GeneralListItem.h"
 
 #include "CutPlaneMenuBlockExport.generated.h"
 

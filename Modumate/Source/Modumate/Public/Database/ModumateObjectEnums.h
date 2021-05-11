@@ -169,7 +169,8 @@ enum class EToolCategories : uint8
 	MetaGraph,
 	Separators,
 	SurfaceGraphs,
-	Attachments
+	Attachments,
+	SiteTools
 };
 
 UCLASS()

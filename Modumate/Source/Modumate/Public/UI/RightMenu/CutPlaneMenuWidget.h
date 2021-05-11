@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "ModumateCore/ModumateTypes.h"
-#include "UI/RightMenu/CutPlaneDimListItem.h"
+#include "UI/RightMenu/GeneralListItem.h"
 
 #include "CutPlaneMenuWidget.generated.h"
 
@@ -30,34 +30,34 @@ protected:
 	class AEditModelGameState* GameState;
 
 	UPROPERTY()
-	TMap<int32, class UCutPlaneDimListItemObject*> HorizontalItemToIDMap;
+	TMap<int32, class UGeneralListItemObject*> HorizontalItemToIDMap;
 
 	UPROPERTY()
-	TMap<int32, class UCutPlaneDimListItemObject*> VerticalItemToIDMap;
+	TMap<int32, class UGeneralListItemObject*> VerticalItemToIDMap;
 
 	UPROPERTY()
-	TMap<int32, class UCutPlaneDimListItemObject*> OtherItemToIDMap;
+	TMap<int32, class UGeneralListItemObject*> OtherItemToIDMap;
 
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UCutPlaneMenuBlock *CutPlaneMenuBlockHorizontal;
+	class UGeneralListItemMenuBlock *CutPlaneMenuBlockHorizontal;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UCutPlaneMenuBlock *CutPlaneMenuBlockVertical;
+	class UGeneralListItemMenuBlock *CutPlaneMenuBlockVertical;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UCutPlaneMenuBlock *CutPlaneMenuBlockOther;
+	class UGeneralListItemMenuBlock *CutPlaneMenuBlockOther;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UCutPlaneMenuBlockExport *CutPlaneMenuBlockExport;
 
 	void UpdateCutPlaneMenuBlocks();
-	UCutPlaneDimListItemObject* GetListItemFromObjID(int32 ObjID = MOD_ID_NONE);
+	UGeneralListItemObject* GetListItemFromObjID(int32 ObjID = MOD_ID_NONE);
 	bool RemoveCutPlaneFromMenuBlock(int32 ObjID = MOD_ID_NONE);
 	bool UpdateCutPlaneParamInMenuBlock(int32 ObjID = MOD_ID_NONE);
 	void SetCutPlaneExportMenuVisibility(bool NewVisible);
-	static void BuildCutPlaneItemFromMoi(UCutPlaneDimListItemObject* CutPlaneObj, const class AModumateObjectInstance* Moi);
+	static void BuildCutPlaneItemFromMoi(UGeneralListItemObject* CutPlaneObj, const class AModumateObjectInstance* Moi);
 
 	// Show CutPlane by type, show all if none specified
 	bool GetCutPlaneIDsByType(ECutPlaneType Type, TArray<int32>& OutIDs);

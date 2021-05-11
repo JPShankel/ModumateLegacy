@@ -81,6 +81,21 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* Button_Railing;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_TerrainGraph;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_SculptingBrush;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_TextureBrush;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_FoliageBrush;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_Flora;
+
 	UFUNCTION(BlueprintCallable)
 	void ChangeToMassingGraphToolsButtons();
 
@@ -92,6 +107,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeToSurfaceGraphToolsButtons();
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeToSiteToolsButtons();
 
 protected:
 	virtual void NativeConstruct() override;

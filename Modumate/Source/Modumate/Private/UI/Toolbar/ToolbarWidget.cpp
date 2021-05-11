@@ -25,7 +25,7 @@ bool UToolbarWidget::Initialize()
 
 	Controller = GetOwningPlayer<AEditModelPlayerController>();
 
-	if (!(Controller && Button_Metaplanes && Button_Separators && Button_SurfaceGraphs && Button_Attachments && ButtonTopToolbarHelp))
+	if (!(Controller && Button_Metaplanes && Button_Separators && Button_SurfaceGraphs && Button_Attachments && ButtonTopToolbarHelp && Button_SiteTools))
 	{
 		return false;
 	}
@@ -34,6 +34,7 @@ bool UToolbarWidget::Initialize()
 	Button_Separators->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseSeparators);
 	Button_SurfaceGraphs->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseSurfaceGraphs);
 	Button_Attachments->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseAttachments);
+	Button_SiteTools->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseSiteTools);
 	Button_3DViews->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonRelease3DViews);
 	Button_CutPlanes->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseCutPlanes);
 	ButtonTopToolbarHelp->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseTopToolbarHelp);
@@ -78,6 +79,15 @@ void UToolbarWidget::OnButtonReleaseAttachments()
 	if (EditModelUserWidget && (EditModelUserWidget->ToolTrayWidget))
 	{
 		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::ToolMenu, EToolCategories::Attachments);
+	}
+}
+
+void UToolbarWidget::OnButtonReleaseSiteTools()
+{
+	// TODO: Set tool mode to site tools
+	if (EditModelUserWidget->ToolTrayWidget->CurrentToolCategory != EToolCategories::SiteTools)
+	{
+		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::ToolMenu, EToolCategories::SiteTools);
 	}
 }
 

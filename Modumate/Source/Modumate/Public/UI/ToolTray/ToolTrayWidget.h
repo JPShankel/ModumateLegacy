@@ -47,6 +47,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UToolTrayBlockAssembliesList *ToolTrayBlockAssembliesList;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UGeneralListItemMenuBlock* ToolTrayBlockTerrainList;
+
 	UFUNCTION(BlueprintCallable)
 	bool ChangeBlockToMetaPlaneTools();
 
@@ -58,6 +61,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool ChangeBlockToAttachmentTools(EToolMode Toolmode);
+
+	UFUNCTION(BlueprintCallable)
+	bool ChangeBlockToSiteTools();
 
 	void HideAllToolTrayBlocks();
 	bool IsToolTrayVisible();

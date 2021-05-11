@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/RightMenu/CutPlaneExportListItem.h"
-#include "UI/RightMenu/CutPlaneDimListItemObject.h"
+#include "UI/RightMenu/GeneralListItemObject.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "UnrealClasses/TooltipManager.h"
@@ -52,7 +52,7 @@ void UCutPlaneExportListItem::OnButtonMainReleased()
 
 void UCutPlaneExportListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
-	const UCutPlaneDimListItemObject *cutPlaneItemObject = Cast<UCutPlaneDimListItemObject>(ListItemObject);
+	const UGeneralListItemObject *cutPlaneItemObject = Cast<UGeneralListItemObject>(ListItemObject);
 	if (!cutPlaneItemObject)
 	{
 		return;

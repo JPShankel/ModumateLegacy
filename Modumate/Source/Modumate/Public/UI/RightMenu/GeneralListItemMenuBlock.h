@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 
-#include "CutPlaneMenuBlock.generated.h"
+#include "GeneralListItemMenuBlock.generated.h"
 
 /**
  *
@@ -13,12 +13,12 @@
 
 
 UCLASS()
-class MODUMATE_API UCutPlaneMenuBlock : public UUserWidget
+class MODUMATE_API UGeneralListItemMenuBlock : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	UCutPlaneMenuBlock(const FObjectInitializer& ObjectInitializer);
+	UGeneralListItemMenuBlock(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
 protected:
@@ -27,5 +27,5 @@ protected:
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UListView *CutPlanesList;
+	class UListView* GeneralItemsList;
 };

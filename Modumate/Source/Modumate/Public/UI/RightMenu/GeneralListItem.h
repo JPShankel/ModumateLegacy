@@ -1,4 +1,4 @@
-// Copyright 2020 Modumate, Inc. All Rights Reserved.
+// Copyright 2021 Modumate, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "Blueprint/IUserObjectListEntry.h"
 #include "ModumateCore/ModumateTypes.h"
 
-#include "CutPlaneDimListItem.generated.h"
+#include "GeneralListItem.generated.h"
 
 /**
  *
@@ -23,12 +23,12 @@ enum class ECutPlaneType : uint8
 };
 
 UCLASS()
-class MODUMATE_API UCutPlaneDimListItem : public UUserWidget, public IUserObjectListEntry
+class MODUMATE_API UGeneralListItem : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 
 public:
-	UCutPlaneDimListItem(const FObjectInitializer& ObjectInitializer);
+	UGeneralListItem(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
 protected:

@@ -45,6 +45,9 @@ public:
 	class UModumateButtonUserWidget *Button_Attachments;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_SiteTools;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *Button_3DViews;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -70,6 +73,9 @@ public:
 
 	UFUNCTION()
 	void OnButtonReleaseAttachments();
+
+	UFUNCTION()
+	void OnButtonReleaseSiteTools();
 
 	UFUNCTION()
 	void OnButtonRelease3DViews();

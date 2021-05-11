@@ -3,8 +3,8 @@
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "Objects/CutPlane.h"
-#include "UI/RightMenu/CutPlaneDimListItemObject.h"
-#include "UI/RightMenu/CutPlaneMenuBlock.h"
+#include "UI/RightMenu/GeneralListItemObject.h"
+#include "UI/RightMenu/GeneralListItemMenuBlock.h"
 #include "Components/ListView.h"
 #include "Objects/CutPlane.h"
 #include "UI/RightMenu/CutPlaneMenuBlockExport.h"
@@ -35,18 +35,18 @@ void UCutPlaneMenuWidget::NativeConstruct()
 
 void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 {
-	TArray<UCutPlaneDimListItemObject*> horizontalItems;
+	TArray<UGeneralListItemObject*> horizontalItems;
 	HorizontalItemToIDMap.Empty();
 	VerticalItemToIDMap.Empty();
 	OtherItemToIDMap.Empty();
-	CutPlaneMenuBlockHorizontal->CutPlanesList->ClearListItems();
-	CutPlaneMenuBlockVertical->CutPlanesList->ClearListItems();
-	CutPlaneMenuBlockOther->CutPlanesList->ClearListItems();
+	CutPlaneMenuBlockHorizontal->GeneralItemsList->ClearListItems();
+	CutPlaneMenuBlockVertical->GeneralItemsList->ClearListItems();
+	CutPlaneMenuBlockOther->GeneralItemsList->ClearListItems();
 
 	TArray<AModumateObjectInstance*> cutPlaneMois = GameState->Document->GetObjectsOfType(EObjectType::OTCutPlane);
 	for (int32 i = 0; i < cutPlaneMois.Num(); ++i)
 	{
-		UCutPlaneDimListItemObject *newCutPlaneObj = NewObject<UCutPlaneDimListItemObject>(this);
+		UGeneralListItemObject *newCutPlaneObj = NewObject<UGeneralListItemObject>(this);
 		BuildCutPlaneItemFromMoi(newCutPlaneObj, cutPlaneMois[i]);
 
 		// Place cut plane item by its orientation
@@ -56,7 +56,7 @@ void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 		{
 			// Vertical cut planes need to be sorted before adding into the list
 			newCutPlaneObj->CutPlaneType = ECutPlaneType::Vertical;
-			CutPlaneMenuBlockVertical->CutPlanesList->AddItem(newCutPlaneObj);
+			CutPlaneMenuBlockVertical->GeneralItemsList->AddItem(newCutPlaneObj);
 			VerticalItemToIDMap.Add(cutPlaneMois[i]->ID, newCutPlaneObj);
 		}
 		else if (cutPlaneUpDot >= THRESH_NORMALS_ARE_PARALLEL)
@@ -68,23 +68,23 @@ void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 		else
 		{
 			newCutPlaneObj->CutPlaneType = ECutPlaneType::Other;
-			CutPlaneMenuBlockOther->CutPlanesList->AddItem(newCutPlaneObj);
+			CutPlaneMenuBlockOther->GeneralItemsList->AddItem(newCutPlaneObj);
 			OtherItemToIDMap.Add(cutPlaneMois[i]->ID, newCutPlaneObj);
 		}
 	}
 
-	horizontalItems.Sort([](const UCutPlaneDimListItemObject &item1, const UCutPlaneDimListItemObject &item2) {
+	horizontalItems.Sort([](const UGeneralListItemObject &item1, const UGeneralListItemObject &item2) {
 		return item1.Location.Z > item2.Location.Z;
 	});
 	for (auto& curItem : horizontalItems)
 	{
-		CutPlaneMenuBlockHorizontal->CutPlanesList->AddItem(curItem);
+		CutPlaneMenuBlockHorizontal->GeneralItemsList->AddItem(curItem);
 	}
 }
 
-UCutPlaneDimListItemObject* UCutPlaneMenuWidget::GetListItemFromObjID(int32 ObjID /*MOD_ID_NONE*/)
+UGeneralListItemObject* UCutPlaneMenuWidget::GetListItemFromObjID(int32 ObjID /*MOD_ID_NONE*/)
 {
-	UCutPlaneDimListItemObject *outItem = HorizontalItemToIDMap.FindRef(ObjID);
+	UGeneralListItemObject *outItem = HorizontalItemToIDMap.FindRef(ObjID);
 	if (!outItem)
 	{
 		outItem = VerticalItemToIDMap.FindRef(ObjID);
@@ -98,7 +98,7 @@ UCutPlaneDimListItemObject* UCutPlaneMenuWidget::GetListItemFromObjID(int32 ObjI
 
 bool UCutPlaneMenuWidget::RemoveCutPlaneFromMenuBlock(int32 ObjID /*= MOD_ID_NONE*/)
 {
-	UCutPlaneDimListItemObject *item = GetListItemFromObjID(ObjID);
+	UGeneralListItemObject *item = GetListItemFromObjID(ObjID);
 	if (!item)
 	{
 		return false;
@@ -106,13 +106,13 @@ bool UCutPlaneMenuWidget::RemoveCutPlaneFromMenuBlock(int32 ObjID /*= MOD_ID_NON
 	switch (item->CutPlaneType)
 	{
 	case ECutPlaneType::Horizontal:
-		CutPlaneMenuBlockHorizontal->CutPlanesList->RemoveItem(item);
+		CutPlaneMenuBlockHorizontal->GeneralItemsList->RemoveItem(item);
 		return true;
 	case ECutPlaneType::Vertical:
-		CutPlaneMenuBlockVertical->CutPlanesList->RemoveItem(item);
+		CutPlaneMenuBlockVertical->GeneralItemsList->RemoveItem(item);
 		return true;
 	case ECutPlaneType::Other:
-		CutPlaneMenuBlockOther->CutPlanesList->RemoveItem(item);
+		CutPlaneMenuBlockOther->GeneralItemsList->RemoveItem(item);
 		return true;
 	default:
 		return false;
@@ -122,7 +122,7 @@ bool UCutPlaneMenuWidget::RemoveCutPlaneFromMenuBlock(int32 ObjID /*= MOD_ID_NON
 bool UCutPlaneMenuWidget::UpdateCutPlaneParamInMenuBlock(int32 ObjID /*= MOD_ID_NONE*/)
 {
 	// Listview uses UCutPlaneDimListItemObject to build UCutPlaneDimListItem widget, both need to be updated
-	UCutPlaneDimListItemObject* item = GetListItemFromObjID(ObjID);
+	UGeneralListItemObject* item = GetListItemFromObjID(ObjID);
 	AModumateObjectInstance* moi = GameState->Document->GetObjectById(ObjID);
 	if (!(item && moi))
 	{
@@ -132,7 +132,7 @@ bool UCutPlaneMenuWidget::UpdateCutPlaneParamInMenuBlock(int32 ObjID /*= MOD_ID_
 	// Update UCutPlaneDimListItemObject
 	BuildCutPlaneItemFromMoi(item, moi);
 
-	UCutPlaneMenuBlock* block;
+	UGeneralListItemMenuBlock* block;
 	switch (item->CutPlaneType)
 	{
 	case ECutPlaneType::Horizontal:
@@ -149,7 +149,7 @@ bool UCutPlaneMenuWidget::UpdateCutPlaneParamInMenuBlock(int32 ObjID /*= MOD_ID_
 	}
 
 	// Update UCutPlaneDimListItem from the updated CutPlaneDimListItemObject
-	UCutPlaneDimListItem* itemWidget = Cast<UCutPlaneDimListItem>(block->CutPlanesList->GetEntryWidgetFromItem(item));
+	UGeneralListItem* itemWidget = Cast<UGeneralListItem>(block->GeneralItemsList->GetEntryWidgetFromItem(item));
 	if (itemWidget)
 	{
 		itemWidget->NativeOnListItemObjectSet(item);
@@ -169,7 +169,7 @@ void UCutPlaneMenuWidget::SetCutPlaneExportMenuVisibility(bool NewVisible)
 	CutPlaneMenuBlockExport->SetExportMenuVisibility(NewVisible);
 }
 
-void UCutPlaneMenuWidget::BuildCutPlaneItemFromMoi(UCutPlaneDimListItemObject* CutPlaneObj, const class AModumateObjectInstance* Moi)
+void UCutPlaneMenuWidget::BuildCutPlaneItemFromMoi(UGeneralListItemObject* CutPlaneObj, const class AModumateObjectInstance* Moi)
 {
 	FMOICutPlaneData cutPlaneData;
 	if (ensure(Moi->GetStateData().CustomData.LoadStructData(cutPlaneData)))

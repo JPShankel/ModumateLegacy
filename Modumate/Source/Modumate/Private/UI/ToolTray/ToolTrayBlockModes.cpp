@@ -70,6 +70,20 @@ void UToolTrayBlockModes::ChangeToAttachmentToolsButtons(EToolMode mode)
 	SetButtonsState({ ButtonMPBucket });
 }
 
+void UToolTrayBlockModes::ChangeToSiteToolsButtons()
+{
+	TArray<UModumateButtonUserWidget*> buttonsToShow = {
+		ButtonPoint,
+		ButtonBrush,
+		ButtonSmoothBrush,
+		ButtonFlattenBrush,
+		ButtonRaiseBrush,
+		ButtonLowerBrush,
+		ButtonErase
+	};
+	SetButtonsState(buttonsToShow);
+}
+
 void UToolTrayBlockModes::SetButtonsState(const TArray<UModumateButtonUserWidget*>& ButtonsToShow)
 {
 	for (auto curButton : AllModumateButtons)

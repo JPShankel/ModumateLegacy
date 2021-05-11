@@ -62,6 +62,18 @@ void UToolTrayBlockTools::ChangeToSurfaceGraphToolsButtons()
 	SetButtonsState(buttonsToShow);
 }
 
+void UToolTrayBlockTools::ChangeToSiteToolsButtons()
+{
+	TArray<UModumateButtonUserWidget*> buttonsToShow = {
+	Button_TerrainGraph,
+	Button_SculptingBrush,
+	Button_TextureBrush,
+	Button_FoliageBrush,
+	Button_Flora
+	};
+	SetButtonsState(buttonsToShow);
+}
+
 void UToolTrayBlockTools::NativeConstruct()
 {
 	Super::NativeConstruct();

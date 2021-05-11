@@ -310,6 +310,8 @@ FText UModumateTypeStatics::GetToolCategoryText(EToolCategories ToolCategory)
 		return LOCTEXT("ToolCategory_SurfaceGraphs", "Surface Graph");
 	case EToolCategories::Attachments:
 		return LOCTEXT("ToolCategory_Attachments", "Attachment Tools");
+	case EToolCategories::SiteTools:
+		return LOCTEXT("ToolCategory_SiteTools", "Site Tools");
 	default:
 		return FText::GetEmpty();
 	}

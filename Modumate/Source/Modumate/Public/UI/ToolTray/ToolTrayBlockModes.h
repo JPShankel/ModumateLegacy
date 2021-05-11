@@ -50,11 +50,35 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonOpeningSystem;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonPoint;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonBrush;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonSmoothBrush;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonFlattenBrush;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonRaiseBrush;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonLowerBrush;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonErase;
+
 	UFUNCTION(BlueprintCallable)
 	void ChangeToSeparatorToolsButtons(EToolMode mode);
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeToAttachmentToolsButtons(EToolMode mode);
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeToSiteToolsButtons();
 
 	void SetButtonsState(const TArray<UModumateButtonUserWidget*>& ButtonsToShow);
 };

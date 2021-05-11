@@ -165,6 +165,9 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 		case EToolCategories::Attachments:
 			ToolTrayWidget->ChangeBlockToAttachmentTools(Controller->GetToolMode());
 			break;
+		case EToolCategories::SiteTools:
+			ToolTrayWidget->ChangeBlockToSiteTools();
+			break;
 		}
 	}
 

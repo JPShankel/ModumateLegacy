@@ -1,7 +1,7 @@
-// Copyright 2020 Modumate, Inc. All Rights Reserved.
+// Copyright 2021 Modumate, Inc. All Rights Reserved.
 
-#include "UI/RightMenu/CutPlaneDimListItem.h"
-#include "UI/RightMenu/CutPlaneDimListItemObject.h"
+#include "UI/RightMenu/GeneralListItem.h"
+#include "UI/RightMenu/GeneralListItemObject.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Components/CheckBox.h"
@@ -17,12 +17,12 @@
 #include "UI/Custom/ModumateCheckBox.h"
 
 
-UCutPlaneDimListItem::UCutPlaneDimListItem(const FObjectInitializer& ObjectInitializer)
+UGeneralListItem::UGeneralListItem(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-bool UCutPlaneDimListItem::Initialize()
+bool UGeneralListItem::Initialize()
 {
 	if (!Super::Initialize())
 	{
@@ -32,27 +32,27 @@ bool UCutPlaneDimListItem::Initialize()
 	{
 		return false;
 	}
-	CheckBoxVisibility->OnCheckStateChanged.AddDynamic(this, &UCutPlaneDimListItem::OnCheckBoxVisibilityChanged);
-	CheckBoxVisibility->ToolTipWidgetDelegate.BindDynamic(this, &UCutPlaneDimListItem::OnCheckBoxTooltipWidget);
-	ButtonEdit->ModumateButton->OnReleased.AddDynamic(this, &UCutPlaneDimListItem::OnButtonEditReleased);
-	TextTitleEditable->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UCutPlaneDimListItem::OnEditableTitleCommitted);
-	CheckBoxCullModel->OnCheckStateChanged.AddDynamic(this, &UCutPlaneDimListItem::OnCheckBoxCullModelChanged);
-	CheckBoxCullModel->ToolTipWidgetDelegate.BindDynamic(this, &UCutPlaneDimListItem::OnCheckBoxCullModelTooltipWidget);
+	CheckBoxVisibility->OnCheckStateChanged.AddDynamic(this, &UGeneralListItem::OnCheckBoxVisibilityChanged);
+	CheckBoxVisibility->ToolTipWidgetDelegate.BindDynamic(this, &UGeneralListItem::OnCheckBoxTooltipWidget);
+	ButtonEdit->ModumateButton->OnReleased.AddDynamic(this, &UGeneralListItem::OnButtonEditReleased);
+	TextTitleEditable->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UGeneralListItem::OnEditableTitleCommitted);
+	CheckBoxCullModel->OnCheckStateChanged.AddDynamic(this, &UGeneralListItem::OnCheckBoxCullModelChanged);
+	CheckBoxCullModel->ToolTipWidgetDelegate.BindDynamic(this, &UGeneralListItem::OnCheckBoxCullModelTooltipWidget);
 
 	return true;
 }
 
-void UCutPlaneDimListItem::NativeConstruct()
+void UGeneralListItem::NativeConstruct()
 {
 	Super::NativeConstruct();
 }
 
-void UCutPlaneDimListItem::OnButtonMainReleased()
+void UGeneralListItem::OnButtonMainReleased()
 {
 	// TODO: Cut plane action on button released
 }
 
-void UCutPlaneDimListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
+void UGeneralListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
 {
 	AEditModelGameState *gameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
 	if (gameState)
@@ -70,7 +70,7 @@ void UCutPlaneDimListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
 
 }
 
-void UCutPlaneDimListItem::OnEditableTitleCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+void UGeneralListItem::OnEditableTitleCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	// Lose focus if this commit is not entering its value
 	if (!(CommitMethod == ETextCommit::OnEnter || CommitMethod == ETextCommit::OnUserMovedFocus))
@@ -100,7 +100,7 @@ void UCutPlaneDimListItem::OnEditableTitleCommitted(const FText& Text, ETextComm
 	}
 }
 
-void UCutPlaneDimListItem::OnCheckBoxCullModelChanged(bool IsChecked)
+void UGeneralListItem::OnCheckBoxCullModelChanged(bool IsChecked)
 {
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller)
@@ -109,14 +109,14 @@ void UCutPlaneDimListItem::OnCheckBoxCullModelChanged(bool IsChecked)
 	}
 }
 
-void UCutPlaneDimListItem::OnButtonEditReleased()
+void UGeneralListItem::OnButtonEditReleased()
 {
 	TextTitleEditable->ModumateEditableTextBox->SetKeyboardFocus();
 }
 
-void UCutPlaneDimListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
+void UGeneralListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
-	const UCutPlaneDimListItemObject *cutPlaneItemObject = Cast<UCutPlaneDimListItemObject>(ListItemObject);
+	const UGeneralListItemObject *cutPlaneItemObject = Cast<UGeneralListItemObject>(ListItemObject);
 	if (!cutPlaneItemObject)
 	{
 		return;
@@ -142,30 +142,30 @@ void UCutPlaneDimListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 	
 }
 
-void UCutPlaneDimListItem::BuildAsVerticalCutPlaneItem(const FQuat& Rotation)
+void UGeneralListItem::BuildAsVerticalCutPlaneItem(const FQuat& Rotation)
 {
 	// TODO: This will be in static function for converting from ue4 axis to Modumate axis
 	int32 degree = AMOICutPlane::GetCutPlaneVerticalDegree(Rotation);
 	TextDimension->ChangeText(FText::AsNumber(degree));
 }
 
-void UCutPlaneDimListItem::BuildAsHorizontalCutPlaneItem(const FVector& Location)
+void UGeneralListItem::BuildAsHorizontalCutPlaneItem(const FVector& Location)
 {
 	TextDimension->ChangeText(UModumateDimensionStatics::CentimetersToDisplayText(Location.Z));
 }
 
-void UCutPlaneDimListItem::UpdateVisibilityAndName(bool NewVisible, const FString& NewName)
+void UGeneralListItem::UpdateVisibilityAndName(bool NewVisible, const FString& NewName)
 {
 	CheckBoxVisibility->SetIsChecked(!NewVisible);
 	TextTitleEditable->ChangeText(FText::FromString(NewName));
 }
 
-UWidget* UCutPlaneDimListItem::OnCheckBoxTooltipWidget()
+UWidget* UGeneralListItem::OnCheckBoxTooltipWidget()
 {
 	return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID_CheckBoxVisibility, this);
 }
 
-UWidget* UCutPlaneDimListItem::OnCheckBoxCullModelTooltipWidget()
+UWidget* UGeneralListItem::OnCheckBoxCullModelTooltipWidget()
 {
 	return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID_CheckBoxCullModel, this);
 }

@@ -1,15 +1,15 @@
-// Copyright 2020 Modumate, Inc. All Rights Reserved.
+// Copyright 2021 Modumate, Inc. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UI/RightMenu/CutPlaneDimListItem.h"
+#include "UI/RightMenu/GeneralListItem.h"
 
-#include "CutPlaneDimListItemObject.generated.h"
+#include "GeneralListItemObject.generated.h"
 
 
 UCLASS(BlueprintType)
-class MODUMATE_API UCutPlaneDimListItemObject : public UObject
+class MODUMATE_API UGeneralListItemObject : public UObject
 {
 	GENERATED_BODY()
 
