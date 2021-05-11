@@ -93,6 +93,17 @@ void UModumateGameInstance::Init()
 	}
 
 	QuantitiesManager = MakeShared<FQuantitiesManager>(this);
+
+	// Initialize the Object Database, which can take a while
+	ObjectDatabase = new FModumateDatabase();
+	ObjectDatabase->Init();
+
+	double databaseLoadTime = 0.0;
+	{
+		SCOPE_SECONDS_COUNTER(databaseLoadTime);
+		ObjectDatabase->ReadPresetData();
+	}
+	UE_LOG(LogPerformance, Log, TEXT("Object database loaded in %d ms"), FMath::RoundToInt(1000.0 * databaseLoadTime));
 }
 
 TSharedPtr<FModumateCloudConnection> UModumateGameInstance::GetCloudConnection() const
@@ -108,6 +119,18 @@ TSharedPtr<FQuantitiesManager> UModumateGameInstance::GetQuantitiesManager() con
 TSharedPtr<FModumateAccountManager> UModumateGameInstance::GetAccountManager() const
 {
 	return AccountManager;
+}
+
+const AEditModelGameMode* UModumateGameInstance::GetEditModelGameMode() const
+{
+	UWorld* world = GetWorld();
+	if (world == nullptr)
+	{
+		return nullptr;
+	}
+
+	auto gameModeClass = world->GetWorldSettings()->DefaultGameMode;
+	return GetDefault<AEditModelGameMode>(gameModeClass);
 }
 
 void UModumateGameInstance::RegisterAllCommands()
@@ -524,6 +547,13 @@ void UModumateGameInstance::Shutdown()
 	}
 
 	UModumateAnalyticsStatics::ShutdownAnalytics(AnalyticsInstance);
+
+	if (ObjectDatabase)
+	{
+		ObjectDatabase->Shutdown();
+		delete ObjectDatabase;
+		ObjectDatabase = nullptr;
+	}
 }
 
 void UModumateGameInstance::StartGameInstance()

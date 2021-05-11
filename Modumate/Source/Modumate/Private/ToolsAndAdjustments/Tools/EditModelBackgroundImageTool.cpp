@@ -13,11 +13,6 @@
 UBackgroundImageTool::UBackgroundImageTool()
 	: Super()
 {
-	auto* world = GetWorld();
-	if (world)
-	{
-		GameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
-	}
 }
 
 bool UBackgroundImageTool::Activate()

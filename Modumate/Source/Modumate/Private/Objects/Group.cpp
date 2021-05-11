@@ -6,6 +6,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/MOIGroupActor.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 float AMOIGroup::StructuralExtentsExpansion = 20.0f;
 
@@ -50,7 +51,7 @@ bool AMOIGroup::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutS
 AActor *AMOIGroup::RestoreActor()
 {
 	UWorld* world = GetWorld();
-	auto* gameMode = world->GetAuthGameMode<AEditModelGameMode>();
+	auto* gameMode = world->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
 	auto* groupActorClass = gameMode ? gameMode->MOIGroupActorClass : nullptr;
 	if (!ensure(groupActorClass))
 	{

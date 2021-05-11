@@ -30,9 +30,6 @@ protected:
 	FCollisionQueryParams CachedCollisionQueryParams;
 	FCollisionQueryParams CachedCollisionQueryComplexParams;
 
-	UPROPERTY()
-	class AEditModelPlayerController* EMPlayerController;
-
 public:
 	// Objects types for collision detection
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

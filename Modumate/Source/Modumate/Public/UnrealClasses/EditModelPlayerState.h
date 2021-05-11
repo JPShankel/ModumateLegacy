@@ -30,6 +30,8 @@ class MODUMATE_API AEditModelPlayerState : public APlayerState
 	GENERATED_BODY()
 	AEditModelPlayerState();
 
+	void BeginWithController();
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -59,6 +61,8 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Debug")
 	bool bDevelopDDL2Data;
 
+	bool bBeganWithController = false;
+
 	FString LastFilePath;
 
 	void SetShowGraphDebug(bool bShow);
@@ -70,9 +74,6 @@ public:
 	AModumateObjectInstance *HoveredObject;
 
 	bool DebugMouseHits;
-
-	UFUNCTION(BlueprintCallable, Category = "Game")
-	AEditModelGameMode *GetEditModelGameMode();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
 	TArray<FAffordanceLine> AffordanceLines;

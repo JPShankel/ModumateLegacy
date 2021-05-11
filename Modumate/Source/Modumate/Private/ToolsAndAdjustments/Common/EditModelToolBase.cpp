@@ -14,6 +14,7 @@
 #include "UI/PendingSegmentActor.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/DimensionWidget.h"
+#include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
@@ -36,6 +37,7 @@ UEditModelToolBase::UEditModelToolBase()
 	{
 		GameInstance = Cast<UModumateGameInstance>(world->GetGameInstance());
 		GameState = world->GetGameState<AEditModelGameState>();
+		GameMode = GameInstance ? GameInstance->GetEditModelGameMode() : nullptr;
 		DimensionManager = GameInstance ? GameInstance->DimensionManager : nullptr;
 	}
 }

@@ -3,12 +3,12 @@
 #include "ModumateCore/ModumateRoomStatics.h"
 
 #include "Algo/LevenshteinDistance.h"
-#include "UnrealClasses/DynamicMeshActor.h"
-#include "UnrealClasses/EditModelGameMode.h"
-#include "UnrealClasses/EditModelGameState.h"
-#include "Graph/Graph3D.h"
 #include "Database/ModumateObjectDatabase.h"
+#include "Graph/Graph3D.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 using namespace Modumate;
 
@@ -43,13 +43,13 @@ const FGuid UModumateRoomStatics::DefaultRoomConfigKey;
 bool UModumateRoomStatics::GetRoomConfigurationsFromTable(UObject* WorldContextObject, TArray<FRoomConfigurationBlueprint> &OutRoomConfigs)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameMode *gameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
-	if (!ensure(gameMode && gameMode->ObjectDatabase))
+	UModumateGameInstance* gameInstance = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
+	if (!ensure(gameInstance && gameInstance->ObjectDatabase))
 	{
 		return false;
 	}
 
-	for (auto &kvp : gameMode->ObjectDatabase->RoomConfigurations.DataMap)
+	for (auto &kvp : gameInstance->ObjectDatabase->RoomConfigurations.DataMap)
 	{
 		OutRoomConfigs.Add(kvp.Value.AsBlueprintObject());
 	}
@@ -133,7 +133,7 @@ bool UModumateRoomStatics::SetRoomConfigFromKey(AModumateObjectInstance *RoomObj
 #if 0 
 
 	UWorld *world = RoomObj ? RoomObj->GetWorld() : nullptr;
-	AEditModelGameMode *gameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
+	auto* gameMode = world ? world->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode() : nullptr;
 	const FRoomConfiguration *roomConfig = gameMode ? gameMode->ObjectDatabase->GetRoomConfigByGUID(ConfigKey) : nullptr;
 	if (roomConfig == nullptr)
 	{

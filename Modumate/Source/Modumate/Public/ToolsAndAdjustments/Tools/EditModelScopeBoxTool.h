@@ -7,8 +7,6 @@
 
 #include "EditModelScopeBoxTool.generated.h"
 
-class AEditModelGameMode;
-class AEditModelGameState;
 class ALineActor;
 
 UCLASS()
@@ -40,7 +38,6 @@ protected:
 
 	bool ResetState();
 
-	TWeakObjectPtr<AEditModelGameMode> GameMode;
 	TWeakObjectPtr<ADynamicMeshActor> PendingBox;
 	TWeakObjectPtr<ALineActor> PendingSegment;
 	FArchitecturalMaterial PendingBoxMaterial;

@@ -1,12 +1,14 @@
+// Copyright 2021 Modumate, Inc. All Rights Reserved.
+
 #include "UnrealClasses/CutPlaneCaptureActor.h"
 
 #include "Components/SceneCaptureComponent2D.h"
-#include "Drafting/DraftingManager.h"
-#include "UnrealClasses/EditModelGameMode.h"
-#include "Kismet/KismetRenderingLibrary.h"
 #include "DocumentManagement/ModumateSceneCaptureObjectInterface.h"
+#include "Drafting/DraftingManager.h"
+#include "Kismet/KismetRenderingLibrary.h"
 #include "ModumateCore/ModumateUserSettings.h"
-#include "UObject/Object.h"
+#include "UnrealClasses/AxesActor.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 // Called when the game starts or when spawned
 void ACutPlaneCaptureActor::BeginPlay()
@@ -64,6 +66,9 @@ void ACutPlaneCaptureActor::ResetHiddenActorsToDefault()
 {
 	CaptureComponent->HiddenActors.Reset();
 
-	AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
-	CaptureComponent->HiddenActors.Add(gameMode->Axes);
+	auto* controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+	if (controller && controller->AxesActor)
+	{
+		CaptureComponent->HiddenActors.Add(controller->AxesActor);
+	}
 }

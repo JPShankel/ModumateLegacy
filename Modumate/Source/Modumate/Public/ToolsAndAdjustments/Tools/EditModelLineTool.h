@@ -8,8 +8,6 @@
 
 #include "EditModelLineTool.generated.h"
 
-class AEditModelGameMode;
-class AEditModelGameState;
 
 UCLASS()
 class MODUMATE_API ULineTool : public UEditModelToolBase
@@ -23,8 +21,6 @@ protected:
 		NewSegmentPending,
 	};
 	EState State;
-
-	TWeakObjectPtr<AEditModelGameMode> GameMode;
 	EMouseMode OriginalMouseMode;
 
 public:

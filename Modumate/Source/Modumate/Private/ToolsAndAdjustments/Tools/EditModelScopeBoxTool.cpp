@@ -4,8 +4,8 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
-
 #include "UnrealClasses/LineActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 #include "DocumentManagement/ModumateCommands.h"
 
@@ -14,8 +14,6 @@ using namespace Modumate;
 UScopeBoxTool::UScopeBoxTool()
 	: Super()
 {
-	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
-	GameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
 }
 
 bool UScopeBoxTool::Activate()
@@ -154,7 +152,7 @@ bool UScopeBoxTool::EnterNextStage()
 		AModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject; 
 		if (newTarget != nullptr && newTarget->GetObjectType() == EObjectType::OTCutPlane)
 		{
-			if (!GameMode.IsValid())
+			if (GameMode == nullptr)
 			{
 				return false;
 			}

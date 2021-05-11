@@ -2,12 +2,13 @@
 
 #include "Objects/EdgeBase.h"
 
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/LineActor.h"
-#include "DocumentManagement/ModumateDocument.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 AMOIEdgeBase::AMOIEdgeBase()
 	: AModumateObjectInstance()
@@ -130,7 +131,7 @@ void AMOIEdgeBase::UpdateMaterial()
 {
 	if (LineActor.IsValid())
 	{
-		AEditModelGameMode* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
+		auto* gameMode = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
 		// Color
 		if (gameMode)
 		{

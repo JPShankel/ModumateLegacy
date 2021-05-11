@@ -14,10 +14,11 @@ static const TCHAR *kModumateRecoveryFile = TEXT("_tempBackupNew.mdmt");
 static const TCHAR *kModumateRecoveryFileBackup = TEXT("_tempBackupOld.mdmt");
 static const TCHAR *kModumateCleanShutdownFile = TEXT("_modumateDidNotShutDownCleanly.txt");
 
-class MODUMATE_API UModumateDocument;
-class MODUMATE_API FModumateAccountManager;
-class MODUMATE_API FModumateCloudConnection;
-class MODUMATE_API FQuantitiesManager;
+class AEditModelGameMode;
+class UModumateDocument;
+class FModumateAccountManager;
+class FModumateCloudConnection;
+class FQuantitiesManager;
 
 class IAnalyticsProvider;
 
@@ -77,6 +78,8 @@ public:
 	TSharedPtr<FModumateCloudConnection> GetCloudConnection() const;
 	TSharedPtr<FQuantitiesManager> GetQuantitiesManager() const;
 
+	const AEditModelGameMode* GetEditModelGameMode() const;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Tooltips)
 	TSubclassOf<class UTooltipManager> TooltipManagerClass;
 
@@ -112,6 +115,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UModumateTutorialManager* TutorialManager;
+
+	class FModumateDatabase* ObjectDatabase;
 
 	static const FString TestScriptRelativePath;
 

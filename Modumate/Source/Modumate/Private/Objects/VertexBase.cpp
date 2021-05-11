@@ -8,6 +8,7 @@
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 AMOIVertexBase::AMOIVertexBase()
 	: Super()
@@ -98,7 +99,7 @@ void AMOIVertexBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	auto gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
+	auto gameMode = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
 	VertexMeshComp->SetStaticMesh(gameMode->VertexMesh);
 	VertexMeshComp->SetMaterial(0, gameMode->VertexMaterial);
 

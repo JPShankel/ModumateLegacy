@@ -31,8 +31,6 @@ UStairTool::UStairTool()
 	, RiseSegmentID(MOD_ID_NONE)
 	, WidthSegmentID(MOD_ID_NONE)
 	, PendingObjMesh(nullptr)
-	, GameMode(nullptr)
-	, GameState(nullptr)
 	, RunStartPos(ForceInitToZero)
 	, RiseStartPos(ForceInitToZero)
 	, RiseEndPos(ForceInitToZero)
@@ -51,12 +49,6 @@ UStairTool::UStairTool()
 	, bFixTreadDepth(true)
 	, SegmentColor(0x00, 0x00, 0x00)
 {
-	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
-	if (world)
-	{
-		GameMode = world->GetAuthGameMode<AEditModelGameMode>();
-		GameState = world->GetGameState<AEditModelGameState>();
-	}
 }
 
 bool UStairTool::Activate()
@@ -412,7 +404,7 @@ void UStairTool::OnAssemblyChanged()
 	Super::OnAssemblyChanged();
 
 	EToolMode toolMode = UModumateTypeStatics::ToolModeFromObjectType(EObjectType::OTStaircase);
-	const FBIMAssemblySpec* assembly = GameState.IsValid() ?
+	const FBIMAssemblySpec* assembly = GameState ?
 		GameState->Document->GetPresetCollection().GetAssemblyByGUID(toolMode, AssemblyGUID) : nullptr;
 
 	if (assembly != nullptr)

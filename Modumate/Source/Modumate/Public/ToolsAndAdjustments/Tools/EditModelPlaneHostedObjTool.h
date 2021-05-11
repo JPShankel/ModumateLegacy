@@ -18,7 +18,6 @@ class MODUMATE_API UPlaneHostedObjTool : public URectangleTool
 	GENERATED_BODY()
 
 public:
-
 	UPlaneHostedObjTool();
 
 	virtual bool Activate() override;

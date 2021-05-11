@@ -3,16 +3,14 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-
 #include "UnrealClasses/LineActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 #include "DocumentManagement/ModumateCommands.h"
 
 UDrawingTool::UDrawingTool()
 	: Super()
 {
-	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
-	GameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
 }
 
 bool UDrawingTool::Activate()

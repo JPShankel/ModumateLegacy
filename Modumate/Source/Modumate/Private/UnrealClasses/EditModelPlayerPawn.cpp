@@ -11,7 +11,6 @@
 // Sets default values
 AEditModelPlayerPawn::AEditModelPlayerPawn()
 	: Super()
-	, EMPlayerController(nullptr)
 	, bHaveEverBeenPossessed(false)
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -54,12 +53,11 @@ void AEditModelPlayerPawn::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	EMPlayerController = Cast<AEditModelPlayerController>(NewController);
-
 	// Stop prioritizing axis input when we're possessed
-	if (EMPlayerController && EMPlayerController->InputHandlerComponent && bHaveEverBeenPossessed)
+	auto emPlayerController = Cast<AEditModelPlayerController>(NewController);
+	if (emPlayerController && emPlayerController->InputHandlerComponent && bHaveEverBeenPossessed)
 	{
-		EMPlayerController->InputHandlerComponent->RequestAxisInputPriority(StaticClass()->GetFName(), false);
+		emPlayerController->InputHandlerComponent->RequestAxisInputPriority(StaticClass()->GetFName(), false);
 	}
 
 	bHaveEverBeenPossessed = true;
@@ -68,12 +66,13 @@ void AEditModelPlayerPawn::PossessedBy(AController* NewController)
 void AEditModelPlayerPawn::UnPossessed()
 {
 	// Start prioritizing axis input when we're not possessed
-	if (EMPlayerController && EMPlayerController->InputHandlerComponent)
+	auto emPlayerController = Cast<AEditModelPlayerController>(Controller);
+	if (emPlayerController && emPlayerController->InputHandlerComponent)
 	{
-		EMPlayerController->InputHandlerComponent->RequestAxisInputPriority(StaticClass()->GetFName(), true);
+		emPlayerController->InputHandlerComponent->RequestAxisInputPriority(StaticClass()->GetFName(), true);
 	}
 
-	EMPlayerController = nullptr;
+	emPlayerController = nullptr;
 
 	Super::UnPossessed();
 }
@@ -83,9 +82,10 @@ void AEditModelPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (ensure(EMPlayerController && EMPlayerController->CameraController))
+	auto emPlayerController = Cast<AEditModelPlayerController>(Controller);
+	if (ensure(emPlayerController && emPlayerController->CameraController))
 	{
-		EMPlayerController->CameraController->SetupPlayerInputComponent(PlayerInputComponent);
+		emPlayerController->CameraController->SetupPlayerInputComponent(PlayerInputComponent);
 	}
 }
 

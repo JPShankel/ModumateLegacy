@@ -1029,7 +1029,7 @@ AActor *AModumateObjectInstance::RestoreActor()
 AActor *AModumateObjectInstance::CreateActor(const FVector &loc, const FQuat &rot)
 {
 	UWorld* world = GetWorld();
-	AEditModelGameMode* gameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
+	auto* gameMode = world ? world->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode() : nullptr;
 	if (gameMode)
 	{
 		DynamicMeshActor = world->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get(), FTransform(rot, loc));

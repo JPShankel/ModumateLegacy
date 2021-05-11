@@ -4,7 +4,7 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "ToolsAndAdjustments/Handles/AdjustBackgroundImageExtentsHandle.h"
-#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UI/Properties/InstPropWidgetScale.h"
 #include "Kismet/KismetRenderingLibrary.h"
@@ -28,7 +28,6 @@ void AMOIBackgroundImage::PostCreateObject(bool bNewObject)
 {
 	Super::PostCreateObject(bNewObject);
 
-	auto* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
 	auto* material = DynamicMeshActor->MasterPBRMaterial;
 
 	MaterialData.EngineMaterial = DynamicMeshActor->MasterPBRMaterial;

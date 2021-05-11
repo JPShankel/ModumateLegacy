@@ -1,31 +1,33 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/BIM/BIMDesigner.h"
-#include "UnrealClasses/EditModelPlayerController.h"
-#include "Blueprint/WidgetLayoutLibrary.h"
-#include "Components/CanvasPanelSlot.h"
-#include "Components/ScaleBox.h"
-#include "Components/CanvasPanel.h"
-#include "UI/BIM/BIMBlockNode.h"
-#include "DocumentManagement/ModumateDocument.h"
-#include "UI/EditModelPlayerHUD.h"
-#include "ModumateCore/ModumateSlateHelper.h"
-#include "BIMKernel/Presets/BIMPresetEditor.h"
-#include "UI/BIM/BIMBlockAddLayer.h"
-#include "UnrealClasses/EditModelGameMode.h"
+
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
+#include "BIMKernel/Presets/BIMPresetEditor.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Components/CanvasPanel.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Components/ScaleBox.h"
 #include "Components/SizeBox.h"
-#include "UI/EditModelUserWidget.h"
-#include "UnrealClasses/ThumbnailCacheManager.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/ModumateSlateHelper.h"
+#include "Online/ModumateAnalyticsStatics.h"
+#include "UI/BIM/BIMBlockAddLayer.h"
+#include "UI/BIM/BIMBlockMiniNode.h"
+#include "UI/BIM/BIMBlockNode.h"
 #include "UI/BIM/BIMBlockSlotList.h"
 #include "UI/BIM/BIMBlockSlotListItem.h"
-#include "UnrealClasses/DynamicIconGenerator.h"
-#include "UI/BIM/BIMBlockMiniNode.h"
-#include "ModumateCore/ModumateDimensionStatics.h"
 #include "UI/BIM/BIMEditColorPicker.h"
-#include "Online/ModumateAnalyticsStatics.h"
+#include "UI/EditModelPlayerHUD.h"
+#include "UI/EditModelUserWidget.h"
 #include "UI/SelectionTray/SelectionTrayWidget.h"
+#include "UnrealClasses/DynamicIconGenerator.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/ThumbnailCacheManager.h"
 
 
 UBIMDesigner::UBIMDesigner(const FObjectInitializer& ObjectInitializer)
@@ -160,7 +162,7 @@ void UBIMDesigner::PerformDrag()
 bool UBIMDesigner::UpdateCraftingAssembly()
 {
 	UpdateCachedPresetCollection();
-	return InstancePool.CreateAssemblyFromNodes(*GetWorld()->GetAuthGameMode<AEditModelGameMode>()->ObjectDatabase, CraftingAssembly) == EBIMResult::Success;
+	return InstancePool.CreateAssemblyFromNodes(*GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase, CraftingAssembly) == EBIMResult::Success;
 }
 
 void UBIMDesigner::ToggleCollapseExpandNodes()
@@ -280,7 +282,7 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FGuid& PresetID, bool bCenterOn
 
 	FBIMPresetEditorNodeSharedPtr rootNode;
 	EBIMResult getPresetResult = InstancePool.InitFromPreset(
-		*GetWorld()->GetAuthGameMode<AEditModelGameMode>()->ObjectDatabase,		
+		*GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase,
 		PresetID,
 		rootNode);
 	if (getPresetResult != EBIMResult::Success)
@@ -334,7 +336,7 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 
 	UpdateCachedPresetCollection();
 
-	EBIMResult asmResult = InstancePool.CreateAssemblyFromNodes(*GetWorld()->GetAuthGameMode<AEditModelGameMode>()->ObjectDatabase, CraftingAssembly);
+	EBIMResult asmResult = InstancePool.CreateAssemblyFromNodes(*GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase, CraftingAssembly);
 
 	bool bAssemblyHasPart = false;
 
@@ -814,7 +816,7 @@ bool UBIMDesigner::ApplyBIMFormElement(const FBIMEditorNodeIDType& NodeID, const
 	FBIMPresetEditorDelta delta;
 	if (ensureAlways(instPtr->Preset.MakeDeltaForFormElement(FormElement, delta) == EBIMResult::Success))
 	{
-		instPtr->Preset.ApplyDelta(*GetWorld()->GetAuthGameMode<AEditModelGameMode>()->ObjectDatabase,delta);
+		instPtr->Preset.ApplyDelta(*GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase, delta);
 
 		// If this preset is used elsewhere in the graph, update all copies to match this edit
 		for (auto& other : InstancePool.GetInstancePool())

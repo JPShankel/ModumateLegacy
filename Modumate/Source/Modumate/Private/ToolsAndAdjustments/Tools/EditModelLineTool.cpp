@@ -11,17 +11,12 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/LineActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 ULineTool::ULineTool()
 	: Super()
 	, State(Neutral)
 {
-	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
-	if (world)
-	{
-		GameMode = world->GetAuthGameMode<AEditModelGameMode>();
-		GameState = world->GetGameState<AEditModelGameState>();
-	}
 }
 
 void ULineTool::Initialize()

@@ -30,8 +30,6 @@ public:
 	virtual bool AbortUse() override;
 
 protected:
-	TWeakObjectPtr<AEditModelGameMode> GameMode;
-
 	TWeakObjectPtr<ALineActor> PendingSegment;
 	TWeakObjectPtr<ADynamicMeshActor> PendingPlane;
 	TArray<FVector> PendingPlanePoints;

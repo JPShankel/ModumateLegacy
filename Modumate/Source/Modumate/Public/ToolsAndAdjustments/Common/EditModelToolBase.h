@@ -77,6 +77,9 @@ protected:
 	class AEditModelGameState* GameState;
 
 	UPROPERTY()
+	const class AEditModelGameMode* GameMode;
+
+	UPROPERTY()
 	class UDimensionManager* DimensionManager;
 
 	EToolCreateObjectMode CreateObjectMode;

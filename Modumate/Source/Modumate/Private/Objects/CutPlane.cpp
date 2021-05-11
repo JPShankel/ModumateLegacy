@@ -49,7 +49,7 @@ void AMOICutPlane::PostCreateObject(bool bNewObject)
 		controller->EditModelUserWidget->UpdateCutPlanesList();
 	}
 
-	AEditModelGameMode *gameMode = world->GetAuthGameMode<AEditModelGameMode>();
+	auto* gameMode = world->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
 	MaterialData.EngineMaterial = gameMode ? gameMode->CutPlaneMaterial : nullptr;
 
 	// TODO: make sure that these are destroyed

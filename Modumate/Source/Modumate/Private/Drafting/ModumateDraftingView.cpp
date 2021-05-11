@@ -3,7 +3,6 @@
 #include "Drafting/ModumateDraftingView.h"
 #include <functional>
 #include "Drafting/DraftingManager.h"
-#include "UnrealClasses/EditModelGameMode.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "UnrealClasses/Modumate.h"
 #include "DocumentManagement/ModumateDocument.h"

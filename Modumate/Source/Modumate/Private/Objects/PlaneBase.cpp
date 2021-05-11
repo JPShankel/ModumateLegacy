@@ -6,6 +6,7 @@
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 AMOIPlaneBase::AMOIPlaneBase()
 	: AModumateObjectInstance()
@@ -134,7 +135,7 @@ bool AMOIPlaneBase::OnHovered(AEditModelPlayerController *controller, bool bIsHo
 
 void AMOIPlaneBase::PostCreateObject(bool bNewObject)
 {
-	AEditModelGameMode* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
+	auto* gameMode = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
 	if (gameMode)
 	{
 		MaterialData.EngineMaterial = gameMode->MetaPlaneMaterial;

@@ -10,14 +10,13 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 using namespace Modumate;
 
 UCutPlaneTool::UCutPlaneTool()
 	: Super()
 {
-	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
-	GameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
 }
 
 bool UCutPlaneTool::Activate()
@@ -62,7 +61,7 @@ bool UCutPlaneTool::BeginUse()
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector, tangent);
 	}
 
-	if (GameMode.IsValid())
+	if (GameMode)
 	{
 		PendingPlane = Controller->GetWorld()->SpawnActor<ADynamicMeshActor>(GameMode->DynamicMeshActorClass.Get());
 		PendingPlane->SetActorHiddenInGame(true);

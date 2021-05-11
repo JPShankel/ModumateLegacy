@@ -7,6 +7,8 @@ namespace Modumate
 	enum class FModumateLayerType;
 }
 
+#include "ModumateCore/ModumateTypes.h"
+
 DECLARE_MULTICAST_DELEGATE(FSceneCaptureHandlerDelegate);
 
 class MODUMATE_API ISceneCaptureObject
@@ -14,7 +16,7 @@ class MODUMATE_API ISceneCaptureObject
 public:
 	virtual ~ISceneCaptureObject() {};
 
-	virtual bool StartRender(UModumateDocument* doc = nullptr) = 0;
+	virtual bool StartRender(class UModumateDocument* doc = nullptr) = 0;
 	virtual void CaptureComplete() = 0;
 	virtual void TraceRequestComplete(int32 TraceID, FString TraceString) = 0;
 

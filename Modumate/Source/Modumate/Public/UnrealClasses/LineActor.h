@@ -9,8 +9,6 @@
 #include "ProceduralMeshComponent.h"
 #include "LineActor.generated.h"
 
-class AEditModelPlayerState;
-class AEditModelGameMode;
 class AEditModelPlayerHUD;
 class UProceduralMeshComponent;
 class UMaterialInstanceDynamic;
@@ -36,12 +34,6 @@ protected:
 	void UpdateColor();
 
 public:
-	UPROPERTY()
-	AEditModelPlayerState* EMPlayerState;
-
-	UPROPERTY()
-	AEditModelGameMode* EMGameMode;
-
 	UPROPERTY()
 	AEditModelPlayerHUD* EMPlayerHUD;
 

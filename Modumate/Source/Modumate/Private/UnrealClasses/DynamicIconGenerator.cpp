@@ -18,6 +18,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "Objects/LayeredObjectInterface.h"
 
@@ -75,23 +76,25 @@ void ADynamicIconGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Gamemode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
-	GameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
-	Controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	UWorld* world = GetWorld();
+	GameInstance = world->GetGameInstance<UModumateGameInstance>();
+	GameState = Cast<AEditModelGameState>(world->GetGameState());
+	Controller = Cast<AEditModelPlayerController>(world->GetFirstPlayerController());
 
+	auto* gameMode = world->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
 	FActorSpawnParameters dynamicMeshSpawnParams;
-	dynamicMeshSpawnParams.Name = FName(TEXT("IconDynamicMeshActor"));
-	IconDynamicMeshActor = GetWorld()->SpawnActor<ADynamicMeshActor>(Gamemode->DynamicMeshActorClass.Get(), dynamicMeshSpawnParams);
+	dynamicMeshSpawnParams.Name = FName(*FString::Printf(TEXT("%s_IconDynamicMeshActor"), *GetName()));
+	IconDynamicMeshActor = world->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get(), dynamicMeshSpawnParams);
 	IconDynamicMeshActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
 
 	FActorSpawnParameters compoundMeshSpawnParams;
-	compoundMeshSpawnParams.Name = FName(TEXT("IconCompoundMeshActor"));
-	IconCompoundMeshActor = GetWorld()->SpawnActor<ACompoundMeshActor>(compoundMeshSpawnParams);
+	compoundMeshSpawnParams.Name = FName(*FString::Printf(TEXT("%s_IconCompoundMeshActor"), *GetName()));
+	IconCompoundMeshActor = world->SpawnActor<ACompoundMeshActor>(compoundMeshSpawnParams);
 	IconCompoundMeshActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
 
 	DynCustomMaterial = IconSphereMesh->CreateDynamicMaterialInstance(0, CustomMaterialBase);
 
-	IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), RenderTargetSize, RenderTargetSize, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
+	IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(world, RenderTargetSize, RenderTargetSize, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
 }
 
 void ADynamicIconGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -291,7 +294,7 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMPresetCollection
 						// Turn off verbose error reporting, needed for data validation but annoying for icons that are allowed to fail
 						bool bEnsureOnFormulaError = FBIMPartLayout::bEnsureOnFormulaError;
 						FBIMPartLayout::bEnsureOnFormulaError = false;
-						if (assemblySpec.FromPreset(*Gamemode->ObjectDatabase, alteredPartCollection, craftingSpec.PresetGUID) == EBIMResult::Success)
+						if (assemblySpec.FromPreset(*GameInstance->ObjectDatabase, alteredPartCollection, craftingSpec.PresetGUID) == EBIMResult::Success)
 						{
 							FBIMPartLayout::bEnsureOnFormulaError = bEnsureOnFormulaError;
 							bCaptureSuccess = SetIconMeshForAssemblyType(assemblySpec, IconRenderTarget, assemblyPartIndex, fromRootNode);
@@ -786,7 +789,7 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 
 bool ADynamicIconGenerator::SetIconFromTextureAsset(const FGuid& PresetID, UMaterialInterface*& OutMaterial)
 {
-	const FStaticIconTexture* staticIcon = Gamemode->ObjectDatabase->GetStaticIconTextureByGUID(PresetID);
+	const FStaticIconTexture* staticIcon = GameInstance->ObjectDatabase->GetStaticIconTextureByGUID(PresetID);
 	if (staticIcon != nullptr && staticIcon->IsValid())
 	{
 		UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
@@ -800,7 +803,7 @@ bool ADynamicIconGenerator::SetIconFromTextureAsset(const FGuid& PresetID, UMate
 bool ADynamicIconGenerator::SetIconMeshForRawMaterial(const FGuid& MaterialKey, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Step 1: Get material
-	const FArchitecturalMaterial* aMat = Gamemode->ObjectDatabase->GetArchitecturalMaterialByGUID(MaterialKey);
+	const FArchitecturalMaterial* aMat = GameInstance->ObjectDatabase->GetArchitecturalMaterialByGUID(MaterialKey);
 	if (!aMat->IsValid())
 	{
 		return false;
@@ -822,7 +825,7 @@ bool ADynamicIconGenerator::SetIconMeshForRawMaterial(const FGuid& MaterialKey, 
 bool ADynamicIconGenerator::SetIconMeshForProfile(const FGuid& ProfileKey, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Step 1: Get profile
-	const FSimpleMeshRef* meshRef = Gamemode->ObjectDatabase->GetSimpleMeshByGUID(ProfileKey);
+	const FSimpleMeshRef* meshRef = GameInstance->ObjectDatabase->GetSimpleMeshByGUID(ProfileKey);
 	if (!meshRef)
 	{
 		return false;
@@ -865,7 +868,7 @@ bool ADynamicIconGenerator::SetIconMeshForProfile(const FGuid& ProfileKey, UText
 bool ADynamicIconGenerator::SetIconMeshForMesh(const FGuid& MeshKey, UTextureRenderTarget2D* InRenderTarget)
 {
 	// Step 1: Get mesh from key
-	const FArchitecturalMesh* aMesh = Gamemode->ObjectDatabase->GetArchitecturalMeshByGUID(MeshKey);
+	const FArchitecturalMesh* aMesh = GameInstance->ObjectDatabase->GetArchitecturalMeshByGUID(MeshKey);
 	if (!aMesh->EngineMesh.IsValid())
 	{
 		return false;
@@ -943,8 +946,8 @@ bool ADynamicIconGenerator::SetIconMeshForPart(const FBIMPresetCollectionProxy& 
 	// Step 3: Get assets from key, and size from dimension
 	FVector vSize = FVector::OneVector;
 
-	const FArchitecturalMaterial* aMat = Gamemode->ObjectDatabase->GetArchitecturalMaterialByGUID(rawMaterialKey);
-	const FArchitecturalMesh* aMesh = Gamemode->ObjectDatabase->GetArchitecturalMeshByGUID(meshKey);
+	const FArchitecturalMaterial* aMat = GameInstance->ObjectDatabase->GetArchitecturalMaterialByGUID(rawMaterialKey);
+	const FArchitecturalMesh* aMesh = GameInstance->ObjectDatabase->GetArchitecturalMeshByGUID(meshKey);
 
 	// Step 4: Set assets
 	if (aMat != nullptr && aMesh != nullptr && aMesh->EngineMesh.IsValid())
@@ -1004,7 +1007,7 @@ bool ADynamicIconGenerator::SetIconMeshForMaterial(const FBIMPresetCollectionPro
 	}
 
 	// Step 3: Get assets from key
-	const FArchitecturalMaterial* aMat = Gamemode->ObjectDatabase->GetArchitecturalMaterialByGUID(rawMaterialKey);
+	const FArchitecturalMaterial* aMat = GameInstance->ObjectDatabase->GetArchitecturalMaterialByGUID(rawMaterialKey);
 
 	// Step 4: Set assets
 	if (aMat != nullptr)
@@ -1082,7 +1085,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 		}
 	}
 
-	const FArchitecturalMaterial* aMat = Gamemode->ObjectDatabase->GetArchitecturalMaterialByGUID(rawMaterialKey);
+	const FArchitecturalMaterial* aMat = GameInstance->ObjectDatabase->GetArchitecturalMaterialByGUID(rawMaterialKey);
 	// Step 4: Set assets
 	if (aMat != nullptr)
 	{
@@ -1111,7 +1114,7 @@ bool ADynamicIconGenerator::SetIconMeshForModule(const FBIMPresetCollectionProxy
 bool ADynamicIconGenerator::SetIconMeshForLayerNodeID(const FBIMPresetCollectionProxy& PresetCollection, const FBIMEditorNodeIDType& NodeID, UTextureRenderTarget2D* InRenderTarget)
 {
 	FBIMAssemblySpec assembly;
-	Controller->EditModelUserWidget->BIMDesigner->InstancePool.CreateAssemblyFromLayerNode(*Gamemode->ObjectDatabase, NodeID, assembly);
+	Controller->EditModelUserWidget->BIMDesigner->InstancePool.CreateAssemblyFromLayerNode(*GameInstance->ObjectDatabase, NodeID, assembly);
 	return SetIconMeshForWallAssembly(assembly, InRenderTarget);
 }
 
@@ -1120,7 +1123,7 @@ bool ADynamicIconGenerator::SetIconMeshForLayerPreset(const FBIMPresetCollection
 	FBIMAssemblySpec assembly;
 	EObjectType objType = EObjectType::OTWallSegment; // TODO: Get object type, default to wall for now
 	FBIMPresetCollectionProxy mutableCollection(PresetCollection);
-	EBIMResult result = mutableCollection.CreateAssemblyFromLayerPreset(*Gamemode->ObjectDatabase, PresetID, objType, assembly);
+	EBIMResult result = mutableCollection.CreateAssemblyFromLayerPreset(*GameInstance->ObjectDatabase, PresetID, objType, assembly);
 	return SetIconMeshForWallAssembly(assembly, InRenderTarget);
 }
 

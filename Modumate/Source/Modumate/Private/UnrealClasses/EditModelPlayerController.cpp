@@ -124,8 +124,8 @@ void AEditModelPlayerController::PostInitializeComponents()
 
 	// Assign our cached casted AEditModelPlayerState, and its cached casted pointer to us,
 	// immediately after it's created.
-	AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
-	if ((gameMode != nullptr) && ensureAlways(PlayerState != nullptr))
+	// (This is only possible on standalone / server - online clients won't get the PlayerState until replication)
+	if (PlayerState != nullptr)
 	{
 		EMPlayerState = Cast<AEditModelPlayerState>(PlayerState);
 		EMPlayerState->EMPlayerController = this;
@@ -136,11 +136,20 @@ void AEditModelPlayerController::PostInitializeComponents()
 * Unreal Event Handlers
 */
 
-void AEditModelPlayerController::BeginPlay()
+void AEditModelPlayerController::BeginWithPlayerState()
 {
-	Super::BeginPlay();
+	if (bBeganWithPlayerState || (EMPlayerState == nullptr))
+	{
+		return;
+	}
 
 	AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+	if (gameState->Document == nullptr)
+	{
+		ensureMsgf(IsNetMode(NM_Client), TEXT("The document should only be missing if we're a client connected to a dedicated server!"));
+		gameState->InitDocument();
+	}
+
 	Document = gameState->Document;
 
 	EMPlayerPawn = Cast<AEditModelPlayerPawn>(GetPawn());
@@ -202,8 +211,6 @@ void AEditModelPlayerController::BeginPlay()
 		viewportClient->SetUseSoftwareCursorWidgets(false);
 	}
 
-	AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
-
 	FString recoveryFile = FPaths::Combine(gameInstance->UserSettings.GetLocalTempDir(), kModumateRecoveryFile);
 
 	if (gameInstance->RecoveringFromCrash)
@@ -257,7 +264,7 @@ void AEditModelPlayerController::BeginPlay()
 
 #if !UE_BUILD_SHIPPING
 	// Now that we've registered our commands, register them in the UE4 console's autocompletion list
-	UModumateConsole *console = Cast<UModumateConsole>(GEngine->GameViewport ? GEngine->GameViewport->ViewportConsole : nullptr);
+	UModumateConsole* console = Cast<UModumateConsole>(GEngine->GameViewport ? GEngine->GameViewport->ViewportConsole : nullptr);
 	if (console)
 	{
 		console->BuildRuntimeAutoCompleteList(true);
@@ -290,6 +297,21 @@ void AEditModelPlayerController::BeginPlay()
 	if (InputAutomationComponent && InputAutomationComponent->IsRecording())
 	{
 		InputAutomationComponent->RecordLoadedTutorial(bOpeningTutorialProject);
+	}
+
+	bBeganWithPlayerState = true;
+}
+
+void AEditModelPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Allow initializing player state from within player controller, in case EMPlayerState began first without the controller.
+	if (EMPlayerState && EMPlayerState->HasActorBegunPlay() && !EMPlayerState->bBeganWithController)
+	{
+		EMPlayerState->EMPlayerController = this;
+		BeginWithPlayerState();
+		EMPlayerState->BeginWithController();
 	}
 }
 
@@ -1543,6 +1565,12 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	SCOPE_CYCLE_COUNTER(STAT_ModumateEditTick);
 
+	// Postpone any meaningful work until we have a valid PlayerState
+	if (!bBeganWithPlayerState || !ensure(EMPlayerState))
+	{
+		return;
+	}
+
 	if (bResetFocusToGameViewport)
 	{
 		bResetFocusToGameViewport = false;
@@ -1591,8 +1619,6 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 	if (EMPlayerState->ShowDocumentDebug)
 	{
 		Document->DisplayDebugInfo(GetWorld());
-
-		AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
 
 		for (auto &sob : EMPlayerState->SelectedObjects)
 		{
@@ -1982,7 +2008,8 @@ bool AEditModelPlayerController::CanShowFileDialog()
 {
 	// If we're using input automation to play back input, then don't bother to show the dialog, since it shouldn't affect the current session.
 	// TODO: capture the modal dialog action in case we want to know whether it was confirmed or canceled.
-	return !EMPlayerState->ShowingFileDialog && ((InputAutomationComponent == nullptr) || !InputAutomationComponent->IsPlaying());
+	return EMPlayerState && !EMPlayerState->ShowingFileDialog &&
+		((InputAutomationComponent == nullptr) || !InputAutomationComponent->IsPlaying());
 }
 
 void AEditModelPlayerController::CleanSelectedObjects()
@@ -3580,8 +3607,8 @@ bool AEditModelPlayerController::ToggleGravityPawn()
 	// Get required pawns
 	APlayerCameraManager* camManager = UGameplayStatics::GetPlayerCameraManager(this, 0);
 	APawn* currentPawn = UGameplayStatics::GetPlayerPawn(this, 0);
-	AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
-	if (camManager == nullptr || EMPlayerPawn == nullptr || currentPawn == nullptr || gameMode == nullptr || gameMode->ToggleGravityPawnClass == nullptr)
+	auto* gameMode = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
+	if (!(camManager && EMPlayerPawn && currentPawn && gameMode && gameMode->ToggleGravityPawnClass))
 	{
 		return false;
 	}

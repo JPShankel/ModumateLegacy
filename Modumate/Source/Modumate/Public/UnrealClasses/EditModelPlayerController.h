@@ -217,6 +217,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class AAxesActor* AxesActor;
 
+	void BeginWithPlayerState();
+
 	// Event overrides
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -565,4 +567,6 @@ public:
 	void UpdateCutPlaneCullingMaterialInst(int32 ObjID = MOD_ID_NONE);
 	void ToggleAllCutPlanesColor(bool bEnable);
 	FPlane GetCurrentCullingPlane() const;
+
+	bool bBeganWithPlayerState = false;
 };

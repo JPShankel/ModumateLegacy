@@ -7,9 +7,6 @@
 
 #include "EditModelStairTool.generated.h"
 
-class AEditModelGameMode;
-class AEditModelGameState;
-class AEditModelPlayerState;
 class ADynamicMeshActor;
 class ALineActor;
 class AModumateObjectInstance;
@@ -58,8 +55,6 @@ protected:
 	FBIMAssemblySpec ObjAssembly;
 	int32 RunSegmentID, RiseSegmentID, WidthSegmentID;
 	TWeakObjectPtr<ADynamicMeshActor> PendingObjMesh;
-	TWeakObjectPtr<AEditModelGameMode> GameMode;
-	TWeakObjectPtr<AEditModelGameState> GameState;
 	FVector RunStartPos, RiseStartPos, RiseEndPos, WidthEndPos;
 	FVector RunDir, WidthDir;
 	float DesiredTreadDepth, CurrentTreadDepth, CurrentRiserHeight, CurrentWidth;

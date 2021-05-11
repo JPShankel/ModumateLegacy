@@ -26,12 +26,6 @@ URectangleTool::URectangleTool()
 	, PendingPlaneGeom(ForceInitToZero)
 	, MinPlaneSize(1.0f)
 {
-	UWorld *world = Controller ? Controller->GetWorld() : nullptr;
-	if (world)
-	{
-		GameMode = world->GetAuthGameMode<AEditModelGameMode>();
-		GameState = world->GetGameState<AEditModelGameState>();
-	}
 }
 
 bool URectangleTool::HandleInputNumber(double n)

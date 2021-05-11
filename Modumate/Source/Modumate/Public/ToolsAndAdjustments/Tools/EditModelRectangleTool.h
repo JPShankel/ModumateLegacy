@@ -8,9 +8,6 @@
 
 #include "EditModelRectangleTool.generated.h"
 
-class AEditModelGameMode;
-class AEditModelGameState;
-class ALineActor;
 
 UCLASS()
 class MODUMATE_API URectangleTool : public UEditModelToolBase
@@ -25,8 +22,6 @@ protected:
 		NewPlanePending,
 	};
 	EState State;
-
-	TWeakObjectPtr<AEditModelGameMode> GameMode;
 
 	EMouseMode OriginalMouseMode;
 	TArray<FVector> PendingPlanePoints;

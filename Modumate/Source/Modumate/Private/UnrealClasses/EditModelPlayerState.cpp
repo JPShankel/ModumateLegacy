@@ -48,6 +48,18 @@ AEditModelPlayerState::AEditModelPlayerState()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void AEditModelPlayerState::BeginWithController()
+{
+	if (!bBeganWithController && EMPlayerController)
+	{
+		PostSelectionChanged();
+		PostViewChanged();
+		SetViewMode(EEditViewModes::AllObjects, true);
+
+		bBeganWithController = true;
+	}
+}
+
 void AEditModelPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
@@ -57,21 +69,27 @@ void AEditModelPlayerState::BeginPlay()
 	// (For example, the DebugCameraController, spawned by the CheatManager when pressing the semicolon key in non-shipping builds)
 	if (EMPlayerController == nullptr)
 	{
-		EMPlayerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
-		check(EMPlayerController);
+		auto* world = GetWorld();
+		auto* localPlayer = world ? world->GetFirstLocalPlayerFromController() : nullptr;
+		EMPlayerController = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(world)) : nullptr;
 	}
 
-	PostSelectionChanged();
-	PostViewChanged();
-	SetViewMode(EEditViewModes::AllObjects, true);
+	// EditModelPlayerState initialization must happen after the EditModelPlayerController,
+	// so allow that to either happen now or be deferred.
+	if (EMPlayerController && EMPlayerController->HasActorBegunPlay() && !EMPlayerController->bBeganWithPlayerState)
+	{
+		EMPlayerController->EMPlayerState = this;
+		EMPlayerController->BeginWithPlayerState();
+		BeginWithController();
+	}
 }
 
 void AEditModelPlayerState::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (!ensureMsgf(EMPlayerController != nullptr,
-		TEXT("AEditModelPlayerController should have initialized AEditModelPlayerState!")))
+	// Postpone any meaningful work until we have a valid PlayerController
+	if (!bBeganWithController || !ensure(EMPlayerController))
 	{
 		return;
 	}
@@ -260,11 +278,6 @@ void AEditModelPlayerState::SetShowGraphDebug(bool bShow)
 			}
 		}
 	}
-}
-
-AEditModelGameMode *AEditModelPlayerState::GetEditModelGameMode()
-{
-	return Cast<AEditModelGameMode>(GetWorld()->GetAuthGameMode());
 }
 
 void AEditModelPlayerState::ToggleRoomViewMode()

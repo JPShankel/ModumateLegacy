@@ -127,7 +127,7 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UPROPERTY()
-	class AEditModelGameMode* Gamemode;
+	class UModumateGameInstance* GameInstance;
 
 	UPROPERTY()
 	class AEditModelGameState* GameState;

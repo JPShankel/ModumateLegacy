@@ -15,7 +15,7 @@ class MODUMATE_API UBackgroundImageTool: public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	explicit UBackgroundImageTool();
+	UBackgroundImageTool();
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_BACKGROUNDIMAGE; }
 
@@ -28,8 +28,6 @@ public:
 	virtual bool EnterNextStage() override;
 
 protected:
-	UPROPERTY()
-	AEditModelGameMode* GameMode = nullptr;
 	FVector Origin;
 	FVector Normal;
 	EMouseMode OriginalMouseMode;

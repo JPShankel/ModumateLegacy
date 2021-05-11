@@ -10,7 +10,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-#include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 // Sets default values
 ALineActor::ALineActor()
@@ -28,8 +28,6 @@ void ALineActor::BeginPlay()
 
 	if (auto *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>())
 	{
-		EMPlayerState = playerController->EMPlayerState;
-		EMGameMode = EMPlayerState->GetEditModelGameMode();
 		EMPlayerHUD = playerController->GetEditModelHUD();
 
 		SetIsHUD(bIsHUD);
@@ -58,14 +56,16 @@ bool ALineActor::MakeGeometry()
 {
 	if (auto meshComp = GetStaticMeshComponent())
 	{
-		if (!EMGameMode)
+		auto* gameMode = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
+
+		if (!gameMode)
 		{
 			return false;
 		}
 
-		meshComp->SetStaticMesh(EMGameMode->LineMesh);
+		meshComp->SetStaticMesh(gameMode->LineMesh);
 		FArchitecturalMaterial materialData;
-		materialData.EngineMaterial = EMGameMode->LineMaterial;
+		materialData.EngineMaterial = gameMode->LineMaterial;
 		meshComp->SetMaterial(0, materialData.EngineMaterial.Get());
 		meshComp->SetCastShadow(false);
 

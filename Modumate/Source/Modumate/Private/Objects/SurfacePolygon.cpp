@@ -9,6 +9,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 AMOISurfacePolygon::AMOISurfacePolygon()
 	: AMOIPlaneBase()
@@ -75,7 +76,7 @@ bool AMOISurfacePolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 		CachedOrigin = CachedPoints[0];
 		CachedCenter = CachedOrigin;
 
-		AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
+		auto* gameMode = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
 		MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
 		// Offset the vertices used for the surface polygon away from the host, to prevent z-fighting

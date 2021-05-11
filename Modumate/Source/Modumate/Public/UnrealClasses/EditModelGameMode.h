@@ -19,12 +19,7 @@ public:
 
 	AEditModelGameMode();
 
-	//~ Begin AActor Interface
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	//~ End AActor Interface
-
 	//~ Begin AGameModeBase Interface
-	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 	virtual void InitGameState() override;
 	//~ End AGameModeBase Interface
 
@@ -91,8 +86,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UTexture2D *ButtonEditRedTexture;
 
-	FModumateDatabase *ObjectDatabase;
-
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* RoomConfigurationTable;
 
@@ -101,9 +94,6 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Editing")
 	TSubclassOf<class ACutPlaneCaptureActor> CutPlaneCaptureActorClass;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Actors")
-	AActor *Axes;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Pawn")
 	TSubclassOf<class AEditModelToggleGravityPawn> ToggleGravityPawnClass;

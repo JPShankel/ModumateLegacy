@@ -13,6 +13,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 
 AMOIRoofPerimeter::AMOIRoofPerimeter()
@@ -63,7 +64,7 @@ void AMOIRoofPerimeter::SetupAdjustmentHandles(AEditModelPlayerController *Contr
 		return;
 	}
 
-	UStaticMesh *anchorMesh = Controller->EMPlayerState->GetEditModelGameMode()->AnchorMesh;
+	UStaticMesh *anchorMesh = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode()->AnchorMesh;
 
 	CreateFacesHandle = MakeHandle<ACreateRoofFacesHandle>();
 	RetractFacesHandle = MakeHandle<ARetractRoofFacesHandle>();

@@ -35,7 +35,6 @@
 #include "Quantities/QuantitiesManager.h"
 #include "UI/DimensionManager.h"
 #include "UI/EditModelUserWidget.h"
-#include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelInputAutomation.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -748,7 +747,7 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 	* Valid GUID->Invalid GUID == Delete existing preset
 	*/
 
-	AEditModelGameMode* gameMode = World->GetAuthGameMode<AEditModelGameMode>();
+	UModumateGameInstance* gameInstance = World->GetGameInstance<UModumateGameInstance>();
 
 	// Add or update if we have a new GUID
 	if (PresetDelta.NewState.GUID.IsValid())
@@ -774,7 +773,7 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 			}
 			
 			FBIMAssemblySpec newSpec;
-			if (ensureAlways(newSpec.FromPreset(*gameMode->ObjectDatabase, FBIMPresetCollectionProxy(BIMPresetCollection), affectedPreset) == EBIMResult::Success))
+			if (ensureAlways(newSpec.FromPreset(*gameInstance->ObjectDatabase, FBIMPresetCollectionProxy(BIMPresetCollection), affectedPreset) == EBIMResult::Success))
 			{
 				affectedAssemblies.Add(affectedPreset);
 				BIMPresetCollection.UpdateProjectAssembly(newSpec);
@@ -1400,8 +1399,6 @@ int32 UModumateDocument::MakeGroupObject(UWorld *world, const TArray<int32> &ids
 void UModumateDocument::UnmakeGroupObjects(UWorld *world, const TArray<int32> &groupIds)
 {
 	ClearRedoBuffer();
-
-	AEditModelGameMode *gameMode = world->GetAuthGameMode<AEditModelGameMode>();
 
 	TArray<AModumateObjectInstance*> obs;
 	Algo::Transform(groupIds,obs,[this](int32 id){return GetObjectById(id);});
@@ -2079,8 +2076,8 @@ void UModumateDocument::MakeNew(UWorld *World)
 		kvp.Value.Reset();
 	}
 
-	AEditModelGameMode* gameMode = Cast<AEditModelGameMode>(World->GetAuthGameMode());
-	BIMPresetCollection = gameMode->ObjectDatabase->GetPresetCollection();
+	UModumateGameInstance* gameInstance = World ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
+	BIMPresetCollection = gameInstance->ObjectDatabase->GetPresetCollection();
 
 	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
 	if (controller && controller->DynamicIconGenerator)
@@ -2090,8 +2087,7 @@ void UModumateDocument::MakeNew(UWorld *World)
 	}
 
 	// Clear drafting render directories
-	UModumateGameInstance *modGameInst = World ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
-	UDraftingManager *draftMan = modGameInst ? modGameInst->DraftingManager : nullptr;
+	UDraftingManager *draftMan = gameInstance ? gameInstance->DraftingManager : nullptr;
 	if (draftMan != nullptr)
 	{
 		draftMan->Reset();
@@ -2218,8 +2214,6 @@ bool UModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
 bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Serialize"));
-
-	AEditModelGameMode *gameMode = Cast<AEditModelGameMode>(World->GetAuthGameMode());
 
 	// Header is its own object
 	OutHeader.Version = Modumate::DocVersion;
@@ -2414,9 +2408,8 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 
 	MakeNew(world);
 
-	AEditModelGameMode* gameMode = world->GetAuthGameMode<AEditModelGameMode>();
-
-	FModumateDatabase* objectDB = gameMode->ObjectDatabase;
+	UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
+	FModumateDatabase* objectDB = gameInstance->ObjectDatabase;
 
 	BIMPresetCollection.ReadPresetsFromDocRecord(*objectDB, InHeader.Version, InDocumentRecord);
 
@@ -2581,9 +2574,8 @@ bool UModumateDocument::LoadDeltas(UWorld* world, const FString& path, bool bSet
 
 	MakeNew(world);
 
-	AEditModelGameMode* gameMode = world->GetAuthGameMode<AEditModelGameMode>();
-
-	FModumateDatabase* objectDB = gameMode->ObjectDatabase;
+	UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
+	FModumateDatabase* objectDB = gameInstance->ObjectDatabase;
 
 	CachedHeader = FModumateDocumentHeader();
 	CachedRecord = FMOIDocumentRecord();

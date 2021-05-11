@@ -45,7 +45,7 @@ void AMOIScopeBox::SetupDynamicGeometry()
 {
 	// TODO: generate plane points and extrusion from extents and transform, rather than old-school control points
 #if 0
-	AEditModelGameMode *gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
+	auto* gameMode = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
 	MaterialData.EngineMaterial = gameMode ? gameMode->ScopeBoxMaterial : nullptr;
 
 	float thickness = GetExtents().Y;
