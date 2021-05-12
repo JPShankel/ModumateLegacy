@@ -135,6 +135,7 @@ namespace BIMPropertyNames
 	extern const FBIMNameType UIGroup;
 	extern const FBIMNameType UseGroupType;
 	extern const FBIMNameType Width;
+	extern const FBIMNameType Zalign;
 }
 
 struct MODUMATE_API FBIMPropertyKey

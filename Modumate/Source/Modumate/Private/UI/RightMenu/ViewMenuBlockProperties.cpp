@@ -2,7 +2,7 @@
 
 #include "UI/RightMenu/ViewMenuBlockProperties.h"
 
-#include "Components/CheckBox.h"
+#include "UI/Custom/ModumateCheckBox.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "UI/Custom/ModumateButton.h"
@@ -23,15 +23,13 @@ bool UViewMenuBlockProperties::Initialize()
 	{
 		return false;
 	}
-	if (!(ControlGravityOn && ControlGravityOff && ControlViewCubeOn && ControlViewCubeOff && EditableTextBox_FOV && EditableTextBox_Month && EditableTextBox_Day && 
+	if (!(ViewCubeCheckBox && GravityCheckBox && EditableTextBox_FOV && EditableTextBox_Month && EditableTextBox_Day &&
 		EditableTextBox_Hour && EditableTextBox_Minute && ModumateButton_AM))
 	{
 		return false;
 	}
-	ControlGravityOn->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::OnControlGravityOnChanged);
-	ControlGravityOff->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::OnControlGravityOffChanged);
-	ControlViewCubeOn->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::OnControlViewCubeOnChanged);
-	ControlViewCubeOff->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::OnControlViewCubeOffChanged);
+	ViewCubeCheckBox->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::ToggleViewCubeCheckboxes);
+	GravityCheckBox->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::ToggleGravityCheckboxes);
 	EditableTextBox_FOV->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UViewMenuBlockProperties::OnEditableTextBoxFOVCommitted);
 
 	EditableTextBox_Month->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UViewMenuBlockProperties::OnEditableTextBoxMonthCommitted);
@@ -148,61 +146,14 @@ void UViewMenuBlockProperties::OnReleaseButtonModumateButtonAM()
 	SyncTextBoxesWithSkyActorCurrentTime();
 }
 
-void UViewMenuBlockProperties::OnControlGravityOnChanged(bool IsChecked)
-{
-	ToggleGravityCheckboxes(true);
-}
-
-void UViewMenuBlockProperties::OnControlGravityOffChanged(bool IsChecked)
-{
-	ToggleGravityCheckboxes(false);
-}
-
 void UViewMenuBlockProperties::ToggleGravityCheckboxes(bool NewEnable)
 {
 	Controller->ToggleGravityPawn();
-	ControlGravityOn->SetIsChecked(NewEnable);
-	ControlGravityOff->SetIsChecked(!NewEnable);
-
-	if (NewEnable)
-	{
-		ControlGravityOn->SetVisibility(ESlateVisibility::HitTestInvisible);
-		ControlGravityOff->SetVisibility(ESlateVisibility::Visible);
-	}
-	else
-	{
-		ControlGravityOn->SetVisibility(ESlateVisibility::Visible);
-		ControlGravityOff->SetVisibility(ESlateVisibility::HitTestInvisible);
-	}
-}
-
-void UViewMenuBlockProperties::OnControlViewCubeOnChanged(bool IsChecked)
-{
-	ToggleViewCubeCheckboxes(true);
-}
-
-void UViewMenuBlockProperties::OnControlViewCubeOffChanged(bool IsChecked)
-{
-	ToggleViewCubeCheckboxes(false);
 }
 
 void UViewMenuBlockProperties::ToggleViewCubeCheckboxes(bool NewEnable)
 {
 	Controller->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(NewEnable ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
-
-	ControlViewCubeOn->SetIsChecked(NewEnable);
-	ControlViewCubeOff->SetIsChecked(!NewEnable);
-
-	if (NewEnable)
-	{
-		ControlViewCubeOn->SetVisibility(ESlateVisibility::HitTestInvisible);
-		ControlViewCubeOff->SetVisibility(ESlateVisibility::Visible);
-	}
-	else
-	{
-		ControlViewCubeOn->SetVisibility(ESlateVisibility::Visible);
-		ControlViewCubeOff->SetVisibility(ESlateVisibility::HitTestInvisible);
-	}
 }
 
 void UViewMenuBlockProperties::SyncTextBoxesWithSkyActorCurrentTime()

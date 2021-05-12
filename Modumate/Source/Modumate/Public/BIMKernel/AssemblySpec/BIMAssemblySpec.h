@@ -83,6 +83,9 @@ public:
 	FVector Tangent = FVector(0, 1, 0);
 
 	UPROPERTY()
+	bool bZalign = false;
+
+	UPROPERTY()
 	FString SlotConfigConceptualSizeY;
 
 	UPROPERTY()

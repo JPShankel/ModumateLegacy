@@ -739,7 +739,13 @@ bool UModumateObjectStatics::GetFFEMountedTransform(
 {
 	if (!SnappedCursor.HitNormal.IsNearlyZero())
 	{
-		return GetMountedTransform(SnappedCursor.WorldPosition, SnappedCursor.HitNormal,
+		FVector hitNormal = SnappedCursor.HitNormal;
+		if (Assembly->bZalign)
+		{
+			hitNormal = FVector::UpVector;
+		}
+
+		return GetMountedTransform(SnappedCursor.WorldPosition, hitNormal,
 			Assembly->Normal, Assembly->Tangent, OutTransform);
 	}
 

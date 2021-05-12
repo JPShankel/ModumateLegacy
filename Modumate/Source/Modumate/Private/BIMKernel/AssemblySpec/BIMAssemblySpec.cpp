@@ -480,6 +480,11 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 			ensureAlways(stringToAxis(vectorStr, Tangent, Tangent));
 		}
 
+		if (RootProperties.TryGetProperty(EBIMValueScope::Part, BIMPropertyNames::Zalign, vectorStr))
+		{
+			bZalign = !vectorStr.IsEmpty();
+		}
+
 		if (!RootProperties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshKey))
 		{
 			return EBIMResult::Error;

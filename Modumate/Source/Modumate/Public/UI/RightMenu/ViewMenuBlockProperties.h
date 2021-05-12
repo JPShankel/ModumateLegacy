@@ -31,16 +31,10 @@ protected:
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UCheckBox *ControlGravityOn;
+	class UModumateCheckBox* GravityCheckBox;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UCheckBox *ControlGravityOff;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UCheckBox *ControlViewCubeOn;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UCheckBox *ControlViewCubeOff;
+	class UModumateCheckBox* ViewCubeCheckBox;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateEditableTextBoxUserWidget *EditableTextBox_FOV;
@@ -82,19 +76,9 @@ public:
 	void OnReleaseButtonModumateButtonAM();
 
 	UFUNCTION()
-	void OnControlGravityOnChanged(bool IsChecked);
-
-	UFUNCTION()
-	void OnControlGravityOffChanged(bool IsChecked);
-
 	void ToggleGravityCheckboxes(bool NewEnable);
 
 	UFUNCTION()
-	void OnControlViewCubeOnChanged(bool IsChecked);
-
-	UFUNCTION()
-	void OnControlViewCubeOffChanged(bool IsChecked);
-
 	void ToggleViewCubeCheckboxes(bool NewEnable);
 
 	void SyncTextBoxesWithSkyActorCurrentTime();
