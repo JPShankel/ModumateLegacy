@@ -2,6 +2,7 @@
 
 #include "UI/PresetCard/PresetCardQuantityListTotal.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
+#include "ModumateCore/ModumateDimensionStatics.h"
 
 #define LOCTEXT_NAMESPACE "PresetCardQuantityListTotal"
 
@@ -38,8 +39,8 @@ void UPresetCardQuantityListTotal::BuildTotalLabel(const FQuantity& InQuantity)
 	{
 		FieldTitleMeasurmentType1->ChangeText(LOCTEXT("AreaTitle", "sq.ft."));
 		FieldTitleMeasurmentType2->ChangeText(LOCTEXT("LinearTitle", "lin.ft."));
-		Quantity1->ChangeText(FText::AsNumber(InQuantity.Area));
-		Quantity2->ChangeText(FText::AsNumber(InQuantity.Linear));
+		Quantity1->ChangeText(FText::AsNumber(InQuantity.Area * UModumateDimensionStatics::SquareCentimetersToSquareFeet));
+		Quantity2->ChangeText(FText::AsNumber(InQuantity.Linear * UModumateDimensionStatics::CentimetersToFeet));
 	}
 }
 

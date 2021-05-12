@@ -34,6 +34,9 @@ public:
 	static constexpr double InchesToCentimeters = 2.54;
 	static constexpr double CentimetersToInches = 1.0 / InchesToCentimeters;
 	static constexpr double InchesPerFoot = 12.0;
+	static constexpr double CentimetersToFeet = CentimetersToInches / InchesPerFoot;
+	static constexpr double SquareCentimetersToSquareFeet = CentimetersToFeet * CentimetersToFeet;
+	static constexpr double CubicCentimetersToCubicFeet = SquareCentimetersToSquareFeet * CentimetersToFeet;
 
 	// Efficient and culture aware number formatting and parsing, to convert a string containing a culture correct decimal representation of a number into an actual number.
 	template<typename T>

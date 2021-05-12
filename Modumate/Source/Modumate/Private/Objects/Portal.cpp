@@ -581,6 +581,7 @@ void AMOIPortal::UpdateQuantities()
 		return;
 	}
 
+	CachedQuantities.Empty();
 	float width = (hostingFace->Cached2DPositions[2] - hostingFace->Cached2DPositions[1]).Size();
 	float height = (hostingFace->Cached2DPositions[1] - hostingFace->Cached2DPositions[0]).Size();
 	int32 namingWidth = FMath::RoundToInt(width * UModumateDimensionStatics::CentimetersToInches);

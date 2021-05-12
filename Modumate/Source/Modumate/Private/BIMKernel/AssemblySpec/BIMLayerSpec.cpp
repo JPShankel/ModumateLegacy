@@ -155,6 +155,7 @@ EBIMResult FBIMLayerSpec::UpdatePatternFromPreset(const FModumateDatabase& InDB,
 
 			module.ModuleExtents = modularDimensions;
 			module.BevelWidthCentimeters = bevelWidth;
+			module.Key = Preset.GUID;
 		}
 
 		if (ensureAlways(Modules.Num() > 0))

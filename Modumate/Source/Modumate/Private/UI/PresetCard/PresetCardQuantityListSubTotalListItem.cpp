@@ -45,8 +45,8 @@ void UPresetCardQuantityListSubTotalListItem::BuildAsSubTotalListItem(const FQua
 	}
 	else
 	{
-		Quantity1->ChangeText(FText::AsNumber(InQuantity.Area));
-		Quantity2->ChangeText(FText::AsNumber(InQuantity.Linear));
+		Quantity1->ChangeText(FText::AsNumber(InQuantity.Area * UModumateDimensionStatics::SquareCentimetersToSquareFeet));
+		Quantity2->ChangeText(FText::AsNumber(InQuantity.Linear * UModumateDimensionStatics::CentimetersToFeet));
 	}
 }
 
