@@ -197,7 +197,6 @@ bool UMoveObjectTool::EndUse()
 		GameState->Document->ClearPreviewDeltas(GetWorld());
 		FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, AnchorPoint, GameState->Document, Controller, false);
 
-		AnchorPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorPoint, Controller->EMPlayerState->SnappedCursor.HitNormal, Controller->EMPlayerState->SnappedCursor.HitTangent);
 	}
 
