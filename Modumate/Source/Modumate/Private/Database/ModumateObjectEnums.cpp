@@ -38,6 +38,8 @@ EToolCategories UModumateTypeStatics::GetToolCategory(EToolMode ToolMode)
 		return EToolCategories::Attachments;
 	case EToolMode::VE_SURFACEGRAPH:
 		return EToolCategories::SurfaceGraphs;
+	case EToolMode::VE_TERRAIN:
+		return EToolCategories::SiteTools;
 	default:
 		return EToolCategories::Unknown;
 	}
@@ -83,6 +85,7 @@ EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 	case EToolMode::VE_PANEL: return EObjectType::OTSystemPanel;
 	case EToolMode::VE_MULLION: return EObjectType::OTMullion;
 	case EToolMode::VE_BACKGROUNDIMAGE: return EObjectType::OTBackgroundImage;
+	case EToolMode::VE_TERRAIN: return EObjectType::OTTerrain;
 	}
 	return EObjectType::OTUnknown;
 }
@@ -121,6 +124,10 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTSystemPanel: return EToolMode::VE_PANEL;
 	case EObjectType::OTMullion: return EToolMode::VE_MULLION;
 	case EObjectType::OTBackgroundImage: return EToolMode::VE_BACKGROUNDIMAGE;
+	case EObjectType::OTTerrain:
+	case EObjectType::OTTerrainVertex:
+	case EObjectType::OTTerrainEdge:
+	case EObjectType::OTTerrainPolygon: return EToolMode::VE_TERRAIN;
 	case EObjectType::OTUnknown: return EToolMode::VE_NONE;
 	};
 	return EToolMode::VE_NONE;
@@ -190,6 +197,14 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTBackgroundImages", "Background Images") : LOCTEXT("OTBackgroundImage", "Background Image");
 	case EObjectType::OTEdgeDetail:
 		return bPlural ? LOCTEXT("OTEdgeDetail", "Edge Details") : LOCTEXT("OTEdgeDetail", "Edge Detail");
+	case EObjectType::OTTerrain:
+		return bPlural ? LOCTEXT("OTTerrain", "Terrain") : LOCTEXT("OTTerrain", "Terrain");
+	case EObjectType::OTTerrainVertex:
+		return bPlural ? LOCTEXT("OTTerrainVertex", "Terrain Vertices") : LOCTEXT("OTTerrainVertex", "Terrain Vertex");
+	case EObjectType::OTTerrainEdge:
+		return bPlural ? LOCTEXT("OTTerrainEdge", "Terrain Edges") : LOCTEXT("OTTerrainEdge", "Terrain Edge");
+	case EObjectType::OTTerrainPolygon:
+		return bPlural ? LOCTEXT("OTTerrainPolygon", "Terrain Polygons") : LOCTEXT("OTTerrainPolygon", "Terrain Polygon");
 	case EObjectType::OTUnknown:
 	default:
 		return bPlural ? LOCTEXT("OTUnknowns", "Unknowns") : LOCTEXT("OTUnknown", "Unknown");
@@ -233,26 +248,60 @@ EGraphObjectType UModumateTypeStatics::Graph2DObjectTypeFromObjectType(EObjectTy
 	switch (ObjectType)
 	{
 	case EObjectType::OTSurfaceVertex:
+	case EObjectType::OTTerrainVertex:
 		return EGraphObjectType::Vertex;
+
 	case EObjectType::OTSurfaceEdge:
+	case EObjectType::OTTerrainEdge:
 		return EGraphObjectType::Edge;
+
 	case EObjectType::OTSurfacePolygon:
+	case EObjectType::OTTerrainPolygon:
 		return EGraphObjectType::Polygon;
+
 	default:
 		return EGraphObjectType::None;
 	}
 }
 
-EObjectType UModumateTypeStatics::ObjectTypeFromGraph2DType(EGraphObjectType GraphType)
+EObjectType UModumateTypeStatics::ObjectTypeFromGraph2DType(Modumate::EGraphObjectType GraphType, EToolCategories GraphCategory)
 {
-	switch (GraphType)
+	switch (GraphCategory)
 	{
-	case EGraphObjectType::Vertex:
-		return EObjectType::OTSurfaceVertex;
-	case EGraphObjectType::Edge:
-		return EObjectType::OTSurfaceEdge;
-	case EGraphObjectType::Polygon:
-		return EObjectType::OTSurfacePolygon;
+	case EToolCategories::SurfaceGraphs:
+	{
+		switch (GraphType)
+		{
+		case EGraphObjectType::Vertex:
+			return EObjectType::OTSurfaceVertex;
+		case EGraphObjectType::Edge:
+			return EObjectType::OTSurfaceEdge;
+		case EGraphObjectType::Polygon:
+			return EObjectType::OTSurfacePolygon;
+		default:
+			return EObjectType::OTNone;
+		}
+
+		break;
+	}
+
+	case EToolCategories::SiteTools:
+	{
+		switch (GraphType)
+		{
+		case EGraphObjectType::Vertex:
+			return EObjectType::OTTerrainVertex;
+		case EGraphObjectType::Edge:
+			return EObjectType::OTTerrainEdge;
+		case EGraphObjectType::Polygon:
+			return EObjectType::OTTerrainPolygon;
+		default:
+			return EObjectType::OTNone;
+		}
+
+		break;
+	}
+
 	default:
 		return EObjectType::OTNone;
 	}

@@ -25,6 +25,10 @@
 #include "Objects/Trim.h"
 #include "Objects/Mullion.h"
 #include "Objects/BackgroundImage.h"
+#include "Objects/Terrain.h"
+#include "Objects/TerrainVertex.h"
+#include "Objects/TerrainEdge.h"
+#include "Objects/TerrainPolygon.h"
 
 UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 {
@@ -60,6 +64,10 @@ UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 	case EObjectType::OTMullion: return AMOIMullion::StaticClass();
 	case EObjectType::OTBackgroundImage: return AMOIBackgroundImage::StaticClass();
 	case EObjectType::OTEdgeDetail: return AMOIEdgeDetail::StaticClass();
+	case EObjectType::OTTerrain: return AMOITerrain::StaticClass();
+	case EObjectType::OTTerrainVertex: return AMOITerrainVertex::StaticClass();
+	case EObjectType::OTTerrainEdge: return AMOITerrainEdge::StaticClass();
+	case EObjectType::OTTerrainPolygon: return AMOITerrainPolygon::StaticClass();
 	default:
 	{
 		FString objectTypeString = GetEnumValueString(ObjectType);

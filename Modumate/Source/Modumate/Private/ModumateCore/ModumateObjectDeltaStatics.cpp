@@ -104,7 +104,8 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 			auto surfaceObj = doc->GetObjectById(targetParentID);
 			auto surfaceGraph = doc->FindSurfaceGraph(targetParentID);
 			auto surfaceParent = surfaceObj ? surfaceObj->GetParentObject() : nullptr;
-			if (!ensure(surfaceObj && surfaceGraph && surfaceParent))
+			surfaceParent = surfaceParent ? surfaceParent : surfaceObj;
+			if (!ensure(surfaceObj && surfaceGraph))
 			{
 				continue;
 			}
@@ -113,7 +114,14 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 
 			TArray<FVector> facePoints;
 			FVector faceNormal, faceAxisX, faceAxisY;
-			if (!ensure(UModumateObjectStatics::GetGeometryFromFaceIndex(surfaceParent, surfaceGraphFaceIndex, facePoints, faceNormal, faceAxisX, faceAxisY)))
+			if (surfaceObj->GetObjectType() == EObjectType::OTTerrain)
+			{   // Terrain has a simple basis:
+				faceNormal = FVector::UpVector;
+				faceAxisX = FVector::ForwardVector;
+				faceAxisY = FVector::RightVector;
+				facePoints.Add(surfaceObj->GetLocation());
+			}
+			else if (!ensure(UModumateObjectStatics::GetGeometryFromFaceIndex(surfaceParent, surfaceGraphFaceIndex, facePoints, faceNormal, faceAxisX, faceAxisY)))
 			{
 				continue;
 			}

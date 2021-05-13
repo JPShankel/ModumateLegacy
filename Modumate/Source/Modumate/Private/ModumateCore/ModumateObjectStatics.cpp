@@ -164,7 +164,8 @@ bool UModumateObjectStatics::GetWorldTransformOnPlanarObj(
 int32 UModumateObjectStatics::GetParentFaceIndex(const AModumateObjectInstance *FaceMountedObj)
 {
 	// TODO: generalize face-mounted data through an interface/virtual function, for FF&E mounting support
-	if ((FaceMountedObj == nullptr) || !ensure(FaceMountedObj->GetObjectType() == EObjectType::OTSurfaceGraph))
+	if ((FaceMountedObj == nullptr) || !ensure(FaceMountedObj->GetObjectType() == EObjectType::OTSurfaceGraph
+		|| FaceMountedObj->GetObjectType() == EObjectType::OTTerrain))
 	{
 		return INDEX_NONE;
 	}
@@ -429,6 +430,7 @@ bool UModumateObjectStatics::GetNonPhysicalEnabledFlags(const AModumateObjectIns
 	case EToolCategories::MetaGraph:
 		return GetMetaObjEnabledFlags(NonPhysicalMOI, bOutVisible, bOutCollisionEnabled);
 	case EToolCategories::SurfaceGraphs:
+	case EToolCategories::SiteTools:
 		return GetSurfaceObjEnabledFlags(NonPhysicalMOI, bOutVisible, bOutCollisionEnabled);
 	default:
 		ensureMsgf(false, TEXT("Invalid object; must be member of Volume Graph or Surface Graph!"));
@@ -577,7 +579,10 @@ bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const AModumateObjectInst
 	bool bHasChildren = (SurfaceMOI->GetChildIDs().Num() > 0);
 
 	EToolCategories curToolCategory = UModumateTypeStatics::GetToolCategory(playerController->GetToolMode());
-	bool bInCompatibleToolCategory = (curToolCategory == EToolCategories::SurfaceGraphs) || (curToolCategory == EToolCategories::Attachments);
+	bool bInCompatibleToolCategory =
+		(curToolCategory == EToolCategories::SurfaceGraphs) ||
+		(curToolCategory == EToolCategories::Attachments) ||
+		(curToolCategory == EToolCategories::SiteTools);
 
 	EEditViewModes curViewMode = playerController->EMPlayerState->SelectedViewMode;
 	bool bSurfaceViewMode = (curViewMode == EEditViewModes::SurfaceGraphs);
@@ -630,6 +635,16 @@ bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const AModumateObjectInst
 		bOutCollisionEnabled = !SurfaceMOI->IsCollisionRequestedDisabled() && (bOutVisible || bInCompatibleToolCategory);
 		break;
 	}
+
+	case EObjectType::OTTerrainVertex:
+	case EObjectType::OTTerrainEdge:
+	case EObjectType::OTTerrainPolygon:
+	{	// For now, terrain always visible.
+		bOutVisible = true;
+		bOutCollisionEnabled = true;
+		break;
+	}
+
 	default:
 		break;
 	}

@@ -1026,6 +1026,8 @@ bool AEditModelPlayerState::IsObjectTypeEnabledByViewMode(EObjectType ObjectType
 		return (SelectedViewMode == EEditViewModes::SurfaceGraphs) || (SelectedViewMode == EEditViewModes::AllObjects);
 	case EToolCategories::Attachments:
 		return (SelectedViewMode == EEditViewModes::AllObjects) || (SelectedViewMode == EEditViewModes::Physical);
+	case EToolCategories::SiteTools:
+		return true;
 	case EToolCategories::Unknown:
 		switch (ObjectType)
 		{
@@ -1034,6 +1036,10 @@ bool AEditModelPlayerState::IsObjectTypeEnabledByViewMode(EObjectType ObjectType
 		case EObjectType::OTCutPlane:
 		case EObjectType::OTScopeBox:
 		case EObjectType::OTBackgroundImage:
+		case EObjectType::OTTerrain:
+		case EObjectType::OTTerrainVertex:
+		case EObjectType::OTTerrainEdge:
+		case EObjectType::OTTerrainPolygon:
 			return true;
 		case EObjectType::OTEdgeDetail:
 			return false;

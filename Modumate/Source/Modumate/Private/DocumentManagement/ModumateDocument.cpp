@@ -554,23 +554,33 @@ void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 	// mark the surface graph dirty, so that its children can update their visual and world-coordinate-space representations
 	surfaceGraphObj->MarkDirty(EObjectDirtyFlags::All);
 
+	EObjectType vertexType = EObjectType::OTSurfaceVertex;
+	EObjectType edgeType = EObjectType::OTSurfaceEdge;
+	EObjectType polygonType = EObjectType::OTSurfacePolygon;
+	if (surfaceGraphObj->GetObjectType() == EObjectType::OTTerrain)
+	{
+		vertexType = EObjectType::OTTerrainVertex;
+		edgeType = EObjectType::OTTerrainEdge;
+		polygonType = EObjectType::OTTerrainPolygon;
+	}
+
 	// add objects
 	for (auto &kvp : Delta.PolygonAdditions)
 	{
 		// It would be ideal to only create SurfacePolgyon objects for interior polygons, but if we don't then the graph will try creating
 		// deltas that use IDs that the document will try to re-purpose for other objects.
 		// TODO: allow allocating IDs from graph deltas in a way that the document can't use them
-		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTSurfacePolygon, surfaceGraphID));
+		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, polygonType, surfaceGraphID));
 	}
 
 	for (auto& kvp : Delta.EdgeAdditions)
 	{
-		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTSurfaceEdge, surfaceGraphID));
+		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, edgeType, surfaceGraphID));
 	}
 
 	for (auto& kvp : Delta.VertexAdditions)
 	{
-		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTSurfaceVertex, surfaceGraphID));
+		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, vertexType, surfaceGraphID));
 	}
 
 	// delete surface objects
@@ -596,7 +606,7 @@ void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		for (int32 polygonID : modifiedPolygons)
 		{
 			AModumateObjectInstance* polygonObj = GetObjectById(polygonID);
-			if (ensureAlways(polygonObj && (polygonObj->GetObjectType() == EObjectType::OTSurfacePolygon)))
+			if (ensureAlways(polygonObj && (polygonObj->GetObjectType() == polygonType)))
 			{
 				polygonObj->MarkDirty(EObjectDirtyFlags::Structure);
 			}
@@ -605,7 +615,7 @@ void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		for (int32 edgeID : modifiedEdges)
 		{
 			AModumateObjectInstance *edgeObj = GetObjectById(edgeID);
-			if (ensureAlways(edgeObj && (edgeObj->GetObjectType() == EObjectType::OTSurfaceEdge)))
+			if (ensureAlways(edgeObj && (edgeObj->GetObjectType() == edgeType)))
 			{
 				edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
 			}
@@ -614,7 +624,7 @@ void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		for (int32 vertexID : modifiedVertices)
 		{
 			AModumateObjectInstance* vertexObj = GetObjectById(vertexID);
-			if (ensureAlways(vertexObj && (vertexObj->GetObjectType() == EObjectType::OTSurfaceVertex)))
+			if (ensureAlways(vertexObj && (vertexObj->GetObjectType() == vertexType)))
 			{
 				vertexObj->MarkDirty(EObjectDirtyFlags::Structure);
 			}
@@ -2448,14 +2458,21 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		}
 	}
 
-	// Create MOIs reflected from the surface graphs
+	// Create MOIs reflected from the surface and terrain graphs
 	for (const auto& surfaceGraphKVP : SurfaceGraphs)
 	{
 		if (surfaceGraphKVP.Value.IsValid())
 		{
+			EToolCategories graphCategory = EToolCategories::SurfaceGraphs;
+			const auto moiObject = GetObjectById(surfaceGraphKVP.Key);
+			if (moiObject != nullptr && moiObject->GetObjectType() == EObjectType::OTTerrain)
+			{
+				graphCategory = EToolCategories::SiteTools;
+			}
+
 			for (const auto& surfaceGraphObjKVP : surfaceGraphKVP.Value->GetAllObjects())
 			{
-				EObjectType objectType = UModumateTypeStatics::ObjectTypeFromGraph2DType(surfaceGraphObjKVP.Value);
+				EObjectType objectType = UModumateTypeStatics::ObjectTypeFromGraph2DType(surfaceGraphObjKVP.Value, graphCategory);
 				if (ensure(!ObjectsByID.Contains(surfaceGraphObjKVP.Key)) && (objectType != EObjectType::OTNone))
 				{
 					CreateOrRestoreObj(world, FMOIStateData(surfaceGraphObjKVP.Key, objectType, surfaceGraphKVP.Key));

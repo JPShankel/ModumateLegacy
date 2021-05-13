@@ -99,6 +99,7 @@ enum class EInputCommand : uint8
 	ActivateTool_Panel,
 	ActivateTool_Mullion,
 	ActivateTool_BackgroundImage,
+	ActivateTool_Terrain,
 	ActivateTool_END,
 
 	// Tool-related commands

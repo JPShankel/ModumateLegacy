@@ -78,6 +78,15 @@ public:
 	UStaticMesh* VertexMesh;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterialInterface *TerrainMaterial;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UStaticMesh* GrassMesh;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterialInterface* GrassMaterial;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UMaterialInterface *BillboardTextureMaterial;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")

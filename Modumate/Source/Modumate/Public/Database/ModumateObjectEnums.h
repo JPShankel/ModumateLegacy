@@ -67,7 +67,8 @@ enum class EToolMode : uint8
 	VE_CEILING,
 	VE_PANEL,
 	VE_MULLION,
-	VE_BACKGROUNDIMAGE
+	VE_BACKGROUNDIMAGE,
+	VE_TERRAIN,
 };
 
 UENUM(BlueprintType)
@@ -105,6 +106,10 @@ enum class EObjectType : uint8
 	OTMullion,
 	OTBackgroundImage,
 	OTEdgeDetail,
+	OTTerrain,
+	OTTerrainVertex,
+	OTTerrainEdge,
+	OTTerrainPolygon,
 	OTUnknown
 };
 
@@ -189,7 +194,7 @@ public:
 	static EObjectType ObjectTypeFromGraph3DType(Modumate::EGraph3DObjectType GraphType);
 
 	static Modumate::EGraphObjectType Graph2DObjectTypeFromObjectType(EObjectType ObjectType);
-	static EObjectType ObjectTypeFromGraph2DType(Modumate::EGraphObjectType GraphType);
+	static EObjectType ObjectTypeFromGraph2DType(Modumate::EGraphObjectType GraphType, EToolCategories GraphCategory);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Types")
 	static FText GetTextForObjectType(EObjectType ObjectType, bool bPlural = false);

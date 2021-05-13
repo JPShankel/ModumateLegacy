@@ -76,6 +76,7 @@
 #include "ToolsAndAdjustments/Tools/EditModelTrimTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelWandTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelBackgroundImageTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelTerrainTool.h"
 
 const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetry"));
 
@@ -668,6 +669,7 @@ void AEditModelPlayerController::CreateTools()
 	RegisterTool(CreateTool<UPanelTool>());
 	RegisterTool(CreateTool<UMullionTool>());
 	RegisterTool(CreateTool<UBackgroundImageTool>());
+	RegisterTool(CreateTool<UTerrainTool>());
 }
 
 void AEditModelPlayerController::RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool)
