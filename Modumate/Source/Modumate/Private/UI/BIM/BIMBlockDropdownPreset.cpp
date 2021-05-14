@@ -152,19 +152,41 @@ void UBIMBlockDropdownPreset::BuildDropdownFromStringList(class UBIMDesigner* Ou
 	ButtonSwap->SetVisibility(ESlateVisibility::Collapsed);
 
 	DropdownList->ComboBoxStringJustification->ClearOptions();
-	for (auto& option : InFormElement.SelectionOptions)
-	{
-		DropdownList->ComboBoxStringJustification->AddOption(option);
-	}
 
-	DropdownList->ComboBoxStringJustification->SetSelectedOption(InFormElement.StringRepresentation);
+	int64 selectedValue = 0;
+	FString selectedOption;
+	if (LexTryParseString(selectedValue, *InFormElement.StringRepresentation) && GetEnumDisplayNamesAndValues(InFormElement.EnumClassName,EnumOptions))
+	{
+		for (auto& kvp : EnumOptions)
+		{
+			DropdownList->ComboBoxStringJustification->AddOption(kvp.Key.ToString());
+			if (selectedValue == kvp.Value)
+			{
+				selectedOption = kvp.Key.ToString();
+			}
+		}
+	}
+	if (!selectedOption.IsEmpty())
+	{
+		DropdownList->ComboBoxStringJustification->SetSelectedOption(selectedOption);
+	}
 }
 
 void UBIMBlockDropdownPreset::OnDropdownListSelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
 {
-	if (!SelectedItem.IsEmpty() && !FormElement.StringRepresentation.Equals(SelectedItem))
+	FText selectedText = FText::FromString(SelectedItem);
+	FString newStringRep;
+	for (auto& kvp : EnumOptions)
 	{
-		FormElement.StringRepresentation = SelectedItem;
-		ParentBIMDesigner->ApplyBIMFormElement(OwnerNode->ID, FormElement);
+		if (kvp.Key.EqualTo(selectedText))
+		{
+			newStringRep = FString::Printf(TEXT("%d"), static_cast<int32>(kvp.Value));
+			if (!newStringRep.Equals(FormElement.StringRepresentation))
+			{
+				FormElement.StringRepresentation = newStringRep;
+				ParentBIMDesigner->ApplyBIMFormElement(OwnerNode->ID, FormElement);
+			}
+			break;
+		}
 	}
 }

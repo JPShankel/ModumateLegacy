@@ -10,7 +10,6 @@
 
 #define LOCTEXT_NAMESPACE "BIMPresetInstance"
 
-
 bool FBIMPresetPinAttachment::operator==(const FBIMPresetPinAttachment &OtherAttachment) const
 {
 	return ParentPinSetIndex == OtherAttachment.ParentPinSetIndex &&
@@ -290,8 +289,13 @@ EBIMResult FBIMPresetInstance::HandleMaterialBindingDelta(const FBIMPresetEditor
 EBIMResult FBIMPresetInstance::HandleLayerPriorityGroupDelta(const FBIMPresetEditorDelta& Delta)
 {
 	FBIMPresetLayerPriority layerPriority;
-	if (TryGetCustomData(layerPriority) && FindEnumValueByString(Delta.NewStringRepresentation,layerPriority.PriorityGroup))
+	int64 newValue;
+
+	if (ensureAlways(TryGetCustomData(layerPriority) && 
+		LexTryParseString(newValue,*Delta.NewStringRepresentation)) && 
+		static_cast<int64>(layerPriority.PriorityGroup) != newValue)
 	{
+		layerPriority.PriorityGroup = static_cast<EBIMPresetLayerPriorityGroup>(newValue);
 		SetCustomData(layerPriority);
 		return EBIMResult::Success;
 	}
@@ -426,7 +430,6 @@ EBIMResult FBIMPresetInstance::MakeMaterialBindingDelta(const FBIMPresetFormElem
 	return EBIMResult::Error;
 }
 
-
 EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const
 {
 	OutDelta.FieldType = FormElement.FieldType;
@@ -439,9 +442,10 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 		case EBIMPresetEditorField::LayerPriorityGroup:
 		{
 			FBIMPresetLayerPriority layerPriority;
-			if (TryGetCustomData(layerPriority))
+
+			if (ensureAlways(TryGetCustomData(layerPriority)))
 			{
-				OutDelta.OldStringRepresentation = GetEnumValueString<EBIMPresetLayerPriorityGroup>(layerPriority.PriorityGroup);
+				OutDelta.OldStringRepresentation = FString::FromInt(static_cast<int32>(layerPriority.PriorityGroup));
 				return EBIMResult::Success;
 			}
 		}
@@ -452,7 +456,7 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 			FBIMPresetLayerPriority layerPriority;
 			if (TryGetCustomData(layerPriority))
 			{
-				OutDelta.OldStringRepresentation = FString::Printf(TEXT("%d"), layerPriority.PriorityValue);
+				OutDelta.OldStringRepresentation = FString::FromInt(layerPriority.PriorityValue);
 				return EBIMResult::Success;
 			}
 		}
@@ -547,7 +551,7 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(FBIMPresetForm& OutForm) const
 			FBIMPresetLayerPriority layerPriority;
 			if (ensureAlways(TryGetCustomData(layerPriority)))
 			{
-				element.StringRepresentation = FString::Printf(TEXT("%d"), layerPriority.PriorityValue);
+				element.StringRepresentation = FString::FromInt(layerPriority.PriorityValue);
 			}
 		}
 		break;
@@ -557,7 +561,7 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(FBIMPresetForm& OutForm) const
 			FBIMPresetLayerPriority layerPriority;
 			if (ensureAlways(TryGetCustomData(layerPriority)))
 			{
-				element.StringRepresentation = GetEnumValueString<EBIMPresetLayerPriorityGroup>(layerPriority.PriorityGroup);
+				element.StringRepresentation = FString::FromInt(static_cast<int32>(layerPriority.PriorityGroup));
 			}
 		}
 		break;

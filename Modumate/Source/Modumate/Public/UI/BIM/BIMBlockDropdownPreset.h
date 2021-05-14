@@ -39,6 +39,7 @@ protected:
 	FVector2D DropdownOffset = FVector2D::ZeroVector;
 	FGuid PresetGUID;
 	FBIMPresetFormElement FormElement;
+	TArray<TPair<FText, int64>> EnumOptions;
 
 public:
 

@@ -59,3 +59,12 @@ static FORCEINLINE TEnum GetEnumValueByString(const FString& StringValue)
 {
 	return GetEnumValueByName<TEnum>(FName(*StringValue));
 }
+
+bool GetEnumDisplayNamesAndValues(const UEnum* EnumClass, TArray<TPair<FText, int64>>& OutDisplayNames);
+bool GetEnumDisplayNamesAndValues(const FString& EnumClassName, TArray<TPair<FText, int64>>& OutDisplayNames);
+
+template<typename TEnum>
+static FORCEINLINE bool GetEnumDisplayNamesAndValues(TArray<TPair<FText, int64>>& OutDisplayNames)
+{
+	return GetEnumDisplayNames(StaticEnum<TEnum>(), OutDisplayNames);
+}

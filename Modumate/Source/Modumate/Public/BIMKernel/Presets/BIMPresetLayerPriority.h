@@ -7,7 +7,7 @@
 #include "BIMPresetLayerPriority.generated.h"
 
 UENUM()
-enum class EBIMPresetLayerPriorityGroup
+enum class EBIMPresetLayerPriorityGroup : uint8
 {
 	Structure,
 	Substrate,

@@ -31,27 +31,20 @@ enum class EBIMPresetEditorField : uint8
 * If we move in that direction, this delta will supplant the FBIMPresetDocumentDelta and provide fine-grained undo/redoable changes
 * For now, we just use editor deltas internally and send whole preset changes to the document in a document delta
 */
-USTRUCT()
+
+// BIM deltas are not serialized
 struct MODUMATE_API FBIMPresetEditorDelta
 {
-	GENERATED_BODY()
-
-	UPROPERTY()
 	EBIMPresetEditorField FieldType;
 
-	UPROPERTY()
 	FName FieldName;
 
-	UPROPERTY()
 	FString NewStringRepresentation;
 
-	UPROPERTY()
 	FString OldStringRepresentation;
 
-	UPROPERTY()
 	EMaterialChannelFields MaterialChannelSubField = EMaterialChannelFields::None;
 
-	UPROPERTY()
 	EBIMPresetLayerPriorityGroup LayerPriorityGroup = EBIMPresetLayerPriorityGroup::Other;
 
 	FBIMPresetEditorDelta Inverted() const;
@@ -82,16 +75,17 @@ struct MODUMATE_API FBIMPresetFormElement
 	FString FieldName;
 
 	UPROPERTY()
-	FString StringRepresentation;
-
-	UPROPERTY()
-	TArray<FString> SelectionOptions;
+	FString EnumClassName;
 
 	UPROPERTY()
 	EMaterialChannelFields MaterialChannelSubField = EMaterialChannelFields::None;
 
 	UPROPERTY()
 	EBIMFormElementWidget FormElementWidgetType = EBIMFormElementWidget::None;
+
+	// Form values are not serialized, only used to create BIM deltas
+	FString StringRepresentation;
+
 };
 
 USTRUCT()

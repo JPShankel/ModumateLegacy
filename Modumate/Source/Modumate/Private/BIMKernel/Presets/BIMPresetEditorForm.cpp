@@ -124,11 +124,7 @@ EBIMResult FBIMPresetForm::AddLayerPriorityGroupElement()
 	newElement.FormElementWidgetType = EBIMFormElementWidget::EnumSelect;
 
 	UEnum* enumClass = StaticEnum<EBIMPresetLayerPriorityGroup>();
-	// the last entry is an internal 'MAX' value
-	for (int32 i=0;i<enumClass->NumEnums()-1;++i)
-	{
-		newElement.SelectionOptions.Add(enumClass->GetNameStringByIndex(i));
-	}
+	newElement.EnumClassName = enumClass->CppType;
 
 	return EBIMResult::Success;
 }
