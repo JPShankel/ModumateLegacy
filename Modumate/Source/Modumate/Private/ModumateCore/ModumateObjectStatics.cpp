@@ -757,7 +757,7 @@ bool UModumateObjectStatics::GetFFEMountedTransform(
 		FVector hitNormal = SnappedCursor.HitNormal;
 		if (Assembly->bZalign)
 		{
-			hitNormal = FVector::UpVector;
+			hitNormal = Assembly->Normal;
 		}
 
 		return GetMountedTransform(SnappedCursor.WorldPosition, hitNormal,
