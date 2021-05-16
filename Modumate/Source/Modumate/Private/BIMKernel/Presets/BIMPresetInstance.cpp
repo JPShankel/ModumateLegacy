@@ -670,7 +670,7 @@ EBIMResult FBIMPresetInstance::SetMaterialChannelsForMesh(const FModumateDatabas
 	return bindingSet.SetFormElements(PresetForm);
 }
 
-EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, float& OutBevelWidth) const
+EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, float& OutBevelWidth, float& OutThickness) const
 {
 	static const FBIMTagPath planarModule(TEXT("Part_0FlexDims3Fixed_ModulePlanar"));
 	static const FBIMTagPath studModule(TEXT("Part_1FlexDim2Fixed_ModuleLinear"));
@@ -700,6 +700,7 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Recess, OutDimensions.Y)
 				)
 			{
+				OutThickness = OutDimensions.Y;
 				return EBIMResult::Success;
 			}
 		}
@@ -719,6 +720,7 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, OutDimensions.Y) &&
 				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, OutDimensions.Z))
 			{
+				OutThickness = OutDimensions.Y;
 				return EBIMResult::Success;
 			}
 		}
@@ -730,6 +732,7 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 				if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Length, OutDimensions.Z) ||
 					Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Depth, OutDimensions.Z))
 				{
+					OutThickness = OutDimensions.Z;
 					return EBIMResult::Success;
 				}
 			}
@@ -740,6 +743,7 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, OutDimensions.Y) &&
 				Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, OutDimensions.Z))
 			{
+				OutThickness = OutDimensions.Y;
 				return EBIMResult::Success;
 			}
 		}
@@ -748,6 +752,7 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 			OutDimensions.X = OutDimensions.Z = 0;
 			if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Thickness, OutDimensions.Y))
 			{
+				OutThickness = OutDimensions.Y;
 				return EBIMResult::Success;
 			}
 		}

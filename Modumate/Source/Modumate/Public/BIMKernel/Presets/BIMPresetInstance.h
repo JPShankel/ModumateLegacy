@@ -268,7 +268,7 @@ struct MODUMATE_API FBIMPresetInstance
 
 	bool ValidatePreset() const;
 
-	EBIMResult GetModularDimensions(FVector& OutDimensions, float& OutBevelWidth) const;
+	EBIMResult GetModularDimensions(FVector& OutDimensions, float& OutBevelWidth,float& OutThickness) const;
 
 	EBIMResult UpgradeData(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, int32 DocVersion);
 

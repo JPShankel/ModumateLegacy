@@ -114,8 +114,8 @@ EBIMResult FBIMLayerSpec::UpdatePatternFromPreset(const FModumateDatabase& InDB,
 			{
 				ensureAlways(materialBindings.MaterialBindings[0].GetEngineMaterial(InDB, Gap.Material) == EBIMResult::Success);
 				FVector gapExtents3;
-				float bevelWidth;
-				Preset.GetModularDimensions(gapExtents3,bevelWidth);
+				float bevelWidth,thickness;
+				Preset.GetModularDimensions(gapExtents3,bevelWidth,thickness);
 				Gap.GapExtents = FVector2D(gapExtents3.X,gapExtents3.Y);
 				return EBIMResult::Success;
 			}
@@ -133,7 +133,7 @@ EBIMResult FBIMLayerSpec::UpdatePatternFromPreset(const FModumateDatabase& InDB,
 
 	FVector modularDimensions = FVector::ZeroVector;
 	float bevelWidth;
-	Preset.GetModularDimensions(modularDimensions,bevelWidth);
+	Preset.GetModularDimensions(modularDimensions,bevelWidth,ThicknessCentimeters);
 
 	// Add one module for each material binding
 	// TODO: allow heterogenous module sets
@@ -156,22 +156,6 @@ EBIMResult FBIMLayerSpec::UpdatePatternFromPreset(const FModumateDatabase& InDB,
 			module.ModuleExtents = modularDimensions;
 			module.BevelWidthCentimeters = bevelWidth;
 			module.Key = Preset.GUID;
-		}
-
-		if (ensureAlways(Modules.Num() > 0))
-		{
-			if (Modules[0].ModuleExtents.Y > 0)
-			{
-				ThicknessCentimeters = Modules[0].ModuleExtents.Y;
-			}
-			else if (Modules[0].ModuleExtents.X > 0)
-			{
-				ThicknessCentimeters = Modules[0].ModuleExtents.X;
-			}
-			else if (Modules[0].ModuleExtents.Z > 0)
-			{
-				ThicknessCentimeters = Modules[0].ModuleExtents.Z;
-			}
 		}
 	}
 
