@@ -140,7 +140,7 @@ bool UBackgroundImageTool::EnterNextStage()
 		return false;
 	}
 
-	auto* doc = GameMode->GetGameState<AEditModelGameState>()->Document;
+	auto* doc = GameState->Document;
 	FMOIBackgroundImageData moiData;
 	moiData.Location = Origin;
 
