@@ -33,6 +33,7 @@ private:
 
 	struct UndoRedo
 	{
+		int32 ID = MOD_ID_NONE;
 		TArray<FDeltaPtr> Deltas;
 	};
 
@@ -43,6 +44,12 @@ private:
 	int32 PrePreviewNextID;
 	int32 ReservingObjectID;
 	bool bApplyingPreviewDeltas, bFastClearingPreviewDeltas, bSlowClearingPreviewDeltas;
+
+	// The ID of the next UndoRedo/DeltasRecord to generate
+	int32 NextLocalDeltasID;
+
+	// The ID of the last DeltasRecord verified by the server and sent out to all connected clients
+	int32 LatestVerifiedDeltasID;
 
 	UPROPERTY()
 	TArray<AModumateObjectInstance*> ObjectInstanceArray;
@@ -100,6 +107,9 @@ public:
 	int32 GetNextAvailableID() const;
 	int32 ReserveNextIDs(int32 reservingObjID);
 	void SetNextID(int32 ID, int32 reservingObjID);
+
+	// TODO: this functionality could potentially be rolled into the Delta constructor
+	void InitDeltaMetadata(FDeltasRecord& DeltasRecord);
 
 	const TArray<AModumateObjectInstance*>& GetObjectInstances() const { return ObjectInstanceArray; }
 	TArray<AModumateObjectInstance*>& GetObjectInstances() { return ObjectInstanceArray; }
@@ -206,11 +216,12 @@ public:
 	bool ApplyPreviewDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World);
 	bool IsPreviewingDeltas() const;
 	void ClearPreviewDeltas(UWorld *World, bool bFastClear = false);
-	void CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWorld* World);
+	void CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWorld* World, bool bIsPreview);
 
 	bool GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas);
 
 public:
+	bool ApplyRemoteDeltas(const FDeltasRecord& DeltasRecord, UWorld* World);
 	bool ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World);
 	void ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World);
 	void ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World);
@@ -298,6 +309,7 @@ private:
 	TSharedPtr<Modumate::FModumateDraftingView> CurrentDraftingView = nullptr;
 	FBIMPresetCollection BIMPresetCollection;
 	FDocumentSettings CurrentSettings;
+	FString CachedLocalUserID;
 
 	// TODO: refactor the different types of dirtiness into flags if we add more with multiplayer, but until then we know there are only two types of dirtiness.
 	bool bUserFileDirty = true;

@@ -3,10 +3,16 @@
 #include "UnrealClasses/EditModelPlayerPawn.h"
 
 #include "CollisionShape.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/TextRenderComponent.h"
+#include "Database/ModumateObjectEnums.h"
+#include "UI/Custom/ModumateTextBlockUserWidget.h"
+#include "UI/EditModelPlayerHUD.h"
+#include "UI/Online/ModumateClientIcon.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelInputHandler.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-#include "Database/ModumateObjectEnums.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 // Sets default values
 AEditModelPlayerPawn::AEditModelPlayerPawn()
@@ -35,6 +41,10 @@ AEditModelPlayerPawn::AEditModelPlayerPawn()
 
 	ScreenshotTaker = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("ScreenshotTaker"));
 	ScreenshotTaker->SetupAttachment(RootComponent);
+
+	RemoteMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RemoteMeshComponent"));
+	RemoteMeshComponent->SetupAttachment(RootComponent);
+	RemoteMeshComponent->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +57,19 @@ void AEditModelPlayerPawn::BeginPlay()
 void AEditModelPlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (IsNetMode(NM_Client) && !IsLocallyControlled() && ClientIconWidget)
+	{
+		UWorld* world = GetWorld();
+		ULocalPlayer* localPlayer = world ? world->GetFirstLocalPlayerFromController() : nullptr;
+		APlayerController* localController = localPlayer ? localPlayer->GetPlayerController(world) : nullptr;
+		FVector2D localViewportPos;
+
+		if (localController && localController->ProjectWorldLocationToScreen(GetActorLocation(), localViewportPos))
+		{
+			ClientIconWidget->SetPositionInViewport(localViewportPos, true);
+		}
+	}
 }
 
 void AEditModelPlayerPawn::PossessedBy(AController* NewController)
@@ -75,6 +98,30 @@ void AEditModelPlayerPawn::UnPossessed()
 	emPlayerController = nullptr;
 
 	Super::UnPossessed();
+}
+
+void AEditModelPlayerPawn::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	AEditModelPlayerState* playerState = GetPlayerState<AEditModelPlayerState>();
+
+	if (IsNetMode(NM_Client) && !IsLocallyControlled() && playerState)
+	{
+		UWorld* world = GetWorld();
+		ULocalPlayer* localPlayer = world ? world->GetFirstLocalPlayerFromController() : nullptr;
+		APlayerController* localController = localPlayer ? localPlayer->GetPlayerController(world) : nullptr;
+		AEditModelPlayerHUD* localHUD = localController ? localController->GetHUD<AEditModelPlayerHUD>() : nullptr;
+		ClientIconWidget = localHUD ? localHUD->GetOrCreateWidgetInstance(ClientIconClass) : nullptr;
+		if (ensure(ClientIconWidget))
+		{
+			ClientIconWidget->AddToViewport();
+			ClientIconWidget->SetAlignmentInViewport(FVector2D(0.5f, 1.0f));
+			ClientIconWidget->ClientName->ChangeText(FText::FromString(playerState->GetPlayerName()), false);
+		}
+
+		RemoteMeshComponent->SetVisibility(true);
+	}
 }
 
 // Called to bind functionality to input

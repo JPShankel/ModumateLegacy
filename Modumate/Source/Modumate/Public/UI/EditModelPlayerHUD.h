@@ -92,6 +92,6 @@ public:
 	template <typename UserWidgetT = UUserWidget>
 	UserWidgetT* GetOrCreateWidgetInstance(TSubclassOf<UserWidgetT> WidgetClass)
 	{
-		return HUDDrawWidget->UserWidgetPool.GetOrCreateInstance<UserWidgetT>(WidgetClass);
+		return HUDDrawWidget ? HUDDrawWidget->UserWidgetPool.GetOrCreateInstance<UserWidgetT>(WidgetClass) : nullptr;
 	}
 };

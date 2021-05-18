@@ -1,18 +1,20 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 #include "UnrealClasses/MainMenuGameMode.h"
 
+#include "DocumentManagement/ModumateDocument.h"
+#include "DocumentManagement/ModumateSerialization.h"
 #include "HAL/FileManager.h"
 #include "JsonObjectConverter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/CommandLine.h"
 #include "Misc/FileHelper.h"
-#include "ModumateCore/PlatformFunctions.h"
-
-#include "DocumentManagement/ModumateDocument.h"
-#include "UnrealClasses/ModumateGameInstance.h"
-#include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/ModumateThumbnailHelpers.h"
 #include "ModumateCore/ModumateUserSettings.h"
+#include "ModumateCore/PlatformFunctions.h"
+#include "Online/ModumateAccountManager.h"
+#include "Online/ModumateCloudConnection.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/EditModelGameMode.h"
 
 
 void AMainMenuGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -148,4 +150,24 @@ bool AMainMenuGameMode::GetLoadFilename(FString &loadFileName)
 FDateTime AMainMenuGameMode::GetCurrentDateTime()
 {
 	return FDateTime::Now();
+}
+
+bool AMainMenuGameMode::ConnectToMultiplayerServer(const FString& URL)
+{
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (!(accountManager && cloudConnection && cloudConnection->IsLoggedIn()))
+	{
+		return false;
+	}
+
+	// TODO: since UE4's multiplayer protocol seems to be totally insecure by default, we need to either:
+	// - roll our own encryption for auth tokens over the plain multiplayer protocol
+	// - abandon UE4's default multiplayer protocol in favor of a totally separate networking stack
+	FString urlOptions = FString::Printf(TEXT("%s=%s?%s=%s"),
+		*AEditModelGameMode::OptionKeyID, *FPlatformHttp::UrlEncode(accountManager->GetUserInfo().Email),
+		*AEditModelGameMode::OptionKeyAuth, *FPlatformHttp::UrlEncode(cloudConnection->GetAuthToken()));
+	UGameplayStatics::OpenLevel(this, FName(*URL), true, urlOptions);
+	return true;
 }

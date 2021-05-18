@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "Online/ModumateAccountManager.h"
 #include "UnrealClasses/ModumateGameModeBase.h"
+
 #include "EditModelGameMode.generated.h"
 
 class MODUMATE_API FModumateDatabase;
-
 class UDataTable;
 
 UCLASS()
@@ -22,6 +22,13 @@ public:
 	//~ Begin AGameModeBase Interface
 	virtual void InitGameState() override;
 	//~ End AGameModeBase Interface
+
+	virtual void PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
+	virtual APlayerController* Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
+	virtual void Logout(AController* Exiting) override;
+
+	static const FString OptionKeyID;
+	static const FString OptionKeyAuth;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UClass *PortalFrameActorClass;
@@ -106,4 +113,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Pawn")
 	TSubclassOf<class AEditModelToggleGravityPawn> ToggleGravityPawnClass;
+
+protected:
+	TSet<FString> PendingStatusIDs;
+	TMap<FString, FModumateUserStatus> VerifiedUserStatuses;
+	TMap<FString, FString> LoginErrors;
+	TMap<int32, FString> UsersByPlayerID;
 };

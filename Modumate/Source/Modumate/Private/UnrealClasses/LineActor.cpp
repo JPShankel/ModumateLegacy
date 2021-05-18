@@ -107,7 +107,7 @@ void ALineActor::SetIsHUD(bool bRenderScreenSpace)
 		bIsHUD = bRenderScreenSpace;
 		MakeGeometry();
 	}
-	else
+	else if (EMPlayerHUD)
 	{
 		EMPlayerHUD->All3DLineActors.Add(this);
 	}

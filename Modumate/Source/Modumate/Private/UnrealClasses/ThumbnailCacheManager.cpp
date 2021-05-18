@@ -183,6 +183,10 @@ bool UThumbnailCacheManager::SaveThumbnailFromPresetKey(UTexture *ThumbnailTextu
 
 bool UThumbnailCacheManager::SaveThumbnail(UTexture *ThumbnailTexture, FName ThumbnailKey, UTexture2D*& OutSavedTexture, bool AllowOverwrite)
 {
+#if UE_SERVER
+	return false;
+#endif
+
 	OutSavedTexture = nullptr;
 
 	// We require a valid thumbnail key
@@ -252,7 +256,10 @@ bool UThumbnailCacheManager::GetThumbnailFromTexture(UTexture* ThumbnailTexture,
 	{
 		// If the source is a render target, then it must be converted to a texture first
 		OutSavedTexture = FModumateThumbnailHelpers::CreateTexture2DFromRT(renderTargetSource, Outer, ThumbnailKey, EObjectFlags::RF_NoFlags);
-		OutSavedTexture->SRGB = true;
+		if (OutSavedTexture)
+		{
+			OutSavedTexture->SRGB = true;
+		}
 	}
 
 	return true;

@@ -136,6 +136,12 @@ void UEditModelCameraController::TickComponent(float DeltaTime, enum ELevelTick 
 	if (!CamTransform.EqualsNoScale(oldTransform) && bUpdateCameraTransform)
 	{
 		Controller->EMPlayerPawn->SetActorLocationAndRotation(CamTransform.GetLocation(), CamTransform.GetRotation());
+
+		// For multiplayer clients, update the server with our latest camera transform (unreliably during TickComponent)
+		if (Controller->EMPlayerState && Controller->EMPlayerState->IsNetMode(NM_Client))
+		{
+			Controller->EMPlayerState->UpdateCameraUnreliable(CamTransform);
+		}
 	}
 }
 
@@ -420,6 +426,13 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 	{
 		bShouldPrioritizeAxisInputs = false;
 		OrbitZoomDeltaAccumulated = 0.0f;
+
+		// For multiplayer clients, update the server with our latest camera transform (reliably after finishing movement)
+		if (Controller->EMPlayerState && Controller->EMPlayerState->IsNetMode(NM_Client))
+		{
+			Controller->EMPlayerState->UpdateCameraReliable(CamTransform);
+		}
+
 		break;
 	}
 	case ECameraMovementState::Orbiting:

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ModumateCore/ModumateTypes.h"
 #include "ModumateCore/StructDataWrapper.h"
 
 #include "DocumentDelta.generated.h"
@@ -49,7 +50,7 @@ struct MODUMATE_API FDeltasRecord
 	GENERATED_BODY()
 
 	FDeltasRecord();
-	FDeltasRecord(const TArray<FDeltaPtr>& InDeltas);
+	FDeltasRecord(const TArray<FDeltaPtr>& InDeltas, int32 InID = MOD_ID_NONE, const FString& InOriginUserID = FString());
 
 	bool IsEmpty() const;
 	bool operator==(const FDeltasRecord& Other) const;
@@ -57,6 +58,15 @@ struct MODUMATE_API FDeltasRecord
 
 	UPROPERTY()
 	TArray<FStructDataWrapper> DeltaStructWrappers;
+
+	UPROPERTY()
+	int32 ID = MOD_ID_NONE;
+
+	UPROPERTY()
+	FString OriginUserID;
+
+	UPROPERTY()
+	FDateTime TimeStamp = FDateTime(0);
 };
 
 template<>

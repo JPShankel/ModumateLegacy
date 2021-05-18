@@ -54,6 +54,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Date Time")
 	FDateTime GetCurrentDateTime();
 
+	UFUNCTION()
+	bool ConnectToMultiplayerServer(const FString& URL);
+
 protected:
 	TArray<FString> RecentProjectPaths;
 	TArray<FText> RecentProjectNames;

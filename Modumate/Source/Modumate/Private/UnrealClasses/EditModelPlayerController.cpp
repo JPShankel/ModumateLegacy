@@ -245,6 +245,7 @@ void AEditModelPlayerController::BeginWithPlayerState()
 
 	TimeOfLastAutoSave = FDateTime::Now();
 
+#if !UE_SERVER
 	// Create icon generator in the farthest corner of the universe
 	// TODO: Ideally the scene capture comp should capture itself only, but UE4 lacks that feature, for now...
 	FActorSpawnParameters iconGeneratorSpawnParams;
@@ -255,7 +256,6 @@ void AEditModelPlayerController::BeginWithPlayerState()
 		DynamicIconGenerator->SetActorLocation(FVector(-100000.f, -100000.f, -100000.f));
 	}
 
-#if !UE_SERVER
 	EditModelUserWidget = CreateWidget<UEditModelUserWidget>(this, EditModelUserWidgetClass);
 	if (ensureAlways(EditModelUserWidget))
 	{
@@ -306,6 +306,11 @@ void AEditModelPlayerController::BeginWithPlayerState()
 void AEditModelPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if ((EMPlayerState == nullptr) && PlayerState)
+	{
+		EMPlayerState = Cast<AEditModelPlayerState>(PlayerState);
+	}
 
 	// Allow initializing player state from within player controller, in case EMPlayerState began first without the controller.
 	if (EMPlayerState && EMPlayerState->HasActorBegunPlay() && !EMPlayerState->bBeganWithController)

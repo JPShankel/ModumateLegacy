@@ -135,6 +135,10 @@ bool ADynamicIconGenerator::SetIconMeshForAssembly(const FBIMPresetCollectionPro
 
 bool ADynamicIconGenerator::SetIconMeshForAssembly(const FBIMPresetCollectionProxy& PresetCollection, const FGuid& AsmKey, UMaterialInterface*& OutMaterial, bool bAllowOverwrite)
 {
+#if UE_SERVER
+	return false;
+#endif
+
 	OutMaterial = nullptr;
 	UTexture2D* iconTexture = nullptr;
 

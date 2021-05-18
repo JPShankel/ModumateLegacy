@@ -11,6 +11,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateUserSettings.h"
+#include "Net/UnrealNetwork.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
@@ -21,6 +22,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerPawn.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
@@ -46,42 +48,37 @@ AEditModelPlayerState::AEditModelPlayerState()
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::AEditModelPlayerState"));
 
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Update at 15fps, rather than 1fps by default, because we are synchronizing very few properties and this is where custom camera movement is replicated.
+	NetUpdateFrequency = 15;
+}
+
+void AEditModelPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AEditModelPlayerState, ReplicatedCamTransform);
 }
 
 void AEditModelPlayerState::BeginWithController()
 {
-	if (!bBeganWithController && EMPlayerController)
+	if (bBeganWithController || (EMPlayerController == nullptr))
 	{
-		PostSelectionChanged();
-		PostViewChanged();
-		SetViewMode(EEditViewModes::AllObjects, true);
-
-		bBeganWithController = true;
+		return;
 	}
+
+	PostSelectionChanged();
+	PostViewChanged();
+	SetViewMode(EEditViewModes::AllObjects, true);
+
+	bBeganWithController = true;
 }
 
 void AEditModelPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// This is supposed to be set by the EMPlayerController,
-	// but it can be null if we spawn a new PlayerController that still uses this EMPlayerState.
-	// (For example, the DebugCameraController, spawned by the CheatManager when pressing the semicolon key in non-shipping builds)
-	if (EMPlayerController == nullptr)
-	{
-		auto* world = GetWorld();
-		auto* localPlayer = world ? world->GetFirstLocalPlayerFromController() : nullptr;
-		EMPlayerController = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(world)) : nullptr;
-	}
-
-	// EditModelPlayerState initialization must happen after the EditModelPlayerController,
-	// so allow that to either happen now or be deferred.
-	if (EMPlayerController && EMPlayerController->HasActorBegunPlay() && !EMPlayerController->bBeganWithPlayerState)
-	{
-		EMPlayerController->EMPlayerState = this;
-		EMPlayerController->BeginWithPlayerState();
-		BeginWithController();
-	}
+	TryInitController();
 }
 
 void AEditModelPlayerState::Tick(float DeltaSeconds)
@@ -100,6 +97,33 @@ void AEditModelPlayerState::Tick(float DeltaSeconds)
 	{
 		EMPlayerController->HUDDrawWidget->LinesToDraw.Reset();
 		BatchRenderLines();
+	}
+}
+
+void AEditModelPlayerState::ClientInitialize(class AController* C)
+{
+	Super::ClientInitialize(C);
+
+	TryInitController();
+}
+
+void AEditModelPlayerState::TryInitController()
+{
+	// This is supposed to be set by the EMPlayerController,
+	// but it can be null if we spawn a new PlayerController that still uses this EMPlayerState.
+	// (For example, the DebugCameraController, spawned by the CheatManager when pressing the semicolon key in non-shipping builds)
+	if (EMPlayerController == nullptr)
+	{
+		EMPlayerController = GetOwner<AEditModelPlayerController>();
+	}
+
+	// EditModelPlayerState initialization must happen after the EditModelPlayerController,
+	// so allow that to either happen now or be deferred.
+	if (EMPlayerController && EMPlayerController->HasActorBegunPlay() && !EMPlayerController->bBeganWithPlayerState)
+	{
+		EMPlayerController->EMPlayerState = this;
+		EMPlayerController->BeginWithPlayerState();
+		BeginWithController();
 	}
 }
 
@@ -1050,5 +1074,40 @@ bool AEditModelPlayerState::IsObjectTypeEnabledByViewMode(EObjectType ObjectType
 	default:
 		ensureMsgf(false, TEXT("Unknown object category: %d!"), (int8)objectCategory);
 		return false;
+	}
+}
+
+bool AEditModelPlayerState::SendClientDeltas_Validate(const FDeltasRecord& Deltas)
+{
+	return true;
+}
+
+void AEditModelPlayerState::SendClientDeltas_Implementation(const FDeltasRecord& Deltas)
+{
+	AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+	if (gameState)
+	{
+		gameState->ReceiveServerDeltas(Deltas);
+	}
+}
+
+void AEditModelPlayerState::UpdateCameraUnreliable_Implementation(const FTransform& NewTransform)
+{
+	ReplicatedCamTransform = NewTransform;
+}
+
+void AEditModelPlayerState::UpdateCameraReliable_Implementation(const FTransform& NewTransform)
+{
+	ReplicatedCamTransform = NewTransform;
+}
+
+void AEditModelPlayerState::OnRep_CamTransform()
+{
+	AEditModelPlayerPawn* playerPawn = GetPawn<AEditModelPlayerPawn>();
+	ULocalPlayer* localPlayer = EMPlayerController ? EMPlayerController->GetLocalPlayer() : nullptr;
+
+	if (playerPawn && (localPlayer == nullptr) && IsNetMode(NM_Client))
+	{
+		playerPawn->SetActorTransform(ReplicatedCamTransform);
 	}
 }

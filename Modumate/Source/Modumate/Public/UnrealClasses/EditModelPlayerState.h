@@ -30,14 +30,19 @@ class MODUMATE_API AEditModelPlayerState : public APlayerState
 	GENERATED_BODY()
 	AEditModelPlayerState();
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	void BeginWithController();
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void ClientInitialize(class AController* C) override;
+
 	friend class AEditModelPlayerController;
 
 protected:
+	void TryInitController();
 	void BatchRenderLines();
 	void UpdateRenderFlags(const TSet<AModumateObjectInstance*>& ChangedObjects);
 
@@ -207,6 +212,23 @@ public:
 
 	UFUNCTION()
 	bool IsObjectTypeEnabledByViewMode(EObjectType ObjectType) const;
+
+	// Networking/replication-related functions and properties
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void SendClientDeltas(const FDeltasRecord& Deltas);
+
+	UFUNCTION(Server, Unreliable)
+	void UpdateCameraUnreliable(const FTransform& NewTransform);
+
+	UFUNCTION(Server, Reliable)
+	void UpdateCameraReliable(const FTransform& NewTransform);
+
+	UFUNCTION()
+	void OnRep_CamTransform();
+
+	UPROPERTY(ReplicatedUsing=OnRep_CamTransform)
+	FTransform ReplicatedCamTransform;
 
 protected:
 	TArray<FStructurePoint> TempObjectStructurePoints, CurSelectionStructurePoints;

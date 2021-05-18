@@ -183,7 +183,7 @@ void UPresetCardHeader::UpdateSelectionHeaderItemCount(int32 ItemCount)
 
 bool UPresetCardHeader::CaptureIcon(const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID, bool bAsAssembly)
 {
-	if (!(EMPlayerController && IconImageSmall))
+	if (!(EMPlayerController && EMPlayerController->DynamicIconGenerator && IconImageSmall))
 	{
 		return false;
 	}

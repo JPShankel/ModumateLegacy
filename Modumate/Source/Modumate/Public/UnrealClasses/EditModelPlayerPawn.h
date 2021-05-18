@@ -7,6 +7,9 @@
 #include "CollisionQueryParams.h"
 #include "EditModelPlayerPawn.generated.h"
 
+
+class UModumateClientIcon;
+
 UCLASS()
 class MODUMATE_API AEditModelPlayerPawn : public ACharacter
 {
@@ -18,6 +21,8 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void UnPossessed() override;
+
+	virtual void OnRep_PlayerState() override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -43,6 +48,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class USceneCaptureComponent2D* ScreenshotTaker;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UStaticMeshComponent* RemoteMeshComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UModumateClientIcon> ClientIconClass;
+
+	UPROPERTY()
+	UModumateClientIcon* ClientIconWidget;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

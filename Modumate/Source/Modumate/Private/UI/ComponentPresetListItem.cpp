@@ -29,7 +29,7 @@ void UComponentPresetListItem::NativeConstruct()
 
 bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerController* Controller, const FGuid& InGUID)
 {
-	if (!(Controller && IconImage))
+	if (!(Controller && Controller->DynamicIconGenerator && IconImage))
 	{
 		return false;
 	}
@@ -45,7 +45,7 @@ bool UComponentPresetListItem::CaptureIconFromPresetKey(class AEditModelPlayerCo
 
 bool UComponentPresetListItem::CaptureIconForBIMDesignerSwap(class AEditModelPlayerController* Controller, const FGuid& InGUID, const FBIMEditorNodeIDType& NodeID)
 {
-	if (!(Controller && IconImage))
+	if (!(Controller && Controller->DynamicIconGenerator && IconImage))
 	{
 		return false;
 	}

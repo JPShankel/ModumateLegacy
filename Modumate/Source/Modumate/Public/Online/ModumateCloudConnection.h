@@ -27,7 +27,8 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		FString GetCloudRootURL() const;
 		FString GetCloudAPIURL() const;
 
-		FString GetAuthToken() const { return AuthToken; }
+		const FString& GetAuthToken() const { return AuthToken; }
+		void SetAuthToken(const FString& InAuthToken) { AuthToken = InAuthToken; }
 
 		void SetLoginStatus(ELoginStatus InLoginStatus);
 		ELoginStatus GetLoginStatus() const;
@@ -52,12 +53,12 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 
 		void SetAutomationHandler(ICloudConnectionAutomation* InAutomationHandler);
 
-	private:
 		FHttpRequestRef MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure = true, int32* OutRequestAutomationIndexPtr = nullptr);
+		static FString GetRequestTypeString(ERequestType RequestType);
+
+	private:
 		void HandleRequestResponse(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure,
 			bool bSuccessfulConnection, int32 ResponseCode, const FString& ResponseContent);
-
-		static FString GetRequestTypeString(ERequestType RequestType);
 
 		FString AuthToken;
 		FString RefreshToken;

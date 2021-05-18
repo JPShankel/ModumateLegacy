@@ -9,3 +9,14 @@ void AEditModelGameState::InitDocument()
 		Document = NewObject<UModumateDocument>(this);
 	}
 }
+
+void AEditModelGameState::ReceiveServerDeltas_Implementation(const FDeltasRecord& Deltas)
+{
+	UWorld* world = GetWorld();
+	if (!ensure(world && Document))
+	{
+		return;
+	}
+
+	Document->ApplyRemoteDeltas(Deltas, world);
+}

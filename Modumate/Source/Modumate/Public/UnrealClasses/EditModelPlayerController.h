@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Database/ModumateObjectEnums.h"
+#include "DocumentManagement/DocumentDelta.h"
 #include "GameFramework/PlayerController.h"
-#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
+#include "Math/Sphere.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
-#include "Database/ModumateObjectEnums.h"
-#include "Math/Sphere.h"
+#include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 
 #include "EditModelPlayerController.generated.h"
 

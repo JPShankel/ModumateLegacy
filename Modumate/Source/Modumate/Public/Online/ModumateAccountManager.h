@@ -40,16 +40,19 @@ struct MODUMATE_API FModumateUserInfo
 	FString Email;
 
 	UPROPERTY()
-	FString Uid;
-
-	UPROPERTY()
-	int32 Points = 0;
+	FString ID;
 
 	UPROPERTY()
 	FString Zipcode;
 
 	UPROPERTY()
+	FString Photo;
+
+	UPROPERTY()
 	bool Analytics = false;
+
+	UPROPERTY()
+	FString Phone;
 };
 
 USTRUCT()

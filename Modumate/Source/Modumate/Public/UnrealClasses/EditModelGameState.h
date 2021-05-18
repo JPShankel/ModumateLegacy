@@ -18,4 +18,7 @@ public:
 
 	UPROPERTY()
 	UModumateDocument* Document;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void ReceiveServerDeltas(const FDeltasRecord& Deltas);
 };
