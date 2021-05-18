@@ -167,10 +167,11 @@ bool UToolTrayWidget::ChangeBlockToSiteTools()
 
 	ToolTrayBlockProperties->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	// TODO: Hook up site tool
-	//ToolTrayBlockProperties->ChangeBlockProperties(Cast<UEditModelToolBase>(controller->CurrentTool.GetObject()));
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
+	ToolTrayBlockProperties->ChangeBlockProperties(Cast<UEditModelToolBase>(controller->CurrentTool.GetObject()));
 
-	// TODO: Fill terrain list
 	ToolTrayBlockTerrainList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ToolTrayBlockTerrainList->UpdateAsTerrainList();
 
 	return true;
 }
@@ -188,6 +189,7 @@ void UToolTrayWidget::HideAllToolTrayBlocks()
 		EditModelUserWidget->ToolbarWidget->Button_Separators->SwitchToNormalStyle();
 		EditModelUserWidget->ToolbarWidget->Button_SurfaceGraphs->SwitchToNormalStyle();
 		EditModelUserWidget->ToolbarWidget->Button_Attachments->SwitchToNormalStyle();
+		EditModelUserWidget->ToolbarWidget->Button_SiteTools->SwitchToNormalStyle();
 	}
 }
 

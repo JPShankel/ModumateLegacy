@@ -89,7 +89,7 @@ public:
 	void UpdateCategoryCheckboxes();
 
 	void UpdateCutPlaneExportable(const TArray<int32>& IDs, bool NewExportable);
-	void UpdateCutPlaneExportableByType(ECutPlaneType Type, bool NewExportable);
+	void UpdateCutPlaneExportableByType(EGeneralListType Type, bool NewExportable);
 
 protected:
 	void CalculateRemainingExports();

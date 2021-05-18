@@ -440,3 +440,15 @@ bool USelectTool::ProcessDragSelect()
 
 	return false;
 }
+
+void USelectTool::RegisterToolDataUI(class UToolTrayBlockProperties* PropertiesUI, int32& OutMaxNumRegistrations)
+{
+	OutMaxNumRegistrations = Controller->EMPlayerState->SelectedObjects.Num();
+	for (auto selectedMOI : Controller->EMPlayerState->SelectedObjects)
+	{
+		if (selectedMOI)
+		{
+			selectedMOI->RegisterInstanceDataUI(PropertiesUI);
+		}
+	}
+}

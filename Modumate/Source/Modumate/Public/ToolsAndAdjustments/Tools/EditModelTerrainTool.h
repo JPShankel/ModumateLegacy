@@ -29,6 +29,11 @@ public:
 
 	virtual bool HasDimensionActor() override { return true; }
 
+	virtual void RegisterToolDataUI(class UToolTrayBlockProperties* PropertiesUI, int32& OutMaxNumRegistrations) override;
+
+	UFUNCTION()
+	void OnToolUIChangedHeight(float NewHeight);
+
 protected:
 	bool GetDeltas(const FVector& CurrentPoint, bool bClosed, TArray<FDeltaPtr>& OutDeltas);
 	bool MakeObject();
@@ -39,6 +44,7 @@ protected:
 	EMouseMode OriginalMouseMode;
 	TArray<FVector> Points;
 	float ZHeight = 0.0f;
+	float StartingZHeight = 0.f;
 
 	static constexpr float CloseLoopEpsilon = 15.0f;
 };

@@ -13,6 +13,8 @@
 #include "UnrealClasses/LineActor.h"
 
 #include <numeric>
+#include "UI/ToolTray/ToolTrayBlockProperties.h"
+#include "UI/Properties/InstPropWidgetLinearDimension.h"
 
 
 UTerrainTool::UTerrainTool()
@@ -175,6 +177,22 @@ bool UTerrainTool::PostEndOrAbort()
 	}
 
 	return Super::PostEndOrAbort();
+}
+
+void UTerrainTool::RegisterToolDataUI(class UToolTrayBlockProperties* PropertiesUI, int32& OutMaxNumRegistrations)
+{
+	static const FString heightPropertyName(TEXT("Height"));
+	if (auto heightField = PropertiesUI->RequestPropertyField<UInstPropWidgetLinearDimension>(this, heightPropertyName))
+	{
+		heightField->RegisterValue(this, StartingZHeight);
+		heightField->ValueChangedEvent.AddDynamic(this, &UTerrainTool::OnToolUIChangedHeight);
+		OutMaxNumRegistrations = 1;
+	}
+}
+
+void UTerrainTool::OnToolUIChangedHeight(float NewHeight)
+{
+	StartingZHeight = NewHeight;
 }
 
 bool UTerrainTool::GetDeltas(const FVector& CurrentPoint, bool bClosed, TArray<FDeltaPtr>& OutDeltas)

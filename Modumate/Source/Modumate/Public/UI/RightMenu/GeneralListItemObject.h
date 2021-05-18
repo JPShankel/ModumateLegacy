@@ -15,7 +15,7 @@ class MODUMATE_API UGeneralListItemObject : public UObject
 
 public:
 
-	ECutPlaneType CutPlaneType = ECutPlaneType::None;
+	EGeneralListType CutPlaneType = EGeneralListType::None;
 	FString DisplayName = FString(TEXT("New Cut Plane"));
 	int32 ObjId = -1;
 	FVector Location = FVector::ZeroVector;

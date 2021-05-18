@@ -73,13 +73,8 @@ void UToolTrayBlockModes::ChangeToAttachmentToolsButtons(EToolMode mode)
 void UToolTrayBlockModes::ChangeToSiteToolsButtons()
 {
 	TArray<UModumateButtonUserWidget*> buttonsToShow = {
-		ButtonPoint,
-		ButtonBrush,
-		ButtonSmoothBrush,
-		ButtonFlattenBrush,
-		ButtonRaiseBrush,
-		ButtonLowerBrush,
-		ButtonErase
+		ButtonLine,
+		ButtonPoint
 	};
 	SetButtonsState(buttonsToShow);
 }

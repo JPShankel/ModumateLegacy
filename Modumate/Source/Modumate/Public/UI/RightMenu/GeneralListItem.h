@@ -14,11 +14,12 @@
  */
 
 UENUM(BlueprintType)
-enum class ECutPlaneType : uint8
+enum class EGeneralListType : uint8
 {
 	Horizontal,
 	Vertical,
 	Other,
+	Terrain,
 	None
 };
 

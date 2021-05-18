@@ -128,13 +128,14 @@ void UGeneralListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 
 	switch (cutPlaneItemObject->CutPlaneType)
 	{
-	case ECutPlaneType::Horizontal:
+	case EGeneralListType::Horizontal:
 		BuildAsHorizontalCutPlaneItem(cutPlaneItemObject->Location);
 		break;
-	case ECutPlaneType::Vertical:
+	case EGeneralListType::Vertical:
 		BuildAsVerticalCutPlaneItem(cutPlaneItemObject->Rotation);
 		break;
-	case ECutPlaneType::Other:
+	case EGeneralListType::Other:
+	case EGeneralListType::Terrain:
 	default:
 		TextDimension->ChangeText(FText::GetEmpty());
 		break;

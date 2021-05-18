@@ -56,6 +56,8 @@ public:
 
 	virtual bool CycleMode() { return false; }
 
+	virtual void RegisterToolDataUI(class UToolTrayBlockProperties* PropertiesUI, int32& OutMaxNumRegistrations) {}
+
 protected:
 	UFUNCTION()
 	void OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);

@@ -59,22 +59,22 @@ void UCutPlaneMenuBlockExport::NativeConstruct()
 
 void UCutPlaneMenuBlockExport::OnCheckBoxHorizontalChanged(bool IsChecked)
 {
-	UpdateCutPlaneExportableByType(ECutPlaneType::Horizontal, IsChecked);
+	UpdateCutPlaneExportableByType(EGeneralListType::Horizontal, IsChecked);
 }
 
 void UCutPlaneMenuBlockExport::OnCheckBoxVerticalChanged(bool IsChecked)
 {
-	UpdateCutPlaneExportableByType(ECutPlaneType::Vertical, IsChecked);
+	UpdateCutPlaneExportableByType(EGeneralListType::Vertical, IsChecked);
 }
 
 void UCutPlaneMenuBlockExport::OnCheckBoxOtherChanged(bool IsChecked)
 {
-	UpdateCutPlaneExportableByType(ECutPlaneType::Other, IsChecked);
+	UpdateCutPlaneExportableByType(EGeneralListType::Other, IsChecked);
 }
 
 void UCutPlaneMenuBlockExport::OnCheckBoxAllChanged(bool IsChecked)
 {
-	UpdateCutPlaneExportableByType(ECutPlaneType::None, IsChecked);
+	UpdateCutPlaneExportableByType(EGeneralListType::None, IsChecked);
 }
 
 void UCutPlaneMenuBlockExport::OnButtonExportReleased()
@@ -85,7 +85,7 @@ void UCutPlaneMenuBlockExport::OnButtonExportReleased()
 		return;
 	}
 	TArray<int32> cutPlaneIds;
-	if (!Controller->EditModelUserWidget->CutPlaneMenu->GetCutPlaneIDsByType(ECutPlaneType::None, cutPlaneIds) || cutPlaneIds.Num() == 0)
+	if (!Controller->EditModelUserWidget->CutPlaneMenu->GetCutPlaneIDsByType(EGeneralListType::None, cutPlaneIds) || cutPlaneIds.Num() == 0)
 	{
 		return;
 	}
@@ -178,7 +178,7 @@ void UCutPlaneMenuBlockExport::UpdateCategoryCheckboxes()
 	int32 numCannotExportOther = 0;
 
 	TArray<int32> cutPlaneIDs;
-	Controller->EditModelUserWidget->CutPlaneMenu->GetCutPlaneIDsByType(ECutPlaneType::None, cutPlaneIDs);
+	Controller->EditModelUserWidget->CutPlaneMenu->GetCutPlaneIDsByType(EGeneralListType::None, cutPlaneIDs);
 
 	for (auto curId : cutPlaneIDs)
 	{
@@ -187,13 +187,13 @@ void UCutPlaneMenuBlockExport::UpdateCategoryCheckboxes()
 		{
 			switch (item->CutPlaneType)
 			{
-			case ECutPlaneType::Horizontal:
+			case EGeneralListType::Horizontal:
 				item->CanExport ? numCanExportHorizontal++ : numCannotExportHorizontal++;
 				break;
-			case ECutPlaneType::Vertical:
+			case EGeneralListType::Vertical:
 				item->CanExport ? numCanExportVertical++ : numCannotExportVertical++;
 				break;
-			case ECutPlaneType::Other:
+			case EGeneralListType::Other:
 				item->CanExport ? numCanExportOther++ : numCannotExportOther++;
 				break;
 			default:
@@ -317,7 +317,7 @@ void UCutPlaneMenuBlockExport::UpdateCutPlaneExportable(const TArray<int32>& IDs
 	UpdateCategoryCheckboxes();
 }
 
-void UCutPlaneMenuBlockExport::UpdateCutPlaneExportableByType(ECutPlaneType Type, bool NewExportable)
+void UCutPlaneMenuBlockExport::UpdateCutPlaneExportableByType(EGeneralListType Type, bool NewExportable)
 {
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller && controller->EditModelUserWidget)

@@ -55,19 +55,19 @@ void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 		if (cutPlaneUpDot <= THRESH_NORMALS_ARE_ORTHOGONAL)
 		{
 			// Vertical cut planes need to be sorted before adding into the list
-			newCutPlaneObj->CutPlaneType = ECutPlaneType::Vertical;
+			newCutPlaneObj->CutPlaneType = EGeneralListType::Vertical;
 			CutPlaneMenuBlockVertical->GeneralItemsList->AddItem(newCutPlaneObj);
 			VerticalItemToIDMap.Add(cutPlaneMois[i]->ID, newCutPlaneObj);
 		}
 		else if (cutPlaneUpDot >= THRESH_NORMALS_ARE_PARALLEL)
 		{
-			newCutPlaneObj->CutPlaneType = ECutPlaneType::Horizontal;
+			newCutPlaneObj->CutPlaneType = EGeneralListType::Horizontal;
 			horizontalItems.Add(newCutPlaneObj);
 			HorizontalItemToIDMap.Add(cutPlaneMois[i]->ID, newCutPlaneObj);
 		}
 		else
 		{
-			newCutPlaneObj->CutPlaneType = ECutPlaneType::Other;
+			newCutPlaneObj->CutPlaneType = EGeneralListType::Other;
 			CutPlaneMenuBlockOther->GeneralItemsList->AddItem(newCutPlaneObj);
 			OtherItemToIDMap.Add(cutPlaneMois[i]->ID, newCutPlaneObj);
 		}
@@ -105,13 +105,13 @@ bool UCutPlaneMenuWidget::RemoveCutPlaneFromMenuBlock(int32 ObjID /*= MOD_ID_NON
 	}
 	switch (item->CutPlaneType)
 	{
-	case ECutPlaneType::Horizontal:
+	case EGeneralListType::Horizontal:
 		CutPlaneMenuBlockHorizontal->GeneralItemsList->RemoveItem(item);
 		return true;
-	case ECutPlaneType::Vertical:
+	case EGeneralListType::Vertical:
 		CutPlaneMenuBlockVertical->GeneralItemsList->RemoveItem(item);
 		return true;
-	case ECutPlaneType::Other:
+	case EGeneralListType::Other:
 		CutPlaneMenuBlockOther->GeneralItemsList->RemoveItem(item);
 		return true;
 	default:
@@ -135,13 +135,13 @@ bool UCutPlaneMenuWidget::UpdateCutPlaneParamInMenuBlock(int32 ObjID /*= MOD_ID_
 	UGeneralListItemMenuBlock* block;
 	switch (item->CutPlaneType)
 	{
-	case ECutPlaneType::Horizontal:
+	case EGeneralListType::Horizontal:
 		block = CutPlaneMenuBlockHorizontal;
 		break;
-	case ECutPlaneType::Vertical:
+	case EGeneralListType::Vertical:
 		block = CutPlaneMenuBlockVertical;
 		break;
-	case ECutPlaneType::Other:
+	case EGeneralListType::Other:
 		block = CutPlaneMenuBlockOther;
 		break;
 	default:
@@ -189,30 +189,30 @@ void UCutPlaneMenuWidget::BuildCutPlaneItemFromMoi(UGeneralListItemObject* CutPl
 	}
 }
 
-bool UCutPlaneMenuWidget::GetCutPlaneIDsByType(ECutPlaneType Type, TArray<int32>& OutIDs)
+bool UCutPlaneMenuWidget::GetCutPlaneIDsByType(EGeneralListType Type, TArray<int32>& OutIDs)
 {
 	OutIDs.Reset();
 	switch (Type)
 	{
-	case ECutPlaneType::Horizontal:
+	case EGeneralListType::Horizontal:
 		for (auto curItem : HorizontalItemToIDMap)
 		{
 			OutIDs.Add(curItem.Key);
 		}
 		return true;
-	case ECutPlaneType::Vertical:
+	case EGeneralListType::Vertical:
 		for (auto curItem : VerticalItemToIDMap)
 		{
 			OutIDs.Add(curItem.Key);
 		}
 		return true;
-	case ECutPlaneType::Other:
+	case EGeneralListType::Other:
 		for (auto curItem : OtherItemToIDMap)
 		{
 			OutIDs.Add(curItem.Key);
 		}
 		return true;
-	case ECutPlaneType::None:
+	case EGeneralListType::None:
 		for (auto curItem : HorizontalItemToIDMap)
 		{
 			OutIDs.Add(curItem.Key);

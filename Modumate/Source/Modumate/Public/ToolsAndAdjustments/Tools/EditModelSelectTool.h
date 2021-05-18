@@ -31,6 +31,8 @@ public:
 
 	bool ProcessDragSelect();
 
+	virtual void RegisterToolDataUI(class UToolTrayBlockProperties* PropertiesUI, int32& OutMaxNumRegistrations) override;
+
 protected:
 	TMap<const AModumateObjectInstance*, float> LastObjectSelectionAttemptTimes;
 	AModumateObjectInstance *InitialClickedObject;

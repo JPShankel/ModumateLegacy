@@ -28,4 +28,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UListView* GeneralItemsList;
+
+	void UpdateAsTerrainList();
 };

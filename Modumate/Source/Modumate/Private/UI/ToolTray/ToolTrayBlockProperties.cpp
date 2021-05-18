@@ -8,8 +8,6 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 
-// TODO: remove after generalized tool API
-#include "ToolsAndAdjustments/Tools/EditModelSelectTool.h"
 
 UToolTrayBlockProperties::UToolTrayBlockProperties(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -64,28 +62,17 @@ void UToolTrayBlockProperties::ChangeBlockProperties(UEditModelToolBase* Current
 		}
 	}
 
-	// TODO: generalize the UEditModelToolBase API
-	if (auto selectTool = Cast<USelectTool>(CurrentTool))
-	{
-		maxNumRegistrations = controller->EMPlayerState->SelectedObjects.Num();
-		for (auto selectedMOI : controller->EMPlayerState->SelectedObjects)
-		{
-			if (selectedMOI)
-			{
-				selectedMOI->RegisterInstanceDataUI(this);
-			}
-		}
-	}
+	// Link property block to current tool mode
+	CurrentTool->RegisterToolDataUI(this, maxNumRegistrations);
 
 	// For all instance property members, set their visibility to whether their value has been consistently registered
-	bool bAnyRegistrations = maxNumRegistrations > 0;
 	bool bAnyPropertiesEnabled = false;
 	propertyEntries = PropertiesListBox->GetAllChildren();
 	for (auto propertyEntry : propertyEntries)
 	{
 		if (auto instPropEntry = Cast<UInstPropWidgetBase>(propertyEntry))
 		{
-			bool bVisible = bAnyRegistrations && (instPropEntry->GetNumRegistrations() == maxNumRegistrations);
+			bool bVisible = instPropEntry->GetNumRegistrations() == maxNumRegistrations;
 			instPropEntry->SetVisibility(bVisible ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 			if (bVisible)
 			{

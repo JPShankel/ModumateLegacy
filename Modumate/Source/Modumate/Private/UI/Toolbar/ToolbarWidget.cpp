@@ -84,7 +84,7 @@ void UToolbarWidget::OnButtonReleaseAttachments()
 
 void UToolbarWidget::OnButtonReleaseSiteTools()
 {
-	// TODO: Set tool mode to site tools
+	Controller->SetToolMode(EToolMode::VE_TERRAIN);
 	if (EditModelUserWidget->ToolTrayWidget->CurrentToolCategory != EToolCategories::SiteTools)
 	{
 		EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::ToolMenu, EToolCategories::SiteTools);

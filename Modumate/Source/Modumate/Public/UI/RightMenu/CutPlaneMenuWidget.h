@@ -60,5 +60,5 @@ public:
 	static void BuildCutPlaneItemFromMoi(UGeneralListItemObject* CutPlaneObj, const class AModumateObjectInstance* Moi);
 
 	// Show CutPlane by type, show all if none specified
-	bool GetCutPlaneIDsByType(ECutPlaneType Type, TArray<int32>& OutIDs);
+	bool GetCutPlaneIDsByType(EGeneralListType Type, TArray<int32>& OutIDs);
 };
