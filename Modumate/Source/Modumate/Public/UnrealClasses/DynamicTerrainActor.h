@@ -3,7 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "ProceduralMeshComponent.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
 
 #include "DynamicTerrainActor.generated.h"
 
@@ -45,7 +45,13 @@ public:
 	class UHierarchicalInstancedStaticMeshComponent* GrassMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 VertSize = 100;
+	float VerticesDensityPerRow = 30;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MinVertSize = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxVertSize = 1000.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 UVSize = 100;
@@ -59,8 +65,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector GrassMeshOffset = FVector(0.f, 0.f, -10.f);
 
-	UFUNCTION(BlueprintCallable)
-	void SetupTerrainGeometry(const TArray<FVector>& PerimeterPoints, const TArray<FVector>& HeightPoints, bool bRecreateMesh, bool bCreateCollision = true);
+	//UFUNCTION(BlueprintCallable)
+	//void SetupTerrainGeometry(const TArray<FVector>& PerimeterPoints, const TArray<FVector>& HeightPoints, bool bRecreateMesh, bool bCreateCollision = true);
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateTerrainGeometryFromPoints(const TArray<FVector>& HeightPoints);
@@ -69,9 +75,7 @@ public:
 	void UpdateVertexColorByLocation(const FVector& Location, const FLinearColor& NewColor, float Radius, float Alpha);
 
 
-
-	UFUNCTION(BlueprintCallable)
-	void TestSetupTerrainGeometryGTE(const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FVector2D>& HolePoints, bool bCreateCollision = true);
+	void TestSetupTerrainGeometryGTE(const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision = true);
 
 	void UpdateInstancedMeshes(bool bRecreateMesh);
 	bool GetRandomPointsOnTriangleSurface(int32 Tri1, int32 Tri2, int32 Tri3, int32 NumOfOutPoints, TArray<FVector>& OutPoints);

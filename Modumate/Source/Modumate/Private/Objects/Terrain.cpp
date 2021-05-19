@@ -163,7 +163,7 @@ void AMOITerrain::UpdateTerrainActors()
 
 			if (perimeterPoints2D.Num() >= 3)
 			{
-				actor->TestSetupTerrainGeometryGTE(perimeterPoints2D, heightPoints, TArray<FVector2D>(), false);
+				actor->TestSetupTerrainGeometryGTE(perimeterPoints2D, heightPoints, TArray<FPolyHole2D>(), true, false);
 			}
 
 			++numTerrainPatches;

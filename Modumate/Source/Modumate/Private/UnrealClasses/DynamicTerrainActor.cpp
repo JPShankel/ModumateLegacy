@@ -3,7 +3,6 @@
 #include "UnrealClasses/DynamicTerrainActor.h"
 #include "IntpThinPlateSpline2.h"
 #include "ConstrainedDelaunay2.h"
-#include "ModumateCore/ModumateGeometryStatics.h"
 #include "KismetProceduralMeshLibrary.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 
@@ -48,6 +47,7 @@ void ADynamicTerrainActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+#if 0
 void ADynamicTerrainActor::SetupTerrainGeometry(const TArray<FVector>& PerimeterPoints, const TArray<FVector>& HeightPoints, bool bRecreateMesh, bool bCreateCollision /*= true*/)
 {
 	if (!ensureAlways(PerimeterPoints.Num() > 2 && HeightPoints.Num() > 2))
@@ -161,6 +161,7 @@ void ADynamicTerrainActor::SetupTerrainGeometry(const TArray<FVector>& Perimeter
 	SimpleDynamicMesh->SetMaterial(0, TerrainMaterial);
 	*/
 }
+#endif
 
 void ADynamicTerrainActor::UpdateTerrainGeometryFromPoints(const TArray<FVector>& HeightPoints)
 {
@@ -188,7 +189,7 @@ void ADynamicTerrainActor::UpdateTerrainGeometryFromPoints(const TArray<FVector>
 	//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UV0, Normals, Tangents);
 
 	Mesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, UV0, VertexColors, Tangents);
-	UpdateInstancedMeshes(false);
+	//UpdateInstancedMeshes(false);
 }
 
 void ADynamicTerrainActor::UpdateVertexColorByLocation(const FVector& Location, const FLinearColor& NewColor, float Radius, float Alpha)
@@ -206,7 +207,7 @@ void ADynamicTerrainActor::UpdateVertexColorByLocation(const FVector& Location, 
 	Mesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, UV0, VertexColors, Tangents);
 }
 
-void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FVector2D>& HolePoints, bool bCreateCollision /*= true*/)
+void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision /*= true*/)
 {
 	Vertices.Empty();
 	Vertices2D.Empty();
@@ -216,25 +217,30 @@ void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(const TArray<FVector2D>& 
 	VertexColors.Empty();
 	Tangents.Empty();
 
-	TArray<FPolyHole2D> inHoles = { FPolyHole2D(HolePoints) };
+	// Calculate distance between vertices by terrain size
 	FBox2D box2D(PerimeterPoints);
+	float vertSize = FMath::Clamp((FMath::Sqrt(box2D.GetArea()) / VerticesDensityPerRow), MinVertSize, MaxVertSize);
 
-	// GTE
-	int32 numX = (box2D.Max.X - box2D.Min.X) / VertSize;
-	int32 numY = (box2D.Max.Y - box2D.Min.Y) / VertSize;
+	// Add grid points if required
 	FDynamicGraph2<float> inGridPoints;
-	for (int32 xId = 0; xId < numX; xId++)
+	if (bAddGraphPoints)
 	{
-		for (int32 yId = 0; yId < numY; yId++)
+		int32 numX = ((box2D.Max.X - box2D.Min.X) / vertSize) + 1;
+		int32 numY = ((box2D.Max.Y - box2D.Min.Y) / vertSize) + 1;
+		for (int32 xId = 0; xId < numX; xId++)
 		{
-			float xV = (xId * VertSize) + box2D.Min.X;
-			float yV = (yId * VertSize) + box2D.Min.Y;
-			inGridPoints.AppendVertex(FVector2f(xV, yV));
+			for (int32 yId = 0; yId < numY; yId++)
+			{
+				float xV = (xId * vertSize) + box2D.Min.X;
+				float yV = (yId * vertSize) + box2D.Min.Y;
+				inGridPoints.AppendVertex(FVector2f(xV, yV));
+			}
 		}
 	}
 
+	// GTE
 	TArray<FVector2D> gteCombinedVertices;
-	if (!UModumateGeometryStatics::TriangulateVerticesGTE(PerimeterPoints, inHoles, Triangles, &gteCombinedVertices, true, &Vertices2D, &inGridPoints))
+	if (!UModumateGeometryStatics::TriangulateVerticesGTE(PerimeterPoints, HolePoints, Triangles, &gteCombinedVertices, true, &Vertices2D, &inGridPoints))
 	{
 		return;
 	}
@@ -258,9 +264,9 @@ void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(const TArray<FVector2D>& 
 
 	Mesh->CreateMeshSection_LinearColor(0, Vertices, Triangles, Normals, UV0, VertexColors, Tangents, bCreateCollision);
 	Mesh->SetMaterial(0, TerrainMaterial);
-	GrassMesh->SetStaticMesh(GrassStaticMesh);
 
-	UpdateInstancedMeshes(true);
+	//GrassMesh->SetStaticMesh(GrassStaticMesh);
+	//UpdateInstancedMeshes(true);
 
 	return;
 }
