@@ -8,6 +8,8 @@
 
 #include "EditModelTerrainTool.generated.h"
 
+class AMOITerrain;
+
 UCLASS()
 class MODUMATE_API UTerrainTool : public UEditModelToolBase
 {
@@ -35,16 +37,20 @@ public:
 	void OnToolUIChangedHeight(float NewHeight);
 
 protected:
-	bool GetDeltas(const FVector& CurrentPoint, bool bClosed, TArray<FDeltaPtr>& OutDeltas);
-	bool MakeObject();
+	bool AddFirstEdge(FVector Point1, FVector Point2);
+	bool AddNewEdge(FVector Point1, FVector Point2);
+	static FVector2D ProjectToPlane(FVector Origin, FVector Point);
 
-	enum EState { Idle, FirstPoint, MultiplePoints };
+	enum EState { Idle, AddEdge };
 	EState State = Idle;
 
 	EMouseMode OriginalMouseMode;
+	FVector CurrentPoint;
+	TSharedPtr<Modumate::FGraph2D> TerrainGraph;
 	TArray<FVector> Points;
 	float ZHeight = 0.0f;
-	float StartingZHeight = 0.f;
+	AMOITerrain* CurrentMoi = nullptr;
+	float StartingZHeight = 0.0f;
 
 	static constexpr float CloseLoopEpsilon = 15.0f;
 };

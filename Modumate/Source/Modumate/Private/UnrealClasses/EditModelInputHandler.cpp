@@ -455,6 +455,12 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 		return true;
 	}
 
+	case EInputCommand::TerrainPoint:
+	{
+		Controller->SetToolCreateObjectMode(EToolCreateObjectMode::Draw);
+		return true;
+	}
+
 	// Non-tool modal commands
 
 	case EInputCommand::NextViewMode:

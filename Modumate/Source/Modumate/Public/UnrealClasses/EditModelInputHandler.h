@@ -107,6 +107,7 @@ enum class EInputCommand : uint8
 	PaintBucket,
 	OpeningStamp,
 	OpeningSystem,
+	TerrainPoint,
 
 	// Non-tool modal commands
 	NextViewMode,

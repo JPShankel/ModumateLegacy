@@ -3241,22 +3241,37 @@ void UModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 		int32 surfaceGraphID = kvp.Key;
 		const AModumateObjectInstance *surfaceGraphObj = GetObjectById(surfaceGraphID);
 		const AModumateObjectInstance *surfaceGraphParent = surfaceGraphObj ? surfaceGraphObj->GetParentObject() : nullptr;
+		const bool bIsTerrain = surfaceGraphObj && surfaceGraphObj->GetObjectType() == EObjectType::OTTerrain;
+
 		int32 surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceGraphObj);
-		if (!ensure(surfaceGraphObj && surfaceGraphParent && (surfaceGraphFaceIndex != INDEX_NONE)))
+
+		if (!ensure(bIsTerrain ||
+			(surfaceGraphObj && surfaceGraphParent && (surfaceGraphFaceIndex != INDEX_NONE)) ))
 		{
 			continue;
 		}
 
 		const AMOISurfaceGraph* surfaceGraphImpl = static_cast<const AMOISurfaceGraph*>(surfaceGraphObj);
 		FString surfaceGraphString = FString::Printf(TEXT("SurfaceGraph: #%d, face %d, %s"),
-			surfaceGraphID, surfaceGraphFaceIndex, surfaceGraphImpl->IsGraphLinked() ? TEXT("linked") : TEXT("unlinked"));
+			surfaceGraphID, surfaceGraphFaceIndex,
+			bIsTerrain ? TEXT("") : (surfaceGraphImpl->IsGraphLinked() ? TEXT("linked") : TEXT("unlinked")) );
 		GEngine->AddOnScreenDebugMessage(surfaceGraphID, 0.0f, FColor::White, surfaceGraphString);
 
 		TArray<FVector> facePoints;
 		FVector faceNormal, faceAxisX, faceAxisY;
-		if (!ensure(UModumateObjectStatics::GetGeometryFromFaceIndex(surfaceGraphParent, surfaceGraphFaceIndex, facePoints, faceNormal, faceAxisX, faceAxisY)))
+		if (bIsTerrain)
+		{   // Terrain has a simple basis:
+			faceNormal = FVector::UpVector;
+			faceAxisX = FVector::ForwardVector;
+			faceAxisY = FVector::RightVector;
+			facePoints.Add(surfaceGraphObj->GetLocation());
+		}
+		else
 		{
-			continue;
+			if (!ensure(UModumateObjectStatics::GetGeometryFromFaceIndex(surfaceGraphParent, surfaceGraphFaceIndex, facePoints, faceNormal, faceAxisX, faceAxisY)))
+			{
+				continue;
+			}
 		}
 		FVector faceOrigin = facePoints[0];
 

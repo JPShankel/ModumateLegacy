@@ -284,7 +284,7 @@ void ADynamicTerrainActor::UpdateInstancedMeshes(bool bRecreateMesh)
 			randTransforms.Add(FTransform(
 				FRotator(0.f, FMath::FRand() * 360.f, 0.f),
 				curLoc + GrassMeshOffset,
-				FVector::OneVector));
+				FVector::OneVector) * GetTransform());
 		}
 	}
 

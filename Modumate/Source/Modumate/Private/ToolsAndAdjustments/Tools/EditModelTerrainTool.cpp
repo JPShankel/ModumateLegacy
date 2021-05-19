@@ -7,10 +7,15 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/ToolTray/ToolTrayWidget.h"
+#include "UI/ToolTray/ToolTrayBlockModes.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UnrealClasses/EditModelInputAutomation.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "Objects/Terrain.h"
 #include "UnrealClasses/LineActor.h"
+#include "Graph/Graph2D.h"
 
 #include <numeric>
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
@@ -32,6 +37,7 @@ bool UTerrainTool::Activate()
 	Controller->EMPlayerState->SetHoveredObject(nullptr);
 	OriginalMouseMode = Controller->EMPlayerState->SnappedCursor.MouseMode;
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
+
 	return Super::Activate();
 }
 
@@ -60,33 +66,37 @@ bool UTerrainTool::BeginUse()
 
 	ZHeight = hitLoc.Z;
 
+	TerrainGraph.Reset();
 	TArray<AModumateObjectInstance*> terrainMois = doc->GetObjectsOfType(EObjectType::OTTerrain);
-	for (const auto* tm : terrainMois)
+	for (auto* tm : terrainMois)
 	{
-		if (tm->GetLocation().Z == ZHeight)
-		{	// TODO: handle multiple terrain patches at same height.
-			return false;
+		if (FMath::IsNearlyEqual(tm->GetLocation().Z, ZHeight, THRESH_POINT_ON_PLANE))
+		{
+			TerrainGraph = doc->FindSurfaceGraph(tm->ID);
+			if (!ensure(TerrainGraph.IsValid()))
+			{
+				return false;
+			}
+			ZHeight = tm->GetLocation().Z;
 		}
 	}
 
 	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = false;
-
-	FVector xAxis;
-	FVector yAxis;
 	Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector, FVector::ZeroVector, false);
+	CurrentPoint = hitLoc;
 
 	auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
 	if (dimensionActor != nullptr)
 	{
 		ALineActor* pendingSegment = dimensionActor->GetLineActor();
-		pendingSegment->Point1 = hitLoc;
-		pendingSegment->Point2 = hitLoc;
+		pendingSegment->Point1 = CurrentPoint;
+		pendingSegment->Point2 = CurrentPoint;
 		pendingSegment->SetVisibilityInApp(true);
 	}
 
 	Points.Empty();
 	Points.Add(hitLoc);
-	State = FirstPoint;
+	State = AddEdge;
 	GameState->Document->StartPreviewing();
 
 	return true;
@@ -124,9 +134,6 @@ bool UTerrainTool::FrameUpdate()
 		{
 			auto pendingSegment = dimensionActor->GetLineActor();
 			pendingSegment->Point2 = hitLoc;
-			GameState->Document->StartPreviewing();
-			GetDeltas(hitLoc, false,CurDeltas);
-			GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
 		}
 	}
 
@@ -142,28 +149,29 @@ bool UTerrainTool::EnterNextStage()
 		return false;
 	}
 
-	if (State == FirstPoint || State == MultiplePoints)
+	FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+	if (State == AddEdge)
 	{
-		FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
-		hitLoc.Z = ZHeight;  // Force to affordance plane.
-		if (State == MultiplePoints && hitLoc.Equals(Points[0], CloseLoopEpsilon))
+		GameState->Document->ClearPreviewDeltas(GetWorld(), false);
+
+		if (TerrainGraph == nullptr)
 		{
-			MakeObject();
-			return EndUse();
+			AddFirstEdge(CurrentPoint, hitLoc);
+		}
+		else
+		{
+			AddNewEdge(CurrentPoint, hitLoc);
 		}
 
+		CurrentPoint = hitLoc;
+		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector, FVector::ZeroVector, false);
 		auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
 		if (dimensionActor != nullptr)
 		{
 			ALineActor* pendingSegment = dimensionActor->GetLineActor();
-			pendingSegment->Point1 = hitLoc;
-			pendingSegment->Point2 = hitLoc;
-			pendingSegment->SetVisibilityInApp(true);
+			pendingSegment->Point1 = CurrentPoint;
+			pendingSegment->Point2 = CurrentPoint;
 		}
-
-		Points.Add(hitLoc);
-		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(hitLoc, FVector::UpVector, FVector::ZeroVector, false);
-		State = MultiplePoints;
 	}
 
 	return true;
@@ -190,12 +198,14 @@ void UTerrainTool::RegisterToolDataUI(class UToolTrayBlockProperties* Properties
 	}
 }
 
+
 void UTerrainTool::OnToolUIChangedHeight(float NewHeight)
 {
 	StartingZHeight = NewHeight;
 }
 
-bool UTerrainTool::GetDeltas(const FVector& CurrentPoint, bool bClosed, TArray<FDeltaPtr>& OutDeltas)
+// Add the first edge of a new terrain MOI.
+bool UTerrainTool::AddFirstEdge(FVector Point1, FVector Point2)
 {
 	UModumateDocument* doc = GameState ? GameState->Document : nullptr;
 	if (doc == nullptr)
@@ -203,67 +213,46 @@ bool UTerrainTool::GetDeltas(const FVector& CurrentPoint, bool bClosed, TArray<F
 		return false;
 	}
 
-	int32 terrainMoiID = doc->GetNextAvailableID();
-	int32 graph2dID = terrainMoiID + 1;
-	const int32 startVertexID = graph2dID;
-
-	const int32 numPoints = Points.Num();
+	int32 nextID = doc->GetNextAvailableID();
 	FMOITerrainData moiData;
-	moiData.Origin = Points[0];
-	for (int32 p = 0; p < numPoints; ++p)
-	{
-#if 0  // For testing:
-		float h = FMath::RandRange(20.0f, 250.0f);
-		moiData.Heights.Emplace(startVertexID + p, h);
-#else
-		moiData.Heights.Emplace(startVertexID + p, 30.48);
-#endif
-	}
+	moiData.Origin = Point1;  // First point will be origin for new Terrain.
+	moiData.Heights.Add(nextID + 1, StartingZHeight);
+	moiData.Heights.Add(nextID + 2, StartingZHeight);
 
-	FMOIStateData stateData(terrainMoiID, EObjectType::OTTerrain);
+	FMOIStateData stateData(nextID, EObjectType::OTTerrain);
 	stateData.CustomData.SaveStructData(moiData);
 	auto createMoiDelta = MakeShared<FMOIDelta>();
 	createMoiDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
 
-	auto createGraphDelta = MakeShared<FGraph2DDelta>(terrainMoiID, EGraph2DDeltaType::Add);
-	auto addToGraphDelta = MakeShared<FGraph2DDelta>(terrainMoiID);
+	TerrainGraph = MakeShared<Modumate::FGraph2D>(nextID, THRESH_POINTS_ARE_NEAR);
+	if (!ensure(TerrainGraph.IsValid()))
+	{
+		return false;
+	}
+	++nextID;
 
-	for (const auto& p : Points)
+	TArray<FGraph2DDelta> addEdgeDeltas;
+	if (!TerrainGraph->AddEdge(addEdgeDeltas, nextID, FVector2D::ZeroVector, ProjectToPlane(Point1, Point2)))
 	{
-		FVector position = p - Points[0];
-		addToGraphDelta->AddNewVertex(FVector2D(position), graph2dID);
-	}
-	if (!bClosed)
-	{
-		addToGraphDelta->AddNewVertex(FVector2D(CurrentPoint - Points[0]), graph2dID);
-	}
-
-	for (int32 i = 0; i < numPoints - 1; ++i)
-	{
-		FGraphVertexPair newEdge(startVertexID + i, startVertexID + 1 + i);
-		addToGraphDelta->AddNewEdge(newEdge, graph2dID);
-	}
-	if (bClosed)
-	{
-		addToGraphDelta->AddNewEdge(FGraphVertexPair(startVertexID + numPoints - 1, startVertexID), graph2dID);
-		TArray<int32> vertexArray;
-		vertexArray.SetNum(Points.Num());
-		std::iota(vertexArray.begin(), vertexArray.end(), startVertexID);
-		addToGraphDelta->AddNewPolygon(vertexArray, graph2dID);
-	}
-	else
-	{
-		addToGraphDelta->AddNewEdge(FGraphVertexPair(startVertexID + numPoints - 1, startVertexID + numPoints), graph2dID);
+		return false;
 	}
 
-	OutDeltas.Add(createMoiDelta);
-	OutDeltas.Add(createGraphDelta);
-	OutDeltas.Add(addToGraphDelta);
+	TArray<FDeltaPtr> deltas;
+	deltas.Add(createMoiDelta);
+	deltas.Add(MakeShared<FGraph2DDelta>(TerrainGraph->GetID(), EGraph2DDeltaType::Add, THRESH_POINTS_ARE_NEAR));
+	if (!doc->FinalizeGraph2DDeltas(addEdgeDeltas, nextID, deltas))
+	{
+		return false;
+	}
 
-	return true;
+	bool bRetVal = doc->ApplyDeltas(deltas, GetWorld());
+
+	TerrainGraph = doc->FindSurfaceGraph(TerrainGraph->GetID());
+
+	return bRetVal;
 }
 
-bool UTerrainTool::MakeObject()
+bool UTerrainTool::AddNewEdge(FVector Point1, FVector Point2)
 {
 	UModumateDocument* doc = GameState ? GameState->Document : nullptr;
 	if (doc == nullptr)
@@ -271,15 +260,48 @@ bool UTerrainTool::MakeObject()
 		return false;
 	}
 
-
-	doc->ClearPreviewDeltas(GetWorld());
-
-	CurDeltas.Empty();
-	bool bSuccess = GetDeltas(FVector::ZeroVector, true, CurDeltas);
-	if (bSuccess)
+	auto* terrainMoi = Cast<AMOITerrain>(doc->GetObjectById(TerrainGraph->GetID()));
+	if (terrainMoi == nullptr)
 	{
-		return doc->ApplyDeltas(CurDeltas, GetWorld());
+		return false;
+	}
+	FVector origin = terrainMoi->GetLocation();
+
+	int32 nextID = doc->GetNextAvailableID();
+	TArray<FGraph2DDelta> addEdgeDeltas;
+
+	if (!TerrainGraph->AddEdge(addEdgeDeltas, nextID, ProjectToPlane(origin, Point1), ProjectToPlane(origin, Point2)) )
+	{
+		return false;
+	}
+	TArray<FDeltaPtr> deltas;
+	if (!doc->FinalizeGraph2DDeltas(addEdgeDeltas, nextID, deltas))
+	{
+		return false;
 	}
 
-	return bSuccess;
+	FMOITerrainData moiData = terrainMoi->InstanceData;
+	for (const auto& delta: addEdgeDeltas)
+	{
+		for (const auto& deletion : delta.VertexDeletions)
+		{
+			moiData.Heights.Remove(deletion.Key);
+		}
+		for (const auto& additions : delta.VertexAdditions)
+		{
+			moiData.Heights.Add(additions.Key, StartingZHeight);
+		}
+	}
+	auto deltaPtr = MakeShared<FMOIDelta>();
+	FMOIStateData& newState = deltaPtr->AddMutationState(terrainMoi);
+	newState.CustomData.SaveStructData(moiData);
+
+	deltas.Add(deltaPtr);
+
+	return doc->ApplyDeltas(deltas, GetWorld());
+}
+
+FVector2D UTerrainTool::ProjectToPlane(FVector Origin, FVector Point)
+{
+	return FVector2D(Point.X - Origin.X, Point.Y - Origin.Y);
 }

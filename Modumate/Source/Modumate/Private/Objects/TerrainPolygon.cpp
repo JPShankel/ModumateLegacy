@@ -3,7 +3,8 @@
 #include "Objects/TerrainPolygon.h"
 
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "UnrealClasses//EditModelGameMode.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "UnrealClasses/EditModelGameMode.h"
 #include "DocumentManagement/ModumateDocument.h"
 
 
@@ -30,11 +31,13 @@ bool AMOITerrainPolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 		const Modumate::FGraph2DPolygon* graphPoly = graph2d->FindPolygon(ID);
 		if (ensure(graphPoly))
 		{
-			TArray<int32> vertices;
-			graphPoly->GetVertexIDs(vertices);
+			if (!graphPoly->bInterior)
+			{   // Outer polys shouldn't be visible.
+				return true;
+			}
 
 			CachedPoints.Empty();
-			for (int32 v : vertices)
+			for (int32 v : graphPoly->CachedPerimeterVertexIDs)
 			{
 				auto position = graph2d->FindVertex(v)->Position;
 				CachedPoints.Add(origin + position.X * FVector::ForwardVector + position.Y * FVector::RightVector);
@@ -57,6 +60,36 @@ bool AMOITerrainPolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 
 	default:
 		break;
+	}
+
+	return true;
+}
+
+bool AMOITerrainPolygon::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
+{
+	if (!DynamicMeshActor.IsValid())
+	{
+		return false;
+	}
+
+	bool bPreviouslyVisible = IsVisible();
+
+	if (!UModumateObjectStatics::GetSurfaceObjEnabledFlags(this, bOutVisible, bOutCollisionEnabled))
+	{
+		return false;
+	}
+
+	DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
+	DynamicMeshActor->SetActorEnableCollision(bOutCollisionEnabled);
+
+	if (bOutVisible)
+	{
+		AMOIPlaneBase::UpdateMaterial();
+	}
+
+	if (bPreviouslyVisible != bOutVisible)
+	{
+		MarkConnectedVisualsDirty();
 	}
 
 	return true;

@@ -16,9 +16,14 @@ struct MODUMATE_API FMOITerrainData
 	FVector Origin;
 
 	UPROPERTY()
+	FString Name;
+
+	UPROPERTY()
 	TMap<int32, double> Heights;
 };
 
+
+class ADynamicTerrainActor;
 
 UCLASS()
 class MODUMATE_API AMOITerrain : public AModumateObjectInstance
@@ -34,15 +39,19 @@ public:
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
 
-	virtual AActor* CreateActor(const FVector& loc, const FQuat& rot) override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
+	virtual void PreDestroy() override;
 
 	UPROPERTY()
 	FMOITerrainData InstanceData;
 
 protected:
-	void UpdateTerrainActor();
-	bool SetupTerrainMaterial();
+	UPROPERTY()
+	TArray<ADynamicTerrainActor*> TerrainActors;
 
+	void UpdateTerrainActors();
+	bool SetupTerrainMaterial(ADynamicTerrainActor* Actor);
+
+	FVector GraphToWorldPosition(FVector2D GraphPos, double Height = 0.0) const;
 };

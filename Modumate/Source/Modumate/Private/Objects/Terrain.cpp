@@ -45,8 +45,7 @@ bool AMOITerrain::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* Ou
 	{
 	case EObjectDirtyFlags::Structure:
 	{
-		SetupTerrainMaterial();
-		UpdateTerrainActor();
+		UpdateTerrainActors();
 		break;
 	}
 
@@ -67,90 +66,144 @@ bool AMOITerrain::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnable
 		return false;
 	}
 
-	ADynamicTerrainActor* actor = Cast<ADynamicTerrainActor>(GetActor());
-	if (!ensure(actor))
-	{
-		return false;
-	}
-
 	return true;
 }
 
-void AMOITerrain::UpdateTerrainActor()
+void AMOITerrain::PreDestroy()
 {
-	// TODO: Each uncontained polygon in the graph should have its own actor, instead
-	// of assuming just one terrain patch per MOI.
+	for (const auto& actor: TerrainActors)
+	{
+		actor->Destroy();
+	}
+
+	TerrainActors.Empty();
+
+	Super::PreDestroy();
+}
+
+void AMOITerrain::UpdateTerrainActors()
+{
 	const auto graph2d = GetDocument()->FindSurfaceGraph(ID);
+	int32 numTerrainPatches = 0;
+
 	if (ensure(graph2d))
 	{
-		ADynamicTerrainActor* actor = Cast<ADynamicTerrainActor>(GetActor());
-		if (!ensure(actor))
+		const auto& polygons = graph2d->GetPolygons();
+		for (const auto& polygonKvp: polygons)
 		{
-			return;
+			const auto& polygon = polygonKvp.Value;
+			if (polygon.bInterior || polygon.ContainingPolyID != MOD_ID_NONE)
+			{
+				continue;
+			}
+
+			ADynamicTerrainActor* actor;
+			if (TerrainActors.Num() <= numTerrainPatches)
+			{
+				actor = GetWorld()->SpawnActor<ADynamicTerrainActor>(ADynamicTerrainActor::StaticClass(), FTransform(FQuat::Identity, GetLocation() ));
+				ensure(SetupTerrainMaterial(actor));
+				TerrainActors.Add(actor);
+			}
+			else
+			{
+				actor = TerrainActors[numTerrainPatches];
+			}
+
+			if (!ensure(actor))
+			{
+				return;
+			}
+
+			TArray<FVector2D> perimeterPoints2D;
+			TArray<FVector> heightPoints;
+			TSet<int32> vertexIDs;
+
+			TFunction<void (int32)> addVertexHeights = [&heightPoints, &vertexIDs, graph2d, this, &addVertexHeights](int32 Polygon)
+			{
+				for (int32 v: graph2d->FindPolygon(Polygon)->VertexIDs)
+				{
+					if (!vertexIDs.Contains(v))
+					{
+						FVector2D graph2dPosition = graph2d->GetVertices()[v].Position;
+						heightPoints.Add(GraphToWorldPosition(graph2dPosition, InstanceData.Heights[v]));
+						vertexIDs.Add(v);
+					}
+				}
+
+				// Add all contained polys:
+				for (int32 subPoly : graph2d->FindPolygon(Polygon)->ContainedPolyIDs)
+				{
+					addVertexHeights(subPoly);
+				}
+
+			};
+
+			for (int32 v: polygon.VertexIDs)
+			{
+				ensure(InstanceData.Heights.Find(v));
+				float height = InstanceData.Heights[v];
+
+				FVector2D graph2dPosition = graph2d->GetVertices()[v].Position;
+				FVector planePosition = InstanceData.Origin + graph2dPosition.X * FVector::ForwardVector + graph2dPosition.Y * FVector::RightVector;
+				FVector position = planePosition + height * FVector::UpVector;
+
+				perimeterPoints2D.Add(graph2dPosition);
+			}
+
+			TSet<int32> interiorPolys;
+			for (int32 edge: polygon.Edges)
+			{
+				interiorPolys.Add(graph2d->FindEdge(edge)->LeftPolyID);
+				interiorPolys.Add(graph2d->FindEdge(edge)->RightPolyID);
+			}
+			for (int32 poly: interiorPolys)
+			{
+				addVertexHeights(poly);
+			}
+
+			if (perimeterPoints2D.Num() >= 3)
+			{
+				actor->TestSetupTerrainGeometryGTE(perimeterPoints2D, heightPoints, TArray<FVector2D>(), false);
+			}
+
+			++numTerrainPatches;
 		}
 
-		const TMap<int32, Modumate::FGraph2DVertex>& vertices = graph2d->GetVertices();
-		TArray<FVector> perimeterPoints;
-		TArray<FVector2D> perimeterPoints2D;
-		TArray<FVector> heightPoints;
-
-		if (vertices.Num() != InstanceData.Heights.Num())
+		for(int32 deleteActor = numTerrainPatches; deleteActor < TerrainActors.Num(); ++deleteActor)
 		{
-			return;
+			TerrainActors[deleteActor]->Destroy();
 		}
-
-		for (const auto& vertexKvp: vertices)
-		{
-			float height = InstanceData.Heights[vertexKvp.Key];
-
-			FVector2D position2d = vertexKvp.Value.Position;
-			FVector planePosition = InstanceData.Origin + position2d.X * FVector::ForwardVector + position2d.Y * FVector::RightVector;
-			FVector position = planePosition + height * FVector::UpVector;
-
-			perimeterPoints.Add(planePosition);
-			perimeterPoints2D.Add(FVector2D(planePosition));
-			heightPoints.Add(position);
-		}
-
-		auto* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
-
-		if (perimeterPoints.Num() >= 3)
-		{
-			actor->TestSetupTerrainGeometryGTE(perimeterPoints2D, heightPoints, TArray<FVector2D>(), false);
-			actor->GrassMesh->BuildTreeIfOutdated(false, true);
-		}
+		TerrainActors.SetNum(numTerrainPatches);
 	}
 }
 
-bool AMOITerrain::SetupTerrainMaterial()
+bool AMOITerrain::SetupTerrainMaterial(ADynamicTerrainActor* Actor)
 {
-	ADynamicTerrainActor* actor = Cast<ADynamicTerrainActor>(GetActor());
-	if (!ensure(actor))
+	if (!ensure(Actor))
 	{
 		return false;
 	}
 
 	auto* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
-	UMaterialInstanceDynamic* dynamicMat = Cast<UMaterialInstanceDynamic>(actor->Mesh->GetMaterial(0));
+	UMaterialInstanceDynamic* dynamicMat = Cast<UMaterialInstanceDynamic>(Actor->Mesh->GetMaterial(0));
 	if (dynamicMat == nullptr)
 	{
-		dynamicMat = UMaterialInstanceDynamic::Create(gameMode->TerrainMaterial, actor->Mesh);
-		actor->TerrainMaterial = dynamicMat;
+		dynamicMat = UMaterialInstanceDynamic::Create(gameMode->TerrainMaterial, Actor->Mesh);
+		Actor->TerrainMaterial = dynamicMat;
 
-		actor->GrassStaticMesh = gameMode->GrassMesh;
-		UMaterialInstance* grassMat = Cast<UMaterialInstance>(actor->GrassMesh->GetMaterial(0));
+		Actor->GrassStaticMesh = gameMode->GrassMesh;
+		UMaterialInstance* grassMat = Cast<UMaterialInstance>(Actor->GrassMesh->GetMaterial(0));
 		if (grassMat == nullptr)
 		{
-			actor->GrassMesh->SetMaterial(0, gameMode->GrassMaterial);
+			Actor->GrassMesh->SetMaterial(0, gameMode->GrassMaterial);
 		}
-
 	}
 
 	return true;
 }
 
-AActor* AMOITerrain::CreateActor(const FVector& loc, const FQuat& rot)
+FVector AMOITerrain::GraphToWorldPosition(FVector2D GraphPos, double Height /*= 0.0*/) const
 {
-	ADynamicTerrainActor* actor = GetWorld()->SpawnActor<ADynamicTerrainActor>(ADynamicTerrainActor::StaticClass(), FTransform(rot, loc));
-	return actor;
+	return GraphPos.X * FVector::ForwardVector + GraphPos.Y * FVector::RightVector
+		+ Height * FVector::UpVector;
 }
