@@ -152,22 +152,22 @@ FDateTime AMainMenuGameMode::GetCurrentDateTime()
 	return FDateTime::Now();
 }
 
-bool AMainMenuGameMode::ConnectToMultiplayerServer(const FString& URL)
+bool AMainMenuGameMode::ConnectToMultiplayerServer(const FString& URL, const FGuid& MPSessionID)
 {
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
 	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
-	if (!(accountManager && cloudConnection && cloudConnection->IsLoggedIn()))
+	auto playerController = gameInstance ? gameInstance->GetFirstLocalPlayerController() : nullptr;
+	if (!(accountManager && cloudConnection && cloudConnection->IsLoggedIn() && playerController))
 	{
 		return false;
 	}
 
-	// TODO: since UE4's multiplayer protocol seems to be totally insecure by default, we need to either:
-	// - roll our own encryption for auth tokens over the plain multiplayer protocol
-	// - abandon UE4's default multiplayer protocol in favor of a totally separate networking stack
-	FString urlOptions = FString::Printf(TEXT("%s=%s?%s=%s"),
-		*AEditModelGameMode::OptionKeyID, *FPlatformHttp::UrlEncode(accountManager->GetUserInfo().Email),
-		*AEditModelGameMode::OptionKeyAuth, *FPlatformHttp::UrlEncode(cloudConnection->GetAuthToken()));
-	UGameplayStatics::OpenLevel(this, FName(*URL), true, urlOptions);
+	// The public encryption token is just the user ID and the session ID, as used by Epic's examples in Fortnite
+	FString fullURL = FString::Printf(TEXT("%s?EncryptionToken=%s%s%s"),
+		*URL, *accountManager->GetUserInfo().ID, SUBOBJECT_DELIMITER, *MPSessionID.ToString(EGuidFormats::Short));
+
+	playerController->ClientTravel(fullURL, ETravelType::TRAVEL_Absolute);
+
 	return true;
 }

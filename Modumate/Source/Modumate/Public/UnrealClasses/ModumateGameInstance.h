@@ -64,6 +64,9 @@ public:
 	virtual void Shutdown() override;
 	virtual void StartGameInstance() override;
 
+	virtual void ReceivedNetworkEncryptionToken(const FString& EncryptionToken, const FOnEncryptionKeyResponse& Delegate) override;
+	virtual void ReceivedNetworkEncryptionAck(const FOnEncryptionKeyResponse& Delegate) override;
+
 	void RegisterAllCommands();
 
 	void RegisterCommand(const TCHAR *command, const std::function<bool(const Modumate::FModumateFunctionParameterSet &, Modumate::FModumateFunctionParameterSet &)> &fn);

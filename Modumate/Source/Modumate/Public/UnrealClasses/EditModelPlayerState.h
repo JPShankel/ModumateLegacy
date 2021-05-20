@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Database/ModumateObjectEnums.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "Online/ModumateAccountManager.h"
 #include "GameFramework/PlayerState.h"
 #include "ModumateCore/ModumateDimensionString.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
@@ -215,6 +216,9 @@ public:
 
 	// Networking/replication-related functions and properties
 
+	UFUNCTION(Server, Reliable)
+	void SetUserInfo(const FModumateUserInfo& UserInfo);
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	void SendClientDeltas(const FDeltasRecord& Deltas);
 
@@ -227,8 +231,16 @@ public:
 	UFUNCTION()
 	void OnRep_CamTransform();
 
+	UFUNCTION()
+	void OnRep_UserInfo();
+
+	virtual void OnRep_PlayerName() override;
+
 	UPROPERTY(ReplicatedUsing=OnRep_CamTransform)
 	FTransform ReplicatedCamTransform;
+
+	UPROPERTY(ReplicatedUsing=OnRep_UserInfo)
+	FModumateUserInfo ReplicatedUserInfo;
 
 protected:
 	TArray<FStructurePoint> TempObjectStructurePoints, CurSelectionStructurePoints;

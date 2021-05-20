@@ -55,7 +55,7 @@ public:
 	FDateTime GetCurrentDateTime();
 
 	UFUNCTION()
-	bool ConnectToMultiplayerServer(const FString& URL);
+	bool ConnectToMultiplayerServer(const FString& URL, const FGuid& MPSessionID);
 
 protected:
 	TArray<FString> RecentProjectPaths;

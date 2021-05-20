@@ -28,7 +28,13 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		FString GetCloudAPIURL() const;
 
 		const FString& GetAuthToken() const { return AuthToken; }
-		void SetAuthToken(const FString& InAuthToken) { AuthToken = InAuthToken; }
+		void SetAuthToken(const FString& InAuthToken);
+
+		static FString MakeEncryptionToken(const FString& UserID, const FGuid& SessionID);
+		static bool ParseEncryptionToken(const FString& EncryptionToken, FString& OutUserID, FGuid& OutSessionID);
+
+		bool GetCachedEncryptionKey(const FString& UserID, const FGuid& SessionID, FString& OutEncryptionKey);
+		void QueryEncryptionKey(const FString& UserID, const FGuid& SessionID, const FOnEncryptionKeyResponse& Delegate);
 
 		void SetLoginStatus(ELoginStatus InLoginStatus);
 		ELoginStatus GetLoginStatus() const;
@@ -66,6 +72,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		FDateTime AuthTokenTimestamp = FDateTime(0);
 		int32 NextRequestAutomationIndex = 0;
 		ICloudConnectionAutomation* AutomationHandler = nullptr;
+		TMap<FString, FString> CachedEncryptionKeysByToken;
 
 		const static FTimespan AuthTokenTimeout;
 };

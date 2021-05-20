@@ -53,6 +53,16 @@ void AEditModelPlayerPawn::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AEditModelPlayerPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (ClientIconWidget)
+	{
+		ClientIconWidget->RemoveFromViewport();
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
 // Called every frame
 void AEditModelPlayerPawn::Tick(float DeltaTime)
 {
@@ -117,7 +127,9 @@ void AEditModelPlayerPawn::OnRep_PlayerState()
 		{
 			ClientIconWidget->AddToViewport();
 			ClientIconWidget->SetAlignmentInViewport(FVector2D(0.5f, 1.0f));
-			ClientIconWidget->ClientName->ChangeText(FText::FromString(playerState->GetPlayerName()), false);
+
+			// Clear the name for now, since the player name will change after the client sends updated user info.
+			ClientIconWidget->ClientName->ChangeText(FText::GetEmpty(), false);
 		}
 
 		RemoteMeshComponent->SetVisibility(true);

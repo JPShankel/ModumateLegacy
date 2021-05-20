@@ -59,6 +59,8 @@ UModumateDocument *UModumateGameInstance::GetDocument()
 
 void UModumateGameInstance::Init()
 {
+	Super::Init();
+
 	CloudConnection = MakeShared<FModumateCloudConnection>();
 	AccountManager = MakeShared<FModumateAccountManager>(CloudConnection, this);
 	AnalyticsInstance = UModumateAnalyticsStatics::InitAnalytics();
@@ -592,6 +594,49 @@ void UModumateGameInstance::StartGameInstance()
 	}
 
 	Super::StartGameInstance();
+}
+
+void UModumateGameInstance::ReceivedNetworkEncryptionToken(const FString& EncryptionToken, const FOnEncryptionKeyResponse& Delegate)
+{
+	FString userID;
+	FGuid sessionID;
+	if (!CloudConnection.IsValid() || !FModumateCloudConnection::ParseEncryptionToken(EncryptionToken, userID, sessionID))
+	{
+		FEncryptionKeyResponse response(EEncryptionResponse::InvalidToken,
+			FString::Printf(TEXT("Encryption token was invalid, and did not include a User ID + Session ID: %s"), *EncryptionToken));
+
+		Delegate.ExecuteIfBound(response);
+	}
+	else
+	{
+		CloudConnection->QueryEncryptionKey(userID, sessionID, Delegate);
+	}
+}
+
+void UModumateGameInstance::ReceivedNetworkEncryptionAck(const FOnEncryptionKeyResponse& Delegate)
+{
+	FEncryptionKeyResponse response(EEncryptionResponse::Failure, TEXT("Invalid user!"));
+
+	if (!AccountManager.IsValid() || !CloudConnection.IsValid() || !CloudConnection->IsLoggedIn())
+	{
+		Delegate.ExecuteIfBound(response);
+	}
+
+	const FString& loggedInUserID = AccountManager->GetUserInfo().ID;
+
+	FWorldContext* worldContext = GetWorldContext();
+	UPendingNetGame* pendingNetGame = worldContext ? worldContext->PendingNetGame : nullptr;
+	FString optionKey = AEditModelGameMode::EncryptionTokenKey + FString(TEXT("="));
+	FString encryptionToken(pendingNetGame ? pendingNetGame->URL.GetOption(*optionKey, TEXT("")) : TEXT(""));
+
+	FString travelUserID;
+	FGuid travelSessionID;
+	if (!FModumateCloudConnection::ParseEncryptionToken(encryptionToken, travelUserID, travelSessionID) || (travelUserID != loggedInUserID))
+	{
+		Delegate.ExecuteIfBound(response);
+	}
+
+	CloudConnection->QueryEncryptionKey(travelUserID, travelSessionID, Delegate);
 }
 
 void UModumateGameInstance::CheckCrashRecovery()

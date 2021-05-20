@@ -14,10 +14,13 @@
 #include "Net/UnrealNetwork.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ModumateAnalyticsStatics.h"
+#include "Online/ModumateCloudConnection.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+#include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/DimensionManager.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/EditModelUserWidget.h"
+#include "UI/Online/ModumateClientIcon.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -58,6 +61,7 @@ void AEditModelPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AEditModelPlayerState, ReplicatedCamTransform);
+	DOREPLIFETIME(AEditModelPlayerState, ReplicatedUserInfo);
 }
 
 void AEditModelPlayerState::BeginWithController()
@@ -72,6 +76,16 @@ void AEditModelPlayerState::BeginWithController()
 	SetViewMode(EEditViewModes::AllObjects, true);
 
 	bBeganWithController = true;
+
+	// Also, if we're a multiplayer client, then broadcast information to other clients
+	ULocalPlayer* localPlayer = EMPlayerController ? EMPlayerController->GetLocalPlayer() : nullptr;
+	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (IsNetMode(NM_Client) && localPlayer && accountManager && cloudConnection && cloudConnection->IsLoggedIn())
+	{
+		SetUserInfo(accountManager->GetUserInfo());
+	}
 }
 
 void AEditModelPlayerState::BeginPlay()
@@ -1077,6 +1091,18 @@ bool AEditModelPlayerState::IsObjectTypeEnabledByViewMode(EObjectType ObjectType
 	}
 }
 
+void AEditModelPlayerState::SetUserInfo_Implementation(const FModumateUserInfo& UserInfo)
+{
+	ReplicatedUserInfo = UserInfo;
+
+	UWorld* world = GetWorld();
+	AEditModelGameMode* gameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
+	if (gameMode && EMPlayerController)
+	{
+		gameMode->ChangeName(EMPlayerController, ReplicatedUserInfo.Firstname, true);
+	}
+}
+
 bool AEditModelPlayerState::SendClientDeltas_Validate(const FDeltasRecord& Deltas)
 {
 	return true;
@@ -1109,5 +1135,24 @@ void AEditModelPlayerState::OnRep_CamTransform()
 	if (playerPawn && (localPlayer == nullptr) && IsNetMode(NM_Client))
 	{
 		playerPawn->SetActorTransform(ReplicatedCamTransform);
+	}
+}
+
+void AEditModelPlayerState::OnRep_UserInfo()
+{
+	// TODO: download and update other player's profile photos
+	UE_LOG(LogTemp, Log, TEXT("Replicated %s's user info, id: %s"), *ReplicatedUserInfo.Firstname, *ReplicatedUserInfo.ID);
+}
+
+void AEditModelPlayerState::OnRep_PlayerName()
+{
+	Super::OnRep_PlayerName();
+
+	AEditModelPlayerPawn* playerPawn = GetPawn<AEditModelPlayerPawn>();
+	ULocalPlayer* localPlayer = EMPlayerController ? EMPlayerController->GetLocalPlayer() : nullptr;
+
+	if (playerPawn && (localPlayer == nullptr) && IsNetMode(NM_Client) && playerPawn->ClientIconWidget)
+	{
+		playerPawn->ClientIconWidget->ClientName->ChangeText(FText::FromString(GetPlayerName()), false);
 	}
 }

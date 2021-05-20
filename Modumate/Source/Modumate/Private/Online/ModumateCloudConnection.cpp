@@ -1,9 +1,9 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "Online/ModumateCloudConnection.h"
+
 #include "ModumateCore/PlatformFunctions.h"
 #include "Online/ModumateAccountManager.h"
-
 #include "Serialization/JsonSerializer.h"
 
 TAutoConsoleVariable<FString> CVarModumateCloudAddress(
@@ -33,6 +33,56 @@ FString FModumateCloudConnection::GetCloudRootURL() const
 FString FModumateCloudConnection::GetCloudAPIURL() const
 {
 	return CVarModumateCloudAddress.GetValueOnAnyThread() + TEXT("/api/v2");
+}
+
+void FModumateCloudConnection::SetAuthToken(const FString& InAuthToken)
+{
+	AuthToken = InAuthToken;
+}
+
+FString FModumateCloudConnection::MakeEncryptionToken(const FString& UserID, const FGuid& SessionID)
+{
+	return UserID + SUBOBJECT_DELIMITER + SessionID.ToString(EGuidFormats::Short);
+}
+
+bool FModumateCloudConnection::ParseEncryptionToken(const FString& EncryptionToken, FString& OutUserID, FGuid& OutSessionID)
+{
+	OutUserID.Empty();
+	OutSessionID.Invalidate();
+
+	FString sessionIDStr;
+	return EncryptionToken.Split(SUBOBJECT_DELIMITER, &OutUserID, &sessionIDStr) &&
+		!OutUserID.IsEmpty() && FGuid::Parse(sessionIDStr, OutSessionID);
+}
+
+bool FModumateCloudConnection::GetCachedEncryptionKey(const FString& UserID, const FGuid& SessionID, FString& OutEncryptionKey)
+{
+	FString encryptionToken = MakeEncryptionToken(UserID, SessionID);
+
+	if (CachedEncryptionKeysByToken.Contains(encryptionToken))
+	{
+		OutEncryptionKey = CachedEncryptionKeysByToken[encryptionToken];
+		return true;
+	}
+
+	return false;
+}
+
+void FModumateCloudConnection::QueryEncryptionKey(const FString& UserID, const FGuid& SessionID, const FOnEncryptionKeyResponse& Delegate)
+{
+	FString encryptionKeyString;
+	if (!GetCachedEncryptionKey(UserID, SessionID, encryptionKeyString))
+	{
+		FString encryptionToken = MakeEncryptionToken(UserID, SessionID);
+
+		// TODO: asynchronously retrieve a real encryption key from the AMS using the User ID & Session ID, and *then* call the delegate.
+		encryptionKeyString = UserID.Reverse() + SessionID.ToString(EGuidFormats::Short).Reverse();
+		CachedEncryptionKeysByToken.Add(encryptionToken, encryptionKeyString);
+	}
+
+	FEncryptionKeyResponse response(EEncryptionResponse::Success, TEXT(""));
+	response.EncryptionData.Key.Append((uint8*)*encryptionKeyString, sizeof(TCHAR) * encryptionKeyString.Len());
+	Delegate.ExecuteIfBound(response);
 }
 
 void FModumateCloudConnection::SetLoginStatus(ELoginStatus InLoginStatus)

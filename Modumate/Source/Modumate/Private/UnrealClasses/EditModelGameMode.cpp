@@ -12,8 +12,8 @@
 
 #define LOCTEXT_NAMESPACE "ModumateOnline"
 
-const FString AEditModelGameMode::OptionKeyID(TEXT("MDID"));
-const FString AEditModelGameMode::OptionKeyAuth(TEXT("MDAuth"));
+const FString AEditModelGameMode::MPSessionKey(TEXT("-MPSessionID="));
+const FString AEditModelGameMode::EncryptionTokenKey(TEXT("EncryptionToken"));
 
 AEditModelGameMode::AEditModelGameMode()
 	: Super()
@@ -31,6 +31,19 @@ void AEditModelGameMode::InitGameState()
 	{
 		gameState->InitDocument();
 	}
+
+#if UE_SERVER
+	FString inputSessionStr;
+	if (FParse::Value(FCommandLine::Get(), *AEditModelGameMode::MPSessionKey, inputSessionStr) &&
+		FGuid::Parse(inputSessionStr, CurMPSessionID))
+	{
+		UE_LOG(LogGameMode, Log, TEXT("Starting EditModelGameMode server with Session ID: %s"), *CurMPSessionID.ToString(EGuidFormats::Short));
+	}
+	else
+	{
+		UE_LOG(LogGameMode, Fatal, TEXT("Can't start an EditModelGameMode server without a --%s argument!"), *AEditModelGameMode::MPSessionKey);
+	}
+#endif
 }
 
 void AEditModelGameMode::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
@@ -56,134 +69,60 @@ void AEditModelGameMode::PreLogin(const FString& Options, const FString& Address
 		return;
 	}
 
-	// Get the Modumate account ID and auth token from the login options
-	// TODO: get these values in a more officially supported way, potentially from the controller's NetUniqueID.
-	FString loginID = FPlatformHttp::UrlDecode(UGameplayStatics::ParseOption(Options, OptionKeyID));
-	FString loginAuth = FPlatformHttp::UrlDecode(UGameplayStatics::ParseOption(Options, OptionKeyAuth));
+	FString encryptionToken = UGameplayStatics::ParseOption(Options, AEditModelGameMode::EncryptionTokenKey);
 
-	if (loginID.IsEmpty() || loginAuth.IsEmpty())
+	// Now, get the encryption key for the encryption token, which should already be cached on the CloudConnection,
+	// assuming the user already successfully shook hands via our encrypted packet handler.
+	FString userID, encryptionKey;
+	FGuid inputSessionID;
+	if (!FModumateCloudConnection::ParseEncryptionToken(encryptionToken, userID, inputSessionID) ||
+		!cloudConnection->GetCachedEncryptionKey(userID, inputSessionID, encryptionKey))
 	{
-		UE_LOG(LogGameMode, Error, TEXT("Invalid loginID (%s) and/or loginAuth (%s)"), *loginID, *loginAuth);
-		ErrorMessage = FString(TEXT("Missing login info; please log in with user ID and authentication."));
+		UE_LOG(LogGameMode, Error, TEXT("Couldn't get encryption key for token: %s"), *encryptionToken);
+		ErrorMessage = FString(TEXT("Login failed; check credentials and try again later."));
 		return;
 	}
 
-	UE_LOG(LogGameMode, Log, TEXT("Approving Modumate login from user %s..."), *loginID);
-
-	if (PendingStatusIDs.Contains(loginID))
+	if (inputSessionID != CurMPSessionID)
 	{
-		UE_LOG(LogGameMode, Error, TEXT("UserID %s is already logging in!"), *loginID);
+		UE_LOG(LogGameMode, Error, TEXT("Input session ID \"%s\" doesn't match current session ID: %s"),
+			*inputSessionID.ToString(EGuidFormats::Short), *CurMPSessionID.ToString(EGuidFormats::Short));
+		ErrorMessage = FString(TEXT("Invalid session ID; make sure you've selected the correct server and try again."));
+		return;
+	}
+
+	if (LoggedInUsersByID.Contains(userID))
+	{
+		UE_LOG(LogGameMode, Error, TEXT("UserID %s is already logged in!"), *userID);
 		ErrorMessage = FString(TEXT("Duplicate login; please try again later."));
-		return;
 	}
-
-	if (VerifiedUserStatuses.Contains(loginID))
+	else
 	{
-		UE_LOG(LogGameMode, Error, TEXT("UserID %s is already logged in!"), *loginID);
-		ErrorMessage = FString(TEXT("User is already logged in; please log in as a different user."));
-		return;
+		UE_LOG(LogGameMode, Log, TEXT("UserID %s login approved!"), *userID);
+		LoggedInUsersByID.Add(userID);
 	}
-
-	PendingStatusIDs.Add(loginID);
-
-	TWeakObjectPtr<AEditModelGameMode> weakThis(this);
-	cloudConnection->SetAuthToken(loginAuth);
-
-	// Make a manual request to our AMS to verify that the user is allowed to communicate with this server.
-	// TODO: use a different endpoint besides "/status" to verify workspace and read/write permissions; currently we only verify that the user exists.
-	auto statusRequest = cloudConnection->MakeRequest(
-		[weakThis, loginID](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
-		{
-			if (!weakThis.IsValid())
-			{
-				return;
-			}
-
-			weakThis->PendingStatusIDs.Remove(loginID);
-
-			FModumateUserStatus status;
-			if (bSuccessful && Response.IsValid() &&
-				FJsonObjectConverter::JsonObjectToUStruct<FModumateUserStatus>(Response.ToSharedRef(), &status))
-			{
-				UE_LOG(LogGameMode, Log, TEXT("Received status for user: %s"), *loginID);
-				weakThis->VerifiedUserStatuses.Add(loginID, status);
-			}
-		},
-		[weakThis, loginID](int32 ErrorCode, const FString& ErrorString)
-		{
-			UE_LOG(LogGameMode, Error, TEXT("Request Status Error: %s"), *ErrorString);
-			if (weakThis.IsValid())
-			{
-				weakThis->PendingStatusIDs.Remove(loginID);
-				weakThis->LoginErrors.Add(loginID, ErrorString);
-			}
-		},
-			false);
-
-	static const FString statusEndpoint(TEXT("status"));
-	static const float statusServerTimeout = 4.0f;
-	static const float statusTickTime = 0.01f;
-
-	statusRequest->SetURL(cloudConnection->GetCloudAPIURL() / statusEndpoint);
-	statusRequest->SetVerb(FModumateCloudConnection::GetRequestTypeString(FModumateCloudConnection::Get));
-	statusRequest->SetTimeout(statusServerTimeout);
-	if (!statusRequest->ProcessRequest())
-	{
-		UE_LOG(LogGameMode, Error, TEXT("Couldn't start login request!"));
-		ErrorMessage = FString(TEXT("Server login error; please try again later."));
-		return;
-	}
-
-	// HACK: without creating our own OnlineSubsystem, relying on AModumateGameSession::ApproveLogin
-	// means we're forced to wait for the AMS in a blocking fashion.
-	EHttpRequestStatus::Type requestStatus = EHttpRequestStatus::NotStarted;
-	int32 responseCode = 0;
-	while ((statusRequest->GetElapsedTime() < statusServerTimeout) &&
-		!EHttpRequestStatus::IsFinished(requestStatus) && (responseCode == 0))
-	{
-		FPlatformProcess::Sleep(statusTickTime);
-		FHttpModule::Get().GetHttpManager().Tick(statusTickTime);
-		requestStatus = statusRequest->GetStatus();
-		auto response = statusRequest->GetResponse();
-		if (response.IsValid())
-		{
-			responseCode = response->GetResponseCode();
-		}
-	}
-
-	if (!VerifiedUserStatuses.Contains(loginID) || !VerifiedUserStatuses[loginID].Active)
-	{
-		FString error = LoginErrors.FindRef(loginID);
-		UE_LOG(LogGameMode, Error, TEXT("UserID %s login error: %s"), *loginID, *error);
-		ErrorMessage = FString::Printf(TEXT("Log in failure: %s"), *error);
-		return;
-	}
-
-	UE_LOG(LogGameMode, Log, TEXT("UserID %s login approved!"), *loginID);
 }
 
 APlayerController* AEditModelGameMode::Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
 {
 	APlayerController* newController = Super::Login(NewPlayer, InRemoteRole, Portal, Options, UniqueId, ErrorMessage);
 
-	FString loginID = FPlatformHttp::UrlDecode(UGameplayStatics::ParseOption(Options, OptionKeyID));
-
+	FString userID;
+	FGuid inputSessionID;
+	FString encryptionToken = UGameplayStatics::ParseOption(Options, AEditModelGameMode::EncryptionTokenKey);
 	APlayerState* playerState = newController ? newController->PlayerState : nullptr;
 	int32 playerID = playerState ? playerState->GetPlayerId() : INDEX_NONE;
-	if ((playerID == INDEX_NONE) || UsersByPlayerID.Contains(playerID) || loginID.IsEmpty())
+
+	if ((playerID == INDEX_NONE) || UsersByPlayerID.Contains(playerID) ||
+		!FModumateCloudConnection::ParseEncryptionToken(encryptionToken, userID, inputSessionID) ||
+		!LoggedInUsersByID.Contains(userID))
 	{
-		UE_LOG(LogGameMode, Error, TEXT("Invalid/duplicate playerID: %d"), playerID);
+		UE_LOG(LogGameMode, Error, TEXT("Invalid/duplicate Player ID: %d and User ID: %s"), playerID, *userID);
 		ErrorMessage = FString(TEXT("Log in failure"));
 		return newController;
 	}
 
-	UsersByPlayerID.Add(playerID, loginID);
-
-	FModumateUserStatus* userStatus = VerifiedUserStatuses.Find(loginID);
-	if (userStatus)
-	{
-		ChangeName(newController, loginID, true);
-	}
+	UsersByPlayerID.Add(playerID, userID);
 
 	return newController;
 }
@@ -196,12 +135,15 @@ void AEditModelGameMode::Logout(AController* Exiting)
 	FString userID;
 	if (UsersByPlayerID.RemoveAndCopyValue(playerID, userID))
 	{
-		PendingStatusIDs.Remove(userID);
-		VerifiedUserStatuses.Remove(userID);
-		LoginErrors.Remove(userID);
+		LoggedInUsersByID.Remove(userID);
 	}
 
 	Super::Logout(Exiting);
+}
+
+const FGuid& AEditModelGameMode::GetMPSessionID() const
+{
+	return CurMPSessionID;
 }
 
 #undef LOCTEXT_NAMESPACE

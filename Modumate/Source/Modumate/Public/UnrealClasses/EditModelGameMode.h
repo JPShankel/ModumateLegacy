@@ -27,8 +27,10 @@ public:
 	virtual APlayerController* Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
 	virtual void Logout(AController* Exiting) override;
 
-	static const FString OptionKeyID;
-	static const FString OptionKeyAuth;
+	const FGuid& GetMPSessionID() const;
+
+	static const FString MPSessionKey;
+	static const FString EncryptionTokenKey;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UClass *PortalFrameActorClass;
@@ -115,8 +117,7 @@ public:
 	TSubclassOf<class AEditModelToggleGravityPawn> ToggleGravityPawnClass;
 
 protected:
-	TSet<FString> PendingStatusIDs;
-	TMap<FString, FModumateUserStatus> VerifiedUserStatuses;
-	TMap<FString, FString> LoginErrors;
+	FGuid CurMPSessionID;
+	TSet<FString> LoggedInUsersByID;
 	TMap<int32, FString> UsersByPlayerID;
 };
