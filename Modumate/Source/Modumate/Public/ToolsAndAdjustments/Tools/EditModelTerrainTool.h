@@ -49,7 +49,6 @@ protected:
 	TSharedPtr<Modumate::FGraph2D> TerrainGraph;
 	TArray<FVector> Points;
 	float ZHeight = 0.0f;
-	AMOITerrain* CurrentMoi = nullptr;
 	float StartingZHeight = 0.0f;
 
 	static constexpr float CloseLoopEpsilon = 15.0f;

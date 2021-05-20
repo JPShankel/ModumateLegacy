@@ -78,6 +78,7 @@ bool UTerrainTool::BeginUse()
 				return false;
 			}
 			ZHeight = tm->GetLocation().Z;
+			hitLoc.Z = ZHeight;
 		}
 	}
 
@@ -150,6 +151,8 @@ bool UTerrainTool::EnterNextStage()
 	}
 
 	FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+	hitLoc.Z = ZHeight;  // Project to terrain height.
+
 	if (State == AddEdge)
 	{
 		GameState->Document->ClearPreviewDeltas(GetWorld(), false);

@@ -265,8 +265,8 @@ void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(const TArray<FVector2D>& 
 	Mesh->CreateMeshSection_LinearColor(0, Vertices, Triangles, Normals, UV0, VertexColors, Tangents, bCreateCollision);
 	Mesh->SetMaterial(0, TerrainMaterial);
 
-	//GrassMesh->SetStaticMesh(GrassStaticMesh);
-	//UpdateInstancedMeshes(true);
+	GrassMesh->SetStaticMesh(GrassStaticMesh);
+	UpdateInstancedMeshes(true);
 
 	return;
 }
@@ -288,7 +288,7 @@ void ADynamicTerrainActor::UpdateInstancedMeshes(bool bRecreateMesh)
 		for (FVector& curLoc : randLocs)
 		{
 			randTransforms.Add(FTransform(
-				FRotator(0.f, FMath::FRand() * 360.f, 0.f),
+				FRotator(0.f, (curLoc.X + curLoc.Y) * 10.0f, 0.f),
 				curLoc + GrassMeshOffset,
 				FVector::OneVector) * GetTransform());
 		}
@@ -309,16 +309,43 @@ void ADynamicTerrainActor::UpdateInstancedMeshes(bool bRecreateMesh)
 
 bool ADynamicTerrainActor::GetRandomPointsOnTriangleSurface(int32 TriA, int32 TriB, int32 TriC, int32 NumOfOutPoints, TArray<FVector>& OutPoints)
 {
+	static constexpr float gridSize = 50.0f;
 	if (!ensureAlways(Vertices.IsValidIndex(TriA) && Vertices.IsValidIndex(TriB) && Vertices.IsValidIndex(TriC)))
 	{
 		return false;
 	}
 
-	for (int32 i = 0; i < NumOfOutPoints; ++i)
+	FVector2D p1(Vertices[TriA]);
+	FVector2D p2(Vertices[TriB]);
+	FVector2D p3(Vertices[TriC]);
+	FBox2D box(ForceInitToZero);
+	box += p1;
+	box += p2;
+	box += p3;
+
+	int32 minX = (int32) FMath::Floor(box.Min.X / gridSize);
+	int32 minY = (int32) FMath::Floor(box.Min.Y / gridSize);
+	int32 maxX = FMath::CeilToInt(box.Max.X / gridSize);
+	int32 maxY = FMath::CeilToInt(box.Max.Y / gridSize);
+	for (int32 y = minY; y < maxY; ++y)
 	{
-		FVector lerpAB = Vertices[TriA] + FMath::FRand() * (Vertices[TriB] - Vertices[TriA]);
-		FVector lerpABC = lerpAB + FMath::FRand() * (Vertices[TriC] - lerpAB);
-		OutPoints.Add(lerpABC);
+		for (int32 x = minX; x < maxX; ++x)
+		{
+			// Hash grid position to two floating-point offsets within the grid.
+			// TODO: factor out into cleaner function, or replace entirely with UE4 procedural texture.
+			int32 hashSrc[2] = { x, y };
+			uint64 rand = CityHash64((char*)&hashSrc, sizeof(hashSrc));
+			static constexpr float maxUint32 = float(((uint64)1 << 32) - 1);
+			float randX = (rand >> 32u) / maxUint32;
+			float randY = (rand & 0xffffffff) / maxUint32;
+
+			FVector2D randPoint((x + randX) * gridSize, (y + randY) * gridSize);
+			FVector3f bary = VectorUtil::BarycentricCoords(FVector2f(randPoint), FVector2f(p1), FVector2f(p2), FVector2f(p3));
+			if (bary.X >= 0.0f && bary.X <= 1.0f && bary.Y >= 0.0f && bary.Y <= 1.0f && bary.Z >= 0.0f)
+			{
+				OutPoints.Add(bary.X * Vertices[TriA] + bary.Y * Vertices[TriB] + bary.Z * Vertices[TriC]);
+			}
+		}
 	}
 
 	return true;
