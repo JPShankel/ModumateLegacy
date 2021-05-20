@@ -197,7 +197,7 @@ struct MODUMATE_API FBIMPresetInstance
 		const FStructDataWrapper* wrapper = CustomDataByClassName.Find(T::StaticStruct()->GetFName());
 		if (wrapper != nullptr)
 		{
-			return (*wrapper).LoadStructData(OutData);
+			return (*wrapper).LoadStructData(OutData,true);
 		}
 		return false;
 	}
