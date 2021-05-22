@@ -46,6 +46,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UListView* DynamicMainListView;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UBorder* BorderBackground;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bBorderAutoSize = false;
+
 	// String of the NCP, and whether it should be opened by default
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TMap<FString, bool> StarterNCPTagStrings;

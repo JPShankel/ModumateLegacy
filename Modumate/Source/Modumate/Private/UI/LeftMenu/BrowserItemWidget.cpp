@@ -38,7 +38,13 @@ void UBrowserItemWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 		PresetCardMainWidget->SetVisibility(ESlateVisibility::Visible);
 		NCPButtonWidget->SetVisibility(ESlateVisibility::Collapsed);
 		PresetCardMainWidget->SetAsNCPNavigatorPresetCard(itemObj->ParentNCPNavigator, itemObj, itemObj->PresetCardType);
-		if (itemObj->bPresetCardExpanded)
+		
+		// AssemblyList only allows one preset card selected as current tool assembly
+		if (itemObj->PresetCardType == EPresetCardType::AssembliesList)
+		{
+			PresetCardMainWidget->BuildAsAssemblyListPresetCard(itemObj);
+		}
+		else if (itemObj->bPresetCardExpanded)
 		{
 			PresetCardMainWidget->BuildAsExpandedPresetCard(itemObj->PresetGuid);
 		}

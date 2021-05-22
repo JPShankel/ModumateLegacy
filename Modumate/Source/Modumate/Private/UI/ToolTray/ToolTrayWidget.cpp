@@ -95,7 +95,7 @@ bool UToolTrayWidget::ChangeBlockToSeparatorTools(EToolMode Toolmode)
 	ToolTrayBlockProperties->ChangeBlockProperties(Cast<UEditModelToolBase>(controller->CurrentTool.GetObject()));
 
 	ToolTrayBlockAssembliesList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ToolTrayBlockAssembliesList->CreateAssembliesListForCurrentToolMode();
+	ToolTrayBlockAssembliesList->RefreshNCPNavigatorAssembliesList(true);
 
 	return true;
 }
@@ -144,7 +144,7 @@ bool UToolTrayWidget::ChangeBlockToAttachmentTools(EToolMode Toolmode)
 	ToolTrayBlockModes->ChangeToAttachmentToolsButtons(controller->GetToolMode());
 
 	ToolTrayBlockAssembliesList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ToolTrayBlockAssembliesList->CreateAssembliesListForCurrentToolMode();
+	ToolTrayBlockAssembliesList->RefreshNCPNavigatorAssembliesList(true);
 
 	return true;
 }

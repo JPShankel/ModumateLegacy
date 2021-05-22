@@ -43,27 +43,17 @@ public:
 	class UToolTrayWidget *ToolTray;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UListView *AssembliesList;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *ButtonAdd;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UComponentPresetListItem* ComponentPresetItem;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateEditableTextBoxUserWidget* Text_SearchBar;
+	class UNCPNavigator* NCPNavigatorAssembliesList;
 
-	UFUNCTION(BlueprintCallable)
-	void CreateAssembliesListForCurrentToolMode();
-
-	bool IsPresetAvailableForSearch(const FGuid& PresetKey);
+	void RefreshNCPNavigatorAssembliesList(bool bScrollToSelected = false);
 	void ResetSearchBox();
-	void RefreshAssembliesListView();
 
 	UFUNCTION()
 	void OnButtonAddReleased();
-
-	UFUNCTION()
-	void OnSearchBarChanged(const FText& NewText);
 };

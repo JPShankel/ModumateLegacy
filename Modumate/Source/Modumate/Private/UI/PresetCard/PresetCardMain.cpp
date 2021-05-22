@@ -24,6 +24,7 @@
 #include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "UI/LeftMenu/SwapMenuWidget.h"
 #include "UI/EditModelUserWidget.h"
+#include "UI/ToolTray/ToolTrayWidget.h"
 
 UPresetCardMain::UPresetCardMain(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -95,7 +96,7 @@ void UPresetCardMain::OnMainButtonReleased()
 		EMPlayerController->EMPlayerState->SetAssemblyForToolMode(EMPlayerController->GetToolMode(), PresetGUID);
 		if (ensure(ParentToolTrayBlockAssembliesList))
 		{
-			ParentToolTrayBlockAssembliesList->RefreshAssembliesListView();
+			ParentToolTrayBlockAssembliesList->RefreshNCPNavigatorAssembliesList();
 		}
 	}
 }
@@ -307,6 +308,22 @@ bool UPresetCardMain::IsCurrentToolAssembly()
 	return currentAssembly == PresetGUID;
 }
 
+void UPresetCardMain::BuildAsAssemblyListPresetCard(class UBrowserItemObj* InBrowserItemObj)
+{
+	ParentBrowserItemObj = InBrowserItemObj;
+	PresetGUID = ParentBrowserItemObj->PresetGuid;
+	CurrentPresetCardType = ParentBrowserItemObj->PresetCardType;
+	ParentToolTrayBlockAssembliesList = EMPlayerController->EditModelUserWidget->ToolTrayWidget->ToolTrayBlockAssembliesList;
+	if (IsCurrentToolAssembly())
+	{
+		BuildAsExpandedPresetCard(PresetGUID);
+	}
+	else
+	{
+		BuildAsCollapsedPresetCard(PresetGUID, true);
+	}
+}
+
 void UPresetCardMain::ToggleMainButtonInteraction(bool bEnable)
 {
 	if (bEnable)
@@ -353,18 +370,6 @@ void UPresetCardMain::NativeOnListItemObjectSet(UObject* ListItemObject)
 		SelectCount = ParentPresetCardItemObj->SelectionItemCount;
 		ParentSelectionTrayBlockPresetList = ParentPresetCardItemObj->ParentSelectionTrayBlockPresetList;
 		if (ParentPresetCardItemObj->bPresetCardExpanded)
-		{
-			BuildAsExpandedPresetCard(PresetGUID);
-		}
-		else
-		{
-			BuildAsCollapsedPresetCard(PresetGUID, true);
-		}
-	}
-	else if (CurrentPresetCardType == EPresetCardType::AssembliesList)
-	{
-		ParentToolTrayBlockAssembliesList = ParentPresetCardItemObj->ParentToolTrayBlockAssembliesList;
-		if (IsCurrentToolAssembly())
 		{
 			BuildAsExpandedPresetCard(PresetGUID);
 		}

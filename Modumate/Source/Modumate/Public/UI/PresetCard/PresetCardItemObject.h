@@ -26,10 +26,6 @@ public:
 	UPROPERTY()
 	class USelectionTrayBlockPresetList* ParentSelectionTrayBlockPresetList;
 
-	// As AssembliesList
-	UPROPERTY()
-	class UToolTrayBlockAssembliesList* ParentToolTrayBlockAssembliesList;
-
 	int32 SelectionItemCount = 0;
 	EObjectType ObjectType = EObjectType::OTNone;
 };

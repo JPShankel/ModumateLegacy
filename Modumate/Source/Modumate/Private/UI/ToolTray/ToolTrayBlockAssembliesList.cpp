@@ -6,17 +6,11 @@
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UI/EditModelUserWidget.h"
-#include "Components/ListView.h"
-#include "UI/BIM/BIMDesigner.h"
-#include "Components/SizeBox.h"
 #include "UI/SelectionTray/SelectionTrayWidget.h"
 #include "UI/ComponentPresetListItem.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
-#include "UI/Custom/ModumateTextBlockUserWidget.h"
-#include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
-#include "UI/Custom/ModumateEditableTextBox.h"
-#include "Kismet/KismetStringLibrary.h"
 #include "UI/PresetCard/PresetCardItemObject.h"
+#include "UI/LeftMenu/NCPNavigator.h"
 
 UToolTrayBlockAssembliesList::UToolTrayBlockAssembliesList(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -29,16 +23,11 @@ bool UToolTrayBlockAssembliesList::Initialize()
 	{
 		return false;
 	}
-	if (!(ButtonAdd && Text_SearchBar))
+	if (!ButtonAdd)
 	{
 		return false;
 	}
-
 	ButtonAdd->ModumateButton->OnReleased.AddDynamic(this, &UToolTrayBlockAssembliesList::OnButtonAddReleased);
-	if (Text_SearchBar)
-	{
-		Text_SearchBar->ModumateEditableTextBox->OnTextChanged.AddDynamic(this, &UToolTrayBlockAssembliesList::OnSearchBarChanged);
-	}
 
 	return true;
 }
@@ -51,59 +40,31 @@ void UToolTrayBlockAssembliesList::NativeConstruct()
 	GameState = GetWorld()->GetGameState<AEditModelGameState>();
 }
 
-void UToolTrayBlockAssembliesList::CreateAssembliesListForCurrentToolMode()
+void UToolTrayBlockAssembliesList::RefreshNCPNavigatorAssembliesList(bool bScrollToSelected /*= false*/)
 {
-	if (Controller && GameState)
+	if (!Controller || !Controller->CurrentTool)
 	{
-		EObjectType ot = UModumateTypeStatics::ObjectTypeFromToolMode(Controller->GetToolMode());
-		AssembliesList->ClearListItems();
-
-		GameState->Document->GetPresetCollection().ForEachPreset(
-			[this,ot](const FBIMPresetInstance& Preset)
-			{
-				if (Preset.ObjectType == ot)
-				{
-					if (IsPresetAvailableForSearch(Preset.GUID))
-					{
-						UPresetCardItemObject* newPresetCardItemObj = NewObject<UPresetCardItemObject>(this);
-						newPresetCardItemObj->PresetCardType = EPresetCardType::AssembliesList;
-						newPresetCardItemObj->ObjectType = Preset.ObjectType;
-						newPresetCardItemObj->PresetGuid = Preset.GUID;
-						newPresetCardItemObj->ParentToolTrayBlockAssembliesList = this;
-						AssembliesList->AddItem(newPresetCardItemObj);
-					}
-				}
-			}
-		);
+		return;
 	}
-}
 
-bool UToolTrayBlockAssembliesList::IsPresetAvailableForSearch(const FGuid& PresetKey)
-{
-	FString searchSubString = Text_SearchBar->ModumateEditableTextBox->GetText().ToString();
-	if (searchSubString.Len() == 0)
+	NCPNavigatorAssembliesList->BuildNCPNavigator(EPresetCardType::AssembliesList);
+	if (bScrollToSelected)
 	{
-		return true;
-	}
-	if (GameState)
-	{
-		const FBIMPresetInstance* preset = GameState->Document->GetPresetCollection().PresetFromGUID(PresetKey);
-		if (preset)
+		FGuid toolGuid = Controller->CurrentTool->GetAssemblyGUID();
+		FBIMTagPath ncpForSwap;
+		Controller->GetDocument()->GetPresetCollection().GetNCPForPreset(toolGuid, ncpForSwap);
+		if (ncpForSwap.Tags.Num() > 0)
 		{
-			return UKismetStringLibrary::Contains(preset->DisplayName.ToString(), searchSubString);
+			NCPNavigatorAssembliesList->ResetSelectedAndSearchTag();
+			NCPNavigatorAssembliesList->SetNCPTagPathAsSelected(ncpForSwap);
+			NCPNavigatorAssembliesList->ScrollPresetToView(toolGuid);
 		}
 	}
-	return false;
 }
 
 void UToolTrayBlockAssembliesList::ResetSearchBox()
 {
-	Text_SearchBar->ModumateEditableTextBox->SetText(FText::GetEmpty());
-}
-
-void UToolTrayBlockAssembliesList::RefreshAssembliesListView()
-{
-	AssembliesList->RequestRefresh();
+	NCPNavigatorAssembliesList->ResetSelectedAndSearchTag();
 }
 
 void UToolTrayBlockAssembliesList::OnButtonAddReleased()
@@ -112,9 +73,4 @@ void UToolTrayBlockAssembliesList::OnButtonAddReleased()
 	{
 		Controller->EditModelUserWidget->EventNewCraftingAssembly(Controller->GetToolMode());
 	}
-}
-
-void UToolTrayBlockAssembliesList::OnSearchBarChanged(const FText& NewText)
-{
-	CreateAssembliesListForCurrentToolMode();
 }

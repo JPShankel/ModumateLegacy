@@ -14,6 +14,9 @@
 #include "Kismet/KismetStringLibrary.h"
 #include "UI/LeftMenu/BrowserItemObj.h"
 #include "Components/ListView.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Components/Border.h"
 
 
 UNCPNavigator::UNCPNavigator(const FObjectInitializer& ObjectInitializer)
@@ -36,6 +39,16 @@ bool UNCPNavigator::Initialize()
 	if (SearchBarWidget)
 	{
 		SearchBarWidget->ModumateEditableTextBox->OnTextChanged.AddDynamic(this, &UNCPNavigator::OnSearchBarChanged);
+	}
+
+	// AssembliesList require preset cards to autosize
+	if (BorderBackground)
+	{
+		UCanvasPanelSlot* canvasSlotBorder = UWidgetLayoutLibrary::SlotAsCanvasSlot(BorderBackground);
+		if (canvasSlotBorder)
+		{
+			canvasSlotBorder->bAutoSize = bBorderAutoSize;
+		}
 	}
 
 	return true;
@@ -91,26 +104,29 @@ void UNCPNavigator::BuildNCPNavigator(EPresetCardType BuildAsType)
 
 	for (auto& curSourceNCPTag : sourceNCPTags)
 	{
-		UBrowserItemObj* newAssemblyItemObj = NewObject<UBrowserItemObj>(this);
-		newAssemblyItemObj->ParentNCPNavigator = this;
-		newAssemblyItemObj->PresetCardType = CurrentPresetCardType;
-		newAssemblyItemObj->bAsPresetCard = false;
-		newAssemblyItemObj->NCPTag = curSourceNCPTag;
-		newAssemblyItemObj->TagOrder = curSourceNCPTag.Tags.Num() - 1;
+		if (IsNCPAvailableForSearch(curSourceNCPTag))
+		{
+			UBrowserItemObj* newAssemblyItemObj = NewObject<UBrowserItemObj>(this);
+			newAssemblyItemObj->ParentNCPNavigator = this;
+			newAssemblyItemObj->PresetCardType = CurrentPresetCardType;
+			newAssemblyItemObj->bAsPresetCard = false;
+			newAssemblyItemObj->NCPTag = curSourceNCPTag;
+			newAssemblyItemObj->TagOrder = curSourceNCPTag.Tags.Num() - 1;
 
-		// Check which NCP button should be opened
-		bool bSourceTagIsOpen = SelectedTags.Contains(curSourceNCPTag);
-		if (!bSourceTagIsOpen)
-		{
-			FString tagString;
-			curSourceNCPTag.ToString(tagString);
-			bSourceTagIsOpen = StarterNCPTagStrings.FindRef(tagString);
-		}
-		newAssemblyItemObj->bNCPButtonExpanded = bSourceTagIsOpen;
-		DynamicMainListView->AddItem(newAssemblyItemObj);
-		if (bSourceTagIsOpen)
-		{
-			BuildBrowserItemSubObjs(curSourceNCPTag, curSourceNCPTag.Tags.Num() - 1);
+			// Check which NCP button should be opened
+			bool bSourceTagIsOpen = SelectedTags.Contains(curSourceNCPTag);
+			if (!bSourceTagIsOpen)
+			{
+				FString tagString;
+				curSourceNCPTag.ToString(tagString);
+				bSourceTagIsOpen = StarterNCPTagStrings.FindRef(tagString);
+			}
+			newAssemblyItemObj->bNCPButtonExpanded = bSourceTagIsOpen;
+			DynamicMainListView->AddItem(newAssemblyItemObj);
+			if (bSourceTagIsOpen)
+			{
+				BuildBrowserItemSubObjs(curSourceNCPTag, curSourceNCPTag.Tags.Num() - 1);
+			}
 		}
 	}
 }
@@ -193,6 +209,7 @@ void UNCPNavigator::CacheSearchFilteredPresets(const TArray<FBIMTagPath>& Source
 {
 	SearchFilteredPresets.Reset();
 	FString searchSubString = SearchBarWidget->ModumateEditableTextBox->GetText().ToString();
+	EObjectType currentObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(EMPlayerController->GetToolMode());
 
 	// Preset is available if its display name contains string from searchbar
 	for (auto& curNCPTag : SourceNCPTags)
@@ -204,8 +221,11 @@ void UNCPNavigator::CacheSearchFilteredPresets(const TArray<FBIMTagPath>& Source
 			const FBIMPresetInstance* presetInst = EMGameState->Document->GetPresetCollection().PresetFromGUID(curPreset);
 			if (presetInst)
 			{
-				if (searchSubString.Len() == 0 ||
-					(UKismetStringLibrary::Contains(presetInst->DisplayName.ToString(), searchSubString)))
+				// If this is an assembly list, use only the correct object type
+				bool bFilteredFromAssemblyList = CurrentPresetCardType == EPresetCardType::AssembliesList && presetInst->ObjectType != currentObjectType;
+
+				if (!bFilteredFromAssemblyList &&
+					(searchSubString.Len() == 0 || (UKismetStringLibrary::Contains(presetInst->DisplayName.ToString(), searchSubString))))
 				{
 					SearchFilteredPresets.Add(presetInst->GUID);
 				}

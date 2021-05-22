@@ -114,6 +114,7 @@ public:
 
 	void UpdateSelectionItemCount(int32 ItemCount);
 	bool IsCurrentToolAssembly();
+	void BuildAsAssemblyListPresetCard(class UBrowserItemObj* InBrowserItemObj);
 
 	void ToggleMainButtonInteraction(bool bEnable);
 	void ClearWidgetPool(class UPanelWidget* Widget);
