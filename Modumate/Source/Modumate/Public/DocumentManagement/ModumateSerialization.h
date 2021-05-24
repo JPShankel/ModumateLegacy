@@ -306,29 +306,25 @@ struct FModumateDocumentHeaderV2
 	FString Thumbnail;
 };
 
-
 using FModumateDocumentHeader = FModumateDocumentHeaderV2;
 
-// USTRUCTs above cannot be in a namespace
-namespace Modumate
-{
-	// Version 5: portal locations and rotations are now relative to their parent, rather than in world space.
-	// Version 6: Roof was split into RoofFace and RoofPerimeter (EToolMode VE_ROOF -> VE_ROOF_FACE and EObjectType OTRoof -> OTRoofFace)
-	// Version 7: Preset structure change, throw out presets and preserve graph for old file load
-	// Version 8: Empty FName keys serialized as "None", BIMKeys as empty string
-	// Version 9: Object state data serialized directly, deprecated FMOIDataRecord
-	// Version 10: BIM Taxonomy present in serialized presets
-	// Version 11: Fix lost material bindings
-	// Version 12: Strip custom preset NCPs of spaces
-	// Version 13: BIM patterns converted from child pins to properties
-	// Version 14: Linear extrusion width/depth values were swapped, and effectively only canceled out for Trim, so Mullion/Beam/Column dimensions need to be swapped
-	// Version 15: Support for multiple custom data entries in presets
-	// Version 16: Miter priority in layers
-	static const int32 DocVersion = 16;
+// Version 5: portal locations and rotations are now relative to their parent, rather than in world space.
+// Version 6: Roof was split into RoofFace and RoofPerimeter (EToolMode VE_ROOF -> VE_ROOF_FACE and EObjectType OTRoof -> OTRoofFace)
+// Version 7: Preset structure change, throw out presets and preserve graph for old file load
+// Version 8: Empty FName keys serialized as "None", BIMKeys as empty string
+// Version 9: Object state data serialized directly, deprecated FMOIDataRecord
+// Version 10: BIM Taxonomy present in serialized presets
+// Version 11: Fix lost material bindings
+// Version 12: Strip custom preset NCPs of spaces
+// Version 13: BIM patterns converted from child pins to properties
+// Version 14: Linear extrusion width/depth values were swapped, and effectively only canceled out for Trim, so Mullion/Beam/Column dimensions need to be swapped
+// Version 15: Support for multiple custom data entries in presets
+// Version 16: Miter priority in layers
+static constexpr int32 DocVersion = 16;
 
-	static const TCHAR * DocObjectInstanceField = TEXT("ModumateObjects");
-	static const TCHAR * DocHeaderField = TEXT("ModumateHeader");
-}
+static constexpr TCHAR * DocObjectInstanceField = TEXT("ModumateObjects");
+static constexpr TCHAR * DocHeaderField = TEXT("ModumateHeader");
+
 
 struct MODUMATE_API FModumateSerializationStatics
 {

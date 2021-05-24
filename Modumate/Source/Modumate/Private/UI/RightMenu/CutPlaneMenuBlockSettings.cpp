@@ -11,7 +11,7 @@
 #include "UI/Custom/ModumateCheckBox.h"
 
 
-using namespace Modumate;
+
 
 UCutPlaneMenuBlockSettings::UCutPlaneMenuBlockSettings(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

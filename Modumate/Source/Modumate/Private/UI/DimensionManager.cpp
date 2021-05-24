@@ -54,7 +54,7 @@ void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 	bool bFoundVolumeGraphObject = false;
 	bool bFoundSurfaceGraphObject = false;
 
-	TSharedPtr<Modumate::FGraph2D> surfaceGraph = doc->FindSurfaceGraphByObjID(moi->ID);
+	TSharedPtr<FGraph2D> surfaceGraph = doc->FindSurfaceGraphByObjID(moi->ID);
 	// aggregate the unique selected vertices
 	if (auto graphObject = graph.FindObject(selectedGraphObjID))
 	{

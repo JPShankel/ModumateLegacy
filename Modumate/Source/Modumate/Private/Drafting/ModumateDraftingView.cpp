@@ -36,9 +36,6 @@
 
 #define LOCTEXT_NAMESPACE "ModumateDraftingView"
 
-using namespace Modumate;
-
-namespace Modumate { 
 
 FMColor FMColor::Black = FMColor(0, 0, 0);
 FMColor FMColor::White = FMColor(1, 1, 1);
@@ -357,8 +354,6 @@ void FModumateDraftingView::FinishDraft()
 //	GenerateScheduleViews();
 
 	ExportDraft(World.Get(), *CurrentFilePath);
-}
-
 }
 
 #undef LOCTEXT_NAMESPACE

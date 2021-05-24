@@ -3,18 +3,14 @@
 
 #include "Drafting/Schedules/DraftingSchedule.h"
 
-namespace Modumate {
+class FScheduleGrid;
 
-	class FScheduleGrid;
+class FRoomLegend : public FDraftingSchedule
+{
+public:
+	FRoomLegend();
+	virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
 
-	class FRoomLegend : public FDraftingSchedule
-	{
-	public:
-		FRoomLegend();
-		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
-
-	public:
-		TSharedPtr<FScheduleGrid> Data;
-	};
-
-}
+public:
+	TSharedPtr<FScheduleGrid> Data;
+};

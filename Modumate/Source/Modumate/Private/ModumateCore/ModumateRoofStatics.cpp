@@ -10,7 +10,7 @@
 
 #define DEBUG_ROOFS UE_BUILD_DEBUG
 
-using namespace Modumate;
+
 
 
 FTessellationPolygon::FTessellationPolygon()

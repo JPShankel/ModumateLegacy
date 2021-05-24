@@ -10,60 +10,58 @@
 
 #define POINTER_MEMBERS 1
 
-namespace Modumate
+class FPointerTestContainer;
+
+class FPointerTestMember
 {
-	class FPointerTestContainer;
+public:
+	FPointerTestMember(int32 InID, TSharedPtr<FPointerTestContainer> InContainer);
+	~FPointerTestMember();
 
-	class FPointerTestMember
-	{
-	public:
-		FPointerTestMember(int32 InID, TSharedPtr<FPointerTestContainer> InContainer);
-		~FPointerTestMember();
+	int32 ID = -1;
+	int32 ContainerID = -1;
 
-		int32 ID = -1;
-		int32 ContainerID = -1;
+	TWeakPtr<FPointerTestContainer> Container;
+};
 
-		TWeakPtr<FPointerTestContainer> Container;
-	};
+class FPointerTestContainer : public TSharedFromThis<FPointerTestContainer>
+{
+public:
+	FPointerTestContainer() { }
 
-	class FPointerTestContainer : public TSharedFromThis<FPointerTestContainer>
-	{
-	public:
-		FPointerTestContainer() { }
-
-		FPointerTestContainer(int32 InID) : ID(InID) { }
+	FPointerTestContainer(int32 InID) : ID(InID) { }
 
 #if POINTER_MEMBERS
-		TSharedPtr<FPointerTestMember> AddMember(int32 MemberID)
-		{
-			auto sharedThis = this->AsShared();
-			auto newMember = MakeShared<FPointerTestMember>(MemberID, sharedThis);
-			auto addedMember = Members.Add(MemberID, newMember);
-			ensure(newMember == addedMember);
-			return newMember;
-		}
+	TSharedPtr<FPointerTestMember> AddMember(int32 MemberID)
+	{
+		auto sharedThis = this->AsShared();
+		auto newMember = MakeShared<FPointerTestMember>(MemberID, sharedThis);
+		auto addedMember = Members.Add(MemberID, newMember);
+		ensure(newMember == addedMember);
+		return newMember;
+	}
 #else
-		FPointerTestMember* AddMember(int32 MemberID)
-		{
-			auto sharedThis = this->AsShared();
-			FPointerTestMember& addedMember = Members.Add(MemberID, FPointerTestMember(MemberID, sharedThis));
-			return &addedMember;
-		}
+	FPointerTestMember* AddMember(int32 MemberID)
+	{
+		auto sharedThis = this->AsShared();
+		FPointerTestMember& addedMember = Members.Add(MemberID, FPointerTestMember(MemberID, sharedThis));
+		return &addedMember;
+	}
 #endif
 
-		void Reset()
-		{
-			Members.Reset();
-		}
+	void Reset()
+	{
+		Members.Reset();
+	}
 
-		int32 ID = -1;
+	int32 ID = -1;
 #if POINTER_MEMBERS
-		TMap<int32, TSharedPtr<FPointerTestMember>> Members;
+	TMap<int32, TSharedPtr<FPointerTestMember>> Members;
 #else
-		TMap<int32, FPointerTestMember> Members;
+	TMap<int32, FPointerTestMember> Members;
 #endif
-	};
-}
+};
+
 
 USTRUCT()
 struct MODUMATE_API FModumateTestStruct1

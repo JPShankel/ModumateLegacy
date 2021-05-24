@@ -50,7 +50,7 @@ public:
 	virtual bool OnSelected(bool bIsSelected) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
-	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane,
+	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane,
 		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 		TArray<TArray<FVector>> &OutPerimeters) const override;
 	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;

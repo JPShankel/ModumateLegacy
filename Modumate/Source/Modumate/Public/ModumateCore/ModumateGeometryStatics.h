@@ -176,7 +176,7 @@ public:
 
 	static bool GetAxisForVector(const FVector &Normal, EAxis::Type &OutAxis, float &OutSign);
 
-	static bool GetEdgeIntersections(const TArray<FVector> &Positions, const FVector &IntersectionOrigin, const FVector &IntersectionDir, TArray<Modumate::FEdgeIntersection> &OutEdgeIntersections, float Epsilon = DEFAULT_GRAPH3D_EPSILON);
+	static bool GetEdgeIntersections(const TArray<FVector> &Positions, const FVector &IntersectionOrigin, const FVector &IntersectionDir, TArray<FEdgeIntersection> &OutEdgeIntersections, float Epsilon = DEFAULT_GRAPH3D_EPSILON);
 
 	static void GetUniquePoints2D(const TArray<FVector2D>& InPoints, TArray<FVector2D>& OutPoints, float Tolerance = THRESH_POINTS_ARE_NEAR);
 	static void GetUniquePoints(const TArray<FVector>& InPoints, TArray<FVector>& OutPoints, float Tolerance = THRESH_POINTS_ARE_NEAR);

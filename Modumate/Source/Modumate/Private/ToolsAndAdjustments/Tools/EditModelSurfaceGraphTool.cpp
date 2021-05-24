@@ -16,7 +16,7 @@
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
-using namespace Modumate;
+
 
 USurfaceGraphTool::USurfaceGraphTool()
 	: Super()

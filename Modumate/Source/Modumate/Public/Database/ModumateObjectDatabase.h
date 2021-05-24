@@ -104,5 +104,5 @@ public:
 
 	bool UnitTest();
 
-	TModumateDataCollection<Modumate::FRoomConfiguration> RoomConfigurations;
+	TModumateDataCollection<FRoomConfiguration> RoomConfigurations;
 };

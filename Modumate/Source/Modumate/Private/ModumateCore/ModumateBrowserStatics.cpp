@@ -6,7 +6,7 @@
 #include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/EditModelGameState.h"
 
-using namespace Modumate;
+
 
 bool UModumateBrowserStatics::GetCutPlanesFromProject(UObject* WorldContextObject, TArray<FCutPlaneParamBlueprint> &OutCutPlaneParams)
 {

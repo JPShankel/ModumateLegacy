@@ -14,8 +14,6 @@
 
 #define LOCTEXT_NAMESPACE "ModumateEditor"
 
-using namespace Modumate;
-
 /*------------------------------------------------------------------------------
 	USimpleMeshImportFactory.
 ------------------------------------------------------------------------------*/

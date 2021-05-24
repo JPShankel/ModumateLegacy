@@ -25,7 +25,7 @@
 #include "UnrealClasses/ModumateObjectComponent.h"
 #include "UObject/ConstructorHelpers.h"
 
-using namespace Modumate;
+
 class AEditModelPlayerController;
 
 AModumateObjectInstance::AModumateObjectInstance()

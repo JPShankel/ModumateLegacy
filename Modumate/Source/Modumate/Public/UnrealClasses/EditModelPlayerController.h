@@ -289,7 +289,7 @@ public:
 
 	void SetViewGroupObject(const AModumateObjectInstance *ob);
 
-	Modumate::FModumateFunctionParameterSet ModumateCommand(const Modumate::FModumateCommand &cmd);
+	FModumateFunctionParameterSet ModumateCommand(const FModumateCommand &cmd);
 
 	UModumateDocument *GetDocument() const { return Document; }
 	FModumateSnappingView *GetSnappingView() const { return SnappingView; }

@@ -34,9 +34,9 @@
 #include "Online/ModumateCloudConnection.h"
 #include "Quantities/QuantitiesManager.h"
 
-using namespace Modumate::Commands;
-using namespace Modumate::Parameters;
-using namespace Modumate;
+using namespace ModumateCommands;
+using namespace ModumateParameters;
+
 
 #define LOCTEXT_NAMESPACE "ModumateGameInstance"
 
@@ -184,7 +184,7 @@ void UModumateGameInstance::RegisterAllCommands()
 
 	RegisterCommand(kScreenPrint, [](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Black, params.GetValue(Parameters::kText));
+		GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Black, params.GetValue(ModumateParameters::kText));
 		return true;
 	});
 
@@ -315,7 +315,7 @@ void UModumateGameInstance::RegisterAllCommands()
 	});
 
 	RegisterCommand(kGroup, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		if (params.GetValue(Parameters::kMake))
+		if (params.GetValue(ModumateParameters::kMake))
 		{
 			bool combineWithExistingGroups = params.GetValue(TEXT("combine_existing"));
 			int32 groupID = GetDocument()->MakeGroupObject(GetWorld(), params.GetValue(kObjectIDs), combineWithExistingGroups, params.GetValue(kParent));
@@ -386,7 +386,7 @@ void UModumateGameInstance::RegisterAllCommands()
 	{
 		AEditModelPlayerController *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
 		AEditModelPlayerPawn *playerPawn = playerController ? Cast<AEditModelPlayerPawn>(playerController->GetPawn()) : nullptr;
-		float newFOV = params.GetValue(Parameters::kFieldOfView);
+		float newFOV = params.GetValue(ModumateParameters::kFieldOfView);
 
 		if (playerPawn && (newFOV > 0.0f))
 		{
@@ -433,7 +433,7 @@ void UModumateGameInstance::RegisterCommand(const TCHAR *command, const std::fun
 	CommandMap.Add(FString(command), new FModumateFunction(fn));
 }
 
-Modumate::FModumateFunctionParameterSet UModumateGameInstance::DoModumateCommand(const FModumateCommand &command)
+FModumateFunctionParameterSet UModumateGameInstance::DoModumateCommand(const FModumateCommand &command)
 {
 	static bool reenter = false;
 
@@ -444,7 +444,7 @@ Modumate::FModumateFunctionParameterSet UModumateGameInstance::DoModumateCommand
 	{
 		UE_LOG(LogUnitTest, Display, TEXT("%s"), *commandString);
 		CommandQueue.Add(commandString);
-		return Modumate::FModumateFunctionParameterSet();
+		return FModumateFunctionParameterSet();
 	}
 
 	reenter = true;

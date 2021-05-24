@@ -42,7 +42,7 @@
 #include <regex>
 
 using namespace std;
-using namespace Modumate;
+
 
 
 bool UModumateFunctionLibrary::IsWithEditor()
@@ -495,7 +495,7 @@ FGuid UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& 
 	return FGuid();
 }
 
-using namespace Modumate;
+
 
 bool UModumateFunctionLibrary::SetMeshMaterial(UMeshComponent *MeshComponent, const FArchitecturalMaterial &Material, int32 MatIndex, UMaterialInstanceDynamic** CachedMIDPtr)
 {
@@ -705,10 +705,10 @@ bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshC
 				auto &moduleInstData = pattern.ParameterizedModuleDimensions[moduleInstIdx];
 
 				moduleInstParams.Dimensions = FLinearColor(
-					Modumate::Expression::Evaluate(Layer.CachedPatternExprVars, moduleInstData.ModuleXExpr),
-					Modumate::Expression::Evaluate(Layer.CachedPatternExprVars, moduleInstData.ModuleYExpr),
-					Modumate::Expression::Evaluate(Layer.CachedPatternExprVars, moduleInstData.ModuleWidthExpr),
-					Modumate::Expression::Evaluate(Layer.CachedPatternExprVars, moduleInstData.ModuleHeightExpr)
+					Expression::Evaluate(Layer.CachedPatternExprVars, moduleInstData.ModuleXExpr),
+					Expression::Evaluate(Layer.CachedPatternExprVars, moduleInstData.ModuleYExpr),
+					Expression::Evaluate(Layer.CachedPatternExprVars, moduleInstData.ModuleWidthExpr),
+					Expression::Evaluate(Layer.CachedPatternExprVars, moduleInstData.ModuleHeightExpr)
 				);
 
 				// TODO: populate texture and color details from real data

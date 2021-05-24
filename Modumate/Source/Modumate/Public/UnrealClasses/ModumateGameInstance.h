@@ -47,7 +47,7 @@ private:
 	FTimerHandle ConsoleWaitTimer;
 	TArray<FString> CommandQueue;
 	void ProcessCommandQueue();
-	TMap<FString, Modumate::FModumateFunction*> CommandMap;
+	TMap<FString, FModumateFunction*> CommandMap;
 	TSharedPtr<IAnalyticsProvider> AnalyticsInstance;
 	TSharedPtr<FModumateAccountManager> AccountManager;
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
@@ -69,9 +69,9 @@ public:
 
 	void RegisterAllCommands();
 
-	void RegisterCommand(const TCHAR *command, const std::function<bool(const Modumate::FModumateFunctionParameterSet &, Modumate::FModumateFunctionParameterSet &)> &fn);
+	void RegisterCommand(const TCHAR *command, const std::function<bool(const FModumateFunctionParameterSet &, FModumateFunctionParameterSet &)> &fn);
 
-	Modumate::FModumateFunctionParameterSet DoModumateCommand(const Modumate::FModumateCommand &command);
+	FModumateFunctionParameterSet DoModumateCommand(const FModumateCommand &command);
 
 	void GetRegisteredCommands(TMap<FString, FString> &OutCommands);
 

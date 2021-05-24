@@ -10,437 +10,435 @@
 
 #define LOCTEXT_NAMESPACE "ModumateDefaultDrawing"
 
-namespace Modumate {
+FDraftingDrawing::FDraftingDrawing(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID) :
+	Doc(doc), World(world), CaptureObjID(captureObjID) {}
 
-	FDraftingDrawing::FDraftingDrawing(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID) :
-		Doc(doc), World(world), CaptureObjID(captureObjID) {}
-
-	namespace {
-		TArray<FVector> GetCorners(const AModumateObjectInstance * Object)
+namespace {
+	TArray<FVector> GetCorners(const AModumateObjectInstance * Object)
+	{
+		TArray<FVector> corners;
+		if (ensureAlways(Object->GetNumCorners() == 4))
 		{
-			TArray<FVector> corners;
-			if (ensureAlways(Object->GetNumCorners() == 4))
+			for (int32 c = 0; c < 4; ++c)
 			{
-				for (int32 c = 0; c < 4; ++c)
-				{
-					corners.Add(Object->GetCorner(c));
-				}
-
+				corners.Add(Object->GetCorner(c));
 			}
-			return corners;
+
 		}
+		return corners;
+	}
+}
+
+
+EDrawError FDraftingDrawing::Draw(IModumateDraftingDraw *drawingInterface,
+	FModumateUnitCoord2D position,
+	ModumateUnitParams::FAngle orientation,
+	float scale)
+{
+	EDrawError error = EDrawError::ErrorNone;
+	if (drawingInterface == nullptr)
+	{
+		error = EDrawError::ErrorBadParam;
+		return error;
 	}
 
+	// set the drawing scale to the interface, then continue with the normal composite behavior
+	drawingInterface->DrawingScale = DrawingScale;
 
-	EDrawError FDraftingDrawing::Draw(IModumateDraftingDraw *drawingInterface,
-		FModumateUnitCoord2D position,
-		ModumateUnitParams::FAngle orientation,
-		float scale)
-	{
-		EDrawError error = EDrawError::ErrorNone;
-		if (drawingInterface == nullptr)
-		{
-			error = EDrawError::ErrorBadParam;
-			return error;
-		}
+	return FDraftingComposite::Draw(drawingInterface,position,orientation,scale);
+}
 
-		// set the drawing scale to the interface, then continue with the normal composite behavior
-		drawingInterface->DrawingScale = DrawingScale;
+bool FDraftingDrawing::InitializeDimensions(FModumateUnitCoord2D drawingSize, FModumateUnitCoord2D drawingMargin)
+{
+	DrawingSize = drawingSize;
+	DrawingMargin = drawingMargin;
 
-		return FDraftingComposite::Draw(drawingInterface,position,orientation,scale);
-	}
-
-	bool FDraftingDrawing::InitializeDimensions(FModumateUnitCoord2D drawingSize, FModumateUnitCoord2D drawingMargin)
-	{
-		DrawingSize = drawingSize;
-		DrawingMargin = drawingMargin;
-
-		Dimensions = DrawingSize;
+	Dimensions = DrawingSize;
 		
-		TSharedPtr<FDrawingArea> viewArea = MakeShareable(new FDrawingArea());
-		viewArea->SetLocalPosition(DrawingMargin);
-		viewArea->Dimensions = Dimensions - (DrawingMargin * 2.0f);
-		DrawingContent = TWeakPtr<FDrawingArea>(viewArea);
+	TSharedPtr<FDrawingArea> viewArea = MakeShareable(new FDrawingArea());
+	viewArea->SetLocalPosition(DrawingMargin);
+	viewArea->Dimensions = Dimensions - (DrawingMargin * 2.0f);
+	DrawingContent = TWeakPtr<FDrawingArea>(viewArea);
 
-		Children.Add(viewArea);
-		// Don't draw page rectangle:
-		//Children.Add(MakeShareable(new FDraftingRectangle(Dimensions)));
+	Children.Add(viewArea);
+	// Don't draw page rectangle:
+	//Children.Add(MakeShareable(new FDraftingRectangle(Dimensions)));
 
-		return true;
-	}
+	return true;
+}
 
-	bool FDraftingDrawing::MakeTitleTag(IModumateDraftingDraw *drawingInterface)
-	{	
-		// empty by default
-		return true;
-	}
+bool FDraftingDrawing::MakeTitleTag(IModumateDraftingDraw *drawingInterface)
+{	
+	// empty by default
+	return true;
+}
 
-	bool FDraftingDrawing::MakeScaleTag(IModumateDraftingDraw *drawingInterface)
-	{
-		// empty by default
-		return true;
-	}
+bool FDraftingDrawing::MakeScaleTag(IModumateDraftingDraw *drawingInterface)
+{
+	// empty by default
+	return true;
+}
 
-	// TODO: this function is similar to GetForegroundLines in the cut plane implementation, the main
-	// difference is this operates on the intersection between a scopebox and a cutplane as opposed
-	// to the entire cutplane.  It is possible both functions could be cleaned up by making some of 
-	// the code static and shared
-	void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting)
-	{
-		auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
-		TArray<FVector> controlPoints;
+// TODO: this function is similar to GetForegroundLines in the cut plane implementation, the main
+// difference is this operates on the intersection between a scopebox and a cutplane as opposed
+// to the entire cutplane.  It is possible both functions could be cleaned up by making some of 
+// the code static and shared
+void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting)
+{
+	auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
+	TArray<FVector> controlPoints;
 
-		FVector cutPlaneOrigin = cutPlane->GetCorner(0);
+	FVector cutPlaneOrigin = cutPlane->GetCorner(0);
 
-		// for now, the entire cut plane is used instead of using the scope box at all
+	// for now, the entire cut plane is used instead of using the scope box at all
 #if 0
-		auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
-		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(controlPoints[0], AxisX, AxisY, cutPlaneOrigin);
-		FVector scopeBoxOrigin = cutPlaneOrigin + (scopeBoxOrigin2D.X * AxisX) + (scopeBoxOrigin2D.Y * AxisY);
-		controlPoints = scopeBox->GetControlPoints();
+	auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
+	FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(controlPoints[0], AxisX, AxisY, cutPlaneOrigin);
+	FVector scopeBoxOrigin = cutPlaneOrigin + (scopeBoxOrigin2D.X * AxisX) + (scopeBoxOrigin2D.Y * AxisY);
+	controlPoints = scopeBox->GetControlPoints();
 #else
-		FVector scopeBoxOrigin = cutPlaneOrigin;
-		FBox sceneBounds(Doc->CalculateProjectBounds().GetBox());
-		sceneBounds = sceneBounds.ExpandBy(1000.0f);
-		controlPoints.Add(sceneBounds.Min);
-		controlPoints.Add(sceneBounds.Max);
+	FVector scopeBoxOrigin = cutPlaneOrigin;
+	FBox sceneBounds(Doc->CalculateProjectBounds().GetBox());
+	sceneBounds = sceneBounds.ExpandBy(1000.0f);
+	controlPoints.Add(sceneBounds.Min);
+	controlPoints.Add(sceneBounds.Max);
 #endif
 
-		TArray<FVector2D> boxPoints;
-		for (auto& point : controlPoints)
+	TArray<FVector2D> boxPoints;
+	for (auto& point : controlPoints)
+	{
+		FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, AxisX, AxisY, scopeBoxOrigin);
+		boxPoints.Add(point2D);
+	}
+
+	FBox2D drawingBox = FBox2D(boxPoints);
+
+	auto plane = FPlane(scopeBoxOrigin, cutPlane->GetNormal());
+
+	auto graph = MakeShared<FGraph2D>();
+	TMap<int32, int32> objMap;
+	const auto& volumeGraph = Doc->GetVolumeGraph();
+	volumeGraph.Create2DGraph(plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, graph, objMap);
+
+	ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
+	FMColor lineColor = FMColor::Black;
+
+	for (auto& edgekvp : graph->GetEdges())
+	{
+		auto& edge = edgekvp.Value;
+
+		auto startVertex = graph->FindVertex(edge.StartVertexID);
+		auto endVertex = graph->FindVertex(edge.EndVertexID);
+
+		FModumateUnitCoord2D start = FModumateUnitCoord2D::WorldCentimeters(startVertex->Position);
+		FModumateUnitCoord2D end = FModumateUnitCoord2D::WorldCentimeters(endVertex->Position);
+
+		int32 metaplaneID = objMap[edge.ID];
+		auto metaplane = Doc->GetObjectById(metaplaneID);
+		if (metaplane == nullptr)
 		{
-			FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, AxisX, AxisY, scopeBoxOrigin);
-			boxPoints.Add(point2D);
+			continue;
 		}
 
-		FBox2D drawingBox = FBox2D(boxPoints);
-
-		auto plane = FPlane(scopeBoxOrigin, cutPlane->GetNormal());
-
-		auto graph = MakeShared<FGraph2D>();
-		TMap<int32, int32> objMap;
-		const auto& volumeGraph = Doc->GetVolumeGraph();
-		volumeGraph.Create2DGraph(plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, graph, objMap);
-
-		ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
-		FMColor lineColor = FMColor::Black;
-
-		for (auto& edgekvp : graph->GetEdges())
+		auto children = metaplane->GetChildObjects();
+		if (children.Num() != 1)
 		{
-			auto& edge = edgekvp.Value;
-
-			auto startVertex = graph->FindVertex(edge.StartVertexID);
-			auto endVertex = graph->FindVertex(edge.EndVertexID);
-
-			FModumateUnitCoord2D start = FModumateUnitCoord2D::WorldCentimeters(startVertex->Position);
-			FModumateUnitCoord2D end = FModumateUnitCoord2D::WorldCentimeters(endVertex->Position);
-
-			int32 metaplaneID = objMap[edge.ID];
-			auto metaplane = Doc->GetObjectById(metaplaneID);
-			if (metaplane == nullptr)
-			{
-				continue;
-			}
-
-			auto children = metaplane->GetChildObjects();
-			if (children.Num() != 1)
-			{
-				continue;
-			}
-			auto wall = children[0];
-			if (wall == nullptr)
-			{
-				continue;
-			}
-
-			TArray<TPair<FVector2D, FVector2D>> OutLines;
-
-			// TODO: this only is implemented for plane hosted objects right now, this function should be
-			// a part of ModumateObjectInstance instead and should propagate down through the children
-			TArray<TArray<FVector>> WallCutPerimeters;
-			wall->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
-
-			if (bIsDrafting)
-			{
-				for (int32 objID : wall->GetChildIDs())
-				{
-					auto moi = Doc->GetObjectById(objID);
-					if (!moi) continue;
-					
-					// not used
-					TArray<TArray<FVector>> portalPerimeters;
-					moi->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, portalPerimeters);
-				}
-			}
+			continue;
+		}
+		auto wall = children[0];
+		if (wall == nullptr)
+		{
+			continue;
 		}
 
+		TArray<TPair<FVector2D, FVector2D>> OutLines;
+
+		// TODO: this only is implemented for plane hosted objects right now, this function should be
+		// a part of ModumateObjectInstance instead and should propagate down through the children
 		TArray<TArray<FVector>> WallCutPerimeters;
-		TArray<const AModumateObjectInstance*> miscDraftObjects(Doc->GetObjectsOfType(
-			{ EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTFinish, EObjectType::OTTrim }));
+		wall->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
 
-		for (const auto* miscObject: miscDraftObjects)
+		if (bIsDrafting)
 		{
-			miscObject->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
+			for (int32 objID : wall->GetChildIDs())
+			{
+				auto moi = Doc->GetObjectById(objID);
+				if (!moi) continue;
+					
+				// not used
+				TArray<TArray<FVector>> portalPerimeters;
+				moi->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, portalPerimeters);
+			}
 		}
+	}
 
-		// Clipping of beyond-cut-plane lines.
-		ParentPage->lineClipping.Reset(new FModumateClippingTriangles(*cutPlane));
-		ParentPage->lineClipping->SetTransform(cutPlane->GetCorner(0), AxisX, 1.0f);
-		ParentPage->lineClipping->AddTrianglesFromDoc(Doc);
+	TArray<TArray<FVector>> WallCutPerimeters;
+	TArray<const AModumateObjectInstance*> miscDraftObjects(Doc->GetObjectsOfType(
+		{ EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTFinish, EObjectType::OTTrim }));
+
+	for (const auto* miscObject: miscDraftObjects)
+	{
+		miscObject->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
+	}
+
+	// Clipping of beyond-cut-plane lines.
+	ParentPage->lineClipping.Reset(new FModumateClippingTriangles(*cutPlane));
+	ParentPage->lineClipping->SetTransform(cutPlane->GetCorner(0), AxisX, 1.0f);
+	ParentPage->lineClipping->AddTrianglesFromDoc(Doc);
 
 //#define MODUMATE_DRAW_OCCLUDERS
 #ifdef MODUMATE_DRAW_OCCLUDERS
 
-		TArray<FEdge> occluders;
-		ParentPage->lineClipping->GetTriangleEdges(occluders);
-		for (const auto& edge: occluders)
-		{
-			TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
-				FModumateUnitCoord2D::WorldCentimeters(FVector2D(edge.Vertex[0])),
-				FModumateUnitCoord2D::WorldCentimeters(FVector2D(edge.Vertex[1])),
-				lineThickness, lineColor);
-			ParentPage->Children.Add(line);
-			line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kDebug1);
-		}
+	TArray<FEdge> occluders;
+	ParentPage->lineClipping->GetTriangleEdges(occluders);
+	for (const auto& edge: occluders)
+	{
+		TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
+			FModumateUnitCoord2D::WorldCentimeters(FVector2D(edge.Vertex[0])),
+			FModumateUnitCoord2D::WorldCentimeters(FVector2D(edge.Vertex[1])),
+			lineThickness, lineColor);
+		ParentPage->Children.Add(line);
+		line->SetLayerTypeRecursive(FModumateLayerType::kDebug1);
+	}
 #endif
 
 
-		// Draw all separators, portals.
-		TArray<const AModumateObjectInstance*> beyondCutObjects(Doc->GetObjectsOfType({
-			EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTCeiling,
-			EObjectType::OTRoofFace, EObjectType::OTWindow, EObjectType::OTDoor,
-			EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTRailSegment,
-			EObjectType::OTSystemPanel, EObjectType::OTMullion, EObjectType::OTStaircase,
-			EObjectType::OTFinish, EObjectType::OTCountertop, EObjectType::OTTrim
-			}));
+	// Draw all separators, portals.
+	TArray<const AModumateObjectInstance*> beyondCutObjects(Doc->GetObjectsOfType({
+		EObjectType::OTWallSegment, EObjectType::OTFloorSegment, EObjectType::OTCeiling,
+		EObjectType::OTRoofFace, EObjectType::OTWindow, EObjectType::OTDoor,
+		EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTRailSegment,
+		EObjectType::OTSystemPanel, EObjectType::OTMullion, EObjectType::OTStaircase,
+		EObjectType::OTFinish, EObjectType::OTCountertop, EObjectType::OTTrim
+		}));
 
-		for (auto object: beyondCutObjects)
-		{
-			object->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
-		}
-		// Cut plane holds traced FFE lines.
-		cutPlane->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
-
-	}
-
-	bool FDraftingDrawing::MakeWorldObjects()
+	for (auto object: beyondCutObjects)
 	{
-		TSharedPtr<FDraftingComposite> totalPage = MakeShareable(new FDraftingComposite());
-		TSharedPtr<FDraftingComposite> section = MakeShareable(new FDraftingComposite());
+		object->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
+	}
+	// Cut plane holds traced FFE lines.
+	cutPlane->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
 
-		auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
+}
+
+bool FDraftingDrawing::MakeWorldObjects()
+{
+	TSharedPtr<FDraftingComposite> totalPage = MakeShareable(new FDraftingComposite());
+	TSharedPtr<FDraftingComposite> section = MakeShareable(new FDraftingComposite());
+
+	auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
 #if 0
-		auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
-		FVector scopeBoxNormal = scopeBox->GetNormal();
+	auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
+	FVector scopeBoxNormal = scopeBox->GetNormal();
 #else
-		FVector scopeBoxNormal = cutPlane->GetNormal();
+	FVector scopeBoxNormal = cutPlane->GetNormal();
 #endif
 		
 
-		FPlane plane = FPlane(cutPlane->GetCorner(0), cutPlane->GetNormal());
-		int32 numPoints = 4;
-		TArray<FVector> intersection;
+	FPlane plane = FPlane(cutPlane->GetCorner(0), cutPlane->GetNormal());
+	int32 numPoints = 4;
+	TArray<FVector> intersection;
 #if 0
-		bool bValidIntersection = true;
-		intersection.SetNumZeroed(numPoints);
-		for (int32 cornerIdx = 0; cornerIdx < numPoints; cornerIdx++)
-		{
-			FVector corner = scopeBox->GetCorner(cornerIdx);
-			FVector extrudedCorner = corner + (scopeBoxNormal * scopeBox->GetExtents().Y);
+	bool bValidIntersection = true;
+	intersection.SetNumZeroed(numPoints);
+	for (int32 cornerIdx = 0; cornerIdx < numPoints; cornerIdx++)
+	{
+		FVector corner = scopeBox->GetCorner(cornerIdx);
+		FVector extrudedCorner = corner + (scopeBoxNormal * scopeBox->GetExtents().Y);
 
-			bool bIntersects = FMath::SegmentPlaneIntersection(corner, extrudedCorner, plane, intersection[cornerIdx]);
-			bValidIntersection = bValidIntersection && bIntersects;
-		}
+		bool bIntersects = FMath::SegmentPlaneIntersection(corner, extrudedCorner, plane, intersection[cornerIdx]);
+		bValidIntersection = bValidIntersection && bIntersects;
+	}
 #else
-		intersection = GetCorners(cutPlane);
+	intersection = GetCorners(cutPlane);
 #endif
 
-		FVector axisX, axisY, center;
-		TArray<FVector2D> cached2DPositions;
-		FVector origin = intersection[0];
-		UModumateGeometryStatics::AnalyzeCachedPositions(intersection, plane, axisX, axisY, cached2DPositions, center);
-		const bool bHorizontalPlan = FVector::Parallel(plane, FVector::UpVector);
+	FVector axisX, axisY, center;
+	TArray<FVector2D> cached2DPositions;
+	FVector origin = intersection[0];
+	UModumateGeometryStatics::AnalyzeCachedPositions(intersection, plane, axisX, axisY, cached2DPositions, center);
+	const bool bHorizontalPlan = FVector::Parallel(plane, FVector::UpVector);
 
-		TArray<FVector2D> boxPoints;
-		for (auto& point : intersection)
-		{
-			FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, axisX, axisY, origin);
-			boxPoints.Add(point2D);
-		}
-
-		FBox2D drawingBox = FBox2D(boxPoints);
-
-		float orthoWidth = drawingBox.GetSize().X;
-		float orthoHeight = drawingBox.GetSize().Y;
-
-		FModumateUnitCoord2D dimensions = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::WorldCentimeters(orthoWidth), ModumateUnitParams::FYCoord::WorldCentimeters(orthoHeight));
-
-		TSharedPtr<FDraftingComposite> foregroundLines = MakeShareable(new FDraftingComposite());
-
-		if (!bHorizontalPlan)
-		{
-			axisX *= -1.0f;
-			axisY *= -1.0f;
-		}
-
-		GetForegroundLines(foregroundLines, axisX, axisY, true);
-
-		foregroundLines->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);
-
-		if (!bHorizontalPlan)
-		{
-			foregroundLines->MoveXTo(dimensions.X);
-			foregroundLines->MoveYTo(dimensions.Y);
-		}
-		totalPage->Children.Add(foregroundLines);
-
-		// Plan dimensions MOD-726.
-		TSharedPtr<FDraftingComposite> planDimensions = MakeShared<FDraftingComposite>();
-		planDimensions->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);
-		FModumateDimensions dimensionsCreator;
-
-		if (dimensionsCreator.AddDimensionsFromCutPlane(planDimensions, Doc, plane, origin, axisX))
-		{
-			if (!bHorizontalPlan)
-			{
-				planDimensions->MoveXTo(dimensions.X);
-				planDimensions->MoveYTo(dimensions.Y);
-			}
-			totalPage->Children.Add(planDimensions);
-		}
-
-		section->Children.Add(totalPage);
-
-		section->BoundingBox = drawingBox + totalPage->BoundingBox;
-
-		WorldObjects = TWeakPtr<FDraftingComposite>(section);
-
-		auto viewArea = DrawingContent.Pin();
-		ensureAlways(viewArea.IsValid());
-
-		viewArea->Children.Add(section);
-
-		return true;
+	TArray<FVector2D> boxPoints;
+	for (auto& point : intersection)
+	{
+		FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, axisX, axisY, origin);
+		boxPoints.Add(point2D);
 	}
 
-	void FDraftingDrawing::GetFacesConnectedToRooms(TMap<int32, TArray<int32>> &OutFacesToRooms) const
+	FBox2D drawingBox = FBox2D(boxPoints);
+
+	float orthoWidth = drawingBox.GetSize().X;
+	float orthoHeight = drawingBox.GetSize().Y;
+
+	FModumateUnitCoord2D dimensions = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::WorldCentimeters(orthoWidth), ModumateUnitParams::FYCoord::WorldCentimeters(orthoHeight));
+
+	TSharedPtr<FDraftingComposite> foregroundLines = MakeShareable(new FDraftingComposite());
+
+	if (!bHorizontalPlan)
 	{
-		auto volumeGraph = Doc->GetVolumeGraph();
-
-		for (auto* room : Doc->GetObjectsOfType(EObjectType::OTRoom))
-		{
-			int32 roomID = room->ID;
-			TSet<int32> roomConnectedFaces;
-			// TODO: refactor room faces using strongly-typed InstanceProperties
-			for (int32 faceID : { MOD_ID_NONE })//room->GetControlPointIndices())
-			{
-				auto face = volumeGraph.FindFace(faceID);
-				if (!face)
-				{
-					continue;
-				}
-
-				face->GetAdjacentFaceIDs(roomConnectedFaces);
-			}
-
-			for (int32 id : roomConnectedFaces)
-			{
-				TArray<int32> &roomIDs = OutFacesToRooms.FindOrAdd(id);
-				roomIDs.Add(roomID);
-			}
-		}
+		axisX *= -1.0f;
+		axisY *= -1.0f;
 	}
 
-	void FDraftingDrawing::GetVisibleRoomsAndLocations(TMap<int32, FVector2D> &OutRoomsAndLocations) const
+	GetForegroundLines(foregroundLines, axisX, axisY, true);
+
+	foregroundLines->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);
+
+	if (!bHorizontalPlan)
 	{
-		auto volumeGraph = Doc->GetVolumeGraph();
-		auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
-		// scope boxes are deprecated for now
-#if 0
-		auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
-#endif
+		foregroundLines->MoveXTo(dimensions.X);
+		foregroundLines->MoveYTo(dimensions.Y);
+	}
+	totalPage->Children.Add(foregroundLines);
 
-		FPlane plane;
-		FVector axisX, axisY, center;
-		TArray<FVector2D> cached2DPositions;
-		FVector origin = cutPlane->GetCorner(0);
-		auto cutPlanePoints = GetCorners(cutPlane);
-		UModumateGeometryStatics::AnalyzeCachedPositions(cutPlanePoints, plane, axisX, axisY, cached2DPositions, center);
-		TMap<int32, int32> objMap;
-		auto graph = MakeShared<FGraph2D>();
+	// Plan dimensions MOD-726.
+	TSharedPtr<FDraftingComposite> planDimensions = MakeShared<FDraftingComposite>();
+	planDimensions->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);
+	FModumateDimensions dimensionsCreator;
 
-		TArray<FVector2D> points2D;
-#if 0
-		FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(scopeBox->GetControlPoint(0), axisX, axisY, origin);
-		FVector scopeBoxOrigin = origin + (scopeBoxOrigin2D.X * axisX) + (scopeBoxOrigin2D.Y * axisY);
-
-		for (auto& point : scopeBox->GetControlPoints())
+	if (dimensionsCreator.AddDimensionsFromCutPlane(planDimensions, Doc, plane, origin, axisX))
+	{
+		if (!bHorizontalPlan)
 		{
-			FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, axisX, axisY, scopeBoxOrigin);
-			points2D.Add(point2D);
+			planDimensions->MoveXTo(dimensions.X);
+			planDimensions->MoveYTo(dimensions.Y);
 		}
-#else
-		for (auto& point : cutPlanePoints)
+		totalPage->Children.Add(planDimensions);
+	}
+
+	section->Children.Add(totalPage);
+
+	section->BoundingBox = drawingBox + totalPage->BoundingBox;
+
+	WorldObjects = TWeakPtr<FDraftingComposite>(section);
+
+	auto viewArea = DrawingContent.Pin();
+	ensureAlways(viewArea.IsValid());
+
+	viewArea->Children.Add(section);
+
+	return true;
+}
+
+void FDraftingDrawing::GetFacesConnectedToRooms(TMap<int32, TArray<int32>> &OutFacesToRooms) const
+{
+	auto volumeGraph = Doc->GetVolumeGraph();
+
+	for (auto* room : Doc->GetObjectsOfType(EObjectType::OTRoom))
+	{
+		int32 roomID = room->ID;
+		TSet<int32> roomConnectedFaces;
+		// TODO: refactor room faces using strongly-typed InstanceProperties
+		for (int32 faceID : { MOD_ID_NONE })//room->GetControlPointIndices())
 		{
-			FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, axisX, axisY, origin);
-			points2D.Add(point2D);
-		}
-#endif
-
-		// bounding box is defined by the dimensions of the cut plane as opposed to the contents of the graph
-		FBox2D drawingBox = FBox2D(points2D);
-		plane = FPlane(origin, cutPlane->GetNormal());
-
-		volumeGraph.Create2DGraph(plane, axisX, axisY, origin, drawingBox, graph, objMap);
-
-		TSet<int32> foundRooms;
-
-		TMap<int32, TArray<int32>> roomMap;
-		GetFacesConnectedToRooms(roomMap);
-
-		for (auto& edgekvp : graph->GetEdges())
-		{
-			int32 metaplaneID = objMap[edgekvp.Key];
-			if (roomMap.Contains(metaplaneID))
-			{
-				for (int32 roomID : roomMap[metaplaneID])
-				{
-					foundRooms.Add(roomID);
-				}
-			}
-		}
-
-		// visible rooms have a connected wall that intersects the plane, and a centroid that is above the plane
-		for (int32 roomID : foundRooms)
-		{
-			auto room = Doc->GetObjectById(roomID);
-			if (room == nullptr)
+			auto face = volumeGraph.FindFace(faceID);
+			if (!face)
 			{
 				continue;
 			}
 
-			// TODO: refactor room faces using strongly-typed InstanceProperties
-			for (int32 faceID : { MOD_ID_NONE })//room->GetControlPointIndices())
+			face->GetAdjacentFaceIDs(roomConnectedFaces);
+		}
+
+		for (int32 id : roomConnectedFaces)
+		{
+			TArray<int32> &roomIDs = OutFacesToRooms.FindOrAdd(id);
+			roomIDs.Add(roomID);
+		}
+	}
+}
+
+void FDraftingDrawing::GetVisibleRoomsAndLocations(TMap<int32, FVector2D> &OutRoomsAndLocations) const
+{
+	auto volumeGraph = Doc->GetVolumeGraph();
+	auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
+	// scope boxes are deprecated for now
+#if 0
+	auto scopeBox = Doc->GetObjectById(CaptureObjID.Value);
+#endif
+
+	FPlane plane;
+	FVector axisX, axisY, center;
+	TArray<FVector2D> cached2DPositions;
+	FVector origin = cutPlane->GetCorner(0);
+	auto cutPlanePoints = GetCorners(cutPlane);
+	UModumateGeometryStatics::AnalyzeCachedPositions(cutPlanePoints, plane, axisX, axisY, cached2DPositions, center);
+	TMap<int32, int32> objMap;
+	auto graph = MakeShared<FGraph2D>();
+
+	TArray<FVector2D> points2D;
+#if 0
+	FVector2D scopeBoxOrigin2D = UModumateGeometryStatics::ProjectPoint2D(scopeBox->GetControlPoint(0), axisX, axisY, origin);
+	FVector scopeBoxOrigin = origin + (scopeBoxOrigin2D.X * axisX) + (scopeBoxOrigin2D.Y * axisY);
+
+	for (auto& point : scopeBox->GetControlPoints())
+	{
+		FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, axisX, axisY, scopeBoxOrigin);
+		points2D.Add(point2D);
+	}
+#else
+	for (auto& point : cutPlanePoints)
+	{
+		FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, axisX, axisY, origin);
+		points2D.Add(point2D);
+	}
+#endif
+
+	// bounding box is defined by the dimensions of the cut plane as opposed to the contents of the graph
+	FBox2D drawingBox = FBox2D(points2D);
+	plane = FPlane(origin, cutPlane->GetNormal());
+
+	volumeGraph.Create2DGraph(plane, axisX, axisY, origin, drawingBox, graph, objMap);
+
+	TSet<int32> foundRooms;
+
+	TMap<int32, TArray<int32>> roomMap;
+	GetFacesConnectedToRooms(roomMap);
+
+	for (auto& edgekvp : graph->GetEdges())
+	{
+		int32 metaplaneID = objMap[edgekvp.Key];
+		if (roomMap.Contains(metaplaneID))
+		{
+			for (int32 roomID : roomMap[metaplaneID])
 			{
-				auto face = volumeGraph.FindFace(faceID);
-				if (face == nullptr)
-				{
-					continue;
-				}
+				foundRooms.Add(roomID);
+			}
+		}
+	}
 
-				FVector2D centroid2D;
-				UModumateGeometryStatics::FindPointFurthestFromPolyEdge(face->Cached2DPositions, centroid2D);
-				FVector centroid = face->DeprojectPosition(centroid2D);
+	// visible rooms have a connected wall that intersects the plane, and a centroid that is above the plane
+	for (int32 roomID : foundRooms)
+	{
+		auto room = Doc->GetObjectById(roomID);
+		if (room == nullptr)
+		{
+			continue;
+		}
 
-				if (plane.PlaneDot(centroid) > 0)
-				{
-					FVector2D centroidOnPlane = UModumateGeometryStatics::ProjectPoint2D(origin, -axisX, -axisY, centroid);
-					OutRoomsAndLocations.Add(roomID, centroidOnPlane);
-					break;
-				}
+		// TODO: refactor room faces using strongly-typed InstanceProperties
+		for (int32 faceID : { MOD_ID_NONE })//room->GetControlPointIndices())
+		{
+			auto face = volumeGraph.FindFace(faceID);
+			if (face == nullptr)
+			{
+				continue;
+			}
+
+			FVector2D centroid2D;
+			UModumateGeometryStatics::FindPointFurthestFromPolyEdge(face->Cached2DPositions, centroid2D);
+			FVector centroid = face->DeprojectPosition(centroid2D);
+
+			if (plane.PlaneDot(centroid) > 0)
+			{
+				FVector2D centroidOnPlane = UModumateGeometryStatics::ProjectPoint2D(origin, -axisX, -axisY, centroid);
+				OutRoomsAndLocations.Add(roomID, centroidOnPlane);
+				break;
 			}
 		}
 	}
 }
+
 
 #undef LOCTEXT_NAMESPACE

@@ -26,11 +26,7 @@
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "Quantities/QuantitiesManager.h"
 
-
 class AEditModelPlayerController;
-
-using namespace Modumate::Mitering;
-
 
 FMOIPlaneHostedObjData::FMOIPlaneHostedObjData()
 {
@@ -305,7 +301,7 @@ void AMOIPlaneHostedObj::RegisterInstanceDataUI(UToolTrayBlockProperties* Proper
 	}
 }
 
-void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
+void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
 {
 	OutPerimeters.Reset();
 
@@ -313,9 +309,9 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 	ModumateUnitParams::FThickness structureThickness = ModumateUnitParams::FThickness::Points(1.125f);
 	ModumateUnitParams::FThickness outerThickness = ModumateUnitParams::FThickness::Points(0.75f);
 
-	Modumate::FMColor innerColor = Modumate::FMColor::Gray64;
-	Modumate::FMColor outerColor = Modumate::FMColor::Gray32;
-	Modumate::FMColor structureColor = Modumate::FMColor::Black;
+	FMColor innerColor = FMColor::Gray64;
+	FMColor outerColor = FMColor::Gray32;
+	FMColor structureColor = FMColor::Black;
 
 	bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
@@ -323,28 +319,28 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 		const AModumateObjectInstance *parent = GetParentObject();
 		FVector parentLocation = parent->GetLocation();
 
-		Modumate::FModumateLayerType layerTypeOuterSurface;
-		Modumate::FModumateLayerType layerTypeMinorSurface;
-		Modumate::FModumateLayerType layerTypeEndCaps;
+		FModumateLayerType layerTypeOuterSurface;
+		FModumateLayerType layerTypeMinorSurface;
+		FModumateLayerType layerTypeEndCaps;
 
 		switch (GetObjectType())
 		{
 		case EObjectType::OTCountertop:
-			layerTypeOuterSurface = Modumate::FModumateLayerType::kCountertopCut;
+			layerTypeOuterSurface = FModumateLayerType::kCountertopCut;
 			layerTypeMinorSurface = layerTypeOuterSurface;
 			layerTypeEndCaps = layerTypeOuterSurface;
 			break;
 
 		case EObjectType::OTSystemPanel:
-			layerTypeOuterSurface = Modumate::FModumateLayerType::kSystemPanelCut;
+			layerTypeOuterSurface = FModumateLayerType::kSystemPanelCut;
 			layerTypeMinorSurface = layerTypeOuterSurface;
 			layerTypeEndCaps = layerTypeOuterSurface;
 			break;
 
 		default:
-			layerTypeOuterSurface = Modumate::FModumateLayerType::kSeparatorCutOuterSurface;
-			layerTypeMinorSurface = Modumate::FModumateLayerType::kSeparatorCutMinorLayer;
-			layerTypeEndCaps = Modumate::FModumateLayerType::kSeparatorCutEndCaps;
+			layerTypeOuterSurface = FModumateLayerType::kSeparatorCutOuterSurface;
+			layerTypeMinorSurface = FModumateLayerType::kSeparatorCutMinorLayer;
+			layerTypeEndCaps = FModumateLayerType::kSeparatorCutEndCaps;
 			break;
 		}
 
@@ -363,9 +359,9 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 					continue;
 				}
 
-				Modumate::FModumateLayerType dwgLayerType;
+				FModumateLayerType dwgLayerType;
 				ModumateUnitParams::FThickness lineThickness;
-				Modumate::FMColor lineColor(Modumate::FMColor::Black);
+				FMColor lineColor(FMColor::Black);
 
 				if ((usePointsA && (layerIdx == 0)) || (!usePointsA && (layerIdx == numLayers - 1)))
 				{
@@ -438,7 +434,7 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 
 						if (UModumateFunctionLibrary::ClipLine2DToRectangle(rangeStart, rangeEnd, BoundingBox, clippedStart, clippedEnd))
 						{
-							TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+							TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 								FModumateUnitCoord2D::WorldCentimeters(clippedStart),
 								FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 								lineThickness, lineColor);
@@ -451,7 +447,7 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 						{
 							if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint], rangeStart, BoundingBox, clippedStart, clippedEnd))
 							{
-								TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+								TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 									FModumateUnitCoord2D::WorldCentimeters(clippedStart),
 									FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 									outerThickness, outerColor);
@@ -460,7 +456,7 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCo
 							}
 							if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint + 1], rangeEnd, BoundingBox, clippedStart, clippedEnd))
 							{
-								TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+								TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 									FModumateUnitCoord2D::WorldCentimeters(clippedStart),
 									FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 									outerThickness, outerColor);
@@ -547,7 +543,7 @@ void AMOIPlaneHostedObj::UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalcul
 	}
 
 	int32 parentID = GetParentID();
-	const Modumate::FGraph3DFace *planeFace = doc->GetVolumeGraph().FindFace(parentID);
+	const FGraph3DFace *planeFace = doc->GetVolumeGraph().FindFace(parentID);
 	const AModumateObjectInstance *parentPlane = doc->GetObjectById(parentID);
 	if (!ensureMsgf(parentPlane, TEXT("Plane-hosted object (ID %d) is missing parent object (ID %d)!"), ID, parentID) ||
 		!ensureMsgf(planeFace, TEXT("Plane-hosted object (ID %d) is missing parent graph face (ID %d)!"), ID, parentID))
@@ -615,31 +611,31 @@ void AMOIPlaneHostedObj::MarkEdgesMiterDirty()
 	}
 }
 
-void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FBox2D& BoundingBox) const
 {
 	static const ModumateUnitParams::FThickness outerThickness = ModumateUnitParams::FThickness::Points(0.25f);
 
 	const AModumateObjectInstance *parent = GetParentObject();
 	FVector parentLocation = parent->GetLocation();
-	Modumate::FModumateLayerType layerType;
+	FModumateLayerType layerType;
 
 	switch (GetObjectType())
 	{
 	case EObjectType::OTCountertop:
-		layerType = Modumate::FModumateLayerType::kCountertopBeyond;
+		layerType = FModumateLayerType::kCountertopBeyond;
 		break;
 
 	case EObjectType::OTSystemPanel:
-		layerType = Modumate::FModumateLayerType::kSystemPanelBeyond;
+		layerType = FModumateLayerType::kSystemPanelBeyond;
 		break;
 
 	default:
-		layerType = Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges;
+		layerType = FModumateLayerType::kSeparatorBeyondSurfaceEdges;
 		break;
 	}
 
-	TArray<TPair<FEdge, Modumate::FModumateLayerType>> backgroundLines;
+	TArray<TPair<FEdge, FModumateLayerType>> backgroundLines;
 
 	const int numLayers = LayerGeometries.Num();
 
@@ -684,7 +680,7 @@ void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraf
 					FVector v1 = layer.ProjectToPlane(hole.Points[i], bSideA);
 					FVector v2 = layer.ProjectToPlane(hole.Points[(i + 1) % n], bSideA);
 					FEdge line(v1 + parentLocation, v2 + parentLocation);
-					backgroundLines.Emplace(line, Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges);
+					backgroundLines.Emplace(line, FModumateLayerType::kSeparatorBeyondSurfaceEdges);
 				}
 			}
 
@@ -701,7 +697,7 @@ void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraf
 			{
 				FVector holePoint = LayerGeometries[0].ProjectToPlane(p, true) + parentLocation;
 				backgroundLines.Emplace(FEdge(holePoint, holePoint + planeOffset),
-					Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges);
+					FModumateLayerType::kSeparatorBeyondSurfaceEdges);
 			}
 		}
 
@@ -750,10 +746,10 @@ void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<Modumate::FDraf
 
 					if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 					{
-						TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShared<Modumate::FDraftingLine>(
+						TSharedPtr<FDraftingLine> draftingLine = MakeShared<FDraftingLine>(
 							FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
 							FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
-							outerThickness, Modumate::FMColor::Black);
+							outerThickness, FMColor::Black);
 						ParentPage->Children.Add(draftingLine);
 						draftingLine->SetLayerTypeRecursive(line.Value);
 					}
@@ -803,8 +799,8 @@ void AMOIPlaneHostedObj::UpdateQuantities()
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	const int32 numLayers = assembly.Layers.Num();
 	auto assemblyGuid = assembly.UniqueKey();
-	const Modumate::FGraph3D& graph = Document->GetVolumeGraph();
-	const Modumate::FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
+	const FGraph3D& graph = Document->GetVolumeGraph();
+	const FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
 	if (!ensure(hostingFace))
 	{
 		return;

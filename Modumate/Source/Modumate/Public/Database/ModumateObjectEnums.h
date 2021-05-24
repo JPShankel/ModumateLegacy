@@ -190,11 +190,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Modumate Types")
 	static EToolMode ToolModeFromObjectType(EObjectType ot);
 
-	static Modumate::EGraph3DObjectType Graph3DObjectTypeFromObjectType(EObjectType ot);
-	static EObjectType ObjectTypeFromGraph3DType(Modumate::EGraph3DObjectType GraphType);
+	static EGraph3DObjectType Graph3DObjectTypeFromObjectType(EObjectType ot);
+	static EObjectType ObjectTypeFromGraph3DType(EGraph3DObjectType GraphType);
 
-	static Modumate::EGraphObjectType Graph2DObjectTypeFromObjectType(EObjectType ObjectType);
-	static EObjectType ObjectTypeFromGraph2DType(Modumate::EGraphObjectType GraphType, EToolCategories GraphCategory);
+	static EGraphObjectType Graph2DObjectTypeFromObjectType(EObjectType ObjectType);
+	static EObjectType ObjectTypeFromGraph2DType(EGraphObjectType GraphType, EToolCategories GraphCategory);
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Types")
 	static FText GetTextForObjectType(EObjectType ObjectType, bool bPlural = false);

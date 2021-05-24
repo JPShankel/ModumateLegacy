@@ -3,15 +3,12 @@
 
 #include "Drafting/Drawings/DraftingDrawing.h"
 
-namespace Modumate {
+class FDrawingArea;
 
-	class FDrawingArea;
+class FFloorplan : public FDraftingDrawing
+{
+public:
+	FFloorplan(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID);
 
-	class FFloorplan : public FDraftingDrawing
-	{
-	public:
-		FFloorplan(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID);
-
-		virtual void OnPageCompleted() override;
-	};
-}
+	virtual void OnPageCompleted() override;
+};

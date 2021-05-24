@@ -17,7 +17,7 @@
 #include "UnrealClasses/PortalFrameActor.h"
 #include "Objects/Portal.h"
 
-using namespace Modumate;
+
 
 UPortalToolBase::UPortalToolBase()
 	: Super()

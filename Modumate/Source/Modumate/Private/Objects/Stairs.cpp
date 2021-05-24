@@ -77,7 +77,7 @@ void AMOIStaircase::SetupDynamicGeometry()
 	// Calculate the polygons that make up the outer surfaces of each tread and riser of the linear stair run
 	float stepRun, stepRise;
 	FVector runDir(ForceInitToZero), stairOrigin(ForceInitToZero);
-	if (!Modumate::FStairStatics::CalculateLinearRunPolysFromPlane(
+	if (!FStairStatics::CalculateLinearRunPolysFromPlane(
 		runPlanePoints, goalTreadDepth, bCachedUseRisers, bCachedStartRiser, bCachedEndRiser,
 		stepRun, stepRise, runDir, stairOrigin,
 		CachedTreadPolys, CachedRiserPolys))
@@ -87,7 +87,7 @@ void AMOIStaircase::SetupDynamicGeometry()
 
 	const float totalTreadThickness = CachedTreadDims.TotalUnfinishedWidth;
 	const float totalRiserThickness = bCachedUseRisers ? CachedRiserDims.TotalUnfinishedWidth : OpenStairsOverhang;
-	Modumate::FStairStatics::CalculateSetupStairPolysParams(
+	FStairStatics::CalculateSetupStairPolysParams(
 		assemblySpec,
 		totalTreadThickness, totalRiserThickness, runDir,
 		CachedTreadPolys, CachedRiserPolys,
@@ -97,7 +97,7 @@ void AMOIStaircase::SetupDynamicGeometry()
 	DynamicMeshActor->SetupStairPolys(stairOrigin, CachedTreadPolys, CachedRiserPolys, CachedRiserNormals, TreadLayers, RiserLayers, assemblySpec);
 }
 
-void AMOIStaircase::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIStaircase::GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 	TArray<TArray<FVector>>& OutPerimeters) const
 {
@@ -129,8 +129,8 @@ void AMOIStaircase::UpdateQuantities()
 		return;
 	}
 
-	const Modumate::FGraph3D& graph = Document->GetVolumeGraph();
-	const Modumate::FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
+	const FGraph3D& graph = Document->GetVolumeGraph();
+	const FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
 	if (!ensure(hostingFace))
 	{
 		return;
@@ -150,12 +150,12 @@ void AMOIStaircase::UpdateQuantities()
 	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
 }
 
-void AMOIStaircase::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIStaircase::GetBeyondLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
 	static const ModumateUnitParams::FThickness stairLineThickness = ModumateUnitParams::FThickness::Points(0.15f);
-	static const Modumate::FMColor lineColor(0.439f, 0.439f, 0.439f);  // Gray112
-	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kSeparatorBeyondSurfaceEdges;
+	static const FMColor lineColor(0.439f, 0.439f, 0.439f);  // Gray112
+	static const FModumateLayerType dwgLayerType = FModumateLayerType::kSeparatorBeyondSurfaceEdges;
 
 	float treadThickness = CachedTreadDims.TotalUnfinishedWidth;
 	float riserThickness = bCachedUseRisers ? CachedRiserDims.TotalUnfinishedWidth : OpenStairsOverhang;
@@ -219,7 +219,7 @@ void AMOIStaircase::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite
 
 			if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 			{
-				TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShared<Modumate::FDraftingLine>(
+				TSharedPtr<FDraftingLine> draftingLine = MakeShared<FDraftingLine>(
 					FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
 					FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
 					stairLineThickness, lineColor);
@@ -231,12 +231,12 @@ void AMOIStaircase::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite
 
 }
 
-void AMOIStaircase::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIStaircase::GetInPlaneLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
 	static const ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.75f);
-	static const Modumate::FMColor lineColor = Modumate::FMColor::Gray96;
-	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kSeparatorCutOuterSurface;
+	static const FMColor lineColor = FMColor::Gray96;
+	static const FModumateLayerType dwgLayerType = FModumateLayerType::kSeparatorCutOuterSurface;
 
 	float treadThickness = CachedTreadDims.TotalUnfinishedWidth;
 	float riserThickness = bCachedUseRisers ? CachedRiserDims.TotalUnfinishedWidth : OpenStairsOverhang;
@@ -332,7 +332,7 @@ void AMOIStaircase::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposit
 
 		if (UModumateFunctionLibrary::ClipLine2DToRectangle(start, end, BoundingBox, clippedStart, clippedEnd))
 		{
-			TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShared<Modumate::FDraftingLine>(
+			TSharedPtr<FDraftingLine> draftingLine = MakeShared<FDraftingLine>(
 				FModumateUnitCoord2D::WorldCentimeters(clippedStart),
 				FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 				lineThickness, lineColor);

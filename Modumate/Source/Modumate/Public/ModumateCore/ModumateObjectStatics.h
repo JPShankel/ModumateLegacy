@@ -17,13 +17,10 @@ class UModumateDocument;
 class AModumateObjectInstance;
 struct FSimplePolygon;
 
-namespace Modumate
-{
-	class FGraph2DEdge;
-	class FGraph3DEdge;
-	class FDraftingComposite;
-	enum class FModumateLayerType;
-};
+class FGraph2DEdge;
+class FGraph3DEdge;
+class FDraftingComposite;
+enum class FModumateLayerType;
 
 // Helper functions for creating / updating MOIs and their geometry.
 // When multiple systems need to understand the relationship between control points/indices and MOI geometry,
@@ -57,9 +54,9 @@ public:
 		FTransform& OutOrigin, TArray<FVector>& OutPerimeter, TArray<FPolyHole3D>& OutHoles);
 
 	// Meta/Surface Objects
-	static bool GetEdgeFaceConnections(const Modumate::FGraph3DEdge* GraphEdge, const UModumateDocument* Doc,
+	static bool GetEdgeFaceConnections(const FGraph3DEdge* GraphEdge, const UModumateDocument* Doc,
 		bool& bOutConnectedToAnyFace, bool& bOutConnectedToVisibleFace, bool& bOutConnectedToVisibleChild);
-	static bool GetEdgePolyConnections(const Modumate::FGraph2DEdge* SurfaceEdge, const UModumateDocument* Doc,
+	static bool GetEdgePolyConnections(const FGraph2DEdge* SurfaceEdge, const UModumateDocument* Doc,
 		bool& bOutConnectedToAnyPolygon, bool& bOutConnectedToVisiblePolygon, bool& bOutConnectedToVisibleChild);
 
 	static bool GetNonPhysicalEnabledFlags(const AModumateObjectInstance* NonPhysicalMOI, bool& bOutVisible, bool& bOutCollisionEnabled);
@@ -105,9 +102,9 @@ public:
 		const FDimensionOffset& OffsetX, const FDimensionOffset& OffsetY, const FVector2D& FlipSigns, TArray<FVector>& OutObjectPoints);
 
 	// Extruded objects drafting
-	static void GetExtrusionCutPlaneDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+	static void GetExtrusionCutPlaneDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox, const TArray<FVector>& Perimeter,
-		const FVector& StartPosition, const FVector& EndPosition, Modumate::FModumateLayerType LayerType, float Epsilon = 0.0f);
+		const FVector& StartPosition, const FVector& EndPosition, FModumateLayerType LayerType, float Epsilon = 0.0f);
 	static TArray<FEdge> GetExtrusionBeyondLinesFromMesh(const FPlane& Plane, const TArray<FVector>& Perimeter,
 		const FVector& StartPosition, const FVector& EndPosition);
 };

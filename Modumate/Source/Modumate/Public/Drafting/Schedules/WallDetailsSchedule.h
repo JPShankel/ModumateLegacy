@@ -5,23 +5,19 @@
 
 class MODUMATE_API UModumateDocument;
 
-namespace Modumate {
+class IModumateDraftingDraw;
+class FScheduleGrid;
+class FImagePrimitive;
 
-	class IModumateDraftingDraw;
-	class FScheduleGrid;
-	class FImagePrimitive;
+class FWallDetailsSchedule : public FDraftingSchedule
+{
+public:
+	FWallDetailsSchedule(const UModumateDocument *doc, UWorld *World, IModumateDraftingDraw *drawingInterface);
+	virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
 
-	class FWallDetailsSchedule : public FDraftingSchedule
-	{
-	public:
-		FWallDetailsSchedule(const UModumateDocument *doc, UWorld *World, IModumateDraftingDraw *drawingInterface);
-		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
+public:
+	TArray<TSharedPtr<FScheduleGrid>> assemblyData;
+	TArray<TSharedPtr<FImagePrimitive>> iconData;
 
-	public:
-		TArray<TSharedPtr<FScheduleGrid>> assemblyData;
-		TArray<TSharedPtr<FImagePrimitive>> iconData;
-
-		float CommentsWidth =	3.0f;			// whitespace width of comments sections
-	};
-
-}
+	float CommentsWidth =	3.0f;			// whitespace width of comments sections
+};

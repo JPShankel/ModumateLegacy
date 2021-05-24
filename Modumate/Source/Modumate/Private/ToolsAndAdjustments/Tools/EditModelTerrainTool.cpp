@@ -227,7 +227,7 @@ bool UTerrainTool::AddFirstEdge(FVector Point1, FVector Point2)
 	auto createMoiDelta = MakeShared<FMOIDelta>();
 	createMoiDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
 
-	TerrainGraph = MakeShared<Modumate::FGraph2D>(nextID, THRESH_POINTS_ARE_NEAR);
+	TerrainGraph = MakeShared<FGraph2D>(nextID, THRESH_POINTS_ARE_NEAR);
 	if (!ensure(TerrainGraph.IsValid()))
 	{
 		return false;

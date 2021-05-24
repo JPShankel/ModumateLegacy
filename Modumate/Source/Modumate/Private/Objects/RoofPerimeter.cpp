@@ -31,15 +31,15 @@ FVector AMOIRoofPerimeter::GetLocation() const
 
 FVector AMOIRoofPerimeter::GetCorner(int32 index) const
 {
-	const Modumate::FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
+	const FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
 
 	if (CachedEdgeIDs.IsValidIndex(index))
 	{
 		auto edgeID = CachedEdgeIDs[index];
-		const Modumate::FGraph3DEdge *edge = volumeGraph.FindEdge(edgeID);
+		const FGraph3DEdge *edge = volumeGraph.FindEdge(edgeID);
 		if (edge)
 		{
-			const Modumate::FGraph3DVertex *startVertex = volumeGraph.FindVertex(edge->StartVertexID);
+			const FGraph3DVertex *startVertex = volumeGraph.FindVertex(edge->StartVertexID);
 			if (startVertex)
 			{
 				return startVertex->Position;
@@ -198,7 +198,7 @@ bool AMOIRoofPerimeter::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 
 bool AMOIRoofPerimeter::UpdateConnectedIDs()
 {
-	const Modumate::FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
+	const FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
 
 	// Ask the graph what IDs belong to this roof perimeter group object
 	if (!volumeGraph.GetGroup(ID, TempGroupMembers))
@@ -213,10 +213,10 @@ bool AMOIRoofPerimeter::UpdateConnectedIDs()
 	{
 		switch (volumeGraph.GetObjectType(groupMember))
 		{
-		case Modumate::EGraph3DObjectType::Edge:
+		case EGraph3DObjectType::Edge:
 			TempGroupEdges.Add(groupMember);
 			break;
-		case Modumate::EGraph3DObjectType::Face:
+		case EGraph3DObjectType::Face:
 			CachedFaceIDs.Add(groupMember);
 			break;
 		default:
@@ -226,13 +226,13 @@ bool AMOIRoofPerimeter::UpdateConnectedIDs()
 
 	if (!CachedPerimeterGraph.IsValid())
 	{
-		CachedPerimeterGraph = MakeShared<Modumate::FGraph2D>();
+		CachedPerimeterGraph = MakeShared<FGraph2D>();
 	}
 	CachedEdgeIDs.Reset();
 
 	if (volumeGraph.Create2DGraph(TempGroupEdges, TempConnectedGraphIDs, CachedPerimeterGraph, CachedPlane, true, false))
 	{
-		const Modumate::FGraph2DPolygon *perimeterPoly = CachedPerimeterGraph->GetRootInteriorPolygon();
+		const FGraph2DPolygon *perimeterPoly = CachedPerimeterGraph->GetRootInteriorPolygon();
 		if (ensure(perimeterPoly))
 		{
 			bValidPerimeterLoop = !perimeterPoly->bHasDuplicateVertex;
@@ -240,7 +240,7 @@ bool AMOIRoofPerimeter::UpdateConnectedIDs()
 			{
 				// Make sure that each edge in the perimeter is actually associated with this perimeter's group ID,
 				// otherwise the perimeter can't be created.
-				const Modumate::FGraph3DEdge *graphEdge = volumeGraph.FindEdge(signedEdgeID);
+				const FGraph3DEdge *graphEdge = volumeGraph.FindEdge(signedEdgeID);
 				if (graphEdge && graphEdge->GroupIDs.Contains(ID))
 				{
 					CachedEdgeIDs.Add(signedEdgeID);
@@ -300,17 +300,17 @@ void AMOIRoofPerimeter::UpdatePerimeterGeometry()
 
 	CachedPerimeterPoints.Reset();
 	CachedPerimeterCenter = FVector::ZeroVector;
-	const Modumate::FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
+	const FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
 
 	int32 numEdges = CachedEdgeIDs.Num();
 	for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
 	{
 		auto edgeID = CachedEdgeIDs[edgeIdx];
-		const Modumate::FGraph3DEdge *edge = volumeGraph.FindEdge(edgeID);
+		const FGraph3DEdge *edge = volumeGraph.FindEdge(edgeID);
 		if (edge)
 		{
 			int32 vertexID = (edgeID > 0) ? edge->StartVertexID : edge->EndVertexID;
-			const Modumate::FGraph3DVertex *vertex = volumeGraph.FindVertex(vertexID);
+			const FGraph3DVertex *vertex = volumeGraph.FindVertex(vertexID);
 			if (vertex)
 			{
 				CachedPerimeterPoints.Add(vertex->Position);

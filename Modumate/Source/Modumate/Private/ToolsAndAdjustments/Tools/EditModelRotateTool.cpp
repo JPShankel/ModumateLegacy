@@ -17,8 +17,6 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/LineActor.h"
 
-using namespace Modumate;
-
 URotateObjectTool::URotateObjectTool()
 	: Super()
 	, FSelectedObjectToolMixin(Controller)

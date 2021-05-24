@@ -602,7 +602,7 @@ bool AMOICabinet::OnSelected(bool bIsSelected)
 	return true;
 }
 
-using namespace Modumate;
+
 
 void AMOICabinet::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane,
 	const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
@@ -685,7 +685,7 @@ void AMOICabinet::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentP
 
 				if (UModumateFunctionLibrary::ClipLine2DToRectangle(lineStart, lineEnd, BoundingBox, clippedStart, clippedEnd))
 				{
-					TSharedPtr<Modumate::FDraftingLine> clippedLine = MakeShared<Modumate::FDraftingLine>(
+					TSharedPtr<FDraftingLine> clippedLine = MakeShared<FDraftingLine>(
 						FModumateUnitCoord2D::WorldCentimeters(clippedStart),
 						FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 						lineThickness, lineColor);

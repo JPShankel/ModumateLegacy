@@ -28,7 +28,7 @@ bool AMOITerrainPolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 
 		FVector origin = terrainMoi->GetLocation();
 		const auto graph2d = GetDocument()->FindSurfaceGraph(terrainMoi->ID);
-		const Modumate::FGraph2DPolygon* graphPoly = graph2d->FindPolygon(ID);
+		const FGraph2DPolygon* graphPoly = graph2d->FindPolygon(ID);
 		if (ensure(graphPoly))
 		{
 			if (!graphPoly->bInterior)

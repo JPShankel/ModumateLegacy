@@ -37,7 +37,7 @@ FMiterParticipantData::FMiterParticipantData(const struct FMiterData *InMiterDat
 		return;
 	}
 
-	const Modumate::FEdgeFaceConnection &edgeFaceConnection = InMiterData->GraphEdge->ConnectedFaces[EdgeFaceIndex];
+	const FEdgeFaceConnection &edgeFaceConnection = InMiterData->GraphEdge->ConnectedFaces[EdgeFaceIndex];
 	GraphFace = doc->GetVolumeGraph().FindFace(edgeFaceConnection.FaceID);
 	if (!ensure(GraphFace))
 	{
@@ -46,7 +46,7 @@ FMiterParticipantData::FMiterParticipantData(const struct FMiterData *InMiterDat
 
 	int32 planeObjID = FMath::Abs(edgeFaceConnection.FaceID);
 	const AModumateObjectInstance *planeObj = doc->GetObjectById(planeObjID);
-	MOI = Modumate::Mitering::FMiterHelpers::GetChildLayeredObj(planeObj);
+	MOI = FMiterHelpers::GetChildLayeredObj(planeObj);
 
 	// This step is allowed to fail, since we could try to construct a miter participant from a plane without a child layered object.
 	if (MOI == nullptr)
@@ -243,7 +243,7 @@ bool FMiterData::GatherDetails(const AModumateObjectInstance *InMiterObject)
 		return false;
 	}
 
-	const Modumate::FGraph3D &volumeGraph = doc->GetVolumeGraph();
+	const FGraph3D &volumeGraph = doc->GetVolumeGraph();
 	GraphEdge = volumeGraph.FindEdge(MOI->ID);
 	if (GraphEdge == nullptr)
 	{

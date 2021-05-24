@@ -4,18 +4,17 @@ class FString;
 
 #pragma once
 
-namespace Modumate {
-	class FMiniZip
+class FMiniZip
+{
+public:
+	void AddFile(const FString& filename)
 	{
-	public:
-		void AddFile(const FString& filename)
-		{
-			Files.Add(filename);
-		}
-		bool CreateArchive(const FString& archiveFilename);
-	private:
-		TArray<FString> Files;
+		Files.Add(filename);
+	}
+	bool CreateArchive(const FString& archiveFilename);
+private:
+	TArray<FString> Files;
 
-		static const int CompressionLevel = 9;
-	};
-}
+	static const int CompressionLevel = 9;
+};
+

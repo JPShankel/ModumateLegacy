@@ -195,7 +195,7 @@ void AMOICutPlane::AddDraftingLines(UHUDDrawWidget *HUDDrawWidget)
 	}
 }
 
-void AMOICutPlane::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane,
+void AMOICutPlane::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane,
 	const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 	TArray<TArray<FVector>> &OutPerimeters) const
 {
@@ -206,7 +206,7 @@ void AMOICutPlane::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposit
 	for(const auto& traceResponse: InprocessRenders)
 	{
 		FModumateTraceObject trace;
-		TSharedPtr<Modumate::FDraftingComposite> singleOutlineElement = MakeShareable(new Modumate::FDraftingComposite);
+		TSharedPtr<FDraftingComposite> singleOutlineElement = MakeShareable(new FDraftingComposite);
 		ParentPage->Children.Add(singleOutlineElement);
 
 		bool result = FJsonObjectConverter::JsonObjectStringToUStruct<FModumateTraceObject>(traceResponse.Value.JsonTrace, &trace, 0, 0);
@@ -295,10 +295,10 @@ void AMOICutPlane::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposit
 
 				if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 				{
-					TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShareable(new Modumate::FDraftingLine(
+					TSharedPtr<FDraftingLine> draftingLine = MakeShareable(new FDraftingLine(
 						FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
 						FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
-						ModumateUnitParams::FThickness::Points(0.15f), Modumate::FMColor::Gray144));
+						ModumateUnitParams::FThickness::Points(0.15f), FMColor::Gray144));
 					singleOutlineElement->Children.Add(draftingLine);
 					draftingLine->SetLayerTypeRecursive(traceResponse.Value.LayerType);
 				}
@@ -435,7 +435,7 @@ bool AMOICutPlane::UpdateDraftingPreview()
 	{
 		return true;
 	}
-	PreviewHUDLines = MakeShared<Modumate::FDraftingComposite>();
+	PreviewHUDLines = MakeShared<FDraftingComposite>();
 
 	FVector axisY = CachedAxisY * -1.0f;
 
@@ -461,10 +461,10 @@ bool AMOICutPlane::UpdateDraftingPreview()
 	return true;
 }
 
-bool AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting)
+bool AMOICutPlane::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting)
 {
 	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
-	const Modumate::FGraph3D& volumeGraph = Document->GetVolumeGraph();
+	const FGraph3D& volumeGraph = Document->GetVolumeGraph();
 	TArray<FVector2D> boxPoints;
 
 	for (auto& point : CachedPoints)
@@ -518,7 +518,7 @@ bool AMOICutPlane::GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> P
 
 						for (const auto& object: surfaceObjects)
 						{
-							if (object.Value == Modumate::EGraphObjectType::Vertex)
+							if (object.Value == EGraphObjectType::Vertex)
 							{
 								continue;
 							}
@@ -579,7 +579,7 @@ void AMOICutPlane::SetupPendingRenders()
 		FPendingObjectRender renderInfo;
 		renderInfo.LocalId = renderId++;
 		renderInfo.MoiId = object->ID;
-		renderInfo.LayerType = Modumate::FModumateLayerType::kFfeOutline;
+		renderInfo.LayerType = FModumateLayerType::kFfeOutline;
 		PendingObjectRenders.Enqueue(renderInfo);
 	}
 }
@@ -603,7 +603,7 @@ void AMOICutPlane::TraceRequestComplete(int32 TraceID, FString TraceString)
 
 void AMOICutPlane::ConvertToOutlines(const FString& renderTargetFilename)
 {
-	Modumate::FModumateAutotraceConnect autotraceServer;
+	FModumateAutotraceConnect autotraceServer;
 
 	if (autotraceServer.ConvertImageFromFile(renderTargetFilename, CurrentObjectRender.LocalId, ID, GetWorld()))
 	{

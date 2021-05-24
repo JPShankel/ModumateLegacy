@@ -3,17 +3,14 @@
 
 #include "Drafting/Schedules/DraftingSchedule.h"
 
-namespace Modumate {
+class IModumateDraftingDraw;
+class FIconElement;
 
-	class IModumateDraftingDraw;
-	class FIconElement;
+class FSummaryList : public FDraftingSchedule
+{
+public:
+	FSummaryList() {};
+	virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
 
-	class FSummaryList : public FDraftingSchedule
-	{
-	public:
-		FSummaryList() {};
-		virtual EDrawError InitializeBounds(IModumateDraftingDraw *drawingInterface) override;
-
-		TArray<TSharedPtr<FIconElement>> ffeIconElements;
-	};
-}
+	TArray<TSharedPtr<FIconElement>> ffeIconElements;
+};

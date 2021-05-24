@@ -12,62 +12,59 @@
 class UModumateDocument;
 class AModumateObjectInstance;
 
-namespace Modumate
+class FDraftingSchedule;
+
+class IModumateDraftingDraw;
+
+class MODUMATE_API FModumateDraftingView
 {
-	class FDraftingSchedule;
+public:
+	enum DraftType {kDWG};
+	FModumateDraftingView(UWorld *world, UModumateDocument *doc, DraftType draftType);
+	virtual ~FModumateDraftingView();
 
-	class IModumateDraftingDraw;
+public:
+		FString CurrentFilePath;
+private:
+	bool ExportDraft(UWorld *world, const TCHAR *filepath);
 
-	class MODUMATE_API FModumateDraftingView
-	{
-	public:
-		enum DraftType {kDWG};
-		FModumateDraftingView(UWorld *world, UModumateDocument *doc, DraftType draftType);
-		virtual ~FModumateDraftingView();
+public:
+	TArray<TSharedPtr<FDraftingPage>> DraftingPages;
 
-	public:
-		 FString CurrentFilePath;
-	private:
-		bool ExportDraft(UWorld *world, const TCHAR *filepath);
+	// List of all schedules; arranged on pages in PaginateScheduleViews
+	TArray<TSharedPtr<FDraftingSchedule>> Schedules;
 
-	public:
-		TArray<TSharedPtr<FDraftingPage>> DraftingPages;
+	TSharedPtr<IModumateDraftingDraw> DrawingInterface;
 
-		// List of all schedules; arranged on pages in PaginateScheduleViews
-		TArray<TSharedPtr<FDraftingSchedule>> Schedules;
+	void PaginateScheduleViews(IModumateDraftingDraw *drawingInterface);
 
-		TSharedPtr<IModumateDraftingDraw> DrawingInterface;
+public:
+	void GeneratePagesFromCutPlanes(UWorld *world);
 
-		void PaginateScheduleViews(IModumateDraftingDraw *drawingInterface);
+// Generate schedules
+public:
+	void GenerateScheduleViews();
 
-	public:
-		void GeneratePagesFromCutPlanes(UWorld *world);
+	// name and number are defaulted - often name and number are fields that are dependent on pageNumber
+	// the fields are public in FDraftingPage so they can be set after this function with the desired format
+	TSharedPtr<FDraftingPage> CreateAndAddPage(FString name = FString(), FString number = FString());
 
-	// Generate schedules
-	public:
-		void GenerateScheduleViews();
+// Receive pages
+public:
+	void FinishDraft();
 
-		// name and number are defaulted - often name and number are fields that are dependent on pageNumber
-		// the fields are public in FDraftingPage so they can be set after this function with the desired format
-		TSharedPtr<FDraftingPage> CreateAndAddPage(FString name = FString(), FString number = FString());
+private:
+	TWeakObjectPtr<UWorld> World;
+	UModumateDocument * Document;
+	const DraftType ExportType;
 
-	// Receive pages
-	public:
-		void FinishDraft();
+public:
+	// TODO: this stuff should probably be a setting, as opposed to hard-coded here
+	// this can be removed once the remaining schedule code is moved somewhere else or deleted
+	FModumateUnitCoord2D PageSize = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(17.0f), ModumateUnitParams::FYCoord::FloorplanInches(11.0f));
+	FModumateUnitCoord2D PageMargin = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(0.5f), ModumateUnitParams::FYCoord::FloorplanInches(0.5f));
 
-	private:
-		TWeakObjectPtr<UWorld> World;
-		UModumateDocument * Document;
-		const DraftType ExportType;
+	const float TitleBarWidth = 3.0f;
 
-	public:
-		// TODO: this stuff should probably be a setting, as opposed to hard-coded here
-		// this can be removed once the remaining schedule code is moved somewhere else or deleted
-		FModumateUnitCoord2D PageSize = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(17.0f), ModumateUnitParams::FYCoord::FloorplanInches(11.0f));
-		FModumateUnitCoord2D PageMargin = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(0.5f), ModumateUnitParams::FYCoord::FloorplanInches(0.5f));
-
-		const float TitleBarWidth = 3.0f;
-
-		TArray<FPlane> SectionCuts;
-	};
-}
+	TArray<FPlane> SectionCuts;
+};

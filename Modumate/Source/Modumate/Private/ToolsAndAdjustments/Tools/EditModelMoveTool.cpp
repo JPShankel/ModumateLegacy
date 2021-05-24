@@ -11,7 +11,7 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/LineActor.h"
 
-using namespace Modumate;
+
 
 UMoveObjectTool::UMoveObjectTool()
 	: Super()

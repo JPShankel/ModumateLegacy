@@ -19,5 +19,5 @@ public:
 	virtual bool Deactivate() override;
 
 protected:
-	TSharedPtr<Modumate::FGraph2D> SelectedGraph;
+	TSharedPtr<FGraph2D> SelectedGraph;
 };

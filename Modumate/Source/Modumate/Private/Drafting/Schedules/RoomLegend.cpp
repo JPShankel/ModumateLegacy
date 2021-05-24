@@ -6,54 +6,52 @@
 
 #define LOCTEXT_NAMESPACE "ModumateRoomLegend"
 
-namespace Modumate {
-	FRoomLegend::FRoomLegend()
-	{
-		Title = MakeShareable(new FDraftingText(
-			LOCTEXT("roomlegend_title", "Room Legend"),
-			ModumateUnitParams::FFontSize::FloorplanInches(TitleHeight),
-			DefaultColor,
-			FontType::Bold));
+FRoomLegend::FRoomLegend()
+{
+	Title = MakeShareable(new FDraftingText(
+		LOCTEXT("roomlegend_title", "Room Legend"),
+		ModumateUnitParams::FFontSize::FloorplanInches(TitleHeight),
+		DefaultColor,
+		FontType::Bold));
 
-		Children.Add(Title);
+	Children.Add(Title);
 
-		// TODO: the commented out columns are not a part of the legend used for presentation plans,
-		// but there will be more detail when this is used for other plans
-		ColumnHeaders = {
-			LOCTEXT("number", "#"),
-			LOCTEXT("color", "   "),
-			//LOCTEXT("group", "Group"),
-			LOCTEXT("name", "Name"),
-			LOCTEXT("area", "Area (sq. ft.)")
-			//LOCTEXT("load", "Load Factor"),
-			//LOCTEXT("occ", "Occupants"),
-			//LOCTEXT("netgross", "Net/Gross")
-			// potentially add comments column here
-		};
+	// TODO: the commented out columns are not a part of the legend used for presentation plans,
+	// but there will be more detail when this is used for other plans
+	ColumnHeaders = {
+		LOCTEXT("number", "#"),
+		LOCTEXT("color", "   "),
+		//LOCTEXT("group", "Group"),
+		LOCTEXT("name", "Name"),
+		LOCTEXT("area", "Area (sq. ft.)")
+		//LOCTEXT("load", "Load Factor"),
+		//LOCTEXT("occ", "Occupants"),
+		//LOCTEXT("netgross", "Net/Gross")
+		// potentially add comments column here
+	};
 
-		Data = MakeShareable(new FScheduleGrid());
-		Data->InitializeColumns(ColumnHeaders);
+	Data = MakeShareable(new FScheduleGrid());
+	Data->InitializeColumns(ColumnHeaders);
 
-		Children.Add(Data);
-	}
+	Children.Add(Data);
+}
 
-	EDrawError FRoomLegend::InitializeBounds(IModumateDraftingDraw *drawingInterface)
-	{
-		EDrawError error;
+EDrawError FRoomLegend::InitializeBounds(IModumateDraftingDraw *drawingInterface)
+{
+	EDrawError error;
 
-		Title->InitializeBounds(drawingInterface);
-		Title->MoveYTo(Title->Dimensions.Y * -1.0f);
+	Title->InitializeBounds(drawingInterface);
+	Title->MoveYTo(Title->Dimensions.Y * -1.0f);
 
-		Dimensions.Y = Title->Dimensions.Y + ModumateUnitParams::FYCoord::FloorplanInches(TitleMargin);
+	Dimensions.Y = Title->Dimensions.Y + ModumateUnitParams::FYCoord::FloorplanInches(TitleMargin);
 
-		Data->MoveYTo(Dimensions.Y * -1.0f);
+	Data->MoveYTo(Dimensions.Y * -1.0f);
 
-		error = Data->InitializeBounds(drawingInterface);
-		Dimensions.X = Data->Dimensions.X;
-		Dimensions.Y += Data->Dimensions.Y;
+	error = Data->InitializeBounds(drawingInterface);
+	Dimensions.X = Data->Dimensions.X;
+	Dimensions.Y += Data->Dimensions.Y;
 
-		return error;
-	}
+	return error;
 }
 
 #undef LOCTEXT_NAMESPACE

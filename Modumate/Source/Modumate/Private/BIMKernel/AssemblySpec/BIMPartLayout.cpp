@@ -188,7 +188,7 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 	if (!InAssemblySpec.SlotConfigConceptualSizeY.IsEmpty())
 	{
 		TArray<FString> varNames;
-		Modumate::Expression::ExtractVariables(InAssemblySpec.SlotConfigConceptualSizeY, varNames);
+		Expression::ExtractVariables(InAssemblySpec.SlotConfigConceptualSizeY, varNames);
 		for (const auto& var : varNames)
 		{
 			float val;
@@ -205,7 +205,7 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 		}
 #endif
 
-		CabinetPanelAssemblyConceptualSizeY = Modumate::Expression::Evaluate(PartSlotInstances[0].VariableValues, InAssemblySpec.SlotConfigConceptualSizeY);
+		CabinetPanelAssemblyConceptualSizeY = Expression::Evaluate(PartSlotInstances[0].VariableValues, InAssemblySpec.SlotConfigConceptualSizeY);
 	}
 
 	// Second pass: compute all derived values by applying transformation formulae 

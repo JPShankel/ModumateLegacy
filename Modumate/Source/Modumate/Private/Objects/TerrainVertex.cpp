@@ -32,7 +32,7 @@ bool AMOITerrainVertex::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 
 		FVector origin = terrainMoi->GetLocation();
 		const auto graph2d = GetDocument()->FindSurfaceGraph(terrainMoi->ID);
-		const Modumate::FGraph2DVertex* graphVert = graph2d->FindVertex(ID);
+		const FGraph2DVertex* graphVert = graph2d->FindVertex(ID);
 		if (ensure(graphVert))
 		{
 			CachedLocation = origin + graphVert->Position.X * FVector::ForwardVector + graphVert->Position.Y * FVector::RightVector;

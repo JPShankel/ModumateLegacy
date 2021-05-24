@@ -239,9 +239,9 @@ bool AAdjustPolyEdgeHandle::GetTransforms(const FVector Offset, TMap<int32, FTra
 
 	float translation = Offset | CurrentDirection;
 
-	Modumate::EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(TargetMOI->GetObjectType());
-	Modumate::EGraphObjectType graph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(TargetMOI->GetObjectType());
-	if (graph3DObjType != Modumate::EGraph3DObjectType::None)
+	EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(TargetMOI->GetObjectType());
+	EGraphObjectType graph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(TargetMOI->GetObjectType());
+	if (graph3DObjType != EGraph3DObjectType::None)
 	{
 		if (TargetMOI->GetObjectType() == EObjectType::OTMetaPlane)
 		{
@@ -273,7 +273,7 @@ bool AAdjustPolyEdgeHandle::GetTransforms(const FVector Offset, TMap<int32, FTra
 			return false;
 		}
 	}
-	else if (graph2DObjType != Modumate::EGraphObjectType::None)
+	else if (graph2DObjType != EGraphObjectType::None)
 	{
 		auto surfaceGraph = GameState->Document->FindSurfaceGraphByObjID(TargetMOI->ID);
 		auto surfaceObj = GameState->Document->GetObjectById(TargetMOI->GetParentID());

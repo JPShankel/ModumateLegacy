@@ -4,7 +4,7 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "Algo/Transform.h"
 
-using namespace Modumate;
+
 
 // Sets default values
 AMOIGroupActor::AMOIGroupActor()

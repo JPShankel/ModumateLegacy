@@ -31,11 +31,8 @@ struct MODUMATE_API FMOICutPlaneData
 
 class ACutPlaneCaptureActor;
 
-namespace Modumate
-{
-	class FDraftingComposite;
-	class FModumateDraftingView;
-}
+class FDraftingComposite;
+class FModumateDraftingView;
 
 UCLASS()
 class MODUMATE_API AMOICutPlane : public AMOIPlaneBase, public ISceneCaptureObject
@@ -51,7 +48,7 @@ public:
 
 	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;
 	virtual void AddDraftingLines(UHUDDrawWidget *HUDDrawWidget) override;
-	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override;
+	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const override;
 	virtual ISceneCaptureObject* GetSceneCaptureInterface() override { return this; }
 
 	virtual bool AddCaptureArea(int32 ScopeBoxID, TArray<FVector> CaptureArea) override;
@@ -72,12 +69,12 @@ public:
 	void SetHUDDwgDrafting(bool NewEnable) { bHUDDwgDrafting = NewEnable; };
 
 
-	Modumate::FDraftingHUDDraw DrawingInterface;
+	FDraftingHUDDraw DrawingInterface;
 
 	// These two objects are similar in purpose and use, but there are differences between what the HUD and the PDF 
 	// can and should draw. These objects should remain separate while there isn't parity between the two interfaces.
-	TSharedPtr<Modumate::FDraftingComposite> PreviewHUDLines = nullptr;
-	TSharedPtr<Modumate::FDraftingComposite> DraftingForegroundLines = nullptr;
+	TSharedPtr<FDraftingComposite> PreviewHUDLines = nullptr;
+	TSharedPtr<FDraftingComposite> DraftingForegroundLines = nullptr;
 
 	TWeakObjectPtr<ADynamicMeshActor> MasksActor;
 
@@ -88,7 +85,7 @@ protected:
 	virtual float GetAlpha() const override;
 	void UpdateCachedGeometryData();
 	bool UpdateDraftingPreview();
-	bool GetForegroundLines(TSharedPtr<Modumate::FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting = false);
+	bool GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting = false);
 	void ConvertToOutlines(const FString& renderTargetFilename);
 
 	TWeakObjectPtr<ACutPlaneCaptureActor> CaptureActor;

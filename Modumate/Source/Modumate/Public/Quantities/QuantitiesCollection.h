@@ -47,11 +47,8 @@ struct FBIMPartSlotSpec;
 struct FLayerPatternModule;
 struct FPolyHole3D;
 
-namespace Modumate
-{
-	class FGraph3DFace;
-	class FGraph2DPolygon;
-}
+class FGraph3DFace;
+class FGraph2DPolygon;
 
 class MODUMATE_API FQuantitiesCollection
 {
@@ -81,9 +78,9 @@ public:
 	const QuantitiesMap& GetQuantities() const { return Quantities; }
 	int32 Num() const { return Quantities.Num(); }
 
-	static float AreaOfFace(const Modumate::FGraph3DFace& Face);
-	static float AreaOfFace(const Modumate::FGraph2DPolygon& Face);
-	static float LengthOfWallFace(const Modumate::FGraph3DFace& Face);
+	static float AreaOfFace(const FGraph3DFace& Face);
+	static float AreaOfFace(const FGraph2DPolygon& Face);
+	static float LengthOfWallFace(const FGraph3DFace& Face);
 	static float AreaOfLayer(const FLayerGeomDef& LayerGeom);
 	static float AreaOfPoly(const TArray<FVector>& Poly);
 	static float AreaOfPoly(const TArray<FVector2D>& Poly);

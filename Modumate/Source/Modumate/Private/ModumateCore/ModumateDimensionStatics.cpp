@@ -12,7 +12,7 @@
 #include "Kismet/KismetStringLibrary.h"
 #include <regex>
 
-using namespace Modumate;
+
 
 #define LOCTEXT_NAMESPACE "ModumateDimensions"
 

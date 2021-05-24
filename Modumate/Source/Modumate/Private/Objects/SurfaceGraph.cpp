@@ -106,7 +106,7 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 				for (int32 facePointIdx = 0; facePointIdx < CachedFacePoints.Num(); ++facePointIdx)
 				{
 					FVector2D prevPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
-					Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(prevPos2D);
+					FGraph2DVertex* vertex = surfaceGraph->FindVertex(prevPos2D);
 					if ((vertex) && poly->VertexIDs.Contains(vertex->ID))
 					{
 						FaceIdxToVertexID.Add(facePointIdx, vertex->ID);
@@ -203,7 +203,7 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 							break;
 						}
 
-						Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(*index);
+						FGraph2DVertex* vertex = surfaceGraph->FindVertex(*index);
 						if (ensure(vertex) && boundingVertexIDs.Contains(vertex->ID))
 						{
 							FVector2D newPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);
@@ -382,7 +382,7 @@ bool AMOISurfaceGraph::CheckGraphLink()
 			bLinked = false;
 			return false;
 		}
-		Modumate::FGraph2DVertex* vertex = surfaceGraph->FindVertex(*index);
+		FGraph2DVertex* vertex = surfaceGraph->FindVertex(*index);
 		if (ensure(vertex) && boundingVertexIDs.Contains(vertex->ID))
 		{
 			FVector2D newPos2D = UModumateGeometryStatics::ProjectPoint2DTransform(CachedFacePoints[facePointIdx], CachedFaceOrigin);

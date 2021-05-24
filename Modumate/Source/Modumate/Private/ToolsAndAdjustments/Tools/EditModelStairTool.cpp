@@ -18,7 +18,7 @@
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
-using namespace Modumate;
+
 
 UStairTool::UStairTool()
 	: Super()

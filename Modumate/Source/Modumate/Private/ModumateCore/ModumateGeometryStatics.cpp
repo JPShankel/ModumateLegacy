@@ -1599,7 +1599,7 @@ bool UModumateGeometryStatics::GetAxisForVector(const FVector &Normal, EAxis::Ty
 	return false;
 }
 
-bool UModumateGeometryStatics::GetEdgeIntersections(const TArray<FVector> &Positions, const FVector &IntersectionOrigin, const FVector &IntersectionDir, TArray<Modumate::FEdgeIntersection> &OutEdgeIntersections, float Epsilon)
+bool UModumateGeometryStatics::GetEdgeIntersections(const TArray<FVector> &Positions, const FVector &IntersectionOrigin, const FVector &IntersectionDir, TArray<FEdgeIntersection> &OutEdgeIntersections, float Epsilon)
 {
 	OutEdgeIntersections.Reset();
 	int32 numSourceEdges = Positions.Num();
@@ -1643,17 +1643,17 @@ bool UModumateGeometryStatics::GetEdgeIntersections(const TArray<FVector> &Posit
 			if (bNearVertexA)
 			{
 				intersectedIdxs.Add(edgeIdxA);
-				OutEdgeIntersections.Add(Modumate::FEdgeIntersection(edgeIdxA, edgeIdxB, distAlongRay, distAlongEdge, edgeIntersection));
+				OutEdgeIntersections.Add(FEdgeIntersection(edgeIdxA, edgeIdxB, distAlongRay, distAlongEdge, edgeIntersection));
 			}
 			// if the intersection is on a vertex, create the intersection so that the EdgeIdxA field holds the vertexID
 			else if (bNearVertexB)
 			{
 				intersectedIdxs.Add(edgeIdxB);
-				OutEdgeIntersections.Add(Modumate::FEdgeIntersection(edgeIdxB, (edgeIdxB + 1) % numSourceEdges, distAlongRay, distAlongEdge, edgeIntersection));
+				OutEdgeIntersections.Add(FEdgeIntersection(edgeIdxB, (edgeIdxB + 1) % numSourceEdges, distAlongRay, distAlongEdge, edgeIntersection));
 			}
 			else
 			{
-				OutEdgeIntersections.Add(Modumate::FEdgeIntersection(edgeIdxA, edgeIdxB, distAlongRay, distAlongEdge, edgeIntersection));
+				OutEdgeIntersections.Add(FEdgeIntersection(edgeIdxA, edgeIdxB, distAlongRay, distAlongEdge, edgeIntersection));
 			}
 		}
 

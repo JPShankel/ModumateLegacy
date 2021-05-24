@@ -7,15 +7,9 @@
 #include "VectorTypes.h"
 
 class UModumateDocument;
-namespace Modumate
-{
-	class FGraph2D;
-}
+class FGraph2D;
+class FDraftingComposite;
 
-namespace Modumate
-{
-	class FDraftingComposite;
-}
 
 class FModumateDimension
 {
@@ -59,7 +53,7 @@ public:
 class FModumateDimensions
 {
 public:
-	bool AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDraftingComposite>& Page, const UModumateDocument * Doc,
+	bool AddDimensionsFromCutPlane(TSharedPtr<FDraftingComposite>& Page, const UModumateDocument * Doc,
 		FPlane Plane, FVector Origin, FVector AxisX);
 
 private:
@@ -75,7 +69,7 @@ private:
 	void CreateAngularDimension(int32 Edge1, int32 Vertex, int32 Edge2);
 	void ConnectIslands(const TArray<TSet<int32>>& plans);
 
-	TSharedPtr<Modumate::FGraph2D> CutGraph;
+	TSharedPtr<FGraph2D> CutGraph;
 	TMap<int32, int32> GraphIDToObjID;
 	TMap<int32, int32> GraphIDToDimID;
 	TArray<FModumateDimension> Dimensions;

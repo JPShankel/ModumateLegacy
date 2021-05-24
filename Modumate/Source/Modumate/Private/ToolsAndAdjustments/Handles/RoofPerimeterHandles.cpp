@@ -13,7 +13,7 @@
 #include "UI/RoofPerimeterPropertiesWidget.h"
 #include "UI/WidgetClassAssetData.h"
 
-using namespace Modumate;
+
 
 bool ACreateRoofFacesHandle::BeginUse()
 {

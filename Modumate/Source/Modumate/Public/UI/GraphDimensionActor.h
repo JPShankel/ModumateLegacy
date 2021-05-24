@@ -8,11 +8,8 @@
 
 #include "GraphDimensionActor.generated.h"
 
-namespace Modumate 
-{
-	class FGraph3D;
-	class FGraph2D;
-}
+class FGraph3D;
+class FGraph2D;
 
 UCLASS()
 class MODUMATE_API AGraphDimensionActor : public ADimensionActor
@@ -50,5 +47,5 @@ private:
 	FVector AxisX;
 	FVector AxisY;
 
-	TSharedPtr<Modumate::FGraph2D> SurfaceGraph;
+	TSharedPtr<FGraph2D> SurfaceGraph;
 };

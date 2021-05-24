@@ -5,11 +5,8 @@
 
 class AModumateObjectInstance;
 
-namespace Modumate
-{
-	class FGraph3DFace;
-	class FGraph3DEdge;
-}
+class FGraph3DFace;
+class FGraph3DEdge;
 
 // The individual groups of layers that miter together as a unit,
 // interpolating their extents for each of the layers within.
@@ -46,7 +43,7 @@ struct MODUMATE_API FMiterParticipantData
 	const AModumateObjectInstance* MOI = nullptr;
 
 	// The pointer to the actual graph face for this object
-	const Modumate::FGraph3DFace* GraphFace = nullptr;
+	const FGraph3DFace* GraphFace = nullptr;
 
 	// The angle of the miter participant, relative to the edge, for sorting
 	float MiterAngle = 0.0f;
@@ -104,7 +101,7 @@ struct MODUMATE_API FMiterData
 	TWeakObjectPtr<const AModumateObjectInstance> MOI = nullptr;
 
 	// The pointer to the actual graph edge for this object
-	const Modumate::FGraph3DEdge* GraphEdge = nullptr;
+	const FGraph3DEdge* GraphEdge = nullptr;
 
 	// The position to use as a reference point for the miter (the midpoint of the edge)
 	FVector EdgeCenter = FVector::ZeroVector;

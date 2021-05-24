@@ -6,24 +6,22 @@
 
 #define LOCTEXT_NAMESPACE "ModumateSchedule"
 
-namespace Modumate {
-
-	FDraftingSchedule::~FDraftingSchedule() 
-	{ 
-		FDraftingComposite::~FDraftingComposite(); 
-	}
-
-	TSharedPtr<FDraftingText> FDraftingSchedule::MakeDraftingText(FText text)
-	{
-		return MakeShareable(new FDraftingText(
-			text,
-			DefaultFontSize,
-			DefaultColor,
-			DefaultFont,
-			DefaultAlignment,
-			ModumateUnitParams::FAngle::Degrees(0.0f),
-			ModumateUnitParams::FWidth::FloorplanInches(DefaultColumnWidth)));
-	}
+FDraftingSchedule::~FDraftingSchedule() 
+{ 
+	FDraftingComposite::~FDraftingComposite(); 
 }
+
+TSharedPtr<FDraftingText> FDraftingSchedule::MakeDraftingText(FText text)
+{
+	return MakeShareable(new FDraftingText(
+		text,
+		DefaultFontSize,
+		DefaultColor,
+		DefaultFont,
+		DefaultAlignment,
+		ModumateUnitParams::FAngle::Degrees(0.0f),
+		ModumateUnitParams::FWidth::FloorplanInches(DefaultColumnWidth)));
+}
+
 
 #undef LOCTEXT_NAMESPACE

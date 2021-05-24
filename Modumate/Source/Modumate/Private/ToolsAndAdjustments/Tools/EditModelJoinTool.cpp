@@ -8,7 +8,7 @@
 
 #include "DocumentManagement/ModumateCommands.h"
 
-using namespace Modumate;
+
 
 UJoinTool::UJoinTool()
 	: Super()

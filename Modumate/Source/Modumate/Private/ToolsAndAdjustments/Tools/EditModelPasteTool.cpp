@@ -9,7 +9,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 
-using namespace Modumate;
+
 
 UPasteTool::UPasteTool()
 	: Super()
@@ -35,7 +35,7 @@ bool UPasteTool::Activate()
 
 	const TSharedPtr<FJsonObject> *docOb;
 
-	if (!PasteJson->TryGetObjectField(Modumate::DocObjectInstanceField, docOb))
+	if (!PasteJson->TryGetObjectField(DocObjectInstanceField, docOb))
 	{
 		return false;
 	}

@@ -1,11 +1,8 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-namespace Modumate
-{
-	class FDraftingComposite;
-	enum class FModumateLayerType;
-}
+class FDraftingComposite;
+enum class FModumateLayerType;
 
 #include "ModumateCore/ModumateTypes.h"
 
@@ -32,7 +29,7 @@ protected:
 		FVector2D Size { ForceInitToZero };
 		float Scale { 1.0f };
 		float Depth  { 0.0f };
-		Modumate::FModumateLayerType LayerType;
+		FModumateLayerType LayerType;
 		FString JsonTrace;
 		int32 LocalId = 0;
 	};

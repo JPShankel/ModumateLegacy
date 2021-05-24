@@ -22,7 +22,7 @@
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "Objects/LayeredObjectInterface.h"
 
-using namespace Modumate;
+
 
 // Sets default values
 ADynamicIconGenerator::ADynamicIconGenerator()
@@ -728,7 +728,7 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 	TArray<TArray<FVector>> cachedRiserPolys;
 
 	FVector runDir(ForceInitToZero), stairOrigin(ForceInitToZero);
-	if (!Modumate::FStairStatics::CalculateLinearRunPolysFromPlane(
+	if (!FStairStatics::CalculateLinearRunPolysFromPlane(
 		runPlanePoints, goalTreadDepth, bCachedUseRisers, bCachedStartRiser, bCachedEndRiser,
 		stepRun, stepRise, runDir, stairOrigin,
 		cachedTreadPolys, cachedRiserPolys))
@@ -749,7 +749,7 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 	const float totalTreadThickness = cachedTreadDims.TotalUnfinishedWidth;
 	const float totalRiserThickness = bCachedUseRisers ? cachedRiserDims.TotalUnfinishedWidth : openStairsOverhang;
 
-	Modumate::FStairStatics::CalculateSetupStairPolysParams(
+	FStairStatics::CalculateSetupStairPolysParams(
 		Assembly,
 		totalTreadThickness, totalRiserThickness, runDir,
 		cachedTreadPolys, cachedRiserPolys,

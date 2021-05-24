@@ -26,8 +26,6 @@
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
-
-using namespace Modumate;
 const FName AAdjustmentHandleActor::StateRequestTag(TEXT("AdjustmentHandle"));
 
 // Sets default values

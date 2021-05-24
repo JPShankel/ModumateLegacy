@@ -16,7 +16,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 
 
-using namespace Modumate;
+
 
 URoofPerimeterPropertiesWidget::URoofPerimeterPropertiesWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

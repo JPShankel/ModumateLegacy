@@ -83,7 +83,7 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 	}
 
 	const TSharedPtr<FJsonObject> *headerOb;
-	if (!FileJson->TryGetObjectField(Modumate::DocHeaderField, headerOb))
+	if (!FileJson->TryGetObjectField(DocHeaderField, headerOb))
 	{
 		return false;
 	}
@@ -120,7 +120,7 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 
 	const TSharedPtr<FJsonObject> *docOb;
 
-	if (!FileJson->TryGetObjectField(Modumate::DocObjectInstanceField, docOb))
+	if (!FileJson->TryGetObjectField(DocObjectInstanceField, docOb))
 	{
 		return false;
 	}

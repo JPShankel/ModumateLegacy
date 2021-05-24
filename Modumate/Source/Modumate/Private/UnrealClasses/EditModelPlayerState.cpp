@@ -31,7 +31,7 @@
 #include "UnrealClasses/ThumbnailCacheManager.h"
 
 
-using namespace Modumate;
+
 
 AEditModelPlayerState::AEditModelPlayerState()
 	: ShowDebugSnaps(false)
@@ -279,8 +279,8 @@ void AEditModelPlayerState::UpdateRenderFlags(const TSet<AModumateObjectInstance
 		if (moi && !moi->IsDestroyed())
 		{
 			auto type = moi->GetObjectType();
-			bool bIsGraphType = (UModumateTypeStatics::Graph2DObjectTypeFromObjectType(type) != Modumate::EGraphObjectType::None) ||
-				(UModumateTypeStatics::Graph3DObjectTypeFromObjectType(type) != Modumate::EGraph3DObjectType::None);
+			bool bIsGraphType = (UModumateTypeStatics::Graph2DObjectTypeFromObjectType(type) != EGraphObjectType::None) ||
+				(UModumateTypeStatics::Graph3DObjectTypeFromObjectType(type) != EGraph3DObjectType::None);
 			bool bHovered = (ShowHoverEffects && !bIsGraphType && HoveredObjectDescendents.Contains(moi));
 			bool bSelected = SelectedObjects.Contains(moi);
 

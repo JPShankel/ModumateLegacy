@@ -760,10 +760,10 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 	return EBIMResult::Error;
 }
 
-EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, int32 DocVersion)
+EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, int32 InDocVersion)
 {
 	// Prior to version 11, material bindings were a named member, not custom data
-	if (DocVersion < 11)
+	if (InDocVersion < 11)
 	{
 		FGuid matGUID;
 		// If we have deprecated channels, translate them
@@ -840,7 +840,7 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const 
 	}
 
 	// Prior to version 12, some NCPs had spaces
-	if (DocVersion < 12)
+	if (InDocVersion < 12)
 	{
 		FString ncp;
 		MyTagPath.ToString(ncp);
@@ -848,7 +848,7 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const 
 	}
 
 	// Prior to version 13, patterns were stored as children. Convert to property.
-	if (DocVersion < 13)
+	if (InDocVersion < 13)
 	{
 		for (auto& childPin : ChildPresets)
 		{
@@ -864,7 +864,7 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const 
 	}
 
 	// Prior to version 14, beams and columns had their dimensions reversed
-	if (DocVersion < 14)
+	if (InDocVersion < 14)
 	{
 		switch (ObjectType)
 		{
@@ -886,7 +886,7 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const 
 	}
 
 	// Prior to version 15, Presets only had a single custom data member, either material binding or edge detail
-	if (DocVersion < 15)
+	if (InDocVersion < 15)
 	{
 		if (CustomData_DEPRECATED.IsValid())
 		{
@@ -907,7 +907,7 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const 
 	}
 
 	// Prior to version 16, layers did not have miter priority data
-	if (DocVersion < 16 && NodeScope == EBIMValueScope::Layer)
+	if (InDocVersion < 16 && NodeScope == EBIMValueScope::Layer)
 	{
 		FBIMPresetLayerPriority layerPriority;
 		if (ensureAlways(!TryGetCustomData(layerPriority)))

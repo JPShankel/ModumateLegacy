@@ -7,10 +7,8 @@
 
 #include "DraftingManager.generated.h"
 
-namespace Modumate {
-	class FModumateDraftingView;
-	class IModumateDraftingDraw;
-}
+class FModumateDraftingView;
+class IModumateDraftingDraw;
 
 // the information associated with a scene capture is a 
 // cutPlane ID (key) and a scopeBox ID (value)
@@ -47,6 +45,6 @@ public:
 
 	TMap<SceneCaptureID, int32> SceneCaptureIDToDrawingAmounts;
 
-	Modumate::FModumateDraftingView *CurrentDraftingView = nullptr;
-	Modumate::IModumateDraftingDraw *CurrentDrawingInterface = nullptr;
+	FModumateDraftingView *CurrentDraftingView = nullptr;
+	IModumateDraftingDraw *CurrentDrawingInterface = nullptr;
 };

@@ -16,7 +16,7 @@
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
 
-using namespace Modumate;
+
 
 UCabinetTool::UCabinetTool()
 	: Super()

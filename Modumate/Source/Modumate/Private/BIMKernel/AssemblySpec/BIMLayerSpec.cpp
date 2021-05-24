@@ -73,8 +73,8 @@ void FBIMLayerSpec::EvaluateParameterizedPatternExtents()
 
 		if (extentsExpressions.Split(TEXT(","), &patternWidthExpr, &patternHeightExpr))
 		{
-			Pattern.CachedExtents.X = Modumate::Expression::Evaluate(CachedPatternExprVars, patternWidthExpr);
-			Pattern.CachedExtents.Y = Modumate::Expression::Evaluate(CachedPatternExprVars, patternHeightExpr);
+			Pattern.CachedExtents.X = Expression::Evaluate(CachedPatternExprVars, patternWidthExpr);
+			Pattern.CachedExtents.Y = Expression::Evaluate(CachedPatternExprVars, patternHeightExpr);
 		}
 	}
 }

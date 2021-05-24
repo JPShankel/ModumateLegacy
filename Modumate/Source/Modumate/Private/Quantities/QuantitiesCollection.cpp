@@ -138,7 +138,7 @@ void FQuantitiesCollection::AddQuantity(const FGuid& ItemGuid, const FString& It
 	Quantities.FindOrAdd(key) += value;
 }
 
-float FQuantitiesCollection::AreaOfFace(const Modumate::FGraph3DFace& Face)
+float FQuantitiesCollection::AreaOfFace(const FGraph3DFace& Face)
 {
 	FPoly poly;
 	int32 i = 0;
@@ -149,12 +149,12 @@ float FQuantitiesCollection::AreaOfFace(const Modumate::FGraph3DFace& Face)
 	return poly.Area();
 }
 
-float FQuantitiesCollection::AreaOfFace(const Modumate::FGraph2DPolygon& Face)
+float FQuantitiesCollection::AreaOfFace(const FGraph2DPolygon& Face)
 {
 	return AreaOfPoly(Face.CachedPerimeterPoints);
 }
 
-float FQuantitiesCollection::LengthOfWallFace(const Modumate::FGraph3DFace& Face)
+float FQuantitiesCollection::LengthOfWallFace(const FGraph3DFace& Face)
 {
 	FVector2D normal(Face.CachedPlane.Y, -Face.CachedPlane.X);
 	normal.Normalize();

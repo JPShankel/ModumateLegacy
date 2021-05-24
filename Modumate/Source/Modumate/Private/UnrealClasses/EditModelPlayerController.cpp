@@ -80,8 +80,6 @@
 
 const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetry"));
 
-using namespace Modumate;
-
 #define LOCTEXT_NAMESPACE "ModumateDialog"
 
 /*
@@ -1352,16 +1350,16 @@ bool AEditModelPlayerController::TakeScreenshot()
 void AEditModelPlayerController::DeleteActionDefault()
 {
 	ModumateCommand(
-		FModumateCommand(Commands::kDeleteSelectedObjects)
-		.Param(Parameters::kIncludeConnected, true)
+		FModumateCommand(ModumateCommands::kDeleteSelectedObjects)
+		.Param(ModumateParameters::kIncludeConnected, true)
 	);
 }
 
 void AEditModelPlayerController::DeleteActionOnlySelected()
 {
 	ModumateCommand(
-		FModumateCommand(Commands::kDeleteSelectedObjects)
-		.Param(Parameters::kIncludeConnected, false)
+		FModumateCommand(ModumateCommands::kDeleteSelectedObjects)
+		.Param(ModumateParameters::kIncludeConnected, false)
 	);
 }
 
@@ -2049,14 +2047,14 @@ void AEditModelPlayerController::SetViewGroupObject(const AModumateObjectInstanc
 	if (ob && (ob->GetObjectType() == EObjectType::OTGroup))
 	{
 		ModumateCommand(
-			FModumateCommand(Commands::kViewGroupObject)
-			.Param(Parameters::kObjectID, ob->ID)
+			FModumateCommand(ModumateCommands::kViewGroupObject)
+			.Param(ModumateParameters::kObjectID, ob->ID)
 		);
 	}
 	else
 	{
 		ModumateCommand(
-			FModumateCommand(Commands::kViewGroupObject)
+			FModumateCommand(ModumateCommands::kViewGroupObject)
 		);
 	}
 }
@@ -2252,8 +2250,8 @@ bool AEditModelPlayerController::IsCursorOverWidget() const
 void AEditModelPlayerController::SetFieldOfViewCommand(float FieldOfView)
 {
 	ModumateCommand(
-		FModumateCommand(Commands::kSetFOV, true)
-		.Param(Parameters::kFieldOfView, FieldOfView));
+		FModumateCommand(ModumateCommands::kSetFOV, true)
+		.Param(ModumateParameters::kFieldOfView, FieldOfView));
 }
 
 bool AEditModelPlayerController::GetActiveUserSnapPoint(FTransform &outSnapPoint) const
@@ -3567,13 +3565,13 @@ void AEditModelPlayerController::GroupSelected(bool makeGroup)
 			Document->BeginUndoRedoMacro();
 
 			auto output = ModumateCommand(
-				FModumateCommand(Commands::kGroup)
-				.Param(Parameters::kMake, TEXT("true"))
-				.Param(Parameters::kObjectIDs, selIds)
-				.Param(Parameters::kParent, EMPlayerState->GetViewGroupObjectID())
+				FModumateCommand(ModumateCommands::kGroup)
+				.Param(ModumateParameters::kMake, TEXT("true"))
+				.Param(ModumateParameters::kObjectIDs, selIds)
+				.Param(ModumateParameters::kParent, EMPlayerState->GetViewGroupObjectID())
 			);
 
-			int32 groupID = output.GetValue(Parameters::kObjectID);
+			int32 groupID = output.GetValue(ModumateParameters::kObjectID);
 			if (auto *groupObj = Document->GetObjectById(groupID))
 			{
 				SetObjectSelected(groupObj, true, true);
@@ -3601,9 +3599,9 @@ void AEditModelPlayerController::GroupSelected(bool makeGroup)
 		if (groupIds.Num() > 0)
 		{
 			ModumateCommand(
-				FModumateCommand(Commands::kGroup)
-				.Param(Parameters::kMake, false)
-				.Param(Parameters::kObjectIDs, groupIds)
+				FModumateCommand(ModumateCommands::kGroup)
+				.Param(ModumateParameters::kMake, false)
+				.Param(ModumateParameters::kObjectIDs, groupIds)
 			);
 		}
 	}

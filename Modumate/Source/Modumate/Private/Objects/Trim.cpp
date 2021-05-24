@@ -218,7 +218,7 @@ void AMOITrim::RegisterInstanceDataUI(UToolTrayBlockProperties* PropertiesUI)
 	extensionFields[1]->ValueChangedEvent.AddDynamic(this, &AMOITrim::OnInstPropUIChangedExtensionEnd);
 }
 
-void AMOITrim::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOITrim::GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 	TArray<TArray<FVector>>& OutPerimeters) const
 {
@@ -253,20 +253,20 @@ void AMOITrim::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& 
 
 			if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 			{
-				TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+				TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 					FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
 					FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
 					ModumateUnitParams::FThickness::Points(bool(clippedLine.Count) ? 0.15f : 0.05f),
-					Modumate::FMColor::Gray128);
+					FMColor::Gray128);
 				ParentPage->Children.Add(line);
-				line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kSeparatorBeyondModuleEdges);
+				line->SetLayerTypeRecursive(FModumateLayerType::kSeparatorBeyondModuleEdges);
 			}
 		}
 	}
 	else
 	{   // In-plane lines.
 	 UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox,
-			perimeter, TrimStartPos, TrimEndPos, Modumate::FModumateLayerType::kSeparatorCutTrim, 0.3f);
+			perimeter, TrimStartPos, TrimEndPos, FModumateLayerType::kSeparatorCutTrim, 0.3f);
 	}
 }
 
@@ -420,7 +420,7 @@ bool AMOITrim::UpdateCachedStructure()
 
 	// See if the trim should be offset based on its neighboring polygons
 	float maxNeighboringThickness = 0.0f;
-	const Modumate::FGraph2DPolygon *surfacePolyLeft, *surfacePolyRight;
+	const FGraph2DPolygon *surfacePolyLeft, *surfacePolyRight;
 	if (!surfaceEdge->GetAdjacentInteriorPolygons(surfacePolyLeft, surfacePolyRight))
 	{
 		return false;

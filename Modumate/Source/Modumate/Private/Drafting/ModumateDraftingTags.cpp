@@ -8,8 +8,6 @@
 #include "CoreMinimal.h"
 #include "UnrealClasses/Modumate.h"
 
-namespace Modumate { 
-
 
 FFFETag::FFFETag(const FString &label) :
 	Label(label)
@@ -777,6 +775,4 @@ EDrawError FScaleTag::InitializeBounds(IModumateDraftingDraw *drawingInterface)
 	Dimensions.Y = (polyHeight * 2.0f) + ModumateUnitParams::FYCoord::FloorplanInches(Margin) + ModumateUnitParams::FFontSize::FloorplanInches(FontSize);
 
 	return EDrawError::ErrorNone;
-}
-
 }

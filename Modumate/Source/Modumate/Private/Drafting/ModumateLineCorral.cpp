@@ -7,7 +7,7 @@
 
 DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Line Coalescing"), STAT_ModumateLineCoalescing, STATGROUP_Modumate);
 
-using namespace Modumate;
+
 
 // Map FModumateLayerType priorities in terms of obscuring in DWG.
 const FModumateLayerType FModumateLineCorral::LayerTypeOrder[] =
@@ -88,7 +88,7 @@ FModumateLineCorral::FModumateLineCorral(IModumateDraftingDraw * nextDrafting) :
 	}
 }
 
-Modumate::EDrawError FModumateLineCorral::DrawLine(
+EDrawError FModumateLineCorral::DrawLine(
 	const ModumateUnitParams::FXCoord &x1,
 	const ModumateUnitParams::FYCoord &y1,
 	const ModumateUnitParams::FXCoord &x2,
@@ -113,7 +113,7 @@ Modumate::EDrawError FModumateLineCorral::DrawLine(
 	}
 }
 
-Modumate::EDrawError FModumateLineCorral::AddText(
+EDrawError FModumateLineCorral::AddText(
 	const TCHAR *text,
 	const ModumateUnitParams::FFontSize &fontSize,
 	const ModumateUnitParams::FXCoord &xpos,
@@ -129,7 +129,7 @@ Modumate::EDrawError FModumateLineCorral::AddText(
 		type, layerType);
 }
 
-Modumate::EDrawError FModumateLineCorral::GetTextLength(
+EDrawError FModumateLineCorral::GetTextLength(
 	const TCHAR *text,
 	const ModumateUnitParams::FFontSize &fontSize,
 	FModumateUnitValue &textLength,
@@ -138,7 +138,7 @@ Modumate::EDrawError FModumateLineCorral::GetTextLength(
 	return Next->GetTextLength(text, fontSize, textLength, type);
 }
 
-Modumate::EDrawError FModumateLineCorral::DrawArc(
+EDrawError FModumateLineCorral::DrawArc(
 	const ModumateUnitParams::FXCoord &x,
 	const ModumateUnitParams::FYCoord &y,
 	const ModumateUnitParams::FAngle &a1,
@@ -153,7 +153,7 @@ Modumate::EDrawError FModumateLineCorral::DrawArc(
 	return Next->DrawArc(x, y, a1, a2, radius, lineWidth, color, linePattern, slices, layerType);
 }
 
-Modumate::EDrawError FModumateLineCorral::AddImage(
+EDrawError FModumateLineCorral::AddImage(
 	const TCHAR *imageFileFullPath,
 	const ModumateUnitParams::FXCoord &x,
 	const ModumateUnitParams::FYCoord &y,
@@ -164,7 +164,7 @@ Modumate::EDrawError FModumateLineCorral::AddImage(
 	return Next->AddImage(imageFileFullPath, x, y, width, height, layerType);
 }
 
-Modumate::EDrawError FModumateLineCorral::FillPoly(
+EDrawError FModumateLineCorral::FillPoly(
 	const float *points,
 	int numPoints,
 	const FMColor &color,
@@ -173,7 +173,7 @@ Modumate::EDrawError FModumateLineCorral::FillPoly(
 	return Next->FillPoly(points, numPoints, color, layerType);
 }
 
-Modumate::EDrawError FModumateLineCorral::DrawCircle(
+EDrawError FModumateLineCorral::DrawCircle(
 	const ModumateUnitParams::FXCoord &cx,
 	const ModumateUnitParams::FYCoord &cy,
 	const ModumateUnitParams::FRadius &radius,
@@ -185,7 +185,7 @@ Modumate::EDrawError FModumateLineCorral::DrawCircle(
 	return Next->DrawCircle(cx, cy, radius, lineWidth, linePattern, color, layerType);
 }
 
-Modumate::EDrawError FModumateLineCorral::FillCircle(
+EDrawError FModumateLineCorral::FillCircle(
 	const ModumateUnitParams::FXCoord &cx,
 	const ModumateUnitParams::FYCoord &cy,
 	const ModumateUnitParams::FRadius &radius,
@@ -195,7 +195,7 @@ Modumate::EDrawError FModumateLineCorral::FillCircle(
 	return Next->FillCircle(cx, cy, radius, color, layerType);
 }
 
-Modumate::EDrawError FModumateLineCorral::AddDimension(
+EDrawError FModumateLineCorral::AddDimension(
 	const ModumateUnitParams::FXCoord& startx,
 	const ModumateUnitParams::FXCoord& starty,
 	const ModumateUnitParams::FXCoord& endx,
@@ -207,7 +207,7 @@ Modumate::EDrawError FModumateLineCorral::AddDimension(
 	return Next->AddDimension(startx, starty, endx, endy, positionx, positiony, color, layerType);
 }
 
-Modumate::EDrawError FModumateLineCorral::AddAngularDimension(
+EDrawError FModumateLineCorral::AddAngularDimension(
 	const ModumateUnitParams::FXCoord& startx,
 	const ModumateUnitParams::FXCoord& starty,
 	const ModumateUnitParams::FXCoord& endx,

@@ -16,8 +16,6 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/LineActor.h"
 
-using namespace Modumate;
-
 URectangleTool::URectangleTool()
 	: Super()
 	, State(Neutral)

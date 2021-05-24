@@ -252,16 +252,16 @@ void AMOIStructureLine::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
-	const Modumate::FGraph3D& graph = Document->GetVolumeGraph();
-	const Modumate::FGraph3DEdge* hostingEdge = graph.FindEdge(GetParentID());
+	const FGraph3D& graph = Document->GetVolumeGraph();
+	const FGraph3DEdge* hostingEdge = graph.FindEdge(GetParentID());
 	if (!hostingEdge)
 	{
 		return;
 	}
 
 	CachedQuantities.Empty();
-	const Modumate::FGraph3DVertex* startVertex = graph.FindVertex(hostingEdge->StartVertexID);
-	const Modumate::FGraph3DVertex* endVertex = graph.FindVertex(hostingEdge->EndVertexID);
+	const FGraph3DVertex* startVertex = graph.FindVertex(hostingEdge->StartVertexID);
+	const FGraph3DVertex* endVertex = graph.FindVertex(hostingEdge->EndVertexID);
 	float length = (startVertex->Position - endVertex->Position).Size();
 	CachedQuantities.AddQuantity(assemblyGuid, 1.0f, length);
 
@@ -394,7 +394,7 @@ bool AMOIStructureLine::UpdateCachedGeometry(bool bRecreate, bool bCreateCollisi
 	return true;
 }
 
-void AMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIStructureLine::GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 	TArray<TArray<FVector>>& OutPerimeters) const
 {
@@ -410,15 +410,15 @@ void AMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 	const bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
 	{   // In cut-plane lines.
-		const Modumate::FModumateLayerType layerType =
-			GetObjectType() == EObjectType::OTMullion ? Modumate::FModumateLayerType::kMullionCut : Modumate::FModumateLayerType::kBeamColumnCut;
+		const FModumateLayerType layerType =
+			GetObjectType() == EObjectType::OTMullion ? FModumateLayerType::kMullionCut : FModumateLayerType::kBeamColumnCut;
 		UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox,
 			perimeter, LineStartPos, LineEndPos, layerType);
 	}
 	else
 	{   // Beyond cut-plane lines.
-		const Modumate::FModumateLayerType layerType =
-			GetObjectType() == EObjectType::OTMullion ? Modumate::FModumateLayerType::kMullionBeyond : Modumate::FModumateLayerType::kBeamColumnBeyond;
+		const FModumateLayerType layerType =
+			GetObjectType() == EObjectType::OTMullion ? FModumateLayerType::kMullionBeyond : FModumateLayerType::kBeamColumnBeyond;
 		TArray<FEdge> beyondLines = UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(Plane, perimeter, LineStartPos, LineEndPos);
 
 		TArray<FEdge> clippedLines;
@@ -440,11 +440,11 @@ void AMOIStructureLine::GetDraftingLines(const TSharedPtr<Modumate::FDraftingCom
 
 			if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 			{
-				TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+				TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 					FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
 					FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
 					ModumateUnitParams::FThickness::Points(bool(clippedLine.Count) ? 0.15f : 0.05f),
-					Modumate::FMColor::Gray128);
+					FMColor::Gray128);
 				ParentPage->Children.Add(line);
 				line->SetLayerTypeRecursive(layerType);
 			}

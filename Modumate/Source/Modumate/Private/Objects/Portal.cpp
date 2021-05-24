@@ -147,7 +147,7 @@ bool AMOIPortal::GetOffsetFaceBounds(FBox2D& OutOffsetBounds, FVector2D& OutOffs
 	OutOffsetBounds.Init();
 	OutOffset = FVector2D::ZeroVector;
 
-	const Modumate::FGraph3DFace* parentFace = Document->GetVolumeGraph().FindFace(GetParentID());
+	const FGraph3DFace* parentFace = Document->GetVolumeGraph().FindFace(GetParentID());
 	if (parentFace == nullptr)
 	{
 		return false;
@@ -404,7 +404,7 @@ void AMOIPortal::RegisterInstanceDataUI(UToolTrayBlockProperties* PropertiesUI)
 	}
 }
 
-void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
+void AMOIPortal::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TArray<TArray<FVector>> &OutPerimeters) const
 {
 	bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
@@ -417,8 +417,8 @@ void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>
 		bool bLinesDrawn = actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin);
 
 		ModumateUnitParams::FThickness defaultThickness = ModumateUnitParams::FThickness::Points(0.3f);
-		Modumate::FMColor defaultColor = Modumate::FMColor::Gray64;
-		Modumate::FMColor swingColor = Modumate::FMColor::Gray160;
+		FMColor defaultColor = FMColor::Gray64;
+		FMColor swingColor = FMColor::Gray160;
 		static constexpr float defaultDoorOpeningDegrees = 90.0f;
 
 		// draw door swing lines if the cut plane intersects the door's mesh
@@ -481,12 +481,12 @@ void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>
 						FVector2D clippedStart, clippedEnd;
 						if (UModumateFunctionLibrary::ClipLine2DToRectangle(planStart, planEnd, BoundingBox, clippedStart, clippedEnd))
 						{
-							TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+							TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 								FModumateUnitCoord2D::WorldCentimeters(clippedStart),
 								FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 								defaultThickness, swingColor);
 							ParentPage->Children.Add(line);
-							line->SetLayerTypeRecursive(Modumate::FModumateLayerType::kOpeningSystemOperatorLine);
+							line->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemOperatorLine);
 
 							auto arcAngle = FMath::Atan2(planDelta.Y, planDelta.X);
 
@@ -494,14 +494,14 @@ void AMOIPortal::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>
 							{
 								arcAngle -= FModumateUnitValue::Degrees(defaultDoorOpeningDegrees).AsRadians();
 							}
-							TSharedPtr<Modumate::FDraftingArc> doorArc = MakeShared<Modumate::FDraftingArc>(
+							TSharedPtr<FDraftingArc> doorArc = MakeShared<FDraftingArc>(
 								ModumateUnitParams::FLength::WorldCentimeters(panelLength),
 								ModumateUnitParams::FRadius::Degrees(defaultDoorOpeningDegrees),
 								defaultThickness, swingColor);
 							doorArc->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(planStart));
 							doorArc->SetLocalOrientation(FModumateUnitValue::Radians(arcAngle));
 							ParentPage->Children.Add(doorArc);
-							doorArc->SetLayerTypeRecursive(Modumate::FModumateLayerType::kOpeningSystemOperatorLine);
+							doorArc->SetLayerTypeRecursive(FModumateLayerType::kOpeningSystemOperatorLine);
 						}
 					}
 				}
@@ -573,8 +573,8 @@ void AMOIPortal::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
-	const Modumate::FGraph3D& graph = Document->GetVolumeGraph();
-	const Modumate::FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
+	const FGraph3D& graph = Document->GetVolumeGraph();
+	const FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
 
 	if (!hostingFace)
 	{

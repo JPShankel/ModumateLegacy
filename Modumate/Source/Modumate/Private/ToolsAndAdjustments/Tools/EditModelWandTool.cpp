@@ -8,7 +8,7 @@
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 
-using namespace Modumate;
+
 
 UWandTool::UWandTool()
 	: Super()

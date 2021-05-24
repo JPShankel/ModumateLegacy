@@ -10,7 +10,7 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
-using namespace Modumate;
+
 
 FRoomConfigurationBlueprint FRoomConfiguration::AsBlueprintObject() const
 {

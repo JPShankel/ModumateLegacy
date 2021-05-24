@@ -5,13 +5,10 @@
 
 class MODUMATE_API UModumateDocument;
 
-namespace Modumate {
+class MODUMATE_API IModumateDraftingDraw;
 
-	class MODUMATE_API IModumateDraftingDraw;
-
-	class MODUMATE_API FDoorSummarySchedule : public FSummaryList
-	{
-	public:
-		FDoorSummarySchedule(const UModumateDocument *doc, IModumateDraftingDraw *drawingInterface);
-	};
-}
+class MODUMATE_API FDoorSummarySchedule : public FSummaryList
+{
+public:
+	FDoorSummarySchedule(const UModumateDocument *doc, IModumateDraftingDraw *drawingInterface);
+};

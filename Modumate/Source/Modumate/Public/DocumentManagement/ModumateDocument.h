@@ -15,11 +15,7 @@
 
 #include "ModumateDocument.generated.h"
 
-namespace Modumate
-{
-	class FModumateDraftingView;
-}
-
+class FModumateDraftingView;
 class AModumateObjectInstance;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAppliedMOIDeltas, EObjectType, ObjectType, int32, Count, EMOIDeltaType, DeltaType);
@@ -76,13 +72,13 @@ private:
 
 	// The volume connectivity information, for the purpose of keeping track of connectivity of all planar objects;
 	// the source of truth for mitering, room detection, volume calculation, slicing floorplans/sections/elevations, heat/acoustics, etc.
-	Modumate::FGraph3D VolumeGraph;
+	FGraph3D VolumeGraph;
 
 	// Copy of the volume graph to work with multi-stage deltas
-	Modumate::FGraph3D TempVolumeGraph;
+	FGraph3D TempVolumeGraph;
 
 	// The surface graphs used by the current document, mapped by owning object ID
-	TMap<int32, TSharedPtr<Modumate::FGraph2D>> SurfaceGraphs;
+	TMap<int32, TSharedPtr<FGraph2D>> SurfaceGraphs;
 
 	TMap<EObjectDirtyFlags, TArray<AModumateObjectInstance*>> DirtyObjectMap;
 
@@ -151,7 +147,7 @@ public:
 	// Allocates IDs for new objects, finds new parent IDs for objects, and marks objects for deletion after another graph operation
 	bool FinalizeGraph2DDeltas(const TArray<FGraph2DDelta>& InDeltas, int32& InNextID, TArray<FDeltaPtr>& OutDeltas) const;
 	bool FinalizeGraph2DDelta(const FGraph2DDelta& Delta, int32& InNextID, TArray<FDeltaPtr>& OutSideEffectDeltas) const;
-	bool FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, const FGraph3DDelta &Delta, TArray<FDeltaPtr> &OutSideEffectDeltas);
+	bool FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDelta &Delta, TArray<FDeltaPtr> &OutSideEffectDeltas);
 
 	bool GetVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas);
 	bool MoveMetaVertices(UWorld* World, const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions);
@@ -171,21 +167,21 @@ public:
 	bool CanRoomContainFace(FGraphSignedID FaceID);
 	void UpdateRoomAnalysis(UWorld *world);
 
-	const Modumate::FGraph3D &GetVolumeGraph() const { return VolumeGraph; }
+	const FGraph3D &GetVolumeGraph() const { return VolumeGraph; }
 
 	// TODO: we should remove the TempVolumeGraph entirely if we can rely on inverting deltas,
 	// or give graph delta creators their own copy of a graph to modify if we still need to use it for delta creation.
-	const Modumate::FGraph3D &GetTempVolumeGraph() const { return TempVolumeGraph; }
-	Modumate::FGraph3D &GetTempVolumeGraph() { return TempVolumeGraph; }
+	const FGraph3D &GetTempVolumeGraph() const { return TempVolumeGraph; }
+	FGraph3D &GetTempVolumeGraph() { return TempVolumeGraph; }
 
-	const TSharedPtr<Modumate::FGraph2D> FindSurfaceGraph(int32 SurfaceGraphID) const;
-	TSharedPtr<Modumate::FGraph2D> FindSurfaceGraph(int32 SurfaceGraphID);
+	const TSharedPtr<FGraph2D> FindSurfaceGraph(int32 SurfaceGraphID) const;
+	TSharedPtr<FGraph2D> FindSurfaceGraph(int32 SurfaceGraphID);
 
-	const TSharedPtr<Modumate::FGraph2D> FindSurfaceGraphByObjID(int32 ObjectID) const;
-	TSharedPtr<Modumate::FGraph2D> FindSurfaceGraphByObjID(int32 ObjectID);
+	const TSharedPtr<FGraph2D> FindSurfaceGraphByObjID(int32 ObjectID) const;
+	TSharedPtr<FGraph2D> FindSurfaceGraphByObjID(int32 ObjectID);
 
 	int32 CalculatePolyhedra() { return VolumeGraph.CalculatePolyhedra(); }
-	bool IsObjectInVolumeGraph(int32 ObjID, Modumate::EGraph3DObjectType &OutObjType) const;
+	bool IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &OutObjType) const;
 
 	TArray<const AModumateObjectInstance*> GetObjectsOfType(EObjectType type) const;
 	TArray<AModumateObjectInstance*> GetObjectsOfType(EObjectType type);
@@ -306,7 +302,7 @@ public:
 	const FDocumentSettings& GetCurrentSettings() const { return CurrentSettings; }
 
 private:
-	TSharedPtr<Modumate::FModumateDraftingView> CurrentDraftingView = nullptr;
+	TSharedPtr<FModumateDraftingView> CurrentDraftingView = nullptr;
 	FBIMPresetCollection BIMPresetCollection;
 	FDocumentSettings CurrentSettings;
 	FString CachedLocalUserID;

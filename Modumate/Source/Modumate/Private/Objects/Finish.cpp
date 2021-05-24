@@ -153,7 +153,7 @@ bool AMOIFinish::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) 
 	return OutState.CustomData.SaveStructData(modifiedFinishData);
 }
 
-void AMOIFinish::GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIFinish::GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 	TArray<TArray<FVector>>& OutPerimeters) const
 {
@@ -179,12 +179,12 @@ void AMOIFinish::UpdateQuantities()
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
 	const int32 hostingPolyId = GetParentID();
-	TSharedPtr<Modumate::FGraph2D> graph = Document->FindSurfaceGraphByObjID(GetParentID());
+	TSharedPtr<FGraph2D> graph = Document->FindSurfaceGraphByObjID(GetParentID());
 	if (!ensure(graph.IsValid()))
 	{
 		return;
 	}
-	const Modumate::FGraph2DPolygon* hostingFace = graph->FindPolygon(GetParentID());
+	const FGraph2DPolygon* hostingFace = graph->FindPolygon(GetParentID());
 
 	if (!ensure(hostingFace))
 	{
@@ -248,12 +248,12 @@ void AMOIFinish::MarkConnectedEdgeChildrenDirty(EObjectDirtyFlags EdgeDirtyFlags
 	}
 }
 
-void AMOIFinish::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIFinish::GetInPlaneLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
 	static const ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
-	static const Modumate::FMColor lineColor = Modumate::FMColor::Gray144;
-	static const Modumate::FModumateLayerType dwgLayerType = Modumate::FModumateLayerType::kFinishCut;
+	static const FMColor lineColor = FMColor::Gray144;
+	static const FModumateLayerType dwgLayerType = FModumateLayerType::kFinishCut;
 
 	const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(GetActor());
 	if (actor == nullptr)
@@ -313,7 +313,7 @@ void AMOIFinish::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>&
 
 				if (UModumateFunctionLibrary::ClipLine2DToRectangle(rangeStart, rangeEnd, BoundingBox, clippedStart, clippedEnd))
 				{
-					TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+					TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 						FModumateUnitCoord2D::WorldCentimeters(clippedStart),
 						FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 						lineThickness, lineColor);
@@ -324,7 +324,7 @@ void AMOIFinish::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>&
 				{
 					if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint], rangeStart, BoundingBox, clippedStart, clippedEnd))
 					{
-						TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+						TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 							FModumateUnitCoord2D::WorldCentimeters(clippedStart),
 							FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 							lineThickness, lineColor);
@@ -333,7 +333,7 @@ void AMOIFinish::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>&
 					}
 					if (UModumateFunctionLibrary::ClipLine2DToRectangle(previousLinePoints[linePoint + 1], rangeEnd, BoundingBox, clippedStart, clippedEnd))
 					{
-						TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+						TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 							FModumateUnitCoord2D::WorldCentimeters(clippedStart),
 							FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
 							lineThickness, lineColor);
@@ -354,13 +354,13 @@ void AMOIFinish::GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>&
 
 }
 
-void AMOIFinish::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void AMOIFinish::GetBeyondLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
 {
 	static const ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
-	static const Modumate::FMColor lineColor(0.439f, 0.439f, 0.439f);  // Gray112
-	static const Modumate::FModumateLayerType dwgOuterType = Modumate::FModumateLayerType::kFinishBeyond;
-	static const Modumate::FModumateLayerType dwgHoleType = Modumate::FModumateLayerType::kFinishBeyond;
+	static const FMColor lineColor(0.439f, 0.439f, 0.439f);  // Gray112
+	static const FModumateLayerType dwgOuterType = FModumateLayerType::kFinishBeyond;
+	static const FModumateLayerType dwgHoleType = FModumateLayerType::kFinishBeyond;
 
 	const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(GetActor());
 	if (actor == nullptr)
@@ -372,7 +372,7 @@ void AMOIFinish::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& 
 	const int32 numLayers = layers.Num();
 	const float totalThickness = Algo::Accumulate(layers, 0.0f, [](float s, const auto& layer) { return s + layer.Thickness; });
 
-	TArray<TPair<FEdge, Modumate::FModumateLayerType>> beyondLines;
+	TArray<TPair<FEdge, FModumateLayerType>> beyondLines;
 
 	if (numLayers > 0)
 	{
@@ -422,7 +422,7 @@ void AMOIFinish::GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& 
 
 				if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 				{
-					TSharedPtr<Modumate::FDraftingLine> draftingLine = MakeShared<Modumate::FDraftingLine>(
+					TSharedPtr<FDraftingLine> draftingLine = MakeShared<FDraftingLine>(
 						FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
 						FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
 						lineThickness, lineColor);

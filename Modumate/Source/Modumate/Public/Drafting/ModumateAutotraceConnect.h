@@ -8,16 +8,12 @@
 class AMOICutPlane;
 class UModumateDocument;
 
-namespace Modumate
+// TODO: Combine with FModumateDwgConnnect (ModumateCloudConnect?).
+class FModumateAutotraceConnect
 {
-	// TODO: Combine with FModumateDwgConnnect (ModumateCloudConnect?).
-	class FModumateAutotraceConnect
-	{
-	public:
-		bool ConvertImageFromFile(const FString& filename, int32 renderID, int32 cutPlaneID, TWeakObjectPtr<UWorld> world);
+public:
+	bool ConvertImageFromFile(const FString& filename, int32 renderID, int32 cutPlaneID, TWeakObjectPtr<UWorld> world);
 
-	private:
-		struct ResponseHandler;
-	};
-
-}
+private:
+	struct ResponseHandler;
+};

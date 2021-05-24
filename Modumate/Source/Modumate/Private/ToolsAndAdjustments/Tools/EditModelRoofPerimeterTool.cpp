@@ -10,7 +10,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 
-using namespace Modumate;
+
 
 URoofPerimeterTool::URoofPerimeterTool()
 	: Super()

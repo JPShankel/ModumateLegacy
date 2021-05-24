@@ -46,7 +46,7 @@ protected:
 
 	EMouseMode OriginalMouseMode;
 	FVector CurrentPoint;
-	TSharedPtr<Modumate::FGraph2D> TerrainGraph;
+	TSharedPtr<FGraph2D> TerrainGraph;
 	TArray<FVector> Points;
 	float ZHeight = 0.0f;
 	float StartingZHeight = 0.0f;

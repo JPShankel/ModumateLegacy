@@ -63,11 +63,11 @@ void AMOIRoom::SetupDynamicGeometry()
 	}
 
 	TArray<TArray<FVector>> polygons;
-	const Modumate::FGraph3D &volumeGraph = doc->GetVolumeGraph();
+	const FGraph3D &volumeGraph = doc->GetVolumeGraph();
 	// TODO: refactor room faces using strongly-typed InstanceProperties
 	for (FGraphSignedID faceID : { MOD_ID_NONE })//GetControlPointIndices())
 	{
-		const Modumate::FGraph3DFace *graphFace = volumeGraph.FindFace(faceID);
+		const FGraph3DFace *graphFace = volumeGraph.FindFace(faceID);
 		const AModumateObjectInstance *planeObj = doc->GetObjectById(FMath::Abs(faceID));
 		if (!ensureAlways(graphFace && planeObj))
 		{

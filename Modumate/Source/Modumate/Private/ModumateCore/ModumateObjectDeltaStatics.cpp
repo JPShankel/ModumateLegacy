@@ -21,7 +21,7 @@ void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObj
 		{
 			continue;
 		}
-		Modumate::EGraphObjectType graph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(moi->GetObjectType());
+		EGraphObjectType graph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(moi->GetObjectType());
 
 		if (auto graphObject = doc->GetVolumeGraph().FindObject(id))
 		{
@@ -80,8 +80,8 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 		{
 			continue;
 		}
-		Modumate::EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(moi->GetObjectType());
-		Modumate::EGraphObjectType graph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(moi->GetObjectType());
+		EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(moi->GetObjectType());
+		EGraphObjectType graph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(moi->GetObjectType());
 
 		if (auto graphObject = graph.FindObject(moi->ID))
 		{
@@ -98,7 +98,7 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 				vertex3DMovements.Add(graphObject->ID, kvp.Value.GetTranslation());
 			}
 		}
-		else if (graph2DObjType != Modumate::EGraphObjectType::None)
+		else if (graph2DObjType != EGraphObjectType::None)
 		{
 			int32 targetParentID = moi->GetParentID();
 			auto surfaceObj = doc->GetObjectById(targetParentID);
@@ -224,7 +224,7 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 	for (int32 id : InObjectIDs)
 	{
 		auto moi = doc->GetObjectById(id);
-		Modumate::EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(moi->GetObjectType());
+		EGraph3DObjectType graph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(moi->GetObjectType());
 		if (!ensureAlways(moi != nullptr))
 		{
 			continue;
@@ -398,7 +398,7 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 			continue;
 		}
 
-		auto tempGraph = MakeShared<Modumate::FGraph2D>(copiedToPastedObjIDs[sgRec.Key][0]);
+		auto tempGraph = MakeShared<FGraph2D>(copiedToPastedObjIDs[sgRec.Key][0]);
 		TArray<FGraph2DDelta> sgDeltas;
 
 		if (!tempGraph->PasteObjects(sgDeltas, nextID, &sgRec.Value, copiedToPastedObjIDs))

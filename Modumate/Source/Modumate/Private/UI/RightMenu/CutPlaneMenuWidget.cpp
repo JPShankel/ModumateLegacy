@@ -9,7 +9,7 @@
 #include "Objects/CutPlane.h"
 #include "UI/RightMenu/CutPlaneMenuBlockExport.h"
 
-using namespace Modumate;
+
 
 UCutPlaneMenuWidget::UCutPlaneMenuWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

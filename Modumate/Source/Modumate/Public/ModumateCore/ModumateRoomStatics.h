@@ -56,16 +56,13 @@ struct FRoomConfigurationBlueprint
 // TODO: this should be defined by BIM, rather than a USTRUCT table row and a Blueprintable subclass
 class UModumateDocument;
 class AModumateObjectInstance;
-namespace Modumate
+struct MODUMATE_API FRoomConfiguration : public FRoomConfigurationTableRow
 {
-	struct MODUMATE_API FRoomConfiguration : public FRoomConfigurationTableRow
-	{
-		FGuid DatabaseKey;
-		FGuid UniqueKey() const { return DatabaseKey; }
-		FRoomConfigurationBlueprint AsBlueprintObject() const;
-		FRoomConfigurationBlueprint AsBlueprintObject(int32 InObjectID, const FString &InRoomNumber, float InArea, int32 InOccupantsNumber) const;
-	};
-}
+	FGuid DatabaseKey;
+	FGuid UniqueKey() const { return DatabaseKey; }
+	FRoomConfigurationBlueprint AsBlueprintObject() const;
+	FRoomConfigurationBlueprint AsBlueprintObject(int32 InObjectID, const FString &InRoomNumber, float InArea, int32 InOccupantsNumber) const;
+};
 
 // Helper functions for accessing / editing room data and interpreting room geometry.
 UCLASS(BlueprintType)

@@ -23,8 +23,6 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 
-using namespace Modumate;
-
 bool UModumateObjectStatics::GetPolygonProfile(const FBIMAssemblySpec *TrimAssembly, const FSimplePolygon*& OutProfile)
 {
 	if (!ensure(TrimAssembly && (TrimAssembly->Extrusions.Num() == 1)))
@@ -342,7 +340,7 @@ bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const UModumateDocument*
 	return true;
 }
 
-bool UModumateObjectStatics::GetEdgeFaceConnections(const Modumate::FGraph3DEdge* GraphEdge, const UModumateDocument* Doc,
+bool UModumateObjectStatics::GetEdgeFaceConnections(const FGraph3DEdge* GraphEdge, const UModumateDocument* Doc,
 	bool& bOutConnectedToAnyFace, bool& bOutConnectedToValidFace, bool& bOutConnectedToVisibleChild)
 {
 	bOutConnectedToAnyFace = false;
@@ -376,7 +374,7 @@ bool UModumateObjectStatics::GetEdgeFaceConnections(const Modumate::FGraph3DEdge
 	return true;
 }
 
-bool UModumateObjectStatics::GetEdgePolyConnections(const Modumate::FGraph2DEdge* SurfaceEdge, const UModumateDocument* Doc,
+bool UModumateObjectStatics::GetEdgePolyConnections(const FGraph2DEdge* SurfaceEdge, const UModumateDocument* Doc,
 	bool& bOutConnectedToAnyPolygon, bool& bOutConnectedToVisiblePolygon, bool& bOutConnectedToVisibleChild)
 {
 	bOutConnectedToAnyPolygon = false;
@@ -388,7 +386,7 @@ bool UModumateObjectStatics::GetEdgePolyConnections(const Modumate::FGraph2DEdge
 		return false;
 	}
 
-	const Modumate::FGraph2DPolygon *leftInteriorPoly, *rightInteriorPoly;
+	const FGraph2DPolygon *leftInteriorPoly, *rightInteriorPoly;
 	if (!SurfaceEdge->GetAdjacentInteriorPolygons(leftInteriorPoly, rightInteriorPoly))
 	{
 		return false;
@@ -870,9 +868,9 @@ bool UModumateObjectStatics::GetExtrusionObjectPoints(const FBIMAssemblySpec& As
 	return true;
 }
 
-void UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+void UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox, const TArray<FVector>& Perimeter,
-	const FVector& StartPosition, const FVector& EndPosition, Modumate::FModumateLayerType LayerType, float Epsilon /*= 0.0f*/)
+	const FVector& StartPosition, const FVector& EndPosition, FModumateLayerType LayerType, float Epsilon /*= 0.0f*/)
 {
 	if (Perimeter.Num() == 0)
 	{
@@ -954,10 +952,10 @@ void UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(const TSharedPtr<
 
 			if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 			{
-				TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+				TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 					FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
 					FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
-					ModumateUnitParams::FThickness::Points(0.75f), Modumate::FMColor::Black);
+					ModumateUnitParams::FThickness::Points(0.75f), FMColor::Black);
 				ParentPage->Children.Add(line);
 				line->SetLayerTypeRecursive(LayerType);
 			}

@@ -23,7 +23,7 @@ public:
 
 	virtual void SetupDynamicGeometry() override;
 
-	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 		TArray<TArray<FVector>>& OutPerimeters) const override;
 
@@ -31,9 +31,9 @@ public:
 	bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;
 
 protected:
-	void GetBeyondLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+	void GetBeyondLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const;
-	void GetInPlaneLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+	void GetInPlaneLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const;
 	virtual void UpdateQuantities() override;
 

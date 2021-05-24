@@ -6,7 +6,7 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 
-using namespace Modumate;
+
 
 const FName FSelectedObjectToolMixin::StateRequestTag(TEXT("SelectedObjectTool"));
 

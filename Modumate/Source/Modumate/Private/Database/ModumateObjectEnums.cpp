@@ -211,8 +211,6 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 	}
 }
 
-using namespace Modumate;
-
 EGraph3DObjectType UModumateTypeStatics::Graph3DObjectTypeFromObjectType(EObjectType ot)
 {
 	switch (ot)
@@ -264,7 +262,7 @@ EGraphObjectType UModumateTypeStatics::Graph2DObjectTypeFromObjectType(EObjectTy
 	}
 }
 
-EObjectType UModumateTypeStatics::ObjectTypeFromGraph2DType(Modumate::EGraphObjectType GraphType, EToolCategories GraphCategory)
+EObjectType UModumateTypeStatics::ObjectTypeFromGraph2DType(EGraphObjectType GraphType, EToolCategories GraphCategory)
 {
 	switch (GraphCategory)
 	{

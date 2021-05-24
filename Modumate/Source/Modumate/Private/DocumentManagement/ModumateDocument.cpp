@@ -45,9 +45,6 @@
 #include "UnrealClasses/ModumateObjectComponent.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 
-using namespace Modumate::Mitering;
-using namespace Modumate;
-
 #define LOCTEXT_NAMESPACE "ModumateDocument"
 
 const FName UModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
@@ -1799,7 +1796,7 @@ bool UModumateDocument::FinalizeGraph2DDelta(const FGraph2DDelta &Delta, int32 &
 }
 
 
-bool UModumateDocument::FinalizeGraphDelta(Modumate::FGraph3D &TempGraph, const FGraph3DDelta &Delta, TArray<FDeltaPtr> &OutSideEffectDeltas)
+bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDelta &Delta, TArray<FDeltaPtr> &OutSideEffectDeltas)
 {
 	TMap<int32, TArray<int32>> parentIDToChildrenIDs;
 
@@ -2282,7 +2279,7 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Serialize"));
 
 	// Header is its own object
-	OutHeader.Version = Modumate::DocVersion;
+	OutHeader.Version = DocVersion;
 	OutHeader.Thumbnail = CurrentEncodedThumbnail;
 
 	EToolMode modes[] = {
@@ -2995,22 +2992,22 @@ void UModumateDocument::UpdateRoomAnalysis(UWorld *world)
 #endif
 }
 
-const TSharedPtr<Modumate::FGraph2D> UModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID) const
+const TSharedPtr<FGraph2D> UModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID) const
 {
 	return SurfaceGraphs.FindRef(SurfaceGraphID);
 }
 
-TSharedPtr<Modumate::FGraph2D> UModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID)
+TSharedPtr<FGraph2D> UModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID)
 {
 	return SurfaceGraphs.FindRef(SurfaceGraphID);
 }
 
-const TSharedPtr<Modumate::FGraph2D> UModumateDocument::FindSurfaceGraphByObjID(int32 ObjectID) const
+const TSharedPtr<FGraph2D> UModumateDocument::FindSurfaceGraphByObjID(int32 ObjectID) const
 {
 	return const_cast<UModumateDocument*>(this)->FindSurfaceGraphByObjID(ObjectID);
 }
 
-TSharedPtr<Modumate::FGraph2D> UModumateDocument::FindSurfaceGraphByObjID(int32 ObjectID)
+TSharedPtr<FGraph2D> UModumateDocument::FindSurfaceGraphByObjID(int32 ObjectID)
 {
 	auto moi = GetObjectById(ObjectID);
 	if (moi == nullptr)
@@ -3018,7 +3015,7 @@ TSharedPtr<Modumate::FGraph2D> UModumateDocument::FindSurfaceGraphByObjID(int32 
 		return nullptr;
 	}
 	int32 parentID = moi->GetParentID();
-	TSharedPtr<Modumate::FGraph2D> surfaceGraph = nullptr;
+	TSharedPtr<FGraph2D> surfaceGraph = nullptr;
 
 	// this handles the case where the object is a surface graph object
 	surfaceGraph = FindSurfaceGraph(parentID);

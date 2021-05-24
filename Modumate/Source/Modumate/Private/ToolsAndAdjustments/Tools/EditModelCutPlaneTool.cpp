@@ -12,7 +12,7 @@
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
-using namespace Modumate;
+
 
 UCutPlaneTool::UCutPlaneTool()
 	: Super()

@@ -9,8 +9,6 @@
 
 #include "DocumentManagement/ModumateCommands.h"
 
-using namespace Modumate;
-
 UScopeBoxTool::UScopeBoxTool()
 	: Super()
 {
@@ -183,17 +181,17 @@ bool UScopeBoxTool::EnterNextStage()
 		}
 
 		auto commandResult = Controller->ModumateCommand(
-			FModumateCommand(Commands::kMakeScopeBox)
-			.Param(Parameters::kControlPoints, PendingBoxBasePoints)
-			.Param(Parameters::kHeight, Extrusion)
+			FModumateCommand(ModumateCommands::kMakeScopeBox)
+			.Param(ModumateParameters::kControlPoints, PendingBoxBasePoints)
+			.Param(ModumateParameters::kHeight, Extrusion)
 		);
 
-		if (commandResult.GetValue(Parameters::kSuccess))
+		if (commandResult.GetValue(ModumateParameters::kSuccess))
 		{
 			EndUse();
 		}
 
-		return commandResult.GetValue(Parameters::kSuccess);
+		return commandResult.GetValue(ModumateParameters::kSuccess);
 	}
 	break;
 	case BasePending:

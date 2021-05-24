@@ -39,7 +39,7 @@ protected:
 
 	const AModumateObjectInstance* HitGraphHostMOI;
 	const AModumateObjectInstance* HitGraphMOI;
-	TSharedPtr<Modumate::FGraph2D> HitSurfaceGraph;
+	TSharedPtr<FGraph2D> HitSurfaceGraph;
 	const AModumateObjectInstance* HitGraphElementMOI;
 	TArray<const AModumateObjectInstance*> HitAdjacentGraphMOIs;
 
@@ -49,7 +49,7 @@ protected:
 	TArray<FVector> HitFacePoints;
 
 	const AModumateObjectInstance* TargetGraphMOI;
-	TSharedPtr<Modumate::FGraph2D> TargetSurfaceGraph;
+	TSharedPtr<FGraph2D> TargetSurfaceGraph;
 	TArray<const AModumateObjectInstance*> TargetAdjacentGraphMOIs;
 
 	EMouseMode OriginalMouseMode;

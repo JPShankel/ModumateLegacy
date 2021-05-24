@@ -19,9 +19,6 @@
 #include "UnrealClasses/EditModelPlayerPawn.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 
-
-using namespace Modumate;
-
 UEditModelInputHandler::UEditModelInputHandler()
 	: Super()
 	, SequenceResetTime(1.0f)
@@ -261,17 +258,17 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 
 	case EInputCommand::Copy:
 	{
-		Controller->ModumateCommand(FModumateCommand(Commands::kCopySelected));
+		Controller->ModumateCommand(FModumateCommand(ModumateCommands::kCopySelected));
 		return true;
 	}
 	case EInputCommand::Cut:
 	{
-		Controller->ModumateCommand(FModumateCommand(Commands::kCutSelected));
+		Controller->ModumateCommand(FModumateCommand(ModumateCommands::kCutSelected));
 		return true;
 	}
 	case EInputCommand::Paste:
 	{
-		Controller->ModumateCommand(FModumateCommand(Commands::kPaste));
+		Controller->ModumateCommand(FModumateCommand(ModumateCommands::kPaste));
 		return true;
 	}
 	case EInputCommand::SelectAll:
@@ -292,16 +289,16 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	case EInputCommand::DeleteDefault:
 	{
 		Controller->ModumateCommand(
-			FModumateCommand(Commands::kDeleteSelectedObjects)
-			.Param(Parameters::kIncludeConnected, true)
+			FModumateCommand(ModumateCommands::kDeleteSelectedObjects)
+			.Param(ModumateParameters::kIncludeConnected, true)
 		);
 		return true;
 	}
 	case EInputCommand::DeleteOnlySelected:
 	{
 		Controller->ModumateCommand(
-			FModumateCommand(Commands::kDeleteSelectedObjects)
-			.Param(Parameters::kIncludeConnected, false)
+			FModumateCommand(ModumateCommands::kDeleteSelectedObjects)
+			.Param(ModumateParameters::kIncludeConnected, false)
 		);
 		return true;
 	}

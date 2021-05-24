@@ -31,10 +31,10 @@ FModumateDimension::FModumateDimension(FVec2d StartVec, FVec2d EndVec)
 	bVertical = AreParallel(Dir, FVec2d::UnitY());
 }
 
-bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDraftingComposite>& Page,
+bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<FDraftingComposite>& Page,
 	const UModumateDocument * Doc, FPlane Plane, FVector Origin, FVector AxisX)
 {
-	const Modumate::FGraph3D& graph = Doc->GetVolumeGraph();
+	const FGraph3D& graph = Doc->GetVolumeGraph();
 
 	const FVector axisY = Plane ^ AxisX;
 
@@ -53,7 +53,7 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDrafti
 		projectBoundingBox += UModumateGeometryStatics::ProjectPoint2D(v, AxisX, axisY, Origin);
 	}
 
-	CutGraph = MakeShared<Modumate::FGraph2D>();
+	CutGraph = MakeShared<FGraph2D>();
 	GraphIDToObjID.Empty();
 	graph.Create2DGraph(Plane, AxisX, axisY, Origin, projectBoundingBox, CutGraph, GraphIDToObjID);
 	CutGraph->CleanDirtyObjects(false);
@@ -66,7 +66,7 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDrafti
 
 	for (const auto& edgePair: CutGraph->GetEdges())
 	{
-		const Modumate::FGraph2DEdge& edge = edgePair.Value;
+		const FGraph2DEdge& edge = edgePair.Value;
 		FVec2d a = vertMap.Find(edge.StartVertexID)->Position;
 		FVec2d b = vertMap.Find(edge.EndVertexID)->Position;
 
@@ -93,31 +93,31 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDrafti
 		if (dim)
 		{
 			double offset = 0.0;
-			Modumate::FModumateLayerType layerType = Modumate::FModumateLayerType::kDimensionOpening;
+			FModumateLayerType layerType = FModumateLayerType::kDimensionOpening;
 			switch (dim.DimensionType)
 			{
 			case FModumateDimension::EType::Opening:
 				offset = OpeningDimOffset;
-				layerType = Modumate::FModumateLayerType::kDimensionOpening;
+				layerType = FModumateLayerType::kDimensionOpening;
 				break;
 
 			case FModumateDimension::EType::Framing:
-				layerType = Modumate::FModumateLayerType::kDimensionFraming;
+				layerType = FModumateLayerType::kDimensionFraming;
 				offset = FramingDimOffset;
 				break;
 
 			case FModumateDimension::EType::Massing:
 				offset = MassingDimOffset;
-				layerType = Modumate::FModumateLayerType::kDimensionMassing;
+				layerType = FModumateLayerType::kDimensionMassing;
 				break;
 
 			case FModumateDimension::Bridging:
 				offset = BridgingDimOffset;
-				layerType = Modumate::FModumateLayerType::kDimensionMassing;
+				layerType = FModumateLayerType::kDimensionMassing;
 				break;
 
 			case FModumateDimension::Reference:
-				layerType = Modumate::FModumateLayerType::KDimensionReference;
+				layerType = FModumateLayerType::KDimensionReference;
 				break;
 
 			default:
@@ -127,7 +127,7 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDrafti
 
 			if (dim.DimensionType == FModumateDimension::Reference)
 			{
-				TSharedPtr<Modumate::FDraftingLine> refLine = MakeShared<Modumate::FDraftingLine>(
+				TSharedPtr<FDraftingLine> refLine = MakeShared<FDraftingLine>(
 					FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.Points[0])),
 					FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.Points[1])),
 					ModumateUnitParams::FThickness::Points(0.25f)
@@ -144,11 +144,11 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDrafti
 				}
 				dim.TextPosition = (dim.Points[0] + dim.Points[1]) / 2 + FVec2d(positionOffset.Y, -positionOffset.X);
 
-				TSharedPtr<Modumate::FDimensionPrimitive> dimPrim = MakeShared<Modumate::FDimensionPrimitive>(
+				TSharedPtr<FDimensionPrimitive> dimPrim = MakeShared<FDimensionPrimitive>(
 					FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.Points[0])),
 					FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.Points[1])),
 					FModumateUnitCoord2D::WorldCentimeters(FVector2D(dim.TextPosition)),
-					Modumate::FMColor::Black);
+					FMColor::Black);
 				Page->Children.Add(dimPrim);
 				dimPrim->SetLayerTypeRecursive(layerType);
 			}
@@ -157,13 +157,13 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<Modumate::FDrafti
 
 	for (const auto& angularDim : AngularDimensions)
 	{
-		TSharedPtr<Modumate::FAngularDimensionPrimitive> angularDimPrim = MakeShared<Modumate::FAngularDimensionPrimitive>(
+		TSharedPtr<FAngularDimensionPrimitive> angularDimPrim = MakeShared<FAngularDimensionPrimitive>(
 			FModumateUnitCoord2D::WorldCentimeters(FVector2D(angularDim.Start)),
 			FModumateUnitCoord2D::WorldCentimeters(FVector2D(angularDim.End)),
 			FModumateUnitCoord2D::WorldCentimeters(FVector2D(angularDim.Center))
 			);
 		Page->Children.Add(angularDimPrim);
-		angularDimPrim->SetLayerTypeRecursive(Modumate::FModumateLayerType::kDimensionFraming);
+		angularDimPrim->SetLayerTypeRecursive(FModumateLayerType::kDimensionFraming);
 	}
 
 	return true;
@@ -180,8 +180,8 @@ void FModumateDimensions::ProcessDimensions()
 	// Fill in connectivity from Graph2D.
 	for (auto& d: Dimensions)
 	{
-		const Modumate::FGraph2DEdge& edge = edges[d.Graph2DID[0]];
-		const Modumate::FGraph2DVertex* vert[2] = { &verts[edge.StartVertexID], &verts[edge.EndVertexID] };
+		const FGraph2DEdge& edge = edges[d.Graph2DID[0]];
+		const FGraph2DVertex* vert[2] = { &verts[edge.StartVertexID], &verts[edge.EndVertexID] };
 		for (int32 i = 0; i < 2; ++i)
 		{
 			for (FGraphSignedID edgeIDSigned: vert[i]->Edges)
@@ -714,7 +714,7 @@ void FModumateDimensions::AddAngularDimensions(const TArray<int32>& Group)
 		{
 			int32 edgeID = dim.Graph2DID[vertex];
 			TArray<int32> graph2dVertexIDs;
-			const Modumate::FGraph2DEdge* graphEdge = CutGraph->FindEdge(edgeID);
+			const FGraph2DEdge* graphEdge = CutGraph->FindEdge(edgeID);
 			float angle;
 			CutGraph->GetEdgeAngle(edgeID, angle);
 			if (vertex == 1)
@@ -732,7 +732,7 @@ void FModumateDimensions::AddAngularDimensions(const TArray<int32>& Group)
 			{
 				const int32 e = adjacentEdges.Find(edgeID);
 				ensureAlways(e != INDEX_NONE);
-				const Modumate::FGraph2DEdge* graphEdge0 = CutGraph->FindEdge(adjacentEdges[(e + 1) % numEdges]);
+				const FGraph2DEdge* graphEdge0 = CutGraph->FindEdge(adjacentEdges[(e + 1) % numEdges]);
 				if (!processedEdges.Contains(graphEdge0->ID))
 				{
 					float angle0;
@@ -748,7 +748,7 @@ void FModumateDimensions::AddAngularDimensions(const TArray<int32>& Group)
 					}
 				}
 
-				const Modumate::FGraph2DEdge* graphEdge1 = CutGraph->FindEdge(adjacentEdges[(e + numEdges - 1) % numEdges]);
+				const FGraph2DEdge* graphEdge1 = CutGraph->FindEdge(adjacentEdges[(e + numEdges - 1) % numEdges]);
 				if (!processedEdges.Contains(graphEdge1->ID))
 				{
 					float angle1;
@@ -769,7 +769,6 @@ void FModumateDimensions::AddAngularDimensions(const TArray<int32>& Group)
 			}
 		}
 	}
-
 }
 
 namespace
@@ -883,7 +882,7 @@ void FModumateDimensions::ConnectIslands(const TArray<TSet<int32>>& plans)
 			int32 edgeID = bridgeVertex == 0 ? Dimensions[bridge.DimA].Graph2DID[currentVert]
 				: Dimensions[bridge.DimB].Graph2DID[currentVert];
 
-			Modumate::FGraph2DEdge* graphEdge = CutGraph->FindEdge(edgeID);
+			FGraph2DEdge* graphEdge = CutGraph->FindEdge(edgeID);
 			TArray<int32> graphVerts;
 			graphEdge->GetVertexIDs(graphVerts);
 			TArray<int32> adjacentEdges = CutGraph->FindVertex(graphVerts[currentVert])->Edges;

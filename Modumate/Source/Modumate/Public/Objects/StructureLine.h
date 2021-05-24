@@ -78,7 +78,7 @@ public:
 	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
 	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) override;
 
-	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite> &ParentPage, const FPlane &Plane,
+	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPage, const FPlane &Plane,
 		const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox,
 		TArray<TArray<FVector>> &OutPerimeters) const override;
 

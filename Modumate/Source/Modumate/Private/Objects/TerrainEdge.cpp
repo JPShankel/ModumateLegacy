@@ -36,7 +36,7 @@ bool AMOITerrainEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>
 
 		FVector origin = terrainMoi->GetLocation();
 		const auto graph2d = GetDocument()->FindSurfaceGraph(terrainMoi->ID);
-		const Modumate::FGraph2DEdge* graphEdge = graph2d->FindEdge(ID);
+		const FGraph2DEdge* graphEdge = graph2d->FindEdge(ID);
 		if (ensure(graphEdge))
 		{
 			TArray<int32> vertexIDs;

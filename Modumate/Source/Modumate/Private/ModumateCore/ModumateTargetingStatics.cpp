@@ -6,7 +6,7 @@
 #include "Graph/Graph3D.h"
 #include "Objects/ModumateObjectInstance.h"
 
-using namespace Modumate;
+
 
 int32 UModumateTargetingStatics::GetFaceIndexFromTargetHit(const AModumateObjectInstance* HitObject, const FVector& HitLocation, const FVector& HitNormal)
 {

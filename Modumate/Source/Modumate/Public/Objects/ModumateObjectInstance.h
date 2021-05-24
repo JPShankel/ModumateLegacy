@@ -20,11 +20,7 @@ class AEditModelPlayerController;
 class UHUDDrawWidget;
 class UModumateDocument;
 class FQuantitiesCollection;
-
-namespace Modumate {
-	class FDraftingComposite;
-}
-
+class FDraftingComposite;
 class IMiterNode;
 class ILayeredObject;
 class ISceneCaptureObject;
@@ -99,7 +95,7 @@ public:
 
 	// Drafting
 	virtual void AddDraftingLines(UHUDDrawWidget* HUDDrawWidget) { };
-	virtual void GetDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane, const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox, TArray<TArray<FVector>>& OutPerimeters) const { };
+	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox, TArray<TArray<FVector>>& OutPerimeters) const { };
 
 	virtual void SetIsDynamic(bool bIsDynamic) { }
 	virtual bool GetIsDynamic() const { return false; }

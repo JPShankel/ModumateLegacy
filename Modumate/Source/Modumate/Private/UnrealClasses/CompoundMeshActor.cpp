@@ -25,7 +25,7 @@
 
 DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Mesh To Lines"), STAT_ModumateMeshToLines, STATGROUP_Modumate);
 
-using namespace Modumate;
+
 
 #define DEBUG_NINE_SLICING 0
 
@@ -689,7 +689,7 @@ float ACompoundMeshActor::GetPortalCenter(const UModumateDocument* Doc, const FG
 	return centerOffset;
 }
 
-bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane,
+bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin) const
 {
 		TArray<TPair<FVector, FVector>> OutEdges;
@@ -697,8 +697,8 @@ bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<Modumate::FDr
 		auto gameState = GetWorld()->GetGameState<AEditModelGameState>();
 		auto moi = gameState->Document->ObjectFromActor(this);
 		bool bIsCabinet = moi && moi->GetObjectType() == EObjectType::OTCabinet;
-		Modumate::FModumateLayerType layerType = bIsCabinet ? Modumate::FModumateLayerType::kCabinetCutCarcass
-			: Modumate::FModumateLayerType::kOpeningSystemCutLine;
+		FModumateLayerType layerType = bIsCabinet ? FModumateLayerType::kCabinetCutCarcass
+			: FModumateLayerType::kOpeningSystemCutLine;
 
 		const int32 numComponents = StaticMeshComps.Num();
 		for (int32 component = 0; component < numComponents; ++component)
@@ -724,8 +724,8 @@ bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<Modumate::FDr
 		}
 
 		ModumateUnitParams::FThickness defaultThickness = ModumateUnitParams::FThickness::Points(0.3f);
-		Modumate::FMColor defaultColor = Modumate::FMColor::Gray64;
-		Modumate::FMColor swingColor = Modumate::FMColor::Gray160;
+		FMColor defaultColor = FMColor::Gray64;
+		FMColor swingColor = FMColor::Gray160;
 		static constexpr float defaultDoorOpeningDegrees = 90.0f;
 
 		for (auto& edge: OutEdges)
@@ -733,7 +733,7 @@ bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<Modumate::FDr
 			FVector2D start = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Key);
 			FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Value);
 
-			TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+			TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 				FModumateUnitCoord2D::WorldCentimeters(start),
 				FModumateUnitCoord2D::WorldCentimeters(end),
 				defaultThickness, defaultColor);
@@ -744,7 +744,7 @@ bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<Modumate::FDr
 		return OutEdges.Num() != 0;
 }
 
-void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftingComposite>& ParentPage, const FPlane& Plane, const FBox2D& BoundingBox) const
+void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FBox2D& BoundingBox) const
 {
 	const FTransform& actorToWorld = ActorToWorld();
 	const FVector viewNormal = Plane;
@@ -778,8 +778,8 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 	auto gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	auto moi = gameState->Document->ObjectFromActor(this);
 	bool bIsCabinet = moi && moi->GetObjectType() == EObjectType::OTCabinet;
-	Modumate::FModumateLayerType layerType = bIsCabinet ? Modumate::FModumateLayerType::kCabinetBeyond
-		: Modumate::FModumateLayerType::kOpeningSystemBeyond;
+	FModumateLayerType layerType = bIsCabinet ? FModumateLayerType::kCabinetBeyond
+		: FModumateLayerType::kOpeningSystemBeyond;
 
 	const int32 numComponents = StaticMeshComps.Num();
 
@@ -946,10 +946,10 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<Modumate::FDraftin
 		if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
 		{
 
-			TSharedPtr<Modumate::FDraftingLine> line = MakeShared<Modumate::FDraftingLine>(
+			TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 				FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
 				FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
-				ModumateUnitParams::FThickness::Points(0.125f), Modumate::FMColor::Gray64);
+				ModumateUnitParams::FThickness::Points(0.125f), FMColor::Gray64);
 			ParentPage->Children.Add(line);
 			line->SetLayerTypeRecursive(layerType);
 		}

@@ -6,18 +6,16 @@
 #include "ModumateCore/ModumateUnits.h"
 #include "ExpressionEvaluator.generated.h"
 
-namespace Modumate
+namespace Expression
 {
-	namespace Expression
-	{
-		bool ReplaceVariable(FString &ExprString, const FString &VarName, float VarValue);
-		bool Evaluate(const TMap<FString, float> &Vars, const FString &Expr, float &Result);
-		bool Evaluate(const TMap<FName, FModumateUnitValue> &Vars, const FString &Expr, FModumateUnitValue& OutResult);
-		bool Evaluate(const FString &Expr, float &Result);
-		float Evaluate(const TMap<FString, float> &Vars, const FString &Expr);
-		bool ExtractVariables(const FString &ExprString, TArray<FString>& OutVariables);
-	}
+	bool ReplaceVariable(FString &ExprString, const FString &VarName, float VarValue);
+	bool Evaluate(const TMap<FString, float> &Vars, const FString &Expr, float &Result);
+	bool Evaluate(const TMap<FName, FModumateUnitValue> &Vars, const FString &Expr, FModumateUnitValue& OutResult);
+	bool Evaluate(const FString &Expr, float &Result);
+	float Evaluate(const TMap<FString, float> &Vars, const FString &Expr);
+	bool ExtractVariables(const FString &ExprString, TArray<FString>& OutVariables);
 }
+
 
 USTRUCT()
 struct MODUMATE_API FVectorExpression

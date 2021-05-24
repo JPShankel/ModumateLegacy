@@ -9,32 +9,28 @@
 
 class FModumateAccountManager;
 
-namespace Modumate
+/**
+	* Encapsulate connection to cloud drafting server.
+	*/
+class FModumateDwgConnect
 {
-	/**
-	 * Encapsulate connection to cloud drafting server.
-	 */
-	class FModumateDwgConnect
-	{
-	public:
-		FModumateDwgConnect(const FModumateDwgDraw& dwgDraw);
-		~FModumateDwgConnect();
+public:
+	FModumateDwgConnect(const FModumateDwgDraw& dwgDraw);
+	~FModumateDwgConnect();
 
-		bool ConvertJsonToDwg(FString filename);
+	bool ConvertJsonToDwg(FString filename);
 
-	private:
-		const FModumateDwgDraw& DwgDraw;
-		FString Filename;
-		TSharedPtr<FModumateAccountManager> AccountManager;
+private:
+	const FModumateDwgDraw& DwgDraw;
+	FString Filename;
+	TSharedPtr<FModumateAccountManager> AccountManager;
 
-		static const FString ServerAddress;
+	static const FString ServerAddress;
 
-		bool UploadJsonAndSave();
-		bool CallDwgServer(const FString& jsonString, const FString& saveFilename);
+	bool UploadJsonAndSave();
+	bool CallDwgServer(const FString& jsonString, const FString& saveFilename);
 
-		// Class for persistent aspects needed for HTTP reply callbacks.
-		class DwgSaver;
-		TSharedPtr<DwgSaver> ResponseSaver;
-	};
-
-}
+	// Class for persistent aspects needed for HTTP reply callbacks.
+	class DwgSaver;
+	TSharedPtr<DwgSaver> ResponseSaver;
+};

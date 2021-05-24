@@ -46,10 +46,6 @@
 *
 */
 
-namespace Modumate
-{
-}
-
 UENUM()
 enum class EModumateUnitType : uint8 
 {

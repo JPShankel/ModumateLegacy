@@ -902,7 +902,7 @@ bool UEditModelInputAutomation::PlayBackPacket(const FEditModelInputPacket &Inpu
 			return false;
 		}
 
-		EMPlayerController->ModumateCommand(Modumate::FModumateCommand::FromJSONString(InputPacket.CommandString));
+		EMPlayerController->ModumateCommand(FModumateCommand::FromJSONString(InputPacket.CommandString));
 		return true;
 	}
 	case EInputPacketType::Deltas:

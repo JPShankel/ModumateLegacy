@@ -868,7 +868,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		}
 	}
 
-	if (DocRecordVersion < Modumate::DocVersion)
+	if (DocRecordVersion < DocVersion)
 	{
 		TMap<FGuid, FBIMPresetInstance> fixedPresets = DocRecord.PresetCollection.PresetsByGUID;
 
