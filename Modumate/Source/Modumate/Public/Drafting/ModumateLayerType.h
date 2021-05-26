@@ -40,5 +40,7 @@ enum class FModumateLayerType
 	kDimensionFraming,
 	kDimensionOpening,
 	KDimensionReference,
-	kFinalLayerType = KDimensionReference
+	kTerrainCut,
+	kTerrainBeyond,
+	kFinalLayerType = kTerrainBeyond
 };

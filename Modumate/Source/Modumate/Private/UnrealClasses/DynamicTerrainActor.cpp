@@ -4,7 +4,10 @@
 #include "IntpThinPlateSpline2.h"
 #include "ConstrainedDelaunay2.h"
 #include "KismetProceduralMeshLibrary.h"
+#include "ModumateCore//ModumateFunctionLibrary.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "Drafting/ModumateDraftingElements.h"
 
 // To use SimpleDynamicMeshComponent:
 // Add "ModelingComponents" and "DynamicMesh" to Build.cs
@@ -349,4 +352,89 @@ bool ADynamicTerrainActor::GetRandomPointsOnTriangleSurface(int32 TriA, int32 Tr
 	}
 
 	return true;
+}
+
+bool ADynamicTerrainActor::GetCutPlaneDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage,
+	const FPlane& Plane, const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
+{
+	TArray<TPair<FVector, FVector>> OutEdges;
+
+	if (!FMath::PlaneAABBIntersection(Plane, Mesh->Bounds.GetBox()))
+	{
+		return true;
+	}
+
+	auto gameState = GetWorld()->GetGameState<AEditModelGameState>();
+	UModumateGeometryStatics::ConvertProcMeshToLinesOnPlane(Mesh, Origin, Plane, OutEdges);
+
+	for (auto& edge: OutEdges)
+	{
+		FVector2D start = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Key);
+		FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Value);
+
+		FVector2D clippedStart, clippedEnd;
+		if (UModumateFunctionLibrary::ClipLine2DToRectangle(start, end, BoundingBox, clippedStart, clippedEnd))
+		{
+
+			TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
+				FModumateUnitCoord2D::WorldCentimeters(clippedStart),
+				FModumateUnitCoord2D::WorldCentimeters(clippedEnd),
+				ModumateUnitParams::FThickness::Points(0.3f), FMColor::Gray64);
+			line->SetLayerTypeRecursive(FModumateLayerType::kTerrainCut);
+			ParentPage->Children.Add(line);
+		}
+	}
+
+	return OutEdges.Num() != 0;
+}
+
+void ADynamicTerrainActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage,
+	const FPlane& Plane, const FBox2D& BoundingBox) const
+{
+	const FTransform localToWorld = Mesh->GetRelativeTransform();
+
+	TArray<FEdge> terrainEdges;
+
+	const FVector viewNormal = Plane;
+
+	const FProcMeshSection* meshSection = Mesh->GetProcMeshSection(0);
+	if (meshSection)
+	{
+		const auto& sectionVertices = meshSection->ProcVertexBuffer;
+		const auto& sectionTriangles = meshSection->ProcIndexBuffer;
+		ensureAlways(sectionTriangles.Num() % 3 == 0);
+
+		TArray <FVector> vertices;
+		for (const auto& v: meshSection->ProcVertexBuffer)
+		{
+			vertices.Emplace(localToWorld.TransformPosition(v.Position));
+		}
+
+		UModumateGeometryStatics::GetSilhouetteEdges(vertices, sectionTriangles, viewNormal, terrainEdges, 0.1, 0.0);
+	}
+
+	TArray<FEdge> clippedLines;
+	for (const auto& edge: terrainEdges)
+	{
+		clippedLines.Append(ParentPage->lineClipping->ClipWorldLineToView(edge));
+	}
+
+	FVector2D boxClipped0;
+	FVector2D boxClipped1;
+	for (const auto& clippedLine: clippedLines)
+	{
+		FVector2D vert0(clippedLine.Vertex[0]);
+		FVector2D vert1(clippedLine.Vertex[1]);
+
+		if (UModumateFunctionLibrary::ClipLine2DToRectangle(vert0, vert1, BoundingBox, boxClipped0, boxClipped1))
+		{
+
+			TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
+				FModumateUnitCoord2D::WorldCentimeters(boxClipped0),
+				FModumateUnitCoord2D::WorldCentimeters(boxClipped1),
+				ModumateUnitParams::FThickness::Points(0.15f), FMColor::Gray96);
+			ParentPage->Children.Add(line);
+			line->SetLayerTypeRecursive(FModumateLayerType::kTerrainBeyond);
+		}
+	}
 }

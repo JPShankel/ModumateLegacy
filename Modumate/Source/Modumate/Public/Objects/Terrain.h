@@ -43,6 +43,14 @@ public:
 	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
 	virtual void PreDestroy() override;
 
+	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
+		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
+		TArray<TArray<FVector>>& OutPerimeters) const override;
+
+	const TArray<ADynamicTerrainActor*>& GetTerrainActors() const
+		{ return TerrainActors; }
+
+
 	UPROPERTY()
 	FMOITerrainData InstanceData;
 

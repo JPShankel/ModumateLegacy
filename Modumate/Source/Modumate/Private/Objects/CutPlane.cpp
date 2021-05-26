@@ -542,6 +542,8 @@ bool AMOICutPlane::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage,
 
 	// Add cabinets globally.
 	draftingObjectMois.Append(Document->GetObjectsOfType(EObjectType::OTCabinet));
+	// Add terrain globally, since it's not a child of a massing element.
+	draftingObjectMois.Append(Document->GetObjectsOfType(EObjectType::OTTerrain));
 
 	for (auto moi : draftingObjectMois)
 	{

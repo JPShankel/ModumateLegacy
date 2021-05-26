@@ -34,6 +34,12 @@ static const FColor dwgColors[int32(FModumateLayerType::kFinalLayerType) + 1] =
 	FColor(255, 0, 255),	// kDebug1
 	FColor(0, 0, 255),		// kDebug2
 	FColor(127, 0, 31),		// kSeparatorCutEndCaps
+	FColor(31, 127, 0),		// kDimensionMassing
+	FColor(31, 127, 0),		// kDimensionFraming
+	FColor(31, 127, 0),		// kDimensionOpening
+	FColor(31, 127, 0),		// KDimensionReference
+	FColor(127, 255, 0),	// kTerrainCut
+	FColor(82, 165, 0),		// kTerrainBeyond
 };
 
 EDrawError FDraftingHUDDraw::DrawLine(
@@ -164,4 +170,3 @@ EDrawError FDraftingHUDDraw::AddAngularDimension(
 {
 	return EDrawError::ErrorUnimplemented;
 }
-

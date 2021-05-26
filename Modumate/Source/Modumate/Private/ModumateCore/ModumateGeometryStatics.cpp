@@ -7,6 +7,7 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Algo/Accumulate.h"
 #include "DrawDebugHelpers.h"
+#include "ModumateCore/ModumateStats.h"
 
 #include <algorithm>
 #include <queue>
@@ -2137,5 +2138,96 @@ bool UModumateGeometryStatics::SegmentPlaneIntersectionDouble(FVector3d StartPoi
 	else
 	{
 		return false;
+	}
+}
+
+DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Mesh To Silhouette"), STAT_ModumateMeshToLines, STATGROUP_Modumate);
+
+void UModumateGeometryStatics::GetSilhouetteEdges(const TArray<FVector>& Vertices, const TArray<uint32>& Indices, const FVector& ViewDirection,
+	TArray<FEdge>& outEdges, double Epsilon /*= 0.4*/, double AngleThreshold /*= 0.9205 /* 23 deg */)
+{
+	SCOPE_MS_ACCUMULATOR(STAT_ModumateMeshToLines);
+
+	const double EpsilonSquare = Epsilon * Epsilon;
+	FVector3d viewDir(ViewDirection);
+
+	struct FLocalEdge
+	{
+		FVector3d A;
+		FVector3d B;
+		FVector3d N;
+		bool bIsValid{ true };
+
+		operator bool() const { return bIsValid; }
+		bool lexicalVerticesCompare() const
+		{
+			if (A.X == B.X)
+			{
+				if (A.Y == B.Y)
+				{
+					return A.Z < B.Z;
+				}
+				return A.Y < B.Y;
+			}
+			return A.X < B.X;
+
+		}
+		void Normalize() { if (!lexicalVerticesCompare()) { Swap(A, B); } }
+		bool operator==(const FLocalEdge& rhs) const
+		{
+			return ((A == rhs.A) && (B == rhs.B)) || ((A == rhs.B) && (B == rhs.A));
+		}
+	};
+
+	TArray<FLocalEdge> edges;
+
+	const int32 numTriangles = Indices.Num() / 3;
+	for (int32 triangle = 0; triangle < numTriangles; ++triangle)
+	{
+
+		FVector3d vert0 = Vertices[Indices[triangle * 3 + 0]];
+		FVector3d vert1 = Vertices[Indices[triangle * 3 + 1]];
+		FVector3d vert2 = Vertices[Indices[triangle * 3 + 2]];
+		if (vert0.DistanceSquared(vert1) > EpsilonSquare && vert0.DistanceSquared(vert2) > EpsilonSquare
+			&& vert1.DistanceSquared(vert2) > EpsilonSquare)
+		{
+			FVector3d triNormal = ((vert2 - vert0).Cross(vert1 - vert0)).Normalized();
+			if (viewDir.Dot(triNormal) <= 0.0)
+			{
+				edges.Add({ vert0, vert1, triNormal });
+				edges.Add({ vert1, vert2, triNormal });
+				edges.Add({ vert2, vert0, triNormal });
+			}
+		}
+	}
+
+	const int numEdges = edges.Num();
+	for (auto& edge : edges)
+	{
+		edge.Normalize();
+	}
+
+	// Brute-force search for internal lines.
+	for (int32 e1 = 0; e1 < numEdges; ++e1)
+	{
+		for (int32 e2 = e1 + 1; e2 < numEdges; ++e2)
+		{
+			auto& edge1 = edges[e1];
+			auto& edge2 = edges[e2];
+			if (edge1.A.DistanceSquared(edge2.A) < EpsilonSquare && edge1.B.DistanceSquared(edge2.B) < EpsilonSquare
+				&& FMath::Abs(edge1.N.Dot(edge2.N)) > AngleThreshold)
+			{
+				edge1.bIsValid = false;
+				edge2.bIsValid = false;
+			}
+		}
+	}
+
+	for (auto& edge : edges)
+	{
+		if (edge)
+		{
+			outEdges.Emplace(FVector(edge.A), FVector(edge.B));
+		}
 	}
 }

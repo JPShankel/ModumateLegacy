@@ -21,7 +21,9 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Drafting/ModumateViewLineSegment.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "Objects/Terrain.h"
 #include "UnrealClasses/DynamicMeshActor.h"
+#include "UnrealClasses/DynamicTerrainActor.h"
 
 DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Drafting Line Clipping"), STAT_ModumateDraftLineClip, STATGROUP_Modumate);
 DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Drafting Clip Kernel"), STAT_ModumateDraftClipKernel, STATGROUP_Modumate);
@@ -29,7 +31,7 @@ DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Drafting Clip Kernel"), STAT_Modum
 static constexpr double triangleEpsilon = 0.1;  // Push triangles back slightly.
 static constexpr double minTriangleArea = 0.02;  // Cull degenerate triangles.
 static constexpr double minOccluderAreaForCulling = 10.0;  // Don't bother with smaller than this triangles
-															// for rough culling.
+															   // for rough culling.
 
 FModumateClippingTriangles::FModumateClippingTriangles(const AModumateObjectInstance& CutPlane)
 {
@@ -46,7 +48,7 @@ void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* do
 		EObjectType::OTRoofFace, EObjectType::OTCeiling, EObjectType::OTSystemPanel, EObjectType::OTDoor,
 		EObjectType::OTWindow,  EObjectType::OTStaircase, EObjectType::OTRailSegment, EObjectType::OTCabinet });
 
-	const TSet<EObjectType>  actorMeshOccluderTypes({ EObjectType::OTStructureLine, EObjectType::OTMullion });
+	const TSet<EObjectType> actorMeshOccluderTypes({ EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTTerrain });
 
 	TSet<EObjectType> occluderTypes(separatorOccluderTypes);
 	occluderTypes.Append(actorMeshOccluderTypes);
@@ -195,15 +197,36 @@ void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* do
 
 			if (actorMeshOccluderTypes.Contains(objectType))
 			{
-				UProceduralMeshComponent* meshComponent = meshActor->Mesh;
-				const FProcMeshSection* meshSection = meshComponent->GetProcMeshSection(0);
-				if (meshSection)
-				{
-					for (const auto& vertex : meshSection->ProcVertexBuffer)
+				TArray<UProceduralMeshComponent*> meshComponents;
+				if (objectType == EObjectType::OTTerrain)
+				{   // Terrain has multiple actors, in general.
+					const AMOITerrain* terrainMoi = Cast<AMOITerrain>(object);
+					if (terrainMoi)
 					{
-						vertices.Add(localToWorld.TransformPosition(vertex.Position));
+						for (const auto* terrainActor : terrainMoi->GetTerrainActors())
+						{
+							meshComponents.Add(terrainActor->Mesh);
+							AddTerrainCutPlaneTriangles(terrainActor);
+						}
+						localToWorld = FTransform(terrainMoi->GetRotation(), terrainMoi->GetLocation());
 					}
-					triangles.Append(meshSection->ProcIndexBuffer);
+				}
+				else
+				{
+					meshComponents.Add(meshActor->Mesh);
+				}
+
+				for (UProceduralMeshComponent* meshComponent : meshComponents)
+				{
+					const FProcMeshSection* meshSection = meshComponent->GetProcMeshSection(0);
+					if (meshSection)
+					{
+						for (const auto& vertex : meshSection->ProcVertexBuffer)
+						{
+							vertices.Add(localToWorld.TransformPosition(vertex.Position));
+						}
+						triangles.Append(meshSection->ProcIndexBuffer);
+					}
 				}
 
 			}
@@ -745,14 +768,6 @@ void FModumateClippingTriangles::AddLayeredCutPlaneTriangles(const TArray<FLayer
 	TArray<FVector> layerB = layer2.OriginalPointsB;
 
 	const FMatrix localToView = LocalToWorld.ToMatrixWithScale() * TransformMatrix;
-	for (auto& v: layerA)
-	{
-		v = localToView.TransformPosition(v);
-	}
-	for (auto& v: layerB)
-	{
-		v = localToView.TransformPosition(v);
-	}
 
 	const int32 numPoints = layerA.Num();
 
@@ -763,7 +778,7 @@ void FModumateClippingTriangles::AddLayeredCutPlaneTriangles(const TArray<FLayer
 	auto intersect = [](const FVector3d& v1, const FVector3d& v2, TArray<FVector3d>& intersections)
 	{
 		FVector3d intersection;
-		if((v1.Z < 0.0) ^ (v2.Z < 0.0))
+		if ((v1.Z < 0.0) ^ (v2.Z < 0.0))
 		{
 			FVector3d d(v2 - v1);
 			intersection = v1 - d * (v1.Z / d.Z);
@@ -803,7 +818,7 @@ void FModumateClippingTriangles::AddLayeredCutPlaneTriangles(const TArray<FLayer
 				intersect(p1, p2, intersectionsB);
 			}
 		}
-		
+
 		if (intersectionsA.Num() == intersectionsB.Num() && intersectionsA.Num() % 2 == 0)
 		{
 			if (FMath::Abs(spanDelta.X) > FMath::Abs(spanDelta.Y))
@@ -833,6 +848,70 @@ void FModumateClippingTriangles::AddLayeredCutPlaneTriangles(const TArray<FLayer
 				{
 					Occluders.Add(occluder2);
 				}
+			}
+		}
+	}
+}
+
+void FModumateClippingTriangles::AddTerrainCutPlaneTriangles(const class ADynamicTerrainActor* Actor)
+{
+	if (Actor->Mesh == nullptr || Actor->Mesh->GetNumSections() == 0)
+	{
+		return;
+	}
+
+	if (!FVector::Orthogonal(FVector(Normal), FVector::UpVector))
+	{
+		return;  // Masking under terrain only makes sense for vertical sections.
+	}
+
+	FTransform localToWorld = Actor->Mesh->GetComponentTransform();
+	const FProcMeshSection* meshSection = Actor->Mesh->GetProcMeshSection(0);
+
+	const auto& sectionVertices = meshSection->ProcVertexBuffer;
+	const auto& sectionTriangles = meshSection->ProcIndexBuffer;
+
+	if (sectionTriangles.Num() == 0)
+	{
+		return;
+	}
+
+	const FMatrix localToView = localToWorld.ToMatrixWithScale() * TransformMatrix;
+
+	float lowestHeight = FLT_MAX;
+	for (const auto index : sectionTriangles)
+	{
+		float height = localToView.TransformPosition(sectionVertices[index].Position).Y;
+		lowestHeight = FMath::Min(height, lowestHeight);
+	}
+
+	FVector origin(TransformMatrix.Inverse().GetOrigin());
+	FPlane plane(origin, FVector(Normal));
+	TArray<TPair<FVector, FVector>> edges;
+	UModumateGeometryStatics::ConvertProcMeshToLinesOnPlane(Actor->Mesh, origin, FVector(Normal), edges);
+
+	for (const auto& edge: edges)
+	{
+		FVector p1(edge.Key), p2(edge.Value);
+		p1 = TransformMatrix.TransformPosition(p1);
+		p2 = TransformMatrix.TransformPosition(p2);
+		FVector p3(p1), p4(p2);
+		p3.Y = lowestHeight;
+		p4.Y = lowestHeight;
+		if (p3.Y < p1.Y)
+		{
+			FModumateOccluder occluder(p1, p3, p2);
+			if (occluder.Area2D > minTriangleArea)
+			{
+				Occluders.Add(occluder);
+			}
+		}
+		if (p4.Y < p2.Y)
+		{
+			FModumateOccluder occluder(p2, p3, p4);
+			if (occluder.Area2D > minTriangleArea)
+			{
+				Occluders.Add(occluder);
 			}
 		}
 	}

@@ -207,4 +207,9 @@ public:
 	static void DeCasteljau(const FVector Points[4], int32 iterations, TArray<FVector>& outCurve);
 
 	static bool SegmentPlaneIntersectionDouble(FVector3d StartPoint, FVector3d EndPoint, const FPlane& Plane, FVector3d& outIntersectionPoint);
+
+	// Internal edges with adjacent angles of less than angleThreshold are dropped.
+	// Vertices separated by Epsilon are considered equivalent.
+	static void GetSilhouetteEdges(const TArray<FVector>& Vertices, const TArray<uint32>& Indices,
+		const FVector& ViewDirection, TArray<FEdge>& outEdges, double Epsilon = 0.4, double AngleThreshold = 0.9205 /* 23 deg */);
 };

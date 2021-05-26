@@ -7,6 +7,8 @@
 
 #include "DynamicTerrainActor.generated.h"
 
+class FDraftingComposite;
+
 UCLASS()
 class MODUMATE_API ADynamicTerrainActor : public AActor
 {
@@ -79,4 +81,9 @@ public:
 
 	void UpdateInstancedMeshes(bool bRecreateMesh);
 	bool GetRandomPointsOnTriangleSurface(int32 Tri1, int32 Tri2, int32 Tri3, int32 NumOfOutPoints, TArray<FVector>& OutPoints);
+
+	bool GetCutPlaneDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
+		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const;
+	void GetFarDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
+		const FBox2D& BoundingBox) const;
 };

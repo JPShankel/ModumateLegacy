@@ -1,6 +1,7 @@
 // Copyright 2021 Modumate, Inc. All Rights Reserved.
 
 #include "Objects/Terrain.h"
+#include "Drafting/ModumateDraftingElements.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Graph/Graph2DVertex.h"
@@ -11,7 +12,6 @@
 
 AMOITerrain::AMOITerrain()
 {
-
 }
 
 FVector AMOITerrain::GetCorner(int32 index) const
@@ -79,6 +79,28 @@ void AMOITerrain::PreDestroy()
 	TerrainActors.Empty();
 
 	Super::PreDestroy();
+}
+
+void AMOITerrain::GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
+	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
+	TArray<TArray<FVector>>& OutPerimeters) const
+{
+		bool bGetFarLines = ParentPage->lineClipping.IsValid();
+		if (bGetFarLines)
+		{
+			for (const auto* actor : TerrainActors)
+			{
+				actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox);
+			}
+		}
+		else
+		{
+			for (const auto* actor : TerrainActors)
+			{
+				bool bLinesDrawn = actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox);
+			}
+
+		}
 }
 
 void AMOITerrain::UpdateTerrainActors()

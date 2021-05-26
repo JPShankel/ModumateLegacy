@@ -15,17 +15,12 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateUnits.h"
-#include "ModumateCore/ModumateStats.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "Drafting/ModumateDraftingElements.h"
-
-DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Mesh To Lines"), STAT_ModumateMeshToLines, STATGROUP_Modumate);
-
-
 
 #define DEBUG_NINE_SLICING 0
 
@@ -794,7 +789,7 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposite
 		if (UseSlicedMesh[component])
 		{   // Component has been nine-sliced.
 			TArray<FVector> vertices;
-			TArray<int32> indices;
+			TArray<uint32> indices;
 			TArray<FEdge> componentEdges;
 			for (int32 slice = 9 * component; slice < 9 * (component + 1); ++slice)
 			{
@@ -837,7 +832,7 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposite
 
 			// Use epsilon of 0.25 mm:
 			FVector viewNormalLocal = actorToWorld.InverseTransformVector(viewNormal);
-			DraftingLinesFromTriangles(vertices, indices, viewNormalLocal, componentEdges, 0.025f);
+			UModumateGeometryStatics::GetSilhouetteEdges(vertices, indices, viewNormalLocal, componentEdges, 0.025f);
 
 			for (const auto& edge: componentEdges)
 			{
@@ -870,7 +865,7 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposite
 			FVector viewNormalLocal = localToWorld.InverseTransformVector(viewNormal);
 
 			TArray<FVector> positions;
-			TArray<int32> indices;
+			TArray<uint32> indices;
 			TArray<FVector> normals;
 			TArray<FVector2D> UVs;
 			TArray<FProcMeshTangent> tangents;
@@ -902,7 +897,7 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposite
 
 			TArray<FEdge> localEdges;
 			// Portal static meshes tend to have a lot of fine detail, to use epsilon of 0.5 mm.
-			DraftingLinesFromTriangles(positions, indices, viewNormalLocal, localEdges, 0.05f);
+			UModumateGeometryStatics::GetSilhouetteEdges(positions, indices, viewNormalLocal, localEdges, 0.05f);
 			for (const auto& edge: localEdges)
 			{
 				portalEdges.Add(FEdge(localToWorld.TransformPosition(edge.Vertex[0]), localToWorld.TransformPosition(edge.Vertex[1])) );
@@ -954,99 +949,4 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposite
 			line->SetLayerTypeRecursive(layerType);
 		}
 	}
-}
-
-// Vertices separated by Epsilon are considered equivalent.
-void ACompoundMeshActor::DraftingLinesFromTriangles(const TArray<FVector>& Vertices, const TArray<int32>& Indices,
-	const FVector& ViewDirection, TArray<FEdge>& outEdges, float Epsilon /*= 0.4f*/) const
-{
-	SCOPE_MS_ACCUMULATOR(STAT_ModumateMeshToLines);
-
-	const double EpsilonSquare = (double) Epsilon * Epsilon;
-	static constexpr double angleThreshold = 0.9205;  // 23 degrees
-	FVector3d viewDir(ViewDirection);
-
-	static auto lexicalVectorCompare = [](const FVector3d& a, const FVector3d& b)
-	{
-		if (a.X == b.X)
-		{
-			if (a.Y == b.Y)
-			{
-				return a.Z < b.Z;
-			}
-			return a.Y < b.Y;
-		}
-		return a.X < b.X;
-	};
-
-	struct FLocalEdge
-	{
-		FVector3d A;
-		FVector3d B;
-		FVector3d N;
-		bool bIsValid { true };
-		operator bool() const { return bIsValid; }
-		void Normalize() { if (lexicalVectorCompare(B, A)) { Swap(A, B); } }
-		bool operator==(const FLocalEdge& rhs) const
-		{
-			return ((A == rhs.A) && (B == rhs.B)) || ((A == rhs.B) && (B == rhs.A));
-		}
-		bool operator<(const FLocalEdge& rhs) const
-		{
-			return A == rhs.A ? lexicalVectorCompare(B, rhs.B) : lexicalVectorCompare(A, rhs.A);
-		}
-	};
-
-	TArray<FLocalEdge> edges;
-
-	const int32 numTriangles = Indices.Num() / 3;
-	for (int32 triangle = 0; triangle < numTriangles; ++triangle)
-	{
-
-		FVector3d vert0 = Vertices[Indices[triangle * 3]];
-		FVector3d vert1 = Vertices[Indices[triangle * 3 + 1]];
-		FVector3d vert2 = Vertices[Indices[triangle * 3 + 2]];
-		if (vert0.DistanceSquared(vert1) > EpsilonSquare && vert0.DistanceSquared(vert2) > EpsilonSquare
-			&& vert1.DistanceSquared(vert2) > EpsilonSquare)
-		{
-			FVector3d triNormal = ((vert2 - vert0).Cross(vert1 - vert0)).Normalized();
-			if (viewDir.Dot(triNormal) <= 0.0)
-			{
-				edges.Add({ vert0, vert1, triNormal });
-				edges.Add({ vert1, vert2, triNormal });
-				edges.Add({ vert2, vert0, triNormal });
-			}
-		}
-	}
-
-	const int numEdges = edges.Num();
-	for (auto& edge : edges)
-	{
-		edge.Normalize();
-	}
-
-	// Brute-force search for internal lines.
-	for (int32 e1 = 0; e1 < numEdges; ++e1)
-	{
-		for (int32 e2 = e1 + 1; e2 < numEdges; ++e2)
-		{
-			auto& edge1 = edges[e1];
-			auto& edge2 = edges[e2];
-			if (edge1.A.DistanceSquared(edge2.A) < EpsilonSquare && edge1.B.DistanceSquared(edge2.B) < EpsilonSquare
-				&& FMath::Abs(edge1.N.Dot(edge2.N)) > angleThreshold)
-			{
-				edge1.bIsValid = false;
-				edge2.bIsValid = false;
-			}
-		}
-	}
-
-	for (auto& edge: edges)
-	{
-		if (edge)
-		{
-			outEdges.Emplace(FVector(edge.A), FVector(edge.B));
-		}
-	}
-
 }

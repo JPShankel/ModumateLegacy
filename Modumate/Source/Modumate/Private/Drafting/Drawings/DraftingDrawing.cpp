@@ -14,19 +14,19 @@ FDraftingDrawing::FDraftingDrawing(const UModumateDocument *doc, UWorld *world, 
 	Doc(doc), World(world), CaptureObjID(captureObjID) {}
 
 namespace {
-	TArray<FVector> GetCorners(const AModumateObjectInstance * Object)
-	{
-		TArray<FVector> corners;
-		if (ensureAlways(Object->GetNumCorners() == 4))
+		TArray<FVector> GetCorners(const AModumateObjectInstance * Object)
 		{
-			for (int32 c = 0; c < 4; ++c)
+			TArray<FVector> corners;
+			if (ensureAlways(Object->GetNumCorners() == 4))
 			{
-				corners.Add(Object->GetCorner(c));
-			}
+				for (int32 c = 0; c < 4; ++c)
+				{
+					corners.Add(Object->GetCorner(c));
+				}
 
+			}
+			return corners;
 		}
-		return corners;
-	}
 }
 
 
@@ -174,7 +174,8 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 
 	TArray<TArray<FVector>> WallCutPerimeters;
 	TArray<const AModumateObjectInstance*> miscDraftObjects(Doc->GetObjectsOfType(
-		{ EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTFinish, EObjectType::OTTrim }));
+		{ EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTFinish, EObjectType::OTTrim,
+			EObjectType::OTTerrain}));
 
 	for (const auto* miscObject: miscDraftObjects)
 	{
@@ -193,12 +194,12 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 	ParentPage->lineClipping->GetTriangleEdges(occluders);
 	for (const auto& edge: occluders)
 	{
-		TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
+	TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 			FModumateUnitCoord2D::WorldCentimeters(FVector2D(edge.Vertex[0])),
 			FModumateUnitCoord2D::WorldCentimeters(FVector2D(edge.Vertex[1])),
 			lineThickness, lineColor);
 		ParentPage->Children.Add(line);
-		line->SetLayerTypeRecursive(FModumateLayerType::kDebug1);
+	line->SetLayerTypeRecursive(FModumateLayerType::kDebug1);
 	}
 #endif
 
@@ -209,7 +210,8 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 		EObjectType::OTRoofFace, EObjectType::OTWindow, EObjectType::OTDoor,
 		EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTRailSegment,
 		EObjectType::OTSystemPanel, EObjectType::OTMullion, EObjectType::OTStaircase,
-		EObjectType::OTFinish, EObjectType::OTCountertop, EObjectType::OTTrim
+		EObjectType::OTFinish, EObjectType::OTCountertop, EObjectType::OTTrim,
+		EObjectType::OTTerrain
 		}));
 
 	for (auto object: beyondCutObjects)
