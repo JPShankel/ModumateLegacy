@@ -204,7 +204,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	*/
 	std::wstring dimCStr(TCHAR_TO_WCHAR(*trimmedDimStr));
 
-	static const std::wregex fractionPattern(L"[\\d]+/[\\d]+");
+	static const std::wregex fractionPattern(L"[-+]?[\\d]+/[\\d]+");
 	static const std::wregex floatPattern(L"[-+]?([,\\d]*[.][0-9]+|[,\\d]+[.][0-9]*)");
 	static const std::wregex integerPattern(L"[-+]?[,\\d]+");
 	static const std::wregex feetPattern(L"(ft|')+");

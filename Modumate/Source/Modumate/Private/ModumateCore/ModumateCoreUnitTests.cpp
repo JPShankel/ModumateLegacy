@@ -1609,6 +1609,8 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDimensionFormatUnitTest, "Modumate.Cor
 	static constexpr double parseTolerance = 1.0e-6;
 
 	static TArray<TestCase> testCases = { 
+		{TEXT("-1/2\""),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * -0.5},
+		{TEXT("1' -1/2\""),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * 11.5},
 		{TEXT("5 6 7"),EDimensionFormat::Error,0},
 		{TEXT("3 FT 7IN"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (3.0 * 12.0 + 7)},
 		{TEXT("6ft 8'"),EDimensionFormat::Error,0},
@@ -1686,7 +1688,9 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDimensionFormatUnitTest, "Modumate.Cor
 		{TEXT("1m - 4.5cm"),EDimensionFormat::MetersAndCentimeters,104.5},
 		{TEXT("1,000m - 4.5cm"),EDimensionFormat::MetersAndCentimeters,100004.5},
 		{TEXT("zed"),EDimensionFormat::Error,0.0},
-		{TEXT("7 -3/4in"),EDimensionFormat::Error,0.0},
+		{TEXT("7 -3/4in"),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * (7 - 0.75)},
+		{TEXT("7- 3/4in"),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * (7 + 0.75)},
+		{TEXT("7 - 3/4in"),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * (7 + 0.75)},
 		{TEXT(",ft"),EDimensionFormat::Error,0.0},
 		{TEXT(".ft"),EDimensionFormat::Error,0.0},
 		{TEXT("0..1ft"),EDimensionFormat::Error,0.0},
