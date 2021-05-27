@@ -179,10 +179,12 @@ void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserS
 		LatestVersion = version;
 	}
 
+#if PLATFORM_WINDOWS
 	if (bQueryUpdateInstallers)
 	{
 		Updater->ProcessLatestInstallers(CachedUserStatus);
 	}
+#endif
 
 	if (CachedUserStatus.Active)
 	{
