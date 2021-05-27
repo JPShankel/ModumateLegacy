@@ -617,6 +617,10 @@ void AMOIPlaneHostedObj::GetBeyondDraftingLines(const TSharedPtr<FDraftingCompos
 	static const ModumateUnitParams::FThickness outerThickness = ModumateUnitParams::FThickness::Points(0.25f);
 
 	const AModumateObjectInstance *parent = GetParentObject();
+	if (!ensure(parent))
+	{
+		return;
+	}
 	FVector parentLocation = parent->GetLocation();
 	FModumateLayerType layerType;
 
