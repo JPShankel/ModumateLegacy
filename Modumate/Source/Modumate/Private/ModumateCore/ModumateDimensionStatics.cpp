@@ -177,15 +177,19 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 		Replace(TEXT("FT"), TEXT("'")).
 		Replace(TEXT("IN"), TEXT("\""));
 
-	// Dashes preceeded by a space and followed by a numeral are minus signs, the rest are treated spaces
-	for (int32 i = trimmedDimStr.Len() - 1; i >= 0 ; --i)
+	bool bIsNegative = false;
+
+	// Any dash that appears before the first numerical digit indicates overall negativity
+	for (int32 i = 0; i< trimmedDimStr.Len(); ++i)
 	{
+		if (FChar::IsDigit(trimmedDimStr[i]))
+		{
+			break;
+		}
 		if (trimmedDimStr[i] == TCHAR('-'))
 		{
-			if ((i>0 && trimmedDimStr[i - 1] != TCHAR(' ')) || !FChar::IsDigit(trimmedDimStr[i + 1]))
-			{
-				trimmedDimStr[i] = TCHAR(' ');
-			}
+			bIsNegative = true;
+			break;
 		}
 	}
 
@@ -204,12 +208,12 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	*/
 	std::wstring dimCStr(TCHAR_TO_WCHAR(*trimmedDimStr));
 
-	static const std::wregex fractionPattern(L"[-+]?[\\d]+/[\\d]+");
-	static const std::wregex floatPattern(L"[-+]?([,\\d]*[.][0-9]+|[,\\d]+[.][0-9]*)");
-	static const std::wregex integerPattern(L"[-+]?[,\\d]+");
+	static const std::wregex fractionPattern(L"[\\d]+/[\\d]+");
+	static const std::wregex floatPattern(L"([,\\d]*[.][0-9]+|[,\\d]+[.][0-9]*)");
+	static const std::wregex integerPattern(L"[,\\d]+");
 	static const std::wregex feetPattern(L"(ft|')+");
 	static const std::wregex inchesPattern(L"(in|\")+");
-	static const std::wregex garbagePattern(L"[a-zA-Z\\s]+");
+	static const std::wregex garbagePattern(L"[a-zA-Z\\s-+]+");
 
 	/*
 	* Keep a record of the values we resolve during tokenization
@@ -497,7 +501,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 		result.Format = EDimensionFormat::FeetAndInches;
 	}
 
-	result.Centimeters = (InchesPerFoot * feetV + inchesV) * InchesToCentimeters;
+	result.Centimeters = (bIsNegative ? -1.0 : 1.0)*(InchesPerFoot * feetV + inchesV) * InchesToCentimeters;
 
 	return result;
 }
