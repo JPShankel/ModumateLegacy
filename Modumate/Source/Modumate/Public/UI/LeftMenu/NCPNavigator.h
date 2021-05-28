@@ -52,10 +52,23 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bBorderAutoSize = false;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FAnchors EnableAutoSizeAnchor;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FAnchors DisableAutoSizeAnchor;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FMargin EnableAutoSizeMargin;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FMargin DisableAutoSizeMargin;
+
 	// String of the NCP, and whether it should be opened by default
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TMap<FString, bool> StarterNCPTagStrings;
 
+	void BuildAssemblyList(bool bScrollToSelectedAssembly = false);
 	void BuildNCPNavigator(EPresetCardType BuildAsType);
 	void BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 TagOrder);
 	bool IsNCPAvailableForSearch(const FBIMTagPath& NCPTag);

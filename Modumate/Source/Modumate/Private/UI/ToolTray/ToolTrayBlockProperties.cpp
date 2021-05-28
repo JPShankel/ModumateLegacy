@@ -67,20 +67,23 @@ void UToolTrayBlockProperties::ChangeBlockProperties(UEditModelToolBase* Current
 
 	// For all instance property members, set their visibility to whether their value has been consistently registered
 	bool bAnyPropertiesEnabled = false;
-	propertyEntries = PropertiesListBox->GetAllChildren();
-	for (auto propertyEntry : propertyEntries)
+	if (maxNumRegistrations > 0)
 	{
-		if (auto instPropEntry = Cast<UInstPropWidgetBase>(propertyEntry))
+		for (auto propertyEntry : propertyEntries)
 		{
-			bool bVisible = instPropEntry->GetNumRegistrations() == maxNumRegistrations;
-			instPropEntry->SetVisibility(bVisible ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-			if (bVisible)
+			if (auto instPropEntry = Cast<UInstPropWidgetBase>(propertyEntry))
 			{
-				instPropEntry->DisplayValue();
-				bAnyPropertiesEnabled = true;
+				bool bVisible = instPropEntry->GetNumRegistrations() == maxNumRegistrations;
+				instPropEntry->SetVisibility(bVisible ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+				if (bVisible)
+				{
+					instPropEntry->DisplayValue();
+					bAnyPropertiesEnabled = true;
+				}
 			}
 		}
 	}
+
 
 	if (bAnyPropertiesEnabled)
 	{

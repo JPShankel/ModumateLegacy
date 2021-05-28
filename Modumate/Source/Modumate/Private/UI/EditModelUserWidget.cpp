@@ -16,7 +16,7 @@
 #include "UI/Toolbar/ToolbarTopWidget.h"
 #include "UI/Toolbar/ToolbarWidget.h"
 #include "UI/Toolbar/ViewModeIndicatorWidget.h"
-#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
+#include "UI/LeftMenu/NCPNavigator.h"
 #include "UI/ToolTray/ToolTrayWidget.h"
 #include "UnrealClasses/EditModelInputHandler.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -71,7 +71,7 @@ void UEditModelUserWidget::NativeConstruct()
 
 void UEditModelUserWidget::UpdateOnToolModeChanged()
 {
-	ToolTrayWidget->ToolTrayBlockAssembliesList->ResetSearchBox();
+	ToolTrayWidget->NCPNavigatorAssembliesList->ResetSelectedAndSearchTag();
 	UpdateToolTray();
 }
 
@@ -268,7 +268,7 @@ bool UEditModelUserWidget::UpdateCutPlaneInList(int32 ObjID /*= MOD_ID_NONE*/)
 
 void UEditModelUserWidget::RefreshAssemblyList(bool bScrollToSelected)
 {
-	ToolTrayWidget->ToolTrayBlockAssembliesList->RefreshNCPNavigatorAssembliesList(bScrollToSelected);
+	ToolTrayWidget->NCPNavigatorAssembliesList->BuildAssemblyList(bScrollToSelected);
 }
 
 void UEditModelUserWidget::UpdateViewModeIndicator(EEditViewModes NewViewMode)

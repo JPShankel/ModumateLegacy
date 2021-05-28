@@ -10,7 +10,6 @@
 #include "UI/DetailDesigner/DetailContainer.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/SelectionTray/SelectionTrayBlockPresetList.h"
-#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"

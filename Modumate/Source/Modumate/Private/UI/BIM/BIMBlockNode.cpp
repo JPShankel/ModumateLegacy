@@ -12,7 +12,6 @@
 #include "UI/Custom/ModumateButton.h"
 #include "Components/Image.h"
 #include "UI/ComponentPresetListItem.h"
-#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Components/VerticalBox.h"
 #include "UI/BIM/BIMBlockUserEnterable.h"

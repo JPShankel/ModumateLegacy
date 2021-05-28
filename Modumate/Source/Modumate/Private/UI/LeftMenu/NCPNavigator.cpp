@@ -48,6 +48,8 @@ bool UNCPNavigator::Initialize()
 		if (canvasSlotBorder)
 		{
 			canvasSlotBorder->bAutoSize = bBorderAutoSize;
+			canvasSlotBorder->SetAnchors(bBorderAutoSize ? EnableAutoSizeAnchor : DisableAutoSizeAnchor);
+			canvasSlotBorder->SetOffsets(bBorderAutoSize ? EnableAutoSizeMargin : DisableAutoSizeMargin);
 		}
 	}
 
@@ -59,6 +61,28 @@ void UNCPNavigator::NativeConstruct()
 	Super::NativeConstruct();
 	EMPlayerController = GetOwningPlayer<AEditModelPlayerController>();
 	EMGameState = GetWorld()->GetGameState<AEditModelGameState>();
+}
+
+void UNCPNavigator::BuildAssemblyList(bool bScrollToSelectedAssembly /*= false*/)
+{
+	if (!EMPlayerController || !EMPlayerController->CurrentTool)
+	{
+		return;
+	}
+
+	BuildNCPNavigator(EPresetCardType::AssembliesList);
+	if (bScrollToSelectedAssembly)
+	{
+		FGuid toolGuid = EMPlayerController->CurrentTool->GetAssemblyGUID();
+		FBIMTagPath ncpForSwap;
+		EMPlayerController->GetDocument()->GetPresetCollection().GetNCPForPreset(toolGuid, ncpForSwap);
+		if (ncpForSwap.Tags.Num() > 0)
+		{
+			ResetSelectedAndSearchTag();
+			SetNCPTagPathAsSelected(ncpForSwap);
+			ScrollPresetToView(toolGuid);
+		}
+	}
 }
 
 void UNCPNavigator::BuildNCPNavigator(EPresetCardType BuildAsType)
@@ -299,7 +323,7 @@ void UNCPNavigator::GetTopTraversalPath(const FBIMTagPath& InNCP, FBIMTagPath& T
 	{
 		FBIMPresetTaxonomyNode taxNode;
 		EMPlayerController->GetDocument()->GetPresetCollection().PresetTaxonomy.GetExactMatch(TopTraversalNCP, taxNode);
-		bCanTraverse = TopTraversalNCP.Tags.Num() > 1 && taxNode.BlockUpwardTraversal;
+		bCanTraverse = TopTraversalNCP.Tags.Num() > 1 && !taxNode.BlockUpwardTraversal;
 		if (bCanTraverse)
 		{
 			FBIMTagPath partialPath;

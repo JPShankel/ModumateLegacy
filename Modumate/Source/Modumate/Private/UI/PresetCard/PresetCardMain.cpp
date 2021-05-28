@@ -21,7 +21,6 @@
 #include "UI/PresetCard/PresetCardMetaDimension.h"
 #include "UI/PresetCard/PresetCardItemObject.h"
 #include "UI/SelectionTray/SelectionTrayBlockPresetList.h"
-#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "UI/LeftMenu/SwapMenuWidget.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/ToolTray/ToolTrayWidget.h"
@@ -94,9 +93,9 @@ void UPresetCardMain::OnMainButtonReleased()
 	else if (CurrentPresetCardType == EPresetCardType::AssembliesList)
 	{
 		EMPlayerController->EMPlayerState->SetAssemblyForToolMode(EMPlayerController->GetToolMode(), PresetGUID);
-		if (ensure(ParentToolTrayBlockAssembliesList))
+		if (ensure(EMPlayerController->EditModelUserWidget->ToolTrayWidget->NCPNavigatorAssembliesList))
 		{
-			ParentToolTrayBlockAssembliesList->RefreshNCPNavigatorAssembliesList();
+			EMPlayerController->EditModelUserWidget->ToolTrayWidget->NCPNavigatorAssembliesList->BuildAssemblyList();
 		}
 	}
 }
@@ -313,7 +312,6 @@ void UPresetCardMain::BuildAsAssemblyListPresetCard(class UBrowserItemObj* InBro
 	ParentBrowserItemObj = InBrowserItemObj;
 	PresetGUID = ParentBrowserItemObj->PresetGuid;
 	CurrentPresetCardType = ParentBrowserItemObj->PresetCardType;
-	ParentToolTrayBlockAssembliesList = EMPlayerController->EditModelUserWidget->ToolTrayWidget->ToolTrayBlockAssembliesList;
 	if (IsCurrentToolAssembly())
 	{
 		BuildAsExpandedPresetCard(PresetGUID);

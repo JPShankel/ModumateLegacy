@@ -45,7 +45,7 @@ public:
 	class UToolTrayBlockProperties *ToolTrayBlockProperties;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UToolTrayBlockAssembliesList *ToolTrayBlockAssembliesList;
+	class UNCPNavigator* NCPNavigatorAssembliesList;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UGeneralListItemMenuBlock* ToolTrayBlockTerrainList;

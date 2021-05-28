@@ -11,7 +11,6 @@
 #include "UI/Custom/ModumateComboBoxString.h"
 #include "Components/Image.h"
 #include "UI/BIM/BIMBlockNode.h"
-#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/BIM/BIMEditColorPicker.h"

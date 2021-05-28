@@ -7,12 +7,12 @@
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/Toolbar/ToolbarWidget.h"
-#include "UI/ToolTray/ToolTrayBlockAssembliesList.h"
 #include "UI/ToolTray/ToolTrayBlockModes.h"
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UI/ToolTray/ToolTrayBlockTools.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/RightMenu/GeneralListItemMenuBlock.h"
+#include "UI/LeftMenu/NCPNavigator.h"
 
 UToolTrayWidget::UToolTrayWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -25,12 +25,6 @@ bool UToolTrayWidget::Initialize()
 	{
 		return false;
 	}
-	if (!ToolTrayBlockAssembliesList)
-	{
-		return false;
-	}
-
-	ToolTrayBlockAssembliesList->ToolTray = this;
 
 	return true;
 }
@@ -94,8 +88,8 @@ bool UToolTrayWidget::ChangeBlockToSeparatorTools(EToolMode Toolmode)
 	ToolTrayBlockProperties->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockProperties->ChangeBlockProperties(Cast<UEditModelToolBase>(controller->CurrentTool.GetObject()));
 
-	ToolTrayBlockAssembliesList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ToolTrayBlockAssembliesList->RefreshNCPNavigatorAssembliesList(true);
+	NCPNavigatorAssembliesList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	NCPNavigatorAssembliesList->BuildAssemblyList(true);
 
 	return true;
 }
@@ -143,8 +137,8 @@ bool UToolTrayWidget::ChangeBlockToAttachmentTools(EToolMode Toolmode)
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	ToolTrayBlockModes->ChangeToAttachmentToolsButtons(controller->GetToolMode());
 
-	ToolTrayBlockAssembliesList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ToolTrayBlockAssembliesList->RefreshNCPNavigatorAssembliesList(true);
+	NCPNavigatorAssembliesList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	NCPNavigatorAssembliesList->BuildAssemblyList(true);
 
 	return true;
 }
@@ -181,7 +175,7 @@ void UToolTrayWidget::HideAllToolTrayBlocks()
 	ToolTrayBlockTools->SetVisibility(ESlateVisibility::Collapsed);
 	ToolTrayBlockModes->SetVisibility(ESlateVisibility::Collapsed);
 	ToolTrayBlockProperties->SetVisibility(ESlateVisibility::Collapsed);
-	ToolTrayBlockAssembliesList->SetVisibility(ESlateVisibility::Collapsed);
+	NCPNavigatorAssembliesList->SetVisibility(ESlateVisibility::Collapsed);
 	ToolTrayBlockTerrainList->SetVisibility(ESlateVisibility::Collapsed);
 	if (EditModelUserWidget)
 	{

@@ -46,9 +46,6 @@ protected:
 	class USelectionTrayBlockPresetList* ParentSelectionTrayBlockPresetList;
 
 	UPROPERTY()
-	class UToolTrayBlockAssembliesList* ParentToolTrayBlockAssembliesList;
-
-	UPROPERTY()
 	class UBrowserItemObj* ParentBrowserItemObj;
 
 	UPROPERTY()
