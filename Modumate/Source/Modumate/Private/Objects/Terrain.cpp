@@ -111,10 +111,30 @@ void AMOITerrain::UpdateTerrainActors()
 	if (ensure(graph2d))
 	{
 		const auto& polygons = graph2d->GetPolygons();
+
+		// TODO: Calculate gridSize for each TerrainActor, currently calculate the smallest one for now
+		float verticesDensityPerRow = 30;
+		float minGridSize = 1.f;
+		float maxGridSize = 1000.f;
+		float gridSize = maxGridSize;
+		for (const auto& polygonKvp : polygons)
+		{
+			const auto& polygon = polygonKvp.Value;
+			TArray<FVector2D> polygonPoints;
+			for (int32 v : polygon.VertexIDs)
+			{
+				polygonPoints.Add(graph2d->GetVertices()[v].Position);
+			}
+			FBox2D polygonBox2D(polygonPoints);
+			gridSize = FMath::Min(FMath::Clamp((FMath::Sqrt(polygonBox2D.GetArea()) / verticesDensityPerRow), minGridSize, maxGridSize), gridSize);
+		}
+
 		for (const auto& polygonKvp: polygons)
 		{
 			const auto& polygon = polygonKvp.Value;
-			if (polygon.bInterior || polygon.ContainingPolyID != MOD_ID_NONE)
+			// TODO: Commented to allow testing separate sections for TerrainActor
+			//if (polygon.bInterior || polygon.ContainingPolyID != MOD_ID_NONE)
+			if (!polygon.bInterior || polygon.ContainingPolyID != MOD_ID_NONE)
 			{
 				continue;
 			}
@@ -160,7 +180,7 @@ void AMOITerrain::UpdateTerrainActors()
 
 			};
 
-			for (int32 v: polygon.VertexIDs)
+			for (int32 v: polygon.CachedPerimeterVertexIDs)
 			{
 				ensure(InstanceData.Heights.Find(v));
 				float height = InstanceData.Heights[v];
@@ -185,7 +205,9 @@ void AMOITerrain::UpdateTerrainActors()
 
 			if (perimeterPoints2D.Num() >= 3)
 			{
-				actor->TestSetupTerrainGeometryGTE(perimeterPoints2D, heightPoints, TArray<FPolyHole2D>(), true, false);
+				// TODO: Calculate gridSize for individual TerrainActor, must be same for all sections within a terrain actor to avoid seams
+				// TODO: Determine which terrain actor to add section. Add to the first terrainActor for now
+				TerrainActors[0]->TestSetupTerrainGeometryGTE(numTerrainPatches, gridSize, perimeterPoints2D, heightPoints, TArray<FPolyHole2D>(), true, false);
 			}
 
 			++numTerrainPatches;

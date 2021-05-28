@@ -16,15 +16,6 @@ class MODUMATE_API ADynamicTerrainActor : public AActor
 
 private:
 
-	TArray<FVector2D> GridPoints;
-	TArray<FVector> Vertices;
-	TArray<FVector2D> Vertices2D;
-	TArray<FVector> Normals;
-	TArray<int32> Triangles;
-	TArray<FVector2D> UV0;
-	TArray<FProcMeshTangent> Tangents;
-	TArray<FLinearColor> VertexColors;
-
 public:
 	// Sets default values for this actor's properties
 	ADynamicTerrainActor();
@@ -47,15 +38,6 @@ public:
 	class UHierarchicalInstancedStaticMeshComponent* GrassMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float VerticesDensityPerRow = 30;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MinVertSize = 1.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MaxVertSize = 1000.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 UVSize = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -70,17 +52,13 @@ public:
 	//UFUNCTION(BlueprintCallable)
 	//void SetupTerrainGeometry(const TArray<FVector>& PerimeterPoints, const TArray<FVector>& HeightPoints, bool bRecreateMesh, bool bCreateCollision = true);
 
-	UFUNCTION(BlueprintCallable)
-	void UpdateTerrainGeometryFromPoints(const TArray<FVector>& HeightPoints);
+	void TestSetupTerrainGeometryGTE(int32 SectionID, float GridSize, const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision = true);
 
-	UFUNCTION(BlueprintCallable)
-	void UpdateVertexColorByLocation(const FVector& Location, const FLinearColor& NewColor, float Radius, float Alpha);
-
-
-	void TestSetupTerrainGeometryGTE(const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision = true);
-
+	// TODO: Update instances for triangles in mesh sections
+#if 0
 	void UpdateInstancedMeshes(bool bRecreateMesh);
 	bool GetRandomPointsOnTriangleSurface(int32 Tri1, int32 Tri2, int32 Tri3, int32 NumOfOutPoints, TArray<FVector>& OutPoints);
+#endif
 
 	bool GetCutPlaneDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const;

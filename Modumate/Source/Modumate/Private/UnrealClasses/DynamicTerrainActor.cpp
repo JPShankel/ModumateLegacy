@@ -166,84 +166,52 @@ void ADynamicTerrainActor::SetupTerrainGeometry(const TArray<FVector>& Perimeter
 }
 #endif
 
-void ADynamicTerrainActor::UpdateTerrainGeometryFromPoints(const TArray<FVector>& HeightPoints)
+void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(int32 SectionID, float GridSize, const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision /*= true*/)
 {
-	if (!ensureAlways(HeightPoints.Num() > 2))
-	{
-		return;
-	}
-
-	Vertices.Reset();
-
-	// tps
-	FThinPlateSpline2 tps;
-	TArray<float> zOffsets;
-	if (!tps.Calculate(HeightPoints, Vertices2D, 0, zOffsets))
-	{
-		return;
-	}
-
-	// Update vertices
-	for (int32 i = 0; i < Vertices2D.Num(); i++)
-	{
-		Vertices.Add(FVector(Vertices2D[i].X, Vertices2D[i].Y, zOffsets[i]));
-	}
-	// Uncomment below to update normals and tangents (expensive)
-	//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UV0, Normals, Tangents);
-
-	Mesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, UV0, VertexColors, Tangents);
-	//UpdateInstancedMeshes(false);
-}
-
-void ADynamicTerrainActor::UpdateVertexColorByLocation(const FVector& Location, const FLinearColor& NewColor, float Radius, float Alpha)
-{
-	FVector2D origin2D = FVector2D(Location.X, Location.Y);
-	for (int32 i = 0; i < Vertices2D.Num(); i++)
-	{
-		if ((Vertices2D[i] - origin2D).Size() < Radius)
-		{
-			FLinearColor newColor = (Alpha * (NewColor - VertexColors[i])) + VertexColors[i];
-			VertexColors[i] = newColor;
-		}
-	}
-
-	Mesh->UpdateMeshSection_LinearColor(0, Vertices, Normals, UV0, VertexColors, Tangents);
-}
-
-void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision /*= true*/)
-{
-	Vertices.Empty();
-	Vertices2D.Empty();
-	Triangles.Empty();
-	UV0.Empty();
-	Normals.Empty();
-	VertexColors.Empty();
-	Tangents.Empty();
-
-	// Calculate distance between vertices by terrain size
-	FBox2D box2D(PerimeterPoints);
-	float vertSize = FMath::Clamp((FMath::Sqrt(box2D.GetArea()) / VerticesDensityPerRow), MinVertSize, MaxVertSize);
+	TArray<FVector> vertices;
+	TArray<FVector2D> vertices2D;
+	TArray<FVector> normals;
+	TArray<int32> triangles;
+	TArray<FVector2D> uv0;
+	TArray<FProcMeshTangent> tangents;
+	TArray<FLinearColor> vertexColors;
 
 	// Add grid points if required
+	FBox2D box2D(PerimeterPoints);
 	FDynamicGraph2<float> inGridPoints;
 	if (bAddGraphPoints)
 	{
-		int32 numX = ((box2D.Max.X - box2D.Min.X) / vertSize) + 1;
-		int32 numY = ((box2D.Max.Y - box2D.Min.Y) / vertSize) + 1;
+		int32 numX = ((box2D.Max.X - box2D.Min.X) / GridSize) + 1;
+		int32 numY = ((box2D.Max.Y - box2D.Min.Y) / GridSize) + 1;
 		for (int32 xId = 0; xId < numX; xId++)
 		{
 			for (int32 yId = 0; yId < numY; yId++)
 			{
-				float xV = (xId * vertSize) + box2D.Min.X;
-				float yV = (yId * vertSize) + box2D.Min.Y;
+				float xV = (xId * GridSize) + box2D.Min.X;
+				float yV = (yId * GridSize) + box2D.Min.Y;
 				inGridPoints.AppendVertex(FVector2f(xV, yV));
 			}
 		}
 	}
 
+	// Add vertices between perimeter points to match grid vertices
+	TArray<FVector2D> dividedPerimeterPoints;
+	for (int32 i = 0; i < PerimeterPoints.Num(); i++)
+	{
+		FVector2D p1 = PerimeterPoints[i];
+		FVector2D p2 = PerimeterPoints[(i + 1) % PerimeterPoints.Num()];
+		int32 totalPoints = (p1 - p2).Size() / GridSize;
+		for (int32 idPoint = 0; idPoint < totalPoints; idPoint++)
+		{
+			float pct = float(idPoint) / float(totalPoints);
+			FVector2D curP = p1 + pct * (p2 - p1);
+			dividedPerimeterPoints.Add(curP);
+		}
+	}
+
 	// GTE
 	TArray<FVector2D> gteCombinedVertices;
-	if (!UModumateGeometryStatics::TriangulateVerticesGTE(PerimeterPoints, HolePoints, Triangles, &gteCombinedVertices, true, &Vertices2D, &inGridPoints))
+	if (!UModumateGeometryStatics::TriangulateVerticesGTE(dividedPerimeterPoints, HolePoints, triangles, &gteCombinedVertices, true, &vertices2D, &inGridPoints))
 	{
 		return;
 	}
@@ -251,29 +219,30 @@ void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(const TArray<FVector2D>& 
 	// tps
 	FThinPlateSpline2 tps;
 	TArray<float> zOffsets;
-	if (!tps.Calculate(HeightPoints, Vertices2D, 0, zOffsets))
+	if (!tps.Calculate(HeightPoints, vertices2D, 0, zOffsets))
 	{
 		return;
 	}
 
 	// Setup procedural mesh
-	for (int32 i = 0; i < Vertices2D.Num(); i++)
+	for (int32 i = 0; i < vertices2D.Num(); i++)
 	{
-		Vertices.Add(FVector(Vertices2D[i].X, Vertices2D[i].Y, zOffsets[i]));
-		UV0.Add(FVector2D(Vertices2D[i].X, Vertices2D[i].Y) / UVSize);
-		VertexColors.Add(FLinearColor::Black);
+		vertices.Add(FVector(vertices2D[i].X, vertices2D[i].Y, zOffsets[i]));
+		uv0.Add(FVector2D(vertices2D[i].X, vertices2D[i].Y) / UVSize);
+		vertexColors.Add(FLinearColor::Black);
 	}
-	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UV0, Normals, Tangents);
+	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(vertices, triangles, uv0, normals, tangents);
 
-	Mesh->CreateMeshSection_LinearColor(0, Vertices, Triangles, Normals, UV0, VertexColors, Tangents, bCreateCollision);
-	Mesh->SetMaterial(0, TerrainMaterial);
+	Mesh->CreateMeshSection_LinearColor(SectionID, vertices, triangles, normals, uv0, vertexColors, tangents, bCreateCollision);
+	Mesh->SetMaterial(SectionID, TerrainMaterial);
 
-	GrassMesh->SetStaticMesh(GrassStaticMesh);
-	UpdateInstancedMeshes(true);
+	//GrassMesh->SetStaticMesh(GrassStaticMesh);
+	//UpdateInstancedMeshes(true);
 
 	return;
 }
 
+#if 0
 void ADynamicTerrainActor::UpdateInstancedMeshes(bool bRecreateMesh)
 {
 	if (bRecreateMesh)
@@ -353,6 +322,7 @@ bool ADynamicTerrainActor::GetRandomPointsOnTriangleSurface(int32 TriA, int32 Tr
 
 	return true;
 }
+#endif
 
 bool ADynamicTerrainActor::GetCutPlaneDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage,
 	const FPlane& Plane, const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox) const
