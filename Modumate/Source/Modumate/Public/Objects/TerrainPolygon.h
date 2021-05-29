@@ -16,6 +16,7 @@ public:
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController* controller) override { };
 
 protected:
 };

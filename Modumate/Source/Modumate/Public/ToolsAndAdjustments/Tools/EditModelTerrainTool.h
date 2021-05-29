@@ -30,11 +30,14 @@ public:
 	virtual bool PostEndOrAbort() override;
 
 	virtual bool HasDimensionActor() override { return true; }
+	virtual bool HandleInputNumber(double n) override;
 
 	virtual void RegisterToolDataUI(class UToolTrayBlockProperties* PropertiesUI, int32& OutMaxNumRegistrations) override;
 
 	UFUNCTION()
 	void OnToolUIChangedHeight(float NewHeight);
+
+
 
 protected:
 	bool AddFirstEdge(FVector Point1, FVector Point2);

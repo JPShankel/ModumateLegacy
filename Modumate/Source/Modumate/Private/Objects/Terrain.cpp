@@ -66,6 +66,13 @@ bool AMOITerrain::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnable
 		return false;
 	}
 
+	for (auto& actor : TerrainActors)
+	{
+		actor->SetActorHiddenInGame(!bOutVisible);
+		actor->SetActorEnableCollision(bOutCollisionEnabled);
+		actor->SetActorTransform(FTransform(FQuat::Identity, GetLocation()) );
+	}
+
 	return true;
 }
 
@@ -103,6 +110,14 @@ void AMOITerrain::GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentP
 		}
 }
 
+bool AMOITerrain::GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const
+{
+	OutState = GetStateData();
+	FMOITerrainData newData = InstanceData;
+	newData.Origin = Transform.GetLocation();
+	return OutState.CustomData.SaveStructData(newData);
+}
+
 void AMOITerrain::UpdateTerrainActors()
 {
 	const auto graph2d = GetDocument()->FindSurfaceGraph(ID);
@@ -114,7 +129,7 @@ void AMOITerrain::UpdateTerrainActors()
 
 		// TODO: Calculate gridSize for each TerrainActor, currently calculate the smallest one for now
 		float verticesDensityPerRow = 30;
-		float minGridSize = 1.f;
+		float minGridSize = 100.0f;
 		float maxGridSize = 1000.f;
 		float gridSize = maxGridSize;
 		for (const auto& polygonKvp : polygons)
@@ -144,7 +159,9 @@ void AMOITerrain::UpdateTerrainActors()
 			{
 				actor = GetWorld()->SpawnActor<ADynamicTerrainActor>(ADynamicTerrainActor::StaticClass(), FTransform(FQuat::Identity, GetLocation() ));
 				ensure(SetupTerrainMaterial(actor));
+				actor->Mesh->SetCollisionObjectType(UModumateTypeStatics::CollisionTypeFromObjectType(GetObjectType()) );
 				TerrainActors.Add(actor);
+				actor->AttachToActor(GetActor(), FAttachmentTransformRules::KeepWorldTransform);
 			}
 			else
 			{
@@ -207,7 +224,7 @@ void AMOITerrain::UpdateTerrainActors()
 			{
 				// TODO: Calculate gridSize for individual TerrainActor, must be same for all sections within a terrain actor to avoid seams
 				// TODO: Determine which terrain actor to add section. Add to the first terrainActor for now
-				TerrainActors[0]->TestSetupTerrainGeometryGTE(numTerrainPatches, gridSize, perimeterPoints2D, heightPoints, TArray<FPolyHole2D>(), true, false);
+				TerrainActors[0]->TestSetupTerrainGeometryGTE(numTerrainPatches, gridSize, perimeterPoints2D, heightPoints, TArray<FPolyHole2D>(), true, true);
 			}
 
 			++numTerrainPatches;

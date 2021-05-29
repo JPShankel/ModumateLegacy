@@ -235,6 +235,7 @@ void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(int32 SectionID, float Gr
 
 	Mesh->CreateMeshSection_LinearColor(SectionID, vertices, triangles, normals, uv0, vertexColors, tangents, bCreateCollision);
 	Mesh->SetMaterial(SectionID, TerrainMaterial);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 	//GrassMesh->SetStaticMesh(GrassStaticMesh);
 	//UpdateInstancedMeshes(true);

@@ -207,6 +207,40 @@ void UTerrainTool::OnToolUIChangedHeight(float NewHeight)
 	StartingZHeight = NewHeight;
 }
 
+bool UTerrainTool::HandleInputNumber(double n)
+{
+	Super::HandleInputNumber(n);
+
+	if (!Controller->EMPlayerState->SnappedCursor.Visible)
+	{
+		return false;
+	}
+
+	if (State == AddEdge)
+	{
+		auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID);
+		if (dimensionActor != nullptr)
+		{
+			ALineActor* pendingSegment = dimensionActor->GetLineActor();
+			FVector endPoint = pendingSegment->Point1 + (pendingSegment->Point2 - pendingSegment->Point1).GetSafeNormal() * n;
+			endPoint.Z = ZHeight;
+
+			if (TerrainGraph == nullptr)
+			{
+				AddFirstEdge(pendingSegment->Point1, endPoint);
+			}
+			else
+			{
+				AddNewEdge(pendingSegment->Point1, endPoint);
+			}
+			pendingSegment->Point1 = pendingSegment->Point2 = CurrentPoint = endPoint;
+			Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(CurrentPoint, FVector::UpVector, FVector::ZeroVector, false);
+		}
+	}
+
+	return true;
+}
+
 // Add the first edge of a new terrain MOI.
 bool UTerrainTool::AddFirstEdge(FVector Point1, FVector Point2)
 {

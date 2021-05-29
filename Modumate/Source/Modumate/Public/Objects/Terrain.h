@@ -38,6 +38,7 @@ public:
 	virtual FVector GetNormal() const override;
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
+	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
