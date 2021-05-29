@@ -249,8 +249,13 @@ void UModumateGameInstance::RegisterAllCommands()
 	});
 
 	RegisterCommand(kDebug, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
+		AEditModelPlayerController* playerController = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+		AEditModelPlayerState* playerState = playerController ? playerController->EMPlayerState : nullptr;
+		if (playerState == nullptr)
+		{
+			return false;
+		}
 
-		AEditModelPlayerState* playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		FString type = params.GetValue(TEXT("type"),TEXT("document"));
 
 		bool hasShow = params.HasValue(TEXT("on"));
@@ -281,6 +286,10 @@ void UModumateGameInstance::RegisterAllCommands()
 		else if (type.Equals(TEXT("ddl2")))
 		{
 			playerState->bDevelopDDL2Data = hasShow ? show : !playerState->bDevelopDDL2Data;
+		}
+		else if (type.Equals(TEXT("multiplayer")))
+		{
+			playerState->bShowMultiplayerDebug = hasShow ? show : !playerState->bShowMultiplayerDebug;
 		}
 
 		return true;

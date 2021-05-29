@@ -46,12 +46,21 @@ bool UStartRootMenuWidget::Initialize()
 	return true;
 }
 
-bool UStartRootMenuWidget::ConfirmQuit() const
+bool UStartRootMenuWidget::ConfirmQuit()
 {
+	if (bShowingQuitConfirmation)
+	{
+		return false;
+	}
+
+	bShowingQuitConfirmation = true;
+
 	FText quitConfirmMsg = LOCTEXT("QuitConfirmMessage", "Are you sure you want to quit Modumate?");
 	FText quitConfirmCaption = LOCTEXT("QuitConfirmCaption", "Quit");
 	auto confirmResponse = FPlatformMisc::MessageBoxExt(EAppMsgType::OkCancel, *quitConfirmMsg.ToString(), *quitConfirmCaption.ToString());
-	return confirmResponse == EAppReturnType::Ok;
+
+	bShowingQuitConfirmation = false;
+	return (confirmResponse == EAppReturnType::Ok);
 }
 
 void UStartRootMenuWidget::NativeConstruct()

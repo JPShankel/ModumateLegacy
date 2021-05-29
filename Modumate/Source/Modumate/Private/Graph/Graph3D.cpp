@@ -739,13 +739,12 @@ bool FGraph3D::ApplyDelta(const FGraph3DDelta &Delta)
 		int32 vertexID = kvp.Key;
 		const auto &vertexDelta = kvp.Value;
 		FGraph3DVertex *vertex = FindVertex(vertexID);
-		if (ensureAlways(vertex))
+		if (!ensure(vertex))
 		{
-			vertex->Position = vertexDelta.Value;
+			return false;
 		}
 
-		TSet<int32> connectedFaces, connectedEdges;
-		vertex->GetConnectedFacesAndEdges(connectedFaces, connectedEdges);
+		vertex->Position = vertexDelta.Value;
 
 		// this also sets all connected edges and faces dirty
 		vertex->Dirty(true);
@@ -780,7 +779,10 @@ bool FGraph3D::ApplyDelta(const FGraph3DDelta &Delta)
 	{
 		int32 edgeID = kvp.Key;
 		const TArray<int32> &edgeVertexIDs = kvp.Value.Vertices;
-		ensureAlways(edgeVertexIDs.Num() == 2);
+		if (!ensureAlways(edgeVertexIDs.Num() == 2))
+		{
+			return false;
+		}
 
 		TempInheritedGroupIDs = kvp.Value.GroupIDs;
 		for (int32 parentID : kvp.Value.ParentObjIDs)

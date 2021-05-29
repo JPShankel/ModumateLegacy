@@ -322,11 +322,10 @@ using FModumateDocumentHeader = FModumateDocumentHeaderV2;
 // Version 16: Miter priority in layers
 static constexpr int32 DocVersion = 16;
 
-static constexpr TCHAR * DocObjectInstanceField = TEXT("ModumateObjects");
-static constexpr TCHAR * DocHeaderField = TEXT("ModumateHeader");
-
-
 struct MODUMATE_API FModumateSerializationStatics
 {
+	static const FString DocHeaderField;
+	static const FString DocObjectInstanceField;
+
 	static bool TryReadModumateDocumentRecord(const FString &filePath, FModumateDocumentHeader &OutHeader, FMOIDocumentRecord &OutRecord);
 };

@@ -9,6 +9,7 @@
 #include "Components/EditableTextBox.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "DocumentManagement/ModumateCommands.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Engine/SceneCapture2D.h"
 #include "Framework/Application/SlateApplication.h"
@@ -131,33 +132,60 @@ void AEditModelPlayerController::PostInitializeComponents()
 	}
 }
 
+void AEditModelPlayerController::SetPawn(APawn* InPawn)
+{
+	Super::SetPawn(InPawn);
+
+	EMPlayerPawn = Cast<AEditModelPlayerPawn>(GetPawn());
+	if (EMPlayerPawn)
+	{
+		SetViewTargetWithBlend(EMPlayerPawn);
+	}
+}
+
 /*
 * Unreal Event Handlers
 */
 
-void AEditModelPlayerController::BeginWithPlayerState()
+bool AEditModelPlayerController::BeginWithPlayerState()
 {
-	if (bBeganWithPlayerState || (EMPlayerState == nullptr))
+	UWorld* world = GetWorld();
+	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
+
+	if (bBeganWithPlayerState || (EMPlayerState == nullptr) || (gameState == nullptr))
 	{
-		return;
+		return false;
 	}
 
-	AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	if (gameState->Document == nullptr)
 	{
 		ensureMsgf(IsNetMode(NM_Client), TEXT("The document should only be missing if we're a client connected to a dedicated server!"));
-		gameState->InitDocument();
+
+		FString localUserID;
+		int32 localUserIdx = INDEX_NONE;
+
+		auto gameInstance = GetGameInstance<UModumateGameInstance>();
+		auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
+		if (accountManager)
+		{
+			localUserID = accountManager->GetUserInfo().ID;
+		}
+
+		// PlayerIds increase starting from 256 - see AGameSession::GetNextPlayerID
+		// TODO: serialize and replicate our own mapping of Modumate User ID -> User Index for the purpose of Object ID allocation
+		// The actual MaxUserIdx value is reserved for the server, so local players must be less than that.
+		localUserIdx = EMPlayerState->GetPlayerId() - 256;
+		if (ensure(!localUserID.IsEmpty() && (localUserIdx >= 0) && (localUserIdx < UModumateDocument::MaxUserIdx)))
+		{
+			gameState->InitDocument(localUserID, localUserIdx);
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	Document = gameState->Document;
-
-	EMPlayerPawn = Cast<AEditModelPlayerPawn>(GetPawn());
-#if !UE_SERVER
-	if (ensure(EMPlayerPawn))
-	{
-		SetViewTargetWithBlend(EMPlayerPawn);
-	}
-#endif
 
 	SnappingView = new FModumateSnappingView(Document, this);
 
@@ -184,7 +212,7 @@ void AEditModelPlayerController::BeginWithPlayerState()
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
 	if (!ensure(gameInstance && gameInstance->TutorialManager))
 	{
-		return;
+		return false;
 	}
 
 	UGameViewportClient* viewportClient = gameInstance->GetGameViewportClient();
@@ -270,6 +298,7 @@ void AEditModelPlayerController::BeginWithPlayerState()
 	}
 #endif
 
+#if !UE_SERVER
 	// Make a clean telemetry directory, also cleans up on EndPlay 
 	FString path = FModumateUserSettings::GetLocalTempDir() / InputTelemetryDirectory;
 	IFileManager::Get().DeleteDirectory(*path, false, true);
@@ -286,6 +315,15 @@ void AEditModelPlayerController::BeginWithPlayerState()
 		NewModel(false);
 	}
 
+	// Also, if we received some initial deltas from the server when logging in as a multiplayer client, then apply those now
+	if (IsNetMode(NM_Client) && (EMPlayerState->PendingInitialDeltas.Num() > 0))
+	{
+		for (const FDeltasRecord& record : EMPlayerState->PendingInitialDeltas)
+		{
+			gameState->Document->ApplyRemoteDeltas(record, world, true);
+		}
+	}
+
 	// Begin a walkthrough if requested from the main menu, then clear out the request.
 	if (gameInstance->TutorialManager->FromMainMenuWalkthroughCategory != EModumateWalkthroughCategories::None)
 	{
@@ -297,8 +335,11 @@ void AEditModelPlayerController::BeginWithPlayerState()
 	{
 		InputAutomationComponent->RecordLoadedTutorial(bOpeningTutorialProject);
 	}
+#endif
 
 	bBeganWithPlayerState = true;
+
+	return true;
 }
 
 void AEditModelPlayerController::BeginPlay()
@@ -314,8 +355,18 @@ void AEditModelPlayerController::BeginPlay()
 	if (EMPlayerState && EMPlayerState->HasActorBegunPlay() && !EMPlayerState->bBeganWithController)
 	{
 		EMPlayerState->EMPlayerController = this;
-		BeginWithPlayerState();
-		EMPlayerState->BeginWithController();
+		if (BeginWithPlayerState() && EMPlayerState->BeginWithController())
+		{
+			UE_LOG(LogTemp, Log, TEXT("AEditModelPlayerController initialized state and controller."));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("AEditModelPlayerController failed to initialize state and controller!"));
+			if (IsNetMode(NM_Client))
+			{
+				EMPlayerState->GoToMainMenu();
+			}
+		}
 	}
 }
 
@@ -1645,13 +1696,24 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 	{
 		Document->DrawDebugSurfaceGraphs(GetWorld());
 	}
+
+	if (EMPlayerState->bShowMultiplayerDebug)
+	{
+		Document->DisplayMultiplayerDebugInfo(GetWorld());
+	}
 }
 
 void AEditModelPlayerController::TickInput(float DeltaTime)
 {
 	// Skip input updates if there are no OS windows with active input focus
+	// (unless we're debugging a multiplayer client)
+	bool bTickWithoutFocus = false;
+#if !UE_BUILD_SHIPPING
+	bTickWithoutFocus = IsNetMode(NM_Client);
+#endif
+
 	auto viewportClient = Cast<UModumateViewportClient>(GetWorld()->GetGameViewport());
-	if ((viewportClient == nullptr) || !viewportClient->AreWindowsActive())
+	if (!bTickWithoutFocus && ((viewportClient == nullptr) || !viewportClient->AreWindowsActive()))
 	{
 		return;
 	}

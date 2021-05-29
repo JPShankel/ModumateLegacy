@@ -42,7 +42,7 @@ protected:
 };
 
 using FDeltaPtr = TSharedPtr<FDocumentDelta>;
-
+using FAffectedObjMap = TMap<EMOIDeltaType, TSet<int32>>;
 
 USTRUCT()
 struct MODUMATE_API FDeltasRecord
@@ -50,11 +50,18 @@ struct MODUMATE_API FDeltasRecord
 	GENERATED_BODY()
 
 	FDeltasRecord();
-	FDeltasRecord(const TArray<FDeltaPtr>& InDeltas, int32 InID = MOD_ID_NONE, const FString& InOriginUserID = FString());
+	FDeltasRecord(const TArray<FDeltaPtr>& InDeltas, int32 InID = MOD_ID_NONE, const FString& InOriginUserID = FString(), uint32 InPrevDocHash = 0);
 
 	bool IsEmpty() const;
+	void CacheSelfHash();
+	void SetAffectedObjects(const FAffectedObjMap& InAffectedObjects, const TSet<int32>& InDirtiedObjects);
+
+	void PostSerialize(const FArchive& Ar);
 	bool operator==(const FDeltasRecord& Other) const;
 	bool operator!=(const FDeltasRecord& Other) const;
+	friend uint32 GetTypeHash(const FDeltasRecord& DeltasRecord);
+
+	// Definitional data, GetTypeHash depends on these
 
 	UPROPERTY()
 	TArray<FStructDataWrapper> DeltaStructWrappers;
@@ -66,7 +73,33 @@ struct MODUMATE_API FDeltasRecord
 	FString OriginUserID;
 
 	UPROPERTY()
+	uint32 PrevDocHash = 0;
+
+	UPROPERTY()
+	uint32 CachedSelfHash = 0;
+
+	// Diagnostic, but still useful enough for replication
+
+	UPROPERTY()
 	FDateTime TimeStamp = FDateTime(0);
+
+	UPROPERTY()
+	TArray<int32> AddedObjects;
+
+	UPROPERTY()
+	TArray<int32> ModifiedObjects;
+
+	UPROPERTY()
+	TArray<int32> DeletedObjects;
+
+	UPROPERTY()
+	TArray<int32> DirtiedObjects;
+
+	// Non-definitional / derived from application; not necessarily worth the space for replication
+
+	TArray<FDeltaPtr> RawDeltaPtrs;
+	FAffectedObjMap AffectedObjectsMap;
+	TSet<int32> DirtiedObjectsSet;
 };
 
 template<>
@@ -74,6 +107,7 @@ struct TStructOpsTypeTraits<FDeltasRecord> : public TStructOpsTypeTraitsBase2<FD
 {
 	enum
 	{
-		WithIdenticalViaEquality = true
+		WithPostSerialize = true,
+		WithIdenticalViaEquality = true,
 	};
 };

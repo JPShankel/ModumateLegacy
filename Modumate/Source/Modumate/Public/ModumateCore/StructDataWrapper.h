@@ -64,9 +64,13 @@ struct MODUMATE_API FStructDataWrapper
 
 	bool operator==(const FStructDataWrapper& Other) const;
 	bool operator!=(const FStructDataWrapper& Other) const;
+	friend uint32 GetTypeHash(const FStructDataWrapper& StructDataWrapper);
 
 	// Function that's supposed to be automatically called after struct [de]serialization, for keeping CBOR and JSON data up to date
 	void PostSerialize(const FArchive& Ar);
+
+	// Custom NetSerialization to be more data-efficient that the default FJsonObjectWrapper behavior
+	bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess);
 
 private:
 	bool UpdateStructDefFromName();
@@ -97,6 +101,9 @@ struct TStructOpsTypeTraits<FStructDataWrapper> : public TStructOpsTypeTraitsBas
 {
 	enum
 	{
-		WithPostSerialize = true
+		WithPostSerialize = true,
+		WithNetSerializer = true,
+		WithNetSharedSerialization = true,
+		WithIdenticalViaEquality = true
 	};
 };

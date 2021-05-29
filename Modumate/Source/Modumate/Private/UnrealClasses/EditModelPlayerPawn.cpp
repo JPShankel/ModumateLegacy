@@ -68,14 +68,16 @@ void AEditModelPlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsNetMode(NM_Client) && !IsLocallyControlled() && ClientIconWidget)
-	{
-		UWorld* world = GetWorld();
-		ULocalPlayer* localPlayer = world ? world->GetFirstLocalPlayerFromController() : nullptr;
-		APlayerController* localController = localPlayer ? localPlayer->GetPlayerController(world) : nullptr;
-		FVector2D localViewportPos;
+	UWorld* world = GetWorld();
+	ULocalPlayer* localPlayer = world ? world->GetFirstLocalPlayerFromController() : nullptr;
+	APlayerController* localController = localPlayer ? localPlayer->GetPlayerController(world) : nullptr;
 
-		if (localController && localController->ProjectWorldLocationToScreen(GetActorLocation(), localViewportPos))
+	if (IsNetMode(NM_Client) && !IsLocallyControlled())
+	{
+		TryInitClientIconWidget();
+
+		FVector2D localViewportPos;
+		if (ClientIconWidget && localController->ProjectWorldLocationToScreen(GetActorLocation(), localViewportPos))
 		{
 			ClientIconWidget->SetPositionInViewport(localViewportPos, true);
 		}
@@ -114,24 +116,9 @@ void AEditModelPlayerPawn::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	AEditModelPlayerState* playerState = GetPlayerState<AEditModelPlayerState>();
-
-	if (IsNetMode(NM_Client) && !IsLocallyControlled() && playerState)
+	if (IsNetMode(NM_Client) && !IsLocallyControlled())
 	{
-		UWorld* world = GetWorld();
-		ULocalPlayer* localPlayer = world ? world->GetFirstLocalPlayerFromController() : nullptr;
-		APlayerController* localController = localPlayer ? localPlayer->GetPlayerController(world) : nullptr;
-		AEditModelPlayerHUD* localHUD = localController ? localController->GetHUD<AEditModelPlayerHUD>() : nullptr;
-		ClientIconWidget = localHUD ? localHUD->GetOrCreateWidgetInstance(ClientIconClass) : nullptr;
-		if (ensure(ClientIconWidget))
-		{
-			ClientIconWidget->AddToViewport();
-			ClientIconWidget->SetAlignmentInViewport(FVector2D(0.5f, 1.0f));
-
-			// Clear the name for now, since the player name will change after the client sends updated user info.
-			ClientIconWidget->ClientName->ChangeText(FText::GetEmpty(), false);
-		}
-
+		TryInitClientIconWidget();
 		RemoteMeshComponent->SetVisibility(true);
 	}
 }
@@ -145,6 +132,32 @@ void AEditModelPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	if (ensure(emPlayerController && emPlayerController->CameraController))
 	{
 		emPlayerController->CameraController->SetupPlayerInputComponent(PlayerInputComponent);
+	}
+}
+
+void AEditModelPlayerPawn::TryInitClientIconWidget()
+{
+	if (ClientIconWidget)
+	{
+		return;
+	}
+
+	UWorld* world = GetWorld();
+	ULocalPlayer* localPlayer = world ? world->GetFirstLocalPlayerFromController() : nullptr;
+	APlayerController* localController = localPlayer ? localPlayer->GetPlayerController(world) : nullptr;
+	AEditModelPlayerHUD* localHUD = localController ? localController->GetHUD<AEditModelPlayerHUD>() : nullptr;
+	AEditModelPlayerState* playerState = GetPlayerState<AEditModelPlayerState>();
+
+	if (localHUD && localHUD->HUDDrawWidget && playerState && ClientIconClass)
+	{
+		ClientIconWidget = localHUD->GetOrCreateWidgetInstance(ClientIconClass);
+
+		if (ensure(ClientIconWidget))
+		{
+			ClientIconWidget->AddToViewport();
+			ClientIconWidget->SetAlignmentInViewport(FVector2D(0.5f, 1.0f));
+			ClientIconWidget->ClientName->ChangeText(FText::FromString(playerState->GetPlayerName()), false);
+		}
 	}
 }
 

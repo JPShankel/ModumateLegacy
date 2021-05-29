@@ -60,10 +60,12 @@ UCLASS(Config=Game)
 class MODUMATE_API AEditModelPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+public:
 
 	AEditModelPlayerController();
 	virtual ~AEditModelPlayerController();
 	virtual void PostInitializeComponents() override;
+	virtual void SetPawn(APawn* InPawn) override;
 
 private:
 
@@ -218,7 +220,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class AAxesActor* AxesActor;
 
-	void BeginWithPlayerState();
+	bool BeginWithPlayerState();
 
 	// Event overrides
 	virtual void BeginPlay() override;

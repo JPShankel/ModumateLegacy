@@ -33,7 +33,7 @@ class MODUMATE_API AEditModelPlayerState : public APlayerState
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	void BeginWithController();
+	bool BeginWithController();
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
@@ -66,6 +66,9 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Debug")
 	bool bDevelopDDL2Data;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Debug")
+	bool bShowMultiplayerDebug;
 
 	bool bBeganWithController = false;
 
@@ -216,11 +219,20 @@ public:
 
 	// Networking/replication-related functions and properties
 
+	UFUNCTION()
+	void GoToMainMenu();
+
 	UFUNCTION(Server, Reliable)
 	void SetUserInfo(const FModumateUserInfo& UserInfo);
 
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION(Server, Reliable)
 	void SendClientDeltas(const FDeltasRecord& Deltas);
+
+	UFUNCTION(Client, Reliable)
+	void SendInitialDeltas(const TArray<FDeltasRecord>& InitialDeltas);
+
+	UFUNCTION(Client, Reliable)
+	void RollBackUnverifiedDeltas(int32 MaxVerifiedDeltasID, uint32 VerifiedDocHash);
 
 	UFUNCTION(Server, Unreliable)
 	void UpdateCameraUnreliable(const FTransform& NewTransform);
@@ -241,6 +253,9 @@ public:
 
 	UPROPERTY(ReplicatedUsing=OnRep_UserInfo)
 	FModumateUserInfo ReplicatedUserInfo;
+
+	UPROPERTY()
+	TArray<FDeltasRecord> PendingInitialDeltas;
 
 protected:
 	TArray<FStructurePoint> TempObjectStructurePoints, CurSelectionStructurePoints;

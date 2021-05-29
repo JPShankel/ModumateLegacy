@@ -33,7 +33,7 @@ bool UCopyTool::Activate()
 
 	TSharedPtr<FJsonObject> selectionJson = MakeShared<FJsonObject>();
 	TSharedPtr<FJsonObject> docOb = FJsonObjectConverter::UStructToJsonObject<FMOIDocumentRecord>(selectionRecord);
-	selectionJson->SetObjectField(DocObjectInstanceField, docOb);
+	selectionJson->SetObjectField(FModumateSerializationStatics::DocObjectInstanceField, docOb);
 
 	FString ProjectJsonString;
 	TSharedRef<FPrettyJsonStringWriter> JsonStringWriter = FPrettyJsonStringWriterFactory::Create(&ProjectJsonString);

@@ -66,13 +66,19 @@ UModumateDocument::UModumateDocument()
 	ElevationDelta = 0;
 	DefaultWindowHeight = 91.44f;
 	DefaultDoorHeight = 0.f;
+}
 
-	auto gameState = Cast<AEditModelGameState>(GetOuter());
-	auto gameInstance = gameState ? gameState->GetGameInstance<UModumateGameInstance>() : nullptr;
-	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
-	if (accountManager)
+void UModumateDocument::SetLocalUserInfo(const FString& InLocalUserID, int32 InLocalUserIdx)
+{
+	CachedLocalUserID = InLocalUserID;
+	CachedLocalUserIdx = InLocalUserIdx;
+}
+
+void UModumateDocument::ApplyInvertedDeltas(UWorld* World, const TArray<FDeltaPtr>& Deltas)
+{
+	for (int32 i = Deltas.Num() - 1; i >= 0; --i)
 	{
-		CachedLocalUserID = accountManager->GetUserInfo().ID;
+		Deltas[i]->MakeInverse()->ApplyTo(this, World);
 	}
 }
 
@@ -80,17 +86,19 @@ void UModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 {
 	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentUndoRedo);
 
+	if (World->IsNetMode(NM_Client))
+	{
+		// TODO: refactor undo/redo for multiplayer, to interface with VerifiedDeltasRecords in addition to / instead of UndoBuffer.
+		// This refactor will require deciding whether the intent is for undo to add to history or remove from it.
+		UE_LOG(LogTemp, Warning, TEXT("Undo/redo is unimplemented for multiplayer clients!"));
+		return;
+	}
+
 	if (FromBuffer.Num() > 0)
 	{
-		TSharedPtr <UndoRedo> ur = FromBuffer.Last(0);
+		TSharedPtr<UndoRedo> ur = FromBuffer.Last();
 		FromBuffer.RemoveAt(FromBuffer.Num() - 1);
-
-		TArray<FDeltaPtr> fromDeltas = ur->Deltas;
-		Algo::Reverse(fromDeltas);
-
-		ur->Deltas.Empty();
-		Algo::Transform(fromDeltas, ur->Deltas, [](const FDeltaPtr& DeltaPtr) {return DeltaPtr->MakeInverse(); });
-		Algo::ForEach(ur->Deltas, [this, World](FDeltaPtr& DeltaPtr) {DeltaPtr->ApplyTo(this, World); });
+		ApplyInvertedDeltas(World, ur->Deltas);
 
 		ToBuffer.Add(ur);
 
@@ -99,27 +107,12 @@ void UModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 		int32 toBufferSize = ToBuffer.Num();
 #endif
 
-		CleanObjects(nullptr);
-		PostApplyDeltas(World);
-		UpdateRoomAnalysis(World);
-
-		AEditModelPlayerController* controller = World ? World->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
-		if (controller && controller->InputAutomationComponent)
-		{
-			controller->InputAutomationComponent->PostApplyUserDeltas(ur->Deltas);
-		}
-
-		AEditModelPlayerState* EMPlayerState = Cast<AEditModelPlayerState>(World->GetFirstPlayerController()->PlayerState);
-		EMPlayerState->RefreshActiveAssembly();
+		PostApplyDeltas(World, true, true);
 
 #if WITH_EDITOR
 		ensureAlways(fromBufferSize == FromBuffer.Num());
 		ensureAlways(toBufferSize == ToBuffer.Num());
 #endif
-
-		// TODO: keep track of document dirtiness by a unique identifier of which delta is at the top of the stack,
-		// but that refactor could wait until the multiplayer refactor which would also affect the definition of autosave.
-		SetDirtyFlags(true);
 	}
 }
 
@@ -390,8 +383,8 @@ bool UModumateDocument::DeleteObjectImpl(AModumateObjectInstance *ObjToDelete)
 
 		if (bTrackingDeltaObjects)
 		{
-			DeltaCreatedObjects.FindOrAdd(ObjToDelete->GetObjectType()).Remove(ObjToDelete->ID);
-			DeltaDestroyedObjects.FindOrAdd(ObjToDelete->GetObjectType()).Add(ObjToDelete->ID);
+			DeltaAffectedObjects.FindOrAdd(EMOIDeltaType::Create).Remove(ObjToDelete->ID);
+			DeltaAffectedObjects.FindOrAdd(EMOIDeltaType::Destroy).Add(ObjToDelete->ID);
 		}
 
 		return true;
@@ -419,7 +412,10 @@ bool UModumateDocument::RestoreObjectImpl(AModumateObjectInstance *obj)
 AModumateObjectInstance* UModumateDocument::CreateOrRestoreObj(UWorld* World, const FMOIStateData& StateData)
 {
 	// Check to make sure NextID represents the next highest ID we can allocate to a new object.
-	if (StateData.ID >= NextID)
+	// For multiplayer clients, they will only allocate IDs in a certain block, so we can ignore IDs outside of that block.
+	int32 localObjID, userIdx;
+	SplitMPObjID(StateData.ID, localObjID, userIdx);
+	if ((userIdx == CachedLocalUserIdx) && (StateData.ID >= NextID))
 	{
 		NextID = StateData.ID + 1;
 	}
@@ -463,47 +459,113 @@ AModumateObjectInstance* UModumateDocument::CreateOrRestoreObj(UWorld* World, co
 
 	if (bTrackingDeltaObjects)
 	{
-		DeltaDestroyedObjects.FindOrAdd(newObj->GetObjectType()).Remove(newObj->ID);
-		DeltaCreatedObjects.FindOrAdd(newObj->GetObjectType()).Add(newObj->ID);
+		DeltaAffectedObjects.FindOrAdd(EMOIDeltaType::Destroy).Remove(newObj->ID);
+		DeltaAffectedObjects.FindOrAdd(EMOIDeltaType::Create).Add(newObj->ID);
 	}
 
 	return newObj;
 }
 
-bool UModumateDocument::ApplyRemoteDeltas(const FDeltasRecord& DeltasRecord, UWorld* World)
+bool UModumateDocument::ReconcileRemoteDeltas(const FDeltasRecord& DeltasRecord, UWorld* World,
+	FDeltasRecord& OutReconciledRecord, int32& OutMaxVerifiedDeltasID, uint32& OutVerifiedDocHash)
 {
-	if (!ensure(DeltasRecord.ID > LatestVerifiedDeltasID))
+	OutReconciledRecord = FDeltasRecord();
+	OutMaxVerifiedDeltasID = GetLatestVerifiedDeltasID();
+	OutVerifiedDocHash = GetLatestVerifiedDocHash();
+
+	// For now, only reject deltas that come from clients that are out of date, which will eventually receive the deltas that *were* verified.
+	// TODO: handle delta merging, conflict resolution, rollbacks, etc. so that deltas from clients that are out of date can still be combined
+	// with verified deltas if they don't affect the same data in conflicting ways. The OutCorrections parameter would be used to fix the order
+	// of deltas on the client that's out of date.
+	bool bValidRecordID = (DeltasRecord.ID > OutMaxVerifiedDeltasID);
+	bool bValidRecordHash = (DeltasRecord.PrevDocHash == OutVerifiedDocHash);
+	ensure(bValidRecordID == bValidRecordHash);
+	return bValidRecordID && bValidRecordHash;
+}
+
+bool UModumateDocument::RollBackUnverifiedDeltas(int32 MaxVerifiedDeltasID, uint32 VerifiedDocHash, UWorld* World)
+{
+	bool bRolledBackDeltas = false;
+
+	while (UnverifiedDeltasRecords.Num() > 0)
+	{
+		auto& unverifiedDeltasRecord = UnverifiedDeltasRecords.Last();
+
+		// TODO: utilize the document hash to roll back unverified FDeltasRecords
+		if (unverifiedDeltasRecord.ID >= MaxVerifiedDeltasID)
+		{
+			ApplyInvertedDeltas(World, unverifiedDeltasRecord.RawDeltaPtrs);
+			UnverifiedDeltasRecords.RemoveAt(UnverifiedDeltasRecords.Num() - 1);
+			bRolledBackDeltas = true;
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	return bRolledBackDeltas;
+}
+
+bool UModumateDocument::ApplyRemoteDeltas(const FDeltasRecord& DeltasRecord, UWorld* World, bool bApplyOwnDeltas)
+{
+	if (!ensure(DeltasRecord.ID > GetLatestVerifiedDeltasID()))
 	{
 		// TODO: handle desync
 		return false;
 	}
 
-	LatestVerifiedDeltasID = DeltasRecord.ID;
+	bool bReceivingOwnDeltas = (DeltasRecord.OriginUserID == CachedLocalUserID);
+	if (!bReceivingOwnDeltas || bApplyOwnDeltas)
+	{
+		// If we receive remote deltas from another user while we still have some unverified deltas,
+		// then it means we didn't send them to the server fast enough;
+		// otherwise, another user's deltas should've caused the server to tell us to roll back directly.
+		if (RollBackUnverifiedDeltas(DeltasRecord.ID, DeltasRecord.PrevDocHash, World))
+		{
+			UE_LOG(LogTemp, Log, TEXT("Rolled back local deltas received before remote delta ID #%d from user ID %s"),
+				DeltasRecord.ID, *DeltasRecord.OriginUserID);
+		}
 
-	if (DeltasRecord.OriginUserID == CachedLocalUserID)
-	{
-		return true;
-	}
-	else
-	{
 		NextLocalDeltasID = FMath::Max(NextLocalDeltasID, DeltasRecord.ID + 1);
 	}
 
-	// BIG TODO: implement delta merging, conflict resolution, rollbacks, etc.
+	VerifiedDeltasRecords.Add(DeltasRecord);
+
+	// For clients receiving their own deltas, move an entry from the unverified list to the undo-redo list now that we've verified the deltas,
+	// and we know that all clients will have the same order.
+	ULocalPlayer* localPlayer = World->GetFirstLocalPlayerFromController();
+	APlayerController* localController = localPlayer ? localPlayer->GetPlayerController(World) : nullptr;
+	if (localController && localController->IsNetMode(NM_Client) && bReceivingOwnDeltas && !bApplyOwnDeltas)
+	{
+		int32 verifiedDeltasID = DeltasRecord.ID;
+		int32 unverifiedIdx = UnverifiedDeltasRecords.IndexOfByPredicate([this, verifiedDeltasID](const FDeltasRecord& UnverifiedDeltasRecord)
+			{ return (UnverifiedDeltasRecord.ID == verifiedDeltasID); });
+		if (ensure(unverifiedIdx != INDEX_NONE))
+		{
+			UnverifiedDeltasRecords.RemoveAt(unverifiedIdx);
+		}
+	}
+
 	for (auto& structWrapper : DeltasRecord.DeltaStructWrappers)
 	{
 		// TODO: fix net serialization of struct wrappers so that this is unnecessary
 		FStructDataWrapper structWrapperCopy = structWrapper;
 		structWrapperCopy.SaveFromJsonString();
 
-		auto deltaPtr = structWrapperCopy.CreateStructFromJSON<FDocumentDelta>();
+		FDeltaPtr deltaPtr = MakeShareable(structWrapperCopy.CreateStructFromJSON<FDocumentDelta>());
 		if (!ensure(deltaPtr))
 		{
 			continue;
 		}
 
-		deltaPtr->ApplyTo(this, World);
+		if (!bReceivingOwnDeltas || bApplyOwnDeltas)
+		{
+			deltaPtr->ApplyTo(this, World);
+		}
 	}
+
+	PostApplyDeltas(World, true, true);
 
 	return true;
 }
@@ -518,8 +580,12 @@ bool UModumateDocument::ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World)
 		{
 		case EMOIDeltaType::Create:
 		{
+			int32 localObjID, userIdx;
+			SplitMPObjID(targetState.ID, localObjID, userIdx);
+
 			AModumateObjectInstance* newInstance = CreateOrRestoreObj(World, targetState);
-			if (ensureAlways(newInstance) && (NextID <= newInstance->ID))
+			if (ensureAlways(newInstance) && ensure(newInstance->ID == targetState.ID) &&
+				(userIdx == CachedLocalUserIdx) && (NextID <= newInstance->ID))
 			{
 				NextID = newInstance->ID + 1;
 			}
@@ -896,9 +962,17 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 		return true;
 	}
 
+	auto* localPlayer = World ? World->GetFirstLocalPlayerFromController() : nullptr;
+	auto* controller = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(World)) : nullptr;
+	if (!ensure(controller && controller->EMPlayerState))
+	{
+		return false;
+	}
+
+	bool bMultiplayerClient = controller->EMPlayerState->IsNetMode(NM_Client);
+
 	// Fail immediately if we're playing back recorded input
-	AEditModelPlayerController* controller = World ? World->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
-	if (controller && controller->InputAutomationComponent && controller->InputAutomationComponent->ShouldDocumentSkipDeltas())
+	if (controller->InputAutomationComponent && controller->InputAutomationComponent->ShouldDocumentSkipDeltas())
 	{
 		return false;
 	}
@@ -916,7 +990,11 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	ur->ID = NextLocalDeltasID++;
 	ur->Deltas = Deltas;
 
-	UndoBuffer.Add(ur);
+	// If we're a multiplayer client, don't add to the undo buffer until we've received verification from the server
+	if (!bMultiplayerClient)
+	{
+		UndoBuffer.Add(ur);
+	}
 
 	// First, apply the input deltas, generated from the first pass of user intent
 	for (auto& delta : ur->Deltas)
@@ -931,19 +1009,31 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 
 	EndUndoRedoMacro();
 
-	EndTrackingDeltaObjects();
-
 	if (controller && controller->InputAutomationComponent)
 	{
 		controller->InputAutomationComponent->PostApplyUserDeltas(ur->Deltas);
 	}
 
+	// If we make a DeltasRecord immediately after one of our own unverified DeltasRecords, then we need to use that unverified hash,
+	// rather than re-use the same verified document hash that hasn't been updated yet.
+	uint32 latestDocHash = (UnverifiedDeltasRecords.Num() > 0) ? GetTypeHash(UnverifiedDeltasRecords.Last()) : GetLatestVerifiedDocHash();
+	FDeltasRecord deltasRecord(ur->Deltas, ur->ID, CachedLocalUserID, latestDocHash);
+
+	deltasRecord.SetAffectedObjects(DeltaAffectedObjects, DeltaDirtiedObjects);
+
 	// If we're a multiplayer client, then send the deltas generated by this user to the server
-	if (controller && controller->EMPlayerState && controller->EMPlayerState->IsNetMode(NM_Client))
+	if (bMultiplayerClient)
 	{
-		FDeltasRecord deltasRecord(ur->Deltas, ur->ID, CachedLocalUserID);
+		UnverifiedDeltasRecords.Add(deltasRecord);
 		controller->EMPlayerState->SendClientDeltas(deltasRecord);
 	}
+	// Otherwise, they're already considered "verified"
+	else
+	{
+		VerifiedDeltasRecords.Add(deltasRecord);
+	}
+
+	EndTrackingDeltaObjects();
 
 	return true;
 }
@@ -1046,8 +1136,7 @@ void UModumateDocument::ClearPreviewDeltas(UWorld *World, bool bFastClear)
 
 	NextID = PrePreviewNextID;
 
-	CleanObjects(nullptr);
-	PostApplyDeltas(World);
+	PostApplyDeltas(World, true, false);
 
 	bApplyingPreviewDeltas = false;
 	bFastClearingPreviewDeltas = false;
@@ -1072,7 +1161,7 @@ void UModumateDocument::CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWo
 			Deltas.Add(delta);
 			delta->ApplyTo(this, World);
 		}
-		PostApplyDeltas(World);
+		PostApplyDeltas(World, false, false);
 
 		if (!ensure(--sideEffectIterationGuard > 0))
 		{
@@ -1177,13 +1266,24 @@ bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDelta
 	return true;
 }
 
-bool UModumateDocument::PostApplyDeltas(UWorld *World)
+bool UModumateDocument::PostApplyDeltas(UWorld *World, bool bCleanObjects, bool bMarkDocumentDirty)
 {
 	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentPostApplyDeltas);
 
+	if (bCleanObjects)
+	{
+		CleanObjects(nullptr);
+	}
+
 	// Now that objects may have been deleted, validate the player state so that none of them are incorrectly referenced.
-	AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(World->GetFirstPlayerController()->PlayerState);
-	playerState->ValidateSelectionsAndView();
+	ULocalPlayer* localPlayer = World->GetFirstLocalPlayerFromController();
+	APlayerController* localController = localPlayer ? localPlayer->GetPlayerController(World) : nullptr;
+	AEditModelPlayerState* playerState = localController ? Cast<AEditModelPlayerState>(localController->PlayerState) : nullptr;
+	if (playerState)
+	{
+		playerState->ValidateSelectionsAndView();
+		playerState->RefreshActiveAssembly();
+	}
 
 	// TODO: Find a better way to determine what objects were or are now dependents of CutPlanes,
 	// so we don't always have to update them in order to have always-correct lines.
@@ -1191,6 +1291,13 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World)
 	for (auto cutPlane : cutPlanes)
 	{
 		cutPlane->MarkDirty(EObjectDirtyFlags::Visuals);
+	}
+
+	if (bMarkDocumentDirty)
+	{
+		// TODO: keep track of document dirtiness by a unique identifier of which delta is at the top of the stack,
+		// but that refactor could wait until the multiplayer refactor which would also affect the definition of autosave.
+		SetDirtyFlags(true);
 	}
 
 	return true;
@@ -1203,15 +1310,12 @@ void UModumateDocument::StartTrackingDeltaObjects()
 		return;
 	}
 
-	for (auto& kvp : DeltaCreatedObjects)
+	for (auto& kvp : DeltaAffectedObjects)
 	{
 		kvp.Value.Reset();
 	}
 
-	for (auto& kvp : DeltaDestroyedObjects)
-	{
-		kvp.Value.Reset();
-	}
+	DeltaDirtiedObjects.Reset();
 
 	bTrackingDeltaObjects = true;
 }
@@ -1223,7 +1327,28 @@ void UModumateDocument::EndTrackingDeltaObjects()
 		return;
 	}
 
-	for (auto& kvp : DeltaCreatedObjects)
+	// For analytics, we want to keep track of which objects were added/removed aggregated on object type,
+	// which requires a bit more processing than if we only cared about the identities of affected objects.
+	static TMap<EObjectType, TSet<int32>> affectedObjectsByType;
+	auto gatherAffectedObjectsByType = [this](const TSet<int32>& ObjectIDs)
+	{
+		for (auto& kvp : affectedObjectsByType)
+		{
+			kvp.Value.Reset();
+		}
+
+		for (int32 objectID : ObjectIDs)
+		{
+			auto* object = GetObjectById(objectID);
+			if (object)
+			{
+				affectedObjectsByType.FindOrAdd(object->GetObjectType()).Add(objectID);
+			}
+		}
+	};
+
+	gatherAffectedObjectsByType(DeltaAffectedObjects.FindOrAdd(EMOIDeltaType::Create));
+	for (auto& kvp : affectedObjectsByType)
 	{
 		EObjectType objectType = kvp.Key;
 		int32 numCreatedObjects = kvp.Value.Num();
@@ -1236,7 +1361,8 @@ void UModumateDocument::EndTrackingDeltaObjects()
 		kvp.Value.Reset();
 	}
 
-	for (auto& kvp : DeltaDestroyedObjects)
+	gatherAffectedObjectsByType(DeltaAffectedObjects.FindOrAdd(EMOIDeltaType::Destroy));
+	for (auto& kvp : affectedObjectsByType)
 	{
 		EObjectType objectType = kvp.Key;
 		int32 numDeletedObjects = kvp.Value.Num();
@@ -1930,6 +2056,28 @@ void UModumateDocument::ClearUndoBuffer()
 	UndoRedoMacroStack.Empty();
 }
 
+int32 UModumateDocument::GetLatestVerifiedDeltasID() const
+{
+	return (VerifiedDeltasRecords.Num() > 0) ? VerifiedDeltasRecords.Last().ID : 0;
+}
+
+uint32 UModumateDocument::GetLatestVerifiedDocHash() const
+{
+	return (VerifiedDeltasRecords.Num() > 0) ? GetTypeHash(VerifiedDeltasRecords.Last()) : 0;
+}
+
+bool UModumateDocument::GetDeltaRecordsSinceSave(TArray<FDeltasRecord>& OutRecordsSinceSave) const
+{
+	OutRecordsSinceSave.Reset();
+
+	for (int32 i = LastSavedDeltasRecordIdx + 1; i < VerifiedDeltasRecords.Num(); ++i)
+	{
+		OutRecordsSinceSave.Add(VerifiedDeltasRecords[i]);
+	}
+
+	return OutRecordsSinceSave.Num() > 0;
+}
+
 FBoxSphereBounds UModumateDocument::CalculateProjectBounds() const
 {
 	TArray<FVector> allMOIPoints;
@@ -2100,6 +2248,11 @@ void UModumateDocument::RegisterDirtyObject(EObjectDirtyFlags DirtyType, AModuma
 		// We can use TArray with Add rather than AddUnique or TSet because objects already check against their own
 		// dirty flag before registering themselves with the Document.
 		dirtyObjList.Add(DirtyObj);
+
+		if (bTrackingDeltaObjects)
+		{
+			DeltaDirtiedObjects.Add(DirtyObj->ID);
+		}
 	}
 	else
 	{
@@ -2154,13 +2307,15 @@ void UModumateDocument::MakeNew(UWorld *World)
 		draftMan->Reset();
 	}
 
-	NextID = 1;
+	NextID = MPObjIDFromLocalObjID(1, CachedLocalUserIdx);
 	NextLocalDeltasID = 1;
-	LatestVerifiedDeltasID = MOD_ID_NONE;
+	LastSavedDeltasRecordIdx = INDEX_NONE;
 
 	ClearRedoBuffer();
 	ClearUndoBuffer();
 
+	UnverifiedDeltasRecords.Reset();
+	VerifiedDeltasRecords.Reset();
 	UndoRedoMacroStack.Reset();
 	VolumeGraph.Reset();
 	TempVolumeGraph.Reset();
@@ -2369,10 +2524,10 @@ bool UModumateDocument::SaveRecords(const FString& FilePath, const FModumateDocu
 
 	TSharedPtr<FJsonObject> FileJson = MakeShared<FJsonObject>();
 	TSharedPtr<FJsonObject> HeaderJson = MakeShared<FJsonObject>();
-	FileJson->SetObjectField(DocHeaderField, FJsonObjectConverter::UStructToJsonObject<FModumateDocumentHeader>(InHeader));
+	FileJson->SetObjectField(FModumateSerializationStatics::DocHeaderField, FJsonObjectConverter::UStructToJsonObject<FModumateDocumentHeader>(InHeader));
 
 	TSharedPtr<FJsonObject> docOb = FJsonObjectConverter::UStructToJsonObject<FMOIDocumentRecord>(InDocumentRecord);
-	FileJson->SetObjectField(DocObjectInstanceField, docOb);
+	FileJson->SetObjectField(FModumateSerializationStatics::DocObjectInstanceField, docOb);
 
 	FString ProjectJsonString;
 	TSharedRef<FPrettyJsonStringWriter> JsonStringWriter = FPrettyJsonStringWriterFactory::Create(&ProjectJsonString);
@@ -2495,7 +2650,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	SavedCameraViews = InDocumentRecord.CameraViews;
 
 	// Create the MOIs whose state data was stored
-	NextID = 1;
+	NextID = MPObjIDFromLocalObjID(1, CachedLocalUserIdx);
 	for (auto& stateData : InDocumentRecord.ObjectData)
 	{
 		CreateOrRestoreObj(world, stateData);
@@ -2575,7 +2730,9 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	AddHideObjectsById(world, hideCutPlaneIds);
 
 	NextLocalDeltasID = 1;
-	LatestVerifiedDeltasID = MOD_ID_NONE;
+	LastSavedDeltasRecordIdx = INDEX_NONE;
+	UnverifiedDeltasRecords.Reset();
+	VerifiedDeltasRecords.Reset();
 
 	ClearUndoBuffer();
 
@@ -3052,26 +3209,25 @@ bool UModumateDocument::IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &O
 	return bIsInGraph;
 }
 
+void DisplayDebugMsg(const FString& Message)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, Message, false);
+}
+
 void UModumateDocument::DisplayDebugInfo(UWorld* world)
 {
-	auto displayMsg = [](const FString &msg)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, msg, false);
-	};
-
-
-	auto displayObjectCount = [this,displayMsg](EObjectType ot, const TCHAR *name)
+	auto displayObjectCount = [this](EObjectType ot, const TCHAR *name)
 	{
 		TArray<AModumateObjectInstance*> obs = GetObjectsOfType(ot);
 		if (obs.Num() > 0)
 		{
-			displayMsg(FString::Printf(TEXT("%s - %d"), name, obs.Num()));
+			DisplayDebugMsg(FString::Printf(TEXT("%s - %d"), name, obs.Num()));
 		}
 	};
 
 	AEditModelPlayerState* emPlayerState = Cast<AEditModelPlayerState>(world->GetFirstPlayerController()->PlayerState);
 
-	displayMsg(TEXT("OBJECT COUNTS"));
+	DisplayDebugMsg(TEXT("OBJECT COUNTS"));
 	auto objectTypeEnum = StaticEnum<EObjectType>();
 	for (int32 objectTypeIdx = 0; objectTypeIdx < objectTypeEnum->NumEnums(); ++objectTypeIdx)
 	{
@@ -3098,20 +3254,15 @@ void UModumateDocument::DisplayDebugInfo(UWorld* world)
 			}
 		);
 
-		displayMsg(FString::Printf(TEXT("Assembly %s: %d"), *a.ToString(), instanceCount));
+		DisplayDebugMsg(FString::Printf(TEXT("Assembly %s: %d"), *a.ToString(), instanceCount));
 	}
 
-	displayMsg(FString::Printf(TEXT("Undo Buffer: %d"), UndoBuffer.Num()));
-	displayMsg(FString::Printf(TEXT("Redo Buffer: %d"), RedoBuffer.Num()));
-	displayMsg(FString::Printf(TEXT("Deleted Obs: %d"), DeletedObjects.Num()));
-	displayMsg(FString::Printf(TEXT("Active Obs: %d"), ObjectInstanceArray.Num()));
-	displayMsg(FString::Printf(TEXT("Next ID: %d"), NextID));
-
-	if (emPlayerState->IsNetMode(NM_Client))
-	{
-		displayMsg(FString::Printf(TEXT("Next local delta ID: %d"), NextLocalDeltasID));
-		displayMsg(FString::Printf(TEXT("Last verified delta ID: %d"), LatestVerifiedDeltasID));
-	}
+	DisplayDebugMsg(FString::Printf(TEXT("Undo Buffer: %d"), UndoBuffer.Num()));
+	DisplayDebugMsg(FString::Printf(TEXT("Redo Buffer: %d"), RedoBuffer.Num()));
+	DisplayDebugMsg(FString::Printf(TEXT("Deleted Obs: %d"), DeletedObjects.Num()));
+	DisplayDebugMsg(FString::Printf(TEXT("Active Obs: %d"), ObjectInstanceArray.Num()));
+	DisplayDebugMsg(FString::Printf(TEXT("Next ID: %d"), NextID));
+	DisplayDebugMsg(FString::Printf(TEXT("Current doc hash: %08x"), GetLatestVerifiedDocHash()));
 
 	FString selected = FString::Printf(TEXT("Selected Obs: %d"), emPlayerState->SelectedObjects.Num());
 	if (emPlayerState->SelectedObjects.Num() > 0)
@@ -3122,7 +3273,7 @@ void UModumateDocument::DisplayDebugInfo(UWorld* world)
 			selected += FString::Printf(TEXT("SEL: %d #CHILD: %d PARENTID: %d"), sel->ID, sel->GetChildIDs().Num(),sel->GetParentID());
 		}
 	}
-	displayMsg(selected);
+	DisplayDebugMsg(selected);
 }
 
 void UModumateDocument::DrawDebugVolumeGraph(UWorld* world)
@@ -3364,6 +3515,27 @@ void UModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 	}
 }
 
+void UModumateDocument::DisplayMultiplayerDebugInfo(UWorld* world)
+{
+	if (!world->IsNetMode(NM_Client))
+	{
+		return;
+	}
+
+	DisplayDebugMsg(FString::Printf(TEXT("Next local delta ID: %d"), NextLocalDeltasID));
+	for (auto& unverifiedDeltasRecord : UnverifiedDeltasRecords)
+	{
+		DisplayDebugMsg(FString::Printf(TEXT("Unverified delta ID: %d"), unverifiedDeltasRecord.ID));
+	}
+	if (VerifiedDeltasRecords.Num() > 0)
+	{
+		auto& lastVerifiedDeltasRecord = VerifiedDeltasRecords.Last();
+		DisplayDebugMsg(FString::Printf(TEXT("Last verified delta ID: %d"), lastVerifiedDeltasRecord.ID));
+		DisplayDebugMsg(FString::Printf(TEXT("Last verified delta source: %s"), *lastVerifiedDeltasRecord.OriginUserID));
+	}
+	DisplayDebugMsg(FString::Printf(TEXT("Last verified doc hash: %08x"), GetLatestVerifiedDocHash()));
+}
+
 const FBIMPresetCollection& UModumateDocument::GetPresetCollection() const
 {
 	return BIMPresetCollection;
@@ -3462,6 +3634,27 @@ void UModumateDocument::DeletePreset(UWorld* World, const FGuid& DeleteGUID, con
 	}
 }
 
+int32 UModumateDocument::MPObjIDFromLocalObjID(int32 LocalObjID, int32 UserIdx)
+{
+	if (!ensure((UserIdx != INDEX_NONE) && (LocalObjID >= 0)))
+	{
+		return MOD_ID_NONE;
+	}
+
+	return LocalObjID | (UserIdx << LocalObjIDBits);
+}
+
+void UModumateDocument::SplitMPObjID(int32 MPObjID, int32& OutLocalObjID, int32& OutUserIdx)
+{
+	// Object IDs should all be non-negative, since we're not touching the sign bit when storing the user index.
+	// TODO: this sign check should be unnecessary because object IDs should be unsigned, but this is effectively
+	// guaranteeing that the sign bit is reserved for other use cases, such as graph directionality.
+	ensure(MPObjID >= 0);
+	OutLocalObjID = MPObjID & LocalObjIDMask;
+	OutUserIdx = (MPObjID & ObjIDUserMask) >> LocalObjIDBits;
+	ensure((OutLocalObjID >= 0) && (OutUserIdx >= 0) && (OutUserIdx <= MaxUserIdx));
+}
+
 void UModumateDocument::UpdateWindowTitle()
 {
 	if (!CurrentProjectName.IsEmpty())
@@ -3476,6 +3669,7 @@ void UModumateDocument::RecordSavedProject(UWorld* World, const FString& FilePat
 	if (bUserFile)
 	{
 		bUserFileDirty = false;
+		LastSavedDeltasRecordIdx = VerifiedDeltasRecords.Num() - 1;
 
 		SetCurrentProjectPath(FilePath);
 

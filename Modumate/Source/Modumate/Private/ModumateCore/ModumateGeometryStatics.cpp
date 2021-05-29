@@ -2144,7 +2144,7 @@ bool UModumateGeometryStatics::SegmentPlaneIntersectionDouble(FVector3d StartPoi
 DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Mesh To Silhouette"), STAT_ModumateMeshToLines, STATGROUP_Modumate);
 
 void UModumateGeometryStatics::GetSilhouetteEdges(const TArray<FVector>& Vertices, const TArray<uint32>& Indices, const FVector& ViewDirection,
-	TArray<FEdge>& outEdges, double Epsilon /*= 0.4*/, double AngleThreshold /*= 0.9205 /* 23 deg */)
+	TArray<FEdge>& outEdges, double Epsilon /*= 0.4*/, double AngleThreshold /*= 0.9205 (23 deg) */)
 {
 	SCOPE_MS_ACCUMULATOR(STAT_ModumateMeshToLines);
 

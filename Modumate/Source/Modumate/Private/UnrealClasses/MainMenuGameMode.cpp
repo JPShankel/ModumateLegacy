@@ -61,7 +61,7 @@ void AMainMenuGameMode::LoadRecentProjectData()
 
 				TSharedPtr<FJsonObject> projectHeaderJson;
 				auto jsonReader = TJsonReaderFactory<>::Create(projectJsonString);
-				FString headerIdentifier(DocHeaderField);
+				FString headerIdentifier(FModumateSerializationStatics::DocHeaderField);
 				if (!FJsonSerializer::Deserialize(jsonReader, projectHeaderJson, FJsonSerializer::EFlags::None, &headerIdentifier))
 				{
 					continue;

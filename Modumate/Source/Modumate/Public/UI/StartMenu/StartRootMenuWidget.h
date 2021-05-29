@@ -61,9 +61,10 @@ protected:
 	void OnButtonReleasedOpen();
 
 	UFUNCTION()
-	bool ConfirmQuit() const;
+	bool ConfirmQuit();
 
 	void ShowStartMenu();
 
 	bool bHasUserLoggedIn = false;
+	bool bShowingQuitConfirmation = false;
 };

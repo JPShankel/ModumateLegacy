@@ -35,7 +35,7 @@ bool UPasteTool::Activate()
 
 	const TSharedPtr<FJsonObject> *docOb;
 
-	if (!PasteJson->TryGetObjectField(DocObjectInstanceField, docOb))
+	if (!PasteJson->TryGetObjectField(FModumateSerializationStatics::DocObjectInstanceField, docOb))
 	{
 		return false;
 	}

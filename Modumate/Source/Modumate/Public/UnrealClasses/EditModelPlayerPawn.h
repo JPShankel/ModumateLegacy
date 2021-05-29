@@ -32,6 +32,8 @@ protected:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void TryInitClientIconWidget();
+
 	FCollisionObjectQueryParams CachedCollisionObjQueryParams;
 	FCollisionQueryParams CachedCollisionQueryParams;
 	FCollisionQueryParams CachedCollisionQueryComplexParams;

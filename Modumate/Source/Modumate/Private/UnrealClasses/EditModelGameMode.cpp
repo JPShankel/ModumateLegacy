@@ -4,6 +4,7 @@
 
 #include "HttpManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Online/ModumateAccountManager.h"
 #include "Online/ModumateCloudConnection.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -29,7 +30,21 @@ void AEditModelGameMode::InitGameState()
 	auto* gameState = Cast<AEditModelGameState>(GameState);
 	if (ensure(gameState))
 	{
-		gameState->InitDocument();
+		FString localUserID;
+		int32 localUserIdx = UModumateDocument::MaxUserIdx;
+
+#if !UE_SERVER
+		auto gameInstance = GetGameInstance<UModumateGameInstance>();
+		auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
+		auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+		if (accountManager.IsValid() && cloudConnection.IsValid() && cloudConnection->IsLoggedIn())
+		{
+			localUserID = accountManager->GetUserInfo().ID;
+		}
+		localUserIdx = 0;
+#endif
+
+		gameState->InitDocument(localUserID, localUserIdx);
 	}
 
 #if UE_SERVER
@@ -43,6 +58,9 @@ void AEditModelGameMode::InitGameState()
 	{
 		UE_LOG(LogGameMode, Fatal, TEXT("Can't start an EditModelGameMode server without a --%s argument!"), *AEditModelGameMode::MPSessionKey);
 	}
+
+	// TODO: support loading documents via another argument that would download them from a cloud-hosted file
+	ResetSession();
 #endif
 }
 
@@ -127,6 +145,24 @@ APlayerController* AEditModelGameMode::Login(UPlayer* NewPlayer, ENetRole InRemo
 	return newController;
 }
 
+void AEditModelGameMode::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+
+	auto* emPlayerState = NewPlayer ? Cast<AEditModelPlayerState>(NewPlayer->PlayerState) : nullptr;
+	UWorld* world = GetWorld();
+	auto* gameState = Cast<AEditModelGameState>(GameState);
+	auto* document = gameState ? gameState->Document : nullptr;
+	if (ensure(emPlayerState && world && document))
+	{
+		TArray<FDeltasRecord> deltasSinceSave;
+		if (document->GetDeltaRecordsSinceSave(deltasSinceSave))
+		{
+			emPlayerState->SendInitialDeltas(deltasSinceSave);
+		}
+	}
+}
+
 void AEditModelGameMode::Logout(AController* Exiting)
 {
 	APlayerState* playerState = Exiting ? Exiting->PlayerState : nullptr;
@@ -138,12 +174,27 @@ void AEditModelGameMode::Logout(AController* Exiting)
 		LoggedInUsersByID.Remove(userID);
 	}
 
+	if (LoggedInUsersByID.Num() == 0)
+	{
+		ResetSession();
+	}
+
 	Super::Logout(Exiting);
 }
 
 const FGuid& AEditModelGameMode::GetMPSessionID() const
 {
 	return CurMPSessionID;
+}
+
+void AEditModelGameMode::ResetSession()
+{
+	UWorld* world = GetWorld();
+	auto* gameState = Cast<AEditModelGameState>(GameState);
+	if (ensure(world && gameState && gameState->Document))
+	{
+		gameState->Document->MakeNew(world);
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -2,21 +2,21 @@
 
 #include "UnrealClasses/EditModelGameState.h"
 
-void AEditModelGameState::InitDocument()
+void AEditModelGameState::InitDocument(const FString& LocalUserID, int32 LocalUserIdx)
 {
 	if (ensure(Document == nullptr))
 	{
 		Document = NewObject<UModumateDocument>(this);
+		Document->SetLocalUserInfo(LocalUserID, LocalUserIdx);
 	}
 }
 
-void AEditModelGameState::ReceiveServerDeltas_Implementation(const FDeltasRecord& Deltas)
+// RPC from the server to every client's copy of the global GameState
+void AEditModelGameState::BroadcastServerDeltas_Implementation(const FDeltasRecord& Deltas)
 {
 	UWorld* world = GetWorld();
-	if (!ensure(world && Document))
+	if (ensure(world && Document))
 	{
-		return;
+		Document->ApplyRemoteDeltas(Deltas, world, false);
 	}
-
-	Document->ApplyRemoteDeltas(Deltas, world);
 }

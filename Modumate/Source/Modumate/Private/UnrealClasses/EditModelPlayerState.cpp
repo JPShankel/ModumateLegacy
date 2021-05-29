@@ -40,6 +40,11 @@ AEditModelPlayerState::AEditModelPlayerState()
 	, bShowVolumeDebug(false)
 	, bShowSurfaceDebug(false)
 	, bDevelopDDL2Data(false)
+#if UE_BUILD_SHIPPING
+	, bShowMultiplayerDebug(false)
+#else	// TODO: remove multiplayer debugging being the default after we're more stable
+	, bShowMultiplayerDebug(true)
+#endif
 	, SelectedViewMode(EEditViewModes::AllObjects)
 	, ShowingFileDialog(false)
 	, HoveredObject(nullptr)
@@ -64,11 +69,11 @@ void AEditModelPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	DOREPLIFETIME(AEditModelPlayerState, ReplicatedUserInfo);
 }
 
-void AEditModelPlayerState::BeginWithController()
+bool AEditModelPlayerState::BeginWithController()
 {
 	if (bBeganWithController || (EMPlayerController == nullptr))
 	{
-		return;
+		return false;
 	}
 
 	PostSelectionChanged();
@@ -86,6 +91,8 @@ void AEditModelPlayerState::BeginWithController()
 	{
 		SetUserInfo(accountManager->GetUserInfo());
 	}
+
+	return true;
 }
 
 void AEditModelPlayerState::BeginPlay()
@@ -136,8 +143,18 @@ void AEditModelPlayerState::TryInitController()
 	if (EMPlayerController && EMPlayerController->HasActorBegunPlay() && !EMPlayerController->bBeganWithPlayerState)
 	{
 		EMPlayerController->EMPlayerState = this;
-		EMPlayerController->BeginWithPlayerState();
-		BeginWithController();
+		if (EMPlayerController->BeginWithPlayerState() && BeginWithController())
+		{
+			UE_LOG(LogTemp, Log, TEXT("AEditModelPlayerState initialized state and controller."));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("AEditModelPlayerState failed to initialize state and controller!"));
+			if (IsNetMode(NM_Client))
+			{
+				GoToMainMenu();
+			}
+		}
 	}
 }
 
@@ -168,7 +185,7 @@ void AEditModelPlayerState::BatchRenderLines()
 	{
 		for (auto *selectedObj : SelectedObjects)
 		{
-			if (selectedObj && selectedObj->ShowStructureOnSelection())
+			if (selectedObj && selectedObj->ShowStructureOnSelection() && !selectedObj->IsDirty(EObjectDirtyFlags::Structure))
 			{
 				selectedObj->RouteGetStructuralPointsAndLines(TempObjectStructurePoints, TempObjectStructureLines, false, false, cullingPlane);
 				CurSelectionStructurePoints.Append(TempObjectStructurePoints);
@@ -248,7 +265,7 @@ void AEditModelPlayerState::BatchRenderLines()
 	// TODO: move this code - either be able to ask objects which lines to draw or enable objects to bypass this function
 	for (AModumateObjectInstance *cutPlaneObj : doc->GetObjectsOfType(EObjectType::OTCutPlane))
 	{
-		if (!cutPlaneObj || !cutPlaneObj->IsVisible())
+		if (!cutPlaneObj || !cutPlaneObj->IsVisible() || cutPlaneObj->IsDirty(EObjectDirtyFlags::Structure))
 		{
 			continue;
 		}
@@ -258,7 +275,7 @@ void AEditModelPlayerState::BatchRenderLines()
 
 	for (AModumateObjectInstance *scopeBoxObj : doc->GetObjectsOfType(EObjectType::OTScopeBox))
 	{
-		if (!scopeBoxObj || !scopeBoxObj->IsVisible())
+		if (!scopeBoxObj || !scopeBoxObj->IsVisible() || scopeBoxObj->IsDirty(EObjectDirtyFlags::Structure))
 		{
 			continue;
 		}
@@ -1091,6 +1108,14 @@ bool AEditModelPlayerState::IsObjectTypeEnabledByViewMode(EObjectType ObjectType
 	}
 }
 
+void AEditModelPlayerState::GoToMainMenu()
+{
+	// If a multiplayer client failed to initialize, then go back to the main menu.
+	FString mainMenuMap = UGameMapsSettings::GetGameDefaultMap();
+	UGameplayStatics::OpenLevel(this, FName(*mainMenuMap));
+}
+
+// RPC from the client to the server's copy of that client's PlayerState
 void AEditModelPlayerState::SetUserInfo_Implementation(const FModumateUserInfo& UserInfo)
 {
 	ReplicatedUserInfo = UserInfo;
@@ -1103,17 +1128,71 @@ void AEditModelPlayerState::SetUserInfo_Implementation(const FModumateUserInfo& 
 	}
 }
 
-bool AEditModelPlayerState::SendClientDeltas_Validate(const FDeltasRecord& Deltas)
-{
-	return true;
-}
-
+// RPC from the client to the server's copy of that client's PlayerState
 void AEditModelPlayerState::SendClientDeltas_Implementation(const FDeltasRecord& Deltas)
 {
-	AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
-	if (gameState)
+	UWorld* world = GetWorld();
+	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
+	if (gameState && gameState->Document && !Deltas.IsEmpty())
 	{
-		gameState->ReceiveServerDeltas(Deltas);
+		// If the server verifies that these deltas have been made after the latest one,
+		// then broadcast them to every client.
+		FDeltasRecord reconciledRecord;
+		int32 maxVerifiedDeltasID;
+		uint32 verifiedDocHash;
+		if (gameState->Document->ReconcileRemoteDeltas(Deltas, world, reconciledRecord, maxVerifiedDeltasID, verifiedDocHash))
+		{
+			UE_LOG(LogTemp, Log, TEXT("Broadcasting verified DeltasRecord #%d from user %s, hash %08x"), Deltas.ID, *Deltas.OriginUserID, GetTypeHash(Deltas));
+			gameState->BroadcastServerDeltas(Deltas);
+		}
+		// Otherwise, tell the client that it needs to roll back all unverified deltas,
+		// and potentially broadcast reconciled deltas that include changes from the out-of-date client's deltas.
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("User %s sent out-of-date DeltasRecord #%d, hash %08x - rolling back"), *Deltas.OriginUserID, Deltas.ID, GetTypeHash(Deltas));
+			RollBackUnverifiedDeltas(maxVerifiedDeltasID, verifiedDocHash);
+
+			if (!reconciledRecord.IsEmpty())
+			{
+				gameState->BroadcastServerDeltas(reconciledRecord);
+			}
+		}
+	}
+}
+
+// RPC from the server to the client's copy of its PlayerState
+void AEditModelPlayerState::SendInitialDeltas_Implementation(const TArray<FDeltasRecord>& InitialDeltas)
+{
+	UWorld* world = GetWorld();
+	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
+	if (gameState && gameState->Document)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Applying %d initial deltas sent from the server."), InitialDeltas.Num());
+
+		for (const FDeltasRecord& record : InitialDeltas)
+		{
+			gameState->Document->ApplyRemoteDeltas(record, world, true);
+		}
+	}
+	else
+	{
+		if (!ensure(PendingInitialDeltas.Num() == 0))
+		{
+			UE_LOG(LogTemp, Error, TEXT("Received redundant initial deltas from the server!"));
+		}
+
+		PendingInitialDeltas = InitialDeltas;
+	}
+}
+
+// RPC from the server to the client's copy of its PlayerState
+void AEditModelPlayerState::RollBackUnverifiedDeltas_Implementation(int32 MaxVerifiedDeltasID, uint32 VerifiedDocHash)
+{
+	UWorld* world = GetWorld();
+	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
+	if (gameState && gameState->Document)
+	{
+		gameState->Document->RollBackUnverifiedDeltas(MaxVerifiedDeltasID, VerifiedDocHash, world);
 	}
 }
 

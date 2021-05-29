@@ -2,6 +2,11 @@
 
 #include "DocumentManagement/ModumateSerialization.h"
 
+
+const FString FModumateSerializationStatics::DocHeaderField(TEXT("ModumateHeader"));
+const FString FModumateSerializationStatics::DocObjectInstanceField(TEXT("ModumateObjects"));
+
+
 FGraph3DVertexRecordV1::FGraph3DVertexRecordV1()
 	: ID(MOD_ID_NONE)
 	, Position()
@@ -83,7 +88,7 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 	}
 
 	const TSharedPtr<FJsonObject> *headerOb;
-	if (!FileJson->TryGetObjectField(DocHeaderField, headerOb))
+	if (!FileJson->TryGetObjectField(FModumateSerializationStatics::DocHeaderField, headerOb))
 	{
 		return false;
 	}
@@ -120,7 +125,7 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 
 	const TSharedPtr<FJsonObject> *docOb;
 
-	if (!FileJson->TryGetObjectField(DocObjectInstanceField, docOb))
+	if (!FileJson->TryGetObjectField(FModumateSerializationStatics::DocObjectInstanceField, docOb))
 	{
 		return false;
 	}

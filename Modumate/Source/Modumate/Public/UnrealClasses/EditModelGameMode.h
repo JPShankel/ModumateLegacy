@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "DocumentManagement/ModumateSerialization.h"
 #include "Online/ModumateAccountManager.h"
 #include "UnrealClasses/ModumateGameModeBase.h"
 
@@ -25,6 +26,7 @@ public:
 
 	virtual void PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
 	virtual APlayerController* Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
 
 	const FGuid& GetMPSessionID() const;
@@ -120,4 +122,6 @@ protected:
 	FGuid CurMPSessionID;
 	TSet<FString> LoggedInUsersByID;
 	TMap<int32, FString> UsersByPlayerID;
+
+	void ResetSession();
 };

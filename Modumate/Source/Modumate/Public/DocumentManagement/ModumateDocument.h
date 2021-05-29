@@ -44,8 +44,14 @@ private:
 	// The ID of the next UndoRedo/DeltasRecord to generate
 	int32 NextLocalDeltasID;
 
-	// The ID of the last DeltasRecord verified by the server and sent out to all connected clients
-	int32 LatestVerifiedDeltasID;
+	// The FDeltasRecords that have been locally on the multiplayer client, but haven't yet been verified and sent back by the server.
+	TArray<FDeltasRecord> UnverifiedDeltasRecords;
+
+	// The FDeltasRecords that have either been applied locally offline, or been verified and sent by the server to all clients.
+	TArray<FDeltasRecord> VerifiedDeltasRecords;
+
+	// The index in VerifiedDeltasRecords of the DeltasRecord that was the most recent one saved.
+	int32 LastSavedDeltasRecordIdx;
 
 	UPROPERTY()
 	TArray<AModumateObjectInstance*> ObjectInstanceArray;
@@ -83,11 +89,14 @@ private:
 	TMap<EObjectDirtyFlags, TArray<AModumateObjectInstance*>> DirtyObjectMap;
 
 	bool bTrackingDeltaObjects = false;
-	TMap<EObjectType, TSet<int32>> DeltaCreatedObjects, DeltaDestroyedObjects;
+	FAffectedObjMap DeltaAffectedObjects;
+	TSet<int32> DeltaDirtiedObjects;
 
 public:
 
 	UModumateDocument();
+
+	void SetLocalUserInfo(const FString& InLocalUserID, int32 InLocalUserIdx);
 
 	// Default Value Library
 	float ElevationDelta;
@@ -217,7 +226,9 @@ public:
 	bool GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas);
 
 public:
-	bool ApplyRemoteDeltas(const FDeltasRecord& DeltasRecord, UWorld* World);
+	bool ReconcileRemoteDeltas(const FDeltasRecord& DeltasRecord, UWorld* World, FDeltasRecord& OutReconciledRecord, int32& OutMaxVerifiedDeltasID, uint32& OutVerifiedDocHash);
+	bool RollBackUnverifiedDeltas(int32 MaxVerifiedDeltasID, uint32 VerifiedDocHash, UWorld* World);
+	bool ApplyRemoteDeltas(const FDeltasRecord& DeltasRecord, UWorld* World, bool bApplyOwnDeltas);
 	bool ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World);
 	void ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World);
 	void ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World);
@@ -229,13 +240,14 @@ public:
 
 private:
 	bool FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas);
-	bool PostApplyDeltas(UWorld *World);
+	bool PostApplyDeltas(UWorld *World, bool bCleanObjects, bool bMarkDocumentDirty);
 	void StartTrackingDeltaObjects();
 	void EndTrackingDeltaObjects();
 
 	// Helper function for ObjectFromActor
 	AModumateObjectInstance *ObjectFromSingleActor(AActor *actor);
 
+	void ApplyInvertedDeltas(UWorld* World, const TArray<FDeltaPtr>& Deltas);
 	void PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRedo>>& FromBuffer, TArray<TSharedPtr<UndoRedo>>& ToBuffer);
 
 public:
@@ -272,6 +284,10 @@ public:
 	void ClearRedoBuffer();
 	void ClearUndoBuffer();
 
+	int32 GetLatestVerifiedDeltasID() const;
+	uint32 GetLatestVerifiedDocHash() const;
+	bool GetDeltaRecordsSinceSave(TArray<FDeltasRecord>& OutRecordsSinceSave) const;
+
 	FBoxSphereBounds CalculateProjectBounds() const;
 
 	bool IsDirty(bool bUserFile = true) const;
@@ -280,6 +296,7 @@ public:
 	void DisplayDebugInfo(UWorld* world);
 	void DrawDebugVolumeGraph(UWorld* world);
 	void DrawDebugSurfaceGraphs(UWorld* world);
+	void DisplayMultiplayerDebugInfo(UWorld* world);
 
 	FString CurrentProjectPath;
 	FString CurrentProjectName;
@@ -301,11 +318,24 @@ public:
 
 	const FDocumentSettings& GetCurrentSettings() const { return CurrentSettings; }
 
+	// Utilities and constants for allocating pools of object IDs for different users
+	// TODO: upgrade all object IDs to 64-bit integers, to allow space for negation (in the graph), user index bits, and enough IDs for large projects.
+	// 32-bit object IDs with 4 user index bits and 1 negation bit caps us out at 16 simultaneous users and up to ~137 million lifetime object IDs per user for a given project.
+	static constexpr int32 UserIdxBits = 4;
+	static constexpr int32 MaxUserIdx = (1 << UserIdxBits) - 1;
+	static constexpr int32 LocalObjIDBits = 32 - UserIdxBits - 1;
+	static constexpr int32 ObjIDUserMask = MaxUserIdx << LocalObjIDBits;
+	static constexpr int32 LocalObjIDMask = ~ObjIDUserMask;
+
+	static int32 MPObjIDFromLocalObjID(int32 LocalObjID, int32 UserIdx);
+	static void SplitMPObjID(int32 MPObjID, int32& OutLocalObjID, int32& OutUserIdx);
+
 private:
 	TSharedPtr<FModumateDraftingView> CurrentDraftingView = nullptr;
 	FBIMPresetCollection BIMPresetCollection;
 	FDocumentSettings CurrentSettings;
 	FString CachedLocalUserID;
+	int32 CachedLocalUserIdx = 0;
 
 	// TODO: refactor the different types of dirtiness into flags if we add more with multiplayer, but until then we know there are only two types of dirtiness.
 	bool bUserFileDirty = true;

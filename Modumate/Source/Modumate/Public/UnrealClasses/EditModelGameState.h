@@ -14,11 +14,11 @@ class MODUMATE_API AEditModelGameState : public AGameStateBase
 	GENERATED_BODY()
 
 public:
-	void InitDocument();
+	void InitDocument(const FString& LocalUserID, int32 LocalUserIdx);
 
 	UPROPERTY()
 	UModumateDocument* Document;
 
 	UFUNCTION(NetMulticast, Reliable)
-	void ReceiveServerDeltas(const FDeltasRecord& Deltas);
+	void BroadcastServerDeltas(const FDeltasRecord& Deltas);
 };
