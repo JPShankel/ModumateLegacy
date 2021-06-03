@@ -5,6 +5,7 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UI/RightMenu/GeneralListItemObject.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "Objects/Terrain.h"
 
 
 UGeneralListItemMenuBlock::UGeneralListItemMenuBlock(const FObjectInitializer& ObjectInitializer)
@@ -39,12 +40,20 @@ void UGeneralListItemMenuBlock::UpdateAsTerrainList()
 	TArray<AModumateObjectInstance*> terrainMOIs = gameState->Document->GetObjectsOfType(EObjectType::OTTerrain);
 	for (int32 i = 0; i < terrainMOIs.Num(); ++i)
 	{
-		// TODO: Terrain CustomData?
-		UGeneralListItemObject* newTerrainObj = NewObject<UGeneralListItemObject>(this);
-		newTerrainObj->CutPlaneType = EGeneralListType::Terrain;
-		newTerrainObj->ObjId = terrainMOIs[i]->ID;
-		newTerrainObj->DisplayName = FString(TEXT("New Terrain"));
+		const AMOITerrain* moiTerrain = Cast<AMOITerrain>(terrainMOIs[i]);
+		if (moiTerrain)
+		{
+			FMOITerrainData terrainData;
+			if (ensure(terrainMOIs[i]->GetStateData().CustomData.LoadStructData(terrainData)))
+			{
+				UGeneralListItemObject* newTerrainObj = NewObject<UGeneralListItemObject>(this);
+				newTerrainObj->CutPlaneType = EGeneralListType::Terrain;
+				newTerrainObj->DisplayName = terrainData.Name;
+				newTerrainObj->ObjId = terrainMOIs[i]->ID;
+				newTerrainObj->bIsCulling = moiTerrain->GetIsTranslucent();
 
-		GeneralItemsList->AddItem(newTerrainObj);
+				GeneralItemsList->AddItem(newTerrainObj);
+			}
+		}
 	}
 }

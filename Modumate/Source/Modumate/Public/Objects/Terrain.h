@@ -51,6 +51,9 @@ public:
 	const TArray<ADynamicTerrainActor*>& GetTerrainActors() const
 		{ return TerrainActors; }
 
+	// TODO: Change terrain material to translucent
+	void SetIsTranslucent(bool NewIsTranslucent) { bIsTranslucent = NewIsTranslucent; };
+	bool GetIsTranslucent() const { return bIsTranslucent; };
 
 	UPROPERTY()
 	FMOITerrainData InstanceData;
@@ -63,4 +66,6 @@ protected:
 	bool SetupTerrainMaterial(ADynamicTerrainActor* Actor);
 
 	FVector GraphToWorldPosition(FVector2D GraphPos, double Height = 0.0) const;
+
+	bool bIsTranslucent = false;
 };

@@ -36,6 +36,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 	int32 ObjID = MOD_ID_NONE;
+	EGeneralListType CurrentGeneralListType = EGeneralListType::None;
 
 public:
 
@@ -83,6 +84,7 @@ public:
 
 	void BuildAsVerticalCutPlaneItem(const FQuat& Rotation);
 	void BuildAsHorizontalCutPlaneItem(const FVector& Location);
+	void BuildAsTerrainItem(const class UGeneralListItemObject* TerrainItemObject);
 	void UpdateVisibilityAndName(bool NewVisible, const FString& NewName);
 
 protected:

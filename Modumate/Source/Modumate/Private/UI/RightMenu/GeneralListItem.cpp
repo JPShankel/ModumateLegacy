@@ -15,6 +15,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/Custom/ModumateCheckBox.h"
+#include "Objects/Terrain.h"
 
 
 UGeneralListItem::UGeneralListItem(const FObjectInitializer& ObjectInitializer)
@@ -88,14 +89,23 @@ void UGeneralListItem::OnEditableTitleCommitted(const FText& Text, ETextCommit::
 		FMOIStateData oldStateData = moi->GetStateData();
 		FMOIStateData newStateData = oldStateData;
 
-		FMOICutPlaneData newCutPlaneData;
-		newStateData.CustomData.LoadStructData(newCutPlaneData);
-		newCutPlaneData.Name = TextTitleEditable->ModumateEditableTextBox->Text.ToString();
+		if (CurrentGeneralListType == EGeneralListType::Terrain)
+		{
+			FMOITerrainData newTerrainData;
+			newStateData.CustomData.LoadStructData(newTerrainData);
+			newTerrainData.Name = TextTitleEditable->ModumateEditableTextBox->Text.ToString();
+			newStateData.CustomData.SaveStructData<FMOITerrainData>(newTerrainData);
+		}
+		else
+		{
+			FMOICutPlaneData newCutPlaneData;
+			newStateData.CustomData.LoadStructData(newCutPlaneData);
+			newCutPlaneData.Name = TextTitleEditable->ModumateEditableTextBox->Text.ToString();
+			newStateData.CustomData.SaveStructData<FMOICutPlaneData>(newCutPlaneData);
+		}
 
-		newStateData.CustomData.SaveStructData<FMOICutPlaneData>(newCutPlaneData);
 		auto delta = MakeShared<FMOIDelta>();
 		delta->AddMutationState(moi, oldStateData, newStateData);
-
 		gameState->Document->ApplyDeltas({ delta }, GetWorld());
 	}
 }
@@ -105,7 +115,22 @@ void UGeneralListItem::OnCheckBoxCullModelChanged(bool IsChecked)
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller)
 	{
-		controller->SetCurrentCullingCutPlane(IsChecked ? ObjID: MOD_ID_NONE);
+		if (CurrentGeneralListType == EGeneralListType::Terrain)
+		{
+			AModumateObjectInstance* moi = controller->GetDocument()->GetObjectById(ObjID);
+			if (moi)
+			{
+				AMOITerrain* terrainMOi = Cast<AMOITerrain>(moi);
+				if (terrainMOi)
+				{
+					terrainMOi->SetIsTranslucent(IsChecked);
+				}
+			}
+		}
+		else
+		{
+			controller->SetCurrentCullingCutPlane(IsChecked ? ObjID : MOD_ID_NONE);
+		}
 	}
 }
 
@@ -119,13 +144,16 @@ void UGeneralListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 	const UGeneralListItemObject *cutPlaneItemObject = Cast<UGeneralListItemObject>(ListItemObject);
 	if (!cutPlaneItemObject)
 	{
+		CurrentGeneralListType = EGeneralListType::None;
 		return;
 	}
+
 	UpdateVisibilityAndName(cutPlaneItemObject->Visibility, cutPlaneItemObject->DisplayName);
 	ObjID = cutPlaneItemObject->ObjId;
 	CheckBoxCullModel->SetCheckedState(
 		cutPlaneItemObject->bIsCulling ? ECheckBoxState::Checked : ECheckBoxState::Unchecked);
 
+	CurrentGeneralListType = cutPlaneItemObject->CutPlaneType;
 	switch (cutPlaneItemObject->CutPlaneType)
 	{
 	case EGeneralListType::Horizontal:
@@ -134,8 +162,10 @@ void UGeneralListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 	case EGeneralListType::Vertical:
 		BuildAsVerticalCutPlaneItem(cutPlaneItemObject->Rotation);
 		break;
-	case EGeneralListType::Other:
 	case EGeneralListType::Terrain:
+		BuildAsTerrainItem(cutPlaneItemObject);
+		break;
+	case EGeneralListType::Other:
 	default:
 		TextDimension->ChangeText(FText::GetEmpty());
 		break;
@@ -153,6 +183,11 @@ void UGeneralListItem::BuildAsVerticalCutPlaneItem(const FQuat& Rotation)
 void UGeneralListItem::BuildAsHorizontalCutPlaneItem(const FVector& Location)
 {
 	TextDimension->ChangeText(UModumateDimensionStatics::CentimetersToDisplayText(Location.Z));
+}
+
+void UGeneralListItem::BuildAsTerrainItem(const class UGeneralListItemObject* TerrainItemObject)
+{
+	TextDimension->ChangeText(FText::GetEmpty());
 }
 
 void UGeneralListItem::UpdateVisibilityAndName(bool NewVisible, const FString& NewName)
