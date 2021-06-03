@@ -75,7 +75,7 @@ void FillObjIDArray(const TSet<int32>* AffectedObjectSetPtr, TArray<int32>& OutA
 	}
 }
 
-void FDeltasRecord::SetAffectedObjects(const FAffectedObjMap& InAffectedObjects, const TSet<int32>& InDirtiedObjects)
+void FDeltasRecord::SetResults(const FAffectedObjMap& InAffectedObjects, const TSet<int32>& InDirtiedObjects, const TArray<FGuid>& InAffectedPresets)
 {
 	AffectedObjectsMap = InAffectedObjects;
 	DirtiedObjectsSet = InDirtiedObjects;
@@ -84,6 +84,8 @@ void FDeltasRecord::SetAffectedObjects(const FAffectedObjMap& InAffectedObjects,
 	FillObjIDArray(InAffectedObjects.Find(EMOIDeltaType::Mutate), ModifiedObjects);
 	FillObjIDArray(InAffectedObjects.Find(EMOIDeltaType::Destroy), DeletedObjects);
 	FillObjIDArray(&DirtiedObjectsSet, DirtiedObjects);
+
+	AffectedPresets = InAffectedPresets;
 }
 
 bool FDeltasRecord::operator==(const FDeltasRecord& Other) const

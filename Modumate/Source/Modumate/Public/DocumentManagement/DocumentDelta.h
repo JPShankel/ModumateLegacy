@@ -54,7 +54,7 @@ struct MODUMATE_API FDeltasRecord
 
 	bool IsEmpty() const;
 	void CacheSelfHash();
-	void SetAffectedObjects(const FAffectedObjMap& InAffectedObjects, const TSet<int32>& InDirtiedObjects);
+	void SetResults(const FAffectedObjMap& InAffectedObjects, const TSet<int32>& InDirtiedObjects, const TArray<FGuid>& InAffectedPresets);
 
 	void PostSerialize(const FArchive& Ar);
 	bool operator==(const FDeltasRecord& Other) const;
@@ -94,6 +94,9 @@ struct MODUMATE_API FDeltasRecord
 
 	UPROPERTY()
 	TArray<int32> DirtiedObjects;
+
+	UPROPERTY()
+	TArray<FGuid> AffectedPresets;
 
 	// Non-definitional / derived from application; not necessarily worth the space for replication
 

@@ -168,7 +168,9 @@ void FMiterParticipantData::FinishLayerGroupExtension(EMiterLayerGroup MiterLaye
 		for (int32 layerIdx = layerGroupStartIdx; layerIdx < layerGroupEndIdx; ++layerIdx)
 		{
 			float layerThickness = LayerDims.LayerOffsets[layerIdx + 1] - LayerDims.LayerOffsets[layerIdx];
-			ensure(FMath::IsNearlyEqual(layerThickness, LayerDims.LayerThicknesses[layerIdx]));
+			// Accumulating layer thicknesses introduces more than the default SMALL_NUMBER (1e-8) of error,
+			// but shouldn't accumulate more than a micrometer of error. Ensure here only for sanity checking.
+			ensure(FMath::IsNearlyEqual(layerThickness, LayerDims.LayerThicknesses[layerIdx], KINDA_SMALL_NUMBER));
 			float layerStartAlpha = layerGroupProgress / groupThickness;
 			layerGroupProgress += layerThickness;
 			float layerEndAlpha = layerGroupProgress / groupThickness;

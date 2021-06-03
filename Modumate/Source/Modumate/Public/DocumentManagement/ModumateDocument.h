@@ -91,6 +91,7 @@ private:
 	bool bTrackingDeltaObjects = false;
 	FAffectedObjMap DeltaAffectedObjects;
 	TSet<int32> DeltaDirtiedObjects;
+	TSet<FGuid> DeltaAffectedPresets;
 
 public:
 

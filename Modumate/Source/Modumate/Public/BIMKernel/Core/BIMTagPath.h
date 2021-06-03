@@ -12,7 +12,7 @@ struct FBIMTagPath
 public:
 	GENERATED_BODY()
 
-	//Not a UPROPERTY, we serialize the full string representation
+	UPROPERTY()
 	TArray<FString> Tags;
 
 	FBIMTagPath() {};
@@ -26,6 +26,8 @@ public:
 	EBIMResult ToString(FString &OutString) const;
 	EBIMResult GetPartialPath(int32 Count, FBIMTagPath& PartialPath) const;
 
+	// Custom Export/Import functions so that it doesn't serialize in JSON as an array of strings, but rather as a single string.
+	// Note: it will still use UPROPERTY-based serialization for non-JSON-based serialization backends, like over the network and for CBOR.
 	bool ExportTextItem(FString& ValueStr, FBIMTagPath const& DefaultValue, UObject* Parent, int32 PortFlags, UObject* ExportRootScope) const;
 	bool ImportTextItem(const TCHAR*& Buffer, int32 PortFlags, UObject* Parent, FOutputDevice* ErrorText);
 

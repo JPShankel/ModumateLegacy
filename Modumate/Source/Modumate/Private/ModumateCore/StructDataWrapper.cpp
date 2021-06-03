@@ -135,7 +135,7 @@ uint32 GetTypeHash(const FStructDataWrapper& StructDataWrapper)
 void FStructDataWrapper::PostSerialize(const FArchive& Ar)
 {
 	// If we're loading from JSON, then the JSON object should be valid, but we shouldn't have CBOR data yet, so finish doing that now.
-	if (!StructName.IsNone() && StructJson && (StructCborBuffer.Num() == 0))
+	if (!Ar.IsSaving() && !StructName.IsNone() && StructJson && (StructCborBuffer.Num() == 0))
 	{
 		SaveCborFromJson();
 	}
@@ -145,17 +145,15 @@ bool FStructDataWrapper::NetSerialize(FArchive& Ar, class UPackageMap* Map, bool
 {
 	if (Ar.IsSaving())
 	{
-		if (((CachedStructDef == nullptr) || (StructCborBuffer.Num() == 0)) && !SaveCborFromJson())
+		bOutSuccess = (CachedStructDef && (StructCborBuffer.Num() > 0)) || SaveCborFromJson();
+		if (bOutSuccess)
 		{
-			bOutSuccess = false;
-			return true;
+			Ar << StructName;
+
+			uint32 uncompressedSize = StructCborBuffer.Num();
+			Ar.SerializeInt(uncompressedSize, MAX_uint32);
+			Ar.SerializeBits(StructCborBuffer.GetData(), 8 * uncompressedSize);
 		}
-
-		Ar << StructName;
-
-		uint32 uncompressedSize = StructCborBuffer.Num();
-		Ar.SerializeInt(uncompressedSize, MAX_uint32);
-		Ar.SerializeBits(StructCborBuffer.GetData(), 8 * uncompressedSize);
 	}
 	else
 	{
@@ -166,10 +164,9 @@ bool FStructDataWrapper::NetSerialize(FArchive& Ar, class UPackageMap* Map, bool
 		StructCborBuffer.AddZeroed(uncompressedSize);
 		Ar.SerializeBits(StructCborBuffer.GetData(), 8 * uncompressedSize);
 
-		SaveJsonFromCbor();
+		bOutSuccess = SaveJsonFromCbor();
 	}
 
-	bOutSuccess = true;
 	return true;
 }
 
