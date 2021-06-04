@@ -120,7 +120,10 @@ public:
 	const TArray<AModumateObjectInstance*>& GetObjectInstances() const { return ObjectInstanceArray; }
 	TArray<AModumateObjectInstance*>& GetObjectInstances() { return ObjectInstanceArray; }
 
-	bool CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas = nullptr);
+	static const int32 LoadIterationFactor;
+	static const int32 DefaultCombinedIterations;
+	static const int32 DefaultSameFlagIterations;
+	bool CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas = nullptr, bool bDeleteUncleanableObjects = false, int32 IterationFactor = 1);
 	void RegisterDirtyObject(EObjectDirtyFlags DirtyType, AModumateObjectInstance *DirtyObj, bool bDirty);
 
 	void BeginUndoRedoMacro();

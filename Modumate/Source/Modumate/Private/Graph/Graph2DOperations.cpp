@@ -1292,10 +1292,21 @@ bool FGraph2D::PopulateFromPolygons(TArray<FGraph2DDelta>& OutDeltas, int32& Nex
 		}
 	}
 
-	int32 numVerts = OutGraphToSurfaceVertices.Num();
 	// return graph in its original state
-	OutDeltas.Append(appliedDeltas);
-	ApplyInverseDeltas(appliedDeltas);
+	TArray<FGraph2DDelta> nonEmptyDeltas;
+	for (auto& appliedDelta : appliedDeltas)
+	{
+		if (!appliedDelta.IsEmpty())
+		{
+			nonEmptyDeltas.Add(appliedDelta);
+		}
+	}
+
+	if (nonEmptyDeltas.Num() > 0)
+	{
+		OutDeltas.Append(nonEmptyDeltas);
+		ApplyInverseDeltas(nonEmptyDeltas);
+	}
 
 	return true;
 }

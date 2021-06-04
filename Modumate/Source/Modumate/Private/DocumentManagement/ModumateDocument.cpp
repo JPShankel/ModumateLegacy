@@ -49,6 +49,11 @@
 
 const FName UModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
 
+// Set up some reasonable defaults for infinite loop detection while cleaning objects and resolving dependencies.
+const int32 UModumateDocument::LoadIterationFactor = 4;
+const int32 UModumateDocument::DefaultCombinedIterations = 4;
+const int32 UModumateDocument::DefaultSameFlagIterations = 8;
+
 UModumateDocument::UModumateDocument()
 	: Super()
 	, NextID(1)
@@ -100,6 +105,15 @@ void UModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 		FromBuffer.RemoveAt(FromBuffer.Num() - 1);
 		ApplyInvertedDeltas(World, ur->Deltas);
 
+		Algo::Reverse(ur->Deltas);
+		for (int32 i = 0; i < ur->Deltas.Num(); ++i)
+		{
+			auto& delta = ur->Deltas[i];
+			if (delta.IsValid())
+			{
+				ur->Deltas[i] = delta->MakeInverse();
+			}
+		}
 		ToBuffer.Add(ur);
 
 #if WITH_EDITOR
@@ -649,49 +663,56 @@ void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 		return;
 	}
 
-	int32 surfaceGraphID = targetSurfaceGraph->GetID();
-	AModumateObjectInstance *surfaceGraphObj = GetObjectById(surfaceGraphID);
-	if (!ensure(surfaceGraphObj))
-	{
-		return;
-	}
-
 	// update graph itself
 	if (!targetSurfaceGraph->ApplyDelta(Delta))
 	{
 		return;
 	}
 
-	// mark the surface graph dirty, so that its children can update their visual and world-coordinate-space representations
-	surfaceGraphObj->MarkDirty(EObjectDirtyFlags::All);
+	int32 surfaceGraphID = targetSurfaceGraph->GetID();
+	AModumateObjectInstance* surfaceGraphObj = GetObjectById(surfaceGraphID);
+	EObjectType vertexType = EObjectType::OTNone, edgeType = EObjectType::OTNone, polygonType = EObjectType::OTNone;
 
-	EObjectType vertexType = EObjectType::OTSurfaceVertex;
-	EObjectType edgeType = EObjectType::OTSurfaceEdge;
-	EObjectType polygonType = EObjectType::OTSurfacePolygon;
-	if (surfaceGraphObj->GetObjectType() == EObjectType::OTTerrain)
+	if (ensure(surfaceGraphObj))
 	{
-		vertexType = EObjectType::OTTerrainVertex;
-		edgeType = EObjectType::OTTerrainEdge;
-		polygonType = EObjectType::OTTerrainPolygon;
-	}
+		// mark the surface graph dirty, so that its children can update their visual and world-coordinate-space representations
+		surfaceGraphObj->MarkDirty(EObjectDirtyFlags::All);
 
-	// add objects
-	for (auto &kvp : Delta.PolygonAdditions)
-	{
-		// It would be ideal to only create SurfacePolgyon objects for interior polygons, but if we don't then the graph will try creating
-		// deltas that use IDs that the document will try to re-purpose for other objects.
-		// TODO: allow allocating IDs from graph deltas in a way that the document can't use them
-		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, polygonType, surfaceGraphID));
-	}
+		switch (surfaceGraphObj->GetObjectType())
+		{
+		case EObjectType::OTSurfaceGraph:
+			vertexType = EObjectType::OTSurfaceVertex;
+			edgeType = EObjectType::OTSurfaceEdge;
+			polygonType = EObjectType::OTSurfacePolygon;
+			break;
+		case EObjectType::OTTerrain:
+			vertexType = EObjectType::OTTerrainVertex;
+			edgeType = EObjectType::OTTerrainEdge;
+			polygonType = EObjectType::OTTerrainPolygon;
+			break;
+		default:
+			ensureMsgf(false, TEXT("Unsupported Graph2D object type!"));
+			return;
+		}
 
-	for (auto& kvp : Delta.EdgeAdditions)
-	{
-		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, edgeType, surfaceGraphID));
-	}
+		// add objects
+		for (auto& kvp : Delta.PolygonAdditions)
+		{
+			// It would be ideal to only create SurfacePolgyon objects for interior polygons, but if we don't then the graph will try creating
+			// deltas that use IDs that the document will try to re-purpose for other objects.
+			// TODO: allow allocating IDs from graph deltas in a way that the document can't use them
+			CreateOrRestoreObj(World, FMOIStateData(kvp.Key, polygonType, surfaceGraphID));
+		}
 
-	for (auto& kvp : Delta.VertexAdditions)
-	{
-		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, vertexType, surfaceGraphID));
+		for (auto& kvp : Delta.EdgeAdditions)
+		{
+			CreateOrRestoreObj(World, FMOIStateData(kvp.Key, edgeType, surfaceGraphID));
+		}
+
+		for (auto& kvp : Delta.VertexAdditions)
+		{
+			CreateOrRestoreObj(World, FMOIStateData(kvp.Key, vertexType, surfaceGraphID));
+		}
 	}
 
 	// delete surface objects
@@ -744,7 +765,7 @@ void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 
 	if (Delta.DeltaType == EGraph2DDeltaType::Remove)
 	{
-		ensureAlways(targetSurfaceGraph->IsEmpty());
+		ensureAlwaysMsgf(targetSurfaceGraph->IsEmpty(), TEXT("Tried to delete a Graph2D that wasn't already emptied by Graph2DDeltas!"));
 		SurfaceGraphs.Remove(Delta.ID);
 	}
 }
@@ -1420,8 +1441,6 @@ void UModumateDocument::DeleteObjects(const TArray<AModumateObjectInstance*>& in
 
 bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, const TArray<AModumateObjectInstance*> &initialObjectsToDelete, bool bAllowRoomAnalysis, bool bDeleteConnected)
 {
-	OutDeltas.Reset();
-
 	if (initialObjectsToDelete.Num() == 0)
 	{
 		return false;
@@ -1468,18 +1487,31 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 
 		int32 objID = objToDelete->ID;
 		EObjectType objType = objToDelete->GetObjectType();
-
 		EGraph3DObjectType graph3DObjType;
+		bool bObjIsGraph2D = SurfaceGraphs.Contains(objID);
+
 		if (IsObjectInVolumeGraph(objToDelete->ID, graph3DObjType) || VolumeGraph.ContainsGroup(objID))
 		{
 			graph3DObjIDsToDelete.Add(objID);
 		}
-		else if (UModumateTypeStatics::Graph2DObjectTypeFromObjectType(objType) != EGraphObjectType::None)
+		else if ((UModumateTypeStatics::Graph2DObjectTypeFromObjectType(objType) != EGraphObjectType::None) || bObjIsGraph2D)
 		{
-			int32 surfaceGraphID = objToDelete->GetParentID();
-			if (SurfaceGraphs.Contains(surfaceGraphID))
+			int32 surfaceGraphID = bObjIsGraph2D ? objID : objToDelete->GetParentID();
+			if (!ensureMsgf(SurfaceGraphs.Contains(surfaceGraphID),
+				TEXT("Tried to delete Graph2D-related MOI #%d, but there's no Graph2D #%d!"), objID, surfaceGraphID))
 			{
-				surfaceGraphDeletionMap.FindOrAdd(surfaceGraphID).Add(objToDelete->ID);
+				continue;
+			}
+
+			TSharedPtr<FGraph2D>& graph2D = SurfaceGraphs[surfaceGraphID];
+			TArray<int32>& graph2DObjsToDelete = surfaceGraphDeletionMap.FindOrAdd(surfaceGraphID);
+			if (bObjIsGraph2D)
+			{
+				graph2D->GetAllObjects().GenerateKeyArray(graph2DObjsToDelete);
+			}
+			else
+			{
+				graph2DObjsToDelete.AddUnique(objToDelete->ID);
 			}
 		}
 	}
@@ -1919,9 +1951,11 @@ bool UModumateDocument::FinalizeGraph2DDelta(const FGraph2DDelta &Delta, int32 &
 	case EGraph2DDeltaType::Remove:
 	{
 		auto* graphObj = GetObjectById(Delta.ID);
-		if (graphObj == nullptr)
+		if (!ensureMsgf(graphObj, TEXT("Tried to remove Graph2D #%d that didn't have a corresponding MOI!"), Delta.ID))
 		{
-			return false;
+			// This can still be considered a success because there's no more additional work to do here;
+			// the MOI delta isn't necessary since the graph is already missing, but we ensure because this shouldn't happen.
+			return true;
 		}
 
 		auto deleteGraphObjDelta = MakeShared<FMOIDelta>();
@@ -2162,7 +2196,7 @@ void UModumateDocument::SetNextID(int32 ID, int32 reservingObjID)
 	ReservingObjectID = MOD_ID_NONE;
 }
 
-bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
+bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas, bool bDeleteUncleanableObjects, int32 IterationFactor)
 {
 	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentCleanObjects);
 
@@ -2184,7 +2218,7 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 	int32 totalObjectsDirty = 0;
 
 	// Prevent iterating over all combined dirty flags too many times while trying to clean all objects
-	int32 combinedDirtySafeguard = 4;
+	int32 combinedDirtySafeguard = IterationFactor * DefaultCombinedIterations;
 	do
 	{
 		for (EObjectDirtyFlags flagToClean : UModumateTypeStatics::OrderedDirtyFlags)
@@ -2196,7 +2230,7 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 			TArray<AModumateObjectInstance*>& dirtyObjList = DirtyObjectMap.FindOrAdd(flagToClean);
 
 			// Prevent iterating over objects dirtied with this flag too many times while trying to clean all objects
-			int32 sameFlagSafeguard = 8;
+			int32 sameFlagSafeguard = IterationFactor * DefaultSameFlagIterations;
 			do
 			{
 				// Save off the current list of dirty objects, since it may change while cleaning them.
@@ -2240,6 +2274,24 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas)
 
 	} while ((totalObjectsDirty > 0) &&
 		ensureMsgf(--combinedDirtySafeguard > 0, TEXT("Infinite loop detected while cleaning combined dirty flags, breaking!")));
+
+	// If objects are still dirty after exhausting the combinedDirtySafeguard, then delete the objects if we are generating side effects.
+	if ((totalObjectsDirty > 0) && OutSideEffectDeltas && bDeleteUncleanableObjects)
+	{
+		TSet<AModumateObjectInstance*> uncleanableObjs;
+		for (auto& kvp : DirtyObjectMap)
+		{
+			uncleanableObjs.Append(kvp.Value);
+		}
+
+		UE_LOG(LogTemp, Error, TEXT("Deleting %d uncleanable objects!"), uncleanableObjs.Num());
+
+		TArray<FDeltaPtr> deletionDeltas;
+		if (GetDeleteObjectsDeltas(deletionDeltas, uncleanableObjs.Array(), false, false))
+		{
+			OutSideEffectDeltas->Append(deletionDeltas);
+		}
+	}
 
 	return (totalObjectCleans > 0);
 }
@@ -2680,13 +2732,20 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	}
 
 	// Create MOIs reflected from the surface and terrain graphs
+	TArray<int32> graph2DsToRemove;
 	for (const auto& surfaceGraphKVP : SurfaceGraphs)
 	{
 		if (surfaceGraphKVP.Value.IsValid())
 		{
 			EToolCategories graphCategory = EToolCategories::SurfaceGraphs;
-			const auto moiObject = GetObjectById(surfaceGraphKVP.Key);
-			if (moiObject != nullptr && moiObject->GetObjectType() == EObjectType::OTTerrain)
+			const auto graphMOI = GetObjectById(surfaceGraphKVP.Key);
+			if (!ensureMsgf(graphMOI, TEXT("Graph2D #%d didn't get a MOI in the Document!"), surfaceGraphKVP.Key))
+			{
+				graph2DsToRemove.Add(surfaceGraphKVP.Key);
+				continue;
+			}
+
+			if (graphMOI->GetObjectType() == EObjectType::OTTerrain)
 			{
 				graphCategory = EToolCategories::SiteTools;
 			}
@@ -2702,9 +2761,30 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		}
 	}
 
+	// If any Graph2D didn't have a corresponding MOI (due a deletion error), then remove it now so that it doesn't continue to pollute the document.
+	for (int32 graph2DToRemove : graph2DsToRemove)
+	{
+		SurfaceGraphs.Remove(graph2DToRemove);
+	}
+
 	// Now that all objects have been created and parented correctly, we can clean all of them.
 	// This should take care of anything that depends on relationships between objects, like mitering.
-	CleanObjects(nullptr);
+	bool bInitialDocumentDirty = false;
+	TArray<FDeltaPtr> loadCleanSideEffects;
+	CleanObjects(&loadCleanSideEffects, true, LoadIterationFactor);
+
+	// If there were side effects generated while cleaning initial objects, then those deltas must be applied immediately.
+	// This should not normally happen, but it's a sign that some objects relied on data that didn't get saved/loaded correctly.
+	int32 numLoadCleanSideEffects = loadCleanSideEffects.Num();
+	if (numLoadCleanSideEffects > 0)
+	{
+		// TODO: potentially alert the user that some cleanup step has occurred, which is why the document is now dirty and needs to be re-saved.
+		// As long as this step happens deterministically, these deltas hopefully won't need to be shared among different clients all loading the same document.
+		// However, they might break serialized the undo buffer, so we will have to skip deserializing it.
+		UE_LOG(LogTemp, Warning, TEXT("CleanObjects generated %d side effects during initial Document load! Attemping to clean."), numLoadCleanSideEffects);
+		
+		bInitialDocumentDirty = ApplyDeltas(loadCleanSideEffects, world);
+	}
 
 	// Check for objects that have errors, as a result of having been loaded and cleaned.
 	// TODO: prompt the user to fix, or delete, these objects
@@ -2749,8 +2829,8 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 
 	ClearUndoBuffer();
 
-	// Load undo/redo buffer if the file version is consistent, otherwise deltas are not supported
-	if (DocVersion == InHeader.Version)
+	// Load undo buffer if the file version is consistent and there weren't initial loading side effects, otherwise deltas are not supported.
+	if ((DocVersion == InHeader.Version) && !bInitialDocumentDirty)
 	{
 		for (auto& deltaRecord : InDocumentRecord.AppliedDeltas)
 		{
@@ -2771,7 +2851,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 
 	CurrentSettings = InDocumentRecord.Settings;
 
-	SetDirtyFlags(false);
+	SetDirtyFlags(bInitialDocumentDirty);
 
 	return true;
 }
@@ -3670,11 +3750,8 @@ void UModumateDocument::SplitMPObjID(int32 MPObjID, int32& OutLocalObjID, int32&
 
 void UModumateDocument::UpdateWindowTitle()
 {
-	if (!CurrentProjectName.IsEmpty())
-	{
-		FText projectSuffix = bUserFileDirty ? LOCTEXT("DirtyProjectSuffix", "*") : FText::GetEmpty();
-		UModumateFunctionLibrary::SetWindowTitle(CurrentProjectName, projectSuffix);
-	}
+	FText projectSuffix = bUserFileDirty ? LOCTEXT("DirtyProjectSuffix", "*") : FText::GetEmpty();
+	UModumateFunctionLibrary::SetWindowTitle(CurrentProjectName, projectSuffix);
 }
 
 void UModumateDocument::RecordSavedProject(UWorld* World, const FString& FilePath, bool bUserFile)

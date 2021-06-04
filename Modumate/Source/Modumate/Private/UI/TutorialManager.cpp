@@ -296,7 +296,7 @@ void UModumateTutorialManager::OpenWalkthroughProject(EModumateWalkthroughCatego
 
 	// TODO: this should be from record
 	static const FString beginnerProjectName(TEXT("Beginner Tutorial Project.mdmt"));
-	static const FString IntermediateProjectName(TEXT("IntermediateTutorialProject.mdmt"));
+	static const FString IntermediateProjectName(TEXT("Intermediate Tutorial Project.mdmt"));
 
 	FString walkthroughFullPath;
 	if (WalkthroughCategory == EModumateWalkthroughCategories::Beginner)

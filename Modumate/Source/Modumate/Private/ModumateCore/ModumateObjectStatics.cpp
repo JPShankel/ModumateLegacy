@@ -296,7 +296,8 @@ bool UModumateObjectStatics::GetGeometryFromSurfacePoly(const UModumateDocument*
 	auto surfaceGraph = Doc->FindSurfaceGraph(surfaceGraphID);
 	const AModumateObjectInstance* surfaceGraphObj = Doc->GetObjectById(surfaceGraphID);
 	const FGraph2DPolygon* surfacePolygon = surfaceGraph.IsValid() ? surfaceGraph->FindPolygon(SurfacePolyID) : nullptr;
-	if (!ensure(surfacePolygon))
+	if (!ensureMsgf(surfacePolygon && surfaceGraphObj,
+		TEXT("Missing SurfacePolygon and/or SurfaceGraph for PolyID %d, GraphID %d!"), SurfacePolyID, surfaceGraphID))
 	{
 		return false;
 	}

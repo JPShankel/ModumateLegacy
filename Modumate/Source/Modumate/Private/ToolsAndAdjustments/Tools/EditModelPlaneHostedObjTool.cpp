@@ -238,10 +238,10 @@ FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& Targe
 
 		bool bCreateNewObject = true;
 		AModumateObjectInstance* parentMOI = GameState->Document->GetObjectById(targetFaceID);
+		AModumateObjectInstance* existingLayeredObj = nullptr;
 
 		if (parentMOI && ensure(parentMOI->GetObjectType() == EObjectType::OTMetaPlane))
 		{
-			AModumateObjectInstance* existingLayeredObj = nullptr;
 			for (auto child : parentMOI->GetChildObjects())
 			{
 				if ((child->GetLayeredInterface() != nullptr) && ensureAlways(existingLayeredObj == nullptr))
@@ -271,6 +271,20 @@ FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& Targe
 			delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
 
 			NewObjectIDs.Add(NewMOIStateData.ID);
+
+			// If we deleted an existing layered separator, then reparent its children to the new MOI.
+			if (existingLayeredObj)
+			{
+				auto childObjsToReparent = existingLayeredObj->GetChildObjects();
+				for (auto* childObjToReparent : childObjsToReparent)
+				{
+					if (childObjToReparent)
+					{
+						FMOIStateData& newState = delta->AddMutationState(childObjToReparent);
+						newState.ParentID = NewMOIStateData.ID;
+					}
+				}
+			}
 		}
 	}
 
