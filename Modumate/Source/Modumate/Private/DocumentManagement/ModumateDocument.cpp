@@ -49,10 +49,8 @@
 
 const FName UModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
 
-// Set up some reasonable defaults for infinite loop detection while cleaning objects and resolving dependencies.
-const int32 UModumateDocument::LoadIterationFactor = 4;
-const int32 UModumateDocument::DefaultCombinedIterations = 4;
-const int32 UModumateDocument::DefaultSameFlagIterations = 8;
+// Set up a reasonable default for infinite loop detection while cleaning objects and resolving dependencies.
+const int32 UModumateDocument::CleanIterationSafeguard = 128;
 
 UModumateDocument::UModumateDocument()
 	: Super()
@@ -2196,7 +2194,7 @@ void UModumateDocument::SetNextID(int32 ID, int32 reservingObjID)
 	ReservingObjectID = MOD_ID_NONE;
 }
 
-bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas, bool bDeleteUncleanableObjects, int32 IterationFactor)
+bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas, bool bDeleteUncleanableObjects)
 {
 	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentCleanObjects);
 
@@ -2214,15 +2212,30 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas, boo
 	static TArray<AModumateObjectInstance*> curDirtyList;
 	curDirtyList.Reset();
 
+	// While iterating over cleaning all objects, or all objects dirty with the same flag, keep track of the list of dirty objects.
+	// If we finish a pass of cleaning objects, and the same objects are dirty as in a previous pass,
+	// then we can't expect the results to change with subsequent passes and we can exit.
+	// (This is intended to detect if objects are uncleanable because they're dependent on missing data,
+	//  or if objects are swapping dirty flags with each other so will never resolve.)
+	static TSet<uint32> combinedDirtyStateHashes, perFlagDirtyStateHashes;
+	combinedDirtyStateHashes.Reset();
+	bool bOldDirtyState = false;
+
 	int32 totalObjectCleans = 0;
 	int32 totalObjectsDirty = 0;
 
 	// Prevent iterating over all combined dirty flags too many times while trying to clean all objects
-	int32 combinedDirtySafeguard = IterationFactor * DefaultCombinedIterations;
+	int32 combinedDirtySafeguard = CleanIterationSafeguard;
 	do
 	{
+		uint32 combinedDirtyStateHash = 0;
+
 		for (EObjectDirtyFlags flagToClean : UModumateTypeStatics::OrderedDirtyFlags)
 		{
+			perFlagDirtyStateHashes.Reset();
+
+			combinedDirtyStateHash = HashCombine(combinedDirtyStateHash, GetTypeHash(flagToClean));
+
 			// Arbitrarily cut off object cleaning iteration, in case there's bad logic that
 			// creates circular dependencies that will never resolve in a single frame.
 			bool bModifiedAnyObjects = false;
@@ -2230,15 +2243,26 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas, boo
 			TArray<AModumateObjectInstance*>& dirtyObjList = DirtyObjectMap.FindOrAdd(flagToClean);
 
 			// Prevent iterating over objects dirtied with this flag too many times while trying to clean all objects
-			int32 sameFlagSafeguard = IterationFactor * DefaultSameFlagIterations;
+			int32 sameFlagSafeguard = CleanIterationSafeguard;
 			do
 			{
 				// Save off the current list of dirty objects, since it may change while cleaning them.
 				bModifiedAnyObjects = false;
 				curDirtyList = dirtyObjList;
 
+				combinedDirtyStateHash = HashCombine(combinedDirtyStateHash, GetTypeHash(curDirtyList.Num()));
+				uint32 perFlagDirtyStateHash = HashCombine(GetTypeHash(flagToClean), GetTypeHash(curDirtyList.Num()));
+
 				for (AModumateObjectInstance *objToClean : curDirtyList)
 				{
+					if (!ensure(objToClean))
+					{
+						continue;
+					}
+
+					combinedDirtyStateHash = HashCombine(combinedDirtyStateHash, objToClean->ID);
+					perFlagDirtyStateHash = HashCombine(perFlagDirtyStateHash, objToClean->ID);
+
 					EObjectDirtyFlags& cleanedFlags = curCleanedFlags.FindOrAdd(objToClean->ID, EObjectDirtyFlags::None);
 					if (!((cleanedFlags & flagToClean) == EObjectDirtyFlags::None))
 					{
@@ -2260,7 +2284,9 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas, boo
 					}
 				}
 
-			} while (bModifiedAnyObjects &&
+				perFlagDirtyStateHashes.Add(perFlagDirtyStateHash, &bOldDirtyState);
+
+			} while (bModifiedAnyObjects && !bOldDirtyState &&
 				ensureMsgf(--sameFlagSafeguard > 0, TEXT("Infinite loop detected while cleaning objects with flag %s, breaking!"), *GetEnumValueString(flagToClean)));
 
 			totalObjectCleans += objectCleans;
@@ -2272,7 +2298,9 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas, boo
 			totalObjectsDirty += kvp.Value.Num();
 		}
 
-	} while ((totalObjectsDirty > 0) &&
+		combinedDirtyStateHashes.Add(combinedDirtyStateHash, &bOldDirtyState);
+
+	} while ((totalObjectsDirty > 0) && !bOldDirtyState &&
 		ensureMsgf(--combinedDirtySafeguard > 0, TEXT("Infinite loop detected while cleaning combined dirty flags, breaking!")));
 
 	// If objects are still dirty after exhausting the combinedDirtySafeguard, then delete the objects if we are generating side effects.
@@ -2771,7 +2799,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	// This should take care of anything that depends on relationships between objects, like mitering.
 	bool bInitialDocumentDirty = false;
 	TArray<FDeltaPtr> loadCleanSideEffects;
-	CleanObjects(&loadCleanSideEffects, true, LoadIterationFactor);
+	CleanObjects(&loadCleanSideEffects, true);
 
 	// If there were side effects generated while cleaning initial objects, then those deltas must be applied immediately.
 	// This should not normally happen, but it's a sign that some objects relied on data that didn't get saved/loaded correctly.
