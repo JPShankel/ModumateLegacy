@@ -214,6 +214,7 @@ void UEditModelUserWidget::EMOnSelectionObjectChanged()
 				BIMDesigner->EditPresetInBIMDesigner((*it)->GetAssembly().PresetGUID, false);
 			}
 		}
+		UpdateMoveRotateToolButtonsUsability();
 	}
 }
 
@@ -341,6 +342,17 @@ FText UEditModelUserWidget::GetPlanUpgradeRichText()
 	static const FString upgradeURLSuffix(TEXT("workspace/plans"));
 	FString upgradeURLFull = cloudConnection->GetCloudRootURL() / upgradeURLSuffix;
 	return FText::Format(upgradeTextFormat, FText::FromString(upgradeURLFull));
+}
+
+void UEditModelUserWidget::UpdateMoveRotateToolButtonsUsability()
+{
+	auto moveButton = ToolToButtonMap.FindRef(EToolMode::VE_MOVEOBJECT);
+	auto rotateButton = ToolToButtonMap.FindRef(EToolMode::VE_ROTATE);
+	if (moveButton && rotateButton)
+	{
+		moveButton->SetIsEnabled(Controller->EMPlayerState->SelectedObjects.Num() > 0);
+		rotateButton->SetIsEnabled(Controller->EMPlayerState->SelectedObjects.Num() > 0);
+	}
 }
 
 void UEditModelUserWidget::ToggleTutorialMenu(bool NewVisibility)

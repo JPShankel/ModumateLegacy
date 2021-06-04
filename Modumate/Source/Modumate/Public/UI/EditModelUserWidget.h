@@ -137,4 +137,5 @@ public:
 	bool EMUserWidgetHandleEscapeKey();
 	void UpdateSelectTrayVisibility();
 	FText GetPlanUpgradeRichText();
+	void UpdateMoveRotateToolButtonsUsability();
 };

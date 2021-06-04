@@ -29,7 +29,7 @@ bool UGeneralListItem::Initialize()
 	{
 		return false;
 	}
-	if (!(CheckBoxVisibility && ButtonEdit && TextTitleEditable))
+	if (!(CheckBoxVisibility && ButtonEdit && TextTitleEditable && ButtonFlip))
 	{
 		return false;
 	}
@@ -39,6 +39,7 @@ bool UGeneralListItem::Initialize()
 	TextTitleEditable->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UGeneralListItem::OnEditableTitleCommitted);
 	CheckBoxCullModel->OnCheckStateChanged.AddDynamic(this, &UGeneralListItem::OnCheckBoxCullModelChanged);
 	CheckBoxCullModel->ToolTipWidgetDelegate.BindDynamic(this, &UGeneralListItem::OnCheckBoxCullModelTooltipWidget);
+	ButtonFlip->ModumateButton->OnReleased.AddDynamic(this, &UGeneralListItem::OnButtonFlipReleased);
 
 	return true;
 }
@@ -139,31 +140,55 @@ void UGeneralListItem::OnButtonEditReleased()
 	TextTitleEditable->ModumateEditableTextBox->SetKeyboardFocus();
 }
 
+void UGeneralListItem::OnButtonFlipReleased()
+{
+	AEditModelGameState* gameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
+	if (gameState)
+	{
+		AModumateObjectInstance* moi = gameState->Document->GetObjectById(ObjID);
+		FMOIStateData oldStateData = moi->GetStateData();
+		FMOIStateData newStateData = oldStateData;
+
+		FMOICutPlaneData newCutPlaneData;
+		newStateData.CustomData.LoadStructData(newCutPlaneData);
+		FQuat newQuat = FRotationMatrix::MakeFromXY(newCutPlaneData.Rotation.GetForwardVector() * -1.f, newCutPlaneData.Rotation.GetRightVector()).ToQuat();
+		newCutPlaneData.Rotation = newQuat;
+		newStateData.CustomData.SaveStructData<FMOICutPlaneData>(newCutPlaneData);
+
+		auto delta = MakeShared<FMOIDelta>();
+		delta->AddMutationState(moi, oldStateData, newStateData);
+		gameState->Document->ApplyDeltas({ delta }, GetWorld());
+	}
+}
+
 void UGeneralListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
-	const UGeneralListItemObject *cutPlaneItemObject = Cast<UGeneralListItemObject>(ListItemObject);
-	if (!cutPlaneItemObject)
+	const UGeneralListItemObject* generalItemObject = Cast<UGeneralListItemObject>(ListItemObject);
+	if (!generalItemObject)
 	{
 		CurrentGeneralListType = EGeneralListType::None;
 		return;
 	}
 
-	UpdateVisibilityAndName(cutPlaneItemObject->Visibility, cutPlaneItemObject->DisplayName);
-	ObjID = cutPlaneItemObject->ObjId;
+	UpdateVisibilityAndName(generalItemObject->Visibility, generalItemObject->DisplayName);
+	ObjID = generalItemObject->ObjId;
 	CheckBoxCullModel->SetCheckedState(
-		cutPlaneItemObject->bIsCulling ? ECheckBoxState::Checked : ECheckBoxState::Unchecked);
+		generalItemObject->bIsCulling ? ECheckBoxState::Checked : ECheckBoxState::Unchecked);
 
-	CurrentGeneralListType = cutPlaneItemObject->CutPlaneType;
-	switch (cutPlaneItemObject->CutPlaneType)
+	CurrentGeneralListType = generalItemObject->CutPlaneType;
+	// Only cutplane can be flipped
+	ButtonFlip->SetVisibility(CurrentGeneralListType == EGeneralListType::Terrain ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+	
+	switch (generalItemObject->CutPlaneType)
 	{
 	case EGeneralListType::Horizontal:
-		BuildAsHorizontalCutPlaneItem(cutPlaneItemObject->Location);
+		BuildAsHorizontalCutPlaneItem(generalItemObject->Location);
 		break;
 	case EGeneralListType::Vertical:
-		BuildAsVerticalCutPlaneItem(cutPlaneItemObject->Rotation);
+		BuildAsVerticalCutPlaneItem(generalItemObject->Rotation);
 		break;
 	case EGeneralListType::Terrain:
-		BuildAsTerrainItem(cutPlaneItemObject);
+		BuildAsTerrainItem(generalItemObject);
 		break;
 	case EGeneralListType::Other:
 	default:

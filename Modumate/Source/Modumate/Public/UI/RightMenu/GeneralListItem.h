@@ -62,6 +62,9 @@ public:
 	class UModumateButtonUserWidget* ButtonEdit;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonFlip;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateCheckBox* CheckBoxCullModel;
 
 	UFUNCTION()
@@ -69,6 +72,9 @@ public:
 
 	UFUNCTION()
 	void OnButtonEditReleased();
+
+	UFUNCTION()
+	void OnButtonFlipReleased();
 
 	UFUNCTION()
 	void OnCheckBoxVisibilityChanged(bool IsChecked);

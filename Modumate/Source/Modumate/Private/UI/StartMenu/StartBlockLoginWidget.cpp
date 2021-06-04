@@ -51,6 +51,7 @@ bool UStartBlockLoginWidget::Initialize()
 		{
 			PasswordBox->SetHintText(LOCTEXT("SavedPassword", "Using saved credentials"));
 			SaveCredentials->SetIsChecked(true);
+			PasswordBox->WidgetStyle.ForegroundColor = SaveCredentialColor;
 		}
 	}
 

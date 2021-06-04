@@ -502,6 +502,13 @@ void AEditModelPlayerController::SetToolMode(EToolMode NewToolMode)
 		return;
 	}
 
+	// Don't change to move or rotate tool if nothing is selected
+	if ((NewToolMode == EToolMode::VE_MOVEOBJECT || NewToolMode == EToolMode::VE_ROTATE)
+		&& EMPlayerState->SelectedObjects.Num() == 0)
+	{
+		return;
+	}
+
 	// Record how long we used the previous tool
 	if (curToolMode != EToolMode::VE_NONE)
 	{
@@ -1509,6 +1516,12 @@ bool AEditModelPlayerController::HandleEscapeKey()
 		CurrentTool->AbortUse();
 		return true;
 	}
+	else if (CurrentTool && (CurrentTool->GetToolMode() != EToolMode::VE_SELECT))
+	{
+		SetToolMode(EToolMode::VE_SELECT);
+		EMPlayerState->SnappedCursor.ClearAffordanceFrame();
+		return true;
+	}
 	else if (EMPlayerState->SelectedObjects.Num() > 0)
 	{
 		DeselectAll();
@@ -1517,12 +1530,6 @@ bool AEditModelPlayerController::HandleEscapeKey()
 	else if (EMPlayerState->ViewGroupObject)
 	{
 		SetViewGroupObject(EMPlayerState->ViewGroupObject->GetParentObject());
-	}
-	else if (CurrentTool && (CurrentTool->GetToolMode() != EToolMode::VE_SELECT))
-	{
-		SetToolMode(EToolMode::VE_SELECT);
-		EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-		return true;
 	}
 	else if(EditModelUserWidget->EMUserWidgetHandleEscapeKey())
 	{

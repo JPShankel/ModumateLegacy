@@ -321,14 +321,8 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 		{
 			UModumateFunctionLibrary::DocAddHideMoiActors(selectedObjActors);
 			Controller->DeselectAll();
-			return true;
 		}
-		// TODO: remove this inconsistent behavior of activating a tool if a fire-and-forget action failed
-		else
-		{
-			Controller->SetToolMode(EToolMode::VE_WAND);
-			return true;
-		}
+		return true;
 	}
 	case EInputCommand::UnhideAll:
 	{

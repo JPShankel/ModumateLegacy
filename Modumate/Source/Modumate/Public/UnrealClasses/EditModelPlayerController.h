@@ -28,14 +28,6 @@ class UModumateDocument;
 class AModumateObjectInstance;
 class FModumateSnappingView;
 
-UENUM(BlueprintType)
-enum class ECameraMode : uint8
-{
-	None,
-	Orbit,
-	Pan
-};
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUserSnapPointEvent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolModeChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnToolCreateObjectModeChanged);

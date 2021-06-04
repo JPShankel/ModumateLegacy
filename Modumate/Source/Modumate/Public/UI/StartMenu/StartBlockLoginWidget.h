@@ -27,6 +27,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString ForgotPasswordURL;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FSlateColor SaveCredentialColor;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget *ButtonCreateAccount;
 
