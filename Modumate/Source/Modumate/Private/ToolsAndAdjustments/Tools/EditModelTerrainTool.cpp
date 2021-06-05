@@ -22,15 +22,6 @@
 #include "UI/Properties/InstPropWidgetLinearDimension.h"
 
 
-UTerrainTool::UTerrainTool()
-{
-	auto* world = GetWorld();
-	if (world)
-	{
-		GameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
-	}
-}
-
 bool UTerrainTool::Activate()
 {
 	Controller->DeselectAll();

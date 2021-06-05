@@ -7,6 +7,7 @@
 #include "Graph/Graph2DVertex.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/DynamicTerrainActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 
 
@@ -245,9 +246,11 @@ bool AMOITerrain::SetupTerrainMaterial(ADynamicTerrainActor* Actor)
 		return false;
 	}
 
-	auto* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
+	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto* gameMode = gameInstance ? gameInstance->GetEditModelGameMode() : nullptr;
+
 	UMaterialInstanceDynamic* dynamicMat = Cast<UMaterialInstanceDynamic>(Actor->Mesh->GetMaterial(0));
-	if (dynamicMat == nullptr)
+	if ((dynamicMat == nullptr) && gameMode)
 	{
 		dynamicMat = UMaterialInstanceDynamic::Create(gameMode->TerrainMaterial, Actor->Mesh);
 		Actor->TerrainMaterial = dynamicMat;

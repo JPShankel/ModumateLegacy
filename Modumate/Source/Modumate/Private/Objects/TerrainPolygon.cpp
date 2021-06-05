@@ -5,6 +5,7 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "DocumentManagement/ModumateDocument.h"
 
 
@@ -46,7 +47,8 @@ bool AMOITerrainPolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 			CachedOrigin = origin;
 			CachedCenter = origin;
 
-			AEditModelGameMode* gameMode = GetWorld()->GetAuthGameMode<AEditModelGameMode>();
+			UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+			auto* gameMode = gameInstance ? gameInstance->GetEditModelGameMode() : nullptr;
 			MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
 			DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, 1.0f, true, nullptr, !IsInPreviewMode());

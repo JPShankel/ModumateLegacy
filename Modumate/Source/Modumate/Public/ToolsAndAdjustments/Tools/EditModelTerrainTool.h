@@ -16,8 +16,6 @@ class MODUMATE_API UTerrainTool : public UEditModelToolBase
 	GENERATED_BODY()
 
 public:
-	UTerrainTool();
-
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_TERRAIN; }
 
 	virtual bool Activate() override;
@@ -36,8 +34,6 @@ public:
 
 	UFUNCTION()
 	void OnToolUIChangedHeight(float NewHeight);
-
-
 
 protected:
 	bool AddFirstEdge(FVector Point1, FVector Point2);
