@@ -502,7 +502,7 @@ bool UModumateFunctionLibrary::SetMeshMaterial(UMeshComponent *MeshComponent, co
 	static const FName baseColorParamName(TEXT("ColorMultiplier"));
 	static const FName uvScaleParamName(TEXT("UVScale"));
 
-	if (!Material.EngineMaterial.IsValid())
+	if (!ensure(MeshComponent) || !Material.EngineMaterial.IsValid())
 	{
 		return false;
 	}
@@ -552,6 +552,11 @@ bool UModumateFunctionLibrary::SetMeshMaterial(UMeshComponent *MeshComponent, co
 bool UModumateFunctionLibrary::SetMeshMaterialsFromMapping(UMeshComponent *MeshComponent, const TMap<FName, FArchitecturalMaterial> &MaterialMapping, const TMap<FName, int32> *MatIndexMapping)
 {
 	bool bSuccess = false;
+
+	if (!ensure(MeshComponent))
+	{
+		return bSuccess;
+	}
 
 	for (auto &kvp : MaterialMapping)
 	{

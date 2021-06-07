@@ -421,14 +421,21 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 			{
 				int32 compIdx = sliceCompIdxStart + sliceIdx;
 				UProceduralMeshComponent* procMeshComp = NineSliceComps[compIdx];
-				UModumateFunctionLibrary::SetMeshMaterialsFromMapping(procMeshComp, assemblyPart.ChannelMaterials, &matIndexMapping);
+				if (procMeshComp)
+				{
+					UModumateFunctionLibrary::SetMeshMaterialsFromMapping(procMeshComp, assemblyPart.ChannelMaterials, &matIndexMapping);
+				}
 
 				procMeshComp = NineSliceLowLODComps[compIdx];
-				UModumateFunctionLibrary::SetMeshMaterialsFromMapping(procMeshComp, assemblyPart.ChannelMaterials, &matIndexMapping);
-				procMeshComp->SetVisibility(false);
-			}
+				if (procMeshComp)
+				{
+					UModumateFunctionLibrary::SetMeshMaterialsFromMapping(procMeshComp, assemblyPart.ChannelMaterials, &matIndexMapping);
+					procMeshComp->SetVisibility(false);
 				}
 			}
+		}
+	}
+
 	SetIsDynamic(origDynamicStatus); 
 }
 
