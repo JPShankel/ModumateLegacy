@@ -6,6 +6,7 @@
 #include "Database/ModumateObjectDatabase.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/EnumHelpers.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateCommands.h"
 
 #define LOCTEXT_NAMESPACE "BIMPresetInstance"
@@ -313,7 +314,7 @@ EBIMResult FBIMPresetInstance::HandleLayerPriorityValueDelta(const FBIMPresetEdi
 	return EBIMResult::Error;
 }
 
-EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FBIMPresetEditorDelta& Delta)
+EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,const FModumateDatabase& InDB,const FBIMPresetEditorDelta& Delta)
 {
 	switch (Delta.FieldType)
 	{
@@ -367,7 +368,8 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const FModumateDatabase& InDB,const FB
 		case EBIMPresetEditorField::DimensionProperty:
 		{
 			FBIMPropertyKey propKey(Delta.FieldName);
-			auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Delta.NewStringRepresentation);
+			const auto& settings = InDocument->GetCurrentSettings();
+			auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Delta.NewStringRepresentation, settings.DimensionType,settings.DimensionUnit);
 			if (dimension.Format != EDimensionFormat::Error)
 			{
 				Properties.SetProperty(propKey.Scope, propKey.Name, static_cast<float>(dimension.Centimeters));
@@ -504,7 +506,7 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 	return EBIMResult::Error;
 }
 
-EBIMResult FBIMPresetInstance::UpdateFormElements(FBIMPresetForm& OutForm) const
+EBIMResult FBIMPresetInstance::UpdateFormElements(const UModumateDocument* InDocument,FBIMPresetForm& OutForm) const
 {
 	for (auto& element : OutForm.Elements)
 	{
@@ -572,7 +574,8 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(FBIMPresetForm& OutForm) const
 			FBIMPropertyKey propKey(*element.FieldName);
 			if (ensureAlways(Properties.TryGetProperty<float>(propKey.Scope, propKey.Name, v)))
 			{
-				element.StringRepresentation = UModumateDimensionStatics::CentimetersToDisplayText(v).ToString();
+				const auto& settings = InDocument->GetCurrentSettings();				
+				element.StringRepresentation = UModumateDimensionStatics::CentimetersToDisplayText(v,1, settings.DimensionType, settings.DimensionUnit).ToString();
 			}
 		}
 		break;
@@ -601,11 +604,11 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(FBIMPresetForm& OutForm) const
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMPresetInstance::GetForm(FBIMPresetForm& OutForm) const
+EBIMResult FBIMPresetInstance::GetForm(const UModumateDocument* InDocument,FBIMPresetForm& OutForm) const
 {
 	OutForm = TypeDefinition.FormTemplate;
 	OutForm.Elements.Append(PresetForm.Elements);
-	return UpdateFormElements(OutForm);
+	return UpdateFormElements(InDocument,OutForm);
 }
 
 /*

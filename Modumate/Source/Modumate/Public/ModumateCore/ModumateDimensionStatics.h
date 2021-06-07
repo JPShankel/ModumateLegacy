@@ -7,7 +7,6 @@
 #include "ModumateCore/ModumateDimensionString.h"
 #include "ModumateCore/ModumateTypes.h"
 #include "UObject/Object.h"
-
 #include "ModumateDimensionStatics.generated.h"
 
 // Helper functions for managing dimensional string parsing and generation
@@ -51,7 +50,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Unit Conversion")
-	static FModumateFormattedDimension StringToFormattedDimension(const FString &DimStr);
+	static FModumateFormattedDimension StringToFormattedDimension(const FString &DimStr, EDimensionUnits UnitType = EDimensionUnits::DU_Imperial,EUnit DefaultUnit = EUnit::Unspecified);
 
 	// Convert any decimal values into string array. [0] = Whole Number, [1] = Numerator. [2] = Denominator
 	UFUNCTION(BlueprintCallable, Category = "Modumate Unit Conversion")

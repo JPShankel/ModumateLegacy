@@ -237,7 +237,7 @@ bool UBIMBlockNode::BuildNode(class UBIMDesigner *OuterBIMDesigner, const FBIMPr
 	// Build instance properties
 	VerticalBoxProperties->ClearChildren();
 	FBIMPresetForm presetForm;
-	Node->GetPresetForm(presetForm);
+	Node->GetPresetForm(Controller->GetDocument(),presetForm);
 	for (auto& curProperty : presetForm.Elements)
 	{
 		// TODO: Need more format info to determine if this should be drop-down

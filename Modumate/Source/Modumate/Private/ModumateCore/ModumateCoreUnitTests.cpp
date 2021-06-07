@@ -1603,12 +1603,18 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDimensionFormatUnitTest, "Modumate.Cor
 		EDimensionFormat expectedFormat;
 		double expectedCentimeters;
 
-		TestCase(const TCHAR *ds, EDimensionFormat ef, double ec) : dimStr(ds), expectedFormat(ef), expectedCentimeters(ec) {};
+		EDimensionUnits unitType = EDimensionUnits::DU_Imperial;
+		EUnit defaultUnit = EUnit::Unspecified;
+
+		TestCase(const TCHAR *ds, EDimensionFormat ef, double ec, EDimensionUnits ut=EDimensionUnits::DU_Imperial, EUnit du=EUnit::Feet) : 
+			dimStr(ds), expectedFormat(ef), expectedCentimeters(ec),unitType(ut),defaultUnit(du) {};
 	};
 
 	static constexpr double parseTolerance = 1.0e-6;
 
 	static TArray<TestCase> testCases = { 
+		{TEXT("15"),EDimensionFormat::JustMillimeters, 1.50,EDimensionUnits::DU_Metric,EUnit::Millimeters},
+		{TEXT("25.44"),EDimensionFormat::JustMillimeters,2.544,EDimensionUnits::DU_Metric,EUnit::Millimeters},
 		{TEXT("-1/2\""),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * -0.5},
 		{TEXT("1' -1/2\""),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * 12.5},
 		{TEXT("5 6 7"),EDimensionFormat::Error,0},
@@ -1629,12 +1635,12 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDimensionFormatUnitTest, "Modumate.Cor
 		{TEXT("7\""),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * 7.0},
 		{TEXT("-8"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * (-8.0 * 12.0)},
 		{TEXT("- 9 \""),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * -9.0},
-		{TEXT("5.75"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12.0 * 5 + 9.0)},
+		{TEXT("5.75"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * (12.0 * 5 + 9.0)},
 		{TEXT("5.75\""),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * 5.75},
 		{TEXT("5/8'"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (5.0 * 12.0 / 8.0)},
 		{TEXT("5/8"),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * (5.0 / 8.0)},
 		{TEXT("ryg8dds"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 8 * 12},
-		{TEXT("ryg8.5ddf"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * 8.5 * 12},
+		{TEXT("ryg8.5ddf"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 8.5 * 12},
 		{TEXT("5 8"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (5.0 * 12.0 + 8.0)},
 		{TEXT("5lq 8kj"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (5.0 * 12.0 + 8.0)},
 		{TEXT("5/8\""),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * (5.0 / 8.0)},
@@ -1644,11 +1650,11 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDimensionFormatUnitTest, "Modumate.Cor
 		{TEXT(" -1 "),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * -1 * 12},
 		{TEXT(" +1 "),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 1 * 12},
 		{TEXT("33"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 33 * 12},
-		{TEXT("1.2"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * 1.2 * 12},
-		{TEXT("-31.2"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * -31.2 * 12},
-		{TEXT("0.1"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * 0.1 * 12},
+		{TEXT("1.2"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 1.2 * 12},
+		{TEXT("-31.2"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * -31.2 * 12},
+		{TEXT("0.1"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 0.1 * 12},
 		{TEXT("1."),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 1.0 * 12},
-		{TEXT(".1"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * 0.1 * 12},
+		{TEXT(".1"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 0.1 * 12},
 		{TEXT("4'"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 4 * 12},
 		{TEXT("15ft"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 15 * 12},
 		{TEXT("2.3ft"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * 2.3 * 12},
@@ -1674,7 +1680,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDimensionFormatUnitTest, "Modumate.Cor
 		{TEXT("-2,301.25ft"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * -2301.25 * 12},
 		{TEXT("1,100ft 5 1/2in"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12.0 * 1100.0 + 5.0 + (1.0 / 2.0))},
 		{TEXT("8' 2 5/8\""),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * (12.0 * 8.0 + 2.0 + (5.0 / 8.0))},
-		{TEXT("2.3maynard"),EDimensionFormat::FeetAndInches,UModumateDimensionStatics::InchesToCentimeters * 2.3 * 12.0},
+		{TEXT("2.3maynard"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 2.3 * 12.0},
 		{TEXT("zed7"),EDimensionFormat::JustFeet,UModumateDimensionStatics::InchesToCentimeters * 7 * 12.0},
 		{TEXT("zed7in"),EDimensionFormat::JustInches,UModumateDimensionStatics::InchesToCentimeters * 7 },
 		{TEXT("6m"),EDimensionFormat::JustMeters,600.0},
@@ -1701,7 +1707,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDimensionFormatUnitTest, "Modumate.Cor
 	int32 testIdx = 0;
 	for (auto &tc : testCases)
 	{
-		FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(tc.dimStr);
+		FModumateFormattedDimension dim = UModumateDimensionStatics::StringToFormattedDimension(tc.dimStr,tc.unitType,tc.defaultUnit);
 		ensureAlways(TestTrue(FString::Printf(TEXT("test %d"), testIdx), dim.Format == tc.expectedFormat));
 		ensureAlways(TestTrue(FString::Printf(TEXT("test %d %f %f"), testIdx, dim.Centimeters, tc.expectedCentimeters), FMath::IsNearlyEqual(dim.Centimeters, tc.expectedCentimeters, parseTolerance)));
 		testIdx++;

@@ -17,6 +17,8 @@ using FBIMPresetEditorNodeWeakPtrConst = TWeakPtr<const FBIMPresetEditorNode>;
 using FBIMEditorNodeIDType = FName;
 static const FBIMEditorNodeIDType BIM_ID_NONE = NAME_None;
 
+class UModumateDocument;
+
 class MODUMATE_API FBIMPresetEditorNode : public TSharedFromThis<FBIMPresetEditorNode>
 {
 	friend class FBIMPresetEditor;
@@ -63,7 +65,7 @@ public:
 	TArray<FString> VisibleNamedDimensions;
 	bool bWantAddButton = false;
 
-	EBIMResult GetPresetForm(FBIMPresetForm& OutForm) const;
+	EBIMResult GetPresetForm(const UModumateDocument* InDocument, FBIMPresetForm& OutForm) const;
 
 	FBIMEditorNodeIDType GetInstanceID() const;
 

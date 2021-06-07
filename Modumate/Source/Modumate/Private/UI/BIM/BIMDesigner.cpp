@@ -816,7 +816,7 @@ bool UBIMDesigner::ApplyBIMFormElement(const FBIMEditorNodeIDType& NodeID, const
 	FBIMPresetEditorDelta delta;
 	if (ensureAlways(instPtr->Preset.MakeDeltaForFormElement(FormElement, delta) == EBIMResult::Success))
 	{
-		instPtr->Preset.ApplyDelta(*GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase, delta);
+		instPtr->Preset.ApplyDelta(Controller->GetDocument(),*GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase, delta);
 
 		// If this preset is used elsewhere in the graph, update all copies to match this edit
 		for (auto& other : InstancePool.GetInstancePool())

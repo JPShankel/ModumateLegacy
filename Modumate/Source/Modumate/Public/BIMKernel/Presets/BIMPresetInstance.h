@@ -25,6 +25,7 @@ For example, a 3x4x7 inch red clay brick would be an instance of BRICK with clay
 */
 struct FBIMPresetCollection;
 class FBIMPresetCollectionProxy;
+class UModumateDocument;
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetPinAttachment
@@ -238,15 +239,15 @@ struct MODUMATE_API FBIMPresetInstance
 	void SetProperties(const FBIMPropertySheet& InProperties);
 
 	template <class T>
-	bool TryGetProperty(const FBIMNameType& Name, T& OutT) const
+	bool TryGetProperty(const FBIMNameType& Name,T& OutT) const
 	{
 		return Properties.TryGetProperty(NodeScope, Name, OutT);
 	}
 
-	EBIMResult GetForm(FBIMPresetForm& OutForm) const;
-	EBIMResult UpdateFormElements(FBIMPresetForm& RefForm) const;
+	EBIMResult GetForm(const UModumateDocument* InDocument,FBIMPresetForm& OutForm) const;
+	EBIMResult UpdateFormElements(const UModumateDocument* InDocument, FBIMPresetForm& RefForm) const;
 	EBIMResult MakeDeltaForFormElement(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const;
-	EBIMResult ApplyDelta(const FModumateDatabase& InDB, const FBIMPresetEditorDelta& Delta);
+	EBIMResult ApplyDelta(const UModumateDocument* InDocument,const FModumateDatabase& InDB, const FBIMPresetEditorDelta& Delta);
 
 	EBIMResult HandleMaterialBindingDelta(const FBIMPresetEditorDelta& Delta);
 	EBIMResult HandleLayerPriorityGroupDelta(const FBIMPresetEditorDelta& Delta);

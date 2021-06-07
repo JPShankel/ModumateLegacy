@@ -35,6 +35,7 @@
 #include "Quantities/QuantitiesManager.h"
 #include "UI/DimensionManager.h"
 #include "UI/EditModelUserWidget.h"
+#include "UI/BIM/BIMDesigner.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelInputAutomation.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -979,6 +980,12 @@ bool UModumateDocument::ApplySettingsDelta(const FDocumentSettingDelta& Settings
 		if (gameInstance && gameInstance->DimensionManager)
 		{
 			gameInstance->DimensionManager->UpdateAllUnits();
+		}
+
+		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
+		if (controller && controller->EditModelUserWidget->IsBIMDesingerActive())
+		{
+			controller->EditModelUserWidget->BIMDesigner->RefreshNodes();
 		}
 	}
 

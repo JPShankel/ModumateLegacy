@@ -116,7 +116,7 @@ EBIMResult UBIMDebugger::DebugBIMPreset(const FGuid& PresetKey, bool AddToHistor
 			TextBIMKey->SetText(FText::FromString(PresetKey.ToString()));
 
 			FBIMPresetForm propertyForm;
-			if (preset->GetForm(propertyForm) != EBIMResult::Success)
+			if (preset->GetForm(controller->GetDocument(),propertyForm) != EBIMResult::Success)
 			{
 				return EBIMResult::Error;
 			}

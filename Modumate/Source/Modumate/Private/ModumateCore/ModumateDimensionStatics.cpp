@@ -154,7 +154,7 @@ static FModumateFormattedDimension StringToFormattedDimensionMetric(const FStrin
 * 
 */
 
-FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimension(const FString &DimStr)
+FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimension(const FString &DimStr, EDimensionUnits UnitType, EUnit DefaultUnit)
 {
 	/*
 	* TODO: roll metric into tokenized algorithm below...meantime just check first if we are in metric
@@ -362,6 +362,45 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	if (dimensionParse.Num() == 0 || dimCStr.length() > 0)
 	{
 		return result;
+	}
+
+
+	// If we got a simple bare number, use default units as guide
+	if (dimensionParse.Num() == 1 && dimensionParse[0].Unit == EUnit::Unspecified && !dimensionParse[0].IsFraction)
+	{
+		if (UnitType == EDimensionUnits::DU_Imperial)
+		{
+			switch (DefaultUnit)
+			{
+			case EUnit::Inches:
+				result.Format = EDimensionFormat::JustInches;
+				result.Centimeters = (bIsNegative ? -1.0 : 1.0) * (dimensionParse[0].Value) * InchesToCentimeters;
+				return result;
+			default:
+				result.Format = EDimensionFormat::JustFeet;
+				result.Centimeters = (bIsNegative ? -1.0 : 1.0) * (InchesPerFoot * dimensionParse[0].Value) * InchesToCentimeters;
+				return result;
+			};
+		}
+		else
+		{
+			switch (DefaultUnit)
+			{
+			case EUnit::Millimeters:
+				result.Format = EDimensionFormat::JustMillimeters;
+				result.Centimeters = (bIsNegative ? -1.0 : 1.0) * dimensionParse[0].Value * 0.1;
+				return result;
+				break;
+			case EUnit::Centimeters:
+				result.Format = EDimensionFormat::JustCentimeters;
+				result.Centimeters = (bIsNegative ? -1.0 : 1.0) * dimensionParse[0].Value;
+				return result;
+			default:
+				result.Format = EDimensionFormat::JustMeters;
+				result.Centimeters = (bIsNegative ? -1.0 : 1.0) * (100 * dimensionParse[0].Value);
+				return result;
+			};
+		}
 	}
 
 	/*

@@ -358,9 +358,9 @@ bool FBIMPresetEditorNode::ValidateNode() const
 * VisibleNamedDimensions is calculated for rigged assemblies using the layout system and provides properties
 * which may or may not be visible depending on whether other parts need to reference them (ie HandleHeight)
 */
-EBIMResult FBIMPresetEditorNode::GetPresetForm(FBIMPresetForm& OutForm) const
+EBIMResult FBIMPresetEditorNode::GetPresetForm(const UModumateDocument* InDocument,FBIMPresetForm& OutForm) const
 {
-	if (Preset.GetForm(OutForm) == EBIMResult::Success)
+	if (Preset.GetForm(InDocument,OutForm) == EBIMResult::Success)
 	{
 		// VisibleNamedDimensions determined by layout walk
 		for (auto& namedDim : VisibleNamedDimensions)
@@ -373,7 +373,7 @@ EBIMResult FBIMPresetEditorNode::GetPresetForm(FBIMPresetForm& OutForm) const
 			}
 		}
 
-		return Preset.UpdateFormElements(OutForm);
+		return Preset.UpdateFormElements(InDocument,OutForm);
 	}
 
 	return EBIMResult::Error;
