@@ -4,6 +4,8 @@
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "DocumentManagement/ModumateDocument.h"
 
 #define LOCTEXT_NAMESPACE "PresetCardMetaDimension"
 
@@ -29,19 +31,33 @@ void UPresetCardMetaDimension::NativeConstruct()
 
 void UPresetCardMetaDimension::BuildAsMetaDimension(EObjectType ObjectType, double InDimensionValue)
 {
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	EDimensionUnits unitType;
+	EUnit defaultUnit;
+	if (controller)
+	{
+		unitType = controller->GetDocument()->GetCurrentSettings().DimensionType;
+		defaultUnit = controller->GetDocument()->GetCurrentSettings().DimensionUnit;
+	}
+	else
+	{
+		unitType = EDimensionUnits::DU_Imperial;
+		defaultUnit = EUnit::Feet;
+	}
+
 	switch (ObjectType)
 	{
 		case EObjectType::OTMetaEdge:
 		{
 			MetaObjectType->ChangeText(LOCTEXT("Units", "Total Length"));
-			DimensionValue->ChangeText(UModumateDimensionStatics::CentimetersToDisplayText(InDimensionValue));
+			DimensionValue->ChangeText(UModumateDimensionStatics::CentimetersToDisplayText(InDimensionValue,1,unitType,defaultUnit));
 		}
 		break;
 
 		case EObjectType::OTMetaPlane:
 		{
 			MetaObjectType->ChangeText(LOCTEXT("Units", "Total Area"));
-			DimensionValue->ChangeText(UModumateDimensionStatics::CentimetersToDisplayText(InDimensionValue, 2));
+			DimensionValue->ChangeText(UModumateDimensionStatics::CentimetersToDisplayText(InDimensionValue, 2,unitType,defaultUnit));
 		}
 		break;
 
