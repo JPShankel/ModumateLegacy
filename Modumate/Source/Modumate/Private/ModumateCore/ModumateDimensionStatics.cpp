@@ -50,7 +50,7 @@ static FModumateFormattedDimension StringToFormattedDimensionMetric(const FStrin
 
 
 	//Combines multi-unit strings
-	static std::wstring multiUnitSeparator = L"[\\s-]+";
+	static std::wstring multiUnitSeparator = L"[\\s\\-]+";
 
 	//Matches any integer...bare integers are interpreted as feet
 	static std::wstring integerString = L"[,\\d]+";
@@ -213,7 +213,7 @@ FModumateFormattedDimension UModumateDimensionStatics::StringToFormattedDimensio
 	static const std::wregex integerPattern(L"[,\\d]+");
 	static const std::wregex feetPattern(L"(ft|')+");
 	static const std::wregex inchesPattern(L"(in|\")+");
-	static const std::wregex garbagePattern(L"[a-zA-Z\\s-+]+");
+	static const std::wregex garbagePattern(L"[a-zA-Z\\s\\-+]+");
 
 	/*
 	* Keep a record of the values we resolve during tokenization
