@@ -8,6 +8,8 @@
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "DocumentManagement/ModumateDocument.h"
 
 
 bool UInstPropWidgetOffset::Initialize()
@@ -80,9 +82,10 @@ void UInstPropWidgetOffset::DisplayValue()
 
 	if (CurrentValue.Type == EDimensionOffsetType::Custom)
 	{
+		const auto& settings = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController())->GetDocument()->GetCurrentSettings();
 		CustomValueTitle->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		CustomValueText->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		CustomValueText->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToDisplayText(CurrentValue.CustomValue));
+		CustomValueText->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToDisplayText(CurrentValue.CustomValue,1,settings.DimensionType,settings.DimensionUnit));
 	}
 	else
 	{

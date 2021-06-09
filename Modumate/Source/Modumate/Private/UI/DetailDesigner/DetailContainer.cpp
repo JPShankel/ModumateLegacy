@@ -180,9 +180,11 @@ bool UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 		// Create a header for the participant, with its participant number, thickness, and optional assembly name
 		auto presetTitle = GetOrCreateParticipantWidget<UDetailDesignerAssemblyTitle>(participantWidgetIdx++, playerHUD, ParticipantTitleClass);
 
+		const auto& settings = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController())->GetDocument()->GetCurrentSettings();
+
 		FText numberPrefix = participantAssembly ? UModumateTypeStatics::GetTextForObjectType(participantObjectType) : LOCTEXT("AssemblyAnonPrefix", "Participant");
 		float totalThicknessInches = Algo::Accumulate(detailCondition.LayerThicknesses, 0.0f);
-		FText totalThicknessText = UModumateDimensionStatics::InchesToDisplayText(totalThicknessInches);
+		FText totalThicknessText = UModumateDimensionStatics::InchesToDisplayText(totalThicknessInches,1,settings.DimensionType,settings.DimensionUnit);
 		FText assemblyNameText = participantAssembly ? FText::Format(LOCTEXT("AssemblyNameFormat", ", {0}"), FText::FromString(participantAssembly->DisplayName)) : FText::GetEmpty();
 
 		FText assemblyTitle = FText::Format(LOCTEXT("AssemblyTitleFormat", "{0} {1}, ({2}){3}"),
@@ -243,9 +245,8 @@ bool UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 
 						layerTitle = layerPreset->DisplayName;
 					}
-
 					presetLayerData->LayerThickness->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-					presetLayerData->LayerThickness->ChangeText(UModumateDimensionStatics::InchesToDisplayText(layerThicknessInches));
+					presetLayerData->LayerThickness->ChangeText(UModumateDimensionStatics::InchesToDisplayText(layerThicknessInches,1,settings.DimensionType,settings.DimensionUnit));
 					extensionValues = detailOverride.LayerExtensions[layerIndex];
 				}
 			}

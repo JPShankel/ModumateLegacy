@@ -7,6 +7,8 @@
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/Custom/ModumateTextBlock.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "DocumentManagement/ModumateDocument.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDetailDesigner"
 
@@ -39,9 +41,11 @@ void UDetailDesignerLayerData::PopulateLayerData(int32 InParticipantIndex, int32
 	bFrontEnabled = bInFrontEnabled;
 	bBackEnabled = bInBackEnabled;
 
+	const auto& settings = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController())->GetDocument()->GetCurrentSettings();
+
 	if (bFrontEnabled)
 	{
-		ExtensionFront->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToDisplayText(CurrentExtensions.X));
+		ExtensionFront->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToDisplayText(CurrentExtensions.X,1,settings.DimensionType,settings.DimensionUnit));
 		ExtensionFront->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else
@@ -51,7 +55,7 @@ void UDetailDesignerLayerData::PopulateLayerData(int32 InParticipantIndex, int32
 
 	if (bBackEnabled)
 	{
-		ExtensionBack->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToDisplayText(CurrentExtensions.Y));
+		ExtensionBack->ModumateEditableTextBox->SetText(UModumateDimensionStatics::CentimetersToDisplayText(CurrentExtensions.Y,1,settings.DimensionType,settings.DimensionUnit));
 		ExtensionBack->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else
@@ -62,10 +66,12 @@ void UDetailDesignerLayerData::PopulateLayerData(int32 InParticipantIndex, int32
 
 bool UDetailDesignerLayerData::OnExtensionTextCommitted(int32 ExtensionIdx, const FString& String)
 {
-	auto enteredDimension = UModumateDimensionStatics::StringToFormattedDimension(String);
+	const auto& settings = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController())->GetDocument()->GetCurrentSettings();
+
+	auto enteredDimension = UModumateDimensionStatics::StringToFormattedDimension(String, settings.DimensionType, settings.DimensionUnit);
 	float enteredCentimetersFloat = static_cast<float>(enteredDimension.Centimeters);
 	if ((enteredDimension.Format != EDimensionFormat::Error) && ensure((ExtensionIdx == 0) || (ExtensionIdx == 1)) &&
-		!UModumateDimensionStatics::CentimetersToDisplayText(CurrentExtensions[ExtensionIdx]).ToString().Equals(String) &&
+		!UModumateDimensionStatics::CentimetersToDisplayText(CurrentExtensions[ExtensionIdx],1,settings.DimensionType,settings.DimensionUnit).ToString().Equals(String) &&
 		!FMath::IsNearlyEqual(CurrentExtensions[ExtensionIdx], enteredCentimetersFloat))
 	{
 		CurrentExtensions[ExtensionIdx] = enteredCentimetersFloat;
