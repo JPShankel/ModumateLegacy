@@ -16,7 +16,10 @@ public:
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
-	virtual void SetupAdjustmentHandles(AEditModelPlayerController* controller) override { };
+	virtual void SetupAdjustmentHandles(AEditModelPlayerController*) override { };
 
 protected:
+	bool CreateMaterialMoi(TArray<FDeltaPtr>* SideEffectDeltas);
+
+	FTransform CachedTransform;
 };

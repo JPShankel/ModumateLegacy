@@ -9,6 +9,7 @@
 #include "UnrealClasses/DynamicTerrainActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
+#include "Objects/TerrainMaterial.h"
 
 
 AMOITerrain::AMOITerrain()
@@ -46,11 +47,12 @@ bool AMOITerrain::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* Ou
 	{
 	case EObjectDirtyFlags::Structure:
 	{
-		UpdateTerrainActors();
+		UpdateTerrainActor();
 		break;
 	}
 
 	case EObjectDirtyFlags::Visuals:
+		UpdateSiteMaterials();
 		return TryUpdateVisuals();
 
 	default:
@@ -67,48 +69,42 @@ bool AMOITerrain::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnable
 		return false;
 	}
 
-	for (auto& actor : TerrainActors)
-	{
-		actor->SetActorHiddenInGame(!bOutVisible);
-		actor->SetActorEnableCollision(bOutCollisionEnabled);
-		actor->SetActorTransform(FTransform(FQuat::Identity, GetLocation()) );
-	}
+	auto* actor = GetActor();
+	actor->SetActorHiddenInGame(!bOutVisible);
+	actor->SetActorEnableCollision(bOutCollisionEnabled);
+	actor->SetActorTransform(FTransform(FQuat::Identity, GetLocation()) );
 
 	return true;
-}
-
-void AMOITerrain::PreDestroy()
-{
-	for (const auto& actor: TerrainActors)
-	{
-		actor->Destroy();
-	}
-
-	TerrainActors.Empty();
-
-	Super::PreDestroy();
 }
 
 void AMOITerrain::GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 	TArray<TArray<FVector>>& OutPerimeters) const
 {
-		bool bGetFarLines = ParentPage->lineClipping.IsValid();
-		if (bGetFarLines)
-		{
-			for (const auto* actor : TerrainActors)
-			{
-				actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox);
-			}
-		}
-		else
-		{
-			for (const auto* actor : TerrainActors)
-			{
-				bool bLinesDrawn = actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox);
-			}
+	const ADynamicTerrainActor* actor = Cast<ADynamicTerrainActor>(GetActor());
 
-		}
+	bool bGetFarLines = ParentPage->lineClipping.IsValid();
+	if (bGetFarLines)
+	{
+		actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox);
+	}
+	else
+	{
+		actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox);
+	}
+}
+
+AActor* AMOITerrain::CreateActor(const FVector& loc, const FQuat& rot)
+{
+	ADynamicTerrainActor* actor =
+		GetWorld()->SpawnActor<ADynamicTerrainActor>(ADynamicTerrainActor::StaticClass(), FTransform(rot, loc));
+	if (!ensure(actor))
+	{
+		return nullptr;
+	}
+
+	actor->Mesh->SetCollisionObjectType(UModumateTypeStatics::CollisionTypeFromObjectType(GetObjectType()));
+	return actor;
 }
 
 bool AMOITerrain::GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const
@@ -119,7 +115,7 @@ bool AMOITerrain::GetTransformedLocationState(const FTransform Transform, FMOISt
 	return OutState.CustomData.SaveStructData(newData);
 }
 
-void AMOITerrain::UpdateTerrainActors()
+void AMOITerrain::UpdateTerrainActor()
 {
 	const auto graph2d = GetDocument()->FindSurfaceGraph(ID);
 	int32 numTerrainPatches = 0;
@@ -127,60 +123,42 @@ void AMOITerrain::UpdateTerrainActors()
 	if (ensure(graph2d))
 	{
 		const auto& polygons = graph2d->GetPolygons();
-
-		// TODO: Calculate gridSize for each TerrainActor, currently calculate the smallest one for now
-		float verticesDensityPerRow = 30;
-		float minGridSize = 100.0f;
-		float maxGridSize = 1000.f;
-		float gridSize = maxGridSize;
-		for (const auto& polygonKvp : polygons)
+		ADynamicTerrainActor* actor = Cast< ADynamicTerrainActor>(GetActor());
+		if (!ensure(actor))
 		{
-			const auto& polygon = polygonKvp.Value;
-			TArray<FVector2D> polygonPoints;
-			for (int32 v : polygon.VertexIDs)
-			{
-				polygonPoints.Add(graph2d->GetVertices()[v].Position);
-			}
-			FBox2D polygonBox2D(polygonPoints);
-			gridSize = FMath::Min(FMath::Clamp((FMath::Sqrt(polygonBox2D.GetArea()) / verticesDensityPerRow), minGridSize, maxGridSize), gridSize);
+			return;
 		}
+		actor->ClearAllMeshSections();
+		PolyIDToMeshSection.Empty();
 
+		TArray<int32> islandPolys;
 		for (const auto& polygonKvp: polygons)
 		{
-			const auto& polygon = polygonKvp.Value;
-			// TODO: Commented to allow testing separate sections for TerrainActor
-			//if (polygon.bInterior || polygon.ContainingPolyID != MOD_ID_NONE)
-			if (!polygon.bInterior || polygon.ContainingPolyID != MOD_ID_NONE)
+			if (!polygonKvp.Value.bInterior && polygonKvp.Value.ContainingPolyID == MOD_ID_NONE)
 			{
-				continue;
+				islandPolys.Add(polygonKvp.Key);
 			}
+		}
 
-			ADynamicTerrainActor* actor;
-			if (TerrainActors.Num() <= numTerrainPatches)
-			{
-				actor = GetWorld()->SpawnActor<ADynamicTerrainActor>(ADynamicTerrainActor::StaticClass(), FTransform(FQuat::Identity, GetLocation() ));
-				ensure(SetupTerrainMaterial(actor));
-				actor->Mesh->SetCollisionObjectType(UModumateTypeStatics::CollisionTypeFromObjectType(GetObjectType()) );
-				TerrainActors.Add(actor);
-				actor->AttachToActor(GetActor(), FAttachmentTransformRules::KeepWorldTransform);
-			}
-			else
-			{
-				actor = TerrainActors[numTerrainPatches];
-			}
+		const int32 numIslands = islandPolys.Num();  // One TPS domain per island.
+		int32 meshSectionNumber = 0;
+		for (int32 island: islandPolys)
+		{
+			const FGraph2DPolygon* polygon = graph2d->FindPolygon(island);
 
-			if (!ensure(actor))
-			{
-				return;
-			}
-
-			TArray<FVector2D> perimeterPoints2D;
 			TArray<FVector> heightPoints;
 			TSet<int32> vertexIDs;
+			TSet<int32> containedPolys;
 
-			TFunction<void (int32)> addVertexHeights = [&heightPoints, &vertexIDs, graph2d, this, &addVertexHeights](int32 Polygon)
+			TFunction<void(int32)> addVertexHeights = [&heightPoints, &vertexIDs, &containedPolys, graph2d, this, &addVertexHeights](int32 Polygon)
 			{
-				for (int32 v: graph2d->FindPolygon(Polygon)->VertexIDs)
+				const FGraph2DPolygon* polygon2d = graph2d->FindPolygon(Polygon);
+				if (polygon2d->bInterior)
+				{
+					containedPolys.Add(Polygon);
+				}
+
+				for (int32 v: polygon2d->VertexIDs)
 				{
 					if (!vertexIDs.Contains(v))
 					{
@@ -191,79 +169,119 @@ void AMOITerrain::UpdateTerrainActors()
 				}
 
 				// Add all contained polys:
-				for (int32 subPoly : graph2d->FindPolygon(Polygon)->ContainedPolyIDs)
+				for (int32 subPoly: graph2d->FindPolygon(Polygon)->ContainedPolyIDs)
 				{
 					addVertexHeights(subPoly);
 				}
 
 			};
 
-			for (int32 v: polygon.CachedPerimeterVertexIDs)
-			{
-				ensure(InstanceData.Heights.Find(v));
-				float height = InstanceData.Heights[v];
-
-				FVector2D graph2dPosition = graph2d->GetVertices()[v].Position;
-				FVector planePosition = InstanceData.Origin + graph2dPosition.X * FVector::ForwardVector + graph2dPosition.Y * FVector::RightVector;
-				FVector position = planePosition + height * FVector::UpVector;
-
-				perimeterPoints2D.Add(graph2dPosition);
-			}
-
 			TSet<int32> interiorPolys;
-			for (int32 edge: polygon.Edges)
+			for (int32 edge: polygon->Edges)
 			{
 				interiorPolys.Add(graph2d->FindEdge(edge)->LeftPolyID);
 				interiorPolys.Add(graph2d->FindEdge(edge)->RightPolyID);
 			}
 			for (int32 poly: interiorPolys)
 			{
-				addVertexHeights(poly);
+				if (poly != MOD_ID_NONE)
+				{
+					addVertexHeights(poly);
+				}
 			}
 
-			if (perimeterPoints2D.Num() >= 3)
+			// Calculate target grid size per island.
+			static constexpr float verticesDensityPerRow = 30.0f;
+			static constexpr float minGridSize = 25.0f;
+			static constexpr float maxGridSize = 1000.0f;
+			float gridSize = maxGridSize;
+			for (int32 containedPoly: containedPolys)
 			{
-				// TODO: Calculate gridSize for individual TerrainActor, must be same for all sections within a terrain actor to avoid seams
-				// TODO: Determine which terrain actor to add section. Add to the first terrainActor for now
-				TerrainActors[0]->TestSetupTerrainGeometryGTE(numTerrainPatches, gridSize, perimeterPoints2D, heightPoints, TArray<FPolyHole2D>(), true, true);
+				const FGraph2DPolygon* containedPolygon = graph2d->FindPolygon(containedPoly);
+				FBox2D polygonBox2D(ForceInitToZero);
+				for (int32 v: containedPolygon->VertexIDs)
+				{
+					polygonBox2D += graph2d->GetVertices()[v].Position;
+				}
+				gridSize = FMath::Min(FMath::Clamp((FMath::Sqrt(polygonBox2D.GetArea()) / verticesDensityPerRow), minGridSize, maxGridSize), gridSize);
 			}
 
-			++numTerrainPatches;
-		}
+			for (int32 containedPoly: containedPolys)
+			{
+				const FGraph2DPolygon* containedPolygon = graph2d->FindPolygon(containedPoly);
+				
+				TArray<FPolyHole2D> holes;
+				// Inner polys become holes:
+				for (int32 otherPolyID : containedPolygon->ContainedPolyIDs)
+				{
+					const FGraph2DPolygon* otherPolygon = graph2d->FindPolygon(otherPolyID);
+					TArray<FVector2D> holePoints(otherPolygon->CachedPerimeterPoints);
+					holes.Emplace(holePoints);
+				}
 
-		for(int32 deleteActor = numTerrainPatches; deleteActor < TerrainActors.Num(); ++deleteActor)
-		{
-			TerrainActors[deleteActor]->Destroy();
+				if (containedPolygon->CachedPerimeterPoints.Num() >= 3)
+				{
+					actor->SetupTerrainGeometryGTE(meshSectionNumber, gridSize, containedPolygon->CachedPerimeterPoints, heightPoints, holes, true, true);
+					PolyIDToMeshSection.Add(containedPoly, meshSectionNumber);
+					++meshSectionNumber;
+				}
+
+			}
 		}
-		TerrainActors.SetNum(numTerrainPatches);
 	}
 }
 
-bool AMOITerrain::SetupTerrainMaterial(ADynamicTerrainActor* Actor)
+void AMOITerrain::UpdateSiteMaterials()
 {
-	if (!ensure(Actor))
+	const auto* doc = GetDocument();
+	const auto graph2d = doc->FindSurfaceGraph(ID);
+
+	if (ensure(graph2d))
 	{
-		return false;
-	}
-
-	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
-	auto* gameMode = gameInstance ? gameInstance->GetEditModelGameMode() : nullptr;
-
-	UMaterialInstanceDynamic* dynamicMat = Cast<UMaterialInstanceDynamic>(Actor->Mesh->GetMaterial(0));
-	if ((dynamicMat == nullptr) && gameMode)
-	{
-		dynamicMat = UMaterialInstanceDynamic::Create(gameMode->TerrainMaterial, Actor->Mesh);
-		Actor->TerrainMaterial = dynamicMat;
-
-		Actor->GrassStaticMesh = gameMode->GrassMesh;
-		UMaterialInstance* grassMat = Cast<UMaterialInstance>(Actor->GrassMesh->GetMaterial(0));
-		if (grassMat == nullptr)
+		auto* actor = Cast<ADynamicTerrainActor>(GetActor());
+		if (!actor || !actor->Mesh)
 		{
-			Actor->GrassMesh->SetMaterial(0, gameMode->GrassMaterial);
+			return;
+		}
+		UProceduralMeshComponent* mesh = actor->Mesh;
+
+		const auto& faces = graph2d->GetPolygons();
+		for (const auto& faceKvp: faces)
+		{
+			const AModumateObjectInstance* faceMoi = doc->GetObjectById(faceKvp.Key);
+			if (ensure(faceMoi) && faceMoi->GetChildIDs().Num() == 1)
+			{
+				const AMOITerrainMaterial* materialMoi = Cast<AMOITerrainMaterial>(doc->GetObjectById(faceMoi->GetChildIDs()[0]) );
+				FGuid materialGuid = materialMoi->InstanceData.Material;
+
+				// TODO: Use a terrain assembly spec rather than presets directly, when they are available.
+				const FBIMPresetCollection& presets = doc->GetPresetCollection();
+				const FBIMPresetInstance* preset = presets.PresetFromGUID(materialGuid);
+				FBIMPresetMaterialBindingSet materialBinding;
+				if (preset && preset->TryGetCustomData(materialBinding))
+				{
+					FGuid innerMaterialGuid = materialBinding.MaterialBindings[0].InnerMaterialGUID;
+
+					UModumateGameInstance* gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
+					const FArchitecturalMaterial* material = gameInstance->ObjectDatabase->GetArchitecturalMaterialByGUID(innerMaterialGuid);
+					if (material)
+					{
+						const int32* meshSectionPointer = PolyIDToMeshSection.Find(faceKvp.Key);
+						if (meshSectionPointer)
+						{
+							int32 meshSectionIndex = *meshSectionPointer;
+							UMaterialInterface* currentMaterial = (mesh->GetMaterial(meshSectionIndex));
+							if (currentMaterial != material->EngineMaterial.Get())
+							{
+								mesh->SetMaterial(meshSectionIndex, material->EngineMaterial.Get());
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
-	return true;
 }
 
 FVector AMOITerrain::GraphToWorldPosition(FVector2D GraphPos, double Height /*= 0.0*/) const

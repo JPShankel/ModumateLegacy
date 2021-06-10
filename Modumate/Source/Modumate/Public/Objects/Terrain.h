@@ -39,17 +39,14 @@ public:
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
 	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;
+	virtual AActor* CreateActor(const FVector& loc, const FQuat& rot) override;
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
-	virtual void PreDestroy() override;
 
 	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 		TArray<TArray<FVector>>& OutPerimeters) const override;
-
-	const TArray<ADynamicTerrainActor*>& GetTerrainActors() const
-		{ return TerrainActors; }
 
 	// TODO: Change terrain material to translucent
 	void SetIsTranslucent(bool NewIsTranslucent) { bIsTranslucent = NewIsTranslucent; };
@@ -59,13 +56,11 @@ public:
 	FMOITerrainData InstanceData;
 
 protected:
-	UPROPERTY()
-	TArray<ADynamicTerrainActor*> TerrainActors;
-
-	void UpdateTerrainActors();
-	bool SetupTerrainMaterial(ADynamicTerrainActor* Actor);
+	void UpdateTerrainActor();
+	void UpdateSiteMaterials();
 
 	FVector GraphToWorldPosition(FVector2D GraphPos, double Height = 0.0) const;
+	TMap<int32, int32> PolyIDToMeshSection;
 
 	bool bIsTranslucent = false;
 };

@@ -37,11 +37,13 @@ bool AMOITerrainPolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 				return true;
 			}
 
-			CachedPoints.Empty();
-			for (int32 v : graphPoly->CachedPerimeterVertexIDs)
+			CreateMaterialMoi(OutSideEffectDeltas);
+
+			bool bInteriorPolygon, bInnerBoundsPolygon;
+			if (!UModumateObjectStatics::GetGeometryFromSurfacePoly(GetDocument(), ID,
+				bInteriorPolygon, bInnerBoundsPolygon, CachedTransform, CachedPoints, CachedHoles))
 			{
-				auto position = graph2d->FindVertex(v)->Position;
-				CachedPoints.Add(origin + position.X * FVector::ForwardVector + position.Y * FVector::RightVector);
+				return false;
 			}
 
 			CachedOrigin = origin;
@@ -51,7 +53,7 @@ bool AMOITerrainPolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 			auto* gameMode = gameInstance ? gameInstance->GetEditModelGameMode() : nullptr;
 			MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
 
-			DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, 1.0f, true, nullptr, !IsInPreviewMode());
+			DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, 1.0f, true, &CachedHoles, !IsInPreviewMode());
 		}
 
 		break;
@@ -81,6 +83,7 @@ bool AMOITerrainPolygon::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisio
 		return false;
 	}
 
+	bOutVisible = false; bOutCollisionEnabled = false;
 	DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
 	DynamicMeshActor->SetActorEnableCollision(bOutCollisionEnabled);
 
@@ -92,6 +95,21 @@ bool AMOITerrainPolygon::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisio
 	if (bPreviouslyVisible != bOutVisible)
 	{
 		MarkConnectedVisualsDirty();
+	}
+
+	return true;
+}
+
+bool AMOITerrainPolygon::CreateMaterialMoi(TArray<FDeltaPtr>* SideEffectDeltas)
+{
+	if (GetChildIDs().Num() == 0 && SideEffectDeltas)
+	{
+		UModumateDocument* doc = GetDocument();
+		int32 nextID = doc->GetNextAvailableID();
+		FMOIStateData stateData(nextID, EObjectType::OTTerrainMaterial, ID);
+		auto createMoiDelta = MakeShared<FMOIDelta>();
+		createMoiDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+		SideEffectDeltas->Add(createMoiDelta);
 	}
 
 	return true;

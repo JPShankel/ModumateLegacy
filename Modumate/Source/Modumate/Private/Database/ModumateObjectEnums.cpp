@@ -125,6 +125,7 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTMullion: return EToolMode::VE_MULLION;
 	case EObjectType::OTBackgroundImage: return EToolMode::VE_BACKGROUNDIMAGE;
 	case EObjectType::OTTerrain:
+	case EObjectType::OTTerrainMaterial:
 	case EObjectType::OTTerrainVertex:
 	case EObjectType::OTTerrainEdge:
 	case EObjectType::OTTerrainPolygon: return EToolMode::VE_TERRAIN;
@@ -205,6 +206,9 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTTerrainEdge", "Terrain Edges") : LOCTEXT("OTTerrainEdge", "Terrain Edge");
 	case EObjectType::OTTerrainPolygon:
 		return bPlural ? LOCTEXT("OTTerrainPolygon", "Terrain Polygons") : LOCTEXT("OTTerrainPolygon", "Terrain Polygon");
+	case EObjectType::OTTerrainMaterial:
+		return bPlural ? LOCTEXT("OTTerrainMaterial", "Terrain Materials") : LOCTEXT("OTTerrainMaterial", "Terrain Material");
+		
 	case EObjectType::OTUnknown:
 	default:
 		return bPlural ? LOCTEXT("OTUnknowns", "Unknowns") : LOCTEXT("OTUnknown", "Unknown");

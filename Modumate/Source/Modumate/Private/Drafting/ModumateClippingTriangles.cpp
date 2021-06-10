@@ -203,11 +203,9 @@ void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* do
 					const AMOITerrain* terrainMoi = Cast<AMOITerrain>(object);
 					if (terrainMoi)
 					{
-						for (const auto* terrainActor : terrainMoi->GetTerrainActors())
-						{
-							meshComponents.Add(terrainActor->Mesh);
-							AddTerrainCutPlaneTriangles(terrainActor);
-						}
+						const auto* terrainActor = Cast<const ADynamicTerrainActor>(terrainMoi->GetActor());
+						meshComponents.Add(terrainActor->Mesh);
+						AddTerrainCutPlaneTriangles(terrainActor);
 						localToWorld = FTransform(terrainMoi->GetRotation(), terrainMoi->GetLocation());
 					}
 				}

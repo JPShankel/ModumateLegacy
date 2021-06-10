@@ -166,7 +166,7 @@ void ADynamicTerrainActor::SetupTerrainGeometry(const TArray<FVector>& Perimeter
 }
 #endif
 
-void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(int32 SectionID, float GridSize, const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision /*= true*/)
+void ADynamicTerrainActor::SetupTerrainGeometryGTE(int32 SectionID, float GridSize, const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision /*= true*/)
 {
 	TArray<FVector> vertices;
 	TArray<FVector2D> vertices2D;
@@ -200,12 +200,29 @@ void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(int32 SectionID, float Gr
 	{
 		FVector2D p1 = PerimeterPoints[i];
 		FVector2D p2 = PerimeterPoints[(i + 1) % PerimeterPoints.Num()];
-		int32 totalPoints = (p1 - p2).Size() / GridSize;
+		int32 totalPoints = int32((p1 - p2).Size() / GridSize + 0.5f);
 		for (int32 idPoint = 0; idPoint < totalPoints; idPoint++)
 		{
 			float pct = float(idPoint) / float(totalPoints);
 			FVector2D curP = p1 + pct * (p2 - p1);
 			dividedPerimeterPoints.Add(curP);
+		}
+	}
+
+	for (const FPolyHole2D& hole: HolePoints)
+	{
+		for (int32 point = 0; point < hole.Points.Num(); ++point)
+		{
+			FVector2D p1 = hole.Points[point];
+			FVector2D p2 = hole.Points[(point + 1) % hole.Points.Num()];
+			int32 totalPoints = int32((p1 - p2).Size() / GridSize + 0.5f);
+			for (int32 idPoint = 0; idPoint < totalPoints; idPoint++)
+			{
+				float pct = float(idPoint) / float(totalPoints);
+				FVector2D curP = p1 + pct * (p2 - p1);
+				inGridPoints.AppendVertex(curP);
+			}
+
 		}
 	}
 
@@ -234,7 +251,7 @@ void ADynamicTerrainActor::TestSetupTerrainGeometryGTE(int32 SectionID, float Gr
 	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(vertices, triangles, uv0, normals, tangents);
 
 	Mesh->CreateMeshSection_LinearColor(SectionID, vertices, triangles, normals, uv0, vertexColors, tangents, bCreateCollision);
-	Mesh->SetMaterial(SectionID, TerrainMaterial);
+	//Mesh->SetMaterial(SectionID, TerrainMaterial);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 	//GrassMesh->SetStaticMesh(GrassStaticMesh);
@@ -368,20 +385,24 @@ void ADynamicTerrainActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposi
 
 	const FVector viewNormal = Plane;
 
-	const FProcMeshSection* meshSection = Mesh->GetProcMeshSection(0);
-	if (meshSection)
+	const int32 numSections = Mesh->GetNumSections();
+	for (int32 section = 0; section < numSections; ++section)
 	{
-		const auto& sectionVertices = meshSection->ProcVertexBuffer;
-		const auto& sectionTriangles = meshSection->ProcIndexBuffer;
-		ensureAlways(sectionTriangles.Num() % 3 == 0);
-
-		TArray <FVector> vertices;
-		for (const auto& v: meshSection->ProcVertexBuffer)
+		const FProcMeshSection* meshSection = Mesh->GetProcMeshSection(section);
+		if (meshSection)
 		{
-			vertices.Emplace(localToWorld.TransformPosition(v.Position));
-		}
+			const auto& sectionVertices = meshSection->ProcVertexBuffer;
+			const auto& sectionTriangles = meshSection->ProcIndexBuffer;
+			ensureAlways(sectionTriangles.Num() % 3 == 0);
 
-		UModumateGeometryStatics::GetSilhouetteEdges(vertices, sectionTriangles, viewNormal, terrainEdges, 0.1, 0.0);
+			TArray <FVector> vertices;
+			for (const auto& v : meshSection->ProcVertexBuffer)
+			{
+				vertices.Emplace(localToWorld.TransformPosition(v.Position));
+			}
+
+			UModumateGeometryStatics::GetSilhouetteEdges(vertices, sectionTriangles, viewNormal, terrainEdges, 0.1, 0.0);
+		}
 	}
 
 	TArray<FEdge> clippedLines;

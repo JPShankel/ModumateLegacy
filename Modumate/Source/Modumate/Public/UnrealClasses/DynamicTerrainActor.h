@@ -52,7 +52,9 @@ public:
 	//UFUNCTION(BlueprintCallable)
 	//void SetupTerrainGeometry(const TArray<FVector>& PerimeterPoints, const TArray<FVector>& HeightPoints, bool bRecreateMesh, bool bCreateCollision = true);
 
-	void TestSetupTerrainGeometryGTE(int32 SectionID, float GridSize, const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision = true);
+	void SetupTerrainGeometryGTE(int32 SectionID, float GridSize, const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints,
+		const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision = true);
+	void ClearAllMeshSections() { Mesh->ClearAllMeshSections(); }
 
 	// TODO: Update instances for triangles in mesh sections
 #if 0

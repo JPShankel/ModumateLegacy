@@ -110,6 +110,7 @@ enum class EObjectType : uint8
 	OTTerrainVertex,
 	OTTerrainEdge,
 	OTTerrainPolygon,
+	OTTerrainMaterial,
 	OTUnknown
 };
 
