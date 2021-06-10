@@ -124,18 +124,11 @@ bool UBackgroundImageTool::EnterNextStage()
 	// If we're playing back recorded input, then skip the open file dialog since we won't be able to do anything with it.
 	// TODO: we could potentially categorize a file open as an input event that records the contents of the opened file;
 	// we could do that work if we wanted to make this more bulletproof for common / more use cases, but so far this is an edge case.
-	if (Controller->InputAutomationComponent->IsPlaying())
-	{
-		Controller->InputAutomationComponent->StartPlayingRecordedDeltas();
-		return false;
-	}
+	bool bSkipFileOpen = Controller->InputAutomationComponent->IsPlaying();
 
 	FString imageFilename;
-	if (!FModumatePlatform::GetOpenFilename(imageFilename, false) || imageFilename.IsEmpty())
-	{
-		return false;
-	}
-	if (!FPaths::FileExists(imageFilename))
+	if (!bSkipFileOpen &&
+		(!FModumatePlatform::GetOpenFilename(imageFilename, false) || imageFilename.IsEmpty() || !FPaths::FileExists(imageFilename)))
 	{
 		return false;
 	}

@@ -362,8 +362,11 @@ bool UEditModelInputAutomation::VerifyAppliedDeltas(const TArray<FDeltaPtr>& Del
 	// If not, then undo the deltas that have been applied in error.
 	if (!bDeltasVerified)
 	{
-		UE_LOG(LogInputAutomation, Error, TEXT("Applied %d deltas on [frame %d, time %.2f] that didn't match recorded deltas!"),
+		FString errorString = FString::Printf(TEXT("Applied %d deltas on [frame %d, time %.2f] that didn't match recorded deltas!"),
 			numAppliedDeltas, CurAutomationFrame, CurAutomationTime);
+
+		UE_LOG(LogInputAutomation, Error, TEXT("%s"), *errorString);
+		GEngine->AddOnScreenDebugMessage(1, 0.5f, FColor::Red, errorString);
 
 		document->Undo(GetWorld());
 
@@ -381,9 +384,6 @@ bool UEditModelInputAutomation::VerifyAppliedDeltas(const TArray<FDeltaPtr>& Del
 			}
 
 		} while (RecordedDeltasToVerify.Dequeue(recordedDeltas));
-
-		// Finally, enable delta playback since we're desynchronized from input, and reset to a neutral input state
-		StartPlayingRecordedDeltas();
 	}
 
 	bVerifyingDeltas = false;
