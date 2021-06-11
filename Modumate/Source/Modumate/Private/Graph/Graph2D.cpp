@@ -435,6 +435,7 @@ bool FGraph2D::RemovePolygon(int32 PolyID)
 	}
 	polyToRemove->SetContainingPoly(MOD_ID_NONE);
 
+	// Remove any edge references to removed poly.
 	for (int32 edgeID : polyToRemove->Edges)
 	{
 		// Edges may be missing because they're currently being deleted, and this polygon is being deleted too as a result.
@@ -444,9 +445,8 @@ bool FGraph2D::RemovePolygon(int32 PolyID)
 			continue;
 		}
 
-		int32& edgePolyID = (edge->ID < 0 ? edge->LeftPolyID : edge->RightPolyID);
+		int32& edgePolyID = edgeID > 0 ? edge->LeftPolyID : edge->RightPolyID;
 
-		// TODO: is this useful, or even correct, if we know we need to re-calculate polygons anyway?
 		if (edgePolyID == polyToRemove->ID)
 		{
 			edgePolyID = polyToRemove->ContainingPolyID;

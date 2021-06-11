@@ -1588,3 +1588,29 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraph2DLoadStar, "Modumate.Graph.2D.Lo
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGraphDeletePeninsularEdge, "Modumate.Graph.2D.DeletePeninsularEdge", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+bool FModumateGraphDeletePeninsularEdge::RunTest(const FString& Parameters)
+{
+	auto graph = MakeShared<FGraph2D>();
+	int32 NextID = 100;
+
+	// Make a triangle with a peninsular; delete the peninsular. MOD-1133
+	int32 p1ID = graph->AddVertex(FVector2D(0.0f, 0.0f))->ID;
+	int32 p2ID = graph->AddVertex(FVector2D(10.0f, 0.0f))->ID;
+	int32 p3ID = graph->AddVertex(FVector2D(0.0f, 10.0f))->ID;
+	int32 p4ID = graph->AddVertex(FVector2D(-5.0f, -5.0f))->ID;
+
+	graph->AddEdge(p1ID, p2ID);
+	graph->AddEdge(p2ID, p3ID);
+	graph->AddEdge(p3ID, p1ID);
+	int32 penEdge = graph->AddEdge(p3ID, p4ID)->ID;
+
+	graph->CalculatePolygons();
+
+	TArray<FGraph2DDelta> deltas;
+	TestTrue(TEXT("Delete Peninsular Edge"),
+		graph->DeleteObjects(deltas, NextID, { penEdge }));
+	TestDeltasAndResetGraph(this, deltas, graph, 2, 3, 3);
+
+	return true;
+}
