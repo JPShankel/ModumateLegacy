@@ -209,9 +209,9 @@ bool FModumateCloudConnection::RequestAuthTokenRefresh(const FString& InRefreshT
 			}
 
 			FModumateUserVerifyParams verifyParams;
-			FJsonObjectConverter::JsonObjectToUStruct<FModumateUserVerifyParams>(Payload.ToSharedRef(), &verifyParams);
-
-			if (!verifyParams.AuthToken.IsEmpty())
+			if (Payload.IsValid() &&
+				FJsonObjectConverter::JsonObjectToUStruct<FModumateUserVerifyParams>(Payload.ToSharedRef(), &verifyParams) &&
+				!verifyParams.AuthToken.IsEmpty())
 			{
 				SharedThis->AuthToken = verifyParams.AuthToken;
 				SharedThis->AuthTokenTimestamp = FDateTime::Now();

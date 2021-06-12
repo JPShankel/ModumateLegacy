@@ -64,6 +64,9 @@ void FEditModelInputLog::Reset(float CurTimeSeconds)
 	RecordEndTime = RecordStartTime;
 }
 
+
+FTimerHandle UEditModelInputAutomation::CheckCaptureTimerHandle;
+
 UEditModelInputAutomation::UEditModelInputAutomation()
 	: Super()
 	, CurState(EInputAutomationState::None)
@@ -97,6 +100,11 @@ void UEditModelInputAutomation::BeginPlay()
 
 void UEditModelInputAutomation::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (CurState == EInputAutomationState::Playing)
+	{
+		EndPlayback();
+	}
+
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -141,22 +149,41 @@ void UEditModelInputAutomation::TickComponent(float DeltaTime, enum ELevelTick T
 			FString debugMessage = FString::Printf(TEXT("\u25B6 Playing input (%s) - %s - %d%%"), *curLogFilename, *automationTimeStr, currentLogPCT);
 			GEngine->AddOnScreenDebugMessage(0, 0.0f, FColor::Green, debugMessage);
 
+			// Steadily progress the automation playback time/frame based on playback speed
 			nextAutomationTime = CurAutomationTime + (PlaybackSpeed * DeltaTime);
 			nextAutomationFrame = CurAutomationFrame + static_cast<int32>(PlaybackSpeed);
+
+			const float halfActivityTimeout = 0.5f * ActivityTimeout;
 
 			// Search for the next packet(s) to use, based on the frame method (fixed vs. variable)
 			while (CurPacketIndex < totalNumPackets)
 			{
+				const FEditModelInputPacket& prevPacket = CurInputLogData.InputPackets[CurPacketIndex > 0 ? CurPacketIndex - 1 : 0];
 				const FEditModelInputPacket& nextPacket = CurInputLogData.InputPackets[CurPacketIndex];
 
 				if ((GEngine->bUseFixedFrameRate && (nextPacket.TimeFrame > CurAutomationFrame)) ||
 					(!GEngine->bUseFixedFrameRate && (nextPacket.TimeSeconds > CurAutomationTime)))
 				{
-					break;
+					if (((CurAutomationTime - prevPacket.TimeSeconds) >= halfActivityTimeout) &&
+						((nextPacket.TimeSeconds - CurAutomationTime) >= halfActivityTimeout))
+					{
+						// We're waiting through a period of inactivity between two input packets, so skip ahead.
+						FString skipMessage = FString::Printf(TEXT("Skipping %s long period of inactivity after packet #%d."),
+							*UKismetStringLibrary::TimeSecondsToString(nextPacket.TimeSeconds - prevPacket.TimeSeconds), CurPacketIndex - 1);
+
+						UE_LOG(LogInputAutomation, Log, TEXT("%s"), *skipMessage);
+						GEngine->AddOnScreenDebugMessage(2, 2.0f, FColor::Yellow, skipMessage);
+						nextAutomationTime = nextPacket.TimeSeconds;
+						nextAutomationFrame = nextPacket.TimeFrame;
+					}
+					else
+					{
+						// We're still waiting for the next packet, and we're not halfway through a period of inactivity, so don't play any packets.
+						break;
+					}
 				}
 
-				float packetDeltaTime = nextPacket.TimeSeconds - CurAutomationTime;
-				PlayBackPacket(nextPacket, packetDeltaTime);
+				PlayBackPacket(nextPacket);
 
 				CurAutomationTime = nextPacket.TimeSeconds;
 				CurAutomationFrame = nextPacket.TimeFrame;
@@ -366,7 +393,7 @@ bool UEditModelInputAutomation::VerifyAppliedDeltas(const TArray<FDeltaPtr>& Del
 			numAppliedDeltas, CurAutomationFrame, CurAutomationTime);
 
 		UE_LOG(LogInputAutomation, Error, TEXT("%s"), *errorString);
-		GEngine->AddOnScreenDebugMessage(1, 0.5f, FColor::Red, errorString);
+		GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::Red, errorString);
 
 		document->Undo(GetWorld());
 
@@ -638,7 +665,10 @@ bool UEditModelInputAutomation::EndPlayback()
 
 		if (bWillExitOnFrameCaptured)
 		{
-			GetWorld()->GetTimerManager().SetTimer(FrameCaptureSaveTimer, this, &UEditModelInputAutomation::CheckFrameCaptureSaved, 1.0f, true);
+			FString frameCapturePathCopy = FrameCapturePath;
+			GetWorld()->GetTimerManager().SetTimer(UEditModelInputAutomation::CheckCaptureTimerHandle, [frameCapturePathCopy]() {
+				UEditModelInputAutomation::CheckFrameCaptureSaved(frameCapturePathCopy);
+			}, 1.0f, true);
 		}
 	}
 
@@ -759,9 +789,9 @@ FTimerManager& UEditModelInputAutomation::GetTimerManager() const
 	return GetWorld()->GetTimerManager();
 }
 
-void UEditModelInputAutomation::CheckFrameCaptureSaved()
+void UEditModelInputAutomation::CheckFrameCaptureSaved(const FString& InFrameCapturePath)
 {
-	if (!FrameCapturePath.IsEmpty() && FPaths::FileExists(FrameCapturePath) && bWillExitOnFrameCaptured)
+	if (!InFrameCapturePath.IsEmpty() && FPaths::FileExists(InFrameCapturePath))
 	{
 		FPlatformMisc::RequestExit(false);
 	}
@@ -864,7 +894,7 @@ FEditModelInputPacket &UEditModelInputAutomation::AddRecordingPacket(EInputPacke
 	return newPacket;
 }
 
-bool UEditModelInputAutomation::PlayBackPacket(const FEditModelInputPacket &InputPacket, float DeltaTime)
+bool UEditModelInputAutomation::PlayBackPacket(const FEditModelInputPacket &InputPacket)
 {
 	switch (InputPacket.Type)
 	{
@@ -1252,10 +1282,13 @@ bool UEditModelInputAutomation::LoadInputLog(const FString& InputLogPath, FEditM
 		return false;
 	}
 
-	// If end time didn't save, then set it to be based on the packets rather than the overall recording time
-	if ((OutLogData.RecordEndTime == 0.0f) && (OutLogData.InputPackets.Num() > 0))
+	// Override RecordStartTime and RecordEndTime with the values from packets, rather than values that haven't reliably saved correctly.
+	// TODO: stop serializing the unsupported values
+	OutLogData.RecordStartTime = OutLogData.RecordEndTime = 0.0f;
+	if (OutLogData.InputPackets.Num() > 0)
 	{
-		OutLogData.RecordEndTime = (OutLogData.InputPackets.Last().TimeSeconds - OutLogData.RecordStartTime);
+		OutLogData.RecordStartTime = OutLogData.InputPackets[0].TimeSeconds;
+		OutLogData.RecordEndTime = OutLogData.InputPackets.Last().TimeSeconds - OutLogData.RecordStartTime;
 	}
 
 	return true;

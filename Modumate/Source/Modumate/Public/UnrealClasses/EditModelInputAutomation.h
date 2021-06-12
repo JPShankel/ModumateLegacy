@@ -297,6 +297,9 @@ public:
 	virtual bool GetResponse(FHttpRequestRef Request, int32 RequestIdx, bool& bOutSuccess, int32& OutCode, FString& OutContent, float& OutResponseTime) override;
 	virtual FTimerManager& GetTimerManager() const override;
 
+	// How many seconds between input events can pass before the time is considered to be "inactive", and can be skipped
+	static constexpr float ActivityTimeout = 5.0f;
+
 protected:
 	TSharedPtr<class FAutomationCaptureInputProcessor> InputProcessor;
 	EInputAutomationState CurState;
@@ -325,12 +328,12 @@ protected:
 	UPROPERTY()
 	class UGameViewportClient* GameViewport;
 
-	UFUNCTION()
-	void CheckFrameCaptureSaved();
+	static FTimerHandle CheckCaptureTimerHandle;
+	static void CheckFrameCaptureSaved(const FString& InFrameCapturePath);
 
 	bool FindViewport();
 	FEditModelInputPacket &AddRecordingPacket(EInputPacketType Type);
-	bool PlayBackPacket(const FEditModelInputPacket &InputPacket, float DeltaTime);
+	bool PlayBackPacket(const FEditModelInputPacket &InputPacket);
 	bool SimulateInput(const FEditModelInputPacket& InputPacket);
 	FString GetDefaultInputLogPath(const FString &Extension);
 	void StartRecordingFrames();

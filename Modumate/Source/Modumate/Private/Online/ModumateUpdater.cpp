@@ -121,7 +121,10 @@ void FModumateUpdater::FetchInstallersObject()
 				pinnedThis->InstallersObjectCallback(bWasSuccessful, Response);
 			}
 		},
-		[](int32, const FString&) { ensure(false); });
+		[](int32 ErrorCode, const FString& ErrorMessage)
+		{
+			UE_LOG(LogTemp, Error, TEXT("%d error querying for installers: \"%s\""), ErrorCode, *ErrorMessage);
+		});
 }
 
 void FModumateUpdater::InstallersObjectCallback(bool bWasSuccessful, const TSharedPtr<FJsonObject>& Response)
