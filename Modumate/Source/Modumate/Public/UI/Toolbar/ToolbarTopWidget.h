@@ -51,8 +51,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* Button_ViewModePhysical;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButton* Button_Help;
+
 	UFUNCTION()
 	void OnButtonReleaseModumateHome();
+
+	UFUNCTION()
+	void OnButtonReleaseButtonHelp();
 
 	void SwitchToViewMode(EEditViewModes NewViewMode);
 

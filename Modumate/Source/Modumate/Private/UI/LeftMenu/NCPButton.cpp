@@ -10,6 +10,8 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/VerticalBoxSlot.h"
 #include "UI/LeftMenu/NCPNavigator.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/TutorialMenu/HelpMenu.h"
 
 UNCPButton::UNCPButton(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -46,15 +48,22 @@ void UNCPButton::NativeConstruct()
 
 void UNCPButton::OnButtonPress()
 {
+	if (bAsTutorialArticle)
+	{
+		EMPlayerController->EditModelUserWidget->HelpMenuBP->ToArticleMenu(TutorialGUID);
+		return;
+	}
+
 	if (ParentNCPNavigator)
 	{
 		ParentNCPNavigator->ToggleNCPTagAsSelected(NCPTag, !bExpanded);
 	}
 }
 
-void UNCPButton::BuildButton(class UNCPNavigator* InParentNCPNavigator, const FBIMTagPath& InNCP, int32 InTagOrder, bool bBuildAsExpanded)
+void UNCPButton::BuildCategoryButton(class UNCPNavigator* InParentNCPNavigator, const FBIMTagPath& InNCP, int32 InTagOrder, bool bBuildAsExpanded)
 {
 	ParentNCPNavigator = InParentNCPNavigator;
+	bAsTutorialArticle = false;
 	NCPTag = InNCP;
 	TagOrder = InTagOrder;
 	bExpanded = bBuildAsExpanded;
@@ -77,6 +86,25 @@ void UNCPButton::BuildButton(class UNCPNavigator* InParentNCPNavigator, const FB
 			FString lastTagString = InNCP.Tags[InNCP.Tags.Num() - 1];
 			ButtonText->SetText(FText::FromString(lastTagString));
 		}
+	}
+}
+
+void UNCPButton::BuildTutorialArticleButton(class UNCPNavigator* InParentNCPNavigator, const FGuid& InGUID, int32 InTagOrder)
+{
+	ParentNCPNavigator = InParentNCPNavigator;
+	TutorialGUID = InGUID;
+	bAsTutorialArticle = true;
+	TagOrder = InTagOrder;
+	ToggleTextColor(false);
+
+	// Add paddding to text
+	UVerticalBoxSlot* verticalBoxSlot = UWidgetLayoutLibrary::SlotAsVerticalBoxSlot(ButtonText);
+	verticalBoxSlot->SetPadding(FMargin(TagOrder * ButtonPaddingSizePerNCPorder, 0.f, 0.f, 0.f));
+
+	auto tutorialNode = EMPlayerController->EditModelUserWidget->HelpMenuBP->AllTutorialNodesByGUID.Find(TutorialGUID);
+	if (tutorialNode)
+	{
+		ButtonText->SetText(FText::FromString(tutorialNode->Title));
 	}
 }
 

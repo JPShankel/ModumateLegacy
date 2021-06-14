@@ -27,6 +27,7 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/LeftMenu/SwapMenuWidget.h"
 #include "UI/LeftMenu/DeleteMenuWidget.h"
+#include "UI/TutorialMenu/HelpMenu.h"
 
 #define LOCTEXT_NAMESPACE "ModumateWidgets"
 
@@ -436,6 +437,16 @@ void UEditModelUserWidget::ToggleSettingsWindow(bool NewVisibility)
 	if (NewVisibility)
 	{
 		SettingsMenuWidget->UpdateFromCurrentSettings();
+	}
+}
+
+void UEditModelUserWidget::ToggleHelpMenu(bool NewVisibility)
+{
+	HelpMenuBP->ResetMenu();
+	HelpMenuBP->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (NewVisibility)
+	{
+		HelpMenuBP->BuildTutorialLibraryMenu();
 	}
 }
 

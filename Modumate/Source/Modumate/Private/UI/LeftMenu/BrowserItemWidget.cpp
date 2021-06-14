@@ -55,8 +55,18 @@ void UBrowserItemWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 	}
 	else
 	{
-		PresetCardMainWidget->SetVisibility(ESlateVisibility::Collapsed);
-		NCPButtonWidget->SetVisibility(ESlateVisibility::Visible);
-		NCPButtonWidget->BuildButton(itemObj->ParentNCPNavigator, itemObj->NCPTag, itemObj->TagOrder, itemObj->bNCPButtonExpanded);
+		// Help menu uses NCP navigator, check if it uses as category or article
+		if (itemObj->PresetCardType == EPresetCardType::TutorialArticle)
+		{
+			PresetCardMainWidget->SetVisibility(ESlateVisibility::Collapsed);
+			NCPButtonWidget->SetVisibility(ESlateVisibility::Visible);
+			NCPButtonWidget->BuildTutorialArticleButton(itemObj->ParentNCPNavigator, itemObj->TutorialGuid, itemObj->TagOrder);
+		}
+		else
+		{
+			PresetCardMainWidget->SetVisibility(ESlateVisibility::Collapsed);
+			NCPButtonWidget->SetVisibility(ESlateVisibility::Visible);
+			NCPButtonWidget->BuildCategoryButton(itemObj->ParentNCPNavigator, itemObj->NCPTag, itemObj->TagOrder, itemObj->bNCPButtonExpanded);
+		}
 	}
 }

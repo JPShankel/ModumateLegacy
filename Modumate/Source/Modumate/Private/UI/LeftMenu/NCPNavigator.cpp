@@ -17,6 +17,9 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/Border.h"
+#include "Components/VerticalBox.h"
+#include "UI/TutorialMenu/HelpMenu.h"
+#include "UI/TutorialMenu/HelpBlockTutorialSearch.h"
 
 
 UNCPNavigator::UNCPNavigator(const FObjectInitializer& ObjectInitializer)
@@ -61,6 +64,8 @@ void UNCPNavigator::NativeConstruct()
 	Super::NativeConstruct();
 	EMPlayerController = GetOwningPlayer<AEditModelPlayerController>();
 	EMGameState = GetWorld()->GetGameState<AEditModelGameState>();
+
+	VerticalBox_TitleAndSearchbar->SetVisibility(bUsesHelpMenuSearchbar ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 }
 
 void UNCPNavigator::BuildAssemblyList(bool bScrollToSelectedAssembly /*= false*/)
@@ -200,7 +205,7 @@ void UNCPNavigator::BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 
 
 			// If NCP in subcategory is selected, that NCP is expanded
 			if (SelectedTags.Contains(newTagPath) ||
-				SearchBarWidget->ModumateEditableTextBox->GetText().ToString().Len() > 0)
+				GetSearchTextBox()->ModumateEditableTextBox->GetText().ToString().Len() > 0)
 			{
 				newItemObj->bNCPButtonExpanded = true;
 				BuildBrowserItemSubObjs(newTagPath, TagOrder + 1);
@@ -216,7 +221,15 @@ void UNCPNavigator::BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 
 bool UNCPNavigator::IsNCPAvailableForSearch(const FBIMTagPath& NCPTag)
 {
 	TArray<FGuid> availableBIMDesignerPresets;
-	EMPlayerController->GetDocument()->GetPresetCollection().GetPresetsForNCP(NCPTag, availableBIMDesignerPresets, false);
+	if (CurrentPresetCardType == EPresetCardType::TutorialArticle ||
+		CurrentPresetCardType == EPresetCardType::TutorialCategory)
+	{
+		EMPlayerController->EditModelUserWidget->HelpMenuBP->GetTutorialsForNCP(NCPTag, availableBIMDesignerPresets, false);
+	}
+	else
+	{
+		EMPlayerController->GetDocument()->GetPresetCollection().GetPresetsForNCP(NCPTag, availableBIMDesignerPresets, false);
+	}
 
 	// This NCP is available if its presets is available for search
 	for (auto& curPreset : availableBIMDesignerPresets)
@@ -231,8 +244,53 @@ bool UNCPNavigator::IsNCPAvailableForSearch(const FBIMTagPath& NCPTag)
 
 void UNCPNavigator::CacheSearchFilteredPresets(const TArray<FBIMTagPath>& SourceNCPTags)
 {
-	SearchFilteredPresets.Reset();
-	FString searchSubString = SearchBarWidget->ModumateEditableTextBox->GetText().ToString();
+	SearchFilteredPresets.Empty();
+	FString searchSubString = GetSearchTextBox()->ModumateEditableTextBox->GetText().ToString();
+
+	if (CurrentPresetCardType == EPresetCardType::TutorialArticle ||
+		CurrentPresetCardType == EPresetCardType::TutorialCategory)
+	{
+		for (auto& curNCPTag : SourceNCPTags)
+		{
+			TArray<FGuid> availableTutorials;
+			EMPlayerController->EditModelUserWidget->HelpMenuBP->GetTutorialsForNCP(curNCPTag, availableTutorials, false);
+			for (auto& curTutorialGUID : availableTutorials)
+			{
+				// Is searchable if searchbar is empty
+				if (searchSubString.Len() == 0)
+				{
+					SearchFilteredPresets.Add(curTutorialGUID);
+				}
+				else
+				{
+					auto tutorialNode = EMPlayerController->EditModelUserWidget->HelpMenuBP->AllTutorialNodesByGUID.Find(curTutorialGUID);
+					if (tutorialNode)
+					{
+						// Is searchable if title or body contain searchbar text
+						if (UKismetStringLibrary::Contains(tutorialNode->Title, searchSubString) ||
+							UKismetStringLibrary::Contains(tutorialNode->Body, searchSubString))
+						{
+							SearchFilteredPresets.Add(curTutorialGUID);			
+						}
+						else
+						{
+							// Is searchable if any tags contain searchbar text 
+							for (auto curTagString : tutorialNode->TagPath.Tags)
+							{
+								if (UKismetStringLibrary::Contains(curTagString, searchSubString))
+								{
+									SearchFilteredPresets.Add(curTutorialGUID);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return;
+	}
+
+
 	EObjectType currentObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(EMPlayerController->GetToolMode());
 
 	// Preset is available if its display name contains string from searchbar
@@ -268,7 +326,16 @@ void UNCPNavigator::ToggleNCPTagAsSelected(const FBIMTagPath& NCPTag, bool bAsSe
 	{
 		SelectedTags.Remove(NCPTag);
 	}
-	BuildNCPNavigator(CurrentPresetCardType);
+
+	if (CurrentPresetCardType == EPresetCardType::TutorialArticle ||
+		CurrentPresetCardType == EPresetCardType::TutorialCategory)
+	{
+		BuildTutorialList();
+	}
+	else
+	{
+		BuildNCPNavigator(CurrentPresetCardType);
+	}
 }
 
 void UNCPNavigator::SetNCPTagPathAsSelected(const FBIMTagPath& NCPTag)
@@ -289,7 +356,7 @@ void UNCPNavigator::RefreshDynamicMainListView()
 void UNCPNavigator::ResetSelectedAndSearchTag()
 {
 	SelectedTags.Reset();
-	SearchBarWidget->ModumateEditableTextBox->SetText(FText::GetEmpty());
+	GetSearchTextBox()->ModumateEditableTextBox->SetText(FText::GetEmpty());
 }
 
 void UNCPNavigator::ScrollPresetToView(const FGuid PresetToView)
@@ -342,4 +409,119 @@ void UNCPNavigator::GetTopTraversalPath(const FBIMTagPath& InNCP, FBIMTagPath& T
 void UNCPNavigator::OnSearchBarChanged(const FText& NewText)
 {
 	BuildNCPNavigator(CurrentPresetCardType);
+}
+
+UModumateEditableTextBoxUserWidget* UNCPNavigator::GetSearchTextBox()
+{
+	if (bUsesHelpMenuSearchbar)
+	{
+		return EMPlayerController->EditModelUserWidget->HelpMenuBP->HelpBlockTutorialsSearchBP->ComponentSearchBar;
+	}
+	else
+	{
+		return SearchBarWidget;
+	}
+}
+
+void UNCPNavigator::BuildTutorialList()
+{
+	CurrentPresetCardType = EPresetCardType::TutorialCategory;
+	DynamicMainListView->ClearListItems();
+
+	TArray<FBIMTagPath> sourceNCPTags;
+	for (auto& curNCPTagString : TutorialNCPTagStrings)
+	{
+		FBIMTagPath newTagPath;
+		newTagPath.FromString(curNCPTagString.Key);
+		sourceNCPTags.Add(newTagPath);
+	}
+
+	CacheSearchFilteredPresets(sourceNCPTags);
+
+	for (auto& curSourceNCPTag : sourceNCPTags)
+	{
+		if (IsNCPAvailableForSearch(curSourceNCPTag))
+		{
+			UBrowserItemObj* newAssemblyItemObj = NewObject<UBrowserItemObj>(this);
+			newAssemblyItemObj->ParentNCPNavigator = this;
+			newAssemblyItemObj->PresetCardType = CurrentPresetCardType;
+			newAssemblyItemObj->bAsPresetCard = false;
+			newAssemblyItemObj->NCPTag = curSourceNCPTag;
+			newAssemblyItemObj->TagOrder = curSourceNCPTag.Tags.Num() - 1;
+
+			// Check which NCP button should be opened
+			bool bSourceTagIsOpen = SelectedTags.Contains(curSourceNCPTag);
+			if (!bSourceTagIsOpen)
+			{
+				FString tagString;
+				curSourceNCPTag.ToString(tagString);
+				bSourceTagIsOpen = TutorialNCPTagStrings.FindRef(tagString);
+			}
+			newAssemblyItemObj->bNCPButtonExpanded = bSourceTagIsOpen;
+			DynamicMainListView->AddItem(newAssemblyItemObj);
+			if (bSourceTagIsOpen)
+			{
+				BuildTutorialBrowserItemSubObjs(curSourceNCPTag, curSourceNCPTag.Tags.Num() - 1);
+			}
+		}
+	}
+}
+
+void UNCPNavigator::BuildTutorialBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 TagOrder)
+{
+	// Build buttons lead to articles
+	TArray<FGuid> availableGuids;
+	EMPlayerController->EditModelUserWidget->HelpMenuBP->GetTutorialsForNCP(ParentNCP, availableGuids, true);
+	for (auto& tutorialGuid : availableGuids)
+	{
+		if (!IgnoredPresets.Contains(tutorialGuid) && SearchFilteredPresets.Contains(tutorialGuid))
+		{
+			UBrowserItemObj* newItemObj = NewObject<UBrowserItemObj>(this);
+			newItemObj->ParentNCPNavigator = this;
+			newItemObj->PresetCardType = EPresetCardType::TutorialArticle;
+			newItemObj->bAsPresetCard = false;
+			newItemObj->NCPTag = ParentNCP;
+			newItemObj->TagOrder = TagOrder + 1;
+			newItemObj->TutorialGuid = tutorialGuid;
+			DynamicMainListView->AddItem(newItemObj);
+		}
+	}
+
+	// Find subcategories under CurrentNCP at tag order
+	FBIMTagPath partialPath;
+	ParentNCP.GetPartialPath(TagOrder + 1, partialPath);
+	TArray<FString> subCats;
+	EMPlayerController->EditModelUserWidget->HelpMenuBP->GetTutorialNCPSubcategories(partialPath, subCats);
+
+	// Build a new NCP for each subcategory
+	for (int32 i = 0; i < subCats.Num(); ++i)
+	{
+		FString partialPathString;
+		partialPath.ToString(partialPathString);
+		FString newPathString = partialPathString + FString(TEXT("_")) + subCats[i];
+		FBIMTagPath newTagPath(newPathString);
+
+		if (IsNCPAvailableForSearch(newTagPath))
+		{
+			UBrowserItemObj* newItemObj = NewObject<UBrowserItemObj>(this);
+			newItemObj->ParentNCPNavigator = this;
+			newItemObj->PresetCardType = EPresetCardType::TutorialCategory;
+			newItemObj->bAsPresetCard = false;
+			newItemObj->NCPTag = newTagPath;
+			newItemObj->TagOrder = TagOrder + 1;
+			DynamicMainListView->AddItem(newItemObj);
+
+			// If NCP in subcategory is selected, that NCP is expanded
+			if (SelectedTags.Contains(newTagPath) ||
+				GetSearchTextBox()->ModumateEditableTextBox->GetText().ToString().Len() > 0)
+			{
+				newItemObj->bNCPButtonExpanded = true;
+				BuildTutorialBrowserItemSubObjs(newTagPath, TagOrder + 1);
+			}
+			else
+			{
+				newItemObj->bNCPButtonExpanded = false;
+			}
+		}
+	}
 }

@@ -49,6 +49,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UBorder* BorderBackground;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UVerticalBox* VerticalBox_TitleAndSearchbar;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bBorderAutoSize = false;
 
@@ -68,6 +71,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TMap<FString, bool> StarterNCPTagStrings;
 
+	// String of the NCP tutorial
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TMap<FString, bool> TutorialNCPTagStrings;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bUsesHelpMenuSearchbar = false;
+
 	void BuildAssemblyList(bool bScrollToSelectedAssembly = false);
 	void BuildNCPNavigator(EPresetCardType BuildAsType);
 	void BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 TagOrder);
@@ -84,7 +94,14 @@ public:
 	void EmptyIgnoredPresets();
 
 	void GetTopTraversalPath(const FBIMTagPath& InNCP, FBIMTagPath& TopTraversalNCP);
+	EPresetCardType GetCurrentType() { return CurrentPresetCardType; }
 
 	UFUNCTION()
 	void OnSearchBarChanged(const FText& NewText);
+
+	UModumateEditableTextBoxUserWidget* GetSearchTextBox();
+
+	// Tutorial
+	void BuildTutorialList();
+	void BuildTutorialBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 TagOrder);
 };

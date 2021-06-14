@@ -30,4 +30,7 @@ public:
 	// As PresetCard
 	FGuid PresetGuid;
 	bool bPresetCardExpanded = false;
+
+	// As Tutorial
+	FGuid TutorialGuid;
 };

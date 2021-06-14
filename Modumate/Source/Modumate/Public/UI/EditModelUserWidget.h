@@ -83,6 +83,9 @@ public:
 	class UTutorialWalkthroughMenu* TutorialWalkthroughMenuBP;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UHelpMenu* HelpMenuBP;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UViewCubeWidget* ViewCubeUserWidget;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -133,6 +136,7 @@ public:
 	void ToggleSwapMenu(bool NewVisibility);
 	void ToggleDeleteMenu(bool NewVisibility);
 	void ToggleSettingsWindow(bool NewVisibility);
+	void ToggleHelpMenu(bool NewVisibility);
 	bool IsBIMDesingerActive() const;
 	bool EMUserWidgetHandleEscapeKey();
 	void UpdateSelectTrayVisibility();

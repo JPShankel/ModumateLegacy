@@ -35,6 +35,9 @@ protected:
 	int32 TagOrder;
 	bool bExpanded = false;
 
+	bool bAsTutorialArticle = false;
+	FGuid TutorialGUID;
+
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -58,6 +61,7 @@ public:
 	UFUNCTION()
 	void OnButtonPress();
 
-	void BuildButton(class UNCPNavigator* InParentNCPNavigator, const FBIMTagPath& InNCP, int32 InTagOrder, bool bBuildAsExpanded = false);
+	void BuildCategoryButton(class UNCPNavigator* InParentNCPNavigator, const FBIMTagPath& InNCP, int32 InTagOrder, bool bBuildAsExpanded = false);
+	void BuildTutorialArticleButton(class UNCPNavigator* InParentNCPNavigator, const FGuid& InGUID, int32 InTagOrder);
 	void ToggleTextColor(bool bAsSelected);
 };

@@ -20,6 +20,8 @@ enum class EPresetCardType : uint8
 	Swap,
 	AssembliesList,
 	Delete,
+	TutorialCategory,
+	TutorialArticle,
 	None
 };
 

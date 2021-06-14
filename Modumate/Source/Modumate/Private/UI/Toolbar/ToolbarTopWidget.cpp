@@ -6,7 +6,6 @@
 #include "UI/Custom/ModumateButton.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-#include "UI/TutorialMenu/TutorialMenuWidget.h"
 
 
 UToolbarTopWidget::UToolbarTopWidget(const FObjectInitializer& ObjectInitializer)
@@ -23,12 +22,13 @@ bool UToolbarTopWidget::Initialize()
 
 	Controller = GetOwningPlayer<AEditModelPlayerController>();
 
-	if (!ButtonModumateHome)
+	if (!(ButtonModumateHome && Button_Help))
 	{
 		return false;
 	}
 
 	ButtonModumateHome->ModumateButton->OnReleased.AddDynamic(this, &UToolbarTopWidget::OnButtonReleaseModumateHome);
+	Button_Help->OnReleased.AddDynamic(this, &UToolbarTopWidget::OnButtonReleaseButtonHelp);
 
 	return true;
 }
@@ -43,6 +43,14 @@ void UToolbarTopWidget::OnButtonReleaseModumateHome()
 	if (Controller)
 	{
 		Controller->EditModelUserWidget->EventToggleProjectMenu();
+	}
+}
+
+void UToolbarTopWidget::OnButtonReleaseButtonHelp()
+{
+	if (Controller)
+	{
+		Controller->EditModelUserWidget->ToggleHelpMenu(true);
 	}
 }
 
