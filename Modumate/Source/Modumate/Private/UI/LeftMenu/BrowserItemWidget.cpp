@@ -60,7 +60,7 @@ void UBrowserItemWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 		{
 			PresetCardMainWidget->SetVisibility(ESlateVisibility::Collapsed);
 			NCPButtonWidget->SetVisibility(ESlateVisibility::Visible);
-			NCPButtonWidget->BuildTutorialArticleButton(itemObj->ParentNCPNavigator, itemObj->TutorialGuid, itemObj->TagOrder);
+			NCPButtonWidget->BuildTutorialArticleButton(itemObj->ParentNCPNavigator, itemObj->PresetGuid, itemObj->TagOrder);
 		}
 		else
 		{

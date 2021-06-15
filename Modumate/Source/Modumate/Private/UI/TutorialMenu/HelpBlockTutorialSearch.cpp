@@ -38,6 +38,6 @@ void UHelpBlockTutorialSearch::OnSearchBarChanged(const FText& NewText)
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller)
 	{
-		controller->EditModelUserWidget->HelpMenuBP->NCPNavigator->BuildTutorialList();
+		controller->EditModelUserWidget->HelpMenuBP->NCPNavigator->BuildNCPNavigator(EPresetCardType::TutorialCategory);
 	}
 }

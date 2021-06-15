@@ -100,8 +100,4 @@ public:
 	void OnSearchBarChanged(const FText& NewText);
 
 	UModumateEditableTextBoxUserWidget* GetSearchTextBox();
-
-	// Tutorial
-	void BuildTutorialList();
-	void BuildTutorialBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 TagOrder);
 };

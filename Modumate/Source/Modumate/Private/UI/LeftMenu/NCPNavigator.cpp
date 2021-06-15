@@ -95,6 +95,9 @@ void UNCPNavigator::BuildNCPNavigator(EPresetCardType BuildAsType)
 	CurrentPresetCardType = BuildAsType;
 	DynamicMainListView->ClearListItems();
 
+	const auto& starterTagStrings = CurrentPresetCardType == EPresetCardType::TutorialCategory || CurrentPresetCardType == EPresetCardType::TutorialArticle ? 
+		TutorialNCPTagStrings : StarterNCPTagStrings;
+
 	TArray<FBIMTagPath> sourceNCPTags;
 	// Delete and swap navigator starts with NCPTraversal stopper
 	// Other navigators start with browser like full list
@@ -121,7 +124,7 @@ void UNCPNavigator::BuildNCPNavigator(EPresetCardType BuildAsType)
 	else
 	{
 		// Full list
-		for (auto& curNCPTagString : StarterNCPTagStrings)
+		for (auto& curNCPTagString : starterTagStrings)
 		{
 			FBIMTagPath newTagPath;
 			newTagPath.FromString(curNCPTagString.Key);
@@ -148,7 +151,7 @@ void UNCPNavigator::BuildNCPNavigator(EPresetCardType BuildAsType)
 			{
 				FString tagString;
 				curSourceNCPTag.ToString(tagString);
-				bSourceTagIsOpen = StarterNCPTagStrings.FindRef(tagString);
+				bSourceTagIsOpen = starterTagStrings.FindRef(tagString);
 			}
 			newAssemblyItemObj->bNCPButtonExpanded = bSourceTagIsOpen;
 			DynamicMainListView->AddItem(newAssemblyItemObj);
@@ -162,19 +165,33 @@ void UNCPNavigator::BuildNCPNavigator(EPresetCardType BuildAsType)
 
 void UNCPNavigator::BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 TagOrder)
 {
+	bool bBuildingAsTutorial = CurrentPresetCardType == EPresetCardType::TutorialCategory || CurrentPresetCardType == EPresetCardType::TutorialArticle;
+
 	// Build presets
-	TArray<FGuid> availablePresets;
-	EMPlayerController->GetDocument()->GetPresetCollection().GetPresetsForNCP(ParentNCP, availablePresets, true);
-	for (auto& newPreset : availablePresets)
+	TArray<FGuid> availableGUIDs;
+	if (bBuildingAsTutorial)
 	{
-		if (!IgnoredPresets.Contains(newPreset) && SearchFilteredPresets.Contains(newPreset))
+		EMPlayerController->EditModelUserWidget->HelpMenuBP->GetTutorialsForNCP(ParentNCP, availableGUIDs, true);
+	}
+	else
+	{
+		EMPlayerController->GetDocument()->GetPresetCollection().GetPresetsForNCP(ParentNCP, availableGUIDs, true);
+	}
+
+	for (auto& newGUID : availableGUIDs)
+	{
+		if (!IgnoredPresets.Contains(newGUID) && SearchFilteredPresets.Contains(newGUID))
 		{
 			UBrowserItemObj* newItemObj = NewObject<UBrowserItemObj>(this);
 			newItemObj->ParentNCPNavigator = this;
-			newItemObj->PresetCardType = CurrentPresetCardType;
-			newItemObj->bAsPresetCard = true;
-			newItemObj->PresetGuid = newPreset;
+			newItemObj->PresetGuid = newGUID;
+			newItemObj->NCPTag = ParentNCP;
+			newItemObj->TagOrder = TagOrder + 1;
 			newItemObj->bPresetCardExpanded = false;
+
+			newItemObj->bAsPresetCard = !bBuildingAsTutorial;
+			newItemObj->PresetCardType = bBuildingAsTutorial ? EPresetCardType::TutorialArticle : CurrentPresetCardType;
+
 			DynamicMainListView->AddItem(newItemObj);
 		}
 	}
@@ -183,7 +200,14 @@ void UNCPNavigator::BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 
 	FBIMTagPath partialPath;
 	ParentNCP.GetPartialPath(TagOrder + 1, partialPath);
 	TArray<FString> subCats;
-	EMPlayerController->GetDocument()->GetPresetCollection().GetNCPSubcategories(partialPath, subCats);
+	if (bBuildingAsTutorial)
+	{
+		EMPlayerController->EditModelUserWidget->HelpMenuBP->GetTutorialNCPSubcategories(partialPath, subCats);
+	}
+	else
+	{
+		EMPlayerController->GetDocument()->GetPresetCollection().GetNCPSubcategories(partialPath, subCats);
+	}
 
 	// Build a new NCP for each subcategory
 	for (int32 i = 0; i < subCats.Num(); ++i)
@@ -197,10 +221,10 @@ void UNCPNavigator::BuildBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 
 		{
 			UBrowserItemObj* newItemObj = NewObject<UBrowserItemObj>(this);
 			newItemObj->ParentNCPNavigator = this;
-			newItemObj->PresetCardType = CurrentPresetCardType;
 			newItemObj->bAsPresetCard = false;
 			newItemObj->NCPTag = newTagPath;
 			newItemObj->TagOrder = TagOrder + 1;
+			newItemObj->PresetCardType = bBuildingAsTutorial ? EPresetCardType::TutorialCategory : CurrentPresetCardType;
 			DynamicMainListView->AddItem(newItemObj);
 
 			// If NCP in subcategory is selected, that NCP is expanded
@@ -327,15 +351,7 @@ void UNCPNavigator::ToggleNCPTagAsSelected(const FBIMTagPath& NCPTag, bool bAsSe
 		SelectedTags.Remove(NCPTag);
 	}
 
-	if (CurrentPresetCardType == EPresetCardType::TutorialArticle ||
-		CurrentPresetCardType == EPresetCardType::TutorialCategory)
-	{
-		BuildTutorialList();
-	}
-	else
-	{
-		BuildNCPNavigator(CurrentPresetCardType);
-	}
+	BuildNCPNavigator(CurrentPresetCardType);
 }
 
 void UNCPNavigator::SetNCPTagPathAsSelected(const FBIMTagPath& NCPTag)
@@ -420,108 +436,5 @@ UModumateEditableTextBoxUserWidget* UNCPNavigator::GetSearchTextBox()
 	else
 	{
 		return SearchBarWidget;
-	}
-}
-
-void UNCPNavigator::BuildTutorialList()
-{
-	CurrentPresetCardType = EPresetCardType::TutorialCategory;
-	DynamicMainListView->ClearListItems();
-
-	TArray<FBIMTagPath> sourceNCPTags;
-	for (auto& curNCPTagString : TutorialNCPTagStrings)
-	{
-		FBIMTagPath newTagPath;
-		newTagPath.FromString(curNCPTagString.Key);
-		sourceNCPTags.Add(newTagPath);
-	}
-
-	CacheSearchFilteredPresets(sourceNCPTags);
-
-	for (auto& curSourceNCPTag : sourceNCPTags)
-	{
-		if (IsNCPAvailableForSearch(curSourceNCPTag))
-		{
-			UBrowserItemObj* newAssemblyItemObj = NewObject<UBrowserItemObj>(this);
-			newAssemblyItemObj->ParentNCPNavigator = this;
-			newAssemblyItemObj->PresetCardType = CurrentPresetCardType;
-			newAssemblyItemObj->bAsPresetCard = false;
-			newAssemblyItemObj->NCPTag = curSourceNCPTag;
-			newAssemblyItemObj->TagOrder = curSourceNCPTag.Tags.Num() - 1;
-
-			// Check which NCP button should be opened
-			bool bSourceTagIsOpen = SelectedTags.Contains(curSourceNCPTag);
-			if (!bSourceTagIsOpen)
-			{
-				FString tagString;
-				curSourceNCPTag.ToString(tagString);
-				bSourceTagIsOpen = TutorialNCPTagStrings.FindRef(tagString);
-			}
-			newAssemblyItemObj->bNCPButtonExpanded = bSourceTagIsOpen;
-			DynamicMainListView->AddItem(newAssemblyItemObj);
-			if (bSourceTagIsOpen)
-			{
-				BuildTutorialBrowserItemSubObjs(curSourceNCPTag, curSourceNCPTag.Tags.Num() - 1);
-			}
-		}
-	}
-}
-
-void UNCPNavigator::BuildTutorialBrowserItemSubObjs(const FBIMTagPath& ParentNCP, int32 TagOrder)
-{
-	// Build buttons lead to articles
-	TArray<FGuid> availableGuids;
-	EMPlayerController->EditModelUserWidget->HelpMenuBP->GetTutorialsForNCP(ParentNCP, availableGuids, true);
-	for (auto& tutorialGuid : availableGuids)
-	{
-		if (!IgnoredPresets.Contains(tutorialGuid) && SearchFilteredPresets.Contains(tutorialGuid))
-		{
-			UBrowserItemObj* newItemObj = NewObject<UBrowserItemObj>(this);
-			newItemObj->ParentNCPNavigator = this;
-			newItemObj->PresetCardType = EPresetCardType::TutorialArticle;
-			newItemObj->bAsPresetCard = false;
-			newItemObj->NCPTag = ParentNCP;
-			newItemObj->TagOrder = TagOrder + 1;
-			newItemObj->TutorialGuid = tutorialGuid;
-			DynamicMainListView->AddItem(newItemObj);
-		}
-	}
-
-	// Find subcategories under CurrentNCP at tag order
-	FBIMTagPath partialPath;
-	ParentNCP.GetPartialPath(TagOrder + 1, partialPath);
-	TArray<FString> subCats;
-	EMPlayerController->EditModelUserWidget->HelpMenuBP->GetTutorialNCPSubcategories(partialPath, subCats);
-
-	// Build a new NCP for each subcategory
-	for (int32 i = 0; i < subCats.Num(); ++i)
-	{
-		FString partialPathString;
-		partialPath.ToString(partialPathString);
-		FString newPathString = partialPathString + FString(TEXT("_")) + subCats[i];
-		FBIMTagPath newTagPath(newPathString);
-
-		if (IsNCPAvailableForSearch(newTagPath))
-		{
-			UBrowserItemObj* newItemObj = NewObject<UBrowserItemObj>(this);
-			newItemObj->ParentNCPNavigator = this;
-			newItemObj->PresetCardType = EPresetCardType::TutorialCategory;
-			newItemObj->bAsPresetCard = false;
-			newItemObj->NCPTag = newTagPath;
-			newItemObj->TagOrder = TagOrder + 1;
-			DynamicMainListView->AddItem(newItemObj);
-
-			// If NCP in subcategory is selected, that NCP is expanded
-			if (SelectedTags.Contains(newTagPath) ||
-				GetSearchTextBox()->ModumateEditableTextBox->GetText().ToString().Len() > 0)
-			{
-				newItemObj->bNCPButtonExpanded = true;
-				BuildTutorialBrowserItemSubObjs(newTagPath, TagOrder + 1);
-			}
-			else
-			{
-				newItemObj->bNCPButtonExpanded = false;
-			}
-		}
 	}
 }

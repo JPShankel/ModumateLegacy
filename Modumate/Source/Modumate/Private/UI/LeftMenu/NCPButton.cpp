@@ -7,8 +7,9 @@
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UI/PresetCard/PresetCardMain.h"
-#include "Blueprint/WidgetLayoutLibrary.h"
-#include "Components/VerticalBoxSlot.h"
+#include "Components/HorizontalBox.h"
+#include "Components/ButtonSlot.h"
+#include "Components/Image.h"
 #include "UI/LeftMenu/NCPNavigator.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/TutorialMenu/HelpMenu.h"
@@ -70,8 +71,12 @@ void UNCPButton::BuildCategoryButton(class UNCPNavigator* InParentNCPNavigator, 
 	ToggleTextColor(bExpanded);
 
 	// Add paddding to text
-	UVerticalBoxSlot* verticalBoxSlot = UWidgetLayoutLibrary::SlotAsVerticalBoxSlot(ButtonText);
-	verticalBoxSlot->SetPadding(FMargin(TagOrder * ButtonPaddingSizePerNCPorder, 0.f, 0.f, 0.f));
+	UButtonSlot* horizontalBoxSlot = Cast<UButtonSlot>(HorizontalBoxText->Slot);
+	if (horizontalBoxSlot)
+	{
+		horizontalBoxSlot->SetPadding(FMargin(TagOrder * ButtonPaddingSizePerNCPorder, 0.f, 0.f, 0.f) + ButtonPaddingSizeOriginal);
+	}
+	ButtonIconGoToArticle->SetVisibility(ESlateVisibility::Collapsed);
 
 	if (ensureAlways(NCPTag.Tags.Num() > 0))
 	{
@@ -98,8 +103,12 @@ void UNCPButton::BuildTutorialArticleButton(class UNCPNavigator* InParentNCPNavi
 	ToggleTextColor(false);
 
 	// Add paddding to text
-	UVerticalBoxSlot* verticalBoxSlot = UWidgetLayoutLibrary::SlotAsVerticalBoxSlot(ButtonText);
-	verticalBoxSlot->SetPadding(FMargin(TagOrder * ButtonPaddingSizePerNCPorder, 0.f, 0.f, 0.f));
+	UButtonSlot* horizontalBoxSlot = Cast<UButtonSlot>(HorizontalBoxText->Slot);
+	if (horizontalBoxSlot)
+	{
+		horizontalBoxSlot->SetPadding(FMargin(TagOrder * ButtonPaddingSizePerNCPorder, 0.f, 0.f, 0.f) + ButtonPaddingSizeOriginal);
+	}
+	ButtonIconGoToArticle->SetVisibility(ESlateVisibility::Visible);
 
 	auto tutorialNode = EMPlayerController->EditModelUserWidget->HelpMenuBP->AllTutorialNodesByGUID.Find(TutorialGUID);
 	if (tutorialNode)

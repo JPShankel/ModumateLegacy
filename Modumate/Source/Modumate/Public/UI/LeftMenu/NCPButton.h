@@ -46,6 +46,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
 	class UModumateTextBlock* ButtonText;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
+	class UHorizontalBox* HorizontalBoxText;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
+	class UImage* ButtonIconGoToArticle;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText ButtonTextOverride;
 
@@ -57,6 +63,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ButtonPaddingSizePerNCPorder = 12.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FMargin ButtonPaddingSizeOriginal = FMargin(24.f, 3.f, 0.f, 3.f);
 
 	UFUNCTION()
 	void OnButtonPress();

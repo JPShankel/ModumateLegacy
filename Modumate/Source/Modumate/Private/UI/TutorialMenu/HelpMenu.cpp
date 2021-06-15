@@ -145,7 +145,7 @@ void UHelpMenu::ReadTutorialCSV(FHttpRequestPtr Request, FHttpResponsePtr Respon
 
 	if (AllTutorialNodesByGUID.Num() > 0)
 	{
-		NCPNavigator->BuildTutorialList();
+		NCPNavigator->BuildNCPNavigator(EPresetCardType::TutorialCategory);
 	}
 }
 
