@@ -129,7 +129,7 @@ uint32 GetTypeHash(const FStructDataWrapper& StructDataWrapper)
 	}
 
 	auto& structBuffer = StructDataWrapper.StructCborBuffer;
-	return FCrc::MemCrc32(structBuffer.GetData(), structBuffer.Num(), GetTypeHash(StructDataWrapper.StructName));
+	return FCrc::MemCrc32(structBuffer.GetData(), structBuffer.Num(), GetTypeHash(StructDataWrapper.StructName.ToString()));
 }
 
 void FStructDataWrapper::PostSerialize(const FArchive& Ar)

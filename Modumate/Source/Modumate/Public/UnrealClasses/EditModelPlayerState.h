@@ -228,11 +228,14 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SendClientDeltas(const FDeltasRecord& Deltas);
 
+	UFUNCTION(Server, Reliable)
+	void TryUndo();
+
 	UFUNCTION(Client, Reliable)
 	void SendInitialDeltas(const TArray<FDeltasRecord>& InitialDeltas);
 
 	UFUNCTION(Client, Reliable)
-	void RollBackUnverifiedDeltas(int32 MaxVerifiedDeltasID, uint32 VerifiedDocHash);
+	void RollBackUnverifiedDeltas(uint32 VerifiedDocHash);
 
 	UFUNCTION(Server, Unreliable)
 	void UpdateCameraUnreliable(const FTransform& NewTransform);

@@ -1138,25 +1138,41 @@ void AEditModelPlayerState::SendClientDeltas_Implementation(const FDeltasRecord&
 		// If the server verifies that these deltas have been made after the latest one,
 		// then broadcast them to every client.
 		FDeltasRecord reconciledRecord;
-		int32 maxVerifiedDeltasID;
 		uint32 verifiedDocHash;
-		if (gameState->Document->ReconcileRemoteDeltas(Deltas, world, reconciledRecord, maxVerifiedDeltasID, verifiedDocHash))
+		if (gameState->Document->ReconcileRemoteDeltas(Deltas, world, reconciledRecord, verifiedDocHash))
 		{
-			UE_LOG(LogTemp, Log, TEXT("Broadcasting verified DeltasRecord #%d from user %s, hash %08x"), Deltas.ID, *Deltas.OriginUserID, GetTypeHash(Deltas));
+			UE_LOG(LogTemp, Log, TEXT("Broadcasting verified DeltasRecord %08x from user %s"), Deltas.TotalHash, *Deltas.OriginUserID);
 			gameState->BroadcastServerDeltas(Deltas);
 		}
 		// Otherwise, tell the client that it needs to roll back all unverified deltas,
 		// and potentially broadcast reconciled deltas that include changes from the out-of-date client's deltas.
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("User %s sent out-of-date DeltasRecord #%d, hash %08x - rolling back"), *Deltas.OriginUserID, Deltas.ID, GetTypeHash(Deltas));
-			RollBackUnverifiedDeltas(maxVerifiedDeltasID, verifiedDocHash);
+			UE_LOG(LogTemp, Warning, TEXT("User %s sent out-of-date DeltasRecord hash %08x - rolling back"), *Deltas.OriginUserID, Deltas.TotalHash);
+			RollBackUnverifiedDeltas(verifiedDocHash);
 
 			if (!reconciledRecord.IsEmpty())
 			{
+				UE_LOG(LogTemp, Log, TEXT("Broadcasting reconciled DeltasRecord DeltasRecord %08x from user %s"), Deltas.TotalHash, *Deltas.OriginUserID);
 				gameState->BroadcastServerDeltas(reconciledRecord);
 			}
 		}
+	}
+}
+
+// RPC from the client to the server's copy of that client's PlayerState
+void AEditModelPlayerState::TryUndo_Implementation()
+{
+	FString userID;
+	TArray<uint32> undoRecordHashes;
+
+	UWorld* world = GetWorld();
+	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
+	AEditModelGameMode* gameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
+	if (gameState && gameState->Document && gameMode && gameMode->GetUserByPlayerID(GetPlayerId(), userID) &&
+		gameState->Document->GetUndoRecordsFromClient(world, userID, undoRecordHashes))
+	{
+		gameState->BroadcastUndo(userID, undoRecordHashes);
 	}
 }
 
@@ -1186,13 +1202,13 @@ void AEditModelPlayerState::SendInitialDeltas_Implementation(const TArray<FDelta
 }
 
 // RPC from the server to the client's copy of its PlayerState
-void AEditModelPlayerState::RollBackUnverifiedDeltas_Implementation(int32 MaxVerifiedDeltasID, uint32 VerifiedDocHash)
+void AEditModelPlayerState::RollBackUnverifiedDeltas_Implementation(uint32 VerifiedDocHash)
 {
 	UWorld* world = GetWorld();
 	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
 	if (gameState && gameState->Document)
 	{
-		gameState->Document->RollBackUnverifiedDeltas(MaxVerifiedDeltasID, VerifiedDocHash, world);
+		gameState->Document->RollBackUnverifiedDeltas(VerifiedDocHash, world);
 	}
 }
 

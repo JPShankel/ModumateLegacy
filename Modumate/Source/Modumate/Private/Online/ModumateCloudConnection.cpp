@@ -40,24 +40,22 @@ void FModumateCloudConnection::SetAuthToken(const FString& InAuthToken)
 	AuthToken = InAuthToken;
 }
 
-FString FModumateCloudConnection::MakeEncryptionToken(const FString& UserID, const FGuid& SessionID)
+FString FModumateCloudConnection::MakeEncryptionToken(const FString& UserID, const FString& ProjectID)
 {
-	return UserID + SUBOBJECT_DELIMITER + SessionID.ToString(EGuidFormats::Short);
+	return UserID + SUBOBJECT_DELIMITER + ProjectID;
 }
 
-bool FModumateCloudConnection::ParseEncryptionToken(const FString& EncryptionToken, FString& OutUserID, FGuid& OutSessionID)
+bool FModumateCloudConnection::ParseEncryptionToken(const FString& EncryptionToken, FString& OutUserID, FString& OutProjectID)
 {
 	OutUserID.Empty();
-	OutSessionID.Invalidate();
+	OutProjectID.Empty();
 
-	FString sessionIDStr;
-	return EncryptionToken.Split(SUBOBJECT_DELIMITER, &OutUserID, &sessionIDStr) &&
-		!OutUserID.IsEmpty() && FGuid::Parse(sessionIDStr, OutSessionID);
+	return EncryptionToken.Split(SUBOBJECT_DELIMITER, &OutUserID, &OutProjectID) && !OutUserID.IsEmpty() && !OutProjectID.IsEmpty();
 }
 
-bool FModumateCloudConnection::GetCachedEncryptionKey(const FString& UserID, const FGuid& SessionID, FString& OutEncryptionKey)
+bool FModumateCloudConnection::GetCachedEncryptionKey(const FString& UserID, const FString& ProjectID, FString& OutEncryptionKey)
 {
-	FString encryptionToken = MakeEncryptionToken(UserID, SessionID);
+	FString encryptionToken = MakeEncryptionToken(UserID, ProjectID);
 
 	if (CachedEncryptionKeysByToken.Contains(encryptionToken))
 	{
@@ -68,15 +66,15 @@ bool FModumateCloudConnection::GetCachedEncryptionKey(const FString& UserID, con
 	return false;
 }
 
-void FModumateCloudConnection::QueryEncryptionKey(const FString& UserID, const FGuid& SessionID, const FOnEncryptionKeyResponse& Delegate)
+void FModumateCloudConnection::QueryEncryptionKey(const FString& UserID, const FString& ProjectID, const FOnEncryptionKeyResponse& Delegate)
 {
 	FString encryptionKeyString;
-	if (!GetCachedEncryptionKey(UserID, SessionID, encryptionKeyString))
+	if (!GetCachedEncryptionKey(UserID, ProjectID, encryptionKeyString))
 	{
-		FString encryptionToken = MakeEncryptionToken(UserID, SessionID);
+		FString encryptionToken = MakeEncryptionToken(UserID, ProjectID);
 
 		// TODO: asynchronously retrieve a real encryption key from the AMS using the User ID & Session ID, and *then* call the delegate.
-		encryptionKeyString = UserID.Reverse() + SessionID.ToString(EGuidFormats::Short).Reverse();
+		encryptionKeyString = UserID.Reverse() + ProjectID.Reverse();
 		CachedEncryptionKeysByToken.Add(encryptionToken, encryptionKeyString);
 	}
 

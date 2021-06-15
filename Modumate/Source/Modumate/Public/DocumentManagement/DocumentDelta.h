@@ -50,11 +50,13 @@ struct MODUMATE_API FDeltasRecord
 	GENERATED_BODY()
 
 	FDeltasRecord();
-	FDeltasRecord(const TArray<FDeltaPtr>& InDeltas, int32 InID = MOD_ID_NONE, const FString& InOriginUserID = FString(), uint32 InPrevDocHash = 0);
+	FDeltasRecord(const TArray<FDeltaPtr>& InDeltas, const FString& InOriginUserID = FString(), uint32 InPrevDocHash = 0);
 
 	bool IsEmpty() const;
-	void CacheSelfHash();
-	void SetResults(const FAffectedObjMap& InAffectedObjects, const TSet<int32>& InDirtiedObjects, const TArray<FGuid>& InAffectedPresets);
+	void ComputeHash();
+	void SetResults(const FAffectedObjMap& InAffectedObjects, const TSet<int32>& InDirtiedObjects, const TArray<FGuid>& InAffectedPresets, const FBox& InAffectedObjBounds);
+	void GatherResults(TSet<int32>& OutAffectedObjects, TSet<FGuid>& OutAffectedPresets, FBox* OutAffectedObjBounds = nullptr) const;
+	bool ConflictsWithResults(const TSet<int32>& OtherAffectedObjects, const TSet<FGuid>& OtherAffectedPresets, const FBox* OtherAffectedObjBounds = nullptr) const;
 
 	void PostSerialize(const FArchive& Ar);
 	bool operator==(const FDeltasRecord& Other) const;
@@ -67,16 +69,16 @@ struct MODUMATE_API FDeltasRecord
 	TArray<FStructDataWrapper> DeltaStructWrappers;
 
 	UPROPERTY()
-	int32 ID = MOD_ID_NONE;
+	FString OriginUserID;
 
 	UPROPERTY()
-	FString OriginUserID;
+	uint32 SelfHash = 0;
 
 	UPROPERTY()
 	uint32 PrevDocHash = 0;
 
 	UPROPERTY()
-	uint32 CachedSelfHash = 0;
+	uint32 TotalHash = 0;
 
 	// Diagnostic, but still useful enough for replication
 
@@ -97,6 +99,9 @@ struct MODUMATE_API FDeltasRecord
 
 	UPROPERTY()
 	TArray<FGuid> AffectedPresets;
+
+	UPROPERTY()
+	FBox AffectedObjBounds = FBox(EForceInit::ForceInitToZero);
 
 	// Non-definitional / derived from application; not necessarily worth the space for replication
 

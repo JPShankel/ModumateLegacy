@@ -21,4 +21,7 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void BroadcastServerDeltas(const FDeltasRecord& Deltas);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void BroadcastUndo(const FString& UndoingUserID, const TArray<uint32>& UndoRecordHashes);
 };

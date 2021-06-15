@@ -152,7 +152,7 @@ FDateTime AMainMenuGameMode::GetCurrentDateTime()
 	return FDateTime::Now();
 }
 
-bool AMainMenuGameMode::ConnectToMultiplayerServer(const FString& URL, const FGuid& MPSessionID)
+bool AMainMenuGameMode::ConnectToMultiplayerServer(const FString& URL, const FString& ProjectID)
 {
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
@@ -164,8 +164,8 @@ bool AMainMenuGameMode::ConnectToMultiplayerServer(const FString& URL, const FGu
 	}
 
 	// The public encryption token is just the user ID and the session ID, as used by Epic's examples in Fortnite
-	FString fullURL = FString::Printf(TEXT("%s?EncryptionToken=%s%s%s"),
-		*URL, *accountManager->GetUserInfo().ID, SUBOBJECT_DELIMITER, *MPSessionID.ToString(EGuidFormats::Short));
+	FString fullURL = FString::Printf(TEXT("%s?EncryptionToken=%s"),
+		*URL, *FModumateCloudConnection::MakeEncryptionToken(accountManager->GetUserInfo().ID, ProjectID));
 
 	playerController->ClientTravel(fullURL, ETravelType::TRAVEL_Absolute);
 

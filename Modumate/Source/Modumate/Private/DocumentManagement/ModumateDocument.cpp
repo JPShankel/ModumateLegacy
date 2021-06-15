@@ -90,14 +90,6 @@ void UModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 {
 	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentUndoRedo);
 
-	if (World->IsNetMode(NM_Client))
-	{
-		// TODO: refactor undo/redo for multiplayer, to interface with VerifiedDeltasRecords in addition to / instead of UndoBuffer.
-		// This refactor will require deciding whether the intent is for undo to add to history or remove from it.
-		UE_LOG(LogTemp, Warning, TEXT("Undo/redo is unimplemented for multiplayer clients!"));
-		return;
-	}
-
 	if (FromBuffer.Num() > 0)
 	{
 		TSharedPtr<UndoRedo> ur = FromBuffer.Last();
@@ -131,7 +123,18 @@ void UModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 
 void UModumateDocument::Undo(UWorld *World)
 {
-	if (ensureAlways(!InUndoRedoMacro()))
+	auto* localPlayer = World ? World->GetFirstLocalPlayerFromController() : nullptr;
+	auto* controller = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(World)) : nullptr;
+	if (!ensure(controller && controller->EMPlayerState))
+	{
+		return;
+	}
+
+	if (controller->EMPlayerState->IsNetMode(NM_Client))
+	{
+		controller->EMPlayerState->TryUndo();
+	}
+	else if (ensureAlways(!InUndoRedoMacro()))
 	{
 		PerformUndoRedo(World, UndoBuffer, RedoBuffer);
 	}
@@ -139,10 +142,75 @@ void UModumateDocument::Undo(UWorld *World)
 
 void UModumateDocument::Redo(UWorld *World)
 {
-	if (ensureAlways(!InUndoRedoMacro()))
+	auto* localPlayer = World ? World->GetFirstLocalPlayerFromController() : nullptr;
+	auto* controller = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(World)) : nullptr;
+	if (!ensure(controller && controller->EMPlayerState))
+	{
+		return;
+	}
+
+	if (controller->EMPlayerState->IsNetMode(NM_Client))
+	{
+		int32 numUndoneRecords = UndoneDeltasRecords.Num();
+		if (numUndoneRecords > 0)
+		{
+			auto& undoneRecord = UndoneDeltasRecords.Last();
+			if (ApplyDeltas(undoneRecord.RawDeltaPtrs, World, true) &&
+				ensure(numUndoneRecords == UndoneDeltasRecords.Num()))
+			{
+				UndoneDeltasRecords.RemoveAt(numUndoneRecords - 1);
+			}
+		}
+	}
+	else if (ensureAlways(!InUndoRedoMacro()))
 	{
 		PerformUndoRedo(World, RedoBuffer, UndoBuffer);
 	}
+}
+
+bool UModumateDocument::GetUndoRecordsFromClient(UWorld* World, const FString& UserID, TArray<uint32>& OutUndoRecordHashes) const
+{
+	OutUndoRecordHashes.Reset();
+
+	if (!ensure(World && !World->IsNetMode(NM_Client)))
+	{
+		return false;
+	}
+
+	int32 numVerifiedDeltasRecords = VerifiedDeltasRecords.Num();
+	int32 firstDeltaIdx = INDEX_NONE;
+
+	for (int32 recordIdx = numVerifiedDeltasRecords - 1; recordIdx >= 0; --recordIdx)
+	{
+		auto& deltasRecord = VerifiedDeltasRecords[recordIdx];
+		if (deltasRecord.OriginUserID == UserID)
+		{
+			firstDeltaIdx = recordIdx;
+			break;
+		}
+	}
+
+	if (firstDeltaIdx == INDEX_NONE)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("There aren't any DeltasRecords from %s to undo!"), *UserID);
+		return false;
+	}
+
+	TSet<int32> affectedObjects;
+	TSet<FGuid> affectedPresets;
+	auto& firstDeltasRecord = VerifiedDeltasRecords[firstDeltaIdx];
+
+	for (int32 recordIdx = firstDeltaIdx; recordIdx < numVerifiedDeltasRecords; ++recordIdx)
+	{
+		auto& deltasRecord = VerifiedDeltasRecords[recordIdx];
+		if ((recordIdx == firstDeltaIdx) || deltasRecord.ConflictsWithResults(affectedObjects, affectedPresets))
+		{
+			OutUndoRecordHashes.Add(deltasRecord.TotalHash);
+			deltasRecord.GatherResults(affectedObjects, affectedPresets);
+		}
+	}
+
+	return true;
 }
 
 void UModumateDocument::BeginUndoRedoMacro()
@@ -479,30 +547,51 @@ AModumateObjectInstance* UModumateDocument::CreateOrRestoreObj(UWorld* World, co
 	return newObj;
 }
 
-bool UModumateDocument::ReconcileRemoteDeltas(const FDeltasRecord& DeltasRecord, UWorld* World,
-	FDeltasRecord& OutReconciledRecord, int32& OutMaxVerifiedDeltasID, uint32& OutVerifiedDocHash)
+bool UModumateDocument::ReconcileRemoteDeltas(const FDeltasRecord& DeltasRecord, UWorld* World, FDeltasRecord& OutReconciledRecord, uint32& OutVerifiedDocHash)
 {
 	OutReconciledRecord = FDeltasRecord();
-	OutMaxVerifiedDeltasID = GetLatestVerifiedDeltasID();
 	OutVerifiedDocHash = GetLatestVerifiedDocHash();
 
 	// For now, only reject deltas that come from clients that are out of date, which will eventually receive the deltas that *were* verified.
 	// TODO: handle delta merging, conflict resolution, rollbacks, etc. so that deltas from clients that are out of date can still be combined
 	// with verified deltas if they don't affect the same data in conflicting ways. The OutCorrections parameter would be used to fix the order
 	// of deltas on the client that's out of date.
-	bool bValidRecordID = (DeltasRecord.ID > OutMaxVerifiedDeltasID);
-	bool bValidRecordHash = (DeltasRecord.PrevDocHash == OutVerifiedDocHash);
-	if (bValidRecordID != bValidRecordHash)
+	if (DeltasRecord.PrevDocHash == OutVerifiedDocHash)
 	{
-		UE_LOG(LogTemp, Error, TEXT("DeltasRecords #%d (from %s, hash %08x, prev hash %08x) inconsistent with latest DeltasRecord #%d (hash %08x)"),
-			DeltasRecord.ID, *DeltasRecord.OriginUserID, GetTypeHash(DeltasRecord), DeltasRecord.PrevDocHash,
-			OutMaxVerifiedDeltasID, OutVerifiedDocHash);
+		return true;
 	}
+	else
+	{
+		// Gather the set of all objects, presets, and locations affected by the deltas that have been verified since the incoming delta was made.
+		TSet<int32> affectedObjects;
+		TSet<FGuid> affectedPresets;
+		FBox affectedBounds;
 
-	return bValidRecordID && bValidRecordHash;
+		int32 numVerifiedRecords = VerifiedDeltasRecords.Num();
+		for (int32 i = numVerifiedRecords - 1; i >= 0; --i)
+		{
+			const auto& verifiedRecord = VerifiedDeltasRecords[i];
+			if (verifiedRecord.TotalHash == DeltasRecord.PrevDocHash)
+			{
+				break;
+			}
+			else
+			{
+				verifiedRecord.GatherResults(affectedObjects, affectedPresets, &affectedBounds);
+			}
+		}
+
+		// If the incoming delta had no effects that conflict with any of the verified deltas, then make a reconciled delta on top of the latest verified one.
+		if (!DeltasRecord.ConflictsWithResults(affectedObjects, affectedPresets, &affectedBounds))
+		{
+			OutReconciledRecord = FDeltasRecord(DeltasRecord.RawDeltaPtrs, DeltasRecord.OriginUserID, OutVerifiedDocHash);
+		}
+
+		return false;
+	}
 }
 
-bool UModumateDocument::RollBackUnverifiedDeltas(int32 MaxVerifiedDeltasID, uint32 VerifiedDocHash, UWorld* World)
+bool UModumateDocument::RollBackUnverifiedDeltas(uint32 VerifiedDocHash, UWorld* World)
 {
 	bool bRolledBackDeltas = false;
 
@@ -510,17 +599,16 @@ bool UModumateDocument::RollBackUnverifiedDeltas(int32 MaxVerifiedDeltasID, uint
 	{
 		auto& unverifiedDeltasRecord = UnverifiedDeltasRecords.Last();
 
-		// TODO: utilize the document hash to roll back unverified FDeltasRecords
-		if (unverifiedDeltasRecord.ID >= MaxVerifiedDeltasID)
-		{
-			ApplyInvertedDeltas(World, unverifiedDeltasRecord.RawDeltaPtrs);
-			UnverifiedDeltasRecords.RemoveAt(UnverifiedDeltasRecords.Num() - 1);
-			bRolledBackDeltas = true;
-		}
-		else
-		{
-			break;
-		}
+		// Undo all unverified deltas, since we wouldn't expect an earlier record's verification to lag behind a later record's rollback.
+		ApplyInvertedDeltas(World, unverifiedDeltasRecord.RawDeltaPtrs);
+		UnverifiedDeltasRecords.RemoveAt(UnverifiedDeltasRecords.Num() - 1);
+		bRolledBackDeltas = true;
+	}
+
+	uint32 localVerifiedDocHash = GetLatestVerifiedDocHash();
+	if (!ensure(VerifiedDocHash == localVerifiedDocHash))
+	{
+		UE_LOG(LogTemp, Error, TEXT("The local verified doc hash %08x disagrees with the expected value: %08x!"), localVerifiedDocHash, VerifiedDocHash);
 	}
 
 	return bRolledBackDeltas;
@@ -528,7 +616,8 @@ bool UModumateDocument::RollBackUnverifiedDeltas(int32 MaxVerifiedDeltasID, uint
 
 bool UModumateDocument::ApplyRemoteDeltas(const FDeltasRecord& DeltasRecord, UWorld* World, bool bApplyOwnDeltas)
 {
-	if (!ensure(DeltasRecord.ID > GetLatestVerifiedDeltasID()))
+	uint32 latestVerifiedDocHash = GetLatestVerifiedDocHash();
+	if (!ensure(DeltasRecord.PrevDocHash == latestVerifiedDocHash))
 	{
 		// TODO: handle desync
 		return false;
@@ -540,13 +629,16 @@ bool UModumateDocument::ApplyRemoteDeltas(const FDeltasRecord& DeltasRecord, UWo
 		// If we receive remote deltas from another user while we still have some unverified deltas,
 		// then it means we didn't send them to the server fast enough;
 		// otherwise, another user's deltas should've caused the server to tell us to roll back directly.
-		if (RollBackUnverifiedDeltas(DeltasRecord.ID, DeltasRecord.PrevDocHash, World))
+		if (RollBackUnverifiedDeltas(latestVerifiedDocHash, World))
 		{
-			UE_LOG(LogTemp, Log, TEXT("Rolled back local deltas received before remote delta ID #%d from user ID %s"),
-				DeltasRecord.ID, *DeltasRecord.OriginUserID);
+			UE_LOG(LogTemp, Log, TEXT("Rolled back local deltas received before remote delta %08x from user ID %s"),
+				DeltasRecord.TotalHash, *DeltasRecord.OriginUserID);
 		}
 
-		NextLocalDeltasID = FMath::Max(NextLocalDeltasID, DeltasRecord.ID + 1);
+		// Wipe the undone deltas, since redoing on top of other user's changes is unlikely to be valid.
+		// TODO: should this be conditional on interfering with the union of all affected data from undone deltas,
+		// since that's how we verify undo in the first place?
+		UndoneDeltasRecords.Reset();
 	}
 
 	VerifiedDeltasRecords.Add(DeltasRecord);
@@ -557,26 +649,86 @@ bool UModumateDocument::ApplyRemoteDeltas(const FDeltasRecord& DeltasRecord, UWo
 	APlayerController* localController = localPlayer ? localPlayer->GetPlayerController(World) : nullptr;
 	if (localController && localController->IsNetMode(NM_Client) && bReceivingOwnDeltas && !bApplyOwnDeltas)
 	{
-		int32 verifiedDeltasID = DeltasRecord.ID;
-		int32 unverifiedIdx = UnverifiedDeltasRecords.IndexOfByPredicate([this, verifiedDeltasID](const FDeltasRecord& UnverifiedDeltasRecord)
-			{ return (UnverifiedDeltasRecord.ID == verifiedDeltasID); });
-		if (ensure(unverifiedIdx != INDEX_NONE))
+		uint32 verifiedDeltasHash = DeltasRecord.TotalHash;
+		int32 unverifiedIdx = UnverifiedDeltasRecords.IndexOfByPredicate([this, verifiedDeltasHash](const FDeltasRecord& UnverifiedDeltasRecord)
+			{ return (UnverifiedDeltasRecord.TotalHash == verifiedDeltasHash); });
+
+		// If we're receiving our own deltas, then we wait until now to remove them from the unverified list.
+		if (unverifiedIdx != INDEX_NONE)
 		{
 			UnverifiedDeltasRecords.RemoveAt(unverifiedIdx);
 		}
+		// But if we already removed them before (i.e. from being rolled back for being out of date), then we want to reapply the reconciled deltas here.
+		else
+		{
+			bApplyOwnDeltas = true;
+		}
 	}
 
-	for (auto& structWrapper : DeltasRecord.DeltaStructWrappers)
+	for (auto& deltaPtr : DeltasRecord.RawDeltaPtrs)
 	{
-		FDeltaPtr deltaPtr = MakeShareable(structWrapper.CreateStructFromJSON<FDocumentDelta>());
-		if (!ensure(deltaPtr))
-		{
-			continue;
-		}
-
-		if (!bReceivingOwnDeltas || bApplyOwnDeltas)
+		if ((!bReceivingOwnDeltas || bApplyOwnDeltas) && ensure(deltaPtr))
 		{
 			deltaPtr->ApplyTo(this, World);
+		}
+	}
+
+	PostApplyDeltas(World, true, true);
+
+	return true;
+}
+
+bool UModumateDocument::ApplyRemoteUndo(UWorld* World, const FString& UndoingUserID, const TArray<uint32>& UndoRecordHashes)
+{
+	int32 numUndoRecords = UndoRecordHashes.Num();
+	if (!ensure(numUndoRecords > 0))
+	{
+		return false;
+	}
+
+	// If we receive an undo request (either originating from us, or any other user) while we still have some unverified deltas,
+	// then it means we didn't send them to the server fast enough.
+	if (RollBackUnverifiedDeltas(GetLatestVerifiedDocHash(), World))
+	{
+		UE_LOG(LogTemp, Log, TEXT("Rolled back local deltas received before remote undo from user ID %s"), *UndoingUserID);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Undoing %d deltas from user %s"), numUndoRecords, *UndoingUserID);
+
+	for (int32 recordIDIdx = numUndoRecords - 1; recordIDIdx >= 0; --recordIDIdx)
+	{
+		uint32 recordHash = UndoRecordHashes[recordIDIdx];
+		int32 recordIdx = VerifiedDeltasRecords.IndexOfByPredicate([this, recordHash](const FDeltasRecord& VerifiedDeltasRecord)
+			{ return (VerifiedDeltasRecord.TotalHash == recordHash); });
+
+		if (!ensure(recordIdx != INDEX_NONE))
+		{
+			return false;
+		}
+
+		auto& undoRecord = VerifiedDeltasRecords[recordIdx];
+		ApplyInvertedDeltas(World, undoRecord.RawDeltaPtrs);
+
+		if (UndoingUserID == CachedLocalUserID)
+		{
+			UndoneDeltasRecords.Add(VerifiedDeltasRecords[recordIdx]);
+		}
+
+		VerifiedDeltasRecords.RemoveAt(recordIdx);
+
+		// After removing the final (oldest) DeltasRecord, re-hash the subsequent deltas
+		if (recordIDIdx == 0)
+		{
+			int32 numRecords = VerifiedDeltasRecords.Num();
+			for (int32 rehashIdx = recordIdx; rehashIdx < numRecords; ++rehashIdx)
+			{
+				int32 prevRecordIdx = rehashIdx - 1;
+				uint32 prevDocHash = VerifiedDeltasRecords.IsValidIndex(prevRecordIdx) ? VerifiedDeltasRecords[prevRecordIdx].TotalHash : 0;
+
+				auto& rehashRecord = VerifiedDeltasRecords[rehashIdx];
+				rehashRecord.PrevDocHash = prevDocHash;
+				rehashRecord.ComputeHash();
+			}
 		}
 	}
 
@@ -992,7 +1144,7 @@ bool UModumateDocument::ApplySettingsDelta(const FDocumentSettingDelta& Settings
 	return true;
 }
 
-bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* World)
+bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* World, bool bRedoingDeltas)
 {
 	// Vacuous success if there are no deltas to apply
 	if (Deltas.Num() == 0)
@@ -1020,12 +1172,15 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	SetDirtyFlags(true);
 	ClearPreviewDeltas(World, false);
 
-	ClearRedoBuffer();
+	if (!bRedoingDeltas)
+	{
+		ClearRedoBuffer();
+		UndoneDeltasRecords.Reset();
+	}
 
 	BeginUndoRedoMacro();
 
 	TSharedPtr<UndoRedo> ur = MakeShared<UndoRedo>();
-	ur->ID = NextLocalDeltasID++;
 	ur->Deltas = Deltas;
 
 	// If we're a multiplayer client, don't add to the undo buffer until we've received verification from the server
@@ -1054,10 +1209,10 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 
 	// If we make a DeltasRecord immediately after one of our own unverified DeltasRecords, then we need to use that unverified hash,
 	// rather than re-use the same verified document hash that hasn't been updated yet.
-	uint32 latestDocHash = (UnverifiedDeltasRecords.Num() > 0) ? GetTypeHash(UnverifiedDeltasRecords.Last()) : GetLatestVerifiedDocHash();
-	FDeltasRecord deltasRecord(ur->Deltas, ur->ID, CachedLocalUserID, latestDocHash);
+	uint32 latestDocHash = (UnverifiedDeltasRecords.Num() > 0) ? UnverifiedDeltasRecords.Last().TotalHash : GetLatestVerifiedDocHash();
+	FDeltasRecord deltasRecord(ur->Deltas, CachedLocalUserID, latestDocHash);
 
-	deltasRecord.SetResults(DeltaAffectedObjects, DeltaDirtiedObjects, DeltaAffectedPresets.Array());
+	deltasRecord.SetResults(DeltaAffectedObjects, DeltaDirtiedObjects, DeltaAffectedPresets.Array(), GetDeltaAffectedBounds());
 
 	// If we're a multiplayer client, then send the deltas generated by this user to the server
 	if (bMultiplayerClient)
@@ -1415,6 +1570,40 @@ void UModumateDocument::EndTrackingDeltaObjects()
 	}
 
 	bTrackingDeltaObjects = false;
+}
+
+FBox UModumateDocument::GetDeltaAffectedBounds() const
+{
+	static TArray<FVector> allMOIPoints;
+	static TArray<FStructurePoint> curMOIPoints;
+	static TArray<FStructureLine> curMOILines;
+	allMOIPoints.Reset();
+
+	auto gatherPointsForObjects = [this](const TSet<int32>& ObjectIDs) {
+		for (int32 objID : ObjectIDs)
+		{
+			const AModumateObjectInstance* affectedObj = GetObjectById(objID);
+			if (affectedObj)
+			{
+				curMOIPoints.Reset();
+				curMOILines.Reset();
+				affectedObj->GetStructuralPointsAndLines(curMOIPoints, curMOILines);
+
+				for (const FStructurePoint& point : curMOIPoints)
+				{
+					allMOIPoints.Add(point.Point);
+				}
+			}
+		}
+	};
+
+	for (auto& kvp : DeltaAffectedObjects)
+	{
+		gatherPointsForObjects(kvp.Value);
+	}
+	gatherPointsForObjects(DeltaDirtiedObjects);
+
+	return FBox(allMOIPoints);
 }
 
 void UModumateDocument::DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis, bool bDeleteConnected)
@@ -2108,14 +2297,9 @@ void UModumateDocument::ClearUndoBuffer()
 	UndoRedoMacroStack.Empty();
 }
 
-int32 UModumateDocument::GetLatestVerifiedDeltasID() const
-{
-	return (VerifiedDeltasRecords.Num() > 0) ? VerifiedDeltasRecords.Last().ID : 0;
-}
-
 uint32 UModumateDocument::GetLatestVerifiedDocHash() const
 {
-	return (VerifiedDeltasRecords.Num() > 0) ? GetTypeHash(VerifiedDeltasRecords.Last()) : 0;
+	return (VerifiedDeltasRecords.Num() > 0) ? VerifiedDeltasRecords.Last().TotalHash : 0;
 }
 
 bool UModumateDocument::GetDeltaRecordsSinceSave(TArray<FDeltasRecord>& OutRecordsSinceSave) const
@@ -2408,7 +2592,6 @@ void UModumateDocument::MakeNew(UWorld *World)
 	}
 
 	NextID = MPObjIDFromLocalObjID(1, CachedLocalUserIdx);
-	NextLocalDeltasID = 1;
 	LastSavedDeltasRecordIdx = INDEX_NONE;
 
 	ClearRedoBuffer();
@@ -2416,6 +2599,7 @@ void UModumateDocument::MakeNew(UWorld *World)
 
 	UnverifiedDeltasRecords.Reset();
 	VerifiedDeltasRecords.Reset();
+	UndoneDeltasRecords.Reset();
 	UndoRedoMacroStack.Reset();
 	VolumeGraph.Reset();
 	TempVolumeGraph.Reset();
@@ -2857,10 +3041,10 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	}
 	AddHideObjectsById(world, hideCutPlaneIds);
 
-	NextLocalDeltasID = 1;
 	LastSavedDeltasRecordIdx = INDEX_NONE;
 	UnverifiedDeltasRecords.Reset();
 	VerifiedDeltasRecords.Reset();
+	UndoneDeltasRecords.Reset();
 
 	ClearUndoBuffer();
 
@@ -3650,15 +3834,13 @@ void UModumateDocument::DisplayMultiplayerDebugInfo(UWorld* world)
 		return;
 	}
 
-	DisplayDebugMsg(FString::Printf(TEXT("Next local delta ID: %d"), NextLocalDeltasID));
 	for (auto& unverifiedDeltasRecord : UnverifiedDeltasRecords)
 	{
-		DisplayDebugMsg(FString::Printf(TEXT("Unverified delta ID: %d"), unverifiedDeltasRecord.ID));
+		DisplayDebugMsg(FString::Printf(TEXT("Unverified delta (prev hash: %08x, total hash: %08x"), unverifiedDeltasRecord.PrevDocHash, unverifiedDeltasRecord.TotalHash));
 	}
 	if (VerifiedDeltasRecords.Num() > 0)
 	{
 		auto& lastVerifiedDeltasRecord = VerifiedDeltasRecords.Last();
-		DisplayDebugMsg(FString::Printf(TEXT("Last verified delta ID: %d"), lastVerifiedDeltasRecord.ID));
 		DisplayDebugMsg(FString::Printf(TEXT("Last verified delta source: %s"), *lastVerifiedDeltasRecord.OriginUserID));
 	}
 	DisplayDebugMsg(FString::Printf(TEXT("Last verified doc hash: %08x"), GetLatestVerifiedDocHash()));

@@ -29,9 +29,11 @@ public:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
 
-	const FGuid& GetMPSessionID() const;
+	const FString& GetCurProjectID() const;
+	bool GetUserByPlayerID(int32 PlayerID, FString& OutUserID) const;
 
-	static const FString MPSessionKey;
+	static const FString ProjectIDArg;
+	static const FString APIKeyArg;
 	static const FString EncryptionTokenKey;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
@@ -119,8 +121,9 @@ public:
 	TSubclassOf<class AEditModelToggleGravityPawn> ToggleGravityPawnClass;
 
 protected:
-	FGuid CurMPSessionID;
-	TSet<FString> LoggedInUsersByID;
+	FString CurProjectID;
+	FString CurAPIKey;
+	TMap<FString, int32> PlayersByUserID;
 	TMap<int32, FString> UsersByPlayerID;
 
 	void ResetSession();

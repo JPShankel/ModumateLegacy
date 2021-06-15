@@ -20,3 +20,13 @@ void AEditModelGameState::BroadcastServerDeltas_Implementation(const FDeltasReco
 		Document->ApplyRemoteDeltas(Deltas, world, false);
 	}
 }
+
+// RPC from the server to every client's copy of the global GameState
+void AEditModelGameState::BroadcastUndo_Implementation(const FString& UndoingUserID, const TArray<uint32>& UndoRecordHashes)
+{
+	UWorld* world = GetWorld();
+	if (ensure(world && Document))
+	{
+		Document->ApplyRemoteUndo(world, UndoingUserID, UndoRecordHashes);
+	}
+}

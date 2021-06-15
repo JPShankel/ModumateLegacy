@@ -30,11 +30,11 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		const FString& GetAuthToken() const { return AuthToken; }
 		void SetAuthToken(const FString& InAuthToken);
 
-		static FString MakeEncryptionToken(const FString& UserID, const FGuid& SessionID);
-		static bool ParseEncryptionToken(const FString& EncryptionToken, FString& OutUserID, FGuid& OutSessionID);
+		static FString MakeEncryptionToken(const FString& UserID, const FString& ProjectID);
+		static bool ParseEncryptionToken(const FString& EncryptionToken, FString& OutUserID, FString& OutProjectID);
 
-		bool GetCachedEncryptionKey(const FString& UserID, const FGuid& SessionID, FString& OutEncryptionKey);
-		void QueryEncryptionKey(const FString& UserID, const FGuid& SessionID, const FOnEncryptionKeyResponse& Delegate);
+		bool GetCachedEncryptionKey(const FString& UserID, const FString& ProjectID, FString& OutEncryptionKey);
+		void QueryEncryptionKey(const FString& UserID, const FString& ProjectID, const FOnEncryptionKeyResponse& Delegate);
 
 		void SetLoginStatus(ELoginStatus InLoginStatus);
 		ELoginStatus GetLoginStatus() const;

@@ -607,18 +607,17 @@ void UModumateGameInstance::StartGameInstance()
 
 void UModumateGameInstance::ReceivedNetworkEncryptionToken(const FString& EncryptionToken, const FOnEncryptionKeyResponse& Delegate)
 {
-	FString userID;
-	FGuid sessionID;
-	if (!CloudConnection.IsValid() || !FModumateCloudConnection::ParseEncryptionToken(EncryptionToken, userID, sessionID))
+	FString userID, projectID;
+	if (!CloudConnection.IsValid() || !FModumateCloudConnection::ParseEncryptionToken(EncryptionToken, userID, projectID))
 	{
 		FEncryptionKeyResponse response(EEncryptionResponse::InvalidToken,
-			FString::Printf(TEXT("Encryption token was invalid, and did not include a User ID + Session ID: %s"), *EncryptionToken));
+			FString::Printf(TEXT("Encryption token was invalid, and did not include a User ID + Project ID: %s"), *EncryptionToken));
 
 		Delegate.ExecuteIfBound(response);
 	}
 	else
 	{
-		CloudConnection->QueryEncryptionKey(userID, sessionID, Delegate);
+		CloudConnection->QueryEncryptionKey(userID, projectID, Delegate);
 	}
 }
 
@@ -638,14 +637,13 @@ void UModumateGameInstance::ReceivedNetworkEncryptionAck(const FOnEncryptionKeyR
 	FString optionKey = AEditModelGameMode::EncryptionTokenKey + FString(TEXT("="));
 	FString encryptionToken(pendingNetGame ? pendingNetGame->URL.GetOption(*optionKey, TEXT("")) : TEXT(""));
 
-	FString travelUserID;
-	FGuid travelSessionID;
-	if (!FModumateCloudConnection::ParseEncryptionToken(encryptionToken, travelUserID, travelSessionID) || (travelUserID != loggedInUserID))
+	FString travelUserID, travelProjectID;
+	if (!FModumateCloudConnection::ParseEncryptionToken(encryptionToken, travelUserID, travelProjectID) || (travelUserID != loggedInUserID))
 	{
 		Delegate.ExecuteIfBound(response);
 	}
 
-	CloudConnection->QueryEncryptionKey(travelUserID, travelSessionID, Delegate);
+	CloudConnection->QueryEncryptionKey(travelUserID, travelProjectID, Delegate);
 }
 
 void UModumateGameInstance::CheckCrashRecovery()

@@ -29,7 +29,6 @@ private:
 
 	struct UndoRedo
 	{
-		int32 ID = MOD_ID_NONE;
 		TArray<FDeltaPtr> Deltas;
 	};
 
@@ -41,14 +40,14 @@ private:
 	int32 ReservingObjectID;
 	bool bApplyingPreviewDeltas, bFastClearingPreviewDeltas, bSlowClearingPreviewDeltas;
 
-	// The ID of the next UndoRedo/DeltasRecord to generate
-	int32 NextLocalDeltasID;
-
 	// The FDeltasRecords that have been locally on the multiplayer client, but haven't yet been verified and sent back by the server.
 	TArray<FDeltasRecord> UnverifiedDeltasRecords;
 
 	// The FDeltasRecords that have either been applied locally offline, or been verified and sent by the server to all clients.
 	TArray<FDeltasRecord> VerifiedDeltasRecords;
+
+	// The FDeltasRecords that this user has undone (either directly, or because they were implicated in this user's intended undo)
+	TArray<FDeltasRecord> UndoneDeltasRecords;
 
 	// The index in VerifiedDeltasRecords of the DeltasRecord that was the most recent one saved.
 	int32 LastSavedDeltasRecordIdx;
@@ -228,13 +227,14 @@ public:
 	bool GetPreviewVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas);
 
 public:
-	bool ReconcileRemoteDeltas(const FDeltasRecord& DeltasRecord, UWorld* World, FDeltasRecord& OutReconciledRecord, int32& OutMaxVerifiedDeltasID, uint32& OutVerifiedDocHash);
-	bool RollBackUnverifiedDeltas(int32 MaxVerifiedDeltasID, uint32 VerifiedDocHash, UWorld* World);
+	bool ReconcileRemoteDeltas(const FDeltasRecord& DeltasRecord, UWorld* World, FDeltasRecord& OutReconciledRecord, uint32& OutVerifiedDocHash);
+	bool RollBackUnverifiedDeltas(uint32 VerifiedDocHash, UWorld* World);
 	bool ApplyRemoteDeltas(const FDeltasRecord& DeltasRecord, UWorld* World, bool bApplyOwnDeltas);
+	bool ApplyRemoteUndo(UWorld* World, const FString& UndoingUserID, const TArray<uint32>& UndoRecordHashes);
 	bool ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World);
 	void ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World);
 	void ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World);
-	bool ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World);
+	bool ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World, bool bRedoingDeltas = false);
 	bool ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWorld* World);
 	bool ApplySettingsDelta(const FDocumentSettingDelta& SettingsDelta, UWorld* World);
 
@@ -245,6 +245,7 @@ private:
 	bool PostApplyDeltas(UWorld *World, bool bCleanObjects, bool bMarkDocumentDirty);
 	void StartTrackingDeltaObjects();
 	void EndTrackingDeltaObjects();
+	FBox GetDeltaAffectedBounds() const;
 
 	// Helper function for ObjectFromActor
 	AModumateObjectInstance *ObjectFromSingleActor(AActor *actor);
@@ -282,11 +283,11 @@ public:
 
 	void Undo(UWorld *World);
 	void Redo(UWorld *World);
+	bool GetUndoRecordsFromClient(UWorld* World, const FString& UserID, TArray<uint32>& OutUndoRecordHashes) const;
 
 	void ClearRedoBuffer();
 	void ClearUndoBuffer();
 
-	int32 GetLatestVerifiedDeltasID() const;
 	uint32 GetLatestVerifiedDocHash() const;
 	bool GetDeltaRecordsSinceSave(TArray<FDeltasRecord>& OutRecordsSinceSave) const;
 

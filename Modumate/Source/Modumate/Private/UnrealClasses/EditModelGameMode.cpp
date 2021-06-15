@@ -13,7 +13,8 @@
 
 #define LOCTEXT_NAMESPACE "ModumateOnline"
 
-const FString AEditModelGameMode::MPSessionKey(TEXT("-MPSessionID="));
+const FString AEditModelGameMode::ProjectIDArg(TEXT("-ModProjectID="));
+const FString AEditModelGameMode::APIKeyArg(TEXT("-ModApiKey="));
 const FString AEditModelGameMode::EncryptionTokenKey(TEXT("EncryptionToken"));
 
 AEditModelGameMode::AEditModelGameMode()
@@ -48,15 +49,15 @@ void AEditModelGameMode::InitGameState()
 	}
 
 #if UE_SERVER
-	FString inputSessionStr;
-	if (FParse::Value(FCommandLine::Get(), *AEditModelGameMode::MPSessionKey, inputSessionStr) &&
-		FGuid::Parse(inputSessionStr, CurMPSessionID))
+	if (FParse::Value(FCommandLine::Get(), *AEditModelGameMode::ProjectIDArg, CurProjectID) && !CurProjectID.IsEmpty() &&
+		FParse::Value(FCommandLine::Get(), *AEditModelGameMode::APIKeyArg, CurAPIKey) && !CurAPIKey.IsEmpty())
 	{
-		UE_LOG(LogGameMode, Log, TEXT("Starting EditModelGameMode server with Session ID: %s"), *CurMPSessionID.ToString(EGuidFormats::Short));
+		FString redactedKey = FString::Printf(TEXT("%c****%c"), CurAPIKey[0], CurAPIKey[CurAPIKey.Len() - 1]);
+		UE_LOG(LogGameMode, Log, TEXT("Starting EditModelGameMode server with Project ID: %s, API Key: %s"), *CurProjectID, *redactedKey);
 	}
 	else
 	{
-		UE_LOG(LogGameMode, Fatal, TEXT("Can't start an EditModelGameMode server without a --%s argument!"), *AEditModelGameMode::MPSessionKey);
+		UE_LOG(LogGameMode, Fatal, TEXT("Can't start an EditModelGameMode server without %s and %s arguments!"), *AEditModelGameMode::ProjectIDArg, *AEditModelGameMode::APIKeyArg);
 	}
 
 	// TODO: support loading documents via another argument that would download them from a cloud-hosted file
@@ -91,25 +92,23 @@ void AEditModelGameMode::PreLogin(const FString& Options, const FString& Address
 
 	// Now, get the encryption key for the encryption token, which should already be cached on the CloudConnection,
 	// assuming the user already successfully shook hands via our encrypted packet handler.
-	FString userID, encryptionKey;
-	FGuid inputSessionID;
-	if (!FModumateCloudConnection::ParseEncryptionToken(encryptionToken, userID, inputSessionID) ||
-		!cloudConnection->GetCachedEncryptionKey(userID, inputSessionID, encryptionKey))
+	FString userID, projectID, encryptionKey;
+	if (!FModumateCloudConnection::ParseEncryptionToken(encryptionToken, userID, projectID) ||
+		!cloudConnection->GetCachedEncryptionKey(userID, projectID, encryptionKey))
 	{
 		UE_LOG(LogGameMode, Error, TEXT("Couldn't get encryption key for token: %s"), *encryptionToken);
 		ErrorMessage = FString(TEXT("Login failed; check credentials and try again later."));
 		return;
 	}
 
-	if (inputSessionID != CurMPSessionID)
+	if (projectID != CurProjectID)
 	{
-		UE_LOG(LogGameMode, Error, TEXT("Input session ID \"%s\" doesn't match current session ID: %s"),
-			*inputSessionID.ToString(EGuidFormats::Short), *CurMPSessionID.ToString(EGuidFormats::Short));
+		UE_LOG(LogGameMode, Error, TEXT("Input project ID \"%s\" doesn't match current project ID: %s"), *projectID, *CurProjectID);
 		ErrorMessage = FString(TEXT("Invalid session ID; make sure you've selected the correct server and try again."));
 		return;
 	}
 
-	if (LoggedInUsersByID.Contains(userID))
+	if (PlayersByUserID.Contains(userID))
 	{
 		UE_LOG(LogGameMode, Error, TEXT("UserID %s is already logged in!"), *userID);
 		ErrorMessage = FString(TEXT("Duplicate login; please try again later."));
@@ -117,7 +116,7 @@ void AEditModelGameMode::PreLogin(const FString& Options, const FString& Address
 	else
 	{
 		UE_LOG(LogGameMode, Log, TEXT("UserID %s login approved!"), *userID);
-		LoggedInUsersByID.Add(userID);
+		PlayersByUserID.Add(userID, INDEX_NONE);
 	}
 }
 
@@ -125,15 +124,14 @@ APlayerController* AEditModelGameMode::Login(UPlayer* NewPlayer, ENetRole InRemo
 {
 	APlayerController* newController = Super::Login(NewPlayer, InRemoteRole, Portal, Options, UniqueId, ErrorMessage);
 
-	FString userID;
-	FGuid inputSessionID;
+	FString userID, projectID;
 	FString encryptionToken = UGameplayStatics::ParseOption(Options, AEditModelGameMode::EncryptionTokenKey);
 	APlayerState* playerState = newController ? newController->PlayerState : nullptr;
 	int32 playerID = playerState ? playerState->GetPlayerId() : INDEX_NONE;
 
 	if ((playerID == INDEX_NONE) || UsersByPlayerID.Contains(playerID) ||
-		!FModumateCloudConnection::ParseEncryptionToken(encryptionToken, userID, inputSessionID) ||
-		!LoggedInUsersByID.Contains(userID))
+		!FModumateCloudConnection::ParseEncryptionToken(encryptionToken, userID, projectID) ||
+		!PlayersByUserID.Contains(userID))
 	{
 		UE_LOG(LogGameMode, Error, TEXT("Invalid/duplicate Player ID: %d and User ID: %s"), playerID, *userID);
 		ErrorMessage = FString(TEXT("Log in failure"));
@@ -141,6 +139,7 @@ APlayerController* AEditModelGameMode::Login(UPlayer* NewPlayer, ENetRole InRemo
 	}
 
 	UsersByPlayerID.Add(playerID, userID);
+	PlayersByUserID[userID] = playerID;
 
 	return newController;
 }
@@ -171,10 +170,10 @@ void AEditModelGameMode::Logout(AController* Exiting)
 	FString userID;
 	if (UsersByPlayerID.RemoveAndCopyValue(playerID, userID))
 	{
-		LoggedInUsersByID.Remove(userID);
+		PlayersByUserID.Remove(userID);
 	}
 
-	if (LoggedInUsersByID.Num() == 0)
+	if (PlayersByUserID.Num() == 0)
 	{
 		ResetSession();
 	}
@@ -182,9 +181,23 @@ void AEditModelGameMode::Logout(AController* Exiting)
 	Super::Logout(Exiting);
 }
 
-const FGuid& AEditModelGameMode::GetMPSessionID() const
+const FString& AEditModelGameMode::GetCurProjectID() const
 {
-	return CurMPSessionID;
+	return CurProjectID;
+}
+
+bool AEditModelGameMode::GetUserByPlayerID(int32 PlayerID, FString& OutUserID) const
+{
+	const FString* userIDPtr = UsersByPlayerID.Find(PlayerID);
+	if (userIDPtr)
+	{
+		OutUserID = *userIDPtr;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void AEditModelGameMode::ResetSession()
