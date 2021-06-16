@@ -243,6 +243,7 @@ bool UTerrainTool::AddFirstEdge(FVector Point1, FVector Point2)
 
 	int32 nextID = doc->GetNextAvailableID();
 	FMOITerrainData moiData;
+	moiData.Name = GetNextName();
 	moiData.Origin = Point1;  // First point will be origin for new Terrain.
 	moiData.Heights.Add(nextID + 1, StartingZHeight);
 	moiData.Heights.Add(nextID + 2, StartingZHeight);
@@ -332,4 +333,29 @@ bool UTerrainTool::AddNewEdge(FVector Point1, FVector Point2)
 FVector2D UTerrainTool::ProjectToPlane(FVector Origin, FVector Point)
 {
 	return FVector2D(Point.X - Origin.X, Point.Y - Origin.Y);
+}
+
+FString UTerrainTool::GetNextName() const
+{
+	static const TCHAR namePattern[] = TEXT("Terrain %d");
+	int32 n = 1;
+	const UModumateDocument* doc = GameState->Document;
+
+	auto existingTerrain = doc->GetObjectsOfType(EObjectType::OTTerrain);
+	TSet<FString> existingNames;
+	for (const auto* terrain : existingTerrain)
+	{
+		FMOIStateData stateData = terrain->GetStateData();
+		FMOITerrainData terrainData;
+		stateData.CustomData.LoadStructData(terrainData);
+		existingNames.Add(terrainData.Name);
+	}
+
+	FString candidate;
+	do
+	{
+		candidate = FString::Printf(namePattern, n++);
+	} while (existingNames.Contains(candidate));
+
+	return candidate;
 }

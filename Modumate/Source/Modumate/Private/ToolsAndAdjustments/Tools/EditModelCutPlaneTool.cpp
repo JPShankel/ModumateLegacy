@@ -203,7 +203,7 @@ FString UCutPlaneTool::GetNextName() const
 	const UModumateDocument* doc = GameState->Document;
 
 	auto existingCutPlanes = doc->GetObjectsOfType(EObjectType::OTCutPlane);
-	TArray<FString> existingNames;
+	TSet<FString> existingNames;
 	for (const auto* cutPlane: existingCutPlanes)
 	{
 		FMOIStateData stateData = cutPlane->GetStateData();

@@ -38,6 +38,7 @@ public:
 protected:
 	bool AddFirstEdge(FVector Point1, FVector Point2);
 	bool AddNewEdge(FVector Point1, FVector Point2);
+	FString GetNextName() const;
 	static FVector2D ProjectToPlane(FVector Origin, FVector Point);
 
 	enum EState { Idle, AddEdge };
