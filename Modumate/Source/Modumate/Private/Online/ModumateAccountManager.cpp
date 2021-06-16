@@ -1,11 +1,13 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "Online/ModumateAccountManager.h"
-#include "JsonUtilities.h"
+
 #include "Dom/JsonObject.h"
-#include "UnrealClasses/ModumateGameInstance.h"
-#include "UnrealClasses/EditModelPlayerController.h"
+#include "JsonUtilities.h"
+#include "GenericPlatform/GenericPlatformCrashContext.h"
 #include "Online/ModumateUpdater.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 FModumateAccountManager::FModumateAccountManager(TSharedPtr<FModumateCloudConnection>& InConnection,
 	UModumateGameInstance* InGameInstance) :
@@ -121,6 +123,17 @@ void FModumateAccountManager::NotifyServiceUse(const FString& ServiceName, const
 			}
 		}
 	);
+}
+
+void FModumateAccountManager::SetUserInfo(const FModumateUserInfo& InUserInfo)
+{
+	CachedUserInfo = InUserInfo;
+
+	static const FString crashDataKeyUserID(TEXT("ModUserID"));
+	static const FString crashDataKeyUserEmail(TEXT("ModUserEmail"));
+
+	FGenericCrashContext::SetGameData(crashDataKeyUserID, CachedUserInfo.ID);
+	FGenericCrashContext::SetGameData(crashDataKeyUserEmail, CachedUserInfo.Email);
 }
 
 void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserStatus, bool bQueryUpdateInstallers)

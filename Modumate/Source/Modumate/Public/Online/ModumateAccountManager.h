@@ -199,7 +199,7 @@ public:
 	const FModumateUserStatus& GetUserStatus() const { return CachedUserStatus; }
 	bool ShouldRecordTelemetry() const;
 
-	void SetUserInfo(const FModumateUserInfo& InUserInfo) { CachedUserInfo = InUserInfo; }
+	void SetUserInfo(const FModumateUserInfo& InUserInfo);
 	void ProcessUserStatus(const FModumateUserStatus& UserStatus, bool bQueryUpdateInstallers);
 
 	void RequestStatus();
