@@ -123,6 +123,12 @@ void AMOITerrain::GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints
 	}
 }
 
+void AMOITerrain::SetIsTranslucent(bool NewIsTranslucent)
+{
+	bIsTranslucent = NewIsTranslucent;
+	UpdateSiteMaterials(true);
+}
+
 bool AMOITerrain::OnSelected(bool bIsSelected)
 {
 	if (!Super::OnSelected(bIsSelected))
@@ -280,7 +286,7 @@ void AMOITerrain::UpdateTerrainActor()
 	}
 }
 
-void AMOITerrain::UpdateSiteMaterials()
+void AMOITerrain::UpdateSiteMaterials(bool bForceUpdate/* = false*/)
 {
 	const auto* doc = GetDocument();
 	const auto graph2d = doc->FindSurfaceGraph(ID);
@@ -313,7 +319,7 @@ void AMOITerrain::UpdateSiteMaterials()
 					if (meshSectionPointer)
 					{
 						int32 meshSectionIndex = *meshSectionPointer;
-						if (CachedMaterials.FindOrAdd(meshSectionIndex) != materialGuid)
+						if (CachedMaterials.FindOrAdd(meshSectionIndex) != materialGuid || bForceUpdate)
 						{
 							FGuid innerMaterialGuid = materialBinding.MaterialBindings[0].InnerMaterialGUID;
 							FColor tint(FColor::FromHex(materialBinding.MaterialBindings[0].ColorHexValue));
@@ -323,11 +329,22 @@ void AMOITerrain::UpdateSiteMaterials()
 							const FArchitecturalMaterial* material = gameInstance->ObjectDatabase->GetArchitecturalMaterialByGUID(innerMaterialGuid);
 							if (material)
 							{
-								UMaterialInterface* currentMaterial = mesh->GetMaterial(meshSectionIndex);
-								UMaterialInstanceDynamic* materialInst = UMaterialInstanceDynamic::Create(material->EngineMaterial.Get(), mesh);
-								materialInst->SetVectorParameterValue(colorMultiplierName, tint);
-								mesh->SetMaterial(meshSectionIndex, materialInst);
-								CachedMaterials[meshSectionIndex] = materialGuid;
+								// TODO: Create material only for new mesh section, changing material for exiting section only needs to copy material params
+								auto* gameMode = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
+								UMaterialInterface* gmTerrainMat = gameMode ? gameMode->TerrainMaterial : nullptr;
+								if (gmTerrainMat)
+								{
+									UMaterialInstanceDynamic* materialInst = UMaterialInstanceDynamic::Create(gmTerrainMat, mesh);
+									materialInst->CopyMaterialUniformParameters(material->EngineMaterial.Get());
+									materialInst->SetVectorParameterValue(colorMultiplierName, tint);
+									static const FName opacityParamName(TEXT("OpacityValue"));
+									materialInst->SetScalarParameterValue(opacityParamName, bIsTranslucent ? 0.5f : 1.f);
+
+									mesh->SetMaterial(meshSectionIndex, materialInst);
+									CachedMaterials[meshSectionIndex] = materialGuid;
+								}
+
+
 							}
 						}
 					}

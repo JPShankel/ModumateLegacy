@@ -52,7 +52,7 @@ public:
 		TArray<TArray<FVector>>& OutPerimeters) const override;
 
 	// TODO: Change terrain material to translucent
-	void SetIsTranslucent(bool NewIsTranslucent) { bIsTranslucent = NewIsTranslucent; };
+	void SetIsTranslucent(bool NewIsTranslucent);
 	bool GetIsTranslucent() const { return bIsTranslucent; };
 
 	UPROPERTY()
@@ -60,7 +60,7 @@ public:
 
 protected:
 	void UpdateTerrainActor();
-	void UpdateSiteMaterials();
+	void UpdateSiteMaterials(bool bForceUpdate = false);
 
 	FVector GraphToWorldPosition(FVector2D GraphPos, double Height = 0.0, bool bRelative = false) const;
 	TMap<int32, int32> PolyIDToMeshSection;
