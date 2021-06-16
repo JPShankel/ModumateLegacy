@@ -8,6 +8,10 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/DynamicTerrainActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/ToolTray/ToolTrayWidget.h"
+#include "UI/RightMenu/GeneralListItemMenuBlock.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Objects/TerrainMaterial.h"
 
@@ -127,6 +131,32 @@ void AMOITerrain::SetIsTranslucent(bool NewIsTranslucent)
 {
 	bIsTranslucent = NewIsTranslucent;
 	UpdateSiteMaterials(true);
+}
+
+void AMOITerrain::PostCreateObject(bool bNewObject)
+{
+	Super::PostCreateObject(bNewObject);
+
+	UWorld* world = GetWorld();
+	auto controller = world->GetFirstPlayerController<AEditModelPlayerController>();
+	if (controller && controller->EditModelUserWidget)
+	{
+		controller->EditModelUserWidget->ToolTrayWidget->ToolTrayBlockTerrainList->UpdateAsTerrainList();
+	}
+}
+
+void AMOITerrain::PreDestroy()
+{
+	Super::PreDestroy();
+
+	bDestroyed = true;
+
+	UWorld* world = GetWorld();
+	auto controller = world->GetFirstPlayerController<AEditModelPlayerController>();
+	if (controller && controller->EditModelUserWidget)
+	{
+		controller->EditModelUserWidget->ToolTrayWidget->ToolTrayBlockTerrainList->UpdateAsTerrainList();
+	}
 }
 
 bool AMOITerrain::OnSelected(bool bIsSelected)

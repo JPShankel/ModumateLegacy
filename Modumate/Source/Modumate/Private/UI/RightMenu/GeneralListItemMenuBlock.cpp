@@ -41,7 +41,7 @@ void UGeneralListItemMenuBlock::UpdateAsTerrainList()
 	for (int32 i = 0; i < terrainMOIs.Num(); ++i)
 	{
 		const AMOITerrain* moiTerrain = Cast<AMOITerrain>(terrainMOIs[i]);
-		if (moiTerrain)
+		if (moiTerrain && !moiTerrain->IsDestroyed())
 		{
 			FMOITerrainData terrainData;
 			if (ensure(terrainMOIs[i]->GetStateData().CustomData.LoadStructData(terrainData)))

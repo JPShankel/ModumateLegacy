@@ -40,6 +40,8 @@ public:
 	virtual FQuat GetRotation() const override;
 	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;
 	virtual AActor* CreateActor(const FVector& loc, const FQuat& rot) override;
+	virtual void PostCreateObject(bool bNewObject) override;
+	virtual void PreDestroy() override;
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
