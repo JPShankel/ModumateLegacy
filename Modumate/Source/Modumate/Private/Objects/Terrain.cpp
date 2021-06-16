@@ -94,6 +94,51 @@ void AMOITerrain::GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentP
 	}
 }
 
+void AMOITerrain::GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines,
+	bool bForSnapping /*= false*/, bool bForSelection /*= false*/) const
+{
+	const auto graph2d = GetDocument()->FindSurfaceGraph(ID);
+
+	if (ensure(graph2d))
+	{
+		const auto& polygons = graph2d->GetPolygons();
+
+		for (const auto& polyKvp: polygons)
+		{
+			if (!polyKvp.Value.bInterior && polyKvp.Value.ContainingPolyID == MOD_ID_NONE)
+			{
+				const auto& poly = polyKvp.Value;
+				for (const auto& edgeID : poly.Edges)
+				{
+					const FGraph2DEdge* edge = graph2d->FindEdge(edgeID);
+					FVector pointA(GraphToWorldPosition(graph2d->FindVertex(edge->StartVertexID)->Position, InstanceData.Heights[edge->StartVertexID]));
+					FVector pointB(GraphToWorldPosition(graph2d->FindVertex(edge->EndVertexID)->Position, InstanceData.Heights[edge->EndVertexID]));
+
+					outPoints.Emplace(pointA, (pointB - pointA).GetSafeNormal(), edge->StartVertexID);
+					outLines.Emplace(pointA, pointB, edge->StartVertexID, edge->EndVertexID);
+				}
+
+			}
+		}
+	}
+}
+
+bool AMOITerrain::OnSelected(bool bIsSelected)
+{
+	if (!Super::OnSelected(bIsSelected))
+	{
+		return false;
+	}
+
+	auto* actor = Cast<ADynamicTerrainActor>(GetActor());
+	if (!actor || !actor->Mesh)
+	{
+		return true;
+	}
+
+	return true;
+}
+
 AActor* AMOITerrain::CreateActor(const FVector& loc, const FQuat& rot)
 {
 	ADynamicTerrainActor* actor =
@@ -130,6 +175,7 @@ void AMOITerrain::UpdateTerrainActor()
 		}
 		actor->ClearAllMeshSections();
 		PolyIDToMeshSection.Empty();
+		const FVector origin = InstanceData.Origin;
 
 		TArray<int32> islandPolys;
 		for (const auto& polygonKvp: polygons)
@@ -163,7 +209,7 @@ void AMOITerrain::UpdateTerrainActor()
 					if (!vertexIDs.Contains(v))
 					{
 						FVector2D graph2dPosition = graph2d->GetVertices()[v].Position;
-						heightPoints.Add(GraphToWorldPosition(graph2dPosition, InstanceData.Heights[v]));
+						heightPoints.Add(GraphToWorldPosition(graph2dPosition, InstanceData.Heights[v], true));
 						vertexIDs.Add(v);
 					}
 				}
@@ -216,12 +262,15 @@ void AMOITerrain::UpdateTerrainActor()
 				{
 					const FGraph2DPolygon* otherPolygon = graph2d->FindPolygon(otherPolyID);
 					TArray<FVector2D> holePoints(otherPolygon->CachedPerimeterPoints);
-					holes.Emplace(holePoints);
+					if (holePoints.Num() != 0)
+					{
+						holes.Emplace(holePoints);
+					}
 				}
 
 				if (containedPolygon->CachedPerimeterPoints.Num() >= 3)
 				{
-					actor->SetupTerrainGeometryGTE(meshSectionNumber, gridSize, containedPolygon->CachedPerimeterPoints, heightPoints, holes, true, true);
+					actor->SetupTerrainGeometry(meshSectionNumber, gridSize, containedPolygon->CachedPerimeterPoints, heightPoints, holes, true, true);
 					PolyIDToMeshSection.Add(containedPoly, meshSectionNumber);
 					++meshSectionNumber;
 				}
@@ -260,20 +309,25 @@ void AMOITerrain::UpdateSiteMaterials()
 				FBIMPresetMaterialBindingSet materialBinding;
 				if (preset && preset->TryGetCustomData(materialBinding))
 				{
-					FGuid innerMaterialGuid = materialBinding.MaterialBindings[0].InnerMaterialGUID;
-
-					UModumateGameInstance* gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
-					const FArchitecturalMaterial* material = gameInstance->ObjectDatabase->GetArchitecturalMaterialByGUID(innerMaterialGuid);
-					if (material)
+					const int32* meshSectionPointer = PolyIDToMeshSection.Find(faceKvp.Key);
+					if (meshSectionPointer)
 					{
-						const int32* meshSectionPointer = PolyIDToMeshSection.Find(faceKvp.Key);
-						if (meshSectionPointer)
+						int32 meshSectionIndex = *meshSectionPointer;
+						if (CachedMaterials.FindOrAdd(meshSectionIndex) != materialGuid)
 						{
-							int32 meshSectionIndex = *meshSectionPointer;
-							UMaterialInterface* currentMaterial = (mesh->GetMaterial(meshSectionIndex));
-							if (currentMaterial != material->EngineMaterial.Get())
+							FGuid innerMaterialGuid = materialBinding.MaterialBindings[0].InnerMaterialGUID;
+							FColor tint(FColor::FromHex(materialBinding.MaterialBindings[0].ColorHexValue));
+							static const FName colorMultiplierName(TEXT("colorMultiplier"));
+
+							UModumateGameInstance* gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
+							const FArchitecturalMaterial* material = gameInstance->ObjectDatabase->GetArchitecturalMaterialByGUID(innerMaterialGuid);
+							if (material)
 							{
-								mesh->SetMaterial(meshSectionIndex, material->EngineMaterial.Get());
+								UMaterialInterface* currentMaterial = mesh->GetMaterial(meshSectionIndex);
+								UMaterialInstanceDynamic* materialInst = UMaterialInstanceDynamic::Create(material->EngineMaterial.Get(), mesh);
+								materialInst->SetVectorParameterValue(colorMultiplierName, tint);
+								mesh->SetMaterial(meshSectionIndex, materialInst);
+								CachedMaterials[meshSectionIndex] = materialGuid;
 							}
 						}
 					}
@@ -284,8 +338,8 @@ void AMOITerrain::UpdateSiteMaterials()
 
 }
 
-FVector AMOITerrain::GraphToWorldPosition(FVector2D GraphPos, double Height /*= 0.0*/) const
+FVector AMOITerrain::GraphToWorldPosition(FVector2D GraphPos, double Height /*= 0.0*/, bool bRelative /*= false*/) const
 {
-	return GraphPos.X * FVector::ForwardVector + GraphPos.Y * FVector::RightVector
+	return (bRelative ? FVector::ZeroVector : InstanceData.Origin) + GraphPos.X * FVector::ForwardVector + GraphPos.Y * FVector::RightVector
 		+ Height * FVector::UpVector;
 }

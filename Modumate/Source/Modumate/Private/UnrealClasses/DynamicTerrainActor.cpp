@@ -41,7 +41,72 @@ ADynamicTerrainActor::ADynamicTerrainActor()
 void ADynamicTerrainActor::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
+// Add new points between A & B at intersection with grid lines, but not at grid points.
+void ADynamicTerrainActor::GetGridTriangulationPoints(FVector2D PointA, FVector2D PointB, float GridSize, TArray<FVector2D>& OutPoints) const
+{
+	// TODO: simplify this code!
+	static constexpr float epsilon = 1.0f;
+	FVector2D delta = PointB - PointA;
+	FVector2D pA(PointA);
+	FVector2D pB(PointB);
+
+	TArray<FVector2D> points;
+	if (delta.Y != 0.0f)
+	{
+		if (pA.Y > pB.Y)
+		{
+			Swap(pA, pB);
+		}
+		delta = pB - pA;
+		float slope = delta.Y / delta.X;
+
+		float y1 = FMath::CeilToInt(pA.Y / GridSize) * GridSize;
+		if (y1 - pA.Y < epsilon)
+		{
+			y1 += GridSize;
+		}
+		FVector2D gridIntersect((y1 - pA.Y) / slope + pA.X, y1);
+		FVector2D step(GridSize * delta.X / delta.Y, GridSize);
+		while (gridIntersect.Y < pB.Y - epsilon)
+		{
+			if (FMath::Abs(FMath::Frac((gridIntersect.X / GridSize))) * GridSize > epsilon)
+			{
+				points.Add(gridIntersect);
+			}
+			gridIntersect += step;
+		}
+	}
+
+	if (delta.X != 0.0f)
+	{
+		if (pA.X > pB.X)
+		{
+			Swap(pA, pB);
+		}
+		delta = pB - pA;
+		float slope = delta.Y / delta.X;
+
+		float x1 = FMath::CeilToInt(pA.X / GridSize) * GridSize;
+		if (x1 - pA.X < epsilon)
+		{
+			x1 += GridSize;
+		}
+		FVector2D gridIntersect(x1, slope * (x1 - pA.X) + pA.Y);
+		FVector2D step(GridSize, GridSize * slope);
+		while (gridIntersect.X < pB.X - epsilon)
+		{
+			if (FMath::Abs(FMath::Frac((gridIntersect.Y / GridSize))) * GridSize > epsilon)
+			{
+				points.Add(gridIntersect);
+			}
+			gridIntersect += step;
+		}
+	}
+
+	points.Sort([PointA](const FVector2D& A, const FVector2D& B) {return (A - PointA).SizeSquared() < (B - PointA).SizeSquared(); });
+	OutPoints.Append(points);
 }
 
 // Called every frame
@@ -166,7 +231,7 @@ void ADynamicTerrainActor::SetupTerrainGeometry(const TArray<FVector>& Perimeter
 }
 #endif
 
-void ADynamicTerrainActor::SetupTerrainGeometryGTE(int32 SectionID, float GridSize, const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision /*= true*/)
+void ADynamicTerrainActor::SetupTerrainGeometry(int32 SectionID, float GridSize, const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints, const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision /*= true*/)
 {
 	TArray<FVector> vertices;
 	TArray<FVector2D> vertices2D;
@@ -183,12 +248,14 @@ void ADynamicTerrainActor::SetupTerrainGeometryGTE(int32 SectionID, float GridSi
 	{
 		int32 numX = ((box2D.Max.X - box2D.Min.X) / GridSize) + 1;
 		int32 numY = ((box2D.Max.Y - box2D.Min.Y) / GridSize) + 1;
+		float minX = FMath::Floor(box2D.Min.X / GridSize) * GridSize;
+		float minY = FMath::Floor(box2D.Min.Y / GridSize) * GridSize;
 		for (int32 xId = 0; xId < numX; xId++)
 		{
 			for (int32 yId = 0; yId < numY; yId++)
 			{
-				float xV = (xId * GridSize) + box2D.Min.X;
-				float yV = (yId * GridSize) + box2D.Min.Y;
+				float xV = (xId * GridSize) + minX;
+				float yV = (yId * GridSize) + minY;
 				inGridPoints.AppendVertex(FVector2f(xV, yV));
 			}
 		}
@@ -200,13 +267,9 @@ void ADynamicTerrainActor::SetupTerrainGeometryGTE(int32 SectionID, float GridSi
 	{
 		FVector2D p1 = PerimeterPoints[i];
 		FVector2D p2 = PerimeterPoints[(i + 1) % PerimeterPoints.Num()];
-		int32 totalPoints = int32((p1 - p2).Size() / GridSize + 0.5f);
-		for (int32 idPoint = 0; idPoint < totalPoints; idPoint++)
-		{
-			float pct = float(idPoint) / float(totalPoints);
-			FVector2D curP = p1 + pct * (p2 - p1);
-			dividedPerimeterPoints.Add(curP);
-		}
+
+		dividedPerimeterPoints.Add(p1);
+		GetGridTriangulationPoints(p1, p2, GridSize, dividedPerimeterPoints);
 	}
 
 	for (const FPolyHole2D& hole: HolePoints)
@@ -215,12 +278,12 @@ void ADynamicTerrainActor::SetupTerrainGeometryGTE(int32 SectionID, float GridSi
 		{
 			FVector2D p1 = hole.Points[point];
 			FVector2D p2 = hole.Points[(point + 1) % hole.Points.Num()];
-			int32 totalPoints = int32((p1 - p2).Size() / GridSize + 0.5f);
-			for (int32 idPoint = 0; idPoint < totalPoints; idPoint++)
+			TArray<FVector2D> holePerimeterPoints;
+			GetGridTriangulationPoints(p1, p2, GridSize, holePerimeterPoints);
+			inGridPoints.AppendVertex(p1);
+			for (const auto& p : holePerimeterPoints)
 			{
-				float pct = float(idPoint) / float(totalPoints);
-				FVector2D curP = p1 + pct * (p2 - p1);
-				inGridPoints.AppendVertex(curP);
+				inGridPoints.AppendVertex(p);
 			}
 
 		}

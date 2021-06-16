@@ -24,6 +24,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void GetGridTriangulationPoints(FVector2D PointA, FVector2D PointB, float GridSize, TArray<FVector2D>& OutPoints) const;
+
 	// Uncomment to test SimpleDynamicMesh
 	//class USimpleDynamicMeshComponent* SimpleDynamicMesh = nullptr;
 
@@ -52,7 +54,7 @@ public:
 	//UFUNCTION(BlueprintCallable)
 	//void SetupTerrainGeometry(const TArray<FVector>& PerimeterPoints, const TArray<FVector>& HeightPoints, bool bRecreateMesh, bool bCreateCollision = true);
 
-	void SetupTerrainGeometryGTE(int32 SectionID, float GridSize, const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints,
+	void SetupTerrainGeometry(int32 SectionID, float GridSize, const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints,
 		const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision = true);
 	void ClearAllMeshSections() { Mesh->ClearAllMeshSections(); }
 

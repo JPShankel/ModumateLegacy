@@ -43,6 +43,9 @@ public:
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
+	virtual bool OnSelected(bool bIsSelected) override;
+	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines,
+		bool bForSnapping = false, bool bForSelection = false) const override;
 
 	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
@@ -59,8 +62,9 @@ protected:
 	void UpdateTerrainActor();
 	void UpdateSiteMaterials();
 
-	FVector GraphToWorldPosition(FVector2D GraphPos, double Height = 0.0) const;
+	FVector GraphToWorldPosition(FVector2D GraphPos, double Height = 0.0, bool bRelative = false) const;
 	TMap<int32, int32> PolyIDToMeshSection;
 
 	bool bIsTranslucent = false;
+	TMap<int32, FGuid> CachedMaterials;
 };
