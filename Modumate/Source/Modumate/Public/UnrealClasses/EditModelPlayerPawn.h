@@ -70,9 +70,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool LineTraceForCollisionLocation(const FVector &Start, const FVector &End, FHitResult& OutHit, bool TraceComplex);
 
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
-	bool ToggleWalkAround();
-
 	bool SetCameraFOV(float NewFOV);
 
 	bool bHaveEverBeenPossessed;

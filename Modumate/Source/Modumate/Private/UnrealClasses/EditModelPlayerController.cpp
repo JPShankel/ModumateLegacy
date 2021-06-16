@@ -136,9 +136,10 @@ void AEditModelPlayerController::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
 
-	EMPlayerPawn = Cast<AEditModelPlayerPawn>(GetPawn());
-	if (EMPlayerPawn)
+	AEditModelPlayerPawn* asEMPlayerPawn = Cast<AEditModelPlayerPawn>(GetPawn());
+	if (asEMPlayerPawn)
 	{
+		EMPlayerPawn = asEMPlayerPawn;
 		SetViewTargetWithBlend(EMPlayerPawn);
 	}
 }

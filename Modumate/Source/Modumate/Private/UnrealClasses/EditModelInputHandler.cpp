@@ -493,7 +493,7 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	}
 	case EInputCommand::ToggleWalkAround:
 	{
-		Controller->EMPlayerPawn->ToggleWalkAround();
+		Controller->ToggleGravityPawn();
 		return true;
 	}
 	case EInputCommand::SnapNextAxisLeft:
