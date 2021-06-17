@@ -19,6 +19,8 @@ public:
 	UStartRootMenuWidget(const FObjectInitializer& ObjectInitializer);
 	virtual bool Initialize() override;
 
+	void ShowStartMenu();
+
 	UPROPERTY()
 	class UModumateGameInstance *ModumateGameInstance;
 
@@ -62,8 +64,6 @@ protected:
 
 	UFUNCTION()
 	bool ConfirmQuit();
-
-	void ShowStartMenu();
 
 	bool bHasUserLoggedIn = false;
 	bool bShowingQuitConfirmation = false;

@@ -36,6 +36,7 @@ struct FModumatePlatform
 	};
 
 	static EMessageBoxResponse ShowMessageBox(const FString &msg, const FString &caption,EMessageBoxType type);
+	static bool ConsumeTempMessage(FString& OutMessage);
 
 	FString GetStringValueFromHKCU(const FString &regSubKey, const FString &regValue);
 };

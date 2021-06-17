@@ -12,6 +12,8 @@ Unicode True
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\Modumate.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
+!define PRODUCT_URL_ROOT_KEY "HKEY_CLASSES_ROOT"
+!define PRODUCT_URL_KEY "mdmt"
 
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
@@ -63,8 +65,25 @@ Section "Program Files" SEC01
 SectionEnd
 
 Section "Engine Files" SEC02
-  SetOutPath "$INSTDIR\Engine\Binaries\ThirdParty\DbgHelp"
   SetOverwrite try
+  SetOutPath "$INSTDIR\Engine\Binaries\ThirdParty\CEF3\Win64"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\chrome_elf.dll"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\d3dcompiler_43.dll"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\d3dcompiler_47.dll"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\icudtl.dat"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\libcef.dll"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\libEGL.dll"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\libGLESv2.dll"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\natives_blob.bin"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\snapshot_blob.bin"
+  SetOutPath "$INSTDIR\Engine\Binaries\ThirdParty\CEF3\Win64\Resources"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\Resources\cef.pak"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\Resources\cef_100_percent.pak"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\Resources\cef_200_percent.pak"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\Resources\cef_extensions.pak"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\Resources\devtools_resources.pak"
+  SetOutPath "$INSTDIR\Engine\Binaries\ThirdParty\CEF3\Win64\Resources\locales"
+  File "${PATH_IN}\Engine\Binaries\ThirdParty\CEF3\Win64\Resources\locales\en-US.pak"
   File "${PATH_IN}\Engine\Binaries\ThirdParty\DbgHelp\dbghelp.dll"
   SetOutPath "$INSTDIR\Engine\Binaries\ThirdParty\NVIDIA\NVaftermath\Win64"
   File "${PATH_IN}\Engine\Binaries\ThirdParty\NVIDIA\NVaftermath\Win64\GFSDK_Aftermath_Lib.x64.dll"
@@ -124,6 +143,12 @@ Section -Post
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
+  WriteRegStr ${PRODUCT_URL_ROOT_KEY} "${PRODUCT_URL_KEY}" "URL protocol" ""
+  WriteRegStr ${PRODUCT_URL_ROOT_KEY} "${PRODUCT_URL_KEY}" "" "URL:Modumate protocol"
+  WriteRegStr ${PRODUCT_URL_ROOT_KEY} "${PRODUCT_URL_KEY}\DefaultIcon" "" "$INSTDIR\Modumate.exe"
+  WriteRegStr ${PRODUCT_URL_ROOT_KEY} "${PRODUCT_URL_KEY}\shell" "" ""
+  WriteRegStr ${PRODUCT_URL_ROOT_KEY} "${PRODUCT_URL_KEY}\shell\open" "" ""
+  WriteRegStr ${PRODUCT_URL_ROOT_KEY} "${PRODUCT_URL_KEY}\shell\open\command" "" '"$INSTDIR\Modumate.exe" -CustomURL="%1"'
   Delete "$INSTDIR\Modumate\Binaries\Win64\PDFNetDotNetCore.dll"
   Delete "$INSTDIR\Modumate\Binaries\Win64\PDFNetC.dll"
   Delete "$INSTDIR\Modumate\Binaries\Win64\Modumate-Win64-Shipping.pdb"
@@ -141,39 +166,6 @@ Function un.onInit
 FunctionEnd
 
 Section Uninstall
-  Delete "$INSTDIR\${PRODUCT_NAME}.url"
-  Delete "$INSTDIR\UninstallModumate.exe"
-  Delete "$INSTDIR\Modumate\Content\Splash\Splash.bmp"
-  Delete "$INSTDIR\Modumate\Content\Paks\pakchunk0-WindowsNoEditor.sig"
-  Delete "$INSTDIR\Modumate\Content\Paks\pakchunk0-WindowsNoEditor.pak"
-  Delete "$INSTDIR\Modumate\Binaries\Win64\PDFNetDotNetCore.dll"
-  Delete "$INSTDIR\Modumate\Binaries\Win64\PDFNetC.dll"
-  Delete "$INSTDIR\Modumate\Binaries\Win64\turbojpeg.dll"
-  Delete "$INSTDIR\Modumate\Binaries\Win64\Modumate-Win64-Shipping.exe"
-  Delete "$INSTDIR\Modumate\Binaries\Win64\Modumate-Win64-Shipping.pdb"
-  Delete "$INSTDIR\Engine\Programs\CrashReportClient\Content\Paks\CrashReportClient.pak"
-  Delete "$INSTDIR\Engine\Extras\Redist\en-us\UE4PrereqSetup_x64.exe"
-  Delete "$INSTDIR\Engine\Content\SlateDebug\Fonts\LastResort.ttf"
-  Delete "$INSTDIR\Engine\Content\SlateDebug\Fonts\LastResort.tps"
-  Delete "$INSTDIR\Engine\Binaries\Win64\CrashReportClient.exe"
-  Delete "$INSTDIR\Engine\Binaries\Win64\CrashReportClient.pdb"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\Windows\XAudio2_9\x64\xaudio2_9redist.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\Vorbis\Win64\VS2015\libvorbis_64.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\Vorbis\Win64\VS2015\libvorbisfile_64.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\PhysX3\Win64\VS2015\PxPvdSDK_x64.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\PhysX3\Win64\VS2015\PxFoundation_x64.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\PhysX3\Win64\VS2015\PhysX3_x64.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\PhysX3\Win64\VS2015\PhysX3Cooking_x64.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\PhysX3\Win64\VS2015\PhysX3Common_x64.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\PhysX3\Win64\VS2015\NvCloth_x64.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\PhysX3\Win64\VS2015\APEX_Legacy_x64.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\PhysX3\Win64\VS2015\APEX_Clothing_x64.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\PhysX3\Win64\VS2015\ApexFramework_x64.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\Ogg\Win64\VS2015\libogg_64.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\NVIDIA\NVaftermath\Win64\GFSDK_Aftermath_Lib.x64.dll"
-  Delete "$INSTDIR\Engine\Binaries\ThirdParty\DbgHelp\dbghelp.dll"
-  Delete "$INSTDIR\Modumate.exe"
-
   Delete "$SMPROGRAMS\Modumate\Uninstall.lnk"
   Delete "$SMPROGRAMS\Modumate\Website.lnk"
   Delete "$DESKTOP\Modumate.lnk"
@@ -184,5 +176,6 @@ Section Uninstall
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
+  DeleteRegKey ${PRODUCT_URL_ROOT_KEY} "${PRODUCT_URL_KEY}"
   SetAutoClose true
 SectionEnd

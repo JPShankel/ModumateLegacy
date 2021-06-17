@@ -13,8 +13,11 @@
 #include "ModumateCore/PlatformFunctions.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ModumateCloudConnection.h"
+#include "UI/StartMenu/StartRootMenuWidget.h"
+#include "UI/TutorialManager.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/MainMenuController.h"
 
 
 void AMainMenuGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -91,6 +94,38 @@ void AMainMenuGameMode::LoadRecentProjectData()
 	}
 }
 
+void AMainMenuGameMode::OnLoggedIn()
+{
+	UWorld* world = GetWorld();
+	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+	ULocalPlayer* localPlayer = world ? world->GetFirstLocalPlayerFromController() : nullptr;
+	AMainMenuController* controller = localPlayer ? Cast<AMainMenuController>(localPlayer->GetPlayerController(world)) : nullptr;
+	if (!ensure(gameInstance && controller && controller->StartRootMenuWidget))
+	{
+		return;
+	}
+
+	// If there's a pending project or input log that came from the command line, then open it directly.
+	if (!gameInstance->PendingProjectPath.IsEmpty() || !gameInstance->PendingInputLogPath.IsEmpty())
+	{
+		OpenEditModelLevel();
+		return;
+	}
+	// Otherwise, if the user is trying to open a cloud project by ID, then attempt to open that connection.
+	else if (!gameInstance->PendingProjectID.IsEmpty() && OpenCloudProject(gameInstance->PendingProjectID))
+	{
+		gameInstance->PendingProjectID.Empty();
+	}
+	// Otherwise, if the user is going into the starting walkthrough, then skip show the start menu.
+	else if (gameInstance->TutorialManager->CheckAbsoluteBeginner())
+	{
+		return;
+	}
+
+	// If we haven't already exited to the edit model level, then show the start menu.
+	controller->StartRootMenuWidget->ShowStartMenu();
+}
+
 bool AMainMenuGameMode::GetRecentProjectData(int32 index, FString &outProjectPath, FText &outProjectName, FDateTime &outProjectTime, FSlateBrush &outDefaultThumbnail, FSlateBrush &outHoveredThumbnail) const
 {
 	if (index < NumRecentProjects)
@@ -131,6 +166,73 @@ bool AMainMenuGameMode::OpenProject(const FString& ProjectPath)
 	return false;
 }
 
+bool AMainMenuGameMode::OpenCloudProject(const FString& ProjectID)
+{
+	if (!PendingCloudProjectID.IsEmpty())
+	{
+		return false;
+	}
+
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (!accountManager.IsValid() || !cloudConnection.IsValid() || !cloudConnection->IsLoggedIn())
+	{
+		return false;
+	}
+
+	auto weakThis = MakeWeakObjectPtr(this);
+	bool bEndpointSuccess = cloudConnection->RequestEndpoint(
+		FProjectConnectionHelpers::MakeProjectConnectionEndpoint(ProjectID),
+		FModumateCloudConnection::ERequestType::Put,
+		nullptr,
+		[weakThis, ProjectID](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+		{
+			FProjectConnectionResponse createConnectionResponse;
+			if (!ensure(bSuccessful && Response.IsValid() && weakThis.IsValid() &&
+				FJsonObjectConverter::JsonObjectToUStruct(Response.ToSharedRef(), &createConnectionResponse)))
+			{
+				UE_LOG(LogTemp, Error, TEXT("Unexpected error in response to creating a connection to project %s."), *ProjectID);
+				return;
+			}
+
+			weakThis->OnCreatedProjectConnection(ProjectID, createConnectionResponse);
+		},
+		[weakThis, ProjectID](int32 ErrorCode, const FString& ErrorString)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Error code %d while trying to create a connection to project %s: %s"), ErrorCode, *ProjectID, *ErrorString);
+
+			if (weakThis.IsValid() && ensure(ProjectID == weakThis->PendingCloudProjectID))
+			{
+				weakThis->PendingCloudProjectID.Empty();
+			}
+		});
+
+	if (bEndpointSuccess)
+	{
+		PendingCloudProjectID = ProjectID;
+	}
+
+	return bEndpointSuccess;
+}
+
+void AMainMenuGameMode::OnCreatedProjectConnection(const FString& ProjectID, const FProjectConnectionResponse& Response)
+{
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (!accountManager.IsValid() || !cloudConnection.IsValid() || !cloudConnection->IsLoggedIn() || !ensure(ProjectID == PendingCloudProjectID))
+	{
+		return;
+	}
+
+	const FString& userID = accountManager->GetUserInfo().ID;
+	cloudConnection->CacheEncryptionKey(userID, ProjectID, Response.Key);
+
+	FString targetURL = FString::Printf(TEXT("%s:%d"), *Response.IP, Response.Port);
+	OpenProjectServerInstance(targetURL, ProjectID);
+}
+
 bool AMainMenuGameMode::OpenProjectFromPicker()
 {
 	FString projectPath;
@@ -152,7 +254,7 @@ FDateTime AMainMenuGameMode::GetCurrentDateTime()
 	return FDateTime::Now();
 }
 
-bool AMainMenuGameMode::ConnectToMultiplayerServer(const FString& URL, const FString& ProjectID)
+bool AMainMenuGameMode::OpenProjectServerInstance(const FString& URL, const FString& ProjectID)
 {
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;

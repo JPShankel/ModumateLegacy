@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ModumateCloudConnection.h"
+#include "Online/ProjectConnection.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerState.h"
@@ -29,30 +30,37 @@ void AEditModelGameMode::InitGameState()
 	Super::InitGameState();
 
 	auto* gameState = Cast<AEditModelGameState>(GameState);
-	if (ensure(gameState))
+
+	auto gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+
+	if (!ensure(gameState && accountManager.IsValid() && cloudConnection.IsValid()))
 	{
-		FString localUserID;
-		int32 localUserIdx = UModumateDocument::MaxUserIdx;
-
-#if !UE_SERVER
-		auto gameInstance = GetGameInstance<UModumateGameInstance>();
-		auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
-		auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
-		if (accountManager.IsValid() && cloudConnection.IsValid() && cloudConnection->IsLoggedIn())
-		{
-			localUserID = accountManager->GetUserInfo().ID;
-		}
-		localUserIdx = 0;
-#endif
-
-		gameState->InitDocument(localUserID, localUserIdx);
+		return;
 	}
 
-#if UE_SERVER
-	if (FParse::Value(FCommandLine::Get(), *AEditModelGameMode::ProjectIDArg, CurProjectID) && !CurProjectID.IsEmpty() &&
-		FParse::Value(FCommandLine::Get(), *AEditModelGameMode::APIKeyArg, CurAPIKey) && !CurAPIKey.IsEmpty())
+	FString localUserID;
+	int32 localUserIdx = UModumateDocument::MaxUserIdx;
+
+#if !UE_SERVER
+	if (accountManager.IsValid() && cloudConnection.IsValid() && cloudConnection->IsLoggedIn())
 	{
-		FString redactedKey = FString::Printf(TEXT("%c****%c"), CurAPIKey[0], CurAPIKey[CurAPIKey.Len() - 1]);
+		localUserID = accountManager->GetUserInfo().ID;
+	}
+	localUserIdx = 0;
+#endif
+
+	gameState->InitDocument(localUserID, localUserIdx);
+
+#if UE_SERVER
+	FString inXApiKey;
+	if (FParse::Value(FCommandLine::Get(), *AEditModelGameMode::ProjectIDArg, CurProjectID) && !CurProjectID.IsEmpty() &&
+		FParse::Value(FCommandLine::Get(), *AEditModelGameMode::APIKeyArg, inXApiKey) && !inXApiKey.IsEmpty())
+	{
+		cloudConnection->SetXApiKey(inXApiKey);
+
+		FString redactedKey = FString::Printf(TEXT("%c****%c"), inXApiKey[0], inXApiKey[inXApiKey.Len() - 1]);
 		UE_LOG(LogGameMode, Log, TEXT("Starting EditModelGameMode server with Project ID: %s, API Key: %s"), *CurProjectID, *redactedKey);
 	}
 	else
@@ -62,6 +70,8 @@ void AEditModelGameMode::InitGameState()
 
 	// TODO: support loading documents via another argument that would download them from a cloud-hosted file
 	ResetSession();
+
+	gameInstance->GetTimerManager().SetTimer(ServerStatusTimer, this, &AEditModelGameMode::OnServerStatusTimer, ServerStatusTimerRate, true);
 #endif
 }
 
@@ -173,10 +183,21 @@ void AEditModelGameMode::Logout(AController* Exiting)
 		PlayersByUserID.Remove(userID);
 	}
 
+#if UE_SERVER
+	// Once the user has logged out, let the multiplayer controller and AMS know that the user is no longer connected to the multiplayer server.
+	auto gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (cloudConnection.IsValid())
+	{
+		FString deleteConnectionEndpoint = FProjectConnectionHelpers::MakeProjectConnectionEndpoint(CurProjectID) / userID;
+		cloudConnection->RequestEndpoint(deleteConnectionEndpoint, FModumateCloudConnection::ERequestType::Delete, nullptr, nullptr, nullptr);
+	}
+
 	if (PlayersByUserID.Num() == 0)
 	{
 		ResetSession();
 	}
+#endif
 
 	Super::Logout(Exiting);
 }
@@ -198,6 +219,26 @@ bool AEditModelGameMode::GetUserByPlayerID(int32 PlayerID, FString& OutUserID) c
 	{
 		return false;
 	}
+}
+
+void AEditModelGameMode::OnServerStatusTimer()
+{
+#if UE_SERVER
+	if (PlayersByUserID.Num() == 0)
+	{
+		TimeWithoutPlayers += ServerStatusTimerRate;
+
+		if (TimeWithoutPlayers >= ServerAutoExitTimeout)
+		{
+			UE_LOG(LogTemp, Log, TEXT("It has been %.1fsec without any connected players; exiting!"), TimeWithoutPlayers);
+			FPlatformMisc::RequestExit(false);
+		}
+	}
+	else
+	{
+		TimeWithoutPlayers = 0.0f;
+	}
+#endif
 }
 
 void AEditModelGameMode::ResetSession()

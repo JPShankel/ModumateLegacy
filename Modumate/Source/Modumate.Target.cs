@@ -10,5 +10,6 @@ public class ModumateTarget : TargetRules
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.Latest;
 		ExtraModuleNames.AddRange( new string[] { "Modumate" } );
+		bUseLoggingInShipping = true;
 	}
 }

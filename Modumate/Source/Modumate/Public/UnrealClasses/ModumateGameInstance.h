@@ -101,6 +101,12 @@ public:
 	UFUNCTION(Exec, Category = ExecFunctions)
 	void Modumate(const FString &Params);
 
+	UFUNCTION()
+	bool ProcessCustomURLArgs(const FString& Args);
+
+	UFUNCTION()
+	void CheckForTempMessage();
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FModumateUserSettings UserSettings;
 
@@ -131,4 +137,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FString PendingInputLogPath;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	FString PendingProjectID;
+
+	FTimerHandle TempMessageCheckHandle;
 };

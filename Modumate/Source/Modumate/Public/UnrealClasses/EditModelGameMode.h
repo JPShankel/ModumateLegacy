@@ -120,11 +120,18 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Pawn")
 	TSubclassOf<class AEditModelToggleGravityPawn> ToggleGravityPawnClass;
 
+	static constexpr float ServerAutoExitTimeout = 30.0f;
+	static constexpr float ServerStatusTimerRate = 1.0f;
+
 protected:
 	FString CurProjectID;
-	FString CurAPIKey;
 	TMap<FString, int32> PlayersByUserID;
 	TMap<int32, FString> UsersByPlayerID;
+	FTimerHandle ServerStatusTimer;
+	float TimeWithoutPlayers = 0.0f;
+
+	UFUNCTION()
+	void OnServerStatusTimer();
 
 	void ResetSession();
 };

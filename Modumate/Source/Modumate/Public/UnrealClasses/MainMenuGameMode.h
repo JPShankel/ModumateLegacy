@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UnrealClasses/ModumateGameModeBase.h"
+#include "Online/ProjectConnection.h"
 #include "Styling/SlateBrush.h"
 #include "Templates/SharedPointer.h"
+#include "UnrealClasses/ModumateGameModeBase.h"
 
 #include "MainMenuGameMode.generated.h"
 
@@ -36,6 +37,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	int32 NumRecentProjects;
 
+	UFUNCTION()
+	void OnLoggedIn();
+
 	UFUNCTION(BlueprintPure, Category = "Files")
 	bool GetRecentProjectData(int32 index, FString &outProjectPath, FText &outProjectName, FDateTime &outProjectTime, FSlateBrush &outDefaultThumbnail, FSlateBrush &outHoveredThumbnail) const;
 
@@ -44,6 +48,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Files")
 	bool OpenProject(const FString& ProjectPath);
+
+	UFUNCTION()
+	bool OpenCloudProject(const FString& ProjectID);
+
+	UFUNCTION()
+	void OnCreatedProjectConnection(const FString& ProjectID, const FProjectConnectionResponse& Response);
 
 	UFUNCTION(BlueprintCallable, Category = "Files")
 	bool OpenProjectFromPicker();
@@ -55,9 +65,10 @@ public:
 	FDateTime GetCurrentDateTime();
 
 	UFUNCTION()
-	bool ConnectToMultiplayerServer(const FString& URL, const FString& ProjectID);
+	bool OpenProjectServerInstance(const FString& URL, const FString& ProjectID);
 
 protected:
+	FString PendingCloudProjectID;
 	TArray<FString> RecentProjectPaths;
 	TArray<FText> RecentProjectNames;
 	TArray<FDateTime> RecentProjectTimes;

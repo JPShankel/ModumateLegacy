@@ -46,6 +46,19 @@ bool UStartRootMenuWidget::Initialize()
 	return true;
 }
 
+void UStartRootMenuWidget::ShowStartMenu()
+{
+	if (Start_Home_BP && (Start_Home_BP->GetVisibility() == ESlateVisibility::Collapsed))
+	{
+		Start_Home_BP->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		// TODO: Play widget opening animation here
+		Start_Home_BP->OpenRecentProjectMenu();
+		Start_Home_BP->TutorialsMenuWidgetBP->BuildTutorialMenu();
+
+		OpenCreateNewButtonsBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+}
+
 bool UStartRootMenuWidget::ConfirmQuit()
 {
 	if (bShowingQuitConfirmation)
@@ -77,16 +90,9 @@ void UStartRootMenuWidget::NativeTick(const FGeometry& MyGeometry, float InDelta
 	{
 		bHasUserLoggedIn = true;
 		auto* mainMenuGameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode>();
-
-		// If there's a pending project or input log that came from the command line, then open it directly.
-		if (ensure(mainMenuGameMode) && (!ModumateGameInstance->PendingProjectPath.IsEmpty() || !ModumateGameInstance->PendingInputLogPath.IsEmpty()))
+		if (ensure(mainMenuGameMode))
 		{
-			mainMenuGameMode->OpenEditModelLevel();
-		}
-		// Otherwise, if the user isn't forced into the starting walkthrough, then show the start menu.
-		else if (!GetWorld()->GetGameInstance<UModumateGameInstance>()->TutorialManager->CheckAbsoluteBeginner())
-		{
-			ShowStartMenu();
+			mainMenuGameMode->OnLoggedIn();
 		}
 	}
 }
@@ -117,19 +123,6 @@ void UStartRootMenuWidget::OnButtonReleasedOpen()
 	if (mainMenuGameMode)
 	{
 		mainMenuGameMode->OpenProjectFromPicker();
-	}
-}
-
-void UStartRootMenuWidget::ShowStartMenu()
-{
-	if (Start_Home_BP && (Start_Home_BP->GetVisibility() == ESlateVisibility::Collapsed))
-	{
-		Start_Home_BP->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		// TODO: Play widget opening animation here
-		Start_Home_BP->OpenRecentProjectMenu();
-		Start_Home_BP->TutorialsMenuWidgetBP->BuildTutorialMenu();
-
-		OpenCreateNewButtonsBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 }
 

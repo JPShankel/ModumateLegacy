@@ -4,8 +4,16 @@
 
 #include "ModumateCore/PlatformFunctions.h"
 #include "Online/ModumateAccountManager.h"
+#include "Online/ProjectConnection.h"
 #include "Serialization/JsonSerializer.h"
 
+/*
+* With this (without the ECVF_Cheat flag) we can override the AMS endpoint on any shipping build (installer or otherwise) by adding these lines to:
+* %LOCALAPPDATA%\Modumate\Saved\Config\WindowsNoEditor\Engine.ini:
+* 
+* [SystemSettings]
+* modumate.CloudAddress="https://beta.account.modumate.com"
+*/
 TAutoConsoleVariable<FString> CVarModumateCloudAddress(
 	TEXT("modumate.CloudAddress"),
 #if UE_BUILD_SHIPPING
@@ -14,7 +22,7 @@ TAutoConsoleVariable<FString> CVarModumateCloudAddress(
 	TEXT("https://beta.account.modumate.com"),
 #endif
 	TEXT("The address used to connect to the Modumate Cloud backend."),
-	ECVF_Default | ECVF_Cheat);
+	ECVF_Default);
 
 
 // Period for requesting refresh of AuthToken.
@@ -40,6 +48,11 @@ void FModumateCloudConnection::SetAuthToken(const FString& InAuthToken)
 	AuthToken = InAuthToken;
 }
 
+void FModumateCloudConnection::SetXApiKey(const FString& InXApiKey)
+{
+	XApiKey = InXApiKey;
+}
+
 FString FModumateCloudConnection::MakeEncryptionToken(const FString& UserID, const FString& ProjectID)
 {
 	return UserID + SUBOBJECT_DELIMITER + ProjectID;
@@ -51,6 +64,12 @@ bool FModumateCloudConnection::ParseEncryptionToken(const FString& EncryptionTok
 	OutProjectID.Empty();
 
 	return EncryptionToken.Split(SUBOBJECT_DELIMITER, &OutUserID, &OutProjectID) && !OutUserID.IsEmpty() && !OutProjectID.IsEmpty();
+}
+
+void FModumateCloudConnection::CacheEncryptionKey(const FString& UserID, const FString& ProjectID, const FString& EncryptionKey)
+{
+	FString encryptionToken = MakeEncryptionToken(UserID, ProjectID);
+	CachedEncryptionKeysByToken.Add(encryptionToken, EncryptionKey);
 }
 
 bool FModumateCloudConnection::GetCachedEncryptionKey(const FString& UserID, const FString& ProjectID, FString& OutEncryptionKey)
@@ -69,18 +88,50 @@ bool FModumateCloudConnection::GetCachedEncryptionKey(const FString& UserID, con
 void FModumateCloudConnection::QueryEncryptionKey(const FString& UserID, const FString& ProjectID, const FOnEncryptionKeyResponse& Delegate)
 {
 	FString encryptionKeyString;
-	if (!GetCachedEncryptionKey(UserID, ProjectID, encryptionKeyString))
+
+	if (GetCachedEncryptionKey(UserID, ProjectID, encryptionKeyString))
 	{
-		FString encryptionToken = MakeEncryptionToken(UserID, ProjectID);
-
-		// TODO: asynchronously retrieve a real encryption key from the AMS using the User ID & Session ID, and *then* call the delegate.
-		encryptionKeyString = UserID.Reverse() + ProjectID.Reverse();
-		CachedEncryptionKeysByToken.Add(encryptionToken, encryptionKeyString);
+		FEncryptionKeyResponse response(EEncryptionResponse::Success, TEXT(""));
+		response.EncryptionData.Key.Append((uint8*)*encryptionKeyString, sizeof(TCHAR) * encryptionKeyString.Len());
+		Delegate.ExecuteIfBound(response);
 	}
+	else
+	{
+		TWeakPtr<FModumateCloudConnection> weakThisCaptured(this->AsShared());
+		FString getConnectionEndpoint = FProjectConnectionHelpers::MakeProjectConnectionEndpoint(ProjectID) / UserID;
+		bool bQuerySuccess = RequestEndpoint(getConnectionEndpoint, ERequestType::Get, nullptr,
+			[weakThisCaptured, UserID, ProjectID, Delegate](bool bSuccess, const TSharedPtr<FJsonObject>& Payload)
+			{
+				FProjectConnectionResponse getConnectionResponse;
+				TSharedPtr<FModumateCloudConnection> sharedThis = weakThisCaptured.Pin();
+				if (!ensure(bSuccess && sharedThis.IsValid() && Payload.IsValid() &&
+					FJsonObjectConverter::JsonObjectToUStruct(Payload.ToSharedRef(), &getConnectionResponse)))
+				{
+					return;
+				}
 
-	FEncryptionKeyResponse response(EEncryptionResponse::Success, TEXT(""));
-	response.EncryptionData.Key.Append((uint8*)*encryptionKeyString, sizeof(TCHAR) * encryptionKeyString.Len());
-	Delegate.ExecuteIfBound(response);
+				sharedThis->CacheEncryptionKey(UserID, ProjectID, getConnectionResponse.Key);
+
+				FEncryptionKeyResponse asyncResponse(EEncryptionResponse::Success, TEXT(""));
+				asyncResponse.EncryptionData.Key.Append((uint8*)*getConnectionResponse.Key, sizeof(TCHAR) * getConnectionResponse.Key.Len());
+				Delegate.ExecuteIfBound(asyncResponse);
+			},
+			[UserID, ProjectID, Delegate](int32 ErrorCode, const FString& ErrorString)
+			{
+				UE_LOG(LogTemp, Error, TEXT("Error code %d querying encrypion key for User ID %s and Project ID %s: %s"),
+					ErrorCode, *UserID, *ProjectID, *ErrorString);
+
+				FEncryptionKeyResponse asyncResponse(EEncryptionResponse::Failure, ErrorString);
+				Delegate.ExecuteIfBound(asyncResponse);
+			},
+			false);
+
+		if (!bQuerySuccess)
+		{
+			FEncryptionKeyResponse response(EEncryptionResponse::Failure, TEXT("Failed to query for encryption key!"));
+			Delegate.ExecuteIfBound(response);
+		}
+	}
 }
 
 void FModumateCloudConnection::SetLoginStatus(ELoginStatus InLoginStatus)
@@ -220,7 +271,10 @@ bool FModumateCloudConnection::RequestAuthTokenRefresh(const FString& InRefreshT
 				SharedThis->LoginStatus = ELoginStatus::ConnectionError;
 			}
 
-			Callback(bSuccess, Payload);
+			if (Callback)
+			{
+				Callback(bSuccess, Payload);
+			}
 		},
 
 		ServerErrorCallback,
@@ -278,7 +332,11 @@ bool FModumateCloudConnection::Login(const FString& Username, const FString& Pas
 			{
 				SharedThis->LoginStatus = ELoginStatus::ConnectionError;
 			}
-			Callback(bSuccess, Payload);
+
+			if (Callback)
+			{
+				Callback(bSuccess, Payload);
+			}
 		},
 		// Handle error
 		[WeakThisCaptured,ServerErrorCallback](int32 ErrorCode, const FString& ErrorString)
@@ -290,7 +348,11 @@ bool FModumateCloudConnection::Login(const FString& Username, const FString& Pas
 			}
 			bool bInvalidCredentials = (ErrorCode == EHttpResponseCodes::Denied);
 			SharedThis->LoginStatus = bInvalidCredentials ? ELoginStatus::InvalidCredentials : ELoginStatus::ConnectionError;
-			ServerErrorCallback(ErrorCode, ErrorString);
+
+			if (ServerErrorCallback)
+			{
+				ServerErrorCallback(ErrorCode, ErrorString);
+			}
 		},
 		false);
 
@@ -361,9 +423,16 @@ TSharedRef<IHttpRequest, ESPMode::ThreadSafe> FModumateCloudConnection::MakeRequ
 	Request->SetHeader(TEXT("Accepts"), TEXT("application/json"));
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 
+	// The auth token is for authenticating and identifying users while they make secure requests to our AMS
 	if (!AuthToken.IsEmpty())
 	{
 		Request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + AuthToken);
+	}
+
+	// The x-api-key is for authenticating privileged services that make secure requests to our AMS in order to access non-user-specific data
+	if (!XApiKey.IsEmpty())
+	{
+		Request->SetHeader(TEXT("x-api-key"), XApiKey);
 	}
 
 	return Request;
@@ -378,7 +447,10 @@ void FModumateCloudConnection::HandleRequestResponse(const FSuccessCallback& Cal
 
 	if (ResponseCode == EHttpResponseCodes::Ok)
 	{
-		Callback(true, responseValue ? responseValue->AsObject() : nullptr);
+		if (Callback)
+		{
+			Callback(true, responseValue ? responseValue->AsObject() : nullptr);
+		}
 	}
 	else
 	{
@@ -390,7 +462,10 @@ void FModumateCloudConnection::HandleRequestResponse(const FSuccessCallback& Cal
 			AuthTokenTimestamp = FDateTime(0);
 		}
 
-		ServerErrorCallback(ResponseCode, responseValue && responseValue->AsObject() ? responseValue->AsObject()->GetStringField(TEXT("error")) : TEXT("null response"));
+		if (ServerErrorCallback)
+		{
+			ServerErrorCallback(ResponseCode, responseValue && responseValue->AsObject() ? responseValue->AsObject()->GetStringField(TEXT("error")) : TEXT("null response"));
+		}
 	}
 }
 

@@ -1,6 +1,10 @@
 // Copyright 2018 Modumate, Inc. All Rights Reserved.
 #include "ModumateCore/PlatformFunctions.h"
+
 #include "HAL/PlatformAtomics.h"
+#include "HAL/FileManager.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 
 #define LOCTEXT_NAMESPACE "ModumatePlatform"
 
@@ -21,6 +25,7 @@ const TArray<FString> FModumatePlatform::FileExtensions({
 #include "Windows/AllowWindowsPlatformTypes.h"
 	#include <shlobj.h>
 	#include <shlwapi.h>
+	#include <fileapi.h>
 #include "Windows/HideWindowsPlatformTypes.h"
 
 static HRESULT CDialogEventHandler_CreateInstance(REFIID riid, void **ppv);
@@ -501,6 +506,47 @@ FModumatePlatform::EMessageBoxResponse FModumatePlatform::ShowMessageBox(const F
 	return Cancel;
 }
 
+bool FModumatePlatform::ConsumeTempMessage(FString& OutMessage)
+{
+	WCHAR TempDir[MAX_PATH];
+	DWORD TempPathResult = GetTempPath(MAX_PATH, TempDir);
+	if ((TempPathResult > MAX_PATH) || (TempPathResult == MAX_PATH))
+	{
+		return false;
+	}
+
+	HMODULE CurModuleHandle = GetModuleHandle(NULL);
+	if (!ensure(CurModuleHandle != INVALID_HANDLE_VALUE))
+	{
+		return false;
+	}
+
+	WCHAR CurModuleFilePathW[MAX_PATH];
+	if (!ensure(GetModuleFileNameW(CurModuleHandle, CurModuleFilePathW, sizeof(CurModuleFilePathW)) != 0))
+	{
+		return false;
+	}
+
+	FString CurModuleFileName = FPaths::GetCleanFilename(FString(WCHAR_TO_TCHAR(CurModuleFilePathW)));
+	const WCHAR* CurModuleFileNameW = TCHAR_TO_WCHAR(*CurModuleFileName);
+
+	DWORD CurPID = GetCurrentProcessId();
+	WCHAR TempFileNameW[MAX_PATH];
+	UINT TempFileResult = GetTempFileNameW(TempDir, CurModuleFileNameW, CurPID, TempFileNameW);
+	if (TempFileResult == 0)
+	{
+		return false;
+	}
+
+	const TCHAR* TempFileName = WCHAR_TO_TCHAR(TempFileNameW);
+	if (!FFileHelper::LoadFileToString(OutMessage, TempFileName))
+	{
+		return false;
+	}
+
+	return IFileManager::Get().Delete(TempFileName, false, true, true);
+}
+
 #elif PLATFORM_MAC
 
 #include "Mac/MacApplication.h"
@@ -633,7 +679,11 @@ FModumatePlatform::EMessageBoxResponse FModumatePlatform::ShowMessageBox(const F
 {
 	return Cancel;
 }
-	
+
+bool FModumatePlatform::ConsumeTempMessage(FString& OutMessage)
+{
+	return false;
+}
 
 
 #else
@@ -659,6 +709,11 @@ FString FModumatePlatform::GetStringValueFromHKCU(const FString &regSubKey, cons
 FModumatePlatform::EMessageBoxResponse FModumatePlatform::ShowMessageBox(const FString &msg, const FString &caption, EMessageBoxType type)
 {
 	return Cancel;
+}
+
+bool FModumatePlatform::ConsumeTempMessage(FString& OutMessage)
+{
+	return false;
 }
 
 

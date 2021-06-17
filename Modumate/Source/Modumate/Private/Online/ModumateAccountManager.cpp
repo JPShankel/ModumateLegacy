@@ -68,7 +68,7 @@ bool FModumateAccountManager::HasPermission(EModumatePermission requestedPermiss
 
 bool FModumateAccountManager::RequestServiceRemaining(const FString& ServiceName, const TFunction<void(FString, bool, bool, int32)>& Callback)
 {
-	if (!CloudConnection->IsLoggedIn())
+	if (!CloudConnection->IsLoggedIn() || !Callback)
 	{
 		return false;
 	}
@@ -112,7 +112,11 @@ void FModumateAccountManager::NotifyServiceUse(const FString& ServiceName, const
 			{
 				UE_LOG(LogTemp, Error, TEXT("FModumateAccountManager::NotifyServiceUse() unsuccessful"));
 			}
-			Callback(ServiceName, bSuccessful);
+
+			if (Callback)
+			{
+				Callback(ServiceName, bSuccessful);
+			}
 		},
 		[Callback, ServiceName](int32 ErrorCode, const FString& ErrorString)
 		{

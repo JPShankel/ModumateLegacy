@@ -10,5 +10,6 @@ public class ModumateServerTarget : TargetRules
 		Type = TargetType.Server;
 		DefaultBuildSettings = BuildSettingsVersion.Latest;
 		ExtraModuleNames.AddRange( new string[] { "Modumate" } );
+		bUseLoggingInShipping = true;
 	}
 }

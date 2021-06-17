@@ -106,6 +106,8 @@ void UModumateGameInstance::Init()
 		ObjectDatabase->ReadPresetData();
 	}
 	UE_LOG(LogPerformance, Log, TEXT("Object database loaded in %d ms"), FMath::RoundToInt(1000.0 * databaseLoadTime));
+
+	GetTimerManager().SetTimer(TempMessageCheckHandle, this, &UModumateGameInstance::CheckForTempMessage, 0.5f, true);
 }
 
 TSharedPtr<FModumateCloudConnection> UModumateGameInstance::GetCloudConnection() const
@@ -573,15 +575,16 @@ void UModumateGameInstance::StartGameInstance()
 	static const FString inputLogExtension(TEXT("ilog"));
 
 	// Determine whether there's a file that should be opened as soon as possible, before the command line argument might be interpreted by the default GameInstance.
+	bool bUseFile = false;
 	IFileManager& fileManger = IFileManager::Get();
 	const TCHAR* commandLine = FCommandLine::Get();
 	FString potentialFilePath;
 	if (FParse::Token(commandLine, potentialFilePath, 0) && fileManger.FileExists(*potentialFilePath))
 	{
+		bUseFile = true;
 		FString filePathPart, fileNamePart, fileExtPart;
 		FPaths::Split(potentialFilePath, filePathPart, fileNamePart, fileExtPart);
 
-		bool bUseFile = true;
 		if (fileExtPart == projectExtension)
 		{
 			PendingProjectPath = potentialFilePath;
@@ -602,9 +605,16 @@ void UModumateGameInstance::StartGameInstance()
 		}
 	}
 
+	if (!bUseFile && ProcessCustomURLArgs(FString(FCommandLine::Get())) && !PendingProjectID.IsEmpty())
+	{
+		UE_LOG(LogTemp, Log, TEXT("Command line specified project ID: \"%s\""), *PendingProjectID);
+		FCommandLine::Set(TEXT(""));
+	}
+
 	Super::StartGameInstance();
 }
 
+/** Handle setting up encryption keys. Games that override this MUST call the delegate when their own (possibly async) processing is complete. */
 void UModumateGameInstance::ReceivedNetworkEncryptionToken(const FString& EncryptionToken, const FOnEncryptionKeyResponse& Delegate)
 {
 	FString userID, projectID;
@@ -621,6 +631,7 @@ void UModumateGameInstance::ReceivedNetworkEncryptionToken(const FString& Encryp
 	}
 }
 
+/** Called when a client receives the EncryptionAck control message from the server, will generally enable encryption. */
 void UModumateGameInstance::ReceivedNetworkEncryptionAck(const FOnEncryptionKeyResponse& Delegate)
 {
 	FEncryptionKeyResponse response(EEncryptionResponse::Failure, TEXT("Invalid user!"));
@@ -749,6 +760,46 @@ ELoginStatus UModumateGameInstance::LoginStatus() const
 bool UModumateGameInstance::IsloggedIn() const
 {
 	return CloudConnection->IsLoggedIn();
+}
+
+bool UModumateGameInstance::ProcessCustomURLArgs(const FString& Args)
+{
+	// Must match the CustomURLArg value in BootstrapPackagedGame.cpp in order to communicate using shared temp files!
+	static const FString urlKey(TEXT("-CustomURL="));
+	// Must match the NSIS registry key that we use in the installer to register a URL Protocol!
+	static const FString urlPrefix(TEXT("mdmt://"));
+	static const FString projectPrefix(TEXT("project/"));
+
+	FString parsedURL;
+	if (!FParse::Value(*Args, *urlKey, parsedURL))
+	{
+		return false;
+	}
+
+	if (!parsedURL.RemoveFromStart(urlPrefix))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Invalid URL protocol: %s"), *parsedURL);
+		return false;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Parsed custom URL argument: %s"), *parsedURL);
+
+	if (parsedURL.RemoveFromStart(projectPrefix))
+	{
+		PendingProjectID = parsedURL;
+	}
+
+	return true;
+}
+
+void UModumateGameInstance::CheckForTempMessage()
+{
+	FString tempMessage;
+	if (FModumatePlatform::ConsumeTempMessage(tempMessage))
+	{
+		// TODO: process PendingProjectID if we received it while editing a level, or after logging in to the main menu
+		ProcessCustomURLArgs(tempMessage);
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

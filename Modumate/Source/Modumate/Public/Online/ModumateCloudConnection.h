@@ -30,9 +30,13 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		const FString& GetAuthToken() const { return AuthToken; }
 		void SetAuthToken(const FString& InAuthToken);
 
+		const FString& GetXApiKey() const { return XApiKey; }
+		void SetXApiKey(const FString& InXApiKey);
+
 		static FString MakeEncryptionToken(const FString& UserID, const FString& ProjectID);
 		static bool ParseEncryptionToken(const FString& EncryptionToken, FString& OutUserID, FString& OutProjectID);
 
+		void CacheEncryptionKey(const FString& UserID, const FString& ProjectID, const FString& EncryptionKey);
 		bool GetCachedEncryptionKey(const FString& UserID, const FString& ProjectID, FString& OutEncryptionKey);
 		void QueryEncryptionKey(const FString& UserID, const FString& ProjectID, const FOnEncryptionKeyResponse& Delegate);
 
@@ -68,6 +72,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 
 		FString AuthToken;
 		FString RefreshToken;
+		FString XApiKey;
 		ELoginStatus LoginStatus = ELoginStatus::Disconnected;
 		FDateTime AuthTokenTimestamp = FDateTime(0);
 		int32 NextRequestAutomationIndex = 0;
