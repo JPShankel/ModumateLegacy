@@ -10,7 +10,7 @@
 
 AMOITerrainVertex::AMOITerrainVertex()
 {
-	BaseColor = FColor(0x20, 0xa0, 0x20);
+	BaseColor = FColor(0x03, 0x84, 0x71);
 }
 
 FVector AMOITerrainVertex::GetLocation() const

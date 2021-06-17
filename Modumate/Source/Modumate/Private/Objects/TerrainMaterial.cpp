@@ -14,10 +14,7 @@
 const FBIMTagPath AMOITerrainMaterial::SiteNcp(TEXT("Part_3FlexDims0Fixed_Terrain"));
 
 AMOITerrainMaterial::AMOITerrainMaterial()
-{
-	BaseColor = FColor(160, 240, 170);
-	HoveredColor = FColor(100, 230, 120);
-}
+{ }
 
 bool AMOITerrainMaterial::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {

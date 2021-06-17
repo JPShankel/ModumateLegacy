@@ -10,10 +10,7 @@
 
 
 AMOITerrainPolygon::AMOITerrainPolygon()
-{
-	BaseColor = FColor(160, 240, 170);
-	HoveredColor = FColor(100, 230, 120);
-}
+{ }
 
 bool AMOITerrainPolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {

@@ -83,6 +83,8 @@ bool UTerrainTool::BeginUse()
 		ALineActor* pendingSegment = dimensionActor->GetLineActor();
 		pendingSegment->Point1 = CurrentPoint;
 		pendingSegment->Point2 = CurrentPoint;
+		PendingSegment->Color = FColor(0x63, 0xC3, 0xBA);
+		PendingSegment->Thickness = 3;
 		pendingSegment->SetVisibilityInApp(true);
 	}
 
