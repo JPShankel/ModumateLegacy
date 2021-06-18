@@ -25,7 +25,7 @@ void UPresetCardQuantityListSubTotal::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UPresetCardQuantityListSubTotal::BuildSubLabel(const FText& LabelText, const FQuantity& InQuantity)
+void UPresetCardQuantityListSubTotal::BuildSubLabel(const FText& LabelText, const FQuantity& InQuantity, bool bMetric)
 {
 	TributaryType->ChangeText(LabelText);
 
@@ -37,8 +37,16 @@ void UPresetCardQuantityListSubTotal::BuildSubLabel(const FText& LabelText, cons
 	}
 	else
 	{
-		FieldTitleMeasurmentType1->ChangeText(LOCTEXT("AreaTitle", "sq.ft."));
-		FieldTitleMeasurmentType2->ChangeText(LOCTEXT("LinearTitle", "lin.ft."));
+		if (bMetric)
+		{
+			FieldTitleMeasurmentType1->ChangeText(LOCTEXT("AreaTitleMetric", "m2"));
+			FieldTitleMeasurmentType2->ChangeText(LOCTEXT("LinearTitleMetric", "m"));
+		}
+		else
+		{
+			FieldTitleMeasurmentType1->ChangeText(LOCTEXT("AreaTitle", "sq.ft."));
+			FieldTitleMeasurmentType2->ChangeText(LOCTEXT("LinearTitle", "lin.ft."));
+		}
 	}
 }
 

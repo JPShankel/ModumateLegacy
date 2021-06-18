@@ -40,5 +40,5 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlockUserWidget* Quantity2;
 
-	void BuildTotalLabel(const FQuantity& InQuantity);
+	void BuildTotalLabel(const FQuantity& InQuantity, bool bUseMetric);
 };

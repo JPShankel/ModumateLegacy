@@ -29,7 +29,7 @@ void UPresetCardQuantityListSubTotalListItem::NativeConstruct()
 	EMPlayerController = GetOwningPlayer<AEditModelPlayerController>();
 }
 
-void UPresetCardQuantityListSubTotalListItem::BuildAsSubTotalListItem(const FQuantityItemId& QuantityItemID, const FQuantity& InQuantity)
+void UPresetCardQuantityListSubTotalListItem::BuildAsSubTotalListItem(const FQuantityItemId& QuantityItemID, const FQuantity& InQuantity, bool bMetric)
 {
 	const FBIMPresetInstance* curPreset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(QuantityItemID.Id);
 	if (curPreset)
@@ -45,8 +45,16 @@ void UPresetCardQuantityListSubTotalListItem::BuildAsSubTotalListItem(const FQua
 	}
 	else
 	{
-		Quantity1->ChangeText(FText::AsNumber(InQuantity.Area * UModumateDimensionStatics::SquareCentimetersToSquareFeet));
-		Quantity2->ChangeText(FText::AsNumber(InQuantity.Linear * UModumateDimensionStatics::CentimetersToFeet));
+		if (bMetric)
+		{
+			Quantity1->ChangeText(FText::AsNumber(InQuantity.Area * UModumateDimensionStatics::SquareCentimetersToSquareMeters));
+			Quantity2->ChangeText(FText::AsNumber(InQuantity.Linear * 0.01));
+		}
+		else
+		{
+			Quantity1->ChangeText(FText::AsNumber(InQuantity.Area * UModumateDimensionStatics::SquareCentimetersToSquareFeet));
+			Quantity2->ChangeText(FText::AsNumber(InQuantity.Linear * UModumateDimensionStatics::CentimetersToFeet));
+		}
 	}
 }
 

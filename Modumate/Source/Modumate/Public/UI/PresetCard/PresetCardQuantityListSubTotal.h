@@ -37,5 +37,5 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlockUserWidget* FieldTitleMeasurmentType2;
 
-	void BuildSubLabel(const FText& LabelText, const FQuantity& InQuantity);
+	void BuildSubLabel(const FText& LabelText, const FQuantity& InQuantity, bool bMetric);
 };
