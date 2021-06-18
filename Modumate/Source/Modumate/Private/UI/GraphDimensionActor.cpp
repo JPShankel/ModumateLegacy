@@ -112,20 +112,39 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 		}
 
 		auto surfaceGraphObj = Document->GetObjectById(SurfaceGraph->GetID());
-		auto surfaceGraphParent = surfaceGraphObj != nullptr ? Document->GetObjectById(surfaceGraphObj->GetParentID()) : nullptr;
-		int32 surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceGraphObj);
-		if ((surfaceGraphParent == nullptr) || (surfaceGraphFaceIndex == INDEX_NONE))
+		const bool bIsTerrain = surfaceGraphObj && surfaceGraphObj->GetObjectType() == EObjectType::OTTerrain;
+		auto surfaceGraphParent = surfaceGraphObj != nullptr ?
+			(bIsTerrain ? surfaceGraphObj : Document->GetObjectById(surfaceGraphObj->GetParentID()) )
+			: nullptr;
+		int32 surfaceGraphFaceIndex = INDEX_NONE;
+		if (!bIsTerrain)
 		{
-			return;
+			surfaceGraphFaceIndex = UModumateObjectStatics::GetParentFaceIndex(surfaceGraphObj);
+			if ((surfaceGraphParent == nullptr) || (surfaceGraphFaceIndex == INDEX_NONE))
+			{
+				return;
+			}
 		}
 
 		TArray<FVector> facePoints;
 		FVector faceNormal;
-		if (!ensure(UModumateObjectStatics::GetGeometryFromFaceIndex(surfaceGraphParent, surfaceGraphFaceIndex, facePoints, faceNormal, AxisX, AxisY)))
+
+		// Find world basis for polygon - terrain is simple:
+		if (bIsTerrain)
 		{
-			return;
+			Origin = surfaceGraphParent->GetLocation();
+			faceNormal = FVector::UpVector;
+			AxisX = FVector::ForwardVector;
+			AxisY = FVector::RightVector;
 		}
-		Origin = facePoints[0];
+		else
+		{
+			if (!ensure(UModumateObjectStatics::GetGeometryFromFaceIndex(surfaceGraphParent, surfaceGraphFaceIndex, facePoints, faceNormal, AxisX, AxisY)))
+			{
+				return;
+			}
+			Origin = facePoints[0];
+		}
 
 		startPosition = UModumateGeometryStatics::Deproject2DPoint(startVertex->Position, AxisX, AxisY, Origin);
 		endPosition = UModumateGeometryStatics::Deproject2DPoint(endVertex->Position, AxisX, AxisY, Origin);

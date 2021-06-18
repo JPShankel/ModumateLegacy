@@ -11,7 +11,7 @@ struct MODUMATE_API FMOISurfaceGraphData
 	GENERATED_BODY()
 
 	UPROPERTY()
-	int32 ParentFaceIndex;
+	int32 ParentFaceIndex;	// Face of the parent MOI that this graph is hosted on.
 };
 
 UCLASS()
