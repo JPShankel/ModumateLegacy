@@ -49,8 +49,8 @@ void FQuantitiesCollection::AddLayersQuantity(const TArray<FLayerGeomDef>& Layer
 		auto& layerGuid = layerSpec.PresetGUID;
 		AddAreaQuantity(layerGuid, ParentGuid, layerArea * Multiplier);
 		for (const auto& module : layerSpec.Modules)
-		{
-			if (module.Key.IsValid())
+		{   // Guard against simple layers that just contain themselves as a module.
+			if (module.Key.IsValid() && module.Key != layerGuid)
 			{
 				FQuantity quantity;
 				GetQuantitiesForModule(&layerSpec, layerArea, quantity);

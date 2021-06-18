@@ -260,7 +260,7 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 				subItem.Name = childPreset->DisplayName.ToString();
 				subItem.Subname = usesPreset.Key.Subname;
 				subItem.Quantity = usesPreset.Value;
-				reportItem.UsedIn.Add(MoveTemp(subItem));
+				reportItem.Uses.Add(MoveTemp(subItem));
 			}
 		}
 
