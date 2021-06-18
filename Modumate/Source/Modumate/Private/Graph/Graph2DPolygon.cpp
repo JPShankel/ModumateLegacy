@@ -62,9 +62,15 @@ bool FGraph2DPolygon::IsInside(int32 OtherPolyID) const
 	// For interior polygons, this is an optimization, and should not affect the correctness of results.
 	const TArray<FVector2D>& containedPolyVerts = bInterior ? CachedPerimeterPoints : CachedPoints;
 
+	// Test containment with a tolerance that's a factor of the graph's built-in tolerance, for historical consistency
+	// (GetPolygonContainment and TestPointInPolygon use RAY_INTERSECT_TOLERANCE, with for single-precision floats has historically been 0.2f based on dot product error,
+	//  but the Graph2D default single-precision epsilon for linear distances has been 0.5f in order to try to prevent operations that would cause too much error later on.)
+	static constexpr float ContainmentToleranceFactor = 0.4f;
+	float containmentTolerance = ContainmentToleranceFactor * graph->Epsilon;
+
 	// Now, check the actual polygon perimeters for geometric containment, allowing partial containment with a shared vertex
 	bool bFullyContained, bPartiallyContained;
-	bool bValidContainment = UModumateGeometryStatics::GetPolygonContainment(otherPoly->CachedPerimeterPoints, containedPolyVerts, bFullyContained, bPartiallyContained);
+	bool bValidContainment = UModumateGeometryStatics::GetPolygonContainment(otherPoly->CachedPerimeterPoints, containedPolyVerts, bFullyContained, bPartiallyContained, containmentTolerance);
 	return bValidContainment && (bFullyContained || bPartiallyContained);
 }
 

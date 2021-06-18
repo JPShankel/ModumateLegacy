@@ -905,7 +905,7 @@ bool UModumateGeometryStatics::TestPointInPolygon(const FVector2D& Point, const 
 	return true;
 }
 
-bool UModumateGeometryStatics::GetPolygonContainment(const TArray<FVector2D> &ContainingPolygon, const TArray<FVector2D> &ContainedPolygon, bool& bOutFullyContained, bool& bOutPartiallyContained)
+bool UModumateGeometryStatics::GetPolygonContainment(const TArray<FVector2D> &ContainingPolygon, const TArray<FVector2D> &ContainedPolygon, bool& bOutFullyContained, bool& bOutPartiallyContained, float Tolerance)
 {
 	// We allow 2 contained points because contained polygons are not required to be simple, only containing polygons
 	int32 numContainingPoints = ContainingPolygon.Num();
@@ -926,7 +926,7 @@ bool UModumateGeometryStatics::GetPolygonContainment(const TArray<FVector2D> &Co
 
 	for (const FVector2D& containedVertex : ContainedPolygon)
 	{
-		if (!ensure(UModumateGeometryStatics::TestPointInPolygon(containedVertex, ContainingPolygon, pointInPolyResult)))
+		if (!ensure(UModumateGeometryStatics::TestPointInPolygon(containedVertex, ContainingPolygon, pointInPolyResult, Tolerance)))
 		{
 			return false;
 		}
@@ -963,7 +963,7 @@ bool UModumateGeometryStatics::GetPolygonContainment(const TArray<FVector2D> &Co
 			const FVector2D& edgePointB = ContainedPolygon[edgeIdxB];
 			FVector2D edgeMidpoint = 0.5f * (edgePointA + edgePointB);
 
-			if (!ensure(UModumateGeometryStatics::TestPointInPolygon(edgeMidpoint, ContainingPolygon, pointInPolyResult)))
+			if (!ensure(UModumateGeometryStatics::TestPointInPolygon(edgeMidpoint, ContainingPolygon, pointInPolyResult, Tolerance)))
 			{
 				return false;
 			}

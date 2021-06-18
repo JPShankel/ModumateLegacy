@@ -147,7 +147,7 @@ public:
 	// [param] bOutPartiallyContained: All vertices and edges of ContainedPolygon are either inside of ContainingPolygon, or overlap with vertices and edges of ContainingPolygon, AND
 	//                                 at least one vertex and/or edge of ContainingPolygon is outside of ContainedPolygon, so they can not be identical.
 	// If neither are true, then the faces may or may not overlap geometrically; we could add out parameters to detect this if needed.
-	static bool GetPolygonContainment(const TArray<FVector2D> &ContainingPolygon, const TArray<FVector2D> &ContainedPolygon, bool& bOutFullyContained, bool& bOutPartiallyContained);
+	static bool GetPolygonContainment(const TArray<FVector2D> &ContainingPolygon, const TArray<FVector2D> &ContainedPolygon, bool& bOutFullyContained, bool& bOutPartiallyContained, float Tolerance = RAY_INTERSECT_TOLERANCE);
 
 	// The same as GetPolygonContainment, except we first check for edge intersections between polygons and will early-exit if they intersect.
 	static bool GetPolygonIntersection(const TArray<FVector2D> &ContainingPolygon, const TArray<FVector2D> &ContainedPolygon, bool& bOverlapping, bool& bOutFullyContained, bool& bOutPartiallyContained);

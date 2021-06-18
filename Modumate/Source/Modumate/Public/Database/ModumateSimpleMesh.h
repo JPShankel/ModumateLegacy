@@ -24,6 +24,7 @@ struct MODUMATE_API FSimplePolygon
 
 	void Reset();
 	void UpdateExtents();
+	bool FixUpPerimeter(float Epsilon, class FFeedbackContext* InWarn = nullptr);
 	bool ValidateSimple(class FFeedbackContext* InWarn = nullptr) const;
 };
 

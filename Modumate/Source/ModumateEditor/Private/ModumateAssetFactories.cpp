@@ -182,28 +182,15 @@ bool USimpleMeshImportFactory::ImportFromOBJ(class USimpleMeshData* TargetObject
 				return false;
 			}
 
+			curPolygon.UpdateExtents();
+
+			// Calculate an epsilon value for computing the perimeter of a polygon based on the bounds of the polygon;
+			// With single-precision floating point graphs, we have confidence that edge lengths can be as short as ~0.25% of the bounds before causing too much error.
+			static constexpr float boundsEpsilonFactor = 0.0025f;
+			float perimeterCalculationEpsilon = boundsEpsilonFactor * curPolygon.Extents.GetSize().GetMax();
+
 			// Make sure that the polygon is valid before adding it to the mesh.
-			bool bValidPolygon = curPolygon.ValidateSimple(InWarn);
-
-			// If it's invalid, it might be a quad that is trivially easy to fix; if so, try to fix it.
-			if (!bValidPolygon && (curPolygon.Points.Num() == 4) && (curPolygon.Triangles.Num() == 6))
-			{
-				// If the edges of the quad crossed each other, then swap the last two vertices and it should be valid.
-				Swap(curPolygon.Points[2], curPolygon.Points[3]);
-				for (int32 &vertIndex : curPolygon.Triangles)
-				{
-					if (vertIndex == 2)
-					{
-						vertIndex = 3;
-					}
-					else if (vertIndex == 3)
-					{
-						vertIndex = 2;
-					}
-				}
-
-				bValidPolygon = curPolygon.ValidateSimple(InWarn);
-			}
+			bool bValidPolygon = curPolygon.FixUpPerimeter(perimeterCalculationEpsilon, InWarn);
 
 			if (bValidPolygon)
 			{
