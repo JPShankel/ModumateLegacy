@@ -188,14 +188,19 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 	auto world = gameInstance->GetWorld();
 	UModumateDocument* doc = world->GetGameState<AEditModelGameState>()->Document;
 	const FBIMPresetCollection& presets = doc->GetPresetCollection();
+	auto& documentSettings = doc->GetCurrentSettings();
+	const bool bMetric = (documentSettings.DimensionType == EDimensionUnits::DU_Metric);
+	const double linearScaleFactor = bMetric ? 100.0 : 30.48;
+	const double areaScaleFactor = FMath::Pow(linearScaleFactor, 2);
+	const double volumeScaleFactor = FMath::Pow(linearScaleFactor, 3);
 
-	auto printCsvQuantities = [](const FQuantity& Q)
+	auto printCsvQuantities = [linearScaleFactor, areaScaleFactor, volumeScaleFactor](const FQuantity& Q)
 	{
 		static constexpr TCHAR format[] = TEXT("%.1f");
 		return (Q.Count != 0.0f ? FString::Printf(format, Q.Count) : FString())
-			+ TEXT(",") + (Q.Volume != 0.0f ? FString::Printf(format, Q.Volume / 28316.8f) : FString())
-			+ TEXT(",") + (Q.Area != 0.0f ? FString::Printf(format, Q.Area / 929.0f) : FString())
-			+ TEXT(",") + (Q.Linear != 0.0f ? FString::Printf(format, Q.Linear / 30.48f) : FString());
+			+ TEXT(",") + (Q.Volume != 0.0f ? FString::Printf(format, Q.Volume / volumeScaleFactor) : FString())
+			+ TEXT(",") + (Q.Area != 0.0f ? FString::Printf(format, Q.Area / areaScaleFactor) : FString())
+			+ TEXT(",") + (Q.Linear != 0.0f ? FString::Printf(format, Q.Linear / linearScaleFactor) : FString());
 	};
 
 	const FQuantitiesCollection::QuantitiesMap& quantities = CurrentQuantities->GetQuantities();
@@ -315,7 +320,8 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 
 	// Now generate the CSV contents.
 	FString csvContents;
-	csvContents += TEXT("TOTAL ESTIMATES") + commas(categoryIndent + 4) + TEXT("Count,ft^3,ft^2,ft,\n");
+	csvContents += TEXT("TOTAL ESTIMATES") + commas(categoryIndent + 4) +
+		(bMetric ? TEXT("Count,m3,m2,m,\n") : TEXT("Count,ft^3,ft^2,ft,\n"));
 
 	for (auto& item : treeReportItems)
 	{
