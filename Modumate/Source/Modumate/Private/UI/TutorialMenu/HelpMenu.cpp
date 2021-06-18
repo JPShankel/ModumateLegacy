@@ -9,10 +9,14 @@
 #include "UI/LeftMenu/NCPNavigator.h"
 #include "UI/TutorialMenu/HelpBlockTutorialSearch.h"
 #include "UI/TutorialMenu/HelpBlockTutorialArticle.h"
+#include "UI/TutorialMenu/HelpBlockTutorial.h"
+#include "UI/TutorialMenu/HelpBlockTutorialMoreLinks.h"
 #include "Serialization/Csv/CsvParser.h"
 #include "BIMKernel/Core/BIMKey.h"
 #include "HttpModule.h"
 #include "Runtime/Online/HTTP/Public/Http.h"
+#include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
+#include "UI/Custom/ModumateEditableTextBox.h"
 
 UHelpMenu::UHelpMenu(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -25,7 +29,7 @@ bool UHelpMenu::Initialize()
 	{
 		return false;
 	}
-	if (!ButtonClose)
+	if (!(ButtonClose && HelpBlockTutorialsBP))
 	{
 		return false;
 	}
@@ -38,6 +42,11 @@ bool UHelpMenu::Initialize()
 void UHelpMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	if (HelpBlockTutorialsBP)
+	{
+		HelpBlockTutorialsBP->ParentHelpMenu = this;
+	}
 }
 
 void UHelpMenu::BuildTutorialLibraryMenu()
@@ -45,14 +54,16 @@ void UHelpMenu::BuildTutorialLibraryMenu()
 	// Only need to request from online source once
 	if (AllTutorialNodesByGUID.Num() > 0)
 	{
-		return;
+		NCPNavigator->BuildNCPNavigator(EPresetCardType::TutorialCategory);
 	}
-
-	auto httpRequest = FHttpModule::Get().CreateRequest();
-	httpRequest->SetVerb("GET");
-	httpRequest->SetURL(TutorialLibraryDataLink);
-	httpRequest->OnProcessRequestComplete().BindUObject(this, &UHelpMenu::ReadTutorialCSV);
-	httpRequest->ProcessRequest();
+	else
+	{
+		auto httpRequest = FHttpModule::Get().CreateRequest();
+		httpRequest->SetVerb("GET");
+		httpRequest->SetURL(TutorialLibraryDataLink);
+		httpRequest->OnProcessRequestComplete().BindUObject(this, &UHelpMenu::ReadTutorialCSV);
+		httpRequest->ProcessRequest();
+	}
 }
 
 void UHelpMenu::ReadTutorialCSV(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
@@ -187,13 +198,34 @@ EBIMResult UHelpMenu::GetTutorialsForNCP(const FBIMTagPath& InNCP, TArray<FGuid>
 	return EBIMResult::Success;
 }
 
-void UHelpMenu::ResetMenu()
+FString UHelpMenu::GetHelpMenuSearchbarText()
+{
+	return HelpBlockTutorialsSearchBP->ComponentSearchBar->ModumateEditableTextBox->GetText().ToString();
+}
+
+void UHelpMenu::ResetHelpWebBrowser()
 {
 	HelpBlockTutorialArticleBP->ToggleWebBrowser(false);
+}
 
+void UHelpMenu::ToMainHelpMenu()
+{
 	HelpBlockTutorialsSearchBP->SetVisibility(ESlateVisibility::Visible);
+	HelpBlockTutorialsBP->SetVisibility(ESlateVisibility::Visible);
+	HelpBlockMoreLinksBP->SetVisibility(ESlateVisibility::Visible);
+	NCPNavigator->SetVisibility(ESlateVisibility::Collapsed);
+	HelpBlockTutorialArticleBP->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UHelpMenu::ToLibraryMenu()
+{
+	HelpBlockTutorialsSearchBP->SetVisibility(ESlateVisibility::Visible);
+	HelpBlockTutorialsBP->SetVisibility(ESlateVisibility::Collapsed);
+	HelpBlockMoreLinksBP->SetVisibility(ESlateVisibility::Collapsed);
 	NCPNavigator->SetVisibility(ESlateVisibility::Visible);
 	HelpBlockTutorialArticleBP->SetVisibility(ESlateVisibility::Collapsed);
+
+	BuildTutorialLibraryMenu();
 }
 
 void UHelpMenu::ToArticleMenu(const FGuid& InGUID)
@@ -201,6 +233,8 @@ void UHelpMenu::ToArticleMenu(const FGuid& InGUID)
 	HelpBlockTutorialArticleBP->BuildTutorialArticle(InGUID);
 
 	HelpBlockTutorialsSearchBP->SetVisibility(ESlateVisibility::Collapsed);
+	HelpBlockTutorialsBP->SetVisibility(ESlateVisibility::Collapsed);
+	HelpBlockMoreLinksBP->SetVisibility(ESlateVisibility::Collapsed);
 	NCPNavigator->SetVisibility(ESlateVisibility::Collapsed);
 	HelpBlockTutorialArticleBP->SetVisibility(ESlateVisibility::Visible);
 }

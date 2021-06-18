@@ -22,13 +22,13 @@ bool UToolbarTopWidget::Initialize()
 
 	Controller = GetOwningPlayer<AEditModelPlayerController>();
 
-	if (!(ButtonModumateHome && Button_Help))
+	if (!(ButtonModumateHome && ButtonHelp))
 	{
 		return false;
 	}
 
 	ButtonModumateHome->ModumateButton->OnReleased.AddDynamic(this, &UToolbarTopWidget::OnButtonReleaseModumateHome);
-	Button_Help->OnReleased.AddDynamic(this, &UToolbarTopWidget::OnButtonReleaseButtonHelp);
+	ButtonHelp->ModumateButton->OnReleased.AddDynamic(this, &UToolbarTopWidget::OnButtonReleaseButtonHelp);
 
 	return true;
 }
@@ -50,7 +50,7 @@ void UToolbarTopWidget::OnButtonReleaseButtonHelp()
 {
 	if (Controller)
 	{
-		Controller->EditModelUserWidget->ToggleHelpMenu(true);
+		Controller->EditModelUserWidget->ToggleHelpMenu(!Controller->EditModelUserWidget->bIsHelpMenuVisible);
 	}
 }
 

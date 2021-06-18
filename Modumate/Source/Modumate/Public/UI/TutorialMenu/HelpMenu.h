@@ -76,6 +76,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UHelpBlockTutorialSearch* HelpBlockTutorialsSearchBP;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UHelpBlockTutorial* HelpBlockTutorialsBP;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UHelpBlockTutorialMoreLinks* HelpBlockMoreLinksBP;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModalDialogConfirmPlayTutorial* ModalDialogConfirmPlayTutorialBP;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString TutorialLibraryDataLink;
 
@@ -91,7 +100,11 @@ public:
 	EBIMResult GetTutorialNCPSubcategories(const FBIMTagPath& InNCP, TArray<FString>& OutSubcats) const;
 	EBIMResult GetTutorialsForNCP(const FBIMTagPath& InNCP, TArray<FGuid>& OutGUIDs, bool bExactMatch = false) const;
 
-	void ResetMenu();
+	FString GetHelpMenuSearchbarText();
+
+	void ResetHelpWebBrowser();
+	void ToMainHelpMenu();
+	void ToLibraryMenu();
 	void ToArticleMenu(const FGuid& InGUID);
 
 	UFUNCTION()

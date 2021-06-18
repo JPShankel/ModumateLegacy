@@ -52,7 +52,7 @@ public:
 	class UModumateButtonUserWidget* Button_ViewModePhysical;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButton* Button_Help;
+	class UModumateButtonUserWidget* ButtonHelp;
 
 	UFUNCTION()
 	void OnButtonReleaseModumateHome();

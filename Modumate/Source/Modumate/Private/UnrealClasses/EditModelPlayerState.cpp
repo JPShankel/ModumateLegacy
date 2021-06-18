@@ -699,6 +699,7 @@ void AEditModelPlayerState::OnNewModel()
 	if (EMPlayerController && EMPlayerController->EditModelUserWidget)
 	{
 		EMPlayerController->EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::None);
+		EMPlayerController->EditModelUserWidget->ToggleHelpMenu(false);
 	}
 }
 

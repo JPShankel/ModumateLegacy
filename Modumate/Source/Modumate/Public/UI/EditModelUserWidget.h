@@ -109,6 +109,8 @@ public:
 	ELeftMenuState PreviousLeftMenuState = ELeftMenuState::None;
 	ELeftMenuState CurrentLeftMenuState = ELeftMenuState::None;
 
+	bool bIsHelpMenuVisible = false;
+
 	UFUNCTION()
 	void EMOnSelectionObjectChanged();
 

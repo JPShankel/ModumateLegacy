@@ -76,5 +76,6 @@ void UHelpBlockTutorialArticle::ToggleWebBrowser(bool bEnable)
 
 void UHelpBlockTutorialArticle::OnButtonGoBackPress()
 {
-	EMPlayerController->EditModelUserWidget->HelpMenuBP->ResetMenu();
+	EMPlayerController->EditModelUserWidget->HelpMenuBP->ResetHelpWebBrowser();
+	EMPlayerController->EditModelUserWidget->HelpMenuBP->ToLibraryMenu();
 }

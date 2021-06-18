@@ -28,6 +28,7 @@
 #include "UI/LeftMenu/SwapMenuWidget.h"
 #include "UI/LeftMenu/DeleteMenuWidget.h"
 #include "UI/TutorialMenu/HelpMenu.h"
+#include "Online/ModumateAnalyticsStatics.h"
 
 #define LOCTEXT_NAMESPACE "ModumateWidgets"
 
@@ -442,11 +443,20 @@ void UEditModelUserWidget::ToggleSettingsWindow(bool NewVisibility)
 
 void UEditModelUserWidget::ToggleHelpMenu(bool NewVisibility)
 {
-	HelpMenuBP->ResetMenu();
-	HelpMenuBP->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-	if (NewVisibility)
+	HelpMenuBP->ResetHelpWebBrowser();
+	bIsHelpMenuVisible = NewVisibility;
+	HelpMenuBP->SetVisibility(bIsHelpMenuVisible ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (bIsHelpMenuVisible)
 	{
-		HelpMenuBP->BuildTutorialLibraryMenu();
+		ToolbarWidget->ButtonTopToolbarHelp->SwitchToActiveStyle();
+		HelpMenuBP->ToMainHelpMenu();
+	}
+	else
+	{
+		ToolbarWidget->ButtonTopToolbarHelp->SwitchToNormalStyle();
+
+		// Send analytic event
+		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Tutorials, HelpMenuBP->GetHelpMenuSearchbarText());
 	}
 }
 

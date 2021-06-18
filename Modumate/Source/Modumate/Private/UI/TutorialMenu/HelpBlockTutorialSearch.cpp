@@ -6,7 +6,6 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/TutorialMenu/HelpMenu.h"
-#include "UI/LeftMenu/NCPNavigator.h"
 
 UHelpBlockTutorialSearch::UHelpBlockTutorialSearch(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -38,6 +37,6 @@ void UHelpBlockTutorialSearch::OnSearchBarChanged(const FText& NewText)
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller)
 	{
-		controller->EditModelUserWidget->HelpMenuBP->NCPNavigator->BuildNCPNavigator(EPresetCardType::TutorialCategory);
+		controller->EditModelUserWidget->HelpMenuBP->ToLibraryMenu();
 	}
 }
