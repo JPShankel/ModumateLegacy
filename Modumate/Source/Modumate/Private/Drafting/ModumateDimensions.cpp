@@ -625,11 +625,17 @@ void FModumateDimensions::PropagateHorizontalStatus(int32 d, int32 vert)
 	PropagateStatus(d, 1);
 
 	const FVec2d& point = dim.Points[vert];
-	for (int32 n: Dimensions[d].Connections[vert])
+	for (int32 connectIdx = 0; connectIdx < Dimensions[d].Connections[vert].Num(); ++connectIdx)
 	{
+		int32 n = Dimensions[d].Connections[vert][connectIdx];
 		if (Dimensions[n].bHorizontal)
 		{
-			PropagateHorizontalStatus(n, Dimensions[n].Points[0] == point ? 1 : 0);
+			FVec2d farPoint = FarPoint(d, vert, connectIdx);
+			// Check that we keep going horizontally in the same direction.
+			if (!dim.bHorizontal || ((farPoint.X > point.X) ^ (point.X < dim.Points[1 - vert].X)) )
+			{
+				PropagateHorizontalStatus(n, Dimensions[n].Points[0] == point ? 1 : 0);
+			}
 		}
 	}
 }
@@ -644,11 +650,17 @@ void FModumateDimensions::PropagateVerticalStatus(int32 d, int32 vert)
 	PropagateStatus(d, 1);
 
 	const FVec2d& point = dim.Points[vert];
-	for (int32 n: Dimensions[d].Connections[vert])
+	for (int32 connectIdx = 0; connectIdx < Dimensions[d].Connections[vert].Num(); ++connectIdx)
 	{
+		int32 n = Dimensions[d].Connections[vert][connectIdx];
 		if (Dimensions[n].bVertical)
 		{
-			PropagateVerticalStatus(n, Dimensions[n].Points[0] == point ? 1 : 0);
+			FVec2d farPoint = FarPoint(d, vert, connectIdx);
+			// Check that we keep going vertically in the same direction.
+			if (!dim.bVertical || ((farPoint.Y > point.Y) ^ (point.Y < dim.Points[1 - vert].Y)) )
+			{
+				PropagateVerticalStatus(n, Dimensions[n].Points[0] == point ? 1 : 0);
+			}
 		}
 	}
 }
@@ -921,5 +933,18 @@ void FModumateDimensions::ConnectIslands(const TArray<TSet<int32>>& plans)
 			angle = FRotator::ClampAxis(angle + 180.0f);
 		}
 
+	}
+}
+
+FVec2d FModumateDimensions::FarPoint(int32 DimensionIndex, int32 VertexIndex, int32 ConnectionIndex) const
+{
+	int32 connectedEdge = Dimensions[DimensionIndex].Connections[VertexIndex][ConnectionIndex];
+	if (Dimensions[connectedEdge].Points[0] == Dimensions[DimensionIndex].Points[VertexIndex])
+	{
+		return Dimensions[connectedEdge].Points[1];
+	}
+	else
+	{
+		return Dimensions[connectedEdge].Points[0];
 	}
 }

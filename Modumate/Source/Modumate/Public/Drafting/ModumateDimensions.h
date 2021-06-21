@@ -68,6 +68,8 @@ private:
 	void AddAngularDimensions(const TArray<int32>& Group);
 	void CreateAngularDimension(int32 Edge1, int32 Vertex, int32 Edge2);
 	void ConnectIslands(const TArray<TSet<int32>>& plans);
+	FVec2d FarPoint(int32 DimensionIndex, int32 VertexIndex, int32 ConnectionIndex) const;
+
 
 	TSharedPtr<FGraph2D> CutGraph;
 	TMap<int32, int32> GraphIDToObjID;
