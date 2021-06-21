@@ -268,7 +268,7 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 	FString lockFile = FPaths::Combine(gameInstance->UserSettings.GetLocalTempDir(), kModumateCleanShutdownFile);
 	FFileHelper::SaveStringToFile(TEXT("lock"), *lockFile);
 
-	GetWorldTimerManager().SetTimer(ControllerTimer, this, &AEditModelPlayerController::OnControllerTimer, 1.0f, true, 0.0f);
+	GetWorldTimerManager().SetTimer(AutoSaveTimer, this, &AEditModelPlayerController::OnAutoSaveTimer, 1.0f, true, 0.0f);
 
 	TimeOfLastAutoSave = FDateTime::Now();
 
@@ -447,7 +447,7 @@ void AEditModelPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReaso
 	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
 	FString lockFile = FPaths::Combine(gameInstance->UserSettings.GetLocalTempDir(), kModumateCleanShutdownFile);
 	FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*lockFile);
-	GetWorldTimerManager().ClearTimer(ControllerTimer);
+	GetWorldTimerManager().ClearTimer(AutoSaveTimer);
 
 	EndTelemetrySession(false);
 	auto dimensionManager = gameInstance->DimensionManager;
@@ -1550,7 +1550,7 @@ bool AEditModelPlayerController::IsControlDown() const
 	return IsInputKeyDown(EKeys::LeftControl) || IsInputKeyDown(EKeys::RightControl);
 }
 
-void AEditModelPlayerController::OnControllerTimer()
+void AEditModelPlayerController::OnAutoSaveTimer()
 {
 	UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 
@@ -1569,8 +1569,6 @@ void AEditModelPlayerController::OnControllerTimer()
 	{
 		bWantTelemetryUpload = true;
 	}
-
-	gameInstance->GetCloudConnection()->Tick();
 }
 
 DECLARE_CYCLE_STAT(TEXT("Edit tick"), STAT_ModumateEditTick, STATGROUP_Modumate)

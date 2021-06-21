@@ -20,6 +20,8 @@ public:
 	virtual bool Initialize() override;
 
 	void ShowStartMenu();
+	void ShowModalStatus(const FText& StatusText, bool bAllowDismiss);
+	void HideModalStatus();
 
 	UPROPERTY()
 	class UModumateGameInstance *ModumateGameInstance;
@@ -44,6 +46,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonOpen;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModalDialogWidget* ModalStatusDialog;
 
 	UPROPERTY(Transient)
 	FUserWidgetPool UserWidgetPool;

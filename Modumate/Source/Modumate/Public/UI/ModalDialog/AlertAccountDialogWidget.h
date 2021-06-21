@@ -27,6 +27,9 @@ protected:
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateTextBlockUserWidget* TitleTextBlock;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlockUserWidget* AlertTextBlock;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
@@ -41,7 +44,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnAlertAccountPressedConfirm OnPressedConfirm;
 
-	void ShowDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback);
+	void ShowDialog(const FText& TitleText, const FText& AlertText, const FText& ConfirmText, bool bShowUpgrade, bool bShowDismiss, const TFunction<void()>& InConfirmCallback = nullptr, const TFunction<void()>& InDismissCallback = nullptr);
 
 protected:
 
@@ -58,4 +61,5 @@ protected:
 	FString ButtonInfoLinkURL;
 
 	TFunction<void()> ConfirmCallback;
+	TFunction<void()> DismissCallback;
 };

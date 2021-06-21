@@ -23,7 +23,7 @@ bool UAlertAccountDialogWidget::Initialize()
 		return false;
 	}
 
-	if (!(AlertTextBlock && ButtonConfirm && ButtonDismiss))
+	if (!(TitleTextBlock && AlertTextBlock && ButtonConfirm && ButtonDismiss))
 	{
 		return false;
 	}
@@ -44,14 +44,24 @@ void UAlertAccountDialogWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UAlertAccountDialogWidget::ShowDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback)
+void UAlertAccountDialogWidget::ShowDialog(const FText& TitleText, const FText& AlertText, const FText& ConfirmText, bool bShowUpgrade, bool bShowDismiss, const TFunction<void()>& InConfirmCallback, const TFunction<void()>& InDismissCallback)
 {
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
 	bool bShowConfirm = !ConfirmText.IsEmpty();
 	ButtonConfirm->GetParent()->SetVisibility(bShowConfirm ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 	ButtonConfirm->ButtonText->SetText(ConfirmText);
+
+	ButtonDismiss->SetVisibility(bShowDismiss ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (ButtonInfoLink)
+	{
+		ButtonInfoLink->SetVisibility(bShowUpgrade ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	}
+
+	TitleTextBlock->ModumateTextBlock->SetText(TitleText);
 	AlertTextBlock->ModumateTextBlock->SetText(AlertText);
 	ConfirmCallback = InConfirmCallback;
+	DismissCallback = InDismissCallback;
 }
 
 void UAlertAccountDialogWidget::OnReleaseButtonInfoLink()
@@ -81,4 +91,8 @@ void UAlertAccountDialogWidget::OnReleaseButtonConfirm()
 void UAlertAccountDialogWidget::OnReleaseButtonDismiss()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
+	if (DismissCallback)
+	{
+		DismissCallback();
+	}
 }

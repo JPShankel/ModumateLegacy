@@ -81,7 +81,7 @@ private:
 	void UpdateMouseHits(float DeltaTime);
 	void UpdateUserSnapPoint();
 
-	FTimerHandle ControllerTimer;
+	FTimerHandle AutoSaveTimer;
 	FGuid TelemetrySessionKey;
 	FDateTime SessionStartTime;
 	static const FString InputTelemetryDirectory;
@@ -226,7 +226,7 @@ public:
 	void SetObjectsSelected(TSet<AModumateObjectInstance*>& Obs, bool bSelected, bool bDeselectOthers);
 
 	UFUNCTION()
-	void OnControllerTimer();
+	void OnAutoSaveTimer();
 
 	void HandleDigitKey(int32 DigitKey);
 

@@ -29,6 +29,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerPawn.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/MainMenuGameMode.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "UnrealClasses/TooltipManager.h"
 #include "Online/ModumateCloudConnection.h"
@@ -107,7 +108,7 @@ void UModumateGameInstance::Init()
 	}
 	UE_LOG(LogPerformance, Log, TEXT("Object database loaded in %d ms"), FMath::RoundToInt(1000.0 * databaseLoadTime));
 
-	GetTimerManager().SetTimer(TempMessageCheckHandle, this, &UModumateGameInstance::CheckForTempMessage, 0.5f, true);
+	GetTimerManager().SetTimer(SlowTickHandle, this, &UModumateGameInstance::SlowTick, 0.5f, true);
 }
 
 TSharedPtr<FModumateCloudConnection> UModumateGameInstance::GetCloudConnection() const
@@ -754,12 +755,12 @@ void UModumateGameInstance::Login(const FString& UserName, const FString& Passwo
 
 ELoginStatus UModumateGameInstance::LoginStatus() const
 {
-	return CloudConnection->GetLoginStatus();
+	return CloudConnection.IsValid() ? CloudConnection->GetLoginStatus() : ELoginStatus::Disconnected;
 }
 
 bool UModumateGameInstance::IsloggedIn() const
 {
-	return CloudConnection->IsLoggedIn();
+	return CloudConnection.IsValid() && CloudConnection->IsLoggedIn();
 }
 
 bool UModumateGameInstance::ProcessCustomURLArgs(const FString& Args)
@@ -792,13 +793,44 @@ bool UModumateGameInstance::ProcessCustomURLArgs(const FString& Args)
 	return true;
 }
 
-void UModumateGameInstance::CheckForTempMessage()
+void UModumateGameInstance::SlowTick()
 {
-	FString tempMessage;
-	if (FModumatePlatform::ConsumeTempMessage(tempMessage))
+	UWorld* world = GetWorld();
+	if (world == nullptr)
 	{
-		// TODO: process PendingProjectID if we received it while editing a level, or after logging in to the main menu
-		ProcessCustomURLArgs(tempMessage);
+		return;
+	}
+
+	FString tempMessage;
+	if (FModumatePlatform::ConsumeTempMessage(tempMessage) && ProcessCustomURLArgs(tempMessage))
+	{
+		// If we received a project ID to open as a message, then either:
+		// - Try to close the current edit session to go to the main menu, where once logged in we should auto-open the project
+		// - See if we're logged in at the main menu, and try to open the project immediately
+		if (!PendingProjectID.IsEmpty())
+		{
+			AMainMenuGameMode* mainMenuGameMode = world->GetAuthGameMode<AMainMenuGameMode>();
+			auto* localPlayer = world->GetFirstLocalPlayerFromController();
+			auto* editModelController = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(world)) : nullptr;
+
+			if (editModelController)
+			{
+				if (editModelController->CheckSaveModel())
+				{
+					FString mainMenuMap = UGameMapsSettings::GetGameDefaultMap();
+					UGameplayStatics::OpenLevel(this, FName(*mainMenuMap));
+				}
+			}
+			else if (ensure(mainMenuGameMode) && IsloggedIn() && mainMenuGameMode->OpenCloudProject(PendingProjectID))
+			{
+				PendingProjectID.Empty();
+			}
+		}
+	}
+
+	if (CloudConnection.IsValid())
+	{
+		CloudConnection->Tick();
 	}
 }
 

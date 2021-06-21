@@ -30,6 +30,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UAlertAccountDialogWidget* DeletePresetDialogWidgetBP;
 
+	static const FText DefaultTitleText;
+
+	void ShowStatusDialog(const FText& TitleText, const FText& StatusText, bool bAllowDismiss);
 	void ShowAlertAccountDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback);
 	void ShowDeletePresetDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback);
 

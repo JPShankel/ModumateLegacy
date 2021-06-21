@@ -19,6 +19,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/MainMenuController.h"
 
+#define LOCTEXT_NAMESPACE "ModumateMainMenu"
 
 void AMainMenuGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
@@ -105,25 +106,29 @@ void AMainMenuGameMode::OnLoggedIn()
 		return;
 	}
 
+	// Show the start menu, even if we're just about to clear it by loading a project.
+	controller->StartRootMenuWidget->ShowStartMenu();
+
 	// If there's a pending project or input log that came from the command line, then open it directly.
-	if (!gameInstance->PendingProjectPath.IsEmpty() || !gameInstance->PendingInputLogPath.IsEmpty())
+	if (!gameInstance->PendingProjectPath.IsEmpty())
+	{
+		OpenProject(gameInstance->PendingProjectPath);
+	}
+	else if (!gameInstance->PendingInputLogPath.IsEmpty())
 	{
 		OpenEditModelLevel();
-		return;
 	}
 	// Otherwise, if the user is trying to open a cloud project by ID, then attempt to open that connection.
 	else if (!gameInstance->PendingProjectID.IsEmpty() && OpenCloudProject(gameInstance->PendingProjectID))
 	{
 		gameInstance->PendingProjectID.Empty();
+		controller->StartRootMenuWidget->ShowModalStatus(LOCTEXT("InitialCloudProjectStatus", "Connecting to online project..."), false);
 	}
-	// Otherwise, if the user is going into the starting walkthrough, then skip show the start menu.
+	// Otherwise, potentially load the starting walkthrough
 	else if (gameInstance->TutorialManager->CheckAbsoluteBeginner())
 	{
-		return;
+		UE_LOG(LogTemp, Log, TEXT("Loading first-time beginner walkthrough..."));
 	}
-
-	// If we haven't already exited to the edit model level, then show the start menu.
-	controller->StartRootMenuWidget->ShowStartMenu();
 }
 
 bool AMainMenuGameMode::GetRecentProjectData(int32 index, FString &outProjectPath, FText &outProjectName, FDateTime &outProjectTime, FSlateBrush &outDefaultThumbnail, FSlateBrush &outHoveredThumbnail) const
@@ -159,7 +164,22 @@ bool AMainMenuGameMode::OpenProject(const FString& ProjectPath)
 	if (gameInstance && IFileManager::Get().FileExists(*ProjectPath))
 	{
 		gameInstance->PendingProjectPath = ProjectPath;
-		OpenEditModelLevel();
+
+		AMainMenuController* controller = Cast<AMainMenuController>(gameInstance->GetFirstLocalPlayerController(GetWorld()));
+		if (controller && controller->StartRootMenuWidget)
+		{
+			FText loadingStatusText = FText::Format(LOCTEXT("OpenLocalProjectFormat", "Opening project \"{0}\"..."),
+				FText::FromString(FPaths::GetBaseFilename(ProjectPath)));
+			controller->StartRootMenuWidget->ShowStartMenu();
+			controller->StartRootMenuWidget->ShowModalStatus(loadingStatusText, false);
+		}
+
+		// Delay OpenEditModelLevel for a frame, to give Slate a chance to display the loading status widget.
+		// OpenEditModelLevel currently load the document and does all of the heavy object cleaning in a single blocking callstack,
+		// so this loading message will effectively display until the project is ready to use.
+		// TODO: create the loading status widget from a new, separate thread so it can be animated, since Slate is already running outside of the main thread.
+		gameInstance->GetTimerManager().SetTimerForNextTick([this]() { OpenEditModelLevel(); });
+
 		return true;
 	}
 
@@ -200,11 +220,9 @@ bool AMainMenuGameMode::OpenCloudProject(const FString& ProjectID)
 		},
 		[weakThis, ProjectID](int32 ErrorCode, const FString& ErrorString)
 		{
-			UE_LOG(LogTemp, Error, TEXT("Error code %d while trying to create a connection to project %s: %s"), ErrorCode, *ProjectID, *ErrorString);
-
-			if (weakThis.IsValid() && ensure(ProjectID == weakThis->PendingCloudProjectID))
+			if (weakThis.IsValid())
 			{
-				weakThis->PendingCloudProjectID.Empty();
+				weakThis->OnProjectConnectionFailed(ProjectID, ErrorCode, ErrorString);
 			}
 		});
 
@@ -233,6 +251,20 @@ void AMainMenuGameMode::OnCreatedProjectConnection(const FString& ProjectID, con
 	OpenProjectServerInstance(targetURL, ProjectID);
 }
 
+void AMainMenuGameMode::OnProjectConnectionFailed(const FString& ProjectID, int32 ErrorCode, const FString& ErrorMessage)
+{
+	UE_LOG(LogTemp, Error, TEXT("Error code %d while trying to create a connection to project %s: %s"), ErrorCode, *ProjectID, *ErrorMessage);
+
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto* playerController = gameInstance ? Cast<AMainMenuController>(gameInstance->GetFirstLocalPlayerController()) : nullptr;
+	if (playerController && playerController->StartRootMenuWidget && ensure(ProjectID == PendingCloudProjectID))
+	{
+		PendingCloudProjectID.Empty();
+
+		playerController->StartRootMenuWidget->ShowModalStatus(LOCTEXT("OpenProjectError", "Failed to open project! Please try again later."), true);
+	}
+}
+
 bool AMainMenuGameMode::OpenProjectFromPicker()
 {
 	FString projectPath;
@@ -259,7 +291,7 @@ bool AMainMenuGameMode::OpenProjectServerInstance(const FString& URL, const FStr
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
 	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
-	auto playerController = gameInstance ? gameInstance->GetFirstLocalPlayerController() : nullptr;
+	auto* playerController = gameInstance ? Cast<AMainMenuController>(gameInstance->GetFirstLocalPlayerController()) : nullptr;
 	if (!(accountManager && cloudConnection && cloudConnection->IsLoggedIn() && playerController))
 	{
 		return false;
@@ -271,5 +303,15 @@ bool AMainMenuGameMode::OpenProjectServerInstance(const FString& URL, const FStr
 
 	playerController->ClientTravel(fullURL, ETravelType::TRAVEL_Absolute);
 
+	// TODO: update status and clear PendingCloudProjectID if traveling fails
+
+	if (playerController->StartRootMenuWidget)
+	{
+		// TODO: format the text with the name of the project itself
+		playerController->StartRootMenuWidget->ShowModalStatus(LOCTEXT("OpenProjectBegin", "Opening online project..."), false);
+	}
+
 	return true;
 }
+
+#undef LOCTEXT_NAMESPACE

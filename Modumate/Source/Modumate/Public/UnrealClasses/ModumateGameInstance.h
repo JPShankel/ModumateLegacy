@@ -105,7 +105,7 @@ public:
 	bool ProcessCustomURLArgs(const FString& Args);
 
 	UFUNCTION()
-	void CheckForTempMessage();
+	void SlowTick();
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FModumateUserSettings UserSettings;
@@ -141,5 +141,5 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FString PendingProjectID;
 
-	FTimerHandle TempMessageCheckHandle;
+	FTimerHandle SlowTickHandle;
 };

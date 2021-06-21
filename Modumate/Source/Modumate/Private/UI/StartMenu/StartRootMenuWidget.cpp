@@ -1,15 +1,17 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "UI/StartMenu/StartRootMenuWidget.h"
-#include "UI/Custom/ModumateButtonUserWidget.h"
-#include "UI/Custom/ModumateButton.h"
-#include "UnrealClasses/ModumateGameInstance.h"
-#include "UI/StartMenu/StartBlockHomeWidget.h"
-#include "HAL/PlatformMisc.h"
+
 #include "Components/HorizontalBox.h"
-#include "UnrealClasses/MainMenuGameMode.h"
-#include "UI/TutorialMenu/TutorialMenuWidget.h"
+#include "HAL/PlatformMisc.h"
 #include "ModumateCore/PlatformFunctions.h"
+#include "UI/Custom/ModumateButton.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/ModalDialog/ModalDialogWidget.h"
+#include "UI/StartMenu/StartBlockHomeWidget.h"
+#include "UI/TutorialMenu/TutorialMenuWidget.h"
+#include "UnrealClasses/MainMenuGameMode.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 #define LOCTEXT_NAMESPACE "ModumateRootMenuWidget"
 
@@ -27,7 +29,7 @@ bool UStartRootMenuWidget::Initialize()
 	}
 
 	ModumateGameInstance = Cast<UModumateGameInstance>(GetGameInstance());
-	if (!(ButtonHelp && ButtonQuit && ButtonOpen))
+	if (!(ButtonHelp && ButtonQuit && ButtonOpen && ModalStatusDialog))
 	{
 		return false;
 	}
@@ -35,6 +37,7 @@ bool UStartRootMenuWidget::Initialize()
 	ButtonHelp->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedHelp);
 	ButtonQuit->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedQuit);
 	ButtonOpen->ModumateButton->OnReleased.AddDynamic(this, &UStartRootMenuWidget::OnButtonReleasedOpen);
+	ModalStatusDialog->SetVisibility(ESlateVisibility::Collapsed);
 	bHasUserLoggedIn = false;
 
 	UGameViewportClient* viewportClient = ModumateGameInstance ? ModumateGameInstance->GetGameViewportClient() : nullptr;
@@ -57,6 +60,18 @@ void UStartRootMenuWidget::ShowStartMenu()
 
 		OpenCreateNewButtonsBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
+}
+
+void UStartRootMenuWidget::ShowModalStatus(const FText& StatusText, bool bAllowDismiss)
+{
+	ModalStatusDialog->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ModalStatusDialog->ShowStatusDialog(LOCTEXT("StatusTitle", "STATUS"), StatusText, bAllowDismiss);
+}
+
+void UStartRootMenuWidget::HideModalStatus()
+{
+	ModalStatusDialog->HideAllWidgets();
+	ModalStatusDialog->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 bool UStartRootMenuWidget::ConfirmQuit()

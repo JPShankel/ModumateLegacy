@@ -55,6 +55,9 @@ public:
 	UFUNCTION()
 	void OnCreatedProjectConnection(const FString& ProjectID, const FProjectConnectionResponse& Response);
 
+	UFUNCTION()
+	void OnProjectConnectionFailed(const FString& ProjectID, int32 ErrorCode, const FString& ErrorMessage);
+
 	UFUNCTION(BlueprintCallable, Category = "Files")
 	bool OpenProjectFromPicker();
 
