@@ -56,6 +56,7 @@ public:
 
 	void SetupTerrainGeometry(int32 SectionID, float GridSize, const TArray<FVector2D>& PerimeterPoints, const TArray<FVector>& HeightPoints,
 		const TArray<FPolyHole2D>& HolePoints, bool bAddGraphPoints, bool bCreateCollision = true);
+	void UpdateEnableCollision(bool bEnableCollision);
 	void ClearAllMeshSections() { Mesh->ClearAllMeshSections(); }
 
 	// TODO: Update instances for triangles in mesh sections

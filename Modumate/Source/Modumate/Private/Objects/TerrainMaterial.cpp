@@ -10,6 +10,7 @@
 #include "UI/Custom/ModumateDropDownUserWidget.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UMG/Public/Components/ComboBoxString.h"
+#include "Objects/Terrain.h"
 
 const FBIMTagPath AMOITerrainMaterial::SiteNcp(TEXT("Part_3FlexDims0Fixed_Terrain"));
 
@@ -118,13 +119,23 @@ bool AMOITerrainMaterial::UpdateStructure()
 		CachedOrigin = origin;
 		CachedCenter = origin;
 
-		UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
-		const AEditModelGameMode* gameMode = gameInstance ? gameInstance->GetEditModelGameMode() : nullptr;
-		MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
-
-		DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, 1.0f, true, &CachedHoles, !IsInPreviewMode());
-
 		AModumateObjectInstance* parentTerrain = doc->GetObjectById(graph2d->GetID());
+		AMOITerrain* moiTerrain = parentTerrain ? Cast<AMOITerrain>(parentTerrain) : nullptr;
+		if (moiTerrain)
+		{
+			if (moiTerrain->GetIsTranslucent())
+			{
+				UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+				const AEditModelGameMode* gameMode = gameInstance ? gameInstance->GetEditModelGameMode() : nullptr;
+				MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
+
+				DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, 1.0f, true, &CachedHoles, !IsInPreviewMode());
+			}
+			else
+			{
+				DynamicMeshActor->ClearProceduralMesh();
+			}
+		}
 		parentTerrain->MarkDirty(EObjectDirtyFlags::Visuals);
 	}
 

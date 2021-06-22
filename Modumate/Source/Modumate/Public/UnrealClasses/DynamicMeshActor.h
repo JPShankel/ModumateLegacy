@@ -84,6 +84,7 @@ public:
 
 	void SetupProceduralLayers(int32 numProceduralLayers);
 	void ClearProceduralLayers();
+	void ClearProceduralMesh() { Mesh->ClearAllMeshSections(); }
 
 	void SetupPlaneGeometry(const TArray<FVector> &points, const FArchitecturalMaterial &material, bool bRecreateMesh, bool bCreateCollision = true);
 	void SetupMetaPlaneGeometry(const TArray<FVector> &points, 

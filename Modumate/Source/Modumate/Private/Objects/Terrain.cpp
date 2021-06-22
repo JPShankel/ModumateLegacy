@@ -130,7 +130,34 @@ void AMOITerrain::GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints
 void AMOITerrain::SetIsTranslucent(bool NewIsTranslucent)
 {
 	bIsTranslucent = NewIsTranslucent;
+
+	// Update collision and material of TerrainActor
 	UpdateSiteMaterials(true);
+	ADynamicTerrainActor* actor = Cast< ADynamicTerrainActor>(GetActor());
+	if (ensure(actor))
+	{
+		actor->UpdateEnableCollision(!bIsTranslucent);
+	}
+
+	// Update visibility of Terrain surface graph geometry
+	auto* doc = GetDocument();
+	auto graph2d = doc->FindSurfaceGraph(ID);
+	if (ensure(graph2d))
+	{
+		auto& faces = graph2d->GetPolygons();
+		for (auto& faceKvp : faces)
+		{
+			AModumateObjectInstance* faceMoi = doc->GetObjectById(faceKvp.Key);
+			if (ensure(faceMoi) && faceMoi->GetChildIDs().Num() == 1)
+			{
+				AMOITerrainMaterial* materialMoi = Cast<AMOITerrainMaterial>(doc->GetObjectById(faceMoi->GetChildIDs()[0]));
+				if (materialMoi)
+				{
+					materialMoi->MarkDirty(EObjectDirtyFlags::Structure);
+				}
+			}
+		}
+	}
 }
 
 void AMOITerrain::PostCreateObject(bool bNewObject)
@@ -313,6 +340,7 @@ void AMOITerrain::UpdateTerrainActor()
 
 			}
 		}
+		actor->UpdateEnableCollision(!bIsTranslucent);
 	}
 }
 
@@ -361,9 +389,9 @@ void AMOITerrain::UpdateSiteMaterials(bool bForceUpdate/* = false*/)
 							{
 								// TODO: Create material only for new mesh section, changing material for exiting section only needs to copy material params
 								auto* gameMode = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
-								UMaterialInterface* gmTerrainMat = gameMode ? gameMode->TerrainMaterial : nullptr;
-								if (gmTerrainMat)
+								if (gameMode)
 								{
+									UMaterialInterface* gmTerrainMat = bIsTranslucent ? gameMode->TerrainMaterialTranslucent : gameMode->TerrainMaterial;
 									UMaterialInstanceDynamic* materialInst = UMaterialInstanceDynamic::Create(gmTerrainMat, mesh);
 									materialInst->CopyMaterialUniformParameters(material->EngineMaterial.Get());
 									materialInst->SetVectorParameterValue(colorMultiplierName, tint);
@@ -373,8 +401,6 @@ void AMOITerrain::UpdateSiteMaterials(bool bForceUpdate/* = false*/)
 									mesh->SetMaterial(meshSectionIndex, materialInst);
 									CachedMaterials[meshSectionIndex] = materialGuid;
 								}
-
-
 							}
 						}
 					}

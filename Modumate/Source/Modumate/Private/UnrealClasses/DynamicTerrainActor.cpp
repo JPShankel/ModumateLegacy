@@ -314,13 +314,16 @@ void ADynamicTerrainActor::SetupTerrainGeometry(int32 SectionID, float GridSize,
 	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(vertices, triangles, uv0, normals, tangents);
 
 	Mesh->CreateMeshSection_LinearColor(SectionID, vertices, triangles, normals, uv0, vertexColors, tangents, bCreateCollision);
-	//Mesh->SetMaterial(SectionID, TerrainMaterial);
-	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 	//GrassMesh->SetStaticMesh(GrassStaticMesh);
 	//UpdateInstancedMeshes(true);
 
 	return;
+}
+
+void ADynamicTerrainActor::UpdateEnableCollision(bool bEnableCollision)
+{
+	Mesh->SetCollisionEnabled(bEnableCollision ? ECollisionEnabled::QueryAndPhysics : ECollisionEnabled::NoCollision);
 }
 
 #if 0
