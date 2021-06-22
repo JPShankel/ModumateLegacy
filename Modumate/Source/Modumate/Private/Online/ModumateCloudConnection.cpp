@@ -89,14 +89,10 @@ void FModumateCloudConnection::QueryEncryptionKey(const FString& UserID, const F
 {
 	FString encryptionKeyString;
 
-	if (GetCachedEncryptionKey(UserID, ProjectID, encryptionKeyString))
+	if (!GetCachedEncryptionKey(UserID, ProjectID, encryptionKeyString))
 	{
-		FEncryptionKeyResponse response(EEncryptionResponse::Success, TEXT(""));
-		response.EncryptionData.Key.Append((uint8*)*encryptionKeyString, sizeof(TCHAR) * encryptionKeyString.Len());
-		Delegate.ExecuteIfBound(response);
-	}
-	else
-	{
+		// Only the standalone server should be trying (and able) to query the AMS for an arbitrary user's encryption key.
+#if UE_SERVER
 		TWeakPtr<FModumateCloudConnection> weakThisCaptured(this->AsShared());
 		FString getConnectionEndpoint = FProjectConnectionHelpers::MakeProjectConnectionEndpoint(ProjectID) / UserID;
 		bool bQuerySuccess = RequestEndpoint(getConnectionEndpoint, ERequestType::Get, nullptr,
@@ -116,23 +112,74 @@ void FModumateCloudConnection::QueryEncryptionKey(const FString& UserID, const F
 				asyncResponse.EncryptionData.Key.Append((uint8*)*getConnectionResponse.Key, sizeof(TCHAR) * getConnectionResponse.Key.Len());
 				Delegate.ExecuteIfBound(asyncResponse);
 			},
-			[UserID, ProjectID, Delegate](int32 ErrorCode, const FString& ErrorString)
+			[weakThisCaptured, UserID, ProjectID, Delegate](int32 ErrorCode, const FString& ErrorString)
 			{
+				FEncryptionKeyResponse asyncResponse(EEncryptionResponse::Failure, ErrorString);
+
+	#if UE_BUILD_SHIPPING
+				// Shipping server configurations that failed to query for an encryption key should prevent the user from logging in.
 				UE_LOG(LogTemp, Error, TEXT("Error code %d querying encrypion key for User ID %s and Project ID %s: %s"),
 					ErrorCode, *UserID, *ProjectID, *ErrorString);
+	#else
+				// But development servers can fall back to a fake key to let development clients in.
+				TSharedPtr<FModumateCloudConnection> sharedThis = weakThisCaptured.Pin();
+				if (sharedThis.IsValid())
+				{
+					FString fakeEncryptionKey = MakeTestingEncryptionKey(UserID, ProjectID);
+					sharedThis->CacheEncryptionKey(UserID, ProjectID, fakeEncryptionKey);
+					UE_LOG(LogTemp, Warning, TEXT("Error code %d querying encrypion key for User ID %s and Project ID %s: %s - using a fake one for testing: %s"),
+						ErrorCode, *UserID, *ProjectID, *ErrorString, *fakeEncryptionKey);
 
-				FEncryptionKeyResponse asyncResponse(EEncryptionResponse::Failure, ErrorString);
+					asyncResponse.Response = EEncryptionResponse::Success;
+					asyncResponse.EncryptionData.Key.Append((uint8*)*fakeEncryptionKey, sizeof(TCHAR) * fakeEncryptionKey.Len());
+				}
+	#endif
+
 				Delegate.ExecuteIfBound(asyncResponse);
 			},
 			false);
 
-		if (!bQuerySuccess)
+		// If we're querying for the user's encryption key now, then exit early and respond to the delegate once the request finishes.
+		if (bQuerySuccess)
 		{
-			FEncryptionKeyResponse response(EEncryptionResponse::Failure, TEXT("Failed to query for encryption key!"));
-			Delegate.ExecuteIfBound(response);
+			UE_LOG(LogTemp, Log, TEXT("Querying for User ID %s's encryption key for Project ID %s..."), *UserID, *ProjectID);
+			return;
 		}
+#else
+	#if UE_BUILD_SHIPPING
+		// Otherwise, standalone clients shouldn't have reached this point on shipping environments; they should have gotten an encryption key when creating a connection from the AMS.
+		UE_LOG(LogTemp, Error, TEXT("Client didn't already have a cached encryption key for User ID: %s!"), *UserID);
+	#else
+		// But standalone clients in development can still generate a fake key for testing without the AMS.
+		encryptionKeyString = MakeTestingEncryptionKey(UserID, ProjectID);
+		CacheEncryptionKey(UserID, ProjectID, encryptionKeyString);
+		UE_LOG(LogTemp, Warning, TEXT("Client didn't already have a cached encryption key for User ID %s and Project ID %s - using a fake one for testing: %s"),
+			*UserID, *ProjectID, *encryptionKeyString);
+	#endif
+#endif
 	}
+
+	// If we haven't exited early due to waiting for an AMS query, then we can respond now with success/failure based on the cached/generated key (or lack thereof).
+	if (encryptionKeyString.IsEmpty())
+	{
+		FEncryptionKeyResponse response(EEncryptionResponse::Failure, TEXT("Failed to query for encryption key!"));
+		Delegate.ExecuteIfBound(response);
+	}
+	else
+	{
+		FEncryptionKeyResponse response(EEncryptionResponse::Success, TEXT(""));
+		response.EncryptionData.Key.Append((uint8*)*encryptionKeyString, sizeof(TCHAR) * encryptionKeyString.Len());
+		Delegate.ExecuteIfBound(response);
+	}
+	
 }
+
+#if !UE_BUILD_SHIPPING
+FString FModumateCloudConnection::MakeTestingEncryptionKey(const FString& UserID, const FString& ProjectID)
+{
+	return FString::Printf(TEXT("TEST:%s:KEY"), *MakeEncryptionToken(UserID, ProjectID));
+}
+#endif
 
 void FModumateCloudConnection::SetLoginStatus(ELoginStatus InLoginStatus)
 {

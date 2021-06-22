@@ -39,6 +39,9 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		void CacheEncryptionKey(const FString& UserID, const FString& ProjectID, const FString& EncryptionKey);
 		bool GetCachedEncryptionKey(const FString& UserID, const FString& ProjectID, FString& OutEncryptionKey);
 		void QueryEncryptionKey(const FString& UserID, const FString& ProjectID, const FOnEncryptionKeyResponse& Delegate);
+#if !UE_BUILD_SHIPPING
+		static FString MakeTestingEncryptionKey(const FString& UserID, const FString& ProjectID);
+#endif
 
 		void SetLoginStatus(ELoginStatus InLoginStatus);
 		ELoginStatus GetLoginStatus() const;

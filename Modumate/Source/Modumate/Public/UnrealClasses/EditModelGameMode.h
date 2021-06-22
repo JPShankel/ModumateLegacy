@@ -11,7 +11,7 @@
 class MODUMATE_API FModumateDatabase;
 class UDataTable;
 
-UCLASS()
+UCLASS(Config=Game)
 class MODUMATE_API AEditModelGameMode : public AModumateGameModeBase
 {
 	GENERATED_BODY()
@@ -123,7 +123,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Pawn")
 	TSubclassOf<class AEditModelToggleGravityPawn> ToggleGravityPawnClass;
 
-	static constexpr float ServerAutoExitTimeout = 30.0f;
+	UPROPERTY(Config, EditAnywhere, Category = "Server")
+	float ServerAutoExitTimeout = 30.0f;
+	
 	static constexpr float ServerStatusTimerRate = 1.0f;
 
 protected:
