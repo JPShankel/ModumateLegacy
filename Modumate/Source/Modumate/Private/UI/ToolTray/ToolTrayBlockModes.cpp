@@ -72,10 +72,7 @@ void UToolTrayBlockModes::ChangeToAttachmentToolsButtons(EToolMode mode)
 
 void UToolTrayBlockModes::ChangeToSiteToolsButtons()
 {
-	TArray<UModumateButtonUserWidget*> buttonsToShow = {
-		ButtonLine,
-		ButtonPoint
-	};
+	TArray<UModumateButtonUserWidget*> buttonsToShow = {ButtonLine};
 	SetButtonsState(buttonsToShow);
 }
 
@@ -106,7 +103,15 @@ void UToolTrayBlockModes::SetButtonsState(const TArray<UModumateButtonUserWidget
 		ButtonRectangle->SwitchToActiveStyle();
 		break;
 	case EToolCreateObjectMode::Apply:
-		ButtonMPBucket->SwitchToActiveStyle();
+		// Terrain tool uses ButtonLine for Apply
+		if (controller->GetToolMode() == EToolMode::VE_TERRAIN)
+		{
+			ButtonLine->SwitchToActiveStyle();
+		}
+		else
+		{
+			ButtonMPBucket->SwitchToActiveStyle();
+		}
 		break;
 	case EToolCreateObjectMode::Stamp:
 		ButtonOpeningStamp->SwitchToActiveStyle();

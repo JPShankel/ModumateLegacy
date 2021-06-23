@@ -75,7 +75,7 @@ public:
 	static void SetWindowTitle(const FString& ProjectName = TEXT(""), const FText& ProjectSuffix = FText::GetEmpty());
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	static void DocAddHideMoiActors(const TArray<AActor*> Actors);
+	static void DocAddHideMoiActors(const TArray<AActor*> Actors, bool bHide = true);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
 	static void DocUnHideAllMoiActors(const AActor* Owner);

@@ -51,9 +51,8 @@ void UToolTrayBlockProperties::ChangeBlockProperties(UEditModelToolBase* Current
 	}
 
 	// Clear out all of the previous instance properties, so that they can be re-registered
-	auto propertyEntries = PropertiesListBox->GetAllChildren();
 	int32 maxNumRegistrations = 0;
-	for (auto propertyEntry : propertyEntries)
+	for (auto propertyEntry : PropertiesListBox->GetAllChildren())
 	{
 		if (auto instPropEntry = Cast<UInstPropWidgetBase>(propertyEntry))
 		{
@@ -69,7 +68,7 @@ void UToolTrayBlockProperties::ChangeBlockProperties(UEditModelToolBase* Current
 	bool bAnyPropertiesEnabled = false;
 	if (maxNumRegistrations > 0)
 	{
-		for (auto propertyEntry : propertyEntries)
+		for (auto propertyEntry : PropertiesListBox->GetAllChildren())
 		{
 			if (auto instPropEntry = Cast<UInstPropWidgetBase>(propertyEntry))
 			{

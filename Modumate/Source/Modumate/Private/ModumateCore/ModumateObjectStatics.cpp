@@ -638,9 +638,9 @@ bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const AModumateObjectInst
 	case EObjectType::OTTerrainVertex:
 	case EObjectType::OTTerrainEdge:
 	case EObjectType::OTTerrainPolygon:
-	{	// For now, terrain always visible.
-		bOutVisible = true;
-		bOutCollisionEnabled = true;
+	{
+		bOutVisible = !SurfaceMOI->IsRequestedHidden();
+		bOutCollisionEnabled = !SurfaceMOI->IsCollisionRequestedDisabled();
 		break;
 	}
 

@@ -418,7 +418,7 @@ void UModumateFunctionLibrary::SetWindowTitle(const FString& ProjectName, const 
 	UKismetSystemLibrary::SetWindowTitle(WindowTitle);
 }
 
-void UModumateFunctionLibrary::DocAddHideMoiActors(const TArray<AActor*> Actors)
+void UModumateFunctionLibrary::DocAddHideMoiActors(const TArray<AActor*> Actors, bool bHide/* = true*/)
 {
 	if (Actors.Num() > 0)
 	{
@@ -463,7 +463,14 @@ void UModumateFunctionLibrary::DocAddHideMoiActors(const TArray<AActor*> Actors)
 			}
 		}
 
-		doc->AddHideObjectsById(Actors[0]->GetWorld(), objectIDsToHide.Array());
+		if (bHide)
+		{
+			doc->AddHideObjectsById(Actors[0]->GetWorld(), objectIDsToHide.Array());
+		}
+		else
+		{
+			doc->UnhideObjectsById(Actors[0]->GetWorld(), objectIDsToHide.Array());
+		}
 	}
 }
 

@@ -16,6 +16,7 @@
 #include "UI/EditModelUserWidget.h"
 #include "UI/Custom/ModumateCheckBox.h"
 #include "Objects/Terrain.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 
 
 UGeneralListItem::UGeneralListItem(const FObjectInitializer& ObjectInitializer)
@@ -59,14 +60,27 @@ void UGeneralListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
 	AEditModelGameState *gameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
 	if (gameState)
 	{
-		TArray<int32> objIDs = { ObjID };
-		if (IsChecked)
+		// For terrain
+		if (CurrentGeneralListType == EGeneralListType::Terrain)
 		{
-			gameState->Document->AddHideObjectsById(GetWorld(), objIDs);
+			AModumateObjectInstance* moi = gameState->Document->GetObjectById(ObjID);
+			if (ensure(moi))
+			{
+				TArray<AActor*> terrainActors = { moi->GetActor() };
+				UModumateFunctionLibrary::DocAddHideMoiActors(terrainActors, IsChecked);
+			}
 		}
-		else
+		else // For cutplanes
 		{
-			gameState->Document->UnhideObjectsById(GetWorld(), objIDs);
+			TArray<int32> objIDs = { ObjID };
+			if (IsChecked)
+			{
+				gameState->Document->AddHideObjectsById(GetWorld(), objIDs);
+			}
+			else
+			{
+				gameState->Document->UnhideObjectsById(GetWorld(), objIDs);
+			}
 		}
 	}
 
