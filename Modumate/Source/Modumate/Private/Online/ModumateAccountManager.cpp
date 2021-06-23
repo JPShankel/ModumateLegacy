@@ -199,16 +199,19 @@ void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserS
 #if PLATFORM_WINDOWS
 	if (bQueryUpdateInstallers)
 	{
-		Updater->ProcessLatestInstallers(CachedUserStatus);
-	}
-#endif
+		if (!CachedUserStatus.Active)
+		{
+			CloudConnection->SetLoginStatus(ELoginStatus::UserDisabled);
+		}
 
-	if (CachedUserStatus.Active)
-	{
-		CloudConnection->SetLoginStatus(ELoginStatus::Connected);
+		Updater->ProcessLatestInstallers(CachedUserStatus);
 	}
 	else
 	{
-		CloudConnection->SetLoginStatus(ELoginStatus::UserDisabled);
+		CloudConnection->SetLoginStatus(CachedUserStatus.Active ? ELoginStatus::Connected : ELoginStatus::UserDisabled);
 	}
+#else
+	CloudConnection->SetLoginStatus(CachedUserStatus.Active ? ELoginStatus::Connected : ELoginStatus::UserDisabled);
+#endif
+
 }

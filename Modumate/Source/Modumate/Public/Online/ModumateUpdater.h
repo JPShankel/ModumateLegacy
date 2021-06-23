@@ -22,6 +22,8 @@ private:
 	void NotifyUser();
 	void FetchInstallersObject();
 	void InstallersObjectCallback(bool bWasSuccessful, const TSharedPtr<FJsonObject>& Response);
+	void RequestUserDownload(const FString& Url);
+	void SetUserLoggedIn();
 
 	FString OurVersion;
 	FString LatestVersion;

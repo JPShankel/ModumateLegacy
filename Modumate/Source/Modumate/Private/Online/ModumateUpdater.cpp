@@ -4,8 +4,18 @@
 #include "ModumateCore/PlatformFunctions.h"
 #include "Online/ModumateAccountManager.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "Online/ModumateAnalyticsStatics.h"
+
+#define LOCTEXT_NAMESPACE "ModumateUpdater"
 
 const FString FModumateUpdater::InstallerSubdir(TEXT("Installers"));
+
+TAutoConsoleVariable<int32> CVarModumateDisableForcedUpdate(
+	TEXT("modumate.DisableForcedUpdate"),
+	0,
+	TEXT("Don't force the user to update."),
+	ECVF_Default);
+
 
 FModumateUpdater::~FModumateUpdater()
 {
@@ -79,25 +89,31 @@ void FModumateUpdater::NotifyUser()
 		const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
 		const FString& currentVersion = projectSettings->ProjectVersion;
 
-		auto response = FPlatformMisc::MessageBoxExt(EAppMsgType::OkCancel, *FString::Printf(
-			TEXT("A new release of Modumate (v%s) has been downloaded (you are currently using v%s). "
-				"We recommend upgrading immediately.\n\nDo you wish to upgrade now?"), *DownloadVersion, *currentVersion),
-			TEXT("Modumate Upgrade"));
+		auto response = FPlatformMisc::MessageBoxExt(EAppMsgType::OkCancel,
+			*FText::Format(LOCTEXT("PatchReleaseUpdatePrompt", "A new release of Modumate (v{0}) has been downloaded (you are currently using v{1}). "
+				"Please upgrade to continue."), FText::FromString(DownloadVersion), FText::FromString(currentVersion)).ToString(),
+			*LOCTEXT("UpdatePromptTitle", "Modumate Upgrade").ToString());
+
 		if (response == EAppReturnType::Ok)
 		{
 			// Run via cmd as it's a UAC executable.
 			FPlatformProcess::CreateProc(TEXT("cmd.exe"), *(TEXT("/c \"") + DownloadFilename + TEXT("\"")), false, false, false, nullptr, 0, TEXT("/"), nullptr);
 			State = Upgrading;
+		}
+		else
+		{
+			State = Declined;
+			UModumateAnalyticsStatics::RecordEventCustomFloat(GameInstance->GetWorld(), EModumateAnalyticsCategory::Session, TEXT("DeclinedPatchUpgrade"), 0.0f);
+		}
+
+		if (State != Declined || !CVarModumateDisableForcedUpdate.GetValueOnAnyThread())
+		{
 			auto playerController = Cast<AEditModelPlayerController>(GameInstance->GetPrimaryPlayerController());
 			if (playerController)
 			{
 				playerController->CheckSaveModel();
 			}
 			FPlatformMisc::RequestExit(false);
-		}
-		else
-		{
-			State = Declined;
 		}
 	}
 }
@@ -121,14 +137,20 @@ void FModumateUpdater::FetchInstallersObject()
 				pinnedThis->InstallersObjectCallback(bWasSuccessful, Response);
 			}
 		},
-		[](int32 ErrorCode, const FString& ErrorMessage)
+		[weakThis](int32 ErrorCode, const FString& ErrorMessage)
 		{
-			UE_LOG(LogTemp, Error, TEXT("%d error querying for installers: \"%s\""), ErrorCode, *ErrorMessage);
+			auto pinnedThis(weakThis.Pin());
+			if (pinnedThis)
+			{
+				pinnedThis->SetUserLoggedIn();
+			}
+			UE_LOG(LogTemp, Warning, TEXT("%d error querying for installers: \"%s\""), ErrorCode, *ErrorMessage);
 		});
 }
 
 void FModumateUpdater::InstallersObjectCallback(bool bWasSuccessful, const TSharedPtr<FJsonObject>& Response)
 {
+	SetUserLoggedIn();
 	FModumateInstallersObject installersObject;
 	if (ensure(bWasSuccessful
 		&& FJsonObjectConverter::JsonObjectToUStruct<FModumateInstallersObject>(Response.ToSharedRef(), &installersObject)) )
@@ -150,7 +172,11 @@ void FModumateUpdater::InstallersObjectCallback(bool bWasSuccessful, const TShar
 
 		if (installerUrl.IsEmpty())
 		{
-			installerUrl = baseInstallerUrl;
+			if (!baseInstallerUrl.IsEmpty() && OurVersion != LatestVersion)
+			{
+				RequestUserDownload(baseInstallerUrl);
+			}
+			return;
 		}
 
 		if (installerUrl.IsEmpty())
@@ -179,3 +205,38 @@ void FModumateUpdater::InstallersObjectCallback(bool bWasSuccessful, const TShar
 
 	}
 }
+
+void FModumateUpdater::RequestUserDownload(const FString& Url)
+{
+	auto response = FPlatformMisc::MessageBoxExt(EAppMsgType::Ok,
+		*FText::Format(LOCTEXT("FullReleaseDownloadPrompt", "A new release of Modumate (v{0}) is available. Please click on OK to download."),
+			FText::FromString(LatestVersion)).ToString(),
+		*LOCTEXT("UpdatePromptTitle", "Modumate Upgrade").ToString());
+			
+	if (response == EAppReturnType::Ok || !CVarModumateDisableForcedUpdate.GetValueOnAnyThread())
+	{
+		FPlatformProcess::LaunchURL(*Url, nullptr, nullptr);
+	}
+	else
+	{
+		UModumateAnalyticsStatics::RecordEventCustomFloat(GameInstance->GetWorld(), EModumateAnalyticsCategory::Session, TEXT("DeclinedUpgradeDownload"), 0.0f);
+	}
+
+	auto playerController = Cast<AEditModelPlayerController>(GameInstance->GetPrimaryPlayerController());
+	if (playerController)
+	{
+		playerController->CheckSaveModel();
+	}
+	FPlatformMisc::RequestExit(false);
+}
+
+void FModumateUpdater::SetUserLoggedIn()
+{
+	auto cloudConnection = GameInstance->GetCloudConnection();
+	if (cloudConnection && cloudConnection->GetLoginStatus() != ELoginStatus::UserDisabled)
+	{
+		cloudConnection->SetLoginStatus(ELoginStatus::Connected);
+	}
+}
+
+#undef LOCTEXT_NAMESPACE
