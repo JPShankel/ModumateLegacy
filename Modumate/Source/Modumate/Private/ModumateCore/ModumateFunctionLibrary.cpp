@@ -418,91 +418,59 @@ void UModumateFunctionLibrary::SetWindowTitle(const FString& ProjectName, const 
 	UKismetSystemLibrary::SetWindowTitle(WindowTitle);
 }
 
-void UModumateFunctionLibrary::DocAddHideMoiActors(const TArray<AActor*> Actors, bool bHide/* = true*/)
+void UModumateFunctionLibrary::SetMOIAndDescendentsHidden(const TArray<AModumateObjectInstance*>& MOIs, bool bHide/* = true*/)
 {
-	if (Actors.Num() > 0)
+	if (MOIs.Num() == 0)
 	{
-		AEditModelGameState *gameState = Actors[0]->GetWorld()->GetGameState<AEditModelGameState>();
-		UModumateDocument* doc = gameState->Document;
+		return;
+	}
 
-		// First, find all descendents of the selected actor objects
-		TSet<const AModumateObjectInstance *> objectsAndDescendents;
-		for (auto curActor : Actors)
+	AEditModelGameState* gameState = MOIs[0]->GetWorld()->GetGameState<AEditModelGameState>();
+	UModumateDocument* doc = gameState->Document;
+
+	// First, find all descendents of the selected actor objects
+	TSet<const AModumateObjectInstance*> objectsAndDescendents;
+	for (auto moi : MOIs)
+	{
+		objectsAndDescendents.Add(moi);
+
+		TArray<AModumateObjectInstance*> descendents = moi->GetAllDescendents();
+		for (AModumateObjectInstance* descendent : descendents)
 		{
-			AModumateObjectInstance *moi = gameState->Document->ObjectFromActor(curActor);
-			if (moi)
+			if (descendent)
 			{
-				objectsAndDescendents.Add(moi);
-
-				TArray<AModumateObjectInstance *> descendents = moi->GetAllDescendents();
-				for (AModumateObjectInstance *descendent : descendents)
-				{
-					if (descendent)
-					{
-						objectsAndDescendents.Add(descendent);
-					}
-				}
+				objectsAndDescendents.Add(descendent);
 			}
 		}
-
-		// Now, gather their IDs, and any parent IDs that are in the graph
-		TSet<int32> objectIDsToHide;
-		for (const AModumateObjectInstance *object : objectsAndDescendents)
-		{
-			objectIDsToHide.Add(object->ID);
-
-			auto* parentObj = object->GetParentObject();
-
-			EObjectType parentObjType = parentObj ? parentObj->GetObjectType() : EObjectType::OTNone;
-			EGraphObjectType parentGraph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(parentObjType);
-			EGraph3DObjectType parentGraph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(parentObjType);
-
-			if ((parentGraph2DObjType != EGraphObjectType::None) || (parentGraph3DObjType != EGraph3DObjectType::None))
-			{
-				objectIDsToHide.Add(parentObj->ID);
-			}
-		}
-
-		if (bHide)
-		{
-			doc->AddHideObjectsById(Actors[0]->GetWorld(), objectIDsToHide.Array());
-		}
-		else
-		{
-			doc->UnhideObjectsById(Actors[0]->GetWorld(), objectIDsToHide.Array());
-		}
 	}
-}
 
-void UModumateFunctionLibrary::DocUnHideAllMoiActors(const AActor* Owner)
-{
-	if (Owner != nullptr)
+	// Now, gather their IDs, and any parent IDs that are in the graph
+	TSet<int32> objectIDsToHide;
+	for (const AModumateObjectInstance* object : objectsAndDescendents)
 	{
-		AEditModelGameState *gameState = Owner->GetWorld()->GetGameState<AEditModelGameState>();
-		UModumateDocument* doc = gameState->Document;
-		doc->UnhideAllObjects(Owner->GetWorld());
-	}
-}
+		objectIDsToHide.Add(object->ID);
 
-FGuid UModumateFunctionLibrary::GetShopItemFromActor(AActor* TargetActor, bool& bSuccess)
-{
-	if (TargetActor != nullptr)
-	{
-		AEditModelGameState *gameState = TargetActor->GetWorld()->GetGameState<AEditModelGameState>();
-		UModumateDocument* doc = gameState->Document;
-		AModumateObjectInstance *moi = doc->ObjectFromActor(TargetActor);
-		
-		if (moi != nullptr)
+		auto* parentObj = object->GetParentObject();
+
+		EObjectType parentObjType = parentObj ? parentObj->GetObjectType() : EObjectType::OTNone;
+		EGraphObjectType parentGraph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(parentObjType);
+		EGraph3DObjectType parentGraph3DObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(parentObjType);
+
+		if ((parentGraph2DObjType != EGraphObjectType::None) || (parentGraph3DObjType != EGraph3DObjectType::None))
 		{
-			bSuccess = true;
-			return moi->GetAssembly().UniqueKey();
+			objectIDsToHide.Add(parentObj->ID);
 		}
 	}
-	bSuccess = false;
-	return FGuid();
+
+	if (bHide)
+	{
+		doc->AddHideObjectsById(MOIs[0]->GetWorld(), objectIDsToHide.Array());
+	}
+	else
+	{
+		doc->UnhideObjectsById(MOIs[0]->GetWorld(), objectIDsToHide.Array());
+	}
 }
-
-
 
 bool UModumateFunctionLibrary::SetMeshMaterial(UMeshComponent *MeshComponent, const FArchitecturalMaterial &Material, int32 MatIndex, UMaterialInstanceDynamic** CachedMIDPtr)
 {
@@ -591,54 +559,6 @@ bool UModumateFunctionLibrary::SetMeshMaterialsFromMapping(UMeshComponent *MeshC
 	}
 
 	return bSuccess;
-}
-
-bool UModumateFunctionLibrary::SetMeshMaterialsFromAssemblyLayer(UMeshComponent* MeshComponent, const FBIMLayerSpec &AssemblyLayer, const TMap<FName, int32> *MatIndexMapping)
-{
-	bool bSuccess = false;
-
-#if 0 // TODO: refactor for new material assignments
-	for (int32 i = -1; i < AssemblyLayer.ExtraMaterials.Num(); ++i)
-	{
-		auto &matData = (i < 0) ? AssemblyLayer.Material : AssemblyLayer.ExtraMaterials[i];
-		if (matData.EngineMaterial.IsValid())
-		{
-			FName materialSlotName(*FString::Printf(TEXT("Material%d"), i + 1));
-			int32 matIndex = INDEX_NONE;
-			if (MatIndexMapping && MatIndexMapping->Contains(materialSlotName))
-			{
-				matIndex = MatIndexMapping->FindChecked(materialSlotName);
-			}
-			else
-			{
-				matIndex = MeshComponent->GetMaterialIndex(materialSlotName);
-			}
-
-			if (!ensureMsgf(matIndex != INDEX_NONE, TEXT("Couldn't find mesh material index on %s for slot %s"),
-				*MeshComponent->GetName(), *materialSlotName.ToString()))
-			{
-				continue;
-			}
-
-			if (SetMeshMaterial(MeshComponent, matData, matIndex))
-			{
-				bSuccess = true;
-			}
-		}
-	}
-#endif
-
-	return bSuccess;
-}
-
-FColor UModumateFunctionLibrary::GetColorFromHex(FString Hex)
-{
-	return FColor::FromHex(Hex);
-}
-
-FString UModumateFunctionLibrary::GetHexFromColor(FColor Color)
-{
-	return Color.ToHex();
 }
 
 bool UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer(UProceduralMeshComponent *MeshComponent, const FBIMLayerSpec &Layer,

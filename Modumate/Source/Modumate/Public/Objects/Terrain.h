@@ -53,7 +53,6 @@ public:
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 		TArray<TArray<FVector>>& OutPerimeters) const override;
 
-	// TODO: Change terrain material to translucent
 	void SetIsTranslucent(bool NewIsTranslucent);
 	bool GetIsTranslucent() const { return bIsTranslucent; };
 

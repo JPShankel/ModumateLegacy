@@ -114,10 +114,6 @@ public:
 	UFUNCTION()
 	void EMOnSelectionObjectChanged();
 
-	// Blueprint event for opening BIM configurator
-	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
-	void EventNewCraftingAssembly(EToolMode ToolMode);
-
 	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
 	void EventToggleProjectMenu();
 

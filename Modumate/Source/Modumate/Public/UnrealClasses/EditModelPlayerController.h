@@ -236,14 +236,6 @@ public:
 	UFUNCTION(Category = Input)
 	void HandleRawLeftMouseButtonReleased();
 
-	// Logical mouse input handling events
-	// TODO: They are BlueprintNativeEvents for now, so that Blueprint can still authoritatively
-	//       handle how (and if) they are passed along to UI, this PlayerController (OnLButtonDown, etc.).
-	//       Eventually that logic should be ported to these functions, these should no longer be BlueprintNativeEvents,
-	//       and these should replace those other OnLButtonDown functions.
-	UFUNCTION(BlueprintNativeEvent, Category = Input)
-	void HandleLeftMouseButton(bool bPressed);
-
 	UFUNCTION(BlueprintCallable, Category = Selection)
 	void SelectAll();
 
@@ -337,9 +329,6 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	bool IsCursorOverWidget() const;
-
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = HUD)
-	void ClearTextInputs();
 
 	UFUNCTION(BlueprintCallable, DisplayName = "Set Field of View", meta = (ScriptMethod = "SetFieldOfView"))
 	void SetFieldOfViewCommand(float FieldOfView);

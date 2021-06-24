@@ -75,24 +75,11 @@ public:
 	static void SetWindowTitle(const FString& ProjectName = TEXT(""), const FText& ProjectSuffix = FText::GetEmpty());
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	static void DocAddHideMoiActors(const TArray<AActor*> Actors, bool bHide = true);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	static void DocUnHideAllMoiActors(const AActor* Owner);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Document")
-	static FGuid GetShopItemFromActor(AActor* TargetActor, bool& bSuccess);
+	static void SetMOIAndDescendentsHidden(const TArray<AModumateObjectInstance*>& MOIs, bool bHide = true);
 
 	// Helper non-BP methods for below BP method
 	static bool SetMeshMaterial(UMeshComponent *MeshComponent, const FArchitecturalMaterial &Material, int32 MatIndex, UMaterialInstanceDynamic** CachedMIDPtr = nullptr);
 	static bool SetMeshMaterialsFromMapping(UMeshComponent *MeshComponent, const TMap<FName, FArchitecturalMaterial> &MaterialMapping, const TMap<FName, int32> *MatIndexMapping = nullptr);
-	static bool SetMeshMaterialsFromAssemblyLayer(UMeshComponent *MeshComponent, const FBIMLayerSpec &AssemblyLayer, const TMap<FName, int32> *MatIndexMapping = nullptr);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Color")
-	static FColor GetColorFromHex(FString Hex);
-
-	UFUNCTION(BlueprintCallable, Category = "Modumate Color")
-	static FString GetHexFromColor(FColor Color);
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate System")
 	static void CopyToClipboard(const FString& ClipboardContents);

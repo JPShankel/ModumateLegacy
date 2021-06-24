@@ -66,8 +66,8 @@ void UGeneralListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
 			AModumateObjectInstance* moi = gameState->Document->GetObjectById(ObjID);
 			if (ensure(moi))
 			{
-				TArray<AActor*> terrainActors = { moi->GetActor() };
-				UModumateFunctionLibrary::DocAddHideMoiActors(terrainActors, IsChecked);
+				TArray<AModumateObjectInstance*> terrainMOIs = { moi };
+				UModumateFunctionLibrary::SetMOIAndDescendentsHidden(terrainMOIs, IsChecked);
 			}
 		}
 		else // For cutplanes

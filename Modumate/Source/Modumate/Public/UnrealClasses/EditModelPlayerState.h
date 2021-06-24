@@ -168,21 +168,11 @@ public:
 
 	TMap<int32, TSet<FName>> ObjectErrorMap;
 
-	UFUNCTION(BlueprintCallable, Category = "Tools")
-	void GetSelectorModumateObjects(TArray<AActor*>& ModumateObjects);
-
 	UFUNCTION(BlueprintPure, Category = "Tools")
 	AActor* GetViewGroupObject() const;
 
 	UFUNCTION(BlueprintPure, Category = "Tools")
 	AActor* GetHoveredObject() const;
-
-	// Used to refresh FOV value in UI
-	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
-	void OnCameraFOVUpdate(float UpdatedFOV);
-
-	UFUNCTION(BlueprintImplementableEvent, Category = "Menu")
-	void RefreshActiveAssembly();
 
 	UFUNCTION(BlueprintCallable, Category = "Tools")
 	bool SetErrorForObject(int32 ObjectID, FName ErrorTag, bool bIsError);

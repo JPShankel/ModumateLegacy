@@ -890,20 +890,6 @@ bool AEditModelPlayerState::IsObjectReachableInView(AModumateObjectInstance* obj
 	return LastReachableObjectSet.Contains(obj);
 }
 
-void AEditModelPlayerState::GetSelectorModumateObjects(TArray<AActor*>& ModumateObjects)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::GetSelectorModumateObjects"));
-	TArray<AActor*> objectRefs;
-	for (AModumateObjectInstance*& curObjectRef : SelectedObjects)
-	{
-		if (curObjectRef->GetActor() != nullptr)
-		{
-			objectRefs.Add(curObjectRef->GetActor());
-		}
-	}
-	ModumateObjects = objectRefs;
-}
-
 AActor* AEditModelPlayerState::GetViewGroupObject() const
 {
 	return ViewGroupObject ? ViewGroupObject->GetActor() : nullptr;

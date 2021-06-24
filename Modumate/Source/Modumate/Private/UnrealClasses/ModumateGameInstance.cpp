@@ -402,7 +402,6 @@ void UModumateGameInstance::RegisterAllCommands()
 
 		if (playerPawn && (newFOV > 0.0f))
 		{
-			playerController->EMPlayerState->OnCameraFOVUpdate(newFOV);
 			return playerPawn->SetCameraFOV(newFOV);
 		}
 

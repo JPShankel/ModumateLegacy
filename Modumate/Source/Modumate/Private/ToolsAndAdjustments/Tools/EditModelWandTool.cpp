@@ -44,7 +44,7 @@ bool UWandTool::HandleMouseUp()
 	AModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
 	if (newTarget)
 	{
-		UModumateFunctionLibrary::DocAddHideMoiActors(TArray<AActor*> {newTarget->GetActor()});
+		UModumateFunctionLibrary::SetMOIAndDescendentsHidden(TArray<AModumateObjectInstance*> {newTarget});
 	}
 	EndUse();
 

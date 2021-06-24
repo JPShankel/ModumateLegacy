@@ -1928,11 +1928,6 @@ void AEditModelPlayerController::HandleRawLeftMouseButtonReleased()
 	}
 }
 
-void AEditModelPlayerController::HandleLeftMouseButton_Implementation(bool bPressed)
-{
-	// TODO: handle input logic here, see OnLButtonDown, OnLButtonUp
-}
-
 void AEditModelPlayerController::SelectAll()
 {
 	EMPlayerState->SelectAll();

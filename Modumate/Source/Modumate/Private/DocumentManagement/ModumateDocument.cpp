@@ -1475,7 +1475,6 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World, bool bCleanObjects, bool 
 	if (playerState)
 	{
 		playerState->ValidateSelectionsAndView();
-		playerState->RefreshActiveAssembly();
 	}
 
 	// TODO: Find a better way to determine what objects were or are now dependents of CutPlanes,

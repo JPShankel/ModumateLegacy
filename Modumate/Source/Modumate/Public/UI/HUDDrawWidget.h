@@ -116,12 +116,6 @@ public:
 	TArray<FModelDimensionString> DegreeStringToDraw;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Tools")
-	void ShowRoomInfoWidget(int32 RoomID);
-
-	UFUNCTION(BlueprintImplementableEvent, Category = "Tools")
-	void ClearRoomInfoWidget(int32 RoomID);
-
-	UFUNCTION(BlueprintImplementableEvent, Category = "Tools")
 	void DrawLines(const TArray<FModumateLines>& Lines);
 
 public:

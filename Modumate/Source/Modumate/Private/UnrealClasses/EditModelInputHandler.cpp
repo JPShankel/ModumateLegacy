@@ -234,13 +234,11 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	}
 	case EInputCommand::Undo:
 	{
-		Controller->ClearTextInputs();
 		Controller->HandleUndo();
 		return true;
 	}
 	case EInputCommand::Redo:
 	{
-		Controller->ClearTextInputs();
 		Controller->HandleRedo();
 		return true;
 	}
@@ -315,11 +313,9 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	case EInputCommand::HideSelected:
 	{
 		// TODO: move this logic somewhere reasonable
-		TArray<AActor*> selectedObjActors;
-		Controller->EMPlayerState->GetSelectorModumateObjects(selectedObjActors);
-		if (selectedObjActors.Num() > 0)
+		if (Controller->EMPlayerState->SelectedObjects.Num() > 0)
 		{
-			UModumateFunctionLibrary::DocAddHideMoiActors(selectedObjActors);
+			UModumateFunctionLibrary::SetMOIAndDescendentsHidden(Controller->EMPlayerState->SelectedObjects.Array());
 			Controller->DeselectAll();
 		}
 		return true;
@@ -328,7 +324,7 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	{
 		// TODO: move this logic somewhere reasonable
 		Controller->SetToolMode(EToolMode::VE_SELECT);
-		UModumateFunctionLibrary::DocUnHideAllMoiActors(GetOwner());
+		Controller->GetDocument()->UnhideAllObjects(GetWorld());
 		return true;
 	}
 	case EInputCommand::ToggleUserSnapPoint:
