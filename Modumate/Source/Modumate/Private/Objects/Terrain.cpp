@@ -319,7 +319,6 @@ void AMOITerrain::UpdateTerrainActor()
 
 			}
 		}
-		actor->UpdateEnableCollision(!bIsTranslucent);
 	}
 }
 
