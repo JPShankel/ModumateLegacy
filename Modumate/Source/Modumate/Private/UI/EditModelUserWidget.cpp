@@ -207,7 +207,7 @@ void UEditModelUserWidget::EMOnSelectionObjectChanged()
 		{
 			SwitchLeftMenu(ELeftMenuState::SelectMenu);
 		}
-		else if (Controller->EMPlayerState->SelectedObjects.Num()==1)
+		else if (Controller && Controller->EMPlayerState && Controller->EMPlayerState->SelectedObjects.Num()==1)
 		{
 			// If the BIM designer is visible and we've made a single selection, edit it
 			auto it = Controller->EMPlayerState->SelectedObjects.CreateConstIterator();
@@ -321,7 +321,7 @@ bool UEditModelUserWidget::EMUserWidgetHandleEscapeKey()
 
 void UEditModelUserWidget::UpdateSelectTrayVisibility()
 {
-	if (Controller->EMPlayerState->SelectedObjects.Num() == 0)
+	if (Controller && Controller->EMPlayerState && Controller->EMPlayerState->SelectedObjects.Num() == 0)
 	{
 		SelectionTrayWidget->CloseToolTray();
 	}
@@ -350,7 +350,7 @@ void UEditModelUserWidget::UpdateMoveRotateToolButtonsUsability()
 {
 	auto moveButton = ToolToButtonMap.FindRef(EToolMode::VE_MOVEOBJECT);
 	auto rotateButton = ToolToButtonMap.FindRef(EToolMode::VE_ROTATE);
-	if (moveButton && rotateButton)
+	if (moveButton && rotateButton && Controller && Controller->EMPlayerState)
 	{
 		moveButton->SetIsEnabled(Controller->EMPlayerState->SelectedObjects.Num() > 0);
 		rotateButton->SetIsEnabled(Controller->EMPlayerState->SelectedObjects.Num() > 0);

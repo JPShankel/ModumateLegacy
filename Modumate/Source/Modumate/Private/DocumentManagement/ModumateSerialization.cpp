@@ -2,6 +2,10 @@
 
 #include "DocumentManagement/ModumateSerialization.h"
 
+#include "Backends/CborStructDeserializerBackend.h"
+#include "Backends/CborStructSerializerBackend.h"
+#include "StructDeserializer.h"
+#include "StructSerializer.h"
 
 const FString FModumateSerializationStatics::DocHeaderField(TEXT("ModumateHeader"));
 const FString FModumateSerializationStatics::DocObjectInstanceField(TEXT("ModumateObjects"));
@@ -151,6 +155,110 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 	if (OutHeader.Version == 5)
 	{
 		OutHeader.Version = 6;
+	}
+
+	return true;
+}
+
+bool FModumateSerializationStatics::SaveDocumentToBuffer(const FModumateDocumentHeader& Header, const FMOIDocumentRecord& Record, TArray<uint8>& OutBuffer)
+{
+	OutBuffer.Reset();
+
+	FStructSerializerPolicies policies;
+	policies.NullValues = EStructSerializerNullValuePolicies::Ignore;
+
+	// Before saving anything to the OutBuffer, first make an uncompressed CBOR buffer of the document record, the large part that can be compressed.
+	TArray<uint8> recordUncompressedBuffer;
+	FMemoryWriter recordBufferWriter(recordUncompressedBuffer);
+	FCborStructSerializerBackend recordSerializerBackend(recordBufferWriter, EStructSerializerBackendFlags::Default);
+	FStructSerializer::Serialize(Record, recordSerializerBackend, policies);
+	uint32 recordUncompressedSize = recordUncompressedBuffer.Num();
+	if (recordUncompressedSize == 0)
+	{
+		return false;
+	}
+
+	// Now, save the actual buffer writing in order
+	FMemoryWriter totalBufferWriter(OutBuffer);
+
+	// 1) The version of our binary format (distinct from document version; it only dicates the binary components of the file)
+	uint32 binaryDocVersion = CurBinaryDocVersion;
+	totalBufferWriter.SerializeIntPacked(binaryDocVersion);
+
+	// 2) The (uncompressed) CBOR representation of the document header
+	FCborStructSerializerBackend headerSerializerBackend(totalBufferWriter, EStructSerializerBackendFlags::Default);
+	FStructSerializer::Serialize(Header, headerSerializerBackend, policies);
+
+	// 3) The size of our uncompressed CBOR buffer of the document record
+	totalBufferWriter.SerializeIntPacked(recordUncompressedSize);
+
+	// 4) The compressed CBOR buffer of the document record
+	totalBufferWriter.SerializeCompressed(recordUncompressedBuffer.GetData(), recordUncompressedSize, NAME_Zlib, COMPRESS_BiasSpeed);
+
+	if (!totalBufferWriter.Close())
+	{
+		return false;
+	}
+
+	return (OutBuffer.Num() > 0);
+}
+
+bool FModumateSerializationStatics::LoadDocumentFromBuffer(const TArray<uint8>& Buffer, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutRecord, bool bLoadOnlyHeader)
+{
+	FStructDeserializerPolicies policies;
+	policies.MissingFields = EStructDeserializerErrorPolicies::Ignore;
+
+	OutHeader = FModumateDocumentHeader();
+	OutRecord = FMOIDocumentRecord();
+
+	FMemoryReader totalBufferReader(Buffer);
+
+	// 1) Verify the version of our binary format
+	uint32 savedBinaryDocVersion = 0;
+	totalBufferReader.SerializeIntPacked(savedBinaryDocVersion);
+
+	if (savedBinaryDocVersion != CurBinaryDocVersion)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Binary document was saved with an out of date version: %d"), savedBinaryDocVersion);
+		return false;
+	}
+
+	// 2) Read the document header
+	FCborStructDeserializerBackend headerDeserializerBackend(totalBufferReader);
+	if (!FStructDeserializer::Deserialize(OutHeader, headerDeserializerBackend, policies))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to deserialize the document header!"));
+		return false;
+	}
+
+	if (bLoadOnlyHeader)
+	{
+		return true;
+	}
+
+	// 3) Get the expected size of the uncompressed CBOR buffer of the document record
+	uint32 uncompressedRecordSize = 0;
+	totalBufferReader.SerializeIntPacked(uncompressedRecordSize);
+
+	if (uncompressedRecordSize == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("The document record size is empty!"));
+		return false;
+	}
+
+	// 4a) Decompress the CBOR buffer of the document record
+	TArray<uint8> recordBuffer;
+	recordBuffer.AddZeroed(uncompressedRecordSize);
+	totalBufferReader.SerializeCompressed(recordBuffer.GetData(), uncompressedRecordSize, NAME_Zlib, COMPRESS_BiasSpeed);
+
+	// 4b) Deserialize the uncompressed CBOR buffer
+	FMemoryReader recordBufferReader(recordBuffer);
+	FCborStructDeserializerBackend recordDeserializerBackend(recordBufferReader);
+
+	if (!FStructDeserializer::Deserialize(OutRecord, recordDeserializerBackend, policies))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to deserialize the document record!"));
+		return false;
 	}
 
 	return true;

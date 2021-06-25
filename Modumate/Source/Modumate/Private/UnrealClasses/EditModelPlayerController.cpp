@@ -144,9 +144,43 @@ void AEditModelPlayerController::SetPawn(APawn* InPawn)
 	}
 }
 
-/*
-* Unreal Event Handlers
-*/
+bool AEditModelPlayerController::TryInitPlayerState(float DeltaTime)
+{
+	if ((EMPlayerState == nullptr) && PlayerState)
+	{
+		EMPlayerState = Cast<AEditModelPlayerState>(PlayerState);
+	}
+
+	// If we're a multiplayer client, then we're still trying to make sure that we've shown the loading status widget
+	// for at least a frame before starting the blocking operation of starting the document.
+	if (!bBeganWithPlayerState && IsNetMode(NM_Client) && (TimeDisplayedClientLoading == 0.0f))
+	{
+		TimeDisplayedClientLoading += DeltaTime;
+		return false;
+	}
+
+	// Allow initializing player state from within player controller, in case EMPlayerState began first without the controller.
+	if (EMPlayerState && EMPlayerState->HasActorBegunPlay() && !EMPlayerState->bBeganWithController &&
+		(!IsNetMode(NM_Client) || (TimeDisplayedClientLoading > 0.0f)))
+	{
+		EMPlayerState->EMPlayerController = this;
+		if (BeginWithPlayerState() && EMPlayerState->BeginWithController())
+		{
+			UE_LOG(LogTemp, Log, TEXT("AEditModelPlayerController initialized state and controller."));
+			return true;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("AEditModelPlayerController failed to initialize state and controller!"));
+			if (IsNetMode(NM_Client))
+			{
+				EMPlayerState->GoToMainMenu();
+			}
+		}
+	}
+
+	return false;
+}
 
 bool AEditModelPlayerController::BeginWithPlayerState()
 {
@@ -192,15 +226,6 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 
 	CreateTools();
 	SetToolMode(EToolMode::VE_SELECT);
-
-#if !UE_SERVER
-	auto* playerHUD = GetEditModelHUD();
-	if (ensure(playerHUD))
-	{
-		playerHUD->Initialize();
-		HUDDrawWidget = playerHUD->HUDDrawWidget;
-	}
-#endif
 
 	// If we have a crash recovery, load that 
 	// otherwise if the game mode started with a pending project (if it came from the command line, for example) then load it immediately. 
@@ -268,11 +293,11 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 	FString lockFile = FPaths::Combine(gameInstance->UserSettings.GetLocalTempDir(), kModumateCleanShutdownFile);
 	FFileHelper::SaveStringToFile(TEXT("lock"), *lockFile);
 
-	GetWorldTimerManager().SetTimer(AutoSaveTimer, this, &AEditModelPlayerController::OnAutoSaveTimer, 1.0f, true, 0.0f);
-
 	TimeOfLastAutoSave = FDateTime::Now();
 
 #if !UE_SERVER
+	GetWorldTimerManager().SetTimer(AutoSaveTimer, this, &AEditModelPlayerController::OnAutoSaveTimer, 1.0f, true, 0.0f);
+
 	// Create icon generator in the farthest corner of the universe
 	// TODO: Ideally the scene capture comp should capture itself only, but UE4 lacks that feature, for now...
 	FActorSpawnParameters iconGeneratorSpawnParams;
@@ -281,12 +306,6 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 	if (ensureAlways(DynamicIconGenerator))
 	{
 		DynamicIconGenerator->SetActorLocation(FVector(-100000.f, -100000.f, -100000.f));
-	}
-
-	EditModelUserWidget = CreateWidget<UEditModelUserWidget>(this, EditModelUserWidgetClass);
-	if (ensureAlways(EditModelUserWidget))
-	{
-		EditModelUserWidget->AddToViewport(1);
 	}
 #endif
 
@@ -310,6 +329,16 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 	if (!fileLoadPath.IsEmpty())
 	{
 		LoadModelFilePath(fileLoadPath, bSetAsCurrentProject, bAddToRecents, bEnableAutoSave);
+	}
+	// If we're bringing up the game state when the game instance has already downloaded a document, then load it now
+	else if (gameInstance && gameInstance->bHaveDownloadedDocument)
+	{
+		if (Document->LoadRecord(world, gameInstance->ClientDownloadedDocHeader, gameInstance->ClientDownloadedDocRecord))
+		{
+			gameInstance->bHaveDownloadedDocument = false;
+			gameInstance->ClientDownloadedDocHeader = FModumateDocumentHeader();
+			gameInstance->ClientDownloadedDocRecord = FMOIDocumentRecord();
+		}
 	}
 	else
 	{
@@ -336,6 +365,14 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 	{
 		InputAutomationComponent->RecordLoadedTutorial(bOpeningTutorialProject);
 	}
+
+	// Clear the loading status now that we've finished loading as a multiplayer client
+	if (IsNetMode(NM_Client) && EditModelUserWidget && EditModelUserWidget->ModalDialogWidgetBP)
+	{
+		EditModelUserWidget->ModalDialogWidgetBP->HideAllWidgets();
+		TimeDisplayedClientLoading = 0.0f;
+	}
+
 #endif
 
 	bBeganWithPlayerState = true;
@@ -347,27 +384,41 @@ void AEditModelPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if ((EMPlayerState == nullptr) && PlayerState)
+	// Create the HUD during our initial BeginPlay, rather than deferring until we have PlayerState,
+	// to avoid any delays during multiplayer sessions startup
+#if !UE_SERVER
+	auto* playerHUD = GetEditModelHUD();
+	if (ensure(playerHUD))
 	{
-		EMPlayerState = Cast<AEditModelPlayerState>(PlayerState);
+		playerHUD->Initialize();
+		HUDDrawWidget = playerHUD->HUDDrawWidget;
 	}
 
-	// Allow initializing player state from within player controller, in case EMPlayerState began first without the controller.
-	if (EMPlayerState && EMPlayerState->HasActorBegunPlay() && !EMPlayerState->bBeganWithController)
+	EditModelUserWidget = CreateWidget<UEditModelUserWidget>(this, EditModelUserWidgetClass);
+	if (ensureAlways(EditModelUserWidget))
 	{
-		EMPlayerState->EMPlayerController = this;
-		if (BeginWithPlayerState() && EMPlayerState->BeginWithController())
-		{
-			UE_LOG(LogTemp, Log, TEXT("AEditModelPlayerController initialized state and controller."));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("AEditModelPlayerController failed to initialize state and controller!"));
-			if (IsNetMode(NM_Client))
-			{
-				EMPlayerState->GoToMainMenu();
-			}
-		}
+		EditModelUserWidget->AddToViewport(1);
+	}
+#endif
+
+	// Set the loading status if we're starting to load as a multiplayer client
+	// TODO: This won't render if we want to immediately do any blocking work (like calling BeginWithPlayerState),
+	// and this also has a few frames of delay after the previous MainMenuGameMode's status widget stops rendering.
+	// We could instead have a pure-native-Slate loading widget setup with GetMoviePlayer()->SetupLoadingScreen and/or
+	// a level-independent non-game-thread modal widget system for this type of loading text.
+	if (IsNetMode(NM_Client) && EditModelUserWidget && EditModelUserWidget->ModalDialogWidgetBP)
+	{
+		EditModelUserWidget->ModalDialogWidgetBP->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		EditModelUserWidget->ModalDialogWidgetBP->ShowStatusDialog(
+			LOCTEXT("ClientLoadingStatusTitle", "STATUS"),
+			LOCTEXT("ClientLoadingStatusText", "Opening online project..."),
+			false);
+		TimeDisplayedClientLoading = 0.0f;
+	}
+	// Otherwise, allow starting the player state as soon as possible
+	else
+	{
+		TryInitPlayerState(0.0f);
 	}
 }
 
@@ -1552,6 +1603,7 @@ bool AEditModelPlayerController::IsControlDown() const
 
 void AEditModelPlayerController::OnAutoSaveTimer()
 {
+#if !UE_SERVER
 	UModumateGameInstance* gameInstance = Cast<UModumateGameInstance>(GetGameInstance());
 
 	FTimespan ts(FDateTime::Now().GetTicks() - TimeOfLastAutoSave.GetTicks());
@@ -1569,6 +1621,7 @@ void AEditModelPlayerController::OnAutoSaveTimer()
 	{
 		bWantTelemetryUpload = true;
 	}
+#endif
 }
 
 DECLARE_CYCLE_STAT(TEXT("Edit tick"), STAT_ModumateEditTick, STATGROUP_Modumate)
@@ -1626,6 +1679,10 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	SCOPE_CYCLE_COUNTER(STAT_ModumateEditTick);
+
+	// Allow the player state initialization to happen after BeginPlay, in case EditModelPlayerState hadn't begun during our BeginPlay,
+	// or if we're a multiplayer client waiting for UI before fully initializing.
+	TryInitPlayerState(DeltaTime);
 
 	// Postpone any meaningful work until we have a valid PlayerState
 	if (!bBeganWithPlayerState || !ensure(EMPlayerState))

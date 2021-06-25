@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DocumentManagement/ModumateSerialization.h"
 #include "Runtime/Online/HTTP/Public/Http.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "JsonUtilities.h"
@@ -37,6 +38,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		static bool ParseEncryptionToken(const FString& EncryptionToken, FString& OutUserID, FString& OutProjectID);
 
 		void CacheEncryptionKey(const FString& UserID, const FString& ProjectID, const FString& EncryptionKey);
+		bool ClearEncryptionKey(const FString& UserID, const FString& ProjectID);
 		bool GetCachedEncryptionKey(const FString& UserID, const FString& ProjectID, FString& OutEncryptionKey);
 		void QueryEncryptionKey(const FString& UserID, const FString& ProjectID, const FOnEncryptionKeyResponse& Delegate);
 #if !UE_BUILD_SHIPPING
@@ -50,6 +52,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		using FRequestCustomizer = TFunction<void(FHttpRequestRef& RefRequest)>;
 		using FSuccessCallback = TFunction<void(bool,const TSharedPtr<FJsonObject>&)>;
 		using FErrorCallback = TFunction<void(int32, const FString&)>;
+		using FProjectCallback = TFunction<void(const FModumateDocumentHeader&, const FMOIDocumentRecord&, bool)>;
 
 		enum ERequestType { Get, Delete, Put, Post };
 		bool RequestEndpoint(const FString& Endpoint, ERequestType RequestType, const FRequestCustomizer& Customizer, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback,
@@ -59,6 +62,11 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		bool UploadReplay(const FString& SessionID, const FString& Filename, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 		bool UploadAnalyticsEvents(const TArray<TSharedPtr<FJsonValue>>& EventsJSON, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 
+		static const FString DocumentDataEndpointPrefix;
+		static const FString DocumentDataEndpointSuffix;
+		bool DownloadProject(const FString& ProjectID, const FProjectCallback& DownloadCallback, const FErrorCallback& ServerErrorCallback);
+		bool UploadProject(const FString& ProjectID, const FModumateDocumentHeader& DocHeader, const FMOIDocumentRecord& DocRecord, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
+
 		bool Login(const FString& Username, const FString& Password, const FString& InRefreshToken, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 		bool RequestAuthTokenRefresh(const FString& InRefreshToken, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 
@@ -66,6 +74,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 
 		void SetAutomationHandler(ICloudConnectionAutomation* InAutomationHandler);
 
+		void SetupRequestAuth(FHttpRequestRef& Request);
 		FHttpRequestRef MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure = true, int32* OutRequestAutomationIndexPtr = nullptr);
 		static FString GetRequestTypeString(ERequestType RequestType);
 
@@ -81,6 +90,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		int32 NextRequestAutomationIndex = 0;
 		ICloudConnectionAutomation* AutomationHandler = nullptr;
 		TMap<FString, FString> CachedEncryptionKeysByToken;
+		TSet<FString> PendingProjectDownloads, PendingProjectUploads;
 
 		const static FTimespan AuthTokenTimeout;
 };

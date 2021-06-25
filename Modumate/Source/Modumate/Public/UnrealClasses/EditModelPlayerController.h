@@ -212,6 +212,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class AAxesActor* AxesActor;
 
+	bool TryInitPlayerState(float DeltaTime);
 	bool BeginWithPlayerState();
 
 	// Event overrides
@@ -553,4 +554,7 @@ public:
 	FPlane GetCurrentCullingPlane() const;
 
 	bool bBeganWithPlayerState = false;
+
+	// TODO: remove this workaround for making sure that a loading screen is present while a multiplayer client is loading an online project
+	float TimeDisplayedClientLoading = 0.0f;
 };

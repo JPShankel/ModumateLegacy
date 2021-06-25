@@ -452,10 +452,12 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 	const AActor* metaActor = MetaMOI ? MetaMOI->GetActor() : nullptr;
 	const UModumateDocument* doc = MetaMOI ? MetaMOI->GetDocument() : nullptr;
 	UWorld *world = metaActor ? metaActor->GetWorld() : nullptr;
+
+	// Without a Player Controller (most likely on a server), the object might as well be hidden, and if so that's a successful result that shouldn't cause deletion.
 	AEditModelPlayerController *playerController = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
 	if (playerController == nullptr)
 	{
-		return false;
+		return true;
 	}
 
 	EObjectType objectType = MetaMOI->GetObjectType();

@@ -1154,15 +1154,11 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 
 	auto* localPlayer = World ? World->GetFirstLocalPlayerFromController() : nullptr;
 	auto* controller = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(World)) : nullptr;
-	if (!ensure(controller && controller->EMPlayerState))
-	{
-		return false;
-	}
 
-	bool bMultiplayerClient = controller->EMPlayerState->IsNetMode(NM_Client);
+	bool bMultiplayerClient = controller && controller->EMPlayerState && controller->EMPlayerState->IsNetMode(NM_Client);
 
 	// Fail immediately if we're playing back recorded input
-	if (controller->InputAutomationComponent && controller->InputAutomationComponent->ShouldDocumentSkipDeltas())
+	if (controller && controller->InputAutomationComponent && controller->InputAutomationComponent->ShouldDocumentSkipDeltas())
 	{
 		return false;
 	}
@@ -2301,18 +2297,6 @@ uint32 UModumateDocument::GetLatestVerifiedDocHash() const
 	return (VerifiedDeltasRecords.Num() > 0) ? VerifiedDeltasRecords.Last().TotalHash : 0;
 }
 
-bool UModumateDocument::GetDeltaRecordsSinceSave(TArray<FDeltasRecord>& OutRecordsSinceSave) const
-{
-	OutRecordsSinceSave.Reset();
-
-	for (int32 i = LastSavedDeltasRecordIdx + 1; i < VerifiedDeltasRecords.Num(); ++i)
-	{
-		OutRecordsSinceSave.Add(VerifiedDeltasRecords[i]);
-	}
-
-	return OutRecordsSinceSave.Num() > 0;
-}
-
 FBoxSphereBounds UModumateDocument::CalculateProjectBounds() const
 {
 	TArray<FVector> allMOIPoints;
@@ -2591,7 +2575,6 @@ void UModumateDocument::MakeNew(UWorld *World)
 	}
 
 	NextID = MPObjIDFromLocalObjID(1, CachedLocalUserIdx);
-	LastSavedDeltasRecordIdx = INDEX_NONE;
 
 	ClearRedoBuffer();
 	ClearUndoBuffer();
@@ -2782,7 +2765,7 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 
 	// Potentially limit the number of undo records to save, based on user preferences
 	auto* gameInstance = World->GetGameInstance<UModumateGameInstance>();
-	int32 numUndoRecords = UndoBuffer.Num();
+	int32 numUndoRecords = VerifiedDeltasRecords.Num();
 	int32 numUndoRecordsToSave = numUndoRecords;
 	if (gameInstance && (gameInstance->UserSettings.SaveFileUndoHistoryLength >= 0))
 	{
@@ -2791,8 +2774,7 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 
 	for (int32 i = (numUndoRecords - numUndoRecordsToSave); i < numUndoRecords; ++i)
 	{
-		auto& ur = UndoBuffer[i];
-		OutDocumentRecord.AppliedDeltas.Add(FDeltasRecord(ur->Deltas));
+		OutDocumentRecord.AppliedDeltas.Add(VerifiedDeltasRecords[i]);
 	}
 
 	OutDocumentRecord.Settings = CurrentSettings;
@@ -2903,9 +2885,12 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::LoadRecord"));
 
 	//Get player state and tells it to empty selected object
-	AEditModelPlayerController* EMPlayerController = Cast<AEditModelPlayerController>(world->GetFirstPlayerController());
-	AEditModelPlayerState* EMPlayerState = EMPlayerController->EMPlayerState;
-	EMPlayerState->OnNewModel();
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(world->GetFirstPlayerController());
+	AEditModelPlayerState* playerState = controller ? controller->EMPlayerState : nullptr;
+	if (playerState)
+	{
+		playerState->OnNewModel();
+	}
 
 	MakeNew(world);
 
@@ -2989,7 +2974,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	// This should take care of anything that depends on relationships between objects, like mitering.
 	bool bInitialDocumentDirty = false;
 	TArray<FDeltaPtr> loadCleanSideEffects;
-	CleanObjects(&loadCleanSideEffects, true);
+ 	CleanObjects(&loadCleanSideEffects, true);
 
 	// If there were side effects generated while cleaning initial objects, then those deltas must be applied immediately.
 	// This should not normally happen, but it's a sign that some objects relied on data that didn't get saved/loaded correctly.
@@ -3008,22 +2993,25 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	// TODO: prompt the user to fix, or delete, these objects
 	for (auto* obj : ObjectInstanceArray)
 	{
-		if (EMPlayerState->DoesObjectHaveAnyError(obj->ID))
+		if (playerState && playerState->DoesObjectHaveAnyError(obj->ID))
 		{
 			FString objectTypeString = GetEnumValueString(obj->GetObjectType());
 			UE_LOG(LogTemp, Warning, TEXT("MOI %d (%s) has an error!"), obj->ID, *objectTypeString);
 		}
 	}
 
-	for (auto& cta : InDocumentRecord.CurrentToolAssemblyGUIDMap)
+	if (controller)
 	{
-		TScriptInterface<IEditModelToolInterface> tool = EMPlayerController->ModeToTool.FindRef(cta.Key);
-		if (ensureAlways(tool))
+		for (auto& cta : InDocumentRecord.CurrentToolAssemblyGUIDMap)
 		{
-			const FBIMAssemblySpec *obAsm = GetPresetCollection().GetAssemblyByGUID(cta.Key, cta.Value);
-			if (obAsm != nullptr)
+			TScriptInterface<IEditModelToolInterface> tool = controller->ModeToTool.FindRef(cta.Key);
+			if (ensureAlways(tool))
 			{
-				tool->SetAssemblyGUID(obAsm->UniqueKey());
+				const FBIMAssemblySpec* obAsm = GetPresetCollection().GetAssemblyByGUID(cta.Key, cta.Value);
+				if (obAsm != nullptr)
+				{
+					tool->SetAssemblyGUID(obAsm->UniqueKey());
+				}
 			}
 		}
 	}
@@ -3040,7 +3028,6 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	}
 	AddHideObjectsById(world, hideCutPlaneIds);
 
-	LastSavedDeltasRecordIdx = INDEX_NONE;
 	UnverifiedDeltasRecords.Reset();
 	VerifiedDeltasRecords.Reset();
 	UndoneDeltasRecords.Reset();
@@ -3048,23 +3035,10 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	ClearUndoBuffer();
 
 	// Load undo buffer if the file version is consistent and there weren't initial loading side effects, otherwise deltas are not supported.
+	// TODO: for cloud-hosted documents, we rely on these for document hashing - we'll need to either make this unconditional, or redundantly save the assumed document hash.
 	if ((DocVersion == InHeader.Version) && !bInitialDocumentDirty)
 	{
-		for (auto& deltaRecord : InDocumentRecord.AppliedDeltas)
-		{
-			TSharedPtr<UndoRedo> undoRedo = MakeShared<UndoRedo>();
-
-			for (auto& structWrapper : deltaRecord.DeltaStructWrappers)
-			{
-				auto deltaPtr = structWrapper.CreateStructFromJSON<FDocumentDelta>();
-				if (deltaPtr)
-				{
-					undoRedo->Deltas.Add(MakeShareable(deltaPtr));
-				}
-			}
-
-			UndoBuffer.Add(undoRedo);
-		}
+		VerifiedDeltasRecords = InDocumentRecord.AppliedDeltas;
 	}
 
 	CurrentSettings = InDocumentRecord.Settings;
@@ -3109,9 +3083,12 @@ bool UModumateDocument::LoadDeltas(UWorld* world, const FString& path, bool bSet
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::Load"));
 
 	//Get player state and tells it to empty selected object
-	AEditModelPlayerController* EMPlayerController = Cast<AEditModelPlayerController>(world->GetFirstPlayerController());
-	AEditModelPlayerState* EMPlayerState = EMPlayerController->EMPlayerState;
-	EMPlayerState->OnNewModel();
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(world->GetFirstPlayerController());
+	AEditModelPlayerState* playerState = controller ? controller->EMPlayerState : nullptr;
+	if (playerState)
+	{
+		playerState->OnNewModel();
+	}
 
 	MakeNew(world);
 
@@ -3975,7 +3952,6 @@ void UModumateDocument::RecordSavedProject(UWorld* World, const FString& FilePat
 	if (bUserFile)
 	{
 		bUserFileDirty = false;
-		LastSavedDeltasRecordIdx = VerifiedDeltasRecords.Num() - 1;
 
 		SetCurrentProjectPath(FilePath);
 

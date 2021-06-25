@@ -2,6 +2,7 @@
 
 #include "Online/ModumateCloudConnection.h"
 
+#include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ProjectConnection.h"
@@ -27,6 +28,8 @@ TAutoConsoleVariable<FString> CVarModumateCloudAddress(
 
 // Period for requesting refresh of AuthToken.
 const FTimespan FModumateCloudConnection::AuthTokenTimeout = { 0, 5 /* min */, 0 };
+const FString FModumateCloudConnection::DocumentDataEndpointPrefix(TEXT("/projects"));
+const FString FModumateCloudConnection::DocumentDataEndpointSuffix(TEXT("data"));
 
 FModumateCloudConnection::FModumateCloudConnection()
 {
@@ -70,6 +73,12 @@ void FModumateCloudConnection::CacheEncryptionKey(const FString& UserID, const F
 {
 	FString encryptionToken = MakeEncryptionToken(UserID, ProjectID);
 	CachedEncryptionKeysByToken.Add(encryptionToken, EncryptionKey);
+}
+
+bool FModumateCloudConnection::ClearEncryptionKey(const FString& UserID, const FString& ProjectID)
+{
+	FString encryptionToken = MakeEncryptionToken(UserID, ProjectID);
+	return CachedEncryptionKeysByToken.Remove(encryptionToken) > 0;
 }
 
 bool FModumateCloudConnection::GetCachedEncryptionKey(const FString& UserID, const FString& ProjectID, FString& OutEncryptionKey)
@@ -116,7 +125,7 @@ void FModumateCloudConnection::QueryEncryptionKey(const FString& UserID, const F
 			{
 				FEncryptionKeyResponse asyncResponse(EEncryptionResponse::Failure, ErrorString);
 
-	#if UE_BUILD_SHIPPING
+	#if UE_BUILD_SHIPPING || PLATFORM_LINUX
 				// Shipping server configurations that failed to query for an encryption key should prevent the user from logging in.
 				UE_LOG(LogTemp, Error, TEXT("Error code %d querying encrypion key for User ID %s and Project ID %s: %s"),
 					ErrorCode, *UserID, *ProjectID, *ErrorString);
@@ -146,16 +155,8 @@ void FModumateCloudConnection::QueryEncryptionKey(const FString& UserID, const F
 			return;
 		}
 #else
-	#if UE_BUILD_SHIPPING
-		// Otherwise, standalone clients shouldn't have reached this point on shipping environments; they should have gotten an encryption key when creating a connection from the AMS.
+		// Otherwise, standalone clients shouldn't have reached this point; they should have gotten an encryption key when creating a connection from the AMS.
 		UE_LOG(LogTemp, Error, TEXT("Client didn't already have a cached encryption key for User ID: %s!"), *UserID);
-	#else
-		// But standalone clients in development can still generate a fake key for testing without the AMS.
-		encryptionKeyString = MakeTestingEncryptionKey(UserID, ProjectID);
-		CacheEncryptionKey(UserID, ProjectID, encryptionKeyString);
-		UE_LOG(LogTemp, Warning, TEXT("Client didn't already have a cached encryption key for User ID %s and Project ID %s - using a fake one for testing: %s"),
-			*UserID, *ProjectID, *encryptionKeyString);
-	#endif
 #endif
 	}
 
@@ -217,7 +218,8 @@ FString FModumateCloudConnection::GetRequestTypeString(ERequestType RequestType)
 	return TEXT("POST");
 }
 
-bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequestType RequestType, const FRequestCustomizer& Customizer, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback,
+bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequestType RequestType,
+	const FRequestCustomizer& Customizer, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback,
 	bool bRefreshTokenOnAuthFailure)
 {
 	if (!ensureAlways(Endpoint.Len() > 0 && Endpoint[0] == TCHAR('/')))
@@ -435,6 +437,23 @@ bool FModumateCloudConnection::UploadReplay(const FString& SessionID, const FStr
 	return Request->ProcessRequest();
 }
 
+void FModumateCloudConnection::SetupRequestAuth(FHttpRequestRef& Request)
+{
+	Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
+
+	// The auth token is for authenticating and identifying users while they make secure requests to our AMS
+	if (!AuthToken.IsEmpty())
+	{
+		Request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + AuthToken);
+	}
+
+	// The x-api-key is for authenticating privileged services that make secure requests to our AMS in order to access non-user-specific data
+	if (!XApiKey.IsEmpty())
+	{
+		Request->SetHeader(TEXT("x-api-key"), XApiKey);
+	}
+}
+
 TSharedRef<IHttpRequest, ESPMode::ThreadSafe> FModumateCloudConnection::MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback,
 	bool bRefreshTokenOnAuthFailure, int32* OutRequestAutomationIndexPtr)
 {
@@ -466,21 +485,9 @@ TSharedRef<IHttpRequest, ESPMode::ThreadSafe> FModumateCloudConnection::MakeRequ
 		}
 	});
 
-	Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
+	SetupRequestAuth(Request);
 	Request->SetHeader(TEXT("Accepts"), TEXT("application/json"));
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-
-	// The auth token is for authenticating and identifying users while they make secure requests to our AMS
-	if (!AuthToken.IsEmpty())
-	{
-		Request->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + AuthToken);
-	}
-
-	// The x-api-key is for authenticating privileged services that make secure requests to our AMS in order to access non-user-specific data
-	if (!XApiKey.IsEmpty())
-	{
-		Request->SetHeader(TEXT("x-api-key"), XApiKey);
-	}
 
 	return Request;
 }
@@ -538,6 +545,129 @@ bool FModumateCloudConnection::UploadAnalyticsEvents(const TArray<TSharedPtr<FJs
 		Callback,
 		ServerErrorCallback
 	);
+}
+
+bool FModumateCloudConnection::DownloadProject(const FString& ProjectID, const FProjectCallback& DownloadCallback, const FErrorCallback& ServerErrorCallback)
+{
+	if (PendingProjectDownloads.Contains(ProjectID))
+	{
+		return false;
+	}
+
+	auto request = FHttpModule::Get().CreateRequest();
+
+	SetupRequestAuth(request);
+	FString downloadEndpoint = DocumentDataEndpointPrefix / ProjectID / DocumentDataEndpointSuffix;
+	request->SetURL(GetCloudAPIURL() + downloadEndpoint);
+	request->SetVerb(GetRequestTypeString(FModumateCloudConnection::Get));
+	request->SetHeader(TEXT("Accepts"), TEXT("application/octet-stream"));
+	request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+
+	TWeakPtr<FModumateCloudConnection> weakThisCaptured(AsShared());
+	request->OnProcessRequestComplete().BindLambda([weakThisCaptured, ProjectID, DownloadCallback, ServerErrorCallback](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful) {
+		auto sharedThis = weakThisCaptured.Pin();
+		if (ensure(sharedThis.IsValid()))
+		{
+			int32 code = Response->GetResponseCode();
+			if (bWasSuccessful && (code == EHttpResponseCodes::Ok))
+			{
+				int32 responseSize = Response->GetContentLength();
+				bool bEmptyProject = (responseSize == 0);
+				UE_LOG(LogTemp, Log, TEXT("Successfully downloaded %.1fkB for Project ID: %s"), responseSize / 1024.0f, *ProjectID);
+				FModumateDocumentHeader docHeader;
+				FMOIDocumentRecord docRecord;
+				if (bEmptyProject || FModumateSerializationStatics::LoadDocumentFromBuffer(Response->GetContent(), docHeader, docRecord))
+				{
+					if (DownloadCallback)
+					{
+						DownloadCallback(docHeader, docRecord, bEmptyProject);
+					}
+				}
+				else if (ServerErrorCallback)
+				{
+					ServerErrorCallback(EHttpResponseCodes::ServerError, FString(TEXT("Project failed to deserialize!")));
+				}
+			}
+			else
+			{
+				FString content = Response->GetContentAsString();
+				UE_LOG(LogTemp, Error, TEXT("Error code %d when trying to download Project ID %s: %s"), code, *ProjectID, *content);
+				if (ServerErrorCallback)
+				{
+					ServerErrorCallback(code, content);
+				}
+			}
+
+			sharedThis->PendingProjectDownloads.Remove(ProjectID);
+		}
+		});
+
+	if (request->ProcessRequest())
+	{
+		PendingProjectDownloads.Add(ProjectID);
+		return true;
+	}
+
+	return false;
+}
+
+bool FModumateCloudConnection::UploadProject(const FString& ProjectID, const FModumateDocumentHeader& DocHeader, const FMOIDocumentRecord& DocRecord,
+	const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
+{
+	if (PendingProjectUploads.Contains(ProjectID))
+	{
+		return false;
+	}
+
+	PendingProjectUploads.Add(ProjectID);
+
+	FString uploadEndpoint = DocumentDataEndpointPrefix / ProjectID / DocumentDataEndpointSuffix;
+	TWeakPtr<FModumateCloudConnection> weakThisCaptured(AsShared());
+	bool bRequestSuccess = RequestEndpoint(uploadEndpoint, FModumateCloudConnection::Post,
+		[&DocHeader, &DocRecord](FHttpRequestRef& RefRequest) {
+			TArray<uint8> docBuffer;
+			if (!FModumateSerializationStatics::SaveDocumentToBuffer(DocHeader, DocRecord, docBuffer))
+			{
+				UE_LOG(LogTemp, Error, TEXT("Failed to save document to buffer in preparation for upload!"));
+			}
+
+			RefRequest->SetHeader(FString(TEXT("Content-Type")), FString(TEXT("application/octet-stream")));
+			RefRequest->SetContent(docBuffer);
+		},
+		[weakThisCaptured, ProjectID, Callback](bool bSuccessful, const TSharedPtr<FJsonObject>& Response) {
+			auto sharedThis = weakThisCaptured.Pin();
+			if (!ensure(sharedThis.IsValid() && sharedThis->PendingProjectUploads.Contains(ProjectID)))
+			{
+				return;
+			}
+
+			sharedThis->PendingProjectUploads.Remove(ProjectID);
+			if (Callback)
+			{
+				Callback(bSuccessful, Response);
+			}
+		},
+		[weakThisCaptured, ProjectID, ServerErrorCallback](int32 ErrorCode, const FString& ErrorMessage) {
+			auto sharedThis = weakThisCaptured.Pin();
+			if (!ensure(sharedThis.IsValid() && sharedThis->PendingProjectUploads.Contains(ProjectID)))
+			{
+				return;
+			}
+
+			UE_LOG(LogTemp, Error, TEXT("Error code %d when trying to upload Project ID %s: %s"), ErrorCode, *ProjectID, *ErrorMessage);
+			sharedThis->PendingProjectUploads.Remove(ProjectID);
+			if (ServerErrorCallback)
+			{
+				ServerErrorCallback(ErrorCode, ErrorMessage);
+			}
+		}, false);
+
+	if (!bRequestSuccess)
+	{
+		PendingProjectUploads.Remove(ProjectID);
+	}
+
+	return bRequestSuccess;
 }
 
 void FModumateCloudConnection::Tick()

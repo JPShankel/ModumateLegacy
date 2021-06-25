@@ -66,11 +66,11 @@ void AEditModelGameMode::InitGameState()
 	else
 	{
 		UE_LOG(LogGameMode, Fatal, TEXT("Can't start an EditModelGameMode server without %s and %s arguments!"), *AEditModelGameMode::ProjectIDArg, *AEditModelGameMode::APIKeyArg);
+		FPlatformMisc::RequestExit(false);
+		return;
 	}
 
-	// TODO: support loading documents via another argument that would download them from a cloud-hosted file
-	ResetSession();
-
+	gameState->DownloadDocument();
 	gameInstance->GetTimerManager().SetTimer(ServerStatusTimer, this, &AEditModelGameMode::OnServerStatusTimer, ServerStatusTimerRate, true);
 #endif
 }
@@ -80,10 +80,7 @@ void AEditModelGameMode::PreLogin(const FString& Options, const FString& Address
 	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
 
 	// Non-dedicated servers can just use default behavior; no one should be logging into them.
-#if !UE_SERVER
-	return;
-#endif
-
+#if UE_SERVER
 	if (!ErrorMessage.IsEmpty())
 	{
 		return;
@@ -128,12 +125,14 @@ void AEditModelGameMode::PreLogin(const FString& Options, const FString& Address
 		UE_LOG(LogGameMode, Log, TEXT("UserID %s login approved!"), *userID);
 		PlayersByUserID.Add(userID, INDEX_NONE);
 	}
+#endif
 }
 
 APlayerController* AEditModelGameMode::Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
 {
 	APlayerController* newController = Super::Login(NewPlayer, InRemoteRole, Portal, Options, UniqueId, ErrorMessage);
 
+#if UE_SERVER
 	FString userID, projectID;
 	FString encryptionToken = UGameplayStatics::ParseOption(Options, AEditModelGameMode::EncryptionTokenKey);
 	APlayerState* playerState = newController ? newController->PlayerState : nullptr;
@@ -150,6 +149,7 @@ APlayerController* AEditModelGameMode::Login(UPlayer* NewPlayer, ENetRole InRemo
 
 	UsersByPlayerID.Add(playerID, userID);
 	PlayersByUserID[userID] = playerID;
+#endif
 
 	return newController;
 }
@@ -158,22 +158,37 @@ void AEditModelGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
-	auto* emPlayerState = NewPlayer ? Cast<AEditModelPlayerState>(NewPlayer->PlayerState) : nullptr;
-	UWorld* world = GetWorld();
+#if UE_SERVER
+	// TODO: this should probably send the deltas that have been applied since the version of the document that the joining player has downloaded,
+	// rather than just the last time we saved - since we could have auto-saved just as the player joined.
+	auto* playerState = NewPlayer ? Cast<AEditModelPlayerState>(NewPlayer->PlayerState) : nullptr;
+	int32 playerID = playerState ? playerState->GetPlayerId() : INDEX_NONE;
+	FString userID = UsersByPlayerID.FindRef(playerID);
 	auto* gameState = Cast<AEditModelGameState>(GameState);
-	auto* document = gameState ? gameState->Document : nullptr;
-	if (ensure(emPlayerState && world && document))
+	if (ensure(playerState && gameState && !userID.IsEmpty()))
 	{
 		TArray<FDeltasRecord> deltasSinceSave;
-		if (document->GetDeltaRecordsSinceSave(deltasSinceSave))
+		if (gameState->GetDeltaRecordsSinceSave(deltasSinceSave))
 		{
-			emPlayerState->SendInitialDeltas(deltasSinceSave);
+			int32 numDeltasSinceSave = deltasSinceSave.Num();
+			if (numDeltasSinceSave > 0)
+			{
+				UE_LOG(LogGameMode, Log, TEXT("Sent %d DeltasRecords to User ID %s that were made since the document was last saved."), numDeltasSinceSave, *userID);
+				playerState->SendInitialDeltas(deltasSinceSave);
+			}
+		}
+		else
+		{
+			UE_LOG(LogGameMode, Error, TEXT("Failed to get unsaved DeltasRecords for User ID %s!"), *userID);
+			// TODO: if this failed, then we should either disconnect the user, or tell them to re-download the cloud document
 		}
 	}
+#endif
 }
 
 void AEditModelGameMode::Logout(AController* Exiting)
 {
+#if UE_SERVER
 	APlayerState* playerState = Exiting ? Exiting->PlayerState : nullptr;
 	int32 playerID = playerState ? playerState->GetPlayerId() : INDEX_NONE;
 
@@ -183,12 +198,16 @@ void AEditModelGameMode::Logout(AController* Exiting)
 		PlayersByUserID.Remove(userID);
 	}
 
-#if UE_SERVER
 	// Once the user has logged out, let the multiplayer controller and AMS know that the user is no longer connected to the multiplayer server.
 	auto gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
 	if (cloudConnection.IsValid())
 	{
+		if (!cloudConnection->ClearEncryptionKey(userID, CurProjectID))
+		{
+			UE_LOG(LogGameMode, Error, TEXT("Failed to remove encryption key for User ID %s and Project ID %s"), *userID, *CurProjectID);
+		}
+
 		FString deleteConnectionEndpoint = FProjectConnectionHelpers::MakeProjectConnectionEndpoint(CurProjectID) / userID;
 		cloudConnection->RequestEndpoint(deleteConnectionEndpoint, FModumateCloudConnection::ERequestType::Delete, nullptr, nullptr, nullptr);
 	}
@@ -230,7 +249,7 @@ void AEditModelGameMode::OnServerStatusTimer()
 
 		if (TimeWithoutPlayers >= ServerAutoExitTimeout)
 		{
-			UE_LOG(LogTemp, Log, TEXT("It has been %.1fsec without any connected players; exiting!"), TimeWithoutPlayers);
+			UE_LOG(LogGameMode, Log, TEXT("It has been %.1fsec without any connected players; exiting!"), TimeWithoutPlayers);
 			FPlatformMisc::RequestExit(false);
 		}
 	}

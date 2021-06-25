@@ -275,9 +275,6 @@ public:
 	void TryEndPlayback();
 
 	UFUNCTION()
-	bool ResizeWindowForViewportSize(int32 Width, int32 Height);
-
-	UFUNCTION()
 	bool IsPlayingRecordedDeltas() const { return IsPlaying() && bShouldPlayRecordedDeltas; }
 
 	UFUNCTION()
@@ -331,7 +328,6 @@ protected:
 	static FTimerHandle CheckCaptureTimerHandle;
 	static void CheckFrameCaptureSaved(const FString& InFrameCapturePath);
 
-	bool FindViewport();
 	FEditModelInputPacket &AddRecordingPacket(EInputPacketType Type);
 	bool PlayBackPacket(const FEditModelInputPacket &InputPacket);
 	bool SimulateInput(const FEditModelInputPacket& InputPacket);

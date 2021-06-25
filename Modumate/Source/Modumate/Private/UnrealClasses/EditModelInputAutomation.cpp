@@ -10,6 +10,7 @@
 #include "Misc/Compression.h"
 #include "Misc/FileHelper.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "Slate/SceneViewport.h"
 #include "StructDeserializer.h"
@@ -20,13 +21,6 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerPawn.h"
 #include "UnrealClasses/ModumateGameInstance.h"
-#include "Widgets/SViewport.h"
-#include "Widgets/SWindow.h"
-
-#if WITH_EDITOR
-#include "Editor.h"
-#include "Editor/EditorEngine.h"
-#endif
 
 
 DEFINE_LOG_CATEGORY(LogInputAutomation);
@@ -95,7 +89,8 @@ void UEditModelInputAutomation::BeginPlay()
 	ensureAlways(EMPlayerController != nullptr);
 
 	InputProcessor = MakeShared<FAutomationCaptureInputProcessor>(this);
-	FindViewport();
+
+	UModumateFunctionLibrary::FindViewports(this, SceneViewport, GameViewport);
 }
 
 void UEditModelInputAutomation::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -551,7 +546,7 @@ bool UEditModelInputAutomation::BeginPlayback(const FString& InputLogPath, bool 
 
 	UE_LOG(LogInputAutomation, Log, TEXT("Starting playback from file: %s"), *FPaths::GetCleanFilename(InputLogPath));
 
-	if (!ResizeWindowForViewportSize(CurInputLogData.ViewportSize.X, CurInputLogData.ViewportSize.Y))
+	if (!UModumateFunctionLibrary::ModifyViewportWindow(SceneViewport, CurInputLogData.ViewportSize.X, CurInputLogData.ViewportSize.Y))
 	{
 		return false;
 	}
@@ -687,31 +682,6 @@ void UEditModelInputAutomation::TryEndPlayback()
 	EndPlayback();
 }
 
-bool UEditModelInputAutomation::ResizeWindowForViewportSize(int32 Width, int32 Height)
-{
-	if (SceneViewport == nullptr)
-	{
-		return false;
-	}
-
-	TSharedPtr<SWindow> window = SceneViewport->FindWindow();
-	if (window.IsValid())
-	{
-		// Try to set the window size to match the originally-recorded size.
-		FVector2D viewportSize(Width, Height);
-		FVector2D newWindowSize = window->GetWindowSizeFromClientSize(viewportSize);
-
-		SceneViewport->ResizeFrame(static_cast<uint32>(newWindowSize.X), static_cast<uint32>(newWindowSize.Y), EWindowMode::Windowed);
-
-		// Force the window to the front, to make sure it gets mouse focus.
-		window->HACK_ForceToFront();
-		window->GetNativeWindow()->SetWindowFocus();
-		window->BringToFront(true);
-	}
-
-	return true;
-}
-
 bool UEditModelInputAutomation::StartPlayingRecordedDeltas()
 {
 	if (IsPlaying() && !bShouldPlayRecordedDeltas)
@@ -797,42 +767,6 @@ void UEditModelInputAutomation::CheckFrameCaptureSaved(const FString& InFrameCap
 	}
 }
 
-bool UEditModelInputAutomation::FindViewport()
-{
-	// Try to find the scene viewport, whether this is inside the editor or not.
-	SceneViewport = nullptr;
-
-	if (!GIsEditor)
-	{
-		UGameEngine* GameEngine = Cast<UGameEngine>(GEngine);
-		SceneViewport = GameEngine->SceneViewport.Get();
-	}
-#if WITH_EDITOR
-	else
-	{
-		// Try to find the dedicated play-in-editor window viewport, because that's the only one that can be resized.
-		// See UEditorEngine::GetPIEViewport() for reference.
-		for (const FWorldContext& context : GEngine->GetWorldContexts())
-		{
-			if (context.WorldType == EWorldType::PIE)
-			{
-				UEditorEngine* editorEngine = CastChecked<UEditorEngine>(GEngine);
-				FSlatePlayInEditorInfo* slatePlayInEditorSessionPtr = editorEngine->SlatePlayInEditorMap.Find(context.ContextHandle);
-				if (slatePlayInEditorSessionPtr && slatePlayInEditorSessionPtr->SlatePlayInEditorWindowViewport.IsValid())
-				{
-					SceneViewport = slatePlayInEditorSessionPtr->SlatePlayInEditorWindowViewport.Get();
-				}
-			}
-		}
-	}
-#endif
-
-	UWorld* world = GetWorld();
-	GameViewport = world ? world->GetGameViewport() : nullptr;
-
-	return (SceneViewport != nullptr) && (GameViewport != nullptr);
-}
-
 FEditModelInputPacket &UEditModelInputAutomation::AddRecordingPacket(EInputPacketType Type)
 {
 	CurPacketIndex = CurInputLogData.InputPackets.Num();
@@ -909,7 +843,7 @@ bool UEditModelInputAutomation::PlayBackPacket(const FEditModelInputPacket &Inpu
 		{
 			SaveRecordedFrames();
 
-			if (!ResizeWindowForViewportSize(InputPacket.NewViewportSize.X, InputPacket.NewViewportSize.Y))
+			if (!UModumateFunctionLibrary::ModifyViewportWindow(SceneViewport, InputPacket.NewViewportSize.X, InputPacket.NewViewportSize.Y))
 			{
 				return false;
 			}

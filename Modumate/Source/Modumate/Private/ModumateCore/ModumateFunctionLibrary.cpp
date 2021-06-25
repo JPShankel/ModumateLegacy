@@ -2,47 +2,46 @@
 
 #include "ModumateCore/ModumateFunctionLibrary.h"
 
+#include "Algo/Accumulate.h"
+#include "BIMKernel/Core/BIMKey.h"
 #include "Components/SkyLightComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "Objects/Portal.h"
+#include "Database/ModumateObjectDatabase.h"
+#include "DocumentManagement/ModumateCommands.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "DrawDebugHelpers.h"
-#include "UnrealClasses/DynamicMeshActor.h"
-#include "UnrealClasses/EditModelGameState.h"
-#include "UnrealClasses/EditModelPlayerController.h"
-#include "UnrealClasses/EditModelPlayerState.h"
 #include "Engine/Engine.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/UserInterfaceSettings.h"
 #include "EngineGlobals.h"
-#include "ModumateCore/ExpressionEvaluator.h"
 #include "GameFramework/PlayerController.h"
 #include "HAL/PlatformApplicationMisc.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "KismetProceduralMeshLibrary.h"
-#include "UnrealClasses/Modumate.h"
-#include "DocumentManagement/ModumateDocument.h"
-#include "ModumateCore/ModumateGeometryStatics.h"
-#include "ModumateCore/ModumateStats.h"
-#include "Database/ModumateObjectDatabase.h"
-#include "Objects/ModumateObjectInstance.h"
-#include "ModumateCore/ModumateObjectStatics.h"
-#include "Runtime/Core/Public/Math/RandomStream.h"
-#include "UnrealClasses/CompoundMeshActor.h"
-#include "DocumentManagement/ModumateCommands.h"
-#include "ModumateCore/ModumateUnits.h"
+#include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
-#include "Algo/Accumulate.h"
-#include "BIMKernel/Core/BIMKey.h"
+#include "ModumateCore/ModumateGeometryStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
+#include "ModumateCore/ModumateStats.h"
+#include "ModumateCore/ModumateUnits.h"
+#include "Objects/ModumateObjectInstance.h"
+#include "Objects/Portal.h"
+#include "Runtime/Core/Public/Math/RandomStream.h"
+#include "Slate/SceneViewport.h"
+#include "UnrealClasses/CompoundMeshActor.h"
+#include "UnrealClasses/DynamicMeshActor.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/Modumate.h"
+#include "Widgets/SWindow.h"
 
-#include <algorithm>
-#include <queue>
-#include <iostream>
-#include <regex>
-
-using namespace std;
-
+#if WITH_EDITOR
+#include "Editor.h"
+#include "Editor/EditorEngine.h"
+#endif
 
 
 bool UModumateFunctionLibrary::IsWithEditor()
@@ -820,4 +819,67 @@ bool UModumateFunctionLibrary::ClipLine2DToRectangle(const FVector2D& lineStart,
 	}
 	// No clip, both points are outside the rectangle and no intersection with its border
 	return false;
+}
+
+bool UModumateFunctionLibrary::FindViewports(UObject* WorldContextObject, FSceneViewport*& OutSceneViewport, UGameViewportClient*& OutGameViewport)
+{
+	OutSceneViewport = nullptr;
+
+	if (!GIsEditor)
+	{
+		UGameEngine* GameEngine = Cast<UGameEngine>(GEngine);
+		OutSceneViewport = GameEngine->SceneViewport.Get();
+	}
+#if WITH_EDITOR
+	else
+	{
+		// Try to find the dedicated play-in-editor window viewport, because that's the only one that can be resized.
+		// See UEditorEngine::GetPIEViewport() for reference.
+		for (const FWorldContext& context : GEngine->GetWorldContexts())
+		{
+			if (context.WorldType == EWorldType::PIE)
+			{
+				UEditorEngine* editorEngine = CastChecked<UEditorEngine>(GEngine);
+				FSlatePlayInEditorInfo* slatePlayInEditorSessionPtr = editorEngine->SlatePlayInEditorMap.Find(context.ContextHandle);
+				if (slatePlayInEditorSessionPtr && slatePlayInEditorSessionPtr->SlatePlayInEditorWindowViewport.IsValid())
+				{
+					OutSceneViewport = slatePlayInEditorSessionPtr->SlatePlayInEditorWindowViewport.Get();
+				}
+			}
+		}
+	}
+#endif
+
+	UWorld* world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
+	OutGameViewport = world ? world->GetGameViewport() : nullptr;
+
+	return (OutSceneViewport != nullptr) && (OutGameViewport != nullptr);
+}
+
+bool UModumateFunctionLibrary::ModifyViewportWindow(class FSceneViewport* SceneViewport, int32 WindowWidth, int32 WindowHeight, bool bBringToFront)
+{
+	TSharedPtr<SWindow> window = SceneViewport ? SceneViewport->FindWindow() : nullptr;
+	if (!window.IsValid())
+	{
+		return false;
+	}
+
+	if ((WindowWidth > 0) && (WindowHeight > 0))
+	{
+		// Try to set the window size to match the originally-recorded size.
+		FVector2D viewportSize(WindowWidth, WindowHeight);
+		FVector2D newWindowSize = window->GetWindowSizeFromClientSize(viewportSize);
+
+		SceneViewport->ResizeFrame(static_cast<uint32>(newWindowSize.X), static_cast<uint32>(newWindowSize.Y), EWindowMode::Windowed);
+	}
+
+	if (bBringToFront)
+	{
+		// Force the window to the front, to make sure it gets mouse focus.
+		window->HACK_ForceToFront();
+		window->GetNativeWindow()->SetWindowFocus();
+		window->BringToFront(true);
+	}
+
+	return true;
 }

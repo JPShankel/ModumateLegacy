@@ -138,6 +138,13 @@ void AEditModelPlayerState::TryInitController()
 		EMPlayerController = GetOwner<AEditModelPlayerController>();
 	}
 
+	// If we're a multiplayer client, then allow the player controller to initialize this on Tick,
+	// to make sure that any pending UI or operations have completed before starting the blocking document load.
+	if (IsNetMode(NM_Client))
+	{
+		return;
+	}
+
 	// EditModelPlayerState initialization must happen after the EditModelPlayerController,
 	// so allow that to either happen now or be deferred.
 	if (EMPlayerController && EMPlayerController->HasActorBegunPlay() && !EMPlayerController->bBeganWithPlayerState)
@@ -1122,6 +1129,14 @@ void AEditModelPlayerState::SendClientDeltas_Implementation(const FDeltasRecord&
 	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
 	if (gameState && gameState->Document && !Deltas.IsEmpty())
 	{
+		// Rare situation, but if the client sent deltas before the server finished downloading the cloud document, reject them immediately.
+		if (gameState->bDownloadingDocument)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("User %s sent DeltasRecord while the server was still downloading the project - rolling back"), *Deltas.OriginUserID);
+			RollBackUnverifiedDeltas(0);
+			return;
+		}
+
 		// If the server verifies that these deltas have been made after the latest one,
 		// then broadcast them to every client.
 		FDeltasRecord reconciledRecord;

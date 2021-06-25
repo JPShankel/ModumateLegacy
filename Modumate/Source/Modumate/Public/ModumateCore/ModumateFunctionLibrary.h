@@ -101,4 +101,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Modumate Vector")
 	static bool ClipLine2DToRectangle(const FVector2D& lineStart, const FVector2D& lineEnd, const FBox2D& rectBox, FVector2D& returnLineStart, FVector2D& returnLineEnd, float tolerance = 0.02f);
+
+	static bool FindViewports(UObject* WorldContextObject, class FSceneViewport*& OutSceneViewport, class UGameViewportClient*& OutGameViewport);
+	static bool ModifyViewportWindow(class FSceneViewport* SceneViewport, int32 WindowWidth = 0, int32 WindowHeight = 0, bool bBringToFront = false);
 };

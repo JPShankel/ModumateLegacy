@@ -58,6 +58,9 @@ public:
 	UFUNCTION()
 	void OnProjectConnectionFailed(const FString& ProjectID, int32 ErrorCode, const FString& ErrorMessage);
 
+	UFUNCTION()
+	void OnDownloadedCloudProject(bool bSuccess);
+
 	UFUNCTION(BlueprintCallable, Category = "Files")
 	bool OpenProjectFromPicker();
 
@@ -72,6 +75,8 @@ public:
 
 protected:
 	FString PendingCloudProjectID;
+	FString PendingProjectServerURL;
+
 	TArray<FString> RecentProjectPaths;
 	TArray<FText> RecentProjectNames;
 	TArray<FDateTime> RecentProjectTimes;

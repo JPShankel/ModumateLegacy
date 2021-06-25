@@ -300,7 +300,7 @@ struct FModumateDocumentHeaderV2
 	GENERATED_BODY()
 
 	UPROPERTY()
-	int32 Version;
+	int32 Version = 0;
 
 	UPROPERTY()
 	FString Thumbnail;
@@ -326,6 +326,9 @@ struct MODUMATE_API FModumateSerializationStatics
 {
 	static const FString DocHeaderField;
 	static const FString DocObjectInstanceField;
+	static constexpr uint32 CurBinaryDocVersion = 1;
 
 	static bool TryReadModumateDocumentRecord(const FString &filePath, FModumateDocumentHeader &OutHeader, FMOIDocumentRecord &OutRecord);
+	static bool SaveDocumentToBuffer(const FModumateDocumentHeader& Header, const FMOIDocumentRecord& Record, TArray<uint8>& OutBuffer);
+	static bool LoadDocumentFromBuffer(const TArray<uint8>& Buffer, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutRecord, bool bLoadOnlyHeader = false);
 };

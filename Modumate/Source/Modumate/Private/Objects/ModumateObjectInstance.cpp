@@ -978,9 +978,13 @@ bool AModumateObjectInstance::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCol
 {
 	AActor *moiActor = GetActor();
 	auto *controller = moiActor ? moiActor->GetWorld()->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+
+	// If we're missing the controller or player state, then we're either a dedicated server or are shutting down, so in either case hidden is fine.
 	if ((controller == nullptr) || (controller->EMPlayerState == nullptr))
 	{
-		return false;
+		bOutVisible = false;
+		bOutCollisionEnabled = false;
+		return true;
 	}
 
 	bool bEnabledByViewMode = controller->EMPlayerState->IsObjectTypeEnabledByViewMode(GetObjectType());

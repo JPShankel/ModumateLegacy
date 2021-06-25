@@ -21,6 +21,22 @@
 
 #define LOCTEXT_NAMESPACE "ModumateMainMenu"
 
+// Set this value to '127.0.0.1' (or any other IP address) if you want to connect directly to a multiplayer server instance,
+// rather than create a connection and request for a server to be spun up by the AMS's multiplayer server controller.
+// This is only used for non-shipping builds.
+TAutoConsoleVariable<FString> CVarModumateMPAddrOverride(
+	TEXT("modumate.MultiplayerAddressOverride"),
+	TEXT(""),
+	TEXT("If non-empty, the address used to connect to a testing multiplayer server instance, rather than the one resulting from a connection from the AMS."),
+	ECVF_Default);
+
+TAutoConsoleVariable<int32> CVarModumateMPPortOverride(
+	TEXT("modumate.MultiplayerPortOverride"),
+	7777,
+	TEXT("The port to use to connect to the testing multiplayer server instance, if provided by modumate.MultiplayerAddressOverride."),
+	ECVF_Default);
+
+
 void AMainMenuGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
@@ -119,9 +135,9 @@ void AMainMenuGameMode::OnLoggedIn()
 		OpenEditModelLevel();
 	}
 	// Otherwise, if the user is trying to open a cloud project by ID, then attempt to open that connection.
-	else if (!gameInstance->PendingProjectID.IsEmpty() && OpenCloudProject(gameInstance->PendingProjectID))
+	else if (!gameInstance->PendingClientConnectProjectID.IsEmpty() && OpenCloudProject(gameInstance->PendingClientConnectProjectID))
 	{
-		gameInstance->PendingProjectID.Empty();
+		gameInstance->PendingClientConnectProjectID.Empty();
 		controller->StartRootMenuWidget->ShowModalStatus(LOCTEXT("InitialCloudProjectStatus", "Connecting to online project..."), false);
 	}
 	// Otherwise, potentially load the starting walkthrough
@@ -188,11 +204,12 @@ bool AMainMenuGameMode::OpenProject(const FString& ProjectPath)
 
 bool AMainMenuGameMode::OpenCloudProject(const FString& ProjectID)
 {
-	if (!PendingCloudProjectID.IsEmpty())
+	if (!PendingCloudProjectID.IsEmpty() || !PendingProjectServerURL.IsEmpty())
 	{
 		return false;
 	}
 
+	auto weakThis = MakeWeakObjectPtr(this);
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
 	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
@@ -201,37 +218,87 @@ bool AMainMenuGameMode::OpenCloudProject(const FString& ProjectID)
 		return false;
 	}
 
-	auto weakThis = MakeWeakObjectPtr(this);
-	bool bEndpointSuccess = cloudConnection->RequestEndpoint(
-		FProjectConnectionHelpers::MakeProjectConnectionEndpoint(ProjectID),
-		FModumateCloudConnection::ERequestType::Put,
-		nullptr,
-		[weakThis, ProjectID](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
-		{
-			FProjectConnectionResponse createConnectionResponse;
-			if (!ensure(bSuccessful && Response.IsValid() && weakThis.IsValid() &&
-				FJsonObjectConverter::JsonObjectToUStruct(Response.ToSharedRef(), &createConnectionResponse)))
-			{
-				UE_LOG(LogTemp, Error, TEXT("Unexpected error in response to creating a connection to project %s."), *ProjectID);
-				return;
-			}
+#if !UE_BUILD_SHIPPING
+	FString mpAddrOverride = CVarModumateMPAddrOverride.GetValueOnGameThread();
+	if (!mpAddrOverride.IsEmpty())
+	{
+		FProjectConnectionResponse testConnectionResponse;
+		testConnectionResponse.IP = mpAddrOverride;
+		testConnectionResponse.Port = CVarModumateMPPortOverride.GetValueOnGameThread();
+		testConnectionResponse.Key = FModumateCloudConnection::MakeTestingEncryptionKey(accountManager->GetUserInfo().ID, ProjectID);
+		OnCreatedProjectConnection(ProjectID, testConnectionResponse);
+	}
+#endif
 
-			weakThis->OnCreatedProjectConnection(ProjectID, createConnectionResponse);
-		},
-		[weakThis, ProjectID](int32 ErrorCode, const FString& ErrorString)
-		{
-			if (weakThis.IsValid())
+	if (PendingProjectServerURL.IsEmpty())
+	{
+		// Request a connection to a multiplayer server instance for this project,
+		// which will either spin up a server that downloads the project, or return a connection to an existing server running for this project.
+		bool bRequestedConnection = cloudConnection->RequestEndpoint(
+			FProjectConnectionHelpers::MakeProjectConnectionEndpoint(ProjectID),
+			FModumateCloudConnection::ERequestType::Put,
+			nullptr,
+			[weakThis, ProjectID](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
 			{
-				weakThis->OnProjectConnectionFailed(ProjectID, ErrorCode, ErrorString);
+				FProjectConnectionResponse createConnectionResponse;
+				if (!ensure(bSuccessful && Response.IsValid() && weakThis.IsValid() &&
+					FJsonObjectConverter::JsonObjectToUStruct(Response.ToSharedRef(), &createConnectionResponse)))
+				{
+					UE_LOG(LogTemp, Error, TEXT("Unexpected error in response to creating a connection to project %s."), *ProjectID);
+					return;
+				}
+
+				weakThis->OnCreatedProjectConnection(ProjectID, createConnectionResponse);
+			},
+			[weakThis, ProjectID](int32 ErrorCode, const FString& ErrorString)
+			{
+				if (weakThis.IsValid())
+				{
+					weakThis->OnProjectConnectionFailed(ProjectID, ErrorCode, ErrorString);
+				}
+			});
+
+		if (!bRequestedConnection)
+		{
+			return false;
+		}
+	}
+
+	// Request the cloud-hosted content for this project
+	bool bRequestedDownload = cloudConnection->DownloadProject(ProjectID,
+		[weakThis, ProjectID](const FModumateDocumentHeader& DocHeader, const FMOIDocumentRecord& DocRecord, bool bEmpty) {
+			auto* gameInstance = weakThis.IsValid() ? weakThis->GetGameInstance<UModumateGameInstance>() : nullptr;
+			if (ensure(gameInstance && (gameInstance->PendingClientDownloadProjectID == ProjectID)))
+			{
+				gameInstance->PendingClientDownloadProjectID.Empty();
+				gameInstance->ClientDownloadedDocHeader = DocHeader;
+				gameInstance->ClientDownloadedDocRecord = DocRecord;
+				gameInstance->bHaveDownloadedDocument = true;
+				weakThis->OnDownloadedCloudProject(true);
+			}
+		},
+		[weakThis, ProjectID](int32 ErrorCode, const FString& ErrorMessage) {
+			UE_LOG(LogTemp, Error, TEXT("Error code %d when trying to download Project ID %s: %s"), ErrorCode, *ProjectID, *ErrorMessage);
+			auto* gameInstance = weakThis.IsValid() ? weakThis->GetGameInstance<UModumateGameInstance>() : nullptr;
+			if (ensure(gameInstance && (gameInstance->PendingClientDownloadProjectID == ProjectID)))
+			{
+				gameInstance->PendingClientDownloadProjectID.Empty();
+				gameInstance->ClientDownloadedDocHeader = FModumateDocumentHeader();
+				gameInstance->ClientDownloadedDocRecord = FMOIDocumentRecord();
+				gameInstance->bHaveDownloadedDocument = false;
+				weakThis->OnDownloadedCloudProject(false);
 			}
 		});
 
-	if (bEndpointSuccess)
+	if (!bRequestedDownload)
 	{
-		PendingCloudProjectID = ProjectID;
+		return false;
 	}
 
-	return bEndpointSuccess;
+	PendingCloudProjectID = ProjectID;
+	gameInstance->PendingClientDownloadProjectID = ProjectID;
+
+	return true;
 }
 
 void AMainMenuGameMode::OnCreatedProjectConnection(const FString& ProjectID, const FProjectConnectionResponse& Response)
@@ -239,7 +306,7 @@ void AMainMenuGameMode::OnCreatedProjectConnection(const FString& ProjectID, con
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
 	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
-	if (!accountManager.IsValid() || !cloudConnection.IsValid() || !cloudConnection->IsLoggedIn() || !ensure(ProjectID == PendingCloudProjectID))
+	if (!accountManager.IsValid() || !cloudConnection.IsValid() || !cloudConnection->IsLoggedIn())
 	{
 		return;
 	}
@@ -247,8 +314,13 @@ void AMainMenuGameMode::OnCreatedProjectConnection(const FString& ProjectID, con
 	const FString& userID = accountManager->GetUserInfo().ID;
 	cloudConnection->CacheEncryptionKey(userID, ProjectID, Response.Key);
 
-	FString targetURL = FString::Printf(TEXT("%s:%d"), *Response.IP, Response.Port);
-	OpenProjectServerInstance(targetURL, ProjectID);
+	PendingProjectServerURL = FString::Printf(TEXT("%s:%d"), *Response.IP, Response.Port);
+
+	// If the project download has already finished by the time we got the connection, then open the server now
+	if (gameInstance->bHaveDownloadedDocument)
+	{
+		OpenProjectServerInstance(PendingProjectServerURL, ProjectID);
+	}
 }
 
 void AMainMenuGameMode::OnProjectConnectionFailed(const FString& ProjectID, int32 ErrorCode, const FString& ErrorMessage)
@@ -262,6 +334,15 @@ void AMainMenuGameMode::OnProjectConnectionFailed(const FString& ProjectID, int3
 		PendingCloudProjectID.Empty();
 
 		playerController->StartRootMenuWidget->ShowModalStatus(LOCTEXT("OpenProjectError", "Failed to open project! Please try again later."), true);
+	}
+}
+
+void AMainMenuGameMode::OnDownloadedCloudProject(bool bSuccess)
+{
+	// If the project connection was already established by the time we finished the project download, then open the server now
+	if (bSuccess && !PendingProjectServerURL.IsEmpty())
+	{
+		OpenProjectServerInstance(PendingProjectServerURL, PendingCloudProjectID);
 	}
 }
 
@@ -303,13 +384,15 @@ bool AMainMenuGameMode::OpenProjectServerInstance(const FString& URL, const FStr
 
 	playerController->ClientTravel(fullURL, ETravelType::TRAVEL_Absolute);
 
-	// TODO: update status and clear PendingCloudProjectID if traveling fails
+	// TODO: update status if traveling fails
 
 	if (playerController->StartRootMenuWidget)
 	{
 		// TODO: format the text with the name of the project itself
 		playerController->StartRootMenuWidget->ShowModalStatus(LOCTEXT("OpenProjectBegin", "Opening online project..."), false);
 	}
+
+	PendingCloudProjectID.Empty();
 
 	return true;
 }

@@ -49,9 +49,6 @@ private:
 	// The FDeltasRecords that this user has undone (either directly, or because they were implicated in this user's intended undo)
 	TArray<FDeltasRecord> UndoneDeltasRecords;
 
-	// The index in VerifiedDeltasRecords of the DeltasRecord that was the most recent one saved.
-	int32 LastSavedDeltasRecordIdx;
-
 	UPROPERTY()
 	TArray<AModumateObjectInstance*> ObjectInstanceArray;
 
@@ -266,6 +263,7 @@ public:
 	bool SerializeRecords(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord);
 	static bool SaveRecords(const FString& FilePath, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord);
 	bool SaveFile(UWorld* World, const FString& FilePath, bool bUserFile, bool bAsync = false, const TFunction<void (bool)>& OnSaveFunction = nullptr);
+	bool SaveAsBinary(UWorld* World, TArray<uint8>& OutBuffer);
 	bool LoadRecord(UWorld* World, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord);
 	bool LoadFile(UWorld* World, const FString& Path, bool bSetAsCurrentProject, bool bRecordAsRecentProject);
 	bool LoadDeltas(UWorld* World, const FString& Path, bool bSetAsCurrentProject, bool bRecordAsRecentProject); // Debug - Loads all deltas into the redo buffer for replay purposes
@@ -289,7 +287,7 @@ public:
 	void ClearUndoBuffer();
 
 	uint32 GetLatestVerifiedDocHash() const;
-	bool GetDeltaRecordsSinceSave(TArray<FDeltasRecord>& OutRecordsSinceSave) const;
+	const TArray<FDeltasRecord>& GetVerifiedDeltasRecords() const { return VerifiedDeltasRecords; }
 
 	FBoxSphereBounds CalculateProjectBounds() const;
 

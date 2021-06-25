@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DocumentManagement/ModumateSerialization.h"
 #include "Engine/GameInstance.h"
 #include "Runtime/Online/HTTP/Public/Http.h"
 #include "Runtime/Engine/Public/TimerManager.h"
@@ -138,8 +139,18 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FString PendingInputLogPath;
 
+	// The ID of a cloud-hosted project for which a multiplayer client should establish a server connection
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	FString PendingProjectID;
+	FString PendingClientConnectProjectID;
+
+	// The ID of a cloud-hosted project that a multiplayer client is currently downloading/deserializing
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	FString PendingClientDownloadProjectID;
+
+	// The content of a cloud-hosted project download from the client for its pending multiplayer session
+	FModumateDocumentHeader ClientDownloadedDocHeader;
+	FMOIDocumentRecord ClientDownloadedDocRecord;
+	bool bHaveDownloadedDocument = false;
 
 	FTimerHandle SlowTickHandle;
 };
