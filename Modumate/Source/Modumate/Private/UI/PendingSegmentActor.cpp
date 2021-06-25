@@ -57,9 +57,13 @@ void APendingSegmentActor::Tick(float DeltaTime)
 		controller->ProjectWorldLocationToScreen(PendingSegment->Point2, projEnd);
 
 		edgeDirection = projEnd - projStart;
+		float screenLength = edgeDirection.Size();
 		edgeDirection.Normalize();
 
 		offsetDirection = FVector2D(edgeDirection.Y, -edgeDirection.X);
+
+		// Move text out of harms way for small lines:
+		targetScreenPosition -= FMath::Clamp(TextSmallLineLength - screenLength, 0.0f, TextSmallLineOffset) * offsetDirection;
 
 		float length = (PendingSegment->Point2 - PendingSegment->Point1).Size();
 		DimensionText->UpdateLengthTransform(targetScreenPosition, edgeDirection, offsetDirection, length);

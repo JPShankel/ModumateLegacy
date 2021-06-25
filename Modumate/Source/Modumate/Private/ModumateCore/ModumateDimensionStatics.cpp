@@ -9,6 +9,7 @@
 #include "ModumateCore/ModumateTypes.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "DocumentManagement/DocumentSettings.h"
 #include "Kismet/KismetStringLibrary.h"
 #include <regex>
 
@@ -836,6 +837,13 @@ FText UModumateDimensionStatics::CentimetersToDisplayText(double LengthCM, int32
 float UModumateDimensionStatics::CentimetersToInches64(double Centimeters)
 {
 	return FMath::RoundHalfFromZero(64.0 * Centimeters * UModumateDimensionStatics::CentimetersToInches) / 64.0;
+}
+
+FModumateFormattedDimension UModumateDimensionStatics::StringToSettingsFormattedDimension(const FString& DimStr, const FDocumentSettings& Settings)
+{
+	return StringToFormattedDimension(DimStr,
+		Settings.DimensionUnit == EUnit::Feet || Settings.DimensionUnit == EUnit::Unspecified ? EDimensionUnits::DU_Imperial : EDimensionUnits::DU_Metric,
+		Settings.DimensionUnit);
 }
 
 #undef LOCTEXT_NAMESPACE

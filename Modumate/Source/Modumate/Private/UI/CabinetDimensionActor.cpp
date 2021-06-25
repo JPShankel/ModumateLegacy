@@ -72,7 +72,10 @@ void ACabinetDimensionActor::OnMeasurementTextCommitted(const FText& Text, EText
 {
 	if (CommitMethod == ETextCommit::OnEnter)
 	{
-		float lengthValue = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString()).Centimeters;
+		const FDocumentSettings& settings = Document->GetCurrentSettings();
+
+		float lengthValue = UModumateDimensionStatics::StringToSettingsFormattedDimension(Text.ToString(), settings).Centimeters;
+
 		if (lengthValue > 0.0f)
 		{
 			auto moi = Document->GetObjectById(CabinetID);

@@ -25,6 +25,9 @@ protected:
 	void CreateWidget();
 	void ReleaseWidget();
 
+	static constexpr float TextSmallLineLength = 50.0f;
+	static constexpr float TextSmallLineOffset = 10.0f;
+
 public:
 	virtual ALineActor* GetLineActor();
 

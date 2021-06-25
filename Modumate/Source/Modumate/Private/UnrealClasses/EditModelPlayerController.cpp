@@ -673,6 +673,8 @@ void AEditModelPlayerController::OnTextCommitted(const FText& Text, ETextCommit:
 	double lengthCM = 0.f;
 	bool bParseSuccess = false;
 
+	AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+	
 	// Most cases input is in imperial unit, unless is specific handle or tool mode
 	if (curToolMode == EToolMode::VE_ROTATE || // Rotate tool uses degree
 		(InteractionHandle && !InteractionHandle->HasDistanceTextInput()))
@@ -681,7 +683,8 @@ void AEditModelPlayerController::OnTextCommitted(const FText& Text, ETextCommit:
 	}
 	else
 	{
-		auto dimension = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString());
+		const FDocumentSettings& settings = gameState->Document->GetCurrentSettings();
+		auto dimension = UModumateDimensionStatics::StringToSettingsFormattedDimension(Text.ToString(), settings);
 		if (dimension.Format != EDimensionFormat::Error)
 		{
 			bParseSuccess = true;

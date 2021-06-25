@@ -92,11 +92,19 @@ void UDimensionWidget::UpdateText(double length, bool bForce)
 {
 	if ((length != LastMeasurement) || bForce)
 	{
-		FText newText = UModumateDimensionStatics::CentimetersToDisplayText(length, 1, DisplayUnitType, DisplayOverrideUnit);
-		Measurement->SetText(newText);
-		LastCommittedText = newText;
 		LastMeasurement = length;
 		LastDisplayType = EDimensionDisplayType::Linear;
+		if (FMath::IsNearlyZero(length))
+		{
+			SetVisibility(ESlateVisibility::Hidden);
+		}
+		else
+		{
+			FText newText = UModumateDimensionStatics::CentimetersToDisplayText(length, 1, DisplayUnitType, DisplayOverrideUnit);
+			Measurement->SetText(newText);
+			LastCommittedText = newText;
+			SetVisibility(Measurement->IsReadOnly ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Visible);
+		}
 	}
 }
 

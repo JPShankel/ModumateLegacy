@@ -214,9 +214,11 @@ void AGraphDimensionActor::OnMeasurementTextCommitted(const FText& Text, ETextCo
 	{
 		auto& volumeGraph = Document->GetVolumeGraph();
 
-		// get the desired length from the text (assuming the text is entered in feet)
+		// get the desired length from the text
 		// shrinking the edge be zero length is not allowed
-		float lengthValue = UModumateDimensionStatics::StringToFormattedDimension(Text.ToString()).Centimeters;
+		const FDocumentSettings& settings = Document->GetCurrentSettings();
+
+		float lengthValue = UModumateDimensionStatics::StringToSettingsFormattedDimension(Text.ToString(), settings).Centimeters;
 		float epsilon = SurfaceGraph.IsValid() ? SurfaceGraph->Epsilon : volumeGraph.Epsilon;
 		if (lengthValue > epsilon)
 		{

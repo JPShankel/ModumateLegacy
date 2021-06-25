@@ -9,6 +9,8 @@
 #include "UObject/Object.h"
 #include "ModumateDimensionStatics.generated.h"
 
+struct FDocumentSettings;
+
 // Helper functions for managing dimensional string parsing and generation
 // 
 UCLASS(BlueprintType)
@@ -80,4 +82,6 @@ public:
 
 	UFUNCTION()
 	static float CentimetersToInches64(double Centimeters);
+
+	static FModumateFormattedDimension StringToSettingsFormattedDimension(const FString& DimStr, const FDocumentSettings& Settings);
 };
