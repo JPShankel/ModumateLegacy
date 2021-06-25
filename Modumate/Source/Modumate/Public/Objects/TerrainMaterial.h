@@ -27,6 +27,7 @@ public:
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController*) override { };
 	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) override;
 	virtual void PostCreateObject(bool bNewObject) override;
+	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
 
 	UFUNCTION()
 	void OnInstPropUIChangedSelection(int32 NewValue);

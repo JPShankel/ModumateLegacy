@@ -66,6 +66,6 @@ protected:
 	FVector GraphToWorldPosition(FVector2D GraphPos, double Height = 0.0, bool bRelative = false) const;
 	TMap<int32, int32> PolyIDToMeshSection;
 
-	bool bIsTranslucent = false;
+	bool bIsTranslucent = true;
 	TMap<int32, FGuid> CachedMaterials;
 };

@@ -107,4 +107,6 @@ public:
 		const FVector& StartPosition, const FVector& EndPosition, FModumateLayerType LayerType, float Epsilon = 0.0f);
 	static TArray<FEdge> GetExtrusionBeyondLinesFromMesh(const FPlane& Plane, const TArray<FVector>& Perimeter,
 		const FVector& StartPosition, const FVector& EndPosition);
+
+	static void GetTerrainSurfaceObjectEnabledFlags(const AModumateObjectInstance* TerrainSurfaceObj, bool& bOutVisible, bool& bOutCollisionEnabled);
 };

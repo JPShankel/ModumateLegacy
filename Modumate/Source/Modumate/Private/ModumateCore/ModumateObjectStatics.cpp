@@ -15,6 +15,7 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "Objects/PlaneHostedObj.h"
 #include "Objects/Portal.h"
+#include "Objects/Terrain.h"
 #include "Objects/SurfaceGraph.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "UnrealClasses/CompoundMeshActor.h"
@@ -641,8 +642,7 @@ bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const AModumateObjectInst
 	case EObjectType::OTTerrainEdge:
 	case EObjectType::OTTerrainPolygon:
 	{
-		bOutVisible = !SurfaceMOI->IsRequestedHidden();
-		bOutCollisionEnabled = !SurfaceMOI->IsCollisionRequestedDisabled();
+		GetTerrainSurfaceObjectEnabledFlags(SurfaceMOI, bOutVisible, bOutCollisionEnabled);
 		break;
 	}
 
@@ -1045,4 +1045,52 @@ TArray<FEdge> UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(const FPla
 	}
 
 	return beamEdges;
+}
+
+void UModumateObjectStatics::GetTerrainSurfaceObjectEnabledFlags(const AModumateObjectInstance* TerrainSurfaceObj, bool& bOutVisible, bool& bOutCollisionEnabled)
+{
+	bOutVisible = !TerrainSurfaceObj->IsRequestedHidden();
+	bOutCollisionEnabled = !TerrainSurfaceObj->IsCollisionRequestedDisabled();
+
+	if (TerrainSurfaceObj->GetObjectType() != EObjectType::OTTerrainVertex &&
+		TerrainSurfaceObj->GetObjectType() != EObjectType::OTTerrainEdge)
+	{
+		return;
+	}
+
+	const AMOITerrain* terrainMoi = Cast<AMOITerrain>(TerrainSurfaceObj->GetParentObject());
+	if (!ensure(terrainMoi))
+	{
+		return;
+	}
+
+	// Check if surface object is part of any terrain interior polygon
+	const auto graph2d = terrainMoi->GetDocument()->FindSurfaceGraph(terrainMoi->ID);
+	const auto& polygons = graph2d->GetPolygons();
+	for (const auto& polygonKvp : polygons)
+	{
+		if (polygonKvp.Value.bInterior)
+		{
+			const FGraph2DPolygon* polygonInterior = graph2d->FindPolygon(polygonKvp.Key);
+			if (polygonInterior)
+			{
+				bool bPartOfInteriorPoly = TerrainSurfaceObj->GetObjectType() == EObjectType::OTTerrainVertex 
+					&& polygonInterior->CachedPerimeterVertexIDs.Contains(TerrainSurfaceObj->ID);
+
+				if (!bPartOfInteriorPoly && TerrainSurfaceObj->GetObjectType() == EObjectType::OTTerrainEdge)
+				{
+					bool bSameDir = false;
+					bPartOfInteriorPoly = polygonInterior->FindPerimeterEdgeIndex(TerrainSurfaceObj->ID, bSameDir) != INDEX_NONE;
+				}
+
+				// If it belongs to a terrain interior polygon, check if it is affected by its translucency
+				if (bPartOfInteriorPoly)
+				{
+					bOutVisible = terrainMoi->GetIsTranslucent() && !terrainMoi->IsRequestedHidden();
+					bOutCollisionEnabled = bOutVisible; // Assume collision is always equal to its visibility?
+					return;
+				}
+			}
+		}
+	}
 }

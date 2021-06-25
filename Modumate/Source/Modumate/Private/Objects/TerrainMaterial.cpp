@@ -87,6 +87,35 @@ void AMOITerrainMaterial::PostCreateObject(bool bNewObject)
 	}
 }
 
+bool AMOITerrainMaterial::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
+{
+	bool bSuccess = false;
+
+	int32 polyID = GetParentID();
+	const auto graph2d = GetDocument()->FindSurfaceGraphByObjID(polyID);
+	if (ensure(graph2d))
+	{
+		AModumateObjectInstance* parentTerrain = GetDocument()->GetObjectById(graph2d->GetID());
+		AMOITerrain* moiTerrain = parentTerrain ? Cast<AMOITerrain>(parentTerrain) : nullptr;
+		if (moiTerrain)
+		{
+			bOutVisible = !moiTerrain->IsRequestedHidden() && moiTerrain->GetIsTranslucent();
+			bOutCollisionEnabled = !moiTerrain->IsCollisionRequestedDisabled() && moiTerrain->GetIsTranslucent();
+
+			DynamicMeshActor->SetActorHiddenInGame(!bOutVisible);
+			DynamicMeshActor->SetActorEnableCollision(bOutCollisionEnabled);
+			bSuccess = true;
+		}
+	}
+
+	if (bOutVisible)
+	{
+		UpdateMaterial();
+	}
+
+	return false;
+}
+
 bool AMOITerrainMaterial::UpdateStructure()
 {
 	auto* doc = GetDocument();
@@ -119,23 +148,12 @@ bool AMOITerrainMaterial::UpdateStructure()
 		CachedOrigin = origin;
 		CachedCenter = origin;
 
-		AModumateObjectInstance* parentTerrain = doc->GetObjectById(graph2d->GetID());
-		AMOITerrain* moiTerrain = parentTerrain ? Cast<AMOITerrain>(parentTerrain) : nullptr;
-		if (moiTerrain)
-		{
-			if (moiTerrain->GetIsTranslucent())
-			{
-				UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
-				const AEditModelGameMode* gameMode = gameInstance ? gameInstance->GetEditModelGameMode() : nullptr;
-				MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
+		UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+		const AEditModelGameMode* gameMode = gameInstance ? gameInstance->GetEditModelGameMode() : nullptr;
+		MaterialData.EngineMaterial = gameMode ? gameMode->MetaPlaneMaterial : nullptr;
+		DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, 1.0f, true, &CachedHoles, !IsInPreviewMode());
 
-				DynamicMeshActor->SetupMetaPlaneGeometry(CachedPoints, MaterialData, 1.0f, true, &CachedHoles, !IsInPreviewMode());
-			}
-			else
-			{
-				DynamicMeshActor->ClearProceduralMesh();
-			}
-		}
+		AModumateObjectInstance* parentTerrain = doc->GetObjectById(graph2d->GetID());
 		parentTerrain->MarkDirty(EObjectDirtyFlags::Visuals);
 	}
 
