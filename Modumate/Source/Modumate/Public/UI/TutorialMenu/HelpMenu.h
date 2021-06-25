@@ -88,6 +88,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString TutorialLibraryDataLink;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString HelpWebBrowserBlankLink;
+
 	UPROPERTY()
 	TMap<FGuid, FTutorialTaxonomyNode> AllTutorialNodesByGUID;
 

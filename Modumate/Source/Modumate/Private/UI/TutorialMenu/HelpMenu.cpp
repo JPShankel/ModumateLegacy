@@ -205,7 +205,7 @@ FString UHelpMenu::GetHelpMenuSearchbarText()
 
 void UHelpMenu::ResetHelpWebBrowser()
 {
-	HelpBlockTutorialArticleBP->ToggleWebBrowser(false);
+	HelpBlockTutorialArticleBP->LoadURLForWebBrowserVideo(HelpWebBrowserBlankLink);
 }
 
 void UHelpMenu::ToMainHelpMenu()

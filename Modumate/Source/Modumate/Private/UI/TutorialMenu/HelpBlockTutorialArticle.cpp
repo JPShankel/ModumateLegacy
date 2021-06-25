@@ -54,24 +54,14 @@ void UHelpBlockTutorialArticle::BuildTutorialArticle(const FGuid& InTutorialGUID
 
 		if (ensureAlways(WebBrowserVideo) &&!tutorialNode->VideoURL.IsEmpty())
 		{
-			ToggleWebBrowser(true);
 			WebBrowserVideo->LoadURL(tutorialNode->VideoURL);
 		}
 	}
 }
 
-void UHelpBlockTutorialArticle::ToggleWebBrowser(bool bEnable)
+void UHelpBlockTutorialArticle::LoadURLForWebBrowserVideo(const FString& URL)
 {
-	if (bEnable)
-	{
-		SizeBoxVideo->AddChild(WebBrowserVideo);
-	}
-	else
-	{
-		// Stop the browser completely by removing it
-		// TODO: Investigating is this safe to do?
-		WebBrowserVideo->RemoveFromParent();
-	}
+	WebBrowserVideo->LoadURL(URL);
 }
 
 void UHelpBlockTutorialArticle::OnButtonGoBackPress()

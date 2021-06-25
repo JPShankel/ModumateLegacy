@@ -46,7 +46,7 @@ public:
 	class USizeBox* SizeBoxVideo;
 
 	void BuildTutorialArticle(const FGuid& InTutorialGUID);
-	void ToggleWebBrowser(bool bEnable);
+	void LoadURLForWebBrowserVideo(const FString& URL);
 
 	UFUNCTION()
 	void OnButtonGoBackPress();
