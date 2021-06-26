@@ -113,7 +113,7 @@ bool AMOITerrainMaterial::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisi
 		UpdateMaterial();
 	}
 
-	return false;
+	return bSuccess;
 }
 
 bool AMOITerrainMaterial::UpdateStructure()

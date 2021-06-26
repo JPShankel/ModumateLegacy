@@ -560,10 +560,12 @@ bool UModumateObjectStatics::GetSurfaceObjEnabledFlags(const AModumateObjectInst
 	const AActor* surfaceActor = SurfaceMOI ? SurfaceMOI->GetActor() : nullptr;
 	const UModumateDocument* doc = SurfaceMOI ? SurfaceMOI->GetDocument() : nullptr;
 	UWorld* world = surfaceActor ? surfaceActor->GetWorld() : nullptr;
+
+	// Without a Player Controller (most likely on a server), the object might as well be hidden, and if so that's a successful result that shouldn't cause deletion.
 	AEditModelPlayerController* playerController = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
 	if (playerController == nullptr)
 	{
-		return false;
+		return true;
 	}
 
 	EObjectType objectType = SurfaceMOI->GetObjectType();
