@@ -20,7 +20,9 @@
 #include "Components/VerticalBox.h"
 #include "UI/TutorialMenu/HelpMenu.h"
 #include "UI/TutorialMenu/HelpBlockTutorialSearch.h"
+#include "Online/ModumateAnalyticsStatics.h"
 
+const FString UNCPNavigator::AnalyticsEventString = TEXT("NCPSearchString");
 
 UNCPNavigator::UNCPNavigator(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -422,8 +424,28 @@ void UNCPNavigator::GetTopTraversalPath(const FBIMTagPath& InNCP, FBIMTagPath& T
 	}
 }
 
+void UNCPNavigator::SendAnalytics()
+{
+	if (!AnalyticsString.IsEmpty())
+	{
+		UModumateAnalyticsStatics::RecordEventCustomString(this, EModumateAnalyticsCategory::Presets, AnalyticsEventString, AnalyticsString);
+		AnalyticsString.Empty();
+	}
+}
+
 void UNCPNavigator::OnSearchBarChanged(const FText& NewText)
 {
+	if (!GetWorld() || !GetWorld()->GetFirstPlayerController())
+	{
+		return;
+	}
+
+	auto& timerManager = GetWorld()->GetFirstPlayerController()->GetWorldTimerManager();
+
+	timerManager.ClearTimer(AnalyticsTimer);
+	timerManager.SetTimer(AnalyticsTimer, this, &UNCPNavigator::SendAnalytics, 1.0f, false, 3.0f);
+	AnalyticsString = NewText.ToString();
+
 	BuildNCPNavigator(CurrentPresetCardType);
 }
 

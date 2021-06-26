@@ -6,6 +6,8 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/TutorialMenu/HelpMenu.h"
+#include "Online/ModumateAnalyticsStatics.h"
+
 
 UHelpBlockTutorialSearch::UHelpBlockTutorialSearch(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -32,8 +34,28 @@ void UHelpBlockTutorialSearch::NativeConstruct()
 	Super::NativeConstruct();
 }
 
+void UHelpBlockTutorialSearch::SendAnalytics()
+{
+	if (!AnalyticsString.IsEmpty())
+	{
+		UModumateAnalyticsStatics::RecordEventCustomString(this, EModumateAnalyticsCategory::Tutorials, UHelpMenu::AnalyticsSearchEvent, AnalyticsString);
+		AnalyticsString.Empty();
+	}
+}
+
 void UHelpBlockTutorialSearch::OnSearchBarChanged(const FText& NewText)
 {
+	if (!GetWorld() || !GetWorld()->GetFirstPlayerController())
+	{
+		return;
+	}
+
+	auto& timerManager = GetWorld()->GetFirstPlayerController()->GetWorldTimerManager();
+
+	timerManager.ClearTimer(AnalyticsTimer);
+	timerManager.SetTimer(AnalyticsTimer, this, &UHelpBlockTutorialSearch::SendAnalytics, 1.0f, false, 3.0f);
+	AnalyticsString = NewText.ToString();
+
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
 	if (controller)
 	{

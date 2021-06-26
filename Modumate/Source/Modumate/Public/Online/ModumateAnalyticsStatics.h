@@ -38,6 +38,8 @@ public:
 	static const FString AttrNameCategory;
 	static const FString AttrNameCustomValue;
 	static const FString AttrNameInTutorial;
+	static const FString AttrNameSessionID;
+	static const FString AttrNameStringValue;
 
 	static FOnModumateAnalyticsEvent OnRecordedAnalyticsEvent;
 
@@ -46,6 +48,7 @@ public:
 	static void ShutdownAnalytics(TSharedPtr<IAnalyticsProvider> &AnalyticsInstance);
 
 	static IAnalyticsProvider *GetAnalyticsFromWorld(UObject* WorldContextObject);
+	static FString GetSessionIDFromWorld(UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
 	static void SetInTutorial(bool bNewIntutorial);
@@ -55,6 +58,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
 	static bool RecordEventCustomFloat(UObject* WorldContextObject, EModumateAnalyticsCategory EventCategory, const FString &EventName, float CustomValue);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
+	static bool RecordEventCustomString(UObject* WorldContextObject, EModumateAnalyticsCategory EventCategory, const FString& EventName, const FString& StringValue);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Modumate | Analytics")
 	static bool RecordToolUsage(UObject* WorldContextObject, EToolMode ToolMode, float UsedDuration);

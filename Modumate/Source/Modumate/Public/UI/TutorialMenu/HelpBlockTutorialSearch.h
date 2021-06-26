@@ -23,7 +23,13 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+	FTimerHandle AnalyticsTimer;
+	FString AnalyticsString;
+	void SendAnalytics();
+
 public:
+
+	static const FString AnalyticsSearchEvent; 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateEditableTextBoxUserWidget* ComponentSearchBar;

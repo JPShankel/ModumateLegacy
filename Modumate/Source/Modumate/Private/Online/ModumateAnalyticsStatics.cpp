@@ -7,6 +7,7 @@
 #include "Interfaces/IAnalyticsProvider.h"
 #include "Database/ModumateObjectEnums.h"
 #include "UnrealClasses/Modumate.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
 
@@ -14,9 +15,21 @@
 const FString UModumateAnalyticsStatics::AttrNameCategory(TEXT("Category"));
 const FString UModumateAnalyticsStatics::AttrNameCustomValue(TEXT("CustomValue"));
 const FString UModumateAnalyticsStatics::AttrNameInTutorial(TEXT("InTutorial"));
+const FString UModumateAnalyticsStatics::AttrNameSessionID(TEXT("SessionID"));
+const FString UModumateAnalyticsStatics::AttrNameStringValue(TEXT("StringValue"));
 
 FOnModumateAnalyticsEvent UModumateAnalyticsStatics::OnRecordedAnalyticsEvent;
 bool UModumateAnalyticsStatics::bInTutorial = false;
+
+FString UModumateAnalyticsStatics::GetSessionIDFromWorld(UObject *WorldContextObject)
+{
+	if (WorldContextObject && WorldContextObject->GetWorld() && WorldContextObject->GetWorld()->GetFirstPlayerController())
+	{
+		auto sessionID = Cast<AEditModelPlayerController>(WorldContextObject->GetWorld()->GetFirstPlayerController())->GetSessionID();
+		return sessionID.ToString();
+	}
+	return FGuid().ToString();
+}
 
 TSharedPtr<IAnalyticsProvider> UModumateAnalyticsStatics::InitAnalytics()
 {
@@ -82,6 +95,7 @@ bool UModumateAnalyticsStatics::RecordEventSimple(UObject* WorldContextObject, E
 		TArray<FAnalyticsEventAttribute> eventAttributes;
 		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameCategory, GetEnumValueString(EventCategory)));
 		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameInTutorial, UModumateAnalyticsStatics::bInTutorial));
+		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameSessionID, GetSessionIDFromWorld(WorldContextObject)));
 
 		analytics->RecordEvent(EventName, eventAttributes);
 		UModumateAnalyticsStatics::OnRecordedAnalyticsEvent.Broadcast(EventCategory, EventName);
@@ -100,6 +114,26 @@ bool UModumateAnalyticsStatics::RecordEventCustomFloat(UObject* WorldContextObje
 		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameCategory, GetEnumValueString(EventCategory)));
 		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameCustomValue, CustomValue));
 		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameInTutorial, UModumateAnalyticsStatics::bInTutorial));
+		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameSessionID, GetSessionIDFromWorld(WorldContextObject)));
+
+		analytics->RecordEvent(EventName, eventAttributes);
+		UModumateAnalyticsStatics::OnRecordedAnalyticsEvent.Broadcast(EventCategory, EventName);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool UModumateAnalyticsStatics::RecordEventCustomString(UObject* WorldContextObject, EModumateAnalyticsCategory EventCategory, const FString& EventName, const FString& StringValue)
+{
+	if (IAnalyticsProvider* analytics = GetAnalyticsFromWorld(WorldContextObject))
+	{
+		TArray<FAnalyticsEventAttribute> eventAttributes;
+		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameCategory, GetEnumValueString(EventCategory)));
+		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameStringValue, StringValue));
+		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameInTutorial, UModumateAnalyticsStatics::bInTutorial));
+		eventAttributes.Add(FAnalyticsEventAttribute(UModumateAnalyticsStatics::AttrNameSessionID, GetSessionIDFromWorld(WorldContextObject)));
 
 		analytics->RecordEvent(EventName, eventAttributes);
 		UModumateAnalyticsStatics::OnRecordedAnalyticsEvent.Broadcast(EventCategory, EventName);
@@ -174,7 +208,6 @@ bool UModumateAnalyticsStatics::RecordPresetDuplication(UObject* WorldContextObj
 	FString eventName = UModumateAnalyticsStatics::GetPresetEventName(TEXT("Duplicate"), PresetInstance);
 	return UModumateAnalyticsStatics::RecordEventCustomFloat(WorldContextObject, EModumateAnalyticsCategory::Presets, eventName, 1.0f);
 }
-
 
 FString UModumateAnalyticsStatics::GetPresetEventName(const TCHAR* Prefix, const FBIMPresetInstance* PresetInstance)
 {

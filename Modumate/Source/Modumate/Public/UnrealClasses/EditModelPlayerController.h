@@ -59,6 +59,7 @@ public:
 	virtual void PostInitializeComponents() override;
 	virtual void SetPawn(APawn* InPawn) override;
 
+
 private:
 
 	UPROPERTY()
@@ -82,8 +83,8 @@ private:
 	void UpdateUserSnapPoint();
 
 	FTimerHandle AutoSaveTimer;
-	FGuid TelemetrySessionKey;
 	FDateTime SessionStartTime;
+	FGuid TelemetrySessionKey;
 	static const FString InputTelemetryDirectory;
 
 	bool StartTelemetrySession(bool bRecordLoadedDocument);
@@ -173,6 +174,8 @@ public:
 
 	UPROPERTY()
 	FOnBoundInputAxisEvent HandledInputAxisEvent;
+
+	FGuid GetSessionID() const { return TelemetrySessionKey; }
 
 	void OnHandledInputActionName(FName ActionName, EInputEvent InputEvent);
 	void OnHandledInputAxisName(FName AxisName, float Value);

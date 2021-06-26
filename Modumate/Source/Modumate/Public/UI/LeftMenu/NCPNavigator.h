@@ -38,7 +38,13 @@ protected:
 
 	EPresetCardType CurrentPresetCardType = EPresetCardType::None;
 
+	FTimerHandle AnalyticsTimer;
+	FString AnalyticsString;
+	void SendAnalytics();
+
 public:
+
+	static const FString AnalyticsEventString;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateEditableTextBoxUserWidget* SearchBarWidget;

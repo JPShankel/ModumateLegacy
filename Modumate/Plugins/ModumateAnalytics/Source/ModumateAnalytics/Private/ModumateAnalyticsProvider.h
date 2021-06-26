@@ -31,6 +31,12 @@ struct FModumateAnalyticsEventData
 	UPROPERTY()
 	bool inTutorial;
 
+	UPROPERTY()
+	FString sessionId;
+
+	UPROPERTY()
+	FString stringValue;
+
 	FModumateAnalyticsEventData();
 	FModumateAnalyticsEventData(const FString& EventName, const FString& AppVersion, const TArray<FAnalyticsEventAttribute>& Attributes);
 };

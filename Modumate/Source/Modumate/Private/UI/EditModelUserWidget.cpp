@@ -456,7 +456,7 @@ void UEditModelUserWidget::ToggleHelpMenu(bool NewVisibility)
 		ToolbarWidget->ButtonTopToolbarHelp->SwitchToNormalStyle();
 
 		// Send analytic event
-		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Tutorials, HelpMenuBP->GetHelpMenuSearchbarText());
+		UModumateAnalyticsStatics::RecordEventCustomString(this, EModumateAnalyticsCategory::Tutorials, UHelpMenu::AnalyticsSearchEvent,HelpMenuBP->GetHelpMenuSearchbarText());
 	}
 }
 

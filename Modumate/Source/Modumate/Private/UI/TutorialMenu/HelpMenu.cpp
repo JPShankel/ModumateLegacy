@@ -18,6 +18,8 @@
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
 
+const FString UHelpMenu::AnalyticsSearchEvent = TEXT("TutorialHelpSearch");
+
 UHelpMenu::UHelpMenu(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

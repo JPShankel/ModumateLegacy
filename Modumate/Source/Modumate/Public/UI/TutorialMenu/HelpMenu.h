@@ -63,6 +63,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
+	const static FString AnalyticsSearchEvent;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonClose;

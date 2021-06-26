@@ -47,6 +47,14 @@ FModumateAnalyticsEventData::FModumateAnalyticsEventData(const FString& EventNam
 		{
 			LexTryParseString(inTutorial, *attrValue);
 		}
+		else if (attrName == UModumateAnalyticsStatics::AttrNameSessionID)
+		{
+			sessionId = attrValue;
+		}
+		else if (attrName == UModumateAnalyticsStatics::AttrNameStringValue)
+		{
+			stringValue = attrValue;
+		}
 	}
 
 	if (key.IsEmpty())
