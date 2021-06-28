@@ -13,9 +13,18 @@ const FString FModumateUpdater::InstallerSubdir(TEXT("Installers"));
 TAutoConsoleVariable<int32> CVarModumateDisableForcedUpdate(
 	TEXT("modumate.DisableForcedUpdate"),
 	0,
-	TEXT("Don't force the user to update."),
+	TEXT("Don't force the user to update if an installer is found."),
 	ECVF_Default);
 
+TAutoConsoleVariable<bool> CVarModumateQueryUpdates(
+	TEXT("modumate.QueryUpdates"),
+#if UE_BUILD_SHIPPING
+	true,
+#else
+	false,
+#endif
+	TEXT("Whether to query for available installers for newer versions of the app."),
+	ECVF_Default);
 
 FModumateUpdater::~FModumateUpdater()
 {
@@ -31,7 +40,14 @@ void FModumateUpdater::ProcessLatestInstallers(const FModumateUserStatus& Status
 	OurVersion = projectSettings->ProjectVersion;
 	LatestVersion = Status.latest_modumate_version;
 
-	FetchInstallersObject();
+	if (CVarModumateQueryUpdates.GetValueOnAnyThread())
+	{
+		FetchInstallersObject();
+	}
+	else
+	{
+		SetUserLoggedIn();
+	}
 }
 
 FString FModumateUpdater::GetPathForInstaller(const FString& CurrentVersion, const FString& NewestVersion) const
