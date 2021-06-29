@@ -23,12 +23,10 @@ bool UModumateAnalyticsStatics::bInTutorial = false;
 
 FString UModumateAnalyticsStatics::GetSessionIDFromWorld(UObject *WorldContextObject)
 {
-	if (WorldContextObject && WorldContextObject->GetWorld() && WorldContextObject->GetWorld()->GetFirstPlayerController())
-	{
-		auto sessionID = Cast<AEditModelPlayerController>(WorldContextObject->GetWorld()->GetFirstPlayerController())->GetSessionID();
-		return sessionID.ToString();
-	}
-	return FGuid().ToString();
+	auto* world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
+	auto* editModelPlayerController = world ? Cast<AEditModelPlayerController>(world->GetFirstPlayerController()) : nullptr;
+	FGuid sessionID = editModelPlayerController ? editModelPlayerController->GetSessionID() : FGuid();
+	return sessionID.ToString();
 }
 
 TSharedPtr<IAnalyticsProvider> UModumateAnalyticsStatics::InitAnalytics()
