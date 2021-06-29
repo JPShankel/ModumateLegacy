@@ -400,11 +400,14 @@ bool AEditModelGameMode::TrySendUserInitialState(APlayerController* NewPlayer)
 void AEditModelGameMode::OnServerStatusTimer()
 {
 #if UE_SERVER
+	// Allow skipping the auto-exit with the "longtimeouts" parameter, which is also how we enable longer connection timeout values.
+	static bool bShouldAutoExit = !FParse::Param(FCommandLine::Get(), TEXT("longtimeouts"));
+
 	if (PlayersByUserID.Num() == 0)
 	{
 		TimeWithoutPlayers += ServerStatusTimerRate;
 
-		if (TimeWithoutPlayers >= ServerAutoExitTimeout)
+		if (bShouldAutoExit && (TimeWithoutPlayers >= ServerAutoExitTimeout))
 		{
 			UE_LOG(LogGameMode, Log, TEXT("It has been %.1fsec without any connected players; exiting!"), TimeWithoutPlayers);
 			FPlatformMisc::RequestExit(false);

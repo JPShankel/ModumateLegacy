@@ -1,3 +1,5 @@
 # OSX specific global file ignores
 .DS_Store
 
+# Convenient folder for sticking build artifacts
+Builds/*
