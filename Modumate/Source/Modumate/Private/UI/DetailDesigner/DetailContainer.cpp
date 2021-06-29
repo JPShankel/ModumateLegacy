@@ -102,7 +102,7 @@ bool UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 		int32 rotationIdx = OrientationIdx % numParticipants;
 
 		auto& miterData = edgeObj->GetMiterData();
-		for (int32 participantID : miterData.SortedMiterIDs)
+		for (int32 participantID : miterData.SortedParticipantIDs)
 		{
 			auto participantObj = document->GetObjectById(participantID);
 			if (!ensure(participantObj))

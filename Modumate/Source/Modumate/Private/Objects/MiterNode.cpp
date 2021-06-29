@@ -72,26 +72,36 @@ FMiterParticipantData::FMiterParticipantData(const struct FMiterData *InMiterDat
 		return;
 	}
 
-	for (int32 layerGroupIdx = 0; layerGroupIdx < MaxNumLayerGroups; ++layerGroupIdx)
-	{
-		EMiterLayerGroup layerGroup = (EMiterLayerGroup)layerGroupIdx;
-		int32 layerGroupStartIdx, layerGroupEndIdx;
-		GetLayerOffsetIndices(layerGroup, layerGroupStartIdx, layerGroupEndIdx);
-
-		// TODO: refactor the concept of "layer groups" when we can author custom miter groups/priorities for each layer.
-		// For now, since all layers come in as Structure by default, PreStructure and PostStructure will be repurposed for Surface extensions.
-		HaveLayerGroup[layerGroupIdx] = (layerGroup != EMiterLayerGroup::Structure) || (layerGroupStartIdx != layerGroupEndIdx);
-
-		float layerGroupStartOffset = LayerStartOffset + LayerDims.LayerOffsets[layerGroupStartIdx];
-		float layerGroupEndOffset = LayerStartOffset + LayerDims.LayerOffsets[layerGroupEndIdx];
-
-		FVector2D origin2D = FVector2D::ZeroVector;
-		LayerGroupOrigins2D[layerGroupIdx].Key = origin2D + (layerGroupStartOffset * Normal2D);
-		LayerGroupOrigins2D[layerGroupIdx].Value = origin2D + (layerGroupEndOffset * Normal2D);
-	}
-
-	LayerExtensions.AddZeroed(LayerDims.NumLayers);
+	// All structural layers plus pre and post structure
+	GroupOrigins2D.SetNum(LayerDims.LayerGroups.Num()+2);
+	GroupExtensions.SetNumZeroed(LayerDims.LayerGroups.Num());
+	
+	LayerExtensions.SetNumZeroed(LayerDims.NumLayers);
 	SurfaceExtensions = FVector2D::ZeroVector;
+
+	// Pre-structure origin
+	float layerGroupStartOffset = LayerStartOffset + LayerDims.LayerOffsets[0];
+	float layerGroupEndOffset = LayerStartOffset + LayerDims.LayerOffsets[0];
+	GroupOrigins2D[0].Key = (layerGroupStartOffset * Normal2D);
+	GroupOrigins2D[0].Value = (layerGroupEndOffset * Normal2D);
+
+	// Post-structure origin
+	layerGroupStartOffset = LayerStartOffset + LayerDims.LayerOffsets[LayerDims.NumLayers];
+	layerGroupEndOffset = LayerStartOffset + LayerDims.LayerOffsets[LayerDims.NumLayers];
+	GroupOrigins2D.Last().Key = (layerGroupStartOffset * Normal2D);
+	GroupOrigins2D.Last().Value = (layerGroupEndOffset * Normal2D);
+
+	// Structural origins
+	for (int32 groupIdx = 0; groupIdx < LayerDims.LayerGroups.Num(); ++groupIdx)
+	{
+		const auto& group = LayerDims.LayerGroups[groupIdx];
+
+		layerGroupStartOffset = LayerStartOffset + LayerDims.LayerOffsets[group.StartIndex];
+		layerGroupEndOffset = LayerStartOffset + LayerDims.LayerOffsets[group.EndIndex+1];
+
+		GroupOrigins2D[groupIdx + 1].Key = (layerGroupStartOffset * Normal2D);
+		GroupOrigins2D[groupIdx + 1].Value = (layerGroupEndOffset * Normal2D);
+	}
 
 	bValid = true;
 }
@@ -108,109 +118,114 @@ void FMiterParticipantData::Reset()
 	Normal2D = FVector2D::ZeroVector;
 	LayerDims = FCachedLayerDimsByType();
 
-	for (int32 layerGroupIdx = 0; layerGroupIdx < MaxNumLayerGroups; ++layerGroupIdx)
-	{
-		HaveLayerGroup[layerGroupIdx] = false;
-		LayerGroupOrigins2D[layerGroupIdx].Key = FVector2D::ZeroVector;
-		LayerGroupOrigins2D[layerGroupIdx].Value = FVector2D::ZeroVector;
-		HaveExtendedLayerGroup[layerGroupIdx] = false;
-		LayerGroupExtensions[layerGroupIdx] = FVector2D::ZeroVector;
-	}
-
 	LayerExtensions.Reset();
+	GroupExtensions.Reset();
 	SurfaceExtensions = FVector2D::ZeroVector;
 }
 
-void FMiterParticipantData::GetLayerOffsetIndices(EMiterLayerGroup MiterLayerGroup, int32 &OutLayerStartIdx, int32 &OutLayerEndIdx)
+void FMiterParticipantData::IntersectStructureGroup(const FMiterLayerGroup& LayerGroup, const FMiterParticipantData& OtherParticipant, bool bUseThisStart, bool bUseOtherStart, FMiterHitResult& OutHitResult) const
 {
-	switch (MiterLayerGroup)
-	{
-	case EMiterLayerGroup::PreStructure:
-		OutLayerStartIdx = 0;
-		OutLayerEndIdx = LayerDims.StructuralLayerStartIdx;
-		break;
-	case EMiterLayerGroup::Structure:
-		OutLayerStartIdx = LayerDims.StructuralLayerStartIdx;
-		OutLayerEndIdx = LayerDims.StructuralLayerEndIdx + 1;
-		break;
-	case EMiterLayerGroup::PostStructure:
-		OutLayerStartIdx = LayerDims.StructuralLayerEndIdx + 1;
-		OutLayerEndIdx = LayerDims.LayerOffsets.Num() - 1;
-		break;
-	}
-}
+	int32 numOtherLayers = OtherParticipant.LayerDims.LayerGroups.Num();
 
-void FMiterParticipantData::FinishLayerGroupExtension(EMiterLayerGroup MiterLayerGroup)
-{
-	int32 layerGroupIdx = (int32)MiterLayerGroup;
-	HaveExtendedLayerGroup[layerGroupIdx] = true;
-	const FVector2D &groupExtensions = LayerGroupExtensions[layerGroupIdx];
+	const auto& thisOriginPair = GroupOrigins2D[LayerGroup.GroupIdx + 1];
+	FVector2D thisOrigin = bUseThisStart ? thisOriginPair.Key : thisOriginPair.Value;
 
-	int32 layerGroupStartIdx, layerGroupEndIdx;
-	GetLayerOffsetIndices(MiterLayerGroup, layerGroupStartIdx, layerGroupEndIdx);
+	EMiterLayerGroupPreferredNeighbor targetNeighborDelta = bUseThisStart == bUseOtherStart ? LayerGroup.PreferredNeighbor : MiterLayerGroupOtherNeighbor(LayerGroup.PreferredNeighbor);
 
-	switch (MiterLayerGroup)
+	int32 bestGroup = INDEX_NONE;
+	OutHitResult.bPriorityMatchHit = false;
+
+	for (int32 i = 0; i < numOtherLayers; ++i)
 	{
-	case EMiterLayerGroup::PreStructure:
-	{
-		SurfaceExtensions.X = groupExtensions.X;
-		break;
-	}
-	case EMiterLayerGroup::PostStructure:
-	{
-		SurfaceExtensions.Y = groupExtensions.Y;
-		break;
-	}
-	case EMiterLayerGroup::Structure:
-	{
-		float groupThickness = (LayerDims.LayerOffsets[layerGroupEndIdx] - LayerDims.LayerOffsets[layerGroupStartIdx]);
-		float layerGroupProgress = 0.0f;
-		for (int32 layerIdx = layerGroupStartIdx; layerIdx < layerGroupEndIdx; ++layerIdx)
+		int32 otherGroupIdx = targetNeighborDelta == EMiterLayerGroupPreferredNeighbor::Previous ? i : numOtherLayers - i - 1;
+
+		// If I have no designated target side, or this layer group is on my designated side or this layer group is structual, I can miter
+		bool bCanMiterWith = targetNeighborDelta == EMiterLayerGroupPreferredNeighbor::Both ||
+			targetNeighborDelta == OtherParticipant.LayerDims.LayerGroups[otherGroupIdx].PreferredNeighbor ||
+			OtherParticipant.LayerDims.LayerGroups[otherGroupIdx].PreferredNeighbor == EMiterLayerGroupPreferredNeighbor::Both;
+
+		if (!bCanMiterWith)
 		{
-			float layerThickness = LayerDims.LayerOffsets[layerIdx + 1] - LayerDims.LayerOffsets[layerIdx];
-			// Accumulating layer thicknesses introduces more than the default SMALL_NUMBER (1e-8) of error,
-			// but shouldn't accumulate more than a micrometer of error. Ensure here only for sanity checking.
-			ensure(FMath::IsNearlyEqual(layerThickness, LayerDims.LayerThicknesses[layerIdx], KINDA_SMALL_NUMBER));
-			float layerStartAlpha = layerGroupProgress / groupThickness;
-			layerGroupProgress += layerThickness;
-			float layerEndAlpha = layerGroupProgress / groupThickness;
-			LayerExtensions[layerIdx].X = FMath::Lerp(groupExtensions.X, groupExtensions.Y, layerStartAlpha);
-			LayerExtensions[layerIdx].Y = FMath::Lerp(groupExtensions.X, groupExtensions.Y, layerEndAlpha);
+			continue;
 		}
-		break;
+
+		// If we find an exact match, prioritize that
+		if (OtherParticipant.LayerDims.LayerGroups[otherGroupIdx].Priority == LayerGroup.Priority)
+		{
+			bestGroup = otherGroupIdx;
+			OutHitResult.bPriorityMatchHit = true;
+			break;
+		}
+
+		// Accept the first higher priority layer, but keep looking for an exact match
+		if (bestGroup == INDEX_NONE && OtherParticipant.LayerDims.LayerGroups[otherGroupIdx].Priority < LayerGroup.Priority)
+		{
+			bestGroup = otherGroupIdx;
+		}
 	}
-	default:
-		break;
+
+	if (bestGroup == INDEX_NONE)
+	{
+		return;
+	}
+
+	int32 otherGroupIdx = bestGroup;
+
+	const auto& otherOriginPair = OtherParticipant.GroupOrigins2D[otherGroupIdx + 1];
+	FVector2D otherOrigin;
+
+	// If we hit a matching layer, pick origin to create angled miter
+	if (OutHitResult.bPriorityMatchHit)
+	{
+		otherOrigin = bUseOtherStart ? otherOriginPair.Key : otherOriginPair.Value;
+	}
+	else
+	{
+		// Otherwise, if we're targeting a central structural layer, pick the side passed in
+		if (targetNeighborDelta == EMiterLayerGroupPreferredNeighbor::Both)
+		{
+			otherOrigin = bUseOtherStart ? otherOriginPair.Key : otherOriginPair.Value;
+		}
+		// ..or if it's a low priority layer, pick the side of the structural layer we're targeting
+		else
+		{
+			otherOrigin = targetNeighborDelta == EMiterLayerGroupPreferredNeighbor::Previous ? otherOriginPair.Key : otherOriginPair.Value;
+		}
+	}
+
+	FVector2D intersection;
+	float thisRayDist,otherRayDist;
+
+	if (UModumateGeometryStatics::RayIntersection2D(
+		thisOrigin, MiterDir2D, otherOrigin, OtherParticipant.MiterDir2D,
+		intersection, thisRayDist, otherRayDist, false))
+	{
+		OutHitResult.Dist = thisRayDist;
+		OutHitResult.bRayHit = true;
 	}
 }
 
-void FMiterParticipantData::IntersectSingle(const FMiterParticipantData &OtherParticipant, bool bUseThisStart, bool bUseOtherStart,
-	EMiterLayerGroup ThisLayerGroup, EMiterLayerGroup OtherLayerGroup, FMiterHitResult &OutHitResult) const
+void FMiterParticipantData::IntersectSurfaceGroup(int32 ThisSurfaceIdx, int32 OtherSurfaceIdx, const FMiterParticipantData& OtherParticipant, bool bUseThisStart, bool bUseOtherStart, FMiterHitResult& OutHitResult) const
 {
-	int32 thisLayerGroupIdx = (int32)ThisLayerGroup;
-	int32 otherLayerGroupIdx = (int32)OtherLayerGroup;
+	TPair<FVector2D, FVector2D> thisOriginPair, otherOriginPair;
+	FVector2D thisOrigin, otherOrigin;
 
-	const auto &thisOriginPair = LayerGroupOrigins2D[thisLayerGroupIdx];
-	const FVector2D &thisOrigin = bUseThisStart ? thisOriginPair.Key : thisOriginPair.Value;
+	thisOriginPair = GroupOrigins2D[ThisSurfaceIdx];
+	thisOrigin = bUseThisStart ? thisOriginPair.Key : thisOriginPair.Value;
 
-	const auto &otherOriginPair = OtherParticipant.LayerGroupOrigins2D[otherLayerGroupIdx];
-	const FVector2D &otherOrigin = bUseOtherStart ? otherOriginPair.Key : otherOriginPair.Value;
-
-	const FVector2D &otherExtensions = OtherParticipant.LayerGroupExtensions[otherLayerGroupIdx];
-	float otherExtension = bUseOtherStart ? otherExtensions.X : otherExtensions.Y;
+	otherOriginPair = OtherParticipant.GroupOrigins2D[OtherSurfaceIdx];
+	otherOrigin = bUseOtherStart ? otherOriginPair.Key : otherOriginPair.Value;
 
 	float otherRayDist = 0.0f;
 	FVector2D intersection;
 
-	OutHitResult.bRayHit = UModumateGeometryStatics::RayIntersection2D(
+	if (UModumateGeometryStatics::RayIntersection2D(
 		thisOrigin, MiterDir2D, otherOrigin, OtherParticipant.MiterDir2D,
-		intersection, OutHitResult.Dist, otherRayDist, false);
-
-	OutHitResult.bPhysicalHit = OutHitResult.bRayHit &&
-		OtherParticipant.HaveExtendedLayerGroup[otherLayerGroupIdx] &&
-		(otherRayDist <= (otherExtension + RAY_INTERSECT_TOLERANCE));
+		intersection, OutHitResult.Dist, otherRayDist, false))
+	{
+		OutHitResult.bRayHit = true;
+	}
 }
-
 
 FMiterData::FMiterData()
 {
@@ -225,7 +240,7 @@ void FMiterData::Reset()
 	EdgeDir = FVector::ZeroVector;
 	AxisX = FVector::ZeroVector;
 	AxisY = FVector::ZeroVector;
-	SortedMiterIDs.Reset();
+	SortedParticipantIDs.Reset();
 	ParticipantsByID.Reset();
 }
 
@@ -269,12 +284,12 @@ bool FMiterData::GatherDetails(const AModumateObjectInstance *InMiterObject)
 		}
 
 		int32 participantID = participant.MOI->ID;
-		SortedMiterIDs.Add(participantID);
+		SortedParticipantIDs.Add(participantID);
 		ParticipantsByID.Add(participantID, MoveTemp(participant));
 	}
 
 	// Sort the participants by angle
-	SortedMiterIDs.Sort([this](const int32 &IDA, const int32 &IDB) {
+	SortedParticipantIDs.Sort([this](const int32 &IDA, const int32 &IDB) {
 		return ParticipantsByID[IDA].MiterAngle < ParticipantsByID[IDB].MiterAngle;
 	});
 
@@ -302,7 +317,7 @@ bool FMiterData::CalculateMitering()
 
 		for (int32 participantIdx = 0; participantIdx < numParticipants; ++participantIdx)
 		{
-			int32 participantID = SortedMiterIDs[participantIdx];
+			int32 participantID = SortedParticipantIDs[participantIdx];
 			if (!ensure(ParticipantsByID.Contains(participantID)))
 			{
 				return false;
@@ -340,115 +355,184 @@ bool FMiterData::CalculateMitering()
 		return true;
 	}
 
-	bool bTotalMiterSuccess = true;
-
-	// Now, for each object, extend its structural layer group
-	for (int32 i = 0; i < numParticipants; ++i)
+	// Gather all layer groups from all participants and sort by priority
+	TArray<FMiterLayerGroup> SortedParticipantGroups;
+	for (int32 partIdx = 0; partIdx < numParticipants; ++partIdx)
 	{
-		bool bMiterSuccess = ExtendLayerGroup(i, EMiterLayerGroup::Structure);
-		bTotalMiterSuccess = bTotalMiterSuccess && bMiterSuccess;
+		FMiterParticipantData& participant = ParticipantsByID[SortedParticipantIDs[partIdx]];
+		participant.ExtendedGroupIndices.Empty();
+		for (int32 groupIdx=0;groupIdx<participant.LayerDims.LayerGroups.Num();++groupIdx)
+		{
+			auto& layerGroup = participant.LayerDims.LayerGroups[groupIdx];
+			layerGroup.ParticipantIdx = partIdx;
+			layerGroup.GroupIdx = groupIdx;
+			SortedParticipantGroups.Add(layerGroup);
+		}
 	}
 
-	// Now, for each object, extend its non-structural layer groups
+	SortedParticipantGroups.Sort([](const FMiterLayerGroup& LHS, const FMiterLayerGroup& RHS) {
+		return LHS.Priority < RHS.Priority;
+	});
+
+	// Now, extend each structural layer group from participants
+	bool bTotalMiterSuccess = true;
+	for (auto& participantGroup : SortedParticipantGroups)
+	{
+		bTotalMiterSuccess = ExtendLayerGroup(participantGroup) && bTotalMiterSuccess;
+	}
+
+	// Now, for each object, extend its surface groups
+	FMiterLayerGroup prePostGroup;
 	for (int32 i = 0; i < numParticipants; ++i)
 	{
-		bool bPreMiterSuccess = ExtendLayerGroup(i, EMiterLayerGroup::PreStructure);
-		bool bPostMiterSuccess = ExtendLayerGroup(i, EMiterLayerGroup::PostStructure);
-		bTotalMiterSuccess = bTotalMiterSuccess && bPreMiterSuccess && bPostMiterSuccess;
+		bTotalMiterSuccess = ExtendSurfaceGroups(i) && bTotalMiterSuccess;
 	}
 
 	return bTotalMiterSuccess;
 }
 
-bool FMiterData::ExtendLayerGroup(int32 ParticipantIndex, EMiterLayerGroup MiterLayerGroup)
+FMiterParticipantData* FMiterData::GetParticipantBySortedIDIndex(int32 ParticipantIdx)
 {
-	int32 layerGroupIdx = (int32)MiterLayerGroup;
-	int32 curID = SortedMiterIDs[ParticipantIndex];
-	FMiterParticipantData &participant = ParticipantsByID[curID];
-	int32 numParticipants = SortedMiterIDs.Num();
-
 	// If the participant is missing a particular layer group, then we report success without doing any work.
-	if (!participant.HaveLayerGroup[layerGroupIdx] || (numParticipants < 2))
+	if (ParticipantIdx >= SortedParticipantIDs.Num() || SortedParticipantIDs.Num() < 2)
 	{
+		return nullptr;
+	}
+	return ParticipantsByID.Find(SortedParticipantIDs[ParticipantIdx]);
+}
+
+bool FMiterData::ExtendSurfaceGroups(int32 ParticipantIdx)
+{
+	FMiterParticipantData* participant = GetParticipantBySortedIDIndex(ParticipantIdx);
+
+	if (participant == nullptr)
+	{
+		return false;
+	}
+
+	int32 nextDelta, prevDelta;
+	participant->GetNeighboringParticipantDeltas(nextDelta, prevDelta);
+
+	FMiterParticipantData* nextNeighbor, *prevNeighbor;
+	if (!ensureAlways(GetNeighboringParticipants(ParticipantIdx, nextDelta, nextNeighbor, prevDelta, prevNeighbor)))
+	{
+		return false;
+	}
+
+	bool bSameWindingAsNext = (nextNeighbor->bPlaneNormalCW == participant->bPlaneNormalCW);
+	bool bSameWindingAsPrev = (prevNeighbor->bPlaneNormalCW == participant->bPlaneNormalCW);
+
+	int32 prevNeighborOriginIdx = INDEX_NONE, nextNeighborOriginIdx= INDEX_NONE;
+	prevNeighborOriginIdx = bSameWindingAsPrev ? prevNeighbor->GroupOrigins2D.Num() - 1 : 0;
+	nextNeighborOriginIdx = bSameWindingAsNext ? 0 : nextNeighbor->GroupOrigins2D.Num() - 1;
+	
+	FMiterHitResult prevHitResult,nextHitResult;
+	participant->IntersectSurfaceGroup(0, prevNeighborOriginIdx, *prevNeighbor, true, !bSameWindingAsPrev, prevHitResult);
+	participant->IntersectSurfaceGroup(participant->GroupOrigins2D.Num()-1, nextNeighborOriginIdx, *nextNeighbor, false, bSameWindingAsNext, nextHitResult);
+
+	if (prevHitResult.bRayHit && nextHitResult.bRayHit)
+	{
+		participant->SurfaceExtensions.X = prevHitResult.Dist;
+		participant->SurfaceExtensions.Y = nextHitResult.Dist;
 		return true;
 	}
+	return false;
+}
 
-	int32 participantID = participant.MOI->ID;
-	const FVector2D &fromDir = participant.MiterDir2D;
-	const FVector2D &fromStartOrigin = participant.LayerGroupOrigins2D[layerGroupIdx].Key;
-	const FVector2D &fromEndOrigin = participant.LayerGroupOrigins2D[layerGroupIdx].Value;
-	bool bExtendingStructure = (MiterLayerGroup == EMiterLayerGroup::Structure);
+void FMiterParticipantData::GetNeighboringParticipantDeltas(int32& OutNextNeighbor, int32& OutPreviousNeighbor) const
+{
+	OutNextNeighbor = bPlaneNormalCW ? -1 : 1;
+	OutPreviousNeighbor = -OutNextNeighbor;
+}
 
-	bool bFoundLayerGroupExtensions = false;
-	FVector2D layerGroupExtensions(ForceInitToZero);
+bool FMiterData::GetNeighboringParticipants(int32 ParticipantIdx, int32 NextDelta, FMiterParticipantData*& NextNeighbor, int32 PrevDelta, FMiterParticipantData*& PrevNeighbor)
+{
+	int32 numParticipants = SortedParticipantIDs.Num();
 
-	// Extend the start and end side only as far as they would need to miter with adjacent participants.
-	// Determine which direction to iterate to the next and previous miter participants,
-	// based on the way the source participant is oriented around the miter edge.
-	int32 nextDelta = participant.bPlaneNormalCW ? -1 : 1;
-	int32 prevDelta = -nextDelta;
+	int32 nextID = SortedParticipantIDs[(ParticipantIdx + numParticipants + NextDelta) % numParticipants];
+	int32 prevID = SortedParticipantIDs[(ParticipantIdx + numParticipants + PrevDelta) % numParticipants];
 
-	// Determine which direction to traverse the angularly-sorted list of miter participants,
-	// based on which group of layers we're current extending and which side of the group to extend.
-	int32 startDelta = 0, endDelta = 0;
-	switch (MiterLayerGroup)
+	NextNeighbor = ParticipantsByID.Find(nextID);
+	PrevNeighbor = ParticipantsByID.Find(prevID);
+
+	return true;
+}
+
+bool FMiterData::ExtendLayerGroup(const FMiterLayerGroup& LayerGroup)
+{
+	FMiterParticipantData* participant = GetParticipantBySortedIDIndex(LayerGroup.ParticipantIdx);
+
+	if (participant == nullptr)
 	{
-	case EMiterLayerGroup::PreStructure:
-		startDelta = endDelta = prevDelta;
-		break;
-	case EMiterLayerGroup::Structure:
-		startDelta = prevDelta;
-		endDelta = nextDelta;
-		break;
-	case EMiterLayerGroup::PostStructure:
-		startDelta = endDelta = nextDelta;
-		break;
+		return false;
 	}
 
-	int32 startID = SortedMiterIDs[(ParticipantIndex + numParticipants + startDelta) % numParticipants];
-	int32 endID = SortedMiterIDs[(ParticipantIndex + numParticipants + endDelta) % numParticipants];
-	FMiterParticipantData &startParticipant = ParticipantsByID[startID];
-	FMiterParticipantData &endParticipant = ParticipantsByID[endID];
+	int32 nextDelta, prevDelta;
+	participant->GetNeighboringParticipantDeltas(nextDelta, prevDelta);
+
+	// Low priority layers favor one or the other neighboring participant, higher priority layers test against both
+	if (LayerGroup.PreferredNeighbor == EMiterLayerGroupPreferredNeighbor::Previous)
+	{
+		nextDelta = prevDelta;
+	}
+	else if(LayerGroup.PreferredNeighbor == EMiterLayerGroupPreferredNeighbor::Next)
+	{
+		prevDelta = nextDelta;
+	}
+
+	FMiterParticipantData* startParticipant = nullptr;
+	FMiterParticipantData* endParticipant = nullptr;
+
+	if (!ensureAlways(GetNeighboringParticipants(LayerGroup.ParticipantIdx, prevDelta, startParticipant, nextDelta, endParticipant)))
+	{
+		return false;
+	}
 
 	// Determine which sides of the "to" layer groups to extend against,
 	// based on which way they are oriented around the miter edge.
-	bool bSameWindingAsStart = (participant.bPlaneNormalCW == startParticipant.bPlaneNormalCW);
-	bool bSameWindingAsEnd = (participant.bPlaneNormalCW == endParticipant.bPlaneNormalCW);
+	bool bSameWindingAsStart = (participant->bPlaneNormalCW == startParticipant->bPlaneNormalCW);
+	bool bSameWindingAsEnd = (participant->bPlaneNormalCW == endParticipant->bPlaneNormalCW);
 	bool bTargetStartOfStartObj = !bSameWindingAsStart;
 	bool bTargetStartOfEndObj = bSameWindingAsEnd;
 
-	EMiterLayerGroup startLayerGroup = EMiterLayerGroup::Structure;
-	EMiterLayerGroup endLayerGroup = EMiterLayerGroup::Structure;
-	switch (MiterLayerGroup)
-	{
-	case EMiterLayerGroup::PreStructure:
-		startLayerGroup = (bSameWindingAsStart ? EMiterLayerGroup::PostStructure : EMiterLayerGroup::PreStructure);
-		endLayerGroup = (bSameWindingAsEnd ? EMiterLayerGroup::PostStructure : EMiterLayerGroup::PreStructure);
-		break;
-	case EMiterLayerGroup::Structure:
-		break;
-	case EMiterLayerGroup::PostStructure:
-		startLayerGroup = (bSameWindingAsStart ? EMiterLayerGroup::PreStructure : EMiterLayerGroup::PostStructure);
-		endLayerGroup = (bSameWindingAsEnd ? EMiterLayerGroup::PreStructure : EMiterLayerGroup::PostStructure);
-		break;
-	}
-
 	FMiterHitResult startHitResult, endHitResult;
-	participant.IntersectSingle(startParticipant, true, bTargetStartOfStartObj,
-		MiterLayerGroup, startLayerGroup, startHitResult);
-	participant.IntersectSingle(endParticipant, false, bTargetStartOfEndObj,
-		MiterLayerGroup, endLayerGroup, endHitResult);
+	participant->IntersectStructureGroup(LayerGroup, *startParticipant, true, bTargetStartOfStartObj, startHitResult);
+	participant->IntersectStructureGroup(LayerGroup, *endParticipant, false, bTargetStartOfEndObj, endHitResult);
 
 	// Using the collision results for extended sides,
 	// try to get actual extension values against the neighboring layer groups
+	auto& groupExtensions = participant->GroupExtensions[LayerGroup.GroupIdx];
 	if (startHitResult.bRayHit && endHitResult.bRayHit)
 	{
-		layerGroupExtensions.X = startHitResult.Dist;
-		layerGroupExtensions.Y = endHitResult.Dist;
-		participant.LayerGroupExtensions[layerGroupIdx] = layerGroupExtensions;
-		participant.FinishLayerGroupExtension(MiterLayerGroup);
+		participant->ExtendedGroupIndices.Add(LayerGroup.GroupIdx);
+
+		groupExtensions.X = startHitResult.Dist;
+		groupExtensions.Y = endHitResult.Dist;
+
+		int32 layerGroupStartIdx, layerGroupEndIdx;
+		layerGroupStartIdx = LayerGroup.StartIndex;
+		layerGroupEndIdx = LayerGroup.EndIndex + 1;
+		float groupThickness = (participant->LayerDims.LayerOffsets[layerGroupEndIdx] - participant->LayerDims.LayerOffsets[layerGroupStartIdx]);
+
+		float layerGroupProgress = 0.0f;
+		for (int32 layerIdx = layerGroupStartIdx; layerIdx < layerGroupEndIdx; ++layerIdx)
+		{
+			float layerThickness = participant->LayerDims.LayerOffsets[layerIdx + 1] - participant->LayerDims.LayerOffsets[layerIdx];
+			// Accumulating layer thicknesses introduces more than the default SMALL_NUMBER (1e-8) of error,
+			// but shouldn't accumulate more than a micrometer of error. Ensure here only for sanity checking.
+			ensure(FMath::IsNearlyEqual(layerThickness, participant->LayerDims.LayerThicknesses[layerIdx], KINDA_SMALL_NUMBER));
+			float layerStartAlpha = layerGroupProgress / groupThickness;
+			layerGroupProgress += layerThickness;
+			float layerEndAlpha = layerGroupProgress / groupThickness;
+			participant->LayerExtensions[layerIdx].X = FMath::Lerp(groupExtensions.X, groupExtensions.Y, layerStartAlpha);
+			participant->LayerExtensions[layerIdx].Y = FMath::Lerp(groupExtensions.X, groupExtensions.Y, layerEndAlpha);
+		}
+
 		return true;
 	}
+
+	// TODO: when we fail to find a suitable target in our favored participant, move on to the next one in winding order
+	groupExtensions.X = groupExtensions.Y = 0;
 
 	return false;
 }

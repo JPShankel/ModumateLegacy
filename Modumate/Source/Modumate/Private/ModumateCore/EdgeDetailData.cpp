@@ -324,12 +324,12 @@ void FEdgeDetailData::FillFromMiterNode(const IMiterNode* MiterNode)
 	Version = FEdgeDetailData::CurrentVersion;
 
 	const FMiterData& miterData = MiterNode->GetMiterData();
-	if (miterData.SortedMiterIDs.Num() == 0)
+	if (miterData.SortedParticipantIDs.Num() == 0)
 	{
 		return;
 	}
 
-	for (int32 participantID : miterData.SortedMiterIDs)
+	for (int32 participantID : miterData.SortedParticipantIDs)
 	{
 		const FMiterParticipantData* participantData = miterData.ParticipantsByID.Find(participantID);
 		FEdgeDetailCondition participantCondition(participantData);

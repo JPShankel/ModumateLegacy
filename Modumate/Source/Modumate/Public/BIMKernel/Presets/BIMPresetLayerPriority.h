@@ -27,10 +27,17 @@ struct MODUMATE_API FBIMPresetLayerPriority
 	GENERATED_BODY()
 
 	UPROPERTY()
-	EBIMPresetLayerPriorityGroup PriorityGroup;
+	EBIMPresetLayerPriorityGroup PriorityGroup = EBIMPresetLayerPriorityGroup::Other;
 
 	UPROPERTY()
-	int32 PriorityValue;
+	int32 PriorityValue = 0;
 
 	EBIMResult SetFormElements(FBIMPresetForm& OutForm) const;
 };
+
+bool operator==(const FBIMPresetLayerPriority& LHS, const FBIMPresetLayerPriority& RHS);
+bool operator!=(const FBIMPresetLayerPriority& LHS, const FBIMPresetLayerPriority& RHS);
+bool operator<(const FBIMPresetLayerPriority& LHS, const FBIMPresetLayerPriority& RHS);
+bool operator>(const FBIMPresetLayerPriority& LHS, const FBIMPresetLayerPriority& RHS);
+bool operator<=(const FBIMPresetLayerPriority& LHS, const FBIMPresetLayerPriority& RHS);
+bool operator>=(const FBIMPresetLayerPriority& LHS, const FBIMPresetLayerPriority& RHS);

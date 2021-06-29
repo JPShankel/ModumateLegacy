@@ -2,21 +2,12 @@
 #pragma once
 
 #include "Objects/LayeredObjectInterface.h"
+#include "BIMKernel/Presets/BIMPresetLayerPriority.h"
 
 class AModumateObjectInstance;
 
 class FGraph3DFace;
 class FGraph3DEdge;
-
-// The individual groups of layers that miter together as a unit,
-// interpolating their extents for each of the layers within.
-enum class EMiterLayerGroup : uint8
-{
-	PreStructure,
-	Structure,
-	PostStructure,
-	Num
-};
 
 struct MODUMATE_API FMiterHitResult
 {
@@ -26,16 +17,13 @@ struct MODUMATE_API FMiterHitResult
 	// Whether the source ray intersects with the target ray  at all
 	bool bRayHit = false;
 
-	// Whether the source ray intersects with the target participant at its physically extended length
-	bool bPhysicalHit = false;
+	// Whether the source ray intersects with a layer of equal priority (not higher)
+	bool bPriorityMatchHit = false;
 };
 
 // A collection of data required to miter a plane-hosted object for a given edge
 struct MODUMATE_API FMiterParticipantData
-{
-    // TODO: replace this with variable number of groups when we support miter data coming from BIM
-    static constexpr int32 MaxNumLayerGroups = 3;
-    
+{    
 	// Whether all of the data has been successfully initialized
 	bool bValid = false;
 
@@ -66,17 +54,12 @@ struct MODUMATE_API FMiterParticipantData
 	// The cached layer dimensions of this plane-hosted object
 	FCachedLayerDimsByType LayerDims;
 
-	// For each layer group, whether the plane-hosted object has any layers in it
-	bool HaveLayerGroup[MaxNumLayerGroups];
-
 	// For each layer group, the 2D-projected origin points of the start and end sides of the layer group, offset from the miter center.
-	TPair<FVector2D, FVector2D> LayerGroupOrigins2D[MaxNumLayerGroups];
+	TArray<TPair<FVector2D, FVector2D>> GroupOrigins2D;
 
 	// For each layer group, if it has been extended in the miter
-	bool HaveExtendedLayerGroup[MaxNumLayerGroups];
-
-	// For each layer group, the mitered extension values for the start and end of the group
-	FVector2D LayerGroupExtensions[MaxNumLayerGroups];
+	TSet<int32> ExtendedGroupIndices;
+	TArray<FVector2D> GroupExtensions;
 
 	// For each layer, the mitered extension values for the start and of the layer
 	TArray<FVector2D> LayerExtensions;
@@ -87,13 +70,12 @@ struct MODUMATE_API FMiterParticipantData
 	FMiterParticipantData();
 	FMiterParticipantData(const struct FMiterData *InMiterData, int32 EdgeFaceIndex);
 	void Reset();
-	void GetLayerOffsetIndices(EMiterLayerGroup MiterLayerGroup, int32 &OutLayerStartIdx, int32 &OutLayerEndIdx);
-	void FinishLayerGroupExtension(EMiterLayerGroup MiterlayerGroup);
 
-	void IntersectSingle(const FMiterParticipantData &OtherParticipant, bool bUseThisStart, bool bUseOtherStart,
-		EMiterLayerGroup ThisLayerGroup, EMiterLayerGroup OtherLayerGroup, FMiterHitResult &OutHitResult) const;
+	void GetNeighboringParticipantDeltas(int32& OutNextNeighbor, int32& OutPreviousNeighbor) const;
+
+	void IntersectStructureGroup(const FMiterLayerGroup& LayerGroup, const FMiterParticipantData& OtherParticipant, bool bUseThisStart, bool bUseOtherStart, FMiterHitResult& OutHitResult) const;
+	void IntersectSurfaceGroup(int32 ThisSurfaceIdx, int32 OtherSurfaceIdx, const FMiterParticipantData& OtherParticipant, bool bUseThisStart, bool bUseOtherStart, FMiterHitResult& OutHitResult) const;
 };
-
 
 struct MODUMATE_API FMiterData
 {
@@ -114,7 +96,7 @@ struct MODUMATE_API FMiterData
 	FVector AxisY = FVector::ZeroVector;
 
 	// The miter participant IDs, sorted by angle
-	TArray<int32> SortedMiterIDs;
+	TArray<int32> SortedParticipantIDs;
 
 	// The miter participants, stored by ID
 	TMap<int32, FMiterParticipantData> ParticipantsByID;
@@ -129,7 +111,12 @@ struct MODUMATE_API FMiterData
 	bool CalculateMitering();
 
 	// Given an index in the sorted list of participants and a layer group to extend, extend it.
-	bool ExtendLayerGroup(int32 ParticipantIndex, EMiterLayerGroup MiterLayerGroup);
+	bool ExtendLayerGroup(const FMiterLayerGroup& LayerGroup);
+	bool ExtendSurfaceGroups(int32 ParticipantIdx);
+
+private:
+	FMiterParticipantData* GetParticipantBySortedIDIndex(int32 ParticipantIdx);
+	bool GetNeighboringParticipants(int32 ParticipantIdx, int32 NextDelta, FMiterParticipantData*& NextNeighbor, int32 PrevDelta, FMiterParticipantData*& PrevNeighbor);
 };
 
 class MODUMATE_API IMiterNode

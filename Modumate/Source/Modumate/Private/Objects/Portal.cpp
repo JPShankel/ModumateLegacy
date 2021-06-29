@@ -114,7 +114,7 @@ void AMOIPortal::UpdateCachedThickness()
 	FBIMLayerSpec& proxyLayer = (CachedProxyLayers.Num() == 0) ? CachedProxyLayers.AddDefaulted_GetRef() : CachedProxyLayers[0];
 	proxyLayer.ThicknessCentimeters = CachedThickness;
 
-	CachedLayerDims.UpdateLayersFromAssembly(CachedProxyLayers);
+	CachedLayerDims.UpdateLayersFromAssembly(Document,CachedProxyLayers);
 }
 
 bool AMOIPortal::MarkEdgesMiterDirty()

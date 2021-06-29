@@ -4,23 +4,42 @@
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 
 class AModumateObjectInstance;
+class UModumateDocument;
 
+enum class EMiterLayerGroupPreferredNeighbor
+{
+	Previous,
+	Next,
+	Both
+};
 
-struct FCachedLayerDimsByType
+FORCEINLINE EMiterLayerGroupPreferredNeighbor MiterLayerGroupOtherNeighbor(EMiterLayerGroupPreferredNeighbor Neighbor)
+{
+	switch (Neighbor)
+	{
+	case EMiterLayerGroupPreferredNeighbor::Previous: return EMiterLayerGroupPreferredNeighbor::Next;
+	case EMiterLayerGroupPreferredNeighbor::Next: return EMiterLayerGroupPreferredNeighbor::Previous;
+	};
+
+	return EMiterLayerGroupPreferredNeighbor::Both;
+}
+
+struct MODUMATE_API FMiterLayerGroup
+{
+	int32 StartIndex = INDEX_NONE, 
+		EndIndex = INDEX_NONE, 
+		ParticipantIdx = INDEX_NONE, 
+		GroupIdx = INDEX_NONE;
+
+	EMiterLayerGroupPreferredNeighbor PreferredNeighbor;
+	
+	float GroupThickness = 0.0f, GroupOffset = 0.0f;
+	FBIMPresetLayerPriority Priority;
+};
+
+struct MODUMATE_API FCachedLayerDimsByType
 {
 	int32 NumLayers = 0;
-
-	int32 StructuralLayerStartIdx = INDEX_NONE;
-	int32 StructuralLayerEndIdx = INDEX_NONE;
-	float StructureWidthStart = 0.0f;
-	float StructureWidthEnd = 0.0f;
-
-	int32 StartMembraneIdx = INDEX_NONE;
-	float StartMembraneStart = 0.0f;
-	float StartMembraneEnd = 0.0f;
-	int32 EndMembraneIdx = INDEX_NONE;
-	float EndMembraneStart = 0.0f;
-	float EndMembraneEnd = 0.0f;
 
 	bool bHasStartFinish = false;
 	float StartFinishThickness = 0.0f;
@@ -33,15 +52,17 @@ struct FCachedLayerDimsByType
 	TArray<float, TInlineAllocator<8>> LayerOffsets;
 	TArray<float, TInlineAllocator<8>> LayerThicknesses;
 
-	bool HasStructuralLayers() const;
-	bool HasStartMembrane() const;
-	bool HasEndMembrane() const;
-	bool HasStartFinish() const;
-	bool HasEndFinish() const;
+	TArray<FMiterLayerGroup> LayerGroups;
 
-	void UpdateLayersFromAssembly(const FBIMAssemblySpec& Assembly);
-	void UpdateLayersFromAssembly(const TArray<FBIMLayerSpec>& AssemblyLayers);
+	void UpdateLayersFromAssembly(const UModumateDocument* Document, const FBIMAssemblySpec& Assembly);
+	void UpdateLayersFromAssembly(const UModumateDocument* Document, const TArray<FBIMLayerSpec>& AssemblyLayers);
 	void UpdateFinishFromObject(const AModumateObjectInstance *MOI);
+
+	private:
+
+	TArray<FBIMPresetLayerPriority> NormalizedLayerPriorities;
+	
+	void CalcNormalizeLayerPriorities(const TArray<FBIMLayerSpec>& AssemblyLayers, FBIMPresetLayerPriority& OutHighestPriority);
 };
 
 class MODUMATE_API ILayeredObject

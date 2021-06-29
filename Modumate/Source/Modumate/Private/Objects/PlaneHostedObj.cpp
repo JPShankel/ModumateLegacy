@@ -129,7 +129,7 @@ bool AMOIPlaneHostedObj::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 		// based on preview/current state changing, assembly changing, object creation, etc.
 		SetAssemblyLayersReversed(InstanceData.FlipSigns.Y < 0);
 
-		CachedLayerDims.UpdateLayersFromAssembly(GetAssembly());
+		CachedLayerDims.UpdateLayersFromAssembly(Document,GetAssembly());
 		CachedLayerDims.UpdateFinishFromObject(this);
 
 		// When structure (assembly, offset, or plane structure) changes, mark neighboring

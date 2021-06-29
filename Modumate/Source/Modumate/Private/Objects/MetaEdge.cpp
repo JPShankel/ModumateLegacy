@@ -168,7 +168,7 @@ void AMOIMetaEdge::RegisterInstanceDataUI(class UToolTrayBlockProperties* Proper
 {
 	// If there are no miter participants, then the edge cannot have a detail
 	// (and if it did, it should have been deleted)
-	if (CachedMiterData.SortedMiterIDs.Num() == 0)
+	if (CachedMiterData.SortedParticipantIDs.Num() == 0)
 	{
 		return;
 	}
