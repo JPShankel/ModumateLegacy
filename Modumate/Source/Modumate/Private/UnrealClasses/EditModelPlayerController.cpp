@@ -1319,6 +1319,11 @@ bool AEditModelPlayerController::CheckUserPlanAndPermission(EModumatePermission 
 
 bool AEditModelPlayerController::OnCreateDwg()
 {
+	if (!CanShowFileDialog())
+	{
+		return false;
+	}
+
 	if (!CheckUserPlanAndPermission(EModumatePermission::ServiceJsontodwg))
 	{
 		return false;
