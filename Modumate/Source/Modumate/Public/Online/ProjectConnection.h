@@ -10,8 +10,11 @@ struct MODUMATE_API FProjectConnectionHelpers
 {
 	static const FString ProjectsEndpointPrefix;
 	static const FString ConnectionEndpointSuffix;
+	static const FString DataEndpointSuffix;
 
+	static FString MakeProjectInfoEndpoint(const FString& ProjectID);
 	static FString MakeProjectConnectionEndpoint(const FString& ProjectID);
+	static FString MakeProjectDataEndpoint(const FString& ProjectID);
 };
 
 // Must match the API spec for components/schemas/Connection in the AMS
@@ -28,4 +31,29 @@ struct MODUMATE_API FProjectConnectionResponse
 
 	UPROPERTY()
 	FString Key;
+};
+
+// Must match the API spec for components/schemas/Project in the AMS
+USTRUCT()
+struct MODUMATE_API FProjectInfoResponse
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString ID;
+
+	UPROPERTY()
+	FString Name;
+
+	UPROPERTY()
+	FString Workspace;
+
+	UPROPERTY()
+	int32 Date_created = 0;
+
+	UPROPERTY()
+	int32 Date_modified = 0;
+
+	UPROPERTY()
+	bool bLocked = false;
 };

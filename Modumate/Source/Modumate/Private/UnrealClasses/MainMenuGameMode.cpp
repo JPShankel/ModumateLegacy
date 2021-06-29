@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Misc/CommandLine.h"
 #include "Misc/FileHelper.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateThumbnailHelpers.h"
 #include "ModumateCore/ModumateUserSettings.h"
 #include "ModumateCore/PlatformFunctions.h"
@@ -41,6 +42,7 @@ void AMainMenuGameMode::InitGame(const FString& MapName, const FString& Options,
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 
+	UModumateFunctionLibrary::SetWindowTitle();
 	LoadRecentProjectData();
 
 	// If there's a file to open, and there are saved credentials, then try to log in so the file can automatically be opened.
@@ -52,6 +54,13 @@ void AMainMenuGameMode::InitGame(const FString& MapName, const FString& Options,
 		!gameInstance->UserSettings.SavedCredentials.IsEmpty())
 	{
 		gameInstance->Login(gameInstance->UserSettings.SavedUserName, FString(), gameInstance->UserSettings.SavedCredentials, true, true);
+	}
+
+	// Clear all encryption keys after returning back to the main menu, in preparation for making new connections
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (cloudConnection.IsValid())
+	{
+		cloudConnection->ClearEncryptionKeys();
 	}
 }
 
@@ -204,19 +213,18 @@ bool AMainMenuGameMode::OpenProject(const FString& ProjectPath)
 
 bool AMainMenuGameMode::OpenCloudProject(const FString& ProjectID)
 {
-	if (!PendingCloudProjectID.IsEmpty() || !PendingProjectServerURL.IsEmpty())
-	{
-		return false;
-	}
-
 	auto weakThis = MakeWeakObjectPtr(this);
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
 	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
-	if (!accountManager.IsValid() || !cloudConnection.IsValid() || !cloudConnection->IsLoggedIn())
+	if (!accountManager.IsValid() || !cloudConnection.IsValid() || !cloudConnection->IsLoggedIn() ||
+		!PendingCloudProjectID.IsEmpty() || ProjectID.IsEmpty())
 	{
 		return false;
 	}
+
+	PendingCloudProjectID = ProjectID;
+	bool bRequestConnection = true;
 
 #if !UE_BUILD_SHIPPING
 	FString mpAddrOverride = CVarModumateMPAddrOverride.GetValueOnGameThread();
@@ -225,125 +233,102 @@ bool AMainMenuGameMode::OpenCloudProject(const FString& ProjectID)
 		FProjectConnectionResponse testConnectionResponse;
 		testConnectionResponse.IP = mpAddrOverride;
 		testConnectionResponse.Port = CVarModumateMPPortOverride.GetValueOnGameThread();
-		testConnectionResponse.Key = FModumateCloudConnection::MakeTestingEncryptionKey(accountManager->GetUserInfo().ID, ProjectID);
-		OnCreatedProjectConnection(ProjectID, testConnectionResponse);
+		testConnectionResponse.Key = FModumateCloudConnection::MakeTestingEncryptionKey(accountManager->GetUserInfo().ID, PendingCloudProjectID);
+		if (OnCreatedProjectConnection(testConnectionResponse))
+		{
+			bRequestConnection = false;
+		}
+		else
+		{
+			OnCloudProjectFailure();
+			return false;
+		}
 	}
 #endif
 
-	if (PendingProjectServerURL.IsEmpty())
+	if (bRequestConnection)
 	{
 		// Request a connection to a multiplayer server instance for this project,
 		// which will either spin up a server that downloads the project, or return a connection to an existing server running for this project.
 		bool bRequestedConnection = cloudConnection->RequestEndpoint(
-			FProjectConnectionHelpers::MakeProjectConnectionEndpoint(ProjectID),
+			FProjectConnectionHelpers::MakeProjectConnectionEndpoint(PendingCloudProjectID),
 			FModumateCloudConnection::ERequestType::Put,
 			nullptr,
-			[weakThis, ProjectID](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
-			{
-				FProjectConnectionResponse createConnectionResponse;
-				if (!ensure(bSuccessful && Response.IsValid() && weakThis.IsValid() &&
-					FJsonObjectConverter::JsonObjectToUStruct(Response.ToSharedRef(), &createConnectionResponse)))
-				{
-					UE_LOG(LogTemp, Error, TEXT("Unexpected error in response to creating a connection to project %s."), *ProjectID);
-					return;
-				}
-
-				weakThis->OnCreatedProjectConnection(ProjectID, createConnectionResponse);
-			},
-			[weakThis, ProjectID](int32 ErrorCode, const FString& ErrorString)
+			[weakThis](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
 			{
 				if (weakThis.IsValid())
 				{
-					weakThis->OnProjectConnectionFailed(ProjectID, ErrorCode, ErrorString);
+					FProjectConnectionResponse createConnectionResponse;
+					if (!ensure(bSuccessful && Response.IsValid() &&
+						FJsonObjectConverter::JsonObjectToUStruct(Response.ToSharedRef(), &createConnectionResponse)))
+					{
+						UE_LOG(LogTemp, Error, TEXT("Unexpected error in response to creating a connection to project %s."), *weakThis->PendingCloudProjectID);
+						weakThis->OnProjectConnectionFailed(EHttpResponseCodes::Unknown, FString());
+						return;
+					}
+
+					weakThis->OnCreatedProjectConnection(createConnectionResponse);
+				}
+			},
+			[weakThis](int32 ErrorCode, const FString& ErrorString)
+			{
+				if (weakThis.IsValid())
+				{
+					weakThis->OnProjectConnectionFailed(ErrorCode, ErrorString);
 				}
 			});
 
 		if (!bRequestedConnection)
 		{
+			OnCloudProjectFailure();
 			return false;
 		}
 	}
 
-	// Request the cloud-hosted content for this project
-	bool bRequestedDownload = cloudConnection->DownloadProject(ProjectID,
-		[weakThis, ProjectID](const FModumateDocumentHeader& DocHeader, const FMOIDocumentRecord& DocRecord, bool bEmpty) {
-			auto* gameInstance = weakThis.IsValid() ? weakThis->GetGameInstance<UModumateGameInstance>() : nullptr;
-			if (ensure(gameInstance && (gameInstance->PendingClientDownloadProjectID == ProjectID)))
-			{
-				gameInstance->PendingClientDownloadProjectID.Empty();
-				gameInstance->ClientDownloadedDocHeader = DocHeader;
-				gameInstance->ClientDownloadedDocRecord = DocRecord;
-				gameInstance->bHaveDownloadedDocument = true;
-				weakThis->OnDownloadedCloudProject(true);
-			}
-		},
-		[weakThis, ProjectID](int32 ErrorCode, const FString& ErrorMessage) {
-			UE_LOG(LogTemp, Error, TEXT("Error code %d when trying to download Project ID %s: %s"), ErrorCode, *ProjectID, *ErrorMessage);
-			auto* gameInstance = weakThis.IsValid() ? weakThis->GetGameInstance<UModumateGameInstance>() : nullptr;
-			if (ensure(gameInstance && (gameInstance->PendingClientDownloadProjectID == ProjectID)))
-			{
-				gameInstance->PendingClientDownloadProjectID.Empty();
-				gameInstance->ClientDownloadedDocHeader = FModumateDocumentHeader();
-				gameInstance->ClientDownloadedDocRecord = FMOIDocumentRecord();
-				gameInstance->bHaveDownloadedDocument = false;
-				weakThis->OnDownloadedCloudProject(false);
-			}
-		});
-
-	if (!bRequestedDownload)
-	{
-		return false;
-	}
-
-	PendingCloudProjectID = ProjectID;
-	gameInstance->PendingClientDownloadProjectID = ProjectID;
-
 	return true;
 }
 
-void AMainMenuGameMode::OnCreatedProjectConnection(const FString& ProjectID, const FProjectConnectionResponse& Response)
+void AMainMenuGameMode::OnCloudProjectFailure(const FText& ErrorMessage)
+{
+	// Wipe the encryption key(s) that this client may have cached for its user and this pending project, so they won't get used on the next connection attempt.
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (ensure(accountManager.IsValid() && cloudConnection.IsValid() && cloudConnection->IsLoggedIn() && !PendingCloudProjectID.IsEmpty()))
+	{
+		const FString& userID = accountManager->GetUserInfo().ID;
+		cloudConnection->ClearEncryptionKey(userID, PendingCloudProjectID);
+	}
+
+	PendingCloudProjectID.Empty();
+
+	auto* playerController = gameInstance ? Cast<AMainMenuController>(gameInstance->GetFirstLocalPlayerController()) : nullptr;
+	if (playerController && playerController->StartRootMenuWidget && !ErrorMessage.IsEmpty())
+	{
+		playerController->StartRootMenuWidget->ShowModalStatus(ErrorMessage, true);
+	}
+}
+
+bool AMainMenuGameMode::OnCreatedProjectConnection(const FProjectConnectionResponse& Response)
 {
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
 	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
-	if (!accountManager.IsValid() || !cloudConnection.IsValid() || !cloudConnection->IsLoggedIn())
+	if (!ensure(accountManager.IsValid() && cloudConnection.IsValid() && cloudConnection->IsLoggedIn() && !PendingCloudProjectID.IsEmpty()))
 	{
-		return;
+		return false;
 	}
 
 	const FString& userID = accountManager->GetUserInfo().ID;
-	cloudConnection->CacheEncryptionKey(userID, ProjectID, Response.Key);
+	cloudConnection->CacheEncryptionKey(userID, PendingCloudProjectID, Response.Key);
 
-	PendingProjectServerURL = FString::Printf(TEXT("%s:%d"), *Response.IP, Response.Port);
-
-	// If the project download has already finished by the time we got the connection, then open the server now
-	if (gameInstance->bHaveDownloadedDocument)
-	{
-		OpenProjectServerInstance(PendingProjectServerURL, ProjectID);
-	}
+	return OpenProjectServerInstance(FString::Printf(TEXT("%s:%d"), *Response.IP, Response.Port));
 }
 
-void AMainMenuGameMode::OnProjectConnectionFailed(const FString& ProjectID, int32 ErrorCode, const FString& ErrorMessage)
+void AMainMenuGameMode::OnProjectConnectionFailed(int32 ErrorCode, const FString& ErrorMessage)
 {
-	UE_LOG(LogTemp, Error, TEXT("Error code %d while trying to create a connection to project %s: %s"), ErrorCode, *ProjectID, *ErrorMessage);
-
-	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
-	auto* playerController = gameInstance ? Cast<AMainMenuController>(gameInstance->GetFirstLocalPlayerController()) : nullptr;
-	if (playerController && playerController->StartRootMenuWidget && ensure(ProjectID == PendingCloudProjectID))
-	{
-		PendingCloudProjectID.Empty();
-
-		playerController->StartRootMenuWidget->ShowModalStatus(LOCTEXT("OpenProjectError", "Failed to open project! Please try again later."), true);
-	}
-}
-
-void AMainMenuGameMode::OnDownloadedCloudProject(bool bSuccess)
-{
-	// If the project connection was already established by the time we finished the project download, then open the server now
-	if (bSuccess && !PendingProjectServerURL.IsEmpty())
-	{
-		OpenProjectServerInstance(PendingProjectServerURL, PendingCloudProjectID);
-	}
+	UE_LOG(LogTemp, Error, TEXT("Error code %d while trying to create a connection to project %s: %s"), ErrorCode, *PendingCloudProjectID, *ErrorMessage);
+	OnCloudProjectFailure(LOCTEXT("OpenProjectError", "Failed to connect to server! Please try again later."));
 }
 
 bool AMainMenuGameMode::OpenProjectFromPicker()
@@ -362,12 +347,7 @@ bool AMainMenuGameMode::GetLoadFilename(FString &loadFileName)
 	return FModumatePlatform::GetOpenFilename(loadFileName);
 }
 
-FDateTime AMainMenuGameMode::GetCurrentDateTime()
-{
-	return FDateTime::Now();
-}
-
-bool AMainMenuGameMode::OpenProjectServerInstance(const FString& URL, const FString& ProjectID)
+bool AMainMenuGameMode::OpenProjectServerInstance(const FString& URL)
 {
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
@@ -379,8 +359,13 @@ bool AMainMenuGameMode::OpenProjectServerInstance(const FString& URL, const FStr
 	}
 
 	// The public encryption token is just the user ID and the session ID, as used by Epic's examples in Fortnite
-	FString fullURL = FString::Printf(TEXT("%s?EncryptionToken=%s"),
-		*URL, *FModumateCloudConnection::MakeEncryptionToken(accountManager->GetUserInfo().ID, ProjectID));
+	const FString& userID = accountManager->GetUserInfo().ID;
+	FString fullURL;
+	if (!ensure(FModumateCloudConnection::MakeConnectionURL(fullURL, URL, userID, PendingCloudProjectID)))
+	{
+		OnCloudProjectFailure();
+		return false;
+	}
 
 	playerController->ClientTravel(fullURL, ETravelType::TRAVEL_Absolute);
 

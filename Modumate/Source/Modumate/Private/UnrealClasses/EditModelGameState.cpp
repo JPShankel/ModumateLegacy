@@ -6,13 +6,17 @@
 #include "Net/UnrealNetwork.h"
 #include "Online/ModumateCloudConnection.h"
 #include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 
+#define LOCTEXT_NAMESPACE "EditModelGameState"
 
 void AEditModelGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(AEditModelGameState, LastUploadedDocHash);
 	DOREPLIFETIME(AEditModelGameState, LastUploadTime);
 }
 
@@ -24,6 +28,7 @@ void AEditModelGameState::InitDocument(const FString& LocalUserID, int32 LocalUs
 		Document->SetLocalUserInfo(LocalUserID, LocalUserIdx);
 
 		LastUploadedDocHash = 0;
+		LastUploadTime = FDateTime::UtcNow();
 
 #if UE_SERVER
 		GetWorld()->GetTimerManager().SetTimer(AutoUploadTimer, this, &AEditModelGameState::OnAutoUploadTimer, AutoUploadTimerPeriod, true);
@@ -35,88 +40,88 @@ void AEditModelGameState::InitDocument(const FString& LocalUserID, int32 LocalUs
 	}
 }
 
-// RPC from the server to every client's copy of the global GameState
-void AEditModelGameState::BroadcastServerDeltas_Implementation(const FDeltasRecord& Deltas)
+// RPC from the server to every copy of the global GameState
+void AEditModelGameState::BroadcastServerDeltas_Implementation(const FString& SourceUserID, const FDeltasRecord& Deltas, bool bRedoingRecord)
 {
 	UWorld* world = GetWorld();
 	if (ensure(world && Document))
 	{
-		Document->ApplyRemoteDeltas(Deltas, world, false);
-		OnPerformedSaveableAction();
+		Document->ApplyRemoteDeltas(Deltas, world, bRedoingRecord);
+
+#if UE_SERVER
+		// On the server, use this opportunity to potentially wipe every player's redo stack.
+		int32 originPlayerID = 0;
+		if (ensure(EditModelGameMode && EditModelGameMode->GetPlayerByUserID(SourceUserID, originPlayerID)))
+		{
+			for (auto* playerState : PlayerArray)
+			{
+				AEditModelPlayerState* emPlayerState = Cast<AEditModelPlayerState>(playerState);
+				if (emPlayerState && (emPlayerState->GetPlayerId() != originPlayerID))
+				{
+					emPlayerState->ClearConflictingRedoBuffer(Deltas);
+				}
+			}
+		}
+#endif
 	}
 }
 
-// RPC from the server to every client's copy of the global GameState
+// RPC from the server to every copy of the global GameState
 void AEditModelGameState::BroadcastUndo_Implementation(const FString& UndoingUserID, const TArray<uint32>& UndoRecordHashes)
 {
 	UWorld* world = GetWorld();
 	if (ensure(world && Document))
 	{
 		Document->ApplyRemoteUndo(world, UndoingUserID, UndoRecordHashes);
-		OnPerformedSaveableAction();
 	}
 }
 
-bool AEditModelGameState::GetDeltaRecordsSinceSave(TArray<FDeltasRecord>& OutRecordsSinceSave) const
-{
-	OutRecordsSinceSave.Reset();
-
-	if (!ensure(Document))
-	{
-		return false;
-	}
-
-	auto& verifiedRecords = Document->GetVerifiedDeltasRecords();
-
-	// If we don't have any DeltasRecords, then there are none to report
-	if (verifiedRecords.Num() == 0)
-	{
-		return true;
-	}
-
-	// Otherwise, try to find the last saved record
-	int32 lastSavedRecordIdx = verifiedRecords.IndexOfByPredicate([this](const FDeltasRecord& VerifiedDeltasRecord)
-		{ return (VerifiedDeltasRecord.TotalHash == LastUploadedDocHash); });
-
-	// If we're unsuccessful, then we don't have a way of reporting a correct set of deltas to apply on top of the saved document
-	if (lastSavedRecordIdx == INDEX_NONE)
-	{
-		return false;
-	}
-
-	for (int32 i = lastSavedRecordIdx + 1; i < verifiedRecords.Num(); ++i)
-	{
-		OutRecordsSinceSave.Add(verifiedRecords[i]);
-	}
-
-	return true;
-}
-
-bool AEditModelGameState::DownloadDocument()
+bool AEditModelGameState::DownloadDocument(const FString& ProjectID)
 {
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	TSharedPtr<FModumateCloudConnection> cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
 
-	if (!ensure(EditModelGameMode && Document && cloudConnection.IsValid() && !bDownloadingDocument))
+	if (!ensure(Document && cloudConnection.IsValid() && !bDownloadingDocument &&
+		CurProjectID.IsEmpty() && !ProjectID.IsEmpty()))
 	{
 		return false;
 	}
 
-	const FString& projectID = EditModelGameMode->GetCurProjectID();
+	// Assign CurProjectID here, since downloading the document is the first thing that happens
+	// for both clients and servers in multiplayer sessions.
+	CurProjectID = ProjectID;
 
 	auto weakThis = MakeWeakObjectPtr<AEditModelGameState>(this);
-	bDownloadingDocument = cloudConnection->DownloadProject(projectID,
-		[weakThis, projectID](const FModumateDocumentHeader& DocHeader, const FMOIDocumentRecord& DocRecord, bool bEmpty) {
-			if (ensure(weakThis.IsValid() && weakThis->EditModelGameMode))
+	bDownloadingDocument = cloudConnection->DownloadProject(CurProjectID,
+		[weakThis](const FModumateDocumentHeader& DocHeader, const FMOIDocumentRecord& DocRecord, bool bEmpty) {
+			if (ensure(weakThis.IsValid()))
 			{
-				bool bLoadedProject = weakThis->Document && (bEmpty || weakThis->Document->LoadRecord(weakThis->GetWorld(), DocHeader, DocRecord));
-				weakThis->LastUploadedDocHash = bLoadedProject ? weakThis->Document->GetLatestVerifiedDocHash() : 0;
-				weakThis->bDownloadingDocument = false;
+				weakThis->OnDownloadDocumentSuccess(DocHeader, DocRecord, bEmpty);
 			}
 		},
-		[weakThis, projectID](int32 ErrorCode, const FString& ErrorMessage) {
-			UE_LOG(LogTemp, Fatal, TEXT("Error code %d when trying to download Project ID %s: %s"), ErrorCode, *projectID, *ErrorMessage);
-			FPlatformMisc::RequestExit(false);
+		[weakThis](int32 ErrorCode, const FString& ErrorMessage) {
+			if (ensure(weakThis.IsValid()))
+			{
+				weakThis->OnDownloadDocumentFailure(ErrorCode, ErrorMessage);
+			}
+		});
+
+	bool bRequestedInfo = cloudConnection->RequestEndpoint(
+		FProjectConnectionHelpers::MakeProjectInfoEndpoint(CurProjectID),
+		FModumateCloudConnection::ERequestType::Get,
+		nullptr,
+		[weakThis](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+		{
+			FProjectInfoResponse projectInfo;
+			if (ensure(weakThis.IsValid() && bSuccessful && Response.IsValid() &&
+				FJsonObjectConverter::JsonObjectToUStruct(Response.ToSharedRef(), &projectInfo)))
+			{
+				weakThis->OnReceivedProjectInfo(projectInfo);
+			}
+		},
+		[weakThis](int32 ErrorCode, const FString& ErrorMessage) {
+			UE_LOG(LogGameState, Error, TEXT("Error code %d querying info for Project ID %s: %s"),
+				ErrorCode, weakThis.IsValid() ? *weakThis->CurProjectID : TEXT("?"), *ErrorMessage);
 		});
 
 	return bDownloadingDocument;
@@ -124,6 +129,12 @@ bool AEditModelGameState::DownloadDocument()
 
 bool AEditModelGameState::UploadDocument()
 {
+	if (!ensure(Document && !CurProjectID.IsEmpty()))
+	{
+		return false;
+	}
+
+	uint32 curDocHash = Document->GetLatestVerifiedDocHash();
 	auto* world = GetWorld();
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	TSharedPtr<FModumateCloudConnection> cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
@@ -131,61 +142,48 @@ bool AEditModelGameState::UploadDocument()
 	FMOIDocumentRecord docRecord;
 	TArray<uint8> docBuffer;
 
-	if ((NumUnsavedActions == 0) || bUploadingDocument ||
-		!ensure(EditModelGameMode && Document && cloudConnection.IsValid() && Document->SerializeRecords(world, docHeader, docRecord)))
+	if (!Document->IsDirty(false) || CurrentUploadHashes.Contains(curDocHash) ||
+		!ensure(cloudConnection.IsValid() && Document->SerializeRecords(world, docHeader, docRecord)))
 	{
 		return false;
 	}
 
 	auto weakThis = MakeWeakObjectPtr<AEditModelGameState>(this);
-	const FString& projectID = EditModelGameMode->GetCurProjectID();
-	bool bRequestSuccess = cloudConnection->UploadProject(projectID, docHeader, docRecord,
-		[weakThis, projectID](bool bSuccessful, const TSharedPtr<FJsonObject>& Response) {
+	bool bRequestSuccess = cloudConnection->UploadProject(CurProjectID, docHeader, docRecord,
+		[weakThis, curDocHash](bool bSuccessful, const TSharedPtr<FJsonObject>& Response) {
 			if (ensure(weakThis.IsValid() && bSuccessful))
 			{
-				weakThis->OnUploadedDocument(projectID, true);
+				weakThis->OnUploadedDocument(true, curDocHash);
 			}
 		},
-		[weakThis, projectID](int32 ErrorCode, const FString& ErrorMessage) {
-			UE_LOG(LogTemp, Error, TEXT("Error code %d when trying to upload Project ID %s: %s"), ErrorCode, *projectID, *ErrorMessage);
+		[weakThis, curDocHash](int32 ErrorCode, const FString& ErrorMessage) {
+			UE_LOG(LogGameState, Error, TEXT("Error code %d when trying to upload Project ID %s: %s"),
+				ErrorCode, weakThis.IsValid() ? *weakThis->CurProjectID : TEXT("?"), *ErrorMessage);
 			if (ensure(weakThis.IsValid()))
 			{
-				weakThis->OnUploadedDocument(projectID, false);
+				weakThis->OnUploadedDocument(false, curDocHash);
 			}
 		});
 
-	bUploadingDocument = bRequestSuccess;
-	PendingUploadDocHash = bRequestSuccess ? Document->GetLatestVerifiedDocHash() : 0;
 	if (bRequestSuccess)
 	{
-		NumUnsavedActions = 0;
+		CurrentUploadHashes.Add(curDocHash);
 	}
 
 	return bRequestSuccess;
 }
 
-// RPC from the client to the server's copy of EditModelGameState
-void AEditModelGameState::RequestImmediateUpload_Implementation()
+void AEditModelGameState::OnRep_LastUploadedDocHash()
 {
-	UploadDocument();
-}
-
-void AEditModelGameState::OnPerformedSaveableAction()
-{
-	TimeSinceAction = 0.0f;
-	if (ensure(Document) && (LastUploadedDocHash == Document->GetLatestVerifiedDocHash()))
+	if (IsNetMode(NM_Client) && Document && Document->IsDirty(true) &&
+		(Document->GetLatestVerifiedDocHash() == LastUploadedDocHash))
 	{
-		NumUnsavedActions = 0;
-	}
-	else
-	{
-		NumUnsavedActions++;
+		Document->SetDirtyFlags(false);
 	}
 }
 
 void AEditModelGameState::OnRep_LastUploadTime()
 {
-	UE_LOG(LogTemp, Log, TEXT("Online Document was last saved: %s"), *LastUploadTime.ToString());
 }
 
 void AEditModelGameState::OnAutoUploadTimer()
@@ -196,24 +194,107 @@ void AEditModelGameState::OnAutoUploadTimer()
 		return;
 	}
 
-	TimeSinceAction += AutoUploadTimerPeriod;
-
-	if ((NumUnsavedActions > 0) && ((TimeSinceAction > PostActionUploadTime) || (NumUnsavedActions >= MaxUnsavedActions)))
+	if (Document->IsDirty(false))
 	{
-		UploadDocument();
+		TimeSinceDirty += AutoUploadTimerPeriod;
+
+		if (TimeSinceDirty > PostDirtyUploadTime)
+		{
+			UploadDocument();
+			TimeSinceDirty = 0.0f;
+		}
+	}
+	else
+	{
+		TimeSinceDirty = 0.0f;
 	}
 #endif
 }
 
-void AEditModelGameState::OnUploadedDocument(const FString& ProjectID, bool bSuccess)
+void AEditModelGameState::OnDownloadDocumentSuccess(const FModumateDocumentHeader& DocHeader, const FMOIDocumentRecord& DocRecord, bool bEmpty)
 {
-	if (bUploadingDocument && bSuccess)
+	UWorld* world = GetWorld();
+	if (!ensure(world && Document && !CurProjectID.IsEmpty()))
 	{
-		UE_LOG(LogTemp, Log, TEXT("Successfully uploaded Project ID: %s"), *ProjectID)
-		LastUploadTime = FDateTime::Now();
-		LastUploadedDocHash = PendingUploadDocHash;
+		OnDownloadDocumentFailure(0, FString(TEXT("Haven't initialized Document or been given a Project ID before download completed!")));
+		return;
+	}
+
+	bDownloadingDocument = false;
+	bool bLoadedProject = (bEmpty || Document->LoadRecord(world, DocHeader, DocRecord, false));
+	uint32 loadedDocHash = Document->GetLatestVerifiedDocHash();
+	LastUploadedDocHash = loadedDocHash;
+	LastUploadTime = FDateTime::UtcNow();
+	UE_LOG(LogGameState, Log, TEXT("Downloaded Project ID %s is on hash %08x"), *CurProjectID, loadedDocHash);
+
+	// If we're a local multiplayer client, then we're expecting to finish downloading the pending document before we can perform any actions,
+	// and we'll also need to let the server know that we've finished downloading, so we can safely receive RPCs and all clients can send them.
+	if (IsNetMode(NM_Client))
+	{
+		ULocalPlayer* localPlayer = world->GetFirstLocalPlayerFromController();
+		auto* controller = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(world)) : nullptr;
+		if (ensure(controller))
+		{
+			controller->OnDownloadedClientDocument(loadedDocHash);
+		}
+	}
+	// If we're a multiplayer server and we just downloaded a document that's already dirty,
+	// then we should try to upload it immediately, so that any joining clients have a chance to get the cleaned version.
+	else if (IsNetMode(NM_DedicatedServer) && Document->IsDirty(false))
+	{
+		UploadDocument();
+	}
+}
+
+void AEditModelGameState::OnDownloadDocumentFailure(int32 ErrorCode, const FString& ErrorMessage)
+{
+	UE_LOG(LogGameState, Error, TEXT("Error code %d when trying to download Project ID %s: %s"), ErrorCode, *CurProjectID, *ErrorMessage);
+	bDownloadingDocument = false;
+
+#if UE_SERVER
+	// Servers only download documents upon initialization, and cannot tolerate failure.
+	FPlatformMisc::RequestExit(false);
+#else
+	// Clients can fail more gracefully, and go back to the main menu if the project they intended to download was unsuccessful.
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (ensure(gameInstance))
+	{
+		gameInstance->GoToMainMenu(LOCTEXT("DocDownloadFailure", "Failed to download project, please try again later."));
+	}
+#endif
+}
+
+void AEditModelGameState::OnUploadedDocument(bool bSuccess, uint32 UploadedDocHash)
+{
+	if (bSuccess && CurrentUploadHashes.Contains(UploadedDocHash))
+	{
+		UE_LOG(LogGameState, Log, TEXT("Successfully uploaded Project ID: %s, hash %08x"), *CurProjectID, UploadedDocHash);
+		LastUploadedDocHash = UploadedDocHash;
+		LastUploadTime = FDateTime::UtcNow();
+
+		// Clear the dirty flag if we just uploaded the document's current hash
+		if (Document && (Document->GetLatestVerifiedDocHash() == UploadedDocHash))
+		{
+			Document->SetDirtyFlags(false);
+		}
 	}
 	
-	bUploadingDocument = false;
-	PendingUploadDocHash = 0;
+	CurrentUploadHashes.Remove(UploadedDocHash);
+
+	if (EditModelGameMode)
+	{
+		EditModelGameMode->OnServerUploadedDocument(UploadedDocHash);
+	}
 }
+
+void AEditModelGameState::OnReceivedProjectInfo(const FProjectInfoResponse& InProjectInfo)
+{
+	CurProjectInfo = InProjectInfo;
+
+	if (Document && !CurProjectInfo.Name.IsEmpty())
+	{
+		Document->SetCurrentProjectName(CurProjectInfo.Name, false);
+	}
+}
+
+#undef LOCTEXT_NAMESPACE

@@ -58,6 +58,7 @@ public:
 	virtual ~AEditModelPlayerController();
 	virtual void PostInitializeComponents() override;
 	virtual void SetPawn(APawn* InPawn) override;
+	virtual void ClientWasKicked_Implementation(const FText& KickReason) override;
 
 
 private:
@@ -215,8 +216,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class AAxesActor* AxesActor;
 
-	bool TryInitPlayerState(float DeltaTime);
+	bool TryInitPlayerState();
 	bool BeginWithPlayerState();
+	void OnDownloadedClientDocument(uint32 DownloadedDocHash);
 
 	// Event overrides
 	virtual void BeginPlay() override;
@@ -549,6 +551,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "CutPlane")
 	UMaterialParameterCollection* CutPlaneCullingMaterialCollection;
 
+	UFUNCTION()
+	void OnToggledProjectSystemMenu(ESlateVisibility NewVisibility);
+
 	int32 CurrentCullingCutPlaneID = MOD_ID_NONE;
 
 	void SetCurrentCullingCutPlane(int32 ObjID = MOD_ID_NONE, bool bRefreshMenu = true);
@@ -557,7 +562,4 @@ public:
 	FPlane GetCurrentCullingPlane() const;
 
 	bool bBeganWithPlayerState = false;
-
-	// TODO: remove this workaround for making sure that a loading screen is present while a multiplayer client is loading an online project
-	float TimeDisplayedClientLoading = 0.0f;
 };

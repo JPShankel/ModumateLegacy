@@ -45,7 +45,7 @@ bool UEditModelUserWidget::Initialize()
 	}
 
 	Controller = GetOwningPlayer<AEditModelPlayerController>();
-	if (!(ToolTrayWidget && ToolTrayWidget))
+	if (!(ProjectSystemMenu && ToolTrayWidget && ToolTrayWidget))
 	{
 		return false;
 	}

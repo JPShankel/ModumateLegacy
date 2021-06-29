@@ -18,6 +18,27 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox* ButtonBox;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonNewProject;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonSaveProject;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonSaveProjectAs;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonLoadProject;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonSettings;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonMainMenu;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonExit;
+
 protected:
 	UFUNCTION()
 	void OnPressedButton();

@@ -42,8 +42,8 @@ public:
 
 	class UTooltipWidget* GetOrCreateTooltipWidget(TSubclassOf<class UTooltipWidget> TooltipClass);
 
-	static class UWidget* GenerateTooltipNonInputWidget(const FName& TooltipID, const class UWidget* FromWidget);
-	static class UWidget* GenerateTooltipWithInputWidget(EInputCommand InputCommand, const class UWidget* FromWidget);
+	static class UWidget* GenerateTooltipNonInputWidget(const FName& TooltipID, const class UWidget* FromWidget, const FText& OverrideText = FText::GetEmpty());
+	static class UWidget* GenerateTooltipWithInputWidget(EInputCommand InputCommand, const class UWidget* FromWidget, const FText& OverrideText = FText::GetEmpty());
 
 protected:
 	UPROPERTY()

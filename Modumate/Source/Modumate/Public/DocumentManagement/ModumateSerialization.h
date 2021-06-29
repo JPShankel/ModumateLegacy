@@ -303,6 +303,9 @@ struct FModumateDocumentHeaderV2
 	int32 Version = 0;
 
 	UPROPERTY()
+	uint32 DocumentHash = 0;
+
+	UPROPERTY()
 	FString Thumbnail;
 };
 

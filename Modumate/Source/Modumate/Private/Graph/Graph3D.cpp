@@ -1486,29 +1486,36 @@ void FGraph3D::CheckTranslationValidity(const TArray<int32> &InVertexIDs, TMap<i
 
 }
 
-void FGraph3D::Load(const FGraph3DRecord* InGraph3DRecord)
+bool FGraph3D::Load(const FGraph3DRecord* InGraph3DRecord)
 {
+	bool bTotalSuccess = true;
+
 	Reset();
 
 	for (auto &kvp : InGraph3DRecord->Vertices)
 	{
-		AddVertex(FVector(kvp.Value.Position), kvp.Key, TSet<int32>());
+		auto* vertex = AddVertex(FVector(kvp.Value.Position), kvp.Key, TSet<int32>());
+		bTotalSuccess = bTotalSuccess && vertex && vertex->bValid;
 	}
 
 	for (auto &kvp : InGraph3DRecord->Edges)
 	{
-		AddEdge(kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Key, kvp.Value.GroupIDs);
+		auto* edge = AddEdge(kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Key, kvp.Value.GroupIDs);
+		bTotalSuccess = bTotalSuccess && edge && edge->bValid;
 	}
 
 	for (auto &kvp : InGraph3DRecord->Faces)
 	{
-		AddFace(kvp.Value.VertexIDs, kvp.Key, kvp.Value.GroupIDs, kvp.Value.ContainingFaceID, kvp.Value.ContainedFaceIDs);
+		auto* face = AddFace(kvp.Value.VertexIDs, kvp.Key, kvp.Value.GroupIDs, kvp.Value.ContainingFaceID, kvp.Value.ContainedFaceIDs);
+		bTotalSuccess = bTotalSuccess && face && face->bValid;
 	}
-		
+
 	TArray<int32> cleanedVertices, cleanedEdges, cleanedFaces;
 	CleanGraph(cleanedVertices, cleanedEdges, cleanedFaces);
+
+	return bTotalSuccess;
 }
-	
+
 void FGraph3D::Save(FGraph3DRecord* OutGraph3DRecord)
 {
 	OutGraph3DRecord->Vertices.Reset();

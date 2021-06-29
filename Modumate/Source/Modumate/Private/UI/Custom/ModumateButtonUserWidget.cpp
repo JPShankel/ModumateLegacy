@@ -110,11 +110,11 @@ UWidget* UModumateButtonUserWidget::OnTooltipWidget()
 {
 	if (!TooltipID.IsNone())
 	{
-		return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID, this);
+		return UTooltipManager::GenerateTooltipNonInputWidget(TooltipID, this, OverrideTooltipText);
 	}
 	else if (InputCommand != EInputCommand::None)
 	{
-		return UTooltipManager::GenerateTooltipWithInputWidget(InputCommand, this);
+		return UTooltipManager::GenerateTooltipWithInputWidget(InputCommand, this, OverrideTooltipText);
 	}
 
 	return nullptr;

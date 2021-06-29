@@ -50,6 +50,9 @@ public:
 	class AEditModelPlayerController *Controller;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UProjectSystemWidget* ProjectSystemMenu;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UToolbarWidget *ToolbarWidget;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))

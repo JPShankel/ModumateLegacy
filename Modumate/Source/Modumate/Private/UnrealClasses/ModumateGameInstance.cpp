@@ -109,6 +109,13 @@ void UModumateGameInstance::Init()
 	UE_LOG(LogPerformance, Log, TEXT("Object database loaded in %d ms"), FMath::RoundToInt(1000.0 * databaseLoadTime));
 
 	GetTimerManager().SetTimer(SlowTickHandle, this, &UModumateGameInstance::SlowTick, 0.5f, true);
+
+	UEngine* engine = GetEngine();
+	if (engine)
+	{
+		engine->TravelFailureEvent.AddUObject(this, &UModumateGameInstance::OnTravelFailure);
+		engine->NetworkFailureEvent.AddUObject(this, &UModumateGameInstance::OnNetworkFailure);
+	}
 }
 
 TSharedPtr<FModumateCloudConnection> UModumateGameInstance::GetCloudConnection() const
@@ -645,7 +652,7 @@ void UModumateGameInstance::ReceivedNetworkEncryptionAck(const FOnEncryptionKeyR
 
 	FWorldContext* worldContext = GetWorldContext();
 	UPendingNetGame* pendingNetGame = worldContext ? worldContext->PendingNetGame : nullptr;
-	FString optionKey = AEditModelGameMode::EncryptionTokenKey + FString(TEXT("="));
+	FString optionKey = FModumateCloudConnection::EncryptionTokenKey + FString(TEXT("="));
 	FString encryptionToken(pendingNetGame ? pendingNetGame->URL.GetOption(*optionKey, TEXT("")) : TEXT(""));
 
 	FString travelUserID, travelProjectID;
@@ -839,6 +846,38 @@ void UModumateGameInstance::SlowTick()
 	{
 		CloudConnection->Tick();
 	}
+}
+
+void UModumateGameInstance::GoToMainMenu(const FText& StatusMessage)
+{
+	FString mainMenuMap = UGameMapsSettings::GetGameDefaultMap();
+	UGameplayStatics::OpenLevel(this, FName(*mainMenuMap));
+}
+
+void UModumateGameInstance::OnKickedFromMPSession(const FText& KickReason)
+{
+	PendingMainMenuStatus = KickReason;
+}
+
+void UModumateGameInstance::OnTravelFailure(UWorld* World, ETravelFailure::Type FailureType, const FString& ErrorMessage)
+{
+	PendingMainMenuStatus = LOCTEXT("GenericTravelFailure", "Failed to open project, please try again later.");
+}
+
+void UModumateGameInstance::OnNetworkFailure(UWorld* World, UNetDriver* NetDrive, ENetworkFailure::Type FailureType, const FString& ErrorMessage)
+{
+	PendingMainMenuStatus = LOCTEXT("GenericTravelFailure", "Network error; please check your internet connection and try to reconnect later.");
+}
+
+bool UModumateGameInstance::CheckMainMenuStatus(FText& OutStatusMessage)
+{
+	if (PendingMainMenuStatus.IsEmpty())
+	{
+		return false;
+	}
+
+	OutStatusMessage = MoveTemp(PendingMainMenuStatus);
+	return true;
 }
 
 #undef LOCTEXT_NAMESPACE

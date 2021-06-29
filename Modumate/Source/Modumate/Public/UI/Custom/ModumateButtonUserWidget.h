@@ -59,6 +59,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	EInputCommand InputCommand;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText OverrideTooltipText;
+
 	UFUNCTION()
 	void OnButtonPress();
 

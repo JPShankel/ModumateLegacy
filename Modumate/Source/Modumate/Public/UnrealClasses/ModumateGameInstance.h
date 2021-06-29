@@ -53,6 +53,7 @@ private:
 	TSharedPtr<FModumateAccountManager> AccountManager;
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
 	TSharedPtr<FQuantitiesManager> QuantitiesManager;
+	FText PendingMainMenuStatus;
 
 	UModumateDocument *GetDocument();
 
@@ -108,6 +109,24 @@ public:
 	UFUNCTION()
 	void SlowTick();
 
+	UFUNCTION()
+	void GoToMainMenu(const FText& StatusMessage);
+
+	UFUNCTION()
+	void OnKickedFromMPSession(const FText& KickReason);
+
+	UFUNCTION()
+	void OnTravelFailure(UWorld* World, ETravelFailure::Type FailureType, const FString& ErrorMessage);
+
+	UFUNCTION()
+	void OnNetworkFailure(UWorld* World, UNetDriver* NetDrive, ENetworkFailure::Type FailureType, const FString& ErrorMessage);
+
+	UFUNCTION()
+	bool CheckMainMenuStatus(FText& OutStatusMessage);
+
+	void SetDownloadedDocument(const FModumateDocumentHeader& InDownloadedDocHeader, const FMOIDocumentRecord& InDownloadedDocRecord);
+	void ClearDownloadedDocument();
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FModumateUserSettings UserSettings;
 
@@ -142,15 +161,6 @@ public:
 	// The ID of a cloud-hosted project for which a multiplayer client should establish a server connection
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FString PendingClientConnectProjectID;
-
-	// The ID of a cloud-hosted project that a multiplayer client is currently downloading/deserializing
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	FString PendingClientDownloadProjectID;
-
-	// The content of a cloud-hosted project download from the client for its pending multiplayer session
-	FModumateDocumentHeader ClientDownloadedDocHeader;
-	FMOIDocumentRecord ClientDownloadedDocRecord;
-	bool bHaveDownloadedDocument = false;
 
 	FTimerHandle SlowTickHandle;
 };

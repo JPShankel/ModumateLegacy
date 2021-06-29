@@ -702,7 +702,9 @@ bool UEditModelInputAutomation::ShouldDocumentSkipDeltas() const
 
 bool UEditModelInputAutomation::ShouldDocumentVerifyDeltas() const
 {
-	return IsPlaying() && !bShouldPlayRecordedDeltas && !bVerifyingDeltas;
+	// Skip delta verification for multiplayer clients, who can use input playback for stress testing,
+	// and with reconciliation won't necessarily have exact matches of the deltas to play back or undo.
+	return IsPlaying() && !bShouldPlayRecordedDeltas && !bVerifyingDeltas && !IsNetMode(NM_Client);
 }
 
 bool UEditModelInputAutomation::RecordRequest(FHttpRequestRef Request, int32 RequestIdx)

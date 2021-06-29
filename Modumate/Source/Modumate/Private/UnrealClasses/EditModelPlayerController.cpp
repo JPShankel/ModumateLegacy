@@ -37,11 +37,13 @@
 #include "UnrealClasses/ModumateViewportClient.h"
 #include "UnrealClasses/AxesActor.h"
 #include "UI/AdjustmentHandleWidget.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/DimensionActor.h"
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/DimensionManager.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/ModalDialog/ModalDialogWidget.h"
+#include "UI/ProjectSystemWidget.h"
 #include "UI/TutorialManager.h"
 #include "Objects/CutPlane.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
@@ -144,26 +146,42 @@ void AEditModelPlayerController::SetPawn(APawn* InPawn)
 	}
 }
 
-bool AEditModelPlayerController::TryInitPlayerState(float DeltaTime)
+void AEditModelPlayerController::ClientWasKicked_Implementation(const FText& KickReason)
+{
+	auto gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (gameInstance)
+	{
+		gameInstance->OnKickedFromMPSession(KickReason);
+	}
+}
+
+bool AEditModelPlayerController::TryInitPlayerState()
 {
 	if ((EMPlayerState == nullptr) && PlayerState)
 	{
 		EMPlayerState = Cast<AEditModelPlayerState>(PlayerState);
 	}
 
-	// If we're a multiplayer client, then we're still trying to make sure that we've shown the loading status widget
-	// for at least a frame before starting the blocking operation of starting the document.
-	if (!bBeganWithPlayerState && IsNetMode(NM_Client) && (TimeDisplayedClientLoading == 0.0f))
+	if (bBeganWithPlayerState)
 	{
-		TimeDisplayedClientLoading += DeltaTime;
-		return false;
+		return true;
 	}
 
+	auto* world = GetWorld();
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
+
 	// Allow initializing player state from within player controller, in case EMPlayerState began first without the controller.
-	if (EMPlayerState && EMPlayerState->HasActorBegunPlay() && !EMPlayerState->bBeganWithController &&
-		(!IsNetMode(NM_Client) || (TimeDisplayedClientLoading > 0.0f)))
+	if (EMPlayerState && EMPlayerState->HasActorBegunPlay() && !EMPlayerState->bBeganWithController && gameInstance)
 	{
 		EMPlayerState->EMPlayerController = this;
+
+		// Multiplayer clients need to wait until the player state has received a client index, to use for object ID allocation
+		if (IsNetMode(NM_Client) && ((EMPlayerState->MultiplayerClientIdx == INDEX_NONE) || (gameState == nullptr)))
+		{
+			return false;
+		}
+
 		if (BeginWithPlayerState() && EMPlayerState->BeginWithController())
 		{
 			UE_LOG(LogTemp, Log, TEXT("AEditModelPlayerController initialized state and controller."));
@@ -174,7 +192,7 @@ bool AEditModelPlayerController::TryInitPlayerState(float DeltaTime)
 			UE_LOG(LogTemp, Error, TEXT("AEditModelPlayerController failed to initialize state and controller!"));
 			if (IsNetMode(NM_Client))
 			{
-				EMPlayerState->GoToMainMenu();
+				gameInstance->GoToMainMenu(FText::GetEmpty());
 			}
 		}
 	}
@@ -186,37 +204,36 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 {
 	UWorld* world = GetWorld();
 	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
+	auto gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
 
-	if (bBeganWithPlayerState || (EMPlayerState == nullptr) || (gameState == nullptr))
+	if (bBeganWithPlayerState || !(EMPlayerState && gameState && accountManager && cloudConnection && gameInstance->TutorialManager))
 	{
 		return false;
 	}
 
-	if (gameState->Document == nullptr)
+	if (IsNetMode(NM_Client))
 	{
-		ensureMsgf(IsNetMode(NM_Client), TEXT("The document should only be missing if we're a client connected to a dedicated server!"));
+		ensureMsgf(gameState->Document == nullptr, TEXT("The document should only be missing if we're a client connected to a dedicated server!"));
 
-		FString localUserID;
-		int32 localUserIdx = INDEX_NONE;
+		FString localUserID = accountManager->GetUserInfo().ID;
 
-		auto gameInstance = GetGameInstance<UModumateGameInstance>();
-		auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
-		if (accountManager)
+		if (ensure(!localUserID.IsEmpty() && (EMPlayerState->MultiplayerClientIdx >= 0) &&
+			(EMPlayerState->MultiplayerClientIdx < UModumateDocument::MaxUserIdx)))
 		{
-			localUserID = accountManager->GetUserInfo().ID;
-		}
-
-		// PlayerIds increase starting from 256 - see AGameSession::GetNextPlayerID
-		// TODO: serialize and replicate our own mapping of Modumate User ID -> User Index for the purpose of Object ID allocation
-		// The actual MaxUserIdx value is reserved for the server, so local players must be less than that.
-		localUserIdx = EMPlayerState->GetPlayerId() - 256;
-		if (ensure(!localUserID.IsEmpty() && (localUserIdx >= 0) && (localUserIdx < UModumateDocument::MaxUserIdx)))
-		{
-			gameState->InitDocument(localUserID, localUserIdx);
+			gameState->InitDocument(localUserID, EMPlayerState->MultiplayerClientIdx);
 		}
 		else
 		{
 			return false;
+		}
+
+		// Disable save-as for multiplayer projects
+		if (EditModelUserWidget && EditModelUserWidget->ProjectSystemMenu &&
+			EditModelUserWidget->ProjectSystemMenu->ButtonSaveProjectAs)
+		{
+			EditModelUserWidget->ProjectSystemMenu->ButtonSaveProjectAs->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
 
@@ -234,12 +251,6 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 	bool bSetAsCurrentProject = true;
 	bool bAddToRecents = true;
 	bool bEnableAutoSave = true;
-
-	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
-	if (!ensure(gameInstance && gameInstance->TutorialManager))
-	{
-		return false;
-	}
 
 	UGameViewportClient* viewportClient = gameInstance->GetGameViewportClient();
 	if (viewportClient)
@@ -330,28 +341,24 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 	{
 		LoadModelFilePath(fileLoadPath, bSetAsCurrentProject, bAddToRecents, bEnableAutoSave);
 	}
-	// If we're bringing up the game state when the game instance has already downloaded a document, then load it now
-	else if (gameInstance && gameInstance->bHaveDownloadedDocument)
-	{
-		if (Document->LoadRecord(world, gameInstance->ClientDownloadedDocHeader, gameInstance->ClientDownloadedDocRecord))
-		{
-			gameInstance->bHaveDownloadedDocument = false;
-			gameInstance->ClientDownloadedDocHeader = FModumateDocumentHeader();
-			gameInstance->ClientDownloadedDocRecord = FMOIDocumentRecord();
-		}
-	}
 	else
 	{
 		NewModel(false);
+
+		// If we're a multiplayer client, then we should still need to download the project; try to do so now.
+		if (IsNetMode(NM_Client) && EMPlayerState->bPendingClientDownload)
+		{
+			if (!gameState->DownloadDocument(EMPlayerState->CurProjectID))
+			{
+				return false;
+			}
+		}
 	}
 
-	// Also, if we received some initial deltas from the server when logging in as a multiplayer client, then apply those now
-	if (IsNetMode(NM_Client) && (EMPlayerState->PendingInitialDeltas.Num() > 0))
+	// Multiplayer clients do not auto-save; the server auto-saves for them.
+	if (IsNetMode(NM_Client))
 	{
-		for (const FDeltasRecord& record : EMPlayerState->PendingInitialDeltas)
-		{
-			gameState->Document->ApplyRemoteDeltas(record, world, true);
-		}
+		bCurProjectAutoSaves = false;
 	}
 
 	// Begin a walkthrough if requested from the main menu, then clear out the request.
@@ -365,19 +372,36 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 	{
 		InputAutomationComponent->RecordLoadedTutorial(bOpeningTutorialProject);
 	}
-
-	// Clear the loading status now that we've finished loading as a multiplayer client
-	if (IsNetMode(NM_Client) && EditModelUserWidget && EditModelUserWidget->ModalDialogWidgetBP)
-	{
-		EditModelUserWidget->ModalDialogWidgetBP->HideAllWidgets();
-		TimeDisplayedClientLoading = 0.0f;
-	}
-
 #endif
 
 	bBeganWithPlayerState = true;
 
 	return true;
+}
+
+void AEditModelPlayerController::OnDownloadedClientDocument(uint32 DownloadedDocHash)
+{
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (!ensure(gameInstance))
+	{
+		return;
+	}
+
+	if (!ensure(EMPlayerState && EMPlayerState->bPendingClientDownload &&
+		(EMPlayerState->ExpectedDownloadDocHash == DownloadedDocHash)))
+	{
+		gameInstance->GoToMainMenu(LOCTEXT("DownloadHashError", "Error downloading project - please try again later."));
+		return;
+	}
+
+	// Clear the loading status now that we've finished loading
+	if (EditModelUserWidget && EditModelUserWidget->ModalDialogWidgetBP)
+	{
+		EditModelUserWidget->ModalDialogWidgetBP->HideAllWidgets();
+	}
+
+	// Let the server know that we've downloaded the document that we expected, so operations should be able to resume.
+	EMPlayerState->OnDownloadedDocument(DownloadedDocHash);
 }
 
 void AEditModelPlayerController::BeginPlay()
@@ -398,11 +422,16 @@ void AEditModelPlayerController::BeginPlay()
 	if (ensureAlways(EditModelUserWidget))
 	{
 		EditModelUserWidget->AddToViewport(1);
+
+		if (EditModelUserWidget->ProjectSystemMenu)
+		{
+			EditModelUserWidget->ProjectSystemMenu->OnVisibilityChanged.AddDynamic(this, &AEditModelPlayerController::OnToggledProjectSystemMenu);
+		}
 	}
 #endif
 
 	// Set the loading status if we're starting to load as a multiplayer client
-	// TODO: This won't render if we want to immediately do any blocking work (like calling BeginWithPlayerState),
+	// TODO: This won't render if we want to immediately do any blocking work (like calling BeginWithPlayerState with a fully-loaded document),
 	// and this also has a few frames of delay after the previous MainMenuGameMode's status widget stops rendering.
 	// We could instead have a pure-native-Slate loading widget setup with GetMoviePlayer()->SetupLoadingScreen and/or
 	// a level-independent non-game-thread modal widget system for this type of loading text.
@@ -413,13 +442,9 @@ void AEditModelPlayerController::BeginPlay()
 			LOCTEXT("ClientLoadingStatusTitle", "STATUS"),
 			LOCTEXT("ClientLoadingStatusText", "Opening online project..."),
 			false);
-		TimeDisplayedClientLoading = 0.0f;
 	}
-	// Otherwise, allow starting the player state as soon as possible
-	else
-	{
-		TryInitPlayerState(0.0f);
-	}
+
+	TryInitPlayerState();
 }
 
 bool AEditModelPlayerController::StartTelemetrySession(bool bRecordLoadedDocument)
@@ -957,6 +982,15 @@ bool AEditModelPlayerController::SaveModel()
 		return false;
 	}
 
+	if (IsNetMode(NM_Client))
+	{
+		if (EMPlayerState)
+		{
+			EMPlayerState->RequestUpload();
+		}
+		return true;
+	}
+
 	if (EMPlayerState->LastFilePath.IsEmpty())
 	{
 		return SaveModelAs();
@@ -1129,7 +1163,8 @@ bool AEditModelPlayerController::LoadModelFilePath(const FString &filename, bool
 
 bool AEditModelPlayerController::CheckSaveModel()
 {
-	if (Document->IsDirty(true))
+	// Don't prompt for saving if we're connected as a dedicated multiplayer client; the server is in charge of auto-saving
+	if (!IsNetMode(NM_Client) && Document->IsDirty(true))
 	{
 		const FString& saveConfirmationText = LOCTEXT("SaveConfirmationMessage", "Save current model?").ToString();
 		const FString& saveConfirmationTitle = LOCTEXT("SaveConfirmationTitle", "Save").ToString();
@@ -1690,7 +1725,7 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 
 	// Allow the player state initialization to happen after BeginPlay, in case EditModelPlayerState hadn't begun during our BeginPlay,
 	// or if we're a multiplayer client waiting for UI before fully initializing.
-	TryInitPlayerState(DeltaTime);
+	TryInitPlayerState();
 
 	// Postpone any meaningful work until we have a valid PlayerState
 	if (!bBeganWithPlayerState || !ensure(EMPlayerState))
@@ -3779,6 +3814,29 @@ bool AEditModelPlayerController::ToggleGravityPawn()
 	UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::View, analyticsEventName);
 
 	return true;
+}
+
+void AEditModelPlayerController::OnToggledProjectSystemMenu(ESlateVisibility NewVisibility)
+{
+	// When showing the project system menu in multiplayer, use the upload time & hash from the server for the Save button.
+	auto* world = GetWorld();
+	auto* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
+	if (IsNetMode(NM_Client) && gameState && gameState->Document &&
+		EditModelUserWidget && EditModelUserWidget->ProjectSystemMenu &&
+		EditModelUserWidget->ProjectSystemMenu->IsVisible() &&
+		EditModelUserWidget->ProjectSystemMenu->ButtonSaveProject)
+	{
+		double uploadAge = (FDateTime::UtcNow() - gameState->LastUploadTime).GetTotalSeconds();
+		FNumberFormattingOptions timeFormatOpts;
+		timeFormatOpts.MaximumFractionalDigits = 0;
+
+		FText saveFormatText = (gameState->Document->GetLatestVerifiedDocHash() == gameState->LastUploadedDocHash) ?
+			LOCTEXT("OnlineSavedFormat", "Up to date.\nAuto-saved by the server {0} seconds ago.") :
+			LOCTEXT("OnlineUnsavedFormat", "Auto-saved by the server {0} seconds ago.");
+		FText saveText = FText::Format(saveFormatText, FText::AsNumber(uploadAge, &timeFormatOpts));
+
+		EditModelUserWidget->ProjectSystemMenu->ButtonSaveProject->OverrideTooltipText = saveText;
+	}
 }
 
 void AEditModelPlayerController::SetCurrentCullingCutPlane(int32 ObjID /*= MOD_ID_NONE*/, bool bRefreshMenu /*= true*/)

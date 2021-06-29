@@ -98,7 +98,7 @@ private:
 public:
 	static void CloneFromGraph(FGraph3D &tempGraph, const FGraph3D &graph);
 
-	void Load(const FGraph3DRecord* InGraph3DRecord);
+	bool Load(const FGraph3DRecord* InGraph3DRecord);
 	void Save(FGraph3DRecord* OutGraph3DRecord);
 
 	void SaveSubset(const TSet<int32> InObjectIDs, FGraph3DRecord* OutGraph3DRecord) const;

@@ -53,13 +53,13 @@ public:
 	bool OpenCloudProject(const FString& ProjectID);
 
 	UFUNCTION()
-	void OnCreatedProjectConnection(const FString& ProjectID, const FProjectConnectionResponse& Response);
+	void OnCloudProjectFailure(const FText& ErrorMessage = FText::GetEmpty());
 
 	UFUNCTION()
-	void OnProjectConnectionFailed(const FString& ProjectID, int32 ErrorCode, const FString& ErrorMessage);
+	bool OnCreatedProjectConnection(const FProjectConnectionResponse& Response);
 
 	UFUNCTION()
-	void OnDownloadedCloudProject(bool bSuccess);
+	void OnProjectConnectionFailed(int32 ErrorCode, const FString& ErrorMessage);
 
 	UFUNCTION(BlueprintCallable, Category = "Files")
 	bool OpenProjectFromPicker();
@@ -67,15 +67,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Files")
 	bool GetLoadFilename(FString &loadFileName);
 
-	UFUNCTION(BlueprintCallable, Category = "Date Time")
-	FDateTime GetCurrentDateTime();
-
 	UFUNCTION()
-	bool OpenProjectServerInstance(const FString& URL, const FString& ProjectID);
+	bool OpenProjectServerInstance(const FString& URL);
 
 protected:
 	FString PendingCloudProjectID;
-	FString PendingProjectServerURL;
 
 	TArray<FString> RecentProjectPaths;
 	TArray<FText> RecentProjectNames;

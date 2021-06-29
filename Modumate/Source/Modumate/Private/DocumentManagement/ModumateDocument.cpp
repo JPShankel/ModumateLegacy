@@ -53,6 +53,15 @@ const FName UModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
 // Set up a reasonable default for infinite loop detection while cleaning objects and resolving dependencies.
 const int32 UModumateDocument::CleanIterationSafeguard = 128;
 
+// 32-bit object IDs with 4 user index bits and 1 negation bit caps us out at 16 simultaneous users and up to ~137 million lifetime object IDs per user for a given project.
+// TODO: These could be constexpr without a .cpp definition, but clang 10.0.0.1 for Linux generates `ld.lld: error: undefined symbol` errors for these if we do so,
+// which may be fixed if we explicitly enable C++17 in our module and/or target's CppCompileEnvironment.CppStandardVersion.
+const int32 UModumateDocument::UserIdxBits = 4;
+const int32 UModumateDocument::MaxUserIdx = (1 << UserIdxBits) - 1;
+const int32 UModumateDocument::LocalObjIDBits = 32 - UserIdxBits - 1;
+const int32 UModumateDocument::ObjIDUserMask = MaxUserIdx << LocalObjIDBits;
+const int32 UModumateDocument::LocalObjIDMask = ~ObjIDUserMask;
+
 UModumateDocument::UModumateDocument()
 	: Super()
 	, NextID(1)
@@ -151,16 +160,7 @@ void UModumateDocument::Redo(UWorld *World)
 
 	if (controller->EMPlayerState->IsNetMode(NM_Client))
 	{
-		int32 numUndoneRecords = UndoneDeltasRecords.Num();
-		if (numUndoneRecords > 0)
-		{
-			auto& undoneRecord = UndoneDeltasRecords.Last();
-			if (ApplyDeltas(undoneRecord.RawDeltaPtrs, World, true) &&
-				ensure(numUndoneRecords == UndoneDeltasRecords.Num()))
-			{
-				UndoneDeltasRecords.RemoveAt(numUndoneRecords - 1);
-			}
-		}
+		controller->EMPlayerState->TryRedo();
 	}
 	else if (ensureAlways(!InUndoRedoMacro()))
 	{
@@ -198,15 +198,17 @@ bool UModumateDocument::GetUndoRecordsFromClient(UWorld* World, const FString& U
 
 	TSet<int32> affectedObjects;
 	TSet<FGuid> affectedPresets;
+	FBox affectedBounds;
+
 	auto& firstDeltasRecord = VerifiedDeltasRecords[firstDeltaIdx];
 
 	for (int32 recordIdx = firstDeltaIdx; recordIdx < numVerifiedDeltasRecords; ++recordIdx)
 	{
 		auto& deltasRecord = VerifiedDeltasRecords[recordIdx];
-		if ((recordIdx == firstDeltaIdx) || deltasRecord.ConflictsWithResults(affectedObjects, affectedPresets))
+		if ((recordIdx == firstDeltaIdx) || deltasRecord.ConflictsWithResults(affectedObjects, affectedPresets, &affectedBounds))
 		{
 			OutUndoRecordHashes.Add(deltasRecord.TotalHash);
-			deltasRecord.GatherResults(affectedObjects, affectedPresets);
+			deltasRecord.GatherResults(affectedObjects, affectedPresets, &affectedBounds);
 		}
 	}
 
@@ -634,11 +636,6 @@ bool UModumateDocument::ApplyRemoteDeltas(const FDeltasRecord& DeltasRecord, UWo
 			UE_LOG(LogTemp, Log, TEXT("Rolled back local deltas received before remote delta %08x from user ID %s"),
 				DeltasRecord.TotalHash, *DeltasRecord.OriginUserID);
 		}
-
-		// Wipe the undone deltas, since redoing on top of other user's changes is unlikely to be valid.
-		// TODO: should this be conditional on interfering with the union of all affected data from undone deltas,
-		// since that's how we verify undo in the first place?
-		UndoneDeltasRecords.Reset();
 	}
 
 	VerifiedDeltasRecords.Add(DeltasRecord);
@@ -649,9 +646,9 @@ bool UModumateDocument::ApplyRemoteDeltas(const FDeltasRecord& DeltasRecord, UWo
 	APlayerController* localController = localPlayer ? localPlayer->GetPlayerController(World) : nullptr;
 	if (localController && localController->IsNetMode(NM_Client) && bReceivingOwnDeltas && !bApplyOwnDeltas)
 	{
-		uint32 verifiedDeltasHash = DeltasRecord.TotalHash;
-		int32 unverifiedIdx = UnverifiedDeltasRecords.IndexOfByPredicate([this, verifiedDeltasHash](const FDeltasRecord& UnverifiedDeltasRecord)
-			{ return (UnverifiedDeltasRecord.TotalHash == verifiedDeltasHash); });
+		uint32 recordHash = DeltasRecord.TotalHash;
+		int32 unverifiedIdx = UnverifiedDeltasRecords.IndexOfByPredicate([recordHash](const FDeltasRecord& UnverifiedDeltasRecord)
+			{ return (UnverifiedDeltasRecord.TotalHash == recordHash); });
 
 		// If we're receiving our own deltas, then we wait until now to remove them from the unverified list.
 		if (unverifiedIdx != INDEX_NONE)
@@ -697,9 +694,7 @@ bool UModumateDocument::ApplyRemoteUndo(UWorld* World, const FString& UndoingUse
 
 	for (int32 recordIDIdx = numUndoRecords - 1; recordIDIdx >= 0; --recordIDIdx)
 	{
-		uint32 recordHash = UndoRecordHashes[recordIDIdx];
-		int32 recordIdx = VerifiedDeltasRecords.IndexOfByPredicate([this, recordHash](const FDeltasRecord& VerifiedDeltasRecord)
-			{ return (VerifiedDeltasRecord.TotalHash == recordHash); });
+		int32 recordIdx = FindDeltasRecordIdxByHash(UndoRecordHashes[recordIDIdx]);
 
 		if (!ensure(recordIdx != INDEX_NONE))
 		{
@@ -708,11 +703,6 @@ bool UModumateDocument::ApplyRemoteUndo(UWorld* World, const FString& UndoingUse
 
 		auto& undoRecord = VerifiedDeltasRecords[recordIdx];
 		ApplyInvertedDeltas(World, undoRecord.RawDeltaPtrs);
-
-		if (UndoingUserID == CachedLocalUserID)
-		{
-			UndoneDeltasRecords.Add(VerifiedDeltasRecords[recordIdx]);
-		}
 
 		VerifiedDeltasRecords.RemoveAt(recordIdx);
 
@@ -1171,7 +1161,6 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	if (!bRedoingDeltas)
 	{
 		ClearRedoBuffer();
-		UndoneDeltasRecords.Reset();
 	}
 
 	BeginUndoRedoMacro();
@@ -1208,7 +1197,8 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	uint32 latestDocHash = (UnverifiedDeltasRecords.Num() > 0) ? UnverifiedDeltasRecords.Last().TotalHash : GetLatestVerifiedDocHash();
 	FDeltasRecord deltasRecord(ur->Deltas, CachedLocalUserID, latestDocHash);
 
-	deltasRecord.SetResults(DeltaAffectedObjects, DeltaDirtiedObjects, DeltaAffectedPresets.Array(), GetDeltaAffectedBounds());
+	FBox deltaAffectedBounds = GetAffectedBounds(DeltaAffectedObjects, DeltaDirtiedObjects);
+	deltasRecord.SetResults(DeltaAffectedObjects, DeltaDirtiedObjects, DeltaAffectedPresets.Array(), deltaAffectedBounds);
 
 	// If we're a multiplayer client, then send the deltas generated by this user to the server
 	if (bMultiplayerClient)
@@ -1475,11 +1465,17 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World, bool bCleanObjects, bool 
 
 	// TODO: Find a better way to determine what objects were or are now dependents of CutPlanes,
 	// so we don't always have to update them in order to have always-correct lines.
+	// Also, this involves a very unfortunate workaround for preventing deltas from serializing cut planes dirtied by their application.
+	bool bWasTrackingDeltaObjects = bTrackingDeltaObjects;
+	bTrackingDeltaObjects = false;
+
 	TArray<AModumateObjectInstance*> cutPlanes = GetObjectsOfType(EObjectType::OTCutPlane);
 	for (auto cutPlane : cutPlanes)
 	{
 		cutPlane->MarkDirty(EObjectDirtyFlags::Visuals);
 	}
+
+	bTrackingDeltaObjects = bWasTrackingDeltaObjects;
 
 	if (bMarkDocumentDirty)
 	{
@@ -1567,7 +1563,7 @@ void UModumateDocument::EndTrackingDeltaObjects()
 	bTrackingDeltaObjects = false;
 }
 
-FBox UModumateDocument::GetDeltaAffectedBounds() const
+FBox UModumateDocument::GetAffectedBounds(const FAffectedObjMap& AffectedObjects, const TSet<int32>& DirtiedObjects) const
 {
 	static TArray<FVector> allMOIPoints;
 	static TArray<FStructurePoint> curMOIPoints;
@@ -1592,11 +1588,11 @@ FBox UModumateDocument::GetDeltaAffectedBounds() const
 		}
 	};
 
-	for (auto& kvp : DeltaAffectedObjects)
+	for (auto& kvp : AffectedObjects)
 	{
 		gatherPointsForObjects(kvp.Value);
 	}
-	gatherPointsForObjects(DeltaDirtiedObjects);
+	gatherPointsForObjects(DirtiedObjects);
 
 	return FBox(allMOIPoints);
 }
@@ -2294,7 +2290,13 @@ void UModumateDocument::ClearUndoBuffer()
 
 uint32 UModumateDocument::GetLatestVerifiedDocHash() const
 {
-	return (VerifiedDeltasRecords.Num() > 0) ? VerifiedDeltasRecords.Last().TotalHash : 0;
+	return (VerifiedDeltasRecords.Num() > 0) ? VerifiedDeltasRecords.Last().TotalHash : InitialDocHash;
+}
+
+int32 UModumateDocument::FindDeltasRecordIdxByHash(uint32 RecordHash) const
+{
+	return VerifiedDeltasRecords.IndexOfByPredicate([RecordHash](const FDeltasRecord& VerifiedDeltasRecord)
+		{ return (VerifiedDeltasRecord.TotalHash == RecordHash); });
 }
 
 FBoxSphereBounds UModumateDocument::CalculateProjectBounds() const
@@ -2527,7 +2529,7 @@ void UModumateDocument::RegisterDirtyObject(EObjectDirtyFlags DirtyType, AModuma
 	}
 }
 
-void UModumateDocument::MakeNew(UWorld *World)
+void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeNew"));
 
@@ -2579,15 +2581,18 @@ void UModumateDocument::MakeNew(UWorld *World)
 	ClearRedoBuffer();
 	ClearUndoBuffer();
 
+	InitialDocHash = 0;
 	UnverifiedDeltasRecords.Reset();
 	VerifiedDeltasRecords.Reset();
-	UndoneDeltasRecords.Reset();
 	UndoRedoMacroStack.Reset();
 	VolumeGraph.Reset();
 	TempVolumeGraph.Reset();
 	SurfaceGraphs.Reset();
 
-	SetCurrentProjectPath();
+	if (bClearName)
+	{
+		SetCurrentProjectName();
+	}
 
 	SetDirtyFlags(false);
 }
@@ -2701,6 +2706,7 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 
 	// Header is its own object
 	OutHeader.Version = DocVersion;
+	OutHeader.DocumentHash = GetLatestVerifiedDocHash();
 	OutHeader.Thumbnail = CurrentEncodedThumbnail;
 
 	EToolMode modes[] = {
@@ -2721,14 +2727,15 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 	};
 
 	AEditModelPlayerController* emPlayerController = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
-	AEditModelPlayerState* emPlayerState = emPlayerController->EMPlayerState;
-
-	for (auto &mode : modes)
+	if (emPlayerController)
 	{
-		TScriptInterface<IEditModelToolInterface> tool = emPlayerController->ModeToTool.FindRef(mode);
-		if (ensureAlways(tool))
+		for (auto& mode : modes)
 		{
-			OutDocumentRecord.CurrentToolAssemblyGUIDMap.Add(mode, tool->GetAssemblyGUID());
+			TScriptInterface<IEditModelToolInterface> tool = emPlayerController->ModeToTool.FindRef(mode);
+			if (ensureAlways(tool))
+			{
+				OutDocumentRecord.CurrentToolAssemblyGUIDMap.Add(mode, tool->GetAssemblyGUID());
+			}
 		}
 	}
 
@@ -2880,7 +2887,7 @@ const AModumateObjectInstance *UModumateDocument::GetObjectById(int32 id) const
 	return ObjectsByID.FindRef(id);
 }
 
-bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord)
+bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord, bool bClearName)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::LoadRecord"));
 
@@ -2892,7 +2899,8 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		playerState->OnNewModel();
 	}
 
-	MakeNew(world);
+	MakeNew(world, bClearName);
+	bool bInitialDocumentDirty = false;
 
 	UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
 	FModumateDatabase* objectDB = gameInstance->ObjectDatabase;
@@ -2901,8 +2909,15 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 
 	// Load the connectivity graphs now, which contain associations between object IDs,
 	// so that any objects whose geometry setup needs to know about connectivity can find it.
-	VolumeGraph.Load(&InDocumentRecord.VolumeGraph);
+	bool bSuccessfulGraphLoad = VolumeGraph.Load(&InDocumentRecord.VolumeGraph);
 	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+
+	// If some elements didn't load in correctly, then mark the document as initially dirty,
+	// since it may indicate that undo operations could break the graph, or that it should be re-saved before clients join.
+	if (!bSuccessfulGraphLoad)
+	{
+		bInitialDocumentDirty = true;
+	}
 
 	// Load all of the surface graphs now
 	for (const auto& kvp : InDocumentRecord.SurfaceGraphs)
@@ -2972,9 +2987,8 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 
 	// Now that all objects have been created and parented correctly, we can clean all of them.
 	// This should take care of anything that depends on relationships between objects, like mitering.
-	bool bInitialDocumentDirty = false;
 	TArray<FDeltaPtr> loadCleanSideEffects;
- 	CleanObjects(&loadCleanSideEffects, true);
+	CleanObjects(&loadCleanSideEffects, true);
 
 	// If there were side effects generated while cleaning initial objects, then those deltas must be applied immediately.
 	// This should not normally happen, but it's a sign that some objects relied on data that didn't get saved/loaded correctly.
@@ -2986,7 +3000,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		// However, they might break serialized the undo buffer, so we will have to skip deserializing it.
 		UE_LOG(LogTemp, Warning, TEXT("CleanObjects generated %d side effects during initial Document load! Attemping to clean."), numLoadCleanSideEffects);
 		
-		bInitialDocumentDirty = ApplyDeltas(loadCleanSideEffects, world);
+		bInitialDocumentDirty = ApplyDeltas(loadCleanSideEffects, world) || bInitialDocumentDirty;
 	}
 
 	// Check for objects that have errors, as a result of having been loaded and cleaned.
@@ -3028,17 +3042,27 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	}
 	AddHideObjectsById(world, hideCutPlaneIds);
 
+	InitialDocHash = 0;
 	UnverifiedDeltasRecords.Reset();
-	VerifiedDeltasRecords.Reset();
-	UndoneDeltasRecords.Reset();
+	VerifiedDeltasRecords = InDocumentRecord.AppliedDeltas;
 
 	ClearUndoBuffer();
 
-	// Load undo buffer if the file version is consistent and there weren't initial loading side effects, otherwise deltas are not supported.
-	// TODO: for cloud-hosted documents, we rely on these for document hashing - we'll need to either make this unconditional, or redundantly save the assumed document hash.
-	if ((DocVersion == InHeader.Version) && !bInitialDocumentDirty)
+	// Sanity-check our scheme for saving the document hash in the header, that should always match up with the DeltasRecords stored in the record.
+	uint32 loadedDeltasHash = GetLatestVerifiedDocHash();
+	if (InHeader.DocumentHash != loadedDeltasHash)
 	{
-		VerifiedDeltasRecords = InDocumentRecord.AppliedDeltas;
+		UE_LOG(LogTemp, Error, TEXT("Load failure; mismatch between DocumentRecord's DeltasRecords hash (%08x) and DocumentHeader's DocumentHash (%08x)!"),
+			loadedDeltasHash, InHeader.DocumentHash);
+	}
+
+	// If the file version is out of date, or if side effects were done upon load, then DeltasRecords may not be safely used for undo.
+	// Wipe the records so that they can't undone, but set InitialDocHash so that we can still get the oldest valid doc hash.
+	if (bInitialDocumentDirty || (DocVersion != InHeader.Version))
+	{
+		InitialDocHash = GetLatestVerifiedDocHash();
+		VerifiedDeltasRecords.Reset();
+		UE_LOG(LogTemp, Warning, TEXT("Undo records cleared due to load-clean-side-effects or document version mismatch."));
 	}
 
 	CurrentSettings = InDocumentRecord.Settings;
@@ -3066,7 +3090,7 @@ bool UModumateDocument::LoadFile(UWorld* world, const FString& path, bool bSetAs
 
 	if (bSetAsCurrentProject)
 	{
-		SetCurrentProjectPath(path);
+		SetCurrentProjectName(path);
 	}
 
 	auto* gameInstance = world->GetGameInstance<UModumateGameInstance>();
@@ -3197,15 +3221,17 @@ TArray<AModumateObjectInstance *> UModumateDocument::CloneObjects(UWorld *world,
 	return newObjs;
 }
 
-void UModumateDocument::SetCurrentProjectPath(const FString& currentProjectPath)
+void UModumateDocument::SetCurrentProjectName(const FString& NewProjectName, bool bAsPath)
 {
-	CurrentProjectPath = currentProjectPath;
-	CurrentProjectName = currentProjectPath;
-
-	if (!currentProjectPath.IsEmpty())
+	if (bAsPath)
 	{
-		FString projectDir, projectExt;
-		FPaths::Split(CurrentProjectPath, projectDir, CurrentProjectName, projectExt);
+		CurrentProjectPath = NewProjectName;
+		CurrentProjectName = FPaths::GetBaseFilename(CurrentProjectPath);
+	}
+	else
+	{
+		CurrentProjectPath.Empty();
+		CurrentProjectName = NewProjectName;
 	}
 
 	UpdateWindowTitle();
@@ -3953,7 +3979,7 @@ void UModumateDocument::RecordSavedProject(UWorld* World, const FString& FilePat
 	{
 		bUserFileDirty = false;
 
-		SetCurrentProjectPath(FilePath);
+		SetCurrentProjectName(FilePath);
 
 		if (auto* gameInstance = World->GetGameInstance<UModumateGameInstance>())
 		{

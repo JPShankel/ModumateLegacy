@@ -196,7 +196,7 @@ void FAnalyticsProviderModumate::RecordEvent(const FString& EventName, const TAr
 			UploadBufferedEvents();
 		}
 
-		UE_LOG(LogModumateAnalytics, Display, TEXT("Buffered analytics event (%s)"), *eventData.key);
+		UE_LOG(LogModumateAnalytics, Verbose, TEXT("Buffered analytics event (%s)"), *eventData.key);
 	}
 	else
 	{
@@ -222,7 +222,7 @@ bool FAnalyticsProviderModumate::UploadBufferedEvents()
 	auto eventsJsonArray = eventsJson->GetArrayField(TEXT("Events"));
 
 	bool bUploadRequestSuccess = CloudConnection->UploadAnalyticsEvents(eventsJsonArray,
-		[numEvents](bool bSuccess, const TSharedPtr<FJsonObject>&) { UE_LOG(LogModumateAnalytics, Display, TEXT("Successfully uploaded %d buffered analytics events."), numEvents); },
+		[numEvents](bool bSuccess, const TSharedPtr<FJsonObject>&) { UE_LOG(LogModumateAnalytics, Verbose, TEXT("Successfully uploaded %d buffered analytics events."), numEvents); },
 		[](int32 Code, const FString& Error) { UE_LOG(LogModumateAnalytics, Error, TEXT("Analytics event upload error code: %d, error message: %s"), Code, *Error); }
 	);
 

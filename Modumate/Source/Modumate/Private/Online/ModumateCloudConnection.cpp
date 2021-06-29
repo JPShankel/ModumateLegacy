@@ -28,8 +28,8 @@ TAutoConsoleVariable<FString> CVarModumateCloudAddress(
 
 // Period for requesting refresh of AuthToken.
 const FTimespan FModumateCloudConnection::AuthTokenTimeout = { 0, 5 /* min */, 0 };
-const FString FModumateCloudConnection::DocumentDataEndpointPrefix(TEXT("/projects"));
-const FString FModumateCloudConnection::DocumentDataEndpointSuffix(TEXT("data"));
+const FString FModumateCloudConnection::EncryptionTokenKey(TEXT("EncryptionToken"));
+const FString FModumateCloudConnection::DocumentHashKey(TEXT("DocHash"));
 
 FModumateCloudConnection::FModumateCloudConnection()
 {
@@ -79,6 +79,11 @@ bool FModumateCloudConnection::ClearEncryptionKey(const FString& UserID, const F
 {
 	FString encryptionToken = MakeEncryptionToken(UserID, ProjectID);
 	return CachedEncryptionKeysByToken.Remove(encryptionToken) > 0;
+}
+
+void FModumateCloudConnection::ClearEncryptionKeys()
+{
+	CachedEncryptionKeysByToken.Reset();
 }
 
 bool FModumateCloudConnection::GetCachedEncryptionKey(const FString& UserID, const FString& ProjectID, FString& OutEncryptionKey)
@@ -216,6 +221,25 @@ FString FModumateCloudConnection::GetRequestTypeString(ERequestType RequestType)
 		case ERequestType::Post: return TEXT("POST");
 	};
 	return TEXT("POST");
+}
+
+bool FModumateCloudConnection::MakeConnectionURL(FString& OutFullURL, const FString& BaseURL, const FString& UserID, const FString& ProjectID)
+{
+	OutFullURL.Empty();
+	if (BaseURL.IsEmpty() || UserID.IsEmpty() || ProjectID.IsEmpty())
+	{
+		return false;
+	}
+
+	OutFullURL = FString::Printf(TEXT("%s?%s=%s"), *BaseURL, *EncryptionTokenKey, *MakeEncryptionToken(UserID, ProjectID));
+
+	return true;
+}
+
+bool FModumateCloudConnection::ParseConnectionOptions(const FString& ConnectionOptions, FString& OutUserID, FString& OutProjectID)
+{
+	FString encryptionToken = UGameplayStatics::ParseOption(ConnectionOptions, EncryptionTokenKey);
+	return ParseEncryptionToken(encryptionToken, OutUserID, OutProjectID);
 }
 
 bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequestType RequestType,
@@ -549,7 +573,7 @@ bool FModumateCloudConnection::UploadAnalyticsEvents(const TArray<TSharedPtr<FJs
 
 bool FModumateCloudConnection::DownloadProject(const FString& ProjectID, const FProjectCallback& DownloadCallback, const FErrorCallback& ServerErrorCallback)
 {
-	if (PendingProjectDownloads.Contains(ProjectID))
+	if (PendingProjectDownloads.Contains(ProjectID) || ProjectID.IsEmpty())
 	{
 		return false;
 	}
@@ -557,7 +581,7 @@ bool FModumateCloudConnection::DownloadProject(const FString& ProjectID, const F
 	auto request = FHttpModule::Get().CreateRequest();
 
 	SetupRequestAuth(request);
-	FString downloadEndpoint = DocumentDataEndpointPrefix / ProjectID / DocumentDataEndpointSuffix;
+	FString downloadEndpoint = FProjectConnectionHelpers::MakeProjectDataEndpoint(ProjectID);
 	request->SetURL(GetCloudAPIURL() + downloadEndpoint);
 	request->SetVerb(GetRequestTypeString(FModumateCloudConnection::Get));
 	request->SetHeader(TEXT("Accepts"), TEXT("application/octet-stream"));
@@ -621,7 +645,7 @@ bool FModumateCloudConnection::UploadProject(const FString& ProjectID, const FMo
 
 	PendingProjectUploads.Add(ProjectID);
 
-	FString uploadEndpoint = DocumentDataEndpointPrefix / ProjectID / DocumentDataEndpointSuffix;
+	FString uploadEndpoint = FProjectConnectionHelpers::MakeProjectDataEndpoint(ProjectID);
 	TWeakPtr<FModumateCloudConnection> weakThisCaptured(AsShared());
 	bool bRequestSuccess = RequestEndpoint(uploadEndpoint, FModumateCloudConnection::Post,
 		[&DocHeader, &DocRecord](FHttpRequestRef& RefRequest) {

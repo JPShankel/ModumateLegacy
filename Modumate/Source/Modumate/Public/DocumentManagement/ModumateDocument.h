@@ -40,14 +40,14 @@ private:
 	int32 ReservingObjectID;
 	bool bApplyingPreviewDeltas, bFastClearingPreviewDeltas, bSlowClearingPreviewDeltas;
 
+	// The initial hash of the document; normally 0, unless VerifiedDeltasRecords cannot be loaded or used.
+	uint32 InitialDocHash = 0;
+
 	// The FDeltasRecords that have been locally on the multiplayer client, but haven't yet been verified and sent back by the server.
 	TArray<FDeltasRecord> UnverifiedDeltasRecords;
 
 	// The FDeltasRecords that have either been applied locally offline, or been verified and sent by the server to all clients.
 	TArray<FDeltasRecord> VerifiedDeltasRecords;
-
-	// The FDeltasRecords that this user has undone (either directly, or because they were implicated in this user's intended undo)
-	TArray<FDeltasRecord> UndoneDeltasRecords;
 
 	UPROPERTY()
 	TArray<AModumateObjectInstance*> ObjectInstanceArray;
@@ -237,12 +237,13 @@ public:
 
 	void UpdateVolumeGraphObjects(UWorld *World);
 
+	FBox GetAffectedBounds(const FAffectedObjMap& AffectedObjects, const TSet<int32>& DirtiedObjects) const;
+
 private:
 	bool FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas);
 	bool PostApplyDeltas(UWorld *World, bool bCleanObjects, bool bMarkDocumentDirty);
 	void StartTrackingDeltaObjects();
 	void EndTrackingDeltaObjects();
-	FBox GetDeltaAffectedBounds() const;
 
 	// Helper function for ObjectFromActor
 	AModumateObjectInstance *ObjectFromSingleActor(AActor *actor);
@@ -259,15 +260,15 @@ public:
 	void RestoreDeletedObjects(const TArray<int32> &ids);
 	void DeleteObjects(const TArray<int32> &obIds, bool bAllowRoomAnalysis = true, bool bDeleteConnected = true);
 
-	void MakeNew(UWorld* World);
+	void MakeNew(UWorld* World, bool bClearName = true);
 	bool SerializeRecords(UWorld* World, FModumateDocumentHeader& OutHeader, FMOIDocumentRecord& OutDocumentRecord);
 	static bool SaveRecords(const FString& FilePath, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord);
 	bool SaveFile(UWorld* World, const FString& FilePath, bool bUserFile, bool bAsync = false, const TFunction<void (bool)>& OnSaveFunction = nullptr);
 	bool SaveAsBinary(UWorld* World, TArray<uint8>& OutBuffer);
-	bool LoadRecord(UWorld* World, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord);
+	bool LoadRecord(UWorld* World, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord, bool bClearName = true);
 	bool LoadFile(UWorld* World, const FString& Path, bool bSetAsCurrentProject, bool bRecordAsRecentProject);
 	bool LoadDeltas(UWorld* World, const FString& Path, bool bSetAsCurrentProject, bool bRecordAsRecentProject); // Debug - Loads all deltas into the redo buffer for replay purposes
-	void SetCurrentProjectPath(const FString& CurrentProjectPath = FString());
+	void SetCurrentProjectName(const FString& NewProjectName = FString(), bool bAsPath = true);
 
 	// Expose the serialized structs that were most recently used to either load or save the document
 	const FModumateDocumentHeader& GetLastSerializedHeader() const { return CachedHeader; }
@@ -288,6 +289,8 @@ public:
 
 	uint32 GetLatestVerifiedDocHash() const;
 	const TArray<FDeltasRecord>& GetVerifiedDeltasRecords() const { return VerifiedDeltasRecords; }
+	int32 FindDeltasRecordIdxByHash(uint32 RecordHash) const;
+	uint32 GetInitialDocHash() const { return InitialDocHash; }
 
 	FBoxSphereBounds CalculateProjectBounds() const;
 
@@ -321,12 +324,11 @@ public:
 
 	// Utilities and constants for allocating pools of object IDs for different users
 	// TODO: upgrade all object IDs to 64-bit integers, to allow space for negation (in the graph), user index bits, and enough IDs for large projects.
-	// 32-bit object IDs with 4 user index bits and 1 negation bit caps us out at 16 simultaneous users and up to ~137 million lifetime object IDs per user for a given project.
-	static constexpr int32 UserIdxBits = 4;
-	static constexpr int32 MaxUserIdx = (1 << UserIdxBits) - 1;
-	static constexpr int32 LocalObjIDBits = 32 - UserIdxBits - 1;
-	static constexpr int32 ObjIDUserMask = MaxUserIdx << LocalObjIDBits;
-	static constexpr int32 LocalObjIDMask = ~ObjIDUserMask;
+	static const int32 UserIdxBits;
+	static const int32 MaxUserIdx;
+	static const int32 LocalObjIDBits;
+	static const int32 ObjIDUserMask;
+	static const int32 LocalObjIDMask;
 
 	static int32 MPObjIDFromLocalObjID(int32 LocalObjID, int32 UserIdx);
 	static void SplitMPObjID(int32 MPObjID, int32& OutLocalObjID, int32& OutUserIdx);

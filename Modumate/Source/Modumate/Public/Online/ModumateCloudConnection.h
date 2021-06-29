@@ -39,6 +39,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 
 		void CacheEncryptionKey(const FString& UserID, const FString& ProjectID, const FString& EncryptionKey);
 		bool ClearEncryptionKey(const FString& UserID, const FString& ProjectID);
+		void ClearEncryptionKeys();
 		bool GetCachedEncryptionKey(const FString& UserID, const FString& ProjectID, FString& OutEncryptionKey);
 		void QueryEncryptionKey(const FString& UserID, const FString& ProjectID, const FOnEncryptionKeyResponse& Delegate);
 #if !UE_BUILD_SHIPPING
@@ -62,8 +63,6 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		bool UploadReplay(const FString& SessionID, const FString& Filename, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 		bool UploadAnalyticsEvents(const TArray<TSharedPtr<FJsonValue>>& EventsJSON, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 
-		static const FString DocumentDataEndpointPrefix;
-		static const FString DocumentDataEndpointSuffix;
 		bool DownloadProject(const FString& ProjectID, const FProjectCallback& DownloadCallback, const FErrorCallback& ServerErrorCallback);
 		bool UploadProject(const FString& ProjectID, const FModumateDocumentHeader& DocHeader, const FMOIDocumentRecord& DocRecord, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 
@@ -77,6 +76,11 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		void SetupRequestAuth(FHttpRequestRef& Request);
 		FHttpRequestRef MakeRequest(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure = true, int32* OutRequestAutomationIndexPtr = nullptr);
 		static FString GetRequestTypeString(ERequestType RequestType);
+
+		static const FString EncryptionTokenKey;
+		static const FString DocumentHashKey;
+		static bool MakeConnectionURL(FString& OutFullURL, const FString& BaseURL, const FString& UserID, const FString& ProjectID);
+		static bool ParseConnectionOptions(const FString& ConnectionOptions, FString& OutUserID, FString& OutProjectID);
 
 	private:
 		void HandleRequestResponse(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure,

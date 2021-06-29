@@ -55,14 +55,20 @@ class UTooltipWidget* UTooltipManager::GetOrCreateTooltipWidget(TSubclassOf<clas
 	return nullptr;
 }
 
-class UWidget* UTooltipManager::GenerateTooltipNonInputWidget(const FName& TooltipID, const class UWidget* FromWidget)
+class UWidget* UTooltipManager::GenerateTooltipNonInputWidget(const FName& TooltipID, const class UWidget* FromWidget, const FText& OverrideText)
 {
 	UModumateGameInstance* gameInstance = FromWidget->GetWorld()->GetGameInstance<UModumateGameInstance>();
 	UTooltipManager* manager = gameInstance ? gameInstance->TooltipManager : nullptr;
 
 	if (manager)
 	{
-		const auto& tooltipData = manager->TooltipsMap.FindRef(TooltipID);
+		FTooltipData tooltipData = manager->TooltipsMap.FindRef(TooltipID);
+
+		if (!OverrideText.IsEmpty())
+		{
+			tooltipData.TooltipText = OverrideText;
+		}
+
 		if (!tooltipData.TooltipText.IsEmpty())
 		{
 			if (tooltipData.TooltipTitle.IsEmpty())
@@ -89,7 +95,7 @@ class UWidget* UTooltipManager::GenerateTooltipNonInputWidget(const FName& Toolt
 	return nullptr;
 }
 
-class UWidget* UTooltipManager::GenerateTooltipWithInputWidget(EInputCommand InputCommand, const class UWidget* FromWidget)
+class UWidget* UTooltipManager::GenerateTooltipWithInputWidget(EInputCommand InputCommand, const class UWidget* FromWidget, const FText& OverrideText)
 {
 	// Since input command requires input component, the EditModelController is needed
 	AEditModelPlayerController* controller = FromWidget->GetOwningPlayer<AEditModelPlayerController>();
@@ -107,8 +113,13 @@ class UWidget* UTooltipManager::GenerateTooltipWithInputWidget(EInputCommand Inp
 	{
 		FTooltipData newTooltipData;
 		newTooltipData.TooltipTitle = inputData.Title;
-		newTooltipData.TooltipText = inputData.EnabledDescription;
+		newTooltipData.TooltipText = FromWidget->GetIsEnabled() ? inputData.EnabledDescription : inputData.DisabledDescription;
 		newTooltipData.AllBindings = inputData.AllBindings;
+
+		if (!OverrideText.IsEmpty())
+		{
+			newTooltipData.TooltipText = OverrideText;
+		}
 
 		UTooltipWidget* newTooltipWidget = manager->GetOrCreateTooltipWidget(manager->PrimaryTooltipWidgetClass);
 		if (newTooltipWidget)

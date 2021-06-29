@@ -138,16 +138,19 @@ void AEditModelPlayerState::TryInitController()
 		EMPlayerController = GetOwner<AEditModelPlayerController>();
 	}
 
-	// If we're a multiplayer client, then allow the player controller to initialize this on Tick,
-	// to make sure that any pending UI or operations have completed before starting the blocking document load.
-	if (IsNetMode(NM_Client))
+	auto* world = GetWorld();
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
+
+	// Multiplayer clients need to wait until they've received a client index, to use for object ID allocation
+	if (IsNetMode(NM_Client) && ((MultiplayerClientIdx == INDEX_NONE) || (gameState == nullptr)))
 	{
 		return;
 	}
 
 	// EditModelPlayerState initialization must happen after the EditModelPlayerController,
 	// so allow that to either happen now or be deferred.
-	if (EMPlayerController && EMPlayerController->HasActorBegunPlay() && !EMPlayerController->bBeganWithPlayerState)
+	if (EMPlayerController && EMPlayerController->HasActorBegunPlay() && !EMPlayerController->bBeganWithPlayerState && gameInstance)
 	{
 		EMPlayerController->EMPlayerState = this;
 		if (EMPlayerController->BeginWithPlayerState() && BeginWithController())
@@ -159,7 +162,7 @@ void AEditModelPlayerState::TryInitController()
 			UE_LOG(LogTemp, Error, TEXT("AEditModelPlayerState failed to initialize state and controller!"));
 			if (IsNetMode(NM_Client))
 			{
-				GoToMainMenu();
+				gameInstance->GoToMainMenu(FText::GetEmpty());
 			}
 		}
 	}
@@ -710,6 +713,17 @@ void AEditModelPlayerState::OnNewModel()
 	}
 }
 
+void AEditModelPlayerState::SetObjectIDSelected(int32 ObjID, bool bSelected)
+{
+	auto* world = GetWorld();
+	auto* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
+	AModumateObjectInstance* obj = (gameState && gameState->Document) ? gameState->Document->GetObjectById(ObjID) : nullptr;
+	if (obj)
+	{
+		SetObjectSelected(obj, bSelected, bSelected);
+	}
+}
+
 void AEditModelPlayerState::SetShowHoverEffects(bool showHoverEffects)
 {
 	ShowHoverEffects = showHoverEffects;
@@ -1102,11 +1116,27 @@ bool AEditModelPlayerState::IsObjectTypeEnabledByViewMode(EObjectType ObjectType
 	}
 }
 
-void AEditModelPlayerState::GoToMainMenu()
+void AEditModelPlayerState::ClearConflictingRedoBuffer(const FDeltasRecord& Deltas)
 {
-	// If a multiplayer client failed to initialize, then go back to the main menu.
-	FString mainMenuMap = UGameMapsSettings::GetGameDefaultMap();
-	UGameplayStatics::OpenLevel(this, FName(*mainMenuMap));
+	if (UndoneDeltasRecords.Num() == 0)
+	{
+		return;
+	}
+
+	// Gather the set of all objects, presets, and locations affected by the deltas in this player's redo stack.
+	TSet<int32> affectedObjects;
+	TSet<FGuid> affectedPresets;
+	FBox affectedBounds;
+	for (const auto& undoneRecord : UndoneDeltasRecords)
+	{
+		undoneRecord.GatherResults(affectedObjects, affectedPresets, &affectedBounds);
+	}
+
+	// If the incoming delta had no effects that conflict with any of the undone deltas, then clear the redo buffer.
+	if (Deltas.ConflictsWithResults(affectedObjects, affectedPresets, &affectedBounds))
+	{
+		UndoneDeltasRecords.Reset();
+	}
 }
 
 // RPC from the client to the server's copy of that client's PlayerState
@@ -1123,40 +1153,58 @@ void AEditModelPlayerState::SetUserInfo_Implementation(const FModumateUserInfo& 
 }
 
 // RPC from the client to the server's copy of that client's PlayerState
-void AEditModelPlayerState::SendClientDeltas_Implementation(const FDeltasRecord& Deltas)
+void AEditModelPlayerState::SendClientDeltas_Implementation(FDeltasRecord Deltas)
 {
+	FString userID;
 	UWorld* world = GetWorld();
 	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
-	if (gameState && gameState->Document && !Deltas.IsEmpty())
+	AEditModelGameMode* gameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
+	if (gameState && gameState->Document && gameMode && !Deltas.IsEmpty() && gameMode->GetUserByPlayerID(GetPlayerId(), userID))
 	{
-		// Rare situation, but if the client sent deltas before the server finished downloading the cloud document, reject them immediately.
+		// If the client sent deltas before the server finished downloading the cloud document, or while another user is logging in, then reject them immediately.
 		if (gameState->bDownloadingDocument)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("User %s sent DeltasRecord while the server was still downloading the project - rolling back"), *Deltas.OriginUserID);
+			UE_LOG(LogTemp, Warning, TEXT("User %s sent DeltasRecord %08x before the server was ready - rolling back to 0."),
+				*Deltas.OriginUserID, Deltas.TotalHash);
 			RollBackUnverifiedDeltas(0);
-			return;
 		}
-
-		// If the server verifies that these deltas have been made after the latest one,
-		// then broadcast them to every client.
-		FDeltasRecord reconciledRecord;
-		uint32 verifiedDocHash;
-		if (gameState->Document->ReconcileRemoteDeltas(Deltas, world, reconciledRecord, verifiedDocHash))
+		else if (gameMode->IsAnyUserPendingLogin())
 		{
-			UE_LOG(LogTemp, Log, TEXT("Broadcasting verified DeltasRecord %08x from user %s"), Deltas.TotalHash, *Deltas.OriginUserID);
-			gameState->BroadcastServerDeltas(Deltas);
+			uint32 verifiedDocHash = gameState->Document->GetLatestVerifiedDocHash();
+			UE_LOG(LogTemp, Log, TEXT("User %s sent DeltasRecord %08x while someone was logging in - rolling back to %08x."),
+				*Deltas.OriginUserID, Deltas.TotalHash, verifiedDocHash);
+			RollBackUnverifiedDeltas(verifiedDocHash);
 		}
-		// Otherwise, tell the client that it needs to roll back all unverified deltas,
-		// and potentially broadcast reconciled deltas that include changes from the out-of-date client's deltas.
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("User %s sent out-of-date DeltasRecord hash %08x - rolling back"), *Deltas.OriginUserID, Deltas.TotalHash);
-			RollBackUnverifiedDeltas(verifiedDocHash);
+			// Clear the user's redo buffer if they're sending a new non-redo record
+			UndoneDeltasRecords.Reset();
 
-			if (!reconciledRecord.IsEmpty())
+			// Expand the delta's bounds based on the current bounds of objects that the deltas are about to affect,
+			// rather than what's serialized, which is only the bounds of objects that the deltas have already affected.
+			Deltas.AffectedObjBounds += gameState->Document->GetAffectedBounds(Deltas.AffectedObjectsMap, Deltas.DirtiedObjectsSet);
+
+			// If the server verifies that these deltas have been made after the latest one,
+			// then broadcast them to every client.
+			FDeltasRecord reconciledRecord;
+			uint32 verifiedDocHash;
+			if (gameState->Document->ReconcileRemoteDeltas(Deltas, world, reconciledRecord, verifiedDocHash))
 			{
-				UE_LOG(LogTemp, Log, TEXT("Broadcasting reconciled DeltasRecord DeltasRecord %08x from user %s"), Deltas.TotalHash, *Deltas.OriginUserID);
-				gameState->BroadcastServerDeltas(reconciledRecord);
+				UE_LOG(LogTemp, Log, TEXT("Broadcasting verified DeltasRecord %08x from user %s"), Deltas.TotalHash, *Deltas.OriginUserID);
+				gameState->BroadcastServerDeltas(userID, Deltas);
+			}
+			// Otherwise, tell the client that it needs to roll back all unverified deltas,
+			// and potentially broadcast reconciled deltas that include changes from the out-of-date client's deltas.
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("User %s sent out-of-date DeltasRecord hash %08x - rolling back"), *Deltas.OriginUserID, Deltas.TotalHash);
+				RollBackUnverifiedDeltas(verifiedDocHash);
+
+				if (!reconciledRecord.IsEmpty())
+				{
+					UE_LOG(LogTemp, Log, TEXT("Broadcasting reconciled DeltasRecord DeltasRecord %08x from user %s"), Deltas.TotalHash, *Deltas.OriginUserID);
+					gameState->BroadcastServerDeltas(userID, reconciledRecord);
+				}
 			}
 		}
 	}
@@ -1171,35 +1219,94 @@ void AEditModelPlayerState::TryUndo_Implementation()
 	UWorld* world = GetWorld();
 	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
 	AEditModelGameMode* gameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
-	if (gameState && gameState->Document && gameMode && gameMode->GetUserByPlayerID(GetPlayerId(), userID) &&
-		gameState->Document->GetUndoRecordsFromClient(world, userID, undoRecordHashes))
+	if (gameState && gameState->Document && gameMode && gameMode->GetUserByPlayerID(GetPlayerId(), userID))
 	{
-		gameState->BroadcastUndo(userID, undoRecordHashes);
+		if (gameState->bDownloadingDocument)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("User %s tried to undo while the server was still downloading the project - rejecting"), *userID);
+		}
+		else if (gameMode->IsAnyUserPendingLogin())
+		{
+			UE_LOG(LogTemp, Log, TEXT("User %s tried to undo while someone is logging in to the server - rejecting"), *userID);
+		}
+		else if (gameState->Document->GetUndoRecordsFromClient(world, userID, undoRecordHashes))
+		{
+			// Add the undone records to our redo stack
+			auto& verifiedDeltas = gameState->Document->GetVerifiedDeltasRecords();
+			int32 numUndoRecords = undoRecordHashes.Num();
+			for (int32 recordIDIdx = numUndoRecords - 1; recordIDIdx >= 0; --recordIDIdx)
+			{
+				uint32 undoneRecordHash = undoRecordHashes[recordIDIdx];
+				int32 recordIdx = gameState->Document->FindDeltasRecordIdxByHash(undoneRecordHash);
+				if (!ensure(recordIdx != INDEX_NONE))
+				{
+					break;
+				}
+
+				auto& undoneRecord = verifiedDeltas[recordIdx];
+				UndoneDeltasRecords.Add(undoneRecord);
+			}
+
+			gameState->BroadcastUndo(userID, undoRecordHashes);
+		}
+	}
+}
+
+// RPC from the client to the server's copy of that client's PlayerState
+void AEditModelPlayerState::TryRedo_Implementation()
+{
+	FString userID;
+	TArray<uint32> undoRecordHashes;
+
+	UWorld* world = GetWorld();
+	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
+	AEditModelGameMode* gameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
+	if (gameState && gameState->Document && gameMode && gameMode->GetUserByPlayerID(GetPlayerId(), userID))
+	{
+		if (gameState->bDownloadingDocument)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("User %s tried to redo while the server was still downloading the project - rejecting"), *userID);
+		}
+		else if (gameMode->IsAnyUserPendingLogin())
+		{
+			UE_LOG(LogTemp, Log, TEXT("User %s tried to redo while someone is logging in to the server - rejecting"), *userID);
+		}
+		else if (UndoneDeltasRecords.Num() > 0)
+		{
+			FDeltasRecord redoRecord = UndoneDeltasRecords.Pop();
+			redoRecord.PrevDocHash = gameState->Document->GetLatestVerifiedDocHash();
+			redoRecord.ComputeHash();
+
+			UE_LOG(LogTemp, Log, TEXT("Broadcasting redone DeltasRecord %08x from user %s"), redoRecord.TotalHash, *userID);
+			gameState->BroadcastServerDeltas(userID, redoRecord, true);
+		}
 	}
 }
 
 // RPC from the server to the client's copy of its PlayerState
-void AEditModelPlayerState::SendInitialDeltas_Implementation(const TArray<FDeltasRecord>& InitialDeltas)
+void AEditModelPlayerState::SendInitialState_Implementation(const FString& ProjectID, int32 UserIdx, uint32 CurDocHash)
 {
+	UE_LOG(LogTemp, Log, TEXT("Received initial state for Project ID %s; User #%d, expected doc hash: %08x."), *ProjectID, UserIdx, CurDocHash);
+
+	CurProjectID = ProjectID;
+	MultiplayerClientIdx = UserIdx;
+	bPendingClientDownload = true;
+	ExpectedDownloadDocHash = CurDocHash;
+
+	// Now that we have a client index and project ID, we should be able to initialize the controller, player state, and document;
+	// we shouldn't have been able to before now, but if we still can't at this frame, the controller will do so on its BeginPlay.
+	TryInitController();
+}
+
+// RPC from the client to the server's copy of that client's PlayerState
+void AEditModelPlayerState::OnDownloadedDocument_Implementation(uint32 DownloadedDocHash)
+{
+	FString userID;
 	UWorld* world = GetWorld();
-	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
-	if (gameState && gameState->Document)
+	AEditModelGameMode* gameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
+	if (gameMode && gameMode->GetUserByPlayerID(GetPlayerId(), userID))
 	{
-		UE_LOG(LogTemp, Log, TEXT("Applying %d initial deltas sent from the server."), InitialDeltas.Num());
-
-		for (const FDeltasRecord& record : InitialDeltas)
-		{
-			gameState->Document->ApplyRemoteDeltas(record, world, true);
-		}
-	}
-	else
-	{
-		if (!ensure(PendingInitialDeltas.Num() == 0))
-		{
-			UE_LOG(LogTemp, Error, TEXT("Received redundant initial deltas from the server!"));
-		}
-
-		PendingInitialDeltas = InitialDeltas;
+		gameMode->OnUserDownloadedDocument(userID, DownloadedDocHash);
 	}
 }
 
@@ -1214,14 +1321,27 @@ void AEditModelPlayerState::RollBackUnverifiedDeltas_Implementation(uint32 Verif
 	}
 }
 
+// RPC from the client to the server's copy of that client's PlayerState
 void AEditModelPlayerState::UpdateCameraUnreliable_Implementation(const FTransform& NewTransform)
 {
 	ReplicatedCamTransform = NewTransform;
 }
 
+// RPC from the client to the server's copy of that client's PlayerState
 void AEditModelPlayerState::UpdateCameraReliable_Implementation(const FTransform& NewTransform)
 {
 	ReplicatedCamTransform = NewTransform;
+}
+
+// RPC from the client to the server's copy of that client's PlayerState
+void AEditModelPlayerState::RequestUpload_Implementation()
+{
+	UWorld* world = GetWorld();
+	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
+	if (gameState)
+	{
+		gameState->UploadDocument();
+	}
 }
 
 void AEditModelPlayerState::OnRep_CamTransform()

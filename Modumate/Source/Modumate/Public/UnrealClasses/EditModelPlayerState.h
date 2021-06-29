@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Database/ModumateObjectEnums.h"
+#include "DocumentManagement/DocumentDelta.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "Online/ModumateAccountManager.h"
 #include "GameFramework/PlayerState.h"
@@ -115,6 +116,9 @@ public:
 
 	void OnNewModel();
 
+	UFUNCTION()
+	void SetObjectIDSelected(int32 ObjID, bool bSelected);
+
 	void SetShowHoverEffects(bool showHoverEffects);
 	AModumateObjectInstance *GetValidHoveredObjectInView(AModumateObjectInstance *hoverTarget) const;
 	void SetHoveredObject(AModumateObjectInstance *ob);
@@ -207,22 +211,28 @@ public:
 	UFUNCTION()
 	bool IsObjectTypeEnabledByViewMode(EObjectType ObjectType) const;
 
-	// Networking/replication-related functions and properties
-
 	UFUNCTION()
-	void GoToMainMenu();
+	void ClearConflictingRedoBuffer(const FDeltasRecord& Deltas);
+
+	// Networking/replication-related functions and properties
 
 	UFUNCTION(Server, Reliable)
 	void SetUserInfo(const FModumateUserInfo& UserInfo);
 
 	UFUNCTION(Server, Reliable)
-	void SendClientDeltas(const FDeltasRecord& Deltas);
+	void SendClientDeltas(FDeltasRecord Deltas);
 
 	UFUNCTION(Server, Reliable)
 	void TryUndo();
 
+	UFUNCTION(Server, Reliable)
+	void TryRedo();
+
 	UFUNCTION(Client, Reliable)
-	void SendInitialDeltas(const TArray<FDeltasRecord>& InitialDeltas);
+	void SendInitialState(const FString& ProjectID, int32 UserIdx, uint32 CurDocHash);
+
+	UFUNCTION(Server, Reliable)
+	void OnDownloadedDocument(uint32 DownloadedDocHash);
 
 	UFUNCTION(Client, Reliable)
 	void RollBackUnverifiedDeltas(uint32 VerifiedDocHash);
@@ -232,6 +242,9 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void UpdateCameraReliable(const FTransform& NewTransform);
+
+	UFUNCTION(Server, Reliable)
+	void RequestUpload();
 
 	UFUNCTION()
 	void OnRep_CamTransform();
@@ -247,8 +260,14 @@ public:
 	UPROPERTY(ReplicatedUsing=OnRep_UserInfo)
 	FModumateUserInfo ReplicatedUserInfo;
 
+	// The FDeltasRecords that this user has undone (either directly, or because they were implicated in this user's intended undo)
 	UPROPERTY()
-	TArray<FDeltasRecord> PendingInitialDeltas;
+	TArray<FDeltasRecord> UndoneDeltasRecords;
+
+	int32 MultiplayerClientIdx = INDEX_NONE;
+	FString CurProjectID;
+	bool bPendingClientDownload = false;
+	uint32 ExpectedDownloadDocHash = 0;
 
 protected:
 	TArray<FStructurePoint> TempObjectStructurePoints, CurSelectionStructurePoints;

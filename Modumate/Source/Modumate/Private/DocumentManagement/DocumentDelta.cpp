@@ -18,7 +18,7 @@ FDeltasRecord::FDeltasRecord()
 FDeltasRecord::FDeltasRecord(const TArray<FDeltaPtr>& InDeltas, const FString& InOriginUserID, uint32 InPrevDocHash)
 	: OriginUserID(InOriginUserID)
 	, PrevDocHash(InPrevDocHash)
-	, TimeStamp(FDateTime::Now())
+	, TimeStamp(FDateTime::UtcNow())
 	, RawDeltaPtrs(InDeltas)
 {
 	for (auto& deltaPtr : RawDeltaPtrs)

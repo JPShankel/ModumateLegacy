@@ -2,6 +2,7 @@
 
 #include "UnrealClasses/EditModelGameMode.h"
 
+#include "DocumentManagement/ModumateDocument.h"
 #include "HttpManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Online/ModumateAccountManager.h"
@@ -16,7 +17,6 @@
 
 const FString AEditModelGameMode::ProjectIDArg(TEXT("-ModProjectID="));
 const FString AEditModelGameMode::APIKeyArg(TEXT("-ModApiKey="));
-const FString AEditModelGameMode::EncryptionTokenKey(TEXT("EncryptionToken"));
 
 AEditModelGameMode::AEditModelGameMode()
 	: Super()
@@ -29,13 +29,13 @@ void AEditModelGameMode::InitGameState()
 {
 	Super::InitGameState();
 
+	auto* world = GetWorld();
 	auto* gameState = Cast<AEditModelGameState>(GameState);
-
-	auto gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
 	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
 
-	if (!ensure(gameState && accountManager.IsValid() && cloudConnection.IsValid()))
+	if (!ensure(world && gameState && accountManager.IsValid() && cloudConnection.IsValid()))
 	{
 		return;
 	}
@@ -54,23 +54,28 @@ void AEditModelGameMode::InitGameState()
 	gameState->InitDocument(localUserID, localUserIdx);
 
 #if UE_SERVER
-	FString inXApiKey;
-	if (FParse::Value(FCommandLine::Get(), *AEditModelGameMode::ProjectIDArg, CurProjectID) && !CurProjectID.IsEmpty() &&
-		FParse::Value(FCommandLine::Get(), *AEditModelGameMode::APIKeyArg, inXApiKey) && !inXApiKey.IsEmpty())
+	if (GameSession)
 	{
-		cloudConnection->SetXApiKey(inXApiKey);
-
-		FString redactedKey = FString::Printf(TEXT("%c****%c"), inXApiKey[0], inXApiKey[inXApiKey.Len() - 1]);
-		UE_LOG(LogGameMode, Log, TEXT("Starting EditModelGameMode server with Project ID: %s, API Key: %s"), *CurProjectID, *redactedKey);
+		GameSession->MaxPlayers = UModumateDocument::MaxUserIdx;
 	}
-	else
+
+	FString inXApiKey;
+	if (!FParse::Value(FCommandLine::Get(), *AEditModelGameMode::ProjectIDArg, CurProjectID) || CurProjectID.IsEmpty() ||
+		!FParse::Value(FCommandLine::Get(), *AEditModelGameMode::APIKeyArg, inXApiKey) || inXApiKey.IsEmpty())
 	{
 		UE_LOG(LogGameMode, Fatal, TEXT("Can't start an EditModelGameMode server without %s and %s arguments!"), *AEditModelGameMode::ProjectIDArg, *AEditModelGameMode::APIKeyArg);
 		FPlatformMisc::RequestExit(false);
 		return;
 	}
 
-	gameState->DownloadDocument();
+	cloudConnection->SetXApiKey(inXApiKey);
+
+	FString redactedKey = FString::Printf(TEXT("%c****%c"), inXApiKey[0], inXApiKey[inXApiKey.Len() - 1]);
+	UE_LOG(LogGameMode, Log, TEXT("Starting EditModelGameMode server with Project ID: %s, API Key: %s"), *CurProjectID, *redactedKey);
+
+	gameState->Document->MakeNew(world);
+	gameState->DownloadDocument(CurProjectID);
+
 	gameInstance->GetTimerManager().SetTimer(ServerStatusTimer, this, &AEditModelGameMode::OnServerStatusTimer, ServerStatusTimerRate, true);
 #endif
 }
@@ -88,22 +93,27 @@ void AEditModelGameMode::PreLogin(const FString& Options, const FString& Address
 
 	auto gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
-	if (!cloudConnection.IsValid())
+	auto* gameState = Cast<AEditModelGameState>(GameState);
+	if (!ensure(cloudConnection.IsValid() && gameState && gameState->Document))
 	{
-		UE_LOG(LogGameMode, Error, TEXT("Invalid ModumateCloudConnection!"));
+		UE_LOG(LogGameMode, Error, TEXT("Invalid ModumateCloudConnection and/or Document!"));
 		ErrorMessage = FString(TEXT("Server is not ready; please try again later."));
 		return;
 	}
 
-	FString encryptionToken = UGameplayStatics::ParseOption(Options, AEditModelGameMode::EncryptionTokenKey);
+	FString userID, projectID, encryptionKey;
+	if (!ensure(FModumateCloudConnection::ParseConnectionOptions(Options, userID, projectID)))
+	{
+		UE_LOG(LogGameMode, Error, TEXT("Invalid connection options: %s"), *Options);
+		ErrorMessage = FString(TEXT("Log in failure"));
+		return;
+	}
 
 	// Now, get the encryption key for the encryption token, which should already be cached on the CloudConnection,
 	// assuming the user already successfully shook hands via our encrypted packet handler.
-	FString userID, projectID, encryptionKey;
-	if (!FModumateCloudConnection::ParseEncryptionToken(encryptionToken, userID, projectID) ||
-		!cloudConnection->GetCachedEncryptionKey(userID, projectID, encryptionKey))
+	if (!cloudConnection->GetCachedEncryptionKey(userID, projectID, encryptionKey))
 	{
-		UE_LOG(LogGameMode, Error, TEXT("Couldn't get encryption key for token: %s"), *encryptionToken);
+		UE_LOG(LogGameMode, Error, TEXT("Couldn't get encryption key for User ID: %s"), *userID);
 		ErrorMessage = FString(TEXT("Login failed; check credentials and try again later."));
 		return;
 	}
@@ -115,15 +125,38 @@ void AEditModelGameMode::PreLogin(const FString& Options, const FString& Address
 		return;
 	}
 
+	if (OrderedUserIDs.Num() >= UModumateDocument::MaxUserIdx)
+	{
+		UE_LOG(LogGameMode, Error, TEXT("Player cap (%d) reached!"), UModumateDocument::MaxUserIdx);
+		ErrorMessage = FString::Printf(TEXT("Only %d users can connect to the server at a time - please try again later after someone disconnects."), UModumateDocument::MaxUserIdx);
+		return;
+	}
+
+	if (PendingLoginDocHashByUserID.Contains(userID))
+	{
+		UE_LOG(LogGameMode, Error, TEXT("UserID %s is already in the process of logging in!"), *userID);
+		ErrorMessage = FString(TEXT("Duplicate login; please try again later."));
+		return;
+	}
+
 	if (PlayersByUserID.Contains(userID))
 	{
 		UE_LOG(LogGameMode, Error, TEXT("UserID %s is already logged in!"), *userID);
 		ErrorMessage = FString(TEXT("Duplicate login; please try again later."));
+		return;
 	}
-	else
+
+	UE_LOG(LogGameMode, Log, TEXT("UserID %s login approved!"), *userID);
+	PlayersByUserID.Add(userID, INDEX_NONE);
+
+	uint32 latestDocHash = gameState->Document->GetLatestVerifiedDocHash();
+	PendingLoginDocHashByUserID.Add(userID, latestDocHash);
+
+	// Now that we're going to let the client log in, we need to upload the current version of the document,
+	// so that client can download the same version.
+	if (gameState->UploadDocument())
 	{
-		UE_LOG(LogGameMode, Log, TEXT("UserID %s login approved!"), *userID);
-		PlayersByUserID.Add(userID, INDEX_NONE);
+		PendingLoginUploadDocHashes.Add(latestDocHash);
 	}
 #endif
 }
@@ -134,13 +167,16 @@ APlayerController* AEditModelGameMode::Login(UPlayer* NewPlayer, ENetRole InRemo
 
 #if UE_SERVER
 	FString userID, projectID;
-	FString encryptionToken = UGameplayStatics::ParseOption(Options, AEditModelGameMode::EncryptionTokenKey);
+	if (!ensure(FModumateCloudConnection::ParseConnectionOptions(Options, userID, projectID)))
+	{
+		UE_LOG(LogGameMode, Error, TEXT("Invalid connection options: %s"), *Options);
+		ErrorMessage = FString(TEXT("Log in failure"));
+		return newController;
+	}
+
 	APlayerState* playerState = newController ? newController->PlayerState : nullptr;
 	int32 playerID = playerState ? playerState->GetPlayerId() : INDEX_NONE;
-
-	if ((playerID == INDEX_NONE) || UsersByPlayerID.Contains(playerID) ||
-		!FModumateCloudConnection::ParseEncryptionToken(encryptionToken, userID, projectID) ||
-		!PlayersByUserID.Contains(userID))
+	if ((playerID == INDEX_NONE) || UsersByPlayerID.Contains(playerID) || !PlayersByUserID.Contains(userID))
 	{
 		UE_LOG(LogGameMode, Error, TEXT("Invalid/duplicate Player ID: %d and User ID: %s"), playerID, *userID);
 		ErrorMessage = FString(TEXT("Log in failure"));
@@ -149,6 +185,16 @@ APlayerController* AEditModelGameMode::Login(UPlayer* NewPlayer, ENetRole InRemo
 
 	UsersByPlayerID.Add(playerID, userID);
 	PlayersByUserID[userID] = playerID;
+
+	int32 firstEmptyIdx = OrderedUserIDs.Find(FString());
+	if (firstEmptyIdx == INDEX_NONE)
+	{
+		OrderedUserIDs.Add(userID);
+	}
+	else
+	{
+		OrderedUserIDs[firstEmptyIdx] = userID;
+	}
 #endif
 
 	return newController;
@@ -158,32 +204,7 @@ void AEditModelGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
-#if UE_SERVER
-	// TODO: this should probably send the deltas that have been applied since the version of the document that the joining player has downloaded,
-	// rather than just the last time we saved - since we could have auto-saved just as the player joined.
-	auto* playerState = NewPlayer ? Cast<AEditModelPlayerState>(NewPlayer->PlayerState) : nullptr;
-	int32 playerID = playerState ? playerState->GetPlayerId() : INDEX_NONE;
-	FString userID = UsersByPlayerID.FindRef(playerID);
-	auto* gameState = Cast<AEditModelGameState>(GameState);
-	if (ensure(playerState && gameState && !userID.IsEmpty()))
-	{
-		TArray<FDeltasRecord> deltasSinceSave;
-		if (gameState->GetDeltaRecordsSinceSave(deltasSinceSave))
-		{
-			int32 numDeltasSinceSave = deltasSinceSave.Num();
-			if (numDeltasSinceSave > 0)
-			{
-				UE_LOG(LogGameMode, Log, TEXT("Sent %d DeltasRecords to User ID %s that were made since the document was last saved."), numDeltasSinceSave, *userID);
-				playerState->SendInitialDeltas(deltasSinceSave);
-			}
-		}
-		else
-		{
-			UE_LOG(LogGameMode, Error, TEXT("Failed to get unsaved DeltasRecords for User ID %s!"), *userID);
-			// TODO: if this failed, then we should either disconnect the user, or tell them to re-download the cloud document
-		}
-	}
-#endif
+	TrySendUserInitialState(NewPlayer);
 }
 
 void AEditModelGameMode::Logout(AController* Exiting)
@@ -198,6 +219,15 @@ void AEditModelGameMode::Logout(AController* Exiting)
 		PlayersByUserID.Remove(userID);
 	}
 
+	// Clear the User ID from the ordered User IDs, so its index can get reused
+	int32 userIdx = userID.IsEmpty() ? INDEX_NONE : OrderedUserIDs.IndexOfByKey(userID);
+	if (ensure(userIdx != INDEX_NONE))
+	{
+		OrderedUserIDs[userIdx].Empty();
+	}
+
+	PendingLoginDocHashByUserID.Remove(userID);
+
 	// Once the user has logged out, let the multiplayer controller and AMS know that the user is no longer connected to the multiplayer server.
 	auto gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
@@ -210,11 +240,6 @@ void AEditModelGameMode::Logout(AController* Exiting)
 
 		FString deleteConnectionEndpoint = FProjectConnectionHelpers::MakeProjectConnectionEndpoint(CurProjectID) / userID;
 		cloudConnection->RequestEndpoint(deleteConnectionEndpoint, FModumateCloudConnection::ERequestType::Delete, nullptr, nullptr, nullptr);
-	}
-
-	if (PlayersByUserID.Num() == 0)
-	{
-		ResetSession();
 	}
 #endif
 
@@ -240,6 +265,138 @@ bool AEditModelGameMode::GetUserByPlayerID(int32 PlayerID, FString& OutUserID) c
 	}
 }
 
+bool AEditModelGameMode::GetPlayerByUserID(const FString& UserID, int32& OutPlayerID) const
+{
+	const int32* playerIDPtr = PlayersByUserID.Find(UserID);
+	if (playerIDPtr)
+	{
+		OutPlayerID = *playerIDPtr;
+		return true;
+	}
+	{
+		return false;
+	}
+}
+
+bool AEditModelGameMode::IsAnyUserPendingLogin() const
+{
+	return PendingLoginDocHashByUserID.Num() > 0;
+}
+
+void AEditModelGameMode::OnUserDownloadedDocument(const FString& UserID, uint32 DownloadedDocHash)
+{
+#if UE_SERVER
+	auto* gameState = Cast<AEditModelGameState>(GameState);
+	if (!ensure(gameState && gameState->Document))
+	{
+		return;
+	}
+
+	uint32 currentDocHash = gameState->Document->GetLatestVerifiedDocHash();
+	bool bDownloadedLatest = (currentDocHash == DownloadedDocHash);
+
+	uint32 pendingDocHash = 0;
+	bool bDownloadedPendingDoc = PendingLoginDocHashByUserID.RemoveAndCopyValue(UserID, pendingDocHash) && (pendingDocHash == DownloadedDocHash);
+
+	if (bDownloadedLatest && bDownloadedPendingDoc)
+	{
+		UE_LOG(LogGameMode, Log, TEXT("User ID %s successfully downloaded current doc hash %08x"), *UserID, currentDocHash);
+
+		if (PendingLoginDocHashByUserID.Num() == 0)
+		{
+			UE_LOG(LogGameMode, Log, TEXT("No users are currently logging in, operations can safely resume!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogGameMode, Error, TEXT("User ID %s reportedly finished downloading their document (hash %08x), but it wasn't the correct version!"), *UserID, DownloadedDocHash);
+
+		APlayerController* userController = FindControllerByUserID(UserID);
+		if (ensure(GameSession) && userController)
+		{
+			GameSession->KickPlayer(userController, LOCTEXT("ClientBadDownload", "There was an error downloading the project, please try again later."));
+		}
+	}
+#endif
+}
+
+void AEditModelGameMode::OnServerUploadedDocument(uint32 UploadedDocHash)
+{
+#if UE_SERVER
+	if (PendingLoginUploadDocHashes.Contains(UploadedDocHash))
+	{
+		PendingLoginUploadDocHashes.Remove(UploadedDocHash);
+
+		// If we just finished uploading a document, but a player has already logged in and needs to know what document to download,
+		// we can let them know here.
+		for (auto& kvp : PendingLoginDocHashByUserID)
+		{
+			if (kvp.Value == UploadedDocHash)
+			{
+				auto* controller = FindControllerByUserID(kvp.Key);
+				if (controller && controller->GetPawn())
+				{
+					TrySendUserInitialState(controller);
+				}
+			}
+		}
+	}
+#endif
+}
+
+APlayerController* AEditModelGameMode::FindControllerByUserID(const FString& UserID)
+{
+	if (!PlayersByUserID.Contains(UserID) || (GameState == nullptr))
+	{
+		return nullptr;
+	}
+
+	for (APlayerState* player : GameState->PlayerArray)
+	{
+		auto* controller = player->GetOwner<APlayerController>();
+		if ((player->GetPlayerId() == PlayersByUserID[UserID]) && controller)
+		{
+			return controller;
+		}
+	}
+
+	return nullptr;
+}
+
+bool AEditModelGameMode::TrySendUserInitialState(APlayerController* NewPlayer)
+{
+#if UE_SERVER
+	auto* playerState = NewPlayer ? Cast<AEditModelPlayerState>(NewPlayer->PlayerState) : nullptr;
+	auto* playerPawn = NewPlayer ? NewPlayer->GetPawn() : nullptr;
+	int32 playerID = playerState ? playerState->GetPlayerId() : INDEX_NONE;
+	FString userID = UsersByPlayerID.FindRef(playerID);
+	int32 userIdx = userID.IsEmpty() ? INDEX_NONE : OrderedUserIDs.IndexOfByKey(userID);
+	auto* gameState = Cast<AEditModelGameState>(GameState);
+	if (ensure(playerState && playerPawn && gameState && !userID.IsEmpty() && (userIdx != INDEX_NONE) &&
+		(userIdx < UModumateDocument::MaxUserIdx) && PendingLoginDocHashByUserID.Contains(userID)))
+	{
+		uint32 userDocHash = PendingLoginDocHashByUserID[userID];
+		if (PendingLoginUploadDocHashes.Contains(userDocHash))
+		{
+			UE_LOG(LogGameMode, Warning, TEXT("User ID %s finished logging in, but we're still uploading the document (hash %08x) for them to download. Deferring sending initial state..."),
+				*userID, userDocHash);
+		}
+		else
+		{
+			playerState->SendInitialState(CurProjectID, userIdx, userDocHash);
+			return true;
+		}
+	}
+	else
+	{
+		UE_LOG(LogGameMode, Error, TEXT("Unknown login failure! User ID %s, Player ID %d, User #%d"), *userID, playerID, userIdx);
+		GameSession->KickPlayer(NewPlayer, LOCTEXT("LoginFailureKick", "You have failed to connect to the server, please try again."));
+	}
+#endif
+
+	return false;
+}
+
 void AEditModelGameMode::OnServerStatusTimer()
 {
 #if UE_SERVER
@@ -258,16 +415,6 @@ void AEditModelGameMode::OnServerStatusTimer()
 		TimeWithoutPlayers = 0.0f;
 	}
 #endif
-}
-
-void AEditModelGameMode::ResetSession()
-{
-	UWorld* world = GetWorld();
-	auto* gameState = Cast<AEditModelGameState>(GameState);
-	if (ensure(world && gameState && gameState->Document))
-	{
-		gameState->Document->MakeNew(world);
-	}
 }
 
 #undef LOCTEXT_NAMESPACE
