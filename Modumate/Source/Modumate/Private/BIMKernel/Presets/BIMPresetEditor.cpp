@@ -533,16 +533,17 @@ bool FBIMPresetEditor::GetSortedNodeIDs(TArray<FBIMEditorNodeIDType> &OutNodeIDs
 
 EBIMResult FBIMPresetEditor::DestroyNodeInstance(const FBIMPresetEditorNodeSharedPtr& Instance, TArray<FBIMEditorNodeIDType>& OutDestroyed)
 {
+	if (!ensureAlways(Instance.IsValid()))
+	{
+		return EBIMResult::Error;
+	}
+
 	FBIMPresetEditorNodeSharedPtr parent;
 	if (Instance->ParentInstance.IsValid())
 	{
 		parent = InstanceFromID(Instance->ParentInstance.Pin()->GetInstanceID());
 	}
 
-	if (!ensureAlways(Instance != nullptr))
-	{
-		return EBIMResult::Error;
-	}
 	TArray<FBIMPresetEditorNodeSharedPtr> childNodes;
 	Instance->GatherAllChildNodes(childNodes);
 	OutDestroyed.Add(Instance->GetInstanceID());
