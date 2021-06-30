@@ -204,6 +204,9 @@ bool AMOITerrain::GetTransformedLocationState(const FTransform Transform, FMOISt
 
 void AMOITerrain::UpdateTerrainActor()
 {
+	// Don't evaluate terrain mesh on server as it's costly and not required.
+#if !UE_SERVER
+
 	const auto graph2d = GetDocument()->FindSurfaceGraph(ID);
 	int32 numTerrainPatches = 0;
 
@@ -320,10 +323,12 @@ void AMOITerrain::UpdateTerrainActor()
 			}
 		}
 	}
+#endif
 }
 
 void AMOITerrain::UpdateSiteMaterials(bool bForceUpdate/* = false*/)
 {
+#if !UE_SERVER
 	const auto* doc = GetDocument();
 	const auto graph2d = doc->FindSurfaceGraph(ID);
 
@@ -387,6 +392,7 @@ void AMOITerrain::UpdateSiteMaterials(bool bForceUpdate/* = false*/)
 		}
 	}
 
+#endif
 }
 
 FVector AMOITerrain::GraphToWorldPosition(FVector2D GraphPos, double Height /*= 0.0*/, bool bRelative /*= false*/) const
