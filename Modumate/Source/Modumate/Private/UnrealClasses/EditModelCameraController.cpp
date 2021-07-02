@@ -133,15 +133,22 @@ void UEditModelCameraController::TickComponent(float DeltaTime, enum ELevelTick 
 	FVector clampedCamPos = curCamPos.GetClampedToMaxSize(ZoomMaxTotalDistance);
 	CamTransform.SetLocation(clampedCamPos);
 
+	// Decide whether to send a transform for this camera's pawn over the network
+	bool bSendClientTransform = false;
 	if (!CamTransform.EqualsNoScale(oldTransform) && bUpdateCameraTransform)
 	{
+		bSendClientTransform = true;
 		Controller->EMPlayerPawn->SetActorLocationAndRotation(CamTransform.GetLocation(), CamTransform.GetRotation());
+	}
+	else if (CurMovementState == ECameraMovementState::Flying)
+	{
+		bSendClientTransform = true;
+	}
 
-		// For multiplayer clients, update the server with our latest camera transform (unreliably during TickComponent)
-		if (Controller->EMPlayerState && Controller->EMPlayerState->IsNetMode(NM_Client))
-		{
-			Controller->EMPlayerState->UpdateCameraUnreliable(CamTransform);
-		}
+	// For multiplayer clients, update the server with our latest camera transform (unreliably during TickComponent)
+	if (bSendClientTransform && Controller->EMPlayerPawn && Controller->EMPlayerState && Controller->EMPlayerState->IsNetMode(NM_Client))
+	{
+		Controller->EMPlayerState->UpdateCameraUnreliable(Controller->EMPlayerPawn->GetActorTransform());
 	}
 }
 
@@ -778,7 +785,6 @@ void UEditModelCameraController::UpdateFlying(float DeltaTime)
 
 	if (!FlyingDeltasAccumulated.IsZero())
 	{
-		FVector camPos = CamTransform.GetLocation();
 		FQuat camRot = CamTransform.GetRotation();
 
 		FVector flyingInputX = camRot.GetAxisX() * FlyingDeltasAccumulated.X;

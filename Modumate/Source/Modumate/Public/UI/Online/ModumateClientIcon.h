@@ -17,7 +17,7 @@ public:
 	virtual bool Initialize() override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateTextBlockUserWidget* ClientName;
+	class UOnlineUserName* ClientName;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UImage* IconImage;

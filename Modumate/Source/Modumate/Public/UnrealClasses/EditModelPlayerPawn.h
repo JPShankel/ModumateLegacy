@@ -22,8 +22,6 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void UnPossessed() override;
 
-	virtual void OnRep_PlayerState() override;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -31,8 +29,6 @@ protected:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	void TryInitClientIconWidget();
 
 	FCollisionObjectQueryParams CachedCollisionObjQueryParams;
 	FCollisionQueryParams CachedCollisionQueryParams;
@@ -60,6 +56,11 @@ public:
 
 	UPROPERTY()
 	UModumateClientIcon* ClientIconWidget;
+
+	UPROPERTY()
+	class UMaterialInstanceDynamic* RemoteMeshMaterial;
+
+	bool TryInitClientVisuals();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

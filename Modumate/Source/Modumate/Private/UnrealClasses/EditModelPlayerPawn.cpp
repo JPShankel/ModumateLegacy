@@ -3,12 +3,15 @@
 #include "UnrealClasses/EditModelPlayerPawn.h"
 
 #include "CollisionShape.h"
+#include "Components/Border.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "Database/ModumateObjectEnums.h"
+#include "UI/Custom/ModumateTextBlock.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/Online/ModumateClientIcon.h"
+#include "UI/Online/OnlineUserName.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelInputHandler.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -74,12 +77,20 @@ void AEditModelPlayerPawn::Tick(float DeltaTime)
 
 	if (IsNetMode(NM_Client) && !IsLocallyControlled())
 	{
-		TryInitClientIconWidget();
+		TryInitClientVisuals();
 
-		FVector2D localViewportPos;
-		if (ClientIconWidget && localController->ProjectWorldLocationToScreen(GetActorLocation(), localViewportPos))
+		if (ClientIconWidget)
 		{
-			ClientIconWidget->SetPositionInViewport(localViewportPos, true);
+			FVector2D localViewportPos;
+			if (localController->ProjectWorldLocationToScreen(GetActorLocation(), localViewportPos))
+			{
+				ClientIconWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+				ClientIconWidget->SetPositionInViewport(localViewportPos, true);
+			}
+			else
+			{
+				ClientIconWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
 		}
 	}
 }
@@ -112,17 +123,6 @@ void AEditModelPlayerPawn::UnPossessed()
 	Super::UnPossessed();
 }
 
-void AEditModelPlayerPawn::OnRep_PlayerState()
-{
-	Super::OnRep_PlayerState();
-
-	if (IsNetMode(NM_Client) && !IsLocallyControlled())
-	{
-		TryInitClientIconWidget();
-		RemoteMeshComponent->SetVisibility(true);
-	}
-}
-
 // Called to bind functionality to input
 void AEditModelPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -135,30 +135,70 @@ void AEditModelPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	}
 }
 
-void AEditModelPlayerPawn::TryInitClientIconWidget()
+bool AEditModelPlayerPawn::TryInitClientVisuals()
 {
-	if (ClientIconWidget)
-	{
-		return;
-	}
-
 	UWorld* world = GetWorld();
 	ULocalPlayer* localPlayer = world ? world->GetFirstLocalPlayerFromController() : nullptr;
 	APlayerController* localController = localPlayer ? localPlayer->GetPlayerController(world) : nullptr;
 	AEditModelPlayerHUD* localHUD = localController ? localController->GetHUD<AEditModelPlayerHUD>() : nullptr;
 	AEditModelPlayerState* playerState = GetPlayerState<AEditModelPlayerState>();
 
-	if (localHUD && localHUD->HUDDrawWidget && playerState && ClientIconClass)
+	// Make sure that PlayerState has received all of the server-provided info required to initialize the client-side visuals
+	if (!(localHUD && localHUD->HUDDrawWidget && ClientIconClass && playerState &&
+		(playerState->MultiplayerClientIdx != INDEX_NONE) &&
+		!playerState->ReplicatedUserInfo.Email.IsEmpty()))
+	{
+		return false;
+	}
+
+	FLinearColor playerColor = playerState->GetClientColor();
+
+	if (ClientIconWidget == nullptr)
 	{
 		ClientIconWidget = localHUD->GetOrCreateWidgetInstance(ClientIconClass);
-
-		if (ensure(ClientIconWidget))
+		if (!ensure(ClientIconWidget))
 		{
-			ClientIconWidget->AddToViewport();
-			ClientIconWidget->SetAlignmentInViewport(FVector2D(0.5f, 1.0f));
-			ClientIconWidget->ClientName->ChangeText(FText::FromString(playerState->GetPlayerName()), false);
+			return false;
 		}
+
+		ClientIconWidget->AddToViewport();
+		ClientIconWidget->SetAlignmentInViewport(FVector2D(0.5f, 1.0f));
+
+		if (ClientIconWidget->ClientName->Background)
+		{
+			ClientIconWidget->ClientName->Background->SetBrushColor(playerColor);
+
+			// Decide whether the text for the player name should be black or white, based on the luminance of the background,
+			// for contrast purposes, based on standard accessibility thresholds.
+			static const float whiteTextThresh = 0.66667f;
+			float playerColorLuminance = playerColor.ComputeLuminance();
+			FLinearColor textColor = (playerColorLuminance > whiteTextThresh) ? FLinearColor::Black : FLinearColor::White;
+			ClientIconWidget->ClientName->ModumateTextBlock->SetColorAndOpacity(FSlateColor(textColor));
+		}
+
+		// User either the player's first name, or email if there's no first name, as the display name.
+		const FString& playerName = !playerState->ReplicatedUserInfo.Firstname.IsEmpty() ?
+			playerState->ReplicatedUserInfo.Firstname : playerState->ReplicatedUserInfo.Email;
+		ClientIconWidget->ClientName->ChangeText(FText::FromString(playerName), false);
 	}
+
+	if (RemoteMeshMaterial == nullptr)
+	{
+		static const FName colorParamName(TEXT("ColorMultiplier"));
+		static const int32 colorMaterialIdx = 1;
+		RemoteMeshMaterial = UMaterialInstanceDynamic::Create(RemoteMeshComponent->GetMaterial(colorMaterialIdx), RemoteMeshComponent);
+		if (!ensure(RemoteMeshMaterial))
+		{
+			return false;
+		}
+
+		RemoteMeshComponent->SetMaterial(colorMaterialIdx, RemoteMeshMaterial);
+		RemoteMeshMaterial->SetVectorParameterValue(colorParamName, playerState->GetClientColor());
+
+		RemoteMeshComponent->SetVisibility(true);
+	}
+
+	return true;
 }
 
 bool AEditModelPlayerPawn::SphereTraceForZoomLocation(const FVector &Start, const FVector &End, float Radius, FHitResult& OutHit)

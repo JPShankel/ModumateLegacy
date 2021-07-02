@@ -21,6 +21,7 @@
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/Online/ModumateClientIcon.h"
+#include "UI/Online/OnlineUserName.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -45,11 +46,14 @@ AEditModelPlayerState::AEditModelPlayerState()
 #else	// TODO: remove multiplayer debugging being the default after we're more stable
 	, bShowMultiplayerDebug(true)
 #endif
+	, CamTransformBufferSize(6)
+	, CamTransformInterpDelay(0.25f)
 	, SelectedViewMode(EEditViewModes::AllObjects)
 	, ShowingFileDialog(false)
 	, HoveredObject(nullptr)
 	, DebugMouseHits(false)
 	, bShowSnappedCursor(true)
+	, DefaultPlayerColor(0.011612f, 0.346704f, 1.0f, 1.0f)	// "Modumate Blue"
 	, ShowHoverEffects(false)
 {
 	//DimensionString.Visible = false;
@@ -67,6 +71,7 @@ void AEditModelPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 
 	DOREPLIFETIME(AEditModelPlayerState, ReplicatedCamTransform);
 	DOREPLIFETIME(AEditModelPlayerState, ReplicatedUserInfo);
+	DOREPLIFETIME(AEditModelPlayerState, MultiplayerClientIdx);
 }
 
 bool AEditModelPlayerState::BeginWithController()
@@ -89,7 +94,7 @@ bool AEditModelPlayerState::BeginWithController()
 	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
 	if (IsNetMode(NM_Client) && localPlayer && accountManager && cloudConnection && cloudConnection->IsLoggedIn())
 	{
-		SetUserInfo(accountManager->GetUserInfo());
+		SetUserInfo(accountManager->GetUserInfo(), MultiplayerClientIdx);
 	}
 
 	return true;
@@ -105,6 +110,9 @@ void AEditModelPlayerState::BeginPlay()
 void AEditModelPlayerState::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	// Interpolate the movement of other players' cameras (which can happen without fully initializing with PlayerController)
+	UpdateOtherClientCamera();
 
 	// Postpone any meaningful work until we have a valid PlayerController
 	if (!bBeganWithController || !ensure(EMPlayerController))
@@ -1139,10 +1147,26 @@ void AEditModelPlayerState::ClearConflictingRedoBuffer(const FDeltasRecord& Delt
 	}
 }
 
+FLinearColor AEditModelPlayerState::GetClientColor() const
+{
+	if (MultiplayerClientIdx == INDEX_NONE)
+	{
+		return DefaultPlayerColor;
+	}
+
+	// Golden Ratio % 1.0 happens to allow cycling through repeating intervals with optimal coverage,
+	// to select an arbitrary number of hues that are initially spaced out and remain spaced out.
+	// TODO: select from a pre-authored table of colors, and allow players to customize if similar colors are okay.
+	FLinearColor assignedColorHSV = DefaultPlayerColor.LinearRGBToHSV();
+	assignedColorHSV.R = 360.0f * FMath::Frac((assignedColorHSV.R / 360.0f) + (MultiplayerClientIdx * UE_GOLDEN_RATIO));
+	return assignedColorHSV.HSVToLinearRGB();
+}
+
 // RPC from the client to the server's copy of that client's PlayerState
-void AEditModelPlayerState::SetUserInfo_Implementation(const FModumateUserInfo& UserInfo)
+void AEditModelPlayerState::SetUserInfo_Implementation(const FModumateUserInfo& UserInfo, int32 ClientIdx)
 {
 	ReplicatedUserInfo = UserInfo;
+	MultiplayerClientIdx = ClientIdx;
 
 	UWorld* world = GetWorld();
 	AEditModelGameMode* gameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
@@ -1197,6 +1221,10 @@ void AEditModelPlayerState::SendClientDeltas_Implementation(FDeltasRecord Deltas
 			// and potentially broadcast reconciled deltas that include changes from the out-of-date client's deltas.
 			else
 			{
+				// TODO: if there *is* a reconciled record with identical deltas, we could send a new specialized message to the client
+				// not to roll *back* the unverified delta, but just to *reorder* it with a new previous document hash.
+				// This would significantly save performance on clients that are rolling back and then redoing large deltas that are prone
+				// to being reconciled in the first place, like big graph cuts or large moves.
 				UE_LOG(LogTemp, Warning, TEXT("User %s sent out-of-date DeltasRecord hash %08x - rolling back"), *Deltas.OriginUserID, Deltas.TotalHash);
 				RollBackUnverifiedDeltas(verifiedDocHash);
 
@@ -1346,12 +1374,27 @@ void AEditModelPlayerState::RequestUpload_Implementation()
 
 void AEditModelPlayerState::OnRep_CamTransform()
 {
+	UWorld* world = GetWorld();
 	AEditModelPlayerPawn* playerPawn = GetPawn<AEditModelPlayerPawn>();
 	ULocalPlayer* localPlayer = EMPlayerController ? EMPlayerController->GetLocalPlayer() : nullptr;
 
-	if (playerPawn && (localPlayer == nullptr) && IsNetMode(NM_Client))
+	if (world && playerPawn && (localPlayer == nullptr) && IsNetMode(NM_Client))
 	{
-		playerPawn->SetActorTransform(ReplicatedCamTransform);
+		// If the camera transform buffer is <= 1, then immediately update the other client's player pawn camera mesh;
+		// this will appear jittery and low-fps without having much higher replication speed.
+		if (CamTransformBufferSize <= 1)
+		{
+			playerPawn->SetActorTransform(ReplicatedCamTransform);
+		}
+		// Otherwise, buffer the camera transform so that a smooth value can be calculated upon Tick
+		else
+		{
+			CamTransformBuffer.Insert(TPair<float, FTransform>(world->GetTimeSeconds(), ReplicatedCamTransform), 0);
+			while (CamTransformBuffer.Num() > CamTransformBufferSize)
+			{
+				CamTransformBuffer.Pop(false);
+			}
+		}
 	}
 }
 
@@ -1361,15 +1404,42 @@ void AEditModelPlayerState::OnRep_UserInfo()
 	UE_LOG(LogTemp, Log, TEXT("Replicated %s's user info, id: %s"), *ReplicatedUserInfo.Firstname, *ReplicatedUserInfo.ID);
 }
 
-void AEditModelPlayerState::OnRep_PlayerName()
-{
-	Super::OnRep_PlayerName();
 
+void AEditModelPlayerState::UpdateOtherClientCamera()
+{
+	UWorld* world = GetWorld();
 	AEditModelPlayerPawn* playerPawn = GetPawn<AEditModelPlayerPawn>();
 	ULocalPlayer* localPlayer = EMPlayerController ? EMPlayerController->GetLocalPlayer() : nullptr;
+	int32 numBufferedCamTransforms = CamTransformBuffer.Num();
 
-	if (playerPawn && (localPlayer == nullptr) && IsNetMode(NM_Client) && playerPawn->ClientIconWidget)
+	// If this player state belongs to another client, and we're using buffered events to smooth the replicated transform,
+	// then interpolate some of the buffered events at a target delay from the current time, to avoid jittering.
+	if (world && playerPawn && (localPlayer == nullptr) && IsNetMode(NM_Client) &&
+		(numBufferedCamTransforms > 0) && (CamTransformBufferSize > 1))
 	{
-		playerPawn->ClientIconWidget->ClientName->ChangeText(FText::FromString(GetPlayerName()), false);
+		float curTime = world->GetTimeSeconds();
+		float targetTime = curTime - CamTransformInterpDelay;
+
+		float interpAlpha = 0.0f;
+		FTransform olderTransform, newerTransform;
+		for (int32 i = 0; i < numBufferedCamTransforms; ++i)
+		{
+			auto& bufferedEvent = CamTransformBuffer[i];
+			if (targetTime >= bufferedEvent.Key)
+			{
+				auto& newerEvent = CamTransformBuffer[(i > 0) ? i - 1 : i];
+
+				olderTransform = bufferedEvent.Value;
+				newerTransform = newerEvent.Value;
+				interpAlpha = FMath::GetRangePct(bufferedEvent.Key, newerEvent.Key, targetTime);
+				break;
+			}
+		}
+
+		FTransform blendedCamTransform;
+		blendedCamTransform.LerpTranslationScale3D(olderTransform, newerTransform, ScalarRegister(interpAlpha));
+		blendedCamTransform.SetRotation(FQuat::Slerp(olderTransform.GetRotation(), newerTransform.GetRotation(), interpAlpha));
+
+		playerPawn->SetActorTransform(blendedCamTransform);
 	}
 }

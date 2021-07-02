@@ -71,6 +71,15 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Debug")
 	bool bShowMultiplayerDebug;
 
+	// The number of buffered camera transforms to use for smoothing
+	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	int32 CamTransformBufferSize;
+
+	// The amount of time, in seconds, to look backwards for interpolating the camera transform
+	// Should be smaller than the maximum expected buffer duration (CamTransformBufferSize / NetUpdateFrequency)
+	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float CamTransformInterpDelay;
+
 	bool bBeganWithController = false;
 
 	FString LastFilePath;
@@ -149,6 +158,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UMaterialParameterCollection *MetaPlaneMatParamCollection;
 
+	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite)
+	FLinearColor DefaultPlayerColor;
+
 	// The MOI of type Group that is the current selection view scope.
 	// Clicking outside of it or escaping will go to the next highest group in the hierarchy,
 	// so normally only its children can be selected directly with the tool.
@@ -214,10 +226,13 @@ public:
 	UFUNCTION()
 	void ClearConflictingRedoBuffer(const FDeltasRecord& Deltas);
 
+	UFUNCTION()
+	FLinearColor GetClientColor() const;
+
 	// Networking/replication-related functions and properties
 
 	UFUNCTION(Server, Reliable)
-	void SetUserInfo(const FModumateUserInfo& UserInfo);
+	void SetUserInfo(const FModumateUserInfo& UserInfo, int32 ClientIdx);
 
 	UFUNCTION(Server, Reliable)
 	void SendClientDeltas(FDeltasRecord Deltas);
@@ -252,25 +267,29 @@ public:
 	UFUNCTION()
 	void OnRep_UserInfo();
 
-	virtual void OnRep_PlayerName() override;
-
 	UPROPERTY(ReplicatedUsing=OnRep_CamTransform)
 	FTransform ReplicatedCamTransform;
 
 	UPROPERTY(ReplicatedUsing=OnRep_UserInfo)
 	FModumateUserInfo ReplicatedUserInfo;
 
+	UPROPERTY(Replicated)
+	int32 MultiplayerClientIdx = INDEX_NONE;
+
 	// The FDeltasRecords that this user has undone (either directly, or because they were implicated in this user's intended undo)
 	UPROPERTY()
 	TArray<FDeltasRecord> UndoneDeltasRecords;
 
-	int32 MultiplayerClientIdx = INDEX_NONE;
 	FString CurProjectID;
 	bool bPendingClientDownload = false;
 	uint32 ExpectedDownloadDocHash = 0;
 
 protected:
+	void UpdateOtherClientCamera();
+
 	TArray<FStructurePoint> TempObjectStructurePoints, CurSelectionStructurePoints;
 	TArray<FStructureLine> TempObjectStructureLines, CurSelectionStructureLines;
 	TSet<AModumateObjectInstance *> CurViewGroupObjects;
+
+	TArray<TPair<float, FTransform>> CamTransformBuffer;
 };

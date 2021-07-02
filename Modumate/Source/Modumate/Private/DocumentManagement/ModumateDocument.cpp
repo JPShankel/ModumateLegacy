@@ -564,6 +564,9 @@ bool UModumateDocument::ReconcileRemoteDeltas(const FDeltasRecord& DeltasRecord,
 	}
 	else
 	{
+		// NOTE: for stability, if deltas that actually conflict, but aren't reported as conflicting, are corrupting the document,
+		// this can universally return false. This will negatively impact the experience of laggy clients, because they'll lose work.
+
 		// Gather the set of all objects, presets, and locations affected by the deltas that have been verified since the incoming delta was made.
 		TSet<int32> affectedObjects;
 		TSet<FGuid> affectedPresets;
@@ -1125,7 +1128,7 @@ bool UModumateDocument::ApplySettingsDelta(const FDocumentSettingDelta& Settings
 		}
 
 		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
-		if (controller && controller->EditModelUserWidget->IsBIMDesingerActive())
+		if (controller && controller->EditModelUserWidget && controller->EditModelUserWidget->IsBIMDesingerActive())
 		{
 			controller->EditModelUserWidget->BIMDesigner->RefreshNodes();
 		}
