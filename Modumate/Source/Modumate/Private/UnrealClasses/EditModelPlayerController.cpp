@@ -1359,11 +1359,6 @@ bool AEditModelPlayerController::OnCreateDwg()
 		return false;
 	}
 
-	if (!CheckUserPlanAndPermission(EModumatePermission::ServiceJsontodwg))
-	{
-		return false;
-	}
-
 	if (ToolIsInUse())
 	{
 		AbortUseTool();
