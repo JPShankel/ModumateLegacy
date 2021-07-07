@@ -9,6 +9,7 @@
 #include "Dom/JsonObject.h"
 #include "Drafting/DraftingManager.h"
 #include "Drafting/ModumateDraftingView.h"
+#include "Kismet/GameplayStatics.h"
 #include "Misc/Crc.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
@@ -867,6 +868,40 @@ void UModumateGameInstance::OnTravelFailure(UWorld* World, ETravelFailure::Type 
 void UModumateGameInstance::OnNetworkFailure(UWorld* World, UNetDriver* NetDrive, ENetworkFailure::Type FailureType, const FString& ErrorMessage)
 {
 	PendingMainMenuStatus = LOCTEXT("GenericTravelFailure", "Network error; please check your internet connection and try to reconnect later.");
+}
+
+void UModumateGameInstance::OnStartConnectCloudProject(const FString& NewProjectID)
+{
+	if (!CurClientConnectProjectID.IsEmpty())
+	{
+		return;
+	}
+
+	CurClientConnectProjectID = NewProjectID;
+
+	// TODO: show modal UI here for our project connection status, rather than in a level-specific widget
+
+#if !UE_BUILD_SHIPPING
+	// Play a fun sound while connecting to a cloud project
+	ProjectConnectionSoundInst = UGameplayStatics::SpawnSound2D(this, ProjectConnectionSound, 1.0f, 1.0f, 0.0f, nullptr, true, true);
+	if (ProjectConnectionSoundInst)
+	{
+		ProjectConnectionSoundInst->Play();
+	}
+#endif
+}
+
+void UModumateGameInstance::OnEndConnectCloudProject()
+{
+	CurClientConnectProjectID.Empty();
+
+	// TODO: hide modal UI here for our project connection status, rather than in a level-specific widget
+
+	// Stop playing the sound for connecting to a cloud project
+	if (ProjectConnectionSoundInst)
+	{
+		ProjectConnectionSoundInst->Stop();
+	}
 }
 
 bool UModumateGameInstance::CheckMainMenuStatus(FText& OutStatusMessage)

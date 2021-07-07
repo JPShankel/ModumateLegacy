@@ -47,13 +47,18 @@ void AMainMenuGameMode::InitGame(const FString& MapName, const FString& Options,
 
 	// If there's a file to open, and there are saved credentials, then try to log in so the file can automatically be opened.
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
-	if (gameInstance &&
-		(!gameInstance->PendingProjectPath.IsEmpty() || !gameInstance->PendingInputLogPath.IsEmpty()) &&
-		gameInstance->UserSettings.bLoaded &&
-		!gameInstance->UserSettings.SavedUserName.IsEmpty() &&
-		!gameInstance->UserSettings.SavedCredentials.IsEmpty())
+	if (gameInstance)
 	{
-		gameInstance->Login(gameInstance->UserSettings.SavedUserName, FString(), gameInstance->UserSettings.SavedCredentials, true, true);
+		// If we were connecting to a cloud project, and we're back at the main menu, then we aren't connecting any more.
+		gameInstance->OnEndConnectCloudProject();
+
+		if ((!gameInstance->PendingProjectPath.IsEmpty() || !gameInstance->PendingInputLogPath.IsEmpty()) &&
+			gameInstance->UserSettings.bLoaded &&
+			!gameInstance->UserSettings.SavedUserName.IsEmpty() &&
+			!gameInstance->UserSettings.SavedCredentials.IsEmpty())
+		{
+			gameInstance->Login(gameInstance->UserSettings.SavedUserName, FString(), gameInstance->UserSettings.SavedCredentials, true, true);
+		}
 	}
 
 	// Clear all encryption keys after returning back to the main menu, in preparation for making new connections
@@ -369,14 +374,13 @@ bool AMainMenuGameMode::OpenProjectServerInstance(const FString& URL)
 
 	playerController->ClientTravel(fullURL, ETravelType::TRAVEL_Absolute);
 
-	// TODO: update status if traveling fails
-
 	if (playerController->StartRootMenuWidget)
 	{
 		// TODO: format the text with the name of the project itself
 		playerController->StartRootMenuWidget->ShowModalStatus(LOCTEXT("OpenProjectBegin", "Opening online project..."), false);
 	}
 
+	gameInstance->OnStartConnectCloudProject(PendingCloudProjectID);
 	PendingCloudProjectID.Empty();
 
 	return true;

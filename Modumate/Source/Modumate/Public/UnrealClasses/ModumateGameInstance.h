@@ -122,6 +122,12 @@ public:
 	void OnNetworkFailure(UWorld* World, UNetDriver* NetDrive, ENetworkFailure::Type FailureType, const FString& ErrorMessage);
 
 	UFUNCTION()
+	void OnStartConnectCloudProject(const FString& NewProjectID);
+
+	UFUNCTION()
+	void OnEndConnectCloudProject();
+
+	UFUNCTION()
 	bool CheckMainMenuStatus(FText& OutStatusMessage);
 
 	void SetDownloadedDocument(const FModumateDocumentHeader& InDownloadedDocHeader, const FMOIDocumentRecord& InDownloadedDocRecord);
@@ -145,6 +151,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UModumateTutorialManager* TutorialManager;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class USoundBase* ProjectConnectionSound = nullptr;
+
+	UPROPERTY()
+	class UAudioComponent* ProjectConnectionSoundInst = nullptr;
+
 	class FModumateDatabase* ObjectDatabase;
 
 	static const FString TestScriptRelativePath;
@@ -161,6 +173,11 @@ public:
 	// The ID of a cloud-hosted project for which a multiplayer client should establish a server connection
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FString PendingClientConnectProjectID;
+
+	// The ID of a cloud-hosted project to which a multiplayer client is currently connecting,
+	// starting from the Main Menu level until the project finishes loading in the Edit Model level.
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	FString CurClientConnectProjectID;
 
 	FTimerHandle SlowTickHandle;
 };

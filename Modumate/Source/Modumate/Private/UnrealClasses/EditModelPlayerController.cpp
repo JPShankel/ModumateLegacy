@@ -400,6 +400,9 @@ void AEditModelPlayerController::OnDownloadedClientDocument(uint32 DownloadedDoc
 		EditModelUserWidget->ModalDialogWidgetBP->HideAllWidgets();
 	}
 
+	// Let the game instance know that we're no longer pending connection to the current cloud project
+	gameInstance->OnEndConnectCloudProject();
+
 	// Let the server know that we've downloaded the document that we expected, so operations should be able to resume.
 	EMPlayerState->OnDownloadedDocument(DownloadedDocHash);
 }
