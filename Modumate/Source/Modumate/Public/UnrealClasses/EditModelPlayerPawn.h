@@ -51,6 +51,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UStaticMeshComponent* RemoteMeshComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UStaticMeshComponent* CursorMeshComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UModumateClientIcon> ClientIconClass;
 

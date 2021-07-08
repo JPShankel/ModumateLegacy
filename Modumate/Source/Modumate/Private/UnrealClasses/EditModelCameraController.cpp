@@ -150,6 +150,12 @@ void UEditModelCameraController::TickComponent(float DeltaTime, enum ELevelTick 
 	{
 		Controller->EMPlayerState->UpdateCameraUnreliable(Controller->EMPlayerPawn->GetActorTransform());
 	}
+
+	// Multiplayer update cursor snap
+	if (Controller && Controller->EMPlayerState && Controller->EMPlayerState->SnappedCursor.bValid)
+	{
+		Controller->EMPlayerState->UpdateCursorLocationUnreliable(Controller->EMPlayerState->SnappedCursor.WorldPosition);
+	}
 }
 
 void UEditModelCameraController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

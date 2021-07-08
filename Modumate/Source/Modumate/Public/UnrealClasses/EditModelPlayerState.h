@@ -13,6 +13,7 @@
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/HUDDrawWidget.h"
 #include "UObject/ScriptInterface.h"
+#include "ToolsAndAdjustments/Common/ModumateInterpBuffer.h"
 
 #include "EditModelPlayerState.generated.h"
 
@@ -70,15 +71,6 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Debug")
 	bool bShowMultiplayerDebug;
-
-	// The number of buffered camera transforms to use for smoothing
-	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	int32 CamTransformBufferSize;
-
-	// The amount of time, in seconds, to look backwards for interpolating the camera transform
-	// Should be smaller than the maximum expected buffer duration (CamTransformBufferSize / NetUpdateFrequency)
-	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float CamTransformInterpDelay;
 
 	bool bBeganWithController = false;
 
@@ -258,6 +250,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void UpdateCameraReliable(const FTransform& NewTransform);
 
+	UFUNCTION(Server, Unreliable)
+	void UpdateCursorLocationUnreliable(const FVector& NewLocation);
+
 	UFUNCTION(Server, Reliable)
 	void RequestUpload();
 
@@ -265,10 +260,16 @@ public:
 	void OnRep_CamTransform();
 
 	UFUNCTION()
+	void OnRep_CursorLocation();
+
+	UFUNCTION()
 	void OnRep_UserInfo();
 
 	UPROPERTY(ReplicatedUsing=OnRep_CamTransform)
 	FTransform ReplicatedCamTransform;
+
+	UPROPERTY(ReplicatedUsing = OnRep_CursorLocation)
+	FVector ReplicatedCursorLocation;
 
 	UPROPERTY(ReplicatedUsing=OnRep_UserInfo)
 	FModumateUserInfo ReplicatedUserInfo;
@@ -284,12 +285,16 @@ public:
 	bool bPendingClientDownload = false;
 	uint32 ExpectedDownloadDocHash = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Multiplayer")
+	FModumateInterpBuffer CamReplicationTransformBuffer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Multiplayer")
+	FModumateInterpBuffer CursorReplicationTransformBuffer;
+
 protected:
 	void UpdateOtherClientCamera();
 
 	TArray<FStructurePoint> TempObjectStructurePoints, CurSelectionStructurePoints;
 	TArray<FStructureLine> TempObjectStructureLines, CurSelectionStructureLines;
 	TSet<AModumateObjectInstance *> CurViewGroupObjects;
-
-	TArray<TPair<float, FTransform>> CamTransformBuffer;
 };
