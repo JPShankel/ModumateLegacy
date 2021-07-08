@@ -46,8 +46,6 @@ AEditModelPlayerState::AEditModelPlayerState()
 #else	// TODO: remove multiplayer debugging being the default after we're more stable
 	, bShowMultiplayerDebug(true)
 #endif
-	, CamReplicationTransformBuffer(6, 0.25f)
-	, CursorReplicationTransformBuffer(3, 0.125f)
 	, SelectedViewMode(EEditViewModes::AllObjects)
 	, ShowingFileDialog(false)
 	, HoveredObject(nullptr)
@@ -55,6 +53,8 @@ AEditModelPlayerState::AEditModelPlayerState()
 	, bShowSnappedCursor(true)
 	, DefaultPlayerColor(0.011612f, 0.346704f, 1.0f, 1.0f)	// "Modumate Blue"
 	, ShowHoverEffects(false)
+	, CamReplicationTransformBuffer(6, 0.25f)
+	, CursorReplicationTransformBuffer(3, 0.125f)
 {
 	//DimensionString.Visible = false;
 	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::AEditModelPlayerState"));
