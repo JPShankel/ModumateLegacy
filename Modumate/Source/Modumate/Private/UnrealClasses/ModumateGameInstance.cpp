@@ -915,4 +915,69 @@ bool UModumateGameInstance::CheckMainMenuStatus(FText& OutStatusMessage)
 	return true;
 }
 
+void UModumateGameInstance::open_cloud_project_from_ams(int32 ProjectID)
+{
+	UWorld* world = GetWorld();
+	AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
+	if (mainMenuGameMode)
+	{
+		mainMenuGameMode->OpenCloudProject(FString::FromInt(ProjectID));
+	}
+}
+
+void UModumateGameInstance::pass_user_package_from_ams(const FString& content)
+{
+	// Convert JSON content to verifyParams
+	TSharedPtr<FJsonObject> JsonParsed;
+	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(content);
+	if (FJsonSerializer::Deserialize(JsonReader, JsonParsed))
+	{
+		FModumateUserVerifyParams verifyParams;
+
+		const TSharedPtr<FJsonValue> jsonRefreshToken = JsonParsed->TryGetField(TEXT("refreshToken"));
+		const TSharedPtr<FJsonValue> jsonUserId = JsonParsed->TryGetField(TEXT("userId"));
+		const TSharedPtr<FJsonValue> jsonName = JsonParsed->TryGetField(TEXT("name"));
+		const TSharedPtr<FJsonValue> jsonEmail = JsonParsed->TryGetField(TEXT("email"));
+
+		if (jsonRefreshToken.IsValid())
+		{
+			verifyParams.RefreshToken = jsonRefreshToken->AsString();
+		}
+		if (jsonUserId.IsValid())
+		{
+			verifyParams.User.ID = jsonUserId->AsString();
+		}
+		if (jsonName.IsValid())
+		{
+			verifyParams.User.Firstname = jsonName->AsString();
+		}
+		if (jsonEmail.IsValid())
+		{
+			verifyParams.User.Email = jsonEmail->AsString();
+		}
+
+		// Save verifyParams 
+		UserSettings.SavedCredentials = verifyParams.RefreshToken;
+		AccountManager->SetUserInfo(verifyParams.User);
+
+		// TODO: Reviews steps to get AuthToken
+		// 1. RequestAuthTokenRefresh() requires a connected status, is pass_refresh_token_from_ams() a valid and sufficient guess to assume user has logged in?
+		// 2. RefreshToken is private in CloudConnection, can we use SetRefreshToken() from here?
+		CloudConnection->SetLoginStatus(ELoginStatus::Connected);
+		CloudConnection->SetRefreshToken(UserSettings.SavedCredentials);
+
+		CloudConnection->RequestAuthTokenRefresh(UserSettings.SavedCredentials, [](bool, const TSharedPtr<FJsonObject>&) {}, [](int32, const FString&) {});
+	}
+}
+
+void UModumateGameInstance::open_offline_project_from_ams()
+{
+	UWorld* world = GetWorld();
+	AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
+	if (mainMenuGameMode)
+	{
+		mainMenuGameMode->OpenProjectFromPicker();
+	}
+}
+
 #undef LOCTEXT_NAMESPACE

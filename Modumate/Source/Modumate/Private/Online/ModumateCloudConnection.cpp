@@ -51,6 +51,11 @@ void FModumateCloudConnection::SetAuthToken(const FString& InAuthToken)
 	AuthToken = InAuthToken;
 }
 
+void FModumateCloudConnection::SetRefreshToken(const FString& InRefreshToken)
+{
+	RefreshToken = InRefreshToken;
+}
+
 void FModumateCloudConnection::SetXApiKey(const FString& InXApiKey)
 {
 	XApiKey = InXApiKey;

@@ -130,6 +130,15 @@ public:
 	UFUNCTION()
 	bool CheckMainMenuStatus(FText& OutStatusMessage);
 
+	UFUNCTION()
+	void open_cloud_project_from_ams(int32 ProjectID);
+
+	UFUNCTION()
+	void pass_user_package_from_ams(const FString& content);
+
+	UFUNCTION()
+	void open_offline_project_from_ams();
+
 	void SetDownloadedDocument(const FModumateDocumentHeader& InDownloadedDocHeader, const FMOIDocumentRecord& InDownloadedDocRecord);
 	void ClearDownloadedDocument();
 

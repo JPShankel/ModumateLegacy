@@ -30,6 +30,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 
 		const FString& GetAuthToken() const { return AuthToken; }
 		void SetAuthToken(const FString& InAuthToken);
+		void SetRefreshToken(const FString& InRefreshToken);
 
 		const FString& GetXApiKey() const { return XApiKey; }
 		void SetXApiKey(const FString& InXApiKey);

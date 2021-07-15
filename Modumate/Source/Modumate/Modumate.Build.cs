@@ -40,7 +40,8 @@ public class Modumate : ModuleRules
 			"SunPosition",
 			"RHI",
 			"MediaAssets",
-			"WebBrowserWidget"
+			"WebBrowserWidget",
+			"WebBrowser"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
