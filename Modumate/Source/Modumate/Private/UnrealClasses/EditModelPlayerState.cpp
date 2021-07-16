@@ -1378,6 +1378,20 @@ void AEditModelPlayerState::RequestUpload_Implementation()
 	}
 }
 
+void AEditModelPlayerState::UploadProjectThumbnail_Implementation(const FString& Base64String)
+{
+	UWorld* world = GetWorld();
+	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
+	if (gameState && Base64String.Len() > 0)
+	{
+		TArray<uint8> thumbImage;
+		if (ensure(FBase64::Decode(Base64String, thumbImage)))
+		{
+			gameState->UploadThumbnail(thumbImage);
+		}
+	}
+}
+
 void AEditModelPlayerState::OnRep_CamTransform()
 {
 	UWorld* world = GetWorld();

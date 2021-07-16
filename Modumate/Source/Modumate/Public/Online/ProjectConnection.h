@@ -11,10 +11,12 @@ struct MODUMATE_API FProjectConnectionHelpers
 	static const FString ProjectsEndpointPrefix;
 	static const FString ConnectionEndpointSuffix;
 	static const FString DataEndpointSuffix;
+	static const FString ThumbnailEndpointSuffix;
 
 	static FString MakeProjectInfoEndpoint(const FString& ProjectID);
 	static FString MakeProjectConnectionEndpoint(const FString& ProjectID);
 	static FString MakeProjectDataEndpoint(const FString& ProjectID);
+	static FString MakeProjectThumbnailEndpoint(const FString& ProjectID);
 };
 
 // Must match the API spec for components/schemas/Connection in the AMS

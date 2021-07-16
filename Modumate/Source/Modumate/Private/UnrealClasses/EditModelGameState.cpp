@@ -173,6 +173,41 @@ bool AEditModelGameState::UploadDocument()
 	return bRequestSuccess;
 }
 
+bool AEditModelGameState::UploadThumbnail(const TArray<uint8>& ThumbImage)
+{
+	if (!ensure(Document && !CurProjectID.IsEmpty()))
+	{
+		return false;
+	}
+
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	TSharedPtr<FModumateCloudConnection> cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (cloudConnection)
+	{
+		bool bSuccess = cloudConnection->RequestEndpoint(FProjectConnectionHelpers::MakeProjectThumbnailEndpoint(CurProjectID), FModumateCloudConnection::Post,
+			[&ThumbImage](FHttpRequestRef& RefRequest)
+			{
+				RefRequest->SetHeader(TEXT("Content-Type"), TEXT("image/jpeg"));
+				RefRequest->SetContent(ThumbImage);
+			},
+			[](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+			{
+				if (!bSuccessful || !Response.IsValid())
+				{
+					UE_LOG(LogGameState, Error, TEXT("Thumbnail upload rejected"));
+				}
+			},
+			[](int32 ErrorCode, const FString& ErrorMessage)
+			{
+				UE_LOG(LogGameState, Error, TEXT("Thumbnail upload failed (%d): %s"), ErrorCode, *ErrorMessage);
+			}
+		);
+		return bSuccess;
+	}
+
+	return false;
+}
+
 void AEditModelGameState::OnRep_LastUploadedDocHash()
 {
 	if (IsNetMode(NM_Client) && Document && Document->IsDirty(true) &&

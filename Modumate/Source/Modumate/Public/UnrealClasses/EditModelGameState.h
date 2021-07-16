@@ -34,6 +34,9 @@ public:
 	UFUNCTION()
 	bool UploadDocument();
 
+	UFUNCTION()
+	bool UploadThumbnail(const TArray<uint8>& ThumbImage);
+
 	UPROPERTY()
 	bool bDownloadingDocument = false;
 

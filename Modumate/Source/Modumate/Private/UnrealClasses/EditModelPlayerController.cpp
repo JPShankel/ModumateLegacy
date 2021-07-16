@@ -990,6 +990,14 @@ bool AEditModelPlayerController::SaveModel()
 		if (EMPlayerState)
 		{
 			EMPlayerState->RequestUpload();
+
+			AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+			if (gameState)
+			{
+				CaptureProjectThumbnail();
+				EMPlayerState->UploadProjectThumbnail(gameState->Document->CurrentEncodedThumbnail);
+			}
+
 		}
 		return true;
 	}

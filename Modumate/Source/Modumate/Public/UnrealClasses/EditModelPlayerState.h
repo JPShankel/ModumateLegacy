@@ -256,6 +256,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void RequestUpload();
 
+	UFUNCTION(Server, Reliable)
+	void UploadProjectThumbnail(const FString& Base64String);
+
 	UFUNCTION()
 	void OnRep_CamTransform();
 
