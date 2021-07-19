@@ -811,7 +811,7 @@ void AMOIPlaneHostedObj::UpdateQuantities()
 	}
 
 	CachedQuantities.Empty();
-	float assemblyArea = FQuantitiesCollection::AreaOfFace(*hostingFace);
+	float assemblyArea = hostingFace->CalculateArea();
 	float assemblyLength = StateData.ObjectType == EObjectType::OTWallSegment ? FQuantitiesCollection::LengthOfWallFace(*hostingFace)
 		: 0.0f;
 

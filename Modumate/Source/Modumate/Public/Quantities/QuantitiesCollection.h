@@ -78,7 +78,6 @@ public:
 	const QuantitiesMap& GetQuantities() const { return Quantities; }
 	int32 Num() const { return Quantities.Num(); }
 
-	static float AreaOfFace(const FGraph3DFace& Face);
 	static float AreaOfFace(const FGraph2DPolygon& Face);
 	static float LengthOfWallFace(const FGraph3DFace& Face);
 	static float AreaOfLayer(const FLayerGeomDef& LayerGeom);

@@ -138,22 +138,6 @@ void FQuantitiesCollection::AddQuantity(const FGuid& ItemGuid, const FString& It
 	Quantities.FindOrAdd(key) += value;
 }
 
-float FQuantitiesCollection::AreaOfFace(const FGraph3DFace& Face)
-{
-	FPoly poly;
-	int32 i = 0;
-	for (const auto& vert: Face.CachedPositions)
-	{
-		poly.InsertVertex(i++, vert);
-	}
-	return poly.Area();
-}
-
-float FQuantitiesCollection::AreaOfFace(const FGraph2DPolygon& Face)
-{
-	return AreaOfPoly(Face.CachedPerimeterPoints);
-}
-
 float FQuantitiesCollection::LengthOfWallFace(const FGraph3DFace& Face)
 {
 	FVector2D normal(Face.CachedPlane.Y, -Face.CachedPlane.X);
@@ -169,6 +153,11 @@ float FQuantitiesCollection::LengthOfWallFace(const FGraph3DFace& Face)
 	return maxProj - minProj;
 }
 
+float FQuantitiesCollection::AreaOfFace(const FGraph2DPolygon& Face)
+{
+	return AreaOfPoly(Face.CachedPerimeterPoints);
+}
+
 float FQuantitiesCollection::AreaOfLayer(const FLayerGeomDef& LayerGeom)
 {
 	float area = 0.0f;
@@ -181,15 +170,24 @@ float FQuantitiesCollection::AreaOfLayer(const FLayerGeomDef& LayerGeom)
 	return FMath::Max(0.0f, area);
 }
 
+// Basically a corrected version of FPoly::Area() for concave shapes.
 float FQuantitiesCollection::AreaOfPoly(const TArray<FVector>& Poly)
 {
-	FPoly polygon;
-	int32 i = 0;
-	for (const auto& vert : Poly)
+	if (Poly.Num() < 3)
 	{
-		polygon.InsertVertex(i++, vert);
+		return 0.0f;
 	}
-	return polygon.Area();
+
+	FVector areaVec(0.0f);
+	FVector side1(Poly[1] - Poly[0]);
+	for (int32 v = 2; v < Poly.Num(); ++v)
+	{
+		FVector side2(Poly[v] - Poly[0]);
+		areaVec += side1 ^ side2;
+		side1 = side2;
+	}
+
+	return areaVec.Size() * 0.5f;
 }
 
 float FQuantitiesCollection::AreaOfPoly(const TArray<FVector2D>& Poly)
