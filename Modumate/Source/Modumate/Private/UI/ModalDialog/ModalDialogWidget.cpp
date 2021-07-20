@@ -51,10 +51,26 @@ void UModalDialogWidget::ShowDeletePresetDialog(const FText& AlertText, const FT
 	DeletePresetDialogWidgetBP->ShowDialog(DefaultTitleText, AlertText, ConfirmText, false, true, InConfirmCallback);
 }
 
+void UModalDialogWidget::ShowUploadOfflineProjectDialog(const FText& TitleText, const FText& StatusText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback)
+{
+	HideAllWidgets();
+	UploadOfflineProjectDialogWidgetBP->SetVisibility(ESlateVisibility::Visible);
+	UploadOfflineProjectDialogWidgetBP->ShowDialog(TitleText, StatusText, ConfirmText, false, true, InConfirmCallback);
+}
+
+void UModalDialogWidget::ShowUploadOfflineDoneDialog(const FText& TitleText, const FText& StatusText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback)
+{
+	HideAllWidgets();
+	UploadOfflineDoneDialogWidgetBP->SetVisibility(ESlateVisibility::Visible);
+	UploadOfflineDoneDialogWidgetBP->ShowDialog(TitleText, StatusText, ConfirmText, false, true, InConfirmCallback);
+}
+
 void UModalDialogWidget::HideAllWidgets()
 {
 	AlertAccountDialogWidgetBP->SetVisibility(ESlateVisibility::Collapsed);
 	DeletePresetDialogWidgetBP->SetVisibility(ESlateVisibility::Collapsed);
+	UploadOfflineProjectDialogWidgetBP->SetVisibility(ESlateVisibility::Collapsed);
+	UploadOfflineDoneDialogWidgetBP->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 #undef LOCTEXT_NAMESPACE

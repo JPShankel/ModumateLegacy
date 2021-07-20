@@ -929,8 +929,8 @@ void UModumateGameInstance::pass_user_package_from_ams(const FString& content)
 {
 	// Convert JSON content to verifyParams
 	TSharedPtr<FJsonObject> JsonParsed;
-	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(content);
-	if (FJsonSerializer::Deserialize(JsonReader, JsonParsed))
+	TSharedRef<TJsonReader<TCHAR>> jsonReader = TJsonReaderFactory<TCHAR>::Create(content);
+	if (FJsonSerializer::Deserialize(jsonReader, JsonParsed))
 	{
 		FModumateUserVerifyParams verifyParams;
 
@@ -938,6 +938,7 @@ void UModumateGameInstance::pass_user_package_from_ams(const FString& content)
 		const TSharedPtr<FJsonValue> jsonUserId = JsonParsed->TryGetField(TEXT("userId"));
 		const TSharedPtr<FJsonValue> jsonName = JsonParsed->TryGetField(TEXT("name"));
 		const TSharedPtr<FJsonValue> jsonEmail = JsonParsed->TryGetField(TEXT("email"));
+		const TSharedPtr<FJsonValue> jsonWorkspace = JsonParsed->TryGetField(TEXT("workspace"));
 
 		if (jsonRefreshToken.IsValid())
 		{
@@ -954,6 +955,10 @@ void UModumateGameInstance::pass_user_package_from_ams(const FString& content)
 		if (jsonEmail.IsValid())
 		{
 			verifyParams.User.Email = jsonEmail->AsString();
+		}
+		if (jsonWorkspace.IsValid())
+		{
+			AccountManager->CachedWorkspace = jsonWorkspace->AsString();
 		}
 
 		// Save verifyParams 
@@ -976,7 +981,7 @@ void UModumateGameInstance::open_offline_project_from_ams()
 	AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
 	if (mainMenuGameMode)
 	{
-		mainMenuGameMode->OpenProjectFromPicker();
+		mainMenuGameMode->OpenOfflineProjectPicker();
 	}
 }
 

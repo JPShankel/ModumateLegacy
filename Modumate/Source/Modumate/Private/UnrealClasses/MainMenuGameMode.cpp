@@ -19,6 +19,8 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/MainMenuController.h"
+#include "UI/StartMenu/StartMenuWebBrowserWidget.h"
+#include "UI/ModalDialog/ModalDialogWidget.h"
 
 #define LOCTEXT_NAMESPACE "ModumateMainMenu"
 
@@ -196,12 +198,19 @@ bool AMainMenuGameMode::OpenProject(const FString& ProjectPath)
 		gameInstance->PendingProjectPath = ProjectPath;
 
 		AMainMenuController* controller = Cast<AMainMenuController>(gameInstance->GetFirstLocalPlayerController(GetWorld()));
-		if (controller && controller->StartRootMenuWidget)
+		if (controller)
 		{
 			FText loadingStatusText = FText::Format(LOCTEXT("OpenLocalProjectFormat", "Opening project \"{0}\"..."),
 				FText::FromString(FPaths::GetBaseFilename(ProjectPath)));
-			controller->StartRootMenuWidget->ShowStartMenu();
-			controller->StartRootMenuWidget->ShowModalStatus(loadingStatusText, false);
+			if (controller->StartMenuWebBrowserWidget)
+			{
+				controller->StartMenuWebBrowserWidget->ShowModalStatus(loadingStatusText, false);
+			}
+			else if(controller->StartRootMenuWidget)
+			{
+				controller->StartRootMenuWidget->ShowStartMenu();
+				controller->StartRootMenuWidget->ShowModalStatus(loadingStatusText, false);
+			}
 		}
 
 		// Delay OpenEditModelLevel for a frame, to give Slate a chance to display the loading status widget.
@@ -374,16 +383,169 @@ bool AMainMenuGameMode::OpenProjectServerInstance(const FString& URL)
 
 	playerController->ClientTravel(fullURL, ETravelType::TRAVEL_Absolute);
 
+	// TODO: format the text with the name of the project itself
+	FText openProjectText = LOCTEXT("OpenProjectBegin", "Opening online project...");
 	if (playerController->StartRootMenuWidget)
 	{
-		// TODO: format the text with the name of the project itself
-		playerController->StartRootMenuWidget->ShowModalStatus(LOCTEXT("OpenProjectBegin", "Opening online project..."), false);
+		playerController->StartRootMenuWidget->ShowModalStatus(openProjectText, false);
+	}
+	else if (playerController->StartMenuWebBrowserWidget)
+	{
+		playerController->StartMenuWebBrowserWidget->ShowModalStatus(openProjectText, false);
 	}
 
 	gameInstance->OnStartConnectCloudProject(PendingCloudProjectID);
 	PendingCloudProjectID.Empty();
 
 	return true;
+}
+
+void AMainMenuGameMode::OpenOfflineProjectPicker()
+{
+	// Get project file from picker
+	bool bSuccess = false;
+	bSuccess = FModumatePlatform::GetOpenFilename(PendingOfflineProjectPath);
+	if (!bSuccess || PendingOfflineProjectPath.IsEmpty())
+	{
+		return;
+	}
+
+	// Get menu to open in app modal dialog
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto* controller = gameInstance ? Cast<AMainMenuController>(gameInstance->GetFirstLocalPlayerController()) : nullptr;
+	auto* menu = controller ? controller->StartMenuWebBrowserWidget : nullptr;
+	if (!ensure(menu))
+	{
+		return;
+	}
+
+	// TODO: Get CachedWorkspace name as part of modal dialog
+	//gameInstance->GetAccountManager()->CachedWorkspace;
+	FText uploadingProjectText = FText::Format(LOCTEXT("UploadProjectAlert", "\"{0}\" is an Offline file. \n\n Start by uploading this file to your Workspace?"),
+		FText::FromString(FPaths::GetBaseFilename(PendingOfflineProjectPath)));
+
+	auto weakThis = MakeWeakObjectPtr<AMainMenuGameMode>(this);
+	auto deferredUploadProject = [weakThis]() {
+		if (weakThis.IsValid())
+		{
+			// Create new online project and upload from PendingOfflineProjectPath to the new project id
+			weakThis->CreateNewOnlineProject(true);
+		}
+	};
+	menu->ModalStatusDialog->ShowUploadOfflineProjectDialog(LOCTEXT("UploadAlertTitle", "ALERT"), uploadingProjectText, LOCTEXT("UploadConfirmText", "Upload"), deferredUploadProject);
+}
+
+void AMainMenuGameMode::OpenPendingOfflineProject()
+{
+	OpenProject(PendingOfflineProjectPath);
+}
+
+bool AMainMenuGameMode::UploadOfflineProjectFile(const FString& ProjectID)
+{
+	// Store project record from mdmt file
+	FModumateDocumentHeader docHeader;
+	FMOIDocumentRecord docRecord;
+	if (!ensureAlways(FModumateSerializationStatics::TryReadModumateDocumentRecord(PendingOfflineProjectPath, docHeader, docRecord)))
+	{
+		return false;
+	}
+
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	TSharedPtr<FModumateCloudConnection> cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	auto weakThis = MakeWeakObjectPtr<AMainMenuGameMode>(this);
+
+	// TODO: Show uploading project dialog
+
+	// Upload project
+	bool bRequestSuccess = cloudConnection->UploadProject(ProjectID, docHeader, docRecord,
+		[weakThis, ProjectID](bool bSuccessful, const TSharedPtr<FJsonObject>& Response) {
+			if (ensure(weakThis.IsValid() && bSuccessful))
+			{
+				weakThis->ShowUploadSuccessDialog(ProjectID);
+			}
+		},
+		[weakThis](int32 ErrorCode, const FString& ErrorMessage) {
+			// TODO: Show error message dialog to user?
+			UE_LOG(LogGameState, Error, TEXT("Error code %d when trying to upload project"), ErrorCode);
+		});
+	return bRequestSuccess;
+}
+
+bool AMainMenuGameMode::CreateNewOnlineProject(bool bUploadPendingOfflineProject)
+{
+	auto weakThis = MakeWeakObjectPtr(this);
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	TSharedPtr<FModumateCloudConnection> cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+
+	// Create json object for workspace and project name
+	FString newProjectName = bUploadPendingOfflineProject ? FPaths::GetBaseFilename(PendingOfflineProjectPath) : LOCTEXT("UploadProjectName", "Uploaded Project").ToString();
+	TSharedPtr<FJsonObject> jsonRefObj = MakeShareable(new FJsonObject);
+	jsonRefObj->SetStringField(TEXT("workspace"), gameInstance->GetAccountManager()->CachedWorkspace);
+	jsonRefObj->SetStringField(TEXT("name"), newProjectName);
+
+	FString refJsonString;
+	TSharedRef<FPrettyJsonStringWriter> JsonStringWriter = FPrettyJsonStringWriterFactory::Create(&refJsonString);
+	if (!ensureAlways(FJsonSerializer::Serialize(jsonRefObj.ToSharedRef(), JsonStringWriter)))
+	{
+		return false;
+	}
+
+	bool bRequestedConnection = cloudConnection->RequestEndpoint(
+		FProjectConnectionHelpers::ProjectsEndpointPrefix,
+		FModumateCloudConnection::ERequestType::Put,
+		[refJsonString](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
+		{
+			RefRequest->SetContentAsString(refJsonString);
+		},
+		[weakThis, bUploadPendingOfflineProject](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+		{
+			if (weakThis.IsValid())
+			{
+				FProjectInfoResponse createInfoResponse;
+				if (!ensure(bSuccessful && Response.IsValid() &&
+					FJsonObjectConverter::JsonObjectToUStruct(Response.ToSharedRef(), &createInfoResponse)))
+				{
+					UE_LOG(LogGameState, Error, TEXT("Fail to create project in workspace %s"), *createInfoResponse.Workspace);
+					return;
+				}
+				if (bUploadPendingOfflineProject)
+				{
+					weakThis->UploadOfflineProjectFile(createInfoResponse.ID);
+				}
+			}
+		},
+		[weakThis](int32 ErrorCode, const FString& ErrorString)
+		{
+			if (weakThis.IsValid())
+			{
+				UE_LOG(LogGameState, Error, TEXT("Error code %d while trying to create project %s"), ErrorCode, *ErrorString);
+			}
+		});
+
+	return bRequestedConnection;
+}
+
+void AMainMenuGameMode::ShowUploadSuccessDialog(const FString& UploadedProjectID)
+{
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto* controller = gameInstance ? Cast<AMainMenuController>(gameInstance->GetFirstLocalPlayerController()) : nullptr;
+	auto* menu = controller ? controller->StartMenuWebBrowserWidget : nullptr;
+	if (!ensure(menu))
+	{
+		return;
+	}
+
+	FText uploadingSuccessText = FText::Format(LOCTEXT("UploadSuccessAlert", "\"{0}\" was successfully uploaded. You and other members can now access it from any computer in your Workspace projects"),
+		FText::FromString(FPaths::GetBaseFilename(PendingOfflineProjectPath)));
+
+	auto weakThis = MakeWeakObjectPtr<AMainMenuGameMode>(this);
+	auto deferredOpenOnlineProject = [weakThis, UploadedProjectID]() {
+		if (weakThis.IsValid())
+		{
+			weakThis->OpenCloudProject(UploadedProjectID);
+		}
+	};
+	menu->ModalStatusDialog->ShowUploadOfflineDoneDialog(LOCTEXT("UploadSuccessTitle", "SUCCESS!"), uploadingSuccessText, LOCTEXT("OpenUploadedProjectText", "Open this project"), deferredOpenOnlineProject);
 }
 
 #undef LOCTEXT_NAMESPACE

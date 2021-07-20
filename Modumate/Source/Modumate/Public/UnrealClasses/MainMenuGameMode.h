@@ -70,8 +70,15 @@ public:
 	UFUNCTION()
 	bool OpenProjectServerInstance(const FString& URL);
 
+	void OpenOfflineProjectPicker();
+	void OpenPendingOfflineProject();
+	bool UploadOfflineProjectFile(const FString& ProjectID);
+	bool CreateNewOnlineProject(bool bUploadPendingOfflineProject);
+	void ShowUploadSuccessDialog(const FString& UploadedProjectID);
+
 protected:
 	FString PendingCloudProjectID;
+	FString PendingOfflineProjectPath;
 
 	TArray<FString> RecentProjectPaths;
 	TArray<FText> RecentProjectNames;

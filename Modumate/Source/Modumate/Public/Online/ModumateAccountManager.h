@@ -220,6 +220,8 @@ public:
 	static const FString ServiceQuantityEstimates;
 	static const FString ServiceDwg;
 
+	FString CachedWorkspace;
+
 private:
 	TSharedPtr<FModumateUpdater> Updater;
 	FModumateUserInfo CachedUserInfo;

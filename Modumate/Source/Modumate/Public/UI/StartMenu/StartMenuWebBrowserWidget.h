@@ -26,6 +26,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateWebBrowser* ModumateWebBrowser;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModalDialogWidget* ModalStatusDialog;
+
+	void ShowModalStatus(const FText& StatusText, bool bAllowDismiss);
+	void HideModalStatus();
+
 	UFUNCTION()
 	void OnWebBrowserLoadCompleted();
 };

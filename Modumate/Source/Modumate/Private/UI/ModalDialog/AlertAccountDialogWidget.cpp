@@ -9,6 +9,7 @@
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/MainMenuGameMode.h"
 
 
 UAlertAccountDialogWidget::UAlertAccountDialogWidget(const FObjectInitializer& ObjectInitializer)
@@ -34,6 +35,11 @@ bool UAlertAccountDialogWidget::Initialize()
 	if (ButtonInfoLink)
 	{
 		ButtonInfoLink->ModumateButton->OnReleased.AddDynamic(this, &UAlertAccountDialogWidget::OnReleaseButtonInfoLink);
+	}
+
+	if (ButtonOfflineProject)
+	{
+		ButtonOfflineProject->ModumateButton->OnReleased.AddDynamic(this, &UAlertAccountDialogWidget::OnReleaseButtonOfflineProject);
 	}
 
 	return true;
@@ -94,5 +100,15 @@ void UAlertAccountDialogWidget::OnReleaseButtonDismiss()
 	if (DismissCallback)
 	{
 		DismissCallback();
+	}
+}
+
+void UAlertAccountDialogWidget::OnReleaseButtonOfflineProject()
+{
+	UWorld* world = GetWorld();
+	AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
+	if (mainMenuGameMode)
+	{
+		mainMenuGameMode->OpenPendingOfflineProject();
 	}
 }

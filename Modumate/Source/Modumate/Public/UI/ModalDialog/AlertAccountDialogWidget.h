@@ -41,6 +41,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonDismiss;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidgetOptional))
+	class UModumateButtonUserWidget* ButtonOfflineProject;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnAlertAccountPressedConfirm OnPressedConfirm;
 
@@ -56,6 +59,9 @@ protected:
 
 	UFUNCTION()
 	void OnReleaseButtonDismiss();
+
+	UFUNCTION()
+	void OnReleaseButtonOfflineProject();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString ButtonInfoLinkURL;
