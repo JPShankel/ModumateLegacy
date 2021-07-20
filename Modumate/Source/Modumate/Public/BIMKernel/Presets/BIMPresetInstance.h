@@ -111,8 +111,10 @@ struct MODUMATE_API FBIMPresetInstance
 	GENERATED_BODY()
 
 	// TODO: roll fields below into type definition and make it the top level UPROPERTY
+	UPROPERTY()
 	FBIMPresetTypeDefinition TypeDefinition;
 
+	UPROPERTY()
 	bool Edited = false;
 
 	//TODO: Debug data must be UPROPERTY() to serialize in cache, cannot be conditionally compiled out
