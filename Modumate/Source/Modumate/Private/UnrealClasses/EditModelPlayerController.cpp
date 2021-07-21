@@ -979,11 +979,6 @@ Load/Save menu
 
 bool AEditModelPlayerController::SaveModel()
 {
-	FText saveAsAlert = LOCTEXT("PermissionAlertSaveOne", "Your plan doesn't allow you to save projects.\nUpgrade your plan to save projects.");
-	if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSaveOne, saveAsAlert))
-	{
-		return false;
-	}
 
 	if (IsNetMode(NM_Client))
 	{
@@ -1000,6 +995,12 @@ bool AEditModelPlayerController::SaveModel()
 
 		}
 		return true;
+	}
+
+	FText saveAsAlert = LOCTEXT("PermissionAlertSaveOne", "Your plan doesn't allow you to save projects.\nUpgrade your plan to save projects.");
+	if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSaveOne, saveAsAlert))
+	{
+		return false;
 	}
 
 	if (EMPlayerState->LastFilePath.IsEmpty())

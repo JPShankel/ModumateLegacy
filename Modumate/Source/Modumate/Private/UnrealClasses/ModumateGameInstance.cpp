@@ -964,6 +964,7 @@ void UModumateGameInstance::pass_user_package_from_ams(const FString& content)
 		// Save verifyParams 
 		UserSettings.SavedCredentials = verifyParams.RefreshToken;
 		AccountManager->SetUserInfo(verifyParams.User);
+		TWeakPtr<FModumateAccountManager> weakAccountManager(AccountManager);
 
 		// TODO: Reviews steps to get AuthToken
 		// 1. RequestAuthTokenRefresh() requires a connected status, is pass_refresh_token_from_ams() a valid and sufficient guess to assume user has logged in?
@@ -971,7 +972,18 @@ void UModumateGameInstance::pass_user_package_from_ams(const FString& content)
 		CloudConnection->SetLoginStatus(ELoginStatus::Connected);
 		CloudConnection->SetRefreshToken(UserSettings.SavedCredentials);
 
-		CloudConnection->RequestAuthTokenRefresh(UserSettings.SavedCredentials, [](bool, const TSharedPtr<FJsonObject>&) {}, [](int32, const FString&) {});
+		CloudConnection->RequestAuthTokenRefresh(UserSettings.SavedCredentials, [weakAccountManager](bool bSuccess, const TSharedPtr<FJsonObject>&)
+		{
+			auto am = weakAccountManager.Pin();
+			if (bSuccess && am.IsValid())
+			{
+				am->RequestStatus();
+			}
+		},
+			[](int32 Code, const FString& Message)
+		{
+			UE_LOG(LogNet, Error, TEXT("Auth token request via CEF failed - %s (%d)"), *Message, Code);
+		});
 	}
 }
 
