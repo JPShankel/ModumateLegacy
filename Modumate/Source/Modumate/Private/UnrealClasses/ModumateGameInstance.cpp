@@ -613,6 +613,7 @@ void UModumateGameInstance::StartGameInstance()
 		}
 	}
 
+	// Handle args while at Modumate startup
 	if (!bUseFile && ProcessCustomURLArgs(FString(FCommandLine::Get())) && !PendingClientConnectProjectID.IsEmpty())
 	{
 		UE_LOG(LogTemp, Log, TEXT("Command line specified project ID: \"%s\""), *PendingClientConnectProjectID);
@@ -808,38 +809,41 @@ void UModumateGameInstance::SlowTick()
 		return;
 	}
 
+	// Handle args while Modumate is running
 	FString tempMessage;
-	if (FModumatePlatform::ConsumeTempMessage(tempMessage) && ProcessCustomURLArgs(tempMessage))
+	if (FModumatePlatform::ConsumeTempMessage(tempMessage))
 	{
-		// If we received a project ID to open as a message, then either:
-		// - Try to close the current edit session to go to the main menu, where once logged in we should auto-open the project
-		// - See if we're logged in at the main menu, and try to open the project immediately
-		if (!PendingClientConnectProjectID.IsEmpty())
+		ProcessCustomURLArgs(tempMessage);
+	}
+
+	// If we received a project ID to open as a message, then either:
+	// - Try to close the current edit session to go to the main menu, where once logged in we should auto-open the project
+	// - See if we're logged in at the main menu, and try to open the project immediately
+	if (!PendingClientConnectProjectID.IsEmpty())
+	{
+		// Bring the main window to the front, to alert the user that we're handling a message.
+		FSceneViewport* sceneViewport;
+		UGameViewportClient* gameViewport;
+		if (UModumateFunctionLibrary::FindViewports(world, sceneViewport, gameViewport))
 		{
-			// Bring the main window to the front, to alert the user that we're handling a message.
-			FSceneViewport* sceneViewport;
-			UGameViewportClient* gameViewport;
-			if (UModumateFunctionLibrary::FindViewports(world, sceneViewport, gameViewport))
-			{
-				UModumateFunctionLibrary::ModifyViewportWindow(sceneViewport, 0, 0, true);
-			}
+			UModumateFunctionLibrary::ModifyViewportWindow(sceneViewport, 0, 0, true);
+		}
 
-			AMainMenuGameMode* mainMenuGameMode = world->GetAuthGameMode<AMainMenuGameMode>();
-			auto* localPlayer = world->GetFirstLocalPlayerFromController();
-			auto* editModelController = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(world)) : nullptr;
+		AMainMenuGameMode* mainMenuGameMode = world->GetAuthGameMode<AMainMenuGameMode>();
+		auto* localPlayer = world->GetFirstLocalPlayerFromController();
+		auto* editModelController = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(world)) : nullptr;
 
-			if (editModelController)
+		if (editModelController)
+		{
+			if (editModelController->CheckSaveModel())
 			{
-				if (editModelController->CheckSaveModel())
-				{
-					FString mainMenuMap = UGameMapsSettings::GetGameDefaultMap();
-					UGameplayStatics::OpenLevel(this, FName(*mainMenuMap));
-				}
+				FString mainMenuMap = UGameMapsSettings::GetGameDefaultMap();
+				UGameplayStatics::OpenLevel(this, FName(*mainMenuMap));
 			}
-			else if (ensure(mainMenuGameMode) && IsloggedIn() && mainMenuGameMode->OpenCloudProject(PendingClientConnectProjectID))
-			{
-				PendingClientConnectProjectID.Empty();
-			}
+		}
+		else if (ensure(mainMenuGameMode) && IsloggedIn() && mainMenuGameMode->OpenCloudProject(PendingClientConnectProjectID))
+		{
+			PendingClientConnectProjectID.Empty();
 		}
 	}
 
