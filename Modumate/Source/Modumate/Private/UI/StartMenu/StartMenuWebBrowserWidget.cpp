@@ -5,6 +5,7 @@
 #include "UnrealClasses/MainMenuGameMode.h"
 #include "UI/Custom/ModumateWebBrowser.h"
 #include "UI/ModalDialog/ModalDialogWidget.h"
+#include "Online/ModumateCloudConnection.h"
 
 #define LOCTEXT_NAMESPACE "StartMenuWebBrowserWidget"
 
@@ -30,6 +31,14 @@ void UStartMenuWebBrowserWidget::NativeConstruct()
 
 	static const FString bindObjName(TEXT("obj"));
 	ModumateWebBrowser->CallBindUObject(bindObjName, GetGameInstance(), true);
+
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (cloudConnection)
+	{
+		UE_LOG(LogGameState, Log, TEXT("Launching URL from  cloud address: %s"), *cloudConnection->GetCloudRootURL());
+		ModumateWebBrowser->LoadURL(cloudConnection->GetCloudRootURL());
+	}
 }
 
 void UStartMenuWebBrowserWidget::ShowModalStatus(const FText& StatusText, bool bAllowDismiss)
