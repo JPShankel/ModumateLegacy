@@ -3,10 +3,10 @@
 
 #include "Drafting/Schedules/DraftingSchedule.h"
 
-class MODUMATE_API UModumateDocument;
+class UModumateDocument;
 
-class MODUMATE_API IModumateDraftingDraw;
-class MODUMATE_API FScheduleGrid;
+class IModumateDraftingDraw;
+class FScheduleGrid;
 
 class MODUMATE_API FWallSummarySchedule : public FDraftingSchedule
 {

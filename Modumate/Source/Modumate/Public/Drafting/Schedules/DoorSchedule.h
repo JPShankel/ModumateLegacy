@@ -3,11 +3,11 @@
 
 #include "Drafting/Schedules/DraftingSchedule.h"
 
-class MODUMATE_API UModumateDocument;
+class UModumateDocument;
 
-class MODUMATE_API FScheduleGrid;
+class FScheduleGrid;
 
-class FDoorSchedule : public FDraftingSchedule
+class MODUMATE_API FDoorSchedule : public FDraftingSchedule
 {
 public:
 	FDoorSchedule(const UModumateDocument *doc);
