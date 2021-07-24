@@ -198,7 +198,7 @@ bool UModumateDocument::GetUndoRecordsFromClient(UWorld* World, const FString& U
 
 	TSet<int32> affectedObjects;
 	TSet<FGuid> affectedPresets;
-	FBox affectedBounds;
+	FBox affectedBounds(EForceInit::ForceInitToZero);
 
 	auto& firstDeltasRecord = VerifiedDeltasRecords[firstDeltaIdx];
 
@@ -570,7 +570,7 @@ bool UModumateDocument::ReconcileRemoteDeltas(const FDeltasRecord& DeltasRecord,
 		// Gather the set of all objects, presets, and locations affected by the deltas that have been verified since the incoming delta was made.
 		TSet<int32> affectedObjects;
 		TSet<FGuid> affectedPresets;
-		FBox affectedBounds;
+		FBox affectedBounds(EForceInit::ForceInitToZero);
 
 		int32 numVerifiedRecords = VerifiedDeltasRecords.Num();
 		for (int32 i = numVerifiedRecords - 1; i >= 0; --i)
