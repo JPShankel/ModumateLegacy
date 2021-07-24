@@ -96,7 +96,11 @@ bool AMOICutPlane::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 		//MarkDirty(EObjectDirtyFlags::Visuals);
 		return true;
 	case EObjectDirtyFlags::Visuals:
+#if UE_SERVER
+		return true;
+#else
 		return TryUpdateVisuals() && UpdateDraftingPreview();
+#endif
 	default:
 		return true;
 	}
