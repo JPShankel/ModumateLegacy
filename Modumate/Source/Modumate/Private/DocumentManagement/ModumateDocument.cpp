@@ -2373,9 +2373,16 @@ void UModumateDocument::SetNextID(int32 ID, int32 reservingObjID)
 	ReservingObjectID = MOD_ID_NONE;
 }
 
-bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas, bool bDeleteUncleanableObjects)
+bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas /*= nullptr*/, bool bDeleteUncleanableObjects /*= false*/, bool bInitialLoad /*= false*/)
 {
 	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentCleanObjects);
+
+	double currentTime = FPlatformTime::Seconds();
+	static constexpr float checkinMaxDelay = 0.1f;
+	if (bInitialLoad)
+	{
+		NetTick(checkinMaxDelay);
+	}
 
 	UpdateVolumeGraphObjects(GetWorld());
 	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
@@ -2461,9 +2468,23 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas, boo
 					{
 						++objectCleans;
 					}
+
+					if (bInitialLoad)
+					{
+						// Tick network driver in case of long delays.
+						double newTime = FPlatformTime::Seconds();
+						float deltaTime = float(newTime - currentTime);
+						if (deltaTime >= checkinMaxDelay)
+						{
+							NetTick(deltaTime);
+							currentTime = newTime;
+						}
+					}
+
 				}
 
 				perFlagDirtyStateHashes.Add(perFlagDirtyStateHash, &bOldDirtyState);
+
 
 			} while (bModifiedAnyObjects && !bOldDirtyState &&
 				ensureMsgf(--sameFlagSafeguard > 0, TEXT("Infinite loop detected while cleaning objects with flag %s, breaking!"), *GetEnumValueString(flagToClean)));
@@ -2991,7 +3012,11 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	// Now that all objects have been created and parented correctly, we can clean all of them.
 	// This should take care of anything that depends on relationships between objects, like mitering.
 	TArray<FDeltaPtr> loadCleanSideEffects;
-	CleanObjects(&loadCleanSideEffects, true);
+#if UE_SERVER
+	CleanObjects(nullptr, true);
+#else
+	CleanObjects(&loadCleanSideEffects, true, true);
+#endif
 
 	// If there were side effects generated while cleaning initial objects, then those deltas must be applied immediately.
 	// This should not normally happen, but it's a sign that some objects relied on data that didn't get saved/loaded correctly.
@@ -3992,6 +4017,15 @@ void UModumateDocument::RecordSavedProject(UWorld* World, const FString& FilePat
 	else
 	{
 		bAutoSaveDirty = false;
+	}
+}
+
+void UModumateDocument::NetTick(float TimeDelta) const
+{
+	UNetDriver * netDriver = GEngine->FindNamedNetDriver(GetWorld(), NAME_GameNetDriver);
+	if (netDriver)
+	{
+		netDriver->TickDispatch(TimeDelta);
 	}
 }
 

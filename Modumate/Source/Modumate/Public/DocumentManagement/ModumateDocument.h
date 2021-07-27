@@ -117,7 +117,7 @@ public:
 	TArray<AModumateObjectInstance*>& GetObjectInstances() { return ObjectInstanceArray; }
 
 	static const int32 CleanIterationSafeguard;
-	bool CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas = nullptr, bool bDeleteUncleanableObjects = false);
+	bool CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas = nullptr, bool bDeleteUncleanableObjects = false, bool bInitialLoad = false);
 	void RegisterDirtyObject(EObjectDirtyFlags DirtyType, AModumateObjectInstance *DirtyObj, bool bDirty);
 
 	void BeginUndoRedoMacro();
@@ -349,4 +349,6 @@ private:
 
 	void UpdateWindowTitle();
 	void RecordSavedProject(UWorld* World, const FString& FilePath, bool bUserFile);
+
+	void NetTick(float TimeDelta) const;
 };
