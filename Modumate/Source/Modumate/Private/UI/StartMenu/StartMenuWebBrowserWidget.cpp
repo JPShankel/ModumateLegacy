@@ -32,13 +32,7 @@ void UStartMenuWebBrowserWidget::NativeConstruct()
 	static const FString bindObjName(TEXT("obj"));
 	ModumateWebBrowser->CallBindUObject(bindObjName, GetGameInstance(), true);
 
-	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
-	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
-	if (cloudConnection)
-	{
-		UE_LOG(LogGameState, Log, TEXT("Launching URL from  cloud address: %s"), *cloudConnection->GetCloudRootURL());
-		ModumateWebBrowser->LoadURL(cloudConnection->GetCloudRootURL());
-	}
+	LaunchModumateCloudWebsite();
 }
 
 void UStartMenuWebBrowserWidget::ShowModalStatus(const FText& StatusText, bool bAllowDismiss)
@@ -55,9 +49,32 @@ void UStartMenuWebBrowserWidget::HideModalStatus()
 
 void UStartMenuWebBrowserWidget::OnWebBrowserLoadCompleted()
 {
+#if 0
 	const auto projectSettings = GetDefault<UGeneralProjectSettings>();
-	FString toggleUEString = TEXT("toggleModumateUESwitch('") + projectSettings->ProjectVersion + TEXT("')");
+	FString projectVersionJS = TEXT("'") + projectSettings->ProjectVersion + TEXT("'");
+
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	FString uploadRefreshToken = cloudConnection.IsValid() ? cloudConnection->GetRefreshToken() : FString();
+	FString uploadRefreshTokenJS = TEXT("'") + uploadRefreshToken + TEXT("'");
+
+	FString toggleUEString = TEXT("toggleModumateUESwitch(") + projectVersionJS + TEXT(", ") + uploadRefreshTokenJS + TEXT(")");
 	ModumateWebBrowser->ExecuteJavascript(toggleUEString);
+
+	// TODO: Remove log
+	UE_LOG(LogTemp, Log, TEXT("ExecuteJavascript: %s"), *toggleUEString);
+#endif
+}
+
+void UStartMenuWebBrowserWidget::LaunchModumateCloudWebsite()
+{
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (cloudConnection)
+	{
+		UE_LOG(LogGameState, Log, TEXT("Launching URL from  cloud address: %s"), *cloudConnection->GetCloudRootURL());
+		ModumateWebBrowser->LoadURL(cloudConnection->GetCloudRootURL());
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

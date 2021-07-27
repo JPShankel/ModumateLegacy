@@ -34,4 +34,7 @@ public:
 
 	UFUNCTION()
 	void OnWebBrowserLoadCompleted();
+
+	UFUNCTION(BlueprintCallable)
+	void LaunchModumateCloudWebsite();
 };

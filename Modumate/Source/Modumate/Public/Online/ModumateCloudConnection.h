@@ -30,6 +30,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 
 		const FString& GetAuthToken() const { return AuthToken; }
 		void SetAuthToken(const FString& InAuthToken);
+		const FString& GetRefreshToken() const { return RefreshToken; }
 		void SetRefreshToken(const FString& InRefreshToken);
 
 		const FString& GetXApiKey() const { return XApiKey; }
@@ -69,6 +70,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 
 		bool Login(const FString& Username, const FString& Password, const FString& InRefreshToken, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
 		bool RequestAuthTokenRefresh(const FString& InRefreshToken, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback);
+		void OnLogout(); // This is in response to logout from ams
 
 		void Tick();
 

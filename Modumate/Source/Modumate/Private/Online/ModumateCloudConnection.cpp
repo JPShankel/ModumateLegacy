@@ -362,6 +362,13 @@ bool FModumateCloudConnection::RequestAuthTokenRefresh(const FString& InRefreshT
 	return false;
 }
 
+void FModumateCloudConnection::OnLogout()
+{
+	SetAuthToken(FString());
+	SetRefreshToken(FString());
+	LoginStatus = ELoginStatus::Disconnected;
+}
+
 bool FModumateCloudConnection::Login(const FString& Username, const FString& Password, const FString& InRefreshToken, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback)
 {
 	TWeakPtr<FModumateCloudConnection> WeakThisCaptured(this->AsShared());

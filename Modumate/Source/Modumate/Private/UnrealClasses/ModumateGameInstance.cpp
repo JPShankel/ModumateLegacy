@@ -773,11 +773,15 @@ bool UModumateGameInstance::IsloggedIn() const
 
 bool UModumateGameInstance::ProcessCustomURLArgs(const FString& Args)
 {
+	UE_LOG(LogTemp, Log, TEXT("ProcessCustomURLArgs: %s"), *Args);
+
 	// Must match the CustomURLArg value in BootstrapPackagedGame.cpp in order to communicate using shared temp files!
 	static const FString urlKey(TEXT("-CustomURL="));
 	// Must match the NSIS registry key that we use in the installer to register a URL Protocol!
 	static const FString urlPrefix(TEXT("mdmt://"));
 	static const FString projectPrefix(TEXT("project/"));
+	static const FString optionsDelimiter(TEXT("?"));
+	static const FString tokenPrefix(TEXT("token="));
 
 	FString parsedURL;
 	if (!FParse::Value(*Args, *urlKey, parsedURL))
@@ -791,11 +795,30 @@ bool UModumateGameInstance::ProcessCustomURLArgs(const FString& Args)
 		return false;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("Parsed custom URL argument: %s"), *parsedURL);
-
-	if (parsedURL.RemoveFromStart(projectPrefix))
+	// Check for options. Currently the only extra option is 'token'
+	// If no option, assume parsedURL as projectID
+	FString projectString;
+	FString optionString;
+	bool bHasOptions = parsedURL.Split(optionsDelimiter, &projectString, &optionString);
+	if (bHasOptions)
 	{
-		PendingClientConnectProjectID = parsedURL;
+		// Check for RefreshToken
+		if (GetCloudConnection() && optionString.RemoveFromStart(tokenPrefix))
+		{
+			UE_LOG(LogTemp, Log, TEXT("Set PendingToken from URL: %s"), *optionString);
+			GetCloudConnection()->SetRefreshToken(optionString);
+		}
+	}
+	else
+	{
+		projectString = parsedURL;
+	}
+
+	// Check for projectID
+	if (projectString.RemoveFromStart(projectPrefix))
+	{
+		UE_LOG(LogTemp, Log, TEXT("Set PendingClientConnectProjectID to : %s"), *projectString);
+		PendingClientConnectProjectID = projectString;
 	}
 
 	return true;
@@ -821,20 +844,13 @@ void UModumateGameInstance::SlowTick()
 	// - See if we're logged in at the main menu, and try to open the project immediately
 	if (!PendingClientConnectProjectID.IsEmpty())
 	{
-		// Bring the main window to the front, to alert the user that we're handling a message.
-		FSceneViewport* sceneViewport;
-		UGameViewportClient* gameViewport;
-		if (UModumateFunctionLibrary::FindViewports(world, sceneViewport, gameViewport))
-		{
-			UModumateFunctionLibrary::ModifyViewportWindow(sceneViewport, 0, 0, true);
-		}
-
 		AMainMenuGameMode* mainMenuGameMode = world->GetAuthGameMode<AMainMenuGameMode>();
 		auto* localPlayer = world->GetFirstLocalPlayerFromController();
 		auto* editModelController = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(world)) : nullptr;
 
 		if (editModelController)
 		{
+			BringViewportWindowToFront();
 			if (editModelController->CheckSaveModel())
 			{
 				FString mainMenuMap = UGameMapsSettings::GetGameDefaultMap();
@@ -843,6 +859,7 @@ void UModumateGameInstance::SlowTick()
 		}
 		else if (ensure(mainMenuGameMode) && IsloggedIn() && mainMenuGameMode->OpenCloudProject(PendingClientConnectProjectID))
 		{
+			BringViewportWindowToFront();
 			PendingClientConnectProjectID.Empty();
 		}
 	}
@@ -998,6 +1015,33 @@ void UModumateGameInstance::open_offline_project_from_ams()
 	if (mainMenuGameMode)
 	{
 		mainMenuGameMode->OpenOfflineProjectPicker();
+	}
+}
+
+FString UModumateGameInstance::get_refresh_token_for_ams() const
+{
+	if (GetCloudConnection())
+	{
+		return GetCloudConnection()->GetRefreshToken();
+	}
+	return FString();
+}
+
+void UModumateGameInstance::on_logout_from_ams()
+{
+	if (GetCloudConnection())
+	{
+		GetCloudConnection()->OnLogout();
+	}
+}
+
+void UModumateGameInstance::BringViewportWindowToFront()
+{
+	FSceneViewport* sceneViewport;
+	UGameViewportClient* gameViewport;
+	if (UModumateFunctionLibrary::FindViewports(GetWorld(), sceneViewport, gameViewport))
+	{
+		UModumateFunctionLibrary::ModifyViewportWindow(sceneViewport, 0, 0, true);
 	}
 }
 

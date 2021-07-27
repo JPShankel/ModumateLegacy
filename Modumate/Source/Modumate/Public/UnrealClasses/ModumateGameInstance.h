@@ -139,6 +139,13 @@ public:
 	UFUNCTION()
 	void open_offline_project_from_ams();
 
+	UFUNCTION()
+	FString get_refresh_token_for_ams() const;
+
+	UFUNCTION()
+	void on_logout_from_ams();
+
+	void BringViewportWindowToFront();
 	void SetDownloadedDocument(const FModumateDocumentHeader& InDownloadedDocHeader, const FMOIDocumentRecord& InDownloadedDocRecord);
 	void ClearDownloadedDocument();
 
