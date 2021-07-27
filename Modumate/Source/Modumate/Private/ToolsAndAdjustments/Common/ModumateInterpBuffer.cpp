@@ -35,15 +35,14 @@ bool FModumateInterpBuffer::GetBlendedTransform(float CurrentTime, FTransform& O
 				olderTransform = bufferedEvent.Value;
 				newerTransform = newerEvent.Value;
 				interpAlpha = FMath::GetRangePct(bufferedEvent.Key, newerEvent.Key, targetTime);
-				break;
+				FTransform blendedCamTransform;
+				blendedCamTransform.LerpTranslationScale3D(olderTransform, newerTransform, ScalarRegister(interpAlpha));
+				blendedCamTransform.SetRotation(FQuat::Slerp(olderTransform.GetRotation(), newerTransform.GetRotation(), interpAlpha));
+				OutTransform = blendedCamTransform;
+				return true;
 			}
 		}
 
-		FTransform blendedCamTransform;
-		blendedCamTransform.LerpTranslationScale3D(olderTransform, newerTransform, ScalarRegister(interpAlpha));
-		blendedCamTransform.SetRotation(FQuat::Slerp(olderTransform.GetRotation(), newerTransform.GetRotation(), interpAlpha));
-		OutTransform = blendedCamTransform;
-		return true;
 	}
 	OutTransform = FTransform::Identity;
 	return false;
