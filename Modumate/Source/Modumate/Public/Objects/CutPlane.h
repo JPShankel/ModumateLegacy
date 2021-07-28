@@ -90,8 +90,8 @@ protected:
 
 	TWeakObjectPtr<ACutPlaneCaptureActor> CaptureActor;
 
-	FLinearColor EdgeSelectedColor;
-	FLinearColor EdgeColor;
+	FColor EdgeSelectedColor;
+	FColor EdgeColor;
 
 	TArray<TPair<int32, TArray<FVector>>> PendingCaptureAreas;
 	TQueue<FPendingObjectRender> PendingObjectRenders;

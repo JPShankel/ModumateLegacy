@@ -236,7 +236,7 @@ void AEditModelPlayerState::BatchRenderLines()
 		}
 		else
 		{
-			objectSelectionLine.Color = FLinearColor(FColor(0x1C, 0x9F, 0xFF));
+			objectSelectionLine.Color = FLinearColor(FColor(0x63, 0xC3, 0xBA));
 		}
 
 		EMPlayerController->HUDDrawWidget->LinesToDraw.Add(MoveTemp(objectSelectionLine));

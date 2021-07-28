@@ -13,7 +13,7 @@
 AMOIEdgeBase::AMOIEdgeBase()
 	: AModumateObjectInstance()
 	, LineActor(nullptr)
-	, SelectedColor(0x00, 0x35, 0xFF)
+	, SelectedColor(0x03, 0x84, 0x71)
 	, HoveredColor(0x00, 0x00, 0x00)
 	, BaseColor(0x00, 0x00, 0x00)
 	, HoverThickness(2.0f)

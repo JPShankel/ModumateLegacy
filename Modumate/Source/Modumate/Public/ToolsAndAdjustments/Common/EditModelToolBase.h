@@ -105,8 +105,8 @@ protected:
 	UPROPERTY()
 	class ALineActor* PendingSegment;
 
-	// ModumateBlue
-	FColor AffordanceLineColor = FColor(28, 159, 255);
+	// ModumateGreen
+	FColor AffordanceLineColor = FColor(3, 196, 168);
 	float AffordanceLineThickness = 3.0f;
 	float AffordanceLineInterval = 6.0f;
 };

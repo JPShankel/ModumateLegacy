@@ -9,8 +9,8 @@
 
 AMOITerrainEdge::AMOITerrainEdge()
 {
-	BaseColor = FColor(0x03, 0x84, 0x71);
-	HoveredColor = FColor(0x03, 0x84, 0x71);
+	BaseColor = FColor(0x00, 0x35, 0xFF);
+	HoveredColor = FColor(0x00, 0x35, 0xFF);
 }
 
 FVector AMOITerrainEdge::GetCorner(int32 Index) const

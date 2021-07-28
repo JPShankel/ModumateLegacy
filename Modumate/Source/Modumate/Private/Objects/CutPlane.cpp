@@ -26,8 +26,8 @@ static constexpr float PixelsToWorldCentimeters = 0.5f;
 
 AMOICutPlane::AMOICutPlane()
 	: AMOIPlaneBase(),
-	EdgeSelectedColor(28.0f / 255.0f, 159.0f / 255.0f, 255.0f / 255.0f),
-	EdgeColor(73.0f / 255.0f, 179.0f / 255.0f, 255.0f / 255.0f),
+	EdgeSelectedColor(0x93, 0x93, 0x93),
+	EdgeColor(0x63, 0xC3, 0xBA),
 	bHUDDwgDrafting(true)
 {
 }
