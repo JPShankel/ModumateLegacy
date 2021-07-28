@@ -154,6 +154,7 @@ void UBIMBlockDropdownPreset::BuildDropdownFromStringList(class UBIMDesigner* Ou
 
 	int64 selectedValue = 0;
 	FString selectedOption;
+	EnumOptions.Reset();
 	if (LexTryParseString(selectedValue, *InFormElement.StringRepresentation) && GetEnumDisplayNamesAndValues(InFormElement.EnumClassName,EnumOptions))
 	{
 		for (auto& kvp : EnumOptions)
