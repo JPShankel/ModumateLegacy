@@ -66,7 +66,7 @@ void FModumateSnappingView::UpdateSnapPoints(const TSet<int32> &idsToIgnore, int
 
 	for (const FStructureLine &ls : LineSegments)
 	{
-		Corners.Add(FStructurePoint((ls.P1 + ls.P2) * 0.5f, (ls.P2 - ls.P1).GetSafeNormal(), ls.CP1, ls.CP2, ls.ObjID));
+		Corners.Add(FStructurePoint((ls.P1 + ls.P2) * 0.5f, (ls.P2 - ls.P1).GetSafeNormal(), ls.CP1, ls.CP2, ls.ObjID, EPointType::Middle));
 	}
 }
 

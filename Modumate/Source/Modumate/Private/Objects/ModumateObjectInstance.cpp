@@ -829,7 +829,7 @@ void AModumateObjectInstance::RouteGetStructuralPointsAndLines(TArray<FStructure
 				FVector newP1 = bP1IsBehind ? intersect : line.P1;
 				FVector newP2 = bP2IsBehind ? intersect : line.P2;
 
-				outPoints.Add(FStructurePoint(intersect, lineDir, bP2IsBehind ? line.CP1 : line.CP2, -1, line.ObjID));
+				outPoints.Add(FStructurePoint(intersect, lineDir, bP2IsBehind ? line.CP1 : line.CP2, INDEX_NONE, line.ObjID, EPointType::Corner));
 				outLines.Add(FStructureLine(newP1, newP2, line.CP1, line.CP2, line.ObjID));
 			}
 		}

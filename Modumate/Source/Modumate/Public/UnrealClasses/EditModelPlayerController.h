@@ -10,6 +10,7 @@
 #include "ModumateCore/ModumateConsoleCommand.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
+#include "Objects/MOIStructureData.h"
 
 #include "EditModelPlayerController.generated.h"
 
@@ -95,7 +96,7 @@ private:
 	bool SnapDistAlongAffordance(FVector& SnappedPosition, const FVector& AffordanceOrigin, const FVector& AffordanceDir) const;
 	bool ValidateVirtualHit(const FVector &MouseOrigin, const FVector &MouseDir, const FVector &HitPoint,
 		float CurObjectHitDist, float CurVirtualHitDist, float MaxScreenDist, float &OutRayDist) const;
-	bool FindBestMousePointHit(const TArray<FVector> &Points, const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist, int32 &OutBestIndex, float &OutBestRayDist) const;
+	bool FindBestMousePointHit(const TArray<FStructurePoint> &Points, const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist, int32 &OutBestIndex, float &OutBestRayDist) const;
 	bool FindBestMouseLineHit(const TArray<TPair<FVector, FVector>> &Lines, const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist, int32 &OutBestIndex, FVector &OutBestIntersection, float &OutBestRayDist) const;
 	FMouseWorldHitType GetAffordanceHit(const FVector &mouseLoc, const FVector &mouseDir, const FAffordanceFrame &affordance, bool allowZSnap) const;
 
@@ -106,7 +107,7 @@ private:
 
 	// These are cached helpers for GetObjectMouseHit, to avoid allocating new TArrays on each call for GetObjectMouseHit.
 	mutable TArray<AModumateObjectInstance *> CurHitPointMOIs;
-	mutable TArray<FVector> CurHitPointLocations;
+	mutable TArray<FStructurePoint> CurHitPointLocations;
 	mutable TArray<AModumateObjectInstance *> CurHitLineMOIs;
 	mutable TArray<TPair<FVector, FVector>> CurHitLineLocations;
 
@@ -377,6 +378,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Category = Snap, ToolTip = "The distance bias at which we will prefer hits against virtual objects (snaps, MOIs that are just points/lines) to direct hits."))
 	float VirtualHitBias = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Category = Snap, ToolTip = "The distance bias at which we will prefer hits against corners to midpoints. (0 = prefer midpoints)"))
+	float MidPointHitBias = 1.5f;
 
 	// The difference in camera distance, in cm, that a structural snap hit
 	// will be preferred compared to the sketch plane in front of it.

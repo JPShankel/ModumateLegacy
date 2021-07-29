@@ -3026,7 +3026,7 @@ bool AEditModelPlayerController::ValidateVirtualHit(const FVector &MouseOrigin, 
 	return false;
 }
 
-bool AEditModelPlayerController::FindBestMousePointHit(const TArray<FVector> &Points,
+bool AEditModelPlayerController::FindBestMousePointHit(const TArray<FStructurePoint> &Points,
 	const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist,
 	int32 &OutBestIndex, float &OutBestRayDist) const
 {
@@ -3036,15 +3036,42 @@ bool AEditModelPlayerController::FindBestMousePointHit(const TArray<FVector> &Po
 	int32 numPoints = Points.Num();
 	for (int32 pointIdx = 0; pointIdx < numPoints; ++pointIdx)
 	{
-		const FVector &point = Points[pointIdx];
+		const FStructurePoint& structurePoint = Points[pointIdx];
 
 		// See if this is our best valid point hit
 		float rayDist;
-		if (ValidateVirtualHit(MouseOrigin, MouseDir, point,
+		if (ValidateVirtualHit(MouseOrigin, MouseDir, structurePoint.Point,
 			CurObjectHitDist, OutBestRayDist, SnapPointMaxScreenDistance, rayDist))
 		{
-			OutBestRayDist = rayDist;
-			OutBestIndex = pointIdx;
+			auto nextPoint = Points[pointIdx];
+
+			//If we have a previous best, run a quick heuristic on it to
+			// determine if we should replace it
+			if (OutBestIndex != INDEX_NONE)
+			{
+				//If the 'next' point returned from ValidateVirtualHit
+				// is a midpoint, we need to score it worse so that we
+				// prioritize corners over mids.
+				if (nextPoint.PointType == EPointType::Middle)
+				{
+					
+					rayDist = rayDist * MidPointHitBias;
+				}
+
+				if (rayDist < OutBestRayDist)
+				{
+					OutBestRayDist = rayDist;
+					OutBestIndex = pointIdx;
+				}
+			}
+
+			//Otherwise, just flat out replace it...
+			else
+			{
+				OutBestRayDist = nextPoint.PointType == EPointType::Middle ? (rayDist * MidPointHitBias) : rayDist;
+				OutBestIndex = pointIdx;
+			}
+
 		}
 	}
 
@@ -3337,7 +3364,7 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 		// Then, transform them to raw positions for the purposes of hit selection
 		CurHitPointLocations.Reset();
 		CurHitLineLocations.Reset();
-		Algo::Transform(tempStructurePoints, CurHitPointLocations, [](const FStructurePoint &point) { return point.Point; });
+		Algo::Transform(tempStructurePoints, CurHitPointLocations, [](const FStructurePoint &point) { return point; });
 		Algo::Transform(tempStructureLines, CurHitLineLocations,[](const FStructureLine &line) { return TPair<FVector, FVector>(line.P1, line.P2); });
 
 		if (FindBestMousePointHit(CurHitPointLocations, mouseLoc, mouseDir, objectHitDist, bestVirtualHitIndex, bestVirtualHitDist))
@@ -3354,7 +3381,7 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 			if (bestObj)
 			{
 				objectHit.Actor = bestObj->GetActor();
-				objectHit.SnapType = (bestPoint.CP2 == INDEX_NONE) ? ESnapType::CT_CORNERSNAP : ESnapType::CT_MIDSNAP;
+				objectHit.SnapType = (bestPoint.PointType == EPointType::Corner) ? ESnapType::CT_CORNERSNAP : ESnapType::CT_MIDSNAP;
 				if (objectHit.Actor == directHitActor)
 				{
 					objectHit.Normal = directHitNormal;
@@ -3450,7 +3477,7 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 						if (validateStructurePoint(point))
 						{
 							CurHitPointMOIs.Add(moi);
-							CurHitPointLocations.Add(point.Point);
+							CurHitPointLocations.Add(point);
 						}
 					}
 				}
@@ -3462,7 +3489,7 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 		{
 			objectHit.Valid = true;
 			objectHit.Actor = CurHitPointMOIs[bestVirtualHitIndex]->GetActor();
-			objectHit.Location = CurHitPointLocations[bestVirtualHitIndex];
+			objectHit.Location = CurHitPointLocations[bestVirtualHitIndex].Point;
 			objectHit.SnapType = ESnapType::CT_FACESELECT;
 			objectHitDist = bestVirtualHitDist;
 			if (objectHit.Actor == directHitActor)
