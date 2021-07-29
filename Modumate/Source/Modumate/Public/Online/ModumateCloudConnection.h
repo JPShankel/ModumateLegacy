@@ -85,6 +85,8 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		static bool MakeConnectionURL(FString& OutFullURL, const FString& BaseURL, const FString& UserID, const FString& ProjectID);
 		static bool ParseConnectionOptions(const FString& ConnectionOptions, FString& OutUserID, FString& OutProjectID);
 
+		void NetworkTick(UWorld* World);
+
 	private:
 		void HandleRequestResponse(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure,
 			bool bSuccessfulConnection, int32 ResponseCode, const FString& ResponseContent);
@@ -98,6 +100,6 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		ICloudConnectionAutomation* AutomationHandler = nullptr;
 		TMap<FString, FString> CachedEncryptionKeysByToken;
 		TSet<FString> PendingProjectDownloads, PendingProjectUploads;
-
+		double LastNetworkTickTime = 0.0;
 		const static FTimespan AuthTokenTimeout;
 };

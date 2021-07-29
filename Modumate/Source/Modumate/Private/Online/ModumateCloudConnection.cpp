@@ -247,6 +247,24 @@ bool FModumateCloudConnection::ParseConnectionOptions(const FString& ConnectionO
 	return ParseEncryptionToken(encryptionToken, OutUserID, OutProjectID);
 }
 
+void FModumateCloudConnection::NetworkTick(UWorld* World)
+{
+	static constexpr float checkinMaxDelay = 0.1f;
+
+	double currentTime = FPlatformTime::Seconds();
+	float deltaTime = float(currentTime - LastNetworkTickTime);
+	if (deltaTime >= checkinMaxDelay)
+	{
+		UNetDriver* netDriver = GEngine->FindNamedNetDriver(World, NAME_GameNetDriver);
+		if (netDriver)
+		{
+			netDriver->TickDispatch(deltaTime);
+			LastNetworkTickTime = currentTime;
+		}
+
+	}
+}
+
 bool FModumateCloudConnection::RequestEndpoint(const FString& Endpoint, ERequestType RequestType,
 	const FRequestCustomizer& Customizer, const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback,
 	bool bRefreshTokenOnAuthFailure)

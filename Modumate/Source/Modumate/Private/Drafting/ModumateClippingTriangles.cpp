@@ -24,6 +24,8 @@
 #include "Objects/Terrain.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/DynamicTerrainActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "Online/ModumateCloudConnection.h"
 
 DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Drafting Line Clipping"), STAT_ModumateDraftLineClip, STATGROUP_Modumate);
 DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Drafting Clip Kernel"), STAT_ModumateDraftClipKernel, STATGROUP_Modumate);
@@ -55,10 +57,15 @@ void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* do
 
 	TArray<const AModumateObjectInstance*> occluderObjects(doc->GetObjectsOfType(occluderTypes));
 
+	UWorld* world = doc->GetWorld();
+	auto cloudConnection = world->GetGameInstance<UModumateGameInstance>()->GetCloudConnection();
+
 	const int numObjects = occluderObjects.Num();
 	int totalTriangles = 0;
 	for (const auto& object: occluderObjects)
 	{
+		cloudConnection->NetworkTick(world);
+
 		FTransform localToWorld;
 		TArray<FVector> vertices;
 		TArray<int32> triangles;

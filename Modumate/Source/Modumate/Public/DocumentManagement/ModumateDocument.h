@@ -349,6 +349,4 @@ private:
 
 	void UpdateWindowTitle();
 	void RecordSavedProject(UWorld* World, const FString& FilePath, bool bUserFile);
-
-	void NetTick(float TimeDelta) const;
 };

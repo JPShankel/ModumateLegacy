@@ -2377,14 +2377,15 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas /*= 
 {
 	QUICK_SCOPE_CYCLE_COUNTER(STAT_ModumateDocumentCleanObjects);
 
-	double currentTime = FPlatformTime::Seconds();
-	static constexpr float checkinMaxDelay = 0.1f;
+	UWorld* world = GetWorld();
+	UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
+
 	if (bInitialLoad)
 	{
-		NetTick(checkinMaxDelay);
+		gameInstance->GetCloudConnection()->NetworkTick(world);
 	}
 
-	UpdateVolumeGraphObjects(GetWorld());
+	UpdateVolumeGraphObjects(world);
 	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
 
 	for (auto& kvp : SurfaceGraphs)
@@ -2472,13 +2473,7 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas /*= 
 					if (bInitialLoad)
 					{
 						// Tick network driver in case of long delays.
-						double newTime = FPlatformTime::Seconds();
-						float deltaTime = float(newTime - currentTime);
-						if (deltaTime >= checkinMaxDelay)
-						{
-							NetTick(deltaTime);
-							currentTime = newTime;
-						}
+						gameInstance->GetCloudConnection()->NetworkTick(world);
 					}
 
 				}
@@ -4017,15 +4012,6 @@ void UModumateDocument::RecordSavedProject(UWorld* World, const FString& FilePat
 	else
 	{
 		bAutoSaveDirty = false;
-	}
-}
-
-void UModumateDocument::NetTick(float TimeDelta) const
-{
-	UNetDriver * netDriver = GEngine->FindNamedNetDriver(GetWorld(), NAME_GameNetDriver);
-	if (netDriver)
-	{
-		netDriver->TickDispatch(TimeDelta);
 	}
 }
 
