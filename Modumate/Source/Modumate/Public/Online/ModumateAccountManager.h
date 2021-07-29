@@ -208,6 +208,9 @@ public:
 	bool IsFirstLogin() const { return bIsFirstLogin; }
 	void SetIsFirstLogin(bool IsFirst) { bIsFirstLogin = IsFirst; }
 
+	bool GetHasMultiplayerFeature() const { return bHasMultiplayerFeature; }
+	void SetHasMultiplayerFeature(bool InHasMultiplayerFeature) { bHasMultiplayerFeature = InHasMultiplayerFeature; }
+
 	// Request quota remaining for a particular service (eg. 'quantityestimates') from AMS.
 	bool RequestServiceRemaining(const FString& ServiceName, const TFunction<void(FString, bool, bool, int32)>& Callback);
 
@@ -229,6 +232,7 @@ private:
 	FString LatestVersion;
 
 	bool bIsFirstLogin = false;
+	bool bHasMultiplayerFeature = false; // Eventually this will not be needed as customers roll into full multiplayer
 
 	FPermissionSet CurrentPermissions;
 };

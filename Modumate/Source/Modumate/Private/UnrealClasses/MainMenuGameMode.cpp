@@ -419,6 +419,13 @@ void AMainMenuGameMode::OpenOfflineProjectPicker()
 		return;
 	}
 
+	// Check for multiplayer feature. Do not ask for upload if multiplayer is false
+	if (gameInstance->GetAccountManager() && !gameInstance->GetAccountManager()->GetHasMultiplayerFeature())
+	{
+		OpenPendingOfflineProject();
+		return;
+	}
+
 	// TODO: Get CachedWorkspace name as part of modal dialog
 	//gameInstance->GetAccountManager()->CachedWorkspace;
 	FText uploadingProjectText = FText::Format(LOCTEXT("UploadProjectAlert", "\"{0}\" is an Offline file. \n\n Start by uploading this file to your Workspace?"),

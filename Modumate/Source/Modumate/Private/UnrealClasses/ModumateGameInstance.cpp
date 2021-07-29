@@ -954,12 +954,15 @@ void UModumateGameInstance::pass_user_package_from_ams(const FString& content)
 	if (FJsonSerializer::Deserialize(jsonReader, JsonParsed))
 	{
 		FModumateUserVerifyParams verifyParams;
+		bool bHasMultiplayerFeatureFromAMS = false;
 
 		const TSharedPtr<FJsonValue> jsonRefreshToken = JsonParsed->TryGetField(TEXT("refreshToken"));
 		const TSharedPtr<FJsonValue> jsonUserId = JsonParsed->TryGetField(TEXT("userId"));
 		const TSharedPtr<FJsonValue> jsonName = JsonParsed->TryGetField(TEXT("name"));
 		const TSharedPtr<FJsonValue> jsonEmail = JsonParsed->TryGetField(TEXT("email"));
 		const TSharedPtr<FJsonValue> jsonWorkspace = JsonParsed->TryGetField(TEXT("workspace"));
+		const TSharedPtr<FJsonValue> jsonFeatures = JsonParsed->TryGetField(TEXT("features"));
+		static const FString multiplayerFeatureFlagString(TEXT("multiplayer"));
 
 		if (jsonRefreshToken.IsValid())
 		{
@@ -981,6 +984,21 @@ void UModumateGameInstance::pass_user_package_from_ams(const FString& content)
 		{
 			AccountManager->CachedWorkspace = jsonWorkspace->AsString();
 		}
+		if (jsonFeatures.IsValid())
+		{
+			TArray<TSharedPtr<FJsonValue>> arrayFeature = jsonFeatures->AsArray();
+			for (const TSharedPtr<FJsonValue>& curFeature : arrayFeature)
+			{
+				if (curFeature->AsString() == multiplayerFeatureFlagString)
+				{
+					bHasMultiplayerFeatureFromAMS = true;
+					break;
+				}
+			}
+		}
+
+		// Save features
+		AccountManager->SetHasMultiplayerFeature(bHasMultiplayerFeatureFromAMS);
 
 		// Save verifyParams 
 		UserSettings.SavedCredentials = verifyParams.RefreshToken;
