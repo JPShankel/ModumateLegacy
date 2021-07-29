@@ -17,6 +17,9 @@
 
 const FString AEditModelGameMode::ProjectIDArg(TEXT("-ModProjectID="));
 const FString AEditModelGameMode::APIKeyArg(TEXT("-ModApiKey="));
+const FString AEditModelGameMode::CloudUrl(TEXT("-ModAMSURL="));
+
+extern TAutoConsoleVariable<FString> CVarModumateCloudAddress;
 
 AEditModelGameMode::AEditModelGameMode()
 	: Super()
@@ -66,6 +69,13 @@ void AEditModelGameMode::InitGameState()
 		UE_LOG(LogGameMode, Fatal, TEXT("Can't start an EditModelGameMode server without %s and %s arguments!"), *AEditModelGameMode::ProjectIDArg, *AEditModelGameMode::APIKeyArg);
 		FPlatformMisc::RequestExit(false);
 		return;
+	}
+
+	FString cloudUrl;
+	if (FParse::Value(FCommandLine::Get(), *CloudUrl, cloudUrl))
+	{
+		UE_LOG(LogGameMode, Log, TEXT("Overriding cloud URL to %s"), *cloudUrl);
+		CVarModumateCloudAddress->Set(*cloudUrl, EConsoleVariableFlags::ECVF_SetByCommandline);
 	}
 
 	cloudConnection->SetXApiKey(inXApiKey);

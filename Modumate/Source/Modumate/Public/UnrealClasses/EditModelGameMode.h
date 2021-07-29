@@ -38,6 +38,7 @@ public:
 
 	static const FString ProjectIDArg;
 	static const FString APIKeyArg;
+	static const FString CloudUrl;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UClass *PortalFrameActorClass;
