@@ -64,6 +64,7 @@ void UGeneralListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
 		if (CurrentGeneralListType == EGeneralListType::Terrain)
 		{
 			AModumateObjectInstance* moi = gameState->Document->GetObjectById(ObjID);
+			
 			if (ensure(moi))
 			{
 				TArray<AModumateObjectInstance*> terrainMOIs = { moi };
@@ -186,6 +187,7 @@ void UGeneralListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 
 	UpdateVisibilityAndName(generalItemObject->Visibility, generalItemObject->DisplayName);
 	ObjID = generalItemObject->ObjId;
+
 	CheckBoxCullModel->SetCheckedState(
 		generalItemObject->bIsCulling ? ECheckBoxState::Checked : ECheckBoxState::Unchecked);
 

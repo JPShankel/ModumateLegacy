@@ -51,6 +51,13 @@ void UGeneralListItemMenuBlock::UpdateAsTerrainList()
 				newTerrainObj->DisplayName = terrainData.Name;
 				newTerrainObj->ObjId = terrainMOIs[i]->ID;
 				newTerrainObj->bIsCulling = moiTerrain->GetIsTranslucent();
+				
+				//There are a few ways to get the 'visibility' of an MOI, but in this case
+				// we are going to check the inversion of setting the checkbox instead of
+				// querying the MOI directly.
+				UModumateDocument* doc = gameState->Document;
+				auto isHiddenInDoc = doc->HiddenObjectsID.Contains(newTerrainObj->ObjId);
+				newTerrainObj->Visibility = !isHiddenInDoc;
 
 				GeneralItemsList->AddItem(newTerrainObj);
 			}

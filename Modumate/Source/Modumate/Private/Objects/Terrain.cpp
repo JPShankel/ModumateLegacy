@@ -137,18 +137,15 @@ void AMOITerrain::SetIsTranslucent(bool NewIsTranslucent)
 	bIsTranslucent = NewIsTranslucent;
 	UpdateSiteMaterials(true);
 	MarkDirty(EObjectDirtyFlags::Visuals);
+
+	UpdateEditTerrainList();
 }
 
 void AMOITerrain::PostCreateObject(bool bNewObject)
 {
 	Super::PostCreateObject(bNewObject);
 
-	UWorld* world = GetWorld();
-	auto controller = world->GetFirstPlayerController<AEditModelPlayerController>();
-	if (controller && controller->EditModelUserWidget)
-	{
-		controller->EditModelUserWidget->ToolTrayWidget->ToolTrayBlockTerrainList->UpdateAsTerrainList();
-	}
+	UpdateEditTerrainList();
 }
 
 void AMOITerrain::PreDestroy()
@@ -157,12 +154,7 @@ void AMOITerrain::PreDestroy()
 
 	bDestroyed = true;
 
-	UWorld* world = GetWorld();
-	auto controller = world->GetFirstPlayerController<AEditModelPlayerController>();
-	if (controller && controller->EditModelUserWidget)
-	{
-		controller->EditModelUserWidget->ToolTrayWidget->ToolTrayBlockTerrainList->UpdateAsTerrainList();
-	}
+	UpdateEditTerrainList();
 }
 
 bool AMOITerrain::OnSelected(bool bIsSelected)
@@ -393,6 +385,16 @@ void AMOITerrain::UpdateSiteMaterials(bool bForceUpdate/* = false*/)
 	}
 
 #endif
+}
+
+void AMOITerrain::UpdateEditTerrainList()
+{
+	UWorld* world = GetWorld();
+	auto controller = world->GetFirstPlayerController<AEditModelPlayerController>();
+	if (controller && controller->EditModelUserWidget)
+	{
+		controller->EditModelUserWidget->ToolTrayWidget->ToolTrayBlockTerrainList->UpdateAsTerrainList();
+	}
 }
 
 FVector AMOITerrain::GraphToWorldPosition(FVector2D GraphPos, double Height /*= 0.0*/, bool bRelative /*= false*/) const

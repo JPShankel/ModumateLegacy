@@ -279,6 +279,8 @@ bool UTerrainTool::AddFirstEdge(FVector Point1, FVector Point2)
 	bool bRetVal = doc->ApplyDeltas(deltas, GetWorld());
 
 	TerrainGraph = doc->FindSurfaceGraph(TerrainGraph->GetID());
+	auto* terrainMoi = Cast<AMOITerrain>(doc->GetObjectById(TerrainGraph->GetID()));
+	terrainMoi->SetIsTranslucent(true);
 
 	return bRetVal;
 }

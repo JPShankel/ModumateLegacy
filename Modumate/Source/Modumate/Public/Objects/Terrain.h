@@ -62,10 +62,11 @@ public:
 protected:
 	void UpdateTerrainActor();
 	void UpdateSiteMaterials(bool bForceUpdate = false);
+	void UpdateEditTerrainList();
 
 	FVector GraphToWorldPosition(FVector2D GraphPos, double Height = 0.0, bool bRelative = false) const;
 	TMap<int32, int32> PolyIDToMeshSection;
 
-	bool bIsTranslucent = true;
+	bool bIsTranslucent = false;
 	TMap<int32, FGuid> CachedMaterials;
 };
