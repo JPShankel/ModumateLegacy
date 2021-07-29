@@ -131,6 +131,9 @@ public:
 	bool CheckMainMenuStatus(FText& OutStatusMessage);
 
 	UFUNCTION()
+	void create_local_project_from_ams();
+
+	UFUNCTION()
 	void open_cloud_project_from_ams(int32 ProjectID);
 
 	UFUNCTION()

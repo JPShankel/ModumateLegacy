@@ -555,4 +555,15 @@ void AMainMenuGameMode::ShowUploadSuccessDialog(const FString& UploadedProjectID
 	menu->ModalStatusDialog->ShowUploadOfflineDoneDialog(LOCTEXT("UploadSuccessTitle", "SUCCESS!"), uploadingSuccessText, LOCTEXT("OpenUploadedProjectText", "Open this project"), deferredOpenOnlineProject);
 }
 
+void AMainMenuGameMode::OpenProjectPageInWebBrowser()
+{
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto* controller = gameInstance ? Cast<AMainMenuController>(gameInstance->GetFirstLocalPlayerController()) : nullptr;
+	auto* menu = controller ? controller->StartMenuWebBrowserWidget : nullptr;
+	if (menu)
+	{
+		menu->LaunchURL(gameInstance->GetCloudConnection()->GetCloudProjectPageURL());
+	}
+}
+
 #undef LOCTEXT_NAMESPACE

@@ -37,4 +37,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LaunchModumateCloudWebsite();
+
+	void LaunchURL(const FString& InURL);
 };

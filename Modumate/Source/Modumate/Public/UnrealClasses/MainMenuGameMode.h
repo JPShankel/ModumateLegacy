@@ -75,6 +75,7 @@ public:
 	bool UploadOfflineProjectFile(const FString& ProjectID);
 	bool CreateNewOnlineProject(bool bUploadPendingOfflineProject);
 	void ShowUploadSuccessDialog(const FString& UploadedProjectID);
+	void OpenProjectPageInWebBrowser();
 
 protected:
 	FString PendingCloudProjectID;

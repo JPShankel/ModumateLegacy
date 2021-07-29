@@ -779,6 +779,7 @@ bool UModumateGameInstance::ProcessCustomURLArgs(const FString& Args)
 	static const FString urlKey(TEXT("-CustomURL="));
 	// Must match the NSIS registry key that we use in the installer to register a URL Protocol!
 	static const FString urlPrefix(TEXT("mdmt://"));
+	static const FString projectPagePrefix(TEXT("projects"));
 	static const FString projectPrefix(TEXT("project/"));
 	static const FString optionsDelimiter(TEXT("?"));
 	static const FString tokenPrefix(TEXT("token="));
@@ -812,6 +813,18 @@ bool UModumateGameInstance::ProcessCustomURLArgs(const FString& Args)
 	else
 	{
 		projectString = parsedURL;
+	}
+
+	// Check if url opens project page
+	if (projectString.StartsWith(projectPagePrefix))
+	{
+		UWorld* world = GetWorld();
+		AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
+		if (mainMenuGameMode)
+		{
+			mainMenuGameMode->OpenProjectPageInWebBrowser();
+			return true;
+		}
 	}
 
 	// Check for projectID
@@ -934,6 +947,16 @@ bool UModumateGameInstance::CheckMainMenuStatus(FText& OutStatusMessage)
 
 	OutStatusMessage = MoveTemp(PendingMainMenuStatus);
 	return true;
+}
+
+void UModumateGameInstance::create_local_project_from_ams()
+{
+	UWorld* world = GetWorld();
+	AMainMenuGameMode* mainMenuGameMode = world ? world->GetAuthGameMode<AMainMenuGameMode>() : nullptr;
+	if (mainMenuGameMode)
+	{
+		mainMenuGameMode->OpenEditModelLevel();
+	}
 }
 
 void UModumateGameInstance::open_cloud_project_from_ams(int32 ProjectID)

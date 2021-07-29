@@ -46,6 +46,11 @@ FString FModumateCloudConnection::GetCloudAPIURL() const
 	return CVarModumateCloudAddress.GetValueOnAnyThread() + TEXT("/api/v2");
 }
 
+FString FModumateCloudConnection::GetCloudProjectPageURL() const
+{
+	return CVarModumateCloudAddress.GetValueOnAnyThread() + TEXT("/workspace/projects");
+}
+
 void FModumateCloudConnection::SetAuthToken(const FString& InAuthToken)
 {
 	AuthToken = InAuthToken;

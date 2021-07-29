@@ -68,13 +68,19 @@ void UStartMenuWebBrowserWidget::OnWebBrowserLoadCompleted()
 
 void UStartMenuWebBrowserWidget::LaunchModumateCloudWebsite()
 {
+	// After log-in from embedded AMS, default to open project page
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
 	if (cloudConnection)
 	{
-		UE_LOG(LogGameState, Log, TEXT("Launching URL from  cloud address: %s"), *cloudConnection->GetCloudRootURL());
-		ModumateWebBrowser->LoadURL(cloudConnection->GetCloudRootURL());
+		UE_LOG(LogGameState, Log, TEXT("Launching project page from  cloud address: %s"), *cloudConnection->GetCloudProjectPageURL());
+		ModumateWebBrowser->LoadURL(cloudConnection->GetCloudProjectPageURL());
 	}
+}
+
+void UStartMenuWebBrowserWidget::LaunchURL(const FString& InURL)
+{
+	ModumateWebBrowser->LoadURL(InURL);
 }
 
 #undef LOCTEXT_NAMESPACE
