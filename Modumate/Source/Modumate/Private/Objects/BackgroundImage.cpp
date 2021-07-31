@@ -14,7 +14,7 @@ const FModumateUnitValue AMOIBackgroundImage::DefaultSize(FModumateUnitValue::Wo
 const FModumateUnitValue AMOIBackgroundImage::PlaneDisplacement(FModumateUnitValue::WorldCentimeters(0.5f));
 
 const FColor AMOIBackgroundImage::UnselectedColor(230, 230, 230);
-const FColor AMOIBackgroundImage::SelectedColor(110, 200, 230);
+const FColor AMOIBackgroundImage::SelectedColor(141, 217, 205);
 
 
 AMOIBackgroundImage::AMOIBackgroundImage()
