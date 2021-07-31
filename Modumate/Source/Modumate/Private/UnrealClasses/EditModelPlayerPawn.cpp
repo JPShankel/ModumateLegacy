@@ -47,7 +47,7 @@ AEditModelPlayerPawn::AEditModelPlayerPawn()
 
 	RemoteMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RemoteMeshComponent"));
 	RemoteMeshComponent->SetupAttachment(RootComponent);
-	RemoteMeshComponent->SetVisibility(false);
+	RemoteMeshComponent->SetOwnerNoSee(true);
 
 	CursorMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CursorMeshComponent"));
 	CursorMeshComponent->SetupAttachment(RootComponent);
@@ -198,8 +198,6 @@ bool AEditModelPlayerPawn::TryInitClientVisuals()
 
 		RemoteMeshComponent->SetMaterial(colorMaterialIdx, RemoteMeshMaterial);
 		RemoteMeshMaterial->SetVectorParameterValue(colorParamName, playerState->GetClientColor());
-
-		RemoteMeshComponent->SetVisibility(true);
 
 		// Share the same material with cursor mesh 
 		if (CursorMeshComponent)
