@@ -1229,6 +1229,9 @@ bool UModumateDocument::StartPreviewing()
 
 	bApplyingPreviewDeltas = true;
 	PrePreviewNextID = NextID;
+
+	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+
 	return true;
 }
 
