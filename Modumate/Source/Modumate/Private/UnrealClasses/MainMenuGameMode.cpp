@@ -447,12 +447,74 @@ void AMainMenuGameMode::OpenPendingOfflineProject()
 	OpenProject(PendingOfflineProjectPath);
 }
 
-bool AMainMenuGameMode::UploadOfflineProjectFile(const FString& ProjectID)
+//TODO: This can be removed after sufficient rollout of Multiplayer -JN
+bool AMainMenuGameMode::UploadRestrictedSaveFile()
+{
+	bool rtn = true; //If the file does not exist, this function should return true
+	auto restrictedSavePath = FModumateUserSettings::GetRestrictedSavePath();
+	if (FPaths::FileExists(restrictedSavePath))
+	{
+		rtn = false; //If the file exists, and we didn't upload it, let the caller know.
+		auto weakThis = MakeWeakObjectPtr(this);
+		auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+		TSharedPtr<FModumateCloudConnection> cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+
+		// Create json object for workspace and project name
+		FString newProjectName = TEXT("My Project");
+		TSharedPtr<FJsonObject> jsonRefObj = MakeShareable(new FJsonObject);
+		jsonRefObj->SetStringField(TEXT("workspace"), gameInstance->GetAccountManager()->CachedWorkspace);
+		jsonRefObj->SetStringField(TEXT("name"), newProjectName);
+
+		FString refJsonString;
+		TSharedRef<FPrettyJsonStringWriter> JsonStringWriter = FPrettyJsonStringWriterFactory::Create(&refJsonString);
+		if (!ensureAlways(FJsonSerializer::Serialize(jsonRefObj.ToSharedRef(), JsonStringWriter)))
+		{
+			return false;
+		}
+
+		bool bRequestedConnection = cloudConnection->RequestEndpoint(
+			FProjectConnectionHelpers::ProjectsEndpointPrefix,
+			FModumateCloudConnection::ERequestType::Put,
+			//CUSTOMIZE
+			[refJsonString](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
+			{
+				RefRequest->SetContentAsString(refJsonString);
+			},
+			//SUCCESS
+			[weakThis, restrictedSavePath](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+			{
+				if (weakThis.IsValid())
+				{
+					FProjectInfoResponse createInfoResponse;
+					if (!ensure(bSuccessful && Response.IsValid() &&
+						FJsonObjectConverter::JsonObjectToUStruct(Response.ToSharedRef(), &createInfoResponse)))
+					{
+						UE_LOG(LogGameState, Error, TEXT("Fail to create free project in workspace %s"), *createInfoResponse.Workspace);
+						return;
+					}
+
+					//Upload the file to the new ID and deletes it once complete.
+					weakThis->UploadOfflineProjectFile(restrictedSavePath, createInfoResponse.ID, true);
+				}
+			},
+			//FAIL
+			[weakThis](int32 ErrorCode, const FString& ErrorString)
+			{
+				if (weakThis.IsValid())
+				{
+					UE_LOG(LogGameState, Error, TEXT("Error code %d while trying to create free project %s"), ErrorCode, *ErrorString);
+				}
+			});
+	}
+	return rtn;
+}
+
+bool AMainMenuGameMode::UploadOfflineProjectFile(const FString& fileName, const FString& ProjectID, bool bDeleteFileAfterUpload)
 {
 	// Store project record from mdmt file
 	FModumateDocumentHeader docHeader;
 	FMOIDocumentRecord docRecord;
-	if (!ensureAlways(FModumateSerializationStatics::TryReadModumateDocumentRecord(PendingOfflineProjectPath, docHeader, docRecord)))
+	if (!ensureAlways(FModumateSerializationStatics::TryReadModumateDocumentRecord(fileName, docHeader, docRecord)))
 	{
 		return false;
 	}
@@ -465,10 +527,18 @@ bool AMainMenuGameMode::UploadOfflineProjectFile(const FString& ProjectID)
 
 	// Upload project
 	bool bRequestSuccess = cloudConnection->UploadProject(ProjectID, docHeader, docRecord,
-		[weakThis, ProjectID](bool bSuccessful, const TSharedPtr<FJsonObject>& Response) {
+		[weakThis, ProjectID, bDeleteFileAfterUpload, fileName](bool bSuccessful, const TSharedPtr<FJsonObject>& Response) {
 			if (ensure(weakThis.IsValid() && bSuccessful))
 			{
-				weakThis->ShowUploadSuccessDialog(ProjectID);
+				if (bDeleteFileAfterUpload)
+				{
+					FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*fileName);
+				}
+				//TODO: Use a better design for determining if we should show the dialog or not -JN
+				else
+				{
+					weakThis->ShowUploadSuccessDialog(ProjectID);
+				}
 			}
 		},
 		[weakThis](int32 ErrorCode, const FString& ErrorMessage) {
@@ -517,8 +587,8 @@ bool AMainMenuGameMode::CreateNewOnlineProject(bool bUploadPendingOfflineProject
 				}
 				if (bUploadPendingOfflineProject)
 				{
-					weakThis->UploadOfflineProjectFile(createInfoResponse.ID);
-				}
+					weakThis->UploadOfflineProjectFile(weakThis->PendingOfflineProjectPath, createInfoResponse.ID, false);
+				}	
 			}
 		},
 		[weakThis](int32 ErrorCode, const FString& ErrorString)

@@ -855,9 +855,9 @@ void UModumateGameInstance::SlowTick()
 	// If we received a project ID to open as a message, then either:
 	// - Try to close the current edit session to go to the main menu, where once logged in we should auto-open the project
 	// - See if we're logged in at the main menu, and try to open the project immediately
+	AMainMenuGameMode* mainMenuGameMode = world->GetAuthGameMode<AMainMenuGameMode>();
 	if (!PendingClientConnectProjectID.IsEmpty())
 	{
-		AMainMenuGameMode* mainMenuGameMode = world->GetAuthGameMode<AMainMenuGameMode>();
 		auto* localPlayer = world->GetFirstLocalPlayerFromController();
 		auto* editModelController = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(world)) : nullptr;
 
@@ -875,6 +875,11 @@ void UModumateGameInstance::SlowTick()
 			BringViewportWindowToFront();
 			PendingClientConnectProjectID.Empty();
 		}
+	}
+
+	if (ensure(mainMenuGameMode) && IsloggedIn() && !HasAskedForRestrictedFileUpload)
+	{
+		HasAskedForRestrictedFileUpload = mainMenuGameMode->UploadRestrictedSaveFile();;
 	}
 
 	if (CloudConnection.IsValid())

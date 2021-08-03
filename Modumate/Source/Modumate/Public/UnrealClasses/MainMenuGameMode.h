@@ -72,7 +72,8 @@ public:
 
 	void OpenOfflineProjectPicker();
 	void OpenPendingOfflineProject();
-	bool UploadOfflineProjectFile(const FString& ProjectID);
+	bool UploadRestrictedSaveFile();
+	bool UploadOfflineProjectFile(const FString& fileName, const FString& ProjectID, bool bDeleteFileAfterUpload);
 	bool CreateNewOnlineProject(bool bUploadPendingOfflineProject);
 	void ShowUploadSuccessDialog(const FString& UploadedProjectID);
 	void OpenProjectPageInWebBrowser();

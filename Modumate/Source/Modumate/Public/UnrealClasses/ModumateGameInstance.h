@@ -186,6 +186,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool RecoveringFromCrash = false;
 
+	bool HasAskedForRestrictedFileUpload = false;
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FString PendingProjectPath;
 
