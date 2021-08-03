@@ -43,6 +43,7 @@ public:
 	void SetActiveActorID(int32 ID);
 
 	void UpdateAllUnits();
+	bool CheckCanUseSameDimensionStrings(int32 NewSelectedMoiID);
 
 private:
 

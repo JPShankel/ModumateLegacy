@@ -595,9 +595,11 @@ void AEditModelPlayerState::PostSelectionChanged()
 	if (SelectedObjects.Num() == 1 && bSelectTool)
 	{
 		AModumateObjectInstance* moi = *SelectedObjects.CreateConstIterator();
-
-		gameInstance->DimensionManager->UpdateGraphDimensionStrings(moi->ID);
-		moi->ShowAdjustmentHandles(EMPlayerController, true);
+		if (!gameInstance->DimensionManager->CheckCanUseSameDimensionStrings(moi->ID))
+		{
+			gameInstance->DimensionManager->UpdateGraphDimensionStrings(moi->ID);
+			moi->ShowAdjustmentHandles(EMPlayerController, true);
+		}
 	}
 	else
 	{

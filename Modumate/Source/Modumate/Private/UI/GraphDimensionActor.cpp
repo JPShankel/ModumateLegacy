@@ -46,6 +46,11 @@ ALineActor* AGraphDimensionActor::GetLineActor()
 	return nullptr;
 }
 
+int32 AGraphDimensionActor::GetTargetEdgeID() const
+{
+	return TargetEdgeID;
+}
+
 void AGraphDimensionActor::BeginPlay()
 {
 	Super::BeginPlay();

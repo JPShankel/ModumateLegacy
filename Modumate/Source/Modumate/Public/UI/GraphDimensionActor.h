@@ -22,6 +22,7 @@ public:
 	void SetTarget(int32 InTargetEdgeID, int32 InTargetObjID, bool bIsEditable, int32 InTargetSurfaceGraphID = 0);
 
 	virtual ALineActor* GetLineActor() override;
+	virtual int32 GetTargetEdgeID() const override;
 
 protected:
 	// Called when the game starts or when spawned

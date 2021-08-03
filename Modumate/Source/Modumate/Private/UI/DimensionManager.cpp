@@ -235,3 +235,24 @@ void UDimensionManager::UpdateAllUnits()
 		}
 	}
 }
+
+bool UDimensionManager::CheckCanUseSameDimensionStrings(int32 NewSelectedMoiID)
+{
+	if (LastSelectedObjID != NewSelectedMoiID)
+	{
+		return false;
+	}
+
+	const auto* doc = GetWorld()->GetGameState<AEditModelGameState>()->Document;
+	for (const auto& kvp : DimensionActors)
+	{
+		int32 edgeID = kvp.Value->GetTargetEdgeID();
+		auto moi = doc->GetObjectById(edgeID);
+		if (!moi)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}

@@ -52,6 +52,7 @@ public:
 	void SetSwapMenuAsSelection(FGuid InPresetGUIDToSwap);
 	void SetSwapMenuAsFromNode(const FGuid& InParentPresetGUID, const FGuid& InPresetGUIDToSwap, const FBIMEditorNodeIDType& InNodeID, const FBIMPresetFormElement& InFormElement);
 	void BuildSwapMenu();
+	bool IsCurrentObjsSelectionValidForSwap();
 
 	const FGuid& GetPresetGUIDToSwap() const { return PresetGUIDToSwap; }
 

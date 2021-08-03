@@ -20,6 +20,8 @@ public:
 
 	void SetTarget(int32 EdgeID, TPair<int32, int32> FaceIDs);
 
+	virtual int32 GetTargetEdgeID() const override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

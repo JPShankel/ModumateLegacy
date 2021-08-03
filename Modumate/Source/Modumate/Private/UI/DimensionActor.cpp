@@ -60,3 +60,8 @@ ALineActor* ADimensionActor::GetLineActor()
 {
 	return nullptr;
 }
+
+int32 ADimensionActor::GetTargetEdgeID() const
+{
+	return MOD_ID_NONE;
+}

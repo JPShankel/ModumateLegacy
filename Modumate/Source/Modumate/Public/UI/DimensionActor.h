@@ -30,6 +30,7 @@ protected:
 
 public:
 	virtual ALineActor* GetLineActor();
+	virtual int32 GetTargetEdgeID() const;
 
 public:
 	UPROPERTY()

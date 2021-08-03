@@ -198,8 +198,18 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 
 void UEditModelUserWidget::EMOnSelectionObjectChanged()
 {
+	UpdateMoveRotateToolButtonsUsability();
+
+	if (CurrentLeftMenuState == ELeftMenuState::SwapMenu)
+	{
+		if (!SwapMenuWidget->IsCurrentObjsSelectionValidForSwap())
+		{
+			SwitchLeftMenu(ELeftMenuState::SelectMenu);
+		}
+		return;
+	}
+
 	if (CurrentLeftMenuState == ELeftMenuState::SelectMenu ||
-		CurrentLeftMenuState == ELeftMenuState::SwapMenu ||
 		CurrentLeftMenuState == ELeftMenuState::ToolMenu ||
 		CurrentLeftMenuState == ELeftMenuState::None)
 	{
@@ -216,7 +226,6 @@ void UEditModelUserWidget::EMOnSelectionObjectChanged()
 				BIMDesigner->EditPresetInBIMDesigner((*it)->GetAssembly().PresetGUID, false);
 			}
 		}
-		UpdateMoveRotateToolButtonsUsability();
 	}
 }
 

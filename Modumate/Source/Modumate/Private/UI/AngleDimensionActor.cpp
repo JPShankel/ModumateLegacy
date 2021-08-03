@@ -28,6 +28,11 @@ void AAngleDimensionActor::SetTarget(int32 EdgeID, TPair<int32, int32> FaceIDs)
 	EndFaceID = FaceIDs.Value;
 }
 
+int32 AAngleDimensionActor::GetTargetEdgeID() const
+{
+	return AnchorEdgeID;
+}
+
 void AAngleDimensionActor::BeginPlay()
 {
 	Super::BeginPlay();
