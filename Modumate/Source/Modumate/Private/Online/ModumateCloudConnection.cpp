@@ -264,6 +264,7 @@ void FModumateCloudConnection::NetworkTick(UWorld* World)
 		if (netDriver)
 		{
 			netDriver->TickDispatch(deltaTime);
+			netDriver->TickFlush(deltaTime);
 			LastNetworkTickTime = currentTime;
 		}
 
