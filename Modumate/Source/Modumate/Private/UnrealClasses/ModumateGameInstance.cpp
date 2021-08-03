@@ -1068,6 +1068,11 @@ FString UModumateGameInstance::get_refresh_token_for_ams() const
 	return FString();
 }
 
+void UModumateGameInstance::open_url_in_browser_from_ams(const FString& InURL)
+{
+	FPlatformProcess::LaunchURL(*InURL, nullptr, nullptr);
+}
+
 void UModumateGameInstance::on_logout_from_ams()
 {
 	if (GetCloudConnection())

@@ -146,6 +146,9 @@ public:
 	FString get_refresh_token_for_ams() const;
 
 	UFUNCTION()
+	void open_url_in_browser_from_ams(const FString& InURL);
+
+	UFUNCTION()
 	void on_logout_from_ams();
 
 	void BringViewportWindowToFront();
