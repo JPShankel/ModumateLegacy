@@ -487,6 +487,10 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 	case EObjectType::OTMetaVertex:
 	{
 		auto *graphVertex = volumeGraph.FindVertex(objID);
+		if (!ensure(graphVertex))
+		{
+			return false;
+		}
 
 		for (FGraphSignedID connectedEdgeID : graphVertex->ConnectedEdgeIDs)
 		{
