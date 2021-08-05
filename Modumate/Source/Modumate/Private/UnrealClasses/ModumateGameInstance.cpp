@@ -877,7 +877,9 @@ void UModumateGameInstance::SlowTick()
 		}
 	}
 
-	if (ensure(mainMenuGameMode) && IsloggedIn() && !HasAskedForRestrictedFileUpload)
+	if (!HasAskedForRestrictedFileUpload && 
+		IsloggedIn() &&
+		GetWorld()->GetAuthGameMode()->IsA(AMainMenuGameMode::StaticClass()))
 	{
 		HasAskedForRestrictedFileUpload = mainMenuGameMode->UploadRestrictedSaveFile();;
 	}
