@@ -3220,6 +3220,7 @@ FMouseWorldHitType AEditModelPlayerController::GetSketchPlaneMouseHit(const FVec
 		globalAffordance.Origin = EMPlayerState->SnappedCursor.AffordanceFrame.Origin;
 		globalAffordance.Normal = FVector::UpVector;
 		globalAffordance.Tangent = FVector::LeftVector;
+
 		ret = GetAffordanceHit(mouseLoc, mouseDir, globalAffordance, EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap);
 	}
 

@@ -232,4 +232,7 @@ protected:
 
 	// The current world-space transform of the camera (and pawn, meant to be identical), which is modified during a frame to be the new intended transform
 	FTransform CamTransform;
+
+	// The maximum ratio of Dist(Camera-Target)/Dist(Camera-CenterOfModel) that a new OrbitTarget can be.
+	static constexpr float MaxOrbitDistanceRatio = 1.5f;
 };

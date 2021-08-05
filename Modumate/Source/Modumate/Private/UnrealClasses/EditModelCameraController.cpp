@@ -457,6 +457,28 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 
 		OrbitTarget = cursor.WorldPosition;
 
+		//If the orbit OrbitTarget is too far, e.g. Dist(Camera-Target)/Dist(Camera-CenterOfModel) > 1.5
+		// then clamp the distance of the Target along a similar vector of orbitTarget to the camera
+		// This prevents users from wildly swinging the camera away from the model
+		auto boundingSphere = Controller->GetDocument()->CalculateProjectBounds().GetSphere();
+		
+		FVector modelCenter = boundingSphere.Center;
+		float targetDistance = FVector::Dist(OrbitTarget, CamTransform.GetLocation());
+		float orbitDistance = FVector::Dist(OrbitTarget, modelCenter);
+		float centerDistance = FVector::Dist(modelCenter, CamTransform.GetLocation());
+		float maxRadius = boundingSphere.W * MaxOrbitDistanceRatio;
+
+		if((!FMath::IsNearlyZero(centerDistance)) && 
+			(targetDistance / centerDistance > MaxOrbitDistanceRatio) &&
+			orbitDistance > maxRadius)
+		{
+			FVector ray = OrbitTarget - CamTransform.GetLocation();
+			ray.Normalize();
+			ray = ray * centerDistance;
+			OrbitTarget = CamTransform.GetLocation() + ray;
+		}
+		
+
 		// Calculate the direction from the camera that points at or below the center of the screen, horizontally centered, towards the orbit target.
 		// This direction is the one that can be used for orbiting around a point, rather than the forward vector, so it can be fixed about
 		// a point in screen space that's not only the center of the screen.

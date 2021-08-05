@@ -111,6 +111,8 @@ private:
 	mutable TArray<AModumateObjectInstance *> CurHitLineMOIs;
 	mutable TArray<TPair<FVector, FVector>> CurHitLineLocations;
 
+
+
 protected:
 	virtual void SetupInputComponent() override;
 
@@ -389,11 +391,11 @@ public:
 
 	// The maximum distance, in pixels, between the cursor in screen space and a valid point snap location
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Snap)
-	float SnapPointMaxScreenDistance = 15.0f;
+	float SnapPointMaxScreenDistance = 18.0f;
 
 	// The maximum distance, in pixels, between the cursor in screen space and a valid line snap location
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Snap)
-	float SnapLineMaxScreenDistance = 10.0f;
+	float SnapLineMaxScreenDistance = 15.0f;
 
 	// The maximum distance, in cm, between a raycast used for snapping and geometry that would occlude it
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Snap)
