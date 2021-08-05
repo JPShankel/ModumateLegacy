@@ -921,15 +921,6 @@ void UModumateGameInstance::OnStartConnectCloudProject(const FString& NewProject
 	CurClientConnectProjectID = NewProjectID;
 
 	// TODO: show modal UI here for our project connection status, rather than in a level-specific widget
-
-#if !UE_BUILD_SHIPPING
-	// Play a fun sound while connecting to a cloud project
-	ProjectConnectionSoundInst = UGameplayStatics::SpawnSound2D(this, ProjectConnectionSound, 1.0f, 1.0f, 0.0f, nullptr, true, true);
-	if (ProjectConnectionSoundInst)
-	{
-		ProjectConnectionSoundInst->Play();
-	}
-#endif
 }
 
 void UModumateGameInstance::OnEndConnectCloudProject()
@@ -937,12 +928,6 @@ void UModumateGameInstance::OnEndConnectCloudProject()
 	CurClientConnectProjectID.Empty();
 
 	// TODO: hide modal UI here for our project connection status, rather than in a level-specific widget
-
-	// Stop playing the sound for connecting to a cloud project
-	if (ProjectConnectionSoundInst)
-	{
-		ProjectConnectionSoundInst->Stop();
-	}
 }
 
 bool UModumateGameInstance::CheckMainMenuStatus(FText& OutStatusMessage)

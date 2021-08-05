@@ -173,12 +173,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UModumateTutorialManager* TutorialManager;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class USoundBase* ProjectConnectionSound = nullptr;
-
-	UPROPERTY()
-	class UAudioComponent* ProjectConnectionSoundInst = nullptr;
-
 	class FModumateDatabase* ObjectDatabase;
 
 	static const FString TestScriptRelativePath;
