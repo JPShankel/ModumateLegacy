@@ -57,14 +57,14 @@ void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* do
 
 	TArray<const AModumateObjectInstance*> occluderObjects(doc->GetObjectsOfType(occluderTypes));
 
-	UWorld* world = doc->GetWorld();
-	auto cloudConnection = world->GetGameInstance<UModumateGameInstance>()->GetCloudConnection();
+	World = doc->GetWorld();
+	CloudConnection = World->GetGameInstance<UModumateGameInstance>()->GetCloudConnection();
 
 	const int numObjects = occluderObjects.Num();
 	int totalTriangles = 0;
 	for (const auto& object: occluderObjects)
 	{
-		cloudConnection->NetworkTick(world);
+		CloudConnection->NetworkTick(World);
 
 		FTransform localToWorld;
 		TArray<FVector> vertices;
@@ -357,6 +357,9 @@ TArray<FEdge> FModumateClippingTriangles::ClipWorldLineToView(FEdge line)
 	inViewLines.Add(lineInViewSpace);
 	while (inViewLines.Num() != 0)
 	{
+		// Keep network alive:
+		CloudConnection->NetworkTick(World);
+
 		auto viewLine = inViewLines.Pop();
 		if (viewLine.Length2() <= LineClipEpsilon * Scale)
 		{
@@ -396,6 +399,9 @@ TArray<FEdge> FModumateClippingTriangles::ClipViewLineToView(FEdge lineInViewSpa
 	inViewLines.Add(FModumateViewLineSegment(lineInViewSpace.Vertex[0], lineInViewSpace.Vertex[1]));
 	while (inViewLines.Num() != 0)
 	{
+		// Keep network alive:
+		CloudConnection->NetworkTick(World);
+
 		FModumateViewLineSegment viewLine = inViewLines.Pop();
 
 		if (viewLine.Length2() <= LineClipEpsilon * Scale)
@@ -404,7 +410,7 @@ TArray<FEdge> FModumateClippingTriangles::ClipViewLineToView(FEdge lineInViewSpa
 		}
 
 		if (QuadTree->Apply(viewLine, [this, &viewLine, &inViewLines](const FModumateOccluder& occluder)
-		{return ClipSingleWorldLine(viewLine, occluder, inViewLines); }))
+			{return ClipSingleWorldLine(viewLine, occluder, inViewLines); }))
 		{
 			outViewLines.Add(viewLine);
 		}

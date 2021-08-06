@@ -242,6 +242,18 @@ bool FModumateDwgDraw::StartPage(int32 pageNumber, float widthInches, float heig
 	return true;
 }
 
+namespace
+{
+	class ModumateJsonPolicy : public TCondensedJsonPrintPolicy<TCHAR>
+	{ };
+}
+
+EJsonToken TJsonWriter<TCHAR, ModumateJsonPolicy>::WriteValueOnly(double Value)
+{
+	TCondensedJsonPrintPolicy<TCHAR>::WriteString(Stream, FString::Printf(TEXT("%.12g"), Value));
+	return EJsonToken::Number;
+}
+
 FString FModumateDwgDraw::GetJsonAsString(int index) const
 {
 	if (index >= JsonDocument.Num())
@@ -250,7 +262,7 @@ FString FModumateDwgDraw::GetJsonAsString(int index) const
 	}
 
 	FString serializedJson;
-	auto serializer = TJsonWriterFactory<>::Create(&serializedJson);
+	auto serializer = TJsonWriterFactory<TCHAR, ModumateJsonPolicy>::Create(&serializedJson);
 	FJsonSerializer::Serialize(JsonDocument[index], serializer);
 
 	return serializedJson;

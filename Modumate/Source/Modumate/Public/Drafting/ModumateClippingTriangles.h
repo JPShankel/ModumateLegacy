@@ -10,6 +10,7 @@ class AModumateObjectInstance;
 class FModumateViewLineSegment;
 struct FLayerGeomDef;
 class ADynamicTerrainActor;
+class FModumateCloudConnection;
 
 
 class FModumateClippingTriangles
@@ -36,6 +37,8 @@ private:
 	FVec3d Normal;
 	FMatrix TransformMatrix;
 	float Scale;
+	TSharedPtr<FModumateCloudConnection> CloudConnection;
+	UWorld* World = nullptr;
 
 
 	TArray<FModumateOccluder> Occluders;
