@@ -50,6 +50,7 @@
 #include "Quantities/QuantitiesManager.h"
 
 #include "Kismet/KismetRenderingLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 // Tools
@@ -1286,9 +1287,16 @@ bool AEditModelPlayerController::CaptureProjectThumbnail()
 		float captureMaxAspect = FMath::Max(captureAspect, 1.0f / captureAspect);
 
 		FSphere projectBounds = gameState->Document->CalculateProjectBounds().GetSphere();
-		FVector captureOrigin = CalculateViewLocationForSphere(projectBounds, captureComp->GetForwardVector(), captureMaxAspect, captureComp->FOVAngle);
-		captureComp->GetOwner()->SetActorLocation(captureOrigin);
 
+		auto captureVector = (FVector::LeftVector.RotateAngleAxis(ThumbnailCaptureRotationZ, FVector::UpVector).RotateAngleAxis(ThumbnailCaptureRotationY, FVector::ForwardVector));
+		captureVector.Normalize();
+
+		FVector captureOrigin = CalculateViewLocationForSphere(projectBounds, captureVector, captureMaxAspect, ThumbnailCaptureFOV);
+		FRotator captureRotation = UKismetMathLibrary::FindLookAtRotation(captureOrigin, projectBounds.Center);
+
+		captureComp->GetOwner()->SetActorLocation(captureOrigin);
+		captureComp->GetOwner()->SetActorRotation(captureRotation);
+		
 		// Perform the actual scene capture
 		captureComp->CaptureScene();
 
@@ -1889,8 +1897,10 @@ void AEditModelPlayerController::TickInput(float DeltaTime)
 
 FVector AEditModelPlayerController::CalculateViewLocationForSphere(const FSphere &TargetSphere, const FVector &ViewVector, float AspectRatio, float FOV)
 {
-	float captureHalfFOV = 0.5f * FMath::DegreesToRadians(FOV);
-	float captureDistance = AspectRatio * TargetSphere.W / FMath::Tan(captureHalfFOV);
+	//Because of the camera perspective and rotation, clipping of the model was occuring
+	// when 0.5f was used. I have changed this to have the model take up '90%' of the thumbnail.
+	float captureAlmostHalfFOV = ThumbnailCaptureZoomPercent * FMath::DegreesToRadians(FOV) * 0.5f;
+	float captureDistance = AspectRatio * TargetSphere.W / FMath::Tan(captureAlmostHalfFOV);
 	return TargetSphere.Center - captureDistance * ViewVector;
 }
 

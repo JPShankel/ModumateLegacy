@@ -6,6 +6,7 @@
 #include "Engine/Texture2D.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Engine/World.h"
+#include "Misc/FileHelper.h"
 #include "Framework/Application/SlateApplication.h"
 #include "IImageWrapper.h"
 #include "IImageWrapperModule.h"
@@ -123,6 +124,10 @@ bool FModumateThumbnailHelpers::CreateProjectThumbnail(class UTextureRenderTarge
 			if (imageCompressedBytes.Num() > 0)
 			{
 				thumbnailBase64 = FBase64::Encode(imageCompressedBytes.GetData(), imageCompressedBytes.Num());
+
+#if 0
+				FFileHelper::SaveArrayToFile(imageCompressedBytes, TEXT("debug_thumbnail.png"));
+#endif
 				return true;
 			}
 		}

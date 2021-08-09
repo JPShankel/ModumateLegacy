@@ -401,6 +401,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Snap)
 	float SnapOcclusionEpsilon = 1.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Category = Thumbnails, ToolTip = "How much of the thumbnail is taken up by the building (1.0 = 100%, 1.5 = 150%)"))
+	float ThumbnailCaptureZoomPercent = 0.9f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Category = Thumbnails, ToolTip = "The angle around the Z axis at which the thumbnail is captured"))
+	float ThumbnailCaptureRotationZ = 50.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Category = Thumbnails, ToolTip = "The angle around the Y axis at which the thumbnail is captured"))
+	float ThumbnailCaptureRotationY = 25.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Category = Thumbnails, ToolTip = "The angle around the Y axis at which the thumbnail is captured"))
+	float ThumbnailCaptureFOV = 50.0f;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> SoftwareCursorWidgetClass;
 
