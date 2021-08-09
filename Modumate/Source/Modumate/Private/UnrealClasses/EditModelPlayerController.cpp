@@ -1037,7 +1037,7 @@ bool AEditModelPlayerController::SaveModelAs()
 	// Open the save file dialog and actually perform the save
 	FString filename;
 	bool bSaveSuccess = false;
-	if (FModumatePlatform::GetSaveFilename(filename, FModumatePlatform::INDEX_MODFILE))
+	if (FModumatePlatform::GetSaveFilename(filename, nullptr, FModumatePlatform::INDEX_MODFILE))
 	{
 		EMPlayerState->ShowingFileDialog = false;
 		bSaveSuccess = SaveModelFilePath(filename);
@@ -1117,7 +1117,7 @@ bool AEditModelPlayerController::LoadModel(bool bLoadOnlyDeltas)
 	FString filename;
 	bool bLoadSuccess = false;
 
-	if (FModumatePlatform::GetOpenFilename(filename))
+	if (FModumatePlatform::GetOpenFilename(filename, nullptr))
 	{
 		bLoadSuccess = LoadModelFilePath(filename, true, true, true, bLoadOnlyDeltas);
 	}
@@ -1324,12 +1324,21 @@ bool AEditModelPlayerController::GetScreenshotFileNameWithDialog(FString& Filepa
 		AbortUseTool();
 	}
 
-	EMPlayerState->ShowingFileDialog = true;
+	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (!gameInstance)
+	{
+		return false;
+	}
+
+	auto cloudConnection = gameInstance->GetCloudConnection();
+	UWorld* world = GetWorld();
+	TFunction<bool()>  networkTickCall = [cloudConnection, world]() { cloudConnection->NetworkTick(world); return true; };
 
 	// Open the file dialog
 	bool bChoseFile = false;
 	FString fullFilePath;
-	if (FModumatePlatform::GetSaveFilename(fullFilePath, FModumatePlatform::INDEX_PNGFILE))
+	EMPlayerState->ShowingFileDialog = true;
+	if (FModumatePlatform::GetSaveFilename(fullFilePath, networkTickCall, FModumatePlatform::INDEX_PNGFILE))
 	{
 		bChoseFile = true;
 	}
@@ -1404,7 +1413,12 @@ bool AEditModelPlayerController::OnCreateDwg()
 	EMPlayerState->ShowingFileDialog = true;
 
 	FString filename;
-	if (FModumatePlatform::GetSaveFilename(filename, FModumatePlatform::INDEX_DWGFILE))
+
+	auto cloudConnection = gameInstance->GetCloudConnection();
+	UWorld* world = GetWorld();
+	TFunction<bool()>  networkTickCall = [cloudConnection, world]() { cloudConnection->NetworkTick(world); return true; };
+
+	if (FModumatePlatform::GetSaveFilename(filename, networkTickCall, FModumatePlatform::INDEX_DWGFILE))
 	{
 		EMPlayerState->ShowingFileDialog = false;
 
@@ -1442,10 +1456,14 @@ bool AEditModelPlayerController::OnCreateQuantitiesCsv(const TFunction<void(FStr
 
 	static const FText dialogTitle = LOCTEXT("QuantityEstimateCSVText", "Quantity Estimate CSV");
 
+	auto cloudConnection = gameInstance->GetCloudConnection();
+	UWorld* world = GetWorld();
+	TFunction<bool()>  networkTickCall = [cloudConnection, world]() { cloudConnection->NetworkTick(world); return true; };
+
 	FString filename;
 	EMPlayerState->ShowingFileDialog = true;
 	auto quantitiesManager = gameInstance->GetQuantitiesManager();
-	if (FModumatePlatform::GetSaveFilename(filename, FModumatePlatform::INDEX_CSVFILE))
+	if (FModumatePlatform::GetSaveFilename(filename, networkTickCall, FModumatePlatform::INDEX_CSVFILE))
 	{
 		EMPlayerState->ShowingFileDialog = false;
 

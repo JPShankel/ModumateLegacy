@@ -15,8 +15,8 @@ struct FModumatePlatform
 	
 	static const TArray<FString> FileExtensions;
 	
-	static bool GetOpenFilename(FString &filename, bool bUseDefaultFilters = true);
-	static bool GetSaveFilename(FString &filename, unsigned int filter);
+	static bool GetOpenFilename(FString& filename, TFunction<bool()> userCallback, bool bUseDefaultFilters = true);
+	static bool GetSaveFilename(FString& filename, TFunction<bool()> userCallback, unsigned int fileType);
 
 	enum EMessageBoxResponse
 	{

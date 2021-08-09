@@ -126,9 +126,13 @@ bool UBackgroundImageTool::EnterNextStage()
 	// we could do that work if we wanted to make this more bulletproof for common / more use cases, but so far this is an edge case.
 	bool bSkipFileOpen = Controller->InputAutomationComponent->IsPlaying();
 
+	auto cloudConnection = GameInstance->GetCloudConnection();
+	UWorld* world = GetWorld();
+	TFunction<bool()>  networkTickCall = [cloudConnection, world]() { cloudConnection->NetworkTick(world); return true; };
+
 	FString imageFilename;
 	if (!bSkipFileOpen &&
-		(!FModumatePlatform::GetOpenFilename(imageFilename, false) || imageFilename.IsEmpty() || !FPaths::FileExists(imageFilename)))
+		(!FModumatePlatform::GetOpenFilename(imageFilename, networkTickCall, false) || imageFilename.IsEmpty() || !FPaths::FileExists(imageFilename)))
 	{
 		return false;
 	}

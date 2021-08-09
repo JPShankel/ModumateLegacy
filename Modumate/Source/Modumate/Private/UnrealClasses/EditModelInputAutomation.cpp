@@ -477,7 +477,7 @@ bool UEditModelInputAutomation::EndRecording(bool bPromptForPath)
 	FString newLogPath;
 	if (bPromptForPath)
 	{
-		if (!FModumatePlatform::GetSaveFilename(newLogPath, FModumatePlatform::INDEX_ILOGFILE))
+		if (!FModumatePlatform::GetSaveFilename(newLogPath, nullptr, FModumatePlatform::INDEX_ILOGFILE))
 		{
 			bTrySaveFile = false;
 		}

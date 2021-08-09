@@ -134,6 +134,21 @@ private:
 
 bool CDialogEventHandler::DialogVisible = false;
 
+namespace
+{
+	TFunction<bool()> SavedUserCallback;
+	constexpr uint32 callbackTimerPeriod = 100; // ms
+
+	void DialogTimerCallback(HWND hwnd, UINT message, UINT_PTR timerId, DWORD systemTime)
+	{
+		if (SavedUserCallback)
+		{
+			SavedUserCallback();
+		}
+		return;
+	}
+}
+
 HRESULT FindOrAddDefaultSaveFolder(IShellItem*& saveDir)
 {
 	saveDir = nullptr;
@@ -183,7 +198,7 @@ HRESULT FindOrAddDefaultSaveFolder(IShellItem*& saveDir)
 	return hr;
 }
 
-bool FModumatePlatform::GetOpenFilename(FString &filename, bool bUseDefaultFilters)
+bool FModumatePlatform::GetOpenFilename(FString& filename, TFunction<bool()> userCallback, bool bUseDefaultFilters /*= true */)
 {
 	if (CDialogEventHandler::DialogVisible)
 	{
@@ -235,6 +250,16 @@ bool FModumatePlatform::GetOpenFilename(FString &filename, bool bUseDefaultFilte
 								hr = bUseDefaultFilters ? pfd->SetDefaultExtension(pszModProjExt) : 0;
 								if (SUCCEEDED(hr))
 								{
+									// Create main-thread periodic callback for any maintenance.
+									ensureMsgf(!SavedUserCallback, TEXT("Callback already exists"));
+									UINT_PTR timerId = 0;
+									if (userCallback)
+									{
+										SavedUserCallback = userCallback;
+										timerId = SetTimer(nullptr, 0, callbackTimerPeriod, DialogTimerCallback);
+										ensureMsgf(timerId != 0, TEXT("Couldn't create periodic timer"));
+									}
+
 									// Show the dialog
 									hr = pfd->Show(nullptr);
 									if (SUCCEEDED(hr))
@@ -255,6 +280,12 @@ bool FModumatePlatform::GetOpenFilename(FString &filename, bool bUseDefaultFilte
 
 											psiResult->Release();
 										}
+									}
+
+									if (timerId != 0)
+									{
+										KillTimer(nullptr, timerId);
+										SavedUserCallback = TFunction<bool()>();
 									}
 								}
 							}
@@ -298,7 +329,7 @@ HRESULT CDialogEventHandler_CreateInstance(REFIID riid, void **ppv)
 	return hr;
 }
 
-bool FModumatePlatform::GetSaveFilename(FString &filename, unsigned int fileType)
+bool FModumatePlatform::GetSaveFilename(FString& filename, TFunction<bool()> userCallback, unsigned int fileType)
 {
 	if (CDialogEventHandler::DialogVisible)
 	{
@@ -370,6 +401,16 @@ bool FModumatePlatform::GetSaveFilename(FString &filename, unsigned int fileType
 							hr = pfd->SetFileTypeIndex(fileType);
 							if (SUCCEEDED(hr))
 							{
+								// Create main-thread periodic callback for any maintenance.
+								ensureMsgf(!SavedUserCallback, TEXT("Callback already exists"));
+								UINT_PTR timerId = 0;
+								if (userCallback)
+								{
+									SavedUserCallback = userCallback;
+									timerId = SetTimer(nullptr, 0, callbackTimerPeriod, DialogTimerCallback);
+									ensureMsgf(timerId != 0, TEXT("Couldn't create periodic timer"));
+								}
+
 								// Show the dialog
 								hr = pfd->Show(nullptr);
 								if (SUCCEEDED(hr))
@@ -405,6 +446,12 @@ bool FModumatePlatform::GetSaveFilename(FString &filename, unsigned int fileType
 
 										psiResult->Release();
 									}
+								}
+
+								if (timerId != 0)
+								{
+									KillTimer(nullptr, timerId);
+									SavedUserCallback = TFunction<bool()>();
 								}
 							}
 						}
@@ -660,12 +707,12 @@ bool GetOpenOrSavePath(FString& OutFilename, EFileDialogType DialogType, int32 F
 	return bSuccess;
 }
 
-bool FModumatePlatform::GetOpenFilename(FString& OutFilename, bool bUseDefaultFilters)
+bool FModumatePlatform::GetOpenFilename(FString& filename, TFunction<bool()> userCallback, bool bUseDefaultFilters /*= true */)
 {
 	return GetOpenOrSavePath(OutFilename, EFileDialogType::Open, bUseDefaultFilters ? INDEX_MODFILE : INDEX_NONE);
 }
 
-bool FModumatePlatform::GetSaveFilename(FString& OutFilename, unsigned int fileType)
+bool FModumatePlatform::GetSaveFilename(FString& filename, TFunction<bool()> userCallback, unsigned int fileType)
 {
 	return GetOpenOrSavePath(OutFilename, EFileDialogType::Save, fileType);
 }
@@ -691,12 +738,12 @@ bool FModumatePlatform::ConsumeTempMessage(FString& OutMessage)
 // TODO: implement these functions for all platforms, or use/integration UE4's cross-platform alternatives
 
 
-bool FModumatePlatform::GetOpenFilename(FString &filename, bool bUseDefaultFilters)
+bool FModumatePlatform::GetOpenFilename(FString& filename, TFunction<bool()> userCallback, bool bUseDefaultFilters /*= true */)
 {
 	return false;
 }
 
-bool FModumatePlatform::GetSaveFilename(FString &filename, unsigned int fileType)
+bool FModumatePlatform::GetSaveFilename(FString& filename, TFunction<bool()> userCallback, unsigned int fileType)
 {
 	return false;
 }

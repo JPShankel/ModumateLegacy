@@ -358,7 +358,7 @@ bool AMainMenuGameMode::OpenProjectFromPicker()
 
 bool AMainMenuGameMode::GetLoadFilename(FString &loadFileName)
 {
-	return FModumatePlatform::GetOpenFilename(loadFileName);
+	return FModumatePlatform::GetOpenFilename(loadFileName, nullptr);
 }
 
 bool AMainMenuGameMode::OpenProjectServerInstance(const FString& URL)
@@ -404,7 +404,7 @@ void AMainMenuGameMode::OpenOfflineProjectPicker()
 {
 	// Get project file from picker
 	bool bSuccess = false;
-	bSuccess = FModumatePlatform::GetOpenFilename(PendingOfflineProjectPath);
+	bSuccess = FModumatePlatform::GetOpenFilename(PendingOfflineProjectPath, nullptr);
 	if (!bSuccess || PendingOfflineProjectPath.IsEmpty())
 	{
 		return;
