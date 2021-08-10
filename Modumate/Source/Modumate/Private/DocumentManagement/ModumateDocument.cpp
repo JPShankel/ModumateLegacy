@@ -1098,7 +1098,7 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 		}
 
 		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
-		if (controller)
+		if (controller && controller->EditModelUserWidget)
 		{
 			controller->EditModelUserWidget->RefreshAssemblyList();
 		}
