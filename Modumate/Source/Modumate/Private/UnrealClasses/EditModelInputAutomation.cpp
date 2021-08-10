@@ -527,7 +527,7 @@ void UEditModelInputAutomation::TryEndRecording()
 bool UEditModelInputAutomation::BeginPlaybackPrompt(bool bCaptureFrames, float InPlaybackSpeed, bool bExitOnFrameCaptured)
 {
 	FString inputLogPath;
-	if (FModumatePlatform::GetOpenFilename(inputLogPath, false))
+	if (FModumatePlatform::GetOpenFilename(inputLogPath, nullptr, false))
 	{
 		return BeginPlayback(inputLogPath, bCaptureFrames, InPlaybackSpeed);
 	}

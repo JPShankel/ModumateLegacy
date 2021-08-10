@@ -248,6 +248,7 @@ namespace
 	{ };
 }
 
+template<>
 EJsonToken TJsonWriter<TCHAR, ModumateJsonPolicy>::WriteValueOnly(double Value)
 {
 	TCondensedJsonPrintPolicy<TCHAR>::WriteString(Stream, FString::Printf(TEXT("%.12g"), Value));

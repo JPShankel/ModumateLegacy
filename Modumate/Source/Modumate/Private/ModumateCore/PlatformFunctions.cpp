@@ -707,12 +707,12 @@ bool GetOpenOrSavePath(FString& OutFilename, EFileDialogType DialogType, int32 F
 	return bSuccess;
 }
 
-bool FModumatePlatform::GetOpenFilename(FString& filename, TFunction<bool()> userCallback, bool bUseDefaultFilters /*= true */)
+bool FModumatePlatform::GetOpenFilename(FString& OutFilename, TFunction<bool()> userCallback, bool bUseDefaultFilters /*= true */)
 {
 	return GetOpenOrSavePath(OutFilename, EFileDialogType::Open, bUseDefaultFilters ? INDEX_MODFILE : INDEX_NONE);
 }
 
-bool FModumatePlatform::GetSaveFilename(FString& filename, TFunction<bool()> userCallback, unsigned int fileType)
+bool FModumatePlatform::GetSaveFilename(FString& OutFilename, TFunction<bool()> userCallback, unsigned int fileType)
 {
 	return GetOpenOrSavePath(OutFilename, EFileDialogType::Save, fileType);
 }
