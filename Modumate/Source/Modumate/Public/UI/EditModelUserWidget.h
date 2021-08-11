@@ -103,6 +103,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateSettingsMenu* SettingsMenuWidget;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 MaxNumberUsersDisplayOnToolBar = 5;
+
 	UPROPERTY()
 	TMap<EToolMode, class UModumateButtonUserWidget*> ToolToButtonMap;
 
@@ -143,4 +146,5 @@ public:
 	void UpdateSelectTrayVisibility();
 	FText GetPlanUpgradeRichText();
 	void UpdateMoveRotateToolButtonsUsability();
+	void UpdateUsersList();
 };

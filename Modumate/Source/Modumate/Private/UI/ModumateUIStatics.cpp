@@ -10,3 +10,12 @@ FString UModumateUIStatics::GetEllipsizeString(const FString& InString, const in
 	}
 	return InString.Left(StringLength) + FString(TEXT("..."));
 }
+
+FLinearColor UModumateUIStatics::GetTextColorFromBackgroundColor(const FLinearColor& BackgroundColor)
+{
+	// Decide whether the text for the player name should be black or white, based on the luminance of the background,
+	// for contrast purposes, based on standard accessibility thresholds.
+	static const float whiteTextThresh = 0.66667f;
+	float playerColorLuminance = BackgroundColor.ComputeLuminance();
+	return (playerColorLuminance > whiteTextThresh) ? FLinearColor::Black : FLinearColor::White;
+}

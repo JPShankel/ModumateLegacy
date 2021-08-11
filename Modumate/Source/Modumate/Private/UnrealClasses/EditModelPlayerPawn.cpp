@@ -16,6 +16,7 @@
 #include "UnrealClasses/EditModelInputHandler.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "UI/ModumateUIStatics.h"
 
 // Sets default values
 AEditModelPlayerPawn::AEditModelPlayerPawn()
@@ -171,13 +172,7 @@ bool AEditModelPlayerPawn::TryInitClientVisuals()
 		if (ClientIconWidget->ClientName->Background)
 		{
 			ClientIconWidget->ClientName->Background->SetBrushColor(playerColor);
-
-			// Decide whether the text for the player name should be black or white, based on the luminance of the background,
-			// for contrast purposes, based on standard accessibility thresholds.
-			static const float whiteTextThresh = 0.66667f;
-			float playerColorLuminance = playerColor.ComputeLuminance();
-			FLinearColor textColor = (playerColorLuminance > whiteTextThresh) ? FLinearColor::Black : FLinearColor::White;
-			ClientIconWidget->ClientName->ModumateTextBlock->SetColorAndOpacity(FSlateColor(textColor));
+			ClientIconWidget->ClientName->ModumateTextBlock->SetColorAndOpacity(FSlateColor(UModumateUIStatics::GetTextColorFromBackgroundColor(playerColor)));
 		}
 
 		// User either the player's first name, or email if there's no first name, as the display name.

@@ -54,6 +54,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonHelp;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UUsersListHorizontalWidget* UsersListHorizontal_BP;
+
 	UFUNCTION()
 	void OnButtonReleaseModumateHome();
 

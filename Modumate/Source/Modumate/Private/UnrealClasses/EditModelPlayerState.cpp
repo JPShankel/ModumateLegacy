@@ -130,6 +130,13 @@ void AEditModelPlayerState::Tick(float DeltaSeconds)
 	}
 }
 
+void AEditModelPlayerState::Destroyed()
+{
+	UpdateAllUsersList();
+
+	Super::Destroy();
+}
+
 void AEditModelPlayerState::ClientInitialize(class AController* C)
 {
 	Super::ClientInitialize(C);
@@ -1165,6 +1172,16 @@ FLinearColor AEditModelPlayerState::GetClientColor() const
 	return assignedColorHSV.HSVToLinearRGB();
 }
 
+void AEditModelPlayerState::UpdateAllUsersList()
+{
+	ULocalPlayer* localPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+	auto* controller = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(GetWorld())) : nullptr;
+	if (controller && controller->EditModelUserWidget)
+	{
+		controller->EditModelUserWidget->UpdateUsersList();
+	}
+}
+
 // RPC from the client to the server's copy of that client's PlayerState
 void AEditModelPlayerState::SetUserInfo_Implementation(const FModumateUserInfo& UserInfo, int32 ClientIdx)
 {
@@ -1439,6 +1456,8 @@ void AEditModelPlayerState::OnRep_UserInfo()
 {
 	// TODO: download and update other player's profile photos
 	UE_LOG(LogTemp, Log, TEXT("Replicated %s's user info, id: %s"), *ReplicatedUserInfo.Firstname, *ReplicatedUserInfo.ID);
+
+	UpdateAllUsersList();
 }
 
 

@@ -21,6 +21,7 @@
 #include "UnrealClasses/EditModelInputHandler.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "UI/Debugger/BIMDebugger.h"
 #include "UI/TutorialMenu/TutorialMenuWidget.h"
 #include "UI/LeftMenu/BrowserMenuWidget.h"
@@ -29,6 +30,7 @@
 #include "UI/LeftMenu/DeleteMenuWidget.h"
 #include "UI/TutorialMenu/HelpMenu.h"
 #include "Online/ModumateAnalyticsStatics.h"
+#include "UI/UsersList/UsersListHorizontalWidget.h"
 
 #define LOCTEXT_NAMESPACE "ModumateWidgets"
 
@@ -364,6 +366,37 @@ void UEditModelUserWidget::UpdateMoveRotateToolButtonsUsability()
 		moveButton->SetIsEnabled(Controller->EMPlayerState->SelectedObjects.Num() > 0);
 		rotateButton->SetIsEnabled(Controller->EMPlayerState->SelectedObjects.Num() > 0);
 	}
+}
+
+void UEditModelUserWidget::UpdateUsersList()
+{
+	auto* gameState = GetWorld() ? GetWorld()->GetGameState<AEditModelGameState>() : nullptr;
+	if (!gameState)
+	{
+		return;
+	}
+
+	TArray<AEditModelPlayerState*> playersOnToolBar;
+	TArray<AEditModelPlayerState*> playersOnExpandedList;
+
+	for (const auto& curPS : gameState->PlayerArray)
+	{
+		AEditModelPlayerState* emPS = Cast<AEditModelPlayerState>(curPS);
+		if (emPS && !emPS->IsActorBeingDestroyed())
+		{
+			if (playersOnToolBar.Num() < MaxNumberUsersDisplayOnToolBar)
+			{
+				playersOnToolBar.Add(emPS);
+			}
+			else
+			{
+				playersOnExpandedList.Add(emPS);
+			}
+		}
+	}
+
+	ToolbarWidget->ToolBarTopBP->UsersListHorizontal_BP->UpdateHorizontalUsersList(playersOnToolBar, playersOnExpandedList.Num());
+	// TODO: Display playersOnExpandedList to other widget?
 }
 
 void UEditModelUserWidget::ToggleTutorialMenu(bool NewVisibility)

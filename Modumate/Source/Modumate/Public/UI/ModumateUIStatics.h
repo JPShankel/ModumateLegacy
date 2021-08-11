@@ -16,4 +16,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Modumate | UI")
  	static FString GetEllipsizeString(const FString& InString, const int32 StringLength = 10);
+
+	UFUNCTION(BlueprintPure, Category = "Modumate | UI")
+	static FLinearColor GetTextColorFromBackgroundColor(const FLinearColor& BackgroundColor);
 };

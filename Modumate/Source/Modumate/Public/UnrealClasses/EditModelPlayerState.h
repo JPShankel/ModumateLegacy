@@ -39,6 +39,7 @@ class MODUMATE_API AEditModelPlayerState : public APlayerState
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void Destroyed() override;
 
 	virtual void ClientInitialize(class AController* C) override;
 
@@ -220,6 +221,9 @@ public:
 
 	UFUNCTION()
 	FLinearColor GetClientColor() const;
+
+	UFUNCTION()
+	void UpdateAllUsersList();
 
 	// Networking/replication-related functions and properties
 
