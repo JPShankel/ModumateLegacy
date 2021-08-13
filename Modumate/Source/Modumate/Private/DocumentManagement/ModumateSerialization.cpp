@@ -75,6 +75,22 @@ Used by Document::Load and the object database which uses a saved game as a prox
 */
 bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString &filePath, FModumateDocumentHeader &OutHeader, FMOIDocumentRecord &OutRecord)
 {
+#if WITH_EDITOR
+	// Developer builds - allow loading of binary (multiplayer) files:
+	if (filePath.EndsWith(TEXT(".mdmb")))
+	{
+		TArray<uint8> fileArray;
+		if (FFileHelper::LoadFileToArray(fileArray, *filePath))
+		{
+			if (LoadDocumentFromBuffer(fileArray, OutHeader, OutRecord))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+#endif
+
 	FString FileJsonString;
 	bool bLoadFileSuccess = FFileHelper::LoadFileToString(FileJsonString, *filePath);
 	if (!bLoadFileSuccess)
