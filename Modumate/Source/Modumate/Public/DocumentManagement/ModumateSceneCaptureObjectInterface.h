@@ -24,11 +24,19 @@ public:
 protected:
 	struct FPendingObjectRender
 	{
+		// Capture keys:
+		FGuid Assembly;
+		FQuat ItemRotation;
+
 		int32 MoiId = MOD_ID_NONE;
-		FVector2D PagePosition { ForceInitToZero };
-		FVector2D Size { ForceInitToZero };
-		float Scale { 1.0f };
-		float Depth  { 0.0f };
+
+		// Per instance values:
+		TArray<FVector2D> PagePosition;
+		TArray<float> Depth;
+
+		FTransform RenderTransform;
+		float maxDimension = 0.0f;
+		float Scale = 0.0f;
 		FModumateLayerType LayerType;
 		FString JsonTrace;
 		int32 LocalId = 0;

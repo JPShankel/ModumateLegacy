@@ -88,13 +88,14 @@ protected:
 	bool GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting = false);
 	void ConvertToOutlines(const FString& renderTargetFilename);
 
+	static constexpr int32 RenderTargetSize = 1500;
 	TWeakObjectPtr<ACutPlaneCaptureActor> CaptureActor;
 
 	FColor EdgeSelectedColor;
 	FColor EdgeColor;
 
 	TArray<TPair<int32, TArray<FVector>>> PendingCaptureAreas;
-	TQueue<FPendingObjectRender> PendingObjectRenders;
+	TArray<FPendingObjectRender> PendingObjectRenders;
 	FPendingObjectRender CurrentObjectRender;
 	TMap<int32, FPendingObjectRender> InprocessRenders;
 

@@ -250,8 +250,8 @@ namespace
 
 template<>
 EJsonToken TJsonWriter<TCHAR, ModumateJsonPolicy>::WriteValueOnly(double Value)
-{
-	TCondensedJsonPrintPolicy<TCHAR>::WriteString(Stream, FString::Printf(TEXT("%.12g"), Value));
+{   // Override writing of doubles to write 12 significant figures instead of 17.
+	ModumateJsonPolicy::WriteString(Stream, FString::Printf(TEXT("%.12g"), Value));
 	return EJsonToken::Number;
 }
 

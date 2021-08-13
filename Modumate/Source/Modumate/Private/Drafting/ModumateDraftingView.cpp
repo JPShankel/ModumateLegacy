@@ -307,8 +307,6 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 			continue;
 		}
 
-		FPlane plane = FPlane(cutPlane->GetCorner(0), cutPlane->GetNormal());
-
 		sceneCaptureInterface->SetupPendingRenders();
 
 		FMOICutPlaneData cutPlaneData;
