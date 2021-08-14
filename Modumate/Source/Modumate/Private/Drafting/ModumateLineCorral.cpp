@@ -24,6 +24,7 @@ const FModumateLayerType FModumateLineCorral::LayerTypeOrder[] =
 	FModumateLayerType::kCabinetCutAttachment,
 	FModumateLayerType::kSeparatorCutTrim,
 	FModumateLayerType::kFinishCut,
+	FModumateLayerType::kTerrainCut,
 	FModumateLayerType::kOpeningSystemOperatorLine,
 	FModumateLayerType::kOpeningSystemBeyond,
 	FModumateLayerType::kSeparatorBeyondModuleEdges,
@@ -39,6 +40,7 @@ const FModumateLayerType FModumateLineCorral::LayerTypeOrder[] =
 	FModumateLayerType::kFinishBeyond,
 	FModumateLayerType::kFfeOutline,
 	FModumateLayerType::kFfeInteriorEdges,
+	FModumateLayerType::kTerrainBeyond,
 	FModumateLayerType::kDebug1,
 	FModumateLayerType::kDebug2,
 	FModumateLayerType::kDefault
@@ -47,9 +49,10 @@ const FModumateLayerType FModumateLineCorral::LayerTypeOrder[] =
 int FModumateLineCorral::LinePriorities[sizeof(LayerTypeOrder) / sizeof(FModumateLayerType)];
 TAtomic<int32> FModumateLineCorral::InitPriorities{ 0 };
 
-const TSet<FModumateLayerType>  FModumateLineCorral::PassedThroughTypes = 
-    { FModumateLayerType::kFfeInteriorEdges, FModumateLayerType::kFfeOutline, FModumateLayerType::kDebug1, FModumateLayerType::kDebug2 };
-
+const TSet<FModumateLayerType>  FModumateLineCorral::PassedThroughTypes = {
+	FModumateLayerType::kFfeInteriorEdges, FModumateLayerType::kFfeOutline, FModumateLayerType::kDebug1, FModumateLayerType::kDebug2,
+	FModumateLayerType::kDimensionMassing, FModumateLayerType::kDimensionFraming,  FModumateLayerType::kDimensionOpening, FModumateLayerType::KDimensionReference
+};
 
 namespace
 {

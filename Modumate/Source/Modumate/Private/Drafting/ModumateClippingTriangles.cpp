@@ -779,6 +779,8 @@ void FModumateClippingTriangles::AddLayeredCutPlaneTriangles(const TArray<FLayer
 	TArray<FVector> layerB = layer2.OriginalPointsB;
 
 	const FMatrix localToView = LocalToWorld.ToMatrixWithScale() * TransformMatrix;
+	Algo::ForEach(layerA, [localToView](FVector& v) {v = localToView.TransformPosition(v); });
+	Algo::ForEach(layerB, [localToView](FVector& v) {v = localToView.TransformPosition(v); });
 
 	const int32 numPoints = layerA.Num();
 
