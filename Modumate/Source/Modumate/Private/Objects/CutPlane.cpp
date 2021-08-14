@@ -455,6 +455,10 @@ void AMOICutPlane::UpdateCachedGeometryData()
 	CachedAxisY = InstanceData.Rotation.GetAxisY();
 	CachedPlane = FPlane(CachedCenter, InstanceData.Rotation.GetAxisZ());
 
+	if (InstanceData.Extents.IsNearlyZero())
+	{   // Some scenes may have a zero-size plane.
+		InstanceData.Extents = FVector2D(100.0f, 100.0f);
+	}
 	FVector halfExtentsX = 0.5f * InstanceData.Extents.X * CachedAxisX;
 	FVector halfExtentsY = 0.5f * InstanceData.Extents.Y * CachedAxisY;
 	CachedPoints = {

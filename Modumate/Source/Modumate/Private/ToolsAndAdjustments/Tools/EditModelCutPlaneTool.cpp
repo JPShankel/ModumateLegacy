@@ -87,6 +87,10 @@ bool UCutPlaneTool::FrameUpdate()
 	if (PendingPlane != nullptr)
 	{
 		Normal = (hitLoc - Origin).GetSafeNormal();
+		if (Normal.IsZero())
+		{
+			Normal = FVector::UpVector;
+		}
 
 		FVector BasisX, BasisY;
 		UModumateGeometryStatics::FindBasisVectors(BasisX, BasisY, Normal);
