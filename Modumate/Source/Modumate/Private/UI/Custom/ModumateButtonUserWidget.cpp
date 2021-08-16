@@ -84,10 +84,17 @@ void UModumateButtonUserWidget::NativeDestruct()
 
 void UModumateButtonUserWidget::OnButtonPress()
 {
-	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
-	if (controller && InputCommand != EInputCommand::None)
+	if (ButtonReleasedCallBack)
 	{
-		controller->InputHandlerComponent->TryCommand(InputCommand);
+		ButtonReleasedCallBack();
+	}
+	else
+	{
+		AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
+		if (controller && InputCommand != EInputCommand::None)
+		{
+			controller->InputHandlerComponent->TryCommand(InputCommand);
+		}
 	}
 }
 
@@ -104,6 +111,15 @@ void UModumateButtonUserWidget::SwitchToActiveStyle()
 void UModumateButtonUserWidget::SwitchToDisabledStyle()
 {
 	ModumateButton->SetStyle(DisabledButtonStyle);
+}
+
+void UModumateButtonUserWidget::BuildFromCallBack(const FText& InText, const TFunction<void()>& InConfirmCallback)
+{
+	if (ButtonText)
+	{
+		ButtonText->SetText(InText);
+	}
+	ButtonReleasedCallBack = InConfirmCallback;
 }
 
 UWidget* UModumateButtonUserWidget::OnTooltipWidget()

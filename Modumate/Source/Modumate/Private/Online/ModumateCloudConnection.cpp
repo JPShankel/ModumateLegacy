@@ -45,12 +45,17 @@ FString FModumateCloudConnection::GetCloudRootURL() const
 
 FString FModumateCloudConnection::GetCloudAPIURL() const
 {
-	return CVarModumateCloudAddress.GetValueOnAnyThread() + TEXT("/api/v2");
+	return GetCloudRootURL() + TEXT("/api/v2");
 }
 
 FString FModumateCloudConnection::GetCloudProjectPageURL() const
 {
-	return CVarModumateCloudAddress.GetValueOnAnyThread() + TEXT("/workspace/projects");
+	return GetCloudRootURL() + TEXT("/workspace/projects");
+}
+
+FString FModumateCloudConnection::GetCloudWorkspacePlansURL() const
+{
+	return GetCloudRootURL() + TEXT("/workspace/plans");
 }
 
 void FModumateCloudConnection::SetAuthToken(const FString& InAuthToken)

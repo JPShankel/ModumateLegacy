@@ -530,6 +530,8 @@ public:
 	bool CheckUserPlanAndPermission(EModumatePermission Permission, const FText& NoPermissionText = FText::GetEmpty(),
 		const FText& ConfirmText = FText::GetEmpty(), const TFunction<void()>& ConfirmCallback = nullptr);
 
+	void LaunchCloudWorkspacePlanURL();
+
 	UFUNCTION(BlueprintCallable)
 	bool TakeScreenshot();
 

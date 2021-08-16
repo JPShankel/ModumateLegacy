@@ -57,28 +57,52 @@ void UDeleteMenuWidget::SetPresetToDelete(const FGuid& InPresetToDelete, const F
 
 void UDeleteMenuWidget::BuildDeleteModalDialog()
 {
+	// Create header text
+	FText headerText = LOCTEXT("DeleteHeader", "Are You Sure?");
+
+	// Create body text for modal dialog
 	const FBIMPresetInstance* presetDelete = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUIDToDelete);
 	const FBIMPresetInstance* presetReplace = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUIDReplacement);
-	FText descText;
+	FText bodyText;
 	if (presetDelete && presetReplace)
 	{
-		descText = FText::Format(LOCTEXT("ReplaceFormat", "Delete {0} and replace with {1}"),
+		bodyText = FText::Format(LOCTEXT("ReplaceFormat", "Delete {0} and replace with {1}"),
 			presetDelete->DisplayName, presetReplace->DisplayName);
 	}
 	else if (presetDelete)
 	{
-		descText = FText::Format(LOCTEXT("DeleteFormat", "Delete ({0})"), presetDelete->DisplayName);
+		bodyText = FText::Format(LOCTEXT("DeleteFormat", "Delete ({0})"), presetDelete->DisplayName);
 	}
 
-	FText confirmText = LOCTEXT("ConfirmDelete", "Confirm");
+	// Create confirm delete callback
 	auto weakThis = MakeWeakObjectPtr<UDeleteMenuWidget>(this);
 	auto deferredDelete = [weakThis]() {
 		if (weakThis.IsValid())
 		{
 			weakThis->ModalDeleteButtonConfirmReleased();
+			weakThis->EMPlayerController->EditModelUserWidget->ModalDialogWidgetBP->HideAllWidgets();
 		}
 	};
-	EMPlayerController->EditModelUserWidget->ModalDialogWidgetBP->ShowDeletePresetDialog(descText, confirmText, deferredDelete);
+
+	// Create cancel callback
+	auto deferredCancel = [weakThis]() {
+		if (weakThis.IsValid())
+		{
+			weakThis->EMPlayerController->EditModelUserWidget->ModalDialogWidgetBP->HideAllWidgets();
+		}
+	};
+
+	// Create buttons
+	TArray<FModalButtonParam> buttonParams;
+
+	FModalButtonParam confirmButton(EModalButtonStyle::Red, LOCTEXT("ConfirmDelete", "Confirm"), deferredDelete);
+	buttonParams.Add(confirmButton);
+
+	FModalButtonParam cancelButton(EModalButtonStyle::Default, LOCTEXT("CancelDelete", "Cancel"), deferredCancel);
+	buttonParams.Add(cancelButton);
+	
+	// Create modal dialog
+	EMPlayerController->EditModelUserWidget->ModalDialogWidgetBP->CreateModalDialog(headerText, bodyText, buttonParams);
 }
 
 void UDeleteMenuWidget::ModalDeleteButtonConfirmReleased()

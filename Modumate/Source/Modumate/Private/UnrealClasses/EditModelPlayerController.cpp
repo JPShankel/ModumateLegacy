@@ -441,11 +441,10 @@ void AEditModelPlayerController::BeginPlay()
 	// a level-independent non-game-thread modal widget system for this type of loading text.
 	if (IsNetMode(NM_Client) && EditModelUserWidget && EditModelUserWidget->ModalDialogWidgetBP)
 	{
-		EditModelUserWidget->ModalDialogWidgetBP->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		EditModelUserWidget->ModalDialogWidgetBP->ShowStatusDialog(
-			LOCTEXT("ClientLoadingStatusTitle", "STATUS"),
+		EditModelUserWidget->ModalDialogWidgetBP->CreateModalDialog(
+			LOCTEXT("ClientLoadingStatusTitle", "STATUS"), 
 			LOCTEXT("ClientLoadingStatusText", "Opening online project..."),
-			false);
+			TArray<FModalButtonParam>());
 	}
 
 	TryInitPlayerState();
@@ -1375,10 +1374,57 @@ bool AEditModelPlayerController::CheckUserPlanAndPermission(EModumatePermission 
 
 	if (EditModelUserWidget && !NoPermissionText.IsEmpty())
 	{
-		EditModelUserWidget->ModalDialogWidgetBP->ShowAlertAccountDialog(NoPermissionText, ConfirmText, ConfirmCallback);
+		// Header text
+		FText headerText = LOCTEXT("AlertHeader", "ALERT");
+
+		// Create upgrade callback
+		auto weakThis = MakeWeakObjectPtr<AEditModelPlayerController>(this);
+		auto deferredUpgradePlan = [weakThis]() {
+			if (weakThis.IsValid())
+			{
+				weakThis->LaunchCloudWorkspacePlanURL();
+				weakThis->EditModelUserWidget->ModalDialogWidgetBP->HideAllWidgets();
+			}
+		};
+
+		// Create cancel callback
+		auto deferredDismiss = [weakThis]() {
+			if (weakThis.IsValid())
+			{
+				weakThis->EditModelUserWidget->ModalDialogWidgetBP->HideAllWidgets();
+			}
+		};
+
+		// Create buttons
+		TArray<FModalButtonParam> buttonParams;
+
+		FModalButtonParam upgradeButton(EModalButtonStyle::Green, LOCTEXT("AlertUpgradePlan", "Upgrade your plan"), deferredUpgradePlan);
+		buttonParams.Add(upgradeButton);
+
+		if (!ConfirmText.IsEmpty() && ConfirmCallback)
+		{
+			FModalButtonParam confirmButton(EModalButtonStyle::Default, ConfirmText, ConfirmCallback);
+			buttonParams.Add(confirmButton);
+		}
+
+		FModalButtonParam dismissButton(EModalButtonStyle::Default, LOCTEXT("DismissAlert", "Dismiss"), deferredDismiss);
+		buttonParams.Add(dismissButton);
+
+		// Create modal dialog
+		EditModelUserWidget->ModalDialogWidgetBP->CreateModalDialog(headerText, NoPermissionText, buttonParams);
 	}
 
 	return false;
+}
+
+void AEditModelPlayerController::LaunchCloudWorkspacePlanURL()
+{
+	auto gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+	if (cloudConnection.IsValid())
+	{
+		FPlatformProcess::LaunchURL(*cloudConnection->GetCloudWorkspacePlansURL(), nullptr, nullptr);
+	}
 }
 
 bool AEditModelPlayerController::OnCreateDwg()

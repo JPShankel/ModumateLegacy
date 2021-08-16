@@ -36,6 +36,8 @@ protected:
 	UPROPERTY()
 	FButtonStyle DisabledButtonStyle;
 
+	TFunction<void()> ButtonReleasedCallBack;
+
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -71,6 +73,8 @@ public:
 	void SwitchToNormalStyle();
 	void SwitchToActiveStyle();
 	void SwitchToDisabledStyle();
+
+	void BuildFromCallBack(const FText& InText, const TFunction<void()>& InConfirmCallback);
 
 protected:
 
