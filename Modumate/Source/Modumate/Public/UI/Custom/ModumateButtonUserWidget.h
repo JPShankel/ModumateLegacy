@@ -37,6 +37,7 @@ protected:
 	FButtonStyle DisabledButtonStyle;
 
 	TFunction<void()> ButtonReleasedCallBack;
+	bool bDimissModalDialogOnButtonPress = false;
 
 public:
 
@@ -74,7 +75,7 @@ public:
 	void SwitchToActiveStyle();
 	void SwitchToDisabledStyle();
 
-	void BuildFromCallBack(const FText& InText, const TFunction<void()>& InConfirmCallback);
+	void BuildFromModalDialogCallBack(const FText& InText, const TFunction<void()>& InConfirmCallback);
 
 protected:
 

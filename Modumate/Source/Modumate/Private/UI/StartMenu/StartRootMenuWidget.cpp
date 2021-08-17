@@ -70,7 +70,7 @@ void UStartRootMenuWidget::ShowModalStatus(const FText& StatusText, bool bAllowD
 
 void UStartRootMenuWidget::HideModalStatus()
 {
-	ModalStatusDialog->HideAllWidgets();
+	ModalStatusDialog->CloseModalDialog();
 	ModalStatusDialog->SetVisibility(ESlateVisibility::Collapsed);
 }
 

@@ -7,6 +7,7 @@
 #include "UI/EditModelUserWidget.h"
 #include "UI/Custom/ModumateTextBlock.h"
 #include "Components/Image.h"
+#include "UI/ModalDialog/ModalDialogWidget.h"
 
 UModumateButtonUserWidget::UModumateButtonUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -84,17 +85,28 @@ void UModumateButtonUserWidget::NativeDestruct()
 
 void UModumateButtonUserWidget::OnButtonPress()
 {
+	// Callback function if valid
 	if (ButtonReleasedCallBack)
 	{
 		ButtonReleasedCallBack();
 	}
-	else
+
+	// Use controller for input command and modal dialog
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
+	if (!controller)
 	{
-		AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
-		if (controller && InputCommand != EInputCommand::None)
-		{
-			controller->InputHandlerComponent->TryCommand(InputCommand);
-		}
+		return;
+	}
+
+	if (InputCommand != EInputCommand::None)
+	{
+		controller->InputHandlerComponent->TryCommand(InputCommand);
+	}
+
+	// Optional dismiss modal dialog
+	if (bDimissModalDialogOnButtonPress && controller->EditModelUserWidget)
+	{
+		controller->EditModelUserWidget->ModalDialogWidgetBP->CloseModalDialog();
 	}
 }
 
@@ -113,12 +125,13 @@ void UModumateButtonUserWidget::SwitchToDisabledStyle()
 	ModumateButton->SetStyle(DisabledButtonStyle);
 }
 
-void UModumateButtonUserWidget::BuildFromCallBack(const FText& InText, const TFunction<void()>& InConfirmCallback)
+void UModumateButtonUserWidget::BuildFromModalDialogCallBack(const FText& InText, const TFunction<void()>& InConfirmCallback)
 {
 	if (ButtonText)
 	{
 		ButtonText->SetText(InText);
 	}
+	bDimissModalDialogOnButtonPress = true;
 	ButtonReleasedCallBack = InConfirmCallback;
 }
 

@@ -98,7 +98,6 @@ AEditModelPlayerController::AEditModelPlayerController()
 	, UserSnapAutoCreationDuration(0.75f)
 	, EMPlayerState(nullptr)
 	, TestBox(ForceInitToZero)
-	, ShowingModalDialog(false)
 	, CameraInputLock(false)
 	, SelectionMode(ESelectObjectMode::DefaultObjects)
 	, MaxRaycastDist(100000.0f)
@@ -398,7 +397,7 @@ void AEditModelPlayerController::OnDownloadedClientDocument(uint32 DownloadedDoc
 	// Clear the loading status now that we've finished loading
 	if (EditModelUserWidget && EditModelUserWidget->ModalDialogWidgetBP)
 	{
-		EditModelUserWidget->ModalDialogWidgetBP->HideAllWidgets();
+		EditModelUserWidget->ModalDialogWidgetBP->CloseModalDialog();
 	}
 
 	// Let the game instance know that we're no longer pending connection to the current cloud project
@@ -1383,15 +1382,6 @@ bool AEditModelPlayerController::CheckUserPlanAndPermission(EModumatePermission 
 			if (weakThis.IsValid())
 			{
 				weakThis->LaunchCloudWorkspacePlanURL();
-				weakThis->EditModelUserWidget->ModalDialogWidgetBP->HideAllWidgets();
-			}
-		};
-
-		// Create cancel callback
-		auto deferredDismiss = [weakThis]() {
-			if (weakThis.IsValid())
-			{
-				weakThis->EditModelUserWidget->ModalDialogWidgetBP->HideAllWidgets();
 			}
 		};
 
@@ -1407,7 +1397,7 @@ bool AEditModelPlayerController::CheckUserPlanAndPermission(EModumatePermission 
 			buttonParams.Add(confirmButton);
 		}
 
-		FModalButtonParam dismissButton(EModalButtonStyle::Default, LOCTEXT("DismissAlert", "Dismiss"), deferredDismiss);
+		FModalButtonParam dismissButton(EModalButtonStyle::Default, LOCTEXT("DismissAlert", "Dismiss"), nullptr);
 		buttonParams.Add(dismissButton);
 
 		// Create modal dialog
@@ -2922,7 +2912,7 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 
 	AModumateObjectInstance *newHoveredObject = nullptr;
 
-	if (InteractionHandle == nullptr && !ShowingModalDialog && actorUnderMouse)
+	if (InteractionHandle == nullptr && actorUnderMouse)
 	{
 		newHoveredObject = Document->ObjectFromActor(actorUnderMouse);
 	}

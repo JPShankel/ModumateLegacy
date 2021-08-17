@@ -77,7 +77,7 @@ void UModalDialogWidget::HideAllWidgets()
 
 void UModalDialogWidget::CreateModalDialog(const FText& HeaderText, const FText& BodyText, const TArray<FModalButtonParam>& ModalButtonParam)
 {
-	// TODO Block or toggle input
+	EnableInputHandler(false);
 	HideAllWidgets();
 	HorizontalBox_Buttons->ClearChildren();
 
@@ -94,7 +94,7 @@ void UModalDialogWidget::CreateModalDialog(const FText& HeaderText, const FText&
 		UModumateButtonUserWidget* newButton = CreateWidget<UModumateButtonUserWidget>(this, buttonClass);
 		if (newButton)
 		{
-			newButton->BuildFromCallBack(curParam.ButtonText, curParam.CallbackTask);
+			newButton->BuildFromModalDialogCallBack(curParam.ButtonText, curParam.CallbackTask);
 			HorizontalBox_Buttons->AddChildToHorizontalBox(newButton);
 			UHorizontalBoxSlot* horizontalBoxSlot = Cast<UHorizontalBoxSlot>(newButton->Slot);
 			if (horizontalBoxSlot)
@@ -102,6 +102,22 @@ void UModalDialogWidget::CreateModalDialog(const FText& HeaderText, const FText&
 				horizontalBoxSlot->SetPadding(curParam.ButtonMargin);
 			}
 		}
+	}
+}
+
+void UModalDialogWidget::CloseModalDialog()
+{
+	HideAllWidgets();
+	EnableInputHandler(true);
+}
+
+void UModalDialogWidget::EnableInputHandler(bool bEnable)
+{
+	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
+	if (controller && controller->InputHandlerComponent)
+	{
+		static const FName modalDialogName = TEXT("ModalDialogWidget");
+		controller->InputHandlerComponent->RequestInputDisabled(modalDialogName, !bEnable);
 	}
 }
 

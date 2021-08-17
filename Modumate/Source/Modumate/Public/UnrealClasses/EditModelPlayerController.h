@@ -346,9 +346,6 @@ public:
 	FBox TestBox;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
-	bool ShowingModalDialog;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 	bool CameraInputLock = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Cursor)

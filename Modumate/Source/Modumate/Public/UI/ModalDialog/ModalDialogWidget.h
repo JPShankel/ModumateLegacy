@@ -47,6 +47,9 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+	void HideAllWidgets();
+	void EnableInputHandler(bool bEnable);
+
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UAlertAccountDialogWidget* AlertAccountDialogWidgetBP;
@@ -90,9 +93,8 @@ public:
 	void ShowUploadOfflineProjectDialog(const FText& TitleText, const FText& StatusText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback);
 	void ShowUploadOfflineDoneDialog(const FText& TitleText, const FText& StatusText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback);
 
-	void HideAllWidgets();
-
 
 	void CreateModalDialog(const FText& HeaderText, const FText& BodyText, const TArray<FModalButtonParam>& ModalButtonParam);
+	void CloseModalDialog();
 	TSubclassOf<class UModumateButtonUserWidget> ButtonClassSelector(EModalButtonStyle Style) const;
 };

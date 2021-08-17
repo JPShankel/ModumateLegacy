@@ -80,15 +80,6 @@ void UDeleteMenuWidget::BuildDeleteModalDialog()
 		if (weakThis.IsValid())
 		{
 			weakThis->ModalDeleteButtonConfirmReleased();
-			weakThis->EMPlayerController->EditModelUserWidget->ModalDialogWidgetBP->HideAllWidgets();
-		}
-	};
-
-	// Create cancel callback
-	auto deferredCancel = [weakThis]() {
-		if (weakThis.IsValid())
-		{
-			weakThis->EMPlayerController->EditModelUserWidget->ModalDialogWidgetBP->HideAllWidgets();
 		}
 	};
 
@@ -98,7 +89,7 @@ void UDeleteMenuWidget::BuildDeleteModalDialog()
 	FModalButtonParam confirmButton(EModalButtonStyle::Red, LOCTEXT("ConfirmDelete", "Confirm"), deferredDelete);
 	buttonParams.Add(confirmButton);
 
-	FModalButtonParam cancelButton(EModalButtonStyle::Default, LOCTEXT("CancelDelete", "Cancel"), deferredCancel);
+	FModalButtonParam cancelButton(EModalButtonStyle::Default, LOCTEXT("CancelDelete", "Cancel"), nullptr);
 	buttonParams.Add(cancelButton);
 	
 	// Create modal dialog

@@ -43,7 +43,7 @@ void UStartMenuWebBrowserWidget::ShowModalStatus(const FText& StatusText, bool b
 
 void UStartMenuWebBrowserWidget::HideModalStatus()
 {
-	ModalStatusDialog->HideAllWidgets();
+	ModalStatusDialog->CloseModalDialog();
 	ModalStatusDialog->SetVisibility(ESlateVisibility::Collapsed);
 }
 
