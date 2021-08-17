@@ -87,7 +87,7 @@ void UModalDialogWidget::CreateModalDialog(const FText& HeaderText, const FText&
 	RichTextBlock_Header->SetText(HeaderText);
 	RichTextBlock_Body->SetText(BodyText);
 
-	for (const auto curParam : ModalButtonParam)
+	for (const auto& curParam : ModalButtonParam)
 	{
 		TSubclassOf<class UModumateButtonUserWidget> buttonClass = ButtonClassSelector(curParam.ModalButtonStyle);
 
