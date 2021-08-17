@@ -92,7 +92,7 @@ public:
 
 	virtual bool SaveDocument(const FString& filename) override;
 
-	explicit FModumateLineCorral(IModumateDraftingDraw * nextDrafting = new FModumateDwgDraw);
+	explicit FModumateLineCorral(IModumateDraftingDraw * nextDrafting);
 
 	static int LinePriorities[];
 

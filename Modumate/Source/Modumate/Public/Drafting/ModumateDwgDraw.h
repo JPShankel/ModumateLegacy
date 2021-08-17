@@ -10,6 +10,9 @@
 class FModumateDwgDraw: public IModumateDraftingDraw
 {
 public:
+	explicit FModumateDwgDraw(UWorld* InWorld) :
+		World(InWorld) { }
+
 	virtual EDrawError DrawLine(
 		const ModumateUnitParams::FXCoord &x1,
 		const ModumateUnitParams::FYCoord &y1,
@@ -118,6 +121,7 @@ public:
 	FString GetPageName(int index) const;
 
 	const TArray<FString>& GetImages() const { return ImageFilepaths; }
+	UWorld* GetWorld() const { return World; }
 
 private:
 	using FJsonValuePtr = TSharedPtr<FJsonValue>;
@@ -130,6 +134,8 @@ private:
 	TArray<FString> PageNames;
 
 	TArray<FString> ImageFilepaths;
+
+	UWorld* World = nullptr;
 
 	static constexpr double defaultScaleFactor = 48.0;
 };

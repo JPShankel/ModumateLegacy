@@ -283,7 +283,7 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 
 	if (ExportType == kDWG)
 	{
-		DrawingInterface = MakeShared<FModumateLineCorral>();
+		DrawingInterface = MakeShared<FModumateLineCorral>(new FModumateDwgDraw(world));
 	}
 	else
 	{

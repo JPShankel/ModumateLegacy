@@ -211,11 +211,14 @@ public:
 	bool GetHasMultiplayerFeature() const { return bHasMultiplayerFeature; }
 	void SetHasMultiplayerFeature(bool InHasMultiplayerFeature) { bHasMultiplayerFeature = InHasMultiplayerFeature; }
 
+	FString GetProjectID() const { return ProjectID; }
+	void SetProjectID(FString InProjectID) { ProjectID = MoveTemp(InProjectID); }
+
 	// Request quota remaining for a particular service (eg. 'quantityestimates') from AMS.
 	bool RequestServiceRemaining(const FString& ServiceName, const TFunction<void(FString, bool, bool, int32)>& Callback);
 
 	// Notify server of a single use of a service against its quota.
-	void NotifyServiceUse(const FString& ServiceName, const TFunction<void(FString, bool)>& Callback = nullptr);
+	void NotifyServiceUse(FString ServiceName, const TFunction<void(FString, bool)>& Callback = nullptr);
 
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
 
@@ -230,6 +233,7 @@ private:
 	FModumateUserInfo CachedUserInfo;
 	FModumateUserStatus CachedUserStatus;
 	FString LatestVersion;
+	FString ProjectID;  // If multiplayer
 
 	bool bIsFirstLogin = false;
 	bool bHasMultiplayerFeature = false; // Eventually this will not be needed as customers roll into full multiplayer

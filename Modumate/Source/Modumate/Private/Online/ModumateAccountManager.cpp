@@ -73,7 +73,17 @@ bool FModumateAccountManager::RequestServiceRemaining(const FString& ServiceName
 		return false;
 	}
 
-	return CloudConnection->RequestEndpoint(TEXT("/service/") + ServiceName + TEXT("/usage"), FModumateCloudConnection::Get,
+	FString endpointUrl;
+	if (GetProjectID().IsEmpty())
+	{
+		endpointUrl = TEXT("/service/") + ServiceName + TEXT("/usage");
+	}
+	else
+	{
+		endpointUrl = TEXT("/projects/") + GetProjectID() + TEXT("/") + ServiceName + TEXT("/usage");
+	}
+
+	return CloudConnection->RequestEndpoint(endpointUrl, FModumateCloudConnection::Get,
 		[](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
 			{ },
 		[Callback, ServiceName](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
@@ -96,14 +106,28 @@ bool FModumateAccountManager::RequestServiceRemaining(const FString& ServiceName
 	);
 }
 
-void FModumateAccountManager::NotifyServiceUse(const FString& ServiceName, const TFunction<void(FString, bool)>& Callback)
+void FModumateAccountManager::NotifyServiceUse(FString ServiceName, const TFunction<void(FString, bool)>& Callback)
 {
 	if (!CloudConnection->IsLoggedIn())
 	{
 		return;
 	}
+
+	FString endpointUrl;
+	if (GetProjectID().IsEmpty())
+	{
+		endpointUrl = TEXT("/service/") + ServiceName + TEXT("/usage");
+	}
+	else
+	{
+		if (ServiceName == ServiceQuantityEstimates)
+		{
+			ServiceName = TEXT("qe");  // TODO: fix this inconsistency.
+		}
+		endpointUrl = TEXT("/projects/") + GetProjectID() + TEXT("/") + ServiceName + TEXT("/");
+	}
 	
-	CloudConnection->RequestEndpoint(TEXT("/service/") + ServiceName, FModumateCloudConnection::Post,
+	CloudConnection->RequestEndpoint(endpointUrl, FModumateCloudConnection::Post,
 		[](TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& RefRequest)
 		{},
 		[Callback, ServiceName](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)

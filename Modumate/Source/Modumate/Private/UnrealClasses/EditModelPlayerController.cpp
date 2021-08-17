@@ -222,6 +222,7 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 		if (ensure(!localUserID.IsEmpty() && (EMPlayerState->MultiplayerClientIdx >= 0) &&
 			(EMPlayerState->MultiplayerClientIdx < UModumateDocument::MaxUserIdx)))
 		{
+			accountManager->SetProjectID(EMPlayerState->CurProjectID);
 			gameState->InitDocument(localUserID, EMPlayerState->MultiplayerClientIdx);
 		}
 		else
@@ -235,6 +236,10 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 		{
 			EditModelUserWidget->ProjectSystemMenu->ButtonSaveProjectAs->SetVisibility(ESlateVisibility::Collapsed);
 		}
+	}
+	else
+	{
+		accountManager->SetProjectID(FString());
 	}
 
 	Document = gameState->Document;

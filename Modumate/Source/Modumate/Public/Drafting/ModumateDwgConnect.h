@@ -8,6 +8,7 @@
 
 
 class FModumateAccountManager;
+class UModumateGameInstance;
 
 /**
 	* Encapsulate connection to cloud drafting server.
@@ -23,7 +24,9 @@ public:
 private:
 	const FModumateDwgDraw& DwgDraw;
 	FString Filename;
+	FString ProjectID;  // For multiplayer.
 	TSharedPtr<FModumateAccountManager> AccountManager;
+	UModumateGameInstance* GameInstance = nullptr;
 
 	static const FString ServerAddress;
 
