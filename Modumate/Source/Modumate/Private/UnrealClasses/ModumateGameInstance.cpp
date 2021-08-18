@@ -919,14 +919,13 @@ void UModumateGameInstance::OnStartConnectCloudProject(const FString& NewProject
 	}
 
 	CurClientConnectProjectID = NewProjectID;
-
+	DocumentProjectID = CurClientConnectProjectID;
 	// TODO: show modal UI here for our project connection status, rather than in a level-specific widget
 }
 
 void UModumateGameInstance::OnEndConnectCloudProject()
 {
 	CurClientConnectProjectID.Empty();
-
 	// TODO: hide modal UI here for our project connection status, rather than in a level-specific widget
 }
 

@@ -48,7 +48,7 @@
 #include "Objects/CutPlane.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
 #include "Quantities/QuantitiesManager.h"
-
+#include "Net/UnrealNetwork.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -379,6 +379,10 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 	}
 #endif
 
+
+	RegisterCapability<AModumateVoice>();
+
+
 	bBeganWithPlayerState = true;
 
 	return true;
@@ -540,6 +544,18 @@ void AEditModelPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReaso
 	FString path = FModumateUserSettings::GetLocalTempDir() / InputTelemetryDirectory;
 	IFileManager::Get().DeleteDirectory(*path,false,true);
 
+	if (VoiceClient)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Disconnecting Voice Client"));
+		VoiceClient->Disconnect();
+		if (IsNetMode(NM_DedicatedServer))
+		{
+			UE_LOG(LogTemp, Log, TEXT("Destroying Voice Client"));
+			VoiceClient->Destroy();
+		}
+		
+	}
+	
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -3943,6 +3959,23 @@ void AEditModelPlayerController::OnToggledProjectSystemMenu(ESlateVisibility New
 	}
 }
 
+void AEditModelPlayerController::ConnectVoiceClient(AModumateVoice* voiceClient)
+{
+	if (IsNetMode(NM_Client) && voiceClient)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Voice Chat Connecting"))
+
+		VoiceClient = voiceClient;
+
+		auto gameInstance = GetGameInstance<UModumateGameInstance>();
+
+		const FString name = gameInstance->GetAccountManager()->GetUserInfo().ID;
+		const FString channel = gameInstance->DocumentProjectID;
+
+		VoiceClient->Connect(name, channel);
+	}
+}
+
 void AEditModelPlayerController::SetCurrentCullingCutPlane(int32 ObjID /*= MOD_ID_NONE*/, bool bRefreshMenu /*= true*/)
 {
 	// Stop previous culling cutplane from culling
@@ -4020,6 +4053,15 @@ FPlane AEditModelPlayerController::GetCurrentCullingPlane() const
 	return (cullingCutPlaneMOI && ensure(cullingCutPlaneMOI->GetObjectType() == EObjectType::OTCutPlane)) ?
 		FPlane(cullingCutPlaneMOI->GetLocation(), cullingCutPlaneMOI->GetNormal()) :
 		FPlane(ForceInitToZero);
+}
+
+void AEditModelPlayerController::CapabilityReady(AModumateCapability* capability)
+{
+	//Route capability to the correct call
+	if (capability->IsA<AModumateVoice>())
+	{
+		ConnectVoiceClient(Cast<AModumateVoice>(capability));
+	}
 }
 
 void AEditModelPlayerController::HandleUndo()

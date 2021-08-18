@@ -44,7 +44,13 @@ public class Modumate : ModuleRules
 			"WebBrowser"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		if (Target.Platform == UnrealTargetPlatform.Win64 ||
+			Target.Platform == UnrealTargetPlatform.Mac)
+		{
+			PublicDependencyModuleNames.Add("VivoxCore");
+		}
+
+		PrivateDependencyModuleNames.AddRange(new string[] { });
 
 		if (Target.bBuildEditor == true)
 		{

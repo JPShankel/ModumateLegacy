@@ -53,6 +53,7 @@ private:
 	TSharedPtr<FModumateAccountManager> AccountManager;
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
 	TSharedPtr<FQuantitiesManager> QuantitiesManager;
+
 	FText PendingMainMenuStatus;
 
 	UModumateDocument *GetDocument();
@@ -196,6 +197,9 @@ public:
 	// starting from the Main Menu level until the project finishes loading in the Edit Model level.
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FString CurClientConnectProjectID;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	FString DocumentProjectID;
 
 	FTimerHandle SlowTickHandle;
 };

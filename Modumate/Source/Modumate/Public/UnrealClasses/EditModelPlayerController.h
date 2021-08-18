@@ -11,6 +11,8 @@
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "Objects/MOIStructureData.h"
+#include "Online/ModumateVoice.h"
+#include "UnrealClasses/ModumateCapability.h"
 
 #include "EditModelPlayerController.generated.h"
 
@@ -571,6 +573,12 @@ public:
 	UFUNCTION()
 	void OnToggledProjectSystemMenu(ESlateVisibility NewVisibility);
 
+	UFUNCTION()
+	void ConnectVoiceClient(AModumateVoice* voiceClient);
+
+	UPROPERTY(BlueprintReadOnly)
+	AModumateVoice* VoiceClient;
+
 	int32 CurrentCullingCutPlaneID = MOD_ID_NONE;
 
 	void SetCurrentCullingCutPlane(int32 ObjID = MOD_ID_NONE, bool bRefreshMenu = true);
@@ -579,4 +587,21 @@ public:
 	FPlane GetCurrentCullingPlane() const;
 
 	bool bBeganWithPlayerState = false;
+
+	void CapabilityReady(AModumateCapability* capability);
+
+	template <class T>
+	void RegisterCapability()
+	{
+		if (IsNetMode(NM_DedicatedServer))
+		{
+			auto defferredActor = Cast<T>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, T::StaticClass(), FTransform::Identity));
+			if (defferredActor != nullptr)
+			{
+				defferredActor->SetOwner(this);
+				UGameplayStatics::FinishSpawningActor(defferredActor, FTransform::Identity);
+			}
+		}
+	}
+
 };
