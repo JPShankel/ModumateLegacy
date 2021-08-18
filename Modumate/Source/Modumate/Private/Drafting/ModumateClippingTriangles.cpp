@@ -155,7 +155,11 @@ void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* do
 									continue;
 								}
 
-								const FTransform localTransform = meshComponent->GetRelativeTransform() * localToWorld;
+								FTransform componentTransform = meshComponent->GetRelativeTransform();
+								// Fix for ensures for unnormalized rotations (TODO: figure out why UE4 thinks the transform isn't normalized
+								// when it is).
+								componentTransform.NormalizeRotation();
+								const FTransform localTransform = componentTransform * localToWorld;
 								int numSections = meshComponent->GetNumSections();
 								for (int section = 0; section < numSections; ++section)
 								{
@@ -778,7 +782,8 @@ void FModumateClippingTriangles::AddLayeredCutPlaneTriangles(const TArray<FLayer
 	TArray<FVector> layerA = layer1.OriginalPointsA;
 	TArray<FVector> layerB = layer2.OriginalPointsB;
 
-	const FMatrix localToView = LocalToWorld.ToMatrixWithScale() * TransformMatrix;
+	const FMatrix localToWorldMx = LocalToWorld.ToMatrixWithScale();
+	const FMatrix localToView = localToWorldMx * TransformMatrix;
 	Algo::ForEach(layerA, [localToView](FVector& v) {v = localToView.TransformPosition(v); });
 	Algo::ForEach(layerB, [localToView](FVector& v) {v = localToView.TransformPosition(v); });
 
