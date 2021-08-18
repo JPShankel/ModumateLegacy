@@ -38,7 +38,13 @@ void UStartMenuWebBrowserWidget::NativeConstruct()
 void UStartMenuWebBrowserWidget::ShowModalStatus(const FText& StatusText, bool bAllowDismiss)
 {
 	ModalStatusDialog->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ModalStatusDialog->ShowStatusDialog(LOCTEXT("StatusTitle", "STATUS"), StatusText, bAllowDismiss);
+	TArray<FModalButtonParam> buttonParams;
+	if (bAllowDismiss)
+	{
+		FModalButtonParam dismissButton(EModalButtonStyle::Default, LOCTEXT("DismissAlert", "Dismiss"), nullptr);
+		buttonParams.Add(dismissButton);
+	}
+	ModalStatusDialog->CreateModalDialog(LOCTEXT("StatusTitle", "STATUS"), StatusText, buttonParams);
 }
 
 void UStartMenuWebBrowserWidget::HideModalStatus()

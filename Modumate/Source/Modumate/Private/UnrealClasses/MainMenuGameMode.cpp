@@ -428,9 +428,15 @@ void AMainMenuGameMode::OpenOfflineProjectPicker()
 
 	// TODO: Get CachedWorkspace name as part of modal dialog
 	//gameInstance->GetAccountManager()->CachedWorkspace;
-	FText uploadingProjectText = FText::Format(LOCTEXT("UploadProjectAlert", "\"{0}\" is an Offline file. \n\n Start by uploading this file to your Workspace?"),
-		FText::FromString(FPaths::GetBaseFilename(PendingOfflineProjectPath)));
 
+	// Header text
+	FText headerText = LOCTEXT("AlertHeader", "ALERT");
+
+	// Body Text
+	FText bodyText = FText::Format(LOCTEXT("UploadProjectAlert", "\"{0}\" is an Offline file. \n\n Start by uploading this file to your Workspace?"),
+		FText::FromString(FPaths::GetBaseFilename(PendingOfflineProjectPath)));
+	
+	// Create upload callback
 	auto weakThis = MakeWeakObjectPtr<AMainMenuGameMode>(this);
 	auto deferredUploadProject = [weakThis]() {
 		if (weakThis.IsValid())
@@ -439,7 +445,28 @@ void AMainMenuGameMode::OpenOfflineProjectPicker()
 			weakThis->CreateNewOnlineProject(true);
 		}
 	};
-	menu->ModalStatusDialog->ShowUploadOfflineProjectDialog(LOCTEXT("UploadAlertTitle", "ALERT"), uploadingProjectText, LOCTEXT("UploadConfirmText", "Upload"), deferredUploadProject);
+
+	// Create open offline project callback
+	auto deferredOpenOfflineProject = [weakThis]() {
+		if (weakThis.IsValid())
+		{
+			weakThis->OpenPendingOfflineProject();
+		}
+	};
+
+	// Create buttons
+	TArray<FModalButtonParam> buttonParams;
+	FModalButtonParam uploadButton(EModalButtonStyle::Green, LOCTEXT("UploadConfirmText", "Upload"), deferredUploadProject);
+	buttonParams.Add(uploadButton);
+
+	FModalButtonParam cancelButton(EModalButtonStyle::Red, LOCTEXT("UploadCancelText", "Cancel"), nullptr);
+	buttonParams.Add(cancelButton);
+
+	FModalButtonParam openOfflineButton(EModalButtonStyle::Default, LOCTEXT("UploadToOfflineText", "Continue Offline"), deferredOpenOfflineProject);
+	buttonParams.Add(openOfflineButton);
+
+	// Create modal dialog
+	menu->ModalStatusDialog->CreateModalDialog(headerText, bodyText, buttonParams);
 }
 
 void AMainMenuGameMode::OpenPendingOfflineProject()
@@ -612,9 +639,14 @@ void AMainMenuGameMode::ShowUploadSuccessDialog(const FString& UploadedProjectID
 		return;
 	}
 
-	FText uploadingSuccessText = FText::Format(LOCTEXT("UploadSuccessAlert", "\"{0}\" was successfully uploaded. You and other members can now access it from any computer in your Workspace projects"),
+	// Header text
+	FText headerText = LOCTEXT("UploadSuccessHeader", "SUCCESS!");
+
+	// Body text
+	FText bodyText = FText::Format(LOCTEXT("UploadSuccessBody", "\"{0}\" was successfully uploaded. You and other members can now access it from any computer in your Workspace projects"),
 		FText::FromString(FPaths::GetBaseFilename(PendingOfflineProjectPath)));
 
+	// Create open online project callback
 	auto weakThis = MakeWeakObjectPtr<AMainMenuGameMode>(this);
 	auto deferredOpenOnlineProject = [weakThis, UploadedProjectID]() {
 		if (weakThis.IsValid())
@@ -622,7 +654,17 @@ void AMainMenuGameMode::ShowUploadSuccessDialog(const FString& UploadedProjectID
 			weakThis->OpenCloudProject(UploadedProjectID);
 		}
 	};
-	menu->ModalStatusDialog->ShowUploadOfflineDoneDialog(LOCTEXT("UploadSuccessTitle", "SUCCESS!"), uploadingSuccessText, LOCTEXT("OpenUploadedProjectText", "Open this project"), deferredOpenOnlineProject);
+
+	// Create buttons
+	TArray<FModalButtonParam> buttonParams;
+	FModalButtonParam openProjectButton(EModalButtonStyle::Green, LOCTEXT("OpenUploadedProjectText", "Open this project"), deferredOpenOnlineProject);
+	buttonParams.Add(openProjectButton);
+
+	FModalButtonParam backButton(EModalButtonStyle::Default, LOCTEXT("ToWorkspaceProjectsText", "Go to Workspace Projects"), nullptr);
+	buttonParams.Add(backButton);
+
+	// Create modal dialog
+	menu->ModalStatusDialog->CreateModalDialog(headerText, bodyText, buttonParams);
 }
 
 void AMainMenuGameMode::OpenProjectPageInWebBrowser()

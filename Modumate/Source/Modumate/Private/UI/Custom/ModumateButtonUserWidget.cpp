@@ -8,6 +8,8 @@
 #include "UI/Custom/ModumateTextBlock.h"
 #include "Components/Image.h"
 #include "UI/ModalDialog/ModalDialogWidget.h"
+#include "UnrealClasses/MainMenuController.h"
+#include "UI/StartMenu/StartMenuWebBrowserWidget.h"
 
 UModumateButtonUserWidget::UModumateButtonUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -85,28 +87,37 @@ void UModumateButtonUserWidget::NativeDestruct()
 
 void UModumateButtonUserWidget::OnButtonPress()
 {
-	// Callback function if valid
-	if (ButtonReleasedCallBack)
-	{
-		ButtonReleasedCallBack();
-	}
-
-	// Use controller for input command and modal dialog
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
-	if (!controller)
+
+	// Optional dismiss modal dialog with EditModelPlayerController or MainMenuController
+	if (bDimissModalDialogOnButtonPress)
 	{
-		return;
+		if (controller && controller->EditModelUserWidget)
+		{
+			controller->EditModelUserWidget->ModalDialogWidgetBP->CloseModalDialog();
+		}
+		else
+		{
+			AMainMenuController* mainMenuController = GetOwningPlayer<AMainMenuController>();
+			if (mainMenuController && 
+				mainMenuController->StartMenuWebBrowserWidget &&
+				mainMenuController->StartMenuWebBrowserWidget->ModalStatusDialog)
+			{
+				mainMenuController->StartMenuWebBrowserWidget->ModalStatusDialog->CloseModalDialog();
+			}
+		}
 	}
 
-	if (InputCommand != EInputCommand::None)
+	// Use EditModelPlayerController for input command
+	if (controller && InputCommand != EInputCommand::None)
 	{
 		controller->InputHandlerComponent->TryCommand(InputCommand);
 	}
 
-	// Optional dismiss modal dialog
-	if (bDimissModalDialogOnButtonPress && controller->EditModelUserWidget)
+	// Callback function if valid
+	if (ButtonReleasedCallBack)
 	{
-		controller->EditModelUserWidget->ModalDialogWidgetBP->CloseModalDialog();
+		ButtonReleasedCallBack();
 	}
 }
 

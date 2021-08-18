@@ -25,10 +25,7 @@ bool UModalDialogWidget::Initialize()
 	{
 		return false;
 	}
-	if (!AlertAccountDialogWidgetBP)
-	{
-		return false;
-	}
+
 	return true;
 }
 
@@ -37,40 +34,8 @@ void UModalDialogWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UModalDialogWidget::ShowStatusDialog(const FText& TitleText, const FText& StatusText, bool bAllowDismiss)
-{
-	HideAllWidgets();
-	AlertAccountDialogWidgetBP->SetVisibility(ESlateVisibility::Visible);
-	AlertAccountDialogWidgetBP->ShowDialog(TitleText, StatusText, FText::GetEmpty(), false, bAllowDismiss, nullptr);
-}
-
-void UModalDialogWidget::ShowAlertAccountDialog(const FText& AlertText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback)
-{
-	HideAllWidgets();
-	AlertAccountDialogWidgetBP->SetVisibility(ESlateVisibility::Visible);
-	AlertAccountDialogWidgetBP->ShowDialog(DefaultTitleText, AlertText, ConfirmText, true, true, InConfirmCallback);
-}
-
-void UModalDialogWidget::ShowUploadOfflineProjectDialog(const FText& TitleText, const FText& StatusText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback)
-{
-	HideAllWidgets();
-	UploadOfflineProjectDialogWidgetBP->SetVisibility(ESlateVisibility::Visible);
-	UploadOfflineProjectDialogWidgetBP->ShowDialog(TitleText, StatusText, ConfirmText, false, true, InConfirmCallback);
-}
-
-void UModalDialogWidget::ShowUploadOfflineDoneDialog(const FText& TitleText, const FText& StatusText, const FText& ConfirmText, const TFunction<void()>& InConfirmCallback)
-{
-	HideAllWidgets();
-	UploadOfflineDoneDialogWidgetBP->SetVisibility(ESlateVisibility::Visible);
-	UploadOfflineDoneDialogWidgetBP->ShowDialog(TitleText, StatusText, ConfirmText, false, true, InConfirmCallback);
-}
-
 void UModalDialogWidget::HideAllWidgets()
 {
-	AlertAccountDialogWidgetBP->SetVisibility(ESlateVisibility::Collapsed);
-	UploadOfflineProjectDialogWidgetBP->SetVisibility(ESlateVisibility::Collapsed);
-	UploadOfflineDoneDialogWidgetBP->SetVisibility(ESlateVisibility::Collapsed);
-
 	SizeBox_Dialog->SetVisibility(ESlateVisibility::Collapsed);
 	InputBlocker->SetVisibility(ESlateVisibility::Collapsed);
 }
