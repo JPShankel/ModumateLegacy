@@ -7,7 +7,7 @@
 class FModumateOccluder
 {
 public:
-	FModumateOccluder(const FVec3d& A, const FVec3d& B, const FVec3d& C);
+	FModumateOccluder(const FVec3d& A = FVec3d::Zero(), const FVec3d& B = FVec3d::Zero(), const FVec3d& C = FVec3d::Zero());
 	bool operator<(const FModumateOccluder& rhs) const
 		{ return Area2D < rhs.Area2D; };
 	bool operator>(const FModumateOccluder& rhs) const

@@ -2231,3 +2231,89 @@ void UModumateGeometryStatics::GetSilhouetteEdges(const TArray<FVector>& Vertice
 		}
 	}
 }
+
+int32 UModumateGeometryStatics::ClipTriangleAtXYPlane(const FVector3d InTri[3], FVector3d OutTri[6])
+{
+	bool visible0 = InTri[0].Z >= 0.0;
+	bool visible1 = InTri[1].Z >= 0.0;
+	bool visible2 = InTri[2].Z >= 0.0;
+	int32 numVisible = int32(visible0) + int32(visible1) + int32(visible2);
+	if (numVisible == 3 || numVisible == 0)
+	{
+		return 0;
+	}
+	// Triangle intersects plane - there are two categories:
+	// 1. one vertex in front of plane; clipping produces new triangle retaining that point.
+	// 2. two vertices in front of plane; clipping produces quad which is decomposed to two triangles.
+	if (numVisible == 1)
+	{
+		if (visible0)
+		{
+			FVector3d v(InTri[0]);
+			OutTri[0] = v;
+			OutTri[1] = v + (v.Z / (v.Z - InTri[1].Z)) * (InTri[1] - v);
+			OutTri[1].Z = 0.0;
+			OutTri[2] = v + (v.Z / (v.Z - InTri[2].Z)) * (InTri[2] - v);
+			OutTri[2].Z = 0.0;
+		}
+		else if (visible1)
+		{
+			FVector3d v(InTri[1]);
+			OutTri[1] = v;
+			OutTri[0] = v + (v.Z / (v.Z - InTri[0].Z)) * (InTri[0] - v);
+			OutTri[0].Z = 0.0;
+			OutTri[2] = v + (v.Z / (v.Z - InTri[2].Z)) * (InTri[2] - v);
+			OutTri[2].Z = 0.0;
+		}
+		else
+		{
+			FVector3d v(InTri[2]);
+			OutTri[2] = v;
+			OutTri[0] = v + (v.Z / (v.Z - InTri[0].Z)) * (InTri[0] - v);
+			OutTri[0].Z = 0.0;
+			OutTri[1] = v + (v.Z / (v.Z - InTri[1].Z)) * (InTri[1] - v);
+			OutTri[2].Z = 0.0;
+		}
+		return 1;  // One new triangle created
+	}
+	else
+	{
+		if (!visible0)
+		{
+			FVector3d v(InTri[0]);
+			OutTri[1] = InTri[1];
+			OutTri[2] = InTri[2];
+			OutTri[0] = v + (v.Z / (v.Z - InTri[1].Z)) * (InTri[1] - v);
+			OutTri[0].Z = 0.0;
+			OutTri[3] = OutTri[0];
+			OutTri[4] = OutTri[2];
+			OutTri[5] = v + (v.Z / (v.Z - InTri[2].Z)) * (InTri[2] - v);
+			OutTri[5].Z = 0.0;
+		}
+		else if (!visible1)
+		{
+			FVector3d v(InTri[1]);
+			OutTri[0] = InTri[0];
+			OutTri[2] = InTri[2];
+			OutTri[1] = v + (v.Z / (v.Z - InTri[2].Z)) * (InTri[2] - v);
+			OutTri[1].Z = 0.0;
+			OutTri[5] = OutTri[1];
+			OutTri[3] = InTri[0];
+			OutTri[4] = v + (v.Z / (v.Z - InTri[0].Z)) * (InTri[0] - v);
+			OutTri[4].Z = 0.0;
+		}
+		else
+		{
+			FVector3d v(InTri[2]);
+			OutTri[0] = InTri[0];
+			OutTri[1] = InTri[1];
+			OutTri[2] = v + (v.Z / (v.Z - InTri[0].Z)) * (InTri[0] - v);
+			OutTri[2].Z = 0.0;
+			OutTri[5] = OutTri[2];
+			OutTri[3] = OutTri[1];
+			OutTri[4] = v + (v.Z / (v.Z - InTri[1].Z)) * (InTri[1] - v);
+			OutTri[4].Z = 0.0;
+		}
+		return 2;  // Two new triangles created
+	}
+}

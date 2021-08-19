@@ -12,6 +12,7 @@
 #include "Algo/AnyOf.h"
 #include "Algo/Copy.h"
 #include "Algo/ForEach.h"
+#include "Algo/Accumulate.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Math/Matrix.h"
 #include "Math/ScaleMatrix.h"
@@ -262,19 +263,47 @@ void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* do
 		totalTriangles += triangles.Num() / 3;
 		for (int triangle = 0; triangle < triangles.Num(); triangle += 3)
 		{
+			FModumateOccluder newOccluder;
 			FVector verts[3] = { vertices[triangles[triangle]],
 				vertices[triangles[triangle + 1]], vertices[triangles[triangle + 2]] };
-			if (Algo::AnyOf(verts, [this](FVector v) {return IsPointInFront(v); }))
+			int32 numVisiblePoints = Algo::Accumulate(verts, 0, [this](int32 n, FVector v) { return n + int32(IsPointInFront(v)); });
+			if (numVisiblePoints > 0)
 			{
-				FModumateOccluder newOccluder(
-					FVector3d(TransformMatrix.TransformPosition(verts[0])) + vectorEpsilon,
-					FVector3d(TransformMatrix.TransformPosition(verts[1])) + vectorEpsilon,
-					FVector3d(TransformMatrix.TransformPosition(verts[2])) + vectorEpsilon
-				);
+				FVector3d viewSpaceVerts[3] = {
+					TransformMatrix.TransformPosition(verts[0]),
+					TransformMatrix.TransformPosition(verts[1]),
+					TransformMatrix.TransformPosition(verts[2]) };
+				if (numVisiblePoints < 3)
+				{
+					FVector3d clippedVerts[6];
+					int32 newTriangles = UModumateGeometryStatics::ClipTriangleAtXYPlane(viewSpaceVerts, clippedVerts);
+					if (newTriangles == 0)
+					{
+						newOccluder = FModumateOccluder(viewSpaceVerts[0] + vectorEpsilon, viewSpaceVerts[1] + vectorEpsilon, viewSpaceVerts[2] + vectorEpsilon);
+					}
+					else
+					{
+						newOccluder = FModumateOccluder(clippedVerts[0] + vectorEpsilon, clippedVerts[1] + vectorEpsilon, clippedVerts[2] + vectorEpsilon);
+					}
+					if (newTriangles == 2)
+					{
+						FModumateOccluder secondNewOccluder(clippedVerts[3] + vectorEpsilon, clippedVerts[4] + vectorEpsilon, clippedVerts[5] + vectorEpsilon);
+						if (secondNewOccluder.Area2D > minScaledArea)
+						{
+							Occluders.Add(secondNewOccluder);
+						}
+
+					}
+				}
+				else
+				{
+					newOccluder = FModumateOccluder(viewSpaceVerts[0] + vectorEpsilon, viewSpaceVerts[1] + vectorEpsilon, viewSpaceVerts[2] + vectorEpsilon);
+				}
 				if (newOccluder.Area2D > minScaledArea)
 				{
 					Occluders.Add(newOccluder);
 				}
+
 			}
 		}
 	}
