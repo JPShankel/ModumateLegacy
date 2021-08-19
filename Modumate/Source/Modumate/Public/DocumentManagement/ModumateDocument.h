@@ -235,6 +235,8 @@ public:
 	bool ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWorld* World);
 	bool ApplySettingsDelta(const FDocumentSettingDelta& SettingsDelta, UWorld* World);
 
+	void PurgeDeltas();
+
 	void UpdateVolumeGraphObjects(UWorld *World);
 
 	FBox GetAffectedBounds(const FAffectedObjMap& AffectedObjects, const TSet<int32>& DirtiedObjects) const;

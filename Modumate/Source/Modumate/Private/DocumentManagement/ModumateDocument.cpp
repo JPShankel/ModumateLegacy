@@ -1220,6 +1220,13 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	return true;
 }
 
+void UModumateDocument::PurgeDeltas()
+{
+	InitialDocHash = GetLatestVerifiedDocHash();
+	UnverifiedDeltasRecords.Empty();
+	VerifiedDeltasRecords.Empty();
+}
+
 bool UModumateDocument::StartPreviewing()
 {
 	if (bApplyingPreviewDeltas || bFastClearingPreviewDeltas)
@@ -3068,7 +3075,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	}
 	AddHideObjectsById(world, hideCutPlaneIds);
 
-	InitialDocHash = 0;
+	InitialDocHash = InHeader.DocumentHash;
 	UnverifiedDeltasRecords.Reset();
 	VerifiedDeltasRecords = InDocumentRecord.AppliedDeltas;
 
@@ -3078,17 +3085,16 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	uint32 loadedDeltasHash = GetLatestVerifiedDocHash();
 	if (InHeader.DocumentHash != loadedDeltasHash)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Load failure; mismatch between DocumentRecord's DeltasRecords hash (%08x) and DocumentHeader's DocumentHash (%08x)!"),
-			loadedDeltasHash, InHeader.DocumentHash);
+		UE_LOG(LogTemp, Error, TEXT("Load failure; mismatch between DocumentRecord's DeltasRecords hash (%08x) and DocumentHeader's DocumentHash (%08x) with (%d) records!"),
+			loadedDeltasHash, InHeader.DocumentHash, VerifiedDeltasRecords.Num());
 	}
 
 	// If the file version is out of date, or if side effects were done upon load, then DeltasRecords may not be safely used for undo.
 	// Wipe the records so that they can't undone, but set InitialDocHash so that we can still get the oldest valid doc hash.
-	if (bInitialDocumentDirty || (DocVersion != InHeader.Version))
+	if (world->IsNetMode(NM_DedicatedServer) || bInitialDocumentDirty || (DocVersion != InHeader.Version))
 	{
 		InitialDocHash = GetLatestVerifiedDocHash();
 		VerifiedDeltasRecords.Reset();
-		UE_LOG(LogTemp, Warning, TEXT("Undo records cleared due to load-clean-side-effects or document version mismatch."));
 	}
 
 	CurrentSettings = InDocumentRecord.Settings;
@@ -3995,8 +4001,10 @@ void UModumateDocument::SplitMPObjID(int32 MPObjID, int32& OutLocalObjID, int32&
 
 void UModumateDocument::UpdateWindowTitle()
 {
+#if !UE_SERVER
 	FText projectSuffix = bUserFileDirty ? LOCTEXT("DirtyProjectSuffix", "*") : FText::GetEmpty();
 	UModumateFunctionLibrary::SetWindowTitle(CurrentProjectName, projectSuffix);
+#endif
 }
 
 void UModumateDocument::RecordSavedProject(UWorld* World, const FString& FilePath, bool bUserFile)

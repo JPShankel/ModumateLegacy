@@ -229,6 +229,17 @@ void AEditModelGameMode::Logout(AController* Exiting)
 		PlayersByUserID.Remove(userID);
 	}
 
+	if (PlayersByUserID.Num() == 0)
+	{
+		auto* gameState = Cast<AEditModelGameState>(GameState);
+		if (ensure(gameState && gameState->Document))
+		{
+			gameState->Document->PurgeDeltas();
+			gameState->Document->SetDirtyFlags(true);
+			gameState->UploadDocument();
+		}
+	}
+
 	// Clear the User ID from the ordered User IDs, so its index can get reused
 	int32 userIdx = userID.IsEmpty() ? INDEX_NONE : OrderedUserIDs.IndexOfByKey(userID);
 	if (ensure(userIdx != INDEX_NONE))
