@@ -14,7 +14,6 @@
 #include "ModumateCore/PlatformFunctions.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ModumateCloudConnection.h"
-#include "UI/StartMenu/StartRootMenuWidget.h"
 #include "UI/TutorialManager.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/EditModelGameMode.h"
@@ -127,42 +126,6 @@ void AMainMenuGameMode::LoadRecentProjectData()
 	}
 }
 
-void AMainMenuGameMode::OnLoggedIn()
-{
-	UWorld* world = GetWorld();
-	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
-	ULocalPlayer* localPlayer = world ? world->GetFirstLocalPlayerFromController() : nullptr;
-	AMainMenuController* controller = localPlayer ? Cast<AMainMenuController>(localPlayer->GetPlayerController(world)) : nullptr;
-	if (!ensure(gameInstance && controller && controller->StartRootMenuWidget))
-	{
-		return;
-	}
-
-	// Show the start menu, even if we're just about to clear it by loading a project.
-	controller->StartRootMenuWidget->ShowStartMenu();
-
-	// If there's a pending project or input log that came from the command line, then open it directly.
-	if (!gameInstance->PendingProjectPath.IsEmpty())
-	{
-		OpenProject(gameInstance->PendingProjectPath);
-	}
-	else if (!gameInstance->PendingInputLogPath.IsEmpty())
-	{
-		OpenEditModelLevel();
-	}
-	// Otherwise, if the user is trying to open a cloud project by ID, then attempt to open that connection.
-	else if (!gameInstance->PendingClientConnectProjectID.IsEmpty() && OpenCloudProject(gameInstance->PendingClientConnectProjectID))
-	{
-		gameInstance->PendingClientConnectProjectID.Empty();
-		controller->StartRootMenuWidget->ShowModalStatus(LOCTEXT("InitialCloudProjectStatus", "Connecting to online project..."), false);
-	}
-	// Otherwise, potentially load the starting walkthrough
-	else if (gameInstance->TutorialManager->CheckAbsoluteBeginner())
-	{
-		UE_LOG(LogTemp, Log, TEXT("Loading first-time beginner walkthrough..."));
-	}
-}
-
 bool AMainMenuGameMode::GetRecentProjectData(int32 index, FString &outProjectPath, FText &outProjectName, FDateTime &outProjectTime, FSlateBrush &outDefaultThumbnail, FSlateBrush &outHoveredThumbnail) const
 {
 	if (index < NumRecentProjects)
@@ -205,11 +168,6 @@ bool AMainMenuGameMode::OpenProject(const FString& ProjectPath)
 			if (controller->StartMenuWebBrowserWidget)
 			{
 				controller->StartMenuWebBrowserWidget->ShowModalStatus(loadingStatusText, false);
-			}
-			else if(controller->StartRootMenuWidget)
-			{
-				controller->StartRootMenuWidget->ShowStartMenu();
-				controller->StartRootMenuWidget->ShowModalStatus(loadingStatusText, false);
 			}
 		}
 
@@ -317,9 +275,9 @@ void AMainMenuGameMode::OnCloudProjectFailure(const FText& ErrorMessage)
 	PendingCloudProjectID.Empty();
 
 	auto* playerController = gameInstance ? Cast<AMainMenuController>(gameInstance->GetFirstLocalPlayerController()) : nullptr;
-	if (playerController && playerController->StartRootMenuWidget && !ErrorMessage.IsEmpty())
+	if (playerController && playerController->StartMenuWebBrowserWidget && !ErrorMessage.IsEmpty())
 	{
-		playerController->StartRootMenuWidget->ShowModalStatus(ErrorMessage, true);
+		playerController->StartMenuWebBrowserWidget->ShowModalStatus(ErrorMessage, true);
 	}
 }
 
@@ -385,11 +343,7 @@ bool AMainMenuGameMode::OpenProjectServerInstance(const FString& URL)
 
 	// TODO: format the text with the name of the project itself
 	FText openProjectText = LOCTEXT("OpenProjectBegin", "Opening online project...");
-	if (playerController->StartRootMenuWidget)
-	{
-		playerController->StartRootMenuWidget->ShowModalStatus(openProjectText, false);
-	}
-	else if (playerController->StartMenuWebBrowserWidget)
+	if (playerController->StartMenuWebBrowserWidget)
 	{
 		playerController->StartMenuWebBrowserWidget->ShowModalStatus(openProjectText, false);
 	}

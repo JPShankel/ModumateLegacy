@@ -17,15 +17,6 @@ class MODUMATE_API AMainMenuController : public APlayerController
 public:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bUseWebBrowser = true;
-
-	UPROPERTY()
-	class UStartRootMenuWidget* StartRootMenuWidget;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class UStartRootMenuWidget> StartRootMenuWidgetClass;
-
 	UPROPERTY()
 	class UStartMenuWebBrowserWidget* StartMenuWebBrowserWidget;
 

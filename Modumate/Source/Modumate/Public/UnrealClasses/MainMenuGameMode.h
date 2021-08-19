@@ -37,9 +37,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	int32 NumRecentProjects;
 
-	UFUNCTION()
-	void OnLoggedIn();
-
 	UFUNCTION(BlueprintPure, Category = "Files")
 	bool GetRecentProjectData(int32 index, FString &outProjectPath, FText &outProjectName, FDateTime &outProjectTime, FSlateBrush &outDefaultThumbnail, FSlateBrush &outHoveredThumbnail) const;
 

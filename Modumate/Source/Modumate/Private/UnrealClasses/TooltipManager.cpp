@@ -6,9 +6,7 @@
 #include "UI/EditModelPlayerHUD.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/EditModelUserWidget.h"
-#include "UI/StartMenu/StartRootMenuWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-#include "UnrealClasses/MainMenuController.h"
 #include "UI/Custom/TooltipWidget.h"
 
 
