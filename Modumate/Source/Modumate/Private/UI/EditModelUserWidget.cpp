@@ -23,7 +23,6 @@
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UI/Debugger/BIMDebugger.h"
-#include "UI/TutorialMenu/TutorialMenuWidget.h"
 #include "UI/LeftMenu/BrowserMenuWidget.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/LeftMenu/SwapMenuWidget.h"
@@ -122,14 +121,12 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 	bool newToolTrayVisibility = CurrentLeftMenuState == ELeftMenuState::ToolMenu;
 	bool newViewMenuVisibility = CurrentLeftMenuState == ELeftMenuState::ViewMenu;
 	bool newCutPlaneMenuVisibility = CurrentLeftMenuState == ELeftMenuState::CutPlaneMenu;
-	bool newTutorialMenuVisibility = CurrentLeftMenuState == ELeftMenuState::TutorialMenu;
 	bool newBrowserMenuVisibility = CurrentLeftMenuState == ELeftMenuState::BrowserMenu;
 	bool newSwapMenuVisibility = CurrentLeftMenuState == ELeftMenuState::SwapMenu;
 	bool newDeleteMenuVisibility = CurrentLeftMenuState == ELeftMenuState::DeleteMenu;
 	newToolTrayVisibility ? ToolTrayWidget->OpenToolTray() : ToolTrayWidget->CloseToolTray();
 	ToggleViewMenu(newViewMenuVisibility);
 	ToggleCutPlaneMenu(newCutPlaneMenuVisibility);
-	ToggleTutorialMenu(newTutorialMenuVisibility);
 	ToggleBrowserMenu(newBrowserMenuVisibility);
 	ToggleSwapMenu(newSwapMenuVisibility);
 	ToggleDeleteMenu(newDeleteMenuVisibility);
@@ -399,20 +396,6 @@ void UEditModelUserWidget::UpdateUsersList()
 	// TODO: Display playersOnExpandedList to other widget?
 }
 
-void UEditModelUserWidget::ToggleTutorialMenu(bool NewVisibility)
-{
-	TutorialsMenuWidgetBP->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-	if (NewVisibility)
-	{
-		ToolbarWidget->ButtonTopToolbarHelp->SwitchToActiveStyle();
-		TutorialsMenuWidgetBP->BuildTutorialMenu();
-	}
-	else
-	{
-		ToolbarWidget->ButtonTopToolbarHelp->SwitchToNormalStyle();
-	}
-}
-
 void UEditModelUserWidget::ToggleCutPlaneMenu(bool NewVisibility)
 {
 	CutPlaneMenu->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
@@ -490,13 +473,10 @@ void UEditModelUserWidget::ToggleHelpMenu(bool NewVisibility)
 	HelpMenuBP->SetVisibility(bIsHelpMenuVisible ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 	if (bIsHelpMenuVisible)
 	{
-		ToolbarWidget->ButtonTopToolbarHelp->SwitchToActiveStyle();
 		HelpMenuBP->ToMainHelpMenu();
 	}
 	else
 	{
-		ToolbarWidget->ButtonTopToolbarHelp->SwitchToNormalStyle();
-
 		// Send analytic event
 		UModumateAnalyticsStatics::RecordEventCustomString(this, EModumateAnalyticsCategory::Tutorials, UHelpMenu::AnalyticsSearchEvent,HelpMenuBP->GetHelpMenuSearchbarText());
 	}

@@ -973,6 +973,7 @@ void UModumateGameInstance::pass_user_package_from_ams(const FString& content)
 		const TSharedPtr<FJsonValue> jsonRefreshToken = JsonParsed->TryGetField(TEXT("refreshToken"));
 		const TSharedPtr<FJsonValue> jsonUserId = JsonParsed->TryGetField(TEXT("userId"));
 		const TSharedPtr<FJsonValue> jsonName = JsonParsed->TryGetField(TEXT("name"));
+		const TSharedPtr<FJsonValue> jsonLastName = JsonParsed->TryGetField(TEXT("lastname"));
 		const TSharedPtr<FJsonValue> jsonEmail = JsonParsed->TryGetField(TEXT("email"));
 		const TSharedPtr<FJsonValue> jsonWorkspace = JsonParsed->TryGetField(TEXT("workspace"));
 		const TSharedPtr<FJsonValue> jsonFeatures = JsonParsed->TryGetField(TEXT("features"));
@@ -989,6 +990,10 @@ void UModumateGameInstance::pass_user_package_from_ams(const FString& content)
 		if (jsonName.IsValid())
 		{
 			verifyParams.User.Firstname = jsonName->AsString();
+		}
+		if (jsonLastName.IsValid())
+		{
+			verifyParams.User.Lastname = jsonLastName->AsString();
 		}
 		if (jsonEmail.IsValid())
 		{

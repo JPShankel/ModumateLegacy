@@ -20,7 +20,6 @@ bool UStartMenuWebBrowserWidget::Initialize()
 	{
 		return false;
 	}
-	ModumateWebBrowser->OnLoadCompleted.AddDynamic(this, &UStartMenuWebBrowserWidget::OnWebBrowserLoadCompleted);
 
 	return true;
 }
@@ -51,25 +50,6 @@ void UStartMenuWebBrowserWidget::HideModalStatus()
 {
 	ModalStatusDialog->CloseModalDialog();
 	ModalStatusDialog->SetVisibility(ESlateVisibility::Collapsed);
-}
-
-void UStartMenuWebBrowserWidget::OnWebBrowserLoadCompleted()
-{
-#if 0
-	const auto projectSettings = GetDefault<UGeneralProjectSettings>();
-	FString projectVersionJS = TEXT("'") + projectSettings->ProjectVersion + TEXT("'");
-
-	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
-	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
-	FString uploadRefreshToken = cloudConnection.IsValid() ? cloudConnection->GetRefreshToken() : FString();
-	FString uploadRefreshTokenJS = TEXT("'") + uploadRefreshToken + TEXT("'");
-
-	FString toggleUEString = TEXT("toggleModumateUESwitch(") + projectVersionJS + TEXT(", ") + uploadRefreshTokenJS + TEXT(")");
-	ModumateWebBrowser->ExecuteJavascript(toggleUEString);
-
-	// TODO: Remove log
-	UE_LOG(LogTemp, Log, TEXT("ExecuteJavascript: %s"), *toggleUEString);
-#endif
 }
 
 void UStartMenuWebBrowserWidget::LaunchModumateCloudWebsite()

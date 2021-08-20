@@ -3,7 +3,7 @@
 #include "UI/UsersList/UsersListHorizontalWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-#include "Components/HorizontalBox.h"
+#include "Components/SizeBox.h"
 #include "UI/Custom/ModumateTextBlock.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UI/UsersList/UsersListButtonWidget.h"
@@ -45,23 +45,36 @@ void UUsersListHorizontalWidget::OnReleaseButton_ExpandUsersList()
 
 void UUsersListHorizontalWidget::UpdateHorizontalUsersList(const TArray<AEditModelPlayerState*>& InPlayerStates, int32 ExtraNumberOfPlayerStates)
 {
-	HorizontalBox_UsersList->ClearChildren();
-
-	for (const auto& curPlayerState : InPlayerStates)
+	// Set user buttons based on available player states
+	const TArray<UUsersListButtonWidget*> userButtons = GetUserListButtonsArray();
+	for (int32 i = 0; i < userButtons.Num(); ++i)
 	{
-		UUsersListButtonWidget* buttonWidget = CreateWidget<UUsersListButtonWidget>(this, UsersListButtonWidgetClass);
-		if (buttonWidget)
+		if (InPlayerStates.Num() > i)
 		{
-			buttonWidget->SetupFromPlayerState(curPlayerState);
-			HorizontalBox_UsersList->AddChildToHorizontalBox(buttonWidget);
+			userButtons[i]->SetVisibility(ESlateVisibility::Visible);
+			userButtons[i]->SetupFromPlayerState(InPlayerStates[i]);
+		}
+		else
+		{
+			userButtons[i]->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 
 	// Visibility of the expand button
-	ModumateButton_ExpandUsersList->SetVisibility(
-		ExtraNumberOfPlayerStates > 0 ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+	SizeBox_ExpandListButton->SetVisibility(
+		ExtraNumberOfPlayerStates > 0 ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 
 	// Text within the expand button
 	FString extraCountString = FString(TEXT("+")) + FString::FromInt(ExtraNumberOfPlayerStates);
 	TextBlock_NumberOfUsers->SetText(FText::FromString(extraCountString));
+}
+
+TArray<class UUsersListButtonWidget*> UUsersListHorizontalWidget::GetUserListButtonsArray() const
+{
+	return TArray<UUsersListButtonWidget*> {
+		UsersListRoundButtonWidget_0,
+		UsersListRoundButtonWidget_1,
+		UsersListRoundButtonWidget_2,
+		UsersListRoundButtonWidget_3,
+		UsersListRoundButtonWidget_4 };
 }

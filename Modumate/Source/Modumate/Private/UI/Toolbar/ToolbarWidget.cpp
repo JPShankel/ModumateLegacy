@@ -8,7 +8,6 @@
 #include "UI/ToolTray/ToolTrayWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/BIM/BIMDesigner.h"
-#include "UI/TutorialMenu/TutorialMenuWidget.h"
 
 
 UToolbarWidget::UToolbarWidget(const FObjectInitializer& ObjectInitializer)
@@ -25,7 +24,7 @@ bool UToolbarWidget::Initialize()
 
 	Controller = GetOwningPlayer<AEditModelPlayerController>();
 
-	if (!(Controller && Button_Metaplanes && Button_Separators && Button_SurfaceGraphs && Button_Attachments && ButtonTopToolbarHelp && Button_SiteTools))
+	if (!(Controller && Button_Metaplanes && Button_Separators && Button_SurfaceGraphs && Button_Attachments && Button_SiteTools))
 	{
 		return false;
 	}
@@ -37,7 +36,6 @@ bool UToolbarWidget::Initialize()
 	Button_SiteTools->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseSiteTools);
 	Button_3DViews->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonRelease3DViews);
 	Button_CutPlanes->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseCutPlanes);
-	ButtonTopToolbarHelp->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseTopToolbarHelp);
 	Button_Browser->ModumateButton->OnReleased.AddDynamic(this, &UToolbarWidget::OnButtonReleaseBrowser);
 
 	return true;
@@ -119,22 +117,6 @@ void UToolbarWidget::OnButtonReleaseCutPlanes()
 		else
 		{
 			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::CutPlaneMenu);
-		}
-	}
-}
-
-void UToolbarWidget::OnButtonReleaseTopToolbarHelp()
-{
-	Controller->SetToolMode(EToolMode::VE_SELECT);
-	if (EditModelUserWidget)
-	{
-		if (EditModelUserWidget->CurrentLeftMenuState == ELeftMenuState::TutorialMenu)
-		{
-			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::SelectMenu);
-		}
-		else
-		{
-			EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::TutorialMenu);
 		}
 	}
 }

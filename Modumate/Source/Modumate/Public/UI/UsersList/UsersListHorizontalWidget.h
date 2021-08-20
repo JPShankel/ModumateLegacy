@@ -28,19 +28,32 @@ protected:
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UHorizontalBox* HorizontalBox_UsersList;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateTextBlock* TextBlock_NumberOfUsers;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButton* ModumateButton_ExpandUsersList;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class UUsersListButtonWidget> UsersListButtonWidgetClass;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UUsersListButtonWidget* UsersListRoundButtonWidget_0;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UUsersListButtonWidget* UsersListRoundButtonWidget_1;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UUsersListButtonWidget* UsersListRoundButtonWidget_2;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UUsersListButtonWidget* UsersListRoundButtonWidget_3;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UUsersListButtonWidget* UsersListRoundButtonWidget_4;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class USizeBox* SizeBox_ExpandListButton;
 
 	UFUNCTION()
 	void OnReleaseButton_ExpandUsersList();
 
 	void UpdateHorizontalUsersList(const TArray<AEditModelPlayerState*>& InPlayerStates, int32 ExtraNumberOfPlayerStates);
+	TArray<class UUsersListButtonWidget*> GetUserListButtonsArray() const;
 };

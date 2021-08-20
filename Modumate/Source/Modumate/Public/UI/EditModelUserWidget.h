@@ -18,7 +18,6 @@ enum class ELeftMenuState : uint8
 	ViewMenu,
 	CutPlaneMenu,
 	ToolMenu,
-	TutorialMenu,
 	SelectMenu,
 	BrowserMenu,
 	SwapMenu,
@@ -80,9 +79,6 @@ public:
 	class UModalDialogWidget* ModalDialogWidgetBP;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UTutorialMenuWidget* TutorialsMenuWidgetBP;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UTutorialWalkthroughMenu* TutorialWalkthroughMenuBP;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -133,7 +129,6 @@ public:
 	void UpdateViewModeIndicator(EEditViewModes NewViewMode);
 	void ShowBIMDebugger(bool NewVisible);
 	bool IsBIMDebuggerOn();
-	void ToggleTutorialMenu(bool NewVisibility);
 	void ToggleCutPlaneMenu(bool NewVisibility);
 	void ToggleViewMenu(bool NewVisibility);
 	void ToggleBrowserMenu(bool NewVisibility);

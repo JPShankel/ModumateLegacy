@@ -32,9 +32,6 @@ public:
 	void ShowModalStatus(const FText& StatusText, bool bAllowDismiss);
 	void HideModalStatus();
 
-	UFUNCTION()
-	void OnWebBrowserLoadCompleted();
-
 	UFUNCTION(BlueprintCallable)
 	void LaunchModumateCloudWebsite();
 
