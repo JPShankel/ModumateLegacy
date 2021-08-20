@@ -56,6 +56,17 @@ def get_project_version():
 	project_version = config.get('/Script/EngineSettings.GeneralProjectSettings', 'ProjectVersion')
 	print(project_version)
 
+def get_engine_version():
+	cwd = os.path.abspath(os.path.normpath(sys.path[0]))
+
+	config = configparser.ConfigParser(strict=False)
+	config_path = os.path.join(cwd, '../../UE4/Engine/Build/Build.version')
+	f = open (config_path);
+	data = json.load(f);
+
+	engine_version=str(data['MajorVersion'])+'.'+str(data['MinorVersion'])+'.'+str(data['PatchVersion']);
+	print(engine_version);
+
 # If utils.py is invoked directly, try to call one of its defined functions
 if __name__ == '__main__':
 	global_vars = globals()
