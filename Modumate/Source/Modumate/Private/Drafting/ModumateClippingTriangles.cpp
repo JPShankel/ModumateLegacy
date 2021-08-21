@@ -270,9 +270,9 @@ void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* do
 			if (numVisiblePoints > 0)
 			{
 				FVector3d viewSpaceVerts[3] = {
-					TransformMatrix.TransformPosition(verts[0]),
-					TransformMatrix.TransformPosition(verts[1]),
-					TransformMatrix.TransformPosition(verts[2]) };
+					FVector(TransformMatrix.TransformPosition(verts[0])),
+					FVector(TransformMatrix.TransformPosition(verts[1])),
+					FVector(TransformMatrix.TransformPosition(verts[2])) };
 				if (numVisiblePoints < 3)
 				{
 					FVector3d clippedVerts[6];
