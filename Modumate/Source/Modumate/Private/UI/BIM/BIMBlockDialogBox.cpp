@@ -7,6 +7,7 @@
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/BIM/BIMDesigner.h"
+#include "Database/ModumateObjectEnums.h"
 
 
 
@@ -44,6 +45,11 @@ void UBIMBlockDialogBox::OnReleaseButton_VariableText_GreyOutline()
 	if (Controller && Controller->EditModelUserWidget)
 	{
 		Controller->EditModelUserWidget->ToggleBIMDesigner(false);
+		EToolCategories toolCategory = UModumateTypeStatics::GetToolCategory(Controller->GetToolMode());
+		if (toolCategory != EToolCategories::Unknown)
+		{
+			Controller->EditModelUserWidget->SwitchLeftMenu(ELeftMenuState::ToolMenu, toolCategory);
+		}
 	}
 }
 
