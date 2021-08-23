@@ -35,6 +35,12 @@ void UCutPlaneMenuWidget::NativeConstruct()
 
 void UCutPlaneMenuWidget::UpdateCutPlaneMenuBlocks()
 {
+	// Dismiss export menu if currently open, since its info is outdated
+	if (CutPlaneMenuBlockExport->IsVisible())
+	{
+		CutPlaneMenuBlockExport->SetExportMenuVisibility(false);
+	}
+
 	TArray<UGeneralListItemObject*> horizontalItems;
 	HorizontalItemToIDMap.Empty();
 	VerticalItemToIDMap.Empty();
@@ -98,6 +104,11 @@ UGeneralListItemObject* UCutPlaneMenuWidget::GetListItemFromObjID(int32 ObjID /*
 
 bool UCutPlaneMenuWidget::RemoveCutPlaneFromMenuBlock(int32 ObjID /*= MOD_ID_NONE*/)
 {
+	if (CutPlaneMenuBlockExport->IsVisible())
+	{
+		CutPlaneMenuBlockExport->SetExportMenuVisibility(false);
+	}
+
 	UGeneralListItemObject *item = GetListItemFromObjID(ObjID);
 	if (!item)
 	{

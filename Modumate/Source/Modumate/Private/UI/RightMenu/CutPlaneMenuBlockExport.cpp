@@ -99,13 +99,17 @@ void UCutPlaneMenuBlockExport::OnButtonExportReleased()
 		if (item)
 		{
 			AModumateObjectInstance* moi = gameState->Document->GetObjectById(curID);
-			auto& newStateData = newDelta->AddMutationState(moi);
+			if (moi)
+			{
+				auto& newStateData = newDelta->AddMutationState(moi);
 
-			FMOICutPlaneData newCutPlaneData;
-			newStateData.CustomData.LoadStructData(newCutPlaneData);
-			newCutPlaneData.bIsExported = item->CanExport;
+				FMOICutPlaneData newCutPlaneData;
+				newStateData.CustomData.LoadStructData(newCutPlaneData);
+				newCutPlaneData.bIsExported = item->CanExport;
 
-			newStateData.CustomData.SaveStructData<FMOICutPlaneData>(newCutPlaneData);
+				newStateData.CustomData.SaveStructData<FMOICutPlaneData>(newCutPlaneData);
+			}
+
 		}
 	}
 	gameState->Document->ApplyDeltas({ newDelta }, GetWorld());
