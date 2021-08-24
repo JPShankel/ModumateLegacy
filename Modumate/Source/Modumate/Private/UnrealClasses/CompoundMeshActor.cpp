@@ -279,9 +279,9 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 			if (bUpdateMaterials)
 			{
 				matIndexMapping.Empty();
-				for (int32 matIdx = 0; matIdx < partMesh->StaticMaterials.Num(); ++matIdx)
+				for (int32 matIdx = 0; matIdx < partMesh->GetStaticMaterials().Num(); ++matIdx)
 				{
-					const FStaticMaterial& meshMaterial = partMesh->StaticMaterials[matIdx];
+					const FStaticMaterial& meshMaterial = partMesh->GetStaticMaterials()[matIdx];
 					matIndexMapping.Add(meshMaterial.MaterialSlotName, matIdx);
 				}
 			}
@@ -295,7 +295,7 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 #endif // DEBUG_NINE_SLICING
 
 			FBox partRelSliceBounds[9];
-			const FBoxSphereBounds& meshBounds = partMesh->ExtendedBounds;
+			const FBoxSphereBounds& meshBounds = partMesh->GetExtendedBounds();
 			FVector meshMinExtension = (meshBounds.Origin - meshBounds.BoxExtent);
 			FVector meshMaxExtension = (meshBounds.Origin + meshBounds.BoxExtent) - partNativeSize;
 

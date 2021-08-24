@@ -633,7 +633,7 @@ EBIMResult FBIMPresetInstance::SetMaterialChannelsForMesh(const FModumateDatabas
 
 	// Gather all the named channels from the engine mesh
 	TArray<FName> staticMats;
-	Algo::Transform(mesh->EngineMesh.Get()->StaticMaterials, staticMats,
+	Algo::Transform(mesh->EngineMesh.Get()->GetStaticMaterials(), staticMats,
 		[](const FStaticMaterial& StaticMaterial) 
 		{
 			return StaticMaterial.MaterialSlotName; 
