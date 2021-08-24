@@ -39,7 +39,7 @@ struct FModumateBIMCacheRecord
 	GENERATED_BODY()
 
 	UPROPERTY()
-	int32 Version;
+	int32 Version = BIMCacheCurrentVersion;
 
 	UPROPERTY()
 	FBIMPresetCollection Presets;

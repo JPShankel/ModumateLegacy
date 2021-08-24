@@ -35,7 +35,7 @@ struct FCustomAssemblyProperty
 	GENERATED_BODY()
 
 	UPROPERTY()
-	int32 LayerID;
+	int32 LayerID = 0;
 
 	UPROPERTY()
 	FString PropertyName;
@@ -185,10 +185,10 @@ struct FCustomAssemblyRecordV3
 	FString DisplayName;
 
 	UPROPERTY()
-	EObjectType ObjectType;
+	EObjectType ObjectType= EObjectType::OTNone;
 
 	UPROPERTY()
-	EToolMode ToolMode;
+	EToolMode ToolMode= EToolMode::VE_NONE;
 
 	UPROPERTY()
 	TMap<FString, FString> Genome;
@@ -207,10 +207,10 @@ struct FCustomAssemblyRecordV4
 	FString DisplayName;
 
 	UPROPERTY()
-	EObjectType ObjectType;
+	EObjectType ObjectType= EObjectType::OTNone;
 
 	UPROPERTY()
-	EToolMode ToolMode;
+	EToolMode ToolMode= EToolMode::VE_NONE;
 
 	UPROPERTY()
 	TArray<FCustomAssemblyProperty> PropertySheet;

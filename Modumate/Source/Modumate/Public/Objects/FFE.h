@@ -23,7 +23,7 @@ struct MODUMATE_API FMOIFFEData
 	bool bLateralInverted = false;
 
 	UPROPERTY()
-	int32 ParentFaceIndex;
+	int32 ParentFaceIndex = 0;
 };
 
 UCLASS()
@@ -54,9 +54,9 @@ protected:
 	void InternalUpdateGeometry();
 
 	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> AdjustmentHandles;
-	FVector CachedLocation;
-	FQuat CachedRotation;
-	FVector CachedFaceNormal;
+	FVector CachedLocation = FVector::ZeroVector;
+	FQuat CachedRotation = FQuat::Identity;
+	FVector CachedFaceNormal = FVector::ZeroVector;
 	TArray<int32> CachedFaceIndices;
 
 	virtual void UpdateQuantities() override;

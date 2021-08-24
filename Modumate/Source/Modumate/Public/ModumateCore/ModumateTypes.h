@@ -17,10 +17,10 @@ struct FLineIndex
 	GENERATED_BODY();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Modumate LineIndex")
-	int32 A;
+	int32 A=0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Modumate LineIndex")
-	int32 B;
+	int32 B=0;
 };
 
 USTRUCT(BlueprintType)
@@ -29,13 +29,13 @@ struct FTriangle2D
 	GENERATED_BODY();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Modumate LineIndex")
-	int32 A;
+	int32 A=0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Modumate LineIndex")
-	int32 B;
+	int32 B=0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Modumate LineIndex")
-	int32 C;
+	int32 C=0;
 };
 
 USTRUCT(BlueprintType)

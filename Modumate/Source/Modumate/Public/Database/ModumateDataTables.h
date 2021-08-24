@@ -24,10 +24,10 @@ struct FRoomConfigurationTableRow : public FTableRowBase
 	FText DisplayName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
-	float OccupantLoadFactor;
+	float OccupantLoadFactor=0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
-	EAreaType AreaType;
+	EAreaType AreaType=EAreaType::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
 	FText LoadFactorSpecialCalc;

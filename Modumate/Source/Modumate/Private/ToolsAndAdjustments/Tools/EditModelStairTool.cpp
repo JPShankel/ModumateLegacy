@@ -294,7 +294,10 @@ bool UStairTool::AbortUse()
 	break;
 	case RisePending:
 	{
-		PendingObjMesh->SetActorHiddenInGame(true);
+		if (PendingObjMesh.IsValid())
+		{
+			PendingObjMesh->SetActorHiddenInGame(true);
+		}
 
 		auto dimensionActor = DimensionManager->GetDimensionActor(RiseSegmentID);
 		if (dimensionActor != nullptr)
@@ -366,7 +369,10 @@ bool UStairTool::EnterNextStage()
 			RiseStartPos = runSegment->Point2;
 			cursor.SetAffordanceFrame(RiseStartPos, RunDir, WidthDir);
 			MakePendingSegment(RiseSegmentID, RiseStartPos);
-			PendingObjMesh->SetActorHiddenInGame(false);
+			if (PendingObjMesh.IsValid())
+			{
+				PendingObjMesh->SetActorHiddenInGame(false);
+			}
 			CurrentState = RisePending;
 		}
 	}
@@ -425,7 +431,10 @@ bool UStairTool::UpdatePreviewStairs()
 	{
 	case Starting:
 	case RunPending:
-		PendingObjMesh->SetActorHiddenInGame(true);
+		if (PendingObjMesh.IsValid())
+		{
+			PendingObjMesh->SetActorHiddenInGame(true);
+		}
 		return false;
 	default:
 		break;
@@ -454,13 +463,16 @@ bool UStairTool::UpdatePreviewStairs()
 	}
 
 	// TODO: get this material from a real assembly
-	FArchitecturalMaterial material;
-	material.EngineMaterial = PendingObjMesh->StaircaseMaterial;
+	if (PendingObjMesh.IsValid())
+	{
+		FArchitecturalMaterial material;
+		material.EngineMaterial = PendingObjMesh->StaircaseMaterial;
 
-	// Set up the triangulated staircase mesh by extruding each tread and riser polygon
-	bStairSuccess = bStairSuccess && PendingObjMesh->SetupStairPolys(RunStartPos, CachedTreadPolys, CachedRiserPolys, CachedRiserNormals, treadThickness, material);
+		// Set up the triangulated staircase mesh by extruding each tread and riser polygon
+		bStairSuccess = bStairSuccess && PendingObjMesh->SetupStairPolys(RunStartPos, CachedTreadPolys, CachedRiserPolys, CachedRiserNormals, treadThickness, material);
 
-	PendingObjMesh->SetActorHiddenInGame(!bStairSuccess);
+		PendingObjMesh->SetActorHiddenInGame(!bStairSuccess);
+	}
 
 	return bStairSuccess;
 }

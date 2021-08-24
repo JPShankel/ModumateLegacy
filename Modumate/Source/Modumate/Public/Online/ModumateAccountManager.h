@@ -121,7 +121,7 @@ struct MODUMATE_API FModumateUserVerifyParams
 	FString RefreshToken;
 
 	UPROPERTY()
-	int32 LastDesktopLoginDateTime;
+	int32 LastDesktopLoginDateTime = 0;
 
 	UPROPERTY()
 	FModumateUserInfo User;
@@ -139,10 +139,10 @@ struct MODUMATE_API FModumateAnalyticsEvent
 	FString Key;
 
 	UPROPERTY()
-	float Value;
+	float Value = 0.0f;
 
 	UPROPERTY()
-	int64 Timestamp;
+	int64 Timestamp = 0;
 };
 
 USTRUCT()
@@ -151,13 +151,13 @@ struct MODUMATE_API FModumateServiceInfo
 	GENERATED_BODY();
 
 	UPROPERTY()
-	bool Allowed;
+	bool Allowed = false;
 
 	UPROPERTY()
-	bool Limited;
+	bool Limited = false;
 
 	UPROPERTY()
-	float Remaining;
+	float Remaining = 0.0f;
 };
 
 enum class ELoginStatus : uint8;

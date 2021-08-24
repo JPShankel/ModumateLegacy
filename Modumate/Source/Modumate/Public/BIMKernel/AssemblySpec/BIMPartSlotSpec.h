@@ -38,7 +38,7 @@ struct MODUMATE_API FPartNamedDimension
 	GENERATED_BODY()
 
 	UPROPERTY()
-	EPartSlotDimensionUIType UIType;
+	EPartSlotDimensionUIType UIType = EPartSlotDimensionUIType::Major;
 
 	UPROPERTY()
 	FModumateUnitValue DefaultValue;

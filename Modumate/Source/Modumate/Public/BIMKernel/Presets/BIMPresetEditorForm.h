@@ -35,7 +35,7 @@ enum class EBIMPresetEditorField : uint8
 // BIM deltas are not serialized
 struct MODUMATE_API FBIMPresetEditorDelta
 {
-	EBIMPresetEditorField FieldType;
+	EBIMPresetEditorField FieldType = EBIMPresetEditorField::None;
 
 	FName FieldName;
 
@@ -69,7 +69,7 @@ struct MODUMATE_API FBIMPresetFormElement
 	FText DisplayName;
 
 	UPROPERTY()
-	EBIMPresetEditorField FieldType;
+	EBIMPresetEditorField FieldType = EBIMPresetEditorField::None;
 
 	UPROPERTY()
 	FString FieldName;

@@ -136,7 +136,7 @@ struct MODUMATE_API FInputCommandDataRow : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EInputCommand Command;
+	EInputCommand Command = EInputCommand::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Title;

@@ -13,7 +13,7 @@ struct MODUMATE_API FMOITerrainData
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FVector Origin;
+	FVector Origin = FVector::ZeroVector;
 
 	UPROPERTY()
 	FString Name;

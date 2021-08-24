@@ -17,7 +17,7 @@ struct MODUMATE_API FRecentProject
 	FString ProjectPath;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	FDateTime Timestamp;
+	FDateTime Timestamp=FDateTime(0);
 };
 
 USTRUCT(BlueprintType)

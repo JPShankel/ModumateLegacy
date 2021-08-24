@@ -20,16 +20,16 @@ struct FRoomConfigurationBlueprint
 	FGuid Key;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
-	int32 ObjectID;
+	int32 ObjectID = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
 	FString RoomNumber;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
-	FColor RoomColor;
+	FColor RoomColor = FColor::White;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
-	float Area;
+	float Area=0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
 	FName UseGroupCode;
@@ -41,13 +41,13 @@ struct FRoomConfigurationBlueprint
 	FText DisplayName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
-	int32 OccupantsNumber;
+	int32 OccupantsNumber=0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
-	float OccupantLoadFactor;
+	float OccupantLoadFactor=0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
-	EAreaType AreaType;
+	EAreaType AreaType= EAreaType::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room")
 	FText LoadFactorSpecialCalc;

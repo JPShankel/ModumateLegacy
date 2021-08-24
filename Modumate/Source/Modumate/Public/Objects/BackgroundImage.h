@@ -12,10 +12,10 @@ struct MODUMATE_API FMOIBackgroundImageData
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FVector Location;
+	FVector Location = FVector::ZeroVector;
 
 	UPROPERTY()
-	FQuat Rotation;
+	FQuat Rotation = FQuat::Identity;
 
 	UPROPERTY()
 	float Scale = 1.0f;

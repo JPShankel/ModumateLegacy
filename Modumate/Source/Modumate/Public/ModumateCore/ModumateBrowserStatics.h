@@ -16,7 +16,7 @@ struct FCutPlaneParamBlueprint
 	FName Key;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
-	int32 ObjectID;
+	int32 ObjectID = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
 	FString DisplayName = FString(TEXT("New Cut Plane"));
@@ -25,13 +25,13 @@ struct FCutPlaneParamBlueprint
 	bool bVisiblity = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
-	FVector Location;
+	FVector Location = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
-	FVector Normal;
+	FVector Normal = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
-	FVector Size;
+	FVector Size = FVector::ZeroVector;
 
 	// If true, menu will start initial behavior such as user naming process
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CutPlane")
@@ -56,10 +56,10 @@ struct FScopeBoxParamBlueprint
 	bool bVisiblity = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ScopeBox")
-	FVector Location;
+	FVector Location = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ScopeBox")
-	FVector Extent;
+	FVector Extent = FVector::ZeroVector;
 
 	// If true, menu will start initial behavior such as user naming process
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ScopeBox")

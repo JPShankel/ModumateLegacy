@@ -69,10 +69,10 @@ struct MODUMATE_API FModumateTestStruct1
 	GENERATED_BODY()
 
 	UPROPERTY()
-	bool bValue;
+	bool bValue = false;
 
 	UPROPERTY()
-	double Number;
+	double Number = 0.0;
 
 	UPROPERTY()
 	FVec2d Vector;
@@ -121,7 +121,7 @@ struct MODUMATE_API FModumateTestInstanceData
 	GENERATED_BODY()
 
 	UPROPERTY()
-	int32 InstanceID;
+	int32 InstanceID = 0;
 
 	UPROPERTY()
 	FString InstanceName;

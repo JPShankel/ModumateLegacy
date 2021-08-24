@@ -14,13 +14,13 @@ struct MODUMATE_API FMOICutPlaneData
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FVector Location;
+	FVector Location = FVector::ZeroVector;
 
 	UPROPERTY()
-	FQuat Rotation;
+	FQuat Rotation = FQuat::Identity;
 
 	UPROPERTY()
-	FVector2D Extents;
+	FVector2D Extents = FVector2D::ZeroVector;
 
 	UPROPERTY()
 	FString Name;

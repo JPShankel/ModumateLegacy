@@ -29,7 +29,7 @@ struct MODUMATE_API FProjectConnectionResponse
 	FString IP;
 
 	UPROPERTY()
-	int32 Port;
+	int32 Port = 0;
 
 	UPROPERTY()
 	FString Key;

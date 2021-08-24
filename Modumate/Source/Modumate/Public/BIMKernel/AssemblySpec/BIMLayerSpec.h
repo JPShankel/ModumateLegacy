@@ -42,7 +42,7 @@ public:
 	FString PresetSequence;
 
 	UPROPERTY()
-	float ThicknessCentimeters;
+	float ThicknessCentimeters = 0.0f;
 
 	// TODO: this is the DDL 1.0 pattern loadout...to be extended
 	UPROPERTY()

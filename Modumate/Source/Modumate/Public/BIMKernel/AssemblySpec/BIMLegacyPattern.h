@@ -69,13 +69,13 @@ struct MODUMATE_API FPatternModuleParams
 	FLinearColor TileShapeDetails = FLinearColor::Transparent;
 
 	UPROPERTY()
-	UTexture* BaseColorTex;
+	UTexture* BaseColorTex = nullptr;
 
 	UPROPERTY()
-	UTexture* MRSATex;
+	UTexture* MRSATex = nullptr;
 
 	UPROPERTY()
-	UTexture* NormalTex;
+	UTexture* NormalTex = nullptr;
 };
 
 USTRUCT()

@@ -17,13 +17,13 @@ struct FModumateLines
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	FVector Point1;
+	FVector Point1 = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	FVector Point2;
+	FVector Point2 = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	float AngleDegrees;
+	float AngleDegrees = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
 	bool Visible = true;
@@ -35,10 +35,10 @@ struct FModumateLines
 	TArray<FString> OutStrings;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	FVector TextLocation;
+	FVector TextLocation = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
-	float TextRotationDegree;
+	float TextRotationDegree = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
 	AActor* OwnerActor = nullptr;

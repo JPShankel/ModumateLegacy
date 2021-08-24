@@ -33,10 +33,10 @@ struct MODUMATE_API FBIMPresetPinAttachment
 	GENERATED_BODY()
 
 	UPROPERTY()
-	int32 ParentPinSetIndex;
+	int32 ParentPinSetIndex = 0;
 
 	UPROPERTY()
-	int32 ParentPinSetPosition;
+	int32 ParentPinSetPosition = 0;
 
 	UPROPERTY()
 	FBIMKey PresetID;
@@ -138,7 +138,7 @@ struct MODUMATE_API FBIMPresetInstance
 	FText DisplayName;
 
 	UPROPERTY()
-	EBIMValueScope NodeScope;
+	EBIMValueScope NodeScope = EBIMValueScope::None;
 
 	UPROPERTY()
 	FName NodeType;
