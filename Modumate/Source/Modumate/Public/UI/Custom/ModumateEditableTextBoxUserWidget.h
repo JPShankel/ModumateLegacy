@@ -92,7 +92,9 @@ public:
 	void ChangeText(const FText &NewText, bool EllipsizeText = true);
 	void ChangeHint(const FText &NewHint, bool EllipsizeHint = true);
 	void OverrideSizeBox();
+	FText GetNonEllipsizedText() { return NonEllipsizedText; }
 
 protected:
 
+	FText NonEllipsizedText;
 };

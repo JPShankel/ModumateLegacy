@@ -153,6 +153,7 @@ void UGeneralListItem::OnCheckBoxCullModelChanged(bool IsChecked)
 void UGeneralListItem::OnButtonEditReleased()
 {
 	TextTitleEditable->ModumateEditableTextBox->SetKeyboardFocus();
+	TextTitleEditable->ModumateEditableTextBox->SetText(TextTitleEditable->GetNonEllipsizedText());
 }
 
 void UGeneralListItem::OnButtonFlipReleased()

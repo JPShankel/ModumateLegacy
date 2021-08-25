@@ -29,6 +29,8 @@ void UModumateEditableTextBoxUserWidget::NativeConstruct()
 
 void UModumateEditableTextBoxUserWidget::ChangeText(const FText &NewText, bool EllipsizeText)
 {
+	NonEllipsizedText = NewText;
+
 	if (!ModumateEditableTextBox)
 	{
 		return;
