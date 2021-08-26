@@ -208,6 +208,27 @@ bool AEditModelGameState::UploadThumbnail(const TArray<uint8>& ThumbImage)
 	return false;
 }
 
+// Takes the users CloudID and provides their corresponding PlayersState.
+// String searched are slow. Doing this every frame is not recommended.
+AEditModelPlayerState* AEditModelGameState::GetPlayerFromCloudID(const FString& Id) const
+{
+	for (const auto& curPS : PlayerArray)
+	{
+		if (curPS != nullptr)
+		{
+			AEditModelPlayerState* emPS = Cast<AEditModelPlayerState>(curPS);
+			FString cloudID = emPS->ReplicatedUserInfo.ID;
+
+			if (cloudID.Equals(Id))
+			{
+				return emPS;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 void AEditModelGameState::OnRep_LastUploadedDocHash()
 {
 	if (IsNetMode(NM_Client) && Document && Document->IsDirty(true) &&

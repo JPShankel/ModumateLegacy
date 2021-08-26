@@ -222,11 +222,7 @@ void AModumateVoice::JoinChannel(const FString& JoinToken)
 			UE_LOG(ModumateVoice, Error, TEXT("Failed to connect to channel: %d"), vivoxReturn);
 		}
 
-		vivoxReturn = LoginSession->SetTransmissionMode(TransmissionMode::All);
-		if (vivoxReturn != VxErrorSuccess)
-		{
-			UE_LOG(ModumateVoice, Error, TEXT("Failed to set transmission mode to all: %d"), vivoxReturn);
-		}
+		SetMuted(true);
 	}
 #endif
 }
@@ -473,6 +469,7 @@ void AModumateVoice::OnChannelSessionConnectionStateChanged(const IChannelConnec
 	{
 		UE_LOG(ModumateVoice, Log, TEXT("Channel %s connected\n"), *channelName);
 		bIsConnectedToChannel = true;
+		ChannelSession->EventAfterParticipantUpdated.AddUObject(this, &AModumateVoice::OnParticipantUpdated);
 	}
 	else if (ConnectionState::Disconnected == State.State())
 	{

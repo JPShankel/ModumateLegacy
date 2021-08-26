@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-
+#include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UsersListButtonWidget.generated.h"
 
 /**
@@ -32,4 +32,5 @@ public:
 	class UModumateButton* ModumateButton;
 
 	void SetupFromPlayerState(const class AEditModelPlayerState* InOwnerPlayerState);
+	void Setup(const FString& FirstName, const FString& LastName, const FLinearColor& color);
 };

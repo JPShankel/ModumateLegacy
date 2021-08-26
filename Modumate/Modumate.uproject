@@ -93,6 +93,10 @@
 		{
 			"Name": "ChaosCloth",
 			"Enabled": false
+		},
+		{
+			"Name": "VivoxCore",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [

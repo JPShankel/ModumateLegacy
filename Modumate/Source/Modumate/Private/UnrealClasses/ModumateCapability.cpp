@@ -19,7 +19,7 @@ void AModumateCapability::BeginPlay()
 	Super::BeginPlay();
 
 	auto playerController = Cast<AEditModelPlayerController>(GetOwner());
-	if (playerController && playerController->IsLocalController())
+	if (playerController)
 	{
 		playerController->CapabilityReady(this);
 	}

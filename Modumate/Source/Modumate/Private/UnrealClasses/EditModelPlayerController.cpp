@@ -381,6 +381,7 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 
 
 	RegisterCapability<AModumateVoice>();
+	RegisterCapability<AModumateTextChat>();
 
 
 	bBeganWithPlayerState = true;
@@ -3959,13 +3960,13 @@ void AEditModelPlayerController::OnToggledProjectSystemMenu(ESlateVisibility New
 	}
 }
 
-void AEditModelPlayerController::ConnectVoiceClient(AModumateVoice* voiceClient)
+void AEditModelPlayerController::ConnectVoiceClient(AModumateVoice* UsersVoiceClient)
 {
-	if (IsNetMode(NM_Client) && voiceClient)
+	if (IsNetMode(NM_Client) && UsersVoiceClient)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Voice Chat Connecting"))
 
-		VoiceClient = voiceClient;
+		VoiceClient = UsersVoiceClient;
 
 		auto gameInstance = GetGameInstance<UModumateGameInstance>();
 
@@ -3973,6 +3974,27 @@ void AEditModelPlayerController::ConnectVoiceClient(AModumateVoice* voiceClient)
 		const FString channel = gameInstance->DocumentProjectID;
 
 		VoiceClient->Connect(name, channel);
+
+		VoiceConnectedEvent.Broadcast();
+	}
+}
+
+void AEditModelPlayerController::ConnectTextChatClient(AModumateTextChat* UsersTextChatClient)
+{
+	if (UsersTextChatClient)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Text Chat Connecting"))
+
+		TextChatClient = UsersTextChatClient;
+
+		if (IsNetMode(NM_Client))
+		{
+			auto gameInstance = GetGameInstance<UModumateGameInstance>();
+			const FString id = gameInstance->GetAccountManager()->GetUserInfo().ID;
+			TextChatClient->Connect(id);
+			TextChatConnectedEvent.Broadcast();
+		}
+		
 	}
 }
 
@@ -4055,12 +4077,17 @@ FPlane AEditModelPlayerController::GetCurrentCullingPlane() const
 		FPlane(ForceInitToZero);
 }
 
-void AEditModelPlayerController::CapabilityReady(AModumateCapability* capability)
+void AEditModelPlayerController::CapabilityReady(AModumateCapability* Capability)
 {
 	//Route capability to the correct call
-	if (capability->IsA<AModumateVoice>())
+	if (Capability->IsA<AModumateVoice>())
 	{
-		ConnectVoiceClient(Cast<AModumateVoice>(capability));
+		ConnectVoiceClient(Cast<AModumateVoice>(Capability));
+	}
+
+	if (Capability->IsA<AModumateTextChat>())
+	{
+		ConnectTextChatClient(Cast<AModumateTextChat>(Capability));
 	}
 }
 

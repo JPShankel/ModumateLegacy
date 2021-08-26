@@ -99,8 +99,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateSettingsMenu* SettingsMenuWidget;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 MaxNumberUsersDisplayOnToolBar = 5;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateChatWidget* TextChatWidget;
 
 	UPROPERTY()
 	TMap<EToolMode, class UModumateButtonUserWidget*> ToolToButtonMap;
@@ -136,6 +136,7 @@ public:
 	void ToggleDeleteMenu(bool NewVisibility);
 	void ToggleSettingsWindow(bool NewVisibility);
 	void ToggleHelpMenu(bool NewVisibility);
+	void ToggleTextChat(bool bNewVisibility);
 	bool IsBIMDesingerActive() const;
 	bool EMUserWidgetHandleEscapeKey();
 	void UpdateSelectTrayVisibility();

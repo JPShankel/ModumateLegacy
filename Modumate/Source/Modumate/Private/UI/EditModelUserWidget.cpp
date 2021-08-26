@@ -29,6 +29,7 @@
 #include "UI/LeftMenu/DeleteMenuWidget.h"
 #include "UI/TutorialMenu/HelpMenu.h"
 #include "Online/ModumateAnalyticsStatics.h"
+#include "UI/Chat/ModumateChatWidget.h"
 #include "UI/UsersList/UsersListHorizontalWidget.h"
 
 #define LOCTEXT_NAMESPACE "ModumateWidgets"
@@ -374,26 +375,16 @@ void UEditModelUserWidget::UpdateUsersList()
 	}
 
 	TArray<AEditModelPlayerState*> playersOnToolBar;
-	TArray<AEditModelPlayerState*> playersOnExpandedList;
-
 	for (const auto& curPS : gameState->PlayerArray)
 	{
 		AEditModelPlayerState* emPS = Cast<AEditModelPlayerState>(curPS);
 		if (emPS && !emPS->IsActorBeingDestroyed())
 		{
-			if (playersOnToolBar.Num() < MaxNumberUsersDisplayOnToolBar)
-			{
-				playersOnToolBar.Add(emPS);
-			}
-			else
-			{
-				playersOnExpandedList.Add(emPS);
-			}
+			playersOnToolBar.Add(emPS);
 		}
 	}
 
-	ToolbarWidget->ToolBarTopBP->UsersListHorizontal_BP->UpdateHorizontalUsersList(playersOnToolBar, playersOnExpandedList.Num());
-	// TODO: Display playersOnExpandedList to other widget?
+	ToolbarWidget->ToolBarTopBP->UsersListHorizontal_BP->UpdateHorizontalUsersList(playersOnToolBar);
 }
 
 void UEditModelUserWidget::ToggleCutPlaneMenu(bool NewVisibility)
@@ -473,6 +464,7 @@ void UEditModelUserWidget::ToggleHelpMenu(bool NewVisibility)
 	HelpMenuBP->SetVisibility(bIsHelpMenuVisible ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 	if (bIsHelpMenuVisible)
 	{
+		ToggleTextChat(false);
 		HelpMenuBP->ToMainHelpMenu();
 	}
 	else
@@ -480,6 +472,20 @@ void UEditModelUserWidget::ToggleHelpMenu(bool NewVisibility)
 		// Send analytic event
 		UModumateAnalyticsStatics::RecordEventCustomString(this, EModumateAnalyticsCategory::Tutorials, UHelpMenu::AnalyticsSearchEvent,HelpMenuBP->GetHelpMenuSearchbarText());
 	}
+} 
+
+void UEditModelUserWidget::ToggleTextChat(bool bNewVisibility)
+{
+	if (!bNewVisibility)
+	{
+		TextChatWidget->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	else
+	{
+		TextChatWidget->SetVisibility(ESlateVisibility::Visible);
+		ToggleHelpMenu(false);
+	}
+	
 }
 
 #undef LOCTEXT_NAMESPACE

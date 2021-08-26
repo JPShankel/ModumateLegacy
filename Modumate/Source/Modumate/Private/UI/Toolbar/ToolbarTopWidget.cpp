@@ -5,6 +5,8 @@
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UI/EditModelUserWidget.h"
+#include "UI/Chat/ModumateChatWidget.h"
+#include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 
 
@@ -29,6 +31,7 @@ bool UToolbarTopWidget::Initialize()
 
 	ButtonModumateHome->ModumateButton->OnReleased.AddDynamic(this, &UToolbarTopWidget::OnButtonReleaseModumateHome);
 	ButtonHelp->ModumateButton->OnReleased.AddDynamic(this, &UToolbarTopWidget::OnButtonReleaseButtonHelp);
+	Button_TextChat->ModumateButton->OnReleased.AddDynamic(this, &UToolbarTopWidget::OnButtonReleaseTextChat);
 
 	return true;
 }
@@ -51,6 +54,15 @@ void UToolbarTopWidget::OnButtonReleaseButtonHelp()
 	if (Controller)
 	{
 		Controller->EditModelUserWidget->ToggleHelpMenu(!Controller->EditModelUserWidget->bIsHelpMenuVisible);
+	}
+}
+
+void UToolbarTopWidget::OnButtonReleaseTextChat()
+{
+	if (Controller && Controller->EditModelUserWidget && Controller->EditModelUserWidget->TextChatWidget)
+	{
+		bool currentVisibility = Controller->EditModelUserWidget->TextChatWidget->Visibility != ESlateVisibility::Collapsed;
+		Controller->EditModelUserWidget->ToggleTextChat(!currentVisibility);
 	}
 }
 

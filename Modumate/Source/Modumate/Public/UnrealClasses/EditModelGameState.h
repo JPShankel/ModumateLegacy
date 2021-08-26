@@ -37,6 +37,9 @@ public:
 	UFUNCTION()
 	bool UploadThumbnail(const TArray<uint8>& ThumbImage);
 
+	UFUNCTION()
+	AEditModelPlayerState* GetPlayerFromCloudID(const FString& Id) const;
+
 	UPROPERTY()
 	bool bDownloadingDocument = false;
 

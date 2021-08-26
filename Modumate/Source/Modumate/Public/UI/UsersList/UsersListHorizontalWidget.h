@@ -4,12 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-
+#include "UI/UsersList/UsersListButtonWidget.h"
+#include "UI/Custom/TooltipWidget.h"
+#include "Components/CanvasPanel.h"
+#include "Components/CanvasPanelSlot.h"
 #include "UsersListHorizontalWidget.generated.h"
-
-/**
- *
- */
 
 class AEditModelPlayerState;
 
@@ -51,9 +50,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class USizeBox* SizeBox_ExpandListButton;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UTooltipWidget> UsersListTooltipClass;
+
 	UFUNCTION()
 	void OnReleaseButton_ExpandUsersList();
 
-	void UpdateHorizontalUsersList(const TArray<AEditModelPlayerState*>& InPlayerStates, int32 ExtraNumberOfPlayerStates);
+	void UpdateHorizontalUsersList(const TArray<AEditModelPlayerState*>& InPlayerStates);
 	TArray<class UUsersListButtonWidget*> GetUserListButtonsArray() const;
 };

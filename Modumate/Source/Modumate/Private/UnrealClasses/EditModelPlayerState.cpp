@@ -95,7 +95,8 @@ bool AEditModelPlayerState::BeginWithController()
 	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
 	if (IsNetMode(NM_Client) && localPlayer && accountManager && cloudConnection && cloudConnection->IsLoggedIn())
 	{
-		SetUserInfo(accountManager->GetUserInfo(), MultiplayerClientIdx);
+		auto userInfo = accountManager->GetUserInfo();
+		SetUserInfo(userInfo, MultiplayerClientIdx);
 	}
 
 	return true;

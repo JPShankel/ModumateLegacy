@@ -118,9 +118,9 @@ public:
 	FTalkingEvent& OnTalkingChanged() { return TalkingChangedEvent; }
 
 	UPROPERTY(replicated)
-	bool bIsConnectedToChannel;
+	bool bIsConnectedToChannel = false;
 	UPROPERTY()
-	bool bIsLocallyOwned;
+	bool bIsLocallyOwned = false;
 
 private:
 

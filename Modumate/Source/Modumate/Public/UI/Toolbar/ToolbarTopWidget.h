@@ -57,11 +57,17 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UUsersListHorizontalWidget* UsersListHorizontal_BP;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_TextChat;
+
 	UFUNCTION()
 	void OnButtonReleaseModumateHome();
 
 	UFUNCTION()
 	void OnButtonReleaseButtonHelp();
+
+	UFUNCTION()
+	void OnButtonReleaseTextChat();
 
 	void SwitchToViewMode(EEditViewModes NewViewMode);
 

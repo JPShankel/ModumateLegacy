@@ -3,14 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/EditableText.h"
-#include "ModumateEditableText.generated.h"
+#include "Components/MultiLineEditableTextBox.h"
+
+#include "ModumateSelectableTextBlock.generated.h"
+
 
 /**
  *
  */
 UCLASS()
-class MODUMATE_API UModumateEditableText : public UEditableText
+class MODUMATE_API UModumateSelectableTextBlock : public UMultiLineEditableTextBox
 {
 	GENERATED_BODY()
 
@@ -21,7 +23,8 @@ public:
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class USlateWidgetStyleAsset *CustomEditableText;
+	class USlateWidgetStyleAsset* CustomEditableText;
 
 	bool ApplyCustomStyle();
+
 };

@@ -12,6 +12,7 @@
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "Objects/MOIStructureData.h"
 #include "Online/ModumateVoice.h"
+#include "Online/ModumateTextChat.h"
 #include "UnrealClasses/ModumateCapability.h"
 
 #include "EditModelPlayerController.generated.h"
@@ -572,12 +573,23 @@ public:
 
 	UFUNCTION()
 	void OnToggledProjectSystemMenu(ESlateVisibility NewVisibility);
-
+	// Voice Chat
 	UFUNCTION()
-	void ConnectVoiceClient(AModumateVoice* voiceClient);
+	void ConnectVoiceClient(AModumateVoice* VoiceClient);
+	DECLARE_EVENT(AEditModelPlayerController, FVoiceEvent)
+	FVoiceEvent& OnVoiceClientConnected() { return VoiceConnectedEvent; }
 
 	UPROPERTY(BlueprintReadOnly)
 	AModumateVoice* VoiceClient;
+
+	//Text Chat
+	UFUNCTION()
+	void ConnectTextChatClient(AModumateTextChat* TextChatClient);
+	DECLARE_EVENT(AEditModelPlayerController, FTextChatClientEvent)
+	FTextChatClientEvent& OnTextChatClientConnected() { return TextChatConnectedEvent; }
+
+	UPROPERTY(BlueprintReadOnly)
+	AModumateTextChat* TextChatClient;
 
 	int32 CurrentCullingCutPlaneID = MOD_ID_NONE;
 
@@ -588,7 +600,7 @@ public:
 
 	bool bBeganWithPlayerState = false;
 
-	void CapabilityReady(AModumateCapability* capability);
+	void CapabilityReady(AModumateCapability* Capability);
 
 	template <class T>
 	void RegisterCapability()
@@ -603,5 +615,9 @@ public:
 			}
 		}
 	}
+
+private:
+	FVoiceEvent VoiceConnectedEvent;
+	FTextChatClientEvent TextChatConnectedEvent;
 
 };
