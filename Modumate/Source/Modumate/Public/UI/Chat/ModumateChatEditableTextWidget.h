@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/Custom/ModumateButton.h"
-#include "UI/Custom/ModumateCheckbox.h"
+#include "UI/Custom/ModumateCheckBox.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateTextBlock.h"
 #include "UI/EditModelUserWidget.h"
