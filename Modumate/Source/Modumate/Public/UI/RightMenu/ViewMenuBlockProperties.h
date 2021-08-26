@@ -37,6 +37,9 @@ public:
 	class UModumateCheckBox* ViewCubeCheckBox;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateCheckBox* WorldAxesCheckBox;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateEditableTextBoxUserWidget *EditableTextBox_FOV;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -80,6 +83,9 @@ public:
 
 	UFUNCTION()
 	void ToggleViewCubeCheckboxes(bool NewEnable);
+
+	UFUNCTION()
+	void ToggleWorldAxesCheckboxes(bool NewEnable);
 
 	void SyncTextBoxesWithSkyActorCurrentTime();
 };

@@ -10,6 +10,7 @@
 #include "UI/ViewCubeWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/SkyActor.h"
+#include "UnrealClasses/AxesActor.h"
 
 
 UViewMenuBlockProperties::UViewMenuBlockProperties(const FObjectInitializer& ObjectInitializer)
@@ -23,13 +24,15 @@ bool UViewMenuBlockProperties::Initialize()
 	{
 		return false;
 	}
-	if (!(ViewCubeCheckBox && GravityCheckBox && EditableTextBox_FOV && EditableTextBox_Month && EditableTextBox_Day &&
+	if (!(ViewCubeCheckBox && GravityCheckBox && WorldAxesCheckBox &&
+		EditableTextBox_FOV && EditableTextBox_Month && EditableTextBox_Day &&
 		EditableTextBox_Hour && EditableTextBox_Minute && ModumateButton_AM))
 	{
 		return false;
 	}
 	ViewCubeCheckBox->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::ToggleViewCubeCheckboxes);
 	GravityCheckBox->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::ToggleGravityCheckboxes);
+	WorldAxesCheckBox->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::ToggleWorldAxesCheckboxes);
 	EditableTextBox_FOV->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UViewMenuBlockProperties::OnEditableTextBoxFOVCommitted);
 
 	EditableTextBox_Month->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UViewMenuBlockProperties::OnEditableTextBoxMonthCommitted);
@@ -154,6 +157,14 @@ void UViewMenuBlockProperties::ToggleGravityCheckboxes(bool NewEnable)
 void UViewMenuBlockProperties::ToggleViewCubeCheckboxes(bool NewEnable)
 {
 	Controller->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(NewEnable ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+}
+
+void UViewMenuBlockProperties::ToggleWorldAxesCheckboxes(bool NewEnable)
+{
+	if (ensure(Controller && Controller->AxesActor))
+	{
+		Controller->AxesActor->SetActorHiddenInGame(!NewEnable);
+	}
 }
 
 void UViewMenuBlockProperties::SyncTextBoxesWithSkyActorCurrentTime()
