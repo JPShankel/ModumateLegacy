@@ -34,6 +34,7 @@ protected:
 	class UBIMEditColorPicker* ParentColorPicker;
 
 	bool DragTick = false;
+	int32 MouseClickCountdown=0;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

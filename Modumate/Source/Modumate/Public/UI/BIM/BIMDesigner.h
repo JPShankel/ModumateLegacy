@@ -37,6 +37,8 @@ protected:
 	FVector2D LastMousePosition = FVector2D::ZeroVector;
 	bool DragReset = true;
 
+	int32 MouseClickCountdown = 0;
+
 	FBIMEditorNodeIDType GetNodeParentID(const FBIMEditorNodeIDType& InstanceID) const;
 
 	/*

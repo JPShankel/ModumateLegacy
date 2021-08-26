@@ -34,6 +34,20 @@ void UBIMEditColorMap::NativeConstruct()
 void UBIMEditColorMap::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+	
+	// On Mac, the controller will not report keydown for a whole frame, so start looking after you get the event
+	if (MouseClickCountdown > 0)
+	{
+		if (Controller->IsInputKeyDown(EKeys::LeftMouseButton))
+		{
+			DragTick = true;
+			MouseClickCountdown=0;
+		}
+		else
+		{
+			--MouseClickCountdown;
+		}
+	}
 
 	if (DragTick)
 	{
@@ -46,7 +60,15 @@ FReply UBIMEditColorMap::NativeOnMouseButtonDown(const FGeometry& InGeometry, co
 	FReply reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
-		DragTick = true;
+		// If we the controller doesn't report key down in 10 frames, forget it
+		if (Controller->IsInputKeyDown(EKeys::LeftMouseButton))
+		{
+			DragTick=true;
+		}
+		else
+		{
+			MouseClickCountdown=10;
+		}
 	}
 	return reply;
 }

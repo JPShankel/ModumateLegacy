@@ -35,6 +35,19 @@ void UBIMEditColorBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	// On Mac, IsInputKeyDown will be false for an extra frame after OnMouseButtonDown
+	if (MouseClickCountdown > 0)
+	{
+		if (Controller->IsInputKeyDown(EKeys::LeftMouseButton))
+		{
+			DragTick = true;
+			MouseClickCountdown=0;
+		}
+		else
+		{
+			--MouseClickCountdown;
+		}
+	}
 	if (DragTick)
 	{
 		PerformDrag();
@@ -46,7 +59,15 @@ FReply UBIMEditColorBar::NativeOnMouseButtonDown(const FGeometry& InGeometry, co
 	FReply reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
-		DragTick = true;
+		// MouseClick delay for Mac...if it takes more than 10 frames, abort
+		if (Controller->IsInputKeyDown(EKeys::LeftMouseButton))
+		{
+			DragTick=true;
+		}
+		else
+		{
+			MouseClickCountdown=10;
+		}
 	}
 	return reply;
 }

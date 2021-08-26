@@ -56,6 +56,19 @@ void UBIMDesigner::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	if (MouseClickCountdown > 0)
+	{
+		if (Controller->IsInputKeyDown(DragKey))
+		{
+			MouseClickCountdown = 0;
+			DragTick = true;
+		}
+		else
+		{
+			--MouseClickCountdown;
+		}
+	}
+
 	if (DragTick)
 	{
 		PerformDrag();
@@ -67,7 +80,15 @@ FReply UBIMDesigner::NativeOnMouseButtonDown(const FGeometry& InGeometry, const 
 	FReply reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 	if (InMouseEvent.GetEffectingButton() == DragKey)
 	{
-		DragTick = true;
+		if (Controller->IsInputKeyDown(DragKey))
+		{
+			DragTick = true;
+		}
+		else
+		{
+			// There's a delay for IsInputKeyDown on Mac...bail if we don't get it in 10 frames
+			MouseClickCountdown = 10;
+		}
 	}
 	else
 	{
