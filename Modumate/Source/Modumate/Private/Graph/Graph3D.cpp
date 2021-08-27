@@ -1474,7 +1474,7 @@ void FGraph3D::CheckTranslationValidity(const TArray<int32> &InVertexIDs, TMap<i
 			}
 
 			FPlane newPlane;
-			bValidDirection = UModumateGeometryStatics::GetPlaneFromPoints(newVertices, newPlane);
+			bValidDirection = UModumateGeometryStatics::GetPlaneFromPoints(newVertices, newPlane, Epsilon * 2.0f);
 			if (!bValidDirection)
 			{
 				break;
@@ -1816,7 +1816,7 @@ bool FGraph3D::Create2DGraph(const TSet<int32> &InitialGraphObjIDs, TSet<int32> 
 	// If we still haven't found a plane, then use the provided vertices to find one. Otherwise, we have no other means of finding a shared plane.
 	if (OutPlane.IsZero())
 	{
-		bool bFoundPlane = UModumateGeometryStatics::GetPlaneFromPoints(vertexPositions, OutPlane);
+		bool bFoundPlane = UModumateGeometryStatics::GetPlaneFromPoints(vertexPositions, OutPlane, Epsilon * 2.0f);
 		if (!bFoundPlane)
 		{
 			return false;

@@ -69,7 +69,7 @@ bool FGraph3DFace::UpdatePlane(const TArray<int32> &InVertexIDs)
 		return false;
 	}
 
-	bool bPlanar = UModumateGeometryStatics::GetPlaneFromPoints(CachedPositions, CachedPlane);
+	bool bPlanar = UModumateGeometryStatics::GetPlaneFromPoints(CachedPositions, CachedPlane, Graph->Epsilon * 2.0f);
 
 	if (!(bPlanar && CachedPlane.IsNormalized()))
 	{
