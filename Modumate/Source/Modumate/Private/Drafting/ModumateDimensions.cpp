@@ -90,7 +90,7 @@ bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<FDraftingComposit
 
 	for (auto& dim: Dimensions)
 	{
-		if (dim)
+		if (dim && dim.Length > SMALL_NUMBER)
 		{
 			double offset = 0.0;
 			FModumateLayerType layerType = FModumateLayerType::kDimensionOpening;
@@ -265,6 +265,7 @@ void FModumateDimensions::ProcessConnectedGroup(const TSet<int32>& Group)
 			}
 			if (metaplaneID != INDEX_NONE)
 			{
+				// For portal dims move left and right, coalescing simple runs of portals & unique wall/floor.
 				TArray<int32> removeIds[2];
 				int32 outerVerts[2];
 				for (int32 v = 0; v < 2; ++v)
@@ -289,7 +290,14 @@ void FModumateDimensions::ProcessConnectedGroup(const TSet<int32>& Group)
 						{
 							break;
 						}
-						removeIds[v].Add(current);
+						const int32 vectorSize = removeIds[v].Num();
+						// Check for dimension cycles along wall.
+						if (!ensure(removeIds[v].AddUnique(current) == vectorSize))
+						{   // Don't remove any such cycles and make original dimension active.
+							removeIds[v].Empty();
+							Dimensions[d].bActive = true;
+							break;
+						}
 						nextVert = Dimensions[current].Points[0] == point ? 1 : 0;
 						outerVerts[v] = nextVert;
 					}
@@ -561,7 +569,10 @@ void FModumateDimensions::ProcessConnectedGroup(const TSet<int32>& Group)
 		massingDim.DimensionType = FModumateDimension::Massing;
 		massingDim.bActive = true;
 		massingDim.LineSide = FModumateDimension::Right;
-		Dimensions.Add(massingDim);
+		if (massingDim.Length > SMALL_NUMBER)
+		{
+			Dimensions.Add(massingDim);
+		}
 
 		if (endP - startP == 1)
 		{   // If containing single framing dimension then drop that dimension.
