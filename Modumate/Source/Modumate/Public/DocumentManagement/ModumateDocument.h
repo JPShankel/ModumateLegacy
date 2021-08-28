@@ -244,6 +244,7 @@ public:
 private:
 	bool FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas);
 	bool PostApplyDeltas(UWorld *World, bool bCleanObjects, bool bMarkDocumentDirty);
+	bool DeepCloneForFinalize(FGraph3D& TempGraph, const AModumateObjectInstance* ChildObj, int32 ChildFaceID, TArray<FDeltaPtr>& OutDerivedDeltas);
 	void StartTrackingDeltaObjects();
 	void EndTrackingDeltaObjects();
 

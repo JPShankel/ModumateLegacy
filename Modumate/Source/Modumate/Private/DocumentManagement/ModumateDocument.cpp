@@ -2227,14 +2227,7 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 				{
 					if (!idsWithObjects.Contains(childFaceID))
 					{
-						FMOIStateData stateData = childObj->GetStateData();
-						stateData.ID = NextID++;
-						stateData.ParentID = childFaceID;
-
-						auto delta = MakeShared<FMOIDelta>();
-						delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
-						OutSideEffectDeltas.Add(delta);
-
+						DeepCloneForFinalize(TempGraph, childObj, childFaceID, OutSideEffectDeltas);
 						idsWithObjects.Add(childFaceID);
 					}
 				}
@@ -2285,6 +2278,92 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 		}
 	}
 
+	return true;
+}
+
+bool UModumateDocument::DeepCloneForFinalize(FGraph3D& TempGraph, const AModumateObjectInstance* ChildObj, int32 ChildFaceID, TArray<FDeltaPtr>& OutDerivedDeltas)
+{
+	FMOIStateData stateData = ChildObj->GetStateData();
+	stateData.ID = NextID++;
+	stateData.ParentID = ChildFaceID;
+
+	auto delta = MakeShared<FMOIDelta>();
+	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+	OutDerivedDeltas.Add(delta);
+
+	for(int32 grandchildObjID: ChildObj->GetChildIDs())
+	{
+		auto grandchildObj = GetObjectById(grandchildObjID);
+		if (grandchildObj && grandchildObj->GetObjectType() == EObjectType::OTSurfaceGraph)
+		{
+			// If surface graph is 'simple' then clone also.
+			auto surfaceGraph = FindSurfaceGraph(grandchildObj->ID);
+			if (surfaceGraph->GetPolygons().Num() == 2)
+			{
+				// create new surface graph MOI, create empty graph 2D based on new face
+				const int32 graphID = NextID++;
+				FDeltaPtr newSurfaceGraph = MakeShared<FGraph2DDelta>(graphID, EGraph2DDeltaType::Add);
+				FMOIStateData newSurfaceGraphObj(graphID, EObjectType::OTSurfaceGraph, stateData.ID);
+				newSurfaceGraphObj.CustomData = grandchildObj->GetStateData().CustomData;
+				auto newSurfaceGraphObjdelta = MakeShared<FMOIDelta>();
+				newSurfaceGraphObjdelta->AddCreateDestroyState(newSurfaceGraphObj, EMOIDeltaType::Create);
+				auto tempGraph2d = MakeShared<FGraph2D>(graphID, THRESH_POINTS_ARE_NEAR);
+
+				const FGraph3DFace* newMetaPlane = TempGraph.FindFace(ChildFaceID);
+				// Create simple surface graph for new metaplane. Based on USurfaceGraphTool::CreateGraphFromFaceTarget().
+				TArray<int32> newFaceVerts;
+				newMetaPlane->GetVertexIDs(newFaceVerts);
+				if (newFaceVerts.Num() < 3)
+				{
+					return false;
+				}
+
+				// New graph origin has rotation of old surface-graph object and position of new meta-plane.
+				FTransform faceTransform = grandchildObj->GetWorldTransform();
+				faceTransform.SetTranslation(VolumeGraph.FindVertex(newMetaPlane->VertexIDs[0])->Position);
+
+				TArray<FVector2D> perimeterPolygon;
+				for (int32 vert3dID: newFaceVerts)
+				{
+					FVector2D vert2d = UModumateGeometryStatics::ProjectPoint2DTransform(TempGraph.FindVertex(vert3dID)->Position, faceTransform);
+					perimeterPolygon.Add(vert2d);
+				}
+				TMap<int32, TArray<FVector2D>> graphPolygonsToAdd;
+				graphPolygonsToAdd.Add(MOD_ID_NONE, perimeterPolygon);
+				TArray<FGraph2DDelta> fillGraphDeltas;
+				TMap<int32, int32> outFaceToPoly, outGraphToSurfaceVertices;
+				TMap<int32, TArray<int32>> graphFaceToVertices;
+				int32 newRootPoly = MOD_ID_NONE;
+
+				if (!tempGraph2d->PopulateFromPolygons(fillGraphDeltas, NextID, graphPolygonsToAdd, graphFaceToVertices, outFaceToPoly, outGraphToSurfaceVertices, true, newRootPoly))
+				{
+					return false;
+				}
+
+				OutDerivedDeltas.Add(newSurfaceGraphObjdelta);
+				OutDerivedDeltas.Add(newSurfaceGraph);
+
+				FinalizeGraph2DDeltas(fillGraphDeltas, NextID, OutDerivedDeltas);
+
+				// Check for finish, etc, parented to interior polygon of surface graph and copy.
+				int32 oldRootPoly = surfaceGraph->GetRootInteriorPolyID();
+				const AModumateObjectInstance* polyObject = GetObjectById(oldRootPoly);
+				auto oldGraphChildren = polyObject->GetChildObjects();
+
+				for(const auto* oldGraphChild: oldGraphChildren)
+				{   // Apparently surface polys can have multiple children.
+					FMOIStateData finishStateData = oldGraphChild->GetStateData();
+					finishStateData.ID = NextID++;
+					finishStateData.ParentID = newRootPoly;
+					auto finishDelta = MakeShared<FMOIDelta>();
+					finishDelta->AddCreateDestroyState(finishStateData, EMOIDeltaType::Create);
+					OutDerivedDeltas.Add(finishDelta);
+				}
+
+			}
+		}
+
+	}
 	return true;
 }
 
