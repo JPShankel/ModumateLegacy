@@ -100,8 +100,7 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 	FVector scopeBoxOrigin = cutPlaneOrigin;
 	FBox sceneBounds(Doc->CalculateProjectBounds().GetBox());
 	sceneBounds = sceneBounds.ExpandBy(1000.0f);
-	controlPoints.Add(sceneBounds.Min);
-	controlPoints.Add(sceneBounds.Max);
+	UModumateGeometryStatics::GetBoxCorners(sceneBounds, controlPoints);
 #endif
 
 	TArray<FVector2D> boxPoints;

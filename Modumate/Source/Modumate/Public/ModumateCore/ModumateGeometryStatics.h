@@ -215,4 +215,7 @@ public:
 
 	// Clip 3D triangle against z = 0 removing z < 0, returns count of generated triangles (0, 1, 2).
 	static int32 ClipTriangleAtXYPlane(const FVector3d InTri[3], FVector3d OutTri[6]);
+
+	// Return all eight corners of a box.
+	static void GetBoxCorners(const FBox& Box, TArray<FVector>& OutCorners);
 };

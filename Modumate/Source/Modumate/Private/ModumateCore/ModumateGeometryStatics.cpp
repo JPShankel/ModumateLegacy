@@ -2317,3 +2317,12 @@ int32 UModumateGeometryStatics::ClipTriangleAtXYPlane(const FVector3d InTri[3], 
 		return 2;  // Two new triangles created
 	}
 }
+
+void UModumateGeometryStatics::GetBoxCorners(const FBox& Box, TArray<FVector>& OutCorners)
+{
+	OutCorners.Append({
+		Box.Min, FVector(Box.Min.X, Box.Min.Y, Box.Max.Z),
+		FVector(Box.Min.X, Box.Max.Y, Box.Min.Z), FVector(Box.Min.X, Box.Max.Y, Box.Max.Z),
+		FVector(Box.Max.X, Box.Min.Y, Box.Min.Z), FVector(Box.Max.X, Box.Min.Y, Box.Max.Z),
+		FVector(Box.Max.X, Box.Max.Y, Box.Min.Z), Box.Max });
+}
