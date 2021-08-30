@@ -128,25 +128,39 @@ void AModumateVoice::SetMuted(bool IsMuted)
 #endif
 }
 
-TArray<FString> AModumateVoice::GetInputDevices() const
+bool AModumateVoice::GetInputDevices(TMap<FString, FString> &OutInputs) const
 {
 #if !UE_SERVER
+	OutInputs.Empty();
 	TArray<FString> keys;
-	auto rtn = VoiceClient->AudioInputDevices().AvailableDevices().GetKeys(keys);
-	return keys;
+	auto devices = VoiceClient->AudioInputDevices().AvailableDevices();
+	devices.GetKeys(keys);
+	for (auto k : keys)
+	{
+		FString name = devices[k]->Name();
+		OutInputs.Add(name,k);
+	}
+	return true;
 #else
-	return TArray<FString>();
+	return false;
 #endif
 }
 
-TArray<FString> AModumateVoice::GetOutputDevices() const
+bool AModumateVoice::GetOutputDevices(TMap<FString, FString> &OutOutputs) const
 {
 #if !UE_SERVER
+	OutOutputs.Empty();
 	TArray<FString> keys;
-	auto rtn = VoiceClient->AudioOutputDevices().AvailableDevices().GetKeys(keys);
-	return keys;
+	auto devices = VoiceClient->AudioOutputDevices().AvailableDevices();
+	devices.GetKeys(keys);
+	for (auto k : keys)
+	{
+		FString name = devices[k]->Name();
+		OutOutputs.Add(name,k);
+}
+	return true;
 #else
-	return TArray<FString>();
+	return false;
 #endif
 }
 
@@ -155,7 +169,8 @@ bool AModumateVoice::SetInputDevice(const FString& InputDevice)
 #if !UE_SERVER
 	if (VoiceClient->AudioInputDevices().AvailableDevices().Contains(InputDevice))
 	{
-		auto device = VoiceClient->AudioInputDevices().AvailableDevices()[InputDevice];
+		IAudioDevice* device = VoiceClient->AudioInputDevices().AvailableDevices()[InputDevice];
+		VoiceClient->AudioInputDevices().SetActiveDevice(*device);
 		return true;
 	}
 #endif
@@ -167,7 +182,8 @@ bool AModumateVoice::SetOutputDevice(const FString& OutputDevice)
 #if !UE_SERVER
 	if (VoiceClient->AudioOutputDevices().AvailableDevices().Contains(OutputDevice))
 	{
-		auto device = VoiceClient->AudioOutputDevices().AvailableDevices()[OutputDevice];
+		IAudioDevice* device = VoiceClient->AudioOutputDevices().AvailableDevices()[OutputDevice];
+		VoiceClient->AudioOutputDevices().SetActiveDevice(*device);
 		return true;
 	}
 #endif
@@ -410,6 +426,7 @@ void AModumateVoice::SetAudioDevices(const IAudioDevice& InputToSet, const IAudi
 void AModumateVoice::OnDeviceAdded(const IAudioDevice& Device)
 {
 	UE_LOG(ModumateVoice, Log, TEXT("Audio device added: %s"), *(Device.Name()));
+	VoiceDeviceChangedEvent.Broadcast();
 }
 
 void AModumateVoice::OnDeviceRemoved(const IAudioDevice& Device)
@@ -427,11 +444,13 @@ void AModumateVoice::OnDeviceRemoved(const IAudioDevice& Device)
 	{
 		VoiceClient->AudioOutputDevices().SetActiveDevice(VoiceClient->AudioOutputDevices().SystemDevice());
 	}
+	VoiceDeviceChangedEvent.Broadcast();
 }
 
 void AModumateVoice::OnDeviceChanged(const IAudioDevice& Device)
 {
 	UE_LOG(ModumateVoice, Log, TEXT("Audio device changed to: %s"), *(Device.Name()));
+	VoiceDeviceChangedEvent.Broadcast();
 }
 
 void AModumateVoice::OnParticipantUpdated(const IParticipant& Participant)

@@ -3,10 +3,12 @@
 #include "UI/ModumateSettingsMenu.h"
 
 #include "Components/ComboBoxString.h"
+#include "UI/Custom/ModumateComboBoxString.h"
 #include "DocumentManagement/DocumentSettings.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/EnumHelpers.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "Online/ModumateVoice.h"
 #include "UI/Custom/ModumateDropDownUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
@@ -21,7 +23,7 @@ bool UModumateSettingsMenu::Initialize()
 		return false;
 	}
 
-	if (!(DimensionPrefDropdown && DistIncrementDropdown && CloseButton))
+	if (!(DimensionPrefDropdown && DistIncrementDropdown && CloseButton && MicSourceDropdown && SpeakerSourceDropdown))
 	{
 		return false;
 	}
@@ -29,6 +31,17 @@ bool UModumateSettingsMenu::Initialize()
 	DimensionPrefDropdown->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UModumateSettingsMenu::OnDimensionPrefChanged);
 	DistIncrementDropdown->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UModumateSettingsMenu::OnDistIncrementPrefChanged);
 	CloseButton->ModumateButton->OnClicked.AddDynamic(this, &UModumateSettingsMenu::OnCloseButtonClicked);
+	MicSourceDropdown->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UModumateSettingsMenu::OnMicDeviceChanged);
+	SpeakerSourceDropdown->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UModumateSettingsMenu::OnSpeakerDeviceChanged);
+
+	UModumateComboBoxString* cbox_mic = Cast<UModumateComboBoxString>(MicSourceDropdown->ComboBoxStringJustification);
+	UModumateComboBoxString* cbox_spk = Cast<UModumateComboBoxString>(SpeakerSourceDropdown->ComboBoxStringJustification);
+
+	if (cbox_mic && cbox_spk)
+	{
+		cbox_mic->ItemWidgetClass = ItemWidgetOverrideClass;
+		cbox_spk->ItemWidgetClass = ItemWidgetOverrideClass;
+	}
 
 	// Populate dimension preference dropdown
 	DimPrefsByDisplayString.Reset();
@@ -52,6 +65,18 @@ bool UModumateSettingsMenu::Initialize()
 
 	UpdateFromCurrentSettings();
 
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (ensure(controller))
+	{
+		if (!controller->VoiceClient)
+		{
+			controller->OnVoiceClientConnected().AddUObject(this, &UModumateSettingsMenu::VoiceClientConnectedHandler);
+		}
+		else
+		{
+			VoiceClientConnectedHandler();
+		}
+	}
 	return true;
 }
 
@@ -159,6 +184,44 @@ void UModumateSettingsMenu::OnDistIncrementPrefChanged(FString SelectedItem, ESe
 	}
 }
 
+void UModumateSettingsMenu::OnMicDeviceChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
+{
+	if (!SelectedItem.IsEmpty() && SelectedItem != CurSelectedMic)
+	{
+		TMap<FString, FString> inputs;
+		if (!GetAudioInputs(inputs))
+		{
+			return;
+		}
+
+		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (ensure(controller))
+		{
+			controller->VoiceClient->SetInputDevice(inputs[SelectedItem]);
+			CurSelectedMic = SelectedItem;
+		}
+	}
+}
+
+void UModumateSettingsMenu::OnSpeakerDeviceChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
+{
+	if (!SelectedItem.IsEmpty() && SelectedItem != CurSelectedSpeaker)
+	{
+		TMap<FString, FString> outputs;
+		if (!GetAudioOutputs(outputs))
+		{
+			return;
+		}
+
+		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (ensure(controller))
+		{
+			controller->VoiceClient->SetOutputDevice(outputs[SelectedItem]);
+			CurSelectedSpeaker = SelectedItem;
+		}
+	}
+}
+
 void UModumateSettingsMenu::OnCloseButtonClicked()
 {
 	auto* controller = GetOwningPlayer<AEditModelPlayerController>();
@@ -166,6 +229,68 @@ void UModumateSettingsMenu::OnCloseButtonClicked()
 	{
 		controller->EditModelUserWidget->ToggleSettingsWindow(false);
 	}
+}
+
+void UModumateSettingsMenu::AudioDevicesChangedHandler()
+{
+	PopulateAudioDevices();
+}
+
+void UModumateSettingsMenu::PopulateAudioDevices()
+{
+	TMap<FString, FString> inputs;
+	TMap<FString, FString> outputs;
+
+	if (!(GetAudioOutputs(outputs) && GetAudioInputs(inputs)))
+	{
+		return;
+	}
+
+	//Clear and re-add the options...
+	MicSourceDropdown->ComboBoxStringJustification->ClearOptions();
+	for (auto input : inputs)
+	{
+		MicSourceDropdown->ComboBoxStringJustification->AddOption(input.Key);
+	}
+
+	SpeakerSourceDropdown->ComboBoxStringJustification->ClearOptions();
+	for (auto output : outputs)
+	{
+		SpeakerSourceDropdown->ComboBoxStringJustification->AddOption(output.Key);
+	}
+
+
+	//Since we cleared, we have to set the selected option appropriately. If it does
+	// not exist anymore, let's go ahead and set it to default.
+	if (SpeakerSourceDropdown->ComboBoxStringJustification->FindOptionIndex(CurSelectedSpeaker) < 0)
+	{
+		SpeakerSourceDropdown->ComboBoxStringJustification->SetSelectedOption(DefaultSelection.ToString());
+	}
+	else
+	{
+		SpeakerSourceDropdown->ComboBoxStringJustification->SetSelectedOption(CurSelectedSpeaker);
+	}
+
+	if (MicSourceDropdown->ComboBoxStringJustification->FindOptionIndex(CurSelectedMic) < 0)
+	{
+		MicSourceDropdown->ComboBoxStringJustification->SetSelectedOption(DefaultSelection.ToString());
+	}
+	else
+	{
+		MicSourceDropdown->ComboBoxStringJustification->SetSelectedOption(CurSelectedMic);
+	}
+}
+
+void UModumateSettingsMenu::VoiceClientConnectedHandler()
+{
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (!controller || !controller->VoiceClient)
+	{
+		return;
+	}
+
+	controller->VoiceClient->OnVoiceDevicesChanged().AddUObject(this, &UModumateSettingsMenu::AudioDevicesChangedHandler);
+	PopulateAudioDevices();
 }
 
 void UModumateSettingsMenu::ApplyCurrentSettings()
@@ -246,4 +371,26 @@ void UModumateSettingsMenu::PopulateDistIncrement()
 			DistIncrementDropdown->ComboBoxStringJustification->SetSelectedIndex(multiplierIdx);
 		}
 	}
+}
+
+bool UModumateSettingsMenu::GetAudioInputs(TMap<FString, FString> &OutInputs)
+{
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (!controller || !controller->VoiceClient)
+	{
+		return false;
+	}
+
+	return controller->VoiceClient->GetInputDevices(OutInputs);;
+}
+
+bool UModumateSettingsMenu::GetAudioOutputs(TMap<FString, FString> &OutOutputs)
+{
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (!controller || !controller->VoiceClient)
+	{
+		return false;
+	}
+
+	return controller->VoiceClient->GetOutputDevices(OutOutputs);
 }

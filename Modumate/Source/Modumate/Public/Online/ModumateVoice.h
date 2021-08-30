@@ -104,8 +104,8 @@ public:
 	void Disconnect();
 
 	void SetMuted(bool IsMuted);
-	TArray<FString> GetInputDevices() const;
-	TArray<FString> GetOutputDevices() const;
+	bool GetInputDevices(TMap<FString, FString> &OutInputs) const;
+	bool GetOutputDevices(TMap<FString, FString> &OutOutputs) const;
 	bool SetInputDevice(const FString& InputDevice);
 	bool SetOutputDevice(const FString& OutputDevice);
 
@@ -116,6 +116,9 @@ public:
 
 	DECLARE_EVENT_TwoParams(AModumateVoice, FTalkingEvent, FString, bool)
 	FTalkingEvent& OnTalkingChanged() { return TalkingChangedEvent; }
+
+	DECLARE_EVENT(AModumateVoice, FVoiceDeviceEvent)
+	FVoiceDeviceEvent& OnVoiceDevicesChanged() { return VoiceDeviceChangedEvent; }
 
 	UPROPERTY(replicated)
 	bool bIsConnectedToChannel = false;
@@ -131,13 +134,14 @@ private:
 	void CLIENT_AllowVoiceLogin(const FVivoxParam& Parameters, const FVivoxEndpoint& Endpoint);
 
 	FString GenerateToken(const FVivoxEndpoint& Endpoint, const FVivoxParam& Parameters,
-		const FString& Request, const FString& Key) const;
+	const FString& Request, const FString& Key) const;
 	FString HMACSHA256(const FString& Msg, const FString& Key) const;
 	void ToBase64URL(FString& Base64) const;
 	static FString GenerateAccountURI(const FVivoxEndpoint& Endpoint, const FString& Username);
 	static FString GenerateChannelURI(const FVivoxEndpoint& Endpoint, const FString& Channel);
 
 	FTalkingEvent TalkingChangedEvent;
+	FVoiceDeviceEvent VoiceDeviceChangedEvent;
 
 	//There is no available Linux SDK for Vivox, so the types defined in that sdk are isolated
 	// to this block.
