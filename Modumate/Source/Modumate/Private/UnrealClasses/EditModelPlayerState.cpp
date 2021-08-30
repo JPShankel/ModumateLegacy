@@ -1444,7 +1444,7 @@ void AEditModelPlayerState::OnRep_CursorLocation()
 	{
 		if (CursorReplicationTransformBuffer.TransformBufferSize <= 1)
 		{
-			playerPawn->CursorMeshComponent->SetWorldLocation(ReplicatedCursorLocation);
+			InterpReplicatedCursorLocation = ReplicatedCursorLocation;
 		}
 		else
 		{
@@ -1483,7 +1483,6 @@ void AEditModelPlayerState::UpdateOtherClientCamera()
 	FTransform blendedCursorTransform;
 	if (CursorReplicationTransformBuffer.GetBlendedTransform(world->GetTimeSeconds(), blendedCursorTransform))
 	{
-		// TODO: Set rotation and scale cursor mesh to screen space
-		playerPawn->CursorMeshComponent->SetWorldLocation(blendedCursorTransform.GetLocation());
+		InterpReplicatedCursorLocation = blendedCursorTransform.GetLocation();
 	}
 }

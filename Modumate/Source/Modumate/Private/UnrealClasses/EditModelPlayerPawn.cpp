@@ -11,6 +11,7 @@
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/Online/ModumateClientIcon.h"
+#include "UI/Online/ModumateClientCursor.h"
 #include "UI/Online/OnlineUserName.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelInputHandler.h"
@@ -49,10 +50,6 @@ AEditModelPlayerPawn::AEditModelPlayerPawn()
 	RemoteMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RemoteMeshComponent"));
 	RemoteMeshComponent->SetupAttachment(RootComponent);
 	RemoteMeshComponent->SetOwnerNoSee(true);
-
-	CursorMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CursorMeshComponent"));
-	CursorMeshComponent->SetupAttachment(RootComponent);
-	CursorMeshComponent->SetOwnerNoSee(true);
 }
 
 // Called when the game starts or when spawned
@@ -66,6 +63,10 @@ void AEditModelPlayerPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	if (ClientIconWidget)
 	{
 		ClientIconWidget->RemoveFromViewport();
+	}
+	if (ClientCursorWidget)
+	{
+		ClientCursorWidget->RemoveFromViewport();
 	}
 
 	Super::EndPlay(EndPlayReason);
@@ -95,6 +96,22 @@ void AEditModelPlayerPawn::Tick(float DeltaTime)
 			else
 			{
 				ClientIconWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
+
+		if (ClientCursorWidget)
+		{
+			AEditModelPlayerState* playerState = GetPlayerState<AEditModelPlayerState>();
+			FVector2D localViewportPosCursor;
+			if (playerState && localController->ProjectWorldLocationToScreen(playerState->InterpReplicatedCursorLocation, localViewportPosCursor))
+			{
+				ClientCursorWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+				ClientCursorWidget->SetPositionInViewport(localViewportPosCursor, true);
+				ClientCursorWidget->UpdateCursorOcclusion(playerState->InterpReplicatedCursorLocation);
+			}
+			else
+			{
+				ClientCursorWidget->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
 	}
@@ -149,7 +166,7 @@ bool AEditModelPlayerPawn::TryInitClientVisuals()
 	AEditModelPlayerState* playerState = GetPlayerState<AEditModelPlayerState>();
 
 	// Make sure that PlayerState has received all of the server-provided info required to initialize the client-side visuals
-	if (!(localHUD && localHUD->HUDDrawWidget && ClientIconClass && playerState &&
+	if (!(localHUD && localHUD->HUDDrawWidget && ClientIconClass && ClientCursorClass && playerState &&
 		(playerState->MultiplayerClientIdx != INDEX_NONE) &&
 		!playerState->ReplicatedUserInfo.Email.IsEmpty()))
 	{
@@ -181,6 +198,24 @@ bool AEditModelPlayerPawn::TryInitClientVisuals()
 		ClientIconWidget->ClientName->ChangeText(FText::FromString(playerName), false);
 	}
 
+	if (ClientCursorWidget == nullptr)
+	{
+		ClientCursorWidget = localHUD->GetOrCreateWidgetInstance(ClientCursorClass);
+		if (!ensure(ClientCursorWidget))
+		{
+			return false;
+		}
+
+		ClientCursorWidget->AddToViewport();
+		ClientCursorWidget->SetAlignmentInViewport(FVector2D(0.5f, 0.5f));
+
+		if (ClientCursorWidget)
+		{
+			ClientCursorWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+			ClientCursorWidget->InitCursor(playerColor, UModumateUIStatics::GetTextColorFromBackgroundColor(playerColor));
+		}
+	}
+
 	if (RemoteMeshMaterial == nullptr)
 	{
 		static const FName colorParamName(TEXT("ColorMultiplier"));
@@ -193,12 +228,6 @@ bool AEditModelPlayerPawn::TryInitClientVisuals()
 
 		RemoteMeshComponent->SetMaterial(colorMaterialIdx, RemoteMeshMaterial);
 		RemoteMeshMaterial->SetVectorParameterValue(colorParamName, playerState->GetClientColor());
-
-		// Share the same material with cursor mesh 
-		if (CursorMeshComponent)
-		{
-			CursorMeshComponent->SetMaterial(0, RemoteMeshMaterial);
-		}
 	}
 
 	return true;

@@ -298,6 +298,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Multiplayer")
 	FModumateInterpBuffer CursorReplicationTransformBuffer;
 
+	FVector InterpReplicatedCursorLocation;
+
 protected:
 	void UpdateOtherClientCamera();
 

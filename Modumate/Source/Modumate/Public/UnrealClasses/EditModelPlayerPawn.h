@@ -9,6 +9,7 @@
 
 
 class UModumateClientIcon;
+class UModumateClientCursor;
 
 UCLASS()
 class MODUMATE_API AEditModelPlayerPawn : public ACharacter
@@ -51,17 +52,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UStaticMeshComponent* RemoteMeshComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UStaticMeshComponent* CursorMeshComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UModumateClientIcon> ClientIconClass = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<UModumateClientIcon> ClientIconClass;
+	TSubclassOf<UModumateClientCursor> ClientCursorClass = nullptr;
 
 	UPROPERTY()
-	UModumateClientIcon* ClientIconWidget;
+	UModumateClientIcon* ClientIconWidget = nullptr;
 
 	UPROPERTY()
-	class UMaterialInstanceDynamic* RemoteMeshMaterial;
+	UModumateClientCursor* ClientCursorWidget = nullptr;
+
+	UPROPERTY()
+	class UMaterialInstanceDynamic* RemoteMeshMaterial = nullptr;
 
 	bool TryInitClientVisuals();
 
