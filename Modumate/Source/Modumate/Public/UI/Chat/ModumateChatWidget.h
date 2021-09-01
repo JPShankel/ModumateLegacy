@@ -10,10 +10,6 @@
 #include "UI/Chat/ModumateChatMessageWidget.h"
 #include "ModumateChatWidget.generated.h"
 
-/**
- *
- */
-
 UCLASS()
 class MODUMATE_API UChatMessage : public UObject
 {

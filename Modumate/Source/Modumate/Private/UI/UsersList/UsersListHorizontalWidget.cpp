@@ -1,6 +1,7 @@
 // Copyright 2021 Modumate, Inc. All Rights Reserved.
 
 #include "UI/UsersList/UsersListHorizontalWidget.h"
+#include "UI/UsersList/UsersListVerticalWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "Components/SizeBox.h"
@@ -9,8 +10,6 @@
 #include "UI/UsersList/UsersListButtonWidget.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
-
-
 
 UUsersListHorizontalWidget::UUsersListHorizontalWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -40,7 +39,12 @@ void UUsersListHorizontalWidget::NativeConstruct()
 
 void UUsersListHorizontalWidget::OnReleaseButton_ExpandUsersList()
 {
-	// TODO: Toggle expanded users list
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (ensure(controller))
+	{
+		bool isVisible = controller->EditModelUserWidget->UsersListVertical->Visibility != ESlateVisibility::Collapsed;
+		controller->EditModelUserWidget->ToggleVerticalUserList(!isVisible);
+	}
 }
 
 void UUsersListHorizontalWidget::UpdateHorizontalUsersList(const TArray<AEditModelPlayerState*>& InPlayerStates)
@@ -76,8 +80,20 @@ void UUsersListHorizontalWidget::UpdateHorizontalUsersList(const TArray<AEditMod
 	else
 	{
 		SizeBox_ExpandListButton->SetVisibility(ESlateVisibility::Visible);
+		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (controller)
+		{
+			controller->EditModelUserWidget->UsersListVertical->Clear();
+			for (int32 i = userButtons.Num(); i < InPlayerStates.Num(); i++)
+			{
+				auto ps = InPlayerStates[i];
+				if (ps)
+				{
+					controller->EditModelUserWidget->UsersListVertical->AddUser(InPlayerStates[i]);
+				}
+			}
+		}
 	}
-
 }
 
 TArray<class UUsersListButtonWidget*> UUsersListHorizontalWidget::GetUserListButtonsArray() const
@@ -87,5 +103,6 @@ TArray<class UUsersListButtonWidget*> UUsersListHorizontalWidget::GetUserListBut
 		UsersListRoundButtonWidget_1,
 		UsersListRoundButtonWidget_2,
 		UsersListRoundButtonWidget_3,
-		UsersListRoundButtonWidget_4 };
+		UsersListRoundButtonWidget_4
+	};
 }

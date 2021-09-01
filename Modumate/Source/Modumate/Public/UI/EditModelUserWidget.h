@@ -102,6 +102,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateChatWidget* TextChatWidget;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UUsersListVerticalWidget* UsersListVertical;
+
 	UPROPERTY()
 	TMap<EToolMode, class UModumateButtonUserWidget*> ToolToButtonMap;
 
@@ -127,16 +130,17 @@ public:
 	bool UpdateCutPlaneInList(int32 ObjID = MOD_ID_NONE);
 	void RefreshAssemblyList(bool bScrollToSelected = false);
 	void UpdateViewModeIndicator(EEditViewModes NewViewMode);
-	void ShowBIMDebugger(bool NewVisible);
+	void ShowBIMDebugger(bool bNewVisible);
 	bool IsBIMDebuggerOn();
-	void ToggleCutPlaneMenu(bool NewVisibility);
-	void ToggleViewMenu(bool NewVisibility);
-	void ToggleBrowserMenu(bool NewVisibility);
-	void ToggleSwapMenu(bool NewVisibility);
-	void ToggleDeleteMenu(bool NewVisibility);
-	void ToggleSettingsWindow(bool NewVisibility);
-	void ToggleHelpMenu(bool NewVisibility);
+	void ToggleCutPlaneMenu(bool bNewVisibility);
+	void ToggleViewMenu(bool bNewVisibility);
+	void ToggleBrowserMenu(bool bNewVisibility);
+	void ToggleSwapMenu(bool bNewVisibility);
+	void ToggleDeleteMenu(bool bNewVisibility);
+	void ToggleSettingsWindow(bool bNewVisibility);
+	void ToggleHelpMenu(bool bNewVisibility);
 	void ToggleTextChat(bool bNewVisibility);
+	void ToggleVerticalUserList(bool bNewVisibility);
 	bool IsBIMDesingerActive() const;
 	bool EMUserWidgetHandleEscapeKey();
 	void UpdateSelectTrayVisibility();

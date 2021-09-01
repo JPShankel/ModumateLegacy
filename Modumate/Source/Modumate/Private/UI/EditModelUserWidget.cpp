@@ -31,6 +31,7 @@
 #include "Online/ModumateAnalyticsStatics.h"
 #include "UI/Chat/ModumateChatWidget.h"
 #include "UI/UsersList/UsersListHorizontalWidget.h"
+#include "UI/UsersList/UsersListVerticalWidget.h"
 
 #define LOCTEXT_NAMESPACE "ModumateWidgets"
 
@@ -387,10 +388,10 @@ void UEditModelUserWidget::UpdateUsersList()
 	ToolbarWidget->ToolBarTopBP->UsersListHorizontal_BP->UpdateHorizontalUsersList(playersOnToolBar);
 }
 
-void UEditModelUserWidget::ToggleCutPlaneMenu(bool NewVisibility)
+void UEditModelUserWidget::ToggleCutPlaneMenu(bool bNewVisibility)
 {
-	CutPlaneMenu->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-	if (NewVisibility)
+	CutPlaneMenu->SetVisibility(bNewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (bNewVisibility)
 	{
 		ToolbarWidget->Button_CutPlanes->SwitchToActiveStyle();
 		CutPlaneMenu->UpdateCutPlaneMenuBlocks();
@@ -402,10 +403,10 @@ void UEditModelUserWidget::ToggleCutPlaneMenu(bool NewVisibility)
 	}
 }
 
-void UEditModelUserWidget::ToggleViewMenu(bool NewVisibility)
+void UEditModelUserWidget::ToggleViewMenu(bool bNewVisibility)
 {
-	ViewMenu->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-	if (NewVisibility)
+	ViewMenu->SetVisibility(bNewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (bNewVisibility)
 	{
 		ToolbarWidget->Button_3DViews->SwitchToActiveStyle();
 		ViewMenu->BuildViewMenu();
@@ -416,10 +417,10 @@ void UEditModelUserWidget::ToggleViewMenu(bool NewVisibility)
 	}
 }
 
-void UEditModelUserWidget::ToggleBrowserMenu(bool NewVisibility)
+void UEditModelUserWidget::ToggleBrowserMenu(bool bNewVisibility)
 {
-	BrowserMenuWidget->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-	if (NewVisibility)
+	BrowserMenuWidget->SetVisibility(bNewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (bNewVisibility)
 	{
 		ToolbarWidget->Button_Browser->SwitchToActiveStyle();
 		BrowserMenuWidget->BuildBrowserMenu();
@@ -430,28 +431,28 @@ void UEditModelUserWidget::ToggleBrowserMenu(bool NewVisibility)
 	}
 }
 
-void UEditModelUserWidget::ToggleSwapMenu(bool NewVisibility)
+void UEditModelUserWidget::ToggleSwapMenu(bool bNewVisibility)
 {
-	SwapMenuWidget->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-	if (NewVisibility)
+	SwapMenuWidget->SetVisibility(bNewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (bNewVisibility)
 	{
 		SwapMenuWidget->BuildSwapMenu();
 	}
 }
 
-void UEditModelUserWidget::ToggleDeleteMenu(bool NewVisibility)
+void UEditModelUserWidget::ToggleDeleteMenu(bool bNewVisibility)
 {
-	DeleteMenuWidget->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-	if (NewVisibility)
+	DeleteMenuWidget->SetVisibility(bNewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (bNewVisibility)
 	{
 		DeleteMenuWidget->BuildDeleteMenu();
 	}
 }
 
-void UEditModelUserWidget::ToggleSettingsWindow(bool NewVisibility)
+void UEditModelUserWidget::ToggleSettingsWindow(bool bNewVisibility)
 {
-	SettingsMenuWidget->SetVisibility(NewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
-	if (NewVisibility)
+	SettingsMenuWidget->SetVisibility(bNewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (bNewVisibility)
 	{
 		SettingsMenuWidget->UpdateFromCurrentSettings();
 	}
@@ -465,6 +466,7 @@ void UEditModelUserWidget::ToggleHelpMenu(bool NewVisibility)
 	if (bIsHelpMenuVisible)
 	{
 		ToggleTextChat(false);
+		ToggleVerticalUserList(false);
 		HelpMenuBP->ToMainHelpMenu();
 	}
 	else
@@ -484,8 +486,23 @@ void UEditModelUserWidget::ToggleTextChat(bool bNewVisibility)
 	{
 		TextChatWidget->SetVisibility(ESlateVisibility::Visible);
 		ToggleHelpMenu(false);
+		ToggleVerticalUserList(false);
 	}
 	
+}
+
+void UEditModelUserWidget::ToggleVerticalUserList(bool bNewVisibility)
+{
+	if (!bNewVisibility)
+	{
+		UsersListVertical->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	else
+	{
+		UsersListVertical->SetVisibility(ESlateVisibility::Visible);
+		ToggleTextChat(false);
+		ToggleHelpMenu(false);
+	}
 }
 
 #undef LOCTEXT_NAMESPACE
