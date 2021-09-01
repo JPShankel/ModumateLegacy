@@ -2291,6 +2291,7 @@ bool UModumateDocument::DeepCloneForFinalize(FGraph3D& TempGraph, const AModumat
 	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
 	OutDerivedDeltas.Add(delta);
 
+	// MOD-1542 clone over decendents (finish, etc).
 	for(int32 grandchildObjID: ChildObj->GetChildIDs())
 	{
 		auto grandchildObj = GetObjectById(grandchildObjID);
@@ -2310,6 +2311,11 @@ bool UModumateDocument::DeepCloneForFinalize(FGraph3D& TempGraph, const AModumat
 				auto tempGraph2d = MakeShared<FGraph2D>(graphID, THRESH_POINTS_ARE_NEAR);
 
 				const FGraph3DFace* newMetaPlane = TempGraph.FindFace(ChildFaceID);
+				if (!ensure(newMetaPlane) || newMetaPlane->VertexIDs.Num() == 0)
+				{
+					continue;
+				}
+
 				// Create simple surface graph for new metaplane. Based on USurfaceGraphTool::CreateGraphFromFaceTarget().
 				TArray<int32> newFaceVerts;
 				newMetaPlane->GetVertexIDs(newFaceVerts);
@@ -2320,7 +2326,7 @@ bool UModumateDocument::DeepCloneForFinalize(FGraph3D& TempGraph, const AModumat
 
 				// New graph origin has rotation of old surface-graph object and position of new meta-plane.
 				FTransform faceTransform = grandchildObj->GetWorldTransform();
-				faceTransform.SetTranslation(VolumeGraph.FindVertex(newMetaPlane->VertexIDs[0])->Position);
+				faceTransform.SetTranslation(TempGraph.FindVertex(newMetaPlane->VertexIDs[0])->Position);
 
 				TArray<FVector2D> perimeterPolygon;
 				for (int32 vert3dID: newFaceVerts)
