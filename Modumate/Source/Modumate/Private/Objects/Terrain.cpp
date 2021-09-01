@@ -252,9 +252,12 @@ void AMOITerrain::UpdateTerrainActor()
 				}
 
 				// Add all contained polys:
-				for (int32 subPoly: graph2d->FindPolygon(Polygon)->ContainedPolyIDs)
+				for (int32 subPoly: polygon2d->ContainedPolyIDs)
 				{
-					addVertexHeights(subPoly);
+					if (!containedPolys.Contains(subPoly))
+					{
+						addVertexHeights(subPoly);
+					}
 				}
 
 			};
