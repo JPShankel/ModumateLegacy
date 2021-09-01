@@ -213,6 +213,14 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 		return false;
 	}
 
+#if UE_BUILD_SHIPPING
+	if (EditModelUserWidget && EditModelUserWidget->ProjectSystemMenu &&
+		EditModelUserWidget->ProjectSystemMenu->ButtonSaveProjectAs)
+	{
+		EditModelUserWidget->ProjectSystemMenu->ButtonSaveProjectAs->SetVisibility(ESlateVisibility::Collapsed);
+	}
+#endif
+
 	if (IsNetMode(NM_Client))
 	{
 		ensureMsgf(gameState->Document == nullptr, TEXT("The document should only be missing if we're a client connected to a dedicated server!"));
@@ -1018,12 +1026,6 @@ bool AEditModelPlayerController::SaveModel()
 		return true;
 	}
 
-	FText saveAsAlert = LOCTEXT("PermissionAlertSaveOne", "Your plan doesn't allow you to save projects.\nUpgrade your plan to save projects.");
-	if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSaveOne, saveAsAlert))
-	{
-		return false;
-	}
-
 	if (EMPlayerState->LastFilePath.IsEmpty())
 	{
 		return SaveModelAs();
@@ -1033,12 +1035,6 @@ bool AEditModelPlayerController::SaveModel()
 
 bool AEditModelPlayerController::SaveModelAs()
 {
-	FText saveAsAlert = LOCTEXT("PermissionAlertSaveAs", "Your plan only allows you to save one project at a time with Save.\nUpgrade your plan to save as many versions and projects as you'd like.");
-	if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSave, saveAsAlert))
-	{
-		return false;
-	}
-
 	if (!CanShowFileDialog())
 	{
 		return false;
@@ -1073,7 +1069,7 @@ bool AEditModelPlayerController::SaveModelFilePath(const FString &filepath)
 		AbortUseTool();
 	}
 
-	bool bShowPath = CheckUserPlanAndPermission(EModumatePermission::ProjectSave);
+	bool bShowPath = true;
 	FText filePathText = FText::FromString(filepath);
 
 	// Try to capture a thumbnail for the project
@@ -1166,20 +1162,6 @@ bool AEditModelPlayerController::LoadModelFilePath(const FString &filename, bool
 		TimeOfLastAutoSave = FDateTime::Now();
 		bWantAutoSave = false;
 		bCurProjectAutoSaves = bEnableAutoSave;
-
-		if (bAddToRecents)
-		{
-			// If we're loading a project from an unrestricted location, then potentially show a permissions warning if the user won't be able to save it in-place.
-			FString restrictedSavePath = FModumateUserSettings::GetRestrictedSavePath();
-			if (filename != restrictedSavePath)
-			{
-				FText noMultiSaveAlertText = LOCTEXT("PermissionAlertSaveAsOnLoad", "Your plan only allows you to save one project at a time; saving this project will overwrite your only project.\nUpgrade your plan to save as many projects as you'd like.");
-				if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSave, noMultiSaveAlertText))
-				{
-					newFilePath = restrictedSavePath;
-				}
-			}
-		}
 	}
 
 	if (bLoadSuccess && bSetAsCurrentProject)
@@ -1229,22 +1211,6 @@ void AEditModelPlayerController::NewModel(bool bShouldCheckForSave)
 	if (bShouldCheckForSave)
 	{
 		if (!CheckSaveModel())
-		{
-			return;
-		}
-
-		// If the user doesn't have permission to save multiple projects, then we want to confirm that making a new model
-		FText saveAsAlert = LOCTEXT("PermissionAlertSaveAsOnNew", "Your plan only allows you to save one project at a time.\nMaking a new document will overwrite your existing project, would you like to proceed?\nUpgrade your plan to make as many projects as you'd like.");
-		FText confirmText = LOCTEXT("PermissionConfirmSaveAsOnNew", "Make New");
-		auto weakThis = MakeWeakObjectPtr<AEditModelPlayerController>(this);
-		auto deferredNewModel = [weakThis]() {
-			if (weakThis.IsValid())
-			{
-				weakThis->NewModel(false);
-			}
-		};
-
-		if (!CheckUserPlanAndPermission(EModumatePermission::ProjectSave, saveAsAlert, confirmText, deferredNewModel))
 		{
 			return;
 		}
@@ -1371,62 +1337,6 @@ bool AEditModelPlayerController::GetScreenshotFileNameWithDialog(FString& Filepa
 	EMPlayerState->ShowingFileDialog = false;
 
 	return bChoseFile;
-}
-
-bool AEditModelPlayerController::CheckUserPlanAndPermission(EModumatePermission Permission, const FText& NoPermissionText, const FText& ConfirmText, const TFunction<void()>& ConfirmCallback)
-{
-	// TODO: Check if user is still login, refresh and request permission status
-	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
-
-#if WITH_EDITOR
-	// Bypass permission checking in the editor, only if we haven't logged in.
-	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
-	if (cloudConnection.IsValid() && !cloudConnection->IsLoggedIn())
-	{
-		return true;
-	}
-#endif
-
-	auto accountManager = gameInstance ? gameInstance->GetAccountManager() : nullptr;
-	if (accountManager.IsValid() && accountManager->HasPermission(Permission))
-	{
-		return true;
-	}
-
-	if (EditModelUserWidget && !NoPermissionText.IsEmpty())
-	{
-		// Header text
-		FText headerText = LOCTEXT("AlertHeader", "ALERT");
-
-		// Create upgrade callback
-		auto weakThis = MakeWeakObjectPtr<AEditModelPlayerController>(this);
-		auto deferredUpgradePlan = [weakThis]() {
-			if (weakThis.IsValid())
-			{
-				weakThis->LaunchCloudWorkspacePlanURL();
-			}
-		};
-
-		// Create buttons
-		TArray<FModalButtonParam> buttonParams;
-
-		FModalButtonParam upgradeButton(EModalButtonStyle::Green, LOCTEXT("AlertUpgradePlan", "Upgrade your plan"), deferredUpgradePlan);
-		buttonParams.Add(upgradeButton);
-
-		if (!ConfirmText.IsEmpty() && ConfirmCallback)
-		{
-			FModalButtonParam confirmButton(EModalButtonStyle::Default, ConfirmText, ConfirmCallback);
-			buttonParams.Add(confirmButton);
-		}
-
-		FModalButtonParam dismissButton(EModalButtonStyle::Default, LOCTEXT("DismissAlert", "Dismiss"), nullptr);
-		buttonParams.Add(dismissButton);
-
-		// Create modal dialog
-		EditModelUserWidget->ModalDialogWidgetBP->CreateModalDialog(headerText, NoPermissionText, buttonParams);
-	}
-
-	return false;
 }
 
 void AEditModelPlayerController::LaunchCloudWorkspacePlanURL()
@@ -3942,21 +3852,31 @@ void AEditModelPlayerController::OnToggledProjectSystemMenu(ESlateVisibility New
 	// When showing the project system menu in multiplayer, use the upload time & hash from the server for the Save button.
 	auto* world = GetWorld();
 	auto* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
-	if (IsNetMode(NM_Client) && gameState && gameState->Document &&
-		EditModelUserWidget && EditModelUserWidget->ProjectSystemMenu &&
+	if (EditModelUserWidget && EditModelUserWidget->ProjectSystemMenu &&
 		EditModelUserWidget->ProjectSystemMenu->IsVisible() &&
 		EditModelUserWidget->ProjectSystemMenu->ButtonSaveProject)
 	{
-		double uploadAge = (FDateTime::UtcNow() - gameState->LastUploadTime).GetTotalSeconds();
-		FNumberFormattingOptions timeFormatOpts;
-		timeFormatOpts.MaximumFractionalDigits = 0;
+		if (IsNetMode(NM_Client) && gameState && gameState->Document)
+		{
+			double uploadAge = (FDateTime::UtcNow() - gameState->LastUploadTime).GetTotalSeconds();
+			FNumberFormattingOptions timeFormatOpts;
+			timeFormatOpts.MaximumFractionalDigits = 0;
 
-		FText saveFormatText = (gameState->Document->GetLatestVerifiedDocHash() == gameState->LastUploadedDocHash) ?
-			LOCTEXT("OnlineSavedFormat", "Up to date.\nAuto-saved by the server {0} seconds ago.") :
-			LOCTEXT("OnlineUnsavedFormat", "Auto-saved by the server {0} seconds ago.");
-		FText saveText = FText::Format(saveFormatText, FText::AsNumber(uploadAge, &timeFormatOpts));
+			FText saveFormatText = (gameState->Document->GetLatestVerifiedDocHash() == gameState->LastUploadedDocHash) ?
+				LOCTEXT("OnlineSavedFormat", "Up to date.\nAuto-saved by the server {0} seconds ago.") :
+				LOCTEXT("OnlineUnsavedFormat", "Auto-saved by the server {0} seconds ago.");
+			FText saveText = FText::Format(saveFormatText, FText::AsNumber(uploadAge, &timeFormatOpts));
 
-		EditModelUserWidget->ProjectSystemMenu->ButtonSaveProject->OverrideTooltipText = saveText;
+			EditModelUserWidget->ProjectSystemMenu->ButtonSaveProject->OverrideTooltipText = saveText;
+		}
+#if UE_BUILD_SHIPPING
+		else
+		{
+			{
+				EditModelUserWidget->ProjectSystemMenu->ButtonSaveProject->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
+#endif
 	}
 }
 

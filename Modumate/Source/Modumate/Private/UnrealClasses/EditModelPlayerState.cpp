@@ -712,11 +712,6 @@ void AEditModelPlayerState::OnNewModel()
 	ObjectErrorMap.Reset();
 	LastFilePath.Empty();
 
-	if (!EMPlayerController->CheckUserPlanAndPermission(EModumatePermission::ProjectSave))
-	{
-		LastFilePath = FModumateUserSettings::GetRestrictedSavePath();
-	}
-
 	PostViewChanged();
 
 	auto gameInstance = Cast<UModumateGameInstance>(GetGameInstance());

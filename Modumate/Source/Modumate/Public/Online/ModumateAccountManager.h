@@ -100,9 +100,6 @@ struct MODUMATE_API FModumateUserStatus
 	bool Active = false;
 
 	UPROPERTY()
-	TArray<FModumateUserNotification> Notifications;
-
-	UPROPERTY()
 	TArray<FString> Permissions;
 
 	UPROPERTY()
@@ -125,9 +122,6 @@ struct MODUMATE_API FModumateUserVerifyParams
 
 	UPROPERTY()
 	FModumateUserInfo User;
-
-	UPROPERTY()
-	FModumateUserStatus Status;
 };
 
 USTRUCT()
@@ -190,8 +184,6 @@ public:
 	FModumateAccountManager(TSharedPtr<FModumateCloudConnection>& InConnection, UModumateGameInstance * InGameInstance);
 	~FModumateAccountManager();
 
-	using FPermissionSet = TSet<EModumatePermission>;
-
 	FString GetFirstname() const { return CachedUserInfo.Firstname; }
 	FString GetLastname() const { return CachedUserInfo.Lastname; }
 	FString GetEmail() const { return CachedUserInfo.Email; }
@@ -203,7 +195,6 @@ public:
 	void ProcessUserStatus(const FModumateUserStatus& UserStatus, bool bQueryUpdateInstallers);
 
 	void RequestStatus();
-	bool HasPermission(EModumatePermission requestedPermission) const;
 
 	bool IsFirstLogin() const { return bIsFirstLogin; }
 	void SetIsFirstLogin(bool IsFirst) { bIsFirstLogin = IsFirst; }
@@ -237,6 +228,4 @@ private:
 
 	bool bIsFirstLogin = false;
 	bool bHasMultiplayerFeature = false; // Eventually this will not be needed as customers roll into full multiplayer
-
-	FPermissionSet CurrentPermissions;
 };

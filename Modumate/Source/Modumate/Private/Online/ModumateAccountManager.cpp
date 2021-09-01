@@ -61,11 +61,6 @@ bool FModumateAccountManager::ShouldRecordTelemetry() const
 	return CloudConnection && CloudConnection->IsLoggedIn() && CachedUserInfo.Analytics;
 }
 
-bool FModumateAccountManager::HasPermission(EModumatePermission requestedPermission) const
-{
-	return CurrentPermissions.Contains(requestedPermission);
-}
-
 bool FModumateAccountManager::RequestServiceRemaining(const FString& ServiceName, const TFunction<void(FString, bool, bool, int32)>& Callback)
 {
 	if (!CloudConnection->IsLoggedIn() || !Callback)
@@ -170,49 +165,6 @@ void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserS
 
 	static const FString permissionSeparator(TEXT("."));
 	static const FString permissionWildcard(TEXT("*"));
-
-	// TODO: process announcements:
-	CurrentPermissions.Empty();
-
-	auto permissionEnum = StaticEnum<EModumatePermission>();
-	int32 numPermissions = permissionEnum->NumEnums();
-	if (permissionEnum->ContainsExistingMax())
-	{
-		numPermissions--;
-	}
-
-	// Add specific enum permissions to the local account based on incoming server-formatted permission strings,
-	// which are lowercase and can have wildcards after the category.
-	FString permissionCategory, permissionSpecific;
-	for (const FString& permissionServerString: CachedUserStatus.Permissions)
-	{
-		if (permissionServerString.Split(permissionSeparator, &permissionCategory, &permissionSpecific) &&
-			(permissionCategory.Len() > 0) && (permissionSpecific.Len() > 0))
-		{
-			permissionCategory[0] = FChar::ToUpper(permissionCategory[0]);
-			permissionSpecific[0] = FChar::ToUpper(permissionSpecific[0]);
-
-			if (permissionSpecific == permissionWildcard)
-			{
-				for (int32 permissionIdx = 0; permissionIdx < numPermissions; ++permissionIdx)
-				{
-					if (permissionEnum->GetNameStringByIndex(permissionIdx).StartsWith(permissionCategory))
-					{
-						CurrentPermissions.Add(static_cast<EModumatePermission>(permissionEnum->GetValueByIndex(permissionIdx)));
-					}
-				}
-			}
-			else
-			{
-				FString permissionEnumString = permissionCategory + permissionSpecific;
-				int64 searchResult = permissionEnum->GetValueByNameString(permissionEnumString, EGetByNameFlags::CaseSensitive);
-				if (searchResult != INDEX_NONE)
-				{
-					CurrentPermissions.Add(static_cast<EModumatePermission>(searchResult));
-				}
-			}
-		}
-	}
 
 	FString version = CachedUserStatus.latest_modumate_version;
 	if (!version.IsEmpty())

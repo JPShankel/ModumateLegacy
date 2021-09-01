@@ -525,11 +525,6 @@ public:
 	bool OnCreateDwg();
 	bool OnCreateQuantitiesCsv(const TFunction<void(FString, bool)>& UsageNotificationCallback = nullptr);
 
-	// Check user plan & permission, and if user doesn't have sufficient status then show a modal dialog and return false.
-	// The modal dialog has an optional confirm button and confirmation callback.
-	bool CheckUserPlanAndPermission(EModumatePermission Permission, const FText& NoPermissionText = FText::GetEmpty(),
-		const FText& ConfirmText = FText::GetEmpty(), const TFunction<void()>& ConfirmCallback = nullptr);
-
 	void LaunchCloudWorkspacePlanURL();
 
 	UFUNCTION(BlueprintCallable)
