@@ -3,15 +3,17 @@
 #include "UI/ModumateSettingsMenu.h"
 
 #include "Components/ComboBoxString.h"
-#include "UI/Custom/ModumateComboBoxString.h"
 #include "DocumentManagement/DocumentSettings.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/EnumHelpers.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Online/ModumateVoice.h"
 #include "UI/Custom/ModumateDropDownUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/Custom/ModumateComboBoxString.h"
+#include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 
@@ -77,6 +79,9 @@ bool UModumateSettingsMenu::Initialize()
 			VoiceClientConnectedHandler();
 		}
 	}
+
+	VersionText->ChangeText(FText::FromString(UModumateFunctionLibrary::GetProjectVersion()));
+
 	return true;
 }
 
