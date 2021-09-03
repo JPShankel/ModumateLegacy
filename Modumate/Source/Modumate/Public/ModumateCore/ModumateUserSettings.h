@@ -21,6 +21,24 @@ struct MODUMATE_API FRecentProject
 };
 
 USTRUCT(BlueprintType)
+struct MODUMATE_API FModumateGraphicsSettings
+{
+	GENERATED_USTRUCT_BODY();
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	bool bLit = true;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	int32 Shadows = 3;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	int32 AntiAliasing = 3;
+
+	// Unreal graphics settings: 0:low, 1:medium, 2:high, 3:epic, 4:cinematic
+	static const int32 UnrealGraphicsSettingsMaxValue = 4;
+};
+
+USTRUCT(BlueprintType)
 struct MODUMATE_API FModumateUserSettings
 {
 	GENERATED_BODY();
@@ -44,6 +62,9 @@ struct MODUMATE_API FModumateUserSettings
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	int32 SaveFileUndoHistoryLength = 256;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	FModumateGraphicsSettings GraphicsSettings;
 
 	UPROPERTY()
 	FString SavedUserName;

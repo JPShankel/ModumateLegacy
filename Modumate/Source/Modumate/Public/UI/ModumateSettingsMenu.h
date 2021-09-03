@@ -44,6 +44,12 @@ public:
 	TSubclassOf<class UModumateComboBoxStringItem> ItemWidgetOverrideClass;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateSlider* SliderGraphicShadows = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateSlider* SliderGraphicAntiAliasing = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* CloseButton;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -68,6 +74,12 @@ protected:
 	UFUNCTION()
 	void OnCloseButtonClicked();
 
+	UFUNCTION()
+	void OnMouseCaptureEndSliderGraphicShadows();
+
+	UFUNCTION()
+	void OnMouseCaptureEndSliderGraphicAntiAliasing();
+
 	UPROPERTY()
 	EDimensionPreference CurDimensionPref;
 
@@ -80,6 +92,7 @@ protected:
 
 	void ApplyCurrentSettings();
 	void PopulateDistIncrement();
+	void UpdateAndSaveGraphicsSettings();
 
 	TMap<FString, EDimensionPreference> DimPrefsByDisplayString;
 	TMap<FString, double> DistIncrementsByDisplayString;

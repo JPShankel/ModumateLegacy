@@ -16,7 +16,8 @@
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
-
+#include "UI/Custom/ModumateSlider.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 bool UModumateSettingsMenu::Initialize()
 {
@@ -25,7 +26,8 @@ bool UModumateSettingsMenu::Initialize()
 		return false;
 	}
 
-	if (!(DimensionPrefDropdown && DistIncrementDropdown && CloseButton && MicSourceDropdown && SpeakerSourceDropdown))
+	if (!(DimensionPrefDropdown && DistIncrementDropdown && CloseButton && MicSourceDropdown && SpeakerSourceDropdown && 
+		SliderGraphicShadows && SliderGraphicAntiAliasing))
 	{
 		return false;
 	}
@@ -35,6 +37,8 @@ bool UModumateSettingsMenu::Initialize()
 	CloseButton->ModumateButton->OnClicked.AddDynamic(this, &UModumateSettingsMenu::OnCloseButtonClicked);
 	MicSourceDropdown->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UModumateSettingsMenu::OnMicDeviceChanged);
 	SpeakerSourceDropdown->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UModumateSettingsMenu::OnSpeakerDeviceChanged);
+	SliderGraphicShadows->OnMouseCaptureEnd.AddDynamic(this, &UModumateSettingsMenu::OnMouseCaptureEndSliderGraphicShadows);
+	SliderGraphicAntiAliasing->OnMouseCaptureEnd.AddDynamic(this, &UModumateSettingsMenu::OnMouseCaptureEndSliderGraphicAntiAliasing);
 
 	UModumateComboBoxString* cbox_mic = Cast<UModumateComboBoxString>(MicSourceDropdown->ComboBoxStringJustification);
 	UModumateComboBoxString* cbox_spk = Cast<UModumateComboBoxString>(SpeakerSourceDropdown->ComboBoxStringJustification);
@@ -68,7 +72,7 @@ bool UModumateSettingsMenu::Initialize()
 	UpdateFromCurrentSettings();
 
 	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
-	if (ensure(controller))
+	if (!IsDesignTime() && ensure(controller))
 	{
 		if (!controller->VoiceClient)
 		{
@@ -107,6 +111,15 @@ void UModumateSettingsMenu::UpdateFromCurrentSettings()
 
 	CurDistIncrement = currentSettings.MinimumDistanceIncrement;
 	PopulateDistIncrement();
+
+	// Refresh current graphics settings values
+	auto gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (gameInstance)
+	{
+		float maxValue = gameInstance->UserSettings.GraphicsSettings.UnrealGraphicsSettingsMaxValue;
+		SliderGraphicShadows->SetValue(float(gameInstance->UserSettings.GraphicsSettings.Shadows) / maxValue);
+		SliderGraphicAntiAliasing->SetValue(float(gameInstance->UserSettings.GraphicsSettings.AntiAliasing) / maxValue);
+	}
 }
 
 bool UModumateSettingsMenu::GetDimensionTypesFromPref(EDimensionPreference DimensionPref, EDimensionUnits& OutDimensionType, EUnit& OutDimensionUnit)
@@ -234,6 +247,16 @@ void UModumateSettingsMenu::OnCloseButtonClicked()
 	{
 		controller->EditModelUserWidget->ToggleSettingsWindow(false);
 	}
+}
+
+void UModumateSettingsMenu::OnMouseCaptureEndSliderGraphicShadows()
+{
+	UpdateAndSaveGraphicsSettings();
+}
+
+void UModumateSettingsMenu::OnMouseCaptureEndSliderGraphicAntiAliasing()
+{
+	UpdateAndSaveGraphicsSettings();
 }
 
 void UModumateSettingsMenu::AudioDevicesChangedHandler()
@@ -376,6 +399,20 @@ void UModumateSettingsMenu::PopulateDistIncrement()
 			DistIncrementDropdown->ComboBoxStringJustification->SetSelectedIndex(multiplierIdx);
 		}
 	}
+}
+
+void UModumateSettingsMenu::UpdateAndSaveGraphicsSettings()
+{
+	auto gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (!gameInstance)
+	{
+		return;
+	}
+	float maxValue = gameInstance->UserSettings.GraphicsSettings.UnrealGraphicsSettingsMaxValue;
+	gameInstance->UserSettings.GraphicsSettings.Shadows = FMath::RoundToInt(SliderGraphicShadows->GetValue() * maxValue);
+	gameInstance->UserSettings.GraphicsSettings.AntiAliasing = FMath::RoundToInt(SliderGraphicAntiAliasing->GetValue() * maxValue);
+	gameInstance->UserSettings.SaveLocally();
+	gameInstance->ApplyGraphicsFromModumateUserSettings();
 }
 
 bool UModumateSettingsMenu::GetAudioInputs(TMap<FString, FString> &OutInputs)

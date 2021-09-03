@@ -156,6 +156,8 @@ public:
 	void SetDownloadedDocument(const FModumateDocumentHeader& InDownloadedDocHeader, const FMOIDocumentRecord& InDownloadedDocRecord);
 	void ClearDownloadedDocument();
 
+	void ApplyGraphicsFromModumateUserSettings();
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FModumateUserSettings UserSettings;
 

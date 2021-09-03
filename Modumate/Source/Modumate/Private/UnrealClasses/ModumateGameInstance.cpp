@@ -35,6 +35,7 @@
 #include "UnrealClasses/TooltipManager.h"
 #include "Online/ModumateCloudConnection.h"
 #include "Quantities/QuantitiesManager.h"
+#include "GameFramework/GameUserSettings.h"
 
 using namespace ModumateCommands;
 using namespace ModumateParameters;
@@ -117,6 +118,8 @@ void UModumateGameInstance::Init()
 		engine->TravelFailureEvent.AddUObject(this, &UModumateGameInstance::OnTravelFailure);
 		engine->NetworkFailureEvent.AddUObject(this, &UModumateGameInstance::OnNetworkFailure);
 	}
+
+	ApplyGraphicsFromModumateUserSettings();
 }
 
 TSharedPtr<FModumateCloudConnection> UModumateGameInstance::GetCloudConnection() const
@@ -1085,6 +1088,19 @@ void UModumateGameInstance::BringViewportWindowToFront()
 	{
 		UModumateFunctionLibrary::ModifyViewportWindow(sceneViewport, 0, 0, true);
 	}
+}
+
+void UModumateGameInstance::ApplyGraphicsFromModumateUserSettings()
+{
+	UGameUserSettings* curGameUserSettings = UGameUserSettings::GetGameUserSettings();
+	if (!curGameUserSettings)
+	{
+		return;
+	}
+
+	curGameUserSettings->SetShadowQuality(UserSettings.GraphicsSettings.Shadows);
+	curGameUserSettings->SetAntiAliasingQuality(UserSettings.GraphicsSettings.AntiAliasing);
+	curGameUserSettings->ApplySettings(true);
 }
 
 #undef LOCTEXT_NAMESPACE
