@@ -301,7 +301,7 @@ public:
 	FVector InterpReplicatedCursorLocation;
 
 protected:
-	void UpdateOtherClientCamera();
+	void UpdateOtherClientCameraAndCursor();
 
 	TArray<FStructurePoint> TempObjectStructurePoints, CurSelectionStructurePoints;
 	TArray<FStructureLine> TempObjectStructureLines, CurSelectionStructureLines;

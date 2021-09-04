@@ -114,7 +114,7 @@ void AEditModelPlayerState::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	// Interpolate the movement of other players' cameras (which can happen without fully initializing with PlayerController)
-	UpdateOtherClientCamera();
+	UpdateOtherClientCameraAndCursor();
 
 	// Postpone any meaningful work until we have a valid PlayerController
 	if (!bBeganWithController || !ensure(EMPlayerController))
@@ -1415,17 +1415,7 @@ void AEditModelPlayerState::OnRep_CamTransform()
 
 	if (world && playerPawn && (localPlayer == nullptr) && IsNetMode(NM_Client))
 	{
-		// If the camera transform buffer is <= 1, then immediately update the other client's player pawn camera mesh;
-		// this will appear jittery and low-fps without having much higher replication speed.
-		if (CamReplicationTransformBuffer.TransformBufferSize <= 1)
-		{
-			playerPawn->SetActorTransform(ReplicatedCamTransform);
-		}
-		// Otherwise, buffer the camera transform so that a smooth value can be calculated upon Tick
-		else
-		{
-			CamReplicationTransformBuffer.AddToTransformBuffer(world->GetTimeSeconds(), ReplicatedCamTransform);
-		}
+		CamReplicationTransformBuffer.AddToTransformBuffer(world->GetTimeSeconds(), ReplicatedCamTransform);
 	}
 }
 
@@ -1437,14 +1427,7 @@ void AEditModelPlayerState::OnRep_CursorLocation()
 
 	if (world && playerPawn && (localPlayer == nullptr) && IsNetMode(NM_Client))
 	{
-		if (CursorReplicationTransformBuffer.TransformBufferSize <= 1)
-		{
-			InterpReplicatedCursorLocation = ReplicatedCursorLocation;
-		}
-		else
-		{
-			CursorReplicationTransformBuffer.AddToTransformBuffer(world->GetTimeSeconds(), FTransform(ReplicatedCursorLocation));
-		}
+		CursorReplicationTransformBuffer.AddToTransformBuffer(world->GetTimeSeconds(), FTransform(ReplicatedCursorLocation));
 	}
 }
 
@@ -1457,7 +1440,7 @@ void AEditModelPlayerState::OnRep_UserInfo()
 }
 
 
-void AEditModelPlayerState::UpdateOtherClientCamera()
+void AEditModelPlayerState::UpdateOtherClientCameraAndCursor()
 {
 	UWorld* world = GetWorld();
 	AEditModelPlayerPawn* playerPawn = GetPawn<AEditModelPlayerPawn>();
@@ -1469,15 +1452,27 @@ void AEditModelPlayerState::UpdateOtherClientCamera()
 		return;
 	}
 
+	// Buffer the camera transform so that a smooth value can be calculated upon update from tick
 	FTransform blendedCamTransform;
 	if (CamReplicationTransformBuffer.GetBlendedTransform(world->GetTimeSeconds(), blendedCamTransform))
 	{
 		playerPawn->SetActorTransform(blendedCamTransform);
 	}
+	else 
+	{
+		// If GetBlendedTransform failed (ex: buffer is <= 1), then immediately update the other client's player pawn camera mesh;	
+		// this will appear jittery and low-fps without having much higher replication speed.
+		playerPawn->SetActorTransform(ReplicatedCamTransform);
+	}
 
+	// Cursor location blend. Same logic as blending camera transform
 	FTransform blendedCursorTransform;
 	if (CursorReplicationTransformBuffer.GetBlendedTransform(world->GetTimeSeconds(), blendedCursorTransform))
 	{
 		InterpReplicatedCursorLocation = blendedCursorTransform.GetLocation();
+	}
+	else
+	{
+		InterpReplicatedCursorLocation = ReplicatedCursorLocation;
 	}
 }
