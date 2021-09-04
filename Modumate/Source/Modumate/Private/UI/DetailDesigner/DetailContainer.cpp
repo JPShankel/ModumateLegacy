@@ -11,7 +11,7 @@
 #include "Objects/EdgeDetailObj.h"
 #include "Objects/MetaEdge.h"
 #include "UI/Custom/ModumateButton.h"
-#include "UI/Custom/ModumateCheckbox.h"
+#include "UI/Custom/ModumateCheckBox.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
