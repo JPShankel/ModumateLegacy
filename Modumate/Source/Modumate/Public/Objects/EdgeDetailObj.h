@@ -19,6 +19,25 @@ struct MODUMATE_API FMOIEdgeDetailData
 	int32 OrientationIndex = INDEX_NONE;
 };
 
+USTRUCT()
+struct MODUMATE_API FMOITypicalEdgeDetailDelta : public FDocumentDelta
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FGuid OldTypicalEdge;
+
+	UPROPERTY()
+	FGuid NewTypicalEdge;
+
+	UPROPERTY()
+	uint32 ConditionValue;
+
+	virtual bool ApplyTo(UModumateDocument* Doc, UWorld* World) const override;
+	virtual TSharedPtr<FDocumentDelta> MakeInverse() const override;
+	virtual FStructDataWrapper SerializeStruct() override;
+};
+
 UCLASS()
 class MODUMATE_API AMOIEdgeDetail : public AModumateObjectInstance
 {

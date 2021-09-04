@@ -277,6 +277,9 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 	UPROPERTY()
 	FDocumentSettings Settings;
 
+	UPROPERTY()
+	TMap<uint32, FGuid> TypicalEdgeDetails;
+
 	void FromVersion3(const FMOIDocumentRecordV3 &v3);
 };
 
@@ -323,7 +326,8 @@ using FModumateDocumentHeader = FModumateDocumentHeaderV2;
 // Version 14: Linear extrusion width/depth values were swapped, and effectively only canceled out for Trim, so Mullion/Beam/Column dimensions need to be swapped
 // Version 15: Support for multiple custom data entries in presets
 // Version 16: Miter priority in layers
-static constexpr int32 DocVersion = 16;
+// Version 17: Typical edge details
+static constexpr int32 DocVersion = 17;
 
 struct MODUMATE_API FModumateSerializationStatics
 {

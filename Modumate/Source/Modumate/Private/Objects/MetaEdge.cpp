@@ -73,6 +73,8 @@ bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 
 		CacheEdgeDetail();
 
+		uint32 cachedConditions = CachedEdgeDetailConditionHash;
+
 		// If this edge has a detail, we may need to update it if conditions have changed.
 		if (CachedEdgeDetailMOI && OutSideEffectDeltas)
 		{
@@ -100,6 +102,26 @@ bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 				deleteObjectDelta->AddCreateDestroyState(CachedEdgeDetailMOI->GetStateData(), EMOIDeltaType::Destroy);
 				OutSideEffectDeltas->Add(deleteObjectDelta);
 				ResetEdgeDetail();
+			}
+
+		}
+
+		// If we don't have an edge detail, look up the 
+		if (!CachedEdgeDetailMOI)
+		{
+			auto* edgeDetailPreset = doc->TypicalEdgeDetails.Find(cachedConditions);
+			if (edgeDetailPreset != nullptr)
+			{
+				FMOIStateData newDetailState;
+				newDetailState = FMOIStateData(doc->GetNextAvailableID(), EObjectType::OTEdgeDetail, ID);
+
+				newDetailState.AssemblyGUID = *edgeDetailPreset;
+				newDetailState.CustomData.SaveStructData(FMOIEdgeDetailData());
+				auto updateDetailMOIDelta = MakeShared<FMOIDelta>();
+
+				updateDetailMOIDelta->AddCreateDestroyState(newDetailState, EMOIDeltaType::Create);
+				OutSideEffectDeltas->Add(updateDetailMOIDelta);
+				MarkDirty(EObjectDirtyFlags::Visuals | EObjectDirtyFlags::Mitering);
 			}
 		}
 

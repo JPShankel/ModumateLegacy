@@ -2871,7 +2871,6 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 		}
 	}
 
-
 	VolumeGraph.Save(&OutDocumentRecord.VolumeGraph);
 
 	// Save all of the surface graphs as records
@@ -2883,6 +2882,7 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 	}
 
 	OutDocumentRecord.CameraViews = SavedCameraViews;
+	OutDocumentRecord.TypicalEdgeDetails = TypicalEdgeDetails;
 
 	// Potentially limit the number of undo records to save, based on user preferences
 	auto* gameInstance = World->GetGameInstance<UModumateGameInstance>();
@@ -2902,7 +2902,6 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 
 	return true;
 }
-
 
 bool UModumateDocument::SaveRecords(const FString& FilePath, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord)
 {
@@ -3045,6 +3044,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	}
 
 	SavedCameraViews = InDocumentRecord.CameraViews;
+	TypicalEdgeDetails = InDocumentRecord.TypicalEdgeDetails;
 
 	// Create the MOIs whose state data was stored
 	NextID = MPObjIDFromLocalObjID(1, CachedLocalUserIdx);

@@ -25,6 +25,8 @@ public:
 	virtual const FMiterData &GetMiterData() const;
 	// End IMiterNode interface
 
+	uint32 GetDetailConditionHash() const { return CachedEdgeDetailConditionHash; }
+
 	UPROPERTY()
 	class AMOIEdgeDetail* CachedEdgeDetailMOI;
 

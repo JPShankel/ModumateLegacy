@@ -28,6 +28,9 @@ public:
 	class UModumateButtonUserWidget* ButtonCancel;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateCheckBox* IsTypicalCheckbox;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UDetailDesignerPresetName* PresetName;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -56,6 +59,7 @@ public:
 
 protected:
 	FGuid DetailPresetID;
+	uint32 DetailConditionHash;
 	TSet<int32> EdgeIDs;
 	int32 OrientationIdx = INDEX_NONE;
 
@@ -76,6 +80,9 @@ protected:
 
 	UFUNCTION()
 	void OnPressedCancel();
+
+	UFUNCTION()
+	void OnPressedIsTypical(bool bIsChecked);
 
 	UFUNCTION()
 	void OnPresetNameEdited(const FText& Text, ETextCommit::Type CommitMethod);

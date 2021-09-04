@@ -11,6 +11,7 @@
 #include "Objects/EdgeDetailObj.h"
 #include "Objects/MetaEdge.h"
 #include "UI/Custom/ModumateButton.h"
+#include "UI/Custom/ModumateCheckbox.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
@@ -22,6 +23,7 @@
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/SelectionTray/SelectionTrayWidget.h"
+#include "ModumateCore/ModumateObjectDeltaStatics.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDetailDesigner"
@@ -40,6 +42,7 @@ bool UDetailDesignerContainer::Initialize()
 	}
 
 	ButtonCancel->ModumateButton->OnClicked.AddDynamic(this, &UDetailDesignerContainer::OnPressedCancel);
+	IsTypicalCheckbox->OnCheckStateChanged.AddDynamic(this, &UDetailDesignerContainer::OnPressedIsTypical);
 	PresetName->EditText->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UDetailDesignerContainer::OnPresetNameEdited);
 
 	return true;
@@ -88,6 +91,10 @@ bool UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 	}
 
 	PresetName->EditText->ModumateEditableTextBox->SetText(detailPreset->DisplayName);
+
+	DetailConditionHash = detailData.CalculateConditionHash();
+	FGuid* typicalEdgeGuid = document->TypicalEdgeDetails.Find(DetailConditionHash);
+	IsTypicalCheckbox->SetIsChecked(typicalEdgeGuid && *typicalEdgeGuid == DetailPresetID);
 
 	// Find the miter participants for the edge(s) that we're editing.
 	// TODO: determine if we can display participant data if our selection all has the same detail orientation;
@@ -288,6 +295,48 @@ void UDetailDesignerContainer::OnPressedCancel()
 	{
 		controller->EditModelUserWidget->SelectionTrayWidget->OpenToolTrayForSelection();
 	}
+}
+
+void UDetailDesignerContainer::OnPressedIsTypical(bool bIsChecked)
+{
+	auto controller = GetOwningPlayer<AEditModelPlayerController>();
+	auto document = controller ? controller->GetDocument() : nullptr;
+
+	TArray<FDeltaPtr> deltas;
+
+	auto makeTypicalDelta = MakeShared<FMOITypicalEdgeDetailDelta>();
+	makeTypicalDelta->ConditionValue = DetailConditionHash;
+	const FGuid* oldEdge = document->TypicalEdgeDetails.Find(DetailConditionHash);
+	makeTypicalDelta->OldTypicalEdge = oldEdge ? *oldEdge : FGuid();
+
+	if (bIsChecked)
+	{
+		auto edgeObjects = document->GetObjectsOfType(EObjectType::OTMetaEdge).FilterByPredicate(
+			[this](const AModumateObjectInstance* MOI) {
+				auto edgeMOI = Cast<AMOIMetaEdge>(MOI);
+				if (edgeMOI->CachedEdgeDetailMOI != nullptr)
+				{
+					return false;
+				}
+				FEdgeDetailData detailData;
+				detailData.FillFromMiterNode(edgeMOI->GetMiterInterface());
+				return DetailConditionHash == detailData.CalculateConditionHash();
+			});
+
+		TArray<uint32> edgeIDs;
+		Algo::Transform(edgeObjects, edgeIDs, [](const AModumateObjectInstance* MOI) {return MOI->ID; });
+
+		makeTypicalDelta->NewTypicalEdge = DetailPresetID;
+		
+		FModumateObjectDeltaStatics::MakeSwapEdgeDetailDeltas(document, edgeIDs, DetailPresetID, deltas);
+	}
+	else
+	{
+		makeTypicalDelta->NewTypicalEdge = FGuid();
+	}
+
+	deltas.Add(makeTypicalDelta);
+	document->ApplyDeltas(deltas, GetWorld());
 }
 
 void UDetailDesignerContainer::OnPresetNameEdited(const FText& Text, ETextCommit::Type CommitMethod)

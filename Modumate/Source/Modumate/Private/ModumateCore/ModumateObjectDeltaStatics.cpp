@@ -8,6 +8,8 @@
 #include "ModumateCore/ModumateObjectStatics.h"
 #include "Objects/CutPlane.h"
 #include "Objects/FFE.h"
+#include "Objects/EdgeDetailObj.h"
+#include "Objects/MetaEdge.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
@@ -539,6 +541,110 @@ bool FModumateObjectDeltaStatics::PasteObjectsWithinSurfaceGraph(const FMOIDocum
 
 	OutDeltas.Add(attachmentDelta);
 
+
+	return true;
+}
+
+// TODO: this code is derived from UInstPropWidgetEdgeDetail::CreateOrSwap, to be consolidated
+bool FModumateObjectDeltaStatics::MakeSwapEdgeDetailDeltas(UModumateDocument *Doc, const TArray<uint32>& EdgeIDs,FGuid NewDetailPresetID, TArray<FDeltaPtr>& OutDeltas)
+{
+	auto document = Doc;
+
+	bool bPopulatedDetailData = false;
+	FEdgeDetailData newDetailData;
+	const FBIMPresetInstance* swapPresetInstance = nullptr;
+	FBIMPresetCollection& presetCollection = document->GetPresetCollection();
+	bool bClearingDetail = !NewDetailPresetID.IsValid();
+
+	if (NewDetailPresetID.IsValid())
+	{
+		swapPresetInstance = presetCollection.PresetFromGUID(NewDetailPresetID);
+
+		// If we passed in a new preset ID, it better already be in the preset collection and have detail data.
+		if (!ensure(swapPresetInstance && swapPresetInstance->TryGetCustomData(newDetailData)))
+		{
+			return false;
+		}
+
+		bPopulatedDetailData = true;
+	}
+
+	// make an edge detail on the selected edges that have no current detail, from the current conditions and naive mitering
+	TMap<int32, int32> validDetailOrientationByEdgeID;
+	TArray<int32> tempDetailOrientations;
+
+	// For each edge that this detail widget is assigning a new detail to, make sure the details all have matching conditions,
+	// and figure out which orientation to apply for each one.
+	if (!bClearingDetail)
+	{
+		for (int32 edgeID : EdgeIDs)
+		{
+			auto edgeMOI = Cast<AMOIMetaEdge>(document->GetObjectById(edgeID));
+			if (!ensure(edgeMOI))
+			{
+				return false;
+			}
+
+			if (bPopulatedDetailData)
+			{
+				FEdgeDetailData curDetailData(edgeMOI->GetMiterInterface());
+				if (!ensure(newDetailData.CompareConditions(curDetailData, tempDetailOrientations) && (tempDetailOrientations.Num() > 0)))
+				{
+					return false;
+				}
+
+				validDetailOrientationByEdgeID.Add(edgeID, tempDetailOrientations[0]);
+			}
+			else
+			{
+				newDetailData.FillFromMiterNode(edgeMOI->GetMiterInterface());
+				validDetailOrientationByEdgeID.Add(edgeID, 0);
+			}
+		}
+	}
+
+	// Now, create MOI delta(s) for creating/updating/deleting the edge detail MOI(s) for the selected edge(s)
+	auto updateDetailMOIDelta = MakeShared<FMOIDelta>();
+	int nextID = document->GetNextAvailableID();
+	for (int32 edgeID : EdgeIDs)
+	{
+		auto edgeMOI = Cast<AMOIMetaEdge>(document->GetObjectById(edgeID));
+
+		// If there already was a preset and the new one is empty, then only delete the edge detail MOI for each selected edge.
+		if (bClearingDetail && ensure(edgeMOI && edgeMOI->CachedEdgeDetailMOI))
+		{
+			updateDetailMOIDelta->AddCreateDestroyState(edgeMOI->CachedEdgeDetailMOI->GetStateData(), EMOIDeltaType::Destroy);
+			continue;
+		}
+
+		// Otherwise, update the state data and detail assembly for the edge.
+		FMOIStateData newDetailState;
+		if (edgeMOI->CachedEdgeDetailMOI)
+		{
+			newDetailState = edgeMOI->CachedEdgeDetailMOI->GetStateData();
+		}
+		else
+		{
+			newDetailState = FMOIStateData(nextID++, EObjectType::OTEdgeDetail, edgeID);
+		}
+
+		newDetailState.AssemblyGUID = NewDetailPresetID;
+		newDetailState.CustomData.SaveStructData(FMOIEdgeDetailData(validDetailOrientationByEdgeID[edgeID]));
+
+		if (edgeMOI->CachedEdgeDetailMOI)
+		{
+			updateDetailMOIDelta->AddMutationState(edgeMOI->CachedEdgeDetailMOI, edgeMOI->CachedEdgeDetailMOI->GetStateData(), newDetailState);
+		}
+		else
+		{
+			updateDetailMOIDelta->AddCreateDestroyState(newDetailState, EMOIDeltaType::Create);
+		}
+	}
+
+	if (updateDetailMOIDelta->IsValid())
+	{
+		OutDeltas.Add(updateDetailMOIDelta);
+	}
 
 	return true;
 }

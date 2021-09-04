@@ -23,4 +23,6 @@ public:
 
 	static bool PasteObjects(const FMOIDocumentRecord* InRecord, const FVector& InOrigin, UModumateDocument* doc, class AEditModelPlayerController* Controller, bool bIsPreview);
 	static bool PasteObjectsWithinSurfaceGraph(const FMOIDocumentRecord* InRecord, const FVector& InOrigin, TArray<FDeltaPtr> &OutDeltas, UModumateDocument* doc, int32 &nextID, class AEditModelPlayerController* Controller, bool bIsPreview);
+
+	static bool MakeSwapEdgeDetailDeltas(UModumateDocument* Doc, const TArray<uint32>& EdgeIDs, FGuid NewDetailPresetID, TArray<FDeltaPtr>& OutDeltas);
 };

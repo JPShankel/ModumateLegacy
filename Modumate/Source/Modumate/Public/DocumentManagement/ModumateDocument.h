@@ -103,6 +103,7 @@ public:
 	const AModumateObjectInstance *GetObjectById(int32 id) const;
 	TSet<int32> HiddenObjectsID;
 	TArray<FModumateCameraView> SavedCameraViews;
+	TMap<uint32, FGuid> TypicalEdgeDetails;
 
 	// TODO: resolve how best to get IDs for created objects into MOI deltas
 	// For now, just ask what the next ID will be
@@ -190,6 +191,7 @@ public:
 	int32 CalculatePolyhedra() { return VolumeGraph.CalculatePolyhedra(); }
 	bool IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &OutObjType) const;
 
+	// TODO: refactor for output parameters: GetObjectsOfType(EObjectType, TArray<const AModumateObjectInstance
 	TArray<const AModumateObjectInstance*> GetObjectsOfType(EObjectType type) const;
 	TArray<AModumateObjectInstance*> GetObjectsOfType(EObjectType type);
 	using FObjectTypeSet = TSet<EObjectType>;

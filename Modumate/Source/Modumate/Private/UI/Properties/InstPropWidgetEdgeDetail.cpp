@@ -59,6 +59,22 @@ void UInstPropWidgetEdgeDetail::DisplayValue()
 
 	FText noDetailText = LOCTEXT("EdgeDetail_None", "None");
 
+	auto controller = GetOwningPlayer<AEditModelPlayerController>();
+	auto document = controller ? controller->GetDocument() : nullptr;
+	if (document)
+	{
+		auto* typicalDetail = document->TypicalEdgeDetails.Find(CurrentConditionValue);
+		if (typicalDetail && *typicalDetail == detailPresetID)
+		{
+			PropertyTitle->ChangeText(FText(LOCTEXT("EdgeDetail_Typical","Detail (Typical)")));
+		}
+		else
+		{
+			PropertyTitle->ChangeText(FText(LOCTEXT("EdgeDetail_Typical", "Detail")));
+		}
+	}
+
+
 	if (bConsistentValue)
 	{
 		if (numDetailPresets == 0)
@@ -69,7 +85,6 @@ void UInstPropWidgetEdgeDetail::DisplayValue()
 		{
 			if (detailPresetID.IsValid())
 			{
-				auto controller = GetOwningPlayer<AEditModelPlayerController>();
 				FBIMPresetInstance* detailPresetInst = controller ? controller->GetDocument()->GetPresetCollection().PresetFromGUID(detailPresetID) : nullptr;
 				if (detailPresetInst)
 				{
@@ -200,6 +215,7 @@ bool UInstPropWidgetEdgeDetail::OnCreateOrSwap(FGuid NewDetailPresetID)
 
 	// Now, create MOI delta(s) for creating/updating/deleting the edge detail MOI(s) for the selected edge(s)
 	auto updateDetailMOIDelta = MakeShared<FMOIDelta>();
+	int nextID = document->GetNextAvailableID();
 	for (int32 edgeID : CurrentEdgeIDs)
 	{
 		auto edgeMOI = Cast<AMOIMetaEdge>(document->GetObjectById(edgeID));
@@ -219,7 +235,7 @@ bool UInstPropWidgetEdgeDetail::OnCreateOrSwap(FGuid NewDetailPresetID)
 		}
 		else
 		{
-			newDetailState = FMOIStateData(document->GetNextAvailableID(), EObjectType::OTEdgeDetail, edgeID);
+			newDetailState = FMOIStateData(nextID++, EObjectType::OTEdgeDetail, edgeID);
 		}
 
 		newDetailState.AssemblyGUID = NewDetailPresetID;
