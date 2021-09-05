@@ -77,12 +77,24 @@ void UModumateChatWidget::NextTextChatHandler(const FString& FromID, const FStri
 	newEntry->ID = FromID;
 	int32 year, month, dayOfWeek, day, hour, minute, second, millisecond;
 	FPlatformTime::SystemTime(year, month, dayOfWeek, day, hour, minute, second, millisecond);
-	FString ampm = "AM";
-	if (hour >= 12)
+	FString ampm(TEXT("AM"));
+	if (hour == 0)
 	{
-		ampm = "PM";
+		ampm = TEXT("AM");
+		hour = 12;
+	}
+	else if (hour == 12)
+	{
+		ampm = TEXT("PM");
+	}
+	if (hour > 12)
+	{
+		ampm = TEXT("PM");
 		hour = hour - 12;
 	}
+
+
+
 	newEntry->Timestamp = FString::Printf(TEXT("%02d:%02d %s"), hour, minute, *ampm);
 	newEntry->Message = Msg;
 	newEntry->UserIconColor = entryPlayerState->GetClientColor();
