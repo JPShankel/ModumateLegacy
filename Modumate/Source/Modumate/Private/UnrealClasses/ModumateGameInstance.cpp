@@ -1103,4 +1103,28 @@ void UModumateGameInstance::ApplyGraphicsFromModumateUserSettings()
 	curGameUserSettings->ApplySettings(true);
 }
 
+void UModumateGameInstance::AutoDetectAndSaveModumateUserSettings()
+{
+	UGameUserSettings* curGameUserSettings = UGameUserSettings::GetGameUserSettings();
+	if (!curGameUserSettings)
+	{
+		return;
+	}
+
+	// Run Unreal's hardware benchmark, this includes all settings outside Modumate's GraphicsSettings,
+	// such as resolution scale, foliage, material quality, etc
+	curGameUserSettings->RunHardwareBenchmark();
+
+	// Get selected benchmark results and save them to Modumate's GraphicsSettings
+	UserSettings.GraphicsSettings.Shadows = curGameUserSettings->GetShadowQuality();
+	UserSettings.GraphicsSettings.AntiAliasing = curGameUserSettings->GetAntiAliasingQuality();
+	UserSettings.SaveLocally();
+
+	// Since all Unreal's settings have been adjusted by benchmark, reset back to last settings
+	curGameUserSettings->ResetToCurrentSettings();
+
+	// Apply only the selected graphics settings
+	ApplyGraphicsFromModumateUserSettings();
+}
+
 #undef LOCTEXT_NAMESPACE

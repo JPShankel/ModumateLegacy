@@ -27,7 +27,7 @@ bool UModumateSettingsMenu::Initialize()
 	}
 
 	if (!(DimensionPrefDropdown && DistIncrementDropdown && CloseButton && MicSourceDropdown && SpeakerSourceDropdown && 
-		SliderGraphicShadows && SliderGraphicAntiAliasing))
+		SliderGraphicShadows && SliderGraphicAntiAliasing && ButtonAutoDetectGraphicsSettings))
 	{
 		return false;
 	}
@@ -37,6 +37,7 @@ bool UModumateSettingsMenu::Initialize()
 	CloseButton->ModumateButton->OnClicked.AddDynamic(this, &UModumateSettingsMenu::OnCloseButtonClicked);
 	MicSourceDropdown->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UModumateSettingsMenu::OnMicDeviceChanged);
 	SpeakerSourceDropdown->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UModumateSettingsMenu::OnSpeakerDeviceChanged);
+	ButtonAutoDetectGraphicsSettings->ModumateButton->OnReleased.AddDynamic(this, &UModumateSettingsMenu::OnButtonAutoDetectSettingsReleased);
 	SliderGraphicShadows->OnMouseCaptureEnd.AddDynamic(this, &UModumateSettingsMenu::OnMouseCaptureEndSliderGraphicShadows);
 	SliderGraphicAntiAliasing->OnMouseCaptureEnd.AddDynamic(this, &UModumateSettingsMenu::OnMouseCaptureEndSliderGraphicAntiAliasing);
 
@@ -257,6 +258,18 @@ void UModumateSettingsMenu::OnMouseCaptureEndSliderGraphicShadows()
 void UModumateSettingsMenu::OnMouseCaptureEndSliderGraphicAntiAliasing()
 {
 	UpdateAndSaveGraphicsSettings();
+}
+
+void UModumateSettingsMenu::OnButtonAutoDetectSettingsReleased()
+{
+	auto gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (!gameInstance)
+	{
+		return;
+	}
+
+	gameInstance->AutoDetectAndSaveModumateUserSettings();
+	UpdateFromCurrentSettings();
 }
 
 void UModumateSettingsMenu::AudioDevicesChangedHandler()

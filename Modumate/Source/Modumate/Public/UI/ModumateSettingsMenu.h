@@ -44,6 +44,9 @@ public:
 	TSubclassOf<class UModumateComboBoxStringItem> ItemWidgetOverrideClass;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonAutoDetectGraphicsSettings = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateSlider* SliderGraphicShadows = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
@@ -79,6 +82,9 @@ protected:
 
 	UFUNCTION()
 	void OnMouseCaptureEndSliderGraphicAntiAliasing();
+
+	UFUNCTION()
+	void OnButtonAutoDetectSettingsReleased();
 
 	UPROPERTY()
 	EDimensionPreference CurDimensionPref;

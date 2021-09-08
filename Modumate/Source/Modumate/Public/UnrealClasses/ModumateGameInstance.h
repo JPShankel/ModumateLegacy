@@ -157,6 +157,7 @@ public:
 	void ClearDownloadedDocument();
 
 	void ApplyGraphicsFromModumateUserSettings();
+	void AutoDetectAndSaveModumateUserSettings();
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FModumateUserSettings UserSettings;
