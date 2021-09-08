@@ -3890,8 +3890,12 @@ void AEditModelPlayerController::ConnectVoiceClient(AModumateVoice* UsersVoiceCl
 
 		auto gameInstance = GetGameInstance<UModumateGameInstance>();
 
-		const FString name = gameInstance->GetAccountManager()->GetUserInfo().ID;
-		const FString channel = gameInstance->DocumentProjectID;
+		FString name = gameInstance->GetAccountManager()->GetUserInfo().ID;
+		FString channel = gameInstance->GetCloudConnection()->GetCloudProjectPageURL() + TEXT("/") + gameInstance->DocumentProjectID;
+
+		channel = channel.Replace(TEXT(":"), TEXT("_"));
+		channel = channel.Replace(TEXT("/"), TEXT("_"));
+		channel = channel.Replace(TEXT("."), TEXT("_"));
 
 		VoiceClient->Connect(name, channel);
 

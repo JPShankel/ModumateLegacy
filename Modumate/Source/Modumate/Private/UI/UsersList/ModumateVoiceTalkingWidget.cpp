@@ -46,23 +46,25 @@ void UModumateVoiceTalkingWidget::NativeConstruct()
 
 void UModumateVoiceTalkingWidget::TalkingChangedHandler(FString SpeakingUser, bool IsSpeaking)
 {
-	SpeakerMap.Add(SpeakingUser, IsSpeaking);
-
-	//If a user has begun speaking, we override the existing user (or nothing) with that user
-	if (IsSpeaking && SetToUser(SpeakingUser))
+	bool newUserSet = false;
+	if (IsSpeaking)
 	{
-		SetVisibility(ESlateVisibility::HitTestInvisible);
+		newUserSet = SetToUser(SpeakingUser);
+		if (newUserSet)
+		{
+			SpeakerMap.Add(SpeakingUser, IsSpeaking);
+			SetVisibility(ESlateVisibility::Visible);
+		}
 	}
-	else
+
+	if(!newUserSet)
 	{
-		//If a user has finished speaking we remove them from the speaker list
-		// if at that point the speakerlist is empty, we hide the element
 		SpeakerMap.Remove(SpeakingUser);
 		if (SpeakerMap.Num() == 0)
 		{
 			SetVisibility(ESlateVisibility::Collapsed);
 		}
-		else if(LatestSpeaker.Equals(SpeakingUser))
+		else if (LatestSpeaker.Equals(SpeakingUser))
 		{
 			//The latest speaker has stopped talking, oh no!
 			// Just choose a new one from the map.
@@ -83,10 +85,16 @@ void UModumateVoiceTalkingWidget::TalkingChangedHandler(FString SpeakingUser, bo
 			// just don't display...
 			if (!found)
 			{
+				SpeakerMap.Empty();
 				SetVisibility(ESlateVisibility::Collapsed);
 			}
 		}
 	}
+}
+
+void UModumateVoiceTalkingWidget::ParticipantLeaveHandler(FString Participant)
+{
+	TalkingChangedHandler(Participant, false);
 }
 
 void UModumateVoiceTalkingWidget::VoiceClientConnectedHandler()
@@ -98,6 +106,7 @@ void UModumateVoiceTalkingWidget::VoiceClientConnectedHandler()
 	}
 
 	controller->VoiceClient->OnTalkingChanged().AddUObject(this, &UModumateVoiceTalkingWidget::TalkingChangedHandler);
+	controller->VoiceClient->OnParticipantLeave().AddUObject(this, &UModumateVoiceTalkingWidget::ParticipantLeaveHandler);
 }
 
 bool UModumateVoiceTalkingWidget::SetToUser(FString SpeakingUser)

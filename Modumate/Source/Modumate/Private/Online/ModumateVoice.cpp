@@ -217,6 +217,8 @@ void AModumateVoice::JoinChannel(const FString& JoinToken)
 	{
 		ChannelSession = &(LoginSession->GetChannelSession(CurrentChannel));
 		ChannelSession->EventChannelStateChanged.AddUObject(this, &AModumateVoice::OnChannelSessionConnectionStateChanged);
+		ChannelSession->EventBeforeParticipantRemoved.AddUObject(this, &AModumateVoice::OnParticipantRemoved);
+		ChannelSession->EventAfterParticipantAdded.AddUObject(this, &AModumateVoice::OnParticipantAdded);
 
 		UE_LOG(ModumateVoice, Log, TEXT("Joining Vivox Channel: %s\n"), *(CurrentChannel.Name()));
 		IChannelSession::FOnBeginConnectCompletedDelegate OnBeginConnectCompleted;
@@ -456,6 +458,16 @@ void AModumateVoice::OnDeviceChanged(const IAudioDevice& Device)
 void AModumateVoice::OnParticipantUpdated(const IParticipant& Participant)
 {
 	TalkingChangedEvent.Broadcast(Participant.Account().Name(), Participant.SpeechDetected());
+}
+
+void AModumateVoice::OnParticipantAdded(const IParticipant& Participant)
+{
+	ParticipantJoinEvent.Broadcast(Participant.Account().Name());
+}
+
+void AModumateVoice::OnParticipantRemoved(const IParticipant& Participant)
+{
+	ParticipantLeaveEvent.Broadcast(Participant.Account().Name());
 }
 
 void AModumateVoice::OnLoginSessionStateChanged(LoginState State)

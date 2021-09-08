@@ -117,6 +117,10 @@ public:
 	DECLARE_EVENT_TwoParams(AModumateVoice, FTalkingEvent, FString, bool)
 	FTalkingEvent& OnTalkingChanged() { return TalkingChangedEvent; }
 
+	DECLARE_EVENT_OneParam(AModumateVoice, FParticipantEvent, FString)
+	FParticipantEvent& OnParticipantJoin() { return ParticipantJoinEvent; }
+	FParticipantEvent& OnParticipantLeave() { return ParticipantLeaveEvent; }
+
 	DECLARE_EVENT(AModumateVoice, FVoiceDeviceEvent)
 	FVoiceDeviceEvent& OnVoiceDevicesChanged() { return VoiceDeviceChangedEvent; }
 
@@ -141,6 +145,8 @@ private:
 	static FString GenerateChannelURI(const FVivoxEndpoint& Endpoint, const FString& Channel);
 
 	FTalkingEvent TalkingChangedEvent;
+	FParticipantEvent ParticipantJoinEvent;
+	FParticipantEvent ParticipantLeaveEvent;
 	FVoiceDeviceEvent VoiceDeviceChangedEvent;
 
 	//There is no available Linux SDK for Vivox, so the types defined in that sdk are isolated
@@ -153,6 +159,8 @@ private:
 	void OnDeviceChanged(const IAudioDevice& Device);
 
 	void OnParticipantUpdated(const IParticipant& Participant);
+	void OnParticipantAdded(const IParticipant& Participant);
+	void OnParticipantRemoved(const IParticipant& Participant);
 
 	void OnLoginSessionStateChanged(LoginState State);
 	void OnChannelSessionConnectionStateChanged(const IChannelConnectionState& State);

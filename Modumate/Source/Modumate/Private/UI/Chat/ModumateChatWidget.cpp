@@ -93,8 +93,6 @@ void UModumateChatWidget::NextTextChatHandler(const FString& FromID, const FStri
 		hour = hour - 12;
 	}
 
-
-
 	newEntry->Timestamp = FString::Printf(TEXT("%02d:%02d %s"), hour, minute, *ampm);
 	newEntry->Message = Msg;
 	newEntry->UserIconColor = entryPlayerState->GetClientColor();

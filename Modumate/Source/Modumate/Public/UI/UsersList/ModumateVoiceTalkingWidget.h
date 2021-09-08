@@ -32,6 +32,7 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 	virtual void TalkingChangedHandler(FString SpeakingUser, bool IsSpeaking);
+	virtual void ParticipantLeaveHandler(FString Participant);
 	virtual void VoiceClientConnectedHandler();
 
 	virtual bool SetToUser(FString SpeakingUser);
