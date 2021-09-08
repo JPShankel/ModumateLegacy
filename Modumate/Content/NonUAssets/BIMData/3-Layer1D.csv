@@ -24,163 +24,163 @@ PRESET,,435A9054-45CE-5F4A-A423-FD4687506B82,,"Assembly_2FlexDims1Fixed_PlanarPa
 Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel-FFFFFF
 0LayerPattern_1D-24-Inch O.C.
 Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-435A9054-45CE-5F4A-A423-FD4687506B82",,Assembly_2FlexDims1Fixed_PlanarPattern,,Steel Hat Channels @ 24in O.C.,,IconLength,64in,,Substrate,11,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+435A9054-45CE-5F4A-A423-FD4687506B82",,Assembly_2FlexDims1Fixed_PlanarPattern,,Steel Hat Channels @ 24in O.C.,,IconLength,64in,,Substrate,31,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,4EE84F65-B47B-3645-B39D-78A35339E050,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel-FFFFFF
 0LayerPattern_1D-16-Inch O.C.
 Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-4EE84F65-B47B-3645-B39D-78A35339E050",,Assembly_2FlexDims1Fixed_PlanarPattern,,Steel Hat Channels @ 16in O.C.,,IconLength,64in,,Substrate,11,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+4EE84F65-B47B-3645-B39D-78A35339E050",,Assembly_2FlexDims1Fixed_PlanarPattern,,Steel Hat Channels @ 16in O.C.,,IconLength,64in,,Substrate,31,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Steel Hat Channel-Width-1.25in-Depth-0.875in-0Profile-Steel Hat Channel-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,2AB97E33-7109-0B4E-913F-5C5E46C0CA5F,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_1FlexDim2Fixed_ModuleLinear_Steel Z Channel-Width-1.5in-Depth-2in-0Profile-Steel Z Channel-Finish1-0RawMaterial-Steel-FFFFFF
 0LayerPattern_1D-24-Inch O.C.
 Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-2AB97E33-7109-0B4E-913F-5C5E46C0CA5F",,Assembly_2FlexDims1Fixed_PlanarPattern,,"2"" Steel Z Channels @ 24in O.C.",,IconLength,64in,,Substrate,11,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Steel Z Channel-Width-1.5in-Depth-2in-0Profile-Steel Z Channel-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+2AB97E33-7109-0B4E-913F-5C5E46C0CA5F",,Assembly_2FlexDims1Fixed_PlanarPattern,,"2"" Steel Z Channels @ 24in O.C.",,IconLength,64in,,Substrate,31,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Steel Z Channel-Width-1.5in-Depth-2in-0Profile-Steel Z Channel-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,0D3C22BC-D64C-0D44-8083-8EE98380CE9F,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_1FlexDim2Fixed_ModuleLinear_Steel Z Channel-Width-1.5in-Depth-1.5in-0Profile-Steel Z Channel-Finish1-0RawMaterial-Steel-FFFFFF
 0LayerPattern_1D-24-Inch O.C.
 Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-0D3C22BC-D64C-0D44-8083-8EE98380CE9F",,Assembly_2FlexDims1Fixed_PlanarPattern,,"1 1/2"" Steel Z Channels @ 24in O.C. (Insulated)",,IconLength,64in,,Substrate,11,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel Z Channel-Width-1.5in-Depth-1.5in-0Profile-Steel Z Channel-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+0D3C22BC-D64C-0D44-8083-8EE98380CE9F",,Assembly_2FlexDims1Fixed_PlanarPattern,,"1 1/2"" Steel Z Channels @ 24in O.C. (Insulated)",,IconLength,64in,,Substrate,31,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel Z Channel-Width-1.5in-Depth-1.5in-0Profile-Steel Z Channel-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,78751348-089A-B343-A977-3E99C9759FA0,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 0LayerPattern_1D-16-Inch O.C.
 Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-78751348-089A-B343-A977-3E99C9759FA0",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 1x1s @ 16in O.C.,,IconLength,64in,,Substrate,10,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,BF634294-BBE0-4643-AD6C-C51DF35BFABE,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
-0LayerPattern_1D-16-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Fiberglass Wool-EDE79C
-BF634294-BBE0-4643-AD6C-C51DF35BFABE",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x6s @ 16in O.C. (Insulated),,IconLength,64in,,Structure,20,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Fiberglass Wool-EDE79C,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,20F179D9-6D3F-4746-A632-199EE7278AB5,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-20F179D9-6D3F-4746-A632-199EE7278AB5",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x6s @ 24in O.C.,,IconLength,64in,,Structure,20,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,6E374B98-871C-AD42-90A3-1E4A829F0949,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
-6E374B98-871C-AD42-90A3-1E4A829F0949",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x8s @ 24in O.C. (Insulated),,IconLength,64in,,Structure,20,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,8465DC66-01B7-6741-B313-134A54A65535,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-8465DC66-01B7-6741-B313-134A54A65535",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x8s @ 24in O.C.,,IconLength,64in,,Structure,20,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,71B6D347-1578-674F-A98E-44148E347F14,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-9.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
-71B6D347-1578-674F-A98E-44148E347F14",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x10s @ 24in O.C. (Insulated),,IconLength,64in,,Structure,20,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-9.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,7959635F-93BE-314F-9B76-278F4C795EA1,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-9.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-7959635F-93BE-314F-9B76-278F4C795EA1",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x10s @ 24in O.C.,,IconLength,64in,,Structure,20,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-9.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,2835CB6A-0D95-4B41-86D9-89E5DAA46B6F,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands-FFFFFF
-0LayerPattern_1D-16-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-2835CB6A-0D95-4B41-86D9-89E5DAA46B6F",,Assembly_2FlexDims1Fixed_PlanarPattern,,Engineered Wood 2x4s @ 16in O.C.,,IconLength,64in,,Structure,20,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,76167765-8109-C545-A755-EA3AE4A09104,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
-76167765-8109-C545-A755-EA3AE4A09104",,Assembly_2FlexDims1Fixed_PlanarPattern,,Engineered Wood 2x8s @ 24in O.C. (Insulated),,IconLength,64in,,Structure,20,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,ED0BF60A-F8CA-7B47-9BFA-6CF7DC1F840A,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
-ED0BF60A-F8CA-7B47-9BFA-6CF7DC1F840A",,Assembly_2FlexDims1Fixed_PlanarPattern,,"12"" Wood Web Joists @ 24in O.C. (Insulated)",,IconLength,64in,,Structure,10,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Wood Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,FE0C73AA-3649-A241-8185-A42933785873,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Wood-Chord, Steel-Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
-FE0C73AA-3649-A241-8185-A42933785873",,Assembly_2FlexDims1Fixed_PlanarPattern,,"12"" Wood-Chord, Steel-Web Joists @ 24in O.C. (Insulated)",,IconLength,64in,,Structure,10,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,"Part_1FlexDim2Fixed_ModuleLinear_Wood-Chord, Steel-Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF",Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,DE565A2D-6B3D-5D45-81F6-3915302383B7,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-DE565A2D-6B3D-5D45-81F6-3915302383B7",,Assembly_2FlexDims1Fixed_PlanarPattern,,1 5/8in Steel C-Studs @ 24in O.C.,,IconLength,64in,,Substrate,1,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,56F4142C-955F-B04B-BCAC-26815DB36EA2,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-2in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
-56F4142C-955F-B04B-BCAC-26815DB36EA2",,Assembly_2FlexDims1Fixed_PlanarPattern,,2in Steel C-Studs @ 24in O.C. (Insulated),,IconLength,64in,,Substrate,1,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-2in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,5483A330-8223-D541-AB6D-8BBA8D619E69,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
-5483A330-8223-D541-AB6D-8BBA8D619E69",,Assembly_2FlexDims1Fixed_PlanarPattern,,3 5/8in Steel C-Studs @ 24in O.C. (Insulated),,IconLength,64in,,Structure,21,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,E1BBA404-B1E3-5644-AD6B-D276068AD3F3,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-6in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
-E1BBA404-B1E3-5644-AD6B-D276068AD3F3",,Assembly_2FlexDims1Fixed_PlanarPattern,,6in Steel C-Studs @ 24in O.C. (Insulated),,IconLength,64in,,Structure,21,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-6in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
-PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,E4E26B6E-0486-B443-8C20-5AE032DD41D7,,"Assembly_2FlexDims1Fixed_PlanarPattern
-Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
-Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
-E4E26B6E-0486-B443-8C20-5AE032DD41D7",,Assembly_2FlexDims1Fixed_PlanarPattern,,"12"" Steel Web Joists @ 24in O.C. (Insulated)",,IconLength,64in,,Structure,21,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+78751348-089A-B343-A977-3E99C9759FA0",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 1x1s @ 16in O.C.,,IconLength,64in,,Substrate,30,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-0.75in-Depth-0.75in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,F923BEF5-1F2D-1549-9773-0BE04F9EA31F,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 0LayerPattern_1D-16-Inch O.C.
 Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-F923BEF5-1F2D-1549-9773-0BE04F9EA31F",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x4s @ 16in O.C.,,IconLength,64in,,Structure,20,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+F923BEF5-1F2D-1549-9773-0BE04F9EA31F",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x4s @ 16in O.C.,,IconLength,64in,,Structure,30,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,69D456F6-CAED-5F4F-995F-A7D318829B17,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 0LayerPattern_1D-24-Inch O.C.
 Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
-69D456F6-CAED-5F4F-995F-A7D318829B17",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x4s @ 24in O.C. (Insulated),,IconLength,64in,,Structure,20,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+69D456F6-CAED-5F4F-995F-A7D318829B17",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x4s @ 24in O.C. (Insulated),,IconLength,64in,,Structure,30,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,B2A63D6B-5F76-D349-B0EE-A005604279EB,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
 0LayerPattern_1D-16-Inch O.C.
 Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-B2A63D6B-5F76-D349-B0EE-A005604279EB",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x6s @ 16in O.C.,,IconLength,64in,,Structure,20,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+B2A63D6B-5F76-D349-B0EE-A005604279EB",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x6s @ 16in O.C.,,IconLength,64in,,Structure,30,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,BF634294-BBE0-4643-AD6C-C51DF35BFABE,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Fiberglass Wool-EDE79C
+BF634294-BBE0-4643-AD6C-C51DF35BFABE",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x6s @ 16in O.C. (Insulated),,IconLength,64in,,Structure,30,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Fiberglass Wool-EDE79C,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,3549F0E2-4689-374F-800B-1A0F265CC4BA,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
+0LayerPattern_1D-16-Inch O.C.
 Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
-3549F0E2-4689-374F-800B-1A0F265CC4BA",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x6s @ 24in O.C. (Insulated),,IconLength,64in,,Structure,20,,0LayerPattern_1D-24-Inch O.C.,,1Material_Synthetic and Polymer_Foam - Extruded Polystyrene-0RawMaterial-Foam (Extruded Polystyrene)-0Color_Synthetic and Polymer_Foam - Extruded Polystyrene-ECB9BE-Pink,,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+3549F0E2-4689-374F-800B-1A0F265CC4BA",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x6s @ 16in O.C. (Insulated),,IconLength,64in,,Structure,30,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,20F179D9-6D3F-4746-A632-199EE7278AB5,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
+20F179D9-6D3F-4746-A632-199EE7278AB5",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x6s @ 16in O.C.,,IconLength,64in,,Structure,30,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-5.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,6E374B98-871C-AD42-90A3-1E4A829F0949,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
+6E374B98-871C-AD42-90A3-1E4A829F0949",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x8s @ 16in O.C. (Insulated),,IconLength,64in,,Structure,20,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,8465DC66-01B7-6741-B313-134A54A65535,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
+8465DC66-01B7-6741-B313-134A54A65535",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x8s @ 16in O.C.,,IconLength,64in,,Structure,20,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,71B6D347-1578-674F-A98E-44148E347F14,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-9.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
+71B6D347-1578-674F-A98E-44148E347F14",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x10s @ 16in O.C. (Insulated),,IconLength,64in,,Structure,20,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-9.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,7959635F-93BE-314F-9B76-278F4C795EA1,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-9.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
+7959635F-93BE-314F-9B76-278F4C795EA1",,Assembly_2FlexDims1Fixed_PlanarPattern,,Wood 2x10s @ 16in O.C.,,IconLength,64in,,Structure,20,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-9.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,2835CB6A-0D95-4B41-86D9-89E5DAA46B6F,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
+2835CB6A-0D95-4B41-86D9-89E5DAA46B6F",,Assembly_2FlexDims1Fixed_PlanarPattern,,Engineered Wood 2x4s @ 16in O.C.,,IconLength,64in,,Structure,30,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-3.5in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,76167765-8109-C545-A755-EA3AE4A09104,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
+76167765-8109-C545-A755-EA3AE4A09104",,Assembly_2FlexDims1Fixed_PlanarPattern,,Engineered Wood 2x8s @ 16in O.C. (Insulated),,IconLength,64in,,Structure,20,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Wood Lumber-Width-1.5in-Depth-7.25in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Wood Strands-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,ED0BF60A-F8CA-7B47-9BFA-6CF7DC1F840A,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Wood Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
+ED0BF60A-F8CA-7B47-9BFA-6CF7DC1F840A",,Assembly_2FlexDims1Fixed_PlanarPattern,,"12"" Wood Web Joists @ 16in O.C. (Insulated)",,IconLength,64in,,Structure,20,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Wood Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,FE0C73AA-3649-A241-8185-A42933785873,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Wood-Chord, Steel-Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
+FE0C73AA-3649-A241-8185-A42933785873",,Assembly_2FlexDims1Fixed_PlanarPattern,,"12"" Wood-Chord, Steel-Web Joists @ 16in O.C. (Insulated)",,IconLength,64in,,Structure,20,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,"Part_1FlexDim2Fixed_ModuleLinear_Wood-Chord, Steel-Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Spruce-Pine-Fir-FFFFFF",Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,DE565A2D-6B3D-5D45-81F6-3915302383B7,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
+DE565A2D-6B3D-5D45-81F6-3915302383B7",,Assembly_2FlexDims1Fixed_PlanarPattern,,1 5/8in Steel C-Studs @ 16in O.C.,,IconLength,64in,,Substrate,1,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,56F4142C-955F-B04B-BCAC-26815DB36EA2,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-2in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
+56F4142C-955F-B04B-BCAC-26815DB36EA2",,Assembly_2FlexDims1Fixed_PlanarPattern,,2in Steel C-Studs @ 16in O.C. (Insulated),,IconLength,64in,,Substrate,1,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-2in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,5483A330-8223-D541-AB6D-8BBA8D619E69,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
+5483A330-8223-D541-AB6D-8BBA8D619E69",,Assembly_2FlexDims1Fixed_PlanarPattern,,3 5/8in Steel C-Studs @ 16in O.C. (Insulated),,IconLength,64in,,Structure,31,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,E1BBA404-B1E3-5644-AD6B-D276068AD3F3,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-6in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
+E1BBA404-B1E3-5644-AD6B-D276068AD3F3",,Assembly_2FlexDims1Fixed_PlanarPattern,,6in Steel C-Studs @ 16in O.C. (Insulated),,IconLength,64in,,Structure,31,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-6in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,E4E26B6E-0486-B443-8C20-5AE032DD41D7,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel-FFFFFF
+0LayerPattern_1D-16-Inch O.C.
+Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
+E4E26B6E-0486-B443-8C20-5AE032DD41D7",,Assembly_2FlexDims1Fixed_PlanarPattern,,"12"" Steel Web Joists @ 16in O.C. (Insulated)",,IconLength,64in,,Structure,31,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel Web Joist-Width-3.5in-Depth-11.875in-0Profile-Solid Rectangle-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,FF223758-ED30-E749-AEC4-CE62AC2FF26F,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 0LayerPattern_1D-16-Inch O.C.
 Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF
-FF223758-ED30-E749-AEC4-CE62AC2FF26F",,Assembly_2FlexDims1Fixed_PlanarPattern,,1 5/8in Steel C-Studs @ 16in O.C.,,IconLength,64in,,Substrate,11,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+FF223758-ED30-E749-AEC4-CE62AC2FF26F",,Assembly_2FlexDims1Fixed_PlanarPattern,,1 5/8in Steel C-Studs @ 16in O.C.,,IconLength,64in,,Substrate,32,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Air,FFFFFF,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-1.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,08960386-22EB-1645-9169-9D45B96AC862,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-2in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
-0LayerPattern_1D-24-Inch O.C.
+0LayerPattern_1D-16-Inch O.C.
 Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
-08960386-22EB-1645-9169-9D45B96AC862",,Assembly_2FlexDims1Fixed_PlanarPattern,,2in Steel C-Studs @ 24in O.C. (Insulated),,IconLength,64in,,Substrate,11,,0LayerPattern_1D-24-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-2in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+08960386-22EB-1645-9169-9D45B96AC862",,Assembly_2FlexDims1Fixed_PlanarPattern,,2in Steel C-Studs @ 16in O.C. (Insulated),,IconLength,64in,,Substrate,31,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-2in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,293FED4D-B6B4-1743-973E-948CBC01093E,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF
 0LayerPattern_1D-16-Inch O.C.
 Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE
-293FED4D-B6B4-1743-973E-948CBC01093E",,Assembly_2FlexDims1Fixed_PlanarPattern,,3 5/8in Steel C-Studs @ 16in O.C. (Insulated),,IconLength,64in,,Structure,21,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
+293FED4D-B6B4-1743-973E-948CBC01093E",,Assembly_2FlexDims1Fixed_PlanarPattern,,3 5/8in Steel C-Studs @ 16in O.C. (Insulated),,IconLength,64in,,Structure,31,,0LayerPattern_1D-16-Inch O.C.,,0RawMaterial-Foam (Extruded Polystyrene),ECB9BE,,Part_1FlexDim2Fixed_ModuleLinear_Steel C-Channel-Width-1.625in-Depth-3.625in-0Profile-Steel C-Stud-Finish1-0RawMaterial-Steel-FFFFFF,Part_1FlexDim2Fixed_Gap1D-Finish1-0RawMaterial-Foam (Extruded Polystyrene)-ECB9BE,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,1796E811-D103-004D-98AD-715ADBAEF873,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Cement-Length-60in-Width-36in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Cement-D6D7D8
@@ -283,6 +283,12 @@ Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thi
 0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
 F4759892-13D2-C84A-BB52-8A29A074D130",,Assembly_2FlexDims1Fixed_PlanarPattern,,23/32in Plywood Boards,,IconLength,64in,,Substrate,21,,0LayerPattern_2D-Running Bond,,,,,Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-0.71875in-BevelWidth-0in-Finish1-0RawMaterial-Plywood-FFFFFF,Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
+PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,F96EBDB4-140A-C442-B6D7-39EC3271FBD3,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-1.125in-BevelWidth-0in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+F96EBDB4-140A-C442-B6D7-39EC3271FBD3",,Assembly_2FlexDims1Fixed_PlanarPattern,,1-1/8in Plywood Boards,,IconLength,64in,,Structure,20,,0LayerPattern_2D-Running Bond,,,,,Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-1.125in-BevelWidth-0in-Finish1-0RawMaterial-Plywood-FFFFFF,Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,F04D30DA-0328-644B-81B1-7C411CA7325E,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModulePlanar_Plank_Engineered Wood-Length-32in-Width-5in-Thickness-0.375in-BevelWidth-0.125in-Finish1-0RawMaterial-Plywood-0RawMaterial-Teak-FFFFFF
@@ -462,18 +468,54 @@ PRESET,,79A5A1A3-A23E-1C4A-8B11-1FE429B72C35,,"Assembly_2FlexDims1Fixed_PlanarPa
 Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633
 0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.125in-Finish1-0RawMaterial-Grout-EAECE7
-79A5A1A3-A23E-1C4A-8B11-1FE429B72C35",,Assembly_2FlexDims1Fixed_PlanarPattern,,"Modular Bricks, Running Bond",,IconLength,64in,,Structure,31,,0LayerPattern_2D-Running Bond,,,,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633,Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.125in-Finish1-0RawMaterial-Grout-EAECE7,,,,,,,,,,,,,
+79A5A1A3-A23E-1C4A-8B11-1FE429B72C35",,Assembly_2FlexDims1Fixed_PlanarPattern,,"Modular Bricks, Running Bond",,IconLength,64in,,Structure,11,,0LayerPattern_2D-Running Bond,,,,,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633,Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.125in-Finish1-0RawMaterial-Grout-EAECE7,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,89631FFC-271B-E844-85C2-8EEF4C541F70,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit-Length-15.625in-Width-7.625in-Height-7.625in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8
 0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.25in-Finish1-0RawMaterial-Grout-EAECE7
-89631FFC-271B-E844-85C2-8EEF4C541F70",,Assembly_2FlexDims1Fixed_PlanarPattern,,"Full CMU, Running Bond",,IconLength,64in,,Structure,30,,0LayerPattern_2D-Running Bond,,,,,Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit-Length-15.625in-Width-7.625in-Height-7.625in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.25in-Finish1-0RawMaterial-Grout-EAECE7,,,,,,,,,,,,,
+89631FFC-271B-E844-85C2-8EEF4C541F70",,Assembly_2FlexDims1Fixed_PlanarPattern,,"Full CMU, Running Bond",,IconLength,64in,,Structure,10,,0LayerPattern_2D-Running Bond,,,,,Part_0FlexDims3Fixed_ModuleVolumetric_Concrete Masonry Unit-Length-15.625in-Width-7.625in-Height-7.625in-BevelWidth-0.1875in-Finish1-0RawMaterial-Concrete (Normal Aggregate)-D6D7D8,Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.25in-Finish1-0RawMaterial-Grout-EAECE7,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,F696D179-53E1-A74D-A7D4-E104CDC4BD15,,"Assembly_2FlexDims1Fixed_PlanarPattern
 Part_0FlexDims3Fixed_ModuleVolumetric_Glass Block-Length-7.75in-Width-3.875in-Height-3.75in-BevelWidth-0.1875in-Finish1-0RawMaterial-Glass Block-F2F2F2
 0LayerPattern_2D-Stack Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.25in-Finish1-0RawMaterial-Grout-EAECE7
-F696D179-53E1-A74D-A7D4-E104CDC4BD15",,Assembly_2FlexDims1Fixed_PlanarPattern,,"Glass Blocks, Stack Bond",,IconLength,64in,,Structure,32,,0LayerPattern_2D-Stack Bond,,,,,Part_0FlexDims3Fixed_ModuleVolumetric_Glass Block-Length-7.75in-Width-3.875in-Height-3.75in-BevelWidth-0.1875in-Finish1-0RawMaterial-Glass Block-F2F2F2,Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.25in-Finish1-0RawMaterial-Grout-EAECE7,,,,,,,,,,,,,
+F696D179-53E1-A74D-A7D4-E104CDC4BD15",,Assembly_2FlexDims1Fixed_PlanarPattern,,"Glass Blocks, Stack Bond",,IconLength,64in,,Structure,12,,0LayerPattern_2D-Stack Bond,,,,,Part_0FlexDims3Fixed_ModuleVolumetric_Glass Block-Length-7.75in-Width-3.875in-Height-3.75in-BevelWidth-0.1875in-Finish1-0RawMaterial-Glass Block-F2F2F2,Part_1FlexDim2Fixed_Gap2D-Width-0.375in-Recess-0.25in-Finish1-0RawMaterial-Grout-EAECE7,,,,,,,,,,,,,
 PRESET,,,,,,,,,,IconHeight,48in,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

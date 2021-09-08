@@ -2368,6 +2368,12 @@ Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Sl
 Property_Spatiality_Slot-Panel
 Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-3EB03626-2848-C849-8047-61D79DACCC70
 49C0138A-5C39-D442-A9E5-ECF50A07C01E
+Property_Spatiality_Slot-AssemblyPanelHung2of2
+Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
+Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
+Property_Spatiality_Slot-Panel
+Part_2FlexDims1Fixed_Panel_Window-Property_Spatiality_Mesh_Panel_Window-Window-Panel-Sliding-01.Window-Panel-Sliding-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-3EB03626-2848-C849-8047-61D79DACCC70
+49C0138A-5C39-D442-A9E5-ECF50A07C01E
 5C4F93C8-08A3-F044-9F54-B8060BD17855",,Assembly_2FlexDims1Fixed_PlanarRig_Window,,Hung Window 1,,Width,36in,,X,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Portal_Hung-Property_Spatiality_Slot-FrameSliding-Property_Spatiality_Slot-AssemblyPanelHung1of2-Property_Spatiality_Slot-AssemblyPanelHung2of2,Property_Spatiality_Slot-FrameSliding,Part_2FlexDims1Fixed_Frame-Property_Spatiality_Mesh_FrameSliding-Window-Frame-Hung-01.Window-Frame-Hung-01'-Finish1-0RawMaterial-Aluminum-FFFFFF-FB992287-A687-A745-A5AA-661D53469F29,,-,-,-,-,-,-,-,-,-,-,-,-
 PRESET,,,,,,,,,,Height,48in,,,,,Property_Spatiality_Slot-AssemblyPanelHung1of2,"Assembly_2FlexDims1Fixed_PlanarRig_Panel_Window
 Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Window-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-AssemblyMuntinSet1-Property_Spatiality_Slot-SurfaceLockXMiddleYInsideZTop-Property_Spatiality_Slot-SurfaceLockLower-Property_Spatiality_Slot-SurfaceLockUpper
