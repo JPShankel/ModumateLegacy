@@ -260,3 +260,21 @@ bool AEditModelPlayerPawn::SetCameraFOV(float NewFOV)
 
 	return false;
 }
+
+bool AEditModelPlayerPawn::SetCameraOrtho(bool bOrtho)
+{
+	ECameraProjectionMode::Type mode = bOrtho ? ECameraProjectionMode::Orthographic : ECameraProjectionMode::Perspective;
+	if (CameraComponent)
+	{
+		if (bOrtho && CameraComponent->ProjectionMode == ECameraProjectionMode::Perspective)
+		{   // Switching to ortho:
+			static constexpr float matchDistance = 1500.0f;  // Match view size at this distance.
+			float orthoWidth = matchDistance * FMath::Tan(FMath::DegreesToRadians(CameraComponent->FieldOfView) / 2.0f) * 2.0f;
+			CameraComponent->SetOrthoWidth(orthoWidth);
+		}
+		CameraComponent->SetProjectionMode(mode);
+		return true;
+	}
+
+	return false;
+}

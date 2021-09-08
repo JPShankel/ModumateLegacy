@@ -684,6 +684,11 @@ void UEditModelCameraController::UpdateFreeZooming(float DeltaTime)
 		return;
 	}
 
+	if (!Controller || !Controller->EMPlayerPawn)
+	{
+		return;
+	}
+
 	// If smooth zooming, use the desired zoom delta over time; otherwise use it all immediately
 	float zoomLerpAlpha = bUseSmoothZoom ? FMath::Clamp(SmoothZoomSpeed * DeltaTime, 0.0f, 1.0f) : 1.0f;
 	FVector curZoomDelta = FMath::Lerp(FVector::ZeroVector, FreeZoomDeltaAccumulated, zoomLerpAlpha);
@@ -692,7 +697,18 @@ void UEditModelCameraController::UpdateFreeZooming(float DeltaTime)
 		return;
 	}
 
-	CamTransform.SetLocation(CamTransform.GetLocation() + curZoomDelta);
+	UCameraComponent* cameraComponent = Controller->EMPlayerPawn->CameraComponent;
+	if (cameraComponent->ProjectionMode == ECameraProjectionMode::Orthographic)
+	{
+		static constexpr float orthoZoomScale = 0.5f;
+		float direction = (CamTransform.TransformVector(FVector::ForwardVector) | curZoomDelta) < 0.0f ? 1.0f : -1.0f;
+		cameraComponent->SetOrthoWidth(cameraComponent->OrthoWidth + direction * orthoZoomScale * curZoomDelta.Size());
+	}
+	else
+	{
+		CamTransform.SetLocation(CamTransform.GetLocation() + curZoomDelta);
+	}
+
 	FreeZoomDeltaAccumulated *= (1.0f - zoomLerpAlpha);
 }
 

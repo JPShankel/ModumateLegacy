@@ -80,5 +80,7 @@ public:
 
 	bool SetCameraFOV(float NewFOV);
 
+	bool SetCameraOrtho(bool bOrtho);
+
 	bool bHaveEverBeenPossessed;
 };

@@ -11,6 +11,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/SkyActor.h"
 #include "UnrealClasses/AxesActor.h"
+#include "UnrealClasses/EditModelPlayerPawn.h"
 
 
 UViewMenuBlockProperties::UViewMenuBlockProperties(const FObjectInitializer& ObjectInitializer)
@@ -26,7 +27,8 @@ bool UViewMenuBlockProperties::Initialize()
 	}
 	if (!(ViewCubeCheckBox && GravityCheckBox && WorldAxesCheckBox &&
 		EditableTextBox_FOV && EditableTextBox_Month && EditableTextBox_Day &&
-		EditableTextBox_Hour && EditableTextBox_Minute && ModumateButton_AM))
+		EditableTextBox_Hour && EditableTextBox_Minute && ModumateButton_AM &&
+		OrthoViewCheckBox))
 	{
 		return false;
 	}
@@ -34,6 +36,7 @@ bool UViewMenuBlockProperties::Initialize()
 	GravityCheckBox->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::ToggleGravityCheckboxes);
 	WorldAxesCheckBox->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::ToggleWorldAxesCheckboxes);
 	EditableTextBox_FOV->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UViewMenuBlockProperties::OnEditableTextBoxFOVCommitted);
+	OrthoViewCheckBox->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::ToggleOrthViewCheckbox);
 
 	EditableTextBox_Month->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UViewMenuBlockProperties::OnEditableTextBoxMonthCommitted);
 	EditableTextBox_Day->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UViewMenuBlockProperties::OnEditableTextBoxDayCommitted);
@@ -164,6 +167,14 @@ void UViewMenuBlockProperties::ToggleWorldAxesCheckboxes(bool NewEnable)
 	if (ensure(Controller && Controller->AxesActor))
 	{
 		Controller->AxesActor->SetActorHiddenInGame(!NewEnable);
+	}
+}
+
+void UViewMenuBlockProperties::ToggleOrthViewCheckbox(bool bNewEnable)
+{
+	if (ensure(Controller && Controller->EMPlayerPawn))
+	{
+		Controller->EMPlayerPawn->SetCameraOrtho(bNewEnable);
 	}
 }
 
