@@ -17,6 +17,7 @@
 #include "UnrealClasses/EditModelInputHandler.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/SkyActor.h"
 #include "UI/ModumateUIStatics.h"
 
 // Sets default values
@@ -263,14 +264,38 @@ bool AEditModelPlayerPawn::SetCameraFOV(float NewFOV)
 
 bool AEditModelPlayerPawn::SetCameraOrtho(bool bOrtho)
 {
+	// Magic constants for orthogonal/perspective changes.
+	// The persp dome transform is the EU4 default for a new level;
+	// the ortho version are the changes to get it visible.
+	// Note the scale values give an ellipsoid - this is not an error!
+	static constexpr float matchPerpectiveDistance = 1500.0f;  // Match view size at this distance.
+	static const FVector PerspectiveDomePosition(0.0f, 0.0f, -7.3e6f);
+	static const FVector PerspectiveDomeScale(1e6f, 150000.0f, 1e6f);
+	static const FVector OrthogonalDomePosition(0);
+	static const FVector OrthogonalDomeScale(2e4f, 2e3f, 2e4f);
+
+
 	ECameraProjectionMode::Type mode = bOrtho ? ECameraProjectionMode::Orthographic : ECameraProjectionMode::Perspective;
 	if (CameraComponent)
 	{
 		if (bOrtho && CameraComponent->ProjectionMode == ECameraProjectionMode::Perspective)
 		{   // Switching to ortho:
-			static constexpr float matchDistance = 1500.0f;  // Match view size at this distance.
-			float orthoWidth = matchDistance * FMath::Tan(FMath::DegreesToRadians(CameraComponent->FieldOfView) / 2.0f) * 2.0f;
+			float orthoWidth = matchPerpectiveDistance * FMath::Tan(FMath::DegreesToRadians(CameraComponent->FieldOfView) / 2.0f) * 2.0f;
 			CameraComponent->SetOrthoWidth(orthoWidth);
+			auto emPlayerController = Cast<AEditModelPlayerController>(Controller);
+			if (emPlayerController)
+			{
+				emPlayerController->SkyActor->SetSkyDomePositionScale(OrthogonalDomePosition, OrthogonalDomeScale);
+			}
+		}
+		else if (!bOrtho && CameraComponent->ProjectionMode == ECameraProjectionMode::Orthographic)
+		{   // Switching to perspective:
+			auto emPlayerController = Cast<AEditModelPlayerController>(Controller);
+			if (emPlayerController)
+			{
+				emPlayerController->SkyActor->SetSkyDomePositionScale(PerspectiveDomePosition, PerspectiveDomeScale);
+			}
+
 		}
 		CameraComponent->SetProjectionMode(mode);
 		return true;

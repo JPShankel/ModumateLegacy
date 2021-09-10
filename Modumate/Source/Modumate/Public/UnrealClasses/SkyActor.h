@@ -100,4 +100,5 @@ public:
 	void SetCurrentMinute(int32 NewMinute);
 	void ToggleCurrentMeridiem();
 	void AddTimespanToCurrentDateTime(const FTimespan &Timespan);
+	void SetSkyDomePositionScale(const FVector& Position, const FVector& Scale);
 };

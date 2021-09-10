@@ -152,3 +152,13 @@ void ASkyActor::AddTimespanToCurrentDateTime(const FTimespan &Timespan)
 	CurrentDateTime = CurrentDateTime + Timespan;
 	UpdateComponentsWithDateTime(CurrentDateTime);
 }
+
+void ASkyActor::SetSkyDomePositionScale(const FVector& Position, const FVector& Scale)
+{
+	if (SkyDomeMesh)
+	{
+		SkyDomeMesh->SetRelativeLocation_Direct(Position);
+		SkyDomeMesh->SetRelativeScale3D_Direct(Scale);
+		SkyDomeMesh->UpdateComponentToWorld();
+	}
+}
