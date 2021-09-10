@@ -220,12 +220,25 @@ bool AMainMenuGameMode::OpenCloudProject(const FString& ProjectID)
 
 	if (bRequestConnection)
 	{
+		const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
+		FString currentVersion = projectSettings->ProjectVersion;
+
+		TSharedPtr<FJsonObject> jsonObject = MakeShareable(new FJsonObject);
+		jsonObject->SetStringField(TEXT("version"), currentVersion);
+		FString requestPayload;
+		TSharedRef<FPrettyJsonStringWriter> JsonStringWriter = FPrettyJsonStringWriterFactory::Create(&requestPayload);
+		FJsonSerializer::Serialize(jsonObject.ToSharedRef(), JsonStringWriter);
+
 		// Request a connection to a multiplayer server instance for this project,
 		// which will either spin up a server that downloads the project, or return a connection to an existing server running for this project.
 		bool bRequestedConnection = cloudConnection->RequestEndpoint(
 			FProjectConnectionHelpers::MakeProjectConnectionEndpoint(PendingCloudProjectID),
 			FModumateCloudConnection::ERequestType::Put,
-			nullptr,
+			[requestPayload](FHttpRequestRef& RefRequest)
+			{
+				RefRequest->SetContentAsString(requestPayload);
+				RefRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+			},
 			[weakThis](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
 			{
 				if (weakThis.IsValid())
