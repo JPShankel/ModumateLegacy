@@ -35,7 +35,10 @@ AudioDevicesImpl::~AudioDevicesImpl()
         delete item.Value;
     }
 
+	//@third party BEGIN MODUMATE
+	// MOD-1668
 	VivoxNativeSdk::Get().EventSdkEventRaised.Remove(_lambdaHandle);
+	//@third party END MODUMATE
 }
 
 void AudioDevicesImpl::Initialize()

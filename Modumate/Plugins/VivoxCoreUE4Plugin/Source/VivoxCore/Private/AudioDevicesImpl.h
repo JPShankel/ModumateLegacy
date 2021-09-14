@@ -40,7 +40,10 @@ class AudioDevicesImpl : public IAudioDevices
     bool _muted;
     AudioDeviceType _type;
 
+	//@third party BEGIN MODUMATE
+	// Record added-delegate handle so it can be removed. MOD-1668
 	FDelegateHandle _lambdaHandle;
+	//@third party END MODUMATE
 
     void Handle(const vx_evt_audio_device_hot_swap_t &r);
     void Handle(const vx_resp_aux_get_capture_devices_t &r);
