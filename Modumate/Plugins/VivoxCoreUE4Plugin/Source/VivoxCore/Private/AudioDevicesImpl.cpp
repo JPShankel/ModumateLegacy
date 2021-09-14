@@ -34,11 +34,13 @@ AudioDevicesImpl::~AudioDevicesImpl()
     {
         delete item.Value;
     }
+
+	VivoxNativeSdk::Get().EventSdkEventRaised.Remove(_lambdaHandle);
 }
 
 void AudioDevicesImpl::Initialize()
 {
-    VivoxNativeSdk::Get().EventSdkEventRaised.AddLambda([this](const vx_evt_base_t &evt)
+	_lambdaHandle = VivoxNativeSdk::Get().EventSdkEventRaised.AddLambda([this](const vx_evt_base_t &evt)
     {
         Handle(evt);
     });
