@@ -1422,8 +1422,6 @@ bool AEditModelPlayerController::OnCreateQuantitiesCsv(const TFunction<void(FStr
 		return false;
 	}
 
-	static const FText dialogTitle = LOCTEXT("QuantityEstimateCSVText", "Quantity Estimate CSV");
-
 	auto cloudConnection = gameInstance->GetCloudConnection();
 	UWorld* world = GetWorld();
 	TFunction<bool()>  networkTickCall = [cloudConnection, world]() { cloudConnection->NetworkTick(world); return true; };
@@ -1434,16 +1432,30 @@ bool AEditModelPlayerController::OnCreateQuantitiesCsv(const TFunction<void(FStr
 	if (FModumatePlatform::GetSaveFilename(filename, networkTickCall, FModumatePlatform::INDEX_CSVFILE))
 	{
 		EMPlayerState->ShowingFileDialog = false;
+		FModalButtonParam dismissButton(EModalButtonStyle::Default, LOCTEXT("SavedCSVok", "OK"), nullptr);
 
 		if (!quantitiesManager->CreateReport(filename))
 		{
-			FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("QuantityEstimateCreateFail", "Quantity Estimate CSV Creation Failed"),
-				&dialogTitle);
+			if (EditModelUserWidget && EditModelUserWidget->ModalDialogWidgetBP)
+			{
+				EditModelUserWidget->ModalDialogWidgetBP->CreateModalDialog(
+					LOCTEXT("ClientExportQuantitiesError", "Error"),
+					LOCTEXT("QuantityEstimateCreateFail", "Quantity Estimate CSV creation failed"),
+					TArray<FModalButtonParam>({ dismissButton }));
+			}
+
 			retValue = false;
 		}
 		else
 		{
 			gameInstance->GetAccountManager()->NotifyServiceUse(FModumateAccountManager::ServiceQuantityEstimates, UsageNotificationCallback);
+			if (EditModelUserWidget && EditModelUserWidget->ModalDialogWidgetBP)
+			{
+				EditModelUserWidget->ModalDialogWidgetBP->CreateModalDialog(
+					LOCTEXT("ClientExportQuantities", "Notice"),
+					FText::Format(LOCTEXT("ClientExportQuantitiesText", "Saved Quantity Estimates to {0}"), FText::FromString(filename)),
+					TArray<FModalButtonParam>({ dismissButton }));
+			}
 		}
 	}
 	else
