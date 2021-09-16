@@ -2,6 +2,12 @@ chmod -R a+rw "/Users/buildy/Documents/"$1
 infoplist="/Users/buildy/Documents/$1/ModumatePackaged/MacNoEditor/Modumate-Mac-Shipping.app/Contents/Info.plist"
 sedcom="sed -I b 's/"$2"/"$1"/' $infoplist"
 eval "$sedcom"
+splitcom="split -l 37 $infoplist urlsplit"
+eval "$splitcom"
+splitcom="cat ./urlsplitaa ./Modumate/Scripts/url_scheme.info ./urlsplitab > $infoplist"
+eval "$splitcom"
+rm ./urlsplitaa
+rm ./urlsplitab
 infoplist="${infoplist}b"
 rm $infoplist
 cp ./Modumate/Scripts/Modumate_Mac_Client.provisionprofile ~/Documents/$1/ModumatePackaged/MacNoEditor/Modumate-Mac-Shipping.app/Contents/embedded.provisionprofile
