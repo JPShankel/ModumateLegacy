@@ -167,6 +167,8 @@ void UEditModelCameraController::SetupPlayerInputComponent(UInputComponent* Play
 
 		PlayerInputComponent->BindAction(GetEnumValueShortName(EInputCameraActions::CameraPan), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionPanPressed);
 		PlayerInputComponent->BindAction(GetEnumValueShortName(EInputCameraActions::CameraPan), EInputEvent::IE_Released, this, &UEditModelCameraController::OnActionPanReleased);
+		PlayerInputComponent->BindAction(GetEnumValueShortName(EInputCameraActions::CameraPanShift), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionPanShiftPressed);
+		PlayerInputComponent->BindAction(GetEnumValueShortName(EInputCameraActions::CameraPanShift), EInputEvent::IE_Released, this, &UEditModelCameraController::OnActionPanShiftReleased);
 
 		PlayerInputComponent->BindAction(GetEnumValueShortName(EInputCameraActions::CameraZoomIn), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionZoomIn);
 		PlayerInputComponent->BindAction(GetEnumValueShortName(EInputCameraActions::CameraZoomOut), EInputEvent::IE_Pressed, this, &UEditModelCameraController::OnActionZoomOut);
@@ -298,6 +300,16 @@ void UEditModelCameraController::OnActionPanReleased()
 {
 	SetPanning(false);
 	Controller->OnHandledInputAction(EInputCameraActions::CameraPan, EInputEvent::IE_Released);
+}
+
+void UEditModelCameraController::OnActionPanShiftPressed()
+{
+	OnActionPanPressed();
+}
+
+void UEditModelCameraController::OnActionPanShiftReleased()
+{
+	OnActionPanReleased();
 }
 
 void UEditModelCameraController::OnActionZoomIn()
@@ -563,6 +575,7 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 
 void UEditModelCameraController::SetOrbiting(bool bNewOrbiting)
 {
+	Controller->SetShowMouseCursor(!bNewOrbiting);
 	if (bNewOrbiting)
 	{
 		SetMovementState(ECameraMovementState::Orbiting);

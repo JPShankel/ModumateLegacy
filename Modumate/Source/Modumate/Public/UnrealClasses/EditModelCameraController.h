@@ -23,7 +23,8 @@ enum class EInputCameraActions : uint8
 	CameraOrbit,
 	CameraPan,
 	CameraZoomIn,
-	CameraZoomOut
+	CameraZoomOut,
+	CameraPanShift
 };
 
 UCLASS()
@@ -128,6 +129,12 @@ protected:
 
 	UFUNCTION()
 	void OnActionPanReleased();
+
+	UFUNCTION()
+	void OnActionPanShiftPressed();
+
+	UFUNCTION()
+	void OnActionPanShiftReleased();
 
 	UFUNCTION()
 	void OnActionZoomIn();

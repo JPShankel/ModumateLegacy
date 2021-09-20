@@ -66,6 +66,9 @@ public:
 	FKey DragKey = EKeys::MiddleMouseButton;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FKey AlternateDragKey = EKeys::RightMouseButton;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ZoomDeltaPlus = 1.1f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

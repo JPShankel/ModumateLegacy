@@ -10,7 +10,6 @@ void UModumateViewportClient::Init(struct FWorldContext& WorldContext, UGameInst
 	Super::Init(WorldContext, OwningGameInstance, bCreateNewAudioDevice);
 
 	SetMouseCaptureMode(EMouseCaptureMode::CaptureDuringRightMouseDown);
-	SetHideCursorDuringCapture(true);
 
 	bWindowsActive = true;
 	bWindowsVisible = true;

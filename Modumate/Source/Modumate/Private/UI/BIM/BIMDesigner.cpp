@@ -58,7 +58,7 @@ void UBIMDesigner::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	if (MouseClickCountdown > 0)
 	{
-		if (Controller->IsInputKeyDown(DragKey))
+		if (Controller->IsInputKeyDown(DragKey) || Controller->IsInputKeyDown(AlternateDragKey))
 		{
 			MouseClickCountdown = 0;
 			DragTick = true;
@@ -78,9 +78,9 @@ void UBIMDesigner::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 FReply UBIMDesigner::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	FReply reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-	if (InMouseEvent.GetEffectingButton() == DragKey)
+	if (InMouseEvent.GetEffectingButton() == DragKey || InMouseEvent.GetEffectingButton() == AlternateDragKey)
 	{
-		if (Controller->IsInputKeyDown(DragKey))
+		if (Controller->IsInputKeyDown(DragKey) || Controller->IsInputKeyDown(AlternateDragKey))
 		{
 			DragTick = true;
 		}
@@ -167,7 +167,7 @@ void UBIMDesigner::PerformDrag()
 		}
 
 	}
-	DragTick = Controller->IsInputKeyDown(DragKey) && hasMousePosition;
+	DragTick = (Controller->IsInputKeyDown(DragKey) || Controller->IsInputKeyDown(AlternateDragKey)) && hasMousePosition;
 	if (DragTick)
 	{
 		LastMousePosition = currentMousePosition;
