@@ -122,7 +122,6 @@ public:
 private:
 	static const FModumateLayerType LayerTypeOrder[];
 	static TAtomic<int32> InitPriorities;
-	static const TSet<FModumateLayerType> PassedThroughTypes;
 
 	const TUniquePtr<IModumateDraftingDraw> Next;
 

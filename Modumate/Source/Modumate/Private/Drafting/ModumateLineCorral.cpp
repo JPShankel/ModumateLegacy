@@ -49,11 +49,6 @@ const FModumateLayerType FModumateLineCorral::LayerTypeOrder[] =
 int FModumateLineCorral::LinePriorities[sizeof(LayerTypeOrder) / sizeof(FModumateLayerType)];
 TAtomic<int32> FModumateLineCorral::InitPriorities{ 0 };
 
-const TSet<FModumateLayerType>  FModumateLineCorral::PassedThroughTypes = {
-	FModumateLayerType::kFfeInteriorEdges, FModumateLayerType::kFfeOutline, FModumateLayerType::kDebug1, FModumateLayerType::kDebug2,
-	FModumateLayerType::kDimensionMassing, FModumateLayerType::kDimensionFraming,  FModumateLayerType::kDimensionOpening, FModumateLayerType::KDimensionReference
-};
-
 namespace
 {
 	// a < b: layer b obscures layer a.
@@ -102,8 +97,13 @@ EDrawError FModumateLineCorral::DrawLine(
 	const ModumateUnitParams::FPhase &phase,
 	FModumateLayerType layerType /*= FModumateLayerType::kDefault */)
 {
+	static const TSet<FModumateLayerType>  localPassedThroughTypes = {
+	FModumateLayerType::kFfeInteriorEdges, FModumateLayerType::kFfeOutline, FModumateLayerType::kDebug1, FModumateLayerType::kDebug2,
+	FModumateLayerType::kDimensionMassing, FModumateLayerType::kDimensionFraming,  FModumateLayerType::kDimensionOpening, FModumateLayerType::KDimensionReference
+	};
+
 	if (x1.GetUnitType() != EModumateUnitType::WorldCentimeters
-		|| PassedThroughTypes.Contains(layerType))
+		|| localPassedThroughTypes.Contains(layerType))
 	{
 		return Next->DrawLine(x1, y1, x2, y2, thickness, color, linePattern, phase, layerType);
 	}
