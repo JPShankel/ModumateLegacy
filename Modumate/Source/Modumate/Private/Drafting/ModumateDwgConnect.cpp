@@ -97,13 +97,12 @@ void FModumateDwgConnect::DwgSaver::OnHttpReply(FHttpRequestPtr Request, FHttpRe
 		{
 			gameInstance = WeakGameInstance.Get();
 		}
-
+#if PLATFORM_WINDOWS
 		if (miniZip.CreateArchive(ZipDirectory + TEXT(".zip")))
 		{
 			UE_LOG(LogAutoDrafting, Display, TEXT("Saved DWG bundle to %s.zip"), *ZipDirectory);
 			if (gameInstance)
 			{
-
 				AEditModelPlayerController* controller = CastChecked<AEditModelPlayerController>(gameInstance->GetFirstLocalPlayerController());
 				if (controller && controller->EditModelUserWidget && controller->EditModelUserWidget->ModalDialogWidgetBP)
 				{
@@ -119,7 +118,21 @@ void FModumateDwgConnect::DwgSaver::OnHttpReply(FHttpRequestPtr Request, FHttpRe
 		{
 			UE_LOG(LogAutoDrafting, Error, TEXT("Failed to create DWG bundle from %s"), *ZipDirectory);
 		}
-
+#else
+		UE_LOG(LogAutoDrafting, Display, TEXT("Saved DWG bundle to %s"), *ZipDirectory);
+		if (gameInstance)
+		{
+			AEditModelPlayerController* controller = CastChecked<AEditModelPlayerController>(gameInstance->GetFirstLocalPlayerController());
+			if (controller && controller->EditModelUserWidget && controller->EditModelUserWidget->ModalDialogWidgetBP)
+			{
+				FModalButtonParam dismissButton(EModalButtonStyle::Default, LOCTEXT("SavedDWGok", "OK"), nullptr);
+				controller->EditModelUserWidget->ModalDialogWidgetBP->CreateModalDialog(LOCTEXT("SavedDWGTitle", "Notice"),
+					FText::Format(LOCTEXT("SavedDWGMsg", "Saved DWG bundle to {0}"), FText::FromString(ZipDirectory)),
+					TArray<FModalButtonParam>({ dismissButton })
+				);
+			}
+		}
+#endif
 	}
 
 	return;
