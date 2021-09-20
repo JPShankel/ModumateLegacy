@@ -12,6 +12,7 @@
 #include "UnrealClasses/SkyActor.h"
 #include "UnrealClasses/AxesActor.h"
 #include "UnrealClasses/EditModelPlayerPawn.h"
+#include "Components/HorizontalBox.h"
 
 
 UViewMenuBlockProperties::UViewMenuBlockProperties(const FObjectInitializer& ObjectInitializer)
@@ -51,6 +52,12 @@ void UViewMenuBlockProperties::NativeConstruct()
 {
 	Super::NativeConstruct();
 	Controller = GetOwningPlayer<AEditModelPlayerController>();
+
+#if PLATFORM_MAC
+	HorizontalBox_OrthoView->SetVisibility(ESlateVisibility::Collapsed);
+#else
+	HorizontalBox_OrthoView->SetVisibility(ESlateVisibility::Visible);
+#endif
 }
 
 FReply UViewMenuBlockProperties::NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)

@@ -43,6 +43,9 @@ public:
 	class UModumateEditableTextBoxUserWidget *EditableTextBox_FOV;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UHorizontalBox* HorizontalBox_OrthoView;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateCheckBox* OrthoViewCheckBox;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))

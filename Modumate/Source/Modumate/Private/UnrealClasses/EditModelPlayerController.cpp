@@ -1654,7 +1654,8 @@ bool AEditModelPlayerController::IsShiftDown() const
 
 bool AEditModelPlayerController::IsControlDown() const
 {
-	return IsInputKeyDown(EKeys::LeftControl) || IsInputKeyDown(EKeys::RightControl);
+	return IsInputKeyDown(EKeys::LeftControl) || IsInputKeyDown(EKeys::RightControl) ||
+		IsInputKeyDown(EKeys::LeftCommand) || IsInputKeyDown(EKeys::RightCommand);
 }
 
 void AEditModelPlayerController::OnAutoSaveTimer()
