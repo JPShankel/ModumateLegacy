@@ -1,4 +1,5 @@
 chmod -R a+rw "/Users/buildy/Documents/"$1
+./Modumate/Scripts/make_app_symlink.sh $1
 infoplist="/Users/buildy/Documents/$1/ModumatePackaged/MacNoEditor/Modumate-Mac-Shipping.app/Contents/Info.plist"
 sedcom="sed -I b 's/"$2"/"$1"/' $infoplist"
 eval "$sedcom"

@@ -11,4 +11,6 @@
 		  </array>
 		</dict>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Uses the microphone for chat</string>
 	

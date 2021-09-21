@@ -17,9 +17,7 @@
 */
 TAutoConsoleVariable<FString> CVarModumateCloudAddress(
 	TEXT("modumate.CloudAddress"),
-#if PLATFORM_MAC
-	TEXT("https://beta.account.modumate.com"),
-#elif UE_BUILD_SHIPPING
+#if UE_BUILD_SHIPPING
 	TEXT("https://account.modumate.com"),
 #else
 	TEXT("https://beta.account.modumate.com"),
