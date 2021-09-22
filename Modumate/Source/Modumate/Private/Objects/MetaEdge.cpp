@@ -140,6 +140,9 @@ bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 	break;
 	case EObjectDirtyFlags::Visuals:
 	{
+		// Backtrace: Possible invalid MOIs in preview deltas leading to crash 
+		GetConnectedMOIs(CachedConnectedMOIs);
+
 		for (AModumateObjectInstance* connectedMOI : CachedConnectedMOIs)
 		{
 			if ((connectedMOI->GetObjectType() == EObjectType::OTMetaPlane) && connectedMOI->IsDirty(EObjectDirtyFlags::Visuals))

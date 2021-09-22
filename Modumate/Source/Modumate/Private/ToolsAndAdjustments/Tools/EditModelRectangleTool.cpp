@@ -318,7 +318,7 @@ bool URectangleTool::MakeObject(const FVector& Location)
 		constrainedLocation = PlaneBaseStart;
 		pendingSegment->Point1 = constrainedLocation;
 	}
-	else if (State == NewPlanePending)
+	else if (State == NewPlanePending && ensureAlways(PendingPlanePoints.Num() > 3))
 	{
 		PlaneBaseStart = PendingPlanePoints[3];
 		PlaneBaseEnd = PendingPlanePoints[2];
