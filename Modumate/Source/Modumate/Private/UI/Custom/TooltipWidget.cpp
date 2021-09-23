@@ -38,9 +38,8 @@ void UTooltipWidget::BuildPrimaryTooltip(const FTooltipData& InData)
 	TextBlock_Desc->ChangeText(InData.TooltipText);
 
 	// Primary tooltips with inputs should only exist during edit model
-	// If main menu needs primary tooltips with inputs, use StartRootMenuWidget for UserWidgetPool
 	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
-	if (!controller)
+	if (!(controller && controller->HUDDrawWidget))
 	{
 		return;
 	}
@@ -48,7 +47,10 @@ void UTooltipWidget::BuildPrimaryTooltip(const FTooltipData& InData)
 	for (auto keyWidget : HorizontalBoxForKeys->GetAllChildren())
 	{
 		UUserWidget* asUserWidget = Cast<UUserWidget>(keyWidget);
-		controller->HUDDrawWidget->UserWidgetPool.Release(asUserWidget);
+		if (asUserWidget)
+		{
+			controller->HUDDrawWidget->UserWidgetPool.Release(asUserWidget);
+		}
 	}
 	HorizontalBoxForKeys->ClearChildren();
 
