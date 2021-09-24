@@ -313,7 +313,14 @@ bool AMainMenuGameMode::OnCreatedProjectConnection(const FProjectConnectionRespo
 void AMainMenuGameMode::OnProjectConnectionFailed(int32 ErrorCode, const FString& ErrorMessage)
 {
 	UE_LOG(LogTemp, Error, TEXT("Error code %d while trying to create a connection to project %s: %s"), ErrorCode, *PendingCloudProjectID, *ErrorMessage);
-	OnCloudProjectFailure(LOCTEXT("OpenProjectError", "Failed to connect to server! Please try again later."));
+	if (ErrorCode == EHttpResponseCodes::Conflict)
+	{
+		OnCloudProjectFailure(LOCTEXT("OpenProjectConflict", "Failed to connect to server - existing server is a different release."));
+	}
+	else
+	{
+		OnCloudProjectFailure(LOCTEXT("OpenProjectError", "Failed to connect to server! Please try again later."));
+	}
 }
 
 bool AMainMenuGameMode::OpenProjectFromPicker()
