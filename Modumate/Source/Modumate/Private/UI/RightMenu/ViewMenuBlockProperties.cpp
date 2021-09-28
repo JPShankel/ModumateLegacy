@@ -29,7 +29,7 @@ bool UViewMenuBlockProperties::Initialize()
 	if (!(ViewCubeCheckBox && GravityCheckBox && WorldAxesCheckBox &&
 		EditableTextBox_FOV && EditableTextBox_Month && EditableTextBox_Day &&
 		EditableTextBox_Hour && EditableTextBox_Minute && ModumateButton_AM &&
-		OrthoViewCheckBox))
+		PerspectiveRadioButton && OrthogonalRadioButton))
 	{
 		return false;
 	}
@@ -37,7 +37,8 @@ bool UViewMenuBlockProperties::Initialize()
 	GravityCheckBox->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::ToggleGravityCheckboxes);
 	WorldAxesCheckBox->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::ToggleWorldAxesCheckboxes);
 	EditableTextBox_FOV->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UViewMenuBlockProperties::OnEditableTextBoxFOVCommitted);
-	OrthoViewCheckBox->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::ToggleOrthViewCheckbox);
+	PerspectiveRadioButton->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::ChangePerspectiveButton);
+	OrthogonalRadioButton->OnCheckStateChanged.AddDynamic(this, &UViewMenuBlockProperties::ChangeOrthogonalButton);
 
 	EditableTextBox_Month->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UViewMenuBlockProperties::OnEditableTextBoxMonthCommitted);
 	EditableTextBox_Day->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UViewMenuBlockProperties::OnEditableTextBoxDayCommitted);
@@ -52,12 +53,6 @@ void UViewMenuBlockProperties::NativeConstruct()
 {
 	Super::NativeConstruct();
 	Controller = GetOwningPlayer<AEditModelPlayerController>();
-
-#if PLATFORM_MAC
-	HorizontalBox_OrthoView->SetVisibility(ESlateVisibility::Collapsed);
-#else
-	HorizontalBox_OrthoView->SetVisibility(ESlateVisibility::Visible);
-#endif
 }
 
 FReply UViewMenuBlockProperties::NativeOnMouseWheel(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -177,12 +172,23 @@ void UViewMenuBlockProperties::ToggleWorldAxesCheckboxes(bool NewEnable)
 	}
 }
 
-void UViewMenuBlockProperties::ToggleOrthViewCheckbox(bool bNewEnable)
+void UViewMenuBlockProperties::ChangePerspectiveButton(bool bNewEnable)
 {
+		OrthogonalRadioButton->SetCheckedState(bNewEnable ? ECheckBoxState::Unchecked : ECheckBoxState::Checked);
+		if (ensure(Controller && Controller->EMPlayerPawn))
+		{
+			Controller->EMPlayerPawn->SetCameraOrtho(!bNewEnable);
+		}
+}
+
+void UViewMenuBlockProperties::ChangeOrthogonalButton(bool bNewEnable)
+{
+	PerspectiveRadioButton->SetCheckedState(bNewEnable ? ECheckBoxState::Unchecked : ECheckBoxState::Checked);
 	if (ensure(Controller && Controller->EMPlayerPawn))
 	{
 		Controller->EMPlayerPawn->SetCameraOrtho(bNewEnable);
 	}
+
 }
 
 void UViewMenuBlockProperties::SyncTextBoxesWithSkyActorCurrentTime()

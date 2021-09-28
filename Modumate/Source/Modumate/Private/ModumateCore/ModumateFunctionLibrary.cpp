@@ -135,18 +135,25 @@ bool UModumateFunctionLibrary::IsVectorInArray(const TArray<FVector>& Array, con
 FVector UModumateFunctionLibrary::GetWorldComponentToScreenSizeScale(UStaticMeshComponent * Target, FVector DesiredScreenSize)
 {
 	APlayerCameraManager* cameraActor = UGameplayStatics::GetPlayerCameraManager(Target, 0);
-	float fovD = UKismetMathLibrary::DegSin(cameraActor->GetFOVAngle());
-	float distance = FVector::Dist(cameraActor->GetCameraLocation(), Target->GetComponentLocation());
-	float relativeScreenSize = FMath::Clamp(50.0f / (distance * fovD), 0.0f, 1.0f);
-	if (relativeScreenSize < KINDA_SMALL_NUMBER)
+	if (cameraActor->GetCameraCachePOV().ProjectionMode == ECameraProjectionMode::Orthographic)
 	{
-		return FVector::ZeroVector;
+		return cameraActor->GetCameraCachePOV().OrthoWidth / 60.0f * DesiredScreenSize;
 	}
+	else
+	{
+		float fovD = UKismetMathLibrary::DegSin(cameraActor->GetFOVAngle());
+		float distance = FVector::Dist(cameraActor->GetCameraLocation(), Target->GetComponentLocation());
+		float relativeScreenSize = FMath::Clamp(50.0f / (distance * fovD), 0.0f, 1.0f);
+		if (relativeScreenSize < KINDA_SMALL_NUMBER)
+		{
+			return FVector::ZeroVector;
+		}
 
-	float rFOV = FMath::DegreesToRadians(cameraActor->GetFOVAngle());
-	float fovScale = 2 * FMath::Tan(rFOV / 2.f);
+		float rFOV = FMath::DegreesToRadians(cameraActor->GetFOVAngle());
+		float fovScale = 2 * FMath::Tan(rFOV / 2.f);
 
-	return (DesiredScreenSize / relativeScreenSize) * fovScale;
+		return (DesiredScreenSize / relativeScreenSize) * fovScale;
+	}
 }
 
 bool UModumateFunctionLibrary::ComponentAsBillboard(UStaticMeshComponent * Target, FVector DesiredScreenSize)

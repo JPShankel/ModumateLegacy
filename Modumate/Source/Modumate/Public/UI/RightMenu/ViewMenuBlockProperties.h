@@ -43,10 +43,10 @@ public:
 	class UModumateEditableTextBoxUserWidget *EditableTextBox_FOV;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UHorizontalBox* HorizontalBox_OrthoView;
+	class UModumateCheckBox* PerspectiveRadioButton;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateCheckBox* OrthoViewCheckBox;
+	class UModumateCheckBox* OrthogonalRadioButton;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateEditableTextBoxUserWidget *EditableTextBox_Month;
@@ -94,7 +94,10 @@ public:
 	void ToggleWorldAxesCheckboxes(bool NewEnable);
 
 	UFUNCTION()
-	void ToggleOrthViewCheckbox(bool NewEnable);
+	void ChangePerspectiveButton(bool bNewEnable);
+
+	UFUNCTION()
+	void ChangeOrthogonalButton(bool bNewEnable);
 
 	void SyncTextBoxesWithSkyActorCurrentTime();
 };
