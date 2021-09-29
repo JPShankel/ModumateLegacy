@@ -192,6 +192,9 @@ protected:
 	// The world-space position about which we intend to orbit after clicking on a target, if we're in ECameraMovementState::Orbiting
 	FVector OrbitTarget;
 
+	// The world-space position to move towards (or away from) on zoom
+	FVector ZoomTarget;
+
 	// The world-space position about which we are actually rotating, which approaches OrbitTarget in order to smooth the camera
 	FVector OrbitStartProxyTarget;
 

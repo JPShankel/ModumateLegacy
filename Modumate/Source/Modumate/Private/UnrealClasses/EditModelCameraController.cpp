@@ -43,6 +43,7 @@ UEditModelCameraController::UEditModelCameraController()
 	, Controller(nullptr)
 	, CurMovementState(ECameraMovementState::Default)
 	, OrbitTarget(ForceInitToZero)
+	, ZoomTarget(ForceInitToZero)
 	, OrbitStartProxyTarget(ForceInitToZero)
 	, DefaultSphere(FVector::ZeroVector, 100.0f)
 	, FreeZoomDeltaAccumulated(ForceInitToZero)
@@ -626,6 +627,7 @@ void UEditModelCameraController::OnZoom(float ZoomSign)
 		// to be consistent between smooth zooming and not-smooth zooming with quick zoom actions.
 		const FVector origin = CamTransform.GetLocation() + FreeZoomDeltaAccumulated;
 		const FVector target = cursor.WorldPosition;
+		ZoomTarget = target;
 		const FVector deltaToTarget = target - origin;
 		const float distToTarget = deltaToTarget.Size();
 		if (FMath::IsNearlyZero(distToTarget))
@@ -714,13 +716,21 @@ void UEditModelCameraController::UpdateFreeZooming(float DeltaTime)
 	if (cameraComponent->ProjectionMode == ECameraProjectionMode::Orthographic)
 	{
 		static constexpr float orthoZoomScale = 0.5f;
-		float direction = (CamTransform.TransformVector(FVector::ForwardVector) | curZoomDelta) < 0.0f ? 1.0f : -1.0f;
-		cameraComponent->SetOrthoWidth(cameraComponent->OrthoWidth + direction * orthoZoomScale * curZoomDelta.Size());
+		static constexpr float orthoMinWidth = 10.0f;
+		FVector camDirection = CamTransform.TransformVector(FVector::ForwardVector);
+		FVector CameraPos = CamTransform.GetLocation();
+		float cameraDotZoom = camDirection | curZoomDelta;
+		float direction = cameraDotZoom < 0.0f ? 1.0f : -1.0f;
+		float orthoWidth = cameraComponent->OrthoWidth;
+		float newOrthoWidth = orthoWidth + direction * orthoZoomScale * curZoomDelta.Size();
+		newOrthoWidth = FMath::Max(newOrthoWidth, orthoMinWidth);
+		cameraComponent->SetOrthoWidth(newOrthoWidth);
+		// Move camera in direction of zoom target but orthogonal to view.
+		FVector targetInViewPlane = ZoomTarget + ((CameraPos - ZoomTarget) | camDirection) * camDirection - CameraPos;
+		curZoomDelta = targetInViewPlane * (orthoWidth - newOrthoWidth) / orthoWidth;
 	}
-	else
-	{
-		CamTransform.SetLocation(CamTransform.GetLocation() + curZoomDelta);
-	}
+	
+	CamTransform.SetLocation(CamTransform.GetLocation() + curZoomDelta);
 
 	FreeZoomDeltaAccumulated *= (1.0f - zoomLerpAlpha);
 }
