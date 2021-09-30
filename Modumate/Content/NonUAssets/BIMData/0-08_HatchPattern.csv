@@ -1,0 +1,36 @@
+TYPENAME,,0HatchPattern,,HatchPattern,,,,,,,
+,,Definition,,,,,,,,,
+,,PropertyType,,PropertyName,,PropertyScope.Value,,,,,
+PROPERTY,,DisplayText,,Name,,HatchPattern.Name,,,,,
+PROPERTY,,AssetPath,,,,HatchPattern.AssetPath,,,,,
+PROPERTY,,Number,,,,HatchPattern.TextureTilingSize,,,,,
+PROPERTY,,Number,,,,HatchPattern.TextureTilingType,,,,,
+,,Presets,,,,,,,,,
+TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,HatchPattern.Name,HatchPattern.AssetPath,HatchPattern.TextureTilingSize,HatchPattern.TextureTilingType
+PRESET,,5C3A9E61-C766-B542-AAD8-F39BBF65EC38,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_None-1,,Property_Materiality_HatchPattern,,None,Game/ShoppingData/HatchPatterns/Hatch_None,1,2D
+PRESET,,39743792-F051-634A-A5D3-03F829B7B3B7,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Aluminum_01-1,,Property_Materiality_HatchPattern,,Aluminum,Game/ShoppingData/HatchPatterns/Hatch_Aluminum_01,1,2D
+,,C6818D1D-69E9-6447-A7B6-363DBBF8B2DF,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_BattInsulation_01-1,,Property_Materiality_HatchPattern,,Batt Insulation,Game/ShoppingData/HatchPatterns/Hatch_BattInsulation_01,1,1D
+PRESET,,785A6C7E-C934-5E4B-A6F6-88F3FD886429,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_BrickMasonry_01-1,,Property_Materiality_HatchPattern,,Brick Masonry,Game/ShoppingData/HatchPatterns/Hatch_BrickMasonry_01,1,2D
+PRESET,,4C894167-F525-AC41-8223-4E5A8FDE055E,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_ConcreteBlock_01-1,,Property_Materiality_HatchPattern,,Concrete Block,Game/ShoppingData/HatchPatterns/Hatch_ConcreteBlock_01,1,2D
+PRESET,,890D39EC-462F-F243-9C98-87B175B3423B,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Concrete_01-1,,Property_Materiality_HatchPattern,,Concrete,Game/ShoppingData/HatchPatterns/Hatch_Concrete_01,1,2D
+PRESET,,C0B3073A-405B-7E49-8028-D8474F98CE2F,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_CrossHatch_01-1,,Property_Materiality_HatchPattern,,Crosshatch 1/8in,Game/ShoppingData/HatchPatterns/Hatch_CrossHatch_01,1,2D
+PRESET,,22B9D0CF-F733-F44E-A887-99D746E41023,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_CrossHatch_02-1,,Property_Materiality_HatchPattern,,Crosshatch 1/16in,Game/ShoppingData/HatchPatterns/Hatch_CrossHatch_02,1,2D
+PRESET,,0F7C4068-2ADD-5643-ABFB-DCBE2CF62E52,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Earth_01-1,,Property_Materiality_HatchPattern,,Earth,Game/ShoppingData/HatchPatterns/Hatch_Earth_01,1,2D
+PRESET,,B8418EA5-71FC-D941-B0EE-544C709FDB51,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Earth_02-1,,Property_Materiality_HatchPattern,,Earth Rock,Game/ShoppingData/HatchPatterns/Hatch_Earth_02,1,2D
+PRESET,,5614ADBB-973C-B945-BC88-2E9E8052D0DE,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Gravel_01-1,,Property_Materiality_HatchPattern,,Gravel,Game/ShoppingData/HatchPatterns/Hatch_Gravel_01,1,2D
+PRESET,,8EB5CC2A-2448-D64D-B7BD-4CEFB619F684,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Grid_01-1,,Property_Materiality_HatchPattern,,Grid 1/8in,Game/ShoppingData/HatchPatterns/Hatch_Grid_01,1,2D
+PRESET,,8B0D1911-685A-E843-A65E-D07E7ADE1BCB,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Grid_02-1,,Property_Materiality_HatchPattern,,Grid 1/16in,Game/ShoppingData/HatchPatterns/Hatch_Grid_02,1,2D
+PRESET,,3BE0C293-2D4D-D246-BA23-939CD5AACF8C,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Plywood_01-1,,Property_Materiality_HatchPattern,,Plywood,Game/ShoppingData/HatchPatterns/Hatch_Plywood_01,1,2D
+PRESET,,92AFAE9D-665D-754B-9326-BDE9C935F4D5,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_RubberPlastic_01-1,,Property_Materiality_HatchPattern,,Rubber / Plastic,Game/ShoppingData/HatchPatterns/Hatch_RubberPlastic_01,1,2D
+PRESET,,36A6C080-3E56-1F43-AC63-393F07B0AAFC,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Sand_01-1,,Property_Materiality_HatchPattern,,Sand 01,Game/ShoppingData/HatchPatterns/Hatch_Sand_01,1,2D
+PRESET,,E1A193EB-AF1D-CA4E-B427-7CF647D0CA08,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Sand_02-1,,Property_Materiality_HatchPattern,,Sand 02,Game/ShoppingData/HatchPatterns/Hatch_Sand_02,1,2D
+PRESET,,3CDE379F-B12A-C74A-ADBA-EFD041226DD8,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Steel_01-1,,Property_Materiality_HatchPattern,,Steel,Game/ShoppingData/HatchPatterns/Hatch_Steel_01,1,2D
+PRESET,,AB084616-47DE-5848-A113-2D04E2F127D6,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Stone_01-1,,Property_Materiality_HatchPattern,,Stone,Game/ShoppingData/HatchPatterns/Hatch_Stone_01,1,2D
+PRESET,,ACF52D3C-4791-5B42-A27B-8EC05D06A5C2,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Wood_01-1,,Property_Materiality_HatchPattern,,Wood 01,Game/ShoppingData/HatchPatterns/Hatch_Wood_01,1,2D
+PRESET,,4B06B55A-7BE3-A749-86C4-E9AF819A87B7,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_Wood_02-1,,Property_Materiality_HatchPattern,,Wood 02,Game/ShoppingData/HatchPatterns/Hatch_Wood_02,1,2D
+,,2778B3AB-AB49-BD47-A17A-6B7AAC480B8B,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_WoodBlocking_01-1,,Property_Materiality_HatchPattern,,Wood Blocking,Game/ShoppingData/HatchPatterns/Hatch_WoodBlocking_01,1,0D
+,,FC1BA7E6-2354-B345-9E2C-0127D4E5F94F,,Property_Materiality_HatchPattern-Game/ShoppingData/HatchPatterns/Hatch_WoodFraming_01-1,,Property_Materiality_HatchPattern,,Wood Framing,Game/ShoppingData/HatchPatterns/Hatch_WoodFraming_01,1,0D
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
