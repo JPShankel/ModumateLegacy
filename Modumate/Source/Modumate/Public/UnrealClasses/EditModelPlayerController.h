@@ -567,6 +567,9 @@ public:
 	UMaterialParameterCollection* CutPlaneCullingMaterialCollection;
 
 	UFUNCTION()
+	void ProjectPermissionsChangedHandler();
+
+	UFUNCTION()
 	void OnToggledProjectSystemMenu(ESlateVisibility NewVisibility);
 	// Voice Chat
 	UFUNCTION()

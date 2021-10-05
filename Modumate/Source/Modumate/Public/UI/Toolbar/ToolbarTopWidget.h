@@ -60,6 +60,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* Button_TextChat;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UUserWidget* ViewOnlyBadge;
+
 	UFUNCTION()
 	void OnButtonReleaseModumateHome();
 
@@ -70,5 +73,10 @@ public:
 	void OnButtonReleaseTextChat();
 
 	void SwitchToViewMode(EEditViewModes NewViewMode);
+
+	UFUNCTION()
+	void CheckProjectPermissions();
+
+	FTimerHandle SlowTickHandle;
 
 };

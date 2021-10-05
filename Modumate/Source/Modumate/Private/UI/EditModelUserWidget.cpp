@@ -505,4 +505,20 @@ void UEditModelUserWidget::ToggleVerticalUserList(bool bNewVisibility)
 	}
 }
 
+void UEditModelUserWidget::ToggleViewOnlyBadge(bool bNewVisibility)
+{
+	if (ToolbarWidget->ToolBarTopBP->ViewOnlyBadge)
+	{
+		auto widget = ToolbarWidget->ToolBarTopBP->ViewOnlyBadge;
+		if (bNewVisibility)
+		{
+			widget->SetVisibility(ESlateVisibility::HitTestInvisible);
+		}
+		else
+		{
+			widget->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+}
+
 #undef LOCTEXT_NAMESPACE

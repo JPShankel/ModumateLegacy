@@ -33,6 +33,9 @@ struct MODUMATE_API FProjectConnectionResponse
 
 	UPROPERTY()
 	FString Key;
+
+	UPROPERTY()
+	TArray<FString> Permissions;
 };
 
 // Must match the API spec for components/schemas/Project in the AMS

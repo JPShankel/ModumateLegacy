@@ -263,6 +263,10 @@ public:
 	UFUNCTION(Server, Reliable)
 	void UploadProjectThumbnail(const FString& Base64String);
 
+	UFUNCTION(Server, Reliable)
+	void SetupPermissions();
+	bool RequestPermissions(const FString& UserID, const FString& ProjecID, const TFunction<void(const FString&, const FString&, const FProjectPermissions&)>& Callback);
+
 	UFUNCTION()
 	void OnRep_CamTransform();
 
@@ -272,6 +276,9 @@ public:
 	UFUNCTION()
 	void OnRep_UserInfo();
 
+	UFUNCTION()
+	void OnRep_UserPermissions();
+
 	UPROPERTY(ReplicatedUsing=OnRep_CamTransform)
 	FTransform ReplicatedCamTransform;
 
@@ -280,6 +287,9 @@ public:
 
 	UPROPERTY(ReplicatedUsing=OnRep_UserInfo)
 	FModumateUserInfo ReplicatedUserInfo;
+
+	UPROPERTY(ReplicatedUsing=OnRep_UserPermissions)
+	FProjectPermissions ReplicatedProjectPermissions;
 
 	UPROPERTY(Replicated)
 	int32 MultiplayerClientIdx = INDEX_NONE;
@@ -300,10 +310,19 @@ public:
 
 	FVector InterpReplicatedCursorLocation;
 
+	DECLARE_EVENT(AEditModelPlayerState, FProjectPermissionsEvent)
+	FProjectPermissionsEvent& OnProjectPermissionsChanged() { return ProjectPermChangedEvent; }
+
 protected:
+	FProjectPermissionsEvent ProjectPermChangedEvent;
+
 	void UpdateOtherClientCameraAndCursor();
+	static const FString ViewOnlyArg;
+	static FProjectPermissions ParseProjectPermissions(const TArray<FString>& Permissions);
 
 	TArray<FStructurePoint> TempObjectStructurePoints, CurSelectionStructurePoints;
 	TArray<FStructureLine> TempObjectStructureLines, CurSelectionStructureLines;
 	TSet<AModumateObjectInstance *> CurViewGroupObjects;
+
+	
 };

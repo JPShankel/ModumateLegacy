@@ -1156,6 +1156,11 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 		return false;
 	}
 
+	if (bMultiplayerClient && !controller->EMPlayerState->ReplicatedProjectPermissions.CanEdit)
+	{
+		return false;
+	}
+
 	StartTrackingDeltaObjects();
 
 	SetDirtyFlags(true);

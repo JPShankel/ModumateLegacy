@@ -141,6 +141,7 @@ public:
 	void ToggleHelpMenu(bool bNewVisibility);
 	void ToggleTextChat(bool bNewVisibility);
 	void ToggleVerticalUserList(bool bNewVisibility);
+	void ToggleViewOnlyBadge(bool bNewVisibility);
 	bool IsBIMDesingerActive() const;
 	bool EMUserWidgetHandleEscapeKey();
 	void UpdateSelectTrayVisibility();

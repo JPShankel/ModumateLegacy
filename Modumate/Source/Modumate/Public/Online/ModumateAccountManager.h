@@ -26,6 +26,24 @@ struct MODUMATE_API FModumateLoginParams
 };
 
 USTRUCT()
+struct MODUMATE_API FProjectPermissions
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	bool CanView;
+
+	UPROPERTY()
+	bool CanEdit;
+
+	UPROPERTY()
+	bool CanChat;
+
+	UPROPERTY()
+	bool CanExport;
+};
+
+USTRUCT()
 struct MODUMATE_API FModumateUserInfo
 {
 	GENERATED_BODY();

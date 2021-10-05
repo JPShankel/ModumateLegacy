@@ -62,7 +62,7 @@ void UModumateVoiceTalkingWidget::TalkingChangedHandler(FString SpeakingUser, bo
 		SpeakerMap.Remove(SpeakingUser);
 		if (SpeakerMap.Num() == 0)
 		{
-			SetVisibility(ESlateVisibility::Collapsed);
+			SetVisibility(ESlateVisibility::Hidden);
 		}
 		else if (LatestSpeaker.Equals(SpeakingUser))
 		{
@@ -86,7 +86,7 @@ void UModumateVoiceTalkingWidget::TalkingChangedHandler(FString SpeakingUser, bo
 			if (!found)
 			{
 				SpeakerMap.Empty();
-				SetVisibility(ESlateVisibility::Collapsed);
+				SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
 	}

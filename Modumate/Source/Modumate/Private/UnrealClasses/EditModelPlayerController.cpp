@@ -386,11 +386,13 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 		InputAutomationComponent->RecordLoadedTutorial(bOpeningTutorialProject);
 	}
 #endif
-
+	if (IsNetMode(NM_Client))
+	{
+		EMPlayerState->OnProjectPermissionsChanged().AddUObject(this, &AEditModelPlayerController::ProjectPermissionsChangedHandler);
+	}
 
 	RegisterCapability<AModumateVoice>();
 	RegisterCapability<AModumateTextChat>();
-
 
 	bBeganWithPlayerState = true;
 
@@ -3858,6 +3860,21 @@ bool AEditModelPlayerController::ToggleGravityPawn()
 	UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::View, analyticsEventName);
 
 	return true;
+}
+
+void AEditModelPlayerController::ProjectPermissionsChangedHandler()
+{
+	if (EditModelUserWidget && EMPlayerState)
+	{
+		if (EMPlayerState->ReplicatedProjectPermissions.CanEdit)
+		{
+			EditModelUserWidget->ToggleViewOnlyBadge(false);
+		}
+		else
+		{
+			EditModelUserWidget->ToggleViewOnlyBadge(true);
+		}
+	}
 }
 
 void AEditModelPlayerController::OnToggledProjectSystemMenu(ESlateVisibility NewVisibility)

@@ -8,6 +8,7 @@
 #include "UI/Chat/ModumateChatWidget.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 
 UToolbarTopWidget::UToolbarTopWidget(const FObjectInitializer& ObjectInitializer)
@@ -38,6 +39,8 @@ bool UToolbarTopWidget::Initialize()
 
 void UToolbarTopWidget::NativeConstruct()
 {
+
+
 	Super::NativeConstruct();
 }
 
@@ -73,4 +76,19 @@ void UToolbarTopWidget::SwitchToViewMode(EEditViewModes NewViewMode)
 	NewViewMode == EEditViewModes::SurfaceGraphs ? Button_ViewModeSurfaceGraph->SwitchToActiveStyle() : Button_ViewModeSurfaceGraph->SwitchToNormalStyle();
 	NewViewMode == EEditViewModes::AllObjects ? Button_ViewModeAllObject->SwitchToActiveStyle() : Button_ViewModeAllObject->SwitchToNormalStyle();
 	NewViewMode == EEditViewModes::Physical ? Button_ViewModePhysical->SwitchToActiveStyle() : Button_ViewModePhysical->SwitchToNormalStyle();
+}
+
+void UToolbarTopWidget::CheckProjectPermissions()
+{
+	if (Controller && Controller->EMPlayerState && ViewOnlyBadge)
+	{
+		if (Controller->EMPlayerState->ReplicatedProjectPermissions.CanEdit)
+		{
+			ViewOnlyBadge->SetVisibility(ESlateVisibility::Hidden);
+		}
+		else
+		{
+			ViewOnlyBadge->SetVisibility(ESlateVisibility::HitTestInvisible);
+		}
+	}
 }

@@ -31,8 +31,7 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 
-
-
+const FString AEditModelPlayerState::ViewOnlyArg(TEXT("ModViewOnly"));
 
 AEditModelPlayerState::AEditModelPlayerState()
 	: ShowDebugSnaps(false)
@@ -73,6 +72,7 @@ void AEditModelPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	DOREPLIFETIME(AEditModelPlayerState, ReplicatedUserInfo);
 	DOREPLIFETIME(AEditModelPlayerState, MultiplayerClientIdx);
 	DOREPLIFETIME(AEditModelPlayerState, ReplicatedCursorLocation);
+	DOREPLIFETIME(AEditModelPlayerState, ReplicatedProjectPermissions);
 }
 
 bool AEditModelPlayerState::BeginWithController()
@@ -97,6 +97,7 @@ bool AEditModelPlayerState::BeginWithController()
 	{
 		auto userInfo = accountManager->GetUserInfo();
 		SetUserInfo(userInfo, MultiplayerClientIdx);
+		SetupPermissions(); //On Client, tell server we're ready to setup permissions...
 	}
 
 	return true;
@@ -1195,6 +1196,12 @@ void AEditModelPlayerState::SetUserInfo_Implementation(const FModumateUserInfo& 
 // RPC from the client to the server's copy of that client's PlayerState
 void AEditModelPlayerState::SendClientDeltas_Implementation(FDeltasRecord Deltas)
 {
+	if (!ReplicatedProjectPermissions.CanEdit)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("User without project edit permissions sent delta, userId=%s"), *ReplicatedUserInfo.ID);
+		return;
+	}
+
 	FString userID;
 	UWorld* world = GetWorld();
 	AEditModelGameState* gameState = world ? world->GetGameState<AEditModelGameState>() : nullptr;
@@ -1439,6 +1446,17 @@ void AEditModelPlayerState::OnRep_UserInfo()
 	UpdateAllUsersList();
 }
 
+void AEditModelPlayerState::OnRep_UserPermissions()
+{
+	UE_LOG(LogTemp, Log, TEXT("Permissions changed: view=%d, edit=%d, chat=%d, export=%d"), 
+		ReplicatedProjectPermissions.CanView, 
+		ReplicatedProjectPermissions.CanEdit,
+		ReplicatedProjectPermissions.CanChat,
+		ReplicatedProjectPermissions.CanExport);
+
+	ProjectPermChangedEvent.Broadcast();
+	
+}
 
 void AEditModelPlayerState::UpdateOtherClientCameraAndCursor()
 {
@@ -1475,4 +1493,124 @@ void AEditModelPlayerState::UpdateOtherClientCameraAndCursor()
 	{
 		InterpReplicatedCursorLocation = ReplicatedCursorLocation;
 	}
+}
+
+FProjectPermissions AEditModelPlayerState::ParseProjectPermissions(const TArray<FString>& Permissions)
+{
+	FProjectPermissions userPerms;
+	userPerms.CanView = false;
+	userPerms.CanEdit = false;
+	userPerms.CanChat = false;
+	userPerms.CanExport = false;
+
+	for (auto& permission : Permissions)
+	{
+		if (permission == TEXT("project.*"))
+		{
+			userPerms.CanView = true;
+			userPerms.CanEdit = true;
+			userPerms.CanChat = true;
+			userPerms.CanExport = true;
+		}
+		else if (permission == TEXT("project.view"))
+		{
+			userPerms.CanView = true;
+		}
+		else if (permission == TEXT("project.edit"))
+		{
+			userPerms.CanEdit = true;
+		}
+		else if (permission == TEXT("project.chat"))
+		{
+			userPerms.CanChat = true;
+		}
+		else if (permission == TEXT("project.export"))
+		{
+			userPerms.CanExport = true;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Unknown permissions detected: %s"), *permission);
+		}
+	}
+
+	return userPerms;
+}
+
+void AEditModelPlayerState::SetupPermissions_Implementation()
+{
+	FProjectPermissions defaultPermissions;
+
+	defaultPermissions.CanView = true;
+	defaultPermissions.CanChat = false;
+	defaultPermissions.CanEdit = false;
+	defaultPermissions.CanExport = false;
+
+	ReplicatedProjectPermissions = defaultPermissions;
+
+	RequestPermissions(ReplicatedUserInfo.ID, CurProjectID,
+		[&](const FString& user, const FString& project, const FProjectPermissions& perms) 
+		{
+			this->ReplicatedProjectPermissions = perms;
+			UE_LOG(LogTemp, Log, TEXT("Setting Permissions, canEdit=%d"), this->ReplicatedProjectPermissions.CanEdit);
+		}
+	);
+}
+
+bool AEditModelPlayerState::RequestPermissions(const FString& UserID, const FString& ProjectID,
+	const TFunction<void(const FString& user, const FString& project, const FProjectPermissions& perms)>& Callback)
+{
+	UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+
+
+	FString getConnectionEndpoint = FProjectConnectionHelpers::MakeProjectConnectionEndpoint(ProjectID) / UserID;
+
+	bool bQuerySuccess = cloudConnection->RequestEndpoint(getConnectionEndpoint, FModumateCloudConnection::ERequestType::Get, nullptr,
+		[=](bool bSuccess, const TSharedPtr<FJsonObject>& Payload)
+		{
+			FProjectConnectionResponse getConnectionResponse;
+			if (!ensure(bSuccess) && FJsonObjectConverter::JsonObjectToUStruct(Payload.ToSharedRef(), &getConnectionResponse))
+			{
+				return;
+			}
+			//Parse Permissions here...
+			FProjectPermissions userPerms = AEditModelPlayerState::ParseProjectPermissions(getConnectionResponse.Permissions);
+			if (Callback)
+			{
+				Callback(UserID, ProjectID, userPerms);
+			}
+
+		},
+		[=](int32 ErrorCode, const FString& ErrorString)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Setting user permissions, user ID=%s"), *UserID);
+			FProjectPermissions userPerms;
+
+#if UE_BUILD_SHIPPING
+			//Revoke non-view permissions on failure in shipping.
+			UE_LOG(LogTemp, Error, TEXT("Error code %d querying permissions for User ID %s: %s"),
+				ErrorCode, *UserID, *ErrorString);
+
+			userPerms.CanView = true;
+			userPerms.CanEdit = false;
+			userPerms.CanChat = false;
+			userPerms.CanExport = false;
+#else
+			bool viewOnly = FParse::Param(FCommandLine::Get(), *AEditModelPlayerState::ViewOnlyArg);
+
+			UE_LOG(LogTemp, Warning, TEXT("Unable to query permissions -- standalone windows server detected. Setting viewOnly=%d"), viewOnly);
+			userPerms.CanView = true;
+			userPerms.CanEdit = !viewOnly;
+			userPerms.CanChat = !viewOnly;
+			userPerms.CanExport = !viewOnly;
+#endif
+			if (Callback)
+			{
+				Callback(UserID, ProjectID, userPerms);
+			}
+		},
+			false);
+
+	return true;
 }
