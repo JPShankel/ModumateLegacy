@@ -25,6 +25,13 @@ ADynamicMeshActor::ADynamicMeshActor()
 	Mesh->SetMobility(bIsDynamic ? EComponentMobility::Movable : EComponentMobility::Static);
 
 	Height = 0;
+
+	// Cap for cutplane culling
+	MeshCap = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMeshCap"));
+	MeshCap->bUseAsyncCooking = true;
+	MeshCap->SetMobility(bIsDynamic ? EComponentMobility::Movable : EComponentMobility::Static);
+	MeshCap->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MeshCap->SetCastShadow(false);
 }
 
 // Called when the game starts or when spawned
@@ -717,6 +724,7 @@ bool ADynamicMeshActor::SetupStairPolys(const FVector& StairOrigin, const TArray
 	const TArray<FLayerGeomDef>& TreadLayers, const TArray<FLayerGeomDef>& RiserLayers, const FBIMAssemblySpec& AssemblySpec)
 {
 	Mesh->ClearAllMeshSections();
+	MeshCap->ClearAllMeshSections();
 
 	SetActorLocation(StairOrigin);
 	SetActorRotation(FQuat::Identity);
@@ -817,12 +825,26 @@ void ADynamicMeshActor::SetupProceduralLayers(int32 numProceduralLayers)
 			newProceduralMesh->SetMobility(newMobility);
 			newProceduralMesh->RegisterComponent();
 			ProceduralSubLayers.Add(newProceduralMesh);
+
+			UProceduralMeshComponent* newProceduralMeshCap = NewObject<UProceduralMeshComponent>(this);
+			newProceduralMeshCap->bUseAsyncCooking = true;
+			newProceduralMeshCap->SetCollisionObjectType(Mesh->GetCollisionObjectType());
+			newProceduralMeshCap->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			newProceduralMeshCap->SetCastShadow(false);
+			newProceduralMeshCap->SetupAttachment(this->GetRootComponent());
+			newProceduralMeshCap->SetMobility(newMobility);
+			newProceduralMeshCap->RegisterComponent();
+			ProceduralSubLayerCaps.Add(newProceduralMeshCap);
 		}
 	}
 	// Clear mesh of all procedural mesh
 	for (UProceduralMeshComponent* proceduralSubLayer : ProceduralSubLayers)
 	{
 		proceduralSubLayer->ClearAllMeshSections();
+	}
+	for (UProceduralMeshComponent* proceduralSubLayerCap : ProceduralSubLayerCaps)
+	{
+		proceduralSubLayerCap->ClearAllMeshSections();
 	}
 }
 
@@ -832,8 +854,19 @@ void ADynamicMeshActor::ClearProceduralLayers()
 	{
 		ProceduralSubLayers[layerIdx]->DestroyComponent();
 	}
-
 	ProceduralSubLayers.Reset();
+
+	for (int32 layerIdx = 0; layerIdx < ProceduralSubLayerCaps.Num(); layerIdx++)
+	{
+		ProceduralSubLayerCaps[layerIdx]->DestroyComponent();
+	}
+	ProceduralSubLayerCaps.Reset();
+}
+
+void ADynamicMeshActor::ClearProceduralMesh()
+{
+	Mesh->ClearAllMeshSections();
+	MeshCap->ClearAllMeshSections();
 }
 
 bool ADynamicMeshActor::SetupExtrudedPolyGeometry(const FBIMAssemblySpec& InAssembly, const FVector& InStartPoint, const FVector& InEndPoint,
@@ -1030,6 +1063,43 @@ void ADynamicMeshActor::SetupMasksGeometry(const TArray<TArray<FVector>> &Polygo
 
 		idx++;
 	}
+}
+
+void ADynamicMeshActor::SetupCapGeometry()
+{
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (!controller)
+	{
+		return;
+	}
+	ClearCapGeometry();
+
+	TArray<UStaticMeshComponent*> emptyStaticMeshes;
+	if (ProceduralSubLayers.Num() > 0)
+	{
+		for (int32 layerIdx = 0; layerIdx < ProceduralSubLayers.Num(); ++layerIdx)
+		{
+			UModumateGeometryStatics::CreateProcMeshCapFromPlane(ProceduralSubLayerCaps[layerIdx], 
+				TArray<UProceduralMeshComponent*>{ ProceduralSubLayers[layerIdx] }, emptyStaticMeshes,
+				controller->GetCurrentCullingPlane(), 0, ProceduralSubLayers[layerIdx]->GetMaterial(0));
+		}
+	}
+	else
+	{
+		UModumateGeometryStatics::CreateProcMeshCapFromPlane(MeshCap, 
+			TArray<UProceduralMeshComponent*>{ Mesh }, emptyStaticMeshes,
+			controller->GetCurrentCullingPlane(), 0, Mesh->GetMaterial(0));
+	}
+
+}
+
+void ADynamicMeshActor::ClearCapGeometry()
+{
+	for (UProceduralMeshComponent* proceduralSubLayerCap : ProceduralSubLayerCaps)
+	{
+		proceduralSubLayerCap->ClearAllMeshSections();
+	}
+	MeshCap->ClearAllMeshSections();
 }
 
 void ADynamicMeshActor::UpdateLayerMaterialsFromAssembly()

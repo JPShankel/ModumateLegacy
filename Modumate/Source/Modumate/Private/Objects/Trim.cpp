@@ -128,6 +128,14 @@ void AMOITrim::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, T
 	}
 }
 
+void AMOITrim::ToggleAndUpdateCapGeometry(bool bEnableCap)
+{
+	if (DynamicMeshActor.IsValid())
+	{
+		bEnableCap ? DynamicMeshActor->SetupCapGeometry() : DynamicMeshActor->ClearCapGeometry();
+	}
+}
+
 void AMOITrim::SetIsDynamic(bool bIsDynamic)
 {
 	if (DynamicMeshActor.IsValid())

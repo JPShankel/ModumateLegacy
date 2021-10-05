@@ -203,6 +203,14 @@ void AMOIPlaneHostedObj::GetStructuralPointsAndLines(TArray<FStructurePoint> &ou
 	}
 }
 
+void AMOIPlaneHostedObj::ToggleAndUpdateCapGeometry(bool bEnableCap)
+{
+	if (DynamicMeshActor.IsValid())
+	{
+		bEnableCap ? DynamicMeshActor->SetupCapGeometry() : DynamicMeshActor->ClearCapGeometry();
+	}
+}
+
 void AMOIPlaneHostedObj::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 {
 	AModumateObjectInstance *parent = GetParentObject();

@@ -115,6 +115,14 @@ void AMOIFinish::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints,
 	}
 }
 
+void AMOIFinish::ToggleAndUpdateCapGeometry(bool bEnableCap)
+{
+	if (DynamicMeshActor.IsValid())
+	{
+		bEnableCap ? DynamicMeshActor->SetupCapGeometry() : DynamicMeshActor->ClearCapGeometry();
+	}
+}
+
 void AMOIFinish::SetupAdjustmentHandles(AEditModelPlayerController* controller)
 {
 	// parent handles

@@ -76,6 +76,14 @@ void AMOIStructureLine::UpdateDynamicGeometry()
 	UpdateCachedGeometry(false, true);
 }
 
+void AMOIStructureLine::ToggleAndUpdateCapGeometry(bool bEnableCap)
+{
+	if (DynamicMeshActor.IsValid())
+	{
+		bEnableCap ? DynamicMeshActor->SetupCapGeometry() : DynamicMeshActor->ClearCapGeometry();
+	}
+}
+
 bool AMOIStructureLine::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
 {
 	OutState = GetStateData();

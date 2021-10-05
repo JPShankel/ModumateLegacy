@@ -84,7 +84,7 @@ public:
 
 	void SetupProceduralLayers(int32 numProceduralLayers);
 	void ClearProceduralLayers();
-	void ClearProceduralMesh() { Mesh->ClearAllMeshSections(); }
+	void ClearProceduralMesh();
 
 	void SetupPlaneGeometry(const TArray<FVector> &points, const FArchitecturalMaterial &material, bool bRecreateMesh, bool bCreateCollision = true);
 	void SetupMetaPlaneGeometry(const TArray<FVector> &points, 
@@ -126,6 +126,9 @@ public:
 
 	void SetupMasksGeometry(const TArray<TArray<FVector>> &Polygons, const FPlane &Plane, const FVector &Origin, const FVector &AxisX, const FVector &AxisY);
 
+	void SetupCapGeometry();
+	void ClearCapGeometry();
+
 	void UpdateLayerMaterialsFromAssembly();
 
 	bool HasPlacementError() const { return PlacementErrors.Num() > 0; }
@@ -159,6 +162,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	UProceduralMeshComponent *Mesh;
 
+	UPROPERTY(EditAnywhere)
+	UProceduralMeshComponent* MeshCap;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FVector> OldControlPoints;
 
@@ -190,6 +196,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UProceduralMeshComponent*> ProceduralSubLayers;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UProceduralMeshComponent*> ProceduralSubLayerCaps;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<UMaterialInstanceDynamic*> CachedMIDs;

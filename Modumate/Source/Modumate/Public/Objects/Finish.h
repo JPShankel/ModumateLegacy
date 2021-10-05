@@ -35,6 +35,7 @@ public:
 	virtual FVector GetNormal() const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
+	virtual void ToggleAndUpdateCapGeometry(bool bEnableCap) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController* controller) override;
 
 	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;

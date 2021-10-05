@@ -171,8 +171,20 @@ public:
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool AnalyzeCachedPositions(const TArray<FVector> &InPositions, FPlane &OutPlane, FVector &OutAxis2DX, FVector &OutAxis2DY, TArray<FVector2D> &Out2DPositions, FVector &OutCenter, bool bUpdatePlane = true);
 
-	static bool ConvertProcMeshToLinesOnPlane(UProceduralMeshComponent* InProcMesh, FVector PlanePosition, FVector PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges);
+	static bool ConvertProcMeshToLinesOnPlane(UProceduralMeshComponent* InProcMesh, FVector PlanePosition, FVector PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges, int32 UseSectionId = INDEX_NONE);
 	static bool ConvertStaticMeshToLinesOnPlane(UStaticMeshComponent* InStaticMesh, FVector PlanePosition, FVector PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges);
+	
+	/* Create cap geometry from plane
+	*
+	* @param[in] InCapProcMesh: procedural mesh for cap geometry
+	* @param[in] InProcMeshes: procedural meshes for cap perimeter calculation
+	* @param[in] InStaticMeshes: static meshes for cap perimeter calculation
+	* @param[in] CutPlane: Plane to slice
+	* @param[in] SectionIdOnly: use only specific mesh section from InProcMeshes
+	* @param[in] CapMaterial: material for cap geometry
+	* @result: whether result is calculated successfully and the inputs are valid
+	*/
+	static bool CreateProcMeshCapFromPlane(UProceduralMeshComponent* InCapProcMesh, TArray<UProceduralMeshComponent*> InProcMeshes, TArray<UStaticMeshComponent*> InStaticMeshes, const FPlane& CutPlane, const int32 SectionIdOnly, UMaterialInterface* CapMaterial);
 
 	static bool GetAxisForVector(const FVector &Normal, EAxis::Type &OutAxis, float &OutSign);
 

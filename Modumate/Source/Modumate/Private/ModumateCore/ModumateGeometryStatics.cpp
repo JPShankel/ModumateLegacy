@@ -17,6 +17,7 @@ using namespace std;
 #include "Algo/Reverse.h"
 
 #include "ConstrainedDelaunay2.h"
+#include "GeomTools.h"
 
 
 // Helper functions for determining a point inside a polygon that is far from its edges and close to its centroid.
@@ -1363,7 +1364,7 @@ bool UModumateGeometryStatics::AnalyzeCachedPositions(const TArray<FVector> &InP
 	return true;
 }
 
-bool UModumateGeometryStatics::ConvertProcMeshToLinesOnPlane(UProceduralMeshComponent* InProcMesh, FVector PlanePosition, FVector PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges)
+bool UModumateGeometryStatics::ConvertProcMeshToLinesOnPlane(UProceduralMeshComponent* InProcMesh, FVector PlanePosition, FVector PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges, int32 UseSectionId)
 {
 	// This code is mostly copied from UKismetProceduralMeshLibrary::SliceProceduralMesh.
 	// This function differs because it does not create any meshes, instead it creates and outputs edges that 
@@ -1384,6 +1385,11 @@ bool UModumateGeometryStatics::ConvertProcMeshToLinesOnPlane(UProceduralMeshComp
 
 	for (int32 SectionIndex = 0; SectionIndex < InProcMesh->GetNumSections(); SectionIndex++)
 	{
+		if (UseSectionId != INDEX_NONE && SectionIndex != UseSectionId)
+		{
+			continue;
+		}
+
 		FProcMeshSection* BaseSection = InProcMesh->GetProcMeshSection(SectionIndex);
 		// If we have a section, and it has some valid geom
 		if (BaseSection != nullptr && BaseSection->ProcIndexBuffer.Num() > 0 && BaseSection->ProcVertexBuffer.Num() > 0)
@@ -1571,6 +1577,115 @@ bool UModumateGeometryStatics::ConvertStaticMeshToLinesOnPlane(UStaticMeshCompon
 			}
 		}
 	}
+
+	return true;
+}
+
+bool UModumateGeometryStatics::CreateProcMeshCapFromPlane(UProceduralMeshComponent* InCapProcMesh, TArray<UProceduralMeshComponent*> InProcMeshes, TArray<UStaticMeshComponent*> InStaticMeshes, const FPlane& CutPlane, const int32 SectionIdOnly, UMaterialInterface* CapMaterial)
+{
+	FVector capMeshLocation = InCapProcMesh->GetComponentLocation();
+
+	TArray<TPair<FVector, FVector>> outEdges;
+	for (auto& curProcMesh : InProcMeshes)
+	{
+		ConvertProcMeshToLinesOnPlane(curProcMesh, CutPlane.GetOrigin(), CutPlane, outEdges, SectionIdOnly);
+	}
+	for (auto& curStaticMesh : InStaticMeshes)
+	{
+		ConvertStaticMeshToLinesOnPlane(curStaticMesh, CutPlane.GetOrigin(), CutPlane, outEdges);
+	}
+	if (outEdges.Num() == 0)
+	{
+		return false;
+	}
+
+	TArray<FUtilEdge3D> clipEdges;
+	for (auto& edge : outEdges)
+	{
+		FUtilEdge3D newEdge;
+		newEdge.V0 = edge.Key; newEdge.V1 = edge.Value;
+		clipEdges.Add(newEdge);
+	}
+
+	// This code is similar to UKismetProceduralMeshLibrary::SliceProceduralMesh()
+	if (clipEdges.Num() == 0)
+	{
+		return false;
+	}
+
+	FProcMeshSection capSection;
+	int32 capSectionIndex = InCapProcMesh->GetNumSections();
+
+	// Project 3D edges onto slice plane to form 2D edges
+	TArray<FUtilEdge2D> edges2D;
+	FUtilPoly2DSet polySet;
+	FGeomTools::ProjectEdges(edges2D, polySet.PolyToWorld, clipEdges, CutPlane);
+
+	// Find 2D closed polygons from this edge soup
+	FGeomTools::Buid2DPolysFromEdges(polySet.Polys, edges2D, FColor::White);
+
+	// Triangulate each poly
+	for (int32 polyIdx = 0; polyIdx < polySet.Polys.Num(); polyIdx++)
+	{
+		if (polySet.Polys[polyIdx].Verts.Num() < 3)
+		{
+			continue;
+		}
+
+		// Generate UVs for the 2D polygon.
+		FGeomTools::GeneratePlanarTilingPolyUVs(polySet.Polys[polyIdx], 64.f);
+
+		// Remember start of vert buffer before adding triangles for this poly
+		int32 polyVertBase = capSection.ProcVertexBuffer.Num();
+
+		// Transform from 2D poly verts to 3D
+		// This code is mostly copied from UKismetProceduralMeshLibrary cpp, but with position modify
+		FVector polyNormal = -polySet.PolyToWorld.GetUnitAxis(EAxis::Z);
+		FProcMeshTangent polyTangent(polySet.PolyToWorld.GetUnitAxis(EAxis::X), false);
+		for (int32 vertexIndex = 0; vertexIndex < polySet.Polys[polyIdx].Verts.Num(); vertexIndex++)
+		{
+			const FUtilVertex2D& inVertex = polySet.Polys[polyIdx].Verts[vertexIndex];
+			FProcMeshVertex newVert;
+			newVert.Position = polySet.PolyToWorld.TransformPosition(FVector(inVertex.Pos.X, inVertex.Pos.Y, 0.f)) - capMeshLocation;
+			newVert.Normal = polyNormal;
+			newVert.Tangent = polyTangent;
+			newVert.Color = inVertex.Color;
+			newVert.UV0 = inVertex.UV;
+			capSection.ProcVertexBuffer.Add(newVert);
+			// Update bounding box
+			capSection.SectionLocalBox += newVert.Position;
+		}
+
+		// Triangulate with GTE
+		TArray<FVector2D> tempPolypoints;
+		for (auto& curVert : polySet.Polys[polyIdx].Verts)
+		{
+			tempPolypoints.Add(curVert.Pos);
+		}
+		TArray<FVector2D> vertices2D;
+		TArray<int32> tris2D;
+		TArray<FPolyHole2D> validHoles; // empty
+		bool bGTEresult = TriangulateVerticesGTE(tempPolypoints, validHoles, tris2D, &vertices2D);
+		if (!bGTEresult)
+		{
+			return false;
+		}
+
+		// Append tris into buffer
+		TArray<uint32> utris2D;
+		for (auto& curTri : tris2D)
+		{
+			utris2D.Add(curTri + polyVertBase);
+		}
+		Algo::Reverse(utris2D); // TODO: check winding of input verts
+		capSection.ProcIndexBuffer.Append(utris2D);
+	}
+
+	// Set geom for cap section
+	InCapProcMesh->SetProcMeshSection(capSectionIndex, capSection);
+
+	// Assign cap material
+	InCapProcMesh->SetMaterial(capSectionIndex, CapMaterial);
 
 	return true;
 }

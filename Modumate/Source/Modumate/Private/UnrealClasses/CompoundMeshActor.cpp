@@ -21,6 +21,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "Drafting/ModumateDraftingElements.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 #define DEBUG_NINE_SLICING 0
 
@@ -78,6 +79,7 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 
 	ResetProcMeshComponents(NineSliceComps, maxNumMeshes);
 	ResetProcMeshComponents(NineSliceLowLODComps, maxNumMeshes);
+	ClearCapGeometry();
 
 	MaterialIndexMappings.SetNum(maxNumMeshes);
 
@@ -233,6 +235,7 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 				{
 					procMeshComp->DestroyComponent();
 					NineSliceComps[compIdx] = nullptr;
+					SlicedMeshesToStaticMeshesRef.Remove(procMeshComp);
 				}
 			}
 		}
@@ -269,7 +272,7 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 					{
 						UKismetProceduralMeshLibrary::CopyProceduralMeshFromStaticMeshComponent(partStaticMeshComp, lodIndex, baseProcMeshComp, bMakeCollision);
 
-						CalculateNineSliceComponents(comps, rootComp, lodIndex, sliceCompIdxStart, nineSliceInterior, partNativeSize);
+						CalculateNineSliceComponents(comps, rootComp, lodIndex, sliceCompIdxStart, nineSliceInterior, partNativeSize, partStaticMeshComp);
 
 						bUpdateMaterials = true;
 					}
@@ -444,6 +447,76 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec& ObAsm, FVector
 	MakeFromAssemblyPart(ObAsm, 0, Scale, bLateralInvert, bMakeCollision);
 }
 
+void ACompoundMeshActor::SetupCapGeometry()
+{
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (!controller)
+	{
+		return;
+	}
+	ClearCapGeometry();
+	int32 capMeshId = 0;
+
+	// Create cap for static meshes
+	for (auto& curStaticMesh : StaticMeshComps)
+	{
+		if (curStaticMesh && curStaticMesh->IsVisible())
+		{
+			UProceduralMeshComponent* curCapMesh = nullptr;
+			if (GetOrAddProceduralMeshCap(capMeshId, curCapMesh))
+			{
+				if (UModumateGeometryStatics::CreateProcMeshCapFromPlane(curCapMesh,
+					TArray<UProceduralMeshComponent*> {}, TArray<UStaticMeshComponent*>{curStaticMesh},
+					controller->GetCurrentCullingPlane(), 0, curStaticMesh->GetMaterial(0)))
+				{
+					capMeshId++;
+				}
+			}
+		}
+	}
+
+	// Create cap for procedural meshes
+	// All 9-slice procedural meshes are grouped according to their original static mesh
+	TMap<const UStaticMeshComponent*, TArray<UProceduralMeshComponent*>> meshGroupMap;
+	for (auto& curSliceMeshRef : SlicedMeshesToStaticMeshesRef)
+	{
+		auto& slicedProcMeshesArray = meshGroupMap.FindOrAdd(curSliceMeshRef.Value);
+		if (curSliceMeshRef.Key->IsVisible())
+		{
+			slicedProcMeshesArray.Add(curSliceMeshRef.Key);
+		}
+	}
+	// Create cap for each group of 9-slice procedural meshes
+	for (auto& curMeshes : meshGroupMap)
+	{
+		TArray<UProceduralMeshComponent*> curMeshGroup = curMeshes.Value;
+		if (curMeshGroup.Num() > 0)
+		{
+			for (int32 sectionId = 0; sectionId < curMeshGroup[0]->GetNumSections(); sectionId++)
+			{
+				UProceduralMeshComponent* curCapMesh = nullptr;
+				if (GetOrAddProceduralMeshCap(capMeshId, curCapMesh))
+				{
+					if (UModumateGeometryStatics::CreateProcMeshCapFromPlane(curCapMesh,
+						curMeshGroup, TArray<UStaticMeshComponent*>{},
+						controller->GetCurrentCullingPlane(), sectionId, curMeshGroup[0]->GetMaterial(sectionId)))
+					{
+						capMeshId++;
+					}
+				}
+			}
+		}
+	}
+}
+
+void ACompoundMeshActor::ClearCapGeometry()
+{
+	for (UProceduralMeshComponent* curCap : ProceduralMeshCaps)
+	{
+		curCap->ClearAllMeshSections();
+	}
+}
+
 bool ACompoundMeshActor::ConvertProcMeshToLinesOnPlane(const FVector &PlanePosition, const FVector &PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges)
 {
 	for (auto procMesh : NineSliceComps)
@@ -551,6 +624,7 @@ void ACompoundMeshActor::ResetProcMeshComponents(TArray<UProceduralMeshComponent
 				{
 					procMeshComp->DestroyComponent();
 					ProcMeshComps[compIdx] = nullptr;
+					SlicedMeshesToStaticMeshesRef.Remove(procMeshComp);
 				}
 			}
 		}
@@ -580,7 +654,7 @@ bool ACompoundMeshActor::InitializeProcMeshComponent(TArray<UProceduralMeshCompo
 }
 
 void ACompoundMeshActor::CalculateNineSliceComponents(TArray<UProceduralMeshComponent*> &ProcMeshComps, USceneComponent *rootComp, const int32 LodIndex, 
-	int32 sliceCompIdxStart, FBox &nineSliceInterior, const FVector &partNativeSize)
+	int32 sliceCompIdxStart, FBox &nineSliceInterior, const FVector &partNativeSize, const UStaticMeshComponent* StaticMeshRef)
 {
 	UProceduralMeshComponent *baseProcMeshComp = ProcMeshComps[sliceCompIdxStart];
 
@@ -595,6 +669,7 @@ void ACompoundMeshActor::CalculateNineSliceComponents(TArray<UProceduralMeshComp
 		{
 			procMeshComp->DestroyComponent();
 			ProcMeshComps[compIdx] = nullptr;
+			SlicedMeshesToStaticMeshesRef.Remove(procMeshComp);
 		}
 	}
 
@@ -615,13 +690,16 @@ void ACompoundMeshActor::CalculateNineSliceComponents(TArray<UProceduralMeshComp
 	// 6 7 8
 	// 3 4 5
 	// 0 1 2
-	auto sliceProcMesh = [this, rootComp, &ProcMeshComps, sliceCompIdxStart](int32 sliceIdxIn, int32 sliceIdxOut, const FVector &sliceOrigin, const FVector &sliceNormal)
+	auto sliceProcMesh = [this, rootComp, &ProcMeshComps, sliceCompIdxStart, StaticMeshRef](int32 sliceIdxIn, int32 sliceIdxOut, const FVector &sliceOrigin, const FVector &sliceNormal)
 	{
 		UProceduralMeshComponent *sliceResult = nullptr;
 		UKismetProceduralMeshLibrary::SliceProceduralMesh(ProcMeshComps[sliceCompIdxStart + sliceIdxIn],
 			sliceOrigin, sliceNormal, true, sliceResult, EProcMeshSliceCapOption::NoCap, nullptr);
 		sliceResult->AttachToComponent(rootComp, FAttachmentTransformRules::KeepWorldTransform);
 		ProcMeshComps[sliceCompIdxStart + sliceIdxOut] = sliceResult;
+
+		SlicedMeshesToStaticMeshesRef.Add(ProcMeshComps[sliceCompIdxStart + sliceIdxIn], StaticMeshRef);
+		SlicedMeshesToStaticMeshesRef.Add(sliceResult, StaticMeshRef);
 	};
 
 	static const FVector sliceDirLeft(-1.0f, 0.0f, 0.0f);
@@ -637,6 +715,30 @@ void ACompoundMeshActor::CalculateNineSliceComponents(TArray<UProceduralMeshComp
 	sliceProcMesh(3, 6, nineSliceInterior.Max, sliceDirDown);
 	sliceProcMesh(4, 7, nineSliceInterior.Max, sliceDirDown);
 	sliceProcMesh(5, 8, nineSliceInterior.Max, sliceDirDown);
+}
+
+bool ACompoundMeshActor::GetOrAddProceduralMeshCap(int32 CapId, UProceduralMeshComponent*& OutMesh)
+{
+	if (CapId >= ProceduralMeshCaps.Num())
+	{
+		UProceduralMeshComponent* newMesh = NewObject<UProceduralMeshComponent>(this);
+		newMesh->SetMobility(EComponentMobility::Movable);
+		newMesh->SetupAttachment(GetRootComponent());
+		newMesh->bUseAsyncCooking = true;
+		newMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		newMesh->SetCastShadow(false);
+		newMesh->SetWorldRotation(FRotator::ZeroRotator);
+		newMesh->SetWorldScale3D(FVector::OneVector);
+		AddOwnedComponent(newMesh);
+		newMesh->RegisterComponent();
+		ProceduralMeshCaps.Add(newMesh);
+	}
+	if (ensureMsgf(ProceduralMeshCaps.IsValidIndex(CapId),
+		TEXT("ProceduralMeshCaps, Num: %d, has no valid index %d"), ProceduralMeshCaps.Num(), CapId))
+	{
+		OutMesh = ProceduralMeshCaps[CapId];
+	}
+	return OutMesh != nullptr;
 }
 
 void ACompoundMeshActor::SetIsDynamic(bool dynamicStatus)

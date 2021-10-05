@@ -45,6 +45,7 @@ public:
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual bool GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupDynamicGeometry() override;
+	virtual void ToggleAndUpdateCapGeometry(bool bEnableCap) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
 	virtual void ShowAdjustmentHandles(AEditModelPlayerController *Controller, bool bShow);
 	virtual bool OnSelected(bool bIsSelected) override;

@@ -64,7 +64,7 @@ public:
 	virtual bool GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 
 	static int32 GetCutPlaneVerticalDegree(const FQuat& Rotation);	
-	void SetIsCulling(bool NewIsCulling) { bIsCulling = NewIsCulling; };
+	void SetIsCulling(bool NewIsCulling);
 	bool GetIsCulling() const { return bIsCulling; };
 	void SetHUDDwgDrafting(bool NewEnable) { bHUDDwgDrafting = NewEnable; };
 
@@ -101,4 +101,6 @@ protected:
 
 	bool bHUDDwgDrafting;
 	bool bIsCulling = false;
+
+	TArray<int32> CachedForegroundMOIs;
 };

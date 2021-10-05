@@ -76,6 +76,7 @@ public:
 	virtual void SetupDynamicGeometry() { }
 	virtual void UpdateDynamicGeometry() { }
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping = false, bool bForSelection = false) const { }
+	virtual void ToggleAndUpdateCapGeometry(bool bEnableCap) { }
 
 	virtual bool IsSelectableByUser() const { return true; }
 	virtual bool ShowStructureOnSelection() const { return true; }

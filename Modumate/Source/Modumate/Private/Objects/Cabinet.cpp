@@ -140,6 +140,18 @@ void AMOICabinet::SetupDynamicGeometry()
 	ShowAdjustmentHandles(controller, AdjustmentHandlesVisible);
 }
 
+void AMOICabinet::ToggleAndUpdateCapGeometry(bool bEnableCap)
+{
+	if (DynamicMeshActor.IsValid())
+	{
+		bEnableCap ? DynamicMeshActor->SetupCapGeometry() : DynamicMeshActor->ClearCapGeometry();
+	}
+	if (FrontFacePortalActor.IsValid())
+	{
+		bEnableCap? FrontFacePortalActor->SetupCapGeometry() : FrontFacePortalActor->ClearCapGeometry();
+	}
+}
+
 void AMOICabinet::GetStructuralPointsAndLines(TArray<FStructurePoint>& OutPoints, TArray<FStructureLine>& OutLines, bool bForSnapping, bool bForSelection) const
 {
 	int32 numBasePoints = CachedBasePoints.Num();

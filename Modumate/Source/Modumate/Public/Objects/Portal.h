@@ -63,6 +63,7 @@ public:
 	virtual FVector GetNormal() const;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
+	virtual void ToggleAndUpdateCapGeometry(bool bEnableCap) override;
 	virtual void PreDestroy() override;
 
 	virtual const ILayeredObject* GetLayeredInterface() const override { return this; }

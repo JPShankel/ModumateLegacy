@@ -292,6 +292,15 @@ void AMOIPortal::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints,
 	}
 }
 
+void AMOIPortal::ToggleAndUpdateCapGeometry(bool bEnableCap)
+{
+	ACompoundMeshActor* cma = Cast<ACompoundMeshActor>(GetActor());
+	if (cma)
+	{
+		bEnableCap ? cma->SetupCapGeometry() : cma->ClearCapGeometry();
+	}
+}
+
 FQuat AMOIPortal::GetRotation() const
 {
 	return CachedRelativeRot;

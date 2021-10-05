@@ -39,6 +39,9 @@ public:
 	void MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int32 PartIndex, FVector Scale, bool bLateralInvert, bool bMakeCollision);
 	void MakeFromAssembly(const FBIMAssemblySpec& ObAsm, FVector Scale, bool bLateralInvert, bool bMakeCollision);
 
+	void SetupCapGeometry();
+	void ClearCapGeometry();
+
 	void UpdateLightFromLightConfig(UStaticMeshComponent* parentMesh, const FLightConfiguration &lightConfig, const FTransform &lightTransform);
 	void RemoveAllLights();
 
@@ -76,6 +79,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool bIsDynamic = true;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TMap<UProceduralMeshComponent*, const UStaticMeshComponent*> SlicedMeshesToStaticMeshesRef;
 
 	// Temporary MOI data, used for objects to refer to the data they would use
 	// if they were to become a fully-fledged MOI, by systems like tools.
@@ -89,5 +94,8 @@ public:
 private:
 	void ResetProcMeshComponents(TArray<UProceduralMeshComponent*> &ProcMeshComps, int32 maxNumMeshes);
 	bool InitializeProcMeshComponent(TArray<UProceduralMeshComponent*> &ProcMeshComps, USceneComponent *rootComp, int32 index);
-	void CalculateNineSliceComponents(TArray<UProceduralMeshComponent*> &ProcMeshComps, USceneComponent *rootComp, const int32 LodIndex, int32 sliceCompIdxStart, FBox &nineSliceInterior, const FVector &partNativeSize);
+	void CalculateNineSliceComponents(TArray<UProceduralMeshComponent*> &ProcMeshComps, USceneComponent *rootComp, const int32 LodIndex, int32 sliceCompIdxStart, FBox &nineSliceInterior, const FVector &partNativeSize, const UStaticMeshComponent* StaticMeshRef);
+
+	bool GetOrAddProceduralMeshCap(int32 CapId, UProceduralMeshComponent*& OutMesh);
+	TArray<UProceduralMeshComponent*> ProceduralMeshCaps;
 };

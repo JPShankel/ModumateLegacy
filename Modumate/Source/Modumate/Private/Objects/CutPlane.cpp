@@ -134,6 +134,19 @@ int32 AMOICutPlane::GetCutPlaneVerticalDegree(const FQuat& Rotation)
 	return degree % 180;
 }
 
+void AMOICutPlane::SetIsCulling(bool NewIsCulling)
+{
+	bIsCulling = NewIsCulling;
+	for (auto curMOIID : CachedForegroundMOIs)
+	{
+		const auto curMOI = GetDocument()->GetObjectById(curMOIID);
+		if (curMOI)
+		{
+			curMOI->ToggleAndUpdateCapGeometry(NewIsCulling);
+		}
+	}
+}
+
 bool AMOICutPlane::OnSelected(bool bIsSelected)
 {
 	SelectedColor = bHUDDwgDrafting ? FColor::Black : FColor(0x1C, 0x9F, 0xFF);
@@ -589,13 +602,34 @@ bool AMOICutPlane::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage,
 	// Add terrain globally, since it's not a child of a massing element.
 	draftingObjectMois.Append(Document->GetObjectsOfType(EObjectType::OTTerrain));
 
+	TArray<int32> curDraftingObjectIds;
+
 	for (auto moi : draftingObjectMois)
 	{
 		// TODO: this only is implemented for plane hosted objects right now, this function should be
 		// a part of ModumateObjectInstance instead and should propagate down through the children
 		TArray<TArray<FVector>> WallCutPerimeters;
 		moi->GetDraftingLines(ParentPage, CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, WallCutPerimeters);
+
+		// Create cap geometry for Mois
+		// TODO: prevent unnecessary cap update 
+		curDraftingObjectIds.Add(moi->ID);
+		moi->ToggleAndUpdateCapGeometry(true);
 	}
+
+	// Check previous cached Mois with cap, and remove them if necessary
+	for (auto curId : CachedForegroundMOIs)
+	{
+		if (!curDraftingObjectIds.Contains(curId))
+		{
+			const auto curMOI = GetDocument()->GetObjectById(curId);
+			if (curMOI)
+			{
+				curMOI->ToggleAndUpdateCapGeometry(false);
+			}
+		}
+	}
+	CachedForegroundMOIs = curDraftingObjectIds;
 
 	return true;
 }

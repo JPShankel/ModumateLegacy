@@ -68,6 +68,7 @@ public:
 
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
+	virtual void ToggleAndUpdateCapGeometry(bool bEnableCap) override;
 
 	// Flipping the X axis (R) flips the polygon about the "Normal" axis, the basis X axis, which is the profile polygon's Y component,
 	//     negating InstanceData.FlipSigns.X and flipping InstanceData.Justification.Y.
