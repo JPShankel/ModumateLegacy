@@ -79,9 +79,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool bIsDynamic = true;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TMap<UProceduralMeshComponent*, const UStaticMeshComponent*> SlicedMeshesToStaticMeshesRef;
-
 	// Temporary MOI data, used for objects to refer to the data they would use
 	// if they were to become a fully-fledged MOI, by systems like tools.
 	FBIMKey TempAssemblyKey;

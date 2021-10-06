@@ -235,7 +235,6 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 				{
 					procMeshComp->DestroyComponent();
 					NineSliceComps[compIdx] = nullptr;
-					SlicedMeshesToStaticMeshesRef.Remove(procMeshComp);
 				}
 			}
 		}
@@ -454,55 +453,55 @@ void ACompoundMeshActor::SetupCapGeometry()
 	{
 		return;
 	}
+
 	ClearCapGeometry();
 	int32 capMeshId = 0;
 
-	// Create cap for static meshes
-	for (auto& curStaticMesh : StaticMeshComps)
+	// Create cap for procedural meshes
+	const int32 numComponents = StaticMeshComps.Num();
+	for (int32 component = 0; component < numComponents; ++component)
 	{
-		if (curStaticMesh && curStaticMesh->IsVisible())
+		UStaticMeshComponent* staticMeshComponent = StaticMeshComps[component];
+		if (staticMeshComponent == nullptr)
+		{
+			continue;
+		}
+
+		if (UseSlicedMesh[component])
+		{   // Component has been nine-sliced.
+			// All 9-slice procedural meshes are grouped according to their original static mesh
+			TArray<UProceduralMeshComponent*> curMeshGroup;
+			for (int32 slice = 9 * component; slice < 9 * (component + 1); ++slice)
+			{
+				curMeshGroup.Add(NineSliceLowLODComps[slice]);
+			}
+			if (curMeshGroup.Num() > 0)
+			{
+				for (int32 sectionId = 0; sectionId < curMeshGroup[0]->GetNumSections(); sectionId++)
+				{
+					UProceduralMeshComponent* curCapMesh = nullptr;
+					if (GetOrAddProceduralMeshCap(capMeshId, curCapMesh))
+					{
+						if (UModumateGeometryStatics::CreateProcMeshCapFromPlane(curCapMesh,
+							curMeshGroup, TArray<UStaticMeshComponent*>{},
+							controller->GetCurrentCullingPlane(), sectionId, curMeshGroup[0]->GetMaterial(sectionId)))
+						{
+							capMeshId++;
+						}
+					}
+				}
+			}
+		}
+		else
 		{
 			UProceduralMeshComponent* curCapMesh = nullptr;
 			if (GetOrAddProceduralMeshCap(capMeshId, curCapMesh))
 			{
 				if (UModumateGeometryStatics::CreateProcMeshCapFromPlane(curCapMesh,
-					TArray<UProceduralMeshComponent*> {}, TArray<UStaticMeshComponent*>{curStaticMesh},
-					controller->GetCurrentCullingPlane(), 0, curStaticMesh->GetMaterial(0)))
+					TArray<UProceduralMeshComponent*> {}, TArray<UStaticMeshComponent*>{staticMeshComponent},
+					controller->GetCurrentCullingPlane(), 0, staticMeshComponent->GetMaterial(0)))
 				{
 					capMeshId++;
-				}
-			}
-		}
-	}
-
-	// Create cap for procedural meshes
-	// All 9-slice procedural meshes are grouped according to their original static mesh
-	TMap<const UStaticMeshComponent*, TArray<UProceduralMeshComponent*>> meshGroupMap;
-	for (auto& curSliceMeshRef : SlicedMeshesToStaticMeshesRef)
-	{
-		auto& slicedProcMeshesArray = meshGroupMap.FindOrAdd(curSliceMeshRef.Value);
-		if (curSliceMeshRef.Key->IsVisible())
-		{
-			slicedProcMeshesArray.Add(curSliceMeshRef.Key);
-		}
-	}
-	// Create cap for each group of 9-slice procedural meshes
-	for (auto& curMeshes : meshGroupMap)
-	{
-		TArray<UProceduralMeshComponent*> curMeshGroup = curMeshes.Value;
-		if (curMeshGroup.Num() > 0)
-		{
-			for (int32 sectionId = 0; sectionId < curMeshGroup[0]->GetNumSections(); sectionId++)
-			{
-				UProceduralMeshComponent* curCapMesh = nullptr;
-				if (GetOrAddProceduralMeshCap(capMeshId, curCapMesh))
-				{
-					if (UModumateGeometryStatics::CreateProcMeshCapFromPlane(curCapMesh,
-						curMeshGroup, TArray<UStaticMeshComponent*>{},
-						controller->GetCurrentCullingPlane(), sectionId, curMeshGroup[0]->GetMaterial(sectionId)))
-					{
-						capMeshId++;
-					}
 				}
 			}
 		}
@@ -624,7 +623,6 @@ void ACompoundMeshActor::ResetProcMeshComponents(TArray<UProceduralMeshComponent
 				{
 					procMeshComp->DestroyComponent();
 					ProcMeshComps[compIdx] = nullptr;
-					SlicedMeshesToStaticMeshesRef.Remove(procMeshComp);
 				}
 			}
 		}
@@ -669,7 +667,6 @@ void ACompoundMeshActor::CalculateNineSliceComponents(TArray<UProceduralMeshComp
 		{
 			procMeshComp->DestroyComponent();
 			ProcMeshComps[compIdx] = nullptr;
-			SlicedMeshesToStaticMeshesRef.Remove(procMeshComp);
 		}
 	}
 
@@ -697,9 +694,6 @@ void ACompoundMeshActor::CalculateNineSliceComponents(TArray<UProceduralMeshComp
 			sliceOrigin, sliceNormal, true, sliceResult, EProcMeshSliceCapOption::NoCap, nullptr);
 		sliceResult->AttachToComponent(rootComp, FAttachmentTransformRules::KeepWorldTransform);
 		ProcMeshComps[sliceCompIdxStart + sliceIdxOut] = sliceResult;
-
-		SlicedMeshesToStaticMeshesRef.Add(ProcMeshComps[sliceCompIdxStart + sliceIdxIn], StaticMeshRef);
-		SlicedMeshesToStaticMeshesRef.Add(sliceResult, StaticMeshRef);
 	};
 
 	static const FVector sliceDirLeft(-1.0f, 0.0f, 0.0f);
