@@ -22,7 +22,8 @@ enum class EModumateAnalyticsCategory : uint8
 	View,
 	Session,
 	Tutorials,
-	Input
+	Input,
+	Network
 };
 
 struct FBIMPresetInstance;

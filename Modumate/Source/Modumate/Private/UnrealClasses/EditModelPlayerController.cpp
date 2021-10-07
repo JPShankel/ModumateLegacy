@@ -410,6 +410,9 @@ void AEditModelPlayerController::OnDownloadedClientDocument(uint32 DownloadedDoc
 	if (!ensure(EMPlayerState && EMPlayerState->bPendingClientDownload &&
 		(EMPlayerState->ExpectedDownloadDocHash == DownloadedDocHash)))
 	{
+		static const FString eventName(TEXT("ErrorClientDocumentHash"));
+		UModumateAnalyticsStatics::RecordEventCustomString(this, EModumateAnalyticsCategory::Network, eventName, FString::Printf(TEXT("client: %08x server: %08x"), EMPlayerState->ExpectedDownloadDocHash,DownloadedDocHash));
+
 		gameInstance->GoToMainMenu(LOCTEXT("DownloadHashError", "Error downloading project - please try again later."));
 		return;
 	}

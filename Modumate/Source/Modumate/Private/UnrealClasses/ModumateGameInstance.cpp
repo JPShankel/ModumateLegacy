@@ -901,16 +901,26 @@ void UModumateGameInstance::GoToMainMenu(const FText& StatusMessage)
 
 void UModumateGameInstance::OnKickedFromMPSession(const FText& KickReason)
 {
+	static const FString eventName(TEXT("ErrorClientKicked"));
+	UModumateAnalyticsStatics::RecordEventCustomString(this, EModumateAnalyticsCategory::Network, eventName, *KickReason.ToString());
 	PendingMainMenuStatus = KickReason;
 }
 
 void UModumateGameInstance::OnTravelFailure(UWorld* World, ETravelFailure::Type FailureType, const FString& ErrorMessage)
 {
+	static const FString eventName(TEXT("ErrorClientTravel"));
+	FString failureTypeStr = GetEnumValueString<ETravelFailure::Type>(FailureType);
+	FString err = FString::Printf(TEXT("%s - %s"), *failureTypeStr, *ErrorMessage);
+	UModumateAnalyticsStatics::RecordEventCustomString(this, EModumateAnalyticsCategory::Network, eventName, *err);
 	PendingMainMenuStatus = LOCTEXT("GenericTravelFailure", "Failed to open project, please try again later.");
 }
 
 void UModumateGameInstance::OnNetworkFailure(UWorld* World, UNetDriver* NetDrive, ENetworkFailure::Type FailureType, const FString& ErrorMessage)
 {
+	static const FString eventName(TEXT("ErrorClientNetworkFailure"));
+	FString failureTypeStr = GetEnumValueString<ENetworkFailure::Type>(FailureType);
+	FString err = FString::Printf(TEXT("%s - %s"), *failureTypeStr, *ErrorMessage);
+	UModumateAnalyticsStatics::RecordEventCustomString(this, EModumateAnalyticsCategory::Network, eventName, err);
 	PendingMainMenuStatus = LOCTEXT("GenericTravelFailure", "Network error; please check your internet connection and try to reconnect later.");
 }
 

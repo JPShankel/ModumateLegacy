@@ -5,6 +5,7 @@
 #include "DocumentManagement/ModumateSerialization.h"
 #include "Net/UnrealNetwork.h"
 #include "Online/ModumateCloudConnection.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
@@ -315,6 +316,8 @@ void AEditModelGameState::OnDownloadDocumentFailure(int32 ErrorCode, const FStri
 	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
 	if (ensure(gameInstance))
 	{
+		static const FString eventName(TEXT("ErrorClientDocumentDownload"));
+		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Network, eventName);
 		gameInstance->GoToMainMenu(LOCTEXT("DocDownloadFailure", "Failed to download project, please try again later."));
 	}
 #endif
