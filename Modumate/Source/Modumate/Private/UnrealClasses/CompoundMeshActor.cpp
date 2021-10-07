@@ -731,6 +731,8 @@ bool ACompoundMeshActor::GetOrAddProceduralMeshCap(int32 CapId, UProceduralMeshC
 		TEXT("ProceduralMeshCaps, Num: %d, has no valid index %d"), ProceduralMeshCaps.Num(), CapId))
 	{
 		OutMesh = ProceduralMeshCaps[CapId];
+		OutMesh->SetWorldRotation(FRotator::ZeroRotator);
+		OutMesh->SetWorldScale3D(FVector::OneVector);
 	}
 	return OutMesh != nullptr;
 }
