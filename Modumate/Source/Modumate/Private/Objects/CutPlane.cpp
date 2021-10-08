@@ -612,9 +612,11 @@ bool AMOICutPlane::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage,
 		moi->GetDraftingLines(ParentPage, CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, WallCutPerimeters);
 
 		// Create cap geometry for Mois
-		// TODO: prevent unnecessary cap update 
 		curDraftingObjectIds.Add(moi->ID);
-		moi->ToggleAndUpdateCapGeometry(true);
+		if (bIsCulling)
+		{
+			moi->ToggleAndUpdateCapGeometry(true);
+		}
 	}
 
 	// Check previous cached Mois with cap, and remove them if necessary
