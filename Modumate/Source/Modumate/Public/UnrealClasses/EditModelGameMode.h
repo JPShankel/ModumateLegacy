@@ -128,7 +128,7 @@ public:
 	TSubclassOf<class AEditModelToggleGravityPawn> ToggleGravityPawnClass;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Server")
-	float ServerAutoExitTimeout = 30.0f;
+	float ServerAutoExitTimeout = 120.0f;
 	
 	static constexpr float ServerStatusTimerRate = 1.0f;
 

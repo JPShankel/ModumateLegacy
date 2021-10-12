@@ -97,6 +97,11 @@ static constexpr TCHAR BIMNCPFileName[] = TEXT("NCPTable.csv");
 
 bool FModumateDatabase::ReadBIMCache(const FString& CacheFile, FModumateBIMCacheRecord& OutCache)
 {
+	// Worker instances need to support multiple versions of the BIM data, so no caching
+#if UE_SERVER
+	return false;
+#endif
+
 	FString cacheFile = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), CacheFile);
 	if (!FPaths::FileExists(cacheFile))
 	{
@@ -264,7 +269,9 @@ void FModumateDatabase::ReadPresetData()
 				bimCacheRecord.Starters.Append(furniture);
 				bimCacheRecord.PresetTaxonomy = BIMPresetCollection.PresetTaxonomy;
 
+#if !UE_SERVER
 				WriteBIMCache(BIMCacheFile, bimCacheRecord);
+#endif
 			}
 #if !UE_BUILD_SHIPPING
 			bWantUnitTest = true;
