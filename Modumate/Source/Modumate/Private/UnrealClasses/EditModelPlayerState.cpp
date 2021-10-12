@@ -1548,13 +1548,18 @@ void AEditModelPlayerState::SetupPermissions_Implementation()
 
 	ReplicatedProjectPermissions = defaultPermissions;
 
-	RequestPermissions(ReplicatedUserInfo.ID, CurProjectID,
-		[&](const FString& user, const FString& project, const FProjectPermissions& perms) 
-		{
-			this->ReplicatedProjectPermissions = perms;
-			UE_LOG(LogTemp, Log, TEXT("Setting Permissions, canEdit=%d"), this->ReplicatedProjectPermissions.CanEdit);
-		}
-	);
+	AEditModelGameMode* gameMode = Cast<AEditModelGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	
+	if (gameMode)
+	{
+		RequestPermissions(ReplicatedUserInfo.ID, gameMode->GetCurProjectID(),
+			[&](const FString& user, const FString& project, const FProjectPermissions& perms)
+			{
+				this->ReplicatedProjectPermissions = perms;
+				UE_LOG(LogTemp, Log, TEXT("Setting Permissions, canEdit=%d"), this->ReplicatedProjectPermissions.CanEdit);
+			}
+		);
+	}
 }
 
 bool AEditModelPlayerState::RequestPermissions(const FString& UserID, const FString& ProjectID,
@@ -1569,6 +1574,7 @@ bool AEditModelPlayerState::RequestPermissions(const FString& UserID, const FStr
 	bool bQuerySuccess = cloudConnection->RequestEndpoint(getConnectionEndpoint, FModumateCloudConnection::ERequestType::Get, nullptr,
 		[=](bool bSuccess, const TSharedPtr<FJsonObject>& Payload)
 		{
+			UE_LOG(LogTemp, Log, TEXT("Setting user permissions, user ID=%s"), *UserID);
 			FProjectConnectionResponse getConnectionResponse;
 			if (!ensure(bSuccess) && FJsonObjectConverter::JsonObjectToUStruct(Payload.ToSharedRef(), &getConnectionResponse))
 			{
@@ -1584,7 +1590,6 @@ bool AEditModelPlayerState::RequestPermissions(const FString& UserID, const FStr
 		},
 		[=](int32 ErrorCode, const FString& ErrorString)
 		{
-			UE_LOG(LogTemp, Log, TEXT("Setting user permissions, user ID=%s"), *UserID);
 			FProjectPermissions userPerms;
 
 #if UE_BUILD_SHIPPING
