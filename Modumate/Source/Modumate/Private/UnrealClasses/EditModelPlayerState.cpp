@@ -1505,27 +1505,32 @@ FProjectPermissions AEditModelPlayerState::ParseProjectPermissions(const TArray<
 
 	for (auto& permission : Permissions)
 	{
-		if (permission == TEXT("project.*"))
+		if (permission.Contains(TEXT("project.*")))
 		{
+			UE_LOG(LogTemp, Log, TEXT("Permission: project.*"));
 			userPerms.CanView = true;
 			userPerms.CanEdit = true;
 			userPerms.CanChat = true;
 			userPerms.CanExport = true;
 		}
-		else if (permission == TEXT("project.view"))
+		else if (permission.Contains(TEXT("project.view")))
 		{
+			UE_LOG(LogTemp, Log, TEXT("Permission: project.view"));
 			userPerms.CanView = true;
 		}
-		else if (permission == TEXT("project.edit"))
+		else if (permission.Contains(TEXT("project.edit")))
 		{
+			UE_LOG(LogTemp, Log, TEXT("Permission: project.edit"));
 			userPerms.CanEdit = true;
 		}
-		else if (permission == TEXT("project.chat"))
+		else if (permission.Contains(TEXT("project.chat")))
 		{
+			UE_LOG(LogTemp, Log, TEXT("Permission: project.chat"));
 			userPerms.CanChat = true;
 		}
-		else if (permission == TEXT("project.export"))
+		else if (permission.Contains(TEXT("project.export")))
 		{
+			UE_LOG(LogTemp, Log, TEXT("Permission: project.export"));
 			userPerms.CanExport = true;
 		}
 		else
@@ -1570,17 +1575,18 @@ bool AEditModelPlayerState::RequestPermissions(const FString& UserID, const FStr
 
 
 	FString getConnectionEndpoint = FProjectConnectionHelpers::MakeProjectConnectionEndpoint(ProjectID) / UserID;
+	UE_LOG(LogTemp, Log, TEXT("Checking endpoint, %s"), *getConnectionEndpoint);
 
 	bool bQuerySuccess = cloudConnection->RequestEndpoint(getConnectionEndpoint, FModumateCloudConnection::ERequestType::Get, nullptr,
 		[=](bool bSuccess, const TSharedPtr<FJsonObject>& Payload)
 		{
 			UE_LOG(LogTemp, Log, TEXT("Setting user permissions, user ID=%s"), *UserID);
 			FProjectConnectionResponse getConnectionResponse;
-			if (!ensure(bSuccess) && FJsonObjectConverter::JsonObjectToUStruct(Payload.ToSharedRef(), &getConnectionResponse))
+			if (!ensure(bSuccess && FJsonObjectConverter::JsonObjectToUStruct(Payload.ToSharedRef(), &getConnectionResponse)))
 			{
 				return;
 			}
-			//Parse Permissions here...
+
 			FProjectPermissions userPerms = AEditModelPlayerState::ParseProjectPermissions(getConnectionResponse.Permissions);
 			if (Callback)
 			{

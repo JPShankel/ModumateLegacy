@@ -134,12 +134,27 @@ void FModumateCloudConnection::QueryEncryptionKey(const FString& UserID, const F
 				{
 					return;
 				}
-
-				sharedThis->CacheEncryptionKey(UserID, ProjectID, getConnectionResponse.Key);
-
 				FEncryptionKeyResponse asyncResponse(EEncryptionResponse::Success, TEXT(""));
+
+	#if UE_BUILD_SHIPPING
+				sharedThis->CacheEncryptionKey(UserID, ProjectID, getConnectionResponse.Key);
 				asyncResponse.EncryptionData.Key.Append((uint8*)*getConnectionResponse.Key, sizeof(TCHAR) * getConnectionResponse.Key.Len());
+	#else
+				//This allows local servers to query the connection and project tables if they log a second client
+				// in to the *real* cloud server project. Added this because testing responses after deploying to staging/beta
+				// was taking too long.
+				if (sharedThis.IsValid())
+				{
+					FString fakeEncryptionKey = MakeTestingEncryptionKey(UserID, ProjectID);
+					sharedThis->CacheEncryptionKey(UserID, ProjectID, fakeEncryptionKey);
+
+					asyncResponse.Response = EEncryptionResponse::Success;
+					asyncResponse.EncryptionData.Key.Append((uint8*)*fakeEncryptionKey, sizeof(TCHAR) * fakeEncryptionKey.Len());
+				}
+	#endif
+
 				Delegate.ExecuteIfBound(asyncResponse);
+
 			},
 			[weakThisCaptured, UserID, ProjectID, Delegate](int32 ErrorCode, const FString& ErrorString)
 			{
