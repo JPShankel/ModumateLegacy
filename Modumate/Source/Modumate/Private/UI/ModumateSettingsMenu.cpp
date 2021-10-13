@@ -50,6 +50,9 @@ bool UModumateSettingsMenu::Initialize()
 		cbox_spk->ItemWidgetClass = ItemWidgetOverrideClass;
 	}
 
+	SpeakerSourceDropdown->ComboBoxStringJustification->ClearOptions();
+	MicSourceDropdown->ComboBoxStringJustification->ClearOptions();
+
 	// Populate dimension preference dropdown
 	DimPrefsByDisplayString.Reset();
 	DimensionPrefDropdown->ComboBoxStringJustification->ClearOptions();
