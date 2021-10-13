@@ -32,8 +32,8 @@ bool operator<(const FBIMPresetLayerPriority& LHS, const FBIMPresetLayerPriority
 	{
 		return false;
 	}
-	// higher priorities sort to beginning of list, so greater than is less than
-	return LHS.PriorityValue > RHS.PriorityValue;
+
+	return LHS.PriorityValue < RHS.PriorityValue;
 }
 
 bool operator>(const FBIMPresetLayerPriority& LHS, const FBIMPresetLayerPriority& RHS)
