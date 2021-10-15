@@ -56,6 +56,16 @@ FString FModumateCloudConnection::GetCloudWorkspacePlansURL() const
 	return GetCloudRootURL() + TEXT("/workspace/plans");
 }
 
+FString FModumateCloudConnection::GetInstallerDownloadURL() const
+{
+#if !PLATFORM_MAC
+	static const FString downloadLocation(TEXT("/static/download/appleintel"));
+#else
+	static const FString downloadLocation(TEXT("/static/download/windows64"));
+#endif
+	return GetCloudRootURL() + downloadLocation;
+}
+
 void FModumateCloudConnection::SetAuthToken(const FString& InAuthToken)
 {
 	AuthToken = InAuthToken;

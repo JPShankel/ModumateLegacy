@@ -8,11 +8,22 @@
 #include "Online/ModumateUpdater.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/MainMenuController.h"
+#include "UI/EditModelUserWidget.h"
+#include "UI/ModalDialog/ModalDialogWidget.h"
+#include "UI/StartMenu/StartMenuWebBrowserWidget.h"
+#include "Online/ModumateAnalyticsStatics.h"
+
+#define LOCTEXT_NAMESPACE "ModumateAccountManager"
+
+// From ModumateUpdater.cpp:
+extern TAutoConsoleVariable<int32> CVarModumateDisableForcedUpdate;
 
 FModumateAccountManager::FModumateAccountManager(TSharedPtr<FModumateCloudConnection>& InConnection,
 	UModumateGameInstance* InGameInstance) :
 	CloudConnection(InConnection),
-	Updater(new FModumateUpdater(InGameInstance))
+	Updater(new FModumateUpdater(InGameInstance)),
+	GameInstance(InGameInstance)
 {}
 
 FModumateAccountManager::~FModumateAccountManager() = default;
@@ -163,31 +174,51 @@ void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserS
 {
 	CachedUserStatus = UserStatus;
 
-	static const FString permissionSeparator(TEXT("."));
-	static const FString permissionWildcard(TEXT("*"));
+
+	CloudConnection->SetLoginStatus(CachedUserStatus.Active ? ELoginStatus::Connected : ELoginStatus::UserDisabled);
 
 	FString version = CachedUserStatus.latest_modumate_version;
 	if (!version.IsEmpty())
 	{
 		LatestVersion = version;
-	}
-
-#if PLATFORM_WINDOWS
-	if (bQueryUpdateInstallers)
-	{
-		if (!CachedUserStatus.Active)
+		const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
+		OurVersion = projectSettings->ProjectVersion;
+		if (OurVersion != LatestVersion && !CVarModumateDisableForcedUpdate.GetValueOnAnyThread())
 		{
-			CloudConnection->SetLoginStatus(ELoginStatus::UserDisabled);
+			PromptForUpgrade();
 		}
 
-		Updater->ProcessLatestInstallers(CachedUserStatus);
 	}
-	else
-	{
-		CloudConnection->SetLoginStatus(CachedUserStatus.Active ? ELoginStatus::Connected : ELoginStatus::UserDisabled);
-	}
-#else
-	CloudConnection->SetLoginStatus(CachedUserStatus.Active ? ELoginStatus::Connected : ELoginStatus::UserDisabled);
-#endif
 
 }
+
+void FModumateAccountManager::PromptForUpgrade() const
+{
+	FString url = CloudConnection->GetInstallerDownloadURL();
+
+	AMainMenuController* controller = CastChecked<AMainMenuController>(GameInstance->GetFirstLocalPlayerController());
+	if (controller && controller->StartMenuWebBrowserWidget && controller->StartMenuWebBrowserWidget->ModalStatusDialog)
+	{
+		auto downloadAction = [url]()
+		{
+			FPlatformProcess::LaunchURL(*url, nullptr, nullptr);
+			FPlatformMisc::RequestExit(false);
+		};
+		auto cancelAction = [GameInstance = GameInstance]()
+		{
+			UModumateAnalyticsStatics::RecordEventCustomFloat(GameInstance->GetWorld(), EModumateAnalyticsCategory::Session, TEXT("DeclinedUpgrade"), 0.0f);
+		};
+		
+		FModalButtonParam cancelButton(EModalButtonStyle::Default, LOCTEXT("UpgradeDialogCancel", "Cancel"), cancelAction);
+		FModalButtonParam downloadButton(EModalButtonStyle::Default, LOCTEXT("UpgradeDialogDownload", "Get Latest Version"), downloadAction);
+		controller->StartMenuWebBrowserWidget->ModalStatusDialog->CreateModalDialog(LOCTEXT("UpgradeDialogTitle", "New Version"),
+			FText::Format(LOCTEXT("UpgradeDialogMsg",
+				"A new version (v{0}) of Modumate is available!\n"
+				"You are currently using v{1}, so you should update Modumate to receive its latest features, fixes, and other quality-of-life improvements."),
+				FText::FromString(LatestVersion), FText::FromString(OurVersion)),
+			TArray<FModalButtonParam>({ downloadButton, cancelButton })
+		);
+	}
+}
+
+#undef LOCTEXT_NAMESPACE

@@ -29,6 +29,7 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 		FString GetCloudAPIURL() const;
 		FString GetCloudProjectPageURL() const;
 		FString GetCloudWorkspacePlansURL() const;
+		FString GetInstallerDownloadURL() const;
 
 		const FString& GetAuthToken() const { return AuthToken; }
 		void SetAuthToken(const FString& InAuthToken);

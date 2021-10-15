@@ -238,10 +238,13 @@ public:
 	FString CachedWorkspace;
 
 private:
+	void PromptForUpgrade() const;
 	TSharedPtr<FModumateUpdater> Updater;
+	UModumateGameInstance* GameInstance = nullptr;
 	FModumateUserInfo CachedUserInfo;
 	FModumateUserStatus CachedUserStatus;
 	FString LatestVersion;
+	FString OurVersion;
 	FString ProjectID;  // If multiplayer
 
 	bool bIsFirstLogin = false;
