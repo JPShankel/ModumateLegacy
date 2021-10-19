@@ -8,6 +8,8 @@
 #include "UI/RightMenu/ComponentSavedViewListItemObject.h"
 #include "Components/ListView.h"
 #include "UnrealClasses/SkyActor.h"
+#include "Objects/CameraView.h"
+#include "DocumentManagement/ModumateDocument.h"
 
 
 UViewMenuBlockSavedViews::UViewMenuBlockSavedViews(const FObjectInitializer& ObjectInitializer)
@@ -42,22 +44,42 @@ void UViewMenuBlockSavedViews::OnButtonAddReleased()
 	if (cameraComp)
 	{
 		FDateTime dateTime = Controller->SkyActor->GetCurrentDateTime();
-		FString newViewName = FString(TEXT("New Camera View ")) + FString::FromInt(SavedViewsList->GetNumItems() + 1);
-		UModumateBrowserStatics::SaveCameraView(this, cameraComp, newViewName, dateTime);
+		int32 listOrder = SavedViewsList->GetNumItems() + 1;
+		FString newViewName = FString(TEXT("New Camera View ")) + FString::FromInt(listOrder);
+		UModumateBrowserStatics::CreateCameraViewAsMoi(this, cameraComp, newViewName, dateTime, listOrder);
 	}
-	UpdateSavedViewsList();
 }
 
-void UViewMenuBlockSavedViews::UpdateSavedViewsList()
+void UViewMenuBlockSavedViews::RebuildSavedViewsList()
 {
 	SavedViewsList->ClearListItems();
-	TArray<FModumateCameraView> cameraViews;
-	UModumateBrowserStatics::GetCameraViewsFromDoc(this, cameraViews);
-	for (int32 i = 0; i < cameraViews.Num(); ++i)
+	auto mois = Controller->GetDocument()->GetObjectsOfType(EObjectType::OTCameraView);
+
+	// Cast and sort camera views according to its list order
+	TArray<AMOICameraView*> moiCVs;
+	for (const auto& curMoi : mois)
 	{
-		UComponentSavedViewListItemObject *newListObj = NewObject<UComponentSavedViewListItemObject>(this);
-		newListObj->CameraView = cameraViews[i];
-		newListObj->ID = i;
+		AMOICameraView* moiCV = Cast<AMOICameraView>(curMoi);
+		if (moiCV && !curMoi->IsDestroyed())
+		{
+			moiCVs.Add(moiCV);
+		}
+	}
+
+	moiCVs.Sort([](const AMOICameraView& cv1, const AMOICameraView& cv2) 
+		{
+		return cv2.InstanceData.CameraViewIndex >= cv1.InstanceData.CameraViewIndex;
+		});
+
+	for (int32 i = 0; i < moiCVs.Num(); ++i)
+	{
+		// Change list order from instance data because its order might have changed from sort
+		// Currently this isn't part of delta because sorting only applies to client
+		// Send this via ApplyDeltas if other clients need to see reordering
+		moiCVs[i]->InstanceData.CameraViewIndex = i;
+
+		UComponentSavedViewListItemObject* newListObj = NewObject<UComponentSavedViewListItemObject>(this);
+		newListObj->CameraView = moiCVs[i]->InstanceData;
 		SavedViewsList->AddItem(newListObj);
 	}
 }

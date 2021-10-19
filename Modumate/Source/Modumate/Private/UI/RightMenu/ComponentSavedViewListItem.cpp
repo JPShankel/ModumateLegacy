@@ -70,8 +70,7 @@ void UComponentSavedViewListItem::OnButtonMainReleased()
 
 void UComponentSavedViewListItem::OnButtonDeleteReleased()
 {
-	UModumateBrowserStatics::RemoveCameraView(this, ID);
-	Controller->EditModelUserWidget->ViewMenu->ViewMenu_Block_SavedViews->UpdateSavedViewsList();
+	UModumateBrowserStatics::RemoveCameraViewMoi(this, CameraView.MoiId);
 }
 
 void UComponentSavedViewListItem::OnButtonUpdateReleased()
@@ -80,9 +79,8 @@ void UComponentSavedViewListItem::OnButtonUpdateReleased()
 	if (cameraComp)
 	{
 		FDateTime dateTime = Controller->SkyActor->GetCurrentDateTime();
-		UModumateBrowserStatics::SaveCameraView(this, cameraComp, CameraView.Name, dateTime, ID);
+		UModumateBrowserStatics::UpdateCameraViewAsMoi(this, cameraComp, CameraView.MoiId, dateTime);
 	}
-	Controller->EditModelUserWidget->ViewMenu->ViewMenu_Block_SavedViews->UpdateSavedViewsList();
 }
 
 void UComponentSavedViewListItem::OnEditableTitleCommitted(const FText& Text, ETextCommit::Type CommitMethod)
@@ -94,8 +92,7 @@ void UComponentSavedViewListItem::OnEditableTitleCommitted(const FText& Text, ET
 		return;
 	}
 
-	UModumateBrowserStatics::EditCameraViewName(this, ID, Text.ToString());
-	Controller->EditModelUserWidget->ViewMenu->ViewMenu_Block_SavedViews->UpdateSavedViewsList();
+	UModumateBrowserStatics::EditCameraViewName(this, CameraView.MoiId, Text.ToString());
 }
 
 void UComponentSavedViewListItem::ActivateCameraView()
@@ -104,7 +101,17 @@ void UComponentSavedViewListItem::ActivateCameraView()
 	if (pawn)
 	{
 		pawn->SetActorLocationAndRotation(CameraView.Position, CameraView.Rotation);
-		Controller->SkyActor->SetCurrentDateTime(CameraView.TimeOfDay);
+		UCameraComponent* cameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
+		if (cameraComp)
+		{
+			cameraComp->ProjectionMode = CameraView.bOrthoView ? ECameraProjectionMode::Orthographic : ECameraProjectionMode::Perspective;
+			cameraComp->FieldOfView = CameraView.FOV;
+		}
+		FDateTime newDateTime;
+		if (FDateTime::Parse(CameraView.SavedTime, newDateTime))
+		{
+			Controller->SkyActor->SetCurrentDateTime(newDateTime);
+		}
 		Controller->EditModelUserWidget->ViewMenu->ViewMenu_Block_Properties->SyncTextBoxesWithSkyActorCurrentTime();
 		Controller->EditModelUserWidget->ViewMenu->MouseEndHoverView(this);
 	}
@@ -118,8 +125,7 @@ void UComponentSavedViewListItem::NativeOnListItemObjectSet(UObject* ListItemObj
 		return;
 	}
 	CameraView = viewListObj->CameraView;
-	ID = viewListObj->ID;
-	ListNumber->ChangeText(FText::AsNumber(viewListObj->ID + 1));
+	ListNumber->ChangeText(FText::AsNumber(viewListObj->CameraView.CameraViewIndex));
 	SavedViewEdiableTitle->ChangeText(FText::FromString(CameraView.Name));
 }
 

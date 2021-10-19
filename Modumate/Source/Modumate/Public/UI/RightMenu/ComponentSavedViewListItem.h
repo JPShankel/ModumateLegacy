@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/IUserObjectListEntry.h"
-#include "DocumentManagement/ModumateCameraView.h"
+#include "Objects/CameraView.h"
 
 #include "ComponentSavedViewListItem.generated.h"
 
@@ -68,8 +68,7 @@ public:
 
 	void ActivateCameraView();
 
-	FModumateCameraView CameraView;
-	int32 ID = -1;
+	FMOICameraViewData CameraView;
 
 	// UserObjectListEntry interface
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;

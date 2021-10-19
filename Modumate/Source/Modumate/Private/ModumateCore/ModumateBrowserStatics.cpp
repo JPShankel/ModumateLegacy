@@ -5,147 +5,9 @@
 #include "Objects/ModumateObjectInstance.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "UnrealClasses/EditModelGameState.h"
+#include "Objects/CameraView.h"
 
-
-
-bool UModumateBrowserStatics::GetCutPlanesFromProject(UObject* WorldContextObject, TArray<FCutPlaneParamBlueprint> &OutCutPlaneParams)
-{
-	OutCutPlaneParams.Reset();
-
-	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
-	if (gameState == nullptr)
-	{
-		return false;
-	}
-
-	bool bSuccess = true;
-	TArray<AModumateObjectInstance*> cutPlaneObjs = gameState->Document->GetObjectsOfType(EObjectType::OTCutPlane);
-	for (auto *cutPlaneObj : cutPlaneObjs)
-	{
-		auto &cutPlaneParam = OutCutPlaneParams.AddDefaulted_GetRef();
-		cutPlaneParam.ObjectID = cutPlaneObj->ID;
-		cutPlaneParam.bVisiblity = cutPlaneObj->IsVisible();
-		cutPlaneParam.Location = cutPlaneObj->GetLocation();
-		cutPlaneParam.Normal = cutPlaneObj->GetNormal();
-		
-		// TODO: Copy other parameters?
-		//cutPlaneParam.DisplayName;
-		//cutPlaneParam.Key;
-		//cutPlaneParam.Size;
-	}
-
-	return bSuccess;
-}
-
-bool UModumateBrowserStatics::GetScopeBoxesFromProject(UObject* WorldContextObject, TArray<FScopeBoxParamBlueprint> &OutScopeBoxParams)
-{
-	OutScopeBoxParams.Reset();
-
-	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
-	if (gameState == nullptr)
-	{
-		return false;
-	}
-
-	bool bSuccess = true;
-	TArray<AModumateObjectInstance*> scopeBoxObjs = gameState->Document->GetObjectsOfType(EObjectType::OTScopeBox);
-	for (auto *scopeBoxObj : scopeBoxObjs)
-	{
-		auto &scopeBoxParam = OutScopeBoxParams.AddDefaulted_GetRef();
-		scopeBoxParam.ObjectID = scopeBoxObj->ID;
-		scopeBoxParam.bVisiblity = scopeBoxObj->IsVisible();
-		// TODO: re-implement scope box data
-		//scopeBoxParam.Location = scopeBoxObj->GetLocation();
-		//scopeBoxParam.Extent = scopeBoxObj->GetExtents();
-
-		// TODO: Copy other parameters?
-		//scopeBoxParam.DisplayName;
-		//scopeBoxParam.Key;
-	}
-
-	return bSuccess;
-}
-
-bool UModumateBrowserStatics::SetDrawingObjectName(UObject* WorldContextObject, int32 ObjectID, const FString &NewName)
-{
-	// TODO: Set name here
-	return true;
-}
-
-bool UModumateBrowserStatics::SetDrawingObjectVisibility(UObject* WorldContextObject, int32 ObjectID, bool Visible)
-{
-	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
-	if (gameState == nullptr)
-	{
-		return false;
-	}
-
-	AModumateObjectInstance *drawingObj = gameState->Document->GetObjectById(ObjectID);
-	if (drawingObj == nullptr)
-	{
-		return false;
-	}
-
-	// TODO: JI, you can place the hide cut plane or scrope box logic below
-	return true;
-}
-
-bool UModumateBrowserStatics::ToggleAllCutPlaneVisibility(UObject* WorldContextObject)
-{
-	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
-	if (gameState == nullptr)
-	{
-		return false;
-	}
-
-	// TODO: Toggle all cut planes here
-
-	return true;
-}
-
-bool UModumateBrowserStatics::ToggleAllScopeBoxesVisibility(UObject* WorldContextObject)
-{
-	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
-	if (gameState == nullptr)
-	{
-		return false;
-	}
-
-	// TODO: Toggle all scope boxes here
-
-	return true;
-}
-
-FVector UModumateBrowserStatics::GetDrawingOriginFromProject(UObject* WorldContextObject)
-{
-	// TODO: Get project origin from document
-	return FVector::ZeroVector;
-}
-
-FVector UModumateBrowserStatics::GetDrawingXDirectionFromProject(UObject* WorldContextObject)
-{
-	// TODO: Get project direction from document
-	return FVector(0.f, -1.f, 0.f);
-}
-
-bool UModumateBrowserStatics::GetCameraViewsFromDoc(UObject* WorldContextObject, TArray<FModumateCameraView> &OutCameraViews)
-{
-	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
-	if (gameState == nullptr)
-	{
-		return false;
-	}
-	OutCameraViews = gameState->Document->SavedCameraViews;
-	return true;
-}
-
-bool UModumateBrowserStatics::SaveCameraView(UObject* WorldContextObject, UCameraComponent *CameraComp, const FString &CameraViewName, const FDateTime &TimeOfDay, int32 CameraViewIndex /*= -1*/)
+bool UModumateBrowserStatics::CreateCameraViewAsMoi(UObject* WorldContextObject, UCameraComponent *CameraComp, const FString &CameraViewName, const FDateTime &TimeOfDay, int32 CameraViewIndex /*= INDEX_NONE*/)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
@@ -154,30 +16,67 @@ bool UModumateBrowserStatics::SaveCameraView(UObject* WorldContextObject, UCamer
 		return false;
 	}
 
-	FModumateCameraView newCameraView;
-	newCameraView.Position = CameraComp->GetComponentLocation();
-	newCameraView.Rotation = CameraComp->GetComponentQuat();
-	newCameraView.FOV = CameraComp->FieldOfView;
-	newCameraView.AspectRatio = CameraComp->AspectRatio;
-	newCameraView.Name = CameraViewName;
-	newCameraView.TimeOfDay = TimeOfDay;
+	FMOICameraViewData newCameraViewData;
+	newCameraViewData.Position = CameraComp->GetComponentLocation();
+	newCameraViewData.Rotation = CameraComp->GetComponentQuat();
+	newCameraViewData.FOV = CameraComp->FieldOfView;
+	newCameraViewData.AspectRatio = CameraComp->AspectRatio;
+	newCameraViewData.Name = CameraViewName;
+	newCameraViewData.bOrthoView = CameraComp->ProjectionMode == ECameraProjectionMode::Orthographic;
+	newCameraViewData.MoiId = gameState->Document->GetNextAvailableID();
+	newCameraViewData.CameraViewIndex = CameraViewIndex;
+	newCameraViewData.SavedTime = TimeOfDay.ToString();
 
-	if (gameState->Document->SavedCameraViews.IsValidIndex(CameraViewIndex))
-	{
-		gameState->Document->SavedCameraViews[CameraViewIndex] = newCameraView;
-	}
-	else
-	{
-		gameState->Document->SavedCameraViews.Add(newCameraView);
-	}
+	FMOIStateData stateData(gameState->Document->GetNextAvailableID(), EObjectType::OTCameraView);
+	stateData.CustomData.SaveStructData(newCameraViewData);
+
+	auto delta = MakeShared<FMOIDelta>();
+	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+	bool bSuccess = gameState->Document->ApplyDeltas({ delta }, WorldContextObject->GetWorld());
 
 	static const FString analyticsEventName(TEXT("SaveCameraView"));
 	UModumateAnalyticsStatics::RecordEventSimple(WorldContextObject, EModumateAnalyticsCategory::View, analyticsEventName);
 
-	return true;
+	return bSuccess;
 }
 
-bool UModumateBrowserStatics::RemoveCameraView(UObject* WorldContextObject, int32 CameraViewIndex)
+bool UModumateBrowserStatics::UpdateCameraViewAsMoi(UObject* WorldContextObject, UCameraComponent* CameraComp, int32 CameraMoiId, const FDateTime& TimeOfDay)
+{
+	UWorld* world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
+	AEditModelGameState* gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
+	if (gameState == nullptr || CameraComp == nullptr)
+	{
+		return false;
+	}
+
+	if (gameState)
+	{
+		AModumateObjectInstance* moi = gameState->Document->GetObjectById(CameraMoiId);
+		FMOIStateData oldStateData = moi->GetStateData();
+		FMOIStateData newStateData = oldStateData;
+
+		FMOICameraViewData newCameraViewData;
+		newStateData.CustomData.LoadStructData(newCameraViewData);
+		newCameraViewData.Position = CameraComp->GetComponentLocation();
+		newCameraViewData.Rotation = CameraComp->GetComponentQuat();
+		newCameraViewData.FOV = CameraComp->FieldOfView;
+		newCameraViewData.AspectRatio = CameraComp->AspectRatio;
+		newCameraViewData.bOrthoView = CameraComp->ProjectionMode == ECameraProjectionMode::Orthographic;
+		newCameraViewData.SavedTime = TimeOfDay.ToString();
+
+		newStateData.CustomData.SaveStructData<FMOICameraViewData>(newCameraViewData);
+
+		auto delta = MakeShared<FMOIDelta>();
+		delta->AddMutationState(moi, oldStateData, newStateData);
+		gameState->Document->ApplyDeltas({ delta }, world);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool UModumateBrowserStatics::RemoveCameraViewMoi(UObject* WorldContextObject, int32 CameraMoiId)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
@@ -186,15 +85,16 @@ bool UModumateBrowserStatics::RemoveCameraView(UObject* WorldContextObject, int3
 		return false;
 	}
 
-	if (gameState->Document->SavedCameraViews.IsValidIndex(CameraViewIndex))
+	const AModumateObjectInstance* cameraMoi = gameState->Document->GetObjectById(CameraMoiId);
+	if (cameraMoi && cameraMoi->GetObjectType() == EObjectType::OTCameraView)
 	{
-		gameState->Document->SavedCameraViews.RemoveAt(CameraViewIndex);
+		gameState->Document->DeleteObjects(TArray<int32>{ CameraMoiId });
 		return true;
 	}
 	return false;
 }
 
-bool UModumateBrowserStatics::EditCameraViewName(UObject* WorldContextObject, int32 CameraViewIndex, const FString &NewCameraViewName)
+bool UModumateBrowserStatics::EditCameraViewName(UObject* WorldContextObject, int32 CameraMoiId, const FString &NewCameraViewName)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
@@ -203,30 +103,23 @@ bool UModumateBrowserStatics::EditCameraViewName(UObject* WorldContextObject, in
 		return false;
 	}
 
-	if (gameState->Document->SavedCameraViews.IsValidIndex(CameraViewIndex))
+	if (gameState)
 	{
-		gameState->Document->SavedCameraViews[CameraViewIndex].Name = NewCameraViewName;
+		AModumateObjectInstance* moi = gameState->Document->GetObjectById(CameraMoiId);
+		FMOIStateData oldStateData = moi->GetStateData();
+		FMOIStateData newStateData = oldStateData;
+
+		FMOICameraViewData newCameraViewData;
+		newStateData.CustomData.LoadStructData(newCameraViewData);
+		newCameraViewData.Name = NewCameraViewName;
+		newStateData.CustomData.SaveStructData<FMOICameraViewData>(newCameraViewData);
+
+		auto delta = MakeShared<FMOIDelta>();
+		delta->AddMutationState(moi, oldStateData, newStateData);
+		gameState->Document->ApplyDeltas({ delta }, world);
+
 		return true;
 	}
-	return false;
-}
 
-bool UModumateBrowserStatics::ReorderCameraViews(UObject* WorldContextObject, int32 From, int32 To)
-{
-	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
-	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
-	if (gameState == nullptr)
-	{
-		return false;
-	}
-
-	if (gameState->Document->SavedCameraViews.IsValidIndex(From) &&
-		(gameState->Document->SavedCameraViews.IsValidIndex(To)))
-	{
-		FModumateCameraView moveCV = gameState->Document->SavedCameraViews[From];
-		gameState->Document->SavedCameraViews.RemoveAt(From);
-		gameState->Document->SavedCameraViews.Insert(moveCV, To);
-		return true;
-	}
 	return false;
 }

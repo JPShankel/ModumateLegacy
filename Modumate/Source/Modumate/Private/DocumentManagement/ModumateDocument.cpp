@@ -2886,7 +2886,6 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 		surfaceGraph->ToDataRecord(&surfaceGraphRecord, true, true);
 	}
 
-	OutDocumentRecord.CameraViews = SavedCameraViews;
 	OutDocumentRecord.TypicalEdgeDetails = TypicalEdgeDetails;
 
 	// Potentially limit the number of undo records to save, based on user preferences
@@ -3048,7 +3047,6 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		}
 	}
 
-	SavedCameraViews = InDocumentRecord.CameraViews;
 	TypicalEdgeDetails = InDocumentRecord.TypicalEdgeDetails;
 
 	// Create the MOIs whose state data was stored

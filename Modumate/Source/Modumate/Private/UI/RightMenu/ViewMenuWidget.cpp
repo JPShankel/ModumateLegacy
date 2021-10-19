@@ -53,7 +53,7 @@ void UViewMenuWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void UViewMenuWidget::BuildViewMenu()
 {
-	ViewMenu_Block_SavedViews->UpdateSavedViewsList();
+	ViewMenu_Block_SavedViews->RebuildSavedViewsList();
 	ViewMenu_Block_Properties->SyncTextBoxesWithSkyActorCurrentTime();
 }
 
@@ -106,9 +106,14 @@ void UViewMenuWidget::HoverCaptureTick()
 
 			PlayerPawn->CameraCaptureComponent2D->SetWorldLocationAndRotation(CurrentHoverViewItem->CameraView.Position, CurrentHoverViewItem->CameraView.Rotation);
 			PlayerPawn->CameraCaptureComponent2D->FOVAngle = CurrentHoverViewItem->CameraView.FOV;
+			PlayerPawn->CameraCaptureComponent2D->ProjectionType = CurrentHoverViewItem->CameraView.bOrthoView ? ECameraProjectionMode::Orthographic : ECameraProjectionMode::Perspective;
 			PlayerPawn->CameraCaptureComponent2D->TextureTarget = PreviewRT;
 			// Set lighting param to match with saved camera view
-			Controller->SkyActor->UpdateComponentsWithDateTime(CurrentHoverViewItem->CameraView.TimeOfDay);
+			FDateTime newDateTime;
+			if (FDateTime::Parse(CurrentHoverViewItem->CameraView.SavedTime, newDateTime))
+			{
+				Controller->SkyActor->UpdateComponentsWithDateTime(newDateTime);
+			}
 		}
 
 		// Due to post-processing (ex: Light Propagation responding to time of day change), 

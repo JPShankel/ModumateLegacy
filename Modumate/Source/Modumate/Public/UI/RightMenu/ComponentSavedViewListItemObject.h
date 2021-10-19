@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DocumentManagement/ModumateCameraView.h"
+#include "Objects/CameraView.h"
 
 #include "ComponentSavedViewListItemObject.generated.h"
 
@@ -15,6 +15,5 @@ class MODUMATE_API UComponentSavedViewListItemObject : public UObject
 
 public:
 
-	FModumateCameraView CameraView;
-	int32 ID = -1;
+	FMOICameraViewData CameraView;
 };

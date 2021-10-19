@@ -6,7 +6,6 @@
 #include "Database/ModumateObjectEnums.h"
 #include "DocumentManagement/DocumentDelta.h"
 #include "DocumentManagement/DocumentSettings.h"
-#include "DocumentManagement/ModumateCameraView.h"
 #include "JsonObjectConverter.h"
 #include "Objects/MOIState.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
@@ -258,9 +257,6 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 
 	UPROPERTY()
 	FBIMPresetCollection PresetCollection;
-
-	UPROPERTY()
-	TArray<FModumateCameraView> CameraViews;
 
 	UPROPERTY()
 	TMap<FString, FGraph2DRecord> CustomGraph2DRecords;

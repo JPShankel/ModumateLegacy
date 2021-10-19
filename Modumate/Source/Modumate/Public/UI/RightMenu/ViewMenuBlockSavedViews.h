@@ -38,5 +38,5 @@ public:
 	UFUNCTION()
 	void OnButtonAddReleased();
 
-	void UpdateSavedViewsList();
+	void RebuildSavedViewsList();
 };

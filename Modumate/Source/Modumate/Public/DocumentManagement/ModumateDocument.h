@@ -5,7 +5,6 @@
 #include "Database/ModumateObjectDatabase.h"
 #include "DocumentManagement/DocumentDelta.h"
 #include "DocumentManagement/DocumentSettings.h"
-#include "DocumentManagement/ModumateCameraView.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "Graph/Graph2D.h"
 #include "Graph/Graph2DDelta.h"
@@ -102,7 +101,6 @@ public:
 	AModumateObjectInstance *GetObjectById(int32 id);
 	const AModumateObjectInstance *GetObjectById(int32 id) const;
 	TSet<int32> HiddenObjectsID;
-	TArray<FModumateCameraView> SavedCameraViews;
 	TMap<uint32, FGuid> TypicalEdgeDetails;
 
 	// TODO: resolve how best to get IDs for created objects into MOI deltas

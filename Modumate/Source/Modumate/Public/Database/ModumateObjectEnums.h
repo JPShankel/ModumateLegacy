@@ -111,6 +111,7 @@ enum class EObjectType : uint8
 	OTTerrainEdge,
 	OTTerrainPolygon,
 	OTTerrainMaterial,
+	OTCameraView,
 	OTUnknown
 };
 
