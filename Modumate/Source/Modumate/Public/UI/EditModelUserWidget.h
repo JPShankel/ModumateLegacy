@@ -67,6 +67,9 @@ public:
 	class UBIMDebugger* BIMDebugger;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UDrawingDesignerWebBrowserWidget* DrawingDesigner;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UBIMBlockDialogBox *BIMBlockDialogBox;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))

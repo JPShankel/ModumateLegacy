@@ -45,6 +45,7 @@
 #include "UI/ModalDialog/ModalDialogWidget.h"
 #include "UI/ProjectSystemWidget.h"
 #include "UI/TutorialManager.h"
+#include "UI/DrawingDesigner/DrawingDesignerWebBrowserWidget.h"
 #include "Objects/CutPlane.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
 #include "Quantities/QuantitiesManager.h"
@@ -85,6 +86,20 @@
 const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetry"));
 
 #define LOCTEXT_NAMESPACE "ModumateDialog"
+
+/*
+Engine.ini:
+
+[SystemSettings]
+modumate.ShowDrawingDesigner = true/false
+
+*/
+
+TAutoConsoleVariable<bool> CVarModumateShowDrawingDesigner(
+	TEXT("modumate.ShowDrawingDesigner"),
+	false,
+	TEXT("Set to true in Engine.ini to show drawing designer."),
+	ECVF_Default);
 
 /*
 * Constructor
@@ -251,6 +266,12 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 	}
 
 	Document = gameState->Document;
+
+	if (EditModelUserWidget && EditModelUserWidget->DrawingDesigner)
+	{
+		EditModelUserWidget->DrawingDesigner->InitWithController();
+		EditModelUserWidget->DrawingDesigner->SetVisibility(CVarModumateShowDrawingDesigner.GetValueOnAnyThread() ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	}
 
 	SnappingView = new FModumateSnappingView(Document, this);
 

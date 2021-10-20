@@ -36,6 +36,8 @@
 #include "UI/DimensionManager.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/BIM/BIMDesigner.h"
+#include "UI/DrawingDesigner/DrawingDesignerWebBrowserWidget.h"
+#include "UI/Custom/ModumateWebBrowser.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelInputAutomation.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -2887,6 +2889,7 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 	}
 
 	OutDocumentRecord.TypicalEdgeDetails = TypicalEdgeDetails;
+	OutDocumentRecord.DrawingDesignerDocument = DrawingDesignerDocument;
 
 	// Potentially limit the number of undo records to save, based on user preferences
 	auto* gameInstance = World->GetGameInstance<UModumateGameInstance>();
@@ -3035,6 +3038,8 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	{
 		bInitialDocumentDirty = true;
 	}
+
+	DrawingDesignerDocument = InDocumentRecord.DrawingDesignerDocument;
 
 	// Load all of the surface graphs now
 	for (const auto& kvp : InDocumentRecord.SurfaceGraphs)
@@ -4112,6 +4117,32 @@ void UModumateDocument::RecordSavedProject(UWorld* World, const FString& FilePat
 	{
 		bAutoSaveDirty = false;
 	}
+}
+
+void UModumateDocument::drawing_request_document()
+{
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_request_document"));
+
+	FString documentJson;
+
+	if (ensureAlways(DrawingDesignerDocument.WriteJson(documentJson)))
+	{
+		auto player = GetWorld()->GetFirstLocalPlayerFromController();
+		auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
+		auto drawingDesigner = controller && controller->EditModelUserWidget ? controller->EditModelUserWidget->DrawingDesigner : nullptr;
+
+		if (drawingDesigner && drawingDesigner->DrawingSetWebBrowser)
+		{
+			FString javaScript = TEXT("UE_pushDocument(") + documentJson + TEXT(")");
+			drawingDesigner->DrawingSetWebBrowser->ExecuteJavascript(javaScript);
+		}
+	}
+	// TODO: else send error status
+}
+
+void UModumateDocument::drawing_apply_delta(const FString& InDelta)
+{
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_apply_delta"));
 }
 
 #undef LOCTEXT_NAMESPACE

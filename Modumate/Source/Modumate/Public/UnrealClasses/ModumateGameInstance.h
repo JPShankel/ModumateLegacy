@@ -55,8 +55,7 @@ private:
 	TSharedPtr<FQuantitiesManager> QuantitiesManager;
 
 	FText PendingMainMenuStatus;
-
-	UModumateDocument *GetDocument();
+	UModumateDocument* GetDocument();
 
 	void OnLoginResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void ProcessLogin(const FHttpResponsePtr Response);
@@ -66,6 +65,7 @@ public:
 	virtual void Init() override;
 	virtual void Shutdown() override;
 	virtual void StartGameInstance() override;
+
 
 	virtual void ReceivedNetworkEncryptionToken(const FString& EncryptionToken, const FOnEncryptionKeyResponse& Delegate) override;
 	virtual void ReceivedNetworkEncryptionAck(const FOnEncryptionKeyResponse& Delegate) override;

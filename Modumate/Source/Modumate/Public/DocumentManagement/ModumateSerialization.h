@@ -6,6 +6,7 @@
 #include "Database/ModumateObjectEnums.h"
 #include "DocumentManagement/DocumentDelta.h"
 #include "DocumentManagement/DocumentSettings.h"
+#include "DrawingDesigner/DrawingDesignerDocument.h"
 #include "JsonObjectConverter.h"
 #include "Objects/MOIState.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
@@ -275,6 +276,9 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 
 	UPROPERTY()
 	TMap<uint32, FGuid> TypicalEdgeDetails;
+
+	UPROPERTY()
+	FDrawingDesignerDocument DrawingDesignerDocument;
 
 	void FromVersion3(const FMOIDocumentRecordV3 &v3);
 };

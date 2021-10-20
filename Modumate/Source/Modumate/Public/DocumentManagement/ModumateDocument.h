@@ -6,6 +6,7 @@
 #include "DocumentManagement/DocumentDelta.h"
 #include "DocumentManagement/DocumentSettings.h"
 #include "DocumentManagement/ModumateSerialization.h"
+#include "DrawingDesigner/DrawingDesignerDocument.h"
 #include "Graph/Graph2D.h"
 #include "Graph/Graph2DDelta.h"
 #include "Graph/Graph3D.h"
@@ -91,6 +92,8 @@ private:
 public:
 
 	UModumateDocument();
+
+	FDrawingDesignerDocument DrawingDesignerDocument;
 
 	void SetLocalUserInfo(const FString& InLocalUserID, int32 InLocalUserIdx);
 
@@ -352,4 +355,13 @@ private:
 
 	void UpdateWindowTitle();
 	void RecordSavedProject(UWorld* World, const FString& FilePath, bool bUserFile);
+
+public: 
+		// TODO: Add Drawing Set JS interface
+
+	UFUNCTION()
+	void drawing_request_document();
+
+	UFUNCTION()
+	void drawing_apply_delta(const FString& InDelta);
 };
