@@ -205,3 +205,29 @@ void UViewMenuBlockProperties::SyncTextBoxesWithSkyActorCurrentTime()
 		EditableTextBox_AM->SetText(FText::FromString(newMeridiem));
 	}
 }
+
+void UViewMenuBlockProperties::SyncAllMenuProperties()
+{
+	SyncTextBoxesWithSkyActorCurrentTime();
+
+	UCameraComponent* cameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
+	if (cameraComp)
+	{
+		bool bOrtho = cameraComp->ProjectionMode == ECameraProjectionMode::Orthographic;
+		OrthogonalRadioButton->SetCheckedState(bOrtho ? ECheckBoxState::Checked : ECheckBoxState::Unchecked);
+		PerspectiveRadioButton->SetCheckedState(bOrtho ? ECheckBoxState::Unchecked : ECheckBoxState::Checked);
+
+		FString fovString = FString::SanitizeFloat(cameraComp->FieldOfView);
+		EditableTextBox_FOV->ModumateEditableTextBox->SetText(FText::FromString(fovString));
+	}
+
+	if (Controller && Controller->AxesActor)
+	{
+		WorldAxesCheckBox->SetCheckedState(Controller->AxesActor->IsHidden() ? ECheckBoxState::Unchecked : ECheckBoxState::Checked);
+	}
+
+	if (Controller->EditModelUserWidget->ViewCubeUserWidget && Controller->EditModelUserWidget->ViewCubeUserWidget)
+	{
+		ViewCubeCheckBox->SetCheckedState(Controller->EditModelUserWidget->ViewCubeUserWidget->IsVisible() ? ECheckBoxState::Checked : ECheckBoxState::Unchecked);
+	}
+}

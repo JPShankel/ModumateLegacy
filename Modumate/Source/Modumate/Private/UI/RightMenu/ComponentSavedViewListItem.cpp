@@ -14,6 +14,9 @@
 #include "UI/RightMenu/ViewMenuBlockProperties.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
+#include "UnrealClasses/EditModelPlayerPawn.h"
+#include "UnrealClasses/AxesActor.h"
+#include "UI/ViewCubeWidget.h"
 
 
 UComponentSavedViewListItem::UComponentSavedViewListItem(const FObjectInitializer& ObjectInitializer)
@@ -100,19 +103,40 @@ void UComponentSavedViewListItem::ActivateCameraView()
 	APawn *pawn = Controller->GetPawn();
 	if (pawn)
 	{
+		// Position and rotation
 		pawn->SetActorLocationAndRotation(CameraView.Position, CameraView.Rotation);
+
+		// FOV
 		UCameraComponent* cameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
 		if (cameraComp)
 		{
-			cameraComp->ProjectionMode = CameraView.bOrthoView ? ECameraProjectionMode::Orthographic : ECameraProjectionMode::Perspective;
 			cameraComp->FieldOfView = CameraView.FOV;
 		}
+
+		// Projection mode
+		Controller->EMPlayerPawn->SetCameraOrtho(CameraView.bOrthoView);
+
+		// Time
 		FDateTime newDateTime;
 		if (FDateTime::Parse(CameraView.SavedTime, newDateTime))
 		{
 			Controller->SkyActor->SetCurrentDateTime(newDateTime);
 		}
-		Controller->EditModelUserWidget->ViewMenu->ViewMenu_Block_Properties->SyncTextBoxesWithSkyActorCurrentTime();
+
+		// Axis actor
+		if (Controller->AxesActor)
+		{
+			Controller->AxesActor->SetActorHiddenInGame(!CameraView.bAxesActorVisibility);
+		}
+
+		// Viewcube
+		if (Controller->EditModelUserWidget->ViewCubeUserWidget && Controller->EditModelUserWidget->ViewCubeUserWidget)
+		{
+			Controller->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(CameraView.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+		}
+
+		// Sync with menu
+		Controller->EditModelUserWidget->ViewMenu->ViewMenu_Block_Properties->SyncAllMenuProperties();
 		Controller->EditModelUserWidget->ViewMenu->MouseEndHoverView(this);
 	}
 }

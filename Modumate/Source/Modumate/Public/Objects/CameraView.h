@@ -37,6 +37,12 @@ struct MODUMATE_API FMOICameraViewData
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
 	FString SavedTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
+	bool bAxesActorVisibility = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
+	bool bViewCubeVisibility = true;
 };
 
 UCLASS()

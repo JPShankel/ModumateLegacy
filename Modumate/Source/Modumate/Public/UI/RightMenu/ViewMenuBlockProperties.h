@@ -100,4 +100,5 @@ public:
 	void ChangeOrthogonalButton(bool bNewEnable);
 
 	void SyncTextBoxesWithSkyActorCurrentTime();
+	void SyncAllMenuProperties();
 };
