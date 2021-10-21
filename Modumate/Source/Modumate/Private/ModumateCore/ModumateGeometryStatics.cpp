@@ -254,7 +254,8 @@ bool UModumateGeometryStatics::FindPointFurthestFromPolyEdge(const TArray<FVecto
 }
 
 bool UModumateGeometryStatics::TriangulateVerticesGTE(const TArray<FVector2D>& Vertices, const TArray<FPolyHole2D>& Holes,
-	TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid, TArray<FVector2D>* OutOptionalCDTVertices, FDynamicGraph2<float>* OptionalGraphPoints)
+	TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid /*= true*/, TArray<FVector2D>* OutOptionalCDTVertices /*= nullptr*/,
+	FDynamicGraph2<float>* OptionalGraphPoints /*= nullptr*/, bool bFastmode /*= false*/)
 {
 	OutTriangles.Reset();
 	if (OutCombinedVertices)
@@ -292,20 +293,32 @@ bool UModumateGeometryStatics::TriangulateVerticesGTE(const TArray<FVector2D>& V
 		polygon.AddHole(holePoly, false, false);
 	}
 
-	TConstrainedDelaunay2<float> cdt;
-	cdt.bOutputCCW = true;
-	cdt.Add(polygon);
+	FConstrainedDelaunay2f constrainedDelaunay;
+	constrainedDelaunay.bOutputCCW = true;
+	constrainedDelaunay.Add(polygon);
+
 	if (OptionalGraphPoints)
 	{
-		cdt.bOutputCCW = false; // TODO: No idea why. Maybe is the order of the gridpoint added
-		cdt.Add(*OptionalGraphPoints);
-	}
-	if (!cdt.Triangulate())
-	{
-		return false;
+		constrainedDelaunay.bOutputCCW = false; // TODO: No idea why. Maybe is the order of the gridpoint added
+		constrainedDelaunay.Add(*OptionalGraphPoints);
 	}
 
-	for (auto& triangle : cdt.Triangles)
+	if (bFastmode)
+	{	// 'Fast' mode uses double as the internal compute type, rather than software floating-point.
+		if (!constrainedDelaunay.TriangulateFast())
+		{
+			return false;
+		}
+	}
+	else
+	{
+		if (!constrainedDelaunay.Triangulate())
+		{
+			return false;
+		}
+	}
+
+	for (auto& triangle : constrainedDelaunay.Triangles)
 	{
 		OutTriangles.Add(triangle.A);
 		OutTriangles.Add(triangle.B);
@@ -315,7 +328,7 @@ bool UModumateGeometryStatics::TriangulateVerticesGTE(const TArray<FVector2D>& V
 	if (OutOptionalCDTVertices)
 	{
 		OutOptionalCDTVertices->Reset();
-		for (auto& curVert : cdt.Vertices)
+		for (auto& curVert : constrainedDelaunay.Vertices)
 		{
 			OutOptionalCDTVertices->Add(FVector2D(curVert.X, curVert.Y));
 		}

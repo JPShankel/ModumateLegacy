@@ -244,8 +244,18 @@ void ADynamicTerrainActor::SetupTerrainGeometry(int32 SectionID, float GridSize,
 	// Add grid points if required
 	FBox2D box2D(PerimeterPoints);
 	FDynamicGraph2<float> inGridPoints;
+
+	TArray<FVector2D> dividedPerimeterPoints;
+	TArray<FPolyHole2D> dividedHolePoints;
+
 	if (bAddGraphPoints)
 	{
+		TArray<FVector2f> boundingPoints;
+		for (const auto& p : PerimeterPoints)
+		{
+			boundingPoints.Add(p);
+		}
+		FPolygon2f boundingPoly(boundingPoints);
 		int32 numX = ((box2D.Max.X - box2D.Min.X) / GridSize) + 1;
 		int32 numY = ((box2D.Max.Y - box2D.Min.Y) / GridSize) + 1;
 		float minX = FMath::Floor(box2D.Min.X / GridSize) * GridSize;
@@ -256,42 +266,45 @@ void ADynamicTerrainActor::SetupTerrainGeometry(int32 SectionID, float GridSize,
 			{
 				float xV = (xId * GridSize) + minX;
 				float yV = (yId * GridSize) + minY;
-				inGridPoints.AppendVertex(FVector2f(xV, yV));
+				if (boundingPoly.Contains(FVector2f(xV, yV)) )
+				{
+					inGridPoints.AppendVertex(FVector2f(xV, yV));
+				}
 			}
 		}
-	}
 
-	// Add vertices between perimeter points to match grid vertices
-	TArray<FVector2D> dividedPerimeterPoints;
-	for (int32 i = 0; i < PerimeterPoints.Num(); i++)
-	{
-		FVector2D p1 = PerimeterPoints[i];
-		FVector2D p2 = PerimeterPoints[(i + 1) % PerimeterPoints.Num()];
-
-		dividedPerimeterPoints.Add(p1);
-		GetGridTriangulationPoints(p1, p2, GridSize, dividedPerimeterPoints);
-	}
-
-	for (const FPolyHole2D& hole: HolePoints)
-	{
-		for (int32 point = 0; point < hole.Points.Num(); ++point)
+		// Add vertices between perimeter points to match grid vertices
+		for (int32 i = 0; i < PerimeterPoints.Num(); i++)
 		{
-			FVector2D p1 = hole.Points[point];
-			FVector2D p2 = hole.Points[(point + 1) % hole.Points.Num()];
-			TArray<FVector2D> holePerimeterPoints;
-			GetGridTriangulationPoints(p1, p2, GridSize, holePerimeterPoints);
-			inGridPoints.AppendVertex(p1);
-			for (const auto& p : holePerimeterPoints)
-			{
-				inGridPoints.AppendVertex(p);
-			}
+			FVector2D p1 = PerimeterPoints[i];
+			FVector2D p2 = PerimeterPoints[(i + 1) % PerimeterPoints.Num()];
 
+			dividedPerimeterPoints.Add(p1);
+			GetGridTriangulationPoints(p1, p2, GridSize, dividedPerimeterPoints);
 		}
+
+		for (const FPolyHole2D& hole: HolePoints)
+		{
+			FPolyHole2D newHole;
+			for (int32 point = 0; point < hole.Points.Num(); ++point)
+			{
+				FVector2D p1 = hole.Points[point];
+				FVector2D p2 = hole.Points[(point + 1) % hole.Points.Num()];
+				TArray<FVector2D> holePerimeterPoints;
+				newHole.Points.Add(p1);
+				GetGridTriangulationPoints(p1, p2, GridSize, newHole.Points);
+			}
+			dividedHolePoints.Add(MoveTemp(newHole));
+		}
+	}
+	else
+	{
+		dividedPerimeterPoints = PerimeterPoints;
+		dividedHolePoints = HolePoints;
 	}
 
 	// GTE
-	TArray<FVector2D> gteCombinedVertices;
-	if (!UModumateGeometryStatics::TriangulateVerticesGTE(dividedPerimeterPoints, HolePoints, triangles, &gteCombinedVertices, true, &vertices2D, &inGridPoints))
+	if (!UModumateGeometryStatics::TriangulateVerticesGTE(dividedPerimeterPoints, dividedHolePoints, triangles, nullptr, true, &vertices2D, &inGridPoints, true))
 	{
 		return;
 	}

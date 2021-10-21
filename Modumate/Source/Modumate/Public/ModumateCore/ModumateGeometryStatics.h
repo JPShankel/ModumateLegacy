@@ -109,7 +109,8 @@ public:
 	 * @result: whether we could triangulate the polygon at all; fails on invalid input polygon/holes.
 	 */
 	static bool TriangulateVerticesGTE(const TArray<FVector2D>& Vertices, const TArray<FPolyHole2D>& Holes,
-		TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid = true, TArray<FVector2D>* OutOptionalCDTVertices = nullptr, FDynamicGraph2<float>* OptionalGraphPoints = nullptr);
+		TArray<int32>& OutTriangles, TArray<FVector2D>* OutCombinedVertices, bool bCheckValid = true, TArray<FVector2D>* OutOptionalCDTVertices = nullptr,
+		FDynamicGraph2<float>* OptionalGraphPoints = nullptr, bool bFastmode = false);
 
 	UFUNCTION(Category = "Modumate | Geometry")
 	static bool SegmentIntersection2D(const FVector2D& SegmentStartA, const FVector2D& SegmentEndA, const FVector2D& SegmentStartB, const FVector2D& SegmentEndB, FVector2D& OutIntersectionPoint, bool& bOutOverlapping, float Tolerance = RAY_INTERSECT_TOLERANCE);

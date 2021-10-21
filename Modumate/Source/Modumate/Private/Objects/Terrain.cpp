@@ -284,12 +284,17 @@ void AMOITerrain::UpdateTerrainActor()
 			for (int32 containedPoly: containedPolys)
 			{
 				const FGraph2DPolygon* containedPolygon = graph2d->FindPolygon(containedPoly);
-				FBox2D polygonBox2D(ForceInitToZero);
+				FBox polygonBox3D(ForceInitToZero);
 				for (int32 v: containedPolygon->VertexIDs)
 				{
-					polygonBox2D += graph2d->GetVertices()[v].Position;
+					polygonBox3D += FVector(graph2d->GetVertices()[v].Position, InstanceData.Heights[v]);
 				}
-				gridSize = FMath::Min(FMath::Clamp((FMath::Sqrt(polygonBox2D.GetArea()) / verticesDensityPerRow), minGridSize, maxGridSize), gridSize);
+				const float Area = polygonBox3D.GetSize().X * polygonBox3D.GetSize().Y;
+				const FVector size = polygonBox3D.GetSize();
+				float density = 0.1f * size.Z;
+				//gridSize = FMath::Min(FMath::Clamp(( FMath::Sqrt(Area) / verticesDensityPerRow), minGridSize, maxGridSize), gridSize);
+				float targetGridSize = FMath::Max(size.X, size.Y) / density;
+				gridSize = FMath::Min(FMath::Clamp(targetGridSize, minGridSize, maxGridSize), gridSize);
 			}
 
 			for (int32 containedPoly: containedPolys)
@@ -316,6 +321,7 @@ void AMOITerrain::UpdateTerrainActor()
 				}
 
 			}
+
 		}
 	}
 #endif
