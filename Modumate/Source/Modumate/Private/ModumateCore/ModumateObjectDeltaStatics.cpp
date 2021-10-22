@@ -220,6 +220,7 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 	TSet<int32> volumeGraphIDs;
 	TSet<int32> separatorIDs;
 	TMap<int32, TSet<int32>> surfaceGraphIDToObjIDs;
+	TSet<int32> ffeIDs;
 
 	auto& graph = doc->GetVolumeGraph(); 
 
@@ -262,6 +263,10 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 			auto& surfaceGraphSubset = surfaceGraphIDToObjIDs.FindOrAdd(surfaceGraph->GetID());
 			surfaceGraphSubset.Add(surfaceGraphObject->ID);
 		}
+		else
+		{   // Everything else:
+			ffeIDs.Add(id);
+		}
 
 	}
 
@@ -270,6 +275,15 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 	for (int32 separatorID : separatorIDs)
 	{
 		auto obj = doc->GetObjectById(separatorID);
+
+		FMOIStateData& stateData = obj->GetStateData();
+		stateData.CustomData.SaveJsonFromCbor();
+		OutRecord->ObjectData.Add(stateData);
+	}
+
+	for (int32 ffeID : ffeIDs)
+	{
+		auto obj = doc->GetObjectById(ffeID);
 
 		FMOIStateData& stateData = obj->GetStateData();
 		stateData.CustomData.SaveJsonFromCbor();
@@ -357,9 +371,9 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 
 	int32 nextID = doc->GetNextAvailableID();
 
-	// first pass - separators and surface graph base MOIs
+	// first pass - separators, surface graph base MOIs, other physical MOIs with parents.
 	auto separatorDelta = MakeShared<FMOIDelta>();
-	for(auto & objRec : InRecord->ObjectData)
+	for(const auto& objRec: InRecord->ObjectData)
 	{
 		if (!copiedToPastedObjIDs.Contains(objRec.ParentID))
 		{
@@ -373,15 +387,17 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 			continue;
 		}
 
+		FMOIStateData stateData(objRec);
+		const AModumateObjectInstance* sourceObj = doc->GetObjectById(objRec.ID);
+
+		// For MOIs that are parented and have their own transform.
+		const FVector newLocation(sourceObj->GetLocation() + offset);
+		sourceObj->GetTransformedLocationState({ sourceObj->GetRotation(), newLocation }, stateData);
+
 		for (int32 parentID : newParents)
 		{
-			FMOIStateData stateData;
 			stateData.ID = nextID++;
-
-			stateData.ObjectType = objRec.ObjectType;
 			stateData.ParentID = parentID;
-			stateData.AssemblyGUID = objRec.AssemblyGUID;
-			stateData.CustomData = objRec.CustomData;
 
 			separatorDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
 
@@ -427,24 +443,37 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 
 		if (!copiedToPastedObjIDs.Contains(objRec.ParentID))
 		{
-			continue;
-		}
-
-		auto& newParents = copiedToPastedObjIDs[objRec.ParentID];
-		for (int32 parentID : newParents)
-		{
 			FMOIStateData stateData;
-			stateData.ID = nextID++;
+			const AModumateObjectInstance* sourceObj = doc->GetObjectById(objRec.ID);
 
-			stateData.ObjectType = objRec.ObjectType;
-			stateData.ParentID = parentID;
-			stateData.AssemblyGUID = objRec.AssemblyGUID;
-			stateData.CustomData = objRec.CustomData;
+			const FVector newLocation(sourceObj->GetLocation() + offset);
+			if (sourceObj->GetTransformedLocationState({ sourceObj->GetRotation(), newLocation }, stateData))
+			{
+				stateData.ID = nextID++;
+				attachmentDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
 
-			attachmentDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+				auto& pastedIDs = copiedToPastedObjIDs.FindOrAdd(objRec.ID);
+				pastedIDs.Add(stateData.ID);
+			}
+		}
+		else
+		{
+			auto& newParents = copiedToPastedObjIDs[objRec.ParentID];
+			for (int32 parentID : newParents)
+			{
+				FMOIStateData stateData;
+				stateData.ID = nextID++;
 
-			auto& pastedIDs = copiedToPastedObjIDs.FindOrAdd(objRec.ID);
-			pastedIDs.Add(stateData.ID);
+				stateData.ObjectType = objRec.ObjectType;
+				stateData.ParentID = parentID;
+				stateData.AssemblyGUID = objRec.AssemblyGUID;
+				stateData.CustomData = objRec.CustomData;
+
+				attachmentDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+
+				auto& pastedIDs = copiedToPastedObjIDs.FindOrAdd(objRec.ID);
+				pastedIDs.Add(stateData.ID);
+			}
 		}
 	}
 
