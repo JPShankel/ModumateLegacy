@@ -53,9 +53,14 @@ void UDrawingDesignerWebBrowserWidget::OnDebugSubmit()
 			FString document = DebugDocumentTextBox->GetText().ToString();
 			FString js = TEXT("UE_pushDocument(");
 			js = js + document + TEXT(")");
-
 			UE_LOG(LogTemp, Log, TEXT("js=%s"), *js);
-
+			UModumateDocument* doc = controller->GetDocument();
+			if (doc)
+			{
+				FDrawingDesignerDocument replacer;
+				replacer.ReadJson(document);
+				doc->DrawingDesignerDocument = replacer;
+			}
 			DrawingSetWebBrowser->ExecuteJavascript(js);
 		}
 	}

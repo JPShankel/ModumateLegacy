@@ -10,7 +10,7 @@
 
 DEFINE_LOG_CATEGORY(ModumateDrawingDesigner);
 
-static constexpr TCHAR* DrawingDesignerDocumentLabel = TEXT("document");
+static const TCHAR* DrawingDesignerDocumentLabel = TEXT("document");
 
 FDrawingDesignerDocument::FDrawingDesignerDocument()
 {

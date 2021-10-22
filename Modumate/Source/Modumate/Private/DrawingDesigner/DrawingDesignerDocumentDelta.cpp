@@ -3,7 +3,7 @@
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
 #include "DocumentManagement/ModumateDocument.h"
 
-static constexpr TCHAR* DrawingDesignerDeltaLabel = TEXT("document");
+static const TCHAR* DrawingDesignerDeltaLabel = TEXT("document");
 
 FDrawingDesignerDocumentDelta::FDrawingDesignerDocumentDelta(const FDrawingDesignerDocument& doc,
 	FDrawingDesignerJsDeltaPackage package

@@ -48,6 +48,8 @@
 #include "UnrealClasses/ModumateObjectComponent.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 
+#include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
+
 #define LOCTEXT_NAMESPACE "ModumateDocument"
 
 const FName UModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
@@ -4143,6 +4145,24 @@ void UModumateDocument::drawing_request_document()
 void UModumateDocument::drawing_apply_delta(const FString& InDelta)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_apply_delta"));
+	FDrawingDesignerJsDeltaPackage  package;
+	if (!package.ReadJson(InDelta))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to read JSON package"));
+	}
+	else
+	{
+		TSharedPtr<FDocumentDelta> delta = MakeShared<FDrawingDesignerDocumentDelta>(DrawingDesignerDocument, package);
+		TArray<FDeltaPtr> wrapped;
+		wrapped.Add(delta);
+		if (!ApplyDeltas(wrapped, GetWorld()))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to apply Delta"));
+		}
+		else
+		{
+			drawing_request_document();
+		}
+	}
 }
-
 #undef LOCTEXT_NAMESPACE
