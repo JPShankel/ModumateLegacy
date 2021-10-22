@@ -137,14 +137,23 @@ bool UModumateBrowserStatics::UpdateCameraViewData(UObject* WorldContextObject, 
 		bNewViewCubeVisibility = controller->EditModelUserWidget->ViewCubeUserWidget->IsVisible();
 	}
 
+	CameraViewData.SavedCullingCutPlane = controller->CurrentCullingCutPlaneID;
 	CameraViewData.Position = CameraComp->GetComponentLocation();
 	CameraViewData.Rotation = CameraComp->GetComponentQuat();
 	CameraViewData.FOV = CameraComp->FieldOfView;
 	CameraViewData.AspectRatio = CameraComp->AspectRatio;
 	CameraViewData.bOrthoView = CameraComp->ProjectionMode == ECameraProjectionMode::Orthographic;
+	CameraViewData.OrthoWidth = CameraComp->OrthoWidth;
 	CameraViewData.SavedTime = TimeOfDay.ToString();
 	CameraViewData.bAxesActorVisibility = bNewAxisVisibility;
 	CameraViewData.bViewCubeVisibility = bNewViewCubeVisibility;
+
+	CameraViewData.SavedCutPlaneVisibilities.Empty();
+	TArray<AModumateObjectInstance*> cpMois = controller->GetDocument()->GetObjectsOfType(EObjectType::OTCutPlane);
+	for (const auto& curCp : cpMois)
+	{
+		CameraViewData.SavedCutPlaneVisibilities.Add(curCp->ID, curCp->IsVisible());
+	}
 
 	return true;
 }

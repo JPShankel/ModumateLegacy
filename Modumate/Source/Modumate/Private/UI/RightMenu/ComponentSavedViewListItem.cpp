@@ -17,6 +17,7 @@
 #include "UnrealClasses/EditModelPlayerPawn.h"
 #include "UnrealClasses/AxesActor.h"
 #include "UI/ViewCubeWidget.h"
+#include "DocumentManagement/ModumateDocument.h"
 
 
 UComponentSavedViewListItem::UComponentSavedViewListItem(const FObjectInitializer& ObjectInitializer)
@@ -106,15 +107,16 @@ void UComponentSavedViewListItem::ActivateCameraView()
 		// Position and rotation
 		pawn->SetActorLocationAndRotation(CameraView.Position, CameraView.Rotation);
 
-		// FOV
+		// Projection mode
+		Controller->EMPlayerPawn->SetCameraOrtho(CameraView.bOrthoView);
+
+		// FOV and ortho width
 		UCameraComponent* cameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
 		if (cameraComp)
 		{
 			cameraComp->FieldOfView = CameraView.FOV;
+			cameraComp->SetOrthoWidth(CameraView.OrthoWidth);
 		}
-
-		// Projection mode
-		Controller->EMPlayerPawn->SetCameraOrtho(CameraView.bOrthoView);
 
 		// Time
 		FDateTime newDateTime;
@@ -138,6 +140,26 @@ void UComponentSavedViewListItem::ActivateCameraView()
 		// Sync with menu
 		Controller->EditModelUserWidget->ViewMenu->ViewMenu_Block_Properties->SyncAllMenuProperties();
 		Controller->EditModelUserWidget->ViewMenu->MouseEndHoverView(this);
+
+		// Update cutplane culling
+		Controller->SetCurrentCullingCutPlane(CameraView.SavedCullingCutPlane, false);
+
+		// Update cutplane visibility
+		TArray<int32> visibleCPs;
+		TArray<int32> hiddenCPs;
+		for (const auto& kvp : CameraView.SavedCutPlaneVisibilities)
+		{
+			if (kvp.Value)
+			{
+				visibleCPs.Add(kvp.Key);
+			}
+			else
+			{
+				hiddenCPs.Add(kvp.Key);
+			}
+		}
+		Controller->GetDocument()->AddHideObjectsById(GetWorld(), hiddenCPs);
+		Controller->GetDocument()->UnhideObjectsById(GetWorld(), visibleCPs);
 	}
 }
 

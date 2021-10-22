@@ -91,6 +91,12 @@ void UViewMenuWidget::MouseEndHoverView(UComponentSavedViewListItem *Item)
 	}
 	// Revert skyActor back to its original param
 	Controller->SkyActor->UpdateComponentsWithDateTime(Controller->SkyActor->GetCurrentDateTime());
+
+	UCameraComponent* cameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
+	if (cameraComp)
+	{
+		Controller->SkyActor->SetSkyDomePositionScaleByCameraProjection(cameraComp->ProjectionMode == ECameraProjectionMode::Orthographic);
+	}
 }
 
 void UViewMenuWidget::HoverCaptureTick()
@@ -107,12 +113,23 @@ void UViewMenuWidget::HoverCaptureTick()
 			PlayerPawn->CameraCaptureComponent2D->SetWorldLocationAndRotation(CurrentHoverViewItem->CameraView.Position, CurrentHoverViewItem->CameraView.Rotation);
 			PlayerPawn->CameraCaptureComponent2D->FOVAngle = CurrentHoverViewItem->CameraView.FOV;
 			PlayerPawn->CameraCaptureComponent2D->ProjectionType = CurrentHoverViewItem->CameraView.bOrthoView ? ECameraProjectionMode::Orthographic : ECameraProjectionMode::Perspective;
+			PlayerPawn->CameraCaptureComponent2D->OrthoWidth = CurrentHoverViewItem->CameraView.OrthoWidth;
 			PlayerPawn->CameraCaptureComponent2D->TextureTarget = PreviewRT;
 			// Set lighting param to match with saved camera view
 			FDateTime newDateTime;
 			if (FDateTime::Parse(CurrentHoverViewItem->CameraView.SavedTime, newDateTime))
 			{
 				Controller->SkyActor->UpdateComponentsWithDateTime(newDateTime);
+			}
+
+			// Set skydome to match with projection mode
+			if (CurrentHoverViewItem->CameraView.bOrthoView)
+			{
+				Controller->SkyActor->SetSkyDomePositionScaleForOrthoPreview(PlayerPawn->CameraCaptureComponent2D->GetComponentLocation());
+			}
+			else
+			{
+				Controller->SkyActor->SetSkyDomePositionScaleByCameraProjection(false);
 			}
 		}
 
@@ -121,9 +138,16 @@ void UViewMenuWidget::HoverCaptureTick()
 		// Change NumberOfTickForHoverPreview for number of tick needed before capturing ends
 		if (HoverCaptureTickCount < NumberOfTickForHoverPreview)
 		{
+			// Temp culling cutplane for preview capture
+			int32 preCaptureCutplaneID = Controller->CurrentCullingCutPlaneID;
+			Controller->UpdateCutPlaneCullingMaterialInst(CurrentHoverViewItem->CameraView.SavedCullingCutPlane);
+
 			PlayerPawn->CameraCaptureComponent2D->CaptureScene();
 			static const FName textureParamName(TEXT("Texture"));
 			ImagePreview->GetDynamicMaterial()->SetTextureParameterValue(textureParamName, PreviewRT);
+
+			// Revert back to original culling cutplane
+			Controller->UpdateCutPlaneCullingMaterialInst(preCaptureCutplaneID);
 		}
 		else
 		{

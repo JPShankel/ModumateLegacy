@@ -17,6 +17,12 @@ struct MODUMATE_API FMOICameraViewData
 	UPROPERTY()
 	int32 CameraViewIndex = INDEX_NONE;
 
+	UPROPERTY()
+	int32 SavedCullingCutPlane = INDEX_NONE;
+
+	UPROPERTY()
+	TMap<int32, bool> SavedCutPlaneVisibilities; // MoiID, IsVisible
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
 	FVector Position = FVector::ZeroVector;
 
@@ -28,6 +34,9 @@ struct MODUMATE_API FMOICameraViewData
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
 	float AspectRatio = 1.778f; // Default UE4 camera aspect ratio
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
+	float OrthoWidth = 512;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
 	FString Name = FString(TEXT("NewCameraView"));

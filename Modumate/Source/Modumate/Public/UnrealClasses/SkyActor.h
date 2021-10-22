@@ -101,4 +101,6 @@ public:
 	void ToggleCurrentMeridiem();
 	void AddTimespanToCurrentDateTime(const FTimespan &Timespan);
 	void SetSkyDomePositionScale(const FVector& Position, const FVector& Scale);
+	void SetSkyDomePositionScaleByCameraProjection(bool bIsPerspective);
+	void SetSkyDomePositionScaleForOrthoPreview(const FVector& PreviewPosition);
 };

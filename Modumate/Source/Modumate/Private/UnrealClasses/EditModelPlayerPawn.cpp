@@ -264,16 +264,7 @@ bool AEditModelPlayerPawn::SetCameraFOV(float NewFOV)
 
 bool AEditModelPlayerPawn::SetCameraOrtho(bool bOrtho)
 {
-	// Magic constants for orthogonal/perspective changes.
-	// The persp dome transform is the EU4 default for a new level;
-	// the ortho version are the changes to get it visible.
-	// Note the scale values give an ellipsoid - this is not an error!
 	static constexpr float matchPerpectiveDistance = 1500.0f;  // Match view size at this distance.
-	static const FVector PerspectiveDomePosition(0.0f, 0.0f, -7.3e6f);
-	static const FVector PerspectiveDomeScale(1e6f, 150000.0f, 1e6f);
-	static const FVector OrthogonalDomePosition(0);
-	static const FVector OrthogonalDomeScale(2e4f, 2e3f, 2e4f);
-
 
 	ECameraProjectionMode::Type mode = bOrtho ? ECameraProjectionMode::Orthographic : ECameraProjectionMode::Perspective;
 	if (CameraComponent)
@@ -282,21 +273,15 @@ bool AEditModelPlayerPawn::SetCameraOrtho(bool bOrtho)
 		{   // Switching to ortho:
 			float orthoWidth = matchPerpectiveDistance * FMath::Tan(FMath::DegreesToRadians(CameraComponent->FieldOfView) / 2.0f) * 2.0f;
 			CameraComponent->SetOrthoWidth(orthoWidth);
-			auto emPlayerController = Cast<AEditModelPlayerController>(Controller);
-			if (emPlayerController)
-			{
-				emPlayerController->SkyActor->SetSkyDomePositionScale(OrthogonalDomePosition, OrthogonalDomeScale);
-			}
 		}
-		else if (!bOrtho && CameraComponent->ProjectionMode == ECameraProjectionMode::Orthographic)
-		{   // Switching to perspective:
-			auto emPlayerController = Cast<AEditModelPlayerController>(Controller);
-			if (emPlayerController)
-			{
-				emPlayerController->SkyActor->SetSkyDomePositionScale(PerspectiveDomePosition, PerspectiveDomeScale);
-			}
 
+		// Change Sky dome to match with projection mode
+		auto emPlayerController = Cast<AEditModelPlayerController>(Controller);
+		if (emPlayerController)
+		{
+			emPlayerController->SkyActor->SetSkyDomePositionScaleByCameraProjection(bOrtho);
 		}
+
 		CameraComponent->SetProjectionMode(mode);
 		return true;
 	}
