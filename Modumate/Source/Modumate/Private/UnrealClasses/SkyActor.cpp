@@ -19,7 +19,7 @@ static const FVector PerspectiveDomePosition(0.0f, 0.0f, -7.3e6f);
 static const FVector PerspectiveDomeScale(1e6f, 150000.0f, 1e6f);
 static const FVector OrthogonalDomePosition(0);
 static const FVector OrthogonalDomeScale(2e4f, 2e3f, 2e4f);
-static const FVector PreviewOrthogonalDomeScale(200.f, 300.f, 200.f);
+static const float BackgroundSkyPlanePreviewDistance(1e5f);
 
 // Sets default values
 ASkyActor::ASkyActor()
@@ -37,6 +37,8 @@ ASkyActor::ASkyActor()
 	SkyDomeMesh->SetupAttachment(Root);
 	SkyLight = CreateDefaultSubobject<USkyLightComponent>(TEXT("SkyLight"));
 	SkyLight->SetupAttachment(Root);
+	BackgroundSkyPlane = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BackgroundSkyPlane"));
+	BackgroundSkyPlane->SetupAttachment(Root);
 }
 
 // Called when the game starts or when spawned
@@ -184,11 +186,14 @@ void ASkyActor::SetSkyDomePositionScaleByCameraProjection(bool bIsOrtho)
 	}
 }
 
-void ASkyActor::SetSkyDomePositionScaleForOrthoPreview(const FVector& PreviewPosition)
+void ASkyActor::ToggleBackgroundSkyPlane(bool bVisible, const FVector& CameraPosition, const FRotator& CameraRotation)
 {
-	if (SkyDomeMesh)
+	BackgroundSkyPlane->SetVisibility(bVisible);
+	if (bVisible)
 	{
-		SkyDomeMesh->SetWorldLocation(PreviewPosition);
-		SkyDomeMesh->SetRelativeScale3D(PreviewOrthogonalDomeScale);
+		FVector pos = (CameraRotation.Vector() * BackgroundSkyPlanePreviewDistance) + CameraPosition;
+		BackgroundSkyPlane->SetWorldLocation(pos);
+		BackgroundSkyPlane->SetWorldRotation(CameraRotation);
+		BackgroundSkyPlane->AddRelativeRotation(FRotator(90.f, 0.f, 0.f));
 	}
 }

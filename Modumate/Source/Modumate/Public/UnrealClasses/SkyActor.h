@@ -31,6 +31,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USkyLightComponent* SkyLight;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UStaticMeshComponent* BackgroundSkyPlane;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -102,5 +105,5 @@ public:
 	void AddTimespanToCurrentDateTime(const FTimespan &Timespan);
 	void SetSkyDomePositionScale(const FVector& Position, const FVector& Scale);
 	void SetSkyDomePositionScaleByCameraProjection(bool bIsPerspective);
-	void SetSkyDomePositionScaleForOrthoPreview(const FVector& PreviewPosition);
+	void ToggleBackgroundSkyPlane(bool bVisible, const FVector& CameraPosition = FVector::ZeroVector, const FRotator& CameraRotation = FRotator::ZeroRotator);
 };

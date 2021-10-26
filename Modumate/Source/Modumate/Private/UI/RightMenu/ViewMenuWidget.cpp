@@ -115,6 +115,7 @@ void UViewMenuWidget::HoverCaptureTick()
 			PlayerPawn->CameraCaptureComponent2D->ProjectionType = CurrentHoverViewItem->CameraView.bOrthoView ? ECameraProjectionMode::Orthographic : ECameraProjectionMode::Perspective;
 			PlayerPawn->CameraCaptureComponent2D->OrthoWidth = CurrentHoverViewItem->CameraView.OrthoWidth;
 			PlayerPawn->CameraCaptureComponent2D->TextureTarget = PreviewRT;
+			
 			// Set lighting param to match with saved camera view
 			FDateTime newDateTime;
 			if (FDateTime::Parse(CurrentHoverViewItem->CameraView.SavedTime, newDateTime))
@@ -123,14 +124,7 @@ void UViewMenuWidget::HoverCaptureTick()
 			}
 
 			// Set skydome to match with projection mode
-			if (CurrentHoverViewItem->CameraView.bOrthoView)
-			{
-				Controller->SkyActor->SetSkyDomePositionScaleForOrthoPreview(PlayerPawn->CameraCaptureComponent2D->GetComponentLocation());
-			}
-			else
-			{
-				Controller->SkyActor->SetSkyDomePositionScaleByCameraProjection(false);
-			}
+			Controller->SkyActor->SetSkyDomePositionScaleByCameraProjection(CurrentHoverViewItem->CameraView.bOrthoView);
 		}
 
 		// Due to post-processing (ex: Light Propagation responding to time of day change), 
@@ -141,13 +135,26 @@ void UViewMenuWidget::HoverCaptureTick()
 			// Temp culling cutplane for preview capture
 			int32 preCaptureCutplaneID = Controller->CurrentCullingCutPlaneID;
 			Controller->UpdateCutPlaneCullingMaterialInst(CurrentHoverViewItem->CameraView.SavedCullingCutPlane);
-
+			
+			// If ortho view, set background sky
+			if (CurrentHoverViewItem->CameraView.bOrthoView)
+			{
+				Controller->SkyActor->ToggleBackgroundSkyPlane(true, CurrentHoverViewItem->CameraView.Position, CurrentHoverViewItem->CameraView.Rotation.Rotator());
+			}
+			
+			// Capture scene
 			PlayerPawn->CameraCaptureComponent2D->CaptureScene();
 			static const FName textureParamName(TEXT("Texture"));
 			ImagePreview->GetDynamicMaterial()->SetTextureParameterValue(textureParamName, PreviewRT);
 
 			// Revert back to original culling cutplane
 			Controller->UpdateCutPlaneCullingMaterialInst(preCaptureCutplaneID);
+
+			// If ortho view, revert background sky
+			if (CurrentHoverViewItem->CameraView.bOrthoView)
+			{
+				Controller->SkyActor->ToggleBackgroundSkyPlane(false);
+			}
 		}
 		else
 		{
