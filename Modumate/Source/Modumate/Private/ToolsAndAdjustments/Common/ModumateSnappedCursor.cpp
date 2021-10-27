@@ -54,19 +54,28 @@ void FSnappedCursor::ClearAffordanceFrame()
 	bSnapGlobalAxes = true;
 }
 
-bool FSnappedCursor::TryGetRaySketchPlaneIntersection(const FVector &origin, const FVector &direction, FVector &outputPosition) const
+bool FSnappedCursor::TryGetRaySketchPlaneIntersection(const FVector& origin, const FVector& direction, FVector& outputPosition) const
 {
-	// RayPlaneIntersection is not safe, pre-reject parallel projection
-	if (!AffordanceFrame.Normal.IsNormalized() || FVector::Orthogonal(direction, AffordanceFrame.Normal))
+	// RayPlaneIntersection is not safe
+	if (!AffordanceFrame.Normal.IsNormalized())
 	{
 		return false;
 	}
 
-	// First, compute the intersection between the input ray and the sketch plane
-	outputPosition = FMath::RayPlaneIntersection(origin, direction, FPlane(AffordanceFrame.Origin,AffordanceFrame.Normal));
+	if (FVector::Orthogonal(direction, AffordanceFrame.Normal))
+	{
+		// Force a hit for axis-aligned views.
+		outputPosition = FMath::RayPlaneIntersection(origin, (direction - KINDA_SMALL_NUMBER * AffordanceFrame.Normal).GetSafeNormal(),
+			FPlane(AffordanceFrame.Origin, AffordanceFrame.Normal));
+	}
+	else
+	{
+		// First, compute the intersection between the input ray and the sketch plane
+		outputPosition = FMath::RayPlaneIntersection(origin, direction, FPlane(AffordanceFrame.Origin, AffordanceFrame.Normal));
 
-	// Then, compensate for division-by-dot-product floating point error by projecting on the plane explicitly
-	outputPosition = SketchPlaneProject(outputPosition);
+		// Then, compensate for division-by-dot-product floating point error by projecting on the plane explicitly
+		outputPosition = SketchPlaneProject(outputPosition);
+	}
 
 	return true;
 }
