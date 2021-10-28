@@ -341,7 +341,8 @@ void UPresetCardMain::ClearWidgetPool(class UPanelWidget* Widget)
 	for (auto& curWidget : Widget->GetAllChildren())
 	{
 		UUserWidget* asUserWidget = Cast<UUserWidget>(curWidget);
-		if (asUserWidget)
+		if (asUserWidget && EMPlayerController &&
+			EMPlayerController->HUDDrawWidget)
 		{
 			EMPlayerController->HUDDrawWidget->UserWidgetPool.Release(asUserWidget);
 		}

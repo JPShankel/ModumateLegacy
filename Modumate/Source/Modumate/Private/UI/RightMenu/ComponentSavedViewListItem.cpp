@@ -64,6 +64,7 @@ void UComponentSavedViewListItem::NativeConstruct()
 
 void UComponentSavedViewListItem::OnButtonEditReleased()
 {
+	SavedViewEdiableTitle->ModumateEditableTextBox->SetText(FText::FromString(CameraView.Name));
 	SavedViewEdiableTitle->ModumateEditableTextBox->SetKeyboardFocus();
 }
 
