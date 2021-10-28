@@ -135,33 +135,57 @@ void FMiterParticipantData::IntersectStructureGroup(const FMiterLayerGroup& Laye
 	int32 bestGroup = INDEX_NONE;
 	OutHitResult.bPriorityMatchHit = false;
 
-	for (int32 i = 0; i < numOtherLayers; ++i)
+	/*
+	* If this is not the lone instance of the highest priority layer, we look for a viable target in the other participant
+	*/
+	if (!LayerGroup.bIsLoneTopPriorityLayer)
 	{
-		int32 otherGroupIdx = targetNeighborDelta == EMiterLayerGroupPreferredNeighbor::Previous ? i : numOtherLayers - i - 1;
-
-		// If I have no designated target side, or this layer group is on my designated side or this layer group is structual, I can miter
-		bool bCanMiterWith = targetNeighborDelta == EMiterLayerGroupPreferredNeighbor::Both ||
-			targetNeighborDelta == OtherParticipant.LayerDims.LayerGroups[otherGroupIdx].PreferredNeighbor ||
-			OtherParticipant.LayerDims.LayerGroups[otherGroupIdx].PreferredNeighbor == EMiterLayerGroupPreferredNeighbor::Both;
-
-		if (!bCanMiterWith)
+		for (int32 i = 0; i < numOtherLayers; ++i)
 		{
-			continue;
-		}
+			int32 otherGroupIdx = targetNeighborDelta == EMiterLayerGroupPreferredNeighbor::Previous ? i : numOtherLayers - i - 1;
 
-		// If we find an exact match, prioritize that
-		if (OtherParticipant.LayerDims.LayerGroups[otherGroupIdx].Priority == LayerGroup.Priority)
-		{
-			bestGroup = otherGroupIdx;
-			OutHitResult.bPriorityMatchHit = true;
-			break;
-		}
+			// If I have no designated target side, or this layer group is on my designated side or this layer group is structual, I can miter
+			bool bCanMiterWith = targetNeighborDelta == EMiterLayerGroupPreferredNeighbor::Both ||
+				targetNeighborDelta == OtherParticipant.LayerDims.LayerGroups[otherGroupIdx].PreferredNeighbor ||
+				OtherParticipant.LayerDims.LayerGroups[otherGroupIdx].PreferredNeighbor == EMiterLayerGroupPreferredNeighbor::Both;
 
-		// Accept the first higher priority layer, but keep looking for an exact match
-		if (bestGroup == INDEX_NONE && OtherParticipant.LayerDims.LayerGroups[otherGroupIdx].Priority < LayerGroup.Priority)
-		{
-			bestGroup = otherGroupIdx;
+			if (!bCanMiterWith)
+			{
+				continue;
+			}
+
+			// If we find an exact match, prioritize that
+			if (OtherParticipant.LayerDims.LayerGroups[otherGroupIdx].Priority == LayerGroup.Priority)
+			{
+				bestGroup = otherGroupIdx;
+				OutHitResult.bPriorityMatchHit = true;
+				break;
+			}
+
+			// Accept the first higher priority layer, but keep looking for an exact match
+			if (bestGroup == INDEX_NONE && OtherParticipant.LayerDims.LayerGroups[otherGroupIdx].Priority < LayerGroup.Priority)
+			{
+				bestGroup = otherGroupIdx;
+			}
 		}
+	}
+	/*
+	* If this is the lone instance of the highest priority layer, it won't have any collision targets, so extend this layer to the
+	* opposite side of the highest priority layer in the other participant
+	*/
+	else
+	{
+		bestGroup = 0;
+		auto topPriority = OtherParticipant.LayerDims.LayerGroups[0].Priority;
+		for (int32 i = 0; i < numOtherLayers; ++i)
+		{
+			if (OtherParticipant.LayerDims.LayerGroups[i].Priority < topPriority)
+			{
+				topPriority = OtherParticipant.LayerDims.LayerGroups[i].Priority;
+				bestGroup = i;
+			}
+		}
+		bUseOtherStart = !bUseOtherStart;
 	}
 
 	if (bestGroup == INDEX_NONE)
@@ -275,6 +299,12 @@ bool FMiterData::GatherDetails(const AModumateObjectInstance *InMiterObject)
 	// and construct helper structs to calculate/cache miter-relevant details
 	int32 numConnectedFaces = GraphEdge->ConnectedFaces.Num();
 
+
+	// If we only find one participant having the highest priority layer, we'll need to mark that layer for special extension
+	int32 topPriorityCount = 0;
+	FBIMPresetLayerPriority topPriority;
+	int32 extended180ID = INDEX_NONE;
+
 	for (int32 edgeFaceIdx = 0; edgeFaceIdx < numConnectedFaces; ++edgeFaceIdx)
 	{
 		FMiterParticipantData participant(this, edgeFaceIdx);
@@ -283,9 +313,69 @@ bool FMiterData::GatherDetails(const AModumateObjectInstance *InMiterObject)
 			continue;
 		}
 
+		if (topPriorityCount == 0)
+		{
+			topPriority = participant.LayerDims.LayerGroups[0].Priority;
+			topPriorityCount = 1;
+			extended180ID = participant.MOI->ID;
+		}
+
+		for (int32 i = 0; i < participant.LayerDims.LayerGroups.Num(); ++i)
+		{
+			if (participant.LayerDims.LayerGroups[i].Priority < topPriority)
+			{
+				topPriorityCount = 1;
+				topPriority = participant.LayerDims.LayerGroups[i].Priority;
+				extended180ID = participant.MOI->ID;
+			}
+			else if (participant.LayerDims.LayerGroups[i].Priority == topPriority && extended180ID != INDEX_NONE && extended180ID != participant.MOI->ID)
+			{
+				++topPriorityCount;
+			}
+		}
+
 		int32 participantID = participant.MOI->ID;
 		SortedParticipantIDs.Add(participantID);
 		ParticipantsByID.Add(participantID, MoveTemp(participant));
+	}
+
+	/*
+	 * If we found one and only one participant with the highest priority layer,
+	 * mark each instance of that layer type as being a "lone top priority layer."
+	 * Lone top priority layers have no miter targets and so extend themselves 
+	 * to the opposite side of their neighbors
+	 * */
+
+	if (topPriorityCount == 1 && numConnectedFaces > 1 && ensure(extended180ID != INDEX_NONE))
+	{
+		auto& participant = ParticipantsByID[extended180ID];
+		for (auto& layer : participant.LayerDims.LayerGroups)
+		{
+			if (layer.Priority == topPriority)
+			{
+				layer.bIsLoneTopPriorityLayer = true;
+			}
+		}
+
+		/*
+		* In addition to marking the original participant's layers as top priority,
+		* we must also create a twin virtual layer 180 degrees around so other layers
+		* will see this participant as a candidate for extending both sides
+		* 
+		* TODO: this is a hack that requires us to use the negative MOI ID to store the
+		* virtual participant. This is to be refactored so each participant can consider
+		* every other participant instead of just a "preferred" neighbor
+		*/
+		auto newParticipant = participant;
+
+		newParticipant.MiterAngle += 180.0;
+		if (newParticipant.MiterAngle > 360)
+		{
+			newParticipant.MiterAngle -= 360;
+		}
+		newParticipant.bPlaneNormalCW = !newParticipant.bPlaneNormalCW;
+		SortedParticipantIDs.Add(-newParticipant.MOI->ID);
+		ParticipantsByID.Add(-newParticipant.MOI->ID, newParticipant);
 	}
 
 	// Sort the participants by angle
@@ -305,6 +395,13 @@ bool FMiterData::CalculateMitering()
 	auto edgeDetailMOI = metaEdge ? metaEdge->CachedEdgeDetailMOI : nullptr;
 	const FEdgeDetailData* edgeDetailData = edgeDetailMOI ? &edgeDetailMOI->GetAssembly().EdgeDetailData : nullptr;
 	int32 numDetailParticipants = edgeDetailData ? edgeDetailData->Overrides.Num() : 0;
+
+	// If we have an edge detail, we don't need the mirrored top-priority layer used by auto mitering
+	if (edgeDetailData)
+	{
+		ParticipantsByID = ParticipantsByID.FilterByPredicate([](const TPair<int32, FMiterParticipantData>& Participant) {return Participant.Key > 0; });
+		SortedParticipantIDs = SortedParticipantIDs.FilterByPredicate([](int32 ID) {return ID > 0; });
+	}
 
 	// If there is an edge detail that overrides layer extension data for this miter node,
 	// then let it populate the data rather than our miter algorithm.
@@ -498,6 +595,19 @@ bool FMiterData::ExtendLayerGroup(const FMiterLayerGroup& LayerGroup)
 	FMiterHitResult startHitResult, endHitResult;
 	participant->IntersectStructureGroup(LayerGroup, *startParticipant, true, bTargetStartOfStartObj, startHitResult);
 	participant->IntersectStructureGroup(LayerGroup, *endParticipant, false, bTargetStartOfEndObj, endHitResult);
+
+	// If we only have one top priority layer, extend it evenly to the furthest intersection
+	if (LayerGroup.bIsLoneTopPriorityLayer)
+	{
+		if (startHitResult.Dist > endHitResult.Dist)
+		{
+			endHitResult = startHitResult;
+		}
+		else
+		{
+			startHitResult = endHitResult;
+		}
+	}
 
 	// Using the collision results for extended sides,
 	// try to get actual extension values against the neighboring layer groups

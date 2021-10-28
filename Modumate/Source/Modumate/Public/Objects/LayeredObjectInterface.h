@@ -34,6 +34,9 @@ struct MODUMATE_API FMiterLayerGroup
 	EMiterLayerGroupPreferredNeighbor PreferredNeighbor;
 	
 	float GroupThickness = 0.0f, GroupOffset = 0.0f;
+
+	bool bIsLoneTopPriorityLayer = false;
+
 	FBIMPresetLayerPriority Priority;
 };
 

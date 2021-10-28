@@ -331,6 +331,13 @@ void FEdgeDetailData::FillFromMiterNode(const IMiterNode* MiterNode)
 
 	for (int32 participantID : miterData.SortedParticipantIDs)
 	{
+		// TODO: participants with negative IDs is a hack used to allow top-priority layers to extend across the miter area
+		// They will inherit the detail information from their positive twin
+		// To be refactored out with mitering 2.0
+		if (participantID < 0)
+		{
+			continue;
+		}
 		const FMiterParticipantData* participantData = miterData.ParticipantsByID.Find(participantID);
 		FEdgeDetailCondition participantCondition(participantData);
 		FEdgeDetailOverrides participantOverride(participantData);
