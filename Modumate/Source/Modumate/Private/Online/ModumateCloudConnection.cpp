@@ -58,7 +58,7 @@ FString FModumateCloudConnection::GetCloudWorkspacePlansURL() const
 
 FString FModumateCloudConnection::GetInstallerDownloadURL() const
 {
-#if !PLATFORM_MAC
+#if PLATFORM_MAC
 	static const FString downloadLocation(TEXT("/static/download/appleintel"));
 #else
 	static const FString downloadLocation(TEXT("/static/download/windows64"));
