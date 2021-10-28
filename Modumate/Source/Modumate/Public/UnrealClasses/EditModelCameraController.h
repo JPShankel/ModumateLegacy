@@ -195,6 +195,9 @@ protected:
 	// The world-space position to move towards (or away from) on zoom
 	FVector ZoomTarget;
 
+	// Target new ortho width, for orthographic zoom.
+	float OrthoWidthTarget = 1.0f;
+
 	// The world-space position about which we are actually rotating, which approaches OrbitTarget in order to smooth the camera
 	FVector OrbitStartProxyTarget;
 
@@ -245,4 +248,10 @@ protected:
 
 	// The maximum ratio of Dist(Camera-Target)/Dist(Camera-CenterOfModel) that a new OrbitTarget can be.
 	static constexpr float MaxOrbitDistanceRatio = 1.5f;
+
+	// Effect of one orthographic zoom step in (5%)
+	static constexpr float OrthoZoomStep = 0.95f;
+
+	// Maximum amount of orthographic zoom
+	static constexpr float OrthoMinWidth = 20.0f;
 };

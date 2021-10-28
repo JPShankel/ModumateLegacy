@@ -648,6 +648,10 @@ void UEditModelCameraController::OnZoom(float ZoomSign)
 		// Accumulate the free zoom target delta
 		FVector newZoomDelta = FreeZoomDeltaAccumulated - (zoomDistDelta * dirToTarget);
 
+		UCameraComponent* cameraComponent = Controller->EMPlayerPawn->CameraComponent;
+		float currentOrthoWidth = cameraComponent->OrthoWidth;
+		OrthoWidthTarget = ZoomSign < 0.0f ? FMath::Max(currentOrthoWidth * OrthoZoomStep, OrthoMinWidth) : currentOrthoWidth / OrthoZoomStep;
+
 		// But don't zoom closer than ZoomMinDistance to the target if we're zooming in and it's enforced during free-zooming
 		if (bEnforceFreeZoomMinDist)
 		{
@@ -707,29 +711,35 @@ void UEditModelCameraController::UpdateFreeZooming(float DeltaTime)
 	// If smooth zooming, use the desired zoom delta over time; otherwise use it all immediately
 	float zoomLerpAlpha = bUseSmoothZoom ? FMath::Clamp(SmoothZoomSpeed * DeltaTime, 0.0f, 1.0f) : 1.0f;
 	FVector curZoomDelta = FMath::Lerp(FVector::ZeroVector, FreeZoomDeltaAccumulated, zoomLerpAlpha);
-	if (curZoomDelta.IsNearlyZero())
-	{
-		return;
-	}
 
 	UCameraComponent* cameraComponent = Controller->EMPlayerPawn->CameraComponent;
 	if (cameraComponent->ProjectionMode == ECameraProjectionMode::Orthographic)
 	{
-		static constexpr float orthoZoomScale = 0.5f;
-		static constexpr float orthoMinWidth = 10.0f;
 		FVector camDirection = CamTransform.TransformVector(FVector::ForwardVector);
 		FVector CameraPos = CamTransform.GetLocation();
 		float cameraDotZoom = camDirection | curZoomDelta;
-		float direction = cameraDotZoom < 0.0f ? 1.0f : -1.0f;
 		float orthoWidth = cameraComponent->OrthoWidth;
-		float newOrthoWidth = orthoWidth + direction * orthoZoomScale * curZoomDelta.Size();
-		newOrthoWidth = FMath::Max(newOrthoWidth, orthoMinWidth);
+		if (FMath::IsNearlyEqual(orthoWidth, OrthoWidthTarget, KINDA_SMALL_NUMBER))
+		{
+			cameraComponent->SetOrthoWidth(OrthoWidthTarget);
+			FreeZoomDeltaAccumulated.Set(0, 0, 0);
+			return;
+		}
+		float newOrthoWidth = FMath::Lerp(orthoWidth, OrthoWidthTarget, zoomLerpAlpha);
 		cameraComponent->SetOrthoWidth(newOrthoWidth);
+
 		// Move camera in direction of zoom target but orthogonal to view.
 		FVector targetInViewPlane = ZoomTarget + ((CameraPos - ZoomTarget) | camDirection) * camDirection - CameraPos;
 		curZoomDelta = targetInViewPlane * (orthoWidth - newOrthoWidth) / orthoWidth;
 	}
-	
+	else
+	{
+		if (curZoomDelta.IsNearlyZero())
+		{
+			return;
+		}
+	}
+
 	CamTransform.SetLocation(CamTransform.GetLocation() + curZoomDelta);
 
 	FreeZoomDeltaAccumulated *= (1.0f - zoomLerpAlpha);
