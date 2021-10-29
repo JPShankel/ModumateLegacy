@@ -12,6 +12,66 @@
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDrawingDesignerViewTest, "Modumate.DrawingDesigner.ViewTest", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+bool FModumateDrawingDesignerViewTest::RunTest(const FString& Parameters)
+{
+	bool doVerbose = false;
+	if (doVerbose) FPlatformProcess::Sleep(15.0);
+
+	FDrawingDesignerViewList myList;
+	FDrawingDesignerView sample;
+	sample.aspect.x = 1;
+	sample.aspect.y = 1;
+	sample.moi_id = INDEX_NONE; // Just for sample...
+	myList.views.Add(sample);
+
+	FString response;
+	if (!myList.WriteJson(response))
+	{
+		UE_LOG(LogTemp, Error, TEXT("FDrawingDesignerViewList failed to serialize"));
+		return false;
+	}
+
+	FDrawingDesignerViewList myListCopy;
+	if (!myListCopy.ReadJson(response) || myListCopy != myList)
+	{
+		UE_LOG(LogTemp, Error, TEXT("FDrawingDesignerViewList failed to deserialize or the deserialization does not match"));
+		return false;
+	}
+	FDrawingDesignerViewRequest req;
+	req.minimum_resolution_pixels.x = 500;
+	req.minimum_resolution_pixels.y = 500;
+	req.moi_id = 999;
+	req.request_id = 42;
+
+	FDrawingDesignerViewImage image;
+	image.view = sample;
+	image.image_base64 = TEXT("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==");
+	image.line_stride_bytes = 40;
+	image.pixel_stride_bytes = 40;
+	image.resolution_pixels.x = 10;
+	image.resolution_pixels.y = 10;
+	image.request_id = req.request_id;
+
+	FDrawingDesignerViewResponse resp;
+	resp.request = req;
+	resp.response = image;
+
+	if (!resp.WriteJson(response))
+	{
+		UE_LOG(LogTemp, Error, TEXT("FDrawingDesignerViewResponse failed to serialize"));
+		return false;
+	}
+
+	FDrawingDesignerViewResponse respCopy;
+	if (!respCopy.ReadJson(response) || respCopy != resp)
+	{
+		UE_LOG(LogTemp, Error, TEXT("FDrawingDesignerViewResponse failed to deserialize or the deserialization does not match"));
+		return false;
+	}
+
+	return true;
+}
 
 static bool createDeltaAndApply(const FString& json, UModumateDocument* document, int expectedNodeCount)
 {

@@ -32,7 +32,6 @@ bool FDrawingDesignerDocument::WriteJson(FString& OutJson) const
 
 	if (docOb)
 	{
-		bool bSuccess = true;
 		//Add the map fields
 		TMap<FString, const FDrawingDesignerMap*> fields =
 		{
@@ -64,7 +63,7 @@ bool FDrawingDesignerDocument::WriteJson(FString& OutJson) const
 
 		//Return it prettified
 		FileJsonWrite->SetObjectField(DrawingDesignerDocumentLabel, docOb);
-		return bSuccess && FJsonSerializer::Serialize(FileJsonWrite.ToSharedRef(), JsonStringWriter);
+		return FJsonSerializer::Serialize(FileJsonWrite.ToSharedRef(), JsonStringWriter);
 	}
 
 	return false;
@@ -126,11 +125,6 @@ bool FDrawingDesignerDocument::operator==(const FDrawingDesignerDocument& RHS) c
 		return false;
 	}
 
-	if (views.Num() != RHS.views.Num())
-	{
-		return false;
-	}
-
 	for (auto& kvp : nodes)
 	{
 		auto* other = RHS.nodes.Find(kvp.Key);
@@ -140,14 +134,6 @@ bool FDrawingDesignerDocument::operator==(const FDrawingDesignerDocument& RHS) c
 		}
 	}
 
-	for (auto& kvp : views)
-	{
-		auto* other = RHS.views.Find(kvp.Key);
-		if (!other || *other != kvp.Value)
-		{
-			return false;
-		}
-	}
 	return true;
 }
 

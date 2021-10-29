@@ -4129,17 +4129,22 @@ void UModumateDocument::drawing_request_document()
 
 	if (ensureAlways(DrawingDesignerDocument.WriteJson(documentJson)))
 	{
-		auto player = GetWorld()->GetFirstLocalPlayerFromController();
-		auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
-		auto drawingDesigner = controller && controller->EditModelUserWidget ? controller->EditModelUserWidget->DrawingDesigner : nullptr;
-
-		if (drawingDesigner && drawingDesigner->DrawingSetWebBrowser)
-		{
-			FString javaScript = TEXT("UE_pushDocument(") + documentJson + TEXT(")");
-			drawingDesigner->DrawingSetWebBrowser->ExecuteJavascript(javaScript);
-		}
+		drawing_send_response(TEXT("UE_pushDocument"), documentJson);
 	}
 	// TODO: else send error status
+}
+
+void UModumateDocument::drawing_send_response(const FString& FunctionName, const FString& Argument)
+{
+	auto player = GetWorld()->GetFirstLocalPlayerFromController();
+	auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
+	auto drawingDesigner = controller && controller->EditModelUserWidget ? controller->EditModelUserWidget->DrawingDesigner : nullptr;
+
+	if (drawingDesigner && drawingDesigner->DrawingSetWebBrowser)
+	{
+		FString javaScript = FunctionName + TEXT("(") + Argument + TEXT(")");
+		drawingDesigner->DrawingSetWebBrowser->ExecuteJavascript(javaScript);
+	}
 }
 
 void UModumateDocument::drawing_apply_delta(const FString& InDelta)
@@ -4165,4 +4170,58 @@ void UModumateDocument::drawing_apply_delta(const FString& InDelta)
 		}
 	}
 }
+
+void UModumateDocument::drawing_request_view_list()
+{
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_request_view_list"));
+	FDrawingDesignerViewList myList;
+	FDrawingDesignerView sample;
+	sample.aspect.x = 1;
+	sample.aspect.y = 1;
+	sample.moi_id = INDEX_NONE; // Just for sample...
+	myList.views.Add(sample);
+
+	FString response;
+	if (ensureAlways(myList.WriteJson(response)))
+	{
+		drawing_send_response(TEXT("UE_pushViewList"), response);
+	}
+}
+
+void UModumateDocument::drawing_get_view_image(const FString& InRequest)
+{
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_get_view_image"));
+	//This example just takes the in request and ignores the moi_id, returning the example...
+	FDrawingDesignerViewRequest req;
+	if (req.ReadJson(InRequest))
+	{
+		FDrawingDesignerView sample;
+		sample.aspect.x = 1;
+		sample.aspect.y = 1;
+		sample.moi_id = INDEX_NONE; // Just for sample...
+
+		//For now, just send a black image...
+		FDrawingDesignerViewImage image;
+		image.view = sample;
+		image.image_base64 = TEXT("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==");
+		image.line_stride_bytes = 40;
+		image.pixel_stride_bytes = 40;
+		image.resolution_pixels.x = 10;
+		image.resolution_pixels.y = 10;
+		image.request_id = req.request_id;
+
+		FDrawingDesignerViewResponse resp;
+		resp.request = req;
+		resp.response = image;
+
+		FString response;
+		if (ensureAlways(resp.WriteJson(response)))
+		{
+			drawing_send_response(TEXT("UE_pushViewImage"), response);
+		}
+	}
+
+
+}
+
 #undef LOCTEXT_NAMESPACE

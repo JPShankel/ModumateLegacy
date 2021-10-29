@@ -357,11 +357,19 @@ private:
 	void RecordSavedProject(UWorld* World, const FString& FilePath, bool bUserFile);
 
 public: 
-		// TODO: Add Drawing Set JS interface
+
+	UFUNCTION()
+	void drawing_send_response(const FString& FunctionName, const FString& Argument);
 
 	UFUNCTION()
 	void drawing_request_document();
 
 	UFUNCTION()
 	void drawing_apply_delta(const FString& InDelta);
+
+	UFUNCTION()
+	void drawing_request_view_list();
+
+	UFUNCTION()
+	void drawing_get_view_image(const FString& InRequest);
 };
