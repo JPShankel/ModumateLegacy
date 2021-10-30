@@ -288,6 +288,9 @@ void AEditModelGameState::OnDownloadDocumentSuccess(const FModumateDocumentHeade
 	// and we'll also need to let the server know that we've finished downloading, so we can safely receive RPCs and all clients can send them.
 	if (IsNetMode(NM_Client))
 	{
+		static const FString eventName(TEXT("SuccessDocumentDownload"));
+		UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Network, eventName);
+
 		ULocalPlayer* localPlayer = world->GetFirstLocalPlayerFromController();
 		auto* controller = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(world)) : nullptr;
 		if (ensure(controller))

@@ -14,6 +14,7 @@
 #include "ModumateCore/PlatformFunctions.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ModumateCloudConnection.h"
+#include "Online/ModumateAnalyticsStatics.h"
 #include "UI/TutorialManager.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/EditModelGameMode.h"
@@ -231,6 +232,7 @@ bool AMainMenuGameMode::OpenCloudProject(const FString& ProjectID)
 
 		// Request a connection to a multiplayer server instance for this project,
 		// which will either spin up a server that downloads the project, or return a connection to an existing server running for this project.
+		FDateTime requestStartTime = FDateTime::Now();
 		bool bRequestedConnection = cloudConnection->RequestEndpoint(
 			FProjectConnectionHelpers::MakeProjectConnectionEndpoint(PendingCloudProjectID),
 			FModumateCloudConnection::ERequestType::Put,
@@ -239,7 +241,7 @@ bool AMainMenuGameMode::OpenCloudProject(const FString& ProjectID)
 				RefRequest->SetContentAsString(requestPayload);
 				RefRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 			},
-			[weakThis](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
+			[weakThis,requestStartTime](bool bSuccessful, const TSharedPtr<FJsonObject>& Response)
 			{
 				if (weakThis.IsValid())
 				{
@@ -251,6 +253,11 @@ bool AMainMenuGameMode::OpenCloudProject(const FString& ProjectID)
 						weakThis->OnProjectConnectionFailed(EHttpResponseCodes::Unknown, FString());
 						return;
 					}
+
+					FTimespan duration = FDateTime::Now() - requestStartTime;
+					UE_LOG(LogTemp, Log, TEXT("Connected to project in %0.2f seconds."), duration.GetTotalSeconds());
+					static const FString eventName(TEXT("TimeToProjectStart"));
+					UModumateAnalyticsStatics::RecordEventCustomFloat(weakThis->GetWorld(), EModumateAnalyticsCategory::Network, eventName, duration.GetTotalSeconds());
 
 					weakThis->OnCreatedProjectConnection(createConnectionResponse);
 				}

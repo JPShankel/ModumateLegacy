@@ -3011,6 +3011,9 @@ const AModumateObjectInstance *UModumateDocument::GetObjectById(int32 id) const
 
 bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader& InHeader, const FMOIDocumentRecord& InDocumentRecord, bool bClearName)
 {
+#if !UE_SERVER
+	FDateTime loadStartTime = FDateTime::Now();
+#endif
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::LoadRecord"));
 
 	//Get player state and tells it to empty selected object
@@ -3195,6 +3198,13 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	CurrentSettings = InDocumentRecord.Settings;
 
 	SetDirtyFlags(bInitialDocumentDirty);
+
+#if !UE_SERVER
+	FTimespan duration = FDateTime::Now() - loadStartTime;
+	static const FString eventName(TEXT("TimeClientDocumentLoad"));
+	UModumateAnalyticsStatics::RecordEventCustomFloat(GetWorld(), EModumateAnalyticsCategory::Network, eventName, duration.GetTotalSeconds());
+	UE_LOG(LogTemp, Log, TEXT("Loaded document in %0.2f seconds"), duration.GetTotalSeconds());
+#endif
 
 	return true;
 }

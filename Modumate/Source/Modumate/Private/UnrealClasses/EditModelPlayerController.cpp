@@ -458,6 +458,8 @@ void AEditModelPlayerController::BeginPlay()
 	// Create the HUD during our initial BeginPlay, rather than deferring until we have PlayerState,
 	// to avoid any delays during multiplayer sessions startup
 #if !UE_SERVER
+	SessionStartTime = FDateTime::Now();
+
 	auto* playerHUD = GetEditModelHUD();
 	if (ensure(playerHUD))
 	{
@@ -504,7 +506,6 @@ bool AEditModelPlayerController::StartTelemetrySession(bool bRecordLoadedDocumen
 	EndTelemetrySession();
 
 	TelemetrySessionKey = FGuid::NewGuid();
-	SessionStartTime = FDateTime::Now();
 
 	if (InputAutomationComponent->BeginRecording())
 	{
@@ -556,8 +557,6 @@ bool AEditModelPlayerController::EndTelemetrySession(bool bAsyncUpload)
 	// If we don't have a session key, there's nothing to record
 	if (TelemetrySessionKey.IsValid())
 	{
-		FTimespan sessionTime = FDateTime::Now() - SessionStartTime;
-		UModumateAnalyticsStatics::RecordSessionDuration(this, sessionTime);
 		TelemetrySessionKey.Invalidate();
 	}
 
@@ -590,7 +589,12 @@ void AEditModelPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReaso
 		}
 		
 	}
-	
+
+#if !UE_SERVER
+	FTimespan sessionTime = FDateTime::Now() - SessionStartTime;
+	UModumateAnalyticsStatics::RecordSessionDuration(this, sessionTime);
+#endif
+
 	Super::EndPlay(EndPlayReason);
 }
 
