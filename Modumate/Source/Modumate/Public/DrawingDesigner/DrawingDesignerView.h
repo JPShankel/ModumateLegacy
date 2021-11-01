@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
+#include "ModumateCore/PrettyJSONWriter.h"
 #include "DrawingDesignerView.generated.h"
 
 USTRUCT()

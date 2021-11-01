@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
+#include "ModumateCore/PrettyJSONWriter.h"
+
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "Database/ModumateObjectEnums.h"
 #include "DocumentManagement/DocumentDelta.h"
@@ -9,25 +12,9 @@
 #include "DrawingDesigner/DrawingDesignerDocument.h"
 #include "JsonObjectConverter.h"
 #include "Objects/MOIState.h"
-#include "Policies/PrettyJsonPrintPolicy.h"
-#include "Serialization/JsonReader.h"
-#include "Serialization/JsonSerializer.h"
 #include "VectorTypes.h"
 
 #include "ModumateSerialization.generated.h"
-
-// Future versions of serialization types should be constructible from previous versions
-
-typedef TJsonWriterFactory< TCHAR, TPrettyJsonPrintPolicy<TCHAR> > FPrettyJsonStringWriterFactory;
-typedef TJsonWriter< TCHAR, TPrettyJsonPrintPolicy<TCHAR> > FPrettyJsonStringWriter;
-
-// ---------------- Object serialization ----------------
-
-
-/*
-DDL 2.0
-*/
-
 
 USTRUCT()
 struct FCustomAssemblyProperty
