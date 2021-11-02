@@ -205,4 +205,6 @@ public:
 	FString DocumentProjectID;
 
 	FTimerHandle SlowTickHandle;
+
+	bool bExitRequested = false;
 };

@@ -322,7 +322,7 @@ void AMainMenuGameMode::OnProjectConnectionFailed(int32 ErrorCode, const FString
 	UE_LOG(LogTemp, Error, TEXT("Error code %d while trying to create a connection to project %s: %s"), ErrorCode, *PendingCloudProjectID, *ErrorMessage);
 	if (ErrorCode == EHttpResponseCodes::Conflict)
 	{
-		OnCloudProjectFailure(LOCTEXT("OpenProjectConflict", "Failed to connect to server - existing server is a different release."));
+		OnCloudProjectFailure(LOCTEXT("OpenProjectConflict", "Collaborators on this project are running a different version of Modumate. All members must use the same version to continue collaborating."));
 	}
 	else
 	{

@@ -24,3 +24,14 @@ void AMainMenuController::BeginPlay()
 		}
 	}
 }
+
+// We need to explicitly detach the web browser when shutting the app down for upgrade
+void AMainMenuController::ShutdownWebBrowser()
+{
+	if (StartMenuWebBrowserWidget)
+	{
+		StartMenuWebBrowserWidget->RemoveFromViewport();
+		StartMenuWebBrowserWidget = nullptr;
+	}
+}
+

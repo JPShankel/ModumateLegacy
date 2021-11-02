@@ -31,6 +31,7 @@
 #include "UnrealClasses/EditModelPlayerPawn.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/MainMenuGameMode.h"
+#include "UnrealClasses/MainMenuController.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "UnrealClasses/TooltipManager.h"
 #include "Online/ModumateCloudConnection.h"
@@ -840,8 +841,16 @@ bool UModumateGameInstance::ProcessCustomURLArgs(const FString& Args)
 	return true;
 }
 
+extern bool bRequestExit;
 void UModumateGameInstance::SlowTick()
 {
+	// When shutting down from the main menu for version update, we crash in the web browser unless we delay the exit request
+	if (bExitRequested)
+	{
+		bExitRequested = false;
+		FPlatformMisc::RequestExit(false);
+	}
+
 	UWorld* world = GetWorld();
 	if (world == nullptr)
 	{

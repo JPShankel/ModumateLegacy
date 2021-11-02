@@ -17,6 +17,8 @@ class MODUMATE_API AMainMenuController : public APlayerController
 public:
 	virtual void BeginPlay() override;
 
+	void ShutdownWebBrowser();
+
 	UPROPERTY()
 	class UStartMenuWebBrowserWidget* StartMenuWebBrowserWidget;
 

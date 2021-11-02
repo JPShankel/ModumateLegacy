@@ -174,7 +174,6 @@ void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserS
 {
 	CachedUserStatus = UserStatus;
 
-
 	CloudConnection->SetLoginStatus(CachedUserStatus.Active ? ELoginStatus::Connected : ELoginStatus::UserDisabled);
 
 	FString version = CachedUserStatus.latest_modumate_version;
@@ -187,9 +186,7 @@ void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserS
 		{
 			PromptForUpgrade();
 		}
-
 	}
-
 }
 
 void FModumateAccountManager::PromptForUpgrade() const
@@ -199,10 +196,11 @@ void FModumateAccountManager::PromptForUpgrade() const
 	AMainMenuController* controller = CastChecked<AMainMenuController>(GameInstance->GetFirstLocalPlayerController());
 	if (controller && controller->StartMenuWebBrowserWidget && controller->StartMenuWebBrowserWidget->ModalStatusDialog)
 	{
-		auto downloadAction = [url]()
+		auto downloadAction = [url,controller, GameInstance = GameInstance]()
 		{
+			controller->ShutdownWebBrowser();
+			GameInstance->bExitRequested = true;
 			FPlatformProcess::LaunchURL(*url, nullptr, nullptr);
-			FPlatformMisc::RequestExit(false);
 		};
 		auto cancelAction = [GameInstance = GameInstance]()
 		{
