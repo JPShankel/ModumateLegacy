@@ -389,8 +389,6 @@ bool FMiterData::GatherDetails(const AModumateObjectInstance *InMiterObject)
 
 bool FMiterData::CalculateMitering()
 {
-	int32 numParticipants = ParticipantsByID.Num();
-
 	auto metaEdge = Cast<AMOIMetaEdge>(MOI.Get());
 	auto edgeDetailMOI = metaEdge ? metaEdge->CachedEdgeDetailMOI : nullptr;
 	const FEdgeDetailData* edgeDetailData = edgeDetailMOI ? &edgeDetailMOI->GetAssembly().EdgeDetailData : nullptr;
@@ -402,6 +400,8 @@ bool FMiterData::CalculateMitering()
 		ParticipantsByID = ParticipantsByID.FilterByPredicate([](const TPair<int32, FMiterParticipantData>& Participant) {return Participant.Key > 0; });
 		SortedParticipantIDs = SortedParticipantIDs.FilterByPredicate([](int32 ID) {return ID > 0; });
 	}
+
+	int32 numParticipants = ParticipantsByID.Num();
 
 	// If there is an edge detail that overrides layer extension data for this miter node,
 	// then let it populate the data rather than our miter algorithm.
