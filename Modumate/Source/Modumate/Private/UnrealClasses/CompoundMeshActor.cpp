@@ -5,6 +5,7 @@
 
 #include "Engine/Engine.h"
 #include "Algo/Unique.h"
+#include "Algo/ForEach.h"
 #include "DrawDebugHelpers.h"
 #include "KismetProceduralMeshLibrary.h"
 #include "ProceduralMeshComponent.h"
@@ -22,6 +23,7 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "DrawingDesigner/DrawingDesignerLine.h"
 
 #define DEBUG_NINE_SLICING 0
 
@@ -1052,6 +1054,161 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposite
 				ModumateUnitParams::FThickness::Points(0.125f), FMColor::Gray64);
 			ParentPage->Children.Add(line);
 			line->SetLayerTypeRecursive(layerType);
+		}
+	}
+}
+
+void ACompoundMeshActor::GetDrawingDesignerLines(TArray<FDrawingDesignerLine>& Outlines, float MinLength) const
+{
+	TArray<FDrawingDesignerLine> lines;
+	const float minLength2 = MinLength * MinLength;
+
+	const int32 numComponents = StaticMeshComps.Num();
+	for (int32 component = 0; component < numComponents; ++component)
+	{
+		const UStaticMeshComponent* staticMeshComponent = StaticMeshComps[component];
+		if (staticMeshComponent == nullptr)
+		{
+			continue;
+		}
+
+		if (UseSlicedMesh[component])
+		{
+			const int32 sliceStart = 9 * component;
+			const int32 sliceEnd = 9 * (component + 1);
+			for (int32 slice = sliceStart; slice < sliceEnd; ++slice)
+			{
+				UProceduralMeshComponent* mesh9Component = NineSliceComps[slice];
+
+				if (mesh9Component == nullptr)
+				{
+					continue;
+				}
+
+				const FMatrix componentToWorld = mesh9Component->GetComponentTransform().ToMatrixWithScale();
+				const int32 numSections = mesh9Component->GetNumSections();
+				for (int32 section = 0; section < numSections; ++section)
+				{
+					const FProcMeshSection* meshSection = mesh9Component->GetProcMeshSection(section);
+					if (meshSection == nullptr)
+					{
+						continue;
+					}
+
+					const TArray<FProcMeshVertex>& sectionVertices = meshSection->ProcVertexBuffer;
+					const TArray<uint32>& sectionIndices = meshSection->ProcIndexBuffer;
+					const int32 numVertices = sectionVertices.Num();
+					const int32 numIndices = sectionIndices.Num();
+					ensure(numIndices % 3 == 0);
+
+					const int32 numTriangles = numIndices / 3;
+					for (int32 t = 0; t < numTriangles; ++t)
+					{
+						FVector p0(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t    ]].Position));
+						FVector p1(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 1]].Position));
+						FVector p2(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 2]].Position));
+						FVector N(((p1 - p0) ^ (p2 - p0)).GetSafeNormal());
+						if ((p1 - p0).SizeSquared() >= minLength2)
+						{
+							lines.Emplace(p0, p1, N);
+						}
+						if ((p2 - p1).SizeSquared() >= minLength2)
+						{
+							lines.Emplace(p1, p2, N);
+						}
+						if ((p0 - p2).SizeSquared() >= minLength2)
+						{
+							lines.Emplace(p2, p0, N);
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			UStaticMesh* staticMesh = staticMeshComponent->GetStaticMesh();
+			if (staticMesh == nullptr)
+			{
+				continue;
+			}
+
+			TArray<FVector2D> UVs;		// Unused
+			TArray<FProcMeshTangent> tangents;	// Unused
+
+			const FMatrix componentToWorld = staticMeshComponent->GetComponentTransform().ToMatrixWithScale();
+			const int32 lodNumber = 0;
+			const int32 numSections = staticMesh->GetNumSections(lodNumber);
+			for (int32 section = 0; section < numSections; ++section)
+			{
+				TArray<FVector> sectionVertices;
+				TArray<int32> sectionIndices;
+				TArray<FVector> sectionNormals;
+				UKismetProceduralMeshLibrary::GetSectionFromStaticMesh(staticMesh, lodNumber, section,
+					sectionVertices, sectionIndices, sectionNormals, UVs, tangents);
+				ensure(sectionIndices.Num() % 3 == 0);
+
+				const int32 numTriangles = sectionIndices.Num() / 3;
+				for (int32 t = 0; t < numTriangles; ++t)
+				{
+					FVector p0(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t]]));
+					FVector p1(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 1]]));
+					FVector p2(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 2]]));
+					FVector N(((p1 - p0) ^ (p2 - p0)).GetSafeNormal());
+					lines.Emplace(p0, p1, N);
+					lines.Emplace(p1, p2, N);
+					lines.Emplace(p2, p0, N);
+				}
+			}
+		}
+	}
+
+	Algo::ForEach(lines, [](FDrawingDesignerLine& l) { l.Canonicalize(); });
+	lines.Sort();
+
+	static constexpr float normalPlanarity = 0.9205f;  // 23 deg
+
+	const int32 numLines = lines.Num();
+	for (int32 l = 0; l < numLines; )
+	{
+		const FVector& N = lines[l].N;
+		bool bDropLine = false;
+		bool bSingleLine = false;
+		int32 blockLine;
+		for (blockLine = l + 1; blockLine < numLines; ++blockLine)
+		{
+			if (lines[l] == lines[blockLine])
+			{
+				float dot = N | lines[blockLine].N;
+				if (dot > 1.0f - normalPlanarity || dot < -1.0f + normalPlanarity)
+				{
+					bDropLine = true;
+				}
+				else
+				{
+					bSingleLine = true;
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		if (bDropLine || bSingleLine)
+		{
+			for (int32 droppedLine = bSingleLine ? l + 1 : l; droppedLine < blockLine; ++droppedLine)
+			{
+				lines[droppedLine].bValid = false;
+			}
+		}
+		l = blockLine;
+	}
+
+	for (const auto& line: lines)
+	{
+		if (line)
+		{
+			Outlines.Add(line);
 		}
 	}
 }

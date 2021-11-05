@@ -24,6 +24,7 @@ class FDraftingComposite;
 class IMiterNode;
 class ILayeredObject;
 class ISceneCaptureObject;
+class FDrawingDesignerLine;
 
 UCLASS()
 class MODUMATE_API AModumateObjectInstance : public AActor
@@ -96,7 +97,11 @@ public:
 
 	// Drafting
 	virtual void AddDraftingLines(UHUDDrawWidget* HUDDrawWidget) { };
-	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox, TArray<TArray<FVector>>& OutPerimeters) const { };
+	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
+		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
+		TArray<TArray<FVector>>& OutPerimeters) const { }
+	virtual void GetDrawingDesignerItems(const FVector& viewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength = 0.0f) const
+	{ }
 
 	virtual void SetIsDynamic(bool bIsDynamic) { }
 	virtual bool GetIsDynamic() const { return false; }

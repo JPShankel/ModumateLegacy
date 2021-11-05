@@ -38,22 +38,16 @@ bool FModumateDrawingDesignerViewTest::RunTest(const FString& Parameters)
 		UE_LOG(LogTemp, Error, TEXT("FDrawingDesignerViewList failed to deserialize or the deserialization does not match"));
 		return false;
 	}
-	FDrawingDesignerViewRequest req;
+	FDrawingDesignerDrawingRequest req;
 	req.minimum_resolution_pixels.x = 500;
 	req.minimum_resolution_pixels.y = 500;
 	req.moi_id = 999;
-	req.request_id = 42;
 
-	FDrawingDesignerViewImage image;
+	FDrawingDesignerDrawingImage image;
 	image.view = sample;
 	image.image_base64 = TEXT("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==");
-	image.line_stride_bytes = 40;
-	image.pixel_stride_bytes = 40;
-	image.resolution_pixels.x = 10;
-	image.resolution_pixels.y = 10;
-	image.request_id = req.request_id;
 
-	FDrawingDesignerViewResponse resp;
+	FDrawingDesignerDrawingResponse resp;
 	resp.request = req;
 	resp.response = image;
 
@@ -63,7 +57,7 @@ bool FModumateDrawingDesignerViewTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
-	FDrawingDesignerViewResponse respCopy;
+	FDrawingDesignerDrawingResponse respCopy;
 	if (!respCopy.ReadJson(response) || respCopy != resp)
 	{
 		UE_LOG(LogTemp, Error, TEXT("FDrawingDesignerViewResponse failed to deserialize or the deserialization does not match"));

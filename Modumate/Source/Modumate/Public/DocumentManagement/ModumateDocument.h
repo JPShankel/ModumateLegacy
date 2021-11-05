@@ -359,7 +359,7 @@ private:
 public: 
 
 	UFUNCTION()
-	void drawing_send_response(const FString& FunctionName, const FString& Argument);
+	void DrawingSendResponse(const FString& FunctionName, const FString& Argument) const;
 
 	UFUNCTION()
 	void drawing_request_document();
@@ -368,8 +368,8 @@ public:
 	void drawing_apply_delta(const FString& InDelta);
 
 	UFUNCTION()
-	void drawing_request_view_list();
+	void drawing_request_view_list() const;
 
 	UFUNCTION()
-	void drawing_get_view_image(const FString& InRequest);
+	void drawing_get_drawing_image(const FString& InRequest) const;
 };

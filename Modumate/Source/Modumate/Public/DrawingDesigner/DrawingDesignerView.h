@@ -35,10 +35,10 @@ struct MODUMATE_API FDrawingDesignerViewRegion
 };
 
 USTRUCT()
-struct MODUMATE_API FDrawingDesignerViewSnap
+struct MODUMATE_API FDrawingDesignerSnap
 {
 	GENERATED_BODY()
-	FDrawingDesignerViewSnap() = default;
+	FDrawingDesignerSnap() = default;
 
 	UPROPERTY()
 	int32 id = INDEX_NONE;
@@ -50,8 +50,8 @@ struct MODUMATE_API FDrawingDesignerViewSnap
 	UPROPERTY()
 	float y = 0.0f;
 
-	bool operator==(const FDrawingDesignerViewSnap& RHS) const;
-	bool operator!=(const FDrawingDesignerViewSnap& RHS) const;
+	bool operator==(const FDrawingDesignerSnap& RHS) const;
+	bool operator!=(const FDrawingDesignerSnap& RHS) const;
 };
 
 USTRUCT()
@@ -66,6 +66,9 @@ struct MODUMATE_API FDrawingDesignerView
 	UPROPERTY()
 	FDrawingDesignerPoint aspect;
 
+	UPROPERTY()
+	FString name;
+
 	//TODO: Add Object Type def pending more discussion
 
 	bool operator==(const FDrawingDesignerView& RHS) const;
@@ -73,35 +76,26 @@ struct MODUMATE_API FDrawingDesignerView
 };
 
 USTRUCT()
-struct MODUMATE_API FDrawingDesignerViewImage
+struct MODUMATE_API FDrawingDesignerDrawingImage
 {
 	GENERATED_BODY()
 
-	FDrawingDesignerViewImage() = default;
+	FDrawingDesignerDrawingImage() = default;
 
 	UPROPERTY()
 	FDrawingDesignerView view;
 
-	UPROPERTY()
-	int32 request_id = INDEX_NONE;
-
-	UPROPERTY()
-	int32 line_stride_bytes = 0;
-
-	UPROPERTY()
-	int32 pixel_stride_bytes = 0;
-
-	UPROPERTY()
-	FDrawingDesignerPoint resolution_pixels;
-
 	UPROPERTY() // FString key encoded from int32 id
-	TMap<FString, FDrawingDesignerViewSnap> snaps;
+	TMap<FString, FDrawingDesignerSnap> snaps;
 
 	UPROPERTY()
 	FString image_base64;
 
-	bool operator==(const FDrawingDesignerViewImage& RHS) const;
-	bool operator!=(const FDrawingDesignerViewImage& RHS) const;
+	UPROPERTY()
+	FDrawingDesignerPoint resolution_pixels;
+
+	bool operator==(const FDrawingDesignerDrawingImage& RHS) const;
+	bool operator!=(const FDrawingDesignerDrawingImage& RHS) const;
 };
 
 USTRUCT()
@@ -121,13 +115,10 @@ struct MODUMATE_API FDrawingDesignerViewList
 };
 
 USTRUCT()
-struct MODUMATE_API FDrawingDesignerViewRequest
+struct MODUMATE_API FDrawingDesignerDrawingRequest
 {
 	GENERATED_BODY()
-	FDrawingDesignerViewRequest() = default;
-
-	UPROPERTY()
-	int32 request_id = INDEX_NONE;
+	FDrawingDesignerDrawingRequest() = default;
 
 	UPROPERTY()
 	int32 moi_id = INDEX_NONE;
@@ -141,59 +132,49 @@ struct MODUMATE_API FDrawingDesignerViewRequest
 	bool WriteJson(FString& OutJson) const;
 	bool ReadJson(const FString& InJson);
 
-	bool operator==(const FDrawingDesignerViewRequest& RHS) const;
-	bool operator!=(const FDrawingDesignerViewRequest& RHS) const;
+	bool operator==(const FDrawingDesignerDrawingRequest& RHS) const;
+	bool operator!=(const FDrawingDesignerDrawingRequest& RHS) const;
 };
 
 USTRUCT()
-struct MODUMATE_API FDrawingDesignerViewResponse
+struct MODUMATE_API FDrawingDesignerDrawingResponse
 {
 	GENERATED_BODY()
-	FDrawingDesignerViewResponse() = default;
+	FDrawingDesignerDrawingResponse() = default;
 
 	UPROPERTY()
-	FDrawingDesignerViewRequest request;
+	FDrawingDesignerDrawingRequest request;
 
 	UPROPERTY()
-	FDrawingDesignerViewImage response;
+	FDrawingDesignerDrawingImage response;
 
 	bool WriteJson(FString& OutJson) const;
 	bool ReadJson(const FString& InJson);
 
-	bool operator==(const FDrawingDesignerViewResponse& RHS) const;
-	bool operator!=(const FDrawingDesignerViewResponse& RHS) const;
+	bool operator==(const FDrawingDesignerDrawingResponse& RHS) const;
+	bool operator!=(const FDrawingDesignerDrawingResponse& RHS) const;
 };
 
 template <class T>
-static bool WriteJsonGeneric(FString& OutJson, const FString& Label, const T* InObject)
+static bool WriteJsonGeneric(FString& OutJson, const T* InObject)
 {
 	TSharedPtr<FJsonObject> docOb = FJsonObjectConverter::UStructToJsonObject<T>(*InObject);
 	TSharedRef<FPrettyJsonStringWriter> JsonStringWriter = FPrettyJsonStringWriterFactory::Create(&OutJson);
-	TSharedPtr<FJsonObject> FileJsonWrite = MakeShared<FJsonObject>();
 
 	//Return it prettified
-	FileJsonWrite->SetObjectField(Label, docOb);
-	return FJsonSerializer::Serialize(FileJsonWrite.ToSharedRef(), JsonStringWriter);
+	return FJsonSerializer::Serialize(docOb.ToSharedRef(), JsonStringWriter);
 };
 
 template <class T>
-static bool ReadJsonGeneric(const FString& InJson, const FString& Label, T* OutObject)
+static bool ReadJsonGeneric(const FString& InJson, T* OutObject)
 {
 	TSharedPtr<FJsonObject> FileJsonRead;
-	const TSharedPtr<FJsonObject>* jsonDocument;
 	auto JsonReader = TJsonReaderFactory<>::Create(InJson);
 	bool bSuccess = FJsonSerializer::Deserialize(JsonReader, FileJsonRead) && FileJsonRead.IsValid();
 
 	if (bSuccess)
 	{
-		if (FileJsonRead->TryGetObjectField(Label, jsonDocument))
-		{
-			FJsonObjectConverter::JsonObjectToUStruct<T>(jsonDocument->ToSharedRef(), OutObject);
-		}
-		else
-		{
-			bSuccess = false;
-		}
+		FJsonObjectConverter::JsonObjectToUStruct<T>(FileJsonRead.ToSharedRef(), OutObject);
 	}
 
 	return bSuccess;

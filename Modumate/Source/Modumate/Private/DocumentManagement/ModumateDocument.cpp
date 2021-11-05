@@ -49,6 +49,7 @@
 #include "UnrealClasses/DynamicIconGenerator.h"
 
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
+#include "DrawingDesigner/DrawingDesignerRenderControl.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDocument"
 
@@ -4139,12 +4140,12 @@ void UModumateDocument::drawing_request_document()
 
 	if (ensureAlways(DrawingDesignerDocument.WriteJson(documentJson)))
 	{
-		drawing_send_response(TEXT("UE_pushDocument"), documentJson);
+		DrawingSendResponse(TEXT("UE_pushDocument"), documentJson);
 	}
 	// TODO: else send error status
 }
 
-void UModumateDocument::drawing_send_response(const FString& FunctionName, const FString& Argument)
+void UModumateDocument::DrawingSendResponse(const FString& FunctionName, const FString& Argument) const
 {
 	auto player = GetWorld()->GetFirstLocalPlayerFromController();
 	auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
@@ -4181,57 +4182,23 @@ void UModumateDocument::drawing_apply_delta(const FString& InDelta)
 	}
 }
 
-void UModumateDocument::drawing_request_view_list()
+void UModumateDocument::drawing_request_view_list() const
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_request_view_list"));
-	FDrawingDesignerViewList myList;
-	FDrawingDesignerView sample;
-	sample.aspect.x = 1;
-	sample.aspect.y = 1;
-	sample.moi_id = INDEX_NONE; // Just for sample...
-	myList.views.Add(sample);
 
-	FString response;
-	if (ensureAlways(myList.WriteJson(response)))
-	{
-		drawing_send_response(TEXT("UE_pushViewList"), response);
-	}
+	FString response = FDrawingDesignerRenderControl::GetViewList(this);
+	DrawingSendResponse(TEXT("UE_pushViewList"), response);
 }
 
-void UModumateDocument::drawing_get_view_image(const FString& InRequest)
+void UModumateDocument::drawing_get_drawing_image(const FString& InRequest) const
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_get_view_image"));
-	//This example just takes the in request and ignores the moi_id, returning the example...
-	FDrawingDesignerViewRequest req;
-	if (req.ReadJson(InRequest))
+	FString response;
+	bool bResult = FDrawingDesignerRenderControl::GetView(this, InRequest, response);
+	if (ensure(bResult))
 	{
-		FDrawingDesignerView sample;
-		sample.aspect.x = 1;
-		sample.aspect.y = 1;
-		sample.moi_id = INDEX_NONE; // Just for sample...
-
-		//For now, just send a black image...
-		FDrawingDesignerViewImage image;
-		image.view = sample;
-		image.image_base64 = TEXT("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==");
-		image.line_stride_bytes = 40;
-		image.pixel_stride_bytes = 40;
-		image.resolution_pixels.x = 10;
-		image.resolution_pixels.y = 10;
-		image.request_id = req.request_id;
-
-		FDrawingDesignerViewResponse resp;
-		resp.request = req;
-		resp.response = image;
-
-		FString response;
-		if (ensureAlways(resp.WriteJson(response)))
-		{
-			drawing_send_response(TEXT("UE_pushViewImage"), response);
-		}
+		DrawingSendResponse(TEXT("UE_pushViewImage"), response);
 	}
-
-
 }
 
 #undef LOCTEXT_NAMESPACE

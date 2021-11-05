@@ -578,6 +578,12 @@ bool AMOIPortal::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) con
 	return true;
 }
 
+void AMOIPortal::GetDrawingDesignerItems(const FVector& viewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength /*= 0.0f*/) const
+{
+	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
+	actor->GetDrawingDesignerLines(OutDrawingLines, MinLength);
+}
+
 void AMOIPortal::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;

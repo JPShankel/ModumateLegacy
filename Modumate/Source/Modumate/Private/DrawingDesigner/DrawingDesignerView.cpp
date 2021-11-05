@@ -7,11 +7,6 @@
 #include "Serialization/JsonSerializer.h"
 #include "DocumentManagement/ModumateSerialization.h"
 
-static const TCHAR* DrawingDesignerViewResponseLabel = TEXT("view_response");
-static const TCHAR* DrawingDesignerViewRequestLabel = TEXT("view_request");
-static const TCHAR* DrawingDesignerViewListLabel = TEXT("view_list");
-
-
 /**
  * View
  */
@@ -29,13 +24,9 @@ bool FDrawingDesignerView::operator!=(const FDrawingDesignerView& RHS) const
  * View Image
  */
 
-bool FDrawingDesignerViewImage::operator==(const FDrawingDesignerViewImage& RHS) const
+bool FDrawingDesignerDrawingImage::operator==(const FDrawingDesignerDrawingImage& RHS) const
 {
-	if (this->request_id != RHS.request_id ||
-		this->resolution_pixels != RHS.resolution_pixels ||
-		this->image_base64 != RHS.image_base64 ||
-		this->line_stride_bytes != RHS.line_stride_bytes ||
-		this->pixel_stride_bytes != RHS.pixel_stride_bytes)
+	if (this->image_base64 != RHS.image_base64 || this->resolution_pixels != RHS.resolution_pixels)
 	{
 		return false;
 	}
@@ -57,7 +48,7 @@ bool FDrawingDesignerViewImage::operator==(const FDrawingDesignerViewImage& RHS)
 	return true;
 }
 
-bool FDrawingDesignerViewImage::operator!=(const FDrawingDesignerViewImage& RHS) const
+bool FDrawingDesignerDrawingImage::operator!=(const FDrawingDesignerDrawingImage& RHS) const
 {
 	return !(*this == RHS);
 }
@@ -65,12 +56,12 @@ bool FDrawingDesignerViewImage::operator!=(const FDrawingDesignerViewImage& RHS)
 /**
  * Snap
  */
-bool FDrawingDesignerViewSnap::operator==(const FDrawingDesignerViewSnap& RHS) const
+bool FDrawingDesignerSnap::operator==(const FDrawingDesignerSnap& RHS) const
 {
 	return id == RHS.id && FMath::IsNearlyEqual(x, RHS.x) && FMath::IsNearlyEqual(y, RHS.y);
 }
 
-bool FDrawingDesignerViewSnap::operator!=(const FDrawingDesignerViewSnap& RHS) const
+bool FDrawingDesignerSnap::operator!=(const FDrawingDesignerSnap& RHS) const
 {
 	return !(*this == RHS);
 }
@@ -130,58 +121,57 @@ bool FDrawingDesignerViewList::operator!=(const FDrawingDesignerViewList& RHS) c
 
 bool FDrawingDesignerViewList::WriteJson(FString& OutJson) const
 {
-	return WriteJsonGeneric<FDrawingDesignerViewList>(OutJson, DrawingDesignerViewListLabel, this);
+	return WriteJsonGeneric<FDrawingDesignerViewList>(OutJson, this);
 }
 
 bool FDrawingDesignerViewList::ReadJson(const FString& InJson)
 {
-	return ReadJsonGeneric<FDrawingDesignerViewList>(InJson, DrawingDesignerViewListLabel, this);
+	return ReadJsonGeneric<FDrawingDesignerViewList>(InJson, this);
 }
 
 /**
  * View Request
  */
-bool FDrawingDesignerViewRequest::operator==(const FDrawingDesignerViewRequest& RHS) const
+bool FDrawingDesignerDrawingRequest::operator==(const FDrawingDesignerDrawingRequest& RHS) const
 {
-	return this->request_id == RHS.request_id &&
-		this->moi_id == RHS.moi_id &&
+		return this->moi_id == RHS.moi_id &&
 		this->roi == RHS.roi &&
 		this->minimum_resolution_pixels == RHS.minimum_resolution_pixels;
 }
 
-bool FDrawingDesignerViewRequest::operator!=(const FDrawingDesignerViewRequest& RHS) const
+bool FDrawingDesignerDrawingRequest::operator!=(const FDrawingDesignerDrawingRequest& RHS) const
 {
 	return !(*this == RHS);
 }
 
-bool FDrawingDesignerViewRequest::WriteJson(FString& OutJson) const
+bool FDrawingDesignerDrawingRequest::WriteJson(FString& OutJson) const
 {
-	return WriteJsonGeneric<FDrawingDesignerViewRequest>(OutJson, DrawingDesignerViewRequestLabel, this);
+	return WriteJsonGeneric<FDrawingDesignerDrawingRequest>(OutJson, this);
 }
 
-bool FDrawingDesignerViewRequest::ReadJson(const FString& InJson)
+bool FDrawingDesignerDrawingRequest::ReadJson(const FString& InJson)
 {
-	return ReadJsonGeneric<FDrawingDesignerViewRequest>(InJson, DrawingDesignerViewRequestLabel, this);
+	return ReadJsonGeneric<FDrawingDesignerDrawingRequest>(InJson, this);
 }
 
 /**
  * View Response
  */
-bool FDrawingDesignerViewResponse::operator==(const FDrawingDesignerViewResponse& RHS) const
+bool FDrawingDesignerDrawingResponse::operator==(const FDrawingDesignerDrawingResponse& RHS) const
 {
 	return this->request == RHS.request && this->response == RHS.response;
 }
 
-bool FDrawingDesignerViewResponse::operator!=(const FDrawingDesignerViewResponse& RHS) const
+bool FDrawingDesignerDrawingResponse::operator!=(const FDrawingDesignerDrawingResponse& RHS) const
 {
 	return !(*this == RHS);
 }
 
-bool FDrawingDesignerViewResponse::ReadJson(const FString& InJson)
+bool FDrawingDesignerDrawingResponse::ReadJson(const FString& InJson)
 {
-	return ReadJsonGeneric<FDrawingDesignerViewResponse>(InJson, DrawingDesignerViewResponseLabel, this);
+	return ReadJsonGeneric<FDrawingDesignerDrawingResponse>(InJson, this);
 }
-bool FDrawingDesignerViewResponse::WriteJson(FString& OutJson) const
+bool FDrawingDesignerDrawingResponse::WriteJson(FString& OutJson) const
 {
-	return WriteJsonGeneric<FDrawingDesignerViewResponse>(OutJson, DrawingDesignerViewResponseLabel, this);
+	return WriteJsonGeneric<FDrawingDesignerDrawingResponse>(OutJson, this);
 }

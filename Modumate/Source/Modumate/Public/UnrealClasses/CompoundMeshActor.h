@@ -17,6 +17,7 @@ class UStaticMeshComponent;
 class UProceduralMeshComponent;
 class UModumateDocument;
 class FDraftingComposite;
+class FDrawingDesignerLine;
 
 
 UCLASS()
@@ -55,6 +56,8 @@ public:
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin) const;
 	void GetFarDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FBox2D& BoundingBox) const;
 	float GetPortalCenter(const UModumateDocument* Doc, const FGuid& AssemblyGUID) const;
+
+	void GetDrawingDesignerLines(TArray<FDrawingDesignerLine>& Outlines, float MinLength) const;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TArray<bool> UseSlicedMesh;
