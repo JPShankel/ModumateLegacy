@@ -4,7 +4,7 @@
 
 bool FDrawingDesignerLine::operator==(const FDrawingDesignerLine& Rhs) const
 {
-	return (P1 == Rhs.P1 && P2 == Rhs.P2 || P1 == Rhs.P2 && P2 == Rhs.P1) && Thickness == Rhs.Thickness;
+	return ((P1 == Rhs.P1 && P2 == Rhs.P2) || (P1 == Rhs.P2 && P2 == Rhs.P1)) && (Thickness == Rhs.Thickness);
 }
 
 bool FDrawingDesignerLine::operator!=(const FDrawingDesignerLine& Rhs) const
