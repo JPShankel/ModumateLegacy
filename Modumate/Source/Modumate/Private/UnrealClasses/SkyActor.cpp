@@ -197,3 +197,16 @@ void ASkyActor::ToggleBackgroundSkyPlane(bool bVisible, const FVector& CameraPos
 		BackgroundSkyPlane->AddRelativeRotation(FRotator(90.f, 0.f, 0.f));
 	}
 }
+
+void ASkyActor::UpdateCoordinate(float InLatitude, float InLongitude, float TrueNorth)
+{
+	Latitude = InLatitude;
+	Longitude = InLongitude;
+
+	// Rotation must be reset to correctly update sky material's sun position
+	this->SetActorRotation(FRotator::ZeroRotator);
+	UpdateComponentsWithDateTime(GetCurrentDateTime());
+
+	// Set sky rotation to match new north
+	this->SetActorRotation(FRotator(0.f, TrueNorth, 0.f));
+}

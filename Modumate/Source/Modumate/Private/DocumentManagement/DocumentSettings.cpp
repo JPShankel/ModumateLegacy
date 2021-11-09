@@ -20,7 +20,10 @@ bool FDocumentSettings::operator==(const FDocumentSettings& RHS) const
 {
 	return (DimensionType == RHS.DimensionType) &&
 		(DimensionUnit == RHS.DimensionUnit) &&
-		(MinimumDistanceIncrement == RHS.MinimumDistanceIncrement);
+		(MinimumDistanceIncrement == RHS.MinimumDistanceIncrement) &&
+		(FMath::IsNearlyEqual(Latitude, RHS.Latitude, 0.001f)) &&
+		(FMath::IsNearlyEqual(Longitude, RHS.Longitude, 0.001f)) &&
+		(FMath::IsNearlyEqual(TrueNorthDegree, RHS.TrueNorthDegree, 0.001f));
 }
 
 bool FDocumentSettings::operator!=(const FDocumentSettings& RHS) const

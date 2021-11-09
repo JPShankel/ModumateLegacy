@@ -38,6 +38,7 @@
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/DrawingDesigner/DrawingDesignerWebBrowserWidget.h"
 #include "UI/Custom/ModumateWebBrowser.h"
+#include "UI/ModumateSettingsMenu.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelInputAutomation.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -47,6 +48,7 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/ModumateObjectComponent.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
+#include "UnrealClasses/SkyActor.h"
 
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
 #include "DrawingDesigner/DrawingDesignerRenderControl.h"
@@ -1133,9 +1135,24 @@ bool UModumateDocument::ApplySettingsDelta(const FDocumentSettingDelta& Settings
 		}
 
 		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
-		if (controller && controller->EditModelUserWidget && controller->EditModelUserWidget->IsBIMDesingerActive())
+		if (controller)
 		{
-			controller->EditModelUserWidget->BIMDesigner->RefreshNodes();
+			// Update bim designer
+			if (controller->EditModelUserWidget && controller->EditModelUserWidget->IsBIMDesingerActive())
+			{
+				controller->EditModelUserWidget->BIMDesigner->RefreshNodes();
+			}
+			// Update setting menu
+			if (controller->EditModelUserWidget && controller->EditModelUserWidget->SettingsMenuWidget
+				&& controller->EditModelUserWidget->SettingsMenuWidget->IsVisible())
+			{
+				controller->EditModelUserWidget->SettingsMenuWidget->UpdateSettingsFromDoc();
+			}
+			// Update sky actor
+			if (controller->SkyActor)
+			{
+				controller->SkyActor->UpdateCoordinate(CurrentSettings.Latitude, CurrentSettings.Longitude, CurrentSettings.TrueNorthDegree);
+			}
 		}
 	}
 
@@ -3197,6 +3214,10 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	}
 
 	CurrentSettings = InDocumentRecord.Settings;
+	if (controller && controller->SkyActor)
+	{
+		controller->SkyActor->UpdateCoordinate(CurrentSettings.Latitude, CurrentSettings.Longitude, CurrentSettings.TrueNorthDegree);
+	}
 
 	SetDirtyFlags(bInitialDocumentDirty);
 

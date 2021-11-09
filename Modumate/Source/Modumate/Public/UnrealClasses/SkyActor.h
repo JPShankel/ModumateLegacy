@@ -106,4 +106,5 @@ public:
 	void SetSkyDomePositionScale(const FVector& Position, const FVector& Scale);
 	void SetSkyDomePositionScaleByCameraProjection(bool bIsPerspective);
 	void ToggleBackgroundSkyPlane(bool bVisible, const FVector& CameraPosition = FVector::ZeroVector, const FRotator& CameraRotation = FRotator::ZeroRotator);
+	void UpdateCoordinate(float InLatitude, float InLongitude, float TrueNorth);
 };

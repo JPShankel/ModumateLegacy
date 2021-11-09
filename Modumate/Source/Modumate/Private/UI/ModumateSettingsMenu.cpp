@@ -14,10 +14,12 @@
 #include "UI/Custom/ModumateButtonUserWidget.h"
 #include "UI/Custom/ModumateComboBoxString.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
+#include "UI/Custom/ModumateEditableTextBox.h"
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/Custom/ModumateSlider.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/SkyActor.h"
 
 bool UModumateSettingsMenu::Initialize()
 {
@@ -35,6 +37,9 @@ bool UModumateSettingsMenu::Initialize()
 	DimensionPrefDropdown->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UModumateSettingsMenu::OnDimensionPrefChanged);
 	DistIncrementDropdown->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UModumateSettingsMenu::OnDistIncrementPrefChanged);
 	CloseButton->ModumateButton->OnClicked.AddDynamic(this, &UModumateSettingsMenu::OnCloseButtonClicked);
+	TextEditableLatitude->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UModumateSettingsMenu::OnTextEditableLatitudeCommitted);
+	TextEditableLongitude->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UModumateSettingsMenu::OnTextEditableLongitudeCommitted);
+	TextEditableNorth->ModumateEditableTextBox->OnTextCommitted.AddDynamic(this, &UModumateSettingsMenu::OnTextEditableNorthCommitted);
 	MicSourceDropdown->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UModumateSettingsMenu::OnMicDeviceChanged);
 	SpeakerSourceDropdown->ComboBoxStringJustification->OnSelectionChanged.AddDynamic(this, &UModumateSettingsMenu::OnSpeakerDeviceChanged);
 	ButtonAutoDetectGraphicsSettings->ModumateButton->OnReleased.AddDynamic(this, &UModumateSettingsMenu::OnButtonAutoDetectSettingsReleased);
@@ -73,7 +78,7 @@ bool UModumateSettingsMenu::Initialize()
 		DimPrefsByDisplayString.Add(dimensionPrefDisplayString, dimensionPrefValue);
 	}
 
-	UpdateFromCurrentSettings();
+	UpdateSettingsFromDoc();
 
 	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
 	if (!IsDesignTime() && ensure(controller))
@@ -93,7 +98,7 @@ bool UModumateSettingsMenu::Initialize()
 	return true;
 }
 
-void UModumateSettingsMenu::UpdateFromCurrentSettings()
+void UModumateSettingsMenu::UpdateSettingsFromDoc()
 {
 	auto* controller = GetOwningPlayer<AEditModelPlayerController>();
 	auto* document = controller ? controller->GetDocument() : nullptr;
@@ -115,6 +120,13 @@ void UModumateSettingsMenu::UpdateFromCurrentSettings()
 
 	CurDistIncrement = currentSettings.MinimumDistanceIncrement;
 	PopulateDistIncrement();
+
+	CurLatitude = currentSettings.Latitude;
+	CurLongitude = currentSettings.Longitude;
+	CurTrueNorth = currentSettings.TrueNorthDegree;
+	TextEditableLatitude->ModumateEditableTextBox->SetText(FText::AsNumber(CurLatitude));
+	TextEditableLongitude->ModumateEditableTextBox->SetText(FText::AsNumber(CurLongitude));
+	TextEditableNorth->ModumateEditableTextBox->SetText(FText::AsNumber(CurTrueNorth));
 
 	// Refresh current graphics settings values
 	auto gameInstance = GetGameInstance<UModumateGameInstance>();
@@ -272,7 +284,25 @@ void UModumateSettingsMenu::OnButtonAutoDetectSettingsReleased()
 	}
 
 	gameInstance->AutoDetectAndSaveModumateUserSettings();
-	UpdateFromCurrentSettings();
+	UpdateSettingsFromDoc();
+}
+
+void UModumateSettingsMenu::OnTextEditableLatitudeCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	CurLatitude = FCString::Atof(*Text.ToString());
+	ApplyCurrentSettings();
+}
+
+void UModumateSettingsMenu::OnTextEditableLongitudeCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	CurLongitude = FCString::Atof(*Text.ToString());
+	ApplyCurrentSettings();
+}
+
+void UModumateSettingsMenu::OnTextEditableNorthCommitted(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	CurTrueNorth = FCString::Atof(*Text.ToString());
+	ApplyCurrentSettings();
 }
 
 void UModumateSettingsMenu::AudioDevicesChangedHandler()
@@ -355,6 +385,9 @@ void UModumateSettingsMenu::ApplyCurrentSettings()
 	}
 
 	settingsDelta->NextSettings.MinimumDistanceIncrement = CurDistIncrement;
+	settingsDelta->NextSettings.Latitude = CurLatitude;
+	settingsDelta->NextSettings.Longitude = CurLongitude;
+	settingsDelta->NextSettings.TrueNorthDegree = CurTrueNorth;
 
 	// Don't bother applying deltas if it wouldn't result in any change
 	if (settingsDelta->PreviousSettings == settingsDelta->NextSettings)
@@ -363,7 +396,6 @@ void UModumateSettingsMenu::ApplyCurrentSettings()
 	}
 
 	document->ApplyDeltas({ settingsDelta }, GetWorld());
-	UpdateFromCurrentSettings();
 }
 
 void UModumateSettingsMenu::PopulateDistIncrement()

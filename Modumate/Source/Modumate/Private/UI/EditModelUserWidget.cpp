@@ -454,7 +454,7 @@ void UEditModelUserWidget::ToggleSettingsWindow(bool bNewVisibility)
 	SettingsMenuWidget->SetVisibility(bNewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 	if (bNewVisibility)
 	{
-		SettingsMenuWidget->UpdateFromCurrentSettings();
+		SettingsMenuWidget->UpdateSettingsFromDoc();
 	}
 }
 

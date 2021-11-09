@@ -26,7 +26,7 @@ class MODUMATE_API UModumateSettingsMenu : public UUserWidget
 public:
 	virtual bool Initialize() override;
 
-	void UpdateFromCurrentSettings();
+	void UpdateSettingsFromDoc();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateDropDownUserWidget* DimensionPrefDropdown;
@@ -58,6 +58,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateEditableTextBoxUserWidget* VersionText;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateEditableTextBoxUserWidget* TextEditableLatitude;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateEditableTextBoxUserWidget* TextEditableLongitude;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateEditableTextBoxUserWidget* TextEditableNorth;
+
 	static bool GetDimensionTypesFromPref(EDimensionPreference DimensionPref, EDimensionUnits& OutDimensionType, EUnit& OutDimensionUnit);
 	static bool GetDimensionPrefFromTypes(EDimensionUnits DimensionType, EUnit DimensionUnit, EDimensionPreference& OutDimensionPref);
 
@@ -86,8 +95,26 @@ protected:
 	UFUNCTION()
 	void OnButtonAutoDetectSettingsReleased();
 
+	UFUNCTION()
+	void OnTextEditableLatitudeCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void OnTextEditableLongitudeCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void OnTextEditableNorthCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+
 	UPROPERTY()
 	EDimensionPreference CurDimensionPref;
+
+	UPROPERTY()
+	float CurLatitude = 45.f;
+
+	UPROPERTY()
+	float CurLongitude = -73.f;
+
+	UPROPERTY()
+	float CurTrueNorth = 0.f;
 
 	virtual void AudioDevicesChangedHandler();
 	virtual void VoiceClientConnectedHandler();

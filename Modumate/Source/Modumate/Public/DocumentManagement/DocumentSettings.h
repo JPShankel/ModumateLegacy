@@ -35,6 +35,15 @@ struct MODUMATE_API FDocumentSettings
 	UPROPERTY()
 	double MinimumDistanceIncrement = 0.0;
 
+	UPROPERTY()
+	float Latitude = 45.f;
+
+	UPROPERTY()
+	float Longitude = -73.f;
+
+	UPROPERTY()
+	float TrueNorthDegree = 0.f;
+
 	bool operator==(const FDocumentSettings& RHS) const;
 	bool operator!=(const FDocumentSettings& RHS) const;
 };
