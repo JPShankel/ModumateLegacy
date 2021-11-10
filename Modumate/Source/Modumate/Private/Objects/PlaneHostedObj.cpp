@@ -25,6 +25,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "Quantities/QuantitiesManager.h"
+#include "DrawingDesigner/DrawingDesignerLine.h"
 
 class AEditModelPlayerController;
 
@@ -804,6 +805,48 @@ bool AMOIPlaneHostedObj::ProcessQuantities(FQuantitiesCollection& QuantitiesVisi
 {
 	QuantitiesVisitor.Add(CachedQuantities);
 	return true;
+}
+
+void AMOIPlaneHostedObj::GetDrawingDesignerItems(const FVector& viewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength /*= 0.0f*/) const
+{
+	FVector parentLocation = GetParentObject()->GetLocation();
+
+	const auto& layers = LayerGeometries;
+	TArray<FVector> previous;
+	previous.SetNum(layers[0].OriginalPointsA.Num());
+	for (int32 layerIdx = 0; layerIdx <= layers.Num(); ++layerIdx)
+	{
+		const TArray<FVector>& points = layerIdx == layers.Num() ? layers[layerIdx - 1].UniquePointsB :
+			layers[layerIdx].UniquePointsA;
+
+		const int32 numPoints = points.Num();
+		for (int32 p = 0; p < numPoints; ++p)
+		{
+			FVector p1(points[p] + parentLocation);
+			FVector p2(points[(p + 1) % numPoints] + parentLocation);
+			FDrawingDesignerLine line;
+			line.P1 = p1;
+			line.P2 = p2;
+			line.Thickness = layerIdx == 0 || layerIdx == layers.Num() ? 1.0f : 0.5f;
+			if (line.Length() >= MinLength)
+			{
+				OutDrawingLines.Add(line);
+			}
+
+			if (layerIdx != 0)
+			{
+				FDrawingDesignerLine cornerLine;
+				cornerLine.P1 = p1;
+				cornerLine.P2 = previous[p];
+				cornerLine.Thickness = 1.0f;
+				if (cornerLine.Length() >= MinLength)
+				{
+					OutDrawingLines.Add(cornerLine);
+				}
+			}
+			previous[p] = p1;
+		}
+	}
 }
 
 void AMOIPlaneHostedObj::UpdateQuantities()

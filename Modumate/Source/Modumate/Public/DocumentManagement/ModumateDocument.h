@@ -193,11 +193,11 @@ public:
 	bool IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &OutObjType) const;
 
 	// TODO: refactor for output parameters: GetObjectsOfType(EObjectType, TArray<const AModumateObjectInstance
-	TArray<const AModumateObjectInstance*> GetObjectsOfType(EObjectType type) const;
-	TArray<AModumateObjectInstance*> GetObjectsOfType(EObjectType type);
+	TArray<const AModumateObjectInstance*> GetObjectsOfType(EObjectType Type) const;
+	TArray<AModumateObjectInstance*> GetObjectsOfType(EObjectType Type);
 	using FObjectTypeSet = TSet<EObjectType>;
-	TArray<const AModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& types) const;
-	TArray<AModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& types);
+	TArray<const AModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& Types) const;
+	TArray<AModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& Types);
 
 	void GetObjectIdsByAssembly(const FGuid& AssemblyKey, TArray<int32>& OutIDs) const;
 

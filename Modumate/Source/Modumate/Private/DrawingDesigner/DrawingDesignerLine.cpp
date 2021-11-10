@@ -20,6 +20,11 @@ void FDrawingDesignerLine::Canonicalize()
 	}
 }
 
+float FDrawingDesignerLine::Length() const
+{
+	return FVector::Distance(P1, P2);
+}
+
 bool FDrawingDesignerLine::operator<(const FDrawingDesignerLine& Rhs) const
 {
 	if (P1 == Rhs.P1)

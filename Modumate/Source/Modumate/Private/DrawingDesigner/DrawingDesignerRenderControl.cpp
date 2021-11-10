@@ -4,10 +4,12 @@
 
 #include "DocumentManagement/ModumateDocument.h"
 #include "DrawingDesigner/DrawingDesignerView.h"
+#include "DrawingDesigner/DrawingDesignerLine.h"
 #include "DrawingDesigner/DrawingDesignerRender.h"
 #include "Objects/CutPlane.h"
+#include "UnrealClasses/CompoundMeshActor.h"
 
-FString FDrawingDesignerRenderControl::GetViewList(const UModumateDocument* Doc)
+FString FDrawingDesignerRenderControl::GetViewList()
 {
 	FDrawingDesignerViewList viewList;
 
@@ -50,7 +52,7 @@ FString FDrawingDesignerRenderControl::GetViewList(const UModumateDocument* Doc)
 	}
 }
 
-bool FDrawingDesignerRenderControl::GetView(const UModumateDocument* Doc, const FString& jsonRequest, FString& OutJsonResponse)
+bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString& OutJsonResponse)
 {
 	FDrawingDesignerDrawingRequest viewRequest;
 	if (!ReadJsonGeneric(jsonRequest, &viewRequest))
@@ -82,14 +84,28 @@ bool FDrawingDesignerRenderControl::GetView(const UModumateDocument* Doc, const 
 	const float viewWidth = planeWidth * FMath::Abs(viewRequest.roi.B.x - viewRequest.roi.A.x);
 	const float viewHeight = planeHeight * FMath::Abs(viewRequest.roi.B.y - viewRequest.roi.A.y);
 
+	static constexpr float minFeatureSizeScale = 3.0f;
+	float scaleLength = FMath::Sqrt(viewWidth * viewHeight / (viewRequest.minimum_resolution_pixels.x * viewRequest.minimum_resolution_pixels.y))
+		* minFeatureSizeScale;
+
 	// Capture actor looks along +X (Y up); cutplane looks along +Z.
 	static const FQuat cameraToCutplane(FVector(1, -1, 1).GetSafeNormal(), FMath::DegreesToRadians(120));
-	FTransform cameraTransform(cutPlane->GetRotation()  * cameraToCutplane, cameraCentre, FVector(viewWidth, viewHeight, 1.0f));
+	const FQuat cutPlaneRotation(cutPlane->GetRotation());
+
+	FTransform cameraTransform(cutPlaneRotation * cameraToCutplane, cameraCentre, FVector(viewWidth, viewHeight, 1.0f));
+
 	ADrawingDesignerRender* renderer = Doc->GetWorld()->SpawnActor<ADrawingDesignerRender>();
 
 	renderer->SetViewTransform(cameraTransform);
 
+	FVector viewDirection(cutPlaneRotation * FVector::ZAxisVector);
+	AddSceneLines(viewDirection, scaleLength, renderer);
+
+	SwapPortalMaterials();
+
 	renderer->RenderImage(viewRequest.minimum_resolution_pixels.x);
+
+	RestorePortalMaterials();
 
 	TArray<uint8> rawPng;
 	bool bSuccess = false;
@@ -101,6 +117,7 @@ bool FDrawingDesignerRenderControl::GetView(const UModumateDocument* Doc, const 
 
 		FDrawingDesignerDrawingResponse viewResponse;
 		viewResponse.request = viewRequest;
+		viewResponse.response.resolution_pixels = viewRequest.minimum_resolution_pixels;
 		viewResponse.response.view.moi_id = viewRequest.moi_id;
 		viewResponse.response.view.aspect = { 1.0f, viewHeight / viewWidth };
 		viewResponse.response.resolution_pixels = viewRequest.minimum_resolution_pixels;
@@ -113,4 +130,226 @@ bool FDrawingDesignerRenderControl::GetView(const UModumateDocument* Doc, const 
 	renderer->Destroy();
 
 	return bSuccess;
+}
+
+void FDrawingDesignerRenderControl::AddSceneLines(const FVector& ViewDirection, float MinLength, ADrawingDesignerRender* Render)
+{
+	TArray<const AModumateObjectInstance*> portalObjects = Doc->GetObjectsOfType(
+		{ EObjectType::OTDoor, EObjectType::OTWindow, EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace });
+	TArray<FDrawingDesignerLine> sceneLines;
+	for (const auto* moi : portalObjects)
+	{
+		moi->GetDrawingDesignerItems(ViewDirection, sceneLines, MinLength);
+	}
+
+	Render->AddLines(sceneLines);
+}
+
+void FDrawingDesignerRenderControl::SwapPortalMaterials()
+{
+	// TODO: plumb material through from blueprint.
+	UMaterialInterface* masterPBR = LoadObject<UMaterial>(nullptr, TEXT("Material'/Game/ShoppingData/Materials/_MASTER/MasterPBREmissive.MasterPBREmissive'"));
+	if (!ensure(masterPBR))
+	{
+		return;
+	}
+
+	// Portals:
+	TArray<const AModumateObjectInstance*> portalObjects = Doc->GetObjectsOfType({ EObjectType::OTDoor, EObjectType::OTWindow });
+	for (const auto* moi: portalObjects)
+	{
+		const ACompoundMeshActor* actor = CastChecked<ACompoundMeshActor>(moi->GetActor());
+		if (!actor)
+		{
+			continue;
+		}
+
+		const int32 numComponents = actor->UseSlicedMesh.Num();
+		for (int32 componentIndex = 0; componentIndex < numComponents; ++componentIndex)
+		{
+			if (actor->UseSlicedMesh[componentIndex])
+			{
+				const int32 sliceStart = 9 * componentIndex;
+				const int32 sliceEnd = 9 * (componentIndex + 1);
+				for (int32 slice = sliceStart; slice < sliceEnd; ++slice)
+				{
+					UProceduralMeshComponent* meshComponent = actor->NineSliceComps[slice];
+					if (!meshComponent)
+					{
+						continue;
+					}
+
+					const int32 numMaterials = meshComponent->GetNumMaterials();
+					UMaterialInstanceDynamic* curMID = UMaterialInstanceDynamic::Create(masterPBR, meshComponent);
+					static const FName emissiveMultiplierParamName("EmissiveMultiplier");
+					static const FName emissiveColorMultiplierParamName("EmissiveColorMultiplier");
+					curMID->SetScalarParameterValue(emissiveMultiplierParamName, 1.0f);
+					curMID->SetVectorParameterValue(emissiveColorMultiplierParamName, FLinearColor(0.6f, 0.6f, 0.6f));
+
+					for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
+					{
+						UMaterialInterface* sceneMaterial = meshComponent->GetMaterial(materialIndex);
+						SceneProcMaterialMap.Add(ProcMaterialKey(meshComponent, materialIndex), sceneMaterial);
+						meshComponent->SetMaterial(materialIndex, curMID);
+					}
+				}
+			}
+			else
+			{
+				UStaticMeshComponent* meshComponent = actor->StaticMeshComps[componentIndex];
+				if (!meshComponent)
+				{
+					continue;
+				}
+				const int32 numMaterials = meshComponent->GetNumMaterials();
+				UStaticMesh* mesh = meshComponent->GetStaticMesh();
+
+				UMaterialInstanceDynamic* curMID = UMaterialInstanceDynamic::Create(masterPBR, meshComponent);
+				static const FName emissiveMultiplierParamName("EmissiveMultiplier");
+				static const FName emissiveColorMultiplierParamName("EmissiveColorMultiplier");
+				curMID->SetScalarParameterValue(emissiveMultiplierParamName, 1.0f);
+				curMID->SetVectorParameterValue(emissiveColorMultiplierParamName, FLinearColor(0.6f, 0.6f, 0.6f));
+
+				const FName fname = meshComponent->GetFName();
+				for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
+				{
+					UMaterialInterface* sceneMaterial = meshComponent->GetMaterial(materialIndex);
+					SceneStaticMaterialMap.Add(StaticMaterialKey(meshComponent, materialIndex), sceneMaterial);
+					meshComponent->SetMaterial(materialIndex, curMID);
+				}
+			}
+		}
+
+	}
+
+	// Layered separators:
+	TArray<const AModumateObjectInstance*> layeredObjects = Doc->GetObjectsOfType({ EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace });
+	for (const auto* moi: layeredObjects)
+	{
+		const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(moi->GetActor());
+		if (!actor)
+		{
+			continue;
+		}
+
+		TArray<UProceduralMeshComponent*> meshComponents = { actor->Mesh, actor->MeshCap };
+		meshComponents.Append(actor->ProceduralSubLayers);
+		meshComponents.Append(actor->ProceduralSubLayerCaps);
+
+		for (UProceduralMeshComponent* meshComponent: meshComponents)
+		{
+			if (!meshComponent || meshComponent->GetNumMaterials() == 0)
+			{
+				continue;
+			}
+
+			const int32 numMaterials = meshComponent->GetNumMaterials();
+			UMaterialInstanceDynamic* curMID = UMaterialInstanceDynamic::Create(masterPBR, meshComponent);
+			static const FName emissiveMultiplierParamName("EmissiveMultiplier");
+			static const FName emissiveColorMultiplierParamName("EmissiveColorMultiplier");
+			curMID->SetScalarParameterValue(emissiveMultiplierParamName, 1.0f);
+			curMID->SetVectorParameterValue(emissiveColorMultiplierParamName, FLinearColor(0.4f, 0.4f, 0.4f));
+
+			for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
+			{
+				UMaterialInterface* sceneMaterial = meshComponent->GetMaterial(materialIndex);
+				SceneProcMaterialMap.Add(ProcMaterialKey(meshComponent, materialIndex), sceneMaterial);
+				meshComponent->SetMaterial(materialIndex, curMID);
+			}
+		}
+	}
+
+}
+
+void FDrawingDesignerRenderControl::RestorePortalMaterials()
+{
+	// Portals:
+	TArray<const AModumateObjectInstance*> portalObjects = Doc->GetObjectsOfType({ EObjectType::OTDoor, EObjectType::OTWindow });
+	for (const auto* moi: portalObjects)
+	{
+		const ACompoundMeshActor* actor = CastChecked<ACompoundMeshActor>(moi->GetActor());
+		const int32 numComponents = actor->UseSlicedMesh.Num();
+		for (int32 componentIndex = 0; componentIndex < numComponents; ++componentIndex)
+		{
+			if (actor->UseSlicedMesh[componentIndex])
+			{
+				const int32 sliceStart = 9 * componentIndex;
+				const int32 sliceEnd = 9 * (componentIndex + 1);
+				for (int32 slice = sliceStart; slice < sliceEnd; ++slice)
+				{
+					UProceduralMeshComponent* meshComponent = actor->NineSliceComps[slice];
+					if (!meshComponent)
+					{
+						continue;
+					}
+
+					const int32 numMaterials = meshComponent->GetNumMaterials();
+					for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
+					{
+						UMaterialInterface** scenematerial = SceneProcMaterialMap.Find(ProcMaterialKey(meshComponent, materialIndex));
+						if (ensure(scenematerial))
+						{
+							meshComponent->SetMaterial(materialIndex, *scenematerial);
+						}
+					}
+
+				}
+			}
+			else
+			{
+				UStaticMeshComponent* meshComponent = actor->StaticMeshComps[componentIndex];
+				if (!meshComponent)
+				{
+					continue;
+				}
+
+				const int32 numMaterials = meshComponent->GetNumMaterials();
+				UStaticMesh* mesh = meshComponent->GetStaticMesh();
+
+				const FName fname = meshComponent->GetFName();
+				for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
+				{
+					UMaterialInterface** scenematerial = SceneStaticMaterialMap.Find(StaticMaterialKey(meshComponent, materialIndex));
+					if (ensure(scenematerial))
+					{
+						meshComponent->SetMaterial(materialIndex, *scenematerial);
+					}
+				}
+			}
+		}
+
+	}
+
+	// Layered separators:
+	TArray<const AModumateObjectInstance*> layeredObjects = Doc->GetObjectsOfType({ EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace });
+	for (const auto* moi: layeredObjects)
+	{
+		const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(moi->GetActor());
+		if (!actor)
+		{
+			continue;
+		}
+
+		TArray<UProceduralMeshComponent*> meshComponents = { actor->Mesh, actor->MeshCap };
+		meshComponents.Append(actor->ProceduralSubLayers);
+		meshComponents.Append(actor->ProceduralSubLayerCaps);
+
+		for (UProceduralMeshComponent* meshComponent: meshComponents)
+		{
+			if (!meshComponent || meshComponent->GetNumMaterials() == 0)
+			{
+				continue;
+			}
+
+			const int32 numMaterials = meshComponent->GetNumMaterials();
+			for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
+			{
+				UMaterialInterface** scenematerial = SceneProcMaterialMap.Find(ProcMaterialKey(meshComponent, materialIndex));
+				if (ensure(scenematerial))
+				{
+					meshComponent->SetMaterial(materialIndex, *scenematerial);
+				}
+			}
+		}
+	}
 }

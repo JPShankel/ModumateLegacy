@@ -799,7 +799,7 @@ void FModumateClippingTriangles::QuadTreeNode::PostProcess(int32 GlobalPosition 
 }
 
 // Add obscuring quads in the cut plane to hide beyond lines within layered objects.
-void FModumateClippingTriangles::AddLayeredCutPlaneTriangles(const TArray<FLayerGeomDef>& LayerGeoms, const FTransform& LocalToWorld)
+void FModumateClippingTriangles::AddLayeredCutPlaneTriangles(const TArray<FLayerGeomDef>& LayerGeoms, const FTransform LocalToWorld)
 {
 	if (LayerGeoms.Num() == 0)
 	{

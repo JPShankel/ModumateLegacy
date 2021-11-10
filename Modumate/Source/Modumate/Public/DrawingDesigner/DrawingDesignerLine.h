@@ -13,6 +13,7 @@ public:
 	{ }
 
 	void Canonicalize();
+	float Length() const;
 
 	bool operator==(const FDrawingDesignerLine& Rhs) const;
 	bool operator!=(const FDrawingDesignerLine& Rhs) const;

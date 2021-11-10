@@ -5,10 +5,27 @@
 #include "CoreMinimal.h"
 
 class UModumateDocument;
+class ADrawingDesignerRender;
+class UStaticMeshComponent;
+class UMaterialInterface;
+class UProceduralMeshComponent;
 
 class MODUMATE_API FDrawingDesignerRenderControl
 {
 public:
-	static FString GetViewList(const UModumateDocument* Doc);
-	static bool GetView(const UModumateDocument* Doc, const FString& jsonRequest, FString& OutJsonResponse);
+	FDrawingDesignerRenderControl(const UModumateDocument* InDoc)
+		: Doc(InDoc) { }
+	FString GetViewList();
+	bool GetView(const FString& jsonRequest, FString& OutJsonResponse);
+	void AddSceneLines(const FVector& ViewDirection, float MinLength, ADrawingDesignerRender* Render);
+
+private:
+	void SwapPortalMaterials();
+	void RestorePortalMaterials();
+	const UModumateDocument *const Doc = nullptr;
+
+	using StaticMaterialKey = TPair<UStaticMeshComponent*, int32>;
+	TMap<StaticMaterialKey, UMaterialInterface*> SceneStaticMaterialMap;
+	using ProcMaterialKey = TPair<UProceduralMeshComponent*, int32>;
+	TMap< ProcMaterialKey, UMaterialInterface*> SceneProcMaterialMap;
 };

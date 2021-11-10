@@ -13,6 +13,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/SkyActor.h"
 #include "UnrealClasses/LineActor.h"
+#include "UnrealClasses/AxesActor.h"
 
 ADrawingDesignerRender::ADrawingDesignerRender()
 {
@@ -76,7 +77,9 @@ void ADrawingDesignerRender::RenderImage(int32 imageWidth)
 	if (playerController && playerController->SkyActor)
 	{
 		CaptureComponent->HideActorComponents(playerController->SkyActor);
+		CaptureComponent->HideActorComponents(playerController->AxesActor);
 	}
+
 	CaptureComponent->ShowFlags.SetOverrideDiffuseAndSpecular(true);
 
 	FTransform cameraTransform(ViewTransform.GetRotation(), ViewTransform.GetTranslation());

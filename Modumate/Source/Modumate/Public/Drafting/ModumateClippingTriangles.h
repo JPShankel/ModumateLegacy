@@ -31,7 +31,7 @@ public:
 private:
 	bool IsPointInFront(FVector Point) const;
 	void BuildAccelerationStructure();
-	void AddLayeredCutPlaneTriangles(const TArray<FLayerGeomDef>& LayerGeoms, const FTransform& LocalToWorld);
+	void AddLayeredCutPlaneTriangles(const TArray<FLayerGeomDef>& LayerGeoms, const FTransform LocalToWorld);
 	void AddTerrainCutPlaneTriangles(const ADynamicTerrainActor* Actor);
 	FVec3d Position;
 	FVec3d Normal;

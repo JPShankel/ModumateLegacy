@@ -2767,10 +2767,10 @@ AModumateObjectInstance *UModumateDocument::ObjectFromActor(AActor *actor)
 	return moi;
 }
 
-TArray<AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(EObjectType type)
+TArray<AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(EObjectType Type)
 {
 	TArray<AModumateObjectInstance*> objects;
-	auto* objectsOfType = ObjectsByType.Find(type);
+	auto* objectsOfType = ObjectsByType.Find(Type);
 	if (objectsOfType)
 	{
 		for (int32 objectID : *objectsOfType)
@@ -2786,36 +2786,10 @@ TArray<AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(EObjectType
 	return objects;
 }
 
-TArray<const AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(const FObjectTypeSet& types) const
-{
-	TArray<const AModumateObjectInstance*> outArray;
-	Algo::TransformIf(ObjectInstanceArray, outArray, [&types](AModumateObjectInstance * moi)
-		{ return types.Contains(moi->GetObjectType()); },
-		[](AModumateObjectInstance * moi) {return moi; });
-	return outArray;
-}
-
-TArray<AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(const FObjectTypeSet& types)
-{
-	return ObjectInstanceArray.FilterByPredicate([&types](AModumateObjectInstance *moi)
-		{ return types.Contains(moi->GetObjectType()); });
-}
-
-void UModumateDocument::GetObjectIdsByAssembly(const FGuid& AssemblyKey, TArray<int32>& OutIds) const
-{
-	for (const auto &moi : ObjectInstanceArray)
-	{
-		if (moi->GetAssembly().UniqueKey() == AssemblyKey)
-		{
-			OutIds.Add(moi->ID);
-		}
-	}
-}
-
-TArray<const AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(EObjectType type) const
+TArray<const AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(EObjectType Type) const
 {
 	TArray<const AModumateObjectInstance*> objects;
-	auto* objectsOfType = ObjectsByType.Find(type);
+	auto* objectsOfType = ObjectsByType.Find(Type);
 	if (objectsOfType)
 	{
 		for (int32 objectID : *objectsOfType)
@@ -2829,6 +2803,37 @@ TArray<const AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(EObje
 	}
 
 	return objects;
+}
+
+TArray<const AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(const FObjectTypeSet& Types) const
+{
+	TArray<const AModumateObjectInstance*> outArray;
+	for (auto type: Types)
+	{
+		outArray.Append(GetObjectsOfType(type));
+	}
+	return outArray;
+}
+
+TArray<AModumateObjectInstance*> UModumateDocument::GetObjectsOfType(const FObjectTypeSet& Types)
+{
+	TArray<AModumateObjectInstance*> outArray;
+	for (auto type: Types)
+	{
+		outArray.Append(GetObjectsOfType(type));
+	}
+	return outArray;
+}
+
+void UModumateDocument::GetObjectIdsByAssembly(const FGuid& AssemblyKey, TArray<int32>& OutIds) const
+{
+	for (const auto &moi : ObjectInstanceArray)
+	{
+		if (moi->GetAssembly().UniqueKey() == AssemblyKey)
+		{
+			OutIds.Add(moi->ID);
+		}
+	}
 }
 
 bool UModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
@@ -4206,8 +4211,9 @@ void UModumateDocument::drawing_apply_delta(const FString& InDelta)
 void UModumateDocument::drawing_request_view_list() const
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_request_view_list"));
+	FDrawingDesignerRenderControl renderControl(this);
 
-	FString response = FDrawingDesignerRenderControl::GetViewList(this);
+	FString response = renderControl.GetViewList();
 	DrawingSendResponse(TEXT("UE_pushViewList"), response);
 }
 
@@ -4215,7 +4221,8 @@ void UModumateDocument::drawing_get_drawing_image(const FString& InRequest) cons
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_get_view_image"));
 	FString response;
-	bool bResult = FDrawingDesignerRenderControl::GetView(this, InRequest, response);
+	FDrawingDesignerRenderControl renderControl(this);
+	bool bResult = renderControl.GetView(InRequest, response);
 	if (ensure(bResult))
 	{
 		DrawingSendResponse(TEXT("UE_pushViewImage"), response);

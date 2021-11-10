@@ -79,6 +79,9 @@ public:
 	UPROPERTY()
 	FMOIPlaneHostedObjData InstanceData;
 
+	virtual void GetDrawingDesignerItems(const FVector& viewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines,
+		float MinLength = 0.0f) const override;
+
 protected:
 	virtual void PostLoadInstanceData() override;
 	virtual void UpdateQuantities() override;
