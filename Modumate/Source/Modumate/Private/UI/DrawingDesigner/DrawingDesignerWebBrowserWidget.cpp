@@ -10,6 +10,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "UI/ModalDialog/ModalDialogWidget.h"
 #include "Online/ModumateCloudConnection.h"
+#include "DrawingDesigner/DrawingDesignerDocument.h"
 
 #define LOCTEXT_NAMESPACE "DrawingDesignerWebBrowserWidget"
 
@@ -29,9 +30,9 @@ bool UDrawingDesignerWebBrowserWidget::Initialize()
 		return false;
 	}
 
-	if (DebugSubmit != NULL) 
+	if (ResetDocumentButton != nullptr)
 	{
-		DebugSubmit->OnReleased.AddDynamic(this, &UDrawingDesignerWebBrowserWidget::OnDebugSubmit);
+		ResetDocumentButton->OnReleased.AddDynamic(this, &UDrawingDesignerWebBrowserWidget::ResetDocumentButtonPressed);
 	}
 
 	return true;
@@ -42,27 +43,15 @@ void UDrawingDesignerWebBrowserWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UDrawingDesignerWebBrowserWidget::OnDebugSubmit()
+void UDrawingDesignerWebBrowserWidget::ResetDocumentButtonPressed()
 {
-	if (DebugDocumentTextBox != NULL)
-	{
-		auto controller = GetOwningPlayer<AEditModelPlayerController>();
+	auto controller = GetOwningPlayer<AEditModelPlayerController>();
 
-		if (controller != NULL)
-		{
-			FString document = DebugDocumentTextBox->GetText().ToString();
-			FString js = TEXT("UE_pushDocument(");
-			js = js + document + TEXT(")");
-			UE_LOG(LogTemp, Log, TEXT("js=%s"), *js);
-			UModumateDocument* doc = controller->GetDocument();
-			if (doc)
-			{
-				FDrawingDesignerDocument replacer;
-				replacer.ReadJson(document);
-				doc->DrawingDesignerDocument = replacer;
-			}
-			DrawingSetWebBrowser->ExecuteJavascript(js);
-		}
+	if (ensure(controller))
+	{
+		UModumateDocument* doc = controller->GetDocument();
+		doc->DrawingDesignerDocument = FDrawingDesignerDocument();
+		doc->drawing_request_document();
 	}
 }
 

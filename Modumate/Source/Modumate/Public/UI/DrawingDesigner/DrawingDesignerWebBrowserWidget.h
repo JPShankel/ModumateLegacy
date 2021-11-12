@@ -27,13 +27,10 @@ public:
 	class UModumateWebBrowser* DrawingSetWebBrowser;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UModumateButton* DebugSubmit;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UMultiLineEditableTextBox* DebugDocumentTextBox;
+	class UModumateButton* ResetDocumentButton;
 
 	UFUNCTION()
-	void OnDebugSubmit();
+	void ResetDocumentButtonPressed();
 
 	void InitWithController();
 };
