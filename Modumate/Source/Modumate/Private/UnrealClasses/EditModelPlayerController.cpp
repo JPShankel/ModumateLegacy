@@ -88,20 +88,6 @@ const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetr
 #define LOCTEXT_NAMESPACE "ModumateDialog"
 
 /*
-Engine.ini:
-
-[SystemSettings]
-modumate.ShowDrawingDesigner = true/false
-
-*/
-
-TAutoConsoleVariable<bool> CVarModumateShowDrawingDesigner(
-	TEXT("modumate.ShowDrawingDesigner"),
-	false,
-	TEXT("Set to true in Engine.ini to show drawing designer."),
-	ECVF_Default);
-
-/*
 * Constructor
 */
 AEditModelPlayerController::AEditModelPlayerController()
@@ -270,7 +256,6 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 	if (EditModelUserWidget && EditModelUserWidget->DrawingDesigner)
 	{
 		EditModelUserWidget->DrawingDesigner->InitWithController();
-		EditModelUserWidget->DrawingDesigner->SetVisibility(CVarModumateShowDrawingDesigner.GetValueOnAnyThread() ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 	}
 
 	SnappingView = new FModumateSnappingView(Document, this);
@@ -4057,6 +4042,11 @@ FPlane AEditModelPlayerController::GetCurrentCullingPlane() const
 	return (cullingCutPlaneMOI && ensure(cullingCutPlaneMOI->GetObjectType() == EObjectType::OTCutPlane)) ?
 		FPlane(cullingCutPlaneMOI->GetLocation(), cullingCutPlaneMOI->GetNormal()) :
 		FPlane(ForceInitToZero);
+}
+
+void AEditModelPlayerController::ToggleDrawingDesigner(bool bEnable)
+{
+	EditModelUserWidget->DrawingDesigner->SetVisibility(bEnable ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
 
 void AEditModelPlayerController::CapabilityReady(AModumateCapability* Capability)
