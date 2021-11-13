@@ -97,6 +97,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 	ADrawingDesignerRender* renderer = Doc->GetWorld()->SpawnActor<ADrawingDesignerRender>();
 
 	renderer->SetViewTransform(cameraTransform);
+	renderer->SetDocument(Doc);
 
 	FVector viewDirection(cutPlaneRotation * FVector::ZAxisVector);
 	AddSceneLines(viewDirection, scaleLength, renderer);
@@ -129,15 +130,17 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 
 	renderer->Destroy();
 
+	SceneStaticMaterialMap.Empty();
+	SceneProcMaterialMap.Empty();
 	return bSuccess;
 }
 
 void FDrawingDesignerRenderControl::AddSceneLines(const FVector& ViewDirection, float MinLength, ADrawingDesignerRender* Render)
 {
-	TArray<const AModumateObjectInstance*> portalObjects = Doc->GetObjectsOfType(
+	TArray<const AModumateObjectInstance*> sceneLinesObjects = Doc->GetObjectsOfType(
 		{ EObjectType::OTDoor, EObjectType::OTWindow, EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace });
 	TArray<FDrawingDesignerLine> sceneLines;
-	for (const auto* moi : portalObjects)
+	for (const auto* moi : sceneLinesObjects)
 	{
 		moi->GetDrawingDesignerItems(ViewDirection, sceneLines, MinLength);
 	}

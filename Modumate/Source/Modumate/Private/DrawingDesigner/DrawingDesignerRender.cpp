@@ -11,6 +11,8 @@
 #include "DrawingDesigner/DrawingDesignerLine.h"
 #include "DrawingDesigner/DrawingDesignerView.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/SkyActor.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/AxesActor.h"
@@ -55,6 +57,11 @@ void ADrawingDesignerRender::RenderImage(int32 imageWidth)
 	int32 orthoHeight = ViewTransform.GetScale3D().Y;
 	int32 imageHeight = imageWidth * orthoHeight / orthoWidth;
 
+	if (!ensure(Doc))
+	{
+		return;
+	}
+
 	if (RenderTarget == nullptr || RenderTarget->GetSurfaceWidth() != imageWidth || RenderTarget->GetSurfaceHeight() != imageHeight)
 	{
 		if (!RenderTarget)
@@ -65,11 +72,17 @@ void ADrawingDesignerRender::RenderImage(int32 imageWidth)
 			{
 				return;
 			}
-			CaptureComponent->TextureTarget = RenderTarget;
+			FfeRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), imageWidth, imageHeight,
+				ETextureRenderTargetFormat::RTF_R16f);
+			if (!ensureAlways(FfeRenderTarget))
+			{
+				return;
+			}
 		}
 		else
 		{
 			RenderTarget->ResizeTarget(imageWidth, imageHeight);
+			FfeRenderTarget->ResizeTarget(imageWidth, imageHeight);
 		}
 	}
 
@@ -80,12 +93,18 @@ void ADrawingDesignerRender::RenderImage(int32 imageWidth)
 		CaptureComponent->HideActorComponents(playerController->AxesActor);
 	}
 
-	CaptureComponent->ShowFlags.SetOverrideDiffuseAndSpecular(true);
-
 	FTransform cameraTransform(ViewTransform.GetRotation(), ViewTransform.GetTranslation());
 	CaptureComponent->SetWorldTransform(cameraTransform);
 	CaptureComponent->OrthoWidth = orthoWidth;
+
+	RenderFfe();
+	CaptureComponent->TextureTarget = RenderTarget;
+
+	CaptureComponent->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_RenderScenePrimitives;
 	CaptureComponent->CaptureScene();
+
+	RestoreFfeMaterials();
+	SceneStaticMaterialMap.Empty();
 
 #if 0
 	UKismetRenderingLibrary::ExportRenderTarget(GetWorld(), RenderTarget, TEXT("/Modumate"), TEXT("portaldrawing_test.png"));
@@ -113,4 +132,107 @@ void ADrawingDesignerRender::Destroyed()
 {
 	EmptyLines();
 	Super::Destroyed();
+}
+
+void ADrawingDesignerRender::RenderFfe()
+{
+	const TArray<const AModumateObjectInstance*> ffeObjects = Doc->GetObjectsOfType(EObjectType::OTFurniture);
+	if (ffeObjects.Num() == 0)
+	{
+		return;
+	}
+
+	auto* gameMode = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
+	if (!gameMode)
+	{
+		return;
+	}
+
+	UMaterialInterface* depthMaterial = gameMode->DepthMaterial;
+	if (!ensure(depthMaterial))
+	{
+		return;
+	}
+
+	CaptureComponent->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
+	for (const auto* ffe: ffeObjects)
+	{
+		const AActor* actor = ffe->GetActor();
+		TArray<UMeshComponent*> components;
+		actor->GetComponents<UMeshComponent>(components);
+		for (auto* component: components)
+		{
+			const int32 numMaterials = component->GetNumMaterials();
+			for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
+			{
+				UMaterialInterface* existingMaterial = component->GetMaterial(materialIndex);
+				if (existingMaterial)
+				{
+					SceneStaticMaterialMap.Add(StaticMaterialKey(component, materialIndex), existingMaterial);
+					component->SetMaterial(materialIndex, depthMaterial);
+				}
+			}
+
+			CaptureComponent->ShowOnlyComponents.Add(component);
+		}
+	}
+
+	CaptureComponent->TextureTarget = FfeRenderTarget;
+	CaptureComponent->CaptureScene();
+
+	UMaterialInterface* sobelMaterial = gameMode->SobelEdgeMaterial;
+	if (!ensure(sobelMaterial))
+	{
+		return;
+	}
+
+	static const FName depthTextureParamName(TEXT("FfeDepth"));
+	UMaterialInstanceDynamic* curMID = UMaterialInstanceDynamic::Create(sobelMaterial, this);
+	curMID->SetTextureParameterValue(depthTextureParamName, FfeRenderTarget);
+
+	for (const auto* ffe: ffeObjects)
+	{
+		const AActor* actor = ffe->GetActor();
+		TArray<UMeshComponent*> components;
+		actor->GetComponents<UMeshComponent>(components);
+		for (auto* component: components)
+		{
+			const int32 numMaterials = component->GetNumMaterials();
+
+			for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
+			{
+				if (component->GetMaterial(materialIndex))
+				{
+					component->SetMaterial(materialIndex, curMID);
+				}
+			}
+		}
+	}
+
+#if 0
+	UKismetRenderingLibrary::ExportRenderTarget(GetWorld(), FfeRenderTarget, TEXT("/Modumate"), TEXT("portaldrawing_ffe.png"));
+#endif
+}
+
+void ADrawingDesignerRender::RestoreFfeMaterials()
+{
+	const TArray<const AModumateObjectInstance*> ffeObjects = Doc->GetObjectsOfType(EObjectType::OTFurniture);
+	for (const auto* ffe: ffeObjects)
+	{
+		const AActor* actor = ffe->GetActor();
+		TArray<UMeshComponent*> components;
+		actor->GetComponents<UMeshComponent>(components);
+		for (auto* component : components)
+		{
+			const int32 numMaterials = component->GetNumMaterials();
+			for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
+			{
+				if (component->GetMaterial(materialIndex))
+				{
+					UMaterialInterface** originalMaterial = SceneStaticMaterialMap.Find(StaticMaterialKey(component, materialIndex));
+					component->SetMaterial(materialIndex, *originalMaterial);
+				}
+			}
+		}
+	}
 }

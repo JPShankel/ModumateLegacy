@@ -110,6 +110,12 @@ public:
 	UMaterialInterface *BillboardTextureMaterial;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterialInterface *DepthMaterial;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterialInterface *SobelEdgeMaterial;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UTexture2D *ButtonEditGreenTexture;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
