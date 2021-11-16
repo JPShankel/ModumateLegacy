@@ -8,6 +8,8 @@
 #include "DrawingDesigner/DrawingDesignerRender.h"
 #include "Objects/CutPlane.h"
 #include "UnrealClasses/CompoundMeshActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/EditModelGameMode.h"
 
 FString FDrawingDesignerRenderControl::GetViewList()
 {
@@ -138,7 +140,9 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 void FDrawingDesignerRenderControl::AddSceneLines(const FVector& ViewDirection, float MinLength, ADrawingDesignerRender* Render)
 {
 	TArray<const AModumateObjectInstance*> sceneLinesObjects = Doc->GetObjectsOfType(
-		{ EObjectType::OTDoor, EObjectType::OTWindow, EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace });
+		{ EObjectType::OTDoor, EObjectType::OTWindow, EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace,
+		EObjectType::OTStructureLine, EObjectType::OTMullion });
+
 	TArray<FDrawingDesignerLine> sceneLines;
 	for (const auto* moi : sceneLinesObjects)
 	{
@@ -150,8 +154,13 @@ void FDrawingDesignerRenderControl::AddSceneLines(const FVector& ViewDirection, 
 
 void FDrawingDesignerRenderControl::SwapPortalMaterials()
 {
-	// TODO: plumb material through from blueprint.
-	UMaterialInterface* masterPBR = LoadObject<UMaterial>(nullptr, TEXT("Material'/Game/ShoppingData/Materials/_MASTER/MasterPBREmissive.MasterPBREmissive'"));
+	auto* gameMode = Doc->GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
+	if (!gameMode)
+	{
+		return;
+	}
+
+	UMaterialInterface* masterPBR = gameMode->EmissiveUnlitMaterial;
 	if (!ensure(masterPBR))
 	{
 		return;
@@ -187,7 +196,7 @@ void FDrawingDesignerRenderControl::SwapPortalMaterials()
 					static const FName emissiveMultiplierParamName("EmissiveMultiplier");
 					static const FName emissiveColorMultiplierParamName("EmissiveColorMultiplier");
 					curMID->SetScalarParameterValue(emissiveMultiplierParamName, 1.0f);
-					curMID->SetVectorParameterValue(emissiveColorMultiplierParamName, FLinearColor(0.6f, 0.6f, 0.6f));
+					curMID->SetVectorParameterValue(emissiveColorMultiplierParamName, FLinearColor(0.8f, 0.8f, 0.8f));
 
 					for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
 					{
@@ -225,8 +234,9 @@ void FDrawingDesignerRenderControl::SwapPortalMaterials()
 
 	}
 
-	// Layered separators:
-	TArray<const AModumateObjectInstance*> layeredObjects = Doc->GetObjectsOfType({ EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace });
+	// Layered separators, columns:
+	TArray<const AModumateObjectInstance*> layeredObjects = Doc->GetObjectsOfType({ EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace,
+		EObjectType::OTStructureLine, EObjectType::OTMullion });
 	for (const auto* moi: layeredObjects)
 	{
 		const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(moi->GetActor());
@@ -251,7 +261,7 @@ void FDrawingDesignerRenderControl::SwapPortalMaterials()
 			static const FName emissiveMultiplierParamName("EmissiveMultiplier");
 			static const FName emissiveColorMultiplierParamName("EmissiveColorMultiplier");
 			curMID->SetScalarParameterValue(emissiveMultiplierParamName, 1.0f);
-			curMID->SetVectorParameterValue(emissiveColorMultiplierParamName, FLinearColor(0.4f, 0.4f, 0.4f));
+			curMID->SetVectorParameterValue(emissiveColorMultiplierParamName, FLinearColor(0.8f, 0.8f, 0.8f));
 
 			for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
 			{
@@ -324,7 +334,8 @@ void FDrawingDesignerRenderControl::RestorePortalMaterials()
 	}
 
 	// Layered separators:
-	TArray<const AModumateObjectInstance*> layeredObjects = Doc->GetObjectsOfType({ EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace });
+	TArray<const AModumateObjectInstance*> layeredObjects = Doc->GetObjectsOfType({ EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace,
+		EObjectType::OTStructureLine, EObjectType::OTMullion });
 	for (const auto* moi: layeredObjects)
 	{
 		const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(moi->GetActor());

@@ -19,6 +19,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "Quantities/QuantitiesManager.h"
+#include "DrawingDesigner/DrawingDesignerLine.h"
 
 
 FMOIStructureLineData::FMOIStructureLineData()
@@ -254,6 +255,29 @@ bool AMOIStructureLine::ProcessQuantities(FQuantitiesCollection& QuantitiesVisit
 {
 	QuantitiesVisitor.Add(CachedQuantities);
 	return true;
+}
+
+void AMOIStructureLine::GetDrawingDesignerItems(const FVector& viewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength /*= 0.0f*/) const
+{
+	if ((LineStartPos - LineEndPos).Size() < MinLength)
+	{
+		return;
+	}
+
+	TArray<FVector> perimeter;
+	if (!UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, LineNormal, LineUp,
+		InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, perimeter))
+	{
+		return;
+	}
+	TArray<FEdge> columnEdges = UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(FPlane(viewDirection), perimeter, LineStartPos, LineEndPos);
+
+	for(auto& edge: columnEdges)
+	{
+		FDrawingDesignerLine line(edge.Vertex[0], edge.Vertex[1]);
+		line.Thickness = bool(edge.Count) ? 1.0f : 0.5f;
+		OutDrawingLines.Add(line);
+	}
 }
 
 void AMOIStructureLine::UpdateQuantities()

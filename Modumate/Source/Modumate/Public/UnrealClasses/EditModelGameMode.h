@@ -116,6 +116,9 @@ public:
 	UMaterialInterface *SobelEdgeMaterial;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterialInterface *EmissiveUnlitMaterial;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UTexture2D *ButtonEditGreenTexture;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")

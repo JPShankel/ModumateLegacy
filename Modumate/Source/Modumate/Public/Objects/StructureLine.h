@@ -84,6 +84,7 @@ public:
 		TArray<TArray<FVector>> &OutPerimeters) const override;
 
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const override;
+	virtual void GetDrawingDesignerItems(const FVector& viewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength = 0.0f) const override;
 	virtual void PostLoadInstanceData() override;
 
 	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;
