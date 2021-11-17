@@ -556,15 +556,17 @@ TSharedRef<IHttpRequest, ESPMode::ThreadSafe> FModumateCloudConnection::MakeRequ
 
 	TWeakPtr<FModumateCloudConnection> weakThisCaptured(AsShared());
 	auto Request = FHttpModule::Get().CreateRequest();
+
 	Request->OnProcessRequestComplete().BindLambda([Callback, ServerErrorCallback, weakThisCaptured, bRefreshTokenOnAuthFailure, curRequestAutomationIdx]
 	(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 	{
-		int32 code = Response->GetResponseCode();
-		FString content = Response->GetContentAsString();
 		TSharedPtr<FModumateCloudConnection> sharedThis = weakThisCaptured.Pin();
 
-		if (sharedThis.IsValid())
+		if (bWasSuccessful && sharedThis.IsValid() && Response.IsValid())
 		{
+			int32 code = Response->GetResponseCode();
+			FString content = Response->GetContentAsString();
+
 			// If there's an automation handler, then store the response we get for this request so we can potentially play it back.
 			if (sharedThis->AutomationHandler && Request.IsValid() && (curRequestAutomationIdx != INDEX_NONE))
 			{

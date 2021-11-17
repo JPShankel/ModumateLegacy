@@ -390,6 +390,11 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 		FMOIStateData stateData(objRec);
 		const AModumateObjectInstance* sourceObj = doc->GetObjectById(objRec.ID);
 
+		if (!ensure(sourceObj != nullptr))
+		{
+			continue;
+		}
+
 		// For MOIs that are parented and have their own transform.
 		const FVector newLocation(sourceObj->GetLocation() + offset);
 		sourceObj->GetTransformedLocationState({ sourceObj->GetRotation(), newLocation }, stateData);
