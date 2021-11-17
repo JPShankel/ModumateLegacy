@@ -90,6 +90,11 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 	float scaleLength = FMath::Sqrt(viewWidth * viewHeight / (viewRequest.minimum_resolution_pixels.x * viewRequest.minimum_resolution_pixels.y))
 		* minFeatureSizeScale;
 
+	CachedXAxis = (corners[0] - corners[1]).GetSafeNormal();
+	CachedYAxis = (corners[1] - corners[2]).GetSafeNormal();
+	CachedOrigin = corners[2];
+	CachedSize.X = planeWidth; CachedSize.Y = planeHeight;
+
 	// Capture actor looks along +X (Y up); cutplane looks along +Z.
 	static const FQuat cameraToCutplane(FVector(1, -1, 1).GetSafeNormal(), FMath::DegreesToRadians(120));
 	const FQuat cutPlaneRotation(cutPlane->GetRotation());
@@ -127,6 +132,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 		viewResponse.response.view.name = cutPlaneData.Name;
 
 		viewResponse.response.image_base64 = MoveTemp(b64Png);
+		GetSnapPoints(viewResponse.response.snaps);
 		bSuccess = WriteJsonGeneric(OutJsonResponse, &viewResponse);
 	}
 
@@ -362,6 +368,39 @@ void FDrawingDesignerRenderControl::RestorePortalMaterials()
 				if (ensure(scenematerial))
 				{
 					meshComponent->SetMaterial(materialIndex, *scenematerial);
+				}
+			}
+		}
+	}
+}
+
+void FDrawingDesignerRenderControl::GetSnapPoints(TMap<FString, FDrawingDesignerSnap>& OutSnapPoints)
+{
+	TArray<const AModumateObjectInstance*> snapObjects = Doc->GetObjectsOfType({ EObjectType::OTWallSegment });
+	const FVector zAxis(CachedXAxis ^ CachedYAxis);
+	static const FBox2D unitBox(FVector2D::ZeroVector, FVector2D::UnitVector);
+
+	for (const auto* moi: snapObjects)
+	{
+		TArray<FStructurePoint> snapPoints;
+		TArray<FStructureLine> snapLines;
+		moi->GetStructuralPointsAndLines(snapPoints, snapLines);
+		const FString moiName(FString::FromInt(moi->ID) + TEXT(","));
+
+		int snapIndex = 0;
+		for (const auto& snap: snapPoints)
+		{
+			if ( ((snap.Point - CachedOrigin) | zAxis) > 0.0f)
+			{
+				FVector2D projectedPoint(UModumateGeometryStatics::ProjectPoint2D(snap.Point, CachedXAxis, CachedYAxis, CachedOrigin));
+				FVector2D scaledPoint(projectedPoint / CachedSize);
+				if (unitBox.IsInside(scaledPoint))
+				{
+					FDrawingDesignerSnap newSnap;
+					newSnap.x = scaledPoint.X; newSnap.y = scaledPoint.Y;
+					newSnap.id = snap.CP1;
+					OutSnapPoints.Add(moiName + FString::FromInt(snapIndex), newSnap);
+					++snapIndex;
 				}
 			}
 		}

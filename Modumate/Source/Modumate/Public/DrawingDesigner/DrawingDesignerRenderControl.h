@@ -9,6 +9,7 @@ class ADrawingDesignerRender;
 class UStaticMeshComponent;
 class UMaterialInterface;
 class UProceduralMeshComponent;
+struct FDrawingDesignerSnap;
 
 class MODUMATE_API FDrawingDesignerRenderControl
 {
@@ -22,6 +23,13 @@ public:
 private:
 	void SwapPortalMaterials();
 	void RestorePortalMaterials();
+	void GetSnapPoints(TMap<FString, FDrawingDesignerSnap>& OutSnapPoints);
+
+	FVector CachedXAxis;
+	FVector CachedYAxis;
+	FVector CachedOrigin;
+	FVector2D CachedSize;
+
 	const UModumateDocument *const Doc = nullptr;
 
 	using StaticMaterialKey = TPair<UStaticMeshComponent*, int32>;
