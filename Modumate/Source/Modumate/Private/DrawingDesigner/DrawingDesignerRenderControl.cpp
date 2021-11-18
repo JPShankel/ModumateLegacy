@@ -376,7 +376,7 @@ void FDrawingDesignerRenderControl::RestorePortalMaterials()
 
 void FDrawingDesignerRenderControl::GetSnapPoints(TMap<FString, FDrawingDesignerSnap>& OutSnapPoints)
 {
-	TArray<AModumateObjectInstance*> snapObjects = Doc->GetObjectsOfType({ EObjectType::OTWallSegment });
+	TArray<AModumateObjectInstance*> snapObjects = Doc->GetObjectsOfType(EObjectType::OTWallSegment);
 	const FVector zAxis(CachedXAxis ^ CachedYAxis);
 	static const FBox2D unitBox(FVector2D::ZeroVector, FVector2D::UnitVector);
 
