@@ -4208,7 +4208,7 @@ void UModumateDocument::drawing_apply_delta(const FString& InDelta)
 	}
 }
 
-void UModumateDocument::drawing_request_view_list() const
+void UModumateDocument::drawing_request_view_list()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_request_view_list"));
 	FDrawingDesignerRenderControl renderControl(this);
@@ -4217,7 +4217,7 @@ void UModumateDocument::drawing_request_view_list() const
 	DrawingSendResponse(TEXT("UE_pushViewList"), response);
 }
 
-void UModumateDocument::drawing_get_drawing_image(const FString& InRequest) const
+void UModumateDocument::drawing_get_drawing_image(const FString& InRequest)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_get_view_image"));
 	FString response;

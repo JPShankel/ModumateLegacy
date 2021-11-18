@@ -14,7 +14,7 @@ struct FDrawingDesignerSnap;
 class MODUMATE_API FDrawingDesignerRenderControl
 {
 public:
-	FDrawingDesignerRenderControl(const UModumateDocument* InDoc)
+	FDrawingDesignerRenderControl(UModumateDocument* InDoc)
 		: Doc(InDoc) { }
 	FString GetViewList();
 	bool GetView(const FString& jsonRequest, FString& OutJsonResponse);
@@ -30,7 +30,7 @@ private:
 	FVector CachedOrigin;
 	FVector2D CachedSize;
 
-	const UModumateDocument *const Doc = nullptr;
+	UModumateDocument *const Doc = nullptr;
 
 	using StaticMaterialKey = TPair<UStaticMeshComponent*, int32>;
 	TMap<StaticMaterialKey, UMaterialInterface*> SceneStaticMaterialMap;

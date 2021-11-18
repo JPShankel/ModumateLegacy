@@ -15,7 +15,7 @@ FString FDrawingDesignerRenderControl::GetViewList()
 {
 	FDrawingDesignerViewList viewList;
 
-	TArray<const AModumateObjectInstance*> cutPlanes = Doc->GetObjectsOfType(EObjectType::OTCutPlane);
+	TArray<const AModumateObjectInstance*> cutPlanes = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType(EObjectType::OTCutPlane);
 	for (const auto* cutPlane : cutPlanes)
 	{
 		if (cutPlane->GetNumCorners() != 4)
@@ -145,7 +145,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 
 void FDrawingDesignerRenderControl::AddSceneLines(const FVector& ViewDirection, float MinLength, ADrawingDesignerRender* Render)
 {
-	TArray<const AModumateObjectInstance*> sceneLinesObjects = Doc->GetObjectsOfType(
+	TArray<const AModumateObjectInstance*> sceneLinesObjects = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType(
 		{ EObjectType::OTDoor, EObjectType::OTWindow, EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace,
 		EObjectType::OTStructureLine, EObjectType::OTMullion });
 
@@ -173,7 +173,7 @@ void FDrawingDesignerRenderControl::SwapPortalMaterials()
 	}
 
 	// Portals:
-	TArray<const AModumateObjectInstance*> portalObjects = Doc->GetObjectsOfType({ EObjectType::OTDoor, EObjectType::OTWindow });
+	TArray<const AModumateObjectInstance*> portalObjects = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType({ EObjectType::OTDoor, EObjectType::OTWindow });
 	for (const auto* moi: portalObjects)
 	{
 		const ACompoundMeshActor* actor = CastChecked<ACompoundMeshActor>(moi->GetActor());
@@ -241,7 +241,7 @@ void FDrawingDesignerRenderControl::SwapPortalMaterials()
 	}
 
 	// Layered separators, columns:
-	TArray<const AModumateObjectInstance*> layeredObjects = Doc->GetObjectsOfType({ EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace,
+	TArray<const AModumateObjectInstance*> layeredObjects = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType({ EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace,
 		EObjectType::OTStructureLine, EObjectType::OTMullion });
 	for (const auto* moi: layeredObjects)
 	{
@@ -283,7 +283,7 @@ void FDrawingDesignerRenderControl::SwapPortalMaterials()
 void FDrawingDesignerRenderControl::RestorePortalMaterials()
 {
 	// Portals:
-	TArray<const AModumateObjectInstance*> portalObjects = Doc->GetObjectsOfType({ EObjectType::OTDoor, EObjectType::OTWindow });
+	TArray<const AModumateObjectInstance*> portalObjects = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType({ EObjectType::OTDoor, EObjectType::OTWindow });
 	for (const auto* moi: portalObjects)
 	{
 		const ACompoundMeshActor* actor = CastChecked<ACompoundMeshActor>(moi->GetActor());
@@ -340,7 +340,7 @@ void FDrawingDesignerRenderControl::RestorePortalMaterials()
 	}
 
 	// Layered separators:
-	TArray<const AModumateObjectInstance*> layeredObjects = Doc->GetObjectsOfType({ EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace,
+	TArray<const AModumateObjectInstance*> layeredObjects = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType({ EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace,
 		EObjectType::OTStructureLine, EObjectType::OTMullion });
 	for (const auto* moi: layeredObjects)
 	{
@@ -376,33 +376,44 @@ void FDrawingDesignerRenderControl::RestorePortalMaterials()
 
 void FDrawingDesignerRenderControl::GetSnapPoints(TMap<FString, FDrawingDesignerSnap>& OutSnapPoints)
 {
-	TArray<const AModumateObjectInstance*> snapObjects = Doc->GetObjectsOfType({ EObjectType::OTWallSegment });
+	TArray<AModumateObjectInstance*> snapObjects = Doc->GetObjectsOfType({ EObjectType::OTWallSegment });
 	const FVector zAxis(CachedXAxis ^ CachedYAxis);
 	static const FBox2D unitBox(FVector2D::ZeroVector, FVector2D::UnitVector);
 
-	for (const auto* moi: snapObjects)
-	{
-		TArray<FStructurePoint> snapPoints;
-		TArray<FStructureLine> snapLines;
-		moi->GetStructuralPointsAndLines(snapPoints, snapLines);
-		const FString moiName(FString::FromInt(moi->ID) + TEXT(","));
+	const FPlane cutPlane(CachedOrigin, zAxis);
 
-		int snapIndex = 0;
-		for (const auto& snap: snapPoints)
+	TArray<FStructurePoint> snapPoints;
+
+	for (auto* moi : snapObjects)
+	{
+		TArray<FStructurePoint> objectSnapPoints;
+		TArray<FStructureLine> objectSnapLines;
+		if (moi->IsCollisionEnabled())
 		{
-			if ( ((snap.Point - CachedOrigin) | zAxis) > 0.0f)
-			{
-				FVector2D projectedPoint(UModumateGeometryStatics::ProjectPoint2D(snap.Point, CachedXAxis, CachedYAxis, CachedOrigin));
-				FVector2D scaledPoint(projectedPoint / CachedSize);
-				if (unitBox.IsInside(scaledPoint))
-				{
-					FDrawingDesignerSnap newSnap;
-					newSnap.x = scaledPoint.X; newSnap.y = scaledPoint.Y;
-					newSnap.id = snap.CP1;
-					OutSnapPoints.Add(moiName + FString::FromInt(snapIndex), newSnap);
-					++snapIndex;
-				}
-			}
+			moi->RouteGetStructuralPointsAndLines(objectSnapPoints, objectSnapLines, true, false, cutPlane);
+			snapPoints.Append(MoveTemp(objectSnapPoints));
+		}
+	}
+
+	int snapIndex = 0;
+	int32 moiID = MOD_ID_NONE;
+	for (const auto& snap : snapPoints)
+	{
+		if (snap.ObjID != moiID)
+		{
+			moiID = snap.ObjID;
+			snapIndex = 0;
+		}
+
+		FVector2D projectedPoint(UModumateGeometryStatics::ProjectPoint2D(snap.Point, CachedXAxis, CachedYAxis, CachedOrigin));
+		FVector2D scaledPoint(projectedPoint / CachedSize);
+		if (unitBox.IsInside(scaledPoint))
+		{
+			FDrawingDesignerSnap newSnap;
+			newSnap.x = scaledPoint.X; newSnap.y = scaledPoint.Y;
+			newSnap.id = snap.CP1;
+			OutSnapPoints.Add(FString::FromInt(moiID) + TEXT(",") + FString::FromInt(snapIndex), newSnap);
+			++snapIndex;
 		}
 	}
 }
