@@ -8,6 +8,7 @@
 #include "UI/ToolTray/ToolTrayWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/BIM/BIMDesigner.h"
+#include "UI/Toolbar/ToolbarBottomWidget.h"
 
 
 UToolbarWidget::UToolbarWidget(const FObjectInitializer& ObjectInitializer)
@@ -44,6 +45,10 @@ bool UToolbarWidget::Initialize()
 void UToolbarWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+#if UE_BUILD_SHIPPING
+	ToolbarBottomBlock->SetVisibility(ESlateVisibility::Collapsed);
+#endif
 }
 
 void UToolbarWidget::OnButtonReleaseMetaPlane()

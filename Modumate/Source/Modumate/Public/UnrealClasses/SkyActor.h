@@ -89,9 +89,6 @@ public:
 	float Longitude = -73.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float TimeZone = -5.f;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool IsDayLightSaving = false;
 
 	FDateTime GetCurrentDateTime() const { return CurrentDateTime; }

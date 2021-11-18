@@ -59,6 +59,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UToolbarTopWidget *ToolBarTopBP;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UToolbarBottomWidget* ToolbarBottomBlock;
+
 	UFUNCTION()
 	void OnButtonReleaseMetaPlane();
 

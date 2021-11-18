@@ -76,7 +76,7 @@ void ASkyActor::UpdateComponentsWithDateTime(const FDateTime &DateTime)
 	USunPositionFunctionLibrary::GetSunPosition(
 		Latitude,
 		Longitude,
-		TimeZone,
+		Longitude / 15.f,
 		IsDayLightSaving,
 		DateTime.GetYear(),
 		DateTime.GetMonth(),
