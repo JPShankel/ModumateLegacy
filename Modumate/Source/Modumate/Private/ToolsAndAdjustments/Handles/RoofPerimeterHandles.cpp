@@ -49,8 +49,8 @@ bool ACreateRoofFacesHandle::BeginUse()
 		int32 vertIdxStart = 0, vertIdxEnd = 0;
 
 		UModumateDocument* doc = GameState->Document;
-		const FGraph3D &volumeGraph = doc->GetVolumeGraph();
-		FGraph3D &tempVolumeGraph = doc->GetTempVolumeGraph();
+		const FGraph3D& volumeGraph = *doc->GetVolumeGraph();
+		FGraph3D& tempVolumeGraph = doc->GetTempVolumeGraph();
 		int32 nextID = doc->GetNextAvailableID();
 		TSet<int32> groupIDs({ TargetMOI->ID });
 
@@ -124,7 +124,7 @@ bool ARetractRoofFacesHandle::BeginUse()
 	}
 
 	UModumateDocument* doc = GameState->Document;
-	const FGraph3D &volumeGraph = doc->GetVolumeGraph();
+	const FGraph3D& volumeGraph = *doc->GetVolumeGraph();
 	if (!volumeGraph.GetGroup(TargetMOI->ID, TempGroupMembers))
 	{
 		return false;

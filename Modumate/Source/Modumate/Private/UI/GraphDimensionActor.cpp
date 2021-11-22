@@ -73,7 +73,7 @@ void AGraphDimensionActor::Tick(float DeltaTime)
 	offset = FVector::ZeroVector;
 	if (!SurfaceGraph.IsValid())
 	{
-		auto& volumeGraph = Document->GetVolumeGraph();
+		const auto& volumeGraph = *Document->GetVolumeGraph();
 		auto targetEdge = volumeGraph.FindEdge(FMath::Abs(TargetEdgeID));
 		if (targetEdge == nullptr)
 		{
@@ -217,7 +217,7 @@ void AGraphDimensionActor::OnMeasurementTextCommitted(const FText& Text, ETextCo
 {
 	if (CommitMethod == ETextCommit::OnEnter)
 	{
-		auto& volumeGraph = Document->GetVolumeGraph();
+		const auto& volumeGraph = *Document->GetVolumeGraph();
 
 		// get the desired length from the text
 		// shrinking the edge be zero length is not allowed

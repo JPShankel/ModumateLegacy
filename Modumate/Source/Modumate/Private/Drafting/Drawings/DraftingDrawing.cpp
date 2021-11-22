@@ -116,7 +116,7 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 
 	auto graph = MakeShared<FGraph2D>();
 	TMap<int32, int32> objMap;
-	const auto& volumeGraph = Doc->GetVolumeGraph();
+	const auto& volumeGraph = *Doc->GetVolumeGraph();
 	volumeGraph.Create2DGraph(plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, graph, objMap);
 
 	ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
@@ -324,7 +324,7 @@ bool FDraftingDrawing::MakeWorldObjects()
 
 void FDraftingDrawing::GetFacesConnectedToRooms(TMap<int32, TArray<int32>> &OutFacesToRooms) const
 {
-	auto volumeGraph = Doc->GetVolumeGraph();
+	const auto& volumeGraph = *Doc->GetVolumeGraph();
 
 	for (auto* room : Doc->GetObjectsOfType(EObjectType::OTRoom))
 	{
@@ -352,7 +352,7 @@ void FDraftingDrawing::GetFacesConnectedToRooms(TMap<int32, TArray<int32>> &OutF
 
 void FDraftingDrawing::GetVisibleRoomsAndLocations(TMap<int32, FVector2D> &OutRoomsAndLocations) const
 {
-	auto volumeGraph = Doc->GetVolumeGraph();
+	const auto& volumeGraph = *Doc->GetVolumeGraph();
 	auto cutPlane = Doc->GetObjectById(CaptureObjID.Key);
 	// scope boxes are deprecated for now
 #if 0

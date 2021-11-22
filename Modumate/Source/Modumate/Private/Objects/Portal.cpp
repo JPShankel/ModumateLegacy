@@ -147,7 +147,7 @@ bool AMOIPortal::GetOffsetFaceBounds(FBox2D& OutOffsetBounds, FVector2D& OutOffs
 	OutOffsetBounds.Init();
 	OutOffset = FVector2D::ZeroVector;
 
-	const FGraph3DFace* parentFace = Document->GetVolumeGraph().FindFace(GetParentID());
+	const FGraph3DFace* parentFace = Document->GetVolumeGraph()->FindFace(GetParentID());
 	if (parentFace == nullptr)
 	{
 		return false;
@@ -588,7 +588,7 @@ void AMOIPortal::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
-	const FGraph3D& graph = Document->GetVolumeGraph();
+	const FGraph3D& graph = *Document->GetVolumeGraph();
 	const FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
 
 	if (!hostingFace)

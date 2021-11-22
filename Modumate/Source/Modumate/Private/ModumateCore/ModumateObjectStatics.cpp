@@ -78,7 +78,7 @@ bool UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
 
 	if (bUseDistanceFromBottom)
 	{
-		const FGraph3DFace *parentFace = PlanarObj->GetDocument()->GetVolumeGraph().FindFace(metaPlaneObject->ID);
+		const FGraph3DFace *parentFace = PlanarObj->GetDocument()->GetVolumeGraph()->FindFace(metaPlaneObject->ID);
 		FVector2D faceRelativePos = parentFace->ProjectPosition2D(WorldPos);
 
 		FVector2D faceRelativeRayEnd = parentFace->ProjectPosition2D(WorldPos - FVector::UpVector);
@@ -463,7 +463,7 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 
 	EObjectType objectType = MetaMOI->GetObjectType();
 	int32 objID = MetaMOI->ID;
-	const FGraph3D& volumeGraph = doc->GetVolumeGraph();
+	const FGraph3D& volumeGraph = *doc->GetVolumeGraph();
 	if (!volumeGraph.ContainsObject(objID))
 	{
 		return false;

@@ -438,7 +438,7 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfa
 	graphPolygonsToAdd.Add(MOD_ID_NONE, perimeterPolygon);
 
 	// Project the holes that the target has into graph polygons, if any
-	const auto &volumeGraph = GameState->Document->GetVolumeGraph();
+	const auto& volumeGraph = *GameState->Document->GetVolumeGraph();
 	const auto *hostParentFace = volumeGraph.FindFace(HitGraphHostMOI->GetParentID());
 
 	// this only counts faces that are contained, not holes without faces (CachedIslands)

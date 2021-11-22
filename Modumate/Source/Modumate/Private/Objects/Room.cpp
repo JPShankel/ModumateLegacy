@@ -63,7 +63,7 @@ void AMOIRoom::SetupDynamicGeometry()
 	}
 
 	TArray<TArray<FVector>> polygons;
-	const FGraph3D &volumeGraph = doc->GetVolumeGraph();
+	const FGraph3D& volumeGraph = *doc->GetVolumeGraph();
 	// TODO: refactor room faces using strongly-typed InstanceProperties
 	for (FGraphSignedID faceID : { MOD_ID_NONE })//GetControlPointIndices())
 	{

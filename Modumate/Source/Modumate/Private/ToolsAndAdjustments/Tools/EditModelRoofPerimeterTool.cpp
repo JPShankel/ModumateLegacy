@@ -24,7 +24,7 @@ bool URoofPerimeterTool::Activate()
 
 	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
-	const FGraph3D &volumeGraph = doc->GetVolumeGraph();
+	const FGraph3D& volumeGraph = *doc->GetVolumeGraph();
 
 	TSet<int32> graphObjIDs, connectedGraphIDs;
 	UModumateObjectStatics::GetGraphIDsFromMOIs(Controller->EMPlayerState->SelectedObjects, graphObjIDs);

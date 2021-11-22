@@ -11,9 +11,6 @@ class AEditModelGameMode;
 class AEditModelGameState;
 class ALineActor;
 
-struct FMOIDocumentRecordV4;
-using FMOIDocumentRecord = FMOIDocumentRecordV4;
-
 UCLASS()
 class MODUMATE_API UPasteTool : public UEditModelToolBase
 {

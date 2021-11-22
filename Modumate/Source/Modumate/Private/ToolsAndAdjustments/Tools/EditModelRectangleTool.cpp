@@ -113,8 +113,8 @@ bool URectangleTool::BeginUse()
 	if (newTarget && newTarget->GetObjectType() == EObjectType::OTMetaEdge)
 	{
 		UModumateDocument* doc = GameState->Document;
-		auto& graph = doc->GetVolumeGraph();
-		auto edge = graph.FindEdge(newTarget->ID);
+		const auto& graph = *doc->GetVolumeGraph();
+		const auto* edge = graph.FindEdge(newTarget->ID);
 		if (edge == nullptr)
 		{
 			return false;

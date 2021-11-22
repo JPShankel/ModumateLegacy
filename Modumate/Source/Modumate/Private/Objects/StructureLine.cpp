@@ -284,7 +284,7 @@ void AMOIStructureLine::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
-	const FGraph3D& graph = Document->GetVolumeGraph();
+	const FGraph3D& graph = *Document->GetVolumeGraph();
 	const FGraph3DEdge* hostingEdge = graph.FindEdge(GetParentID());
 	if (!hostingEdge)
 	{

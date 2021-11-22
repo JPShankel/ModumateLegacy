@@ -129,7 +129,7 @@ void AMOIStaircase::UpdateQuantities()
 		return;
 	}
 
-	const FGraph3D& graph = Document->GetVolumeGraph();
+	const FGraph3D& graph = *Document->GetVolumeGraph();
 	const FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
 	if (!ensure(hostingFace))
 	{

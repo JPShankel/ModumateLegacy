@@ -20,8 +20,8 @@ static constexpr int32 BIMPresetCollectionCurrentVersion = 6;
 struct FBIMPresetDelta;
 
 // Can't include ModumateSerialization, circular dependency
-struct FMOIDocumentRecordV4;
-using FMOIDocumentRecord = FMOIDocumentRecordV4;
+struct FMOIDocumentRecordV5;
+using FMOIDocumentRecord = FMOIDocumentRecordV5;
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetCollection

@@ -34,7 +34,7 @@ FModumateDimension::FModumateDimension(FVec2d StartVec, FVec2d EndVec)
 bool FModumateDimensions::AddDimensionsFromCutPlane(TSharedPtr<FDraftingComposite>& Page,
 	const UModumateDocument * Doc, FPlane Plane, FVector Origin, FVector AxisX)
 {
-	const FGraph3D& graph = Doc->GetVolumeGraph();
+	const FGraph3D& graph = *Doc->GetVolumeGraph();
 
 	const FVector axisY = Plane ^ AxisX;
 

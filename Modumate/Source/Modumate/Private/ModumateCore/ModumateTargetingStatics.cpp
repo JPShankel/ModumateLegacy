@@ -104,7 +104,7 @@ void UModumateTargetingStatics::GetConnectedSurfaceGraphs(const AModumateObjectI
 		return;
 	}
 
-	const FGraph3D& volumeGraph = doc->GetVolumeGraph();
+	const FGraph3D& volumeGraph = *doc->GetVolumeGraph();
 	TArray<const AModumateObjectInstance*, TInlineAllocator<8>> connectedPlanes;
 
 	auto getEdgeFaces = [&connectedPlanes, doc, &volumeGraph](int32 EdgeID)

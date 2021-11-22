@@ -44,7 +44,7 @@ void UDimensionManager::UpdateGraphDimensionStrings(int32 selectedGraphObjID)
 {
 	// find which vertices are currently selected and create measuring dimension strings
 	auto* doc = GetWorld()->GetGameState<AEditModelGameState>()->Document;
-	auto& graph = doc->GetVolumeGraph();
+	const auto& graph = *doc->GetVolumeGraph();
 
 	LastSelectedVertexIDs.Reset();
 	LastSelectedEdgeIDs.Reset();

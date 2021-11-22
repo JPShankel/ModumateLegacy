@@ -62,11 +62,11 @@ void AAngleDimensionActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	auto& volumeGraph = Document->GetVolumeGraph();
+	const auto& volumeGraph = *Document->GetVolumeGraph();
 
-	auto anchorEdge = volumeGraph.FindEdge(FMath::Abs(AnchorEdgeID));
-	auto startFace = volumeGraph.FindFace(FMath::Abs(StartFaceID));
-	auto endFace = volumeGraph.FindFace(FMath::Abs(EndFaceID));
+	const auto* anchorEdge = volumeGraph.FindEdge(FMath::Abs(AnchorEdgeID));
+	const auto* startFace = volumeGraph.FindFace(FMath::Abs(StartFaceID));
+	const auto* endFace = volumeGraph.FindFace(FMath::Abs(EndFaceID));
 
 	auto controller = DimensionText->GetOwningPlayer();
 

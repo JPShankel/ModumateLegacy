@@ -175,7 +175,7 @@ struct MODUMATE_API FEditModelInputLog
 	FModumateDocumentHeaderV2 LoadedDocHeader;
 	
 	UPROPERTY()
-	FMOIDocumentRecordV4 LoadedDocRecord;
+	FMOIDocumentRecordV5 LoadedDocRecord;
 
 	UPROPERTY()
 	float RecordEndTime;

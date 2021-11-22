@@ -31,7 +31,7 @@ FVector AMOIRoofPerimeter::GetLocation() const
 
 FVector AMOIRoofPerimeter::GetCorner(int32 index) const
 {
-	const FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
+	const FGraph3D& volumeGraph = *GetDocument()->GetVolumeGraph();
 
 	if (CachedEdgeIDs.IsValidIndex(index))
 	{
@@ -198,7 +198,7 @@ bool AMOIRoofPerimeter::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 
 bool AMOIRoofPerimeter::UpdateConnectedIDs()
 {
-	const FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
+	const FGraph3D& volumeGraph = *GetDocument()->GetVolumeGraph();
 
 	// Ask the graph what IDs belong to this roof perimeter group object
 	if (!volumeGraph.GetGroup(ID, TempGroupMembers))
@@ -300,7 +300,7 @@ void AMOIRoofPerimeter::UpdatePerimeterGeometry()
 
 	CachedPerimeterPoints.Reset();
 	CachedPerimeterCenter = FVector::ZeroVector;
-	const FGraph3D &volumeGraph = GetDocument()->GetVolumeGraph();
+	const FGraph3D& volumeGraph = *GetDocument()->GetVolumeGraph();
 
 	int32 numEdges = CachedEdgeIDs.Num();
 	for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)

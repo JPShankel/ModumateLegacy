@@ -208,7 +208,7 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 	UWorld* world = Controller->GetWorld();
 	int32 newParentID = MOD_ID_NONE;
 	AModumateObjectInstance* curTargetPlaneObj = GameState->Document->GetObjectById(CurTargetPlaneID);
-	const FGraph3DFace* curTargetFace = GameState->Document->GetVolumeGraph().FindFace(CurTargetPlaneID);
+	const FGraph3DFace* curTargetFace = GameState->Document->GetVolumeGraph()->FindFace(CurTargetPlaneID);
 
 	if ((curTargetPlaneObj == nullptr) || (curTargetFace == nullptr))
 	{

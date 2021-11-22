@@ -202,7 +202,7 @@ void UModumateRoomStatics::UpdateDerivedRoomProperties(AModumateObjectInstance *
 
 bool UModumateRoomStatics::CanRoomContainFace(const UModumateDocument *Document, FGraphSignedID FaceID)
 {
-	const FGraph3DFace *graphFace = Document->GetVolumeGraph().FindFace(FaceID);
+	const FGraph3DFace *graphFace = Document->GetVolumeGraph()->FindFace(FaceID);
 	const AModumateObjectInstance *planeObj = Document->GetObjectById(FMath::Abs(FaceID));
 
 	if ((graphFace == nullptr) || (planeObj == nullptr))
@@ -274,7 +274,7 @@ void UModumateRoomStatics::CalculateRoomChanges(const UModumateDocument *Documen
 
 	// Traverse the graph to find the separate rooms
 	TArray<FGraph3DTraversal> roomTraversals;
-	Document->GetVolumeGraph().TraverseFacesGeneric(floorPlaneIDs, roomTraversals,
+	Document->GetVolumeGraph()->TraverseFacesGeneric(floorPlaneIDs, roomTraversals,
 		FGraph3D::AlwaysPassPredicate,
 		[Document](FGraphSignedID FaceID) { return UModumateRoomStatics::CanRoomContainFace(Document, FaceID); }
 	);

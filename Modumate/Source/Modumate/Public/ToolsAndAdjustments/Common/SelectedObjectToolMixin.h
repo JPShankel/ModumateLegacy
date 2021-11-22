@@ -7,9 +7,6 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "DocumentManagement/ModumateSerialization.h"
 
-struct FMOIDocumentRecordV4;
-using FMOIDocumentRecord = FMOIDocumentRecordV4;
-
 class MODUMATE_API FSelectedObjectToolMixin
 {
 protected:

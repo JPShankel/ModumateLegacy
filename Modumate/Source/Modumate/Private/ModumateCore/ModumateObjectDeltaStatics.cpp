@@ -25,13 +25,13 @@ void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObj
 		}
 		EGraphObjectType graph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(moi->GetObjectType());
 
-		if (auto graphObject = doc->GetVolumeGraph().FindObject(id))
+		if (const auto& graphObject = doc->GetVolumeGraph()->FindObject(id))
 		{
 			TArray<int32> vertexIDs;
 			graphObject->GetVertexIDs(vertexIDs);
 			OutTransformableIDs.Append(vertexIDs);
 		}
-		else if (auto parentGraphObject = doc->GetVolumeGraph().FindObject(moi->GetParentID()))
+		else if (auto parentGraphObject = doc->GetVolumeGraph()->FindObject(moi->GetParentID()))
 		{
 			TArray<int32> vertexIDs;
 			parentGraphObject->GetVertexIDs(vertexIDs);
@@ -73,7 +73,7 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 	TMap<int32, TMap<int32, FVector2D>> combinedVertex2DMovements;
 	TMap<int32, FTransform> nongraphMovements;
 
-	auto& graph = doc->GetVolumeGraph();
+	const auto& graph = *doc->GetVolumeGraph();
 
 	for (auto& kvp : ObjectMovements)
 	{
@@ -222,7 +222,7 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 	TMap<int32, TSet<int32>> surfaceGraphIDToObjIDs;
 	TSet<int32> ffeIDs;
 
-	auto& graph = doc->GetVolumeGraph(); 
+	const auto& graph = *doc->GetVolumeGraph(); 
 
 	for (int32 id : InObjectIDs)
 	{

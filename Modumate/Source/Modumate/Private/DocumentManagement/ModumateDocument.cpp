@@ -932,9 +932,10 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 	// Dirty every group whose members were deleted, or that had members added/removed
 	TSet<int32> dirtyGroupIDs;
+	FGraph3D* volumeGraph = GetVolumeGraph();
 	for (auto& kvp : Delta.VertexDeletions)
 	{
-		auto vertex = VolumeGraph.FindVertex(kvp.Key);
+		auto vertex = volumeGraph->FindVertex(kvp.Key);
 		if (vertex == nullptr)
 		{
 			continue;
@@ -943,7 +944,7 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 	}
 	for (auto& kvp : Delta.EdgeDeletions)
 	{
-		auto edge = VolumeGraph.FindEdge(kvp.Key);
+		auto edge = volumeGraph->FindEdge(kvp.Key);
 		if (edge == nullptr)
 		{
 			continue;
@@ -952,7 +953,7 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 	}
 	for (auto& kvp : Delta.FaceDeletions)
 	{
-		auto face = VolumeGraph.FindFace(kvp.Key);
+		auto face = volumeGraph->FindFace(kvp.Key);
 		if (face == nullptr)
 		{
 			continue;
@@ -987,7 +988,7 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 		}
 	}
 
-	VolumeGraph.ApplyDelta(Delta);
+	volumeGraph->ApplyDelta(Delta);
 
 	for (auto &kvp : Delta.VertexAdditions)
 	{
@@ -1264,7 +1265,7 @@ bool UModumateDocument::StartPreviewing()
 	bApplyingPreviewDeltas = true;
 	PrePreviewNextID = NextID;
 
-	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+	FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 
 	return true;
 }
@@ -1394,8 +1395,9 @@ void UModumateDocument::CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWo
 void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 {
 	// TODO: unclear whether this is correct or the best place -
-	// set the faces containing or contained by dirty faces dirty as well	
-	for (auto& kvp : VolumeGraph.GetFaces())
+	// set the faces containing or contained by dirty faces dirty as well
+	FGraph3D* volumeGraph = GetVolumeGraph();
+	for (auto& kvp : volumeGraph->GetFaces())
 	{
 		auto& face = kvp.Value;
 		if (!face.bDirty)
@@ -1403,13 +1405,13 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 			continue;
 		}
 
-		if (auto containingFace = VolumeGraph.FindFace(face.ContainingFaceID))
+		if (auto containingFace = volumeGraph->FindFace(face.ContainingFaceID))
 		{
 			containingFace->Dirty(false);
 		}
 		for (int32 containedFaceID : face.ContainedFaceIDs)
 		{
-			if (auto containedFace = VolumeGraph.FindFace(containedFaceID))
+			if (auto containedFace = volumeGraph->FindFace(containedFaceID))
 			{
 				containedFace->Dirty(false);
 			}
@@ -1418,11 +1420,11 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 
 	TSet<int32> dirtyGroupIDs;
 	TArray<int32> cleanedVertices, cleanedEdges, cleanedFaces;
-	if (VolumeGraph.CleanGraph(cleanedVertices, cleanedEdges, cleanedFaces))
+	if (volumeGraph->CleanGraph(cleanedVertices, cleanedEdges, cleanedFaces))
 	{
 		for (int32 vertexID : cleanedVertices)
 		{
-			FGraph3DVertex *graphVertex = VolumeGraph.FindVertex(vertexID);
+			FGraph3DVertex *graphVertex = volumeGraph->FindVertex(vertexID);
 			AModumateObjectInstance *vertexObj = GetObjectById(vertexID);
 			if (graphVertex && vertexObj && (vertexObj->GetObjectType() == EObjectType::OTMetaVertex))
 			{
@@ -1433,7 +1435,7 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 
 		for (int32 edgeID : cleanedEdges)
 		{
-			FGraph3DEdge *graphEdge = VolumeGraph.FindEdge(edgeID);
+			FGraph3DEdge *graphEdge = volumeGraph->FindEdge(edgeID);
 			AModumateObjectInstance *edgeObj = GetObjectById(edgeID);
 			if (graphEdge && edgeObj && (edgeObj->GetObjectType() == EObjectType::OTMetaEdge))
 			{
@@ -1444,7 +1446,7 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 
 		for (int32 faceID : cleanedFaces)
 		{
-			FGraph3DFace *graphFace = VolumeGraph.FindFace(faceID);
+			FGraph3DFace *graphFace = volumeGraph->FindFace(faceID);
 			AModumateObjectInstance *faceObj = GetObjectById(faceID);
 			if (graphFace && faceObj && (faceObj->GetObjectType() == EObjectType::OTMetaPlane))
 			{
@@ -1468,7 +1470,7 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas)
 {
 	FGraph3D moiTempGraph;
-	FGraph3D::CloneFromGraph(moiTempGraph, VolumeGraph);
+	FGraph3D::CloneFromGraph(moiTempGraph, *GetVolumeGraph());
 
 	for (auto& delta : InDeltas)
 	{
@@ -1715,7 +1717,7 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 		EGraph3DObjectType graph3DObjType;
 		bool bObjIsGraph2D = SurfaceGraphs.Contains(objID);
 
-		if (IsObjectInVolumeGraph(objToDelete->ID, graph3DObjType) || VolumeGraph.ContainsGroup(objID))
+		if (IsObjectInVolumeGraph(objToDelete->ID, graph3DObjType) || GetVolumeGraph()->ContainsGroup(objID))
 		{
 			graph3DObjIDsToDelete.Add(objID);
 		}
@@ -1748,13 +1750,13 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 		TArray<FGraph3DDelta> graph3DDeltas;
 		if (!TempVolumeGraph.GetDeltaForDeleteObjects(graph3DObjIDsToDelete.Array(), graph3DDeltas, NextID, bDeleteConnected, true))
 		{
-			FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+			FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 			return false;
 		}
 
 		if (!FinalizeGraphDeltas(graph3DDeltas, graph3DDeltaPtrs))
 		{
-			FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+			FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 			return false;
 		}
 	}
@@ -1880,13 +1882,13 @@ bool UModumateDocument::GetVertexMovementDeltas(const TArray<int32>& VertexIDs, 
 
 	if (!TempVolumeGraph.GetDeltaForVertexMovements(VertexIDs, VertexPositions, deltas, NextID))
 	{
-		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 		return false;
 	}
 
 	if (!FinalizeGraphDeltas(deltas, OutDeltas))
 	{
-		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 		return false;
 	}
 
@@ -1899,13 +1901,13 @@ bool UModumateDocument::GetPreviewVertexMovementDeltas(const TArray<int32>& Vert
 
 	if (!TempVolumeGraph.MoveVerticesDirect(VertexIDs, VertexPositions, deltas, NextID))
 	{
-		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 		return false;
 	}
 
 	if (!FinalizeGraphDeltas(deltas, OutDeltas))
 	{
-		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 		return false;
 	}
 
@@ -1939,14 +1941,14 @@ bool UModumateDocument::JoinMetaObjects(UWorld *World, const TArray<int32> &Obje
 	TArray<FGraph3DDelta> graphDeltas;
 	if (!TempVolumeGraph.GetDeltasForObjectJoin(graphDeltas, ObjectIDs, NextID, objectType))
 	{
-		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 		return false;
 	}
 
 	TArray<FDeltaPtr> deltaPtrs;
 	if (!FinalizeGraphDeltas(graphDeltas, deltaPtrs))
 	{
-		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 		return false;
 	}
 	return ApplyDeltas(deltaPtrs, World);
@@ -2016,7 +2018,7 @@ bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 	if (!bValidDelta || !FinalizeGraphDeltas(deltas, OutDeltaPtrs))
 	{
 		// delta will be false if the object exists, out object ids should contain the existing id
-		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 		return false;
 	}
 
@@ -2031,7 +2033,7 @@ bool UModumateDocument::PasteMetaObjects(const FGraph3DRecord* InRecord, TArray<
 
 	if (!FinalizeGraphDeltas(OutDeltas, OutDeltaPtrs))
 	{
-		FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 		return false;
 	}
 
@@ -2242,7 +2244,7 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 		auto parentObj = GetObjectById(parentID);
 
 		// obtained from the original graph because this face is removed by now
-		auto parentFace = VolumeGraph.FindFace(parentID);
+		auto parentFace = GetVolumeGraph()->FindFace(parentID);
 
 		if (parentObj && parentObj->GetChildIDs().Num() > 0)
 		{
@@ -2508,7 +2510,7 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas /*= 
 	}
 
 	UpdateVolumeGraphObjects(world);
-	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+	FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 
 	for (auto& kvp : SurfaceGraphs)
 	{
@@ -2726,9 +2728,15 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 	UnverifiedDeltasRecords.Reset();
 	VerifiedDeltasRecords.Reset();
 	UndoRedoMacroStack.Reset();
-	VolumeGraph.Reset();
+	VolumeGraphs.Reset();
 	TempVolumeGraph.Reset();
 	SurfaceGraphs.Reset();
+
+	// TODO: Graph IDs will eventually be MOI IDs.
+	static constexpr int32 RootGraphID = 1;
+	VolumeGraphs.Add(RootGraphID, MakeShared<FGraph3D>());
+	RootVolumeGraph = RootGraphID;
+	ActiveVolumeGraph = RootVolumeGraph;
 
 	if (bClearName)
 	{
@@ -2903,7 +2911,14 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 		}
 	}
 
-	VolumeGraph.Save(&OutDocumentRecord.VolumeGraph);
+	// For compatibility with older clients
+	GetVolumeGraph(RootVolumeGraph)->Save(&OutDocumentRecord.VolumeGraph);
+	
+	OutDocumentRecord.RootVolumeGraph = RootVolumeGraph;
+	for (const auto& graph3dKvp: VolumeGraphs)
+	{
+		graph3dKvp.Value->Save(&OutDocumentRecord.VolumeGraphs.Add(graph3dKvp.Key));
+	}
 
 	// Save all of the surface graphs as records
 	for (const auto &kvp : SurfaceGraphs)
@@ -3057,8 +3072,27 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 
 	// Load the connectivity graphs now, which contain associations between object IDs,
 	// so that any objects whose geometry setup needs to know about connectivity can find it.
-	bool bSuccessfulGraphLoad = VolumeGraph.Load(&InDocumentRecord.VolumeGraph);
-	FGraph3D::CloneFromGraph(TempVolumeGraph, VolumeGraph);
+	bool bSuccessfulGraphLoad = true;
+	if (InHeader.Version < 18)
+	{   // Legacy project with a single volume graph
+		if (ensureAlways(VolumeGraphs.Num() == 1))
+		{
+			bSuccessfulGraphLoad = VolumeGraphs.begin()->Value->Load(&InDocumentRecord.VolumeGraph);
+		}
+	}
+	else
+	{
+		VolumeGraphs.Reset();
+		for (const auto& volumeGraphKvp : InDocumentRecord.VolumeGraphs)
+		{
+			TSharedPtr<FGraph3D> volumeGraph = MakeShared<FGraph3D>();
+			bSuccessfulGraphLoad &= volumeGraph->Load(&volumeGraphKvp.Value);
+			VolumeGraphs.Add(volumeGraphKvp.Key, volumeGraph);
+		}
+		RootVolumeGraph = InDocumentRecord.RootVolumeGraph;
+	}
+
+	FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 
 	// If some elements didn't load in correctly, then mark the document as initially dirty,
 	// since it may indicate that undo operations could break the graph, or that it should be re-saved before clients join.
@@ -3090,7 +3124,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	}
 
 	// Create MOIs reflected from the volume graph
-	for (const auto& kvp : VolumeGraph.GetAllObjects())
+	for (const auto& kvp : GetVolumeGraph()->GetAllObjects())
 	{
 		EObjectType objectType = UModumateTypeStatics::ObjectTypeFromGraph3DType(kvp.Value);
 		if (ensure(!ObjectsByID.Contains(kvp.Key)) && (objectType != EObjectType::OTNone))
@@ -3405,6 +3439,7 @@ void UModumateDocument::UpdateMitering(UWorld *world, const TArray<int32> &dirty
 {
 	TSet<int32> dirtyPlaneIDs;
 
+	FGraph3D* volumeGraph = GetVolumeGraph();
 	// Gather all of the dirty planes that need to be updated with new miter geometry
 	for (int32 dirtyObjID : dirtyObjIDs)
 	{
@@ -3415,7 +3450,7 @@ void UModumateDocument::UpdateMitering(UWorld *world, const TArray<int32> &dirty
 			{
 			case EObjectType::OTMetaEdge:
 			{
-				const FGraph3DEdge *graphEdge = VolumeGraph.FindEdge(dirtyObjID);
+				const FGraph3DEdge *graphEdge = volumeGraph->FindEdge(dirtyObjID);
 				for (const FEdgeFaceConnection &edgeFaceConnection : graphEdge->ConnectedFaces)
 				{
 					dirtyPlaneIDs.Add(FMath::Abs(edgeFaceConnection.FaceID));
@@ -3426,13 +3461,13 @@ void UModumateDocument::UpdateMitering(UWorld *world, const TArray<int32> &dirty
 			{
 				dirtyPlaneIDs.Add(dirtyObjID);
 
-				const FGraph3DFace *graphFace = VolumeGraph.FindFace(dirtyObjID);
+				const FGraph3DFace *graphFace = volumeGraph->FindFace(dirtyObjID);
 				graphFace->GetAdjacentFaceIDs(dirtyPlaneIDs);
 				break;
 			}
 			case EObjectType::OTMetaVertex:
 			{
-				const FGraph3DVertex *graphVertex = VolumeGraph.FindVertex(dirtyObjID);
+				const FGraph3DVertex *graphVertex = volumeGraph->FindVertex(dirtyObjID);
 				graphVertex->GetConnectedFaces(dirtyPlaneIDs);
 				break;
 			}
@@ -3453,7 +3488,7 @@ void UModumateDocument::UpdateMitering(UWorld *world, const TArray<int32> &dirty
 	for (int32 dirtyPlaneID : dirtyPlaneIDs)
 	{
 		AModumateObjectInstance *dirtyPlane = GetObjectById(dirtyPlaneID);
-		FGraph3DFace *dirtyFace = VolumeGraph.FindFace(dirtyPlaneID);
+		FGraph3DFace *dirtyFace = volumeGraph->FindFace(dirtyPlaneID);
 		if (dirtyPlane && dirtyFace)
 		{
 			const TArray<int32> &childIDs = dirtyPlane->GetChildIDs();
@@ -3470,7 +3505,7 @@ void UModumateDocument::UpdateMitering(UWorld *world, const TArray<int32> &dirty
 
 bool UModumateDocument::CanRoomContainFace(FGraphSignedID FaceID)
 {
-	const FGraph3DFace *graphFace = VolumeGraph.FindFace(FaceID);
+	const FGraph3DFace *graphFace = GetVolumeGraph()->FindFace(FaceID);
 	const AModumateObjectInstance *planeObj = GetObjectById(FMath::Abs(FaceID));
 
 	if ((graphFace == nullptr) || (planeObj == nullptr))
@@ -3627,6 +3662,18 @@ void UModumateDocument::UpdateRoomAnalysis(UWorld *world)
 #endif
 }
 
+FGraph3D* UModumateDocument::GetVolumeGraph(int32 GraphId /*= MOD_ID_NONE*/)
+{
+	TSharedPtr<FGraph3D>* graph = VolumeGraphs.Find(GraphId == MOD_ID_NONE ? ActiveVolumeGraph : GraphId);
+	return ensure(graph) ? graph->Get() : nullptr;
+}
+
+const FGraph3D* UModumateDocument::GetVolumeGraph(int32 GraphId /*= MOD_ID_NONE*/) const
+{
+	const TSharedPtr<FGraph3D>* graph = VolumeGraphs.Find(GraphId == MOD_ID_NONE ? ActiveVolumeGraph : GraphId);
+	return ensure(graph) ? graph->Get() : nullptr;
+}
+
 const TSharedPtr<FGraph2D> UModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID) const
 {
 	return SurfaceGraphs.FindRef(SurfaceGraphID);
@@ -3681,7 +3728,7 @@ bool UModumateDocument::IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &O
 
 	OutObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(moi->GetObjectType());
 	bool bIsVolumeGraphType = (OutObjType != EGraph3DObjectType::None);
-	bIsInGraph = VolumeGraph.ContainsObject(ObjID);
+	bIsInGraph = GetVolumeGraph()->ContainsObject(ObjID);
 	ensureAlways(bIsVolumeGraphType == bIsInGraph);
 
 	return bIsInGraph;
@@ -3763,7 +3810,8 @@ void UModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 	const float faceEdgeOffset = 15.0f;
 	const FVector textOffset = 20.0f * FVector::UpVector;
 
-	for (const auto &kvp : VolumeGraph.GetVertices())
+	const FGraph3D* volumeGraph = GetVolumeGraph();
+	for (const auto &kvp : volumeGraph->GetVertices())
 	{
 		const FGraph3DVertex &graphVertex = kvp.Value;
 		FVector vertexDrawPos = graphVertex.Position;
@@ -3777,11 +3825,11 @@ void UModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 		DrawDebugString(world, vertexDrawPos + textOffset, vertexString, nullptr, FColor::White, 0.0f, true);
 	}
 
-	for (const auto &kvp : VolumeGraph.GetEdges())
+	for (const auto &kvp : volumeGraph->GetEdges())
 	{
 		const FGraph3DEdge &graphEdge = kvp.Value;
-		const FGraph3DVertex *startGraphVertex = VolumeGraph.FindVertex(graphEdge.StartVertexID);
-		const FGraph3DVertex *endGraphVertex = VolumeGraph.FindVertex(graphEdge.EndVertexID);
+		const FGraph3DVertex *startGraphVertex = volumeGraph->FindVertex(graphEdge.StartVertexID);
+		const FGraph3DVertex *endGraphVertex = volumeGraph->FindVertex(graphEdge.EndVertexID);
 		if (startGraphVertex && endGraphVertex)
 		{
 			FVector startDrawPos = startGraphVertex->Position;
@@ -3794,7 +3842,7 @@ void UModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 		}
 	}
 
-	for (const auto &kvp : VolumeGraph.GetFaces())
+	for (const auto &kvp : volumeGraph->GetFaces())
 	{
 		const FGraph3DFace &face = kvp.Value;
 
@@ -3806,9 +3854,9 @@ void UModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 			const FVector &prevEdgeNormal = face.CachedEdgeNormals[(edgeIdx + numEdges - 1) % numEdges];
 			const FVector &nextEdgeNormal = face.CachedEdgeNormals[(edgeIdx + 1) % numEdges];
 
-			const FGraph3DEdge *graphEdge = VolumeGraph.FindEdge(edgeID);
-			const FGraph3DVertex *startGraphVertex = VolumeGraph.FindVertex(graphEdge->StartVertexID);
-			const FGraph3DVertex *endGraphVertex = VolumeGraph.FindVertex(graphEdge->EndVertexID);
+			const FGraph3DEdge *graphEdge = volumeGraph->FindEdge(edgeID);
+			const FGraph3DVertex *startGraphVertex = volumeGraph->FindVertex(graphEdge->StartVertexID);
+			const FGraph3DVertex *endGraphVertex = volumeGraph->FindVertex(graphEdge->EndVertexID);
 
 			bool bEdgeForward = (edgeID > 0);
 			FVector startDrawPos = bEdgeForward ? startGraphVertex->Position : endGraphVertex->Position;
@@ -3835,7 +3883,7 @@ void UModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 		DrawDebugDirectionalArrow(world, face.CachedCenter, face.CachedCenter + 2.0f * faceEdgeOffset * planeNormal, arrowSize, FColor::Green, false, -1.f, 0xFF, lineThickness);
 	}
 
-	for (const auto &kvp : VolumeGraph.GetPolyhedra())
+	for (const auto &kvp : volumeGraph->GetPolyhedra())
 	{
 		const FGraph3DPolyhedron &polyhedron = kvp.Value;
 		FString polyhedronFacesString = FString::JoinBy(polyhedron.FaceIDs, TEXT(", "), [](const FGraphSignedID &faceID) { return FString::Printf(TEXT("%d"), faceID); });

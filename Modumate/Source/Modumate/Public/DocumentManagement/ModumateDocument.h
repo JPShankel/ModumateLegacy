@@ -74,7 +74,9 @@ private:
 
 	// The volume connectivity information, for the purpose of keeping track of connectivity of all planar objects;
 	// the source of truth for mitering, room detection, volume calculation, slicing floorplans/sections/elevations, heat/acoustics, etc.
-	FGraph3D VolumeGraph;
+	TMap<int32, TSharedPtr<FGraph3D>> VolumeGraphs;
+	int32 RootVolumeGraph = MOD_ID_NONE;
+	int32 ActiveVolumeGraph = MOD_ID_NONE;
 
 	// Copy of the volume graph to work with multi-stage deltas
 	FGraph3D TempVolumeGraph;
@@ -176,7 +178,8 @@ public:
 	bool CanRoomContainFace(FGraphSignedID FaceID);
 	void UpdateRoomAnalysis(UWorld *world);
 
-	const FGraph3D &GetVolumeGraph() const { return VolumeGraph; }
+	FGraph3D* GetVolumeGraph(int32 GraphId = MOD_ID_NONE);
+	const FGraph3D* GetVolumeGraph(int32 GraphId = MOD_ID_NONE) const;
 
 	// TODO: we should remove the TempVolumeGraph entirely if we can rely on inverting deltas,
 	// or give graph delta creators their own copy of a graph to modify if we still need to use it for delta creation.
@@ -189,7 +192,7 @@ public:
 	const TSharedPtr<FGraph2D> FindSurfaceGraphByObjID(int32 ObjectID) const;
 	TSharedPtr<FGraph2D> FindSurfaceGraphByObjID(int32 ObjectID);
 
-	int32 CalculatePolyhedra() { return VolumeGraph.CalculatePolyhedra(); }
+	int32 CalculatePolyhedra() { return GetVolumeGraph()->CalculatePolyhedra(); }
 	bool IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &OutObjType) const;
 
 	// TODO: refactor for output parameters: GetObjectsOfType(EObjectType, TArray<const AModumateObjectInstance

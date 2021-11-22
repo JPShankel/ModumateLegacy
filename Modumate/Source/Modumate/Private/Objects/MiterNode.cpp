@@ -38,7 +38,7 @@ FMiterParticipantData::FMiterParticipantData(const struct FMiterData *InMiterDat
 	}
 
 	const FEdgeFaceConnection &edgeFaceConnection = InMiterData->GraphEdge->ConnectedFaces[EdgeFaceIndex];
-	GraphFace = doc->GetVolumeGraph().FindFace(edgeFaceConnection.FaceID);
+	GraphFace = doc->GetVolumeGraph()->FindFace(edgeFaceConnection.FaceID);
 	if (!ensure(GraphFace))
 	{
 		return;
@@ -284,7 +284,7 @@ bool FMiterData::GatherDetails(const AModumateObjectInstance *InMiterObject)
 		return false;
 	}
 
-	const FGraph3D &volumeGraph = doc->GetVolumeGraph();
+	const FGraph3D& volumeGraph = *doc->GetVolumeGraph();
 	GraphEdge = volumeGraph.FindEdge(MOI->ID);
 	if (GraphEdge == nullptr)
 	{

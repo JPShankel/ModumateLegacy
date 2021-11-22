@@ -521,7 +521,7 @@ bool AMOICutPlane::UpdateDraftingPreview()
 bool AMOICutPlane::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting)
 {
 	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
-	const FGraph3D& volumeGraph = Document->GetVolumeGraph();
+	const FGraph3D& volumeGraph = *Document->GetVolumeGraph();
 	TArray<FVector2D> boxPoints;
 
 	for (auto& point : CachedPoints)

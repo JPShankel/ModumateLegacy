@@ -5,8 +5,8 @@
 
 class UModumateDocument;
 
-struct FMOIDocumentRecordV4;
-using FMOIDocumentRecord = FMOIDocumentRecordV4;
+struct FMOIDocumentRecordV5;
+using FMOIDocumentRecord = FMOIDocumentRecordV5;
 
 struct FDocumentDelta;
 using FDeltaPtr = TSharedPtr<FDocumentDelta>;

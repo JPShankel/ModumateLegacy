@@ -52,12 +52,12 @@ bool AAdjustPolyEdgeHandle::BeginUse()
 	else if (TargetMOI->GetObjectType() == EObjectType::OTMetaEdge)
 	{
 		// if the edge is connected to a face, arbitrarily pick one as the plane for the tool
-		auto& graph = Controller->GetDocument()->GetVolumeGraph();
-		auto edge = graph.FindEdge(TargetMOI->ID);
+		const auto& graph = *Controller->GetDocument()->GetVolumeGraph();
+		const auto* edge = graph.FindEdge(TargetMOI->ID);
 		if (edge != nullptr && edge->ConnectedFaces.Num() > 0)
 		{
-			auto& faceConnection = edge->ConnectedFaces[0];
-			auto face = graph.FindFace(faceConnection.FaceID);
+			const auto& faceConnection = edge->ConnectedFaces[0];
+			const auto* face = graph.FindFace(faceConnection.FaceID);
 			if (face != nullptr)
 			{
 				PolyPlane = face->CachedPlane;
@@ -245,7 +245,7 @@ bool AAdjustPolyEdgeHandle::GetTransforms(const FVector Offset, TMap<int32, FTra
 	{
 		if (TargetMOI->GetObjectType() == EObjectType::OTMetaPlane)
 		{
-			auto face = doc->GetVolumeGraph().FindFace(TargetMOI->ID);
+			const auto* face = doc->GetVolumeGraph()->FindFace(TargetMOI->ID);
 			int32 numPolyPoints = OriginalPolyPoints.Num();
 			int32 edgeStartIdx = TargetIndex;
 			int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
@@ -259,7 +259,7 @@ bool AAdjustPolyEdgeHandle::GetTransforms(const FVector Offset, TMap<int32, FTra
 		}
 		else if (TargetMOI->GetObjectType() == EObjectType::OTMetaEdge)
 		{
-			auto edge = doc->GetVolumeGraph().FindEdge(TargetMOI->ID);
+			const auto* edge = doc->GetVolumeGraph()->FindEdge(TargetMOI->ID);
 			if (!ensure(edge))
 			{
 				return false;

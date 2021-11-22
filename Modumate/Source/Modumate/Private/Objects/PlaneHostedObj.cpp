@@ -552,7 +552,7 @@ void AMOIPlaneHostedObj::UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalcul
 	}
 
 	int32 parentID = GetParentID();
-	const FGraph3DFace *planeFace = doc->GetVolumeGraph().FindFace(parentID);
+	const FGraph3DFace *planeFace = doc->GetVolumeGraph()->FindFace(parentID);
 	const AModumateObjectInstance *parentPlane = doc->GetObjectById(parentID);
 	if (!ensureMsgf(parentPlane, TEXT("Plane-hosted object (ID %d) is missing parent object (ID %d)!"), ID, parentID) ||
 		!ensureMsgf(planeFace, TEXT("Plane-hosted object (ID %d) is missing parent graph face (ID %d)!"), ID, parentID))
@@ -854,7 +854,7 @@ void AMOIPlaneHostedObj::UpdateQuantities()
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	const int32 numLayers = assembly.Layers.Num();
 	auto assemblyGuid = assembly.UniqueKey();
-	const FGraph3D& graph = Document->GetVolumeGraph();
+	const FGraph3D& graph = *Document->GetVolumeGraph();
 	const FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
 	if (!ensure(hostingFace))
 	{

@@ -270,7 +270,52 @@ struct FMOIDocumentRecordV4 : public FMOIDocumentRecordBASE
 	void FromVersion3(const FMOIDocumentRecordV3 &v3);
 };
 
-using FMOIDocumentRecord = FMOIDocumentRecordV4;
+USTRUCT()
+struct FMOIDocumentRecordV5 : public FMOIDocumentRecordBASE
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FMOIStateData> ObjectData;
+
+	UPROPERTY()
+	TMap<EToolMode, FBIMKey> CurrentToolAssemblyMap_DEPRECATED;
+
+	UPROPERTY()
+	TMap<EToolMode, FGuid> CurrentToolAssemblyGUIDMap;
+
+	UPROPERTY()
+	FBIMPresetCollection PresetCollection;
+
+	UPROPERTY()
+	TMap<FString, FGraph2DRecord> CustomGraph2DRecords;
+
+	UPROPERTY()
+	TMap<int32, FGraph2DRecord> SurfaceGraphs;
+
+	UPROPERTY()
+	TMap<FBIMKey, FGuid> UsedPresetGUIDs;
+
+	UPROPERTY()
+	TArray<FDeltasRecord> AppliedDeltas;
+
+	UPROPERTY()
+	FDocumentSettings Settings;
+
+	UPROPERTY()
+	TMap<uint32, FGuid> TypicalEdgeDetails;
+
+	UPROPERTY()
+	FDrawingDesignerDocument DrawingDesignerDocument;
+
+	UPROPERTY()
+	int32 RootVolumeGraph = 0;
+
+	UPROPERTY()
+	TMap<int32, FGraph3DRecordV1> VolumeGraphs;
+};
+
+using FMOIDocumentRecord = FMOIDocumentRecordV5;
 
 USTRUCT()
 struct FModumateDocumentHeaderV1
@@ -314,7 +359,8 @@ using FModumateDocumentHeader = FModumateDocumentHeaderV2;
 // Version 15: Support for multiple custom data entries in presets
 // Version 16: Miter priority in layers
 // Version 17: Typical edge details
-static constexpr int32 DocVersion = 17;
+// Version 18: Multiple volume graphs
+static constexpr int32 DocVersion = 18;
 
 struct MODUMATE_API FModumateSerializationStatics
 {

@@ -75,8 +75,8 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 			return false;
 		}
 
-		auto& graph = doc->GetVolumeGraph();
-		auto face = graph.FindFace(faceObj->ID);
+		const auto& graph = *doc->GetVolumeGraph();
+		const auto* face = graph.FindFace(faceObj->ID);
 		if (face == nullptr)
 		{
 			return false;
@@ -425,7 +425,7 @@ bool AMOISurfaceGraph::CalculateFaces(const TArray<int32>& AddIDs, TMap<int32, T
 	{
 		return false;
 	}
-	auto& graph = doc->GetVolumeGraph();
+	const auto& graph = *doc->GetVolumeGraph();
 
 	int32 hitFaceIndex = UModumateObjectStatics::GetParentFaceIndex(this);
 	TArray<FVector> cornerPositions;

@@ -127,7 +127,7 @@ bool FWaitForInputPlaybackCommand::Update()
 				FGraph3D referenceDocGraph;
 				referenceDocGraph.Load(&referenceDocRecord.VolumeGraph);
 
-				if (!referenceDocGraph.Equals(gameState->Document->GetVolumeGraph()))
+				if (!referenceDocGraph.Equals(*gameState->Document->GetVolumeGraph()))
 				{
 					UE_LOG(LogInputAutomation, Error, TEXT("Resulting VolumeGraph does not equal reference VolumeGraph!"));
 				}

@@ -253,7 +253,7 @@ void UPresetCardMain::BuildAsExpandedPresetCard(const FGuid& InPresetKey)
 				{
 					if (ob->GetAssembly().ObjectType == EObjectType::OTMetaPlane)
 					{
-						const FGraph3DFace* face = doc->GetVolumeGraph().FindFace(ob->ID);
+						const FGraph3DFace* face = doc->GetVolumeGraph()->FindFace(ob->ID);
 						if (ensureAlways(face != nullptr))
 						{
 							totalArea += face->CalculateArea();

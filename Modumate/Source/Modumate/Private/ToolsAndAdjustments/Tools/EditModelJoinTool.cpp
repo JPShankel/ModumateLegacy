@@ -52,7 +52,7 @@ bool UJoinTool::HandleMouseUp()
 
 		int32 newObjID = newTarget->ID;
 
-		const FGraph3D& volumeGraph = doc->GetVolumeGraph();
+		const FGraph3D& volumeGraph = *doc->GetVolumeGraph();
 		const FGraph3DFace* face = volumeGraph.FindFace(newObjID);
 		if (!ensure(face != nullptr))
 		{
@@ -97,7 +97,7 @@ bool UJoinTool::HandleMouseUp()
 		ActiveObjectType = newTarget->GetObjectType();
 
 		int32 newObjID = newTarget->ID;
-		const FGraph3D& volumeGraph = doc->GetVolumeGraph();
+		const FGraph3D& volumeGraph = *doc->GetVolumeGraph();
 		const FGraph3DEdge* edge = volumeGraph.FindEdge(newObjID);
 		if (!ensure(edge != nullptr))
 		{
