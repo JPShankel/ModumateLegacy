@@ -39,6 +39,11 @@ FString FDrawingDesignerRenderControl::GetViewList()
 			FVector2D size((points2d[2] - points2d[0]).GetAbs());
 			view.aspect.x = 1.0f;
 			view.aspect.y = size.Y / size.X;
+			
+			FMOICutPlaneData cutPlaneData;
+			cutPlane->GetStateData().CustomData.LoadStructData(cutPlaneData);
+			view.name = cutPlaneData.Name;
+
 			viewList.views.Add(view);
 		}
 	}
