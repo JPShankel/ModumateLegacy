@@ -264,6 +264,10 @@ void FModumateDatabase::ReadPresetData()
 				BIMPresetCollection.GetPresetsByPredicate(
 					[](const FBIMPresetInstance& Preset) {return Preset.ObjectType == EObjectType::OTFurniture; },
 					furniture);
+				// Temp until point hosted table is ready
+				BIMPresetCollection.GetPresetsByPredicate(
+					[](const FBIMPresetInstance& Preset) {return Preset.ObjectType == EObjectType::OTPointHosted; },
+					furniture);
 
 				bimCacheRecord.Starters = starters;
 				bimCacheRecord.Starters.Append(furniture);

@@ -98,6 +98,7 @@ enum class EInputCommand : uint8
 	ActivateTool_Ceiling,
 	ActivateTool_Panel,
 	ActivateTool_Mullion,
+	ActivateTool_PointHosted,
 	ActivateTool_BackgroundImage,
 	ActivateTool_Terrain,
 	ActivateTool_END,

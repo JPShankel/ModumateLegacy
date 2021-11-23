@@ -30,6 +30,7 @@ EToolCategories UModumateTypeStatics::GetToolCategory(EToolMode ToolMode)
 	case EToolMode::VE_PANEL:
 	case EToolMode::VE_MULLION:
 	case EToolMode::VE_COUNTERTOP:
+	case EToolMode::VE_POINTHOSTED:
 		return EToolCategories::Separators;
 	case EToolMode::VE_PLACEOBJECT:
 	case EToolMode::VE_CABINET:
@@ -84,6 +85,7 @@ EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 	case EToolMode::VE_SURFACEGRAPH: return EObjectType::OTSurfaceGraph;
 	case EToolMode::VE_PANEL: return EObjectType::OTSystemPanel;
 	case EToolMode::VE_MULLION: return EObjectType::OTMullion;
+	case EToolMode::VE_POINTHOSTED: return EObjectType::OTPointHosted;
 	case EToolMode::VE_BACKGROUNDIMAGE: return EObjectType::OTBackgroundImage;
 	case EToolMode::VE_TERRAIN: return EObjectType::OTTerrain;
 	}
@@ -123,6 +125,7 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTRoofPerimeter: return EToolMode::VE_ROOF_PERIMETER;
 	case EObjectType::OTSystemPanel: return EToolMode::VE_PANEL;
 	case EObjectType::OTMullion: return EToolMode::VE_MULLION;
+	case EObjectType::OTPointHosted: return EToolMode::VE_POINTHOSTED;
 	case EObjectType::OTBackgroundImage: return EToolMode::VE_BACKGROUNDIMAGE;
 	case EObjectType::OTTerrain:
 	case EObjectType::OTTerrainMaterial:
@@ -194,6 +197,8 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTSystemPanels", "System Panels") : LOCTEXT("OTSystemPanel", "System Panel");
 	case EObjectType::OTMullion:
 		return bPlural ? LOCTEXT("OTMullions", "Mullions") : LOCTEXT("OTMullion", "Mullion");
+	case EObjectType::OTPointHosted:
+		return bPlural ? LOCTEXT("OTPointHosed", "Point Hosted") : LOCTEXT("OTPointHosed", "Point Hosted");
 	case EObjectType::OTBackgroundImage:
 		return bPlural ? LOCTEXT("OTBackgroundImages", "Background Images") : LOCTEXT("OTBackgroundImage", "Background Image");
 	case EObjectType::OTEdgeDetail:

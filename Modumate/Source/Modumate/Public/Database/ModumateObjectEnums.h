@@ -67,6 +67,7 @@ enum class EToolMode : uint8
 	VE_CEILING,
 	VE_PANEL,
 	VE_MULLION,
+	VE_POINTHOSTED,
 	VE_BACKGROUNDIMAGE,
 	VE_TERRAIN,
 };
@@ -104,6 +105,7 @@ enum class EObjectType : uint8
 	OTCeiling,
 	OTSystemPanel,
 	OTMullion,
+	OTPointHosted,
 	OTBackgroundImage,
 	OTEdgeDetail,
 	OTTerrain,

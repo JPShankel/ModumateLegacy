@@ -82,6 +82,7 @@
 #include "ToolsAndAdjustments/Tools/EditModelWandTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelBackgroundImageTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelTerrainTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelPointHostedTool.h"
 
 const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetry"));
 
@@ -856,6 +857,7 @@ void AEditModelPlayerController::CreateTools()
 	RegisterTool(CreateTool<USurfaceGraphTool>());
 	RegisterTool(CreateTool<UPanelTool>());
 	RegisterTool(CreateTool<UMullionTool>());
+	RegisterTool(CreateTool<UPointHostedTool>());
 	RegisterTool(CreateTool<UBackgroundImageTool>());
 	RegisterTool(CreateTool<UTerrainTool>());
 }

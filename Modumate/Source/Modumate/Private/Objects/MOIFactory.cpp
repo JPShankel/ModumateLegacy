@@ -24,6 +24,7 @@
 #include "Objects/SurfaceVertex.h"
 #include "Objects/Trim.h"
 #include "Objects/Mullion.h"
+#include "Objects/PointHosted.h"
 #include "Objects/BackgroundImage.h"
 #include "Objects/Terrain.h"
 #include "Objects/TerrainVertex.h"
@@ -64,6 +65,7 @@ UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 	case EObjectType::OTStructureLine: return AMOIStructureLine::StaticClass();
 	case EObjectType::OTRoofPerimeter: return AMOIRoofPerimeter::StaticClass();
 	case EObjectType::OTMullion: return AMOIMullion::StaticClass();
+	case EObjectType::OTPointHosted: return AMOIPointHosted::StaticClass();
 	case EObjectType::OTBackgroundImage: return AMOIBackgroundImage::StaticClass();
 	case EObjectType::OTEdgeDetail: return AMOIEdgeDetail::StaticClass();
 	case EObjectType::OTTerrain: return AMOITerrain::StaticClass();
