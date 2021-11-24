@@ -1120,6 +1120,7 @@ bool AEditModelPlayerState::IsObjectTypeEnabledByViewMode(EObjectType ObjectType
 		case EObjectType::OTTerrainPolygon:
 			return true;
 		case EObjectType::OTEdgeDetail:
+		case EObjectType::OTMetaGraph:
 			return false;
 		default:
 			ensureMsgf(false, TEXT("Unhandled uncategorized object type: %s!"), *GetEnumValueString(ObjectType));

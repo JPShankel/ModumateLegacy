@@ -2732,10 +2732,10 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 	TempVolumeGraph.Reset();
 	SurfaceGraphs.Reset();
 
-	// TODO: Graph IDs will eventually be MOI IDs.
-	static constexpr int32 RootGraphID = 1;
-	VolumeGraphs.Add(RootGraphID, MakeShared<FGraph3D>());
-	RootVolumeGraph = RootGraphID;
+	RootVolumeGraph = NextID++;
+	CreateOrRestoreObj(World, FMOIStateData(RootVolumeGraph, EObjectType::OTMetaGraph));
+
+	VolumeGraphs.Add(RootVolumeGraph, MakeShared<FGraph3D>());
 	ActiveVolumeGraph = RootVolumeGraph;
 
 	if (bClearName)
@@ -3065,6 +3065,16 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	MakeNew(world, bClearName);
 	bool bInitialDocumentDirty = false;
 
+	// Destroy default graph:
+	if (ensure(ObjectInstanceArray.Num() == 1))
+	{
+		AModumateObjectInstance* graphObj = ObjectInstanceArray[0];
+		ObjectsByType.FindOrAdd(graphObj->GetObjectType()).Remove(graphObj->ID);
+		ObjectsByID.Remove(graphObj->ID);
+		ObjectInstanceArray.Empty();
+		graphObj->Destroy();
+	}
+
 	UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
 	FModumateDatabase* objectDB = gameInstance->ObjectDatabase;
 
@@ -3090,6 +3100,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 			VolumeGraphs.Add(volumeGraphKvp.Key, volumeGraph);
 		}
 		RootVolumeGraph = InDocumentRecord.RootVolumeGraph;
+		ActiveVolumeGraph = RootVolumeGraph;
 	}
 
 	FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
@@ -3167,6 +3178,17 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	for (int32 graph2DToRemove : graph2DsToRemove)
 	{
 		SurfaceGraphs.Remove(graph2DToRemove);
+	}
+
+	// Add a MetaGraph MOI if none in file, for backwards compatibility.
+	if (GetObjectsOfType(EObjectType::OTMetaGraph).Num() == 0 && ensureAlways(VolumeGraphs.Num() > 0))
+	{
+		RootVolumeGraph = NextID++;
+		CreateOrRestoreObj(world, FMOIStateData(RootVolumeGraph, EObjectType::OTMetaGraph));
+		auto graph3d = *VolumeGraphs.begin();
+		VolumeGraphs.Reset();
+		VolumeGraphs.Add(RootVolumeGraph, graph3d.Value);
+		ActiveVolumeGraph = RootVolumeGraph;
 	}
 
 	// Now that all objects have been created and parented correctly, we can clean all of them.

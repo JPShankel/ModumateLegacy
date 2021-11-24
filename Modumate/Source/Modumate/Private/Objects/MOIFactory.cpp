@@ -32,6 +32,7 @@
 #include "Objects/TerrainPolygon.h"
 #include "Objects/TerrainMaterial.h"
 #include "Objects/CameraView.h"
+#include "Objects/MetaGraph.h"
 
 UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 {
@@ -56,6 +57,7 @@ UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 	case EObjectType::OTMetaVertex: return AMOIMetaVertex::StaticClass();
 	case EObjectType::OTMetaEdge: return AMOIMetaEdge::StaticClass();
 	case EObjectType::OTMetaPlane: return AMOIMetaPlane::StaticClass();
+	case EObjectType::OTMetaGraph: return AMOIMetaGraph::StaticClass();
 	case EObjectType::OTSurfaceGraph: return AMOISurfaceGraph::StaticClass();
 	case EObjectType::OTSurfaceVertex: return AMOISurfaceVertex::StaticClass();
 	case EObjectType::OTSurfaceEdge: return AMOISurfaceEdge::StaticClass();

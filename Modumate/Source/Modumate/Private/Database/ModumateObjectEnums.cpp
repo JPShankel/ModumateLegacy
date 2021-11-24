@@ -213,6 +213,8 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTTerrainPolygon", "Terrain Polygons") : LOCTEXT("OTTerrainPolygon", "Terrain Polygon");
 	case EObjectType::OTTerrainMaterial:
 		return bPlural ? LOCTEXT("OTTerrainMaterial", "Terrain Materials") : LOCTEXT("OTTerrainMaterial", "Terrain Material");
+	case EObjectType::OTMetaGraph:
+		return bPlural ? LOCTEXT("OTMetaGraph", "Massing Graphs") : LOCTEXT("OTMetaGraph", "Massing Graph");
 		
 	case EObjectType::OTUnknown:
 	default:
