@@ -13,9 +13,10 @@
 
 #include "BIMPresetCollection.generated.h"
 
-static constexpr int32 BIMPresetCollectionCurrentVersion = 6;
+static constexpr int32 BIMPresetCollectionCurrentVersion = 7;
 // Version 5 - FBIMPresetForm & BIM deltas
 // Version 6 - Taxonomy added to collection
+// Version 7 - Point hosted objects
 
 struct FBIMPresetDelta;
 
