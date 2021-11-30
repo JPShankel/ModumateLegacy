@@ -198,7 +198,7 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 	case EObjectType::OTMullion:
 		return bPlural ? LOCTEXT("OTMullions", "Mullions") : LOCTEXT("OTMullion", "Mullion");
 	case EObjectType::OTPointHosted:
-		return bPlural ? LOCTEXT("OTPointHosed", "Point Hosted") : LOCTEXT("OTPointHosed", "Point Hosted");
+		return bPlural ? LOCTEXT("OTPointHosed", "Point Hosted") : LOCTEXT("OTPointHosed", "Parts");
 	case EObjectType::OTBackgroundImage:
 		return bPlural ? LOCTEXT("OTBackgroundImages", "Background Images") : LOCTEXT("OTBackgroundImage", "Background Image");
 	case EObjectType::OTEdgeDetail:
