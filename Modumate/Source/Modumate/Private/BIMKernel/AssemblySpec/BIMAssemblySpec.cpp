@@ -397,6 +397,12 @@ FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
 		}
 	}
 
+	// TODO: Read dimension properties for point hosted objs
+	if (ObjectType == EObjectType::OTPointHosted)
+	{
+		return nativeSize;
+	}
+
 	RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, nativeSize.X);
 	RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, nativeSize.Z);
 
