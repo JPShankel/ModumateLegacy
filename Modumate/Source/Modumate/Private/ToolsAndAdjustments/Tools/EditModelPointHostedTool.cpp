@@ -80,7 +80,7 @@ bool UPointHostedTool::FrameUpdate()
 		PointHostedPos = hitMOI->GetLocation();
 
 		// Preview the deltas to create a point hosted object
-		if (GameState->Document->StartPreviewing() && GetObjectCreationDeltas({ LastValidTargetID }, CurDeltas))
+		if (GameState->Document->StartPreviewing() && GetObjectCreationDeltas(LastValidTargetID , CurDeltas))
 		{
 			GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
 		}
@@ -101,7 +101,7 @@ bool UPointHostedTool::BeginUse()
 	GameState->Document->ClearPreviewDeltas(GetWorld());
 
 	TArray<FDeltaPtr> deltas;
-	if (!GetObjectCreationDeltas({ LastValidTargetID }, deltas))
+	if (!GetObjectCreationDeltas( LastValidTargetID, deltas))
 	{
 		return false;
 	}
