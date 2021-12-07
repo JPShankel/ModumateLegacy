@@ -2006,6 +2006,7 @@ bool FGraph3D::GetDeltaForDeleteObjects(const TSet<const FGraph3DVertex *> &Vert
 		}
 	}
 
+	OutDelta.GraphID = GraphID;
 	return true;
 }
 

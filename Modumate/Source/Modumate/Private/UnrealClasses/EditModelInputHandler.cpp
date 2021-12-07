@@ -300,16 +300,6 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 		);
 		return true;
 	}
-	case EInputCommand::GroupSelected:
-	{
-		Controller->GroupSelected(true);
-		return true;
-	}
-	case EInputCommand::UngroupSelected:
-	{
-		Controller->GroupSelected(false);
-		return true;
-	}
 	case EInputCommand::HideSelected:
 	{
 		// TODO: move this logic somewhere reasonable

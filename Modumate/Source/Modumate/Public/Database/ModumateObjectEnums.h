@@ -70,6 +70,7 @@ enum class EToolMode : uint8
 	VE_POINTHOSTED,
 	VE_BACKGROUNDIMAGE,
 	VE_TERRAIN,
+	VE_GROUP,
 };
 
 UENUM(BlueprintType)

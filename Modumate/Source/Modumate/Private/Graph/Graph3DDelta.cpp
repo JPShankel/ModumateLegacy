@@ -111,6 +111,10 @@ FGraph3DObjDelta::FGraph3DObjDelta(const FGraphVertexPair& VertexPair, const TAr
 {
 }
 
+FGraph3DDelta::FGraph3DDelta(int32 InID /*= MOD_ID_NONE*/)
+	: GraphID(InID)
+{ }
+
 void FGraph3DDelta::Reset()
 {
 	VertexMovements.Reset();
@@ -125,6 +129,8 @@ void FGraph3DDelta::Reset()
 	FaceContainmentUpdates.Reset();
 
 	FaceVertexIDUpdates.Reset();
+
+	GraphID = MOD_ID_NONE;
 }
 
 bool FGraph3DDelta::IsEmpty()
@@ -200,38 +206,46 @@ void FGraph3DDelta::AggregateDeletedObjects(TSet<int32>& OutDeletedObjIDs)
 
 TSharedPtr<FGraph3DDelta> FGraph3DDelta::MakeGraphInverse() const
 {
-	auto inverse = MakeShared<FGraph3DDelta>();
+	auto inverse = MakeShared<FGraph3DDelta>(GraphID);
 
-	for (const auto& kvp : VertexMovements)
+	if (DeltaType == EGraph3DDeltaType::Edit)
 	{
-		int32 vertexID = kvp.Key;
-		const FModumateVectorPair& vertexMovement = kvp.Value;
+		for (const auto& kvp : VertexMovements)
+		{
+			int32 vertexID = kvp.Key;
+			const FModumateVectorPair& vertexMovement = kvp.Value;
 
-		inverse->VertexMovements.Add(vertexID, { vertexMovement.Value, vertexMovement.Key });
+			inverse->VertexMovements.Add(vertexID, { vertexMovement.Value, vertexMovement.Key });
+		}
+
+		inverse->VertexAdditions = VertexDeletions;
+		inverse->VertexDeletions = VertexAdditions;
+
+		inverse->EdgeAdditions = EdgeDeletions;
+		inverse->EdgeDeletions = EdgeAdditions;
+
+		for (const auto& kvp : FaceVertexIDUpdates)
+		{
+			inverse->FaceVertexIDUpdates.Add(kvp.Key, kvp.Value.MakeInverse());
+		}
+
+		for (const auto& kvp : FaceContainmentUpdates)
+		{
+			inverse->FaceContainmentUpdates.Add(kvp.Key, kvp.Value.MakeInverse());
+		}
+
+		inverse->FaceAdditions = FaceDeletions;
+		inverse->FaceDeletions = FaceAdditions;
+
+		for (const auto& kvp : GroupIDsUpdates)
+		{
+			inverse->GroupIDsUpdates.Add(kvp.Key, kvp.Value.MakeInverse());
+		}
 	}
-
-	inverse->VertexAdditions = VertexDeletions;
-	inverse->VertexDeletions = VertexAdditions;
-
-	inverse->EdgeAdditions = EdgeDeletions;
-	inverse->EdgeDeletions = EdgeAdditions;
-
-	for (const auto& kvp : FaceVertexIDUpdates)
+	else
 	{
-		inverse->FaceVertexIDUpdates.Add(kvp.Key, kvp.Value.MakeInverse());
-	}
-
-	for (const auto& kvp : FaceContainmentUpdates)
-	{
-		inverse->FaceContainmentUpdates.Add(kvp.Key, kvp.Value.MakeInverse());
-	}
-
-	inverse->FaceAdditions = FaceDeletions;
-	inverse->FaceDeletions = FaceAdditions;
-
-	for (const auto& kvp : GroupIDsUpdates)
-	{
-		inverse->GroupIDsUpdates.Add(kvp.Key, kvp.Value.MakeInverse());
+		*inverse = *this;
+		inverse->DeltaType = DeltaType == EGraph3DDeltaType::Add ? EGraph3DDeltaType::Remove : EGraph3DDeltaType::Add;
 	}
 
 	return inverse;

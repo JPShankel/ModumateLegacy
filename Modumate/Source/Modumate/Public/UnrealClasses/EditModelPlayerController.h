@@ -366,9 +366,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Snap)
 	TArray<FTransform> UserSnapPoints;
 
-	UFUNCTION(BlueprintCallable, Category = Modeling)
-	void GroupSelected(bool makeGroup);
-
 	// Calculate the location needed to view the boundary set by TargetSphere
 	FVector CalculateViewLocationForSphere(const FSphere &TargetSphere, const FVector &ViewVector, float AspectRatio, float FOV);
 

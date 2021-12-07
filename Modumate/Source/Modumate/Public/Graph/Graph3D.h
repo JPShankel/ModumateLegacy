@@ -21,6 +21,9 @@ class MODUMATE_API FGraph3D
 {
 public:
 	FGraph3D(float InEpsilon = DEFAULT_GRAPH3D_EPSILON, bool bInDebugCheck = !UE_BUILD_SHIPPING);
+	FGraph3D(int32 ID)
+	: FGraph3D()
+	{ GraphID = ID; }
 
 	void Reset();
 	bool Equals(const FGraph3D& Other, float EqualityEpsilon = DEFAULT_GRAPH3D_EPSILON) const;
@@ -110,6 +113,7 @@ public:
 
 public:
 	float Epsilon;
+	int32 GraphID = MOD_ID_NONE;
 	bool bDebugCheck;
 
 private:

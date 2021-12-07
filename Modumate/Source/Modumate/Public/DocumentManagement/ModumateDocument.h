@@ -180,6 +180,10 @@ public:
 
 	FGraph3D* GetVolumeGraph(int32 GraphId = MOD_ID_NONE);
 	const FGraph3D* GetVolumeGraph(int32 GraphId = MOD_ID_NONE) const;
+	int32 GetActiveVolumeGraphID() const { return ActiveVolumeGraph; }
+	void SetActiveVolumeGraphID(int32 NewID) { ActiveVolumeGraph = NewID; }
+
+	int32 FindGraph3DByObjID(int32 MetaObjectID) const;
 
 	// TODO: we should remove the TempVolumeGraph entirely if we can rely on inverting deltas,
 	// or give graph delta creators their own copy of a graph to modify if we still need to use it for delta creation.
@@ -248,7 +252,7 @@ public:
 	FBox GetAffectedBounds(const FAffectedObjMap& AffectedObjects, const TSet<int32>& DirtiedObjects) const;
 
 private:
-	bool FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas);
+	bool FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas, int32 GraphID = MOD_ID_NONE);
 	bool PostApplyDeltas(UWorld *World, bool bCleanObjects, bool bMarkDocumentDirty);
 	bool DeepCloneForFinalize(FGraph3D& TempGraph, const AModumateObjectInstance* ChildObj, int32 ChildFaceID, TArray<FDeltaPtr>& OutDerivedDeltas);
 	void StartTrackingDeltaObjects();

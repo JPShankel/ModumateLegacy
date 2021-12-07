@@ -924,6 +924,16 @@ void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World)
 {
 	TArray<FVector> controlPoints;
+	if (Delta.DeltaType == EGraph3DDeltaType::Add && !VolumeGraphs.Contains(Delta.GraphID))
+	{
+		VolumeGraphs.Add(Delta.GraphID, MakeShared<FGraph3D>(Delta.GraphID));
+		return;
+	}
+	else if (Delta.DeltaType == EGraph3DDeltaType::Remove)
+	{
+		VolumeGraphs.Remove(Delta.GraphID);
+		return;
+	}
 
 	// TODO: the graph may need an understanding of "net" deleted objects
 	// objects that are deleted, but their metadata (like hosted obj) is not
@@ -932,7 +942,7 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 	// Dirty every group whose members were deleted, or that had members added/removed
 	TSet<int32> dirtyGroupIDs;
-	FGraph3D* volumeGraph = GetVolumeGraph();
+	FGraph3D* volumeGraph = GetVolumeGraph(Delta.GraphID);
 	for (auto& kvp : Delta.VertexDeletions)
 	{
 		auto vertex = volumeGraph->FindVertex(kvp.Key);
@@ -1467,10 +1477,10 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 	}
 }
 
-bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas)
+bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas, int32 GraphID /*= MOD_ID_NONE*/)
 {
 	FGraph3D moiTempGraph;
-	FGraph3D::CloneFromGraph(moiTempGraph, *GetVolumeGraph());
+	FGraph3D::CloneFromGraph(moiTempGraph, *GetVolumeGraph(GraphID));
 
 	for (auto& delta : InDeltas)
 	{
@@ -2735,7 +2745,7 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 	RootVolumeGraph = NextID++;
 	CreateOrRestoreObj(World, FMOIStateData(RootVolumeGraph, EObjectType::OTMetaGraph));
 
-	VolumeGraphs.Add(RootVolumeGraph, MakeShared<FGraph3D>());
+	VolumeGraphs.Add(RootVolumeGraph, MakeShared<FGraph3D>(RootVolumeGraph));
 	ActiveVolumeGraph = RootVolumeGraph;
 
 	if (bClearName)
@@ -3095,7 +3105,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		VolumeGraphs.Reset();
 		for (const auto& volumeGraphKvp : InDocumentRecord.VolumeGraphs)
 		{
-			TSharedPtr<FGraph3D> volumeGraph = MakeShared<FGraph3D>();
+			TSharedPtr<FGraph3D> volumeGraph = MakeShared<FGraph3D>(volumeGraphKvp.Key);
 			bSuccessfulGraphLoad &= volumeGraph->Load(&volumeGraphKvp.Value);
 			VolumeGraphs.Add(volumeGraphKvp.Key, volumeGraph);
 		}
@@ -3694,6 +3704,19 @@ const FGraph3D* UModumateDocument::GetVolumeGraph(int32 GraphId /*= MOD_ID_NONE*
 {
 	const TSharedPtr<FGraph3D>* graph = VolumeGraphs.Find(GraphId == MOD_ID_NONE ? ActiveVolumeGraph : GraphId);
 	return ensure(graph) ? graph->Get() : nullptr;
+}
+
+int32 UModumateDocument::FindGraph3DByObjID(int32 MetaObjectID) const
+{
+	for (const auto& graph : VolumeGraphs)
+	{
+		if (graph.Value->ContainsObject(MetaObjectID))
+		{
+			return graph.Key;
+		}
+	}
+
+	return MOD_ID_NONE;
 }
 
 const TSharedPtr<FGraph2D> UModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID) const

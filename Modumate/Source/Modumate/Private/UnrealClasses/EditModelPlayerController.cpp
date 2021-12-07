@@ -83,6 +83,7 @@
 #include "ToolsAndAdjustments/Tools/EditModelBackgroundImageTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelTerrainTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelPointHostedTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelGroupTool.h"
 
 const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetry"));
 
@@ -860,6 +861,7 @@ void AEditModelPlayerController::CreateTools()
 	RegisterTool(CreateTool<UPointHostedTool>());
 	RegisterTool(CreateTool<UBackgroundImageTool>());
 	RegisterTool(CreateTool<UTerrainTool>());
+	RegisterTool(CreateTool<UGroupTool>());
 }
 
 void AEditModelPlayerController::RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool)
@@ -3749,6 +3751,7 @@ void AEditModelPlayerController::SetSelectionMode(ESelectObjectMode NewSelection
 	}
 }
 
+#if 0
 void AEditModelPlayerController::GroupSelected(bool makeGroup)
 {
 	if (makeGroup)
@@ -3830,6 +3833,7 @@ void AEditModelPlayerController::GroupSelected(bool makeGroup)
 		}
 	}
 }
+#endif
 
 bool AEditModelPlayerController::ToggleGravityPawn()
 {

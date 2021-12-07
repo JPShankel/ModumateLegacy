@@ -682,3 +682,51 @@ bool FModumateObjectDeltaStatics::MakeSwapEdgeDetailDeltas(UModumateDocument *Do
 
 	return true;
 }
+
+void FModumateObjectDeltaStatics::MakeCreateGraphDeltasForDeleteItems(const TArray<FGraph3DDelta>& GraphDeltas, FGraph3D* OldGraph, int32& NextID, TArray<FGraph3DDelta>& OutDeltas)
+{
+	FGraph3D tempGraph;
+	TArray<int32> newIDs;  // unused
+
+	for (auto& graphDelta: GraphDeltas)
+	{
+		for (auto& edge : graphDelta.EdgeDeletions)
+		{
+			TArray<FGraph3DDelta> addEdgeDeltas;
+			FVector vert0(OldGraph->FindVertex(edge.Value.Vertices[0])->Position);
+			FVector vert1(OldGraph->FindVertex(edge.Value.Vertices[1])->Position);
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vert0, vert1, addEdgeDeltas, NextID, newIDs);
+			for (auto& edgeDelta : addEdgeDeltas)
+			{
+				if (edgeDelta.EdgeAdditions.Num() == 1)
+				{
+					auto edgeDeltaCopy = *edgeDelta.EdgeAdditions.begin();
+					edgeDelta.EdgeAdditions.Empty();
+					edgeDelta.EdgeAdditions.Add(edge.Key) = MoveTemp(edgeDeltaCopy.Value);
+					break;
+				}
+			}
+			OutDeltas.Append(addEdgeDeltas);
+		}
+
+		for (auto& face: graphDelta.FaceDeletions)
+		{
+			const TArray<int32>& faceVertices = face.Value.Vertices;
+			TArray<FVector> faceVertexPositions;
+			for (int32 v: faceVertices)
+			{
+				faceVertexPositions.Add(OldGraph->FindVertex(v)->Position);
+			}
+			TArray<FGraph3DDelta> addFaceDelta;
+			tempGraph.GetDeltaForFaceAddition(faceVertexPositions, addFaceDelta, NextID, newIDs);
+
+			if (addFaceDelta.Num() == 1 && addFaceDelta[0].FaceAdditions.Num() == 1)
+			{
+				auto faceDelta = *addFaceDelta[0].FaceAdditions.begin();
+				addFaceDelta[0].FaceAdditions.Empty();
+				addFaceDelta[0].FaceAdditions.Add(face.Key) = MoveTemp(faceDelta.Value);
+			}
+			OutDeltas.Append(addFaceDelta);
+		}
+	}
+}

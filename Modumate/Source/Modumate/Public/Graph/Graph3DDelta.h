@@ -104,12 +104,21 @@ struct MODUMATE_API FGraph3DFaceVertexIDsDelta
 	FGraph3DFaceVertexIDsDelta MakeInverse() const;
 };
 
+UENUM()
+enum class EGraph3DDeltaType
+{
+	Edit,
+	Add,
+	Remove,
+};
+
 // A struct that completely describes a change to the 3D graph
 USTRUCT()
 struct MODUMATE_API FGraph3DDelta : public FDocumentDelta
 {
 	GENERATED_BODY()
 
+	FGraph3DDelta(int32 InID = MOD_ID_NONE);
 	virtual ~FGraph3DDelta() {}
 
 	UPROPERTY()
@@ -139,9 +148,17 @@ struct MODUMATE_API FGraph3DDelta : public FDocumentDelta
 	UPROPERTY()
 	TMap<int32, FGraph3DFaceVertexIDsDelta> FaceVertexIDUpdates;
 
+	// TODO: Remove these legacy groups:
 	// Updates to GroupIDs for graph objects
 	UPROPERTY()
 	TMap<int32, FGraph3DGroupIDsDelta> GroupIDsUpdates;
+
+	// Graph3D-based grouping:
+	UPROPERTY()
+	int32 GraphID = MOD_ID_NONE;
+
+	UPROPERTY()
+	EGraph3DDeltaType DeltaType = EGraph3DDeltaType::Edit;
 
 	void Reset();
 	bool IsEmpty();

@@ -44,8 +44,6 @@ enum class EInputCommand : uint8
 	Deselect,
 	DeleteDefault,
 	DeleteOnlySelected,
-	GroupSelected,
-	UngroupSelected,
 	HideSelected,
 	UnhideAll,
 	ToggleUserSnapPoint,
@@ -101,6 +99,7 @@ enum class EInputCommand : uint8
 	ActivateTool_PointHosted,
 	ActivateTool_BackgroundImage,
 	ActivateTool_Terrain,
+	ActivateTool_Group,
 	ActivateTool_END,
 
 	// Tool-related commands
