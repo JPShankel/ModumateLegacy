@@ -7,6 +7,7 @@
 #include "UI/Properties/InstPropWidgetOffset.h"
 #include "UI/Properties/InstPropWidgetFlip.h"
 #include "UI/Properties/InstPropWidgetRotation.h"
+#include "DocumentManagement/ModumateSnappingView.h"
 
 FMOIPointHostedData::FMOIPointHostedData()
 {}
@@ -80,6 +81,55 @@ void AMOIPointHosted::RegisterInstanceDataUI(class UToolTrayBlockProperties* Pro
 		rotationZField->RegisterValue(this, InstanceData.Rotation.Yaw);
 		rotationZField->ValueChangedEvent.AddDynamic(this, &AMOIPointHosted::OnInstPropUIChangedRotationZ);
 	}
+}
+
+bool AMOIPointHosted::GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
+{
+	FVector absDir = AdjustmentDirection.GetAbs();
+	FDimensionOffset curOffset;
+	EDimensionOffsetType nextOffsetType;
+	FMOIPointHostedData modifiedInstanceData = InstanceData;
+
+	if (absDir.X > absDir.Y && absDir.X > absDir.Z)
+	{
+		curOffset = InstanceData.OffsetX;
+		nextOffsetType = curOffset.GetNextType(AdjustmentDirection.GetSignVector().X, InstanceData.FlipSigns.X);
+		modifiedInstanceData.OffsetX.Type = nextOffsetType;
+	}
+	else if (absDir.Y > absDir.X && absDir.Y > absDir.Z)
+	{
+		curOffset = InstanceData.OffsetY;
+		nextOffsetType = curOffset.GetNextType(AdjustmentDirection.GetSignVector().Y, InstanceData.FlipSigns.Y);
+		modifiedInstanceData.OffsetY.Type = nextOffsetType;
+	}
+	else if (absDir.Z > absDir.X && absDir.Z > absDir.Y)
+	{
+		curOffset = InstanceData.OffsetZ;
+		nextOffsetType = curOffset.GetNextType(AdjustmentDirection.GetSignVector().Z, InstanceData.FlipSigns.Z);
+		modifiedInstanceData.OffsetZ.Type = nextOffsetType;
+	}
+	else
+	{
+		return false;
+	}
+
+	OutState = GetStateData();
+	return OutState.CustomData.SaveStructData(modifiedInstanceData);
+
+}
+
+void AMOIPointHosted::GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping, bool bForSelection) const
+{
+	const ACompoundMeshActor* cma = Cast<ACompoundMeshActor>(GetActor());
+	FVector cmaOrigin, cmaBoxExtent;
+	cma->GetActorBounds(false, cmaOrigin, cmaBoxExtent);
+	FQuat rot = GetRotation();
+
+	// This calculates the extent more accurately since it's unaffected by actor rotation
+	cmaBoxExtent = cma->CalculateComponentsBoundingBoxInLocalSpace(true).GetSize() * 0.5f;
+
+	// TODO: Calculate bounding box with instance data flip 
+	FModumateSnappingView::GetBoundingBoxPointsAndLines(cmaOrigin, rot, cmaBoxExtent, outPoints, outLines);
 }
 
 void AMOIPointHosted::InternalUpdateGeometry(bool bCreateCollision)
