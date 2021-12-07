@@ -400,14 +400,12 @@ void FDrawingDesignerRenderControl::GetSnapPoints(TMap<FString, FDrawingDesigner
 		}
 	}
 
-	int snapIndex = 0;
 	int32 moiID = MOD_ID_NONE;
 	for (const auto& snap : snapPoints)
 	{
 		if (snap.ObjID != moiID)
 		{
 			moiID = snap.ObjID;
-			snapIndex = 0;
 		}
 
 		FVector2D projectedPoint(UModumateGeometryStatics::ProjectPoint2D(snap.Point, CachedXAxis, CachedYAxis, CachedOrigin));
@@ -416,9 +414,9 @@ void FDrawingDesignerRenderControl::GetSnapPoints(TMap<FString, FDrawingDesigner
 		{
 			FDrawingDesignerSnap newSnap;
 			newSnap.x = scaledPoint.X; newSnap.y = scaledPoint.Y;
-			newSnap.id = snap.CP1;
-			OutSnapPoints.Add(FString::FromInt(moiID) + TEXT(",") + FString::FromInt(snapIndex), newSnap);
-			++snapIndex;
+			FString snapId = FString::FromInt(moiID) + TEXT(",") + FString::FromInt(snap.CP1);
+			newSnap.id = snapId;
+			OutSnapPoints.Add(snapId, newSnap);
 		}
 	}
 }

@@ -41,7 +41,7 @@ struct MODUMATE_API FDrawingDesignerSnap
 	FDrawingDesignerSnap() = default;
 
 	UPROPERTY()
-	int32 id = INDEX_NONE;
+	FString id = FString::FromInt(INDEX_NONE);
 
 	// Normalized in range 0-1
 	UPROPERTY()
