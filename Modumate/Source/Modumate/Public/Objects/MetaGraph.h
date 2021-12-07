@@ -14,4 +14,7 @@ class MODUMATE_API AMOIMetaGraph: public AModumateObjectInstance
 public:
 	AMOIMetaGraph();
 
+
+	virtual void PostCreateObject(bool bNewObject) override;
+
 };

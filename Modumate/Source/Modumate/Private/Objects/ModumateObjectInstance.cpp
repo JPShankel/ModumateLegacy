@@ -472,7 +472,7 @@ float AModumateObjectInstance::CalculateThickness() const
 
 void AModumateObjectInstance::MarkDirty(EObjectDirtyFlags NewDirtyFlags)
 {
-	if (bDestroyed)
+	if (bDestroyed || Document == nullptr)
 	{
 		return;
 	}

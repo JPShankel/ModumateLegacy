@@ -8,3 +8,11 @@
 
 AMOIMetaGraph::AMOIMetaGraph()
 { }
+
+void AMOIMetaGraph::PostCreateObject(bool bNewObject)
+{
+	if (Document)
+	{
+		Super::PostCreateObject(bNewObject);
+	}
+}
