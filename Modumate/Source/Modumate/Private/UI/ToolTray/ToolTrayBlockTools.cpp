@@ -41,7 +41,8 @@ void UToolTrayBlockTools::ChangeToSeparatorToolsButtons()
 		Button_BeamColumn, 
 		Button_Railing, 
 		Button_Countertop,
-		Button_PointHosted
+		Button_PointHosted,
+		Button_EdgeHosted
 	};
 	SetButtonsState(buttonsToShow);
 }
