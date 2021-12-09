@@ -166,6 +166,7 @@ public:
 	bool SetIconMeshForTrimAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForFFEAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForStairAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, bool bMakeTread, bool bMakeRiser);
+	bool SetIconMeshForPointHostedAssembly(const FBIMAssemblySpec& Assembly, UTextureRenderTarget2D* InRenderTarget);
 
 	bool SetIconFromTextureAsset(const FGuid& PresetID, UMaterialInterface*& OutMaterial);
 	bool SetIconMeshForRawMaterial(const FGuid& MaterialKey, UTextureRenderTarget2D* InRenderTarget);

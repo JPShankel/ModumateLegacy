@@ -423,6 +423,8 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &A
 		return SetIconMeshForStairAssembly(Assembly, InRenderTarget, 
 			(PartIndex == 0 || PartIndex == StairLayerTreadAssemblyPartIndex),
 			(PartIndex == 0 || PartIndex == StairLayerRiserAssemblyPartIndex));
+	case EObjectType::OTPointHosted:
+		return SetIconMeshForPointHostedAssembly(Assembly, InRenderTarget);
 	}
 	return false;
 }
@@ -787,6 +789,27 @@ bool ADynamicIconGenerator::SetIconMeshForStairAssembly(const FBIMAssemblySpec &
 	SetComponentForIconCapture(IconDynamicMeshActor->Mesh, false);
 	IconDynamicMeshActor->Mesh->SetVisibility(false);
 	IconDynamicMeshActor->Mesh->ClearAllMeshSections(); // Procedural mesh with multiple sections should be cleared out
+
+	return true;
+}
+
+bool ADynamicIconGenerator::SetIconMeshForPointHostedAssembly(const FBIMAssemblySpec& Assembly, UTextureRenderTarget2D* InRenderTarget)
+{
+	// Step 1: Setup for actor to create meshes from assembly
+	IconCompoundMeshActor->SetActorTransform(FTransform::Identity);
+	IconCompoundMeshActor->MakeFromAssembly(Assembly, FVector::OneVector, false, true);
+	IconCompoundMeshActor->SetActorRelativeTransform(FTransform::Identity);
+
+	// Step 2: Set camera transform and actor for capture
+	FTransform originalCaptureCompTransform = SceneCaptureComp->GetRelativeTransform();
+	SetCaptureCompTransformForCapture(IconCompoundMeshActor, PortalIconScaleFactor, true);
+	SetIconCompoundMeshActorForCapture(true);
+	SceneCaptureComp->TextureTarget = InRenderTarget;
+	SceneCaptureComp->CaptureScene();
+
+	// Step 3: Revert capture comp to its original transform, and actor to its original state
+	SceneCaptureComp->SetRelativeTransform(originalCaptureCompTransform);
+	SetIconCompoundMeshActorForCapture(false);
 
 	return true;
 }
