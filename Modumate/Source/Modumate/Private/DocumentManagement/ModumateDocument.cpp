@@ -3116,7 +3116,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	int32 legacyGraphID = 1;
 	if (InHeader.Version < 18)
 	{	// Document has one global volume graph.
-		VolumeGraphs.Add(legacyGraphID) = MakeShared<FGraph3D>(0);
+		VolumeGraphs.Add(legacyGraphID) = MakeShared<FGraph3D>(legacyGraphID);
 		bSuccessfulGraphLoad = GetVolumeGraph(legacyGraphID)->Load(&InDocumentRecord.VolumeGraph);
 		RootVolumeGraph = legacyGraphID;
 	}
@@ -3218,7 +3218,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	}
 
 	// Add a MetaGraph MOI for backwards compatibility.
-	if (InHeader.Version < 18 && ensureAlways(VolumeGraphs.Num() > 0))
+	if (InHeader.Version < 18 && ensureAlways(VolumeGraphs.Contains(legacyGraphID)))
 	{   // Create MOI and remap to new ID
 		auto volumeGraph = VolumeGraphs[legacyGraphID];
 		legacyGraphID = NextID++;
@@ -3230,6 +3230,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 			graphMap.Value = legacyGraphID;
 		}
 		VolumeGraphs.Reset();
+		volumeGraph->GraphID = legacyGraphID;
 		VolumeGraphs.Add(RootVolumeGraph) = volumeGraph;
 	}
 
