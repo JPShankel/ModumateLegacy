@@ -166,7 +166,7 @@ void AModumateObjectInstance::GetConnectedIDs(TArray<int32> &connectedIDs) const
 	EGraph3DObjectType graph3DObjectType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType);
 	if (graph3DObjectType != EGraph3DObjectType::None)
 	{
-		const FGraph3D& graph = *Document->GetVolumeGraph();
+		const FGraph3D& graph = *Document->FindVolumeGraph(ID);
 		switch (graph3DObjectType)
 		{
 		case EGraph3DObjectType::Vertex:

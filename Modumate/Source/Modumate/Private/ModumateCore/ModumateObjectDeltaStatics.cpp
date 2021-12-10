@@ -683,11 +683,12 @@ bool FModumateObjectDeltaStatics::MakeSwapEdgeDetailDeltas(UModumateDocument *Do
 	return true;
 }
 
-void FModumateObjectDeltaStatics::MakeCreateGraphDeltasForDeleteItems(const TArray<FGraph3DDelta>& GraphDeltas, FGraph3D* OldGraph, int32& NextID, TArray<FGraph3DDelta>& OutDeltas)
+void FModumateObjectDeltaStatics::ConvertGraphDeleteToMove(const TArray<FGraph3DDelta>& GraphDeltas, FGraph3D* OldGraph, int32& NextID, TArray<FGraph3DDelta>& OutDeltas)
 {
 	FGraph3D tempGraph;
 	TArray<int32> newIDs;  // unused
 
+	TMap<int32, int32> newFaceIDToOldFaceID;
 	for (auto& graphDelta: GraphDeltas)
 	{
 		for (auto& edge : graphDelta.EdgeDeletions)
@@ -717,16 +718,43 @@ void FModumateObjectDeltaStatics::MakeCreateGraphDeltasForDeleteItems(const TArr
 			{
 				faceVertexPositions.Add(OldGraph->FindVertex(v)->Position);
 			}
-			TArray<FGraph3DDelta> addFaceDelta;
-			tempGraph.GetDeltaForFaceAddition(faceVertexPositions, addFaceDelta, NextID, newIDs);
+			TArray<FGraph3DDelta> addFaceDeltas;
+			tempGraph.GetDeltaForFaceAddition(faceVertexPositions, addFaceDeltas, NextID, newIDs);
 
-			if (addFaceDelta.Num() == 1 && addFaceDelta[0].FaceAdditions.Num() == 1)
+			if (addFaceDeltas.Num() > 0 && addFaceDeltas[0].FaceAdditions.Num() == 1)
 			{
-				auto faceDelta = *addFaceDelta[0].FaceAdditions.begin();
-				addFaceDelta[0].FaceAdditions.Empty();
-				addFaceDelta[0].FaceAdditions.Add(face.Key) = MoveTemp(faceDelta.Value);
+				auto faceDelta = *addFaceDeltas[0].FaceAdditions.begin();
+				newFaceIDToOldFaceID.Add(faceDelta.Key, face.Key);
+				addFaceDeltas[0].FaceAdditions.Empty();
+				addFaceDeltas[0].FaceAdditions.Add(face.Key) = MoveTemp(faceDelta.Value);
 			}
-			OutDeltas.Append(addFaceDelta);
+
+			// Handle face IDs in any containment updates:
+			for (auto& addFaceDelta : addFaceDeltas)
+			{
+				if (addFaceDelta.FaceContainmentUpdates.Num() > 0)
+				{
+					TMap<int32, FGraph3DFaceContainmentDelta> newContainmentUpdates;
+
+					for (auto& faceContainmentUpdate : addFaceDelta.FaceContainmentUpdates)
+					{
+						auto& newContainment = newContainmentUpdates.Add(newFaceIDToOldFaceID[faceContainmentUpdate.Key]);
+						newContainment.NextContainingFaceID = 
+							faceContainmentUpdate.Value.NextContainingFaceID == MOD_ID_NONE ? MOD_ID_NONE : newFaceIDToOldFaceID[faceContainmentUpdate.Value.NextContainingFaceID];
+						newContainment.PrevContainingFaceID = 
+							faceContainmentUpdate.Value.PrevContainingFaceID == MOD_ID_NONE ? MOD_ID_NONE : newFaceIDToOldFaceID[faceContainmentUpdate.Value.PrevContainingFaceID];
+
+						for (int32 newfaceID : faceContainmentUpdate.Value.ContainedFaceIDsToAdd)
+						{
+							newContainment.ContainedFaceIDsToAdd.Add(newFaceIDToOldFaceID[newfaceID]);
+						}
+					}
+
+					addFaceDelta.FaceContainmentUpdates = MoveTemp(newContainmentUpdates);
+				}
+			}
+
+			OutDeltas.Append(addFaceDeltas);
 		}
 	}
 }

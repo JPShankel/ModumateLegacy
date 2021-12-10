@@ -923,15 +923,20 @@ void UModumateDocument::ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *Wo
 
 void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World)
 {
-	TArray<FVector> controlPoints;
-	if (Delta.DeltaType == EGraph3DDeltaType::Add && !VolumeGraphs.Contains(Delta.GraphID))
+	const int32 graphID = Delta.GraphID;
+	ensureAlways(graphID != MOD_ID_NONE);
+	if (Delta.DeltaType == EGraph3DDeltaType::Add && ensure(!VolumeGraphs.Contains(graphID)) )
 	{
-		VolumeGraphs.Add(Delta.GraphID, MakeShared<FGraph3D>(Delta.GraphID));
+		VolumeGraphs.Add(graphID, MakeShared<FGraph3D>(graphID));
 		return;
 	}
-	else if (Delta.DeltaType == EGraph3DDeltaType::Remove)
+	else if (Delta.DeltaType == EGraph3DDeltaType::Remove && ensure(VolumeGraphs.Contains(graphID)) )
 	{
-		VolumeGraphs.Remove(Delta.GraphID);
+		for (const auto& item: VolumeGraphs[graphID]->GetAllObjects())
+		{
+			GraphElementsToGraph3DMap.Remove(item.Key);
+		}
+		VolumeGraphs.Remove(graphID);
 		return;
 	}
 
@@ -942,7 +947,8 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 	// Dirty every group whose members were deleted, or that had members added/removed
 	TSet<int32> dirtyGroupIDs;
-	FGraph3D* volumeGraph = GetVolumeGraph(Delta.GraphID);
+	FGraph3D* volumeGraph = GetVolumeGraph(graphID);
+
 	for (auto& kvp : Delta.VertexDeletions)
 	{
 		auto vertex = volumeGraph->FindVertex(kvp.Key);
@@ -1002,6 +1008,8 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 
 	for (auto &kvp : Delta.VertexAdditions)
 	{
+		check(!GraphElementsToGraph3DMap.Contains(kvp.Key));
+		GraphElementsToGraph3DMap.Add(kvp.Key) = graphID;
 		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTMetaVertex));
 	}
 
@@ -1011,11 +1019,15 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 		if (ensureAlways(deletedVertexObj))
 		{
 			DeleteObjectImpl(deletedVertexObj);
+			check(GraphElementsToGraph3DMap.Contains(kvp.Key));
+			GraphElementsToGraph3DMap.Remove(kvp.Key);
 		}
 	}
 
 	for (auto &kvp : Delta.EdgeAdditions)
 	{
+		check(!GraphElementsToGraph3DMap.Contains(kvp.Key));
+		GraphElementsToGraph3DMap.Add(kvp.Key) = graphID;
 		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTMetaEdge));
 	}
 
@@ -1025,11 +1037,15 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 		if (ensureAlways(deletedEdgeObj))
 		{
 			DeleteObjectImpl(deletedEdgeObj);
+			check(GraphElementsToGraph3DMap.Contains(kvp.Key));
+			GraphElementsToGraph3DMap.Remove(kvp.Key);
 		}
 	}
 
 	for (auto &kvp : Delta.FaceAdditions)
 	{
+		check(!GraphElementsToGraph3DMap.Contains(kvp.Key));
+		GraphElementsToGraph3DMap.Add(kvp.Key) = graphID;
 		CreateOrRestoreObj(World, FMOIStateData(kvp.Key, EObjectType::OTMetaPlane));
 	}
 
@@ -1039,6 +1055,8 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 		if (ensureAlways(deletedFaceObj))
 		{
 			DeleteObjectImpl(deletedFaceObj);
+			check(GraphElementsToGraph3DMap.Contains(kvp.Key));
+			GraphElementsToGraph3DMap.Remove(kvp.Key);
 		}
 	}
 }
@@ -2007,7 +2025,7 @@ bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 
 	if (numPoints == 1)
 	{
-		FGraph3DDelta graphDelta;
+		FGraph3DDelta graphDelta(ActiveVolumeGraph);
 		bValidDelta = (numPoints == 1) && TempVolumeGraph.GetDeltaForVertexAddition(points[0], graphDelta, NextID, id);
 		OutObjectIDs = { id };
 		deltas = { graphDelta };
@@ -2739,6 +2757,7 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 	VerifiedDeltasRecords.Reset();
 	UndoRedoMacroStack.Reset();
 	VolumeGraphs.Reset();
+	GraphElementsToGraph3DMap.Reset();
 	TempVolumeGraph.Reset();
 	SurfaceGraphs.Reset();
 
@@ -3084,6 +3103,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		ObjectInstanceArray.Empty();
 		graphObj->Destroy();
 	}
+	VolumeGraphs.Reset();
 
 	UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
 	FModumateDatabase* objectDB = gameInstance->ObjectDatabase;
@@ -3093,16 +3113,15 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	// Load the connectivity graphs now, which contain associations between object IDs,
 	// so that any objects whose geometry setup needs to know about connectivity can find it.
 	bool bSuccessfulGraphLoad = true;
+	int32 legacyGraphID = 1;
 	if (InHeader.Version < 18)
-	{   // Legacy project with a single volume graph
-		if (ensureAlways(VolumeGraphs.Num() == 1))
-		{
-			bSuccessfulGraphLoad = VolumeGraphs.begin()->Value->Load(&InDocumentRecord.VolumeGraph);
-		}
+	{	// Document has one global volume graph.
+		VolumeGraphs.Add(legacyGraphID) = MakeShared<FGraph3D>(0);
+		bSuccessfulGraphLoad = GetVolumeGraph(legacyGraphID)->Load(&InDocumentRecord.VolumeGraph);
+		RootVolumeGraph = legacyGraphID;
 	}
 	else
 	{
-		VolumeGraphs.Reset();
 		for (const auto& volumeGraphKvp : InDocumentRecord.VolumeGraphs)
 		{
 			TSharedPtr<FGraph3D> volumeGraph = MakeShared<FGraph3D>(volumeGraphKvp.Key);
@@ -3110,8 +3129,8 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 			VolumeGraphs.Add(volumeGraphKvp.Key, volumeGraph);
 		}
 		RootVolumeGraph = InDocumentRecord.RootVolumeGraph;
-		ActiveVolumeGraph = RootVolumeGraph;
 	}
+	ActiveVolumeGraph = RootVolumeGraph;
 
 	FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 
@@ -3144,13 +3163,21 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		CreateOrRestoreObj(world, stateData);
 	}
 
-	// Create MOIs reflected from the volume graph
-	for (const auto& kvp : GetVolumeGraph()->GetAllObjects())
+	// Create MOIs reflected from the volume graphs
+	for (const auto& graph3d : VolumeGraphs)
 	{
-		EObjectType objectType = UModumateTypeStatics::ObjectTypeFromGraph3DType(kvp.Value);
-		if (ensure(!ObjectsByID.Contains(kvp.Key)) && (objectType != EObjectType::OTNone))
+		for (const auto& kvp : graph3d.Value->GetAllObjects())
 		{
-			CreateOrRestoreObj(world, FMOIStateData(kvp.Key, objectType));
+			GraphElementsToGraph3DMap.Add(kvp.Key) = graph3d.Key;
+		}
+
+		for (const auto& kvp : graph3d.Value->GetAllObjects())
+		{
+			EObjectType objectType = UModumateTypeStatics::ObjectTypeFromGraph3DType(kvp.Value);
+			if (ensure(!ObjectsByID.Contains(kvp.Key)) && (objectType != EObjectType::OTNone))
+			{
+				CreateOrRestoreObj(world, FMOIStateData(kvp.Key, objectType));
+			}
 		}
 	}
 
@@ -3190,15 +3217,20 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		SurfaceGraphs.Remove(graph2DToRemove);
 	}
 
-	// Add a MetaGraph MOI if none in file, for backwards compatibility.
-	if (GetObjectsOfType(EObjectType::OTMetaGraph).Num() == 0 && ensureAlways(VolumeGraphs.Num() > 0))
-	{
-		RootVolumeGraph = NextID++;
-		CreateOrRestoreObj(world, FMOIStateData(RootVolumeGraph, EObjectType::OTMetaGraph));
-		auto graph3d = *VolumeGraphs.begin();
-		VolumeGraphs.Reset();
-		VolumeGraphs.Add(RootVolumeGraph, graph3d.Value);
+	// Add a MetaGraph MOI for backwards compatibility.
+	if (InHeader.Version < 18 && ensureAlways(VolumeGraphs.Num() > 0))
+	{   // Create MOI and remap to new ID
+		auto volumeGraph = VolumeGraphs[legacyGraphID];
+		legacyGraphID = NextID++;
+		RootVolumeGraph = legacyGraphID;
 		ActiveVolumeGraph = RootVolumeGraph;
+		CreateOrRestoreObj(world, FMOIStateData(RootVolumeGraph, EObjectType::OTMetaGraph));
+		for (auto& graphMap : GraphElementsToGraph3DMap)
+		{
+			graphMap.Value = legacyGraphID;
+		}
+		VolumeGraphs.Reset();
+		VolumeGraphs.Add(RootVolumeGraph) = volumeGraph;
 	}
 
 	// Now that all objects have been created and parented correctly, we can clean all of them.
@@ -3706,17 +3738,31 @@ const FGraph3D* UModumateDocument::GetVolumeGraph(int32 GraphId /*= MOD_ID_NONE*
 	return ensure(graph) ? graph->Get() : nullptr;
 }
 
+FGraph3D* UModumateDocument::FindVolumeGraph(int32 ElementID)
+{
+	int32 graphID = FindGraph3DByObjID(ElementID);
+	return graphID == MOD_ID_NONE ? nullptr : VolumeGraphs[graphID].Get();
+}
+
+const FGraph3D* UModumateDocument::FindVolumeGraph(int32 ElementID) const
+{
+	int32 graphID = FindGraph3DByObjID(ElementID);
+	return graphID == MOD_ID_NONE ? nullptr : VolumeGraphs[graphID].Get();
+}
+
+void UModumateDocument::SetActiveVolumeGraphID(int32 NewID)
+{
+	if (NewID != ActiveVolumeGraph)
+	{
+		ActiveVolumeGraph = NewID;
+		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph(NewID));
+	}
+}
+
 int32 UModumateDocument::FindGraph3DByObjID(int32 MetaObjectID) const
 {
-	for (const auto& graph : VolumeGraphs)
-	{
-		if (graph.Value->ContainsObject(MetaObjectID))
-		{
-			return graph.Key;
-		}
-	}
-
-	return MOD_ID_NONE;
+	const int32 * graphID = GraphElementsToGraph3DMap.Find(MetaObjectID);
+	return graphID ? *graphID : MOD_ID_NONE;
 }
 
 const TSharedPtr<FGraph2D> UModumateDocument::FindSurfaceGraph(int32 SurfaceGraphID) const

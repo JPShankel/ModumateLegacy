@@ -41,10 +41,10 @@ bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 	{
 		GetConnectedMOIs(CachedConnectedMOIs);
 
-		const auto& graph = *doc->GetVolumeGraph();
-		auto edge = graph.FindEdge(ID);
-		auto vertexStart = edge ? graph.FindVertex(edge->StartVertexID) : nullptr;
-		auto vertexEnd = edge ? graph.FindVertex(edge->EndVertexID) : nullptr;
+		const auto* graph = doc->FindVolumeGraph(ID);
+		auto edge = graph ? graph->FindEdge(ID) : nullptr;
+		auto vertexStart = edge ? graph->FindVertex(edge->StartVertexID) : nullptr;
+		auto vertexEnd = edge ? graph->FindVertex(edge->EndVertexID) : nullptr;
 		if (!ensure(LineActor.IsValid() && vertexStart && vertexEnd))
 		{
 			return false;
@@ -168,7 +168,7 @@ void AMOIMetaEdge::ShowAdjustmentHandles(AEditModelPlayerController* Controller,
 		return;
 	}
 
-	const auto& graph = *doc->GetVolumeGraph();
+	const auto& graph = *doc->FindVolumeGraph(ID);
 	auto edge = graph.FindEdge(ID);
 	if (IsDestroyed() || !ensure(edge))
 	{

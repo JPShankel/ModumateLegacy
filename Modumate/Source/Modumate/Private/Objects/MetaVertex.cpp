@@ -18,7 +18,8 @@ bool AMOIMetaVertex::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 	{
 	case EObjectDirtyFlags::Structure:
 	{
-		auto vertex = GetDocument()->GetVolumeGraph()->FindVertex(ID);
+		auto* graph = GetDocument()->FindVolumeGraph(ID);
+		auto vertex = graph ? graph->FindVertex(ID) : nullptr;
 		if (!ensure(vertex))
 		{
 			return false;

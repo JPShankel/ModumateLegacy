@@ -66,7 +66,8 @@ void AMOIMetaPlane::SetupDynamicGeometry()
 
 void AMOIMetaPlane::UpdateCachedGraphData()
 {
-	const FGraph3DFace *graphFace = GetDocument()->GetVolumeGraph()->FindFace(ID);
+	auto* graph = GetDocument()->FindVolumeGraph(ID);
+	const FGraph3DFace* graphFace = graph ? graph->FindFace(ID) : nullptr;
 
 	if (ensure(graphFace && (graphFace->CachedPositions.Num() > 0)))
 	{

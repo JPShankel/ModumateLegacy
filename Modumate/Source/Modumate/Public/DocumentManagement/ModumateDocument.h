@@ -77,6 +77,8 @@ private:
 	TMap<int32, TSharedPtr<FGraph3D>> VolumeGraphs;
 	int32 RootVolumeGraph = MOD_ID_NONE;
 	int32 ActiveVolumeGraph = MOD_ID_NONE;
+	// Map the element (face, edge, etc) ID to the ID of the graph that contains it.
+	TMap<int32, int32> GraphElementsToGraph3DMap;
 
 	// Copy of the volume graph to work with multi-stage deltas
 	FGraph3D TempVolumeGraph;
@@ -180,8 +182,10 @@ public:
 
 	FGraph3D* GetVolumeGraph(int32 GraphId = MOD_ID_NONE);
 	const FGraph3D* GetVolumeGraph(int32 GraphId = MOD_ID_NONE) const;
+	FGraph3D* FindVolumeGraph(int32 ElementID);
+	const FGraph3D* FindVolumeGraph(int32 ElementID) const;
 	int32 GetActiveVolumeGraphID() const { return ActiveVolumeGraph; }
-	void SetActiveVolumeGraphID(int32 NewID) { ActiveVolumeGraph = NewID; }
+	void SetActiveVolumeGraphID(int32 NewID);
 
 	int32 FindGraph3DByObjID(int32 MetaObjectID) const;
 

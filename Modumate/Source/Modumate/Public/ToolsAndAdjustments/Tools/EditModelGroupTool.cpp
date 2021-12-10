@@ -84,7 +84,7 @@ bool UGroupTool::Activate()
 		oldGraph->GetDeltaForDeleteObjects(metaItemsToMove, graphDeltas, nextID, true);
 		TArray<FGraph3DDelta> createGraphDeltas;
 
-		FModumateObjectDeltaStatics::MakeCreateGraphDeltasForDeleteItems(graphDeltas, oldGraph, nextID, createGraphDeltas);
+		FModumateObjectDeltaStatics::ConvertGraphDeleteToMove(graphDeltas, oldGraph, nextID, createGraphDeltas);
 		for (auto& graphDelta: graphDeltas)
 		{
 			graphDelta.GraphID = oldGroupID;
@@ -98,6 +98,7 @@ bool UGroupTool::Activate()
 		}
 
 		bRetVal = doc->ApplyDeltas(deltas, GetWorld());
+		UE_LOG(LogTemp, Warning, TEXT("Created new group from %d massing elements"), massingObjects.Num());
 	}
 
 	// Tool is single-use only

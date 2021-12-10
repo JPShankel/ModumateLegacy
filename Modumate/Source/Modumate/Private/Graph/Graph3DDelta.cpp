@@ -129,8 +129,6 @@ void FGraph3DDelta::Reset()
 	FaceContainmentUpdates.Reset();
 
 	FaceVertexIDUpdates.Reset();
-
-	GraphID = MOD_ID_NONE;
 }
 
 bool FGraph3DDelta::IsEmpty()
