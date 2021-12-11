@@ -73,7 +73,9 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 	switch (assemblyPreset->ObjectType)
 	{
 		case EObjectType::OTEdgeDetail: ensureAlways(assemblyPreset->TryGetCustomData(EdgeDetailData)); break;
-		case EObjectType::OTCabinet: ensureAlways(assemblyPreset->TryGetCustomData(MaterialBindingSet)); break;
+		case EObjectType::OTCabinet: 
+		case EObjectType::OTPointHosted:
+			ensureAlways(assemblyPreset->TryGetCustomData(MaterialBindingSet)); break;
 	};
 
 	if (assemblyPreset->SlotConfigPresetGUID.IsValid())
@@ -510,6 +512,19 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 		partSlot.Flip[1] = false;
 		partSlot.Flip[2] = false;
 		partSlot.ParentSlotIndex = INDEX_NONE;
+
+		// Point hosted obj uses MaterialBindingSet from assembly 
+		if (ObjectType == EObjectType::OTPointHosted)
+		{
+			for (auto& matBinding : MaterialBindingSet.MaterialBindings)
+			{
+				FArchitecturalMaterial aMat;
+				if (matBinding.GetEngineMaterial(InDB, aMat) == EBIMResult::Success)
+				{
+					partSlot.ChannelMaterials.Add(matBinding.Channel, aMat);
+				}
+			}
+		}
 	}
 
 	FBIMPartLayout layout;
