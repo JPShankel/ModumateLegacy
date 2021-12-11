@@ -3729,8 +3729,7 @@ void UModumateDocument::UpdateRoomAnalysis(UWorld *world)
 
 FGraph3D* UModumateDocument::GetVolumeGraph(int32 GraphId /*= MOD_ID_NONE*/)
 {
-	TSharedPtr<FGraph3D>* graph = VolumeGraphs.Find(GraphId == MOD_ID_NONE ? ActiveVolumeGraph : GraphId);
-	return ensure(graph) ? graph->Get() : nullptr;
+	return const_cast<FGraph3D*>(static_cast<const UModumateDocument*>(this)->GetVolumeGraph(GraphId));
 }
 
 const FGraph3D* UModumateDocument::GetVolumeGraph(int32 GraphId /*= MOD_ID_NONE*/) const
@@ -3741,8 +3740,7 @@ const FGraph3D* UModumateDocument::GetVolumeGraph(int32 GraphId /*= MOD_ID_NONE*
 
 FGraph3D* UModumateDocument::FindVolumeGraph(int32 ElementID)
 {
-	int32 graphID = FindGraph3DByObjID(ElementID);
-	return graphID == MOD_ID_NONE ? nullptr : VolumeGraphs[graphID].Get();
+	return const_cast<FGraph3D*>(static_cast<const UModumateDocument*>(this)->FindVolumeGraph(ElementID));
 }
 
 const FGraph3D* UModumateDocument::FindVolumeGraph(int32 ElementID) const
@@ -3762,7 +3760,7 @@ void UModumateDocument::SetActiveVolumeGraphID(int32 NewID)
 
 int32 UModumateDocument::FindGraph3DByObjID(int32 MetaObjectID) const
 {
-	const int32 * graphID = GraphElementsToGraph3DMap.Find(MetaObjectID);
+	const int32 * graphID = GraphElementsToGraph3DMap.Find(FMath::Abs(MetaObjectID));
 	return graphID ? *graphID : MOD_ID_NONE;
 }
 
@@ -3820,7 +3818,8 @@ bool UModumateDocument::IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &O
 
 	OutObjType = UModumateTypeStatics::Graph3DObjectTypeFromObjectType(moi->GetObjectType());
 	bool bIsVolumeGraphType = (OutObjType != EGraph3DObjectType::None);
-	bIsInGraph = GetVolumeGraph()->ContainsObject(ObjID);
+	auto* graph = FindVolumeGraph(ObjID);
+	bIsInGraph = graph ? graph->ContainsObject(ObjID) : false;
 	ensureAlways(bIsVolumeGraphType == bIsInGraph);
 
 	return bIsInGraph;

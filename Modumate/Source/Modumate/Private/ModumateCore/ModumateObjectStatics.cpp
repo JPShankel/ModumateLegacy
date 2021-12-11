@@ -463,7 +463,7 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 
 	EObjectType objectType = MetaMOI->GetObjectType();
 	int32 objID = MetaMOI->ID;
-	const FGraph3D& volumeGraph = *doc->GetVolumeGraph();
+	const FGraph3D& volumeGraph = *doc->FindVolumeGraph(objID);
 	if (!volumeGraph.ContainsObject(objID))
 	{
 		return false;

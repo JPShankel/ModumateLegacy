@@ -82,15 +82,28 @@ bool USelectTool::HandleMouseUp()
 
 	AModumateObjectInstance *currentViewGroup = Controller->EMPlayerState->ViewGroupObject;
 
-	// If we double clicked on a valid object that is within the hierarchy of the current
-	// view group, then go into that level of the hierarchy.
+	// If we double clicked on a valid object that is graph3D-hosted,
+	// then make its graph the active one.
 	if (doubleClicked)
 	{
-		if (newTarget && (newTarget->GetParentObject() == currentViewGroup) &&
-			(newTarget->GetObjectType() == EObjectType::OTGroup))
+		AModumateObjectInstance* newGroupTarget = newTarget;
+		while (newGroupTarget->GetParentID() != MOD_ID_NONE)
 		{
-			Controller->DeselectAll();
-			Controller->SetViewGroupObject(newTarget);
+			newGroupTarget = newGroupTarget->GetParentObject();
+		}
+
+		if (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(newGroupTarget->GetObjectType()) != EGraph3DObjectType::None)
+		{
+			const FGraph3D* selectedGraph = doc->FindVolumeGraph(newGroupTarget->ID);
+			if (ensure(selectedGraph))
+			{
+				const int32 selectedGroupID = selectedGraph->GraphID;
+				if (doc->GetActiveVolumeGraphID() != selectedGroupID)
+				{
+					doc->SetActiveVolumeGraphID(selectedGraph->GraphID);
+					UE_LOG(LogTemp, Warning, TEXT("Changed active group to %d"), selectedGroupID);
+				}
+			}
 		}
 	}
 	else

@@ -75,8 +75,8 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 			return false;
 		}
 
-		const auto& graph = *doc->GetVolumeGraph();
-		const auto* face = graph.FindFace(faceObj->ID);
+		const auto graph = doc->FindVolumeGraph(faceObj->ID);
+		const auto* face = graph ? graph->FindFace(faceObj->ID) : nullptr;
 		if (face == nullptr)
 		{
 			return false;
@@ -145,7 +145,7 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 				{
 					for (auto& kvp : graphPolygonsToAdd)
 					{
-						const auto* containedFace = graph.FindFace(kvp.Key);
+						const auto* containedFace = graph->FindFace(kvp.Key);
 
 						for (int32 idx = 0; idx < kvp.Value.Num(); idx++)
 						{
@@ -230,7 +230,7 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 			// movement updates
 			for (auto& kvp : GraphVertexToBoundVertex)
 			{
-				auto graphVertex = graph.FindVertex(kvp.Key);
+				auto graphVertex = graph->FindVertex(kvp.Key);
 				auto surfaceVertex = surfaceGraph->FindVertex(kvp.Value);
 
 				if (!graphVertex || !surfaceVertex)
@@ -425,7 +425,6 @@ bool AMOISurfaceGraph::CalculateFaces(const TArray<int32>& AddIDs, TMap<int32, T
 	{
 		return false;
 	}
-	const auto& graph = *doc->GetVolumeGraph();
 
 	int32 hitFaceIndex = UModumateObjectStatics::GetParentFaceIndex(this);
 	TArray<FVector> cornerPositions;
@@ -439,7 +438,7 @@ bool AMOISurfaceGraph::CalculateFaces(const TArray<int32>& AddIDs, TMap<int32, T
 
 		for (int32 id : AddIDs)
 		{
-			const auto* containedFace = graph.FindFace(id);
+			const auto* containedFace = doc->FindVolumeGraph(id)->FindFace(id);
 			TArray<FVector2D> holePolygon;
 			Algo::Transform(containedFace->CachedPositions, holePolygon, [this, axisX, axisY, origin](const FVector& WorldPoint) {
 				return UModumateGeometryStatics::ProjectPoint2D(WorldPoint, axisX, axisY, origin);

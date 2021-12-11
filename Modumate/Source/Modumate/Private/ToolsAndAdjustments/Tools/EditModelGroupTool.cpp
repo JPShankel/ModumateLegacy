@@ -32,13 +32,11 @@ bool UGroupTool::Activate()
 	bool bRetVal = true;
 
 	TSet<const AModumateObjectInstance*> massingObjects;
-	static const TSet<EObjectType> massingTypes = { EObjectType::OTMetaVertex, EObjectType::OTMetaEdge, EObjectType::OTMetaPlane,
-		EObjectType::OTMetaGraph };
 
 	const auto& selectedObjects = emPlayerState->SelectedObjects;
 	for (auto* obj: selectedObjects)
 	{
-		while (obj && !massingTypes.Contains(obj->GetObjectType()))
+		while (obj && UModumateTypeStatics::Graph3DObjectTypeFromObjectType(obj->GetObjectType()) == EGraph3DObjectType::None)
 		{
 			obj = obj->GetParentObject();
 		}
@@ -55,7 +53,7 @@ bool UGroupTool::Activate()
 		int32 nextID = doc->GetNextAvailableID();
 		int32 newGroupID = nextID++;
 		int32 oldGroupID = doc->FindGraph3DByObjID((*massingObjects.begin())->ID);
-		FMOIStateData stateData(newGroupID, EObjectType::OTMetaGraph, doc->GetActiveVolumeGraphID());
+		FMOIStateData stateData(newGroupID, EObjectType::OTMetaGraph, oldGroupID);
 
 		auto delta = MakeShared<FMOIDelta>();
 		delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
