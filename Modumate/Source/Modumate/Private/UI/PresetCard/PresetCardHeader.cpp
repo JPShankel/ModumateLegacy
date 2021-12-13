@@ -217,8 +217,8 @@ bool UPresetCardHeader::CaptureIcon(const FGuid& InGUID, const FBIMEditorNodeIDT
 void UPresetCardHeader::UpdateEditButtonIfPresetIsEditable()
 {
 	const FBIMPresetInstance* preset = EMPlayerController->GetDocument()->GetPresetCollection().PresetFromGUID(PresetGUID);
-	if (preset && 
-		(preset->NodeScope == EBIMValueScope::Assembly) || preset->NodeScope == EBIMValueScope::Part)
+	if (preset != nullptr && 
+		(preset->NodeScope == EBIMValueScope::Assembly || preset->NodeScope == EBIMValueScope::Part))
 	{
 		ButtonEdit->SetVisibility(ESlateVisibility::Visible);
 		return;
