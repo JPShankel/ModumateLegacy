@@ -42,6 +42,10 @@ public:
 	static const FString NativeSizeY;
 	static const FString NativeSizeZ;
 
+	static const FString PartSizeX;
+	static const FString PartSizeY;
+	static const FString PartSizeZ;
+
 	static const FString LocationX;
 	static const FString LocationY;
 	static const FString LocationZ;

@@ -7,6 +7,9 @@ PROPERTY,,String,,,,Dimension.UIGroup,,,,,,,
 PROPERTY,,String,,Description,,Dimension.Description,,,,,,,
 ,,Presets,,,,,,,,,,,
 TAGPATHS,DataType=ID,ID,DataType=GUID,GUID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Dimension.DisplayName,Dimension.DefaultValue,Dimension.UIGroup,Dimension.Description,,
+PRESET,,PartSizeX,,61145BBC-EA63-6E45-9391-0E7EB500E641,,NamedDimension,,Part Size (X),0in,Major,,,Property_Spatiality_Dimension_Size
+PRESET,,PartSizeY,,95373437-B0F5-0D49-8929-B84959A6B496,,NamedDimension,,Part Size (Y),0in,Major,,,Property_Spatiality_Dimension_Size
+PRESET,,PartSizeZ,,B50B9805-1E79-8F41-B7AC-7CB033ED9548,,NamedDimension,,Part Size (Z),0in,Major,,,Property_Spatiality_Dimension_Size
 PRESET,,Depth,,37E27C11-A7C8-E14E-9E99-3D4067D28E44,,NamedDimension,,Depth,4in,Major,,,Property_Spatiality_Dimension_Size
 PRESET,,Diameter,,EECBFC01-118B-6545-9A18-745CC1A04DCA,,NamedDimension,,Diameter,6in,Major,,,Property_Spatiality_Dimension_Size
 PRESET,,Length,,F6143975-A937-EA44-BBBE-D4566F973C48,,NamedDimension,,Length,24in,Major,,,Property_Spatiality_Dimension_Size

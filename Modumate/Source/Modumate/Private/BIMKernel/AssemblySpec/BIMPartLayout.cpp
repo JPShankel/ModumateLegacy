@@ -15,6 +15,10 @@ const FString FBIMPartLayout::NativeSizeX = TEXT("NativeSizeX");
 const FString FBIMPartLayout::NativeSizeY = TEXT("NativeSizeY");
 const FString FBIMPartLayout::NativeSizeZ = TEXT("NativeSizeZ");
 
+const FString FBIMPartLayout::PartSizeX = TEXT("PartSizeX");
+const FString FBIMPartLayout::PartSizeY = TEXT("PartSizeY");
+const FString FBIMPartLayout::PartSizeZ = TEXT("PartSizeZ");
+
 const FString FBIMPartLayout::LocationX = TEXT("LocationX");
 const FString FBIMPartLayout::LocationY = TEXT("LocationY");
 const FString FBIMPartLayout::LocationZ = TEXT("LocationZ");
@@ -161,26 +165,27 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 			}
 		}
 
+		FVector partSize = FVector::OneVector;
 		for (auto& kvp : InAssemblySpec.Parts[slotIdx].NamedDimensionValues)
 		{
 			PartSlotInstances[slotIdx].VariableValues.Add(kvp.Key, kvp.Value.AsWorldCentimeters());
+			if (kvp.Key == FBIMPartLayout::PartSizeX)
+			{
+				partSize.X = kvp.Value.AsWorldCentimeters();
+			}
+			if (kvp.Key == FBIMPartLayout::PartSizeY)
+			{
+				partSize.Y = kvp.Value.AsWorldCentimeters();
+			}
+			if (kvp.Key == FBIMPartLayout::PartSizeZ)
+			{
+				partSize.Z = kvp.Value.AsWorldCentimeters();
+			}
 		}
-
-		// The initial size value for parts with meshes is the mesh's native size
-		// This value is recalculated down below but may depend on this initial value
-		if (useMesh->EngineMesh.IsValid())
-		{
-			FVector nativeSize = useMesh->NativeSize * UModumateDimensionStatics::InchesToCentimeters;
-			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeX, nativeSize.X);
-			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeY, nativeSize.Y);
-			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeZ, nativeSize.Z);
-		}
-		else
-		{
-			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeX, 0.0f);
-			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeY, 0.0f);
-			PartSlotInstances[slotIdx].VariableValues.Add(NativeSizeZ, 0.0f);
-		}
+		// Feed adjusted part size back into NativeSize for formulas
+		PartSlotInstances[slotIdx].VariableValues.Add(FBIMPartLayout::NativeSizeX, partSize.X);
+		PartSlotInstances[slotIdx].VariableValues.Add(FBIMPartLayout::NativeSizeY, partSize.Y);
+		PartSlotInstances[slotIdx].VariableValues.Add(FBIMPartLayout::NativeSizeZ, partSize.Z);
 	}
 
 	TArray<FString> formulaErrors;

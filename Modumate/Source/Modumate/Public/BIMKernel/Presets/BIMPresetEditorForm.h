@@ -101,6 +101,8 @@ struct MODUMATE_API FBIMPresetForm
 	EBIMResult AddLayerPriorityGroupElement();
 	EBIMResult AddLayerPriorityValueElement();
 
+	bool HasField(const FName& Field) const;
+
 	bool operator==(const FBIMPresetForm& RHS) const;
 	bool operator!=(const FBIMPresetForm& RHS) const;
 };

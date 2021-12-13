@@ -45,6 +45,18 @@ bool FBIMPresetForm::operator!=(const FBIMPresetForm& RHS) const
 	return !(*this == RHS);
 }
 
+bool FBIMPresetForm::HasField(const FName& Field) const
+{
+	for (auto& element : Elements)
+	{
+		if (Field == FName(element.FieldName))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 EBIMResult FBIMPresetForm::AddPropertyElement(const FText& DisplayName, const FName& FieldName, EBIMPresetEditorField FieldType)
 {
 	if (ensureAlways(!DisplayName.IsEmpty() && !FieldName.IsNone()))
