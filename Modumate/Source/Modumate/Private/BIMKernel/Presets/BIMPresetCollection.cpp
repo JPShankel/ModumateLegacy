@@ -9,6 +9,7 @@
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/ModumateScriptProcessor.h"
 #include "Online/ModumateAnalyticsStatics.h"
+#include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 
 #define LOCTEXT_NAMESPACE "BIMPresetCollection"
 
@@ -868,6 +869,11 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		}
 	}
 
+	if (DocRecordVersion < 19)
+	{
+		SetPartSizesFromMeshes();
+	}
+
 	if (DocRecordVersion < DocVersion)
 	{
 		TMap<FGuid, FBIMPresetInstance> fixedPresets = DocRecord.PresetCollection.PresetsByGUID;
@@ -883,6 +889,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		{
 			kvp.Value.UpgradeData(InDB,proxyCollection, DocRecordVersion);
 		}
+
 		PresetsByGUID.Append(fixedPresets);
 	}
 	else
@@ -1076,6 +1083,57 @@ EBIMResult FBIMPresetCollectionProxy::CreateAssemblyFromLayerPreset(const FModum
 	OverridePreset(assemblyPreset);
 
 	return OutAssemblySpec.FromPreset(InDB, *this, assemblyPreset.GUID);
+}
+
+EBIMResult FBIMPresetCollection::SetPartSizesFromMeshes()
+{
+	/*
+	* Each Part preset has PartSize(X,Y,Z) properties, set in the data tables
+	* If a Part preset does not define its own size, it gets 0 from the named dimension default
+	* If a Part preset has 0 in a size dimension, retrieve the native size from the associated mesh
+	*/
+	TArray<FGuid> partPresets;
+	if (ensureAlways(GetPresetsForNCP(FBIMTagPath(TEXT("Part")), partPresets) == EBIMResult::Success))
+	{
+		auto checkPartSize = [](FBIMPresetInstance* Preset, const FBIMPresetInstance* MeshPreset, const FBIMNameType& PartField, const FBIMNameType& MeshField, const FText& DisplayName)
+		{
+			float v = 0.0f;
+			Preset->Properties.TryGetProperty(EBIMValueScope::Dimension, PartField, v);
+
+			// The property will always be present but will be 0 if it hasn't been set
+			if (v == 0.0f)
+			{
+				MeshPreset->Properties.TryGetProperty(EBIMValueScope::Mesh, MeshField, v);
+				Preset->Properties.SetProperty(EBIMValueScope::Dimension, PartField, v);
+				FBIMPropertyKey propKey(EBIMValueScope::Dimension, PartField);
+				// If size dimensions are specified in the part table, the form will already be built, otherwise build it here
+				if (!Preset->PresetForm.HasField(propKey.QN()))
+				{
+					Preset->PresetForm.AddPropertyElement(DisplayName, propKey.QN(), EBIMPresetEditorField::DimensionProperty);
+				}
+			}
+		};
+
+		for (auto guid : partPresets)
+		{
+			auto* preset = PresetFromGUID(guid);
+			FGuid assetGUID;
+			if (!preset || !preset->Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("AssetID"), assetGUID))
+			{
+				continue;
+			}
+			auto* meshPreset = PresetFromGUID(assetGUID);
+			if (!meshPreset)
+			{
+				continue;
+			}
+
+			checkPartSize(preset, meshPreset, FBIMNameType(FBIMPartLayout::PartSizeX), FBIMNameType(FBIMPartLayout::NativeSizeX), FText::FromString(TEXT("Part Size X")));
+			checkPartSize(preset, meshPreset, FBIMNameType(FBIMPartLayout::PartSizeY), FBIMNameType(FBIMPartLayout::NativeSizeY), FText::FromString(TEXT("Part Size Y")));
+			checkPartSize(preset, meshPreset, FBIMNameType(FBIMPartLayout::PartSizeZ), FBIMNameType(FBIMPartLayout::NativeSizeZ), FText::FromString(TEXT("Part Size Z")));
+		}
+	}	
+	return EBIMResult::Success;
 }
 
 #undef LOCTEXT_NAMESPACE

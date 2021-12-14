@@ -360,7 +360,8 @@ using FModumateDocumentHeader = FModumateDocumentHeaderV2;
 // Version 16: Miter priority in layers
 // Version 17: Typical edge details
 // Version 18: Multiple volume graphs
-static constexpr int32 DocVersion = 18;
+// Version 19: Editable part sizes in BIM
+static constexpr int32 DocVersion = 19;
 
 struct MODUMATE_API FModumateSerializationStatics
 {

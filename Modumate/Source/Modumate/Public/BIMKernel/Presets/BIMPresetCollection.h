@@ -57,6 +57,7 @@ struct MODUMATE_API FBIMPresetCollection
 	EBIMResult PostLoad();
 	EBIMResult ProcessNamedDimensions();
 	EBIMResult ProcessStarterAssemblies(const FModumateDatabase& AssetDatabase, const TArray<FGuid>& StarterPresets);
+	EBIMResult SetPartSizesFromMeshes();
 
 	EObjectType GetPresetObjectType(const FGuid& PresetID) const;
 
