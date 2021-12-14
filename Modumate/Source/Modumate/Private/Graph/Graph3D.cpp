@@ -1937,6 +1937,11 @@ bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, TSharedPt
 			}
 
 			auto edge = FindEdge(edgeID);
+			if (!ensureAlways(edge != nullptr))
+			{
+				continue;
+			}
+
 			int32 nextVertexID = (edge->StartVertexID == currentVertexID) ? edge->EndVertexID : edge->StartVertexID;
 
 			if (visitedVertexIDs.Contains(nextVertexID) ||
@@ -1946,6 +1951,10 @@ bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, TSharedPt
 			}
 
 			auto nextVertex = FindVertex(nextVertexID);
+			if (!ensureAlways(nextVertex != nullptr))
+			{
+				continue;
+			}
 
 			bool distanceFromPlane = FMath::IsNearlyZero(Plane.PlaneDot(nextVertex->Position), Epsilon);
 			if (!distanceFromPlane)
@@ -1992,6 +2001,10 @@ bool FGraph3D::Create2DGraph(int32 StartVertexID, const FPlane &Plane, TSharedPt
 
 bool FGraph3D::Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const FVector &AxisY, const FVector &Origin, const FBox2D &BoundingBox, TSharedPtr<FGraph2D> OutGraph, TMap<int32, int32> &OutGraphIDToObjID) const
 {
+	if (!ensureAlways(OutGraph.IsValid()))
+	{
+		return false;
+	}
 	OutGraph->Reset();
 
 	int32 NextID = 0;
@@ -2082,6 +2095,10 @@ bool FGraph3D::FindObjectsForPlane(const FVector AxisX, const FVector AxisY, con
 
 bool FGraph3D::Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const TSharedPtr<FGraph2D> Graph, TMap<int32, int32>& OutFace3DToPoly2D) const
 {
+	if (!ensureAlways(Graph.IsValid()))
+	{
+		return false;
+	}
 	const TMap<int32, FGraph2DPolygon> &graphPolys = Graph->GetPolygons();
 
 	// Compare 2D polygon vertex lists with 3D face vertex lists in order to create a mapping between the face IDs.
