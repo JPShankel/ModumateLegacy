@@ -417,12 +417,11 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &A
 		return SetIconMeshForTrimAssembly(Assembly, InRenderTarget);
 	case EObjectType::OTCabinet:
 		return SetIconMeshForCabinetAssembly(Assembly, InRenderTarget, PartIndex, bFromRootNode);
-	case EObjectType::OTFurniture:
-		return SetIconMeshForFFEAssembly(Assembly, InRenderTarget);
 	case  EObjectType::OTStaircase:
 		return SetIconMeshForStairAssembly(Assembly, InRenderTarget, 
 			(PartIndex == 0 || PartIndex == StairLayerTreadAssemblyPartIndex),
 			(PartIndex == 0 || PartIndex == StairLayerRiserAssemblyPartIndex));
+	case EObjectType::OTFurniture:
 	case EObjectType::OTPointHosted:
 		return SetIconMeshForPointHostedAssembly(Assembly, InRenderTarget);
 	}
@@ -653,47 +652,6 @@ bool ADynamicIconGenerator::SetIconMeshForTrimAssembly(const FBIMAssemblySpec &A
 	SceneCaptureComp->SetRelativeTransform(originalCaptureCompTransform);
 	SetIconDynamicMeshMeshCompForCapture(false);
 
-	return true;
-}
-
-bool ADynamicIconGenerator::SetIconMeshForFFEAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget)
-{
-	// Step 1: Generate model
-	////////////////////////////////////////////////////////////////////
-	TArray<UStaticMesh*> meshes;
-	for (int32 i = 0; i < Assembly.Parts.Num(); ++i)
-	{
-		// The first part in a multi-part FFE is the root part and has no mesh
-		if (Assembly.Parts[i].Mesh.EngineMesh.IsValid())
-		{
-			meshes.Add(Assembly.Parts[i].Mesh.EngineMesh.Get());
-		}
-	}
-	if (meshes.Num() == 0)
-	{
-		return false;
-	}
-	UStaticMesh* mesh = meshes[0];
-	////////////////////////////////////////////////////////////////////
-
-	IconStaticMesh->SetStaticMesh(mesh);
-
-	// Step 2: Calculate and adjust model to fit inside the view of SceneCaptureComp
-	FVector meshScale = ((FFEIconScaleFactor / mesh->GetBounds().SphereRadius) * FVector::OneVector);
-	FVector meshLocation = (mesh->GetBounds().Origin * meshScale) * -1.f;
-
-	IconStaticMesh->SetRelativeLocation(meshLocation);
-	IconStaticMesh->SetRelativeScale3D(meshScale);
-
-	SetComponentForIconCapture(IconStaticMesh, true);
-	IconStaticMesh->SetVisibility(true);
-	SceneCaptureComp->TextureTarget = InRenderTarget;
-	SceneCaptureComp->CaptureScene();
-
-	// Step 3: Cleanup
-	IconStaticMesh->ResetRelativeTransform();
-	SetComponentForIconCapture(IconStaticMesh, false);
-	IconStaticMesh->SetVisibility(false);
 	return true;
 }
 

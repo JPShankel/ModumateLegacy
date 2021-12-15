@@ -75,6 +75,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		case EObjectType::OTEdgeDetail: ensureAlways(assemblyPreset->TryGetCustomData(EdgeDetailData)); break;
 		case EObjectType::OTCabinet: 
 		case EObjectType::OTPointHosted:
+		case EObjectType::OTFurniture:
 			ensureAlways(assemblyPreset->TryGetCustomData(MaterialBindingSet)); break;
 	};
 
@@ -514,7 +515,8 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 		partSlot.ParentSlotIndex = INDEX_NONE;
 
 		// Point hosted obj uses MaterialBindingSet from assembly 
-		if (ObjectType == EObjectType::OTPointHosted)
+		if (ObjectType == EObjectType::OTPointHosted ||
+			ObjectType == EObjectType::OTFurniture)
 		{
 			for (auto& matBinding : MaterialBindingSet.MaterialBindings)
 			{
