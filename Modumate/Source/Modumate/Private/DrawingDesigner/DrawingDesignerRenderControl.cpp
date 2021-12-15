@@ -135,6 +135,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 		viewResponse.response.view.aspect = { 1.0f, viewHeight / viewWidth };
 		viewResponse.response.resolution_pixels = viewRequest.minimum_resolution_pixels;
 		viewResponse.response.view.name = cutPlaneData.Name;
+		viewResponse.response.scale = FModumateUnitValue(CachedSize.Y, EModumateUnitType::WorldCentimeters).AsWorldInches();
 
 		viewResponse.response.image_base64 = MoveTemp(b64Png);
 		GetSnapPoints(viewResponse.response.snaps);

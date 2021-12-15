@@ -92,6 +92,9 @@ struct MODUMATE_API FDrawingDesignerDrawingImage
 	FString image_base64;
 
 	UPROPERTY()
+	float scale = 0.0f;
+
+	UPROPERTY()
 	FDrawingDesignerPoint resolution_pixels;
 
 	bool operator==(const FDrawingDesignerDrawingImage& RHS) const;
