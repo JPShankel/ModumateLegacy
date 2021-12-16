@@ -126,6 +126,7 @@ public:
 	void SetHoveredObject(AModumateObjectInstance *ob);
 	void SetObjectSelected(AModumateObjectInstance *ob, bool bSelected, bool bDeselectOthers);
 	void SetObjectsSelected(TSet<AModumateObjectInstance*>& Obs, bool bSelected, bool bDeselectOthers);
+	void SetGroupObjectSelected(AModumateObjectInstance* GroupObject, bool bSelected, bool bDeselectOthers);
 
 	void SetViewGroupObject(AModumateObjectInstance *ob);
 	bool IsObjectInCurViewGroup(AModumateObjectInstance *ob) const;
@@ -173,6 +174,9 @@ public:
 	TSet<AModumateObjectInstance *> LastErrorObjectSet;
 
 	TSet<AModumateObjectInstance *> LastReachableObjectSet;
+
+	TSet<AModumateObjectInstance*> SelectedGroupObjects;
+
 	bool ShowHoverEffects;
 
 	TMap<int32, TSet<FName>> ObjectErrorMap;

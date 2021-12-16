@@ -14,7 +14,14 @@ class MODUMATE_API AMOIMetaGraph: public AModumateObjectInstance
 public:
 	AMOIMetaGraph();
 
-
 	virtual void PostCreateObject(bool bNewObject) override;
 
+	virtual void SetupDynamicGeometry() override;
+
+
+	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping = false, bool bForSelection = false) const override;
+	virtual bool ShowStructureOnSelection() const override;
+
+private:
+	FBox CachedBounds { ForceInitToZero };
 };

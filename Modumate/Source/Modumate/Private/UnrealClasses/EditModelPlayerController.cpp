@@ -1370,6 +1370,21 @@ void AEditModelPlayerController::LaunchCloudWorkspacePlanURL()
 	}
 }
 
+bool AEditModelPlayerController::MoveToParentGroup()
+{
+	if (Document)
+	{
+		const auto* groupObject = Document->GetObjectById(Document->GetActiveVolumeGraphID());
+		const auto* groupParent = groupObject ? groupObject->GetParentObject() : nullptr;
+		if (groupParent)
+		{
+			Document->SetActiveVolumeGraphID(groupParent->ID);
+			return true;
+		}
+	}
+	return false;
+}
+
 bool AEditModelPlayerController::OnCreateDwg()
 {
 	if (!CanShowFileDialog())
@@ -1651,16 +1666,20 @@ bool AEditModelPlayerController::HandleEscapeKey()
 		EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 		return true;
 	}
-	else if (EMPlayerState->SelectedObjects.Num() > 0)
+	else if (EMPlayerState->SelectedObjects.Num() + EMPlayerState->SelectedGroupObjects.Num() > 0)
 	{
 		DeselectAll();
 		return true;
 	}
-	else if (EMPlayerState->ViewGroupObject)
+	else if (EMPlayerState->ViewGroupObject)  // TODO: remove
 	{
 		SetViewGroupObject(EMPlayerState->ViewGroupObject->GetParentObject());
 	}
 	else if(EditModelUserWidget->EMUserWidgetHandleEscapeKey())
+	{
+		return true;
+	}
+	else if (MoveToParentGroup())
 	{
 		return true;
 	}

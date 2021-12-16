@@ -76,6 +76,7 @@ private:
 	// the source of truth for mitering, room detection, volume calculation, slicing floorplans/sections/elevations, heat/acoustics, etc.
 	TMap<int32, TSharedPtr<FGraph3D>> VolumeGraphs;
 	int32 RootVolumeGraph = MOD_ID_NONE;
+	// TODO: move active graph to EMPlayerState or elsewhere since it isn't really part of the document.
 	int32 ActiveVolumeGraph = MOD_ID_NONE;
 	// Map the element (face, edge, etc) ID to the ID of the graph that contains it.
 	TMap<int32, int32> GraphElementsToGraph3DMap;
@@ -187,6 +188,7 @@ public:
 	const FGraph3D* FindVolumeGraph(int32 ElementID) const;
 	int32 GetActiveVolumeGraphID() const { return ActiveVolumeGraph; }
 	void SetActiveVolumeGraphID(int32 NewID);
+	int32 GetRootVolumeGraphID() const { return RootVolumeGraph;  }
 
 	int32 FindGraph3DByObjID(int32 MetaObjectID) const;
 

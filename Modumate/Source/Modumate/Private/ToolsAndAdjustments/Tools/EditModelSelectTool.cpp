@@ -6,6 +6,7 @@
 #include "DocumentManagement/ModumateCommands.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -77,8 +78,9 @@ bool USelectTool::HandleMouseUp()
 		}
 	}
 
-	auto &sels = Controller->EMPlayerState->SelectedObjects;
-	int32 numSelections = sels.Num();
+	auto& selectedObjects = Controller->EMPlayerState->SelectedObjects;
+	int32 numSelections = selectedObjects.Num();
+	auto& selectedGroups = Controller->EMPlayerState->SelectedGroupObjects;
 
 	AModumateObjectInstance *currentViewGroup = Controller->EMPlayerState->ViewGroupObject;
 
@@ -92,7 +94,22 @@ bool USelectTool::HandleMouseUp()
 			newGroupTarget = newGroupTarget->GetParentObject();
 		}
 
-		if (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(newGroupTarget->GetObjectType()) != EGraph3DObjectType::None)
+		int32 subGroupID = MOD_ID_NONE;
+		bool bInGroup;
+		if (UModumateObjectStatics::IsObjectInSubgroup(doc, newTarget, doc->GetActiveVolumeGraphID(), subGroupID, bInGroup))
+		{
+			const FGraph3D* selectedGraph = doc->GetVolumeGraph(subGroupID);
+			if (ensure(selectedGraph))
+			{
+				if (doc->GetActiveVolumeGraphID() != subGroupID)
+				{
+					doc->SetActiveVolumeGraphID(subGroupID);
+					Controller->DeselectAll();
+					UE_LOG(LogTemp, Warning, TEXT("Changed active group to %d"), subGroupID);
+				}
+			}
+		}
+		else if (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(newGroupTarget->GetObjectType()) != EGraph3DObjectType::None)
 		{
 			const FGraph3D* selectedGraph = doc->FindVolumeGraph(newGroupTarget->ID);
 			if (ensure(selectedGraph))
@@ -101,14 +118,16 @@ bool USelectTool::HandleMouseUp()
 				if (doc->GetActiveVolumeGraphID() != selectedGroupID)
 				{
 					doc->SetActiveVolumeGraphID(selectedGraph->GraphID);
+					Controller->DeselectAll();
 					UE_LOG(LogTemp, Warning, TEXT("Changed active group to %d"), selectedGroupID);
 				}
 			}
 		}
+
 	}
 	else
 	{
-		bool newTargetIsSelected = sels.Contains(newTarget);
+		bool newTargetIsSelected = selectedObjects.Contains(newTarget);
 
 		if (!Controller->IsShiftDown() && !Controller->IsControlDown())
 		{
@@ -129,7 +148,17 @@ bool USelectTool::HandleMouseUp()
 
 			bool bDeselectOthers = !Controller->IsControlDown() && !Controller->IsShiftDown();
 
-			Controller->SetObjectSelected(newTarget, bShouldSelect, bDeselectOthers);
+			bool bInGroup = false;
+			int32 selectedGroupID = MOD_ID_NONE;
+
+			if (UModumateObjectStatics::IsObjectInSubgroup(doc, newTarget, doc->GetActiveVolumeGraphID(), selectedGroupID, bInGroup))
+			{
+				Controller->EMPlayerState->SetGroupObjectSelected(doc->GetObjectById(selectedGroupID), bShouldSelect, bDeselectOthers);
+			}
+			else if (bInGroup)
+			{
+				Controller->SetObjectSelected(newTarget, bShouldSelect, bDeselectOthers);
+			}
 
 			static const FString eventNameClick(TEXT("Click"));
 			UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventNameClick);
@@ -443,7 +472,25 @@ bool USelectTool::ProcessDragSelect()
 
 		bool bDeselectOthers = (!Controller->IsShiftDown() && bSetObjectsSelected);
 
-		Controller->SetObjectsSelected(objectsInSelection, bSetObjectsSelected, bDeselectOthers);
+		if (bDeselectOthers)
+		{
+			Controller->DeselectAll();
+		}
+		const int32 activeGroup = doc->GetActiveVolumeGraphID();
+		for (auto* selectedObject: objectsInSelection)
+		{
+			bool bInGroup = false;
+			int32 selectedGroupID = MOD_ID_NONE;
+
+			if (UModumateObjectStatics::IsObjectInSubgroup(doc, selectedObject, activeGroup, selectedGroupID, bInGroup))
+			{
+				Controller->EMPlayerState->SetGroupObjectSelected(doc->GetObjectById(selectedGroupID), bSetObjectsSelected, false);
+			}
+			else if (bInGroup)
+			{
+				Controller->SetObjectSelected(selectedObject, bSetObjectsSelected, false);
+			}
+		}
 
 		static const FString eventNameDrag(TEXT("Drag"));
 		UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventNameDrag);

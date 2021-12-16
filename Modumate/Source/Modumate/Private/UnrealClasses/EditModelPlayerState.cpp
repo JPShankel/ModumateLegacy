@@ -11,6 +11,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateUserSettings.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ModumateAnalyticsStatics.h"
@@ -209,8 +210,10 @@ void AEditModelPlayerState::BatchRenderLines()
 		}
 	}
 
-	if ((SelectedObjects.Num() > 0))
+	if ((SelectedObjects.Num() + SelectedGroupObjects.Num() > 0))
 	{
+		const int32 currentGroup = doc->GetActiveVolumeGraphID();
+		TSet<int32> currentSelectedGroups;
 		for (auto *selectedObj : SelectedObjects)
 		{
 			if (selectedObj && selectedObj->ShowStructureOnSelection() && !selectedObj->IsDirty(EObjectDirtyFlags::Structure))
@@ -218,6 +221,28 @@ void AEditModelPlayerState::BatchRenderLines()
 				selectedObj->RouteGetStructuralPointsAndLines(TempObjectStructurePoints, TempObjectStructureLines, false, false, cullingPlane);
 				CurSelectionStructurePoints.Append(TempObjectStructurePoints);
 				CurSelectionStructureLines.Append(TempObjectStructureLines);
+			}
+		}
+
+		for(auto* selectedGroupObj: SelectedGroupObjects)
+		{
+			if (ensure(selectedGroupObj))
+			{
+				TArray<FStructurePoint> points;
+				TArray<FStructureLine> groupBox;
+
+				FModumateLines currentGroupLine;
+				currentGroupLine.Thickness = 2.0f;
+				currentGroupLine.DashLength = 6.0f;
+				currentGroupLine.DashSpacing = 10.0f;
+				currentGroupLine.Color = FLinearColor(FColor(0x63, 0xC3, 0xBA));
+				selectedGroupObj->RouteGetStructuralPointsAndLines(points, groupBox, false, false, cullingPlane);
+				for (const auto& line : groupBox)
+				{
+					currentGroupLine.Point1 = line.P1;
+					currentGroupLine.Point2 = line.P2;
+					EMPlayerController->HUDDrawWidget->LinesToDraw.Add(currentGroupLine);
+				}
 			}
 		}
 	}
@@ -559,6 +584,7 @@ void AEditModelPlayerState::DeselectAll(bool bNotifyWidget)
 	}
 
 	SelectedObjects.Empty();
+	SelectedGroupObjects.Empty();
 
 	PostSelectionChanged();
 	
@@ -821,6 +847,26 @@ void AEditModelPlayerState::SetObjectsSelected(TSet<AModumateObjectInstance*>& O
 	}
 	PostSelectionChanged();
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
+}
+
+void AEditModelPlayerState::SetGroupObjectSelected(AModumateObjectInstance* GroupObject, bool bSelected, bool bDeselectOthers)
+{
+	if (bDeselectOthers)
+	{
+		SelectedGroupObjects.Empty();
+	}
+
+	if (GroupObject)
+	{
+		if (bSelected)
+		{
+			SelectedGroupObjects.Add(GroupObject);
+		}
+		else
+		{
+			SelectedGroupObjects.Remove(GroupObject);
+		}
+	}
 }
 
 void AEditModelPlayerState::SetObjectSelected(AModumateObjectInstance *ob, bool bSelected, bool bDeselectOthers)

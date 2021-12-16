@@ -109,4 +109,8 @@ public:
 		const FVector& StartPosition, const FVector& EndPosition);
 
 	static void GetTerrainSurfaceObjectEnabledFlags(const AModumateObjectInstance* TerrainSurfaceObj, bool& bOutVisible, bool& bOutCollisionEnabled);
+
+	static bool IsObjectInGroup(const UModumateDocument* Doc, const AModumateObjectInstance* Object, int32 GroupID = MOD_ID_NONE);
+	static bool IsObjectInSubgroup(const UModumateDocument* Doc, const AModumateObjectInstance* Object, int32 ActiveGroup,
+		int32& OutSubgroup, bool& bOutIsInGroup);
 };

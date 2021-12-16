@@ -321,7 +321,7 @@ bool UEditModelUserWidget::EMUserWidgetHandleEscapeKey()
 		ToggleSettingsWindow(false);
 	}
 
-	if (CurrentLeftMenuState != ELeftMenuState::None)
+	if (CurrentLeftMenuState != ELeftMenuState::None && CurrentLeftMenuState != ELeftMenuState::SelectMenu)
 	{
 		SwitchLeftMenu(ELeftMenuState::None);
 		return true;

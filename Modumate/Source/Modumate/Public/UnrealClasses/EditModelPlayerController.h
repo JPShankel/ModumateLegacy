@@ -524,6 +524,8 @@ public:
 
 	void LaunchCloudWorkspacePlanURL();
 
+	bool MoveToParentGroup();
+
 	UFUNCTION(BlueprintCallable)
 	bool TakeScreenshot();
 

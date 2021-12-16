@@ -1100,3 +1100,69 @@ void UModumateObjectStatics::GetTerrainSurfaceObjectEnabledFlags(const AModumate
 		}
 	}
 }
+
+bool UModumateObjectStatics::IsObjectInGroup(const UModumateDocument* Doc, const AModumateObjectInstance* Object, int32 GroupID /*= MOD_ID_NONE*/)
+{
+	if (GroupID == MOD_ID_NONE)
+	{
+		GroupID = Doc->GetActiveVolumeGraphID();
+	}
+
+	while (Object && UModumateTypeStatics::Graph3DObjectTypeFromObjectType(Object->GetObjectType()) == EGraph3DObjectType::None)
+	{
+		Object = Object->GetParentObject();
+	}
+	if (!Object)
+	{
+		return true;
+	}
+
+	const FGraph3D* volumeGraph = Doc->FindVolumeGraph(Object->ID);
+	return volumeGraph && volumeGraph->GraphID == GroupID;
+}
+
+bool UModumateObjectStatics::IsObjectInSubgroup(const UModumateDocument* Doc, const AModumateObjectInstance* Object, int32 ActiveGroup,
+	int32& OutSubgroup, bool& bOutIsInGroup)
+{
+	if (ActiveGroup == MOD_ID_NONE)
+	{
+		ActiveGroup = Doc->GetActiveVolumeGraphID();
+	}
+
+	bOutIsInGroup = false;
+	while (Object && UModumateTypeStatics::Graph3DObjectTypeFromObjectType(Object->GetObjectType()) == EGraph3DObjectType::None)
+	{
+		Object = Object->GetParentObject();
+	}
+	if (!Object)
+	{
+		bOutIsInGroup = true;
+		return false;
+	}
+
+	const FGraph3D* volumeGraph = Doc->FindVolumeGraph(Object->ID);
+	if (!volumeGraph)
+	{
+		return false;
+	}
+
+	if (volumeGraph->GraphID == ActiveGroup)
+	{
+		bOutIsInGroup = true;
+		return false;
+	}
+
+	const AModumateObjectInstance* graphObject = Doc->GetObjectById(volumeGraph->GraphID);
+	while (graphObject)
+	{
+		const auto* parentGraphObject = graphObject->GetParentObject();
+		if (parentGraphObject && parentGraphObject->ID == ActiveGroup)
+		{
+			OutSubgroup = graphObject->ID;
+			return true;
+		}
+		graphObject = parentGraphObject;
+	}
+
+	return false;
+}

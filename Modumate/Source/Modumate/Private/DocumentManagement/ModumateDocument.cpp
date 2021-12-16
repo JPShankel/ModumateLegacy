@@ -1424,66 +1424,88 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 {
 	// TODO: unclear whether this is correct or the best place -
 	// set the faces containing or contained by dirty faces dirty as well
-	FGraph3D* volumeGraph = GetVolumeGraph();
-	for (auto& kvp : volumeGraph->GetFaces())
-	{
-		auto& face = kvp.Value;
-		if (!face.bDirty)
-		{
-			continue;
-		}
-
-		if (auto containingFace = volumeGraph->FindFace(face.ContainingFaceID))
-		{
-			containingFace->Dirty(false);
-		}
-		for (int32 containedFaceID : face.ContainedFaceIDs)
-		{
-			if (auto containedFace = volumeGraph->FindFace(containedFaceID))
-			{
-				containedFace->Dirty(false);
-			}
-		}
-	}
-
 	TSet<int32> dirtyGroupIDs;
-	TArray<int32> cleanedVertices, cleanedEdges, cleanedFaces;
-	if (volumeGraph->CleanGraph(cleanedVertices, cleanedEdges, cleanedFaces))
+	for (auto& volumeGraphKvp : VolumeGraphs)
 	{
-		for (int32 vertexID : cleanedVertices)
+		FGraph3D* volumeGraph = volumeGraphKvp.Value.Get();
+
+		for (auto& kvp : volumeGraph->GetFaces())
 		{
-			FGraph3DVertex *graphVertex = volumeGraph->FindVertex(vertexID);
-			AModumateObjectInstance *vertexObj = GetObjectById(vertexID);
-			if (graphVertex && vertexObj && (vertexObj->GetObjectType() == EObjectType::OTMetaVertex))
+			auto& face = kvp.Value;
+			if (!face.bDirty)
 			{
-				vertexObj->MarkDirty(EObjectDirtyFlags::Structure);
-				dirtyGroupIDs.Append(graphVertex->GroupIDs);
+				continue;
+			}
+
+			if (auto containingFace = volumeGraph->FindFace(face.ContainingFaceID))
+			{
+				containingFace->Dirty(false);
+			}
+			for (int32 containedFaceID : face.ContainedFaceIDs)
+			{
+				if (auto containedFace = volumeGraph->FindFace(containedFaceID))
+				{
+					containedFace->Dirty(false);
+				}
 			}
 		}
 
-		for (int32 edgeID : cleanedEdges)
-		{
-			FGraph3DEdge *graphEdge = volumeGraph->FindEdge(edgeID);
-			AModumateObjectInstance *edgeObj = GetObjectById(edgeID);
-			if (graphEdge && edgeObj && (edgeObj->GetObjectType() == EObjectType::OTMetaEdge))
-			{
-				edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
-				dirtyGroupIDs.Append(graphEdge->GroupIDs);
-			}
-		}
+		TArray<int32> cleanedVertices, cleanedEdges, cleanedFaces;
 
-		for (int32 faceID : cleanedFaces)
+		if (volumeGraph->CleanGraph(cleanedVertices, cleanedEdges, cleanedFaces))
 		{
-			FGraph3DFace *graphFace = volumeGraph->FindFace(faceID);
-			AModumateObjectInstance *faceObj = GetObjectById(faceID);
-			if (graphFace && faceObj && (faceObj->GetObjectType() == EObjectType::OTMetaPlane))
+			for (int32 vertexID : cleanedVertices)
 			{
-				faceObj->MarkDirty(EObjectDirtyFlags::Structure);
-				dirtyGroupIDs.Append(graphFace->GroupIDs);
+				FGraph3DVertex* graphVertex = volumeGraph->FindVertex(vertexID);
+				AModumateObjectInstance* vertexObj = GetObjectById(vertexID);
+				if (graphVertex && vertexObj && (vertexObj->GetObjectType() == EObjectType::OTMetaVertex))
+				{
+					vertexObj->MarkDirty(EObjectDirtyFlags::Structure);
+					dirtyGroupIDs.Append(graphVertex->GroupIDs);
+				}
 			}
+
+			for (int32 edgeID : cleanedEdges)
+			{
+				FGraph3DEdge* graphEdge = volumeGraph->FindEdge(edgeID);
+				AModumateObjectInstance* edgeObj = GetObjectById(edgeID);
+				if (graphEdge && edgeObj && (edgeObj->GetObjectType() == EObjectType::OTMetaEdge))
+				{
+					edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
+					dirtyGroupIDs.Append(graphEdge->GroupIDs);
+				}
+			}
+
+			for (int32 faceID : cleanedFaces)
+			{
+				FGraph3DFace* graphFace = volumeGraph->FindFace(faceID);
+				AModumateObjectInstance* faceObj = GetObjectById(faceID);
+				if (graphFace && faceObj && (faceObj->GetObjectType() == EObjectType::OTMetaPlane))
+				{
+					faceObj->MarkDirty(EObjectDirtyFlags::Structure);
+					dirtyGroupIDs.Append(graphFace->GroupIDs);
+				}
+			}
+
+			AModumateObjectInstance* graphObj = GetObjectById(volumeGraphKvp.Key);
+			if (graphObj)
+			{
+				graphObj->MarkDirty(EObjectDirtyFlags::Structure);
+			}
+
+			if (cleanedVertices.Num() > 0)
+			{   // If any vertices have moved then recalculate all boxes.
+				AModumateObjectInstance* rootGraphObj = GetObjectById(GetRootVolumeGraphID());
+				if (ensure(rootGraphObj))
+				{
+					rootGraphObj->MarkDirty(EObjectDirtyFlags::Structure);
+				}
+			}
+
 		}
 	}
 
+	// TODO: Remove
 	// dirty group objects that are related to dirtied graph objects
 	for (int32 groupID : dirtyGroupIDs)
 	{

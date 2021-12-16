@@ -94,6 +94,8 @@ public:
 
 	void CheckTranslationValidity(const TArray<int32> &InVertexIDs, TMap<int32, bool> &OutEdgeIDToValidity) const;
 
+	void GetBoundingBox(FBox& OutBox) const;
+
 private:
 	// Find a mapping between this 3D graph's faces and the given 2D graph's polygons, assuming the underlying vertex IDs are the same.
 	bool Find2DGraphFaceMapping(TSet<int32> FaceIDsToSearch, const TSharedPtr<FGraph2D> Graph, TMap<int32, int32> &OutFace3DToPoly2D) const;

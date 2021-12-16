@@ -25,13 +25,14 @@ void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObj
 		}
 		EGraphObjectType graph2DObjType = UModumateTypeStatics::Graph2DObjectTypeFromObjectType(moi->GetObjectType());
 
-		if (const auto& graphObject = doc->FindVolumeGraph(id)->FindObject(id))
+		const FGraph3D* graph3d = doc->FindVolumeGraph(id);
+		if (const auto& graphObject = graph3d ? graph3d->FindObject(id) : nullptr)
 		{
 			TArray<int32> vertexIDs;
 			graphObject->GetVertexIDs(vertexIDs);
 			OutTransformableIDs.Append(vertexIDs);
 		}
-		else if (auto parentGraphObject = doc->FindVolumeGraph(id)->FindObject(moi->GetParentID()))
+		else if (auto parentGraphObject = graph3d ? graph3d->FindObject(moi->GetParentID()) : nullptr)
 		{
 			TArray<int32> vertexIDs;
 			parentGraphObject->GetVertexIDs(vertexIDs);

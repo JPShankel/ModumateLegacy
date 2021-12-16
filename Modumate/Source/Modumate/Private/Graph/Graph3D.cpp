@@ -1486,6 +1486,15 @@ void FGraph3D::CheckTranslationValidity(const TArray<int32> &InVertexIDs, TMap<i
 
 }
 
+// OutBox intentionally not reset.
+void FGraph3D::GetBoundingBox(FBox& OutBox) const
+{
+	for (const auto& kvp : Vertices)
+	{
+		OutBox += kvp.Value.Position;
+	}
+}
+
 bool FGraph3D::Load(const FGraph3DRecord* InGraph3DRecord)
 {
 	bool bTotalSuccess = true;
