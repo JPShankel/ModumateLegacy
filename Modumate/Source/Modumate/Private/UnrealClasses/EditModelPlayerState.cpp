@@ -197,6 +197,7 @@ void AEditModelPlayerState::BatchRenderLines()
 	UModumateDocument* doc = gameState->Document;
 	FPlane cullingPlane = EMPlayerController->GetCurrentCullingPlane();
 
+	// TODO: remove
 	if (ViewGroupObject)
 	{
 		AModumateObjectInstance *curViewGroupObj = ViewGroupObject;
@@ -293,6 +294,34 @@ void AEditModelPlayerState::BatchRenderLines()
 		}
 
 		AffordanceLines.Reset();
+	}
+
+	AModumateObjectInstance* outerGroupObject = doc->GetObjectById(doc->GetActiveVolumeGraphID());
+	const int32 rootGroup = doc->GetRootVolumeGraphID();
+	if (ensure(outerGroupObject))
+	{
+		FModumateLines outerGroupLine;
+		outerGroupLine.Thickness = 1.0f;
+		outerGroupLine.DashLength = 3.0f;
+		outerGroupLine.DashSpacing = 10.0f;
+		outerGroupLine.Color = FLinearColor(0.1f, 0.1f, 0.1f);
+
+		TArray<FStructurePoint> points;
+		TArray<FStructureLine> groupBox;
+
+		while (outerGroupObject && outerGroupObject->ID != rootGroup)
+		{
+			outerGroupObject->RouteGetStructuralPointsAndLines(points, groupBox, false, false, cullingPlane);
+			for (const auto& line : groupBox)
+			{
+				outerGroupLine.Point1 = line.P1;
+				outerGroupLine.Point2 = line.P2;
+				EMPlayerController->HUDDrawWidget->LinesToDraw.Add(outerGroupLine);
+			}
+			outerGroupObject = outerGroupObject->GetParentObject();
+			outerGroupLine.Color = FLinearColor(FColor(0x87, 0x9a, 0x99));
+		}
+
 	}
 
 	// Queue up the lines managed by the PlayerHUD, so that all lines added to the HUD Draw Widget happen here.
