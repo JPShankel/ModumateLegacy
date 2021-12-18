@@ -1605,7 +1605,7 @@ void FGraph3D::GetDeltasForPaste(const FGraph3DRecord* InGraph3DRecord, const FV
 		return;
 	}
 
-	FGraph3DDelta vertexDelta;
+	FGraph3DDelta vertexDelta(GraphID);
 	TSet<int32> addedVertices;
 	for (auto& kvp : InGraph3DRecord->Vertices)
 	{

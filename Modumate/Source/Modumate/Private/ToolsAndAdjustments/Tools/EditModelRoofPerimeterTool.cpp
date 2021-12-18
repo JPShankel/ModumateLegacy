@@ -93,7 +93,7 @@ bool URoofPerimeterTool::Activate()
 		deltasToApply.Add(perimeterCreationDelta);
 
 		// Now create the graph delta to assign the perimeter object to the GroupIDs of its edges
-		auto graphDelta = MakeShared<FGraph3DDelta>();
+		auto graphDelta = MakeShared<FGraph3DDelta>(volumeGraph.GraphID);
 		FGraph3DGroupIDsDelta groupIDsDelta(TSet<int32>({ perimeterID }), TSet<int32>());
 		for (int32 edgeID : perimeterEdgeIDs)
 		{

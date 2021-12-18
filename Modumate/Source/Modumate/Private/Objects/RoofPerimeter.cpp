@@ -158,7 +158,11 @@ bool AMOIRoofPerimeter::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 				// Delete the roof group from the graph
 				if (TempGroupMembers.Num() > 0)
 				{
-					auto graphDelta = MakeShared<FGraph3DDelta>();
+					// TempGroupMembers are graph3d perimeter edges & faces of roof.
+					// TODO: store these some other way to remove legacy groups. MOD-2094
+					const int32 graphID = Document->FindGraph3DByObjID(*TempGroupMembers.begin());
+
+					auto graphDelta = MakeShared<FGraph3DDelta>(graphID);
 					for (int32 staleGroupMemberID : TempGroupMembers)
 					{
 						FGraph3DGroupIDsDelta groupIDsDelta(TSet<int32>(), TSet<int32>({ ID }));

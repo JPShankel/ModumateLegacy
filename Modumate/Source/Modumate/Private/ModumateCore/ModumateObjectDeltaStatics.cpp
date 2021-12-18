@@ -32,36 +32,40 @@ void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObj
 			graphObject->GetVertexIDs(vertexIDs);
 			OutTransformableIDs.Append(vertexIDs);
 		}
-		else if (auto parentGraphObject = graph3d ? graph3d->FindObject(moi->GetParentID()) : nullptr)
+		else
 		{
-			TArray<int32> vertexIDs;
-			parentGraphObject->GetVertexIDs(vertexIDs);
-			OutTransformableIDs.Append(vertexIDs);
-		}
-		else if (auto surfaceGraph = doc->FindSurfaceGraphByObjID(id))
-		{
-			if (surfaceGraph == nullptr)
+			graph3d = doc->FindVolumeGraph(moi->GetParentID());
+			if (auto parentGraphObject = graph3d ? graph3d->FindObject(moi->GetParentID()) : nullptr)
 			{
-				continue;
+				TArray<int32> vertexIDs;
+				parentGraphObject->GetVertexIDs(vertexIDs);
+				OutTransformableIDs.Append(vertexIDs);
 			}
-
-			auto surfaceGraphObject = surfaceGraph->FindObject(id);
-			if (surfaceGraphObject == nullptr)
+			else if (auto surfaceGraph = doc->FindSurfaceGraphByObjID(id))
 			{
-				surfaceGraphObject = surfaceGraph->FindObject(moi->GetParentID());
-				if (surfaceGraphObject == nullptr)
+				if (surfaceGraph == nullptr)
 				{
 					continue;
 				}
-			}
 
-			TArray<int32> vertexIDs;
-			surfaceGraphObject->GetVertexIDs(vertexIDs);
-			OutTransformableIDs.Append(vertexIDs);
-		}
-		else
-		{
-			OutTransformableIDs.Add(id);
+				auto surfaceGraphObject = surfaceGraph->FindObject(id);
+				if (surfaceGraphObject == nullptr)
+				{
+					surfaceGraphObject = surfaceGraph->FindObject(moi->GetParentID());
+					if (surfaceGraphObject == nullptr)
+					{
+						continue;
+					}
+				}
+
+				TArray<int32> vertexIDs;
+				surfaceGraphObject->GetVertexIDs(vertexIDs);
+				OutTransformableIDs.Append(vertexIDs);
+			}
+			else
+			{
+				OutTransformableIDs.Add(id);
+			}
 		}
 	}
 }
