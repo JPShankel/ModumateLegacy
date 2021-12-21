@@ -14,6 +14,8 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 
+constexpr float MOI_TRACE_DISTANCE = 5000.0f;
+
 FString FDrawingDesignerRenderControl::GetViewList()
 {
 	FDrawingDesignerViewList viewList;
@@ -169,22 +171,19 @@ bool FDrawingDesignerRenderControl::GetMoiFromView(FVector2D uv, FDrawingDesigne
 		corners[c] = cutPlane->GetCorner(c);
 	}
 
-	const FVector planeCentre((corners[1] + corners[2]) / 2.0f);
+
 	const float planeWidth = (corners[1] - corners[0]).Size();
 	const float planeHeight = (corners[2] - corners[1]).Size();
-
 	const FVector xaxis = (corners[0] - corners[1]).GetSafeNormal();
 	const FVector yaxis = (corners[1] - corners[2]).GetSafeNormal();
 	const FVector origin = corners[2];
 	const FVector zaxis(xaxis ^ yaxis);
 	FVector2D size; size.X = planeWidth; size.Y = planeHeight;
-	
-	const FQuat cutPlaneRotation(cutPlane->GetRotation());
 
 	//***********************************//
 	FVector worldStart = UModumateGeometryStatics::Deproject2DPoint(uv * size, xaxis, yaxis, origin);
 	auto forward = zaxis.GetSafeNormal();
-	const FVector worldEnd = worldStart + forward * 5000;
+	const FVector worldEnd = worldStart + forward * MOI_TRACE_DISTANCE;
 
 	FHitResult hitResult;
 	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(Doc->GetWorld()->GetFirstPlayerController());
