@@ -3,13 +3,16 @@
 #include "DrawingDesigner/DrawingDesignerRenderControl.h"
 
 #include "DocumentManagement/ModumateDocument.h"
+#include "DrawingDesigner/DrawingDesignerRequests.h"
 #include "DrawingDesigner/DrawingDesignerView.h"
 #include "DrawingDesigner/DrawingDesignerLine.h"
 #include "DrawingDesigner/DrawingDesignerRender.h"
 #include "Objects/CutPlane.h"
+
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 FString FDrawingDesignerRenderControl::GetViewList()
 {
@@ -147,6 +150,59 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 	SceneStaticMaterialMap.Empty();
 	SceneProcMaterialMap.Empty();
 	return bSuccess;
+}
+ 
+bool FDrawingDesignerRenderControl::GetMoiFromView(FVector2D uv, FDrawingDesignerView& view, int32& OutMoiId)
+{
+	const AModumateObjectInstance* moi = Doc->GetObjectById(view.moi_id);
+	OutMoiId = INDEX_NONE;
+
+	if (!ensureAlways(moi) || !ensureAlways(moi->GetObjectType() == EObjectType::OTCutPlane))
+	{
+		return false;
+	}
+
+	const AMOICutPlane* cutPlane = Cast<const AMOICutPlane>(moi);
+	FVector corners[4];
+	for (int32 c = 0; c < 4; ++c)
+	{
+		corners[c] = cutPlane->GetCorner(c);
+	}
+
+	const FVector planeCentre((corners[1] + corners[2]) / 2.0f);
+	const float planeWidth = (corners[1] - corners[0]).Size();
+	const float planeHeight = (corners[2] - corners[1]).Size();
+
+	const FVector xaxis = (corners[0] - corners[1]).GetSafeNormal();
+	const FVector yaxis = (corners[1] - corners[2]).GetSafeNormal();
+	const FVector origin = corners[2];
+	const FVector zaxis(xaxis ^ yaxis);
+	FVector2D size; size.X = planeWidth; size.Y = planeHeight;
+	
+	const FQuat cutPlaneRotation(cutPlane->GetRotation());
+
+	//***********************************//
+	FVector worldStart = UModumateGeometryStatics::Deproject2DPoint(uv * size, xaxis, yaxis, origin);
+	auto forward = zaxis.GetSafeNormal();
+	const FVector worldEnd = worldStart + forward * 5000;
+
+	FHitResult hitResult;
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(Doc->GetWorld()->GetFirstPlayerController());
+
+	if (controller)
+	{
+		controller->LineTraceSingleAgainstMOIs(hitResult, worldStart, worldEnd);
+
+		AModumateObjectInstance* object = Doc->ObjectFromActor(hitResult.GetActor());
+		if (object)
+		{
+			OutMoiId = object->ID;
+			return true;
+		}
+	}
+
+	OutMoiId = INDEX_NONE;
+	return false;
 }
 
 void FDrawingDesignerRenderControl::AddSceneLines(const FVector& ViewDirection, float MinLength, ADrawingDesignerRender* Render)

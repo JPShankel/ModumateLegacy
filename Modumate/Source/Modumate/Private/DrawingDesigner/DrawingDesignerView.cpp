@@ -1,6 +1,7 @@
 // Copyright 2021 Modumate, Inc. All Rights Reserved.
 
 #include "DrawingDesigner/DrawingDesignerView.h"
+#include "DrawingDesigner/DrawingDesignerRequests.h"
 #include "JsonObjectConverter.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonReader.h"

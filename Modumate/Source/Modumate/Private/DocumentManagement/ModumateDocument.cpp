@@ -51,6 +51,7 @@
 #include "UnrealClasses/SkyActor.h"
 
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
+#include "DrawingDesigner/DrawingDesignerRequests.h"
 #include "DrawingDesigner/DrawingDesignerRenderControl.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDocument"
@@ -4390,4 +4391,27 @@ void UModumateDocument::drawing_get_drawing_image(const FString& InRequest)
 	}
 }
 
+void UModumateDocument::drawing_get_clicked(const FString& InRequest)
+{
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_get_clicked_moi"));
+	FDrawingDesignerClickRequest req;
+
+	if (req.ReadJson(InRequest))
+	{
+		if (req.requestType != EDrawingDesignerRequestType::moi) return;
+		
+		FDrawingDesignerRenderControl renderControl(this);
+		FDrawingDesignerMoiResponse moiResponse;
+		moiResponse.request = req;
+		FVector2D uvVector; uvVector.X = req.uvPosition.x; uvVector.Y = req.uvPosition.y;
+		renderControl.GetMoiFromView(uvVector, req.view, moiResponse.moiId);
+		
+		FString jsonResponse;
+		moiResponse.WriteJson(jsonResponse);
+		DrawingSendResponse(TEXT("UE_pushMoiResponse"), jsonResponse);
+	}
+}
+
 #undef LOCTEXT_NAMESPACE
+
+

@@ -10,6 +10,7 @@ class UStaticMeshComponent;
 class UMaterialInterface;
 class UProceduralMeshComponent;
 struct FDrawingDesignerSnap;
+struct FDrawingDesignerView;
 
 class MODUMATE_API FDrawingDesignerRenderControl
 {
@@ -18,9 +19,11 @@ public:
 		: Doc(InDoc) { }
 	FString GetViewList();
 	bool GetView(const FString& jsonRequest, FString& OutJsonResponse);
+	bool GetMoiFromView(FVector2D uv, FDrawingDesignerView& view, int32& OutMoiId);
 	void AddSceneLines(const FVector& ViewDirection, float MinLength, ADrawingDesignerRender* Render);
 
 private:
+
 	void SwapPortalMaterials();
 	void RestorePortalMaterials();
 	void GetSnapPoints(TMap<FString, FDrawingDesignerSnap>& OutSnapPoints);

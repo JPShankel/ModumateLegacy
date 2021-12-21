@@ -386,4 +386,7 @@ public:
 
 	UFUNCTION()
 	void drawing_get_drawing_image(const FString& InRequest);
+
+	UFUNCTION()
+	void drawing_get_clicked(const FString& InRequest);
 };
