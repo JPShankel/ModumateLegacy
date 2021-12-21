@@ -143,7 +143,7 @@ void AMOIPointHosted::InternalUpdateGeometry(bool bCreateCollision)
 		FQuat cmaRot = FQuat(InstanceData.Rotation);
 
 		// Offset
-		FVector cmaSize = CachedAssembly.GetRiggedAssemblyNativeSize();
+		FVector cmaSize = CachedAssembly.GetCompoundAssemblyNativeSize();
 		float cmaOffsetX = InstanceData.OffsetX.GetOffsetDistance(InstanceData.FlipSigns.X, cmaSize.X);
 		float cmaOffsetY = InstanceData.OffsetY.GetOffsetDistance(InstanceData.FlipSigns.Y, cmaSize.Y);
 		float cmaOffsetZ = InstanceData.OffsetZ.GetOffsetDistance(InstanceData.FlipSigns.Z, cmaSize.Z);

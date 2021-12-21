@@ -212,9 +212,15 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 
 		int32 sliceCompIdxStart = 9 * slotIdx;
 		FVector nineSliceInteriorExtent = nineSliceInterior.GetExtent();
-		bool bPartIsStatic =
-			(nineSliceInterior.IsValid == 0) ||
-			((nineSliceInteriorExtent.X == 0) && (nineSliceInteriorExtent.Z == 0));
+
+		// Point hosted objects do not support 9-slicing parts
+		bool bPartIsStatic = true;
+		if (ObAsm.ObjectType != EObjectType::OTPointHosted)
+		{
+			bPartIsStatic =
+				(nineSliceInterior.IsValid == 0) ||
+				((nineSliceInteriorExtent.X == 0) && (nineSliceInteriorExtent.Z == 0));
+		}
 
 		// For static parts, we just need to reposition/scale this component
 		if (bPartIsStatic)

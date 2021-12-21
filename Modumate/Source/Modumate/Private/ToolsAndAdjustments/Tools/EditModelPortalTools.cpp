@@ -317,7 +317,7 @@ bool UPortalToolBase::CalculateNativeSize()
 	}
 
 	// Calculate the native size of the mesh
-	FVector nativeSize = assembly->GetRiggedAssemblyNativeSize();
+	FVector nativeSize = assembly->GetCompoundAssemblyNativeSize();
 	if (nativeSize.IsZero())
 	{
 		return false;

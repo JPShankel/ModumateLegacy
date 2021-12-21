@@ -135,7 +135,7 @@ EBIMResult FBIMPartLayout::FromAssembly(const FBIMAssemblySpec& InAssemblySpec, 
 		PartSlotInstances[0].VariableValues.Add(kvp.Key, kvp.Value.AsWorldCentimeters());
 	}
 
-	FVector assemblyNativeSize = InAssemblySpec.GetRiggedAssemblyNativeSize();
+	FVector assemblyNativeSize = InAssemblySpec.GetCompoundAssemblyNativeSize();
 
 	PartSlotInstances[0].VariableValues.Add(NativeSizeX, assemblyNativeSize.X);
 	PartSlotInstances[0].VariableValues.Add(NativeSizeY, assemblyNativeSize.Y);

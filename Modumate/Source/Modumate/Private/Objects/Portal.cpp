@@ -109,7 +109,7 @@ bool AMOIPortal::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* Out
 
 void AMOIPortal::UpdateCachedThickness()
 {
-	CachedThickness = CachedAssembly.GetRiggedAssemblyNativeSize().Y;
+	CachedThickness = CachedAssembly.GetCompoundAssemblyNativeSize().Y;
 
 	FBIMLayerSpec& proxyLayer = (CachedProxyLayers.Num() == 0) ? CachedProxyLayers.AddDefaulted_GetRef() : CachedProxyLayers[0];
 	proxyLayer.ThicknessCentimeters = CachedThickness;
@@ -228,7 +228,7 @@ bool AMOIPortal::SetupCompoundActorGeometry()
 	localPosition = FVector2D(localPosition3d.Z, localPosition3d.X);
 
 	const FBIMAssemblySpec& assembly = GetAssembly();
-	FVector nativeSize = assembly.GetRiggedAssemblyNativeSize();
+	FVector nativeSize = assembly.GetCompoundAssemblyNativeSize();
 	if (!nativeSize.IsZero())
 	{	// Assume first part for native size.
 		if (numRotations % 2 == 0)

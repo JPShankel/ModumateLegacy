@@ -121,7 +121,7 @@ public:
 
 	EBIMResult ReverseLayers();
 
-	FVector GetRiggedAssemblyNativeSize() const;
+	FVector GetCompoundAssemblyNativeSize() const;
 };
 
 using FAssemblyDataCollection = TModumateDataCollection<FBIMAssemblySpec>;

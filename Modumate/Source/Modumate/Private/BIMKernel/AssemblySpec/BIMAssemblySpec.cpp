@@ -386,7 +386,7 @@ EBIMResult FBIMAssemblySpec::ReverseLayers()
 	return EBIMResult::Success;
 }
 
-FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
+FVector FBIMAssemblySpec::GetCompoundAssemblyNativeSize() const
 {
 	FVector nativeSize = FVector::ZeroVector;
 
@@ -400,14 +400,19 @@ FVector FBIMAssemblySpec::GetRiggedAssemblyNativeSize() const
 		}
 	}
 
-	// TODO: Read dimension properties for point hosted objs
+	// PointHosted uses single part to determine size
 	if (ObjectType == EObjectType::OTPointHosted)
 	{
+		RootProperties.TryGetProperty(EBIMValueScope::Dimension, FBIMNameType(FBIMPartLayout::PartSizeX), nativeSize.X);
+		RootProperties.TryGetProperty(EBIMValueScope::Dimension, FBIMNameType(FBIMPartLayout::PartSizeY), nativeSize.Y);
+		RootProperties.TryGetProperty(EBIMValueScope::Dimension, FBIMNameType(FBIMPartLayout::PartSizeZ), nativeSize.Z);
 		return nativeSize;
 	}
-
-	RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, nativeSize.X);
-	RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, nativeSize.Z);
+	else
+	{
+		RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Width, nativeSize.X);
+		RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Height, nativeSize.Z);
+	}
 
 	return nativeSize;
 }

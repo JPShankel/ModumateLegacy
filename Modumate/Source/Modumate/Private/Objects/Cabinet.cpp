@@ -427,7 +427,7 @@ bool AMOICabinet::UpdateCabinetActors(const FBIMAssemblySpec& Assembly, const TA
 			FrontFaceIndex = 0;
 		}
 
-		FVector portalNativeSize = Assembly.GetRiggedAssemblyNativeSize();
+		FVector portalNativeSize = Assembly.GetCompoundAssemblyNativeSize();
 		if (portalNativeSize.GetMin() < KINDA_SMALL_NUMBER)
 		{
 			return false;
