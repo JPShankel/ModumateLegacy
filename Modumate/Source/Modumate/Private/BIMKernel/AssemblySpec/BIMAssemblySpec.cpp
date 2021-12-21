@@ -656,6 +656,7 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 	case EObjectType::OTWindow:
 	case EObjectType::OTFurniture:
 	case EObjectType::OTPointHosted:
+	case EObjectType::OTEdgeHosted:
 		return MakeRiggedAssembly(InDB);
 
 	case EObjectType::OTCabinet:
