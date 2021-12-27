@@ -455,6 +455,11 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 			FMOIStateData stateData;
 			const AModumateObjectInstance* sourceObj = doc->GetObjectById(objRec.ID);
 
+			if (!ensure(sourceObj != nullptr))
+			{
+				continue;
+			}
+
 			const FVector newLocation(sourceObj->GetLocation() + offset);
 			if (sourceObj->GetTransformedLocationState({ sourceObj->GetRotation(), newLocation }, stateData))
 			{
