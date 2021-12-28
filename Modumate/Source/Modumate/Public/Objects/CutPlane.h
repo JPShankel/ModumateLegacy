@@ -67,6 +67,7 @@ public:
 	void SetIsCulling(bool NewIsCulling);
 	bool GetIsCulling() const { return bIsCulling; };
 	void SetHUDDwgDrafting(bool NewEnable) { bHUDDwgDrafting = NewEnable; };
+	TArray<int32> GetCachedForegroundMoiIDs() const { return CachedForegroundMOIs; };
 
 
 	FDraftingHUDDraw DrawingInterface;

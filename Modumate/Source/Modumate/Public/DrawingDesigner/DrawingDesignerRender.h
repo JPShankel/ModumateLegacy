@@ -33,15 +33,15 @@ public:
 
 	virtual void Destroyed() override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneCaptureComponent2D* CaptureComponent = nullptr;
+
 private:
 
 	void RenderFfe();
 	void RestoreFfeMaterials();
 
 	FTransform ViewTransform;
-
-	UPROPERTY()
-	USceneCaptureComponent2D* CaptureComponent = nullptr;
 
 	UPROPERTY()
 	UTextureRenderTarget2D* RenderTarget = nullptr;

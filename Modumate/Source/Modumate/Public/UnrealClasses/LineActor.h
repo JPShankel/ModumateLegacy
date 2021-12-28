@@ -51,6 +51,7 @@ public:
 
 	void SetIsHUD(bool bRenderScreenSpace);
 	void SetVisibilityInApp(bool bVisible);
+	bool ToggleForDrawingRender(bool bEnable);
 
 	void UpdateLineVisuals(bool bConnected, float ThicknessMultiplier = 1.0f, FColor NewColor = FColor::Black);
 

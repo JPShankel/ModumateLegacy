@@ -133,6 +133,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Editing")
 	TSubclassOf<class ACutPlaneCaptureActor> CutPlaneCaptureActorClass;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Editing")
+	TSubclassOf<class ADrawingDesignerRender> DrawingDesignerRenderClass;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Pawn")
 	TSubclassOf<class AEditModelToggleGravityPawn> ToggleGravityPawnClass;
 

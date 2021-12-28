@@ -9,6 +9,7 @@ class ADrawingDesignerRender;
 class UStaticMeshComponent;
 class UMaterialInterface;
 class UProceduralMeshComponent;
+class AMOICutPlane;
 struct FDrawingDesignerSnap;
 struct FDrawingDesignerView;
 
@@ -24,7 +25,7 @@ public:
 
 private:
 
-	void SwapPortalMaterials();
+	void SwapPortalMaterials(AMOICutPlane* CutPlane);
 	void RestorePortalMaterials();
 	void GetSnapPoints(TMap<FString, FDrawingDesignerSnap>& OutSnapPoints);
 

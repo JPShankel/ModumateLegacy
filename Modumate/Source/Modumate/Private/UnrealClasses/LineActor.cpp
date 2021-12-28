@@ -119,6 +119,21 @@ void ALineActor::SetVisibilityInApp(bool bVisible)
 	SetActorHiddenInGame(!bVisibleInApp);
 }
 
+bool ALineActor::ToggleForDrawingRender(bool bEnable)
+{
+	if (auto meshComp = GetStaticMeshComponent())
+	{
+		// Stencil value is determined by post process material during render capture
+		// 0: Disable
+		// 1: Foreground objects
+		// 2: Line renders
+		meshComp->CustomDepthStencilValue = bEnable ? 2 : 0;
+		meshComp->SetRenderCustomDepth(bEnable);
+		return true;
+	}
+	return false;
+}
+
 void ALineActor::UpdateLineVisuals(bool bConnected, float ThicknessMultiplier, FColor NewColor)
 {
 	float newThickness = 2.0f * ThicknessMultiplier;

@@ -16,6 +16,10 @@
 
 constexpr float MOI_TRACE_DISTANCE = 5000.0f;
 
+// Stencil values are determined by post process material in DrawingDesignerRender
+constexpr int32 DisableMeshStencilValue = 0;
+constexpr int32 ForegroundMeshStencilValue  = 1;
+
 FString FDrawingDesignerRenderControl::GetViewList()
 {
 	FDrawingDesignerViewList viewList;
@@ -72,13 +76,14 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 		return false;
 	}
 
-	const AModumateObjectInstance* moi = Doc->GetObjectById(viewRequest.moi_id);
-	if (!ensureAlways(moi) || !ensureAlways(moi->GetObjectType() == EObjectType::OTCutPlane))
+	AModumateObjectInstance* moi = Doc->GetObjectById(viewRequest.moi_id);
+	auto* gameMode = Doc->GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
+	if (!ensureAlways(moi) || !ensureAlways(moi->GetObjectType() == EObjectType::OTCutPlane) || !gameMode)
 	{
 		return false;
 	}
 
-	const AMOICutPlane* cutPlane = Cast<const AMOICutPlane>(moi);
+	AMOICutPlane* cutPlane = Cast<AMOICutPlane>(moi);
 	FVector corners[4];
 	for (int32 c = 0; c < 4; ++c)
 	{
@@ -111,19 +116,34 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 
 	FTransform cameraTransform(cutPlaneRotation * cameraToCutplane, cameraCentre, FVector(viewWidth, viewHeight, 1.0f));
 
-	ADrawingDesignerRender* renderer = Doc->GetWorld()->SpawnActor<ADrawingDesignerRender>();
+	ADrawingDesignerRender* renderer = Doc->GetWorld()->SpawnActor<ADrawingDesignerRender>(gameMode->DrawingDesignerRenderClass.Get());
+	if (!ensureAlways(renderer))
+	{
+		return false;
+	}
 
 	renderer->SetViewTransform(cameraTransform);
 	renderer->SetDocument(Doc);
 
 	FVector viewDirection(cutPlaneRotation * FVector::ZAxisVector);
 	AddSceneLines(viewDirection, scaleLength, renderer);
+	SwapPortalMaterials(cutPlane);
 
-	SwapPortalMaterials();
+	// Prepare cutplane
+	int32 originalCullingCutPlane = MOD_ID_NONE;
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(Doc->GetWorld()->GetFirstPlayerController());
+	if (controller)
+	{
+		originalCullingCutPlane = controller->CurrentCullingCutPlaneID;
+		controller->SetCurrentCullingCutPlane(cutPlane->ID, false);
+	}
 
+	// Draw
 	renderer->RenderImage(viewRequest.minimum_resolution_pixels.x);
 
+	// Restore cutplane
 	RestorePortalMaterials();
+	controller->SetCurrentCullingCutPlane(originalCullingCutPlane);
 
 	TArray<uint8> rawPng;
 	bool bSuccess = false;
@@ -219,7 +239,7 @@ void FDrawingDesignerRenderControl::AddSceneLines(const FVector& ViewDirection, 
 	Render->AddLines(sceneLines);
 }
 
-void FDrawingDesignerRenderControl::SwapPortalMaterials()
+void FDrawingDesignerRenderControl::SwapPortalMaterials(AMOICutPlane* CutPlane)
 {
 	auto* gameMode = Doc->GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
 	if (!gameMode)
@@ -271,6 +291,8 @@ void FDrawingDesignerRenderControl::SwapPortalMaterials()
 						SceneProcMaterialMap.Add(ProcMaterialKey(meshComponent, materialIndex), sceneMaterial);
 						meshComponent->SetMaterial(materialIndex, curMID);
 					}
+					meshComponent->CustomDepthStencilValue = ForegroundMeshStencilValue;
+					meshComponent->SetRenderCustomDepth(true);
 				}
 			}
 			else
@@ -296,6 +318,8 @@ void FDrawingDesignerRenderControl::SwapPortalMaterials()
 					SceneStaticMaterialMap.Add(StaticMaterialKey(meshComponent, materialIndex), sceneMaterial);
 					meshComponent->SetMaterial(materialIndex, curMID);
 				}
+				meshComponent->CustomDepthStencilValue = ForegroundMeshStencilValue;
+				meshComponent->SetRenderCustomDepth(true);
 			}
 		}
 
@@ -311,6 +335,8 @@ void FDrawingDesignerRenderControl::SwapPortalMaterials()
 		{
 			continue;
 		}
+
+		bool bIsForegroundObj = CutPlane->GetCachedForegroundMoiIDs().Contains(moi->ID);
 
 		TArray<UProceduralMeshComponent*> meshComponents = { actor->Mesh, actor->MeshCap };
 		meshComponents.Append(actor->ProceduralSubLayers);
@@ -335,6 +361,12 @@ void FDrawingDesignerRenderControl::SwapPortalMaterials()
 				UMaterialInterface* sceneMaterial = meshComponent->GetMaterial(materialIndex);
 				SceneProcMaterialMap.Add(ProcMaterialKey(meshComponent, materialIndex), sceneMaterial);
 				meshComponent->SetMaterial(materialIndex, curMID);
+			}
+
+			if (bIsForegroundObj)
+			{
+				meshComponent->CustomDepthStencilValue = ForegroundMeshStencilValue;
+				meshComponent->SetRenderCustomDepth(true);
 			}
 		}
 	}
@@ -372,7 +404,8 @@ void FDrawingDesignerRenderControl::RestorePortalMaterials()
 							meshComponent->SetMaterial(materialIndex, *scenematerial);
 						}
 					}
-
+					meshComponent->CustomDepthStencilValue = DisableMeshStencilValue;
+					meshComponent->SetRenderCustomDepth(false);
 				}
 			}
 			else
@@ -395,6 +428,8 @@ void FDrawingDesignerRenderControl::RestorePortalMaterials()
 						meshComponent->SetMaterial(materialIndex, *scenematerial);
 					}
 				}
+				meshComponent->CustomDepthStencilValue = DisableMeshStencilValue;
+				meshComponent->SetRenderCustomDepth(false);
 			}
 		}
 
@@ -431,6 +466,8 @@ void FDrawingDesignerRenderControl::RestorePortalMaterials()
 					meshComponent->SetMaterial(materialIndex, *scenematerial);
 				}
 			}
+			meshComponent->CustomDepthStencilValue = DisableMeshStencilValue;
+			meshComponent->SetRenderCustomDepth(false);
 		}
 	}
 }

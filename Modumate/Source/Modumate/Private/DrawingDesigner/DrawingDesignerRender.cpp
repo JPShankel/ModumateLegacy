@@ -37,6 +37,7 @@ void ADrawingDesignerRender::AddLines(const TArray<FDrawingDesignerLine>& Lines)
 		lineActor->Thickness = line.Thickness;
 		lineActor->SetIsHUD(false);
 		lineActor->MakeGeometry();
+		lineActor->ToggleForDrawingRender(true);
 		lineActor->UpdateLineVisuals(true);
 		LineActors.Add(lineActor);
 	}
