@@ -2981,7 +2981,7 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 	}
 
 	OutDocumentRecord.TypicalEdgeDetails = TypicalEdgeDetails;
-	OutDocumentRecord.DrawingDesignerDocument = DrawingDesignerDocument;
+	DrawingDesignerDocument.WriteJson(OutDocumentRecord.DrawingDesignerDocumentString);
 
 	// Potentially limit the number of undo records to save, based on user preferences
 	auto* gameInstance = World->GetGameInstance<UModumateGameInstance>();
@@ -3164,7 +3164,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		bInitialDocumentDirty = true;
 	}
 
-	DrawingDesignerDocument = InDocumentRecord.DrawingDesignerDocument;
+	DrawingDesignerDocument.ReadJson(InDocumentRecord.DrawingDesignerDocumentString);
 
 	// Load all of the surface graphs now
 	for (const auto& kvp : InDocumentRecord.SurfaceGraphs)

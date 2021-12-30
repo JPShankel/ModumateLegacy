@@ -9,8 +9,8 @@ FDrawingDesignerDocumentDelta::FDrawingDesignerDocumentDelta(const FDrawingDesig
 	FDrawingDesignerJsDeltaPackage package
 ) : FDocumentDelta()
 {
-	this->from = doc;
-	this->to = doc;
+	doc.WriteJson(this->from);
+	this->to = this->from;
 
 	for (FDrawingDesignerJsDelta& delta : package.deltas)
 	{
@@ -31,7 +31,7 @@ bool FDrawingDesignerDocumentDelta::ApplyTo(UModumateDocument* Doc, UWorld* Worl
 {
 	if (Doc)
 	{
-		Doc->DrawingDesignerDocument = this->to;
+		Doc->DrawingDesignerDocument.ReadJson(this->to);
 		return true;
 	}
 
@@ -60,34 +60,38 @@ bool FDrawingDesignerDocumentDelta::ParseDeltaVerb(FDrawingDesignerJsDelta& delt
 	bool rtn = true;
 	if (rtn)
 	{
+		FDrawingDesignerDocument toDoc;
+		toDoc.ReadJson(to);
 		switch (delta.header.verb)
 		{
 		case EDeltaVerb::add:
 		{
 			if (delta.details.id == INDEX_NONE)
 			{
-				delta.details.id = to.GetAndIncrDrawingId();
+				delta.details.id = toDoc.GetAndIncrDrawingId();
 			}
 
-			rtn = to.Add(delta.details);
+			rtn = toDoc.Add(delta.details);
 			break;
 		}
 		case EDeltaVerb::remove:
 		{
 			FString id = FString::FromInt(delta.header.id);
-			rtn = to.Remove(id);
+			rtn = toDoc.Remove(id);
 			break;
 		}
 		case EDeltaVerb::modify:
 		{
 			FString id = FString::FromInt(delta.header.id);
-			rtn = to.Modify(delta.details);
+			rtn = toDoc.Modify(delta.details);
 			break;
 		}
 		default:
 			rtn = false;
 			break;
 		}
+
+		toDoc.WriteJson(to);
 	}
 
 	return rtn;

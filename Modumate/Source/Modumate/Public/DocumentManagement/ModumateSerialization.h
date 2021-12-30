@@ -306,7 +306,7 @@ struct FMOIDocumentRecordV5 : public FMOIDocumentRecordBASE
 	TMap<uint32, FGuid> TypicalEdgeDetails;
 
 	UPROPERTY()
-	FDrawingDesignerDocument DrawingDesignerDocument;
+	FString DrawingDesignerDocumentString;
 
 	UPROPERTY()
 	int32 RootVolumeGraph = 0;

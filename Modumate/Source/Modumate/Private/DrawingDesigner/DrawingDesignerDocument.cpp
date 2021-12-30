@@ -12,6 +12,8 @@ DEFINE_LOG_CATEGORY(ModumateDrawingDesigner);
 
 static const TCHAR* DrawingDesignerDocumentLabel = TEXT("document");
 
+static constexpr int32 DrawingDesignerJsonVersion = 1;
+
 FDrawingDesignerDocument::FDrawingDesignerDocument()
 {
 	//Create the 'root' node
@@ -32,6 +34,8 @@ bool FDrawingDesignerDocument::WriteJson(FString& OutJson) const
 
 	if (docOb)
 	{
+		docOb->SetStringField(TEXT("version"), FString::FromInt(DrawingDesignerJsonVersion));
+
 		//Add the map fields
 		TMap<FString, const FDrawingDesignerMap*> fields =
 		{
@@ -78,10 +82,19 @@ bool FDrawingDesignerDocument::ReadJson(const FString& InJson)
 
 	if (bSuccess)
 	{
+		*this = FDrawingDesignerDocument();
 		if (FileJsonRead->TryGetObjectField(DrawingDesignerDocumentLabel, jsonDocument))
 		{
 			//This will de-serialize everything but the node map
 			FJsonObjectConverter::JsonObjectToUStruct<FDrawingDesignerDocument>(jsonDocument->ToSharedRef(), this);
+
+			FString version;
+			int32 verNum = 1;
+			if ((*jsonDocument)->TryGetStringField(TEXT("version"), version))
+			{
+				verNum = FCString::Atoi(*version);
+			}
+			// TODO: if verNum < DrawingDesignerJsonVersion, do old read
 
 			//Do the maps manually...
 			TMap<FString, FDrawingDesignerMap*> fields =
