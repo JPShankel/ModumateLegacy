@@ -23,7 +23,7 @@ bool UPointHostedTool::Activate()
 	bWasShowingSnapCursor = Controller->EMPlayerState->bShowSnappedCursor;
 
 	OriginalMouseMode = Controller->EMPlayerState->SnappedCursor.MouseMode;
-	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
+	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Object;
 
 	bWantedVerticalSnap = Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap;
 	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = true;
@@ -50,7 +50,7 @@ bool UPointHostedTool::Deactivate()
 bool UPointHostedTool::FrameUpdate()
 {
 	const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
-	if (!cursor.Visible || !AssemblyGUID.IsValid())
+	if (!AssemblyGUID.IsValid())
 	{
 		return false;
 	}

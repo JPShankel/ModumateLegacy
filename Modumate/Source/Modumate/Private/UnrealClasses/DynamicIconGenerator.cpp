@@ -423,6 +423,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &A
 			(PartIndex == 0 || PartIndex == StairLayerRiserAssemblyPartIndex));
 	case EObjectType::OTFurniture:
 	case EObjectType::OTPointHosted:
+	case EObjectType::OTEdgeHosted:
 		return SetIconMeshForPointHostedAssembly(Assembly, InRenderTarget);
 	}
 	return false;
