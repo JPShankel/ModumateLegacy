@@ -120,13 +120,22 @@ void AMOITerrain::GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints
 				for (const auto& edgeID : poly.Edges)
 				{
 					const FGraph2DEdge* edge = graph2d->FindEdge(edgeID);
-					FVector pointA(GraphToWorldPosition(graph2d->FindVertex(edge->StartVertexID)->Position, InstanceData.Heights[edge->StartVertexID]));
-					FVector pointB(GraphToWorldPosition(graph2d->FindVertex(edge->EndVertexID)->Position, InstanceData.Heights[edge->EndVertexID]));
+					if (edge == nullptr)
+					{
+						continue;
+					}
+					auto startVert = graph2d->FindVertex(edge->StartVertexID);
+					auto endVert = graph2d->FindVertex(edge->StartVertexID);
 
-					outPoints.Emplace(pointA, (pointB - pointA).GetSafeNormal(), edge->StartVertexID);
-					outLines.Emplace(pointA, pointB, edge->StartVertexID, edge->EndVertexID);
+					if (ensure(startVert && endVert && InstanceData.Heights.Contains(edge->StartVertexID) && InstanceData.Heights.Contains(edge->EndVertexID)))
+					{
+						FVector pointA(GraphToWorldPosition(graph2d->FindVertex(edge->StartVertexID)->Position, InstanceData.Heights[edge->StartVertexID]));
+						FVector pointB(GraphToWorldPosition(graph2d->FindVertex(edge->EndVertexID)->Position, InstanceData.Heights[edge->EndVertexID]));
+
+						outPoints.Emplace(pointA, (pointB - pointA).GetSafeNormal(), edge->StartVertexID);
+						outLines.Emplace(pointA, pointB, edge->StartVertexID, edge->EndVertexID);
+					}
 				}
-
 			}
 		}
 	}
@@ -243,7 +252,7 @@ void AMOITerrain::UpdateTerrainActor()
 
 				for (int32 v: polygon2d->VertexIDs)
 				{
-					if (!vertexIDs.Contains(v))
+					if (!vertexIDs.Contains(v) && InstanceData.Heights.Contains(v) && graph2d->GetVertices().Contains(v))
 					{
 						FVector2D graph2dPosition = graph2d->GetVertices()[v].Position;
 						heightPoints.Add(GraphToWorldPosition(graph2dPosition, InstanceData.Heights[v], true));
@@ -287,7 +296,10 @@ void AMOITerrain::UpdateTerrainActor()
 				FBox polygonBox3D(ForceInitToZero);
 				for (int32 v: containedPolygon->VertexIDs)
 				{
-					polygonBox3D += FVector(graph2d->GetVertices()[v].Position, InstanceData.Heights[v]);
+					if (graph2d->GetVertices().Contains(v) && InstanceData.Heights.Contains(v))
+					{
+						polygonBox3D += FVector(graph2d->GetVertices()[v].Position, InstanceData.Heights[v]);
+					}
 				}
 				const float Area = polygonBox3D.GetSize().X * polygonBox3D.GetSize().Y;
 				const FVector size = polygonBox3D.GetSize();

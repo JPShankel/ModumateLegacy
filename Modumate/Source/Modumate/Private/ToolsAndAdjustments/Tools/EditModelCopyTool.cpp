@@ -23,6 +23,16 @@ bool UCopyTool::Activate()
 	TArray<int32> objIds;
 	for (auto obj : Controller->EMPlayerState->SelectedObjects)
 	{
+		// Filter out object types that can't be pasted effectively
+		switch (obj->GetObjectType())
+		{
+		case EObjectType::OTTerrainMaterial:
+		case EObjectType::OTTerrain:
+		case EObjectType::OTTerrainVertex:
+		case EObjectType::OTTerrainEdge:
+		case EObjectType::OTTerrainPolygon:
+			continue;
+		}
 		objIds.Add(obj->ID);
 	}
 
