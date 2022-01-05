@@ -3260,11 +3260,8 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	// Now that all objects have been created and parented correctly, we can clean all of them.
 	// This should take care of anything that depends on relationships between objects, like mitering.
 	TArray<FDeltaPtr> loadCleanSideEffects;
-#if UE_SERVER
-	CleanObjects(nullptr, true);
-#else
+
 	CleanObjects(&loadCleanSideEffects, true, true);
-#endif
 
 	// If there were side effects generated while cleaning initial objects, then those deltas must be applied immediately.
 	// This should not normally happen, but it's a sign that some objects relied on data that didn't get saved/loaded correctly.
