@@ -34,6 +34,8 @@
 
 const FString AEditModelPlayerState::ViewOnlyArg(TEXT("ModViewOnly"));
 
+enum class AEditModelPlayerState::EStencilFlags { Selected = 0x1, LegacyGroup = 0x2, Hovered = 0x4, Error = 0x8,  InactiveGroup = 0x10};
+
 AEditModelPlayerState::AEditModelPlayerState()
 	: ShowDebugSnaps(false)
 	, ShowDocumentDebug(false)
@@ -373,6 +375,9 @@ void AEditModelPlayerState::UpdateRenderFlags(const TSet<AModumateObjectInstance
 		OnSelectionOrViewChanged.Broadcast();
 	}
 
+	int32 subGroup;  // unused
+	bool bIsInGroup;
+
 	for (AModumateObjectInstance *moi : ChangedObjects)
 	{
 		if (moi && !moi->IsDestroyed())
@@ -382,12 +387,14 @@ void AEditModelPlayerState::UpdateRenderFlags(const TSet<AModumateObjectInstance
 				(UModumateTypeStatics::Graph3DObjectTypeFromObjectType(type) != EGraph3DObjectType::None);
 			bool bHovered = (ShowHoverEffects && !bIsGraphType && HoveredObjectDescendents.Contains(moi));
 			bool bSelected = SelectedObjects.Contains(moi);
+			bool bGroupVisible = UModumateObjectStatics::IsObjectInSubgroup(moi->GetDocument(), moi, MOD_ID_NONE, subGroup, bIsInGroup) || bIsInGroup;
 
-			int32 selectionValue = bSelected ? 0x1 : 0x0;
-			int32 viewGroupValue = ViewGroupDescendents.Contains(moi) ? 0x2 : 0x0;
-			int32 hoverValue = (bHovered && !bSelected) ? 0x4 : 0x0;
-			int32 errorValue = ErrorObjects.Contains(moi) ? 0x8 : 0x0;
-			int32 stencilValue = selectionValue | viewGroupValue | hoverValue | errorValue;
+			int32 selectionValue = bSelected ? int(EStencilFlags::Selected) : 0x0;
+			//int32 viewGroupValue = ViewGroupDescendents.Contains(moi) ? int(EStencilFlags::LegacyGroup) : 0x0;
+			int32 hoverValue = (bHovered && !bSelected) ? int(EStencilFlags::Hovered) : 0x0;
+			int32 errorValue = ErrorObjects.Contains(moi) ? int(EStencilFlags::Error) : 0x0;
+			int32 groupVisibleValue = !bGroupVisible ? int(EStencilFlags::InactiveGroup) : 0x0;
+			int32 stencilValue = selectionValue | hoverValue | errorValue | groupVisibleValue;
 
 			SetActorRenderValues(moi->GetActor(), stencilValue, bHovered);
 		}
@@ -742,6 +749,21 @@ void AEditModelPlayerState::PostViewChanged()
 	// underneath the current view group (if it's set), and are not underneath a group.
 	// TODO: only call this when necessary (when ViewGroupObject or the object list/hierarchy changes).
 	FindReachableObjects(LastReachableObjectSet);
+}
+
+void AEditModelPlayerState::PostGroupChanged(const TArray<int32> ChangedGroups)
+{
+	if (!EMPlayerController || !EMPlayerController->CurrentTool)
+	{
+		return;
+	}
+
+	auto* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+	auto* doc = gameState->Document;
+
+	TSet<AModumateObjectInstance*> changedObjects;
+	UModumateObjectStatics::GetObjectsInGroups(doc, ChangedGroups, changedObjects);
+	UpdateRenderFlags(changedObjects);
 }
 
 void AEditModelPlayerState::OnNewModel()

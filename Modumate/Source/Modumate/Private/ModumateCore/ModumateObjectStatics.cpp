@@ -1166,3 +1166,90 @@ bool UModumateObjectStatics::IsObjectInSubgroup(const UModumateDocument* Doc, co
 
 	return false;
 }
+
+bool UModumateObjectStatics::GetGroupIdsForGroupChange(const UModumateDocument* Doc, int32 NewgroupID, TArray<int32>& OutAffectedGroups)
+{
+	int32 oldGroupID = Doc->GetActiveVolumeGraphID();
+	OutAffectedGroups.Empty();
+	NewgroupID = NewgroupID == MOD_ID_NONE ? Doc->GetRootVolumeGraphID() : NewgroupID;
+	if (oldGroupID == NewgroupID)
+	{
+		return false;
+	}
+
+	bool bOldGroupIsDescendent = false;
+	const AModumateObjectInstance* groupObject = Doc->GetObjectById(oldGroupID);
+
+	if (!ensure(groupObject))
+	{
+		return false;
+	}
+	// Assignment within condition:
+	while (bool(groupObject = groupObject->GetParentObject()) )
+	{
+		if (groupObject->ID == NewgroupID)
+		{   // Old group is descendent of new group:
+			return GetGroupIdsForGroupChangeHelper(Doc, NewgroupID, oldGroupID, OutAffectedGroups, bOldGroupIsDescendent);
+		}
+	}
+
+	// New group is descendent of old group or are unrelated:
+	if (!GetGroupIdsForGroupChangeHelper(Doc, oldGroupID, NewgroupID, OutAffectedGroups, bOldGroupIsDescendent))
+	{
+		return false;
+	}
+	if (!bOldGroupIsDescendent)
+	{
+		return GetGroupIdsForGroupChangeHelper(Doc, NewgroupID, MOD_ID_NONE, OutAffectedGroups, bOldGroupIsDescendent);
+	}
+
+	return true;
+}
+
+bool UModumateObjectStatics::GetGroupIdsForGroupChangeHelper(const UModumateDocument* Doc, int32 NewGroupID, int32 OldGroupID, TArray<int32>& OutAffectedGroups, bool& bOutFoundOldGroup)
+{
+	const AModumateObjectInstance* newGroup = Doc->GetObjectById(NewGroupID);
+	if (!ensure(newGroup))
+	{
+		return false;
+	}
+
+	OutAffectedGroups.Push(NewGroupID);
+	for (int32 id : newGroup->GetChildIDs())
+	{
+		if (id != OldGroupID)
+		{
+			if (!GetGroupIdsForGroupChangeHelper(Doc, id, OldGroupID, OutAffectedGroups, bOutFoundOldGroup))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			bOutFoundOldGroup = true;
+		}
+	}
+
+	return true;
+}
+
+void UModumateObjectStatics::GetObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, TSet<AModumateObjectInstance*>& OutObjects)
+{
+	for (int32 groupID: GroupIDs)
+	{
+		FGraph3D* graph3d =  Doc->GetVolumeGraph(groupID);
+		if (ensure(graph3d))
+		{
+			auto& graphObjectIDs = graph3d->GetAllObjects();
+			for (auto kvp: graphObjectIDs)
+			{
+				auto* metaMoi = Doc->GetObjectById(kvp.Key);
+				if (ensure(metaMoi))
+				{
+					OutObjects.Add(metaMoi);
+					OutObjects.Append(metaMoi->GetAllDescendents());
+				}
+			}
+		}
+	}
+}

@@ -96,6 +96,8 @@ bool USelectTool::HandleMouseUp()
 
 		int32 subGroupID = MOD_ID_NONE;
 		bool bInGroup;
+		TArray<int32> affectedGroups;
+
 		if (UModumateObjectStatics::IsObjectInSubgroup(doc, newTarget, doc->GetActiveVolumeGraphID(), subGroupID, bInGroup))
 		{
 			const FGraph3D* selectedGraph = doc->GetVolumeGraph(subGroupID);
@@ -103,6 +105,7 @@ bool USelectTool::HandleMouseUp()
 			{
 				if (doc->GetActiveVolumeGraphID() != subGroupID)
 				{
+					ensure(UModumateObjectStatics::GetGroupIdsForGroupChange(doc, subGroupID, affectedGroups));
 					doc->SetActiveVolumeGraphID(subGroupID);
 					Controller->DeselectAll();
 					UE_LOG(LogTemp, Warning, TEXT("Changed active group to %d"), subGroupID);
@@ -117,6 +120,7 @@ bool USelectTool::HandleMouseUp()
 				const int32 selectedGroupID = selectedGraph->GraphID;
 				if (doc->GetActiveVolumeGraphID() != selectedGroupID)
 				{
+					ensure(UModumateObjectStatics::GetGroupIdsForGroupChange(doc, selectedGroupID, affectedGroups));
 					doc->SetActiveVolumeGraphID(selectedGraph->GraphID);
 					Controller->DeselectAll();
 					UE_LOG(LogTemp, Warning, TEXT("Changed active group to %d"), selectedGroupID);
@@ -124,6 +128,10 @@ bool USelectTool::HandleMouseUp()
 			}
 		}
 
+		if (affectedGroups.Num() > 0)
+		{
+			Controller->EMPlayerState->PostGroupChanged(affectedGroups);
+		}
 	}
 	else
 	{

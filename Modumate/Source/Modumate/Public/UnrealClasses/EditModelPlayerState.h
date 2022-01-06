@@ -140,6 +140,7 @@ public:
 	void SetActorRenderValues(AActor* actor, int32 stencilValue, bool bNeverCull);
 	void PostSelectionChanged();
 	void PostViewChanged();
+	void PostGroupChanged(const TArray<int32> ChangedGroups);
 
 	void CopySelectedToClipboard(const UModumateDocument &document);
 	void Paste(UModumateDocument &document) const;
@@ -328,5 +329,5 @@ protected:
 	TArray<FStructureLine> TempObjectStructureLines, CurSelectionStructureLines;
 	TSet<AModumateObjectInstance *> CurViewGroupObjects;
 
-	
+	enum class EStencilFlags;
 };

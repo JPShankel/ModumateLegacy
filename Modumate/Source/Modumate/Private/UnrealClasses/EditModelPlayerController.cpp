@@ -1378,7 +1378,10 @@ bool AEditModelPlayerController::MoveToParentGroup()
 		const auto* groupParent = groupObject ? groupObject->GetParentObject() : nullptr;
 		if (groupParent)
 		{
+			TArray<int32> affectedGroups;
+			ensure(UModumateObjectStatics::GetGroupIdsForGroupChange(Document, groupParent->ID, affectedGroups));
 			Document->SetActiveVolumeGraphID(groupParent->ID);
+			EMPlayerState->PostGroupChanged(affectedGroups);
 			return true;
 		}
 	}

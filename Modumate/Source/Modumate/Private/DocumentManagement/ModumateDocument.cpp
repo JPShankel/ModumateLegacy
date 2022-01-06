@@ -3137,7 +3137,9 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	// so that any objects whose geometry setup needs to know about connectivity can find it.
 	bool bSuccessfulGraphLoad = true;
 	int32 legacyGraphID = 1;
-	if (InHeader.Version < 18)
+	// Is loaded project a legacy project without metaGraph MOIs?
+	const bool bNonGroupProject = InDocumentRecord.ObjectData.FindByPredicate([](const FMOIStateData& sd) { return sd.ObjectType == EObjectType::OTMetaGraph; }) == nullptr;
+	if (bNonGroupProject)
 	{	// Document has one global volume graph.
 		VolumeGraphs.Add(legacyGraphID) = MakeShared<FGraph3D>(legacyGraphID);
 		bSuccessfulGraphLoad = GetVolumeGraph(legacyGraphID)->Load(&InDocumentRecord.VolumeGraph);
@@ -3241,7 +3243,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	}
 
 	// Add a MetaGraph MOI for backwards compatibility.
-	if (InHeader.Version < 18 && ensureAlways(VolumeGraphs.Contains(legacyGraphID)))
+	if (bNonGroupProject && ensureAlways(VolumeGraphs.Contains(legacyGraphID)))
 	{   // Create MOI and remap to new ID
 		auto volumeGraph = VolumeGraphs[legacyGraphID];
 		legacyGraphID = NextID++;
