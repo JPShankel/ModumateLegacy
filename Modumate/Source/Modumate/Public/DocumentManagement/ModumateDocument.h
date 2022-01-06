@@ -98,6 +98,7 @@ public:
 
 	UModumateDocument();
 
+	UPROPERTY()
 	FDrawingDesignerDocument DrawingDesignerDocument;
 
 	void SetLocalUserInfo(const FString& InLocalUserID, int32 InLocalUserIdx);

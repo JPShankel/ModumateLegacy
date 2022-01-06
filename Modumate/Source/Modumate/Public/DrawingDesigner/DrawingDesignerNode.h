@@ -33,12 +33,11 @@ struct MODUMATE_API FDrawingDesignerNode
 	UPROPERTY()
 	TArray<int32> children;
 
-	TSharedPtr<FJsonObject> SerializedChunk;
+	UPROPERTY()
+	FString chunkString;
 
 	bool WriteJson(FString& OutJson) const;
 	bool ReadJson(const FString& InJson);
-	bool FromJsonObject(const TSharedPtr<FJsonObject> InValue);
-	bool AsJsonObject(TSharedPtr<FJsonObject>& outObject) const;
 
 	bool operator==(const FDrawingDesignerNode& RHS) const;
 	bool operator!=(const FDrawingDesignerNode& RHS) const;

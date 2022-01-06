@@ -2,15 +2,14 @@
 
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
 #include "DocumentManagement/ModumateDocument.h"
-
-static const TCHAR* DrawingDesignerDeltaLabel = TEXT("document");
+#include "DrawingDesigner/DrawingDesignerRequests.h"
 
 FDrawingDesignerDocumentDelta::FDrawingDesignerDocumentDelta(const FDrawingDesignerDocument& doc,
 	FDrawingDesignerJsDeltaPackage package
 ) : FDocumentDelta()
 {
-	doc.WriteJson(this->from);
-	this->to = this->from;
+	this->from = doc;
+	this->to = doc;
 
 	for (FDrawingDesignerJsDelta& delta : package.deltas)
 	{
@@ -31,7 +30,7 @@ bool FDrawingDesignerDocumentDelta::ApplyTo(UModumateDocument* Doc, UWorld* Worl
 {
 	if (Doc)
 	{
-		Doc->DrawingDesignerDocument.ReadJson(this->to);
+		Doc->DrawingDesignerDocument = this->to;
 		return true;
 	}
 
@@ -60,38 +59,34 @@ bool FDrawingDesignerDocumentDelta::ParseDeltaVerb(FDrawingDesignerJsDelta& delt
 	bool rtn = true;
 	if (rtn)
 	{
-		FDrawingDesignerDocument toDoc;
-		toDoc.ReadJson(to);
 		switch (delta.header.verb)
 		{
 		case EDeltaVerb::add:
 		{
 			if (delta.details.id == INDEX_NONE)
 			{
-				delta.details.id = toDoc.GetAndIncrDrawingId();
+				delta.details.id = to.GetAndIncrDrawingId();
 			}
 
-			rtn = toDoc.Add(delta.details);
+			rtn = to.Add(delta.details);
 			break;
 		}
 		case EDeltaVerb::remove:
 		{
 			FString id = FString::FromInt(delta.header.id);
-			rtn = toDoc.Remove(id);
+			rtn = to.Remove(id);
 			break;
 		}
 		case EDeltaVerb::modify:
 		{
 			FString id = FString::FromInt(delta.header.id);
-			rtn = toDoc.Modify(delta.details);
+			rtn = to.Modify(delta.details);
 			break;
 		}
 		default:
 			rtn = false;
 			break;
 		}
-
-		toDoc.WriteJson(to);
 	}
 
 	return rtn;
@@ -99,56 +94,6 @@ bool FDrawingDesignerDocumentDelta::ParseDeltaVerb(FDrawingDesignerJsDelta& delt
 
 bool FDrawingDesignerJsDeltaPackage::ReadJson(const FString& InJson)
 {
-	auto JsonReader = TJsonReaderFactory<>::Create(InJson);
-
-	TSharedPtr<FJsonObject> FileJsonRead;
-	const TSharedPtr<FJsonObject>* rootObject;
-
-	bool bSuccess = FJsonSerializer::Deserialize(JsonReader, FileJsonRead) && FileJsonRead.IsValid();
-
-	if (bSuccess)
-	{
-		if (FileJsonRead->TryGetObjectField(DrawingDesignerDeltaLabel, rootObject))
-		{
-			const TArray<TSharedPtr<FJsonValue>>* deltasArray;
-
-			if ((*rootObject)->TryGetArrayField(TEXT("deltas"), deltasArray))
-			{
-				//For each element in this array field
-				for (TSharedPtr<FJsonValue> deltaValue : *deltasArray) 
-				{
-					if (deltaValue.IsValid()) 
-					{
-						const TSharedPtr<FJsonObject>* deltaAsObject;
-						if (deltaValue->TryGetObject(deltaAsObject))
-						{
-							auto& delta = this->deltas.AddDefaulted_GetRef();
-							//Read the Header....
-							if (FJsonObjectConverter::JsonObjectToUStruct<FDrawingDesignerJsDelta>(deltaAsObject->ToSharedRef(), &delta))
-							{
-								//Read the Detail Object..
-								const TSharedPtr<FJsonObject>* detailObject;
-								if ((*deltaAsObject)->TryGetObjectField(TEXT("details"), detailObject))
-								{
-									if (!delta.details.FromJsonObject(*detailObject))
-									{
-										UE_LOG(ModumateDrawingDesigner, Warning, TEXT("Details provided but unable to parse"));
-										bSuccess = false;
-									}
-								}
-							}
-							else
-							{
-								UE_LOG(ModumateDrawingDesigner, Warning, TEXT("Failed to add delta from drawing designer"));
-								bSuccess = false;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return bSuccess;
+	return ReadJsonGeneric<FDrawingDesignerJsDeltaPackage>(InJson, this);
 }
 

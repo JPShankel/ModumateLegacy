@@ -40,6 +40,7 @@ struct MODUMATE_API FDrawingDesignerJsDelta
 	UPROPERTY()
 	FDrawingDesignerJsDeltaHeader header;
 
+	UPROPERTY()
 	FDrawingDesignerNode details;
 };
 
@@ -64,12 +65,11 @@ struct MODUMATE_API FDrawingDesignerDocumentDelta : public FDocumentDelta
 	FDrawingDesignerDocumentDelta() = default;
 	FDrawingDesignerDocumentDelta(const FDrawingDesignerDocument& doc, FDrawingDesignerJsDeltaPackage package);
 
-	// TODO: use FDrawingDesignerDocument when its UPROPERTYable
 	UPROPERTY()
-	FString to;
+	FDrawingDesignerDocument to;
 
 	UPROPERTY()
-	FString from;
+	FDrawingDesignerDocument from;
 
 	virtual bool ApplyTo(UModumateDocument* Doc, UWorld* World) const override;
 	virtual TSharedPtr<FDocumentDelta> MakeInverse() const override;

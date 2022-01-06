@@ -101,25 +101,25 @@ bool FModumateDrawingDesignerUnitTest::RunTest(const FString& Parameters)
 	UModumateDocument* testDocument = NewObject<UModumateDocument>();
 
 	//ID1
-	FString addRootDirectoryStr   { TEXT("{\"document\":{\"deltas\":[{\"header\":{\"verb\":\"add\",\"id\":-1,\"parent\":0},\"details\":{\"id\":-1,\"parent\":0,\"children\":[],\"nodeType\":\"directory\",\"chunk\":{\"version\":1,\"name\":\"Root Directory\"}}}]}}") }; 
+	FString addRootDirectoryStr   { TEXT("{\"deltas\":[{\"header\":{\"verb\":\"add\",\"id\":-1,\"parent\":0},\"details\":{\"id\":-1,\"parent\":0,\"children\":[],\"nodeType\":\"directory\",\"chunkString\":\"\"}}]}") }; 
 	//ID2
-	FString addSubDirectory1Str   { TEXT("{\"document\":{\"deltas\":[{\"header\":{\"verb\":\"add\",\"id\":-1,\"parent\":1},\"details\":{\"id\":-1,\"parent\":1,\"children\":[],\"nodeType\":\"directory\",\"chunk\":{\"version\":1,\"name\":\"Sub Directory 1\"}}}]}}") };
+	FString addSubDirectory1Str   { TEXT("{\"deltas\":[{\"header\":{\"verb\":\"add\",\"id\":-1,\"parent\":1},\"details\":{\"id\":-1,\"parent\":1,\"children\":[],\"nodeType\":\"directory\",\"chunkString\":\"\"}}]}") };
 	//ID3
-	FString addSubDirectory2Str   { TEXT("{\"document\":{\"deltas\":[{\"header\":{\"verb\":\"add\",\"id\":-1,\"parent\":1},\"details\":{\"id\":-1,\"parent\":1,\"children\":[],\"nodeType\":\"directory\",\"chunk\":{\"version\":1,\"name\":\"Sub Directory 2\"}}}]}}") };
+	FString addSubDirectory2Str   { TEXT("{\"deltas\":[{\"header\":{\"verb\":\"add\",\"id\":-1,\"parent\":1},\"details\":{\"id\":-1,\"parent\":1,\"children\":[],\"nodeType\":\"directory\",\"chunkString\":\"\"}}]}") };
 
 
 	//ID4
-	FString addPageStr      { TEXT("{\"document\":{\"deltas\":[{\"header\":{\"verb\":\"add\",\"id\":-1,\"parent\":2},\"details\":{\"id\":-1,\"parent\":2,\"children\":[],\"nodeType\":\"page\",\"chunk\":{\"version\":1,\"size\":{\"x\":36,\"y\":36},\"name\":\"Empty Page\"}}}]}}") };
+	FString addPageStr      { TEXT("{\"deltas\":[{\"header\":{\"verb\":\"add\",\"id\":-1,\"parent\":2},\"details\":{\"id\":-1,\"parent\":2,\"children\":[],\"nodeType\":\"page\",\"chunkString\":\"\"}}]}") };
 	//ID5
-	FString addAnnotationStr{ TEXT("{\"document\":{\"deltas\":[{\"header\":{\"verb\":\"add\",\"id\":-1,\"parent\":4},\"details\":{\"id\":-1,\"parent\":4,\"children\":[],\"nodeType\":\"annotation\",\"chunk\":{\"version\":1,\"view\":-1,\"anchors\":[],\"type\":\"drawing\",\"offset\":{\"x\":0,\"y\":0},\"text\":\"First Annotation Text\",\"color\":\"\",\"floatingSnaps\":{\"1\":{\"id\":1,\"x\":234,\"y\":567}}}}}]}}") };
+	FString addAnnotationStr{ TEXT("{\"deltas\":[{\"header\":{\"verb\":\"add\",\"id\":-1,\"parent\":4},\"details\":{\"id\":-1,\"parent\":4,\"children\":[],\"nodeType\":\"annotation\",\"chunkString\":\"\"}}]}") };
 
-	FString modifyPageStr   { TEXT("{\"document\":{\"deltas\":[{\"header\":{\"verb\":\"modify\",\"id\":4,\"parent\":3},\"details\":{\"id\":4,\"parent\":3,\"children\":[ 5 ],\"nodeType\":\"page\",\"chunk\":{\"version\":1,\"size\":{\"x\":36,\"y\":36},\"name\":\"Modified Page\"}}}]}}") };
+	FString modifyPageStr   { TEXT("{\"deltas\":[{\"header\":{\"verb\":\"modify\",\"id\":4,\"parent\":3},\"details\":{\"id\":4,\"parent\":3,\"children\":[ 5 ],\"nodeType\":\"page\",\"chunkString\":\"\"}}]}") };
 
 	//This adds a cycle to the graph
-	FString invalidateAdd{ TEXT("{\"document\":{\"deltas\":[{\"header\":{\"verb\":\"add\",\"id\":-1,\"parent\":0},\"details\":{\"id\":-1,\"parent\":0,\"children\":[ 3 ],\"nodeType\":\"directory\",\"chunk\":{\"version\":1,\"name\":\"Add a Cycle Directory 2\"}}}]}}") };
+	FString invalidateAdd { TEXT("{\"deltas\":[{\"header\":{\"verb\":\"add\",\"id\":-1,\"parent\":0},\"details\":{\"id\":-1,\"parent\":0,\"children\":[ 3 ],\"nodeType\":\"directory\",\"chunkString\":\"\"}}]}") };
 
 	//Removes ID4, which also removes ID5
-	FString removePageStr   { TEXT("{\"document\":{\"deltas\":[{\"header\":{\"verb\":\"remove\",\"id\":4,\"parent\":3}}]}}") };
+	FString removePageStr   { TEXT("{\"deltas\":[{\"header\":{\"verb\":\"remove\",\"id\":4,\"parent\":3}}]}") };
 
 	int nodeCount = testDocument->DrawingDesignerDocument.nodes.Num();
 

@@ -7,12 +7,11 @@
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "DocumentManagement/ModumateSerialization.h"
+#include "DrawingDesigner/DrawingDesignerRequests.h"
 
 DEFINE_LOG_CATEGORY(ModumateDrawingDesigner);
 
 static const TCHAR* DrawingDesignerDocumentLabel = TEXT("document");
-
-static constexpr int32 DrawingDesignerJsonVersion = 1;
 
 FDrawingDesignerDocument::FDrawingDesignerDocument()
 {
@@ -26,109 +25,12 @@ FDrawingDesignerDocument::FDrawingDesignerDocument()
 
 bool FDrawingDesignerDocument::WriteJson(FString& OutJson) const
 {
-	//This will serialize everything but the map fields
-	TSharedPtr<FJsonObject> docOb = FJsonObjectConverter::UStructToJsonObject<FDrawingDesignerDocument>(*this);
-	TSharedRef<FPrettyJsonStringWriter> JsonStringWriter = FPrettyJsonStringWriterFactory::Create(&OutJson);
-	TSharedPtr<FJsonObject> FileJsonWrite = MakeShared<FJsonObject>();
-	
-
-	if (docOb)
-	{
-		docOb->SetStringField(TEXT("version"), FString::FromInt(DrawingDesignerJsonVersion));
-
-		//Add the map fields
-		TMap<FString, const FDrawingDesignerMap*> fields =
-		{
-			{TEXT("nodes"), &(this->nodes)},
-		};
-
-		//For all the maps above...
-		for (auto& field : fields)
-		{
-			//Create a field for it...
-			TSharedPtr<FJsonObject> jsonField = MakeShared<FJsonObject>();
-
-			//And add all the items to the field (from the maps)
-			for (auto& kvp : *(field.Value))
-			{
-				FDrawingDesignerNode node = kvp.Value;
-				TSharedPtr<FJsonObject> nodeJson = NULL;
-				if (node.AsJsonObject(nodeJson))
-				{
-					TSharedPtr<FJsonValue> asValue = MakeShareable<FJsonValueObject>(new FJsonValueObject{ nodeJson });
-					jsonField->Values.Add(kvp.Key, asValue);
-				}
-				
-			}
-			
-			//Add the created nodes field to the overall object
-			docOb->SetObjectField(field.Key, jsonField);
-		}
-
-		//Return it prettified
-		FileJsonWrite->SetObjectField(DrawingDesignerDocumentLabel, docOb);
-		return FJsonSerializer::Serialize(FileJsonWrite.ToSharedRef(), JsonStringWriter);
-	}
-
-	return false;
+	return WriteJsonGeneric<FDrawingDesignerDocument>(OutJson, this);;
 }
 
 bool FDrawingDesignerDocument::ReadJson(const FString& InJson)
 {
-	TSharedPtr<FJsonObject> FileJsonRead;
-	const TSharedPtr<FJsonObject>* jsonDocument;
-	auto JsonReader = TJsonReaderFactory<>::Create(InJson);
-	bool bSuccess = FJsonSerializer::Deserialize(JsonReader, FileJsonRead) && FileJsonRead.IsValid();
-
-	if (bSuccess)
-	{
-		*this = FDrawingDesignerDocument();
-		if (FileJsonRead->TryGetObjectField(DrawingDesignerDocumentLabel, jsonDocument))
-		{
-			//This will de-serialize everything but the node map
-			FJsonObjectConverter::JsonObjectToUStruct<FDrawingDesignerDocument>(jsonDocument->ToSharedRef(), this);
-
-			FString version;
-			int32 verNum = 1;
-			if ((*jsonDocument)->TryGetStringField(TEXT("version"), version))
-			{
-				verNum = FCString::Atoi(*version);
-			}
-			// TODO: if verNum < DrawingDesignerJsonVersion, do old read
-
-			//Do the maps manually...
-			TMap<FString, FDrawingDesignerMap*> fields =
-			{ 
-				{TEXT("nodes"), &(this->nodes)},
-			};
-
-			//For all the maps above...
-			for(auto& field : fields) 
-			{
-				//Try and find the json field associated with that map
-				const TSharedPtr<FJsonObject>* jsonField;
-				if ((*jsonDocument)->TryGetObjectField(field.Key, jsonField))
-				{
-					//In that json field, get all the key value pairs
-					for (auto& kvp : (*jsonField)->Values)
-					{
-						//Create a node from the key and value pair
-						FDrawingDesignerNode node;
-						node.FromJsonObject(kvp.Value->AsObject());
-
-						//Add it to the map
-						field.Value->Add(kvp.Key, node);
-					}
-				}
-				else
-				{
-					bSuccess = false;
-				}
-			}
-		}
-	}
-
-	return bSuccess;
+	return ReadJsonGeneric<FDrawingDesignerDocument>(InJson, this);;
 }
 
 bool FDrawingDesignerDocument::operator==(const FDrawingDesignerDocument& RHS) const
