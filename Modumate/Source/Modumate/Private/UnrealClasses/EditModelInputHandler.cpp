@@ -725,3 +725,10 @@ void UEditModelInputHandler::SetInputEnabled(bool bNewEnabled)
 		OnCommandReset();
 	}
 }
+
+void UEditModelInputHandler::send_command(const FString& CommandString) {
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::send_command"));
+
+	EInputCommand command = GetEnumValueByString<EInputCommand>(CommandString);
+	TryCommandInternal(command);
+}

@@ -260,6 +260,9 @@ public:
 	void RequestAxisInputPriority(const FName& Requester, bool bShouldPrioritizeAxisInputs);
 	bool IsAxisInputPrioritized() const;
 
+	UFUNCTION()
+	void send_command(const FString& CommandString);
+
 protected:
 	UFUNCTION()
 	void HandleBoundChord(FInputChord Chord);

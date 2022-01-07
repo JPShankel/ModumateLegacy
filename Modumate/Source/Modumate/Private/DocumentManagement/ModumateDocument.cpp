@@ -4292,7 +4292,7 @@ void UModumateDocument::DrawingSendResponse(const FString& FunctionName, const F
 
 	if (drawingDesigner && drawingDesigner->DrawingSetWebBrowser)
 	{
-		FString javaScript = FunctionName + TEXT("(") + Argument + TEXT(")");
+		FString javaScript = TEXT("ue_event.") + FunctionName + TEXT("(") + Argument + TEXT(")");
 		drawingDesigner->DrawingSetWebBrowser->ExecuteJavascript(javaScript);
 	}
 }
