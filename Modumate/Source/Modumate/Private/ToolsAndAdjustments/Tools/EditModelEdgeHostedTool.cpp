@@ -6,6 +6,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/EditModelGameState.h"
+#include "Objects/EdgeHosted.h"
 
 UEdgeHostedTool::UEdgeHostedTool()
 	: Super()
@@ -216,6 +217,8 @@ bool UEdgeHostedTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeI
 			NewMOIStateData.ObjectType = EObjectType::OTEdgeHosted;
 			NewMOIStateData.ParentID = targetEdgeID;
 			NewMOIStateData.AssemblyGUID = AssemblyGUID;
+			FMOIEdgeHostedData newCustomData;
+			NewMOIStateData.CustomData.SaveStructData<FMOIEdgeHostedData>(newCustomData);
 
 			NewObjectIDs.Add(NewMOIStateData.ID);
 

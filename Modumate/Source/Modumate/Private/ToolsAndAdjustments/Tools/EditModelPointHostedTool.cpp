@@ -6,6 +6,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/EditModelGameState.h"
+#include "Objects/PointHosted.h"
 
 UPointHostedTool::UPointHostedTool()
 	: Super()
@@ -178,6 +179,8 @@ bool UPointHostedTool::GetObjectCreationDeltas(const int32 InTargetVertexID, TAr
 		NewMOIStateData.ObjectType = EObjectType::OTPointHosted;
 		NewMOIStateData.ParentID = InTargetVertexID;
 		NewMOIStateData.AssemblyGUID = AssemblyGUID;
+		FMOIPointHostedData newCustomData;
+		NewMOIStateData.CustomData.SaveStructData<FMOIPointHostedData>(newCustomData);
 
 		NewObjectIDs.Add(NewMOIStateData.ID);
 

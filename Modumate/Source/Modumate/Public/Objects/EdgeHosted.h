@@ -21,6 +21,10 @@ struct MODUMATE_API FMOIEdgeHostedData
 	UPROPERTY()
 	FDimensionOffset OffsetNormal;
 
+	// X = Extend start length, Y = Extend end length
+	UPROPERTY()
+	FVector2D Extensions = FVector2D::ZeroVector;
+
 	UPROPERTY()
 	float Rotation = 0.f;
 };
@@ -36,12 +40,34 @@ public:
 	virtual AActor* CreateActor(const FVector& loc, const FQuat& rot) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void UpdateDynamicGeometry() override;
+	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) override;
+	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
+	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping, bool bForSelection) const override;
 
 	UPROPERTY()
 	FMOIEdgeHostedData InstanceData;
 
 protected:
+	FVector LineStartPos, LineEndPos, LineDir, LineNormal, LineUp;
 
 	void InternalUpdateGeometry(bool bCreateCollision);
+	void OnInstPropUIChangedExtension(float NewValue, int32 ExtensionIdx);
 
+	UFUNCTION()
+	void OnInstPropUIChangedFlip(int32 FlippedAxisInt);
+
+	UFUNCTION()
+	void OnInstPropUIChangedOffsetUp(const FDimensionOffset& NewValue);
+
+	UFUNCTION()
+	void OnInstPropUIChangedOffsetNormal(const FDimensionOffset& NewValue);
+
+	UFUNCTION()
+	void OnInstPropUIChangedRotation(float NewValue);
+
+	UFUNCTION()
+	void OnInstPropUIChangedExtensionStart(float NewValue);
+
+	UFUNCTION()
+	void OnInstPropUIChangedExtensionEnd(float NewValue);
 };

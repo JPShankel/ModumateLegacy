@@ -14,6 +14,7 @@ void FMOIDelta::AddCreateDestroyState(const FMOIStateData& State, EMOIDeltaType 
 {
 	if ((DeltaType == EMOIDeltaType::Create) || (DeltaType == EMOIDeltaType::Destroy))
 	{
+		ensureMsgf(State.CustomData.IsValid(), TEXT("Invalid CustomData in MOIStateData"));
 		States.Add(FMOIDeltaState{ State, State, DeltaType });
 	}
 }
