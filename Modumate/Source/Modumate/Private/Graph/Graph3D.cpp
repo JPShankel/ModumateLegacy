@@ -221,56 +221,9 @@ void FGraph3D::FindFacesContainedByFace(int32 ContainingFaceID, TSet<int32> &Out
 	}
 }
 
-void FGraph3D::AddObjectToGroups(const IGraph3DObject *GraphObject)
-{
-	int32 objectID = GraphObject->ID;
-	for (int32 groupID : GraphObject->GroupIDs)
-	{
-		auto &groupMembers = CachedGroups.FindOrAdd(groupID);
-		groupMembers.Add(GraphObject->ID);
-	}
-}
-
-void FGraph3D::RemoveObjectFromGroups(const IGraph3DObject *GraphObject)
-{
-	int32 objectID = GraphObject->ID;
-	for (int32 groupID : GraphObject->GroupIDs)
-	{
-		auto &groupMembers = CachedGroups.FindOrAdd(groupID);
-		groupMembers.Remove(GraphObject->ID);
-
-		// Remove empty groups now to keep the map clean whenever possible
-		if (groupMembers.Num() == 0)
-		{
-			CachedGroups.Remove(groupID);
-		}
-	}
-}
-
 void FGraph3D::ApplyGroupIDsDelta(int32 ID, const FGraph3DGroupIDsDelta &GroupDelta)
 {
-	IGraph3DObject *GraphObject = FindObject(ID);
-
-	if (!ensure(GraphObject))
-	{
-		return;
-	}
-
-	// Remove this element from the membership of groups that it used to belong to
-	RemoveObjectFromGroups(GraphObject);
-
-	// Apply the delta to this object's own GroupIDs list
-	GraphObject->GroupIDs.Append(GroupDelta.GroupIDsToAdd);
-	for (int32 groupIDToRemove : GroupDelta.GroupIDsToRemove)
-	{
-		GraphObject->GroupIDs.Remove(groupIDToRemove);
-	}
-
-	// Add this element as a member of groups that it now belongs to
-	AddObjectToGroups(GraphObject);
-
-	// Mark the element as dirty, so that it can be cleaned and alert connected group objects
-	GraphObject->Dirty(false);
+	// TODO: remove
 }
 
 FGraph3DVertex* FGraph3D::FindVertex(int32 VertexID) 
@@ -439,7 +392,7 @@ FGraph3DVertex *FGraph3D::AddVertex(const FVector &Position, int32 InID, const T
 		return nullptr;
 	}
 
-	FGraph3DVertex newVertex = FGraph3DVertex(newID, this, Position, InGroupIDs);
+	FGraph3DVertex newVertex = FGraph3DVertex(newID, this, Position);
 	if (!ensureAlways(newVertex.bValid))
 	{
 		return nullptr;
@@ -450,12 +403,11 @@ FGraph3DVertex *FGraph3D::AddVertex(const FVector &Position, int32 InID, const T
 
 	FGraph3DVertex *vertexPtr = &Vertices.Add(newID, MoveTemp(newVertex));
 	AllObjects.Add(newID, vertexPtr->GetType());
-	AddObjectToGroups(vertexPtr);
 
 	return vertexPtr;
 }
 
-FGraph3DEdge *FGraph3D::AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID, const TSet<int32> &InGroupIDs)
+FGraph3DEdge * FGraph3D::AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID)
 {
 	int32 newID = InID;
 	if (newID == MOD_ID_NONE)
@@ -473,7 +425,7 @@ FGraph3DEdge *FGraph3D::AddEdge(int32 StartVertexID, int32 EndVertexID, int32 In
 		return nullptr;
 	}
 
-	FGraph3DEdge newEdge = FGraph3DEdge(newID, this, StartVertexID, EndVertexID, InGroupIDs);
+	FGraph3DEdge newEdge = FGraph3DEdge(newID, this, StartVertexID, EndVertexID);
 	if (!ensureAlways(newEdge.bValid))
 	{
 		return nullptr;
@@ -487,13 +439,11 @@ FGraph3DEdge *FGraph3D::AddEdge(int32 StartVertexID, int32 EndVertexID, int32 In
 
 	FGraph3DEdge *edgePtr = &Edges.Add(newID, MoveTemp(newEdge));
 	AllObjects.Add(newID, edgePtr->GetType());
-	AddObjectToGroups(edgePtr);
 
 	return edgePtr;
 }
 
-FGraph3DFace *FGraph3D::AddFace(const TArray<int32> &VertexIDs, int32 InID,
-	const TSet<int32> &InGroupIDs, int32 InContainingFaceID, const TSet<int32> &InContainedFaceIDs)
+FGraph3DFace * FGraph3D::AddFace(const TArray<int32> &VertexIDs, int32 InID, int32 InContainingFaceID, const TSet<int32> &InContainedFaceIDs)
 {
 	int32 newID = InID;
 	if (newID == MOD_ID_NONE)
@@ -511,7 +461,7 @@ FGraph3DFace *FGraph3D::AddFace(const TArray<int32> &VertexIDs, int32 InID,
 		return nullptr;
 	}
 
-	FGraph3DFace newFace = FGraph3DFace(newID, this, VertexIDs, InGroupIDs, InContainingFaceID, InContainedFaceIDs);
+	FGraph3DFace newFace = FGraph3DFace(newID, this, VertexIDs, InContainingFaceID, InContainedFaceIDs);
 	if (!ensure(newFace.bValid))
 	{
 		return nullptr;
@@ -521,7 +471,6 @@ FGraph3DFace *FGraph3D::AddFace(const TArray<int32> &VertexIDs, int32 InID,
 	bDirty = true;
 
 	FGraph3DFace *facePtr = &Faces.Add(newID, MoveTemp(newFace));
-	AddObjectToGroups(facePtr);
 	AllObjects.Add(newID, facePtr->GetType());
 
 	return facePtr;
@@ -536,7 +485,6 @@ bool FGraph3D::RemoveVertex(int32 VertexID)
 	}
 
 	vertexToRemove->Dirty();
-	RemoveObjectFromGroups(vertexToRemove);
 
 	for (FGraphSignedID connectedEdgeID : vertexToRemove->ConnectedEdgeIDs)
 	{
@@ -577,7 +525,6 @@ bool FGraph3D::RemoveEdge(int32 EdgeID)
 	}
 
 	edgeToRemove->Dirty();
-	RemoveObjectFromGroups(edgeToRemove);
 
 	if (edgeToRemove->StartVertexID != MOD_ID_NONE)
 	{
@@ -612,7 +559,6 @@ bool FGraph3D::RemoveFace(int32 FaceID)
 	}
 
 	faceToRemove->Dirty();
-	RemoveObjectFromGroups(faceToRemove);
 
 	for (FGraphSignedID edgeID : faceToRemove->EdgeIDs)
 	{
@@ -784,17 +730,7 @@ bool FGraph3D::ApplyDelta(const FGraph3DDelta &Delta)
 			return false;
 		}
 
-		TempInheritedGroupIDs = kvp.Value.GroupIDs;
-		for (int32 parentID : kvp.Value.ParentObjIDs)
-		{
-			auto edge = FindEdge(parentID);
-			if (edge != nullptr)
-			{
-				TempInheritedGroupIDs.Append(edge->GroupIDs);
-			}
-		}
-
-		auto newEdge = AddEdge(edgeVertexIDs[0], edgeVertexIDs[1], edgeID, TempInheritedGroupIDs);
+		auto newEdge = AddEdge(edgeVertexIDs[0], edgeVertexIDs[1], edgeID);
 		if (!ensure(newEdge))
 		{
 			return false;
@@ -817,17 +753,7 @@ bool FGraph3D::ApplyDelta(const FGraph3DDelta &Delta)
 		const FGraph3DObjDelta &objDelta = kvp.Value;
 		const TArray<int32> &faceVertexIDs = objDelta.Vertices;
 
-		TempInheritedGroupIDs = objDelta.GroupIDs;
-		for(int32 parentID : objDelta.ParentObjIDs)
-		{
-			auto face = FindFace(parentID);
-			if (face != nullptr)
-			{
-				TempInheritedGroupIDs.Append(face->GroupIDs);
-			}
-		}
-
-		auto newFace = AddFace(faceVertexIDs, faceID, TempInheritedGroupIDs, objDelta.ContainingObjID, objDelta.ContainedObjIDs);
+		auto newFace = AddFace(faceVertexIDs, faceID, objDelta.ContainingObjID, objDelta.ContainedObjIDs);
 		if (!ensure(newFace))
 		{
 			return false;
@@ -1509,13 +1435,13 @@ bool FGraph3D::Load(const FGraph3DRecord* InGraph3DRecord)
 
 	for (auto &kvp : InGraph3DRecord->Edges)
 	{
-		auto* edge = AddEdge(kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Key, kvp.Value.GroupIDs);
+		auto* edge = AddEdge(kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Key);
 		bTotalSuccess = bTotalSuccess && edge && edge->bValid;
 	}
 
 	for (auto &kvp : InGraph3DRecord->Faces)
 	{
-		auto* face = AddFace(kvp.Value.VertexIDs, kvp.Key, kvp.Value.GroupIDs, kvp.Value.ContainingFaceID, kvp.Value.ContainedFaceIDs);
+		auto* face = AddFace(kvp.Value.VertexIDs, kvp.Key, kvp.Value.ContainingFaceID, kvp.Value.ContainedFaceIDs);
 		bTotalSuccess = bTotalSuccess && face && face->bValid;
 	}
 
@@ -1536,13 +1462,13 @@ void FGraph3D::Save(FGraph3DRecord* OutGraph3DRecord)
 	OutGraph3DRecord->Edges.Reset();
 	for (auto &kvp : Edges)
 	{
-		OutGraph3DRecord->Edges.Add(kvp.Key, FGraph3DEdgeRecord(kvp.Key, kvp.Value.StartVertexID, kvp.Value.EndVertexID, kvp.Value.GroupIDs));
+		OutGraph3DRecord->Edges.Add(kvp.Key, FGraph3DEdgeRecord(kvp.Key, kvp.Value.StartVertexID, kvp.Value.EndVertexID, TSet<int32>() ));
 	}
 
 	OutGraph3DRecord->Faces.Reset();
 	for (auto &kvp : Faces)
 	{
-		OutGraph3DRecord->Faces.Add(kvp.Key, FGraph3DFaceRecord(kvp.Key, kvp.Value.VertexIDs, kvp.Value.GroupIDs, kvp.Value.ContainingFaceID, kvp.Value.ContainedFaceIDs));
+		OutGraph3DRecord->Faces.Add(kvp.Key, FGraph3DFaceRecord(kvp.Key, kvp.Value.VertexIDs, TSet<int32>(), kvp.Value.ContainingFaceID, kvp.Value.ContainedFaceIDs));
 	}
 }
 
@@ -1560,7 +1486,7 @@ void FGraph3D::SaveSubset(const TSet<int32> InObjectIDs, FGraph3DRecord* OutGrap
 		}
 		else if (auto edge = FindEdge(id))
 		{
-			OutGraph3DRecord->Edges.Add(id, FGraph3DEdgeRecord(id, edge->StartVertexID, edge->EndVertexID, edge->GroupIDs));
+			OutGraph3DRecord->Edges.Add(id, FGraph3DEdgeRecord(id, edge->StartVertexID, edge->EndVertexID, TSet<int32>() ));
 
 			auto startVertex = FindVertex(edge->StartVertexID);
 			auto endVertex = FindVertex(edge->EndVertexID);
@@ -1574,7 +1500,7 @@ void FGraph3D::SaveSubset(const TSet<int32> InObjectIDs, FGraph3DRecord* OutGrap
 		}
 		else if (auto face = FindFace(id))
 		{
-			OutGraph3DRecord->Faces.Add(id, FGraph3DFaceRecord(id, face->VertexIDs, face->GroupIDs, face->ContainingFaceID, face->ContainedFaceIDs));
+			OutGraph3DRecord->Faces.Add(id, FGraph3DFaceRecord(id, face->VertexIDs, TSet<int32>(), face->ContainingFaceID, face->ContainedFaceIDs));
 			for (int32 vertexID : face->VertexIDs)
 			{
 				auto faceVertex = FindVertex(vertexID);
@@ -1592,7 +1518,7 @@ void FGraph3D::SaveSubset(const TSet<int32> InObjectIDs, FGraph3DRecord* OutGrap
 				{
 					continue;
 				}
-				OutGraph3DRecord->Edges.FindOrAdd(faceEdge->ID, FGraph3DEdgeRecord(faceEdge->ID, faceEdge->StartVertexID, faceEdge->EndVertexID, faceEdge->GroupIDs));
+				OutGraph3DRecord->Edges.FindOrAdd(faceEdge->ID, FGraph3DEdgeRecord(faceEdge->ID, faceEdge->StartVertexID, faceEdge->EndVertexID, TSet<int32>() ));
 			}
 		}
 	}
@@ -1631,7 +1557,7 @@ void FGraph3D::GetDeltasForPaste(const FGraph3DRecord* InGraph3DRecord, const FV
 			positions.Add(FindVertex(originalID)->Position);
 		}
 
-		if (GetDeltaForFaceAddition(positions, faceDeltas, NextID, addedFaceIDs, TSet<int32>(), !bIsPreview))
+		if (GetDeltaForFaceAddition(positions, faceDeltas, NextID, addedFaceIDs, !bIsPreview))
 		{
 			OutCopiedToPastedIDs.Add(kvp.Key, addedFaceIDs);
 			OutDeltas.Append(faceDeltas);

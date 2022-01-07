@@ -19,7 +19,7 @@ public:
 	bool bConvex = true;				// Whether this polyhedron is convex
 	FBox AABB = FBox(ForceInitToZero);	// The axis-aligned bounding box for the polyhedron
 
-	FGraph3DPolyhedron(int32 InID, FGraph3D* InGraph, const TSet<int32> &InGroupIDs = TSet<int32>());
+	FGraph3DPolyhedron(int32 InID, FGraph3D* InGraph);
 
 	bool IsInside(const FGraph3DPolyhedron &otherVolume) const;
 	void SetParent(int32 inParentID);

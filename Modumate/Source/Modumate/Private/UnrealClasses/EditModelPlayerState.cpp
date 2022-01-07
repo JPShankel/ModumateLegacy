@@ -390,7 +390,6 @@ void AEditModelPlayerState::UpdateRenderFlags(const TSet<AModumateObjectInstance
 			bool bGroupVisible = UModumateObjectStatics::IsObjectInSubgroup(moi->GetDocument(), moi, MOD_ID_NONE, subGroup, bIsInGroup) || bIsInGroup;
 
 			int32 selectionValue = bSelected ? int(EStencilFlags::Selected) : 0x0;
-			//int32 viewGroupValue = ViewGroupDescendents.Contains(moi) ? int(EStencilFlags::LegacyGroup) : 0x0;
 			int32 hoverValue = (bHovered && !bSelected) ? int(EStencilFlags::Hovered) : 0x0;
 			int32 errorValue = ErrorObjects.Contains(moi) ? int(EStencilFlags::Error) : 0x0;
 			int32 groupVisibleValue = !bGroupVisible ? int(EStencilFlags::InactiveGroup) : 0x0;
@@ -697,16 +696,6 @@ void AEditModelPlayerState::PostViewChanged()
 	// selection, hover, or view group hierarchy
 	TSet<AModumateObjectInstance *> allChangedObjects;
 
-	// Gather all objects previously and currently under the view group object
-	ViewGroupDescendents.Reset();
-	if (ViewGroupObject)
-	{
-		ViewGroupDescendents.Add(ViewGroupObject);
-		ViewGroupDescendents.Append(ViewGroupObject->GetAllDescendents());
-	}
-	allChangedObjects.Append(ViewGroupDescendents);
-	allChangedObjects.Append(LastViewGroupDescendentsSet);
-
 	// Gather all objects previously and currently hovered objects
 	HoveredObjectDescendents.Reset();
 	if (HoveredObject)
@@ -735,9 +724,6 @@ void AEditModelPlayerState::PostViewChanged()
 	// Iterate through all objects whose render mode may have changed due to either selection or view group hierarchy
 	TArray<TWeakObjectPtr<AAdjustmentHandleActor>> adjustHandleActors;
 	UpdateRenderFlags(allChangedObjects);
-
-	LastViewGroupDescendentsSet.Reset();
-	LastViewGroupDescendentsSet.Append(ViewGroupDescendents);
 
 	LastHoveredObjectSet.Reset();
 	LastHoveredObjectSet.Append(HoveredObjectDescendents);
@@ -783,7 +769,6 @@ void AEditModelPlayerState::OnNewModel()
 	ViewGroupObject = nullptr;
 	SelectedObjects.Reset();
 	LastSelectedObjectSet.Reset();
-	LastViewGroupDescendentsSet.Reset();
 	LastHoveredObjectSet.Reset();
 	LastErrorObjectSet.Reset();
 	LastReachableObjectSet.Reset();
@@ -943,38 +928,6 @@ void AEditModelPlayerState::SetViewGroupObject(AModumateObjectInstance *ob)
 {
 	ViewGroupObject = ob;
 	PostViewChanged();
-}
-
-bool AEditModelPlayerState::IsObjectInCurViewGroup(AModumateObjectInstance *obj) const
-{
-	if (ViewGroupObject)
-	{
-		return LastViewGroupDescendentsSet.Contains(obj);
-	}
-
-	return true;
-}
-
-AModumateObjectInstance *AEditModelPlayerState::FindHighestParentGroupInViewGroup(AModumateObjectInstance *obj) const
-{
-	if (!IsObjectInCurViewGroup(obj))
-	{
-		return nullptr;
-	}
-
-	AModumateObjectInstance *iter = obj;
-	AModumateObjectInstance *highestGroup = iter;
-	while (iter && (iter != ViewGroupObject))
-	{
-		if (iter->GetObjectType() == EObjectType::OTGroup)
-		{
-			highestGroup = iter;
-		}
-
-		iter = iter->GetParentObject();
-	}
-
-	return highestGroup;
 }
 
 void AEditModelPlayerState::FindReachableObjects(TSet<AModumateObjectInstance*> &reachableObjs) const

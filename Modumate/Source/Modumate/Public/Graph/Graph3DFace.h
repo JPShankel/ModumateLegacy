@@ -28,8 +28,7 @@ public:
 	TArray<FVector2D> Cached2DEdgeNormals;			// CachedEdgeNormals, projected in the face's 2D coordinate space
 	TArray<FPolyHole2D> Cached2DHoles;				// CachedHoles, projected in the face's 2D coordinate space
 
-	FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs,
-		const TSet<int32> &InGroupIDs, int32 InContainingFaceID, const TSet<int32> &InContainedFaceIDs);
+	FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs, int32 InContainingFaceID, const TSet<int32> &InContainedFaceIDs);
 
 	FVector2D ProjectPosition2D(const FVector &Position) const;
 	FVector DeprojectPosition(const FVector2D &ProjectedPos) const;

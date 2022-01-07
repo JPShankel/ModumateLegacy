@@ -520,20 +520,10 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 			return false;
 		}
 
-		// Edges with GroupIDs should be hidden outside of meta-plane view mode
-		// TODO: add more sophistication to this, based on how GroupIDs are used besides Roof Perimeters
-		if (bMetaViewMode && graphEdge->GroupIDs.Num() > 0)
-		{
-			bOutVisible = true;
-			bOutCollisionEnabled = true;
-		}
-		else
-		{
-			bOutVisible =
-				(bMetaViewMode || (bHybridViewMode && !bHasChildren)) &&
-				(!bConnectedToAnyFace || bConnectedToVisibleFace);
-			bOutCollisionEnabled = bOutVisible || (bInCompatibleToolCategory && bConnectedToVisibleChild);
-		}
+		bOutVisible =
+			(bMetaViewMode || (bHybridViewMode && !bHasChildren)) &&
+			(!bConnectedToAnyFace || bConnectedToVisibleFace);
+		bOutCollisionEnabled = bOutVisible || (bInCompatibleToolCategory && bConnectedToVisibleChild);
 		break;
 	}
 	case EObjectType::OTMetaPlane:

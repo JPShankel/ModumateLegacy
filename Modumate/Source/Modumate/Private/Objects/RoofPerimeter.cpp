@@ -234,6 +234,8 @@ bool AMOIRoofPerimeter::UpdateConnectedIDs()
 	}
 	CachedEdgeIDs.Reset();
 
+	// TODO: Find replacement for edge groups to record perimeter info. MOD-2094
+#if 0
 	if (volumeGraph.Create2DGraph(TempGroupEdges, TempConnectedGraphIDs, CachedPerimeterGraph, CachedPlane, true, false))
 	{
 		const FGraph2DPolygon *perimeterPoly = CachedPerimeterGraph->GetRootInteriorPolygon();
@@ -256,6 +258,7 @@ bool AMOIRoofPerimeter::UpdateConnectedIDs()
 			}
 		}
 	}
+#endif
 
 	// Now that we've updated the connected edge IDs for this perimeter, if either the object's previous cached edges
 	// (saved as control indices) or the handles that were last created (saved in EdgeHandleActors) are out of date,

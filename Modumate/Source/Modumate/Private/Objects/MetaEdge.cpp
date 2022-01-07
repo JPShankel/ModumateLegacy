@@ -54,9 +54,8 @@ bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 		LineActor->Point2 = vertexEnd->Position;
 		LineActor->UpdateTransform();
 
-		bool bGrouped = (edge->GroupIDs.Num() > 0);
-		BaseColor = bGrouped ? BaseGroupedColor : BaseDefaultColor;
-		HoveredColor = bGrouped ? HoverGroupedColor : HoverDefaultColor;
+		BaseColor = BaseDefaultColor;
+		HoveredColor = HoverDefaultColor;
 
 		// If our own geometry has been updated, then we need to re-evaluate our mitering,
 		// and if connectivity has changed then we need to update visuals.
@@ -173,16 +172,6 @@ void AMOIMetaEdge::ShowAdjustmentHandles(AEditModelPlayerController* Controller,
 	if (IsDestroyed() || !ensure(edge))
 	{
 		return;
-	}
-
-	// Mirror adjustment handles of this meta edge with all group objects that it belongs to
-	for (int32 groupID : edge->GroupIDs)
-	{
-		auto groupObj = doc->GetObjectById(groupID);
-		if (groupObj)
-		{
-			groupObj->ShowAdjustmentHandles(Controller, bShow);
-		}
 	}
 }
 

@@ -1,8 +1,7 @@
 #include "Graph/Graph3DPolyhedron.h"
 #include "Graph/Graph3D.h"
 
-FGraph3DPolyhedron::FGraph3DPolyhedron(int32 InID, FGraph3D* InGraph, const TSet<int32> &InGroupIDs)
-	: IGraph3DObject(InID, InGraph, InGroupIDs)
+FGraph3DPolyhedron::FGraph3DPolyhedron(int32 InID, FGraph3D* InGraph) : IGraph3DObject(InID, InGraph)
 	, ParentID(MOD_ID_NONE)
 	, bClosed(false)
 	, bInterior(false)

@@ -34,12 +34,10 @@ struct MODUMATE_API FGraph3DObjDelta
 	FGraph3DObjDelta();
 	FGraph3DObjDelta(const TArray<int32>& InVertices);
 	FGraph3DObjDelta(const TArray<int32>& InVertices, const TArray<int32>& InParents,
-		const TSet<int32>& InGroupIDs = TSet<int32>(),
 		int32 InContainingObjID = MOD_ID_NONE, const TSet<int32>& InContainedObjIDs = TSet<int32>());
 
 	FGraph3DObjDelta(const FGraphVertexPair& VertexPair);
-	FGraph3DObjDelta(const FGraphVertexPair& VertexPair, const TArray<int32>& InParents,
-		const TSet<int32>& InGroupIDs = TSet<int32>());
+	FGraph3DObjDelta(const FGraphVertexPair& VertexPair, const TArray<int32>& InParents);
 };
 
 USTRUCT()

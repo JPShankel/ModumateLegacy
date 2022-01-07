@@ -679,7 +679,7 @@ bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(const FVector& EdgeStartPos, con
 }
 
 bool FGraph3D::GetDeltaForFaceAddition(const TArray<int32> &VertexIDs, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID,
-	TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID, const TSet<int32> &InGroupIDs)
+	TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID)
 {
 	TArray<int32> faceVertices;
 
@@ -728,12 +728,12 @@ bool FGraph3D::GetDeltaForFaceAddition(const TArray<int32> &VertexIDs, FGraph3DD
 	}
 
 	AddedFaceID = NextID++;
-	FGraph3DObjDelta &faceAdditionDelta = OutDelta.FaceAdditions.Add(AddedFaceID, FGraph3DObjDelta(faceVertices, ParentFaceIDs, InGroupIDs));
+	FGraph3DObjDelta &faceAdditionDelta = OutDelta.FaceAdditions.Add(AddedFaceID, FGraph3DObjDelta(faceVertices, ParentFaceIDs));
 
 	return true;
 }
 
-bool FGraph3D::GetDeltaForFaceAddition(const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutFaceIDs, const TSet<int32> &InGroupIDs, bool bSplitAndUpdateFaces)
+bool FGraph3D::GetDeltaForFaceAddition(const TArray<FVector> &VertexPositions, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutFaceIDs, bool bSplitAndUpdateFaces)
 {
 	TArray<int32> newVertices;
 	FGraph3DDelta OutDelta(GraphID);
@@ -746,7 +746,7 @@ bool FGraph3D::GetDeltaForFaceAddition(const TArray<FVector> &VertexPositions, T
 	TArray<int32> parentIds = { MOD_ID_NONE };
 	TMap<int32, int32> edgeMap;
 
-	if (!GetDeltaForFaceAddition(newVertices, OutDelta, NextID, ExistingID, parentIds, edgeMap, addedFaceID, InGroupIDs))
+	if (!GetDeltaForFaceAddition(newVertices, OutDelta, NextID, ExistingID, parentIds, edgeMap, addedFaceID))
 	{
 		return false;
 	}
@@ -1493,7 +1493,6 @@ bool FGraph3D::GetDeltasForFaceJoin(TArray<FGraph3DDelta> &OutDeltas, const TArr
 
 	FGraph3DDelta deleteDelta(GraphID);
 	TArray<int32> parentFaceIDs = { face->ID, otherFace->ID };
-	TSet<int32> groupIDs = face->GroupIDs.Union(otherFace->GroupIDs);
 	int32 containingFaceID = MOD_ID_NONE;
 	TSet<int32> containedFaceIDs;
 
@@ -1544,7 +1543,7 @@ bool FGraph3D::GetDeltasForFaceJoin(TArray<FGraph3DDelta> &OutDeltas, const TArr
 	FGraph3DDelta addFaceDelta(GraphID);
 	int32 addedFaceID, existingID;
 	TMap<int32, int32> edgeMap;
-	if (!GetDeltaForFaceAddition(newFaceVertexIDs, addFaceDelta, NextID, existingID, parentFaceIDs, edgeMap, addedFaceID, groupIDs))
+	if (!GetDeltaForFaceAddition(newFaceVertexIDs, addFaceDelta, NextID, existingID, parentFaceIDs, edgeMap, addedFaceID))
 	{
 		return false;
 	}
@@ -1732,7 +1731,6 @@ bool FGraph3D::GetDeltaForDeleteObjects(const TArray<int32>& ObjectIDsToDelete, 
 	FGraph3DDelta& deleteDelta = OutDeltas.AddDefaulted_GetRef();
 
 	TSet<int32> vertexIDsToDelete, edgeIDsToDelete, faceIDsToDelete;
-	TSet<int32> tempGroupMembers, groupIDsToAdd, groupIDsToRemove;
 
 	// The ids that are considered for deletion start with the input arguments, and grow based on object connectivity.
 	// Also, for any groups being deleted, remove the group from any objects that mark themselves as belonging to it.
@@ -1742,16 +1740,6 @@ bool FGraph3D::GetDeltaForDeleteObjects(const TArray<int32>& ObjectIDsToDelete, 
 		int32 objectIDToDelete = FMath::Abs(signedIDToDelete);
 		switch (GetObjectType(objectIDToDelete))
 		{
-		case EGraph3DObjectType::None:
-			if (GetGroup(objectIDToDelete, tempGroupMembers))
-			{
-				groupIDsToRemove.Add(objectIDToDelete);
-				for (int32 groupMember : tempGroupMembers)
-				{
-					deleteDelta.GroupIDsUpdates.Add(groupMember, FGraph3DGroupIDsDelta(groupIDsToAdd, groupIDsToRemove));
-				}
-			}
-			break;
 		case EGraph3DObjectType::Vertex:
 			vertexIDsToDelete.Add(objectIDToDelete);
 			break;
@@ -1938,9 +1926,6 @@ bool FGraph3D::GetDeltaForDeleteObjects(const TSet<const FGraph3DVertex *> &Vert
 	{
 		if (OutDelta.VertexAdditions.Remove(vertex->ID) == 0)
 		{
-			// TODO: keep track of GroupIDs in vertex deletions/additions, if they can ever support it.
-			// For now, it's easier to leave it as-is and only keep an FVector in the delta.
-			ensure(vertex->GroupIDs.Num() == 0);
 			OutDelta.VertexDeletions.Add(vertex->ID, vertex->Position);
 		}
 	}
@@ -1949,7 +1934,7 @@ bool FGraph3D::GetDeltaForDeleteObjects(const TSet<const FGraph3DVertex *> &Vert
 	{
 		if (OutDelta.EdgeAdditions.Remove(edge->ID) == 0)
 		{
-			OutDelta.EdgeDeletions.Add(edge->ID, FGraph3DObjDelta(FGraphVertexPair(edge->StartVertexID, edge->EndVertexID), {}, edge->GroupIDs));
+			OutDelta.EdgeDeletions.Add(edge->ID, FGraph3DObjDelta(FGraphVertexPair(edge->StartVertexID, edge->EndVertexID), {}));
 		}
 	}
 
@@ -1957,7 +1942,7 @@ bool FGraph3D::GetDeltaForDeleteObjects(const TSet<const FGraph3DVertex *> &Vert
 	{
 		if (OutDelta.FaceAdditions.Remove(face->ID) == 0)
 		{
-			OutDelta.FaceDeletions.Add(face->ID, FGraph3DObjDelta(face->VertexIDs, {}, face->GroupIDs, face->ContainingFaceID, face->ContainedFaceIDs));
+			OutDelta.FaceDeletions.Add(face->ID, FGraph3DObjDelta(face->VertexIDs, {}, face->ContainingFaceID, face->ContainedFaceIDs));
 		}
 
 		// find next containingID by traversing

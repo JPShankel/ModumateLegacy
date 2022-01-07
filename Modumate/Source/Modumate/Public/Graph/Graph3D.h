@@ -144,8 +144,8 @@ public:
 	bool ApplyInverseDeltas(const TArray<FGraph3DDelta>& Deltas);
 private:
 	FGraph3DVertex *AddVertex(const FVector &Position, int32 InID, const TSet<int32> &InGroupIDs);
-	FGraph3DEdge *AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID, const TSet<int32> &InGroupIDs);
-	FGraph3DFace *AddFace(const TArray<int32> &VertexIDs, int32 InID, const TSet<int32> &InGroupIDs, int32 InContainingFaceID, const TSet<int32> &InContainedFaceIDs);
+	FGraph3DEdge *AddEdge(int32 StartVertexID, int32 EndVertexID, int32 InID);
+	FGraph3DFace *AddFace(const TArray<int32> &VertexIDs, int32 InID, int32 InContainingFaceID, const TSet<int32> &InContainedFaceIDs);
 
 	bool RemoveVertex(int32 VertexID);
 	bool RemoveEdge(int32 EdgeID);
@@ -157,11 +157,11 @@ private:
 public:
 	bool GetDeltaForVertexAddition(const FVector &VertexPos, FGraph3DDelta &OutDelta, int32 &NextID, int32 &OutVertexID);
 	bool GetDeltaForEdgeAdditionWithSplit(const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs, bool bCheckFaces = false, bool bSplitAndUpdateEdges = true);
-	bool GetDeltaForFaceAddition(const TArray<FVector>& VertexPositions, TArray<FGraph3DDelta>& OutDeltas, int32& NextID, TArray<int32> &OutFaceIDs, const TSet<int32>& InGroupIDs = TSet<int32>(), bool bSplitAndUpdateFaces = true);
+	bool GetDeltaForFaceAddition(const TArray<FVector>& VertexPositions, TArray<FGraph3DDelta>& OutDeltas, int32& NextID, TArray<int32> &OutFaceIDs, bool bSplitAndUpdateFaces = true);
 
 private:
 	bool GetDeltaForEdgeAddition(const FGraphVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> &ParentIDs = TArray<int32>());
-	bool GetDeltaForFaceAddition(const TArray<int32> &VertexIDs, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID, const TSet<int32> &InGroupIDs = TSet<int32>());
+	bool GetDeltaForFaceAddition(const TArray<int32> &VertexIDs, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID);
 
 // object deletion
 public:
@@ -217,8 +217,6 @@ private:
 	int32 FindMinFaceContainingFace(int32 FaceID, bool bAllowPartialContainment) const;
 	void FindFacesContainedByFace(int32 FaceID, TSet<int32> &OutContainedFaces, bool bAllowPartialContainment) const;
 
-	void AddObjectToGroups(const IGraph3DObject *GraphObject);
-	void RemoveObjectFromGroups(const IGraph3DObject *GraphObject);
 	void ApplyGroupIDsDelta(int32 ID, const FGraph3DGroupIDsDelta &GroupDelta);
 
 	// calculate a list of vertices that are on the line between the two vertices provided

@@ -58,7 +58,7 @@ class FGraph3D;
 class IGraph3DObject
 {
 public:
-	IGraph3DObject(int32 InID, FGraph3D *InGraph, const TSet<int32> &InGroupIDs) : ID(InID), Graph(InGraph), GroupIDs(InGroupIDs) {}
+	IGraph3DObject(int32 InID, FGraph3D *InGraph) : ID(InID), Graph(InGraph) {}
 	virtual ~IGraph3DObject() {}
 
 public:
@@ -76,6 +76,4 @@ public:
 	bool bDirty = false;	// Whether this object needs to be updated
 
 	FGraph3D *Graph = nullptr; // The graph that owns this object
-
-	TSet<int32> GroupIDs; // IDs of groups that contain this graph object
 };

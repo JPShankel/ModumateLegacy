@@ -946,8 +946,6 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 	// passed on to another object
 	// if it is passed on to another object, the MarkDirty here is redundant
 
-	// Dirty every group whose members were deleted, or that had members added/removed
-	TSet<int32> dirtyGroupIDs;
 	FGraph3D* volumeGraph = GetVolumeGraph(graphID);
 
 	for (auto& kvp : Delta.VertexDeletions)
@@ -957,7 +955,6 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 		{
 			continue;
 		}
-		dirtyGroupIDs.Append(vertex->GroupIDs);
 	}
 	for (auto& kvp : Delta.EdgeDeletions)
 	{
@@ -966,7 +963,6 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 		{
 			continue;
 		}
-		dirtyGroupIDs.Append(edge->GroupIDs);
 	}
 	for (auto& kvp : Delta.FaceDeletions)
 	{
@@ -974,34 +970,6 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 		if (face == nullptr)
 		{
 			continue;
-		}
-		dirtyGroupIDs.Append(face->GroupIDs);
-	}
-	for (auto& kvp : Delta.GroupIDsUpdates)
-	{
-		dirtyGroupIDs.Append(kvp.Value.GroupIDsToAdd);
-		dirtyGroupIDs.Append(kvp.Value.GroupIDsToRemove);
-	}
-
-	// Dirty every group that was added to or removed from an element, or had members that were deleted without a GroupIDsUpdates delta
-	for (int32 groupID : dirtyGroupIDs)
-	{
-		auto groupObj = GetObjectById(groupID);
-		if (groupObj != nullptr)
-		{
-			groupObj->MarkDirty(EObjectDirtyFlags::Structure);
-		}
-	}
-
-	// Dirty every group member that was added or removed from a group
-	TArray<int32> updatedGroupMemberIDs;
-	Delta.GroupIDsUpdates.GetKeys(updatedGroupMemberIDs);
-
-	for (int32 groupMemberID : updatedGroupMemberIDs)
-	{
-		if (auto groupMemberObj = GetObjectById(groupMemberID))
-		{
-			groupMemberObj->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 	}
 
@@ -1425,7 +1393,6 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 {
 	// TODO: unclear whether this is correct or the best place -
 	// set the faces containing or contained by dirty faces dirty as well
-	TSet<int32> dirtyGroupIDs;
 	for (auto& volumeGraphKvp : VolumeGraphs)
 	{
 		FGraph3D* volumeGraph = volumeGraphKvp.Value.Get();
@@ -1462,7 +1429,6 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 				if (graphVertex && vertexObj && (vertexObj->GetObjectType() == EObjectType::OTMetaVertex))
 				{
 					vertexObj->MarkDirty(EObjectDirtyFlags::Structure);
-					dirtyGroupIDs.Append(graphVertex->GroupIDs);
 				}
 			}
 
@@ -1473,7 +1439,6 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 				if (graphEdge && edgeObj && (edgeObj->GetObjectType() == EObjectType::OTMetaEdge))
 				{
 					edgeObj->MarkDirty(EObjectDirtyFlags::Structure);
-					dirtyGroupIDs.Append(graphEdge->GroupIDs);
 				}
 			}
 
@@ -1484,7 +1449,6 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 				if (graphFace && faceObj && (faceObj->GetObjectType() == EObjectType::OTMetaPlane))
 				{
 					faceObj->MarkDirty(EObjectDirtyFlags::Structure);
-					dirtyGroupIDs.Append(graphFace->GroupIDs);
 				}
 			}
 
@@ -1506,16 +1470,6 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 		}
 	}
 
-	// TODO: Remove
-	// dirty group objects that are related to dirtied graph objects
-	for (int32 groupID : dirtyGroupIDs)
-	{
-		AModumateObjectInstance *groupObj = GetObjectById(groupID);
-		if (groupObj != nullptr)
-		{
-			groupObj->MarkDirty(EObjectDirtyFlags::Structure);
-		}
-	}
 }
 
 bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas, int32 GraphID /*= MOD_ID_NONE*/)
@@ -2059,7 +2013,7 @@ bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 	}
 	else if (numPoints >= 3)
 	{
-		bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(points, deltas, NextID, OutObjectIDs, TSet<int32>(), bSplitAndUpdateFaces);
+		bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(points, deltas, NextID, OutObjectIDs, bSplitAndUpdateFaces);
 	}
 	else
 	{
@@ -3930,9 +3884,8 @@ void UModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 		FVector vertexDrawPos = graphVertex.Position;
 
 		world->LineBatcher->DrawPoint(vertexDrawPos, FLinearColor::Red, pointThickness, 0);
-		FString vertexString = FString::Printf(TEXT("Vertex #%d: [%s]%s"), graphVertex.ID,
-			*FString::JoinBy(graphVertex.ConnectedEdgeIDs, TEXT(", "), [](const FGraphSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }),
-			(graphVertex.GroupIDs.Num() == 0) ? TEXT("") : *FString::Printf(TEXT(" {%s}"), *FString::JoinBy(graphVertex.GroupIDs, TEXT(", "), [](const int32 &GroupID) { return FString::Printf(TEXT("%d"), GroupID); }))
+		FString vertexString = FString::Printf(TEXT("Vertex #%d: [%s]"), graphVertex.ID,
+			*FString::JoinBy(graphVertex.ConnectedEdgeIDs, TEXT(", "), [](const FGraphSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); })
 		);
 
 		DrawDebugString(world, vertexDrawPos + textOffset, vertexString, nullptr, FColor::White, 0.0f, true);
@@ -3949,8 +3902,7 @@ void UModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 			FVector endDrawPos = endGraphVertex->Position;
 
 			DrawDebugDirectionalArrow(world, startDrawPos, endDrawPos, arrowSize, FColor::Blue, false, -1.f, 0xFF, lineThickness);
-			FString edgeString = FString::Printf(TEXT("Edge #%d: [%d, %d]%s"), graphEdge.ID, graphEdge.StartVertexID, graphEdge.EndVertexID,
-				(graphEdge.GroupIDs.Num() == 0) ? TEXT("") : *FString::Printf(TEXT(" {%s}"), *FString::JoinBy(graphEdge.GroupIDs, TEXT(", "), [](const int32 &GroupID) { return FString::Printf(TEXT("%d"), GroupID); })));
+			FString edgeString = FString::Printf(TEXT("Edge #%d: [%d, %d]"), graphEdge.ID, graphEdge.StartVertexID, graphEdge.EndVertexID);
 			DrawDebugString(world, 0.5f * (startDrawPos + endDrawPos) + textOffset, edgeString, nullptr, FColor::White, 0.0f, true);
 		}
 	}
@@ -3984,9 +3936,8 @@ void UModumateDocument::DrawDebugVolumeGraph(UWorld* world)
 			DrawDebugDirectionalArrow(world, edgeNStartPos, edgeNEndPos, arrowSize, FColor::Blue, false, -1.f, 0, lineThickness);
 		}
 
-		FString faceString = FString::Printf(TEXT("Face #%d: [%s]%s%s%s"), face.ID,
+		FString faceString = FString::Printf(TEXT("Face #%d: [%s]%s%s"), face.ID,
 			*FString::JoinBy(face.EdgeIDs, TEXT(", "), [](const FGraphSignedID &edgeID) { return FString::Printf(TEXT("%d"), edgeID); }),
-			(face.GroupIDs.Num() == 0) ? TEXT("") : *FString::Printf(TEXT(" Groups{%s}"), *FString::JoinBy(face.GroupIDs, TEXT(", "), [](const int32 &GroupID) { return FString::Printf(TEXT("%d"), GroupID); })),
 			(face.ContainedFaceIDs.Num() == 0) ? TEXT("") : *FString::Printf(TEXT(" Contains{%s}"), *FString::JoinBy(face.ContainedFaceIDs, TEXT(", "), [](const int32& ContainedFaceID) { return FString::Printf(TEXT("%d"), ContainedFaceID); })),
 			(face.ContainingFaceID == MOD_ID_NONE) ? TEXT("") : *FString::Printf(TEXT(" ContainedBy #%d"), face.ContainingFaceID)
 		);

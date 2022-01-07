@@ -129,8 +129,6 @@ public:
 	void SetGroupObjectSelected(AModumateObjectInstance* GroupObject, bool bSelected, bool bDeselectOthers);
 
 	void SetViewGroupObject(AModumateObjectInstance *ob);
-	bool IsObjectInCurViewGroup(AModumateObjectInstance *ob) const;
-	AModumateObjectInstance *FindHighestParentGroupInViewGroup(AModumateObjectInstance *ob) const;
 	void FindReachableObjects(TSet<AModumateObjectInstance*> &reachableObjs) const;
 	bool IsObjectReachableInView(AModumateObjectInstance* obj) const;
 	bool ValidateSelectionsAndView();
@@ -164,9 +162,6 @@ public:
 
 	TSet<AModumateObjectInstance *> SelectedObjects;
 	TSet<AModumateObjectInstance *> LastSelectedObjectSet;
-
-	TSet<AModumateObjectInstance *> ViewGroupDescendents;
-	TSet<AModumateObjectInstance *> LastViewGroupDescendentsSet;
 
 	TSet<AModumateObjectInstance *> HoveredObjectDescendents;
 	TSet<AModumateObjectInstance *> LastHoveredObjectSet;

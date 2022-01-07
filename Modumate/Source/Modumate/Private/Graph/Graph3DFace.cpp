@@ -7,9 +7,7 @@
 #include "Polygon2.h"
 #include "Algo/Accumulate.h"
 
-FGraph3DFace::FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs,
-	const TSet<int32> &InGroupIDs, int32 InContainingFaceID, const TSet<int32> &InContainedFaceIDs)
-	: IGraph3DObject(InID, InGraph, InGroupIDs)
+FGraph3DFace::FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs, int32 InContainingFaceID, const TSet<int32> &InContainedFaceIDs) : IGraph3DObject(InID, InGraph)
 	, ContainingFaceID(InContainingFaceID)
 	, ContainedFaceIDs(InContainedFaceIDs)
 {

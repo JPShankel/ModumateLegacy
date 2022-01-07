@@ -1,8 +1,7 @@
 #include "Graph/Graph3DVertex.h"
 #include "Graph/Graph3D.h"
 
-FGraph3DVertex::FGraph3DVertex(int32 InID, FGraph3D* InGraph, const FVector &InPos, const TSet<int32> &InGroupIDs)
-	: IGraph3DObject(InID, InGraph, InGroupIDs)
+FGraph3DVertex::FGraph3DVertex(int32 InID, FGraph3D* InGraph, const FVector &InPos) : IGraph3DObject(InID, InGraph)
 	, Position(InPos)
 {
 	bValid = true;
