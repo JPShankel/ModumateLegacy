@@ -153,7 +153,7 @@ void AMOIEdgeHosted::InternalUpdateGeometry(bool bCreateCollision)
 		float lineLength = (LineStartPos - LineEndPos).Size();
 		float cmaLength = CachedAssembly.GetCompoundAssemblyNativeSize().Z;
 		float lengthScale = lineLength / cmaLength;
-		FVector cmaScale = FVector(lengthScale);
+		FVector cmaScale = FVector(1.f, 1.f, lengthScale);
 
 		// Obj pivot at midpoint and offset
 		FVector objSize = CachedAssembly.GetCompoundAssemblyNativeSize() * cmaScale;
