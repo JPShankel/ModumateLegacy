@@ -118,6 +118,7 @@ enum class EObjectType : uint8
 	OTTerrainMaterial,
 	OTCameraView,
 	OTMetaGraph,
+	OTDesignOption,
 	OTUnknown
 };
 

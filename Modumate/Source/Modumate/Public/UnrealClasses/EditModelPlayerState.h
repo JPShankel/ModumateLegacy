@@ -53,10 +53,10 @@ protected:
 public:
 
 	UPROPERTY(Config, EditAnywhere, Category = "Debug")
-	bool ShowDebugSnaps;
+	bool bShowDebugSnaps;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Debug")
-	bool ShowDocumentDebug;
+	bool bShowDocumentDebug;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Debug")
 	bool bShowGraphDebug;
@@ -72,6 +72,9 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Debug")
 	bool bShowMultiplayerDebug;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Debug")
+	bool bShowDesignOptionDebug;
 
 	bool bBeganWithController = false;
 

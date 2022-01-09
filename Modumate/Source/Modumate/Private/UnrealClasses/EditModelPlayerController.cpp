@@ -1835,11 +1835,11 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 
 	TickInput(DeltaTime);
 
-	if (EMPlayerState->ShowDocumentDebug)
+	if (EMPlayerState->bShowDocumentDebug)
 	{
 		Document->DisplayDebugInfo(GetWorld());
 
-		for (auto &sob : EMPlayerState->SelectedObjects)
+		for (auto& sob : EMPlayerState->SelectedObjects)
 		{
 			FVector p = sob->GetLocation();
 			GetWorld()->LineBatcher->DrawLine(p - FVector(20, 0, 0), p + FVector(20, 0, 0), FColor::Blue, SDPG_MAX, 2, 0.0);
@@ -1863,6 +1863,11 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 	if (EMPlayerState->bShowMultiplayerDebug)
 	{
 		Document->DisplayMultiplayerDebugInfo(GetWorld());
+	}
+
+	if (EMPlayerState->bShowDesignOptionDebug)
+	{
+		Document->DisplayDesignOptionDebugInfo(GetWorld());
 	}
 }
 
@@ -2647,14 +2652,14 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 	// Object mode is used for tools like select and wand, it just returns a simple raycast
 	if (EMPlayerState->SnappedCursor.MouseMode == EMouseMode::Object)
 	{
-		if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("MOUSE MODE: OBJECT")); }
+		if (EMPlayerState->bShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("MOUSE MODE: OBJECT")); }
 
 		baseHit = GetObjectMouseHit(mouseLoc, mouseDir, false);
 
 		if (baseHit.Valid)
 		{
 			const AModumateObjectInstance *hitMOI = Document->ObjectFromActor(baseHit.Actor.Get());
-			if (EMPlayerState->ShowDebugSnaps && hitMOI)
+			if (EMPlayerState->bShowDebugSnaps && hitMOI)
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("OBJECT HIT #%d, %s"),
 					hitMOI->ID, *GetEnumValueString(hitMOI->GetObjectType())
@@ -2678,13 +2683,13 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 		{
 			baseHit = GetSketchPlaneMouseHit(mouseLoc, mouseDir);
 
-			if (baseHit.Valid && EMPlayerState->ShowDebugSnaps)
+			if (baseHit.Valid && EMPlayerState->bShowDebugSnaps)
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("SKETCH HIT")));
 			}
 		}
 
-		if (!baseHit.Valid && EMPlayerState->ShowDebugSnaps)
+		if (!baseHit.Valid && EMPlayerState->bShowDebugSnaps)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("NO OBJECT"));
 		}
@@ -2693,7 +2698,7 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 	else if (EMPlayerState->SnappedCursor.MouseMode == EMouseMode::Location)
 	{
 		EMPlayerState->SnappedCursor.Visible = true;
-		if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("MOUSE MODE: LOCATION")); }
+		if (EMPlayerState->bShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("MOUSE MODE: LOCATION")); }
 
 		FMouseWorldHitType userPointHit, sketchHit, structuralHit;
 
@@ -2715,19 +2720,19 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 		if (userPointHit.Valid)
 		{
 			userPointDist = cameraDistance(userPointHit.Location);
-			if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("USER POINT DIST %f"), userPointDist)); }
+			if (EMPlayerState->bShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("USER POINT DIST %f"), userPointDist)); }
 		}
 
 		if (sketchHit.Valid)
 		{
 			sketchDist = cameraDistance(sketchHit.Location);
-			if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("SKETCH DIST %f"), sketchDist)); }
+			if (EMPlayerState->bShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, FString::Printf(TEXT("SKETCH DIST %f"), sketchDist)); }
 		}
 
 		if (structuralHit.Valid)
 		{
 			structuralDist = cameraDistance(structuralHit.Location);
-			if (EMPlayerState->ShowDebugSnaps)
+			if (EMPlayerState->bShowDebugSnaps)
 			{
 				if (structuralHit.Actor.IsValid())
 				{
@@ -2776,13 +2781,13 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 
 		if (structuralHit.Valid && !bCombineStructuralSketchSnaps)
 		{
-			if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("STRUCTURAL")); }
+			if (EMPlayerState->bShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("STRUCTURAL")); }
 			projectedHit = GetShiftConstrainedMouseHit(structuralHit);
 			baseHit = structuralHit;
 		}
 		else if (userPointHit.Valid)
 		{
-			if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("USER POINT")); }
+			if (EMPlayerState->bShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("USER POINT")); }
 			projectedHit = GetShiftConstrainedMouseHit(userPointHit);
 			baseHit = userPointHit;
 		}
@@ -2820,13 +2825,13 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 				}
 			}
 
-			if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("SKETCH")); }
+			if (EMPlayerState->bShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("SKETCH")); }
 			projectedHit = GetShiftConstrainedMouseHit(sketchHit);
 			baseHit = sketchHit;
 		}
 		else
 		{
-			if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("NO HIT")); }
+			if (EMPlayerState->bShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("NO HIT")); }
 			baseHit.Valid = false;
 		}
 	}
@@ -2843,7 +2848,7 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 
 		if (projectedHit.Valid)
 		{
-			if (EMPlayerState->ShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("HAVE PROJECTED")); }
+			if (EMPlayerState->bShowDebugSnaps) { GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("HAVE PROJECTED")); }
 			EMPlayerState->SnappedCursor.HasProjectedPosition = true;
 
 			// Fully inherit the projected hit, which for now clears any structural information from the base hit.
@@ -2884,7 +2889,7 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 		EMPlayerState->SnappedCursor.HitTangent = baseHit.EdgeDir;
 	}
 
-	if (EMPlayerState->ShowDebugSnaps)
+	if (EMPlayerState->bShowDebugSnaps)
 	{
 		FString msg;
 		switch (EMPlayerState->SnappedCursor.SnapType)

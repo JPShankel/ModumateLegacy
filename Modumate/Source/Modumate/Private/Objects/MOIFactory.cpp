@@ -34,6 +34,7 @@
 #include "Objects/TerrainMaterial.h"
 #include "Objects/CameraView.h"
 #include "Objects/MetaGraph.h"
+#include "Objects/DesignOption.h"
 
 UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 {
@@ -78,6 +79,7 @@ UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 	case EObjectType::OTTerrainPolygon: return AMOITerrainPolygon::StaticClass();
 	case EObjectType::OTTerrainMaterial: return AMOITerrainMaterial::StaticClass();
 	case EObjectType::OTCameraView: return AMOICameraView::StaticClass();
+	case EObjectType::OTDesignOption: return AMOIDesignOption::StaticClass();
 	default:
 	{
 		FString objectTypeString = GetEnumValueString(ObjectType);

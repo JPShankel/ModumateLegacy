@@ -322,6 +322,7 @@ public:
 	void DrawDebugVolumeGraph(UWorld* world);
 	void DrawDebugSurfaceGraphs(UWorld* world);
 	void DisplayMultiplayerDebugInfo(UWorld* world);
+	void DisplayDesignOptionDebugInfo(UWorld* World);
 
 	FString CurrentProjectPath;
 	FString CurrentProjectName;

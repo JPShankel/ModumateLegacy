@@ -40,6 +40,9 @@ namespace ModumateCommands
 
 	// BIM
 	MODUMATE_COMMAND(kBIMDebug, "bim_debug");
+
+	// Design Options
+	MODUMATE_COMMAND(kDesignOption, "design_option");
 }
 
 namespace ModumateParameters

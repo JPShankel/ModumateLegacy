@@ -37,8 +37,8 @@ const FString AEditModelPlayerState::ViewOnlyArg(TEXT("ModViewOnly"));
 enum class AEditModelPlayerState::EStencilFlags { Selected = 0x1, LegacyGroup = 0x2, Hovered = 0x4, Error = 0x8,  InactiveGroup = 0x10};
 
 AEditModelPlayerState::AEditModelPlayerState()
-	: ShowDebugSnaps(false)
-	, ShowDocumentDebug(false)
+	: bShowDebugSnaps(false)
+	, bShowDocumentDebug(false)
 	, bShowGraphDebug(false)
 	, bShowVolumeDebug(false)
 	, bShowSurfaceDebug(false)

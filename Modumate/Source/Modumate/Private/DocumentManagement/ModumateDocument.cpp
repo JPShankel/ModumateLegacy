@@ -26,6 +26,7 @@
 #include "ModumateCore/PlatformFunctions.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Objects/MOIFactory.h"
+#include "Objects/DesignOption.h"
 #include "Objects/SurfaceGraph.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
@@ -4104,6 +4105,23 @@ void UModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 		}
 	}
 }
+
+void UModumateDocument::DisplayDesignOptionDebugInfo(UWorld* World)
+{
+	DisplayDebugMsg(TEXT("Design Option Debug"));
+	TArray<AModumateObjectInstance*> obs = GetObjectsOfType(EObjectType::OTDesignOption);
+	for (auto& ob : obs)
+	{
+		AMOIDesignOption* option = Cast<AMOIDesignOption>(ob);
+		FString msg = FString::Printf(TEXT("ID: %d, Name: %s, Parent: %d, Groups:"), option->ID, *option->InstanceData.Name, option->GetParentID());
+		for (auto& group : option->InstanceData.Groups)
+		{
+			msg += FString::Printf(TEXT(" %d"), group);
+		}
+		DisplayDebugMsg(msg);
+	}
+}
+
 
 void UModumateDocument::DisplayMultiplayerDebugInfo(UWorld* world)
 {

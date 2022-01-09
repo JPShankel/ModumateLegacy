@@ -37,6 +37,7 @@
 #include "Online/ModumateCloudConnection.h"
 #include "Quantities/QuantitiesManager.h"
 #include "GameFramework/GameUserSettings.h"
+#include "Objects/DesignOption.h"
 
 using namespace ModumateCommands;
 using namespace ModumateParameters;
@@ -280,11 +281,11 @@ void UModumateGameInstance::RegisterAllCommands()
 
 		if (type.Equals(TEXT("mouse")))
 		{
-			playerState->ShowDebugSnaps = hasShow ? show : !playerState->ShowDebugSnaps;
+			playerState->bShowDebugSnaps = hasShow ? show : !playerState->bShowDebugSnaps;
 		}
 		else if (type.Equals(TEXT("document")))
 		{
-			playerState->ShowDocumentDebug = hasShow ? show : !playerState->ShowDocumentDebug;
+			playerState->bShowDocumentDebug = hasShow ? show : !playerState->bShowDocumentDebug;
 		}
 		else if (type.Equals(TEXT("graph")))
 		{
@@ -305,6 +306,10 @@ void UModumateGameInstance::RegisterAllCommands()
 		else if (type.Equals(TEXT("multiplayer")))
 		{
 			playerState->bShowMultiplayerDebug = hasShow ? show : !playerState->bShowMultiplayerDebug;
+		}
+		else if (type.Equals(TEXT("options")))
+		{
+			playerState->bShowDesignOptionDebug = hasShow ? show : !playerState->bShowDesignOptionDebug;
 		}
 
 		return true;
@@ -415,6 +420,95 @@ void UModumateGameInstance::RegisterAllCommands()
 		if (playerPawn && (newFOV > 0.0f))
 		{
 			return playerPawn->SetCameraFOV(newFOV);
+		}
+
+		return false;
+	});
+
+	RegisterCommand(kDesignOption, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
+	{
+		UModumateDocument* doc = GetDocument();
+
+		AEditModelPlayerController* playerController = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+		AEditModelPlayerState* playerState = playerController ? playerController->EMPlayerState : nullptr;
+		if (playerState == nullptr)
+		{
+			return false;
+		}
+		playerState->bShowDesignOptionDebug = true;
+
+		FString action = params.GetValue(TEXT("action"));
+		FString parent = params.GetValue(TEXT("parent"));
+		FString option = params.GetValue(TEXT("option"));
+		FString group = params.GetValue(TEXT("group"));
+		FString name = params.GetValue(TEXT("name"));
+
+		auto* ob = Cast<AMOIDesignOption>(doc->GetObjectById(FCString::Atoi(*option)));
+
+		if (action == TEXT("create"))
+		{
+			FMOIDesignOptionData optionData;
+			optionData.Name = name;
+
+			FMOIStateData stateData(doc->GetNextAvailableID(), EObjectType::OTDesignOption);
+			stateData.ParentID = FCString::Atoi(*parent);
+			auto delta = MakeShared<FMOIDelta>();
+			stateData.CustomData.SaveStructData<FMOIDesignOptionData>(optionData);
+			delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+			doc->ApplyDeltas({ delta }, GetWorld());
+		}
+		else if (ob && action == TEXT("destroy"))
+		{
+			FMOIStateData stateData(ob->ID, EObjectType::OTDesignOption);
+			auto delta = MakeShared<FMOIDelta>();
+			delta->AddCreateDestroyState(stateData, EMOIDeltaType::Destroy);
+			doc->ApplyDeltas({ delta }, GetWorld());
+		}
+		else if (ob && action == TEXT("addgroup") && !group.IsEmpty())
+		{
+			FMOIStateData oldStateData = ob->GetStateData();
+			FMOIStateData newStateData = oldStateData;
+			FMOIDesignOptionData optionData;
+			newStateData.CustomData.LoadStructData(optionData);
+			optionData.Groups.Add(FCString::Atoi(*group));
+			newStateData.CustomData.SaveStructData<FMOIDesignOptionData>(optionData);
+
+			auto delta = MakeShared<FMOIDelta>();
+			delta->AddMutationState(ob, oldStateData,newStateData);
+			doc->ApplyDeltas({ delta }, GetWorld());
+		}
+		else if (ob && action == TEXT("removegroup") && !group.IsEmpty())
+		{
+			FMOIStateData oldStateData = ob->GetStateData();
+			FMOIStateData newStateData = oldStateData;
+			FMOIDesignOptionData optionData;
+			newStateData.CustomData.LoadStructData(optionData);
+			
+			int32 groupNum = FCString::Atoi(*group);
+			for (int32 i = 0; i < optionData.Groups.Num(); ++i)
+			{
+				if (optionData.Groups[i] == groupNum)
+				{
+					optionData.Groups.RemoveAt(i);
+					break;
+				}
+			}
+
+			newStateData.CustomData.SaveStructData<FMOIDesignOptionData>(optionData);
+
+			auto delta = MakeShared<FMOIDelta>();
+			delta->AddMutationState(ob, oldStateData, newStateData);
+			doc->ApplyDeltas({ delta }, GetWorld());
+		}
+		else if (ob && action == TEXT("setparent"))
+		{
+			FMOIStateData oldStateData = ob->GetStateData();
+			FMOIStateData newStateData = oldStateData;
+			newStateData.ParentID = FCString::Atoi(*parent);
+
+			auto delta = MakeShared<FMOIDelta>();
+			delta->AddMutationState(ob, oldStateData, newStateData);
+			doc->ApplyDeltas({ delta }, GetWorld());
 		}
 
 		return false;
