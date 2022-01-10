@@ -10,14 +10,17 @@ struct MODUMATE_API FMOIDesignOptionData
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(DisplayName = "Name")
+	FString Name;
+
+	UPROPERTY(DisplayName="Groups")
 	TArray<int32> Groups;
 
-	UPROPERTY()
+	UPROPERTY(DisplayName="Child Options")
 	TArray<int32> SubOptions;
 
-	UPROPERTY()
-	FString Name;
+	UPROPERTY(DisplayName="Hex Color")
+	FString HexColor;
 };
 
 UCLASS()
