@@ -72,6 +72,7 @@ enum class EToolMode : uint8
 	VE_BACKGROUNDIMAGE,
 	VE_TERRAIN,
 	VE_GROUP,
+	VE_UNGROUP,
 };
 
 UENUM(BlueprintType)

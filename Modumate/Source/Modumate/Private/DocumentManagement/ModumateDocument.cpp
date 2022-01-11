@@ -934,7 +934,10 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 	}
 	else if (Delta.DeltaType == EGraph3DDeltaType::Remove && ensure(VolumeGraphs.Contains(graphID)) )
 	{
-		for (const auto& item: VolumeGraphs[graphID]->GetAllObjects())
+		const auto& allObjects = VolumeGraphs[graphID]->GetAllObjects();
+		// Deleted graphs should be empty.
+		ensureAlways(allObjects.Num() == 0);
+		for (const auto& item: allObjects)
 		{
 			GraphElementsToGraph3DMap.Remove(item.Key);
 		}

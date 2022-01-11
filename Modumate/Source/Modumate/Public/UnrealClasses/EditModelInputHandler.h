@@ -101,6 +101,7 @@ enum class EInputCommand : uint8
 	ActivateTool_BackgroundImage,
 	ActivateTool_Terrain,
 	ActivateTool_Group,
+	ActivateTool_Ungroup,
 	ActivateTool_END,
 
 	// Tool-related commands

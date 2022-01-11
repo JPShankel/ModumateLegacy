@@ -96,7 +96,12 @@ bool UGroupTool::Activate()
 		}
 
 		bRetVal = doc->ApplyDeltas(deltas, GetWorld());
-		UE_LOG(LogTemp, Warning, TEXT("Created new group from %d massing elements"), massingObjects.Num());
+		emPlayerState->DeselectAll(false);
+		auto* newGroupObject = doc->GetObjectById(newGroupID);
+		if (newGroupID)
+		{
+			emPlayerState->SetGroupObjectSelected(doc->GetObjectById(newGroupID), true, true);
+		}
 	}
 
 	// Tool is single-use only
