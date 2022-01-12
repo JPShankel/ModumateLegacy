@@ -154,16 +154,21 @@ bool UPointHostedTool::GetObjectCreationDeltas(const int32 InTargetVertexID, TAr
 	AModumateObjectInstance* parentMOI = GameState->Document->GetObjectById(InTargetVertexID);
 
 	// Check if there's already an existing object
-	if (parentMOI && ensure(parentMOI->GetObjectType() == EObjectType::OTMetaVertex))
+	if (parentMOI && ensure(parentMOI->GetObjectType() == EObjectType::OTMetaVertex) &&
+		CreateObjectMode != EToolCreateObjectMode::Add)
 	{
 		for (auto child : parentMOI->GetChildObjects())
 		{
 			if (child->GetObjectType() == EObjectType::OTPointHosted)
 			{
-				// Change assembly of a point hosted object
-				FMOIStateData& newState = delta->AddMutationState(child);
-				newState.AssemblyGUID = AssemblyGUID;
-				bCreateNewObject = false;
+				// Only swap the obj that is being pointed at
+				const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
+				if (cursor.Actor && child == GameState->Document->ObjectFromActor(cursor.Actor))
+				{
+					FMOIStateData& newState = delta->AddMutationState(child);
+					newState.AssemblyGUID = AssemblyGUID;
+					bCreateNewObject = false;
+				}
 			}
 			else
 			{

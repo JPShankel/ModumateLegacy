@@ -42,6 +42,9 @@ public:
 	class UModumateButtonUserWidget* ButtonMPBucket;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonMPBucketAdd;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonRoofPerimeter;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))

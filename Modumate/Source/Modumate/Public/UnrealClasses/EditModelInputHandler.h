@@ -107,6 +107,7 @@ enum class EInputCommand : uint8
 	// Tool-related commands
 	Draw,
 	PaintBucket,
+	PaintBucketAdd,
 	OpeningStamp,
 	OpeningSystem,
 	TerrainPoint,

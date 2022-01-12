@@ -426,6 +426,12 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 		return true;
 	}
 
+	case EInputCommand::PaintBucketAdd:
+	{
+		Controller->SetToolCreateObjectMode(EToolCreateObjectMode::Add);
+		return true;
+	}
+
 	case EInputCommand::OpeningStamp:
 	{
 		Controller->SetToolCreateObjectMode(EToolCreateObjectMode::Stamp);

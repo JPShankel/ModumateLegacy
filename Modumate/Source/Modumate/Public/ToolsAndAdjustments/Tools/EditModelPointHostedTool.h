@@ -21,11 +21,6 @@ public:
 
 	virtual bool FrameUpdate() override;
 	virtual bool BeginUse() override;
-#if 0
-	virtual bool EnterNextStage() override;
-	virtual bool EndUse() override;
-	virtual bool AbortUse() override;
-#endif
 
 protected:
 

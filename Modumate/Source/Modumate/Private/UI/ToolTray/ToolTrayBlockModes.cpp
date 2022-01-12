@@ -57,6 +57,11 @@ void UToolTrayBlockModes::ChangeToSeparatorToolsButtons(EToolMode mode)
 		buttonsToShow.Append({ ButtonMPBucket, ButtonLine });
 		break;
 
+	case EToolMode::VE_POINTHOSTED:
+	case EToolMode::VE_EDGEHOSTED:
+		buttonsToShow.Append({ ButtonMPBucket, ButtonMPBucketAdd });
+		break;
+
 	default:
 		buttonsToShow.Append({ ButtonMPBucket, ButtonRectangle });
 		break;
