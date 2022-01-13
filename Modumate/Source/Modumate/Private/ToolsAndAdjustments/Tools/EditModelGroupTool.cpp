@@ -6,6 +6,7 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "Objects/MetaGraph.h"
 
 UGroupTool::UGroupTool()
 	: Super()
@@ -13,9 +14,6 @@ UGroupTool::UGroupTool()
 
 bool UGroupTool::Activate()
 {
-#if !UE_EDITOR
-	return false;
-#endif
 	if (!Super::Activate())
 	{
 		return false;
@@ -54,6 +52,7 @@ bool UGroupTool::Activate()
 		int32 newGroupID = nextID++;
 		int32 oldGroupID = doc->FindGraph3DByObjID((*massingObjects.begin())->ID);
 		FMOIStateData stateData(newGroupID, EObjectType::OTMetaGraph, oldGroupID);
+		stateData.CustomData.SaveStructData<FMOIMetaGraphData>(FMOIMetaGraphData());
 
 		auto delta = MakeShared<FMOIDelta>();
 		delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);

@@ -28,6 +28,7 @@
 #include "Objects/MOIFactory.h"
 #include "Objects/DesignOption.h"
 #include "Objects/SurfaceGraph.h"
+#include "Objects/MetaGraph.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonReader.h"
@@ -2743,7 +2744,9 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 	SurfaceGraphs.Reset();
 
 	RootVolumeGraph = NextID++;
-	CreateOrRestoreObj(World, FMOIStateData(RootVolumeGraph, EObjectType::OTMetaGraph));
+	FMOIStateData rootGraphState(RootVolumeGraph, EObjectType::OTMetaGraph);
+	rootGraphState.CustomData.SaveStructData<FMOIMetaGraphData>(FMOIMetaGraphData());
+	CreateOrRestoreObj(World, rootGraphState);
 
 	VolumeGraphs.Add(RootVolumeGraph, MakeShared<FGraph3D>(RootVolumeGraph));
 	ActiveVolumeGraph = RootVolumeGraph;
@@ -3207,7 +3210,9 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		legacyGraphID = NextID++;
 		RootVolumeGraph = legacyGraphID;
 		ActiveVolumeGraph = RootVolumeGraph;
-		CreateOrRestoreObj(world, FMOIStateData(RootVolumeGraph, EObjectType::OTMetaGraph));
+		FMOIStateData rootGraphState(RootVolumeGraph, EObjectType::OTMetaGraph);
+		rootGraphState.CustomData.SaveStructData<FMOIMetaGraphData>(FMOIMetaGraphData());
+		CreateOrRestoreObj(world, rootGraphState);
 		for (auto& graphMap : GraphElementsToGraph3DMap)
 		{
 			graphMap.Value = legacyGraphID;

@@ -6,6 +6,18 @@
 
 #include "MetaGraph.generated.h"
 
+USTRUCT()
+struct MODUMATE_API FMOIMetaGraphData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FVector Location = FVector::ZeroVector;
+
+	UPROPERTY()
+	FQuat Rotation = FQuat::Identity;
+};
+
 UCLASS()
 class MODUMATE_API AMOIMetaGraph: public AModumateObjectInstance
 {
