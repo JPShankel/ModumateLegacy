@@ -135,6 +135,9 @@ protected:
 	bool bCurProjectAutoSaves = false;
 	bool bWantTelemetryUpload = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Category = Cursor, ToolTip = "How far from camera to clamp the raycast which determines cursor world space location only when no hit is detected."))
+	float MaxRayLengthOnHitMiss;
+
 	// Keep track of the most recent snapped cursor
 	UPROPERTY()
 	FSnappedCursor LastSnappedCursor;

@@ -106,6 +106,7 @@ AEditModelPlayerController::AEditModelPlayerController()
 	, CameraInputLock(false)
 	, SelectionMode(ESelectObjectMode::DefaultObjects)
 	, MaxRaycastDist(100000.0f)
+	, MaxRayLengthOnHitMiss(1000.0f)
 {
 	InputAutomationComponent = CreateDefaultSubobject<UEditModelInputAutomation>(TEXT("InputAutomationComponent"));
 
@@ -3307,6 +3308,13 @@ FMouseWorldHitType AEditModelPlayerController::GetSketchPlaneMouseHit(const FVec
 		if (ret.Valid && EMPlayerState->SnappedCursor.HasAffordanceSet())
 		{
 			SnapDistAlongAffordance(ret.Location, EMPlayerState->SnappedCursor.AffordanceFrame.Origin, FVector::ZeroVector);
+		}
+		//if ret.Valid is false ray did not intersect sketch plane
+		if(!ret.Valid)
+		{
+			//if ray does not intersect sketch plane clamp the ray at 10 meters from camera.
+			ret.Location = (mouseLoc + (mouseDir * MaxRayLengthOnHitMiss));
+			ret.Valid = true;
 		}
 	}
 

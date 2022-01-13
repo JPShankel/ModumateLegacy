@@ -70,7 +70,22 @@ bool FSnappedCursor::TryGetRaySketchPlaneIntersection(const FVector& origin, con
 	}
 	else
 	{
-		// First, compute the intersection between the input ray and the sketch plane
+		// Compute the intersection between the input ray and the sketch plane
+		// First check if ray intersects plane
+		float denominator = FVector::DotProduct(direction, AffordanceFrame.Normal);
+		//if denominator of plane intersection is 0 then the ray is parallel to the plane
+		if (FMath::IsNearlyZero(denominator, KINDA_SMALL_NUMBER))
+		{
+			//ray is parallel to plane
+			return false;
+		}
+		float intersectDistance = FVector::DotProduct((AffordanceFrame.Origin - origin),(AffordanceFrame.Normal)) / denominator;
+		//if intersectDistance is 0 or less this means the ray never intersects the plane.
+		if(intersectDistance < KINDA_SMALL_NUMBER)
+		{
+			//ray doesn't intersect plane
+			return false;
+		}
 		outputPosition = FMath::RayPlaneIntersection(origin, direction, FPlane(AffordanceFrame.Origin, AffordanceFrame.Normal));
 
 		// Then, compensate for division-by-dot-product floating point error by projecting on the plane explicitly
