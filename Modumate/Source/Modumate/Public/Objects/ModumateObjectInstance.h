@@ -50,19 +50,19 @@ struct MODUMATE_API FWebMOI
 	GENERATED_BODY()
 
 	UPROPERTY()
-	int32 ID;
+	int32 ID = 0;
 
 	UPROPERTY()
-	FString Name;
+	FString DisplayName;
 
 	UPROPERTY()
 	TArray<int32> Children;
 
 	UPROPERTY()
-	int32 Parent;
+	int32 Parent = 0;
 
 	UPROPERTY()
-	EObjectType Type;
+	EObjectType Type = EObjectType::OTNone;
 
 	UPROPERTY()
 	TMap<FString,FWebMOIProperty> Properties;
