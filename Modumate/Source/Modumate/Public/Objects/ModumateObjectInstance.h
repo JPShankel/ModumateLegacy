@@ -26,6 +26,48 @@ class ILayeredObject;
 class ISceneCaptureObject;
 class FDrawingDesignerLine;
 
+USTRUCT()
+struct MODUMATE_API FWebMOIProperty
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString Name;
+
+	UPROPERTY()
+	FString Type = TEXT("string");
+
+	UPROPERTY()
+	FString Value;
+
+	UPROPERTY()
+	FString DisplayName;
+};
+
+USTRUCT()
+struct MODUMATE_API FWebMOI
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	int32 ID;
+
+	UPROPERTY()
+	FString Name;
+
+	UPROPERTY()
+	TArray<int32> Children;
+
+	UPROPERTY()
+	int32 Parent;
+
+	UPROPERTY()
+	EObjectType Type;
+
+	UPROPERTY()
+	TMap<FString,FWebMOIProperty> Properties;
+};
+
 UCLASS()
 class MODUMATE_API AModumateObjectInstance : public AActor
 {
@@ -100,7 +142,7 @@ public:
 	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 		TArray<TArray<FVector>>& OutPerimeters) const { }
-	virtual void GetDrawingDesignerItems(const FVector& viewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength = 0.0f) const
+	virtual void GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength = 0.0f) const
 	{ }
 
 	virtual void SetIsDynamic(bool bIsDynamic) { }
@@ -108,6 +150,11 @@ public:
 
 	// Quantity estimates
 	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const { return true; }
+
+	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, void*& OutStructPtr);
+	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const;
+
+	bool GetWebMOI(FString& OutJson) const;
 
 protected:
 
@@ -150,8 +197,6 @@ protected:
 
 	EObjectDirtyFlags DirtyFlags = EObjectDirtyFlags::None;
 
-	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, void*& OutStructPtr);
-	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const;
 	virtual void PostLoadInstanceData() {}
 
 	void AddCachedChildID(int32 ChildID);

@@ -4305,7 +4305,7 @@ void UModumateDocument::drawing_request_document()
 	if (ensureAlways(DrawingDesignerDocument.WriteJson(documentJson)))
 	{
 
-		DrawingSendResponse(TEXT("UE_pushDocument"), documentJson);
+		DrawingSendResponse(TEXT("onDocumentChanged"), documentJson);
 	}
 	// TODO: else send error status
 }
@@ -4353,7 +4353,16 @@ void UModumateDocument::drawing_request_view_list()
 	FDrawingDesignerRenderControl renderControl(this);
 
 	FString response = renderControl.GetViewList();
-	DrawingSendResponse(TEXT("UE_pushViewList"), response);
+	DrawingSendResponse(TEXT("on3DViewsChanged"), response);
+}
+
+void UModumateDocument::web_push_document_update()
+{
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::web_push_document_update"));
+	FDrawingDesignerRenderControl renderControl(this);
+	drawing_request_view_list();
+	drawing_request_document();
+	UpdateWebMOIs(EObjectType::OTDesignOption);
 }
 
 void UModumateDocument::drawing_get_drawing_image(const FString& InRequest)
@@ -4364,7 +4373,7 @@ void UModumateDocument::drawing_get_drawing_image(const FString& InRequest)
 	bool bResult = renderControl.GetView(InRequest, response);
 	if (ensure(bResult))
 	{
-		DrawingSendResponse(TEXT("UE_pushViewImage"), response);
+		DrawingSendResponse(TEXT("pushViewImage"), response);
 	}
 }
 
@@ -4385,8 +4394,64 @@ void UModumateDocument::drawing_get_clicked(const FString& InRequest)
 		
 		FString jsonResponse;
 		moiResponse.WriteJson(jsonResponse);
-		DrawingSendResponse(TEXT("UE_pushMoiResponse"), jsonResponse);
+		DrawingSendResponse(TEXT("pushMoiResponse"), jsonResponse);
 	}
+}
+
+void UModumateDocument::set_moi_property(const int32 ID, const FString& PropertyName, const FString& Value)
+{
+	AModumateObjectInstance* ob = GetObjectById(ID);
+	UScriptStruct* structDef;
+	void* structPtr;
+
+	// Fetch the custom data definition and pointer
+	if (ob && ob->GetInstanceDataStruct(structDef,structPtr))
+	{
+		// Preserve original state data for use in delta
+		FMOIStateData originalStateData = ob->GetStateData();
+
+		// Set property value on MOI custom data struct
+		for (TFieldIterator<FProperty> it(structDef); it; ++it)
+		{
+			// TODO: we only support string properties for the moment
+			auto* prop = CastField<FStrProperty>(*it);
+			if (prop && prop->GetName() == PropertyName)
+			{
+				prop->SetPropertyValue_InContainer(structPtr, Value);
+				ob->UpdateStateDataFromObject();
+				break;
+			}
+		}
+
+		// Object has been put into destination state, but we still have to apply it as a delta for undo/redo and reflection
+		auto delta = MakeShared<FMOIDelta>();
+		delta->AddMutationState(ob, originalStateData, ob->GetStateData());
+		ApplyDeltas({ delta }, GetWorld());
+	}
+	UpdateWebMOIs(EObjectType::OTDesignOption);
+}
+
+void UModumateDocument::UpdateWebMOIs(const EObjectType ObjectType)
+{
+	TArray<AModumateObjectInstance*> designOptions = GetObjectsOfType(ObjectType);
+	FString jsonArray = TEXT("[");
+	bool bWantComma = false;
+	for (auto* ob : designOptions)
+	{
+		FString jsonRep;
+		if (ob->GetWebMOI(jsonRep))
+		{
+			if (bWantComma)
+			{
+				jsonArray += TEXT(",");
+			}
+			jsonArray += jsonRep;
+			bWantComma = true;
+		}
+	}
+	jsonArray += TEXT("]");
+
+	DrawingSendResponse(TEXT("onDesignOptionsChanged"), jsonArray);
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -3,6 +3,7 @@
 #include "Objects/MOIDelta.h"
 
 #include "DocumentManagement/ModumateDocument.h"
+#include "DrawingDesigner/DrawingDesignerRequests.h"
 
 
 bool FMOIDelta::IsValid() const

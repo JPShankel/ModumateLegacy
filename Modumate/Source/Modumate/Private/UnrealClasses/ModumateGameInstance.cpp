@@ -442,10 +442,16 @@ void UModumateGameInstance::RegisterAllCommands()
 		FString option = params.GetValue(TEXT("option"));
 		FString group = params.GetValue(TEXT("group"));
 		FString name = params.GetValue(TEXT("name"));
+		FString color = params.GetValue(TEXT("color"));
 
 		auto* ob = Cast<AMOIDesignOption>(doc->GetObjectById(FCString::Atoi(*option)));
 
-		if (action == TEXT("create"))
+		if (ob && action == TEXT("test"))
+		{
+			doc->set_moi_property(ob->ID, TEXT("HexColor"), TEXT("TestColorVal"));
+			doc->Undo(GetWorld());
+		}
+		else if (action == TEXT("create"))
 		{
 			FMOIDesignOptionData optionData;
 			optionData.Name = name;
@@ -466,6 +472,9 @@ void UModumateGameInstance::RegisterAllCommands()
 		}
 		else if (ob && action == TEXT("addgroup") && !group.IsEmpty())
 		{
+			FString jsonRep;
+			ob->GetWebMOI(jsonRep);
+
 			FMOIStateData oldStateData = ob->GetStateData();
 			FMOIStateData newStateData = oldStateData;
 			FMOIDesignOptionData optionData;
@@ -475,6 +484,7 @@ void UModumateGameInstance::RegisterAllCommands()
 
 			auto delta = MakeShared<FMOIDelta>();
 			delta->AddMutationState(ob, oldStateData,newStateData);
+
 			doc->ApplyDeltas({ delta }, GetWorld());
 		}
 		else if (ob && action == TEXT("removegroup") && !group.IsEmpty())
@@ -510,6 +520,12 @@ void UModumateGameInstance::RegisterAllCommands()
 			delta->AddMutationState(ob, oldStateData, newStateData);
 			doc->ApplyDeltas({ delta }, GetWorld());
 		}
+		else if (ob && action == TEXT("setcolor"))
+		{
+			doc->set_moi_property(ob->ID, TEXT("HexColor"), color);
+		}
+		
+		doc->UpdateWebMOIs(EObjectType::OTDesignOption);
 
 		return false;
 	});

@@ -381,6 +381,9 @@ public:
 	void drawing_request_document();
 
 	UFUNCTION()
+	void web_push_document_update();
+
+	UFUNCTION()
 	void drawing_apply_delta(const FString& InDelta);
 
 	UFUNCTION()
@@ -391,4 +394,9 @@ public:
 
 	UFUNCTION()
 	void drawing_get_clicked(const FString& InRequest);
+
+	UFUNCTION()
+	void set_moi_property(const int32 ID, const FString& Property, const FString& Value);
+
+	void UpdateWebMOIs(const EObjectType ObjectType);
 };

@@ -24,6 +24,7 @@
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateObjectComponent.h"
 #include "UObject/ConstructorHelpers.h"
+#include "ModumateCore/PrettyJSONWriter.h"
 
 
 class AEditModelPlayerController;
@@ -702,6 +703,43 @@ bool AModumateObjectInstance::GetInstanceDataStruct(UScriptStruct*& OutStructDef
 	OutStructPtr = const_cast<const void*>(mutableStructPtr);
 	return bSuccess;
 }
+
+bool AModumateObjectInstance::GetWebMOI(FString& OutJson) const
+{
+	// Get common data members
+	FWebMOI webMOI;
+	webMOI.ID = ID;
+	GetName(webMOI.Name);
+	webMOI.Parent = GetParentID();
+	webMOI.Type = GetObjectType();
+	webMOI.Children = GetChildIDs();
+	
+	// Get custom data
+	UScriptStruct* structDef;
+	const void* structPtr;
+	if (!GetInstanceDataStruct(structDef, structPtr))
+	{
+		return false;
+	}
+
+	for (TFieldIterator<FProperty> it(structDef); it; ++it)
+	{
+		// TODO: initially we only support string properties
+		FStrProperty* prop = CastField<FStrProperty>(*it);
+		if (prop != nullptr)
+		{
+			FWebMOIProperty webProp;
+			webProp.DisplayName = it->GetName();
+			webProp.Name = it->GetName();
+			webProp.Value = prop->GetPropertyValue_InContainer(structPtr);
+			webProp.Type = TEXT("string");
+			webMOI.Properties.Add(webProp.Name, webProp);
+		}
+	}
+
+	return WriteJsonGeneric<FWebMOI>(OutJson, &webMOI);
+}
+
 
 bool AModumateObjectInstance::BeginPreviewOperation()
 {
