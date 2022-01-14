@@ -120,6 +120,7 @@ enum class EObjectType : uint8
 	OTCameraView,
 	OTMetaGraph,
 	OTDesignOption,
+	OTFaceHosted,
 	OTUnknown
 };
 
