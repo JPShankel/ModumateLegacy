@@ -98,6 +98,7 @@ AEditModelPlayerController::AEditModelPlayerController()
 	: APlayerController()
 	, Document(nullptr)
 	, SnappingView(nullptr)
+	, MaxRayLengthOnHitMiss(1000.0f)
 	, UserSnapAutoCreationElapsed(0.0f)
 	, UserSnapAutoCreationDelay(0.4f)
 	, UserSnapAutoCreationDuration(0.75f)
@@ -106,7 +107,6 @@ AEditModelPlayerController::AEditModelPlayerController()
 	, CameraInputLock(false)
 	, SelectionMode(ESelectObjectMode::DefaultObjects)
 	, MaxRaycastDist(100000.0f)
-	, MaxRayLengthOnHitMiss(1000.0f)
 {
 	InputAutomationComponent = CreateDefaultSubobject<UEditModelInputAutomation>(TEXT("InputAutomationComponent"));
 

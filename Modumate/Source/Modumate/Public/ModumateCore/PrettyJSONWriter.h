@@ -3,6 +3,7 @@
 
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonReader.h"
+#include "JsonObjectConverter.h"
 #include "Serialization/JsonSerializer.h"
 
 typedef TJsonWriterFactory< TCHAR, TPrettyJsonPrintPolicy<TCHAR> > FPrettyJsonStringWriterFactory;

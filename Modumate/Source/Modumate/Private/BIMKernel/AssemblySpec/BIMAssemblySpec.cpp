@@ -675,6 +675,10 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 		// TODO: when property sheets are deprecated, construction should become unnecessary for other types as well
 		return EBIMResult::Success;
 
+		// TODO: implement assembly spec for face-hosted objects
+	case EObjectType::OTFaceHosted:
+		return EBIMResult::Error;
+
 	default:
 		ensureAlways(false);
 	};
