@@ -49,7 +49,8 @@ void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* do
 {
 	const TSet<EObjectType> separatorOccluderTypes({ EObjectType::OTWallSegment, EObjectType::OTFloorSegment,
 		EObjectType::OTRoofFace, EObjectType::OTCeiling, EObjectType::OTSystemPanel, EObjectType::OTDoor,
-		EObjectType::OTWindow,  EObjectType::OTStaircase, EObjectType::OTRailSegment, EObjectType::OTCabinet });
+		EObjectType::OTWindow,  EObjectType::OTStaircase, EObjectType::OTRailSegment, EObjectType::OTCabinet,
+		EObjectType::OTPointHosted, EObjectType::OTEdgeHosted });
 
 	const TSet<EObjectType> actorMeshOccluderTypes({ EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTTerrain });
 
@@ -78,7 +79,8 @@ void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* do
 		const EObjectType objectType = object->GetObjectType();
 
 		const ADynamicMeshActor* meshActor = nullptr;
-		if (objectType == EObjectType::OTDoor || objectType == EObjectType::OTWindow || objectType == EObjectType::OTCabinet)
+		if (objectType == EObjectType::OTDoor || objectType == EObjectType::OTWindow || objectType == EObjectType::OTCabinet ||
+			objectType == EObjectType::OTPointHosted || objectType == EObjectType::OTEdgeHosted)
 		{
 			const auto* parent = object->GetParentObject();
 			if (parent)

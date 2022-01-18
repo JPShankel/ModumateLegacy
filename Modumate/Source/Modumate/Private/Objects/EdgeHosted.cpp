@@ -9,6 +9,7 @@
 #include "UI/Properties/InstPropWidgetLinearDimension.h"
 #include "UI/Properties/InstPropWidgetRotation.h"
 #include "DocumentManagement/ModumateSnappingView.h"
+#include "Drafting/ModumateDraftingElements.h"
 
 FMOIEdgeHostedData::FMOIEdgeHostedData()
 {}
@@ -129,6 +130,29 @@ void AMOIEdgeHosted::GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoi
 
 	// TODO: Calculate bounding box with instance data flip 
 	FModumateSnappingView::GetBoundingBoxPointsAndLines(cmaOrigin, rot, cmaBoxExtent, outPoints, outLines);
+}
+
+void AMOIEdgeHosted::ToggleAndUpdateCapGeometry(bool bEnableCap)
+{
+	ACompoundMeshActor* cma = Cast<ACompoundMeshActor>(GetActor());
+	if (cma)
+	{
+		bEnableCap ? cma->SetupCapGeometry() : cma->ClearCapGeometry();
+	}
+}
+
+void AMOIEdgeHosted::GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox, TArray<TArray<FVector>>& OutPerimeters) const
+{
+	bool bGetFarLines = ParentPage->lineClipping.IsValid();
+	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
+	if (bGetFarLines)
+	{
+		actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox);
+	}
+	else
+	{
+		actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin);
+	}
 }
 
 void AMOIEdgeHosted::InternalUpdateGeometry(bool bCreateCollision)

@@ -174,7 +174,7 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 	TArray<TArray<FVector>> WallCutPerimeters;
 	TArray<const AModumateObjectInstance*> miscDraftObjects(Doc->GetObjectsOfType(
 		{ EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTFinish, EObjectType::OTTrim,
-			EObjectType::OTTerrain}));
+			EObjectType::OTTerrain, EObjectType::OTPointHosted, EObjectType::OTEdgeHosted}));
 
 	for (const auto* miscObject: miscDraftObjects)
 	{
@@ -210,7 +210,7 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 		EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTRailSegment,
 		EObjectType::OTSystemPanel, EObjectType::OTMullion, EObjectType::OTStaircase,
 		EObjectType::OTFinish, EObjectType::OTCountertop, EObjectType::OTTrim,
-		EObjectType::OTTerrain
+		EObjectType::OTTerrain, EObjectType::OTPointHosted, EObjectType::OTEdgeHosted
 		}));
 
 	for (auto object: beyondCutObjects)
