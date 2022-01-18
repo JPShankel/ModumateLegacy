@@ -62,6 +62,12 @@ void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObj
 				surfaceGraphObject->GetVertexIDs(vertexIDs);
 				OutTransformableIDs.Append(vertexIDs);
 			}
+			else if (moi->GetObjectType() == EObjectType::OTMetaGraph)
+			{
+				TArray<int32> allVertexIDs;
+				doc->GetVolumeGraph(id)->GetVertices().GenerateKeyArray(allVertexIDs);
+				OutTransformableIDs.Append(allVertexIDs);
+			}
 			else
 			{
 				OutTransformableIDs.Add(id);
@@ -70,7 +76,8 @@ void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObj
 	}
 }
 
-bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransform>& ObjectMovements, UModumateDocument *doc, UWorld *World, bool bIsPreview)
+bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransform>& ObjectMovements, UModumateDocument *doc, UWorld *World, bool bIsPreview,
+	const TArray<FDeltaPtr>* AdditionalDeltas /*= nullptr*/)
 {
 	doc->ClearPreviewDeltas(World, bIsPreview);
 
@@ -153,6 +160,11 @@ bool FModumateObjectDeltaStatics::MoveTransformableIDs(const TMap<int32, FTransf
 	}
 
 	TArray<FDeltaPtr> deltas;
+	if (AdditionalDeltas)
+	{
+		deltas.Append(*AdditionalDeltas);
+	}
+
 	if (vertex3DMovements.Num() > 0)
 	{
 		TArray<int32> vertexMoveIDs;

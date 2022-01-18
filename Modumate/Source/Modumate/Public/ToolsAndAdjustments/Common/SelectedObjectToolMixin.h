@@ -12,7 +12,9 @@ class MODUMATE_API FSelectedObjectToolMixin
 protected:
 
 	TSet<int32> OriginalSelectedObjects;
+	TSet<int32> OriginalSelectedGroupObjects;
 	TMap<int32, FTransform> OriginalTransforms;
+	TMap<int32, FTransform> OriginalGroupVertexTransforms;
 	TWeakObjectPtr<AEditModelPlayerController> ControllerPtr;
 
 	bool bPaste = false;
@@ -22,7 +24,7 @@ protected:
 
 	void AcquireSelectedObjects();
 	void ReleaseSelectedObjects();
-	void ReleaseObjectsAndApplyDeltas();
+	void ReleaseObjectsAndApplyDeltas(const TArray<FDeltaPtr>* AdditionalDeltas = nullptr);
 
 	void ToggleIsPasting() { bPaste = !bPaste; }
 

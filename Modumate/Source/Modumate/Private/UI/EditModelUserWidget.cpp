@@ -362,8 +362,9 @@ void UEditModelUserWidget::UpdateMoveRotateToolButtonsUsability()
 	auto rotateButton = ToolToButtonMap.FindRef(EToolMode::VE_ROTATE);
 	if (moveButton && rotateButton && Controller && Controller->EMPlayerState)
 	{
-		moveButton->SetIsEnabled(Controller->EMPlayerState->SelectedObjects.Num() > 0);
-		rotateButton->SetIsEnabled(Controller->EMPlayerState->SelectedObjects.Num() > 0);
+		bool bSelectionValid = Controller->EMPlayerState->NumItemsSelected() > 0;
+		moveButton->SetIsEnabled(bSelectionValid);
+		rotateButton->SetIsEnabled(bSelectionValid);
 	}
 }
 

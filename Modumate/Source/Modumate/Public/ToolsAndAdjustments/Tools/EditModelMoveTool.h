@@ -14,6 +14,7 @@ class MODUMATE_API UMoveObjectTool : public UEditModelToolBase, public FSelected
 	GENERATED_BODY()
 
 private:
+	void GetDeltasForGraphMoves(UModumateDocument* Doc, const TMap<int32, FTransform>& Transforms, TArray<FDeltaPtr>& OutDeltas);
 	FVector AnchorPoint;
 	bool bCtrlIsPressed = false;
 

@@ -536,7 +536,7 @@ bool AEditModelPlayerState::ValidateSelectionsAndView()
 		PostViewChanged();
 	}
 
-	if (SelectedObjects.Num() > 0)
+	if (NumItemsSelected() > 0)
 	{
 		EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 	}
@@ -903,6 +903,9 @@ void AEditModelPlayerState::SetGroupObjectSelected(AModumateObjectInstance* Grou
 			SelectedGroupObjects.Remove(GroupObject);
 		}
 	}
+
+	PostSelectionChanged();
+	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
 void AEditModelPlayerState::SetObjectSelected(AModumateObjectInstance *ob, bool bSelected, bool bDeselectOthers)

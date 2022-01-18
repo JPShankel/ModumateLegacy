@@ -633,7 +633,7 @@ void AEditModelPlayerController::SetToolMode(EToolMode NewToolMode)
 
 	// Don't change to move or rotate tool if nothing is selected
 	if ((NewToolMode == EToolMode::VE_MOVEOBJECT || NewToolMode == EToolMode::VE_ROTATE)
-		&& EMPlayerState->SelectedObjects.Num() == 0)
+		&& EMPlayerState->NumItemsSelected() == 0)
 	{
 		return;
 	}

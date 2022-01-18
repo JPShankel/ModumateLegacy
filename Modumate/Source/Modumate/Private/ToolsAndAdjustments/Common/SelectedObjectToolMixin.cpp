@@ -32,6 +32,15 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 	{
 		OriginalSelectedObjects.Add(obj->ID);
 	}
+	for (auto obj : playerState->SelectedGroupObjects)
+	{
+		OriginalSelectedGroupObjects.Add(obj->ID);
+		TArray<AModumateObjectInstance*> groupDescendents(obj->GetAllDescendents());
+		for (auto* moi: groupDescendents)
+		{
+			OriginalSelectedGroupObjects.Add(moi->ID);
+		}
+	}
 
 	TSet<int32> vertexIDs;
 	FModumateObjectDeltaStatics::GetTransformableIDs(OriginalSelectedObjects.Array(), ControllerPtr->GetDocument(), vertexIDs);
@@ -75,6 +84,19 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 
 		moi->RequestCollisionDisabled(StateRequestTag, true);
 	}
+
+	vertexIDs.Reset();
+	FModumateObjectDeltaStatics::GetTransformableIDs(OriginalSelectedGroupObjects.Array(), ControllerPtr->GetDocument(), vertexIDs);
+	for (int32 id : vertexIDs)
+	{
+		auto obj = doc->GetObjectById(id);
+		if (obj == nullptr)
+		{
+			continue;
+		}
+
+		OriginalGroupVertexTransforms.Add(id, obj->GetWorldTransform());
+	}
 }
 
 void FSelectedObjectToolMixin::ReleaseSelectedObjects()
@@ -99,10 +121,12 @@ void FSelectedObjectToolMixin::ReleaseSelectedObjects()
 	}
 
 	OriginalTransforms.Empty();
+	OriginalGroupVertexTransforms.Empty();
 	OriginalSelectedObjects.Empty();
+	OriginalSelectedGroupObjects.Empty();
 }
 
-void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
+void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas(const TArray<FDeltaPtr>* AdditionalDeltas /*= nullptr*/)
 {
 	UModumateDocument* doc = ControllerPtr->GetDocument();
 	UWorld* world = ControllerPtr->GetWorld();
@@ -121,7 +145,7 @@ void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas()
 			objectInfo.Add(kvp.Key, targetMOI->GetWorldTransform());
 		}
 
-		FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, world, false);
+		FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, world, false, AdditionalDeltas);
 	}
 
 	ReleaseSelectedObjects();

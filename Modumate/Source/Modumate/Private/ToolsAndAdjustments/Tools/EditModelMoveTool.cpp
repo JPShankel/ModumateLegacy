@@ -118,15 +118,28 @@ bool UMoveObjectTool::FrameUpdate()
 			if (!bPaste)
 			{
 				TMap<int32, FTransform> objectInfo;
+
+				// Move entire groups
+				for (auto& kvp : OriginalGroupVertexTransforms)
+				{
+					FTransform newTransform(kvp.Value);
+					newTransform.AddToTranslation(offset);
+					objectInfo.Add(kvp.Key, newTransform);
+				}
+				TArray<FDeltaPtr> deltas;
+				GetDeltasForGraphMoves(doc, objectInfo, deltas);
+
+				objectInfo.Reset();
 				for (auto& kvp : OriginalTransforms)
 				{
 					objectInfo.Add(kvp.Key, FTransform(kvp.Value.GetRotation(), kvp.Value.GetTranslation() + offset));;
 				}
 
-				if (!FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), true))
+				if (!FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), true, &deltas))
 				{
 					return false;
 				}
+
 			}
 			else
 			{
@@ -151,22 +164,35 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 			FVector offset = direction * n;
 			Controller->EMPlayerState->SnappedCursor.WorldPosition = AnchorPoint + offset;
 
+			doc->ClearPreviewDeltas(GetWorld());
 			if (!bPaste && !Controller->IsControlDown())
 			{
 				TMap<int32, FTransform> objectInfo;
+
+				// Move entire groups
+				for (auto& kvp : OriginalGroupVertexTransforms)
+				{
+					FTransform newTransform(kvp.Value);
+					newTransform.AddToTranslation(offset);
+					objectInfo.Add(kvp.Key, newTransform);
+				}
+				TArray<FDeltaPtr> deltas;
+				GetDeltasForGraphMoves(doc, objectInfo, deltas);
+				objectInfo.Reset();
+
 				for (auto& kvp : OriginalTransforms)
 				{
 					objectInfo.Add(kvp.Key, FTransform(kvp.Value.GetRotation(), kvp.Value.GetTranslation() + offset));;
 				}
 
-				if (!FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), false))
+				if (!FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), false, &deltas))
 				{
 					return false;
 				}
+
 			}
 			else
 			{
-				doc->ClearPreviewDeltas(doc->GetWorld());
 				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, AnchorPoint, doc, Controller, false);
 			}
 		}
@@ -181,13 +207,28 @@ bool UMoveObjectTool::EndUse()
 {
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
+	UModumateDocument* doc = Controller->GetDocument();
 
 	if (!bPaste)
 	{
 		Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = false;
 		if (Controller->EMPlayerState->SnappedCursor.Visible)
 		{
-			ReleaseObjectsAndApplyDeltas();
+			// Move entire groups
+			TMap<int32, FTransform> objectInfo;
+			for (auto& kvp : OriginalGroupVertexTransforms)
+			{
+				AModumateObjectInstance* targetMOI = doc->GetObjectById(kvp.Key);
+				if (ensure(targetMOI))
+				{
+					objectInfo.Add(kvp.Key, targetMOI->GetWorldTransform());
+				}
+			}
+
+			TArray<FDeltaPtr> deltas;
+			GetDeltasForGraphMoves(doc, objectInfo, deltas);
+
+			ReleaseObjectsAndApplyDeltas(&deltas);
 		}
 
 		return Super::EndUse();
@@ -216,4 +257,23 @@ bool UMoveObjectTool::PostEndOrAbort()
 {
 	bPaste = false;
 	return Super::PostEndOrAbort();
+}
+
+void UMoveObjectTool::GetDeltasForGraphMoves(UModumateDocument* Doc, const TMap<int32, FTransform>& Transforms, TArray<FDeltaPtr>& OutDeltas)
+{
+	// Create deltas directly for vertex moves rather than use routines that finalize the deltas
+	// since it is a graph block move.
+	for (const auto& kvp : Transforms)
+	{
+		int32 id = kvp.Key;
+		int32 graphId = Doc->FindGraph3DByObjID(id);
+		FGraph3D* graph = Doc->GetVolumeGraph(graphId);
+		const FGraph3DVertex* vertex = graph ? graph->GetVertices().Find(id) : nullptr;
+		if (ensure(vertex))
+		{
+			FGraph3DDelta delta(graphId);
+			delta.VertexMovements.Add(id, FModumateVectorPair(OriginalGroupVertexTransforms[kvp.Key].GetTranslation(), kvp.Value.GetTranslation()) );
+			OutDeltas.Add(MakeShared<FGraph3DDelta>(delta));
+		}
+	}
 }
