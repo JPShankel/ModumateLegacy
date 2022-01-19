@@ -602,13 +602,29 @@ bool AMOICutPlane::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage,
 	// Add terrain globally, since it's not a child of a massing element.
 	draftingObjectMois.Append(Document->GetObjectsOfType(EObjectType::OTTerrain));
 
-	// TODO: Instead of adding point and edge hosted globally, check if they are involved in volume graph
-	// Add point hosted, since vertices are not checked for cutplane intersection
-	draftingObjectMois.Append(Document->GetObjectsOfType(EObjectType::OTPointHosted));
-	// Add edge hosted that may have been missed because is parallel to cutplane
-	for (auto curCp : Document->GetObjectsOfType(EObjectType::OTEdgeHosted))
+	// Add hosted objs
+	TArray<AModumateObjectInstance*> hostedObjectMois;
+	hostedObjectMois.Append(Document->GetObjectsOfType(EObjectType::OTPointHosted));
+	hostedObjectMois.Append(Document->GetObjectsOfType(EObjectType::OTEdgeHosted));
+	for (auto curCp : hostedObjectMois)
 	{
-		draftingObjectMois.AddUnique(curCp);
+		if (!draftingObjectMois.Contains(curCp) && curCp->GetActor())
+		{
+			FBox moiBox = curCp->GetActor()->GetComponentsBoundingBox();
+			FVector boxCenter, boxExtents;
+			moiBox.GetCenterAndExtents(boxCenter, boxExtents);
+
+			// Find distance of box center from plane
+			FPlane slicePlane(GetLocation(), GetNormal());
+			float boxCenterDist = slicePlane.PlaneDot(boxCenter);
+
+			// Compare size of box in plane normal direction
+			float boxSize = FVector::BoxPushOut(slicePlane, boxExtents);
+			if (FMath::Abs(boxCenterDist) < boxSize)
+			{
+				draftingObjectMois.Add(curCp);
+			}
+		}
 	}
 
 	TArray<int32> curDraftingObjectIds;
