@@ -1243,3 +1243,10 @@ void UModumateObjectStatics::GetObjectsInGroups(UModumateDocument* Doc, const TA
 		}
 	}
 }
+
+void UModumateObjectStatics::HideObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs)
+{
+	TSet<AModumateObjectInstance*> groupObjects;
+	UModumateObjectStatics::GetObjectsInGroups(Doc, GroupIDs, groupObjects);
+	UModumateFunctionLibrary::SetMOIAndDescendentsHidden(groupObjects.Array());
+}

@@ -9,6 +9,7 @@
 #include "HAL/PlatformMisc.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Online/ModumateAnalyticsStatics.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/ModumateSettingsMenu.h"
@@ -306,8 +307,16 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 		if (Controller->EMPlayerState->SelectedObjects.Num() > 0)
 		{
 			UModumateFunctionLibrary::SetMOIAndDescendentsHidden(Controller->EMPlayerState->SelectedObjects.Array());
-			Controller->DeselectAll();
 		}
+		if (Controller->EMPlayerState->SelectedGroupObjects.Num() > 0)
+		{
+			TArray<int32> selectedGroupIDs;
+			Algo::Transform(Controller->EMPlayerState->SelectedGroupObjects, selectedGroupIDs,
+				[](const AModumateObjectInstance* GroupMOI) {return GroupMOI->ID; });
+
+			UModumateObjectStatics::HideObjectsInGroups(Controller->GetDocument(), selectedGroupIDs);
+		}
+		Controller->DeselectAll();
 		return true;
 	}
 	case EInputCommand::UnhideAll:
