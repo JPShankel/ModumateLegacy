@@ -4464,7 +4464,7 @@ void UModumateDocument::UpdateWebMOIs(const EObjectType ObjectType)
 	DrawingSendResponse(TEXT("onDesignOptionsChanged"), jsonArray);
 }
 
-void UModumateDocument::create_moi(const FString& MOIType)
+void UModumateDocument::create_moi(const FString& MOIType, int32 ParentID)
 {
 	EObjectType objectType = EObjectType::OTNone;
 	FindEnumValueByString<EObjectType>(MOIType, objectType);
@@ -4480,9 +4480,8 @@ void UModumateDocument::create_moi(const FString& MOIType)
 	}
 }
 
-void UModumateDocument::delete_moi(const FString& IDStr)
+void UModumateDocument::delete_moi(int32 ID)
 {
-	int32 ID = FCString::Atoi(*IDStr);
 	const AModumateObjectInstance* moi = GetObjectById(ID);
 	if (moi != nullptr)
 	{
