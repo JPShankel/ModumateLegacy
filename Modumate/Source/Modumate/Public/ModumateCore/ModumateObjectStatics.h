@@ -117,6 +117,8 @@ public:
 	static void GetObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, TSet<AModumateObjectInstance*>& OutObjects);
 	static void HideObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs);
 
+	static void GetDesignOptionsForGroup(UModumateDocument* Doc, int32 GroupID, TArray<int32>& OutDesignOptionIDs);
+	static void UpdateDesignOptionVisibility(UModumateDocument* Doc);
 private:
 	static bool GetGroupIdsForGroupChangeHelper(const UModumateDocument* Doc, int32 NewGroupID, int32 OldGroupID, TArray<int32>& OutAffectedGroups, bool& bOutFoundOldGroup);
 };

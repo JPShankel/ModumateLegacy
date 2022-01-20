@@ -16,6 +16,7 @@
 #include "Objects/PlaneHostedObj.h"
 #include "Objects/Portal.h"
 #include "Objects/Terrain.h"
+#include "Objects/DesignOption.h"
 #include "Objects/SurfaceGraph.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "UnrealClasses/CompoundMeshActor.h"
@@ -1242,6 +1243,63 @@ void UModumateObjectStatics::GetObjectsInGroups(UModumateDocument* Doc, const TA
 			}
 		}
 	}
+}
+
+void UModumateObjectStatics::GetDesignOptionsForGroup(UModumateDocument* Doc, int32 GroupID, TArray<int32>& OutDesignOptionIDs)
+{
+	TArray<AModumateObjectInstance*> designOptions = Doc->GetObjectsOfType(EObjectType::OTDesignOption);
+	for (auto* moi : designOptions)
+	{
+		AMOIDesignOption* doMOI = Cast<AMOIDesignOption>(moi);
+		if (ensure(doMOI) && doMOI->InstanceData.Groups.Contains(GroupID))
+		{
+			OutDesignOptionIDs.AddUnique(GroupID);
+		}
+	}
+}
+
+void UModumateObjectStatics::UpdateDesignOptionVisibility(UModumateDocument* Doc)
+{
+	TArray<AMOIDesignOption*> designOptions;
+	Algo::Transform(
+		Doc->GetObjectsOfType(EObjectType::OTDesignOption), 
+		designOptions,
+		[](AModumateObjectInstance* MOI) {return Cast<AMOIDesignOption>(MOI); 
+	});
+
+	auto groupVisible = [designOptions](int32 GroupID) {
+		for (auto* designOption : designOptions)
+		{
+			if (ensure(designOption) && designOption->InstanceData.bShowingOption && designOption->InstanceData.Groups.Contains(GroupID))
+			{
+				return true;
+			}
+		}
+		return false;
+	};
+
+	Doc->UnhideAllObjects(Doc->GetWorld());
+
+	TArray<int32> allDesignOptionGroups;
+
+	for (auto& designOption : designOptions)
+	{
+		for (auto groupID : designOption->InstanceData.Groups)
+		{
+			allDesignOptionGroups.AddUnique(groupID);
+		}
+	}
+
+	TArray<int32> hiddenGroups;
+	for (auto groupID : allDesignOptionGroups)
+	{
+		if (!groupVisible(groupID))
+		{
+			hiddenGroups.Add(groupID);
+		}
+	}
+
+	HideObjectsInGroups(Doc, hiddenGroups);
 }
 
 void UModumateObjectStatics::HideObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs)

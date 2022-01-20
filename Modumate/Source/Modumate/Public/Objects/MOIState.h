@@ -37,6 +37,9 @@ struct MODUMATE_API FMOIStateData
 	FGuid AssemblyGUID;
 
 	UPROPERTY()
+	FString DisplayName;
+
+	UPROPERTY()
 	FStructDataWrapper CustomData;
 
 	bool operator==(const FMOIStateData& Other) const;

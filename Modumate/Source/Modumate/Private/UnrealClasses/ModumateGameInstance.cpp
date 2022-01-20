@@ -443,24 +443,13 @@ void UModumateGameInstance::RegisterAllCommands()
 		FString group = params.GetValue(TEXT("group"));
 		FString name = params.GetValue(TEXT("name"));
 		FString color = params.GetValue(TEXT("color"));
+		FString value = params.GetValue(TEXT("value"));
 
 		auto* ob = Cast<AMOIDesignOption>(doc->GetObjectById(FCString::Atoi(*option)));
 
-		if (ob && action == TEXT("test"))
+		if (action == TEXT("create"))
 		{
-			doc->set_moi_property(ob->ID, TEXT("HexColor"), TEXT("TestColorVal"));
-			doc->Undo(GetWorld());
-		}
-		else if (action == TEXT("create"))
-		{
-			FMOIDesignOptionData optionData;
-			optionData.Name = name;
-
-			FMOIStateData stateData(doc->GetNextAvailableID(), EObjectType::OTDesignOption);
-			stateData.ParentID = FCString::Atoi(*parent);
-			auto delta = MakeShared<FMOIDelta>();
-			stateData.CustomData.SaveStructData<FMOIDesignOptionData>(optionData);
-			delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+			auto delta = AMOIDesignOption::MakeCreateDelta(doc,name,FCString::Atoi(*parent));
 			doc->ApplyDeltas({ delta }, GetWorld());
 		}
 		else if (ob && action == TEXT("destroy"))
@@ -472,49 +461,40 @@ void UModumateGameInstance::RegisterAllCommands()
 		}
 		else if (ob && action == TEXT("addgroup") && !group.IsEmpty())
 		{
-			FString jsonRep;
-			ob->GetWebMOI(jsonRep);
-
-			FMOIStateData oldStateData = ob->GetStateData();
-			FMOIStateData newStateData = oldStateData;
-			FMOIDesignOptionData optionData;
-			newStateData.CustomData.LoadStructData(optionData);
-			optionData.Groups.Add(FCString::Atoi(*group));
-			newStateData.CustomData.SaveStructData<FMOIDesignOptionData>(optionData);
-
-			auto delta = MakeShared<FMOIDelta>();
-			delta->AddMutationState(ob, oldStateData,newStateData);
-
-			doc->ApplyDeltas({ delta }, GetWorld());
+			auto delta = AMOIDesignOption::MakeAddRemoveGroupDelta(doc, ob->ID, FCString::Atoi(*group), true);
+			if (delta.IsValid())
+			{
+				doc->ApplyDeltas({ delta }, GetWorld());
+			}
 		}
 		else if (ob && action == TEXT("removegroup") && !group.IsEmpty())
 		{
-			FMOIStateData oldStateData = ob->GetStateData();
-			FMOIStateData newStateData = oldStateData;
-			FMOIDesignOptionData optionData;
-			newStateData.CustomData.LoadStructData(optionData);
-			
-			int32 groupNum = FCString::Atoi(*group);
-			for (int32 i = 0; i < optionData.Groups.Num(); ++i)
+			auto delta = AMOIDesignOption::MakeAddRemoveGroupDelta(doc, ob->ID, FCString::Atoi(*group), false);
+			if (delta.IsValid())
 			{
-				if (optionData.Groups[i] == groupNum)
-				{
-					optionData.Groups.RemoveAt(i);
-					break;
-				}
+				doc->ApplyDeltas({ delta }, GetWorld());
 			}
-
-			newStateData.CustomData.SaveStructData<FMOIDesignOptionData>(optionData);
-
-			auto delta = MakeShared<FMOIDelta>();
-			delta->AddMutationState(ob, oldStateData, newStateData);
-			doc->ApplyDeltas({ delta }, GetWorld());
 		}
 		else if (ob && action == TEXT("setparent"))
 		{
 			FMOIStateData oldStateData = ob->GetStateData();
 			FMOIStateData newStateData = oldStateData;
 			newStateData.ParentID = FCString::Atoi(*parent);
+
+			auto delta = MakeShared<FMOIDelta>();
+			delta->AddMutationState(ob, oldStateData, newStateData);
+			doc->ApplyDeltas({ delta }, GetWorld());
+		}
+		else if (ob && action == TEXT("show"))
+		{
+			// TODO: hiding and showing design options to be moved to 3d view
+			FMOIStateData oldStateData = ob->GetStateData();
+			FMOIStateData newStateData = oldStateData;
+
+			FMOIDesignOptionData optionData;
+			newStateData.CustomData.LoadStructData(optionData);
+			optionData.bShowingOption = (value == TEXT("true"));
+			newStateData.CustomData.SaveStructData<FMOIDesignOptionData>(optionData);
 
 			auto delta = MakeShared<FMOIDelta>();
 			delta->AddMutationState(ob, oldStateData, newStateData);

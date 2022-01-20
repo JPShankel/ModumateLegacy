@@ -10,17 +10,17 @@ struct MODUMATE_API FMOIDesignOptionData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(DisplayName = "Name")
-	FString Name;
-
-	UPROPERTY(DisplayName="Groups")
+	UPROPERTY()
 	TArray<int32> Groups;
 
-	UPROPERTY(DisplayName="Child Options")
+	UPROPERTY()
 	TArray<int32> SubOptions;
 
-	UPROPERTY(DisplayName="Hex Color")
+	UPROPERTY()
 	FString HexColor;
+
+	UPROPERTY()
+	bool bShowingOption = true;
 };
 
 UCLASS()
@@ -34,4 +34,8 @@ public:
 
 	UPROPERTY()
 	FMOIDesignOptionData InstanceData;
+
+	// Design options don't have an associated tool, so provide delta functions here
+	static TSharedPtr<FMOIDelta> MakeCreateDelta(UModumateDocument* Doc,const FString& DisplayName, int32 ParentID = 0);
+	static TSharedPtr<FMOIDelta> MakeAddRemoveGroupDelta(UModumateDocument* Doc, int32 OptionID, int32 GroupID, bool bAdd);
 };

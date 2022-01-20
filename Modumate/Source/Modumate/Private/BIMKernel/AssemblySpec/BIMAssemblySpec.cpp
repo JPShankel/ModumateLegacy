@@ -666,18 +666,18 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 	case EObjectType::OTPointHosted:
 	case EObjectType::OTEdgeHosted:
 		return MakeRiggedAssembly(InDB);
+	
+		// TODO: face hosted assemblies
+	case EObjectType::OTFaceHosted:
+		return EBIMResult::Error;
 
 	case EObjectType::OTCabinet:
 		return MakeCabinetAssembly(InDB);
 
+	// Edge details and design options carry their own data, no assembly	
+	case EObjectType::OTDesignOption:
 	case EObjectType::OTEdgeDetail:
-		// Edge detail assemblies carry data directly from their preset, no construction step
-		// TODO: when property sheets are deprecated, construction should become unnecessary for other types as well
 		return EBIMResult::Success;
-
-		// TODO: implement assembly spec for face-hosted objects
-	case EObjectType::OTFaceHosted:
-		return EBIMResult::Error;
 
 	default:
 		ensureAlways(false);

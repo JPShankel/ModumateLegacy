@@ -1536,6 +1536,8 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World, bool bCleanObjects, bool 
 		SetDirtyFlags(true);
 	}
 
+	UModumateObjectStatics::UpdateDesignOptionVisibility(this);
+
 	return true;
 }
 
@@ -1847,7 +1849,7 @@ int32 UModumateDocument::MakeGroupObject(UWorld *world, const TArray<int32> &ids
 	int id = NextID++;
 
 	TArray<AModumateObjectInstance*> obs;
-	Algo::Transform(ids,obs,[this](int32 id){return GetObjectById(id);}); 
+	Algo::Transform(ids, obs, [this](int32 id) {return GetObjectById(id); });
 
 	TMap<AModumateObjectInstance*, AModumateObjectInstance*> oldParents;
 	for (auto ob : obs)
@@ -4117,19 +4119,27 @@ void UModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 void UModumateDocument::DisplayDesignOptionDebugInfo(UWorld* World)
 {
 	DisplayDebugMsg(TEXT("Design Option Debug"));
+	DisplayDebugMsg(TEXT("--Options--"));
 	TArray<AModumateObjectInstance*> obs = GetObjectsOfType(EObjectType::OTDesignOption);
 	for (auto& ob : obs)
 	{
 		AMOIDesignOption* option = Cast<AMOIDesignOption>(ob);
-		FString msg = FString::Printf(TEXT("ID: %d, Name: %s, Parent: %d, Groups:"), option->ID, *option->InstanceData.Name, option->GetParentID());
+		FString msg = FString::Printf(TEXT("ID: %d, Name: %s, Parent: %d, Groups:"), option->ID, *option->StateData.DisplayName, option->GetParentID());
 		for (auto& group : option->InstanceData.Groups)
 		{
 			msg += FString::Printf(TEXT(" %d"), group);
 		}
 		DisplayDebugMsg(msg);
 	}
-}
+	DisplayDebugMsg(TEXT("--Groups--"));
 
+	obs = GetObjectsOfType(EObjectType::OTMetaGraph);
+	for (auto& ob : obs)
+	{
+		FString msg = FString::Printf(TEXT("ID: %d"),ob->ID);
+		DisplayDebugMsg(msg);
+	}
+}
 
 void UModumateDocument::DisplayMultiplayerDebugInfo(UWorld* world)
 {
@@ -4452,6 +4462,56 @@ void UModumateDocument::UpdateWebMOIs(const EObjectType ObjectType)
 	jsonArray += TEXT("]");
 
 	DrawingSendResponse(TEXT("onDesignOptionsChanged"), jsonArray);
+}
+
+void UModumateDocument::create_moi(const FString& MOIType)
+{
+	EObjectType objectType = EObjectType::OTNone;
+	FindEnumValueByString<EObjectType>(MOIType, objectType);
+	if (objectType == EObjectType::OTDesignOption)
+	{
+		TSharedPtr<FMOIDelta> delta = AMOIDesignOption::MakeCreateDelta(this, FString::Printf(TEXT("Design Option %d")), 0);
+		ApplyDeltas({ delta }, GetWorld());
+		UpdateWebMOIs(EObjectType::OTDesignOption);
+	}
+	else
+	{
+		ensureAlwaysMsgf(false, TEXT("Attempt to create unsupported MOI type via web!"));
+	}
+}
+
+void UModumateDocument::delete_moi(const FString& IDStr)
+{
+	int32 ID = FCString::Atoi(*IDStr);
+	const AModumateObjectInstance* moi = GetObjectById(ID);
+	if (moi != nullptr)
+	{
+		EObjectType type = moi->GetObjectType();
+		auto delta = MakeShared<FMOIDelta>();
+		delta->AddCreateDestroyState(moi->GetStateData(), EMOIDeltaType::Destroy);
+		ApplyDeltas({ delta }, GetWorld());
+		UpdateWebMOIs(type);
+	}
+}
+
+void UModumateDocument::set_design_option_visible(int32 ID, bool bVisible)
+{
+	// TODO: design option visibility to be tracked in 3d views
+	set_moi_property(ID, TEXT("bShowingOption"), bVisible ? TEXT("true") : TEXT("false"));
+}
+
+void UModumateDocument::set_moi_display_name(int32 ID, const FString& Name)
+{
+	AModumateObjectInstance* moi = GetObjectById(ID);
+	if (moi != nullptr)
+	{
+		auto delta = MakeShared<FMOIDelta>();
+		FMOIStateData newData = moi->GetStateData();
+		newData.DisplayName = Name;
+		delta->AddMutationState(moi, moi->GetStateData(), newData);
+		ApplyDeltas({ delta }, GetWorld());
+		UpdateWebMOIs(moi->GetObjectType());
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

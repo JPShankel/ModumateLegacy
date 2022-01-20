@@ -398,5 +398,17 @@ public:
 	UFUNCTION()
 	void set_moi_property(const int32 ID, const FString& Property, const FString& Value);
 
+	UFUNCTION()
+	void create_moi(const FString& MOIType);
+
+	UFUNCTION()
+	void delete_moi(const FString& IDStr);
+
+	UFUNCTION()
+	void set_design_option_visible(int32 ID,bool bVisible);
+
+	UFUNCTION()
+	void set_moi_display_name(int32 ID,const FString& Name);
+
 	void UpdateWebMOIs(const EObjectType ObjectType);
 };

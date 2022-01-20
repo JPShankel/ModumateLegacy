@@ -26,6 +26,17 @@ class ILayeredObject;
 class ISceneCaptureObject;
 class FDrawingDesignerLine;
 
+UENUM()
+enum class EWebMOIPropertyType : uint8
+{
+	none=0,
+	text,
+	boolean,
+	color,
+	radio,
+	dropdown
+};
+
 USTRUCT()
 struct MODUMATE_API FWebMOIProperty
 {
@@ -35,7 +46,7 @@ struct MODUMATE_API FWebMOIProperty
 	FString Name;
 
 	UPROPERTY()
-	FString Type = TEXT("string");
+	EWebMOIPropertyType Type = EWebMOIPropertyType::text;
 
 	UPROPERTY()
 	FString Value;
@@ -159,6 +170,9 @@ public:
 protected:
 
 	friend struct FMOIDelta;
+
+	// This map is filled in by MOI subclasses to provide display name and type information for instance data properties for the web
+	TMap<FString, FWebMOIProperty> WebProperties;
 
 	// SUPER TEMPORARY TODO: we don't have a way to expose derived/non-definitional implementation-specific data, so this will be here until MOIs are UObjects.
 	friend class UModumateRoofStatics;

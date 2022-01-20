@@ -728,18 +728,20 @@ bool AModumateObjectInstance::GetWebMOI(FString& OutJson) const
 		FStrProperty* prop = CastField<FStrProperty>(*it);
 		if (prop != nullptr)
 		{
-			FWebMOIProperty webProp;
-			webProp.DisplayName = it->GetName();
-			webProp.Name = it->GetName();
-			webProp.Value = prop->GetPropertyValue_InContainer(structPtr);
-			webProp.Type = TEXT("string");
-			webMOI.Properties.Add(webProp.Name, webProp);
+			// MOI subclasses add properties to WebProperties on construction with type and display name info
+			// Properties not included in this map are not visible to the web
+			const FWebMOIProperty* formProp = WebProperties.Find(it->GetName());
+			if (formProp != nullptr)
+			{
+				FWebMOIProperty webProp = *formProp;
+				webProp.Value = prop->GetPropertyValue_InContainer(structPtr);
+				webMOI.Properties.Add(webProp.Name, webProp);
+			}
 		}
 	}
 
 	return WriteJsonGeneric<FWebMOI>(OutJson, &webMOI);
 }
-
 
 bool AModumateObjectInstance::BeginPreviewOperation()
 {
