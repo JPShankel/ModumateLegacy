@@ -24,11 +24,15 @@ public:
 
 	static void SaveSelection(const TArray<int32>& InObjectIDs, UModumateDocument* doc, FMOIDocumentRecord* OutRecord);
 
-	static bool PasteObjects(const FMOIDocumentRecord* InRecord, const FVector& InOrigin, UModumateDocument* doc, class AEditModelPlayerController* Controller, bool bIsPreview);
+	static bool PasteObjects(const FMOIDocumentRecord* InRecord, const FVector& InOrigin, UModumateDocument* doc, class AEditModelPlayerController* Controller,
+		bool bIsPreview, const TArray<FDeltaPtr>* AdditionalDeltas = nullptr);
 	static bool PasteObjectsWithinSurfaceGraph(const FMOIDocumentRecord* InRecord, const FVector& InOrigin, TArray<FDeltaPtr> &OutDeltas, UModumateDocument* doc, int32 &nextID, class AEditModelPlayerController* Controller, bool bIsPreview);
 
 	static bool MakeSwapEdgeDetailDeltas(UModumateDocument* Doc, const TArray<uint32>& EdgeIDs, FGuid NewDetailPresetID, TArray<FDeltaPtr>& OutDeltas);
 
 	// Create graph deltas that will create deleted edges & vertices in a new graph with matching IDs.
-	static void ConvertGraphDeleteToMove(const TArray<FGraph3DDelta>& GraphDeltas, FGraph3D* OldGraph, int32& NextID, TArray<FGraph3DDelta>& OutDeltas);
+	static void ConvertGraphDeleteToMove(const TArray<FGraph3DDelta>& GraphDeltas, const FGraph3D* OldGraph, int32& NextID, TArray<FGraph3DDelta>& OutDeltas);
+
+	// Duplicate a set of groups.
+	static void DuplicateGroups(const UModumateDocument* Doc, const TSet<int32>& GroupIDs, int32& NextID, TArray<TPair<bool, FDeltaPtr>>& OutDeltas);
 };

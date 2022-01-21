@@ -143,7 +143,13 @@ bool UMoveObjectTool::FrameUpdate()
 			}
 			else
 			{
-				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, AnchorPoint, doc, Controller, true);
+				TArray<FDeltaPtr> groupDeltas;
+				if (GroupCopyDeltas.Num() > 0)
+				{
+					GetDeltasForGroupCopies(doc, offset, groupDeltas);
+					doc->ApplyPreviewDeltas(groupDeltas, GetWorld());
+				}
+				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, AnchorPoint, doc, Controller, true, &groupDeltas);
 			}
 		}
 
@@ -193,7 +199,13 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 			}
 			else
 			{
+				TArray<FDeltaPtr> groupDeltas;
+				GetDeltasForGroupCopies(doc, offset, groupDeltas);
+				doc->BeginUndoRedoMacro();
+				doc->ApplyDeltas(groupDeltas, GetWorld());
+
 				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, AnchorPoint, doc, Controller, false);
+				doc->EndUndoRedoMacro();
 			}
 		}
 	}
@@ -205,13 +217,14 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 
 bool UMoveObjectTool::EndUse()
 {
-	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
+	FSnappedCursor& snappedCursor = Controller->EMPlayerState->SnappedCursor;
+	snappedCursor.ClearAffordanceFrame();
+	snappedCursor.MouseMode = EMouseMode::Location;
 	UModumateDocument* doc = Controller->GetDocument();
 
 	if (!bPaste)
 	{
-		Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = false;
+		snappedCursor.WantsVerticalAffordanceSnap = false;
 		if (Controller->EMPlayerState->SnappedCursor.Visible)
 		{
 			// Move entire groups
@@ -236,9 +249,25 @@ bool UMoveObjectTool::EndUse()
 	else
 	{
 		GameState->Document->ClearPreviewDeltas(GetWorld());
-		FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, AnchorPoint, GameState->Document, Controller, false);
 
-		Controller->EMPlayerState->SnappedCursor.SetAffordanceFrame(AnchorPoint, Controller->EMPlayerState->SnappedCursor.HitNormal, Controller->EMPlayerState->SnappedCursor.HitTangent);
+		FVector offset(snappedCursor.WorldPosition - AnchorPoint);
+		TArray<FDeltaPtr> groupDeltas;
+		GetDeltasForGroupCopies(doc, offset, groupDeltas);
+		doc->BeginUndoRedoMacro();
+		doc->ApplyDeltas(groupDeltas, GetWorld());
+
+		FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, AnchorPoint, GameState->Document, Controller, false);
+		doc->EndUndoRedoMacro();
+
+		snappedCursor.SetAffordanceFrame(AnchorPoint, snappedCursor.HitNormal, snappedCursor.HitTangent);
+		// Re-acquire for next copy.
+		OriginalTransforms.Empty();
+		OriginalGroupVertexTransforms.Empty();
+		OriginalSelectedObjects.Empty();
+		OriginalSelectedGroupObjects.Empty();
+		GroupCopyDeltas.Empty();
+
+		AcquireSelectedObjects();
 	}
 
 	return true;
@@ -274,6 +303,28 @@ void UMoveObjectTool::GetDeltasForGraphMoves(UModumateDocument* Doc, const TMap<
 			FGraph3DDelta delta(graphId);
 			delta.VertexMovements.Add(id, FModumateVectorPair(OriginalGroupVertexTransforms[kvp.Key].GetTranslation(), kvp.Value.GetTranslation()) );
 			OutDeltas.Add(MakeShared<FGraph3DDelta>(delta));
+		}
+	}
+}
+
+// Copy all the new-graph deltas shifting the vertices by Offset.
+void UMoveObjectTool::GetDeltasForGroupCopies(UModumateDocument* Doc, FVector Offset, TArray<FDeltaPtr>& OutDeltas)
+{
+	for (const auto& deltaPair: GroupCopyDeltas)
+	{
+		FDeltaPtr delta = deltaPair.Value;
+		if (deltaPair.Key)
+		{
+			FGraph3DDelta graphDelta(*static_cast<FGraph3DDelta*>(delta.Get()));
+			for (auto& kvp : graphDelta.VertexAdditions)
+			{
+				kvp.Value += Offset;
+			}
+			OutDeltas.Add(MakeShared<FGraph3DDelta>(graphDelta));
+		}
+		else
+		{
+			OutDeltas.Add(delta);
 		}
 	}
 }

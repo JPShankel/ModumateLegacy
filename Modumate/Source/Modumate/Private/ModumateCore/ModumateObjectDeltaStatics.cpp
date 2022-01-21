@@ -10,6 +10,7 @@
 #include "Objects/FFE.h"
 #include "Objects/EdgeDetailObj.h"
 #include "Objects/MetaEdge.h"
+#include "Objects/MetaGraph.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
@@ -326,7 +327,8 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 	}
 }
 
-bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecord, const FVector &InOrigin, UModumateDocument* doc, AEditModelPlayerController *Controller, bool bIsPreview)
+bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecord, const FVector &InOrigin, UModumateDocument* doc, AEditModelPlayerController *Controller,
+	bool bIsPreview, const TArray<FDeltaPtr>* AdditionalDeltas /*= nullptr*/)
 {
 	if (!InRecord)
 	{
@@ -357,6 +359,10 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 		}
 		
 		TArray<FDeltaPtr> OutDeltas;
+		if (AdditionalDeltas)
+		{
+			OutDeltas.Append(*AdditionalDeltas);
+		}
 		{
 			FObjIDReservationHandle objIDReservation(doc, cursorHitMOI->ID);
 			int32& nextID = objIDReservation.NextID;
@@ -374,6 +380,10 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 	}
 
 	TArray<FDeltaPtr> OutDeltas;
+	if (AdditionalDeltas)
+	{
+		OutDeltas.Append(*AdditionalDeltas);
+	}
 	if (!doc->PasteMetaObjects(&InRecord->VolumeGraph, OutDeltas, copiedToPastedObjIDs, offset, bIsPreview))
 	{
 		return false;
@@ -704,7 +714,7 @@ bool FModumateObjectDeltaStatics::MakeSwapEdgeDetailDeltas(UModumateDocument *Do
 	return true;
 }
 
-void FModumateObjectDeltaStatics::ConvertGraphDeleteToMove(const TArray<FGraph3DDelta>& GraphDeltas, FGraph3D* OldGraph, int32& NextID, TArray<FGraph3DDelta>& OutDeltas)
+void FModumateObjectDeltaStatics::ConvertGraphDeleteToMove(const TArray<FGraph3DDelta>& GraphDeltas, const FGraph3D* OldGraph, int32& NextID, TArray<FGraph3DDelta>& OutDeltas)
 {
 	FGraph3D tempGraph;
 	TArray<int32> newIDs;  // unused
@@ -777,5 +787,131 @@ void FModumateObjectDeltaStatics::ConvertGraphDeleteToMove(const TArray<FGraph3D
 
 			OutDeltas.Append(addFaceDeltas);
 		}
+	}
+}
+
+void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, const TSet<int32>& GroupIDs, int32& NextID, TArray<TPair<bool, FDeltaPtr>>& OutDeltas)
+{
+	TMap<int32, int32> newGroupIDMap;
+
+	// Create new group IDs first to be able to preserve hierarchy.
+	for (int32 id : GroupIDs)
+	{
+		newGroupIDMap.Add(id, NextID++);
+	}
+
+	for (int32 groupID: GroupIDs)
+	{
+		const FGraph3D* graph = Doc->GetVolumeGraph(groupID);
+		if (!ensure(graph))
+		{
+			return;
+		}
+
+		const AModumateObjectInstance* graphObject = Doc->GetObjectById(groupID);
+		if (!ensure(graphObject))
+		{
+			return;
+		}
+
+		int32 parentID = graphObject->GetParentID();
+		if (parentID == MOD_ID_NONE)
+		{   // Can't duplicate root group
+			return;
+		}
+
+		int32 newGroupID = newGroupIDMap[groupID];
+		if (newGroupIDMap.Contains(parentID))
+		{
+			parentID = newGroupIDMap[parentID];
+		}
+
+		FMOIStateData stateData(newGroupID, EObjectType::OTMetaGraph, parentID);
+		stateData.CustomData.SaveStructData<FMOIMetaGraphData>(FMOIMetaGraphData());
+
+		auto delta = MakeShared<FMOIDelta>();
+		delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+		OutDeltas.Emplace(false, delta);
+
+		auto addGraph = MakeShared<FGraph3DDelta>();
+		addGraph->DeltaType = EGraph3DDeltaType::Add;
+		addGraph->GraphID = newGroupID;
+		OutDeltas.Emplace(false, addGraph);
+
+		TMap<int32, int32> oldIDToNewID;
+		oldIDToNewID.Add(MOD_ID_NONE, MOD_ID_NONE);
+
+		auto newElementsDelta = MakeShared<FGraph3DDelta>();
+		newElementsDelta->GraphID = newGroupID;
+		const auto& allVerts = graph->GetVertices();
+		const auto& allEdges = graph->GetEdges();
+		const auto& allFaces = graph->GetFaces();
+		for (const auto& kvp : allVerts)
+		{
+			newElementsDelta->VertexAdditions.Add(NextID, kvp.Value.Position);
+			oldIDToNewID.Add(kvp.Key, NextID);
+			++NextID;
+		}
+		for (const auto& kvp : allEdges)
+		{
+			FGraph3DObjDelta newEdge(FGraphVertexPair(oldIDToNewID[kvp.Value.StartVertexID], oldIDToNewID[kvp.Value.EndVertexID]), TArray<int32>());
+			newElementsDelta->EdgeAdditions.Add(NextID, newEdge);
+			oldIDToNewID.Add(kvp.Key, NextID);
+			++NextID;
+		}
+		for (const auto& kvp : allFaces)
+		{
+			TArray<int32> newVertices;
+			for (int32 v : kvp.Value.VertexIDs)
+			{
+				newVertices.Add(oldIDToNewID[v]);
+			}
+			FGraph3DObjDelta newFace(newVertices, TArray<int32>(), kvp.Value.ContainingFaceID, kvp.Value.ContainedFaceIDs);
+			newElementsDelta->FaceAdditions.Add(NextID, newFace);
+			oldIDToNewID.Add(kvp.Key, NextID);
+			++NextID;
+		}
+
+		// Map old contained/containing face IDs:
+		for (auto& kvp : newElementsDelta->FaceAdditions)
+		{
+			kvp.Value.ContainingObjID = oldIDToNewID[kvp.Value.ContainingObjID];
+			TSet<int32> containedFaces;
+			for (int32 oldVert : kvp.Value.ContainedObjIDs)
+			{
+				containedFaces.Add(oldIDToNewID[oldVert]);
+			}
+			kvp.Value.ContainedObjIDs = containedFaces;
+		}
+
+		OutDeltas.Emplace(true, newElementsDelta);
+
+		auto moiDelta = MakeShared<FMOIDelta>();
+
+		TArray<FDeltaPtr> objectDeltas;
+		for (const auto& moiKvp : graph->GetAllObjects())
+		{
+			int32 moiID = moiKvp.Key;
+			TArray<const AModumateObjectInstance*> objects;
+			objects.Add(Doc->GetObjectById(moiID));
+			objects.Append(objects[0]->GetAllDescendents());
+			for (const auto* object : objects)
+			{
+				if (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(object->GetObjectType()) == EGraph3DObjectType::None)
+				{
+					FMOIStateData newState(object->GetStateData());
+					oldIDToNewID.Add(newState.ID, NextID);
+					newState.ID = NextID;
+					++NextID;
+					if (ensure(oldIDToNewID.Contains(newState.ParentID)))
+					{
+						newState.ParentID = oldIDToNewID[newState.ParentID];
+						moiDelta->AddCreateDestroyState(newState, EMOIDeltaType::Create);
+					}
+				}
+			}
+		}
+
+		OutDeltas.Emplace(false, moiDelta);
 	}
 }

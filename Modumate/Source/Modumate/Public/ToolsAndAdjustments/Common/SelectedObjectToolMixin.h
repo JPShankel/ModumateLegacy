@@ -19,6 +19,7 @@ protected:
 
 	bool bPaste = false;
 	FMOIDocumentRecord CurrentRecord;
+	TArray<TPair<bool, FDeltaPtr>> GroupCopyDeltas;
 
 	FSelectedObjectToolMixin(AEditModelPlayerController *InController = nullptr);
 

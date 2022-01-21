@@ -27,6 +27,7 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 	CurrentRecord = FMOIDocumentRecord();
 
 	AEditModelPlayerState *playerState = ControllerPtr->EMPlayerState;
+	UModumateDocument* doc = ControllerPtr->GetDocument();
 
 	for (auto obj : playerState->SelectedObjects)
 	{
@@ -43,8 +44,7 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 	}
 
 	TSet<int32> vertexIDs;
-	FModumateObjectDeltaStatics::GetTransformableIDs(OriginalSelectedObjects.Array(), ControllerPtr->GetDocument(), vertexIDs);
-	auto doc = ControllerPtr->GetDocument();
+	FModumateObjectDeltaStatics::GetTransformableIDs(OriginalSelectedObjects.Array(), doc, vertexIDs);
 
 	FModumateObjectDeltaStatics::SaveSelection(OriginalSelectedObjects.Array(), doc, &CurrentRecord);
 
@@ -86,7 +86,7 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 	}
 
 	vertexIDs.Reset();
-	FModumateObjectDeltaStatics::GetTransformableIDs(OriginalSelectedGroupObjects.Array(), ControllerPtr->GetDocument(), vertexIDs);
+	FModumateObjectDeltaStatics::GetTransformableIDs(OriginalSelectedGroupObjects.Array(), doc, vertexIDs);
 	for (int32 id : vertexIDs)
 	{
 		auto obj = doc->GetObjectById(id);
@@ -97,6 +97,9 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 
 		OriginalGroupVertexTransforms.Add(id, obj->GetWorldTransform());
 	}
+
+	int32 nextID = doc->GetNextAvailableID();
+	FModumateObjectDeltaStatics::DuplicateGroups(doc, OriginalSelectedGroupObjects, nextID, GroupCopyDeltas);
 }
 
 void FSelectedObjectToolMixin::ReleaseSelectedObjects()
@@ -124,6 +127,7 @@ void FSelectedObjectToolMixin::ReleaseSelectedObjects()
 	OriginalGroupVertexTransforms.Empty();
 	OriginalSelectedObjects.Empty();
 	OriginalSelectedGroupObjects.Empty();
+	GroupCopyDeltas.Empty();
 }
 
 void FSelectedObjectToolMixin::ReleaseObjectsAndApplyDeltas(const TArray<FDeltaPtr>* AdditionalDeltas /*= nullptr*/)
