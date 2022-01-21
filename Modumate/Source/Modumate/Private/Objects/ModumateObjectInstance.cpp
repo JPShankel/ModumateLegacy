@@ -717,25 +717,23 @@ bool AModumateObjectInstance::GetWebMOI(FString& OutJson) const
 	// Get custom data
 	UScriptStruct* structDef;
 	const void* structPtr;
-	if (!GetInstanceDataStruct(structDef, structPtr))
+	if (GetInstanceDataStruct(structDef, structPtr))
 	{
-		return false;
-	}
-
-	for (TFieldIterator<FProperty> it(structDef); it; ++it)
-	{
-		// TODO: initially we only support string properties
-		FStrProperty* prop = CastField<FStrProperty>(*it);
-		if (prop != nullptr)
+		for (TFieldIterator<FProperty> it(structDef); it; ++it)
 		{
-			// MOI subclasses add properties to WebProperties on construction with type and display name info
-			// Properties not included in this map are not visible to the web
-			const FWebMOIProperty* formProp = WebProperties.Find(it->GetName());
-			if (formProp != nullptr)
+			// TODO: initially we only support string properties
+			FStrProperty* prop = CastField<FStrProperty>(*it);
+			if (prop != nullptr)
 			{
-				FWebMOIProperty webProp = *formProp;
-				webProp.Value = prop->GetPropertyValue_InContainer(structPtr);
-				webMOI.Properties.Add(webProp.Name, webProp);
+				// MOI subclasses add properties to WebProperties on construction with type and display name info
+				// Properties not included in this map are not visible to the web
+				const FWebMOIProperty* formProp = WebProperties.Find(it->GetName());
+				if (formProp != nullptr)
+				{
+					FWebMOIProperty webProp = *formProp;
+					webProp.Value = prop->GetPropertyValue_InContainer(structPtr);
+					webMOI.Properties.Add(webProp.Name, webProp);
+				}
 			}
 		}
 	}

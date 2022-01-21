@@ -1308,3 +1308,23 @@ void UModumateObjectStatics::HideObjectsInGroups(UModumateDocument* Doc, const T
 	UModumateObjectStatics::GetObjectsInGroups(Doc, GroupIDs, groupObjects);
 	UModumateFunctionLibrary::SetMOIAndDescendentsHidden(groupObjects.Array());
 }
+
+void UModumateObjectStatics::GetWebMOIArrayForObjects(const TArray<const AModumateObjectInstance*>& Objects, FString& OutJson)
+{
+	OutJson = TEXT("[");
+	bool bWantComma = false;
+	for (const auto* ob : Objects)
+	{
+		FString webMoi;
+		if (ob && ob->GetWebMOI(webMoi))
+		{
+			if (bWantComma)
+			{
+				OutJson += TEXT(",");
+			}
+			OutJson += webMoi;
+			bWantComma = true;
+		}
+	}
+	OutJson += TEXT("]");
+}

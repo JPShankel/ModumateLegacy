@@ -410,5 +410,6 @@ public:
 	UFUNCTION()
 	void set_moi_display_name(int32 ID,const FString& Name);
 
-	void UpdateWebMOIs(const EObjectType ObjectType);
+	void UpdateWebMOIs(const EObjectType ObjectType) const;
+	void UpdateWebSelectedObjects() const;
 };

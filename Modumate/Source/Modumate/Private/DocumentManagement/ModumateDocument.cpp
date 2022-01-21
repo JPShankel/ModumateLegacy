@@ -4441,27 +4441,32 @@ void UModumateDocument::set_moi_property(const int32 ID, const FString& Property
 	UpdateWebMOIs(EObjectType::OTDesignOption);
 }
 
-void UModumateDocument::UpdateWebMOIs(const EObjectType ObjectType)
+void UModumateDocument::UpdateWebSelectedObjects() const
 {
-	TArray<AModumateObjectInstance*> designOptions = GetObjectsOfType(ObjectType);
-	FString jsonArray = TEXT("[");
-	bool bWantComma = false;
-	for (auto* ob : designOptions)
-	{
-		FString jsonRep;
-		if (ob->GetWebMOI(jsonRep))
-		{
-			if (bWantComma)
-			{
-				jsonArray += TEXT(",");
-			}
-			jsonArray += jsonRep;
-			bWantComma = true;
-		}
-	}
-	jsonArray += TEXT("]");
+	AEditModelPlayerState* emPlayerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
+	TArray<const AModumateObjectInstance*> obs;
+	
+	// Groups first
+	obs.Append(emPlayerState->SelectedGroupObjects.Array());
+	obs.Append(emPlayerState->SelectedObjects.Array());
 
-	DrawingSendResponse(TEXT("onDesignOptionsChanged"), jsonArray);
+	FString jsonArray;
+	UModumateObjectStatics::GetWebMOIArrayForObjects(obs, jsonArray);
+	DrawingSendResponse(TEXT("onSelectionChanged"), jsonArray);
+}
+
+void UModumateDocument::UpdateWebMOIs(const EObjectType ObjectType) const
+{
+	FString jsonArray;
+	TArray<const AModumateObjectInstance*> objects = GetObjectsOfType(ObjectType);
+	UModumateObjectStatics::GetWebMOIArrayForObjects(objects, jsonArray);
+
+	switch (ObjectType)
+	{
+		case EObjectType::OTDesignOption:
+			DrawingSendResponse(TEXT("onDesignOptionsChanged"), jsonArray);
+			break;
+	};
 }
 
 void UModumateDocument::create_moi(const FString& MOIType, int32 ParentID)

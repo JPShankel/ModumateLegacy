@@ -688,6 +688,8 @@ void AEditModelPlayerState::PostSelectionChanged()
 
 	LastSelectedObjectSet.Reset();
 	LastSelectedObjectSet.Append(SelectedObjects);
+
+	EMPlayerController->GetDocument()->UpdateWebSelectedObjects();
 }
 
 void AEditModelPlayerState::PostViewChanged()
