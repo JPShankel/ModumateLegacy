@@ -46,6 +46,24 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The speed of rotation, in degrees / second, during Orbiting and Flying that's applied by the yaw and pitch input axes"))
 	float RotateSpeed;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The minimum rotation speed when dealing with different FOV levels"))
+	float MinRotationSpeed;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The maximum rotation speed when dealing with different FOV levels"))
+	float MaxRotationSpeed;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The lower limit FOV that the rotation speed is adjusted for"))
+	float MinFOVRotationModulation;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The upper limit FOV that the rotation speed is adjusted for"))
+	float MaxFOVRotationModulation;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The exponent for easing function of orbiting the camera at low FOV levels (<50)"))
+	float LowFOVEasingExp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "The exponent for easing function of orbiting the camera at low FOV levels (>50)"))
+	float HighFOVEasingExp;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ToolTip = "Whether to smoothly approach the intended zoom distance during Orbiting and Default movement, rather than snap directly to it"))
 	bool bUseSmoothZoom;
 
@@ -177,6 +195,7 @@ protected:
 	bool TryWrapCursor(FIntPoint CurCursorPos);
 	void UpdateOrbitAnchorScale();
 	bool ZoomToTargetSphere(const FSphere& TargetSphere, const FVector& NewViewForward, const FVector& NewViewUp, bool bSnapVerticalViewToAxis = true);
+	float GetFOVAdjustedRotateSpeed();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class AEditModelPlayerController *Controller;

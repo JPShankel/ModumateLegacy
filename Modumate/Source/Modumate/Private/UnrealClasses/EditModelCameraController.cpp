@@ -18,11 +18,18 @@
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/ModumateViewportClient.h"
 #include "UnrealClient.h"
+#include <Runtime/Engine/Classes/Kismet/KismetMathLibrary.h>
 
 UEditModelCameraController::UEditModelCameraController()
 	: Super()
 	, bUpdateCameraTransform(true)
 	, RotateSpeed(5.0f)
+	, MinRotationSpeed(1.1f)
+	, MaxRotationSpeed(30.0f)
+	, MinFOVRotationModulation(1.0f)
+	, MaxFOVRotationModulation(120.0f)
+	, LowFOVEasingExp(3.0f)
+	, HighFOVEasingExp(1.0f)
 	, bUseSmoothZoom(true)
 	, SmoothZoomSpeed(25.0f)
 	, ZoomPercentSpeed(0.2f)
@@ -324,13 +331,45 @@ void UEditModelCameraController::OnActionZoomOut()
 	OnZoom(1.0f);
 	Controller->OnHandledInputAction(EInputCameraActions::CameraZoomOut, EInputEvent::IE_Pressed);
 }
-
+//assumes default FOV is 50
+float UEditModelCameraController::GetFOVAdjustedRotateSpeed()
+{
+	float defaultFOV = 50.0f;
+	float retVal = RotateSpeed;
+	//get FOV from player pawn
+	AEditModelPlayerController* playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+	AEditModelPlayerPawn* playerPawn = playerController ? Cast<AEditModelPlayerPawn>(playerController->GetPawn()) : nullptr;
+	float FOV = playerPawn->CameraComponent->FieldOfView;
+	//default FOV don't modify rotate speed
+	if (FMath::IsNearlyEqual(FOV, defaultFOV, KINDA_SMALL_NUMBER))
+	{
+		retVal = RotateSpeed;
+	}
+	else {
+		//handle FOV values less than defaultFOV
+		if (FOV < defaultFOV)
+		{
+			float normalizedFOVValue = FMath::Clamp(UKismetMathLibrary::NormalizeToRange(FOV, MinFOVRotationModulation, defaultFOV), 0.0f, 1.0f);
+			float lerpedRotateSpeed = FMath::InterpEaseIn(RotateSpeed, MaxRotationSpeed, 1 - normalizedFOVValue, LowFOVEasingExp);
+			retVal = lerpedRotateSpeed;
+		}
+		else {
+			//FOV values > defaultFOV
+			float normalizedFOVValue = FMath::Clamp(UKismetMathLibrary::NormalizeToRange(FOV, defaultFOV, MaxFOVRotationModulation), 0.0f, 1.0f);
+			float lerpedRotateSpeed = FMath::InterpEaseOut(MinRotationSpeed, RotateSpeed, 1 - normalizedFOVValue, HighFOVEasingExp);
+			retVal = lerpedRotateSpeed;
+		}
+	}
+	
+	return retVal;
+}
 void UEditModelCameraController::OnAxisRotateYaw(float RotateYawValue)
 {
 	if ((RotateYawValue != 0.0f) &&
 		((CurMovementState == ECameraMovementState::Orbiting) || (CurMovementState == ECameraMovementState::Flying)))
 	{
-		RotationDeltasAccumulated.X += RotateSpeed * RotateYawValue;
+		float FOVAdjustedRotateSpeed = GetFOVAdjustedRotateSpeed();
+		RotationDeltasAccumulated.X += FOVAdjustedRotateSpeed * RotateYawValue;
 		Controller->OnHandledInputAxis(EInputMovementAxes::MoveYaw, RotateYawValue);
 	}
 }
@@ -340,7 +379,8 @@ void UEditModelCameraController::OnAxisRotatePitch(float RotatePitchValue)
 	if ((RotatePitchValue != 0.0f) &&
 		((CurMovementState == ECameraMovementState::Orbiting) || (CurMovementState == ECameraMovementState::Flying)))
 	{
-		RotationDeltasAccumulated.Y += RotateSpeed * RotatePitchValue;
+		float FOVAdjustedRotateSpeed = GetFOVAdjustedRotateSpeed();
+		RotationDeltasAccumulated.Y += FOVAdjustedRotateSpeed * RotatePitchValue;
 		Controller->OnHandledInputAxis(EInputMovementAxes::MovePitch, RotatePitchValue);
 	}
 }
@@ -822,6 +862,13 @@ void UEditModelCameraController::UpdateOrbiting(float DeltaTime)
 
 	// And don't forget, update the orbit anchor to be the right size
 	UpdateOrbitAnchorScale();
+
+	//set mouse location to orbit anchor in order to prevent user from mousing to the edge of the screen without realizing
+	FVector2D orbitTargetScreenPos;
+	if (UGameplayStatics::ProjectWorldToScreen(Controller, OrbitTarget, orbitTargetScreenPos))
+	{
+		Controller->SetMouseLocation(orbitTargetScreenPos.X, orbitTargetScreenPos.Y);
+	}
 }
 
 void UEditModelCameraController::UpdatePanning(float DeltaTime)
