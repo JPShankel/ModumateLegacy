@@ -25,6 +25,7 @@ ADrawingDesignerRender::ADrawingDesignerRender()
 	CaptureComponent->ProjectionType = ECameraProjectionMode::Orthographic;
 	CaptureComponent->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
 	CaptureComponent->bCaptureEveryFrame = false;
+	RootComponent = CaptureComponent;
 }
 
 void ADrawingDesignerRender::AddLines(const TArray<FDrawingDesignerLine>& Lines)

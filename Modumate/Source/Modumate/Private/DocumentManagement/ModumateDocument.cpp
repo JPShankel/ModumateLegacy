@@ -4390,11 +4390,11 @@ void UModumateDocument::drawing_get_drawing_image(const FString& InRequest)
 void UModumateDocument::drawing_get_clicked(const FString& InRequest)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_get_clicked_moi"));
-	FDrawingDesignerClickRequest req;
+	FDrawingDesignerGenericRequest req;
 
 	if (req.ReadJson(InRequest))
 	{
-		if (req.requestType != EDrawingDesignerRequestType::moi) return;
+		if (req.requestType != EDrawingDesignerRequestType::getClickedMoi) return;
 		
 		FDrawingDesignerRenderControl renderControl(this);
 		FDrawingDesignerMoiResponse moiResponse;
@@ -4404,7 +4404,7 @@ void UModumateDocument::drawing_get_clicked(const FString& InRequest)
 		
 		FString jsonResponse;
 		moiResponse.WriteJson(jsonResponse);
-		DrawingSendResponse(TEXT("pushMoiResponse"), jsonResponse);
+		DrawingSendResponse(TEXT("onGenericResponse"), jsonResponse);
 	}
 }
 
@@ -4518,6 +4518,25 @@ void UModumateDocument::set_moi_display_name(int32 ID, const FString& Name)
 	}
 }
 
-#undef LOCTEXT_NAMESPACE
+void UModumateDocument::string_to_inches(const FString& InRequest)
+{
+	FDrawingDesignerGenericRequest req;
 
+	if (req.ReadJson(InRequest))
+	{
+		if (req.requestType != EDrawingDesignerRequestType::stringToInches) return;
+		FDrawingDesignerStringToInchesResponse rsp;
+
+		FString jsonResponse;
+		rsp.request = req;
+		const FDocumentSettings& settings = GetCurrentSettings();
+		const FModumateFormattedDimension formattedDim = UModumateDimensionStatics::StringToSettingsFormattedDimension(req.data, settings);
+		rsp.answer = formattedDim.Centimeters * UModumateDimensionStatics::CentimetersToInches;
+		rsp.WriteJson(jsonResponse);
+		
+		DrawingSendResponse(TEXT("onGenericResponse"), jsonResponse);
+	}
+}
+
+#undef LOCTEXT_NAMESPACE
 

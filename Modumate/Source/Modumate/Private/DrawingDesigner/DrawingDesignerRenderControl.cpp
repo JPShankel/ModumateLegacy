@@ -117,6 +117,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 	FTransform cameraTransform(cutPlaneRotation * cameraToCutplane, cameraCentre, FVector(viewWidth, viewHeight, 1.0f));
 
 	ADrawingDesignerRender* renderer = Doc->GetWorld()->SpawnActor<ADrawingDesignerRender>(gameMode->DrawingDesignerRenderClass.Get());
+
 	if (!ensureAlways(renderer))
 	{
 		return false;
@@ -126,7 +127,9 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 	renderer->SetDocument(Doc);
 
 	FVector viewDirection(cutPlaneRotation * FVector::ZAxisVector);
+	//(A) ~175ms
 	AddSceneLines(viewDirection, scaleLength, renderer);
+	//(/A)
 	SwapPortalMaterials(cutPlane);
 
 	// Prepare cutplane
@@ -138,8 +141,10 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 		controller->SetCurrentCullingCutPlane(cutPlane->ID, false);
 	}
 
-	// Draw
+	// Draw 
+	//(B) ~10ms
 	renderer->RenderImage(viewRequest.minimum_resolution_pixels.x);
+	//(/B)
 
 	// Restore cutplane
 	RestorePortalMaterials();
@@ -147,9 +152,15 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 
 	TArray<uint8> rawPng;
 	bool bSuccess = false;
-	if (ensure(renderer->GetImagePNG(rawPng)) )
+
+
+	//(C) ~100ms
+	bSuccess = renderer->GetImagePNG(rawPng);
+	//(/C)
+
+	bSuccess = true;
+	if (bSuccess)
 	{
-		FString b64Png(FBase64::Encode(rawPng));
 		FMOICutPlaneData cutPlaneData;
 		cutPlane->GetStateData().CustomData.LoadStructData(cutPlaneData);
 
@@ -162,9 +173,14 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 		viewResponse.response.view.name = cutPlaneData.Name;
 		viewResponse.response.scale = FModumateUnitValue(CachedSize.Y, EModumateUnitType::WorldCentimeters).AsWorldInches();
 
+		//(D) 100ms
+		FString b64Png(FBase64::Encode(rawPng));
 		viewResponse.response.image_base64 = MoveTemp(b64Png);
+		//(/D)
 		GetSnapPoints(viewResponse.response.snaps);
 		bSuccess = WriteJsonGeneric(OutJsonResponse, &viewResponse);
+
+		//Anything remaining is ~5-10ms
 	}
 
 	renderer->Destroy();

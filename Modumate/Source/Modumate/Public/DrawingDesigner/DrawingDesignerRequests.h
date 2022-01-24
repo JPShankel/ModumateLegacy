@@ -12,11 +12,12 @@ UENUM()
 enum class EDrawingDesignerRequestType
 {
 	unknown = 0,
-	moi
+	getClickedMoi,
+	stringToInches,
 };
 
 USTRUCT()
-struct MODUMATE_API FDrawingDesignerClickRequest
+struct MODUMATE_API FDrawingDesignerGenericRequest
 {
 	GENERATED_BODY()
 
@@ -25,15 +26,18 @@ struct MODUMATE_API FDrawingDesignerClickRequest
 	UPROPERTY()
 	FDrawingDesignerPoint uvPosition;
 	UPROPERTY()
+	FString data;
+
+	UPROPERTY()
 	EDrawingDesignerRequestType requestType;
 	UPROPERTY()
-	FString handler;
+	int32 handler = 0;
 
 	bool WriteJson(FString& OutJson) const {
-		return WriteJsonGeneric<FDrawingDesignerClickRequest>(OutJson, this);
+		return WriteJsonGeneric<FDrawingDesignerGenericRequest>(OutJson, this);
 	}
 	bool ReadJson(const FString& InJson) {
-		return ReadJsonGeneric<FDrawingDesignerClickRequest>(InJson, this);
+		return ReadJsonGeneric<FDrawingDesignerGenericRequest>(InJson, this);
 	}
 };
 
@@ -43,7 +47,7 @@ struct MODUMATE_API FDrawingDesignerMoiResponse
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FDrawingDesignerClickRequest request;
+	FDrawingDesignerGenericRequest request;
 	UPROPERTY()
 	int32 moiId = INDEX_NONE;
 
@@ -54,3 +58,24 @@ struct MODUMATE_API FDrawingDesignerMoiResponse
 		return ReadJsonGeneric<FDrawingDesignerMoiResponse>(InJson, this);
 	}
 };
+
+
+USTRUCT()
+struct MODUMATE_API FDrawingDesignerStringToInchesResponse
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FDrawingDesignerGenericRequest request;
+
+	UPROPERTY()
+	float answer = 0.0f;
+
+	bool WriteJson(FString& OutJson) const {
+		return WriteJsonGeneric<FDrawingDesignerStringToInchesResponse>(OutJson, this);
+	}
+	bool ReadJson(const FString& InJson) {
+		return ReadJsonGeneric<FDrawingDesignerStringToInchesResponse>(InJson, this);
+	}
+};
+

@@ -410,6 +410,9 @@ public:
 	UFUNCTION()
 	void set_moi_display_name(int32 ID,const FString& Name);
 
+	UFUNCTION()
+	void string_to_inches(const FString& InRequest);
+
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
 	void UpdateWebSelectedObjects() const;
 };
