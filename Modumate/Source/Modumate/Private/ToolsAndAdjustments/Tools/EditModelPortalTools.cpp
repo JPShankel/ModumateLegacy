@@ -81,7 +81,8 @@ bool UPortalToolBase::FrameUpdate()
 		}
 	}
 
-	bool bSuccess = targetPlaneMOI && UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
+	bool bSuccess = targetPlaneMOI && (GameState->Document->FindGraph3DByObjID(targetPlaneMOI->ID) == GameState->Document->GetActiveVolumeGraphID());
+	bSuccess = bSuccess && UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
 		targetPlaneMOI, hitLoc, GetInstanceBottomOffset(), bUseBottomOffset, RelativePos, RelativeRot);
 
 	bSuccess = bSuccess && UModumateObjectStatics::GetWorldTransformOnPlanarObj(
@@ -101,7 +102,6 @@ bool UPortalToolBase::FrameUpdate()
 	if (bSuccess)
 	{
 		GameState->Document->StartPreviewing();
-
 		if (GetPortalCreationDeltas(Deltas))
 		{
 			GameState->Document->ApplyPreviewDeltas(Deltas, world);
@@ -208,7 +208,8 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 	UWorld* world = Controller->GetWorld();
 	int32 newParentID = MOD_ID_NONE;
 	AModumateObjectInstance* curTargetPlaneObj = GameState->Document->GetObjectById(CurTargetPlaneID);
-	const FGraph3DFace* curTargetFace = GameState->Document->GetVolumeGraph()->FindFace(CurTargetPlaneID);
+	const FGraph3DFace* curTargetFace = curTargetPlaneObj ? GameState->Document->FindVolumeGraph(CurTargetPlaneID)->FindFace(CurTargetPlaneID)
+		: nullptr;
 
 	if ((curTargetPlaneObj == nullptr) || (curTargetFace == nullptr))
 	{

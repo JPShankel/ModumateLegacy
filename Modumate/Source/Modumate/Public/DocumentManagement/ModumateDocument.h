@@ -186,6 +186,7 @@ public:
 	const FGraph3D* GetVolumeGraph(int32 GraphId = MOD_ID_NONE) const;
 	// Find the volume graph that contains the graph3D element
 	FGraph3D* FindVolumeGraph(int32 ElementID);
+	// Find the volume graph that contains the graph3D element
 	const FGraph3D* FindVolumeGraph(int32 ElementID) const;
 	int32 GetActiveVolumeGraphID() const { return ActiveVolumeGraph; }
 	void SetActiveVolumeGraphID(int32 NewID);

@@ -79,7 +79,11 @@ bool UModumateObjectStatics::GetRelativeTransformOnPlanarObj(
 
 	if (bUseDistanceFromBottom)
 	{
-		const FGraph3DFace *parentFace = PlanarObj->GetDocument()->GetVolumeGraph()->FindFace(metaPlaneObject->ID);
+		const FGraph3DFace *parentFace = PlanarObj->GetDocument()->FindVolumeGraph(metaPlaneObject->ID)->FindFace(metaPlaneObject->ID);
+		if (!ensure(parentFace))
+		{
+			return false;
+		}
 		FVector2D faceRelativePos = parentFace->ProjectPosition2D(WorldPos);
 
 		FVector2D faceRelativeRayEnd = parentFace->ProjectPosition2D(WorldPos - FVector::UpVector);
