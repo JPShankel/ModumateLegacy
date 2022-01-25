@@ -20,6 +20,7 @@ bool FMOIStateData::operator==(const FMOIStateData& Other) const
 		(ObjectType == Other.ObjectType) &&
 		(ParentID == Other.ParentID) &&
 		(AssemblyGUID == Other.AssemblyGUID) &&
+		(DisplayName == Other.DisplayName) &&
 		(CustomData == Other.CustomData);
 }
 

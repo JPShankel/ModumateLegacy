@@ -4475,7 +4475,7 @@ void UModumateDocument::create_moi(const FString& MOIType, int32 ParentID)
 	FindEnumValueByString<EObjectType>(MOIType, objectType);
 	if (objectType == EObjectType::OTDesignOption)
 	{
-		TSharedPtr<FMOIDelta> delta = AMOIDesignOption::MakeCreateDelta(this, FString::Printf(TEXT("Design Option %d")), 0);
+		TSharedPtr<FMOIDelta> delta = AMOIDesignOption::MakeCreateDelta(this, FString::Printf(TEXT("Design Option")));
 		ApplyDeltas({ delta }, GetWorld());
 		UpdateWebMOIs(EObjectType::OTDesignOption);
 	}

@@ -709,7 +709,7 @@ bool AModumateObjectInstance::GetWebMOI(FString& OutJson) const
 	// Get common data members
 	FWebMOI webMOI;
 	webMOI.ID = ID;
-	GetName(webMOI.DisplayName);
+	webMOI.DisplayName = GetStateData().DisplayName;
 	webMOI.Parent = GetParentID();
 	webMOI.Type = GetObjectType();
 	webMOI.Children = GetChildIDs();
