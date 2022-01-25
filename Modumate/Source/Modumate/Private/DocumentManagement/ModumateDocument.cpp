@@ -4444,16 +4444,20 @@ void UModumateDocument::set_moi_property(const int32 ID, const FString& Property
 void UModumateDocument::UpdateWebSelectedObjects() const
 {
 	AEditModelPlayerState* emPlayerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-	TArray<const AModumateObjectInstance*> obs;
-	
-	// Groups first
-	obs.Append(emPlayerState->SelectedGroupObjects.Array());
-	obs.Append(emPlayerState->SelectedObjects.Array());
+	if (emPlayerState != nullptr) {
+		TArray<const AModumateObjectInstance*> obs;
+		// Groups first
+		obs.Append(emPlayerState->SelectedGroupObjects.Array());
+		obs.Append(emPlayerState->SelectedObjects.Array());
 
-	FString jsonArray;
-	UModumateObjectStatics::GetWebMOIArrayForObjects(obs, jsonArray);
-	DrawingSendResponse(TEXT("onSelectionChanged"), jsonArray);
+		FString jsonArray;
+		UModumateObjectStatics::GetWebMOIArrayForObjects(obs, jsonArray);
+		DrawingSendResponse(TEXT("onSelectionChanged"), jsonArray);
+	}
 }
+	
+	
+
 
 void UModumateDocument::UpdateWebMOIs(const EObjectType ObjectType) const
 {
