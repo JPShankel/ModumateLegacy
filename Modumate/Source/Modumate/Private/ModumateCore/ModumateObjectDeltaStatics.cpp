@@ -327,7 +327,7 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 	}
 }
 
-bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecord, const FVector &InOrigin, UModumateDocument* doc, AEditModelPlayerController *Controller,
+bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecord, const FVector& InOrigin, UModumateDocument* Doc, const AEditModelPlayerController* Controller,
 	bool bIsPreview, const TArray<FDeltaPtr>* AdditionalDeltas /*= nullptr*/)
 {
 	if (!InRecord)
@@ -343,7 +343,7 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 
 	if (bIsPreview)
 	{
-		doc->StartPreviewing();
+		Doc->StartPreviewing();
 	}
 
 	if (InRecord->VolumeGraph.Vertices.Num() == 0 &&
@@ -352,7 +352,7 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 		InRecord->SurfaceGraphs.Num() == 1)
 	{
 		FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
-		auto *cursorHitMOI = doc->ObjectFromActor(cursor.Actor);
+		auto *cursorHitMOI = Doc->ObjectFromActor(cursor.Actor);
 		if (!cursorHitMOI)
 		{
 			return false;
@@ -364,17 +364,17 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 			OutDeltas.Append(*AdditionalDeltas);
 		}
 		{
-			FObjIDReservationHandle objIDReservation(doc, cursorHitMOI->ID);
+			FObjIDReservationHandle objIDReservation(Doc, cursorHitMOI->ID);
 			int32& nextID = objIDReservation.NextID;
-			if (!PasteObjectsWithinSurfaceGraph(InRecord, InOrigin, OutDeltas, doc, nextID, Controller, bIsPreview))
+			if (!PasteObjectsWithinSurfaceGraph(InRecord, InOrigin, OutDeltas, Doc, nextID, Controller, bIsPreview))
 			{
 				return false;
 			}
 		}
 		
 		bIsPreview ? 
-			doc->ApplyPreviewDeltas(OutDeltas, Controller->GetWorld()) :
-			doc->ApplyDeltas(OutDeltas, Controller->GetWorld());
+			Doc->ApplyPreviewDeltas(OutDeltas, Controller->GetWorld()) :
+			Doc->ApplyDeltas(OutDeltas, Controller->GetWorld());
 		
 		return true;
 	}
@@ -384,7 +384,7 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 	{
 		OutDeltas.Append(*AdditionalDeltas);
 	}
-	if (!doc->PasteMetaObjects(&InRecord->VolumeGraph, OutDeltas, copiedToPastedObjIDs, offset, bIsPreview))
+	if (!Doc->PasteMetaObjects(&InRecord->VolumeGraph, OutDeltas, copiedToPastedObjIDs, offset, bIsPreview))
 	{
 		return false;
 	}
@@ -395,7 +395,7 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 		return false;
 	}
 
-	int32 nextID = doc->GetNextAvailableID();
+	int32 nextID = Doc->GetNextAvailableID();
 
 	// first pass - separators, surface graph base MOIs, other physical MOIs with parents.
 	auto separatorDelta = MakeShared<FMOIDelta>();
@@ -414,7 +414,7 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 		}
 
 		FMOIStateData stateData(objRec);
-		const AModumateObjectInstance* sourceObj = doc->GetObjectById(objRec.ID);
+		const AModumateObjectInstance* sourceObj = Doc->GetObjectById(objRec.ID);
 
 		if (!ensure(sourceObj != nullptr))
 		{
@@ -459,7 +459,7 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 		addDelta.DeltaType = EGraph2DDeltaType::Add;
 		OutDeltas.Add(MakeShared<FGraph2DDelta>(addDelta));
 			
-		doc->FinalizeGraph2DDeltas(sgDeltas, nextID, OutDeltas);
+		Doc->FinalizeGraph2DDeltas(sgDeltas, nextID, OutDeltas);
 	}
 
 	// second pass - attachments
@@ -475,7 +475,7 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 		if (!copiedToPastedObjIDs.Contains(objRec.ParentID))
 		{
 			FMOIStateData stateData;
-			const AModumateObjectInstance* sourceObj = doc->GetObjectById(objRec.ID);
+			const AModumateObjectInstance* sourceObj = Doc->GetObjectById(objRec.ID);
 
 			if (!ensure(sourceObj != nullptr))
 			{
@@ -516,14 +516,15 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 	OutDeltas.Add(attachmentDelta);
 
 	bIsPreview ? 
-		doc->ApplyPreviewDeltas(OutDeltas, World) :
-		doc->ApplyDeltas(OutDeltas, World);
+		Doc->ApplyPreviewDeltas(OutDeltas, World) :
+		Doc->ApplyDeltas(OutDeltas, World);
 
 
 	return true;
 }
 
-bool FModumateObjectDeltaStatics::PasteObjectsWithinSurfaceGraph(const FMOIDocumentRecord* InRecord, const FVector& InOrigin, TArray<FDeltaPtr>& OutDeltas, UModumateDocument* doc, int32 &nextID, class AEditModelPlayerController* Controller, bool bIsPreview)
+bool FModumateObjectDeltaStatics::PasteObjectsWithinSurfaceGraph(const FMOIDocumentRecord* InRecord, const FVector& InOrigin, TArray<FDeltaPtr>& OutDeltas, UModumateDocument* doc,
+	int32 &nextID, const AEditModelPlayerController* Controller, bool bIsPreview)
 {
 	FSnappedCursor &cursor = Controller->EMPlayerState->SnappedCursor;
 	const FVector &hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
@@ -914,4 +915,53 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 
 		OutDeltas.Emplace(false, moiDelta);
 	}
+}
+
+void FModumateObjectDeltaStatics::MergeGraphToCurrentGraph(UModumateDocument* Doc, const FGraph3D* OldGraph, int32& NextID, TArray<FDeltaPtr>& OutDeltas)
+{
+	FGraph3DRecord graphRecord;
+	OldGraph->Save(&graphRecord);
+	TMap<int32, TArray<int32>> copiedToPastedIDs;
+	int32 localID;  // unused
+	int32 myPlayerIdx;
+	Doc->SplitMPObjID(NextID, localID, myPlayerIdx);
+
+	Doc->SetNextID(NextID, MOD_ID_NONE);
+
+	Doc->PasteMetaObjects(&graphRecord, OutDeltas, copiedToPastedIDs, FVector::ZeroVector, false);
+
+	auto delta = MakeShared<FMOIDelta>();
+	for (const auto& kvp: copiedToPastedIDs)
+	{
+		const AModumateObjectInstance* moi = Doc->GetObjectById(kvp.Key);
+		if (ensureAlways(moi && kvp.Value.Num() > 0))
+		{
+			for (const auto* childMoi: moi->GetChildObjects())
+			{
+				int32 newParentID = kvp.Value[0];
+				if (kvp.Value.Num() > 1)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Graph element %d was split into %d new elements"), kvp.Key, kvp.Value.Num());
+				}
+
+				// Check if locally-generated ID and bump NextID if appropriate.
+				int32 playerIdx;
+				Doc->SplitMPObjID(newParentID, localID, playerIdx);
+				if (playerIdx == myPlayerIdx)
+				{
+					NextID = FMath::Max(NextID, newParentID + 1);
+				}
+				const FMOIStateData& oldstateData = childMoi->GetStateData();
+				FMOIStateData newStateData(oldstateData);
+				newStateData.ParentID = newParentID;
+				delta->AddMutationState(childMoi, oldstateData, newStateData);
+			}
+		}
+	}
+
+	if (delta->IsValid())
+	{
+		OutDeltas.Add(delta);
+	}
+
 }

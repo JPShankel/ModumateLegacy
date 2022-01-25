@@ -128,8 +128,9 @@ public:
 	AModumateObjectInstance *GetValidHoveredObjectInView(AModumateObjectInstance *hoverTarget) const;
 	void SetHoveredObject(AModumateObjectInstance *ob);
 	void SetObjectSelected(AModumateObjectInstance *ob, bool bSelected, bool bDeselectOthers);
-	void SetObjectsSelected(TSet<AModumateObjectInstance*>& Obs, bool bSelected, bool bDeselectOthers);
+	void SetObjectsSelected(const TSet<AModumateObjectInstance*>& Obs, bool bSelected, bool bDeselectOthers);
 	void SetGroupObjectSelected(AModumateObjectInstance* GroupObject, bool bSelected, bool bDeselectOthers);
+	void SetGroupObjectsSelected(const TSet<AModumateObjectInstance*>& GroupObjects, bool bSelected, bool bDeselectOthers);
 	int32 NumItemsSelected() const { return SelectedObjects.Num() + SelectedGroupObjects.Num(); }
 
 	void SetViewGroupObject(AModumateObjectInstance *ob);

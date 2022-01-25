@@ -1451,7 +1451,7 @@ bool FGraph3D::Load(const FGraph3DRecord* InGraph3DRecord)
 	return bTotalSuccess;
 }
 
-void FGraph3D::Save(FGraph3DRecord* OutGraph3DRecord)
+void FGraph3D::Save(FGraph3DRecord* OutGraph3DRecord) const
 {
 	OutGraph3DRecord->Vertices.Reset();
 	for (auto &kvp : Vertices)

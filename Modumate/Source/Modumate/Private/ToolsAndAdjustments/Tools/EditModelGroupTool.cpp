@@ -36,6 +36,7 @@ bool UGroupTool::Activate()
 	{
 		while (obj && UModumateTypeStatics::Graph3DObjectTypeFromObjectType(obj->GetObjectType()) == EGraph3DObjectType::None)
 		{
+			obj->ClearAdjustmentHandles();
 			obj = obj->GetParentObject();
 		}
 		if (obj)

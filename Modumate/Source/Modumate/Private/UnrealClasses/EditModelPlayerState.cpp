@@ -864,7 +864,7 @@ void AEditModelPlayerState::SetHoveredObject(AModumateObjectInstance *ob)
 	}
 }
 
-void AEditModelPlayerState::SetObjectsSelected(TSet<AModumateObjectInstance*>& Obs, bool bSelected, bool bDeselectOthers)
+void AEditModelPlayerState::SetObjectsSelected(const TSet<AModumateObjectInstance*>& Obs, bool bSelected, bool bDeselectOthers)
 {
 	if (bDeselectOthers)
 	{
@@ -883,6 +883,25 @@ void AEditModelPlayerState::SetObjectsSelected(TSet<AModumateObjectInstance*>& O
 		}
 		ob->OnSelected(bSelected);
 	}
+	PostSelectionChanged();
+	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
+}
+
+void AEditModelPlayerState::SetObjectSelected(AModumateObjectInstance *ob, bool bSelected, bool bDeselectOthers)
+{
+	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::SetObjectSelected"));
+
+	if (bSelected)
+	{
+		SelectedObjects.Add(ob);
+	}
+	else
+	{
+		SelectedObjects.Remove(ob);
+	}
+
+	ob->OnSelected(bSelected);
+
 	PostSelectionChanged();
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
@@ -910,23 +929,24 @@ void AEditModelPlayerState::SetGroupObjectSelected(AModumateObjectInstance* Grou
 	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
 }
 
-void AEditModelPlayerState::SetObjectSelected(AModumateObjectInstance *ob, bool bSelected, bool bDeselectOthers)
+void AEditModelPlayerState::SetGroupObjectsSelected(const TSet<AModumateObjectInstance*>& GroupObjects, bool bSelected, bool bDeselectOthers)
 {
-	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::SetObjectSelected"));
-
-	if (bSelected)
+	if (bDeselectOthers)
 	{
-		SelectedObjects.Add(ob);
-	}
-	else
-	{
-		SelectedObjects.Remove(ob);
+		SelectedGroupObjects.Empty();
 	}
 
-	ob->OnSelected(bSelected);
-
-	PostSelectionChanged();
-	EMPlayerController->EditModelUserWidget->EMOnSelectionObjectChanged();
+	for (auto* moi: GroupObjects)
+	{
+		if (bSelected)
+		{
+			SelectedGroupObjects.Add(moi);
+		}
+		else
+		{
+			SelectedGroupObjects.Remove(moi);
+		}
+	}
 }
 
 void AEditModelPlayerState::SetViewGroupObject(AModumateObjectInstance *ob)

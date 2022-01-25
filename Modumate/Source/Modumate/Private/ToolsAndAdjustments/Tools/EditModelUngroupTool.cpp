@@ -30,14 +30,14 @@ bool UUngroupTool::Activate()
 	// Tool is single-use
 	Controller->ToolAbortUse();
 
-	const auto& selectedObjects = emPlayerState->SelectedGroupObjects;
+	const auto& selectedGroups = emPlayerState->SelectedGroupObjects;
 	ReselectionItems.Empty();
 
 	TArray<FDeltaPtr> deltas;
 
 	int32 nextID = doc->GetNextAvailableID();
 
-	for (auto* obj: selectedObjects)
+	for (auto* obj: selectedGroups)
 	{
 		if (!ExplodeGroup(doc, obj, nextID, deltas))
 		{
@@ -45,7 +45,11 @@ bool UUngroupTool::Activate()
 		}
 	}
 	
-	emPlayerState->SetGroupObjectSelected(nullptr, true, true);
+	TSet<AModumateObjectInstance*> reselectObjects(emPlayerState->SelectedObjects);  // Reselect simple objects afterwards
+	TSet<AModumateObjectInstance*> reselectGroups;
+
+	emPlayerState->DeselectAll(false);
+
 	if (doc->ApplyDeltas(deltas, GetWorld()))
 	{
 		for (int32 item : ReselectionItems)
@@ -55,16 +59,20 @@ bool UUngroupTool::Activate()
 			{
 				if (object->GetObjectType() == EObjectType::OTMetaGraph)
 				{
-					emPlayerState->SetGroupObjectSelected(object, true, false);
+					reselectGroups.Add(object);
 				}
 				else
 				{
-					emPlayerState->SetObjectSelected(object, true, false);
+					object->ClearAdjustmentHandles();
+					reselectObjects.Add(object);
 				}
 			}
 		}
 
 		ReselectionItems.Empty();
+		emPlayerState->SetObjectsSelected(reselectObjects, true, false);
+		emPlayerState->SetGroupObjectsSelected(reselectGroups, true, false);
+
 		return true;
 	}
 
@@ -81,6 +89,7 @@ bool UUngroupTool::ExplodeGroup(UModumateDocument* Doc, AModumateObjectInstance*
 		return true;
 	}
 
+	// Hoist up any child groups.
 	const TArray<int32> childIDs(GroupObject->GetChildIDs());
 	for (int32 childID: childIDs)
 	{
@@ -127,9 +136,6 @@ bool UUngroupTool::ExplodeGroup(UModumateDocument* Doc, AModumateObjectInstance*
 		}
 	}
 
-	TArray<FGraph3DDelta> createGraphDeltas;
-	FModumateObjectDeltaStatics::ConvertGraphDeleteToMove(deleteGraphDeltas, graph, NextID, createGraphDeltas);
-
 	// Remove old graph elements:
 	for (auto& graphDelta: deleteGraphDeltas)
 	{
@@ -143,13 +149,8 @@ bool UUngroupTool::ExplodeGroup(UModumateDocument* Doc, AModumateObjectInstance*
 	auto removeObjectDelta = MakeShared<FMOIDelta>();
 	removeObjectDelta->AddCreateDestroyState(GroupObject->GetStateData(), EMOIDeltaType::Destroy);
 	OutDeltas.Add(removeObjectDelta);
-
-	// Create new graph elements with old IDs:
-	for (auto& createGraphDelta: createGraphDeltas)
-	{
-		createGraphDelta.GraphID = parentGroup;
-		OutDeltas.Add(MakeShared<FGraph3DDelta>(MoveTemp(createGraphDelta)));
-	}
+	
+	FModumateObjectDeltaStatics::MergeGraphToCurrentGraph(Doc, graph, NextID, OutDeltas);
 
 	return true;
 }

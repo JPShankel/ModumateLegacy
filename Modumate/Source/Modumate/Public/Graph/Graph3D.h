@@ -104,7 +104,7 @@ public:
 	static void CloneFromGraph(FGraph3D &tempGraph, const FGraph3D &graph);
 
 	bool Load(const FGraph3DRecord* InGraph3DRecord);
-	void Save(FGraph3DRecord* OutGraph3DRecord);
+	void Save(FGraph3DRecord* OutGraph3DRecord) const;
 
 	void SaveSubset(const TSet<int32> InObjectIDs, FGraph3DRecord* OutGraph3DRecord) const;
 	void GetDeltasForPaste(const FGraph3DRecord* InGraph3DRecord, const FVector& InOffset, int32 &NextID, TArray<FGraph3DDelta>& OutDeltas, TMap<int32, TArray<int32>>& OutCopiedToPastedIDs, bool bIsPreview);
