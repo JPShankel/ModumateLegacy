@@ -39,4 +39,8 @@ public:
 
 	// Duplicate a set of groups.
 	static void DuplicateGroups(const UModumateDocument* Doc, const TSet<int32>& GroupIDs, int32& NextID, TArray<TPair<bool, FDeltaPtr>>& OutDeltas);
+
+	// Transform all positions for groups.
+	static void GetDeltasForGroupTransforms(UModumateDocument* Doc, const TMap<int32, FVector>& OriginalGroupVertexTranslations, const FTransform transform,
+		TArray<FDeltaPtr>& OutDeltas);
 };

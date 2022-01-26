@@ -112,7 +112,12 @@ bool URotateObjectTool::EndUse()
 {
 	if (IsInUse())
 	{
-		ReleaseObjectsAndApplyDeltas();
+		FQuat userQuat = CalcToolAngle();
+		const FTransform objectTransform(userQuat, AnchorPoint - userQuat.RotateVector(AnchorPoint));
+		TArray<FDeltaPtr> groupDeltas;
+		FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(Controller->GetDocument(), OriginalGroupVertexPositions, objectTransform, groupDeltas);
+
+		ReleaseObjectsAndApplyDeltas(&groupDeltas);
 	}
 
 	return Super::EndUse();
@@ -159,16 +164,22 @@ void URotateObjectTool::ApplyRotation()
 	auto dimensionActor = Cast<APendingAngleActor>(GameInstance->DimensionManager->GetDimensionActor(PendingSegmentID));
 	dimensionActor->CurrentAngle = userAngle;
 
+	const FTransform objectTransform(userQuat, AnchorPoint - userQuat.RotateVector(AnchorPoint));
+
 	TMap<int32, FTransform> objectInfo;
 	for (auto& kvp : OriginalTransforms)
 	{
-		objectInfo.Add(kvp.Key, FTransform(userQuat * kvp.Value.GetRotation(), AnchorPoint + userQuat.RotateVector(kvp.Value.GetTranslation() - AnchorPoint)));
+		objectInfo.Add(kvp.Key, kvp.Value * objectTransform);
 	}
 
-	FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Controller->GetDocument(), Controller->GetWorld(), true);
+	TArray<FDeltaPtr> groupDeltas;
+	FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(Controller->GetDocument(), OriginalGroupVertexPositions, objectTransform, groupDeltas);
+
+
+	FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Controller->GetDocument(), Controller->GetWorld(), true, &groupDeltas);
 }
 
-FQuat URotateObjectTool::CalcToolAngle()
+FQuat URotateObjectTool::CalcToolAngle() const
 {
 	if (!Controller->EMPlayerState->SnappedCursor.Visible)
 	{
@@ -236,15 +247,19 @@ bool URotateObjectTool::HandleInputNumber(double n)
 	float radians = FMath::DegreesToRadians(static_cast<float>(n));
 	FQuat deltaRot(FVector::UpVector, radians * clockwiseScale);
 
+	const FTransform objectTransform(deltaRot, AnchorPoint - deltaRot.RotateVector(AnchorPoint));
+
+	TArray<FDeltaPtr> groupDeltas;
+	FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(Controller->GetDocument(), OriginalGroupVertexPositions, objectTransform, groupDeltas);
+
 	TMap<int32, FTransform> objectInfo;
 	for (auto& kvp : OriginalTransforms)
 	{
-		objectInfo.Add(kvp.Key, FTransform(deltaRot * kvp.Value.GetRotation(), AnchorPoint + deltaRot.RotateVector(kvp.Value.GetTranslation() - AnchorPoint)));
+		objectInfo.Add(kvp.Key, kvp.Value * objectTransform);
 	}
-	FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Controller->GetDocument(), Controller->GetWorld(), false);
+	FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Controller->GetDocument(), Controller->GetWorld(), false, &groupDeltas);
 
 	ReleaseSelectedObjects();
 
 	return PostEndOrAbort();
 }
-

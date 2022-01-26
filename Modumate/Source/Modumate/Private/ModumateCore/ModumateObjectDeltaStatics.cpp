@@ -965,3 +965,21 @@ void FModumateObjectDeltaStatics::MergeGraphToCurrentGraph(UModumateDocument* Do
 	}
 
 }
+
+void FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(UModumateDocument* Doc, const TMap<int32, FVector>& OriginalGroupVertexTranslations, const FTransform transform, TArray<FDeltaPtr>& OutDeltas)
+{
+	for (const auto& kvp : OriginalGroupVertexTranslations)
+	{
+		int id = kvp.Key;
+		int32 graphId = Doc->FindGraph3DByObjID(id);
+		FGraph3D* graph = Doc->GetVolumeGraph(graphId);
+		const FGraph3DVertex* vertex = graph ? graph->GetVertices().Find(id) : nullptr;
+		if (ensure(vertex))
+		{
+			FGraph3DDelta delta(graphId);
+			FVector position = kvp.Value;
+			delta.VertexMovements.Add(id, FModumateVectorPair(position, transform.TransformPositionNoScale(position)));
+			OutDeltas.Add(MakeShared<FGraph3DDelta>(delta));
+		}
+	}
+}

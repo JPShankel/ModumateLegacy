@@ -95,7 +95,7 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 			continue;
 		}
 
-		OriginalGroupVertexTransforms.Add(id, obj->GetWorldTransform());
+		OriginalGroupVertexPositions.Add(id, obj->GetWorldTransform().GetTranslation());
 	}
 
 	int32 nextID = doc->GetNextAvailableID();
@@ -124,7 +124,7 @@ void FSelectedObjectToolMixin::ReleaseSelectedObjects()
 	}
 
 	OriginalTransforms.Empty();
-	OriginalGroupVertexTransforms.Empty();
+	OriginalGroupVertexPositions.Empty();
 	OriginalSelectedObjects.Empty();
 	OriginalSelectedGroupObjects.Empty();
 	GroupCopyDeltas.Empty();

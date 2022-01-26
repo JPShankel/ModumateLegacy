@@ -14,7 +14,7 @@ protected:
 	TSet<int32> OriginalSelectedObjects;
 	TSet<int32> OriginalSelectedGroupObjects;
 	TMap<int32, FTransform> OriginalTransforms;
-	TMap<int32, FTransform> OriginalGroupVertexTransforms;
+	TMap<int32, FVector> OriginalGroupVertexPositions;
 	TWeakObjectPtr<AEditModelPlayerController> ControllerPtr;
 
 	bool bPaste = false;

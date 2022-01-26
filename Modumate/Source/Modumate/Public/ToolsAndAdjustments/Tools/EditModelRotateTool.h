@@ -45,8 +45,9 @@ public:
 	virtual bool EndUse() override;
 	virtual bool AbortUse() override;
 	virtual bool PostEndOrAbort() override;
-	void ApplyRotation();
-	FQuat CalcToolAngle();
 	virtual bool FrameUpdate() override;
 	virtual bool HandleInputNumber(double n) override;
+
+	void ApplyRotation();
+	FQuat CalcToolAngle() const;
 };
