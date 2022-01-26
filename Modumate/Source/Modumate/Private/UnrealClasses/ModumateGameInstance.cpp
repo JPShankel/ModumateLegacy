@@ -500,10 +500,6 @@ void UModumateGameInstance::RegisterAllCommands()
 			delta->AddMutationState(ob, oldStateData, newStateData);
 			doc->ApplyDeltas({ delta }, GetWorld());
 		}
-		else if (ob && action == TEXT("setcolor"))
-		{
-			doc->set_moi_property(ob->ID, TEXT("HexColor"), color);
-		}
 		
 		doc->UpdateWebMOIs(EObjectType::OTDesignOption);
 

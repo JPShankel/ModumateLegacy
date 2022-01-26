@@ -33,8 +33,7 @@ enum class EWebMOIPropertyType : uint8
 	text,
 	boolean,
 	color,
-	radio,
-	dropdown
+	moiId
 };
 
 USTRUCT()
@@ -50,6 +49,9 @@ struct MODUMATE_API FWebMOIProperty
 
 	UPROPERTY()
 	FString Value;
+
+	UPROPERTY()
+	TArray<FString> ValueArray;
 
 	UPROPERTY()
 	FString DisplayName;
@@ -74,6 +76,9 @@ struct MODUMATE_API FWebMOI
 
 	UPROPERTY()
 	EObjectType Type = EObjectType::OTNone;
+
+	UPROPERTY()
+	bool isVisible = true;
 
 	UPROPERTY()
 	TMap<FString,FWebMOIProperty> Properties;
@@ -165,7 +170,8 @@ public:
 	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, void*& OutStructPtr);
 	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const;
 
-	bool GetWebMOI(FString& OutJson) const;
+	bool ToWebMOI(FString& OutJson) const;
+	bool FromWebMOI(const FString& InJson);
 
 protected:
 

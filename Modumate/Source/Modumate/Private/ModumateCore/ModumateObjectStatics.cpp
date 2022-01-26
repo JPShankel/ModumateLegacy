@@ -1320,7 +1320,7 @@ void UModumateObjectStatics::GetWebMOIArrayForObjects(const TArray<const AModuma
 	for (const auto* ob : Objects)
 	{
 		FString webMoi;
-		if (ob && ob->GetWebMOI(webMoi))
+		if (ob && ob->ToWebMOI(webMoi))
 		{
 			if (bWantComma)
 			{

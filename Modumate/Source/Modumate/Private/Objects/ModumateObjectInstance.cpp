@@ -704,7 +704,79 @@ bool AModumateObjectInstance::GetInstanceDataStruct(UScriptStruct*& OutStructDef
 	return bSuccess;
 }
 
-bool AModumateObjectInstance::GetWebMOI(FString& OutJson) const
+bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
+{
+	FWebMOI webMOI;
+	if (!ReadJsonGeneric<FWebMOI>(InJson, &webMOI))
+	{
+		return false;
+	}
+
+	UScriptStruct* structDef=nullptr;
+	void* structPtr=nullptr;
+	if (!GetInstanceDataStruct(structDef, structPtr))
+	{
+		return false;
+	}
+
+	StateData.DisplayName = webMOI.DisplayName;
+	StateData.ParentID = webMOI.Parent;
+	bVisible = webMOI.isVisible;
+
+	for (TFieldIterator<FProperty> it(structDef); it; ++it)
+	{
+		FWebMOIProperty* moiProp = webMOI.Properties.Find(it->GetName());
+		if (moiProp == nullptr || moiProp->ValueArray.Num()==0)
+		{
+			continue;
+		}
+
+		FStrProperty* strProp = CastField<FStrProperty>(*it);
+		if (strProp != nullptr)
+		{
+			strProp->SetPropertyValue_InContainer(structPtr,moiProp->ValueArray[0]);
+			continue;
+		}
+
+		FBoolProperty* boolProp = CastField<FBoolProperty>(*it);
+		if (boolProp != nullptr)
+		{
+			boolProp->SetPropertyValue_InContainer(structPtr, moiProp->ValueArray[0].Equals(TEXT("true")));
+			continue;
+		}
+
+		FNumericProperty* numProp = CastField<FNumericProperty>(*it);
+		if (numProp != nullptr)
+		{
+			numProp->SetIntPropertyValue(structPtr, static_cast<int64>(FCString::Atoi(*moiProp->ValueArray[0])));
+			continue;
+		}
+
+		FArrayProperty* arrayProp = CastField<FArrayProperty>(*it);
+		if (arrayProp != nullptr)
+		{
+			const void* propAddr = arrayProp->ContainerPtrToValuePtr<void>(structPtr);
+			FScriptArrayHelper arrayHelp(arrayProp, propAddr);
+			arrayHelp.EmptyAndAddValues(moiProp->ValueArray.Num());
+
+			const FIntProperty* innerPropInt = CastField<FIntProperty>(arrayProp->Inner);
+			if (innerPropInt != nullptr)
+			{
+				int32* rawPtr = reinterpret_cast<int32*>(arrayHelp.GetRawPtr());
+				for (int32 i = 0; i < moiProp->ValueArray.Num(); ++i)
+				{
+					rawPtr[i] = FCString::Atoi(*moiProp->ValueArray[i]);
+				}
+			}
+		}
+	}
+
+	UpdateStateDataFromObject();
+
+	return true;
+}
+
+bool AModumateObjectInstance::ToWebMOI(FString& OutJson) const
 {
 	// Get common data members
 	FWebMOI webMOI;
@@ -717,24 +789,68 @@ bool AModumateObjectInstance::GetWebMOI(FString& OutJson) const
 	// Get custom data
 	UScriptStruct* structDef;
 	const void* structPtr;
-	if (GetInstanceDataStruct(structDef, structPtr))
+	if (!GetInstanceDataStruct(structDef, structPtr))
 	{
-		for (TFieldIterator<FProperty> it(structDef); it; ++it)
+		return 	WriteJsonGeneric<FWebMOI>(OutJson, &webMOI);
+	}
+
+	for (TFieldIterator<FProperty> it(structDef); it; ++it)
+	{
+		// MOI subclasses add properties to WebProperties on construction with type and display name info
+		// Properties not included in this map are not visible to the web
+		const FWebMOIProperty* formProp = WebProperties.Find(it->GetName());
+		if (formProp == nullptr)
 		{
-			// TODO: initially we only support string properties
-			FStrProperty* prop = CastField<FStrProperty>(*it);
-			if (prop != nullptr)
+			continue;
+		}
+
+		FWebMOIProperty webProp = *formProp;
+				
+		FStrProperty* strProp = CastField<FStrProperty>(*it);
+		if (strProp != nullptr)
+		{
+			webProp.Value = strProp->GetPropertyValue_InContainer(structPtr);
+			webProp.ValueArray.Add(webProp.Value);
+			webMOI.Properties.Add(webProp.Name, webProp);
+			continue;
+		}
+
+		FBoolProperty* boolProp = CastField<FBoolProperty>(*it);
+		if (boolProp != nullptr)
+		{
+			webProp.Value = boolProp->GetPropertyValue_InContainer(structPtr) ? TEXT("true") : TEXT("false");
+			webProp.ValueArray.Add(webProp.Value);
+			webMOI.Properties.Add(webProp.Name, webProp);
+			continue;
+		}
+
+		FNumericProperty* numProp = CastField<FNumericProperty>(*it);
+		if (numProp != nullptr)
+		{
+			webProp.Value = FString::Printf(TEXT("%d"), numProp->GetSignedIntPropertyValue(structPtr));
+			webProp.ValueArray.Add(webProp.Value);
+			webMOI.Properties.Add(webProp.Name, webProp);
+			continue;
+		}
+
+		FArrayProperty* arrayProp = CastField<FArrayProperty>(*it);
+		if (arrayProp != nullptr)
+		{
+			const void* propAddr = arrayProp->ContainerPtrToValuePtr<void>(structPtr);
+			FScriptArrayHelper arrayHelp(arrayProp, propAddr);
+			int32 numElements = arrayHelp.Num();
+
+			if (arrayProp->StaticClass() == FIntProperty::StaticClass())
 			{
-				// MOI subclasses add properties to WebProperties on construction with type and display name info
-				// Properties not included in this map are not visible to the web
-				const FWebMOIProperty* formProp = WebProperties.Find(it->GetName());
-				if (formProp != nullptr)
+				const int32* intArray = reinterpret_cast<int32*>(arrayHelp.GetRawPtr());
+				for (int32 i = 0; i < numElements; ++i)
 				{
-					FWebMOIProperty webProp = *formProp;
-					webProp.Value = prop->GetPropertyValue_InContainer(structPtr);
-					webMOI.Properties.Add(webProp.Name, webProp);
+					FString value = FString::Printf(TEXT("%d"), intArray[i]);
+					webProp.ValueArray.AddUnique(value);
 				}
 			}
+			webMOI.Properties.Add(webProp.Name, webProp);
+			continue;
 		}
 	}
 

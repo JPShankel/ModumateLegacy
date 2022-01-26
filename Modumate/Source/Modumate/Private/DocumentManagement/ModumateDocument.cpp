@@ -480,6 +480,8 @@ bool UModumateDocument::DeleteObjectImpl(AModumateObjectInstance *ObjToDelete)
 			DeltaAffectedObjects.FindOrAdd(EMOIDeltaType::Destroy).Add(ObjToDelete->ID);
 		}
 
+		UpdateWebMOIs(ObjToDelete->GetObjectType());
+
 		return true;
 	}
 
@@ -495,6 +497,7 @@ bool UModumateDocument::RestoreObjectImpl(AModumateObjectInstance *obj)
 		ObjectsByID.Add(obj->ID, obj);
 		ObjectsByType.FindOrAdd(obj->GetObjectType()).Add(obj->ID);
 		obj->RestoreMOI();
+		UpdateWebMOIs(obj->GetObjectType());
 
 		return true;
 	}
@@ -774,6 +777,7 @@ bool UModumateDocument::ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World)
 			if (ensureAlways(MOI))
 			{
 				MOI->SetStateData(targetState);
+				UpdateWebMOIs(MOI->GetObjectType());
 			}
 			else
 			{
@@ -4408,37 +4412,24 @@ void UModumateDocument::drawing_get_clicked(const FString& InRequest)
 	}
 }
 
-void UModumateDocument::set_moi_property(const int32 ID, const FString& PropertyName, const FString& Value)
+void UModumateDocument::string_to_inches(const FString& InRequest)
 {
-	AModumateObjectInstance* ob = GetObjectById(ID);
-	UScriptStruct* structDef;
-	void* structPtr;
+	FDrawingDesignerGenericRequest req;
 
-	// Fetch the custom data definition and pointer
-	if (ob && ob->GetInstanceDataStruct(structDef,structPtr))
+	if (req.ReadJson(InRequest))
 	{
-		// Preserve original state data for use in delta
-		FMOIStateData originalStateData = ob->GetStateData();
+		if (req.requestType != EDrawingDesignerRequestType::stringToInches) return;
+		FDrawingDesignerStringToInchesResponse rsp;
 
-		// Set property value on MOI custom data struct
-		for (TFieldIterator<FProperty> it(structDef); it; ++it)
-		{
-			// TODO: we only support string properties for the moment
-			auto* prop = CastField<FStrProperty>(*it);
-			if (prop && prop->GetName() == PropertyName)
-			{
-				prop->SetPropertyValue_InContainer(structPtr, Value);
-				ob->UpdateStateDataFromObject();
-				break;
-			}
-		}
-
-		// Object has been put into destination state, but we still have to apply it as a delta for undo/redo and reflection
-		auto delta = MakeShared<FMOIDelta>();
-		delta->AddMutationState(ob, originalStateData, ob->GetStateData());
-		ApplyDeltas({ delta }, GetWorld());
+		FString jsonResponse;
+		rsp.request = req;
+		const FDocumentSettings& settings = GetCurrentSettings();
+		const FModumateFormattedDimension formattedDim = UModumateDimensionStatics::StringToSettingsFormattedDimension(req.data, settings);
+		rsp.answer = formattedDim.Centimeters * UModumateDimensionStatics::CentimetersToInches;
+		rsp.WriteJson(jsonResponse);
+		
+		DrawingSendResponse(TEXT("onGenericResponse"), jsonResponse);
 	}
-	UpdateWebMOIs(EObjectType::OTDesignOption);
 }
 
 void UModumateDocument::UpdateWebSelectedObjects() const
@@ -4502,44 +4493,24 @@ void UModumateDocument::delete_moi(int32 ID)
 	}
 }
 
-void UModumateDocument::set_design_option_visible(int32 ID, bool bVisible)
-{
-	// TODO: design option visibility to be tracked in 3d views
-	set_moi_property(ID, TEXT("bShowingOption"), bVisible ? TEXT("true") : TEXT("false"));
-}
-
-void UModumateDocument::set_moi_display_name(int32 ID, const FString& Name)
+void UModumateDocument::update_moi(int32 ID, const FString& MOIData)
 {
 	AModumateObjectInstance* moi = GetObjectById(ID);
-	if (moi != nullptr)
+	if (moi == nullptr)
 	{
-		auto delta = MakeShared<FMOIDelta>();
-		FMOIStateData newData = moi->GetStateData();
-		newData.DisplayName = Name;
-		delta->AddMutationState(moi, moi->GetStateData(), newData);
-		ApplyDeltas({ delta }, GetWorld());
-		UpdateWebMOIs(moi->GetObjectType());
+		return;
 	}
-}
+	
+	// Preserve state data, alter MOI, make delta to new state, restore state, apply delta
+	moi->UpdateStateDataFromObject();
+	FMOIStateData stateData = moi->GetStateData();
+	moi->FromWebMOI(MOIData);
+	auto delta = MakeShared<FMOIDelta>();
+	delta->AddMutationState(moi, stateData, moi->GetStateData());
+	moi->SetStateData(stateData);
 
-void UModumateDocument::string_to_inches(const FString& InRequest)
-{
-	FDrawingDesignerGenericRequest req;
-
-	if (req.ReadJson(InRequest))
-	{
-		if (req.requestType != EDrawingDesignerRequestType::stringToInches) return;
-		FDrawingDesignerStringToInchesResponse rsp;
-
-		FString jsonResponse;
-		rsp.request = req;
-		const FDocumentSettings& settings = GetCurrentSettings();
-		const FModumateFormattedDimension formattedDim = UModumateDimensionStatics::StringToSettingsFormattedDimension(req.data, settings);
-		rsp.answer = formattedDim.Centimeters * UModumateDimensionStatics::CentimetersToInches;
-		rsp.WriteJson(jsonResponse);
-		
-		DrawingSendResponse(TEXT("onGenericResponse"), jsonResponse);
-	}
+	ApplyDeltas({ delta }, GetWorld());
+	UpdateWebMOIs(moi->GetObjectType());
 }
 
 #undef LOCTEXT_NAMESPACE

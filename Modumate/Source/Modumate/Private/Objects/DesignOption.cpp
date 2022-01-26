@@ -13,6 +13,16 @@ AMOIDesignOption::AMOIDesignOption()
 	prop.Type = EWebMOIPropertyType::color;
 	prop.DisplayName = TEXT("Color");
 	WebProperties.Add(prop.Name,prop);
+
+	prop.Name = TEXT("Groups");
+	prop.Type = EWebMOIPropertyType::moiId;
+	prop.DisplayName = TEXT("Groups");
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("SubOptions");
+	prop.Type = EWebMOIPropertyType::moiId;
+	prop.DisplayName = TEXT("Sub-Options");
+	WebProperties.Add(prop.Name, prop);
 }
 
 TSharedPtr<FMOIDelta> AMOIDesignOption::MakeCreateDelta(UModumateDocument* Doc, const FString& DisplayName, int32 ParentID)
@@ -22,6 +32,7 @@ TSharedPtr<FMOIDelta> AMOIDesignOption::MakeCreateDelta(UModumateDocument* Doc, 
 	FMOIStateData stateData(Doc->GetNextAvailableID(), EObjectType::OTDesignOption);
 	stateData.ParentID = ParentID;
 	stateData.DisplayName = DisplayName;
+	optionData.HexColor = TEXT("#000000");
 	auto delta = MakeShared<FMOIDelta>();
 	stateData.CustomData.SaveStructData<FMOIDesignOptionData>(optionData);
 	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
@@ -45,8 +56,17 @@ TSharedPtr<FMOIDelta> AMOIDesignOption::MakeAddRemoveGroupDelta(UModumateDocumen
 	FMOIStateData newData = oldData;
 	FMOIDesignOptionData optionData;
 	oldData.CustomData.LoadStructData(optionData);
-	optionData.Groups.AddUnique(GroupID);
-	oldData.CustomData.SaveStructData<FMOIDesignOptionData>(optionData);
+
+	if (bAdd)
+	{
+		optionData.Groups.AddUnique(GroupID);
+	}
+	else
+	{
+		optionData.Groups.Remove(GroupID);
+	}
+
+	newData.CustomData.SaveStructData<FMOIDesignOptionData>(optionData);
 
 	auto delta = MakeShared<FMOIDelta>();
 	delta->AddMutationState(option, oldData, newData);
