@@ -45,13 +45,16 @@ bool UGroupTool::Activate()
 		}
 	}
 
+	const auto& selectedGroups = emPlayerState->SelectedGroupObjects;
+
 	TArray<FDeltaPtr> deltas;
 
-	if (massingObjects.Num() > 0)
+	if (massingObjects.Num() + selectedGroups.Num() > 0)
 	{
 		int32 nextID = doc->GetNextAvailableID();
 		int32 newGroupID = nextID++;
-		int32 oldGroupID = doc->FindGraph3DByObjID((*massingObjects.begin())->ID);
+
+		int32 oldGroupID = doc->GetActiveVolumeGraphID();
 		FMOIStateData stateData(newGroupID, EObjectType::OTMetaGraph, oldGroupID);
 		stateData.CustomData.SaveStructData<FMOIMetaGraphData>(FMOIMetaGraphData());
 
@@ -93,6 +96,15 @@ bool UGroupTool::Activate()
 		{
 			createGraphDelta.GraphID = newGroupID;
 			deltas.Add(MakeShared<FGraph3DDelta>(MoveTemp(createGraphDelta)) );
+		}
+
+		for (auto& childGroup: selectedGroups)
+		{
+			FMOIStateData newState(childGroup->GetStateData());
+			newState.ParentID = newGroupID;
+			auto subgroupDelta = MakeShared<FMOIDelta>();
+			subgroupDelta->AddMutationState(childGroup, childGroup->GetStateData(), newState);
+			deltas.Add(subgroupDelta);
 		}
 
 		bRetVal = doc->ApplyDeltas(deltas, GetWorld());

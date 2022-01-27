@@ -937,7 +937,7 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 		VolumeGraphs.Add(graphID, MakeShared<FGraph3D>(graphID));
 		return;
 	}
-	else if (Delta.DeltaType == EGraph3DDeltaType::Remove && ensure(VolumeGraphs.Contains(graphID)) )
+	else if (Delta.DeltaType == EGraph3DDeltaType::Remove && ensure(VolumeGraphs.Contains(graphID)) && ensure(graphID != GetRootVolumeGraphID()) )
 	{
 		const auto& allObjects = VolumeGraphs[graphID]->GetAllObjects();
 		// Deleted graphs should be empty.
@@ -945,6 +945,10 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 		for (const auto& item: allObjects)
 		{
 			GraphElementsToGraph3DMap.Remove(item.Key);
+		}
+		if (graphID == GetActiveVolumeGraphID())
+		{
+			SetActiveVolumeGraphID(GetRootVolumeGraphID());
 		}
 		VolumeGraphs.Remove(graphID);
 		return;
