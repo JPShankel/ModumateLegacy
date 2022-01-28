@@ -189,32 +189,14 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 	SceneProcMaterialMap.Empty();
 	return bSuccess;
 }
- 
+
 bool FDrawingDesignerRenderControl::GetMoiFromView(FVector2D uv, FDrawingDesignerView& view, int32& OutMoiId)
 {
-	const AModumateObjectInstance* moi = Doc->GetObjectById(view.moi_id);
-	OutMoiId = INDEX_NONE;
-
-	if (!ensureAlways(moi) || !ensureAlways(moi->GetObjectType() == EObjectType::OTCutPlane))
-	{
+	FVector2D size;
+	FVector xaxis, yaxis, zaxis, origin;
+	if (!GetViewAxis(view, xaxis, yaxis, zaxis, origin, size)) {
 		return false;
 	}
-
-	const AMOICutPlane* cutPlane = Cast<const AMOICutPlane>(moi);
-	FVector corners[4];
-	for (int32 c = 0; c < 4; ++c)
-	{
-		corners[c] = cutPlane->GetCorner(c);
-	}
-
-
-	const float planeWidth = (corners[1] - corners[0]).Size();
-	const float planeHeight = (corners[2] - corners[1]).Size();
-	const FVector xaxis = (corners[0] - corners[1]).GetSafeNormal();
-	const FVector yaxis = (corners[1] - corners[2]).GetSafeNormal();
-	const FVector origin = corners[2];
-	const FVector zaxis(xaxis ^ yaxis);
-	FVector2D size; size.X = planeWidth; size.Y = planeHeight;
 
 	//***********************************//
 	FVector worldStart = UModumateGeometryStatics::Deproject2DPoint(uv * size, xaxis, yaxis, origin);
@@ -253,6 +235,33 @@ void FDrawingDesignerRenderControl::AddSceneLines(const FVector& ViewDirection, 
 	}
 
 	Render->AddLines(sceneLines);
+}
+
+bool FDrawingDesignerRenderControl::GetViewAxis(FDrawingDesignerView& view, FVector& outXAxis, FVector& outYAxis, FVector& outZAxis, FVector& outOrigin, FVector2D& outSize)
+{
+	const AModumateObjectInstance* moi = Doc->GetObjectById(view.moi_id);
+
+	if (!ensureAlways(moi) || !ensureAlways(moi->GetObjectType() == EObjectType::OTCutPlane))
+	{
+		return false;
+	}
+
+	const AMOICutPlane* cutPlane = Cast<const AMOICutPlane>(moi);
+	FVector corners[4];
+	for (int32 c = 0; c < 4; ++c)
+	{
+		corners[c] = cutPlane->GetCorner(c);
+	}
+
+
+	outSize.X = (corners[1] - corners[0]).Size();
+	outSize.Y = (corners[2] - corners[1]).Size();
+	outXAxis = (corners[0] - corners[1]).GetSafeNormal();
+	outYAxis = (corners[1] - corners[2]).GetSafeNormal();
+	outOrigin = corners[2];
+	outZAxis = (outXAxis ^ outYAxis);
+
+	return true;
 }
 
 void FDrawingDesignerRenderControl::SwapPortalMaterials(AMOICutPlane* CutPlane)
@@ -488,44 +497,74 @@ void FDrawingDesignerRenderControl::RestorePortalMaterials()
 	}
 }
 
+
 void FDrawingDesignerRenderControl::GetSnapPoints(TMap<FString, FDrawingDesignerSnap>& OutSnapPoints)
 {
-	TArray<AModumateObjectInstance*> snapObjects = Doc->GetObjectsOfType(EObjectType::OTWallSegment);
+	//Derive our cut plane
 	const FVector zAxis(CachedXAxis ^ CachedYAxis);
-	static const FBox2D unitBox(FVector2D::ZeroVector, FVector2D::UnitVector);
-
 	const FPlane cutPlane(CachedOrigin, zAxis);
+	
+	//Mass Graph Vertices
+	FGraph3D* graph = Doc->GetVolumeGraph();
+	auto& vertices = graph->GetVertices();
+	for (auto& kvp : vertices) {
+		const FGraph3DVertex& val = kvp.Value;
 
-	TArray<FStructurePoint> snapPoints;
-
-	for (auto* moi : snapObjects)
-	{
-		TArray<FStructurePoint> objectSnapPoints;
-		TArray<FStructureLine> objectSnapLines;
-		if (moi->IsCollisionEnabled())
+		if ((cutPlane.PlaneDot(val.Position) > -PLANAR_DOT_EPSILON))
 		{
-			moi->RouteGetStructuralPointsAndLines(objectSnapPoints, objectSnapLines, true, false, cutPlane);
-			snapPoints.Append(MoveTemp(objectSnapPoints));
+			FVector2D projectedPoint(UModumateGeometryStatics::ProjectPoint2D(val.Position, CachedXAxis, CachedYAxis, CachedOrigin));
+			FVector2D scaledPoint(projectedPoint / CachedSize);
+			FString snapId = FString::FromInt(INDEX_NONE) + TEXT(",") + FString::FromInt(kvp.Key);
+			FDrawingDesignerSnap newSnap;
+			newSnap.x = scaledPoint.X; newSnap.y = scaledPoint.Y;
+			newSnap.id = snapId;
+
+			OutSnapPoints.Add(snapId, newSnap);
 		}
 	}
 
-	int32 moiID = MOD_ID_NONE;
-	for (const auto& snap : snapPoints)
-	{
-		if (snap.ObjID != moiID)
+	//MOI-Based bounding points
+	TArray<AModumateObjectInstance*> snapObjects = Doc->GetObjectsOfType(
 		{
-			moiID = snap.ObjID;
-		}
+		EObjectType::OTWallSegment,
+		EObjectType::OTRailSegment,
+		EObjectType::OTFloorSegment,
+		EObjectType::OTRoofFace,
+		EObjectType::OTDoor,
+		EObjectType::OTWindow,
+		EObjectType::OTCountertop,
+		EObjectType::OTCeiling,
+		//TODO: These are commented out as a 'They're not done yet'. -JN
+		//EObjectType::OTFurniture, 
+		//EObjectType::OTCabinet,
+		//EObjectType::OTStaircase,
+		//EObjectType::OTTrim,
+		//EObjectType::OTMullion,
+		//EObjectType::OTPointHosted,
+		//EObjectType::OTEdgeHosted
+		});
 
-		FVector2D projectedPoint(UModumateGeometryStatics::ProjectPoint2D(snap.Point, CachedXAxis, CachedYAxis, CachedOrigin));
-		FVector2D scaledPoint(projectedPoint / CachedSize);
-		if (unitBox.IsInside(scaledPoint))
-		{
-			FDrawingDesignerSnap newSnap;
-			newSnap.x = scaledPoint.X; newSnap.y = scaledPoint.Y;
-			FString snapId = FString::FromInt(moiID) + TEXT(",") + FString::FromInt(snap.CP1);
-			newSnap.id = snapId;
-			OutSnapPoints.Add(snapId, newSnap);
+	for (AModumateObjectInstance* moi : snapObjects)
+	{
+		TArray<FVector> bounds;
+		if (moi->GetBoundingPoints(bounds)) {
+			for (int i = 0; i < bounds.Num(); i++)
+			{
+				auto p = bounds[i];
+				if ((cutPlane.PlaneDot(p) > -PLANAR_DOT_EPSILON))
+				{
+					FVector2D projectedPoint(UModumateGeometryStatics::ProjectPoint2D(p, CachedXAxis, CachedYAxis, CachedOrigin));
+					FVector2D scaledPoint(projectedPoint / CachedSize);
+					FString snapId = FString::FromInt(moi->ID) + TEXT(",") + FString::FromInt(i);
+					FDrawingDesignerSnap newSnap;
+					newSnap.x = scaledPoint.X; newSnap.y = scaledPoint.Y;
+					newSnap.id = snapId;
+
+					OutSnapPoints.Add(snapId, newSnap);
+				}
+			}
+
 		}
+		
 	}
 }

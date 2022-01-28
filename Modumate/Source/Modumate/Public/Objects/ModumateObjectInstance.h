@@ -164,6 +164,8 @@ public:
 	virtual void SetIsDynamic(bool bIsDynamic) { }
 	virtual bool GetIsDynamic() const { return false; }
 
+	virtual bool GetBoundingPoints(TArray<FVector>& outBounding) const;
+
 	// Quantity estimates
 	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const { return true; }
 

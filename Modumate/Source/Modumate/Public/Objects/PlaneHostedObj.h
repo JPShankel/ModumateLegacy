@@ -82,6 +82,8 @@ public:
 	virtual void GetDrawingDesignerItems(const FVector& viewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines,
 		float MinLength = 0.0f) const override;
 
+	virtual bool GetBoundingPoints(TArray<FVector>& outBounding)  const override;
+
 protected:
 	virtual void PostLoadInstanceData() override;
 	virtual void UpdateQuantities() override;

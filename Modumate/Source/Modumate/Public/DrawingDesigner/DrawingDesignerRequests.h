@@ -3,7 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "ModumateCore/PrettyJSONWriter.h"
-
+#include "Objects/MOIStructureData.h"
 #include "DrawingDesigner/DrawingDesignerView.h"
 #include "DrawingDesignerRequests.generated.h"
 
@@ -78,4 +78,3 @@ struct MODUMATE_API FDrawingDesignerStringToInchesResponse
 		return ReadJsonGeneric<FDrawingDesignerStringToInchesResponse>(InJson, this);
 	}
 };
-

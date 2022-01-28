@@ -46,6 +46,7 @@ AMOIPortal::AMOIPortal()
 	, CachedWorldRot(ForceInit)
 	, CachedThickness(0.0f)
 	, bHaveValidTransform(false)
+	, CachedBounds(ForceInitToZero)
 {
 }
 
@@ -279,6 +280,22 @@ bool AMOIPortal::SetRelativeTransform(const FVector2D &InRelativePos, const FQua
 	CachedWorldPos += offsetDist * parentObj->GetNormal();
 	portalActor->SetActorLocationAndRotation(CachedWorldPos, CachedWorldRot);
 	bHaveValidTransform = true;
+
+
+	ACompoundMeshActor* cma = Cast<ACompoundMeshActor>(portalActor);
+	if (cma == nullptr)
+	{
+		return false;
+	}
+	float lateralInvertFactor = InstanceData.bLateralInverted ? -1.0f : 1.0f;
+	float normalInvertFactor = InstanceData.bNormalInverted ? -1.0f : 1.0f;
+	auto size = cma->CachedPartLayout.PartSlotInstances[0].Size;
+	size.X *= lateralInvertFactor;
+	size.Y *= normalInvertFactor;
+	auto rotator = CachedWorldRot;
+	CachedBounds = rotator.RotateVector(size);
+
+
 
 	return true;
 }
@@ -576,6 +593,33 @@ bool AMOIPortal::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) con
 {
 	QuantitiesVisitor.Add(CachedQuantities);
 	return true;
+}
+
+bool AMOIPortal::GetBoundingPoints(TArray<FVector>& outBounding) const
+{
+	auto origin = GetWorldTransform().GetLocation();
+	auto size = CachedBounds;
+
+	outBounding.Reset();
+	
+	TArray<FVector> corner;
+	corner.SetNum(8);
+	//First 4 (on z plane)
+	corner[0].X = origin.X;			 corner[0].Y = origin.Y;		  corner[0].Z = origin.Z;
+	corner[1].X = origin.X + size.X; corner[1].Y = origin.Y;		  corner[1].Z = origin.Z;
+	corner[2].X = origin.X + size.X; corner[2].Y = origin.Y + size.Y; corner[2].Z = origin.Z;
+	corner[3].X = origin.X;			 corner[3].Y = origin.Y + size.Y; corner[3].Z = origin.Z;
+
+	//Second 4(w/ z added in)
+	corner[4].X = origin.X;			 corner[4].Y = origin.Y;		  corner[4].Z = origin.Z + size.Z;
+	corner[5].X = origin.X + size.X; corner[5].Y = origin.Y;		  corner[5].Z = origin.Z + size.Z;
+	corner[6].X = origin.X + size.X; corner[6].Y = origin.Y + size.Y; corner[6].Z = origin.Z + size.Z;
+	corner[7].X = origin.X;			 corner[7].Y = origin.Y + size.Y; corner[7].Z = origin.Z + size.Z;
+
+	outBounding.Append(corner);
+
+	return true;
+
 }
 
 void AMOIPortal::GetDrawingDesignerItems(const FVector& viewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength /*= 0.0f*/) const

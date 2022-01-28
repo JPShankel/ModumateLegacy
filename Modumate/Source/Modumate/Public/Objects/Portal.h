@@ -83,6 +83,8 @@ public:
 
 	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;
 
+	virtual bool GetBoundingPoints(TArray<FVector>& outBounding)  const override;
+
 	UPROPERTY()
 	FMOIPortalData InstanceData;
 
@@ -114,6 +116,7 @@ protected:
 	TArray<FBIMLayerSpec> CachedProxyLayers;
 	FCachedLayerDimsByType CachedLayerDims;
 	bool bHaveValidTransform;
+	FVector CachedBounds;
 
 	UPROPERTY()
 	TArray<AModumateObjectInstance*> CachedParentConnectedMOIs;

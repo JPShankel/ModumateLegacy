@@ -196,7 +196,6 @@ void AMOIPlaneHostedObj::GetStructuralPointsAndLines(TArray<FStructurePoint> &ou
 			FVector cornerMaxB = GetCorner(edgeIdxB + numPlanePoints);
 
 			outPoints.Add(FStructurePoint(cornerMinA, edgeDir, edgeIdxA));
-
 			outLines.Add(FStructureLine(cornerMinA, cornerMinB, edgeIdxA, edgeIdxB));
 			outLines.Add(FStructureLine(cornerMaxA, cornerMaxB, edgeIdxA + numPlanePoints, edgeIdxB + numPlanePoints));
 			outLines.Add(FStructureLine(cornerMinA, cornerMaxA, edgeIdxA, edgeIdxA + numPlanePoints));
@@ -847,6 +846,32 @@ void AMOIPlaneHostedObj::GetDrawingDesignerItems(const FVector& viewDirection, T
 			previous[p] = p1;
 		}
 	}
+}
+
+bool AMOIPlaneHostedObj::GetBoundingPoints(TArray<FVector>& outBounding)  const
+{
+	//Only return points for layerIdx == 0 and layerIdx == layers.Num()-1
+	auto origin = LayerGeometries[0].OriginalPointsA;
+	FVector parentLocation = GetParentObject()->GetLocation();
+
+	const auto& layers = LayerGeometries;
+	
+	auto accumulatePoints = [&](const TArray<FVector>& layerPoints) {
+		const TArray<FVector>& points = layerPoints;
+		const int32 numPoints = points.Num();
+		for (int32 p = 0; p < numPoints; ++p)
+		{
+			FVector p1(points[p] + parentLocation);
+			outBounding.Add(p1);
+		}
+	};
+
+	/* FIRST LAYER */
+	accumulatePoints(layers[0].UniquePointsA);
+	/* LAST LAYER OTHER SIDE */
+	accumulatePoints(layers[layers.Num() - 1].UniquePointsB);
+
+	return true;
 }
 
 void AMOIPlaneHostedObj::UpdateQuantities()

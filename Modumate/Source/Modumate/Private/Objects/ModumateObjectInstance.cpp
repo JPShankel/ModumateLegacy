@@ -678,6 +678,11 @@ bool AModumateObjectInstance::UpdateInstanceData()
 	return bLoadedStructData;
 }
 
+bool AModumateObjectInstance::GetBoundingPoints(TArray<FVector>& outBounding) const
+{
+	return false;
+}
+
 bool AModumateObjectInstance::GetInstanceDataStruct(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 	OutStructDef = nullptr;
