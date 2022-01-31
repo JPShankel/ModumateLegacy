@@ -441,68 +441,75 @@ void UModumateGameInstance::RegisterAllCommands()
 		FString parent = params.GetValue(TEXT("parent"));
 		FString option = params.GetValue(TEXT("option"));
 		FString group = params.GetValue(TEXT("group"));
-		FString name = params.GetValue(TEXT("name"));
-		FString color = params.GetValue(TEXT("color"));
-		FString value = params.GetValue(TEXT("value"));
+		FString fromPos = params.GetValue(TEXT("from"));
+		FString toPos = params.GetValue(TEXT("to"));
 
 		auto* ob = Cast<AMOIDesignOption>(doc->GetObjectById(FCString::Atoi(*option)));
 
-		if (action == TEXT("create"))
+		auto getWebMOI = [](AMOIDesignOption* MOI, FMOIStateData& NewData)
 		{
-			auto delta = AMOIDesignOption::MakeCreateDelta(doc,name,FCString::Atoi(*parent));
-			doc->ApplyDeltas({ delta }, GetWorld());
-		}
-		else if (ob && action == TEXT("destroy"))
+			FString jsonRep;
+			FMOIStateData oldData = MOI->GetStateData();
+			MOI->SetStateData(NewData);
+			MOI->ToWebMOI(jsonRep);
+			MOI->SetStateData(oldData);
+			return jsonRep;
+		};
+		
+		if (action == TEXT("reorder"))
 		{
-			FMOIStateData stateData(ob->ID, EObjectType::OTDesignOption);
-			auto delta = MakeShared<FMOIDelta>();
-			delta->AddCreateDestroyState(stateData, EMOIDeltaType::Destroy);
-			doc->ApplyDeltas({ delta }, GetWorld());
-		}
-		else if (ob && action == TEXT("addgroup") && !group.IsEmpty())
-		{
-			auto delta = AMOIDesignOption::MakeAddRemoveGroupDelta(doc, ob->ID, FCString::Atoi(*group), true);
-			if (delta.IsValid())
+			auto* parentMOI = Cast<AMOIDesignOption>(doc->GetObjectById(FCString::Atoi(*parent)));
+			if (parentMOI == nullptr)
 			{
-				doc->ApplyDeltas({ delta }, GetWorld());
+				return false;
 			}
-		}
-		else if (ob && action == TEXT("removegroup") && !group.IsEmpty())
-		{
-			auto delta = AMOIDesignOption::MakeAddRemoveGroupDelta(doc, ob->ID, FCString::Atoi(*group), false);
-			if (delta.IsValid())
+			int32 fromInt = FCString::Atoi(*fromPos);
+			int32 toInt = FCString::Atoi(*toPos);
+
+			if (fromInt >= parentMOI->InstanceData.subOptions.Num() || toInt >= parentMOI->InstanceData.subOptions.Num())
 			{
-				doc->ApplyDeltas({ delta }, GetWorld());
+				return false;
 			}
+
+			FMOIStateData oldStateData = parentMOI->GetStateData();
+			int32 value = parentMOI->InstanceData.subOptions[fromInt];
+			parentMOI->InstanceData.subOptions.RemoveAt(fromInt);
+			parentMOI->InstanceData.subOptions.Insert(value,toInt);
+
+			parentMOI->UpdateStateDataFromObject();
+			FMOIStateData newStateData = parentMOI->GetStateData();
+			FString jsonMoi = getWebMOI(parentMOI, newStateData);
+			parentMOI->SetStateData(oldStateData);
+			doc->update_moi(parentMOI->ID, jsonMoi);
 		}
 		else if (ob && action == TEXT("setparent"))
 		{
-			FMOIStateData oldStateData = ob->GetStateData();
-			FMOIStateData newStateData = oldStateData;
+			FMOIStateData newStateData = ob->GetStateData();
+
+			auto* oldParent = Cast<AMOIDesignOption>(doc->GetObjectById(newStateData.ParentID));
+
 			newStateData.ParentID = FCString::Atoi(*parent);
+			auto* newParent = Cast<AMOIDesignOption>(doc->GetObjectById(newStateData.ParentID));
 
-			auto delta = MakeShared<FMOIDelta>();
-			delta->AddMutationState(ob, oldStateData, newStateData);
-			doc->ApplyDeltas({ delta }, GetWorld());
+			FString jsonMoi = getWebMOI(ob, newStateData);
+			doc->update_moi(ob->ID, jsonMoi);
+
+			if (newParent)
+			{
+				newParent->InstanceData.subOptions.AddUnique(ob->ID);
+				newParent->UpdateStateDataFromObject();
+				jsonMoi = getWebMOI(newParent,newParent->GetStateData());
+				doc->update_moi(newParent->ID, jsonMoi);
+			}
+
+			if (oldParent)
+			{
+				oldParent->InstanceData.subOptions.Remove(ob->ID);
+				oldParent->UpdateStateDataFromObject();
+				jsonMoi = getWebMOI(oldParent,oldParent->GetStateData());
+				doc->update_moi(oldParent->ID, jsonMoi);
+			}
 		}
-		else if (ob && action == TEXT("show"))
-		{
-			// TODO: hiding and showing design options to be moved to 3d view
-			FMOIStateData oldStateData = ob->GetStateData();
-			FMOIStateData newStateData = oldStateData;
-
-			FMOIDesignOptionData optionData;
-			newStateData.CustomData.LoadStructData(optionData);
-			optionData.bShowingOption = (value == TEXT("true"));
-			newStateData.CustomData.SaveStructData<FMOIDesignOptionData>(optionData);
-
-			auto delta = MakeShared<FMOIDelta>();
-			delta->AddMutationState(ob, oldStateData, newStateData);
-			doc->ApplyDeltas({ delta }, GetWorld());
-		}
-		
-		doc->UpdateWebMOIs(EObjectType::OTDesignOption);
-
 		return false;
 	});
 }

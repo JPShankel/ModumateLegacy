@@ -21,6 +21,9 @@ struct MODUMATE_API FMOICameraViewData
 	int32 SavedCullingCutPlane = INDEX_NONE;
 
 	UPROPERTY()
+	TArray<int32> SavedVisibleDesignOptions;
+
+	UPROPERTY()
 	TMap<int32, bool> SavedCutPlaneVisibilities; // MoiID, IsVisible
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")

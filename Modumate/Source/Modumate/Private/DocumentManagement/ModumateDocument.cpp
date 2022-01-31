@@ -28,6 +28,7 @@
 #include "Objects/MOIFactory.h"
 #include "Objects/DesignOption.h"
 #include "Objects/SurfaceGraph.h"
+#include "Objects/CameraView.h"
 #include "Objects/MetaGraph.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
@@ -4133,9 +4134,14 @@ void UModumateDocument::DisplayDesignOptionDebugInfo(UWorld* World)
 	{
 		AMOIDesignOption* option = Cast<AMOIDesignOption>(ob);
 		FString msg = FString::Printf(TEXT("ID: %d, Name: %s, Parent: %d, Groups:"), option->ID, *option->StateData.DisplayName, option->GetParentID());
-		for (auto& group : option->InstanceData.Groups)
+		for (auto& group : option->InstanceData.groups)
 		{
 			msg += FString::Printf(TEXT(" %d"), group);
+		}
+		msg += TEXT(" SubOptions: ");
+		for (auto& subop : option->InstanceData.subOptions)
+		{
+			msg += FString::Printf(TEXT("%d "), subop);
 		}
 		DisplayDebugMsg(msg);
 	}
@@ -4474,8 +4480,25 @@ void UModumateDocument::create_moi(const FString& MOIType, int32 ParentID)
 	FindEnumValueByString<EObjectType>(MOIType, objectType);
 	if (objectType == EObjectType::OTDesignOption)
 	{
-		TSharedPtr<FMOIDelta> delta = AMOIDesignOption::MakeCreateDelta(this, FString::Printf(TEXT("Design Option")));
+		TSharedPtr<FMOIDelta> delta = AMOIDesignOption::MakeCreateDelta(this, FString::Printf(TEXT("Design Option")),ParentID);
+		int32 nextID = GetNextAvailableID();
+		BeginUndoRedoMacro();
 		ApplyDeltas({ delta }, GetWorld());
+
+		AMOIDesignOption* parent = Cast<AMOIDesignOption>(GetObjectById(ParentID));
+		if (parent != nullptr)
+		{
+			FMOIStateData oldData = parent->GetStateData();
+			parent->InstanceData.subOptions.AddUnique(nextID);
+			parent->UpdateStateDataFromObject();
+			auto parentDelta = MakeShared<FMOIDelta>();
+			parentDelta->AddMutationState(parent, oldData, parent->GetStateData());
+			parent->SetStateData(oldData);
+			ApplyDeltas({ parentDelta }, GetWorld());
+		}
+
+		EndUndoRedoMacro();
+
 		UpdateWebMOIs(EObjectType::OTDesignOption);
 	}
 	else
@@ -4515,7 +4538,56 @@ void UModumateDocument::update_moi(int32 ID, const FString& MOIData)
 
 	ApplyDeltas({ delta }, GetWorld());
 	UpdateWebMOIs(moi->GetObjectType());
+	UModumateObjectStatics::UpdateDesignOptionVisibility(this);
+
+	AMOICameraView* cameraView = Cast<AMOICameraView>(GetObjectById(CachedCameraViewID));
+
+	if (cameraView == nullptr)
+	{
+		return;
+	}
+
+	cameraView->InstanceData.SavedVisibleDesignOptions.Empty();
+	Algo::TransformIf(GetObjectsOfType(EObjectType::OTDesignOption), 
+		cameraView->InstanceData.SavedVisibleDesignOptions,
+		[](AModumateObjectInstance* MOI)
+		{
+			AMOIDesignOption* mod = Cast<AMOIDesignOption>(MOI);
+			return (ensure(mod) && mod->InstanceData.isShowing);
+		}, [](AModumateObjectInstance* MOI)
+		{
+			return MOI->ID;
+		}
+	);	
 }
+
+void UModumateDocument::OnCameraViewSelected(int32 ID)
+{
+	TArray<AMOIDesignOption*> designOptions;
+	Algo::Transform(GetObjectsOfType(EObjectType::OTDesignOption), designOptions,
+
+		[](AModumateObjectInstance* MOI)
+		{
+			return Cast<AMOIDesignOption>(MOI);
+		}
+	);
+
+	AMOICameraView* cameraView = Cast<AMOICameraView>(GetObjectById(ID));
+	if (cameraView == nullptr)
+	{
+		return;
+	}
+
+	for (auto* designOption : designOptions)
+	{
+		designOption->InstanceData.isShowing = cameraView->InstanceData.SavedVisibleDesignOptions.Contains(designOption->ID);
+	}
+
+	CachedCameraViewID = ID;
+	UModumateObjectStatics::UpdateDesignOptionVisibility(this);
+	UpdateWebMOIs(EObjectType::OTDesignOption);
+}
+
 
 #undef LOCTEXT_NAMESPACE
 

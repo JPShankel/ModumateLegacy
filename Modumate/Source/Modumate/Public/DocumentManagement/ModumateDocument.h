@@ -370,6 +370,8 @@ private:
 	FModumateDocumentHeader CachedHeader;
 	FMOIDocumentRecord CachedRecord;
 
+	int32 CachedCameraViewID = INDEX_NONE;
+
 	void UpdateWindowTitle();
 	void RecordSavedProject(UWorld* World, const FString& FilePath, bool bUserFile);
 
@@ -412,4 +414,6 @@ public:
 
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
 	void UpdateWebSelectedObjects() const;
+
+	void OnCameraViewSelected(int32 ID);
 };

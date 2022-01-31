@@ -7,8 +7,10 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/AxesActor.h"
+#include "Objects/DesignOption.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/ViewCubeWidget.h"
+#include "ModumateCore/ModumateObjectStatics.h"
 
 bool UModumateBrowserStatics::CreateCameraViewAsMoi(UObject* WorldContextObject, UCameraComponent *CameraComp, const FString &CameraViewName, const FDateTime &TimeOfDay, int32 CameraViewIndex /*= INDEX_NONE*/)
 {
@@ -148,12 +150,29 @@ bool UModumateBrowserStatics::UpdateCameraViewData(UObject* WorldContextObject, 
 	CameraViewData.bAxesActorVisibility = bNewAxisVisibility;
 	CameraViewData.bViewCubeVisibility = bNewViewCubeVisibility;
 
+	CameraViewData.SavedVisibleDesignOptions.Empty();
+	TArray<AMOIDesignOption*> designOptions;
+	Algo::Transform(controller->GetDocument()->GetObjectsOfType(EObjectType::OTDesignOption),
+		designOptions,
+		[](AModumateObjectInstance* MOI) {return Cast<AMOIDesignOption>(MOI); }
+	);
+	for (auto* designOption : designOptions)
+	{
+		if (ensure(designOption) && designOption->InstanceData.isShowing)
+		{
+			CameraViewData.SavedVisibleDesignOptions.Add(designOption->ID);
+		}
+	}
+
 	CameraViewData.SavedCutPlaneVisibilities.Empty();
 	TArray<AModumateObjectInstance*> cpMois = controller->GetDocument()->GetObjectsOfType(EObjectType::OTCutPlane);
 	for (const auto& curCp : cpMois)
 	{
 		CameraViewData.SavedCutPlaneVisibilities.Add(curCp->ID, curCp->IsVisible());
 	}
+
+	UModumateObjectStatics::UpdateDesignOptionVisibility(controller->GetDocument());
+
 
 	return true;
 }

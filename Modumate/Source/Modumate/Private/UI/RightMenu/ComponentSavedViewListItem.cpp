@@ -161,6 +161,7 @@ void UComponentSavedViewListItem::ActivateCameraView()
 		}
 		Controller->GetDocument()->AddHideObjectsById(GetWorld(), hiddenCPs);
 		Controller->GetDocument()->UnhideObjectsById(GetWorld(), visibleCPs);
+		Controller->GetDocument()->OnCameraViewSelected(CameraView.MoiId);
 	}
 }
 

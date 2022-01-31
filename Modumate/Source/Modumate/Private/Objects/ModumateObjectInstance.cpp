@@ -764,13 +764,20 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 			FScriptArrayHelper arrayHelp(arrayProp, propAddr);
 			arrayHelp.EmptyAndAddValues(moiProp->ValueArray.Num());
 
-			const FIntProperty* innerPropInt = CastField<FIntProperty>(arrayProp->Inner);
-			if (innerPropInt != nullptr)
+			if (arrayProp->Inner->IsA<FIntProperty>())
 			{
 				int32* rawPtr = reinterpret_cast<int32*>(arrayHelp.GetRawPtr());
 				for (int32 i = 0; i < moiProp->ValueArray.Num(); ++i)
 				{
 					rawPtr[i] = FCString::Atoi(*moiProp->ValueArray[i]);
+				}
+			}
+			else if (arrayProp->Inner->IsA<FStrProperty>())
+			{
+				FString* rawPtr = reinterpret_cast<FString*>(arrayHelp.GetRawPtr());
+				for (int32 i = 0; i < moiProp->ValueArray.Num(); ++i)
+				{
+					rawPtr[i] = moiProp->ValueArray[i];
 				}
 			}
 		}
@@ -845,7 +852,9 @@ bool AModumateObjectInstance::ToWebMOI(FString& OutJson) const
 			FScriptArrayHelper arrayHelp(arrayProp, propAddr);
 			int32 numElements = arrayHelp.Num();
 
-			if (arrayProp->StaticClass() == FIntProperty::StaticClass())
+			auto innerClass = arrayProp->Inner->StaticClass();
+
+			if (arrayProp->Inner->IsA<FIntProperty>())
 			{
 				const int32* intArray = reinterpret_cast<int32*>(arrayHelp.GetRawPtr());
 				for (int32 i = 0; i < numElements; ++i)
@@ -854,6 +863,16 @@ bool AModumateObjectInstance::ToWebMOI(FString& OutJson) const
 					webProp.ValueArray.AddUnique(value);
 				}
 			}
+			else if (arrayProp->Inner->IsA<FStrProperty>())
+			{
+				const FString* strArray = reinterpret_cast<FString*>(arrayHelp.GetRawPtr());
+				for (int32 i = 0; i < numElements; ++i)
+				{
+					FString value = strArray[i];
+					webProp.ValueArray.AddUnique(value);
+				}
+			}
+
 			webMOI.Properties.Add(webProp.Name, webProp);
 			continue;
 		}

@@ -11,16 +11,16 @@ struct MODUMATE_API FMOIDesignOptionData
 	GENERATED_BODY()
 
 	UPROPERTY()
-	TArray<int32> Groups;
+	TArray<int32> groups;
 
 	UPROPERTY()
-	TArray<int32> SubOptions;
+	TArray<int32> subOptions;
 
 	UPROPERTY()
-	FString HexColor;
+	FString hexColor;
 
 	UPROPERTY()
-	bool bShowingOption = true;
+	bool isShowing = true;
 };
 
 UCLASS()

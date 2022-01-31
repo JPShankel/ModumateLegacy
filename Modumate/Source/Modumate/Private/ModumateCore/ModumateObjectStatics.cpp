@@ -1255,7 +1255,7 @@ void UModumateObjectStatics::GetDesignOptionsForGroup(UModumateDocument* Doc, in
 	for (auto* moi : designOptions)
 	{
 		AMOIDesignOption* doMOI = Cast<AMOIDesignOption>(moi);
-		if (ensure(doMOI) && doMOI->InstanceData.Groups.Contains(GroupID))
+		if (ensure(doMOI) && doMOI->InstanceData.groups.Contains(GroupID))
 		{
 			OutDesignOptionIDs.AddUnique(GroupID);
 		}
@@ -1274,7 +1274,7 @@ void UModumateObjectStatics::UpdateDesignOptionVisibility(UModumateDocument* Doc
 	auto groupVisible = [designOptions](int32 GroupID) {
 		for (auto* designOption : designOptions)
 		{
-			if (ensure(designOption) && designOption->InstanceData.bShowingOption && designOption->InstanceData.Groups.Contains(GroupID))
+			if (ensure(designOption) && designOption->InstanceData.isShowing && designOption->InstanceData.groups.Contains(GroupID))
 			{
 				return true;
 			}
@@ -1282,17 +1282,16 @@ void UModumateObjectStatics::UpdateDesignOptionVisibility(UModumateDocument* Doc
 		return false;
 	};
 
-	Doc->UnhideAllObjects(Doc->GetWorld());
-
 	TArray<int32> allDesignOptionGroups;
 
 	for (auto& designOption : designOptions)
 	{
-		for (auto groupID : designOption->InstanceData.Groups)
+		for (auto groupID : designOption->InstanceData.groups)
 		{
 			allDesignOptionGroups.AddUnique(groupID);
 		}
 	}
+	HideObjectsInGroups(Doc, allDesignOptionGroups, false);
 
 	TArray<int32> hiddenGroups;
 	for (auto groupID : allDesignOptionGroups)
@@ -1303,14 +1302,14 @@ void UModumateObjectStatics::UpdateDesignOptionVisibility(UModumateDocument* Doc
 		}
 	}
 
-	HideObjectsInGroups(Doc, hiddenGroups);
+	HideObjectsInGroups(Doc, hiddenGroups, true);
 }
 
-void UModumateObjectStatics::HideObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs)
+void UModumateObjectStatics::HideObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, bool bHide)
 {
 	TSet<AModumateObjectInstance*> groupObjects;
 	UModumateObjectStatics::GetObjectsInGroups(Doc, GroupIDs, groupObjects);
-	UModumateFunctionLibrary::SetMOIAndDescendentsHidden(groupObjects.Array());
+	UModumateFunctionLibrary::SetMOIAndDescendentsHidden(groupObjects.Array(),bHide);
 }
 
 void UModumateObjectStatics::GetWebMOIArrayForObjects(const TArray<const AModumateObjectInstance*>& Objects, FString& OutJson)
