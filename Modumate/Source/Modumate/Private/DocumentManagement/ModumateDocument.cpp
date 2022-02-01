@@ -775,10 +775,15 @@ bool UModumateDocument::ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World)
 		case EMOIDeltaType::Mutate:
 		{
 			AModumateObjectInstance* MOI = GetObjectById(targetState.ID);
+
 			if (ensureAlways(MOI))
 			{
+				if (targetState.ParentID != MOI->GetParentID())
+				{
+					MOI->SetParentID(targetState.ParentID);
+				}
+				
 				MOI->SetStateData(targetState);
-				UpdateWebMOIs(MOI->GetObjectType());
 			}
 			else
 			{
@@ -4143,6 +4148,12 @@ void UModumateDocument::DisplayDesignOptionDebugInfo(UWorld* World)
 		{
 			msg += FString::Printf(TEXT("%d "), subop);
 		}
+		msg += TEXT(" Children: ");
+		for (auto& child : option->GetChildIDs())
+		{
+			msg += FString::Printf(TEXT("%d "), child);
+		}
+
 		DisplayDebugMsg(msg);
 	}
 	DisplayDebugMsg(TEXT("--Groups--"));

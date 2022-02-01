@@ -2,6 +2,7 @@
 
 #include "Objects/DesignOption.h"
 #include "DocumentManagement/ModumateDocument.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "Objects/MOIDelta.h"
 #include "Objects/MetaGraph.h"
 
@@ -77,5 +78,36 @@ TSharedPtr<FMOIDelta> AMOIDesignOption::MakeAddRemoveGroupDelta(UModumateDocumen
 	delta->AddMutationState(option, oldData, newData);
 
 	return delta;
+}
+
+bool AMOIDesignOption::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+{
+	TArray<int32> subOptions;
+	TArray<int32> children = GetChildIDs();
+
+	for (auto subOp : InstanceData.subOptions)
+	{
+		if (children.Contains(subOp))
+		{
+			subOptions.Add(subOp);
+		}
+	}
+
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+
+	if (controller && controller->GetDocument())
+	{
+		UModumateDocument* document = controller->GetDocument();
+		for (auto child : children)
+		{
+			AModumateObjectInstance* childPtr = document->GetObjectById(child);
+			if (childPtr && childPtr->GetObjectType() == EObjectType::OTDesignOption && !subOptions.Contains(child))
+			{
+				subOptions.Add(child);
+			}
+		}
+		InstanceData.subOptions = subOptions;
+	}
+	return true;
 }
 
