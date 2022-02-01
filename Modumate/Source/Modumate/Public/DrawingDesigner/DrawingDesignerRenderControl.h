@@ -28,7 +28,7 @@ private:
 	bool GetViewAxis(FDrawingDesignerView& view, FVector& outXAxis, FVector& outYAxis, FVector& outZAxis, FVector& outOrigin, FVector2D& outSize);
 	void SwapPortalMaterials(AMOICutPlane* CutPlane);
 	void RestorePortalMaterials();
-	void GetSnapPoints(TMap<FString, FDrawingDesignerSnap>& OutSnapPoints);
+	void GetSnapPoints(int32 viewId, TMap<FString, FDrawingDesignerSnap>& OutSnapPoints);
 
 	FVector CachedXAxis;
 	FVector CachedYAxis;

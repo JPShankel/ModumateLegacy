@@ -177,7 +177,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 		FString b64Png(FBase64::Encode(rawPng));
 		viewResponse.response.image_base64 = MoveTemp(b64Png);
 		//(/D)
-		GetSnapPoints(viewResponse.response.snaps);
+		GetSnapPoints(viewRequest.moi_id, viewResponse.response.snaps);
 		bSuccess = WriteJsonGeneric(OutJsonResponse, &viewResponse);
 
 		//Anything remaining is ~5-10ms
@@ -498,29 +498,95 @@ void FDrawingDesignerRenderControl::RestorePortalMaterials()
 }
 
 
-void FDrawingDesignerRenderControl::GetSnapPoints(TMap<FString, FDrawingDesignerSnap>& OutSnapPoints)
+void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FDrawingDesignerSnap>& OutSnapPoints)
 {
 	//Derive our cut plane
 	const FVector zAxis(CachedXAxis ^ CachedYAxis);
 	const FPlane cutPlane(CachedOrigin, zAxis);
 	
+	//TODO: Get non-active graphs as well (meta graph objects) -JN
 	//Mass Graph Vertices
 	FGraph3D* graph = Doc->GetVolumeGraph();
+
+	//Mass Graph Lines-->
+	auto& edges = graph->GetEdges();
 	auto& vertices = graph->GetVertices();
-	for (auto& kvp : vertices) {
-		const FGraph3DVertex& val = kvp.Value;
 
-		if ((cutPlane.PlaneDot(val.Position) > -PLANAR_DOT_EPSILON))
+
+	//This lambda will cut short a line given 2 points around the cut plane
+	auto correctPointVector = [&](const FVector& Valid, FVector& InOutReproject) {
+
+		FVector corrected = FMath::LinePlaneIntersection(Valid, InOutReproject, cutPlane.GetOrigin(), cutPlane.GetNormal());
+
+		InOutReproject.X = corrected.X;
+		InOutReproject.Y = corrected.Y;
+		InOutReproject.Z = corrected.Z;
+	};
+
+	auto correctPoint = [&](const FGraph3DVertex& Valid, FGraph3DVertex& InOutReproject) {
+		FVector first; first.X = Valid.Position.X; first.Y = Valid.Position.Y; first.Z = Valid.Position.Z;
+		FVector second; second.X = InOutReproject.Position.X; second.Y = InOutReproject.Position.Y; second.Z = InOutReproject.Position.Z;
+		correctPointVector(first, second);
+
+		InOutReproject.Position.X = second.X;
+		InOutReproject.Position.Y = second.Y;
+		InOutReproject.Position.Z = second.Z;
+	};
+
+	auto copyPoint = [&](FDrawingDesignerSnapId Id, FVector& Position, FDrawingDesignerSnapPoint& OutSnap) {
+		FVector2D projectedPoint(UModumateGeometryStatics::ProjectPoint2D(Position, CachedXAxis, CachedYAxis, CachedOrigin));
+		FVector2D scaledPoint(projectedPoint / CachedSize);
+		OutSnap.x = scaledPoint.X;
+		OutSnap.y = scaledPoint.Y;
+		OutSnap.id = Id;
+	};
+
+	for (auto& kvp : edges) {
+		const FGraph3DEdge& val = kvp.Value;
+
+		FGraph3DVertex v1 = vertices[val.StartVertexID];
+		FGraph3DVertex v2 = vertices[val.EndVertexID];
+
+		//Three possible conditions
+		//	1) line lies entirely on the correct side of the cut plane
+		//  2) both points are behind the cut plane
+		//  3) One of the points are on the correct side of the cut plane
+		if ((cutPlane.PlaneDot(v1.Position) > -PLANAR_DOT_EPSILON) && (cutPlane.PlaneDot(v2.Position) > -PLANAR_DOT_EPSILON))
 		{
-			FVector2D projectedPoint(UModumateGeometryStatics::ProjectPoint2D(val.Position, CachedXAxis, CachedYAxis, CachedOrigin));
-			FVector2D scaledPoint(projectedPoint / CachedSize);
-			FString snapId = FString::FromInt(INDEX_NONE) + TEXT(",") + FString::FromInt(kvp.Key);
-			FDrawingDesignerSnap newSnap;
-			newSnap.x = scaledPoint.X; newSnap.y = scaledPoint.Y;
-			newSnap.id = snapId;
-
-			OutSnapPoints.Add(snapId, newSnap);
+			//Both points are good, do nothing
 		}
+		else if (cutPlane.PlaneDot(v1.Position) > -PLANAR_DOT_EPSILON) {
+			//v1 is good, v2 needs correcting
+			correctPoint(v1, v2);
+		}
+		else if (cutPlane.PlaneDot(v2.Position) > -PLANAR_DOT_EPSILON) {
+			//v2 is good, v1 need correcting
+			correctPoint(v2, v1);
+		}
+		else {
+			//Neither is good
+			continue;
+		}
+
+		//One snap per edge
+		FDrawingDesignerSnap newSnap;
+		FDrawingDesignerSnapId snapId;
+		snapId.viewMoiId = FString::FromInt(viewId);
+		snapId.owningMoiId = INDEX_NONE;
+		snapId.id = kvp.Key;
+		snapId.pointIndex = INDEX_NONE;
+
+		//Two points per snap
+		FDrawingDesignerSnapPoint p1, p2;
+		copyPoint(FDrawingDesignerSnapId(snapId, 0), v1.Position, p1);
+		copyPoint(FDrawingDesignerSnapId(snapId, 1), v2.Position, p2);
+		newSnap.points.Add(p1);
+		newSnap.points.Add(p2);
+
+		//KLUDGE: Javascript sucks -JN
+		FString entryKey = TEXT("");
+		snapId.EncodeKey(entryKey);
+		OutSnapPoints.Add(entryKey, newSnap);
 	}
 
 	//MOI-Based bounding points
@@ -544,24 +610,54 @@ void FDrawingDesignerRenderControl::GetSnapPoints(TMap<FString, FDrawingDesigner
 		//EObjectType::OTEdgeHosted
 		});
 
+	
 	for (AModumateObjectInstance* moi : snapObjects)
 	{
-		TArray<FVector> bounds;
-		if (moi->GetBoundingPoints(bounds)) {
+		TArray<FDrawingDesignerLine> bounds;
+		if (moi->GetBoundingLines(bounds)) {
+			//Evaluate each line
 			for (int i = 0; i < bounds.Num(); i++)
 			{
-				auto p = bounds[i];
-				if ((cutPlane.PlaneDot(p) > -PLANAR_DOT_EPSILON))
+				auto& line = bounds[i];
+				auto& v1 = line.P1;
+				auto& v2 = line.P2;
+				
+				//Same three possibilities as above:
+				if ((cutPlane.PlaneDot(v1) > -PLANAR_DOT_EPSILON) && (cutPlane.PlaneDot(v2) > -PLANAR_DOT_EPSILON))
 				{
-					FVector2D projectedPoint(UModumateGeometryStatics::ProjectPoint2D(p, CachedXAxis, CachedYAxis, CachedOrigin));
-					FVector2D scaledPoint(projectedPoint / CachedSize);
-					FString snapId = FString::FromInt(moi->ID) + TEXT(",") + FString::FromInt(i);
-					FDrawingDesignerSnap newSnap;
-					newSnap.x = scaledPoint.X; newSnap.y = scaledPoint.Y;
-					newSnap.id = snapId;
-
-					OutSnapPoints.Add(snapId, newSnap);
+					//Both valid
 				}
+				else if (cutPlane.PlaneDot(v1) > -PLANAR_DOT_EPSILON)
+				{
+					correctPointVector(v1, v2);
+				}
+				else if (cutPlane.PlaneDot(v2) > -PLANAR_DOT_EPSILON)
+				{
+					correctPointVector(v2, v1);
+				}
+				else 
+				{
+					continue;
+				}
+
+				//One snap per edge
+				FDrawingDesignerSnap newSnap;
+				FDrawingDesignerSnapId snapId;
+				snapId.viewMoiId = FString::FromInt(viewId);
+				snapId.owningMoiId = moi->ID;
+				snapId.id = i;
+				snapId.pointIndex = INDEX_NONE;
+
+				//Two points per snap
+				FDrawingDesignerSnapPoint p1, p2;
+				copyPoint(FDrawingDesignerSnapId(snapId, 0), v1, p1);
+				copyPoint(FDrawingDesignerSnapId(snapId, 1), v2, p2);
+				newSnap.points.Add(p1);
+				newSnap.points.Add(p2);
+
+				FString entryKey = TEXT("");
+				snapId.EncodeKey(entryKey);
+				OutSnapPoints.Add(entryKey, newSnap);
 			}
 
 		}

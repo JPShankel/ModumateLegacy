@@ -53,16 +53,62 @@ bool FDrawingDesignerDrawingImage::operator!=(const FDrawingDesignerDrawingImage
 {
 	return !(*this == RHS);
 }
+/**
+ * SnapId
+ */
+bool FDrawingDesignerSnapId::operator==(const FDrawingDesignerSnapId& RHS) const
+{
+	return viewMoiId == RHS.viewMoiId && 
+		owningMoiId == RHS.owningMoiId &&
+		pointIndex == RHS.pointIndex &&
+		id == RHS.id;
+}
+bool FDrawingDesignerSnapId::operator!=(const FDrawingDesignerSnapId& RHS) const
+{
+	return !(*this == RHS);
+}
 
 /**
  * Snap
  */
 bool FDrawingDesignerSnap::operator==(const FDrawingDesignerSnap& RHS) const
 {
-	return id == RHS.id && FMath::IsNearlyEqual(x, RHS.x) && FMath::IsNearlyEqual(y, RHS.y);
+	bool rtn = true;
+
+	//Short if the id's don't match
+	if (id != RHS.id) return false;
+	
+	if (this->points.Num() != RHS.points.Num())
+	{
+		rtn = false;
+	}
+
+	for (auto& point : this->points)
+	{
+		int found = RHS.points.Find(point);
+		if (found == INDEX_NONE)
+		{
+			rtn = false;
+		}
+	}
+
+	return rtn;
 }
 
 bool FDrawingDesignerSnap::operator!=(const FDrawingDesignerSnap& RHS) const
+{
+	return !(*this == RHS);
+}
+
+/**
+ * SnapPoint
+ */
+bool FDrawingDesignerSnapPoint::operator==(const FDrawingDesignerSnapPoint& RHS) const
+{
+	return id == RHS.id && FMath::IsNearlyEqual(x, RHS.x) && FMath::IsNearlyEqual(y, RHS.y);
+}
+
+bool FDrawingDesignerSnapPoint::operator!=(const FDrawingDesignerSnapPoint& RHS) const
 {
 	return !(*this == RHS);
 }
@@ -175,4 +221,12 @@ bool FDrawingDesignerDrawingResponse::ReadJson(const FString& InJson)
 bool FDrawingDesignerDrawingResponse::WriteJson(FString& OutJson) const
 {
 	return WriteJsonGeneric<FDrawingDesignerDrawingResponse>(OutJson, this);
+}
+
+FDrawingDesignerSnapId::FDrawingDesignerSnapId(FDrawingDesignerSnapId& copy, int32 pointIndex)
+{
+	this->viewMoiId = copy.viewMoiId;
+	this->owningMoiId = copy.owningMoiId;
+	this->id = copy.id;
+	this->pointIndex = pointIndex;
 }

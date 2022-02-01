@@ -22,6 +22,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateObjectInstanceParts.h"
 #include "Quantities/QuantitiesManager.h"
+#include "DrawingDesigner/DrawingDesignerLine.h"
 
 
 class AEditModelPlayerController;
@@ -595,15 +596,16 @@ bool AMOIPortal::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) con
 	return true;
 }
 
-bool AMOIPortal::GetBoundingPoints(TArray<FVector>& outBounding) const
+bool AMOIPortal::GetBoundingLines(TArray<FDrawingDesignerLine>& outBounding) const
 {
 	auto origin = GetWorldTransform().GetLocation();
 	auto size = CachedBounds;
 
 	outBounding.Reset();
-	
+
 	TArray<FVector> corner;
 	corner.SetNum(8);
+
 	//First 4 (on z plane)
 	corner[0].X = origin.X;			 corner[0].Y = origin.Y;		  corner[0].Z = origin.Z;
 	corner[1].X = origin.X + size.X; corner[1].Y = origin.Y;		  corner[1].Z = origin.Z;
@@ -616,7 +618,23 @@ bool AMOIPortal::GetBoundingPoints(TArray<FVector>& outBounding) const
 	corner[6].X = origin.X + size.X; corner[6].Y = origin.Y + size.Y; corner[6].Z = origin.Z + size.Z;
 	corner[7].X = origin.X;			 corner[7].Y = origin.Y + size.Y; corner[7].Z = origin.Z + size.Z;
 
-	outBounding.Append(corner);
+	//Bottom Box
+	outBounding.Add(FDrawingDesignerLine{ corner[0], corner[1] });
+	outBounding.Add(FDrawingDesignerLine{ corner[1], corner[2] });
+	outBounding.Add(FDrawingDesignerLine{ corner[2], corner[3] });
+	outBounding.Add(FDrawingDesignerLine{ corner[3], corner[0] });
+
+	//Top Box
+	outBounding.Add(FDrawingDesignerLine{ corner[4], corner[5] });
+	outBounding.Add(FDrawingDesignerLine{ corner[5], corner[6] });
+	outBounding.Add(FDrawingDesignerLine{ corner[6], corner[7] });
+	outBounding.Add(FDrawingDesignerLine{ corner[7], corner[4] });
+
+	//Connecting Top to Bottom
+	outBounding.Add(FDrawingDesignerLine{ corner[0], corner[4] });
+	outBounding.Add(FDrawingDesignerLine{ corner[1], corner[5] });
+	outBounding.Add(FDrawingDesignerLine{ corner[2], corner[6] });
+	outBounding.Add(FDrawingDesignerLine{ corner[3], corner[7] });
 
 	return true;
 

@@ -678,7 +678,7 @@ bool AModumateObjectInstance::UpdateInstanceData()
 	return bLoadedStructData;
 }
 
-bool AModumateObjectInstance::GetBoundingPoints(TArray<FVector>& outBounding) const
+bool AModumateObjectInstance::GetBoundingLines(TArray<FDrawingDesignerLine>& outBounding) const
 {
 	return false;
 }

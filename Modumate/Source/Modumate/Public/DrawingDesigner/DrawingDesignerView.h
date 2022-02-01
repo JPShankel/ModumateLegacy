@@ -35,20 +35,60 @@ struct MODUMATE_API FDrawingDesignerViewRegion
 };
 
 USTRUCT()
-struct MODUMATE_API FDrawingDesignerSnap
-{
+struct MODUMATE_API FDrawingDesignerSnapId {
 	GENERATED_BODY()
-	FDrawingDesignerSnap() = default;
+	FDrawingDesignerSnapId() = default;
+	FDrawingDesignerSnapId(FDrawingDesignerSnapId& copy, int32 newIdx);
 
 	UPROPERTY()
-	FString id = FString::FromInt(INDEX_NONE);
+	FString viewMoiId = FString::FromInt(INDEX_NONE);
 
+	UPROPERTY()
+	int32 owningMoiId = INDEX_NONE;
+
+	UPROPERTY()
+	int32 pointIndex = INDEX_NONE;
+
+	UPROPERTY()
+	int32 id = INDEX_NONE;
+
+	void EncodeKey(FString& outEncoded) {
+		outEncoded =FString(this->viewMoiId + TEXT(",") + FString::FromInt(this->owningMoiId) + TEXT(",") + FString::FromInt(this->id) + TEXT(",") + FString::FromInt(this->pointIndex));
+	}
+
+	bool operator==(const FDrawingDesignerSnapId& RHS) const;
+	bool operator!=(const FDrawingDesignerSnapId& RHS) const;
+};
+
+USTRUCT()
+struct MODUMATE_API FDrawingDesignerSnapPoint {
+	GENERATED_BODY()
+	FDrawingDesignerSnapPoint() = default;
+
+	UPROPERTY()
+	FDrawingDesignerSnapId id;
+	
 	// Normalized in range 0-1
 	UPROPERTY()
 	float x = 0.0f;
 
 	UPROPERTY()
 	float y = 0.0f;
+
+	bool operator==(const FDrawingDesignerSnapPoint& RHS) const;
+	bool operator!=(const FDrawingDesignerSnapPoint& RHS) const;
+};
+USTRUCT()
+struct MODUMATE_API FDrawingDesignerSnap
+{
+	GENERATED_BODY()
+	FDrawingDesignerSnap() = default;
+
+	UPROPERTY()
+	FDrawingDesignerSnapId id;
+
+	UPROPERTY()
+	TArray<FDrawingDesignerSnapPoint> points;
 
 	bool operator==(const FDrawingDesignerSnap& RHS) const;
 	bool operator!=(const FDrawingDesignerSnap& RHS) const;
@@ -85,7 +125,7 @@ struct MODUMATE_API FDrawingDesignerDrawingImage
 	UPROPERTY()
 	FDrawingDesignerView view;
 
-	UPROPERTY() // FString key encoded from int32 id
+	UPROPERTY() //FString key encoded from view ID
 	TMap<FString, FDrawingDesignerSnap> snaps;
 
 	UPROPERTY()

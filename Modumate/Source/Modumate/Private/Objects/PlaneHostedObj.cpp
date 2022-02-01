@@ -848,7 +848,7 @@ void AMOIPlaneHostedObj::GetDrawingDesignerItems(const FVector& viewDirection, T
 	}
 }
 
-bool AMOIPlaneHostedObj::GetBoundingPoints(TArray<FVector>& outBounding)  const
+bool AMOIPlaneHostedObj::GetBoundingLines(TArray<FDrawingDesignerLine>& outBounding)  const
 {
 	//Only return points for layerIdx == 0 and layerIdx == layers.Num()-1
 	auto origin = LayerGeometries[0].OriginalPointsA;
@@ -856,20 +856,34 @@ bool AMOIPlaneHostedObj::GetBoundingPoints(TArray<FVector>& outBounding)  const
 
 	const auto& layers = LayerGeometries;
 	
-	auto accumulatePoints = [&](const TArray<FVector>& layerPoints) {
+	auto acculumateLines = [&](const TArray<FVector>& layerPoints) {
 		const TArray<FVector>& points = layerPoints;
 		const int32 numPoints = points.Num();
 		for (int32 p = 0; p < numPoints; ++p)
 		{
 			FVector p1(points[p] + parentLocation);
-			outBounding.Add(p1);
+			FVector p2(points[(p + 1) % numPoints] + parentLocation);
+			outBounding.Add(FDrawingDesignerLine(p1, p2));
 		}
 	};
 
+
+	auto& firstLayer = layers[0].UniquePointsA;
+	auto& lastLayer = layers[layers.Num() - 1].UniquePointsB;
+
 	/* FIRST LAYER */
-	accumulatePoints(layers[0].UniquePointsA);
+	acculumateLines(firstLayer);
+
 	/* LAST LAYER OTHER SIDE */
-	accumulatePoints(layers[layers.Num() - 1].UniquePointsB);
+	acculumateLines(lastLayer);
+
+	/* Joining lines */
+	//TODO: This can be sped up to a single loop incl with the last 2 if needed -JN
+	for (int i = 0; i < firstLayer.Num(); i++) {
+		FVector p1 = firstLayer[i] + parentLocation;
+		FVector p2 = lastLayer[i] + parentLocation;
+		outBounding.Add(FDrawingDesignerLine(p1, p2));
+	}
 
 	return true;
 }

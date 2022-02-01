@@ -83,7 +83,7 @@ public:
 
 	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;
 
-	virtual bool GetBoundingPoints(TArray<FVector>& outBounding)  const override;
+	virtual bool GetBoundingLines(TArray<FDrawingDesignerLine>& outBounding)  const override;
 
 	UPROPERTY()
 	FMOIPortalData InstanceData;
