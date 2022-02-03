@@ -134,6 +134,7 @@ protected:
 	bool bWantAutoSave = false;
 	bool bCurProjectAutoSaves = false;
 	bool bWantTelemetryUpload = false;
+	bool bAlwaysShowGraphDirection = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Category = Cursor, ToolTip = "How far from camera to clamp the raycast which determines cursor world space location only when no hit is detected."))
 	float MaxRayLengthOnHitMiss;
@@ -567,6 +568,12 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "CutPlane")
 	UMaterialParameterCollection* CutPlaneCullingMaterialCollection;
+
+	UFUNCTION()
+	void SetAlwaysShowGraphDirection(bool NewShow);
+
+	UFUNCTION()
+	bool GetAlwaysShowGraphDirection() const {return bAlwaysShowGraphDirection;}
 
 	UFUNCTION()
 	void ProjectPermissionsChangedHandler();

@@ -227,4 +227,6 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Types")
 	static FText GetToolCategoryText(EToolCategories ToolCategory);
+
+	static TArray<EObjectType> GetObjectTypeWithDirectionIndicator();
 };

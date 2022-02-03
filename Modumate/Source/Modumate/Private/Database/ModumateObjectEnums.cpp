@@ -380,4 +380,11 @@ FText UModumateTypeStatics::GetToolCategoryText(EToolCategories ToolCategory)
 	}
 }
 
+TArray<EObjectType> UModumateTypeStatics::GetObjectTypeWithDirectionIndicator()
+{
+	return TArray<EObjectType>{
+	EObjectType::OTMetaEdge, 
+	EObjectType::OTMetaPlane};
+}
+
 #undef LOCTEXT_NAMESPACE

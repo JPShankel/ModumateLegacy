@@ -26,6 +26,9 @@ public:
 	virtual bool OnSelected(bool bIsSelected) override;
 	virtual bool OnHovered(AEditModelPlayerController *controller, bool bIsHovered) override;
 	virtual void PostCreateObject(bool bNewObject) override;
+	virtual void PreDestroy() override;
+
+	void UpdateLineArrowVisual();
 
 protected:
 	virtual float GetAlpha() const;
@@ -39,4 +42,8 @@ protected:
 	FVector CachedAxisX, CachedAxisY, CachedOrigin, CachedCenter;
 	TArray<FPolyHole3D> CachedHoles;
 	TArray<AModumateObjectInstance*> TempConnectedMOIs;
+	TWeakObjectPtr<UArrowComponent> LineArrowComponent;
+	float LineArrowCompNormalLength;
+	bool CacheIsSelected = false;
+
 };

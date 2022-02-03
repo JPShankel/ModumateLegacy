@@ -3851,6 +3851,18 @@ bool AEditModelPlayerController::ToggleGravityPawn()
 	return true;
 }
 
+void AEditModelPlayerController::SetAlwaysShowGraphDirection(bool NewShow)
+{
+	bAlwaysShowGraphDirection = NewShow;
+	for(auto curType : UModumateTypeStatics::GetObjectTypeWithDirectionIndicator())
+	{
+		for (auto curObj : Document->GetObjectsOfType(curType))
+		{
+			curObj->MarkDirty(EObjectDirtyFlags::Visuals);
+		}
+	}
+}
+
 void AEditModelPlayerController::ProjectPermissionsChangedHandler()
 {
 	if (EditModelUserWidget && EMPlayerState)

@@ -18,6 +18,8 @@ AMOIEdgeBase::AMOIEdgeBase()
 	, BaseColor(0x00, 0x00, 0x00)
 	, HoverThickness(2.0f)
 	, SelectedThickness(3.0f)
+	, LineArrowCompNormalLength(91.44f) // 3ft
+	, LineArrowCompRatio(0.33f)
 {
 }
 
@@ -54,18 +56,32 @@ AActor *AMOIEdgeBase::CreateActor(const FVector &loc, const FQuat &rot)
 	LineActor->SetIsHUD(false);
 	LineActor->MakeGeometry();
 	LineActor->UpdateLineVisuals(false);
+
+	// Create arrow component for certain object type only
+	if (UModumateTypeStatics::GetObjectTypeWithDirectionIndicator().Contains(GetObjectType()))
+	{
+		if (!LineArrowComponent.IsValid())
+		{
+			LineArrowComponent = NewObject<UArrowComponent>(this);
+			LineArrowComponent->RegisterComponent();
+			LineArrowComponent->SetHiddenInGame(false);
+			LineArrowComponent->ArrowLength = LineArrowCompNormalLength;
+			LineArrowComponent->SetArrowColor(SelectedColor);
+		}
+	}
+
 	return LineActor.Get();
 }
 
 bool AMOIEdgeBase::OnSelected(bool bIsSelected)
 {
+	CacheIsSelected = bIsSelected;
 	if (!AModumateObjectInstance::OnSelected(bIsSelected))
 	{
 		return false;
 	}
 
 	MarkDirty(EObjectDirtyFlags::Visuals);
-
 	return true;
 }
 
@@ -89,6 +105,8 @@ bool AMOIEdgeBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabl
 		UpdateMaterial();
 	}
 
+	UpdateLineArrowVisual();
+
 	return true;
 }
 
@@ -111,6 +129,45 @@ void AMOIEdgeBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoint
 	}
 
 	outLines.Add(FStructureLine(startPoint, endPoint, 0, 1));
+}
+
+void AMOIEdgeBase::PreDestroy()
+{
+	if (LineArrowComponent.IsValid())
+	{
+		LineArrowComponent->DestroyComponent();
+	}
+	Super::PreDestroy();
+}
+
+void AMOIEdgeBase::UpdateLineArrowVisual()
+{
+	if (!LineArrowComponent.IsValid())
+	{
+		return;
+	}
+	
+	bool bShowDir = CacheIsSelected;
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (controller && controller->GetAlwaysShowGraphDirection())
+	{
+		bShowDir = bVisible;
+	}
+
+	LineArrowComponent->SetVisibility(bShowDir);
+	if (bShowDir)
+	{
+		LineArrowComponent->SetWorldRotation(FRotationMatrix::MakeFromX((GetCorner(1) - GetCorner(0)).GetSafeNormal()).ToQuat());
+		float edgeLength = (GetCorner(1) - GetCorner(0)).Size();
+		float desiredArrowLength = edgeLength * LineArrowCompRatio;
+		LineArrowComponent->ArrowLength = FMath::Min(desiredArrowLength, LineArrowCompNormalLength); // Make sure length doesnt go below normal
+
+		// Calculate arrow location
+		float halfLength = (edgeLength - LineArrowComponent->ArrowLength) * 0.5f;
+		float pct = halfLength / edgeLength;
+		LineArrowComponent->SetWorldLocation(GetCorner(0) + pct * (GetCorner(1) - GetCorner(0)));
+	}
+	LineArrowComponent->SetArrowColor(CacheIsSelected ? FColor::Black : SelectedColor);
 }
 
 float AMOIEdgeBase::GetThicknessMultiplier() const

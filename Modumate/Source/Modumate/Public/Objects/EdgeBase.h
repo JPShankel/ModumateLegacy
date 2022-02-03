@@ -26,6 +26,9 @@ public:
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual bool ShowStructureOnSelection() const override { return false; }
 	virtual bool UseStructureDataForCollision() const override { return true; }
+	virtual void PreDestroy() override;
+
+	void UpdateLineArrowVisual();
 
 protected:
 	float GetThicknessMultiplier() const;
@@ -33,7 +36,9 @@ protected:
 
 	TArray<AModumateObjectInstance*> CachedConnectedMOIs;
 	TWeakObjectPtr<ALineActor> LineActor;
+	TWeakObjectPtr<UArrowComponent> LineArrowComponent;
 	FColor SelectedColor, HoveredColor, BaseColor;
-	float HoverThickness, SelectedThickness;
+	float HoverThickness, SelectedThickness, LineArrowCompNormalLength, LineArrowCompRatio;
+	bool CacheIsSelected = false;
 };
 

@@ -18,6 +18,7 @@ AMOIPlaneBase::AMOIPlaneBase()
 	, CachedAxisY(ForceInitToZero)
 	, CachedOrigin(ForceInitToZero)
 	, CachedCenter(ForceInitToZero)
+	, LineArrowCompNormalLength(91.44f) // 3ft
 {
 }
 
@@ -111,6 +112,7 @@ bool AMOIPlaneBase::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnab
 
 bool AMOIPlaneBase::OnSelected(bool bIsSelected)
 {
+	CacheIsSelected = bIsSelected;
 	if (!AModumateObjectInstance::OnSelected(bIsSelected))
 	{
 		return false;
@@ -143,6 +145,53 @@ void AMOIPlaneBase::PostCreateObject(bool bNewObject)
 	AModumateObjectInstance::PostCreateObject(bNewObject);
 
 	MarkConnectedVisualsDirty();
+
+	// Create arrow component for certain object type only
+	if (UModumateTypeStatics::GetObjectTypeWithDirectionIndicator().Contains(GetObjectType()))
+	{
+		if (!LineArrowComponent.IsValid())
+		{
+			LineArrowComponent = NewObject<UArrowComponent>(this);
+			LineArrowComponent->RegisterComponent();
+			LineArrowComponent->SetHiddenInGame(false);
+			LineArrowComponent->ArrowLength = LineArrowCompNormalLength;
+			LineArrowComponent->SetArrowColor(SelectedColor);
+		}
+	}
+}
+
+void AMOIPlaneBase::PreDestroy()
+{
+	if (LineArrowComponent.IsValid())
+	{
+		LineArrowComponent->DestroyComponent();
+	}
+	Super::PreDestroy();
+}
+
+void AMOIPlaneBase::UpdateLineArrowVisual()
+{
+	if (!LineArrowComponent.IsValid())
+	{
+		return;
+	}
+
+	bool bShowDir = CacheIsSelected;
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (controller && controller->GetAlwaysShowGraphDirection())
+	{
+		bShowDir = bVisible;
+	}
+
+	LineArrowComponent->SetVisibility(bShowDir);
+	if (bShowDir)
+	{
+		LineArrowComponent->SetWorldLocation(GetLocation());
+		LineArrowComponent->SetWorldRotation(GetNormal().Rotation());
+		float length = (GetCorner(1) - GetCorner(0)).Size();
+		LineArrowComponent->ArrowLength = (FMath::Min(length, LineArrowCompNormalLength));
+	}
+	LineArrowComponent->SetArrowColor(CacheIsSelected ? FColor::Black : SelectedColor);
 }
 
 float AMOIPlaneBase::GetAlpha() const

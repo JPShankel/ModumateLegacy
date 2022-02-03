@@ -425,6 +425,19 @@ void UModumateGameInstance::RegisterAllCommands()
 		return false;
 	});
 
+	RegisterCommand(kGraphDirection, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
+	{
+		AEditModelPlayerController* playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+		if (!playerController)
+		{
+			return false;
+		}
+		FModumateCommandParameter showValue = params.GetValue(TEXT("show"));
+		bool newEnable = showValue.AsBool();
+		playerController->SetAlwaysShowGraphDirection(newEnable);
+		return true;
+	});
+
 	RegisterCommand(kDesignOption, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
 	{
 		UModumateDocument* doc = GetDocument();

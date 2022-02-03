@@ -43,6 +43,8 @@ bool AMOIMetaPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnab
 		MarkConnectedVisualsDirty();
 	}
 
+	AMOIPlaneBase::UpdateLineArrowVisual();
+
 	return true;
 }
 

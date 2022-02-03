@@ -21,6 +21,7 @@ namespace ModumateCommands
 
 	// Edit environment commands
 	MODUMATE_COMMAND(kSetFOV, "set_fov");
+	MODUMATE_COMMAND(kGraphDirection, "graph_direction");
 
 	// Object creators
 	MODUMATE_COMMAND(kMakeScopeBox, "make_scopebox");
