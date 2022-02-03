@@ -162,14 +162,14 @@ void AMOIMetaEdge::ShowAdjustmentHandles(AEditModelPlayerController* Controller,
 	AMOIEdgeBase::ShowAdjustmentHandles(Controller, bShow);
 
 	UModumateDocument* doc = GetDocument();
-	if (!ensure(doc))
+	if (!ensure(doc) || IsDestroyed())
 	{
 		return;
 	}
 
 	const auto& graph = *doc->FindVolumeGraph(ID);
 	auto edge = graph.FindEdge(ID);
-	if (IsDestroyed() || !ensure(edge))
+	if (!ensure(edge))
 	{
 		return;
 	}

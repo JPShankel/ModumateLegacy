@@ -556,13 +556,21 @@ void AEditModelPlayerState::SelectAll()
 		selectedObj->OnSelected(false);
 	}
 	SelectedObjects.Reset();
+	SelectedGroupObjects.Reset();
 
 	for (auto *obj : LastReachableObjectSet)
 	{
 		if (obj)
 		{
-			SelectedObjects.Add(obj);
-			obj->OnSelected(true);
+			if (obj->GetObjectType() == EObjectType::OTMetaGraph)
+			{
+				SelectedGroupObjects.Add(obj);
+			}
+			else
+			{
+				SelectedObjects.Add(obj);
+				obj->OnSelected(true);
+			}
 		}
 	}
 
@@ -955,42 +963,64 @@ void AEditModelPlayerState::SetViewGroupObject(AModumateObjectInstance *ob)
 	PostViewChanged();
 }
 
-void AEditModelPlayerState::FindReachableObjects(TSet<AModumateObjectInstance*> &reachableObjs) const
+void AEditModelPlayerState::FindReachableObjects(TSet<AModumateObjectInstance*> &ReachableObjs) const
 {
-	reachableObjs.Reset();
+	ReachableObjs.Reset();
 
 	auto *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	auto* doc = gameState->Document;
-	const auto &allObjects = doc->GetObjectInstances();
-	int32 viewGroupObjID = ViewGroupObject ? ViewGroupObject->ID : 0;
 
 	TQueue<AModumateObjectInstance *> objQueue;
 
-	for (auto *obj : allObjects)
+	const int32 currentGroupID = doc->GetActiveVolumeGraphID();
+	if (currentGroupID != MOD_ID_NONE)
 	{
-		if ((obj->GetParentID() == viewGroupObjID) && obj->IsSelectableByUser())
+		TSet<AModumateObjectInstance*> objectsInGroup;
+		UModumateObjectStatics::GetObjectsInGroups(doc, { currentGroupID }, objectsInGroup);
+		for (auto* obj: objectsInGroup)
 		{
-			objQueue.Enqueue(obj);
-		}
-	}
-
-	TSet<AModumateObjectInstance *> visited;
-	AModumateObjectInstance *iter = nullptr;
-
-	while (objQueue.Dequeue(iter))
-	{
-		visited.Add(iter);
-		reachableObjs.Add(iter);
-
-		if (iter->GetObjectType() != EObjectType::OTGroup)
-		{
-			auto iterChildren = iter->GetChildObjects();
-			for (auto *iterChild : iterChildren)
+			if (obj->IsSelectableByUser())
 			{
-				if (iterChild && !visited.Contains(iterChild) && iterChild->IsSelectableByUser())
+				objQueue.Enqueue(obj);
+			}
+		}
+
+		TArray<AModumateObjectInstance*> unmountedObjects(doc->GetObjectsOfType(EObjectType::OTFurniture));
+		for (auto* obj: unmountedObjects)
+		{
+			if (obj->GetParentID() == MOD_ID_NONE && obj->IsSelectable())
+			{
+				objQueue.Enqueue(obj);
+			}
+		}
+
+		TSet<AModumateObjectInstance*> visited;
+		AModumateObjectInstance* iter = nullptr;
+
+		while (objQueue.Dequeue(iter))
+		{
+			visited.Add(iter);
+			ReachableObjs.Add(iter);
+
+			if (iter->GetObjectType() != EObjectType::OTGroup)
+			{
+				auto iterChildren = iter->GetChildObjects();
+				for (auto* iterChild : iterChildren)
 				{
-					objQueue.Enqueue(iterChild);
+					if (iterChild && !visited.Contains(iterChild) && iterChild->IsSelectableByUser())
+					{
+						objQueue.Enqueue(iterChild);
+					}
 				}
+			}
+		}
+
+		for (int32 id: doc->GetObjectById(currentGroupID)->GetChildIDs())
+		{
+			auto* groupObj = doc->GetObjectById(id);
+			if (groupObj)
+			{
+				ReachableObjs.Add(groupObj);
 			}
 		}
 	}

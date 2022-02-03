@@ -108,7 +108,6 @@ bool USelectTool::HandleMouseUp()
 					ensure(UModumateObjectStatics::GetGroupIdsForGroupChange(doc, subGroupID, affectedGroups));
 					doc->SetActiveVolumeGraphID(subGroupID);
 					Controller->DeselectAll();
-					UE_LOG(LogTemp, Warning, TEXT("Changed active group to %d"), subGroupID);
 				}
 			}
 		}
@@ -123,7 +122,6 @@ bool USelectTool::HandleMouseUp()
 					ensure(UModumateObjectStatics::GetGroupIdsForGroupChange(doc, selectedGroupID, affectedGroups));
 					doc->SetActiveVolumeGraphID(selectedGraph->GraphID);
 					Controller->DeselectAll();
-					UE_LOG(LogTemp, Warning, TEXT("Changed active group to %d"), selectedGroupID);
 				}
 			}
 		}

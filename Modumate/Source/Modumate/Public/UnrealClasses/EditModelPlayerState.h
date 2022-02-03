@@ -134,7 +134,7 @@ public:
 	int32 NumItemsSelected() const { return SelectedObjects.Num() + SelectedGroupObjects.Num(); }
 
 	void SetViewGroupObject(AModumateObjectInstance *ob);
-	void FindReachableObjects(TSet<AModumateObjectInstance*> &reachableObjs) const;
+	void FindReachableObjects(TSet<AModumateObjectInstance*> &ReachableObjs) const;
 	bool IsObjectReachableInView(AModumateObjectInstance* obj) const;
 	bool ValidateSelectionsAndView();
 	void SelectAll();
