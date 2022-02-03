@@ -2003,9 +2003,9 @@ bool FGraph3D::Create2DGraph(const FPlane &CutPlane, const FVector &AxisX, const
 	return false;
 }
 
-bool FGraph3D::FindObjectsForPlane(const FVector AxisX, const FVector AxisY, const FVector Origin, const FBox2D& BoundingBox, TSet<int32>& outObjectIDs) const
+bool FGraph3D::FindObjectsForPlane(const FVector AxisX, const FVector AxisY, const FVector Origin, const FBox2D& BoundingBox, TSet<int32>& OutObjectIDs) const
 {
-	outObjectIDs.Reset();
+	OutObjectIDs.Reset();
 	const FPlane cutPlane(Origin, Origin + AxisX, Origin + AxisY);
 	for (const auto& edgeItem: Edges)
 	{
@@ -2017,10 +2017,10 @@ bool FGraph3D::FindObjectsForPlane(const FVector AxisX, const FVector AxisY, con
 		if (FMath::SegmentPlaneIntersection(v1, v2, cutPlane, intersect)
 			&& BoundingBox.IsInside(UModumateGeometryStatics::ProjectPoint2D(intersect, AxisX, AxisY, Origin)) )
 		{
-			outObjectIDs.Add(edge.ID);
+			OutObjectIDs.Add(edge.ID);
 			for (const auto& face: edge.ConnectedFaces)
 			{
-				outObjectIDs.Add(FMath::Abs(face.FaceID));
+				OutObjectIDs.Add(FMath::Abs(face.FaceID));
 			}
 		}
 	}

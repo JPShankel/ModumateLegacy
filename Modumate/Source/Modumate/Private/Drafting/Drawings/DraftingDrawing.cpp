@@ -114,59 +114,64 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 
 	auto plane = FPlane(scopeBoxOrigin, cutPlane->GetNormal());
 
-	auto graph = MakeShared<FGraph2D>();
-	TMap<int32, int32> objMap;
-	const auto& volumeGraph = *Doc->GetVolumeGraph();
-	volumeGraph.Create2DGraph(plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, graph, objMap);
-
-	ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
-	FMColor lineColor = FMColor::Black;
-
-	for (auto& edgekvp : graph->GetEdges())
+	TArray<const AModumateObjectInstance*> groupObjects(Doc->GetObjectsOfType(EObjectType::OTMetaGraph));
+	for (const auto* groupObject: groupObjects)
 	{
-		auto& edge = edgekvp.Value;
+		const FGraph3D& volumeGraph = *Doc->GetVolumeGraph(groupObject->ID);
 
-		auto startVertex = graph->FindVertex(edge.StartVertexID);
-		auto endVertex = graph->FindVertex(edge.EndVertexID);
+		auto graph = MakeShared<FGraph2D>();
+		TMap<int32, int32> objMap;
+		volumeGraph.Create2DGraph(plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, graph, objMap);
 
-		FModumateUnitCoord2D start = FModumateUnitCoord2D::WorldCentimeters(startVertex->Position);
-		FModumateUnitCoord2D end = FModumateUnitCoord2D::WorldCentimeters(endVertex->Position);
+		ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
+		FMColor lineColor = FMColor::Black;
 
-		int32 metaplaneID = objMap[edge.ID];
-		auto metaplane = Doc->GetObjectById(metaplaneID);
-		if (metaplane == nullptr)
+		for (auto& edgekvp : graph->GetEdges())
 		{
-			continue;
-		}
+			auto& edge = edgekvp.Value;
 
-		auto children = metaplane->GetChildObjects();
-		if (children.Num() != 1)
-		{
-			continue;
-		}
-		auto wall = children[0];
-		if (wall == nullptr)
-		{
-			continue;
-		}
+			auto startVertex = graph->FindVertex(edge.StartVertexID);
+			auto endVertex = graph->FindVertex(edge.EndVertexID);
 
-		TArray<TPair<FVector2D, FVector2D>> OutLines;
+			FModumateUnitCoord2D start = FModumateUnitCoord2D::WorldCentimeters(startVertex->Position);
+			FModumateUnitCoord2D end = FModumateUnitCoord2D::WorldCentimeters(endVertex->Position);
 
-		// TODO: this only is implemented for plane hosted objects right now, this function should be
-		// a part of ModumateObjectInstance instead and should propagate down through the children
-		TArray<TArray<FVector>> WallCutPerimeters;
-		wall->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
-
-		if (bIsDrafting)
-		{
-			for (int32 objID : wall->GetChildIDs())
+			int32 metaplaneID = objMap[edge.ID];
+			auto metaplane = Doc->GetObjectById(metaplaneID);
+			if (metaplane == nullptr)
 			{
-				auto moi = Doc->GetObjectById(objID);
-				if (!moi) continue;
-					
-				// not used
-				TArray<TArray<FVector>> portalPerimeters;
-				moi->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, portalPerimeters);
+				continue;
+			}
+
+			auto children = metaplane->GetChildObjects();
+			if (children.Num() != 1)
+			{
+				continue;
+			}
+			auto wall = children[0];
+			if (wall == nullptr)
+			{
+				continue;
+			}
+
+			TArray<TPair<FVector2D, FVector2D>> OutLines;
+
+			// TODO: this only is implemented for plane hosted objects right now, this function should be
+			// a part of ModumateObjectInstance instead and should propagate down through the children
+			TArray<TArray<FVector>> WallCutPerimeters;
+			wall->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
+
+			if (bIsDrafting)
+			{
+				for (int32 objID : wall->GetChildIDs())
+				{
+					auto moi = Doc->GetObjectById(objID);
+					if (!moi) continue;
+
+					// not used
+					TArray<TArray<FVector>> portalPerimeters;
+					moi->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, portalPerimeters);
+				}
 			}
 		}
 	}

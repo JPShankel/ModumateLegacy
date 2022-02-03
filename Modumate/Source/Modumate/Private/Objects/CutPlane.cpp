@@ -518,10 +518,11 @@ bool AMOICutPlane::UpdateDraftingPreview()
 	return true;
 }
 
+// This routine is called for the HUD lines. The related routine
+// FDraftingDrawing::GetForegroundLines() is called for drafting lines.
 bool AMOICutPlane::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting)
 {
 	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
-	const FGraph3D& volumeGraph = *Document->GetVolumeGraph();
 	TArray<FVector2D> boxPoints;
 
 	for (auto& point : CachedPoints)
@@ -536,65 +537,71 @@ bool AMOICutPlane::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage,
 	TSet<int32> graphObjectIDs;
 	TArray<AModumateObjectInstance*> draftingObjectMois;
 
-	volumeGraph.FindObjectsForPlane(AxisX, AxisY, CachedOrigin, cutPlaneBox, graphObjectIDs);
-
-	// Do not get lines if any of the objects is dirty
-	for (int32 id : graphObjectIDs)
+	TArray<const AModumateObjectInstance*> groupObjects(Document->GetObjectsOfType(EObjectType::OTMetaGraph));
+	for (const auto* groupObject: groupObjects)
 	{
-		auto metaObject = Document->GetObjectById(id);
-		if (metaObject == nullptr)
-		{
-			continue;
-		}
+		const FGraph3D& volumeGraph = *Document->GetVolumeGraph(groupObject->ID);
 
-		auto graphChildren = metaObject->GetChildObjects();
-		for (AModumateObjectInstance* graphChild : graphChildren)
+		volumeGraph.FindObjectsForPlane(AxisX, AxisY, CachedOrigin, cutPlaneBox, graphObjectIDs);
+
+		// Do not get lines if any of the objects is dirty
+		for (int32 id : graphObjectIDs)
 		{
-			if ((graphChild == nullptr) || graphChild->IsDirty(EObjectDirtyFlags::Visuals))
+			auto metaObject = Document->GetObjectById(id);
+			if (metaObject == nullptr)
 			{
-				// Returning false here allows us to wait to call GetDraftingLines
-				// until everything this CutPlane is dependent on is visually-clean, for correctness.
-				// TODO: Optimize CleanObjects to save CutPlanes for last.
-				return false;
+				continue;
 			}
 
-			auto graphGrandchildren = graphChild->GetChildObjects();
-			for (auto* grandchild: graphGrandchildren)
+			auto graphChildren = metaObject->GetChildObjects();
+			for (AModumateObjectInstance* graphChild : graphChildren)
 			{
-				if (grandchild->GetObjectType() == EObjectType::OTSurfaceGraph)
-				{	// Add any surface-graph MOIS, such as finishes & trim.
-					if (grandchild->IsDirty(EObjectDirtyFlags::Visuals))
-					{
-						return false;
-					}
+				if ((graphChild == nullptr) || graphChild->IsDirty(EObjectDirtyFlags::Visuals))
+				{
+					// Returning false here allows us to wait to call GetDraftingLines
+					// until everything this CutPlane is dependent on is visually-clean, for correctness.
+					// TODO: Optimize CleanObjects to save CutPlanes for last.
+					return false;
+				}
 
-					auto surfaceGraph = Document->FindSurfaceGraph(grandchild->ID);
-					if (surfaceGraph)
-					{
-						const auto& surfaceObjects = surfaceGraph->GetAllObjects();
-
-						for (const auto& object: surfaceObjects)
+				auto graphGrandchildren = graphChild->GetChildObjects();
+				for (auto* grandchild : graphGrandchildren)
+				{
+					if (grandchild->GetObjectType() == EObjectType::OTSurfaceGraph)
+					{	// Add any surface-graph MOIS, such as finishes & trim.
+						if (grandchild->IsDirty(EObjectDirtyFlags::Visuals))
 						{
-							if (object.Value == EGraphObjectType::Vertex)
-							{
-								continue;
-							}
+							return false;
+						}
 
-							AModumateObjectInstance* surfaceMoi = Document->GetObjectById(object.Key);
-							if (ensure(surfaceMoi))
+						auto surfaceGraph = Document->FindSurfaceGraph(grandchild->ID);
+						if (surfaceGraph)
+						{
+							const auto& surfaceObjects = surfaceGraph->GetAllObjects();
+
+							for (const auto& object : surfaceObjects)
 							{
-								draftingObjectMois.Append(surfaceMoi->GetChildObjects().FilterByPredicate(
-									[](const AModumateObjectInstance* moi)
-								{ return moi->GetObjectType() != EObjectType::OTCabinet; }));
+								if (object.Value == EGraphObjectType::Vertex)
+								{
+									continue;
+								}
+
+								AModumateObjectInstance* surfaceMoi = Document->GetObjectById(object.Key);
+								if (ensure(surfaceMoi))
+								{
+									draftingObjectMois.Append(surfaceMoi->GetChildObjects().FilterByPredicate(
+										[](const AModumateObjectInstance* moi)
+									{ return moi->GetObjectType() != EObjectType::OTCabinet; }));
+								}
 							}
 						}
 					}
 				}
+
 			}
 
+			draftingObjectMois.Append(graphChildren);
 		}
-
-		draftingObjectMois.Append(graphChildren);
 	}
 
 	// Add cabinets globally.
