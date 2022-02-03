@@ -70,7 +70,7 @@ bool UPointHostedTool::FrameUpdate()
 		}
 	}
 
-	if ((hitMOI != nullptr) && (hitMOI->GetObjectType() == EObjectType::OTMetaVertex))
+	if ((hitMOI != nullptr) && (hitMOI->GetObjectType() == EObjectType::OTMetaVertex) && IsObjectInActiveGroup(hitMOI))
 	{
 		newTargetID = hitMOI->ID;
 	}

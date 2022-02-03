@@ -175,3 +175,19 @@ void UEditModelToolBase::OnCreateObjectModeChanged()
 void UEditModelToolBase::OnAssemblyChanged()
 {
 }
+
+bool UEditModelToolBase::IsObjectInActiveGroup(const AModumateObjectInstance* MOI) const
+{
+	while (MOI && UModumateTypeStatics::Graph3DObjectTypeFromObjectType(MOI->GetObjectType()) == EGraph3DObjectType::None)
+	{
+		MOI = MOI->GetParentObject();
+	}
+	if (MOI == nullptr)
+	{
+		return true;  // Non-graph moi is always accessible.
+	}
+
+	const auto* doc = Controller->GetDocument();
+	const FGraph3D* graph = doc->FindVolumeGraph(MOI->ID);
+	return graph->GraphID == doc->GetActiveVolumeGraphID();
+}

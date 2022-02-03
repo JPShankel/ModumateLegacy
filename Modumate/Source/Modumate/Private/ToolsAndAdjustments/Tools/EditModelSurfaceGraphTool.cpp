@@ -219,7 +219,7 @@ bool USurfaceGraphTool::UpdateTarget(const AModumateObjectInstance* HitObject, c
 
 	HitLocation = Location;
 
-	if (HitObject)
+	if (HitObject && IsObjectInActiveGroup(HitObject))
 	{
 		HitSurfaceGraph = GameState->Document->FindSurfaceGraph(HitObject->ID);
 		if (!HitSurfaceGraph.IsValid())

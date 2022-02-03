@@ -187,7 +187,7 @@ bool UStructureLineTool::FrameUpdate()
 			}
 		}
 
-		if ((hitMOI != nullptr) && (hitMOI->GetObjectType() == EObjectType::OTMetaEdge))
+		if ((hitMOI != nullptr) && (hitMOI->GetObjectType() == EObjectType::OTMetaEdge) && IsObjectInActiveGroup(hitMOI))
 		{
 			newTargetID = hitMOI->ID;
 		}

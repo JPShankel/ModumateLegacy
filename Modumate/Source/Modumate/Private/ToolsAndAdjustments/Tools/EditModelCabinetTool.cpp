@@ -165,7 +165,7 @@ bool UCabinetTool::FrameUpdate()
 		BasePoints.Reset();
 
 		auto targetMOI = GameState->Document->ObjectFromActor(cursor.Actor);
-		if (targetMOI && (targetMOI->GetObjectType() == EObjectType::OTSurfacePolygon))
+		if (targetMOI && (targetMOI->GetObjectType() == EObjectType::OTSurfacePolygon) && IsObjectInActiveGroup(targetMOI))
 		{
 			auto surfaceGraph = GameState->Document->FindSurfaceGraphByObjID(targetMOI->ID);
 			if (!surfaceGraph.IsValid())

@@ -65,6 +65,7 @@ protected:
 	virtual void InitializeDimension();
 	virtual void OnCreateObjectModeChanged();
 	virtual void OnAssemblyChanged();
+	virtual bool IsObjectInActiveGroup(const AModumateObjectInstance* MOI) const;
 
 	bool InUse;
 	bool Active;

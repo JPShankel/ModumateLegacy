@@ -81,7 +81,7 @@ bool UTrimTool::FrameUpdate()
 
 	const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
 	const AModumateObjectInstance* targetMOI = GameState->Document->ObjectFromActor(cursor.Actor);
-	if (targetMOI && (targetMOI->GetObjectType() == EObjectType::OTSurfaceEdge))
+	if (targetMOI && (targetMOI->GetObjectType() == EObjectType::OTSurfaceEdge) && IsObjectInActiveGroup(targetMOI))
 	{
 		auto targetSurfaceGraph = GameState->Document->FindSurfaceGraphByObjID(targetMOI->ID);
 		if (!targetSurfaceGraph.IsValid())

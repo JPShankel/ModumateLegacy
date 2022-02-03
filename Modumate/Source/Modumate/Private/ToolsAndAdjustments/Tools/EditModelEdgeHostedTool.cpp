@@ -70,7 +70,7 @@ bool UEdgeHostedTool::FrameUpdate()
 		}
 	}
 
-	if (hitMOI && (hitMOI->GetObjectType() == EObjectType::OTMetaEdge))
+	if (hitMOI && (hitMOI->GetObjectType() == EObjectType::OTMetaEdge) && IsObjectInActiveGroup(hitMOI))
 	{
 		newTargetID = hitMOI->ID;
 	}

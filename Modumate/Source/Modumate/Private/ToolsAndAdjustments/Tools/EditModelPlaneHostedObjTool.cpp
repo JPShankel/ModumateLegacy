@@ -310,7 +310,8 @@ bool UPlaneHostedObjTool::MakeObject(const FVector& Location)
 
 bool UPlaneHostedObjTool::ValidatePlaneTarget(const AModumateObjectInstance *PlaneTarget)
 {
-	return (PlaneTarget != nullptr) && (PlaneTarget->GetObjectType() == EObjectType::OTMetaPlane);
+	return (PlaneTarget != nullptr) && (PlaneTarget->GetObjectType() == EObjectType::OTMetaPlane)
+		&& IsObjectInActiveGroup(PlaneTarget);
 }
 
 bool UPlaneHostedObjTool::IsTargetFacingDown()

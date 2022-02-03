@@ -122,6 +122,8 @@ bool UFFETool::BeginUse()
 
 	AModumateObjectInstance *hitMOI = doc->ObjectFromActor(snappedCursor.Actor);
 	int32 parentID = hitMOI != nullptr ? hitMOI->ID : Controller->EMPlayerState->GetViewGroupObjectID();
+	// If hit object not in active group then treat as unmounted FF&E.
+	hitMOI = IsObjectInActiveGroup(hitMOI) ? hitMOI : nullptr;
 	int32 parentFaceIdx = UModumateTargetingStatics::GetFaceIndexFromTargetHit(hitMOI, hitLoc, snappedCursor.HitNormal);
 
 	FMOIFFEData ffeData;

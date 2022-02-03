@@ -555,7 +555,8 @@ bool UStairTool::MakeStairs()
 
 bool UStairTool::ValidatePlaneTarget(const AModumateObjectInstance *PlaneTarget)
 {
-	if ((CurrentState != Starting) || (PlaneTarget == nullptr) || (PlaneTarget->GetObjectType() != EObjectType::OTMetaPlane))
+	if ((CurrentState != Starting) || (PlaneTarget == nullptr) || (PlaneTarget->GetObjectType() != EObjectType::OTMetaPlane)
+		|| !IsObjectInActiveGroup(PlaneTarget))
 	{
 		return false;
 	}
