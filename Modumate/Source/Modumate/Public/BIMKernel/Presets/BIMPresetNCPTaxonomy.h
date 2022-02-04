@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "BIMKernel/Core/BIMTagPath.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "Serialization/Csv/CsvParser.h"
 #include "BIMPresetNCPTaxonomy.generated.h"
 

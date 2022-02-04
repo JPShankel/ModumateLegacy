@@ -2,8 +2,222 @@
 
 #pragma once
 #include "CoreMinimal.h"
-#include "ModumateCore/ModumateTypes.h"
 #include <functional>
+#include "ModumateConsoleCommand.generated.h"
+
+USTRUCT()
+struct FModumateCommandJSON
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TMap<FString, FString> Parameters;
+};
+
+USTRUCT()
+struct FModumateFVectorParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FVector Value = FVector::ZeroVector;
+
+	FModumateFVectorParam() {};
+	FModumateFVectorParam(const FVector& v) : Value(v) {}
+};
+
+USTRUCT()
+struct FModumateFVector2DParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FVector2D Value = FVector2D::ZeroVector;
+
+	FModumateFVector2DParam() {}
+	FModumateFVector2DParam(const FVector2D& v) : Value(v) {}
+};
+
+USTRUCT()
+struct FModumateFRotatorParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FRotator Value = FRotator::ZeroRotator;
+
+	FModumateFRotatorParam() {}
+	FModumateFRotatorParam(const FRotator& v) : Value(v) {}
+};
+
+USTRUCT()
+struct FModumateFQuatParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FQuat Value = FQuat::Identity;
+
+	FModumateFQuatParam() {}
+	FModumateFQuatParam(const FQuat& v) : Value(v) {}
+};
+
+USTRUCT()
+struct FModumateFloatParam
+{
+	GENERATED_BODY()
+	
+	UPROPERTY()
+	float Value = 0.0f;
+
+	FModumateFloatParam() {}
+	FModumateFloatParam(float v) : Value(v) {}
+};
+
+USTRUCT()
+struct FModumateIntParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	int32 Value = 0;
+
+	FModumateIntParam() {}
+	FModumateIntParam(int32 v) : Value(v) {}
+};
+
+USTRUCT()
+struct FModumateStringParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString Value;
+
+	FModumateStringParam() {}
+	FModumateStringParam(const TCHAR* v) : Value(v) {}
+	FModumateStringParam(const FString& v) : Value(v) {}
+};
+
+USTRUCT()
+struct FModumateNameParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FName Value;
+
+	FModumateNameParam() {}
+	FModumateNameParam(const FName& v) : Value(v) {}
+};
+
+USTRUCT()
+struct FModumateVectorArrayParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FVector> Values;
+
+	FModumateVectorArrayParam(const TArray<FVector>& v) : Values(v) {}
+	FModumateVectorArrayParam() {};
+};
+
+USTRUCT()
+struct FModumateVector2DArrayParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FVector2D> Values;
+
+	FModumateVector2DArrayParam(const TArray<FVector2D>& v) : Values(v) {}
+	FModumateVector2DArrayParam() {};
+};
+
+USTRUCT()
+struct FModumateRotatorArrayParam
+{
+	GENERATED_BODY()
+	
+	UPROPERTY()
+	TArray<FRotator> Values;
+
+	FModumateRotatorArrayParam(const TArray<FRotator>& v) : Values(v) {}
+	FModumateRotatorArrayParam() {};
+};
+
+USTRUCT()
+struct FModumateQuatArrayParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FQuat> Values;
+
+	FModumateQuatArrayParam(const TArray<FQuat>& v) : Values(v) {}
+	FModumateQuatArrayParam() {};
+};
+
+USTRUCT()
+struct FModumateIntArrayParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<int32> Values;
+
+	FModumateIntArrayParam(const TArray<int32>& v) : Values(v) {}
+	FModumateIntArrayParam() {};
+};
+
+USTRUCT()
+struct FModumateFloatArrayParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<float> Values;
+
+	FModumateFloatArrayParam(const TArray<float>& v) : Values(v) {}
+	FModumateFloatArrayParam() {};
+};
+
+USTRUCT()
+struct FModumateStringArrayParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FString> Values;
+
+	FModumateStringArrayParam(const TArray<FString>& v) : Values(v) {}
+	FModumateStringArrayParam() {};
+};
+
+USTRUCT()
+struct FModumateNameArrayParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FName> Values;
+
+	FModumateNameArrayParam(const TArray<FName>& v) : Values(v) {}
+	FModumateNameArrayParam() {};
+};
+
+USTRUCT()
+struct FModumateBoolArrayParam
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<bool> Values;
+
+	FModumateBoolArrayParam(const TArray<bool>& v) : Values(v) {}
+	FModumateBoolArrayParam() {};
+};
 
 /*
 Modumate Commands are text commands issued that are sent to the Unreal console
@@ -151,7 +365,7 @@ public:
 	bool FromStringMap(const FStringMap &Map);
 };
 
-#define CURRENT_COMMAND_VERSION	1
+static constexpr int32 MODUMATE_COMMAND_VERSION = 1;
 
 class MODUMATE_API FModumateCommand
 {
@@ -174,7 +388,7 @@ public:
 	int32 CachedCommandID;
 	bool bCaptureForInput;
 
-	FModumateCommand(const FString &command, bool bInCaptureForInput = false, int32 version = CURRENT_COMMAND_VERSION);
+	FModumateCommand(const FString &command, bool bInCaptureForInput = false, int32 version = MODUMATE_COMMAND_VERSION);
 	FModumateCommand() {}
 
 	FModumateFunctionParameterSet GetParameterSet() const;
@@ -188,7 +402,7 @@ public:
 	}
 };
 
-// We need to wrap the functor with because TMap crashes if we overload it with std::function objects
+// TODO: refactor for TFunction
 struct MODUMATE_API FModumateFunction
 {
 	FModumateFunction(const std::function<bool(const FModumateFunctionParameterSet &, FModumateFunctionParameterSet &)> &fn) : FN(fn) {};

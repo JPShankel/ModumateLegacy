@@ -10,6 +10,8 @@
 #include "ModumateCore/ModumateScriptProcessor.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
+#include "ModumateCore/EnumHelpers.h"
+#include "Objects/ModumateObjectStatics.h"
 
 #define LOCTEXT_NAMESPACE "BIMPresetCollection"
 

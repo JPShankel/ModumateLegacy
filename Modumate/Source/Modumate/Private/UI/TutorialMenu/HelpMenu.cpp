@@ -17,6 +17,7 @@
 #include "Runtime/Online/HTTP/Public/Http.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
+#include "ModumateCore/EnumHelpers.h"
 
 const FString UHelpMenu::AnalyticsSearchEvent = TEXT("TutorialHelpSearch");
 

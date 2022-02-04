@@ -4,7 +4,7 @@
 
 #include "Database/ModumateObjectDatabase.h"
 #include "DocumentManagement/ModumateCommands.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateTargetingStatics.h"
 #include "Objects/FFE.h"
 #include "UnrealClasses/CompoundMeshActor.h"

@@ -21,6 +21,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerPawn.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "ModumateCore/EnumHelpers.h"
 
 
 DEFINE_LOG_CATEGORY(LogInputAutomation);

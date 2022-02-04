@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "ModumateCore/ModumateTypes.h"
+#include "CoreMinimal.h"
 #include "MOIStructureData.generated.h"
 
 UENUM(BlueprintType) 

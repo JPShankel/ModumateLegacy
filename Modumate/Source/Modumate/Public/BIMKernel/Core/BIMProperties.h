@@ -6,7 +6,7 @@
 #include "BIMKernel/Core/BIMEnums.h"
 #include "BIMKernel/Core/BIMKey.h"
 #include "ModumateCore/ModumateUnits.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "BIMProperties.generated.h"
 
 struct  FBIMPropertySheetRecord;

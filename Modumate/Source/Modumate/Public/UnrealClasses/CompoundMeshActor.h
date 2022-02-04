@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 #include "GameFramework/Actor.h"

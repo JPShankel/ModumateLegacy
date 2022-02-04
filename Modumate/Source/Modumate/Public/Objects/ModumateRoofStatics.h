@@ -3,7 +3,6 @@
 
 #include "CoreMinimal.h"
 #include "Graph/Graph3DTypes.h"
-#include "ModumateCore/ModumateTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/Object.h"
 

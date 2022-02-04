@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Graph/GraphCommon.h"
-#include "ModumateCore/ModumateTypes.h"
+#include "Graph/Graph2DTypes.h"
+#include "Objects/ModumateObjectEnums.h"
 
 
 static constexpr float DEFAULT_GRAPH_EPSILON = 0.5f;

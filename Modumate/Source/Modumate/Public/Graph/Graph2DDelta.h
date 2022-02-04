@@ -5,9 +5,24 @@
 #include "CoreMinimal.h"
 #include "DocumentManagement/DocumentDelta.h"
 #include "Graph/Graph2DTypes.h"
-#include "ModumateCore/ModumateTypes.h"
 
 #include "Graph2DDelta.generated.h"
+
+USTRUCT()
+struct MODUMATE_API FVector2DPair
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FVector2D Key;
+
+	UPROPERTY()
+	FVector2D Value;
+
+	FVector2DPair() : Key(ForceInitToZero), Value(ForceInitToZero) {}
+	FVector2DPair(FVector2D InKey, FVector2D InValue) : Key(InKey), Value(InValue) {}
+};
+
 
 // A struct that describes a change to a graph object (currently edges and faces)
 USTRUCT()

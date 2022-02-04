@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/IUserObjectListEntry.h"
-#include "ModumateCore/ModumateTypes.h"
+
 
 #include "GeneralListItem.generated.h"
 

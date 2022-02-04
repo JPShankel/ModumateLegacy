@@ -6,7 +6,6 @@
 
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/HUD.h"
-#include "ModumateCore/ModumateTypes.h"
 #include "UI/HUDDrawWidget.h"
 
 #include "EditModelPlayerHUD.generated.h"

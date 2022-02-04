@@ -4,7 +4,6 @@
 #include "CoreMinimal.h"
 #include "Database/ModumateDataTables.h"
 #include "Graph/Graph3DTypes.h"
-#include "ModumateCore/ModumateTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/Object.h"
 #include "BIMKernel/Core/BIMKey.h"

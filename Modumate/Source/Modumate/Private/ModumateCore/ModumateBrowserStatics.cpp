@@ -10,7 +10,7 @@
 #include "Objects/DesignOption.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/ViewCubeWidget.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 
 bool UModumateBrowserStatics::CreateCameraViewAsMoi(UObject* WorldContextObject, UCameraComponent *CameraComp, const FString &CameraViewName, const FDateTime &TimeOfDay, int32 CameraViewIndex /*= INDEX_NONE*/)
 {

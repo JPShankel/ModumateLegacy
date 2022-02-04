@@ -2,9 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Misc/AutomationTest.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "Tests/AutomationCommon.h"
+#include "Objects/ModumateObjectStatics.h"
+#include "ModumateCore/EnumHelpers.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 

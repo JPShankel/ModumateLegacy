@@ -3,7 +3,7 @@
 #include "Objects/SurfaceEdge.h"
 
 #include "DocumentManagement/ModumateDocument.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "Objects/SurfaceGraph.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "UnrealClasses/EditModelPlayerController.h"

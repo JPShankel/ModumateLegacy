@@ -4,7 +4,7 @@
 
 #include "Graph/Graph2D.h"
 #include "Graph/Graph3D.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"

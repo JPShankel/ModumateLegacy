@@ -1,11 +1,11 @@
-#include "ModumateCore/ModumateObjectDeltaStatics.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "DocumentManagement/ObjIDReservationHandle.h"
 #include "Graph/Graph2DDelta.h"
 #include "Graph/Graph3DTypes.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "Objects/CutPlane.h"
 #include "Objects/FFE.h"
 #include "Objects/EdgeDetailObj.h"

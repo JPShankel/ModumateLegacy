@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "ModumateCore/ModumateTypes.h"
+#include "CoreMinimal.h"
 #include "QuantitiesDimensions.generated.h"
 
 UENUM()

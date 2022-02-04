@@ -5,7 +5,7 @@
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 
 #include "BIMKernel/Core/BIMKey.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "DocumentManagement/DocumentDelta.h"
 #include "Objects/MOIState.h"
 

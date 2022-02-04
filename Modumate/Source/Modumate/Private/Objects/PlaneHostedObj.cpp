@@ -12,7 +12,7 @@
 #include "Graph/Graph3DFace.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateMitering.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "Objects/MOIDelta.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"

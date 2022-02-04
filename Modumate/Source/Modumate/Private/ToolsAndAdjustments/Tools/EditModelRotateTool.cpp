@@ -5,7 +5,7 @@
 
 #include "Components/EditableTextBox.h"
 #include "DocumentManagement/ModumateCommands.h"
-#include "ModumateCore/ModumateObjectDeltaStatics.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingAngleActor.h"

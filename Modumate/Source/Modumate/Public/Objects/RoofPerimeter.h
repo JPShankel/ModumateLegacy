@@ -3,7 +3,7 @@
 
 #include "Graph/Graph2D.h"
 #include "Graph/Graph3DTypes.h"
-#include "ModumateCore/ModumateRoofStatics.h"
+#include "Objects/ModumateRoofStatics.h"
 #include "Objects/ModumateObjectInstance.h"
 
 #include "RoofPerimeter.generated.h"

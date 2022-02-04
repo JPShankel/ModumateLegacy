@@ -7,7 +7,7 @@
 #include "Drafting/ModumateDraftingElements.h"
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Objects/MiterNode.h"
 #include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"

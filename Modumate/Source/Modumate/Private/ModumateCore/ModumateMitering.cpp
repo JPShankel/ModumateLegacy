@@ -4,7 +4,7 @@
 #include "ModumateCore/LayerGeomDef.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Objects/MiterNode.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "DrawDebugHelpers.h"
 

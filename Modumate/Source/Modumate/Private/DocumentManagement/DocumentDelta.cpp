@@ -2,7 +2,8 @@
 
 #include "DocumentManagement/DocumentDelta.h"
 
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
+#include "Objects/MOIDelta.h"
 
 FStructDataWrapper FDocumentDelta::SerializeStruct()
 {

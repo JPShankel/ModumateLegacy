@@ -1,6 +1,6 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 
 #include "Algo/ForEach.h"
 #include "BIMKernel/Core/BIMProperties.h"

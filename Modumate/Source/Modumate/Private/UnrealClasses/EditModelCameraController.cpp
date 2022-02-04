@@ -19,6 +19,7 @@
 #include "UnrealClasses/ModumateViewportClient.h"
 #include "UnrealClient.h"
 #include <Runtime/Engine/Classes/Kismet/KismetMathLibrary.h>
+#include "ModumateCore/EnumHelpers.h"
 
 UEditModelCameraController::UEditModelCameraController()
 	: Super()

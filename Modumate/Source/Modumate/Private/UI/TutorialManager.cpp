@@ -2,7 +2,7 @@
 
 #include "UI/TutorialManager.h"
 
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "JsonObjectConverter.h"
 #include "Online/ModumateAccountManager.h"
@@ -16,6 +16,8 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/MainMenuGameMode.h"
+#include "ModumateCore/EnumHelpers.h"
+
 
 bool FModumateWalkthroughStepReqs::IsEmpty() const
 {

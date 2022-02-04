@@ -1,7 +1,7 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 #pragma once
 
-#include "ModumateCore/ModumateRoomStatics.h"
+#include "Objects/ModumateRoomStatics.h"
 #include "Objects/ModumateObjectInstance.h"
 
 #include "Room.generated.h"

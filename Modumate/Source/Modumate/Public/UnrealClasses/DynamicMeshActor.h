@@ -7,8 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "ModumateCore/LayerGeomDef.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "ModumateCore/ModumateTypes.h"
-#include "ModumateCore/ModumateTypes.h"
+
+
 #include "Objects/DimensionOffset.h"
 #include "ProceduralMeshComponent.h"
 

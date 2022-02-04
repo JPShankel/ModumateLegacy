@@ -4,7 +4,8 @@
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/EdgeDetailData.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
+#include "ModumateCore/EnumHelpers.h"
 
 TMap<FBIMKey, FGuid> FBIMCSVReader::KeyGuidMap;
 TMap<FGuid, FBIMKey> FBIMCSVReader::GuidKeyMap;

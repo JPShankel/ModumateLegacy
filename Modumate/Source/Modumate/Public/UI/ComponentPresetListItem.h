@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetEditorNode.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 
 #include "ComponentPresetListItem.generated.h"
 

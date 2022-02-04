@@ -6,7 +6,7 @@
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "Graph/Graph3D.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "Objects/EdgeDetailObj.h"
 #include "Objects/MiterNode.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"

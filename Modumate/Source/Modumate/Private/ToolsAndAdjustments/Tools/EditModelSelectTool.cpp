@@ -6,7 +6,7 @@
 #include "DocumentManagement/ModumateCommands.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "UnrealClasses/EditModelGameState.h"

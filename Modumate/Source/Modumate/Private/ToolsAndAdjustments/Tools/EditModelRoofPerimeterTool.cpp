@@ -4,8 +4,8 @@
 
 #include "Algo/Transform.h"
 #include "Graph/Graph3DDelta.h"
-#include "ModumateCore/ModumateObjectStatics.h"
-#include "ModumateCore/ModumateRoofStatics.h"
+#include "Objects/ModumateObjectStatics.h"
+#include "Objects/ModumateRoofStatics.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"

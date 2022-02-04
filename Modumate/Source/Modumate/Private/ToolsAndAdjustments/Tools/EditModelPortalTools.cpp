@@ -12,7 +12,7 @@
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "Database/ModumateObjectDatabase.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UnrealClasses/PortalFrameActor.h"
 #include "Objects/Portal.h"

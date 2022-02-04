@@ -25,6 +25,7 @@
 #include "UnrealClasses/ModumateObjectComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "ModumateCore/PrettyJSONWriter.h"
+#include "Objects/ModumateObjectStatics.h"
 
 
 class AEditModelPlayerController;

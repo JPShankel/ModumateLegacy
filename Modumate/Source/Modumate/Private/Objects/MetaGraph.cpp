@@ -4,7 +4,7 @@
 
 #include "DocumentManagement/ModumateDocument.h"
 #include "Graph/Graph3D.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 
 AMOIMetaGraph::AMOIMetaGraph()
 { }

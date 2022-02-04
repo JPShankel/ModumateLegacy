@@ -1,6 +1,6 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
-#include "ModumateCore/ModumateRoomStatics.h"
+#include "Objects/ModumateRoomStatics.h"
 
 #include "Algo/LevenshteinDistance.h"
 #include "Database/ModumateObjectDatabase.h"

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BIMKernel/Core/BIMKey.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "ModumateCore/StructDataWrapper.h"
 
 // TODO: remove these

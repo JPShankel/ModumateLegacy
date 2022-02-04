@@ -1,6 +1,8 @@
 // Copyright 2019 Modumate, Inc. All Rights Reserved.
 
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
+#include "ModumateCore/EnumHelpers.h"
+#include "Objects/ModumateObjectStatics.h"
 
 #define LOCTEXT_NAMESPACE "ModumateTypes"
 

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/Presets/BIMPresetEditorNode.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"

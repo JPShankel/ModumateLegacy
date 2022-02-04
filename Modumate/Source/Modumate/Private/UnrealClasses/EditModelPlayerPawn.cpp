@@ -6,7 +6,7 @@
 #include "Components/Border.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/TextRenderComponent.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "UI/Custom/ModumateTextBlock.h"
 #include "UI/Custom/ModumateTextBlockUserWidget.h"
 #include "UI/EditModelPlayerHUD.h"

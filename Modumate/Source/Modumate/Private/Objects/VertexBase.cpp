@@ -3,7 +3,7 @@
 #include "Objects/VertexBase.h"
 
 #include "Components/StaticMeshComponent.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/EditModelGameMode.h"

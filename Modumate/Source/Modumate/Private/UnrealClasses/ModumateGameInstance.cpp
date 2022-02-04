@@ -14,7 +14,7 @@
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateStats.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "Online/ModumateAccountManager.h"
@@ -39,6 +39,7 @@
 #include "Quantities/QuantitiesManager.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Objects/DesignOption.h"
+#include "ModumateCore/EnumHelpers.h"
 
 using namespace ModumateCommands;
 using namespace ModumateParameters;

@@ -3,8 +3,8 @@
 #include "Objects/SurfaceGraph.h"
 
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "ModumateCore/ModumateObjectDeltaStatics.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "DocumentManagement/ModumateDocument.h"
 
 AMOISurfaceGraph::AMOISurfaceGraph()

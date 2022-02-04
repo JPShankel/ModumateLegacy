@@ -2,6 +2,7 @@
 
 #include "BIMKernel/Core/BIMProperties.h"
 #include "DocumentManagement/ModumateSerialization.h"
+#include "ModumateCore/EnumHelpers.h"
 
 struct MODUMATE_API FBIMPropertySheetRecord;
 

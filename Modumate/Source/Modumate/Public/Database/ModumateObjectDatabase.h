@@ -7,7 +7,7 @@
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "Database/ModumateArchitecturalMesh.h"
 
-#include "ModumateCore/ModumateRoomStatics.h"
+#include "Objects/ModumateRoomStatics.h"
 
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"

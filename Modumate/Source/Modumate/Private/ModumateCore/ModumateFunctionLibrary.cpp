@@ -23,7 +23,7 @@
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateStats.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "Objects/ModumateObjectInstance.h"

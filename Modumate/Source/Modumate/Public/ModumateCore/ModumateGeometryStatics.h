@@ -5,7 +5,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "ProceduralMeshComponent.h"
 #include "Database/ModumateSimpleMesh.h"
-#include "ModumateCore/ModumateTypes.h"
+
 #include "Graph/Graph3DTypes.h"
 #include "SegmentTypes.h"
 #include "VectorTypes.h"

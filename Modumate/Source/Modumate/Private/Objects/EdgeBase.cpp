@@ -3,7 +3,7 @@
 #include "Objects/EdgeBase.h"
 
 #include "DocumentManagement/ModumateDocument.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Graph/GraphCommon.h"
-#include "ModumateCore/ModumateRoofStatics.h"
+#include "Objects/ModumateRoofStatics.h"
 
 #include "RoofPerimeterPropertiesWidget.generated.h"
 

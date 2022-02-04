@@ -2,7 +2,7 @@
 
 #include "Objects/TerrainMaterial.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/Properties/InstPropWidgetCombo.h"

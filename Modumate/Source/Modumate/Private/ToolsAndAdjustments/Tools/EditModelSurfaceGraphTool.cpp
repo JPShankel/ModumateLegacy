@@ -2,7 +2,7 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelSurfaceGraphTool.h"
 
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateTargetingStatics.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "Objects/SurfaceGraph.h"

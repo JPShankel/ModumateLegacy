@@ -6,7 +6,7 @@
 #include "Objects/SurfaceGraph.h"
 #include "Graph/Graph2D.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 

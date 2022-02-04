@@ -9,6 +9,15 @@
 
 class AModumateObjectInstance;
 
+UENUM()
+enum class EMOIDeltaType : uint8
+{
+	None = 0,
+	Mutate,
+	Create,
+	Destroy
+};
+
 /**
  * A pair of MOI states, and the desired operation, so that a single MOI delta can perform multiple operations
  */

@@ -5,7 +5,7 @@
 #include "Algo/Accumulate.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Components/VerticalBox.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Objects/EdgeDetailObj.h"
@@ -23,8 +23,9 @@
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/SelectionTray/SelectionTrayWidget.h"
-#include "ModumateCore/ModumateObjectDeltaStatics.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "Objects/ModumateObjectStatics.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDetailDesigner"
 

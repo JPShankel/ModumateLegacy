@@ -1,7 +1,7 @@
 // Copyright 2021 Modumate, Inc. All Rights Reserved.
 
 #include "Graph/Graph3DDelta.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "DocumentManagement/ModumateDocument.h"
 
 

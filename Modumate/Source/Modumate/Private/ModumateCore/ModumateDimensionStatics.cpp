@@ -6,7 +6,7 @@
 #include "Internationalization/Culture.h"
 #include "Internationalization/FastDecimalFormat.h"
 #include "MathUtil.h"
-#include "ModumateCore/ModumateTypes.h"
+
 #include "ModumateCore/ModumateUnits.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "DocumentManagement/DocumentSettings.h"

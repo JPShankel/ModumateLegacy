@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Quantities/QuantitiesCollection.h"
 #include "ModumateCore/ModumateUnits.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 
 #include "PresetCardMetaDimension.generated.h"
 

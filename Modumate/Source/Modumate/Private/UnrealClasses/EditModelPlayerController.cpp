@@ -53,6 +53,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "ModumateCore/EnumHelpers.h"
 
 
 // Tools

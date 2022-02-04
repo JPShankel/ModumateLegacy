@@ -13,6 +13,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/RightMenu/GeneralListItemMenuBlock.h"
 #include "UI/LeftMenu/NCPNavigator.h"
+#include "Objects/ModumateObjectStatics.h"
 
 UToolTrayWidget::UToolTrayWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

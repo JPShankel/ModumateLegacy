@@ -7,9 +7,10 @@
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "ModumateCore/ModumateUnits.h"
 #include "BIMKernel/Core/BIMProperties.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
 #include "BIMKernel/Core/BIMEnums.h"
+#include "Engine/TextureLightProfile.h"
 #include "BIMLegacyPattern.generated.h"
 
 struct FBIMPresetInstance;

@@ -1,7 +1,10 @@
+// Copyright 2022 Modumate, Inc. All Rights Reserved.
+
 #include "DocumentManagement/ModumateSnappingView.h"
 
 #include "DocumentManagement/ModumateDocument.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateStats.h"
 #include "ToolsAndAdjustments/Interface/EditModelToolInterface.h"
 #include "UnrealClasses/EditModelPlayerController.h"

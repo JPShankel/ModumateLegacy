@@ -2,9 +2,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateCore/ModumateTypes.h"
+
 #include "UI/DimensionActor.h"
 #include "UObject/Object.h"
+#include "Objects/ModumateObjectEnums.h"
 
 #include "DimensionManager.generated.h"
 

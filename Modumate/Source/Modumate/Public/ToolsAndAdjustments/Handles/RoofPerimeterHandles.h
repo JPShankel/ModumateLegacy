@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Graph/Graph3DTypes.h"
-#include "ModumateCore/ModumateRoofStatics.h"
+#include "Objects/ModumateRoofStatics.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 
 #include "RoofPerimeterHandles.generated.h"

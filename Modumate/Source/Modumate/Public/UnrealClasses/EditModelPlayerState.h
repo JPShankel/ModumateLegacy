@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "DocumentManagement/DocumentDelta.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "Online/ModumateAccountManager.h"

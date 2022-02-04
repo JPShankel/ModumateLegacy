@@ -4,7 +4,7 @@
 
 #include "DocumentManagement/ModumateSerialization.h"
 #include "HAL/PlatformApplicationMisc.h"
-#include "ModumateCore/ModumateObjectDeltaStatics.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"

@@ -1,8 +1,7 @@
 // Copyright 2021 Modumate, Inc. All Rights Reserved.
 
 #pragma once
-
-#include "ModumateCore/ModumateTypes.h"
+#include "CoreMinimal.h"
 
 struct FQuantityItemId
 {

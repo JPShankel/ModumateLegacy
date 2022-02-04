@@ -4,13 +4,15 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Graph/Graph3DTypes.h"
-#include "ModumateCore/ModumateTypes.h"
+#include "Graph/Graph2DTypes.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "Objects/DimensionOffset.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "UObject/Object.h"
 
 #include "ModumateObjectStatics.generated.h"
+
 
 struct FBIMAssemblySpec;
 class UModumateDocument;
@@ -124,4 +126,46 @@ public:
 
 private:
 	static bool GetGroupIdsForGroupChangeHelper(const UModumateDocument* Doc, int32 NewGroupID, int32 OldGroupID, TArray<int32>& OutAffectedGroups, bool& bOutFoundOldGroup);
+};
+
+UCLASS()
+class MODUMATE_API UModumateTypeStatics : public UBlueprintFunctionLibrary
+{
+	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintPure, Category = "Modumate Types")
+	static EObjectType ObjectTypeFromToolMode(EToolMode tm);
+
+	UFUNCTION(BlueprintPure, Category = "Modumate Types")
+	static EToolMode ToolModeFromObjectType(EObjectType ot);
+
+	static EGraph3DObjectType Graph3DObjectTypeFromObjectType(EObjectType ot);
+	static EObjectType ObjectTypeFromGraph3DType(EGraph3DObjectType GraphType);
+
+	static EGraphObjectType Graph2DObjectTypeFromObjectType(EObjectType ObjectType);
+	static EObjectType ObjectTypeFromGraph2DType(EGraphObjectType GraphType, EToolCategories GraphCategory);
+
+	UFUNCTION(BlueprintPure, Category = "Modumate Types")
+	static FText GetTextForObjectType(EObjectType ObjectType, bool bPlural = false);
+
+	UFUNCTION(BlueprintPure, Category = "Modumate Types")
+	static ECollisionChannel CollisionTypeFromObjectType(EObjectType ot);
+
+	UFUNCTION(BlueprintPure, Category = "Modumate Types")
+	static FText GetAreaTypeText(EAreaType AreaType);
+
+	static const EObjectDirtyFlags OrderedDirtyFlags[3];
+
+	UFUNCTION(BlueprintPure, Category = "Modumate Types")
+	static EToolCategories GetToolCategory(EToolMode ToolMode);
+
+	UFUNCTION(BlueprintPure, Category = "Modumate Types")
+	static EToolCategories GetObjectCategory(EObjectType ObjectType);
+
+	UFUNCTION(BlueprintPure, Category = "Modumate Types")
+	static FText GetToolCategoryText(EToolCategories ToolCategory);
+
+	UFUNCTION(BlueprintPure, Category = "Modumate Types")
+	static TArray<EObjectType> GetObjectTypeWithDirectionIndicator();
 };

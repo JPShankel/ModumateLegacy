@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Engine/StaticMeshActor.h"
-#include "ModumateCore/ModumateTypes.h"
+
 #include "ProceduralMeshComponent.h"
 #include "LineActor.generated.h"
 

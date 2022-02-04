@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Objects/ModumateObjectEnums.h"
 
 class FGraphVertexPair : public TPair<int32, int32>
 {

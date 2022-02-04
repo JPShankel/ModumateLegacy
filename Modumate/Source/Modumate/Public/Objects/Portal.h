@@ -7,6 +7,18 @@
 
 #include "Portal.generated.h"
 
+
+UENUM()
+enum class EDoorOperationType : uint8
+{
+	None,
+	Barn,
+	Bifold,
+	Pocket,
+	Sliding,
+	Swing
+};
+
 UENUM()
 enum class EPortalOrientation : uint8 { Up, Left, Down, Right };
 

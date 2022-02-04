@@ -2,7 +2,7 @@
 
 #include "UI/DimensionManager.h"
 
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "Graph/Graph3DTypes.h"
 #include "UI/AngleDimensionActor.h"
 #include "UI/DimensionActor.h"

@@ -8,7 +8,7 @@
 #include "Graph/Graph2D.h"
 #include "ModumateCore/LayerGeomDef.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"

@@ -6,7 +6,6 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/UserWidgetPool.h"
-#include "ModumateCore/ModumateTypes.h"
 #include "ModumateCore/ModumateDimensionString.h"
 
 #include "HUDDrawWidget.generated.h"

@@ -22,7 +22,7 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateMitering.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Objects/MOIFactory.h"
@@ -52,6 +52,7 @@
 #include "UnrealClasses/ModumateObjectComponent.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "UnrealClasses/SkyActor.h"
+#include "ModumateCore/EnumHelpers.h"
 
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
 #include "DrawingDesigner/DrawingDesignerRequests.h"

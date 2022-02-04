@@ -2,11 +2,14 @@
 
 #pragma once
 
-#include "Database/ModumateObjectEnums.h"
+#include "CoreMinimal.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "GameFramework/Actor.h"
 #include "Objects/MOIState.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "UObject/WeakObjectPtr.h"
+#include "Types/SlateEnums.h"
+#include "Styling/SlateWidgetStyleAsset.h"
 
 #include "AdjustmentHandleActor.generated.h"
 

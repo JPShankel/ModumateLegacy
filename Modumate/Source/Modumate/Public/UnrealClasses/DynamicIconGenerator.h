@@ -7,7 +7,7 @@
 #include "BIMKernel/Core/BIMKey.h"
 #include "BIMKernel/Presets/BIMPresetEditorNode.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "DynamicIconGenerator.generated.h"
 
 struct FBIMAssemblySpec;

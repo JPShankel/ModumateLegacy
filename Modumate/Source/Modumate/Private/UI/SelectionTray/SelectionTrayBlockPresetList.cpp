@@ -4,9 +4,11 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "Objects/ModumateObjectInstance.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "Components/ListView.h"
 #include "UI/PresetCard/PresetCardItemObject.h"
+#include "Objects/ModumateObjectStatics.h"
+
 
 
 USelectionTrayBlockPresetList::USelectionTrayBlockPresetList(const FObjectInitializer& ObjectInitializer)

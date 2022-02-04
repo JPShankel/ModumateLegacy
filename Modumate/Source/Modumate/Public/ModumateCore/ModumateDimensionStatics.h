@@ -5,11 +5,36 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Math/UnitConversion.h"
 #include "ModumateCore/ModumateDimensionString.h"
-#include "ModumateCore/ModumateTypes.h"
 #include "UObject/Object.h"
 #include "ModumateDimensionStatics.generated.h"
 
 struct FDocumentSettings;
+
+UENUM(BlueprintType)
+enum class EDimensionFormat : uint8
+{
+	None,
+	FeetAndInches,
+	JustFeet,
+	JustInches,
+	MetersAndCentimeters,
+	JustMeters,
+	JustCentimeters,
+	JustMillimeters,
+	Error
+};
+
+USTRUCT(BlueprintType)
+struct MODUMATE_API FModumateFormattedDimension
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Modumate Unit")
+	EDimensionFormat Format = EDimensionFormat::None;
+
+	FString FormattedString;
+	double Centimeters = 0.0f;
+};
 
 // Helper functions for managing dimensional string parsing and generation
 // 

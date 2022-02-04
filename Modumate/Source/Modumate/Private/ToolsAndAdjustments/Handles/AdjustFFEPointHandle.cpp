@@ -1,7 +1,7 @@
 #include "ToolsAndAdjustments/Handles/AdjustFFEPointHandle.h"
 
-#include "ModumateCore/ModumateObjectDeltaStatics.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UnrealClasses/EditModelGameState.h"

@@ -13,7 +13,7 @@
 #include "BIMKernel/Core/BIMProperties.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UnrealClasses/ModumateObjectInstanceParts.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Quantities/QuantitiesManager.h"
 

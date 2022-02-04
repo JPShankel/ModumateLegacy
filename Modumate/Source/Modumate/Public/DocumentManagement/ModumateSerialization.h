@@ -6,7 +6,7 @@
 #include "ModumateCore/PrettyJSONWriter.h"
 
 #include "BIMKernel/Presets/BIMPresetCollection.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "DocumentManagement/DocumentDelta.h"
 #include "DocumentManagement/DocumentSettings.h"
 #include "DrawingDesigner/DrawingDesignerDocument.h"

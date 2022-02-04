@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "Engine.h"
 #include "BIMKernel/Core/BIMKey.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 
 #include "EditModelToolInterface.generated.h"
 
 class AEditModelPlayerController;
 class AModumateObjectInstance;
+
 
 UINTERFACE(meta = (CannotImplementInterfaceInBlueprint))
 class UEditModelToolInterface : public UInterface

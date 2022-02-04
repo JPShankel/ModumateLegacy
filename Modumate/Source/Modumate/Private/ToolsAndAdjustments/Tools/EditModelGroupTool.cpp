@@ -2,11 +2,12 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelGroupTool.h"
 
-#include "ModumateCore/ModumateObjectDeltaStatics.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "Objects/MetaGraph.h"
+#include "Objects/ModumateObjectStatics.h"
 
 UGroupTool::UGroupTool()
 	: Super()

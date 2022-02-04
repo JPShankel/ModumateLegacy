@@ -7,7 +7,8 @@
 #include "UI/EditModelUserWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/BIM/BIMDesigner.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectStatics.h"
 
 
 

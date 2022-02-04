@@ -3,7 +3,7 @@
 #include "Objects/TerrainPolygon.h"
 
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "DocumentManagement/ModumateDocument.h"

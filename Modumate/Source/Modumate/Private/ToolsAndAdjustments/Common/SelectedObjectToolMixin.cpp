@@ -1,9 +1,11 @@
+// Copyright 2022 Modumate, Inc. All Rights Reserved.
+
 #include "ToolsAndAdjustments/Common/SelectedObjectToolMixin.h"
 
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateSerialization.h"
-#include "ModumateCore/ModumateObjectDeltaStatics.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 
 

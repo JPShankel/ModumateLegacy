@@ -2,7 +2,7 @@
 
 #include "Objects/LayeredObjectInterface.h"
 
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "DocumentManagement/ModumateDocument.h"
 

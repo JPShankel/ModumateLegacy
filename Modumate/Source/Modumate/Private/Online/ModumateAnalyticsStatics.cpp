@@ -5,10 +5,11 @@
 #include "Analytics.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "Interfaces/IAnalyticsProvider.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "UnrealClasses/Modumate.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "ModumateCore/EnumHelpers.h"
 
 
 // Made to be consistent with those interpreted by FAnalyticsProviderRevulytics::RecordEvent

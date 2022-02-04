@@ -5,7 +5,7 @@
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "Framework/Commands/InputChord.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 
 #include "EditModelInputHandler.generated.h"

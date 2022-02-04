@@ -3,12 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateCore/ModumateTypes.h"
+
 #include "Graph/Graph3DTypes.h"
 #include "DocumentManagement/DocumentDelta.h"
 
 #include "Graph3DDelta.generated.h"
 
+USTRUCT()
+struct MODUMATE_API FModumateVectorPair
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FVector Key;
+
+	UPROPERTY()
+	FVector Value;
+
+	FModumateVectorPair() : Key(ForceInitToZero), Value(ForceInitToZero) {}
+	FModumateVectorPair(FVector InKey, FVector InValue) : Key(InKey), Value(InValue) {}
+};
 
 // A struct that describes a change to a graph object (currently edges and faces)
 USTRUCT()

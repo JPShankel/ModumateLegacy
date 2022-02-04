@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Database/ModumateObjectEnums.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "BIMKernel/Core/BIMProperties.h"
 #include "BIMKernel/Core/BIMEnums.h"
 #include "BIMKernel/Core/BIMKey.h"

@@ -6,7 +6,7 @@
 #include "DocumentManagement/ModumateCommands.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ObjIDReservationHandle.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "Objects/Finish.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/EditModelGameMode.h"

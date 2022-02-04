@@ -10,7 +10,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "ModumateCore/ModumateRoomStatics.h"
+#include "Objects/ModumateRoomStatics.h"
 
 AMOIRoom::AMOIRoom()
 	: AModumateObjectInstance()

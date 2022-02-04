@@ -1,6 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "Objects/MOIFactory.h"
+#include "ModumateCore/EnumHelpers.h"
 
 #include "Objects/Cabinet.h"
 #include "Objects/CutPlane.h"

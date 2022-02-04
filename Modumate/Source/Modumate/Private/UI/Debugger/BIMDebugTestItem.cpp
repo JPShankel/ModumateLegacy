@@ -4,6 +4,7 @@
 #include "UI/Custom/ModumateButton.h"
 #include "UI/Custom/ModumateTextBlock.h"
 #include "UI/Debugger/BIMDebugger.h"
+#include "ModumateCore/EnumHelpers.h"
 
 
 UBIMDebugTestItem::UBIMDebugTestItem(const FObjectInitializer& ObjectInitializer)

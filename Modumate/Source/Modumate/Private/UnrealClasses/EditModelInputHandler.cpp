@@ -9,7 +9,7 @@
 #include "HAL/PlatformMisc.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Online/ModumateAnalyticsStatics.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/ModumateSettingsMenu.h"
@@ -19,6 +19,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerPawn.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "ModumateCore/EnumHelpers.h"
 
 UEditModelInputHandler::UEditModelInputHandler()
 	: Super()

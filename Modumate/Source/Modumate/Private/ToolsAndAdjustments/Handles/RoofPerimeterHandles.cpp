@@ -6,7 +6,7 @@
 #include "Graph/Graph3D.h"
 #include "Graph/Graph3DDelta.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "ModumateCore/ModumateRoofStatics.h"
+#include "Objects/ModumateRoofStatics.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/HUDDrawWidget.h"

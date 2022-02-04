@@ -4,7 +4,7 @@
 
 
 #include "Database/ModumateArchitecturalMaterial.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "Objects/DimensionOffset.h"
 #include "Objects/ModumateObjectInstance.h"

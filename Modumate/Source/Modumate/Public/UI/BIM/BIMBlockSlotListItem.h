@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "BIMKernel/Presets/BIMPresetEditorNode.h"
-#include "ModumateCore/ModumateTypes.h"
+
 
 #include "BIMBlockSlotListItem.generated.h"
 

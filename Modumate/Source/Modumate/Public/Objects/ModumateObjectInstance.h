@@ -5,7 +5,7 @@
 #include "DocumentManagement/ModumateSerialization.h"
 #include "GameFramework/Actor.h"
 #include "ModumateCore/ModumateDimensionString.h"
-#include "ModumateCore/ModumateTypes.h"
+
 #include "Objects/MOIDelta.h"
 #include "Objects/MOIState.h"
 #include "Objects/MOIStructureData.h"
@@ -25,6 +25,7 @@ class IMiterNode;
 class ILayeredObject;
 class ISceneCaptureObject;
 class FDrawingDesignerLine;
+
 
 UENUM()
 enum class EWebMOIPropertyType : uint8

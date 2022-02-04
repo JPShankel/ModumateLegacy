@@ -13,7 +13,7 @@
 #include "Objects/MetaEdge.h"
 #include "ModumateCore/ModumateMitering.h"
 #include "Objects/ModumateObjectInstance.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 
 
 FMiterParticipantData::FMiterParticipantData()

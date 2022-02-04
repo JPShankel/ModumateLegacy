@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ModumateCore/ModumateTypes.h"
+
 #include "SkyActor.generated.h"
 
 UCLASS()

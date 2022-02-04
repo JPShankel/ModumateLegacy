@@ -1,7 +1,7 @@
 #include "ToolsAndAdjustments/Tools/EditModelMoveTool.h"
 
 #include "DocumentManagement/ModumateCommands.h"
-#include "ModumateCore/ModumateObjectDeltaStatics.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
 #include "UnrealClasses/EditModelGameMode.h"

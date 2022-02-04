@@ -16,6 +16,7 @@
 #include "UI/BIM/BIMEditColorPicker.h"
 #include "UI/LeftMenu/SwapMenuWidget.h"
 #include "UI/LeftMenu/NCPNavigator.h"
+#include "ModumateCore/EnumHelpers.h"
 
 UBIMBlockDropdownPreset::UBIMBlockDropdownPreset(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

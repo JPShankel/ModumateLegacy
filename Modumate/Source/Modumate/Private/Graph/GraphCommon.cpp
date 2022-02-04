@@ -2,7 +2,7 @@
 
 #include "Graph/GraphCommon.h"
 
-#include "ModumateCore/ModumateTypes.h"
+
 
 FGraphVertexPair::FGraphVertexPair()
 {

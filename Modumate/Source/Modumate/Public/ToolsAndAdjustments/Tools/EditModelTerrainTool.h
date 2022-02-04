@@ -5,6 +5,7 @@
 #include "ToolsAndAdjustments/Common/EditModelToolBase.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/DynamicMeshActor.h"
+#include "Graph/Graph2D.h"
 
 #include "EditModelTerrainTool.generated.h"
 

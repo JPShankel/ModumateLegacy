@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateCore/ModumateTypes.h"
 #include "ModumateCore/StructDataWrapper.h"
 
 #include "DocumentDelta.generated.h"

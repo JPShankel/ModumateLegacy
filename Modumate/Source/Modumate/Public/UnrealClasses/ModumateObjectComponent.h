@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "ModumateCore/ModumateTypes.h"
+
 #include "ModumateObjectComponent.generated.h"
 
 

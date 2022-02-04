@@ -4,7 +4,7 @@
 class FDraftingComposite;
 enum class FModumateLayerType;
 
-#include "ModumateCore/ModumateTypes.h"
+
 
 DECLARE_MULTICAST_DELEGATE(FSceneCaptureHandlerDelegate);
 

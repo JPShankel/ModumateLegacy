@@ -4,6 +4,7 @@
 
 #include "Components/InputComponent.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "ModumateCore/EnumHelpers.h"
 
 // Sets default values
 AEditModelToggleGravityPawn::AEditModelToggleGravityPawn()

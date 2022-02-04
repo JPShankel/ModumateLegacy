@@ -3,7 +3,7 @@
 #include "Objects/TerrainEdge.h"
 
 #include "DocumentManagement/ModumateDocument.h"
-#include "ModumateCore/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "UnrealClasses/LineActor.h"
 
 

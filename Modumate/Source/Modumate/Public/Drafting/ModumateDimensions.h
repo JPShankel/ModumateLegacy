@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ModumateCore/ModumateTypes.h"
+
 #include "VectorTypes.h"
 
 class UModumateDocument;
