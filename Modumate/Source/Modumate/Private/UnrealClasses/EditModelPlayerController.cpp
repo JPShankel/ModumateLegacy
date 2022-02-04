@@ -23,6 +23,7 @@
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/DynamicIconGenerator.h"
+#include "UnrealClasses/EditModelDatasmithImporter.h"
 #include "UnrealClasses/EditModelCameraController.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -342,6 +343,11 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 	{
 		DynamicIconGenerator->SetActorLocation(FVector(-100000.f, -100000.f, -100000.f));
 	}
+
+	// Create FBXImportManager
+	FActorSpawnParameters datasmithImporterSpawnParams;
+	datasmithImporterSpawnParams.Name = FName(*FString::Printf(TEXT("%s_editModelDatasmithImporter"), *GetName()));
+	EditModelDatasmithImporter = GetWorld()->SpawnActor<AEditModelDatasmithImporter>(EditModelDatasmithImporterClass, datasmithImporterSpawnParams);
 #endif
 
 #if !UE_BUILD_SHIPPING

@@ -34,6 +34,7 @@
 #include "UnrealClasses/MainMenuController.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "UnrealClasses/TooltipManager.h"
+#include "UnrealClasses/EditModelDatasmithImporter.h"
 #include "Online/ModumateCloudConnection.h"
 #include "Quantities/QuantitiesManager.h"
 #include "GameFramework/GameUserSettings.h"
@@ -161,6 +162,24 @@ void UModumateGameInstance::RegisterAllCommands()
 			bool newShow = !controller->EditModelUserWidget->IsBIMDebuggerOn();
 			controller->EditModelUserWidget->ShowBIMDebugger(newShow);
 			return true;
+		}
+		return false;
+	});
+
+	RegisterCommand(kImportDatasmith, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
+	{
+		AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (controller && controller->EditModelDatasmithImporter)
+		{
+			FString idString = params.GetValue(kObjectID);
+			if (idString == TEXT("0"))
+			{
+				return controller->EditModelDatasmithImporter->ImportDatasmithFromDialogue();
+			}
+			else
+			{
+				return controller->EditModelDatasmithImporter->ImportDatasmithFromURL(idString);
+			}
 		}
 		return false;
 	});

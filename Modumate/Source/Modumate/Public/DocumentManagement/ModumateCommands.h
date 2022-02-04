@@ -25,6 +25,7 @@ namespace ModumateCommands
 
 	// Object creators
 	MODUMATE_COMMAND(kMakeScopeBox, "make_scopebox");
+	MODUMATE_COMMAND(kImportDatasmith, "import_datasmith");
 
 	// Groups
 	MODUMATE_COMMAND(kViewGroupObject, "view_group_object");

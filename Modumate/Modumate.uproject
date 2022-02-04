@@ -97,6 +97,14 @@
 		{
 			"Name": "VivoxCore",
 			"Enabled": true
+		},
+		{
+			"Name": "DatasmithImporter",
+			"Enabled": true
+		},
+		{
+			"Name": "DatasmithRuntime",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [

@@ -560,11 +560,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Menu)
 	TSubclassOf<class ADynamicIconGenerator> DynamicIconGeneratorClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Menu)
+	TSubclassOf<class AEditModelDatasmithImporter> EditModelDatasmithImporterClass;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Menu)
 	class UEditModelUserWidget *EditModelUserWidget;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Menu)
 	class ADynamicIconGenerator *DynamicIconGenerator;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Menu)
+	class AEditModelDatasmithImporter* EditModelDatasmithImporter;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "CutPlane")
 	UMaterialParameterCollection* CutPlaneCullingMaterialCollection;
