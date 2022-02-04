@@ -983,3 +983,66 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(UModumateDocument*
 		}
 	}
 }
+
+void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas)
+{
+	auto* graph = Doc->GetVolumeGraph(GraphID);
+	if (graph)
+	{
+		auto& graphElements = graph->GetAllObjects();
+		TSharedPtr<FMOIDelta> moisDelta = MakeShared<FMOIDelta>();
+		TSharedPtr<FGraph3DDelta> graphDelta = MakeShared<FGraph3DDelta>(GraphID);
+
+		for (auto& kvp : graphElements)
+		{
+			int32 id = kvp.Key;
+			switch (kvp.Value)
+			{
+			case EGraph3DObjectType::Vertex:
+				graphDelta->VertexDeletions.Add(id, graph->GetVertices()[id].Position);
+				break;
+
+			case EGraph3DObjectType::Edge:
+			{
+				TArray<int32> edgeVerts;
+				graph->GetEdges()[id].GetVertexIDs(edgeVerts);
+				graphDelta->EdgeDeletions.Add(id, FGraph3DObjDelta(edgeVerts));
+				break;
+			}
+
+			case EGraph3DObjectType::Face:
+			{
+				const FGraph3DFace& face = graph->GetFaces()[id];
+				graphDelta->FaceDeletions.Add(id, FGraph3DObjDelta(face.VertexIDs, TArray<int32>(), face.ContainingFaceID, face.ContainedFaceIDs));
+				break;
+			}
+			}
+
+			auto* metaObject = Doc->GetObjectById(id);
+			if (ensure(metaObject))
+			{
+				auto mois = metaObject->GetAllDescendents();
+				for (auto* moi : mois)
+				{
+					moisDelta->AddCreateDestroyState(moi->GetStateData(), EMOIDeltaType::Destroy);
+				}
+			}
+		}
+
+		if (moisDelta->IsValid())
+		{
+			OutDeltas.Add(moisDelta);
+		}
+		if (!graphDelta->IsEmpty())
+		{
+			OutDeltas.Add(graphDelta);
+
+			TSharedPtr<FGraph3DDelta> deleteGraph = MakeShared<FGraph3DDelta>(GraphID);
+			deleteGraph->DeltaType = EGraph3DDeltaType::Remove;
+			OutDeltas.Add(deleteGraph);
+			TSharedPtr<FMOIDelta> deleteMetaGraph = MakeShared<FMOIDelta>();
+			deleteMetaGraph->AddCreateDestroyState(Doc->GetObjectById(GraphID)->GetStateData(), EMOIDeltaType::Destroy);
+			OutDeltas.Add(deleteMetaGraph);
+		}
+	}
+}

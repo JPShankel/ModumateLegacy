@@ -989,7 +989,7 @@ void AEditModelPlayerState::FindReachableObjects(TSet<AModumateObjectInstance*> 
 		TArray<AModumateObjectInstance*> unmountedObjects(doc->GetObjectsOfType(EObjectType::OTFurniture));
 		for (auto* obj: unmountedObjects)
 		{
-			if (obj->GetParentID() == MOD_ID_NONE && obj->IsSelectable())
+			if (obj->GetParentID() == MOD_ID_NONE && obj->IsSelectableByUser())
 			{
 				objQueue.Enqueue(obj);
 			}

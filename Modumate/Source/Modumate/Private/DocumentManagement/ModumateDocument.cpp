@@ -23,6 +23,7 @@
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "ModumateCore/ModumateMitering.h"
 #include "Objects/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Objects/MOIFactory.h"
@@ -1700,7 +1701,7 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 		return false;
 	}
 
-	UWorld *world = initialObjectsToDelete[0]->GetWorld();
+	UWorld *world = GetWorld();
 	if (!ensureAlways(world != nullptr))
 	{
 		return false;
@@ -1709,6 +1710,7 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 	// Keep track of all of the IDs of objects that the various kinds of deltas (Graph3D, Graph2D, non-Graph, etc.) will delete.
 	TSet<int32> objIDsToDelete;
 	TArray<TPair<int32, EMOIDeltaType>> affectedObjects;
+	TSet<AModumateObjectInstance*> groupsToDelete;
 
 	auto gatherDeletedIDs = [&objIDsToDelete, &affectedObjects](const TArray<FDeltaPtr>& Deltas) {
 		affectedObjects.Reset();
@@ -1744,7 +1746,7 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 		EGraph3DObjectType graph3DObjType;
 		bool bObjIsGraph2D = SurfaceGraphs.Contains(objID);
 
-		if (IsObjectInVolumeGraph(objToDelete->ID, graph3DObjType) || GetVolumeGraph()->ContainsGroup(objID))
+		if (IsObjectInVolumeGraph(objToDelete->ID, graph3DObjType))
 		{
 			graph3DObjIDsToDelete.Add(objID);
 		}
@@ -1767,6 +1769,10 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 			{
 				graph2DObjsToDelete.AddUnique(objToDelete->ID);
 			}
+		}
+		else if (objToDelete->GetObjectType() == EObjectType::OTMetaGraph)
+		{
+			groupsToDelete.Add(objToDelete);
 		}
 	}
 
@@ -1831,7 +1837,7 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 	TArray<AModumateObjectInstance*> nonGraphObjsToDelete;
 	for (AModumateObjectInstance* objToDelete : initialObjectsToDelete)
 	{
-		if (objToDelete && !objIDsToDelete.Contains(objToDelete->ID))
+		if (objToDelete && !objIDsToDelete.Contains(objToDelete->ID) && !groupsToDelete.Contains(objToDelete))
 		{
 			nonGraphObjsToDelete.Add(objToDelete);
 		}
@@ -1846,6 +1852,14 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 			objIDsToDelete.Add(nonGraphObj->ID);
 		}
 		OutDeltas.Add(nonGraphDeleteDelta);
+	}
+
+	for (auto* groupToDelete : groupsToDelete)
+	{
+		FModumateObjectDeltaStatics::GetDeltasForGraphDelete(this, groupToDelete->ID, OutDeltas);
+		{
+			GetDeleteObjectsDeltas(OutDeltas, groupToDelete->GetChildObjects(), false, false);
+		}
 	}
 
 	return true;

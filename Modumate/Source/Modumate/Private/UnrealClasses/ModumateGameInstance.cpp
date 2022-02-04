@@ -270,6 +270,7 @@ void UModumateGameInstance::RegisterAllCommands()
 		AEditModelPlayerController *playerController = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
 		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(playerController->PlayerState);
 		TArray<AModumateObjectInstance*> obs = playerState->SelectedObjects.Array();
+		obs += playerState->SelectedGroupObjects.Array();
 		playerState->DeselectAll();
 
 		if (playerController->ToolIsInUse())

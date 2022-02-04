@@ -43,4 +43,7 @@ public:
 	// Transform all positions for groups.
 	static void GetDeltasForGroupTransforms(UModumateDocument* Doc, const TMap<int32, FVector>& OriginalGroupVertexTranslations, const FTransform transform,
 		TArray<FDeltaPtr>& OutDeltas);
+
+	// Create deltas for wholesale deletion of graph and its contents.
+	static void GetDeltasForGraphDelete(UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas);
 };
