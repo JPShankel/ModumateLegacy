@@ -10,7 +10,9 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "UI/ModalDialog/ModalDialogWidget.h"
 #include "Online/ModumateCloudConnection.h"
+#include "UnrealClasses/EditModelInputHandler.h"
 #include "DrawingDesigner/DrawingDesignerDocument.h"
+#include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
 
 #define LOCTEXT_NAMESPACE "DrawingDesignerWebBrowserWidget"
 
@@ -50,7 +52,18 @@ void UDrawingDesignerWebBrowserWidget::ResetDocumentButtonPressed()
 	if (ensure(controller))
 	{
 		UModumateDocument* doc = controller->GetDocument();
-		doc->DrawingDesignerDocument = FDrawingDesignerDocument();
+		auto newDoc = FDrawingDesignerDocument();
+		
+		FDrawingDesignerJsDeltaPackage package;		
+		TSharedPtr<FDrawingDesignerDocumentDelta> delta = MakeShared<FDrawingDesignerDocumentDelta>();
+		
+		delta->from = doc->DrawingDesignerDocument;
+		delta->to = newDoc;
+
+		TArray<FDeltaPtr> wrapped;
+		wrapped.Add(delta);
+
+		doc->ApplyDeltas(wrapped, doc->GetWorld());
 		doc->drawing_request_document();
 	}
 }
@@ -64,7 +77,7 @@ void UDrawingDesignerWebBrowserWidget::InitWithController()
 		static const FString bindObjName(TEXT("doc"));
 		DrawingSetWebBrowser->CallBindUObject(bindObjName, controller->GetDocument(), true);
 
-		DrawingSetWebBrowser->CallBindUObject(TEXT("ui"), Cast<UObject>(controller->InputHandlerComponent), true);
+		DrawingSetWebBrowser->CallBindUObject(TEXT("ui"), controller->InputHandlerComponent, true);
 	}
 
 	DrawingSetWebBrowser->LoadURL(CVarModumateDrawingDesignerURL.GetValueOnAnyThread());

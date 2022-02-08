@@ -1212,6 +1212,7 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 		ClearRedoBuffer();
 	}
 
+	bool resendDDViews = false;
 	BeginUndoRedoMacro();
 
 	TSharedPtr<UndoRedo> ur = MakeShared<UndoRedo>();
@@ -1227,6 +1228,11 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	for (auto& delta : ur->Deltas)
 	{
 		delta->ApplyTo(this, World);
+		TArray<TPair<int32, EMOIDeltaType>> affectedObjectList;
+		delta->GetAffectedObjects(affectedObjectList);
+		if (affectedObjectList.Num() > 0) {
+			resendDDViews = true;
+		}
 	}
 
 	CalculateSideEffectDeltas(ur->Deltas, World, false);
@@ -1235,7 +1241,6 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	UpdateRoomAnalysis(World);
 
 	EndUndoRedoMacro();
-
 	if (controller && controller->InputAutomationComponent)
 	{
 		controller->InputAutomationComponent->PostApplyUserDeltas(ur->Deltas);
@@ -1262,6 +1267,11 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	}
 
 	EndTrackingDeltaObjects();
+
+	if (resendDDViews) {
+		drawing_request_view_list();
+		drawing_request_document();
+	}
 
 	return true;
 }

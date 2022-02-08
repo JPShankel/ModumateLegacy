@@ -57,6 +57,9 @@ void ADrawingDesignerRender::RenderImage(int32 imageWidth)
 {
 	int32 orthoWidth = ViewTransform.GetScale3D().X;
 	int32 orthoHeight = ViewTransform.GetScale3D().Y;
+	if (!ensure(orthoWidth != 0)) {
+		return;
+	}
 	int32 imageHeight = imageWidth * orthoHeight / orthoWidth;
 
 	if (!ensure(Doc))
