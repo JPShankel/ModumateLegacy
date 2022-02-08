@@ -2387,8 +2387,10 @@ void UModumateGeometryStatics::GetSilhouetteEdges(TArray<FDrawingDesignerLined>&
 			auto& edge1 = Edges[e1];
 			if (!edge1)
 			{
+				++e1;
 				continue;
 			}
+
 			const FVector3d& N = edge1.N;
 			bool bDropLine = false;
 			bool bSingleLine = false;
