@@ -2,12 +2,14 @@
 
 #include "ModumateCore/ModumateGeometryStatics.h"
 
+#include "Algo/ForEach.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "KismetProceduralMeshLibrary.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Algo/Accumulate.h"
 #include "DrawDebugHelpers.h"
 #include "ModumateCore/ModumateStats.h"
+#include "DrawingDesigner//DrawingDesignerLine.h"
 
 #include <algorithm>
 #include <queue>
@@ -2272,7 +2274,7 @@ bool UModumateGeometryStatics::SegmentPlaneIntersectionDouble(FVector3d StartPoi
 DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Mesh To Silhouette"), STAT_ModumateMeshToLines, STATGROUP_Modumate);
 
 void UModumateGeometryStatics::GetSilhouetteEdges(const TArray<FVector>& Vertices, const TArray<uint32>& Indices, const FVector& ViewDirection,
-	TArray<FEdge>& outEdges, double Epsilon /*= 0.4*/, double AngleThreshold /*= 0.9205 (23 deg) */)
+	TArray<FEdge>& OutEdges, double Epsilon /*= 0.4*/, double AngleThreshold /*= 0.9205 (23 deg) */)
 {
 	SCOPE_MS_ACCUMULATOR(STAT_ModumateMeshToLines);
 
@@ -2355,7 +2357,97 @@ void UModumateGeometryStatics::GetSilhouetteEdges(const TArray<FVector>& Vertice
 	{
 		if (edge)
 		{
-			outEdges.Emplace(FVector(edge.A), FVector(edge.B));
+			OutEdges.Emplace(FVector(edge.A), FVector(edge.B));
+		}
+	}
+}
+
+void UModumateGeometryStatics::GetSilhouetteEdges(TArray<FDrawingDesignerLined>& Edges, const FVector& ViewDirection,
+	double Epsilon /*= 0.4*/, double AngleThreshold /*= 0.9205 /* 23 deg */, bool bFastMode /*= true */)
+{
+	SCOPE_MS_ACCUMULATOR(STAT_ModumateMeshToLines);
+
+	const double EpsilonSquare = Epsilon * Epsilon;
+	const FVector3d viewDir(ViewDirection);
+	const int32 numEdges = Edges.Num();
+
+	// Cull backfacing lines
+	for (auto& e: Edges)
+	{
+		e.bValid = viewDir.Dot(e.N) < 0.0;
+	}
+
+	if (bFastMode)
+	{
+		Algo::ForEach(Edges, [](FDrawingDesignerLined& l) { l.Canonicalize(); });
+		Edges.Sort();
+
+		for (int32 e1 = 0; e1 < numEdges;)
+		{
+			auto& edge1 = Edges[e1];
+			if (!edge1)
+			{
+				continue;
+			}
+			const FVector3d& N = edge1.N;
+			bool bDropLine = false;
+			bool bSingleLine = false;
+			int32 e2;
+			for (e2 = e1 + 1; e2 < numEdges; ++e2)
+			{
+				if (!Edges[e2])
+				{
+					continue;
+				}
+
+				if (Edges[e1] == Edges[e2])
+				{
+					bSingleLine = false;
+					if (FMath::Abs(N.Dot(Edges[e2].N)) > AngleThreshold)
+					{
+						bDropLine = true;
+					}
+					else
+					{
+						bSingleLine = true;
+					}
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			if (bDropLine || bSingleLine)
+			{
+				for (int32 droppedLine = bSingleLine ? e1 + 1 : e1; droppedLine < e2; ++droppedLine)
+				{
+					Edges[droppedLine].bValid = false;
+				}
+			}
+			e1 = e2;
+		}
+	}
+	else
+	{
+		for (int32 e1 = 0; e1 < numEdges; ++e1)
+		{
+			const auto& edge1 = Edges[e1];
+			if (edge1)
+			{
+				for (int32 e2 = e1 + 1; e2 < numEdges; ++e2)
+				{
+					const auto& edge2 = Edges[e2];
+					if (edge2 &&
+						((edge1.P1.DistanceSquared(edge2.P1) < EpsilonSquare && edge1.P2.DistanceSquared(edge2.P2) < EpsilonSquare) ||
+							(edge1.P1.DistanceSquared(edge2.P2) < EpsilonSquare && edge1.P2.DistanceSquared(edge2.P1) < EpsilonSquare)) &&
+						FMath::Abs(edge1.N.Dot(edge2.N)) > AngleThreshold)
+					{
+						edge1.bValid = false;
+						edge2.bValid = false;
+					}
+				}
+			}
 		}
 	}
 }

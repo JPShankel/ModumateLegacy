@@ -4,8 +4,6 @@
 #include "UnrealClasses/CompoundMeshActor.h"
 
 #include "Engine/Engine.h"
-#include "Algo/Unique.h"
-#include "Algo/ForEach.h"
 #include "DrawDebugHelpers.h"
 #include "KismetProceduralMeshLibrary.h"
 #include "ProceduralMeshComponent.h"
@@ -855,195 +853,21 @@ bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<FDraftingComp
 
 void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FBox2D& BoundingBox) const
 {
-	const FTransform& actorToWorld = ActorToWorld();
-	const FVector viewNormal = Plane;
+	TArray <FDrawingDesignerLine> ddLines;
+	GetDrawingDesignerLines(Plane, ddLines, 0.1f, 0.9205f, false);
 
-	TArray<FEdge> portalEdges;
-
-	static auto lexicalEdgeCompare = [](const FEdge& a, const FEdge& b)
-	{   // Compare lexicographically.
-		for (int v = 0; v < 2; ++v)
-		{
-			if (a.Vertex[v].X < b.Vertex[v].X)
-			{
-				return true;
-			}
-			else if (a.Vertex[v].X > b.Vertex[v].X)
-			{
-				return false;
-			}
-			else if (a.Vertex[v].Y < b.Vertex[v].Y)
-			{
-				return true;
-			}
-			else if (a.Vertex[v].Y > b.Vertex[v].Y)
-			{
-				return false;
-			}
-		}
-		return false;  // False if equal.
-	};
+	TArray<FEdge> clippedLines;
+	for (const auto& ddLine: ddLines)
+	{
+		const FEdge edge(ddLine.P1, ddLine.P2);
+		clippedLines.Append(ParentPage->lineClipping->ClipWorldLineToView(edge));
+	}
 
 	auto gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	auto moi = gameState->Document->ObjectFromActor(this);
 	bool bIsCabinet = moi && moi->GetObjectType() == EObjectType::OTCabinet;
 	FModumateLayerType layerType = bIsCabinet ? FModumateLayerType::kCabinetBeyond
 		: FModumateLayerType::kOpeningSystemBeyond;
-
-	const int32 numComponents = StaticMeshComps.Num();
-
-	for (int32 component = 0; component < numComponents; ++component)
-	{
-		const UStaticMeshComponent* staticMeshComponent = StaticMeshComps[component];
-		if (staticMeshComponent == nullptr)
-		{
-			continue;
-		}
-
-		if (UseSlicedMesh[component])
-		{   // Component has been nine-sliced.
-			TArray<FVector> vertices;
-			TArray<uint32> indices;
-			TArray<FEdge> componentEdges;
-			for (int32 slice = 9 * component; slice < 9 * (component + 1); ++slice)
-			{
-				UProceduralMeshComponent* meshComponent = NineSliceLowLODComps[slice];
-
-				if (meshComponent == nullptr)
-				{
-					continue;
-				}
-
-				const FTransform sliceToLocal = meshComponent->GetRelativeTransform();
-				int numSections = meshComponent->GetNumSections();
-				for (int section = 0; section < numSections; ++section)
-				{
-					const FProcMeshSection* meshSection = meshComponent->GetProcMeshSection(section);
-					if (meshSection == nullptr)
-					{
-						continue;
-					}
-					const auto& sectionVertices = meshSection->ProcVertexBuffer;
-					const auto& sectionIndices = meshSection->ProcIndexBuffer;
-					const int32 numIndices = sectionIndices.Num();
-					const int32 numVertices = sectionVertices.Num();
-					ensure(numIndices % 3 == 0);
-
-					int32 indexOffset = vertices.Num();
-
-					for (int32 v = 0; v < numVertices; ++v)
-					{
-						vertices.Add(sliceToLocal.TransformPosition(sectionVertices[v].Position));
-					}
-					for (int32 i = 0; i < numIndices; ++i)
-					{
-						indices.Add(sectionIndices[i] + indexOffset);
-					}
-
-				}
-
-			}
-
-			// Use epsilon of 0.25 mm:
-			FVector viewNormalLocal = actorToWorld.InverseTransformVector(viewNormal);
-			UModumateGeometryStatics::GetSilhouetteEdges(vertices, indices, viewNormalLocal, componentEdges, 0.025f);
-
-			for (const auto& edge: componentEdges)
-			{
-				portalEdges.Add(FEdge(actorToWorld.TransformPosition(edge.Vertex[0]), actorToWorld.TransformPosition(edge.Vertex[1])));
-			}
-		}
-		else
-		{
-			const FTransform localToWorld = staticMeshComponent->GetRelativeTransform() * actorToWorld;
-			UStaticMesh* staticMesh = staticMeshComponent->GetStaticMesh();
-			if (staticMesh == nullptr)
-			{
-				continue;
-			}
-
-			FVector minPoint;
-			FVector maxPoint;
-			FBox boundingBox(ForceInit);
-			staticMeshComponent->GetLocalBounds(minPoint, maxPoint);
-			boundingBox += localToWorld.TransformPosition(minPoint);
-			boundingBox += localToWorld.TransformPosition(maxPoint);
-
-			if (!boundingBox.IsValid || ParentPage->lineClipping->IsBoxOccluded(boundingBox))
-			{
-				continue;
-			}
-
-			const int levelOfDetailIndex = staticMesh->GetNumLODs() - 1;
-			const FStaticMeshLODResources& meshResources = staticMesh->GetLODForExport(levelOfDetailIndex);
-			FVector viewNormalLocal = localToWorld.InverseTransformVector(viewNormal);
-
-			TArray<FVector> positions;
-			TArray<uint32> indices;
-			TArray<FVector> normals;
-			TArray<FVector2D> UVs;
-			TArray<FProcMeshTangent> tangents;
-
-			int32 numSections = meshResources.Sections.Num();
-			for (int32 section = 0; section < numSections; ++section)
-			{
-				TArray<FVector> sectionPositions;
-				TArray<int32> sectionIndices;
-				UKismetProceduralMeshLibrary::GetSectionFromStaticMesh(staticMesh, levelOfDetailIndex, section,
-					sectionPositions, sectionIndices, normals, UVs, tangents);
-				ensure(sectionIndices.Num() % 3 == 0);
-
-				const int32 numVerts = sectionPositions.Num();
-				const int32 numIndices = sectionIndices.Num();
-
-				int32 indexOffset = positions.Num();
-
-				for (int32 v = 0; v < numVerts; ++v)
-				{
-					positions.Add(sectionPositions[v]);
-				}
-				for (int32 i = 0; i < numIndices; ++i)
-				{
-					indices.Add(sectionIndices[i] + indexOffset);
-				}
-
-			}
-
-			TArray<FEdge> localEdges;
-			// Portal static meshes tend to have a lot of fine detail, to use epsilon of 0.5 mm.
-			UModumateGeometryStatics::GetSilhouetteEdges(positions, indices, viewNormalLocal, localEdges, 0.05f);
-			for (const auto& edge: localEdges)
-			{
-				portalEdges.Add(FEdge(localToWorld.TransformPosition(edge.Vertex[0]), localToWorld.TransformPosition(edge.Vertex[1])) );
-			}
-
-		}
-	}
-
-	TArray<FEdge> clippedLines;
-	for (const auto& edge : portalEdges)
-	{
-		clippedLines.Append(ParentPage->lineClipping->ClipWorldLineToView(edge));
-	}
-
-	// Eliminate identical lines in 2D...
-	// Superfluous now that we eliminate over the whole draft, but more efficient.
-	for (auto& edge : clippedLines)
-	{   // Canonical form:
-		if (edge.Vertex[0].X > edge.Vertex[1].X ||
-			(edge.Vertex[0].X == edge.Vertex[1].X && edge.Vertex[0].Y > edge.Vertex[1].Y))
-		{
-			Swap(edge.Vertex[0], edge.Vertex[1]);
-		}
-	}
-	Algo::Sort(clippedLines, lexicalEdgeCompare);
-
-	int32 eraseIndex = Algo::Unique(clippedLines, [](const FEdge& a, const FEdge& b)
-	{
-		return a.Vertex[0].X == b.Vertex[0].X && a.Vertex[0].Y == b.Vertex[0].Y
-			&& a.Vertex[1].X == b.Vertex[1].X && a.Vertex[1].Y == b.Vertex[1].Y;
-	});
-	clippedLines.RemoveAt(eraseIndex, clippedLines.Num() - eraseIndex);
 
 	FVector2D boxClipped0;
 	FVector2D boxClipped1;
@@ -1065,10 +889,14 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposite
 	}
 }
 
-void ACompoundMeshActor::GetDrawingDesignerLines(TArray<FDrawingDesignerLine>& Outlines, float MinLength) const
+
+void ACompoundMeshActor::GetDrawingDesignerLines(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& Outlines, float MinLength,
+	float AngleTolerance /*= 0.9205f*/, bool bFastMode /*= true*/) const
 {
-	TArray<FDrawingDesignerLine> lines;
-	const float minLength2 = MinLength * MinLength;
+	TArray<FDrawingDesignerLined> lines;
+	const double minLength2 = MinLength * MinLength;
+
+	int32 linesDropped = 0;
 
 	const int32 numComponents = StaticMeshComps.Num();
 	for (int32 component = 0; component < numComponents; ++component)
@@ -1080,19 +908,19 @@ void ACompoundMeshActor::GetDrawingDesignerLines(TArray<FDrawingDesignerLine>& O
 		}
 
 		if (UseSlicedMesh[component])
-		{
+		{   // Nine-sliced mesh:
 			const int32 sliceStart = 9 * component;
 			const int32 sliceEnd = 9 * (component + 1);
 			for (int32 slice = sliceStart; slice < sliceEnd; ++slice)
 			{
-				UProceduralMeshComponent* mesh9Component = NineSliceComps[slice];
+				UProceduralMeshComponent* mesh9Component = NineSliceLowLODComps[slice];
 
 				if (mesh9Component == nullptr)
 				{
 					continue;
 				}
 
-				const FMatrix componentToWorld = mesh9Component->GetComponentTransform().ToMatrixWithScale();
+				const FTransform3d componentToWorld(mesh9Component->GetComponentTransform());
 				const int32 numSections = mesh9Component->GetNumSections();
 				for (int32 section = 0; section < numSections; ++section)
 				{
@@ -1111,28 +939,36 @@ void ACompoundMeshActor::GetDrawingDesignerLines(TArray<FDrawingDesignerLine>& O
 					const int32 numTriangles = numIndices / 3;
 					for (int32 t = 0; t < numTriangles; ++t)
 					{
-						FVector p0(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t    ]].Position));
-						FVector p1(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 1]].Position));
-						FVector p2(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 2]].Position));
-						FVector N(((p1 - p0) ^ (p2 - p0)).GetSafeNormal());
-						if ((p1 - p0).SizeSquared() >= minLength2)
+						FVector3d p0(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t    ]].Position));
+						FVector3d p1(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 1]].Position));
+						FVector3d p2(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 2]].Position));
+
+						FVector3d N((p2 - p0).Cross(p1 - p0));
+						double area2 = N.SquaredLength();
+						N.Normalize();
+						// Check for various degenerate cases.
+						static constexpr double minSideLen = 0.005;
+						if (area2 > 0.01)
 						{
-							lines.Emplace(p0, p1, N);
-						}
-						if ((p2 - p1).SizeSquared() >= minLength2)
-						{
-							lines.Emplace(p1, p2, N);
-						}
-						if ((p0 - p2).SizeSquared() >= minLength2)
-						{
-							lines.Emplace(p2, p0, N);
+							if (p0.DistanceSquared(p1) >= minSideLen)
+							{
+								lines.Emplace(p0, p1, N);
+							}
+							if (p1.DistanceSquared(p2) >= minSideLen)
+							{
+								lines.Emplace(p1, p2, N);
+							}
+							if (p2.DistanceSquared(p0) >= minSideLen)
+							{
+								lines.Emplace(p2, p0, N);
+							}
 						}
 					}
 				}
 			}
 		}
 		else
-		{
+		{   // Static mesh:
 			UStaticMesh* staticMesh = staticMeshComponent->GetStaticMesh();
 			if (staticMesh == nullptr)
 			{
@@ -1142,8 +978,8 @@ void ACompoundMeshActor::GetDrawingDesignerLines(TArray<FDrawingDesignerLine>& O
 			TArray<FVector2D> UVs;		// Unused
 			TArray<FProcMeshTangent> tangents;	// Unused
 
-			const FMatrix componentToWorld = staticMeshComponent->GetComponentTransform().ToMatrixWithScale();
-			const int32 lodNumber = 0;
+			const FTransform3d componentToWorld(staticMeshComponent->GetComponentTransform());
+			const int lodNumber = staticMesh->GetNumLODs() - 1;
 			const int32 numSections = staticMesh->GetNumSections(lodNumber);
 			for (int32 section = 0; section < numSections; ++section)
 			{
@@ -1157,61 +993,31 @@ void ACompoundMeshActor::GetDrawingDesignerLines(TArray<FDrawingDesignerLine>& O
 				const int32 numTriangles = sectionIndices.Num() / 3;
 				for (int32 t = 0; t < numTriangles; ++t)
 				{
-					FVector p0(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t]]));
-					FVector p1(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 1]]));
-					FVector p2(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 2]]));
-					FVector N(((p1 - p0) ^ (p2 - p0)).GetSafeNormal());
-					lines.Emplace(p0, p1, N);
-					lines.Emplace(p1, p2, N);
-					lines.Emplace(p2, p0, N);
+					FVector3d p0(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t]]));
+					FVector3d p1(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 1]]));
+					FVector3d p2(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 2]]));
+					// Wind order is CW(?)
+					FVector3d N(((p2 - p0).Cross(p1 - p0)).Normalized());
+					if (p0.DistanceSquared(p1) >= minLength2)
+					{
+						lines.Emplace(p0, p1, N);
+					}
+					if (p1.DistanceSquared(p2) >= minLength2)
+					{
+						lines.Emplace(p1, p2, N);
+					}
+					if (p2.DistanceSquared(p0) >= minLength2)
+					{
+						lines.Emplace(p2, p0, N);
+					}
 				}
 			}
 		}
 	}
 
-	Algo::ForEach(lines, [](FDrawingDesignerLine& l) { l.Canonicalize(); });
-	lines.Sort();
-
-	static constexpr float normalPlanarity = 0.9205f;  // 23 deg
-
-	const int32 numLines = lines.Num();
-	for (int32 l = 0; l < numLines; )
-	{
-		const FVector& N = lines[l].N;
-		bool bDropLine = false;
-		bool bSingleLine = false;
-		int32 blockLine;
-		for (blockLine = l + 1; blockLine < numLines; ++blockLine)
-		{
-			if (lines[l] == lines[blockLine])
-			{
-				float dot = N | lines[blockLine].N;
-				if (dot > 1.0f - normalPlanarity || dot < -1.0f + normalPlanarity)
-				{
-					bDropLine = true;
-				}
-				else
-				{
-					bSingleLine = true;
-				}
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		if (bDropLine || bSingleLine)
-		{
-			for (int32 droppedLine = bSingleLine ? l + 1 : l; droppedLine < blockLine; ++droppedLine)
-			{
-				lines[droppedLine].bValid = false;
-			}
-		}
-		l = blockLine;
-	}
-
-	for (const auto& line: lines)
+	TArray<FDrawingDesignerLined> filteredLines;
+	UModumateGeometryStatics::GetSilhouetteEdges(lines, ViewDirection, 0.01, AngleTolerance);
+	for (const auto& line : lines)
 	{
 		if (line)
 		{

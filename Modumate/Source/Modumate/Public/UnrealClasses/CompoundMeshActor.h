@@ -57,7 +57,8 @@ public:
 	void GetFarDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FBox2D& BoundingBox) const;
 	float GetPortalCenter(const UModumateDocument* Doc, const FGuid& AssemblyGUID) const;
 
-	void GetDrawingDesignerLines(TArray<FDrawingDesignerLine>& Outlines, float MinLength) const;
+	void GetDrawingDesignerLines(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& Outlines, float MinLength,
+		float AngleTolerance = 0.9205f, bool bFastMode = true) const;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TArray<bool> UseSlicedMesh;

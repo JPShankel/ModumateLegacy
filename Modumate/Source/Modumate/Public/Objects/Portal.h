@@ -100,7 +100,7 @@ public:
 	UPROPERTY()
 	FMOIPortalData InstanceData;
 
-	virtual void GetDrawingDesignerItems(const FVector& viewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength = 0.0f) const override;
+	virtual void GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength = 0.0f) const override;
 
 protected:
 	TWeakObjectPtr<AEditModelPlayerController> Controller;

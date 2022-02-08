@@ -640,10 +640,10 @@ bool AMOIPortal::GetBoundingLines(TArray<FDrawingDesignerLine>& outBounding) con
 
 }
 
-void AMOIPortal::GetDrawingDesignerItems(const FVector& viewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength /*= 0.0f*/) const
+void AMOIPortal::GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength /*= 0.0f*/) const
 {
 	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
-	actor->GetDrawingDesignerLines(OutDrawingLines, MinLength);
+	actor->GetDrawingDesignerLines(ViewDirection, OutDrawingLines, MinLength, 0.866f /* 30 deg */);
 }
 
 void AMOIPortal::UpdateQuantities()

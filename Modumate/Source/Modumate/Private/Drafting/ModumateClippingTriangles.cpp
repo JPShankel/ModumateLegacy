@@ -47,6 +47,7 @@ FModumateClippingTriangles::FModumateClippingTriangles(const AModumateObjectInst
 
 void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* doc)
 {
+	ensureAlways(VectorGetComponent(VectorDot4(GlobalVectorConstants::FloatOne, MakeVectorRegister(1.0f, 1.0f, 1.0f, 1.0f)), 0  ) == 4.0f);
 	const TSet<EObjectType> separatorOccluderTypes({ EObjectType::OTWallSegment, EObjectType::OTFloorSegment,
 		EObjectType::OTRoofFace, EObjectType::OTCeiling, EObjectType::OTSystemPanel, EObjectType::OTDoor,
 		EObjectType::OTWindow,  EObjectType::OTStaircase, EObjectType::OTRailSegment, EObjectType::OTCabinet,
@@ -159,9 +160,8 @@ void FModumateClippingTriangles::AddTrianglesFromDoc(const UModumateDocument* do
 								}
 
 								FTransform componentTransform = meshComponent->GetRelativeTransform();
-								// Fix for ensures for unnormalized rotations (TODO: figure out why UE4 thinks the transform isn't normalized
-								// when it is).
-								componentTransform.NormalizeRotation();
+								// TODO: figure out why UE4 thinks the transform isn't normalized
+								// when it is. Seems to be combination of -ve scaling and memory corruption.
 								const FTransform localTransform = componentTransform * localToWorld;
 								int numSections = meshComponent->GetNumSections();
 								for (int section = 0; section < numSections; ++section)

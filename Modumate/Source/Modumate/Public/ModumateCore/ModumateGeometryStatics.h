@@ -18,6 +18,7 @@
 #define RAY_INTERSECT_TOLERANCE	(0.2f)
 #define PLANAR_DOT_EPSILON	(0.1f)
 
+class FDrawingDesignerLined;
 
 USTRUCT()
 struct MODUMATE_API FPolyHole2D
@@ -224,7 +225,9 @@ public:
 	// Internal edges with adjacent angles of less than angleThreshold are dropped.
 	// Vertices separated by Epsilon are considered equivalent.
 	static void GetSilhouetteEdges(const TArray<FVector>& Vertices, const TArray<uint32>& Indices,
-		const FVector& ViewDirection, TArray<FEdge>& outEdges, double Epsilon = 0.4, double AngleThreshold = 0.9205 /* 23 deg */);
+		const FVector& ViewDirection, TArray<FEdge>& OutEdges, double Epsilon = 0.4, double AngleThreshold = 0.9205 /* 23 deg */);
+	static void GetSilhouetteEdges(TArray<FDrawingDesignerLined>& Edges, const FVector& ViewDirection,
+		double Epsilon = 0.4, double AngleThreshold = 0.9205 /* 23 deg */, bool bFastMode = true);
 
 	// Clip 3D triangle against z = 0 removing z < 0, returns count of generated triangles (0, 1, 2).
 	static int32 ClipTriangleAtXYPlane(const FVector3d InTri[3], FVector3d OutTri[6]);
