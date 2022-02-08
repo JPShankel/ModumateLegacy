@@ -102,6 +102,7 @@ enum class EInputCommand : uint8
 	ActivateTool_Terrain,
 	ActivateTool_Group,
 	ActivateTool_Ungroup,
+	ActivateTool_Pattern2D,
 	ActivateTool_END,
 
 	// Tool-related commands

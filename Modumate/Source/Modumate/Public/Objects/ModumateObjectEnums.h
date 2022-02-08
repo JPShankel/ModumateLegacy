@@ -65,6 +65,7 @@ enum class EObjectType : uint8
 	OTMetaGraph,
 	OTDesignOption,
 	OTFaceHosted,
+	OTPattern2D,
 	OTUnknown
 };
 

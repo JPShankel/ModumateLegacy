@@ -53,7 +53,8 @@ void UToolTrayBlockTools::ChangeToAttachmentToolsButtons()
 		Button_Finish, 
 		Button_Trim, 
 		Button_Cabinet, 
-		Button_FFE
+		Button_FFE,
+		Button_Pattern2D
 	};
 	SetButtonsState(buttonsToShow);
 }

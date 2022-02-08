@@ -39,6 +39,7 @@ EToolCategories UModumateTypeStatics::GetToolCategory(EToolMode ToolMode)
 	case EToolMode::VE_CABINET:
 	case EToolMode::VE_FINISH:
 	case EToolMode::VE_TRIM:
+	case EToolMode::VE_PATTERN2D:
 		return EToolCategories::Attachments;
 	case EToolMode::VE_SURFACEGRAPH:
 		return EToolCategories::SurfaceGraphs;
@@ -92,6 +93,7 @@ EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 	case EToolMode::VE_EDGEHOSTED: return EObjectType::OTEdgeHosted;
 	case EToolMode::VE_BACKGROUNDIMAGE: return EObjectType::OTBackgroundImage;
 	case EToolMode::VE_TERRAIN: return EObjectType::OTTerrain;
+	case EToolMode::VE_PATTERN2D: return EObjectType::OTPattern2D;
 	}
 	return EObjectType::OTUnknown;
 }
@@ -137,6 +139,7 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTTerrainVertex:
 	case EObjectType::OTTerrainEdge:
 	case EObjectType::OTTerrainPolygon: return EToolMode::VE_TERRAIN;
+	case EObjectType::OTPattern2D: return EToolMode::VE_PATTERN2D;
 	case EObjectType::OTUnknown: return EToolMode::VE_NONE;
 	};
 	return EToolMode::VE_NONE;
@@ -222,7 +225,9 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTTerrainMaterial", "Terrain Materials") : LOCTEXT("OTTerrainMaterial", "Terrain Material");
 	case EObjectType::OTMetaGraph:
 		return bPlural ? LOCTEXT("OTMetaGraph", "Massing Graphs") : LOCTEXT("OTMetaGraph", "Massing Graph");
-		
+	case EObjectType::OTPattern2D:
+		return bPlural ? LOCTEXT("OTPattern2D", "2D Pattern") : LOCTEXT("OTPattern2D", "2D Pattern");
+
 	case EObjectType::OTUnknown:
 	default:
 		return bPlural ? LOCTEXT("OTUnknowns", "Unknowns") : LOCTEXT("OTUnknown", "Unknown");

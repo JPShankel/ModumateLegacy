@@ -85,6 +85,9 @@ public:
 	class UModumateButtonUserWidget* Button_EdgeHosted;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* Button_Pattern2D;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* Button_Railing;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))

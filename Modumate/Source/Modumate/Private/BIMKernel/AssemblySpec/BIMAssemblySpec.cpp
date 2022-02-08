@@ -674,9 +674,10 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 	case EObjectType::OTCabinet:
 		return MakeCabinetAssembly(InDB);
 
-	// Edge details and design options carry their own data, no assembly	
+	// Presets that carry their own data don't need an assembly
 	case EObjectType::OTDesignOption:
 	case EObjectType::OTEdgeDetail:
+	case EObjectType::OTPattern2D:
 		return EBIMResult::Success;
 
 	default:

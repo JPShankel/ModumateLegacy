@@ -88,6 +88,7 @@
 #include "ToolsAndAdjustments/Tools/EditModelGroupTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelUngroupTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelEdgeHostedTool.h"
+#include "ToolsAndAdjustments/Tools/EditModelPattern2DTool.h"
 
 const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetry"));
 
@@ -874,6 +875,7 @@ void AEditModelPlayerController::CreateTools()
 	RegisterTool(CreateTool<UTerrainTool>());
 	RegisterTool(CreateTool<UGroupTool>());
 	RegisterTool(CreateTool<UUngroupTool>());
+	RegisterTool(CreateTool <UEditModelPattern2DTool>());
 }
 
 void AEditModelPlayerController::RegisterTool(TScriptInterface<IEditModelToolInterface> NewTool)
