@@ -5,6 +5,7 @@
 #include "UnrealClasses/ModumateCapability.h"
 #include "Net/UnrealNetwork.h"
 #include "Containers/Map.h"
+#include "DocumentManagement/ModumateWebProjectSettings.h"
 
 #if !UE_SERVER
 //TODO: Move this out of header in to CPP by (e.g.) wrapping the vivox integration
@@ -113,6 +114,8 @@ public:
 	void AdjustInputVolume(int Value);
 	void JoinChannel(const FString& JoinToken);
 	void LeaveChannel();
+
+	bool ToModumateWebProjectSettings(FModumateWebProjectSettings& Settings) const;
 
 	DECLARE_EVENT_TwoParams(AModumateVoice, FTalkingEvent, FString, bool)
 	FTalkingEvent& OnTalkingChanged() { return TalkingChangedEvent; }

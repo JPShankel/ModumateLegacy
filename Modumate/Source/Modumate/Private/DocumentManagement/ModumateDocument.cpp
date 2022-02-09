@@ -4492,9 +4492,6 @@ void UModumateDocument::UpdateWebSelectedObjects() const
 		DrawingSendResponse(TEXT("onSelectionChanged"), jsonArray);
 	}
 }
-	
-	
-
 
 void UModumateDocument::UpdateWebMOIs(const EObjectType ObjectType) const
 {
@@ -4595,6 +4592,39 @@ void UModumateDocument::update_moi(int32 ID, const FString& MOIData)
 			return MOI->ID;
 		}
 	);	
+}
+
+void UModumateDocument::update_web_project_settings()
+{
+	auto player = GetWorld()->GetFirstLocalPlayerFromController();
+	auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
+	auto drawingDesigner = controller && controller->EditModelUserWidget ? controller->EditModelUserWidget->DrawingDesigner : nullptr;
+	if (!drawingDesigner)
+	{
+		return;
+	}
+
+	FModumateWebProjectSettings webProjectSettings;
+	// From document settings
+	CurrentSettings.ToModumateWebProjectSettings(webProjectSettings);
+	// From voice settings
+	if (controller->VoiceClient)
+	{
+		controller->VoiceClient->ToModumateWebProjectSettings(webProjectSettings);
+	}
+	// From graphics settings
+	UModumateGameInstance* gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
+	if (gameInstance)
+	{
+		gameInstance->UserSettings.GraphicsSettings.ToModumateWebProjectSettings(webProjectSettings);
+	}
+	webProjectSettings.version.value = UModumateFunctionLibrary::GetProjectVersion();
+
+	FString projectSettingsJson;
+	if (WriteJsonGeneric<FModumateWebProjectSettings>(projectSettingsJson, &webProjectSettings))
+	{
+		DrawingSendResponse(TEXT("onDocumentSettingsChanged"), projectSettingsJson);
+	}
 }
 
 void UModumateDocument::OnCameraViewSelected(int32 ID)

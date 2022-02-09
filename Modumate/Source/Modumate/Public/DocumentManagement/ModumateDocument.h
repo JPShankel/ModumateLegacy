@@ -412,6 +412,9 @@ public:
 	UFUNCTION()
 	void update_moi(int32 ID,const FString& MOIData);
 
+	UFUNCTION()
+	void update_web_project_settings();
+
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
 	void UpdateWebSelectedObjects() const;
 

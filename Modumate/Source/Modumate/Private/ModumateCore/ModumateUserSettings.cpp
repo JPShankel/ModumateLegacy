@@ -142,3 +142,13 @@ bool FModumateUserSettings::LoadLocally()
 
 	return bConversionSuccess;
 }
+
+bool FModumateGraphicsSettings::ToModumateWebProjectSettings(FModumateWebProjectSettings& Settings) const
+{
+	Settings.shadows.value = FString::FromInt(Shadows);
+	Settings.shadows.range = {0, UnrealGraphicsSettingsMaxValue};
+	Settings.antiAliasing.value = FString::FromInt(AntiAliasing);
+	Settings.antiAliasing.range = {0, UnrealGraphicsSettingsMaxValue};
+
+	return true;
+}

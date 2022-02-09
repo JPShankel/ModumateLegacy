@@ -260,6 +260,36 @@ void AModumateVoice::LeaveChannel()
 #endif
 }
 
+bool AModumateVoice::ToModumateWebProjectSettings(FModumateWebProjectSettings& Settings) const
+{
+#if UE_SERVER
+	return false;
+#else
+	Settings.microphone.value = VoiceClient->AudioInputDevices().ActiveDevice().Name();
+	Settings.microphone.value.RemoveSpacesInline();
+	TMap<FString, FString> inputs;
+	GetInputDevices(inputs);
+	for (auto kvp : inputs)
+	{
+		FString inputId = kvp.Key;
+		inputId.RemoveSpacesInline();
+		Settings.microphone.options.Add(kvp.Key, inputId);
+	}
+
+	Settings.speaker.value = VoiceClient->AudioOutputDevices().ActiveDevice().Name();
+	Settings.speaker.value.RemoveSpacesInline();
+	TMap<FString, FString> outputs;
+	GetInputDevices(outputs);
+	for (auto kvp : outputs)
+	{
+		FString outputId = kvp.Key;
+		outputId.RemoveSpacesInline();
+		Settings.speaker.options.Add(kvp.Key, outputId);
+	}
+	return true;
+#endif
+}
+
 void AModumateVoice::SERVER_RequestVoiceLogin_Implementation(const FVivoxParam& Parameters)
 {
 #if UE_SERVER
