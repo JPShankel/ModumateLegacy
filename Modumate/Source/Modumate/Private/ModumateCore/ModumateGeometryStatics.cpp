@@ -2363,7 +2363,7 @@ void UModumateGeometryStatics::GetSilhouetteEdges(const TArray<FVector>& Vertice
 }
 
 void UModumateGeometryStatics::GetSilhouetteEdges(TArray<FDrawingDesignerLined>& Edges, const FVector& ViewDirection,
-	double Epsilon /*= 0.4*/, double AngleThreshold /*= 0.9205 /* 23 deg */, bool bFastMode /*= true */)
+	double Epsilon /*= 0.4*/, double AngleThreshold /*= 0.9205 (23 deg) */, bool bFastMode /*= true */)
 {
 	SCOPE_MS_ACCUMULATOR(STAT_ModumateMeshToLines);
 
