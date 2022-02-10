@@ -176,6 +176,7 @@ private:
 // joining
 public:
 	bool GetDeltasForObjectJoin(TArray<FGraph3DDelta> &OutDeltas, const TArray<int32> &ObjectIDs, int32 &NextID, EGraph3DObjectType ObjectType);
+	bool GetDeltasForObjectReverse(TArray<FGraph3DDelta>& OutDeltas, const TArray<int32>& EdgeObjectIDs, const TArray<int32>& FaceObjectIDs);
 private:
 	bool GetDeltasForReduceEdges(TArray<FGraph3DDelta> &OutDeltas, int32 FaceID, int32 &NextID);
 

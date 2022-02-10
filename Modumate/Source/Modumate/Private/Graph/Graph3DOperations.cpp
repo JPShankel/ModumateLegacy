@@ -1623,6 +1623,31 @@ bool FGraph3D::GetDeltasForObjectJoin(TArray<FGraph3DDelta> &OutDeltas, const TA
 	return false;
 }
 
+bool FGraph3D::GetDeltasForObjectReverse(TArray<FGraph3DDelta>& OutDeltas, const TArray<int32>& EdgeObjectIDs, const TArray<int32>& FaceObjectIDs)
+{
+	for (auto curObjID : FaceObjectIDs)
+	{
+		auto face = FindFace(curObjID);
+		if (face)
+		{
+			FGraph3DDelta newFaceDelta(GraphID);
+			newFaceDelta.FaceReversals.Add(face->ID);
+			OutDeltas.Add(newFaceDelta);
+		}
+	}
+	for (auto curObjID : EdgeObjectIDs)
+	{
+		auto edge = FindEdge(curObjID);
+		if (edge)
+		{
+			FGraph3DDelta newEdgeDelta(GraphID);
+			newEdgeDelta.EdgeReversals.Add(edge->ID);
+			OutDeltas.Add(newEdgeDelta);
+		}
+	}
+	return true;
+}
+
 bool FGraph3D::GetDeltasForReduceEdges(TArray<FGraph3DDelta> &OutDeltas, int32 FaceID, int32 &NextID)
 {
 	// TODO: refactor/clean & comment this logic; repeating a for loop within a while loop (without re-initializing the index) is awkward.

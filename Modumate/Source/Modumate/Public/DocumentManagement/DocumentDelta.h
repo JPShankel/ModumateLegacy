@@ -37,6 +37,15 @@ protected:
 		}
 	}
 
+	FORCEINLINE static void AddAffectedIDs(
+		const TArray<int32>& DeltaArray, EMOIDeltaType DeltaType, TArray<TPair<int32, EMOIDeltaType>>& OutAffectedObjects)
+	{
+		for (auto& curDelta : DeltaArray)
+		{
+			OutAffectedObjects.Add(TPair<int32, EMOIDeltaType>(curDelta, DeltaType));
+		}
+	}
+
 	// TODO: potentially, int32 ID if it is useful here
 };
 

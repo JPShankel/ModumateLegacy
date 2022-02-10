@@ -160,6 +160,12 @@ struct MODUMATE_API FGraph3DDelta : public FDocumentDelta
 	UPROPERTY()
 	TMap<int32, FGraph3DFaceVertexIDsDelta> FaceVertexIDUpdates;
 
+	UPROPERTY()
+	TArray<int32> EdgeReversals;
+
+	UPROPERTY()
+	TArray<int32> FaceReversals;
+
 	// TODO: Remove these legacy groups:
 	// Updates to GroupIDs for graph objects
 	UPROPERTY()

@@ -120,10 +120,12 @@ void FGraph3DDelta::Reset()
 
 	EdgeAdditions.Reset();
 	EdgeDeletions.Reset();
+	EdgeReversals.Reset();
 
 	FaceAdditions.Reset();
 	FaceDeletions.Reset();
 	FaceContainmentUpdates.Reset();
+	FaceReversals.Reset();
 
 	FaceVertexIDUpdates.Reset();
 }
@@ -136,8 +138,10 @@ bool FGraph3DDelta::IsEmpty()
 	if (VertexDeletions.Num() > 0) return false;
 	if (EdgeAdditions.Num() > 0) return false;
 	if (EdgeDeletions.Num() > 0) return false;
+	if (EdgeReversals.Num() > 0) return false;
 	if (FaceAdditions.Num() > 0) return false;
 	if (FaceDeletions.Num() > 0) return false;
+	if (FaceReversals.Num() > 0) return false;
 	for (auto& kvp : FaceContainmentUpdates)
 	{
 		if (!kvp.Value.IsEmpty())
@@ -219,6 +223,9 @@ TSharedPtr<FGraph3DDelta> FGraph3DDelta::MakeGraphInverse() const
 		inverse->EdgeAdditions = EdgeDeletions;
 		inverse->EdgeDeletions = EdgeAdditions;
 
+		inverse->EdgeReversals = EdgeReversals;
+		inverse->FaceReversals = FaceReversals;
+
 		for (const auto& kvp : FaceVertexIDUpdates)
 		{
 			inverse->FaceVertexIDUpdates.Add(kvp.Key, kvp.Value.MakeInverse());
@@ -271,4 +278,6 @@ void FGraph3DDelta::GetAffectedObjects(TArray<TPair<int32, EMOIDeltaType>>& OutA
 	AddAffectedIDs(FaceContainmentUpdates, EMOIDeltaType::Mutate, OutAffectedObjects);
 	AddAffectedIDs(FaceVertexIDUpdates, EMOIDeltaType::Mutate, OutAffectedObjects);
 	AddAffectedIDs(GroupIDsUpdates, EMOIDeltaType::Mutate, OutAffectedObjects);
+	AddAffectedIDs(EdgeReversals, EMOIDeltaType::Mutate, OutAffectedObjects);
+	AddAffectedIDs(FaceReversals, EMOIDeltaType::Mutate, OutAffectedObjects);
 }

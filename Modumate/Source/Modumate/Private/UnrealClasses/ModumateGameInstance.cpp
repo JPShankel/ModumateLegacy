@@ -456,6 +456,29 @@ void UModumateGameInstance::RegisterAllCommands()
 		FModumateCommandParameter showValue = params.GetValue(TEXT("show"));
 		bool newEnable = showValue.AsBool();
 		playerController->SetAlwaysShowGraphDirection(newEnable);
+
+		FModumateCommandParameter reverseValue = params.GetValue(TEXT("reverse"));
+		if (reverseValue.AsBool())
+		{
+			AEditModelPlayerState* playerState = playerController ? playerController->EMPlayerState : nullptr;
+			if (playerState)
+			{
+				TArray<int32> edgeObjIds;
+				TArray<int32> faceObjIds;
+				for (auto curObj : playerState->SelectedObjects)
+				{
+					if (curObj->GetObjectType() == EObjectType::OTMetaEdge)
+					{
+						edgeObjIds.Add(curObj->ID);
+					}
+					if (curObj->GetObjectType() == EObjectType::OTMetaPlane)
+					{
+						faceObjIds.Add(curObj->ID);
+					}
+				}
+				GetDocument()->ReverseMetaObjects(GetWorld(), edgeObjIds, faceObjIds);
+			}
+		}
 		return true;
 	});
 

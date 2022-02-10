@@ -14,6 +14,7 @@
 #include "UI/RightMenu/GeneralListItemMenuBlock.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Objects/TerrainMaterial.h"
+#include "Objects/ModumateObjectStatics.h"
 
 
 AMOITerrain::AMOITerrain()

@@ -2005,6 +2005,29 @@ bool UModumateDocument::JoinMetaObjects(UWorld *World, const TArray<int32> &Obje
 	return ApplyDeltas(deltaPtrs, World);
 }
 
+bool UModumateDocument::ReverseMetaObjects(UWorld* World, const TArray<int32>& EdgeObjectIDs, const TArray<int32>& FaceObjectIDs)
+{
+	if (EdgeObjectIDs.Num() == 0 && FaceObjectIDs.Num() == 0)
+	{
+		return false;
+	}
+
+	TArray<FGraph3DDelta> graphDeltas;
+	if (!TempVolumeGraph.GetDeltasForObjectReverse(graphDeltas, EdgeObjectIDs, FaceObjectIDs))
+	{
+		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
+		return false;
+	}
+
+	TArray<FDeltaPtr> deltaPtrs;
+	if (!FinalizeGraphDeltas(graphDeltas, deltaPtrs))
+	{
+		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
+		return false;
+	}
+	return ApplyDeltas(deltaPtrs, World);
+}
+
 bool UModumateDocument::GetGraph2DDeletionDeltas(int32 Graph2DID, int32& InNextID, TArray<FDeltaPtr>& OutDeltas) const
 {
 	auto surfaceGraphObj = GetObjectById(Graph2DID);

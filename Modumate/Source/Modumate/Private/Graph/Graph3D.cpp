@@ -812,6 +812,48 @@ bool FGraph3D::ApplyDelta(const FGraph3DDelta &Delta)
 		face->Dirty(false);
 	}
 
+	TArray<int32> reversedFaceID;
+	for (auto curFaceId : Delta.FaceReversals)
+	{
+		auto face = FindFace(curFaceId);
+		if (face == nullptr) continue;
+		Algo::Reverse(face->VertexIDs);
+		face->Dirty(true);
+		reversedFaceID.Add(face->ID);
+	}
+
+	for (auto curEdgeId : Delta.EdgeReversals)
+	{
+		auto edge = FindEdge(curEdgeId);
+		if (edge == nullptr) continue;
+
+		int32 edgeStartID = edge->StartVertexID;
+		int32 edgeEndID = edge->EndVertexID;
+
+		// Remove existing signed edge from both vertices
+		// Attempt to remove edge from other graph sign if first one failed
+		auto startVert = FindVertex(edgeStartID);
+		if (startVert)
+		{
+			if (!startVert->RemoveEdge(edge->ID))
+			{
+				startVert->RemoveEdge(edge->ID * -1);
+			}
+		}
+		auto endVert = FindVertex(edgeEndID);
+		if (endVert)
+		{
+			if (!endVert->RemoveEdge(edge->ID))
+			{
+				endVert->RemoveEdge(edge->ID * -1);
+			}
+		}
+
+		// Set new verts
+		edge->SetVertices(edgeEndID, edgeStartID);
+		edge->Dirty(true);
+	}
+
 	// Apply changes to the GroupIDs field of vertices, edges, and faces
 	for (auto &kvp : Delta.GroupIDsUpdates)
 	{
@@ -831,7 +873,7 @@ bool FGraph3D::ApplyDelta(const FGraph3DDelta &Delta)
 
 		if (face.bDirty)
 		{
-			bool bUpdatePlanes = face.ShouldUpdatePlane();
+			bool bUpdatePlanes = face.ShouldUpdatePlane() || reversedFaceID.Contains(face.ID);
 			if (bUpdatePlanes)
 			{
 				if (!face.UpdatePlane(face.VertexIDs))
