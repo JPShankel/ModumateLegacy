@@ -601,9 +601,9 @@ void UModumateGameInstance::ProcessCommandQueue()
 	reenter = false;
 }
 
-void UModumateGameInstance::RegisterCommand(const TCHAR *command, const std::function<bool(const FModumateFunctionParameterSet &, FModumateFunctionParameterSet &)> &fn)
+void UModumateGameInstance::RegisterCommand(const TCHAR *InCommand, const TFunction<bool(const FModumateFunctionParameterSet &, FModumateFunctionParameterSet &)> &InFN)
 {
-	CommandMap.Add(FString(command), new FModumateFunction(fn));
+	CommandMap.Add(FString(InCommand), new FModumateFunction(InFN));
 }
 
 FModumateFunctionParameterSet UModumateGameInstance::DoModumateCommand(const FModumateCommand &command)
@@ -628,9 +628,9 @@ FModumateFunctionParameterSet UModumateGameInstance::DoModumateCommand(const FMo
 
 	FString commandName = params.GetValue(FModumateCommand::CommandFieldString);
 	auto *fn = CommandMap.Find(commandName);
-	if (fn != nullptr)
+	if (fn != nullptr && *fn != nullptr)
 	{
-		bool bSuccess = (*fn)->FN(params, fnOutput);
+		bool bSuccess = (**fn)(params, fnOutput);
 		fnOutput.SetValue(kSuccess, bSuccess);
 
 		// If we're recording input, then record this command

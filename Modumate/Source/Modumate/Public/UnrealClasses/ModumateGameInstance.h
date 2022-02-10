@@ -72,7 +72,7 @@ public:
 
 	void RegisterAllCommands();
 
-	void RegisterCommand(const TCHAR *command, const std::function<bool(const FModumateFunctionParameterSet &, FModumateFunctionParameterSet &)> &fn);
+	void RegisterCommand(const TCHAR *InCommand, const TFunction<bool(const FModumateFunctionParameterSet &, FModumateFunctionParameterSet &)> &InFN);
 
 	FModumateFunctionParameterSet DoModumateCommand(const FModumateCommand &command);
 

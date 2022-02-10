@@ -223,9 +223,9 @@ FString FModumateCommandParameter::AsJSON() const
 	return StringValue;
 }
 
-void FModumateCommandParameter::FromJSON(const FString &json)
+void FModumateCommandParameter::FromJSON(const FString &Json)
 {
-	StringValue = json;
+	StringValue = Json;
 }
 
 int32 FModumateCommand::NextCommandID = 1;
@@ -233,12 +233,12 @@ const FString FModumateCommand::VersionString(TEXT("version"));
 const FString FModumateCommand::CommandIDString(TEXT("commandID"));
 const FString FModumateCommand::CommandFieldString(TEXT("command"));
 
-FModumateCommand::FModumateCommand(const FString &command, bool bInCaptureForInput, int32 version)
+FModumateCommand::FModumateCommand(const FString &Command, bool bInCaptureForInput, int32 Version)
 {
 	CachedCommandID = NextCommandID++;
 	bCaptureForInput = bInCaptureForInput;
-	Param(FModumateCommand::CommandFieldString, command);
-	Param(FModumateCommand::VersionString, FString::FromInt(version));
+	Param(FModumateCommand::CommandFieldString, Command);
+	Param(FModumateCommand::VersionString, FString::FromInt(Version));
 	Param(FModumateCommand::CommandIDString, FString::FromInt(CachedCommandID));
 }
 
@@ -268,27 +268,27 @@ FModumateFunctionParameterSet FModumateCommand::GetParameterSet() const
 	return ret;
 }
 
-void FModumateCommand::SetParameterSet(const FModumateFunctionParameterSet &params)
+void FModumateCommand::SetParameterSet(const FModumateFunctionParameterSet &Params)
 {
-	params.ForEachProperty([this](const FString &name, const FModumateCommandParameter &param)
+	Params.ForEachProperty([this](const FString &Name, const FModumateCommandParameter &Param)
 	{
-		JSONValue.Parameters.Add(param.ParameterName, param.StringValue);
+		JSONValue.Parameters.Add(Param.ParameterName, Param.StringValue);
 	});
 }
 
-bool FModumateFunctionParameterSet::HasValue(const FString &key) const
+bool FModumateFunctionParameterSet::HasValue(const FString &Key) const
 {
-	return Contains(key);
+	return Contains(Key);
 }
 
 DECLARE_CYCLE_STAT(TEXT("Command from JSON"), STAT_CommandFromJSON, STATGROUP_Modumate)
 
-FModumateCommand FModumateCommand::FromJSONString(const FString &jsonString)
+FModumateCommand FModumateCommand::FromJSONString(const FString &JsonString)
 {
 	SCOPE_CYCLE_COUNTER(STAT_CommandFromJSON);
 	FModumateCommand cmd;
 	FModumateCommandJSON val;
-	FJsonObjectConverter::JsonObjectStringToUStruct<FModumateCommandJSON>(jsonString, &cmd.JSONValue,0,0);
+	FJsonObjectConverter::JsonObjectStringToUStruct<FModumateCommandJSON>(JsonString, &cmd.JSONValue,0,0);
 
 	FString *cmdIDstr = cmd.JSONValue.Parameters.Find(FModumateCommand::CommandIDString);
 	if (ensureAlways(cmdIDstr != nullptr))
@@ -299,22 +299,22 @@ FModumateCommand FModumateCommand::FromJSONString(const FString &jsonString)
 	return cmd;
 }
 
-FModumateCommandParameter FModumateFunctionParameterSet::GetValue(const FString &key, const FModumateCommandParameter &defaultValue) const
+FModumateCommandParameter FModumateFunctionParameterSet::GetValue(const FString &Key, const FModumateCommandParameter &DefaultValue) const
 {
-	const FString *val = Find(key);
+	const FString *val = Find(Key);
 	if (val == nullptr)
 	{
-		return defaultValue;
+		return DefaultValue;
 	}
 	FModumateCommandParameter ret;
 	ret.StringValue = *val;
-	ret.ParameterName = key;
+	ret.ParameterName = Key;
 	return ret;
 }
 
-FModumateFunctionParameterSet &FModumateFunctionParameterSet::SetValue(const FString &key, const FModumateCommandParameter &val)
+FModumateFunctionParameterSet &FModumateFunctionParameterSet::SetValue(const FString &Key, const FModumateCommandParameter &Val)
 {
-	Add(key, val.StringValue);
+	Add(Key, Val.StringValue);
 	return *this;
 }
 
@@ -323,11 +323,11 @@ void FModumateFunctionParameterSet::GetValueNames(TArray<FString> &outNames) con
 	GenerateKeyArray(outNames);
 }
 
-void FModumateFunctionParameterSet::ForEachProperty(TFunction<void(const FString &name, const FModumateCommandParameter &mcp)> fn) const
+void FModumateFunctionParameterSet::ForEachProperty(TFunction<void(const FString &Name, const FModumateCommandParameter &mcp)> FN) const
 {
 	for (auto &kvp : *this)
 	{
-		fn(kvp.Key, GetValue(kvp.Key));
+		FN(kvp.Key, GetValue(kvp.Key));
 	}
 }
 
@@ -336,16 +336,15 @@ void FModumateFunctionParameterSet::Empty()
 	FPrivateBaseClass::Empty();
 }
 
-void FModumateFunctionParameterSet::Remove(const FString &key)
+void FModumateFunctionParameterSet::Remove(const FString &Key)
 {
-	FPrivateBaseClass::Remove(key);
+	FPrivateBaseClass::Remove(Key);
 }
 
 int32 FModumateFunctionParameterSet::Num() const
 {
 	return FPrivateBaseClass::Num();
 }
-
 
 bool FModumateFunctionParameterSet::Matches(const FModumateFunctionParameterSet &MatchSet) const
 {
@@ -374,7 +373,6 @@ bool FModumateFunctionParameterSet::Matches(const FModumateFunctionParameterSet 
 
 	return true;
 }
-
 
 /*
 String map functions take advantage of parameter set's private inheritance from TMap<FString,FString>

@@ -2,7 +2,7 @@
 
 #pragma once
 #include "CoreMinimal.h"
-#include <functional>
+#include "GenericPlatform/GenericPlatformMisc.h"
 #include "ModumateConsoleCommand.generated.h"
 
 USTRUCT()
@@ -347,15 +347,15 @@ class MODUMATE_API FModumateFunctionParameterSet : private TMap<FString, FString
 	typedef TMap<FString, FString> FPrivateBaseClass;
 
 public:
-	FModumateCommandParameter GetValue(const FString &key, const FModumateCommandParameter &defaultValue = FModumateCommandParameter(0)) const;
-	FModumateFunctionParameterSet &SetValue(const FString &key, const FModumateCommandParameter &val);
+	FModumateCommandParameter GetValue(const FString &Key, const FModumateCommandParameter &DefaultValue = FModumateCommandParameter(0)) const;
+	FModumateFunctionParameterSet &SetValue(const FString &Key, const FModumateCommandParameter &Val);
 
-	bool HasValue(const FString &key) const;
-	void GetValueNames(TArray<FString> &outNames) const;
-	void ForEachProperty(TFunction<void(const FString &name, const FModumateCommandParameter &mcp)> fn) const;
+	bool HasValue(const FString &Key) const;
+	void GetValueNames(TArray<FString> &OutNames) const;
+	void ForEachProperty(TFunction<void(const FString &Name, const FModumateCommandParameter &MCP)> FN) const;
 
 	void Empty();
-	void Remove(const FString &key);
+	void Remove(const FString &Key);
 
 	bool Matches(const FModumateFunctionParameterSet &MatchSet) const;
 	int32 Num() const;
@@ -383,28 +383,23 @@ public:
 
 	FString GetJSONString() const;
 
-	static FModumateCommand FromJSONString(const FString &jsonString);
+	static FModumateCommand FromJSONString(const FString &JsonString);
 
 	int32 CachedCommandID;
 	bool bCaptureForInput;
 
-	FModumateCommand(const FString &command, bool bInCaptureForInput = false, int32 version = MODUMATE_COMMAND_VERSION);
+	FModumateCommand(const FString &Command, bool bInCaptureForInput = false, int32 Version = MODUMATE_COMMAND_VERSION);
 	FModumateCommand() {}
 
 	FModumateFunctionParameterSet GetParameterSet() const;
-	void SetParameterSet(const FModumateFunctionParameterSet &params);
+	void SetParameterSet(const FModumateFunctionParameterSet &Params);
 
 
 	template <class T>
-	FModumateCommand &Param(const FString &name, const T &param)
+	FModumateCommand &Param(const FString &Name, const T &InParam)
 	{
-		return Param(FModumateCommandParameter(name, param));
+		return Param(FModumateCommandParameter(Name, InParam));
 	}
 };
 
-// TODO: refactor for TFunction
-struct MODUMATE_API FModumateFunction
-{
-	FModumateFunction(const std::function<bool(const FModumateFunctionParameterSet &, FModumateFunctionParameterSet &)> &fn) : FN(fn) {};
-	std::function<bool(const FModumateFunctionParameterSet &, FModumateFunctionParameterSet &)> FN;
-};
+using FModumateFunction = TFunction<bool(const FModumateFunctionParameterSet&, FModumateFunctionParameterSet&)>;
