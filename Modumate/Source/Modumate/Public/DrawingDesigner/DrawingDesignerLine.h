@@ -16,6 +16,8 @@ public:
 	void Canonicalize();
 	float Length() const;
 
+	float GetDDThickness() const;
+	FColor GetLineShadeAsColor() const;
 	bool operator==(const FDrawingDesignerLine& Rhs) const;
 	bool operator!=(const FDrawingDesignerLine& Rhs) const;
 	bool operator<(const FDrawingDesignerLine& Rhs) const;
@@ -24,10 +26,16 @@ public:
 	FVector P1 { ForceInitToZero };
 	FVector P2 { ForceInitToZero };
 	FVector N { ForceInitToZero };
+
+	// Drawing-designer line appearance specified by
+	// https://docs.google.com/spreadsheets/d/1re5Qm-58Tm5WEHsnbmAxFiCux8i4mxa3-xqHB5yz19M/edit#gid=642729209
 	float Thickness { 1.0f };
+	float GreyValue { 0.0f };
+
 	mutable bool bValid { true };
 
 private:
+	static constexpr float ThicknessScale = 6.0f;
 	static bool LessThan(const FVector& A, const FVector& B);	// Lexicographic comparison
 };
 

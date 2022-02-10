@@ -35,11 +35,10 @@ void ADrawingDesignerRender::AddLines(const TArray<FDrawingDesignerLine>& Lines)
 		ALineActor* lineActor = GetWorld()->SpawnActor<ALineActor>();
 		lineActor->Point1 = line.P1;
 		lineActor->Point2 = line.P2;
-		lineActor->Thickness = line.Thickness;
 		lineActor->SetIsHUD(false);
 		lineActor->MakeGeometry();
 		lineActor->ToggleForDrawingRender(true);
-		lineActor->UpdateLineVisuals(true);
+		lineActor->UpdateLineVisuals(true, line.GetDDThickness(), line.GetLineShadeAsColor());
 		LineActors.Add(lineActor);
 	}
 }

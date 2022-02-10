@@ -25,6 +25,17 @@ float FDrawingDesignerLine::Length() const
 	return FVector::Distance(P1, P2);
 }
 
+float FDrawingDesignerLine::GetDDThickness() const
+{
+	return Thickness * ThicknessScale;
+}
+
+FColor FDrawingDesignerLine::GetLineShadeAsColor() const
+{
+	const uint8 component = uint8(FMath::Clamp(GreyValue * 255.0f + 0.5f, 0.0f, 255.0f));
+	return FColor(component, component, component);
+}
+
 bool FDrawingDesignerLine::operator<(const FDrawingDesignerLine& Rhs) const
 {
 	if (P1 == Rhs.P1)

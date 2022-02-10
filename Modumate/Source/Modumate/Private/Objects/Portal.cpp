@@ -643,7 +643,13 @@ bool AMOIPortal::GetBoundingLines(TArray<FDrawingDesignerLine>& outBounding) con
 void AMOIPortal::GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength /*= 0.0f*/) const
 {
 	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
+	int32 numInitialLines = OutDrawingLines.Num();
 	actor->GetDrawingDesignerLines(ViewDirection, OutDrawingLines, MinLength, 0.866f /* 30 deg */);
+	for (int32 line = numInitialLines; line < OutDrawingLines.Num(); ++line)
+	{
+		OutDrawingLines[line].Thickness = 0.15f;
+		OutDrawingLines[line].GreyValue = 144 / 255.0f;
+	}
 }
 
 void AMOIPortal::UpdateQuantities()

@@ -63,6 +63,7 @@ public:
 		int32 FrontFaceIndex, bool bFaceLateralInverted, bool bUpdateCollision, bool bEnableCollision,
 		class ADynamicMeshActor* CabinetBoxActor, class ACompoundMeshActor* CabinetFaceActor, bool& bOutFaceValid,
 		int32 DoorPartIndex = BIM_ROOT_PART, bool bEnableCabinetBox = true);
+	virtual void GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength = 0.0f) const override;
 
 	UPROPERTY()
 	FMOICabinetData InstanceData;

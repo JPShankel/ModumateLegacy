@@ -810,6 +810,8 @@ void AMOIPlaneHostedObj::GetDrawingDesignerItems(const FVector& viewDirection, T
 {
 	FVector parentLocation = GetParentObject()->GetLocation();
 
+	const int32 numInitialLines = OutDrawingLines.Num();
+
 	const auto& layers = LayerGeometries;
 	TArray<FVector> previous;
 	previous.SetNum(layers[0].OriginalPointsA.Num());
@@ -837,7 +839,7 @@ void AMOIPlaneHostedObj::GetDrawingDesignerItems(const FVector& viewDirection, T
 				FDrawingDesignerLine cornerLine;
 				cornerLine.P1 = p1;
 				cornerLine.P2 = previous[p];
-				cornerLine.Thickness = 1.0f;
+
 				if (cornerLine.Length() >= MinLength)
 				{
 					OutDrawingLines.Add(cornerLine);
@@ -845,6 +847,13 @@ void AMOIPlaneHostedObj::GetDrawingDesignerItems(const FVector& viewDirection, T
 			}
 			previous[p] = p1;
 		}
+	}
+
+	for (int32 l = numInitialLines; l < OutDrawingLines.Num(); ++l)
+	{
+		auto& line = OutDrawingLines[l];
+		line.Thickness = 0.15;
+		line.GreyValue = 112 / 255.0f;
 	}
 }
 

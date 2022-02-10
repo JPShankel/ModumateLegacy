@@ -15,6 +15,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "Quantities/QuantitiesManager.h"
+#include "DrawingDesigner/DrawingDesignerLine.h"
 
 
 void AMOIFinish::PreDestroy()
@@ -440,5 +441,71 @@ void AMOIFinish::GetBeyondLines(const TSharedPtr<FDraftingComposite>& ParentPage
 			}
 		}
 
+	}
+}
+
+void AMOIFinish::GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength /*= 0.0f*/) const
+{
+	const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(GetActor());
+	if (actor == nullptr)
+	{
+		return;
+	}
+
+	const TArray<FLayerGeomDef>& layers = actor->LayerGeometries;
+	const int32 numLayers = layers.Num();
+	const float totalThickness = Algo::Accumulate(layers, 0.0f, [](float s, const auto& layer) { return s + layer.Thickness; });
+
+	TArray<FEdge> finishEdges;
+
+	if (numLayers > 0)
+	{
+		for (int side = 0; side < 2; ++side)
+		{
+			const FLayerGeomDef& layer = side == 0 ? layers[0] : layers.Last();
+			const TArray<FVector> FLayerGeomDef::* layerPoints = side == 0 ? &FLayerGeomDef::OriginalPointsA : &FLayerGeomDef::OriginalPointsB;
+			const FVector finishOffset = totalThickness * layer.Normal;
+
+			const int numPoints = layer.OriginalPointsA.Num();
+			for (int i = 0; i < numPoints; ++i)
+			{
+				FVector point((layer.*layerPoints)[i]);
+				finishEdges.Emplace(point, (layer.*layerPoints)[(i + 1) % numPoints]);
+
+				if (side == 1)
+				{   // Lines along finish thickness.
+					finishEdges.Emplace(point, point - finishOffset);
+				}
+			}
+
+			if (side == 1)
+			{   // Hole outsides.
+				for (const auto& hole : layer.Holes3D)
+				{
+					const int numHolePoints = hole.Points.Num();
+					for (int i = 0; i < numHolePoints; ++i)
+					{
+						finishEdges.Emplace(hole.Points[i], hole.Points[i] + finishOffset);
+					}
+				}
+			}
+		}
+
+		float minLengthSquared = MinLength * MinLength;
+		const int32 numInitialLines = OutDrawingLines.Num();
+		for (const auto& edge : finishEdges)
+		{
+			if ((edge.Vertex[1] - edge.Vertex[0]).SizeSquared() >= minLengthSquared)
+			{
+				OutDrawingLines.Emplace(edge.Vertex[0], edge.Vertex[1]);
+			}
+		}
+
+		for (int32 l = numInitialLines; l < OutDrawingLines.Num(); ++l)
+		{
+			auto& line = OutDrawingLines[l];
+			line.Thickness = 0.15f;
+			line.GreyValue = 144 / 255.0;
+		}
 	}
 }

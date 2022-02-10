@@ -25,6 +25,7 @@
 #include "UI/DimensionManager.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "Quantities/QuantitiesManager.h"
+#include "DrawingDesigner/DrawingDesignerLine.h"
 
 
 AMOICabinet::AMOICabinet()
@@ -760,5 +761,49 @@ void AMOICabinet::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentP
 			FrontFacePortalActor->GetFarDraftingLines(ParentPage, Plane, BoundingBox);
 		}
 
+	}
+}
+
+void AMOICabinet::GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength /*= 0.0f*/) const
+{
+	float minLengthSquared = MinLength * MinLength;
+	TArray<FEdge> cabinetEdges;
+	const ADynamicMeshActor* actor = DynamicMeshActor.Get();
+	const TArray<FLayerGeomDef>& layerGeometries = actor->LayerGeometries;
+	const FVector origin = actor->GetActorLocation();
+
+	// Cabinets can have the base as a different-sized layer.
+	int32 numLayers = layerGeometries.Num();
+
+	for (const auto& layer : layerGeometries)
+	{
+		int32 numPoints = layer.OriginalPointsA.Num();
+		for (int point = 0; point < numPoints; ++point)
+		{
+			cabinetEdges.Emplace(layer.OriginalPointsA[point], layer.OriginalPointsA[(point + 1) % numPoints]);
+			cabinetEdges.Emplace(layer.OriginalPointsB[point], layer.OriginalPointsB[(point + 1) % numPoints]);
+			cabinetEdges.Emplace(layer.OriginalPointsA[point], layer.OriginalPointsB[point]);
+		}
+	}
+
+	const int32 numInitialLines = OutDrawingLines.Num();
+	for (const auto& edge : cabinetEdges)
+	{
+		if ((edge.Vertex[1] - edge.Vertex[0]).SizeSquared() >= minLengthSquared)
+		{
+			OutDrawingLines.Emplace(edge.Vertex[0] + origin, edge.Vertex[1] + origin);
+		}
+	}
+
+	if (FrontFacePortalActor.IsValid())
+	{
+		FrontFacePortalActor->GetDrawingDesignerLines(ViewDirection, OutDrawingLines, MinLength, 0.87f);
+	}
+
+	for (int32 l = numInitialLines; l < OutDrawingLines.Num(); ++l)
+	{
+		auto& line = OutDrawingLines[l];
+		line.Thickness = 0.15f;
+		line.GreyValue = 144 / 255.0;
 	}
 }
