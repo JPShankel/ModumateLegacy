@@ -98,6 +98,7 @@ enum class EInputCommand : uint8
 	ActivateTool_Mullion,
 	ActivateTool_PointHosted,
 	ActivateTool_EdgeHosted,
+	ActivateTool_FaceHosted,
 	ActivateTool_BackgroundImage,
 	ActivateTool_Terrain,
 	ActivateTool_Group,

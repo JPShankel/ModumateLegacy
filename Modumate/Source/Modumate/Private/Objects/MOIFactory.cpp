@@ -27,6 +27,7 @@
 #include "Objects/Mullion.h"
 #include "Objects/PointHosted.h"
 #include "Objects/EdgeHosted.h"
+#include "Objects/FaceHosted.h"
 #include "Objects/BackgroundImage.h"
 #include "Objects/Terrain.h"
 #include "Objects/TerrainVertex.h"
@@ -73,6 +74,7 @@ UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 	case EObjectType::OTMullion: return AMOIMullion::StaticClass();
 	case EObjectType::OTPointHosted: return AMOIPointHosted::StaticClass();
 	case EObjectType::OTEdgeHosted: return AMOIEdgeHosted::StaticClass();
+	case EObjectType::OTFaceHosted: return AMOIFaceHosted::StaticClass();
 	case EObjectType::OTBackgroundImage: return AMOIBackgroundImage::StaticClass();
 	case EObjectType::OTEdgeDetail: return AMOIEdgeDetail::StaticClass();
 	case EObjectType::OTTerrain: return AMOITerrain::StaticClass();

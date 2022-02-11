@@ -266,7 +266,8 @@ void FModumateDatabase::ReadPresetData()
 					[](const FBIMPresetInstance& Preset) {
 						return Preset.ObjectType == EObjectType::OTFurniture ||
 							Preset.ObjectType == EObjectType::OTPointHosted ||
-							Preset.ObjectType == EObjectType::OTEdgeHosted; },
+							Preset.ObjectType == EObjectType::OTEdgeHosted ||
+							Preset.ObjectType == EObjectType::OTFaceHosted; },
 					furniture);
 
 				bimCacheRecord.Starters = starters;

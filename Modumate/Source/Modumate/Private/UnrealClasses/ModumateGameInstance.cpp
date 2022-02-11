@@ -39,6 +39,7 @@
 #include "Quantities/QuantitiesManager.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Objects/DesignOption.h"
+#include "Objects/FaceHosted.h"
 #include "ModumateCore/EnumHelpers.h"
 
 using namespace ModumateCommands;

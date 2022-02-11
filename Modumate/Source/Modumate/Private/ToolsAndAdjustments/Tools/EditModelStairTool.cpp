@@ -17,7 +17,7 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
-
+#include "Objects/ModumateObjectStatics.h"
 
 
 UStairTool::UStairTool()

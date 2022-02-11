@@ -45,6 +45,11 @@ namespace ModumateCommands
 
 	// Design Options
 	MODUMATE_COMMAND(kDesignOption, "design_option");
+
+	MODUMATE_COMMAND(kSetBasisEdge, "set_basis_edge");
+	MODUMATE_COMMAND(kSetRoll, "set_roll");
+	MODUMATE_COMMAND(kSetPitch, "set_pitch");
+	MODUMATE_COMMAND(kSetYaw, "set_yaw");
 }
 
 namespace ModumateParameters

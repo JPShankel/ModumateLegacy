@@ -76,6 +76,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		case EObjectType::OTCabinet: 
 		case EObjectType::OTPointHosted:
 		case EObjectType::OTEdgeHosted:
+		case EObjectType::OTFaceHosted:
 		case EObjectType::OTFurniture:
 			ensureAlways(assemblyPreset->TryGetCustomData(MaterialBindingSet)); break;
 	};
@@ -403,7 +404,8 @@ FVector FBIMAssemblySpec::GetCompoundAssemblyNativeSize() const
 
 	// PointHosted uses single part to determine size
 	if (ObjectType == EObjectType::OTPointHosted ||
-		ObjectType == EObjectType::OTEdgeHosted)
+		ObjectType == EObjectType::OTEdgeHosted ||
+		ObjectType == EObjectType::OTFaceHosted)
 	{
 		RootProperties.TryGetProperty(EBIMValueScope::Dimension, FBIMNameType(FBIMPartLayout::PartSizeX), nativeSize.X);
 		RootProperties.TryGetProperty(EBIMValueScope::Dimension, FBIMNameType(FBIMPartLayout::PartSizeY), nativeSize.Y);
@@ -524,6 +526,7 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 		// Point hosted obj uses MaterialBindingSet from assembly 
 		if (ObjectType == EObjectType::OTPointHosted ||
 			ObjectType == EObjectType::OTEdgeHosted ||
+			ObjectType == EObjectType::OTFaceHosted ||
 			ObjectType == EObjectType::OTFurniture)
 		{
 			for (auto& matBinding : MaterialBindingSet.MaterialBindings)
@@ -665,11 +668,8 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 	case EObjectType::OTFurniture:
 	case EObjectType::OTPointHosted:
 	case EObjectType::OTEdgeHosted:
-		return MakeRiggedAssembly(InDB);
-	
-		// TODO: face hosted assemblies
 	case EObjectType::OTFaceHosted:
-		return EBIMResult::Error;
+		return MakeRiggedAssembly(InDB);
 
 	case EObjectType::OTCabinet:
 		return MakeCabinetAssembly(InDB);

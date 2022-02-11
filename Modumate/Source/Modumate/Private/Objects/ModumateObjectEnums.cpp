@@ -34,6 +34,7 @@ EToolCategories UModumateTypeStatics::GetToolCategory(EToolMode ToolMode)
 	case EToolMode::VE_COUNTERTOP:
 	case EToolMode::VE_POINTHOSTED:
 	case EToolMode::VE_EDGEHOSTED:
+	case EToolMode::VE_FACEHOSTED:
 		return EToolCategories::Separators;
 	case EToolMode::VE_PLACEOBJECT:
 	case EToolMode::VE_CABINET:
@@ -91,6 +92,7 @@ EObjectType UModumateTypeStatics::ObjectTypeFromToolMode(EToolMode tm)
 	case EToolMode::VE_MULLION: return EObjectType::OTMullion;
 	case EToolMode::VE_POINTHOSTED: return EObjectType::OTPointHosted;
 	case EToolMode::VE_EDGEHOSTED: return EObjectType::OTEdgeHosted;
+	case EToolMode::VE_FACEHOSTED: return EObjectType::OTFaceHosted;
 	case EToolMode::VE_BACKGROUNDIMAGE: return EObjectType::OTBackgroundImage;
 	case EToolMode::VE_TERRAIN: return EObjectType::OTTerrain;
 	case EToolMode::VE_PATTERN2D: return EObjectType::OTPattern2D;
@@ -133,6 +135,7 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTMullion: return EToolMode::VE_MULLION;
 	case EObjectType::OTPointHosted: return EToolMode::VE_POINTHOSTED;
 	case EObjectType::OTEdgeHosted: return EToolMode::VE_EDGEHOSTED;
+	case EObjectType::OTFaceHosted: return EToolMode::VE_FACEHOSTED;
 	case EObjectType::OTBackgroundImage: return EToolMode::VE_BACKGROUNDIMAGE;
 	case EObjectType::OTTerrain:
 	case EObjectType::OTTerrainMaterial:
@@ -209,6 +212,8 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTPointHosed", "Point Hosted") : LOCTEXT("OTPointHosed", "Parts");
 	case EObjectType::OTEdgeHosted:
 		return bPlural ? LOCTEXT("OTEdgeHosted", "Edge Hosted") : LOCTEXT("OTEdgeHosted", "Edge Parts");
+	case EObjectType::OTFaceHosted:
+		return bPlural ? LOCTEXT("OTFaceHosted", "Face Hosted") : LOCTEXT("OTFaceHosted", "Face Parts");
 	case EObjectType::OTBackgroundImage:
 		return bPlural ? LOCTEXT("OTBackgroundImages", "Background Images") : LOCTEXT("OTBackgroundImage", "Background Image");
 	case EObjectType::OTEdgeDetail:

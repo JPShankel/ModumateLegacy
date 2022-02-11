@@ -16,7 +16,7 @@
 
 #include "ModumateObjectDatabase.generated.h"
 
-static constexpr int32 BIMCacheCurrentVersion = 18;
+static constexpr int32 BIMCacheCurrentVersion = 19;
 // Version 2: deprecate FBIMKeys for FGuids
 // Version 3: move named parameters from meshes to presets
 // Version 4: material binding editor
@@ -34,6 +34,7 @@ static constexpr int32 BIMCacheCurrentVersion = 18;
 // Version 16: multiple assets added for 2.0.0.0
 // Version 17: point-hosted objects
 // Version 18: user-editable part sizes
+// Version 19: face-hosted objects
 
 USTRUCT()
 struct FModumateBIMCacheRecord

@@ -424,6 +424,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &A
 	case EObjectType::OTFurniture:
 	case EObjectType::OTPointHosted:
 	case EObjectType::OTEdgeHosted:
+	case EObjectType::OTFaceHosted:
 		return SetIconMeshForPointHostedAssembly(Assembly, InRenderTarget);
 	}
 	return false;
