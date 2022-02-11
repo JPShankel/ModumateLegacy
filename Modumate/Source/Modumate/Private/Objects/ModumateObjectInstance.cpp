@@ -789,22 +789,23 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 	return true;
 }
 
-bool AModumateObjectInstance::ToWebMOI(FString& OutJson) const
+bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 {
-	// Get common data members
-	FWebMOI webMOI;
-	webMOI.ID = ID;
-	webMOI.DisplayName = GetStateData().DisplayName;
-	webMOI.Parent = GetParentID();
-	webMOI.Type = GetObjectType();
-	webMOI.Children = GetChildIDs();
-	
+	// Reset
+	OutMOI = FWebMOI();
+
+	OutMOI.ID = ID;
+	OutMOI.DisplayName = GetStateData().DisplayName;
+	OutMOI.Parent = GetParentID();
+	OutMOI.Type = GetObjectType();
+	OutMOI.Children = GetChildIDs();
+
 	// Get custom data
 	UScriptStruct* structDef;
 	const void* structPtr;
 	if (!GetInstanceDataStruct(structDef, structPtr))
 	{
-		return 	WriteJsonGeneric<FWebMOI>(OutJson, &webMOI);
+		return 	false;
 	}
 
 	for (TFieldIterator<FProperty> it(structDef); it; ++it)
@@ -818,13 +819,13 @@ bool AModumateObjectInstance::ToWebMOI(FString& OutJson) const
 		}
 
 		FWebMOIProperty webProp = *formProp;
-				
+
 		FStrProperty* strProp = CastField<FStrProperty>(*it);
 		if (strProp != nullptr)
 		{
 			webProp.Value = strProp->GetPropertyValue_InContainer(structPtr);
 			webProp.ValueArray.Add(webProp.Value);
-			webMOI.Properties.Add(webProp.Name, webProp);
+			OutMOI.Properties.Add(webProp.Name, webProp);
 			continue;
 		}
 
@@ -833,7 +834,7 @@ bool AModumateObjectInstance::ToWebMOI(FString& OutJson) const
 		{
 			webProp.Value = boolProp->GetPropertyValue_InContainer(structPtr) ? TEXT("true") : TEXT("false");
 			webProp.ValueArray.Add(webProp.Value);
-			webMOI.Properties.Add(webProp.Name, webProp);
+			OutMOI.Properties.Add(webProp.Name, webProp);
 			continue;
 		}
 
@@ -842,7 +843,7 @@ bool AModumateObjectInstance::ToWebMOI(FString& OutJson) const
 		{
 			webProp.Value = FString::Printf(TEXT("%d"), numProp->GetSignedIntPropertyValue(structPtr));
 			webProp.ValueArray.Add(webProp.Value);
-			webMOI.Properties.Add(webProp.Name, webProp);
+			OutMOI.Properties.Add(webProp.Name, webProp);
 			continue;
 		}
 
@@ -874,12 +875,21 @@ bool AModumateObjectInstance::ToWebMOI(FString& OutJson) const
 				}
 			}
 
-			webMOI.Properties.Add(webProp.Name, webProp);
+			OutMOI.Properties.Add(webProp.Name, webProp);
 			continue;
 		}
 	}
+	return true;
+}
 
-	return WriteJsonGeneric<FWebMOI>(OutJson, &webMOI);
+bool AModumateObjectInstance::ToWebMOI(FString& OutJson) const
+{
+	FWebMOI webMOI;
+	if (ToWebMOI(webMOI))
+	{
+		return WriteJsonGeneric<FWebMOI>(OutJson, &webMOI);
+	}
+	return false;
 }
 
 bool AModumateObjectInstance::BeginPreviewOperation()

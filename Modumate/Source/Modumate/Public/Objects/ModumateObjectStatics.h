@@ -18,6 +18,7 @@ struct FBIMAssemblySpec;
 class UModumateDocument;
 class AModumateObjectInstance;
 struct FSimplePolygon;
+struct FWebMOI;
 
 class FGraph2DEdge;
 class FGraph3DEdge;
@@ -123,6 +124,7 @@ public:
 	static void UpdateDesignOptionVisibility(UModumateDocument* Doc);
 
 	static void GetWebMOIArrayForObjects(const TArray<const AModumateObjectInstance*>& Objects, FString& OutJson);
+	static void GetWebMOIArrayForObjects(const TArray<const AModumateObjectInstance*>& Objects, TArray<FWebMOI>& OutMOIs);
 
 private:
 	static bool GetGroupIdsForGroupChangeHelper(const UModumateDocument* Doc, int32 NewGroupID, int32 OldGroupID, TArray<int32>& OutAffectedGroups, bool& bOutFoundOldGroup);

@@ -24,6 +24,16 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionOrViewChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPostOnNewModel);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdateScopeBoxes);
 
+USTRUCT()
+struct MODUMATE_API FWebEditModelPlayerState
+{
+	GENERATED_BODY()
+
+	//TODO: extend for all player state settings the web interface needs
+	UPROPERTY()
+	TArray<FWebMOI> selectedObjects;
+};
+
 /**
  *
  */
@@ -87,6 +97,10 @@ public:
 	bool ShowingFileDialog;
 
 	AModumateObjectInstance *HoveredObject;
+
+	bool ToWebPlayerState(FWebEditModelPlayerState& OutState) const;
+	bool FromWebPlayerState(const FWebEditModelPlayerState& InState);
+	bool SendWebPlayerState() const;
 
 	bool DebugMouseHits;
 

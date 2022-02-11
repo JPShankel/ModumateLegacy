@@ -698,7 +698,7 @@ void AEditModelPlayerState::PostSelectionChanged()
 	LastSelectedObjectSet.Reset();
 	LastSelectedObjectSet.Append(SelectedObjects);
 
-	EMPlayerController->GetDocument()->UpdateWebSelectedObjects();
+	SendWebPlayerState();
 }
 
 void AEditModelPlayerState::PostViewChanged()
@@ -1733,3 +1733,72 @@ bool AEditModelPlayerState::RequestPermissions(const FString& UserID, const FStr
 
 	return true;
 }
+
+bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState) const
+{
+	// TODO: add more player state info here as need be
+	TArray<const AModumateObjectInstance*> obs;
+	obs.Append(SelectedGroupObjects.Array());
+	obs.Append(SelectedObjects.Array());
+
+	OutState = FWebEditModelPlayerState();
+	UModumateObjectStatics::GetWebMOIArrayForObjects(obs, OutState.selectedObjects);
+
+	return true;
+}
+
+bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& InState)
+{
+	TArray<int32> webObIds;
+	Algo::Transform(InState.selectedObjects, webObIds, [](const FWebMOI& MOI) {return MOI.ID; });
+
+	TArray<const AModumateObjectInstance*> obs;
+	obs.Append(SelectedGroupObjects.Array());
+	obs.Append(SelectedObjects.Array());
+	TArray<int32> clientObIds;
+	Algo::Transform(obs, clientObIds, [](const AModumateObjectInstance* MOI) {return MOI->ID; });
+
+	TArray<int32> newSelected, newUnselected;
+
+	newSelected = webObIds.FilterByPredicate([&clientObIds](const int32 ObID) {return !clientObIds.Contains(ObID); });
+	newUnselected = clientObIds.FilterByPredicate([&webObIds](const int32 ObID) {return webObIds.Contains(ObID); });
+
+	for (auto& ob : newSelected)
+	{
+		SetObjectIDSelected(ob, true);
+	}
+
+	for (auto& ob : newUnselected)
+	{
+		SetObjectIDSelected(ob, false);
+	}
+
+	return true;
+}
+
+bool AEditModelPlayerState::SendWebPlayerState() const
+{
+	TArray<const AModumateObjectInstance*> obs;
+	// Groups first
+	obs.Append(SelectedGroupObjects.Array());
+	obs.Append(SelectedObjects.Array());
+
+	FString jsonState;
+	FWebEditModelPlayerState webState;
+	UModumateObjectStatics::GetWebMOIArrayForObjects(obs, webState.selectedObjects);
+
+	if (WriteJsonGeneric<FWebEditModelPlayerState> (jsonState, &webState))
+	{
+		AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+		UModumateDocument* doc = gameState ? gameState->Document : nullptr;
+
+		if (ensure(doc))
+		{
+			doc->DrawingSendResponse(TEXT("onPlayerStateUpdated"), jsonState);
+			return true;
+		}
+	}
+
+	return false;
+}
+

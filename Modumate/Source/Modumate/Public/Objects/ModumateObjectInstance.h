@@ -173,6 +173,7 @@ public:
 	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, void*& OutStructPtr);
 	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const;
 
+	bool ToWebMOI(FWebMOI& OutMOI) const;
 	bool ToWebMOI(FString& OutJson) const;
 	bool FromWebMOI(const FString& InJson);
 

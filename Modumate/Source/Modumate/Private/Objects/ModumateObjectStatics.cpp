@@ -1314,20 +1314,38 @@ void UModumateObjectStatics::HideObjectsInGroups(UModumateDocument* Doc, const T
 
 void UModumateObjectStatics::GetWebMOIArrayForObjects(const TArray<const AModumateObjectInstance*>& Objects, FString& OutJson)
 {
-	OutJson = TEXT("[");
-	bool bWantComma = false;
-	for (const auto* ob : Objects)
+	TArray<FWebMOI> webMois;
+	GetWebMOIArrayForObjects(Objects, webMois);
+
+	if (webMois.Num() == 0)
 	{
-		FString webMoi;
-		if (ob && ob->ToWebMOI(webMoi))
+		OutJson = TEXT("[]");
+		return;
+	}
+
+	OutJson = TEXT("[");
+
+	FString jsonMoi;
+	WriteJsonGeneric(jsonMoi, &webMois[0]);
+	OutJson += jsonMoi;
+
+	for (int32 i = 1; i < webMois.Num(); ++i)
+	{
+		jsonMoi.Empty();
+		if (WriteJsonGeneric(jsonMoi, &webMois[i]))
 		{
-			if (bWantComma)
-			{
-				OutJson += TEXT(",");
-			}
-			OutJson += webMoi;
-			bWantComma = true;
+			OutJson += TEXT(",");
+			OutJson += jsonMoi;
 		}
 	}
 	OutJson += TEXT("]");
+}
+
+void UModumateObjectStatics::GetWebMOIArrayForObjects(const TArray<const AModumateObjectInstance*>& Objects, TArray<FWebMOI>& OutMOIs)
+{
+	for (auto& ob : Objects)
+	{
+		FWebMOI& webMoi = OutMOIs.AddDefaulted_GetRef();
+		ob->ToWebMOI(webMoi);
+	}
 }

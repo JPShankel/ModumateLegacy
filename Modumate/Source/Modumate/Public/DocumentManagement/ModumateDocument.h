@@ -414,10 +414,12 @@ public:
 	void update_moi(int32 ID,const FString& MOIData);
 
 	UFUNCTION()
+	void update_player_state_from_web(const FString& PlayerStateData);
+
+	UFUNCTION()
 	void update_web_project_settings();
 
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
-	void UpdateWebSelectedObjects() const;
 
 	void OnCameraViewSelected(int32 ID);
 };

@@ -4501,21 +4501,6 @@ void UModumateDocument::string_to_inches(const FString& InRequest)
 	}
 }
 
-void UModumateDocument::UpdateWebSelectedObjects() const
-{
-	AEditModelPlayerState* emPlayerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-	if (emPlayerState != nullptr) {
-		TArray<const AModumateObjectInstance*> obs;
-		// Groups first
-		obs.Append(emPlayerState->SelectedGroupObjects.Array());
-		obs.Append(emPlayerState->SelectedObjects.Array());
-
-		FString jsonArray;
-		UModumateObjectStatics::GetWebMOIArrayForObjects(obs, jsonArray);
-		DrawingSendResponse(TEXT("onSelectionChanged"), jsonArray);
-	}
-}
-
 void UModumateDocument::UpdateWebMOIs(const EObjectType ObjectType) const
 {
 	FString jsonArray;
@@ -4615,6 +4600,22 @@ void UModumateDocument::update_moi(int32 ID, const FString& MOIData)
 			return MOI->ID;
 		}
 	);	
+}
+
+void UModumateDocument::update_player_state_from_web(const FString& InStateJson)
+{
+	auto* localPlayer = GetWorld() ? GetWorld()->GetFirstLocalPlayerFromController() : nullptr;
+	auto* controller = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(GetWorld())) : nullptr;
+	if (!ensure(controller && controller->EMPlayerState))
+	{
+		return;
+	}
+
+	FWebEditModelPlayerState webState;
+	if (ReadJsonGeneric<FWebEditModelPlayerState>(InStateJson, &webState))
+	{
+		controller->EMPlayerState->FromWebPlayerState(webState);
+	}
 }
 
 void UModumateDocument::update_web_project_settings()
