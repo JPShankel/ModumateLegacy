@@ -226,7 +226,7 @@ void FDrawingDesignerRenderControl::AddSceneLines(const FVector& ViewDirection, 
 {
 	TArray<const AModumateObjectInstance*> sceneLinesObjects = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType(
 		{ EObjectType::OTDoor, EObjectType::OTWindow, EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace,
-		EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTCabinet, EObjectType::OTFinish });
+		EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTCabinet, EObjectType::OTFinish,EObjectType::OTTrim });
 
 	TArray<FDrawingDesignerLine> sceneLines;
 	for (const auto* moi : sceneLinesObjects)

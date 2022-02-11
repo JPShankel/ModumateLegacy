@@ -18,6 +18,7 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "DrawingDesigner/DrawingDesignerLine.h"
 
 
 FMOITrimData::FMOITrimData()
@@ -484,4 +485,37 @@ bool AMOITrim::InternalUpdateGeometry(bool bRecreate, bool bCreateCollision)
 void AMOITrim::UpdateQuantities()
 {
 	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
+}
+
+void AMOITrim::GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength /*= 0.0f*/) const
+{
+	TArray<FVector> perimeter;
+	if (!UModumateObjectStatics::GetExtrusionObjectPoints(CachedAssembly, TrimNormal, TrimUp,
+		InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, perimeter))
+	{
+		return;
+	}
+
+	// Need a plane that causes no lines to be culled:
+	FPlane plane(ViewDirection, -MAX_FLT);
+	TArray<FEdge> edges = UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(plane, perimeter, TrimStartPos, TrimEndPos);
+
+	float minLengthSquared = MinLength * MinLength;
+	const int32 numInitialLines = OutDrawingLines.Num();
+	for (const auto& edge : edges)
+	{
+		if ((edge.Vertex[1] - edge.Vertex[0]).SizeSquared() >= minLengthSquared)
+		{
+			OutDrawingLines.Emplace(edge.Vertex[0], edge.Vertex[1]);
+		}
+	}
+
+	for (int32 l = numInitialLines; l < OutDrawingLines.Num(); ++l)
+	{
+		auto& line = OutDrawingLines[l];
+		line.Thickness = 0.25f;
+		line.GreyValue = 112 / 255.0;
+	}
+
+
 }
