@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Math/UnitConversion.h"
 #include "ModumateCore/ModumateDimensionString.h"
-#include "DocumentManagement/ModumateWebProjectSettings.h"
+#include "DocumentManagement/WebProjectSettings.h"
 
 #include "ModumateUserSettings.generated.h"
 
@@ -38,7 +38,8 @@ struct MODUMATE_API FModumateGraphicsSettings
 	// Unreal graphics settings: 0:low, 1:medium, 2:high, 3:epic, 4:cinematic
 	static const int32 UnrealGraphicsSettingsMaxValue = 4;
 
-	bool ToModumateWebProjectSettings(FModumateWebProjectSettings& Settings) const;
+	bool ToWebProjectSettings(FWebProjectSettings& OutSettings) const;
+	bool FromWebProjectSettings(const FWebProjectSettings& InSettings);
 };
 
 USTRUCT(BlueprintType)

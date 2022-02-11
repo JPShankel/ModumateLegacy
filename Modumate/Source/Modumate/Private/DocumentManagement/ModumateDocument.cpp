@@ -4628,26 +4628,56 @@ void UModumateDocument::update_web_project_settings()
 		return;
 	}
 
-	FModumateWebProjectSettings webProjectSettings;
+	FWebProjectSettings webProjectSettings;
 	// From document settings
-	CurrentSettings.ToModumateWebProjectSettings(webProjectSettings);
+	CurrentSettings.ToWebProjectSettings(webProjectSettings);
 	// From voice settings
 	if (controller->VoiceClient)
 	{
-		controller->VoiceClient->ToModumateWebProjectSettings(webProjectSettings);
+		controller->VoiceClient->ToWebProjectSettings(webProjectSettings);
 	}
 	// From graphics settings
 	UModumateGameInstance* gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
 	if (gameInstance)
 	{
-		gameInstance->UserSettings.GraphicsSettings.ToModumateWebProjectSettings(webProjectSettings);
+		gameInstance->UserSettings.GraphicsSettings.ToWebProjectSettings(webProjectSettings);
 	}
 	webProjectSettings.version.value = UModumateFunctionLibrary::GetProjectVersion();
 
 	FString projectSettingsJson;
-	if (WriteJsonGeneric<FModumateWebProjectSettings>(projectSettingsJson, &webProjectSettings))
+	if (WriteJsonGeneric<FWebProjectSettings>(projectSettingsJson, &webProjectSettings))
 	{
 		DrawingSendResponse(TEXT("onDocumentSettingsChanged"), projectSettingsJson);
+	}
+}
+
+void UModumateDocument::set_document_settings(const FString& InRequest)
+{
+	FWebProjectSettings inWebSettings;
+	if (!ReadJsonGeneric<FWebProjectSettings>(InRequest, &inWebSettings))
+	{
+		return;
+	}
+	FDocumentSettings nextSettings = CurrentSettings;
+	// To document settings
+	nextSettings.FromWebProjectSettings(inWebSettings);
+	auto settingsDelta = MakeShared<FDocumentSettingDelta>(CurrentSettings, nextSettings);
+	ApplyDeltas({ settingsDelta }, GetWorld());
+
+	// To voice settings
+	auto player = GetWorld()->GetFirstLocalPlayerFromController();
+	auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
+	if (controller && controller->VoiceClient)
+	{
+		controller->VoiceClient->FromWebProjectSettings(inWebSettings);
+	}
+	// To graphics settings
+	UModumateGameInstance* gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
+	if (gameInstance)
+	{
+		gameInstance->UserSettings.GraphicsSettings.FromWebProjectSettings(inWebSettings);
+		gameInstance->UserSettings.SaveLocally();
+		gameInstance->ApplyGraphicsFromModumateUserSettings();
 	}
 }
 

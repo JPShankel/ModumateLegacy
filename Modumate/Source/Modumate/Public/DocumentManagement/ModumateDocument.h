@@ -419,6 +419,9 @@ public:
 	UFUNCTION()
 	void update_web_project_settings();
 
+	UFUNCTION()
+	void set_document_settings(const FString& InRequest);
+
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
 
 	void OnCameraViewSelected(int32 ID);

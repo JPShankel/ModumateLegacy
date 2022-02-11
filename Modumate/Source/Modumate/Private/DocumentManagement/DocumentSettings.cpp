@@ -12,7 +12,7 @@ const TArray<int32> FDocumentSettings::ImperialDistIncrementMultipliers({ 1, 2, 
 const TArray<int32> FDocumentSettings::MetricDistIncrementMultipliers({ 1, 2, 4, 10, 20, 40, 100, 200, 400, 1000, 2000 });
 
 
-bool FDocumentSettings::ToModumateWebProjectSettings(FModumateWebProjectSettings& Settings) const
+bool FDocumentSettings::ToWebProjectSettings(FWebProjectSettings& OutSettings) const
 {
 	// Build options for units
 	auto dimensionPrefEnum = StaticEnum<EDimensionPreference>();
@@ -26,18 +26,15 @@ bool FDocumentSettings::ToModumateWebProjectSettings(FModumateWebProjectSettings
 		EDimensionPreference dimensionPrefValue = static_cast<EDimensionPreference>(dimensionPrefEnum->GetValueByIndex(dimensionPrefIdx));
 		FText dimensionPrefDisplayName = dimensionPrefEnum->GetDisplayNameTextByIndex(dimensionPrefIdx);
 		FString dimensionPrefDisplayString = dimensionPrefDisplayName.ToString();
-		FString dimensionPrefId = dimensionPrefDisplayString;
-		dimensionPrefId.RemoveSpacesInline();
-		Settings.units.options.Add(dimensionPrefDisplayString, dimensionPrefId);
+		OutSettings.units.options.Add(dimensionPrefDisplayString, dimensionPrefDisplayString);
 	}
 
 	// Build value for units
-	EDimensionPreference curDimensionPref;
+	EDimensionPreference curDimensionPref = EDimensionPreference::FeetAndInches;
 	if (UModumateSettingsMenu::GetDimensionPrefFromTypes(DimensionType, DimensionUnit, curDimensionPref))
 	{
 		int32 curDimensionPrefIndex = dimensionPrefEnum->GetIndexByValue((int64)curDimensionPref);
-		Settings.units.value = dimensionPrefEnum->GetDisplayNameTextByIndex(curDimensionPrefIndex).ToString();
-		Settings.units.value.RemoveSpacesInline();
+		OutSettings.units.value = dimensionPrefEnum->GetDisplayNameTextByIndex(curDimensionPrefIndex).ToString();
 	}
 
 	// Get current increments
@@ -47,19 +44,19 @@ bool FDocumentSettings::ToModumateWebProjectSettings(FModumateWebProjectSettings
 	switch (DimensionType)
 	{
 	case EDimensionUnits::DU_Imperial:
-		minDistIncrement = FDocumentSettings::MinImperialDistIncrementCM;
-		distIncrementMultipliers = FDocumentSettings::ImperialDistIncrementMultipliers;
-		defaultDistIncrement = distIncrementMultipliers[FDocumentSettings::DefaultImperialMultiplierIdx] * minDistIncrement;
+		minDistIncrement = MinImperialDistIncrementCM;
+		distIncrementMultipliers = ImperialDistIncrementMultipliers;
+		defaultDistIncrement = distIncrementMultipliers[DefaultImperialMultiplierIdx] * minDistIncrement;
 		break;
 	case EDimensionUnits::DU_Metric:
-		minDistIncrement = FDocumentSettings::MinMetricDistIncrementCM;
-		distIncrementMultipliers = FDocumentSettings::MetricDistIncrementMultipliers;
-		defaultDistIncrement = distIncrementMultipliers[FDocumentSettings::DefaultMetricMultiplierIdx] * minDistIncrement;
+		minDistIncrement = MinMetricDistIncrementCM;
+		distIncrementMultipliers = MetricDistIncrementMultipliers;
+		defaultDistIncrement = distIncrementMultipliers[DefaultMetricMultiplierIdx] * minDistIncrement;
 		break;
 	}
 
 	// Build value and options for increments
-	Settings.increment.value = FString::SanitizeFloat(defaultDistIncrement);
+	OutSettings.increment.value = FString::SanitizeFloat(defaultDistIncrement);
 
 	for (int32 multiplierIdx = 0; multiplierIdx < distIncrementMultipliers.Num(); ++multiplierIdx)
 	{
@@ -67,22 +64,75 @@ bool FDocumentSettings::ToModumateWebProjectSettings(FModumateWebProjectSettings
 		double distIncrement = minDistIncrement * distIncrementMultiplier;
 		FText distIncrementText = UModumateDimensionStatics::CentimetersToDisplayText(distIncrement, 1, DimensionType, DimensionUnit);
 		FString distIncrementString = distIncrementText.ToString();
-		FString distIncrementId = distIncrementString;
-		distIncrementId.RemoveSpacesInline();
-		Settings.increment.options.Add(distIncrementString, distIncrementId);
+		OutSettings.increment.options.Add(distIncrementString, distIncrementString);
 
 		if (distIncrement == MinimumDistanceIncrement)
 		{
-			Settings.increment.value = distIncrementString;
-			Settings.increment.value.RemoveSpacesInline();
+			OutSettings.increment.value = distIncrementString;
 		}
 	}
 
-	Settings.latitude.value = FString::SanitizeFloat(Latitude);
-	Settings.longitude.value = FString::SanitizeFloat(Longitude);
-	Settings.trueNorth.value = FString::SanitizeFloat(TrueNorthDegree);
+	OutSettings.latitude.value = FString::SanitizeFloat(Latitude);
+	OutSettings.longitude.value = FString::SanitizeFloat(Longitude);
+	OutSettings.trueNorth.value = FString::SanitizeFloat(TrueNorthDegree);
 
 	return true;
+}
+
+bool FDocumentSettings::FromWebProjectSettings(const FWebProjectSettings& InSettings)
+{
+	// TODO: Majority of this code is to find the current dimension similar ToWebProjectSettings()
+	// Will consolidate most logic here and from UI/ModumateSettingsMenu.h once setting menu UI is out of UUserWidget
+	
+	// Find unit
+	bool bUnitFound = false;
+	EDimensionPreference curDimensionPref = EDimensionPreference::FeetAndInches;
+	auto dimensionPrefEnum = StaticEnum<EDimensionPreference>();
+	for (int32 dimensionPrefIdx = 0; dimensionPrefIdx < dimensionPrefEnum->NumEnums(); ++dimensionPrefIdx)
+	{
+		FString dimensionPrefName = dimensionPrefEnum->GetDisplayNameTextByIndex(dimensionPrefIdx).ToString();
+		if (dimensionPrefName == InSettings.units.value)
+		{
+			curDimensionPref = static_cast<EDimensionPreference>(dimensionPrefEnum->GetValueByIndex(dimensionPrefIdx));
+			bUnitFound = true;
+			break;
+		}
+	}
+	UModumateSettingsMenu::GetDimensionTypesFromPref(curDimensionPref, DimensionType, DimensionUnit);
+
+	// Find increment
+	bool bIncrementFound = false;
+	double minDistIncrement = 0.0;
+	TArray<int32> distIncrementMultipliers;
+	switch (DimensionType)
+	{
+	case EDimensionUnits::DU_Imperial:
+		minDistIncrement = MinImperialDistIncrementCM;
+		distIncrementMultipliers = ImperialDistIncrementMultipliers;
+		break;
+	case EDimensionUnits::DU_Metric:
+		minDistIncrement = MinMetricDistIncrementCM;
+		distIncrementMultipliers = MetricDistIncrementMultipliers;
+		break;
+	}
+	for (int32 multiplierIdx = 0; multiplierIdx < distIncrementMultipliers.Num(); ++multiplierIdx)
+	{
+		int32 distIncrementMultiplier = distIncrementMultipliers[multiplierIdx];
+		double distIncrement = minDistIncrement * distIncrementMultiplier;
+		FString distIncrementString = UModumateDimensionStatics::CentimetersToDisplayText(distIncrement, 1, DimensionType, DimensionUnit).ToString();
+		if (distIncrementString == InSettings.increment.value)
+		{
+			MinimumDistanceIncrement = distIncrement;
+			bIncrementFound = true;
+			break;
+		}
+	}
+
+	Latitude = FCString::Atof(*InSettings.latitude.value);
+	Longitude = FCString::Atof(*InSettings.longitude.value);
+	TrueNorthDegree = FCString::Atof(*InSettings.trueNorth.value);
+
+	return bUnitFound && bIncrementFound;
 }
 
 FDocumentSettings::FDocumentSettings()

@@ -260,34 +260,47 @@ void AModumateVoice::LeaveChannel()
 #endif
 }
 
-bool AModumateVoice::ToModumateWebProjectSettings(FModumateWebProjectSettings& Settings) const
+bool AModumateVoice::ToWebProjectSettings(FWebProjectSettings& OutSettings) const
 {
 #if UE_SERVER
 	return false;
-#else
-	Settings.microphone.value = VoiceClient->AudioInputDevices().ActiveDevice().Name();
-	Settings.microphone.value.RemoveSpacesInline();
+#endif
+	OutSettings.microphone.value = VoiceClient->AudioInputDevices().ActiveDevice().Name();
 	TMap<FString, FString> inputs;
 	GetInputDevices(inputs);
 	for (auto kvp : inputs)
 	{
-		FString inputId = kvp.Key;
-		inputId.RemoveSpacesInline();
-		Settings.microphone.options.Add(kvp.Key, inputId);
+		OutSettings.microphone.options.Add(kvp.Key, kvp.Key);
 	}
 
-	Settings.speaker.value = VoiceClient->AudioOutputDevices().ActiveDevice().Name();
-	Settings.speaker.value.RemoveSpacesInline();
+	OutSettings.speaker.value = VoiceClient->AudioOutputDevices().ActiveDevice().Name();
 	TMap<FString, FString> outputs;
-	GetInputDevices(outputs);
+	GetOutputDevices(outputs);
 	for (auto kvp : outputs)
 	{
-		FString outputId = kvp.Key;
-		outputId.RemoveSpacesInline();
-		Settings.speaker.options.Add(kvp.Key, outputId);
+		OutSettings.speaker.options.Add(kvp.Key, kvp.Key);
 	}
 	return true;
+}
+
+bool AModumateVoice::FromWebProjectSettings(const FWebProjectSettings& InSettings)
+{
+#if UE_SERVER
+	return false;
 #endif
+	bool bInputFound = false;
+	TMap<FString, FString> inputs;
+	if (GetInputDevices(inputs))
+	{
+		bInputFound = SetInputDevice(inputs[InSettings.microphone.value]);
+	}
+	bool bOutputFound = false;
+	TMap<FString, FString> outputs;
+	if (GetOutputDevices(outputs))
+	{
+		bOutputFound = SetOutputDevice(outputs[InSettings.speaker.value]);
+	}
+	return bInputFound && bOutputFound;
 }
 
 void AModumateVoice::SERVER_RequestVoiceLogin_Implementation(const FVivoxParam& Parameters)

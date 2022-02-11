@@ -6,7 +6,7 @@
 
 #include "DocumentManagement/DocumentDelta.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
-#include "DocumentManagement/ModumateWebProjectSettings.h"
+#include "DocumentManagement/WebProjectSettings.h"
 
 #include "DocumentSettings.generated.h"
 
@@ -48,7 +48,8 @@ struct MODUMATE_API FDocumentSettings
 	bool operator==(const FDocumentSettings& RHS) const;
 	bool operator!=(const FDocumentSettings& RHS) const;
 
-	bool ToModumateWebProjectSettings(FModumateWebProjectSettings& Settings) const;
+	bool ToWebProjectSettings(FWebProjectSettings& OutSettings) const;
+	bool FromWebProjectSettings(const FWebProjectSettings& InSettings);
 };
 
 template<>
