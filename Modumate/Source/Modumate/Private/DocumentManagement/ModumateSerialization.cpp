@@ -158,7 +158,7 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 	// All presets saved in a document have been edited at some point
 	for (auto& kvp : OutRecord.PresetCollection.PresetsByGUID)
 	{
-		kvp.Value.Edited = true;
+		kvp.Value.bEdited = true;
 	}
 
 	// Version 4 -> 5: portal locations and rotations are now relative

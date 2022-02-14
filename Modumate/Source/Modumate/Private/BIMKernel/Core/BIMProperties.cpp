@@ -201,6 +201,7 @@ namespace BIMPropertyNames
 	const FBIMNameType ID = TEXT("ID");
 	const FBIMNameType Length = TEXT("Length");
 	const FBIMNameType LoadFactorSpecialCalc = TEXT("LoadFactorSpecialCalc");
+	const FBIMNameType Mark = TEXT("Mark");
 	const FBIMNameType MaterialKey = TEXT("MaterialKey");
 	const FBIMNameType MaterialColor = TEXT("MaterialColor");
 	const FBIMNameType Mesh = TEXT("Mesh");

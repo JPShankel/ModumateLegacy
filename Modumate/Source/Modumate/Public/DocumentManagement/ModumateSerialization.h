@@ -361,7 +361,8 @@ using FModumateDocumentHeader = FModumateDocumentHeaderV2;
 // Version 17: Typical edge details
 // Version 18: Multiple volume graphs
 // Version 19: Editable part sizes in BIM
-static constexpr int32 DocVersion = 19;
+// Version 20: Mark and Comment properties in all presets
+static constexpr int32 DocVersion = 20;
 
 struct MODUMATE_API FModumateSerializationStatics
 {

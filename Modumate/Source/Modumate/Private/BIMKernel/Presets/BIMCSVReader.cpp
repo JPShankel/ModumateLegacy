@@ -131,6 +131,15 @@ EBIMResult FBIMCSVReader::ProcessTagPathRow(const TArray<const TCHAR*>& Row, int
 
 	PresetMatrices.Empty();
 
+	// All presets have marks and comments
+	FBIMPropertyKey propertyKey(EBIMValueScope::Preset, BIMPropertyNames::Mark);
+	NodeType.Properties.SetProperty<FString>(propertyKey.Scope, propertyKey.Name, FString());
+	NodeType.FormTemplate.AddPropertyElement(LOCTEXT("BIMMark","Mark"), propertyKey.QN(), EBIMPresetEditorField::TextProperty);
+
+	propertyKey = FBIMPropertyKey(EBIMValueScope::Preset, BIMPropertyNames::Comments);
+	NodeType.Properties.SetProperty<FString>(propertyKey.Scope, propertyKey.Name, FString());
+	NodeType.FormTemplate.AddPropertyElement(LOCTEXT("BIMComments", "Comments"), propertyKey.QN(), EBIMPresetEditorField::TextProperty);
+
 	for (int32 i = 1; i < Row.Num(); ++i)
 	{
 		FString cell = Row[i];
@@ -191,7 +200,6 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 			{
 				if (!Preset.PresetID.IsNone())
 				{
-					Preset.TryGetProperty(BIMPropertyNames::Name, Preset.DisplayName);
 					if (OutPresets.PresetFromGUID(Preset.GUID)==nullptr)
 					{
 						OutPresets.AddPreset(Preset);
@@ -216,6 +224,13 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				Preset.NodeType = NodeType.TypeName;
 				Preset.NodeScope = NodeType.Scope;
 				Preset.TypeDefinition = NodeType;
+
+				// All presets have marks and comments
+				FBIMPropertyKey propertyKey(EBIMValueScope::Preset, BIMPropertyNames::Mark);
+				Preset.Properties.SetProperty<FString>(propertyKey.Scope, propertyKey.Name, FString());
+
+				propertyKey = FBIMPropertyKey(EBIMValueScope::Preset, BIMPropertyNames::Comments);
+				Preset.Properties.SetProperty<FString>(propertyKey.Scope, propertyKey.Name, FString());
 			}
 		}
 	}

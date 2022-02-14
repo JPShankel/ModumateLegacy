@@ -101,6 +101,7 @@ namespace BIMPropertyNames
 	extern const FBIMNameType ID;
 	extern const FBIMNameType Length;
 	extern const FBIMNameType LoadFactorSpecialCalc;
+	extern const FBIMNameType Mark;
 	extern const FBIMNameType MaterialKey;
 	extern const FBIMNameType MaterialColor;
 	extern const FBIMNameType Mesh;

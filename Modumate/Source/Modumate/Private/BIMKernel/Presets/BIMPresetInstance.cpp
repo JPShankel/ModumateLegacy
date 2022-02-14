@@ -921,6 +921,18 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const 
 		}
 	}
 
+	// Starting with version 20, all presets are expected to have mark and comment fields
+	if (InDocVersion < 20)
+	{
+		FBIMPropertyKey propertyKey(EBIMValueScope::Preset, BIMPropertyNames::Mark);
+		Properties.SetProperty(propertyKey.Scope, propertyKey.Name, FString());
+		PresetForm.AddPropertyElement(LOCTEXT("BIMMark", "Mark"), propertyKey.QN(), EBIMPresetEditorField::TextProperty);
+
+		propertyKey = FBIMPropertyKey(EBIMValueScope::Preset, BIMPropertyNames::Comments);
+		Properties.SetProperty(propertyKey.Scope, propertyKey.Name, FString());
+		PresetForm.AddPropertyElement(LOCTEXT("BIMComments", "Comments"), propertyKey.QN(), EBIMPresetEditorField::TextProperty);
+	}
+
 	return EBIMResult::Success;
 }
 

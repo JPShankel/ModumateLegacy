@@ -115,7 +115,7 @@ struct MODUMATE_API FBIMPresetInstance
 	FBIMPresetTypeDefinition TypeDefinition;
 
 	UPROPERTY()
-	bool Edited = false;
+	bool bEdited = false;
 
 	//TODO: Debug data must be UPROPERTY() to serialize in cache, cannot be conditionally compiled out
 	//To be deprecated with move to SQL

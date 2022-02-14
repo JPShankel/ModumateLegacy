@@ -672,7 +672,7 @@ TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeUpdateDelta(const FBIMPres
 	TSharedPtr<FBIMPresetDelta> presetDelta = MakeShared<FBIMPresetDelta>();
 
 	presetDelta->NewState = UpdatedPreset;
-	presetDelta->NewState.Edited = true;
+	presetDelta->NewState.bEdited = true;
 	const FBIMPresetInstance* oldPreset = PresetsByGUID.Find(UpdatedPreset.GUID);
 	if (oldPreset != nullptr)
 	{
@@ -932,7 +932,7 @@ bool FBIMPresetCollection::SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord)
 	for (auto& kvp : PresetsByGUID)
 	{
 		// Only save presets that have been edited, the rest are in the shared db
-		if (kvp.Value.Edited)
+		if (kvp.Value.bEdited)
 		{
 			auto serializedPreset = kvp.Value;
 
@@ -969,7 +969,7 @@ EBIMResult FBIMPresetCollection::GetBlankPresetForObjectType(EObjectType ObjectT
 		{
 			OutPreset = *preset;
 			OutPreset.GUID.Invalidate();
-			OutPreset.Edited = true;
+			OutPreset.bEdited = true;
 			return EBIMResult::Success;
 		}
 	}
