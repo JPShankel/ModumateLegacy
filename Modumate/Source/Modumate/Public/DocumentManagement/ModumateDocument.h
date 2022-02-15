@@ -417,10 +417,10 @@ public:
 	void update_player_state_from_web(const FString& PlayerStateData);
 
 	UFUNCTION()
-	void update_web_project_settings();
+	void request_project_settings();
 
 	UFUNCTION()
-	void set_document_settings(const FString& InRequest);
+	void update_project_settings(const FString& InRequest);
 
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
 

@@ -7,6 +7,21 @@
 #include "WebProjectSettings.generated.h"
 
 USTRUCT()
+struct MODUMATE_API FWebProjectSettingsPropertyOption
+{
+	GENERATED_BODY()
+
+	FWebProjectSettingsPropertyOption();
+	FWebProjectSettingsPropertyOption(const FString& InName, const FString& InId);
+
+	UPROPERTY()
+	FString name;
+
+	UPROPERTY()
+	FString id;
+};
+
+USTRUCT()
 struct MODUMATE_API FWebProjectSettingsProperty
 {
 	GENERATED_BODY()
@@ -15,7 +30,7 @@ struct MODUMATE_API FWebProjectSettingsProperty
 	FString value;
 
 	UPROPERTY()
-	TMap<FString, FString> options;
+	TArray<FWebProjectSettingsPropertyOption> options;
 
 	UPROPERTY()
 	TArray<int32> range;

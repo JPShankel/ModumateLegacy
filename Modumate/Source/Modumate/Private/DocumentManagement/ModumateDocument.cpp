@@ -1173,6 +1173,8 @@ bool UModumateDocument::ApplySettingsDelta(const FDocumentSettingDelta& Settings
 				controller->SkyActor->UpdateCoordinate(CurrentSettings.Latitude, CurrentSettings.Longitude, CurrentSettings.TrueNorthDegree);
 			}
 		}
+		// Tell web UI to update its menu
+		web_push_document_update();
 	}
 
 	return true;
@@ -4445,6 +4447,7 @@ void UModumateDocument::web_push_document_update()
 	FDrawingDesignerRenderControl renderControl(this);
 	drawing_request_view_list();
 	drawing_request_document();
+	request_project_settings();
 	UpdateWebMOIs(EObjectType::OTDesignOption);
 }
 
@@ -4618,7 +4621,7 @@ void UModumateDocument::update_player_state_from_web(const FString& InStateJson)
 	}
 }
 
-void UModumateDocument::update_web_project_settings()
+void UModumateDocument::request_project_settings()
 {
 	auto player = GetWorld()->GetFirstLocalPlayerFromController();
 	auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
@@ -4647,11 +4650,11 @@ void UModumateDocument::update_web_project_settings()
 	FString projectSettingsJson;
 	if (WriteJsonGeneric<FWebProjectSettings>(projectSettingsJson, &webProjectSettings))
 	{
-		DrawingSendResponse(TEXT("onDocumentSettingsChanged"), projectSettingsJson);
+		DrawingSendResponse(TEXT("onProjectSettingsChanged"), projectSettingsJson);
 	}
 }
 
-void UModumateDocument::set_document_settings(const FString& InRequest)
+void UModumateDocument::update_project_settings(const FString& InRequest)
 {
 	FWebProjectSettings inWebSettings;
 	if (!ReadJsonGeneric<FWebProjectSettings>(InRequest, &inWebSettings))

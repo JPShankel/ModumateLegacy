@@ -26,7 +26,8 @@ bool FDocumentSettings::ToWebProjectSettings(FWebProjectSettings& OutSettings) c
 		EDimensionPreference dimensionPrefValue = static_cast<EDimensionPreference>(dimensionPrefEnum->GetValueByIndex(dimensionPrefIdx));
 		FText dimensionPrefDisplayName = dimensionPrefEnum->GetDisplayNameTextByIndex(dimensionPrefIdx);
 		FString dimensionPrefDisplayString = dimensionPrefDisplayName.ToString();
-		OutSettings.units.options.Add(dimensionPrefDisplayString, dimensionPrefDisplayString);
+		OutSettings.units.options.Add(FWebProjectSettingsPropertyOption(dimensionPrefDisplayString, dimensionPrefDisplayString));
+		
 	}
 
 	// Build value for units
@@ -64,7 +65,7 @@ bool FDocumentSettings::ToWebProjectSettings(FWebProjectSettings& OutSettings) c
 		double distIncrement = minDistIncrement * distIncrementMultiplier;
 		FText distIncrementText = UModumateDimensionStatics::CentimetersToDisplayText(distIncrement, 1, DimensionType, DimensionUnit);
 		FString distIncrementString = distIncrementText.ToString();
-		OutSettings.increment.options.Add(distIncrementString, distIncrementString);
+		OutSettings.increment.options.Add(FWebProjectSettingsPropertyOption(distIncrementString, distIncrementString));
 
 		if (distIncrement == MinimumDistanceIncrement)
 		{
@@ -98,34 +99,46 @@ bool FDocumentSettings::FromWebProjectSettings(const FWebProjectSettings& InSett
 			break;
 		}
 	}
+	EDimensionUnits oldDimensionType = DimensionType;
 	UModumateSettingsMenu::GetDimensionTypesFromPref(curDimensionPref, DimensionType, DimensionUnit);
 
 	// Find increment
 	bool bIncrementFound = false;
 	double minDistIncrement = 0.0;
+	double defaultDistIncrement = 0.0;
 	TArray<int32> distIncrementMultipliers;
 	switch (DimensionType)
 	{
 	case EDimensionUnits::DU_Imperial:
 		minDistIncrement = MinImperialDistIncrementCM;
 		distIncrementMultipliers = ImperialDistIncrementMultipliers;
+		defaultDistIncrement = distIncrementMultipliers[DefaultImperialMultiplierIdx] * minDistIncrement;
 		break;
 	case EDimensionUnits::DU_Metric:
 		minDistIncrement = MinMetricDistIncrementCM;
 		distIncrementMultipliers = MetricDistIncrementMultipliers;
+		defaultDistIncrement = distIncrementMultipliers[DefaultMetricMultiplierIdx] * minDistIncrement;
 		break;
 	}
-	for (int32 multiplierIdx = 0; multiplierIdx < distIncrementMultipliers.Num(); ++multiplierIdx)
+
+	if (oldDimensionType == DimensionType)
 	{
-		int32 distIncrementMultiplier = distIncrementMultipliers[multiplierIdx];
-		double distIncrement = minDistIncrement * distIncrementMultiplier;
-		FString distIncrementString = UModumateDimensionStatics::CentimetersToDisplayText(distIncrement, 1, DimensionType, DimensionUnit).ToString();
-		if (distIncrementString == InSettings.increment.value)
+		for (int32 multiplierIdx = 0; multiplierIdx < distIncrementMultipliers.Num(); ++multiplierIdx)
 		{
-			MinimumDistanceIncrement = distIncrement;
-			bIncrementFound = true;
-			break;
+			int32 distIncrementMultiplier = distIncrementMultipliers[multiplierIdx];
+			double distIncrement = minDistIncrement * distIncrementMultiplier;
+			FString distIncrementString = UModumateDimensionStatics::CentimetersToDisplayText(distIncrement, 1, DimensionType, DimensionUnit).ToString();
+			if (distIncrementString == InSettings.increment.value)
+			{
+				MinimumDistanceIncrement = distIncrement;
+				bIncrementFound = true;
+				break;
+			}
 		}
+	}
+	else
+	{
+		MinimumDistanceIncrement = defaultDistIncrement;
 	}
 
 	Latitude = FCString::Atof(*InSettings.latitude.value);

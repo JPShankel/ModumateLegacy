@@ -270,7 +270,7 @@ bool AModumateVoice::ToWebProjectSettings(FWebProjectSettings& OutSettings) cons
 	GetInputDevices(inputs);
 	for (auto kvp : inputs)
 	{
-		OutSettings.microphone.options.Add(kvp.Key, kvp.Key);
+		OutSettings.microphone.options.Add(FWebProjectSettingsPropertyOption(kvp.Key, kvp.Key));
 	}
 
 	OutSettings.speaker.value = VoiceClient->AudioOutputDevices().ActiveDevice().Name();
@@ -278,7 +278,7 @@ bool AModumateVoice::ToWebProjectSettings(FWebProjectSettings& OutSettings) cons
 	GetOutputDevices(outputs);
 	for (auto kvp : outputs)
 	{
-		OutSettings.speaker.options.Add(kvp.Key, kvp.Key);
+		OutSettings.speaker.options.Add(FWebProjectSettingsPropertyOption(kvp.Key, kvp.Key));
 	}
 	return true;
 }
