@@ -19,7 +19,7 @@
 #define LOCTEXT_NAMESPACE "ModumateDwg"
 
 // For local testing:
-const FString FModumateDwgConnect::ServerAddress(TEXT("http://localhost:8080"));
+const FString FModumateDwgConnect::ServerAddress(TEXT("http://localhost:8082"));
 
 FModumateDwgConnect::FModumateDwgConnect(const FModumateDwgDraw& dwgDraw)
 	: DwgDraw(dwgDraw)

@@ -3,6 +3,7 @@
 #pragma once
 
 // From Layers and Line Types at https://docs.google.com/spreadsheets/d/1re5Qm-58Tm5WEHsnbmAxFiCux8i4mxa3-xqHB5yz19M/#gid=642729209 .
+// The layer table in draftingServer/Dwg/JsonToDwg.cpp (Layers[]) must be in corresponding order.
 enum class FModumateLayerType
 {
 	kDefault,
@@ -42,5 +43,11 @@ enum class FModumateLayerType
 	KDimensionReference,
 	kTerrainCut,
 	kTerrainBeyond,
-	kFinalLayerType = kTerrainBeyond
+	kPartPointCut,
+	kPartEdgeCut,
+	kPartFaceCut,
+	kPartPointBeyond,
+	kPartEdgeBeyond,
+	kPartFaceBeyond,
+	kFinalLayerType = kPartFaceBeyond
 };

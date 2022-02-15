@@ -8,7 +8,6 @@
 DECLARE_FLOAT_ACCUMULATOR_STAT(TEXT("Modumate Line Coalescing"), STAT_ModumateLineCoalescing, STATGROUP_Modumate);
 
 
-
 // Map FModumateLayerType priorities in terms of obscuring in DWG.
 const FModumateLayerType FModumateLineCorral::LayerTypeOrder[] =
 {
@@ -25,6 +24,9 @@ const FModumateLayerType FModumateLineCorral::LayerTypeOrder[] =
 	FModumateLayerType::kSeparatorCutTrim,
 	FModumateLayerType::kFinishCut,
 	FModumateLayerType::kTerrainCut,
+	FModumateLayerType::kPartPointCut,
+	FModumateLayerType::kPartEdgeCut,
+	FModumateLayerType::kPartFaceCut,
 	FModumateLayerType::kOpeningSystemOperatorLine,
 	FModumateLayerType::kOpeningSystemBeyond,
 	FModumateLayerType::kSeparatorBeyondModuleEdges,
@@ -41,12 +43,15 @@ const FModumateLayerType FModumateLineCorral::LayerTypeOrder[] =
 	FModumateLayerType::kFfeOutline,
 	FModumateLayerType::kFfeInteriorEdges,
 	FModumateLayerType::kTerrainBeyond,
+	FModumateLayerType::kPartPointBeyond,
+	FModumateLayerType::kPartEdgeBeyond,
+	FModumateLayerType::kPartFaceBeyond,
 	FModumateLayerType::kDebug1,
 	FModumateLayerType::kDebug2,
 	FModumateLayerType::kDefault
 };
 
-int FModumateLineCorral::LinePriorities[sizeof(LayerTypeOrder) / sizeof(FModumateLayerType)];
+int FModumateLineCorral::LinePriorities[int32(FModumateLayerType::kFinalLayerType) + 1];
 TAtomic<int32> FModumateLineCorral::InitPriorities{ 0 };
 
 namespace
@@ -54,7 +59,7 @@ namespace
 	// a < b: layer b obscures layer a.
 	constexpr bool operator<(FModumateLayerType a, FModumateLayerType b)
 	{
-		return FModumateLineCorral::LinePriorities[int(a)] > FModumateLineCorral::LinePriorities[int(b)];
+		return FModumateLineCorral::LinePriorities[int32(a)] > FModumateLineCorral::LinePriorities[int32(b)];
 	}
 }
 
@@ -81,7 +86,8 @@ FModumateLineCorral::FModumateLineCorral(IModumateDraftingDraw * nextDrafting) :
 	{
 		for (const auto& p: LayerTypeOrder)
 		{
-			LinePriorities[int(p)] = &p - LayerTypeOrder;
+			ensureAlways(int32(p) < sizeof(LinePriorities) / sizeof(LinePriorities[0]));
+			LinePriorities[int32(p)] = &p - LayerTypeOrder;
 		}
 	}
 }
