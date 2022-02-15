@@ -8,6 +8,7 @@
 UENUM(BlueprintType)
 enum class EToolMode : uint8
 {
+	// MUST BE CONSISTENT WITH EInputCommand starting with ActivateTool_START!
 	VE_NONE,
 	VE_SELECT,
 	VE_PLACEOBJECT,
@@ -44,12 +45,12 @@ enum class EToolMode : uint8
 	VE_MULLION,
 	VE_POINTHOSTED,
 	VE_EDGEHOSTED,
+	VE_FACEHOSTED,
 	VE_BACKGROUNDIMAGE,
 	VE_TERRAIN,
 	VE_GROUP,
 	VE_UNGROUP,
 	VE_PATTERN2D,
-	VE_FACEHOSTED
 };
 
 UENUM(BlueprintType)
