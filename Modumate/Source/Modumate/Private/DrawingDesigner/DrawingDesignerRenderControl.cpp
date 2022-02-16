@@ -647,6 +647,7 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 				snapId.owningMoiId = moi->ID;
 				snapId.id = i;
 				snapId.pointIndex = INDEX_NONE;
+				newSnap.id = snapId;
 
 				//Two points per snap
 				FDrawingDesignerSnapPoint p1, p2;
