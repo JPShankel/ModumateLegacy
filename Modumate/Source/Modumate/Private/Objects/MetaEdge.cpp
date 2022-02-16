@@ -16,6 +16,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/LineActor.h"
+#include "UI/Properties/InstPropWidgetCycle.h"
 
 
 AMOIMetaEdge::AMOIMetaEdge()
@@ -177,6 +178,13 @@ void AMOIMetaEdge::ShowAdjustmentHandles(AEditModelPlayerController* Controller,
 
 void AMOIMetaEdge::RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI)
 {
+	static const FString cyclePropertyName(TEXT("Flip Direction"));
+	if (auto cycleField = PropertiesUI->RequestPropertyField<UInstPropWidgetCycle>(this, cyclePropertyName))
+	{
+		cycleField->RegisterValue(this);
+		cycleField->ValueChangedEvent.AddDynamic(this, &AMOIMetaEdge::OnInstPropUIChangedCycle);
+	}
+
 	// If there are no miter participants, then the edge cannot have a detail
 	// (and if it did, it should have been deleted)
 	if (CachedMiterData.SortedParticipantIDs.Num() == 0)
@@ -224,4 +232,9 @@ void AMOIMetaEdge::CacheEdgeDetail()
 
 	CachedEdgeDetailData.FillFromMiterNode(GetMiterInterface());
 	CachedEdgeDetailConditionHash = CachedEdgeDetailData.CachedConditionHash;
+}
+
+void AMOIMetaEdge::OnInstPropUIChangedCycle(int32 BasisValue)
+{
+	Document->ReverseMetaObjects(GetWorld(), {ID}, {});
 }

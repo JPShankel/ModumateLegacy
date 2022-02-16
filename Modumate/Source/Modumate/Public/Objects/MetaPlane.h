@@ -15,10 +15,14 @@ public:
 
 	virtual bool GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupDynamicGeometry() override;
+	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) override;
 
 protected:
 	void UpdateCachedGraphData();
 	virtual float GetAlpha() const override;
+
+	UFUNCTION()
+	void OnInstPropUIChangedCycle(int32 BasisValue);
 
 	TArray<int32> LastChildIDs;
 };

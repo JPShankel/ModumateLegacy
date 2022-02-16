@@ -9,6 +9,8 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "UI/ToolTray/ToolTrayBlockProperties.h"
+#include "UI/Properties/InstPropWidgetCycle.h"
 
 AMOIMetaPlane::AMOIMetaPlane()
 	: AMOIPlaneBase()
@@ -66,6 +68,16 @@ void AMOIMetaPlane::SetupDynamicGeometry()
 	MarkDirty(EObjectDirtyFlags::Visuals);
 }
 
+void AMOIMetaPlane::RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI)
+{
+	static const FString cyclePropertyName(TEXT("Flip Direction"));
+	if (auto cycleField = PropertiesUI->RequestPropertyField<UInstPropWidgetCycle>(this, cyclePropertyName))
+	{
+		cycleField->RegisterValue(this);
+		cycleField->ValueChangedEvent.AddDynamic(this, &AMOIMetaPlane::OnInstPropUIChangedCycle);
+	}
+}
+
 void AMOIMetaPlane::UpdateCachedGraphData()
 {
 	auto* graph = GetDocument()->FindVolumeGraph(ID);
@@ -86,4 +98,9 @@ void AMOIMetaPlane::UpdateCachedGraphData()
 float AMOIMetaPlane::GetAlpha() const
 {
 	return 1.0f;
+}
+
+void AMOIMetaPlane::OnInstPropUIChangedCycle(int32 BasisValue)
+{
+	Document->ReverseMetaObjects(GetWorld(), {}, {ID});
 }

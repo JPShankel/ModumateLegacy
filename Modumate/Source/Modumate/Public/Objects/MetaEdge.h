@@ -39,4 +39,7 @@ protected:
 
 	void ResetEdgeDetail();
 	void CacheEdgeDetail();
+
+	UFUNCTION()
+	void OnInstPropUIChangedCycle(int32 BasisValue);
 };
