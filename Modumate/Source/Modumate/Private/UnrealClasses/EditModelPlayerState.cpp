@@ -1744,6 +1744,12 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 	OutState = FWebEditModelPlayerState();
 	UModumateObjectStatics::GetWebMOIArrayForObjects(obs, OutState.selectedObjects);
 
+	if (EMPlayerController && EMPlayerController->CurrentTool)
+	{
+		OutState.toolMode = GetEnumValueString<EToolMode>(EMPlayerController->CurrentTool->GetToolMode());
+		OutState.toolPresetGUID = EMPlayerController->CurrentTool->GetAssemblyGUID().ToString();
+	}
+
 	return true;
 }
 
@@ -1773,7 +1779,25 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 		SetObjectIDSelected(ob, false);
 	}
 
-	return true;
+	EToolMode toolMode;
+	if (EMPlayerController && EMPlayerController->CurrentTool && FindEnumValueByString<EToolMode>(InState.toolMode,toolMode))
+	{
+		// If tool mode is different, change tool mode
+		if (toolMode != EMPlayerController->CurrentTool->GetToolMode())
+		{
+			EMPlayerController->SetToolMode(toolMode);
+		}
+		// If the tool assembly is different, change that
+		else if (!EMPlayerController->CurrentTool->GetAssemblyGUID().ToString().Equals(InState.toolPresetGUID))
+		{
+			FGuid guid;
+			FGuid::Parse(InState.toolPresetGUID, guid);
+			EMPlayerController->CurrentTool->SetAssemblyGUID(guid);
+		}
+	}
+
+	// general practice: when the web sends us data, send it back so they'll store it
+	return SendWebPlayerState();
 }
 
 bool AEditModelPlayerState::SendWebPlayerState() const
@@ -1785,17 +1809,19 @@ bool AEditModelPlayerState::SendWebPlayerState() const
 
 	FString jsonState;
 	FWebEditModelPlayerState webState;
-	UModumateObjectStatics::GetWebMOIArrayForObjects(obs, webState.selectedObjects);
 
-	if (WriteJsonGeneric<FWebEditModelPlayerState> (jsonState, &webState))
+	if (ToWebPlayerState(webState))
 	{
-		AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
-		UModumateDocument* doc = gameState ? gameState->Document : nullptr;
-
-		if (ensure(doc))
+		if (WriteJsonGeneric<FWebEditModelPlayerState>(jsonState, &webState))
 		{
-			doc->DrawingSendResponse(TEXT("onPlayerStateUpdated"), jsonState);
-			return true;
+			AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+			UModumateDocument* doc = gameState ? gameState->Document : nullptr;
+
+			if (ensure(doc))
+			{
+				doc->DrawingSendResponse(TEXT("onPlayerStateUpdated"), jsonState);
+				return true;
+			}
 		}
 	}
 

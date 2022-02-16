@@ -32,6 +32,12 @@ struct MODUMATE_API FWebEditModelPlayerState
 	//TODO: extend for all player state settings the web interface needs
 	UPROPERTY()
 	TArray<FWebMOI> selectedObjects;
+
+	UPROPERTY()
+	FString toolMode;
+
+	UPROPERTY()
+	FString toolPresetGUID;
 };
 
 /**

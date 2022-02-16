@@ -50,6 +50,9 @@ namespace ModumateCommands
 	MODUMATE_COMMAND(kSetRoll, "set_roll");
 	MODUMATE_COMMAND(kSetPitch, "set_pitch");
 	MODUMATE_COMMAND(kSetYaw, "set_yaw");
+
+	// WEB
+	MODUMATE_COMMAND(kWebUI, "webui");
 }
 
 namespace ModumateParameters

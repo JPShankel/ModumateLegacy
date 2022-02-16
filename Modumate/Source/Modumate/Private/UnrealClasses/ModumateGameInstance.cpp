@@ -483,6 +483,34 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
+	// Use this command to test web ui functions from the command line
+	RegisterCommand(kWebUI, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
+		{
+			UModumateDocument* doc = GetDocument();
+
+			AEditModelPlayerController* playerController = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+			AEditModelPlayerState* playerState = playerController ? playerController->EMPlayerState : nullptr;
+
+			FWebEditModelPlayerState webState;
+
+			playerState->ToWebPlayerState(webState);
+
+			FString toolModeStr = params.GetValue("tool_mode");
+
+			EToolMode toolMode = EToolMode::VE_NONE;
+			if (FindEnumValueByString<EToolMode>(toolModeStr, toolMode))
+			{
+				webState.toolMode = toolModeStr;
+				FString stateStr;
+				if (WriteJsonGeneric<FWebEditModelPlayerState>(stateStr, &webState))
+				{
+					doc->update_player_state_from_web(stateStr);
+				}
+			}
+
+			return true;
+		});
+
 	RegisterCommand(kDesignOption, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
 	{
 		UModumateDocument* doc = GetDocument();
