@@ -20,6 +20,7 @@ constexpr float MOI_TRACE_DISTANCE = 5000.0f;
 constexpr int32 DisableMeshStencilValue = 0;
 constexpr int32 ForegroundMeshStencilValue  = 1;
 
+
 FString FDrawingDesignerRenderControl::GetViewList()
 {
 	FDrawingDesignerViewList viewList;
@@ -70,6 +71,8 @@ FString FDrawingDesignerRenderControl::GetViewList()
 
 bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString& OutJsonResponse)
 {
+	double currentTime = FPlatformTime::Seconds();
+
 	FDrawingDesignerDrawingRequest viewRequest;
 	if (!ReadJsonGeneric(jsonRequest, &viewRequest))
 	{
@@ -127,10 +130,6 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 	renderer->SetDocument(Doc);
 
 	FVector viewDirection(cutPlaneRotation * FVector::ZAxisVector);
-	//(A) ~175ms
-	AddSceneLines(viewDirection, scaleLength, renderer);
-	//(/A)
-	SwapPortalMaterials(cutPlane);
 
 	// Prepare cutplane
 	int32 originalCullingCutPlane = MOD_ID_NONE;
@@ -141,22 +140,16 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 		controller->SetCurrentCullingCutPlane(cutPlane->ID, false);
 	}
 
-	// Draw 
-	//(B) ~10ms
-	renderer->RenderImage(viewRequest.minimum_resolution_pixels.x);
-	//(/B)
+	renderer->SetupRenderTarget(viewRequest.minimum_resolution_pixels.x);
+	renderer->RenderImage(viewDirection, scaleLength);
 
 	// Restore cutplane
-	RestorePortalMaterials();
 	controller->SetCurrentCullingCutPlane(originalCullingCutPlane);
 
 	TArray<uint8> rawPng;
 	bool bSuccess = false;
 
-
-	//(C) ~100ms
 	bSuccess = renderer->GetImagePNG(rawPng);
-	//(/C)
 
 	bSuccess = true;
 	if (bSuccess)
@@ -187,6 +180,10 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 
 	SceneStaticMaterialMap.Empty();
 	SceneProcMaterialMap.Empty();
+
+	double endTime = FPlatformTime::Seconds();
+	UE_LOG(LogTemp, Warning, TEXT("Created view for cut plane id %d in %lf s"), viewRequest.moi_id, endTime - currentTime);
+
 	return bSuccess;
 }
 

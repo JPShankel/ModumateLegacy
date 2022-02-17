@@ -12,10 +12,17 @@
 #include "DrawingDesigner/DrawingDesignerView.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/SkyActor.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/AxesActor.h"
+
+const TSet<EObjectType> ADrawingDesignerRender::RenderedObjectTypes({ EObjectType::OTCabinet, EObjectType::OTCeiling,
+	EObjectType::OTCountertop, EObjectType::OTDoor, EObjectType::OTEdgeHosted, EObjectType::OTFaceHosted, EObjectType::OTFinish,
+	EObjectType::OTFloorSegment, EObjectType::OTMullion, EObjectType::OTPointHosted, EObjectType::OTRailSegment,
+	EObjectType::OTRoofFace, EObjectType::OTStaircase, EObjectType::OTStructureLine, EObjectType::OTSystemPanel, EObjectType::OTTerrain,
+	EObjectType::OTTrim, EObjectType::OTWallSegment, EObjectType::OTWindow });
 
 ADrawingDesignerRender::ADrawingDesignerRender()
 {
@@ -24,8 +31,9 @@ ADrawingDesignerRender::ADrawingDesignerRender()
 
 	CaptureComponent->ProjectionType = ECameraProjectionMode::Orthographic;
 	CaptureComponent->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
+	CaptureComponent->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
 	CaptureComponent->bCaptureEveryFrame = false;
-	RootComponent = CaptureComponent;
+	SetRootComponent(CaptureComponent);
 }
 
 void ADrawingDesignerRender::AddLines(const TArray<FDrawingDesignerLine>& Lines)
@@ -40,6 +48,7 @@ void ADrawingDesignerRender::AddLines(const TArray<FDrawingDesignerLine>& Lines)
 		lineActor->ToggleForDrawingRender(true);
 		lineActor->UpdateLineVisuals(true, line.GetDDThickness(), line.GetLineShadeAsColor());
 		LineActors.Add(lineActor);
+		CaptureComponent->ShowOnlyActorComponents(lineActor);
 	}
 }
 
@@ -52,31 +61,31 @@ void ADrawingDesignerRender::EmptyLines()
 	LineActors.Empty();
 }
 
-void ADrawingDesignerRender::RenderImage(int32 imageWidth)
+void ADrawingDesignerRender::SetupRenderTarget(int32 ImageWidth)
 {
 	int32 orthoWidth = ViewTransform.GetScale3D().X;
 	int32 orthoHeight = ViewTransform.GetScale3D().Y;
 	if (!ensure(orthoWidth != 0)) {
 		return;
 	}
-	int32 imageHeight = imageWidth * orthoHeight / orthoWidth;
+	int32 imageHeight = ImageWidth * orthoHeight / orthoWidth;
 
 	if (!ensure(Doc))
 	{
 		return;
 	}
 
-	if (RenderTarget == nullptr || RenderTarget->GetSurfaceWidth() != imageWidth || RenderTarget->GetSurfaceHeight() != imageHeight)
+	if (RenderTarget == nullptr || RenderTarget->GetSurfaceWidth() != ImageWidth || RenderTarget->GetSurfaceHeight() != imageHeight)
 	{
 		if (!RenderTarget)
 		{
-			RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), imageWidth, imageHeight,
+			RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), ImageWidth, imageHeight,
 				ETextureRenderTargetFormat::RTF_RGBA8);
 			if (!ensureAlways(RenderTarget))
 			{
 				return;
 			}
-			FfeRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), imageWidth, imageHeight,
+			FfeRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), ImageWidth, imageHeight,
 				ETextureRenderTargetFormat::RTF_R16f);
 			if (!ensureAlways(FfeRenderTarget))
 			{
@@ -85,30 +94,35 @@ void ADrawingDesignerRender::RenderImage(int32 imageWidth)
 		}
 		else
 		{
-			RenderTarget->ResizeTarget(imageWidth, imageHeight);
-			FfeRenderTarget->ResizeTarget(imageWidth, imageHeight);
+			RenderTarget->ResizeTarget(ImageWidth, imageHeight);
+			FfeRenderTarget->ResizeTarget(ImageWidth, imageHeight);
 		}
-	}
-
-	auto* playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
-	if (playerController && playerController->SkyActor)
-	{
-		CaptureComponent->HideActorComponents(playerController->SkyActor);
-		CaptureComponent->HideActorComponents(playerController->AxesActor);
 	}
 
 	FTransform cameraTransform(ViewTransform.GetRotation(), ViewTransform.GetTranslation());
 	CaptureComponent->SetWorldTransform(cameraTransform);
 	CaptureComponent->OrthoWidth = orthoWidth;
+}
+
+void ADrawingDesignerRender::RenderImage(const FVector& ViewDirection, float MinLength)
+{
+	if (!ensure(RenderTarget))
+	{
+		return;
+	}
 
 	RenderFfe();
+	AddObjects(ViewDirection, MinLength);
+
 	CaptureComponent->TextureTarget = RenderTarget;
 
-	CaptureComponent->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_RenderScenePrimitives;
 	CaptureComponent->CaptureScene();
 
 	RestoreFfeMaterials();
+	RestoreObjects();
+	EmptyLines();
 	SceneStaticMaterialMap.Empty();
+	SceneMeshComponents.Empty();
 
 #if 0
 	UKismetRenderingLibrary::ExportRenderTarget(GetWorld(), RenderTarget, TEXT("/Modumate"), TEXT("portaldrawing_test.png"));
@@ -176,6 +190,9 @@ void ADrawingDesignerRender::RenderFfe()
 					component->SetMaterial(materialIndex, depthMaterial);
 				}
 			}
+			SceneMeshComponents.Add(component, component->CustomDepthStencilValue);
+			component->SetCustomDepthStencilValue(SVForeground);
+			component->SetRenderCustomDepth(true);
 
 			CaptureComponent->ShowOnlyComponents.Add(component);
 		}
@@ -191,8 +208,8 @@ void ADrawingDesignerRender::RenderFfe()
 	}
 
 	static const FName depthTextureParamName(TEXT("FfeDepth"));
-	UMaterialInstanceDynamic* curMID = UMaterialInstanceDynamic::Create(sobelMaterial, this);
-	curMID->SetTextureParameterValue(depthTextureParamName, FfeRenderTarget);
+	UMaterialInstanceDynamic* sobelMID = UMaterialInstanceDynamic::Create(sobelMaterial, this);
+	sobelMID->SetTextureParameterValue(depthTextureParamName, FfeRenderTarget);
 
 	for (const auto* ffe: ffeObjects)
 	{
@@ -207,7 +224,7 @@ void ADrawingDesignerRender::RenderFfe()
 			{
 				if (component->GetMaterial(materialIndex))
 				{
-					component->SetMaterial(materialIndex, curMID);
+					component->SetMaterial(materialIndex, sobelMID);
 				}
 			}
 		}
@@ -238,5 +255,92 @@ void ADrawingDesignerRender::RestoreFfeMaterials()
 				}
 			}
 		}
+	}
+}
+
+void ADrawingDesignerRender::AddObjects(const FVector& ViewDirection, float MinLength)
+{
+	TArray<const AModumateObjectInstance*> sceneObjects = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType(RenderedObjectTypes);
+	TArray<FDrawingDesignerLine> sceneLines;
+	SceneMeshComponents.Empty();
+
+	for (const auto* moi : sceneObjects)
+	{
+		const ACompoundMeshActor* compoundActor = Cast<ACompoundMeshActor>(moi->GetActor());
+		if (compoundActor)
+		{
+			const int32 numComponents = compoundActor->UseSlicedMesh.Num();
+			for (int32 componentIndex = 0; componentIndex < numComponents; ++componentIndex)
+			{
+				if (compoundActor->UseSlicedMesh[componentIndex])
+				{
+					const int32 sliceStart = 9 * componentIndex;
+					const int32 sliceEnd = 9 * (componentIndex + 1);
+					for (int32 slice = sliceStart; slice < sliceEnd; ++slice)
+					{
+						UProceduralMeshComponent* meshComponent = compoundActor->NineSliceComps[slice];
+						if (!meshComponent)
+						{
+							continue;
+						}
+
+						SceneMeshComponents.Add(meshComponent, meshComponent->CustomDepthStencilValue);
+						meshComponent->SetCustomDepthStencilValue(SVMoi);
+						meshComponent->SetRenderCustomDepth(true);
+						CaptureComponent->ShowOnlyComponent(meshComponent);
+					}
+				}
+				else
+				{
+					UStaticMeshComponent* meshComponent = compoundActor->StaticMeshComps[componentIndex];
+					if (!meshComponent)
+					{
+						continue;
+					}
+
+					SceneMeshComponents.Add(meshComponent, meshComponent->CustomDepthStencilValue);
+					meshComponent->SetCustomDepthStencilValue(SVMoi);
+					meshComponent->SetRenderCustomDepth(true);
+					CaptureComponent->ShowOnlyComponent(meshComponent);
+				}
+			}
+		}
+		else
+		{
+			const ADynamicMeshActor* dynamicActor = Cast<ADynamicMeshActor>(moi->GetActor());
+			if (dynamicActor)
+			{
+				TArray<UProceduralMeshComponent*> meshComponents({ dynamicActor->Mesh, dynamicActor->MeshCap });
+				meshComponents.Append(dynamicActor->ProceduralSubLayers);
+				meshComponents.Append(dynamicActor->ProceduralSubLayers);
+				for (UProceduralMeshComponent* meshComponent : meshComponents)
+				{
+					if (meshComponent)
+					{
+						SceneMeshComponents.Add(meshComponent, meshComponent->CustomDepthStencilValue);
+						meshComponent->SetCustomDepthStencilValue(SVMoi);
+						meshComponent->SetRenderCustomDepth(true);
+						CaptureComponent->ShowOnlyComponent(meshComponent);
+					}
+				}
+			}
+			else
+			{
+				ensure(false); // No compound or dynamic mesh.
+			}
+		}
+
+		moi->GetDrawingDesignerItems(ViewDirection, sceneLines, MinLength);
+	}
+
+	AddLines(sceneLines);
+}
+
+void ADrawingDesignerRender::RestoreObjects()
+{
+	for (auto& meshKvp : SceneMeshComponents)
+	{
+		meshKvp.Key->SetCustomDepthStencilValue(meshKvp.Value);
+		meshKvp.Key->SetRenderCustomDepth(meshKvp.Value != 0);
 	}
 }

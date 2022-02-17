@@ -12,6 +12,7 @@ class UProceduralMeshComponent;
 class AMOICutPlane;
 struct FDrawingDesignerSnap;
 struct FDrawingDesignerView;
+enum class EObjectType: uint8;
 
 class MODUMATE_API FDrawingDesignerRenderControl
 {
@@ -26,8 +27,8 @@ public:
 private:
 
 	bool GetViewAxis(FDrawingDesignerView& view, FVector& outXAxis, FVector& outYAxis, FVector& outZAxis, FVector& outOrigin, FVector2D& outSize);
-	void SwapPortalMaterials(AMOICutPlane* CutPlane);
-	void RestorePortalMaterials();
+	void SwapPortalMaterials(AMOICutPlane* CutPlane);  // unused
+	void RestorePortalMaterials();  // unused
 	void GetSnapPoints(int32 viewId, TMap<FString, FDrawingDesignerSnap>& OutSnapPoints);
 
 	FVector CachedXAxis;

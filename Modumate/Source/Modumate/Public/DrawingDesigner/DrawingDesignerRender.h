@@ -13,6 +13,8 @@ class FDrawingDesignerLine;
 class ALineActor;
 class UModumateDocument;
 class UMeshComponent;
+class UProceduralMeshComponent;
+enum class EObjectType : uint8;
 
 UCLASS()
 class MODUMATE_API ADrawingDesignerRender : public AActor
@@ -26,8 +28,12 @@ public:
 	void SetDocument(const UModumateDocument* InDoc) { Doc = InDoc; }
 	void AddLines(const TArray<FDrawingDesignerLine>& Lines);
 	void EmptyLines();
+	void AddObjects(const FVector& ViewDirection, float MinLength);
 
-	void RenderImage(int32 imageWidth);
+	void RestoreObjects();
+	void SetupRenderTarget(int32 ImageWidth);
+	void RenderFfe();
+	void RenderImage(const FVector& ViewDirection, float MinLength);
 
 	bool GetImagePNG(TArray<uint8>& OutImage) const;
 
@@ -37,8 +43,6 @@ public:
 	USceneCaptureComponent2D* CaptureComponent = nullptr;
 
 private:
-
-	void RenderFfe();
 	void RestoreFfeMaterials();
 
 	FTransform ViewTransform;
@@ -55,4 +59,11 @@ private:
 
 	using StaticMaterialKey = TPair<UMeshComponent*, int32>;
 	TMap<StaticMaterialKey, UMaterialInterface*> SceneStaticMaterialMap;
+
+	TMap<UMeshComponent*, int32> SceneMeshComponents;
+
+	// Stencil-buffer values that are coordinated with the post-process material PP_DrawingDesignerRender.
+	// Also with ALineActor::ToggleForDrawingRender().
+	enum EStencilValues {SVNone = 0, SVMoi = 1, SVForeground = 2};
+	static const TSet<EObjectType> RenderedObjectTypes;
 };

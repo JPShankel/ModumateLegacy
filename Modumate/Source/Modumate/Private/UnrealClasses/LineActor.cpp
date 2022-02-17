@@ -126,7 +126,7 @@ bool ALineActor::ToggleForDrawingRender(bool bEnable)
 		// Stencil value is determined by post process material during render capture
 		// 0: Disable
 		// 1: Foreground objects
-		// 2: Line renders
+		// 2: Line renders (shows regular color buffer)
 		meshComp->CustomDepthStencilValue = bEnable ? 2 : 0;
 		meshComp->SetRenderCustomDepth(bEnable);
 		return true;
