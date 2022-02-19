@@ -431,8 +431,12 @@ void UModumateFunctionLibrary::SetMOIAndDescendentsHidden(const TArray<AModumate
 		return;
 	}
 
-	AEditModelGameState* gameState = MOIs[0]->GetWorld()->GetGameState<AEditModelGameState>();
-	UModumateDocument* doc = gameState->Document;
+	AEditModelPlayerController* playerController = MOIs[0]->GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+	AEditModelPlayerState* playerState = playerController ? playerController->GetPlayerState<AEditModelPlayerState>() : nullptr;
+	if (!ensure(playerState))
+	{
+		return;
+	}
 
 	// First, find all descendents of the selected actor objects
 	TSet<const AModumateObjectInstance*> objectsAndDescendents;
@@ -470,11 +474,11 @@ void UModumateFunctionLibrary::SetMOIAndDescendentsHidden(const TArray<AModumate
 
 	if (bHide)
 	{
-		doc->AddHideObjectsById(MOIs[0]->GetWorld(), objectIDsToHide.Array());
+		playerState->AddHideObjectsById(objectIDsToHide.Array());
 	}
 	else
 	{
-		doc->UnhideObjectsById(MOIs[0]->GetWorld(), objectIDsToHide.Array());
+		playerState->UnhideObjectsById(objectIDsToHide.Array());
 	}
 }
 

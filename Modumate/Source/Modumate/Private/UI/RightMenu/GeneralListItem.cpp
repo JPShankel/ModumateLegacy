@@ -6,6 +6,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Components/CheckBox.h"
 #include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/TooltipManager.h"
 #include "Objects/CutPlane.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
@@ -58,7 +59,10 @@ void UGeneralListItem::OnButtonMainReleased()
 void UGeneralListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
 {
 	AEditModelGameState *gameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
-	if (gameState)
+	AEditModelPlayerController* playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+	AEditModelPlayerState* playerState = playerController ? playerController->GetPlayerState<AEditModelPlayerState>() : nullptr;
+
+	if (gameState && playerState)
 	{
 		// For terrain
 		if (CurrentGeneralListType == EGeneralListType::Terrain)
@@ -76,11 +80,11 @@ void UGeneralListItem::OnCheckBoxVisibilityChanged(bool IsChecked)
 			TArray<int32> objIDs = { ObjID };
 			if (IsChecked)
 			{
-				gameState->Document->AddHideObjectsById(GetWorld(), objIDs);
+				playerState->AddHideObjectsById(objIDs);
 			}
 			else
 			{
-				gameState->Document->UnhideObjectsById(GetWorld(), objIDs);
+				playerState->UnhideObjectsById(objIDs);
 			}
 		}
 	}

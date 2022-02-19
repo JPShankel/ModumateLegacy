@@ -17,6 +17,7 @@
 #include "ModumateCore/ModumateStats.h"
 #include "ModumateCore/ModumateThumbnailHelpers.h"
 #include "ModumateCore/PlatformFunctions.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ModumateCloudConnection.h"
@@ -4060,6 +4061,39 @@ void AEditModelPlayerController::CapabilityReady(AModumateCapability* Capability
 	{
 		ConnectTextChatClient(Cast<AModumateTextChat>(Capability));
 	}
+}
+
+bool AEditModelPlayerController::HideSelected()
+{
+	if (EMPlayerState->SelectedObjects.Num() > 0)
+	{
+		UModumateFunctionLibrary::SetMOIAndDescendentsHidden(EMPlayerState->SelectedObjects.Array());
+	}
+
+	if (EMPlayerState->SelectedGroupObjects.Num() > 0)
+	{
+		TArray<AModumateObjectInstance*> allSelectedGroups;
+		for (auto* group : EMPlayerState->SelectedGroupObjects)
+		{
+			allSelectedGroups.Add(group);
+			allSelectedGroups.Append(group->GetAllDescendents());
+		}
+
+		TArray<int32> selectedGroupIDs;
+		Algo::Transform(allSelectedGroups, selectedGroupIDs,
+			[](const AModumateObjectInstance* GroupMOI) {return GroupMOI->ID; });
+
+		UModumateObjectStatics::HideObjectsInGroups(GetDocument(), selectedGroupIDs);
+	}
+	DeselectAll();
+	return true;
+}
+
+bool AEditModelPlayerController::UnhideAll()
+{
+	SetToolMode(EToolMode::VE_SELECT);
+	GetPlayerState<AEditModelPlayerState>()->UnhideAllObjects();
+	return true;
 }
 
 void AEditModelPlayerController::HandleUndo()

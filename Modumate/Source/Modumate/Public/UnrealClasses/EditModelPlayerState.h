@@ -34,6 +34,9 @@ struct MODUMATE_API FWebEditModelPlayerState
 	TArray<FWebMOI> selectedObjects;
 
 	UPROPERTY()
+	TArray<int32> hiddenObjects;
+
+	UPROPERTY()
 	FString toolMode;
 
 	UPROPERTY()
@@ -108,6 +111,10 @@ public:
 	bool FromWebPlayerState(const FWebEditModelPlayerState& InState);
 	bool SendWebPlayerState() const;
 
+	void AddHideObjectsById(const TArray<int32>& ids);
+	void UnhideAllObjects();
+	void UnhideObjectsById(const TArray<int32>& ids);
+	const TSet<int32>& GetHiddenObjectsId() const { return HiddenObjectsID; }
 	bool DebugMouseHits;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
@@ -348,6 +355,8 @@ protected:
 	TArray<FStructurePoint> TempObjectStructurePoints, CurSelectionStructurePoints;
 	TArray<FStructureLine> TempObjectStructureLines, CurSelectionStructureLines;
 	TSet<AModumateObjectInstance *> CurViewGroupObjects;
+
+	TSet<int32> HiddenObjectsID;
 
 	enum class EStencilFlags;
 };

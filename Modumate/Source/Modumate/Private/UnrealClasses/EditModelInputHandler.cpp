@@ -304,28 +304,11 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	}
 	case EInputCommand::HideSelected:
 	{
-		// TODO: move this logic somewhere reasonable
-		if (Controller->EMPlayerState->SelectedObjects.Num() > 0)
-		{
-			UModumateFunctionLibrary::SetMOIAndDescendentsHidden(Controller->EMPlayerState->SelectedObjects.Array());
-		}
-		if (Controller->EMPlayerState->SelectedGroupObjects.Num() > 0)
-		{
-			TArray<int32> selectedGroupIDs;
-			Algo::Transform(Controller->EMPlayerState->SelectedGroupObjects, selectedGroupIDs,
-				[](const AModumateObjectInstance* GroupMOI) {return GroupMOI->ID; });
-
-			UModumateObjectStatics::HideObjectsInGroups(Controller->GetDocument(), selectedGroupIDs);
-		}
-		Controller->DeselectAll();
-		return true;
+		return Controller->HideSelected();
 	}
 	case EInputCommand::UnhideAll:
 	{
-		// TODO: move this logic somewhere reasonable
-		Controller->SetToolMode(EToolMode::VE_SELECT);
-		Controller->GetDocument()->UnhideAllObjects(GetWorld());
-		return true;
+		return Controller->UnhideAll();
 	}
 	case EInputCommand::ToggleUserSnapPoint:
 	{

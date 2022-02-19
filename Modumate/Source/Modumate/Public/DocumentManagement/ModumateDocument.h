@@ -109,7 +109,6 @@ public:
 	// Data
 	AModumateObjectInstance *GetObjectById(int32 id);
 	const AModumateObjectInstance *GetObjectById(int32 id) const;
-	TSet<int32> HiddenObjectsID;
 	TMap<uint32, FGuid> TypicalEdgeDetails;
 
 	// TODO: resolve how best to get IDs for created objects into MOI deltas
@@ -219,9 +218,6 @@ public:
 	void GetObjectIdsByAssembly(const FGuid& AssemblyKey, TArray<int32>& OutIDs) const;
 
 	static const FName DocumentHideRequestTag;
-	void AddHideObjectsById(UWorld *world, const TArray<int32> &ids);
-	void UnhideAllObjects(UWorld *world);
-	void UnhideObjectsById(UWorld *world, const TArray<int32> &ids);
 
 	UPROPERTY()
 	FOnAppliedMOIDeltas OnAppliedMOIDeltas;

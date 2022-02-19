@@ -1741,8 +1741,16 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 	obs.Append(SelectedGroupObjects.Array());
 	obs.Append(SelectedObjects.Array());
 
+	const auto* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+	const UModumateDocument* doc = gameState ? gameState->Document : nullptr;
+
 	OutState = FWebEditModelPlayerState();
 	UModumateObjectStatics::GetWebMOIArrayForObjects(obs, OutState.selectedObjects);
+
+	if (ensure(doc))
+	{
+		OutState.hiddenObjects = HiddenObjectsID.Array();
+	}
 
 	if (EMPlayerController && EMPlayerController->CurrentTool)
 	{
@@ -1777,6 +1785,17 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 	for (auto& ob : newUnselected)
 	{
 		SetObjectIDSelected(ob, false);
+	}
+
+	auto* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+	UModumateDocument* doc = gameState ? gameState->Document : nullptr;
+	if (ensure(doc))
+	{
+		TSet<int32> requestedHidden(InState.hiddenObjects);
+		const TSet<int32>& currentHidden = HiddenObjectsID;
+		TSet<int32> unhideList(currentHidden.Difference(requestedHidden));
+		AddHideObjectsById(requestedHidden.Difference(currentHidden).Array());
+		UnhideObjectsById(unhideList.Array());
 	}
 
 	EToolMode toolMode;
@@ -1828,3 +1847,93 @@ bool AEditModelPlayerState::SendWebPlayerState() const
 	return false;
 }
 
+void AEditModelPlayerState::AddHideObjectsById(const TArray<int32>& ids)
+{
+	UE_LOG(LogCallTrace, Display, TEXT("EditModelPlayerState::AddHideObjectsById"));
+
+	AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+	UModumateDocument* doc = gameState ? gameState->Document : nullptr;
+	if (!ensure(doc))
+	{
+		return;
+	}
+
+	for (auto id : ids)
+	{
+		AModumateObjectInstance* obj = doc->GetObjectById(id);
+		if (obj && !HiddenObjectsID.Contains(id))
+		{
+			obj->RequestHidden(UModumateDocument::DocumentHideRequestTag, true);
+			obj->RequestCollisionDisabled(UModumateDocument::DocumentHideRequestTag, true);
+			HiddenObjectsID.Add(id);
+		}
+	}
+}
+
+void AEditModelPlayerState::UnhideAllObjects()
+{
+	UE_LOG(LogCallTrace, Display, TEXT("EditModelPlayerState::UnhideAllObjects"));
+
+	TSet<int32> ids = HiddenObjectsID;
+	TSet<int32> hiddenCutPlaneIds;
+
+	AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+	UModumateDocument* doc = gameState ? gameState->Document : nullptr;
+	if (!ensure(doc))
+	{
+		return;
+	}
+
+	for (auto id : ids)
+	{
+		if (AModumateObjectInstance* obj = doc->GetObjectById(id))
+		{
+			if (obj->GetObjectType() != EObjectType::OTCutPlane)
+			{
+				obj->RequestHidden(UModumateDocument::DocumentHideRequestTag, false);
+				obj->RequestCollisionDisabled(UModumateDocument::DocumentHideRequestTag, false);
+			}
+			else
+			{
+				hiddenCutPlaneIds.Add(id);
+			}
+		}
+	}
+
+	HiddenObjectsID = hiddenCutPlaneIds;
+
+	// Why do we dirty all objects?
+	for (AModumateObjectInstance* obj : doc->GetObjectInstances())
+	{
+		obj->MarkDirty(EObjectDirtyFlags::Visuals);
+	}
+}
+
+void AEditModelPlayerState::UnhideObjectsById(const TArray<int32>& ids)
+{
+	UE_LOG(LogCallTrace, Display, TEXT("EditModelPlayerState::UnhideObjectsById"));
+
+	AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+	UModumateDocument* doc = gameState ? gameState->Document : nullptr;
+	if (!ensure(doc))
+	{
+		return;
+	}
+
+	for (auto id : ids)
+	{
+		AModumateObjectInstance* obj = doc->GetObjectById(id);
+		if (obj && HiddenObjectsID.Contains(id))
+		{
+			obj->RequestHidden(UModumateDocument::DocumentHideRequestTag, false);
+			obj->RequestCollisionDisabled(UModumateDocument::DocumentHideRequestTag, false);
+			HiddenObjectsID.Remove(id);
+		}
+	}
+
+	// Why do we dirty all objects?
+	for (AModumateObjectInstance* obj : doc->GetObjectInstances())
+	{
+		obj->MarkDirty(EObjectDirtyFlags::Visuals);
+	}
+}

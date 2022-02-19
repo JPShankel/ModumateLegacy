@@ -14,6 +14,7 @@
 #include "UI/RightMenu/ViewMenuBlockProperties.h"
 #include "UI/Custom/ModumateEditableTextBox.h"
 #include "UI/Custom/ModumateEditableTextBoxUserWidget.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/EditModelPlayerPawn.h"
 #include "UnrealClasses/AxesActor.h"
 #include "UI/ViewCubeWidget.h"
@@ -159,8 +160,10 @@ void UComponentSavedViewListItem::ActivateCameraView()
 				hiddenCPs.Add(kvp.Key);
 			}
 		}
-		Controller->GetDocument()->AddHideObjectsById(GetWorld(), hiddenCPs);
-		Controller->GetDocument()->UnhideObjectsById(GetWorld(), visibleCPs);
+
+		auto* playerState = Controller->GetPlayerState<AEditModelPlayerState>();
+		playerState->AddHideObjectsById(hiddenCPs);
+		playerState->UnhideObjectsById(visibleCPs);
 		Controller->GetDocument()->OnCameraViewSelected(CameraView.MoiId);
 	}
 }

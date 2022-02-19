@@ -510,7 +510,7 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 			bConnectedToVisibleChild |= bEdgeConnectedToVisibleChild;
 		}
 
-		bOutVisible =
+		bOutVisible = !MetaMOI->IsRequestedHidden() &&
 			(bMetaViewMode || (bHybridViewMode && !bHasChildren)) &&
 			(!bConnectedToAnyFace || bConnectedToVisibleFace);
 		bOutCollisionEnabled = bOutVisible || (bInCompatibleToolCategory && bConnectedToVisibleChild);
@@ -525,7 +525,7 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 			return false;
 		}
 
-		bOutVisible =
+		bOutVisible = !MetaMOI->IsRequestedHidden() &&
 			(bMetaViewMode || (bHybridViewMode && !bHasChildren)) &&
 			(!bConnectedToAnyFace || bConnectedToVisibleFace);
 		bOutCollisionEnabled = bOutVisible || (bInCompatibleToolCategory && bConnectedToVisibleChild);
@@ -1308,8 +1308,20 @@ void UModumateObjectStatics::UpdateDesignOptionVisibility(UModumateDocument* Doc
 void UModumateObjectStatics::HideObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, bool bHide)
 {
 	TSet<AModumateObjectInstance*> groupObjects;
+	for (int32 groupID : GroupIDs)
+	{   // Hide entire graph
+		FGraph3D* graph = Doc->GetVolumeGraph(groupID);
+		if (ensure(graph))
+		{
+			for (const auto& kvp : graph->GetAllObjects())
+			{
+				groupObjects.Add(Doc->GetObjectById(kvp.Key));
+			}
+		}
+	}
+
 	UModumateObjectStatics::GetObjectsInGroups(Doc, GroupIDs, groupObjects);
-	UModumateFunctionLibrary::SetMOIAndDescendentsHidden(groupObjects.Array(),bHide);
+	UModumateFunctionLibrary::SetMOIAndDescendentsHidden(groupObjects.Array(), bHide);
 }
 
 void UModumateObjectStatics::GetWebMOIArrayForObjects(const TArray<const AModumateObjectInstance*>& Objects, FString& OutJson)

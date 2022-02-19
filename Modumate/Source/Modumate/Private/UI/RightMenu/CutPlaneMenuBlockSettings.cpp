@@ -5,6 +5,7 @@
 #include "UI/Custom/ModumateButtonIconTextUserWidget.h"
 #include "UI/Custom/ModumateButton.h"
 #include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "UI/EditModelUserWidget.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
@@ -57,13 +58,16 @@ void UCutPlaneMenuBlockSettings::OnButtonShowHideAllReleased()
 			hideAll = true;
 		}
 	}
+
+	auto* playerState = Controller->GetPlayerState<AEditModelPlayerState>();
+
 	if (hideAll)
 	{
-		GameState->Document->AddHideObjectsById(GetWorld(), allCutPlaneIDs);
+		playerState->AddHideObjectsById(allCutPlaneIDs);
 	}
 	else
 	{
-		GameState->Document->UnhideObjectsById(GetWorld(), allCutPlaneIDs);
+		playerState->UnhideObjectsById(allCutPlaneIDs);
 	}
 }
 

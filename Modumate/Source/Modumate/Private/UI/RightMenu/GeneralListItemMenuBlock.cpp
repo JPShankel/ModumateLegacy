@@ -3,6 +3,8 @@
 #include "UI/RightMenu/GeneralListItemMenuBlock.h"
 #include "Components/ListView.h"
 #include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 #include "UI/RightMenu/GeneralListItemObject.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "Objects/Terrain.h"
@@ -30,7 +32,9 @@ void UGeneralListItemMenuBlock::NativeConstruct()
 void UGeneralListItemMenuBlock::UpdateAsTerrainList()
 {
 	AEditModelGameState* gameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
-	if (!gameState)
+	AEditModelPlayerController* playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+	AEditModelPlayerState* playerState = playerController ? playerController->GetPlayerState<AEditModelPlayerState>() : nullptr;
+	if (!gameState || !playerState)
 	{
 		return;
 	}
@@ -55,9 +59,8 @@ void UGeneralListItemMenuBlock::UpdateAsTerrainList()
 				//There are a few ways to get the 'visibility' of an MOI, but in this case
 				// we are going to check the inversion of setting the checkbox instead of
 				// querying the MOI directly.
-				UModumateDocument* doc = gameState->Document;
-				auto isHiddenInDoc = doc->HiddenObjectsID.Contains(newTerrainObj->ObjId);
-				newTerrainObj->Visibility = !isHiddenInDoc;
+				auto isHidden = playerState->GetHiddenObjectsId().Contains(newTerrainObj->ObjId);
+				newTerrainObj->Visibility = !isHidden;
 
 				GeneralItemsList->AddItem(newTerrainObj);
 			}

@@ -617,6 +617,9 @@ public:
 
 	void CapabilityReady(AModumateCapability* Capability);
 
+	bool HideSelected();
+	bool UnhideAll();
+
 	template <class T>
 	void RegisterCapability()
 	{

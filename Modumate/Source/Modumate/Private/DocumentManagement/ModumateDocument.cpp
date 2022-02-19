@@ -349,74 +349,6 @@ void UModumateDocument::SetAssemblyForObjects(UWorld *world,TArray<int32> ids, c
 	ApplyDeltas({ delta }, world);
 }
 
-void UModumateDocument::AddHideObjectsById(UWorld *world, const TArray<int32> &ids)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::AddHideObjectsById"));
-
-	for (auto id : ids)
-	{
-		AModumateObjectInstance *obj = GetObjectById(id);
-		if (obj && !HiddenObjectsID.Contains(id))
-		{
-			obj->RequestHidden(UModumateDocument::DocumentHideRequestTag, true);
-			obj->RequestCollisionDisabled(UModumateDocument::DocumentHideRequestTag, true);
-			HiddenObjectsID.Add(id);
-		}
-	}
-}
-
-void UModumateDocument::UnhideAllObjects(UWorld *world)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UnhideAllObjects"));
-
-	TSet<int32> ids = HiddenObjectsID;
-	TSet<int32> hiddenCutPlaneIds;
-
-	for (auto id : ids)
-	{
-		if (AModumateObjectInstance *obj = GetObjectById(id))
-		{
-			if (obj->GetObjectType() != EObjectType::OTCutPlane)
-			{
-				obj->RequestHidden(UModumateDocument::DocumentHideRequestTag, false);
-				obj->RequestCollisionDisabled(UModumateDocument::DocumentHideRequestTag, false);
-			}
-			else
-			{
-				hiddenCutPlaneIds.Add(id);
-			}
-		}
-	}
-
-	HiddenObjectsID = hiddenCutPlaneIds;
-
-	for (AModumateObjectInstance *obj : ObjectInstanceArray)
-	{
-		obj->MarkDirty(EObjectDirtyFlags::Visuals);
-	}
-}
-
-void UModumateDocument::UnhideObjectsById(UWorld *world, const TArray<int32> &ids)
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::UnhideObjectsById"));
-
-	for (auto id : ids)
-	{
-		AModumateObjectInstance *obj = GetObjectById(id);
-		if (obj && HiddenObjectsID.Contains(id))
-		{
-			obj->RequestHidden(UModumateDocument::DocumentHideRequestTag, false);
-			obj->RequestCollisionDisabled(UModumateDocument::DocumentHideRequestTag, false);
-			HiddenObjectsID.Remove(id);
-		}
-	}
-
-	for (AModumateObjectInstance *obj : ObjectInstanceArray)
-	{
-		obj->MarkDirty(EObjectDirtyFlags::Visuals);
-	}
-}
-
 void UModumateDocument::RestoreDeletedObjects(const TArray<int32> &ids)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::RestoreDeletedObjects"));
@@ -3344,7 +3276,10 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	{
 		hideCutPlaneIds.Add(curCutPlane->ID);
 	}
-	AddHideObjectsById(world, hideCutPlaneIds);
+	if (controller)
+	{
+		controller->GetPlayerState<AEditModelPlayerState>()->AddHideObjectsById(hideCutPlaneIds);
+	}
 
 	InitialDocHash = InHeader.DocumentHash;
 	UnverifiedDeltasRecords.Reset();
