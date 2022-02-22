@@ -48,8 +48,13 @@ struct MODUMATE_API FDrawingDesignerMoiResponse
 
 	UPROPERTY()
 	FDrawingDesignerGenericRequest request;
+
 	UPROPERTY()
 	int32 moiId = INDEX_NONE;
+
+	//TODO: Use MOI data in DD store once it's done and delete this -JN
+	UPROPERTY()
+	FString typeMark = TEXT("");
 
 	bool WriteJson(FString& OutJson) const {
 		return WriteJsonGeneric<FDrawingDesignerMoiResponse>(OutJson, this);

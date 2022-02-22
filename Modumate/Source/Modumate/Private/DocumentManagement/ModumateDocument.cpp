@@ -4412,7 +4412,17 @@ void UModumateDocument::drawing_get_clicked(const FString& InRequest)
 		moiResponse.request = req;
 		FVector2D uvVector; uvVector.X = req.uvPosition.x; uvVector.Y = req.uvPosition.y;
 		renderControl.GetMoiFromView(uvVector, req.view, moiResponse.moiId);
-		
+
+		const AModumateObjectInstance* moi = GetObjectById(moiResponse.moiId);
+		if (moi)
+		{
+			const FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(moi->GetAssembly().PresetGUID);
+			if (preset) 
+			{
+				preset->Properties.TryGetProperty(EBIMValueScope::Preset, BIMPropertyNames::Mark, moiResponse.typeMark);
+			}
+		}
+
 		FString jsonResponse;
 		moiResponse.WriteJson(jsonResponse);
 		DrawingSendResponse(TEXT("onGenericResponse"), jsonResponse);
