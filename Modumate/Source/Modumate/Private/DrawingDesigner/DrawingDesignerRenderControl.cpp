@@ -205,7 +205,8 @@ bool FDrawingDesignerRenderControl::GetMoiFromView(FVector2D uv, FDrawingDesigne
 
 	if (controller)
 	{
-		controller->LineTraceSingleAgainstMOIs(hitResult, worldStart, worldEnd);
+		FCollisionQueryParams params = FCollisionQueryParams(MOITraceTag, SCENE_QUERY_STAT_ONLY(EditModelPlayerController), true);
+		controller->GetWorld()->LineTraceSingleByObjectType(hitResult, worldStart, worldEnd, FCollisionObjectQueryParams::AllObjects, params);
 
 		AModumateObjectInstance* object = Doc->ObjectFromActor(hitResult.GetActor());
 		if (object)
@@ -538,6 +539,7 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 		OutSnap.id = Id;
 	};
 
+#ifdef USE_GRAPH_SNAPS_FOR_DD
 	for (auto& kvp : edges) {
 		const FGraph3DEdge& val = kvp.Value;
 
@@ -565,26 +567,40 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 			continue;
 		}
 
-		//One snap per edge
-		FDrawingDesignerSnap newSnap;
-		FDrawingDesignerSnapId snapId;
-		snapId.viewMoiId = FString::FromInt(viewId);
-		snapId.owningMoiId = INDEX_NONE;
-		snapId.id = kvp.Key;
-		snapId.pointIndex = INDEX_NONE;
 
-		//Two points per snap
+		//One snap per edge/line
+		FDrawingDesignerSnapId edgeId = FDrawingDesignerSnapId(EDDSnapType::line, FString::FromInt(viewId), INDEX_NONE, INDEX_NONE, kvp.Key);
+		FDrawingDesignerSnap edgeSnap = FDrawingDesignerSnap(edgeId);
+
+		//Two points per line snap
 		FDrawingDesignerSnapPoint p1, p2;
-		copyPoint(FDrawingDesignerSnapId(snapId, 0), v1.Position, p1);
-		copyPoint(FDrawingDesignerSnapId(snapId, 1), v2.Position, p2);
-		newSnap.points.Add(p1);
-		newSnap.points.Add(p2);
+		copyPoint(FDrawingDesignerSnapId(edgeId, 0), v1.Position, p1);
+		copyPoint(FDrawingDesignerSnapId(edgeId, 1), v2.Position, p2);
+		edgeSnap.points.Add(p1);
+		edgeSnap.points.Add(p2);
+
+		//Add the mid snap as well
+		FDrawingDesignerSnapId midSnapId = FDrawingDesignerSnapId(EDDSnapType::midpoint, FString::FromInt(viewId), INDEX_NONE, INDEX_NONE, kvp.Key);
+		FDrawingDesignerSnap midSnap = FDrawingDesignerSnap(midSnapId);
+
+		//mid point for mid snap
+		FDrawingDesignerSnapPoint mid;
+		mid.x = (p1.x + p2.x) / 2;
+		mid.y = (p1.y + p2.y) / 2;
+		mid.id = midSnapId;
+		mid.id.pointIndex = 0;
+		midSnap.points.Add(mid);
 
 		//KLUDGE: Javascript sucks -JN
-		FString entryKey = TEXT("");
-		snapId.EncodeKey(entryKey);
-		OutSnapPoints.Add(entryKey, newSnap);
+		FString edgeEntryKey = TEXT("");
+		edgeSnap.id.EncodeKey(edgeEntryKey);
+		OutSnapPoints.Add(edgeEntryKey, edgeSnap);
+
+		FString midEntryKey = TEXT("");
+		midSnap.id.EncodeKey(midEntryKey);
+		OutSnapPoints.Add(midEntryKey, midSnap);
 	}
+#endif
 
 	//MOI-Based bounding points
 	TArray<AModumateObjectInstance*> snapObjects = Doc->GetObjectsOfType(
@@ -638,24 +654,35 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 				}
 
 				//One snap per edge
-				FDrawingDesignerSnap newSnap;
-				FDrawingDesignerSnapId snapId;
-				snapId.viewMoiId = FString::FromInt(viewId);
-				snapId.owningMoiId = moi->ID;
-				snapId.id = i;
-				snapId.pointIndex = INDEX_NONE;
-				newSnap.id = snapId;
-
+				FDrawingDesignerSnapId edgeId = FDrawingDesignerSnapId(EDDSnapType::line, FString::FromInt(viewId), moi->ID, INDEX_NONE, i);
+				FDrawingDesignerSnap edgeSnap = FDrawingDesignerSnap(edgeId);
+				
 				//Two points per snap
 				FDrawingDesignerSnapPoint p1, p2;
-				copyPoint(FDrawingDesignerSnapId(snapId, 0), v1, p1);
-				copyPoint(FDrawingDesignerSnapId(snapId, 1), v2, p2);
-				newSnap.points.Add(p1);
-				newSnap.points.Add(p2);
+				copyPoint(FDrawingDesignerSnapId(edgeId, 0), v1, p1);
+				copyPoint(FDrawingDesignerSnapId(edgeId, 1), v2, p2);
+				edgeSnap.points.Add(p1);
+				edgeSnap.points.Add(p2);
 
-				FString entryKey = TEXT("");
-				snapId.EncodeKey(entryKey);
-				OutSnapPoints.Add(entryKey, newSnap);
+				//Add the mid snap as well
+				FDrawingDesignerSnapId midSnapId = FDrawingDesignerSnapId(EDDSnapType::midpoint, FString::FromInt(viewId), moi->ID, INDEX_NONE, i);
+				FDrawingDesignerSnap midSnap = FDrawingDesignerSnap(midSnapId);
+
+				//mid point for mid snap
+				FDrawingDesignerSnapPoint mid;
+				mid.x = (p1.x + p2.x) / 2;
+				mid.y = (p1.y + p2.y) / 2;
+				mid.id = midSnapId;
+				mid.id.pointIndex = 0;
+				midSnap.points.Add(mid);
+
+				FString edgeEntryKey = TEXT("");
+				edgeSnap.id.EncodeKey(edgeEntryKey);
+				OutSnapPoints.Add(edgeEntryKey, edgeSnap);
+
+				FString midKey = TEXT("");
+				midSnap.id.EncodeKey(midKey);
+				OutSnapPoints.Add(midKey, midSnap);
 			}
 
 		}

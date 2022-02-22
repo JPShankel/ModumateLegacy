@@ -229,4 +229,5 @@ FDrawingDesignerSnapId::FDrawingDesignerSnapId(FDrawingDesignerSnapId& copy, int
 	this->owningMoiId = copy.owningMoiId;
 	this->id = copy.id;
 	this->pointIndex = pointIndex;
+	this->type = copy.type;
 }

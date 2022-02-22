@@ -26,6 +26,8 @@ public:
 
 private:
 
+	FName MOITraceTag = FName(TEXT("MOITrace"));
+
 	bool GetViewAxis(FDrawingDesignerView& view, FVector& outXAxis, FVector& outYAxis, FVector& outZAxis, FVector& outOrigin, FVector2D& outSize);
 	void SwapPortalMaterials(AMOICutPlane* CutPlane);  // unused
 	void RestorePortalMaterials();  // unused

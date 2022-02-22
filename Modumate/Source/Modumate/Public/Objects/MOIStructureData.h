@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "MOIStructureData.generated.h"
 
 UENUM(BlueprintType) 
