@@ -270,7 +270,8 @@ void AMOIStructureLine::GetDrawingDesignerItems(const FVector& viewDirection, TA
 	{
 		return;
 	}
-	TArray<FEdge> columnEdges = UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(FPlane(viewDirection), perimeter, LineStartPos, LineEndPos);
+	TArray<FEdge> columnEdges = UModumateObjectStatics::GetExtrusionBeyondLinesFromMesh(FPlane(viewDirection, -INFINITY),
+		perimeter, LineStartPos, LineEndPos);
 
 	for(auto& edge: columnEdges)
 	{
