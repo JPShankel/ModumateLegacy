@@ -13,6 +13,7 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/LineActor.h"
 
 constexpr float MOI_TRACE_DISTANCE = 5000.0f;
 
@@ -20,6 +21,11 @@ constexpr float MOI_TRACE_DISTANCE = 5000.0f;
 constexpr int32 DisableMeshStencilValue = 0;
 constexpr int32 ForegroundMeshStencilValue  = 1;
 
+
+FDrawingDesignerRenderControl::~FDrawingDesignerRenderControl()
+{
+	DestroyLineActors();
+}
 
 FString FDrawingDesignerRenderControl::GetViewList()
 {
@@ -69,12 +75,12 @@ FString FDrawingDesignerRenderControl::GetViewList()
 	}
 }
 
-bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString& OutJsonResponse)
+bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString& OutJsonResponse)
 {
 	double currentTime = FPlatformTime::Seconds();
 
 	FDrawingDesignerDrawingRequest viewRequest;
-	if (!ReadJsonGeneric(jsonRequest, &viewRequest))
+	if (!ReadJsonGeneric(JsonRequest, &viewRequest))
 	{
 		return false;
 	}
@@ -127,7 +133,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& jsonRequest, FString&
 	}
 
 	renderer->SetViewTransform(cameraTransform);
-	renderer->SetDocument(Doc);
+	renderer->SetDocument(Doc, this);
 
 	FVector viewDirection(cutPlaneRotation * FVector::ZAxisVector);
 
@@ -235,9 +241,40 @@ void FDrawingDesignerRenderControl::AddSceneLines(const FVector& ViewDirection, 
 	Render->AddLines(sceneLines);
 }
 
-bool FDrawingDesignerRenderControl::GetViewAxis(FDrawingDesignerView& view, FVector& outXAxis, FVector& outYAxis, FVector& outZAxis, FVector& outOrigin, FVector2D& outSize)
+ALineActor* FDrawingDesignerRenderControl::GetLineActor()
 {
-	const AModumateObjectInstance* moi = Doc->GetObjectById(view.moi_id);
+	if (LinePool.Num() > 0)
+	{
+		ALineActor* line = LinePool.Pop(false);
+		line->SetVisibilityInApp(true);
+		return line;
+	}
+	else
+	{
+		ALineActor* line = Doc->GetWorld()->SpawnActor<ALineActor>();
+		line->SetIsHUD(false);
+		line->MakeGeometry();
+		line->ToggleForDrawingRender(true);
+		return line;
+	}
+}
+
+void FDrawingDesignerRenderControl::FreeLineActor(ALineActor* LineActor)
+{
+	if (LinePool.Num() >= LinePoolMaxSize)
+	{
+		LineActor->Destroy();
+	}
+	else
+	{
+		LineActor->SetVisibilityInApp(false);
+		LinePool.Add(LineActor);
+	}
+}
+
+bool FDrawingDesignerRenderControl::GetViewAxis(FDrawingDesignerView& View, FVector& OutXAxis, FVector& OutYAxis, FVector& OutZAxis, FVector& OutOrigin, FVector2D& OutSize)
+{
+	const AModumateObjectInstance* moi = Doc->GetObjectById(View.moi_id);
 
 	if (!ensureAlways(moi) || !ensureAlways(moi->GetObjectType() == EObjectType::OTCutPlane))
 	{
@@ -252,148 +289,14 @@ bool FDrawingDesignerRenderControl::GetViewAxis(FDrawingDesignerView& view, FVec
 	}
 
 
-	outSize.X = (corners[1] - corners[0]).Size();
-	outSize.Y = (corners[2] - corners[1]).Size();
-	outXAxis = (corners[0] - corners[1]).GetSafeNormal();
-	outYAxis = (corners[1] - corners[2]).GetSafeNormal();
-	outOrigin = corners[2];
-	outZAxis = (outXAxis ^ outYAxis);
+	OutSize.X = (corners[1] - corners[0]).Size();
+	OutSize.Y = (corners[2] - corners[1]).Size();
+	OutXAxis = (corners[0] - corners[1]).GetSafeNormal();
+	OutYAxis = (corners[1] - corners[2]).GetSafeNormal();
+	OutOrigin = corners[2];
+	OutZAxis = (OutXAxis ^ OutYAxis);
 
 	return true;
-}
-
-void FDrawingDesignerRenderControl::SwapPortalMaterials(AMOICutPlane* CutPlane)
-{
-	auto* gameMode = Doc->GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
-	if (!gameMode)
-	{
-		return;
-	}
-
-	UMaterialInterface* masterPBR = gameMode->EmissiveUnlitMaterial;
-	if (!ensure(masterPBR))
-	{
-		return;
-	}
-
-	// Portals:
-	TArray<const AModumateObjectInstance*> portalObjects = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType({ EObjectType::OTDoor, EObjectType::OTWindow });
-	for (const auto* moi: portalObjects)
-	{
-		const ACompoundMeshActor* actor = CastChecked<ACompoundMeshActor>(moi->GetActor());
-		if (!actor)
-		{
-			continue;
-		}
-
-		const int32 numComponents = actor->UseSlicedMesh.Num();
-		for (int32 componentIndex = 0; componentIndex < numComponents; ++componentIndex)
-		{
-			if (actor->UseSlicedMesh[componentIndex])
-			{
-				const int32 sliceStart = 9 * componentIndex;
-				const int32 sliceEnd = 9 * (componentIndex + 1);
-				for (int32 slice = sliceStart; slice < sliceEnd; ++slice)
-				{
-					UProceduralMeshComponent* meshComponent = actor->NineSliceComps[slice];
-					if (!meshComponent)
-					{
-						continue;
-					}
-
-					const int32 numMaterials = meshComponent->GetNumMaterials();
-					UMaterialInstanceDynamic* curMID = UMaterialInstanceDynamic::Create(masterPBR, meshComponent);
-					static const FName emissiveMultiplierParamName("EmissiveMultiplier");
-					static const FName emissiveColorMultiplierParamName("EmissiveColorMultiplier");
-					curMID->SetScalarParameterValue(emissiveMultiplierParamName, 1.0f);
-					curMID->SetVectorParameterValue(emissiveColorMultiplierParamName, FLinearColor(0.8f, 0.8f, 0.8f));
-
-					for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
-					{
-						UMaterialInterface* sceneMaterial = meshComponent->GetMaterial(materialIndex);
-						SceneProcMaterialMap.Add(ProcMaterialKey(meshComponent, materialIndex), sceneMaterial);
-						meshComponent->SetMaterial(materialIndex, curMID);
-					}
-					meshComponent->CustomDepthStencilValue = ForegroundMeshStencilValue;
-					meshComponent->SetRenderCustomDepth(true);
-				}
-			}
-			else
-			{
-				UStaticMeshComponent* meshComponent = actor->StaticMeshComps[componentIndex];
-				if (!meshComponent)
-				{
-					continue;
-				}
-				const int32 numMaterials = meshComponent->GetNumMaterials();
-				UStaticMesh* mesh = meshComponent->GetStaticMesh();
-
-				UMaterialInstanceDynamic* curMID = UMaterialInstanceDynamic::Create(masterPBR, meshComponent);
-				static const FName emissiveMultiplierParamName("EmissiveMultiplier");
-				static const FName emissiveColorMultiplierParamName("EmissiveColorMultiplier");
-				curMID->SetScalarParameterValue(emissiveMultiplierParamName, 1.0f);
-				curMID->SetVectorParameterValue(emissiveColorMultiplierParamName, FLinearColor(0.6f, 0.6f, 0.6f));
-
-				const FName fname = meshComponent->GetFName();
-				for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
-				{
-					UMaterialInterface* sceneMaterial = meshComponent->GetMaterial(materialIndex);
-					SceneStaticMaterialMap.Add(StaticMaterialKey(meshComponent, materialIndex), sceneMaterial);
-					meshComponent->SetMaterial(materialIndex, curMID);
-				}
-				meshComponent->CustomDepthStencilValue = ForegroundMeshStencilValue;
-				meshComponent->SetRenderCustomDepth(true);
-			}
-		}
-
-	}
-
-	// Layered separators, columns:
-	TArray<const AModumateObjectInstance*> layeredObjects = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType({ EObjectType::OTFloorSegment, EObjectType::OTWallSegment, EObjectType::OTRoofFace,
-		EObjectType::OTStructureLine, EObjectType::OTMullion });
-	for (const auto* moi: layeredObjects)
-	{
-		const ADynamicMeshActor* actor = CastChecked<ADynamicMeshActor>(moi->GetActor());
-		if (!actor)
-		{
-			continue;
-		}
-
-		bool bIsForegroundObj = CutPlane->GetCachedForegroundMoiIDs().Contains(moi->ID);
-
-		TArray<UProceduralMeshComponent*> meshComponents = { actor->Mesh, actor->MeshCap };
-		meshComponents.Append(actor->ProceduralSubLayers);
-		meshComponents.Append(actor->ProceduralSubLayerCaps);
-
-		for (UProceduralMeshComponent* meshComponent: meshComponents)
-		{
-			if (!meshComponent || meshComponent->GetNumMaterials() == 0)
-			{
-				continue;
-			}
-
-			const int32 numMaterials = meshComponent->GetNumMaterials();
-			UMaterialInstanceDynamic* curMID = UMaterialInstanceDynamic::Create(masterPBR, meshComponent);
-			static const FName emissiveMultiplierParamName("EmissiveMultiplier");
-			static const FName emissiveColorMultiplierParamName("EmissiveColorMultiplier");
-			curMID->SetScalarParameterValue(emissiveMultiplierParamName, 1.0f);
-			curMID->SetVectorParameterValue(emissiveColorMultiplierParamName, FLinearColor(0.8f, 0.8f, 0.8f));
-
-			for (int32 materialIndex = 0; materialIndex < numMaterials; ++materialIndex)
-			{
-				UMaterialInterface* sceneMaterial = meshComponent->GetMaterial(materialIndex);
-				SceneProcMaterialMap.Add(ProcMaterialKey(meshComponent, materialIndex), sceneMaterial);
-				meshComponent->SetMaterial(materialIndex, curMID);
-			}
-
-			if (bIsForegroundObj)
-			{
-				meshComponent->CustomDepthStencilValue = ForegroundMeshStencilValue;
-				meshComponent->SetRenderCustomDepth(true);
-			}
-		}
-	}
-
 }
 
 void FDrawingDesignerRenderControl::RestorePortalMaterials()
@@ -688,4 +591,13 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 		}
 		
 	}
+}
+
+void FDrawingDesignerRenderControl::DestroyLineActors()
+{
+	for (auto& line: LinePool)
+	{
+		line->Destroy();
+	}
+	LinePool.Empty();
 }

@@ -83,6 +83,7 @@ UModumateDocument::UModumateDocument()
 	, bApplyingPreviewDeltas(false)
 	, bFastClearingPreviewDeltas(false)
 	, bSlowClearingPreviewDeltas(false)
+	, DrawingDesignerRenderControl(new FDrawingDesignerRenderControl(this))
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ModumateDocument"));
 
@@ -93,6 +94,11 @@ UModumateDocument::UModumateDocument()
 	DefaultWindowHeight = 91.44f;
 	DefaultDoorHeight = 0.f;
 }
+
+UModumateDocument::UModumateDocument(FVTableHelper& Helper)
+{ }
+
+UModumateDocument::~UModumateDocument() = default;
 
 void UModumateDocument::SetLocalUserInfo(const FString& InLocalUserID, int32 InLocalUserIdx)
 {
@@ -4370,16 +4376,14 @@ void UModumateDocument::drawing_apply_delta(const FString& InDelta)
 void UModumateDocument::drawing_request_view_list()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_request_view_list"));
-	FDrawingDesignerRenderControl renderControl(this);
 
-	FString response = renderControl.GetViewList();
+	FString response = DrawingDesignerRenderControl->GetViewList();
 	DrawingSendResponse(TEXT("on3DViewsChanged"), response);
 }
 
 void UModumateDocument::web_push_document_update()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::web_push_document_update"));
-	FDrawingDesignerRenderControl renderControl(this);
 	drawing_request_view_list();
 	drawing_request_document();
 	request_project_settings();
@@ -4390,8 +4394,7 @@ void UModumateDocument::drawing_get_drawing_image(const FString& InRequest)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_get_view_image"));
 	FString response;
-	FDrawingDesignerRenderControl renderControl(this);
-	bool bResult = renderControl.GetView(InRequest, response);
+	bool bResult = DrawingDesignerRenderControl->GetView(InRequest, response);
 	if (ensure(bResult))
 	{
 		DrawingSendResponse(TEXT("pushViewImage"), response);
@@ -4407,11 +4410,10 @@ void UModumateDocument::drawing_get_clicked(const FString& InRequest)
 	{
 		if (req.requestType != EDrawingDesignerRequestType::getClickedMoi) return;
 		
-		FDrawingDesignerRenderControl renderControl(this);
 		FDrawingDesignerMoiResponse moiResponse;
 		moiResponse.request = req;
 		FVector2D uvVector; uvVector.X = req.uvPosition.x; uvVector.Y = req.uvPosition.y;
-		renderControl.GetMoiFromView(uvVector, req.view, moiResponse.moiId);
+		DrawingDesignerRenderControl->GetMoiFromView(uvVector, req.view, moiResponse.moiId);
 
 		const AModumateObjectInstance* moi = GetObjectById(moiResponse.moiId);
 		if (moi)
@@ -4656,6 +4658,11 @@ void UModumateDocument::OnCameraViewSelected(int32 ID)
 	UpdateWebMOIs(EObjectType::OTDesignOption);
 }
 
+void UModumateDocument::BeginDestroy()
+{
+	Super::BeginDestroy();
+	// Destruct here to prevent crash on program shutdown.
+	DrawingDesignerRenderControl.Reset(nullptr);
+}
 
 #undef LOCTEXT_NAMESPACE
-

@@ -10,6 +10,7 @@
 class USceneCaptureComponent2D;
 class UTextureRenderTarget2D;
 class FDrawingDesignerLine;
+class FDrawingDesignerRenderControl;
 class ALineActor;
 class UModumateDocument;
 class UMeshComponent;
@@ -25,7 +26,7 @@ public:
 	ADrawingDesignerRender();
 	FTransform GetViewTransform() const { return ViewTransform;  }
 	void SetViewTransform(const FTransform& Transform) { ViewTransform = Transform; }
-	void SetDocument(const UModumateDocument* InDoc) { Doc = InDoc; }
+	void SetDocument(const UModumateDocument* InDoc, FDrawingDesignerRenderControl* RenderControl);
 	void AddLines(const TArray<FDrawingDesignerLine>& Lines);
 	void EmptyLines();
 	void AddObjects(const FVector& ViewDirection, float MinLength);
@@ -53,6 +54,7 @@ private:
 	UPROPERTY()
 	UTextureRenderTarget2D* FfeRenderTarget = nullptr;
 	const UModumateDocument* Doc = nullptr;
+	FDrawingDesignerRenderControl* DrawingDesignerRenderControl;
 
 	UPROPERTY()
 	TArray<ALineActor*> LineActors;

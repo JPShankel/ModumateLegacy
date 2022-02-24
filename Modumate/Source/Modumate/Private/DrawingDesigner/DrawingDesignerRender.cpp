@@ -10,6 +10,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "DrawingDesigner/DrawingDesignerLine.h"
 #include "DrawingDesigner/DrawingDesignerView.h"
+#include "DrawingDesigner/DrawingDesignerRenderControl.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/CompoundMeshActor.h"
@@ -36,11 +37,17 @@ ADrawingDesignerRender::ADrawingDesignerRender()
 	SetRootComponent(CaptureComponent);
 }
 
+void ADrawingDesignerRender::SetDocument(const UModumateDocument* InDoc, FDrawingDesignerRenderControl* RenderControl)
+{
+	Doc = InDoc;
+	DrawingDesignerRenderControl = RenderControl;
+}
+
 void ADrawingDesignerRender::AddLines(const TArray<FDrawingDesignerLine>& Lines)
 {
 	for (const auto& line : Lines)
 	{
-		ALineActor* lineActor = GetWorld()->SpawnActor<ALineActor>();
+		ALineActor* lineActor = DrawingDesignerRenderControl->GetLineActor();
 		lineActor->Point1 = line.P1;
 		lineActor->Point2 = line.P2;
 		lineActor->SetIsHUD(false);
@@ -56,7 +63,7 @@ void ADrawingDesignerRender::EmptyLines()
 {
 	for (auto* line: LineActors)
 	{
-		line->Destroy();
+		DrawingDesignerRenderControl->FreeLineActor(line);
 	}
 	LineActors.Empty();
 }
@@ -65,9 +72,11 @@ void ADrawingDesignerRender::SetupRenderTarget(int32 ImageWidth)
 {
 	int32 orthoWidth = ViewTransform.GetScale3D().X;
 	int32 orthoHeight = ViewTransform.GetScale3D().Y;
-	if (!ensure(orthoWidth != 0)) {
+	if (!ensure(orthoWidth != 0))
+	{
 		return;
 	}
+
 	int32 imageHeight = ImageWidth * orthoHeight / orthoWidth;
 
 	if (!ensure(Doc))
@@ -106,7 +115,7 @@ void ADrawingDesignerRender::SetupRenderTarget(int32 ImageWidth)
 
 void ADrawingDesignerRender::RenderImage(const FVector& ViewDirection, float MinLength)
 {
-	if (!ensure(RenderTarget))
+	if (!ensure(RenderTarget) || !ensure(DrawingDesignerRenderControl))
 	{
 		return;
 	}

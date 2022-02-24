@@ -17,6 +17,7 @@
 
 class FModumateDraftingView;
 class AModumateObjectInstance;
+class FDrawingDesignerRenderControl;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAppliedMOIDeltas, EObjectType, ObjectType, int32, Count, EMOIDeltaType, DeltaType);
 
@@ -97,6 +98,8 @@ private:
 public:
 
 	UModumateDocument();
+	UModumateDocument(FVTableHelper& Helper);
+	~UModumateDocument();
 
 	UPROPERTY()
 	FDrawingDesignerDocument DrawingDesignerDocument;
@@ -221,6 +224,9 @@ public:
 
 	UPROPERTY()
 	FOnAppliedMOIDeltas OnAppliedMOIDeltas;
+
+
+	virtual void BeginDestroy() override;
 
 	// Deletion and restoration functions used internally by undo/redo-aware functions
 private:
@@ -368,6 +374,8 @@ private:
 	FMOIDocumentRecord CachedRecord;
 
 	int32 CachedCameraViewID = INDEX_NONE;
+
+	TUniquePtr<FDrawingDesignerRenderControl> DrawingDesignerRenderControl;
 
 	void UpdateWindowTitle();
 	void RecordSavedProject(UWorld* World, const FString& FilePath, bool bUserFile);
