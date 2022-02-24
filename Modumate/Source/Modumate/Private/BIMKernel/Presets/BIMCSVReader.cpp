@@ -202,6 +202,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				{
 					if (OutPresets.PresetFromGUID(Preset.GUID)==nullptr)
 					{
+						Preset.TryGetProperty(BIMPropertyNames::Name, Preset.DisplayName);
 						OutPresets.AddPreset(Preset);
 					}
 					else
