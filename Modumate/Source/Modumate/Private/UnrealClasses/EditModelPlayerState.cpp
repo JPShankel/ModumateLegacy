@@ -1225,6 +1225,7 @@ bool AEditModelPlayerState::IsObjectTypeEnabledByViewMode(EObjectType ObjectType
 		case EObjectType::OTTerrainEdge:
 		case EObjectType::OTTerrainPolygon:
 		case EObjectType::OTDesignOption:
+		case EObjectType::OTPattern2D:
 			return true;
 		case EObjectType::OTEdgeDetail:
 		case EObjectType::OTMetaGraph:

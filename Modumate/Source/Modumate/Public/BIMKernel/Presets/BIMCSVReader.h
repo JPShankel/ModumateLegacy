@@ -55,6 +55,9 @@ enum class ECSVMatrixNames : uint8
 	StartsInProject,
 	SubcategoryPath,
 	EdgeDetail,
+	PatternSegments,
+	PatternSpans,
+	PatternHostedElements,
 	Error = 255
 };
 
@@ -84,6 +87,16 @@ struct MODUMATE_API FBIMCSVReader
 	TArray<FPresetMatrix> PresetMatrices;
 
 	FString CurrentFile;
+
+	template<class T>
+	EBIMResult GetOrCreateCustomData(T& OutData)
+	{
+		if (!Preset.TryGetCustomData(OutData))
+		{
+			Preset.SetCustomData(OutData);
+		}
+		return EBIMResult::Success;
+	}
 
 	EBIMResult ProcessNodeTypeRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
 	EBIMResult ProcessPropertyDeclarationRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);

@@ -3,11 +3,13 @@
 #include "UnrealClasses/DynamicMeshActor.h"
 
 #include "UnrealClasses/EditModelGameMode.h"
+#include "Database/ModumateObjectDatabase.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Objects/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "Algo/Transform.h"
 #include "Algo/Accumulate.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -495,10 +497,68 @@ void ADynamicMeshActor::SetupCabinetGeometry(const TArray<FVector>& BasePoints, 
 	}
 }
 
-void ADynamicMeshActor::SetupPlaneGeometry(const TArray<FVector> &points, const FArchitecturalMaterial &material, bool bRecreateMesh, bool bCreateCollision)
+void ADynamicMeshActor::SetupPattern2DGeometry(const FPattern2DParams& Params)
+{
+	SetActorLocation(FVector::ZeroVector);
+	SetActorRotation(FQuat::Identity);
+	int32 sectionCounter = 0;
+	for (TArray<FVector> planePointsIter : Params.MeshsToCreate)
+	{
+		FPlane pointsPlane;
+		if (!UModumateGeometryStatics::GetPlaneFromPoints(planePointsIter, pointsPlane))
+		{
+			continue;
+		}
+
+		FVector planeNormal(pointsPlane);
+		Assembly = FBIMAssemblySpec();		
+
+		LayerGeometries.Reset();
+
+
+		FLayerGeomDef& layerGeomDef = LayerGeometries.AddDefaulted_GetRef();
+		layerGeomDef.Init(planePointsIter, planePointsIter, planeNormal);
+
+		vertices.Reset();
+		normals.Reset();
+		triangles.Reset();
+		uv0.Reset();
+		tangents.Reset();
+		vertexColors.Reset();
+		if (layerGeomDef.TriangulateMesh(vertices, triangles, normals, uv0, tangents))
+		{
+			// TODO: enable iterative mesh section updates when we can know that
+			// the order of vertices did not change as a result of re-triangulation
+			Mesh->CreateMeshSection_LinearColor(sectionCounter, vertices, triangles, normals, uv0, vertexColors, tangents, true);
+			sectionCounter++;
+		}
+		
+	}
+
+
+	auto* gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
+
+	TArray<FColor> colors;
+	colors.Add(FColor::Green);
+	colors.Add(FColor::Red);
+	colors.Add(FColor::Blue);
+	for (int i = 0; i < sectionCounter; i++)
+	{
+		//need to clean up this pointer?
+		UMaterialInstanceDynamic* dynamicMat = UMaterialInstanceDynamic::Create(gameInstance->GetEditModelGameMode()->DynamicColorMaterial, this);
+		int32 colorIndex = i % colors.Num();
+		dynamicMat->SetVectorParameterValue("Color", colors[colorIndex]);
+		Mesh->SetMaterial(i, dynamicMat);
+	}
+	
+
+	
+}
+
+void ADynamicMeshActor::SetupPlaneGeometry(const TArray<FVector> &Points, const FArchitecturalMaterial &Material, bool bRecreateMesh, bool bCreateCollision)
 {
 	FPlane pointsPlane;
-	if (!UModumateGeometryStatics::GetPlaneFromPoints(points, pointsPlane))
+	if (!UModumateGeometryStatics::GetPlaneFromPoints(Points, pointsPlane))
 	{
 		return;
 	}
@@ -506,7 +566,7 @@ void ADynamicMeshActor::SetupPlaneGeometry(const TArray<FVector> &points, const 
 	FVector planeNormal(pointsPlane);
 	Assembly = FBIMAssemblySpec();
 
-	FVector centroid = Algo::Accumulate(points, FVector::ZeroVector, [](const FVector &c, const FVector &p) { return c + p; }) / points.Num();
+	FVector centroid = Algo::Accumulate(Points, FVector::ZeroVector, [](const FVector &c, const FVector &p) { return c + p; }) / Points.Num();
 	SetActorLocation(centroid);
 	SetActorRotation(FQuat::Identity);
 
@@ -514,7 +574,7 @@ void ADynamicMeshActor::SetupPlaneGeometry(const TArray<FVector> &points, const 
 
 
 	TArray<FVector> relativePoints;
-	Algo::Transform(points, relativePoints, [centroid](const FVector &worldPoint) { return worldPoint - centroid; });
+	Algo::Transform(Points, relativePoints, [centroid](const FVector &worldPoint) { return worldPoint - centroid; });
 
 	FLayerGeomDef &layerGeomDef = LayerGeometries.AddDefaulted_GetRef();
 	layerGeomDef.Init(relativePoints, relativePoints, planeNormal);
@@ -531,7 +591,7 @@ void ADynamicMeshActor::SetupPlaneGeometry(const TArray<FVector> &points, const 
 		// the order of vertices did not change as a result of re-triangulation
 		Mesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, bCreateCollision);
 	}
-	Mesh->SetMaterial(0, material.EngineMaterial.Get());
+	Mesh->SetMaterial(0, Material.EngineMaterial.Get());
 }
 
 void ADynamicMeshActor::SetupMetaPlaneGeometry(const TArray<FVector> &points, const FArchitecturalMaterial &material, float alpha, bool bRecreateMesh, const TArray<FPolyHole3D> *holes, bool bCreateCollision)

@@ -22,6 +22,9 @@ class MODUMATE_API AMOIPattern2D : public AModumateObjectInstance
 public:
 	AMOIPattern2D();
 
+	virtual void SetupDynamicGeometry() override;
+	virtual void UpdateDynamicGeometry() override;
+
 	UPROPERTY()
 	FMOIPattern2DData InstanceData;
 };

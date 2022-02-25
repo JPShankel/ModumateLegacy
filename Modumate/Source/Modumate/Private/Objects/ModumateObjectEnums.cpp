@@ -35,12 +35,12 @@ EToolCategories UModumateTypeStatics::GetToolCategory(EToolMode ToolMode)
 	case EToolMode::VE_POINTHOSTED:
 	case EToolMode::VE_EDGEHOSTED:
 	case EToolMode::VE_FACEHOSTED:
+	case EToolMode::VE_PATTERN2D:
 		return EToolCategories::Separators;
 	case EToolMode::VE_PLACEOBJECT:
 	case EToolMode::VE_CABINET:
 	case EToolMode::VE_FINISH:
 	case EToolMode::VE_TRIM:
-	case EToolMode::VE_PATTERN2D:
 		return EToolCategories::Attachments;
 	case EToolMode::VE_SURFACEGRAPH:
 		return EToolCategories::SurfaceGraphs;

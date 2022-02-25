@@ -5,6 +5,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/EdgeDetailData.h"
 #include "Objects/ModumateObjectEnums.h"
+#include "BIMKernel/Presets/BIMPresetPatternDefinition.h"
 #include "ModumateCore/EnumHelpers.h"
 
 TMap<FBIMKey, FGuid> FBIMCSVReader::KeyGuidMap;
@@ -264,6 +265,64 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 	{
 		switch (presetMatrix.Name)
 		{
+			case ECSVMatrixNames::PatternSegments:
+			{
+				FBIMPattern bimPattern;
+				GetOrCreateCustomData(bimPattern);
+				FString direction = NormalizeCell(Row[presetMatrix.First]);
+				FString magnitude = NormalizeCell(Row[presetMatrix.First+1]);
+				FString format = NormalizeCell(Row[presetMatrix.First + 2]);
+
+				if (direction.Len() == 0 || magnitude.Len() == 0 || format.Len() == 0)
+				{
+					continue;
+				}				
+
+				FBIMPatternSequence* seq = nullptr;
+				if (direction == TEXT("X"))
+				{
+					seq = &bimPattern.SequenceX;
+				}
+				else if (direction == TEXT("Y"))
+				{
+					seq = &bimPattern.SequenceY;
+				}
+				else if (direction == TEXT("Z"))
+				{
+					seq = &bimPattern.SequenceZ;
+				}
+
+				if (!ensureAlways(seq != nullptr))
+				{
+					OutMessages.Add(FString::Printf(TEXT("Unidentified direction %s in pattern %s"), *direction, *Preset.GUID.ToString()));
+					continue;
+				}
+
+				FBIMPatternSegment& seg = seq->Segments.AddDefaulted_GetRef();
+				if (!ensureAlways(FindEnumValueByString(format, seg.SegmentType)))
+				{
+					OutMessages.Add(FString::Printf(TEXT("Unidentified format %s in pattern %s"), *format, *Preset.GUID.ToString()));
+				}
+				seg.Value = FCString::Atof(*magnitude);
+
+				Preset.SetCustomData(bimPattern);
+			}
+			break;
+
+			case ECSVMatrixNames::PatternSpans:
+			{
+				FBIMPattern bimPattern;
+				GetOrCreateCustomData(bimPattern);
+			}
+			break;
+
+			case ECSVMatrixNames::PatternHostedElements:
+			{
+				FBIMPattern bimPattern;
+				GetOrCreateCustomData(bimPattern);
+			}
+			break;
+
 			case ECSVMatrixNames::EdgeDetail:
 			{
 				Preset.SetCustomData(FEdgeDetailData(FEdgeDetailData::CurrentVersion));

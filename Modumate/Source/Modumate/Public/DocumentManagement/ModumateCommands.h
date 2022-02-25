@@ -46,6 +46,9 @@ namespace ModumateCommands
 	// Design Options
 	MODUMATE_COMMAND(kDesignOption, "design_option");
 
+	// For temporary tests during feature development
+	MODUMATE_COMMAND(kTest, "test");
+
 	MODUMATE_COMMAND(kSetBasisEdge, "set_basis_edge");
 	MODUMATE_COMMAND(kSetRoll, "set_roll");
 	MODUMATE_COMMAND(kSetPitch, "set_pitch");

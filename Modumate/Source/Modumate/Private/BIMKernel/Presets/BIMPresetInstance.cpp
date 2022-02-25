@@ -769,20 +769,6 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const 
 	if (InDocVersion < 11)
 	{
 		FGuid matGUID;
-		// If we have deprecated channels, translate them
-		if (MaterialChannelBindings_DEPRECATED.Num() > 0)
-		{
-			FBIMPresetMaterialBindingSet bindingSet;
-			for (auto& matChannel : MaterialChannelBindings_DEPRECATED)
-			{
-				auto& binding = bindingSet.MaterialBindings.AddDefaulted_GetRef();
-				binding.Channel = *matChannel.Channel;
-				binding.ColorHexValue = matChannel.Channel;
-				binding.SurfaceMaterialGUID = matChannel.SurfaceMaterialGUID;
-				binding.InnerMaterialGUID = matChannel.InnerMaterialGUID;
-			}
-			SetCustomData(bindingSet);
-		}
 
 		// Prior to version 11, BIM forms were simple arrays of text/property pairs, upgrade to rich form
 		if (FormItemToProperty_DEPRECATED.Num() > 0)

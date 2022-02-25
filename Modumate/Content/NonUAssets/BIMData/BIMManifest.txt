@@ -14,6 +14,7 @@ NamedDimensionTable.csv
 3-Layer1D.csv
 3-RiggedAssembly.csv
 4-00_LayeredAssembly.csv
+4-01_Pattern2D.csv
 5-00_Stair.csv
 5-01_CabinetFloor.csv
 5-02_CabinetWall.csv

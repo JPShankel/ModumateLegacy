@@ -12,6 +12,13 @@
 #include "Objects/DimensionOffset.h"
 #include "ProceduralMeshComponent.h"
 
+#include "Graph/Graph3DDelta.h"
+#include "Graph/Graph3D.h"
+#include "Graph/Graph3DFace.h"
+#include "ModumateCore/ModumateMitering.h"
+#include "Objects/ModumateObjectStatics.h"
+
+
 #include "DynamicMeshActor.generated.h"
 
 
@@ -20,7 +27,7 @@ class UMaterialInstanceDynamic;
 USTRUCT(BlueprintType)
 struct FWallAssemblyLayerControlPoints
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
 	TArray<FVector> LayerControlPoints;
@@ -29,7 +36,7 @@ struct FWallAssemblyLayerControlPoints
 USTRUCT(BlueprintType)
 struct FFloorAssemblyLayerControlPoints
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tools")
 	TArray<FVector> TopLayerControlPoints;
@@ -41,7 +48,7 @@ struct FFloorAssemblyLayerControlPoints
 USTRUCT(BlueprintType)
 struct FProceduralMeshParams
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Procedural Mesh Parameters")
 	TArray<FVector> Vertices;
@@ -54,6 +61,18 @@ struct FProceduralMeshParams
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Procedural Mesh Parameters")
 	TArray<FVector2D> UVs;
+};
+struct MODUMATE_API FPatternAxisData
+{
+	bool bFlex;
+	float Magnitude;
+};
+struct MODUMATE_API FPattern2DParams
+{
+	TArray<TArray<FVector>> MeshsToCreate;
+
+	TArray<FPatternAxisData> XAxisPattern;
+	TArray<FPatternAxisData> YAxisPattern;
 };
 
 UCLASS()
@@ -82,16 +101,16 @@ public:
 	// Sets default values for this actor's properties
 	ADynamicMeshActor();
 
-	void SetupProceduralLayers(int32 numProceduralLayers);
+	void SetupProceduralLayers(int32 NumProceduralLayers);
 	void ClearProceduralLayers();
 	void ClearProceduralMesh();
 
-	void SetupPlaneGeometry(const TArray<FVector> &points, const FArchitecturalMaterial &material, bool bRecreateMesh, bool bCreateCollision = true);
-	void SetupMetaPlaneGeometry(const TArray<FVector> &points, 
-		const FArchitecturalMaterial &material, 
-		float alpha, 
+	void SetupPlaneGeometry(const TArray<FVector> &Points, const FArchitecturalMaterial &Material, bool bRecreateMesh, bool bCreateCollision = true);
+	void SetupMetaPlaneGeometry(const TArray<FVector> &Points, 
+		const FArchitecturalMaterial &Material, 
+		float Alpha, 
 		bool bRecreateMesh, 
-		const TArray<FPolyHole3D> *holes = nullptr, 
+		const TArray<FPolyHole3D> *Holes = nullptr, 
 		bool bCreateCollision = true);
 
 	void SetupRoomGeometry(const TArray<TArray<FVector>> &Polygons, const FArchitecturalMaterial &Material);
@@ -125,6 +144,8 @@ public:
 		const FVector2D& Extensions = FVector2D::ZeroVector, const FVector& InFlipSigns = FVector::OneVector, bool bRecreateSection = true, bool bCreateCollision = true);
 
 	void SetupMasksGeometry(const TArray<TArray<FVector>> &Polygons, const FPlane &Plane, const FVector &Origin, const FVector &AxisX, const FVector &AxisY);
+
+	void SetupPattern2DGeometry(const FPattern2DParams& Params);
 
 	void SetupCapGeometry();
 	void ClearCapGeometry();

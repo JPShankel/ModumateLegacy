@@ -72,7 +72,12 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 
 	switch (assemblyPreset->ObjectType)
 	{
-		case EObjectType::OTEdgeDetail: ensureAlways(assemblyPreset->TryGetCustomData(EdgeDetailData)); break;
+		case EObjectType::OTEdgeDetail: 
+			ensureAlways(assemblyPreset->TryGetCustomData(EdgeDetailData)); 
+			break;
+		case EObjectType::OTPattern2D:
+			ensureAlways(assemblyPreset->TryGetCustomData(PatternData));
+			break;
 		case EObjectType::OTCabinet: 
 		case EObjectType::OTPointHosted:
 		case EObjectType::OTEdgeHosted:

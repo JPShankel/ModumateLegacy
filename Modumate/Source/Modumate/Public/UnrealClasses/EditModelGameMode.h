@@ -8,7 +8,6 @@
 
 #include "EditModelGameMode.generated.h"
 
-class MODUMATE_API FModumateDatabase;
 class UDataTable;
 
 UCLASS(Config=Game)
@@ -123,6 +122,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UTexture2D *ButtonEditRedTexture;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UMaterial *DynamicColorMaterial;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Shopping")
 	UDataTable* RoomConfigurationTable;

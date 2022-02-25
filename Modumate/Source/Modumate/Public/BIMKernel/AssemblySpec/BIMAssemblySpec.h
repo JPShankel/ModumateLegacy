@@ -12,6 +12,8 @@
 #include "BIMKernel/AssemblySpec/BIMPartSlotSpec.h"
 #include "BIMKernel/AssemblySpec/BIMExtrusionSpec.h"
 
+#include "BIMKernel/Presets/BIMPresetPatternDefinition.h"
+
 #include "Database/ModumateDataCollection.h"
 
 #include "ModumateCore/EdgeDetailData.h"
@@ -102,6 +104,9 @@ public:
 
 	UPROPERTY()
 	FEdgeDetailData EdgeDetailData;
+
+	UPROPERTY()
+	FBIMPattern PatternData;
 
 	// Cabinets have material bindings at the assembly level
 	UPROPERTY()

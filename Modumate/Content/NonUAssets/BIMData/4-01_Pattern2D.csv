@@ -1,0 +1,44 @@
+TYPENAME,,Assembly_Pattern2D,,Assembly,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,Scope.Property,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DisplayText,,Name,,Assembly.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..,,ChildLayerArray,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,DataType=StartsInProject,X,DataType=Dimensions,Dimension,Value,DataType=PatternSegments,Direction,Magnitude,Format,DataType=PatternSpans,Span.ID,Span.Members,Span.Cutters,WrapX,WrapY,DataType=PatternHostedElement,Host,Preset,Origin,BasisX,BasisZ,SizeX,SizeY,SizeZ,OffsetX,OffsetY,OffsetZ,RotationX,RotationY,RotationZ,FlipX,FlipY,FlipZ
+PRESET,,5add62c5-2388-43c4-b82e-e043ba4cc3bc,,"Planar_Pattern2D
+Simple Railing
+5add62c5-2388-43c4-b82e-e043ba4cc3bc",,Planar_Pattern2D,,Simple Railing,,X,,IconSizeX,48in,,X,6,Absolute,,S00,"Y0,0",,,,,S00,Part_TypBaluster,"V0,0",ParentFaceNormal,"Y0,0",from Preset,from Preset,S00-whatever_V00/V10_details_say,0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,IconSizeY,64in,,Y,1,FractionalRemainder,,S01,"X0,1",,X,,,S01,Part_TypRailCap,"V1,0",ParentFaceNormal,"X0,1",from Preset,from Preset,S01,0,0,0,0,0,0,,,X
+PRESET,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,3d49d19b-41de-4378-8352-270671d1a4c9,,"Planar_Pattern2D
+Running Bond Bricks
+3d49d19b-41de-4378-8352-270671d1a4c9",,Planar_Pattern2D,,Running Bond Bricks,,X,,IconSizeX,48in,,X,50,PercentageOfLargestChild,,S00,"F0,0",,,,,S00,Part_TypBrick,"V0,0","X0,0",ParentFaceNormal,from Preset,from Preset,from Preset,0,0,0,0,0,0,,,X
+PRESET,,,,,,,,,,,,IconSizeY,64in,,X,50,PercentageOfLargestChild,,,"F1,0",,,,,S01,Part_TypBrick,"V1,1","X1,1",ParentFaceNormal,from Preset,from Preset,from Preset,0,0,0,0,0,0,,,X
+PRESET,,,,,,,,,,,,,,,Y,100,PercentageOfLargestChild,,S01,"F1,1","Y1,1",X,,,S02,Part_TypHorizontalMortar,"V0,0","X0,0",ParentFaceNormal,from Preset,from Preset,"S02-whatever_V0,0/V2,0_details_say",0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,,,,Y,100,PercentageOfLargestChild,,,"F1,0",,,,,S03,Part_TypHorizontalMortar,"V0,1","X0,1",ParentFaceNormal,from Preset,from Preset,"S03-whatever_V0,0/V2,0_details_say",0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,,,,,,,,S02,"X0,0",,,,,S04,Part_TypHorizontalMortar,"V0,0","Y0,0",ParentFaceNormal,from Preset,from Preset,"S04-whatever_V0,0/V2,0_details_say",0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,,,,,,,,,"X1,0",,,,,S05,Part_TypHorizontalMortar,"V1,1","Y1,1",ParentFaceNormal,from Preset,from Preset,"S05-whatever_V0,0/V2,0_details_say",0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,,,,,,,,S03,"X0,1","V1,1",X,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,,,,,,"X1,1",,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,,,,,S04,"Y0,0",,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,,,,,S05,"Y1,1",,,,,,,,,,,,,,,,,,,,,
+PRESET,,ef5cec83-8046-4e15-b712-b3e0af4a5bb7,,"Planar_Pattern2D
+Joists With Alternating Blocking
+ef5cec83-8046-4e15-b712-b3e0af4a5bb7",,Planar_Pattern2D,,Joists With Alternating Blocking,,X,,IconSizeX,48in,,X,24,Absolute,,S00,"Y0,0",,,X,,S00,Part_TypJoist,"V0,0",ParentFaceNormal,"Y0,0",from Preset,from Preset,S00-whatever_V00/V10_details_say,0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,IconSizeY,64in,,X,24,Absolute,,,"Y0,1",,,,,S01,Part_TypJoist,"V1,0",ParentFaceNormal,"Y1,0",from Preset,from Preset,S00-whatever_V00/V10_details_say,0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,,,,Y,1,FractionalRemainder,,,"Y0,2",,,,,S02,Part_TypBlocking,"V0,1",ParentFaceNormal,"X0,1",from Preset,from Preset,S00-whatever_V00/V10_details_say,0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,,,,Y,1,FractionalRemainder,,S01,"Y1,0",,,X,,S03,Part_TypBlocking,"V1,2",ParentFaceNormal,"X1,2",from Preset,from Preset,S00-whatever_V00/V10_details_say,0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,,,,Y,1,FractionalRemainder,,,"Y1,1",,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,,,,,,"Y1,2",,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,,,,,S02,"X0,1",,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,,,,,S03,"X1,2",,,,,,,,,,,,,,,,,,,,,
+PRESET,,af6b4674-a03f-46c9-92fe-d881853e0d94,,"Planar_Pattern2D
+Wainscoting
+af6b4674-a03f-46c9-92fe-d881853e0d94",,Planar_Pattern2D,,Wainscoting,,X,,IconSizeX,48in,,X,30,Absolute,,S00,"F0,0",,,,,S00,Part_WoodPaneling,"V0,0",ParentFaceNormal,"X0,0",from Preset,from Preset,S00-whatever_V00/V10_details_say,0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,IconSizeY,64in,,Y,42,Absolute,,S01,"F0,1",,X,,,S01,Part_Paint,"V0,1",ParentFaceNormal,"X0,1",from Preset,from Preset,S00-whatever_V00/V10_details_say,0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,,,,Y,1,FractionalRemainder,,S02,"X0,0",,X,,,S02,Part_BaseMoulding,"V0,0",ParentFaceNormal,"X0,0",from Preset,from Preset,S00-whatever_V00/V10_details_say,0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,,,,,,,,S03,"Y0,0",,,,,S03,Part_VertMoulding,"V0,0",ParentFaceNormal,"Y0,0",from Preset,from Preset,S00-whatever_V00/V10_details_say,0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,,,,,,,,S04,"X0,1",,X,,,S04,Part_ChairRail,"V0,1",ParentFaceNormal,"X0,1",from Preset,from Preset,S00-whatever_V00/V10_details_say,0,0,0,0,0,0,,,
+PRESET,,,,,,,,,,,,,,,,,,,S05,"X0,2",,X,,,S05,Part_CrownMoulding,"V0,2",ParentFaceNormal,"X0,2",from Preset,from Preset,S00-whatever_V00/V10_details_say,0,0,0,0,0,0,,,

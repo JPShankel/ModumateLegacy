@@ -43,7 +43,8 @@ void UToolTrayBlockTools::ChangeToSeparatorToolsButtons()
 		Button_Countertop,
 		Button_PointHosted,
 		Button_EdgeHosted,
-		Button_FaceHosted
+		Button_FaceHosted,
+		Button_Pattern2D
 	};
 	SetButtonsState(buttonsToShow);
 }
@@ -54,9 +55,7 @@ void UToolTrayBlockTools::ChangeToAttachmentToolsButtons()
 		Button_Finish, 
 		Button_Trim, 
 		Button_Cabinet, 
-		Button_FFE,
-		Button_Pattern2D
-	};
+		Button_FFE	};
 	SetButtonsState(buttonsToShow);
 }
 

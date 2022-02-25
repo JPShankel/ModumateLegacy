@@ -14,9 +14,10 @@
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
-#include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateStats.h"
 #include "ModumateCore/PlatformFunctions.h"
+#include "Objects/ModumateObjectStatics.h"
+#include "Objects/MOIPattern2D.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Runtime/Core/Public/Misc/FileHelper.h"
@@ -39,6 +40,7 @@
 #include "Quantities/QuantitiesManager.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Objects/DesignOption.h"
+#include "Objects/MOIDelta.h"
 #include "Objects/FaceHosted.h"
 #include "ModumateCore/EnumHelpers.h"
 
@@ -598,6 +600,13 @@ void UModumateGameInstance::RegisterAllCommands()
 		}
 		return false;
 	});
+
+	// Use this as a general scratch area for dev testing...no longterm code
+	RegisterCommand(kTest, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
+	{
+		return false;
+	});
+
 }
 
 DECLARE_CYCLE_STAT(TEXT("Process app command queue"), STAT_ModumateProcessCommandQueue, STATGROUP_Modumate)
