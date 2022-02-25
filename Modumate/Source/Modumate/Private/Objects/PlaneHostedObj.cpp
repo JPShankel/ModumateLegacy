@@ -877,8 +877,8 @@ bool AMOIPlaneHostedObj::GetBoundingLines(TArray<FDrawingDesignerLine>& outBound
 	};
 
 
-	auto& firstLayer = layers[0].UniquePointsA;
-	auto& lastLayer = layers[layers.Num() - 1].UniquePointsB;
+	auto& firstLayer = layers[0].OriginalPointsA;
+	auto& lastLayer = layers[layers.Num() - 1].OriginalPointsB;
 
 	/* FIRST LAYER */
 	acculumateLines(firstLayer);
