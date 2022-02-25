@@ -4388,6 +4388,15 @@ void UModumateDocument::web_push_document_update()
 	drawing_request_document();
 	request_project_settings();
 	UpdateWebMOIs(EObjectType::OTDesignOption);
+
+	auto* localPlayer = GetWorld() ? GetWorld()->GetFirstLocalPlayerFromController() : nullptr;
+	auto* controller = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(GetWorld())) : nullptr;
+	if (!ensure(controller && controller->EMPlayerState))
+	{
+		return;
+	}
+
+	controller->EMPlayerState->SendWebPlayerState();
 }
 
 void UModumateDocument::drawing_get_drawing_image(const FString& InRequest)
