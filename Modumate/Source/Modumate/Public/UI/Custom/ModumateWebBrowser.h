@@ -33,6 +33,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CallBindUObject(const FString& Name, UObject* Object, bool bIsPermanent);
 
+	static const FName MODUMATE_WEB_TAG;
+
 protected:
 
 	virtual TSharedRef<SWidget> RebuildWidget() override;

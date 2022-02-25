@@ -40,6 +40,7 @@
 #include "UnrealClasses/AxesActor.h"
 #include "UI/AdjustmentHandleWidget.h"
 #include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/Custom/ModumateWebBrowser.h"
 #include "UI/DimensionActor.h"
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/DimensionManager.h"
@@ -2489,16 +2490,22 @@ bool AEditModelPlayerController::IsCursorOverWidget() const
 
 	// If we're hovering over a widget that's used in the world viewport (or one of its children), then don't consider that as a widget that would consume or block the mouse input.
 	// TODO: we probably shouldn't rely on Slate widget tags, but for now it's better than making an engine change to add a function like Advanced_IsUwerWidget()
-	TSharedPtr<SWidget> potentialWorldWidget = hoverWidget;
+	TSharedPtr<SWidget> currentWidget = hoverWidget;
 	bool bIsWorldWidget = false;
-	while (potentialWorldWidget.IsValid() && (potentialWorldWidget != gameViewport))
+	while (currentWidget.IsValid() && (currentWidget != gameViewport))
 	{
-		if (potentialWorldWidget->GetTag() == playerHUD->WorldViewportWidgetTag)
+		auto tag = currentWidget->GetTag();
+		if (tag == playerHUD->WorldViewportWidgetTag)
 		{
 			return false;
 		}
 
-		potentialWorldWidget = potentialWorldWidget->GetParentWidget();
+		if (tag == UModumateWebBrowser::MODUMATE_WEB_TAG)
+		{
+			return false;
+		}
+
+		currentWidget = currentWidget->GetParentWidget();
 	}
 
 	return true;

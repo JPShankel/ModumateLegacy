@@ -3,6 +3,7 @@
 #include "UI/Custom/ModumateWebBrowser.h"
 #include "Runtime/WebBrowser/Public/SWebBrowser.h"
 
+const FName UModumateWebBrowser::MODUMATE_WEB_TAG = FName(TEXT("ModumateWebBrowser"));
 
 void UModumateWebBrowser::CallBindUObject(const FString& Name, UObject* Object, bool bIsPermanent)
 {
@@ -34,6 +35,8 @@ TSharedRef<SWidget> UModumateWebBrowser::RebuildWidget()
 			.OnLoadCompleted(BIND_UOBJECT_DELEGATE(FSimpleDelegate, HandleOnLoadCompleted))
 			.OnLoadError(BIND_UOBJECT_DELEGATE(FSimpleDelegate, HandleOnLoadError))
 			.OnLoadStarted(BIND_UOBJECT_DELEGATE(FSimpleDelegate, HandleOnLoadStarted));
+		
+		WebBrowserWidget->SetTag(MODUMATE_WEB_TAG);
 
 		return WebBrowserWidget.ToSharedRef();
 	}
