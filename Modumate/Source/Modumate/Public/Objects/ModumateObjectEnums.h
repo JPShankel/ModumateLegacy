@@ -40,6 +40,7 @@ enum class EObjectType : uint8
 	OTMetaVertex,
 	OTMetaEdge,
 	OTMetaPlane,
+	OTMetaPlaneSpan,
 	OTSurfaceGraph,
 	OTSurfaceVertex,
 	OTSurfaceEdge,

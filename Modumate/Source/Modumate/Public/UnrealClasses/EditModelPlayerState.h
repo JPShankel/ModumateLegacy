@@ -86,6 +86,9 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "Debug")
 	bool bShowSurfaceDebug;
 
+	UPROPERTY(Config, EditAnywhere, Category = "Debug")
+	bool bShowSpanDebug;
+
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Debug")
 	bool bDevelopDDL2Data;
 

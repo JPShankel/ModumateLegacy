@@ -335,6 +335,10 @@ void UModumateGameInstance::RegisterAllCommands()
 		{
 			playerState->bShowSurfaceDebug = hasShow ? show : !playerState->bShowSurfaceDebug;
 		}
+		else if (type.Equals(TEXT("span")))
+		{
+			playerState->bShowSpanDebug = hasShow ? show : !playerState->bShowSpanDebug;
+		}
 		else if (type.Equals(TEXT("ddl2")))
 		{
 			playerState->bDevelopDDL2Data = hasShow ? show : !playerState->bDevelopDDL2Data;

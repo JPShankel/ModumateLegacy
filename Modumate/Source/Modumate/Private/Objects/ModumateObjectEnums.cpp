@@ -188,6 +188,8 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTMetaEdges", "Massing Edges") : LOCTEXT("OTMetaEdge", "Massing Edge");
 	case EObjectType::OTMetaPlane:
 		return bPlural ? LOCTEXT("OTMetaPlanes", "Massing Planes") : LOCTEXT("OTMetaPlane", "Massing Plane");
+	case EObjectType::OTMetaPlaneSpan:
+		return bPlural ? LOCTEXT("OTMetaPlaneSpans", "Massing Plane Spans") : LOCTEXT("OTMetaPlaneSpan", "Massing Plane Span");
 	case EObjectType::OTSurfaceGraph:
 		return bPlural ? LOCTEXT("OTSurfaceGraphs", "Surface Graphs") : LOCTEXT("OTSurfaceGraph", "Surface Graph");
 	case EObjectType::OTSurfaceVertex:

@@ -325,6 +325,7 @@ public:
 	void DisplayDebugInfo(UWorld* world);
 	void DrawDebugVolumeGraph(UWorld* world);
 	void DrawDebugSurfaceGraphs(UWorld* world);
+	void DrawDebugSpan(UWorld* world);
 	void DisplayMultiplayerDebugInfo(UWorld* world);
 	void DisplayDesignOptionDebugInfo(UWorld* World);
 

@@ -1885,6 +1885,11 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 	{
 		Document->DisplayDesignOptionDebugInfo(GetWorld());
 	}
+
+	if (EMPlayerState->bShowSpanDebug)
+	{
+		Document->DrawDebugSpan(GetWorld());
+	}
 }
 
 void AEditModelPlayerController::TickInput(float DeltaTime)

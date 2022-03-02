@@ -31,6 +31,7 @@
 #include "Objects/SurfaceGraph.h"
 #include "Objects/CameraView.h"
 #include "Objects/MetaGraph.h"
+#include "Objects/MetaPlaneSpan.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonReader.h"
@@ -2039,6 +2040,14 @@ bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 		return false;
 	}
+	// Note: Test only, cause not sure when span creation happen
+#if 0
+	if (bValidDelta)
+	{
+		int32 newSpanID = NextID + 1;
+		AMOIMetaPlaneSpan::MakeMetaPlaneSpanDeltaFromGraph(&TempVolumeGraph, newSpanID, OutObjectIDs, OutDeltaPtrs);
+	}
+#endif
 
 	return bValidDelta;
 }
@@ -4121,6 +4130,22 @@ void UModumateDocument::DrawDebugSurfaceGraphs(UWorld* world)
 			FVector2D originPos = Algo::Accumulate(poly.CachedPoints, FVector2D::ZeroVector) / poly.CachedPoints.Num();
 			FVector originDrawPos = UModumateGeometryStatics::Deproject2DPoint(originPos, faceAxisX, faceAxisY, faceOrigin);
 			DrawDebugString(world, originDrawPos, faceString, nullptr, FColor::White, 0.0f, true);
+		}
+	}
+}
+
+void UModumateDocument::DrawDebugSpan(UWorld* world)
+{
+	for (const auto curObj : GetObjectsOfType(EObjectType::OTMetaPlaneSpan))
+	{
+		const AMOIMetaPlaneSpan* curSpan = Cast<AMOIMetaPlaneSpan>(curObj);
+		if (curSpan->InstanceData.GraphMembers.Num() > 0)
+		{
+			FVector drawPos = curSpan->GetLocation() + FVector::UpVector * 100.f;//offset upward to avoid overlap with debug volume
+			FString drawString = FString::Printf(TEXT("Span #%d: Graph:[%s]"),
+				curSpan->ID,
+				*FString::JoinBy(curSpan->InstanceData.GraphMembers, TEXT(", "), [](const int32& memberID) { return FString::Printf(TEXT("%d"), memberID); }));
+			DrawDebugString(world, drawPos, drawString, nullptr, FColor::Purple, 0.0f, true);
 		}
 	}
 }

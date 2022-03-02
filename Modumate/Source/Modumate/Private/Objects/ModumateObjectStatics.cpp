@@ -438,6 +438,12 @@ bool UModumateObjectStatics::GetNonPhysicalEnabledFlags(const AModumateObjectIns
 	case EToolCategories::SiteTools:
 		return GetSurfaceObjEnabledFlags(NonPhysicalMOI, bOutVisible, bOutCollisionEnabled);
 	default:
+		switch (objectType)
+		{
+		case EObjectType::OTMetaPlaneSpan:
+			bOutVisible = bOutCollisionEnabled = false;
+			return true;
+		}
 		ensureMsgf(false, TEXT("Invalid object; must be member of Volume Graph or Surface Graph!"));
 		return false;
 	}

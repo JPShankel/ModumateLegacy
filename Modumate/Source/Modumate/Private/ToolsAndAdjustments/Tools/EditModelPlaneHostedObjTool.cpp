@@ -13,6 +13,7 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
+#include "Objects/MetaPlaneSpan.h"
 
 
 
@@ -285,6 +286,11 @@ FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& Targe
 					}
 				}
 			}
+			// Note: Test only, cause not sure when span creation happen
+#if 0
+			AMOIMetaPlaneSpan::MakeMetaPlaneSpanDeltaPtr(GameState->Document, nextID++, {targetFaceID}, delta);
+#endif
+
 		}
 	}
 
