@@ -43,6 +43,7 @@
 #include "Objects/MOIDelta.h"
 #include "Objects/FaceHosted.h"
 #include "ModumateCore/EnumHelpers.h"
+#include "DrawingDesigner/DrawingDesignerMeshCache.h"
 
 using namespace ModumateCommands;
 using namespace ModumateParameters;
@@ -127,6 +128,12 @@ void UModumateGameInstance::Init()
 	}
 
 	ApplyGraphicsFromModumateUserSettings();
+
+	if (ensure(DrawingDesignerMeshCacheClass))
+	{
+		static const FName meshCacheName(TEXT("DrawingDesignerMeshCache"));
+		DrawingDesignerMeshCache = NewObject<UDrawingDesignerMeshCache>(this, DrawingDesignerMeshCacheClass, meshCacheName);
+	}
 }
 
 TSharedPtr<FModumateCloudConnection> UModumateGameInstance::GetCloudConnection() const
@@ -137,6 +144,11 @@ TSharedPtr<FModumateCloudConnection> UModumateGameInstance::GetCloudConnection()
 TSharedPtr<FQuantitiesManager> UModumateGameInstance::GetQuantitiesManager() const
 {
 	return QuantitiesManager;
+}
+
+UDrawingDesignerMeshCache* UModumateGameInstance::GetMeshCache() const
+{
+	return DrawingDesignerMeshCache;
 }
 
 TSharedPtr<FModumateAccountManager> UModumateGameInstance::GetAccountManager() const
@@ -766,6 +778,11 @@ void UModumateGameInstance::Shutdown()
 		ObjectDatabase->Shutdown();
 		delete ObjectDatabase;
 		ObjectDatabase = nullptr;
+	}
+
+	if (DrawingDesignerMeshCache)
+	{
+		DrawingDesignerMeshCache->Shutdown();
 	}
 }
 

@@ -20,6 +20,7 @@ class UModumateDocument;
 class FModumateAccountManager;
 class FModumateCloudConnection;
 class FQuantitiesManager;
+class UDrawingDesignerMeshCache;
 
 class IAnalyticsProvider;
 
@@ -54,6 +55,9 @@ private:
 	TSharedPtr<FModumateCloudConnection> CloudConnection;
 	TSharedPtr<FQuantitiesManager> QuantitiesManager;
 
+	UPROPERTY()
+	UDrawingDesignerMeshCache* DrawingDesignerMeshCache = nullptr;
+
 	FText PendingMainMenuStatus;
 	UModumateDocument* GetDocument();
 
@@ -83,6 +87,7 @@ public:
 	TSharedPtr<FModumateAccountManager> GetAccountManager() const;
 	TSharedPtr<FModumateCloudConnection> GetCloudConnection() const;
 	TSharedPtr<FQuantitiesManager> GetQuantitiesManager() const;
+	UDrawingDesignerMeshCache* GetMeshCache() const;
 
 	const AEditModelGameMode* GetEditModelGameMode() const;
 
@@ -91,6 +96,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UModumateTutorialManager> TutorialManagerClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UDrawingDesignerMeshCache> DrawingDesignerMeshCacheClass;
 
 	UFUNCTION(BlueprintCallable)
 	ELoginStatus LoginStatus() const;

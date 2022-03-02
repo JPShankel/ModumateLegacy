@@ -129,6 +129,7 @@ protected:
 	FCachedLayerDimsByType CachedLayerDims;
 	bool bHaveValidTransform;
 	FVector CachedBounds;
+	FVector CachedScale { FVector::OneVector };
 
 	UPROPERTY()
 	TArray<AModumateObjectInstance*> CachedParentConnectedMOIs;

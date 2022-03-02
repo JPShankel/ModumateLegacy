@@ -62,6 +62,7 @@ public:
 	FVector3d P1;
 	FVector3d P2;
 	FVector3d N;
+	FVector3d AdjacentN;
 	double Thickness { 1.0f };
 	mutable bool bValid { true };
 
