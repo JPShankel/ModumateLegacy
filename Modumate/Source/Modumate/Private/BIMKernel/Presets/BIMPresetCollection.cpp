@@ -1138,4 +1138,15 @@ EBIMResult FBIMPresetCollection::SetPartSizesFromMeshes()
 	return EBIMResult::Success;
 }
 
+EBIMResult FBIMPresetCollection::GetWebPresets(FBIMWebPresetCollection& OutPresets)
+{
+	for (auto& kvp : PresetsByGUID)
+	{
+		FBIMWebPreset& webPreset = OutPresets.presets.AddDefaulted_GetRef();
+		kvp.Value.ToWebPreset(webPreset);
+	}
+	return EBIMResult::Success;
+}
+
+
 #undef LOCTEXT_NAMESPACE

@@ -922,4 +922,12 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const 
 	return EBIMResult::Success;
 }
 
+EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset) const
+{
+	OutPreset.name = DisplayName.ToString();
+	OutPreset.presetID = GUID;
+	OutPreset.tagPath = MyTagPath;
+	return EBIMResult::Success;
+}
+
 #undef LOCTEXT_NAMESPACE

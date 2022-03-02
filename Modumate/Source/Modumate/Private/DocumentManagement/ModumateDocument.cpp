@@ -1049,6 +1049,8 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 			DeltaAffectedPresets.Add(PresetDelta.NewState.GUID);
 		}
 
+		UpdateWebPresets();
+
 		return true;
 	}
 	// Remove if we're deleting an old one (new state has no guid)
@@ -1071,6 +1073,8 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 		{
 			DeltaAffectedPresets.Add(PresetDelta.OldState.GUID);
 		}
+
+		UpdateWebPresets();
 
 		return true;
 	}
@@ -4397,6 +4401,8 @@ void UModumateDocument::web_push_document_update()
 	}
 
 	controller->EMPlayerState->SendWebPlayerState();
+
+	UpdateWebPresets();
 }
 
 void UModumateDocument::drawing_get_drawing_image(const FString& InRequest)
@@ -4459,6 +4465,18 @@ void UModumateDocument::string_to_inches(const FString& InRequest)
 		DrawingSendResponse(TEXT("onGenericResponse"), jsonResponse);
 	}
 }
+
+void UModumateDocument::UpdateWebPresets()
+{
+	FBIMWebPresetCollection collection;
+	BIMPresetCollection.GetWebPresets(collection);
+	FString jsonPresets;
+	if (WriteJsonGeneric(jsonPresets, &collection))
+	{
+		DrawingSendResponse(TEXT("onPresetsChanged"), jsonPresets);
+	}
+}
+
 
 void UModumateDocument::UpdateWebMOIs(const EObjectType ObjectType) const
 {

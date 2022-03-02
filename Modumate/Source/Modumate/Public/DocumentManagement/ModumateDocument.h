@@ -427,6 +427,8 @@ public:
 	void update_project_settings(const FString& InRequest);
 
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
+	void UpdateWebPresets();
+
 
 	void OnCameraViewSelected(int32 ID);
 };

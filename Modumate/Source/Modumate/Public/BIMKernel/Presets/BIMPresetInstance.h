@@ -79,6 +79,21 @@ struct MODUMATE_API FBIMPresetPartSlot
 };
 
 USTRUCT()
+struct MODUMATE_API FBIMWebPreset
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FGuid presetID;
+
+	UPROPERTY()
+	FString name;
+
+	UPROPERTY()
+	FBIMTagPath tagPath;
+};
+
+USTRUCT()
 struct MODUMATE_API FBIMPresetInstance
 {
 	GENERATED_BODY()
@@ -244,6 +259,8 @@ struct MODUMATE_API FBIMPresetInstance
 	EBIMResult GetModularDimensions(FVector& OutDimensions, float& OutBevelWidth,float& OutThickness) const;
 
 	EBIMResult UpgradeData(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, int32 InDocVersion);
+
+	EBIMResult ToWebPreset(FBIMWebPreset& OutPreset) const;
 
 	bool operator==(const FBIMPresetInstance& RHS) const;
 	bool operator!=(const FBIMPresetInstance& RHS) const;

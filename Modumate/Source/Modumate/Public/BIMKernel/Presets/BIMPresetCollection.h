@@ -25,6 +25,15 @@ struct FMOIDocumentRecordV5;
 using FMOIDocumentRecord = FMOIDocumentRecordV5;
 
 USTRUCT()
+struct MODUMATE_API FBIMWebPresetCollection
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FBIMWebPreset> presets;
+};
+
+USTRUCT()
 struct MODUMATE_API FBIMPresetCollection
 {
 	GENERATED_BODY()
@@ -100,6 +109,8 @@ struct MODUMATE_API FBIMPresetCollection
 
 	bool SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord) const;
 	bool ReadPresetsFromDocRecord(const FModumateDatabase& InDB, int32 DocRecordVersion, const FMOIDocumentRecord& DocRecord);
+
+	EBIMResult GetWebPresets(FBIMWebPresetCollection& OutPresets);
 
 	bool operator==(const FBIMPresetCollection& RHS) const;
 	bool operator!=(const FBIMPresetCollection& RHS) const;
