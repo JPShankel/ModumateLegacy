@@ -313,13 +313,162 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 			{
 				FBIMPattern bimPattern;
 				GetOrCreateCustomData(bimPattern);
-			}
-			break;
 
-			case ECSVMatrixNames::PatternHostedElements:
-			{
-				FBIMPattern bimPattern;
-				GetOrCreateCustomData(bimPattern);
+				int32 matrixIndex = 0;
+
+				FString id = NormalizeCell(Row[presetMatrix.First+ matrixIndex++]);
+				FString element = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+
+				TArray<FString> member;
+				NormalizeCell(Row[presetMatrix.First + matrixIndex++]).ParseIntoArray(member, TEXT(","));
+
+				TArray<FString> cutter;
+				NormalizeCell(Row[presetMatrix.First + matrixIndex++]).ParseIntoArray(cutter,TEXT("="));
+
+				FString ncp = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+				FString origin = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+				FString basisX = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+				FString basisZ = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+
+				FString offsetX = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+				FString offsetY = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+				FString offsetZ = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+
+				FString rotationX = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+				FString rotationY = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+				FString rotationZ = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+
+				FString flipX = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+				FString flipY = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+				FString flipZ = NormalizeCell(Row[presetMatrix.First + matrixIndex++]);
+
+				if (!id.IsEmpty())
+				{
+					EBIMSpanElement elementType = EBIMSpanElement::None;
+					if (ensureAlways(FindEnumValueByString< EBIMSpanElement>(element, elementType)))
+					{
+						auto& span = bimPattern.Spans.AddDefaulted_GetRef();
+						span.ID = id;
+						span.ElementType = elementType;
+					}
+					else
+					{
+						OutMessages.Add(FString::Printf(TEXT("Unidentified element format %s in pattern %s"), *element, *Preset.GUID.ToString()));
+					}											
+				}
+
+				bimPattern.Spans.Last().Offset = FVector(FCString::Atof(*offsetX), FCString::Atof(*offsetY), FCString::Atof(*offsetZ));
+				bimPattern.Spans.Last().Rotation = FRotator(FCString::Atof(*offsetX), FCString::Atof(*offsetY), FCString::Atof(*offsetZ));
+				bimPattern.Spans.Last().Flip = FVector(flipX.IsEmpty() ? 1.0f : -1.0f, flipY.IsEmpty() ? 1.0f : -1.0f, flipZ.IsEmpty() ? 1.0f : -1.0f);
+
+				if (!ncp.IsEmpty())
+				{
+					FGuid* hostedGuid = KeyGuidMap.Find(FBIMKey(ncp));
+					if (ensureAlways(hostedGuid != nullptr))
+					{
+						bimPattern.Spans.Last().HostedPreset = *hostedGuid;
+					}
+					else
+					{
+						OutMessages.Add(FString::Printf(TEXT("Unidentified bim key %s in %s"), *ncp, *Preset.GUID.ToString()));
+					}
+				}
+
+				TArray<FString> originCoords;
+				origin.ParseIntoArray(originCoords,TEXT(","));
+				if (originCoords.Num() > 0)
+				{
+					bimPattern.Spans.Last().Origin.X = FCString::Atof(*originCoords[0]);
+					if (originCoords.Num() > 1)
+					{
+						bimPattern.Spans.Last().Origin.Y = FCString::Atof(*originCoords[1]);
+						if (originCoords.Num() > 2)
+						{
+							bimPattern.Spans.Last().Origin.Z = FCString::Atof(*originCoords[2]);
+						}
+					}
+				}
+
+				if (member.Num() > 0)
+				{
+					auto& newElement = bimPattern.Spans.Last().Elements.AddDefaulted_GetRef();
+					newElement.FromCSVCells(member);
+				}
+
+				auto assignBasis = [this,&OutMessages](const FString& BasisStr, FBIMSpanBasis& OutBasis)
+				{
+					if (BasisStr.IsEmpty())
+					{
+						return;
+					}
+					if (BasisStr == TEXT("ParentFaceNormal"))
+					{
+						OutBasis.Element.ElementType = EBIMSpanElement::ParentFaceNormal;
+					}
+					else
+					{
+						TArray<FString> elementCoord;
+						BasisStr.ParseIntoArray(elementCoord, TEXT("="));
+						if (ensureAlways(elementCoord.Num() == 2))
+						{
+							EBIMSpanElement elementType;
+							TArray<FString> coord;
+							elementCoord[1].ParseIntoArray(coord, TEXT(","));
+							if (ensureAlways(FindEnumValueByString(elementCoord[0], elementType)))
+							{
+								OutBasis.Element.ElementType = elementType;
+								if (coord.Num() > 0)
+								{
+									OutBasis.Element.Coordinate.X = FCString::Atoi(*coord[0]);
+									if (coord.Num() > 1)
+									{
+										OutBasis.Element.Coordinate.Y = FCString::Atoi(*coord[1]);
+										if (coord.Num() > 2)
+										{
+											OutBasis.Element.Coordinate.Z = FCString::Atoi(*coord[2]);
+										}
+									}
+								}
+							}
+							else
+							{
+								OutMessages.Add(FString::Printf(TEXT("Bad basis format %s in pattern %s"), *BasisStr, *Preset.GUID.ToString()));
+							}
+						}
+						else
+						{
+							OutMessages.Add(FString::Printf(TEXT("Bad basis format %s in pattern %s"), *BasisStr, *Preset.GUID.ToString()));
+						}
+					}
+				};
+
+				assignBasis(basisX, bimPattern.Spans.Last().BasisX);
+				assignBasis(basisZ, bimPattern.Spans.Last().BasisZ);
+
+				if (cutter.Num() == 2)
+				{
+					if (bimPattern.Spans.Num() == 0)
+					{
+						OutMessages.Add(FString::Printf(TEXT("Cutter out of order at row %d of file %f"), RowNumber, *CurrentFile));
+					}
+					else
+					{
+						EBIMSpanElement cutterType;
+						if (ensureAlways(FindEnumValueByString<EBIMSpanElement>(cutter[0], cutterType)))
+						{
+							auto& cutterData = bimPattern.Spans.Last().Cutters.AddDefaulted_GetRef();
+							cutterData.ElementType = cutterType;
+							TArray<FString> coords;
+							cutter[1].ParseIntoArray(coords, TEXT(","));
+							cutterData.Coordinate.FromCSVCells(coords);
+						}
+						else
+						{
+							OutMessages.Add(FString::Printf(TEXT("Unidentified cutter format %s in pattern %s"), *cutter[1], *Preset.GUID.ToString()));
+						}
+					}
+				}
+				Preset.SetCustomData(bimPattern);
 			}
 			break;
 

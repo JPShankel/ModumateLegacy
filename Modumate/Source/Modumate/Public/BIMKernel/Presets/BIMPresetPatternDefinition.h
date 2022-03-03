@@ -63,12 +63,15 @@ struct MODUMATE_API FBIMPatternCoordinate
 
 	UPROPERTY()
 	int32 Z = 0;
+
+	void FromCSVCells(const TArray<FString>& Cells);
 };
 
 UENUM()
 enum class EBIMSpanElement
 {
 	None = 0,
+	ParentFaceNormal,
 	Vertex,
 	EdgeX,
 	EdgeY,
@@ -77,6 +80,27 @@ enum class EBIMSpanElement
 	FaceXZ,
 	FaceYZ,
 	Volume
+};
+
+USTRUCT()
+struct MODUMATE_API FBIMSpanElement
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	EBIMSpanElement ElementType = EBIMSpanElement::None;
+
+	UPROPERTY()
+	FBIMPatternCoordinate Coordinate;
+};
+
+USTRUCT()
+struct MODUMATE_API FBIMSpanBasis
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FBIMSpanElement Element;
 };
 
 /*
@@ -94,7 +118,31 @@ struct MODUMATE_API FBIMSpan
 	TArray<FBIMPatternCoordinate> Elements;
 
 	UPROPERTY()
+	TArray<FBIMSpanElement> Cutters;
+
+	UPROPERTY()
 	FGuid HostedPreset;
+
+	UPROPERTY()
+	FVector Offset = FVector::ZeroVector;
+
+	UPROPERTY()
+	FRotator Rotation = FRotator::ZeroRotator;
+
+	UPROPERTY()
+	FVector Flip= FVector::ZeroVector;
+
+	UPROPERTY()
+	FString ID;
+
+	UPROPERTY()
+	FBIMPatternCoordinate Origin;
+
+	UPROPERTY()
+	FBIMSpanBasis BasisX;
+
+	UPROPERTY()
+	FBIMSpanBasis BasisZ;
 };
 
 /*
