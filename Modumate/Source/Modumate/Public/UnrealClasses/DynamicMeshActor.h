@@ -65,6 +65,7 @@ struct FProceduralMeshParams
 struct MODUMATE_API FPatternAxisData
 {
 	bool bFlex;
+	int32 FractionalWeight;
 	float Magnitude;
 };
 struct MODUMATE_API FPattern2DParams
