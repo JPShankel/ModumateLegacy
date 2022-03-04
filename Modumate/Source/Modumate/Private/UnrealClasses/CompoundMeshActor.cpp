@@ -798,14 +798,11 @@ float ACompoundMeshActor::GetPortalCenter(const UModumateDocument* Doc, const FG
 }
 
 bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
-	const FVector& AxisX, const FVector& AxisY, const FVector& Origin) const
+	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, FModumateLayerType LayerType) const
 {
 		TArray<TPair<FVector, FVector>> OutEdges;
 
-		auto gameState = GetWorld()->GetGameState<AEditModelGameState>();
-		auto moi = gameState->Document->ObjectFromActor(this);
-		bool bIsCabinet = moi && moi->GetObjectType() == EObjectType::OTCabinet;
-		FModumateLayerType layerType = bIsCabinet ? FModumateLayerType::kCabinetCutCarcass
+		FModumateLayerType layerType = LayerType != FModumateLayerType::kDefault ? LayerType
 			: FModumateLayerType::kOpeningSystemCutLine;
 
 		const int32 numComponents = StaticMeshComps.Num();
@@ -852,7 +849,7 @@ bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<FDraftingComp
 		return OutEdges.Num() != 0;
 }
 
-void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FBox2D& BoundingBox) const
+void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FBox2D& BoundingBox, FModumateLayerType LayerType) const
 {
 	TArray <FDrawingDesignerLine> ddLines;
 	GetDrawingDesignerLines(Plane, ddLines, 0.1f, 0.9205f, false);
@@ -864,10 +861,7 @@ void ACompoundMeshActor::GetFarDraftingLines(const TSharedPtr<FDraftingComposite
 		clippedLines.Append(ParentPage->lineClipping->ClipWorldLineToView(edge));
 	}
 
-	auto gameState = GetWorld()->GetGameState<AEditModelGameState>();
-	auto moi = gameState->Document->ObjectFromActor(this);
-	bool bIsCabinet = moi && moi->GetObjectType() == EObjectType::OTCabinet;
-	FModumateLayerType layerType = bIsCabinet ? FModumateLayerType::kCabinetBeyond
+	FModumateLayerType layerType = LayerType != FModumateLayerType::kDefault ? LayerType
 		: FModumateLayerType::kOpeningSystemBeyond;
 
 	FVector2D boxClipped0;

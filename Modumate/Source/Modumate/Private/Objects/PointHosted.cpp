@@ -142,17 +142,19 @@ void AMOIPointHosted::ToggleAndUpdateCapGeometry(bool bEnableCap)
 	}
 }
 
-void AMOIPointHosted::GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox, TArray<TArray<FVector>>& OutPerimeters) const
+void AMOIPointHosted::GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
+	const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
+	TArray<TArray<FVector>>& OutPerimeters) const
 {
 	bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
 	if (bGetFarLines)
 	{
-		actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox);
+		actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox, FModumateLayerType::kPartPointBeyond);
 	}
 	else
 	{
-		actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin);
+		actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, FModumateLayerType::kPartPointCut);
 	}
 }
 

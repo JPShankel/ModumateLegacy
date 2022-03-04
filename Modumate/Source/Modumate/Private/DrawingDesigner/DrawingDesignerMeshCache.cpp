@@ -235,8 +235,8 @@ bool UDrawingDesignerMeshCache::GetLinesForAssembly(const FBIMAssemblySpec& Asse
 			{
 				auto& line2 = lines[l2];
 				if (line2 &&
-					(line1.P1.DistanceSquared(line2.P1) < distanceThreshold2 && line1.P2.DistanceSquared(line2.P2) < distanceThreshold2
-						|| line1.P1.DistanceSquared(line2.P2) < distanceThreshold2 && line1.P2.DistanceSquared(line2.P1) < distanceThreshold2))
+					((line1.P1.DistanceSquared(line2.P1) < distanceThreshold2 && line1.P2.DistanceSquared(line2.P2) < distanceThreshold2)
+						|| (line1.P1.DistanceSquared(line2.P2) < distanceThreshold2 && line1.P2.DistanceSquared(line2.P1) < distanceThreshold2)) )
 				{
 					double wingAngle = FMath::Abs(line1.N.Dot(line2.N));
 					if (wingAngle > planarityThreshold)

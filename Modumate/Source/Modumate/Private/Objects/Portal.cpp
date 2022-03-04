@@ -439,11 +439,11 @@ void AMOIPortal::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentPa
 	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
 	if (bGetFarLines)
 	{
-		actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox);
+		actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox, FModumateLayerType::kDefault);
 	}
 	else
 	{
-		bool bLinesDrawn = actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin);
+		bool bLinesDrawn = actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, FModumateLayerType::kDefault);
 
 		ModumateUnitParams::FThickness defaultThickness = ModumateUnitParams::FThickness::Points(0.3f);
 		FMColor defaultColor = FMColor::Gray64;

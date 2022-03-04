@@ -100,11 +100,11 @@ void AMOIFaceHosted::GetDraftingLines(const TSharedPtr<FDraftingComposite>& Pare
 	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
 	if (bGetFarLines)
 	{
-		actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox);
+		actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox, FModumateLayerType::kDefault);
 	}
 	else
 	{
-		actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin);
+		actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, FModumateLayerType::kDefault);
 	}
 }
 

@@ -26,6 +26,7 @@
 #include "UI/EditModelPlayerHUD.h"
 #include "Quantities/QuantitiesManager.h"
 #include "DrawingDesigner/DrawingDesignerLine.h"
+#include "DrawingDesigner/DrawingDesignerMeshCache.h"
 
 
 AMOICabinet::AMOICabinet()
@@ -713,7 +714,7 @@ void AMOICabinet::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentP
 		// Cabinet door:
 		if (FrontFacePortalActor.IsValid())
 		{
-			FrontFacePortalActor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin);
+			FrontFacePortalActor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, FModumateLayerType::kCabinetCutCarcass);
 		}
 	}
 	else
@@ -758,7 +759,7 @@ void AMOICabinet::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentP
 
 		if (FrontFacePortalActor.IsValid())
 		{
-			FrontFacePortalActor->GetFarDraftingLines(ParentPage, Plane, BoundingBox);
+			FrontFacePortalActor->GetFarDraftingLines(ParentPage, Plane, BoundingBox, FModumateLayerType::kCabinetBeyond);
 		}
 
 	}

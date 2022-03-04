@@ -18,6 +18,7 @@ class UProceduralMeshComponent;
 class UModumateDocument;
 class FDraftingComposite;
 class FDrawingDesignerLine;
+enum class FModumateLayerType;
 
 
 UCLASS()
@@ -53,8 +54,8 @@ public:
 	bool GetIsDynamic() const { return bIsDynamic; }
 
 	bool GetCutPlaneDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
-		const FVector& AxisX, const FVector& AxisY, const FVector& Origin) const;
-	void GetFarDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FBox2D& BoundingBox) const;
+		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, FModumateLayerType LayerType) const;
+	void GetFarDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FBox2D& BoundingBox, FModumateLayerType LayerType) const;
 	float GetPortalCenter(const UModumateDocument* Doc, const FGuid& AssemblyGUID) const;
 
 	void GetDrawingDesignerLines(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& Outlines, float MinLength,
