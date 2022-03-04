@@ -427,6 +427,9 @@ public:
 	UFUNCTION()
 	void update_project_settings(const FString& InRequest);
 
+	UFUNCTION()
+	void update_auto_detect_graphic_settings();
+
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
 	void UpdateWebPresets();
 

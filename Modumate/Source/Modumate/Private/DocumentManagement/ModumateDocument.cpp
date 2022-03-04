@@ -4683,6 +4683,16 @@ void UModumateDocument::update_project_settings(const FString& InRequest)
 	}
 }
 
+void UModumateDocument::update_auto_detect_graphic_settings()
+{
+	UModumateGameInstance* gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
+	if (gameInstance)
+	{
+		gameInstance->AutoDetectAndSaveModumateUserSettings();
+	}
+	web_push_document_update();
+}
+
 void UModumateDocument::OnCameraViewSelected(int32 ID)
 {
 	TArray<AMOIDesignOption*> designOptions;
