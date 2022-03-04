@@ -483,6 +483,7 @@ bool USelectTool::ProcessDragSelect()
 			Controller->DeselectAll();
 		}
 		const int32 activeGroup = doc->GetActiveVolumeGraphID();
+		TSet<int32> prospectiveGroups;
 		for (auto* selectedObject: objectsInSelection)
 		{
 			bool bInGroup = false;
@@ -490,12 +491,40 @@ bool USelectTool::ProcessDragSelect()
 
 			if (UModumateObjectStatics::IsObjectInSubgroup(doc, selectedObject, activeGroup, selectedGroupID, bInGroup))
 			{
-				Controller->EMPlayerState->SetGroupObjectSelected(doc->GetObjectById(selectedGroupID), bSetObjectsSelected, false);
+				if (!requireEnclosure)
+				{
+					Controller->EMPlayerState->SetGroupObjectSelected(doc->GetObjectById(selectedGroupID), bSetObjectsSelected, false);
+				}
+				else
+				{
+					prospectiveGroups.Add(selectedGroupID);
+				}
 			}
 			else if (bInGroup)
 			{
 				Controller->SetObjectSelected(selectedObject, bSetObjectsSelected, false);
 			}
+		}
+
+		for (int32 groupID : prospectiveGroups)
+		{   // For requireEnclosure selection all selectable members of subgroup must be selected.
+			bool bValid = true;
+			TSet<AModumateObjectInstance*> subGroupObjects;
+			UModumateObjectStatics::GetObjectsInGroups(doc, { groupID }, subGroupObjects);
+			for (auto* subGroupObject : subGroupObjects)
+			{
+				if (Controller->EMPlayerState->IsObjectReachableInView(subGroupObject) && subGroupObject->IsVisible()
+					&& !objectsInSelection.Contains(subGroupObject))
+				{
+					bValid = false;
+					break;
+				}
+			}
+			if (bValid)
+			{
+				Controller->EMPlayerState->SetGroupObjectSelected(doc->GetObjectById(groupID), bSetObjectsSelected, false);
+			}
+
 		}
 
 		static const FString eventNameDrag(TEXT("Drag"));

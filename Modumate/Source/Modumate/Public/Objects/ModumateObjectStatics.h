@@ -114,6 +114,8 @@ public:
 	static void GetTerrainSurfaceObjectEnabledFlags(const AModumateObjectInstance* TerrainSurfaceObj, bool& bOutVisible, bool& bOutCollisionEnabled);
 
 	static bool IsObjectInGroup(const UModumateDocument* Doc, const AModumateObjectInstance* Object, int32 GroupID = MOD_ID_NONE);
+	// True if the Object is in a descendent group of ActiveGroup - if so OutSubgroup is the child group towards
+	// Object, o/wise bOutIsInGroup true if Object directly in ActiveGroup.
 	static bool IsObjectInSubgroup(const UModumateDocument* Doc, const AModumateObjectInstance* Object, int32 ActiveGroup,
 		int32& OutSubgroup, bool& bOutIsInGroup);
 	static bool GetGroupIdsForGroupChange(const UModumateDocument* Doc, int32 NewgroupID, TArray<int32>& OutAffectedGroups);

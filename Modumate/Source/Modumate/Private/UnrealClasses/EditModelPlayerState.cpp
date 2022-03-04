@@ -976,9 +976,17 @@ void AEditModelPlayerState::FindReachableObjects(TSet<AModumateObjectInstance*> 
 	const int32 currentGroupID = doc->GetActiveVolumeGraphID();
 	if (currentGroupID != MOD_ID_NONE)
 	{
-		TSet<AModumateObjectInstance*> objectsInGroup;
-		UModumateObjectStatics::GetObjectsInGroups(doc, { currentGroupID }, objectsInGroup);
-		for (auto* obj: objectsInGroup)
+		auto* currentGraph = doc->GetObjectById(currentGroupID);
+		TArray<int32> allGraphIDs;
+		allGraphIDs.Add(currentGroupID);
+		for (auto* graphObj : currentGraph->GetAllDescendents())
+		{
+			allGraphIDs.Add(graphObj->ID);
+		}
+
+		TSet<AModumateObjectInstance*> objectsInGroups;
+		UModumateObjectStatics::GetObjectsInGroups(doc, allGraphIDs, objectsInGroups);
+		for (auto* obj: objectsInGroups)
 		{
 			if (obj->IsSelectableByUser())
 			{
@@ -995,28 +1003,14 @@ void AEditModelPlayerState::FindReachableObjects(TSet<AModumateObjectInstance*> 
 			}
 		}
 
-		TSet<AModumateObjectInstance*> visited;
 		AModumateObjectInstance* iter = nullptr;
 
 		while (objQueue.Dequeue(iter))
 		{
-			visited.Add(iter);
 			ReachableObjs.Add(iter);
-
-			if (iter->GetObjectType() != EObjectType::OTGroup)
-			{
-				auto iterChildren = iter->GetChildObjects();
-				for (auto* iterChild : iterChildren)
-				{
-					if (iterChild && !visited.Contains(iterChild) && iterChild->IsSelectableByUser())
-					{
-						objQueue.Enqueue(iterChild);
-					}
-				}
-			}
 		}
 
-		for (int32 id: doc->GetObjectById(currentGroupID)->GetChildIDs())
+		for (int32 id: currentGraph->GetChildIDs())
 		{
 			auto* groupObj = doc->GetObjectById(id);
 			if (groupObj)
