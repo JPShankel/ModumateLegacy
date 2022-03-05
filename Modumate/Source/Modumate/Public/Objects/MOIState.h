@@ -31,9 +31,6 @@ struct MODUMATE_API FMOIStateData
 	int32 ParentID = MOD_ID_NONE;
 
 	UPROPERTY()
-	FBIMKey AssemblyKey;
-
-	UPROPERTY()
 	FGuid AssemblyGUID;
 
 	UPROPERTY()
