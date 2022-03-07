@@ -4461,6 +4461,7 @@ void UModumateDocument::drawing_get_clicked(const FString& InRequest)
 			const FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(moi->GetAssembly().PresetGUID);
 			if (preset) 
 			{
+				moiResponse.presetId = preset->PresetID.StringValue;
 				preset->Properties.TryGetProperty(EBIMValueScope::Preset, BIMPropertyNames::Mark, moiResponse.typeMark);
 			}
 		}
