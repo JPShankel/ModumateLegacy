@@ -2,6 +2,7 @@
 
 #include "Objects/FaceHosted.h"
 #include "UnrealClasses/CompoundMeshActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UI/Properties/InstPropWidgetOffset.h"
@@ -10,6 +11,7 @@
 #include "UI/Properties/InstPropWidgetRotation.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Drafting/ModumateDraftingElements.h"
+#include "DrawingDesigner/DrawingDesignerMeshCache.h"
 
 FMOIFaceHostedData::FMOIFaceHostedData()
 {}
@@ -108,7 +110,27 @@ void AMOIFaceHosted::GetDraftingLines(const TSharedPtr<FDraftingComposite>& Pare
 	}
 }
 
-
+void AMOIFaceHosted::GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines,
+	float MinLength /*= 0.0f*/) const
+{
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (gameInstance)
+	{
+		const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
+		TArray<FDrawingDesignerLined> linesDouble;
+		FVector localViewDirection(GetWorldTransform().InverseTransformVector(ViewDirection));
+		gameInstance->GetMeshCache()->GetDesignerLines(CachedAssembly, FVector::OneVector, false, localViewDirection, linesDouble, MinLength);
+		// Use actor transform to get scale.
+		const FMatrix xform(actor->GetTransform().ToMatrixWithScale());
+		for (const auto& l : linesDouble)
+		{
+			FDrawingDesignerLine& newLine = OutDrawingLines.Emplace_GetRef(xform.TransformPosition(FVector(l.P1)),
+				xform.TransformPosition(FVector(l.P2)), xform.TransformPosition(FVector(l.N)));
+			newLine.Thickness = 0.15f;
+			newLine.GreyValue = 144 / 255.0f;
+		}
+	} 
+}
 
 void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 {
@@ -117,7 +139,8 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 	if (parentObj && cma)
 	{
 		FVector nativeSize = CachedAssembly.GetCompoundAssemblyNativeSize();
-		const FGraph3DFace* parentFace = Document->GetVolumeGraph()->FindFace(parentObj->ID);
+		FGraph3D * graph = Document->FindVolumeGraph(parentObj->ID);
+		const FGraph3DFace* parentFace = graph->FindFace(parentObj->ID);
 		
 
 		//------ Start rot
@@ -132,9 +155,9 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 		* JS - use the selected edge and the edge normal to create a basis vector transform
 		*/
 
-		const FGraph3DEdge* edge1 = Document->GetVolumeGraph()->FindEdge(parentFace->EdgeIDs[InstanceData.BasisEdge]);
-		const FGraph3DVertex* startVert1 = Document->GetVolumeGraph()->FindVertex(edge1->StartVertexID);
-		const FGraph3DVertex* endVert1 = Document->GetVolumeGraph()->FindVertex(edge1->EndVertexID);
+		const FGraph3DEdge* edge1 = graph->FindEdge(parentFace->EdgeIDs[InstanceData.BasisEdge]);
+		const FGraph3DVertex* startVert1 = graph->FindVertex(edge1->StartVertexID);
+		const FGraph3DVertex* endVert1 = graph->FindVertex(edge1->EndVertexID);
 		FVector testCross = FVector::CrossProduct(parentFace->CachedEdgeNormals[InstanceData.BasisEdge], parentFace->CachedPlane.GetNormal());
 		testCross.Normalize();
 

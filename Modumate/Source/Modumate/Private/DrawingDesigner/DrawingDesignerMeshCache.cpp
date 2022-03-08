@@ -66,12 +66,10 @@ bool UDrawingDesignerMeshCache::GetDesignerLines(const FBIMAssemblySpec& ObAsm, 
 			}
 			else
 			{
-				if (viewDirection.Dot(line.N) > 0.0 || viewDirection.Dot(line.AdjacentN) < 0.0)
+				const bool bFrontFacing = viewDirection.Dot(line.N) < 0.0;
+				if (!bFrontFacing || (viewDirection.Dot(line.AdjacentN) < 0.0 && line.N.Dot(line.AdjacentN) >= angleThreshold))
 				{
-					if (line.N.Dot(line.AdjacentN) < angleThreshold)
-					{
-						line.bValid = false;
-					}
+					line.bValid = false;
 				}
 			}
 
@@ -95,7 +93,7 @@ bool UDrawingDesignerMeshCache::GetLinesForAssembly(const FBIMAssemblySpec& Asse
 		return false;
 	}
 
-	static constexpr bool bUseLowLOD = true;  // TBD
+	static constexpr bool bUseLowLOD = false;  // TBD
 
 	actor->MakeFromAssembly(Assembly, Scale, false, false);
 

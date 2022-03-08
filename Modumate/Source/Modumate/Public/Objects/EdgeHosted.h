@@ -44,13 +44,17 @@ public:
 	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping, bool bForSelection) const override;
 	virtual void ToggleAndUpdateCapGeometry(bool bEnableCap) override;
-	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox, TArray<TArray<FVector>>& OutPerimeters) const override;
+	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
+		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
+		TArray<TArray<FVector>>& OutPerimeters) const override;
+	virtual void GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength = 0.0f) const override;
 
 	UPROPERTY()
 	FMOIEdgeHostedData InstanceData;
 
 protected:
 	FVector LineStartPos, LineEndPos, LineDir, LineNormal, LineUp;
+	FVector CachedScale { ForceInit };
 
 	void InternalUpdateGeometry(bool bCreateCollision);
 	void OnInstPropUIChangedExtension(float NewValue, int32 ExtensionIdx);

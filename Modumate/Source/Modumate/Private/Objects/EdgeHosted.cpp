@@ -2,6 +2,7 @@
 
 #include "Objects/EdgeHosted.h"
 #include "UnrealClasses/CompoundMeshActor.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UI/Properties/InstPropWidgetOffset.h"
@@ -10,6 +11,7 @@
 #include "UI/Properties/InstPropWidgetRotation.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Drafting/ModumateDraftingElements.h"
+#include "DrawingDesigner/DrawingDesignerMeshCache.h"
 
 FMOIEdgeHostedData::FMOIEdgeHostedData()
 {}
@@ -155,6 +157,26 @@ void AMOIEdgeHosted::GetDraftingLines(const TSharedPtr<FDraftingComposite>& Pare
 	}
 }
 
+void AMOIEdgeHosted::GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength /*= 0.0f*/) const
+{
+	auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+	if (gameInstance)
+	{
+		TArray<FDrawingDesignerLined> linesDouble;
+		FVector localViewDirection(GetWorldTransform().InverseTransformVector(ViewDirection));
+		gameInstance->GetMeshCache()->GetDesignerLines(CachedAssembly, CachedScale * InstanceData.FlipSigns, false, localViewDirection,
+			linesDouble, MinLength);
+		const FMatrix xform(GetWorldTransform().ToMatrixWithScale());
+		for (const auto& l : linesDouble)
+		{
+			FDrawingDesignerLine& newLine = OutDrawingLines.Emplace_GetRef(xform.TransformPosition(FVector(l.P1)),
+				xform.TransformPosition(FVector(l.P2)), xform.TransformPosition(FVector(l.N)));
+			newLine.Thickness = 0.15f;
+			newLine.GreyValue = 144 / 255.0f;
+		}
+	}
+}
+
 void AMOIEdgeHosted::InternalUpdateGeometry(bool bCreateCollision)
 {
 	const AModumateObjectInstance* parentObj = GetParentObject();
@@ -178,6 +200,7 @@ void AMOIEdgeHosted::InternalUpdateGeometry(bool bCreateCollision)
 		float cmaLength = CachedAssembly.GetCompoundAssemblyNativeSize().Z;
 		float lengthScale = lineLength / cmaLength;
 		FVector cmaScale = FVector(1.f, 1.f, lengthScale);
+		CachedScale = cmaScale;
 
 		// Obj pivot at midpoint and offset
 		FVector objSize = CachedAssembly.GetCompoundAssemblyNativeSize() * cmaScale;
