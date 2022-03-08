@@ -518,11 +518,11 @@ void UModumateGameInstance::RegisterAllCommands()
 			EToolMode toolMode = EToolMode::VE_NONE;
 			if (FindEnumValueByString<EToolMode>(toolModeStr, toolMode))
 			{
-				webState.toolMode = toolModeStr;
+				webState.tool = toolModeStr;
 				FString stateStr;
 				if (WriteJsonGeneric<FWebEditModelPlayerState>(stateStr, &webState))
 				{
-					doc->update_player_state_from_web(stateStr);
+					doc->update_player_state(stateStr);
 				}
 			}
 

@@ -727,6 +727,8 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 
 	StateData.DisplayName = webMOI.DisplayName;
 	StateData.ParentID = webMOI.Parent;
+	StateData.AssemblyGUID = webMOI.PresetID;
+
 	bVisible = webMOI.isVisible;
 
 	for (TFieldIterator<FProperty> it(structDef); it; ++it)
@@ -782,6 +784,32 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 				}
 			}
 		}
+
+		FStructProperty* structProp = CastField<FStructProperty>(*it);
+		if (structProp != nullptr)
+		{
+			// We support structured field types here...if we encounter a type we don't support, we'll need to set the web property to an error state
+			if (structProp->Struct == FDimensionOffset::StaticStruct())
+			{
+				// Get the data pointer and store its string value
+				FDimensionOffset* demoPtr = structProp->ContainerPtrToValuePtr<FDimensionOffset>(structPtr);
+				if (demoPtr != nullptr)
+				{
+					demoPtr->FromString(moiProp->ValueArray[0]);
+				}
+			} 
+
+			if (structProp->Struct->GetName() == TEXT("Vector"))
+			{
+				FVector* vectorPtr = structProp->ContainerPtrToValuePtr<FVector>(structPtr);
+				if (vectorPtr != nullptr)
+				{
+					vectorPtr->InitFromString(*moiProp->ValueArray[0]);
+				}
+			}
+
+			continue;
+		}
 	}
 
 	UpdateStateDataFromObject();
@@ -799,6 +827,7 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 	OutMOI.Parent = GetParentID();
 	OutMOI.Type = GetObjectType();
 	OutMOI.Children = GetChildIDs();
+	OutMOI.PresetID = GetStateData().AssemblyGUID;
 
 	// Get custom data
 	UScriptStruct* structDef;
@@ -823,8 +852,7 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 		FStrProperty* strProp = CastField<FStrProperty>(*it);
 		if (strProp != nullptr)
 		{
-			webProp.Value = strProp->GetPropertyValue_InContainer(structPtr);
-			webProp.ValueArray.Add(webProp.Value);
+			webProp.ValueArray.Add(strProp->GetPropertyValue_InContainer(structPtr));
 			OutMOI.Properties.Add(webProp.Name, webProp);
 			continue;
 		}
@@ -832,17 +860,23 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 		FBoolProperty* boolProp = CastField<FBoolProperty>(*it);
 		if (boolProp != nullptr)
 		{
-			webProp.Value = boolProp->GetPropertyValue_InContainer(structPtr) ? TEXT("true") : TEXT("false");
-			webProp.ValueArray.Add(webProp.Value);
+			webProp.ValueArray.Add(boolProp->GetPropertyValue_InContainer(structPtr) ? TEXT("true") : TEXT("false"));
 			OutMOI.Properties.Add(webProp.Name, webProp);
 			continue;
 		}
 
-		FNumericProperty* numProp = CastField<FNumericProperty>(*it);
-		if (numProp != nullptr)
+		FIntProperty* intProp = CastField<FIntProperty>(*it);
+		if (intProp != nullptr)
 		{
-			webProp.Value = FString::Printf(TEXT("%d"), numProp->GetSignedIntPropertyValue(structPtr));
-			webProp.ValueArray.Add(webProp.Value);
+			webProp.ValueArray.Add(FString::Printf(TEXT("%d"), static_cast<int32>(intProp->GetPropertyValue_InContainer(structPtr))));
+			OutMOI.Properties.Add(webProp.Name, webProp);
+			continue;
+		}
+
+		FFloatProperty* floatProp = CastField<FFloatProperty>(*it);
+		if (floatProp != nullptr)
+		{
+			webProp.ValueArray.Add(FString::Printf(TEXT("%f"), static_cast<float>(floatProp->GetPropertyValue_InContainer(structPtr))));
 			OutMOI.Properties.Add(webProp.Name, webProp);
 			continue;
 		}
@@ -876,6 +910,33 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 			}
 
 			OutMOI.Properties.Add(webProp.Name, webProp);
+			continue;
+		}
+
+		FStructProperty* structProp = CastField<FStructProperty>(*it);
+		if (structProp != nullptr)
+		{
+			// We support structured field types here...if we encounter a type we don't support, we'll need to set the web property to an error state
+			if (structProp->Struct == FDimensionOffset::StaticStruct())
+			{
+				// Get the data pointer and store its string value
+				const FDimensionOffset* demoPtr = structProp->ContainerPtrToValuePtr<FDimensionOffset>(structPtr);
+				if (demoPtr != nullptr)
+				{
+					webProp.ValueArray.Add(demoPtr->ToString());
+					OutMOI.Properties.Add(webProp.Name, webProp);
+				}
+			}
+
+			if (structProp->Struct->GetName() == TEXT("Vector"))
+			{
+				const FVector* vectorPtr = structProp->ContainerPtrToValuePtr<FVector>(structPtr);
+				if (vectorPtr != nullptr)
+				{
+					webProp.ValueArray.Add(vectorPtr->ToString());
+					OutMOI.Properties.Add(webProp.Name, webProp);
+				}
+			}
 			continue;
 		}
 	}

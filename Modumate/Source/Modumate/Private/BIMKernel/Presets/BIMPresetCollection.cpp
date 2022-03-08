@@ -1145,6 +1145,9 @@ EBIMResult FBIMPresetCollection::GetWebPresets(FBIMWebPresetCollection& OutPrese
 		FBIMWebPreset& webPreset = OutPresets.presets.AddDefaulted_GetRef();
 		kvp.Value.ToWebPreset(webPreset);
 	}
+
+	OutPresets.ncpTaxonomy = PresetTaxonomy.Nodes;
+
 	return EBIMResult::Success;
 }
 

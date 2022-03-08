@@ -18,7 +18,38 @@ FMOIFaceHostedData::FMOIFaceHostedData()
 
 AMOIFaceHosted::AMOIFaceHosted()
 	: AModumateObjectInstance()
-{}
+{
+	FWebMOIProperty prop;
+
+	prop.Name = TEXT("OffsetZ");
+	prop.Type = EWebMOIPropertyType::offset;
+	prop.DisplayName = TEXT("Offset");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("FlipSigns");
+	prop.Type = EWebMOIPropertyType::flip;
+	prop.DisplayName = TEXT("Flip");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("BasisEdge");
+	prop.Type = EWebMOIPropertyType::button;
+	prop.DisplayName = TEXT("Basis");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+    // TODO: make this a lamba property
+	prop.Name = TEXT("NumEdges");
+	prop.Type = EWebMOIPropertyType::button;
+	prop.DisplayName = TEXT("NumEdges");
+	prop.isEditable = false;
+	prop.isVisible = false;
+	WebProperties.Add(prop.Name, prop);
+}
 
 AActor* AMOIFaceHosted::CreateActor(const FVector& loc, const FQuat& rot)
 {
@@ -255,6 +286,14 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 			cma->SetActorTransform(cmaTransform);
 		}
 	}
+}
+
+bool AMOIFaceHosted::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+{
+	// we know this tracks perfectly. It would normally be cached, but it's okay to update it directly.
+	// TODO: refactor this to a lambda property 
+	InstanceData.NumEdges = 1;
+	return AModumateObjectInstance::CleanObject(DirtyFlag, OutSideEffectDeltas);
 }
 
 void AMOIFaceHosted::OnInstPropUIChangedOffsetZ(const FDimensionOffset& NewValue)

@@ -31,6 +31,9 @@ struct MODUMATE_API FBIMWebPresetCollection
 
 	UPROPERTY()
 	TArray<FBIMWebPreset> presets;
+
+	UPROPERTY()
+	TArray<FBIMPresetTaxonomyNode> ncpTaxonomy;
 };
 
 USTRUCT()

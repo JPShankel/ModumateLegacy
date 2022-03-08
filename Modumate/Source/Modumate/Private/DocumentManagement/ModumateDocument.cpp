@@ -4479,7 +4479,7 @@ void UModumateDocument::string_to_inches(const FString& InRequest)
 	if (req.ReadJson(InRequest))
 	{
 		if (req.requestType != EDrawingDesignerRequestType::stringToInches) return;
-		FDrawingDesignerStringToInchesResponse rsp;
+		FDrawingDesignerGenericFloatResponse rsp;
 
 		FString jsonResponse;
 		rsp.request = req;
@@ -4488,6 +4488,46 @@ void UModumateDocument::string_to_inches(const FString& InRequest)
 		rsp.answer = formattedDim.Centimeters * UModumateDimensionStatics::CentimetersToInches;
 		rsp.WriteJson(jsonResponse);
 		
+		DrawingSendResponse(TEXT("onGenericResponse"), jsonResponse);
+	}
+}
+
+void UModumateDocument::string_to_centimeters(const FString& InRequest)
+{
+	FDrawingDesignerGenericRequest req;
+
+	if (req.ReadJson(InRequest))
+	{
+		if (req.requestType != EDrawingDesignerRequestType::stringToCentimeters) return;
+		FDrawingDesignerGenericFloatResponse rsp;
+
+		FString jsonResponse;
+		rsp.request = req;
+		const FDocumentSettings& settings = GetCurrentSettings();
+		const FModumateFormattedDimension formattedDim = UModumateDimensionStatics::StringToSettingsFormattedDimension(req.data, settings);
+		rsp.answer = formattedDim.Centimeters;
+		rsp.WriteJson(jsonResponse);
+
+		DrawingSendResponse(TEXT("onGenericResponse"), jsonResponse);
+	}
+}
+
+void UModumateDocument::centimeters_to_string(const FString& InRequest)
+{
+	FDrawingDesignerGenericRequest req;
+
+	if (req.ReadJson(InRequest))
+	{
+		if (req.requestType != EDrawingDesignerRequestType::centimeterToString) return;
+		FDrawingDesignerGenericStringResponse rsp;
+
+		FString jsonResponse;
+		rsp.request = req;
+		FString data = req.data;
+		double cm = FCString::Atof(*data);
+		rsp.answer = UModumateDimensionStatics::CentimetersToDisplayText(cm).ToString();
+		rsp.WriteJson(jsonResponse);
+
 		DrawingSendResponse(TEXT("onGenericResponse"), jsonResponse);
 	}
 }
@@ -4502,7 +4542,6 @@ void UModumateDocument::UpdateWebPresets()
 		DrawingSendResponse(TEXT("onPresetsChanged"), jsonPresets);
 	}
 }
-
 
 void UModumateDocument::UpdateWebMOIs(const EObjectType ObjectType) const
 {
@@ -4605,7 +4644,7 @@ void UModumateDocument::update_moi(int32 ID, const FString& MOIData)
 	);	
 }
 
-void UModumateDocument::update_player_state_from_web(const FString& InStateJson)
+void UModumateDocument::update_player_state(const FString& InStateJson)
 {
 	auto* localPlayer = GetWorld() ? GetWorld()->GetFirstLocalPlayerFromController() : nullptr;
 	auto* controller = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(GetWorld())) : nullptr;

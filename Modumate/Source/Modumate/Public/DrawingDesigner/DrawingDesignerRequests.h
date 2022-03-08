@@ -14,6 +14,8 @@ enum class EDrawingDesignerRequestType
 	unknown = 0,
 	getClickedMoi,
 	stringToInches,
+	stringToCentimeters,
+	centimeterToString
 };
 
 USTRUCT()
@@ -69,7 +71,7 @@ struct MODUMATE_API FDrawingDesignerMoiResponse
 
 
 USTRUCT()
-struct MODUMATE_API FDrawingDesignerStringToInchesResponse
+struct MODUMATE_API FDrawingDesignerGenericFloatResponse
 {
 	GENERATED_BODY()
 
@@ -80,9 +82,29 @@ struct MODUMATE_API FDrawingDesignerStringToInchesResponse
 	float answer = 0.0f;
 
 	bool WriteJson(FString& OutJson) const {
-		return WriteJsonGeneric<FDrawingDesignerStringToInchesResponse>(OutJson, this);
+		return WriteJsonGeneric<FDrawingDesignerGenericFloatResponse>(OutJson, this);
 	}
 	bool ReadJson(const FString& InJson) {
-		return ReadJsonGeneric<FDrawingDesignerStringToInchesResponse>(InJson, this);
+		return ReadJsonGeneric<FDrawingDesignerGenericFloatResponse>(InJson, this);
+	}
+};
+
+
+USTRUCT()
+struct MODUMATE_API FDrawingDesignerGenericStringResponse
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FDrawingDesignerGenericRequest request;
+
+	UPROPERTY()
+	FString answer;
+
+	bool WriteJson(FString& OutJson) const {
+		return WriteJsonGeneric<FDrawingDesignerGenericStringResponse>(OutJson, this);
+	}
+	bool ReadJson(const FString& InJson) {
+		return ReadJsonGeneric<FDrawingDesignerGenericStringResponse>(InJson, this);
 	}
 };

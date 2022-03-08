@@ -37,7 +37,7 @@ struct MODUMATE_API FWebEditModelPlayerState
 	TArray<int32> hiddenObjects;
 
 	UPROPERTY()
-	FString toolMode;
+	FString tool;
 
 	UPROPERTY()
 	FString toolPresetGUID;

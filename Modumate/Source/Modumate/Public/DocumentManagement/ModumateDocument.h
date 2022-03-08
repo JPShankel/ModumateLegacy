@@ -408,6 +408,12 @@ public:
 	UFUNCTION()
 	void string_to_inches(const FString& InRequest);
 
+	UFUNCTION()
+	void string_to_centimeters(const FString& InRequest);
+
+	UFUNCTION()
+	void centimeters_to_string(const FString& InRequest);
+
 	// MOI WEB API
 	UFUNCTION()
 	void create_moi(const FString& MOIType, int32 ParentID = 0);
@@ -419,7 +425,7 @@ public:
 	void update_moi(int32 ID,const FString& MOIData);
 
 	UFUNCTION()
-	void update_player_state_from_web(const FString& PlayerStateData);
+	void update_player_state(const FString& PlayerStateData);
 
 	UFUNCTION()
 	void request_project_settings();

@@ -34,7 +34,10 @@ enum class EWebMOIPropertyType : uint8
 	text,
 	boolean,
 	color,
-	moiId
+	moiId,
+	offset,
+	flip,
+	button
 };
 
 USTRUCT()
@@ -49,13 +52,16 @@ struct MODUMATE_API FWebMOIProperty
 	EWebMOIPropertyType Type = EWebMOIPropertyType::text;
 
 	UPROPERTY()
-	FString Value;
-
-	UPROPERTY()
 	TArray<FString> ValueArray;
 
 	UPROPERTY()
 	FString DisplayName;
+
+	UPROPERTY()
+	bool isVisible;
+
+	UPROPERTY()
+	bool isEditable;
 };
 
 USTRUCT()
@@ -71,6 +77,9 @@ struct MODUMATE_API FWebMOI
 
 	UPROPERTY()
 	TArray<int32> Children;
+
+	UPROPERTY()
+	FGuid PresetID;
 
 	UPROPERTY()
 	int32 Parent = 0;

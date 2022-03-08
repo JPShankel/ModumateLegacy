@@ -39,6 +39,9 @@ struct MODUMATE_API FDimensionOffset
 	static FDimensionOffset Positive;
 	static FDimensionOffset Centered;
 	static FDimensionOffset Negative;
+
+	FString ToString() const;
+	void FromString(FString& str);
 };
 
 template<>

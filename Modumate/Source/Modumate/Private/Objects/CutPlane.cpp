@@ -29,8 +29,7 @@ AMOICutPlane::AMOICutPlane()
 	EdgeSelectedColor(0x93, 0x93, 0x93),
 	EdgeColor(0x63, 0xC3, 0xBA),
 	bHUDDwgDrafting(true)
-{
-}
+{}
 
 AActor* AMOICutPlane::CreateActor(const FVector& loc, const FQuat& rot)
 {

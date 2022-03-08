@@ -29,6 +29,10 @@ struct MODUMATE_API FMOIFaceHostedData
 
 	UPROPERTY()
 	int32 BasisEdge = 0;
+
+	// this is a read only cached value
+	UPROPERTY()
+	int32 NumEdges = 0;
 };
 
 UCLASS()
@@ -46,6 +50,7 @@ public:
 	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping, bool bForSelection) const override;
 	virtual void ToggleAndUpdateCapGeometry(bool bEnableCap) override;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane,
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 		TArray<TArray<FVector>>& OutPerimeters) const override;

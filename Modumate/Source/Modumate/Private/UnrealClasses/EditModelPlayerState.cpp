@@ -1750,7 +1750,7 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 
 	if (EMPlayerController && EMPlayerController->CurrentTool)
 	{
-		OutState.toolMode = GetEnumValueString<EToolMode>(EMPlayerController->CurrentTool->GetToolMode());
+		OutState.tool = GetEnumValueString<EToolMode>(EMPlayerController->CurrentTool->GetToolMode());
 		OutState.toolPresetGUID = EMPlayerController->CurrentTool->GetAssemblyGUID().ToString();
 	}
 
@@ -1795,7 +1795,7 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 	}
 
 	EToolMode toolMode;
-	if (EMPlayerController && EMPlayerController->CurrentTool && FindEnumValueByString<EToolMode>(InState.toolMode,toolMode))
+	if (EMPlayerController && EMPlayerController->CurrentTool && FindEnumValueByString<EToolMode>(InState.tool,toolMode))
 	{
 		// If tool mode is different, change tool mode
 		if (toolMode != EMPlayerController->CurrentTool->GetToolMode())

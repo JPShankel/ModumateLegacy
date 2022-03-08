@@ -13,21 +13,29 @@ AMOIDesignOption::AMOIDesignOption()
 	prop.Name = TEXT("hexColor");
 	prop.Type = EWebMOIPropertyType::color;
 	prop.DisplayName = TEXT("Color");
+	prop.isEditable = true;
+	prop.isVisible = true;
 	WebProperties.Add(prop.Name,prop);
 
 	prop.Name = TEXT("groups");
 	prop.Type = EWebMOIPropertyType::moiId;
 	prop.DisplayName = TEXT("Groups");
+	prop.isEditable = false;
+	prop.isVisible = false;
 	WebProperties.Add(prop.Name, prop);
 
 	prop.Name = TEXT("subOptions");
 	prop.Type = EWebMOIPropertyType::moiId;
 	prop.DisplayName = TEXT("Sub-Options");
+	prop.isEditable = false;
+	prop.isVisible = false;
 	WebProperties.Add(prop.Name, prop);
 
 	prop.Name = TEXT("isShowing");
 	prop.Type = EWebMOIPropertyType::boolean;
 	prop.DisplayName = TEXT("Showing");
+	prop.isEditable = false;
+	prop.isVisible = false;
 	WebProperties.Add(prop.Name, prop);
 }
 

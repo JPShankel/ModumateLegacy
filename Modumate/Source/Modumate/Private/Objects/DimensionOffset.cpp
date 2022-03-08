@@ -1,7 +1,7 @@
 // Copyright 2020 Modumate, Inc. All Rights Reserved.
 
 #include "Objects/DimensionOffset.h"
-
+#include "ModumateCore/PrettyJSONWriter.h"
 
 FDimensionOffset FDimensionOffset::Positive(EDimensionOffsetType::Positive, 0.0f);
 FDimensionOffset FDimensionOffset::Centered(EDimensionOffsetType::Centered, 0.0f);
@@ -85,3 +85,16 @@ void FDimensionOffset::Invert()
 		break;
 	}
 }
+
+FString FDimensionOffset::ToString() const
+{
+	FString outputString;
+	WriteJsonGeneric(outputString, this);
+	return outputString;
+}
+
+void FDimensionOffset::FromString(FString& str)
+{
+	ReadJsonGeneric(str, this);
+}
+
