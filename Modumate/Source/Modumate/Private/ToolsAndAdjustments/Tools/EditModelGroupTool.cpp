@@ -83,7 +83,9 @@ bool UGroupTool::Activate()
 		}
 		
 		TArray<FGraph3DDelta> graphDeltas;
-		oldGraph->GetDeltaForDeleteObjects(metaItemsToMove, graphDeltas, nextID, true);
+		// Regular delete has bGatherEdgesFromFaces = false, bAttemptJoin = true. This can change
+		// behaviour slightly (esp. bGatherEdgesFromFaces).
+		oldGraph->GetDeltaForDeleteObjects(metaItemsToMove, graphDeltas, nextID, true /* bGatherEdgesFromFaces */, false /* bAttemptJoin */);
 		TArray<FGraph3DDelta> createGraphDeltas;
 
 		FModumateObjectDeltaStatics::ConvertGraphDeleteToMove(graphDeltas, oldGraph, nextID, createGraphDeltas);

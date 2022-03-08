@@ -721,14 +721,31 @@ void FModumateObjectDeltaStatics::ConvertGraphDeleteToMove(const TArray<FGraph3D
 	TArray<int32> newIDs;  // unused
 
 	TMap<int32, int32> newFaceIDToOldFaceID;
+	newFaceIDToOldFaceID.Add(MOD_ID_NONE, MOD_ID_NONE);
+
 	for (auto& graphDelta: GraphDeltas)
 	{
+		FGraph3DDelta vertexDelta;
+		for (auto& vertex : graphDelta.VertexDeletions)
+		{
+			int32 vertID = vertex.Key;
+			int32 outID;  // unused
+			tempGraph.GetDeltaForVertexAddition(vertex.Value, vertexDelta, vertID, outID);
+		}
+
+		if (vertexDelta.VertexAdditions.Num() > 0)
+		{
+			// Creating delta doesn't apply it to graph, unlike edges/faces. Not sure why.
+			tempGraph.ApplyDelta(vertexDelta);
+			OutDeltas.Add({ vertexDelta });
+		}
+
 		for (auto& edge : graphDelta.EdgeDeletions)
 		{
 			TArray<FGraph3DDelta> addEdgeDeltas;
 			FVector vert0(OldGraph->FindVertex(edge.Value.Vertices[0])->Position);
 			FVector vert1(OldGraph->FindVertex(edge.Value.Vertices[1])->Position);
-			tempGraph.GetDeltaForEdgeAdditionWithSplit(vert0, vert1, addEdgeDeltas, NextID, newIDs);
+			tempGraph.GetDeltaForEdgeAdditionWithSplit(vert0, vert1, addEdgeDeltas, NextID, newIDs, false /* bCheckFaces*/, true /* bSplitAndUpdateEdges */);
 			for (auto& edgeDelta : addEdgeDeltas)
 			{
 				if (edgeDelta.EdgeAdditions.Num() == 1)
@@ -751,7 +768,7 @@ void FModumateObjectDeltaStatics::ConvertGraphDeleteToMove(const TArray<FGraph3D
 				faceVertexPositions.Add(OldGraph->FindVertex(v)->Position);
 			}
 			TArray<FGraph3DDelta> addFaceDeltas;
-			tempGraph.GetDeltaForFaceAddition(faceVertexPositions, addFaceDeltas, NextID, newIDs);
+			tempGraph.GetDeltaForFaceAddition(faceVertexPositions, addFaceDeltas, NextID, newIDs, true /* bSplitAndUpdateFaces */);
 
 			if (addFaceDeltas.Num() > 0 && addFaceDeltas[0].FaceAdditions.Num() == 1)
 			{
@@ -771,10 +788,8 @@ void FModumateObjectDeltaStatics::ConvertGraphDeleteToMove(const TArray<FGraph3D
 					for (auto& faceContainmentUpdate : addFaceDelta.FaceContainmentUpdates)
 					{
 						auto& newContainment = newContainmentUpdates.Add(newFaceIDToOldFaceID[faceContainmentUpdate.Key]);
-						newContainment.NextContainingFaceID = 
-							faceContainmentUpdate.Value.NextContainingFaceID == MOD_ID_NONE ? MOD_ID_NONE : newFaceIDToOldFaceID[faceContainmentUpdate.Value.NextContainingFaceID];
-						newContainment.PrevContainingFaceID = 
-							faceContainmentUpdate.Value.PrevContainingFaceID == MOD_ID_NONE ? MOD_ID_NONE : newFaceIDToOldFaceID[faceContainmentUpdate.Value.PrevContainingFaceID];
+						newContainment.NextContainingFaceID = newFaceIDToOldFaceID[faceContainmentUpdate.Value.NextContainingFaceID];
+						newContainment.PrevContainingFaceID = newFaceIDToOldFaceID[faceContainmentUpdate.Value.PrevContainingFaceID];
 
 						for (int32 newfaceID : faceContainmentUpdate.Value.ContainedFaceIDsToAdd)
 						{
