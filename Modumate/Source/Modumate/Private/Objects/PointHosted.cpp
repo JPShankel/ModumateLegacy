@@ -17,7 +17,44 @@ FMOIPointHostedData::FMOIPointHostedData()
 
 AMOIPointHosted::AMOIPointHosted()
 	: AModumateObjectInstance()
-{}
+{
+	FWebMOIProperty prop;
+
+	prop.Name = TEXT("FlipSigns");
+	prop.Type = EWebMOIPropertyType::flip;
+	prop.DisplayName = TEXT("Flip");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("OffsetX");
+	prop.Type = EWebMOIPropertyType::offset;
+	prop.DisplayName = TEXT("Offset X");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("OffsetY");
+	prop.Type = EWebMOIPropertyType::offset;
+	prop.DisplayName = TEXT("Offset Y");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("OffsetZ");
+	prop.Type = EWebMOIPropertyType::offset;
+	prop.DisplayName = TEXT("Offset Z");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("Rotation");
+	prop.Type = EWebMOIPropertyType::eulerRotation3D;
+	prop.DisplayName = TEXT("Rotation");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+}
 
 AActor* AMOIPointHosted::CreateActor(const FVector& loc, const FQuat& rot)
 {

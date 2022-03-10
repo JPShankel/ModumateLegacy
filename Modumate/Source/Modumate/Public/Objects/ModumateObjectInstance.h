@@ -37,7 +37,8 @@ enum class EWebMOIPropertyType : uint8
 	moiId,
 	offset,
 	flip,
-	button
+	button,
+	eulerRotation3D
 };
 
 USTRUCT()
