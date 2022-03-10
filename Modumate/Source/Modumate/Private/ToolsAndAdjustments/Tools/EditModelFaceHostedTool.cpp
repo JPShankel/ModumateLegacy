@@ -71,7 +71,7 @@ bool UFaceHostedTool::FrameUpdate()
 	{
 		hitMOI = GameState->Document->ObjectFromActor(cursor.Actor);
 
-		if (hitMOI && (hitMOI->GetObjectType() == EObjectType::OTFaceHosted) || (compatibleObjectTypes.Contains(hitMOI->GetObjectType())))
+		if (hitMOI && (hitMOI->GetObjectType() == EObjectType::OTFaceHosted || compatibleObjectTypes.Contains(hitMOI->GetObjectType())))
 		{
 			hitMOI = hitMOI->GetParentObject();
 		}

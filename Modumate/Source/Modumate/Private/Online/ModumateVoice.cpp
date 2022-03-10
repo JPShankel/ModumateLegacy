@@ -262,9 +262,7 @@ void AModumateVoice::LeaveChannel()
 
 bool AModumateVoice::ToWebProjectSettings(FWebProjectSettings& OutSettings) const
 {
-#if UE_SERVER
-	return false;
-#endif
+#if !UE_SERVER
 	OutSettings.microphone.value = VoiceClient->AudioInputDevices().ActiveDevice().Name();
 	TMap<FString, FString> inputs;
 	GetInputDevices(inputs);
@@ -281,13 +279,13 @@ bool AModumateVoice::ToWebProjectSettings(FWebProjectSettings& OutSettings) cons
 		OutSettings.speaker.options.Add(FWebProjectSettingsPropertyOption(kvp.Key, kvp.Key));
 	}
 	return true;
+#endif
+	return false;
 }
 
 bool AModumateVoice::FromWebProjectSettings(const FWebProjectSettings& InSettings)
 {
-#if UE_SERVER
-	return false;
-#endif
+#if !UE_SERVER
 	bool bInputFound = false;
 	TMap<FString, FString> inputs;
 	if (GetInputDevices(inputs))
@@ -301,6 +299,8 @@ bool AModumateVoice::FromWebProjectSettings(const FWebProjectSettings& InSetting
 		bOutputFound = SetOutputDevice(outputs[InSettings.speaker.value]);
 	}
 	return bInputFound && bOutputFound;
+#endif
+	return false;
 }
 
 void AModumateVoice::SERVER_RequestVoiceLogin_Implementation(const FVivoxParam& Parameters)

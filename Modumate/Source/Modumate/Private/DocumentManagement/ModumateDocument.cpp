@@ -3135,6 +3135,7 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	}
 	ActiveVolumeGraph = RootVolumeGraph;
 
+
 	FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 
 	// If some elements didn't load in correctly, then mark the document as initially dirty,
@@ -4305,12 +4306,16 @@ void UModumateDocument::DeletePreset(UWorld* World, const FGuid& DeleteGUID, con
 
 int32 UModumateDocument::MPObjIDFromLocalObjID(int32 LocalObjID, int32 UserIdx)
 {
+#if UE_SERVER
+	return 1;
+#else
 	if (!ensure((UserIdx != INDEX_NONE) && (LocalObjID >= 0)))
 	{
 		return MOD_ID_NONE;
 	}
 
 	return LocalObjID | (UserIdx << LocalObjIDBits);
+#endif
 }
 
 void UModumateDocument::SplitMPObjID(int32 MPObjID, int32& OutLocalObjID, int32& OutUserIdx)
