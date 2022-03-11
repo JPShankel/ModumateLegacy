@@ -23,7 +23,44 @@ AMOIEdgeHosted::AMOIEdgeHosted()
 	, LineDir(ForceInitToZero)
 	, LineNormal(ForceInitToZero)
 	, LineUp(ForceInitToZero)
-{}
+{
+	FWebMOIProperty prop;
+
+	prop.Name = TEXT("FlipSigns");
+	prop.Type = EWebMOIPropertyType::flip;
+	prop.DisplayName = TEXT("Flip");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("OffsetUp");
+	prop.Type = EWebMOIPropertyType::offset;
+	prop.DisplayName = TEXT("Offset Y");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("OffsetNormal");
+	prop.Type = EWebMOIPropertyType::offset;
+	prop.DisplayName = TEXT("Offset X");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("Extensions");
+	prop.Type = EWebMOIPropertyType::extension;
+	prop.DisplayName = TEXT("Extensions");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("Rotation");
+	prop.Type = EWebMOIPropertyType::text;
+	prop.DisplayName = TEXT("Rotation");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+}
 
 AActor* AMOIEdgeHosted::CreateActor(const FVector& loc, const FQuat& rot)
 {

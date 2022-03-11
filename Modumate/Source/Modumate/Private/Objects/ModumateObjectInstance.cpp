@@ -753,10 +753,17 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 			continue;
 		}
 
-		FNumericProperty* numProp = CastField<FNumericProperty>(*it);
-		if (numProp != nullptr)
+		FFloatProperty* floatProp = CastField<FFloatProperty>(*it);
+		if (floatProp != nullptr)
 		{
-			numProp->SetIntPropertyValue(structPtr, static_cast<int64>(FCString::Atoi(*moiProp->ValueArray[0])));
+			floatProp->SetPropertyValue_InContainer(structPtr, static_cast<float>(FCString::Atof(*moiProp->ValueArray[0])));
+			continue;
+		}
+
+		FIntProperty* intProp = CastField<FIntProperty>(*it);
+		if (intProp != nullptr)
+		{
+			intProp->SetPropertyValue_InContainer(structPtr, static_cast<int32>(FCString::Atoi(*moiProp->ValueArray[0])));
 			continue;
 		}
 
@@ -940,6 +947,16 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 			if (structProp->Struct->GetName() == TEXT("Vector"))
 			{
 				const FVector* vectorPtr = structProp->ContainerPtrToValuePtr<FVector>(structPtr);
+				if (vectorPtr != nullptr)
+				{
+					webProp.ValueArray.Add(vectorPtr->ToString());
+					OutMOI.Properties.Add(webProp.Name, webProp);
+				}
+			}
+
+			if (structProp->Struct->GetName() == TEXT("Vector2D"))
+			{
+				const FVector2D* vectorPtr = structProp->ContainerPtrToValuePtr<FVector2D>(structPtr);
 				if (vectorPtr != nullptr)
 				{
 					webProp.ValueArray.Add(vectorPtr->ToString());
