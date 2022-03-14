@@ -4523,7 +4523,7 @@ void UModumateDocument::centimeters_to_string(const FString& InRequest)
 
 	if (req.ReadJson(InRequest))
 	{
-		if (req.requestType != EDrawingDesignerRequestType::centimeterToString) return;
+		if (req.requestType != EDrawingDesignerRequestType::centimetersToString) return;
 		FDrawingDesignerGenericStringResponse rsp;
 
 		FString jsonResponse;

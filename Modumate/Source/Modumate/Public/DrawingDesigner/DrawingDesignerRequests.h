@@ -15,7 +15,7 @@ enum class EDrawingDesignerRequestType
 	getClickedMoi,
 	stringToInches,
 	stringToCentimeters,
-	centimeterToString
+	centimetersToString
 };
 
 USTRUCT()

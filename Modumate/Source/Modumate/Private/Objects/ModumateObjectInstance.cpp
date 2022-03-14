@@ -815,6 +815,15 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 				}
 			}
 
+			if (structProp->Struct->GetName() == TEXT("Vector2D"))
+			{
+				FVector2D* vectorPtr = structProp->ContainerPtrToValuePtr<FVector2D>(structPtr);
+				if (vectorPtr != nullptr)
+				{
+					vectorPtr->InitFromString(*moiProp->ValueArray[0]);
+				}
+			}
+
 			if (structProp->Struct->GetName() == TEXT("Rotator"))
 			{
 				FRotator* rotatorPtr = structProp->ContainerPtrToValuePtr<FRotator>(structPtr);
