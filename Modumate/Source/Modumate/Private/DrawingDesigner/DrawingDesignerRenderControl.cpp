@@ -53,8 +53,8 @@ FString FDrawingDesignerRenderControl::GetViewList()
 		if (UModumateGeometryStatics::AnalyzeCachedPositions(controlPoints, plane, axisX, axisY, points2d, center))
 		{
 			FVector2D size((points2d[2] - points2d[0]).GetAbs());
-			view.aspect.x = 1.0f;
-			view.aspect.y = size.Y / size.X;
+			view.size.x = size.X;
+			view.size.y = size.Y;
 			
 			FMOICutPlaneData cutPlaneData;
 			cutPlane->GetStateData().CustomData.LoadStructData(cutPlaneData);
@@ -167,7 +167,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 		viewResponse.request = viewRequest;
 		viewResponse.response.resolution_pixels = viewRequest.minimum_resolution_pixels;
 		viewResponse.response.view.moi_id = viewRequest.moi_id;
-		viewResponse.response.view.aspect = { 1.0f, viewHeight / viewWidth };
+		viewResponse.response.view.size = { viewWidth, viewHeight };
 		viewResponse.response.resolution_pixels = viewRequest.minimum_resolution_pixels;
 		viewResponse.response.view.name = cutPlaneData.Name;
 		viewResponse.response.scale = FModumateUnitValue(CachedSize.Y, EModumateUnitType::WorldCentimeters).AsWorldInches();

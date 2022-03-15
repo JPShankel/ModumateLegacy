@@ -134,7 +134,7 @@ struct MODUMATE_API FDrawingDesignerView
 	int32 moi_id = INDEX_NONE;
 
 	UPROPERTY()
-	FDrawingDesignerPoint aspect;
+	FDrawingDesignerPoint size;
 
 	UPROPERTY()
 	FString name;

@@ -20,8 +20,8 @@ bool FModumateDrawingDesignerViewTest::RunTest(const FString& Parameters)
 
 	FDrawingDesignerViewList myList;
 	FDrawingDesignerView sample;
-	sample.aspect.x = 1;
-	sample.aspect.y = 1;
+	sample.size.x = 1;
+	sample.size.y = 1;
 	sample.moi_id = INDEX_NONE; // Just for sample...
 	myList.views.Add(sample);
 

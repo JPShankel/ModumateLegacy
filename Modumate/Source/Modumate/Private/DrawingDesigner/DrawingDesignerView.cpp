@@ -13,7 +13,7 @@
  */
 bool FDrawingDesignerView::operator==(const FDrawingDesignerView& RHS) const
 {
-	return this->moi_id == RHS.moi_id && this->aspect == RHS.aspect;
+	return this->moi_id == RHS.moi_id && this->size == RHS.size;
 }
 
 bool FDrawingDesignerView::operator!=(const FDrawingDesignerView& RHS) const

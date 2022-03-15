@@ -93,7 +93,7 @@ bool UDrawingDesignerMeshCache::GetLinesForAssembly(const FBIMAssemblySpec& Asse
 		return false;
 	}
 
-	static constexpr bool bUseLowLOD = false;  // TBD
+	static constexpr bool bUseLowLOD = true;  // TBD
 
 	actor->MakeFromAssembly(Assembly, Scale, false, false);
 
