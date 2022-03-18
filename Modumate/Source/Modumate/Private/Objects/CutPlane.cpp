@@ -29,7 +29,16 @@ AMOICutPlane::AMOICutPlane()
 	EdgeSelectedColor(0x93, 0x93, 0x93),
 	EdgeColor(0x63, 0xC3, 0xBA),
 	bHUDDwgDrafting(true)
-{}
+{
+	FWebMOIProperty prop;
+
+	prop.Name = TEXT("Rotation");
+	prop.Type = EWebMOIPropertyType::quatRotation;
+	prop.DisplayName = TEXT("Flip Direction");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+}
 
 AActor* AMOICutPlane::CreateActor(const FVector& loc, const FQuat& rot)
 {

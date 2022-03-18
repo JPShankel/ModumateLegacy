@@ -39,6 +39,7 @@ enum class EWebMOIPropertyType : uint8
 	flip,
 	button,
 	eulerRotation3D,
+	quatRotation,
 	extension
 };
 

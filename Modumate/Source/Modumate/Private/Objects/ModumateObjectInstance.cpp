@@ -833,6 +833,15 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 				}
 			}
 
+			if (structProp->Struct->GetName() == TEXT("Quat"))
+			{
+				FQuat* quatPtr = structProp->ContainerPtrToValuePtr<FQuat>(structPtr);
+				if (quatPtr != nullptr)
+				{
+					quatPtr->InitFromString(*moiProp->ValueArray[0]);
+				}
+			}
+
 			continue;
 		}
 	}
@@ -979,6 +988,16 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 				if (rotatorPtr != nullptr)
 				{
 					webProp.ValueArray.Add(rotatorPtr->ToString());
+					OutMOI.Properties.Add(webProp.Name, webProp);
+				}
+			}
+
+			if (structProp->Struct->GetName() == TEXT("Quat"))
+			{
+				const FQuat* quatPtr = structProp->ContainerPtrToValuePtr<FQuat>(structPtr);
+				if (quatPtr != nullptr)
+				{
+					webProp.ValueArray.Add(quatPtr->ToString());
 					OutMOI.Properties.Add(webProp.Name, webProp);
 				}
 			}
