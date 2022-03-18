@@ -290,9 +290,11 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 
 bool AMOIFaceHosted::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
-	// we know this tracks perfectly. It would normally be cached, but it's okay to update it directly.
-	// TODO: refactor this to a lambda property 
-	InstanceData.NumEdges = 1;
+	// We know this tracks perfectly. It would normally be cached, but it's okay to update it directly.
+	// TODO: Adapt this to use spans when they are ready
+	const AModumateObjectInstance* parentObj = GetParentObject();
+	const FGraph3DFace* parentFace = Document->GetVolumeGraph()->FindFace(parentObj->ID);
+	InstanceData.NumEdges = parentFace->EdgeIDs.Num();
 	return AModumateObjectInstance::CleanObject(DirtyFlag, OutSideEffectDeltas);
 }
 
