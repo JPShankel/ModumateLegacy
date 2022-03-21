@@ -647,6 +647,22 @@ Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Cementitious Wood Fiber-Length-24i
 0LayerPattern_2D-Stack Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
 83F14900-83BD-9146-9777-284171A088D2",
+PRESET,,086A28F7-F483-C04E-BF3A-9B647EB47F94,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
+Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-1.125in-BevelWidth-0in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+F96EBDB4-140A-C442-B6D7-39EC3271FBD3
+086A28F7-F483-C04E-BF3A-9B647EB47F94",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,Plywood Panel,,IconLength,48in,,X,,"Assembly_2FlexDims1Fixed_PlanarPattern
+Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thickness-1.125in-BevelWidth-0in-Finish1-0RawMaterial-Plywood-FFFFFF
+0LayerPattern_2D-Running Bond
+Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
+F96EBDB4-140A-C442-B6D7-39EC3271FBD3",
+,,,,,,,,,,IconHeight,64in,,,,,
+PRESET,,17BE5D04-EC69-874A-AC74-5B32CB5E4398,,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
+Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-F3F1ED-672BB2A2-EE65-264B-AFD6-F753EF54F68D
+17BE5D04-EC69-874A-AC74-5B32CB5E4398",,Assembly_2FlexDims1Fixed_PlanarGroup_Wall,,"Paint, Near White",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-F3F1ED-672BB2A2-EE65-264B-AFD6-F753EF54F68D,
+PRESET,,,,,,,,,,IconHeight,64in,,,,,
 PRESET,,9E11DBCA-2BCC-9F4B-9AEC-C9C756E969E9,,"Assembly_2FlexDims1Fixed_PlanarGroup_Finish
 Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-F3F1ED-672BB2A2-EE65-264B-AFD6-F753EF54F68D
 9E11DBCA-2BCC-9F4B-9AEC-C9C756E969E9",,Assembly_2FlexDims1Fixed_PlanarGroup_Finish,,"Paint, Near White",,IconLength,48in,,X,,Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-F3F1ED-672BB2A2-EE65-264B-AFD6-F753EF54F68D,
