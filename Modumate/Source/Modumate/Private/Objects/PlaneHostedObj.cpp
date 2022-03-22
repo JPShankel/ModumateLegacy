@@ -14,6 +14,7 @@
 #include "ModumateCore/ModumateMitering.h"
 #include "Objects/ModumateObjectStatics.h"
 #include "Objects/MOIDelta.h"
+#include "Objects/MetaPlaneSpan.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
@@ -47,7 +48,7 @@ AMOIPlaneHostedObj::AMOIPlaneHostedObj()
 FQuat AMOIPlaneHostedObj::GetRotation() const
 {
 	const AModumateObjectInstance *parent = GetParentObject();
-	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
+	if (ensure(parent && IsValidParentObjectType(parent->GetObjectType())))
 	{
 		return parent->GetRotation();
 	}
@@ -60,7 +61,7 @@ FQuat AMOIPlaneHostedObj::GetRotation() const
 FVector AMOIPlaneHostedObj::GetLocation() const
 {
 	const AModumateObjectInstance *parent = GetParentObject();
-	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
+	if (ensure(parent && IsValidParentObjectType(parent->GetObjectType())))
 	{
 		float thickness, startOffset;
 		FVector normal;
@@ -79,7 +80,7 @@ FVector AMOIPlaneHostedObj::GetCorner(int32 CornerIndex) const
 {
 	// Handle the meta plane host case which just returns the meta plane with this MOI's offset
 	const AModumateObjectInstance *parent = GetParentObject();
-	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
+	if (ensure(parent && IsValidParentObjectType(parent->GetObjectType())))
 	{
 		int32 numPlanePoints = parent->GetNumCorners();
 		bool bOnStartingSide = (CornerIndex < numPlanePoints);
@@ -103,7 +104,7 @@ FVector AMOIPlaneHostedObj::GetCorner(int32 CornerIndex) const
 FVector AMOIPlaneHostedObj::GetNormal() const
 {
 	const AModumateObjectInstance *planeParent = GetParentObject();
-	if (ensureAlways(planeParent && (planeParent->GetObjectType() == EObjectType::OTMetaPlane)))
+	if (ensureAlways(planeParent && IsValidParentObjectType(planeParent->GetObjectType())))
 	{
 		return planeParent->GetNormal();
 	}
@@ -179,7 +180,7 @@ void AMOIPlaneHostedObj::GetStructuralPointsAndLines(TArray<FStructurePoint> &ou
 {
 	const AModumateObjectInstance *parent = GetParentObject();
 
-	if (ensure(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
+	if (ensure(parent && IsValidParentObjectType(parent->GetObjectType())))
 	{
 		int32 numPlanePoints = parent->GetNumCorners();
 
@@ -214,7 +215,7 @@ void AMOIPlaneHostedObj::ToggleAndUpdateCapGeometry(bool bEnableCap)
 void AMOIPlaneHostedObj::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 {
 	AModumateObjectInstance *parent = GetParentObject();
-	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
+	if (!ensureAlways(parent && IsValidParentObjectType(parent->GetObjectType())))
 	{
 		return;
 	}
@@ -551,8 +552,9 @@ void AMOIPlaneHostedObj::UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalcul
 	}
 
 	int32 parentID = GetParentID();
-	const FGraph3DFace *planeFace = doc->FindVolumeGraph(parentID)->FindFace(parentID);
-	const AModumateObjectInstance *parentPlane = doc->GetObjectById(parentID);
+	const AModumateObjectInstance* parentPlane = doc->GetObjectById(parentID);
+	const FGraph3DFace* planeFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentID);
+
 	if (!ensureMsgf(parentPlane, TEXT("Plane-hosted object (ID %d) is missing parent object (ID %d)!"), ID, parentID) ||
 		!ensureMsgf(planeFace, TEXT("Plane-hosted object (ID %d) is missing parent graph face (ID %d)!"), ID, parentID))
 	{
@@ -592,20 +594,30 @@ void AMOIPlaneHostedObj::UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalcul
 
 void AMOIPlaneHostedObj::UpdateConnectedEdges()
 {
-	CachedParentConnectedMOIs.Reset();
-
-	const AModumateObjectInstance *planeParent = GetParentObject();
-	if (planeParent)
+	// no plane span means we're being destroyed
+	const AMOIMetaPlaneSpan* planeSpan = Cast<AMOIMetaPlaneSpan>(GetParentObject());
+	if (planeSpan == nullptr)
 	{
-		planeParent->GetConnectedMOIs(CachedParentConnectedMOIs);
+		return;
 	}
 
+	CachedParentConnectedMOIs.Reset();
 	CachedConnectedEdges.Reset();
-	for (AModumateObjectInstance *planeConnectedMOI : CachedParentConnectedMOIs)
+
+	for (int32 id : planeSpan->InstanceData.GraphMembers)
 	{
-		if (planeConnectedMOI && (planeConnectedMOI->GetObjectType() == EObjectType::OTMetaEdge))
+		const AModumateObjectInstance* planeParent = Document->GetObjectById(id);
+		if (planeParent)
 		{
-			CachedConnectedEdges.Add(planeConnectedMOI);
+			planeParent->GetConnectedMOIs(CachedParentConnectedMOIs);
+		}
+
+		for (AModumateObjectInstance* planeConnectedMOI : CachedParentConnectedMOIs)
+		{
+			if (planeConnectedMOI && (planeConnectedMOI->GetObjectType() == EObjectType::OTMetaEdge))
+			{
+				CachedConnectedEdges.Add(planeConnectedMOI);
+			}
 		}
 	}
 }
@@ -903,8 +915,7 @@ void AMOIPlaneHostedObj::UpdateQuantities()
 	const int32 numLayers = assembly.Layers.Num();
 	auto assemblyGuid = assembly.UniqueKey();
 	int32 parentID = GetParentID();
-	const FGraph3D& graph = *Document->FindVolumeGraph(parentID);
-	const FGraph3DFace* hostingFace = graph.FindFace(parentID);
+	const FGraph3DFace* hostingFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentID);
 	if (!ensure(hostingFace))
 	{
 		return;
@@ -918,4 +929,9 @@ void AMOIPlaneHostedObj::UpdateQuantities()
 	CachedQuantities.AddQuantity(assemblyGuid, 0.0f, assemblyLength, assemblyArea);
 	CachedQuantities.AddLayersQuantity(LayerGeometries, assembly.Layers, assemblyGuid);
 	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
+}
+
+bool AMOIPlaneHostedObj::IsValidParentObjectType(EObjectType ParentObjectType) const
+{
+	return ParentObjectType == EObjectType::OTMetaPlane || ParentObjectType == EObjectType::OTMetaPlaneSpan;
 }

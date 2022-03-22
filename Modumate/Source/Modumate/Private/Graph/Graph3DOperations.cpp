@@ -1648,6 +1648,21 @@ bool FGraph3D::GetDeltasForObjectReverse(TArray<FGraph3DDelta>& OutDeltas, const
 	return true;
 }
 
+bool FGraph3D::GetDeltasForSpanJoin(TArray<FGraph3DDelta>& OutDeltas, const TArray<int32>& ObjectIDs, int32& NextID, EGraph3DObjectType ObjectType)
+{
+	// Span join uses TempGraph to get a face for caching
+	bool bResult = GetDeltasForObjectJoin(OutDeltas, ObjectIDs, NextID, ObjectType);
+	// Note: GetDeltasForFaceJoin() apply delta to graph but not GetDeltaForEdgeJoin(), so we apply delta for edge span join
+	if (ObjectType == EGraph3DObjectType::Edge)
+	{
+		for (auto curDelta : OutDeltas)
+		{
+			ApplyDelta(curDelta);
+		}
+	}
+	return bResult;
+}
+
 bool FGraph3D::GetDeltasForReduceEdges(TArray<FGraph3DDelta> &OutDeltas, int32 FaceID, int32 &NextID)
 {
 	// TODO: refactor/clean & comment this logic; repeating a for loop within a while loop (without re-initializing the index) is awkward.

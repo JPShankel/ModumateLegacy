@@ -14,6 +14,8 @@
 #include "UI/Properties/InstPropWidgetOffset.h"
 #include "UI/Properties/InstPropWidgetRotation.h"
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
+#include "Objects/MetaEdge.h"
+#include "Objects/MetaEdgeSpan.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -393,6 +395,14 @@ bool AMOIStructureLine::UpdateCachedGeometry(bool bRecreate, bool bCreateCollisi
 
 	// This can be an expected error, if the object is still getting set up before it has a parent assigned.
 	const AModumateObjectInstance *parentObj = GetParentObject();
+
+	// TODO: support multi-edge spans
+	const AMOIMetaEdgeSpan* spanObj = Cast<AMOIMetaEdgeSpan>(parentObj);
+	if (spanObj && ensure(spanObj->InstanceData.GraphMembers.Num() > 0))
+	{
+		parentObj = Document->GetObjectById(spanObj->InstanceData.GraphMembers[0]);
+	}
+
 	if (parentObj == nullptr)
 	{
 		return false;

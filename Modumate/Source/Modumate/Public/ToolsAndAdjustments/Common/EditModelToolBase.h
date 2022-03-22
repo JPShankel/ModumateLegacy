@@ -57,6 +57,8 @@ public:
 	virtual bool CycleMode() { return false; }
 
 	virtual void RegisterToolDataUI(class UToolTrayBlockProperties* PropertiesUI, int32& OutMaxNumRegistrations) {}
+	virtual void CommitSpanEdit() override {};
+	virtual void CancelSpanEdit() override {};
 
 protected:
 	UFUNCTION()

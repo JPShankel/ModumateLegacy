@@ -114,4 +114,6 @@ protected:
 
 	UPROPERTY()
 	TArray<AModumateObjectInstance*> CachedConnectedEdges;
+
+	bool IsValidParentObjectType(EObjectType ParentObjectType) const;
 };

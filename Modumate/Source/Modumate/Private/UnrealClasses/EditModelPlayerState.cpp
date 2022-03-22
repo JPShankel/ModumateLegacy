@@ -1224,6 +1224,7 @@ bool AEditModelPlayerState::IsObjectTypeEnabledByViewMode(EObjectType ObjectType
 		case EObjectType::OTEdgeDetail:
 		case EObjectType::OTMetaGraph:
 		case EObjectType::OTMetaPlaneSpan:
+		case EObjectType::OTMetaEdgeSpan:
 			return false;
 		default:
 			ensureMsgf(false, TEXT("Unhandled uncategorized object type: %s!"), *GetEnumValueString(ObjectType));

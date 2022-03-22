@@ -153,7 +153,7 @@ void AModumateObjectInstance::AddCachedChildID(int32 ChildID)
 
 void AModumateObjectInstance::RemoveCachedChildID(int32 ChildID)
 {
-	if (!bDestroyed && ensure(HasChildID(ChildID)))
+	if (!bDestroyed && HasChildID(ChildID))
 	{
 		CachedChildIDs.Remove(ChildID);
 		MarkDirty(EObjectDirtyFlags::Structure);

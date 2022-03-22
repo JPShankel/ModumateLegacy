@@ -50,4 +50,6 @@ public:
 	virtual void SetAssemblyGUID(const FGuid &InAssemblyKey) = 0;
 	virtual FGuid GetAssemblyGUID() const = 0;
 	virtual bool CycleMode() = 0;
+	virtual void CommitSpanEdit() = 0;
+	virtual void CancelSpanEdit() = 0;
 };

@@ -74,6 +74,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonErase;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonSpanEditStart;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonSpanEditConfirm;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonSpanEditCancel;
+
 	UFUNCTION(BlueprintCallable)
 	void ChangeToSeparatorToolsButtons(EToolMode mode);
 

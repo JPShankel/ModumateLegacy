@@ -22,6 +22,7 @@ struct FWebMOI;
 
 class FGraph2DEdge;
 class FGraph3DEdge;
+class FGraph3DFace;
 class FDraftingComposite;
 enum class FModumateLayerType;
 
@@ -127,6 +128,12 @@ public:
 
 	static void GetWebMOIArrayForObjects(const TArray<const AModumateObjectInstance*>& Objects, FString& OutJson);
 	static void GetWebMOIArrayForObjects(const TArray<const AModumateObjectInstance*>& Objects, TArray<FWebMOI>& OutMOIs);
+
+	static void GetSpansForFaceObject(const UModumateDocument* Doc, const AModumateObjectInstance* FaceObject, TArray<int32>& OutSpans);
+	static void GetSpansForEdgeObject(const UModumateDocument* Doc, const AModumateObjectInstance* EdgeObject, TArray<int32>& OutSpans);
+	static const FGraph3DFace* GetFaceFromSpanObject(const UModumateDocument* Doc, int32 SpanID);
+	static bool TryJoinSelectedMetaSpan(UWorld* World);
+	static void SeparateSelectedMetaSpan(UWorld* World);
 
 private:
 	static bool GetGroupIdsForGroupChangeHelper(const UModumateDocument* Doc, int32 NewGroupID, int32 OldGroupID, TArray<int32>& OutAffectedGroups, bool& bOutFoundOldGroup);

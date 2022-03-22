@@ -455,6 +455,22 @@ void UModumateGameInstance::RegisterAllCommands()
 		return true;
 	});
 
+	RegisterCommand(kSpan, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
+	{
+		FModumateCommandParameter createValue = params.GetValue(TEXT("join"));
+		if (createValue.AsBool())
+		{
+			UModumateObjectStatics::TryJoinSelectedMetaSpan(GetWorld());
+		}
+
+		FModumateCommandParameter separateValue = params.GetValue(TEXT("separate"));
+		if (separateValue.AsBool())
+		{
+			UModumateObjectStatics::SeparateSelectedMetaSpan(GetWorld());
+		}
+		return true;
+	});
+
 	RegisterCommand(kSetFOV, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
 	{
 		AEditModelPlayerController *playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();

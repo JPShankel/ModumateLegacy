@@ -9,6 +9,8 @@
 #include "UI/Properties/InstPropWidgetFlip.h"
 #include "UI/Properties/InstPropWidgetLinearDimension.h"
 #include "UI/Properties/InstPropWidgetRotation.h"
+#include "Objects/MetaEdge.h"
+#include "Objects/MetaEdgeSpan.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "DrawingDesigner/DrawingDesignerMeshCache.h"
@@ -217,6 +219,7 @@ void AMOIEdgeHosted::GetDrawingDesignerItems(const FVector& ViewDirection, TArra
 void AMOIEdgeHosted::InternalUpdateGeometry(bool bCreateCollision)
 {
 	const AModumateObjectInstance* parentObj = GetParentObject();
+
 	ACompoundMeshActor* cma = Cast<ACompoundMeshActor>(GetActor());
 	if (parentObj && cma)
 	{

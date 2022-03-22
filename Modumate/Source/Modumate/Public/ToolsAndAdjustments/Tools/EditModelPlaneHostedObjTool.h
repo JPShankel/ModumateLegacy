@@ -31,11 +31,15 @@ public:
 	virtual bool HandleInvert() override;
 	virtual bool HandleFlip(EAxis::Type FlipAxis) override;
 	virtual bool HandleOffset(const FVector2D& ViewSpaceDirection) override;
+	virtual void CommitSpanEdit() override;
+	virtual void CancelSpanEdit() override;
 
 protected:
 	virtual void OnAssemblyChanged() override;
+	virtual void OnCreateObjectModeChanged() override;
 
 	FDeltaPtr GetObjectCreationDelta(const TArray<int32>& TargetFaceIDs);
+	FDeltaPtr GetSpanCreationDelta();
 
 	virtual bool MakeObject(const FVector& Location) override;
 	virtual bool ValidatePlaneTarget(const AModumateObjectInstance* PlaneTarget);
@@ -43,12 +47,16 @@ protected:
 	bool IsTargetFacingDown();
 	float GetDefaultJustificationValue();
 	bool GetAppliedInversionValue();
+	void ResetSpanIDs();
+	void DrawAffordanceForPlaneMOI(const AModumateObjectInstance* PlaneMOI, float Interval);
 
-	bool bInverted;
-	bool bRequireHoverMetaPlane;
+	bool bInverted=false;
+	bool bRequireHoverMetaPlane=false;
 	EObjectType ObjectType;
-	int32 LastValidTargetID;
-	bool bWasShowingSnapCursor;
+	int32 LastValidTargetID=0;
+	bool bWasShowingSnapCursor=false;
+	int32 TargetSpanIndex=0;
+	TArray<int32> PreviewSpanGraphMemberIDs;
 };
 
 UCLASS()

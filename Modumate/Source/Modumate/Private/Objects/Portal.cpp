@@ -160,6 +160,8 @@ bool AMOIPortal::GetOffsetFaceBounds(FBox2D& OutOffsetBounds, FVector2D& OutOffs
 	int32 numEdges = parentFace->EdgeIDs.Num();
 	TArray<FVector2D> facePoints = parentFace->Cached2DPositions;
 
+	// TODO: Ignore miter due to span for now
+#if 0
 	for (int32 edgeIdx = 0; edgeIdx < numEdges; ++edgeIdx)
 	{
 		int32 edgeID = FMath::Abs(parentFace->EdgeIDs[edgeIdx]);
@@ -193,6 +195,7 @@ bool AMOIPortal::GetOffsetFaceBounds(FBox2D& OutOffsetBounds, FVector2D& OutOffs
 		nextPoint += edgeExtension;
 		OutOffset += edgeExtension;
 	}
+#endif
 
 	OutOffsetBounds = FBox2D(facePoints);
 

@@ -28,10 +28,15 @@
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Objects/MOIFactory.h"
 #include "Objects/DesignOption.h"
+#include "Objects/FaceHosted.h"
 #include "Objects/SurfaceGraph.h"
 #include "Objects/CameraView.h"
+#include "Objects/MetaEdgeSpan.h"
+#include "Objects/StructureLine.h"
 #include "Objects/MetaGraph.h"
 #include "Objects/MetaPlaneSpan.h"
+#include "Objects/PlaneHostedObj.h"
+#include "Objects/EdgeHosted.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonReader.h"
@@ -3242,6 +3247,47 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		VolumeGraphs.Add(RootVolumeGraph) = volumeGraph;
 	}
 
+	// Prior to version 21, plane and edge hosted objects had graph objects for parents
+	// After version 21, these objects require span parents
+	if (InHeader.Version < 21)
+	{
+		// ObjectInstanceArray will be affected in the loop, so copy the original
+		TArray<AModumateObjectInstance*> obs = ObjectInstanceArray;
+		for (auto* moi : obs)
+		{
+			FMOIStateData spanState;
+			spanState.ParentID = 0;
+
+			if (moi->GetClass() == AMOIPlaneHostedObj::StaticClass() ||
+				moi->GetClass() == AMOIFaceHosted::StaticClass())
+			{
+				spanState.ID = NextID++;
+				spanState.ObjectType = EObjectType::OTMetaPlaneSpan;
+
+				FMOIMetaPlaneSpanData spanData;
+				spanData.GraphMembers.Add(moi->GetParentID());
+				spanState.CustomData.SaveStructData(spanData);
+			}
+
+			if (moi->GetClass() == AMOIEdgeHosted::StaticClass() ||
+				moi->GetClass() == AMOIStructureLine::StaticClass())
+			{
+				spanState.ID = NextID++;
+				spanState.ObjectType = EObjectType::OTMetaEdgeSpan;
+
+				FMOIMetaEdgeSpanData spanData;
+				spanData.GraphMembers.Add(moi->GetParentID());
+				spanState.CustomData.SaveStructData(spanData);
+			}
+
+			if (spanState.ObjectType != EObjectType::OTNone)
+			{
+				CreateOrRestoreObj(world, spanState);
+				moi->SetParentID(spanState.ID);
+			}
+		}
+	}
+
 	// Now that all objects have been created and parented correctly, we can clean all of them.
 	// This should take care of anything that depends on relationships between objects, like mitering.
 	TArray<FDeltaPtr> loadCleanSideEffects;
@@ -4149,6 +4195,19 @@ void UModumateDocument::DrawDebugSpan(UWorld* world)
 				curSpan->ID,
 				*FString::JoinBy(curSpan->InstanceData.GraphMembers, TEXT(", "), [](const int32& memberID) { return FString::Printf(TEXT("%d"), memberID); }));
 			DrawDebugString(world, drawPos, drawString, nullptr, FColor::Purple, 0.0f, true);
+		}
+	}
+
+	for (const auto curObj : GetObjectsOfType(EObjectType::OTMetaEdgeSpan))
+	{
+		const AMOIMetaEdgeSpan* curSpan = Cast<AMOIMetaEdgeSpan>(curObj);
+		if (curSpan->InstanceData.GraphMembers.Num() > 0)
+		{
+			FVector drawPos = curSpan->GetLocation() + FVector::UpVector * 100.f;//offset upward to avoid overlap with debug volume
+			FString drawString = FString::Printf(TEXT("Span #%d: Graph:[%s]"),
+				curSpan->ID,
+				*FString::JoinBy(curSpan->InstanceData.GraphMembers, TEXT(", "), [](const int32& memberID) { return FString::Printf(TEXT("%d"), memberID); }));
+			DrawDebugString(world, drawPos, drawString, nullptr, FColor::Cyan, 0.0f, true);
 		}
 	}
 }

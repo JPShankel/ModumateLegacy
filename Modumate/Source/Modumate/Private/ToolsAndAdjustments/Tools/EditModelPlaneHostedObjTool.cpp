@@ -5,6 +5,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "Objects/PlaneHostedObj.h"
+#include "Objects/ModumateObjectStatics.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -43,6 +44,8 @@ bool UPlaneHostedObjTool::Activate()
 	NewMOIStateData.CustomData.SaveStructData(newMOICustomData);
 
 	bWasShowingSnapCursor = Controller->EMPlayerState->bShowSnappedCursor;
+	TargetSpanIndex = 0;
+	ResetSpanIDs();
 	return true;
 }
 
@@ -63,6 +66,18 @@ bool UPlaneHostedObjTool::Deactivate()
 
 bool UPlaneHostedObjTool::BeginUse()
 {
+	if (GetCreateObjectMode() == EToolCreateObjectMode::SpanEdit && LastValidTargetID != MOD_ID_NONE)
+	{
+		// TODO: Check if legal before adding member
+		// If click on a face that's already selected, remove it from member list
+		// else add to member list
+		if (PreviewSpanGraphMemberIDs.Remove(LastValidTargetID) == 0)
+		{
+			PreviewSpanGraphMemberIDs.AddUnique(LastValidTargetID);
+		}
+		return false;
+	}
+
 	// TODO: require assemblies for stairs, once they can be crafted
 	if (!Controller || (!AssemblyGUID.IsValid() && (ObjectType != EObjectType::OTStaircase)))
 	{
@@ -105,7 +120,8 @@ bool UPlaneHostedObjTool::FrameUpdate()
 	CurDeltas.Reset();
 	FDeltaPtr previewDelta;
 	Controller->EMPlayerState->bShowSnappedCursor = GetCreateObjectMode() != EToolCreateObjectMode::Apply;
-	if (GetCreateObjectMode() == EToolCreateObjectMode::Apply)
+	if (GetCreateObjectMode() == EToolCreateObjectMode::Apply ||
+		GetCreateObjectMode() == EToolCreateObjectMode::SpanEdit)
 	{
 		// Determine whether we can apply the plane hosted object to a plane targeted by the cursor
 		const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
@@ -128,22 +144,26 @@ bool UPlaneHostedObjTool::FrameUpdate()
 
 		if (LastValidTargetID)
 		{
-			int32 numCorners = hitMOI->GetNumCorners();
-			for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
+			// Show affordance for current valid target on both Apply and SpanEdit mode
+			DrawAffordanceForPlaneMOI(hitMOI, AffordanceLineInterval);
+			// Preview apply delta only when there's a valid target ID
+			if (GetCreateObjectMode() == EToolCreateObjectMode::Apply)
 			{
-				int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;
-
-				FVector curCornerPos = hitMOI->GetCorner(curCornerIdx);
-				FVector nextCornerPos = hitMOI->GetCorner(nextCornerIdx);
-
-				Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(
-					curCornerPos, nextCornerPos, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness, 1)
-				);
+				previewDelta = GetObjectCreationDelta({ LastValidTargetID });
 			}
-
-			previewDelta = GetObjectCreationDelta({ LastValidTargetID });
 		}
 
+		// Preview span edit on every flame
+		if (GetCreateObjectMode() == EToolCreateObjectMode::SpanEdit)
+		{
+			previewDelta = GetSpanCreationDelta();
+		}
+		// Show preview affordance for all graph members in the new span
+		for (auto curSpanID : PreviewSpanGraphMemberIDs)
+		{
+			auto curSpanObj = GameState->Document->GetObjectById(curSpanID);
+			DrawAffordanceForPlaneMOI(curSpanObj, AffordanceLineInterval);
+		}
 	}
 	else if (UpdatePreview())
 	{
@@ -214,6 +234,23 @@ bool UPlaneHostedObjTool::HandleOffset(const FVector2D& ViewSpaceDirection)
 	return newMOI && newMOI->GetOffsetState(worldSpaceDirection, NewMOIStateData);
 }
 
+void UPlaneHostedObjTool::CommitSpanEdit()
+{
+	GameState->Document->ClearPreviewDeltas(GetWorld());
+
+	auto delta = GetSpanCreationDelta();
+	if (delta.IsValid() && GameState->Document->ApplyDeltas({ delta }, GetWorld()))
+	{
+		ResetSpanIDs();
+		EndUse();
+	}
+}
+
+void UPlaneHostedObjTool::CancelSpanEdit()
+{
+	ResetSpanIDs();
+}
+
 void UPlaneHostedObjTool::OnAssemblyChanged()
 {
 	Super::OnAssemblyChanged();
@@ -222,6 +259,12 @@ void UPlaneHostedObjTool::OnAssemblyChanged()
 	{
 		FrameUpdate();
 	}
+}
+
+void UPlaneHostedObjTool::OnCreateObjectModeChanged()
+{
+	Super::OnCreateObjectModeChanged();
+	ResetSpanIDs();
 }
 
 FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& TargetFaceIDs)
@@ -238,12 +281,18 @@ FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& Targe
 		}
 
 		bool bCreateNewObject = true;
-		AModumateObjectInstance* parentMOI = GameState->Document->GetObjectById(targetFaceID);
-		AModumateObjectInstance* existingLayeredObj = nullptr;
+		AModumateObjectInstance* planeFace = GameState->Document->GetObjectById(targetFaceID);
 
-		if (parentMOI && ensure(parentMOI->GetObjectType() == EObjectType::OTMetaPlane))
+		TArray<int32> spans;
+		UModumateObjectStatics::GetSpansForFaceObject(GameState->Document, planeFace, spans);
+
+		const AModumateObjectInstance* existingLayeredObj = nullptr;
+
+		const AMOIMetaPlaneSpan* spanOb = spans.Num() > 0 ? Cast<AMOIMetaPlaneSpan>(GameState->Document->GetObjectById(spans[TargetSpanIndex])) : nullptr;
+
+		if (spanOb && planeFace && ensure(planeFace->GetObjectType() == EObjectType::OTMetaPlane))
 		{
-			for (auto child : parentMOI->GetChildObjects())
+			for (auto child : spanOb->GetChildObjects())
 			{
 				if ((child->GetLayeredInterface() != nullptr) && ensureAlways(existingLayeredObj == nullptr))
 				{
@@ -264,9 +313,29 @@ FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& Targe
 		}
 
 		if (bCreateNewObject)
-		{
-			NewMOIStateData.ID = nextID++;
-			NewMOIStateData.ParentID = targetFaceID;
+		{			
+			// If we don't already have a span for this face, create one
+			if (spans.Num() == 0)
+			{
+				NewMOIStateData.ParentID = nextID++;
+
+				FMOIStateData spanCreateState(NewMOIStateData.ParentID, EObjectType::OTMetaPlaneSpan);
+
+				FMOIMetaPlaneSpanData spanData;
+				spanData.GraphMembers.Add(targetFaceID);
+
+				spanCreateState.CustomData.SaveStructData(spanData);
+				delta->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
+
+				NewObjectIDs.Add(NewMOIStateData.ParentID);
+			}
+			else
+			{
+				// TODO: cycle TargetSpanIndex through target list;
+				NewMOIStateData.ParentID = spans[TargetSpanIndex];
+			}
+
+			NewMOIStateData.ID = nextID++; 
 			NewMOIStateData.AssemblyGUID = AssemblyGUID;
 
 			delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
@@ -286,15 +355,37 @@ FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& Targe
 					}
 				}
 			}
-			// Note: Test only, cause not sure when span creation happen
-#if 0
-			AMOIMetaPlaneSpan::MakeMetaPlaneSpanDeltaPtr(GameState->Document, nextID++, {targetFaceID}, delta);
-#endif
-
 		}
 	}
 
 	return delta;
+}
+
+FDeltaPtr UPlaneHostedObjTool::GetSpanCreationDelta()
+{
+	auto deltaPtr = MakeShared<FMOIDelta>();
+	if (PreviewSpanGraphMemberIDs.Num() == 0)
+	{
+		return deltaPtr;
+	}
+	NewObjectIDs.Reset();
+	int32 newObjID = GameState->Document->GetNextAvailableID();
+
+	// Create new span that contains all preview graph members
+	FMOIStateData spanCreateState(newObjID++, EObjectType::OTMetaPlaneSpan);
+	FMOIMetaPlaneSpanData spanData;
+	spanData.GraphMembers = PreviewSpanGraphMemberIDs;
+	spanCreateState.CustomData.SaveStructData(spanData);
+	deltaPtr->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
+
+	// Create plane hosted object that will be child of the new preview span
+	NewMOIStateData.ParentID = spanCreateState.ID;
+	NewMOIStateData.ID = newObjID++;
+	NewMOIStateData.AssemblyGUID = AssemblyGUID;
+	deltaPtr->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
+	NewObjectIDs.Add(NewMOIStateData.ID);
+
+	return deltaPtr;
 }
 
 bool UPlaneHostedObjTool::MakeObject(const FVector& Location)
@@ -380,6 +471,27 @@ bool UPlaneHostedObjTool::GetAppliedInversionValue()
 	return bInversionValue;
 }
 
+
+void UPlaneHostedObjTool::ResetSpanIDs()
+{
+	PreviewSpanGraphMemberIDs.Empty();
+}
+
+void UPlaneHostedObjTool::DrawAffordanceForPlaneMOI(const AModumateObjectInstance* PlaneMOI, float Interval)
+{
+	int32 numCorners = PlaneMOI->GetNumCorners();
+	for (int32 curCornerIdx = 0; curCornerIdx < numCorners; ++curCornerIdx)
+	{
+		int32 nextCornerIdx = (curCornerIdx + 1) % numCorners;
+
+		FVector curCornerPos = PlaneMOI->GetCorner(curCornerIdx);
+		FVector nextCornerPos = PlaneMOI->GetCorner(nextCornerIdx);
+
+		Controller->EMPlayerState->AffordanceLines.Add(FAffordanceLine(
+			curCornerPos, nextCornerPos, AffordanceLineColor, AffordanceLineInterval, AffordanceLineThickness, 1)
+		);
+	}
+}
 
 UWallTool::UWallTool()
 	: Super()

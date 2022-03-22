@@ -6,6 +6,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "Graph/Graph3D.h"
 #include "ModumateCore/ModumateStairStatics.h"
+#include "Objects/MetaEdgeSpan.h"
 #include "Objects/StructureLine.h"
 #include "UnrealClasses/DynamicMeshActor.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -406,6 +407,32 @@ bool UStructureLineTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEd
 
 		EObjectType objectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
 
+		TArray<int32> spans;
+		UModumateObjectStatics::GetSpansForEdgeObject(GameState->Document, parentMOI, spans);
+
+		const AMOIMetaEdgeSpan* spanOb = nullptr;
+
+		int32 spanParentID = MOD_ID_NONE;
+		if (spans.Num() == 0)
+		{
+			FMOIStateData spanCreateState(nextID++, EObjectType::OTMetaEdgeSpan);
+			FMOIMetaEdgeSpanData spanData;
+			spanData.GraphMembers.Add(targetEdgeID);
+			spanCreateState.CustomData.SaveStructData(spanData);
+			delta->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
+			NewObjectIDs.Add(spanCreateState.ID);
+			spanParentID = spanCreateState.ID;
+		}
+		else
+		{
+			spanOb = Cast<AMOIMetaEdgeSpan>(GameState->Document->GetObjectById(spans[0]));
+			if (ensure(spanOb))
+			{
+				spanParentID = spanOb->ID;
+			}
+		}
+
+		// TODO: use spanOb instead of parentMOI when parenting is implemented
 		if (parentMOI && ensure(parentMOI->GetObjectType() == EObjectType::OTMetaEdge))
 		{
 			for (auto child : parentMOI->GetChildObjects())
@@ -425,9 +452,10 @@ bool UStructureLineTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEd
 
 		if (bCreateNewObject)
 		{
+			NewMOIStateData.ParentID = spanParentID;
+
 			NewMOIStateData.ID = nextID++;
 			NewMOIStateData.ObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
-			NewMOIStateData.ParentID = targetEdgeID;
 			NewMOIStateData.AssemblyGUID = AssemblyGUID;
 
 			NewObjectIDs.Add(NewMOIStateData.ID);

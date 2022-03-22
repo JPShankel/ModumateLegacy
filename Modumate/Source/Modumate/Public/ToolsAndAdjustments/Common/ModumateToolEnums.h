@@ -59,7 +59,8 @@ enum class EToolCreateObjectMode : uint8
 	Draw,
 	Apply,
 	Stamp,
-	Add
+	Add,
+	SpanEdit
 };
 
 UENUM(BlueprintType)

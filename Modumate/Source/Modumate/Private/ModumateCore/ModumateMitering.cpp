@@ -6,6 +6,7 @@
 #include "Objects/MiterNode.h"
 #include "Objects/ModumateObjectStatics.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "Objects/MetaPlaneSpan.h"
 #include "DrawDebugHelpers.h"
 
 const AModumateObjectInstance *FMiterHelpers::GetChildLayeredObj(const AModumateObjectInstance *PlaneObj)
@@ -16,7 +17,22 @@ const AModumateObjectInstance *FMiterHelpers::GetChildLayeredObj(const AModumate
 		return nullptr;
 	}
 
-	const TArray<int32> &childIDs = PlaneObj->GetChildIDs();
+	TArray<int32> spanIDs;
+	UModumateObjectStatics::GetSpansForFaceObject(doc, PlaneObj, spanIDs);
+
+	if (spanIDs.Num() == 0)
+	{
+		return nullptr;
+	}
+
+	const AMOIMetaPlaneSpan* span = Cast<AMOIMetaPlaneSpan>(doc->GetObjectById(spanIDs[0]));
+
+	if (!ensure(span != nullptr))
+	{
+		return nullptr;
+	}
+
+	const TArray<int32>& childIDs = span->GetChildIDs();
 	if (childIDs.Num() != 1)
 	{
 		return nullptr;
@@ -82,14 +98,14 @@ bool FMiterHelpers::UpdateMiteredLayerGeoms(const AModumateObjectInstance *Plane
 	{
 		FGraphSignedID edgeID = PlaneFace->EdgeIDs[edgeIdx];
 		const AModumateObjectInstance* edgeObj = doc->GetObjectById(FMath::Abs(edgeID));
-		const IMiterNode *miterNode = edgeObj ? edgeObj->GetMiterInterface() : nullptr;
+		const IMiterNode* miterNode = edgeObj ? edgeObj->GetMiterInterface() : nullptr;
 		if (!ensure(miterNode))
 		{
 			return false;
 		}
 
 		const FMiterData& miterData = miterNode->GetMiterData();
-		const FMiterParticipantData *participantData = miterData.ParticipantsByID.Find(PlaneHostedObj->ID);
+		const FMiterParticipantData* participantData = miterData.ParticipantsByID.Find(PlaneHostedObj->ID);
 		if (!ensure(participantData))
 		{
 			return false;

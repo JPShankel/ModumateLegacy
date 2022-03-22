@@ -7,6 +7,7 @@
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "Objects/EdgeHosted.h"
+#include "Objects/MetaEdgeSpan.h"
 
 UEdgeHostedTool::UEdgeHostedTool()
 	: Super()
@@ -30,6 +31,7 @@ bool UEdgeHostedTool::Activate()
 	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = true;
 
 	ResetState();
+	ResetSpanIDs();
 
 	return true;
 }
@@ -90,13 +92,25 @@ bool UEdgeHostedTool::FrameUpdate()
 		);
 
 		// Preview delta
-		if (GameState->Document->StartPreviewing() && GetObjectCreationDeltas({ LastValidTargetID }, CurDeltas))
+		if (GetCreateObjectMode() == EToolCreateObjectMode::Apply)
 		{
-			GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
+			if (GameState->Document->StartPreviewing() && GetObjectCreationDeltas({ LastValidTargetID }, CurDeltas))
+			{
+				GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
+			}
 		}
 
 		// Don't show the snap cursor if we're targeting an edge or existing structure line.
 		Controller->EMPlayerState->bShowSnappedCursor = (LastValidTargetID == MOD_ID_NONE);
+	}
+
+	// Preview span edit on every flame
+	if (GetCreateObjectMode() == EToolCreateObjectMode::SpanEdit)
+	{
+		if (GetSpanCreationDelta(CurDeltas))
+		{
+			GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
+		}
 	}
 
 	return true;
@@ -104,6 +118,18 @@ bool UEdgeHostedTool::FrameUpdate()
 
 bool UEdgeHostedTool::BeginUse()
 {
+	if (GetCreateObjectMode() == EToolCreateObjectMode::SpanEdit && LastValidTargetID != MOD_ID_NONE)
+	{
+		// TODO: Check if legal before adding member
+		// If click on a edge that's already selected, remove it from member list
+		// else add to member list
+		if (PreviewSpanGraphMemberIDs.Remove(LastValidTargetID) == 0)
+		{
+			PreviewSpanGraphMemberIDs.AddUnique(LastValidTargetID);
+		}
+		return false;
+	}
+
 	if (!AssemblyGUID.IsValid())
 	{
 		return false;
@@ -129,6 +155,30 @@ bool UEdgeHostedTool::BeginUse()
 	EndUse();
 
 	return bSuccess;
+}
+
+void UEdgeHostedTool::CommitSpanEdit()
+{
+	GameState->Document->ClearPreviewDeltas(GetWorld());
+
+	bool bSucess = GetSpanCreationDelta(CurDeltas);
+	if (bSucess && GameState->Document->ApplyDeltas(CurDeltas, GetWorld()))
+	{
+		ResetSpanIDs();
+		EndUse();
+	}
+}
+
+void UEdgeHostedTool::CancelSpanEdit()
+{
+	ResetSpanIDs();
+
+}
+
+void UEdgeHostedTool::OnCreateObjectModeChanged()
+{
+	Super::OnCreateObjectModeChanged();
+	ResetSpanIDs();
 }
 
 void UEdgeHostedTool::ResetState()
@@ -190,14 +240,40 @@ bool UEdgeHostedTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeI
 		}
 
 		bool bCreateNewObject = true;
-		AModumateObjectInstance* parentMOI = GameState->Document->GetObjectById(targetEdgeID);
+		AModumateObjectInstance* edgeOb = GameState->Document->GetObjectById(targetEdgeID);
 
 		EObjectType objectType = EObjectType::OTEdgeHosted;
 
-		if (parentMOI && ensure(parentMOI->GetObjectType() == EObjectType::OTMetaEdge) &&
+		TArray<int32> spans;
+		UModumateObjectStatics::GetSpansForEdgeObject(GameState->Document, edgeOb, spans);
+
+		const AMOIMetaEdgeSpan* spanOb = nullptr;
+
+		int32 spanParentID = MOD_ID_NONE;
+		if (spans.Num() == 0)
+		{
+			FMOIStateData spanCreateState(nextID++, EObjectType::OTMetaEdgeSpan);
+			FMOIMetaEdgeSpanData spanData;
+			spanData.GraphMembers.Add(targetEdgeID);
+			spanCreateState.CustomData.SaveStructData(spanData);
+			delta->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
+			NewObjectIDs.Add(spanCreateState.ID);
+			spanParentID = spanCreateState.ID;
+		}
+		else
+		{
+			spanOb = Cast<AMOIMetaEdgeSpan>(GameState->Document->GetObjectById(spans[0]));
+			if (ensure(spanOb))
+			{
+				spanParentID = spanOb->ID;
+			}
+		}
+
+		// TODO: use spanOb instead of edgeOb when parenting is put in.
+		if (edgeOb && ensure(edgeOb->GetObjectType() == EObjectType::OTMetaEdge) &&
 			CreateObjectMode != EToolCreateObjectMode::Add)
 		{
-			for (auto child : parentMOI->GetChildObjects())
+			for (auto child : edgeOb->GetChildObjects())
 			{
 				if (child->GetObjectType() == objectType)
 				{
@@ -219,9 +295,10 @@ bool UEdgeHostedTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeI
 
 		if (bCreateNewObject)
 		{
+			NewMOIStateData.ParentID = spanParentID;
+
 			NewMOIStateData.ID = nextID++;
 			NewMOIStateData.ObjectType = EObjectType::OTEdgeHosted;
-			NewMOIStateData.ParentID = targetEdgeID;
 			NewMOIStateData.AssemblyGUID = AssemblyGUID;
 			FMOIEdgeHostedData newCustomData;
 			NewMOIStateData.CustomData.SaveStructData<FMOIEdgeHostedData>(newCustomData);
@@ -233,4 +310,41 @@ bool UEdgeHostedTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeI
 	}
 
 	return true;
+}
+
+bool UEdgeHostedTool::GetSpanCreationDelta(TArray<FDeltaPtr>& OutDeltaPtrs)
+{
+	OutDeltaPtrs.Reset();
+	auto deltaPtr = MakeShared<FMOIDelta>();
+	if (PreviewSpanGraphMemberIDs.Num() == 0)
+	{
+		return false;
+	}
+	NewObjectIDs.Reset();
+	int32 newObjID = GameState->Document->GetNextAvailableID();
+
+	// Create new span that contains all preview graph members
+	FMOIStateData spanCreateState(newObjID++, EObjectType::OTMetaEdgeSpan);
+	FMOIMetaEdgeSpanData spanData;
+	spanData.GraphMembers = PreviewSpanGraphMemberIDs;
+	spanCreateState.CustomData.SaveStructData(spanData);
+	deltaPtr->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
+
+	// Create edge hosted object that will be child of the new preview span
+	NewMOIStateData.ParentID = spanCreateState.ID;
+	NewMOIStateData.ObjectType = EObjectType::OTEdgeHosted;
+	NewMOIStateData.ID = newObjID++;
+	NewMOIStateData.AssemblyGUID = AssemblyGUID;
+	FMOIEdgeHostedData newCustomData;
+	NewMOIStateData.CustomData.SaveStructData<FMOIEdgeHostedData>(newCustomData);
+	deltaPtr->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
+	NewObjectIDs.Add(NewMOIStateData.ID);
+	
+	OutDeltaPtrs.Add(deltaPtr);
+	return true;
+}
+
+void UEdgeHostedTool::ResetSpanIDs()
+{
+	PreviewSpanGraphMemberIDs.Empty();
 }

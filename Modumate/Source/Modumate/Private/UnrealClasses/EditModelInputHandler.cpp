@@ -436,6 +436,27 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 		Controller->SetToolCreateObjectMode(EToolCreateObjectMode::Draw);
 		return true;
 	}
+	case EInputCommand::SpanEditStart:
+	{
+		Controller->SetToolCreateObjectMode(EToolCreateObjectMode::SpanEdit);
+		return true;
+	}
+	case EInputCommand::SpanEditConfirm:
+	{
+		if (Controller->CurrentTool)
+		{
+			Controller->CurrentTool->CommitSpanEdit();
+		}
+		return true;
+	}
+	case EInputCommand::SpanEditCancel:
+	{
+		if (Controller->CurrentTool)
+		{
+			Controller->CurrentTool->CancelSpanEdit();
+		}
+		return true;
+	}
 
 	// Non-tool modal commands
 

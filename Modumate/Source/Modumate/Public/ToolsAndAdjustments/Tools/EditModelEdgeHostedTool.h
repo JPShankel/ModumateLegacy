@@ -20,18 +20,23 @@ public:
 
 	virtual bool FrameUpdate() override;
 	virtual bool BeginUse() override;
+	virtual void CommitSpanEdit() override;
+	virtual void CancelSpanEdit() override;
 
 protected:
+	virtual void OnCreateObjectModeChanged() override;
 
 	void ResetState();
 	void SetTargetID(int32 NewTargetID);
 	bool GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeIDs, TArray<FDeltaPtr>& OutDeltaPtrs);
+	bool GetSpanCreationDelta(TArray<FDeltaPtr>& OutDeltaPtrs);
+	void ResetSpanIDs();
 
 	bool bWasShowingSnapCursor = false;
 	EMouseMode OriginalMouseMode = EMouseMode::Location;
 	bool bWantedVerticalSnap = false;
 	int32 LastValidTargetID = MOD_ID_NONE;
-	int32 LastTargetStructureLineID = MOD_ID_NONE;
+	TArray<int32> PreviewSpanGraphMemberIDs;
 
 	FVector LineStartPos, LineEndPos, LineDir, ObjNormal, ObjUp;
 };

@@ -39,6 +39,7 @@
 #include "Objects/DesignOption.h"
 #include "Objects/MOIPattern2D.h"
 #include "Objects/MetaPlaneSpan.h"
+#include "Objects/MetaEdgeSpan.h"
 
 UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 {
@@ -87,6 +88,7 @@ UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 	case EObjectType::OTDesignOption: return AMOIDesignOption::StaticClass();
 	case EObjectType::OTPattern2D: return AMOIPattern2D::StaticClass();
 	case EObjectType::OTMetaPlaneSpan: return AMOIMetaPlaneSpan::StaticClass();
+	case EObjectType::OTMetaEdgeSpan: return AMOIMetaEdgeSpan::StaticClass();
 	default:
 	{
 		FString objectTypeString = GetEnumValueString(ObjectType);

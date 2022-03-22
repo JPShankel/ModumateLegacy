@@ -113,6 +113,9 @@ enum class EInputCommand : uint8
 	OpeningStamp,
 	OpeningSystem,
 	TerrainPoint,
+	SpanEditStart,
+	SpanEditConfirm,
+	SpanEditCancel,
 
 	// Non-tool modal commands
 	NextViewMode,
