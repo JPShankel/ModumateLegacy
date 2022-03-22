@@ -11,7 +11,14 @@
 #define LOCTEXT_NAMESPACE "ModumateDefaultDrawing"
 
 FDraftingDrawing::FDraftingDrawing(const UModumateDocument *doc, UWorld *world, SceneCaptureID captureObjID) :
-	Doc(doc), World(world), CaptureObjID(captureObjID) {}
+	Doc(doc),
+	World(world),
+	CaptureObjID(captureObjID)
+{
+	TSharedPtr<FDrawingArea> viewArea = MakeShareable(new FDrawingArea());
+	Children.Add(viewArea);
+	DrawingContent = TWeakPtr<FDrawingArea>(viewArea);
+}
 
 namespace {
 		TArray<FVector> GetCorners(const AModumateObjectInstance * Object)
@@ -55,14 +62,9 @@ bool FDraftingDrawing::InitializeDimensions(FModumateUnitCoord2D drawingSize, FM
 
 	Dimensions = DrawingSize;
 		
-	TSharedPtr<FDrawingArea> viewArea = MakeShareable(new FDrawingArea());
+	auto viewArea = DrawingContent.Pin();
 	viewArea->SetLocalPosition(DrawingMargin);
 	viewArea->Dimensions = Dimensions - (DrawingMargin * 2.0f);
-	DrawingContent = TWeakPtr<FDrawingArea>(viewArea);
-
-	Children.Add(viewArea);
-	// Don't draw page rectangle:
-	//Children.Add(MakeShareable(new FDraftingRectangle(Dimensions)));
 
 	return true;
 }
@@ -98,9 +100,19 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 	controlPoints = scopeBox->GetControlPoints();
 #else
 	FVector scopeBoxOrigin = cutPlaneOrigin;
-	FBox sceneBounds(Doc->CalculateProjectBounds().GetBox());
-	sceneBounds = sceneBounds.ExpandBy(1000.0f);
-	UModumateGeometryStatics::GetBoxCorners(sceneBounds, controlPoints);
+	if (DraftingType == UDraftingManager::kDWG)
+	{
+		FBox sceneBounds(Doc->CalculateProjectBounds().GetBox());
+		sceneBounds = sceneBounds.ExpandBy(1000.0f);
+		UModumateGeometryStatics::GetBoxCorners(sceneBounds, controlPoints);
+	}
+	else
+	{
+		for (int32 cp = 0; cp < cutPlane->GetNumCorners(); ++cp)
+		{
+			controlPoints.Add(cutPlane->GetCorner(cp));
+		}
+	}
 #endif
 
 	TArray<FVector2D> boxPoints;

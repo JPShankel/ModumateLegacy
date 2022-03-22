@@ -7,7 +7,9 @@
 #include "ModumateCore/ModumateUnits.h"
 #include "Drafting/ModumateDraftingPage.h"
 #include "Drafting/ModumateDraftingTags.h"
+#include "Drafting/DraftingManager.h"
 #include "Runtime/Engine/Classes/Debug/ReporterGraph.h"
+#include "DrawingDesigner/DrawingDesignerRequests.h"
 
 class UModumateDocument;
 class AModumateObjectInstance;
@@ -19,14 +21,13 @@ class IModumateDraftingDraw;
 class MODUMATE_API FModumateDraftingView
 {
 public:
-	enum DraftType {kDWG};
-	FModumateDraftingView(UWorld *world, UModumateDocument *doc, DraftType draftType);
+	FModumateDraftingView(UWorld *world, UModumateDocument *doc, UDraftingManager::EDraftType draftType);
 	virtual ~FModumateDraftingView();
 
 public:
 		FString CurrentFilePath;
 private:
-	bool ExportDraft(UWorld *world, const TCHAR *filepath);
+	bool ExportDraft(const TCHAR *filepath);
 
 public:
 	TArray<TSharedPtr<FDraftingPage>> DraftingPages;
@@ -39,7 +40,8 @@ public:
 	void PaginateScheduleViews(IModumateDraftingDraw *drawingInterface);
 
 public:
-	void GeneratePagesFromCutPlanes(UWorld *world);
+	void GeneratePagesFromCutPlanes();
+	void GeneratePageForDD(int32 CutPlaneID, const FDrawingDesignerGenericRequest& Request);
 
 // Generate schedules
 public:
@@ -56,7 +58,7 @@ public:
 private:
 	TWeakObjectPtr<UWorld> World;
 	UModumateDocument * Document;
-	const DraftType ExportType;
+	const UDraftingManager::EDraftType ExportType;
 
 public:
 	// TODO: this stuff should probably be a setting, as opposed to hard-coded here

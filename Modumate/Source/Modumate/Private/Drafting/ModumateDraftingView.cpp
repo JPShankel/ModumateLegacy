@@ -2,7 +2,6 @@
 
 #include "Drafting/ModumateDraftingView.h"
 #include <functional>
-#include "Drafting/DraftingManager.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "UnrealClasses/Modumate.h"
 #include "DocumentManagement/ModumateDocument.h"
@@ -13,7 +12,7 @@
 #include "Objects/ModumateRoomStatics.h"
 #include "DocumentManagement/ModumateSceneCaptureObjectInterface.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "Drafting/ModumateDwgDraw.h"
+#include "Drafting/ModumateDDDraw.h"
 #include "Drafting/ModumateLineCorral.h"
 #include "Drafting/ModumateDraftingDraw.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
@@ -53,7 +52,7 @@ FModumateDraftingView::~FModumateDraftingView()
 }
 
 
-FModumateDraftingView::FModumateDraftingView(UWorld *world, UModumateDocument *doc, DraftType draftType) :
+FModumateDraftingView::FModumateDraftingView(UWorld *world, UModumateDocument *doc, UDraftingManager::EDraftType draftType) :
 	World(world),
 	Document(doc),
 	ExportType(draftType)
@@ -61,7 +60,7 @@ FModumateDraftingView::FModumateDraftingView(UWorld *world, UModumateDocument *d
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDraftingView::ModumateDraftingView"));
 }
 
-bool FModumateDraftingView::ExportDraft(UWorld *world,const TCHAR *filepath)
+bool FModumateDraftingView::ExportDraft(const TCHAR *filepath)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDraftingView::ExportPDF"));
 
@@ -256,9 +255,9 @@ void FModumateDraftingView::PaginateScheduleViews(IModumateDraftingDraw *drawing
 	currentPage->Children.Add(currentScheduleArea);
 }
 
-void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
+void FModumateDraftingView::GeneratePagesFromCutPlanes()
 {
-	UModumateGameInstance *modGameInst = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
+	UModumateGameInstance *modGameInst = World.IsValid() ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
 	UDraftingManager *draftMan = modGameInst ? modGameInst->DraftingManager : nullptr;
 
 	// TODO: most likely this information should be controlled by UI and requested here
@@ -281,9 +280,9 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 	}
 	TArray<AModumateObjectInstance*> scopeBoxes = Document->GetObjectsOfType(EObjectType::OTScopeBox);
 
-	if (ExportType == kDWG)
+	if (ExportType == UDraftingManager::kDWG)
 	{
-		DrawingInterface = MakeShared<FModumateLineCorral>(new FModumateDwgDraw(world));
+		DrawingInterface = MakeShared<FModumateLineCorral>(new FModumateDwgDraw(World.Get()) );
 	}
 	else
 	{
@@ -314,10 +313,11 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 		FString cutPlaneName = cutPlaneData.Name;
 		cutPlaneName.ReplaceInline(TEXT("/"), TEXT("_"));
 		auto page = CreateAndAddPage(cutPlaneName);
-		TSharedPtr<FFloorplan> floorplan = MakeShareable(new FFloorplan(Document, world, TPair<int32, int32>(cutPlane->ID, MOD_ID_NONE)));
+		TSharedPtr<FFloorplan> floorplan = MakeShareable(new FFloorplan(Document, World.Get(), TPair<int32, int32>(cutPlane->ID, MOD_ID_NONE)));
 		floorplan->InitializeDimensions(presentationSeriesSize - (drawingMargin*2.0f), drawingMargin);
 		floorplan->SetLocalPosition(pageMargin);
-		if (ExportType == kDWG)
+		floorplan->SetDraftingType(ExportType);
+		if (ExportType == UDraftingManager::kDWG)
 		{   // For DWGs don't clip to the paper dimensions MOD-779.
 			auto viewArea = floorplan->DrawingContent.Pin();
 			if (viewArea)
@@ -338,11 +338,55 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes(UWorld *world)
 	// TODO: potentially, FDraftingView doesn't exist at all anymore, if
 	// the types of drawings that appear is entirely managed by the app
 	// in the short term, the implementations of each drawing type should gradually move code out of here
-	if (UDraftingManager::IsRenderPending(world))
+	if (UDraftingManager::IsRenderPending(World.Get()))
 	{
 		draftMan->CurrentDraftingView = this;
 		draftMan->CurrentDrawingInterface = DrawingInterface.Get();
 	}
+}
+
+void FModumateDraftingView::GeneratePageForDD(int32 CutPlaneID, const FDrawingDesignerGenericRequest& Request)
+{
+	UModumateGameInstance* gameInstance = World.IsValid() ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
+	UDraftingManager* draftMan = gameInstance ? gameInstance->DraftingManager : nullptr;
+
+	AModumateObjectInstance* cutPlane = Document->GetObjectById(CutPlaneID);
+	if (!ensure(cutPlane))
+	{
+		return;
+	}
+
+	DrawingInterface = MakeShared<FModumateDDDraw>(Document, World.Get(), Request);
+
+	draftMan->CurrentDraftingView = this;
+	draftMan->CurrentDrawingInterface = DrawingInterface.Get();
+
+	draftMan->RequestRender(TPair<int32, int32>(CutPlaneID, MOD_ID_NONE));
+
+	ISceneCaptureObject* sceneCaptureInterface = cutPlane->GetSceneCaptureInterface();
+	sceneCaptureInterface->SetupPendingRenders();
+
+	if (sceneCaptureInterface)
+	{
+		auto page = CreateAndAddPage();
+		TSharedPtr<FFloorplan> floorplan = MakeShareable(new FFloorplan(Document, World.Get(), TPair<int32, int32>(CutPlaneID, MOD_ID_NONE)));
+		floorplan->SetDraftingType(ExportType);
+
+		auto viewArea = floorplan->DrawingContent.Pin();
+		if (viewArea)
+		{
+			viewArea->bClipped = false;
+		}
+
+		page->Children.Add(floorplan);
+
+		sceneCaptureInterface->CaptureDelegate.AddSP(floorplan.Get(), &FFloorplan::OnPageCompleted);
+		if (!sceneCaptureInterface->StartRender(Document))
+		{
+			sceneCaptureInterface->CaptureDelegate.Broadcast();
+		}
+	}
+
 }
 
 void FModumateDraftingView::FinishDraft()
@@ -351,7 +395,7 @@ void FModumateDraftingView::FinishDraft()
 	// re-enable these conditionally based on what the drawing type
 //	GenerateScheduleViews();
 
-	ExportDraft(World.Get(), *CurrentFilePath);
+	ExportDraft(*CurrentFilePath);
 }
 
 #undef LOCTEXT_NAMESPACE

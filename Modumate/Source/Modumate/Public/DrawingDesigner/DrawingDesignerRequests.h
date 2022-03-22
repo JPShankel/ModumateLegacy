@@ -15,7 +15,8 @@ enum class EDrawingDesignerRequestType
 	getClickedMoi,
 	stringToInches,
 	stringToCentimeters,
-	centimetersToString
+	centimetersToString,
+	getCutplaneLines,
 };
 
 USTRUCT()

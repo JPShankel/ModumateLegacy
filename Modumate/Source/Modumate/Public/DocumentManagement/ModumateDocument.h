@@ -406,6 +406,9 @@ public:
 	void drawing_get_clicked(const FString& InRequest);
 
 	UFUNCTION()
+	void drawing_get_cutplane_lines(const FString& InRequest);
+
+	UFUNCTION()
 	void string_to_inches(const FString& InRequest);
 
 	UFUNCTION()
@@ -435,6 +438,9 @@ public:
 
 	UFUNCTION()
 	void update_auto_detect_graphic_settings();
+
+	UFUNCTION()
+	void download_pdf_from_blob(const FString& Blob, const FString& DefaultName);
 
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
 	void UpdateWebPresets();

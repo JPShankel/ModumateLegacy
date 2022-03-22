@@ -27,6 +27,11 @@ public:
 
 	virtual void OnPageCompleted() {};
 
+	void SetDraftingType(UDraftingManager::EDraftType draftType)
+		{ DraftingType = draftType; }
+	UDraftingManager::EDraftType GetDraftingType() const
+		{ return DraftingType; }
+
 	int32 ID;
 
 	void GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting);
@@ -67,7 +72,8 @@ public:
 protected:
 	const UModumateDocument *Doc;
 	UWorld *World;
+	UDraftingManager::EDraftType DraftingType = UDraftingManager::kDWG;
+
 public:
 	TPair<int32, int32> CaptureObjID;
 };
-

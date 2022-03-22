@@ -21,12 +21,14 @@ void FFloorplan::OnPageCompleted()
 	auto viewArea = DrawingContent.Pin();
 	ensureAlways(viewArea.IsValid());
 
+#if 0  // Legacy movement of drawing within sheet:
 	worldObjects->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(worldObjects->BoundingBox.Min) * -1.0f);
 	viewArea->Dimensions = FModumateUnitCoord2D::WorldCentimeters(viewArea->Dimensions.AsWorldCentimeters(DrawingScale));
 	worldObjects->TranslateBy(viewArea->Dimensions.X);
 
 	worldObjects->Dimensions = FModumateUnitCoord2D::WorldCentimeters(worldObjects->BoundingBox.GetSize());
 	worldObjects->TranslateBy(worldObjects->Dimensions.X * -1.0f);
+#endif
 
 	UDraftingManager::OnPageCompleted(CaptureObjID, World);
 }

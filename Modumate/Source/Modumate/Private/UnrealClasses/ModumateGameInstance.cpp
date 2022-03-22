@@ -351,6 +351,10 @@ void UModumateGameInstance::RegisterAllCommands()
 		{
 			playerState->bShowDesignOptionDebug = hasShow ? show : !playerState->bShowDesignOptionDebug;
 		}
+		else if (type.Equals(TEXT("pdf")))
+		{
+			GetDocument()->drawing_get_cutplane_lines(FString());
+		}
 
 		return true;
 	});

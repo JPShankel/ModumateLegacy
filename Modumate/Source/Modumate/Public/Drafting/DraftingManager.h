@@ -29,6 +29,8 @@ public:
 	void Reset();
 	void Shutdown();
 
+	enum EDraftType { kDWG, kDD };
+
 // communication with rendering surfaces
 public:
 	static bool OnPageCompleted(SceneCaptureID SceneCaptureObjID, UWorld *WorldContextObject);

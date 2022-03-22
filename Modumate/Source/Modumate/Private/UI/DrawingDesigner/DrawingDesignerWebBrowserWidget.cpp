@@ -76,8 +76,8 @@ void UDrawingDesignerWebBrowserWidget::InitWithController()
 	{
 		static const FString bindObjName(TEXT("doc"));
 		DrawingSetWebBrowser->CallBindUObject(bindObjName, controller->GetDocument(), true);
-
 		DrawingSetWebBrowser->CallBindUObject(TEXT("ui"), controller->InputHandlerComponent, true);
+		DrawingSetWebBrowser->CallBindUObject(TEXT("game"), GetGameInstance(), true);
 	}
 
 	DrawingSetWebBrowser->LoadURL(CVarModumateDrawingDesignerURL.GetValueOnAnyThread());

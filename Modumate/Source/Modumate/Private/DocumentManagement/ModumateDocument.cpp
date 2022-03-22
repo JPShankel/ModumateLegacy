@@ -59,6 +59,8 @@
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
 #include "DrawingDesigner/DrawingDesignerRequests.h"
 #include "DrawingDesigner/DrawingDesignerRenderControl.h"
+#include "IDesktopPlatform.h"
+#include "DesktopPlatformModule.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDocument"
 
@@ -2877,9 +2879,9 @@ void UModumateDocument::GetObjectIdsByAssembly(const FGuid& AssemblyKey, TArray<
 bool UModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ExportDWG"));
-	CurrentDraftingView = MakeShared<FModumateDraftingView>(world, this, FModumateDraftingView::kDWG);
+	CurrentDraftingView = MakeShared<FModumateDraftingView>(world, this, UDraftingManager::kDWG);
 	CurrentDraftingView->CurrentFilePath = FString(filepath);
-	CurrentDraftingView->GeneratePagesFromCutPlanes(world);
+	CurrentDraftingView->GeneratePagesFromCutPlanes();
 
 	return true;
 }
@@ -4477,6 +4479,21 @@ void UModumateDocument::drawing_get_clicked(const FString& InRequest)
 	}
 }
 
+void UModumateDocument::drawing_get_cutplane_lines(const FString& InRequest)
+{
+	FDrawingDesignerGenericRequest req;
+	if (req.ReadJson(InRequest) && req.requestType == EDrawingDesignerRequestType::getCutplaneLines)
+	{
+		int32 cutPlane = FCString::Atoi(*req.data);
+
+		if (cutPlane != MOD_ID_NONE)
+		{
+			CurrentDraftingView = MakeShared<FModumateDraftingView>(GetWorld(), this, UDraftingManager::kDD);
+			CurrentDraftingView->GeneratePageForDD(cutPlane, req);
+		}
+	}
+}
+
 void UModumateDocument::string_to_inches(const FString& InRequest)
 {
 	FDrawingDesignerGenericRequest req;
@@ -4484,13 +4501,13 @@ void UModumateDocument::string_to_inches(const FString& InRequest)
 	if (req.ReadJson(InRequest))
 	{
 		if (req.requestType != EDrawingDesignerRequestType::stringToInches) return;
-		FDrawingDesignerGenericFloatResponse rsp;
+		FDrawingDesignerGenericStringResponse rsp;
 
 		FString jsonResponse;
 		rsp.request = req;
 		const FDocumentSettings& settings = GetCurrentSettings();
 		const FModumateFormattedDimension formattedDim = UModumateDimensionStatics::StringToSettingsFormattedDimension(req.data, settings);
-		rsp.answer = formattedDim.Centimeters * UModumateDimensionStatics::CentimetersToInches;
+		rsp.answer = FString::SanitizeFloat(formattedDim.Centimeters * UModumateDimensionStatics::CentimetersToInches);
 		rsp.WriteJson(jsonResponse);
 		
 		DrawingSendResponse(TEXT("onGenericResponse"), jsonResponse);
@@ -4736,6 +4753,27 @@ void UModumateDocument::update_auto_detect_graphic_settings()
 		gameInstance->AutoDetectAndSaveModumateUserSettings();
 	}
 	web_push_document_update();
+}
+
+void UModumateDocument::download_pdf_from_blob(const FString& Blob, const FString& DefaultName)
+{
+	FString OutPath;
+	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
+	if (DesktopPlatform)
+	{
+		TArray<FString> OutFiles;
+		auto DefaultPath = FPaths::ProjectDir();
+		void* ParentWindowHandle = GEngine->GameViewport->GetWindow()->GetNativeWindow()->GetOSWindowHandle();
+		if (DesktopPlatform->SaveFileDialog(ParentWindowHandle, TEXT("Save As.."), DefaultPath, DefaultName, TEXT("PDF Files|*.pdf"), EFileDialogFlags::None, OutFiles))
+		{
+			OutPath = OutFiles[0];
+		}
+	}
+
+	TArray<uint8> PdfBytes;
+	FBase64::Decode(Blob, PdfBytes);
+
+	bool result = FFileHelper::SaveArrayToFile(PdfBytes, *OutPath);
 }
 
 void UModumateDocument::OnCameraViewSelected(int32 ID)
