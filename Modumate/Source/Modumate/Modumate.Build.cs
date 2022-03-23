@@ -42,8 +42,7 @@ public class Modumate : ModuleRules
 			"MediaAssets",
 			"WebBrowserWidget",
 			"WebBrowser",
-			"DatasmithRuntime",
-			"DesktopPlatform"
+			"DatasmithRuntime"
 		});
 
 		if (Target.Platform == UnrealTargetPlatform.Win64 ||

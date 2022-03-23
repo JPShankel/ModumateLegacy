@@ -64,8 +64,6 @@
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
 #include "DrawingDesigner/DrawingDesignerRequests.h"
 #include "DrawingDesigner/DrawingDesignerRenderControl.h"
-#include "IDesktopPlatform.h"
-#include "DesktopPlatformModule.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDocument"
 
@@ -4816,6 +4814,8 @@ void UModumateDocument::update_auto_detect_graphic_settings()
 
 void UModumateDocument::download_pdf_from_blob(const FString& Blob, const FString& DefaultName)
 {
+	//TODO: Remove DesktopPlatform code and replace with ModumateCore::PlatformFunctions
+#if 0
 	FString OutPath;
 	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
 	if (DesktopPlatform)
@@ -4833,6 +4833,7 @@ void UModumateDocument::download_pdf_from_blob(const FString& Blob, const FStrin
 	FBase64::Decode(Blob, PdfBytes);
 
 	bool result = FFileHelper::SaveArrayToFile(PdfBytes, *OutPath);
+#endif
 }
 
 void UModumateDocument::OnCameraViewSelected(int32 ID)
