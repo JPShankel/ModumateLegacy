@@ -40,7 +40,8 @@ enum class EWebMOIPropertyType : uint8
 	button,
 	eulerRotation3D,
 	quatRotation,
-	extension
+	extension,
+	terrainMaterial
 };
 
 USTRUCT()

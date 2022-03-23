@@ -842,6 +842,15 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 				}
 			}
 
+			if (structProp->Struct->GetName() == TEXT("Guid"))
+			{
+				FGuid* guidPtr = structProp->ContainerPtrToValuePtr<FGuid>(structPtr);
+				if (guidPtr != nullptr)
+				{
+					FGuid::Parse(moiProp->ValueArray[0].TrimQuotes(), *guidPtr);
+				}
+			}
+
 			continue;
 		}
 	}
@@ -1000,6 +1009,17 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 					webProp.ValueArray.Add(quatPtr->ToString());
 					OutMOI.Properties.Add(webProp.Name, webProp);
 				}
+			}
+
+			if (structProp->Struct->GetName() == TEXT("Guid"))
+			{
+				const FGuid* guidPtr = structProp->ContainerPtrToValuePtr<FGuid>(structPtr);
+				if (guidPtr != nullptr)
+				{
+					webProp.ValueArray.Add(guidPtr->ToString());
+					OutMOI.Properties.Add(webProp.Name, webProp);
+				}
+
 			}
 
 			continue;

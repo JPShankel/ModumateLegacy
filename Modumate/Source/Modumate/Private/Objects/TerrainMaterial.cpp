@@ -15,7 +15,16 @@
 const FBIMTagPath AMOITerrainMaterial::SiteNcp(TEXT("Part_3FlexDims0Fixed_Terrain"));
 
 AMOITerrainMaterial::AMOITerrainMaterial()
-{ }
+{ 
+	FWebMOIProperty prop;
+
+	prop.Name = TEXT("Material");
+	prop.Type = EWebMOIPropertyType::terrainMaterial;
+	prop.DisplayName = TEXT("Terrain Material");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+}
 
 bool AMOITerrainMaterial::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
