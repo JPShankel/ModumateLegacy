@@ -753,6 +753,13 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 			continue;
 		}
 
+		FDoubleProperty* doubleProp = CastField<FDoubleProperty>(*it);
+		if (doubleProp != nullptr)
+		{
+			doubleProp->SetPropertyValue_InContainer(structPtr, static_cast<double>(FCString::Atod(*moiProp->ValueArray[0])));
+			continue;
+		}
+
 		FFloatProperty* floatProp = CastField<FFloatProperty>(*it);
 		if (floatProp != nullptr)
 		{
@@ -912,6 +919,14 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 		if (intProp != nullptr)
 		{
 			webProp.ValueArray.Add(FString::Printf(TEXT("%d"), static_cast<int32>(intProp->GetPropertyValue_InContainer(structPtr))));
+			OutMOI.Properties.Add(webProp.Name, webProp);
+			continue;
+		}
+
+		FDoubleProperty* doubleProp = CastField<FDoubleProperty>(*it);
+		if (doubleProp != nullptr)
+		{
+			webProp.ValueArray.Add(FString::Printf(TEXT("%f"), static_cast<double>(doubleProp->GetPropertyValue_InContainer(structPtr))));
 			OutMOI.Properties.Add(webProp.Name, webProp);
 			continue;
 		}

@@ -8,9 +8,21 @@
 #include "UI/Properties/InstPropWidgetLinearDimension.h"
 
 
+FMOITerrainVertexData::FMOITerrainVertexData()
+{}
+
 AMOITerrainVertex::AMOITerrainVertex()
 {
 	BaseColor = FColor(0x00, 0x35, 0xFF);
+
+	FWebMOIProperty prop;
+
+	prop.Name = TEXT("Height");
+	prop.Type = EWebMOIPropertyType::height;
+	prop.DisplayName = TEXT("Height");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
 }
 
 FVector AMOITerrainVertex::GetLocation() const
@@ -88,3 +100,14 @@ void AMOITerrainVertex::OnInstPropUIChangedHeight(float NewHeight)
 		Document->ApplyDeltas({ deltaPtr }, GetWorld());
 	}
 }
+
+bool AMOITerrainVertex::FromWebMOI(const FString& InJson)
+{
+	if (AModumateObjectInstance::FromWebMOI(InJson))
+	{
+		OnInstPropUIChangedHeight(InstanceData.Height);
+		return true;
+	}
+	return false;
+}
+

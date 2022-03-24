@@ -115,9 +115,9 @@ public:
 	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, void*& OutStructPtr);
 	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const;
 
-	bool ToWebMOI(FWebMOI& OutMOI) const;
-	bool ToWebMOI(FString& OutJson) const;
-	bool FromWebMOI(const FString& InJson);
+	virtual bool ToWebMOI(FWebMOI& OutMOI) const;
+	virtual bool ToWebMOI(FString& OutJson) const;
+	virtual bool FromWebMOI(const FString& InJson);
 
 protected:
 
