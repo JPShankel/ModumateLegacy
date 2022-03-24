@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "ModumateCore/PrettyJSONWriter.h"
+#include "Objects/WebMOI.h"
 #include "DrawingDesignerView.generated.h"
 
 USTRUCT()
@@ -179,6 +180,9 @@ struct MODUMATE_API FDrawingDesignerViewList
 
 	UPROPERTY()
 	TArray<FDrawingDesignerView> views;
+
+	UPROPERTY()
+	TArray<FWebMOI> cameraViews;
 
 	bool WriteJson(FString& OutJson) const;
 	bool ReadJson(const FString& InJson);

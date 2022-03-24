@@ -27,7 +27,7 @@ FDrawingDesignerRenderControl::~FDrawingDesignerRenderControl()
 	DestroyLineActors();
 }
 
-FString FDrawingDesignerRenderControl::GetViewList()
+FString FDrawingDesignerRenderControl::GetViewList() const
 {
 	FDrawingDesignerViewList viewList;
 
@@ -63,6 +63,12 @@ FString FDrawingDesignerRenderControl::GetViewList()
 			viewList.views.Add(view);
 		}
 	}
+
+	TArray<const AModumateObjectInstance*> cameraViews = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType(EObjectType::OTCameraView);
+	TArray<FWebMOI> cameraViewsFWebMOI;
+	UModumateObjectStatics::GetWebMOIArrayForObjects(cameraViews, cameraViewsFWebMOI);
+	
+	viewList.cameraViews = cameraViewsFWebMOI;
 
 	FString responseString;
 	if (ensureAlways(viewList.WriteJson(responseString)))
@@ -193,7 +199,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 	return bSuccess;
 }
 
-bool FDrawingDesignerRenderControl::GetMoiFromView(FVector2D uv, FDrawingDesignerView& view, int32& OutMoiId)
+bool FDrawingDesignerRenderControl::GetMoiFromView(FVector2D uv, FDrawingDesignerView& view, int32& OutMoiId) const
 {
 	FVector2D size;
 	FVector xaxis, yaxis, zaxis, origin;
@@ -272,7 +278,7 @@ void FDrawingDesignerRenderControl::FreeLineActor(ALineActor* LineActor)
 	}
 }
 
-bool FDrawingDesignerRenderControl::GetViewAxis(FDrawingDesignerView& View, FVector& OutXAxis, FVector& OutYAxis, FVector& OutZAxis, FVector& OutOrigin, FVector2D& OutSize)
+bool FDrawingDesignerRenderControl::GetViewAxis(FDrawingDesignerView& View, FVector& OutXAxis, FVector& OutYAxis, FVector& OutZAxis, FVector& OutOrigin, FVector2D& OutSize) const
 {
 	const AModumateObjectInstance* moi = Doc->GetObjectById(View.moi_id);
 
@@ -399,7 +405,7 @@ void FDrawingDesignerRenderControl::RestorePortalMaterials()
 }
 
 
-void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FDrawingDesignerSnap>& OutSnapPoints)
+void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FDrawingDesignerSnap>& OutSnapPoints) const
 {
 	//Derive our cut plane
 	const FVector zAxis(CachedXAxis ^ CachedYAxis);

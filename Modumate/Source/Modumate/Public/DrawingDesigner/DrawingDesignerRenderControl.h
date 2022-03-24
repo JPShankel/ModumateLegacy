@@ -21,9 +21,11 @@ public:
 	FDrawingDesignerRenderControl(UModumateDocument* InDoc)
 		: Doc(InDoc) { }
 	~FDrawingDesignerRenderControl();
-	FString GetViewList();
+
+	FString GetViewList() const;
 	bool GetView(const FString& JsonRequest, FString& OutJsonResponse);
-	bool GetMoiFromView(FVector2D uv, FDrawingDesignerView& view, int32& OutMoiId);
+	bool GetMoiFromView(FVector2D uv, FDrawingDesignerView& view, int32& OutMoiId) const;
+
 	void AddSceneLines(const FVector& ViewDirection, float MinLength, ADrawingDesignerRender* Render);
 	ALineActor* GetLineActor();
 	void FreeLineActor(ALineActor* LineActor);
@@ -32,9 +34,9 @@ private:
 
 	FName MOITraceTag = FName(TEXT("MOITrace"));
 
-	bool GetViewAxis(FDrawingDesignerView& View, FVector& OutXAxis, FVector& OutYAxis, FVector& OutZAxis, FVector& OutOrigin, FVector2D& OutSize);
+	bool GetViewAxis(FDrawingDesignerView& View, FVector& OutXAxis, FVector& OutYAxis, FVector& OutZAxis, FVector& OutOrigin, FVector2D& OutSize) const;
 	void RestorePortalMaterials();  // unused
-	void GetSnapPoints(int32 viewId, TMap<FString, FDrawingDesignerSnap>& OutSnapPoints);
+	void GetSnapPoints(int32 viewId, TMap<FString, FDrawingDesignerSnap>& OutSnapPoints) const;
 	void DestroyLineActors();
 
 	FVector CachedXAxis;
@@ -42,7 +44,7 @@ private:
 	FVector CachedOrigin;
 	FVector2D CachedSize;
 
-	UModumateDocument *const Doc = nullptr;
+	UModumateDocument* Doc = nullptr;
 
 	using StaticMaterialKey = TPair<UStaticMeshComponent*, int32>;
 	TMap<StaticMaterialKey, UMaterialInterface*> SceneStaticMaterialMap;
