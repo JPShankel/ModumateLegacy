@@ -1772,7 +1772,7 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 	TArray<int32> newSelected, newUnselected;
 
 	newSelected = webObIds.FilterByPredicate([&clientObIds](const int32 ObID) {return !clientObIds.Contains(ObID); });
-	newUnselected = clientObIds.FilterByPredicate([&webObIds](const int32 ObID) {return webObIds.Contains(ObID); });
+	newUnselected = clientObIds.FilterByPredicate([&webObIds](const int32 ObID) {return !webObIds.Contains(ObID); });
 
 	for (auto& ob : newSelected)
 	{
