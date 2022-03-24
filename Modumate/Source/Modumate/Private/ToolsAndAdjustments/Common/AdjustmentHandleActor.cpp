@@ -12,6 +12,7 @@
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Objects/ModumateObjectDeltaStatics.h"
 #include "Objects/ModumateObjectStatics.h"
+#include "Objects/MetaPlaneSpan.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/AdjustmentHandleWidget.h"
 #include "UI/DimensionManager.h"
@@ -347,7 +348,20 @@ bool AAdjustmentHandleActor::UpdateUse()
 void AAdjustmentHandleActor::EndUse()
 {
 	TSet<int32> newVertexIDs;
-	FModumateObjectDeltaStatics::GetTransformableIDs({ TargetMOI->ID }, Controller->GetDocument(), newVertexIDs);
+	TArray<int32> targetMoiIDs;
+	if (TargetMOI->GetObjectType() == EObjectType::OTMetaPlaneSpan)
+	{
+		const AMOIMetaPlaneSpan* spanMoi = Cast<AMOIMetaPlaneSpan>(TargetMOI);
+		if (spanMoi)
+		{
+			targetMoiIDs = spanMoi->InstanceData.GraphMembers;
+		}
+	}
+	else
+	{
+		targetMoiIDs = { TargetMOI->ID };
+	}
+	FModumateObjectDeltaStatics::GetTransformableIDs(targetMoiIDs, Controller->GetDocument(), newVertexIDs);
 
 	TMap<int32, FTransform> newTransforms;
 	for (int32 id : newVertexIDs)

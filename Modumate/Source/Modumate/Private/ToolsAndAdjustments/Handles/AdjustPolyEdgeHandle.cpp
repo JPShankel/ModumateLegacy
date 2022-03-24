@@ -6,6 +6,7 @@
 #include "Objects/ModumateObjectDeltaStatics.h"
 #include "Objects/ModumateObjectStatics.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "Objects/MetaPlaneSpan.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "UI/AdjustmentHandleAssetData.h"
 #include "UI/DimensionManager.h"
@@ -315,6 +316,24 @@ bool AAdjustPolyEdgeHandle::GetTransforms(const FVector Offset, TMap<int32, FTra
 		else
 		{
 			return false;
+		}
+	}
+	else if(TargetMOI->GetObjectType() == EObjectType::OTMetaPlaneSpan)
+	{
+		const AMOIMetaPlaneSpan* spanMOI = Cast<AMOIMetaPlaneSpan>(TargetMOI);
+		if (spanMOI && spanMOI->GetCachedGraphFace())
+		{
+			const auto* face = spanMOI->GetCachedGraphFace();
+			int32 numPolyPoints = OriginalPolyPoints.Num();
+			int32 edgeStartIdx = TargetIndex;
+			int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
+
+			FVector edgeStartPoint, edgeEndPoint;
+			if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
+			{
+				OutTransforms.Add(face->VertexIDs[edgeStartIdx], FTransform(edgeStartPoint));
+				OutTransforms.Add(face->VertexIDs[edgeEndIdx], FTransform(edgeEndPoint));
+			}
 		}
 	}
 	else
