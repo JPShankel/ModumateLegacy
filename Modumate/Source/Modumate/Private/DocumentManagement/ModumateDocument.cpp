@@ -4811,26 +4811,29 @@ void UModumateDocument::update_auto_detect_graphic_settings()
 
 void UModumateDocument::download_pdf_from_blob(const FString& Blob, const FString& DefaultName)
 {
-	//TODO: Remove DesktopPlatform code and replace with ModumateCore::PlatformFunctions
-#if 0
 	FString OutPath;
-	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
-	if (DesktopPlatform)
+	
+	UWorld* world = GetWorld();
+	if (world) 
 	{
-		TArray<FString> OutFiles;
-		auto DefaultPath = FPaths::ProjectDir();
-		void* ParentWindowHandle = GEngine->GameViewport->GetWindow()->GetNativeWindow()->GetOSWindowHandle();
-		if (DesktopPlatform->SaveFileDialog(ParentWindowHandle, TEXT("Save As.."), DefaultPath, DefaultName, TEXT("PDF Files|*.pdf"), EFileDialogFlags::None, OutFiles))
+		UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
+		if (gameInstance)
 		{
-			OutPath = OutFiles[0];
+			auto cloudConnection = gameInstance->GetCloudConnection();
+			if (cloudConnection)
+			{
+				TFunction<bool()> networkTickCall = [cloudConnection, world]() { cloudConnection->NetworkTick(world); return true; };
+
+				if (FModumatePlatform::GetSaveFilename(OutPath, networkTickCall, FModumatePlatform::INDEX_PDFFILE))
+				{
+					TArray<uint8> PdfBytes;
+					FBase64::Decode(Blob, PdfBytes);
+
+					FFileHelper::SaveArrayToFile(PdfBytes, *OutPath);
+				}
+			}
 		}
 	}
-
-	TArray<uint8> PdfBytes;
-	FBase64::Decode(Blob, PdfBytes);
-
-	bool result = FFileHelper::SaveArrayToFile(PdfBytes, *OutPath);
-#endif
 }
 
 void UModumateDocument::OnCameraViewSelected(int32 ID)
