@@ -27,7 +27,7 @@ int32 UModumateTargetingStatics::GetFaceIndexFromTargetHit(const AModumateObject
 	case EObjectType::OTSystemPanel:
 	{
 		const AModumateObjectInstance* hostParent = HitObject->GetParentObject();
-		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlane)))
+		if (!ensure(hostParent && (hostParent->GetObjectType() == EObjectType::OTMetaPlaneSpan)))
 		{
 			return INDEX_NONE;
 		}

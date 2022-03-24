@@ -561,7 +561,27 @@ bool AMOICutPlane::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage,
 				continue;
 			}
 
-			auto graphChildren = metaObject->GetChildObjects();
+			TArray<int32> spanIds;
+			if (metaObject->GetObjectType() == EObjectType::OTMetaPlane)
+			{
+				UModumateObjectStatics::GetSpansForFaceObject(Document, metaObject, spanIds);
+			}
+			else if (metaObject->GetObjectType() == EObjectType::OTMetaEdge)
+			{
+				UModumateObjectStatics::GetSpansForEdgeObject(Document, metaObject, spanIds);
+			}
+
+			// Any items w/o spans:
+			TArray<AModumateObjectInstance*> graphChildren = metaObject->GetChildObjects()
+				;
+			for (int32 spanId : spanIds)
+			{
+				auto spanObject = Document->GetObjectById(spanId);
+				if (spanObject)
+				{
+					graphChildren.Append(spanObject->GetChildObjects());
+				}
+			}
 			for (AModumateObjectInstance* graphChild : graphChildren)
 			{
 				if ((graphChild == nullptr) || graphChild->IsDirty(EObjectDirtyFlags::Visuals))

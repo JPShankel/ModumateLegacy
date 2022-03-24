@@ -1,6 +1,7 @@
 #include "Drafting/DraftingHUDDraw.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 
+// Must be updated whenever FModumateLayerType changes.
 static const FColor dwgColors[int32(FModumateLayerType::kFinalLayerType) + 1] =
 {
 	FColor(0, 0, 0),		// kDefault
@@ -40,6 +41,12 @@ static const FColor dwgColors[int32(FModumateLayerType::kFinalLayerType) + 1] =
 	FColor(31, 127, 0),		// KDimensionReference
 	FColor(127, 255, 0),	// kTerrainCut
 	FColor(82, 165, 0),		// kTerrainBeyond
+	FColor(255, 191, 127),	// kPartPointCut
+	FColor(255, 191, 127),	// kPartEdgeCut
+	FColor(255, 191, 127),	// kPartFaceCut
+	FColor(165, 124, 82),	// kPartPointBeyond
+	FColor(165, 124, 82),	// kPartEdgeBeyond
+	FColor(165, 124, 82),	// kPartFaceBeyond
 };
 
 EDrawError FDraftingHUDDraw::DrawLine(
@@ -59,7 +66,7 @@ EDrawError FDraftingHUDDraw::DrawLine(
 	// currently everything in drafting is opaque
 	if (bUseDwgMode)
 	{
-		int32 intLayerType = int32(FMath::Clamp(layerType, FModumateLayerType::kDefault, FModumateLayerType::kFinalLayerType));
+		int32 intLayerType = int32(FMath::Clamp(int32(layerType), int32(FModumateLayerType::kDefault), int32(FModumateLayerType::kFinalLayerType)) );
 		line.Color = dwgColors[intLayerType];
 	}
 	else

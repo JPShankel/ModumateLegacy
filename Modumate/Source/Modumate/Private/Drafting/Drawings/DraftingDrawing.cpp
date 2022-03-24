@@ -126,76 +126,16 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 
 	auto plane = FPlane(scopeBoxOrigin, cutPlane->GetNormal());
 
-	TArray<const AModumateObjectInstance*> groupObjects(Doc->GetObjectsOfType(EObjectType::OTMetaGraph));
-	for (const auto* groupObject: groupObjects)
-	{
-		const FGraph3D& volumeGraph = *Doc->GetVolumeGraph(groupObject->ID);
-
-		auto graph = MakeShared<FGraph2D>();
-		TMap<int32, int32> objMap;
-		volumeGraph.Create2DGraph(plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, graph, objMap);
-
-		ModumateUnitParams::FThickness lineThickness = ModumateUnitParams::FThickness::Points(0.15f);
-		FMColor lineColor = FMColor::Black;
-
-		for (auto& edgekvp : graph->GetEdges())
-		{
-			auto& edge = edgekvp.Value;
-
-			auto startVertex = graph->FindVertex(edge.StartVertexID);
-			auto endVertex = graph->FindVertex(edge.EndVertexID);
-
-			FModumateUnitCoord2D start = FModumateUnitCoord2D::WorldCentimeters(startVertex->Position);
-			FModumateUnitCoord2D end = FModumateUnitCoord2D::WorldCentimeters(endVertex->Position);
-
-			int32 metaplaneID = objMap[edge.ID];
-			auto metaplane = Doc->GetObjectById(metaplaneID);
-			if (metaplane == nullptr)
-			{
-				continue;
-			}
-
-			auto children = metaplane->GetChildObjects();
-			if (children.Num() != 1)
-			{
-				continue;
-			}
-			auto wall = children[0];
-			if (wall == nullptr)
-			{
-				continue;
-			}
-
-			TArray<TPair<FVector2D, FVector2D>> OutLines;
-
-			// TODO: this only is implemented for plane hosted objects right now, this function should be
-			// a part of ModumateObjectInstance instead and should propagate down through the children
-			TArray<TArray<FVector>> WallCutPerimeters;
-			wall->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
-
-			if (bIsDrafting)
-			{
-				for (int32 objID : wall->GetChildIDs())
-				{
-					auto moi = Doc->GetObjectById(objID);
-					if (!moi) continue;
-
-					// not used
-					TArray<TArray<FVector>> portalPerimeters;
-					moi->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, portalPerimeters);
-				}
-			}
-		}
-	}
-
 	TArray<TArray<FVector>> WallCutPerimeters;
-	TArray<const AModumateObjectInstance*> miscDraftObjects(Doc->GetObjectsOfType(
+	TArray<const AModumateObjectInstance*> inplaneDraftTypes(Doc->GetObjectsOfType(
 		{ EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTFinish, EObjectType::OTTrim,
-			EObjectType::OTTerrain, EObjectType::OTPointHosted, EObjectType::OTEdgeHosted}));
+			EObjectType::OTTerrain, EObjectType::OTPointHosted, EObjectType::OTEdgeHosted, EObjectType::OTWallSegment,
+			EObjectType::OTFloorSegment, EObjectType::OTCeiling, EObjectType::OTRoofFace, EObjectType::OTWindow,
+			EObjectType::OTDoor, EObjectType::OTStaircase }));
 
-	for (const auto* miscObject: miscDraftObjects)
+	for (const auto* moi: inplaneDraftTypes)
 	{
-		miscObject->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
+		moi->GetDraftingLines(ParentPage, plane, AxisX, AxisY, scopeBoxOrigin, drawingBox, WallCutPerimeters);
 	}
 
 	// Clipping of beyond-cut-plane lines.

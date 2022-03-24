@@ -4,6 +4,7 @@
 
 // From Layers and Line Types at https://docs.google.com/spreadsheets/d/1re5Qm-58Tm5WEHsnbmAxFiCux8i4mxa3-xqHB5yz19M/#gid=642729209 .
 // The layer table in draftingServer/Dwg/JsonToDwg.cpp (Layers[]) must be in corresponding order.
+// Also preview color table dwgColors in DraftingHUDDraw.cpp.
 enum class FModumateLayerType
 {
 	kDefault,
