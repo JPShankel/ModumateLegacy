@@ -1753,6 +1753,7 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 	{
 		OutState.tool = GetEnumValueString<EToolMode>(EMPlayerController->CurrentTool->GetToolMode());
 		OutState.toolPresetGUID = EMPlayerController->CurrentTool->GetAssemblyGUID().ToString();
+		OutState.toolMode = GetEnumValueString<EToolCreateObjectMode>(EMPlayerController->CurrentTool->GetCreateObjectMode());
 	}
 
 	return true;
@@ -1810,6 +1811,12 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 			FGuid::Parse(InState.toolPresetGUID, guid);
 			EMPlayerController->CurrentTool->SetAssemblyGUID(guid);
 		}
+	}
+
+	EToolCreateObjectMode toolCreateObjectMode;
+	if (EMPlayerController && EMPlayerController->CurrentTool && FindEnumValueByString<EToolCreateObjectMode>(InState.toolMode, toolCreateObjectMode))
+	{
+		EMPlayerController->SetToolCreateObjectMode(toolCreateObjectMode);
 	}
 
 	// general practice: when the web sends us data, send it back so they'll store it

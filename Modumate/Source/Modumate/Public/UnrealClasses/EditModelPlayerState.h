@@ -41,6 +41,9 @@ struct MODUMATE_API FWebEditModelPlayerState
 
 	UPROPERTY()
 	FString toolPresetGUID;
+
+	UPROPERTY()
+	FString toolMode;
 };
 
 /**
