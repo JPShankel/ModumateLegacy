@@ -13,6 +13,11 @@ void UModumateWebBrowser::CallBindUObject(const FString& Name, UObject* Object, 
 	}
 }
 
+void UModumateWebBrowser::SetPlayerInputPosition(const FVector2D& position)
+{
+	WebBrowserWidget->SetPlayerInputPosition(position);
+}
+
 TSharedRef<SWidget> UModumateWebBrowser::RebuildWidget()
 {
 	// Super::RebuildWidget() creates SWebBrowser with binding delegates.

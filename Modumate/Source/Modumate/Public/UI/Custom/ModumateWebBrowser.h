@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "WebBrowserWidget/Public/WebBrowser.h"
+#include "Input/Events.h"
+#include "Layout/Geometry.h"
 #include "ModumateWebBrowser.generated.h"
 
 /**
@@ -32,7 +34,7 @@ public:
 	// Bind UObject to slate web browser
 	UFUNCTION(BlueprintCallable)
 	void CallBindUObject(const FString& Name, UObject* Object, bool bIsPermanent);
-
+	void SetPlayerInputPosition(const FVector2D& position);
 	static const FName MODUMATE_WEB_TAG;
 
 protected:

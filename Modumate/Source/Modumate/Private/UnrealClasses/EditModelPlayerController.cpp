@@ -56,7 +56,7 @@
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "ModumateCore/EnumHelpers.h"
-
+#include "Blueprint/WidgetLayoutLibrary.h"
 
 // Tools
 #include "ToolsAndAdjustments/Tools/EditModelCabinetTool.h"
@@ -1805,6 +1805,10 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 	{
 		return;
 	}
+
+	//Make sure the web gui does not steal our input...
+	FVector2D mousePosition = UWidgetLayoutLibrary::GetMousePositionOnPlatform();
+	EditModelUserWidget->DrawingDesigner->DrawingSetWebBrowser->SetPlayerInputPosition(mousePosition);
 
 	if (bResetFocusToGameViewport)
 	{
@@ -4058,7 +4062,7 @@ FPlane AEditModelPlayerController::GetCurrentCullingPlane() const
 
 void AEditModelPlayerController::ToggleDrawingDesigner(bool bEnable)
 {
-	EditModelUserWidget->DrawingDesigner->SetVisibility(bEnable ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	EditModelUserWidget->DrawingDesigner->SetVisibility(bEnable ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Hidden);
 }
 
 void AEditModelPlayerController::CapabilityReady(AModumateCapability* Capability)
