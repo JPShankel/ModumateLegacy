@@ -14,6 +14,7 @@
 #include "Algo/Accumulate.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "KismetProceduralMeshLibrary.h"
 
 // Sets default values
 ADynamicMeshActor::ADynamicMeshActor()
@@ -502,6 +503,7 @@ void ADynamicMeshActor::SetupPattern2DGeometry(const FPattern2DParams& Params)
 	SetActorLocation(FVector::ZeroVector);
 	SetActorRotation(FQuat::Identity);
 	int32 sectionCounter = 0;
+	Mesh->ClearAllMeshSections();
 	for (TArray<FVector> planePointsIter : Params.MeshsToCreate)
 	{
 		FPlane pointsPlane;
@@ -525,6 +527,7 @@ void ADynamicMeshActor::SetupPattern2DGeometry(const FPattern2DParams& Params)
 		uv0.Reset();
 		tangents.Reset();
 		vertexColors.Reset();
+		
 		if (layerGeomDef.TriangulateMesh(vertices, triangles, normals, uv0, tangents))
 		{
 			// TODO: enable iterative mesh section updates when we can know that
@@ -532,17 +535,20 @@ void ADynamicMeshActor::SetupPattern2DGeometry(const FPattern2DParams& Params)
 			Mesh->CreateMeshSection_LinearColor(sectionCounter, vertices, triangles, normals, uv0, vertexColors, tangents, true);
 			sectionCounter++;
 		}
-		
 	}
-
-
+	UModumateGeometryStatics::TrimProceduralMesh(Mesh, Params.Slicers, EProcMeshSliceCapOption::NoCap, nullptr);
+	
+	
 	auto* gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
 
 	TArray<FColor> colors;
-	colors.Add(FColor::Green);
 	colors.Add(FColor::Red);
+	colors.Add(FColor::Orange);
+	colors.Add(FColor::Yellow);
+	colors.Add(FColor::Green);
 	colors.Add(FColor::Blue);
-	for (int i = 0; i < sectionCounter; i++)
+	colors.Add(FColor::Purple);
+	for (int32 i = 0; i < sectionCounter; i++)
 	{
 		//need to clean up this pointer?
 		UMaterialInstanceDynamic* dynamicMat = UMaterialInstanceDynamic::Create(gameInstance->GetEditModelGameMode()->DynamicColorMaterial, this);

@@ -21,6 +21,15 @@
 class FDrawingDesignerLined;
 
 USTRUCT()
+struct MODUMATE_API FSlicer
+{
+	GENERATED_USTRUCT_BODY();
+
+	FVector SliceOrigin = FVector::ZeroVector;
+	FVector SliceNormal = FVector::ZeroVector;
+};
+
+USTRUCT()
 struct MODUMATE_API FPolyHole2D
 {
 	GENERATED_USTRUCT_BODY();
@@ -234,4 +243,8 @@ public:
 
 	// Return all eight corners of a box.
 	static void GetBoxCorners(const FBox& Box, TArray<FVector>& OutCorners);
+
+	UFUNCTION(Category = "Modumate | Geometry")
+	static bool TrimProceduralMesh(UProceduralMeshComponent* InProcMesh, TArray<FSlicer> Slicers, EProcMeshSliceCapOption CapOption, UMaterialInterface* CapMaterial);
+
 };

@@ -35,8 +35,6 @@ bool UEditModelPattern2DTool::FrameUpdate()
 		const AModumateObjectInstance* hitMOI = GameState->Document->ObjectFromActor(cursor.Actor);
 		if (hitMOI && hitMOI->GetObjectType() == EObjectType::OTMetaPlane)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("LastTarget: ") + FString::FromInt(LastTarget));
-			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Black, TEXT("Hit moi id: ") + FString::FromInt(hitMOI->ID));
 			if (LastTarget != hitMOI->ID && GameState->Document->StartPreviewing())
 			{
 				LastTarget = hitMOI->ID;

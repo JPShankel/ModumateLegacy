@@ -30,6 +30,11 @@ struct MODUMATE_API FBIMPatternSegment
 
 	UPROPERTY()
 	float Value = 0.0f;
+
+	//this is the worst case fractional remainder magnitude, meaning it's based on the longest bound of the parent plane
+	float CachedFractionalRemainderMagnitude = 0.0f;
+
+	float CachedFractionalRemainerFractionOfTotal = 0.0f;
 };
 
 USTRUCT()
@@ -39,6 +44,8 @@ struct MODUMATE_API FBIMPatternSequence
 
 	UPROPERTY()
 	TArray<FBIMPatternSegment> Segments;
+
+	
 };
 
 /*

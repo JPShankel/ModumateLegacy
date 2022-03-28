@@ -159,7 +159,6 @@ public:
 	bool GetDeltaForEdgeAdditionWithSplit(const FVector &EdgeStartPos, const FVector &EdgeEndPos, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs, bool bCheckFaces = false, bool bSplitAndUpdateEdges = true);
 	bool GetDeltaForFaceAddition(const TArray<FVector>& VertexPositions, TArray<FGraph3DDelta>& OutDeltas, int32& NextID, TArray<int32> &OutFaceIDs, bool bSplitAndUpdateFaces = true);
 
-private:
 	bool GetDeltaForEdgeAddition(const FGraphVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> &ParentIDs = TArray<int32>());
 	bool GetDeltaForFaceAddition(const TArray<int32> &VertexIDs, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID);
 
@@ -192,10 +191,10 @@ public:
 	bool GetDeltaForVertexMovements(const TArray<int32>& VertexIDs, const TArray<FVector>& NewVertexPositions, TArray<FGraph3DDelta>& OutDeltas, int32& NextID);
 
 // splitting functions, support for other graph operations
-private:
 	// calculates splits, etc. then will call the direct versions of the function
 	bool GetDeltaForMultipleEdgeAdditions(const FGraphVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, const TArray<int32> &ParentIDs = TArray<int32>());
 	bool GetDeltaForEdgeAdditionWithSplit(const FGraphVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs);
+private:
 
 	bool GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, TArray<int32> &OutAddedFaceIDs, int32 &NextID, const TArray<int32>& EdgeIDs, const TArray<int32>& FaceIDs, const TArray<FPlane>& InPlanes = TArray<FPlane>(), bool bAddNewFaces = true);
 

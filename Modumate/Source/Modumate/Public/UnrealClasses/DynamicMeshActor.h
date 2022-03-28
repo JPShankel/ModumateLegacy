@@ -64,13 +64,15 @@ struct FProceduralMeshParams
 };
 struct MODUMATE_API FPatternAxisData
 {
-	bool bFlex;
-	int32 FractionalWeight;
-	float Magnitude;
+	bool bFlex = false;
+	int32 FractionalWeight = 0;
+	float Magnitude = 0.0f;
 };
+
 struct MODUMATE_API FPattern2DParams
 {
 	TArray<TArray<FVector>> MeshsToCreate;
+	TArray<FSlicer> Slicers;
 
 	TArray<FPatternAxisData> XAxisPattern;
 	TArray<FPatternAxisData> YAxisPattern;

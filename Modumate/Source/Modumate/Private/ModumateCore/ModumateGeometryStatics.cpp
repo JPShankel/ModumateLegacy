@@ -11,6 +11,7 @@
 #include "ModumateCore/ModumateStats.h"
 #include "DrawingDesigner//DrawingDesignerLine.h"
 
+
 #include <algorithm>
 #include <queue>
 #include <iostream>
@@ -2547,4 +2548,13 @@ void UModumateGeometryStatics::GetBoxCorners(const FBox& Box, TArray<FVector>& O
 		FVector(Box.Min.X, Box.Max.Y, Box.Min.Z), FVector(Box.Min.X, Box.Max.Y, Box.Max.Z),
 		FVector(Box.Max.X, Box.Min.Y, Box.Min.Z), FVector(Box.Max.X, Box.Min.Y, Box.Max.Z),
 		FVector(Box.Max.X, Box.Max.Y, Box.Min.Z), Box.Max });
+}
+bool UModumateGeometryStatics::TrimProceduralMesh(UProceduralMeshComponent* InProcMesh, TArray<FSlicer> Slicers, EProcMeshSliceCapOption CapOption, UMaterialInterface* CapMaterial)
+{
+	for (int32 i = 0; i < Slicers.Num(); i++)
+	{
+		UProceduralMeshComponent* outMeshComp; //unused but required param
+		UKismetProceduralMeshLibrary::SliceProceduralMesh(InProcMesh, Slicers[i].SliceOrigin, Slicers[i].SliceNormal, false, outMeshComp, CapOption, nullptr);
+	}
+	return true;
 }

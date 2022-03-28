@@ -27,4 +27,7 @@ public:
 
 	UPROPERTY()
 	FMOIPattern2DData InstanceData;
+	TSharedPtr<FGraph3D> CachedEssentialElementGraph;
+	bool GetDistanceBetweenIntersectingEdgesOfParentGraph(FVector2D StartSegment, FVector2D EndSegment, FVector2D& OutIntersect1, FVector2D& OutIntersect2);
+	bool bGraphDirty = true;
 };
