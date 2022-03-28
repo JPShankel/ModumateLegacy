@@ -14,6 +14,8 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "Objects/MetaEdgeSpan.h"
+#include "Objects/MetaPlaneSpan.h"
 
 void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObjectIDs, UModumateDocument *doc, TSet<int32>& OutTransformableIDs)
 {
@@ -68,6 +70,35 @@ void FModumateObjectDeltaStatics::GetTransformableIDs(const TArray<int32>& InObj
 				TArray<int32> allVertexIDs;
 				doc->GetVolumeGraph(id)->GetVertices().GenerateKeyArray(allVertexIDs);
 				OutTransformableIDs.Append(allVertexIDs);
+			}
+			else if (moi->GetParentObject() && 
+					(moi->GetParentObject()->GetObjectType() == EObjectType::OTMetaEdgeSpan ||
+					moi->GetParentObject()->GetObjectType() == EObjectType::OTMetaPlaneSpan))
+			{
+				TArray<int32> spanMemberIDs;
+				AMOIMetaEdgeSpan* edgeSpan = Cast<AMOIMetaEdgeSpan>(moi->GetParentObject());
+				if (edgeSpan)
+				{
+					spanMemberIDs = edgeSpan->InstanceData.GraphMembers;
+				}
+				else
+				{
+					AMOIMetaPlaneSpan* planeSpan = Cast<AMOIMetaPlaneSpan>(moi->GetParentObject());
+					if (planeSpan)
+					{
+						spanMemberIDs = planeSpan->InstanceData.GraphMembers;
+					}
+				}
+				for (auto curGraphMemberID : spanMemberIDs)
+				{
+					graph3d = doc->FindVolumeGraph(curGraphMemberID);
+					if (auto curGraphMemberObj = graph3d ? graph3d->FindObject(curGraphMemberID) : nullptr)
+					{
+						TArray<int32> vertexIDs;
+						curGraphMemberObj->GetVertexIDs(vertexIDs);
+						OutTransformableIDs.Append(vertexIDs);
+					}
+				}
 			}
 			else
 			{
