@@ -5,6 +5,7 @@
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Objects/ModumateObjectDeltaStatics.h"
 #include "Objects/ModumateObjectStatics.h"
+#include "Objects/MetaPlaneSpan.h"
 #include "DocumentManagement/ModumateDocument.h"
 
 AMOISurfaceGraph::AMOISurfaceGraph()
@@ -69,7 +70,15 @@ bool AMOISurfaceGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 			return false;
 		}
 
-		auto faceObj = doc->GetObjectById(hostObj->GetParentID());
+		AMOIMetaPlaneSpan* spanParent = Cast<AMOIMetaPlaneSpan>(doc->GetObjectById(hostObj->GetParentID()));
+		if (spanParent == nullptr || spanParent->InstanceData.GraphMembers.Num() == 0)
+		{
+			return false;
+		}
+
+		// TODO: support surface graphs across all faces of a span
+		auto faceObj = doc->GetObjectById(spanParent->InstanceData.GraphMembers[0]);
+
 		if (faceObj == nullptr)
 		{
 			return false;

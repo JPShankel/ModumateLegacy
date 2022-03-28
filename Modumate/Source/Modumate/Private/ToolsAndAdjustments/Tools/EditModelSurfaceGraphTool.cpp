@@ -5,6 +5,7 @@
 #include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateTargetingStatics.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "Objects/MetaPlaneSpan.h"
 #include "Objects/SurfaceGraph.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "UI/DimensionManager.h"
@@ -439,12 +440,23 @@ bool USurfaceGraphTool::CreateGraphFromFaceTarget(int32& NextID, int32& OutSurfa
 
 	// Project the holes that the target has into graph polygons, if any
 	const auto& volumeGraph = *GameState->Document->GetVolumeGraph();
-	const auto *hostParentFace = volumeGraph.FindFace(HitGraphHostMOI->GetParentID());
 
-	// this only counts faces that are contained, not holes without faces (CachedIslands)
-	if (hostParentFace->ContainedFaceIDs.Num() != hostParentFace->CachedHoles.Num())
+	if (HitGraphHostMOI != nullptr)
 	{
-		return false;
+		const AMOIMetaPlaneSpan* spanParent = Cast<AMOIMetaPlaneSpan>(HitGraphHostMOI->GetParentObject());
+		if (!spanParent || spanParent->InstanceData.GraphMembers.Num() == 0)
+		{
+			return false;
+		}
+
+		//TODO: Implement containment check for spans
+		const auto* hostParentFace = volumeGraph.FindFace(spanParent->InstanceData.GraphMembers[0]);
+
+		// this only counts faces that are contained, not holes without faces (CachedIslands)
+		if (hostParentFace == nullptr || hostParentFace->ContainedFaceIDs.Num() != hostParentFace->CachedHoles.Num())
+		{
+			return false;
+		}
 	}
 
 	TArray<FGraph2DDelta> fillGraphDeltas;
