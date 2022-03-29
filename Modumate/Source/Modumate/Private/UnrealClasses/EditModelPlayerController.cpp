@@ -1806,6 +1806,7 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 		return;
 	}
 
+#if !UE_SERVER
 	//Make sure the web gui does not steal our input...
 	FVector2D mousePosition = UWidgetLayoutLibrary::GetMousePositionOnPlatform();
 	EditModelUserWidget->DrawingDesigner->DrawingSetWebBrowser->SetPlayerInputPosition(mousePosition);
@@ -1894,6 +1895,8 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 	{
 		Document->DrawDebugSpan(GetWorld());
 	}
+#endif
+
 }
 
 void AEditModelPlayerController::TickInput(float DeltaTime)

@@ -278,7 +278,7 @@ void AEditModelGameState::OnDownloadDocumentSuccess(const FModumateDocumentHeade
 	}
 
 	bDownloadingDocument = false;
-	bool bLoadedProject = (bEmpty || Document->LoadRecord(world, DocHeader, DocRecord, false));
+	bool bLoadedProject = Document->LoadRecord(world, DocHeader, DocRecord, false);
 	uint32 loadedDocHash = Document->GetLatestVerifiedDocHash();
 	LastUploadedDocHash = loadedDocHash;
 	LastUploadTime = FDateTime::UtcNow();
