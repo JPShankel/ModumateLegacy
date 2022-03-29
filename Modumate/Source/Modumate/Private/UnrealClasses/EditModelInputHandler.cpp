@@ -457,6 +457,16 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 		}
 		return true;
 	}
+	case EInputCommand::SpanJoin:
+	{
+		UModumateObjectStatics::TryJoinSelectedMetaSpan(GetWorld());
+		return true;
+	}
+	case EInputCommand::SpanSeparate:
+	{
+		UModumateObjectStatics::SeparateSelectedMetaSpan(GetWorld());
+		return true;
+	}
 
 	// Non-tool modal commands
 

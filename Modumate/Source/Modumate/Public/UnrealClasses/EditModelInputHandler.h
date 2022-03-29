@@ -116,6 +116,10 @@ enum class EInputCommand : uint8
 	SpanEditStart,
 	SpanEditConfirm,
 	SpanEditCancel,
+	
+	// Span commands
+	SpanJoin,
+	SpanSeparate,
 
 	// Non-tool modal commands
 	NextViewMode,

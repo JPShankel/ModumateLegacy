@@ -28,7 +28,7 @@ protected:
 
 	void ResetState();
 	void SetTargetID(int32 NewTargetID);
-	bool GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeIDs, TArray<FDeltaPtr>& OutDeltaPtrs);
+	bool GetObjectCreationDeltas(const int32 InTargetEdgeID, TArray<FDeltaPtr>& OutDeltaPtrs);
 	bool GetSpanCreationDelta(TArray<FDeltaPtr>& OutDeltaPtrs);
 	void ResetSpanIDs();
 

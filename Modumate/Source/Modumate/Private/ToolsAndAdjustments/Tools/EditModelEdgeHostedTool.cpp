@@ -72,7 +72,10 @@ bool UEdgeHostedTool::FrameUpdate()
 		}
 	}
 
-	if (hitMOI && (hitMOI->GetObjectType() == EObjectType::OTMetaEdge) && IsObjectInActiveGroup(hitMOI))
+	if (hitMOI &&
+		(hitMOI->GetObjectType() == EObjectType::OTMetaEdge ||
+		hitMOI->GetObjectType() == EObjectType::OTMetaEdgeSpan) &&
+		IsObjectInActiveGroup(hitMOI))
 	{
 		newTargetID = hitMOI->ID;
 	}
@@ -92,9 +95,10 @@ bool UEdgeHostedTool::FrameUpdate()
 		);
 
 		// Preview delta
-		if (GetCreateObjectMode() == EToolCreateObjectMode::Apply)
+		if (GetCreateObjectMode() == EToolCreateObjectMode::Apply ||
+			GetCreateObjectMode() == EToolCreateObjectMode::Add)
 		{
-			if (GameState->Document->StartPreviewing() && GetObjectCreationDeltas({ LastValidTargetID }, CurDeltas))
+			if (GameState->Document->StartPreviewing() && GetObjectCreationDeltas(LastValidTargetID, CurDeltas))
 			{
 				GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
 			}
@@ -140,7 +144,7 @@ bool UEdgeHostedTool::BeginUse()
 	GameState->Document->ClearPreviewDeltas(GetWorld());
 
 	TArray<FDeltaPtr> deltas;
-	if (!GetObjectCreationDeltas({ LastValidTargetID }, deltas))
+	if (!GetObjectCreationDeltas(LastValidTargetID, deltas))
 	{
 		return false;
 	}
@@ -196,117 +200,114 @@ void UEdgeHostedTool::SetTargetID(int32 NewTargetID)
 	LastValidTargetID = NewTargetID;
 }
 
-bool UEdgeHostedTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeIDs, TArray<FDeltaPtr>& OutDeltaPtrs)
+bool UEdgeHostedTool::GetObjectCreationDeltas(const int32 InTargetEdgeID, TArray<FDeltaPtr>& OutDeltaPtrs)
 {
 	OutDeltaPtrs.Reset();
 	NewObjectIDs.Reset();
-
-	TArray<int32> targetEdgeIDs;
-	for (int32 targetEdgeID : InTargetEdgeIDs)
+	AModumateObjectInstance* inTargetEdgeMOI = GameState->Document->GetObjectById(InTargetEdgeID);
+	if (!inTargetEdgeMOI)
 	{
-		if (targetEdgeID != MOD_ID_NONE)
-		{
-			targetEdgeIDs.Add(targetEdgeID);
-		}
+		return false;
+	}
+	// Make sure the pending line is valid
+	FVector lineDelta = LineEndPos - LineStartPos;
+	float lineLength = lineDelta.Size();
+	if (FMath::IsNearlyZero(lineLength))
+	{
+		return false;
+	}
+	TArray<FVector> points({ LineStartPos, LineEndPos });
+	TArray<int32> targetEdgeIDs = { InTargetEdgeID };
+	if (!GameState->Document->MakeMetaObject(Controller->GetWorld(), points, targetEdgeIDs, OutDeltaPtrs))
+	{
+		return false;
 	}
 
-	if (targetEdgeIDs.Num() == 0)
-	{
-		// Make sure the pending line is valid
-		FVector lineDelta = LineEndPos - LineStartPos;
-		float lineLength = lineDelta.Size();
-		if (FMath::IsNearlyZero(lineLength))
-		{
-			return false;
-		}
-
-		TArray<FVector> points({ LineStartPos, LineEndPos });
-		if (!GameState->Document->MakeMetaObject(Controller->GetWorld(), points, targetEdgeIDs, OutDeltaPtrs))
-		{
-			return false;
-		}
-	}
-
+	// Begin making delta
 	TSharedPtr<FMOIDelta> delta;
 	int32 nextID = GameState->Document->GetNextAvailableID();
-
-	// Follows the pattern established in UPlaneHostedObjTool
-	for (int32 targetEdgeID : targetEdgeIDs)
+	if (!delta.IsValid())
 	{
-		if (!delta.IsValid())
+		delta = MakeShared<FMOIDelta>();
+		OutDeltaPtrs.Add(delta);
+	}
+
+	TArray<int32> inGraphMemberIDs;
+	int32 spanParentID = MOD_ID_NONE;
+	bool bCreateNewSpan = true;
+	bool bCreateNewEdgeHosted = true;
+	if (inTargetEdgeMOI->GetObjectType() == EObjectType::OTMetaEdge)
+	{
+		inGraphMemberIDs.Add(inTargetEdgeMOI->ID);
+		if (CreateObjectMode == EToolCreateObjectMode::Add)
 		{
-			delta = MakeShared<FMOIDelta>();
-			OutDeltaPtrs.Add(delta);
+			//UE_LOG(LogTemp, Error, TEXT("MetaEdge, Add"));
+			bCreateNewSpan = true;
+			bCreateNewEdgeHosted = true;
 		}
-
-		bool bCreateNewObject = true;
-		AModumateObjectInstance* edgeOb = GameState->Document->GetObjectById(targetEdgeID);
-
-		EObjectType objectType = EObjectType::OTEdgeHosted;
-
-		TArray<int32> spans;
-		UModumateObjectStatics::GetSpansForEdgeObject(GameState->Document, edgeOb, spans);
-
-		const AMOIMetaEdgeSpan* spanOb = nullptr;
-
-		int32 spanParentID = MOD_ID_NONE;
-		if (spans.Num() == 0)
+		else if (CreateObjectMode == EToolCreateObjectMode::Apply)
 		{
-			FMOIStateData spanCreateState(nextID++, EObjectType::OTMetaEdgeSpan);
-			FMOIMetaEdgeSpanData spanData;
-			spanData.GraphMembers.Add(targetEdgeID);
-			spanCreateState.CustomData.SaveStructData(spanData);
-			delta->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
-			NewObjectIDs.Add(spanCreateState.ID);
-			spanParentID = spanCreateState.ID;
+			//UE_LOG(LogTemp, Error, TEXT("MetaEdge, Apply"));
+			bCreateNewSpan = inTargetEdgeMOI->GetChildObjects().Num() == 0;
+			bCreateNewEdgeHosted = inTargetEdgeMOI->GetChildObjects().Num() == 0;
 		}
-		else
+	}
+	else if (inTargetEdgeMOI->GetObjectType() == EObjectType::OTMetaEdgeSpan)
+	{
+		AMOIMetaEdgeSpan* span = Cast<AMOIMetaEdgeSpan>(inTargetEdgeMOI);
+		inGraphMemberIDs = span->InstanceData.GraphMembers;
+		if (CreateObjectMode == EToolCreateObjectMode::Add)
 		{
-			spanOb = Cast<AMOIMetaEdgeSpan>(GameState->Document->GetObjectById(spans[0]));
-			if (ensure(spanOb))
+			//UE_LOG(LogTemp, Error, TEXT("SpanEdge, Add"));
+			bCreateNewSpan = true;
+			bCreateNewEdgeHosted = true;
+		}
+		else if (CreateObjectMode == EToolCreateObjectMode::Apply)
+		{
+			//UE_LOG(LogTemp, Error, TEXT("SpanEdge, Apply"));
+			bCreateNewSpan = false;
+			bCreateNewEdgeHosted = false;
+			spanParentID = inTargetEdgeMOI->ID;
+		}
+	}
+
+
+	if (bCreateNewSpan)
+	{
+		FMOIStateData spanCreateState(nextID++, EObjectType::OTMetaEdgeSpan);
+		FMOIMetaEdgeSpanData spanData;
+		spanData.GraphMembers = inGraphMemberIDs;
+		spanCreateState.CustomData.SaveStructData<FMOIMetaEdgeSpanData>(spanData);
+		delta->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
+		NewObjectIDs.Add(spanCreateState.ID);
+		spanParentID = spanCreateState.ID;
+	}
+
+	if (bCreateNewEdgeHosted)
+	{
+		FMOIStateData edgeHostedCreateState(nextID++, EObjectType::OTEdgeHosted, spanParentID);
+		edgeHostedCreateState.AssemblyGUID = AssemblyGUID;
+		FMOIEdgeHostedData edgeHostedData;
+		edgeHostedCreateState.CustomData.SaveStructData<FMOIEdgeHostedData>(edgeHostedData);
+		delta->AddCreateDestroyState(edgeHostedCreateState, EMOIDeltaType::Create);
+		NewObjectIDs.Add(edgeHostedCreateState.ID);
+	}
+	else
+	{
+		for (auto child : inTargetEdgeMOI->GetChildObjects())
+		{
+			if (child->GetObjectType() == EObjectType::OTEdgeHosted)
 			{
-				spanParentID = spanOb->ID;
+				// Only swap the obj that is being pointed at
+				const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
+				if (cursor.Actor && child == GameState->Document->ObjectFromActor(cursor.Actor))
+				{
+					FMOIStateData& newState = delta->AddMutationState(child);
+					newState.AssemblyGUID = AssemblyGUID;
+				}
 			}
 		}
 
-		// TODO: use spanOb instead of edgeOb when parenting is put in.
-		if (edgeOb && ensure(edgeOb->GetObjectType() == EObjectType::OTMetaEdge) &&
-			CreateObjectMode != EToolCreateObjectMode::Add)
-		{
-			for (auto child : edgeOb->GetChildObjects())
-			{
-				if (child->GetObjectType() == objectType)
-				{
-					// Only swap the obj that is being pointed at
-					const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
-					if (cursor.Actor && child == GameState->Document->ObjectFromActor(cursor.Actor))
-					{
-						FMOIStateData& newState = delta->AddMutationState(child);
-						newState.AssemblyGUID = AssemblyGUID;
-						bCreateNewObject = false;
-					}
-				}
-				else
-				{
-					delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
-				}
-			}
-		}
-
-		if (bCreateNewObject)
-		{
-			NewMOIStateData.ParentID = spanParentID;
-
-			NewMOIStateData.ID = nextID++;
-			NewMOIStateData.ObjectType = EObjectType::OTEdgeHosted;
-			NewMOIStateData.AssemblyGUID = AssemblyGUID;
-			FMOIEdgeHostedData newCustomData;
-			NewMOIStateData.CustomData.SaveStructData<FMOIEdgeHostedData>(newCustomData);
-
-			NewObjectIDs.Add(NewMOIStateData.ID);
-
-			delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
-		}
 	}
 
 	return true;
