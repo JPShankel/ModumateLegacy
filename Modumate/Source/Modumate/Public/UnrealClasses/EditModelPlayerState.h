@@ -44,6 +44,9 @@ struct MODUMATE_API FWebEditModelPlayerState
 
 	UPROPERTY()
 	FString toolMode;
+
+	UPROPERTY()
+	FString viewMode;
 };
 
 /**
