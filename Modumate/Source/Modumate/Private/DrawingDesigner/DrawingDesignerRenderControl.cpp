@@ -153,7 +153,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 	}
 
 	renderer->SetupRenderTarget(viewRequest.minimum_resolution_pixels.x);
-	renderer->RenderImage(viewDirection, scaleLength);
+	renderer->RenderImage(cutPlane, scaleLength);
 
 	// Restore cutplane
 	controller->SetCurrentCullingCutPlane(originalCullingCutPlane);
@@ -244,7 +244,7 @@ void FDrawingDesignerRenderControl::AddSceneLines(const FVector& ViewDirection, 
 		moi->GetDrawingDesignerItems(ViewDirection, sceneLines, MinLength);
 	}
 
-	Render->AddLines(sceneLines);
+	Render->AddLines(sceneLines, false);
 }
 
 ALineActor* FDrawingDesignerRenderControl::GetLineActor()

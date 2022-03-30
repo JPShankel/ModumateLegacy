@@ -11,6 +11,9 @@
 #include "DrawingDesigner/DrawingDesignerLine.h"
 #include "DrawingDesigner/DrawingDesignerView.h"
 #include "DrawingDesigner/DrawingDesignerRenderControl.h"
+#include "DrawingDesigner/ModumateDDRenderDraw.h"
+#include "Drafting/ModumateDraftingElements.h"
+#include "Objects/CutPlane.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/CompoundMeshActor.h"
@@ -24,6 +27,60 @@ const TSet<EObjectType> ADrawingDesignerRender::RenderedObjectTypes({ EObjectTyp
 	EObjectType::OTFloorSegment, EObjectType::OTMullion, EObjectType::OTPointHosted, EObjectType::OTRailSegment,
 	EObjectType::OTRoofFace, EObjectType::OTStaircase, EObjectType::OTStructureLine, EObjectType::OTSystemPanel, EObjectType::OTTerrain,
 	EObjectType::OTTrim, EObjectType::OTWallSegment, EObjectType::OTWindow });
+
+namespace
+{
+	struct
+	{
+		float Thickness;
+		int GreyValue;
+	} LayerToDDParams[] =
+	{
+	1.0f,  0,	// kDefault
+	0.5f,  0,	// kSeparatorCutStructuralLayer
+	0.25f, 96,	// kSeparatorCutOuterSurface
+	0.05f, 144,	// kSeparatorCutMinorLayer
+	0.15f, 112,	// kSeparatorBeyondSurfaceEdges
+	0.05f, 160,	// kSeparatorBeyondModuleEdges
+	0.25f, 0,	// kOpeningSystemCutLine
+	0.15f, 144,	// kOpeningSystemBeyond
+	0.1f,  144, // kOpeningSystemBehind
+	0.1f,  153,	// kOpeningSystemOperatorLine
+	0.25f, 0,	// kSeparatorCutTrim
+	0.25f, 0,	// kCabinetCutCarcass
+	0.15f, 0,	// kCabinetCutAttachment
+	0.15f, 144,	// kCabinetBeyond
+	0.1f,  144,	// kCabinetBehind
+	0.1f,  96,	// kCabinetBeyondBlockedByCountertop
+	0.25f, 32,	// kCountertopCut
+	0.25f, 96,	// kCountertopBeyond
+	0.25f, 96,	// kFfeOutline
+	0.15f, 144,	// kFfeInteriorEdges
+	0.25f, 0,	// kBeamColumnCut
+	0.15f, 144,	// kBeamColumnBeyond
+	0.25f, 0,	// kMullionCut
+	0.15f, 112,	// kMullionBeyond
+	0.25f, 0,	// kSystemPanelCut
+	0.15f, 144,	// kSystemPanelBeyond
+	0.25f, 0,	// kFinishCut
+	0.15f, 144,	// kFinishBeyond
+	0.5f,  128,	// kDebug1
+	0.5f,  192,	// kDebug2
+	0.05f, 160,	// kSeparatorCutEndCaps
+	0.25f, 127,	// kDimensionMassing
+	0.25f, 127,	// kDimensionFraming
+	0.25f, 127,	// kDimensionOpening
+	0.25f, 127,	// KDimensionReference
+	0.25f, 32,	// kTerrainCut
+	0.15f, 96,	// kTerrainBeyond
+	0.25f, 0,	// kPartPointCut
+	0.25f, 0,	// kPartEdgeCut
+	0.25f, 0,	// kPartFaceCut
+	0.15f, 144,	// kPartPointBeyond
+	0.15f, 144,	// kPartEdgeBeyond
+	0.15f, 144,	// kPartFaceBeyond
+	};
+}
 
 ADrawingDesignerRender::ADrawingDesignerRender()
 {
@@ -43,7 +100,7 @@ void ADrawingDesignerRender::SetDocument(const UModumateDocument* InDoc, FDrawin
 	DrawingDesignerRenderControl = RenderControl;
 }
 
-void ADrawingDesignerRender::AddLines(const TArray<FDrawingDesignerLine>& Lines)
+void ADrawingDesignerRender::AddLines(const TArray<FDrawingDesignerLine>& Lines, bool bInPlane)
 {
 	for (const auto& line : Lines)
 	{
@@ -54,6 +111,7 @@ void ADrawingDesignerRender::AddLines(const TArray<FDrawingDesignerLine>& Lines)
 		lineActor->MakeGeometry();
 		lineActor->ToggleForDrawingRender(true);
 		lineActor->UpdateLineVisuals(true, line.GetDDThickness(), line.GetLineShadeAsColor());
+		lineActor->GetStaticMeshComponent()->SetMaterial(0, bInPlane ? GameMode->LineUnculledMaterial : GameMode->LineMaterial);
 		LineActors.Add(lineActor);
 		CaptureComponent->ShowOnlyActorComponents(lineActor);
 	}
@@ -108,20 +166,38 @@ void ADrawingDesignerRender::SetupRenderTarget(int32 ImageWidth)
 		}
 	}
 
-	FTransform cameraTransform(ViewTransform.GetRotation(), ViewTransform.GetTranslation());
+	FTransform cameraTransform(ViewTransform.GetRotation(), ViewTransform.GetTranslation() + -CaptureActorOffset * ViewTransform.TransformVectorNoScale(FVector::XAxisVector));
 	CaptureComponent->SetWorldTransform(cameraTransform);
 	CaptureComponent->OrthoWidth = orthoWidth;
 }
 
-void ADrawingDesignerRender::RenderImage(const FVector& ViewDirection, float MinLength)
+void ADrawingDesignerRender::RenderImage(AMOICutPlane* CutPlane, float MinLength)
 {
 	if (!ensure(RenderTarget) || !ensure(DrawingDesignerRenderControl))
 	{
 		return;
 	}
 
+	AEditModelPlayerController* controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+	if (!ensure(controller))
+	{
+		return;
+	}
+
+	if (!GameMode.IsValid())
+	{
+		GameMode = controller->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
+	}
+
+	CaptureComponent->ClearShowOnlyComponents();
+
+	const FVector viewDirection = CutPlane->GetNormal();
+	InPlaneOffset = -0.5f * CaptureActorOffset * viewDirection;
 	RenderFfe();
-	AddObjects(ViewDirection, MinLength);
+	
+	AddObjects(viewDirection, MinLength);
+
+	AddInPlaneObjects(CutPlane, MinLength);
 
 	CaptureComponent->TextureTarget = RenderTarget;
 
@@ -129,6 +205,7 @@ void ADrawingDesignerRender::RenderImage(const FVector& ViewDirection, float Min
 
 	RestoreFfeMaterials();
 	RestoreObjects();
+
 	EmptyLines();
 	SceneStaticMaterialMap.Empty();
 	SceneMeshComponents.Empty();
@@ -342,7 +419,28 @@ void ADrawingDesignerRender::AddObjects(const FVector& ViewDirection, float MinL
 		moi->GetDrawingDesignerItems(ViewDirection, sceneLines, MinLength);
 	}
 
-	AddLines(sceneLines);
+	AddLines(sceneLines, false);
+}
+
+void ADrawingDesignerRender::AddInPlaneObjects(AMOICutPlane* CutPlane, float MinLength)
+{
+	if (!ensure(CutPlane->GetNumCorners() == 4))
+	{
+		return;
+	}
+
+	FModumateDDRenderDraw::DrawCallback lineCallback = [this](FVector Start, FVector End, FModumateLayerType Layer)
+	{
+		AddInPlaneLines(Start, End, Layer);
+	};
+
+	FModumateDDRenderDraw lineCreator(CutPlane->DrawingInterface, lineCallback);
+	if (!CutPlane->PreviewHUDLines)
+	{	// Trigger an update of the HUD lines.
+		CutPlane->UpdateDraftingPreview(true);
+	}
+
+	CutPlane->PreviewHUDLines->Draw(&lineCreator);
 }
 
 void ADrawingDesignerRender::RestoreObjects()
@@ -352,4 +450,14 @@ void ADrawingDesignerRender::RestoreObjects()
 		meshKvp.Key->SetCustomDepthStencilValue(meshKvp.Value);
 		meshKvp.Key->SetRenderCustomDepth(meshKvp.Value != 0);
 	}
+}
+
+void ADrawingDesignerRender::AddInPlaneLines(FVector P0, FVector P1, FModumateLayerType Layer)
+{
+	FDrawingDesignerLine line(P0 + InPlaneOffset, P1 + InPlaneOffset);
+	int32 intLayer = int32(Layer);
+	intLayer = FMath::Clamp(intLayer, 0, int32(sizeof(LayerToDDParams) / sizeof(LayerToDDParams[0]) ));
+	line.Thickness = LayerToDDParams[intLayer].Thickness * 2.0f;
+	line.GreyValue = LayerToDDParams[intLayer].GreyValue / 255.0;
+	AddLines({ line }, true);
 }

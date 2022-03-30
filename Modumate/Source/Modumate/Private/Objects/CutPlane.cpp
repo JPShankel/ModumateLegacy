@@ -492,11 +492,11 @@ void AMOICutPlane::UpdateCachedGeometryData()
 	CachedOrigin = CachedPoints[0];
 }
 
-bool AMOICutPlane::UpdateDraftingPreview()
+bool AMOICutPlane::UpdateDraftingPreview(bool bForce /*= false*/)
 {
 	PreviewHUDLines = nullptr;
 
-	if (!IsVisible())
+	if (!IsVisible() && !bForce)
 	{
 		return true;
 	}

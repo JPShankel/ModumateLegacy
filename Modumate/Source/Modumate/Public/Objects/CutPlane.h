@@ -69,6 +69,8 @@ public:
 	void SetHUDDwgDrafting(bool NewEnable) { bHUDDwgDrafting = NewEnable; };
 	TArray<int32> GetCachedForegroundMoiIDs() const { return CachedForegroundMOIs; };
 
+	bool UpdateDraftingPreview(bool bForce = false);
+
 
 	FDraftingHUDDraw DrawingInterface;
 
@@ -85,7 +87,6 @@ public:
 protected:
 	virtual float GetAlpha() const override;
 	void UpdateCachedGeometryData();
-	bool UpdateDraftingPreview();
 	bool GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage, const FVector &AxisX, const FVector &AxisY, bool bIsDrafting = false);
 	void ConvertToOutlines(const FString& renderTargetFilename);
 

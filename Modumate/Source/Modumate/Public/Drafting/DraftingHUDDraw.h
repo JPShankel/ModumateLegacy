@@ -9,7 +9,7 @@
 class FDraftingHUDDraw : public IModumateDraftingDraw
 {
 public:
-	UHUDDrawWidget* HUDDrawWidget;
+	UHUDDrawWidget* HUDDrawWidget = nullptr;
 	FVector CurrentOrigin;
 	FVector CurrentAxisX, CurrentAxisY;
 
