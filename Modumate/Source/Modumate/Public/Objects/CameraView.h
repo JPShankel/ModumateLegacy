@@ -51,10 +51,22 @@ struct MODUMATE_API FMOICameraViewData
 	FString SavedTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
+	FDateTime Date = FDateTime::Now();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
+	FDateTime Time = FDateTime::Now();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
 	bool bAxesActorVisibility = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
 	bool bViewCubeVisibility = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
+	bool bCutPlanesColorVisiblity = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
+	bool bGraphDirectionVisiblity = false;
 };
 
 UCLASS()
@@ -68,6 +80,8 @@ public:
 	virtual AActor* CreateActor(const FVector& loc, const FQuat& rot) override;
 	virtual void PostCreateObject(bool bNewObject) override;
 	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
+	virtual bool ToWebMOI(FWebMOI& OutMOI) const override;
+	virtual bool FromWebMOI(const FString& InJson) override;
 
 	UPROPERTY()
 	FMOICameraViewData InstanceData;

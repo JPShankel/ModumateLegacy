@@ -877,6 +877,15 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 				}
 			}
 
+			if (structProp->Struct->GetName() == TEXT("DateTime"))
+			{
+				FDateTime* dateTimePtr = structProp->ContainerPtrToValuePtr<FDateTime>(structPtr);
+				if (dateTimePtr != nullptr)
+				{
+					FDateTime::ParseIso8601(*moiProp->ValueArray[0], *dateTimePtr);
+				}
+			}
+
 			continue;
 		}
 	}
@@ -1053,7 +1062,16 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 					webProp.ValueArray.Add(guidPtr->ToString());
 					OutMOI.Properties.Add(webProp.Name, webProp);
 				}
+			}
 
+			if (structProp->Struct->GetName() == TEXT("DateTime"))
+			{
+				const FDateTime* dateTimePtr = structProp->ContainerPtrToValuePtr<FDateTime>(structPtr);
+				if (dateTimePtr != nullptr)
+				{
+					webProp.ValueArray.Add(dateTimePtr->ToIso8601());
+					OutMOI.Properties.Add(webProp.Name, webProp);
+				}
 			}
 
 			continue;

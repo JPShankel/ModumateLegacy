@@ -19,7 +19,9 @@ enum class EWebMOIPropertyType : uint8
 	quatRotation,
 	extension,
 	terrainMaterial,
-	height
+	height,
+	cameraDate,
+	cameraTime
 };
 
 USTRUCT()
