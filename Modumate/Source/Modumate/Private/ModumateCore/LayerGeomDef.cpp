@@ -535,8 +535,8 @@ void FLayerGeomDef::GetRangesForHolesOnPlane(TArray<TPair<float, float>>& OutRan
 	FVector intersectionEnd = Intersection.Value;
 
 	// TODO: only works when the plane goes through the object once (2 intersections)
-	FVector2D start = UModumateGeometryStatics::ProjectPoint2D(PlaneOrigin, PlaneAxisX, PlaneAxisY, intersectionStart);
-	FVector2D end = UModumateGeometryStatics::ProjectPoint2D(PlaneOrigin, PlaneAxisX, PlaneAxisY, intersectionEnd);
+	FVector2D start = UModumateGeometryStatics::ProjectPoint2D(intersectionStart, PlaneAxisX, PlaneAxisY, PlaneOrigin);
+	FVector2D end = UModumateGeometryStatics::ProjectPoint2D(intersectionEnd, PlaneAxisX, PlaneAxisY, PlaneOrigin);
 	float length = (end - start).Size();
 	FVector2D intersectionDir = (end - start).GetSafeNormal();
 
@@ -566,8 +566,8 @@ void FLayerGeomDef::GetRangesForHolesOnPlane(TArray<TPair<float, float>>& OutRan
 		{
 			continue;
 		}
-		FVector2D holeStart = UModumateGeometryStatics::ProjectPoint2D(PlaneOrigin, PlaneAxisX, PlaneAxisY, holeIntersections[0]);
-		FVector2D holeEnd = UModumateGeometryStatics::ProjectPoint2D(PlaneOrigin, PlaneAxisX, PlaneAxisY, holeIntersections[1]);
+		FVector2D holeStart = UModumateGeometryStatics::ProjectPoint2D(holeIntersections[0], PlaneAxisX, PlaneAxisY, PlaneOrigin);
+		FVector2D holeEnd = UModumateGeometryStatics::ProjectPoint2D(holeIntersections[1], PlaneAxisX, PlaneAxisY, PlaneOrigin);
 
 		float holeDotIntersection = (holeStart - start) | intersectionDir;
 		FVector2D holeStartOnIntersection = holeDotIntersection * intersectionDir;

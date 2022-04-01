@@ -426,11 +426,10 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<FDraftingComposite> &
 					FVector samplePoint = usePointsA ? layer.OriginalPointsA[0] : layer.OriginalPointsB[0];
 					FVector hole3DDisplacement = (samplePoint | layer.Normal) * layer.Normal;
 					layer.GetRangesForHolesOnPlane(lineRanges, currentIntersection,
-						parentLocation + hole3DDisplacement, Plane, -AxisX, -AxisY, Origin);
+						parentLocation + hole3DDisplacement, Plane, AxisX, AxisY, Origin);
 
-					// TODO: unclear why the axes need to be flipped here, could be because of the different implementation of finding intersections
-					FVector2D start = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersectionStart);
-					FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersectionEnd);
+					FVector2D start = UModumateGeometryStatics::ProjectPoint2D(intersectionStart, AxisX, AxisY, Origin);
+					FVector2D end = UModumateGeometryStatics::ProjectPoint2D(intersectionEnd, AxisX, AxisY, Origin);
 					FVector2D delta = end - start;
 
 					ParentPage->inPlaneLines.Emplace(FVector(start, 0), FVector(end, 0));

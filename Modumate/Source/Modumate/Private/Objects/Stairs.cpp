@@ -308,7 +308,7 @@ void AMOIStaircase::GetInPlaneLines(const TSharedPtr<FDraftingComposite>& Parent
 					TArray<FVector2D> projectedPoints;
 					for (const auto& point3d: intersectPoints)
 					{
-						projectedPoints.Add(UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, point3d));
+						projectedPoints.Add(UModumateGeometryStatics::ProjectPoint2D(point3d, AxisX, AxisY, Origin));
 					}
 					TArray<int32> indices;
 					ConvexHull2D::ComputeConvexHull(projectedPoints, indices);

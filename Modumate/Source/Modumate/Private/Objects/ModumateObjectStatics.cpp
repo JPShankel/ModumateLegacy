@@ -905,15 +905,15 @@ void UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(const TSharedPtr<
 		FVector intersect;
 		if (FMath::SegmentPlaneIntersection(p1, p2, Plane, intersect))
 		{
-			points.Emplace(UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersect));
+			points.Emplace(UModumateGeometryStatics::ProjectPoint2D(intersect, AxisX, AxisY, Origin));
 		}
 		if (FMath::SegmentPlaneIntersection(startCap, p1, Plane, intersect))
 		{
-			startCapPoints.Emplace(UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersect));
+			startCapPoints.Emplace(UModumateGeometryStatics::ProjectPoint2D(intersect, AxisX, AxisY, Origin));
 		}
 		if (FMath::SegmentPlaneIntersection(endCap, p2, Plane, intersect))
 		{
-			endCapPoints.Emplace(UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersect));
+			endCapPoints.Emplace(UModumateGeometryStatics::ProjectPoint2D(intersect, AxisX, AxisY, Origin));
 		}
 		startCap = p1;
 		endCap = p2;

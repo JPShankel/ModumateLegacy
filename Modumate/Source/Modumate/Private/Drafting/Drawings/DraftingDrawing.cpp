@@ -250,19 +250,22 @@ bool FDraftingDrawing::MakeWorldObjects()
 	}
 	totalPage->Children.Add(foregroundLines);
 
-	// Plan dimensions MOD-726.
-	TSharedPtr<FDraftingComposite> planDimensions = MakeShared<FDraftingComposite>();
-	planDimensions->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);
-	FModumateDimensions dimensionsCreator;
-
-	if (dimensionsCreator.AddDimensionsFromCutPlane(planDimensions, Doc, plane, origin, axisX))
+	if (DraftingType == UDraftingManager::kDWG)
 	{
-		if (!bHorizontalPlan)
+		// Plan dimensions MOD-726.
+		TSharedPtr<FDraftingComposite> planDimensions = MakeShared<FDraftingComposite>();
+		planDimensions->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);
+		FModumateDimensions dimensionsCreator;
+
+		if (dimensionsCreator.AddDimensionsFromCutPlane(planDimensions, Doc, plane, origin, axisX))
 		{
-			planDimensions->MoveXTo(dimensions.X);
-			planDimensions->MoveYTo(dimensions.Y);
+			if (!bHorizontalPlan)
+			{
+				planDimensions->MoveXTo(dimensions.X);
+				planDimensions->MoveYTo(dimensions.Y);
+			}
+			totalPage->Children.Add(planDimensions);
 		}
-		totalPage->Children.Add(planDimensions);
 	}
 
 	section->Children.Add(totalPage);
@@ -390,7 +393,7 @@ void FDraftingDrawing::GetVisibleRoomsAndLocations(TMap<int32, FVector2D> &OutRo
 
 			if (plane.PlaneDot(centroid) > 0)
 			{
-				FVector2D centroidOnPlane = UModumateGeometryStatics::ProjectPoint2D(origin, -axisX, -axisY, centroid);
+				FVector2D centroidOnPlane = UModumateGeometryStatics::ProjectPoint2D(centroid, axisX, axisY, origin);
 				OutRoomsAndLocations.Add(roomID, centroidOnPlane);
 				break;
 			}

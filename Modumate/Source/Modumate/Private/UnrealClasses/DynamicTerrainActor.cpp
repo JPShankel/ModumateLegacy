@@ -436,8 +436,8 @@ bool ADynamicTerrainActor::GetCutPlaneDraftingLines(const TSharedPtr<FDraftingCo
 
 	for (auto& edge: OutEdges)
 	{
-		FVector2D start = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Key);
-		FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Value);
+		FVector2D start = UModumateGeometryStatics::ProjectPoint2D(edge.Key, AxisX, AxisY, Origin);
+		FVector2D end = UModumateGeometryStatics::ProjectPoint2D(edge.Value, AxisX, AxisY, Origin);
 
 		FVector2D clippedStart, clippedEnd;
 		if (UModumateFunctionLibrary::ClipLine2DToRectangle(start, end, BoundingBox, clippedStart, clippedEnd))

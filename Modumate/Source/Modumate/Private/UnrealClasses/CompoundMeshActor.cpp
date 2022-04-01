@@ -835,8 +835,8 @@ bool ACompoundMeshActor::GetCutPlaneDraftingLines(const TSharedPtr<FDraftingComp
 
 		for (auto& edge: OutEdges)
 		{
-			FVector2D start = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Key);
-			FVector2D end = UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, edge.Value);
+			FVector2D start = UModumateGeometryStatics::ProjectPoint2D(edge.Key, AxisX, AxisY, Origin);
+			FVector2D end = UModumateGeometryStatics::ProjectPoint2D(edge.Value, AxisX, AxisY, Origin);
 
 			TSharedPtr<FDraftingLine> line = MakeShared<FDraftingLine>(
 				FModumateUnitCoord2D::WorldCentimeters(start),

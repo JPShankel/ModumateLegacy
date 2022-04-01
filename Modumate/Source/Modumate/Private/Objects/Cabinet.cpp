@@ -651,7 +651,7 @@ void AMOICabinet::GetDraftingLines(const TSharedPtr<FDraftingComposite> &ParentP
 				FVector intersection;
 				if (FMath::SegmentPlaneIntersection(a + actorOrigin, b + actorOrigin, Plane, intersection))
 				{
-					intersections.Add(UModumateGeometryStatics::ProjectPoint2D(Origin, -AxisX, -AxisY, intersection));
+					intersections.Add(UModumateGeometryStatics::ProjectPoint2D(intersection, AxisX, AxisY, Origin));
 					bAdded = true;
 				}
 
