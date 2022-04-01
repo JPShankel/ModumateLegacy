@@ -8,6 +8,8 @@
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "Objects/MetaGraph.h"
 #include "Objects/ModumateObjectStatics.h"
+#include "Objects/MetaEdgeSpan.h"
+#include "Objects/MetaPlaneSpan.h"
 
 UGroupTool::UGroupTool()
 	: Super()
@@ -35,14 +37,35 @@ bool UGroupTool::Activate()
 	const auto& selectedObjects = emPlayerState->SelectedObjects;
 	for (auto* obj: selectedObjects)
 	{
-		while (obj && UModumateTypeStatics::Graph3DObjectTypeFromObjectType(obj->GetObjectType()) == EGraph3DObjectType::None)
+		while (obj && (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(obj->GetObjectType()) == EGraph3DObjectType::None)
+			&& !UModumateTypeStatics::IsSpanObject(obj))
 		{
 			obj->ClearAdjustmentHandles();
 			obj = obj->GetParentObject();
 		}
-		if (obj)
+
+		switch (obj ? obj->GetObjectType() : EObjectType::OTNone)
 		{
+		case EObjectType::OTMetaEdgeSpan:
+			for (int32 id : Cast<AMOIMetaEdgeSpan>(obj)->InstanceData.GraphMembers)
+			{
+				massingObjects.Add(doc->GetObjectById(id));
+			}
+			break;
+
+		case EObjectType::OTMetaPlaneSpan:
+			for (int32 id : Cast<AMOIMetaPlaneSpan>(obj)->InstanceData.GraphMembers)
+			{
+				massingObjects.Add(doc->GetObjectById(id));
+			}
+			break;
+
+		case EObjectType::OTNone:
+			break;
+
+		default:
 			massingObjects.Add(obj);
+			break;
 		}
 	}
 

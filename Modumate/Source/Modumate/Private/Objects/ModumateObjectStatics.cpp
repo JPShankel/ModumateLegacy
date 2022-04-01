@@ -1114,7 +1114,9 @@ bool UModumateObjectStatics::IsObjectInGroup(const UModumateDocument* Doc, const
 		GroupID = Doc->GetActiveVolumeGraphID();
 	}
 
-	while (Object && UModumateTypeStatics::Graph3DObjectTypeFromObjectType(Object->GetObjectType()) == EGraph3DObjectType::None)
+	// Find eventual hosting graph3d element, or first element for spans, if any.
+	while (Object && UModumateTypeStatics::Graph3DObjectTypeFromObjectType(Object->GetObjectType()) == EGraph3DObjectType::None
+		&& !UModumateTypeStatics::IsSpanObject(Object))
 	{
 		Object = Object->GetParentObject();
 	}
@@ -1123,7 +1125,15 @@ bool UModumateObjectStatics::IsObjectInGroup(const UModumateDocument* Doc, const
 		return true;
 	}
 
-	const FGraph3D* volumeGraph = Doc->FindVolumeGraph(Object->ID);
+	int32 graphId = Object->ID;
+	if (UModumateTypeStatics::IsSpanObject(Object))
+	{
+		graphId = Object->GetObjectType() == EObjectType::OTMetaEdgeSpan ?
+			Cast<AMOIMetaEdgeSpan>(Object)->InstanceData.GraphMembers[0] :
+			Cast<AMOIMetaPlaneSpan>(Object)->InstanceData.GraphMembers[0];
+	}
+
+	const FGraph3D* volumeGraph = Doc->FindVolumeGraph(graphId);
 	return volumeGraph && volumeGraph->GraphID == GroupID;
 }
 
@@ -1136,7 +1146,8 @@ bool UModumateObjectStatics::IsObjectInSubgroup(const UModumateDocument* Doc, co
 	}
 
 	bOutIsInGroup = false;
-	while (Object && UModumateTypeStatics::Graph3DObjectTypeFromObjectType(Object->GetObjectType()) == EGraph3DObjectType::None)
+	while (Object && UModumateTypeStatics::Graph3DObjectTypeFromObjectType(Object->GetObjectType()) == EGraph3DObjectType::None
+		&& !UModumateTypeStatics::IsSpanObject(Object))
 	{
 		Object = Object->GetParentObject();
 	}
@@ -1146,7 +1157,15 @@ bool UModumateObjectStatics::IsObjectInSubgroup(const UModumateDocument* Doc, co
 		return false;
 	}
 
-	const FGraph3D* volumeGraph = Doc->FindVolumeGraph(Object->ID);
+	int32 graphId = Object->ID;
+	if (UModumateTypeStatics::IsSpanObject(Object))
+	{
+		graphId = Object->GetObjectType() == EObjectType::OTMetaEdgeSpan ?
+			Cast<AMOIMetaEdgeSpan>(Object)->InstanceData.GraphMembers[0] :
+			Cast<AMOIMetaPlaneSpan>(Object)->InstanceData.GraphMembers[0];
+	}
+
+	const FGraph3D* volumeGraph = Doc->FindVolumeGraph(graphId);
 	if (!volumeGraph)
 	{
 		return false;
@@ -1254,7 +1273,20 @@ void UModumateObjectStatics::GetObjectsInGroups(UModumateDocument* Doc, const TA
 				{
 					OutObjects.Add(metaMoi);
 					OutObjects.Append(metaMoi->GetAllDescendents());
+
+					TArray<int32> spans;
+					UModumateObjectStatics::GetSpansForFaceObject(Doc, metaMoi, spans);
+					UModumateObjectStatics::GetSpansForEdgeObject(Doc, metaMoi, spans);
+					for (int32 spanId : spans)
+					{
+						metaMoi = Doc->GetObjectById(spanId);
+						if (metaMoi)
+						{
+							OutObjects.Append(metaMoi->GetAllDescendents());
+						}
+					}
 				}
+
 			}
 		}
 	}
@@ -1375,7 +1407,7 @@ void UModumateObjectStatics::GetWebMOIArrayForObjects(const TArray<const AModuma
 
 void UModumateObjectStatics::GetSpansForFaceObject(const UModumateDocument* Doc, const AModumateObjectInstance* FaceObject, TArray<int32>& OutSpans)
 {
-	if (FaceObject != nullptr)
+	if (FaceObject != nullptr && FaceObject->GetObjectType() == EObjectType::OTMetaPlane)
 	{
 		Algo::TransformIf(
 			Doc->GetObjectsOfType(EObjectType::OTMetaPlaneSpan), 
@@ -1393,7 +1425,7 @@ void UModumateObjectStatics::GetSpansForFaceObject(const UModumateDocument* Doc,
 
 void UModumateObjectStatics::GetSpansForEdgeObject(const UModumateDocument* Doc, const AModumateObjectInstance* EdgeObject, TArray<int32>& OutSpans)
 {
-	if (EdgeObject != nullptr)
+	if (EdgeObject != nullptr && EdgeObject->GetObjectType() == EObjectType::OTMetaEdge)
 	{
 		Algo::TransformIf(
 			Doc->GetObjectsOfType(EObjectType::OTMetaEdgeSpan),
@@ -1600,4 +1632,44 @@ void UModumateObjectStatics::SeparateSelectedMetaSpan(UWorld* World)
 	}
 
 	controller->GetDocument()->ApplyDeltas({ deltaPtr }, World);
+}
+
+bool UModumateObjectStatics::GetHostingMOIsForMOI(UModumateDocument* Doc, AModumateObjectInstance* Moi, TArray<AModumateObjectInstance*>& OutMOIs)
+{
+	while (Moi && UModumateTypeStatics::Graph3DObjectTypeFromObjectType(Moi->GetObjectType()) == EGraph3DObjectType::None
+		&& !UModumateTypeStatics::IsSpanObject(Moi))
+	{
+		Moi = Moi->GetParentObject();
+	}
+	if (!Moi)
+	{
+		return false;
+	}
+
+	if (UModumateTypeStatics::IsSpanObject(Moi))
+	{
+		const TArray<int32>& graphIds = Moi->GetObjectType() == EObjectType::OTMetaEdgeSpan ?
+			Cast<AMOIMetaEdgeSpan>(Moi)->InstanceData.GraphMembers :
+			Cast<AMOIMetaPlaneSpan>(Moi)->InstanceData.GraphMembers;
+		for (int32 graphId : graphIds)
+		{
+			auto graphMoi = Doc->GetObjectById(graphId);
+			if (graphMoi)
+			{
+				OutMOIs.Add(graphMoi);
+			}
+		}
+	}
+	else
+	{
+		OutMOIs.Add(Moi);
+	}
+
+	return OutMOIs.Num() > 0;
+}
+
+bool UModumateTypeStatics::IsSpanObject(const AModumateObjectInstance* Object)
+{
+	return Object->GetObjectType() == EObjectType::OTMetaEdgeSpan
+		|| Object->GetObjectType() == EObjectType::OTMetaPlaneSpan;
 }

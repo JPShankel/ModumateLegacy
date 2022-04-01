@@ -66,16 +66,13 @@ bool USelectTool::HandleMouseUp()
 	AModumateObjectInstance *newTarget = Controller->EMPlayerState->HoveredObject;
 	bool doubleClicked = false;
 
-	if (newTarget)
-	{
-		float curTime = UGameplayStatics::GetTimeSeconds(newTarget->GetActor());
-		float lastSelectedTime = LastObjectSelectionAttemptTimes.FindRef(newTarget);
-		LastObjectSelectionAttemptTimes.Emplace(newTarget, curTime);
+	float curTime = UGameplayStatics::GetTimeSeconds(this);
+	float lastSelectedTime = LastObjectSelectionAttemptTimes.FindRef(newTarget);
+	LastObjectSelectionAttemptTimes.Emplace(newTarget, curTime);
 
-		if ((curTime - lastSelectedTime) <= DoubleClickTime)
-		{
-			doubleClicked = true;
-		}
+	if ((curTime - lastSelectedTime) <= DoubleClickTime)
+	{
+		doubleClicked = true;
 	}
 
 	auto& selectedObjects = Controller->EMPlayerState->SelectedObjects;
@@ -88,44 +85,59 @@ bool USelectTool::HandleMouseUp()
 	// then make its graph the active one.
 	if (doubleClicked)
 	{
-		AModumateObjectInstance* newGroupTarget = newTarget;
-		while (newGroupTarget->GetParentID() != MOD_ID_NONE)
-		{
-			newGroupTarget = newGroupTarget->GetParentObject();
-		}
-
-		int32 subGroupID = MOD_ID_NONE;
-		bool bInGroup;
 		TArray<int32> affectedGroups;
-
-		if (UModumateObjectStatics::IsObjectInSubgroup(doc, newTarget, doc->GetActiveVolumeGraphID(), subGroupID, bInGroup))
-		{
-			const FGraph3D* selectedGraph = doc->GetVolumeGraph(subGroupID);
-			if (ensure(selectedGraph))
+		if (!newTarget)
+		{	// Double-click on background moves up a level.
+			int32 currentGroup = doc->GetActiveVolumeGraphID();
+			int32 nextGroup = doc->GetObjectById(currentGroup)->GetParentID();
+			if (nextGroup != MOD_ID_NONE)
 			{
-				if (doc->GetActiveVolumeGraphID() != subGroupID)
-				{
-					ensure(UModumateObjectStatics::GetGroupIdsForGroupChange(doc, subGroupID, affectedGroups));
-					doc->SetActiveVolumeGraphID(subGroupID);
-					Controller->DeselectAll();
-				}
+				UModumateObjectStatics::GetGroupIdsForGroupChange(doc, nextGroup, affectedGroups);
+				doc->SetActiveVolumeGraphID(nextGroup);
 			}
 		}
-		else if (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(newGroupTarget->GetObjectType()) != EGraph3DObjectType::None)
+		else
 		{
-			const FGraph3D* selectedGraph = doc->FindVolumeGraph(newGroupTarget->ID);
-			if (ensure(selectedGraph))
+			AModumateObjectInstance* newGroupTarget = newTarget;
+			TArray<AModumateObjectInstance*> hostingMOIs;
+			if (UModumateObjectStatics::GetHostingMOIsForMOI(doc, newGroupTarget, hostingMOIs))
 			{
-				const int32 selectedGroupID = selectedGraph->GraphID;
-				if (doc->GetActiveVolumeGraphID() != selectedGroupID)
+				newGroupTarget = hostingMOIs[0];
+			}
+
+			int32 subGroupID = MOD_ID_NONE;
+			bool bInGroup;
+
+			if (UModumateObjectStatics::IsObjectInSubgroup(doc, newTarget, doc->GetActiveVolumeGraphID(), subGroupID, bInGroup))
+			{
+				const FGraph3D* selectedGraph = doc->GetVolumeGraph(subGroupID);
+				if (ensure(selectedGraph))
 				{
-					ensure(UModumateObjectStatics::GetGroupIdsForGroupChange(doc, selectedGroupID, affectedGroups));
-					doc->SetActiveVolumeGraphID(selectedGraph->GraphID);
-					Controller->DeselectAll();
+					if (doc->GetActiveVolumeGraphID() != subGroupID)
+					{
+						ensure(UModumateObjectStatics::GetGroupIdsForGroupChange(doc, subGroupID, affectedGroups));
+						doc->SetActiveVolumeGraphID(subGroupID);
+						Controller->DeselectAll();
+					}
 				}
 			}
-		}
+			else if (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(newGroupTarget->GetObjectType()) != EGraph3DObjectType::None)
+			{
+				const FGraph3D* selectedGraph = doc->FindVolumeGraph(newGroupTarget->ID);
+				if (ensure(selectedGraph))
+				{
+					const int32 selectedGroupID = selectedGraph->GraphID;
+					if (doc->GetActiveVolumeGraphID() != selectedGroupID)
+					{
+						ensure(UModumateObjectStatics::GetGroupIdsForGroupChange(doc, selectedGroupID, affectedGroups));
+						doc->SetActiveVolumeGraphID(selectedGraph->GraphID);
+						Controller->DeselectAll();
+					}
+				}
+			}
 
+		}
+		
 		if (affectedGroups.Num() > 0)
 		{
 			Controller->EMPlayerState->PostGroupChanged(affectedGroups);

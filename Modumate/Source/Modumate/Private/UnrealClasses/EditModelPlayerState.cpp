@@ -748,7 +748,7 @@ void AEditModelPlayerState::PostViewChanged()
 	FindReachableObjects(LastReachableObjectSet);
 }
 
-void AEditModelPlayerState::PostGroupChanged(const TArray<int32> ChangedGroups)
+void AEditModelPlayerState::PostGroupChanged(const TArray<int32>& ChangedGroups)
 {
 	if (!EMPlayerController || !EMPlayerController->CurrentTool)
 	{

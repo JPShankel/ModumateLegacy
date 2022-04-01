@@ -135,6 +135,8 @@ public:
 	static bool TryJoinSelectedMetaSpan(UWorld* World);
 	static void SeparateSelectedMetaSpan(UWorld* World);
 
+	static bool GetHostingMOIsForMOI(UModumateDocument* Doc, AModumateObjectInstance* Moi, TArray<AModumateObjectInstance*>& OutMOIs);
+
 private:
 	static bool GetGroupIdsForGroupChangeHelper(const UModumateDocument* Doc, int32 NewGroupID, int32 OldGroupID, TArray<int32>& OutAffectedGroups, bool& bOutFoundOldGroup);
 };
@@ -179,4 +181,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Modumate Types")
 	static TArray<EObjectType> GetObjectTypeWithDirectionIndicator();
+
+	UFUNCTION(BlueprintPure, Category = "Modumate Types")
+	static bool IsSpanObject(const AModumateObjectInstance* Object);
 };
