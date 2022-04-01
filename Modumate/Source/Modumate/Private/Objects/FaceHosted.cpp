@@ -133,11 +133,11 @@ void AMOIFaceHosted::GetDraftingLines(const TSharedPtr<FDraftingComposite>& Pare
 	const ACompoundMeshActor* actor = Cast<ACompoundMeshActor>(GetActor());
 	if (bGetFarLines)
 	{
-		actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox, FModumateLayerType::kDefault);
+		actor->GetFarDraftingLines(ParentPage, Plane, BoundingBox, FModumateLayerType::kPartFaceBeyond);
 	}
 	else
 	{
-		actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, FModumateLayerType::kDefault);
+		actor->GetCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, FModumateLayerType::kPartFaceCut);
 	}
 }
 

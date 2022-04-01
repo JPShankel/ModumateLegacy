@@ -131,7 +131,7 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 		{ EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTMullion, EObjectType::OTFinish, EObjectType::OTTrim,
 			EObjectType::OTTerrain, EObjectType::OTPointHosted, EObjectType::OTEdgeHosted, EObjectType::OTWallSegment,
 			EObjectType::OTFloorSegment, EObjectType::OTCeiling, EObjectType::OTRoofFace, EObjectType::OTWindow,
-			EObjectType::OTDoor, EObjectType::OTStaircase }));
+			EObjectType::OTDoor, EObjectType::OTStaircase, EObjectType::OTFaceHosted }));
 
 	for (const auto* moi: inplaneDraftTypes)
 	{
@@ -167,7 +167,8 @@ void FDraftingDrawing::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentP
 		EObjectType::OTCabinet, EObjectType::OTStructureLine, EObjectType::OTRailSegment,
 		EObjectType::OTSystemPanel, EObjectType::OTMullion, EObjectType::OTStaircase,
 		EObjectType::OTFinish, EObjectType::OTCountertop, EObjectType::OTTrim,
-		EObjectType::OTTerrain, EObjectType::OTPointHosted, EObjectType::OTEdgeHosted
+		EObjectType::OTTerrain, EObjectType::OTPointHosted, EObjectType::OTEdgeHosted,
+		EObjectType::OTFaceHosted
 		}));
 
 	for (auto object: beyondCutObjects)
