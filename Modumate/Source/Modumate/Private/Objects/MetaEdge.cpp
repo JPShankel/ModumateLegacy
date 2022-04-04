@@ -18,6 +18,8 @@
 #include "UnrealClasses/LineActor.h"
 #include "UI/Properties/InstPropWidgetCycle.h"
 
+FMOIMetaEdgeData::FMOIMetaEdgeData()
+{}
 
 AMOIMetaEdge::AMOIMetaEdge()
 	: AMOIEdgeBase()
@@ -30,6 +32,21 @@ AMOIMetaEdge::AMOIMetaEdge()
 	, HoverDefaultColor(FColor::Black)
 	, HoverGroupedColor(FColor(0x0D, 0x0B, 0x55))
 {
+	FWebMOIProperty prop;
+
+	prop.Name = TEXT("FlipDirection");
+	prop.Type = EWebMOIPropertyType::flipDirection;
+	prop.DisplayName = TEXT("Flip Direction");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("CalculatedLength");
+	prop.Type = EWebMOIPropertyType::label;
+	prop.DisplayName = TEXT("Length");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
 }
 
 bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
@@ -238,3 +255,61 @@ void AMOIMetaEdge::OnInstPropUIChangedCycle(int32 BasisValue)
 {
 	Document->ReverseMetaObjects(GetWorld(), {ID}, {});
 }
+
+bool AMOIMetaEdge::FromWebMOI(const FString& InJson)
+{
+	if (AModumateObjectInstance::FromWebMOI(InJson))
+	{
+		if (InstanceData.FlipDirection)
+		{
+			OnInstPropUIChangedCycle(1);
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool AMOIMetaEdge::ToWebMOI(FWebMOI& OutMOI) const
+{
+	if (AModumateObjectInstance::ToWebMOI(OutMOI))
+	{
+		FWebMOIProperty* prop = OutMOI.Properties.Find(TEXT("FlipDirection"));
+		prop->ValueArray.Empty();
+		prop->ValueArray.Add("false");
+
+		const auto& graph = *GetDocument()->FindVolumeGraph(ID);
+		auto edge = graph.FindEdge(ID);
+		if (edge)
+		{
+			AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+			EUnit defaultUnit = controller->GetDocument()->GetCurrentSettings().DimensionUnit;
+			EDimensionUnits unitType = controller->GetDocument()->GetCurrentSettings().DimensionType;
+			FText calculatedLength = UModumateDimensionStatics::CentimetersToDisplayText(CalculateLength(controller), 1, unitType, defaultUnit);
+
+			prop = OutMOI.Properties.Find(TEXT("CalculatedLength"));
+			prop->ValueArray.Empty();
+			prop->ValueArray.Add(calculatedLength.ToString());
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+float AMOIMetaEdge::CalculateLength(AEditModelPlayerController* AEMPlayerController) const
+{
+	float totalLength = 0.0f;
+	for (auto& ob : AEMPlayerController->EMPlayerState->SelectedObjects)
+	{
+		if (ob->GetAssembly().ObjectType == EObjectType::OTMetaEdge && ob->GetNumCorners() > 1)
+		{
+			totalLength += (ob->GetCorner(0) - ob->GetCorner(1)).Size();
+		}
+	}
+
+	return totalLength;
+}
+
