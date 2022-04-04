@@ -737,156 +737,156 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 		return false;
 	}
 
-	UScriptStruct* structDef=nullptr;
-	void* structPtr=nullptr;
-	if (!GetInstanceDataStruct(structDef, structPtr))
-	{
-		return false;
-	}
-
 	StateData.DisplayName = webMOI.DisplayName;
 	StateData.ParentID = webMOI.Parent;
 	StateData.AssemblyGUID = webMOI.PresetID;
 
 	bVisible = webMOI.isVisible;
 
-	for (TFieldIterator<FProperty> it(structDef); it; ++it)
+	UScriptStruct* structDef=nullptr;
+	void* structPtr=nullptr;
+	if (GetInstanceDataStruct(structDef, structPtr))
 	{
-		FWebMOIProperty* moiProp = webMOI.Properties.Find(it->GetName());
-		if (moiProp == nullptr || moiProp->ValueArray.Num()==0)
+		for (TFieldIterator<FProperty> it(structDef); it; ++it)
 		{
-			continue;
-		}
-
-		FStrProperty* strProp = CastField<FStrProperty>(*it);
-		if (strProp != nullptr)
-		{
-			strProp->SetPropertyValue_InContainer(structPtr,moiProp->ValueArray[0]);
-			continue;
-		}
-
-		FBoolProperty* boolProp = CastField<FBoolProperty>(*it);
-		if (boolProp != nullptr)
-		{
-			boolProp->SetPropertyValue_InContainer(structPtr, moiProp->ValueArray[0].Equals(TEXT("true")));
-			continue;
-		}
-
-		FDoubleProperty* doubleProp = CastField<FDoubleProperty>(*it);
-		if (doubleProp != nullptr)
-		{
-			doubleProp->SetPropertyValue_InContainer(structPtr, static_cast<double>(FCString::Atod(*moiProp->ValueArray[0])));
-			continue;
-		}
-
-		FFloatProperty* floatProp = CastField<FFloatProperty>(*it);
-		if (floatProp != nullptr)
-		{
-			floatProp->SetPropertyValue_InContainer(structPtr, static_cast<float>(FCString::Atof(*moiProp->ValueArray[0])));
-			continue;
-		}
-
-		FIntProperty* intProp = CastField<FIntProperty>(*it);
-		if (intProp != nullptr)
-		{
-			intProp->SetPropertyValue_InContainer(structPtr, static_cast<int32>(FCString::Atoi(*moiProp->ValueArray[0])));
-			continue;
-		}
-
-		FArrayProperty* arrayProp = CastField<FArrayProperty>(*it);
-		if (arrayProp != nullptr)
-		{
-			const void* propAddr = arrayProp->ContainerPtrToValuePtr<void>(structPtr);
-			FScriptArrayHelper arrayHelp(arrayProp, propAddr);
-			arrayHelp.EmptyAndAddValues(moiProp->ValueArray.Num());
-
-			if (arrayProp->Inner->IsA<FIntProperty>())
+			FWebMOIProperty* moiProp = webMOI.Properties.Find(it->GetName());
+			if (moiProp == nullptr || moiProp->ValueArray.Num() == 0)
 			{
-				int32* rawPtr = reinterpret_cast<int32*>(arrayHelp.GetRawPtr());
-				for (int32 i = 0; i < moiProp->ValueArray.Num(); ++i)
-				{
-					rawPtr[i] = FCString::Atoi(*moiProp->ValueArray[i]);
-				}
-			}
-			else if (arrayProp->Inner->IsA<FStrProperty>())
-			{
-				FString* rawPtr = reinterpret_cast<FString*>(arrayHelp.GetRawPtr());
-				for (int32 i = 0; i < moiProp->ValueArray.Num(); ++i)
-				{
-					rawPtr[i] = moiProp->ValueArray[i];
-				}
-			}
-		}
-
-		FStructProperty* structProp = CastField<FStructProperty>(*it);
-		if (structProp != nullptr)
-		{
-			// We support structured field types here...if we encounter a type we don't support, we'll need to set the web property to an error state
-			if (structProp->Struct == FDimensionOffset::StaticStruct())
-			{
-				// Get the data pointer and store its string value
-				FDimensionOffset* demoPtr = structProp->ContainerPtrToValuePtr<FDimensionOffset>(structPtr);
-				if (demoPtr != nullptr)
-				{
-					demoPtr->FromString(moiProp->ValueArray[0]);
-				}
-			} 
-
-			if (structProp->Struct->GetName() == TEXT("Vector"))
-			{
-				FVector* vectorPtr = structProp->ContainerPtrToValuePtr<FVector>(structPtr);
-				if (vectorPtr != nullptr)
-				{
-					vectorPtr->InitFromString(*moiProp->ValueArray[0]);
-				}
+				continue;
 			}
 
-			if (structProp->Struct->GetName() == TEXT("Vector2D"))
+			FStrProperty* strProp = CastField<FStrProperty>(*it);
+			if (strProp != nullptr)
 			{
-				FVector2D* vectorPtr = structProp->ContainerPtrToValuePtr<FVector2D>(structPtr);
-				if (vectorPtr != nullptr)
-				{
-					vectorPtr->InitFromString(*moiProp->ValueArray[0]);
-				}
+				strProp->SetPropertyValue_InContainer(structPtr, moiProp->ValueArray[0]);
+				continue;
 			}
 
-			if (structProp->Struct->GetName() == TEXT("Rotator"))
+			FBoolProperty* boolProp = CastField<FBoolProperty>(*it);
+			if (boolProp != nullptr)
 			{
-				FRotator* rotatorPtr = structProp->ContainerPtrToValuePtr<FRotator>(structPtr);
-				if (rotatorPtr != nullptr)
-				{
-					rotatorPtr->InitFromString(*moiProp->ValueArray[0]);
-				}
+				boolProp->SetPropertyValue_InContainer(structPtr, moiProp->ValueArray[0].Equals(TEXT("true")));
+				continue;
 			}
 
-			if (structProp->Struct->GetName() == TEXT("Quat"))
+			FDoubleProperty* doubleProp = CastField<FDoubleProperty>(*it);
+			if (doubleProp != nullptr)
 			{
-				FQuat* quatPtr = structProp->ContainerPtrToValuePtr<FQuat>(structPtr);
-				if (quatPtr != nullptr)
-				{
-					quatPtr->InitFromString(*moiProp->ValueArray[0]);
-				}
+				doubleProp->SetPropertyValue_InContainer(structPtr, static_cast<double>(FCString::Atod(*moiProp->ValueArray[0])));
+				continue;
 			}
 
-			if (structProp->Struct->GetName() == TEXT("Guid"))
+			FFloatProperty* floatProp = CastField<FFloatProperty>(*it);
+			if (floatProp != nullptr)
 			{
-				FGuid* guidPtr = structProp->ContainerPtrToValuePtr<FGuid>(structPtr);
-				if (guidPtr != nullptr)
-				{
-					FGuid::Parse(moiProp->ValueArray[0].TrimQuotes(), *guidPtr);
-				}
+				floatProp->SetPropertyValue_InContainer(structPtr, static_cast<float>(FCString::Atof(*moiProp->ValueArray[0])));
+				continue;
 			}
 
-			if (structProp->Struct->GetName() == TEXT("DateTime"))
+			FIntProperty* intProp = CastField<FIntProperty>(*it);
+			if (intProp != nullptr)
 			{
-				FDateTime* dateTimePtr = structProp->ContainerPtrToValuePtr<FDateTime>(structPtr);
-				if (dateTimePtr != nullptr)
-				{
-					FDateTime::ParseIso8601(*moiProp->ValueArray[0], *dateTimePtr);
-				}
+				intProp->SetPropertyValue_InContainer(structPtr, static_cast<int32>(FCString::Atoi(*moiProp->ValueArray[0])));
+				continue;
 			}
 
-			continue;
+			FArrayProperty* arrayProp = CastField<FArrayProperty>(*it);
+			if (arrayProp != nullptr)
+			{
+				const void* propAddr = arrayProp->ContainerPtrToValuePtr<void>(structPtr);
+				FScriptArrayHelper arrayHelp(arrayProp, propAddr);
+				arrayHelp.EmptyAndAddValues(moiProp->ValueArray.Num());
+
+				if (arrayProp->Inner->IsA<FIntProperty>())
+				{
+					int32* rawPtr = reinterpret_cast<int32*>(arrayHelp.GetRawPtr());
+					for (int32 i = 0; i < moiProp->ValueArray.Num(); ++i)
+					{
+						rawPtr[i] = FCString::Atoi(*moiProp->ValueArray[i]);
+					}
+				}
+				else if (arrayProp->Inner->IsA<FStrProperty>())
+				{
+					FString* rawPtr = reinterpret_cast<FString*>(arrayHelp.GetRawPtr());
+					for (int32 i = 0; i < moiProp->ValueArray.Num(); ++i)
+					{
+						rawPtr[i] = moiProp->ValueArray[i];
+					}
+				}
+
+				continue;
+			}
+
+			FStructProperty* structProp = CastField<FStructProperty>(*it);
+			if (structProp != nullptr)
+			{
+				// We support structured field types here...if we encounter a type we don't support, we'll need to set the web property to an error state
+				if (structProp->Struct == FDimensionOffset::StaticStruct())
+				{
+					// Get the data pointer and store its string value
+					FDimensionOffset* demoPtr = structProp->ContainerPtrToValuePtr<FDimensionOffset>(structPtr);
+					if (demoPtr != nullptr)
+					{
+						demoPtr->FromString(moiProp->ValueArray[0]);
+					}
+				}
+
+				if (structProp->Struct->GetName() == TEXT("Vector"))
+				{
+					FVector* vectorPtr = structProp->ContainerPtrToValuePtr<FVector>(structPtr);
+					if (vectorPtr != nullptr)
+					{
+						vectorPtr->InitFromString(*moiProp->ValueArray[0]);
+					}
+				}
+
+				if (structProp->Struct->GetName() == TEXT("Vector2D"))
+				{
+					FVector2D* vectorPtr = structProp->ContainerPtrToValuePtr<FVector2D>(structPtr);
+					if (vectorPtr != nullptr)
+					{
+						vectorPtr->InitFromString(*moiProp->ValueArray[0]);
+					}
+				}
+
+				if (structProp->Struct->GetName() == TEXT("Rotator"))
+				{
+					FRotator* rotatorPtr = structProp->ContainerPtrToValuePtr<FRotator>(structPtr);
+					if (rotatorPtr != nullptr)
+					{
+						rotatorPtr->InitFromString(*moiProp->ValueArray[0]);
+					}
+				}
+
+				if (structProp->Struct->GetName() == TEXT("Quat"))
+				{
+					FQuat* quatPtr = structProp->ContainerPtrToValuePtr<FQuat>(structPtr);
+					if (quatPtr != nullptr)
+					{
+						quatPtr->InitFromString(*moiProp->ValueArray[0]);
+					}
+				}
+
+				if (structProp->Struct->GetName() == TEXT("Guid"))
+				{
+					FGuid* guidPtr = structProp->ContainerPtrToValuePtr<FGuid>(structPtr);
+					if (guidPtr != nullptr)
+					{
+						FGuid::Parse(moiProp->ValueArray[0].TrimQuotes(), *guidPtr);
+					}
+				}
+
+				if (structProp->Struct->GetName() == TEXT("DateTime"))
+				{
+					FDateTime* dateTimePtr = structProp->ContainerPtrToValuePtr<FDateTime>(structPtr);
+					if (dateTimePtr != nullptr)
+					{
+						FDateTime::ParseIso8601(*moiProp->ValueArray[0], *dateTimePtr);
+					}
+				}
+
+				continue;
+			}
 		}
 	}
 
