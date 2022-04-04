@@ -288,17 +288,14 @@ void AMOIStructureLine::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
-	const FGraph3D& graph = *Document->GetVolumeGraph();
-	const FGraph3DEdge* hostingEdge = graph.FindEdge(GetParentID());
-	if (!hostingEdge)
+	const AMOIMetaEdgeSpan* spanObject = Cast< AMOIMetaEdgeSpan>(Document->GetObjectById(GetParentID()) );
+	if (!ensure(spanObject))
 	{
 		return;
 	}
 
 	CachedQuantities.Empty();
-	const FGraph3DVertex* startVertex = graph.FindVertex(hostingEdge->StartVertexID);
-	const FGraph3DVertex* endVertex = graph.FindVertex(hostingEdge->EndVertexID);
-	float length = (startVertex->Position - endVertex->Position).Size();
+	const float length = (spanObject->GetCorner(1) - spanObject->GetCorner(0)).Size();
 	CachedQuantities.AddQuantity(assemblyGuid, 1.0f, length);
 
 	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();

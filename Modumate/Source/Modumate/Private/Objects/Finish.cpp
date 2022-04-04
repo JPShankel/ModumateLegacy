@@ -188,12 +188,12 @@ void AMOIFinish::UpdateQuantities()
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
 	const int32 hostingPolyId = GetParentID();
-	TSharedPtr<FGraph2D> graph = Document->FindSurfaceGraphByObjID(GetParentID());
+	TSharedPtr<FGraph2D> graph = Document->FindSurfaceGraphByObjID(hostingPolyId);
 	if (!ensure(graph.IsValid()))
 	{
 		return;
 	}
-	const FGraph2DPolygon* hostingFace = graph->FindPolygon(GetParentID());
+	const FGraph2DPolygon* hostingFace = graph->FindPolygon(hostingPolyId);
 
 	if (!ensure(hostingFace))
 	{

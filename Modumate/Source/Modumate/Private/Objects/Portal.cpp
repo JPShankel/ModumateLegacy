@@ -669,10 +669,20 @@ void AMOIPortal::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
-	const FGraph3D& graph = *Document->GetVolumeGraph();
-	const FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
 
-	if (!hostingFace)
+	const int32 parentID = GetParentID();
+	const AModumateObjectInstance* parentObject = Document->GetObjectById(parentID);
+	const FGraph3DFace* hostingFace;
+	if (parentObject->GetObjectType() == EObjectType::OTMetaPlaneSpan)
+	{
+		hostingFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentID);
+	}
+	else
+	{
+		hostingFace = Document->GetVolumeGraph(Document->FindGraph3DByObjID(parentID))->FindFace(parentID);
+	}
+
+	if (!ensure(hostingFace))
 	{
 		return;
 	}

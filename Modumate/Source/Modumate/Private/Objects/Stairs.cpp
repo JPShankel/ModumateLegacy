@@ -129,12 +129,23 @@ void AMOIStaircase::UpdateQuantities()
 		return;
 	}
 
-	const FGraph3D& graph = *Document->GetVolumeGraph();
-	const FGraph3DFace* hostingFace = graph.FindFace(GetParentID());
+	const int32 parentID = GetParentID();
+	const AModumateObjectInstance* parentObject = Document->GetObjectById(parentID);
+	const FGraph3DFace* hostingFace;
+	if (parentObject->GetObjectType() == EObjectType::OTMetaPlaneSpan)
+	{
+		hostingFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentID);
+	}
+	else
+	{
+		hostingFace = Document->GetVolumeGraph(Document->FindGraph3DByObjID(parentID))->FindFace(parentID);
+	}
+
 	if (!ensure(hostingFace))
 	{
 		return;
 	}
+
 	CachedQuantities.Empty();
 	FVector stairVector(hostingFace->CachedPositions[2] - hostingFace->CachedPositions[1]);
 

@@ -18,7 +18,8 @@ FVector AMOIMetaEdgeSpan::GetCorner(int32 index) const
 	if(CachedGraphEdge && CachedGraphEdge->bValid)
 	{
 		int32 vertID = index == 0 ? CachedGraphEdge->StartVertexID : CachedGraphEdge->EndVertexID;
-		auto vertex = Document->GetVolumeGraph()->FindVertex(vertID);
+		const auto* graph = Document->GetVolumeGraph(Document->FindGraph3DByObjID(vertID));
+		const auto* vertex = graph ? graph->FindVertex(vertID) : nullptr;
 		if(vertex)
 		{
 			return vertex->Position;
