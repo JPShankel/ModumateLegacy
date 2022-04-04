@@ -4836,6 +4836,24 @@ void UModumateDocument::download_pdf_from_blob(const FString& Blob, const FStrin
 	}
 }
 
+void UModumateDocument::open_bim_designer(const FString& InGUID)
+{
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (controller && controller->EditModelUserWidget)
+	{
+		controller->EditModelUserWidget->EditExistingAssembly(FGuid(InGUID));
+	}
+}
+
+void UModumateDocument::open_detail_designer()
+{
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (controller && controller->EditModelUserWidget)
+	{
+		controller->EditModelUserWidget->EditDetailDesignerFromSelection();
+	}
+}
+
 void UModumateDocument::OnCameraViewSelected(int32 ID)
 {
 	TArray<AMOIDesignOption*> designOptions;

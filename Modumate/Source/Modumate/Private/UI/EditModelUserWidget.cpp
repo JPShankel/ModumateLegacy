@@ -39,7 +39,7 @@
 
 #define LOCTEXT_NAMESPACE "ModumateWidgets"
 
-TAutoConsoleVariable<bool> CVarModumateShowDrawingDesigner(TEXT("modumate.ShowDrawingDesigner"), 0, TEXT("Show the Drawing Designer bottom toolbar"), ECVF_Default);
+TAutoConsoleVariable<bool> CVarModumateShowDrawingDesigner(TEXT("modumate.ShowDrawingDesigner"), 1, TEXT("Show the Drawing Designer bottom toolbar"), ECVF_Default);
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -427,6 +427,11 @@ void UEditModelUserWidget::UpdateUsersList()
 	}
 
 	ToolbarWidget->ToolBarTopBP->UsersListHorizontal_BP->UpdateHorizontalUsersList(playersOnToolBar);
+}
+
+void UEditModelUserWidget::EditDetailDesignerFromSelection()
+{
+	SelectionTrayWidget->StartDetailDesignerFromSelection();
 }
 
 void UEditModelUserWidget::ToggleCutPlaneMenu(bool bNewVisibility)

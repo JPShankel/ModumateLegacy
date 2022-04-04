@@ -442,6 +442,12 @@ public:
 	UFUNCTION()
 	void download_pdf_from_blob(const FString& Blob, const FString& DefaultName);
 
+	UFUNCTION()
+	void open_bim_designer(const FString& InGUID);
+
+	UFUNCTION()
+	void open_detail_designer();
+
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
 	void UpdateWebPresets();
 

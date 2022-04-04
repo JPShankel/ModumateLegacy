@@ -152,4 +152,5 @@ public:
 	FText GetPlanUpgradeRichText();
 	void UpdateMoveRotateToolButtonsUsability();
 	void UpdateUsersList();
+	void EditDetailDesignerFromSelection();
 };
