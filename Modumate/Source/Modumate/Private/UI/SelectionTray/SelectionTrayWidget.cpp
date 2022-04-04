@@ -13,6 +13,8 @@
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
 USelectionTrayWidget::USelectionTrayWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -113,6 +115,17 @@ void USelectionTrayWidget::OpenToolTrayDetailDesigner(const FGuid& DetailPreset,
 	{
 		DetailDesigner->ClearEditor();
 	}
+
+	auto controller = GetOwningPlayer<AEditModelPlayerController>();
+	if (controller->EditModelUserWidget->bIsShowDrawingDesigner)
+	{
+		UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
+		if (canvasSlot)
+		{
+
+			canvasSlot->SetZOrder(8);
+		}
+	}
 }
 
 void USelectionTrayWidget::UpdateFromSelection()
@@ -150,6 +163,17 @@ void USelectionTrayWidget::CloseDetailDesigner()
 	CurrentDetailPreset.Invalidate();
 	CurrentDetailEdgeIDs.Reset();
 	DetailDesigner->ClearEditor();
+
+	auto controller = GetOwningPlayer<AEditModelPlayerController>();
+	if (controller->EditModelUserWidget->bIsShowDrawingDesigner)
+	{
+		UCanvasPanelSlot* canvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
+		if (canvasSlot)
+		{
+
+			canvasSlot->SetZOrder(5);
+		}
+	}
 }
 
 void USelectionTrayWidget::CloseToolTray()

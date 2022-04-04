@@ -15,6 +15,7 @@
 #include "UI/SelectionTray/SelectionTrayWidget.h"
 #include "UI/Toolbar/ToolbarTopWidget.h"
 #include "UI/Toolbar/ToolbarWidget.h"
+#include "UI/Toolbar/ToolbarBottomWidget.h"
 #include "UI/Toolbar/ViewModeIndicatorWidget.h"
 #include "UI/LeftMenu/NCPNavigator.h"
 #include "UI/ToolTray/ToolTrayWidget.h"
@@ -32,8 +33,13 @@
 #include "UI/Chat/ModumateChatWidget.h"
 #include "UI/UsersList/UsersListHorizontalWidget.h"
 #include "UI/UsersList/UsersListVerticalWidget.h"
+#include "UI/DrawingDesigner/DrawingDesignerWebBrowserWidget.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Components/CanvasPanelSlot.h"
 
 #define LOCTEXT_NAMESPACE "ModumateWidgets"
+
+TAutoConsoleVariable<bool> CVarModumateShowDrawingDesigner(TEXT("modumate.ShowDrawingDesigner"), 0, TEXT("Show the Drawing Designer bottom toolbar"), ECVF_Default);
 
 UEditModelUserWidget::UEditModelUserWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -72,6 +78,40 @@ void UEditModelUserWidget::NativeConstruct()
 
 	// Update current menu visibility according to tool mode
 	UpdateToolTray();
+
+	bIsShowDrawingDesigner = CVarModumateShowDrawingDesigner.GetValueOnAnyThread();
+
+	TextChatWidget->SetVisibility(bIsShowDrawingDesigner ? ESlateVisibility::Collapsed : ESlateVisibility::SelfHitTestInvisible);
+	ToolbarWidget->ToolbarBottomBlock->SetVisibility(bIsShowDrawingDesigner ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	
+	// DrawingDesigner widget
+	DrawingDesigner->SetVisibility(bIsShowDrawingDesigner ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	UCanvasPanelSlot* drawingDesignerCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(DrawingDesigner);
+	if (drawingDesignerCanvasSlot)
+	{
+		drawingDesignerCanvasSlot->SetOffsets(bIsShowDrawingDesigner ? FMargin(0.f) : FMargin(0.f, 48.f, 0.f, 40.f));
+	}
+	
+	// BIM Designer
+	UCanvasPanelSlot* BIMDesignerCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(BIMDesigner);
+	if (BIMDesignerCanvasSlot)
+	{
+		BIMDesignerCanvasSlot->SetZOrder(bIsShowDrawingDesigner ? 8 : 1);
+	}
+	UCanvasPanelSlot* BIMBlockDialogBoxCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(BIMBlockDialogBox);
+	if (BIMBlockDialogBoxCanvasSlot)
+	{
+		BIMBlockDialogBoxCanvasSlot->SetZOrder(bIsShowDrawingDesigner ? 8 : 1);
+		BIMBlockDialogBoxCanvasSlot->SetOffsets(bIsShowDrawingDesigner ? FMargin(0.f, 48.f, 0.f, 0.f) : FMargin(56.f, 48.f, 0.f, 0.f));
+	}
+
+	// Swap menu
+	UCanvasPanelSlot* SwapMenuWidgetCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(SwapMenuWidget);
+	if (SwapMenuWidgetCanvasSlot)
+	{
+		SwapMenuWidgetCanvasSlot->SetZOrder(bIsShowDrawingDesigner ? 9 : 6);
+		SwapMenuWidgetCanvasSlot->SetPosition(bIsShowDrawingDesigner ? FVector2D(0.f, 48.f) : FVector2D(56.f, 48.f));
+	}
 }
 
 void UEditModelUserWidget::UpdateOnToolModeChanged()

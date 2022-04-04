@@ -118,6 +118,7 @@ public:
 	ELeftMenuState CurrentLeftMenuState = ELeftMenuState::None;
 
 	bool bIsHelpMenuVisible = false;
+	bool bIsShowDrawingDesigner = false;
 
 	UFUNCTION()
 	void EMOnSelectionObjectChanged();

@@ -10,8 +10,6 @@
 #include "UI/BIM/BIMDesigner.h"
 #include "UI/Toolbar/ToolbarBottomWidget.h"
 
-TAutoConsoleVariable<bool> CVarModumateShowDrawingDesigner(TEXT("modumate.ShowDrawingDesigner"), 0, TEXT("Show the Drawing Designer bottom toolbar"), ECVF_Default);
-
 UToolbarWidget::UToolbarWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -46,11 +44,6 @@ bool UToolbarWidget::Initialize()
 void UToolbarWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	if (!CVarModumateShowDrawingDesigner.GetValueOnAnyThread())
-	{
-		ToolbarBottomBlock->SetVisibility(ESlateVisibility::Collapsed);
-	}
 }
 
 void UToolbarWidget::OnButtonReleaseMetaPlane()
