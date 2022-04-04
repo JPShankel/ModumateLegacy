@@ -21,7 +21,7 @@ AMOIPointHosted::AMOIPointHosted()
 	FWebMOIProperty prop;
 
 	prop.Name = TEXT("FlipSigns");
-	prop.Type = EWebMOIPropertyType::flip;
+	prop.Type = EWebMOIPropertyType::flip3D;
 	prop.DisplayName = TEXT("Flip");
 	prop.isEditable = true;
 	prop.isVisible = true;

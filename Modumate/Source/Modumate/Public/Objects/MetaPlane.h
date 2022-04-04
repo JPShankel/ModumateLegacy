@@ -6,6 +6,20 @@
 
 #include "MetaPlane.generated.h"
 
+USTRUCT()
+struct MODUMATE_API FMOIMetaPlaneData
+{
+	GENERATED_BODY()
+
+	FMOIMetaPlaneData();
+
+	UPROPERTY()
+	bool FlipDirection = false;
+
+	UPROPERTY()
+	double CalculatedArea = 0;
+};
+
 UCLASS()
 class MODUMATE_API AMOIMetaPlane : public AMOIPlaneBase
 {
@@ -16,6 +30,11 @@ public:
 	virtual bool GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) override;
+	virtual bool ToWebMOI(FWebMOI& OutMOI) const override;
+	virtual bool FromWebMOI(const FString& InJson) override;
+
+	UPROPERTY()
+	FMOIMetaPlaneData InstanceData;
 
 protected:
 	void UpdateCachedGraphData();

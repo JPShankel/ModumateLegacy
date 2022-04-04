@@ -12,10 +12,27 @@
 #include "UI/ToolTray/ToolTrayBlockProperties.h"
 #include "UI/Properties/InstPropWidgetCycle.h"
 
+FMOIMetaPlaneData::FMOIMetaPlaneData()
+{}
+
 AMOIMetaPlane::AMOIMetaPlane()
 	: AMOIPlaneBase()
 {
+	FWebMOIProperty prop;
 
+	prop.Name = TEXT("FlipDirection");
+	prop.Type = EWebMOIPropertyType::flipDirection;
+	prop.DisplayName = TEXT("Flip Direction");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("CalculatedArea");
+	prop.Type = EWebMOIPropertyType::label;
+	prop.DisplayName = TEXT("Area");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
 }
 
 bool AMOIMetaPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
@@ -103,4 +120,47 @@ float AMOIMetaPlane::GetAlpha() const
 void AMOIMetaPlane::OnInstPropUIChangedCycle(int32 BasisValue)
 {
 	Document->ReverseMetaObjects(GetWorld(), {}, {ID});
+}
+
+bool AMOIMetaPlane::FromWebMOI(const FString& InJson)
+{
+	if (AModumateObjectInstance::FromWebMOI(InJson))
+	{
+		if (InstanceData.FlipDirection)
+		{
+			OnInstPropUIChangedCycle(1);
+		}
+
+		return true;
+	}
+	return false;
+}
+
+bool AMOIMetaPlane::ToWebMOI(FWebMOI& OutMOI) const
+{
+	if (AModumateObjectInstance::ToWebMOI(OutMOI))
+	{
+		auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+		auto* graph = GetDocument()->FindVolumeGraph(ID);
+		const FGraph3DFace* graphFace = graph ? graph->FindFace(ID) : nullptr;
+
+		FWebMOIProperty* moiProp = OutMOI.Properties.Find(TEXT("FlipDirection"));
+		moiProp->ValueArray.Empty();
+		moiProp->ValueArray.Add("false");
+
+		if (graphFace)
+		{
+			double calculatedArea = graphFace->CalculateArea();
+			EUnit defaultUnit = controller->GetDocument()->GetCurrentSettings().DimensionUnit;
+			EDimensionUnits unitType = controller->GetDocument()->GetCurrentSettings().DimensionType;
+			FText areaDisplayText = UModumateDimensionStatics::CentimetersToDisplayText(calculatedArea, 2, unitType, defaultUnit);
+
+			moiProp = OutMOI.Properties.Find(TEXT("CalculatedArea"));
+			moiProp->ValueArray.Empty();
+			moiProp->ValueArray.Add(areaDisplayText.ToString());
+		}
+
+		return true;
+	}
+	return false;
 }

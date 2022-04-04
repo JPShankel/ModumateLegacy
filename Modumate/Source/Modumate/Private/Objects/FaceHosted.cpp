@@ -29,7 +29,7 @@ AMOIFaceHosted::AMOIFaceHosted()
 	WebProperties.Add(prop.Name, prop);
 
 	prop.Name = TEXT("FlipSigns");
-	prop.Type = EWebMOIPropertyType::flip;
+	prop.Type = EWebMOIPropertyType::flip3D;
 	prop.DisplayName = TEXT("Flip");
 	prop.isEditable = true;
 	prop.isVisible = true;
