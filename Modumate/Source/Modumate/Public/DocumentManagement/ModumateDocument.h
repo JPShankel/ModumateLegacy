@@ -36,6 +36,8 @@ private:
 	TArray<TSharedPtr<UndoRedo>> UndoBuffer, RedoBuffer;
 	TArray<FDeltaPtr> PreviewDeltas;
 
+	TArray<EObjectType> NetworkClonedObjectTypes;
+
 	int32 NextID;
 	int32 PrePreviewNextID;
 	int32 ReservingObjectID;
@@ -391,7 +393,7 @@ public:
 	void drawing_request_document();
 
 	UFUNCTION()
-	void web_push_document_update();
+	void trigger_update(const TArray<FString>& ObjectTypes);
 
 	UFUNCTION()
 	void drawing_apply_delta(const FString& InDelta);
@@ -431,7 +433,7 @@ public:
 	void update_player_state(const FString& PlayerStateData);
 
 	UFUNCTION()
-	void request_project_settings();
+	void UpdateWebProjectSettings();
 
 	UFUNCTION()
 	void update_project_settings(const FString& InRequest);

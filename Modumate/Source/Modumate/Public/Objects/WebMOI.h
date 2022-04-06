@@ -79,3 +79,15 @@ struct MODUMATE_API FWebMOI
 	UPROPERTY()
 	TMap<FString, FWebMOIProperty> Properties;
 };
+
+USTRUCT()
+struct MODUMATE_API FWebMOIPackage
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	EObjectType objectType = EObjectType::OTNone;
+
+	UPROPERTY()
+	TArray<FWebMOI> mois;
+};
