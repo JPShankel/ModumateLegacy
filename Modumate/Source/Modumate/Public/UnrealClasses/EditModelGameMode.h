@@ -52,7 +52,13 @@ public:
 	UMaterialInterface *HideMaterial;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
-	UStaticMesh *AnchorMesh;
+	UStaticMesh* AnchorMesh;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UStaticMesh* DirectionArrowMeshForFace;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UStaticMesh* DirectionArrowMeshForEdge;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UMaterialInterface *VolumeHoverMaterial;

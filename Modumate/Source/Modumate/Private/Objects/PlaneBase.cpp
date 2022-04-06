@@ -7,6 +7,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 AMOIPlaneBase::AMOIPlaneBase()
 	: AModumateObjectInstance()
@@ -18,7 +19,6 @@ AMOIPlaneBase::AMOIPlaneBase()
 	, CachedAxisY(ForceInitToZero)
 	, CachedOrigin(ForceInitToZero)
 	, CachedCenter(ForceInitToZero)
-	, LineArrowCompNormalLength(91.44f) // 3ft
 {
 }
 
@@ -149,29 +149,32 @@ void AMOIPlaneBase::PostCreateObject(bool bNewObject)
 	// Create arrow component for certain object type only
 	if (UModumateTypeStatics::GetObjectTypeWithDirectionIndicator().Contains(GetObjectType()))
 	{
-		if (!LineArrowComponent.IsValid())
+		if (!LineArrowCylinderMesh)
 		{
-			LineArrowComponent = NewObject<UArrowComponent>(this);
-			LineArrowComponent->RegisterComponent();
-			LineArrowComponent->SetHiddenInGame(false);
-			LineArrowComponent->ArrowLength = LineArrowCompNormalLength;
-			LineArrowComponent->SetArrowColor(SelectedColor);
+			LineArrowCylinderMesh = NewObject<UStaticMeshComponent>(this);
+			LineArrowCylinderMesh->RegisterComponent();
+			LineArrowCylinderMesh->SetHiddenInGame(false);
+			LineArrowCylinderMesh->SetStaticMesh(gameMode->DirectionArrowMeshForFace);
+			LineArrowCylinderMesh->SetBoundsScale(1000.f); // Prevent occlusion
+			LineArrowCylinderMesh->SetCastShadow(false);
+			ArrowDynMat = UMaterialInstanceDynamic::Create(LineArrowCylinderMesh->GetMaterial(0), LineArrowCylinderMesh);
+			LineArrowCylinderMesh->SetMaterial(0, ArrowDynMat);
 		}
 	}
 }
 
 void AMOIPlaneBase::PreDestroy()
 {
-	if (LineArrowComponent.IsValid())
+	if (LineArrowCylinderMesh)
 	{
-		LineArrowComponent->DestroyComponent();
+		LineArrowCylinderMesh->DestroyComponent();
 	}
 	Super::PreDestroy();
 }
 
 void AMOIPlaneBase::UpdateLineArrowVisual()
 {
-	if (!LineArrowComponent.IsValid())
+	if (!LineArrowCylinderMesh)
 	{
 		return;
 	}
@@ -183,15 +186,20 @@ void AMOIPlaneBase::UpdateLineArrowVisual()
 		bShowDir = bVisible;
 	}
 
-	LineArrowComponent->SetVisibility(bShowDir);
+	LineArrowCylinderMesh->SetVisibility(bShowDir);
+
 	if (bShowDir)
 	{
-		LineArrowComponent->SetWorldLocation(GetLocation());
-		LineArrowComponent->SetWorldRotation(GetNormal().Rotation());
-		float length = (GetCorner(1) - GetCorner(0)).Size();
-		LineArrowComponent->ArrowLength = (FMath::Min(length, LineArrowCompNormalLength));
+		LineArrowCylinderMesh->SetWorldLocation(GetLocation());
+		LineArrowCylinderMesh->SetWorldRotation(GetNormal().Rotation());
+		// Mesh scaling is updated in material via WPO, but scale here provides a base size for material to transform 
+		LineArrowCylinderMesh->SetWorldScale3D(FVector(0.1f));
 	}
-	LineArrowComponent->SetArrowColor(CacheIsSelected ? FColor::Black : SelectedColor);
+	if (ArrowDynMat)
+	{
+		static const FName colorParamName(TEXT("Color"));
+		ArrowDynMat->SetVectorParameterValue(colorParamName, CacheIsSelected ? FColor::Black : SelectedColor);
+	}
 }
 
 float AMOIPlaneBase::GetAlpha() const

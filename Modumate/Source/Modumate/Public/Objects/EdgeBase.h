@@ -36,9 +36,14 @@ protected:
 
 	TArray<AModumateObjectInstance*> CachedConnectedMOIs;
 	TWeakObjectPtr<ALineActor> LineActor;
-	TWeakObjectPtr<UArrowComponent> LineArrowComponent;
 	FColor SelectedColor, HoveredColor, BaseColor;
-	float HoverThickness, SelectedThickness, LineArrowCompNormalLength, LineArrowCompRatio;
+	float HoverThickness, SelectedThickness;
 	bool CacheIsSelected = false;
+
+	UPROPERTY()
+	class UStaticMeshComponent* LineArrowCylinderMesh;
+
+	UPROPERTY()
+	class UMaterialInstanceDynamic* ArrowDynMat;
 };
 

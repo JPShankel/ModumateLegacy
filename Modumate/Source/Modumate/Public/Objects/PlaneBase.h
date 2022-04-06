@@ -42,8 +42,11 @@ protected:
 	FVector CachedAxisX, CachedAxisY, CachedOrigin, CachedCenter;
 	TArray<FPolyHole3D> CachedHoles;
 	TArray<AModumateObjectInstance*> TempConnectedMOIs;
-	TWeakObjectPtr<UArrowComponent> LineArrowComponent;
-	float LineArrowCompNormalLength;
 	bool CacheIsSelected = false;
 
+	UPROPERTY()
+	class UStaticMeshComponent* LineArrowCylinderMesh;
+
+	UPROPERTY()
+	class UMaterialInstanceDynamic* ArrowDynMat;
 };
