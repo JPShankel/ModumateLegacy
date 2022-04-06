@@ -1,5 +1,6 @@
 #include "Objects/ModumateObjectDeltaStatics.h"
 
+#include "Algo/ForEach.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateSerialization.h"
 #include "DocumentManagement/ObjIDReservationHandle.h"
@@ -290,6 +291,16 @@ void FModumateObjectDeltaStatics::SaveSelection(const TArray<int32>& InObjectIDs
 			volumeGraphIDs.Add(parentGraphObject->ID);
 			separatorIDs.Add(moi->ID);
 		}
+		else if (UModumateTypeStatics::IsSpanObject(moi->GetParentObject()))
+		{
+			auto* spanObject = moi->GetParentObject();
+			volumeGraphIDs.Append(spanObject->GetObjectType() == EObjectType::OTMetaEdgeSpan ?
+				Cast<AMOIMetaEdgeSpan>(spanObject)->InstanceData.GraphMembers :
+				Cast<AMOIMetaPlaneSpan>(spanObject)->InstanceData.GraphMembers);
+			separatorIDs.Add(spanObject->ID);
+			separatorIDs.Add(moi->ID);
+
+		}
 		else if (auto surfaceGraph = doc->FindSurfaceGraphByObjID(id))
 		{
 			if (surfaceGraph == nullptr)
@@ -432,6 +443,54 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 	auto separatorDelta = MakeShared<FMOIDelta>();
 	for(const auto& objRec: InRecord->ObjectData)
 	{
+		FMOIStateData stateData(objRec);
+		const AModumateObjectInstance* sourceObj = Doc->GetObjectById(objRec.ID);
+		if (!ensure(sourceObj != nullptr))
+		{
+			continue;
+		}
+
+
+		if (UModumateTypeStatics::IsSpanObject(sourceObj))
+		{
+			TArray<int32> newGraphMembers;
+			const TArray<int32>& currentGraphMembers = objRec.ObjectType == EObjectType::OTMetaEdgeSpan
+				? Cast<const AMOIMetaEdgeSpan>(sourceObj)->InstanceData.GraphMembers :
+				Cast<const AMOIMetaPlaneSpan>(sourceObj)->InstanceData.GraphMembers;
+
+			for (int32 gm : currentGraphMembers)
+			{
+				if (copiedToPastedObjIDs.Contains(gm))
+				{	// TODO: This may fail due to overlapping copying.
+					newGraphMembers.Append(copiedToPastedObjIDs[gm]);
+				}
+			}
+			if (newGraphMembers.Num() == 0)
+			{
+				continue;
+			}
+
+			if (objRec.ObjectType == EObjectType::OTMetaEdgeSpan)
+			{
+				FMOIMetaEdgeSpanData spanData;
+				stateData.CustomData.LoadStructData(spanData);
+				spanData.GraphMembers = MoveTemp(newGraphMembers);
+				stateData.CustomData.SaveStructData(spanData);
+			}
+			else
+			{
+				FMOIMetaPlaneSpanData spanData;
+				stateData.CustomData.LoadStructData(spanData);
+				spanData.GraphMembers = MoveTemp(newGraphMembers);
+				stateData.CustomData.SaveStructData(spanData);
+			}
+
+			stateData.ID = nextID++;
+			copiedToPastedObjIDs.Add(objRec.ID, { stateData.ID });
+			separatorDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+			continue;
+		}
+
 		if (!copiedToPastedObjIDs.Contains(objRec.ParentID))
 		{
 			continue;
@@ -444,13 +503,7 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 			continue;
 		}
 
-		FMOIStateData stateData(objRec);
-		const AModumateObjectInstance* sourceObj = Doc->GetObjectById(objRec.ID);
 
-		if (!ensure(sourceObj != nullptr))
-		{
-			continue;
-		}
 
 		// For MOIs that are parented and have their own transform.
 		const FVector newLocation(sourceObj->GetLocation() + offset);
@@ -941,15 +994,42 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 			int32 moiID = moiKvp.Key;
 			TArray<const AModumateObjectInstance*> objects;
 			objects.Add(Doc->GetObjectById(moiID));
-			objects.Append(objects[0]->GetAllDescendents());
+			UModumateObjectStatics::GetAllDescendents(objects[0], objects);
 			for (const auto* object : objects)
 			{
-				if (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(object->GetObjectType()) == EGraph3DObjectType::None)
+				EObjectType objectType = object->GetObjectType();
+				if (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType) == EGraph3DObjectType::None)
 				{
 					FMOIStateData newState(object->GetStateData());
 					oldIDToNewID.Add(newState.ID, NextID);
 					newState.ID = NextID;
 					++NextID;
+
+					// Duplicate span objects mapping graph IDs:
+					switch (objectType)
+					{
+					case EObjectType::OTMetaEdgeSpan:
+					{
+						FMOIMetaEdgeSpanData instanceData(Cast<const AMOIMetaEdgeSpan>(object)->InstanceData);
+						Algo::ForEach(instanceData.GraphMembers, [&oldIDToNewID](int32& S)
+							{ S = oldIDToNewID[S]; });
+						newState.CustomData.SaveStructData(instanceData);
+						break;
+					}
+
+					case EObjectType::OTMetaPlaneSpan:
+					{
+						FMOIMetaPlaneSpanData instanceData(Cast<const AMOIMetaPlaneSpan>(object)->InstanceData);
+						Algo::ForEach(instanceData.GraphMembers, [&oldIDToNewID](int32& S)
+							{ S = oldIDToNewID[S]; });
+						newState.CustomData.SaveStructData(instanceData);
+						break;
+					}
+
+					default:
+						break;
+					}
+
 					if (ensure(oldIDToNewID.Contains(newState.ParentID)))
 					{
 						newState.ParentID = oldIDToNewID[newState.ParentID];

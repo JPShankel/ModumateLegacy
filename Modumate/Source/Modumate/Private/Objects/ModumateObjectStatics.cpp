@@ -1668,8 +1668,25 @@ bool UModumateObjectStatics::GetHostingMOIsForMOI(UModumateDocument* Doc, AModum
 	return OutMOIs.Num() > 0;
 }
 
+void UModumateObjectStatics::GetAllDescendents(const AModumateObjectInstance* Moi, TArray<const AModumateObjectInstance*>& OutMOIs)
+{
+	const UModumateDocument* doc = Moi->GetDocument();
+	TArray<const AModumateObjectInstance*> allMOIs(Moi->GetAllDescendents());
+	TArray<int32> spandIDs;
+	GetSpansForFaceObject(doc, Moi, spandIDs);
+	GetSpansForEdgeObject(doc, Moi, spandIDs);
+	TArray<const AModumateObjectInstance*> spanObjects;
+	for (int32 spanID : spandIDs)
+	{
+		const AModumateObjectInstance* spanObject = doc->GetObjectById(spanID);
+		allMOIs.Add(spanObject);
+		allMOIs.Append(spanObject->GetAllDescendents());
+	}
+	OutMOIs.Append(MoveTemp(allMOIs));
+}
+
 bool UModumateTypeStatics::IsSpanObject(const AModumateObjectInstance* Object)
 {
-	return Object->GetObjectType() == EObjectType::OTMetaEdgeSpan
-		|| Object->GetObjectType() == EObjectType::OTMetaPlaneSpan;
+	return Object && (Object->GetObjectType() == EObjectType::OTMetaEdgeSpan
+		|| Object->GetObjectType() == EObjectType::OTMetaPlaneSpan);
 }

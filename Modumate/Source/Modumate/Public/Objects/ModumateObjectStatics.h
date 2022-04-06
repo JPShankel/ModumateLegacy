@@ -136,6 +136,8 @@ public:
 	static void SeparateSelectedMetaSpan(UWorld* World);
 
 	static bool GetHostingMOIsForMOI(UModumateDocument* Doc, AModumateObjectInstance* Moi, TArray<AModumateObjectInstance*>& OutMOIs);
+	// Get all descendents of a metagraph MOI, including parenting via spans.
+	static void GetAllDescendents(const AModumateObjectInstance* Moi, TArray<const AModumateObjectInstance*>& OutMOIs);
 
 private:
 	static bool GetGroupIdsForGroupChangeHelper(const UModumateDocument* Doc, int32 NewGroupID, int32 OldGroupID, TArray<int32>& OutAffectedGroups, bool& bOutFoundOldGroup);

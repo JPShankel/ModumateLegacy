@@ -150,15 +150,24 @@ bool AMOIPortal::GetOffsetFaceBounds(FBox2D& OutOffsetBounds, FVector2D& OutOffs
 	OutOffsetBounds.Init();
 	OutOffset = FVector2D::ZeroVector;
 
-	const FGraph3DFace* parentFace = Document->GetVolumeGraph()->FindFace(GetParentID());
-	if (parentFace == nullptr)
+	const int32 parentID = GetParentID();
+	const AModumateObjectInstance* parentObject = GetParentObject();
+	if (!ensure(parentObject))
+	{
+		return false;
+	}
+
+	const FGraph3DFace* parentFace = parentObject->GetObjectType() == EObjectType::OTMetaPlaneSpan ? UModumateObjectStatics::GetFaceFromSpanObject(Document, parentID)
+		: Document->FindVolumeGraph(parentID)->FindFace(parentID);
+
+	if (!ensure(parentFace))
 	{
 		return false;
 	}
 
 	// Get size of parent metaplane, accounting for edge details that may have extended/retracted neighboring edges
 	int32 numEdges = parentFace->EdgeIDs.Num();
-	TArray<FVector2D> facePoints = parentFace->Cached2DPositions;
+	const TArray<FVector2D>& facePoints = parentFace->Cached2DPositions;
 
 	// TODO: Ignore miter due to span for now
 #if 0
