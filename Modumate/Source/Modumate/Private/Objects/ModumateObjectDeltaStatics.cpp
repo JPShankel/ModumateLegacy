@@ -1147,7 +1147,8 @@ void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(UModumateDocument* Doc
 			auto* metaObject = Doc->GetObjectById(id);
 			if (ensure(metaObject))
 			{
-				auto mois = metaObject->GetAllDescendents();
+				TArray<const AModumateObjectInstance*> mois;
+				UModumateObjectStatics::GetAllDescendents(metaObject, mois);
 				for (auto* moi : mois)
 				{
 					moisDelta->AddCreateDestroyState(moi->GetStateData(), EMOIDeltaType::Destroy);

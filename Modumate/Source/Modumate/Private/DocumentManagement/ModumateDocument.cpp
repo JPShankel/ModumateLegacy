@@ -1190,7 +1190,7 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 			for (auto& dao : affectedObjectList)
 			{
 				auto* moi = GetObjectById(dao.Key);
-				if (ensure(moi != nullptr))
+				if (dao.Value != EMOIDeltaType::Destroy && ensure(moi != nullptr))
 				{
 					affectedTypes.Add(moi->GetObjectType());
 				}
@@ -1221,7 +1221,7 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	for (auto& dao : DeltaDirtiedObjects)
 	{
 		auto* moi = GetObjectById(dao);
-		if (ensure(moi != nullptr))
+		if (moi != nullptr)
 		{
 			affectedTypes.Add(moi->GetObjectType());
 		}
