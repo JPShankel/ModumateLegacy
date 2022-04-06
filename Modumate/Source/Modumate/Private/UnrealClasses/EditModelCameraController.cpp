@@ -865,11 +865,13 @@ void UEditModelCameraController::UpdateOrbiting(float DeltaTime)
 	UpdateOrbitAnchorScale();
 
 	//set mouse location to orbit anchor in order to prevent user from mousing to the edge of the screen without realizing
+#if !PLATFORM_MAC
 	FVector2D orbitTargetScreenPos;
 	if (UGameplayStatics::ProjectWorldToScreen(Controller, OrbitTarget, orbitTargetScreenPos))
 	{
 		Controller->SetMouseLocation(orbitTargetScreenPos.X, orbitTargetScreenPos.Y);
 	}
+#endif
 }
 
 void UEditModelCameraController::UpdatePanning(float DeltaTime)
