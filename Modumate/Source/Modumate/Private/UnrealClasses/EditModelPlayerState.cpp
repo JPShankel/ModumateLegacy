@@ -11,6 +11,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateUserSettings.h"
+#include "Objects/CameraView.h"
 #include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/EnumHelpers.h"
 #include "Net/UnrealNetwork.h"
@@ -1760,7 +1761,7 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 	return true;
 }
 
-bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& InState)
+bool AEditModelPlayerState::FromWebPlayerState(const FString& InStateJson, const FWebEditModelPlayerState& InState)
 {
 	TArray<int32> webObIds;
 	Algo::Transform(InState.selectedObjects, webObIds, [](const FWebMOI& MOI) {return MOI.ID; });
@@ -1824,6 +1825,13 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 	if (EMPlayerController && EMPlayerController->EMPlayerState && FindEnumValueByString<EEditViewModes>(InState.viewMode, viewMode))
 	{
 		EMPlayerController->EMPlayerState->SetViewMode(viewMode);
+	}
+
+
+	if (InState.selectedObjects.Num() == 1 && InState.selectedObjects[0].Type == EObjectType::OTCameraView)
+	{
+		AMOICameraView* cameraView = Cast<AMOICameraView>(doc->GetObjectById(InState.selectedObjects[0].ID));
+		cameraView->FromWebMOI(InStateJson);
 	}
 
 	// general practice: when the web sends us data, send it back so they'll store it

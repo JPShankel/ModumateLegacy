@@ -4776,7 +4776,7 @@ void UModumateDocument::update_moi(int32 ID, const FString& MOIData)
 		{
 			return MOI->ID;
 		}
-	);	
+	);
 }
 
 void UModumateDocument::update_player_state(const FString& InStateJson)
@@ -4791,7 +4791,7 @@ void UModumateDocument::update_player_state(const FString& InStateJson)
 	FWebEditModelPlayerState webState;
 	if (ReadJsonGeneric<FWebEditModelPlayerState>(InStateJson, &webState))
 	{
-		controller->EMPlayerState->FromWebPlayerState(webState);
+		controller->EMPlayerState->FromWebPlayerState(InStateJson, webState);
 	}
 }
 

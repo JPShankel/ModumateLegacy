@@ -117,7 +117,7 @@ public:
 	AModumateObjectInstance *HoveredObject;
 
 	bool ToWebPlayerState(FWebEditModelPlayerState& OutState) const;
-	bool FromWebPlayerState(const FWebEditModelPlayerState& InState);
+	bool FromWebPlayerState(const FString& InStateJson, const FWebEditModelPlayerState& InState);
 	bool SendWebPlayerState() const;
 
 	void AddHideObjectsById(const TArray<int32>& ids);
