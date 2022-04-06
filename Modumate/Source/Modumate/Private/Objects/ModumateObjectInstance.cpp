@@ -27,8 +27,9 @@
 #include "ModumateCore/PrettyJSONWriter.h"
 #include "Objects/ModumateObjectStatics.h"
 
-
 class AEditModelPlayerController;
+
+const FString AModumateObjectInstance::MOI_DSIPLAY_NAME_FIELD = TEXT("Name");
 
 AModumateObjectInstance::AModumateObjectInstance()
 {
@@ -749,6 +750,17 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 	{
 		for (TFieldIterator<FProperty> it(structDef); it; ++it)
 		{
+			// sync Name CustomStateData to MOI DisplayName
+			// TODO: properly discontinue Name in Custom data and use Display name instead
+			if(it->GetName() == MOI_DSIPLAY_NAME_FIELD)
+			{
+				FStrProperty* strProp = CastField<FStrProperty>(*it);
+				if (strProp != nullptr && strProp->GetPropertyValue_InContainer(structPtr) != TEXT(""))
+				{
+					strProp->SetPropertyValue_InContainer(structPtr, webMOI.DisplayName);
+				}
+			}
+			
 			FWebMOIProperty* moiProp = webMOI.Properties.Find(it->GetName());
 			if (moiProp == nullptr || moiProp->ValueArray.Num() == 0)
 			{
@@ -917,6 +929,16 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 
 	for (TFieldIterator<FProperty> it(structDef); it; ++it)
 	{
+		// sync Name CustomStateData to MOI DisplayName
+		if (it->GetName() == MOI_DSIPLAY_NAME_FIELD)
+		{
+			FStrProperty* strProp = CastField<FStrProperty>(*it);
+			if (strProp != nullptr)
+			{
+				OutMOI.DisplayName = strProp->GetPropertyValue_InContainer(structPtr);
+			}
+		}
+
 		// MOI subclasses add properties to WebProperties on construction with type and display name info
 		// Properties not included in this map are not visible to the web
 		const FWebMOIProperty* formProp = WebProperties.Find(it->GetName());

@@ -127,6 +127,7 @@ bool AMOICameraView::FromWebMOI(const FString& InJson)
 		controller->EMPlayerPawn->SetCameraOrtho(InstanceData.bOrthoView);
 		controller->SetAlwaysShowGraphDirection(InstanceData.bGraphDirectionVisiblity);
 		controller->SkyActor->SetCurrentDateTime(newDateTime);
+		controller->AxesActor->SetActorHiddenInGame(!InstanceData.bAxesActorVisibility);
 		controller->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InstanceData.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 
 		return true;

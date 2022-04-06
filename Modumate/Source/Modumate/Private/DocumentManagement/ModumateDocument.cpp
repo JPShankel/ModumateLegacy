@@ -60,6 +60,7 @@
 #include "UnrealClasses/DynamicIconGenerator.h"
 #include "UnrealClasses/SkyActor.h"
 #include "ModumateCore/EnumHelpers.h"
+#include "ModumateCore/ModumateBrowserStatics.h"
 
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
 #include "DrawingDesigner/DrawingDesignerRequests.h"
@@ -4659,6 +4660,17 @@ void UModumateDocument::create_moi(const FString& MOIType, int32 ParentID)
 		EndUndoRedoMacro();
 
 		UpdateWebMOIs(EObjectType::OTDesignOption);
+	}
+	else if (objectType == EObjectType::OTCameraView)
+	{
+		auto* Controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+		UCameraComponent* cameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
+		if (cameraComp)
+		{
+			FDateTime dateTime = Controller->SkyActor->GetCurrentDateTime();
+			FString newViewName = TEXT("New Camera View ");
+			UModumateBrowserStatics::CreateCameraViewAsMoi(this, cameraComp, newViewName, dateTime, 0);
+		}
 	}
 	else
 	{
