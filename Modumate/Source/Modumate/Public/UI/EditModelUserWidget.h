@@ -153,4 +153,5 @@ public:
 	void UpdateMoveRotateToolButtonsUsability();
 	void UpdateUsersList();
 	void EditDetailDesignerFromSelection();
+	void UpdateViewCubeOffset(float InOffset);
 };

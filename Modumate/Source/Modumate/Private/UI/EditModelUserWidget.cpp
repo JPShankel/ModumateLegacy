@@ -36,6 +36,7 @@
 #include "UI/DrawingDesigner/DrawingDesignerWebBrowserWidget.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanelSlot.h"
+#include "UI/ViewCubeWidget.h"
 
 #define LOCTEXT_NAMESPACE "ModumateWidgets"
 
@@ -112,6 +113,9 @@ void UEditModelUserWidget::NativeConstruct()
 		SwapMenuWidgetCanvasSlot->SetZOrder(bIsShowDrawingDesigner ? 9 : 6);
 		SwapMenuWidgetCanvasSlot->SetPosition(bIsShowDrawingDesigner ? FVector2D(0.f, 48.f) : FVector2D(56.f, 48.f));
 	}
+
+	// ViewCube
+	UpdateViewCubeOffset(bIsShowDrawingDesigner ? -300.f : -50.f);
 }
 
 void UEditModelUserWidget::UpdateOnToolModeChanged()
@@ -432,6 +436,16 @@ void UEditModelUserWidget::UpdateUsersList()
 void UEditModelUserWidget::EditDetailDesignerFromSelection()
 {
 	SelectionTrayWidget->StartDetailDesignerFromSelection();
+}
+
+void UEditModelUserWidget::UpdateViewCubeOffset(float InOffset)
+{
+	UCanvasPanelSlot* viewCubeCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(ViewCubeUserWidget);
+	if (viewCubeCanvasSlot)
+	{
+		FVector2D offset = FVector2D(InOffset, 100.f);
+		viewCubeCanvasSlot->SetPosition(offset);
+	}
 }
 
 void UEditModelUserWidget::ToggleCutPlaneMenu(bool bNewVisibility)
