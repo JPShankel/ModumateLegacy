@@ -85,6 +85,13 @@ void UEditModelUserWidget::NativeConstruct()
 	TextChatWidget->SetVisibility(bIsShowDrawingDesigner ? ESlateVisibility::Collapsed : ESlateVisibility::SelfHitTestInvisible);
 	ToolbarWidget->ToolbarBottomBlock->SetVisibility(bIsShowDrawingDesigner ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 	
+	// Switch toolbar visibility, webUI uses its own toolbar and tooltray
+	if(bIsShowDrawingDesigner)
+	{
+		ToolbarWidget->SetVisibility(ESlateVisibility::Collapsed);
+		ToolTrayWidget->SetVisibility(ESlateVisibility::Collapsed);
+	}
+
 	// DrawingDesigner widget
 	DrawingDesigner->SetVisibility(bIsShowDrawingDesigner ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 	UCanvasPanelSlot* drawingDesignerCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(DrawingDesigner);
@@ -153,6 +160,16 @@ void UEditModelUserWidget::UpdateToolTray()
 
 void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategories AsToolCategory)
 {
+	// New UI shouldn't change umg menu visibility, but with few exceptions
+	if (bIsShowDrawingDesigner)
+	{
+		if (!(NewState == ELeftMenuState::SwapMenu ||
+			NewState == ELeftMenuState::DeleteMenu))
+		{
+			return;
+		}
+	}
+
 	if (!(Controller && ToolTrayWidget))
 	{
 		return;
