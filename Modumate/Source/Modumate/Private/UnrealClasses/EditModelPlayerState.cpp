@@ -23,8 +23,10 @@
 #include "UI/DimensionManager.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/EditModelUserWidget.h"
+#include "UI/ViewCubeWidget.h"
 #include "UI/Online/ModumateClientIcon.h"
 #include "UI/Online/OnlineUserName.h"
+#include "UnrealClasses/AxesActor.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -32,6 +34,7 @@
 #include "UnrealClasses/EditModelPlayerPawn.h"
 #include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/SkyActor.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 
 const FString AEditModelPlayerState::ViewOnlyArg(TEXT("ModViewOnly"));
@@ -1834,15 +1837,31 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 			EMPlayerController->SetCurrentCullingCutPlane(InState.culledCutplane, false);
 		}
 	}
-
-
+	
 	if (InState.selectedObjects.Num() == 1 && InState.selectedObjects[0].Type == EObjectType::OTCameraView)
 	{
 		AMOICameraView* cameraView = Cast<AMOICameraView>(doc->GetObjectById(InState.selectedObjects[0].ID));
 		cameraView->UpdateCamera();
 	}
 
-	
+	if (EMPlayerController)
+	{
+		const FDateTime NewDateTime = FDateTime(
+			InState.camera.Date.GetYear(), 
+			InState.camera.Date.GetMonth(), 
+			InState.camera.Date.GetDay(), 
+			InState.camera.Time.GetHour(), 
+			InState.camera.Time.GetMinute()
+		);
+		
+		EMPlayerController->SetFieldOfViewCommand(InState.camera.FOV);
+		EMPlayerController->ToggleAllCutPlanesColor(InState.camera.bCutPlanesColorVisibility);
+		EMPlayerController->EMPlayerPawn->SetCameraOrtho(InState.camera.bOrthoView);
+		EMPlayerController->SetAlwaysShowGraphDirection(InState.camera.bGraphDirectionVisibility);
+		EMPlayerController->SkyActor->SetCurrentDateTime(NewDateTime);
+		EMPlayerController->AxesActor->SetActorHiddenInGame(!InState.camera.bAxesActorVisibility);
+		EMPlayerController->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InState.camera.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	}
 
 	// general practice: when the web sends us data, send it back so they'll store it
 	return SendWebPlayerState();

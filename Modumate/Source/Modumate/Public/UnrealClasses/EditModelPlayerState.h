@@ -9,6 +9,7 @@
 #include "Online/ModumateAccountManager.h"
 #include "GameFramework/PlayerState.h"
 #include "ModumateCore/ModumateDimensionString.h"
+#include "Objects/CameraView.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "UI/EditModelPlayerHUD.h"
 #include "UI/HUDDrawWidget.h"
@@ -50,6 +51,9 @@ struct MODUMATE_API FWebEditModelPlayerState
 
 	UPROPERTY()
 	int32 culledCutplane;
+
+	UPROPERTY()
+	FMOICameraViewData camera;
 };
 
 /**
