@@ -1043,7 +1043,7 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 	}
 }
 
-void FModumateObjectDeltaStatics::MergeGraphToCurrentGraph(UModumateDocument* Doc, const FGraph3D* OldGraph, int32& NextID, TArray<FDeltaPtr>& OutDeltas)
+void FModumateObjectDeltaStatics::MergeGraphToCurrentGraph(UModumateDocument* Doc, const FGraph3D* OldGraph, int32& NextID, TArray<FDeltaPtr>& OutDeltas, TSet<int32>& OutItemsForSelection)
 {
 	FGraph3DRecord graphRecord;
 	OldGraph->Save(&graphRecord);
@@ -1059,29 +1059,57 @@ void FModumateObjectDeltaStatics::MergeGraphToCurrentGraph(UModumateDocument* Do
 	auto delta = MakeShared<FMOIDelta>();
 	for (const auto& kvp: copiedToPastedIDs)
 	{
-		const AModumateObjectInstance* moi = Doc->GetObjectById(kvp.Key);
-		if (ensureAlways(moi && kvp.Value.Num() > 0))
+		const AModumateObjectInstance* graphMoi = Doc->GetObjectById(kvp.Key);
+		if (ensureAlways(graphMoi && kvp.Value.Num() > 0))
 		{
-			for (const auto* childMoi: moi->GetChildObjects())
+			TArray<const AModumateObjectInstance*> childObjects = graphMoi->GetChildObjects();
+			TArray<int32> spanIDs;
+			UModumateObjectStatics::GetSpansForEdgeObject(Doc, graphMoi, spanIDs);
+			UModumateObjectStatics::GetSpansForFaceObject(Doc, graphMoi, spanIDs);
+			for (int32 spanID: spanIDs)
 			{
-				int32 newParentID = kvp.Value[0];
-				if (kvp.Value.Num() > 1)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Graph element %d was split into %d new elements"), kvp.Key, kvp.Value.Num());
-				}
+				childObjects.Add(Doc->GetObjectById(spanID));
+			}
 
-				// Check if locally-generated ID and bump NextID if appropriate.
-				int32 playerIdx;
-				Doc->SplitMPObjID(newParentID, localID, playerIdx);
+			if (childObjects.Num() == 0)
+			{
+				OutItemsForSelection.Add(kvp.Value[0]);
+			}
+
+			for (const auto* childMoi: childObjects)
+			{
+				if (UModumateTypeStatics::IsSpanObject(childMoi))
+				{
+					FModumateObjectDeltaStatics::GetDeltaForSpanMapping(childMoi, copiedToPastedIDs, OutDeltas);
+					OutItemsForSelection.Append(childMoi->GetChildIDs());
+				}
+				else
+				{
+					OutItemsForSelection.Add(childMoi->ID);
+					int32 newParentID = kvp.Value[0];
+					if (kvp.Value.Num() > 1)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Graph element %d was split into %d new elements"), kvp.Key, kvp.Value.Num());
+					}
+
+					const FMOIStateData& oldstateData = childMoi->GetStateData();
+					FMOIStateData newStateData(oldstateData);
+					newStateData.ParentID = newParentID;
+					delta->AddMutationState(childMoi, oldstateData, newStateData);
+				}
+			}
+
+			// Check if locally-generated ID and bump NextID if appropriate.
+			int32 playerIdx;
+			for (int32 id : kvp.Value)
+			{
+				Doc->SplitMPObjID(id, localID, playerIdx);
 				if (playerIdx == myPlayerIdx)
 				{
-					NextID = FMath::Max(NextID, newParentID + 1);
+					NextID = FMath::Max(NextID, id + 1);
 				}
-				const FMOIStateData& oldstateData = childMoi->GetStateData();
-				FMOIStateData newStateData(oldstateData);
-				newStateData.ParentID = newParentID;
-				delta->AddMutationState(childMoi, oldstateData, newStateData);
 			}
+
 		}
 	}
 
@@ -1172,4 +1200,68 @@ void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(UModumateDocument* Doc
 			OutDeltas.Add(deleteMetaGraph);
 		}
 	}
+}
+
+void FModumateObjectDeltaStatics::GetDeltaForSpanMapping(const AModumateObjectInstance* Moi, const TMap<int32, TArray<int32>>& CopiedToPastedObjIDs, TArray<FDeltaPtr>& OutDeltas)
+{
+	if (Moi == nullptr)
+	{
+		return;
+	}
+
+	auto newSpanDelta = MakeShared<FMOIDelta>();
+	FMOIStateData stateData(Moi->GetStateData());
+
+	switch (Moi->GetObjectType())
+	{
+	case EObjectType::OTMetaEdgeSpan:
+	{
+		FMOIMetaEdgeSpanData spanData;
+		Moi->GetStateData().CustomData.LoadStructData(spanData);
+		spanData.GraphMembers.Empty();
+		for (int32 spanMember : Cast<AMOIMetaEdgeSpan>(Moi)->InstanceData.GraphMembers)
+		{
+			const auto* pastedIDs = CopiedToPastedObjIDs.Find(spanMember);
+			if (pastedIDs)
+			{
+				spanData.GraphMembers.Append(*pastedIDs);
+			}
+			else
+			{   // graph ID is unchanged?
+				spanData.GraphMembers.Add(spanMember);
+			}
+		}
+		stateData.CustomData.SaveStructData(spanData, UE_BUILD_DEVELOPMENT);
+
+		break;
+	}
+
+	case EObjectType::OTMetaPlaneSpan:
+	{
+		FMOIMetaPlaneSpanData spanData;
+		Moi->GetStateData().CustomData.LoadStructData(spanData);
+		spanData.GraphMembers.Empty();
+		for (int32 spanMember : Cast<AMOIMetaPlaneSpan>(Moi)->InstanceData.GraphMembers)
+		{
+			const auto* pastedIDs = CopiedToPastedObjIDs.Find(spanMember);
+			if (pastedIDs)
+			{
+				spanData.GraphMembers.Append(*pastedIDs);
+			}
+			else
+			{   // graph ID is unchanged?
+				spanData.GraphMembers.Add(spanMember);
+			}
+		}
+		stateData.CustomData.SaveStructData(spanData, UE_BUILD_DEVELOPMENT);
+
+		break;
+	}
+
+	default:
+		return;;
+	}
+
+	newSpanDelta->AddMutationState(Moi, Moi->GetStateData(), stateData);
+	OutDeltas.Add(MoveTemp(newSpanDelta));
 }

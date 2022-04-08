@@ -14,6 +14,7 @@ using FDeltaPtr = TSharedPtr<FDocumentDelta>;
 struct FGraph3DDelta;
 class FGraph3D;
 class AEditModelPlayerController;
+class AModumateObjectInstance;
 
 // Helper functions for delta preview operations
 class FModumateObjectDeltaStatics
@@ -35,7 +36,7 @@ public:
 	// Create graph deltas that will create deleted edges & vertices in a new graph with matching IDs.
 	static void ConvertGraphDeleteToMove(const TArray<FGraph3DDelta>& GraphDeltas, const FGraph3D* OldGraph, int32& NextID, TArray<FGraph3DDelta>& OutDeltas);
 	// Copy oldGraph into active graph and move hosted objects with the copy.
-	static void MergeGraphToCurrentGraph(UModumateDocument* Doc, const FGraph3D* OldGraph, int32& NextID, TArray<FDeltaPtr>& OutDeltas);
+	static void MergeGraphToCurrentGraph(UModumateDocument* Doc, const FGraph3D* OldGraph, int32& NextID, TArray<FDeltaPtr>& OutDeltas, TSet<int32>& OutItemsForSelection);
 
 	// Duplicate a set of groups.
 	static void DuplicateGroups(const UModumateDocument* Doc, const TSet<int32>& GroupIDs, int32& NextID, TArray<TPair<bool, FDeltaPtr>>& OutDeltas);
@@ -46,4 +47,7 @@ public:
 
 	// Create deltas for wholesale deletion of graph and its contents.
 	static void GetDeltasForGraphDelete(UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas);
+
+	// Create delta to map the graph IDs for span Moi according to CopiedToPastedObjIDs.
+	static void GetDeltaForSpanMapping(const AModumateObjectInstance* Moi, const TMap<int32, TArray<int32>>& CopiedToPastedObjIDs, TArray<FDeltaPtr>& OutDeltas);
 };

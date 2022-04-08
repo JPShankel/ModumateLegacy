@@ -117,25 +117,6 @@ bool UUngroupTool::ExplodeGroup(UModumateDocument* Doc, AModumateObjectInstance*
 	TArray<FGraph3DDelta> deleteGraphDeltas;
 	graph->GetDeltaForDeleteObjects(allGraphElements, deleteGraphDeltas, NextID, true);
 
-	// Note all members of group for selection after ungrouping.
-	for (int32 graphItem: allGraphElements)
-	{
-		AModumateObjectInstance* metaMOI = Doc->GetObjectById(graphItem);
-		if (metaMOI)
-		{
-			auto& children = metaMOI->GetChildIDs();
-			if (children.Num() > 0)
-			{
-				ReselectionItems.Append(children);
-			}
-			else
-			{
-				ReselectionItems.Add(graphItem);
-			}
-
-		}
-	}
-
 	// Remove old graph elements:
 	for (auto& graphDelta: deleteGraphDeltas)
 	{
@@ -150,7 +131,7 @@ bool UUngroupTool::ExplodeGroup(UModumateDocument* Doc, AModumateObjectInstance*
 	removeObjectDelta->AddCreateDestroyState(GroupObject->GetStateData(), EMOIDeltaType::Destroy);
 	OutDeltas.Add(removeObjectDelta);
 	
-	FModumateObjectDeltaStatics::MergeGraphToCurrentGraph(Doc, graph, NextID, OutDeltas);
+	FModumateObjectDeltaStatics::MergeGraphToCurrentGraph(Doc, graph, NextID, OutDeltas, ReselectionItems);
 
 	return true;
 }
