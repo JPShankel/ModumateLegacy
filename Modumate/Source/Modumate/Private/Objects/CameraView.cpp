@@ -56,14 +56,14 @@ AMOICameraView::AMOICameraView()
 	prop.isVisible = true;
 	WebProperties.Add(prop.Name, prop);
 
-	prop.Name = TEXT("bCutPlanesColorVisiblity");
+	prop.Name = TEXT("bCutPlanesColorVisibility");
 	prop.Type = EWebMOIPropertyType::boolean;
 	prop.DisplayName = TEXT("Cut plane colors");
 	prop.isEditable = true;
 	prop.isVisible = true;
 	WebProperties.Add(prop.Name, prop);
 
-	prop.Name = TEXT("bGraphDirectionVisiblity");
+	prop.Name = TEXT("bGraphDirectionVisibility");
 	prop.Type = EWebMOIPropertyType::boolean;
 	prop.DisplayName = TEXT("Graph Direction");
 	prop.isEditable = true;
@@ -107,14 +107,16 @@ void AMOICameraView::OnCameraActorDestroyed(AActor* DestroyedActor)
 	UpdateViewMenu();
 }
 
-bool AMOICameraView::FromWebMOI(const FString& InJson)
+void AMOICameraView::UpdateCamera()
 {
-	if (AModumateObjectInstance::FromWebMOI(InJson))
+	UScriptStruct* StructDef = nullptr;
+	void* StructPtr=nullptr;
+	if (GetInstanceDataStruct(StructDef, StructPtr))
 	{
-		UWorld* world = GetWorld();
-		auto controller = world->GetFirstPlayerController<AEditModelPlayerController>();
+		const UWorld* World = GetWorld();
+		const auto Controller = World->GetFirstPlayerController<AEditModelPlayerController>();
 
-		FDateTime newDateTime = FDateTime(
+		const FDateTime NewDateTime = FDateTime(
 			InstanceData.Date.GetYear(), 
 			InstanceData.Date.GetMonth(), 
 			InstanceData.Date.GetDay(), 
@@ -122,14 +124,21 @@ bool AMOICameraView::FromWebMOI(const FString& InJson)
 			InstanceData.Time.GetMinute()
 		);
 
-		controller->SetFieldOfViewCommand(InstanceData.FOV);
-		controller->ToggleAllCutPlanesColor(InstanceData.bCutPlanesColorVisiblity);
-		controller->EMPlayerPawn->SetCameraOrtho(InstanceData.bOrthoView);
-		controller->SetAlwaysShowGraphDirection(InstanceData.bGraphDirectionVisiblity);
-		controller->SkyActor->SetCurrentDateTime(newDateTime);
-		controller->AxesActor->SetActorHiddenInGame(!InstanceData.bAxesActorVisibility);
-		controller->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InstanceData.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+		Controller->SetFieldOfViewCommand(InstanceData.FOV);
+		Controller->ToggleAllCutPlanesColor(InstanceData.bCutPlanesColorVisibility);
+		Controller->EMPlayerPawn->SetCameraOrtho(InstanceData.bOrthoView);
+		Controller->SetAlwaysShowGraphDirection(InstanceData.bGraphDirectionVisibility);
+		Controller->SkyActor->SetCurrentDateTime(NewDateTime);
+		Controller->AxesActor->SetActorHiddenInGame(!InstanceData.bAxesActorVisibility);
+		Controller->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InstanceData.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	}
+}
 
+bool AMOICameraView::FromWebMOI(const FString& InJson)
+{
+	if (AModumateObjectInstance::FromWebMOI(InJson))
+	{
+		UpdateCamera();
 		return true;
 	}
 	return false;

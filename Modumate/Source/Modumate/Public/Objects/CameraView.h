@@ -63,10 +63,10 @@ struct MODUMATE_API FMOICameraViewData
 	bool bViewCubeVisibility = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
-	bool bCutPlanesColorVisiblity = true;
+	bool bCutPlanesColorVisibility = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
-	bool bGraphDirectionVisiblity = false;
+	bool bGraphDirectionVisibility = false;
 };
 
 UCLASS()
@@ -87,6 +87,7 @@ public:
 	FMOICameraViewData InstanceData;
 
 	void UpdateViewMenu();
+	void UpdateCamera();
 
 protected:
 

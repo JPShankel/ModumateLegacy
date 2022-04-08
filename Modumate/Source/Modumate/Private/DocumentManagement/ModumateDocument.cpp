@@ -4791,7 +4791,7 @@ void UModumateDocument::update_player_state(const FString& InStateJson)
 	FWebEditModelPlayerState webState;
 	if (ReadJsonGeneric<FWebEditModelPlayerState>(InStateJson, &webState))
 	{
-		controller->EMPlayerState->FromWebPlayerState(InStateJson, webState);
+		controller->EMPlayerState->FromWebPlayerState(webState);
 	}
 }
 

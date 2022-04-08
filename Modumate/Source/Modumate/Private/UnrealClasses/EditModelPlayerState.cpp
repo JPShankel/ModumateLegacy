@@ -1762,7 +1762,7 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 	return true;
 }
 
-bool AEditModelPlayerState::FromWebPlayerState(const FString& InStateJson, const FWebEditModelPlayerState& InState)
+bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& InState)
 {
 	TArray<int32> webObIds;
 	Algo::Transform(InState.selectedObjects, webObIds, [](const FWebMOI& MOI) {return MOI.ID; });
@@ -1839,7 +1839,7 @@ bool AEditModelPlayerState::FromWebPlayerState(const FString& InStateJson, const
 	if (InState.selectedObjects.Num() == 1 && InState.selectedObjects[0].Type == EObjectType::OTCameraView)
 	{
 		AMOICameraView* cameraView = Cast<AMOICameraView>(doc->GetObjectById(InState.selectedObjects[0].ID));
-		cameraView->FromWebMOI(InStateJson);
+		cameraView->UpdateCamera();
 	}
 
 	

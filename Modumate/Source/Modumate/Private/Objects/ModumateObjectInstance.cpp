@@ -29,7 +29,7 @@
 
 class AEditModelPlayerController;
 
-const FString AModumateObjectInstance::MOI_DSIPLAY_NAME_FIELD = TEXT("Name");
+const FString AModumateObjectInstance::MOI_DISPLAY_NAME_FIELD = TEXT("Name");
 
 AModumateObjectInstance::AModumateObjectInstance()
 {
@@ -752,10 +752,10 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 		{
 			// sync Name CustomStateData to MOI DisplayName
 			// TODO: properly discontinue Name in Custom data and use Display name instead
-			if(it->GetName() == MOI_DSIPLAY_NAME_FIELD)
+			if(it->GetName() == MOI_DISPLAY_NAME_FIELD)
 			{
 				FStrProperty* strProp = CastField<FStrProperty>(*it);
-				if (strProp != nullptr && strProp->GetPropertyValue_InContainer(structPtr) != TEXT(""))
+				if (strProp != nullptr && !webMOI.DisplayName.IsEmpty())
 				{
 					strProp->SetPropertyValue_InContainer(structPtr, webMOI.DisplayName);
 				}
@@ -930,7 +930,7 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 	for (TFieldIterator<FProperty> it(structDef); it; ++it)
 	{
 		// sync Name CustomStateData to MOI DisplayName
-		if (it->GetName() == MOI_DSIPLAY_NAME_FIELD)
+		if (it->GetName() == MOI_DISPLAY_NAME_FIELD)
 		{
 			FStrProperty* strProp = CastField<FStrProperty>(*it);
 			if (strProp != nullptr)

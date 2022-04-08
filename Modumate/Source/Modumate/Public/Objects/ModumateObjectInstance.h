@@ -180,7 +180,7 @@ protected:
 	FQuantitiesCollection CachedQuantities;
 	virtual void UpdateQuantities() { };
 
-	static const FString MOI_DSIPLAY_NAME_FIELD;
+	static const FString MOI_DISPLAY_NAME_FIELD;
 
 public:
 	FMOIStateData& GetStateData();
