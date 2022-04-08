@@ -1756,8 +1756,9 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 		OutState.toolPresetGUID = EMPlayerController->CurrentTool->GetAssemblyGUID().ToString();
 		OutState.toolMode = GetEnumValueString<EToolCreateObjectMode>(EMPlayerController->CurrentTool->GetCreateObjectMode());
 		OutState.viewMode = GetEnumValueString<EEditViewModes>(EMPlayerController->EMPlayerState->SelectedViewMode);
+		OutState.culledCutplane = EMPlayerController->CurrentCullingCutPlaneID;
 	}
-
+	
 	return true;
 }
 
@@ -1799,7 +1800,7 @@ bool AEditModelPlayerState::FromWebPlayerState(const FString& InStateJson, const
 	}
 
 	EToolMode toolMode;
-	if (EMPlayerController && EMPlayerController->CurrentTool && FindEnumValueByString<EToolMode>(InState.tool,toolMode))
+	if (EMPlayerController && EMPlayerController->CurrentTool && FindEnumValueByString<EToolMode>(InState.tool, toolMode))
 	{
 		// If tool mode is different, change tool mode
 		if (toolMode != EMPlayerController->CurrentTool->GetToolMode())
@@ -1815,16 +1816,23 @@ bool AEditModelPlayerState::FromWebPlayerState(const FString& InStateJson, const
 		}
 	}
 
-	EToolCreateObjectMode toolCreateObjectMode;
-	if (EMPlayerController && EMPlayerController->CurrentTool && FindEnumValueByString<EToolCreateObjectMode>(InState.toolMode, toolCreateObjectMode))
-	{
-		EMPlayerController->SetToolCreateObjectMode(toolCreateObjectMode);
-	}
+	if (EMPlayerController && EMPlayerController->EMPlayerState) {
 
-	EEditViewModes viewMode;
-	if (EMPlayerController && EMPlayerController->EMPlayerState && FindEnumValueByString<EEditViewModes>(InState.viewMode, viewMode))
-	{
-		EMPlayerController->EMPlayerState->SetViewMode(viewMode);
+		EToolCreateObjectMode toolCreateObjectMode;
+		if (FindEnumValueByString<EToolCreateObjectMode>(InState.toolMode, toolCreateObjectMode))
+		{
+			EMPlayerController->SetToolCreateObjectMode(toolCreateObjectMode);
+		}
+
+		EEditViewModes viewMode;
+		if (FindEnumValueByString<EEditViewModes>(InState.viewMode, viewMode))
+		{
+			EMPlayerController->EMPlayerState->SetViewMode(viewMode);
+		}
+
+		if (InState.culledCutplane != EMPlayerController->CurrentCullingCutPlaneID) {
+			EMPlayerController->SetCurrentCullingCutPlane(InState.culledCutplane, false);
+		}
 	}
 
 
@@ -1833,6 +1841,8 @@ bool AEditModelPlayerState::FromWebPlayerState(const FString& InStateJson, const
 		AMOICameraView* cameraView = Cast<AMOICameraView>(doc->GetObjectById(InState.selectedObjects[0].ID));
 		cameraView->FromWebMOI(InStateJson);
 	}
+
+	
 
 	// general practice: when the web sends us data, send it back so they'll store it
 	return SendWebPlayerState();

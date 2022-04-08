@@ -47,6 +47,9 @@ struct MODUMATE_API FWebEditModelPlayerState
 
 	UPROPERTY()
 	FString viewMode;
+
+	UPROPERTY()
+	int32 culledCutplane;
 };
 
 /**
