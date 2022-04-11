@@ -1,0 +1,40 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch ModumateEditor",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/UE4/Engine/Binaries/Mac/UE4Editor.app/Contents/MacOS/UE4Editor",
+            "args": ["${workspaceFolder}/Modumate/Modumate.uproject", "-RunConfig=Development", "-NSDocumentRevisionsDebugMode", "YES"],
+            //The following is only needed if you have a smylink screwing with your debug paths like I do.
+            "sourceMap": { "/Users/nourij/Code": "/Volumes/T7" },
+            "postRunCommands": [
+                "target modules add /Users/nourij/Code/ModumateGit/Modumate/Binaries/Mac/UE4Editor-ModumateEditor.dylib"
+            ],
+        },
+        {
+            "name": "Attach to UE4Editor",
+            "type": "lldb",
+            "request": "attach",
+            "program": "${workspaceFolder}/UE4/Engine/Binaries/Mac/UE4Editor.app/Contents/MacOS/UE4Editor",
+            "sourceMap": { "/Users/nourij/Code": "/Volumes/T7" },
+            "postRunCommands": [
+                "target modules add /Users/nourij/Code/ModumateGit/Modumate/Binaries/Mac/UE4Editor-ModumateEditor.dylib"
+            ],
+        },
+        {
+            "name": "Attach to Modumate",
+            "type": "lldb",
+            "request": "attach",
+            "program": "${workspaceFolder}/Modumate/Binaries/Mac/Modumate.app/Contents/MacOS/Modumate",
+            "sourceMap": { "/Users/nourij/Code": "/Volumes/T7" },
+            "postRunCommands": [
+                "target modules add /Users/nourij/Code/ModumateGit/Modumate/Binaries/Mac/UE4Editor-ModumateEditor.dylib"
+            ],
+        }
+    ]
+}

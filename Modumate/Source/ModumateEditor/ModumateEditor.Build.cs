@@ -16,7 +16,7 @@ public class ModumateEditor : ModuleRules
 		OptimizeCode = CodeOptimization.Never;
 
 		PublicDependencyModuleNames.AddRange(new string[] {
-			"Modumate",
+			"Modumate"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {
