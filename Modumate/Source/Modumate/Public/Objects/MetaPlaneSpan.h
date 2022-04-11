@@ -23,13 +23,9 @@ public:
 	AMOIMetaPlaneSpan();
 
 	virtual FVector GetLocation() const override;
-	virtual void SetupDynamicGeometry() override;
 
 	UPROPERTY()
 	FMOIMetaPlaneSpanData InstanceData;
-
-	static void MakeMetaPlaneSpanDeltaPtr(UModumateDocument* Doc, int32 NewID, const TArray<int32>& InMemberObjects, TSharedPtr<FMOIDelta>& OutMoiDeltaPtr);
-	static void MakeMetaPlaneSpanDeltaFromGraph(FGraph3D* InGraph, int32 NewID, const TArray<int32>& InMemberObjects, TArray<FDeltaPtr>& OutDeltaPtrs);
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 

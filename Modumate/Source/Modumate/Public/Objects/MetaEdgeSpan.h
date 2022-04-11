@@ -24,13 +24,9 @@ public:
 
 	virtual FVector GetLocation() const override;
 	virtual FVector GetCorner(int32 index) const override;
-	virtual void SetupDynamicGeometry() override;
 
 	UPROPERTY()
 	FMOIMetaEdgeSpanData InstanceData;
-
-	static void MakeMetaEdgeSpanDeltaPtr(UModumateDocument* Doc, int32 NewID, const TArray<int32>& InMemberObjects, TSharedPtr<FMOIDelta>& OutMoiDeltaPtr);
-	static void MakeMetaEdgeSpanDeltaFromGraph(FGraph3D* InGraph, int32 NewID, const TArray<int32>& InMemberObjects, TArray<FDeltaPtr>& OutDeltaPtrs);
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 

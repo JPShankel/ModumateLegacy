@@ -126,6 +126,16 @@ bool AMOIPlaneHostedObj::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 	{
 	case EObjectDirtyFlags::Structure:
 	{
+		const FGraph3DFace* planeFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, GetParentID());
+
+		if (planeFace == nullptr)
+		{
+			TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
+			delta->AddCreateDestroyState(StateData, EMOIDeltaType::Destroy);
+			OutSideEffectDeltas->Add(delta);
+			return true;
+		}
+
 		// TODO: as long as the assembly is not stored inside of the data state, and its layers can be reversed,
 		// then this is the centralized opportunity to match up the reversal of layers with whatever the intended inversion state is,
 		// based on preview/current state changing, assembly changing, object creation, etc.
