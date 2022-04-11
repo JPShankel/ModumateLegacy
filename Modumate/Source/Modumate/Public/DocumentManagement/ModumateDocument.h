@@ -383,9 +383,12 @@ private:
 	void UpdateWindowTitle();
 	void RecordSavedProject(UWorld* World, const FString& FilePath, bool bUserFile);
 
-public: 
+public:
 
 	// Drawing designer API
+	UFUNCTION()
+	void set_web_focus(bool bHasFocus);
+	
 	UFUNCTION()
 	void DrawingSendResponse(const FString& FunctionName, const FString& Argument) const;
 
@@ -449,7 +452,7 @@ public:
 
 	UFUNCTION()
 	void open_detail_designer();
-
+	
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
 	void UpdateWebPresets();
 

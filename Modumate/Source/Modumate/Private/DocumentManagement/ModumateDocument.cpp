@@ -65,6 +65,7 @@
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
 #include "DrawingDesigner/DrawingDesignerRequests.h"
 #include "DrawingDesigner/DrawingDesignerRenderControl.h"
+#include "UnrealClasses/EditModelInputHandler.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDocument"
 
@@ -4439,6 +4440,17 @@ void UModumateDocument::RecordSavedProject(UWorld* World, const FString& FilePat
 	else
 	{
 		bAutoSaveDirty = false;
+	}
+}
+
+void UModumateDocument::set_web_focus(bool bHasFocus)
+{
+	const auto player = GetWorld()->GetFirstLocalPlayerFromController();
+	const auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
+
+	if(controller)
+	{
+		controller->InputHandlerComponent->RequestInputDisabled(UModumateWebBrowser::MODUMATE_WEB_TAG, bHasFocus);
 	}
 }
 
