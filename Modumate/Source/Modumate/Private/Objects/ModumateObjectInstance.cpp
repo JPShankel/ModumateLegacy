@@ -704,6 +704,12 @@ bool AModumateObjectInstance::GetBoundingLines(TArray<FDrawingDesignerLine>& out
 	return false;
 }
 
+bool AModumateObjectInstance::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
+{
+	QuantitiesVisitor.Add(CachedQuantities);
+	return true;
+}
+
 bool AModumateObjectInstance::GetInstanceDataStruct(UScriptStruct*& OutStructDef, void*& OutStructPtr)
 {
 	OutStructDef = nullptr;

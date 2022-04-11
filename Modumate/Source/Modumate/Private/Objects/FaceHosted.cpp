@@ -163,6 +163,12 @@ void AMOIFaceHosted::GetDrawingDesignerItems(const FVector& ViewDirection, TArra
 	} 
 }
 
+bool AMOIFaceHosted::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
+{
+	QuantitiesVisitor.Add(CachedQuantities);
+	return true;
+}
+
 void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 {
 	const AModumateObjectInstance* parentObj = GetParentObject();
@@ -352,6 +358,48 @@ void AMOIFaceHosted::OnInstPropUIChangedRotationZ(float NewValue)
 
 		Document->ApplyDeltas({ deltaPtr }, GetWorld());
 	}
+}
+
+void AMOIFaceHosted::UpdateQuantities()
+{
+	const FBIMAssemblySpec& assembly = CachedAssembly;
+	const int32 numLayers = assembly.Layers.Num();
+	auto assemblyGuid = assembly.UniqueKey();
+	auto* parentObject = GetParentObject();
+
+	if (!ensure(parentObject))
+	{
+		return;
+	}
+
+	const FGraph3DFace* hostingFace = nullptr;
+	switch (parentObject->GetObjectType())
+	{
+	case EObjectType::OTMetaPlaneSpan:
+		hostingFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentObject->ID);
+		break;
+
+	case EObjectType::OTMetaPlane:
+	{
+		int32 graph3dID = Document->FindGraph3DByObjID(parentObject->ID);
+		hostingFace = Document->GetVolumeGraph(graph3dID)->FindFace(parentObject->ID);
+		break;
+	}
+
+	default:
+		ensureMsgf(false, TEXT("Face-hosted object not hosted by meta-plane or meta-span."));
+		break;
+	}
+
+	if (!ensure(hostingFace))
+	{
+		return;
+	}
+
+	CachedQuantities.Empty();
+	float assemblyArea = hostingFace->CalculateArea();
+
+	CachedQuantities.AddQuantity(assemblyGuid, 1.0f, 0.0f, assemblyArea);
 }
 
 void AMOIFaceHosted::OnInstPropUIChangedCycle(int32 BasisValue)

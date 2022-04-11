@@ -1259,7 +1259,7 @@ void FModumateObjectDeltaStatics::GetDeltaForSpanMapping(const AModumateObjectIn
 	}
 
 	default:
-		return;;
+		return;
 	}
 
 	newSpanDelta->AddMutationState(Moi, Moi->GetStateData(), stateData);

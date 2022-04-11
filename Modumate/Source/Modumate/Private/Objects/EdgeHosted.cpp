@@ -14,6 +14,8 @@
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "DrawingDesigner/DrawingDesignerMeshCache.h"
+#include "Quantities/QuantitiesManager.h"
+
 
 FMOIEdgeHostedData::FMOIEdgeHostedData()
 {}
@@ -216,6 +218,12 @@ void AMOIEdgeHosted::GetDrawingDesignerItems(const FVector& ViewDirection, TArra
 	}
 }
 
+bool AMOIEdgeHosted::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
+{
+	QuantitiesVisitor.Add(CachedQuantities);
+	return true;
+}
+
 void AMOIEdgeHosted::InternalUpdateGeometry(bool bCreateCollision)
 {
 	const AModumateObjectInstance* parentObj = GetParentObject();
@@ -341,4 +349,21 @@ void AMOIEdgeHosted::OnInstPropUIChangedExtensionStart(float NewValue)
 void AMOIEdgeHosted::OnInstPropUIChangedExtensionEnd(float NewValue)
 {
 	OnInstPropUIChangedExtension(NewValue, 1);
+}
+
+void AMOIEdgeHosted::UpdateQuantities()
+{
+	const FBIMAssemblySpec& assembly = CachedAssembly;
+	auto assemblyGuid = assembly.UniqueKey();
+	const AModumateObjectInstance* parentObject = GetParentObject();
+	if (!ensure(parentObject))
+	{
+		return;
+	}
+
+	CachedQuantities.Empty();
+	const float length = (parentObject->GetCorner(1) - parentObject->GetCorner(0)).Size();
+	CachedQuantities.AddQuantity(assemblyGuid, 1.0f, length);
+
+	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
 }

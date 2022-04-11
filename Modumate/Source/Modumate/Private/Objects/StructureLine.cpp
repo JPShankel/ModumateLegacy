@@ -288,7 +288,7 @@ void AMOIStructureLine::UpdateQuantities()
 {
 	const FBIMAssemblySpec& assembly = CachedAssembly;
 	auto assemblyGuid = assembly.UniqueKey();
-	const AMOIMetaEdgeSpan* spanObject = Cast< AMOIMetaEdgeSpan>(Document->GetObjectById(GetParentID()) );
+	const AMOIMetaEdgeSpan* spanObject = Cast<AMOIMetaEdgeSpan>(Document->GetObjectById(GetParentID()) );
 	if (!ensure(spanObject))
 	{
 		return;

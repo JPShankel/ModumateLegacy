@@ -11,6 +11,7 @@
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "DrawingDesigner/DrawingDesignerMeshCache.h"
+#include "Quantities/QuantitiesManager.h"
 
 FMOIPointHostedData::FMOIPointHostedData()
 {}
@@ -216,6 +217,12 @@ void AMOIPointHosted::GetDrawingDesignerItems(const FVector& ViewDirection, TArr
 	}
 }
 
+bool AMOIPointHosted::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
+{
+	QuantitiesVisitor.AddQuantity(CachedAssembly.UniqueKey(), 1.0f);
+	return true;
+}
+
 void AMOIPointHosted::InternalUpdateGeometry(bool bCreateCollision)
 {
 	const AModumateObjectInstance* parentObj = GetParentObject();
@@ -342,4 +349,9 @@ void AMOIPointHosted::OnInstPropUIChangedRotationZ(float NewValue)
 
 		Document->ApplyDeltas({ deltaPtr }, GetWorld());
 	}
+}
+
+void AMOIPointHosted::UpdateQuantities()
+{
+	GetWorld()->GetGameInstance<UModumateGameInstance>()->GetQuantitiesManager()->SetDirtyBit();
 }

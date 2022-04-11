@@ -197,10 +197,10 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 	auto printCsvQuantities = [linearScaleFactor, areaScaleFactor, volumeScaleFactor](const FQuantity& Q)
 	{
 		static constexpr TCHAR format[] = TEXT("%.1f");
-		return (Q.Count != 0.0f ? FString::Printf(format, Q.Count) : FString())
-			+ TEXT(",") + (Q.Volume != 0.0f ? FString::Printf(format, Q.Volume / volumeScaleFactor) : FString())
-			+ TEXT(",") + (Q.Area != 0.0f ? FString::Printf(format, Q.Area / areaScaleFactor) : FString())
-			+ TEXT(",") + (Q.Linear != 0.0f ? FString::Printf(format, Q.Linear / linearScaleFactor) : FString());
+		return (Q.Count != 0.0f ? CsvEscape(FString::Printf(format, Q.Count)) : FString())
+			+ TEXT(",") + (Q.Volume != 0.0f ? CsvEscape(FString::Printf(format, Q.Volume / volumeScaleFactor)) : FString())
+			+ TEXT(",") + (Q.Area != 0.0f ? CsvEscape(FString::Printf(format, Q.Area / areaScaleFactor)) : FString())
+			+ TEXT(",") + (Q.Linear != 0.0f ? CsvEscape(FString::Printf(format, Q.Linear / linearScaleFactor)) : FString());
 	};
 
 	const FQuantitiesCollection::QuantitiesMap& quantities = CurrentQuantities->GetQuantities();

@@ -55,6 +55,7 @@ public:
 		const FVector& AxisX, const FVector& AxisY, const FVector& Origin, const FBox2D& BoundingBox,
 		TArray<TArray<FVector>>& OutPerimeters) const override;
 	virtual void GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength = 0.0f) const override;
+	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;
 
 	UPROPERTY()
 	FMOIFaceHostedData InstanceData;
@@ -78,4 +79,5 @@ protected:
 	UFUNCTION()
 	void OnInstPropUIChangedRotationZ(float NewValue);
 
+	virtual void UpdateQuantities() override;
 };

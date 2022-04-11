@@ -110,7 +110,8 @@ public:
 	virtual bool GetBoundingLines(TArray<FDrawingDesignerLine>& outBounding) const;
 
 	// Quantity estimates
-	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const { return true; }
+	// TODO: Remove all the derived versions that do the same action.
+	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const;
 
 	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, void*& OutStructPtr);
 	bool GetInstanceDataStruct(UScriptStruct*& OutStructDef, const void*& OutStructPtr) const;
