@@ -54,6 +54,9 @@ struct MODUMATE_API FWebEditModelPlayerState
 
 	UPROPERTY()
 	FMOICameraViewData camera;
+
+	UPROPERTY()
+	FString projectId;
 };
 
 /**

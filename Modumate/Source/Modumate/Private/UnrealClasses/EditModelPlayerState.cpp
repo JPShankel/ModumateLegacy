@@ -1761,6 +1761,8 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 		OutState.viewMode = GetEnumValueString<EEditViewModes>(EMPlayerController->EMPlayerState->SelectedViewMode);
 		OutState.culledCutplane = EMPlayerController->CurrentCullingCutPlaneID;
 	}
+
+	OutState.projectId = CurProjectID;
 	
 	return true;
 }
