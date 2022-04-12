@@ -11,6 +11,7 @@
 #include "UI/Properties/InstPropWidgetRotation.h"
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Drafting/ModumateDraftingElements.h"
+#include "Objects/MetaPlaneSpan.h"
 #include "DrawingDesigner/DrawingDesignerMeshCache.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"

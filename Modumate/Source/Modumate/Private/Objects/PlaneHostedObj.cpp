@@ -126,16 +126,6 @@ bool AMOIPlaneHostedObj::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 	{
 	case EObjectDirtyFlags::Structure:
 	{
-		const FGraph3DFace* planeFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, GetParentID());
-
-		if (planeFace == nullptr)
-		{
-			TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
-			delta->AddCreateDestroyState(StateData, EMOIDeltaType::Destroy);
-			OutSideEffectDeltas->Add(delta);
-			return true;
-		}
-
 		// TODO: as long as the assembly is not stored inside of the data state, and its layers can be reversed,
 		// then this is the centralized opportunity to match up the reversal of layers with whatever the intended inversion state is,
 		// based on preview/current state changing, assembly changing, object creation, etc.
@@ -561,27 +551,28 @@ void AMOIPlaneHostedObj::UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalcul
 	}
 
 	int32 parentID = GetParentID();
-	const AModumateObjectInstance* parentPlane = doc->GetObjectById(parentID);
-	const FGraph3DFace* planeFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentID);
+	const AMOIMetaPlaneSpan* parentSpan = Cast<AMOIMetaPlaneSpan>(doc->GetObjectById(parentID));
 
-	if (!ensureMsgf(parentPlane, TEXT("Plane-hosted object (ID %d) is missing parent object (ID %d)!"), ID, parentID) ||
-		!ensureMsgf(planeFace, TEXT("Plane-hosted object (ID %d) is missing parent graph face (ID %d)!"), ID, parentID))
+	if (!ensureMsgf(parentSpan, TEXT("Plane-hosted object (ID %d) is missing parent object (ID %d)!"), ID, parentID))
 	{
 		return;
 	}
 
-	DynamicMeshActor->SetActorLocation(parentPlane->GetLocation());
+	const FGraph3DFace* parentFace = parentSpan->GetPerimeterFace();
+
+	DynamicMeshActor->SetActorLocation(parentSpan->GetLocation());
 	DynamicMeshActor->SetActorRotation(FQuat::Identity);
 
 	CachedHoles.Reset();
-	for (auto& hole : planeFace->CachedHoles)
+
+	for (auto& hole : parentFace->CachedHoles)
 	{
 		TempHoleRelativePoints.Reset();
-		Algo::Transform(hole.Points, TempHoleRelativePoints, [planeFace](const FVector &worldPoint) { return worldPoint - planeFace->CachedCenter; });
+		Algo::Transform(hole.Points, TempHoleRelativePoints, [parentFace](const FVector &worldPoint) { return worldPoint - parentFace->CachedCenter; });
 		CachedHoles.Add(FPolyHole3D(TempHoleRelativePoints));
 	}
 
-	if (!FMiterHelpers::UpdateMiteredLayerGeoms(this, planeFace, &CachedHoles, LayerGeometries, CachedExtendedSurfaceFaces))
+	if (!FMiterHelpers::UpdateMiteredLayerGeoms(this, parentFace, &CachedHoles, LayerGeometries, CachedExtendedSurfaceFaces))
 	{
 		return;
 	}
@@ -924,7 +915,15 @@ void AMOIPlaneHostedObj::UpdateQuantities()
 	const int32 numLayers = assembly.Layers.Num();
 	auto assemblyGuid = assembly.UniqueKey();
 	int32 parentID = GetParentID();
-	const FGraph3DFace* hostingFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentID);
+	const FGraph3DFace* hostingFace = nullptr;
+
+	const AMOIMetaPlaneSpan* span = Cast<AMOIMetaPlaneSpan>(Document->GetObjectById(parentID));
+
+	if (ensure(span))
+	{
+		hostingFace = span->GetPerimeterFace();
+	}
+
 	if (!ensure(hostingFace))
 	{
 		return;

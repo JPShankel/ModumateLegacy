@@ -14,7 +14,7 @@ struct MODUMATE_API FMiterHelpers
 
 	// Given a plane-hosted object (and its world-space holes), create layer geometry definitions
 	// that use miter data generated from a central miter node.
-	static bool UpdateMiteredLayerGeoms(const AModumateObjectInstance *PlaneHostedObj, const FGraph3DFace *PlaneFace,
+	static bool UpdateMiteredLayerGeoms(const AModumateObjectInstance *PlaneHostedObj, const FGraph3DFace* PlaneFace,
 		const TArray<FPolyHole3D> *Holes, TArray<FLayerGeomDef> &OutLayerGeometries, TPair<TArray<FVector>, TArray<FVector>>& OutExtendedSurfaceFaces);
 };
 

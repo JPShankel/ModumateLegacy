@@ -10,6 +10,7 @@
 #include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "Objects/MiterNode.h"
+#include "Objects/MetaPlaneSpan.h"
 #include "ProceduralMeshComponent/Public/KismetProceduralMeshLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
@@ -157,8 +158,16 @@ bool AMOIPortal::GetOffsetFaceBounds(FBox2D& OutOffsetBounds, FVector2D& OutOffs
 		return false;
 	}
 
-	const FGraph3DFace* parentFace = parentObject->GetObjectType() == EObjectType::OTMetaPlaneSpan ? UModumateObjectStatics::GetFaceFromSpanObject(Document, parentID)
-		: Document->FindVolumeGraph(parentID)->FindFace(parentID);
+	const FGraph3DFace* parentFace = nullptr;
+	
+	if (parentObject->GetObjectType() == EObjectType::OTMetaPlaneSpan)
+	{
+		parentFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentObject->ID);
+	}
+	else
+	{
+		parentFace = Document->FindVolumeGraph(parentID)->FindFace(parentID);
+	}
 
 	if (!ensure(parentFace))
 	{
@@ -681,7 +690,8 @@ void AMOIPortal::UpdateQuantities()
 
 	const int32 parentID = GetParentID();
 	const AModumateObjectInstance* parentObject = Document->GetObjectById(parentID);
-	const FGraph3DFace* hostingFace;
+	const FGraph3DFace* hostingFace = nullptr;
+	TArray<const FGraph3DFace*> faces;
 	if (parentObject->GetObjectType() == EObjectType::OTMetaPlaneSpan)
 	{
 		hostingFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentID);

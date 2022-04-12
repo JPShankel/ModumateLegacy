@@ -1138,7 +1138,7 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(UModumateDocument*
 	}
 }
 
-void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas)
+void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas)
 {
 	auto* graph = Doc->GetVolumeGraph(GraphID);
 	if (graph)
@@ -1200,6 +1200,37 @@ void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(UModumateDocument* Doc
 			OutDeltas.Add(deleteMetaGraph);
 		}
 	}
+}
+
+void FModumateObjectDeltaStatics::GetDeltasForFaceSpanMerge(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas)
+{
+	TArray<const AMOIMetaPlaneSpan*> allSpans;
+	Algo::TransformIf(SpanIDs, allSpans,
+		[Doc](int32 MOI)
+		{
+			return Cast<AMOIMetaPlaneSpan>(Doc->GetObjectById(MOI));
+		},
+		[Doc](int32 MOI)
+		{
+			return Cast<AMOIMetaPlaneSpan>(Doc->GetObjectById(MOI));
+		});
+
+	if (allSpans.Num() < 2)
+	{
+		return;
+	}
+
+	FMOIMetaPlaneSpanData mergeData = allSpans[0]->InstanceData;
+	TSharedPtr<FMOIDelta> moisDelta = MakeShared<FMOIDelta>();
+	for (int32 i = 1; i < allSpans.Num(); ++i)
+	{
+		mergeData.GraphMembers.Append(allSpans[i]->InstanceData.GraphMembers);
+		moisDelta->AddCreateDestroyState(allSpans[i]->GetStateData(), EMOIDeltaType::Destroy);
+	}
+	FMOIStateData mergeState = allSpans[0]->GetStateData();
+	mergeState.CustomData.SaveStructData(mergeData);
+	moisDelta->AddMutationState(allSpans[0], allSpans[0]->GetStateData(), mergeState);
+	OutDeltas.Add(moisDelta);
 }
 
 void FModumateObjectDeltaStatics::GetDeltaForSpanMapping(const AModumateObjectInstance* Moi, const TMap<int32, TArray<int32>>& CopiedToPastedObjIDs, TArray<FDeltaPtr>& OutDeltas)

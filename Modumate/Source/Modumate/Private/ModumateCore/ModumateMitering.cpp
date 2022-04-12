@@ -1,3 +1,5 @@
+// Copyright 2022 Modumate, Inc. All Rights Reserved.
+
 #include "ModumateCore/ModumateMitering.h"
 
 #include "DocumentManagement/ModumateDocument.h"
@@ -49,10 +51,10 @@ const AModumateObjectInstance *FMiterHelpers::GetChildLayeredObj(const AModumate
 	return nullptr;
 }
 
-bool FMiterHelpers::UpdateMiteredLayerGeoms(const AModumateObjectInstance *PlaneHostedObj, const FGraph3DFace *PlaneFace,
-	const TArray<FPolyHole3D> *Holes, TArray<FLayerGeomDef> &OutLayerGeometries, TPair<TArray<FVector>, TArray<FVector>>& OutExtendedSurfaceFaces)
+bool FMiterHelpers::UpdateMiteredLayerGeoms(const AModumateObjectInstance *PlaneHostedObj, const FGraph3DFace* PlaneFace,
+	const TArray<FPolyHole3D>* Holes, TArray<FLayerGeomDef>& OutLayerGeometries, TPair<TArray<FVector>, TArray<FVector>>& OutExtendedSurfaceFaces)
 {
-	const AModumateObjectInstance *parentPlane = PlaneHostedObj ? PlaneHostedObj->GetParentObject() : nullptr;
+	const AModumateObjectInstance* parentPlane = PlaneHostedObj ? PlaneHostedObj->GetParentObject() : nullptr;
 	if (!ensureAlways(PlaneHostedObj && parentPlane && PlaneFace))
 	{
 		return false;
@@ -61,7 +63,7 @@ bool FMiterHelpers::UpdateMiteredLayerGeoms(const AModumateObjectInstance *Plane
 	FVector curStartDelta, curEndDelta;
 	UModumateObjectStatics::GetExtrusionDeltas(PlaneHostedObj, curStartDelta, curEndDelta);
 
-	const TArray<FVector> &planePoints = PlaneFace->CachedPositions;
+	const TArray<FVector>& planePoints = PlaneFace->CachedPositions;
 	int32 numPoints = planePoints.Num();
 
 	// If we can't use the plane face's edge normals, then we won't be able to determine any mitering.
@@ -320,7 +322,7 @@ bool FMiterHelpers::UpdateMiteredLayerGeoms(const AModumateObjectInstance *Plane
 
 			UModumateGeometryStatics::GetUniquePoints(layerPointsB, OutExtendedSurfaceFaces.Value, RAY_INTERSECT_TOLERANCE);
 			bool bValidSurfaceEnd = UModumateGeometryStatics::IsPolygonValid(OutExtendedSurfaceFaces.Value);
-					
+
 			bAllLayersValid &= (bValidSurfaceStart && bValidSurfaceEnd);
 		}
 		// For each actual layer, create a triangulate-able FLayerGeom.

@@ -20,6 +20,10 @@ FGraph3DFace::FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &I
 	UpdateVerticesAndEdges(InVertexIDs, false);
 }
 
+FGraph3DFace::FGraph3DFace() : IGraph3DObject(0,nullptr)
+{
+}
+
 FVector2D FGraph3DFace::ProjectPosition2D(const FVector &Position) const
 {
 	if (!ensureAlways(CachedPositions.Num() > 0))

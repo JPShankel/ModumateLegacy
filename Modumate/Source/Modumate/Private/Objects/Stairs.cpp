@@ -9,6 +9,7 @@
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "Algo/Accumulate.h"
+#include "Objects/MetaPlaneSpan.h"
 #include "Quantities/QuantitiesManager.h"
 #include "DocumentManagement/ModumateDocument.h"
 
@@ -131,7 +132,7 @@ void AMOIStaircase::UpdateQuantities()
 
 	const int32 parentID = GetParentID();
 	const AModumateObjectInstance* parentObject = Document->GetObjectById(parentID);
-	const FGraph3DFace* hostingFace;
+	const FGraph3DFace* hostingFace = nullptr;
 	if (parentObject->GetObjectType() == EObjectType::OTMetaPlaneSpan)
 	{
 		hostingFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentID);

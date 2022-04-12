@@ -320,10 +320,9 @@ bool AAdjustPolyEdgeHandle::GetTransforms(const FVector Offset, TMap<int32, FTra
 	}
 	else if(TargetMOI->GetObjectType() == EObjectType::OTMetaPlaneSpan)
 	{
-		const AMOIMetaPlaneSpan* spanMOI = Cast<AMOIMetaPlaneSpan>(TargetMOI);
-		if (spanMOI && spanMOI->GetCachedGraphFace())
+		const FGraph3DFace* face = UModumateObjectStatics::GetFaceFromSpanObject(GameState->Document, TargetMOI->ID);
+		if (face != nullptr)
 		{
-			const auto* face = spanMOI->GetCachedGraphFace();
 			int32 numPolyPoints = OriginalPolyPoints.Num();
 			int32 edgeStartIdx = TargetIndex;
 			int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;

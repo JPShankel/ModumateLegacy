@@ -16,6 +16,7 @@
 #include "Objects/MetaEdgeSpan.h"
 #include "Objects/MetaPlaneSpan.h"
 #include "Objects/ModumateObjectInstance.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 #include "Objects/PlaneHostedObj.h"
 #include "Objects/Portal.h"
 #include "Objects/SurfaceGraph.h"
@@ -1443,12 +1444,16 @@ void UModumateObjectStatics::GetSpansForEdgeObject(const UModumateDocument* Doc,
 	}
 }
 
-
 const FGraph3DFace* UModumateObjectStatics::GetFaceFromSpanObject(const UModumateDocument* Doc, int32 SpanID)
 {
-	const AModumateObjectInstance* moi = Doc->GetObjectById(SpanID);
-	const AMOIMetaPlaneSpan* span = moi ? Cast<AMOIMetaPlaneSpan>(moi) : nullptr;
-	return span ? span->GetCachedGraphFace() : nullptr;
+	const AMOIMetaPlaneSpan* span = Cast<AMOIMetaPlaneSpan>(Doc->GetObjectById(SpanID));
+
+	if (span == nullptr)
+	{
+		return false;
+	}
+
+	return span->GetPerimeterFace();
 }
 
 bool UModumateObjectStatics::TryJoinSelectedMetaSpan(UWorld* World)
@@ -1461,118 +1466,15 @@ bool UModumateObjectStatics::TryJoinSelectedMetaSpan(UWorld* World)
 		return false;
 	}
 
-	bool bAsEdgeSpan = false;
-	TArray<int32> allGraphMemberIDs;
-	AMOIMetaPlaneSpan* targetPlaneSpan = nullptr;
-	AMOIMetaEdgeSpan* targetEdgeSpan = nullptr;
-	AModumateObjectInstance* targetSpanHostedObj = nullptr;
-	TArray<AModumateObjectInstance*> allSelectedSpans;
-	for (auto curObj : playerState->SelectedObjects)
-	{
-		if (curObj->GetParentObject())
-		{
-			AMOIMetaPlaneSpan* curPlaneSpan = Cast<AMOIMetaPlaneSpan>(curObj->GetParentObject());
-			if (curPlaneSpan)
-			{
-				allGraphMemberIDs.Append(curPlaneSpan->InstanceData.GraphMembers);
-				allSelectedSpans.Add(curPlaneSpan);
-				if (targetPlaneSpan == nullptr)
-				{
-					targetPlaneSpan = curPlaneSpan;
-					targetSpanHostedObj = curObj;
-				}
-			}
-			else
-			{
-				AMOIMetaEdgeSpan* curEdgeSpan = Cast<AMOIMetaEdgeSpan>(curObj->GetParentObject());
-				if (curEdgeSpan)
-				{
-					allGraphMemberIDs.Append(curEdgeSpan->InstanceData.GraphMembers);
-					allSelectedSpans.Add(curEdgeSpan);
-					if (targetEdgeSpan == nullptr)
-					{
-						targetEdgeSpan = curEdgeSpan;
-						targetSpanHostedObj = curObj;
-						bAsEdgeSpan = true;
-					}
-				}
-			}
-		}
-	}
+	TArray<int32> spanIDs;
+	Algo::TransformIf(playerState->SelectedObjects, spanIDs,
+		[](const AModumateObjectInstance* MOI) {return MOI->GetLayeredInterface() != nullptr; },
+		[](const AModumateObjectInstance* MOI) {return MOI->GetParentID(); }
+	);
 
-	// Check if joining is not needed
-	if(allGraphMemberIDs.Num() < 2 || (targetPlaneSpan == nullptr && targetEdgeSpan == nullptr))
-	{
-		return false;
-	}
-
-	int32 newObjID = controller->GetDocument()->GetNextAvailableID();
-
-	// Create new span that contains selected graph members
-	auto deltaPtr = MakeShared<FMOIDelta>();
-	FMOIStateData spanCreateState;
-	spanCreateState.ID = newObjID++;
-	if (bAsEdgeSpan)
-	{
-		spanCreateState.ObjectType = EObjectType::OTMetaEdgeSpan;
-		FMOIMetaEdgeSpanData edgeSpanData = targetEdgeSpan->InstanceData;
-		edgeSpanData.GraphMembers = allGraphMemberIDs;
-		spanCreateState.CustomData.SaveStructData(edgeSpanData);
-	}
-	else
-	{
-		spanCreateState.ObjectType = EObjectType::OTMetaPlaneSpan;
-		FMOIMetaPlaneSpanData planeSpanData = targetPlaneSpan->InstanceData;
-		planeSpanData.GraphMembers = allGraphMemberIDs;
-		spanCreateState.CustomData.SaveStructData(planeSpanData);
-	}
-	deltaPtr->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
-
-	// Create hosted object that will be child of this span
-	if (targetSpanHostedObj)
-	{
-		FMOIStateData childCreateState(newObjID++, targetSpanHostedObj->GetObjectType(), spanCreateState.ID);
-		childCreateState.AssemblyGUID = targetSpanHostedObj->GetAssembly().PresetGUID;
-		// Get hosted obj instance data to the new hosted object
-		if (bAsEdgeSpan)
-		{
-			AMOIStructureLine* structureLineMOI = Cast<AMOIStructureLine>(targetSpanHostedObj);
-			if (structureLineMOI)
-			{
-				childCreateState.CustomData.SaveStructData(structureLineMOI->InstanceData);
-			}
-			else
-			{
-				AMOIEdgeHosted* edgeHostedMOI = Cast<AMOIEdgeHosted>(targetSpanHostedObj);
-				if (edgeHostedMOI)
-				{
-					childCreateState.CustomData.SaveStructData(edgeHostedMOI->InstanceData);
-				}
-			}
-		}
-		else
-		{
-			AMOIPlaneHostedObj* planeMOI = Cast<AMOIPlaneHostedObj>(targetSpanHostedObj);
-			if (planeMOI)
-			{
-				childCreateState.CustomData.SaveStructData(planeMOI->InstanceData);
-			}
-		}
-
-		deltaPtr->AddCreateDestroyState(childCreateState, EMOIDeltaType::Create);
-	}
-
-	// Destroy selected spans
-	for (auto curSpan : allSelectedSpans)
-	{
-		deltaPtr->AddCreateDestroyState(curSpan->GetStateData(), EMOIDeltaType::Destroy);
-		for (auto curSpanChild : curSpan->GetChildObjects())
-		{
-			deltaPtr->AddCreateDestroyState(curSpanChild->GetStateData(), EMOIDeltaType::Destroy);
-		}
-	}
-
-	return controller->GetDocument()->ApplyDeltas({ deltaPtr }, World);
+	TArray<FDeltaPtr> deltas;
+	FModumateObjectDeltaStatics::GetDeltasForFaceSpanMerge(controller->GetDocument(), spanIDs, deltas);
+	return controller->GetDocument()->ApplyDeltas(deltas, World, false);
 }
 
 void UModumateObjectStatics::SeparateSelectedMetaSpan(UWorld* World)

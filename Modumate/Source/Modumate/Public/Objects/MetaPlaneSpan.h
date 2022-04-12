@@ -22,18 +22,18 @@ class MODUMATE_API AMOIMetaPlaneSpan : public AMOIPlaneBase
 public:
 	AMOIMetaPlaneSpan();
 
-	virtual FVector GetLocation() const override;
-
 	UPROPERTY()
 	FMOIMetaPlaneSpanData InstanceData;
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 
-	const FGraph3DFace* GetCachedGraphFace() const { return CachedGraphFace; }
+	virtual void SetupDynamicGeometry() override;
+
+	const FGraph3DFace* GetPerimeterFace() const;
 
 protected:
 
-	bool TryUpdateCachedGraphData();
+	FGraph3DFace CachedPerimeterFace;
 
-	FGraph3DFace* CachedGraphFace = nullptr;
+	void UpdateCachedPerimeterFace();
 };

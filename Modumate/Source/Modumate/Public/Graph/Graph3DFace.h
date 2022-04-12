@@ -30,6 +30,9 @@ public:
 
 	FGraph3DFace(int32 InID, FGraph3D* InGraph, const TArray<int32> &InVertexIDs, int32 InContainingFaceID, const TSet<int32> &InContainedFaceIDs);
 
+	// Default constructor used by MetaPlaneSpan to define perimeter face for mitering
+	FGraph3DFace();
+
 	FVector2D ProjectPosition2D(const FVector &Position) const;
 	FVector DeprojectPosition(const FVector2D &ProjectedPos) const;
 	bool ContainsPosition(const FVector &Position, bool& bOutOverlaps) const;
