@@ -299,7 +299,7 @@ bool AMOIFaceHosted::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 	// We know this tracks perfectly. It would normally be cached, but it's okay to update it directly.
 	// TODO: Adapt this to use spans when they are ready
 	const AModumateObjectInstance* parentObj = GetParentObject();
-	const FGraph3DFace* parentFace = Document->GetVolumeGraph()->FindFace(parentObj->ID);
+	const FGraph3DFace* parentFace = Document->FindVolumeGraph(parentObj->ID)->FindFace(parentObj->ID);
 	InstanceData.NumEdges = parentFace->EdgeIDs.Num();
 	return AModumateObjectInstance::CleanObject(DirtyFlag, OutSideEffectDeltas);
 }

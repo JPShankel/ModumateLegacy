@@ -18,7 +18,7 @@ void AMOIMetaGraph::PostCreateObject(bool bNewObject)
 }
 
 // Called for structural dirty flag.
-void AMOIMetaGraph::SetupDynamicGeometry()
+bool AMOIMetaGraph::SetupBoundingBox()
 {
 	if (IsDirty(EObjectDirtyFlags::Structure))
 	{
@@ -26,6 +26,18 @@ void AMOIMetaGraph::SetupDynamicGeometry()
 		TArray<int32> subtreeIDs;
 		subtreeIDs.Push(ID);
 		FBox objectBox;
+
+		TSet<AModumateObjectInstance*> groupMembers;
+		UModumateObjectStatics::GetObjectsInGroups(Document, { ID }, groupMembers);
+
+		for (auto* groupMember : groupMembers)
+		{
+			if (groupMember->IsDirty(EObjectDirtyFlags::Structure) || groupMember->IsDirty(EObjectDirtyFlags::Visuals))
+			{
+				return false;
+			}
+		}
+
 		while (subtreeIDs.Num() > 0)
 		{
 			int32 graphID = subtreeIDs.Pop();
@@ -42,7 +54,25 @@ void AMOIMetaGraph::SetupDynamicGeometry()
 				CachedBounds += objectBox;
 			}
 		}
+
+		TArray<FStructurePoint> structurePoints;  // unused
+		TArray<FStructureLine> structureLines;
+		for (const auto* groupMember : groupMembers)
+		{
+			if (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(groupMember->GetObjectType()) == EGraph3DObjectType::None)
+			{
+				groupMember->GetStructuralPointsAndLines(structurePoints, structureLines, false, true);
+			}
+		}
+
+		for (const auto& l : structureLines)
+		{
+			CachedBounds += l.P1;
+			CachedBounds += l.P2;
+		}
 	}
+
+	return true;
 }
 
 void AMOIMetaGraph::GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping /*= false*/, bool bForSelection /*= false*/) const
@@ -80,4 +110,10 @@ void AMOIMetaGraph::GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoin
 bool AMOIMetaGraph::ShowStructureOnSelection() const
 {
 	return true;
+}
+
+bool AMOIMetaGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+{
+	Super::CleanObject(DirtyFlag, OutSideEffectDeltas);
+	return DirtyFlag == EObjectDirtyFlags::Structure ? SetupBoundingBox() : true;
 }

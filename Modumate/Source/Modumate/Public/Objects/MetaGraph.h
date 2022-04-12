@@ -28,11 +28,11 @@ public:
 
 	virtual void PostCreateObject(bool bNewObject) override;
 
-	virtual void SetupDynamicGeometry() override;
-
+	bool SetupBoundingBox();
 
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual bool ShowStructureOnSelection() const override;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 
 private:
 	FBox CachedBounds { ForceInitToZero };
