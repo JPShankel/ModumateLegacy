@@ -209,6 +209,14 @@ bool UEdgeHostedTool::GetObjectCreationDeltas(const int32 InTargetEdgeID, TArray
 	{
 		return false;
 	}
+	if (inTargetEdgeMOI->GetObjectType() == EObjectType::OTMetaEdgeSpan)
+	{
+		int32 parentID = inTargetEdgeMOI->GetParentID();
+		if (parentID != MOD_ID_NONE)
+		{
+			inTargetEdgeMOI = GameState->Document->GetObjectById(parentID);
+		}
+	}
 	// Make sure the pending line is valid
 	FVector lineDelta = LineEndPos - LineStartPos;
 	float lineLength = lineDelta.Size();
@@ -278,6 +286,7 @@ bool UEdgeHostedTool::GetObjectCreationDeltas(const int32 InTargetEdgeID, TArray
 		FMOIMetaEdgeSpanData spanData;
 		spanData.GraphMembers = inGraphMemberIDs;
 		spanCreateState.CustomData.SaveStructData<FMOIMetaEdgeSpanData>(spanData);
+		spanCreateState.ParentID = inTargetEdgeMOI->ID;
 		delta->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
 		NewObjectIDs.Add(spanCreateState.ID);
 		spanParentID = spanCreateState.ID;
@@ -294,16 +303,45 @@ bool UEdgeHostedTool::GetObjectCreationDeltas(const int32 InTargetEdgeID, TArray
 	}
 	else
 	{
+		bool bMutationFound = false;
 		for (auto child : inTargetEdgeMOI->GetChildObjects())
 		{
+			//if the child is a span, loop through it's children to find the edge hosted object to replace.
+			if (child->GetObjectType() == EObjectType::OTMetaEdgeSpan)
+			{
+				bool bSpanMutated = false;
+				for (auto spanChild : child->GetChildObjects())
+				{
+					if (spanChild->GetObjectType() == EObjectType::OTEdgeHosted)
+					{
+						if (bMutationFound)
+						{
+							delta->AddCreateDestroyState(spanChild->GetStateData(), EMOIDeltaType::Destroy);
+						}
+						else
+						{
+							FMOIStateData& newState = delta->AddMutationState(spanChild);
+							newState.AssemblyGUID = AssemblyGUID;
+							bSpanMutated = true;
+							bMutationFound = true;
+						}
+					}
+				}
+				if (!bSpanMutated)
+					delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
+			}
 			if (child->GetObjectType() == EObjectType::OTEdgeHosted)
 			{
-				// Only swap the obj that is being pointed at
-				const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
-				if (cursor.Actor && child == GameState->Document->ObjectFromActor(cursor.Actor))
+				//swap first hosted object found, destroy the rest
+				if (bMutationFound)
+				{
+					delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
+				}
+				else
 				{
 					FMOIStateData& newState = delta->AddMutationState(child);
 					newState.AssemblyGUID = AssemblyGUID;
+					bMutationFound = true;
 				}
 			}
 		}

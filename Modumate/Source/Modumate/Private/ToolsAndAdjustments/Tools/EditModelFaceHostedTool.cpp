@@ -7,6 +7,8 @@
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "Objects/FaceHosted.h"
+#include "Objects/MetaPlaneSpan.h"
+#include "ModumateCore/EnumHelpers.h"
 
 UFaceHostedTool::UFaceHostedTool()
 	: Super()
@@ -50,6 +52,7 @@ bool UFaceHostedTool::Deactivate()
 
 bool UFaceHostedTool::FrameUpdate()
 {
+	
 	TArray<EObjectType> compatibleObjectTypes;
 	compatibleObjectTypes.Add(EObjectType::OTWallSegment);
 	compatibleObjectTypes.Add(EObjectType::OTFloorSegment);
@@ -66,11 +69,14 @@ bool UFaceHostedTool::FrameUpdate()
 
 	int32 newTargetID = MOD_ID_NONE;
 	const AModumateObjectInstance* hitMOI = nullptr;
-
+	int32 hitFaceHostedID = MOD_ID_NONE;
 	if (cursor.Actor)
 	{
 		hitMOI = GameState->Document->ObjectFromActor(cursor.Actor);
-
+		if (hitMOI->GetObjectType() == EObjectType::OTFaceHosted)
+		{
+			hitFaceHostedID = hitMOI->ID;
+		}
 		if (hitMOI && (hitMOI->GetObjectType() == EObjectType::OTFaceHosted || compatibleObjectTypes.Contains(hitMOI->GetObjectType())))
 		{
 			hitMOI = hitMOI->GetParentObject();
@@ -81,15 +87,22 @@ bool UFaceHostedTool::FrameUpdate()
 	{
 		newTargetID = hitMOI->ID;
 	}
+	if (hitMOI && (hitMOI->GetObjectType() == EObjectType::OTMetaPlaneSpan))
+	{
+		newTargetID = hitMOI->GetParentID();
+	}
 
 	SetTargetID(newTargetID);
 	if (LastValidTargetID != MOD_ID_NONE)
 	{
-
-		// Preview delta
-		if (GameState->Document->StartPreviewing() && GetObjectCreationDeltas({ LastValidTargetID }, CurDeltas))
+		if (GetCreateObjectMode() == EToolCreateObjectMode::Apply ||
+			GetCreateObjectMode() == EToolCreateObjectMode::Add)
 		{
-			GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
+			// Preview delta
+			if (GameState->Document->StartPreviewing() && GetObjectCreationDeltas({ LastValidTargetID }, CurDeltas, hitFaceHostedID))
+			{
+				GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
+			}
 		}
 
 		// Don't show the snap cursor if we're targeting an face or existing structure line.
@@ -138,12 +151,11 @@ void UFaceHostedTool::SetTargetID(int32 NewTargetID)
 	LastValidTargetID = NewTargetID;
 }
 
-bool UFaceHostedTool::GetObjectCreationDeltas(const TArray<int32>& InTargetFaceIDs, TArray<FDeltaPtr>& OutDeltaPtrs)
+bool UFaceHostedTool::GetObjectCreationDeltas(const TArray<int32>& InTargetFaceIDs, TArray<FDeltaPtr>& OutDeltaPtrs, int32 HitFaceHostedID)
 {
 	//reset any existing deltas
 	OutDeltaPtrs.Reset();
 	NewObjectIDs.Reset();
-
 	//ensure valid faces
 	TArray<int32> targetFaceIDs;
 	for (int32 targetFaceID : InTargetFaceIDs)
@@ -166,46 +178,114 @@ bool UFaceHostedTool::GetObjectCreationDeltas(const TArray<int32>& InTargetFaceI
 			OutDeltaPtrs.Add(delta);
 		}
 
-		bool bCreateNewObject = true;
 		AModumateObjectInstance* parentMOI = GameState->Document->GetObjectById(targetFaceID);
 
 		EObjectType objectType = EObjectType::OTFaceHosted;
-
-		if (parentMOI && ensure(parentMOI->GetObjectType() == EObjectType::OTMetaPlane) &&
-			CreateObjectMode != EToolCreateObjectMode::Add) //currently only have one mode
+		TArray<int32> inGraphMemberIDs;
+		int32 spanParentID = MOD_ID_NONE;
+		bool bCreateNewSpan = true;
+		bool bCreateNewFaceHosted = true;
+		if (parentMOI->GetObjectType() == EObjectType::OTMetaPlane)
 		{
-			for (auto child : parentMOI->GetChildObjects())
+			inGraphMemberIDs.Add(parentMOI->ID);
+			if (CreateObjectMode == EToolCreateObjectMode::Add)
 			{
-				if (child->GetObjectType() == objectType)
-				{
-					// Only swap the obj that is being pointed at
-					const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
-					if (cursor.Actor && child == GameState->Document->ObjectFromActor(cursor.Actor))
-					{
-						FMOIStateData& newState = delta->AddMutationState(child);
-						newState.AssemblyGUID = AssemblyGUID;
-						bCreateNewObject = false;
-					}
-				}
-				else
-				{
-					delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
-				}
+				//UE_LOG(LogTemp, Error, TEXT("MetaFace, Add"));
+				bCreateNewSpan = true;
+				bCreateNewFaceHosted = true;
+			}
+			else if (CreateObjectMode == EToolCreateObjectMode::Apply)
+			{
+				//UE_LOG(LogTemp, Error, TEXT("MetaFace, Apply"));
+				bCreateNewSpan = parentMOI->GetChildObjects().Num() == 0;
+				bCreateNewFaceHosted = parentMOI->GetChildObjects().Num() == 0;
 			}
 		}
-
-		if (bCreateNewObject)
+		else if (parentMOI->GetObjectType() == EObjectType::OTMetaPlaneSpan)
 		{
-			NewMOIStateData.ID = nextID++;
-			NewMOIStateData.ObjectType = EObjectType::OTFaceHosted;
-			NewMOIStateData.ParentID = targetFaceID;
-			NewMOIStateData.AssemblyGUID = AssemblyGUID;
-			FMOIFaceHostedData newCustomData;
-			NewMOIStateData.CustomData.SaveStructData<FMOIFaceHostedData>(newCustomData);
+			AMOIMetaPlaneSpan* span = Cast<AMOIMetaPlaneSpan>(parentMOI);
+			inGraphMemberIDs = span->InstanceData.GraphMembers;
+			if (CreateObjectMode == EToolCreateObjectMode::Add)
+			{
+				//UE_LOG(LogTemp, Error, TEXT("SpanFace, Add"));
+				bCreateNewSpan = true;
+				bCreateNewFaceHosted = true;
+			}
+			else if (CreateObjectMode == EToolCreateObjectMode::Apply)
+			{
+				//UE_LOG(LogTemp, Error, TEXT("SpanFace, Apply"));
+				bCreateNewSpan = false;
+				bCreateNewFaceHosted = false;
+				spanParentID = parentMOI->ID;
+			}
+		}
+		if (bCreateNewSpan)
+		{
+			FMOIStateData spanCreateState(nextID++, EObjectType::OTMetaPlaneSpan);
+			FMOIMetaPlaneSpanData spanData;
+			spanData.GraphMembers = inGraphMemberIDs;
+			spanCreateState.CustomData.SaveStructData<FMOIMetaPlaneSpanData>(spanData);
+			spanCreateState.ParentID = parentMOI->ID;
+			delta->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
+			NewObjectIDs.Add(spanCreateState.ID);
+			spanParentID = spanCreateState.ID;
+		}
 
-			NewObjectIDs.Add(NewMOIStateData.ID);
+		if (bCreateNewFaceHosted)
+		{
+			FMOIStateData faceHostedCreateState(nextID++, EObjectType::OTFaceHosted, spanParentID);
+			faceHostedCreateState.AssemblyGUID = AssemblyGUID;
+			FMOIFaceHostedData faceHostedData;
+			faceHostedCreateState.CustomData.SaveStructData<FMOIFaceHostedData>(faceHostedData);
+			delta->AddCreateDestroyState(faceHostedCreateState, EMOIDeltaType::Create);
+			NewObjectIDs.Add(faceHostedCreateState.ID);
+		}
+		else
+		{
+			//replace existing mesh
+			//mutate one of the existing meshes and then destroy any others
 
-			delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
+			bool bMutationFound = false;
+			for (auto child : parentMOI->GetChildObjects())
+			{
+				//if the child is a span, loop through it's children to find the facehosted object to replace.
+				if (child->GetObjectType() == EObjectType::OTMetaPlaneSpan)
+				{
+					bool bSpanMutated = false;
+					for (auto spanChild : child->GetChildObjects())
+					{
+						if (spanChild->GetObjectType() == EObjectType::OTFaceHosted)
+						{
+							if (bMutationFound)
+							{
+								delta->AddCreateDestroyState(spanChild->GetStateData(), EMOIDeltaType::Destroy);
+							}
+							else {
+								FMOIStateData& newState = delta->AddMutationState(spanChild);
+								newState.ParentID = child->ID;
+								newState.AssemblyGUID = AssemblyGUID;
+								bMutationFound = true;
+								bSpanMutated = true;
+							}
+						}
+					}
+					if(!bSpanMutated)
+						delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
+				}
+				if (child->GetObjectType() == EObjectType::OTFaceHosted)
+				{
+					if (bMutationFound)
+					{
+						delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
+					}
+					else {
+						FMOIStateData& newState = delta->AddMutationState(child);
+						newState.ParentID = parentMOI->ID;
+						newState.AssemblyGUID = AssemblyGUID;
+						bMutationFound = true;
+					}
+				}
+			}
 		}
 	}
 

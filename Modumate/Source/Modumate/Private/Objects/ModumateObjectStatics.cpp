@@ -1405,6 +1405,8 @@ void UModumateObjectStatics::GetWebMOIArrayForObjects(const TArray<const AModuma
 	}
 }
 
+
+
 void UModumateObjectStatics::GetSpansForFaceObject(const UModumateDocument* Doc, const AModumateObjectInstance* FaceObject, TArray<int32>& OutSpans)
 {
 	if (FaceObject != nullptr && FaceObject->GetObjectType() == EObjectType::OTMetaPlane)
@@ -1689,4 +1691,22 @@ bool UModumateTypeStatics::IsSpanObject(const AModumateObjectInstance* Object)
 {
 	return Object && (Object->GetObjectType() == EObjectType::OTMetaEdgeSpan
 		|| Object->GetObjectType() == EObjectType::OTMetaPlaneSpan);
+}
+TArray<EObjectType> UModumateObjectStatics::CompatibleObjectTypes;
+bool UModumateObjectStatics::bCompatibleObjectsInitialized = false;
+bool UModumateObjectStatics::IsValidParentObjectType(EObjectType ParentObjectType)
+{
+	if (!bCompatibleObjectsInitialized)
+	{
+		CompatibleObjectTypes.Add(EObjectType::OTWallSegment);
+		CompatibleObjectTypes.Add(EObjectType::OTFloorSegment);
+		CompatibleObjectTypes.Add(EObjectType::OTRoofFace);
+		CompatibleObjectTypes.Add(EObjectType::OTCeiling);
+		CompatibleObjectTypes.Add(EObjectType::OTCountertop);
+		CompatibleObjectTypes.Add(EObjectType::OTSystemPanel);
+		CompatibleObjectTypes.Add(EObjectType::OTMetaPlane);
+		bCompatibleObjectsInitialized = true;
+	}
+	
+	return CompatibleObjectTypes.Contains(ParentObjectType);
 }

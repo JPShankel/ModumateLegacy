@@ -25,7 +25,7 @@ protected:
 
 	void ResetState();
 	void SetTargetID(int32 NewTargetID);
-	bool GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeIDs, TArray<FDeltaPtr>& OutDeltaPtrs);
+	bool GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeIDs, TArray<FDeltaPtr>& OutDeltaPtrs, int32 HitFaceHostedID = MOD_ID_NONE);
 
 	bool bWasShowingSnapCursor = false;
 	EMouseMode OriginalMouseMode = EMouseMode::Location;

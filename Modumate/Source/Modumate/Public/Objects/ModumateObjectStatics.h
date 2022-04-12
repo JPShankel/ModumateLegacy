@@ -139,6 +139,9 @@ public:
 	// Get all descendents of a metagraph MOI, including parenting via spans.
 	static void GetAllDescendents(const AModumateObjectInstance* Moi, TArray<const AModumateObjectInstance*>& OutMOIs);
 
+	static bool IsValidParentObjectType(EObjectType ParentObjectType);
+	static TArray<EObjectType> CompatibleObjectTypes;
+	static bool bCompatibleObjectsInitialized;
 private:
 	static bool GetGroupIdsForGroupChangeHelper(const UModumateDocument* Doc, int32 NewGroupID, int32 OldGroupID, TArray<int32>& OutAffectedGroups, bool& bOutFoundOldGroup);
 };

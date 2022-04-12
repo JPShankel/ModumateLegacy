@@ -12,6 +12,12 @@
 #include "DocumentManagement/ModumateSnappingView.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "DrawingDesigner/DrawingDesignerMeshCache.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "ToolsAndAdjustments/Common/AdjustmentHandleActor.h"
+#include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
+#include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
+#include "ToolsAndAdjustments/Handles/JustificationHandle.h"
+
 
 FMOIFaceHostedData::FMOIFaceHostedData()
 {}
@@ -176,9 +182,16 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 	if (parentObj && cma)
 	{
 		FVector nativeSize = CachedAssembly.GetCompoundAssemblyNativeSize();
-		FGraph3D * graph = Document->FindVolumeGraph(parentObj->ID);
-		const FGraph3DFace* parentFace = graph->FindFace(parentObj->ID);
-		
+		const FGraph3DFace* parentFace;
+		if (parentObj->GetObjectType() == EObjectType::OTMetaPlane)
+		{
+			parentFace = Document->GetVolumeGraph()->FindFace(parentObj->ID);
+		} 
+		else
+		{
+			parentFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentObj->ID);
+		}
+		FGraph3D* graph = Document->FindVolumeGraph(parentFace->ID);
 
 		//------ Start rot
 
@@ -277,7 +290,7 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 		FVector cmaSize = CachedAssembly.GetCompoundAssemblyNativeSize() * cmaScale;
 		//cmaLocation.X += InstanceData.OffsetX.GetOffsetDistance(InstanceData.FlipSigns.X, cmaSize.X);
 		//cmaLocation.Y += InstanceData.OffsetY.GetOffsetDistance(InstanceData.FlipSigns.Y, cmaSize.Y);
-		cmaLocation += (InstanceData.OffsetZ.GetOffsetDistance(InstanceData.FlipSigns.Z, cmaSize.Z) * yAxis);
+		cmaLocation += (InstanceData.OffsetZ.GetOffsetDistance(InstanceData.FlipSigns.Z, cmaSize.Y) * yAxis);
 
 		if (CachedAssembly.Parts.Num() > 0)
 		{
@@ -291,16 +304,51 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 			cmaTransform.SetScale3D(cmaScale);
 			cma->SetActorTransform(cmaTransform);
 		}
+
+		
+	}
+}
+
+
+
+void AMOIFaceHosted::SetupAdjustmentHandles(AEditModelPlayerController* Controller)
+{
+	AModumateObjectInstance* parent = GetParentObject();
+	auto parentOT = parent->GetObjectType();
+	bool parentCompatible = UModumateObjectStatics::IsValidParentObjectType(parentOT);
+	if (!parent || !parentCompatible)
+	{
+		return;
+	}
+
+	// Make the polygon adjustment handles, for modifying the parent plane's polygonal shape
+	int32 numCorners = parent->GetNumCorners();
+	for (int32 i = 0; i < numCorners; ++i)
+	{
+		// Don't allow adjusting wall corners, since they're more likely to be edited edge-by-edge.
+		if (GetObjectType() != EObjectType::OTWallSegment)
+		{
+			auto cornerHandle = MakeHandle<AAdjustPolyEdgeHandle>();
+			cornerHandle->SetTargetIndex(i);
+			cornerHandle->SetTargetMOI(parent);
+		}
+
+		auto edgeHandle = MakeHandle<AAdjustPolyEdgeHandle>();
+		edgeHandle->SetTargetIndex(i);
+		edgeHandle->SetTargetMOI(parent);
 	}
 }
 
 bool AMOIFaceHosted::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	// We know this tracks perfectly. It would normally be cached, but it's okay to update it directly.
-	// TODO: Adapt this to use spans when they are ready
 	const AModumateObjectInstance* parentObj = GetParentObject();
-	const FGraph3DFace* parentFace = Document->FindVolumeGraph(parentObj->ID)->FindFace(parentObj->ID);
-	InstanceData.NumEdges = parentFace->EdgeIDs.Num();
+	const FGraph3DFace* parentFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentObj->ID);
+	if (parentFace != nullptr)
+	{
+		//adding numEdges to the Instance Data to be able to be serialized and communicated to the web side
+		InstanceData.NumEdges = parentFace->EdgeIDs.Num();
+	}
 	return AModumateObjectInstance::CleanObject(DirtyFlag, OutSideEffectDeltas);
 }
 
@@ -407,7 +455,7 @@ void AMOIFaceHosted::OnInstPropUIChangedCycle(int32 BasisValue)
 	//TODO: make this instance data
 	int32 newValue = InstanceData.BasisEdge + 1;
 	const AModumateObjectInstance* parentObj = GetParentObject();
-	const FGraph3DFace* parentFace = Document->GetVolumeGraph()->FindFace(parentObj->ID);
+	const FGraph3DFace* parentFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentObj->ID);
 	if (newValue >= parentFace->EdgeIDs.Num())
 		newValue = 0;
 	if (Document && InstanceData.BasisEdge != newValue)
