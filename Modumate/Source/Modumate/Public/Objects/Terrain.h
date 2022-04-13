@@ -56,6 +56,9 @@ public:
 	void SetIsTranslucent(bool NewIsTranslucent);
 	bool GetIsTranslucent() const { return bIsTranslucent; };
 
+	virtual bool FromWebMOI(const FString& InJson) override;
+	virtual bool ToWebMOI(FWebMOI& OutMOI) const override;
+
 	UPROPERTY()
 	FMOITerrainData InstanceData;
 
