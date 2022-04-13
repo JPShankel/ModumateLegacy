@@ -10,6 +10,9 @@ FGraph3DEdge::FGraph3DEdge(int32 InID, FGraph3D* InGraph, int32 InStart, int32 I
 	SetVertices(InStart, InEnd);
 }
 
+FGraph3DEdge::FGraph3DEdge() : IGraph3DObject(0, nullptr)
+{}
+
 void FGraph3DEdge::SetVertices(int32 InStart, int32 InEnd)
 {
 	StartVertexID = InStart;

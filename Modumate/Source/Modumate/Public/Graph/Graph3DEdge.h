@@ -29,6 +29,9 @@ public:
 	FVector CachedMidpoint = FVector::ZeroVector;	// The cached midpoint between the start and end vertices.
 
 	FGraph3DEdge(int32 InID, FGraph3D* InGraph, int32 InStart, int32 InEnd);
+	
+	// Default constructor for use in spans
+	FGraph3DEdge();
 
 	void SetVertices(int32 InStart, int32 InEnd);
 	bool AddFace(FGraphSignedID FaceID, const FVector &EdgeFaceDir, bool bContained);

@@ -22,7 +22,8 @@ class MODUMATE_API AMOIMetaEdgeSpan : public AMOIEdgeBase
 public:
 	AMOIMetaEdgeSpan();
 
-	virtual FVector GetLocation() const override;
+	using FInstanceData = FMOIMetaEdgeSpanData;
+
 	virtual FVector GetCorner(int32 index) const override;
 
 	UPROPERTY()
@@ -30,11 +31,13 @@ public:
 
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 
-	const FGraph3DEdge* GetCachedGraphEdge() const { return CachedGraphEdge; }
+	const FGraph3DEdge* GetCachedGraphEdge() const { return &CachedGraphEdge; }
+
+	virtual void SetupDynamicGeometry() override;
 
 protected:
 
-	bool TryUpdateCachedGraphData();
+	bool UpdateCachedEdge();
 
-	FGraph3DEdge* CachedGraphEdge = nullptr;
+	FGraph3DEdge CachedGraphEdge;
 };

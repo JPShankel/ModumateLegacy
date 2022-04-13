@@ -22,6 +22,9 @@ class MODUMATE_API AMOIMetaPlaneSpan : public AMOIPlaneBase
 public:
 	AMOIMetaPlaneSpan();
 
+	using FInstanceData = FMOIMetaPlaneSpanData;
+
+
 	UPROPERTY()
 	FMOIMetaPlaneSpanData InstanceData;
 

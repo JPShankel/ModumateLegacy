@@ -8,22 +8,14 @@ AMOIMetaEdgeSpan::AMOIMetaEdgeSpan()
 {
 }
 
-FVector AMOIMetaEdgeSpan::GetLocation() const
-{
-	return Super::GetLocation();
-}
-
 FVector AMOIMetaEdgeSpan::GetCorner(int32 index) const
 {
-	if(CachedGraphEdge && CachedGraphEdge->bValid)
+	int32 vertID = index == 0 ? CachedGraphEdge.StartVertexID : CachedGraphEdge.EndVertexID;
+	const auto* graph = Document->GetVolumeGraph(Document->FindGraph3DByObjID(vertID));
+	const auto* vertex = graph ? graph->FindVertex(vertID) : nullptr;
+	if(vertex)
 	{
-		int32 vertID = index == 0 ? CachedGraphEdge->StartVertexID : CachedGraphEdge->EndVertexID;
-		const auto* graph = Document->GetVolumeGraph(Document->FindGraph3DByObjID(vertID));
-		const auto* vertex = graph ? graph->FindVertex(vertID) : nullptr;
-		if(vertex)
-		{
-			return vertex->Position;
-		}
+		return vertex->Position;
 	}
 	return FVector::ZeroVector;
 }
@@ -41,21 +33,69 @@ bool AMOIMetaEdgeSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 		}
 		else
 		{
-			TryUpdateCachedGraphData();
+			UpdateCachedEdge();
 		}
 	}
 	return AMOIEdgeBase::CleanObject(DirtyFlag, OutSideEffectDeltas);
 }
 
-bool AMOIMetaEdgeSpan::TryUpdateCachedGraphData()
+void AMOIMetaEdgeSpan::SetupDynamicGeometry()
 {
-	if (InstanceData.GraphMembers.Num() > 0)
+	UpdateCachedEdge();
+}
+
+bool AMOIMetaEdgeSpan::UpdateCachedEdge()
+{
+
+	if (InstanceData.GraphMembers.Num() == 0)
 	{
-		// Single face only
-		int32 curEdgeID = InstanceData.GraphMembers[0];
-		auto* graph = GetDocument()->FindVolumeGraph(curEdgeID);
-		CachedGraphEdge = graph ? graph->FindEdge(curEdgeID) : nullptr;
-		return (ensure(CachedGraphEdge != nullptr));
+		return false;
 	}
+
+	auto* graph = GetDocument()->FindVolumeGraph(InstanceData.GraphMembers[0]);
+
+	TMap<int32, int32> vertCounts;
+
+	for (auto& edgeID : InstanceData.GraphMembers)
+	{
+		const FGraph3DEdge* edgeOb = graph->FindEdge(edgeID);
+		if (edgeOb)
+		{
+			int32 count = vertCounts.FindOrAdd(edgeOb->StartVertexID, 0);
+			++count;
+			vertCounts.Add(edgeOb->StartVertexID, count);
+
+			count = vertCounts.FindOrAdd(edgeOb->EndVertexID, 0);
+			++count;
+			vertCounts.Add(edgeOb->EndVertexID, count);
+
+			CachedGraphEdge.CachedRefNorm = edgeOb->CachedRefNorm;
+		}
+	}
+
+	TArray<int32> outVerts;
+
+	for (auto& kvp : vertCounts)
+	{
+		if (kvp.Value == 1)
+		{
+			outVerts.Add(kvp.Key);
+		}
+	}
+
+	if (outVerts.Num() >= 2)
+	{
+		CachedGraphEdge.StartVertexID = outVerts[0];
+		CachedGraphEdge.EndVertexID = outVerts[1];
+
+		const FGraph3DVertex* v1 = graph->FindVertex(CachedGraphEdge.StartVertexID);
+		const FGraph3DVertex* v2 = graph->FindVertex(CachedGraphEdge.EndVertexID);
+
+		if (v1 && v2)
+		{
+			CachedGraphEdge.CachedMidpoint = (v1->Position + v2->Position) * 0.5f;
+		}
+	}
+
 	return false;
 }

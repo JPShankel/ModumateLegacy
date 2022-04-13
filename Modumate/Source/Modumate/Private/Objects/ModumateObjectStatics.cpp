@@ -1473,7 +1473,25 @@ bool UModumateObjectStatics::TryJoinSelectedMetaSpan(UWorld* World)
 	);
 
 	TArray<FDeltaPtr> deltas;
-	FModumateObjectDeltaStatics::GetDeltasForFaceSpanMerge(controller->GetDocument(), spanIDs, deltas);
+	if (spanIDs.Num() > 0)
+	{
+		FModumateObjectDeltaStatics::GetDeltasForFaceSpanMerge(controller->GetDocument(), spanIDs, deltas);
+	}
+	else
+	{
+		Algo::TransformIf(playerState->SelectedObjects, spanIDs,
+			[](const AModumateObjectInstance* MOI)
+			{
+				return MOI->GetObjectType() == EObjectType::OTStructureLine || MOI->GetObjectType() == EObjectType::OTEdgeHosted;
+			},
+			[](const AModumateObjectInstance* MOI) {return MOI->GetParentID(); }
+			);
+
+		if (spanIDs.Num() > 0)
+		{
+			FModumateObjectDeltaStatics::GetDeltasForEdgeSpanMerge(controller->GetDocument(), spanIDs, deltas);
+		}
+	}
 	return controller->GetDocument()->ApplyDeltas(deltas, World, false);
 }
 

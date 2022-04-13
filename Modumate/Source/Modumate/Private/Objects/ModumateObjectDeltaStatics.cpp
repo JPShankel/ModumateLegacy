@@ -1,3 +1,5 @@
+// Copyright 2020 Modumate, Inc. All Rights Reserved.
+
 #include "Objects/ModumateObjectDeltaStatics.h"
 
 #include "Algo/ForEach.h"
@@ -1211,17 +1213,18 @@ void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocumen
 	}
 }
 
-void FModumateObjectDeltaStatics::GetDeltasForFaceSpanMerge(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas)
+template<class T>
+void GetDeltasForSpanMerge(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas)
 {
-	TArray<const AMOIMetaPlaneSpan*> allSpans;
+	TArray<const T*> allSpans;
 	Algo::TransformIf(SpanIDs, allSpans,
 		[Doc](int32 MOI)
 		{
-			return Cast<AMOIMetaPlaneSpan>(Doc->GetObjectById(MOI));
+			return Cast<T>(Doc->GetObjectById(MOI));
 		},
 		[Doc](int32 MOI)
 		{
-			return Cast<AMOIMetaPlaneSpan>(Doc->GetObjectById(MOI));
+			return Cast<T>(Doc->GetObjectById(MOI));
 		});
 
 	if (allSpans.Num() < 2)
@@ -1229,17 +1232,35 @@ void FModumateObjectDeltaStatics::GetDeltasForFaceSpanMerge(const UModumateDocum
 		return;
 	}
 
-	FMOIMetaPlaneSpanData mergeData = allSpans[0]->InstanceData;
+	T::FInstanceData mergeData = allSpans[0]->InstanceData;
 	TSharedPtr<FMOIDelta> moisDelta = MakeShared<FMOIDelta>();
 	for (int32 i = 1; i < allSpans.Num(); ++i)
 	{
 		mergeData.GraphMembers.Append(allSpans[i]->InstanceData.GraphMembers);
+		for (int32 childID : allSpans[i]->GetChildIDs())
+		{
+			const AModumateObjectInstance* moi = Doc->GetObjectById(childID);
+			if (moi != nullptr)
+			{
+				moisDelta->AddCreateDestroyState(moi->GetStateData(), EMOIDeltaType::Destroy);
+			}
+		}
 		moisDelta->AddCreateDestroyState(allSpans[i]->GetStateData(), EMOIDeltaType::Destroy);
 	}
 	FMOIStateData mergeState = allSpans[0]->GetStateData();
 	mergeState.CustomData.SaveStructData(mergeData);
 	moisDelta->AddMutationState(allSpans[0], allSpans[0]->GetStateData(), mergeState);
 	OutDeltas.Add(moisDelta);
+}
+
+void FModumateObjectDeltaStatics::GetDeltasForEdgeSpanMerge(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas)
+{
+	GetDeltasForSpanMerge<AMOIMetaEdgeSpan>(Doc, SpanIDs, OutDeltas);
+}
+
+void FModumateObjectDeltaStatics::GetDeltasForFaceSpanMerge(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas)
+{
+	GetDeltasForSpanMerge<AMOIMetaPlaneSpan>(Doc, SpanIDs, OutDeltas);
 }
 
 void FModumateObjectDeltaStatics::GetDeltaForSpanMapping(const AModumateObjectInstance* Moi, const TMap<int32, TArray<int32>>& CopiedToPastedObjIDs, TArray<FDeltaPtr>& OutDeltas)
