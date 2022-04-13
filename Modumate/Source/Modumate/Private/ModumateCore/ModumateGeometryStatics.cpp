@@ -191,7 +191,7 @@ bool UModumateGeometryStatics::FindPointFurthestFromPolyEdge(const TArray<FVecto
 {
 	using namespace PolyDist;
 
-	static const float precision = 1.0f;
+	static constexpr float precision = 1.0f;
 
 	FBox2D envelope(ForceInitToZero);
 	for (const FVector2D &point : polygon)
@@ -201,7 +201,7 @@ bool UModumateGeometryStatics::FindPointFurthestFromPolyEdge(const TArray<FVecto
 
 	FVector2D size = envelope.GetSize();
 
-	const float cellSize = size.GetMin();
+	const float cellSize = FMath::Max(size.GetMin(), precision / 2.0f);
 	float h = cellSize / 2;
 
 	// a priority queue of cells in order of their "potential" (max distance to polygon)
@@ -1365,8 +1365,9 @@ bool UModumateGeometryStatics::AnalyzeCachedPositions(const TArray<FVector> &InP
 
 	// Find a central point to use for casting rays
 	// (essential for concave polygons, where the centroid would not suffice)
+	// TODO: Just use centroid for convex polys, as FindPointFurthestFromPolyEdge() can be very expensive.
 	FVector2D furthestPoint;
-	if (UModumateGeometryStatics::FindPointFurthestFromPolyEdge(Out2DPositions, furthestPoint))
+	if (Out2DPositions.Num() > 3 && UModumateGeometryStatics::FindPointFurthestFromPolyEdge(Out2DPositions, furthestPoint))
 	{
 		OutCenter = InPositions[0] +
 			(furthestPoint.X * OutAxis2DX) +

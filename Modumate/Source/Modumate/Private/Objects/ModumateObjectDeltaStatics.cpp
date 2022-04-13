@@ -1122,6 +1122,8 @@ void FModumateObjectDeltaStatics::MergeGraphToCurrentGraph(UModumateDocument* Do
 
 void FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(UModumateDocument* Doc, const TMap<int32, FVector>& OriginalGroupVertexTranslations, const FTransform transform, TArray<FDeltaPtr>& OutDeltas)
 {
+	TMap<int32, FGraph3DDelta> graphDeltas;
+
 	for (const auto& kvp : OriginalGroupVertexTranslations)
 	{
 		int id = kvp.Key;
@@ -1130,11 +1132,18 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(UModumateDocument*
 		const FGraph3DVertex* vertex = graph ? graph->GetVertices().Find(id) : nullptr;
 		if (ensure(vertex))
 		{
-			FGraph3DDelta delta(graphId);
+			FGraph3DDelta* graphDelta = graphDeltas.Find(graphId);
+			if (!graphDelta)
+			{
+				graphDelta = &graphDeltas.Add(graphId, FGraph3DDelta(graphId));
+			}
 			FVector position = kvp.Value;
-			delta.VertexMovements.Add(id, FModumateVectorPair(position, transform.TransformPositionNoScale(position)));
-			OutDeltas.Add(MakeShared<FGraph3DDelta>(delta));
+			graphDelta->VertexMovements.Add(id, FModumateVectorPair(position, transform.TransformPositionNoScale(position)));
 		}
+	}
+	for (auto& graphKvp : graphDeltas)
+	{
+		OutDeltas.Add(MakeShared<FGraph3DDelta>(MoveTemp(graphKvp.Value) ));
 	}
 }
 
