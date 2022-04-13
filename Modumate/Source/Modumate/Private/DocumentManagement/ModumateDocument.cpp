@@ -4925,6 +4925,24 @@ void UModumateDocument::open_detail_designer()
 	}
 }
 
+void UModumateDocument::open_delete_preset_menu(const FString& InGUID)
+{
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (controller && controller->EditModelUserWidget)
+	{
+		controller->EditModelUserWidget->CheckDeletePresetFromWebUI(FGuid(InGUID));
+	}
+}
+
+void UModumateDocument::export_estimates()
+{
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (controller)
+	{
+		controller->OnCreateQuantitiesCsv();
+	}
+}
+
 void UModumateDocument::OnCameraViewSelected(int32 ID)
 {
 	TArray<AMOIDesignOption*> designOptions;

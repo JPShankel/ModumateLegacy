@@ -99,12 +99,14 @@ void UDeleteMenuWidget::BuildDeleteModalDialog()
 void UDeleteMenuWidget::ModalDeleteButtonConfirmReleased()
 {
 	EMPlayerController->GetDocument()->DeletePreset(GetWorld(), PresetGUIDToDelete, PresetGUIDReplacement);
-	EMPlayerController->EditModelUserWidget->SwitchLeftMenu(EMPlayerController->EditModelUserWidget->PreviousLeftMenuState);
+	ELeftMenuState exitState = EMPlayerController->EditModelUserWidget->bIsShowDrawingDesigner ? ELeftMenuState::None : EMPlayerController->EditModelUserWidget->PreviousLeftMenuState;
+	EMPlayerController->EditModelUserWidget->SwitchLeftMenu(exitState);
 }
 
 void UDeleteMenuWidget::OnReleaseButtonClose()
 {
-	EMPlayerController->EditModelUserWidget->SwitchLeftMenu(EMPlayerController->EditModelUserWidget->PreviousLeftMenuState);
+	ELeftMenuState exitState = EMPlayerController->EditModelUserWidget->bIsShowDrawingDesigner ? ELeftMenuState::None : EMPlayerController->EditModelUserWidget->PreviousLeftMenuState;
+	EMPlayerController->EditModelUserWidget->SwitchLeftMenu(exitState);
 }
 
 #undef LOCTEXT_NAMESPACE

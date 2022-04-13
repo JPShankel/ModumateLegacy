@@ -113,12 +113,28 @@ void UEditModelUserWidget::NativeConstruct()
 		BIMBlockDialogBoxCanvasSlot->SetOffsets(bIsShowDrawingDesigner ? FMargin(0.f, 48.f, 0.f, 0.f) : FMargin(56.f, 48.f, 0.f, 0.f));
 	}
 
+	// Delete menu
+	UCanvasPanelSlot* DeleteMenuWidgetCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(DeleteMenuWidget);
+	if (DeleteMenuWidgetCanvasSlot)
+	{
+		DeleteMenuWidgetCanvasSlot->SetZOrder(bIsShowDrawingDesigner ? 9 : 6);
+		DeleteMenuWidgetCanvasSlot->SetPosition(bIsShowDrawingDesigner ? FVector2D(0.f, 48.f) : FVector2D(56.f, 48.f));
+	}
+
 	// Swap menu
 	UCanvasPanelSlot* SwapMenuWidgetCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(SwapMenuWidget);
 	if (SwapMenuWidgetCanvasSlot)
 	{
 		SwapMenuWidgetCanvasSlot->SetZOrder(bIsShowDrawingDesigner ? 9 : 6);
 		SwapMenuWidgetCanvasSlot->SetPosition(bIsShowDrawingDesigner ? FVector2D(0.f, 48.f) : FVector2D(56.f, 48.f));
+	}
+
+	// Browser menu for quantity export
+	UCanvasPanelSlot* BrowserMenuWidgetCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(BrowserMenuWidget);
+	if (BrowserMenuWidgetCanvasSlot)
+	{
+		BrowserMenuWidgetCanvasSlot->SetZOrder(bIsShowDrawingDesigner ? 9 : 6);
+		BrowserMenuWidgetCanvasSlot->SetPosition(bIsShowDrawingDesigner ? FVector2D(0.f, 48.f) : FVector2D(56.f, 48.f));
 	}
 
 	// ViewCube
@@ -164,7 +180,8 @@ void UEditModelUserWidget::SwitchLeftMenu(ELeftMenuState NewState, EToolCategori
 	if (bIsShowDrawingDesigner)
 	{
 		if (!(NewState == ELeftMenuState::SwapMenu ||
-			NewState == ELeftMenuState::DeleteMenu))
+			NewState == ELeftMenuState::DeleteMenu ||
+			NewState == ELeftMenuState::None))
 		{
 			return;
 		}
@@ -462,6 +479,29 @@ void UEditModelUserWidget::UpdateViewCubeOffset(float InOffset)
 	{
 		FVector2D offset = FVector2D(InOffset, 100.f);
 		viewCubeCanvasSlot->SetPosition(offset);
+	}
+}
+
+void UEditModelUserWidget::CheckDeletePresetFromWebUI(const FGuid& PresetGUIDToDelete)
+{
+	// If this preset does not affect any other preset, then just display the modal dialog for delete
+	TArray<FGuid> allAncestorPresets;
+	if (!Controller->GetDocument()->PresetIsInUse(PresetGUIDToDelete))
+	{
+		Controller->GetDocument()->DeletePreset(GetWorld(), PresetGUIDToDelete, FGuid());
+		return;
+	}
+
+	// Otherwise, this preset needs to be replaced
+	FBIMTagPath ncpForReplace;
+	Controller->GetDocument()->GetPresetCollection().GetNCPForPreset(PresetGUIDToDelete, ncpForReplace);
+	if (ensureAlways(ncpForReplace.Tags.Num() > 0))
+	{
+		DeleteMenuWidget->NCPNavigatorWidget->ResetSelectedAndSearchTag();
+
+		DeleteMenuWidget->SetPresetToDelete(PresetGUIDToDelete, FGuid());
+		SwitchLeftMenu(ELeftMenuState::DeleteMenu);
+		DeleteMenuWidget->NCPNavigatorWidget->SetNCPTagPathAsSelected(ncpForReplace);
 	}
 }
 

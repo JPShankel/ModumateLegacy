@@ -452,6 +452,12 @@ public:
 
 	UFUNCTION()
 	void open_detail_designer();
+
+	UFUNCTION()
+	void open_delete_preset_menu(const FString& InGUID);
+
+	UFUNCTION()
+	void export_estimates();
 	
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
 	void UpdateWebPresets();

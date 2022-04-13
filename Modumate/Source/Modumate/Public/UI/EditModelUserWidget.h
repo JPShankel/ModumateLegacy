@@ -154,4 +154,5 @@ public:
 	void UpdateUsersList();
 	void EditDetailDesignerFromSelection();
 	void UpdateViewCubeOffset(float InOffset);
+	void CheckDeletePresetFromWebUI(const FGuid& PresetGUIDToDelete);
 };
