@@ -62,6 +62,8 @@ public:
 	virtual void PreDestroy() override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual bool GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual bool FromWebMOI(const FString& InJson) override;
+	virtual bool ToWebMOI(FWebMOI& OutMOI) const override;
 
 	static int32 GetCutPlaneVerticalDegree(const FQuat& Rotation);	
 	void SetIsCulling(bool NewIsCulling);

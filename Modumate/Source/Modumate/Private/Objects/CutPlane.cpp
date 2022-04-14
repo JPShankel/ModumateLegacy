@@ -21,6 +21,7 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/CompoundMeshActor.h"
+#include "UnrealClasses/EditModelPlayerState.h"
 
 static constexpr float PixelsToWorldCentimeters = 0.5f;
 
@@ -35,6 +36,13 @@ AMOICutPlane::AMOICutPlane()
 	prop.Name = TEXT("Rotation");
 	prop.Type = EWebMOIPropertyType::quatRotation;
 	prop.DisplayName = TEXT("Flip Direction");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("Visible");
+	prop.Type = EWebMOIPropertyType::boolean;
+	prop.DisplayName = TEXT("Visibility");
 	prop.isEditable = true;
 	prop.isVisible = true;
 	WebProperties.Add(prop.Name, prop);
@@ -739,4 +747,43 @@ void AMOICutPlane::ConvertToOutlines(const FString& renderTargetFilename)
 	{
 		--PendingTraceRequests;
 	}
+}
+
+bool AMOICutPlane::FromWebMOI(const FString& InJson)
+{
+	if (AModumateObjectInstance::FromWebMOI(InJson))
+	{
+		FWebMOI WebMOI;
+		if (!ReadJsonGeneric<FWebMOI>(InJson, &WebMOI))
+		{
+			return false;
+		}
+
+		const FWebMOIProperty* FormPropVisible = WebMOI.Properties.Find(TEXT("Visible"));
+		const bool bLocalVisible = FormPropVisible->ValueArray[0] == TEXT("true");
+		if (bLocalVisible == HideRequests.Contains(FName(TEXT("WebPropertiesPanel")))) {
+			RequestHidden(FName(TEXT("WebPropertiesPanel")), !bLocalVisible);
+		}
+		
+		return true;
+	}
+
+	return false;
+}
+
+bool AMOICutPlane::ToWebMOI(FWebMOI& OutMOI) const
+{
+	if (AModumateObjectInstance::ToWebMOI(OutMOI))
+	{
+		const FWebMOIProperty* FormPropVisible = WebProperties.Find(TEXT("Visible"));
+		FWebMOIProperty WebPropVisible = *FormPropVisible;
+
+		const FString Visible = HideRequests.Contains(FName(TEXT("WebPropertiesPanel"))) ? TEXT("false") : TEXT("true");
+		WebPropVisible.ValueArray.Add(Visible);
+		OutMOI.Properties.Add("Visible", WebPropVisible);
+		
+		return true;
+	}
+
+	return false;
 }
