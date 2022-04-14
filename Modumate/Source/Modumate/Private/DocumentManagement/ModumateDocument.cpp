@@ -4450,7 +4450,20 @@ void UModumateDocument::set_web_focus(bool bHasFocus)
 
 	if(controller)
 	{
-		controller->InputHandlerComponent->RequestInputDisabled(UModumateWebBrowser::MODUMATE_WEB_TAG, bHasFocus);
+		if(bHasFocus)
+		{
+			controller->InputHandlerComponent->RequestInputDisabled(UModumateWebBrowser::MODUMATE_WEB_TAG, true);			
+		}
+		else
+		{
+			//KLUDGE: Hack for 3.0.0 release. The asynchronus nature of the Javascript communication makes this
+			// necessary so we do not remove focus and evaluate the input in the same frame. For example, closing a menu
+			// with escape, but having that escape ALSO get passed to the input handler component. -JN
+			GetWorld()->GetTimerManager().SetTimerForNextTick([=]()
+			{
+				controller->InputHandlerComponent->RequestInputDisabled(UModumateWebBrowser::MODUMATE_WEB_TAG, false);
+			});
+		}
 	}
 }
 
