@@ -35,8 +35,16 @@ bool UGroupTool::Activate()
 	TSet<const AModumateObjectInstance*> massingObjects;
 
 	const auto& selectedObjects = emPlayerState->SelectedObjects;
+
+	TSet<int32> edgesSelectedDirectly;
+
 	for (auto* obj: selectedObjects)
 	{
+		if (obj->GetObjectType() == EObjectType::OTMetaEdge)
+		{
+			edgesSelectedDirectly.Add(obj->ID);
+		}
+
 		while (obj && (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(obj->GetObjectType()) == EGraph3DObjectType::None)
 			&& !UModumateTypeStatics::IsSpanObject(obj))
 		{
@@ -92,7 +100,7 @@ bool UGroupTool::Activate()
 
 		FGraph3D* oldGraph = doc->GetVolumeGraph(oldGroupID);
 		FGraph3D tempGraph(newGroupID);
-		TArray<int32> metaItemsToMove;
+		TSet<int32> metaItemsToMove;
 
 		for (auto* object: massingObjects)
 		{
@@ -104,18 +112,36 @@ bool UGroupTool::Activate()
 				metaItemsToMove.Add(object->ID);
 			}
 		}
+
+		// Remove edges of selected faces that have been explicitly selected.
+		TSet<int32> itemsToIgnore;
+		for (int32 item : metaItemsToMove)
+		{
+			const FGraph3DFace* face = oldGraph->FindFace(item);
+			if (face)
+			{
+				for (int32 edgeID : face->EdgeIDs)
+				{
+					if (edgesSelectedDirectly.Contains(FMath::Abs(edgeID)))
+					{
+						itemsToIgnore.Add(FMath::Abs(edgeID));
+					}
+				}
+			}
+		}
+		metaItemsToMove = metaItemsToMove.Difference(itemsToIgnore);
 		
-		TArray<FGraph3DDelta> graphDeltas;
+		TArray<FGraph3DDelta> deleteGraphDeltas;
 		// Regular delete has bGatherEdgesFromFaces = false, bAttemptJoin = true. This can change
 		// behaviour slightly (esp. bGatherEdgesFromFaces).
-		oldGraph->GetDeltaForDeleteObjects(metaItemsToMove, graphDeltas, nextID, true /* bGatherEdgesFromFaces */, false /* bAttemptJoin */);
+		oldGraph->GetDeltaForDeleteObjects(metaItemsToMove.Array(), deleteGraphDeltas, nextID, true /* bGatherEdgesFromFaces */, false /* bAttemptJoin */);
 		TArray<FGraph3DDelta> createGraphDeltas;
 
-		FModumateObjectDeltaStatics::ConvertGraphDeleteToMove(graphDeltas, oldGraph, nextID, createGraphDeltas);
-		for (auto& graphDelta: graphDeltas)
+		FModumateObjectDeltaStatics::ConvertGraphDeleteToMove(deleteGraphDeltas, oldGraph, nextID, createGraphDeltas);
+		for (auto& deleteGraphDelta: deleteGraphDeltas)
 		{
-			graphDelta.GraphID = oldGroupID;
-			deltas.Add(MakeShared<FGraph3DDelta>(MoveTemp(graphDelta)));
+			deleteGraphDelta.GraphID = oldGroupID;
+			deltas.Add(MakeShared<FGraph3DDelta>(MoveTemp(deleteGraphDelta)));
 		}
 
 		for (auto& createGraphDelta: createGraphDeltas)
