@@ -45,6 +45,42 @@ AMOIStructureLine::AMOIStructureLine()
 	, OuterExtensions(ForceInitToZero)
 	, CachedProfileExtents(ForceInitToZero)
 {
+	FWebMOIProperty prop;
+
+	prop.Name = TEXT("FlipSigns");
+	prop.Type = EWebMOIPropertyType::flip3D;
+	prop.DisplayName = TEXT("Flip");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("OffsetUp");
+	prop.Type = EWebMOIPropertyType::offset;
+	prop.DisplayName = TEXT("Offset Y");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("OffsetNormal");
+	prop.Type = EWebMOIPropertyType::offset;
+	prop.DisplayName = TEXT("Offset X");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("Rotation");
+	prop.Type = EWebMOIPropertyType::text;
+	prop.DisplayName = TEXT("Rotation");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+	
+	prop.Name = TEXT("Extensions");
+	prop.Type = EWebMOIPropertyType::extension;
+	prop.DisplayName = TEXT("Extensions");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
 }
 
 FQuat AMOIStructureLine::GetRotation() const

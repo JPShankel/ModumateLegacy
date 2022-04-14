@@ -51,6 +51,21 @@ AMOIPortal::AMOIPortal()
 	, bHaveValidTransform(false)
 	, CachedBounds(ForceInitToZero)
 {
+	FWebMOIProperty prop;
+
+	prop.Name = TEXT("Offset");
+	prop.Type = EWebMOIPropertyType::offset;
+	prop.DisplayName = TEXT("Offset");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("FlipIndex");
+	prop.Type = EWebMOIPropertyType::flip2DXY;
+	prop.DisplayName = TEXT("Flip");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
 }
 
 AActor *AMOIPortal::CreateActor(const FVector &loc, const FQuat &rot)
@@ -778,4 +793,15 @@ void AMOIPortal::OnInstPropUIChangedOffset(const FDimensionOffset& NewValue)
 
 		Document->ApplyDeltas({ deltaPtr }, GetWorld());
 	}
+}
+
+bool AMOIPortal::FromWebMOI(const FString& InJson)
+{
+	if (AModumateObjectInstance::FromWebMOI(InJson))
+	{
+		OnInstPropUIChangedFlip(InstanceData.FlipIndex);
+		return true;
+	}
+
+	return false;
 }

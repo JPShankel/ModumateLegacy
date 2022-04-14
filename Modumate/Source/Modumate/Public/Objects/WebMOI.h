@@ -14,6 +14,8 @@ enum class EWebMOIPropertyType : uint8
 	color,
 	moiId,
 	offset,
+	flip2DYZ,
+	flip2DXY,
 	flip3D,
 	flipDirection,
 	button,

@@ -44,6 +44,35 @@ AMOITrim::AMOITrim()
 	, ProfileOffsetDists(ForceInitToZero)
 	, ProfileFlip(ForceInitToZero)
 {
+	FWebMOIProperty prop;
+
+	prop.Name = TEXT("FlipIndex");
+	prop.Type = EWebMOIPropertyType::flip2DYZ;
+	prop.DisplayName = TEXT("Flip");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("OffsetNormal");
+	prop.Type = EWebMOIPropertyType::offset;
+	prop.DisplayName = TEXT("Offset X");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+	
+	prop.Name = TEXT("OffsetUp");
+	prop.Type = EWebMOIPropertyType::offset;
+	prop.DisplayName = TEXT("Offset Y");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("Extensions");
+	prop.Type = EWebMOIPropertyType::extension;
+	prop.DisplayName = TEXT("Extensions");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
 }
 
 FVector AMOITrim::GetLocation() const
@@ -516,6 +545,15 @@ void AMOITrim::GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDra
 		line.Thickness = 0.25f;
 		line.GreyValue = 112 / 255.0;
 	}
+}
 
+bool AMOITrim::FromWebMOI(const FString& InJson)
+{
+	if (AModumateObjectInstance::FromWebMOI(InJson))
+	{
+		OnInstPropUIChangedFlip(InstanceData.FlipIndex);
+		return true;
+	}
 
+	return false;
 }

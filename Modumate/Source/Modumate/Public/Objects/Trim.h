@@ -45,6 +45,9 @@ struct MODUMATE_API FMOITrimData
 	UPROPERTY()
 	FVector2D Extensions = FVector2D::ZeroVector;
 
+	UPROPERTY()
+	int32 FlipIndex = 0;
+
 	static constexpr int32 CurrentVersion = 2;
 };
 
@@ -85,6 +88,8 @@ public:
 	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;
 
 	virtual void PostLoadInstanceData() override;
+
+	virtual bool FromWebMOI(const FString& InJson) override;
 
 	UPROPERTY()
 	FMOITrimData InstanceData;

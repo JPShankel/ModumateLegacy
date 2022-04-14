@@ -43,6 +43,21 @@ FMOIPlaneHostedObjData::FMOIPlaneHostedObjData(int32 InVersion)
 AMOIPlaneHostedObj::AMOIPlaneHostedObj()
 	: AModumateObjectInstance()
 {
+	FWebMOIProperty prop;
+
+	prop.Name = TEXT("Offset");
+	prop.Type = EWebMOIPropertyType::offset;
+	prop.DisplayName = TEXT("Offset");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("FlipSigns");
+	prop.Type = EWebMOIPropertyType::flip3D;
+	prop.DisplayName = TEXT("Flip");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);	
 }
 
 FQuat AMOIPlaneHostedObj::GetRotation() const

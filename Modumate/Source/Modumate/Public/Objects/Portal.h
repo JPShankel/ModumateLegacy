@@ -51,6 +51,9 @@ struct MODUMATE_API FMOIPortalData
 	UPROPERTY()
 	EPortalOrientation Orientation = EPortalOrientation::Up;
 
+	UPROPERTY()
+	int32 FlipIndex = 0;
+
 	static constexpr int32 CurrentVersion = 1;
 };
 
@@ -101,6 +104,8 @@ public:
 	FMOIPortalData InstanceData;
 
 	virtual void GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDrawingDesignerLine>& OutDrawingLines, float MinLength = 0.0f) const override;
+
+	virtual bool FromWebMOI(const FString& InJson) override;
 
 protected:
 	TWeakObjectPtr<AEditModelPlayerController> Controller;
