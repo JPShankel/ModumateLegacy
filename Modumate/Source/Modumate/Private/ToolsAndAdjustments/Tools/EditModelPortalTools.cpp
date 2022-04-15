@@ -38,6 +38,11 @@ UPortalToolBase::UPortalToolBase()
 
 bool UPortalToolBase::Activate()
 {
+	// Set default settings for NewMOIStateData
+	FMOIPortalData portalInstanceData(FMOIPortalData::CurrentVersion);
+	NewMOIStateData.ObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
+	NewMOIStateData.CustomData.SaveStructData(portalInstanceData);
+
 	CurTargetPlaneID = MOD_ID_NONE;
 	Controller->DeselectAll();
 	Controller->EMPlayerState->SetHoveredObject(nullptr);
@@ -162,6 +167,23 @@ bool UPortalToolBase::BeginUse()
 	}
 
 	return true;
+}
+
+bool UPortalToolBase::HandleOffset(const FVector2D& ViewSpaceDirection)
+{
+	if (NewObjectIDs.Num() == 0)
+	{
+		return false;
+	}
+
+	FQuat cameraRotation = Controller->PlayerCameraManager->GetCameraRotation().Quaternion();
+	FVector worldSpaceDirection =
+		(ViewSpaceDirection.X * cameraRotation.GetRightVector()) +
+		(ViewSpaceDirection.Y * cameraRotation.GetUpVector());
+
+	// Offset portal moi
+	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	return newMOI && newMOI->GetOffsetState(worldSpaceDirection, NewMOIStateData);
 }
 
 void UPortalToolBase::SetInstanceWidth(const float InWidth)
@@ -293,14 +315,14 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 
 	if (newParentID != MOD_ID_NONE)
 	{
-		FMOIPortalData portalInstanceData(FMOIPortalData::CurrentVersion);
-
-		FMOIStateData objectStateData(GameState->Document->GetNextAvailableID(), UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode()), newParentID);
-		objectStateData.AssemblyGUID = AssemblyGUID;
-		objectStateData.CustomData.SaveStructData(portalInstanceData);
+		int32 nextPortalObjID = GameState->Document->GetNextAvailableID();
+		NewObjectIDs = { nextPortalObjID };
+		NewMOIStateData.ID = nextPortalObjID;
+		NewMOIStateData.ParentID = newParentID;
+		NewMOIStateData.AssemblyGUID = AssemblyGUID;
 
 		auto addPortal = MakeShared<FMOIDelta>();
-		addPortal->AddCreateDestroyState(objectStateData, EMOIDeltaType::Create);
+		addPortal->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
 
 		OutDeltas.Add(addPortal);
 		return true;

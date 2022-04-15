@@ -229,8 +229,15 @@ bool UPlaneHostedObjTool::HandleOffset(const FVector2D& ViewSpaceDirection)
 	FVector worldSpaceDirection =
 		(ViewSpaceDirection.X * cameraRotation.GetRightVector()) +
 		(ViewSpaceDirection.Y * cameraRotation.GetUpVector());
-
+	
+	// PlaneHosted tools create single new span, 
+	// we handle offset by setting its child (PlaneHOstedObj) instance data
 	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	AMOIMetaPlaneSpan* span = Cast<AMOIMetaPlaneSpan>(newMOI);
+	if (span && span->GetChildIDs().Num() > 0)
+	{
+		newMOI = span->GetChildObjects()[0];
+	}
 	return newMOI && newMOI->GetOffsetState(worldSpaceDirection, NewMOIStateData);
 }
 

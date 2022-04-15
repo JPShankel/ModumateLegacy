@@ -374,6 +374,10 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	case EInputCommand::OffsetUp:
 	case EInputCommand::OffsetDown:
 	{
+		if (!currentTool)
+		{
+			return false;
+		}
 		FVector2D viewSpaceDirection(ForceInitToZero);
 
 		switch (Command)

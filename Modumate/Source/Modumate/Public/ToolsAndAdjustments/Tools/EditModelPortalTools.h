@@ -36,6 +36,7 @@ public:
 	virtual bool HandleControlKey(bool pressed) override;
 	virtual bool HandleMouseUp() override { return true; }
 	virtual bool ShowSnapCursorAffordances() override { return true; }
+	virtual bool HandleOffset(const FVector2D& ViewSpaceDirection) override;
 
 	void SetInstanceWidth(const float InWidth);
 	void SetInstanceHeight(const float InHeight);

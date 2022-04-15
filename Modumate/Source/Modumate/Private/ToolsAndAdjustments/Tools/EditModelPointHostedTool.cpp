@@ -19,6 +19,11 @@ bool UPointHostedTool::Activate()
 		return false;
 	}
 
+	// Set default settings for NewMOIStateData
+	FMOIPointHostedData newPointHostedCustomData;
+	NewMOIStateData.ObjectType = EObjectType::OTPointHosted;
+	NewMOIStateData.CustomData.SaveStructData(newPointHostedCustomData);
+
 	Controller->DeselectAll();
 	Controller->EMPlayerState->SetHoveredObject(nullptr);
 	bWasShowingSnapCursor = Controller->EMPlayerState->bShowSnappedCursor;
@@ -119,6 +124,22 @@ bool UPointHostedTool::BeginUse()
 	return bSuccess;
 }
 
+bool UPointHostedTool::HandleOffset(const FVector2D& ViewSpaceDirection)
+{
+	if (NewObjectIDs.Num() == 0)
+	{
+		return false;
+	}
+
+	FQuat cameraRotation = Controller->PlayerCameraManager->GetCameraRotation().Quaternion();
+	FVector worldSpaceDirection =
+		(ViewSpaceDirection.X * cameraRotation.GetRightVector()) +
+		(ViewSpaceDirection.Y * cameraRotation.GetUpVector());
+
+	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	return newMOI && newMOI->GetOffsetState(worldSpaceDirection, NewMOIStateData);
+}
+
 void UPointHostedTool::ResetState()
 {
 	SetTargetID(MOD_ID_NONE);
@@ -181,12 +202,8 @@ bool UPointHostedTool::GetObjectCreationDeltas(const int32 InTargetVertexID, TAr
 	if (bCreateNewObject)
 	{
 		NewMOIStateData.ID = nextID++;
-		NewMOIStateData.ObjectType = EObjectType::OTPointHosted;
 		NewMOIStateData.ParentID = InTargetVertexID;
 		NewMOIStateData.AssemblyGUID = AssemblyGUID;
-		FMOIPointHostedData newCustomData;
-		NewMOIStateData.CustomData.SaveStructData<FMOIPointHostedData>(newCustomData);
-
 		NewObjectIDs.Add(NewMOIStateData.ID);
 
 		delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);

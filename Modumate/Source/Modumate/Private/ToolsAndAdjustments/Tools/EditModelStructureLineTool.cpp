@@ -257,8 +257,15 @@ bool UStructureLineTool::HandleOffset(const FVector2D& ViewSpaceDirection)
 	FVector worldSpaceDirection =
 		(ViewSpaceDirection.X * cameraRotation.GetRightVector()) +
 		(ViewSpaceDirection.Y * cameraRotation.GetUpVector());
-
+	
+	// StructureLineTool creates single edge span, 
+	// we handle offset by setting its child (StructureLine) instance data
 	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	AMOIMetaEdgeSpan* span = Cast<AMOIMetaEdgeSpan>(newMOI);
+	if (span && span->GetChildIDs().Num() > 0)
+	{
+		newMOI = span->GetChildObjects()[0];
+	}
 	return newMOI && newMOI->GetOffsetState(worldSpaceDirection, NewMOIStateData);
 }
 

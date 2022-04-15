@@ -20,6 +20,11 @@ bool UEdgeHostedTool::Activate()
 		return false;
 	}
 
+	// Set default settings for NewMOIStateData
+	FMOIEdgeHostedData newPointHostedCustomData;
+	NewMOIStateData.ObjectType = EObjectType::OTEdgeHosted;
+	NewMOIStateData.CustomData.SaveStructData(newPointHostedCustomData);
+
 	Controller->DeselectAll();
 	Controller->EMPlayerState->SetHoveredObject(nullptr);
 	bWasShowingSnapCursor = Controller->EMPlayerState->bShowSnappedCursor;
@@ -161,6 +166,29 @@ bool UEdgeHostedTool::BeginUse()
 	return bSuccess;
 }
 
+bool UEdgeHostedTool::HandleOffset(const FVector2D& ViewSpaceDirection)
+{
+	if (NewObjectIDs.Num() == 0)
+	{
+		return false;
+	}
+
+	FQuat cameraRotation = Controller->PlayerCameraManager->GetCameraRotation().Quaternion();
+	FVector worldSpaceDirection =
+		(ViewSpaceDirection.X * cameraRotation.GetRightVector()) +
+		(ViewSpaceDirection.Y * cameraRotation.GetUpVector());
+
+	// EdgeHostedTool creates single edge span, 
+	// we handle offset by setting its child (EdgeHosted) instance data
+	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	AMOIMetaEdgeSpan* span = Cast<AMOIMetaEdgeSpan>(newMOI);
+	if (span && span->GetChildIDs().Num() > 0)
+	{
+		newMOI = span->GetChildObjects()[0];
+	}
+	return newMOI && newMOI->GetOffsetState(worldSpaceDirection, NewMOIStateData);
+}
+
 void UEdgeHostedTool::CommitSpanEdit()
 {
 	GameState->Document->ClearPreviewDeltas(GetWorld());
@@ -294,12 +322,11 @@ bool UEdgeHostedTool::GetObjectCreationDeltas(const int32 InTargetEdgeID, TArray
 
 	if (bCreateNewEdgeHosted)
 	{
-		FMOIStateData edgeHostedCreateState(nextID++, EObjectType::OTEdgeHosted, spanParentID);
-		edgeHostedCreateState.AssemblyGUID = AssemblyGUID;
-		FMOIEdgeHostedData edgeHostedData;
-		edgeHostedCreateState.CustomData.SaveStructData<FMOIEdgeHostedData>(edgeHostedData);
-		delta->AddCreateDestroyState(edgeHostedCreateState, EMOIDeltaType::Create);
-		NewObjectIDs.Add(edgeHostedCreateState.ID);
+		NewMOIStateData.ID = nextID++;
+		NewMOIStateData.ParentID = spanParentID;
+		NewMOIStateData.AssemblyGUID = AssemblyGUID;
+		delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
+		NewObjectIDs.Add(NewMOIStateData.ID);
 	}
 	else
 	{
@@ -371,11 +398,8 @@ bool UEdgeHostedTool::GetSpanCreationDelta(TArray<FDeltaPtr>& OutDeltaPtrs)
 
 	// Create edge hosted object that will be child of the new preview span
 	NewMOIStateData.ParentID = spanCreateState.ID;
-	NewMOIStateData.ObjectType = EObjectType::OTEdgeHosted;
 	NewMOIStateData.ID = newObjID++;
 	NewMOIStateData.AssemblyGUID = AssemblyGUID;
-	FMOIEdgeHostedData newCustomData;
-	NewMOIStateData.CustomData.SaveStructData<FMOIEdgeHostedData>(newCustomData);
 	deltaPtr->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
 	NewObjectIDs.Add(NewMOIStateData.ID);
 	
