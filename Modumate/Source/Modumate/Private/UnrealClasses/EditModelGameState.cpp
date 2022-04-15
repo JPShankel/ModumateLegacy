@@ -297,6 +297,8 @@ void AEditModelGameState::OnDownloadDocumentSuccess(const FModumateDocumentHeade
 		{
 			controller->OnDownloadedClientDocument(loadedDocHash);
 		}
+
+		Document->DrawingPushDD();
 	}
 	// If we're a multiplayer server and we just downloaded a document that's already dirty,
 	// then we should try to upload it immediately, so that any joining clients have a chance to get the cleaned version.

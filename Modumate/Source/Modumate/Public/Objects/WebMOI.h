@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Objects/ModumateObjectEnums.h"
 #include "WebMOI.generated.h"
 
 UENUM()

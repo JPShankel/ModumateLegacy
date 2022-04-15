@@ -64,7 +64,7 @@ void UDrawingDesignerWebBrowserWidget::ResetDocumentButtonPressed()
 		wrapped.Add(delta);
 
 		doc->ApplyDeltas(wrapped, doc->GetWorld());
-		doc->drawing_request_document();
+		doc->DrawingPushDD();
 	}
 }
 

@@ -21,6 +21,8 @@ struct MODUMATE_API FDrawingDesignerDocument
 	UPROPERTY()
 	TMap<FString, FDrawingDesignerNode> nodes;
 
+	bool bDirty = false;
+
 	int32 GetAndIncrDrawingId() {
 		return nextId++;
 	};

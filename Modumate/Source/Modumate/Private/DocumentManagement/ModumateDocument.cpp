@@ -1247,7 +1247,6 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	if (resendDDViews)
 	{
 		drawing_request_view_list();
-		drawing_request_document();
 		for (auto& at : affectedTypes)
 		{
 			UpdateWebMOIs(at);
@@ -1511,6 +1510,11 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World, bool bCleanObjects, bool 
 	if (bCleanObjects)
 	{
 		CleanObjects(nullptr);
+	}
+
+	if (DrawingDesignerDocument.bDirty)
+	{
+		DrawingPushDD();
 	}
 
 	// Now that objects may have been deleted, validate the player state so that none of them are incorrectly referenced.
@@ -4467,7 +4471,7 @@ void UModumateDocument::set_web_focus(bool bHasFocus)
 	}
 }
 
-void UModumateDocument::drawing_request_document()  // No longer called by web, rename.
+void UModumateDocument::DrawingPushDD()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_request_document"));
 
@@ -4478,6 +4482,7 @@ void UModumateDocument::drawing_request_document()  // No longer called by web, 
 
 		DrawingSendResponse(TEXT("onDocumentChanged"), documentJson);
 	}
+	DrawingDesignerDocument.bDirty = false;
 	// TODO: else send error status
 }
 
@@ -4513,7 +4518,7 @@ void UModumateDocument::drawing_apply_delta(const FString& InDelta)
 		}
 		else
 		{
-			drawing_request_document();
+			DrawingPushDD();
 		}
 	}
 }
@@ -4533,7 +4538,7 @@ void UModumateDocument::trigger_update(const TArray<FString>& ObjectTypes)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::trigger_update"));
 	drawing_request_view_list();
-	drawing_request_document();
+	DrawingPushDD();
 	UpdateWebProjectSettings();
 
 	for (auto& ot : ObjectTypes)

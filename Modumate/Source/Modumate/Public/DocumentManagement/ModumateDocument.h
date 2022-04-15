@@ -393,7 +393,7 @@ public:
 	void DrawingSendResponse(const FString& FunctionName, const FString& Argument) const;
 
 	UFUNCTION()
-	void drawing_request_document();
+	void DrawingPushDD();
 
 	UFUNCTION()
 	void trigger_update(const TArray<FString>& ObjectTypes);

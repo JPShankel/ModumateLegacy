@@ -31,6 +31,7 @@ bool FDrawingDesignerDocumentDelta::ApplyTo(UModumateDocument* Doc, UWorld* Worl
 	if (Doc)
 	{
 		Doc->DrawingDesignerDocument = this->to;
+		Doc->DrawingDesignerDocument.bDirty = true;
 		return true;
 	}
 
