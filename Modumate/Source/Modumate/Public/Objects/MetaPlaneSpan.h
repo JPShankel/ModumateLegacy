@@ -36,7 +36,10 @@ public:
 
 protected:
 
+
 	FGraph3DFace CachedPerimeterFace;
 
-	void UpdateCachedPerimeterFace();
+	bool CheckIsConnected() const;
+
+	bool UpdateCachedPerimeterFace();
 };

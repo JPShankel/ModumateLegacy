@@ -1263,6 +1263,68 @@ void FModumateObjectDeltaStatics::GetDeltasForFaceSpanMerge(const UModumateDocum
 	GetDeltasForSpanMerge<AMOIMetaPlaneSpan>(Doc, SpanIDs, OutDeltas);
 }
 
+template<class T>
+void GetDeltasForSpanSplitT(const UModumateDocument* Doc, const T* SpanOb, int32& NextID, TArray<FDeltaPtr>& OutDeltas)
+{
+	T::FInstanceData originalData = SpanOb->InstanceData;
+	if (originalData.GraphMembers.Num() < 2)
+	{
+		return;
+	}
+
+	TSharedPtr<FMOIDelta> moisDelta = MakeShared<FMOIDelta>();
+
+	for (int32 i = 1; i < originalData.GraphMembers.Num(); ++i)
+	{
+		FMOIStateData stateData = SpanOb->GetStateData();
+		stateData.ID = NextID++;
+
+		T::FInstanceData instanceData;
+		instanceData.GraphMembers.Add(originalData.GraphMembers[i]);
+		stateData.CustomData.SaveStructData(instanceData);
+
+		moisDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+
+		int32 parentID = stateData.ID;
+
+		for (auto& childId : SpanOb->GetChildIDs())
+		{
+			const AModumateObjectInstance* childOb = Doc->GetObjectById(childId);
+			if (childOb != nullptr)
+			{
+				stateData = childOb->GetStateData();
+				stateData.ID = NextID++;
+				stateData.ParentID = parentID;
+				moisDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+			}
+		}
+	}
+
+	originalData.GraphMembers.SetNum(1);
+	FMOIStateData newState = SpanOb->GetStateData();
+	newState.CustomData.SaveStructData(originalData);
+	moisDelta->AddMutationState(SpanOb, SpanOb->GetStateData(), newState);
+
+	OutDeltas.Add(moisDelta);
+}
+
+void FModumateObjectDeltaStatics::GetDeltasForSpanSplit(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas)
+{
+	int32 nextID = Doc->GetNextAvailableID();
+	for (int32 spanID : SpanIDs)
+	{
+		const AModumateObjectInstance* spanOb = Doc->GetObjectById(spanID);
+		if (spanOb->GetObjectType() == EObjectType::OTMetaPlaneSpan)
+		{
+			GetDeltasForSpanSplitT(Doc, Cast<AMOIMetaPlaneSpan>(spanOb), nextID, OutDeltas);
+		}
+		else if (spanOb->GetObjectType() == EObjectType::OTMetaEdgeSpan)
+		{
+			GetDeltasForSpanSplitT(Doc, Cast<AMOIMetaEdgeSpan>(spanOb), nextID, OutDeltas);
+		}
+	}
+}
+
 void FModumateObjectDeltaStatics::GetDeltaForSpanMapping(const AModumateObjectInstance* Moi, const TMap<int32, TArray<int32>>& CopiedToPastedObjIDs, TArray<FDeltaPtr>& OutDeltas)
 {
 	if (Moi == nullptr)

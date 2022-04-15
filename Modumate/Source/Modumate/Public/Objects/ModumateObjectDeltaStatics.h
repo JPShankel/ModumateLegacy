@@ -50,7 +50,8 @@ public:
 
 	static void GetDeltasForFaceSpanMerge(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas);
 	static void GetDeltasForEdgeSpanMerge(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas);
-		// Create delta to map the graph IDs for span Moi according to CopiedToPastedObjIDs.
+	static void GetDeltasForSpanSplit(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas);
+	// Create delta to map the graph IDs for span Moi according to CopiedToPastedObjIDs.
 	static void GetDeltaForSpanMapping(const AModumateObjectInstance* Moi, const TMap<int32, TArray<int32>>& CopiedToPastedObjIDs, TArray<FDeltaPtr>& OutDeltas);
 	
 };

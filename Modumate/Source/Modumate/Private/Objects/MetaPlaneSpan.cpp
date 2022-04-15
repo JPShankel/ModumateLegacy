@@ -1,6 +1,7 @@
 // Copyright 2022 Modumate, Inc. All Rights Reserved.
 
 #include "Objects/MetaPlaneSpan.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 #include "DocumentManagement/ModumateDocument.h"
 
 AMOIMetaPlaneSpan::AMOIMetaPlaneSpan()
@@ -17,16 +18,20 @@ bool AMOIMetaPlaneSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 {
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
 	{
-		// When a span loses its all its hosted objects, delete it
-		if (OutSideEffectDeltas && (GetChildIDs().Num() == 0 || InstanceData.GraphMembers.Num() == 0))
+		if (OutSideEffectDeltas)
 		{
-			TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
-			delta->AddCreateDestroyState(StateData, EMOIDeltaType::Destroy);
-			OutSideEffectDeltas->Add(delta);
-		}
-		else
-		{
-			UpdateCachedPerimeterFace();
+			if (GetChildIDs().Num() == 0 || InstanceData.GraphMembers.Num() == 0)
+			{
+				TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
+				delta->AddCreateDestroyState(StateData, EMOIDeltaType::Destroy);
+				OutSideEffectDeltas->Add(delta);
+				return true;
+			}
+			else if (!UpdateCachedPerimeterFace())
+			{
+				FModumateObjectDeltaStatics::GetDeltasForSpanSplit(Document, { ID }, *OutSideEffectDeltas);
+				return true;
+			}
 		}
 	}
 	return AMOIPlaneBase::CleanObject(DirtyFlag, OutSideEffectDeltas);
@@ -34,30 +39,41 @@ bool AMOIMetaPlaneSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 
 void AMOIMetaPlaneSpan::SetupDynamicGeometry()
 {
-	UpdateCachedPerimeterFace();
+	if (!UpdateCachedPerimeterFace())
+	{
+		MarkDirty(EObjectDirtyFlags::Structure);
+	}
 	Super::SetupDynamicGeometry();
 }
 
-void AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
+bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 {
 	// The perimeter face is declared by value and not a member of the graph itself
 	CachedPerimeterFace = FGraph3DFace();
+	bool bLegal = true;
 
 	if (InstanceData.GraphMembers.Num() == 0)
 	{
-		return;
+		return false;
 	}
 
 	FGraph3D* graph = GetDocument()->FindVolumeGraph(InstanceData.GraphMembers[0]);
 
 	if (!graph)
 	{
-		return;
+		return false;
 	}
 
 	TArray<const FGraph3DFace* > memberFaces;
 	Algo::Transform(InstanceData.GraphMembers, memberFaces,
 		[graph](int32 FaceID) {return graph->FindFace(FaceID); });
+
+	if (memberFaces.Num() == 0)
+	{
+		return false;
+	}
+
+	FPlane basePlane = memberFaces[0]->CachedPlane;
 
 	auto numFacesForEdge = [this, &memberFaces](int32 EdgeID)
 	{
@@ -88,6 +104,11 @@ void AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 		}
 		CachedPerimeterFace.CachedHoles.Append(face->CachedHoles);
 		CachedPerimeterFace.Cached2DHoles.Append(face->Cached2DHoles);
+
+		if (!UModumateGeometryStatics::ArePlanesCoplanar(basePlane, face->CachedPlane))
+		{
+			bLegal = false;
+		}
 	}
 
 	auto findConnectingEdge = [this,graph,&perimeterEdges](int32 EdgeID)
@@ -151,4 +172,74 @@ void AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 	CachedOrigin = CachedPerimeterFace.CachedPositions.Num() > 0 ? CachedPerimeterFace.CachedPositions[0] : FVector::ZeroVector;
 	CachedCenter = CachedPerimeterFace.CachedCenter;
 	CachedHoles = CachedPerimeterFace.CachedHoles;
+
+	return bLegal && CheckIsConnected();
 }
+
+bool AMOIMetaPlaneSpan::CheckIsConnected() const
+{
+	// Empty graphs are not connected, single element graphs are
+	switch (InstanceData.GraphMembers.Num())
+	{
+		case 0: return false;
+		case 1: return true;
+	}
+
+	// Grab the first face, add its edges to the set of all found edges, then find every other face and add their edges
+	// If you run out of faces, the graph is connected...if any faces are orphaned, you don't
+	TArray<int32> allFaces = InstanceData.GraphMembers;
+	TSet<int32> foundEdges;
+
+	const FGraph3D* graph = GetDocument()->FindVolumeGraph(InstanceData.GraphMembers[0]);
+
+	auto addEdges = [&foundEdges, this, graph](int32 FaceID)
+	{
+		const FGraph3DFace* faceOb = graph->FindFace(FaceID);
+		if (faceOb)
+		{
+			foundEdges.Append(faceOb->EdgeIDs);
+		}
+	};
+
+	auto faceConnected = [&foundEdges, this, graph](int32 FaceID)
+	{
+		const FGraph3DFace* faceOb = graph->FindFace(FaceID);
+		if (faceOb)
+		{
+			for (int32 edgeID : faceOb->EdgeIDs)
+			{
+				if (foundEdges.Contains(edgeID) || foundEdges.Contains(-edgeID))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	};
+
+	addEdges(allFaces.Pop());
+	bool bContinue = true;
+	do 
+	{
+		int32 idx = 0;
+		int32 startingCount = allFaces.Num();
+		bContinue = false;
+		while (idx < allFaces.Num())
+		{
+			if (faceConnected(allFaces[idx]))
+			{
+				addEdges(allFaces[idx]);
+				allFaces.RemoveAt(idx);
+				bContinue = true;
+			}
+			else 
+			{
+				++idx;
+			}
+		}
+
+	} while (bContinue);
+
+	return allFaces.Num() == 0;
+}
+

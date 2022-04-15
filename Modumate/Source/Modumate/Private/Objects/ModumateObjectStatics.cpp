@@ -1504,56 +1504,25 @@ void UModumateObjectStatics::SeparateSelectedMetaSpan(UWorld* World)
 		return;
 	}
 
-	TArray<AMOIMetaPlaneSpan*> allSelectedSpans;
+	TArray<int32> allSelectedSpans;
 	int32 newObjID = controller->GetDocument()->GetNextAvailableID();
-	auto deltaPtr = MakeShared<FMOIDelta>();
 
 	AMOIMetaPlaneSpan* targetSpan = nullptr;
 	for (auto curObj : playerState->SelectedObjects)
 	{
 		if (curObj->GetParentObject())
 		{
-			AMOIMetaPlaneSpan* curSpan = Cast<AMOIMetaPlaneSpan>(curObj->GetParentObject());
-			if (curSpan)
+			if (curObj->GetParentObject()->GetObjectType() == EObjectType::OTMetaEdgeSpan ||
+				curObj->GetParentObject()->GetObjectType() == EObjectType::OTMetaPlaneSpan)
 			{
-				allSelectedSpans.Add(curSpan);
-
-				// Create new span that contains each graph member
-				for (auto curMember : curSpan->InstanceData.GraphMembers)
-				{
-					FMOIStateData spanCreateState(newObjID++, EObjectType::OTMetaPlaneSpan);
-					FMOIMetaPlaneSpanData spanData = curSpan->InstanceData;
-					spanData.GraphMembers = {curMember};
-					spanCreateState.CustomData.SaveStructData(spanData);
-					deltaPtr->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
-
-					// Create hosted object that will be child of this span
-					FMOIStateData childCreateState(newObjID++, curObj->GetObjectType(), spanCreateState.ID);
-					childCreateState.AssemblyGUID = curObj->GetAssembly().PresetGUID;
-					// Get plane hosted obj instance data to the new hosted object
-					AMOIPlaneHostedObj* planeMOI = Cast<AMOIPlaneHostedObj>(curObj);
-					if (planeMOI)
-					{
-						childCreateState.CustomData.SaveStructData(planeMOI->InstanceData);
-					}
-
-					deltaPtr->AddCreateDestroyState(childCreateState, EMOIDeltaType::Create);
-				}
+				allSelectedSpans.Add(curObj->GetParentObject()->ID);
 			}
 		}
 	}
 
-	// Destroy selected spans
-	for (auto curSpan : allSelectedSpans)
-	{
-		deltaPtr->AddCreateDestroyState(curSpan->GetStateData(), EMOIDeltaType::Destroy);
-		for (auto curSpanChild : curSpan->GetChildObjects())
-		{
-			deltaPtr->AddCreateDestroyState(curSpanChild->GetStateData(), EMOIDeltaType::Destroy);
-		}
-	}
-
-	controller->GetDocument()->ApplyDeltas({ deltaPtr }, World);
+	TArray<FDeltaPtr> deltas;
+	FModumateObjectDeltaStatics::GetDeltasForSpanSplit(controller->GetDocument(), allSelectedSpans, deltas);
+	controller->GetDocument()->ApplyDeltas(deltas , World);
 }
 
 bool UModumateObjectStatics::GetHostingMOIsForMOI(UModumateDocument* Doc, AModumateObjectInstance* Moi, TArray<AModumateObjectInstance*>& OutMOIs)
