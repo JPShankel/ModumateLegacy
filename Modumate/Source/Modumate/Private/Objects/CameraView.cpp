@@ -1,6 +1,8 @@
 // Copyright 2021 Modumate, Inc. All Rights Reserved.
 
 #include "Objects/CameraView.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "ModumateCore/ModumateBrowserStatics.h"
 #include "UnrealClasses/SkyActor.h"
 #include "UnrealClasses/AxesActor.h"
 #include "UnrealClasses/EditModelPlayerPawn.h"
@@ -69,6 +71,13 @@ AMOICameraView::AMOICameraView()
 	prop.isEditable = true;
 	prop.isVisible = true;
 	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("UpdateCameraPosition");
+	prop.Type = EWebMOIPropertyType::cameraPositionUpdate;
+	prop.DisplayName = TEXT("Camera Position");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
 }
 
 AActor* AMOICameraView::CreateActor(const FVector& loc, const FQuat& rot)
@@ -114,8 +123,9 @@ void AMOICameraView::UpdateCamera()
 	if (GetInstanceDataStruct(StructDef, StructPtr))
 	{
 		const UWorld* World = GetWorld();
-		const auto Controller = World->GetFirstPlayerController<AEditModelPlayerController>();
-
+		auto* Controller = World->GetFirstPlayerController<AEditModelPlayerController>();
+		auto* CameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
+		
 		const FDateTime NewDateTime = FDateTime(
 			InstanceData.Date.GetYear(), 
 			InstanceData.Date.GetMonth(), 
@@ -124,6 +134,7 @@ void AMOICameraView::UpdateCamera()
 			InstanceData.Time.GetMinute()
 		);
 
+		CameraComp->SetOrthoWidth(InstanceData.OrthoWidth);
 		Controller->SetFieldOfViewCommand(InstanceData.FOV);
 		Controller->ToggleAllCutPlanesColor(InstanceData.bCutPlanesColorVisibility);
 		Controller->EMPlayerPawn->SetCameraOrtho(InstanceData.bOrthoView);
@@ -131,6 +142,8 @@ void AMOICameraView::UpdateCamera()
 		Controller->SkyActor->SetCurrentDateTime(NewDateTime);
 		Controller->AxesActor->SetActorHiddenInGame(!InstanceData.bAxesActorVisibility);
 		Controller->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InstanceData.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+		Controller->EMPlayerPawn->SetActorLocationAndRotation(InstanceData.Position, InstanceData.Rotation);
+		Controller->GetDocument()->OnCameraViewSelected(ID);
 	}
 }
 
@@ -138,7 +151,31 @@ bool AMOICameraView::FromWebMOI(const FString& InJson)
 {
 	if (AModumateObjectInstance::FromWebMOI(InJson))
 	{
-		UpdateCamera();
+		FWebMOI WebMOI;
+		if (!ReadJsonGeneric<FWebMOI>(InJson, &WebMOI))
+		{
+			return false;
+		}
+
+		const FWebMOIProperty* FormPropUpdatePosition = WebMOI.Properties.Find(TEXT("UpdateCameraPosition"));
+		const bool bUpdatePosition = FormPropUpdatePosition->ValueArray[0] == TEXT("true");
+
+		if (bUpdatePosition)
+		{
+			const auto Controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+			auto* CameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
+
+			if (CameraComp)
+			{
+				const FDateTime DateTime = Controller->SkyActor->GetCurrentDateTime();
+				UModumateBrowserStatics::UpdateCameraViewAsMoi(this, CameraComp, ID, DateTime);
+			}
+		}
+		else
+		{
+			UpdateCamera();
+		}
+		
 		return true;
 	}
 	return false;
@@ -148,17 +185,12 @@ bool AMOICameraView::ToWebMOI(FWebMOI& OutMOI) const
 {
 	if (AModumateObjectInstance::ToWebMOI(OutMOI))
 	{
-		UWorld* world = GetWorld();
-		auto controller = world->GetFirstPlayerController<AEditModelPlayerController>();
-
-		FString currentDateTime = controller->SkyActor->GetCurrentDateTime().ToIso8601();
-		FWebMOIProperty* moiProp = OutMOI.Properties.Find(TEXT("Date"));
-		moiProp->ValueArray.Empty();
-		moiProp->ValueArray.Add(currentDateTime);
-
-		moiProp = OutMOI.Properties.Find(TEXT("Time"));
-		moiProp->ValueArray.Empty();
-		moiProp->ValueArray.Add(currentDateTime);
+		const FWebMOIProperty* formPropUpdatePosition = WebProperties.Find(TEXT("UpdateCameraPosition"));
+		FWebMOIProperty webPropUpdatePosition = *formPropUpdatePosition;
+		webPropUpdatePosition.ValueArray.Empty();
+		webPropUpdatePosition.ValueArray.Add(TEXT("false"));
+		OutMOI.Properties.Add(TEXT("UpdateCameraPosition"), webPropUpdatePosition);
+		
 		return true;
 	}
 	return false;

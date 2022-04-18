@@ -1845,8 +1845,7 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 		AMOICameraView* cameraView = Cast<AMOICameraView>(doc->GetObjectById(InState.selectedObjects[0].ID));
 		cameraView->UpdateCamera();
 	}
-
-	if (EMPlayerController)
+	else if (EMPlayerController)
 	{
 		const FDateTime NewDateTime = FDateTime(
 			InState.camera.Date.GetYear(), 
