@@ -37,6 +37,7 @@
 #include "Objects/MetaPlaneSpan.h"
 #include "Objects/PlaneHostedObj.h"
 #include "Objects/EdgeHosted.h"
+#include "Objects/CutPlane.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonReader.h"
@@ -4958,6 +4959,30 @@ void UModumateDocument::export_estimates()
 	if (controller)
 	{
 		controller->OnCreateQuantitiesCsv();
+	}
+}
+
+void UModumateDocument::export_dwgs(TArray<int32> InCutPlaneIDs)
+{
+	if (InCutPlaneIDs.Num() == 0)
+	{
+		return;
+	}
+	// Find all cutplanes, toggle its export state by whether is included from input array
+	TArray<AModumateObjectInstance*> mois = GetObjectsOfType(EObjectType::OTCutPlane);
+	for (auto& curMOI : mois)
+	{
+		AMOICutPlane* curCutPlane = Cast<AMOICutPlane>(curMOI);
+		if (curCutPlane)
+		{
+			curCutPlane->InstanceData.bIsExported = InCutPlaneIDs.Contains(curCutPlane->ID);
+		}
+	}
+
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (controller)
+	{
+		controller->OnCreateDwg();
 	}
 }
 

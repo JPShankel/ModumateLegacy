@@ -458,6 +458,9 @@ public:
 
 	UFUNCTION()
 	void export_estimates();
+
+	UFUNCTION()
+	void export_dwgs(TArray<int32> InCutPlaneIDs);
 	
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
 	void UpdateWebPresets();
