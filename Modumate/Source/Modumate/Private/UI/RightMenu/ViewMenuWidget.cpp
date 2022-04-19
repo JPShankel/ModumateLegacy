@@ -118,7 +118,7 @@ void UViewMenuWidget::HoverCaptureTick()
 			
 			// Set lighting param to match with saved camera view
 			FDateTime newDateTime;
-			if (FDateTime::Parse(CurrentHoverViewItem->CameraView.SavedTime, newDateTime))
+			if (FDateTime::ParseIso8601(*CurrentHoverViewItem->CameraView.SavedTime, newDateTime))
 			{
 				Controller->SkyActor->UpdateComponentsWithDateTime(newDateTime);
 			}

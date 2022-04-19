@@ -146,7 +146,7 @@ bool UModumateBrowserStatics::UpdateCameraViewData(UObject* WorldContextObject, 
 	CameraViewData.AspectRatio = CameraComp->AspectRatio;
 	CameraViewData.bOrthoView = CameraComp->ProjectionMode == ECameraProjectionMode::Orthographic;
 	CameraViewData.OrthoWidth = CameraComp->OrthoWidth;
-	CameraViewData.SavedTime = TimeOfDay.ToString();
+	CameraViewData.SavedTime = TimeOfDay.ToIso8601();
 	CameraViewData.bAxesActorVisibility = bNewAxisVisibility;
 	CameraViewData.bViewCubeVisibility = bNewViewCubeVisibility;
 

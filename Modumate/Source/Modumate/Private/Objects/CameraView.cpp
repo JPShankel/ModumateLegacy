@@ -23,16 +23,9 @@ AMOICameraView::AMOICameraView()
 	prop.isVisible = true;
 	WebProperties.Add(prop.Name, prop);
 
-	prop.Name = TEXT("Date");
-	prop.Type = EWebMOIPropertyType::cameraDate;
-	prop.DisplayName = TEXT("Date");
-	prop.isEditable = true;
-	prop.isVisible = true;
-	WebProperties.Add(prop.Name, prop);
-
-	prop.Name = TEXT("Time");
+	prop.Name = TEXT("SavedTime");
 	prop.Type = EWebMOIPropertyType::cameraTime;
-	prop.DisplayName = TEXT("Time");
+	prop.DisplayName = TEXT("Date");
 	prop.isEditable = true;
 	prop.isVisible = true;
 	WebProperties.Add(prop.Name, prop);
@@ -122,28 +115,19 @@ void AMOICameraView::UpdateCamera()
 	void* StructPtr=nullptr;
 	if (GetInstanceDataStruct(StructDef, StructPtr))
 	{
-		const UWorld* World = GetWorld();
-		auto* Controller = World->GetFirstPlayerController<AEditModelPlayerController>();
-		auto* CameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
-		
-		const FDateTime NewDateTime = FDateTime(
-			InstanceData.Date.GetYear(), 
-			InstanceData.Date.GetMonth(), 
-			InstanceData.Date.GetDay(), 
-			InstanceData.Time.GetHour(), 
-			InstanceData.Time.GetMinute()
-		);
+		FDateTime dateTime;
+		FDateTime::ParseIso8601(*InstanceData.SavedTime, dateTime);
 
-		CameraComp->SetOrthoWidth(InstanceData.OrthoWidth);
-		Controller->SetFieldOfViewCommand(InstanceData.FOV);
-		Controller->ToggleAllCutPlanesColor(InstanceData.bCutPlanesColorVisibility);
-		Controller->EMPlayerPawn->SetCameraOrtho(InstanceData.bOrthoView);
-		Controller->SetAlwaysShowGraphDirection(InstanceData.bGraphDirectionVisibility);
-		Controller->SkyActor->SetCurrentDateTime(NewDateTime);
-		Controller->AxesActor->SetActorHiddenInGame(!InstanceData.bAxesActorVisibility);
-		Controller->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InstanceData.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
-		Controller->EMPlayerPawn->SetActorLocationAndRotation(InstanceData.Position, InstanceData.Rotation);
-		Controller->GetDocument()->OnCameraViewSelected(ID);
+		auto* controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+		controller->SetFieldOfViewCommand(InstanceData.FOV);
+		controller->ToggleAllCutPlanesColor(InstanceData.bCutPlanesColorVisibility);
+		controller->EMPlayerPawn->SetCameraOrtho(InstanceData.bOrthoView);
+		controller->SetAlwaysShowGraphDirection(InstanceData.bGraphDirectionVisibility);
+		controller->SkyActor->SetCurrentDateTime(dateTime);
+		controller->AxesActor->SetActorHiddenInGame(!InstanceData.bAxesActorVisibility);
+		controller->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InstanceData.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+		controller->EMPlayerPawn->SetActorLocationAndRotation(InstanceData.Position, InstanceData.Rotation);
+		controller->GetDocument()->OnCameraViewSelected(ID);
 	}
 }
 
@@ -162,13 +146,12 @@ bool AMOICameraView::FromWebMOI(const FString& InJson)
 
 		if (bUpdatePosition)
 		{
-			const auto Controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
-			auto* CameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
-
-			if (CameraComp)
+			const auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+			auto* cameraComp = controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
+			if (cameraComp)
 			{
-				const FDateTime DateTime = Controller->SkyActor->GetCurrentDateTime();
-				UModumateBrowserStatics::UpdateCameraViewAsMoi(this, CameraComp, ID, DateTime);
+				const FDateTime dateTime = controller->SkyActor->GetCurrentDateTime();
+				UModumateBrowserStatics::UpdateCameraViewAsMoi(this, cameraComp, ID, dateTime);
 			}
 		}
 		else

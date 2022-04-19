@@ -122,7 +122,7 @@ void UComponentSavedViewListItem::ActivateCameraView()
 
 		// Time
 		FDateTime newDateTime;
-		if (FDateTime::Parse(CameraView.SavedTime, newDateTime))
+		if (FDateTime::ParseIso8601(*CameraView.SavedTime, newDateTime))
 		{
 			Controller->SkyActor->SetCurrentDateTime(newDateTime);
 		}

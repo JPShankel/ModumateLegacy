@@ -1847,19 +1847,14 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 	}
 	else if (EMPlayerController)
 	{
-		const FDateTime NewDateTime = FDateTime(
-			InState.camera.Date.GetYear(), 
-			InState.camera.Date.GetMonth(), 
-			InState.camera.Date.GetDay(), 
-			InState.camera.Time.GetHour(), 
-			InState.camera.Time.GetMinute()
-		);
+		FDateTime dateTime;
+		FDateTime::ParseIso8601(*InState.camera.SavedTime, dateTime);
 		
 		EMPlayerController->SetFieldOfViewCommand(InState.camera.FOV);
 		EMPlayerController->ToggleAllCutPlanesColor(InState.camera.bCutPlanesColorVisibility);
 		EMPlayerController->EMPlayerPawn->SetCameraOrtho(InState.camera.bOrthoView);
 		EMPlayerController->SetAlwaysShowGraphDirection(InState.camera.bGraphDirectionVisibility);
-		EMPlayerController->SkyActor->SetCurrentDateTime(NewDateTime);
+		EMPlayerController->SkyActor->SetCurrentDateTime(dateTime);
 		EMPlayerController->AxesActor->SetActorHiddenInGame(!InState.camera.bAxesActorVisibility);
 		EMPlayerController->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InState.camera.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 	}

@@ -51,12 +51,6 @@ struct MODUMATE_API FMOICameraViewData
 	FString SavedTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
-	FDateTime Date = FDateTime::Now();
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
-	FDateTime Time = FDateTime::Now();
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
 	bool bAxesActorVisibility = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraView")
