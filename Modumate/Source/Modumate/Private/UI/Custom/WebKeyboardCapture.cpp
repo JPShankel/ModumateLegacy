@@ -68,7 +68,7 @@ void UWebKeyboardCapture::OnWidgetRebuilt()
 
 bool UWebKeyboardCapture::NativeSupportsKeyboardFocus() const
 {
-	return true;;
+	return true;
 }
 
 TSharedPtr<FWebBrowserViewport> UWebKeyboardCapture::WebBrowser() const

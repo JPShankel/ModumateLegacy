@@ -92,6 +92,7 @@
 #include "ToolsAndAdjustments/Tools/EditModelEdgeHostedTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelFaceHostedTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelPattern2DTool.h"
+#include "UI/Custom/WebKeyboardCapture.h"
 
 const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetry"));
 
@@ -471,13 +472,21 @@ void AEditModelPlayerController::BeginPlay()
 	EditModelUserWidget = CreateWidget<UEditModelUserWidget>(this, EditModelUserWidgetClass);
 	if (ensureAlways(EditModelUserWidget))
 	{
-		EditModelUserWidget->AddToViewport();
+		EditModelUserWidget->AddToViewport(1);
 
 		if (EditModelUserWidget->ProjectSystemMenu)
 		{
 			EditModelUserWidget->ProjectSystemMenu->OnVisibilityChanged.AddDynamic(this, &AEditModelPlayerController::OnToggledProjectSystemMenu);
 		}
 	}
+	UWebKeyboardCapture* keyboardCaptureWidget = CreateWidget<UWebKeyboardCapture>(this, UWebKeyboardCapture::StaticClass());
+	if(ensureAlways(keyboardCaptureWidget))
+	{
+		keyboardCaptureWidget->SetVisibility(ESlateVisibility::Visible);
+		keyboardCaptureWidget->bIsFocusable = true;
+		keyboardCaptureWidget->AddToViewport(-1);
+	}
+
 #endif
 
 	// Set the loading status if we're starting to load as a multiplayer client

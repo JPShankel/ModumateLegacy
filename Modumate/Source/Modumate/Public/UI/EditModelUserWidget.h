@@ -107,10 +107,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UUsersListVerticalWidget* UsersListVertical;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
-	class UWebKeyboardCapture* WebKeyboardCapture;
-
+	
 	UPROPERTY()
 	TMap<EToolMode, class UModumateButtonUserWidget*> ToolToButtonMap;
 
