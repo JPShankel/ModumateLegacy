@@ -4450,9 +4450,10 @@ void UModumateDocument::RecordSavedProject(UWorld* World, const FString& FilePat
 
 void UModumateDocument::set_web_focus(bool bHasFocus)
 {
+
+
 	const auto player = GetWorld()->GetFirstLocalPlayerFromController();
 	const auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
-
 	if(controller)
 	{
 		if(bHasFocus)
@@ -4464,9 +4465,18 @@ void UModumateDocument::set_web_focus(bool bHasFocus)
 			//KLUDGE: Hack for 3.0.0 release. The asynchronus nature of the Javascript communication makes this
 			// necessary so we do not remove focus and evaluate the input in the same frame. For example, closing a menu
 			// with escape, but having that escape ALSO get passed to the input handler component. -JN
-			GetWorld()->GetTimerManager().SetTimerForNextTick([=]()
+
+			//We use GameInstance because it is valid throughout the lifetime of the application, vs 'this' or 'world'
+			auto gameInstance = GetWorld()->GetGameInstance();
+			GetWorld()->GetTimerManager().SetTimerForNextTick([gameInstance]()
 			{
-				controller->InputHandlerComponent->RequestInputDisabled(UModumateWebBrowser::MODUMATE_WEB_TAG, false);
+				const auto player = gameInstance->GetWorld()->GetFirstLocalPlayerFromController();
+				const auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(gameInstance->GetWorld())) : nullptr;
+				
+				if(controller)
+				{
+						controller->InputHandlerComponent->RequestInputDisabled(UModumateWebBrowser::MODUMATE_WEB_TAG, false);
+				}
 			});
 		}
 	}
