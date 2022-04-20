@@ -253,6 +253,21 @@ void AMOIPlaneHostedObj::SetupAdjustmentHandles(AEditModelPlayerController *cont
 	}
 }
 
+void AMOIPlaneHostedObj::ShowAdjustmentHandles(AEditModelPlayerController* Controller, bool bShow)
+{
+	// Check if adjustment handles are up to date with current number of corners, if not, clear existing handles to make new ones.
+	// Mismatch can happen when geometry changes during span operation.
+	if (bShow && AdjustmentHandles.Num() > 0)
+	{
+		AModumateObjectInstance* parent = GetParentObject();
+		if (parent && parent->GetNumCorners() != AdjustmentHandles.Num())
+		{
+			ClearAdjustmentHandles();
+		}
+	}
+	Super::ShowAdjustmentHandles(Controller, bShow);
+}
+
 bool AMOIPlaneHostedObj::OnSelected(bool bIsSelected)
 {
 	if (!AModumateObjectInstance::OnSelected(bIsSelected))

@@ -90,6 +90,26 @@ bool AAdjustPolyEdgeHandle::BeginUse()
 		PolyPlane = FPlane(OriginalPolyPoints[0], surfaceObj->GetNormal());
 	}
 
+	// If this is a span, find which graph member and vertices this handle is influencing
+	if (TargetMOI->GetObjectType() == EObjectType::OTMetaPlaneSpan)
+	{
+		AMOIMetaPlaneSpan* targetSpan = Cast<AMOIMetaPlaneSpan>(TargetMOI);
+		if (targetSpan)
+		{
+			const FGraph3DFace* face = UModumateObjectStatics::GetFaceFromSpanObject(GameState->Document, TargetMOI->ID);
+			SpanStartVertexID = face->VertexIDs[TargetIndex];
+			SpanEndVertexID = face->VertexIDs[(TargetIndex + 1) % OriginalPolyPoints.Num()];
+			for (auto curMemberID : targetSpan->InstanceData.GraphMembers)
+			{
+				const auto* memberFace = Controller->GetDocument()->GetVolumeGraph()->FindFace(curMemberID);
+				if (memberFace && memberFace->VertexIDs.Contains(SpanStartVertexID) && memberFace->VertexIDs.Contains(SpanEndVertexID))
+				{
+					SpanGraphMemberID = curMemberID;
+				}
+			}
+		}
+	}
+
 	// not able to find a plane of movement for the tool
 	if (FVector(PolyPlane).IsZero())
 	{
@@ -320,18 +340,18 @@ bool AAdjustPolyEdgeHandle::GetTransforms(const FVector Offset, TMap<int32, FTra
 	}
 	else if(TargetMOI->GetObjectType() == EObjectType::OTMetaPlaneSpan)
 	{
-		const FGraph3DFace* face = UModumateObjectStatics::GetFaceFromSpanObject(GameState->Document, TargetMOI->ID);
+		const auto& graph = *Controller->GetDocument()->GetVolumeGraph();
+		const auto* face = graph.FindFace(SpanGraphMemberID);
 		if (face != nullptr)
 		{
-			int32 numPolyPoints = OriginalPolyPoints.Num();
-			int32 edgeStartIdx = TargetIndex;
-			int32 edgeEndIdx = (TargetIndex + 1) % numPolyPoints;
+			TArray<FVector> polyPoints = face->CachedPositions;
+			int32 edgeStartIdx = face->VertexIDs.Find(SpanStartVertexID);
 
 			FVector edgeStartPoint, edgeEndPoint;
-			if (UModumateGeometryStatics::TranslatePolygonEdge(OriginalPolyPoints, FVector(PolyPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
+			if (UModumateGeometryStatics::TranslatePolygonEdge(polyPoints, FVector(face->CachedPlane), edgeStartIdx, translation, edgeStartPoint, edgeEndPoint))
 			{
-				OutTransforms.Add(face->VertexIDs[edgeStartIdx], FTransform(edgeStartPoint));
-				OutTransforms.Add(face->VertexIDs[edgeEndIdx], FTransform(edgeEndPoint));
+				OutTransforms.Add(SpanStartVertexID, FTransform(edgeStartPoint));
+				OutTransforms.Add(SpanEndVertexID, FTransform(edgeEndPoint));
 			}
 		}
 	}

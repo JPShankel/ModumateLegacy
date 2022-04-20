@@ -57,6 +57,7 @@ public:
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping = false, bool bForSelection = false) const override;
 	virtual void ToggleAndUpdateCapGeometry(bool bEnableCap) override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
+	virtual void ShowAdjustmentHandles(AEditModelPlayerController* Controller, bool bShow) override;
 	virtual bool OnSelected(bool bIsSelected) override;
 
 	virtual const ILayeredObject* GetLayeredInterface() const override { return this; }

@@ -28,5 +28,8 @@ protected:
 	FVector CurrentDirection;
 	TArray<FVector> OriginalPolyPoints;
 	TArray<FVector> LastValidPolyPoints;
+	int32 SpanGraphMemberID;
+	int32 SpanStartVertexID;
+	int32 SpanEndVertexID;
 };
 
