@@ -1760,6 +1760,7 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 		OutState.toolMode = GetEnumValueString<EToolCreateObjectMode>(EMPlayerController->CurrentTool->GetCreateObjectMode());
 		OutState.viewMode = GetEnumValueString<EEditViewModes>(EMPlayerController->EMPlayerState->SelectedViewMode);
 		OutState.culledCutplane = EMPlayerController->CurrentCullingCutPlaneID;
+		OutState.camera.SavedTime = EMPlayerController->SkyActor->GetCurrentDateTime().ToIso8601();
 	}
 
 	OutState.projectId = CurProjectID;
