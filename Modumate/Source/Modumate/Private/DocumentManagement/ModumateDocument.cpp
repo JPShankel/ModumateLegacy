@@ -1481,7 +1481,6 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 
 		}
 	}
-
 }
 
 bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas, int32 GraphID /*= MOD_ID_NONE*/)
@@ -2336,7 +2335,26 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 	for (auto &kvp : Delta.FaceDeletions)
 	{
 		deletedObjIDs.Add(kvp.Key);
+
+		TArray<int32> spans;
+		UModumateObjectStatics::GetSpansForFaceObject(this, GetObjectById(kvp.Key), spans);
+		for (int32 span : spans)
+		{
+			const AMOIMetaPlaneSpan* planeSpan = Cast<AMOIMetaPlaneSpan>(GetObjectById(span));
+			if (planeSpan != nullptr)
+			{
+				auto deltaPtr = MakeShared<FMOIDelta>();
+				FMOIMetaPlaneSpanData newData = planeSpan->InstanceData;
+				newData.GraphMembers.Remove(kvp.Key);
+
+				FMOIStateData newState = planeSpan->GetStateData();
+				newState.CustomData.SaveStructData(newData);
+				deltaPtr->AddMutationState(planeSpan, planeSpan->GetStateData(), newState);
+				OutSideEffectDeltas.Add(deltaPtr);
+			}
+		}
 	}
+
 	for (auto &kvp : Delta.EdgeDeletions)
 	{
 		deletedObjIDs.Add(kvp.Key);

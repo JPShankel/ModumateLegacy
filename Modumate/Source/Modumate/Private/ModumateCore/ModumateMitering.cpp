@@ -101,6 +101,7 @@ bool FMiterHelpers::UpdateMiteredLayerGeoms(const AModumateObjectInstance *Plane
 		FGraphSignedID edgeID = PlaneFace->EdgeIDs[edgeIdx];
 		const AModumateObjectInstance* edgeObj = doc->GetObjectById(FMath::Abs(edgeID));
 		const IMiterNode* miterNode = edgeObj ? edgeObj->GetMiterInterface() : nullptr;
+
 		if (!ensure(miterNode))
 		{
 			return false;

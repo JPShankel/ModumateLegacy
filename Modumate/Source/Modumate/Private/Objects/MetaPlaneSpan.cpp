@@ -24,6 +24,11 @@ bool AMOIMetaPlaneSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 			{
 				TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
 				delta->AddCreateDestroyState(StateData, EMOIDeltaType::Destroy);
+				for (auto id : GetChildIDs())
+				{
+					const AModumateObjectInstance* ob = Document->GetObjectById(id);
+					delta->AddCreateDestroyState(ob->GetStateData(), EMOIDeltaType::Destroy);
+				}
 				OutSideEffectDeltas->Add(delta);
 				return true;
 			}
