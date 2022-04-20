@@ -330,12 +330,12 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<FDraftingComposite> &
 	OutPerimeters.Reset();
 
 	ModumateUnitParams::FThickness innerThickness = ModumateUnitParams::FThickness::Points(0.375f);
-	ModumateUnitParams::FThickness structureThickness = ModumateUnitParams::FThickness::Points(1.125f);
 	ModumateUnitParams::FThickness outerThickness = ModumateUnitParams::FThickness::Points(0.75f);
 
 	FMColor innerColor = FMColor::Gray64;
 	FMColor outerColor = FMColor::Gray32;
 	FMColor structureColor = FMColor::Black;
+	bool bUseMiterPriority = false;
 
 	bool bGetFarLines = ParentPage->lineClipping.IsValid();
 	if (!bGetFarLines)
@@ -365,10 +365,18 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<FDraftingComposite> &
 			layerTypeOuterSurface = FModumateLayerType::kSeparatorCutOuterSurface;
 			layerTypeMinorSurface = FModumateLayerType::kSeparatorCutMinorLayer;
 			layerTypeEndCaps = FModumateLayerType::kSeparatorCutEndCaps;
+			bUseMiterPriority = true;
 			break;
 		}
 
-		float currentThickness = 0.0f;
+		auto isStructuralLayer = [this](int32 LayerIdx)
+		{
+			return 
+				LayerIdx < CachedAssembly.Layers.Num()
+				&& LayerIdx > 0
+				&& CachedAssembly.Layers[LayerIdx].LayerPriority.PriorityGroup == EBIMPresetLayerPriorityGroup::Structure;
+		};
+
 		TArray<FVector2D> previousLinePoints;
 		int32 numLayers = LayerGeometries.Num();
 		for (int32 layerIdx = 0; layerIdx < numLayers; layerIdx++)
@@ -398,41 +406,27 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<FDraftingComposite> &
 					dwgLayerType = layerTypeMinorSurface;
 					lineThickness = innerThickness;
 					lineColor = innerColor;
+
+					if (bUseMiterPriority)
+					{
+						if (isStructuralLayer(layerIdx)
+							|| isStructuralLayer(layerIdx + (usePointsA ? -1  : +1)) )
+						{
+							dwgLayerType = FModumateLayerType::kSeparatorCutStructuralLayer;
+							lineColor = structureColor;
+						}
+					} 
 				}
 
 				TArray<FVector> intersections;
 				UModumateGeometryStatics::GetPlaneIntersections(intersections, usePointsA ? layer.UniquePointsA : layer.UniquePointsB, Plane, parentLocation);
 
 				intersections.Sort(UModumateGeometryStatics::Points3dSorter);
-				// we can make mask perimeters when there are an even amount of intersection between a simple polygon and a plane
-				bool bMakeMaskPerimeter = (intersections.Num() % 2 == 0);
 
 				int32 linePoint = 0;
 
 				for (int32 idx = 0; idx < intersections.Num() - 1; idx += 2)
 				{
-					// find vertices for the stencil masks, to hide geometry behind the object from the edge detection custom shader
-					if (bMakeMaskPerimeter)
-					{
-						if (layerIdx == 0)
-						{
-							OutPerimeters.Add(TArray<FVector>());
-							OutPerimeters[idx / 2].Add(intersections[idx]);
-							OutPerimeters[idx / 2].Add(intersections[idx + 1]);
-						}
-						else if (layerIdx == numLayers - 1)
-						{
-							// TODO: remove this constraint, potentially need to figure out where the ray would intersect with the plane
-							// sometimes only some of the layers of a wall intersect the plane, resulting in a discrepancy in the amount 
-							// of intersection points.  Currently, the mask geometry expects 4 points
-							if (intersections.Num() / 2 == OutPerimeters.Num())
-							{
-								OutPerimeters[idx / 2].Add(intersections[idx + 1]);
-								OutPerimeters[idx / 2].Add(intersections[idx]);
-							}
-						}
-					}
-
 					TArray<TPair<float, float>> lineRanges;
 					FVector intersectionStart = intersections[idx];
 					FVector intersectionEnd = intersections[idx + 1];
@@ -494,10 +488,9 @@ void AMOIPlaneHostedObj::GetDraftingLines(const TSharedPtr<FDraftingComposite> &
 					}
 
 				}
+
 				usePointsA = !usePointsA;
 			} while (!usePointsA);
-			currentThickness += layer.Thickness;
-
 		}
 	}
 	else  // Get far lines.
