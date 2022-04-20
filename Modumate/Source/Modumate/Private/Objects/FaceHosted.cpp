@@ -183,14 +183,22 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 	if (parentObj && cma)
 	{
 		FVector nativeSize = CachedAssembly.GetCompoundAssemblyNativeSize();
-		const FGraph3DFace* parentFace;
+		const FGraph3DFace* parentFace = nullptr;
 		if (parentObj->GetObjectType() == EObjectType::OTMetaPlane)
 		{
 			parentFace = Document->GetVolumeGraph()->FindFace(parentObj->ID);
 		} 
-		else
+		else if (parentObj->GetObjectType() == EObjectType::OTMetaPlaneSpan)
 		{
-			parentFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentObj->ID);
+			const AMOIMetaPlaneSpan* span = Cast<AMOIMetaPlaneSpan>(parentObj);
+			if (span && span->InstanceData.GraphMembers.Num() > 0)
+			{
+				parentFace = Document->GetVolumeGraph()->FindFace(span->InstanceData.GraphMembers[0]);
+			}
+		}
+		if (!ensure(parentFace))
+		{
+			return;
 		}
 		FGraph3D* graph = Document->FindVolumeGraph(parentFace->ID);
 
