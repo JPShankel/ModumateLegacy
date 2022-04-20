@@ -1450,7 +1450,7 @@ const FGraph3DFace* UModumateObjectStatics::GetFaceFromSpanObject(const UModumat
 
 	if (span == nullptr)
 	{
-		return false;
+		return nullptr;
 	}
 
 	return span->GetPerimeterFace();

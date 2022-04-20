@@ -1232,7 +1232,7 @@ void GetDeltasForSpanMerge(const UModumateDocument* Doc, const TArray<int32>& Sp
 		return;
 	}
 
-	T::FInstanceData mergeData = allSpans[0]->InstanceData;
+	typename T::FInstanceData mergeData = allSpans[0]->InstanceData;
 	TSharedPtr<FMOIDelta> moisDelta = MakeShared<FMOIDelta>();
 	for (int32 i = 1; i < allSpans.Num(); ++i)
 	{
@@ -1266,7 +1266,7 @@ void FModumateObjectDeltaStatics::GetDeltasForFaceSpanMerge(const UModumateDocum
 template<class T>
 void GetDeltasForSpanSplitT(const UModumateDocument* Doc, const T* SpanOb, int32& NextID, TArray<FDeltaPtr>& OutDeltas)
 {
-	T::FInstanceData originalData = SpanOb->InstanceData;
+	typename T::FInstanceData originalData = SpanOb->InstanceData;
 	if (originalData.GraphMembers.Num() < 2)
 	{
 		return;
@@ -1279,7 +1279,7 @@ void GetDeltasForSpanSplitT(const UModumateDocument* Doc, const T* SpanOb, int32
 		FMOIStateData stateData = SpanOb->GetStateData();
 		stateData.ID = NextID++;
 
-		T::FInstanceData instanceData;
+		typename T::FInstanceData instanceData;
 		instanceData.GraphMembers.Add(originalData.GraphMembers[i]);
 		stateData.CustomData.SaveStructData(instanceData);
 
