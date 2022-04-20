@@ -471,7 +471,7 @@ void AEditModelPlayerController::BeginPlay()
 	EditModelUserWidget = CreateWidget<UEditModelUserWidget>(this, EditModelUserWidgetClass);
 	if (ensureAlways(EditModelUserWidget))
 	{
-		EditModelUserWidget->AddToViewport(1);
+		EditModelUserWidget->AddToViewport();
 
 		if (EditModelUserWidget->ProjectSystemMenu)
 		{
