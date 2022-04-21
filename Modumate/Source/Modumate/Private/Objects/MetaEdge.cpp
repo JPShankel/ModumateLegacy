@@ -178,6 +178,7 @@ bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 void AMOIMetaEdge::ShowAdjustmentHandles(AEditModelPlayerController* Controller, bool bShow)
 {
 	AMOIEdgeBase::ShowAdjustmentHandles(Controller, bShow);
+	UpdateLineArrowVisual();
 
 	UModumateDocument* doc = GetDocument();
 	if (!ensure(doc) || IsDestroyed())

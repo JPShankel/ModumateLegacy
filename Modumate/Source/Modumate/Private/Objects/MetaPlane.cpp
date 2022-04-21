@@ -67,6 +67,13 @@ bool AMOIMetaPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnab
 	return true;
 }
 
+
+void AMOIMetaPlane::ShowAdjustmentHandles(AEditModelPlayerController* Controller, bool bShow)
+{
+	Super::ShowAdjustmentHandles(Controller, bShow);
+	UpdateLineArrowVisual();
+}
+
 void AMOIMetaPlane::SetupDynamicGeometry()
 {
 	const TArray<int32> &newChildIDs = GetChildIDs();

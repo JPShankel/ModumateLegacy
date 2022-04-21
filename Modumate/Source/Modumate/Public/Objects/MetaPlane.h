@@ -28,6 +28,7 @@ public:
 	AMOIMetaPlane();
 
 	virtual bool GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
+	virtual void ShowAdjustmentHandles(AEditModelPlayerController* Controller, bool bShow) override;
 	virtual void SetupDynamicGeometry() override;
 	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) override;
 	virtual bool ToWebMOI(FWebMOI& OutMOI) const override;

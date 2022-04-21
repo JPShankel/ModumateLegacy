@@ -153,8 +153,9 @@ void AMOIEdgeBase::UpdateLineArrowVisual()
 		return;
 	}
 	
-	bool bShowDir = CacheIsSelected;
 	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	// Only show arrow if it's the only one selected
+	bool bShowDir = CacheIsSelected && controller->EMPlayerState->SelectedObjects.Num() == 1;
 	if (controller && controller->GetAlwaysShowGraphDirection())
 	{
 		bShowDir = bVisible;
@@ -168,11 +169,12 @@ void AMOIEdgeBase::UpdateLineArrowVisual()
 		LineArrowCylinderMesh->SetWorldRotation(FRotationMatrix::MakeFromX((GetCorner(1) - GetCorner(0)).GetSafeNormal()).ToQuat());
 		// Mesh scaling is updated in material via WPO, but scale here provides a base size for material to transform 
 		LineArrowCylinderMesh->SetWorldScale3D(FVector(0.1f));
-	}
-	if (ArrowDynMat)
-	{
-		static const FName colorParamName(TEXT("Color"));
-		ArrowDynMat->SetVectorParameterValue(colorParamName, CacheIsSelected ? FColor::Black : SelectedColor);
+
+		if (ArrowDynMat)
+		{
+			static const FName colorParamName(TEXT("Color"));
+			ArrowDynMat->SetVectorParameterValue(colorParamName, CacheIsSelected ? FColor::Black : SelectedColor);
+		}
 	}
 }
 

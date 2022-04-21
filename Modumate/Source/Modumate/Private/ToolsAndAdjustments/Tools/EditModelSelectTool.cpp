@@ -496,6 +496,7 @@ bool USelectTool::ProcessDragSelect()
 		}
 		const int32 activeGroup = doc->GetActiveVolumeGraphID();
 		TSet<int32> prospectiveGroups;
+		TSet<AModumateObjectInstance*> prospectiveMOIs;
 		for (auto* selectedObject: objectsInSelection)
 		{
 			bool bInGroup = false;
@@ -514,9 +515,10 @@ bool USelectTool::ProcessDragSelect()
 			}
 			else if (bInGroup)
 			{
-				Controller->SetObjectSelected(selectedObject, bSetObjectsSelected, false);
+				prospectiveMOIs.Add(selectedObject);
 			}
 		}
+		Controller->EMPlayerState->SetObjectsSelected(prospectiveMOIs, bSetObjectsSelected, false);
 
 		for (int32 groupID : prospectiveGroups)
 		{   // For requireEnclosure selection all selectable members of subgroup must be selected.
