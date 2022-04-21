@@ -168,6 +168,27 @@ void AEditModelPlayerController::ClientWasKicked_Implementation(const FText& Kic
 	}
 }
 
+void AEditModelPlayerController::FlushPressedKeys()
+{
+	FTimerHandle flushHandle;
+
+	//KLUDGE: HACK: TODO: Okay, so because we added an overlay widget to capture keyboard events
+	// the UGameViewportClient loses focus when we left click after orbit due to the UWebKeyboardCapture widget.
+	// This causes the UPlayerInput to Flush all the pressed keys (normally this occurs on alt-tabs, resizes, maximizes, etc.).
+	// This is fine, because the KeyState will update eventually anyway. HOWEVER. THE EXACT SAME FRAME we end
+	// up evaluating for shift (to add to selection) and it evaluates FALSE because we JUST FLUSHED
+	// IT. To avoid engine changes and essentially getting back in to the slate stack, I have simply delayed the flush
+	// a bit. This suits our purposes and will not cause any problems with resizing getting shift stuck.
+	// Eventually we /really/ need to make CEF the primary input driver for everything so things like UWebKeyboardCapture
+	// are not necessary. In the mixed UMG/CEF world this is not possible. -JN
+	GetWorld()->GetTimerManager().SetTimer(flushHandle, this, &AEditModelPlayerController::DoFlushPressedKeys, 0.1, false);
+}
+
+void AEditModelPlayerController::DoFlushPressedKeys()
+{
+	Super::FlushPressedKeys();
+}
+
 bool AEditModelPlayerController::TryInitPlayerState()
 {
 	if ((EMPlayerState == nullptr) && PlayerState)
@@ -479,11 +500,11 @@ void AEditModelPlayerController::BeginPlay()
 			EditModelUserWidget->ProjectSystemMenu->OnVisibilityChanged.AddDynamic(this, &AEditModelPlayerController::OnToggledProjectSystemMenu);
 		}
 	}
+
 	UWebKeyboardCapture* keyboardCaptureWidget = CreateWidget<UWebKeyboardCapture>(this, UWebKeyboardCapture::StaticClass());
 	if(ensureAlways(keyboardCaptureWidget))
 	{
 		keyboardCaptureWidget->SetVisibility(ESlateVisibility::Visible);
-		keyboardCaptureWidget->bIsFocusable = true;
 		keyboardCaptureWidget->AddToViewport(-1);
 	}
 

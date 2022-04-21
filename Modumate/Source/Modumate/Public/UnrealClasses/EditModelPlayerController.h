@@ -63,6 +63,8 @@ public:
 	virtual void PostInitializeComponents() override;
 	virtual void SetPawn(APawn* InPawn) override;
 	virtual void ClientWasKicked_Implementation(const FText& KickReason) override;
+	virtual void FlushPressedKeys() override;
+	void DoFlushPressedKeys();
 
 
 private:

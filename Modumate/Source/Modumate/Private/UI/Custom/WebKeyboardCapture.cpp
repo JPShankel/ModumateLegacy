@@ -56,7 +56,6 @@ UWebKeyboardCapture::UWebKeyboardCapture(const FObjectInitializer& ObjectInitial
 
 bool UWebKeyboardCapture::Initialize()
 {
-	bIsFocusable = true;
 	return Super::Initialize();
 }
 
