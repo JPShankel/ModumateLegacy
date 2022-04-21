@@ -21,6 +21,11 @@ bool UFaceHostedTool::Activate()
 		return false;
 	}
 
+	// Set default settings for NewMOIStateData
+	FMOIFaceHostedData newFaceHostedCustomData;
+	NewMOIStateData.ObjectType = EObjectType::OTFaceHosted;
+	NewMOIStateData.CustomData.SaveStructData(newFaceHostedCustomData);
+
 	Controller->DeselectAll();
 	Controller->EMPlayerState->SetHoveredObject(nullptr);
 	bWasShowingSnapCursor = Controller->EMPlayerState->bShowSnappedCursor;
@@ -73,7 +78,7 @@ bool UFaceHostedTool::FrameUpdate()
 	if (cursor.Actor)
 	{
 		hitMOI = GameState->Document->ObjectFromActor(cursor.Actor);
-		if (hitMOI->GetObjectType() == EObjectType::OTFaceHosted)
+		if (hitMOI && hitMOI->GetObjectType() == EObjectType::OTFaceHosted)
 		{
 			hitFaceHostedID = hitMOI->ID;
 		}
@@ -139,6 +144,29 @@ bool UFaceHostedTool::BeginUse()
 	EndUse();
 
 	return bSuccess;
+}
+
+bool UFaceHostedTool::HandleOffset(const FVector2D& ViewSpaceDirection)
+{
+	if (NewObjectIDs.Num() == 0)
+	{
+		return false;
+	}
+
+	FQuat cameraRotation = Controller->PlayerCameraManager->GetCameraRotation().Quaternion();
+	FVector worldSpaceDirection =
+		(ViewSpaceDirection.X * cameraRotation.GetRightVector()) +
+		(ViewSpaceDirection.Y * cameraRotation.GetUpVector());
+
+	// FaceHostedTool creates single plane span, 
+	// we handle offset by setting its child (FaceHostedObject) instance data
+	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	AMOIMetaPlaneSpan* span = Cast<AMOIMetaPlaneSpan>(newMOI);
+	if (span && span->GetChildIDs().Num() > 0)
+	{
+		newMOI = span->GetChildObjects()[0];
+	}
+	return newMOI && newMOI->GetOffsetState(worldSpaceDirection, NewMOIStateData);
 }
 
 void UFaceHostedTool::ResetState()
@@ -233,12 +261,11 @@ bool UFaceHostedTool::GetObjectCreationDeltas(const TArray<int32>& InTargetFaceI
 
 		if (bCreateNewFaceHosted)
 		{
-			FMOIStateData faceHostedCreateState(nextID++, EObjectType::OTFaceHosted, spanParentID);
-			faceHostedCreateState.AssemblyGUID = AssemblyGUID;
-			FMOIFaceHostedData faceHostedData;
-			faceHostedCreateState.CustomData.SaveStructData<FMOIFaceHostedData>(faceHostedData);
-			delta->AddCreateDestroyState(faceHostedCreateState, EMOIDeltaType::Create);
-			NewObjectIDs.Add(faceHostedCreateState.ID);
+			NewMOIStateData.ID = nextID++;
+			NewMOIStateData.ParentID = spanParentID;
+			NewMOIStateData.AssemblyGUID = AssemblyGUID;
+			delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
+			NewObjectIDs.Add(NewMOIStateData.ID);
 		}
 		else
 		{

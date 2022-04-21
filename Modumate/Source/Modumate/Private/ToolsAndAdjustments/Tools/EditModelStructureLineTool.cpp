@@ -113,6 +113,7 @@ bool UStructureLineTool::BeginUse()
 	}
 	break;
 	case EToolCreateObjectMode::Apply:
+	case EToolCreateObjectMode::Add:
 	{
 		if (LastValidTargetID != MOD_ID_NONE)
 		{
@@ -173,6 +174,7 @@ bool UStructureLineTool::FrameUpdate()
 	}
 	break;
 	case EToolCreateObjectMode::Apply:
+	case EToolCreateObjectMode::Add:
 	{
 		int32 newTargetID = MOD_ID_NONE;
 		const AModumateObjectInstance *hitMOI = nullptr;

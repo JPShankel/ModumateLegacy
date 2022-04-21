@@ -242,6 +242,11 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 	{
 	case EToolCreateObjectMode::Draw:
 		return false;
+	case EToolCreateObjectMode::Add:
+	{
+		newParentID = CurTargetPlaneID;
+		break;
+	}
 	case EToolCreateObjectMode::Apply:
 	{
 		newParentID = CurTargetPlaneID;

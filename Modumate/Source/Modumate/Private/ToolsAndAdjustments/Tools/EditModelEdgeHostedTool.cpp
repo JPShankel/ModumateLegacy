@@ -21,9 +21,9 @@ bool UEdgeHostedTool::Activate()
 	}
 
 	// Set default settings for NewMOIStateData
-	FMOIEdgeHostedData newPointHostedCustomData;
+	FMOIEdgeHostedData newEdgeHostedCustomData;
 	NewMOIStateData.ObjectType = EObjectType::OTEdgeHosted;
-	NewMOIStateData.CustomData.SaveStructData(newPointHostedCustomData);
+	NewMOIStateData.CustomData.SaveStructData(newEdgeHostedCustomData);
 
 	Controller->DeselectAll();
 	Controller->EMPlayerState->SetHoveredObject(nullptr);

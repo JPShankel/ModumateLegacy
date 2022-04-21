@@ -67,7 +67,7 @@ void UToolTrayBlockModes::ChangeToSeparatorToolsButtons(EToolMode mode)
 		break;
 	}
 	// Add span buttons to tray regardless of toolmode for testing
-	buttonsToShow.Append({ ButtonSpanEditStart, ButtonSpanEditConfirm, ButtonSpanEditCancel });
+	buttonsToShow.Append({ ButtonSpanEditStart, ButtonSpanEditConfirm, ButtonSpanEditCancel, ButtonMPBucketAdd });
 
 	SetButtonsState(buttonsToShow);
 }

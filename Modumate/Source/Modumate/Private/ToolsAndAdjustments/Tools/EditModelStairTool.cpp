@@ -519,21 +519,24 @@ bool UStairTool::MakeStairs()
 
 			bool bCreateNewObject = true;
 
-			AModumateObjectInstance* parentMOI = GameState->Document->GetObjectById(hostPlaneID);
-
-			if (parentMOI && ensure(parentMOI->GetObjectType() == EObjectType::OTMetaPlane))
+			if (CreateObjectMode != EToolCreateObjectMode::Add)
 			{
-				for (auto child : parentMOI->GetChildObjects())
+				AModumateObjectInstance* parentMOI = GameState->Document->GetObjectById(hostPlaneID);
+
+				if (parentMOI && ensure(parentMOI->GetObjectType() == EObjectType::OTMetaPlane))
 				{
-					if (child->GetObjectType() == EObjectType::OTStaircase)
+					for (auto child : parentMOI->GetChildObjects())
 					{
-						bCreateNewObject = false;
-						FMOIStateData& newState = delta->AddMutationState(child);
-						newState.AssemblyGUID = AssemblyGUID;
-					}
-					else
-					{
-						delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
+						if (child->GetObjectType() == EObjectType::OTStaircase)
+						{
+							bCreateNewObject = false;
+							FMOIStateData& newState = delta->AddMutationState(child);
+							newState.AssemblyGUID = AssemblyGUID;
+						}
+						else
+						{
+							delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
+						}
 					}
 				}
 			}

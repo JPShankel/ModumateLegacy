@@ -20,6 +20,7 @@ public:
 
 	virtual bool FrameUpdate() override;
 	virtual bool BeginUse() override;
+	virtual bool HandleOffset(const FVector2D& ViewSpaceDirection) override;
 
 protected:
 

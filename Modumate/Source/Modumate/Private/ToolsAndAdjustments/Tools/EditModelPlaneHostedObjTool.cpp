@@ -121,7 +121,8 @@ bool UPlaneHostedObjTool::FrameUpdate()
 	FDeltaPtr previewDelta;
 	Controller->EMPlayerState->bShowSnappedCursor = GetCreateObjectMode() != EToolCreateObjectMode::Apply;
 	if (GetCreateObjectMode() == EToolCreateObjectMode::Apply ||
-		GetCreateObjectMode() == EToolCreateObjectMode::SpanEdit)
+		GetCreateObjectMode() == EToolCreateObjectMode::SpanEdit ||
+		GetCreateObjectMode() == EToolCreateObjectMode::Add)
 	{
 		// Determine whether we can apply the plane hosted object to a plane targeted by the cursor
 		const FSnappedCursor& cursor = Controller->EMPlayerState->SnappedCursor;
@@ -147,7 +148,8 @@ bool UPlaneHostedObjTool::FrameUpdate()
 			// Show affordance for current valid target on both Apply and SpanEdit mode
 			DrawAffordanceForPlaneMOI(hitMOI, AffordanceLineInterval);
 			// Preview apply delta only when there's a valid target ID
-			if (GetCreateObjectMode() == EToolCreateObjectMode::Apply)
+			if (GetCreateObjectMode() == EToolCreateObjectMode::Apply ||
+				GetCreateObjectMode() == EToolCreateObjectMode::Add)
 			{
 				previewDelta = GetObjectCreationDelta({ LastValidTargetID });
 			}
@@ -291,11 +293,15 @@ FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& Targe
 		AModumateObjectInstance* planeFace = GameState->Document->GetObjectById(targetFaceID);
 
 		TArray<int32> spans;
-		UModumateObjectStatics::GetSpansForFaceObject(GameState->Document, planeFace, spans);
-
 		const AModumateObjectInstance* existingLayeredObj = nullptr;
+		const AMOIMetaPlaneSpan* spanOb = nullptr;
 
-		const AMOIMetaPlaneSpan* spanOb = spans.Num() > 0 ? Cast<AMOIMetaPlaneSpan>(GameState->Document->GetObjectById(spans[TargetSpanIndex])) : nullptr;
+		// Add mode create new span
+		if (CreateObjectMode != EToolCreateObjectMode::Add)
+		{
+			UModumateObjectStatics::GetSpansForFaceObject(GameState->Document, planeFace, spans);
+			spanOb = spans.Num() > 0 ? Cast<AMOIMetaPlaneSpan>(GameState->Document->GetObjectById(spans[TargetSpanIndex])) : nullptr;
+		}
 
 		if (spanOb && planeFace && ensure(planeFace->GetObjectType() == EObjectType::OTMetaPlane))
 		{
