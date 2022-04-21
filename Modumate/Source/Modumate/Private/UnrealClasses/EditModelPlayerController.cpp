@@ -1690,7 +1690,7 @@ bool AEditModelPlayerController::HandleEscapeKey()
 	}
 	else if (CurrentTool && (CurrentTool->GetToolMode() != EToolMode::VE_SELECT))
 	{
-		SetToolMode(EToolMode::VE_SELECT);
+		Document->ToDefaultTool();
 		EMPlayerState->SnappedCursor.ClearAffordanceFrame();
 		return true;
 	}

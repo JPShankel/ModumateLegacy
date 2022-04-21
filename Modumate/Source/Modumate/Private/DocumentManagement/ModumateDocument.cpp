@@ -4500,6 +4500,11 @@ void UModumateDocument::set_web_focus(bool bHasFocus)
 	}
 }
 
+void UModumateDocument::ToDefaultTool()
+{
+	DrawingSendResponse(TEXT("to_default_tool"), TEXT(""));
+}
+
 void UModumateDocument::DrawingPushDD()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_request_document"));
