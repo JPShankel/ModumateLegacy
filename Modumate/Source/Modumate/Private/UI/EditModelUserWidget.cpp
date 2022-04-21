@@ -105,6 +105,10 @@ void UEditModelUserWidget::NativeConstruct()
 	if (BIMDesignerCanvasSlot)
 	{
 		BIMDesignerCanvasSlot->SetZOrder(bIsShowDrawingDesigner ? 8 : 1);
+		if (bIsShowDrawingDesigner)
+		{
+			BIMDesignerCanvasSlot->SetOffsets(FMargin(0.f, 48.f, 0.f, 0.f));
+		}
 	}
 	UCanvasPanelSlot* BIMBlockDialogBoxCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(BIMBlockDialogBox);
 	if (BIMBlockDialogBoxCanvasSlot)
