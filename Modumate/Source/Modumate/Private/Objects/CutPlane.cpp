@@ -761,8 +761,18 @@ bool AMOICutPlane::FromWebMOI(const FString& InJson)
 
 		const FWebMOIProperty* FormPropVisible = WebMOI.Properties.Find(TEXT("Visible"));
 		const bool bLocalVisible = FormPropVisible->ValueArray[0] == TEXT("true");
-		if (bLocalVisible == HideRequests.Contains(FName(TEXT("WebPropertiesPanel")))) {
-			RequestHidden(FName(TEXT("WebPropertiesPanel")), !bLocalVisible);
+
+		const auto state = GetWorld()->GetFirstPlayerController()->GetPlayerState<AEditModelPlayerState>();
+		if(state)
+		{
+			if(!bLocalVisible)
+			{
+				state->AddHideObjectsById({this->ID});
+			}
+			else
+			{
+				state->UnhideObjectsById({this->ID});
+			}
 		}
 		
 		return true;
@@ -778,7 +788,7 @@ bool AMOICutPlane::ToWebMOI(FWebMOI& OutMOI) const
 		const FWebMOIProperty* FormPropVisible = WebProperties.Find(TEXT("Visible"));
 		FWebMOIProperty WebPropVisible = *FormPropVisible;
 
-		const FString Visible = HideRequests.Contains(FName(TEXT("WebPropertiesPanel"))) ? TEXT("false") : TEXT("true");
+		const FString Visible = HideRequests.Contains(UModumateDocument::DocumentHideRequestTag) ? TEXT("false") : TEXT("true");
 		WebPropVisible.ValueArray.Add(Visible);
 		OutMOI.Properties.Add("Visible", WebPropVisible);
 		

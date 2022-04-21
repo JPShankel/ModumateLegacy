@@ -1795,16 +1795,13 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 	}
 
 	auto* gameState = GetWorld()->GetGameState<AEditModelGameState>();
-	UModumateDocument* doc = gameState ? gameState->Document : nullptr;
-	if (ensure(doc))
-	{
-		TSet<int32> requestedHidden(InState.hiddenObjects);
-		const TSet<int32>& currentHidden = HiddenObjectsID;
-		TSet<int32> unhideList(currentHidden.Difference(requestedHidden));
-		AddHideObjectsById(requestedHidden.Difference(currentHidden).Array());
-		UnhideObjectsById(unhideList.Array());
-	}
-
+	
+	TSet<int32> requestedHidden(InState.hiddenObjects);
+	const TSet<int32>& currentHidden = HiddenObjectsID;
+	TSet<int32> unhideList(currentHidden.Difference(requestedHidden));
+	AddHideObjectsById(requestedHidden.Difference(currentHidden).Array());
+	UnhideObjectsById(unhideList.Array());
+	
 	EToolMode toolMode;
 	if (EMPlayerController && EMPlayerController->CurrentTool && FindEnumValueByString<EToolMode>(InState.tool, toolMode))
 	{
@@ -1840,8 +1837,8 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 			EMPlayerController->SetCurrentCullingCutPlane(InState.culledCutplane, false);
 		}
 	}
-	
-	if (InState.selectedObjects.Num() == 1 && InState.selectedObjects[0].Type == EObjectType::OTCameraView)
+	UModumateDocument* doc = gameState ? gameState->Document : nullptr;
+	if (ensure(doc) && InState.selectedObjects.Num() == 1 && InState.selectedObjects[0].Type == EObjectType::OTCameraView)
 	{
 		AMOICameraView* cameraView = Cast<AMOICameraView>(doc->GetObjectById(InState.selectedObjects[0].ID));
 		cameraView->UpdateCamera();
