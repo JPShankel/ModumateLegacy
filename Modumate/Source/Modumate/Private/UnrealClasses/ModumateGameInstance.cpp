@@ -258,22 +258,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		return bSuccess;
 	});
 
-	RegisterCommand(kViewGroupObject, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output)
-	{
-		int32 objID = params.GetValue(kObjectID);
-		FString idString = params.GetValue(kObjectID);
-		AModumateObjectInstance *ob = nullptr;
-
-		if (objID > 0)
-		{
-			ob = GetDocument()->GetObjectById(objID);
-		}
-
-		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
-		playerState->SetViewGroupObject(ob);
-		return true;
-	});
-
 	RegisterCommand(kDeleteObjects, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
 		AEditModelPlayerController *playerController = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
 		AEditModelPlayerState *playerState = Cast<AEditModelPlayerState>(playerController->PlayerState);
@@ -384,20 +368,6 @@ void UModumateGameInstance::RegisterAllCommands()
 	{
 		AEditModelPlayerState* playerState = Cast<AEditModelPlayerState>(GetWorld()->GetFirstPlayerController()->PlayerState);
 		playerState->Paste(*GetDocument());
-		return true;
-	});
-
-	RegisterCommand(kGroup, [this](const FModumateFunctionParameterSet &params, FModumateFunctionParameterSet &output) {
-		if (params.GetValue(ModumateParameters::kMake))
-		{
-			bool combineWithExistingGroups = params.GetValue(TEXT("combine_existing"));
-			int32 groupID = GetDocument()->MakeGroupObject(GetWorld(), params.GetValue(kObjectIDs), combineWithExistingGroups, params.GetValue(kParent));
-			output.SetValue(kObjectID, groupID);
-		}
-		else
-		{
-			GetDocument()->UnmakeGroupObjects(GetWorld(), params.GetValue(kObjectIDs));
-		}
 		return true;
 	});
 

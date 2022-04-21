@@ -5,25 +5,6 @@
 #include "DocumentManagement/ModumateDocument.h"
 
 
-FGraph3DGroupIDsDelta::FGraph3DGroupIDsDelta()
-{ }
-
-FGraph3DGroupIDsDelta::FGraph3DGroupIDsDelta(const FGraph3DGroupIDsDelta& Other)
-	: GroupIDsToAdd(Other.GroupIDsToAdd)
-	, GroupIDsToRemove(Other.GroupIDsToRemove)
-{ }
-
-FGraph3DGroupIDsDelta::FGraph3DGroupIDsDelta(const TSet<int32>& InGroupIDsToAdd, const TSet<int32>& InGroupIDsToRemove)
-	: GroupIDsToAdd(InGroupIDsToAdd)
-	, GroupIDsToRemove(InGroupIDsToRemove)
-{ }
-
-FGraph3DGroupIDsDelta FGraph3DGroupIDsDelta::MakeInverse() const
-{
-	return FGraph3DGroupIDsDelta(GroupIDsToRemove, GroupIDsToAdd);
-}
-
-
 FGraph3DFaceContainmentDelta::FGraph3DFaceContainmentDelta()
 	: PrevContainingFaceID(MOD_ID_NONE)
 	, NextContainingFaceID(MOD_ID_NONE)
@@ -238,11 +219,6 @@ TSharedPtr<FGraph3DDelta> FGraph3DDelta::MakeGraphInverse() const
 
 		inverse->FaceAdditions = FaceDeletions;
 		inverse->FaceDeletions = FaceAdditions;
-
-		for (const auto& kvp : GroupIDsUpdates)
-		{
-			inverse->GroupIDsUpdates.Add(kvp.Key, kvp.Value.MakeInverse());
-		}
 	}
 	else
 	{
@@ -277,7 +253,6 @@ void FGraph3DDelta::GetAffectedObjects(TArray<TPair<int32, EMOIDeltaType>>& OutA
 	AddAffectedIDs(FaceDeletions, EMOIDeltaType::Destroy, OutAffectedObjects);
 	AddAffectedIDs(FaceContainmentUpdates, EMOIDeltaType::Mutate, OutAffectedObjects);
 	AddAffectedIDs(FaceVertexIDUpdates, EMOIDeltaType::Mutate, OutAffectedObjects);
-	AddAffectedIDs(GroupIDsUpdates, EMOIDeltaType::Mutate, OutAffectedObjects);
 	AddAffectedIDs(EdgeReversals, EMOIDeltaType::Mutate, OutAffectedObjects);
 	AddAffectedIDs(FaceReversals, EMOIDeltaType::Mutate, OutAffectedObjects);
 }

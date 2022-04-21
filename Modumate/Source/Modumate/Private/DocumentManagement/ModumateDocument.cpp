@@ -1866,52 +1866,6 @@ AModumateObjectInstance *UModumateDocument::TryGetDeletedObject(int32 id)
 	return DeletedObjects.FindRef(id);
 }
 
-int32 UModumateDocument::MakeGroupObject(UWorld *world, const TArray<int32> &ids, bool combineWithExistingGroups, int32 parentID)
-{
-	ClearRedoBuffer();
-
-	int id = NextID++;
-
-	TArray<AModumateObjectInstance*> obs;
-	Algo::Transform(ids, obs, [this](int32 id) {return GetObjectById(id); });
-
-	TMap<AModumateObjectInstance*, AModumateObjectInstance*> oldParents;
-	for (auto ob : obs)
-	{
-		oldParents.Add(ob, ob->GetParentObject());
-	}
-
-	auto *groupObj = CreateOrRestoreObj(world, FMOIStateData(id, EObjectType::OTGroup, parentID));
-
-	for (auto ob : obs)
-	{
-		ob->SetParentID(id);
-	}
-
-	return id;
-}
-
-void UModumateDocument::UnmakeGroupObjects(UWorld *world, const TArray<int32> &groupIds)
-{
-	ClearRedoBuffer();
-
-	TArray<AModumateObjectInstance*> obs;
-	Algo::Transform(groupIds,obs,[this](int32 id){return GetObjectById(id);});
-
-	TMap<AModumateObjectInstance*, TArray<AModumateObjectInstance*>> oldChildren;
-
-	for (auto ob : obs)
-	{
-		TArray<AModumateObjectInstance*> children = ob->GetChildObjects();
-		oldChildren.Add(ob, children);
-		for (auto child : children)
-		{
-			child->SetParentID(MOD_ID_NONE);
-		}
-		DeleteObjectImpl(ob);
-	}
-}
-
 bool UModumateDocument::GetVertexMovementDeltas(const TArray<int32>& VertexIDs, const TArray<FVector>& VertexPositions, TArray<FDeltaPtr>& OutDeltas)
 {
 	TArray<FGraph3DDelta> deltas;

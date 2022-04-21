@@ -85,7 +85,7 @@ bool URoofPerimeterTool::Activate()
 
 		// Create the MOI delta for constructing the perimeter object
 		FMOIRoofPerimeterData newPerimeterInstanceData;
-		FMOIStateData newPerimeterState(perimeterID, EObjectType::OTRoofPerimeter, Controller->EMPlayerState->GetViewGroupObjectID());
+		FMOIStateData newPerimeterState(perimeterID, EObjectType::OTRoofPerimeter, /*Controller->EMPlayerState->GetViewGroupObjectID()*/ MOD_ID_NONE);
 		newPerimeterState.CustomData.SaveStructData(newPerimeterInstanceData);
 
 		auto perimeterCreationDelta = MakeShared<FMOIDelta>();
@@ -93,13 +93,13 @@ bool URoofPerimeterTool::Activate()
 		deltasToApply.Add(perimeterCreationDelta);
 
 		// Now create the graph delta to assign the perimeter object to the GroupIDs of its edges
-		auto graphDelta = MakeShared<FGraph3DDelta>(volumeGraph.GraphID);
-		FGraph3DGroupIDsDelta groupIDsDelta(TSet<int32>({ perimeterID }), TSet<int32>());
-		for (int32 edgeID : perimeterEdgeIDs)
-		{
-			graphDelta->GroupIDsUpdates.Add(edgeID, groupIDsDelta);
-		}
-		deltasToApply.Add(graphDelta);
+// 		auto graphDelta = MakeShared<FGraph3DDelta>(volumeGraph.GraphID);
+// 		FGraph3DGroupIDsDelta groupIDsDelta(TSet<int32>({ perimeterID }), TSet<int32>());
+// 		for (int32 edgeID : perimeterEdgeIDs)
+// 		{
+// 			graphDelta->GroupIDsUpdates.Add(edgeID, groupIDsDelta);
+// 		}
+// 		deltasToApply.Add(graphDelta);
 
 		// Apply the deltas to create the perimeter and modify the associated graph objects
 		bool bAppliedDeltas = doc->ApplyDeltas(deltasToApply, GetWorld());

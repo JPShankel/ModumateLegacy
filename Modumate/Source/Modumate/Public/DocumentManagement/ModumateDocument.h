@@ -176,9 +176,6 @@ public:
 
 	bool GetGraph2DDeletionDeltas(int32 Graph2DID, int32& InNextID, TArray<FDeltaPtr>& OutDeltas) const;
 
-	int32 MakeGroupObject(UWorld *world, const TArray<int32> &ids, bool combineWithExistingGroups, int32 parentID);
-	void UnmakeGroupObjects(UWorld *world, const TArray<int32> &groupIds);
-
 	AModumateObjectInstance *ObjectFromActor(AActor *actor);
 	const AModumateObjectInstance *ObjectFromActor(const AActor *actor) const;
 

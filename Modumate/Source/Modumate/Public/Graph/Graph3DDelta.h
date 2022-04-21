@@ -37,9 +37,6 @@ struct MODUMATE_API FGraph3DObjDelta
 	TArray<int32> ParentObjIDs;				// objects that were deleted to make this object
 
 	UPROPERTY()
-	TSet<int32> GroupIDs;					// group objects that this object is related to
-
-	UPROPERTY()
 	int32 ContainingObjID = MOD_ID_NONE;	// the ID of the object that contains this object, if any
 
 	UPROPERTY()
@@ -52,24 +49,6 @@ struct MODUMATE_API FGraph3DObjDelta
 
 	FGraph3DObjDelta(const FGraphVertexPair& VertexPair);
 	FGraph3DObjDelta(const FGraphVertexPair& VertexPair, const TArray<int32>& InParents);
-};
-
-USTRUCT()
-struct MODUMATE_API FGraph3DGroupIDsDelta
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	TSet<int32> GroupIDsToAdd;
-
-	UPROPERTY()
-	TSet<int32> GroupIDsToRemove;
-
-	FGraph3DGroupIDsDelta();
-	FGraph3DGroupIDsDelta(const FGraph3DGroupIDsDelta& Other);
-	FGraph3DGroupIDsDelta(const TSet<int32>& InGroupIDsToAdd, const TSet<int32>& InGroupIDsToRemove);
-
-	FGraph3DGroupIDsDelta MakeInverse() const;
 };
 
 USTRUCT()
@@ -165,11 +144,6 @@ struct MODUMATE_API FGraph3DDelta : public FDocumentDelta
 
 	UPROPERTY()
 	TArray<int32> FaceReversals;
-
-	// TODO: Remove these legacy groups:
-	// Updates to GroupIDs for graph objects
-	UPROPERTY()
-	TMap<int32, FGraph3DGroupIDsDelta> GroupIDsUpdates;
 
 	// Graph3D-based grouping:
 	UPROPERTY()

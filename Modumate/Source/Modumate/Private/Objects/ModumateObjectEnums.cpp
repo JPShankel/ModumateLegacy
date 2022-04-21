@@ -115,7 +115,6 @@ EToolMode UModumateTypeStatics::ToolModeFromObjectType(EObjectType ot)
 	case EObjectType::OTCabinet: return EToolMode::VE_CABINET;
 	case EObjectType::OTStaircase: return EToolMode::VE_STAIR;
 	case EObjectType::OTFinish: return EToolMode::VE_FINISH;
-	case EObjectType::OTGroup: return EToolMode::VE_NONE;
 	case EObjectType::OTRoom: return EToolMode::VE_NONE;
 	case EObjectType::OTCountertop: return EToolMode::VE_COUNTERTOP;
 	case EObjectType::OTTrim: return EToolMode::VE_TRIM;
@@ -174,8 +173,6 @@ FText UModumateTypeStatics::GetTextForObjectType(EObjectType ObjectType, bool bP
 		return bPlural ? LOCTEXT("OTStaircases", "Staircases") : LOCTEXT("OTStaircase", "Staircase");
 	case EObjectType::OTFinish:
 		return bPlural ? LOCTEXT("OTFinishs", "Finishes") : LOCTEXT("OTFinish", "Finish");
-	case EObjectType::OTGroup:
-		return bPlural ? LOCTEXT("OTGroups", "Groups") : LOCTEXT("OTGroup", "Group");
 	case EObjectType::OTRoom:
 		return bPlural ? LOCTEXT("OTRooms", "Rooms") : LOCTEXT("OTRoom", "Room");
 	case EObjectType::OTCountertop:

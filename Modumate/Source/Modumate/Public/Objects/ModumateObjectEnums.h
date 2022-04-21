@@ -33,7 +33,6 @@ enum class EObjectType : uint8
 	OTCabinet,
 	OTStaircase,
 	OTFinish,
-	OTGroup,
 	OTRoom,
 	OTCountertop,
 	OTTrim,

@@ -28,10 +28,6 @@ namespace ModumateCommands
 	MODUMATE_COMMAND(kImportDatasmith, "import_datasmith");
 	MODUMATE_COMMAND(kSpan, "span");
 
-	// Groups
-	MODUMATE_COMMAND(kViewGroupObject, "view_group_object");
-	MODUMATE_COMMAND(kGroup, "group");
-
 	// Selected Objects
 	MODUMATE_COMMAND(kDeleteSelectedObjects, "delete_selected");
 	MODUMATE_COMMAND(kDeleteObjects, "delete_objects");

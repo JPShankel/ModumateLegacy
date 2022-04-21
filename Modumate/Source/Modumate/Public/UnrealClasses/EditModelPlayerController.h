@@ -291,8 +291,6 @@ public:
 	UFUNCTION()
 	void CleanSelectedObjects();
 
-	void SetViewGroupObject(const AModumateObjectInstance *ob);
-
 	FModumateFunctionParameterSet ModumateCommand(const FModumateCommand &cmd);
 
 	UModumateDocument *GetDocument() const { return Document; }

@@ -854,18 +854,6 @@ bool FGraph3D::ApplyDelta(const FGraph3DDelta &Delta)
 		edge->Dirty(true);
 	}
 
-	// Apply changes to the GroupIDs field of vertices, edges, and faces
-	for (auto &kvp : Delta.GroupIDsUpdates)
-	{
-		// We can safely skip GroupIDs updates for graph members that were just deleted
-		if (TempDeletedIDs.Contains(kvp.Key))
-		{
-			continue;
-		}
-
-		ApplyGroupIDsDelta(kvp.Key, kvp.Value);
-	}
-
 	bool bValidFaces = true;
 	for (auto &kvp : Faces)
 	{

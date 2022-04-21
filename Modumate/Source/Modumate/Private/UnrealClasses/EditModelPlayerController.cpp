@@ -1720,10 +1720,6 @@ bool AEditModelPlayerController::HandleEscapeKey()
 		DeselectAll();
 		return true;
 	}
-	else if (EMPlayerState->ViewGroupObject)  // TODO: remove
-	{
-		SetViewGroupObject(EMPlayerState->ViewGroupObject->GetParentObject());
-	}
 	else if(EditModelUserWidget->EMUserWidgetHandleEscapeKey())
 	{
 		return true;
@@ -2325,23 +2321,6 @@ void AEditModelPlayerController::CleanSelectedObjects()
 	}
 
 	Document->CleanObjects();
-}
-
-void AEditModelPlayerController::SetViewGroupObject(const AModumateObjectInstance *ob)
-{
-	if (ob && (ob->GetObjectType() == EObjectType::OTGroup))
-	{
-		ModumateCommand(
-			FModumateCommand(ModumateCommands::kViewGroupObject)
-			.Param(ModumateParameters::kObjectID, ob->ID)
-		);
-	}
-	else
-	{
-		ModumateCommand(
-			FModumateCommand(ModumateCommands::kViewGroupObject)
-		);
-	}
 }
 
 /* User-Document Interface for Blueprints */
@@ -2989,8 +2968,6 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 		newHoveredObject = Document->ObjectFromActor(actorUnderMouse);
 	}
 
-	// Make sure hovered object is always in a valid group view
-	newHoveredObject = EMPlayerState->GetValidHoveredObjectInView(newHoveredObject);
 	EMPlayerState->SetHoveredObject(newHoveredObject);
 
 	// Automatic user snap creation is disabled

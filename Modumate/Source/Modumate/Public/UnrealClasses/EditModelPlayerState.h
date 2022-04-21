@@ -171,7 +171,6 @@ public:
 	void SetObjectIDSelected(int32 ObjID, bool bSelected);
 
 	void SetShowHoverEffects(bool showHoverEffects);
-	AModumateObjectInstance *GetValidHoveredObjectInView(AModumateObjectInstance *hoverTarget) const;
 	void SetHoveredObject(AModumateObjectInstance *ob);
 	void SetObjectSelected(AModumateObjectInstance *ob, bool bSelected, bool bDeselectOthers);
 	void SetObjectsSelected(const TSet<AModumateObjectInstance*>& Obs, bool bSelected, bool bDeselectOthers);
@@ -179,7 +178,6 @@ public:
 	void SetGroupObjectsSelected(const TSet<AModumateObjectInstance*>& GroupObjects, bool bSelected, bool bDeselectOthers);
 	int32 NumItemsSelected() const { return SelectedObjects.Num() + SelectedGroupObjects.Num(); }
 
-	void SetViewGroupObject(AModumateObjectInstance *ob);
 	void FindReachableObjects(TSet<AModumateObjectInstance*> &ReachableObjs) const;
 	bool IsObjectReachableInView(AModumateObjectInstance* obj) const;
 	bool ValidateSelectionsAndView();
@@ -205,12 +203,6 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite)
 	FLinearColor DefaultPlayerColor;
 
-	// The MOI of type Group that is the current selection view scope.
-	// Clicking outside of it or escaping will go to the next highest group in the hierarchy,
-	// so normally only its children can be selected directly with the tool.
-	// Selecting one of its children that is also a group will deepen the view to that new group.
-	AModumateObjectInstance *ViewGroupObject = nullptr;
-
 	TSet<AModumateObjectInstance *> SelectedObjects;
 	TSet<AModumateObjectInstance *> LastSelectedObjectSet;
 
@@ -229,9 +221,6 @@ public:
 	TMap<int32, TSet<FName>> ObjectErrorMap;
 
 	UFUNCTION(BlueprintPure, Category = "Tools")
-	AActor* GetViewGroupObject() const;
-
-	UFUNCTION(BlueprintPure, Category = "Tools")
 	AActor* GetHoveredObject() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Tools")
@@ -245,9 +234,6 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Tools")
 	bool DoesObjectHaveAnyError(int32 ObjectID) const;
-
-	UFUNCTION(BlueprintPure, Category = "Tools")
-	int32 GetViewGroupObjectID() const { return ViewGroupObject ? ViewGroupObject->ID : 0; }
 
 	UFUNCTION(BlueprintCallable, Category = "Shopping")
 	void SetAssemblyForToolMode(EToolMode Mode, const FGuid &AssemblyGUID);

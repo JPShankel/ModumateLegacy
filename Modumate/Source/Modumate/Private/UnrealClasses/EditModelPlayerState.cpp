@@ -204,20 +204,6 @@ void AEditModelPlayerState::BatchRenderLines()
 	UModumateDocument* doc = gameState->Document;
 	FPlane cullingPlane = EMPlayerController->GetCurrentCullingPlane();
 
-	// TODO: remove
-	if (ViewGroupObject)
-	{
-		AModumateObjectInstance *curViewGroupObj = ViewGroupObject;
-		while (curViewGroupObj)
-		{
-			CurViewGroupObjects.Add(curViewGroupObj);
-			curViewGroupObj->RouteGetStructuralPointsAndLines(TempObjectStructurePoints, TempObjectStructureLines, false, false, cullingPlane);
-			CurSelectionStructurePoints.Append(TempObjectStructurePoints);
-			CurSelectionStructureLines.Append(TempObjectStructureLines);
-			curViewGroupObj = curViewGroupObj->GetParentObject();
-		}
-	}
-
 	if ((SelectedObjects.Num() + SelectedGroupObjects.Num() > 0))
 	{
 		const int32 currentGroup = doc->GetActiveVolumeGraphID();
@@ -268,18 +254,7 @@ void AEditModelPlayerState::BatchRenderLines()
 		objectSelectionLine.Point2 = structureLine.P2;
 		objectSelectionLine.OwnerActor = lineObj->GetActor();
 		objectSelectionLine.Thickness = 2.0f;
-
-		bool inViewGroup = CurViewGroupObjects.Contains(lineObj);
-		if ((lineObj->GetObjectType() == EObjectType::OTGroup) || inViewGroup)
-		{
-			objectSelectionLine.DashLength = 6.0f;
-			objectSelectionLine.DashSpacing = 10.0f;
-			objectSelectionLine.Color.A = inViewGroup ? 0.2f : 1.0f;
-		}
-		else
-		{
-			objectSelectionLine.Color = FLinearColor(FColor(0x63, 0xC3, 0xBA));
-		}
+		objectSelectionLine.Color = FLinearColor(FColor(0x63, 0xC3, 0xBA));
 
 		EMPlayerController->HUDDrawWidget->LinesToDraw.Add(MoveTemp(objectSelectionLine));
 	}
@@ -500,13 +475,6 @@ bool AEditModelPlayerState::ValidateSelectionsAndView()
 		}
 	}
 	SelectedObjects = SelectedObjects.Difference(pendingDeselectObjects);
-
-	auto *nextViewGroup = ViewGroupObject;
-	while (nextViewGroup && nextViewGroup->IsDestroyed())
-	{
-		nextViewGroup = nextViewGroup->GetParentObject();
-		viewChanged = true;
-	}
 
 	TArray<int32> invalidErrorIDs;
 	for (auto &kvp : ObjectErrorMap)
@@ -781,7 +749,6 @@ void AEditModelPlayerState::OnNewModel()
 
 	// Reset fields that have pointers/references to MOIs
 	HoveredObject = nullptr;
-	ViewGroupObject = nullptr;
 	SelectedObjects.Reset();
 	LastSelectedObjectSet.Reset();
 	LastHoveredObjectSet.Reset();
@@ -820,43 +787,6 @@ void AEditModelPlayerState::SetShowHoverEffects(bool showHoverEffects)
 {
 	ShowHoverEffects = showHoverEffects;
 	PostViewChanged();
-}
-
-AModumateObjectInstance *AEditModelPlayerState::GetValidHoveredObjectInView(AModumateObjectInstance *hoverTarget) const
-{
-	AModumateObjectInstance *highestGroupUnderViewGroup = nullptr;
-	AModumateObjectInstance *nextTarget = hoverTarget;
-	bool newTargetInViewGroup = false;
-
-	while (nextTarget && !newTargetInViewGroup)
-	{
-		if (nextTarget->GetObjectType() == EObjectType::OTGroup)
-		{
-			highestGroupUnderViewGroup = nextTarget;
-		}
-		nextTarget = nextTarget->GetParentObject();
-
-		if (ViewGroupObject && (ViewGroupObject == nextTarget))
-		{
-			newTargetInViewGroup = true;
-		}
-	}
-
-	bool validWithViewGroup = newTargetInViewGroup || !ViewGroupObject;
-
-	if (validWithViewGroup)
-	{
-		if (highestGroupUnderViewGroup)
-		{
-			return highestGroupUnderViewGroup;
-		}
-		else
-		{
-			return hoverTarget;
-		}
-	}
-
-	return nullptr;
 }
 
 void AEditModelPlayerState::SetHoveredObject(AModumateObjectInstance *ob)
@@ -962,12 +892,6 @@ void AEditModelPlayerState::SetGroupObjectsSelected(const TSet<AModumateObjectIn
 	}
 }
 
-void AEditModelPlayerState::SetViewGroupObject(AModumateObjectInstance *ob)
-{
-	ViewGroupObject = ob;
-	PostViewChanged();
-}
-
 void AEditModelPlayerState::FindReachableObjects(TSet<AModumateObjectInstance*> &ReachableObjs) const
 {
 	ReachableObjs.Reset();
@@ -1028,11 +952,6 @@ void AEditModelPlayerState::FindReachableObjects(TSet<AModumateObjectInstance*> 
 bool AEditModelPlayerState::IsObjectReachableInView(AModumateObjectInstance* obj) const
 {
 	return LastReachableObjectSet.Contains(obj);
-}
-
-AActor* AEditModelPlayerState::GetViewGroupObject() const
-{
-	return ViewGroupObject ? ViewGroupObject->GetActor() : nullptr;
 }
 
 AActor* AEditModelPlayerState::GetHoveredObject() const

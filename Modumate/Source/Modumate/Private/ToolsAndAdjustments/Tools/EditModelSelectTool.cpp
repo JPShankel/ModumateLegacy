@@ -79,8 +79,6 @@ bool USelectTool::HandleMouseUp()
 	int32 numSelections = selectedObjects.Num();
 	auto& selectedGroups = Controller->EMPlayerState->SelectedGroupObjects;
 
-	AModumateObjectInstance *currentViewGroup = Controller->EMPlayerState->ViewGroupObject;
-
 	// If we double clicked on a valid object that is graph3D-hosted,
 	// then make its graph the active one.
 	if (doubleClicked)
@@ -180,18 +178,6 @@ bool USelectTool::HandleMouseUp()
 
 			static const FString eventNameClick(TEXT("Click"));
 			UModumateAnalyticsStatics::RecordSimpleToolEvent(this, GetToolMode(), eventNameClick);
-		}
-		else if (currentViewGroup && (numSelections == 0))
-		{
-			AModumateObjectInstance *currentViewGroupParent = currentViewGroup->GetParentObject();
-			if (currentViewGroupParent && (currentViewGroupParent->GetObjectType() == EObjectType::OTGroup))
-			{
-				Controller->SetViewGroupObject(currentViewGroupParent);
-			}
-			else
-			{
-				Controller->SetViewGroupObject(nullptr);
-			}
 		}
 	}
 

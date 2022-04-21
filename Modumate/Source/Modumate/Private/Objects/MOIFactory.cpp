@@ -58,7 +58,6 @@ UClass* FMOIFactory::GetMOIClass(EObjectType ObjectType)
 	case EObjectType::OTCabinet: return AMOICabinet::StaticClass();
 	case EObjectType::OTStaircase: return AMOIStaircase::StaticClass();
 	case EObjectType::OTFinish: return AMOIFinish::StaticClass();
-	case EObjectType::OTGroup: return AMOIGroup::StaticClass();
 	case EObjectType::OTRoom: return AMOIRoom::StaticClass();
 	case EObjectType::OTTrim: return AMOITrim::StaticClass();
 	case EObjectType::OTMetaVertex: return AMOIMetaVertex::StaticClass();
