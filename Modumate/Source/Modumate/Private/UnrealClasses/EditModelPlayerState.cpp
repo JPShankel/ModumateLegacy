@@ -1675,7 +1675,7 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 	if (EMPlayerController && EMPlayerController->CurrentTool)
 	{
 		OutState.tool = GetEnumValueString<EToolMode>(EMPlayerController->CurrentTool->GetToolMode());
-		OutState.toolPresetGUID = EMPlayerController->CurrentTool->GetAssemblyGUID().ToString();
+		OutState.toolPreset = EMPlayerController->CurrentTool->GetAssemblyGUID().ToString();
 		OutState.toolMode = GetEnumValueString<EToolCreateObjectMode>(EMPlayerController->CurrentTool->GetCreateObjectMode());
 		OutState.viewMode = GetEnumValueString<EEditViewModes>(EMPlayerController->EMPlayerState->SelectedViewMode);
 		OutState.culledCutplane = EMPlayerController->CurrentCullingCutPlaneID;
@@ -1730,10 +1730,10 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 			EMPlayerController->SetToolMode(toolMode);
 		}
 		// If the tool assembly is different, change that
-		else if (!EMPlayerController->CurrentTool->GetAssemblyGUID().ToString().Equals(InState.toolPresetGUID))
+		else if (!EMPlayerController->CurrentTool->GetAssemblyGUID().ToString().Equals(InState.toolPreset))
 		{
 			FGuid guid;
-			FGuid::Parse(InState.toolPresetGUID, guid);
+			FGuid::Parse(InState.toolPreset, guid);
 			EMPlayerController->CurrentTool->SetAssemblyGUID(guid);
 		}
 	}
