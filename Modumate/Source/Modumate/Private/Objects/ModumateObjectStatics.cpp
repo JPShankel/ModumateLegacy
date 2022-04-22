@@ -1594,6 +1594,7 @@ bool UModumateObjectStatics::IsValidParentObjectType(EObjectType ParentObjectTyp
 		CompatibleObjectTypes.Add(EObjectType::OTCountertop);
 		CompatibleObjectTypes.Add(EObjectType::OTSystemPanel);
 		CompatibleObjectTypes.Add(EObjectType::OTMetaPlane);
+		CompatibleObjectTypes.Add(EObjectType::OTMetaPlaneSpan);
 		bCompatibleObjectsInitialized = true;
 	}
 	
