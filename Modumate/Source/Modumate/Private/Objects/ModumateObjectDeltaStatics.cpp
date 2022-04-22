@@ -1388,3 +1388,39 @@ void FModumateObjectDeltaStatics::GetDeltaForSpanMapping(const AModumateObjectIn
 	newSpanDelta->AddMutationState(Moi, Moi->GetStateData(), stateData);
 	OutDeltas.Add(MoveTemp(newSpanDelta));
 }
+
+template<class T>
+void GetDeltasForSpanAddRemove(const UModumateDocument* Doc, const T* SpanOb, const TArray<int32>& AddMembers, const TArray<int32>& RemoveMembers, TArray<FDeltaPtr>& OutDeltas)
+{
+	if (!SpanOb)
+	{
+		return;
+	}
+
+	typename T::FInstanceData newData = SpanOb->InstanceData;
+	for (int32 addMem : AddMembers)
+	{
+		newData.GraphMembers.AddUnique(addMem);
+	}
+	for (int32 remMem : RemoveMembers)
+	{
+		newData.GraphMembers.Remove(remMem);
+	}
+
+	FMOIStateData newStateData = SpanOb->GetStateData();
+	newStateData.CustomData.SaveStructData(newData);
+
+	auto moiDelta = MakeShared<FMOIDelta>();
+	moiDelta->AddMutationState(SpanOb, SpanOb->GetStateData(), newStateData);
+	OutDeltas.Add(moiDelta);
+}
+
+void FModumateObjectDeltaStatics::GetDeltasForFaceSpanAddRemove(const UModumateDocument* Doc, int32 SpanID, const TArray<int32>& AddFaces, const TArray<int32>& RemoveFaces, TArray<FDeltaPtr>& OutDeltas)
+{
+	GetDeltasForSpanAddRemove(Doc, Cast<AMOIMetaPlaneSpan>(Doc->GetObjectById(SpanID)), AddFaces, RemoveFaces, OutDeltas);
+}
+
+void FModumateObjectDeltaStatics::GetDeltasForEdgeSpanAddRemove(const UModumateDocument* Doc, int32 SpanID, const TArray<int32>& AddEdges, const TArray<int32>& RemoveEdges, TArray<FDeltaPtr>& OutDeltas)
+{
+	GetDeltasForSpanAddRemove(Doc, Cast<AMOIMetaEdgeSpan>(Doc->GetObjectById(SpanID)), AddEdges, RemoveEdges, OutDeltas);
+}

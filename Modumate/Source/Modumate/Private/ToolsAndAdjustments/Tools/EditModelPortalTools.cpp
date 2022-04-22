@@ -13,6 +13,8 @@
 #include "ModumateCore/ExpressionEvaluator.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "Objects/ModumateObjectStatics.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
+#include "Objects/MetaPlaneSpan.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "UnrealClasses/PortalFrameActor.h"
 #include "Objects/Portal.h"
@@ -251,7 +253,10 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 	{
 		newParentID = CurTargetPlaneID;
 
-		if (curTargetPlaneObj->GetChildIDs().Num() > 0)
+		TArray<int32> spans;
+		UModumateObjectStatics::GetSpansForFaceObject(GameState->Document, curTargetPlaneObj, spans);
+
+		if (curTargetPlaneObj->GetChildIDs().Num() > 0 || spans.Num() > 0)
 		{
 			auto deleteChildrenDelta = MakeShared<FMOIDelta>();
 
@@ -261,6 +266,12 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 			}
 
 			OutDeltas.Add(deleteChildrenDelta);
+
+			for (auto spanID : spans)
+			{
+				// TODO: face hosted objects to join span instead of replace, requires hole support in span geometry
+				FModumateObjectDeltaStatics::GetDeltasForFaceSpanAddRemove(GameState->Document, spanID, {}, { curTargetPlaneObj->ID }, OutDeltas);
+			}
 		}
 	}
 	break;
