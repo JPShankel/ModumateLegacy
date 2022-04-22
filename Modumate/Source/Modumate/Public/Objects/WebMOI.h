@@ -27,7 +27,8 @@ enum class EWebMOIPropertyType : uint8
 	height,
 	cameraDate,
 	cameraTime,
-	cameraPositionUpdate
+	cameraPositionUpdate,
+	edgeDetailHash
 };
 
 USTRUCT()

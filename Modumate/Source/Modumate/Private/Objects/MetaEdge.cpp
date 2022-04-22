@@ -47,6 +47,19 @@ AMOIMetaEdge::AMOIMetaEdge()
 	prop.isEditable = true;
 	prop.isVisible = true;
 	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("CachedEdgeDetail");
+	prop.Type = EWebMOIPropertyType::text;
+	prop.DisplayName = TEXT("Detail");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("CachedMiterHash");
+	prop.Type = EWebMOIPropertyType::edgeDetailHash;
+	prop.isEditable = false;
+	prop.isVisible = false;
+	WebProperties.Add(prop.Name, prop);
 }
 
 bool AMOIMetaEdge::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
@@ -285,14 +298,35 @@ bool AMOIMetaEdge::ToWebMOI(FWebMOI& OutMOI) const
 		if (edge)
 		{
 			AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
-			EUnit defaultUnit = controller->GetDocument()->GetCurrentSettings().DimensionUnit;
-			EDimensionUnits unitType = controller->GetDocument()->GetCurrentSettings().DimensionType;
+			EUnit defaultUnit = Document->GetCurrentSettings().DimensionUnit;
+			EDimensionUnits unitType = Document->GetCurrentSettings().DimensionType;
 			FText calculatedLength = UModumateDimensionStatics::CentimetersToDisplayText(CalculateLength(controller), 1, unitType, defaultUnit);
 
 			prop = OutMOI.Properties.Find(TEXT("CalculatedLength"));
 			prop->ValueArray.Empty();
 			prop->ValueArray.Add(calculatedLength.ToString());
 		}
+
+		FString edgeDetailDescription;
+		int32 edgeHash = CachedEdgeDetailConditionHash;
+		if (CachedEdgeDetailMOI && CachedEdgeDetailDataID.IsValid())
+		{
+			const FBIMPresetCollection& presetCollection = Document->GetPresetCollection();
+			FText edgeDetailString;
+			UInstPropWidgetEdgeDetail::TryMakeUniquePresetDisplayName(presetCollection, CachedEdgeDetailData, edgeDetailString);
+			edgeDetailDescription = edgeDetailString.ToString();
+		}
+
+		static const FString CachedEdgeDetailName(TEXT("CachedEdgeDetail"));
+		static const FString CachedMiterHashName(TEXT("CachedMiterHash"));
+
+		prop = &OutMOI.Properties.FindOrAdd(CachedEdgeDetailName);
+		*prop = *WebProperties.Find(CachedEdgeDetailName);
+		prop->ValueArray.Add(edgeDetailDescription);
+
+		prop = &OutMOI.Properties.FindOrAdd(CachedMiterHashName);
+		*prop = *WebProperties.Find(CachedMiterHashName);
+		prop->ValueArray.Add(FString::FromInt(edgeHash));
 
 		return true;
 	}

@@ -49,6 +49,8 @@ public:
 
 	void RegisterValue(UObject* Source, int32 EdgeID, const FGuid& DetailPresetID, uint32 DetailConditionHash);
 
+	static bool TryMakeUniquePresetDisplayName(const struct FBIMPresetCollection& PresetCollection, const struct FEdgeDetailData& NewDetailData, FText& OutDisplayName);
+
 protected:
 	virtual void BroadcastValueChanged() override;
 	bool OnCreateOrSwap(FGuid NewDetailPresetID);
@@ -61,8 +63,6 @@ protected:
 
 	UFUNCTION()
 	void OnClickedEdit();
-
-	static bool TryMakeUniquePresetDisplayName(const struct FBIMPresetCollection& PresetCollection, const struct FEdgeDetailData& NewDetailData, FText& OutDisplayName);
 
 	EEdgeDetailWidgetActions LastClickedAction = EEdgeDetailWidgetActions::None;
 };
