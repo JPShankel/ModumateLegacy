@@ -14,12 +14,76 @@ const FGraph3DFace* AMOIMetaPlaneSpan::GetPerimeterFace() const
 	return &CachedPerimeterFace;
 }
 
+bool AMOIMetaPlaneSpan::CanAdd(int32 FaceID) const
+{
+	if (InstanceData.GraphMembers.Num() == 0)
+	{
+		return true;
+	}
+
+	auto* graph = GetDocument()->FindVolumeGraph(FaceID);
+
+	if (graph != GetDocument()->FindVolumeGraph(InstanceData.GraphMembers[0]))
+	{
+		return false;
+	}
+
+	const FGraph3DFace* faceOb = graph->FindFace(FaceID);
+
+	if (!UModumateGeometryStatics::ArePlanesCoplanar(faceOb->CachedPlane, GetPerimeterFace()->CachedPlane))
+	{
+		return false;
+	}
+
+	for (int32 edgeID : faceOb->EdgeIDs)
+	{
+		for (int32 member : InstanceData.GraphMembers)
+		{
+			const FGraph3DFace* memberOb = graph->FindFace(member);
+			if (!ensure(memberOb))
+			{
+				continue;
+			}
+
+			if (memberOb->EdgeIDs.Contains(edgeID))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 bool AMOIMetaPlaneSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
 	{
 		if (OutSideEffectDeltas)
 		{
+			if (PostGraphChanges.Num() > 0)
+			{
+				TArray<int32> additions, removals;
+				FInstanceData newData = InstanceData;
+				for (auto change : PostGraphChanges)
+				{
+					if (change < 0)
+					{
+						if (newData.GraphMembers.Contains(-change))
+						{
+							removals.Add(-change);
+						}
+					}
+					else if (CanAdd(change))
+					{
+						additions.AddUnique(change);
+					}
+				}
+				PostGraphChanges.Empty();
+				FModumateObjectDeltaStatics::GetDeltasForFaceSpanAddRemove(Document, ID, additions, removals, *OutSideEffectDeltas);
+
+			}
+			else
 			if (GetChildIDs().Num() == 0 || InstanceData.GraphMembers.Num() == 0)
 			{
 				TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();

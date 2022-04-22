@@ -72,6 +72,7 @@
 
 const FName UModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
 
+
 // Set up a reasonable default for infinite loop detection while cleaning objects and resolving dependencies.
 const int32 UModumateDocument::CleanIterationSafeguard = 128;
 
@@ -1488,6 +1489,8 @@ bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDelta
 	FGraph3D moiTempGraph;
 	FGraph3D::CloneFromGraph(moiTempGraph, *GetVolumeGraph(GraphID));
 
+	GraphDeltaElementChanges.Empty();
+
 	for (auto& delta : InDeltas)
 	{
 		TArray<FDeltaPtr> sideEffectDeltas;
@@ -1498,6 +1501,15 @@ bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDelta
 
 		OutDeltas.Add(MakeShared<FGraph3DDelta>(delta));
 		OutDeltas.Append(sideEffectDeltas);
+	}
+
+	TArray<AMOIMetaPlaneSpan*> spans;
+	GetObjectsOfTypeCasted(EObjectType::OTMetaPlaneSpan, spans);
+
+	TArray<int32> faceChangeArray = GraphDeltaElementChanges.Array();
+	for (auto* span : spans)
+	{
+		span->PostGraphChanges = faceChangeArray;
 	}
 
 	return true;
@@ -2216,13 +2228,13 @@ bool UModumateDocument::FinalizeGraph2DDelta(const FGraph2DDelta &Delta, int32 &
 	return false;
 }
 
-
 bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDelta &Delta, TArray<FDeltaPtr> &OutSideEffectDeltas)
 {
 	TMap<int32, TArray<int32>> parentIDToChildrenIDs;
 
 	for (auto &kvp : Delta.FaceAdditions)
 	{
+		GraphDeltaElementChanges.Add(kvp.Key);
 		for (int32 parentID : kvp.Value.ParentObjIDs)
 		{
 			if (parentIDToChildrenIDs.Contains(parentID))
@@ -2289,24 +2301,7 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 	for (auto &kvp : Delta.FaceDeletions)
 	{
 		deletedObjIDs.Add(kvp.Key);
-
-		TArray<int32> spans;
-		UModumateObjectStatics::GetSpansForFaceObject(this, GetObjectById(kvp.Key), spans);
-		for (int32 span : spans)
-		{
-			const AMOIMetaPlaneSpan* planeSpan = Cast<AMOIMetaPlaneSpan>(GetObjectById(span));
-			if (planeSpan != nullptr)
-			{
-				auto deltaPtr = MakeShared<FMOIDelta>();
-				FMOIMetaPlaneSpanData newData = planeSpan->InstanceData;
-				newData.GraphMembers.Remove(kvp.Key);
-
-				FMOIStateData newState = planeSpan->GetStateData();
-				newState.CustomData.SaveStructData(newData);
-				deltaPtr->AddMutationState(planeSpan, planeSpan->GetStateData(), newState);
-				OutSideEffectDeltas.Add(deltaPtr);
-			}
-		}
+		GraphDeltaElementChanges.Add(-kvp.Key);
 	}
 
 	for (auto &kvp : Delta.EdgeDeletions)

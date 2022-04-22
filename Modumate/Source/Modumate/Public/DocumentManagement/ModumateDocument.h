@@ -217,12 +217,20 @@ public:
 	TArray<const AModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& Types) const;
 	TArray<AModumateObjectInstance*> GetObjectsOfType(const FObjectTypeSet& Types);
 
+	template<class T>
+	void GetObjectsOfTypeCasted(EObjectType ObjectType, TArray<T*>& OutObjects)
+	{
+		Algo::Transform(GetObjectsOfType(ObjectType), OutObjects, [](AModumateObjectInstance* MOI) {return Cast<T>(MOI); });
+	}
+
 	void GetObjectIdsByAssembly(const FGuid& AssemblyKey, TArray<int32>& OutIDs) const;
 
 	static const FName DocumentHideRequestTag;
 
 	UPROPERTY()
 	FOnAppliedMOIDeltas OnAppliedMOIDeltas;
+
+	TSet<int32> GraphDeltaElementChanges;
 
 
 	virtual void BeginDestroy() override;

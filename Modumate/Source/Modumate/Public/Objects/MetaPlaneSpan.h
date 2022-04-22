@@ -34,6 +34,10 @@ public:
 
 	const FGraph3DFace* GetPerimeterFace() const;
 
+	bool CanAdd(int32 FaceID) const;
+
+	TArray<int32> PostGraphChanges;
+
 protected:
 
 
