@@ -1264,7 +1264,7 @@ void FModumateObjectDeltaStatics::GetDeltasForFaceSpanMerge(const UModumateDocum
 }
 
 template<class T>
-void GetDeltasForSpanSplitT(const UModumateDocument* Doc, const T* SpanOb, int32& NextID, TArray<FDeltaPtr>& OutDeltas)
+void GetDeltasForSpanSplitT(const UModumateDocument* Doc, const T* SpanOb, int32& NextID, TArray<FDeltaPtr>& OutDeltas, TSet<int32>* OutNewMOIs = nullptr)
 {
 	typename T::FInstanceData originalData = SpanOb->InstanceData;
 	if (originalData.GraphMembers.Num() < 2)
@@ -1296,6 +1296,10 @@ void GetDeltasForSpanSplitT(const UModumateDocument* Doc, const T* SpanOb, int32
 				stateData.ID = NextID++;
 				stateData.ParentID = parentID;
 				moisDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+				if (OutNewMOIs)
+				{
+					OutNewMOIs->Add(stateData.ID);
+				}
 			}
 		}
 	}
@@ -1308,7 +1312,8 @@ void GetDeltasForSpanSplitT(const UModumateDocument* Doc, const T* SpanOb, int32
 	OutDeltas.Add(moisDelta);
 }
 
-void FModumateObjectDeltaStatics::GetDeltasForSpanSplit(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas)
+void FModumateObjectDeltaStatics::GetDeltasForSpanSplit(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas,
+	TSet<int32>* OutNewMOIs /*= nullptr*/)
 {
 	int32 nextID = Doc->GetNextAvailableID();
 	for (int32 spanID : SpanIDs)
@@ -1316,11 +1321,11 @@ void FModumateObjectDeltaStatics::GetDeltasForSpanSplit(const UModumateDocument*
 		const AModumateObjectInstance* spanOb = Doc->GetObjectById(spanID);
 		if (spanOb->GetObjectType() == EObjectType::OTMetaPlaneSpan)
 		{
-			GetDeltasForSpanSplitT(Doc, Cast<AMOIMetaPlaneSpan>(spanOb), nextID, OutDeltas);
+			GetDeltasForSpanSplitT(Doc, Cast<AMOIMetaPlaneSpan>(spanOb), nextID, OutDeltas, OutNewMOIs);
 		}
 		else if (spanOb->GetObjectType() == EObjectType::OTMetaEdgeSpan)
 		{
-			GetDeltasForSpanSplitT(Doc, Cast<AMOIMetaEdgeSpan>(spanOb), nextID, OutDeltas);
+			GetDeltasForSpanSplitT(Doc, Cast<AMOIMetaEdgeSpan>(spanOb), nextID, OutDeltas, OutNewMOIs);
 		}
 	}
 }

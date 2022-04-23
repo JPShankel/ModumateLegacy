@@ -1504,8 +1504,10 @@ void UModumateObjectStatics::SeparateSelectedMetaSpan(UWorld* World)
 		return;
 	}
 
+	UModumateDocument* document = controller->GetDocument();
+	TSet<int32> newSelectionItems;
 	TArray<int32> allSelectedSpans;
-	int32 newObjID = controller->GetDocument()->GetNextAvailableID();
+	int32 newObjID = document->GetNextAvailableID();
 
 	AMOIMetaPlaneSpan* targetSpan = nullptr;
 	for (auto curObj : playerState->SelectedObjects)
@@ -1521,8 +1523,23 @@ void UModumateObjectStatics::SeparateSelectedMetaSpan(UWorld* World)
 	}
 
 	TArray<FDeltaPtr> deltas;
-	FModumateObjectDeltaStatics::GetDeltasForSpanSplit(controller->GetDocument(), allSelectedSpans, deltas);
-	controller->GetDocument()->ApplyDeltas(deltas , World);
+	FModumateObjectDeltaStatics::GetDeltasForSpanSplit(document, allSelectedSpans, deltas, &newSelectionItems);
+	document->ApplyDeltas(deltas , World);
+
+	TSet<AModumateObjectInstance*> selectedObjects;
+	for (int32 id : newSelectionItems)
+	{
+		AModumateObjectInstance* moi = document->GetObjectById(id);
+		if (moi && !UModumateTypeStatics::IsSpanObject(moi))
+		{
+			selectedObjects.Add(moi);
+		}
+	}
+
+	if (selectedObjects.Num() > 0)
+	{	// Add to selection, so original selected hosted object remains selected.
+		controller->SetObjectsSelected(selectedObjects, true, false);
+	}
 }
 
 bool UModumateObjectStatics::GetHostingMOIsForMOI(UModumateDocument* Doc, AModumateObjectInstance* Moi, TArray<AModumateObjectInstance*>& OutMOIs)
