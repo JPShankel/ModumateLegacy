@@ -35,6 +35,8 @@ public:
 
 	virtual void SetupDynamicGeometry() override;
 
+	virtual void PreDestroy() override;
+
 protected:
 
 	bool UpdateCachedEdge();

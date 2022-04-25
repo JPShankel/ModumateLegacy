@@ -51,6 +51,20 @@ void AMOIMetaEdgeSpan::SetupDynamicGeometry()
 	UpdateCachedEdge();
 }
 
+void AMOIMetaEdgeSpan::PreDestroy()
+{
+	if (InstanceData.GraphMembers.Num() > 0)
+	{
+		auto* graphMoi = Document->GetObjectById(Document->FindGraph3DByObjID(InstanceData.GraphMembers[0]));
+		if (graphMoi)
+		{
+			graphMoi->MarkDirty(EObjectDirtyFlags::Structure);
+		}
+	}
+
+	Super::PreDestroy();
+}
+
 bool AMOIMetaEdgeSpan::UpdateCachedEdge()
 {
 	bool bLegal = true;
@@ -139,6 +153,7 @@ bool AMOIMetaEdgeSpan::UpdateCachedEdge()
 		bLegal = false;
 	}
 
+	Document->GetObjectById(graph->GraphID)->MarkDirty(EObjectDirtyFlags::Structure);
+
 	return bLegal;
 }
-

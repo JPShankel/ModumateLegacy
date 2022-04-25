@@ -22,6 +22,7 @@ bool AMOIMetaGraph::SetupBoundingBox()
 {
 	if (IsDirty(EObjectDirtyFlags::Structure))
 	{
+		FBox oldBox(CachedBounds);
 		CachedBounds.Init();
 		TArray<int32> subtreeIDs;
 		subtreeIDs.Push(ID);
@@ -38,6 +39,17 @@ bool AMOIMetaGraph::SetupBoundingBox()
 			}
 		}
 
+		FGraph3D* myGraph = GetDocument()->GetVolumeGraph(ID);
+		if (ensure(myGraph))
+		{
+			objectBox.Init();
+			myGraph->GetBoundingBox(objectBox);
+			CachedBounds += objectBox;
+		}
+
+		TArray<FStructurePoint> structurePoints;  // unused
+		TArray<FStructureLine> structureLines;
+
 		while (subtreeIDs.Num() > 0)
 		{
 			int32 graphID = subtreeIDs.Pop();
@@ -45,18 +57,13 @@ bool AMOIMetaGraph::SetupBoundingBox()
 			if (ensure(graphObject))
 			{
 				subtreeIDs.Append(graphObject->GetChildIDs());
-			}
-			FGraph3D* graph = GetDocument()->GetVolumeGraph(graphID);
-			if (ensure(graph))
-			{
-				objectBox.Init();
-				graph->GetBoundingBox(objectBox);
-				CachedBounds += objectBox;
+				if (graphObject->ID != ID)
+				{
+					graphObject->GetStructuralPointsAndLines(structurePoints, structureLines, false, false);
+				}
 			}
 		}
 
-		TArray<FStructurePoint> structurePoints;  // unused
-		TArray<FStructureLine> structureLines;
 		for (const auto* groupMember : groupMembers)
 		{
 			if (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(groupMember->GetObjectType()) == EGraph3DObjectType::None)
@@ -69,6 +76,11 @@ bool AMOIMetaGraph::SetupBoundingBox()
 		{
 			CachedBounds += l.P1;
 			CachedBounds += l.P2;
+		}
+
+		if (!(CachedBounds == oldBox) && GetParentObject())
+		{
+			GetParentObject()->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 	}
 

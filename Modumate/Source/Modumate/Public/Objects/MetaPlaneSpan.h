@@ -38,6 +38,8 @@ public:
 
 	TArray<int32> PostGraphChanges;
 
+	virtual void PreDestroy() override;
+
 protected:
 
 

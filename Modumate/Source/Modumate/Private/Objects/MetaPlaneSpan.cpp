@@ -55,6 +55,20 @@ bool AMOIMetaPlaneSpan::CanAdd(int32 FaceID) const
 	return false;
 }
 
+void AMOIMetaPlaneSpan::PreDestroy()
+{
+	if (InstanceData.GraphMembers.Num() > 0)
+	{
+		auto* graphMoi = Document->GetObjectById(Document->FindGraph3DByObjID(InstanceData.GraphMembers[0]));
+		if (graphMoi)
+		{
+			graphMoi->MarkDirty(EObjectDirtyFlags::Structure);
+		}
+	}
+
+	Super::PreDestroy();
+}
+
 bool AMOIMetaPlaneSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
@@ -241,6 +255,8 @@ bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 	CachedOrigin = CachedPerimeterFace.CachedPositions.Num() > 0 ? CachedPerimeterFace.CachedPositions[0] : FVector::ZeroVector;
 	CachedCenter = CachedPerimeterFace.CachedCenter;
 	CachedHoles = CachedPerimeterFace.CachedHoles;
+
+	Document->GetObjectById(graph->GraphID)->MarkDirty(EObjectDirtyFlags::Structure);
 
 	return bLegal && CheckIsConnected();
 }
