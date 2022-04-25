@@ -366,6 +366,8 @@ public:
 
 	static int32 MPObjIDFromLocalObjID(int32 LocalObjID, int32 UserIdx);
 	static void SplitMPObjID(int32 MPObjID, int32& OutLocalObjID, int32& OutUserIdx);
+	
+	FString GetNextMoiName(EObjectType ObjectType, FString Name);
 
 private:
 	TSharedPtr<FModumateDraftingView> CurrentDraftingView = nullptr;

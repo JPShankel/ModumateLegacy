@@ -4719,7 +4719,8 @@ void UModumateDocument::create_moi(const FString& MOIType, int32 ParentID)
 	FindEnumValueByString<EObjectType>(MOIType, objectType);
 	if (objectType == EObjectType::OTDesignOption)
 	{
-		TSharedPtr<FMOIDelta> delta = AMOIDesignOption::MakeCreateDelta(this, FString::Printf(TEXT("Design Option")),ParentID);
+		FString newName = GetNextMoiName(EObjectType::OTDesignOption, LOCTEXT("NewDesignOptionMoiName", "Design Option ").ToString());
+		TSharedPtr<FMOIDelta> delta = AMOIDesignOption::MakeCreateDelta(this, newName, ParentID);
 		int32 nextID = GetNextAvailableID();
 		BeginUndoRedoMacro();
 		ApplyDeltas({ delta }, GetWorld());
@@ -4745,7 +4746,7 @@ void UModumateDocument::create_moi(const FString& MOIType, int32 ParentID)
 		if (cameraComp)
 		{
 			FDateTime dateTime = Controller->SkyActor->GetCurrentDateTime();
-			FString newViewName = TEXT("New Camera View ");
+			FString newViewName = GetNextMoiName(EObjectType::OTCameraView, LOCTEXT("NewCameraViewMoiName", "New Camera View ").ToString());
 			UModumateBrowserStatics::CreateCameraViewAsMoi(this, cameraComp, newViewName, dateTime, 0);
 		}
 	}
@@ -4753,6 +4754,36 @@ void UModumateDocument::create_moi(const FString& MOIType, int32 ParentID)
 	{
 		ensureAlwaysMsgf(false, TEXT("Attempt to create unsupported MOI type via web!"));
 	}
+}
+
+FString UModumateDocument::GetNextMoiName(EObjectType ObjectType, FString Name) {
+	int32 n = 1;
+
+	auto existingObjects = GetObjectsOfType(ObjectType);
+	TSet<FString> existingNames;
+	for (const auto* object: existingObjects)
+	{
+		FMOIStateData stateData = object->GetStateData();
+		
+		if (ObjectType == EObjectType::OTCameraView)
+		{
+			FMOICameraViewData cameraViewData;
+			stateData.CustomData.LoadStructData(cameraViewData);
+			existingNames.Add(cameraViewData.Name);
+		}
+		else
+		{
+			existingNames.Add(stateData.DisplayName);
+		}
+	}
+
+	FString candidate;
+	do
+	{
+		candidate = Name + FString::Printf(TEXT("%d"), n++);
+	} while (existingNames.Contains(candidate));
+
+	return candidate;
 }
 
 void UModumateDocument::delete_moi(int32 ID)
