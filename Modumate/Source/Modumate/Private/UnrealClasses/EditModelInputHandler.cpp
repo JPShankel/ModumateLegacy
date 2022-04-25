@@ -635,14 +635,11 @@ void UEditModelInputHandler::RequestInputDisabled(const FName& Requester, bool b
 
 	if (bShouldDisable)
 	{
-		bool bDuplicateRequest = false;
-		InputDisabledRequests.Add(Requester, &bDuplicateRequest);
-		ensureAlwaysMsgf(!bDuplicateRequest, TEXT("%s already requested that input be disabled!"), *Requester.ToString());
+		InputDisabledRequests.Add(Requester);
 	}
 	else
 	{
-		int32 numRemoved = InputDisabledRequests.Remove(Requester);
-		ensureAlwaysMsgf(numRemoved == 1, TEXT("%s revoked an input disabled request that was never set!"), *Requester.ToString());
+		InputDisabledRequests.Remove(Requester);
 	}
 
 	bool bShouldInputBeEnabled = IsInputEnabled();
