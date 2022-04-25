@@ -21,6 +21,7 @@
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "Objects/LayeredObjectInterface.h"
+#include "ImageUtils.h"
 
 
 
@@ -95,6 +96,7 @@ void ADynamicIconGenerator::BeginPlay()
 	DynCustomMaterial = IconSphereMesh->CreateDynamicMaterialInstance(0, CustomMaterialBase);
 
 	IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(world, RenderTargetSize, RenderTargetSize, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
+	IconRenderTargetForWeb = UKismetRenderingLibrary::CreateRenderTarget2D(world, RenderTargetSizeForWeb, RenderTargetSizeForWeb, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
 }
 
 void ADynamicIconGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -426,6 +428,41 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &A
 	case EObjectType::OTEdgeHosted:
 	case EObjectType::OTFaceHosted:
 		return SetIconMeshForPointHostedAssembly(Assembly, InRenderTarget);
+	}
+	return false;
+}
+
+bool ADynamicIconGenerator::GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FString& OutResponse)
+{
+#if UE_SERVER
+	return false;
+#endif
+
+	FBIMPresetCollectionProxy presetCollection(Controller->GetDocument()->GetPresetCollection());
+	// Find if this is a valid preset
+	const FBIMPresetInstance* childPreset = presetCollection.PresetFromGUID(AsmKey);
+	if (childPreset == nullptr)
+	{
+		return false;
+	}
+	// Find if an assembly exists for this preset
+	const FBIMAssemblySpec* assembly = presetCollection.AssemblySpecFromGUID(childPreset->ObjectType, AsmKey);
+	if (!assembly)
+	{
+		return false;
+	}
+	// Capture into a render target
+	bool captureSuccess = SetIconMeshForAssemblyType(*assembly, IconRenderTargetForWeb, BIM_ROOT_PART, true);
+	if (captureSuccess)
+	{
+		// TODO: Cache?
+		FBufferArchive imageBuffer;
+		if (!FImageUtils::ExportRenderTarget2DAsPNG(IconRenderTargetForWeb, imageBuffer))
+		{
+			return false;
+		}
+		OutResponse = FBase64::Encode(imageBuffer);
+		return true;
 	}
 	return false;
 }

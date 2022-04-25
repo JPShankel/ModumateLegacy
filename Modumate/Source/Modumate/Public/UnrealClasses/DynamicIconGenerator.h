@@ -76,6 +76,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
 	int32 RenderTargetSize = 512;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
+	int32 RenderTargetSizeForWeb = 64;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Dimension")
 	float WallLength = 91.44f;
 
@@ -150,6 +153,9 @@ public:
 	UPROPERTY()
 	UTextureRenderTarget2D* IconRenderTarget;
 
+	UPROPERTY()
+	UTextureRenderTarget2D* IconRenderTargetForWeb;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -158,6 +164,8 @@ public:
 	bool SetIconMeshForBIMDesigner(const FBIMPresetCollectionProxy& PresetCollection,bool bUseDependentPreset, const FGuid& PresetID, UMaterialInterface*& OutMaterial, const FBIMEditorNodeIDType& NodeID, bool bSaveToCache = true);
 	bool GetSavedIconFromPreset(const FGuid& PresetID, UTexture2D*& OutTexture);
 	bool SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex, bool bFromRootNode);
+	
+	bool GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FString& OutResponse);
 
 	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);

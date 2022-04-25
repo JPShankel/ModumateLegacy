@@ -4599,6 +4599,26 @@ void UModumateDocument::drawing_get_cutplane_lines(const FString& InRequest)
 	}
 }
 
+void UModumateDocument::get_preset_thumbnail(const FString& InRequest)
+{
+	FDrawingDesignerGenericRequest req;
+	if (req.ReadJson(InRequest))
+	{
+		if (req.requestType != EDrawingDesignerRequestType::getPresetThumbnail) return;
+		FDrawingDesignerGenericStringResponse rsp;
+
+		FString jsonResponse;
+		rsp.request = req;
+		auto* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (controller && controller->DynamicIconGenerator &&
+			controller->DynamicIconGenerator->GetIconMeshForAssemblyForWeb(FGuid(req.data), rsp.answer))
+		{
+			rsp.WriteJson(jsonResponse);
+			DrawingSendResponse(TEXT("onGenericResponse"), jsonResponse);
+		}
+	}
+}
+
 void UModumateDocument::string_to_inches(const FString& InRequest)
 {
 	FDrawingDesignerGenericRequest req;

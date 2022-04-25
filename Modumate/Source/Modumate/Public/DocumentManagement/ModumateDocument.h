@@ -419,6 +419,9 @@ public:
 	void drawing_get_cutplane_lines(const FString& InRequest);
 
 	UFUNCTION()
+	void get_preset_thumbnail(const FString& InRequest);
+
+	UFUNCTION()
 	void string_to_inches(const FString& InRequest);
 
 	UFUNCTION()
