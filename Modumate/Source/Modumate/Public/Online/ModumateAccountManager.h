@@ -247,6 +247,7 @@ private:
 	FString OurVersion;
 	FString ProjectID;  // If multiplayer
 
+	bool bAlreadyPromptedForVersionMismatch = false;
 	bool bIsFirstLogin = false;
 	bool bHasMultiplayerFeature = false; // Eventually this will not be needed as customers roll into full multiplayer
 };

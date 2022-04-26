@@ -182,8 +182,9 @@ void FModumateAccountManager::ProcessUserStatus(const FModumateUserStatus& UserS
 		LatestVersion = version;
 		const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
 		OurVersion = projectSettings->ProjectVersion;
-		if (OurVersion != LatestVersion && !CVarModumateDisableForcedUpdate.GetValueOnAnyThread())
+		if (!bAlreadyPromptedForVersionMismatch && OurVersion != LatestVersion && !CVarModumateDisableForcedUpdate.GetValueOnAnyThread())
 		{
+			bAlreadyPromptedForVersionMismatch = true;
 			PromptForUpgrade();
 		}
 	}
