@@ -170,15 +170,7 @@ void AEditModelPlayerController::ClientWasKicked_Implementation(const FText& Kic
 
 void AEditModelPlayerController::FlushPressedKeys()
 {
-	//KLUDGE: HACK: TODO: Okay, so because we added an overlay widget to capture keyboard events
-	// the UGameViewportClient loses focus when we left click after orbit due to the UWebKeyboardCapture widget.
-	// This causes the UPlayerInput to Flush all the pressed keys (normally this occurs on alt-tabs, resizes, maximizes, etc.).
-	// This is fine, because the KeyState will update eventually anyway. HOWEVER. THE EXACT SAME FRAME we end
-	// up evaluating for shift (to add to selection) and it evaluates FALSE because we JUST FLUSHED
-	// IT. To avoid engine changes and essentially getting back in to the slate stack, I have simply aborted the flush.
-	// This suits our purposes, but may end up with stuck keys if we go windowless fullscreen (which we don't really support?)
-	// Eventually we /really/ need to make CEF the primary input driver for everything so things like UWebKeyboardCapture
-	// are not necessary. In the mixed UMG/CEF world this is not possible. -JN
+	Super::FlushPressedKeys();
 }
 
 bool AEditModelPlayerController::TryInitPlayerState()
@@ -491,14 +483,19 @@ void AEditModelPlayerController::BeginPlay()
 		{
 			EditModelUserWidget->ProjectSystemMenu->OnVisibilityChanged.AddDynamic(this, &AEditModelPlayerController::OnToggledProjectSystemMenu);
 		}
+		
+		if(EditModelUserWidget->bIsShowDrawingDesigner)
+		{
+			WebKeyboardCaptureWidget = CreateWidget<UWebKeyboardCapture>(this, UWebKeyboardCapture::StaticClass());
+			if(ensureAlways(WebKeyboardCaptureWidget))
+			{
+				WebKeyboardCaptureWidget->SetVisibility(ESlateVisibility::Visible);
+				WebKeyboardCaptureWidget->AddToViewport(-1);
+			}
+
+		}
 	}
 
-	UWebKeyboardCapture* keyboardCaptureWidget = CreateWidget<UWebKeyboardCapture>(this, UWebKeyboardCapture::StaticClass());
-	if(ensureAlways(keyboardCaptureWidget))
-	{
-		keyboardCaptureWidget->SetVisibility(ESlateVisibility::Visible);
-		keyboardCaptureWidget->AddToViewport(-1);
-	}
 
 #endif
 
@@ -658,7 +655,7 @@ EToolMode AEditModelPlayerController::GetToolMode()
 void AEditModelPlayerController::SetToolMode(EToolMode NewToolMode)
 {
 	// Don't do anything if we're trying to set the tool to our current one.
-	EToolMode curToolMode = GetToolMode();
+ 	EToolMode curToolMode = GetToolMode();
 	if (curToolMode == NewToolMode)
 	{
 		return;

@@ -32,7 +32,6 @@ public:
 
 	FOnMouseEnter OnMouseEnterDelegate;
 	FOnMouseLeave OnMouseLeaveDelegate;
-
 	bool AreWindowsActive() const { return bWindowsActive; }
 	bool AreWindowsVisible() const { return bWindowsVisible; }
 

@@ -4417,8 +4417,6 @@ void UModumateDocument::RecordSavedProject(UWorld* World, const FString& FilePat
 
 void UModumateDocument::set_web_focus(bool bHasFocus)
 {
-
-
 	const auto player = GetWorld()->GetFirstLocalPlayerFromController();
 	const auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
 	if(controller)

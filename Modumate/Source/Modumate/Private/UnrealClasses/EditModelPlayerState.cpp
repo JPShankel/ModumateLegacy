@@ -1759,6 +1759,7 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 			EMPlayerController->SetCurrentCullingCutPlane(InState.culledCutplane, false);
 		}
 	}
+	
 	UModumateDocument* doc = gameState ? gameState->Document : nullptr;
 	if (ensure(doc) && InState.selectedObjects.Num() == 1 && InState.selectedObjects[0].Type == EObjectType::OTCameraView)
 	{

@@ -566,6 +566,7 @@ bool UEditModelCameraController::SetMovementState(ECameraMovementState NewMoveme
 			OrbitAnchorActor->SetActorHiddenInGame(false);
 			UpdateOrbitAnchorScale();
 		}
+
 		break;
 	}
 	case ECameraMovementState::Panning:
@@ -625,6 +626,12 @@ void UEditModelCameraController::SetOrbiting(bool bNewOrbiting)
 	else if ((CurMovementState == ECameraMovementState::Orbiting) || (CurMovementState == ECameraMovementState::Flying))
 	{
 		SetMovementState(ECameraMovementState::Default);
+		// If orbit is ending, reset the focus to web keyboard
+		// This is due to SetMouseCaptureMode(EMouseCaptureMode::CaptureDuringRightMouseDown) from UModumateViewportClient::Init
+		if(Controller->WebKeyboardCaptureWidget)
+		{
+			Controller->WebKeyboardCaptureWidget->SetUserFocus(Controller);	
+		}
 	}
 }
 

@@ -13,6 +13,7 @@
 #include "Objects/MOIStructureData.h"
 #include "Online/ModumateVoice.h"
 #include "Online/ModumateTextChat.h"
+#include "UI/Custom/WebKeyboardCapture.h"
 #include "UnrealClasses/ModumateCapability.h"
 
 #include "EditModelPlayerController.generated.h"
@@ -65,6 +66,7 @@ public:
 	virtual void ClientWasKicked_Implementation(const FText& KickReason) override;
 	virtual void FlushPressedKeys() override;
 
+	UWebKeyboardCapture* WebKeyboardCaptureWidget;
 private:
 
 	UPROPERTY()
