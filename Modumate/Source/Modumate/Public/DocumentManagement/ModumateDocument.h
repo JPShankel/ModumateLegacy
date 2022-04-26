@@ -223,6 +223,12 @@ public:
 		Algo::Transform(GetObjectsOfType(ObjectType), OutObjects, [](AModumateObjectInstance* MOI) {return Cast<T>(MOI); });
 	}
 
+	template<class T>
+	void GetObjectsOfTypeCasted(EObjectType ObjectType, TArray<const T*>& OutObjects) const
+	{
+		Algo::Transform(GetObjectsOfType(ObjectType), OutObjects, [](const AModumateObjectInstance* MOI) {return Cast<const T>(MOI); });
+	}
+
 	void GetObjectIdsByAssembly(const FGuid& AssemblyKey, TArray<int32>& OutIDs) const;
 
 	static const FName DocumentHideRequestTag;

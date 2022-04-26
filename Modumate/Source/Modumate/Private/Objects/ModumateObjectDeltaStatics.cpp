@@ -14,6 +14,7 @@
 #include "Objects/EdgeDetailObj.h"
 #include "Objects/MetaEdge.h"
 #include "Objects/MetaGraph.h"
+#include "Objects/DesignOption.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
@@ -902,6 +903,21 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 		newGroupIDMap.Add(id, NextID++);
 	}
 
+	// Create map of existing mapping from group to its design option, if any.
+	TMap<int32, TArray<int32>> groupToOptionMap;
+
+	TArray<const AMOIDesignOption*> designOptionMois;
+	Doc->GetObjectsOfTypeCasted(EObjectType::OTDesignOption, designOptionMois);
+	for (const auto* moi: designOptionMois)
+	{
+		for (int32 g : moi->InstanceData.groups)
+		{
+			groupToOptionMap.FindOrAdd(g).Add(moi->ID);
+		}
+	}
+
+	TMap<int32, TArray<int32>> optionToNewGroupsMap;
+
 	for (int32 groupID: GroupIDs)
 	{
 		const FGraph3D* graph = Doc->GetVolumeGraph(groupID);
@@ -1041,7 +1057,33 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 			}
 		}
 
+		TArray<int32>* optionIDs = groupToOptionMap.Find(groupID);
+		if (optionIDs)
+		{
+			for (int32 optionID: *optionIDs)
+			{
+				optionToNewGroupsMap.FindOrAdd(optionID).Add(newGroupID);
+			}
+		}
+
 		OutDeltas.Emplace(false, moiDelta);
+	}
+
+	if (optionToNewGroupsMap.Num() > 0)
+	{
+		auto optionsMoiDelta = MakeShared<FMOIDelta>();
+		for (const auto& optionKvp : optionToNewGroupsMap)
+		{
+			const AMOIDesignOption* optionMoi = Cast<AMOIDesignOption>(Doc->GetObjectById(optionKvp.Key));
+			if (ensure(optionMoi))
+			{
+				FMOIDesignOptionData instanceData = optionMoi->InstanceData;
+				instanceData.groups.Append(optionKvp.Value);
+				optionsMoiDelta->AddMutationState(optionMoi).CustomData.SaveStructData(instanceData);
+			}
+		}
+
+		OutDeltas.Emplace(false, optionsMoiDelta);
 	}
 }
 
