@@ -24,31 +24,10 @@ bool UToolbarBottomWidget::Initialize()
 		return false;
 	}
 
-	ButtonMainModel->ModumateButton->OnReleased.AddDynamic(this, &UToolbarBottomWidget::OnButtonReleaseMainModel);
-	ButtonDrawingDesigner->ModumateButton->OnReleased.AddDynamic(this, &UToolbarBottomWidget::OnButtonReleaseDrawingDesigner);
-
 	return true;
 }
 
 void UToolbarBottomWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-}
-
-void UToolbarBottomWidget::OnButtonReleaseMainModel()
-{
-	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
-	if (controller)
-	{
-		controller->ToggleDrawingDesigner(false);
-	}
-}
-
-void UToolbarBottomWidget::OnButtonReleaseDrawingDesigner()
-{
-	AEditModelPlayerController* controller = GetOwningPlayer<AEditModelPlayerController>();
-	if (controller)
-	{
-		controller->ToggleDrawingDesigner(true);
-	}
 }

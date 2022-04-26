@@ -32,10 +32,4 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UModumateButtonUserWidget* ButtonDrawingDesigner;
 
-	UFUNCTION()
-	void OnButtonReleaseMainModel();
-
-	UFUNCTION()
-	void OnButtonReleaseDrawingDesigner();
-
 };

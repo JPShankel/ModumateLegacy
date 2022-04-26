@@ -4447,6 +4447,17 @@ void UModumateDocument::set_web_focus(bool bHasFocus)
 	}
 }
 
+void UModumateDocument::toggle_drawing_designer(bool bDrawingEnabled)
+{
+	auto player = GetWorld()->GetFirstLocalPlayerFromController();
+	auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
+
+	if(controller)
+	{
+		controller->ToggleDrawingDesigner(bDrawingEnabled);
+	}
+}
+
 void UModumateDocument::DrawingPushDD()
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_request_document"));

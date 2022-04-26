@@ -644,6 +644,13 @@ void UEditModelCameraController::SetPanning(bool bNewPanning)
 	else if (CurMovementState == ECameraMovementState::Panning)
 	{
 		SetMovementState(ECameraMovementState::Default);
+
+		// If orbit is ending, reset the focus to web keyboard
+		// This is due to SetMouseCaptureMode(EMouseCaptureMode::CaptureDuringRightMouseDown) from UModumateViewportClient::Init
+		if(Controller->WebKeyboardCaptureWidget)
+		{
+			Controller->WebKeyboardCaptureWidget->SetUserFocus(Controller);	
+		}
 	}
 }
 

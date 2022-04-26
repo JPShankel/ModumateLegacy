@@ -611,7 +611,7 @@ public:
 	void ToggleAllCutPlanesColor(bool bEnable);
 	FPlane GetCurrentCullingPlane() const;
 
-	void ToggleDrawingDesigner(bool bEnable);
+	void ToggleDrawingDesigner(bool bEnable) const;
 
 	bool bBeganWithPlayerState = false;
 

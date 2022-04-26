@@ -59,6 +59,7 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 
 // Tools
+#include "SWebBrowser.h"
 #include "ToolsAndAdjustments/Tools/EditModelCabinetTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelCopyTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelCreateSimilarTool.h"
@@ -4059,9 +4060,9 @@ FPlane AEditModelPlayerController::GetCurrentCullingPlane() const
 		FPlane(ForceInitToZero);
 }
 
-void AEditModelPlayerController::ToggleDrawingDesigner(bool bEnable)
+void AEditModelPlayerController::ToggleDrawingDesigner(bool bEnable) const
 {
-	EditModelUserWidget->DrawingDesigner->SetVisibility(bEnable ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Hidden);
+	EditModelUserWidget->DrawingDesigner->DrawingSetWebBrowser->WebBrowserWidget->ForceFullscreenInput(true);
 }
 
 void AEditModelPlayerController::CapabilityReady(AModumateCapability* Capability)

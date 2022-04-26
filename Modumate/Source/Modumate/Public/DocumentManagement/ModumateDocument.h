@@ -401,6 +401,9 @@ public:
 	// Drawing designer API
 	UFUNCTION()
 	void set_web_focus(bool bHasFocus);
+
+	UFUNCTION()
+	void toggle_drawing_designer(bool bDrawingEnabled);
 	
 	UFUNCTION()
 	void DrawingSendResponse(const FString& FunctionName, const FString& Argument) const;
