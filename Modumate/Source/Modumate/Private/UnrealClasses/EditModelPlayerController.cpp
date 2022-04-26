@@ -1830,7 +1830,9 @@ void AEditModelPlayerController::Tick(float DeltaTime)
 	if (bResetFocusToGameViewport)
 	{
 		bResetFocusToGameViewport = false;
-		FSlateApplication::Get().SetAllUserFocusToGameViewport();
+		//This used to reset to the viewport, but now we set it to the WebKeyboardCapture widget
+		// since that handles all input
+		WebKeyboardCaptureWidget->SetUserFocus(this);
 	}
 
 	// Don't perform hitchy functions while tools or handles are in use
@@ -4062,7 +4064,7 @@ FPlane AEditModelPlayerController::GetCurrentCullingPlane() const
 
 void AEditModelPlayerController::ToggleDrawingDesigner(bool bEnable) const
 {
-	EditModelUserWidget->DrawingDesigner->DrawingSetWebBrowser->WebBrowserWidget->ForceFullscreenInput(true);
+	EditModelUserWidget->DrawingDesigner->DrawingSetWebBrowser->WebBrowserWidget->ForceFullscreenInput(bEnable);
 }
 
 void AEditModelPlayerController::CapabilityReady(AModumateCapability* Capability)
