@@ -34,11 +34,13 @@ PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.5
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.67
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.75
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-MuntinZ0.8
-PRESET,,D2AB6A51-CA8C-3544-BF63-8A2403847276,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet,,Cabinet Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
+PRESET,,D2AB6A51-CA8C-3544-BF63-8A2403847276,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet-Property_Spatiality_Slot-Panel-Property_Spatiality_Slot-RollerBarnLeft-Property_Spatiality_Slot-RollerBarnRight-Property_Spatiality_Slot-HandleCenterTop-Property_Spatiality_Slot-HandleCenterTopTurned-Property_Spatiality_Slot-HandleCenterMidHeight-Property_Spatiality_Slot-HandleCenterMidHeightTurned-Property_Spatiality_Slot-HandleCenterBottom-Property_Spatiality_Slot-HandleRightTop-Property_Spatiality_Slot-HandleRightMidHeight-Property_Spatiality_Slot-HandleRightBottom-Property_Spatiality_Slot-AssemblyMuntinSet1,,Property_Spatiality_Rig_SlotConfig_2FlexDims_Panel_Cabinet,,Cabinet Panel,Self.Panel.NativeSizeY,,Property_Spatiality_Slot-Panel
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-RollerBarnLeft
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-RollerBarnRight
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleCenterTop
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleCenterTopTurned
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleCenterMidHeight
+PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleCenterMidHeightTurned
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleCenterBottom
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleRightTop
 PRESET,,,,,,,,,,,Property_Spatiality_Slot-HandleRightMidHeight
