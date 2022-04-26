@@ -30,6 +30,11 @@ bool AMOIMetaPlaneSpan::CanAdd(int32 FaceID) const
 
 	const FGraph3DFace* faceOb = graph->FindFace(FaceID);
 
+	if (!faceOb)
+	{
+		return false;
+	}
+
 	if (!UModumateGeometryStatics::ArePlanesCoplanar(faceOb->CachedPlane, GetPerimeterFace()->CachedPlane))
 	{
 		return false;
@@ -73,51 +78,51 @@ bool AMOIMetaPlaneSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 {
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
 	{
+		TArray<FDeltaPtr> outDeltas;
+		if (PostGraphChanges.Num() > 0)
+		{
+			TArray<int32> additions, removals;
+			FInstanceData newData = InstanceData;
+			for (auto change : PostGraphChanges)
+			{
+				if (change < 0)
+				{
+					if (newData.GraphMembers.Contains(-change))
+					{
+						removals.Add(-change);
+					}
+				}
+				else if (CanAdd(change))
+				{
+					additions.AddUnique(change);
+				}
+			}
+			PostGraphChanges.Empty();
+			FModumateObjectDeltaStatics::GetDeltasForFaceSpanAddRemove(Document, ID, additions, removals, outDeltas);
+		}
+		else
+		if (GetChildIDs().Num() == 0 || InstanceData.GraphMembers.Num() == 0)
+		{
+			TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
+			delta->AddCreateDestroyState(StateData, EMOIDeltaType::Destroy);
+			for (auto id : GetChildIDs())
+			{
+				const AModumateObjectInstance* ob = Document->GetObjectById(id);
+				delta->AddCreateDestroyState(ob->GetStateData(), EMOIDeltaType::Destroy);
+			}
+			outDeltas.Add(delta);
+		}
+		else if (!UpdateCachedPerimeterFace())
+		{
+			FModumateObjectDeltaStatics::GetDeltasForSpanSplit(Document, { ID }, outDeltas);
+		}
+
 		if (OutSideEffectDeltas)
 		{
-			if (PostGraphChanges.Num() > 0)
-			{
-				TArray<int32> additions, removals;
-				FInstanceData newData = InstanceData;
-				for (auto change : PostGraphChanges)
-				{
-					if (change < 0)
-					{
-						if (newData.GraphMembers.Contains(-change))
-						{
-							removals.Add(-change);
-						}
-					}
-					else if (CanAdd(change))
-					{
-						additions.AddUnique(change);
-					}
-				}
-				PostGraphChanges.Empty();
-				FModumateObjectDeltaStatics::GetDeltasForFaceSpanAddRemove(Document, ID, additions, removals, *OutSideEffectDeltas);
-
-			}
-			else
-			if (GetChildIDs().Num() == 0 || InstanceData.GraphMembers.Num() == 0)
-			{
-				TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
-				delta->AddCreateDestroyState(StateData, EMOIDeltaType::Destroy);
-				for (auto id : GetChildIDs())
-				{
-					const AModumateObjectInstance* ob = Document->GetObjectById(id);
-					delta->AddCreateDestroyState(ob->GetStateData(), EMOIDeltaType::Destroy);
-				}
-				OutSideEffectDeltas->Add(delta);
-				return true;
-			}
-			else if (!UpdateCachedPerimeterFace())
-			{
-				FModumateObjectDeltaStatics::GetDeltasForSpanSplit(Document, { ID }, *OutSideEffectDeltas);
-				return true;
-			}
+			OutSideEffectDeltas->Append(outDeltas);
 		}
 	}
-	return AMOIPlaneBase::CleanObject(DirtyFlag, OutSideEffectDeltas);
+	return true;
 }
 
 void AMOIMetaPlaneSpan::SetupDynamicGeometry()
@@ -164,7 +169,7 @@ bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 		for (auto& face : memberFaces)
 		{
 			bool bSameDirection = false;
-			if (face->FindEdgeIndex(EdgeID,bSameDirection) != INDEX_NONE)
+			if (face && face->FindEdgeIndex(EdgeID,bSameDirection) != INDEX_NONE)
 			{
 				++numFaces;
 			}
@@ -177,6 +182,10 @@ bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 	TArray<int32> perimeterEdges;
 	for (auto* face: memberFaces)
 	{
+		if (!face)
+		{
+			continue;
+		}
 		// Edges are perimeter if they have only one face in the member list
 		for (auto edgeID : face->EdgeIDs)
 		{
@@ -197,6 +206,10 @@ bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 	auto findConnectingEdge = [this,graph,&perimeterEdges](int32 EdgeID)
 	{
 		const FGraph3DEdge* thisEdge = graph->FindEdge(EdgeID);
+		if (!graph)
+		{
+			return MOD_ID_NONE;
+		}
 		for (auto edgeID : perimeterEdges)
 		{
 			if (edgeID == EdgeID)
@@ -213,7 +226,7 @@ bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 				return edgeID;
 			}
 		}
-		return 0;
+		return MOD_ID_NONE;
 	};
 
 	// Now, starting with the first edge, walk around finding connecting edges in sequence

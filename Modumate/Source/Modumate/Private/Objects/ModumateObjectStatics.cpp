@@ -1308,6 +1308,9 @@ void UModumateObjectStatics::GetDesignOptionsForGroup(UModumateDocument* Doc, in
 
 void UModumateObjectStatics::UpdateDesignOptionVisibility(UModumateDocument* Doc)
 {
+#if UE_SERVER
+	return;
+#endif
 	TArray<AMOIDesignOption*> designOptions;
 	Algo::Transform(
 		Doc->GetObjectsOfType(EObjectType::OTDesignOption), 
@@ -1458,6 +1461,7 @@ const FGraph3DFace* UModumateObjectStatics::GetFaceFromSpanObject(const UModumat
 
 bool UModumateObjectStatics::TryJoinSelectedMetaSpan(UWorld* World)
 {
+#if !UE_SERVER
 	// TODO: Check for valid span
 	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
 	AEditModelPlayerState* playerState = controller ? controller->EMPlayerState : nullptr;
@@ -1472,9 +1476,25 @@ bool UModumateObjectStatics::TryJoinSelectedMetaSpan(UWorld* World)
 		[](const AModumateObjectInstance* MOI) {return MOI->GetParentID(); }
 	);
 
+	auto markAllSpansDirty = [controller](const TArray<int32>& checkSpanIDs)
+	{
+		if (controller && controller->GetDocument())
+		{
+			for (int32 spanID : checkSpanIDs)
+			{
+				AModumateObjectInstance* moi = controller->GetDocument()->GetObjectById(spanID);
+				if (moi != nullptr)
+				{
+					moi->MarkDirty(EObjectDirtyFlags::Structure);
+				}
+			}
+		}
+	};
+
 	TArray<FDeltaPtr> deltas;
 	if (spanIDs.Num() > 0)
 	{
+		markAllSpansDirty(spanIDs);
 		FModumateObjectDeltaStatics::GetDeltasForFaceSpanMerge(controller->GetDocument(), spanIDs, deltas);
 	}
 	else
@@ -1489,10 +1509,13 @@ bool UModumateObjectStatics::TryJoinSelectedMetaSpan(UWorld* World)
 
 		if (spanIDs.Num() > 0)
 		{
+			markAllSpansDirty(spanIDs);
 			FModumateObjectDeltaStatics::GetDeltasForEdgeSpanMerge(controller->GetDocument(), spanIDs, deltas);
 		}
 	}
 	return controller->GetDocument()->ApplyDeltas(deltas, World, false);
+#endif
+	return false;
 }
 
 void UModumateObjectStatics::SeparateSelectedMetaSpan(UWorld* World)

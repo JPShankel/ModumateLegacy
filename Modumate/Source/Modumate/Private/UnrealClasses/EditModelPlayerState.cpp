@@ -48,11 +48,7 @@ AEditModelPlayerState::AEditModelPlayerState()
 	, bShowVolumeDebug(false)
 	, bShowSurfaceDebug(false)
 	, bDevelopDDL2Data(false)
-#if UE_BUILD_SHIPPING
 	, bShowMultiplayerDebug(false)
-#else	// TODO: remove multiplayer debugging being the default after we're more stable
-	, bShowMultiplayerDebug(true)
-#endif
 	, SelectedViewMode(EEditViewModes::AllObjects)
 	, ShowingFileDialog(false)
 	, HoveredObject(nullptr)
@@ -1656,6 +1652,7 @@ bool AEditModelPlayerState::RequestPermissions(const FString& UserID, const FStr
 
 bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState) const
 {
+#if !UE_SERVER
 	// TODO: add more player state info here as need be
 	TArray<const AModumateObjectInstance*> obs;
 	obs.Append(SelectedGroupObjects.Array());
@@ -1686,12 +1683,13 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 	}
 
 	OutState.projectId = CurProjectID;
-	
+#endif	
 	return true;
 }
 
 bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& InState)
 {
+#if !UE_SERVER
 	TArray<int32> webObIds;
 	Algo::Transform(InState.selectedObjects, webObIds, [](const FWebMOI& MOI) {return MOI.ID; });
 
@@ -1782,10 +1780,12 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 
 	// general practice: when the web sends us data, send it back so they'll store it
 	return SendWebPlayerState();
+#endif
 }
 
 bool AEditModelPlayerState::SendWebPlayerState() const
 {
+#if !UE_SERVER
 	TArray<const AModumateObjectInstance*> obs;
 	// Groups first
 	obs.Append(SelectedGroupObjects.Array());
@@ -1808,7 +1808,7 @@ bool AEditModelPlayerState::SendWebPlayerState() const
 			}
 		}
 	}
-
+#endif
 	return false;
 }
 
