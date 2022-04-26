@@ -22,6 +22,15 @@ AMOIBackgroundImage::AMOIBackgroundImage()
 	CachedPoints.SetNumZeroed(4);
 	Super::BaseColor = UnselectedColor;
 	Super::SelectedColor = SelectedColor;
+
+	FWebMOIProperty prop;
+
+	prop.Name = TEXT("Scale");
+	prop.Type = EWebMOIPropertyType::number;
+	prop.DisplayName = TEXT("Scale");
+	prop.isEditable = true;
+	prop.isVisible = true;
+	WebProperties.Add(prop.Name, prop);
 }
 
 void AMOIBackgroundImage::PostCreateObject(bool bNewObject)

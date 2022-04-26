@@ -10,6 +10,7 @@ enum class EWebMOIPropertyType : uint8
 {
 	none = 0,
 	text,
+	number,
 	label,
 	boolean,
 	color,
