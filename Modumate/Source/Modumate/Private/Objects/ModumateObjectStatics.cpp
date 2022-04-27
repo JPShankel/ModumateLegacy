@@ -491,6 +491,19 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 	bool bConnectedToVisibleFace = false;
 	bool bConnectedToVisibleChild = false;
 	bool bHasChildren = (MetaMOI->GetChildIDs().Num() > 0);
+	// Check if this meta object is part of a span
+	// TODO: Future work check if meta object is part of span
+	// TODO: Check with undo/redo route clean
+	TArray<int32> spanIDs;
+	if (MetaMOI->GetObjectType() == EObjectType::OTMetaPlane)
+	{
+		GetSpansForFaceObject(doc, MetaMOI, spanIDs);
+	}
+	else if (MetaMOI->GetObjectType() == EObjectType::OTMetaEdge)
+	{
+		GetSpansForEdgeObject(doc, MetaMOI, spanIDs);
+	}
+	bool bHasSpan = spanIDs.Num() > 0;
 
 	EToolCategories curToolCategory = UModumateTypeStatics::GetToolCategory(playerController->GetToolMode());
 	bool bInCompatibleToolCategory = (curToolCategory == EToolCategories::MetaGraph) || (curToolCategory == EToolCategories::Separators);
@@ -538,14 +551,14 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 		}
 
 		bOutVisible = !MetaMOI->IsRequestedHidden() &&
-			(bMetaViewMode || (bHybridViewMode && !bHasChildren)) &&
+			(bMetaViewMode || (bHybridViewMode && !(bHasChildren || bHasSpan))) &&
 			(!bConnectedToAnyFace || bConnectedToVisibleFace);
 		bOutCollisionEnabled = bOutVisible || (bInCompatibleToolCategory && bConnectedToVisibleChild);
 		break;
 	}
 	case EObjectType::OTMetaPlane:
 	{
-		bOutVisible = !MetaMOI->IsRequestedHidden() && (bMetaViewMode || (bHybridViewMode && !bHasChildren));
+		bOutVisible = !MetaMOI->IsRequestedHidden() && (bMetaViewMode || (bHybridViewMode && !(bHasChildren || bHasSpan)));
 		bOutCollisionEnabled = !MetaMOI->IsCollisionRequestedDisabled() && (bOutVisible || bInCompatibleToolCategory);
 		break;
 	}
