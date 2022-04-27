@@ -71,6 +71,9 @@ public:
 	UMaterialInterface* IconSwapWarningMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
+	UMaterialInterface* IconRenderSampleMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
 	FName MaterialIconTextureParamName = TEXT("Texture");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
@@ -201,4 +204,5 @@ public:
 	// When BIMKey can guarantee unique appearance, then BIMKeyToRenderTarget array and this function can be removed	
 	void ReleaseSavedRenderTarget();
 
+	void DrawTextureSampleToRenderTarget(UTexture2D* InTextureSample, UTextureRenderTarget2D* InRenderTarget);
 };

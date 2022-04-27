@@ -446,14 +446,47 @@ bool ADynamicIconGenerator::GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FS
 		return false;
 	}
 	// Find if an assembly exists for this preset
+	bool bCaptureSuccess = false;
 	const FBIMAssemblySpec* assembly = presetCollection.AssemblySpecFromGUID(childPreset->ObjectType, AsmKey);
-	if (!assembly)
+	if (assembly)
 	{
-		return false;
+		bCaptureSuccess = SetIconMeshForAssemblyType(*assembly, IconRenderTargetForWeb, BIM_ROOT_PART, true);
 	}
-	// Capture into a render target
-	bool captureSuccess = SetIconMeshForAssemblyType(*assembly, IconRenderTargetForWeb, BIM_ROOT_PART, true);
-	if (captureSuccess)
+	else
+	{
+		switch (childPreset->NodeScope)
+		{
+		case EBIMValueScope::RawMaterial:
+			bCaptureSuccess = SetIconMeshForRawMaterial(AsmKey, IconRenderTargetForWeb);
+			break;
+		case EBIMValueScope::Profile:
+			bCaptureSuccess = SetIconMeshForProfile(AsmKey, IconRenderTargetForWeb);
+			break;
+		case EBIMValueScope::Material:
+			bCaptureSuccess = SetIconMeshForMaterial(presetCollection, true, AsmKey, BIM_ID_NONE, IconRenderTargetForWeb);
+			break;
+		case EBIMValueScope::Module:
+		case EBIMValueScope::Gap:
+			bCaptureSuccess = SetIconMeshForModule(presetCollection, true, AsmKey, BIM_ID_NONE, IconRenderTargetForWeb);
+			break;
+		case EBIMValueScope::Mesh:
+			bCaptureSuccess = SetIconMeshForMesh(AsmKey, IconRenderTargetForWeb);
+			break;
+		case EBIMValueScope::Layer:
+			bCaptureSuccess = SetIconMeshForLayerPreset(presetCollection, AsmKey, IconRenderTargetForWeb);
+			break;
+		case EBIMValueScope::Pattern:
+			const FStaticIconTexture* staticIcon = GameInstance->ObjectDatabase->GetStaticIconTextureByGUID(AsmKey);
+			if (staticIcon != nullptr && staticIcon->IsValid())
+			{
+				DrawTextureSampleToRenderTarget(staticIcon->Texture.Get(), IconRenderTargetForWeb);
+				bCaptureSuccess = true;
+			}
+			break;
+		}
+	}	
+	
+	if (bCaptureSuccess)
 	{
 		// TODO: Cache?
 		FBufferArchive imageBuffer;
@@ -1265,4 +1298,11 @@ void ADynamicIconGenerator::UpdateCachedAssemblies(const FBIMPresetCollectionPro
 	{
 		Controller->EditModelUserWidget->RefreshAssemblyList();
 	}
+}
+
+void ADynamicIconGenerator::DrawTextureSampleToRenderTarget(UTexture2D* InTextureSample, UTextureRenderTarget2D* InRenderTarget)
+{
+	UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconRenderSampleMaterial, this);
+	dynMat->SetTextureParameterValue(MaterialIconTextureParamName, InTextureSample);
+	UKismetRenderingLibrary::DrawMaterialToRenderTarget(this, InRenderTarget, dynMat);
 }
