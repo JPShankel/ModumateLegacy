@@ -49,6 +49,7 @@
 #include "UI/ProjectSystemWidget.h"
 #include "UI/TutorialManager.h"
 #include "UI/DrawingDesigner/DrawingDesignerWebBrowserWidget.h"
+#include "UI/ViewCubeWidget.h"
 #include "Objects/CutPlane.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
 #include "Quantities/QuantitiesManager.h"
@@ -4065,6 +4066,7 @@ FPlane AEditModelPlayerController::GetCurrentCullingPlane() const
 void AEditModelPlayerController::ToggleDrawingDesigner(bool bEnable) const
 {
 	EditModelUserWidget->DrawingDesigner->DrawingSetWebBrowser->WebBrowserWidget->ForceFullscreenInput(bEnable);
+	EditModelUserWidget->ViewCubeUserWidget->SetVisibility(bEnable ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
 }
 
 void AEditModelPlayerController::CapabilityReady(AModumateCapability* Capability)
