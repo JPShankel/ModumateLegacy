@@ -804,7 +804,6 @@ void AMOICabinet::GetDrawingDesignerItems(const FVector& ViewDirection, TArray<F
 	for (int32 l = numInitialLines; l < OutDrawingLines.Num(); ++l)
 	{
 		auto& line = OutDrawingLines[l];
-		line.Thickness = 0.15f;
-		line.GreyValue = 144 / 255.0;
+		line.Thickness = 0.053f;
 	}
 }

@@ -542,8 +542,7 @@ void AMOITrim::GetDrawingDesignerItems(const FVector& ViewDirection, TArray<FDra
 	for (int32 l = numInitialLines; l < OutDrawingLines.Num(); ++l)
 	{
 		auto& line = OutDrawingLines[l];
-		line.Thickness = 0.25f;
-		line.GreyValue = 112 / 255.0;
+		line.Thickness = 0.053f;
 	}
 }
 

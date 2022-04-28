@@ -71,6 +71,7 @@ private:
 
 	TMap<UMeshComponent*, int32> SceneMeshComponents;
 	FVector InPlaneOffset;
+	float LineScalefactor = 1.0f;
 
 	// Stencil-buffer values that are coordinated with the post-process material PP_DrawingDesignerRender.
 	// Also with ALineActor::ToggleForDrawingRender().

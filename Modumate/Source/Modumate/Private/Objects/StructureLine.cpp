@@ -314,8 +314,7 @@ void AMOIStructureLine::GetDrawingDesignerItems(const FVector& viewDirection, TA
 	for(auto& edge: columnEdges)
 	{
 		FDrawingDesignerLine line(edge.Vertex[0], edge.Vertex[1]);
-		line.Thickness = bool(edge.Count) ? 0.15f : 0.10f;
-		line.GreyValue = 112 / 255.0f;
+		line.Thickness = 0.053f;
 		OutDrawingLines.Add(line);
 	}
 }

@@ -36,49 +36,49 @@ namespace
 		int GreyValue;
 	} LayerToDDParams[] =
 	{
-		{1.0f,  0},	// kDefault
-		{0.5f,  0},	// kSeparatorCutStructuralLayer
-		{0.25f, 96},	// kSeparatorCutOuterSurface
-		{0.05f, 144},	// kSeparatorCutMinorLayer
-		{0.15f, 112},	// kSeparatorBeyondSurfaceEdges
-		{0.05f, 160},	// kSeparatorBeyondModuleEdges
-		{0.25f, 0},	// kOpeningSystemCutLine
-		{0.15f, 144},	// kOpeningSystemBeyond
-		{0.1f,  144}, // kOpeningSystemBehind
-		{0.1f,  153},	// kOpeningSystemOperatorLine
-		{0.25f, 0},	// kSeparatorCutTrim
-		{0.25f, 0},	// kCabinetCutCarcass
-		{0.15f, 0},	// kCabinetCutAttachment
-		{0.15f, 144},	// kCabinetBeyond
-		{0.1f,  144},	// kCabinetBehind
-		{0.1f,  96},	// kCabinetBeyondBlockedByCountertop
-		{0.25f, 32},	// kCountertopCut
-		{0.25f, 96},	// kCountertopBeyond
-		{0.25f, 96},	// kFfeOutline
-		{0.15f, 144},	// kFfeInteriorEdges
-		{0.25f, 0},	// kBeamColumnCut
-		{0.15f, 144},	// kBeamColumnBeyond
-		{0.25f, 0},	// kMullionCut
-		{0.15f, 112},	// kMullionBeyond
-		{0.25f, 0},	// kSystemPanelCut
-		{0.15f, 144},	// kSystemPanelBeyond
-		{0.25f, 0},	// kFinishCut
-		{0.15f, 144},	// kFinishBeyond
-		{0.5f,  128},	// kDebug1
-		{0.5f,  192},	// kDebug2
-		{0.05f, 160},	// kSeparatorCutEndCaps
-		{0.25f, 127},	// kDimensionMassing
-		{0.25f, 127},	// kDimensionFraming
-		{0.25f, 127},	// kDimensionOpening
-		{0.25f, 127},	// KDimensionReference
-		{0.25f, 32},	// kTerrainCut
-		{0.15f, 96},	// kTerrainBeyond
-		{0.25f, 0},	// kPartPointCut
-		{0.25f, 0},	// kPartEdgeCut
-		{0.25f, 0},	// kPartFaceCut
-		{0.15f, 144},	// kPartPointBeyond
-		{0.15f, 144},	// kPartEdgeBeyond
-		{0.15f, 144},	// kPartFaceBeyond
+		{1.0f,  0},		// kDefault
+		{0.106f,  0},	// kSeparatorCutStructuralLayer
+		{0.176f, 0},	// kSeparatorCutOuterSurface
+		{0.018f, 0},	// kSeparatorCutMinorLayer
+		{0.053f, 0},	// kSeparatorBeyondSurfaceEdges
+		{0.018f, 0},	// kSeparatorBeyondModuleEdges
+		{0.106f, 0},	// kOpeningSystemCutLine
+		{0.053f, 0},	// kOpeningSystemBeyond
+		{0.035f, 0},	// kOpeningSystemBehind
+		{0.035f, 153},	// kOpeningSystemOperatorLine
+		{0.106f, 0},	// kSeparatorCutTrim
+		{0.106f, 0},	// kCabinetCutCarcass
+		{0.106f, 0},	// kCabinetCutAttachment
+		{0.053f, 0},	// kCabinetBeyond
+		{0.035f, 0},	// kCabinetBehind
+		{0.035f, 0},	// kCabinetBeyondBlockedByCountertop
+		{0.106f, 0},	// kCountertopCut
+		{0.053f, 0},	// kCountertopBeyond
+		{0.053f, 0},	// kFfeOutline
+		{0.053f, 0},	// kFfeInteriorEdges
+		{0.106f, 0},	// kBeamColumnCut
+		{0.053f, 0},	// kBeamColumnBeyond
+		{0.106f, 0},	// kMullionCut
+		{0.053f, 0},	// kMullionBeyond
+		{0.106f, 0},	// kSystemPanelCut
+		{0.053f, 0},	// kSystemPanelBeyond
+		{0.106f, 0},	// kFinishCut
+		{0.053f, 0},	// kFinishBeyond
+		{0.3f,  128},	// kDebug1
+		{0.3f,  192},	// kDebug2
+		{0.018f, 0},	// kSeparatorCutEndCaps
+		{0.088f, 32},	// kDimensionMassing
+		{0.088f, 32},	// kDimensionFraming
+		{0.088f, 32},	// kDimensionOpening
+		{0.088f, 32},	// KDimensionReference
+		{0.176f, 0},	// kTerrainCut
+		{0.053f, 0},	// kTerrainBeyond
+		{0.106f, 0},	// kPartPointCut
+		{0.106f, 0},	// kPartEdgeCut
+		{0.106f, 0},	// kPartFaceCut
+		{0.053f, 0},	// kPartPointBeyond
+		{0.053f, 0},	// kPartEdgeBeyond
+		{0.053f, 0},	// kPartFaceBeyond
 	};
 }
 
@@ -110,7 +110,7 @@ void ADrawingDesignerRender::AddLines(const TArray<FDrawingDesignerLine>& Lines,
 		lineActor->SetIsHUD(false);
 		lineActor->MakeGeometry();
 		lineActor->ToggleForDrawingRender(true);
-		lineActor->UpdateLineVisuals(true, line.GetDDThickness(), line.GetLineShadeAsColor());
+		lineActor->UpdateLineVisuals(true, line.GetDDThickness() * LineScalefactor, line.GetLineShadeAsColor());
 		lineActor->GetStaticMeshComponent()->SetMaterial(0, bInPlane ? GameMode->LineUnculledMaterial : GameMode->LineMaterial);
 		LineActors.Add(lineActor);
 		CaptureComponent->ShowOnlyActorComponents(lineActor);
@@ -136,6 +136,9 @@ void ADrawingDesignerRender::SetupRenderTarget(int32 ImageWidth)
 	}
 
 	int32 imageHeight = ImageWidth * orthoHeight / orthoWidth;
+
+	// Scale lines down for larger renders.
+	LineScalefactor = FMath::Min(5000.0f / ImageWidth, 8.0f);
 
 	if (!ensure(Doc))
 	{
@@ -457,7 +460,7 @@ void ADrawingDesignerRender::AddInPlaneLines(FVector P0, FVector P1, FModumateLa
 	FDrawingDesignerLine line(P0 + InPlaneOffset, P1 + InPlaneOffset);
 	int32 intLayer = int32(Layer);
 	intLayer = FMath::Clamp(intLayer, 0, int32(sizeof(LayerToDDParams) / sizeof(LayerToDDParams[0]) ));
-	line.Thickness = LayerToDDParams[intLayer].Thickness * 2.0f;
+	line.Thickness = LayerToDDParams[intLayer].Thickness;
 	line.GreyValue = LayerToDDParams[intLayer].GreyValue / 255.0;
 	AddLines({ line }, true);
 }

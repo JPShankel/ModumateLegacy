@@ -887,8 +887,7 @@ void AMOIPlaneHostedObj::GetDrawingDesignerItems(const FVector& viewDirection, T
 	for (int32 l = numInitialLines; l < OutDrawingLines.Num(); ++l)
 	{
 		auto& line = OutDrawingLines[l];
-		line.Thickness = 0.15;
-		line.GreyValue = 112 / 255.0f;
+		line.Thickness = 0.053f;
 	}
 }
 

@@ -164,8 +164,7 @@ void AMOIFaceHosted::GetDrawingDesignerItems(const FVector& ViewDirection, TArra
 		{
 			FDrawingDesignerLine& newLine = OutDrawingLines.Emplace_GetRef(xform.TransformPosition(FVector(l.P1)),
 				xform.TransformPosition(FVector(l.P2)), xform.TransformPosition(FVector(l.N)));
-			newLine.Thickness = 0.15f;
-			newLine.GreyValue = 144 / 255.0f;
+			newLine.Thickness = 0.053f;
 		}
 	} 
 }
