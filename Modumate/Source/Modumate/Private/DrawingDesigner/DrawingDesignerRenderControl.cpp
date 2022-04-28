@@ -563,7 +563,7 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 				}
 
 				//One snap per edge
-				FDrawingDesignerSnapId edgeId = FDrawingDesignerSnapId(EDDSnapType::line, FString::FromInt(viewId), moi->ID, INDEX_NONE, i);
+				FDrawingDesignerSnapId edgeId = FDrawingDesignerSnapId(EDDSnapType::line, FString::FromInt(viewId), moi->ID, moi->GetParentID(),INDEX_NONE, i);
 				FDrawingDesignerSnap edgeSnap = FDrawingDesignerSnap(edgeId);
 				
 				//Two points per snap
@@ -574,7 +574,7 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 				edgeSnap.points.Add(p2);
 
 				//Add the mid snap as well
-				FDrawingDesignerSnapId midSnapId = FDrawingDesignerSnapId(EDDSnapType::midpoint, FString::FromInt(viewId), moi->ID, INDEX_NONE, i);
+				FDrawingDesignerSnapId midSnapId = FDrawingDesignerSnapId(EDDSnapType::midpoint, FString::FromInt(viewId), moi->ID, moi->GetParentID(), INDEX_NONE, i);
 				FDrawingDesignerSnap midSnap = FDrawingDesignerSnap(midSnapId);
 
 				//mid point for mid snap

@@ -4583,6 +4583,7 @@ void UModumateDocument::drawing_get_clicked(const FString& InRequest)
 		const AModumateObjectInstance* moi = GetObjectById(moiResponse.moiId);
 		if (moi)
 		{
+			moiResponse.spanId = moi->GetParentID();
 			const FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(moi->GetAssembly().PresetGUID);
 			if (preset) 
 			{
@@ -4591,6 +4592,7 @@ void UModumateDocument::drawing_get_clicked(const FString& InRequest)
 			}
 		}
 
+		
 		FString jsonResponse;
 		moiResponse.WriteJson(jsonResponse);
 		DrawingSendResponse(TEXT("onGenericResponse"), jsonResponse);

@@ -60,6 +60,7 @@ bool FDrawingDesignerSnapId::operator==(const FDrawingDesignerSnapId& RHS) const
 {
 	return viewMoiId == RHS.viewMoiId && 
 		owningMoiId == RHS.owningMoiId &&
+		spanId == RHS.spanId &&
 		pointIndex == RHS.pointIndex &&
 		id == RHS.id;
 }
@@ -67,6 +68,17 @@ bool FDrawingDesignerSnapId::operator!=(const FDrawingDesignerSnapId& RHS) const
 {
 	return !(*this == RHS);
 }
+
+FDrawingDesignerSnapId::FDrawingDesignerSnapId(FDrawingDesignerSnapId& copy, int32 pointIndex)
+{
+	this->viewMoiId = copy.viewMoiId;
+	this->owningMoiId = copy.owningMoiId;
+	this->spanId = copy.spanId;
+	this->id = copy.id;
+	this->pointIndex = pointIndex;
+	this->type = copy.type;
+}
+
 
 /**
  * Snap
@@ -221,13 +233,4 @@ bool FDrawingDesignerDrawingResponse::ReadJson(const FString& InJson)
 bool FDrawingDesignerDrawingResponse::WriteJson(FString& OutJson) const
 {
 	return WriteJsonGeneric<FDrawingDesignerDrawingResponse>(OutJson, this);
-}
-
-FDrawingDesignerSnapId::FDrawingDesignerSnapId(FDrawingDesignerSnapId& copy, int32 pointIndex)
-{
-	this->viewMoiId = copy.viewMoiId;
-	this->owningMoiId = copy.owningMoiId;
-	this->id = copy.id;
-	this->pointIndex = pointIndex;
-	this->type = copy.type;
 }

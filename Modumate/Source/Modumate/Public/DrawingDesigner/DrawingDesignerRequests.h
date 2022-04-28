@@ -57,6 +57,9 @@ struct MODUMATE_API FDrawingDesignerMoiResponse
 	int32 moiId = INDEX_NONE;
 
 	UPROPERTY()
+	int32 spanId = INDEX_NONE; 
+
+	UPROPERTY()
 	FString presetId = TEXT("");
 
 	//TODO: Use MOI data in DD store once it's done and delete this -JN

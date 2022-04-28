@@ -48,10 +48,11 @@ USTRUCT()
 struct MODUMATE_API FDrawingDesignerSnapId {
 	GENERATED_BODY()
 	FDrawingDesignerSnapId() = default;
-	FDrawingDesignerSnapId(EDDSnapType SnapType, FString View, int32 Owner, int32 Idx, int32 Id) :
+	FDrawingDesignerSnapId(EDDSnapType SnapType, FString View, int32 Owner, int32 span, int32 Idx, int32 Id) :
 		type(SnapType),
 		viewMoiId(View),
 		owningMoiId(Owner),
+		spanId(span),
 		pointIndex(Idx),
 		id(Id)
 	{
@@ -68,6 +69,9 @@ struct MODUMATE_API FDrawingDesignerSnapId {
 	int32 owningMoiId = INDEX_NONE;
 
 	UPROPERTY()
+	int32 spanId = INDEX_NONE;
+
+	UPROPERTY()
 	int32 pointIndex = INDEX_NONE;
 
 	UPROPERTY()
@@ -77,7 +81,7 @@ struct MODUMATE_API FDrawingDesignerSnapId {
 		FString left, right;
 		FString fqName = UEnum::GetValueAsString(this->type);
 		fqName.Split(TEXT("::"), &left, &right);
-		outEncoded = right + TEXT(",") + FString(this->viewMoiId) + TEXT(",") + FString::FromInt(this->owningMoiId) + TEXT(",") + FString::FromInt(this->id) + TEXT(",") + FString::FromInt(this->pointIndex);
+		outEncoded = right + TEXT(",") + FString(this->viewMoiId) + TEXT(",") + FString::FromInt(this->owningMoiId) + TEXT(",") + FString::FromInt(this->spanId) + TEXT(",") + FString::FromInt(this->id) + TEXT(",") + FString::FromInt(this->pointIndex);
 	}
 
 	bool operator==(const FDrawingDesignerSnapId& RHS) const;
