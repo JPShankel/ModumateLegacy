@@ -382,6 +382,8 @@ bool UStructureLineTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEd
 		}
 	}
 
+	int32 nextID = GameState->Document->GetNextAvailableID();
+
 	if (targetEdgeIDs.Num() == 0)
 	{
 		// Make sure the pending line is valid
@@ -397,32 +399,67 @@ bool UStructureLineTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEd
 		{
 			return false;
 		}
+		for (int32 newID : targetEdgeIDs)
+		{
+			nextID = FMath::Max(newID+1, nextID);
+		}
 	}
 
-	TSharedPtr<FMOIDelta> delta;
-	int32 nextID = GameState->Document->GetNextAvailableID();
+	TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
+	OutDeltaPtrs.Add(delta);
 
-	// Follows the pattern established in UPlaneHostedObjTool
+	static const TSet<EObjectType> hostedTypes = { EObjectType::OTEdgeHosted, EObjectType::OTStructureLine, EObjectType::OTMullion };
+	
 	for (int32 targetEdgeID : targetEdgeIDs)
 	{
-		if (!delta.IsValid())
-		{
-			delta = MakeShared<FMOIDelta>();
-			OutDeltaPtrs.Add(delta);
-		}
-
-		bool bCreateNewObject = true;
 		AModumateObjectInstance* parentMOI = GameState->Document->GetObjectById(targetEdgeID);
 
-		EObjectType objectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
-
-		TArray<int32> spans;
-		UModumateObjectStatics::GetSpansForEdgeObject(GameState->Document, parentMOI, spans);
-
-		const AMOIMetaEdgeSpan* spanOb = nullptr;
-
+		bool bCreateSpan = false;
 		int32 spanParentID = MOD_ID_NONE;
-		if (spans.Num() == 0)
+
+		if (!parentMOI)
+		{
+			bCreateSpan = true;
+		}
+		else if (parentMOI->GetObjectType() == EObjectType::OTMetaEdgeSpan)
+		{
+			bCreateSpan = false;
+			spanParentID = parentMOI->ID;
+		}
+		else if (parentMOI->GetObjectType() == EObjectType::OTMetaEdge)
+		{
+			TArray<int32> spans;
+			UModumateObjectStatics::GetSpansForEdgeObject(GameState->Document, parentMOI, spans);
+			// TODO: need method for iterating over multiple spans for same target
+			if (spans.Num() > 0)
+			{
+				spanParentID = spans[0];
+				parentMOI = GameState->Document->GetObjectById(spanParentID);
+			}
+			else
+			{
+				bCreateSpan = true;
+				parentMOI = nullptr;
+			}
+		}
+		else if (hostedTypes.Contains(parentMOI->GetObjectType()))
+		{
+			parentMOI = parentMOI->GetParentObject();
+			if (parentMOI && parentMOI->GetObjectType() == EObjectType::OTMetaEdgeSpan)
+			{
+				spanParentID = parentMOI->ID;
+			}
+		}
+
+		if (parentMOI)
+		{
+			for (auto* childOb : parentMOI->GetChildObjects())
+			{
+				delta->AddCreateDestroyState(childOb->GetStateData(), EMOIDeltaType::Destroy);
+			}
+		}
+
+		if (bCreateSpan)
 		{
 			FMOIStateData spanCreateState(nextID++, EObjectType::OTMetaEdgeSpan);
 			FMOIMetaEdgeSpanData spanData;
@@ -432,45 +469,17 @@ bool UStructureLineTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEd
 			NewObjectIDs.Add(spanCreateState.ID);
 			spanParentID = spanCreateState.ID;
 		}
-		else
-		{
-			spanOb = Cast<AMOIMetaEdgeSpan>(GameState->Document->GetObjectById(spans[0]));
-			if (ensure(spanOb))
-			{
-				spanParentID = spanOb->ID;
-			}
-		}
 
-		// TODO: use spanOb instead of parentMOI when parenting is implemented
-		if (parentMOI && ensure(parentMOI->GetObjectType() == EObjectType::OTMetaEdge))
-		{
-			for (auto child : parentMOI->GetChildObjects())
-			{
-				if (child->GetObjectType() == objectType)
-				{
-					FMOIStateData& newState = delta->AddMutationState(child);
-					newState.AssemblyGUID = AssemblyGUID;
-					bCreateNewObject = false;
-				}
-				else
-				{
-					delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
-				}
-			}
-		}
-
-		if (bCreateNewObject)
+		if (ensure(spanParentID != MOD_ID_NONE))
 		{
 			NewMOIStateData.ParentID = spanParentID;
-
 			NewMOIStateData.ID = nextID++;
 			NewMOIStateData.ObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
 			NewMOIStateData.AssemblyGUID = AssemblyGUID;
-
 			NewObjectIDs.Add(NewMOIStateData.ID);
-
-			delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
 		}
+
+		delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
 	}
 
 	return true;

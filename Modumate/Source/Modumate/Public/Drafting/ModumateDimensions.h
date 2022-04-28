@@ -6,6 +6,8 @@
 
 #include "VectorTypes.h"
 
+#include "Objects/ModumateObjectEnums.h"
+
 class UModumateDocument;
 class FGraph2D;
 class FDraftingComposite;

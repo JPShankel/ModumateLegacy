@@ -33,6 +33,9 @@ public:
 
 	const FGraph3DEdge* GetCachedGraphEdge() const { return &CachedGraphEdge; }
 
+	int32 GetCachedGraphID() const { return CachedGraphID; }
+	const FGraph3D* GetCachedGraph() const;
+
 	virtual void SetupDynamicGeometry() override;
 
 	virtual void PreDestroy() override;
@@ -42,4 +45,5 @@ protected:
 	bool UpdateCachedEdge();
 
 	FGraph3DEdge CachedGraphEdge;
+	int32 CachedGraphID = MOD_ID_NONE;
 };

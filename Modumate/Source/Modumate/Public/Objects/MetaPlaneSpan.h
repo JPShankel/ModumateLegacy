@@ -24,7 +24,6 @@ public:
 
 	using FInstanceData = FMOIMetaPlaneSpanData;
 
-
 	UPROPERTY()
 	FMOIMetaPlaneSpanData InstanceData;
 
@@ -38,12 +37,14 @@ public:
 
 	TArray<int32> PostGraphChanges;
 
+	int32 GetCachedGraphID() const { return CachedGraphID; }
 	virtual void PreDestroy() override;
 
 protected:
 
-
 	FGraph3DFace CachedPerimeterFace;
+	TSet<int32> CachedEdgeIDs;
+	int32 CachedGraphID = MOD_ID_NONE;
 
 	bool CheckIsConnected() const;
 

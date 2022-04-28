@@ -1506,10 +1506,14 @@ bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDelta
 	TArray<AMOIMetaPlaneSpan*> spans;
 	GetObjectsOfTypeCasted(EObjectType::OTMetaPlaneSpan, spans);
 
-	TArray<int32> faceChangeArray = GraphDeltaElementChanges.Array();
-	for (auto* span : spans)
+	if (GraphDeltaElementChanges.Num() > 0)
 	{
-		span->PostGraphChanges = faceChangeArray;
+		TArray<int32> faceChangeArray = GraphDeltaElementChanges.Array();
+		for (auto* span : spans)
+		{
+			span->PostGraphChanges = faceChangeArray;
+			span->MarkDirty(EObjectDirtyFlags::Structure);
+		}
 	}
 
 	return true;

@@ -51,6 +51,11 @@ void AMOIMetaEdgeSpan::SetupDynamicGeometry()
 	UpdateCachedEdge();
 }
 
+const FGraph3D* AMOIMetaEdgeSpan::GetCachedGraph() const
+{
+	return GetDocument()->FindVolumeGraph(CachedGraphID);
+}
+
 void AMOIMetaEdgeSpan::PreDestroy()
 {
 	if (InstanceData.GraphMembers.Num() > 0)
@@ -74,6 +79,26 @@ bool AMOIMetaEdgeSpan::UpdateCachedEdge()
 	}
 
 	auto* graph = GetDocument()->FindVolumeGraph(InstanceData.GraphMembers[0]);
+	int32 graphIdx = 1;
+#if WITH_EDITOR
+	bool bCheckAllMembers = true;
+#else
+	bool bCheckAllMembers = false;
+#endif 
+	while ( (graph == nullptr || bCheckAllMembers) && graphIdx < InstanceData.GraphMembers.Num())
+	{
+		graph = graph == nullptr ? GetDocument()->FindVolumeGraph(InstanceData.GraphMembers[graphIdx]) : graph;
+		// All members should be present in their graphs
+		check(graph != nullptr);
+		graphIdx++;
+	}
+
+	if (!graph)
+	{
+		return false;
+	}
+
+	CachedGraphID = graph->GraphID;
 
 	// Use the first graph member to establish collinearity
 	const FGraph3DEdge* baseEdge = graph->FindEdge(InstanceData.GraphMembers[0]);

@@ -23,7 +23,7 @@ bool AMOIMetaPlaneSpan::CanAdd(int32 FaceID) const
 
 	auto* graph = GetDocument()->FindVolumeGraph(FaceID);
 
-	if (graph != GetDocument()->FindVolumeGraph(InstanceData.GraphMembers[0]))
+	if (graph == nullptr || graph->GraphID != CachedGraphID)
 	{
 		return false;
 	}
@@ -42,18 +42,9 @@ bool AMOIMetaPlaneSpan::CanAdd(int32 FaceID) const
 
 	for (int32 edgeID : faceOb->EdgeIDs)
 	{
-		for (int32 member : InstanceData.GraphMembers)
+		if (CachedEdgeIDs.Contains(edgeID))
 		{
-			const FGraph3DFace* memberOb = graph->FindFace(member);
-			if (!ensure(memberOb))
-			{
-				continue;
-			}
-
-			if (memberOb->EdgeIDs.Contains(edgeID))
-			{
-				return true;
-			}
+			return true;
 		}
 	}
 
@@ -78,6 +69,8 @@ bool AMOIMetaPlaneSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 {
 	if (DirtyFlag == EObjectDirtyFlags::Structure)
 	{
+		//UE_LOG(LogTemp, Display, TEXT("Cleaning span %d with %d members"),ID,InstanceData.GraphMembers.Num());
+
 		TArray<FDeltaPtr> outDeltas;
 		if (PostGraphChanges.Num() > 0)
 		{
@@ -146,11 +139,18 @@ bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 	}
 
 	FGraph3D* graph = GetDocument()->FindVolumeGraph(InstanceData.GraphMembers[0]);
+	int32 graphIdx = 1;
+	while (!graph && graphIdx < InstanceData.GraphMembers.Num())
+	{
+		graph = GetDocument()->FindVolumeGraph(InstanceData.GraphMembers[graphIdx++]);
+	}
 
 	if (!graph)
 	{
 		return false;
 	}
+
+	CachedGraphID = graph->GraphID;
 
 	TArray<const FGraph3DFace* > memberFaces;
 	Algo::Transform(InstanceData.GraphMembers, memberFaces,
@@ -180,6 +180,7 @@ bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 
 	// Gather all the perimeter edges into an unsorted list
 	TArray<int32> perimeterEdges;
+	CachedEdgeIDs.Empty();
 	for (auto* face: memberFaces)
 	{
 		if (!face)
@@ -189,6 +190,7 @@ bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 		// Edges are perimeter if they have only one face in the member list
 		for (auto edgeID : face->EdgeIDs)
 		{
+			CachedEdgeIDs.Add(edgeID);
 			if (numFacesForEdge(edgeID) == 1)
 			{
 				perimeterEdges.Add(edgeID);
@@ -289,6 +291,11 @@ bool AMOIMetaPlaneSpan::CheckIsConnected() const
 	TSet<int32> foundEdges;
 
 	const FGraph3D* graph = GetDocument()->FindVolumeGraph(InstanceData.GraphMembers[0]);
+	int32 graphIdx = 1;
+	while (graph == nullptr && graphIdx < InstanceData.GraphMembers.Num())
+	{
+		graph = GetDocument()->FindVolumeGraph(InstanceData.GraphMembers[graphIdx++]);
+	}
 
 	auto addEdges = [&foundEdges, this, graph](int32 FaceID)
 	{

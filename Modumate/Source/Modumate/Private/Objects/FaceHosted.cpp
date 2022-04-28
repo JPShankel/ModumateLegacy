@@ -184,23 +184,20 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 	{
 		FVector nativeSize = CachedAssembly.GetCompoundAssemblyNativeSize();
 		const FGraph3DFace* parentFace = nullptr;
-		if (parentObj->GetObjectType() == EObjectType::OTMetaPlane)
+
+		FGraph3D* graph = nullptr;
+		const AMOIMetaPlaneSpan* span = Cast<AMOIMetaPlaneSpan>(parentObj);
+
+		if (ensure(span && span->InstanceData.GraphMembers.Num() > 0))
 		{
-			parentFace = Document->GetVolumeGraph()->FindFace(parentObj->ID);
-		} 
-		else if (parentObj->GetObjectType() == EObjectType::OTMetaPlaneSpan)
-		{
-			const AMOIMetaPlaneSpan* span = Cast<AMOIMetaPlaneSpan>(parentObj);
-			if (span && span->InstanceData.GraphMembers.Num() > 0)
-			{
-				parentFace = Document->GetVolumeGraph()->FindFace(span->InstanceData.GraphMembers[0]);
-			}
+			parentFace = span->GetPerimeterFace();
+			graph = Document->GetVolumeGraph(span->GetCachedGraphID());
 		}
-		if (!ensure(parentFace))
+
+		if (!ensure(graph && parentFace))
 		{
 			return;
 		}
-		FGraph3D* graph = Document->FindVolumeGraph(parentFace->ID);
 
 		//------ Start rot
 
@@ -217,23 +214,15 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 		const FGraph3DEdge* edge1 = graph->FindEdge(parentFace->EdgeIDs[InstanceData.BasisEdge]);
 		const FGraph3DVertex* startVert1 = graph->FindVertex(edge1->StartVertexID);
 		const FGraph3DVertex* endVert1 = graph->FindVertex(edge1->EndVertexID);
-		FVector testCross = FVector::CrossProduct(parentFace->CachedEdgeNormals[InstanceData.BasisEdge], parentFace->CachedPlane.GetNormal());
-		testCross.Normalize();
 
-		FVector edgeDir = endVert1->Position - startVert1->Position;
-		edgeDir.Normalize();
-		FVector zAxis = endVert1->Position - startVert1->Position;;
-		bool bEdgeReversed = false;
-		if (!testCross.Equals(edgeDir, KINDA_SMALL_NUMBER))
-		{
-			zAxis = startVert1->Position - endVert1->Position;
-			bEdgeReversed = true;
-		}
-		
+		FVector zAxis = (endVert1->Position - startVert1->Position);
 		zAxis.Normalize();
-		FVector xAxis = parentFace->CachedEdgeNormals[InstanceData.BasisEdge];
-		FVector yAxis = FVector::CrossProduct(zAxis, xAxis);
-		yAxis.Normalize();
+
+		FVector yAxis = parentFace->CachedPlane.GetNormal();
+
+		FVector xAxis = FVector::CrossProduct(yAxis, zAxis);
+		xAxis.Normalize();
+
 		FQuat cmaRot = FBasisVectorMatrix(xAxis, yAxis, zAxis, FVector::ZeroVector).Inverse().ToQuat();
 		//------ End rot
 		
@@ -282,14 +271,7 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 
 		FVector cmaLocation = FVector::ZeroVector;
 		
-		FVector2D calculatePosition;
-		if (bEdgeReversed)
-		{
-			calculatePosition = boundsOfRotatedPoints.Max.GetRotated(angle * -1);
-		}
-		else {
-			calculatePosition = boundsOfRotatedPoints.Min.GetRotated(angle * -1);
-		}
+		FVector2D calculatePosition = boundsOfRotatedPoints.Min.GetRotated(angle * -1);
 		
 		cmaLocation = parentFace->DeprojectPosition(calculatePosition);
 		//------ End position
@@ -312,13 +294,9 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 			cmaTransform.SetLocation(cmaLocation);
 			cmaTransform.SetScale3D(cmaScale);
 			cma->SetActorTransform(cmaTransform);
-		}
-
-		
+		}		
 	}
 }
-
-
 
 void AMOIFaceHosted::SetupAdjustmentHandles(AEditModelPlayerController* Controller)
 {
@@ -352,6 +330,7 @@ bool AMOIFaceHosted::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>*
 {
 	// We know this tracks perfectly. It would normally be cached, but it's okay to update it directly.
 	const AModumateObjectInstance* parentObj = GetParentObject();
+	check(parentObj->GetObjectType() == EObjectType::OTMetaPlaneSpan);
 	const FGraph3DFace* parentFace = UModumateObjectStatics::GetFaceFromSpanObject(Document, parentObj->ID);
 	if (parentFace != nullptr)
 	{
