@@ -4963,6 +4963,7 @@ void UModumateDocument::download_pdf_from_blob(const FString& Blob, const FStrin
 					FBase64::Decode(Blob, PdfBytes);
 
 					FFileHelper::SaveArrayToFile(PdfBytes, *OutPath);
+					FPlatformProcess::LaunchFileInDefaultExternalApplication(*OutPath, nullptr, ELaunchVerb::Open);
 				}
 			}
 		}
