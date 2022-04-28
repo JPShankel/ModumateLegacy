@@ -84,15 +84,15 @@ bool AMOIFaceHosted::GetOffsetState(const FVector& AdjustmentDirection, FMOIStat
 
 	if (absDir.X > absDir.Y && absDir.X > absDir.Z)
 	{
-		curOffset = InstanceData.OffsetX;
-		nextOffsetType = curOffset.GetNextType(AdjustmentDirection.GetSignVector().X, InstanceData.FlipSigns.X);
-		modifiedInstanceData.OffsetX.Type = nextOffsetType;
+		curOffset = InstanceData.OffsetZ;
+		nextOffsetType = curOffset.GetNextType(AdjustmentDirection.GetSignVector().X, InstanceData.FlipSigns.Z);
+		modifiedInstanceData.OffsetZ.Type = nextOffsetType;
 	}
 	else if (absDir.Y > absDir.X && absDir.Y > absDir.Z)
 	{
-		curOffset = InstanceData.OffsetY;
-		nextOffsetType = curOffset.GetNextType(AdjustmentDirection.GetSignVector().Y, InstanceData.FlipSigns.Y);
-		modifiedInstanceData.OffsetY.Type = nextOffsetType;
+		curOffset = InstanceData.OffsetZ;
+		nextOffsetType = curOffset.GetNextType(AdjustmentDirection.GetSignVector().Y * -1, InstanceData.FlipSigns.Z);
+		modifiedInstanceData.OffsetZ.Type = nextOffsetType;
 	}
 	else if (absDir.Z > absDir.X && absDir.Z > absDir.Y)
 	{
