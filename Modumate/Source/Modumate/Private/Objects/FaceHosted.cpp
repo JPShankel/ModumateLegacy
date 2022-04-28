@@ -263,6 +263,10 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 
 		if (!FMath::IsNearlyZero(nativeSize.Z, KINDA_SMALL_NUMBER))
 			cmaScale.Z = height / nativeSize.Z;
+
+		cmaScale.X *= InstanceData.FlipSigns.Z;
+		cmaScale.Y *= InstanceData.FlipSigns.Y;
+		cmaScale.Z *= InstanceData.FlipSigns.X;
 		//------ End scale
 
 
@@ -277,10 +281,24 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 		
 		//apply instance data
 		cmaRot *= InstanceData.Rotation.Quaternion();
+		
 		FVector cmaSize = CachedAssembly.GetCompoundAssemblyNativeSize() * cmaScale;
 		//cmaLocation.X += InstanceData.OffsetX.GetOffsetDistance(InstanceData.FlipSigns.X, cmaSize.X);
 		//cmaLocation.Y += InstanceData.OffsetY.GetOffsetDistance(InstanceData.FlipSigns.Y, cmaSize.Y);
 		cmaLocation += (InstanceData.OffsetZ.GetOffsetDistance(InstanceData.FlipSigns.Z, cmaSize.Y) * yAxis);
+
+		if (InstanceData.FlipSigns.X < 0)
+		{
+			cmaLocation.X += nativeSize.Z * FMath::Abs(cmaScale.Z);
+		}
+		if (InstanceData.FlipSigns.Y < 0)
+		{
+			cmaLocation.Y += nativeSize.Y * FMath::Abs(cmaScale.Y);
+		}
+		if (InstanceData.FlipSigns.Z < 0)
+		{
+			cmaLocation.Z += nativeSize.X * FMath::Abs(cmaScale.X);
+		}
 
 		if (CachedAssembly.Parts.Num() > 0)
 		{
