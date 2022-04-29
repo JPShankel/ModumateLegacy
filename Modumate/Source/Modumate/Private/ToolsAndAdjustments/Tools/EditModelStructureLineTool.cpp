@@ -91,12 +91,20 @@ bool UStructureLineTool::BeginUse()
 		return false;
 	}
 
-	Super::BeginUse();
-
 	switch (CreateObjectMode)
 	{
+	case EToolCreateObjectMode::SpanEdit:
+		if (LastValidTargetID != MOD_ID_NONE)
+		{
+			if (PreviewSpanGraphMemberIDs.Remove(LastValidTargetID) == 0)
+			{
+				PreviewSpanGraphMemberIDs.AddUnique(LastValidTargetID);
+			}
+		}
+		return false;
 	case EToolCreateObjectMode::Draw:
 	{
+		Super::BeginUse();
 		LineStartPos = Controller->EMPlayerState->SnappedCursor.WorldPosition;
 		LineEndPos = LineStartPos;
 
@@ -110,6 +118,7 @@ bool UStructureLineTool::BeginUse()
 			pendingSegment->Color = FColor::Black;
 			pendingSegment->Thickness = 3;
 		}
+
 	}
 	break;
 	case EToolCreateObjectMode::Apply:
@@ -119,11 +128,10 @@ bool UStructureLineTool::BeginUse()
 		{
 			MakeStructureLine(LastValidTargetID);
 		}
-
-		EndUse();
 	}
 	break;
 	}
+
 
 	return true;
 }
@@ -175,6 +183,7 @@ bool UStructureLineTool::FrameUpdate()
 	break;
 	case EToolCreateObjectMode::Apply:
 	case EToolCreateObjectMode::Add:
+	case EToolCreateObjectMode::SpanEdit:
 	{
 		int32 newTargetID = MOD_ID_NONE;
 		const AModumateObjectInstance *hitMOI = nullptr;
@@ -198,6 +207,16 @@ bool UStructureLineTool::FrameUpdate()
 		SetTargetID(newTargetID);
 		if (LastValidTargetID != MOD_ID_NONE)
 		{
+			if (GetCreateObjectMode() == EToolCreateObjectMode::SpanEdit)
+			{
+				TArray<FDeltaPtr> deltas;
+				if (GetSpanCreationDelta(deltas))
+				{
+					GameState->Document->ApplyPreviewDeltas(deltas, GetWorld());
+				}
+				return true;
+			}
+
 			// Show an affordance for the preview object
 			LineStartPos = hitMOI->GetCorner(0);
 			LineEndPos = hitMOI->GetCorner(1);
@@ -363,9 +382,48 @@ void UStructureLineTool::ResetState()
 	LineDir = FVector::ZeroVector;
 	ObjNormal = FVector::ZeroVector;
 	ObjUp = FVector::ZeroVector;
+	PreviewSpanGraphMemberIDs.Empty();
 
 	FMOIStructureLineData newMOICustomData(FMOIStructureLineData::CurrentVersion);
 	NewMOIStateData.CustomData.SaveStructData(newMOICustomData);
+}
+
+bool UStructureLineTool::GetSpanCreationDelta(TArray<FDeltaPtr>& OutDeltaPtrs)
+{
+	OutDeltaPtrs.Reset();
+	auto deltaPtr = MakeShared<FMOIDelta>();
+	if (PreviewSpanGraphMemberIDs.Num() == 0)
+	{
+		return false;
+	}
+	NewObjectIDs.Reset();
+	int32 newObjID = GameState->Document->GetNextAvailableID();
+
+	// Create new span that contains all preview graph members
+	FMOIStateData spanCreateState(newObjID++, EObjectType::OTMetaEdgeSpan);
+	FMOIMetaEdgeSpanData spanData;
+	spanData.GraphMembers = PreviewSpanGraphMemberIDs;
+	spanCreateState.CustomData.SaveStructData(spanData);
+	deltaPtr->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
+
+	// Create edge hosted object that will be child of the new preview span
+	NewMOIStateData.ParentID = spanCreateState.ID;
+	NewMOIStateData.ID = newObjID++;
+	NewMOIStateData.ObjectType = UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode());
+	NewMOIStateData.AssemblyGUID = AssemblyGUID;
+	deltaPtr->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
+	NewObjectIDs.Add(NewMOIStateData.ID);
+
+	OutDeltaPtrs.Add(deltaPtr);
+	return true;
+}
+
+void UStructureLineTool::CommitSpanEdit() 
+{
+	GameState->Document->ClearPreviewDeltas(GetWorld());
+	TArray<FDeltaPtr> deltas;
+	GetSpanCreationDelta(deltas) && GameState->Document->ApplyDeltas(deltas, GetWorld());
+	EndUse();
 }
 
 bool UStructureLineTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeIDs, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitFaces)

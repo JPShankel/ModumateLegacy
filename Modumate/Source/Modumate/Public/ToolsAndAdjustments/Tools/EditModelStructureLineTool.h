@@ -28,6 +28,8 @@ public:
 	virtual bool HandleFlip(EAxis::Type FlipAxis) override;
 	virtual bool HandleOffset(const FVector2D& ViewSpaceDirection) override;
 	virtual bool HasDimensionActor() override { return true; }
+	virtual void CommitSpanEdit()  override;
+
 
 protected:
 	virtual void OnCreateObjectModeChanged() override;
@@ -38,12 +40,14 @@ protected:
 	void ResetState();
 
 	bool GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeIDs, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitFaces);
+	bool GetSpanCreationDelta(TArray<FDeltaPtr>& OutDeltaPtrs);
 
 	bool bWasShowingSnapCursor;
 	EMouseMode OriginalMouseMode;
 	bool bWantedVerticalSnap;
 	int32 LastValidTargetID;
 	int32 LastTargetStructureLineID;
+	TArray<int32> PreviewSpanGraphMemberIDs;
 
 	FVector LineStartPos, LineEndPos, LineDir, ObjNormal, ObjUp;
 };

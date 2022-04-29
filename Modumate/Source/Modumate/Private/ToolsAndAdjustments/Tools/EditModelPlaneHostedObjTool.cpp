@@ -289,86 +289,47 @@ FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& Targe
 			delta = MakeShared<FMOIDelta>();
 		}
 
-		bool bCreateNewObject = true;
 		AModumateObjectInstance* planeFace = GameState->Document->GetObjectById(targetFaceID);
 
 		TArray<int32> spans;
-		const AModumateObjectInstance* existingLayeredObj = nullptr;
-		const AMOIMetaPlaneSpan* spanOb = nullptr;
+		UModumateObjectStatics::GetSpansForFaceObject(GameState->Document, planeFace, spans);
+		const AMOIMetaPlaneSpan* spanOb = spans.Num() > 0 ? Cast<AMOIMetaPlaneSpan>(GameState->Document->GetObjectById(spans[TargetSpanIndex])) : nullptr;
 
-		// Add mode create new span
-		if (CreateObjectMode != EToolCreateObjectMode::Add)
+		int32 spanID = MOD_ID_NONE;
+		if (!spanOb)
 		{
-			UModumateObjectStatics::GetSpansForFaceObject(GameState->Document, planeFace, spans);
-			spanOb = spans.Num() > 0 ? Cast<AMOIMetaPlaneSpan>(GameState->Document->GetObjectById(spans[TargetSpanIndex])) : nullptr;
+			spanID = nextID++;
+			NewMOIStateData.ParentID = 0;
+			NewMOIStateData.ID = spanID;
+			FMOIStateData spanCreateState(spanID, EObjectType::OTMetaPlaneSpan);
+
+			FMOIMetaPlaneSpanData spanData;
+			spanData.GraphMembers.Add(targetFaceID);
+
+			spanCreateState.CustomData.SaveStructData(spanData);
+			delta->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
+
+			NewObjectIDs.Add(spanID);
 		}
-
-		if (spanOb && planeFace && ensure(planeFace->GetObjectType() == EObjectType::OTMetaPlane))
+		else
 		{
-			for (auto child : spanOb->GetChildObjects())
+			spanID = spanOb->ID;
+			if (GetCreateObjectMode() == EToolCreateObjectMode::Apply)
 			{
-				if ((child->GetLayeredInterface() != nullptr) && ensureAlways(existingLayeredObj == nullptr))
+				for (auto* childOb : spanOb->GetChildObjects())
 				{
-					existingLayeredObj = child;
-
-					if (child->GetObjectType() == ObjectType)
-					{
-						FMOIStateData& newState = delta->AddMutationState(child);
-						newState.AssemblyGUID = AssemblyGUID;
-						bCreateNewObject = false;
-					}
-					else
-					{
-						delta->AddCreateDestroyState(child->GetStateData(), EMOIDeltaType::Destroy);
-					}
+					delta->AddCreateDestroyState(childOb->GetStateData(), EMOIDeltaType::Destroy);
 				}
 			}
 		}
 
-		if (bCreateNewObject)
-		{			
-			// If we don't already have a span for this face, create one
-			if (spans.Num() == 0)
-			{
-				NewMOIStateData.ParentID = nextID++;
+		NewMOIStateData.ObjectType = ObjectType;
+		NewMOIStateData.ParentID = spanID;
+		NewMOIStateData.ID = nextID++;
+		NewMOIStateData.AssemblyGUID = AssemblyGUID;
+		NewObjectIDs.Add(NewMOIStateData.ID);
 
-				FMOIStateData spanCreateState(NewMOIStateData.ParentID, EObjectType::OTMetaPlaneSpan);
-
-				FMOIMetaPlaneSpanData spanData;
-				spanData.GraphMembers.Add(targetFaceID);
-
-				spanCreateState.CustomData.SaveStructData(spanData);
-				delta->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
-
-				NewObjectIDs.Add(NewMOIStateData.ParentID);
-			}
-			else
-			{
-				// TODO: cycle TargetSpanIndex through target list;
-				NewMOIStateData.ParentID = spans[TargetSpanIndex];
-			}
-
-			NewMOIStateData.ID = nextID++; 
-			NewMOIStateData.AssemblyGUID = AssemblyGUID;
-
-			delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
-
-			NewObjectIDs.Add(NewMOIStateData.ID);
-
-			// If we deleted an existing layered separator, then reparent its children to the new MOI.
-			if (existingLayeredObj)
-			{
-				auto childObjsToReparent = existingLayeredObj->GetChildObjects();
-				for (auto* childObjToReparent : childObjsToReparent)
-				{
-					if (childObjToReparent)
-					{
-						FMOIStateData& newState = delta->AddMutationState(childObjToReparent);
-						newState.ParentID = NewMOIStateData.ID;
-					}
-				}
-			}
-		}
+		delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
 	}
 
 	return delta;
