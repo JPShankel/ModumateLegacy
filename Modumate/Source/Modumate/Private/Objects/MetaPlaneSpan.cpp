@@ -60,6 +60,14 @@ void AMOIMetaPlaneSpan::PreDestroy()
 		{
 			graphMoi->MarkDirty(EObjectDirtyFlags::Structure);
 		}
+		for (auto curMemberID : InstanceData.GraphMembers)
+		{
+			auto curMemberMoi = Document->GetObjectById(curMemberID);
+			if (curMemberMoi)
+			{
+				curMemberMoi->MarkDirty(EObjectDirtyFlags::Structure);
+			}
+		}
 	}
 
 	Super::PreDestroy();

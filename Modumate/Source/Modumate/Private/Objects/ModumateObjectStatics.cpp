@@ -492,8 +492,6 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 	bool bConnectedToVisibleChild = false;
 	bool bHasChildren = (MetaMOI->GetChildIDs().Num() > 0);
 	// Check if this meta object is part of a span
-	// TODO: Future work check if meta object is part of span
-	// TODO: Check with undo/redo route clean
 	TArray<int32> spanIDs;
 	if (MetaMOI->GetObjectType() == EObjectType::OTMetaPlane)
 	{
