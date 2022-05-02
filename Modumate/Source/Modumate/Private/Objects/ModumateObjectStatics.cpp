@@ -1505,6 +1505,33 @@ bool UModumateObjectStatics::TryJoinSelectedMetaSpan(UWorld* World)
 	TArray<FDeltaPtr> deltas;
 	if (spanIDs.Num() > 0)
 	{
+		TArray<const FGraph3DFace*> memberFaces;
+		for (const auto curSpanID : spanIDs)
+		{
+			const auto curObj = controller->GetDocument()->GetObjectById(curSpanID);
+			const auto curSpanMOI = Cast<AMOIMetaPlaneSpan>(curObj);
+			const FGraph3D* graph = controller->GetDocument()->FindVolumeGraph(curSpanMOI->InstanceData.GraphMembers[0]);
+			Algo::Transform(curSpanMOI->InstanceData.GraphMembers, memberFaces,
+				[graph](int32 FaceID) {return graph->FindFace(FaceID); });
+		}
+		if (memberFaces.Num() >= 2)
+		{
+			FPlane basePlane = memberFaces[0]->CachedPlane;
+			TArray<int32> pendingFaceReverseIDs;
+			for (int32 i = 1; i < memberFaces.Num(); ++i)
+			{
+				// If current face is reverse dir of base face, reverse it
+				if (basePlane.Equals(memberFaces[i]->CachedPlane * -1, THRESH_POINTS_ARE_NEAR))
+				{
+					pendingFaceReverseIDs.Add(memberFaces[i]->ID);
+				}
+			}
+			if (pendingFaceReverseIDs.Num() > 0)
+			{
+				TArray<int32> pendingEdgeReverseIDs; //Currently no edges check
+				controller->GetDocument()->GetDeltaForReverseMetaObjects(World, pendingEdgeReverseIDs, pendingFaceReverseIDs, deltas);
+			}
+		}
 		markAllSpansDirty(spanIDs);
 		FModumateObjectDeltaStatics::GetDeltasForFaceSpanMerge(controller->GetDocument(), spanIDs, deltas);
 	}

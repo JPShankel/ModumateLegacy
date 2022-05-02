@@ -1969,21 +1969,28 @@ bool UModumateDocument::ReverseMetaObjects(UWorld* World, const TArray<int32>& E
 	{
 		return false;
 	}
+	TArray<FDeltaPtr> deltaPtrs;
+	if (!GetDeltaForReverseMetaObjects(World, EdgeObjectIDs, FaceObjectIDs, deltaPtrs))
+	{
+		return false;
+	}
+	return ApplyDeltas(deltaPtrs, World);
+}
 
+bool UModumateDocument::GetDeltaForReverseMetaObjects(UWorld* World, const TArray<int32>& EdgeObjectIDs, const TArray<int32>& FaceObjectIDs, TArray<FDeltaPtr>& OutDeltas)
+{
 	TArray<FGraph3DDelta> graphDeltas;
 	if (!TempVolumeGraph.GetDeltasForObjectReverse(graphDeltas, EdgeObjectIDs, FaceObjectIDs))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 		return false;
 	}
-
-	TArray<FDeltaPtr> deltaPtrs;
-	if (!FinalizeGraphDeltas(graphDeltas, deltaPtrs))
+	if (!FinalizeGraphDeltas(graphDeltas, OutDeltas))
 	{
 		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
 		return false;
 	}
-	return ApplyDeltas(deltaPtrs, World);
+	return true;
 }
 
 bool UModumateDocument::GetGraph2DDeletionDeltas(int32 Graph2DID, int32& InNextID, TArray<FDeltaPtr>& OutDeltas) const

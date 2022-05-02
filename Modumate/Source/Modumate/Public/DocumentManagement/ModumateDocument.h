@@ -173,6 +173,7 @@ public:
 
 	bool JoinMetaObjects(UWorld *World, const TArray<int32> &ObjectIDs);
 	bool ReverseMetaObjects(UWorld* World, const TArray<int32>& EdgeObjectIDs, const TArray<int32>& FaceObjectIDs);
+	bool GetDeltaForReverseMetaObjects(UWorld* World, const TArray<int32>& EdgeObjectIDs, const TArray<int32>& FaceObjectIDs, TArray<FDeltaPtr>& OutDeltas);
 
 	bool GetGraph2DDeletionDeltas(int32 Graph2DID, int32& InNextID, TArray<FDeltaPtr>& OutDeltas) const;
 
