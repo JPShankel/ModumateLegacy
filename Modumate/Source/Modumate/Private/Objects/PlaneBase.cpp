@@ -164,15 +164,6 @@ void AMOIPlaneBase::PostCreateObject(bool bNewObject)
 	}
 }
 
-void AMOIPlaneBase::PreDestroy()
-{
-	if (LineArrowCylinderMesh)
-	{
-		LineArrowCylinderMesh->DestroyComponent();
-	}
-	Super::PreDestroy();
-}
-
 void AMOIPlaneBase::UpdateLineArrowVisual()
 {
 	if (!LineArrowCylinderMesh)

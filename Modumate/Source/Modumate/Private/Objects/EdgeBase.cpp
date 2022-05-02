@@ -137,15 +137,6 @@ void AMOIEdgeBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoint
 	outLines.Add(FStructureLine(startPoint, endPoint, 0, 1));
 }
 
-void AMOIEdgeBase::PreDestroy()
-{
-	if (LineArrowCylinderMesh)
-	{
-		LineArrowCylinderMesh->DestroyComponent();
-	}
-	Super::PreDestroy();
-}
-
 void AMOIEdgeBase::UpdateLineArrowVisual()
 {
 	if (!LineArrowCylinderMesh)
