@@ -1353,6 +1353,7 @@ void AEditModelPlayerState::TryRedo_Implementation()
 			redoRecord.ComputeHash();
 
 			UE_LOG(LogTemp, Log, TEXT("Broadcasting redone DeltasRecord %08x from user %s"), redoRecord.TotalHash, *userID);
+
 			gameState->BroadcastServerDeltas(userID, redoRecord, true);
 		}
 	}
@@ -1780,6 +1781,8 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 
 	// general practice: when the web sends us data, send it back so they'll store it
 	return SendWebPlayerState();
+#else
+	return false;
 #endif
 }
 

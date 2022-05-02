@@ -97,52 +97,93 @@ bool FDrawingDesignerDocument::Add(FDrawingDesignerNode obj)
 	return rtn;
 }
 
-bool FDrawingDesignerDocument::Remove(const FString& id)
+bool FDrawingDesignerDocument::Remove(const FString& Id)
 {
-	bool rtn = true;
-	if (id == TEXT("0"))
+	if (Id == TEXT("0"))
 	{
 		UE_LOG(ModumateDrawingDesigner, Warning, TEXT("Attemped to delete root node -- not a valid operation"));
 		return false;
 	}
 
-	if (nodes.Contains(id))
-	{
-		FString parentID = FString::FromInt(nodes[id].parent);
-		if (nodes.Contains(parentID))
-		{
-			//This makes me hate.
-			nodes[parentID].children.Remove(nodes[id].id);
-		}
-		else
-		{
-			rtn = false;
-		}
-	}
 
-	return rtn && RemoveRecurse(id);
+	UE_LOG(ModumateDrawingDesigner, Log, TEXT("Asked to remove id=%s"), *Id);
+	return RemoveRecurse(Id);
 }
 
-bool FDrawingDesignerDocument::RemoveRecurse(const FString& id)
+bool FDrawingDesignerDocument::RemoveRecurse(const FString& Id)
 {
 	bool found = false;
 
-	if (nodes.Contains(id))
+	if (nodes.Contains(Id))
 	{
 		//Remove children first
-		for (auto& child : nodes[id].children)
+		//Copy here to prevent modification during iteration
+		TArray<int32> iterArray(nodes[Id].children);
+		
+		for (auto& child : iterArray)
 		{
 			FString childId = FString::FromInt(child);
 			RemoveRecurse(childId);
 		}
 
-		//Then Remove the ID from the maps...
-		nodes.Remove(id);
+		FString parentID = FString::FromInt(nodes[Id].parent);
+		if (nodes.Contains(parentID))
+		{
+			nodes[parentID].children.Remove(nodes[Id].id);
+		}
+		else
+		{
+			UE_LOG(ModumateDrawingDesigner, Warning,
+				TEXT("Parent of child does not know about child, parentId=%s id=%s"), *parentID, *Id);
+		}
+
+		UE_LOG(ModumateDrawingDesigner, Log,
+			TEXT("Removing id=%s"), *Id);
+		
+		//Then Remove the ID from the map...
+		nodes.Remove(Id);
 		found = true;
 	}
 	else
 	{
-		UE_LOG(ModumateDrawingDesigner, Warning, TEXT("Asked to remove ID that doesn't exist, id=%s"), *id);
+		//Clean all references to that node ID in children lists.
+		UE_LOG(ModumateDrawingDesigner, Warning,
+			TEXT("Asked to remove ID that doesn't exist, id=%s"), *Id);
+		int32 idIdx = FCString::Atoi(*Id);
+		found = RemoveGhosts(0, idIdx);;
+	}
+
+	return found;
+}
+
+bool FDrawingDesignerDocument::RemoveGhosts(const int32 RootId, const int32 Id)
+{
+	bool found = false;
+	
+	UE_LOG(ModumateDrawingDesigner, Warning,
+			TEXT("Removing ghost child entry for unknown node=%d"), Id);
+	
+	if(nodes.Contains(FString::FromInt(Id)))
+	{
+		//Do not remove ghosts for nodes that are not ghosts
+		return false;
+	}
+
+	if(nodes.Contains(FString::FromInt(RootId)))
+	{
+		FDrawingDesignerNode* root = &nodes[FString::FromInt(RootId)];
+		size_t preCount = root->children.Num();
+		root->children.RemoveAll([&](int32 childId){return childId == Id;});
+		size_t postCount = root->children.Num();
+		if(postCount < preCount)
+		{
+			found = true;
+		}
+		
+		for(auto& child: root->children)
+		{
+			found = found || RemoveGhosts(child, Id);
+		}
 	}
 
 	return found;

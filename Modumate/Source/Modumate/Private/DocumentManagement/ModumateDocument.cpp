@@ -171,6 +171,7 @@ void UModumateDocument::Undo(UWorld *World)
 	if (controller->EMPlayerState->IsNetMode(NM_Client))
 	{
 		controller->EMPlayerState->TryUndo();
+		drawing_request_view_list();
 	}
 	else if (ensureAlways(!InUndoRedoMacro()))
 	{
@@ -190,6 +191,7 @@ void UModumateDocument::Redo(UWorld *World)
 	if (controller->EMPlayerState->IsNetMode(NM_Client))
 	{
 		controller->EMPlayerState->TryRedo();
+		drawing_request_view_list();
 	}
 	else if (ensureAlways(!InUndoRedoMacro()))
 	{
@@ -212,7 +214,7 @@ bool UModumateDocument::GetUndoRecordsFromClient(UWorld* World, const FString& U
 	for (int32 recordIdx = numVerifiedDeltasRecords - 1; recordIdx >= 0; --recordIdx)
 	{
 		auto& deltasRecord = VerifiedDeltasRecords[recordIdx];
-		if (deltasRecord.OriginUserID == UserID)
+		if (deltasRecord.OriginUserID == UserID && !deltasRecord.bDDCleaningDelta)
 		{
 			firstDeltaIdx = recordIdx;
 			break;
@@ -690,7 +692,7 @@ bool UModumateDocument::ApplyRemoteUndo(UWorld* World, const FString& UndoingUse
 	}
 
 	PostApplyDeltas(World, true, true);
-
+	drawing_request_view_list();
 	return true;
 }
 
@@ -1132,7 +1134,7 @@ bool UModumateDocument::ApplySettingsDelta(const FDocumentSettingDelta& Settings
 	return true;
 }
 
-bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* World, bool bRedoingDeltas)
+bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* World, bool bRedoingDeltas, bool bDDCleaningDelta)
 {
 	// Vacuous success if there are no deltas to apply
 	if (Deltas.Num() == 0)
@@ -1173,9 +1175,9 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	ur->Deltas = Deltas;
 
 	// If we're a multiplayer client, don't add to the undo buffer until we've received verification from the server
-	if (!bMultiplayerClient)
+	if (!bMultiplayerClient && !bDDCleaningDelta)
 	{
-		UndoBuffer.Add(ur);
+			UndoBuffer.Add(ur);
 	}
 
 	TSet<EObjectType> affectedTypes;
@@ -1216,6 +1218,7 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	// rather than re-use the same verified document hash that hasn't been updated yet.
 	uint32 latestDocHash = (UnverifiedDeltasRecords.Num() > 0) ? UnverifiedDeltasRecords.Last().TotalHash : GetLatestVerifiedDocHash();
 	FDeltasRecord deltasRecord(ur->Deltas, CachedLocalUserID, latestDocHash);
+	deltasRecord.bDDCleaningDelta = bDDCleaningDelta;
 
 	FBox deltaAffectedBounds = GetAffectedBounds(DeltaAffectedObjects, DeltaDirtiedObjects);
 	deltasRecord.SetResults(DeltaAffectedObjects, DeltaDirtiedObjects, DeltaAffectedPresets.Array(), deltaAffectedBounds);
@@ -1245,7 +1248,7 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	EndTrackingDeltaObjects();
 
 	// TODO: only send changed MOIS to Web
-	// TODO: move this to after object cleaning or a more efficent location. maybe "Mark yourself dirty for network and send all dirty network devices"
+	// TODO: move this to after object cleaning or a more efficient location. maybe "Mark yourself dirty for network and send all dirty network devices"
 	if (resendDDViews)
 	{
 		drawing_request_view_list();
@@ -1527,7 +1530,7 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World, bool bCleanObjects, bool 
 	{
 		CleanObjects(nullptr);
 	}
-
+	
 	if (DrawingDesignerDocument.bDirty)
 	{
 		DrawingPushDD();
@@ -4470,7 +4473,6 @@ void UModumateDocument::DrawingPushDD()
 
 	if (ensureAlways(DrawingDesignerDocument.WriteJson(documentJson)))
 	{
-
 		DrawingSendResponse(TEXT("onDocumentChanged"), documentJson);
 	}
 	DrawingDesignerDocument.bDirty = false;
@@ -4503,7 +4505,7 @@ void UModumateDocument::drawing_apply_delta(const FString& InDelta)
 		TSharedPtr<FDocumentDelta> delta = MakeShared<FDrawingDesignerDocumentDelta>(DrawingDesignerDocument, package);
 		TArray<FDeltaPtr> wrapped;
 		wrapped.Add(delta);
-		if (!ApplyDeltas(wrapped, GetWorld()))
+		if (!ApplyDeltas(wrapped, GetWorld(), package.bAddToUndo))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Failed to apply Delta"));
 		}

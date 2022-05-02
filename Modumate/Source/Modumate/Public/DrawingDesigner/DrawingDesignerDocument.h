@@ -28,7 +28,7 @@ struct MODUMATE_API FDrawingDesignerDocument
 	};
 
 	bool Add(FDrawingDesignerNode obj);
-	bool Remove(const FString& id);
+	bool Remove(const FString& Id);
 	bool Modify(FDrawingDesignerNode obj);
 
 	bool Validate();
@@ -40,6 +40,7 @@ struct MODUMATE_API FDrawingDesignerDocument
 	bool operator!=(const FDrawingDesignerDocument& RHS) const;
 
 protected:
-	bool RemoveRecurse(const FString& id);
+	bool RemoveRecurse(const FString& Id);
+	bool RemoveGhosts(const int32 RootId, const int32 Id);
 	bool ValidateRecurse(const FString& id, TMap<FString, bool>& seenNodeMap);
 };

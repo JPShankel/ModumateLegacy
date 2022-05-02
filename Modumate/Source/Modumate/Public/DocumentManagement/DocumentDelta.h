@@ -111,6 +111,9 @@ struct MODUMATE_API FDeltasRecord
 	UPROPERTY()
 	FBox AffectedObjBounds = FBox(EForceInit::ForceInitToZero);
 
+	UPROPERTY()
+	bool bDDCleaningDelta = true;
+
 	// Non-definitional / derived from application; not necessarily worth the space for replication
 
 	TArray<FDeltaPtr> RawDeltaPtrs;

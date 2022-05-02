@@ -266,7 +266,7 @@ public:
 	bool ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World);
 	void ApplyGraph2DDelta(const FGraph2DDelta &Delta, UWorld *World);
 	void ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *World);
-	bool ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World, bool bRedoingDeltas = false);
+	bool ApplyDeltas(const TArray<FDeltaPtr> &Deltas, UWorld *World, bool bRedoingDeltas = false, bool bDDCleaningDelta = false);
 	bool ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWorld* World);
 	bool ApplySettingsDelta(const FDocumentSettingDelta& SettingsDelta, UWorld* World);
 

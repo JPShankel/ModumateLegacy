@@ -54,6 +54,9 @@ struct MODUMATE_API FDrawingDesignerJsDeltaPackage
 	UPROPERTY()
 	TArray<FDrawingDesignerJsDelta> deltas;
 
+	UPROPERTY()
+	bool bAddToUndo = true;
+
 	bool ReadJson(const FString& InJson);
 };
 
