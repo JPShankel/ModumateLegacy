@@ -127,7 +127,13 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 
 	// Capture actor looks along +X (Y up); cutplane looks along +Z.
 	static const FQuat cameraToCutplane(FVector(1, -1, 1).GetSafeNormal(), FMath::DegreesToRadians(120));
-	const FQuat cutPlaneRotation(cutPlane->GetRotation());
+	FQuat cutPlaneRotation(cutPlane->GetRotation());
+
+	if (FVector::Parallel(cutPlaneRotation * FVector::UpVector, FVector::UpVector))
+	{
+		// Horizontal cut planes are rotated 180 degrees relative to other cut planes.
+		cutPlaneRotation *= FQuat(FVector::UpVector, FMath::DegreesToRadians(180));
+	}
 
 	FTransform cameraTransform(cutPlaneRotation * cameraToCutplane, cameraCentre, FVector(viewWidth, viewHeight, 1.0f));
 
@@ -410,6 +416,16 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 	//Derive our cut plane
 	const FVector zAxis(CachedXAxis ^ CachedYAxis);
 	const FPlane cutPlane(CachedOrigin, zAxis);
+
+	FVector xAxis(CachedXAxis);
+	FVector yAxis(CachedYAxis);
+	FVector origin(CachedOrigin);
+	if (FVector::Parallel(zAxis, FVector::UpVector))
+	{   // Horizontal cut planes are rotated.
+		origin += CachedSize.X * xAxis + CachedSize.Y * yAxis;
+		xAxis = -xAxis;
+		yAxis = -yAxis;
+	}
 	
 	//TODO: Get non-active graphs as well (meta graph objects) -JN
 	//Mass Graph Vertices
@@ -441,7 +457,7 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 	};
 
 	auto copyPoint = [&](FDrawingDesignerSnapId Id, FVector& Position, FDrawingDesignerSnapPoint& OutSnap) {
-		FVector2D projectedPoint(UModumateGeometryStatics::ProjectPoint2D(Position, CachedXAxis, CachedYAxis, CachedOrigin));
+		FVector2D projectedPoint(UModumateGeometryStatics::ProjectPoint2D(Position, xAxis, yAxis, origin));
 		FVector2D scaledPoint(projectedPoint / CachedSize);
 		OutSnap.x = scaledPoint.X;
 		OutSnap.y = scaledPoint.Y;

@@ -192,13 +192,12 @@ bool FDraftingDrawing::MakeWorldObjects()
 #else
 	FVector scopeBoxNormal = cutPlane->GetNormal();
 #endif
-		
 
 	FPlane plane = FPlane(cutPlane->GetCorner(0), cutPlane->GetNormal());
-	int32 numPoints = 4;
 	TArray<FVector> intersection;
 #if 0
 	bool bValidIntersection = true;
+	const int32 numPoints = 4;
 	intersection.SetNumZeroed(numPoints);
 	for (int32 cornerIdx = 0; cornerIdx < numPoints; cornerIdx++)
 	{
@@ -218,14 +217,7 @@ bool FDraftingDrawing::MakeWorldObjects()
 	UModumateGeometryStatics::AnalyzeCachedPositions(intersection, plane, axisX, axisY, cached2DPositions, center);
 	const bool bHorizontalPlan = FVector::Parallel(plane, FVector::UpVector);
 
-	TArray<FVector2D> boxPoints;
-	for (auto& point : intersection)
-	{
-		FVector2D point2D = UModumateGeometryStatics::ProjectPoint2D(point, axisX, axisY, origin);
-		boxPoints.Add(point2D);
-	}
-
-	FBox2D drawingBox = FBox2D(boxPoints);
+	FBox2D drawingBox = FBox2D(cached2DPositions);
 
 	float orthoWidth = drawingBox.GetSize().X;
 	float orthoHeight = drawingBox.GetSize().Y;
@@ -238,17 +230,15 @@ bool FDraftingDrawing::MakeWorldObjects()
 	{
 		axisX *= -1.0f;
 		axisY *= -1.0f;
+		foregroundLines->SetLocalPosition(dimensions);
+	}
+	else
+	{
+		foregroundLines->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);
 	}
 
 	GetForegroundLines(foregroundLines, axisX, axisY, true);
 
-	foregroundLines->SetLocalPosition(FModumateUnitCoord2D::WorldCentimeters(drawingBox.Min) * -1.0f);
-
-	if (!bHorizontalPlan)
-	{
-		foregroundLines->MoveXTo(dimensions.X);
-		foregroundLines->MoveYTo(dimensions.Y);
-	}
 	totalPage->Children.Add(foregroundLines);
 
 	if (DraftingType == UDraftingManager::kDWG)
@@ -272,13 +262,13 @@ bool FDraftingDrawing::MakeWorldObjects()
 	section->Children.Add(totalPage);
 
 	section->BoundingBox = drawingBox + totalPage->BoundingBox;
-
 	WorldObjects = TWeakPtr<FDraftingComposite>(section);
 
-	auto viewArea = DrawingContent.Pin();
-	ensureAlways(viewArea.IsValid());
+	auto drawingContent = DrawingContent.Pin();
+	ensureAlways(drawingContent.IsValid());
 
-	viewArea->Children.Add(section);
+	drawingContent->Children.Add(section);
+	// DrawingContent -> WorldObjects -> totalPage -> foregroundLines -> {line primitives from MOIs}
 
 	return true;
 }
