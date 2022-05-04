@@ -105,14 +105,14 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 		corners[c] = cutPlane->GetCorner(c);
 	}
 
-	const FVector planeCentre((corners[1] + corners[2]) / 2.0f);
+	const FVector planeCentre((corners[0] + corners[2]) / 2.0f);
 	const float planeWidth = (corners[1] - corners[0]).Size();
 	const float planeHeight = (corners[2] - corners[1]).Size();
 	const FVector ll(corners[2] + viewRequest.roi.A.x * (corners[0] - corners[1])
 		+ viewRequest.roi.A.y * (corners[1] - corners[2]));
 	const FVector ur(corners[2] + viewRequest.roi.B.x * (corners[0] - corners[1])
 		+ viewRequest.roi.B.y * (corners[1] - corners[2]));
-	const FVector cameraCentre((ll + ur) / 2.0f);
+	FVector cameraCentre((ll + ur) / 2.0f);
 	const float viewWidth = planeWidth * FMath::Abs(viewRequest.roi.B.x - viewRequest.roi.A.x);
 	const float viewHeight = planeHeight * FMath::Abs(viewRequest.roi.B.y - viewRequest.roi.A.y);
 
@@ -133,6 +133,13 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 	{
 		// Horizontal cut planes are rotated 180 degrees relative to other cut planes.
 		cutPlaneRotation *= FQuat(FVector::UpVector, FMath::DegreesToRadians(180));
+		
+		//This rotates our camera center 180 degrees as well.
+		// This works because the Z component is always 0 in this case (due to the parallel check)
+		FVector cameraZO = cameraCentre - planeCentre;
+		cameraZO.Y = -cameraZO.Y;
+		cameraZO.X = -cameraZO.X;
+		cameraCentre = cameraZO + planeCentre;
 	}
 
 	FTransform cameraTransform(cutPlaneRotation * cameraToCutplane, cameraCentre, FVector(viewWidth, viewHeight, 1.0f));
