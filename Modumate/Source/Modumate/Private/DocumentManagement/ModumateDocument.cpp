@@ -5006,6 +5006,13 @@ void UModumateDocument::open_delete_preset_menu(const FString& InGUID)
 	}
 }
 
+void UModumateDocument::duplicate_preset(const FString& InGUID)
+{
+	FBIMPresetInstance newPreset;
+	ensureAlways(DuplicatePreset(GetWorld(), FGuid(InGUID), newPreset));
+}
+
+
 void UModumateDocument::export_estimates()
 {
 	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());

@@ -475,6 +475,9 @@ public:
 
 	UFUNCTION()
 	void open_delete_preset_menu(const FString& InGUID);
+	
+	UFUNCTION()
+	void duplicate_preset(const FString& InGUID);
 
 	UFUNCTION()
 	void export_estimates();
