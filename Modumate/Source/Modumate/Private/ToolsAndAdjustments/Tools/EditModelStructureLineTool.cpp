@@ -193,14 +193,9 @@ bool UStructureLineTool::FrameUpdate()
 		{
 			hitMOI = GameState->Document->ObjectFromActor(cursor.Actor);
 
-			// If this is hitting a hosted obj, we want to use its meta edge
-			if (hitMOI)
+			if (hitMOI && (hitMOI->GetObjectType() == UModumateTypeStatics::ObjectTypeFromToolMode(GetToolMode())))
 			{
-				const auto parentSpan = Cast<AMOIMetaEdgeSpan>(hitMOI->GetParentObject());
-				if (parentSpan && parentSpan->InstanceData.GraphMembers.Num() > 0)
-				{			
-					hitMOI = GameState->Document->GetObjectById(parentSpan->InstanceData.GraphMembers[0]);
-				}
+				hitMOI = hitMOI->GetParentObject();
 			}
 		}
 

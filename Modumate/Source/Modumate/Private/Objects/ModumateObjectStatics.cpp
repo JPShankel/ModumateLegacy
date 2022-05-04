@@ -379,6 +379,16 @@ bool UModumateObjectStatics::GetEdgeFaceConnections(const FGraph3DEdge* GraphEdg
 
 			auto& faceChildIDs = connectedFaceMOI->GetChildIDs();
 			auto faceChild = (faceChildIDs.Num() == 1) ? Doc->GetObjectById(faceChildIDs[0]) : nullptr;
+			if (!faceChild)
+			{
+				// Since span members are not children of MetaPlane, check for them if faceChild is nullptr
+				TArray<int32> spanMemberIDs; GetSpansForFaceObject(Doc, connectedFaceMOI, spanMemberIDs);
+				if (spanMemberIDs.Num() > 0)
+				{
+					const auto spanMOI = Cast<AMOIMetaPlaneSpan>(Doc->GetObjectById(spanMemberIDs[0]));
+					faceChild = (spanMOI->InstanceData.GraphMembers.Num() > 0) ? Doc->GetObjectById(spanMOI->InstanceData.GraphMembers[0]) : nullptr;
+				}
+			}
 			bOutConnectedToVisibleChild |= (faceChild && faceChild->IsVisible());
 		}
 	}
@@ -536,7 +546,7 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 		bOutVisible = !MetaMOI->IsRequestedHidden() &&
 			(bMetaViewMode || (bHybridViewMode && !bHasChildren)) &&
 			(!bConnectedToAnyFace || bConnectedToVisibleFace);
-		bOutCollisionEnabled = bOutVisible || (bInCompatibleToolCategory && bConnectedToVisibleChild);
+		bOutCollisionEnabled = bOutVisible || bInCompatibleToolCategory || bConnectedToVisibleChild;
 		break;
 	}
 	case EObjectType::OTMetaEdge:
@@ -551,7 +561,7 @@ bool UModumateObjectStatics::GetMetaObjEnabledFlags(const AModumateObjectInstanc
 		bOutVisible = !MetaMOI->IsRequestedHidden() &&
 			(bMetaViewMode || (bHybridViewMode && !(bHasChildren || bHasSpan))) &&
 			(!bConnectedToAnyFace || bConnectedToVisibleFace);
-		bOutCollisionEnabled = bOutVisible || (bInCompatibleToolCategory && bConnectedToVisibleChild);
+		bOutCollisionEnabled = bOutVisible || bInCompatibleToolCategory || bConnectedToVisibleChild;
 		break;
 	}
 	case EObjectType::OTMetaPlane:

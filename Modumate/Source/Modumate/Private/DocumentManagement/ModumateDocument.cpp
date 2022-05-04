@@ -1514,8 +1514,18 @@ bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDelta
 		TArray<int32> faceChangeArray = GraphDeltaElementChanges.Array();
 		for (auto* span : spans)
 		{
-			span->PostGraphChanges = faceChangeArray;
-			span->MarkDirty(EObjectDirtyFlags::Structure);
+			// Only update spans who have lost a face (negative ID in faceChangeArray) 
+			// otherwise new faces added to the side of a span are automatically added
+			for (int32 faceChange : faceChangeArray)
+			{
+				if (span->InstanceData.GraphMembers.Contains(-faceChange))
+				{
+					// copy whole array because if we have lost a face, all bets are off and any added face is legit
+					span->PostGraphChanges = faceChangeArray;
+					span->MarkDirty(EObjectDirtyFlags::Structure);
+					break;
+				}
+			}
 		}
 	}
 

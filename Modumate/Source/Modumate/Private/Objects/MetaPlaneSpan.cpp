@@ -42,7 +42,8 @@ bool AMOIMetaPlaneSpan::CanAdd(int32 FaceID) const
 
 	for (int32 edgeID : faceOb->EdgeIDs)
 	{
-		if (CachedEdgeIDs.Contains(edgeID))
+		if (CachedEdgeIDs.Contains(edgeID) ||
+			CachedEdgeIDs.Contains(edgeID * -1))
 		{
 			return true;
 		}
