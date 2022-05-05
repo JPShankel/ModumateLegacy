@@ -1493,7 +1493,7 @@ bool UModumateObjectStatics::TryJoinSelectedMetaSpan(UWorld* World)
 
 	TArray<int32> spanIDs;
 	Algo::TransformIf(playerState->SelectedObjects, spanIDs,
-		[](const AModumateObjectInstance* MOI) {return MOI->GetLayeredInterface() != nullptr; },
+		[](const AModumateObjectInstance* MOI) {return MOI->GetLayeredInterface() != nullptr || MOI->GetObjectType() == EObjectType::OTFaceHosted; },
 		[](const AModumateObjectInstance* MOI) {return MOI->GetParentID(); }
 	);
 
