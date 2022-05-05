@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/Class.h"
 
 // UEnum <-> FName/String helpers that are not already statically defined in UEnum in Class.h
 
