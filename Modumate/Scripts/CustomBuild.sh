@@ -1,4 +1,5 @@
 #!/bin/sh
+# Must use LF line endings
 
 #-------------------------------------
 # Setup Variables

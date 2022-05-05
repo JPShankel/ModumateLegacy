@@ -15,10 +15,8 @@ public class ModumateTarget : TargetRules
 		bUseLoggingInShipping = true;
 	    if (Target.Platform == UnrealTargetPlatform.Mac)
 	    {
-			string frameworkCopy = "sh $(ProjectDir)/Scripts/MacPostBuild.sh $(ProjectDir) $(TargetName) $(TargetConfiguration)";
-			string sign = "sh $(ProjectDir)/Scripts/MacPostBuildSign.sh $(ProjectDir) $(TargetName) $(TargetConfiguration)";
-			PostBuildSteps.Add(frameworkCopy);
-			PostBuildSteps.Add(sign);
+			string postBuildScript = "sh $(ProjectDir)/Scripts/MacPostBuild.sh $(ProjectDir) $(TargetName) $(TargetConfiguration)";
+			PostBuildSteps.Add(postBuildScript);
 	    }
 	}
 }
