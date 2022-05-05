@@ -146,7 +146,7 @@ bool AMOIMetaEdgeSpan::UpdateCachedEdge()
 			for (int32 vertID : {edgeOb->StartVertexID, edgeOb->EndVertexID})
 			{
 				v = graph->FindVertex(vertID);
-				if (!v || !FMath::IsNearlyEqual(UKismetMathLibrary::GetPointDistanceToLine(v->Position, baseStart, baseDirection), 0))
+				if (!v || !FMath::IsNearlyEqual(UKismetMathLibrary::GetPointDistanceToLine(v->Position, baseStart, baseDirection), 0, KINDA_SMALL_NUMBER))
 				{
 					bLegal = false;
 				}

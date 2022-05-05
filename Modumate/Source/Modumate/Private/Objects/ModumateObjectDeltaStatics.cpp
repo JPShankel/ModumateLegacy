@@ -1354,10 +1354,14 @@ void GetDeltasForSpanSplitT(const UModumateDocument* Doc, const T* SpanOb, int32
 	OutDeltas.Add(moisDelta);
 }
 
-void FModumateObjectDeltaStatics::GetDeltasForSpanSplit(const UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas,
+void FModumateObjectDeltaStatics::GetDeltasForSpanSplit(UModumateDocument* Doc, const TArray<int32>& SpanIDs, TArray<FDeltaPtr>& OutDeltas,
 	TSet<int32>* OutNewMOIs /*= nullptr*/)
 {
-	int32 nextID = Doc->GetNextAvailableID();
+	if (SpanIDs.Num() == 0)
+	{
+		return;
+	}
+	int32 nextID = Doc->ReserveNextIDs(SpanIDs[0]);
 	for (int32 spanID : SpanIDs)
 	{
 		const AModumateObjectInstance* spanOb = Doc->GetObjectById(spanID);
@@ -1370,6 +1374,7 @@ void FModumateObjectDeltaStatics::GetDeltasForSpanSplit(const UModumateDocument*
 			GetDeltasForSpanSplitT(Doc, Cast<AMOIMetaEdgeSpan>(spanOb), nextID, OutDeltas, OutNewMOIs);
 		}
 	}
+	Doc->SetNextID(nextID, SpanIDs[0]);
 }
 
 void FModumateObjectDeltaStatics::GetDeltaForSpanMapping(const AModumateObjectInstance* Moi, const TMap<int32, TArray<int32>>& CopiedToPastedObjIDs, TArray<FDeltaPtr>& OutDeltas)
