@@ -67,6 +67,7 @@ AActor *AMOIEdgeBase::CreateActor(const FVector &loc, const FQuat &rot)
 				LineArrowCylinderMesh = NewObject<UStaticMeshComponent>(this);
 				LineArrowCylinderMesh->RegisterComponent();
 				LineArrowCylinderMesh->SetHiddenInGame(false);
+				LineArrowCylinderMesh->SetVisibility(false);
 				LineArrowCylinderMesh->SetStaticMesh(gameMode->DirectionArrowMeshForEdge);
 				LineArrowCylinderMesh->SetBoundsScale(1000.f); // Prevent occlusion
 				LineArrowCylinderMesh->SetCastShadow(false);
@@ -135,6 +136,15 @@ void AMOIEdgeBase::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoint
 	}
 
 	outLines.Add(FStructureLine(startPoint, endPoint, 0, 1));
+}
+
+void AMOIEdgeBase::PreDestroy()
+{
+	if (LineArrowCylinderMesh)
+	{
+		LineArrowCylinderMesh->SetVisibility(false);
+	}
+	Super::PreDestroy();
 }
 
 void AMOIEdgeBase::UpdateLineArrowVisual()

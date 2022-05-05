@@ -155,6 +155,7 @@ void AMOIPlaneBase::PostCreateObject(bool bNewObject)
 			LineArrowCylinderMesh = NewObject<UStaticMeshComponent>(this);
 			LineArrowCylinderMesh->RegisterComponent();
 			LineArrowCylinderMesh->SetHiddenInGame(false);
+			LineArrowCylinderMesh->SetVisibility(false);
 			LineArrowCylinderMesh->SetStaticMesh(gameMode->DirectionArrowMeshForFace);
 			LineArrowCylinderMesh->SetBoundsScale(1000.f); // Prevent occlusion
 			LineArrowCylinderMesh->SetCastShadow(false);
@@ -162,6 +163,15 @@ void AMOIPlaneBase::PostCreateObject(bool bNewObject)
 			LineArrowCylinderMesh->SetMaterial(0, ArrowDynMat);
 		}
 	}
+}
+
+void AMOIPlaneBase::PreDestroy()
+{
+	if (LineArrowCylinderMesh)
+	{
+		LineArrowCylinderMesh->SetVisibility(false);
+	}
+	Super::PreDestroy();
 }
 
 void AMOIPlaneBase::UpdateLineArrowVisual()

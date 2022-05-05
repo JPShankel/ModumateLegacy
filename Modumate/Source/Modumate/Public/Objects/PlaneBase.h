@@ -26,6 +26,7 @@ public:
 	virtual bool OnSelected(bool bIsSelected) override;
 	virtual bool OnHovered(AEditModelPlayerController *controller, bool bIsHovered) override;
 	virtual void PostCreateObject(bool bNewObject) override;
+	virtual void PreDestroy() override;
 
 	void UpdateLineArrowVisual();
 
