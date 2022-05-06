@@ -613,6 +613,20 @@ void AEditModelPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReaso
 	}
 
 #if !UE_SERVER
+	if (IsNetMode(NM_Client))
+	{
+		if (EMPlayerState)
+		{
+			AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+			if (gameState)
+			{
+				CaptureProjectThumbnail();
+				EMPlayerState->UploadProjectThumbnail(gameState->Document->CurrentEncodedThumbnail);
+			}
+
+		}
+	}
+
 	FTimespan sessionTime = FDateTime::Now() - SessionStartTime;
 	UModumateAnalyticsStatics::RecordSessionDuration(this, sessionTime);
 #endif
@@ -1069,18 +1083,7 @@ bool AEditModelPlayerController::SaveModel()
 
 	if (IsNetMode(NM_Client))
 	{
-		if (EMPlayerState)
-		{
-			EMPlayerState->RequestUpload();
-
-			AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
-			if (gameState)
-			{
-				CaptureProjectThumbnail();
-				EMPlayerState->UploadProjectThumbnail(gameState->Document->CurrentEncodedThumbnail);
-			}
-
-		}
+		UploadWebThumbnail();
 		return true;
 	}
 
@@ -1423,6 +1426,25 @@ bool AEditModelPlayerController::MoveToParentGroup()
 		}
 	}
 	return false;
+}
+
+void AEditModelPlayerController::UploadWebThumbnail()
+{
+#if !UE_SERVER
+	if (IsNetMode(NM_Client))
+	{
+		if (EMPlayerState)
+		{
+			AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+			if (gameState)
+			{
+				CaptureProjectThumbnail();
+				EMPlayerState->UploadProjectThumbnail(gameState->Document->CurrentEncodedThumbnail);
+			}
+
+		}
+	}
+#endif
 }
 
 bool AEditModelPlayerController::OnCreateDwg()

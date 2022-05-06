@@ -213,6 +213,7 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	}
 	case EInputCommand::MainMenu:
 	{
+		Controller->UploadWebThumbnail();
 		if (Controller->CheckSaveModel())
 		{
 			FString mainMenuMap = UGameMapsSettings::GetGameDefaultMap();
@@ -228,6 +229,7 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 	}
 	case EInputCommand::Exit:
 	{
+		Controller->UploadWebThumbnail();
 		if (Controller->CheckSaveModel())
 		{
 			FPlatformMisc::RequestExit(false);

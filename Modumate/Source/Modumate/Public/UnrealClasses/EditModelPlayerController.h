@@ -530,6 +530,8 @@ public:
 
 	bool MoveToParentGroup();
 
+	void UploadWebThumbnail();
+
 	UFUNCTION(BlueprintCallable)
 	bool TakeScreenshot();
 
