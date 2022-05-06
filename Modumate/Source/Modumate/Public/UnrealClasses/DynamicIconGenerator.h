@@ -82,6 +82,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
 	int32 RenderTargetSizeForWeb = 64;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Icon Material")
+	float RenderTargetWebGammaScale = 1.5;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icon Dimension")
 	float WallLength = 91.44f;
 

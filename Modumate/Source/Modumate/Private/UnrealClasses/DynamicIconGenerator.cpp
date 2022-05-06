@@ -97,6 +97,7 @@ void ADynamicIconGenerator::BeginPlay()
 
 	IconRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(world, RenderTargetSize, RenderTargetSize, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
 	IconRenderTargetForWeb = UKismetRenderingLibrary::CreateRenderTarget2D(world, RenderTargetSizeForWeb, RenderTargetSizeForWeb, ETextureRenderTargetFormat::RTF_RGBA8_SRGB, FLinearColor::Black, true);
+	IconRenderTargetForWeb->TargetGamma = RenderTargetWebGammaScale;
 }
 
 void ADynamicIconGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
