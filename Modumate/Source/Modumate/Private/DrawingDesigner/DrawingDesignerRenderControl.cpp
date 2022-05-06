@@ -220,7 +220,12 @@ bool FDrawingDesignerRenderControl::GetMoiFromView(FVector2D uv, FDrawingDesigne
 		return false;
 	}
 
-	//***********************************//
+	if(IsFloorplan(view))
+	{
+		//Flip the uvs around the center (0.5, 0.5)
+		uv = FVector2D::UnitVector - uv;
+	}
+	
 	FVector worldStart = UModumateGeometryStatics::Deproject2DPoint(uv * size, xaxis, yaxis, origin);
 	auto forward = zaxis.GetSafeNormal();
 	const FVector worldEnd = worldStart + forward * MOI_TRACE_DISTANCE;
@@ -301,12 +306,12 @@ bool FDrawingDesignerRenderControl::GetViewAxis(FDrawingDesignerView& View, FVec
 	}
 
 	const AMOICutPlane* cutPlane = Cast<const AMOICutPlane>(moi);
+	
 	FVector corners[4];
 	for (int32 c = 0; c < 4; ++c)
 	{
 		corners[c] = cutPlane->GetCorner(c);
 	}
-
 
 	OutSize.X = (corners[1] - corners[0]).Size();
 	OutSize.Y = (corners[2] - corners[1]).Size();
@@ -629,4 +634,19 @@ void FDrawingDesignerRenderControl::DestroyLineActors()
 		line->Destroy();
 	}
 	LinePool.Empty();
+}
+
+bool FDrawingDesignerRenderControl::IsFloorplan(const FDrawingDesignerView& View) const
+{
+	const AModumateObjectInstance* moi = Doc->GetObjectById(View.moi_id);
+
+	if (!ensureAlways(moi) || !ensureAlways(moi->GetObjectType() == EObjectType::OTCutPlane))
+	{
+		return false;
+	}
+
+	const AMOICutPlane* cutPlane = Cast<const AMOICutPlane>(moi);
+	
+	const FQuat cutPlaneRotation(cutPlane->GetRotation());
+	return (FVector::Parallel(cutPlaneRotation * FVector::UpVector, FVector::UpVector));
 }

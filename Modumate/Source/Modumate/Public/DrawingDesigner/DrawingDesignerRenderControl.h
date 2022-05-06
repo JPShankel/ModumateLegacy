@@ -38,6 +38,7 @@ private:
 	void RestorePortalMaterials();  // unused
 	void GetSnapPoints(int32 viewId, TMap<FString, FDrawingDesignerSnap>& OutSnapPoints) const;
 	void DestroyLineActors();
+	bool IsFloorplan(const FDrawingDesignerView& View) const;
 
 	FVector CachedXAxis;
 	FVector CachedYAxis;
