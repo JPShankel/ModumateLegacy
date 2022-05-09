@@ -60,11 +60,7 @@ struct MODUMATE_API FDrawingDesignerMoiResponse
 	int32 spanId = INDEX_NONE; 
 
 	UPROPERTY()
-	FString presetId = TEXT("");
-
-	//TODO: Use MOI data in DD store once it's done and delete this -JN
-	UPROPERTY()
-	FString typeMark = TEXT("");
+	FGuid presetId;
 
 	bool WriteJson(FString& OutJson) const {
 		return WriteJsonGeneric<FDrawingDesignerMoiResponse>(OutJson, this);

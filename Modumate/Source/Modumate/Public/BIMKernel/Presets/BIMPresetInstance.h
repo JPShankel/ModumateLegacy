@@ -91,6 +91,9 @@ struct MODUMATE_API FBIMWebPreset
 
 	UPROPERTY()
 	FBIMTagPath tagPath;
+
+	UPROPERTY()
+	FString typeMark;
 };
 
 USTRUCT()

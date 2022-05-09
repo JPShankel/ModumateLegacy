@@ -927,6 +927,9 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset) const
 	OutPreset.name = DisplayName.ToString();
 	OutPreset.presetID = GUID;
 	OutPreset.tagPath = MyTagPath;
+	const FBIMPropertyKey propertyKey(EBIMValueScope::Preset, BIMPropertyNames::Mark);
+	const FString typeMark = Properties.GetProperty<FString>(propertyKey.Scope, propertyKey.Name);
+	OutPreset.typeMark = typeMark;
 	return EBIMResult::Success;
 }
 
