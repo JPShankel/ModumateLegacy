@@ -33,6 +33,7 @@
 #include "Objects/CameraView.h"
 #include "Objects/MetaEdgeSpan.h"
 #include "Objects/StructureLine.h"
+#include "Objects/Mullion.h"
 #include "Objects/MetaGraph.h"
 #include "Objects/MetaPlaneSpan.h"
 #include "Objects/PlaneHostedObj.h"
@@ -3284,8 +3285,9 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 			FMOIStateData spanState;
 			spanState.ParentID = 0;
 
-			if (moi->GetClass() == AMOIPlaneHostedObj::StaticClass() ||
-				moi->GetClass() == AMOIFaceHosted::StaticClass())
+			UClass* const moiClass = moi->GetClass();
+			if (moiClass == AMOIPlaneHostedObj::StaticClass() ||
+				moiClass == AMOIFaceHosted::StaticClass())
 			{
 				spanState.ID = NextID++;
 				spanState.ObjectType = EObjectType::OTMetaPlaneSpan;
@@ -3294,9 +3296,9 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 				spanData.GraphMembers.Add(moi->GetParentID());
 				spanState.CustomData.SaveStructData(spanData);
 			}
-
-			if (moi->GetClass() == AMOIEdgeHosted::StaticClass() ||
-				moi->GetClass() == AMOIStructureLine::StaticClass())
+			else if (moiClass == AMOIEdgeHosted::StaticClass() ||
+				moiClass == AMOIStructureLine::StaticClass() ||
+				moiClass == AMOIMullion::StaticClass())
 			{
 				spanState.ID = NextID++;
 				spanState.ObjectType = EObjectType::OTMetaEdgeSpan;
