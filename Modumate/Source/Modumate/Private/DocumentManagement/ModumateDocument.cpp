@@ -2801,6 +2801,15 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 	VolumeGraphs.Add(RootVolumeGraph, MakeShared<FGraph3D>(RootVolumeGraph));
 	ActiveVolumeGraph = RootVolumeGraph;
 
+	//create a root design option to act as a universal parent
+	//TODO: use CreateOrRestoreObj function to create design option
+	create_moi(TEXT("OTDesignOption"), 0);
+	TArray<AModumateObjectInstance*> designOption = GetObjectsOfType(EObjectType::OTDesignOption);
+	if (ensure(designOption.Num() > 0))
+	{
+		CachedRootDesignOptionID = designOption[0]->ID;
+	}
+
 	if (bClearName)
 	{
 		SetCurrentProjectName();
@@ -4756,6 +4765,10 @@ void UModumateDocument::create_moi(const FString& MOIType, int32 ParentID)
 	if (objectType == EObjectType::OTDesignOption)
 	{
 		FString newName = GetNextMoiName(EObjectType::OTDesignOption, LOCTEXT("NewDesignOptionMoiName", "Design Option ").ToString());
+		if (ParentID == MOD_ID_NONE && CachedRootDesignOptionID != MOD_ID_NONE)
+		{
+			ParentID = CachedRootDesignOptionID;
+		}
 		TSharedPtr<FMOIDelta> delta = AMOIDesignOption::MakeCreateDelta(this, newName, ParentID);
 		int32 nextID = GetNextAvailableID();
 		BeginUndoRedoMacro();
@@ -4793,7 +4806,7 @@ void UModumateDocument::create_moi(const FString& MOIType, int32 ParentID)
 }
 
 FString UModumateDocument::GetNextMoiName(EObjectType ObjectType, FString Name) {
-	int32 n = 1;
+	int32 n = 0;
 
 	auto existingObjects = GetObjectsOfType(ObjectType);
 	TSet<FString> existingNames;
