@@ -1523,6 +1523,7 @@ bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDelta
 				{
 					// copy whole array because if we have lost a face, all bets are off and any added face is legit
 					span->PostGraphChanges = faceChangeArray;
+					span->MarkDirty(EObjectDirtyFlags::Structure);
 					break;
 				}
 			}
