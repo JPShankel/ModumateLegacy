@@ -31,11 +31,6 @@ public:
 	virtual bool HasDimensionActor() override { return true; }
 	virtual bool HandleInputNumber(double n) override;
 
-	virtual void RegisterToolDataUI(class UToolTrayBlockProperties* PropertiesUI, int32& OutMaxNumRegistrations) override;
-
-	UFUNCTION()
-	void OnToolUIChangedHeight(float NewHeight);
-
 protected:
 	bool AddFirstEdge(FVector Point1, FVector Point2);
 	bool AddNewEdge(FVector Point1, FVector Point2);
@@ -50,7 +45,6 @@ protected:
 	TSharedPtr<FGraph2D> TerrainGraph;
 	TArray<FVector> Points;
 	float ZHeight = 0.0f;
-	float StartingZHeight = 12.f * UModumateDimensionStatics::InchesToCentimeters;;
 
 	static constexpr float CloseLoopEpsilon = 15.0f;
 };

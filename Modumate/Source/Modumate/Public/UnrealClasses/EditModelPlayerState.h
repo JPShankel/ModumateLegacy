@@ -57,6 +57,9 @@ struct MODUMATE_API FWebEditModelPlayerState
 
 	UPROPERTY()
 	FString projectId;
+
+	UPROPERTY()
+	float terrainHeight;
 };
 
 /**
@@ -81,6 +84,7 @@ class MODUMATE_API AEditModelPlayerState : public APlayerState
 	friend class AEditModelPlayerController;
 
 protected:
+	float DefaultTerrainHeight =  12.0f * UModumateDimensionStatics::InchesToCentimeters;
 	void TryInitController();
 	void BatchRenderLines();
 	void UpdateRenderFlags(const TSet<AModumateObjectInstance*>& ChangedObjects);
@@ -193,6 +197,9 @@ public:
 	void Paste(UModumateDocument &document) const;
 
 	void DebugShowWallProfiles(const TArray<AModumateObjectInstance *> &walls);
+
+	void SetDefaultTerrainHeight(float height) { DefaultTerrainHeight = height; };
+	float GetDefaultTerrainHeight() const { return DefaultTerrainHeight; }
 
 	UPROPERTY()
 	AEditModelPlayerController *EMPlayerController;

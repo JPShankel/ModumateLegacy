@@ -183,23 +183,6 @@ bool UTerrainTool::PostEndOrAbort()
 	return Super::PostEndOrAbort();
 }
 
-void UTerrainTool::RegisterToolDataUI(class UToolTrayBlockProperties* PropertiesUI, int32& OutMaxNumRegistrations)
-{
-	static const FString heightPropertyName(TEXT("Height"));
-	if (auto heightField = PropertiesUI->RequestPropertyField<UInstPropWidgetLinearDimension>(this, heightPropertyName))
-	{
-		heightField->RegisterValue(this, StartingZHeight);
-		heightField->ValueChangedEvent.AddDynamic(this, &UTerrainTool::OnToolUIChangedHeight);
-		OutMaxNumRegistrations = 1;
-	}
-}
-
-
-void UTerrainTool::OnToolUIChangedHeight(float NewHeight)
-{
-	StartingZHeight = NewHeight;
-}
-
 bool UTerrainTool::HandleInputNumber(double n)
 {
 	Super::HandleInputNumber(n);
@@ -243,12 +226,14 @@ bool UTerrainTool::AddFirstEdge(FVector Point1, FVector Point2)
 		return false;
 	}
 
+	auto startingHeight = Controller->EMPlayerState->GetDefaultTerrainHeight();
+
 	int32 nextID = doc->GetNextAvailableID();
 	FMOITerrainData moiData;
 	moiData.Name = GetNextName();
 	moiData.Origin = Point1;  // First point will be origin for new Terrain.
-	moiData.Heights.Add(nextID + 1, StartingZHeight);
-	moiData.Heights.Add(nextID + 2, StartingZHeight);
+	moiData.Heights.Add(nextID + 1, startingHeight);
+	moiData.Heights.Add(nextID + 2, startingHeight);
 
 	FMOIStateData stateData(nextID, EObjectType::OTTerrain);
 	stateData.CustomData.SaveStructData(moiData);
@@ -322,7 +307,7 @@ bool UTerrainTool::AddNewEdge(FVector Point1, FVector Point2)
 		}
 		for (const auto& additions : delta.VertexAdditions)
 		{
-			moiData.Heights.Add(additions.Key, StartingZHeight);
+			moiData.Heights.Add(additions.Key, Controller->EMPlayerState->GetDefaultTerrainHeight());
 		}
 	}
 	auto deltaPtr = MakeShared<FMOIDelta>();

@@ -1681,6 +1681,7 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 		OutState.camera.bViewCubeVisibility = EMPlayerController->EditModelUserWidget->ViewCubeUserWidget->IsVisible();
 		OutState.camera.SavedTime = EMPlayerController->SkyActor->GetCurrentDateTime().ToIso8601();
 		OutState.camera.bGraphDirectionVisibility = EMPlayerController->GetAlwaysShowGraphDirection();
+		OutState.terrainHeight = GetDefaultTerrainHeight();
 	}
 
 	OutState.projectId = CurProjectID;
@@ -1722,6 +1723,8 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 	TSet<int32> unhideList(currentHidden.Difference(requestedHidden));
 	AddHideObjectsById(requestedHidden.Difference(currentHidden).Array());
 	UnhideObjectsById(unhideList.Array());
+
+	SetDefaultTerrainHeight(InState.terrainHeight);
 	
 	EToolMode toolMode;
 	if (EMPlayerController && EMPlayerController->CurrentTool && FindEnumValueByString<EToolMode>(InState.tool, toolMode))
