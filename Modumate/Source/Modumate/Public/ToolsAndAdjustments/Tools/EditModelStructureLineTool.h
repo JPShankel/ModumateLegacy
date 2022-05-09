@@ -29,18 +29,17 @@ public:
 	virtual bool HandleOffset(const FVector2D& ViewSpaceDirection) override;
 	virtual bool HasDimensionActor() override { return true; }
 	virtual void CommitSpanEdit()  override;
+	virtual void CancelSpanEdit() override;
 
 
 protected:
 	virtual void OnCreateObjectModeChanged() override;
 
 	void SetTargetID(int32 NewTargetID);
-	bool SetStructureLineHidden(int32 StructureLineID, bool bHidden);
 	bool MakeStructureLine(int32 TargetEdgeID = MOD_ID_NONE);
 	void ResetState();
 
-	bool GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeIDs, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitFaces);
-	bool GetSpanCreationDelta(TArray<FDeltaPtr>& OutDeltaPtrs);
+	bool GetObjectCreationDeltas(const TArray<int32>& InTargetEdgeIDs, int32& NewID, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitFaces);
 
 	bool bWasShowingSnapCursor;
 	EMouseMode OriginalMouseMode;
@@ -48,6 +47,7 @@ protected:
 	int32 LastValidTargetID;
 	int32 LastTargetStructureLineID;
 	TArray<int32> PreviewSpanGraphMemberIDs;
+	int32 TargetSpanIndex = MOD_ID_NONE;
 
 	FVector LineStartPos, LineEndPos, LineDir, ObjNormal, ObjUp;
 };

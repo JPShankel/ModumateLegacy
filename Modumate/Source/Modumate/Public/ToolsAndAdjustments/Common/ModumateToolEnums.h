@@ -57,10 +57,10 @@ UENUM(BlueprintType)
 enum class EToolCreateObjectMode : uint8
 {
 	Draw,
-	Apply,
+	Apply, // Host(replace)
 	Stamp,
-	Add,
-	SpanEdit
+	Add, // Host(add)
+	SpanEdit // Host(span)
 };
 
 UENUM(BlueprintType)

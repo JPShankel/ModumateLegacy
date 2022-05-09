@@ -2035,6 +2035,8 @@ int32 UModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &F
 bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& points,
 	TArray<int32>& OutObjectIDs, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitAndUpdateFaces)
 {
+	// TODO: Pass in nextID ref, DO NOT increment your own copy
+
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeMetaObject"));
 	OutObjectIDs.Reset();
 	OutDeltaPtrs.Reset();

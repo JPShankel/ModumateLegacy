@@ -30,7 +30,6 @@ protected:
 	void ResetState();
 	void SetTargetID(int32 NewTargetID);
 	bool GetObjectCreationDeltas(const int32 InTargetEdgeID, TArray<FDeltaPtr>& OutDeltaPtrs);
-	bool GetSpanCreationDelta(TArray<FDeltaPtr>& OutDeltaPtrs);
 	void ResetSpanIDs();
 
 	bool bWasShowingSnapCursor = false;
@@ -38,6 +37,7 @@ protected:
 	bool bWantedVerticalSnap = false;
 	int32 LastValidTargetID = MOD_ID_NONE;
 	TArray<int32> PreviewSpanGraphMemberIDs;
+	int32 TargetSpanIndex = MOD_ID_NONE;
 
 	FVector LineStartPos, LineEndPos, LineDir, ObjNormal, ObjUp;
 };

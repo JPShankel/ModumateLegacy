@@ -1441,6 +1441,104 @@ void FModumateObjectDeltaStatics::GetDeltaForSpanMapping(const AModumateObjectIn
 	OutDeltas.Add(MoveTemp(newSpanDelta));
 }
 
+bool FModumateObjectDeltaStatics::GetEdgeSpanCreationDeltas(const TArray<int32>& InTargetEdgeIDs, int32& InNextID, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, int32& OutNewSpanID, int32& OutNewObjID)
+{
+	if (InTargetEdgeIDs.Num() == 0)
+	{
+		return false;
+	}
+
+	TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
+	OutDeltaPtrs.Add(delta);
+
+	// Create new span that contain InTargetEdgeIDs
+	FMOIStateData spanCreateState(InNextID++, EObjectType::OTMetaEdgeSpan);
+	FMOIMetaEdgeSpanData spanData;
+	spanData.GraphMembers = InTargetEdgeIDs;
+	spanCreateState.CustomData.SaveStructData(spanData);
+	delta->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
+
+	// Create edge hosted object that will be child of the new preview span
+	MOIStateData.ParentID = spanCreateState.ID;
+	MOIStateData.ID = InNextID++;
+	MOIStateData.AssemblyGUID = InAssemblyGUID;
+	delta->AddCreateDestroyState(MOIStateData, EMOIDeltaType::Create);
+
+	OutNewSpanID = spanCreateState.ID;
+	OutNewObjID = MOIStateData.ID;
+
+	return true;
+}
+
+bool FModumateObjectDeltaStatics::GetEdgeSpanEditAssemblyDeltas(const UModumateDocument* Doc, const int32& InTargetSpanID, int32& InNextID, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, int32& OutNewObjID)
+{
+	const AMOIMetaEdgeSpan* spanMOI = Cast<AMOIMetaEdgeSpan>(Doc->GetObjectById(InTargetSpanID));
+	if (!spanMOI)
+	{
+		return false;
+	}
+
+	TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
+	OutDeltaPtrs.Add(delta);
+
+	for (auto* childOb : spanMOI->GetChildObjects())
+	{
+		delta->AddCreateDestroyState(childOb->GetStateData(), EMOIDeltaType::Destroy);
+	}
+
+	MOIStateData.ParentID = spanMOI->ID;
+	MOIStateData.ID = InNextID++;
+	MOIStateData.AssemblyGUID = InAssemblyGUID;
+	delta->AddCreateDestroyState(MOIStateData, EMOIDeltaType::Create);
+
+	OutNewObjID = MOIStateData.ID;
+
+	return true;
+}
+
+bool FModumateObjectDeltaStatics::GetObjectCreationDeltasForEdgeSpans(const UModumateDocument* Doc, EToolCreateObjectMode CreationMode, const TArray<int32>& InTargetEdgeIDs, int32& InNextID, int32 InTargetSpanIndex, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, TArray<int32>& OutNewObjectIDs)
+{
+	// Add mode: Create new EdgeSpan
+	// Apply mode: Find EdgeSpan from MetaEdge, edit its assembly, but if no span exist, same as Add mode
+	for (int32 targetEdgeID : InTargetEdgeIDs)
+	{
+		bool bAddSpan = CreationMode == EToolCreateObjectMode::Add || CreationMode == EToolCreateObjectMode::Draw;
+		TArray<int32> spans;
+		const AModumateObjectInstance* targetEdgeMOI = Doc->GetObjectById(targetEdgeID);
+		if (targetEdgeMOI && targetEdgeMOI->GetObjectType() == EObjectType::OTMetaEdge)
+		{
+			UModumateObjectStatics::GetSpansForEdgeObject(Doc, targetEdgeMOI, spans);
+		}
+		const AMOIMetaEdgeSpan* spanObj = spans.Num() > 0 ? Cast<AMOIMetaEdgeSpan>(Doc->GetObjectById(spans[InTargetSpanIndex])) : nullptr;
+		if (!spanObj)
+		{
+			bAddSpan = true;
+		}
+
+		bool bSuccess = false;
+		if (bAddSpan)
+		{
+			int32 newSpanID;
+			int32 newEdgeHostedObjID;
+			if (GetEdgeSpanCreationDeltas({ targetEdgeID }, InNextID, InAssemblyGUID, MOIStateData, OutDeltaPtrs, newSpanID, newEdgeHostedObjID))
+			{
+				OutNewObjectIDs = { newSpanID, newEdgeHostedObjID };
+				bSuccess = true;
+			}
+		}
+		else
+		{
+			int32 newEdgeHostedObjID;
+			if (GetEdgeSpanEditAssemblyDeltas(Doc, spanObj->ID, InNextID, InAssemblyGUID, MOIStateData, OutDeltaPtrs, newEdgeHostedObjID))
+			{
+				OutNewObjectIDs = { newEdgeHostedObjID };
+				bSuccess = true;
+			}
+		}
+	}
+	return true;
+}
+
 template<class T>
 void GetDeltasForSpanAddRemove(const UModumateDocument* Doc, const T* SpanOb, const TArray<int32>& AddMembers, const TArray<int32>& RemoveMembers, TArray<FDeltaPtr>& OutDeltas)
 {

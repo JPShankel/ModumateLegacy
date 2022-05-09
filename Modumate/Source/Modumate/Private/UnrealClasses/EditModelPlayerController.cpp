@@ -2446,6 +2446,9 @@ void AEditModelPlayerController::UpdateMouseTraceParams()
 	case EToolMode::VE_PANEL:
 	case EToolMode::VE_MULLION:
 	case EToolMode::VE_COUNTERTOP:
+	case EToolMode::VE_POINTHOSTED:
+	case EToolMode::VE_EDGEHOSTED:
+	case EToolMode::VE_FACEHOSTED:
 		MOITraceObjectQueryParams = FCollisionObjectQueryParams(COLLISION_META_MOI);
 		break;
 	case EToolMode::VE_SURFACEGRAPH:

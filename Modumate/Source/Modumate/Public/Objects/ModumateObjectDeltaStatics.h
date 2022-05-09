@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MOIState.h"
 
 class UModumateDocument;
 
@@ -56,4 +57,17 @@ public:
 	// Create delta to map the graph IDs for span Moi according to CopiedToPastedObjIDs.
 	static void GetDeltaForSpanMapping(const AModumateObjectInstance* Moi, const TMap<int32, TArray<int32>>& CopiedToPastedObjIDs, TArray<FDeltaPtr>& OutDeltas);
 	
+	// InTargetEdgeID are MetaEdges
+	// InAssemblyGUID is used for hosted obj creation
+	// MOIStateData is state data from tool, that can be used to modify preview or commit delta
+	static bool GetEdgeSpanCreationDeltas(const TArray<int32>& InTargetEdgeIDs, int32& InNextID, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, int32& OutNewSpanID, int32& OutNewObjID);
+	
+	// InAssemblyGUID is used for replacing
+	// MOIStateData is state data from tool, that can be used to modify preview or commit delta
+	static bool GetEdgeSpanEditAssemblyDeltas(const UModumateDocument* Doc, const int32& InTargetSpanID, int32& InNextID, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, int32& OutNewObjID);
+
+	// Preview delta depends on which creation tool mode
+	// InTargetEdgeIDs must be existing MetaEdges
+	static bool GetObjectCreationDeltasForEdgeSpans(const UModumateDocument* Doc, EToolCreateObjectMode CreationMode, const TArray<int32>& InTargetEdgeIDs, int32& InNextID, 
+		int32 InTargetSpanIndex, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, TArray<int32>& OutNewObjectIDs);
 };
