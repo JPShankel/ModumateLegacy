@@ -138,6 +138,8 @@ public:
 	static bool GetHostingMOIsForMOI(UModumateDocument* Doc, AModumateObjectInstance* Moi, TArray<AModumateObjectInstance*>& OutMOIs);
 	// Get all descendents of a metagraph MOI, including parenting via spans.
 	static void GetAllDescendents(const AModumateObjectInstance* Moi, TArray<const AModumateObjectInstance*>& OutMOIs);
+	
+	static int32 GetGraphIDForSpanObject(const AModumateObjectInstance* Object);
 
 	static bool IsValidParentObjectType(EObjectType ParentObjectType);
 	static TArray<EObjectType> CompatibleObjectTypes;

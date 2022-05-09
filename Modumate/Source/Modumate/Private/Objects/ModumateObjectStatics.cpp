@@ -1159,6 +1159,35 @@ bool UModumateObjectStatics::IsObjectInGroup(const UModumateDocument* Doc, const
 	return volumeGraph && volumeGraph->GraphID == GroupID;
 }
 
+template<class T>
+int32 GetGraphIDForSpanObjectT(const AModumateObjectInstance* Object)
+{
+	const T* castedOb = Cast<T>(Object);
+	if (castedOb && castedOb->InstanceData.GraphMembers.Num() > 0)
+	{
+		auto* graph = Object->GetDocument()->FindVolumeGraph(castedOb->InstanceData.GraphMembers[0]);
+		if (graph != nullptr)
+		{
+			return graph->GraphID;
+		}
+	}
+	return MOD_ID_NONE;
+}
+
+int32 UModumateObjectStatics::GetGraphIDForSpanObject(const AModumateObjectInstance* Object)
+{
+	if (Object->GetObjectType() == EObjectType::OTMetaEdgeSpan)
+	{
+		return GetGraphIDForSpanObjectT<AMOIMetaEdgeSpan>(Object);
+	}
+	else if (Object->GetObjectType() == EObjectType::OTMetaPlaneSpan)
+	{
+		return GetGraphIDForSpanObjectT<AMOIMetaPlaneSpan>(Object);
+	}
+
+	return MOD_ID_NONE;
+}
+
 bool UModumateObjectStatics::IsObjectInSubgroup(const UModumateDocument* Doc, const AModumateObjectInstance* Object, int32 ActiveGroup,
 	int32& OutSubgroup, bool& bOutIsInGroup)
 {
@@ -1179,15 +1208,15 @@ bool UModumateObjectStatics::IsObjectInSubgroup(const UModumateDocument* Doc, co
 		return false;
 	}
 
-	int32 graphId = Object->ID;
-	if (UModumateTypeStatics::IsSpanObject(Object))
+	// If it's a span object, retrieve the volume graph from one of its members
+	const FGraph3D* volumeGraph = Doc->GetVolumeGraph(UModumateObjectStatics::GetGraphIDForSpanObject(Object));
+
+	// Otherwise if it's a meta object, find its graph
+	if (volumeGraph == nullptr)
 	{
-		graphId = Object->GetObjectType() == EObjectType::OTMetaEdgeSpan ?
-			Cast<AMOIMetaEdgeSpan>(Object)->InstanceData.GraphMembers[0] :
-			Cast<AMOIMetaPlaneSpan>(Object)->InstanceData.GraphMembers[0];
+		volumeGraph = Doc->FindVolumeGraph(Object->ID);
 	}
 
-	const FGraph3D* volumeGraph = Doc->FindVolumeGraph(graphId);
 	if (!volumeGraph)
 	{
 		return false;

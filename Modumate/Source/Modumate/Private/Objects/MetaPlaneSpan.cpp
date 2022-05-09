@@ -82,20 +82,6 @@ bool AMOIMetaPlaneSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 	{
 		//UE_LOG(LogTemp, Display, TEXT("Cleaning span %d with %d members"),ID,InstanceData.GraphMembers.Num());
 
-#ifdef ENFORCE_SINGLETON_SPANS
-		if (InstanceData.GraphMembers.Num() > 1)
-		{
-			if (OutSideEffectDeltas != nullptr)
-			{
-				FModumateObjectDeltaStatics::GetDeltasForSpanSplit(Document, { ID }, *OutSideEffectDeltas);
-			}
-		}
-		else
-		{
-			UpdateCachedPerimeterFace();
-		}
-		return true;
-#endif
 		TArray<FDeltaPtr> outDeltas;
 
 		if (PostGraphChanges.Num() > 0)
@@ -119,17 +105,16 @@ bool AMOIMetaPlaneSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 			PostGraphChanges.Empty();
 			FModumateObjectDeltaStatics::GetDeltasForFaceSpanAddRemove(Document, ID, additions, removals, outDeltas);
 		}
-		else
-		if (GetChildIDs().Num() == 0 || InstanceData.GraphMembers.Num() == 0)
+#ifdef ENFORCE_SINGLETON_SPANS
+		// TODO: remove for multi-face spans
+		else if (InstanceData.GraphMembers.Num() > 1)
 		{
-			TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
-			delta->AddCreateDestroyState(StateData, EMOIDeltaType::Destroy);
-			for (auto id : GetChildIDs())
-			{
-				const AModumateObjectInstance* ob = Document->GetObjectById(id);
-				delta->AddCreateDestroyState(ob->GetStateData(), EMOIDeltaType::Destroy);
-			}
-			outDeltas.Add(delta);
+			FModumateObjectDeltaStatics::GetDeltasForSpanSplit(Document, { ID }, outDeltas);
+		}
+#endif
+		else if (GetChildIDs().Num() == 0 || InstanceData.GraphMembers.Num() == 0)
+		{
+			Document->GetDeleteObjectsDeltas(outDeltas, { this });
 		}
 		else if (!UpdateCachedPerimeterFace())
 		{
@@ -146,10 +131,7 @@ bool AMOIMetaPlaneSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 
 void AMOIMetaPlaneSpan::SetupDynamicGeometry()
 {
-	if (!UpdateCachedPerimeterFace())
-	{
-		MarkDirty(EObjectDirtyFlags::Structure);
-	}
+	UpdateCachedPerimeterFace();
 	Super::SetupDynamicGeometry();
 }
 

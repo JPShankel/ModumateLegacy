@@ -1523,7 +1523,6 @@ bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDelta
 				{
 					// copy whole array because if we have lost a face, all bets are off and any added face is legit
 					span->PostGraphChanges = faceChangeArray;
-					span->MarkDirty(EObjectDirtyFlags::Structure);
 					break;
 				}
 			}
@@ -1770,6 +1769,11 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 		EObjectType objType = objToDelete->GetObjectType();
 		EGraph3DObjectType graph3DObjType;
 		bool bObjIsGraph2D = SurfaceGraphs.Contains(objID);
+
+		if (objToDelete->GetParentObject() && UModumateTypeStatics::IsSpanObject(objToDelete->GetParentObject()))
+		{
+			objToDelete->GetParentObject()->MarkDirty(EObjectDirtyFlags::Structure);
+		}
 
 		if (IsObjectInVolumeGraph(objToDelete->ID, graph3DObjType))
 		{
