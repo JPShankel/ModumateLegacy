@@ -104,6 +104,8 @@ struct MODUMATE_API FBIMWebPreset
 
 	UPROPERTY()
 	FString customDataJSON;
+
+	UPROPERTY()
 	FString typeMark;
 };
 

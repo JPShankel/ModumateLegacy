@@ -109,7 +109,7 @@ bool FMiterHelpers::UpdateMiteredLayerGeoms(const AModumateObjectInstance *Plane
 
 		const FMiterData& miterData = miterNode->GetMiterData();
 		const FMiterParticipantData* participantData = miterData.ParticipantsByID.Find(PlaneHostedObj->ID);
-		if (!ensure(participantData))
+		if (!participantData)
 		{
 			return false;
 		}

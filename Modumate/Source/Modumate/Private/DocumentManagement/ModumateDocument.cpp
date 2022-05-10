@@ -2814,7 +2814,7 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 	//TODO: use CreateOrRestoreObj function to create design option
 	create_moi(TEXT("OTDesignOption"), 0);
 	TArray<AModumateObjectInstance*> designOption = GetObjectsOfType(EObjectType::OTDesignOption);
-	if (ensure(designOption.Num() > 0))
+	if (designOption.Num() > 0)
 	{
 		CachedRootDesignOptionID = designOption[0]->ID;
 	}
