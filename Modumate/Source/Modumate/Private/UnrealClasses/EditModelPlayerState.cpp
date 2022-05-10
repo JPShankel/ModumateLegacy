@@ -1678,7 +1678,7 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 		OutState.viewMode = GetEnumValueString<EEditViewModes>(EMPlayerController->EMPlayerState->SelectedViewMode);
 		OutState.culledCutplane = EMPlayerController->CurrentCullingCutPlaneID;
 		
-		OutState.camera.SavedTime = CachedInputCameraState.SavedTime;
+		OutState.camera.SavedTime = EMPlayerController->SkyActor->GetCurrentDateTime().ToIso8601();
 		OutState.camera.bAxesActorVisibility = CachedInputCameraState.bAxesActorVisibility;
 		OutState.camera.bViewCubeVisibility = CachedInputCameraState.bViewCubeVisibility;
 		OutState.camera.bGraphDirectionVisibility = CachedInputCameraState.bGraphDirectionVisibility;
