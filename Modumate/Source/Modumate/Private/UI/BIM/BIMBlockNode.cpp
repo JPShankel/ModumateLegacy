@@ -124,7 +124,13 @@ void UBIMBlockNode::PerformDrag()
 			canvasSlot->SetPosition(newCanvasPosition);
 		}
 	}
-	DragTick = Controller->IsInputKeyDown(DragKey) && hasMousePosition;
+#if PLATFORM_MAC
+	//IsInputKeyDown Is not reliable on Mac. Avoid usage.
+	bool ButtonHeld = bMouseButtonDownOnNode;
+#else
+	bool ButtonHeld = Controller->IsInputKeyDown(DragKey);
+#endif
+	DragTick =  ButtonHeld && hasMousePosition;
 	if (DragTick)
 	{
 		LastMousePosition = currentMousePosition;
