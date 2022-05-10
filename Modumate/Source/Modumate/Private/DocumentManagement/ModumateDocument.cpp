@@ -5077,7 +5077,7 @@ void UModumateDocument::export_dwgs(TArray<int32> InCutPlaneIDs)
 	}
 }
 
-void UModumateDocument::create_or_swap_edge_detail(TArray<int32> SelectedEdges, FGuid NewDetailPresetId, FGuid CurrentPresetValue)
+void UModumateDocument::create_or_swap_edge_detail(TArray<int32> SelectedEdges, const FString& InNewDetailPresetGUID, const FString& InCurrentPresetGUID)
 {
 	auto world = GetWorld();
 	auto* localPlayer = world ? world->GetFirstLocalPlayerFromController() : nullptr;
@@ -5094,16 +5094,17 @@ void UModumateDocument::create_or_swap_edge_detail(TArray<int32> SelectedEdges, 
 		return;
 	}
 
+	FGuid newDetailPresetGuid = FGuid(InNewDetailPresetGUID);
+	FGuid existingDetailPresetID = FGuid(InCurrentPresetGUID);
 	bool bPopulatedDetailData = false;
 	FEdgeDetailData newDetailData;
 	FBIMPresetInstance* swapPresetInstance = nullptr;
 	auto& presetCollection = document->GetPresetCollection();
-	FGuid existingDetailPresetID = CurrentPresetValue;
-	bool bClearingDetail = existingDetailPresetID.IsValid() && !NewDetailPresetId.IsValid();
+	bool bClearingDetail = existingDetailPresetID.IsValid() && !newDetailPresetGuid.IsValid();
 
-	if (NewDetailPresetId.IsValid())
+	if (newDetailPresetGuid.IsValid())
 	{
-		swapPresetInstance = presetCollection.PresetFromGUID(NewDetailPresetId);
+		swapPresetInstance = presetCollection.PresetFromGUID(newDetailPresetGuid);
 
 		// If we passed in a new preset ID, it better already be in the preset collection and have detail data.
 		if (!ensure(swapPresetInstance && swapPresetInstance->TryGetCustomData(newDetailData)))
@@ -5144,7 +5145,7 @@ void UModumateDocument::create_or_swap_edge_detail(TArray<int32> SelectedEdges, 
 	TArray<FDeltaPtr> deltas;
 
 	// If we don't already have a new preset ID, and we're not clearing an existing detail, then make a delta to create one.
-	if (!NewDetailPresetId.IsValid() && !bClearingDetail)
+	if (!newDetailPresetGuid.IsValid() && !bClearingDetail)
 	{
 		FBIMPresetInstance newDetailPreset;
 		if (!ensure((presetCollection.GetBlankPresetForObjectType(EObjectType::OTEdgeDetail, newDetailPreset) == EBIMResult::Success) &&
@@ -5157,7 +5158,7 @@ void UModumateDocument::create_or_swap_edge_detail(TArray<int32> SelectedEdges, 
 		UModumateDocument::TryMakeUniquePresetDisplayName(presetCollection, newDetailData, newDetailPreset.DisplayName);
 
 		auto makedetailPresetDelta = presetCollection.MakeCreateNewDelta(newDetailPreset, this);
-		NewDetailPresetId = newDetailPreset.GUID;
+		newDetailPresetGuid = newDetailPreset.GUID;
 		deltas.Add(makedetailPresetDelta);
 	}
 
@@ -5186,7 +5187,7 @@ void UModumateDocument::create_or_swap_edge_detail(TArray<int32> SelectedEdges, 
 			newDetailState = FMOIStateData(nextID++, EObjectType::OTEdgeDetail, edgeID);
 		}
 
-		newDetailState.AssemblyGUID = NewDetailPresetId;
+		newDetailState.AssemblyGUID = newDetailPresetGuid;
 		newDetailState.CustomData.SaveStructData(FMOIEdgeDetailData(validDetailOrientationByEdgeID[edgeID]));
 
 		if (edgeMOI->CachedEdgeDetailMOI)

@@ -302,7 +302,7 @@ void UDetailDesignerContainer::OnPressedCancel()
 {
 	if (auto controller = GetOwningPlayer<AEditModelPlayerController>())
 	{
-		controller->EditModelUserWidget->SelectionTrayWidget->OpenToolTrayForSelection();
+		controller->EditModelUserWidget->SelectionTrayWidget->CloseToolTray();
 	}
 }
 

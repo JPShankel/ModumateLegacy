@@ -311,12 +311,8 @@ bool AMOIMetaEdge::ToWebMOI(FWebMOI& OutMOI) const
 		int32 edgeHash = CachedEdgeDetailConditionHash;
 		if (CachedEdgeDetailMOI && CachedEdgeDetailDataID.IsValid())
 		{
-			const FBIMPresetCollection& presetCollection = Document->GetPresetCollection();
-			FText edgeDetailString;
-			UInstPropWidgetEdgeDetail::TryMakeUniquePresetDisplayName(presetCollection, CachedEdgeDetailData, edgeDetailString);
-			edgeDetailDescription = edgeDetailString.ToString();
+			edgeDetailDescription = CachedEdgeDetailDataID.ToString();
 		}
-
 		static const FString CachedEdgeDetailName(TEXT("CachedEdgeDetail"));
 		static const FString CachedMiterHashName(TEXT("CachedMiterHash"));
 
