@@ -1677,10 +1677,15 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 		OutState.toolMode = GetEnumValueString<EToolCreateObjectMode>(EMPlayerController->CurrentTool->GetCreateObjectMode());
 		OutState.viewMode = GetEnumValueString<EEditViewModes>(EMPlayerController->EMPlayerState->SelectedViewMode);
 		OutState.culledCutplane = EMPlayerController->CurrentCullingCutPlaneID;
-		OutState.camera.bAxesActorVisibility = !EMPlayerController->AxesActor->IsHidden();
-		OutState.camera.bViewCubeVisibility = EMPlayerController->EditModelUserWidget->ViewCubeUserWidget->IsVisible();
-		OutState.camera.SavedTime = EMPlayerController->SkyActor->GetCurrentDateTime().ToIso8601();
-		OutState.camera.bGraphDirectionVisibility = EMPlayerController->GetAlwaysShowGraphDirection();
+		
+		OutState.camera.SavedTime = CachedInputCameraState.SavedTime;
+		OutState.camera.bAxesActorVisibility = CachedInputCameraState.bAxesActorVisibility;
+		OutState.camera.bViewCubeVisibility = CachedInputCameraState.bViewCubeVisibility;
+		OutState.camera.bGraphDirectionVisibility = CachedInputCameraState.bGraphDirectionVisibility;
+		OutState.camera.FOV = CachedInputCameraState.FOV;
+		OutState.camera.bOrthoView = CachedInputCameraState.bOrthoView;
+		OutState.camera.bCutPlanesColorVisibility = CachedInputCameraState.bCutPlanesColorVisibility;
+    
 		OutState.terrainHeight = GetDefaultTerrainHeight();
 	}
 
@@ -1763,10 +1768,10 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 	}
 	
 	UModumateDocument* doc = gameState ? gameState->Document : nullptr;
-	if (ensure(doc) && InState.selectedObjects.Num() == 1 && InState.selectedObjects[0].Type == EObjectType::OTCameraView)
+	if (ensure(doc) && InState.selectedObjects.Num() == 1 && InState.selectedObjects[0].Type == EObjectType::OTCameraView && newSelected.Contains(InState.selectedObjects[0].ID))
 	{
 		AMOICameraView* cameraView = Cast<AMOICameraView>(doc->GetObjectById(InState.selectedObjects[0].ID));
-		cameraView->UpdateCamera();
+		cameraView->UpdateCameraPosition();
 	}
 	else if (EMPlayerController)
 	{
@@ -1780,6 +1785,9 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 		EMPlayerController->SkyActor->SetCurrentDateTime(dateTime);
 		EMPlayerController->AxesActor->SetActorHiddenInGame(!InState.camera.bAxesActorVisibility);
 		EMPlayerController->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InState.camera.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+
+		// Cache the camera state to send back to the web
+		CachedInputCameraState = InState.camera;
 	}
 
 	// general practice: when the web sends us data, send it back so they'll store it

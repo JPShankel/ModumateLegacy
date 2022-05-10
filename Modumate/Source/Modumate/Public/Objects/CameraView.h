@@ -81,7 +81,7 @@ public:
 	FMOICameraViewData InstanceData;
 
 	void UpdateViewMenu();
-	void UpdateCamera();
+	void UpdateCameraPosition();
 
 protected:
 

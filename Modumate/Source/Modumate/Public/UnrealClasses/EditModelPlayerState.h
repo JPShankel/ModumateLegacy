@@ -129,6 +129,7 @@ public:
 	bool ShowingFileDialog;
 
 	AModumateObjectInstance *HoveredObject;
+	FMOICameraViewData CachedInputCameraState;
 
 	bool ToWebPlayerState(FWebEditModelPlayerState& OutState) const;
 	bool FromWebPlayerState(const FWebEditModelPlayerState& InState);

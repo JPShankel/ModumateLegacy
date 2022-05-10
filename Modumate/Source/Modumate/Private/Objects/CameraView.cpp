@@ -109,23 +109,13 @@ void AMOICameraView::OnCameraActorDestroyed(AActor* DestroyedActor)
 	UpdateViewMenu();
 }
 
-void AMOICameraView::UpdateCamera()
+void AMOICameraView::UpdateCameraPosition()
 {
 	UScriptStruct* StructDef = nullptr;
 	void* StructPtr=nullptr;
 	if (GetInstanceDataStruct(StructDef, StructPtr))
 	{
-		FDateTime dateTime;
-		FDateTime::ParseIso8601(*InstanceData.SavedTime, dateTime);
-
 		auto* controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
-		controller->SetFieldOfViewCommand(InstanceData.FOV);
-		controller->ToggleAllCutPlanesColor(InstanceData.bCutPlanesColorVisibility);
-		controller->EMPlayerPawn->SetCameraOrtho(InstanceData.bOrthoView);
-		controller->SetAlwaysShowGraphDirection(InstanceData.bGraphDirectionVisibility);
-		controller->SkyActor->SetCurrentDateTime(dateTime);
-		controller->AxesActor->SetActorHiddenInGame(!InstanceData.bAxesActorVisibility);
-		controller->EditModelUserWidget->ViewCubeUserWidget->SetVisibility(InstanceData.bViewCubeVisibility ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 		controller->EMPlayerPawn->SetActorLocationAndRotation(InstanceData.Position, InstanceData.Rotation);
 		controller->GetDocument()->OnCameraViewSelected(ID);
 	}
@@ -153,10 +143,6 @@ bool AMOICameraView::FromWebMOI(const FString& InJson)
 				const FDateTime dateTime = controller->SkyActor->GetCurrentDateTime();
 				UModumateBrowserStatics::UpdateCameraViewAsMoi(this, cameraComp, ID, dateTime);
 			}
-		}
-		else
-		{
-			UpdateCamera();
 		}
 		
 		return true;
