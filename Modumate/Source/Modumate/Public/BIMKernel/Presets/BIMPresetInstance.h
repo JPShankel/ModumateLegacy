@@ -79,6 +79,16 @@ struct MODUMATE_API FBIMPresetPartSlot
 };
 
 USTRUCT()
+struct MODUMATE_API FPresetCustomDataWrapper
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TMap<FName, FStructDataWrapper> CustomDataWrapper;
+
+};
+
+USTRUCT()
 struct MODUMATE_API FBIMWebPreset
 {
 	GENERATED_BODY()
@@ -93,6 +103,7 @@ struct MODUMATE_API FBIMWebPreset
 	FBIMTagPath tagPath;
 
 	UPROPERTY()
+	FString customDataJSON;
 	FString typeMark;
 };
 

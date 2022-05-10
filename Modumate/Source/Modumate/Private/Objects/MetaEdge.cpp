@@ -49,7 +49,7 @@ AMOIMetaEdge::AMOIMetaEdge()
 	WebProperties.Add(prop.Name, prop);
 
 	prop.Name = TEXT("CachedEdgeDetail");
-	prop.Type = EWebMOIPropertyType::text;
+	prop.Type = EWebMOIPropertyType::edgeDetail;
 	prop.DisplayName = TEXT("Detail");
 	prop.isEditable = true;
 	prop.isVisible = true;

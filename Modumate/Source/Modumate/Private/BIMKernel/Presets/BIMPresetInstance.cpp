@@ -927,9 +927,18 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset) const
 	OutPreset.name = DisplayName.ToString();
 	OutPreset.presetID = GUID;
 	OutPreset.tagPath = MyTagPath;
+
+	//get custom data
+	FString customDataJSONString;
+	FPresetCustomDataWrapper presetCustomData;
+	presetCustomData.CustomDataWrapper = CustomDataByClassName;
+	WriteJsonGeneric<FPresetCustomDataWrapper>(customDataJSONString, &presetCustomData);
+	OutPreset.customDataJSON = customDataJSONString;
+
 	const FBIMPropertyKey propertyKey(EBIMValueScope::Preset, BIMPropertyNames::Mark);
 	const FString typeMark = Properties.GetProperty<FString>(propertyKey.Scope, propertyKey.Name);
 	OutPreset.typeMark = typeMark;
+
 	return EBIMResult::Success;
 }
 

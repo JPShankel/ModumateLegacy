@@ -485,6 +485,12 @@ public:
 
 	UFUNCTION()
 	void export_dwgs(TArray<int32> InCutPlaneIDs);
+
+	UFUNCTION()
+	void create_or_swap_edge_detail(TArray<int32> SelectedEdges, FGuid NewDetailPresetId, FGuid CurrentPresetValue);
+
+	//support function for create_edge_detail
+	static bool TryMakeUniquePresetDisplayName(const struct FBIMPresetCollection& PresetCollection, const struct FEdgeDetailData& NewDetailData, FText& OutDisplayName);
 	
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
 	void UpdateWebPresets();

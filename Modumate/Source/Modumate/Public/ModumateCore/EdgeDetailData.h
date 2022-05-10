@@ -127,6 +127,7 @@ struct FEdgeDetailData
 	// Version 2: FEdgeDetailCondition now has Type
 	static constexpr int32 CurrentVersion = 2;
 
+	UPROPERTY()
 	uint32 CachedConditionHash = 0;
 
 protected:

@@ -39,6 +39,7 @@
 #include "Objects/PlaneHostedObj.h"
 #include "Objects/EdgeHosted.h"
 #include "Objects/CutPlane.h"
+#include "Objects/MetaEdge.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonReader.h"
@@ -63,6 +64,7 @@
 #include "UnrealClasses/SkyActor.h"
 #include "ModumateCore/EnumHelpers.h"
 #include "ModumateCore/ModumateBrowserStatics.h"
+#include "Objects/EdgeDetailObj.h"
 
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
 #include "DrawingDesigner/DrawingDesignerRequests.h"
@@ -4588,7 +4590,6 @@ void UModumateDocument::trigger_update(const TArray<FString>& ObjectTypes)
 	}
 
 	controller->EMPlayerState->SendWebPlayerState();
-
 	UpdateWebPresets();
 }
 
@@ -4763,7 +4764,6 @@ void UModumateDocument::UpdateWebMOIs(const EObjectType ObjectType) const
 		DrawingSendResponse(TEXT("onMOIsChanged"), json);
 	}
 }
-
 void UModumateDocument::create_moi(const FString& MOIType, int32 ParentID)
 {
 	EObjectType objectType = EObjectType::OTNone;
@@ -5075,6 +5075,159 @@ void UModumateDocument::export_dwgs(TArray<int32> InCutPlaneIDs)
 	{
 		controller->OnCreateDwg();
 	}
+}
+
+void UModumateDocument::create_or_swap_edge_detail(TArray<int32> SelectedEdges, FGuid NewDetailPresetId, FGuid CurrentPresetValue)
+{
+	auto world = GetWorld();
+	auto* localPlayer = world ? world->GetFirstLocalPlayerFromController() : nullptr;
+	auto* controller = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(world)) : nullptr;
+	if (!ensure(controller && controller->EMPlayerState))
+	{
+		return;
+	}
+	
+	auto document = controller ? controller->GetDocument() : nullptr;
+	
+	if (!ensure(document && (SelectedEdges.Num() > 0)))
+	{
+		return;
+	}
+
+	bool bPopulatedDetailData = false;
+	FEdgeDetailData newDetailData;
+	FBIMPresetInstance* swapPresetInstance = nullptr;
+	auto& presetCollection = document->GetPresetCollection();
+	FGuid existingDetailPresetID = CurrentPresetValue;
+	bool bClearingDetail = existingDetailPresetID.IsValid() && !NewDetailPresetId.IsValid();
+
+	if (NewDetailPresetId.IsValid())
+	{
+		swapPresetInstance = presetCollection.PresetFromGUID(NewDetailPresetId);
+
+		// If we passed in a new preset ID, it better already be in the preset collection and have detail data.
+		if (!ensure(swapPresetInstance && swapPresetInstance->TryGetCustomData(newDetailData)))
+		{
+			return;
+		}
+
+		bPopulatedDetailData = true;
+	}
+
+	TMap<int32, int32> validDetailOrientationByEdgeID;
+	TArray<int32> tempDetailOrientations;
+	
+	for (int32 edgeID : SelectedEdges)
+	{
+		auto edgeMOI = Cast<AMOIMetaEdge>(GetObjectById(edgeID));
+		if (!ensure(edgeMOI))
+		{
+			return;
+		}
+
+		if (bPopulatedDetailData)
+		{
+			FEdgeDetailData curDetailData(edgeMOI->GetMiterInterface());
+			if (!ensure(newDetailData.CompareConditions(curDetailData, tempDetailOrientations) && (tempDetailOrientations.Num() > 0)))
+			{
+				return;
+			}
+			validDetailOrientationByEdgeID.Add(edgeID, tempDetailOrientations[0]);
+		}
+		else
+		{
+			newDetailData.FillFromMiterNode(edgeMOI->GetMiterInterface());
+			validDetailOrientationByEdgeID.Add(edgeID, 0);
+		}
+	}
+
+	TArray<FDeltaPtr> deltas;
+
+	// If we don't already have a new preset ID, and we're not clearing an existing detail, then make a delta to create one.
+	if (!NewDetailPresetId.IsValid() && !bClearingDetail)
+	{
+		FBIMPresetInstance newDetailPreset;
+		if (!ensure((presetCollection.GetBlankPresetForObjectType(EObjectType::OTEdgeDetail, newDetailPreset) == EBIMResult::Success) &&
+			newDetailPreset.SetCustomData(newDetailData) == EBIMResult::Success))
+		{
+			return;
+		}
+
+		// Try to make a unique display name for this detail preset
+		UModumateDocument::TryMakeUniquePresetDisplayName(presetCollection, newDetailData, newDetailPreset.DisplayName);
+
+		auto makedetailPresetDelta = presetCollection.MakeCreateNewDelta(newDetailPreset, this);
+		NewDetailPresetId = newDetailPreset.GUID;
+		deltas.Add(makedetailPresetDelta);
+	}
+
+	// Now, create MOI delta(s) for creating/updating/deleting the edge detail MOI(s) for the selected edge(s)
+	auto updateDetailMOIDelta = MakeShared<FMOIDelta>();
+	int nextID = document->GetNextAvailableID();
+	for (int32 edgeID : SelectedEdges)
+	{
+		AMOIMetaEdge* edgeMOI = Cast<AMOIMetaEdge>(document->GetObjectById(edgeID));
+
+		// If there already was a preset and the new one is empty, then only delete the edge detail MOI for each selected edge.
+		if (bClearingDetail && ensure(edgeMOI && edgeMOI->CachedEdgeDetailMOI))
+		{
+			updateDetailMOIDelta->AddCreateDestroyState(edgeMOI->CachedEdgeDetailMOI->GetStateData(), EMOIDeltaType::Destroy);
+			continue;
+		}
+
+		// Otherwise, update the state data and detail assembly for the edge.
+		FMOIStateData newDetailState;
+		if (edgeMOI->CachedEdgeDetailMOI)
+		{
+			newDetailState = edgeMOI->CachedEdgeDetailMOI->GetStateData();
+		}
+		else
+		{
+			newDetailState = FMOIStateData(nextID++, EObjectType::OTEdgeDetail, edgeID);
+		}
+
+		newDetailState.AssemblyGUID = NewDetailPresetId;
+		newDetailState.CustomData.SaveStructData(FMOIEdgeDetailData(validDetailOrientationByEdgeID[edgeID]));
+
+		if (edgeMOI->CachedEdgeDetailMOI)
+		{
+			updateDetailMOIDelta->AddMutationState(edgeMOI->CachedEdgeDetailMOI, edgeMOI->CachedEdgeDetailMOI->GetStateData(), newDetailState);
+		}
+		else
+		{
+			updateDetailMOIDelta->AddCreateDestroyState(newDetailState, EMOIDeltaType::Create);
+		}
+	}
+
+	if (updateDetailMOIDelta->IsValid())
+	{
+		deltas.Add(updateDetailMOIDelta);
+	}
+
+	document->ApplyDeltas(deltas, world);
+}
+
+bool UModumateDocument::TryMakeUniquePresetDisplayName(const FBIMPresetCollection& PresetCollection, const FEdgeDetailData& NewDetailData, FText& OutDisplayName)
+{
+	TArray<FGuid> sameNameDetailPresetIDs;
+	int32 displayNameIndex = 1;
+	static const int32 maxDisplayNameIndex = 20;
+	bool bFoundUnique = false;
+	while (!bFoundUnique && displayNameIndex <= maxDisplayNameIndex)
+	{
+		OutDisplayName = NewDetailData.MakeShortDisplayText(displayNameIndex++);
+		sameNameDetailPresetIDs.Reset();
+		EBIMResult searchResult = PresetCollection.GetPresetsByPredicate([OutDisplayName](const FBIMPresetInstance& Preset) {
+			return Preset.DisplayName.IdenticalTo(OutDisplayName, ETextIdenticalModeFlags::DeepCompare | ETextIdenticalModeFlags::LexicalCompareInvariants); },
+			sameNameDetailPresetIDs);
+		bFoundUnique = (searchResult != EBIMResult::Error) && (sameNameDetailPresetIDs.Num() == 0);
+	}
+	if (!bFoundUnique)
+	{
+		OutDisplayName = NewDetailData.MakeShortDisplayText();
+	}
+
+	return bFoundUnique;
 }
 
 void UModumateDocument::OnCameraViewSelected(int32 ID)
