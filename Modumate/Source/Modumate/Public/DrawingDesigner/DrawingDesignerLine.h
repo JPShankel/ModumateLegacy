@@ -44,10 +44,10 @@ class MODUMATE_API FDrawingDesignerLined
 public:
 	FDrawingDesignerLined() = default;
 	FDrawingDesignerLined(const FVector& A, const FVector& B, const FVector& Normal = FVector::ZeroVector)
-	: P1(A), P2(B), N(Normal)
+	: P1(A), P2(B), N(Normal), Len((P1 - P2).Length())
 	{ }
 	FDrawingDesignerLined(const FVector3d& A, const FVector3d& B, const FVector3d& Normal = FVector3d::Zero())
-		: P1(A), P2(B), N(Normal)
+		: P1(A), P2(B), N(Normal), Len((B - A).Length())
 	{ }
 
 	void Canonicalize();
@@ -63,7 +63,8 @@ public:
 	FVector3d P2;
 	FVector3d N;
 	FVector3d AdjacentN;
-	double Thickness { 1.0f };
+	double Thickness { 1.0 };
+	double Len { 0.0 };
 	mutable bool bValid { true };
 
 private:

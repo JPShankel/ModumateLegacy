@@ -2369,14 +2369,13 @@ void UModumateGeometryStatics::GetSilhouetteEdges(TArray<FDrawingDesignerLined>&
 {
 	SCOPE_MS_ACCUMULATOR(STAT_ModumateMeshToLines);
 
-	const double EpsilonSquare = Epsilon * Epsilon;
 	const FVector3d viewDir(ViewDirection);
 	const int32 numEdges = Edges.Num();
 
 	// Cull backfacing lines
 	for (auto& e: Edges)
 	{
-		e.bValid = viewDir.Dot(e.N) < 0.0;
+		e.bValid = viewDir.Dot(e.N) <= 0.0;
 	}
 
 	if (bFastMode)
@@ -2434,22 +2433,24 @@ void UModumateGeometryStatics::GetSilhouetteEdges(TArray<FDrawingDesignerLined>&
 	}
 	else
 	{
+		const double EpsilonSquare = Epsilon * Epsilon;
+
 		for (int32 e1 = 0; e1 < numEdges; ++e1)
 		{
 			const auto& edge1 = Edges[e1];
-			if (edge1)
+			for (int32 e2 = e1 + 1; e2 < numEdges; ++e2)
 			{
-				for (int32 e2 = e1 + 1; e2 < numEdges; ++e2)
+				const auto& edge2 = Edges[e2];
+				// Increase tolerance for larger lines:
+				const double toleranceFactor = FMath::Clamp(FMath::Min(edge1.Len, edge2.Len) / 10.0, 1.0, 2.0);
+				const double edgeEpsilon = EpsilonSquare * toleranceFactor * toleranceFactor;
+				if (edge2 &&
+					((edge1.P1.DistanceSquared(edge2.P1) < edgeEpsilon && edge1.P2.DistanceSquared(edge2.P2) < edgeEpsilon) ||
+						(edge1.P1.DistanceSquared(edge2.P2) < edgeEpsilon && edge1.P2.DistanceSquared(edge2.P1) < edgeEpsilon)) &&
+					FMath::Abs(edge1.N.Dot(edge2.N)) > AngleThreshold)
 				{
-					const auto& edge2 = Edges[e2];
-					if (edge2 &&
-						((edge1.P1.DistanceSquared(edge2.P1) < EpsilonSquare && edge1.P2.DistanceSquared(edge2.P2) < EpsilonSquare) ||
-							(edge1.P1.DistanceSquared(edge2.P2) < EpsilonSquare && edge1.P2.DistanceSquared(edge2.P1) < EpsilonSquare)) &&
-						FMath::Abs(edge1.N.Dot(edge2.N)) > AngleThreshold)
-					{
-						edge1.bValid = false;
-						edge2.bValid = false;
-					}
+					edge1.bValid = false;
+					edge2.bValid = false;
 				}
 			}
 		}

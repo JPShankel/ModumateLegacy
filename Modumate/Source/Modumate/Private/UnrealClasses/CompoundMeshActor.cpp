@@ -937,10 +937,16 @@ void ACompoundMeshActor::GetDrawingDesignerLines(const FVector& ViewDirection, T
 						FVector3d p0(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t    ]].Position));
 						FVector3d p1(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 1]].Position));
 						FVector3d p2(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 2]].Position));
+						FVector3d n0(componentToWorld.TransformNormal(sectionVertices[sectionIndices[3 * t]].Normal));
 
-						FVector3d N((p2 - p0).Cross(p1 - p0));
+						FVector3d N((p1 - p0).Cross(p2 - p0));
 						double area2 = N.SquaredLength();
 						N.Normalize();
+						if (n0.Dot(N) < 0.0)
+						{
+							N = -N;
+						}
+
 						// Check for various degenerate cases.
 						static constexpr double minSideLen = 0.005;
 						if (area2 > 0.01)
@@ -991,8 +997,14 @@ void ACompoundMeshActor::GetDrawingDesignerLines(const FVector& ViewDirection, T
 					FVector3d p0(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t]]));
 					FVector3d p1(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 1]]));
 					FVector3d p2(componentToWorld.TransformPosition(sectionVertices[sectionIndices[3 * t + 2]]));
-					// Wind order is CW(?)
-					FVector3d N(((p2 - p0).Cross(p1 - p0)).Normalized());
+					// Wind order seems to be indefinite.
+					FVector3d N(((p1 - p0).Cross(p2 - p0)).Normalized());
+					FVector3d n0(componentToWorld.TransformNormal(sectionNormals[sectionIndices[3 * t]]));
+					if (n0.Dot(N) < 0.0)
+					{
+						N = -N;
+					}
+
 					if (p0.DistanceSquared(p1) >= minLength2)
 					{
 						lines.Emplace(p0, p1, N);
@@ -1010,8 +1022,7 @@ void ACompoundMeshActor::GetDrawingDesignerLines(const FVector& ViewDirection, T
 		}
 	}
 
-	TArray<FDrawingDesignerLined> filteredLines;
-	UModumateGeometryStatics::GetSilhouetteEdges(lines, ViewDirection, 0.01, AngleTolerance);
+	UModumateGeometryStatics::GetSilhouetteEdges(lines, ViewDirection, 0.4, AngleTolerance, bFastMode);
 	for (const auto& line : lines)
 	{
 		if (line)
