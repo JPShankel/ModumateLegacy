@@ -2809,6 +2809,7 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 
 	VolumeGraphs.Add(RootVolumeGraph, MakeShared<FGraph3D>(RootVolumeGraph));
 	ActiveVolumeGraph = RootVolumeGraph;
+	CachedRootDesignOptionID = MOD_ID_NONE;
 
 	//create a root design option to act as a universal parent
 	//TODO: use CreateOrRestoreObj function to create design option
@@ -3146,15 +3147,14 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	MakeNew(world, bClearName);
 	bool bInitialDocumentDirty = false;
 
-	// Destroy default graph:
-	if (ensure(ObjectInstanceArray.Num() == 1))
+	for (auto* ob : ObjectInstanceArray)
 	{
-		AModumateObjectInstance* graphObj = ObjectInstanceArray[0];
-		ObjectsByType.FindOrAdd(graphObj->GetObjectType()).Remove(graphObj->ID);
-		ObjectsByID.Remove(graphObj->ID);
-		ObjectInstanceArray.Empty();
-		graphObj->Destroy();
+		ObjectsByType.FindOrAdd(ob->GetObjectType()).Remove(ob->ID);
+		ObjectsByID.Remove(ob->ID);
+		ob->Destroy();
 	}
+
+	ObjectInstanceArray.Empty();
 	VolumeGraphs.Reset();
 
 	UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();

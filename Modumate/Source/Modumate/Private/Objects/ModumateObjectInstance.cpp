@@ -500,6 +500,27 @@ void AModumateObjectInstance::MarkDirty(EObjectDirtyFlags NewDirtyFlags)
 			childObj->MarkDirty(NewDirtyFlags);
 		}
 	}
+
+	// Mark span this MOI belongs to dirty
+	// TODO: Preferably metaplane and edge will get span from cache
+	TArray<int32> spanIDs;
+	if (GetObjectType() == EObjectType::OTMetaEdge)
+	{
+		UModumateObjectStatics::GetSpansForEdgeObject(Document, this, spanIDs);
+	}
+	else if (GetObjectType() == EObjectType::OTMetaPlane)
+	{
+		UModumateObjectStatics::GetSpansForFaceObject(Document, this, spanIDs);
+	}
+	for (auto curSpanID : spanIDs)
+	{
+		auto curSpanObj = Document->GetObjectById(curSpanID);
+		if (curSpanObj)
+		{
+			curSpanObj->MarkDirty(NewDirtyFlags);
+		}
+	}
+
 }
 
 bool AModumateObjectInstance::IsDirty(EObjectDirtyFlags CheckDirtyFlags) const
@@ -576,26 +597,6 @@ bool AModumateObjectInstance::RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArr
 			{
 				// Update use of quantities by this MOI.
 				UpdateQuantities();
-			}
-
-			// Mark span this MOI belongs to dirty
-			// TODO: Preferably metaplane and edge will get span from cache
-			TArray<int32> spanIDs;
-			if (GetObjectType() == EObjectType::OTMetaEdge)
-			{
-				UModumateObjectStatics::GetSpansForEdgeObject(Document, this, spanIDs);
-			}
-			else if (GetObjectType() == EObjectType::OTMetaPlane)
-			{
-				UModumateObjectStatics::GetSpansForFaceObject(Document, this, spanIDs);
-			}
-			for (auto curSpanID : spanIDs)
-			{
-				auto curSpanObj = Document->GetObjectById(curSpanID);
-				if (curSpanObj)
-				{
-					curSpanObj->MarkDirty(DirtyFlag);
-				}
 			}
 		}
 
