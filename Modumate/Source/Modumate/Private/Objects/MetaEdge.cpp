@@ -308,7 +308,6 @@ bool AMOIMetaEdge::ToWebMOI(FWebMOI& OutMOI) const
 		}
 
 		FString edgeDetailDescription;
-		int32 edgeHash = CachedEdgeDetailConditionHash;
 		if (CachedEdgeDetailMOI && CachedEdgeDetailDataID.IsValid())
 		{
 			edgeDetailDescription = CachedEdgeDetailDataID.ToString();
@@ -322,7 +321,7 @@ bool AMOIMetaEdge::ToWebMOI(FWebMOI& OutMOI) const
 
 		prop = &OutMOI.Properties.FindOrAdd(CachedMiterHashName);
 		*prop = *WebProperties.Find(CachedMiterHashName);
-		prop->ValueArray.Add(FString::FromInt(edgeHash));
+		prop->ValueArray.Add(FString::Printf(TEXT("%u"), CachedEdgeDetailConditionHash));
 
 		return true;
 	}
