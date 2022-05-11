@@ -4091,7 +4091,6 @@ FPlane AEditModelPlayerController::GetCurrentCullingPlane() const
 void AEditModelPlayerController::ToggleDrawingDesigner(bool bEnable) const
 {
 	EditModelUserWidget->DrawingDesigner->DrawingSetWebBrowser->WebBrowserWidget->ForceFullscreenInput(bEnable);
-	EditModelUserWidget->ViewCubeUserWidget->SetVisibility(bEnable ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
 }
 
 void AEditModelPlayerController::CapabilityReady(AModumateCapability* Capability)
