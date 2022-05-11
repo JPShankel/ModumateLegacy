@@ -49,7 +49,7 @@ public:
 	static constexpr double DefaultRoundingDigits = 2;
 
 	// When displaying an unrounded decimal, how many digits to display in the text.
-	static constexpr double DefaultDisplayDigits = 8;
+	static constexpr double DefaultDisplayDigits = 4;
 
 	// Maximum fractional precision desired, in this case 1 / (2 ^ 6) aka 1/64ths.
 	static constexpr int32 DefaultFractionMaxDenomPow = 6;
