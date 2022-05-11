@@ -46,7 +46,8 @@ void UViewMenuBlockSavedViews::OnButtonAddReleased()
 		FDateTime dateTime = Controller->SkyActor->GetCurrentDateTime();
 		int32 listOrder = SavedViewsList->GetNumItems() + 1;
 		FString newViewName = FString(TEXT("New Camera View ")) + FString::FromInt(listOrder);
-		UModumateBrowserStatics::CreateCameraViewAsMoi(this, cameraComp, newViewName, dateTime, listOrder);
+		int32 nextID = Controller->GetDocument()->GetNextAvailableID();
+		UModumateBrowserStatics::CreateCameraViewAsMoi(this, cameraComp, newViewName, dateTime, nextID, listOrder);
 	}
 }
 

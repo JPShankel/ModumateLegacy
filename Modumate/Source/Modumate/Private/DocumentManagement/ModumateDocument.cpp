@@ -2813,7 +2813,7 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 
 	//create a root design option to act as a universal parent
 	//TODO: use CreateOrRestoreObj function to create design option
-	create_moi(TEXT("OTDesignOption"), 0);
+	create_mois({ TEXT("OTDesignOption") }, { 0 });
 	TArray<AModumateObjectInstance*> designOption = GetObjectsOfType(EObjectType::OTDesignOption);
 	if (designOption.Num() > 0)
 	{
@@ -4764,51 +4764,67 @@ void UModumateDocument::UpdateWebMOIs(const EObjectType ObjectType) const
 		DrawingSendResponse(TEXT("onMOIsChanged"), json);
 	}
 }
-void UModumateDocument::create_moi(const FString& MOIType, int32 ParentID)
+
+void UModumateDocument::create_mois(TArray<FString> MOIType, TArray<int32>ParentID)
 {
-	EObjectType objectType = EObjectType::OTNone;
-	FindEnumValueByString<EObjectType>(MOIType, objectType);
-	if (objectType == EObjectType::OTDesignOption)
+	//MOIType array length and ParentID array length should always be equal
+	if (MOIType.Num() != ParentID.Num())
 	{
-		FString newName = GetNextMoiName(EObjectType::OTDesignOption, LOCTEXT("NewDesignOptionMoiName", "Design Option ").ToString());
-		if (ParentID == MOD_ID_NONE && CachedRootDesignOptionID != MOD_ID_NONE)
-		{
-			ParentID = CachedRootDesignOptionID;
-		}
-		TSharedPtr<FMOIDelta> delta = AMOIDesignOption::MakeCreateDelta(this, newName, ParentID);
-		int32 nextID = GetNextAvailableID();
-		BeginUndoRedoMacro();
-		ApplyDeltas({ delta }, GetWorld());
-
-		AMOIDesignOption* parent = Cast<AMOIDesignOption>(GetObjectById(ParentID));
-		if (parent != nullptr)
-		{
-			FMOIStateData oldData = parent->GetStateData();
-			parent->InstanceData.subOptions.AddUnique(nextID);
-			parent->UpdateStateDataFromObject();
-			auto parentDelta = MakeShared<FMOIDelta>();
-			parentDelta->AddMutationState(parent, oldData, parent->GetStateData());
-			parent->SetStateData(oldData);
-			ApplyDeltas({ parentDelta }, GetWorld());
-		}
-
-		EndUndoRedoMacro();
+		return;
 	}
-	else if (objectType == EObjectType::OTCameraView)
+	TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
+	
+	int32 localNextID = this->GetNextAvailableID();
+	for (int32 i = 0; i < MOIType.Num(); i++)
 	{
-		auto* Controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
-		UCameraComponent* cameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
-		if (cameraComp)
+		EObjectType objectType = EObjectType::OTNone;
+		FindEnumValueByString<EObjectType>(MOIType[i], objectType);
+		if (objectType == EObjectType::OTDesignOption)
 		{
-			FDateTime dateTime = Controller->SkyActor->GetCurrentDateTime();
-			FString newViewName = GetNextMoiName(EObjectType::OTCameraView, LOCTEXT("NewCameraViewMoiName", "New Camera View ").ToString());
-			UModumateBrowserStatics::CreateCameraViewAsMoi(this, cameraComp, newViewName, dateTime, 0);
+			FString newName = GetNextMoiName(EObjectType::OTDesignOption, LOCTEXT("NewDesignOptionMoiName", "Design Option ").ToString());
+			if (ParentID[i] == MOD_ID_NONE && CachedRootDesignOptionID != MOD_ID_NONE)
+			{
+				ParentID[i] = CachedRootDesignOptionID;
+			}
+			FMOIDesignOptionData optionData;
+			optionData.hexColor = TEXT("#000000");
+			FMOIStateData stateData;
+			stateData.ParentID = ParentID[i];
+			stateData.DisplayName = newName;
+			stateData.ID = localNextID++;
+			stateData.CustomData.SaveStructData<FMOIDesignOptionData>(optionData);
+			stateData.ObjectType = EObjectType::OTDesignOption;
+			delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
+			AMOIDesignOption* parent = Cast<AMOIDesignOption>(GetObjectById(ParentID[i]));
+			if (parent != nullptr)
+			{
+				FMOIStateData currentState = parent->GetStateData();
+				FMOIStateData nextState = currentState;
+				FMOIDesignOptionData doData;
+				nextState.CustomData.LoadStructData(doData);
+				doData.subOptions.AddUnique(stateData.ID);
+				nextState.CustomData.SaveStructData(doData);
+				delta->AddMutationState(parent, currentState, nextState);
+			}
+		}
+		else if (objectType == EObjectType::OTCameraView)
+		{
+			auto* Controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+			UCameraComponent* cameraComp = Controller->GetViewTarget()->FindComponentByClass<UCameraComponent>();
+			if (cameraComp)
+			{
+				FDateTime dateTime = Controller->SkyActor->GetCurrentDateTime();
+				FString newViewName = GetNextMoiName(EObjectType::OTCameraView, LOCTEXT("NewCameraViewMoiName", "New Camera View ").ToString());
+				UModumateBrowserStatics::CreateCameraViewAsMoi(this, cameraComp, newViewName, dateTime, localNextID, 0);
+			}
+		}
+		else
+		{
+			ensureAlwaysMsgf(false, TEXT("Attempt to create unsupported MOI type via web!"));
 		}
 	}
-	else
-	{
-		ensureAlwaysMsgf(false, TEXT("Attempt to create unsupported MOI type via web!"));
-	}
+	ApplyDeltas({ delta }, GetWorld());
+	
 }
 
 FString UModumateDocument::GetNextMoiName(EObjectType ObjectType, FString Name) {
@@ -4841,56 +4857,72 @@ FString UModumateDocument::GetNextMoiName(EObjectType ObjectType, FString Name) 
 	return candidate;
 }
 
-void UModumateDocument::delete_moi(int32 ID)
+void UModumateDocument::delete_mois(TArray<int32> ID)
 {
-	const AModumateObjectInstance* moi = GetObjectById(ID);
-	if (moi != nullptr)
+	TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
+	for (int32 i = 0; i < ID.Num(); i++)
 	{
-		EObjectType type = moi->GetObjectType();
-		auto delta = MakeShared<FMOIDelta>();
-		delta->AddCreateDestroyState(moi->GetStateData(), EMOIDeltaType::Destroy);
-		ApplyDeltas({ delta }, GetWorld());
+		const AModumateObjectInstance* moi = GetObjectById(ID[i]);
+		if (moi != nullptr)
+		{
+			EObjectType type = moi->GetObjectType();
+			
+			delta->AddCreateDestroyState(moi->GetStateData(), EMOIDeltaType::Destroy);
+			
+		}
 	}
+	ApplyDeltas({ delta }, GetWorld());
 }
 
-void UModumateDocument::update_moi(int32 ID, const FString& MOIData)
+void UModumateDocument::update_mois(TArray<int32> ID, TArray<FString> MOIData)
 {
-	AModumateObjectInstance* moi = GetObjectById(ID);
-	if (moi == nullptr)
+	//Make sure array lengths are equal
+	if (ID.Num() != MOIData.Num())
 	{
 		return;
 	}
-	
-	// Preserve state data, alter MOI, make delta to new state, restore state, apply delta
-	moi->UpdateStateDataFromObject();
-	FMOIStateData stateData = moi->GetStateData();
-	moi->FromWebMOI(MOIData);
-	auto delta = MakeShared<FMOIDelta>();
-	delta->AddMutationState(moi, stateData, moi->GetStateData());
-	moi->SetStateData(stateData);
-
-	ApplyDeltas({ delta }, GetWorld());
-	UModumateObjectStatics::UpdateDesignOptionVisibility(this);
-
-	AMOICameraView* cameraView = Cast<AMOICameraView>(GetObjectById(CachedCameraViewID));
-
-	if (cameraView == nullptr)
+	TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
+	for (int32 i = 0; i < ID.Num(); i++)
 	{
-		return;
-	}
-
-	cameraView->InstanceData.SavedVisibleDesignOptions.Empty();
-	Algo::TransformIf(GetObjectsOfType(EObjectType::OTDesignOption), 
-		cameraView->InstanceData.SavedVisibleDesignOptions,
-		[](AModumateObjectInstance* MOI)
+		AModumateObjectInstance* moi = GetObjectById(ID[i]);
+		if (moi == nullptr)
 		{
-			AMOIDesignOption* mod = Cast<AMOIDesignOption>(MOI);
-			return (ensure(mod) && mod->InstanceData.isShowing);
-		}, [](AModumateObjectInstance* MOI)
-		{
-			return MOI->ID;
+			continue;
 		}
-	);
+
+		// Preserve state data, alter MOI, make delta to new state, restore state, apply delta
+		moi->UpdateStateDataFromObject();
+		FMOIStateData stateData = moi->GetStateData();
+		moi->FromWebMOI(MOIData[i]);
+		
+		delta->AddMutationState(moi, stateData, moi->GetStateData());
+		moi->SetStateData(stateData);
+
+		
+		UModumateObjectStatics::UpdateDesignOptionVisibility(this);
+
+		AMOICameraView* cameraView = Cast<AMOICameraView>(GetObjectById(CachedCameraViewID));
+
+		if (cameraView == nullptr)
+		{
+			continue;;
+		}
+
+		cameraView->InstanceData.SavedVisibleDesignOptions.Empty();
+		Algo::TransformIf(GetObjectsOfType(EObjectType::OTDesignOption),
+			cameraView->InstanceData.SavedVisibleDesignOptions,
+			[](AModumateObjectInstance* MOI)
+			{
+				AMOIDesignOption* mod = Cast<AMOIDesignOption>(MOI);
+				return (ensure(mod) && mod->InstanceData.isShowing);
+			}, [](AModumateObjectInstance* MOI)
+			{
+				return MOI->ID;
+			}
+			);
+	}
+	ApplyDeltas({ delta }, GetWorld());
+	
 }
 
 void UModumateDocument::update_player_state(const FString& InStateJson)

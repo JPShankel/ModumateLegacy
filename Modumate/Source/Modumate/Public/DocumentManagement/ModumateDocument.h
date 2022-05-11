@@ -445,13 +445,13 @@ public:
 
 	// MOI WEB API
 	UFUNCTION()
-	void create_moi(const FString& MOIType, int32 ParentID = 0);
+	void create_mois(TArray<FString> MOIType, TArray<int32>ParentID);
 
 	UFUNCTION()
-	void delete_moi(int32 ID);
+	void delete_mois(TArray<int32> ID);
 
 	UFUNCTION()
-	void update_moi(int32 ID,const FString& MOIData);
+	void update_mois(TArray<int32> ID,TArray<FString> MOIData);
 
 	UFUNCTION()
 	void update_player_state(const FString& PlayerStateData);

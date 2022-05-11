@@ -12,7 +12,7 @@
 #include "UI/ViewCubeWidget.h"
 #include "Objects/ModumateObjectStatics.h"
 
-bool UModumateBrowserStatics::CreateCameraViewAsMoi(UObject* WorldContextObject, UCameraComponent *CameraComp, const FString &CameraViewName, const FDateTime &TimeOfDay, int32 CameraViewIndex /*= INDEX_NONE*/)
+bool UModumateBrowserStatics::CreateCameraViewAsMoi(UObject* WorldContextObject, UCameraComponent *CameraComp, const FString &CameraViewName, const FDateTime &TimeOfDay, int32& NextID, int32 CameraViewIndex /*= INDEX_NONE*/)
 {
 	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
 	auto controller = world->GetFirstPlayerController<AEditModelPlayerController>();
@@ -24,10 +24,10 @@ bool UModumateBrowserStatics::CreateCameraViewAsMoi(UObject* WorldContextObject,
 	FMOICameraViewData newCameraViewData;
 	UpdateCameraViewData(WorldContextObject, CameraComp, newCameraViewData, TimeOfDay);
 	newCameraViewData.Name = CameraViewName;
-	newCameraViewData.MoiId = controller->GetDocument()->GetNextAvailableID();
+	newCameraViewData.MoiId = NextID++;
 	newCameraViewData.CameraViewIndex = CameraViewIndex;
 
-	FMOIStateData stateData(controller->GetDocument()->GetNextAvailableID(), EObjectType::OTCameraView);
+	FMOIStateData stateData(newCameraViewData.MoiId, EObjectType::OTCameraView);
 	stateData.CustomData.SaveStructData(newCameraViewData);
 
 	auto delta = MakeShared<FMOIDelta>();

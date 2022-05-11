@@ -574,7 +574,7 @@ void UModumateGameInstance::RegisterAllCommands()
 			FMOIStateData newStateData = parentMOI->GetStateData();
 			FString jsonMoi = getWebMOI(parentMOI, newStateData);
 			parentMOI->SetStateData(oldStateData);
-			doc->update_moi(parentMOI->ID, jsonMoi);
+			doc->update_mois({ parentMOI->ID }, { jsonMoi });
 		}
 		else if (ob && action == TEXT("setparent"))
 		{
@@ -586,14 +586,14 @@ void UModumateGameInstance::RegisterAllCommands()
 			auto* newParent = Cast<AMOIDesignOption>(doc->GetObjectById(newStateData.ParentID));
 
 			FString jsonMoi = getWebMOI(ob, newStateData);
-			doc->update_moi(ob->ID, jsonMoi);
+			doc->update_mois({ ob->ID }, { jsonMoi });
 
 			if (newParent)
 			{
 				newParent->InstanceData.subOptions.AddUnique(ob->ID);
 				newParent->UpdateStateDataFromObject();
 				jsonMoi = getWebMOI(newParent,newParent->GetStateData());
-				doc->update_moi(newParent->ID, jsonMoi);
+				doc->update_mois({ newParent->ID }, { jsonMoi });
 			}
 
 			if (oldParent)
@@ -601,7 +601,7 @@ void UModumateGameInstance::RegisterAllCommands()
 				oldParent->InstanceData.subOptions.Remove(ob->ID);
 				oldParent->UpdateStateDataFromObject();
 				jsonMoi = getWebMOI(oldParent,oldParent->GetStateData());
-				doc->update_moi(oldParent->ID, jsonMoi);
+				doc->update_mois({ oldParent->ID }, { jsonMoi });
 			}
 		}
 		return false;
