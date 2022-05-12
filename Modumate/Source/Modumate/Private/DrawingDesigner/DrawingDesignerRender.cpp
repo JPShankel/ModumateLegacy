@@ -401,7 +401,7 @@ void ADrawingDesignerRender::AddObjects(const FVector& ViewDirection, float MinL
 			{
 				TArray<UProceduralMeshComponent*> meshComponents({ dynamicActor->Mesh, dynamicActor->MeshCap });
 				meshComponents.Append(dynamicActor->ProceduralSubLayers);
-				meshComponents.Append(dynamicActor->ProceduralSubLayers);
+				meshComponents.Append(dynamicActor->ProceduralSubLayerCaps);
 				for (UProceduralMeshComponent* meshComponent : meshComponents)
 				{
 					if (meshComponent)
