@@ -135,9 +135,9 @@ public:
 	bool FromWebPlayerState(const FWebEditModelPlayerState& InState);
 	bool SendWebPlayerState() const;
 
-	void AddHideObjectsById(const TArray<int32>& ids);
+	void AddHideObjectsById(const TArray<int32>& IDs, bool bUpdateDesignOptions=true);
 	void UnhideAllObjects();
-	void UnhideObjectsById(const TArray<int32>& ids);
+	void UnhideObjectsById(const TArray<int32>& ids, bool bUpdateDesignOptions = true);
 	const TSet<int32>& GetHiddenObjectsId() const { return HiddenObjectsID; }
 	bool DebugMouseHits;
 

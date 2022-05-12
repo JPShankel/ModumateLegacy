@@ -12,6 +12,7 @@
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateUserSettings.h"
 #include "Objects/CameraView.h"
+#include "Objects/DesignOption.h"
 #include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/EnumHelpers.h"
 #include "Net/UnrealNetwork.h"
@@ -1826,7 +1827,7 @@ bool AEditModelPlayerState::SendWebPlayerState() const
 	return false;
 }
 
-void AEditModelPlayerState::AddHideObjectsById(const TArray<int32>& ids)
+void AEditModelPlayerState::AddHideObjectsById(const TArray<int32>& IDs, bool bUpdateDesignOptions)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("EditModelPlayerState::AddHideObjectsById"));
 
@@ -1837,7 +1838,7 @@ void AEditModelPlayerState::AddHideObjectsById(const TArray<int32>& ids)
 		return;
 	}
 
-	for (auto id : ids)
+	for (auto id : IDs)
 	{
 		AModumateObjectInstance* obj = doc->GetObjectById(id);
 		if (obj && !HiddenObjectsID.Contains(id))
@@ -1846,6 +1847,14 @@ void AEditModelPlayerState::AddHideObjectsById(const TArray<int32>& ids)
 			obj->RequestCollisionDisabled(UModumateDocument::DocumentHideRequestTag, true);
 			HiddenObjectsID.Add(id);
 		}
+	}
+
+	// UpdateDesignOptionVisibility uses this function to set visibility of design option groups
+	// Design options use the player state's hidden object system to track hidden objects
+	// This list can be overridden by user actions to hide/unhide objects, but we want the design option visibility to win
+	if (bUpdateDesignOptions)
+	{
+		UModumateObjectStatics::UpdateDesignOptionVisibility(gameState->Document);
 	}
 }
 
@@ -1881,14 +1890,18 @@ void AEditModelPlayerState::UnhideAllObjects()
 
 	HiddenObjectsID = hiddenCutPlaneIds;
 
+	// After the user has hidden what they want, assert design option overrides
+	UModumateObjectStatics::UpdateDesignOptionVisibility(gameState->Document);
+
 	// Why do we dirty all objects?
 	for (AModumateObjectInstance* obj : doc->GetObjectInstances())
 	{
 		obj->MarkDirty(EObjectDirtyFlags::Visuals);
 	}
+
 }
 
-void AEditModelPlayerState::UnhideObjectsById(const TArray<int32>& ids)
+void AEditModelPlayerState::UnhideObjectsById(const TArray<int32>& IDs, bool bUpdateDesignOptions)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("EditModelPlayerState::UnhideObjectsById"));
 
@@ -1899,7 +1912,7 @@ void AEditModelPlayerState::UnhideObjectsById(const TArray<int32>& ids)
 		return;
 	}
 
-	for (auto id : ids)
+	for (auto id : IDs)
 	{
 		AModumateObjectInstance* obj = doc->GetObjectById(id);
 		if (obj && HiddenObjectsID.Contains(id))
@@ -1908,6 +1921,12 @@ void AEditModelPlayerState::UnhideObjectsById(const TArray<int32>& ids)
 			obj->RequestCollisionDisabled(UModumateDocument::DocumentHideRequestTag, false);
 			HiddenObjectsID.Remove(id);
 		}
+	}
+
+	// See note in AddHideObjectsByID above
+	if (bUpdateDesignOptions)
+	{
+		UModumateObjectStatics::UpdateDesignOptionVisibility(gameState->Document);
 	}
 
 	// Why do we dirty all objects?

@@ -1339,13 +1339,15 @@ void UModumateObjectStatics::GetObjectsInGroups(UModumateDocument* Doc, const TA
 
 void UModumateObjectStatics::GetDesignOptionsForGroup(UModumateDocument* Doc, int32 GroupID, TArray<int32>& OutDesignOptionIDs)
 {
-	TArray<AModumateObjectInstance*> designOptions = Doc->GetObjectsOfType(EObjectType::OTDesignOption);
+	TArray<AMOIDesignOption*> designOptions;
+	Doc->GetObjectsOfTypeCasted<AMOIDesignOption>(EObjectType::OTDesignOption, designOptions);
+
 	for (auto* moi : designOptions)
 	{
 		AMOIDesignOption* doMOI = Cast<AMOIDesignOption>(moi);
 		if (ensure(doMOI) && doMOI->InstanceData.groups.Contains(GroupID))
 		{
-			OutDesignOptionIDs.AddUnique(GroupID);
+			OutDesignOptionIDs.AddUnique(doMOI->ID);
 		}
 	}
 }
@@ -1373,27 +1375,37 @@ void UModumateObjectStatics::UpdateDesignOptionVisibility(UModumateDocument* Doc
 		return false;
 	};
 
-	TArray<int32> allDesignOptionGroups;
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(Doc->GetWorld()->GetFirstPlayerController());
+	AEditModelPlayerState* playerState = controller ? controller->EMPlayerState : nullptr;
 
+	TSet<int32> visibleGroups;
+	TSet<int32> hiddenGroups;
 	for (auto& designOption : designOptions)
 	{
 		for (auto groupID : designOption->InstanceData.groups)
 		{
-			allDesignOptionGroups.AddUnique(groupID);
-		}
-	}
-	HideObjectsInGroups(Doc, allDesignOptionGroups, false);
-
-	TArray<int32> hiddenGroups;
-	for (auto groupID : allDesignOptionGroups)
-	{
-		if (!groupVisible(groupID))
-		{
-			hiddenGroups.Add(groupID);
+			if (groupVisible(groupID))
+			{
+				visibleGroups.Add(groupID);
+			}
+			else
+			{
+				hiddenGroups.Add(groupID);
+			}
 		}
 	}
 
-	HideObjectsInGroups(Doc, hiddenGroups, true);
+	TArray<int32> visibleObIDs;
+	TSet<AModumateObjectInstance*> visibleObs;
+	UModumateObjectStatics::GetObjectsInGroups(Doc, visibleGroups.Array(), visibleObs);
+	Algo::Transform(visibleObs, visibleObIDs, [](const AModumateObjectInstance* MOI) {return MOI->ID; });
+	playerState->UnhideObjectsById(visibleObIDs,false);
+
+	TSet<AModumateObjectInstance*> hiddenObs;
+	UModumateObjectStatics::GetObjectsInGroups(Doc, hiddenGroups.Array(), hiddenObs);
+	TArray<int32> hiddenObIDs;
+	Algo::Transform(hiddenObs, hiddenObIDs, [](const AModumateObjectInstance* MOI) {return MOI->ID; });
+	playerState->AddHideObjectsById(hiddenObIDs,false);
 }
 
 void UModumateObjectStatics::HideObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, bool bHide)
