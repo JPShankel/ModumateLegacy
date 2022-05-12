@@ -2809,16 +2809,11 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 
 	VolumeGraphs.Add(RootVolumeGraph, MakeShared<FGraph3D>(RootVolumeGraph));
 	ActiveVolumeGraph = RootVolumeGraph;
-	CachedRootDesignOptionID = MOD_ID_NONE;
 
-	//create a root design option to act as a universal parent
-	//TODO: use CreateOrRestoreObj function to create design option
-	create_mois({ TEXT("OTDesignOption") }, { 0 });
-	TArray<AModumateObjectInstance*> designOption = GetObjectsOfType(EObjectType::OTDesignOption);
-	if (designOption.Num() > 0)
-	{
-		CachedRootDesignOptionID = designOption[0]->ID;
-	}
+	CachedRootDesignOptionID = NextID++;
+	FMOIStateData rootDesignOptionState(CachedRootDesignOptionID, EObjectType::OTDesignOption);
+	rootDesignOptionState.CustomData.SaveStructData<FMOIDesignOptionData>(FMOIDesignOptionData());
+	CreateOrRestoreObj(World, rootDesignOptionState);
 
 	if (bClearName)
 	{

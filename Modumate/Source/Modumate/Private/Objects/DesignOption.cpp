@@ -119,3 +119,10 @@ bool AMOIDesignOption::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr
 	return true;
 }
 
+void AMOIDesignOption::PostCreateObject(bool bNewObject)
+{
+	if (Document)
+	{
+		Super::PostCreateObject(bNewObject);
+	}
+}

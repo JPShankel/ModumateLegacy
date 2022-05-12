@@ -39,4 +39,5 @@ public:
 	static TSharedPtr<FMOIDelta> MakeCreateDelta(UModumateDocument* Doc,const FString& DisplayName, int32 ParentID = 0);
 	static TSharedPtr<FMOIDelta> MakeAddRemoveGroupDelta(UModumateDocument* Doc, int32 OptionID, int32 GroupID, bool bAdd);
 	bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas);
+	void PostCreateObject(bool bNewObject);
 };
