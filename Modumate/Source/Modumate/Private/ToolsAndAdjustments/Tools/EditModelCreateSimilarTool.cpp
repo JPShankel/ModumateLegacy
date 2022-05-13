@@ -84,6 +84,7 @@ bool UCreateSimilarTool::MatchTargetObject(bool bUseMouseHoverObject)
 		EToolMode targetToolMode = UModumateTypeStatics::ToolModeFromObjectType(targetObj->GetObjectType());
 		Controller->EMPlayerState->SetAssemblyForToolMode(targetToolMode, targetObj->GetAssembly().UniqueKey());
 		Controller->SetToolMode(targetToolMode);
+		Controller->SetToolCreateObjectMode(EToolCreateObjectMode::Apply);
 		return true;
 	}
 

@@ -1702,8 +1702,8 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 	Algo::Transform(InState.selectedObjects, webObIds, [](const FWebMOI& MOI) {return MOI.ID; });
 
 	TArray<const AModumateObjectInstance*> obs;
-	obs.Append(SelectedGroupObjects.Array());
 	obs.Append(SelectedObjects.Array());
+	obs.Append(SelectedGroupObjects.Array());
 	TArray<int32> clientObIds;
 	Algo::Transform(obs, clientObIds, [](const AModumateObjectInstance* MOI) {return MOI->ID; });
 
