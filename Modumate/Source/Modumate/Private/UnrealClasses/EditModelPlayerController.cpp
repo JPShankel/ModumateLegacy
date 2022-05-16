@@ -421,8 +421,10 @@ bool AEditModelPlayerController::BeginWithPlayerState()
 		EMPlayerState->OnProjectPermissionsChanged().AddUObject(this, &AEditModelPlayerController::ProjectPermissionsChangedHandler);
 	}
 
-	RegisterCapability<AModumateVoice>();
-	RegisterCapability<AModumateTextChat>();
+	//TODO: Disabled for 3.0 release -- need to revisit later -JN
+	// MOD-3416 (remove) --> MOD-1952 (add back in)
+	//RegisterCapability<AModumateVoice>();
+	//RegisterCapability<AModumateTextChat>();
 
 	bBeganWithPlayerState = true;
 
