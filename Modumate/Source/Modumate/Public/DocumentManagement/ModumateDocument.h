@@ -84,6 +84,8 @@ private:
 	// Map the element (face, edge, etc) ID to the ID of the graph that contains it.
 	TMap<int32, int32> GraphElementsToGraph3DMap;
 
+	int32 RootDesignOptionID = MOD_ID_NONE;
+
 	// Copy of the volume graph to work with multi-stage deltas
 	FGraph3D TempVolumeGraph;
 
@@ -382,7 +384,6 @@ private:
 	FDocumentSettings CurrentSettings;
 	FString CachedLocalUserID;
 	int32 CachedLocalUserIdx = 0;
-	int32 CachedRootDesignOptionID;
 
 	// TODO: refactor the different types of dirtiness into flags if we add more with multiplayer, but until then we know there are only two types of dirtiness.
 	bool bUserFileDirty = true;

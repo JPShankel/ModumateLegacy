@@ -2810,8 +2810,8 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 	VolumeGraphs.Add(RootVolumeGraph, MakeShared<FGraph3D>(RootVolumeGraph));
 	ActiveVolumeGraph = RootVolumeGraph;
 
-	CachedRootDesignOptionID = NextID++;
-	FMOIStateData rootDesignOptionState(CachedRootDesignOptionID, EObjectType::OTDesignOption);
+	RootDesignOptionID = NextID++;
+	FMOIStateData rootDesignOptionState(RootDesignOptionID, EObjectType::OTDesignOption);
 	rootDesignOptionState.CustomData.SaveStructData<FMOIDesignOptionData>(FMOIDesignOptionData());
 	CreateOrRestoreObj(World, rootDesignOptionState);
 
@@ -3007,6 +3007,7 @@ bool UModumateDocument::SerializeRecords(UWorld* World, FModumateDocumentHeader&
 
 	OutDocumentRecord.TypicalEdgeDetails = TypicalEdgeDetails;
 	OutDocumentRecord.DrawingDesignerDocument = DrawingDesignerDocument;
+	OutDocumentRecord.RootDesignOptionID = RootDesignOptionID;
 
 	// Potentially limit the number of undo records to save, based on user preferences
 	auto* gameInstance = World->GetGameInstance<UModumateGameInstance>();
@@ -3229,6 +3230,29 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 				CreateOrRestoreObj(world, FMOIStateData(kvp.Key, objectType));
 			}
 		}
+	}
+
+	RootDesignOptionID = InDocumentRecord.RootDesignOptionID;
+	// Only the server can reliably fix this
+	if (RootDesignOptionID == MOD_ID_NONE && ensure(!world->IsNetMode(NM_Client)))
+	{
+		TArray<AMOIDesignOption*> designOptions;
+		GetObjectsOfTypeCasted(EObjectType::OTDesignOption,designOptions);
+
+		RootDesignOptionID = NextID++;
+
+		// No delta needed during load...server side with no undo/redo
+		for (auto* designOption : designOptions)
+		{
+			if (designOption->GetParentID() == MOD_ID_NONE)
+			{
+				designOption->SetParentID(RootDesignOptionID);
+			}
+		}
+
+		FMOIStateData rootDesignOptionState(RootDesignOptionID, EObjectType::OTDesignOption);
+		rootDesignOptionState.CustomData.SaveStructData<FMOIDesignOptionData>(FMOIDesignOptionData());
+		CreateOrRestoreObj(GetWorld(), rootDesignOptionState);
 	}
 
 	// Create MOIs reflected from the surface and terrain graphs
@@ -4777,9 +4801,9 @@ void UModumateDocument::create_mois(TArray<FString> MOIType, TArray<int32>Parent
 		if (objectType == EObjectType::OTDesignOption)
 		{
 			FString newName = GetNextMoiName(EObjectType::OTDesignOption, LOCTEXT("NewDesignOptionMoiName", "Design Option ").ToString());
-			if (ParentID[i] == MOD_ID_NONE && CachedRootDesignOptionID != MOD_ID_NONE)
+			if (ParentID[i] == MOD_ID_NONE && RootDesignOptionID != MOD_ID_NONE)
 			{
-				ParentID[i] = CachedRootDesignOptionID;
+				ParentID[i] = RootDesignOptionID;
 			}
 			FMOIDesignOptionData optionData;
 			optionData.hexColor = TEXT("#000000");

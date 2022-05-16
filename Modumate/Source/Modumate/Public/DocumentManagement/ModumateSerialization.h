@@ -312,6 +312,9 @@ struct FMOIDocumentRecordV5 : public FMOIDocumentRecordBASE
 	int32 RootVolumeGraph = 0;
 
 	UPROPERTY()
+	int32 RootDesignOptionID = 0;
+
+	UPROPERTY()
 	TMap<int32, FGraph3DRecordV1> VolumeGraphs;
 };
 
