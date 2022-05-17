@@ -2441,16 +2441,19 @@ void UModumateGeometryStatics::GetSilhouetteEdges(TArray<FDrawingDesignerLined>&
 			for (int32 e2 = e1 + 1; e2 < numEdges; ++e2)
 			{
 				const auto& edge2 = Edges[e2];
-				// Increase tolerance for larger lines:
-				const double toleranceFactor = FMath::Clamp(FMath::Min(edge1.Len, edge2.Len) / 10.0, 1.0, 2.0);
-				const double edgeEpsilon = EpsilonSquare * toleranceFactor * toleranceFactor;
-				if (edge2 &&
-					((edge1.P1.DistanceSquared(edge2.P1) < edgeEpsilon && edge1.P2.DistanceSquared(edge2.P2) < edgeEpsilon) ||
-						(edge1.P1.DistanceSquared(edge2.P2) < edgeEpsilon && edge1.P2.DistanceSquared(edge2.P1) < edgeEpsilon)) &&
-					FMath::Abs(edge1.N.Dot(edge2.N)) > AngleThreshold)
+				if (edge1)
 				{
-					edge1.bValid = false;
-					edge2.bValid = false;
+					// Increase tolerance for larger lines:
+					const double toleranceFactor = FMath::Clamp(FMath::Min(edge1.Len, edge2.Len) / 10.0, 1.0, 3.0);
+					const double edgeEpsilon = EpsilonSquare * toleranceFactor * toleranceFactor;
+					if (edge2 &&
+						((edge1.P1.DistanceSquared(edge2.P1) < edgeEpsilon && edge1.P2.DistanceSquared(edge2.P2) < edgeEpsilon) ||
+							(edge1.P1.DistanceSquared(edge2.P2) < edgeEpsilon && edge1.P2.DistanceSquared(edge2.P1) < edgeEpsilon)) &&
+						FMath::Abs(edge1.N.Dot(edge2.N)) > AngleThreshold)
+					{
+						edge1.bValid = false;
+						edge2.bValid = false;
+					}
 				}
 			}
 		}

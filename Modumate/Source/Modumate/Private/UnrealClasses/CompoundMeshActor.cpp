@@ -1022,7 +1022,7 @@ void ACompoundMeshActor::GetDrawingDesignerLines(const FVector& ViewDirection, T
 		}
 	}
 
-	UModumateGeometryStatics::GetSilhouetteEdges(lines, ViewDirection, 0.4, AngleTolerance, bFastMode);
+	UModumateGeometryStatics::GetSilhouetteEdges(lines, ViewDirection, 0.2, AngleTolerance, bFastMode);
 	for (const auto& line : lines)
 	{
 		if (line)
