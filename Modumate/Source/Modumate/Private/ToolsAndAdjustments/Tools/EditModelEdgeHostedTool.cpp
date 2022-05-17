@@ -160,6 +160,23 @@ bool UEdgeHostedTool::BeginUse()
 	return bSuccess;
 }
 
+bool UEdgeHostedTool::HandleFlip(EAxis::Type FlipAxis)
+{
+	if (NewObjectIDs.Num() == 0)
+	{
+		return false;
+	}
+	// EdgeHostedTool creates single edge span, 
+	// we handle flip by setting its child (EdgeHosted) instance data
+	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	AMOIMetaEdgeSpan* span = Cast<AMOIMetaEdgeSpan>(newMOI);
+	if (span && span->GetChildIDs().Num() > 0)
+	{
+		newMOI = span->GetChildObjects()[0];
+	}
+	return newMOI && newMOI->GetFlippedState(FlipAxis, NewMOIStateData);
+}
+
 bool UEdgeHostedTool::HandleOffset(const FVector2D& ViewSpaceDirection)
 {
 	if (NewObjectIDs.Num() == 0)

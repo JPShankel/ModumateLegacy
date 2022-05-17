@@ -262,8 +262,14 @@ bool UStructureLineTool::HandleFlip(EAxis::Type FlipAxis)
 	{
 		return false;
 	}
-
+	// StructureLineTool creates single edge span, 
+	// we handle flip by setting its child (StructureLine) instance data
 	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	AMOIMetaEdgeSpan* span = Cast<AMOIMetaEdgeSpan>(newMOI);
+	if (span && span->GetChildIDs().Num() > 0)
+	{
+		newMOI = span->GetChildObjects()[0];
+	}
 	return newMOI && newMOI->GetFlippedState(FlipAxis, NewMOIStateData);
 }
 

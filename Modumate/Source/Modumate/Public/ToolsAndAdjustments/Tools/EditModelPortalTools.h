@@ -33,6 +33,7 @@ public:
 	virtual bool HandleInputNumber(double n) override;
 	virtual bool AbortUse() override;
 	virtual bool HandleInvert() override;
+	virtual bool HandleFlip(EAxis::Type FlipAxis) override;
 	virtual bool HandleControlKey(bool pressed) override;
 	virtual bool HandleMouseUp() override { return true; }
 	virtual bool ShowSnapCursorAffordances() override { return true; }

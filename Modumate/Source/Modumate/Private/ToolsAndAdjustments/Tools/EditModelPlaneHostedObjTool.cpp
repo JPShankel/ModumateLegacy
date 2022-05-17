@@ -216,7 +216,14 @@ bool UPlaneHostedObjTool::HandleFlip(EAxis::Type FlipAxis)
 		return false;
 	}
 
+	// PlaneHosted tools create single new span, 
+	// we handle flip by setting its child (PlaneHOstedObj) instance data
 	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	AMOIMetaPlaneSpan* span = Cast<AMOIMetaPlaneSpan>(newMOI);
+	if (span && span->GetChildIDs().Num() > 0)
+	{
+		newMOI = span->GetChildObjects()[0];
+	}
 	return newMOI && newMOI->GetFlippedState(FlipAxis, NewMOIStateData);
 }
 

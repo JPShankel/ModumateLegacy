@@ -132,6 +132,18 @@ void AMOIEdgeHosted::RegisterInstanceDataUI(class UToolTrayBlockProperties* Prop
 	extensionFields[1]->ValueChangedEvent.AddDynamic(this, &AMOIEdgeHosted::OnInstPropUIChangedExtensionEnd);
 }
 
+bool AMOIEdgeHosted::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
+{
+	OutState = GetStateData();
+
+	FMOIEdgeHostedData modifiedInstanceData = InstanceData;
+
+	float curFlipSign = modifiedInstanceData.FlipSigns.GetComponentForAxis(FlipAxis);
+	modifiedInstanceData.FlipSigns.SetComponentForAxis(FlipAxis, -curFlipSign);
+
+	return OutState.CustomData.SaveStructData(modifiedInstanceData);
+}
+
 bool AMOIEdgeHosted::GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const
 {
 	// Similar to StructureLine

@@ -512,3 +512,15 @@ void AMOIFaceHosted::RegisterInstanceDataUI(class UToolTrayBlockProperties* Prop
 		rotationZField->ValueChangedEvent.AddDynamic(this, &AMOIFaceHosted::OnInstPropUIChangedRotationZ);
 	}
 }
+
+bool AMOIFaceHosted::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
+{
+	OutState = GetStateData();
+
+	FMOIFaceHostedData modifiedInstanceData = InstanceData;
+
+	float curFlipSign = modifiedInstanceData.FlipSigns.GetComponentForAxis(FlipAxis);
+	modifiedInstanceData.FlipSigns.SetComponentForAxis(FlipAxis, -curFlipSign);
+
+	return OutState.CustomData.SaveStructData(modifiedInstanceData);
+}

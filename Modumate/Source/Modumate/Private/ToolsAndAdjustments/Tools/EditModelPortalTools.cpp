@@ -153,6 +153,16 @@ bool UPortalToolBase::HandleInvert()
 	return true;
 }
 
+bool UPortalToolBase::HandleFlip(EAxis::Type FlipAxis)
+{
+	if (NewObjectIDs.Num() == 0)
+	{
+		return false;
+	}
+	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	return newMOI && newMOI->GetFlippedState(FlipAxis, NewMOIStateData);
+}
+
 bool UPortalToolBase::HandleControlKey(bool pressed)
 {
 	return true;

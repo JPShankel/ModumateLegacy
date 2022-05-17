@@ -48,6 +48,7 @@ public:
 	virtual void UpdateDynamicGeometry() override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController* controller) override;
 	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) override;
+	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
 	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping, bool bForSelection) const override;
 	virtual void ToggleAndUpdateCapGeometry(bool bEnableCap) override;

@@ -159,6 +159,18 @@ bool AMOIPointHosted::GetOffsetState(const FVector& AdjustmentDirection, FMOISta
 
 }
 
+bool AMOIPointHosted::GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const
+{
+	OutState = GetStateData();
+
+	FMOIPointHostedData modifiedInstanceData = InstanceData;
+
+	float curFlipSign = modifiedInstanceData.FlipSigns.GetComponentForAxis(FlipAxis);
+	modifiedInstanceData.FlipSigns.SetComponentForAxis(FlipAxis, -curFlipSign);
+
+	return OutState.CustomData.SaveStructData(modifiedInstanceData);
+}
+
 void AMOIPointHosted::GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping, bool bForSelection) const
 {
 	const ACompoundMeshActor* cma = Cast<ACompoundMeshActor>(GetActor());

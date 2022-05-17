@@ -124,6 +124,16 @@ bool UPointHostedTool::BeginUse()
 	return bSuccess;
 }
 
+bool UPointHostedTool::HandleFlip(EAxis::Type FlipAxis)
+{
+	if (NewObjectIDs.Num() == 0)
+	{
+		return false;
+	}
+	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	return newMOI && newMOI->GetFlippedState(FlipAxis, NewMOIStateData);
+}
+
 bool UPointHostedTool::HandleOffset(const FVector2D& ViewSpaceDirection)
 {
 	if (NewObjectIDs.Num() == 0)

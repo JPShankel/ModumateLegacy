@@ -41,6 +41,7 @@ public:
 	virtual void UpdateDynamicGeometry() override;
 	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) override;
 	virtual bool GetOffsetState(const FVector& AdjustmentDirection, FMOIStateData& OutState) const override;
+	virtual bool GetFlippedState(EAxis::Type FlipAxis, FMOIStateData& OutState) const override;
 	virtual void GetStructuralPointsAndLines(TArray<FStructurePoint>& outPoints, TArray<FStructureLine>& outLines, bool bForSnapping, bool bForSelection) const override;
 	virtual void ToggleAndUpdateCapGeometry(bool bEnableCap) override;
 	virtual void GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage, const FPlane& Plane, const FVector& AxisX, const FVector& AxisY, const FVector& Origin,

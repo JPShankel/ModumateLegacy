@@ -137,6 +137,24 @@ bool UFaceHostedTool::BeginUse()
 	return bSuccess;
 }
 
+bool UFaceHostedTool::HandleFlip(EAxis::Type FlipAxis)
+{
+	if (NewObjectIDs.Num() == 0)
+	{
+		return false;
+	}
+
+	// FaceHosted tools create single new span, 
+	// we handle flip by setting its child (FaceHosted) instance data
+	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	AMOIMetaPlaneSpan* span = Cast<AMOIMetaPlaneSpan>(newMOI);
+	if (span && span->GetChildIDs().Num() > 0)
+	{
+		newMOI = span->GetChildObjects()[0];
+	}
+	return newMOI && newMOI->GetFlippedState(FlipAxis, NewMOIStateData);
+}
+
 bool UFaceHostedTool::HandleOffset(const FVector2D& ViewSpaceDirection)
 {
 	if (NewObjectIDs.Num() == 0)
