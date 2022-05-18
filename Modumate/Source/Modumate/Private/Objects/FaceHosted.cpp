@@ -303,13 +303,13 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 		if (CachedAssembly.Parts.Num() > 0)
 		{
 			//make compound mesh actor from assembly
-			cma->MakeFromAssembly(CachedAssembly, FVector::OneVector, false, bCreateCollision);
+			cma->MakeFromAssembly(CachedAssembly, cmaScale, false, bCreateCollision);
 
 			//set CMA transform based on values calculated above
 			FTransform cmaTransform;
 			cmaTransform.SetRotation(cmaRot);
 			cmaTransform.SetLocation(cmaLocation);
-			cmaTransform.SetScale3D(cmaScale);
+			cmaTransform.SetScale3D(FVector::OneVector);
 			cma->SetActorTransform(cmaTransform);
 		}		
 	}
