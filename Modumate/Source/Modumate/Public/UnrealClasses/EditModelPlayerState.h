@@ -129,6 +129,7 @@ public:
 	bool ShowingFileDialog;
 
 	AModumateObjectInstance *HoveredObject;
+	AModumateObjectInstance *HoveredGroup = nullptr;
 	FMOICameraViewData CachedInputCameraState;
 
 	bool ToWebPlayerState(FWebEditModelPlayerState& OutState) const;
@@ -176,7 +177,8 @@ public:
 	void SetObjectIDSelected(int32 ObjID, bool bSelected);
 
 	void SetShowHoverEffects(bool showHoverEffects);
-	void SetHoveredObject(AModumateObjectInstance *ob);
+	void SetHoveredObject(AModumateObjectInstance* Object);
+	void SetHoveredGroup(AModumateObjectInstance* GroupObject);
 	void SetObjectSelected(AModumateObjectInstance *ob, bool bSelected, bool bDeselectOthers);
 	void SetObjectsSelected(const TSet<AModumateObjectInstance*>& Obs, bool bSelected, bool bDeselectOthers);
 	void SetGroupObjectSelected(AModumateObjectInstance* GroupObject, bool bSelected, bool bDeselectOthers);

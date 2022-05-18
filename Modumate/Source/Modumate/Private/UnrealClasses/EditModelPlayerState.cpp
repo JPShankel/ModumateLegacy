@@ -323,6 +323,26 @@ void AEditModelPlayerState::BatchRenderLines()
 		}
 	}
 
+	if (HoveredGroup)
+	{
+		FModumateLines hoveredGroupLine;
+		hoveredGroupLine.Thickness = 1.0f;
+		hoveredGroupLine.DashLength = 6.0f;
+		hoveredGroupLine.DashSpacing = 10.0f;
+		hoveredGroupLine.Color = FLinearColor(0.9f, 0.9f, 0.9f);
+
+		TArray<FStructurePoint> points;
+		TArray<FStructureLine> groupBox;
+		HoveredGroup->RouteGetStructuralPointsAndLines(points, groupBox, false, false, cullingPlane);
+
+		for (const auto& line: groupBox)
+		{
+			hoveredGroupLine.Point1 = line.P1;
+			hoveredGroupLine.Point2 = line.P2;
+			EMPlayerController->HUDDrawWidget->LinesToDraw.Add(hoveredGroupLine);
+		}
+	}
+
 	// TODO: move this code - either be able to ask objects which lines to draw or enable objects to bypass this function
 	for (AModumateObjectInstance *cutPlaneObj : doc->GetObjectsOfType(EObjectType::OTCutPlane))
 	{
@@ -786,21 +806,33 @@ void AEditModelPlayerState::SetShowHoverEffects(bool showHoverEffects)
 	PostViewChanged();
 }
 
-void AEditModelPlayerState::SetHoveredObject(AModumateObjectInstance *ob)
+void AEditModelPlayerState::SetHoveredObject(AModumateObjectInstance* Object)
 {
 //	UE_LOG(LogCallTrace, Display, TEXT("AEditModelPlayerState::SetHoveredObject"));
-	if (HoveredObject != ob)
+	if (HoveredObject != Object)
 	{
 		if (HoveredObject != nullptr)
 		{
 			HoveredObject->OnHovered(EMPlayerController, false);
 		}
-		HoveredObject = ob;
-		if (ob != nullptr)
+		HoveredObject = Object;
+		if (Object != nullptr)
 		{
-			ob->OnHovered(EMPlayerController, true);
+			Object->OnHovered(EMPlayerController, true);
 		}
 		PostViewChanged();
+	}
+}
+
+void AEditModelPlayerState::SetHoveredGroup(AModumateObjectInstance* GroupObject)
+{
+	if (!SelectedGroupObjects.Contains(GroupObject))
+	{
+		HoveredGroup = GroupObject;
+	}
+	else
+	{
+		HoveredGroup = nullptr;
 	}
 }
 

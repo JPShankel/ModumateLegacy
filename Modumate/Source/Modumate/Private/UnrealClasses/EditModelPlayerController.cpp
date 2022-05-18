@@ -2982,13 +2982,21 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 	}
 
 	AModumateObjectInstance *newHoveredObject = nullptr;
+	AModumateObjectInstance* newHoveredGroup = nullptr;
 
 	if (InteractionHandle == nullptr && actorUnderMouse)
 	{
 		newHoveredObject = Document->ObjectFromActor(actorUnderMouse);
+		int32 hoveredGroup;
+		bool bInGroup;  // unused
+		if (newHoveredObject && UModumateObjectStatics::IsObjectInSubgroup(Document, newHoveredObject, MOD_ID_NONE, hoveredGroup, bInGroup))
+		{
+			newHoveredGroup = Document->GetObjectById(hoveredGroup);
+		}
 	}
 
 	EMPlayerState->SetHoveredObject(newHoveredObject);
+	EMPlayerState->SetHoveredGroup(newHoveredGroup);
 
 	// Automatic user snap creation is disabled
 #if 0
