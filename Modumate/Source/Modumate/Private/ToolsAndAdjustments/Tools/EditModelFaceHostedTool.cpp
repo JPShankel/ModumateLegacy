@@ -226,6 +226,16 @@ bool UFaceHostedTool::GetObjectCreationDeltas(const TArray<int32>& InTargetFaceI
 
 		if (targetMOI->GetObjectType() == EObjectType::OTMetaPlane)
 		{
+			// Destroy any children object of targeted face if tool is in Apply mode
+			// This is used to replace portals, as they are currently not span
+			if (targetMOI && GetCreateObjectMode() == EToolCreateObjectMode::Apply)
+			{
+				for (auto* childOb : targetMOI->GetChildObjects())
+				{
+					delta->AddCreateDestroyState(childOb->GetStateData(), EMOIDeltaType::Destroy);
+				}
+			}
+
 			TArray<int32> spanIDs;
 			UModumateObjectStatics::GetSpansForFaceObject(GameState->Document, targetMOI, spanIDs);
 			if (spanIDs.Num() > 0)

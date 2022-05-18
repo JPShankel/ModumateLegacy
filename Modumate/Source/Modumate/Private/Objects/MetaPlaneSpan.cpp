@@ -114,7 +114,8 @@ bool AMOIMetaPlaneSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPt
 #endif
 		else if (GetChildIDs().Num() == 0 || InstanceData.GraphMembers.Num() == 0)
 		{
-			Document->GetDeleteObjectsDeltas(outDeltas, { this });
+			// TODO: Portals are currently not spans, so we have to delete them via children
+			Document->GetDeleteObjectsDeltas(outDeltas, { this }, true, true, true);
 		}
 		else if (!UpdateCachedPerimeterFace())
 		{

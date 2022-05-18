@@ -1727,9 +1727,9 @@ void UModumateDocument::DeleteObjects(const TArray<AModumateObjectInstance*>& in
 	ApplyDeltas(deleteDeltas, world);
 }
 
-bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, const TArray<AModumateObjectInstance*> &initialObjectsToDelete, bool bAllowRoomAnalysis, bool bDeleteConnected)
+bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, const TArray<AModumateObjectInstance*> &InitialObjectsToDelete, bool bAllowRoomAnalysis, bool bDeleteConnected, bool bDeleteDescendents)
 {
-	if (initialObjectsToDelete.Num() == 0)
+	if (InitialObjectsToDelete.Num() == 0)
 	{
 		return false;
 	}
@@ -1738,6 +1738,15 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 	if (!ensureAlways(world != nullptr))
 	{
 		return false;
+	}
+
+	TArray<AModumateObjectInstance*> currentObjectsToDelete = InitialObjectsToDelete;
+	if (bDeleteDescendents)
+	{
+		for (auto curObjToDelete : InitialObjectsToDelete)
+		{
+			currentObjectsToDelete.Append(curObjToDelete->GetAllDescendents());
+		}
 	}
 
 	// Keep track of all of the IDs of objects that the various kinds of deltas (Graph3D, Graph2D, non-Graph, etc.) will delete.
@@ -1767,7 +1776,7 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 	// is accomplished by getting the deltas for deleting all of its elements. This also allows undo to add them back as Graph2D element addition deltas.
 	TSet<int32> graph3DObjIDsToDelete;
 	TMap<int32, TArray<int32>> surfaceGraphDeletionMap;
-	for (AModumateObjectInstance* objToDelete : initialObjectsToDelete)
+	for (AModumateObjectInstance* objToDelete : currentObjectsToDelete)
 	{
 		if (objToDelete == nullptr)
 		{
@@ -1873,7 +1882,7 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 
 	// Delete non-graph objects that were not deleted as a result of Graph 2D/3D deltas
 	TArray<AModumateObjectInstance*> nonGraphObjsToDelete;
-	for (AModumateObjectInstance* objToDelete : initialObjectsToDelete)
+	for (AModumateObjectInstance* objToDelete : currentObjectsToDelete)
 	{
 		if (objToDelete && !objIDsToDelete.Contains(objToDelete->ID) && !groupsToDelete.Contains(objToDelete))
 		{

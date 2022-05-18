@@ -297,6 +297,15 @@ FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& Targe
 		}
 
 		AModumateObjectInstance* planeFace = GameState->Document->GetObjectById(targetFaceID);
+		// Destroy any children object of targeted face if tool is in Apply mode
+		// This is used to replace portals, as they are currently not span
+		if (planeFace && GetCreateObjectMode() == EToolCreateObjectMode::Apply)
+		{
+			for (auto* childOb : planeFace->GetChildObjects())
+			{
+				delta->AddCreateDestroyState(childOb->GetStateData(), EMOIDeltaType::Destroy);
+			}
+		}
 
 		TArray<int32> spans;
 		UModumateObjectStatics::GetSpansForFaceObject(GameState->Document, planeFace, spans);
