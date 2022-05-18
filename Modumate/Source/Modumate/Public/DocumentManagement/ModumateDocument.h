@@ -396,6 +396,8 @@ private:
 
 	TUniquePtr<FDrawingDesignerRenderControl> DrawingDesignerRenderControl;
 
+	TArray<int32> ChangedGroupIDs;
+
 	void UpdateWindowTitle();
 	void RecordSavedProject(UWorld* World, const FString& FilePath, bool bUserFile);
 

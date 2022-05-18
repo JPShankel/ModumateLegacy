@@ -908,7 +908,8 @@ void UModumateDocument::ApplyGraph3DDelta(const FGraph3DDelta &Delta, UWorld *Wo
 			GraphElementsToGraph3DMap.Remove(item.Key);
 		}
 		if (graphID == GetActiveVolumeGraphID())
-		{
+		{   // Deletion of active group - move to root group.
+			UModumateObjectStatics::GetGroupIdsForGroupChange(this, GetRootVolumeGraphID(), ChangedGroupIDs);
 			SetActiveVolumeGraphID(GetRootVolumeGraphID());
 		}
 		VolumeGraphs.Remove(graphID);
@@ -1556,6 +1557,11 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World, bool bCleanObjects, bool 
 	if (playerState)
 	{
 		playerState->ValidateSelectionsAndView();
+		if (ChangedGroupIDs.Num() > 0)
+		{   // Group change due to, eg, deleting active group. 
+			playerState->PostGroupChanged(ChangedGroupIDs);
+			ChangedGroupIDs.Empty();
+		}
 	}
 
 	// TODO: Find a better way to determine what objects were or are now dependents of CutPlanes,

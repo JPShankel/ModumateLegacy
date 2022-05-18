@@ -483,7 +483,7 @@ bool AEditModelPlayerState::ValidateSelectionsAndView()
 	UModumateDocument* doc = gameState->Document;
 
 	TSet<AModumateObjectInstance*> pendingDeselectObjects;
-	for (auto& moi : SelectedObjects)
+	for (auto* moi : SelectedObjects.Union(SelectedGroupObjects))
 	{
 		if ((moi == nullptr) || moi->IsDestroyed())
 		{
@@ -492,6 +492,7 @@ bool AEditModelPlayerState::ValidateSelectionsAndView()
 		}
 	}
 	SelectedObjects = SelectedObjects.Difference(pendingDeselectObjects);
+	SelectedGroupObjects = SelectedGroupObjects.Difference(pendingDeselectObjects);
 
 	TArray<int32> invalidErrorIDs;
 	for (auto &kvp : ObjectErrorMap)
