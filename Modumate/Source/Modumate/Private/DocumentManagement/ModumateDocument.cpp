@@ -1903,8 +1903,9 @@ bool UModumateDocument::GetDeleteObjectsDeltas(TArray<FDeltaPtr> &OutDeltas, con
 
 	for (auto* groupToDelete : groupsToDelete)
 	{
-		FModumateObjectDeltaStatics::GetDeltasForGraphDelete(this, groupToDelete->ID, OutDeltas);
+		if (ensureAlways(groupToDelete->ID != GetRootVolumeGraphID()))
 		{
+			FModumateObjectDeltaStatics::GetDeltasForGraphDelete(this, groupToDelete->ID, OutDeltas);
 			GetDeleteObjectsDeltas(OutDeltas, groupToDelete->GetChildObjects(), false, false);
 		}
 	}
