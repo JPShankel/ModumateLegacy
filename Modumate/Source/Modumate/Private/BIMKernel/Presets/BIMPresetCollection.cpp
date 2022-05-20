@@ -861,6 +861,15 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 {
 	*this = InDB.GetPresetCollection();
 
+	FBIMPresetCollection docPresets = DocRecord.PresetCollection;
+
+	// Presets in the doc were edited by definition
+	// If bEdited comes in false for a custom preset for any reason, it won't get saved
+	for (auto& kvp : docPresets.PresetsByGUID)
+	{
+		kvp.Value.bEdited = true;
+	}
+
 	PresetTaxonomy = InDB.GetPresetCollection().PresetTaxonomy;
 
 	for (auto& kvp : DocRecord.PresetCollection.NodeDescriptors)
@@ -878,27 +887,21 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 
 	if (DocRecordVersion < DocVersion)
 	{
-		TMap<FGuid, FBIMPresetInstance> fixedPresets = DocRecord.PresetCollection.PresetsByGUID;
-
 		FBIMPresetCollectionProxy proxyCollection(*this);
-		
-		for (auto& kvp : fixedPresets)
+
+		for (auto& kvp : docPresets.PresetsByGUID)
 		{
 			proxyCollection.OverridePreset(kvp.Value);
 		}
 
-		for (auto& kvp : fixedPresets)
+		for (auto& kvp : docPresets.PresetsByGUID)
 		{
-			kvp.Value.UpgradeData(InDB,proxyCollection, DocRecordVersion);
+			kvp.Value.UpgradeData(InDB, proxyCollection, DocRecordVersion);
 		}
-
-		PresetsByGUID.Append(fixedPresets);
-	}
-	else
-	{
-		PresetsByGUID.Append(DocRecord.PresetCollection.PresetsByGUID);
 	}
 
+	PresetsByGUID.Append(docPresets.PresetsByGUID);
+	
 	// If any presets fail to build their assembly, remove them
 	// They'll be replaced by the fallback system and will not be written out again
 	TSet<FGuid> incompletePresets;
