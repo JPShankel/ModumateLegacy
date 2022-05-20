@@ -60,7 +60,7 @@ int32 UViewCubeWidget::NativePaint(const FPaintArgs& Args, const FGeometry& Allo
 
 	const auto player = GetWorld()->GetFirstLocalPlayerFromController();
 	const auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
-	const auto playerState = controller->EMPlayerState;
+	const auto playerState = controller ? controller->EMPlayerState : nullptr;
 
 	if (playerState && !playerState->bDrawingDesignerVisible) {
 		for (auto& kvp : DirectionToButton)
