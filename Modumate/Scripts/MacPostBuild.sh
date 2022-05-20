@@ -81,12 +81,14 @@ mkdir -p "${UE_OUTPUT_APP}/Contents/Frameworks/UnrealCEFSubProcess (Renderer).ap
 cp -R "${CEF_FRAMEWORK}" "${UE_OUTPUT_APP}/Contents/Frameworks/UnrealCEFSubProcess (Renderer).app/Contents/Frameworks"
 
 #-------------------------------------
-# Do some cleanup of unused component
-if [[ -f "${UE_OUTPUT_APP}/Contents/UE4/Engine/Build" ]]; then
-    rm -r "${UE_OUTPUT_APP}/Contents/UE4/Engine/Build"
+# Do some cleanup of unused components
+if [[ -d "${UE_OUTPUT_APP}/Contents/UE4/Engine/Build" ]]; then
+    echo "${highlight}Removing Contents/UE4/Engine/Build${normal}"
+    rm -rf "${UE_OUTPUT_APP}/Contents/UE4/Engine/Build"
 fi
-if [[ -f "${UE_OUTPUT_APP}/Contents/Resources/RadioEffectUnit.component" ]]; then
-    rm -r "${UE_OUTPUT_APP}/Contents/Resources/RadioEffectUnit.component"
+if [[ -d "${UE_OUTPUT_APP}/Contents/Resources/RadioEffectUnit.component" ]]; then
+    echo "${highlight}Removing CContents/Resources/RadioEffectUnit.component${normal}"
+    rm -rf "${UE_OUTPUT_APP}/Contents/Resources/RadioEffectUnit.component"
 fi
 
 #-------------------------------------
@@ -116,7 +118,9 @@ if [[ ! -z "$IDENTITY" ]]; then
     BUNDLE_GPU_APP="${UE_OUTPUT_APP}/Contents/Frameworks/UnrealCEFSubProcess (GPU).app"
     BUNDLE_RENDERER_APP="${UE_OUTPUT_APP}/Contents/Frameworks/UnrealCEFSubProcess (Renderer).app"
     BUNDLE_HELPER_APP="${UE_OUTPUT_APP}/Contents/Frameworks/UnrealCEFSubProcess.app"
-    BUNDLE_FRAMEWORK="${UE_OUTPUT_APP}/Contents/Frameworks/Chromium Embedded Framework.framework"
+
+    EXTENSION_FRAMEWORK="/Contents/Frameworks/Chromium Embedded Framework.framework"
+    EXTENSION_BINARY_FRAMEWORK="${EXTENSION_FRAMEWORK}/Chromium Embedded Framework"
 
     ENTITLEMENTS_UE="${MODUMATE_GIT_PATH}/Modumate/Scripts/ent_ue4editor.plist"
     ENTITLEMENTS_HELPER="${MODUMATE_GIT_PATH}/Modumate/Scripts/ent_cef_helper.plist"
@@ -125,8 +129,17 @@ if [[ ! -z "$IDENTITY" ]]; then
     echo "${highlight}Signing dylibs${normal}"
     find "${UE_OUTPUT_APP}/Contents" -name '*.dylib' -print0 | xargs -0 -J % codesign -f -v -s "$IDENTITY" --options runtime --timestamp "%"
 
-    echo "${highlight}Signing CEF Framework${normal}"
-    codesign --force --options runtime --entitlements "$ENTITLEMENTS_FRAMEWORK" --sign "$IDENTITY" --timestamp --verbose "${BUNDLE_FRAMEWORK}"
+    echo "${highlight}Signing CEF Framework Binaries${normal}"
+    codesign --force --options runtime --entitlements "$ENTITLEMENTS_FRAMEWORK" --sign "$IDENTITY" --timestamp --verbose "${UE_OUTPUT_APP}${EXTENSION_BINARY_FRAMEWORK}"
+    codesign --force --options runtime --entitlements "$ENTITLEMENTS_FRAMEWORK" --sign "$IDENTITY" --timestamp --verbose "${BUNDLE_GPU_APP}${EXTENSION_BINARY_FRAMEWORK}"
+    codesign --force --options runtime --entitlements "$ENTITLEMENTS_FRAMEWORK" --sign "$IDENTITY" --timestamp --verbose "${BUNDLE_RENDERER_APP}${EXTENSION_BINARY_FRAMEWORK}"
+    codesign --force --options runtime --entitlements "$ENTITLEMENTS_FRAMEWORK" --sign "$IDENTITY" --timestamp --verbose "${BUNDLE_HELPER_APP}${EXTENSION_BINARY_FRAMEWORK}"
+
+    echo "${highlight}Signing CEF Frameworks${normal}"
+    codesign --force --options runtime --entitlements "$ENTITLEMENTS_FRAMEWORK" --sign "$IDENTITY" --timestamp --verbose "${UE_OUTPUT_APP}${EXTENSION_FRAMEWORK}"
+    codesign --force --options runtime --entitlements "$ENTITLEMENTS_FRAMEWORK" --sign "$IDENTITY" --timestamp --verbose "${BUNDLE_GPU_APP}${EXTENSION_FRAMEWORK}"
+    codesign --force --options runtime --entitlements "$ENTITLEMENTS_FRAMEWORK" --sign "$IDENTITY" --timestamp --verbose "${BUNDLE_RENDERER_APP}${EXTENSION_FRAMEWORK}"
+    codesign --force --options runtime --entitlements "$ENTITLEMENTS_FRAMEWORK" --sign "$IDENTITY" --timestamp --verbose "${BUNDLE_HELPER_APP}${EXTENSION_FRAMEWORK}"
 
     echo "${highlight}Signing CrashReportClient.app${normal}"
     codesign --force --options runtime --entitlements "$ENTITLEMENTS_UE" --sign "$IDENTITY" --timestamp --verbose "${UE_OUTPUT_APP}/Contents/UE4/Engine/Binaries/Mac/CrashReportClient.app"
@@ -139,6 +152,15 @@ if [[ ! -z "$IDENTITY" ]]; then
 
     echo "${highlight}Signing UnrealCEFSubProcess (Renderer).app${normal}"
     codesign --force --options runtime --entitlements "$ENTITLEMENTS_HELPER" --sign "$IDENTITY" --timestamp --verbose "${BUNDLE_RENDERER_APP}"
+
+    echo "${highlight}Signing CrashReportClient Binary${normal}"
+    codesign --force --options runtime --entitlements "$ENTITLEMENTS_UE" --sign "$IDENTITY" --timestamp --verbose "${UE_OUTPUT_APP}/Contents/UE4/Engine/Binaries/Mac/CrashReportClient.app/Contents/MacOS/CrashReportClient"
+
+    for file in ${UE_OUTPUT_APP}/Contents/MacOS/*
+    do
+        echo "${highlight}Signing Modumate Binary${normal}"
+        codesign --force --options runtime --entitlements "$ENTITLEMENTS_UE" --sign "$IDENTITY" --timestamp --verbose "$file"
+    done
 
     echo "${highlight}Signing ${UE_OUTPUT_APP}${normal}"
     codesign --force --options runtime --entitlements "$ENTITLEMENTS_UE" --sign "$IDENTITY" --timestamp --verbose "${UE_OUTPUT_APP}"
