@@ -130,7 +130,27 @@ bool UGroupTool::Activate()
 			}
 		}
 		metaItemsToMove = metaItemsToMove.Difference(itemsToIgnore);
-		
+
+		edgesSelectedDirectly = edgesSelectedDirectly.Difference(itemsToIgnore);
+		itemsToIgnore.Empty();
+
+		TArray<TPair<FVector, FVector>> newGroupEdges;
+		for (int32 edgeID : edgesSelectedDirectly)
+		{
+			const FGraph3DEdge* edge = oldGraph->FindEdge(edgeID);
+			for (const auto& faceEdge: edge->ConnectedFaces)
+			{
+				if (!faceEdge.bContained && !metaItemsToMove.Contains(FMath::Abs(faceEdge.FaceID)))
+				{
+					itemsToIgnore.Add(edgeID);
+					newGroupEdges.Emplace(oldGraph->FindVertex(edge->StartVertexID)->Position, oldGraph->FindVertex(edge->EndVertexID)->Position);
+					break;
+				}
+			}
+		}
+
+		metaItemsToMove = metaItemsToMove.Difference(itemsToIgnore);
+
 		TArray<FGraph3DDelta> deleteGraphDeltas;
 		// Regular delete has bGatherEdgesFromFaces = false, bAttemptJoin = true. This can change
 		// behaviour slightly (esp. bGatherEdgesFromFaces).
@@ -142,6 +162,26 @@ bool UGroupTool::Activate()
 		{
 			deleteGraphDelta.GraphID = oldGroupID;
 			deltas.Add(MakeShared<FGraph3DDelta>(MoveTemp(deleteGraphDelta)));
+		}
+
+		if (newGroupEdges.Num() > 0)
+		{
+			// Create temp copy of new graph.
+			for (FGraph3DDelta& graphDelta : createGraphDeltas)
+			{
+				tempGraph.ApplyDelta(graphDelta);
+			}
+	
+			// Duplicate edges that we didn't want to remove from old graph.
+			for (const auto& newEdge : newGroupEdges)
+			{
+				TArray<FGraph3DDelta> edgeDeltas;
+				TArray<int32> newEdgeIDs;  // unused
+				if (tempGraph.GetDeltaForEdgeAdditionWithSplit(newEdge.Key, newEdge.Value, edgeDeltas, nextID, newEdgeIDs, false, false))
+				{
+					createGraphDeltas.Append(edgeDeltas);
+				}
+			}
 		}
 
 		for (auto& createGraphDelta: createGraphDeltas)
