@@ -58,43 +58,49 @@ int32 UViewCubeWidget::NativePaint(const FPaintArgs& Args, const FGeometry& Allo
 
 	FVector forwardVector = CameraManager ? CameraManager->GetActorForwardVector() : DefaultCameraForward;
 
-	for (auto& kvp : DirectionToButton)
-	{
-		auto& direction = kvp.Key;
-		auto* button = kvp.Value;
+	const auto player = GetWorld()->GetFirstLocalPlayerFromController();
+	const auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
+	const auto playerState = controller->EMPlayerState;
 
-		// only show lines and buttons for faces with normals that would face the camera
-		if ((forwardVector | direction) < THRESH_NORMALS_ARE_ORTHOGONAL)
+	if (playerState && !playerState->bDrawingDesignerVisible) {
+		for (auto& kvp : DirectionToButton)
 		{
-			button->SetVisibility(ESlateVisibility::Hidden);
-			continue;
-		}
-		button->SetVisibility(ESlateVisibility::Visible);
+			auto& direction = kvp.Key;
+			auto* button = kvp.Value;
 
-		FVector axisX, axisY;
-		UModumateGeometryStatics::FindBasisVectors(axisX, axisY, direction);
-		TArray<FVector> points = {
-			direction + axisX + axisY,
-			direction + axisX - axisY,
-			direction - axisX - axisY,
-			direction - axisX + axisY
-		};
+			// only show lines and buttons for faces with normals that would face the camera
+			if ((forwardVector | direction) < THRESH_NORMALS_ARE_ORTHOGONAL)
+			{
+				button->SetVisibility(ESlateVisibility::Hidden);
+				continue;
+			}
+			button->SetVisibility(ESlateVisibility::Visible);
 
-		FWidgetTransform newTransform;
-		newTransform.Translation = TransformVector(direction * CubeSideLength);
-		button->SetRenderTransform(newTransform);
+			FVector axisX, axisY;
+			UModumateGeometryStatics::FindBasisVectors(axisX, axisY, direction);
+			TArray<FVector> points = {
+				direction + axisX + axisY,
+				direction + axisX - axisY,
+				direction - axisX - axisY,
+				direction - axisX + axisY
+			};
 
-		for (int32 i = 0; i < 4; i++)
-		{
-			FVector2D pointStart = TransformVector(CubeSideLength * points[i]);
-			FVector2D pointEnd = TransformVector(CubeSideLength * points[(i + 1) % 4]);
-			FVector2D lineDir = (pointEnd - pointStart).GetSafeNormal();
-			pointStart += 0.5f * LineThickness * lineDir;
-			pointEnd -= 0.5f * LineThickness * lineDir;
+			FWidgetTransform newTransform;
+			newTransform.Translation = TransformVector(direction * CubeSideLength);
+			button->SetRenderTransform(newTransform);
 
-			UWidgetBlueprintLibrary::DrawLine(selfPaintContext,
-				pointStart, pointEnd,
-				LineColor, true, LineThickness);
+			for (int32 i = 0; i < 4; i++)
+			{
+				FVector2D pointStart = TransformVector(CubeSideLength * points[i]);
+				FVector2D pointEnd = TransformVector(CubeSideLength * points[(i + 1) % 4]);
+				FVector2D lineDir = (pointEnd - pointStart).GetSafeNormal();
+				pointStart += 0.5f * LineThickness * lineDir;
+				pointEnd -= 0.5f * LineThickness * lineDir;
+
+				UWidgetBlueprintLibrary::DrawLine(selfPaintContext,
+					pointStart, pointEnd,
+					LineColor, true, LineThickness);
+			}
 		}
 	}
 

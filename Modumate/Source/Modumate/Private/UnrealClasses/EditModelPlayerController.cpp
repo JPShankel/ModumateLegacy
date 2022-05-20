@@ -4101,6 +4101,7 @@ FPlane AEditModelPlayerController::GetCurrentCullingPlane() const
 void AEditModelPlayerController::ToggleDrawingDesigner(bool bEnable) const
 {
 	EditModelUserWidget->DrawingDesigner->DrawingSetWebBrowser->WebBrowserWidget->ForceFullscreenInput(bEnable);
+	EMPlayerState->bDrawingDesignerVisible = bEnable;
 }
 
 void AEditModelPlayerController::CapabilityReady(AModumateCapability* Capability)

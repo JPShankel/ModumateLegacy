@@ -118,6 +118,8 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Debug")
 	bool bShowDesignOptionDebug;
 
+	bool bDrawingDesignerVisible = false;
+
 	bool bBeganWithController = false;
 
 	FString LastFilePath;
