@@ -1514,7 +1514,7 @@ bool UModumateDocument::FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDelta
 	GetObjectsOfTypeCasted(EObjectType::OTMetaPlaneSpan, spans);
 
 	if (GraphDeltaElementChanges.Num() > 0)
-	{
+	{   // TODO: Do we still need this?
 		TArray<int32> faceChangeArray = GraphDeltaElementChanges.Array();
 		for (auto* span : spans)
 		{
@@ -2287,14 +2287,7 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 		GraphDeltaElementChanges.Add(kvp.Key);
 		for (int32 parentID : kvp.Value.ParentObjIDs)
 		{
-			if (parentIDToChildrenIDs.Contains(parentID))
-			{
-				parentIDToChildrenIDs[parentID].Add(kvp.Key);
-			}
-			else
-			{
-				parentIDToChildrenIDs.Add(parentID, { kvp.Key });
-			}
+			parentIDToChildrenIDs.FindOrAdd(parentID).Add(kvp.Key);
 		}
 	}
 
@@ -2302,15 +2295,7 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 	{
 		for (int32 parentID : kvp.Value.ParentObjIDs)
 		{
-			parentID = FMath::Abs(parentID);
-			if (parentIDToChildrenIDs.Contains(parentID))
-			{
-				parentIDToChildrenIDs[parentID].Add(FMath::Abs(kvp.Key));
-			}
-			else
-			{
-				parentIDToChildrenIDs.Add(parentID, { FMath::Abs(kvp.Key) });
-			}
+			parentIDToChildrenIDs.FindOrAdd(FMath::Abs(parentID)).Add(kvp.Key);
 		}
 	}
 
@@ -2323,25 +2308,65 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 
 	for (auto &kvp : parentIDToChildrenIDs)
 	{
+		// TODO: when spans v2 implemented clean up this mess.
 		int32 parentID = kvp.Key;
+		int32 newElementID = kvp.Value[0];  // Assume mapped to only one new edge/face.
 		auto parentObj = GetObjectById(parentID);
 
-		// obtained from the original graph because this face is removed by now
-		auto parentFace = GetVolumeGraph()->FindFace(parentID);
-
-		if (parentObj && parentObj->GetChildIDs().Num() > 0)
+		if (ensure(parentObj))
 		{
-			for (int32 childIdx = 0; childIdx < parentObj->GetChildIDs().Num(); childIdx++)
+			if (parentObj->GetChildIDs().Num() > 0)
 			{
-				auto childObj = GetObjectById(parentObj->GetChildIDs()[childIdx]);
-				// wall/floor objects need to be cloned to each child object, and will be deleted during face deletions
-				for (int32 childFaceID : kvp.Value)
+				for (int32 childIdx = 0; childIdx < parentObj->GetChildIDs().Num(); childIdx++)
 				{
-					if (!idsWithObjects.Contains(childFaceID))
+					auto childObj = GetObjectById(parentObj->GetChildIDs()[childIdx]);
+					// wall/floor objects need to be cloned to each child object, and will be deleted during face deletions
+					for (int32 childFaceID : kvp.Value)
 					{
-						DeepCloneForFinalize(TempGraph, childObj, childFaceID, OutSideEffectDeltas);
-						idsWithObjects.Add(childFaceID);
+						if (!idsWithObjects.Contains(childFaceID))
+						{
+							DeepCloneForFinalize(TempGraph, childObj, childFaceID, OutSideEffectDeltas);
+							idsWithObjects.Add(childFaceID);
+						}
 					}
+				}
+			}
+
+			// Treat spans & descendants as children to be cloned. MOD-3457
+			TArray<int32> spanIDs;
+			UModumateObjectStatics::GetSpansForFaceObject(this, parentObj, spanIDs);
+			UModumateObjectStatics::GetSpansForEdgeObject(this, parentObj, spanIDs);
+			for (int32 spanID: spanIDs)
+			{
+				if (!idsWithObjects.Contains(newElementID))
+				{
+					const auto* span = GetObjectById(spanID);
+					FMOIStateData spanState(span->GetStateData());
+					spanState.ID = NextID++;
+
+					auto spanDelta = MakeShared<FMOIDelta>();
+					if (span->GetObjectType() == EObjectType::OTMetaPlaneSpan)
+					{
+						FMOIMetaPlaneSpanData spanData(Cast<AMOIMetaPlaneSpan>(span)->InstanceData);
+						spanData.GraphMembers = { kvp.Value[0] };
+						spanState.CustomData.SaveStructData(spanData);
+					}
+					else
+					{   // Edge span:
+						FMOIMetaEdgeSpanData spanData(Cast<AMOIMetaEdgeSpan>(span)->InstanceData);
+						spanData.GraphMembers = { kvp.Value[0] };
+						spanState.CustomData.SaveStructData(spanData);
+					}
+
+					spanDelta->AddCreateDestroyState(spanState, EMOIDeltaType::Create);
+					OutSideEffectDeltas.Add(spanDelta);
+
+					for (int32 childIdx = 0; childIdx < span->GetChildIDs().Num(); ++childIdx)
+					{
+						auto childObj = GetObjectById(span->GetChildIDs()[childIdx]);
+						DeepCloneForFinalize(TempGraph, childObj, spanState.ID, OutSideEffectDeltas);
+					}
+					idsWithObjects.Add(newElementID);
 				}
 			}
 		}
@@ -2361,32 +2386,50 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 
 	for (int32 objID : deletedObjIDs)
 	{
-		auto obj = GetObjectById(objID);
+		const auto* obj = GetObjectById(objID);
 
-		if (obj && obj->GetChildIDs().Num() > 0)
+		if (ensure(obj))
 		{
-			auto& childIDs = obj->GetChildIDs();
-			for (int32 childIdx = 0; childIdx < childIDs.Num(); childIdx++)
+			TArray<int32> childIDsForDeletion (obj->GetChildIDs());
+
+			// Remove spans & descendants.
+			TArray<int32> spansForDeletion;
+			UModumateObjectStatics::GetSpansForFaceObject(this, obj, spansForDeletion);
+			UModumateObjectStatics::GetSpansForEdgeObject(this, obj, spansForDeletion);
+			for (int32 spanID : spansForDeletion)
 			{
-				auto childObj = GetObjectById(childIDs[childIdx]);
-				if (!childObj)
-				{
-					continue;
-				}
-
+				const auto* spanObj = GetObjectById(spanID);
+				childIDsForDeletion.Append(spanObj->GetChildIDs());
 				auto deleteObjectDelta = MakeShared<FMOIDelta>();
-				deleteObjectDelta->AddCreateDestroyState(childObj->GetStateData(), EMOIDeltaType::Destroy);
+				deleteObjectDelta->AddCreateDestroyState(spanObj->GetStateData(), EMOIDeltaType::Destroy);
 				OutSideEffectDeltas.Add(deleteObjectDelta);
+			}
 
-				if (childObj->GetChildIDs().Num() == 0)
+			if (childIDsForDeletion.Num() > 0)
+			{
+				auto& childIDs = obj->GetChildIDs();
+				for (int32 childIdx = 0; childIdx < childIDsForDeletion.Num(); childIdx++)
 				{
-					continue;
-				}
+					auto childObj = GetObjectById(childIDsForDeletion[childIdx]);
+					if (!childObj)
+					{
+						continue;
+					}
 
-				auto& grandchildIDs = childObj->GetChildIDs();
-				for (int32 grandchildIdx = 0; grandchildIdx < grandchildIDs.Num(); grandchildIdx++)
-				{
-					GetGraph2DDeletionDeltas(grandchildIDs[grandchildIdx], NextID, OutSideEffectDeltas);
+					auto deleteObjectDelta = MakeShared<FMOIDelta>();
+					deleteObjectDelta->AddCreateDestroyState(childObj->GetStateData(), EMOIDeltaType::Destroy);
+					OutSideEffectDeltas.Add(deleteObjectDelta);
+
+					if (childObj->GetChildIDs().Num() == 0)
+					{
+						continue;
+					}
+
+					auto& grandchildIDs = childObj->GetChildIDs();
+					for (int32 grandchildIdx = 0; grandchildIdx < grandchildIDs.Num(); grandchildIdx++)
+					{
+						GetGraph2DDeletionDeltas(grandchildIDs[grandchildIdx], NextID, OutSideEffectDeltas);
+					}
 				}
 			}
 		}
