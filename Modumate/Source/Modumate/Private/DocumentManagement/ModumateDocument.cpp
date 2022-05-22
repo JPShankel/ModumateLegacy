@@ -2756,7 +2756,13 @@ bool UModumateDocument::CleanObjects(TArray<FDeltaPtr>* OutSideEffectDeltas /*= 
 		TSet<AModumateObjectInstance*> uncleanableObjs;
 		for (auto& kvp : DirtyObjectMap)
 		{
-			uncleanableObjs.Append(kvp.Value);
+			for (auto* object : kvp.Value)
+			{   // Don't delete uncleanable groups due to danger.
+				if (object->GetObjectType() != EObjectType::OTMetaGraph)
+				{
+					uncleanableObjs.Add(object);
+				}
+			}
 		}
 
 		UE_LOG(LogTemp, Error, TEXT("Deleting %d uncleanable objects!"), uncleanableObjs.Num());
