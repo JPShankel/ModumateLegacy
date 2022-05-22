@@ -498,7 +498,8 @@ bool UStairTool::MakeStairs()
 		});
 
 		TArray<int32> addedFaceIDs;
-		if (GameState->Document->MakeMetaObject(GetWorld(), newPlanePoints, addedFaceIDs, deltas))
+		TArray<FGraph3DDelta> graphDeltas;
+		if (GameState->Document->MakeMetaObject(GetWorld(), newPlanePoints, addedFaceIDs, deltas, graphDeltas))
 		{
 			hostPlaneIDs = addedFaceIDs;
 		}

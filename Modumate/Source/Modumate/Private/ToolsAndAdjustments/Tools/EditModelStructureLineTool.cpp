@@ -398,7 +398,8 @@ bool UStructureLineTool::GetObjectCreationDeltas(const TArray<int32>& InTargetEd
 		}
 
 		TArray<FVector> points({ LineStartPos, LineEndPos });
-		if (!GameState->Document->MakeMetaObject(Controller->GetWorld(), points, targetEdgeIDs, OutDeltaPtrs, bSplitFaces))
+		TArray<FGraph3DDelta> graphDeltas;
+		if (!GameState->Document->MakeMetaObject(Controller->GetWorld(), points, targetEdgeIDs, OutDeltaPtrs, graphDeltas, bSplitFaces))
 		{
 			return false;
 		}

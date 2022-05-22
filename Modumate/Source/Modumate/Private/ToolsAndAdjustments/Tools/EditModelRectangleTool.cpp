@@ -243,6 +243,7 @@ bool URectangleTool::GetMetaObjectCreationDeltas(const FVector& Location, bool b
 		return true;
 	}
 
+	TArray<FGraph3DDelta> graphDeltas;
 	if (State == NewSegmentPending)
 	{
 		PlaneBaseStart = constrainedStartPoint;
@@ -250,7 +251,7 @@ bool URectangleTool::GetMetaObjectCreationDeltas(const FVector& Location, bool b
 
 		if (!(PlaneBaseEnd - PlaneBaseStart).IsNearlyZero())
 		{
-			bSuccess = doc->MakeMetaObject(GetWorld(), { PlaneBaseStart, PlaneBaseEnd }, CurAddedEdgeIDs, OutDeltaPtrs, bSplitAndUpdateFaces);
+			bSuccess = doc->MakeMetaObject(GetWorld(), { PlaneBaseStart, PlaneBaseEnd }, CurAddedEdgeIDs, OutDeltaPtrs, graphDeltas, bSplitAndUpdateFaces);
 		}
 	}
 	else if (State == NewPlanePending)
@@ -258,7 +259,7 @@ bool URectangleTool::GetMetaObjectCreationDeltas(const FVector& Location, bool b
 		// set end of the segment to the hit location
 		pendingSegment->Point2 = OutConstrainedLocation;
 		UpdatePendingPlane();
-		bSuccess = doc->MakeMetaObject(GetWorld(), PendingPlanePoints, CurAddedFaceIDs, OutDeltaPtrs, bSplitAndUpdateFaces);
+		bSuccess = doc->MakeMetaObject(GetWorld(), PendingPlanePoints, CurAddedFaceIDs, OutDeltaPtrs, graphDeltas, bSplitAndUpdateFaces);
 	}
 
 	if (!bSuccess)

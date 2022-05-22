@@ -327,11 +327,41 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 		}
 
 		TArray<int32> addedFaceIDs;
+		TArray<FGraph3DDelta> graphDeltas;
 		if (bValidContainedFace &&
-			GameState->Document->MakeMetaObject(world, metaPlanePoints, addedFaceIDs, OutDeltas) &&
+			GameState->Document->MakeMetaObject(world, metaPlanePoints, addedFaceIDs, OutDeltas, graphDeltas) &&
 			(addedFaceIDs.Num() == 1))
 		{
+			// Assign new face from UModumateDocument::MakeMetaObject() as new parent face for portal
 			newParentID = addedFaceIDs[0];
+
+			// Use graph deltas to get face info for span
+			TArray<int32> deltaFaceAdditions;
+			TArray<int32> deltaFaceDeletions;
+			for (auto curGraphDelta : graphDeltas)
+			{
+				for (auto& kvp : curGraphDelta.FaceAdditions)
+				{
+					// Span does not include portal face
+					if (kvp.Key != newParentID)
+					{
+						deltaFaceAdditions.Add(kvp.Key);
+					}
+
+				}
+				for (auto& kvp : curGraphDelta.FaceDeletions)
+				{
+					deltaFaceDeletions.Add(kvp.Key);
+				}
+			}
+
+			TArray<int32> spans;
+			UModumateObjectStatics::GetSpansForFaceObject(GameState->Document, curTargetPlaneObj, spans);
+			for (auto spanID : spans)
+			{
+				// TODO: face hosted objects to join span instead of replace, requires hole support in span geometry
+				FModumateObjectDeltaStatics::GetDeltasForFaceSpanAddRemove(GameState->Document, spanID, deltaFaceAdditions, deltaFaceDeletions, OutDeltas);
+			}
 		}
 	}
 	break;

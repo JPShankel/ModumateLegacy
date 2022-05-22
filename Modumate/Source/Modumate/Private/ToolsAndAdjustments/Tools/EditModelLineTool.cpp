@@ -239,7 +239,8 @@ bool ULineTool::GetEdgeDeltas(const FVector& StartPosition, const FVector &EndPo
 	}
 
 	TArray<int32> addedEdgeIDs;
-	bool bSuccess = doc->MakeMetaObject(GetWorld(), { StartPosition, EndPosition }, addedEdgeIDs, CurDeltas, !bIsPreview);
+	TArray<FGraph3DDelta> graphDeltas;
+	bool bSuccess = doc->MakeMetaObject(GetWorld(), { StartPosition, EndPosition }, addedEdgeIDs, CurDeltas, graphDeltas, !bIsPreview);
 
 	if (!bSuccess)
 	{

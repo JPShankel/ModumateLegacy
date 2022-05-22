@@ -159,7 +159,8 @@ public:
 	float GetDefaultJustificationXY() const { return DefaultJustificationXY; } // return DJXY from private;
 
 	int32 MakeRoom(UWorld *World, const TArray<FGraphSignedID> &FaceIDs);
-	bool MakeMetaObject(UWorld *world, const TArray<FVector> &points, TArray<int32>& OutObjectIDs, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitAndUpdateFaces = true);
+	bool MakeMetaObject(UWorld *world, const TArray<FVector> &points, TArray<int32>& OutObjectIDs, TArray<FDeltaPtr>& OutDeltaPtrs, 
+		TArray<FGraph3DDelta>& OutGraphDeltas, bool bSplitAndUpdateFaces = true);
 
 	bool PasteMetaObjects(const FGraph3DRecord* InRecord, TArray<FDeltaPtr>& OutDeltaPtrs, TMap<int32, TArray<int32>>& OutCopiedToPastedIDs, const FVector &Offset, bool bIsPreview);
 

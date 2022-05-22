@@ -2056,18 +2056,18 @@ int32 UModumateDocument::MakeRoom(UWorld *World, const TArray<FGraphSignedID> &F
 }
 
 bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& points,
-	TArray<int32>& OutObjectIDs, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitAndUpdateFaces)
+	TArray<int32>& OutObjectIDs, TArray<FDeltaPtr>& OutDeltaPtrs, TArray<FGraph3DDelta>& OutGraphDeltas, bool bSplitAndUpdateFaces)
 {
 	// TODO: Pass in nextID ref, DO NOT increment your own copy
 
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::MakeMetaObject"));
 	OutObjectIDs.Reset();
 	OutDeltaPtrs.Reset();
+	OutGraphDeltas.Reset();
 
 	bool bValidDelta = false;
 	int32 numPoints = points.Num();
 
-	TArray<FGraph3DDelta> deltas;
 	int32 id = MOD_ID_NONE;
 
 	if (numPoints == 1)
@@ -2075,22 +2075,22 @@ bool UModumateDocument::MakeMetaObject(UWorld* world, const TArray<FVector>& poi
 		FGraph3DDelta graphDelta(ActiveVolumeGraph);
 		bValidDelta = (numPoints == 1) && TempVolumeGraph.GetDeltaForVertexAddition(points[0], graphDelta, NextID, id);
 		OutObjectIDs = { id };
-		deltas = { graphDelta };
+		OutGraphDeltas = { graphDelta };
 	}
 	else if (numPoints == 2)
 	{
-		bValidDelta = TempVolumeGraph.GetDeltaForEdgeAdditionWithSplit(points[0], points[1], deltas, NextID, OutObjectIDs, true, bSplitAndUpdateFaces);
+		bValidDelta = TempVolumeGraph.GetDeltaForEdgeAdditionWithSplit(points[0], points[1], OutGraphDeltas, NextID, OutObjectIDs, true, bSplitAndUpdateFaces);
 	}
 	else if (numPoints >= 3)
 	{
-		bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(points, deltas, NextID, OutObjectIDs, bSplitAndUpdateFaces);
+		bValidDelta = TempVolumeGraph.GetDeltaForFaceAddition(points, OutGraphDeltas, NextID, OutObjectIDs, bSplitAndUpdateFaces);
 	}
 	else
 	{
 		return false;
 	}
 
-	if (!bValidDelta || !FinalizeGraphDeltas(deltas, OutDeltaPtrs))
+	if (!bValidDelta || !FinalizeGraphDeltas(OutGraphDeltas, OutDeltaPtrs))
 	{
 		// delta will be false if the object exists, out object ids should contain the existing id
 		FGraph3D::CloneFromGraph(TempVolumeGraph, *GetVolumeGraph());
