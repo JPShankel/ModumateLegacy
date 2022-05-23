@@ -26,6 +26,18 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPostOnNewModel);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdateScopeBoxes);
 
 USTRUCT()
+struct MODUMATE_API FWebPlayerDetails
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString id;
+	
+	UPROPERTY()
+	FString color;
+};
+
+USTRUCT()
 struct MODUMATE_API FWebEditModelPlayerState
 {
 	GENERATED_BODY()
@@ -60,6 +72,9 @@ struct MODUMATE_API FWebEditModelPlayerState
 
 	UPROPERTY()
 	float terrainHeight;
+
+	UPROPERTY()
+	TArray<FWebPlayerDetails> players;
 };
 
 /**

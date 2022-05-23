@@ -140,6 +140,8 @@ void AEditModelPlayerState::Tick(float DeltaSeconds)
 void AEditModelPlayerState::Destroyed()
 {
 	UpdateAllUsersList();
+	SendWebPlayerState();
+	
 
 	Super::Destroy();
 }
@@ -149,6 +151,7 @@ void AEditModelPlayerState::ClientInitialize(class AController* C)
 	Super::ClientInitialize(C);
 
 	TryInitController();
+	SendWebPlayerState();
 }
 
 void AEditModelPlayerState::TryInitController()
@@ -1503,6 +1506,7 @@ void AEditModelPlayerState::OnRep_UserInfo()
 	UE_LOG(LogTemp, Log, TEXT("Replicated %s's user info, id: %s"), *ReplicatedUserInfo.Firstname, *ReplicatedUserInfo.ID);
 
 	UpdateAllUsersList();
+	SendWebPlayerState();
 }
 
 void AEditModelPlayerState::OnRep_UserPermissions()
@@ -1721,6 +1725,21 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 		OutState.camera.bCutPlanesColorVisibility = CachedInputCameraState.bCutPlanesColorVisibility;
     
 		OutState.terrainHeight = GetDefaultTerrainHeight();
+	}
+
+	if (gameState)
+	{
+		TArray<FWebPlayerDetails> players;
+		for (APlayerState* playerState : gameState->PlayerArray)
+		{
+			auto player = Cast<AEditModelPlayerState>(playerState);
+			if (!player || player->IsActorBeingDestroyed()) continue;
+			FWebPlayerDetails playerDetails;
+			playerDetails.id = player->ReplicatedUserInfo.ID;
+			playerDetails.color = player->GetClientColor().ToRGBE().ToHex();
+			players.Add(playerDetails);
+		}
+		OutState.players = players;	
 	}
 
 	OutState.projectId = CurProjectID;
