@@ -125,6 +125,13 @@ if [[ ! -z $IS_JENKINS ]]; then
     find "./UE4" -name "*.dylib" -type f -exec sh -c 'install_name_tool -add_rpath $(dirname "$1") "$1"' sh {} \;
     cd $oldDir
 
+    #Make the symlink that will be used for the dmg. This allows Users
+    # to drag the App bundle to their applications folder without having
+    # to open another window
+    cd "${UE_OUTPUT_APP}/../"
+    ln -s /Applications Applications
+    cd $oldDir
+
 fi
 
 #-------------------------------------
