@@ -2287,7 +2287,10 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 		GraphDeltaElementChanges.Add(kvp.Key);
 		for (int32 parentID : kvp.Value.ParentObjIDs)
 		{
-			parentIDToChildrenIDs.FindOrAdd(parentID).Add(kvp.Key);
+			if (parentID != MOD_ID_NONE)
+			{
+				parentIDToChildrenIDs.FindOrAdd(parentID).Add(kvp.Key);
+			}
 		}
 	}
 
@@ -2295,7 +2298,10 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 	{
 		for (int32 parentID : kvp.Value.ParentObjIDs)
 		{
-			parentIDToChildrenIDs.FindOrAdd(FMath::Abs(parentID)).Add(kvp.Key);
+			if (parentID != MOD_ID_NONE)
+			{
+				parentIDToChildrenIDs.FindOrAdd(FMath::Abs(parentID)).Add(kvp.Key);
+			}
 		}
 	}
 
@@ -2310,10 +2316,9 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 	{
 		// TODO: when spans v2 implemented clean up this mess.
 		int32 parentID = kvp.Key;
-		int32 newElementID = kvp.Value[0];  // Assume mapped to only one new edge/face.
 		auto parentObj = GetObjectById(parentID);
 
-		if (ensure(parentObj))
+		if (parentObj)
 		{
 			if (parentObj->GetChildIDs().Num() > 0)
 			{
@@ -2338,35 +2343,38 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 			UModumateObjectStatics::GetSpansForEdgeObject(this, parentObj, spanIDs);
 			for (int32 spanID: spanIDs)
 			{
-				if (!idsWithObjects.Contains(newElementID))
+				for (int32 newElementID : kvp.Value)
 				{
-					const auto* span = GetObjectById(spanID);
-					FMOIStateData spanState(span->GetStateData());
-					spanState.ID = NextID++;
-
-					auto spanDelta = MakeShared<FMOIDelta>();
-					if (span->GetObjectType() == EObjectType::OTMetaPlaneSpan)
+					if (!idsWithObjects.Contains(newElementID))
 					{
-						FMOIMetaPlaneSpanData spanData(Cast<AMOIMetaPlaneSpan>(span)->InstanceData);
-						spanData.GraphMembers = { kvp.Value[0] };
-						spanState.CustomData.SaveStructData(spanData);
-					}
-					else
-					{   // Edge span:
-						FMOIMetaEdgeSpanData spanData(Cast<AMOIMetaEdgeSpan>(span)->InstanceData);
-						spanData.GraphMembers = { kvp.Value[0] };
-						spanState.CustomData.SaveStructData(spanData);
-					}
+						const auto* span = GetObjectById(spanID);
+						FMOIStateData spanState(span->GetStateData());
+						spanState.ID = NextID++;
 
-					spanDelta->AddCreateDestroyState(spanState, EMOIDeltaType::Create);
-					OutSideEffectDeltas.Add(spanDelta);
+						auto spanDelta = MakeShared<FMOIDelta>();
+						if (span->GetObjectType() == EObjectType::OTMetaPlaneSpan)
+						{
+							FMOIMetaPlaneSpanData spanData(Cast<AMOIMetaPlaneSpan>(span)->InstanceData);
+							spanData.GraphMembers = { newElementID };
+							spanState.CustomData.SaveStructData(spanData);
+						}
+						else
+						{   // Edge span:
+							FMOIMetaEdgeSpanData spanData(Cast<AMOIMetaEdgeSpan>(span)->InstanceData);
+							spanData.GraphMembers = { newElementID };
+							spanState.CustomData.SaveStructData(spanData);
+						}
 
-					for (int32 childIdx = 0; childIdx < span->GetChildIDs().Num(); ++childIdx)
-					{
-						auto childObj = GetObjectById(span->GetChildIDs()[childIdx]);
-						DeepCloneForFinalize(TempGraph, childObj, spanState.ID, OutSideEffectDeltas);
+						spanDelta->AddCreateDestroyState(spanState, EMOIDeltaType::Create);
+						OutSideEffectDeltas.Add(spanDelta);
+
+						for (int32 childIdx = 0; childIdx < span->GetChildIDs().Num(); ++childIdx)
+						{
+							auto childObj = GetObjectById(span->GetChildIDs()[childIdx]);
+							DeepCloneForFinalize(TempGraph, childObj, spanState.ID, OutSideEffectDeltas);
+						}
+						idsWithObjects.Add(newElementID);
 					}
-					idsWithObjects.Add(newElementID);
 				}
 			}
 		}
@@ -2388,7 +2396,7 @@ bool UModumateDocument::FinalizeGraphDelta(FGraph3D &TempGraph, const FGraph3DDe
 	{
 		const auto* obj = GetObjectById(objID);
 
-		if (ensure(obj))
+		if (obj)
 		{
 			TArray<int32> childIDsForDeletion (obj->GetChildIDs());
 
