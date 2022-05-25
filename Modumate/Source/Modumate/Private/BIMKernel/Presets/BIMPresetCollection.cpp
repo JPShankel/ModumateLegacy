@@ -880,11 +880,6 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		}
 	}
 
-	if (DocRecordVersion < 19)
-	{
-		SetPartSizesFromMeshes();
-	}
-
 	if (DocRecordVersion < DocVersion)
 	{
 		FBIMPresetCollectionProxy proxyCollection(*this);
@@ -901,6 +896,8 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 	}
 
 	PresetsByGUID.Append(docPresets.PresetsByGUID);
+
+	SetPartSizesFromMeshes();
 	
 	// If any presets fail to build their assembly, remove them
 	// They'll be replaced by the fallback system and will not be written out again
