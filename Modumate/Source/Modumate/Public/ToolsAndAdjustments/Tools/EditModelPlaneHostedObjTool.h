@@ -38,8 +38,7 @@ protected:
 	virtual void OnAssemblyChanged() override;
 	virtual void OnCreateObjectModeChanged() override;
 
-	FDeltaPtr GetObjectCreationDelta(const TArray<int32>& TargetFaceIDs);
-	FDeltaPtr GetSpanCreationDelta();
+	bool GetObjectCreationDeltas(const TArray<int32>& InTargetFaceIDs, int32& NewID, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitFaces);
 
 	virtual bool MakeObject(const FVector& Location) override;
 	virtual bool ValidatePlaneTarget(const AModumateObjectInstance* PlaneTarget);

@@ -61,13 +61,17 @@ public:
 	// InAssemblyGUID is used for hosted obj creation
 	// MOIStateData is state data from tool, that can be used to modify preview or commit delta
 	static bool GetEdgeSpanCreationDeltas(const TArray<int32>& InTargetEdgeIDs, int32& InNextID, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, int32& OutNewSpanID, int32& OutNewObjID);
-	
+	static bool GetFaceSpanCreationDeltas(const TArray<int32>& InTargetFaceIDs, int32& InNextID, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, int32& OutNewSpanID, int32& OutNewObjID);
+
 	// InAssemblyGUID is used for replacing
 	// MOIStateData is state data from tool, that can be used to modify preview or commit delta
 	static bool GetEdgeSpanEditAssemblyDeltas(const UModumateDocument* Doc, const int32& InTargetSpanID, int32& InNextID, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, int32& OutNewObjID);
+	static bool GetFaceSpanEditAssemblyDeltas(const UModumateDocument* Doc, const int32& InTargetSpanID, int32& InNextID, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, int32& OutNewObjID);
 
 	// Preview delta depends on which creation tool mode
 	// InTargetEdgeIDs must be existing MetaEdges
 	static bool GetObjectCreationDeltasForEdgeSpans(const UModumateDocument* Doc, EToolCreateObjectMode CreationMode, const TArray<int32>& InTargetEdgeIDs, int32& InNextID, 
+		int32 InTargetSpanIndex, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, TArray<int32>& OutNewObjectIDs);
+	static bool GetObjectCreationDeltasForFaceSpans(const UModumateDocument* Doc, EToolCreateObjectMode CreationMode, const TArray<int32>& InTargetFaceIDs, int32& InNextID,
 		int32 InTargetSpanIndex, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, TArray<int32>& OutNewObjectIDs);
 };

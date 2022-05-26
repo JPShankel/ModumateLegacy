@@ -1470,9 +1470,64 @@ bool FModumateObjectDeltaStatics::GetEdgeSpanCreationDeltas(const TArray<int32>&
 	return true;
 }
 
+bool FModumateObjectDeltaStatics::GetFaceSpanCreationDeltas(const TArray<int32>& InTargetFaceIDs, int32& InNextID, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, int32& OutNewSpanID, int32& OutNewObjID)
+{
+	if (InTargetFaceIDs.Num() == 0)
+	{
+		return false;
+	}
+
+	TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
+	OutDeltaPtrs.Add(delta);
+
+	// Create new span that contain InTargetFaceIDs
+	FMOIStateData spanCreateState(InNextID++, EObjectType::OTMetaPlaneSpan);
+	FMOIMetaPlaneSpanData spanData;
+	spanData.GraphMembers = InTargetFaceIDs;
+	spanCreateState.CustomData.SaveStructData(spanData);
+	delta->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
+
+	// Create edge hosted object that will be child of the new preview span
+	MOIStateData.ParentID = spanCreateState.ID;
+	MOIStateData.ID = InNextID++;
+	MOIStateData.AssemblyGUID = InAssemblyGUID;
+	delta->AddCreateDestroyState(MOIStateData, EMOIDeltaType::Create);
+
+	OutNewSpanID = spanCreateState.ID;
+	OutNewObjID = MOIStateData.ID;
+
+	return true;
+}
+
 bool FModumateObjectDeltaStatics::GetEdgeSpanEditAssemblyDeltas(const UModumateDocument* Doc, const int32& InTargetSpanID, int32& InNextID, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, int32& OutNewObjID)
 {
 	const AMOIMetaEdgeSpan* spanMOI = Cast<AMOIMetaEdgeSpan>(Doc->GetObjectById(InTargetSpanID));
+	if (!spanMOI)
+	{
+		return false;
+	}
+
+	TSharedPtr<FMOIDelta> delta = MakeShared<FMOIDelta>();
+	OutDeltaPtrs.Add(delta);
+
+	for (auto* childOb : spanMOI->GetChildObjects())
+	{
+		delta->AddCreateDestroyState(childOb->GetStateData(), EMOIDeltaType::Destroy);
+	}
+
+	MOIStateData.ParentID = spanMOI->ID;
+	MOIStateData.ID = InNextID++;
+	MOIStateData.AssemblyGUID = InAssemblyGUID;
+	delta->AddCreateDestroyState(MOIStateData, EMOIDeltaType::Create);
+
+	OutNewObjID = MOIStateData.ID;
+
+	return true;
+}
+
+bool FModumateObjectDeltaStatics::GetFaceSpanEditAssemblyDeltas(const UModumateDocument* Doc, const int32& InTargetSpanID, int32& InNextID, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, int32& OutNewObjID)
+{
+	const AMOIMetaPlaneSpan* spanMOI = Cast<AMOIMetaPlaneSpan>(Doc->GetObjectById(InTargetSpanID));
 	if (!spanMOI)
 	{
 		return false;
@@ -1532,6 +1587,63 @@ bool FModumateObjectDeltaStatics::GetObjectCreationDeltasForEdgeSpans(const UMod
 			if (GetEdgeSpanEditAssemblyDeltas(Doc, spanObj->ID, InNextID, InAssemblyGUID, MOIStateData, OutDeltaPtrs, newEdgeHostedObjID))
 			{
 				OutNewObjectIDs = { newEdgeHostedObjID };
+				bSuccess = true;
+			}
+		}
+	}
+	return true;
+}
+
+bool FModumateObjectDeltaStatics::GetObjectCreationDeltasForFaceSpans(const UModumateDocument* Doc, EToolCreateObjectMode CreationMode, const TArray<int32>& InTargetFaceIDs, int32& InNextID, int32 InTargetSpanIndex, const FGuid& InAssemblyGUID, FMOIStateData& MOIStateData, TArray<FDeltaPtr>& OutDeltaPtrs, TArray<int32>& OutNewObjectIDs)
+{
+	// Add mode: Create new PlaneSpan
+	// Apply mode: Find PlaneSpan from MetaPlane, edit its assembly, but if no span exist, same as Add mode
+	for (int32 targetFaceID : InTargetFaceIDs)
+	{
+		// Destroy any children object of targeted face if tool is in Apply mode
+		// TODO: This is used to replace portals, as they are currently not span, 
+		// but when they are, then this step may not be needed
+		const AModumateObjectInstance* planeFace = Doc->GetObjectById(targetFaceID);
+		if (planeFace && CreationMode == EToolCreateObjectMode::Apply && planeFace->GetChildIDs().Num() > 0)
+		{
+			auto childrenDestroyerDelta = MakeShared<FMOIDelta>();
+			OutDeltaPtrs.Add(childrenDestroyerDelta);
+			for (auto* childOb : planeFace->GetChildObjects())
+			{
+				childrenDestroyerDelta->AddCreateDestroyState(childOb->GetStateData(), EMOIDeltaType::Destroy);
+			}
+		}
+
+		bool bAddSpan = CreationMode == EToolCreateObjectMode::Add || CreationMode == EToolCreateObjectMode::Draw;
+		TArray<int32> spans;
+		const AModumateObjectInstance* targetFaceMOI = Doc->GetObjectById(targetFaceID);
+		if (targetFaceMOI && targetFaceMOI->GetObjectType() == EObjectType::OTMetaPlane)
+		{
+			UModumateObjectStatics::GetSpansForFaceObject(Doc, targetFaceMOI, spans);
+		}
+		const AMOIMetaPlaneSpan* spanObj = spans.Num() > 0 ? Cast<AMOIMetaPlaneSpan>(Doc->GetObjectById(spans[InTargetSpanIndex])) : nullptr;
+		if (!spanObj)
+		{
+			bAddSpan = true;
+		}
+
+		bool bSuccess = false;
+		if (bAddSpan)
+		{
+			int32 newSpanID;
+			int32 newPlaneHostedObjID;
+			if (GetFaceSpanCreationDeltas({ targetFaceID }, InNextID, InAssemblyGUID, MOIStateData, OutDeltaPtrs, newSpanID, newPlaneHostedObjID))
+			{
+				OutNewObjectIDs = { newSpanID, newPlaneHostedObjID };
+				bSuccess = true;
+			}
+		}
+		else
+		{
+			int32 newPlaneHostedObjID;
+			if (GetFaceSpanEditAssemblyDeltas(Doc, spanObj->ID, InNextID, InAssemblyGUID, MOIStateData, OutDeltaPtrs, newPlaneHostedObjID))
+			{
+				OutNewObjectIDs = { newPlaneHostedObjID };
 				bSuccess = true;
 			}
 		}

@@ -34,5 +34,6 @@ protected:
 	bool bWantedVerticalSnap = false;
 	int32 LastValidTargetID = MOD_ID_NONE;
 	int32 LastTargetStructureLineID = MOD_ID_NONE;
+	int32 TargetSpanIndex = MOD_ID_NONE;
 
 };

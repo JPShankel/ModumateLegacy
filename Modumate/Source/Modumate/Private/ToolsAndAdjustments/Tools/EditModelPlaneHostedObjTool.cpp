@@ -15,6 +15,7 @@
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
 #include "Objects/MetaPlaneSpan.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 
 
 
@@ -93,9 +94,10 @@ bool UPlaneHostedObjTool::BeginUse()
 		}
 
 		GameState->Document->ClearPreviewDeltas(GetWorld());
-
-		auto delta = GetObjectCreationDelta({ LastValidTargetID });
-		if (delta.IsValid() && GameState->Document->ApplyDeltas({ delta }, GetWorld()))
+		TArray<FDeltaPtr> deltas;
+		int32 newID = GameState->Document->GetNextAvailableID();
+		if (GetObjectCreationDeltas({ LastValidTargetID }, newID, deltas, true) && 
+			GameState->Document->ApplyDeltas(deltas, GetWorld()))
 		{
 			EndUse();
 		}
@@ -118,7 +120,9 @@ bool UPlaneHostedObjTool::FrameUpdate()
 	UEditModelToolBase::FrameUpdate();
 
 	CurDeltas.Reset();
-	FDeltaPtr previewDelta;
+	TArray<FDeltaPtr> previewDeltas;
+	int32 newID = GameState->Document->GetNextAvailableID();
+
 	Controller->EMPlayerState->bShowSnappedCursor = GetCreateObjectMode() != EToolCreateObjectMode::Apply;
 	if (GetCreateObjectMode() == EToolCreateObjectMode::Apply ||
 		GetCreateObjectMode() == EToolCreateObjectMode::SpanEdit ||
@@ -151,14 +155,16 @@ bool UPlaneHostedObjTool::FrameUpdate()
 			if (GetCreateObjectMode() == EToolCreateObjectMode::Apply ||
 				GetCreateObjectMode() == EToolCreateObjectMode::Add)
 			{
-				previewDelta = GetObjectCreationDelta({ LastValidTargetID });
+				GetObjectCreationDeltas({ LastValidTargetID }, newID, previewDeltas, false);
 			}
 		}
 
 		// Preview span edit on every flame
 		if (GetCreateObjectMode() == EToolCreateObjectMode::SpanEdit)
 		{
-			previewDelta = GetSpanCreationDelta();
+			int32 newSpanID;
+			int32 newEdgeHostedObjID;
+			FModumateObjectDeltaStatics::GetFaceSpanCreationDeltas(PreviewSpanGraphMemberIDs, newID, AssemblyGUID, NewMOIStateData, previewDeltas, newSpanID, newEdgeHostedObjID);
 		}
 		// Show preview affordance for all graph members in the new span
 		for (auto curSpanID : PreviewSpanGraphMemberIDs)
@@ -167,18 +173,15 @@ bool UPlaneHostedObjTool::FrameUpdate()
 			DrawAffordanceForPlaneMOI(curSpanObj, AffordanceLineInterval);
 		}
 	}
-	else if (UpdatePreview())
+	// UpdatePreview() create MetaPlane for new span to be hosted on
+	else if (GetCreateObjectMode() == EToolCreateObjectMode::Draw && UpdatePreview())
 	{
 		if (State == EState::NewPlanePending)
 		{
-			previewDelta = GetObjectCreationDelta(CurAddedFaceIDs);
+			GetObjectCreationDeltas({ CurAddedFaceIDs }, newID, previewDeltas, false);
 		}
 	}
-
-	if (previewDelta.IsValid())
-	{
-		CurDeltas.Add(previewDelta);
-	}
+	CurDeltas.Append(previewDeltas);
 	if (CurDeltas.Num() > 0)
 	{
 		GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
@@ -254,12 +257,17 @@ void UPlaneHostedObjTool::CommitSpanEdit()
 {
 	GameState->Document->ClearPreviewDeltas(GetWorld());
 
-	auto delta = GetSpanCreationDelta();
-	if (delta.IsValid() && GameState->Document->ApplyDeltas({ delta }, GetWorld()))
+	int32 newSpanID;
+	int32 newPlaneHostedObjID;
+	TArray<FDeltaPtr> deltas;
+	int32 newID = GameState->Document->GetNextAvailableID();
+	bool bSuccess = FModumateObjectDeltaStatics::GetFaceSpanCreationDeltas(PreviewSpanGraphMemberIDs, newID, AssemblyGUID, NewMOIStateData, deltas, newSpanID, newPlaneHostedObjID);
+	if (bSuccess && GameState->Document->ApplyDeltas(deltas, GetWorld()))
 	{
+		NewObjectIDs = { newSpanID, newPlaneHostedObjID };
 		ResetSpanIDs();
-		EndUse();
 	}
+	EndUse();
 }
 
 void UPlaneHostedObjTool::CancelSpanEdit()
@@ -283,99 +291,30 @@ void UPlaneHostedObjTool::OnCreateObjectModeChanged()
 	ResetSpanIDs();
 }
 
-FDeltaPtr UPlaneHostedObjTool::GetObjectCreationDelta(const TArray<int32>& TargetFaceIDs)
+bool UPlaneHostedObjTool::GetObjectCreationDeltas(const TArray<int32>& InTargetFaceIDs, int32& NewID, TArray<FDeltaPtr>& OutDeltaPtrs, bool bSplitFaces)
 {
+	OutDeltaPtrs.Reset();
 	NewObjectIDs.Reset();
-	TSharedPtr<FMOIDelta> delta;
-	int32 nextID = GameState->Document->GetNextAvailableID();
 
-	for (int32 targetFaceID : TargetFaceIDs)
+	TArray<int32> targetFaceIDs;
+	for (int32 targetFaceID : InTargetFaceIDs)
 	{
-		if (!delta.IsValid())
+		if (targetFaceID != MOD_ID_NONE)
 		{
-			delta = MakeShared<FMOIDelta>();
+			targetFaceIDs.Add(targetFaceID);
 		}
-
-		AModumateObjectInstance* planeFace = GameState->Document->GetObjectById(targetFaceID);
-		// Destroy any children object of targeted face if tool is in Apply mode
-		// This is used to replace portals, as they are currently not span
-		if (planeFace && GetCreateObjectMode() == EToolCreateObjectMode::Apply)
-		{
-			for (auto* childOb : planeFace->GetChildObjects())
-			{
-				delta->AddCreateDestroyState(childOb->GetStateData(), EMOIDeltaType::Destroy);
-			}
-		}
-
-		TArray<int32> spans;
-		UModumateObjectStatics::GetSpansForFaceObject(GameState->Document, planeFace, spans);
-		const AMOIMetaPlaneSpan* spanOb = spans.Num() > 0 ? Cast<AMOIMetaPlaneSpan>(GameState->Document->GetObjectById(spans[TargetSpanIndex])) : nullptr;
-
-		int32 spanID = MOD_ID_NONE;
-		if (!spanOb)
-		{
-			spanID = nextID++;
-			NewMOIStateData.ParentID = 0;
-			NewMOIStateData.ID = spanID;
-			FMOIStateData spanCreateState(spanID, EObjectType::OTMetaPlaneSpan);
-
-			FMOIMetaPlaneSpanData spanData;
-			spanData.GraphMembers.Add(targetFaceID);
-
-			spanCreateState.CustomData.SaveStructData(spanData);
-			delta->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
-
-			NewObjectIDs.Add(spanID);
-		}
-		else
-		{
-			spanID = spanOb->ID;
-			if (GetCreateObjectMode() == EToolCreateObjectMode::Apply)
-			{
-				for (auto* childOb : spanOb->GetChildObjects())
-				{
-					delta->AddCreateDestroyState(childOb->GetStateData(), EMOIDeltaType::Destroy);
-				}
-			}
-		}
-
-		NewMOIStateData.ObjectType = ObjectType;
-		NewMOIStateData.ParentID = spanID;
-		NewMOIStateData.ID = nextID++;
-		NewMOIStateData.AssemblyGUID = AssemblyGUID;
-		NewObjectIDs.Add(NewMOIStateData.ID);
-
-		delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
 	}
 
-	return delta;
-}
-
-FDeltaPtr UPlaneHostedObjTool::GetSpanCreationDelta()
-{
-	auto deltaPtr = MakeShared<FMOIDelta>();
-	if (PreviewSpanGraphMemberIDs.Num() == 0)
+	if (targetFaceIDs.Num() == 0)
 	{
-		return deltaPtr;
+		return false;
 	}
-	NewObjectIDs.Reset();
-	int32 newObjID = GameState->Document->GetNextAvailableID();
 
-	// Create new span that contains all preview graph members
-	FMOIStateData spanCreateState(newObjID++, EObjectType::OTMetaPlaneSpan);
-	FMOIMetaPlaneSpanData spanData;
-	spanData.GraphMembers = PreviewSpanGraphMemberIDs;
-	spanCreateState.CustomData.SaveStructData(spanData);
-	deltaPtr->AddCreateDestroyState(spanCreateState, EMOIDeltaType::Create);
+	// We need to keep track of next ID because Document->MakeMetaObject can make 1+ new meta objects
+	NewID = GameState->Document->GetNextAvailableID();
 
-	// Create plane hosted object that will be child of the new preview span
-	NewMOIStateData.ParentID = spanCreateState.ID;
-	NewMOIStateData.ID = newObjID++;
-	NewMOIStateData.AssemblyGUID = AssemblyGUID;
-	deltaPtr->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
-	NewObjectIDs.Add(NewMOIStateData.ID);
-
-	return deltaPtr;
+	return FModumateObjectDeltaStatics::GetObjectCreationDeltasForFaceSpans(GameState->Document, GetCreateObjectMode(),
+		targetFaceIDs, NewID, TargetSpanIndex, AssemblyGUID, NewMOIStateData, OutDeltaPtrs, NewObjectIDs);
 }
 
 bool UPlaneHostedObjTool::MakeObject(const FVector& Location)
@@ -386,8 +325,10 @@ bool UPlaneHostedObjTool::MakeObject(const FVector& Location)
 
 	if (bSuccess && (CurAddedFaceIDs.Num() > 0))
 	{
-		auto delta = GetObjectCreationDelta(CurAddedFaceIDs);
-		bSuccess = delta.IsValid() && GameState->Document->ApplyDeltas({ delta }, GetWorld());
+		int32 newID = GameState->Document->GetNextAvailableID();
+		TArray<FDeltaPtr> deltas;
+		GetObjectCreationDeltas({ CurAddedFaceIDs }, newID, deltas, false);
+		bSuccess = deltas.Num() > 0 && GameState->Document->ApplyDeltas(deltas, GetWorld());
 	}
 
 	GameState->Document->EndUndoRedoMacro();

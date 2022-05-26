@@ -9,6 +9,7 @@
 #include "Objects/FaceHosted.h"
 #include "Objects/MetaPlaneSpan.h"
 #include "ModumateCore/EnumHelpers.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 
 UFaceHostedTool::UFaceHostedTool()
 	: Super()
@@ -203,89 +204,13 @@ bool UFaceHostedTool::GetObjectCreationDeltas(const TArray<int32>& InTargetFaceI
 		}
 	}
 
-	TSharedPtr<FMOIDelta> delta;
-	int32 nextID = GameState->Document->GetNextAvailableID();
-
-	// Follows the pattern established in UPlaneHostedObjTool
-	for (int32 targetFaceID : targetFaceIDs)
+	if (targetFaceIDs.Num() == 0)
 	{
-		if (!delta.IsValid())
-		{
-			delta = MakeShared<FMOIDelta>();
-			OutDeltaPtrs.Add(delta);
-		}
-
-		AModumateObjectInstance* targetMOI = GameState->Document->GetObjectById(targetFaceID);
-
-		if (!targetMOI)
-		{
-			continue;
-		}
-
-		int32 parentID = MOD_ID_NONE;
-
-		if (targetMOI->GetObjectType() == EObjectType::OTMetaPlane)
-		{
-			// Destroy any children object of targeted face if tool is in Apply mode
-			// This is used to replace portals, as they are currently not span
-			if (targetMOI && GetCreateObjectMode() == EToolCreateObjectMode::Apply)
-			{
-				for (auto* childOb : targetMOI->GetChildObjects())
-				{
-					delta->AddCreateDestroyState(childOb->GetStateData(), EMOIDeltaType::Destroy);
-				}
-			}
-
-			TArray<int32> spanIDs;
-			UModumateObjectStatics::GetSpansForFaceObject(GameState->Document, targetMOI, spanIDs);
-			if (spanIDs.Num() > 0)
-			{
-				// TODO: cycle through multiple spans
-				parentID = spanIDs[0];
-				targetMOI = GameState->Document->GetObjectById(spanIDs[0]);
-				if (!ensure(targetMOI))
-				{
-					continue;
-				}
-			}
-			else
-			{
-				FMOIStateData newSpan;
-				newSpan.ID = nextID++;
-				newSpan.ObjectType = EObjectType::OTMetaPlaneSpan;
-
-				FMOIMetaPlaneSpanData instanceData;
-				instanceData.GraphMembers.Add(targetMOI->ID);
-				newSpan.CustomData.SaveStructData(instanceData);
-
-				delta->AddCreateDestroyState(newSpan, EMOIDeltaType::Create);
-
-				parentID = newSpan.ID;
-			}
-		}
-
-		if (targetMOI->GetObjectType() == EObjectType::OTMetaPlaneSpan)
-		{
-			parentID = targetMOI->ID;
-			
-			// If we're in Add mode, retain underlying children, otherwise replace
-			if (GetCreateObjectMode() == EToolCreateObjectMode::Apply)
-			{
-				for (auto spanChild : targetMOI->GetChildObjects())
-				{
-					delta->AddCreateDestroyState(spanChild->GetStateData(), EMOIDeltaType::Destroy);
-				}
-			}
-		}
-
-		NewMOIStateData.ObjectType = EObjectType::OTFaceHosted;
-		NewMOIStateData.ID = nextID++;
-		NewMOIStateData.ParentID = parentID;
-		NewMOIStateData.AssemblyGUID = AssemblyGUID;
-		delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
-		NewObjectIDs.Add(NewMOIStateData.ID);
-
+		return false;
 	}
 
-	return true;
+	int32 nextID = GameState->Document->GetNextAvailableID();
+
+	return FModumateObjectDeltaStatics::GetObjectCreationDeltasForFaceSpans(GameState->Document, GetCreateObjectMode(),
+		targetFaceIDs, nextID, TargetSpanIndex, AssemblyGUID, NewMOIStateData, OutDeltaPtrs, NewObjectIDs);
 }
