@@ -111,3 +111,27 @@ bool AMOITerrainVertex::FromWebMOI(const FString& InJson)
 	return false;
 }
 
+bool AMOITerrainVertex::ToWebMOI(FWebMOI& OutMOI) const
+{
+	const AMOITerrain* terrainMoi = Cast<AMOITerrain>(GetParentObject());
+	if (!ensure(terrainMoi))
+	{
+		return false;
+	}
+	FMOITerrainData newInstanceData = terrainMoi->InstanceData;
+	if (AModumateObjectInstance::ToWebMOI(OutMOI))
+	{
+		FWebMOIProperty* moiProp = OutMOI.Properties.Find(TEXT("Height"));
+		if (!ensure(moiProp))
+		{
+			return false;
+		}
+
+		moiProp->ValueArray.Empty();
+		moiProp->ValueArray.Add(FString::SanitizeFloat(*newInstanceData.Heights.Find(ID)));
+
+		return true;
+	}
+	return false;
+}
+

@@ -33,6 +33,7 @@ public:
 	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) override;
 
 	virtual bool FromWebMOI(const FString& InJson) override;
+	virtual bool ToWebMOI(FWebMOI& OutMOI) const override;
 
 	UFUNCTION()
 	void OnInstPropUIChangedHeight(float NewHeight);

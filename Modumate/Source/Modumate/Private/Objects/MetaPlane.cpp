@@ -148,26 +148,52 @@ bool AMOIMetaPlane::ToWebMOI(FWebMOI& OutMOI) const
 	if (AModumateObjectInstance::ToWebMOI(OutMOI))
 	{
 		auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
-		auto* graph = GetDocument()->FindVolumeGraph(ID);
-		const FGraph3DFace* graphFace = graph ? graph->FindFace(ID) : nullptr;
 
 		FWebMOIProperty* moiProp = OutMOI.Properties.Find(TEXT("FlipDirection"));
 		moiProp->ValueArray.Empty();
 		moiProp->ValueArray.Add("false");
 
-		if (graphFace)
+		const double area = CalculateArea(controller);
+
+		if (area != 0.0)
 		{
-			double calculatedArea = graphFace->CalculateArea();
 			EUnit defaultUnit = controller->GetDocument()->GetCurrentSettings().DimensionUnit;
 			EDimensionUnits unitType = controller->GetDocument()->GetCurrentSettings().DimensionType;
-			FText areaDisplayText = UModumateDimensionStatics::CentimetersToDisplayText(calculatedArea, 2, unitType, defaultUnit);
+			FText areaDisplayText = UModumateDimensionStatics::CentimetersToDisplayText(area, 2, unitType, defaultUnit);
 
 			moiProp = OutMOI.Properties.Find(TEXT("CalculatedArea"));
-			moiProp->ValueArray.Empty();
-			moiProp->ValueArray.Add(areaDisplayText.ToString());
+			if (!ensure(moiProp))
+			{
+				moiProp->ValueArray.Empty();
+				moiProp->ValueArray.Add(areaDisplayText.ToString());
+			}
 		}
 
 		return true;
 	}
 	return false;
+}
+
+double AMOIMetaPlane::CalculateArea(AEditModelPlayerController* AEMPlayerController) const
+{
+	double totalArea = 0.0f;
+	for (auto& ob : AEMPlayerController->EMPlayerState->SelectedObjects)
+	{
+		if (ob->GetAssembly().ObjectType == EObjectType::OTMetaPlane)
+		{
+			auto* graph = GetDocument()->FindVolumeGraph(ob->ID);
+			const FGraph3DFace* graphFace = graph ? graph->FindFace(ob->ID) : nullptr;
+			if (graphFace)
+			{
+				totalArea += graphFace->CalculateArea();
+			}
+			else
+			{
+				return 0.0f;
+			}
+			
+		}
+	}
+
+	return totalArea;
 }

@@ -33,6 +33,8 @@ public:
 	virtual void RegisterInstanceDataUI(class UToolTrayBlockProperties* PropertiesUI) override;
 	virtual bool ToWebMOI(FWebMOI& OutMOI) const override;
 	virtual bool FromWebMOI(const FString& InJson) override;
+	
+	double CalculateArea(AEditModelPlayerController* AEMPlayerController) const;
 
 	UPROPERTY()
 	FMOIMetaPlaneData InstanceData;
