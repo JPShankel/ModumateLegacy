@@ -162,7 +162,7 @@ bool AMOIMetaPlane::ToWebMOI(FWebMOI& OutMOI) const
 			FText areaDisplayText = UModumateDimensionStatics::CentimetersToDisplayText(area, 2, unitType, defaultUnit);
 
 			moiProp = OutMOI.Properties.Find(TEXT("CalculatedArea"));
-			if (!ensure(moiProp))
+			if (ensure(moiProp))
 			{
 				moiProp->ValueArray.Empty();
 				moiProp->ValueArray.Add(areaDisplayText.ToString());
@@ -177,12 +177,12 @@ bool AMOIMetaPlane::ToWebMOI(FWebMOI& OutMOI) const
 double AMOIMetaPlane::CalculateArea(AEditModelPlayerController* AEMPlayerController) const
 {
 	double totalArea = 0.0f;
-	for (auto& ob : AEMPlayerController->EMPlayerState->SelectedObjects)
+	for (auto& obj : AEMPlayerController->EMPlayerState->SelectedObjects)
 	{
-		if (ob->GetAssembly().ObjectType == EObjectType::OTMetaPlane)
+		if (obj->GetAssembly().ObjectType == EObjectType::OTMetaPlane)
 		{
-			auto* graph = GetDocument()->FindVolumeGraph(ob->ID);
-			const FGraph3DFace* graphFace = graph ? graph->FindFace(ob->ID) : nullptr;
+			auto* graph = GetDocument()->FindVolumeGraph(obj->ID);
+			const FGraph3DFace* graphFace = graph ? graph->FindFace(obj->ID) : nullptr;
 			if (graphFace)
 			{
 				totalArea += graphFace->CalculateArea();
