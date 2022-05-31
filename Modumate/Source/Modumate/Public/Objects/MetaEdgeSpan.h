@@ -40,6 +40,8 @@ public:
 
 	virtual void PreDestroy() override;
 
+	virtual TArray<int32> GetEdgeSpanMembers() const override;
+
 protected:
 
 	bool UpdateCachedEdge();

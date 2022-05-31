@@ -40,6 +40,8 @@ public:
 	int32 GetCachedGraphID() const { return CachedGraphID; }
 	virtual void PreDestroy() override;
 
+	virtual TArray<int32> GetFaceSpanMembers() const override;
+
 protected:
 
 	FGraph3DFace CachedPerimeterFace;

@@ -74,6 +74,11 @@ void AMOIMetaPlaneSpan::PreDestroy()
 	Super::PreDestroy();
 }
 
+TArray<int32> AMOIMetaPlaneSpan::GetFaceSpanMembers() const
+{
+	return InstanceData.GraphMembers;
+}
+
 #define ENFORCE_SINGLETON_SPANS
 
 bool AMOIMetaPlaneSpan::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)

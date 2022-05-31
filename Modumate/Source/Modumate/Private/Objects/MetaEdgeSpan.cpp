@@ -78,6 +78,11 @@ void AMOIMetaEdgeSpan::PreDestroy()
 	Super::PreDestroy();
 }
 
+TArray<int32> AMOIMetaEdgeSpan::GetEdgeSpanMembers() const
+{
+	return InstanceData.GraphMembers;
+}
+
 bool AMOIMetaEdgeSpan::UpdateCachedEdge()
 {
 	bool bLegal = true;

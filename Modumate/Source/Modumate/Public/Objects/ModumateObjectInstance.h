@@ -120,6 +120,12 @@ public:
 	virtual bool ToWebMOI(FString& OutJson) const;
 	virtual bool FromWebMOI(const FString& InJson);
 
+	// Span-related
+	virtual TArray<int32> GetEdgeSpanMembers() const
+		{ return TArray<int32>(); }
+	virtual TArray<int32> GetFaceSpanMembers() const
+		{ return TArray<int32>(); }
+
 protected:
 
 	friend struct FMOIDelta;
