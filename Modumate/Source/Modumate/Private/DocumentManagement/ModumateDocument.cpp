@@ -2882,6 +2882,7 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 
 	VolumeGraphs.Add(RootVolumeGraph, MakeShared<FGraph3D>(RootVolumeGraph));
 	ActiveVolumeGraph = RootVolumeGraph;
+	TempVolumeGraph.GraphID = ActiveVolumeGraph;
 
 	RootDesignOptionID = NextID++;
 	FMOIStateData rootDesignOptionState(RootDesignOptionID, EObjectType::OTDesignOption);
