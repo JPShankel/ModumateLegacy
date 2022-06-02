@@ -63,6 +63,10 @@ private:
 
 	TMap <EObjectType, TSet<int32>> ObjectsByType;
 
+	// Span-related.
+	TMap<int32, TArray<int32>> SpanToGraphElementsMap;  // Just used for removing from GraphElementToSpanMap.
+	TMultiMap<int32, int32> GraphElementToSpanMap;
+
 	float DefaultWallHeight;
 	float DefaultRailHeight = 106.68f;
 	float DefaultCabinetHeight = 87.63f;
@@ -214,6 +218,8 @@ public:
 	int32 CalculatePolyhedra() { return GetVolumeGraph()->CalculatePolyhedra(); }
 	bool IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &OutObjType) const;
 
+	void GetSpansForGraphElement(int32 GraphElement, TArray<int32>& OutSpanIDs) const;
+
 	// TODO: refactor for output parameters: GetObjectsOfType(EObjectType, TArray<const AModumateObjectInstance
 	TArray<const AModumateObjectInstance*> GetObjectsOfType(EObjectType Type) const;
 	TArray<AModumateObjectInstance*> GetObjectsOfType(EObjectType Type);
@@ -292,6 +298,9 @@ private:
 
 	void ApplyInvertedDeltas(UWorld* World, const TArray<FDeltaPtr>& Deltas);
 	void PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRedo>>& FromBuffer, TArray<TSharedPtr<UndoRedo>>& ToBuffer);
+
+	void UpdateSpanData(const FMOIDeltaState& SpanDelta);  // Must only be called with delta for a span.
+	void UpdateSpanData(const AModumateObjectInstance* Moi);
 
 public:
 

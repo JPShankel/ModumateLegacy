@@ -162,6 +162,72 @@ void UModumateDocument::PerformUndoRedo(UWorld* World, TArray<TSharedPtr<UndoRed
 	}
 }
 
+void UModumateDocument::UpdateSpanData(const FMOIDeltaState& SpanDelta)
+{
+	int32 spanID = SpanDelta.NewState.ID;
+	if (SpanDelta.DeltaType == EMOIDeltaType::Mutate || SpanDelta.DeltaType == EMOIDeltaType::Destroy)
+	{
+		TArray<int32>* elementIDs = SpanToGraphElementsMap.Find(spanID);
+		if (ensure(elementIDs))
+		{
+			for (int32 id : *elementIDs)
+			{
+				GraphElementToSpanMap.Remove(id, spanID);
+			}
+			SpanToGraphElementsMap.Remove(spanID);
+		}
+	}
+
+	if (SpanDelta.DeltaType == EMOIDeltaType::Mutate || SpanDelta.DeltaType == EMOIDeltaType::Create)
+	{
+		FMOIMetaEdgeSpanData edgeData;
+		FMOIMetaPlaneSpanData faceData;
+		TArray<int32>* newGraphIDs;
+		if (SpanDelta.NewState.ObjectType == EObjectType::OTMetaEdgeSpan)
+		{
+			newGraphIDs = SpanDelta.NewState.CustomData.LoadStructData(edgeData) ? &edgeData.GraphMembers : nullptr;
+		}
+		else
+		{
+			newGraphIDs = SpanDelta.NewState.CustomData.LoadStructData(faceData) ? &faceData.GraphMembers : nullptr;
+		}
+
+		if (ensure(newGraphIDs))
+		{
+			for (int id : *newGraphIDs)
+			{
+				GraphElementToSpanMap.Add(id, spanID);
+			}
+			SpanToGraphElementsMap.Add(spanID, MoveTemp(*newGraphIDs));
+		}
+	}
+}
+
+void UModumateDocument::UpdateSpanData(const AModumateObjectInstance* Moi)
+{
+	const int32 spanID = Moi->ID;
+	const TArray<int32>* graphIDs = nullptr;
+	if (Moi->GetObjectType() == EObjectType::OTMetaEdgeSpan)
+	{
+		graphIDs = &Cast<AMOIMetaEdgeSpan>(Moi)->InstanceData.GraphMembers;
+	}
+	else if (Moi->GetObjectType() == EObjectType::OTMetaPlaneSpan)
+	{
+		graphIDs = &Cast<AMOIMetaPlaneSpan>(Moi)->InstanceData.GraphMembers;
+	}
+	else
+	{
+		ensure(false);
+		return;
+	}
+
+	SpanToGraphElementsMap.Add(spanID, *graphIDs);
+	for (int32 id : *graphIDs)
+	{
+		GraphElementToSpanMap.Add(id, spanID);
+	}
+}
+
 void UModumateDocument::Undo(UWorld *World)
 {
 	auto* localPlayer = World ? World->GetFirstLocalPlayerFromController() : nullptr;
@@ -751,6 +817,11 @@ bool UModumateDocument::ApplyMOIDelta(const FMOIDelta& Delta, UWorld* World)
 			ensureAlways(false);
 			return false;
 		};
+
+		if (targetState.ObjectType == EObjectType::OTMetaEdgeSpan || targetState.ObjectType == EObjectType::OTMetaPlaneSpan)
+		{
+			UpdateSpanData(deltaState);
+		}
 	}
 
 	return true;
@@ -3427,6 +3498,11 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		}
 	}
 
+	for (const auto* spanMoi : GetObjectsOfType({ EObjectType::OTMetaEdgeSpan, EObjectType::OTMetaPlaneSpan }))
+	{
+		UpdateSpanData(spanMoi);
+	}
+
 	// Now that all objects have been created and parented correctly, we can clean all of them.
 	// This should take care of anything that depends on relationships between objects, like mitering.
 	TArray<FDeltaPtr> loadCleanSideEffects;
@@ -4016,6 +4092,13 @@ bool UModumateDocument::IsObjectInVolumeGraph(int32 ObjID, EGraph3DObjectType &O
 	ensureAlways(bIsVolumeGraphType == bIsInGraph);
 
 	return bIsInGraph;
+}
+
+void UModumateDocument::GetSpansForGraphElement(int32 GraphElement, TArray<int32>& OutSpanIDs) const
+{
+	TArray<int32> spanIDs;
+	GraphElementToSpanMap.MultiFind(GraphElement, spanIDs);
+	OutSpanIDs.Append(MoveTemp(spanIDs));
 }
 
 void DisplayDebugMsg(const FString& Message)

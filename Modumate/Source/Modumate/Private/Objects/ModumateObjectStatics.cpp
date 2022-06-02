@@ -1477,17 +1477,7 @@ void UModumateObjectStatics::GetSpansForFaceObject(const UModumateDocument* Doc,
 {
 	if (FaceObject != nullptr && FaceObject->GetObjectType() == EObjectType::OTMetaPlane)
 	{
-		Algo::TransformIf(
-			Doc->GetObjectsOfType(EObjectType::OTMetaPlaneSpan), 
-			OutSpans, 
-			[FaceObject](const AModumateObjectInstance* MOI)
-			{
-				return Cast<AMOIMetaPlaneSpan>(MOI)->InstanceData.GraphMembers.Contains(FaceObject->ID);
-			},
-			[](const AModumateObjectInstance* MOI) 
-			{
-				return MOI->ID; 
-			});
+		Doc->GetSpansForGraphElement(FaceObject->ID, OutSpans);
 	}
 }
 
@@ -1495,17 +1485,7 @@ void UModumateObjectStatics::GetSpansForEdgeObject(const UModumateDocument* Doc,
 {
 	if (EdgeObject != nullptr && EdgeObject->GetObjectType() == EObjectType::OTMetaEdge)
 	{
-		Algo::TransformIf(
-			Doc->GetObjectsOfType(EObjectType::OTMetaEdgeSpan),
-			OutSpans,
-			[EdgeObject](const AModumateObjectInstance* MOI)
-			{
-				return Cast<AMOIMetaEdgeSpan>(MOI)->InstanceData.GraphMembers.Contains(EdgeObject->ID);
-			},
-			[](const AModumateObjectInstance* MOI)
-			{
-				return MOI->ID;
-			});
+		Doc->GetSpansForGraphElement(EdgeObject->ID, OutSpans);
 	}
 }
 
