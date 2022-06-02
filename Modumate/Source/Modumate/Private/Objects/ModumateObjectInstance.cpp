@@ -493,11 +493,14 @@ void AModumateObjectInstance::MarkDirty(EObjectDirtyFlags NewDirtyFlags)
 	// Recursively propagate dirty flags to children as early as possible,
 	// since delaying this until the cleaning stage itself allows the middle of the tree to be initially skipped,
 	// and the bottom of the tree to be redundantly cleaned. (i.e. modifying a MetaPlane and a SurfacePolygon in the same frame)
-	for (int32 childID : CachedChildIDs)
+	if (GetObjectType() != EObjectType::OTMetaGraph)
 	{
-		if (auto childObj = Document->GetObjectById(childID))
+		for (int32 childID : CachedChildIDs)
 		{
-			childObj->MarkDirty(NewDirtyFlags);
+			if (auto childObj = Document->GetObjectById(childID))
+			{
+				childObj->MarkDirty(NewDirtyFlags);
+			}
 		}
 	}
 
@@ -512,6 +515,7 @@ void AModumateObjectInstance::MarkDirty(EObjectDirtyFlags NewDirtyFlags)
 	{
 		UModumateObjectStatics::GetSpansForFaceObject(Document, this, spanIDs);
 	}
+
 	for (auto curSpanID : spanIDs)
 	{
 		auto curSpanObj = Document->GetObjectById(curSpanID);
@@ -558,7 +562,7 @@ bool AModumateObjectInstance::RouteCleanObject(EObjectDirtyFlags DirtyFlag, TArr
 
 		// If this object has a parent assigned, then it needs to have been created and cleaned, and contain this object, before it can clean itself.
 		// NOTE: this is expected if we try to clean children before parents, like during loading, or undoing deletion of parented objects.
-		if (GetParentID() != MOD_ID_NONE)
+		if (GetParentID() != MOD_ID_NONE && GetObjectType() != EObjectType::OTMetaGraph)
 		{
 			AModumateObjectInstance *parentObj = Document->GetObjectById(GetParentID());
 			if (parentObj == nullptr)

@@ -20,13 +20,26 @@ void AMOIMetaGraph::PostCreateObject(bool bNewObject)
 // Called for structural dirty flag.
 bool AMOIMetaGraph::SetupBoundingBox()
 {
-	if (IsDirty(EObjectDirtyFlags::Structure))
+	// Don't calculate bounding box for root graph:
+	if (IsDirty(EObjectDirtyFlags::Structure) && ID != GetDocument()->GetRootVolumeGraphID())
 	{
 		FBox oldBox(CachedBounds);
 		CachedBounds.Init();
-		TArray<int32> subtreeIDs;
-		subtreeIDs.Push(ID);
 		FBox objectBox;
+
+		TArray<AModumateObjectInstance*> childObjects;
+		for (int32 childID : GetChildIDs())
+		{
+			auto* graphObject = GetDocument()->GetObjectById(childID);
+			if (ensure(graphObject))
+			{
+				if (graphObject->IsDirty(EObjectDirtyFlags::Structure) || graphObject->IsDirty(EObjectDirtyFlags::Visuals))
+				{
+					return false;
+				}
+				childObjects.Add(graphObject);
+			}
+		}
 
 		TSet<AModumateObjectInstance*> groupMembers;
 		UModumateObjectStatics::GetObjectsInGroups(Document, { ID }, groupMembers);
@@ -50,18 +63,11 @@ bool AMOIMetaGraph::SetupBoundingBox()
 		TArray<FStructurePoint> structurePoints;  // unused
 		TArray<FStructureLine> structureLines;
 
-		while (subtreeIDs.Num() > 0)
+		GetStructuralPointsAndLines(structurePoints, structureLines, false, false);
+
+		for (const auto* graphObject: childObjects)
 		{
-			int32 graphID = subtreeIDs.Pop();
-			const auto* graphObject = GetDocument()->GetObjectById(graphID);
-			if (ensure(graphObject))
-			{
-				subtreeIDs.Append(graphObject->GetChildIDs());
-				if (graphObject->ID != ID)
-				{
-					graphObject->GetStructuralPointsAndLines(structurePoints, structureLines, false, false);
-				}
-			}
+			graphObject->GetStructuralPointsAndLines(structurePoints, structureLines, false, false);
 		}
 
 		for (const auto* groupMember : groupMembers)

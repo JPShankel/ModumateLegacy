@@ -1479,11 +1479,11 @@ void UModumateDocument::UpdateVolumeGraphObjects(UWorld *World)
 			}
 
 			if (cleanedVertices.Num() > 0)
-			{   // If any vertices have moved then recalculate all boxes.
-				AModumateObjectInstance* rootGraphObj = GetObjectById(GetRootVolumeGraphID());
-				if (ensure(rootGraphObj))
+			{   // If any vertices have moved then recalculate graph boxes.
+				AModumateObjectInstance* graphObject = GetObjectById(volumeGraph->GraphID);
+				if (ensure(graphObject))
 				{
-					rootGraphObj->MarkDirty(EObjectDirtyFlags::Structure);
+					graphObject->MarkDirty(EObjectDirtyFlags::Structure);
 				}
 			}
 
