@@ -1,6 +1,7 @@
 // Copyright 2022 Modumate, Inc. All Rights Reserved.
 
 #include "CoreMinimal.h"
+#include "Logging/LogCategory.h"
 #include "Misc/AutomationTest.h"
 #include "Tests/AutomationCommon.h"
 
@@ -10,6 +11,8 @@
 #include "Objects/ModumateObjectDeltaStatics.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/EditModelGameState.h"
+
+#if WITH_AUTOMATION_TESTS
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateCreateDeleteSpan, "Modumate.MOI.Span.Create", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext
 	| EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
@@ -160,3 +163,5 @@ bool FModumateCreateDeleteSpan::RunTest(const FString& Parameters)
 
 	return true;
 }
+
+#endif  // WITH_AUTOMATION_TESTS
