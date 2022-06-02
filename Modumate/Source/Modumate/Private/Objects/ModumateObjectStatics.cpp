@@ -1398,14 +1398,20 @@ void UModumateObjectStatics::UpdateDesignOptionVisibility(UModumateDocument* Doc
 	TArray<int32> visibleObIDs;
 	TSet<AModumateObjectInstance*> visibleObs;
 	UModumateObjectStatics::GetObjectsInGroups(Doc, visibleGroups.Array(), visibleObs);
-	Algo::Transform(visibleObs, visibleObIDs, [](const AModumateObjectInstance* MOI) {return MOI->ID; });
-	playerState->UnhideObjectsById(visibleObIDs,false);
+	if (visibleObIDs.Num() > 0)
+	{
+		Algo::Transform(visibleObs, visibleObIDs, [](const AModumateObjectInstance* MOI) {return MOI->ID; });
+		playerState->UnhideObjectsById(visibleObIDs, false);
+	}
 
 	TSet<AModumateObjectInstance*> hiddenObs;
 	UModumateObjectStatics::GetObjectsInGroups(Doc, hiddenGroups.Array(), hiddenObs);
 	TArray<int32> hiddenObIDs;
-	Algo::Transform(hiddenObs, hiddenObIDs, [](const AModumateObjectInstance* MOI) {return MOI->ID; });
-	playerState->AddHideObjectsById(hiddenObIDs,false);
+	if (hiddenObIDs.Num() > 0)
+	{
+		Algo::Transform(hiddenObs, hiddenObIDs, [](const AModumateObjectInstance* MOI) {return MOI->ID; });
+		playerState->AddHideObjectsById(hiddenObIDs, false);
+	}
 }
 
 void UModumateObjectStatics::HideObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, bool bHide)

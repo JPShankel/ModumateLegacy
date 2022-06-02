@@ -1944,13 +1944,6 @@ void AEditModelPlayerState::UnhideAllObjects()
 
 	// After the user has hidden what they want, assert design option overrides
 	UModumateObjectStatics::UpdateDesignOptionVisibility(gameState->Document);
-
-	// Why do we dirty all objects?
-	for (AModumateObjectInstance* obj : doc->GetObjectInstances())
-	{
-		obj->MarkDirty(EObjectDirtyFlags::Visuals);
-	}
-
 }
 
 void AEditModelPlayerState::UnhideObjectsById(const TArray<int32>& IDs, bool bUpdateDesignOptions)
@@ -1979,11 +1972,5 @@ void AEditModelPlayerState::UnhideObjectsById(const TArray<int32>& IDs, bool bUp
 	if (bUpdateDesignOptions)
 	{
 		UModumateObjectStatics::UpdateDesignOptionVisibility(gameState->Document);
-	}
-
-	// Why do we dirty all objects?
-	for (AModumateObjectInstance* obj : doc->GetObjectInstances())
-	{
-		obj->MarkDirty(EObjectDirtyFlags::Visuals);
 	}
 }

@@ -191,7 +191,5 @@ bool AMOIMetaEdgeSpan::UpdateCachedEdge()
 		bLegal = false;
 	}
 
-	Document->GetObjectById(graph->GraphID)->MarkDirty(EObjectDirtyFlags::Structure);
-
 	return bLegal;
 }

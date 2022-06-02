@@ -185,8 +185,6 @@ bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 	CachedHoles = CachedPerimeterFace.CachedHoles;
 	CachedEdgeIDs = TSet<int32>(CachedPerimeterFace.EdgeIDs);
 
-	Document->GetObjectById(graph->GraphID)->MarkDirty(EObjectDirtyFlags::Structure);
-
 	return true;
 
 #endif

@@ -152,8 +152,6 @@ namespace
 
 bool FModumateCreateDeleteSpan::RunTest(const FString& Parameters)
 {
-	AddExpectedError(TEXT("Already cleaned "), EAutomationExpectedErrorFlags::Contains, 0);
-
 	ADD_LATENT_AUTOMATION_COMMAND(FLoadGameMapCommand("EditModelLVL"));
 	ADD_LATENT_AUTOMATION_COMMAND(FWaitForMapToLoadCommand());
 	ADD_LATENT_AUTOMATION_COMMAND(FEngineWaitLatentCommand(1.0f));
