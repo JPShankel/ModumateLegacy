@@ -4918,6 +4918,11 @@ void UModumateDocument::UpdateWebPresets()
 	}
 }
 
+void UModumateDocument::ForceShiftReleaseOnWeb() const
+{
+	DrawingSendResponse(TEXT("onForceShiftRelease"), TEXT(""));
+}
+
 void UModumateDocument::UpdateWebMOIs(const EObjectType ObjectType) const
 {
 	if (!NetworkClonedObjectTypes.Contains(ObjectType))

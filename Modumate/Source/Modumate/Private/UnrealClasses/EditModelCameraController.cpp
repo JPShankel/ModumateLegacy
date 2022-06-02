@@ -295,8 +295,22 @@ void UEditModelCameraController::OnActionOrbitPressed()
 
 void UEditModelCameraController::OnActionOrbitReleased()
 {
-	SetOrbiting(false);
-	Controller->OnHandledInputAction(EInputCameraActions::CameraOrbit, EInputEvent::IE_Released);
+	// Because PanShift shares a button with Orbit, we need to check for PanShift too if shift button is released later than right mouse button
+	if(CurMovementState == ECameraMovementState::Orbiting)
+	{
+		SetOrbiting(false);
+		Controller->OnHandledInputAction(EInputCameraActions::CameraOrbit, EInputEvent::IE_Released);
+	}
+	else if (CurMovementState == ECameraMovementState::Panning)
+	{
+		//TODO: KLUDGE: HACK: Holding right click is captured by UE4, which means widgets (i.e. CEF) do not
+		// get inputs during that action. If the user lifts up shift while panning (shift + right click), CEF
+		// will NOT get that event and it will break keybinds. This forces a shift up event on the web code,
+		// which is a nasty hack for the 3.0 release. -JN
+		Controller->GetDocument()->ForceShiftReleaseOnWeb();
+		OnActionPanReleased();
+	}
+
 }
 
 void UEditModelCameraController::OnActionPanPressed()
@@ -318,6 +332,8 @@ void UEditModelCameraController::OnActionPanShiftPressed()
 
 void UEditModelCameraController::OnActionPanShiftReleased()
 {
+	// Because PanShift is binded with "Shift + RightMouseButton", this might not be fired if a Shift button is released too early
+	// Because PanShift shares button with orbit, OnActionOrbitReleased() is used for double checking if PanShift is released
 	OnActionPanReleased();
 }
 
@@ -649,7 +665,7 @@ void UEditModelCameraController::SetPanning(bool bNewPanning)
 		// This is due to SetMouseCaptureMode(EMouseCaptureMode::CaptureDuringRightMouseDown) from UModumateViewportClient::Init
 		if(Controller->WebKeyboardCaptureWidget)
 		{
-			Controller->WebKeyboardCaptureWidget->SetUserFocus(Controller);	
+			Controller->WebKeyboardCaptureWidget->SetUserFocus(Controller);
 		}
 	}
 }

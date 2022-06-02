@@ -507,7 +507,7 @@ public:
 	
 	void UpdateWebMOIs(const EObjectType ObjectType) const;
 	void UpdateWebPresets();
-
+	void ForceShiftReleaseOnWeb() const;
 
 	void OnCameraViewSelected(int32 ID);
 };
