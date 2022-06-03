@@ -292,6 +292,7 @@ void FDrawingDesignerRenderControl::FreeLineActor(ALineActor* LineActor)
 	else
 	{
 		LineActor->SetVisibilityInApp(false);
+		LineActor->SetActorEnableCollision(false);
 		LinePool.Add(LineActor);
 	}
 }
