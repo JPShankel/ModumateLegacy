@@ -166,6 +166,9 @@ bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 
 	CachedGraphID = graph->GraphID;
 
+	// Dirty metagraph MOI for bounding box.
+	Document->GetObjectById(CachedGraphID)->MarkDirty(EObjectDirtyFlags::Structure);
+
 	TArray<const FGraph3DFace* > memberFaces;
 	Algo::Transform(InstanceData.GraphMembers, memberFaces,
 		[graph](int32 FaceID) {return graph->FindFace(FaceID); });

@@ -191,5 +191,8 @@ bool AMOIMetaEdgeSpan::UpdateCachedEdge()
 		bLegal = false;
 	}
 
+	// Dirty metagraph MOI for bounding box.
+	Document->GetObjectById(graph->GraphID)->MarkDirty(EObjectDirtyFlags::Structure);
+
 	return bLegal;
 }
