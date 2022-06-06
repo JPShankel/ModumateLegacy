@@ -3498,6 +3498,35 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 		}
 	}
 
+	// Version 22, portals require span parents
+	if (InHeader.Version < 22 && !world->IsNetMode(NM_Client))
+	{
+		bInitialDocumentDirty = true;
+		TArray<AModumateObjectInstance*> portalObjs = GetObjectsOfType(EObjectType::OTDoor);
+		TArray<AModumateObjectInstance*> objWindows = GetObjectsOfType(EObjectType::OTWindow);
+		portalObjs.Append(objWindows);
+
+		for (auto* portalObj : portalObjs)
+		{
+			// Create and reparent portal to MetaPlaneSpan
+			if (portalObj->GetParentObject() &&
+				portalObj->GetParentObject()->GetObjectType() != EObjectType::OTMetaPlaneSpan)
+			{
+				FMOIStateData spanState;
+				spanState.ParentID = 0;
+				spanState.ID = NextID++;
+				spanState.ObjectType = EObjectType::OTMetaPlaneSpan;
+
+				FMOIMetaPlaneSpanData spanData;
+				spanData.GraphMembers.Add(portalObj->GetParentID());
+				spanState.CustomData.SaveStructData(spanData);
+
+				CreateOrRestoreObj(world, spanState);
+				portalObj->SetParentID(spanState.ID);
+			}
+		}
+	}
+
 	for (const auto* spanMoi : GetObjectsOfType({ EObjectType::OTMetaEdgeSpan, EObjectType::OTMetaPlaneSpan }))
 	{
 		UpdateSpanData(spanMoi);

@@ -148,7 +148,8 @@ bool UModumateObjectStatics::GetWorldTransformOnPlanarObj(
 	const FVector2D &RelativePos, const FQuat &RelativeRot,
 	FVector &OutWorldPos, FQuat &OutWorldRot)
 {
-	if (PlanarObj->GetObjectType() != EObjectType::OTMetaPlane)
+	if (!(PlanarObj->GetObjectType() == EObjectType::OTMetaPlane ||
+		PlanarObj->GetObjectType() == EObjectType::OTMetaPlaneSpan))
 	{
 		return false;
 	}

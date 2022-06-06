@@ -238,9 +238,8 @@ void UPortalToolBase::OnAssemblyChanged()
 bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 {
 	OutDeltas.Reset();
+	NewObjectIDs.Reset();
 
-	UWorld* world = Controller->GetWorld();
-	int32 newParentID = MOD_ID_NONE;
 	AModumateObjectInstance* curTargetPlaneObj = GameState->Document->GetObjectById(CurTargetPlaneID);
 	const FGraph3DFace* curTargetFace = curTargetPlaneObj ? GameState->Document->FindVolumeGraph(CurTargetPlaneID)->FindFace(CurTargetPlaneID)
 		: nullptr;
@@ -250,42 +249,9 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 		return false;
 	}
 
-	switch (CreateObjectMode)
-	{
-	case EToolCreateObjectMode::Draw:
-		return false;
-	case EToolCreateObjectMode::Add:
-	{
-		newParentID = CurTargetPlaneID;
-		break;
-	}
-	case EToolCreateObjectMode::Apply:
-	{
-		newParentID = CurTargetPlaneID;
+	int32 pendingSpanHostID = CurTargetPlaneID;
 
-		TArray<int32> spans;
-		UModumateObjectStatics::GetSpansForFaceObject(GameState->Document, curTargetPlaneObj, spans);
-
-		if (curTargetPlaneObj->GetChildIDs().Num() > 0 || spans.Num() > 0)
-		{
-			auto deleteChildrenDelta = MakeShared<FMOIDelta>();
-
-			for (AModumateObjectInstance* curTargetPlaneChild : curTargetPlaneObj->GetChildObjects())
-			{
-				deleteChildrenDelta->AddCreateDestroyState(curTargetPlaneChild->GetStateData(), EMOIDeltaType::Destroy);
-			}
-
-			OutDeltas.Add(deleteChildrenDelta);
-
-			for (auto spanID : spans)
-			{
-				// TODO: face hosted objects to join span instead of replace, requires hole support in span geometry
-				FModumateObjectDeltaStatics::GetDeltasForFaceSpanAddRemove(GameState->Document, spanID, {}, { curTargetPlaneObj->ID }, OutDeltas);
-			}
-		}
-	}
-	break;
-	case EToolCreateObjectMode::Stamp:
+	if (CreateObjectMode == EToolCreateObjectMode::Stamp)
 	{
 		FTransform portalTransform(WorldRot, WorldPos, FVector::OneVector);
 
@@ -329,62 +295,23 @@ bool UPortalToolBase::GetPortalCreationDeltas(TArray<FDeltaPtr>& OutDeltas)
 		TArray<int32> addedFaceIDs;
 		TArray<FGraph3DDelta> graphDeltas;
 		if (bValidContainedFace &&
-			GameState->Document->MakeMetaObject(world, metaPlanePoints, addedFaceIDs, OutDeltas, graphDeltas) &&
+			GameState->Document->MakeMetaObject(GetWorld(), metaPlanePoints, addedFaceIDs, OutDeltas, graphDeltas) &&
 			(addedFaceIDs.Num() == 1))
 		{
 			// Assign new face from UModumateDocument::MakeMetaObject() as new parent face for portal
-			newParentID = addedFaceIDs[0];
-
-			// Use graph deltas to get face info for span
-			TArray<int32> deltaFaceAdditions;
-			TArray<int32> deltaFaceDeletions;
-			for (auto curGraphDelta : graphDeltas)
-			{
-				for (auto& kvp : curGraphDelta.FaceAdditions)
-				{
-					// Span does not include portal face
-					if (kvp.Key != newParentID)
-					{
-						deltaFaceAdditions.Add(kvp.Key);
-					}
-
-				}
-				for (auto& kvp : curGraphDelta.FaceDeletions)
-				{
-					deltaFaceDeletions.Add(kvp.Key);
-				}
-			}
-
-			TArray<int32> spans;
-			UModumateObjectStatics::GetSpansForFaceObject(GameState->Document, curTargetPlaneObj, spans);
-			for (auto spanID : spans)
-			{
-				// TODO: face hosted objects to join span instead of replace, requires hole support in span geometry
-				FModumateObjectDeltaStatics::GetDeltasForFaceSpanAddRemove(GameState->Document, spanID, deltaFaceAdditions, deltaFaceDeletions, OutDeltas);
-			}
+			pendingSpanHostID = addedFaceIDs[0];
+		}
+		// If face cannot be added, do not make portal span
+		else
+		{
+			return false;
 		}
 	}
-	break;
-	default:
-		return false;
-	}
 
-	if (newParentID != MOD_ID_NONE)
-	{
-		int32 nextPortalObjID = GameState->Document->GetNextAvailableID();
-		NewObjectIDs = { nextPortalObjID };
-		NewMOIStateData.ID = nextPortalObjID;
-		NewMOIStateData.ParentID = newParentID;
-		NewMOIStateData.AssemblyGUID = AssemblyGUID;
-
-		auto addPortal = MakeShared<FMOIDelta>();
-		addPortal->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
-
-		OutDeltas.Add(addPortal);
-		return true;
-	}
-
-	return OutDeltas.Num() > 0;
+	// We need to keep track of next ID because Document->MakeMetaObject can make 1+ new meta objects
+	int32 NewID = GameState->Document->GetNextAvailableID();
+	return FModumateObjectDeltaStatics::GetObjectCreationDeltasForFaceSpans(GameState->Document, GetCreateObjectMode(),
+		{ pendingSpanHostID }, NewID, TargetSpanIndex, AssemblyGUID, NewMOIStateData, OutDeltas, NewObjectIDs);
 }
 
 bool UPortalToolBase::CalculateNativeSize()

@@ -142,12 +142,19 @@ bool AMOIPortal::MarkEdgesMiterDirty()
 	CachedConnectedEdges.Reset();
 
 	const AModumateObjectInstance* planeParent = GetParentObject();
-	if (planeParent == nullptr)
+	TArray<int32> spanMembers = planeParent ? planeParent->GetFaceSpanMembers() : TArray<int32>();
+	if (spanMembers.Num() == 0)
+	{
+		return false;
+	}
+	// TODO: Use face from multi member for 2+ spans 
+	auto planeMoi = Document->GetObjectById(spanMembers[0]);
+	if (planeMoi == nullptr)
 	{
 		return false;
 	}
 
-	planeParent->GetConnectedMOIs(CachedParentConnectedMOIs);
+	planeMoi->GetConnectedMOIs(CachedParentConnectedMOIs);
 
 	for (AModumateObjectInstance* planeConnectedMOI : CachedParentConnectedMOIs)
 	{
@@ -386,7 +393,8 @@ FTransform AMOIPortal::GetWorldTransform() const
 void AMOIPortal::SetupAdjustmentHandles(AEditModelPlayerController *controller)
 {
 	AModumateObjectInstance *parent = GetParentObject();
-	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane)))
+	if (!ensureAlways(parent && (parent->GetObjectType() == EObjectType::OTMetaPlane || 
+		parent->GetObjectType() == EObjectType::OTMetaPlaneSpan)))
 	{
 		return;
 	}

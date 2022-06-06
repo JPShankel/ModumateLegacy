@@ -1600,20 +1600,6 @@ bool FModumateObjectDeltaStatics::GetObjectCreationDeltasForFaceSpans(const UMod
 	// Apply mode: Find PlaneSpan from MetaPlane, edit its assembly, but if no span exist, same as Add mode
 	for (int32 targetFaceID : InTargetFaceIDs)
 	{
-		// Destroy any children object of targeted face if tool is in Apply mode
-		// TODO: This is used to replace portals, as they are currently not span, 
-		// but when they are, then this step may not be needed
-		const AModumateObjectInstance* planeFace = Doc->GetObjectById(targetFaceID);
-		if (planeFace && CreationMode == EToolCreateObjectMode::Apply && planeFace->GetChildIDs().Num() > 0)
-		{
-			auto childrenDestroyerDelta = MakeShared<FMOIDelta>();
-			OutDeltaPtrs.Add(childrenDestroyerDelta);
-			for (auto* childOb : planeFace->GetChildObjects())
-			{
-				childrenDestroyerDelta->AddCreateDestroyState(childOb->GetStateData(), EMOIDeltaType::Destroy);
-			}
-		}
-
 		bool bAddSpan = CreationMode == EToolCreateObjectMode::Add || CreationMode == EToolCreateObjectMode::Draw;
 		TArray<int32> spans;
 		const AModumateObjectInstance* targetFaceMOI = Doc->GetObjectById(targetFaceID);

@@ -366,7 +366,8 @@ using FModumateDocumentHeader = FModumateDocumentHeaderV2;
 // Version 19: Editable part sizes in BIM
 // Version 20: Mark and Comment properties in all presets
 // Version 21: Edge and plane hosted objects have spans for parents
-static constexpr int32 DocVersion = 21;
+// Version 22: Portals use MetaPlaneSpan
+static constexpr int32 DocVersion = 22;
 
 struct MODUMATE_API FModumateSerializationStatics
 {
