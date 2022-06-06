@@ -1338,6 +1338,19 @@ void UModumateObjectStatics::GetObjectsInGroups(UModumateDocument* Doc, const TA
 	}
 }
 
+void UModumateObjectStatics::GetObjectsInGroupRecursive(UModumateDocument* Doc, int32 GroupID, TSet<AModumateObjectInstance*>& OutObjects)
+{
+	const AModumateObjectInstance* groupObject = Doc->GetObjectById(GroupID);
+	if (ensure(groupObject) && ensure(groupObject->GetObjectType() == EObjectType::OTMetaGraph))
+	{
+		auto groups = groupObject->GetAllDescendents();
+		TArray<int32> groupIDs;
+		Algo::Transform(groups, groupIDs, [](const AModumateObjectInstance* Object) { return Object->ID; });
+		groupIDs.Add(GroupID);
+		GetObjectsInGroups(Doc, groupIDs, OutObjects);
+	}
+}
+
 void UModumateObjectStatics::GetDesignOptionsForGroup(UModumateDocument* Doc, int32 GroupID, TArray<int32>& OutDesignOptionIDs)
 {
 	TArray<AMOIDesignOption*> designOptions;

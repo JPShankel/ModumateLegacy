@@ -121,6 +121,7 @@ public:
 		int32& OutSubgroup, bool& bOutIsInGroup);
 	static bool GetGroupIdsForGroupChange(const UModumateDocument* Doc, int32 NewgroupID, TArray<int32>& OutAffectedGroups);
 	static void GetObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, TSet<AModumateObjectInstance*>& OutObjects);
+	static void GetObjectsInGroupRecursive(UModumateDocument* Doc, int32 GroupID, TSet<AModumateObjectInstance*>& OutObjects);
 	static void HideObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, bool bHide=true);
 
 	static void GetDesignOptionsForGroup(UModumateDocument* Doc, int32 GroupID, TArray<int32>& OutDesignOptionIDs);

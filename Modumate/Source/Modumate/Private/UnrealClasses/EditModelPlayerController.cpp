@@ -3495,16 +3495,25 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 			!FMath::IsNearlyZero(objectHitPlane.PlaneDot(StructureLine.P1), PLANAR_DOT_EPSILON) ||
 			!FMath::IsNearlyZero(objectHitPlane.PlaneDot(StructureLine.P2), PLANAR_DOT_EPSILON);
 	};
-	static TArray<FStructurePoint> tempStructurePoints;
-	static TArray<FStructureLine> tempStructureLines;
-	tempStructurePoints.Reset();
-	tempStructureLines.Reset();
 
 	// After tracing for a direct hit result against a MOI, now check if it would be overridden by a snap point or line if desired
 	if (bCheckSnapping)
 	{
+		TArray<int32> objectIDsForSnapping;
+		TArray<int32>* objectIDsForSnappingPointer = nullptr;
+		if (Document->GetActiveVolumeGraphID() != Document->GetRootVolumeGraphID())
+		{   // If in a group then explicitly provide all objects in the group and its descendants.
+			TSet<AModumateObjectInstance*> objectsForSnapping;
+			UModumateObjectStatics::GetObjectsInGroupRecursive(Document, Document->GetActiveVolumeGraphID(), objectsForSnapping);
+			Algo::Transform(objectsForSnapping, objectIDsForSnapping, [](AModumateObjectInstance* Object) { return Object->ID; });
+			objectIDsForSnappingPointer = &objectIDsForSnapping;
+		}
+
+		TArray<FStructurePoint> tempStructurePoints;
+		TArray<FStructureLine> tempStructureLines;
+
 		// Update the snapping view (lines and points that can be snapped to)
-		SnappingView->UpdateSnapPoints(SnappingIDsToIgnore, mouseQueryBitfield, true, false);
+		SnappingView->UpdateSnapPoints(SnappingIDsToIgnore, mouseQueryBitfield, true, false, objectIDsForSnappingPointer);
 
 		// First, filter the snapping view based on eligible objects, now that we can filter them based on their snapping data
 		Algo::CopyIf(SnappingView->Corners, tempStructurePoints, validateStructurePoint);
@@ -3513,12 +3522,13 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 		// Then, transform them to raw positions for the purposes of hit selection
 		CurHitPointLocations.Reset();
 		CurHitLineLocations.Reset();
-		Algo::Transform(tempStructurePoints, CurHitPointLocations, [](const FStructurePoint &point) { return point; });
+
+		CurHitPointLocations = MoveTemp(tempStructurePoints);
 		Algo::Transform(tempStructureLines, CurHitLineLocations,[](const FStructureLine &line) { return TPair<FVector, FVector>(line.P1, line.P2); });
 
 		if (FindBestMousePointHit(CurHitPointLocations, mouseLoc, mouseDir, objectHitDist, bestVirtualHitIndex, bestVirtualHitDist))
 		{
-			FStructurePoint &bestPoint = tempStructurePoints[bestVirtualHitIndex];
+			FStructurePoint &bestPoint = CurHitPointLocations[bestVirtualHitIndex];
 
 			objectHit.Valid = true;
 			objectHit.Location = bestPoint.Point;
@@ -3602,6 +3612,9 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 			// namely, whether collision is enabled and if the type of physics collision would've been allowed for direct raycasting
 			ECollisionChannel objectCollisionType = UModumateTypeStatics::CollisionTypeFromObjectType(moi->GetObjectType());
 			bool bObjectInMouseQuery = (mouseQueryBitfield & ECC_TO_BITFIELD(objectCollisionType)) != 0;
+
+			TArray<FStructurePoint> tempStructurePoints;
+			TArray<FStructureLine> tempStructureLines;
 
 			if (moi && moi->IsCollisionEnabled() && moi->UseStructureDataForCollision() && bObjectInMouseQuery)
 			{

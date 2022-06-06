@@ -135,3 +135,9 @@ bool AMOIMetaGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* 
 	Super::CleanObject(DirtyFlag, OutSideEffectDeltas);
 	return DirtyFlag == EObjectDirtyFlags::Structure ? SetupBoundingBox() : true;
 }
+
+bool AMOIMetaGraph::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
+{
+	bOutVisible = false; bOutCollisionEnabled = false;
+	return true;
+}
