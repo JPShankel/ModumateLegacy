@@ -90,7 +90,7 @@ void AMOITerrainVertex::OnInstPropUIChangedHeight(float NewHeight)
 
 	FMOITerrainData newInstanceData = terrainMoi->InstanceData;
 	double* vertHeight = newInstanceData.Heights.Find(ID);
-	if (Document && vertHeight)
+	if (ensure(Document && vertHeight))
 	{
 		*vertHeight = NewHeight;
 		auto deltaPtr = MakeShared<FMOIDelta>();
@@ -128,7 +128,11 @@ bool AMOITerrainVertex::ToWebMOI(FWebMOI& OutMOI) const
 		}
 
 		moiProp->ValueArray.Empty();
-		moiProp->ValueArray.Add(FString::SanitizeFloat(*newInstanceData.Heights.Find(ID)));
+		double* height = newInstanceData.Heights.Find(ID);
+		if (ensure(height != nullptr))
+		{
+			moiProp->ValueArray.Add(FString::SanitizeFloat(*height));
+		}
 
 		return true;
 	}
