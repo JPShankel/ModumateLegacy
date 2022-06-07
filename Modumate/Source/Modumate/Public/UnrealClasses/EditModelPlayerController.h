@@ -99,7 +99,7 @@ private:
 	bool UploadInputTelemetry(bool bAsynchronous = true) const;
 
 	bool SnapDistAlongAffordance(FVector& SnappedPosition, const FVector& AffordanceOrigin, const FVector& AffordanceDir) const;
-	bool ValidateVirtualHit(const FVector &MouseOrigin, const FVector &MouseDir, const FVector &HitPoint,
+	bool ValidateVirtualHit(const FVector& MouseOrigin, const FVector& MouseDir, const FVector2D& MouseScreenSpace, const FVector& HitPoint,
 		float CurObjectHitDist, float CurVirtualHitDist, float MaxScreenDist, float &OutRayDist) const;
 	bool FindBestMousePointHit(const TArray<FStructurePoint> &Points, const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist, int32 &OutBestIndex, float &OutBestRayDist) const;
 	bool FindBestMouseLineHit(const TArray<TPair<FVector, FVector>> &Lines, const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist, int32 &OutBestIndex, FVector &OutBestIntersection, float &OutBestRayDist) const;
@@ -206,6 +206,8 @@ public:
 	}
 
 	bool DistanceBetweenWorldPointsInScreenSpace(const FVector &Point1, const FVector &Point2, float &OutScreenDist) const;
+	// Overload for one screen-space & one world-space point.
+	bool DistanceBetweenWorldPointsInScreenSpace(const FVector2D& ScreenPoint1, const FVector &Point2, float &OutScreenDist) const;
 	bool GetScreenScaledDelta(const FVector &Origin, const FVector &Normal, const float DesiredWorldDist, const float MaxScreenDist,
 		FVector &OutWorldPos, FVector2D &OutScreenPos) const;
 

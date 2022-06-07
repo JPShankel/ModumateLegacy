@@ -2607,6 +2607,19 @@ bool AEditModelPlayerController::DistanceBetweenWorldPointsInScreenSpace(const F
 	return false;
 }
 
+bool AEditModelPlayerController::DistanceBetweenWorldPointsInScreenSpace(const FVector2D& ScreenPoint1, const FVector& Point2, float& OutScreenDist) const
+{
+	OutScreenDist = FLT_MAX;
+	FVector2D screenPoint2;
+	if (ProjectWorldLocationToScreen(Point2, screenPoint2))
+	{
+		OutScreenDist = FVector2D::Distance(ScreenPoint1, screenPoint2);
+		return true;
+	}
+
+	return false;
+}
+
 bool AEditModelPlayerController::GetScreenScaledDelta(const FVector &Origin, const FVector &Normal, const float DesiredWorldDist, const float MaxScreenDist,
 	FVector &OutWorldPos, FVector2D &OutScreenPos) const
 {
@@ -3141,14 +3154,14 @@ bool AEditModelPlayerController::SnapDistAlongAffordance(FVector& SnappedPositio
 	return true;
 }
 
-bool AEditModelPlayerController::ValidateVirtualHit(const FVector &MouseOrigin, const FVector &MouseDir,
-	const FVector &HitPoint, float CurObjectHitDist, float CurVirtualHitDist, float MaxScreenDist, float &OutRayDist) const
+bool AEditModelPlayerController::ValidateVirtualHit(const FVector& MouseOrigin, const FVector& MouseDir, const FVector2D& MouseScreenSpace,
+	const FVector& HitPoint, float CurObjectHitDist, float CurVirtualHitDist, float MaxScreenDist, float &OutRayDist) const
 {
 	// The virtual hit point needs to be within a maximum screen distance, and ahead of the mouse
 	OutRayDist = (HitPoint - MouseOrigin) | MouseDir;
 	float screenSpaceDist;
-	if (DistanceBetweenWorldPointsInScreenSpace(HitPoint, MouseOrigin, screenSpaceDist) &&
-		(screenSpaceDist < MaxScreenDist) && (OutRayDist > KINDA_SMALL_NUMBER) && (OutRayDist < CurVirtualHitDist))
+	if ((OutRayDist > KINDA_SMALL_NUMBER) && (OutRayDist < CurVirtualHitDist) &&
+		DistanceBetweenWorldPointsInScreenSpace(MouseScreenSpace, HitPoint, screenSpaceDist) && (screenSpaceDist < MaxScreenDist))
 	{
 		// If virtual hit point is a candidate, make sure it's either
 		// in front of our current object hit distance, or verify that it's not occluded.
@@ -3174,6 +3187,8 @@ bool AEditModelPlayerController::FindBestMousePointHit(const TArray<FStructurePo
 	OutBestIndex = INDEX_NONE;
 	OutBestRayDist = FLT_MAX;
 
+	FVector2D mouseScreenSpace;
+	ProjectWorldLocationToScreen(MouseOrigin, mouseScreenSpace);
 	int32 numPoints = Points.Num();
 	for (int32 pointIdx = 0; pointIdx < numPoints; ++pointIdx)
 	{
@@ -3181,8 +3196,8 @@ bool AEditModelPlayerController::FindBestMousePointHit(const TArray<FStructurePo
 
 		// See if this is our best valid point hit
 		float rayDist;
-		if (ValidateVirtualHit(MouseOrigin, MouseDir, structurePoint.Point,
-			CurObjectHitDist, OutBestRayDist, SnapPointMaxScreenDistance, rayDist))
+		if (ValidateVirtualHit(MouseOrigin, MouseDir, mouseScreenSpace,
+			structurePoint.Point, CurObjectHitDist, OutBestRayDist, SnapPointMaxScreenDistance, rayDist))
 		{
 			auto nextPoint = Points[pointIdx];
 
@@ -3223,6 +3238,9 @@ bool AEditModelPlayerController::FindBestMouseLineHit(const TArray<TPair<FVector
 	const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist,
 	int32 &OutBestIndex, FVector &OutBestIntersection, float &OutBestRayDist) const
 {
+	FVector2D mouseScreenSpace;
+	ProjectWorldLocationToScreen(MouseOrigin, mouseScreenSpace);
+
 	OutBestIndex = INDEX_NONE;
 	OutBestIntersection = MouseOrigin;
 	OutBestRayDist = FLT_MAX;
@@ -3257,8 +3275,8 @@ bool AEditModelPlayerController::FindBestMouseLineHit(const TArray<TPair<FVector
 
 		// See if this is our best valid line hit
 		float rayDist;
-		if (ValidateVirtualHit(MouseOrigin, MouseDir, lineIntercept,
-			CurObjectHitDist, OutBestRayDist, SnapLineMaxScreenDistance, rayDist))
+		if (ValidateVirtualHit(MouseOrigin, MouseDir, mouseScreenSpace,
+			lineIntercept, CurObjectHitDist, OutBestRayDist, SnapLineMaxScreenDistance, rayDist))
 		{
 			OutBestRayDist = rayDist;
 			OutBestIndex = lineIdx;
