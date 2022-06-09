@@ -761,7 +761,8 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, int32 
 		{
 			decimalLength = lengthFeet;
 			decimalSuffix = FText::Format(LOCTEXT("decimal_feet_suffix", "{0}{1}"), dimPrefix,feetIndicator);
-			decimalFormat.MaximumFractionalDigits++;
+			// Reduce fractional precision by no. of integral digits.
+			decimalFormat.MaximumFractionalDigits = FMath::Max(NumDisplayDigits - int32(FMathd::Log(decimalLength) / FMathd::Log(10)) - 1, 0);
 		}
 		else
 		{
@@ -772,7 +773,7 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, int32 
 	break;
 	case EDimensionUnits::DU_Metric:
 	{
-		double lengthCM = LengthInches * FMath::Pow(UModumateDimensionStatics::InchesToCentimeters,Dimensionality);
+		double lengthCM = LengthInches * FMathd::Pow(UModumateDimensionStatics::InchesToCentimeters,Dimensionality);
 		double lengthCMRounded;
 		if (RoundDecimal(lengthCM, lengthCMRounded, NumRoundingDigits, decimalTolerance))
 		{
@@ -809,7 +810,7 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, int32 
 			decimalSuffix = LOCTEXT("MetricSuffixCM", "cm");
 			break;
 		case EUnit::Meters:
-			conversionFromCM = FMath::Pow(0.01,Dimensionality);
+			conversionFromCM = FMathd::Pow(0.01,Dimensionality);
 			decimalSuffix = Dimensionality > 1 ? FText::Format(LOCTEXT("MetricSuffixM", "m{0}"), Dimensionality) : LOCTEXT("MetricSuffixM", "m");
 			decimalFormat.MaximumFractionalDigits += 2;
 			break;
@@ -830,7 +831,7 @@ FText UModumateDimensionStatics::InchesToDisplayText(double LengthInches, int32 
 FText UModumateDimensionStatics::CentimetersToDisplayText(double LengthCM, int32 Dimensionality,
 	EDimensionUnits UnitType, EUnit OverrideUnit, int32 MaxDenomPower, double FractionalTolerance, int32 NumRoundingDigits, int32 NumDisplayDigits)
 {
-	return UModumateDimensionStatics::InchesToDisplayText(LengthCM * FMath::Pow(UModumateDimensionStatics::CentimetersToInches,Dimensionality), Dimensionality,
+	return UModumateDimensionStatics::InchesToDisplayText(LengthCM * FMathd::Pow(UModumateDimensionStatics::CentimetersToInches,Dimensionality), Dimensionality,
 		UnitType, OverrideUnit, MaxDenomPower, FractionalTolerance, NumRoundingDigits, NumDisplayDigits);
 }
 

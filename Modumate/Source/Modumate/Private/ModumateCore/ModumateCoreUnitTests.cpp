@@ -1715,6 +1715,41 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDimensionFormatUnitTest, "Modumate.Cor
 	return true;
 }
 
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateUnitsToStringTest, "Modumate.Core.DimensionFormat.UnitsToString", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter
+	| EAutomationTestFlags::HighPriority)
+bool FModumateUnitsToStringTest::RunTest(const FString& Parameters)
+{
+	static const struct TestCase
+	{
+		double Value;
+		int32 Dimensionality;
+		EDimensionUnits UnitType;
+		FString ExpectedResult;
+	} testCases[] =
+	{
+		{ 92903.04, 2, EDimensionUnits::DU_Imperial, TEXT("100sq.ft.") },
+		{ 467.36, 1, EDimensionUnits::DU_Imperial, TEXT("15'-4\"") },
+		{ 37.1475, 1, EDimensionUnits::DU_Imperial, TEXT("1'-2 5/8\"") },
+		{ 115385.5757, 2, EDimensionUnits::DU_Imperial, TEXT("124.2sq.ft.") },  // 10.35' x 12'
+		{ 2048.383, 3, EDimensionUnits::DU_Imperial, TEXT("125cu.in.") },  // 5" x 5" x 5"
+		{ 770.0, 1, EDimensionUnits::DU_Metric, TEXT("7.7m") },
+		{ 12.0, 1, EDimensionUnits::DU_Metric, TEXT("12cm") },
+		{ 1500.0, 1, EDimensionUnits::DU_Metric, TEXT("15m") },
+		{ 4e4, 2, EDimensionUnits::DU_Metric, TEXT("4m2") },
+		{ 104000.0, 2, EDimensionUnits::DU_Metric, TEXT("10.4m2") },  // 2.6m x 4m
+		{ 1959640.0, 3, EDimensionUnits::DU_Metric, TEXT("1.9596m3") },
+	};
+
+	for (const auto& test : testCases)
+	{
+		const FString testResult(UModumateDimensionStatics::CentimetersToDisplayText(test.Value, test.Dimensionality, test.UnitType).ToString());
+		TestTrue(FString::Printf(TEXT("UnitsToString test %d: %lf -> \"%s\" (actual \"%s\")"), &test - testCases, test.Value, *test.ExpectedResult, *testResult), testResult == test.ExpectedResult);
+	}
+
+	return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateIDListNormalization, "Modumate.Core.IDListNormalization", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 	bool FModumateIDListNormalization::RunTest(const FString& Parameters)
 {
