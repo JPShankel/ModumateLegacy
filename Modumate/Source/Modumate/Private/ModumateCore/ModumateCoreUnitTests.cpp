@@ -20,6 +20,18 @@
 #include "Polygon2.h"
 #include "StructDeserializer.h"
 #include "StructSerializer.h"
+#include "UnrealClasses/ModumateGameInstance.h"
+#include "ToolsAndAdjustments/Tools/EditModelGroupTool.h"
+#include "Objects/MetaGraph.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "ModumateCore/ModumateAutomationStatics.h"
+#include "Tests/AutomationCommon.h"
+
+
+#if WITH_AUTOMATION_TESTS
 
 #define LOCTEXT_NAMESPACE "CoreUnitTests"
 
@@ -1867,4 +1879,118 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateEdgeDetailHashTest, "Modumate.Details.
 	return true;
 }
 
+DEFINE_LATENT_AUTOMATION_COMMAND_ONE_PARAMETER(FModumateGroupTestBody, FAutomationTestBase*, TestBase);
+bool FModumateGroupTestBody::Update()
+{
+	//TODO: create a statics function to get the world and move this code there
+	TWeakObjectPtr<ADynamicMeshActor> DynamicMeshActor;
+	UWorld* world = nullptr;
+	for (const FWorldContext& worldContext : GEngine->GetWorldContexts())
+	{
+		if (worldContext.WorldType == EWorldType::Game || worldContext.WorldType == EWorldType::PIE)
+		{
+			world = worldContext.World();
+			break;
+		}
+	}
+
+	if (!world)
+	{
+		TestBase->SetSuccessState(false);
+		UE_LOG(LogEngineAutomationTests, Error, TEXT("Modumate Group Test failed on world"));
+		return true;
+	}
+	//TODO: create a statics function to get the gamestate and document
+	AEditModelGameState* gameState = world->GetGameState<AEditModelGameState>();
+	UModumateDocument* document = NewObject<UModumateDocument>(world);
+
+	UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
+	gameState->Document = document;
+
+	if (!document)
+	{
+		TestBase->SetSuccessState(false);
+		UE_LOG(LogEngineAutomationTests, Error, TEXT("Modumate Group Test failed on document"));
+		return true;
+	}
+
+	if (gameState == nullptr)
+	{
+		TestBase->SetSuccessState(false);
+		UE_LOG(LogEngineAutomationTests, Error, TEXT("Modumate Group Test failed on Game State"));
+		return true;
+	}
+	document->MakeNew(world);
+
+	FGraph3D* graph = document->GetVolumeGraph(document->GetActiveVolumeGraphID());
+	int32 xIterations = 2;
+	int32 yIterations = 2;
+	int32 nextID = document->GetNextAvailableID();
+	auto graphDelta = MakeShared<FGraph3DDelta>();
+	TArray<TArray<FVector>> planesAndPoints = UModumateAutomationStatics::GenerateProceduralGeometry(world, nextID, graph, xIterations, yIterations, graphDelta, 50.0f, 100.0f, FVector(-100.0f, 0.0f, 0.0f), FVector(0, 1, 0));
+	// apply all the deltas
+	graphDelta->GraphID = document->GetRootVolumeGraphID();
+	document->ApplyDeltas({ graphDelta }, world);
+
+	//select all objects and create and use the group tool 
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(world->GetFirstPlayerController());
+	AEditModelPlayerState* emPlayerState = controller->GetPlayerState<AEditModelPlayerState>();
+	emPlayerState->SelectedObjects.Reset();
+	auto verts = graph->GetVertices();
+	for (auto iter = verts.begin(); iter != verts.end(); ++iter)
+	{
+		auto moiToAdd = document->GetObjectById(iter->Key);
+		emPlayerState->SelectedObjects.Add(moiToAdd);
+	}
+	auto edges = graph->GetEdges();
+	for (auto iter = edges.begin(); iter != edges.end(); ++iter)
+	{
+		auto moiToAdd = document->GetObjectById(iter->Key);
+		emPlayerState->SelectedObjects.Add(moiToAdd);
+	}
+	auto faces = graph->GetFaces();
+	for (auto iter = faces.begin(); iter != faces.end(); ++iter)
+	{
+		auto moiToAdd = document->GetObjectById(iter->Key);
+		emPlayerState->SelectedObjects.Add(moiToAdd);
+	}
+	int32 numGraphsBeforeGroupTool = document->GetObjectsOfType(EObjectType::OTMetaGraph).Num();
+	TScriptInterface<IEditModelToolInterface> groupTool = controller->ModeToTool.FindRef(EToolMode::VE_GROUP);
+
+	groupTool->Activate();
+	auto metaGraphsInDocument = document->GetObjectsOfType(EObjectType::OTMetaGraph);
+	int32 numGraphsAfterGroupTool = metaGraphsInDocument.Num();
+	int32 numGroupGraphElements = 0;
+	for (auto thisGraph : metaGraphsInDocument)
+	{
+		if (thisGraph->ID == document->GetRootVolumeGraphID())
+		{
+			continue;
+		}
+		numGroupGraphElements = thisGraph->GetDocument()->GetObjectInstances().Num();
+	}
+
+	bool bSuccess = (numGraphsBeforeGroupTool == 1) && (numGraphsAfterGroupTool == 2) && (numGroupGraphElements == 28);
+	TestBase->SetSuccessState(bSuccess);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateGroupTest, "Modumate.Groups.GroupTest", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
+bool FModumateGroupTest::RunTest(const FString& Parameters)
+{
+	AddExpectedError(TEXT("Already cleaned"), EAutomationExpectedErrorFlags::Contains);
+
+	ADD_LATENT_AUTOMATION_COMMAND(FLoadGameMapCommand("EditModelLVL"));
+	ADD_LATENT_AUTOMATION_COMMAND(FWaitForMapToLoadCommand());
+	ADD_LATENT_AUTOMATION_COMMAND(FEngineWaitLatentCommand(1.0f));
+	ADD_LATENT_AUTOMATION_COMMAND(FModumateGroupTestBody(this));
+	ADD_LATENT_AUTOMATION_COMMAND(FLoadGameMapCommand("MainMenuLVL"));
+	ADD_LATENT_AUTOMATION_COMMAND(FWaitForMapToLoadCommand());
+
+	return true;
+}
+
 #undef LOCTEXT_NAMESPACE 
+
+#endif
