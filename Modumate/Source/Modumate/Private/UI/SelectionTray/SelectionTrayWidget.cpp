@@ -128,6 +128,14 @@ void USelectionTrayWidget::OpenToolTrayDetailDesigner(const FGuid& DetailPreset,
 	}
 }
 
+void USelectionTrayWidget::UpdateDetailDesignerFromUndoRedo()
+{
+	if (DetailDesigner->IsVisible() && CurrentDetailPreset.IsValid() && CurrentDetailEdgeIDs.Num() > 0)
+	{
+		OpenToolTrayDetailDesigner(CurrentDetailPreset, CurrentDetailEdgeIDs);
+	}
+}
+
 void USelectionTrayWidget::UpdateFromSelection()
 {
 	// The current selection could either result in the detail designer or the selection viewer.

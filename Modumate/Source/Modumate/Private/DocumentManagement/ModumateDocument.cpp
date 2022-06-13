@@ -1658,6 +1658,15 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World, bool bCleanObjects, bool 
 
 	UModumateObjectStatics::UpdateDesignOptionVisibility(this);
 
+	if (localController)
+	{
+		AEditModelPlayerController* emController = Cast<AEditModelPlayerController>(localController);
+		if (emController && emController->EditModelUserWidget)
+		{
+			emController->EditModelUserWidget->UpdateDetailDesginer();
+		}
+	}
+
 	return true;
 }
 
