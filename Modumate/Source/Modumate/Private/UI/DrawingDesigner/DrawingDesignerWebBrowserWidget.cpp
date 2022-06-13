@@ -13,6 +13,7 @@
 #include "UnrealClasses/EditModelInputHandler.h"
 #include "DrawingDesigner/DrawingDesignerDocument.h"
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
+#include "ModumateCore/ModumateFunctionLibrary.h"
 
 #define LOCTEXT_NAMESPACE "DrawingDesignerWebBrowserWidget"
 
@@ -71,16 +72,21 @@ void UDrawingDesignerWebBrowserWidget::ResetDocumentButtonPressed()
 void UDrawingDesignerWebBrowserWidget::InitWithController()
 {
 	auto controller = GetOwningPlayer<AEditModelPlayerController>();
-
+	auto gameInstance = controller->GetGameInstance<UModumateGameInstance>();
+	auto cloudConnection = gameInstance->GetCloudConnection();
+	
 	if (ensureAlways(controller && controller->GetDocument()))
 	{
 		static const FString bindObjName(TEXT("doc"));
 		DrawingSetWebBrowser->CallBindUObject(bindObjName, controller->GetDocument(), true);
 		DrawingSetWebBrowser->CallBindUObject(TEXT("ui"), controller->InputHandlerComponent, true);
 		DrawingSetWebBrowser->CallBindUObject(TEXT("game"), GetGameInstance(), true);
+		
 	}
 
-	DrawingSetWebBrowser->LoadURL(CVarModumateDrawingDesignerURL.GetValueOnAnyThread());
+	const auto* projectSettings = GetDefault<UGeneralProjectSettings>();
+	FString currentVersion = projectSettings->ProjectVersion;
+	DrawingSetWebBrowser->LoadURL(CVarModumateDrawingDesignerURL.GetValueOnAnyThread() + TEXT("?CLOUD=") + cloudConnection->GetCloudRootURL() + TEXT("&CLIENT_VERSION=") + currentVersion);
 }
 
 #undef LOCTEXT_NAMESPACE
