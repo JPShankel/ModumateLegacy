@@ -614,6 +614,7 @@ public:
 	void UpdateCutPlaneCullingMaterialInst(int32 ObjID = MOD_ID_NONE);
 	void ToggleAllCutPlanesColor(bool bEnable);
 	FPlane GetCurrentCullingPlane() const;
+	void RefreshCutPlanes() const;
 
 	void ToggleDrawingDesigner(bool bEnable) const;
 

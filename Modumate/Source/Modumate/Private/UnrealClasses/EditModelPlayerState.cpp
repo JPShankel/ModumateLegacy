@@ -1940,10 +1940,14 @@ void AEditModelPlayerState::UnhideAllObjects()
 		}
 	}
 
-	HiddenObjectsID = hiddenCutPlaneIds;
+	if (HiddenObjectsID.Num() != hiddenCutPlaneIds.Num())
+	{
+		HiddenObjectsID = hiddenCutPlaneIds;
 
-	// After the user has hidden what they want, assert design option overrides
-	UModumateObjectStatics::UpdateDesignOptionVisibility(gameState->Document);
+		// After the user has hidden what they want, assert design option overrides
+		UModumateObjectStatics::UpdateDesignOptionVisibility(gameState->Document);
+		SendWebPlayerState();
+	}
 }
 
 void AEditModelPlayerState::UnhideObjectsById(const TArray<int32>& IDs, bool bUpdateDesignOptions)
@@ -1956,6 +1960,8 @@ void AEditModelPlayerState::UnhideObjectsById(const TArray<int32>& IDs, bool bUp
 	{
 		return;
 	}
+
+	bool bAnyUnhidden = HiddenObjectsID.Num() > 0;
 
 	for (auto id : IDs)
 	{
@@ -1972,5 +1978,10 @@ void AEditModelPlayerState::UnhideObjectsById(const TArray<int32>& IDs, bool bUp
 	if (bUpdateDesignOptions)
 	{
 		UModumateObjectStatics::UpdateDesignOptionVisibility(gameState->Document);
+	}
+
+	if (bAnyUnhidden)
+	{
+		SendWebPlayerState();
 	}
 }

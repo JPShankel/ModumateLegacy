@@ -4129,6 +4129,18 @@ FPlane AEditModelPlayerController::GetCurrentCullingPlane() const
 		FPlane(ForceInitToZero);
 }
 
+void AEditModelPlayerController::RefreshCutPlanes() const
+{
+	TArray<AModumateObjectInstance*> cutPlanes = Document->GetObjectsOfType(EObjectType::OTCutPlane);
+	for (auto* cutPlane : cutPlanes)
+	{
+		if (cutPlane->IsVisible())
+		{
+			cutPlane->MarkDirty(EObjectDirtyFlags::Visuals);
+		}
+	}
+}
+
 void AEditModelPlayerController::ToggleDrawingDesigner(bool bEnable) const
 {
 	EditModelUserWidget->DrawingDesigner->DrawingSetWebBrowser->WebBrowserWidget->ForceFullscreenInput(bEnable);
@@ -4172,6 +4184,7 @@ bool AEditModelPlayerController::HideSelected()
 		UModumateObjectStatics::HideObjectsInGroups(GetDocument(), selectedGroupIDs);
 	}
 	DeselectAll();
+	RefreshCutPlanes();
 	return true;
 }
 
@@ -4179,6 +4192,7 @@ bool AEditModelPlayerController::UnhideAll()
 {
 	SetToolMode(EToolMode::VE_SELECT);
 	GetPlayerState<AEditModelPlayerState>()->UnhideAllObjects();
+	RefreshCutPlanes();
 	return true;
 }
 

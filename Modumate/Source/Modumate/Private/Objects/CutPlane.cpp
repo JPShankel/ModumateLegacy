@@ -677,7 +677,10 @@ bool AMOICutPlane::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage,
 		// TODO: this only is implemented for plane hosted objects right now, this function should be
 		// a part of ModumateObjectInstance instead and should propagate down through the children
 		TArray<TArray<FVector>> WallCutPerimeters;
-		moi->GetDraftingLines(ParentPage, CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, WallCutPerimeters);
+		if (!moi->IsRequestedHidden())
+		{
+			moi->GetDraftingLines(ParentPage, CachedPlane, AxisX, AxisY, CachedOrigin, cutPlaneBox, WallCutPerimeters);
+		}
 
 		// Create cap geometry for Mois
 		curDraftingObjectIds.Add(moi->ID);
