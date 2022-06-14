@@ -271,6 +271,7 @@ ALineActor* FDrawingDesignerRenderControl::GetLineActor()
 	{
 		ALineActor* line = LinePool.Pop(false);
 		line->SetVisibilityInApp(true);
+		line->SetActorEnableCollision(false);
 		return line;
 	}
 	else
@@ -279,6 +280,7 @@ ALineActor* FDrawingDesignerRenderControl::GetLineActor()
 		line->SetIsHUD(false);
 		line->MakeGeometry();
 		line->ToggleForDrawingRender(true);
+		line->SetActorEnableCollision(false);
 		return line;
 	}
 }

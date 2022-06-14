@@ -94,7 +94,7 @@ ADrawingDesignerRender::ADrawingDesignerRender()
 	SetRootComponent(CaptureComponent);
 }
 
-void ADrawingDesignerRender::SetDocument(const UModumateDocument* InDoc, FDrawingDesignerRenderControl* RenderControl)
+void ADrawingDesignerRender::SetDocument(UModumateDocument* InDoc, FDrawingDesignerRenderControl* RenderControl)
 {
 	Doc = InDoc;
 	DrawingDesignerRenderControl = RenderControl;
@@ -243,7 +243,7 @@ void ADrawingDesignerRender::Destroyed()
 
 void ADrawingDesignerRender::RenderFfe()
 {
-	const TArray<const AModumateObjectInstance*> ffeObjects = Doc->GetObjectsOfType(EObjectType::OTFurniture);
+	TArray<AModumateObjectInstance*> ffeObjects = Doc->GetObjectsOfType(EObjectType::OTFurniture);
 	if (ffeObjects.Num() == 0)
 	{
 		return;
@@ -262,11 +262,14 @@ void ADrawingDesignerRender::RenderFfe()
 	}
 
 	CaptureComponent->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
-	for (const auto* ffe: ffeObjects)
+	for (auto* ffe: ffeObjects)
 	{
-		const AActor* actor = ffe->GetActor();
+		AActor* actor = ffe->GetActor();
+		actor->SetActorHiddenInGame(false);
+		
 		TArray<UMeshComponent*> components;
 		actor->GetComponents<UMeshComponent>(components);
+		
 		for (auto* component: components)
 		{
 			const int32 numMaterials = component->GetNumMaterials();
@@ -287,6 +290,7 @@ void ADrawingDesignerRender::RenderFfe()
 		}
 	}
 
+	
 	CaptureComponent->TextureTarget = FfeRenderTarget;
 	CaptureComponent->CaptureScene();
 
@@ -326,9 +330,12 @@ void ADrawingDesignerRender::RenderFfe()
 
 void ADrawingDesignerRender::RestoreFfeMaterials()
 {
-	const TArray<const AModumateObjectInstance*> ffeObjects = Doc->GetObjectsOfType(EObjectType::OTFurniture);
-	for (const auto* ffe: ffeObjects)
+	TArray<AModumateObjectInstance*> ffeObjects = Doc->GetObjectsOfType(EObjectType::OTFurniture);
+	for (auto* ffe: ffeObjects)
 	{
+		bool visible, collidable = false;
+		ffe->GetUpdatedVisuals(visible, collidable);
+		
 		const AActor* actor = ffe->GetActor();
 		TArray<UMeshComponent*> components;
 		actor->GetComponents<UMeshComponent>(components);
@@ -351,7 +358,6 @@ void ADrawingDesignerRender::AddObjects(const FVector& ViewDirection, float MinL
 {
 	TArray<const AModumateObjectInstance*> sceneObjects = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType(RenderedObjectTypes);
 	TArray<FDrawingDesignerLine> sceneLines;
-	SceneMeshComponents.Empty();
 
 	for (const auto* moi : sceneObjects)
 	{

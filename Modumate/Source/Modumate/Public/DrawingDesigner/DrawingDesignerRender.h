@@ -29,7 +29,7 @@ public:
 	ADrawingDesignerRender();
 	FTransform GetViewTransform() const { return ViewTransform;  }
 	void SetViewTransform(const FTransform& Transform) { ViewTransform = Transform; }
-	void SetDocument(const UModumateDocument* InDoc, FDrawingDesignerRenderControl* RenderControl);
+	void SetDocument(UModumateDocument* InDoc, FDrawingDesignerRenderControl* RenderControl);
 	void AddLines(const TArray<FDrawingDesignerLine>& Lines, bool bInPlane);
 	void EmptyLines();
 	void AddObjects(const FVector& ViewDirection, float MinLength);
@@ -57,7 +57,7 @@ private:
 
 	UPROPERTY()
 	UTextureRenderTarget2D* FfeRenderTarget = nullptr;
-	const UModumateDocument* Doc = nullptr;
+	UModumateDocument* Doc = nullptr;
 	FDrawingDesignerRenderControl* DrawingDesignerRenderControl;
 
 	UPROPERTY()
