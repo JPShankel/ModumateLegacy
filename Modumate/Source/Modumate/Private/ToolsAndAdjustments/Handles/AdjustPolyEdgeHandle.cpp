@@ -94,11 +94,13 @@ bool AAdjustPolyEdgeHandle::BeginUse()
 	if (TargetMOI->GetObjectType() == EObjectType::OTMetaPlaneSpan)
 	{
 		AMOIMetaPlaneSpan* targetSpan = Cast<AMOIMetaPlaneSpan>(TargetMOI);
-		if (targetSpan)
+		const FGraph3DFace* face = UModumateObjectStatics::GetFaceFromSpanObject(GameState->Document, TargetMOI->ID);
+
+		int32 endVertexIndex = (TargetIndex + 1) % OriginalPolyPoints.Num();
+		if (targetSpan && face && TargetIndex < face->VertexIDs.Num() && endVertexIndex < face->VertexIDs.Num())
 		{
-			const FGraph3DFace* face = UModumateObjectStatics::GetFaceFromSpanObject(GameState->Document, TargetMOI->ID);
 			SpanStartVertexID = face->VertexIDs[TargetIndex];
-			SpanEndVertexID = face->VertexIDs[(TargetIndex + 1) % OriginalPolyPoints.Num()];
+			SpanEndVertexID = face->VertexIDs[endVertexIndex];
 			for (auto curMemberID : targetSpan->InstanceData.GraphMembers)
 			{
 				const auto* memberFace = Controller->GetDocument()->GetVolumeGraph()->FindFace(curMemberID);
