@@ -16,6 +16,7 @@ class UModumateDocument;
 class UMeshComponent;
 class UProceduralMeshComponent;
 class AMOICutPlane;
+class AModumateObjectInstance;
 class AEditModelGameMode;
 enum class EObjectType : uint8;
 enum class FModumateLayerType;
@@ -65,6 +66,7 @@ private:
 
 	TWeakObjectPtr<const AEditModelGameMode> GameMode;
 	void AddInPlaneLines(FVector P0, FVector P1, FModumateLayerType Layer);
+	void FillHiddenList();
 
 	using StaticMaterialKey = TPair<UMeshComponent*, int32>;
 	TMap<StaticMaterialKey, UMaterialInterface*> SceneStaticMaterialMap;
@@ -72,6 +74,8 @@ private:
 	TMap<UMeshComponent*, int32> SceneMeshComponents;
 	FVector InPlaneOffset;
 	float LineScalefactor = 1.0f;
+
+	TSet<AModumateObjectInstance*> HiddenObjects;
 
 	// Stencil-buffer values that are coordinated with the post-process material PP_DrawingDesignerRender.
 	// Also with ALineActor::ToggleForDrawingRender().

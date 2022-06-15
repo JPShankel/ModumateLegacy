@@ -14,6 +14,7 @@
 #include "DrawingDesigner/ModumateDDRenderDraw.h"
 #include "Drafting/ModumateDraftingElements.h"
 #include "Objects/CutPlane.h"
+#include "Objects/DesignOption.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/CompoundMeshActor.h"
@@ -196,6 +197,9 @@ void ADrawingDesignerRender::RenderImage(AMOICutPlane* CutPlane, float MinLength
 
 	const FVector viewDirection = CutPlane->GetNormal();
 	InPlaneOffset = -0.5f * CaptureActorOffset * viewDirection;
+
+	FillHiddenList();
+
 	RenderFfe();
 	
 	AddObjects(viewDirection, MinLength);
@@ -212,6 +216,7 @@ void ADrawingDesignerRender::RenderImage(AMOICutPlane* CutPlane, float MinLength
 	EmptyLines();
 	SceneStaticMaterialMap.Empty();
 	SceneMeshComponents.Empty();
+	HiddenObjects.Empty();
 
 #if 0
 	UKismetRenderingLibrary::ExportRenderTarget(GetWorld(), RenderTarget, TEXT("/Modumate"), TEXT("portaldrawing_test.png"));
@@ -361,19 +366,35 @@ void ADrawingDesignerRender::AddObjects(const FVector& ViewDirection, float MinL
 
 	for (const auto* moi : sceneObjects)
 	{
-		const ACompoundMeshActor* compoundActor = Cast<ACompoundMeshActor>(moi->GetActor());
-		if (compoundActor)
+		if (!HiddenObjects.Contains(moi))
 		{
-			const int32 numComponents = compoundActor->UseSlicedMesh.Num();
-			for (int32 componentIndex = 0; componentIndex < numComponents; ++componentIndex)
+			const ACompoundMeshActor* compoundActor = Cast<ACompoundMeshActor>(moi->GetActor());
+			if (compoundActor)
 			{
-				if (compoundActor->UseSlicedMesh[componentIndex])
+				const int32 numComponents = compoundActor->UseSlicedMesh.Num();
+				for (int32 componentIndex = 0; componentIndex < numComponents; ++componentIndex)
 				{
-					const int32 sliceStart = 9 * componentIndex;
-					const int32 sliceEnd = 9 * (componentIndex + 1);
-					for (int32 slice = sliceStart; slice < sliceEnd; ++slice)
+					if (compoundActor->UseSlicedMesh[componentIndex])
 					{
-						UProceduralMeshComponent* meshComponent = compoundActor->NineSliceComps[slice];
+						const int32 sliceStart = 9 * componentIndex;
+						const int32 sliceEnd = 9 * (componentIndex + 1);
+						for (int32 slice = sliceStart; slice < sliceEnd; ++slice)
+						{
+							UProceduralMeshComponent* meshComponent = compoundActor->NineSliceComps[slice];
+							if (!meshComponent)
+							{
+								continue;
+							}
+
+							SceneMeshComponents.Add(meshComponent, meshComponent->CustomDepthStencilValue);
+							meshComponent->SetCustomDepthStencilValue(SVMoi);
+							meshComponent->SetRenderCustomDepth(true);
+							CaptureComponent->ShowOnlyComponent(meshComponent);
+						}
+					}
+					else
+					{
+						UStaticMeshComponent* meshComponent = compoundActor->StaticMeshComps[componentIndex];
 						if (!meshComponent)
 						{
 							continue;
@@ -385,47 +406,34 @@ void ADrawingDesignerRender::AddObjects(const FVector& ViewDirection, float MinL
 						CaptureComponent->ShowOnlyComponent(meshComponent);
 					}
 				}
-				else
-				{
-					UStaticMeshComponent* meshComponent = compoundActor->StaticMeshComps[componentIndex];
-					if (!meshComponent)
-					{
-						continue;
-					}
-
-					SceneMeshComponents.Add(meshComponent, meshComponent->CustomDepthStencilValue);
-					meshComponent->SetCustomDepthStencilValue(SVMoi);
-					meshComponent->SetRenderCustomDepth(true);
-					CaptureComponent->ShowOnlyComponent(meshComponent);
-				}
-			}
-		}
-		else
-		{
-			const ADynamicMeshActor* dynamicActor = Cast<ADynamicMeshActor>(moi->GetActor());
-			if (dynamicActor)
-			{
-				TArray<UProceduralMeshComponent*> meshComponents({ dynamicActor->Mesh, dynamicActor->MeshCap });
-				meshComponents.Append(dynamicActor->ProceduralSubLayers);
-				meshComponents.Append(dynamicActor->ProceduralSubLayerCaps);
-				for (UProceduralMeshComponent* meshComponent : meshComponents)
-				{
-					if (meshComponent)
-					{
-						SceneMeshComponents.Add(meshComponent, meshComponent->CustomDepthStencilValue);
-						meshComponent->SetCustomDepthStencilValue(SVMoi);
-						meshComponent->SetRenderCustomDepth(true);
-						CaptureComponent->ShowOnlyComponent(meshComponent);
-					}
-				}
 			}
 			else
 			{
-				ensure(false); // No compound or dynamic mesh.
+				const ADynamicMeshActor* dynamicActor = Cast<ADynamicMeshActor>(moi->GetActor());
+				if (dynamicActor)
+				{
+					TArray<UProceduralMeshComponent*> meshComponents({ dynamicActor->Mesh, dynamicActor->MeshCap });
+					meshComponents.Append(dynamicActor->ProceduralSubLayers);
+					meshComponents.Append(dynamicActor->ProceduralSubLayerCaps);
+					for (UProceduralMeshComponent* meshComponent : meshComponents)
+					{
+						if (meshComponent)
+						{
+							SceneMeshComponents.Add(meshComponent, meshComponent->CustomDepthStencilValue);
+							meshComponent->SetCustomDepthStencilValue(SVMoi);
+							meshComponent->SetRenderCustomDepth(true);
+							CaptureComponent->ShowOnlyComponent(meshComponent);
+						}
+					}
+				}
+				else
+				{
+					ensure(false); // No compound or dynamic mesh.
+				}
 			}
-		}
 
-		moi->GetDrawingDesignerItems(ViewDirection, sceneLines, MinLength);
+			moi->GetDrawingDesignerItems(ViewDirection, sceneLines, MinLength);
+		}
 	}
 
 	AddLines(sceneLines, false);
@@ -469,4 +477,30 @@ void ADrawingDesignerRender::AddInPlaneLines(FVector P0, FVector P1, FModumateLa
 	line.Thickness = LayerToDDParams[intLayer].Thickness;
 	line.GreyValue = LayerToDDParams[intLayer].GreyValue / 255.0;
 	AddLines({ line }, true);
+}
+
+void ADrawingDesignerRender::FillHiddenList()
+{
+	// Find all objects that should not be rendered according to current design options.
+	TSet<int32> allDesignGroups;
+	TSet<int32> shownDesignGroups;
+	TArray<const AMOIDesignOption*> designOptions;
+	Doc->GetObjectsOfTypeCasted(EObjectType::OTDesignOption, designOptions);
+	for (auto* designOption : designOptions)
+	{
+		allDesignGroups.Append(designOption->InstanceData.groups);
+		if (designOption->InstanceData.isShowing)
+		{
+			shownDesignGroups.Append(designOption->InstanceData.groups);
+		}
+	}
+
+	TSet<int32> hiddenDesignGroups(allDesignGroups.Difference(shownDesignGroups));
+
+	HiddenObjects.Empty();
+	for (int32 groupID : hiddenDesignGroups)
+	{
+		UModumateObjectStatics::GetObjectsInGroups(Doc, { groupID }, HiddenObjects);
+	}
+
 }
