@@ -424,7 +424,7 @@ void AEditModelGameMode::OnServerStatusTimer()
 	// Allow skipping the auto-exit with the "longtimeouts" parameter, which is also how we enable longer connection timeout values.
 	static bool bShouldAutoExit = !FParse::Param(FCommandLine::Get(), TEXT("longtimeouts"));
 
-	if (PlayersByUserID.Num() == 0)
+	if (PlayersByUserID.Num() == 0 || GetNumPlayers() == 0)
 	{
 		TimeWithoutPlayers += ServerStatusTimerRate;
 
