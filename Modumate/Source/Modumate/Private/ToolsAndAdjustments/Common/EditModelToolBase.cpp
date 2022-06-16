@@ -150,6 +150,12 @@ void UEditModelToolBase::SetAssemblyGUID(const FGuid& InAssemblyGUID)
 	}
 }
 
+bool UEditModelToolBase::ApplyStateData(const FMOIStateData& InStateData)
+{
+	NewMOIStateData = InStateData;
+	return true;
+}
+
 void UEditModelToolBase::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	Controller->OnTextCommitted(Text, CommitMethod);

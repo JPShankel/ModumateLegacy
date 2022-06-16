@@ -50,6 +50,7 @@ public:
 	virtual EToolCreateObjectMode GetCreateObjectMode() const override { return CreateObjectMode; }
 	virtual void SetAssemblyGUID(const FGuid& InAssemblyKey) override;
 	virtual FGuid GetAssemblyGUID() const override { return AssemblyGUID; }
+	virtual bool ApplyStateData(const FMOIStateData& InStateData) override;
 
 	// TODO: potentially duplicate with handles
 	virtual bool HasDimensionActor() { return false; }

@@ -6,6 +6,7 @@
 #include "Engine.h"
 #include "BIMKernel/Core/BIMKey.h"
 #include "Objects/ModumateObjectEnums.h"
+#include "Objects/MOIState.h"
 
 #include "EditModelToolInterface.generated.h"
 
@@ -49,6 +50,7 @@ public:
 	virtual EToolCreateObjectMode GetCreateObjectMode() const = 0;
 	virtual void SetAssemblyGUID(const FGuid &InAssemblyKey) = 0;
 	virtual FGuid GetAssemblyGUID() const = 0;
+	virtual bool ApplyStateData(const FMOIStateData& InStateData) = 0;
 	virtual bool CycleMode() = 0;
 	virtual void CommitSpanEdit() = 0;
 	virtual void CancelSpanEdit() = 0;
