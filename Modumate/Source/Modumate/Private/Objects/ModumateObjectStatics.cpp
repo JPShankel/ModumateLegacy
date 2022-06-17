@@ -387,7 +387,7 @@ bool UModumateObjectStatics::GetEdgeFaceConnections(const FGraph3DEdge* GraphEdg
 				if (spanMemberIDs.Num() > 0)
 				{
 					const auto spanMOI = Cast<AMOIMetaPlaneSpan>(Doc->GetObjectById(spanMemberIDs[0]));
-					faceChild = (spanMOI->InstanceData.GraphMembers.Num() > 0) ? Doc->GetObjectById(spanMOI->InstanceData.GraphMembers[0]) : nullptr;
+					faceChild = (spanMOI && spanMOI->InstanceData.GraphMembers.Num() > 0) ? Doc->GetObjectById(spanMOI->InstanceData.GraphMembers[0]) : nullptr;
 				}
 			}
 			bOutConnectedToVisibleChild |= (faceChild && faceChild->IsVisible());
