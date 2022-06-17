@@ -76,7 +76,6 @@ bool UDetailDesignerLayerData::OnExtensionTextCommitted(int32 ExtensionIdx, cons
 	{
 		CurrentExtensions[ExtensionIdx] = enteredCentimetersFloat;
 		OnExtensionChanged.Broadcast(DetailParticipantIndex, DetailLayerIndex, CurrentExtensions);
-		UpdateFocusToGameViewport();
 		return true;
 	}
 
@@ -88,7 +87,6 @@ void UDetailDesignerLayerData::OnExtensionFrontTextCommitted(const FText& Text, 
 	if ((CommitMethod == ETextCommit::OnCleared) || !OnExtensionTextCommitted(0, Text.ToString()))
 	{
 		PopulateLayerData(DetailParticipantIndex, DetailLayerIndex, CurrentExtensions, bFrontEnabled, bBackEnabled);
-		UpdateFocusToGameViewport();
 	}
 }
 
@@ -97,16 +95,6 @@ void UDetailDesignerLayerData::OnExtensionBackTextCommitted(const FText& Text, E
 	if ((CommitMethod == ETextCommit::OnCleared) || !OnExtensionTextCommitted(1, Text.ToString()))
 	{
 		PopulateLayerData(DetailParticipantIndex, DetailLayerIndex, CurrentExtensions, bFrontEnabled, bBackEnabled);
-		UpdateFocusToGameViewport();
-	}
-}
-
-void UDetailDesignerLayerData::UpdateFocusToGameViewport()
-{
-	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
-	if (controller)
-	{
-		controller->bResetFocusToGameViewport = true;
 	}
 }
 

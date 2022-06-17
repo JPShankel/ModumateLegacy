@@ -48,7 +48,6 @@ public:
 
 	void OpenToolTrayForSelection();
 	void OpenToolTrayDetailDesigner(const FGuid& DetailPreset, const TSet<int32>& EdgeIDs);
-	void UpdateDetailDesignerFromUndoRedo();
 	void UpdateFromSelection();
 	void StartDetailDesignerFromSelection();
 	void CloseDetailDesigner();

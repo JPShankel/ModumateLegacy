@@ -59,6 +59,4 @@ protected:
 
 	UFUNCTION()
 	void OnExtensionBackTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
-
-	void UpdateFocusToGameViewport();
 };

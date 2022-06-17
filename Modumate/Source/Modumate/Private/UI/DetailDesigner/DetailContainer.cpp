@@ -82,9 +82,6 @@ bool UDetailDesignerContainer::BuildEditor(const FGuid& InDetailPresetID, const 
 	auto detailPreset = presetCollection.PresetFromGUID(DetailPresetID);
 	if (!ensure(detailPreset && detailPreset->TryGetCustomData(detailData)))
 	{
-		// If not a valid detail preset, close the menu
-		// This can be triggered by undo, which delete the preset
-		controller->EditModelUserWidget->SelectionTrayWidget->CloseToolTray();
 		return false;
 	}
 
@@ -313,10 +310,6 @@ void UDetailDesignerContainer::OnPressedIsTypical(bool bIsChecked)
 {
 	auto controller = GetOwningPlayer<AEditModelPlayerController>();
 	auto document = controller ? controller->GetDocument() : nullptr;
-	if (controller)
-	{
-		controller->bResetFocusToGameViewport = true;
-	}
 
 	TArray<FDeltaPtr> deltas;
 
@@ -359,10 +352,6 @@ void UDetailDesignerContainer::OnPresetNameEdited(const FText& Text, ETextCommit
 {
 	auto controller = GetOwningPlayer<AEditModelPlayerController>();
 	auto document = controller ? controller->GetDocument() : nullptr;
-	if (controller)
-	{
-		controller->bResetFocusToGameViewport = true;
-	}
 	if (!ensure(document) || (CommitMethod == ETextCommit::OnCleared))
 	{
 		return;

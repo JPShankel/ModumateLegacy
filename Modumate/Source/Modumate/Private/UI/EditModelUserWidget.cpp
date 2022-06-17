@@ -509,11 +509,6 @@ void UEditModelUserWidget::CheckDeletePresetFromWebUI(const FGuid& PresetGUIDToD
 	}
 }
 
-void UEditModelUserWidget::UpdateDetailDesginer()
-{
-	SelectionTrayWidget->UpdateDetailDesignerFromUndoRedo();
-}
-
 void UEditModelUserWidget::ToggleCutPlaneMenu(bool bNewVisibility)
 {
 	CutPlaneMenu->SetVisibility(bNewVisibility ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
