@@ -30,9 +30,6 @@
 #include "ModumateCore/ModumateAutomationStatics.h"
 #include "Tests/AutomationCommon.h"
 
-
-#if WITH_AUTOMATION_TESTS
-
 #define LOCTEXT_NAMESPACE "CoreUnitTests"
 
 bool UModumateTestObjectBase::GetInstanceData(UScriptStruct*& OutStructDef, void*& OutStructPtr)
@@ -91,6 +88,8 @@ FPointerTestMember::~FPointerTestMember()
 		ensure(ContainerID == container->ID);
 	}
 }
+
+#if WITH_AUTOMATION_TESTS
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumatePointerTests, "Modumate.Core.Pointers", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::LowPriority)
 	bool FModumatePointerTests::RunTest(const FString& Parameters)
@@ -1991,6 +1990,6 @@ bool FModumateGroupTest::RunTest(const FString& Parameters)
 	return true;
 }
 
-#undef LOCTEXT_NAMESPACE 
-
 #endif
+
+#undef LOCTEXT_NAMESPACE 
