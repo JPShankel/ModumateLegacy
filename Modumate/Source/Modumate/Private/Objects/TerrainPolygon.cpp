@@ -7,10 +7,12 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "DocumentManagement/ModumateDocument.h"
-
+#include "Objects/TerrainMaterial.h"
 
 AMOITerrainPolygon::AMOITerrainPolygon()
-{ }
+{
+	StateData.CustomData.SaveStructData(InstanceData);
+}
 
 bool AMOITerrainPolygon::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
@@ -103,7 +105,10 @@ bool AMOITerrainPolygon::CreateMaterialMoi(TArray<FDeltaPtr>* SideEffectDeltas)
 	{
 		UModumateDocument* doc = GetDocument();
 		int32 nextID = doc->GetNextAvailableID();
+		
 		FMOIStateData stateData(nextID, EObjectType::OTTerrainMaterial, ID);
+		stateData.CustomData.SaveStructData(FMOITerrainMaterialData());
+		
 		auto createMoiDelta = MakeShared<FMOIDelta>();
 		createMoiDelta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
 		SideEffectDeltas->Add(createMoiDelta);

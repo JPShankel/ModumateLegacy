@@ -9,6 +9,7 @@
 
 AMOITerrainEdge::AMOITerrainEdge()
 {
+	StateData.CustomData.SaveStructData(InstanceData);
 	BaseColor = FColor(0x00, 0x35, 0xFF);
 	HoveredColor = FColor(0x00, 0x35, 0xFF);
 }

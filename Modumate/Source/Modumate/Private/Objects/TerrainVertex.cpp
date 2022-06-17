@@ -13,6 +13,7 @@ FMOITerrainVertexData::FMOITerrainVertexData()
 
 AMOITerrainVertex::AMOITerrainVertex()
 {
+	StateData.CustomData.SaveStructData(InstanceData);
 	BaseColor = FColor(0x00, 0x35, 0xFF);
 
 	FWebMOIProperty prop;
