@@ -73,14 +73,14 @@ FString FCustomAssemblyProperty::ToCompactString() const
 /*
 Used by Document::Load and the object database which uses a saved game as a proxy for a future cache of downloaded shopping assemblies
 */
-bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString &filePath, FModumateDocumentHeader &OutHeader, FMOIDocumentRecord &OutRecord)
+bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString &FilePath, FModumateDocumentHeader &OutHeader, FMOIDocumentRecord &OutRecord)
 {
 #if WITH_EDITOR
 	// Developer builds - allow loading of binary (multiplayer) files:
-	if (filePath.EndsWith(TEXT(".mdmb")))
+	if (FilePath.EndsWith(TEXT(".mdmb")))
 	{
 		TArray<uint8> fileArray;
-		if (FFileHelper::LoadFileToArray(fileArray, *filePath))
+		if (FFileHelper::LoadFileToArray(fileArray, *FilePath))
 		{
 			if (LoadDocumentFromBuffer(fileArray, OutHeader, OutRecord))
 			{
@@ -92,7 +92,7 @@ bool FModumateSerializationStatics::TryReadModumateDocumentRecord(const FString 
 #endif
 
 	FString FileJsonString;
-	bool bLoadFileSuccess = FFileHelper::LoadFileToString(FileJsonString, *filePath);
+	bool bLoadFileSuccess = FFileHelper::LoadFileToString(FileJsonString, *FilePath);
 	if (!bLoadFileSuccess)
 	{
 		return false;
@@ -202,7 +202,7 @@ bool FModumateSerializationStatics::SaveDocumentToBuffer(const FModumateDocument
 	totalBufferWriter.SerializeIntPacked(binaryDocVersion);
 
 	// 2) The (uncompressed) CBOR representation of the document header
-	FCborStructSerializerBackend headerSerializerBackend(totalBufferWriter, EStructSerializerBackendFlags::Default);
+	FCborStructSerializerBackend headerSerializerBackend(totalBufferWriter, EStructSerializerBackendFlags::Default | EStructSerializerBackendFlags::WriteCborStandardEndianness);
 	FStructSerializer::Serialize(Header, headerSerializerBackend, policies);
 
 	// 3) The size of our uncompressed CBOR buffer of the document record
@@ -233,14 +233,21 @@ bool FModumateSerializationStatics::LoadDocumentFromBuffer(const TArray<uint8>& 
 	uint32 savedBinaryDocVersion = 0;
 	totalBufferReader.SerializeIntPacked(savedBinaryDocVersion);
 
-	if (savedBinaryDocVersion != CurBinaryDocVersion)
+	ECborEndianness endianness = ECborEndianness::StandardCompliant;
+
+	// Original doc version uses intel-native endianness, upgraded to standard compliant to share files with cloud/web
+	if (savedBinaryDocVersion == 1)
+	{
+		endianness = ECborEndianness::LittleEndian;
+	}
+	else if (savedBinaryDocVersion != CurBinaryDocVersion)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Binary document was saved with an out of date version: %d"), savedBinaryDocVersion);
 		return false;
 	}
 
 	// 2) Read the document header
-	FCborStructDeserializerBackend headerDeserializerBackend(totalBufferReader);
+	FCborStructDeserializerBackend headerDeserializerBackend(totalBufferReader, endianness);
 	if (!FStructDeserializer::Deserialize(OutHeader, headerDeserializerBackend, policies))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to deserialize the document header!"));
