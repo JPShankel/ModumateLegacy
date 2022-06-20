@@ -175,7 +175,7 @@ bool FGraph3D::GetDeltaForVertexMovements(const TArray<int32> &VertexIDs, const 
 	return true;
 }
 
-bool FGraph3D::GetDeltaForEdgeAddition(const FGraphVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, const TArray<int32> &ParentIDs)
+bool FGraph3D::GetDeltaForEdgeAddition(const FGraphVertexPair& VertexPair, FGraph3DDelta& OutDelta, int32& NextID, int32& ExistingID, const TArray<int32>& ParentIDs /*= TArray<int32>()*/)
 {
 	bool bExistingEdgeForward = true;
 	const FGraph3DEdge *existingEdge = FindEdgeByVertices(VertexPair.Key, VertexPair.Value, bExistingEdgeForward);
@@ -207,7 +207,7 @@ bool FGraph3D::GetDeltaForEdgeAddition(const FGraphVertexPair &VertexPair, FGrap
 
 // Checks against the current graph and makes edges to connect the provided vertices.  OutVertexIDs is a list of vertices
 // along the edges that connect the two vertices in VertexPair
-bool FGraph3D::GetDeltaForMultipleEdgeAdditions(const FGraphVertexPair &VertexPair, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID, TArray<int32> &OutVertexIDs, const TArray<int32> &ParentIDs)
+bool FGraph3D::GetDeltaForMultipleEdgeAdditions(const FGraphVertexPair& VertexPair, FGraph3DDelta& OutDelta, int32& NextID, int32& ExistingID, TArray<int32>& OutVertexIDs, const TArray<int32>& ParentIDs /*= TArray<int32>()*/)
 {
 	bool bAddedEdge = false;
 
@@ -254,6 +254,8 @@ bool FGraph3D::GetDeltaForMultipleEdgeAdditions(const FGraphVertexPair &VertexPa
 		return false;
 	}
 
+	const bool bFlipNewEdges = endPos.Z < startPos.Z;
+
 	// find all of the vertices that are on the line that connects startPos and endPos, and determine
 	// the vertices that are between them
 	TPair<int32, int32> splitEdgeIDs;
@@ -264,23 +266,41 @@ bool FGraph3D::GetDeltaForMultipleEdgeAdditions(const FGraphVertexPair &VertexPa
 	{
 		for (int32 vertexIdx = 0; vertexIdx < OutVertexIDs.Num() - 1; vertexIdx++)
 		{
-			FGraphVertexPair vertexPair(OutVertexIDs[vertexIdx], OutVertexIDs[vertexIdx + 1]);
+			FGraphVertexPair vertexPairForEdgeAdd;
+			if (bFlipNewEdges)
+			{
+				vertexPairForEdgeAdd.Key = OutVertexIDs[vertexIdx + 1]; vertexPairForEdgeAdd.Value = OutVertexIDs[vertexIdx];
+			}
+			else
+			{
+				vertexPairForEdgeAdd.Key = OutVertexIDs[vertexIdx]; vertexPairForEdgeAdd.Value = OutVertexIDs[vertexIdx + 1];
+
+			}
 			// ExistingID should not be used if there are several edges
 			int32 existingID;
-			bAddedEdge = GetDeltaForEdgeAddition(vertexPair, OutDelta, NextID, existingID, ParentIDs) || bAddedEdge;
+			bAddedEdge = GetDeltaForEdgeAddition(vertexPairForEdgeAdd, OutDelta, NextID, existingID, ParentIDs) || bAddedEdge;
 		}
 	}
 	else
 	{
-		OutVertexIDs = { VertexPair.Key, VertexPair.Value };
+		OutVertexIDs = { VertexPair.Key,  VertexPair.Value };
+		FGraphVertexPair vertexPairForEdgeAdd;
+		if (bFlipNewEdges)
+		{
+			vertexPairForEdgeAdd.Key = VertexPair.Value; vertexPairForEdgeAdd.Value = VertexPair.Key;
+		}
+		else
+		{
+			vertexPairForEdgeAdd = VertexPair;
+		}
 
-		bAddedEdge = GetDeltaForEdgeAddition(VertexPair, OutDelta, NextID, ExistingID, ParentIDs) || bAddedEdge;
+		bAddedEdge = GetDeltaForEdgeAddition(vertexPairForEdgeAdd, OutDelta, NextID, ExistingID, ParentIDs) || bAddedEdge;
 	}
 
 	return bAddedEdge;
 }
 
-bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(const FGraphVertexPair &VertexPair, TArray<FGraph3DDelta> &OutDeltas, int32 &NextID, TArray<int32> &OutEdgeIDs)
+bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(const FGraphVertexPair& VertexPair, TArray<FGraph3DDelta>& OutDeltas, int32& NextID, TArray<int32>& OutEdgeIDs)
 {
 	int32 ExistingID;
 
@@ -594,6 +614,11 @@ bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(const FVector& EdgeStartPos, con
 	}
 
 	FVector vertexPositions[2] = { EdgeStartPos, EdgeEndPos };
+	if (EdgeStartPos.Z > EdgeEndPos.Z)
+	{
+		vertexPositions[0] = EdgeEndPos; vertexPositions[1] = EdgeStartPos;
+	}
+
 	int32 vertexIDs[2] = { MOD_ID_NONE, MOD_ID_NONE };
 
 	for (int32 i = 0; i < 2; ++i)
@@ -678,8 +703,8 @@ bool FGraph3D::GetDeltaForEdgeAdditionWithSplit(const FVector& EdgeStartPos, con
 	return true;
 }
 
-bool FGraph3D::GetDeltaForFaceAddition(const TArray<int32> &VertexIDs, FGraph3DDelta &OutDelta, int32 &NextID, int32 &ExistingID,
-	TArray<int32> &ParentFaceIDs, TMap<int32, int32> &ParentEdgeIdxToID, int32& AddedFaceID)
+bool FGraph3D::GetDeltaForFaceAddition(const TArray<int32>& VertexIDs, FGraph3DDelta& OutDelta, int32& NextID, int32& ExistingID,
+	TArray<int32>& ParentFaceIDs, TMap<int32, int32>& ParentEdgeIdxToID, int32& AddedFaceID)
 {
 	TArray<int32> faceVertices;
 
@@ -690,7 +715,6 @@ bool FGraph3D::GetDeltaForFaceAddition(const TArray<int32> &VertexIDs, FGraph3DD
 		int32 idxB = (idxA + 1) % numVertices;
 		int32 vertexIDA = VertexIDs[idxA];
 		int32 vertexIDB = VertexIDs[idxB];
-		bool bEdgeForward = true;
 
 		FGraphVertexPair currentPair(vertexIDA, vertexIDB);
 		TArray<int32> vertices;
@@ -712,20 +736,41 @@ bool FGraph3D::GetDeltaForFaceAddition(const TArray<int32> &VertexIDs, FGraph3DD
 		}
 	}
 
+	// Create nonvertical faces facing upwards.
+	FPlane facePlane;
+	TArray<FVector> faceVertexPositions;
+	for (int32 vert : VertexIDs)
+	{
+		FGraph3DVertex* currentVertex;
+		FVector* addedvertex;
+		if ((currentVertex = Vertices.Find(vert)) != nullptr)
+		{
+			faceVertexPositions.Add(currentVertex->Position);
+		}
+		else if (ensure((addedvertex = OutDelta.VertexAdditions.Find(vert)) != nullptr))
+		{
+			faceVertexPositions.Add(*addedvertex);
+		}
+	}
+	if (UModumateGeometryStatics::GetPlaneFromPoints(faceVertexPositions, facePlane, Epsilon) && facePlane.Z < 0.0f)
+	{
+		Algo::Reverse(faceVertices);
+	}
+
 	if (!ensureAlways(UModumateFunctionLibrary::NormalizeIDs(faceVertices)))
 	{
 		return false;
 	}
 
 	TArray<int32> otherFaceVertexIDs;
-	for (auto& kvp : Faces)
+	for (const auto& kvp : Faces)
 	{
-		otherFaceVertexIDs = kvp.Value.VertexIDs;
-		if (UModumateFunctionLibrary::AreNormalizedIDListsEqual(faceVertices, otherFaceVertexIDs))
+		if (UModumateFunctionLibrary::AreNormalizedIDListsEqual(faceVertices, kvp.Value.VertexIDs))
 		{
 			return false;
 		}
 	}
+
 
 	AddedFaceID = NextID++;
 	FGraph3DObjDelta &faceAdditionDelta = OutDelta.FaceAdditions.Add(AddedFaceID, FGraph3DObjDelta(faceVertices, ParentFaceIDs));

@@ -931,15 +931,15 @@ bool FGraph3D::ApplyInverseDeltas(const TArray<FGraph3DDelta>& Deltas)
 	return bSuccess;
 }
 
-bool FGraph3D::CalculateVerticesOnLine(const FGraphVertexPair &VertexPair, const FVector& StartPos, const FVector& EndPos, TArray<int32> &OutVertexIDs, TPair<int32, int32> &OutSplitEdgeIDs) const
+bool FGraph3D::CalculateVerticesOnLine(const FGraphVertexPair& VertexPair, const FVector& StartPos, const FVector& EndPos, TArray<int32>& OutVertexIDs, TPair<int32, int32>& OutSplitEdgeIDs) const
 {
 	TArray<TPair<float, int32>> verticesAlongLine;
 	FVector direction = (EndPos - StartPos).GetSafeNormal();
 
-	for (auto& vertexkvp : Vertices)
+	for (const auto& vertexkvp : Vertices)
 	{
 		int32 vertexID = vertexkvp.Key;
-		auto vertex = vertexkvp.Value;
+		const auto& vertex = vertexkvp.Value;
 
 		if (FMath::PointDistToLine(vertex.Position, direction, StartPos) < Epsilon)
 		{
@@ -974,7 +974,7 @@ bool FGraph3D::CalculateVerticesOnLine(const FGraphVertexPair &VertexPair, const
 		{
 			bAddVertex = true;
 			if (vertexIdx > 0)
-			{
+			{	// Detect simple case of new start/end vertex splitting an existing collinear edge.
 				int32 edgeStart = verticesAlongLine[vertexIdx - 1].Value;
 				int32 edgeEnd = verticesAlongLine[vertexIdx + 1].Value;
 				bool bForward;

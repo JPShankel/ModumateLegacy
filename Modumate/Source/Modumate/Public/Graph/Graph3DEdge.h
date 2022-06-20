@@ -20,8 +20,11 @@ struct FEdgeFaceConnection
 class FGraph3DEdge : public IGraph3DObject
 {
 public:
+	// Definitional data
 	int32 StartVertexID = MOD_ID_NONE;				// The ID of the vertex that the start of this edge is connected to
 	int32 EndVertexID = MOD_ID_NONE;				// The ID of the vertex that the end of this edge is connected to
+
+	// Derived data
 	TArray<FEdgeFaceConnection> ConnectedFaces;		// The list of faces connected to this edge, sorted in order from the reference normal
 
 	FVector CachedDir = FVector::ZeroVector;		// The cached direction of the edge, from its start vertex to end vertex

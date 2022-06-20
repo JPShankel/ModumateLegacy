@@ -9,12 +9,15 @@
 class MODUMATE_API FGraph3DFace : public IGraph3DObject
 {
 public:
+	// Definitional data
 	TArray<int32> VertexIDs;						// The IDs of vertices that define this face's polygon's vertices
+	int32 ContainingFaceID = MOD_ID_NONE;			// The ID of the face that contains this one, if any
+	TSet<int32> ContainedFaceIDs;					// The IDs of faces that are fully contained within this face, such as holes
+
+	// Derived data
 	TArray<FGraphSignedID> EdgeIDs;					// The IDs of edges that define this face's polygon's edges
 	int32 FrontPolyhedronID = MOD_ID_NONE;			// The ID of the polyhedron that contains the front of this face, if any
 	int32 BackPolyhedronID = MOD_ID_NONE;			// The ID of the polyhedron that contains the back of this face, if any
-	int32 ContainingFaceID = MOD_ID_NONE;			// The ID of the face that contains this one, if any
-	TSet<int32> ContainedFaceIDs;					// The IDs of faces that are fully contained within this face, such as holes
 
 	TArray<FVector> CachedPositions;				// The positions of this face's vertices
 	TArray<FVector> CachedEdgeNormals;				// The normals of this face's edges, pointing inward
