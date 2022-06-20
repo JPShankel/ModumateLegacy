@@ -190,12 +190,12 @@ void UCutPlaneMenuWidget::BuildCutPlaneItemFromMoi(UGeneralListItemObject* CutPl
 		CutPlaneObj->Location = cutPlaneData.Location;
 		CutPlaneObj->Rotation = cutPlaneData.Rotation;
 		CutPlaneObj->Visibility = !Moi->IsRequestedHidden();
-		CutPlaneObj->CanExport = cutPlaneData.bIsExported;
 
 		const AMOICutPlane* moiCutPlane = Cast<AMOICutPlane>(Moi);
 		if (moiCutPlane)
 		{
 			CutPlaneObj->bIsCulling = moiCutPlane->GetIsCulling();
+			CutPlaneObj->CanExport = moiCutPlane->GetIsExported();
 		}
 	}
 }

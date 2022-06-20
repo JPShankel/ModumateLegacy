@@ -99,20 +99,12 @@ void UCutPlaneMenuBlockExport::OnButtonExportReleased()
 		if (item)
 		{
 			AModumateObjectInstance* moi = gameState->Document->GetObjectById(curID);
-			if (moi)
+			if (moi && moi->GetObjectType() == EObjectType::OTCutPlane)
 			{
-				auto& newStateData = newDelta->AddMutationState(moi);
-
-				FMOICutPlaneData newCutPlaneData;
-				newStateData.CustomData.LoadStructData(newCutPlaneData);
-				newCutPlaneData.bIsExported = item->CanExport;
-
-				newStateData.CustomData.SaveStructData<FMOICutPlaneData>(newCutPlaneData);
+				Cast<AMOICutPlane>(moi)->SetIsExported(item->CanExport);
 			}
-
 		}
 	}
-	gameState->Document->ApplyDeltas({ newDelta }, GetWorld());
 
 	static const FString analyticsEventName(TEXT("ExportDWG"));
 	UModumateAnalyticsStatics::RecordEventSimple(Controller, EModumateAnalyticsCategory::View, analyticsEventName);

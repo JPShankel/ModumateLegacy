@@ -267,13 +267,14 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes()
 	FModumateUnitCoord2D drawingMargin = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(0.5f), ModumateUnitParams::FYCoord::FloorplanInches(0.5f));
 	FModumateUnitCoord2D pageMargin = FModumateUnitCoord2D(ModumateUnitParams::FXCoord::FloorplanInches(0.5f), ModumateUnitParams::FYCoord::FloorplanInches(0.5f));
 
-	TArray<AModumateObjectInstance*> cutPlanes = Document->GetObjectsOfType(EObjectType::OTCutPlane);
-	TArray<AModumateObjectInstance*> exportableCutPlanes;
+	TArray<AMOICutPlane*> cutPlanes;
+	Document->GetObjectsOfTypeCasted(EObjectType::OTCutPlane, cutPlanes);
+	TArray<AMOICutPlane*> exportableCutPlanes;
+
 	for (const auto curCutPlane : cutPlanes)
 	{
 		FMOICutPlaneData cutPlaneData;
-		curCutPlane->GetStateData().CustomData.LoadStructData(cutPlaneData);
-		if (cutPlaneData.bIsExported)
+		if (curCutPlane->GetIsExported())
 		{
 			exportableCutPlanes.Add(curCutPlane);
 		}

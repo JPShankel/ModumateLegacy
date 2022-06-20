@@ -161,7 +161,6 @@ bool UCutPlaneTool::EnterNextStage()
 	cutPlaneData.Location = PendingPlanePoints[0] + cutPlaneData.Extents.X * BasisX * 0.5f + cutPlaneData.Extents.Y * BasisY * 0.5f;
 	cutPlaneData.Rotation = FRotationMatrix::MakeFromXY(BasisX, BasisY).ToQuat();
 	cutPlaneData.Name = GetNextName();
-	cutPlaneData.bIsExported = true;
 
 	FMOIStateData stateData(doc->GetNextAvailableID(), EObjectType::OTCutPlane);
 	stateData.CustomData.SaveStructData(cutPlaneData);
@@ -173,7 +172,9 @@ bool UCutPlaneTool::EnterNextStage()
 	if (bSuccess)
 	{
 		RecentCreatedCutPlaneID = stateData.ID;
+		Cast<AMOICutPlane>(doc->GetObjectById(RecentCreatedCutPlaneID))->SetIsExported(true);
 	}
+
 	// Return false so that EndUse is called, returning true would chain cut plane creation
 	return false;
 }

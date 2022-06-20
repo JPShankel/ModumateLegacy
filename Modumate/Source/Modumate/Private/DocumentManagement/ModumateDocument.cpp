@@ -5302,14 +5302,11 @@ void UModumateDocument::export_dwgs(TArray<int32> InCutPlaneIDs)
 		return;
 	}
 	// Find all cutplanes, toggle its export state by whether is included from input array
-	TArray<AModumateObjectInstance*> mois = GetObjectsOfType(EObjectType::OTCutPlane);
-	for (auto& curMOI : mois)
+	TArray<AMOICutPlane*> mois;
+	GetObjectsOfTypeCasted(EObjectType::OTCutPlane, mois);
+	for (auto* curCutPlane : mois)
 	{
-		AMOICutPlane* curCutPlane = Cast<AMOICutPlane>(curMOI);
-		if (curCutPlane)
-		{
-			curCutPlane->InstanceData.bIsExported = InCutPlaneIDs.Contains(curCutPlane->ID);
-		}
+		curCutPlane->SetIsExported(InCutPlaneIDs.Contains(curCutPlane->ID));
 	}
 
 	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());

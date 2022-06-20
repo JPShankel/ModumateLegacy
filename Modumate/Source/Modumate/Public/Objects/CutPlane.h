@@ -24,9 +24,6 @@ struct MODUMATE_API FMOICutPlaneData
 
 	UPROPERTY()
 	FString Name;
-
-	UPROPERTY()
-	bool bIsExported { false };
 };
 
 class ACutPlaneCaptureActor;
@@ -73,6 +70,9 @@ public:
 
 	bool UpdateDraftingPreview(bool bForce = false);
 
+	void SetIsExported(bool bOn) { bIsExported = bOn; }
+	bool GetIsExported() const { return bIsExported; }
+
 
 	FDraftingHUDDraw DrawingInterface;
 
@@ -105,6 +105,7 @@ protected:
 
 	bool bHUDDwgDrafting;
 	bool bIsCulling = false;
+	bool bIsExported = false;
 
 	TArray<int32> CachedForegroundMOIs;
 };
