@@ -331,7 +331,6 @@ void FModumateLineCorral::ProcessLines()
 								FLineSegment clippedLine = lineA;
 								clippedLine.StartVert = FVector2D(intersectOnA);
 								clippedLine.EndVert = lineA.StartVert;
-								clippedSegments.Push(clippedLine);
 								lineA.StartVert = FVector2D(startA);
 								clippedSegments.Push(clippedLine);
 								if (deltaA.SquaredLength() < Epsilon2)
