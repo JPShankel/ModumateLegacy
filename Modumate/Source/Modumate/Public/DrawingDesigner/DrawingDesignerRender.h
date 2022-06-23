@@ -39,7 +39,7 @@ public:
 	void RestoreObjects();
 	void SetupRenderTarget(int32 ImageWidth);
 	void RenderFfe();
-	void RenderImage(AMOICutPlane* CutPlane, float MinLength);
+	void RenderImage(AMOICutPlane* CutPlane, float MinLength, const TArray<int32>* DesignOptions = nullptr);
 
 	bool GetImagePNG(TArray<uint8>& OutImage) const;
 
@@ -66,7 +66,7 @@ private:
 
 	TWeakObjectPtr<const AEditModelGameMode> GameMode;
 	void AddInPlaneLines(FVector P0, FVector P1, FModumateLayerType Layer);
-	void FillHiddenList();
+	void FillHiddenList(const TSet<int32>* OptionsOverride = nullptr);
 
 	using StaticMaterialKey = TPair<UMeshComponent*, int32>;
 	TMap<StaticMaterialKey, UMaterialInterface*> SceneStaticMaterialMap;

@@ -175,7 +175,7 @@ void ADrawingDesignerRender::SetupRenderTarget(int32 ImageWidth)
 	CaptureComponent->OrthoWidth = orthoWidth;
 }
 
-void ADrawingDesignerRender::RenderImage(AMOICutPlane* CutPlane, float MinLength)
+void ADrawingDesignerRender::RenderImage(AMOICutPlane* CutPlane, float MinLength, const TArray<int32>* DesignOptions /*= nullptr*/)
 {
 	if (!ensure(RenderTarget) || !ensure(DrawingDesignerRenderControl))
 	{
@@ -198,7 +198,13 @@ void ADrawingDesignerRender::RenderImage(AMOICutPlane* CutPlane, float MinLength
 	const FVector viewDirection = CutPlane->GetNormal();
 	InPlaneOffset = -0.5f * CaptureActorOffset * viewDirection;
 
-	FillHiddenList();
+	TSet<int32> designOptionsSet;
+	if (DesignOptions)
+	{
+		designOptionsSet.Append(*DesignOptions);
+	}
+
+	FillHiddenList(&designOptionsSet);
 
 	RenderFfe();
 	
@@ -479,7 +485,7 @@ void ADrawingDesignerRender::AddInPlaneLines(FVector P0, FVector P1, FModumateLa
 	AddLines({ line }, true);
 }
 
-void ADrawingDesignerRender::FillHiddenList()
+void ADrawingDesignerRender::FillHiddenList(const TSet<int32>* OptionsOverride /*= nullptr*/)
 {
 	// Find all objects that should not be rendered according to current design options.
 	TSet<int32> allDesignGroups;
@@ -489,7 +495,7 @@ void ADrawingDesignerRender::FillHiddenList()
 	for (auto* designOption : designOptions)
 	{
 		allDesignGroups.Append(designOption->InstanceData.groups);
-		if (designOption->InstanceData.isShowing)
+		if ((!OptionsOverride && designOption->InstanceData.isShowing) || (OptionsOverride && OptionsOverride->Contains(designOption->ID)) )
 		{
 			shownDesignGroups.Append(designOption->InstanceData.groups);
 		}

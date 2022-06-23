@@ -209,6 +209,9 @@ struct MODUMATE_API FDrawingDesignerDrawingRequest
 
 	UPROPERTY()
 	FDrawingDesignerPoint minimum_resolution_pixels;
+
+	UPROPERTY()
+	FJsonObjectWrapper attributes;
 	
 	bool WriteJson(FString& OutJson) const;
 	bool ReadJson(const FString& InJson);

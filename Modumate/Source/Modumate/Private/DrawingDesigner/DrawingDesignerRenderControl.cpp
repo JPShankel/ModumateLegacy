@@ -165,8 +165,24 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 		controller->SetCurrentCullingCutPlane(cutPlane->ID, false);
 	}
 
+	TArray<int32> selectedOptions;
+	if (viewRequest.attributes.JsonObject.IsValid())
+	{
+		// One current render attribute: designOptions
+		static const FString designOptionsName(TEXT("designOptions"));
+
+		const auto designOptionsAttrib = viewRequest.attributes.JsonObject->TryGetField(designOptionsName);
+		if (designOptionsAttrib.IsValid() && designOptionsAttrib->Type == EJson::Array)
+		{
+			for (const auto& opt: designOptionsAttrib->AsArray())
+			{
+				selectedOptions.Add(FCString::Atoi(*opt->AsString()) );
+			}
+		}
+	}
+
 	renderer->SetupRenderTarget(viewRequest.minimum_resolution_pixels.x);
-	renderer->RenderImage(cutPlane, scaleLength);
+	renderer->RenderImage(cutPlane, scaleLength, &selectedOptions);
 
 	// Restore cutplane
 	controller->SetCurrentCullingCutPlane(originalCullingCutPlane);
