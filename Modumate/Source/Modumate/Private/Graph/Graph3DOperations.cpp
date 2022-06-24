@@ -581,8 +581,11 @@ bool FGraph3D::GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, TArray<
 			auto oldContainingFace = FindFace(face->ContainingFaceID);
 			if (oldContainingFace != nullptr)
 			{
-				auto& oldContainingFaceDelta = containmentDelta.FaceContainmentUpdates[face->ContainingFaceID];
-				oldContainingFaceDelta.ContainedFaceIDsToRemove.Add(faceID);
+				auto* oldContainingFaceDelta = containmentDelta.FaceContainmentUpdates.Find(face->ContainingFaceID);
+				if (ensure(oldContainingFaceDelta != nullptr))
+				{
+					oldContainingFaceDelta->ContainedFaceIDsToRemove.Add(faceID);
+				}
 			}
 		}
 
@@ -590,8 +593,11 @@ bool FGraph3D::GetDeltasForUpdateFaces(TArray<FGraph3DDelta> &OutDeltas, TArray<
 		if (containingFace && !containingFace->ContainedFaceIDs.Contains(faceID) &&
 			ensure(containmentDelta.FaceContainmentUpdates.Contains(containingFaceID)))
 		{
-			auto& containDelta = containmentDelta.FaceContainmentUpdates[containingFaceID];
-			containDelta.ContainedFaceIDsToAdd.Add(faceID);
+			auto* containDelta = containmentDelta.FaceContainmentUpdates.Find(containingFaceID);
+			if (ensure(containDelta != nullptr))
+			{
+				containDelta->ContainedFaceIDsToAdd.Add(faceID);
+			}
 		}
 	}
 
