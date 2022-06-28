@@ -277,6 +277,11 @@ void AGraphDimensionActor::OnMeasurementTextCommitted(const FText& Text, ETextCo
 				UModumateAnalyticsStatics::RecordEventSimple(this, EModumateAnalyticsCategory::Handles, eventName);
 			}
 		}
+		auto playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+		if (playerController != nullptr)
+		{
+				playerController->bResetFocusToGameViewport = true;	
+		}
 	}
 
 	DimensionText->ResetText();
