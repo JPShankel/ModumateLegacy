@@ -338,12 +338,13 @@ bool URectangleTool::UpdatePreview()
 {
 	CurDeltas.Reset();
 
-	if (!Controller->EMPlayerState->SnappedCursor.Visible)
+	const FSnappedCursor& snappedCursor = Controller->EMPlayerState->SnappedCursor;
+	if (!snappedCursor.Visible)
 	{
 		return false;
 	}
 
-	FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+	FVector hitLoc = snappedCursor.WorldPosition;
 
 	if (State == Neutral || !ensure(GameState && GameState->Document))
 	{
@@ -363,7 +364,7 @@ bool URectangleTool::UpdatePreview()
 		{
 			FAffordanceLine affordance;
 			affordance.Color = FLinearColor::Blue;
-			affordance.EndPoint = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+			affordance.EndPoint = snappedCursor.WorldPosition;
 			affordance.StartPoint = hitLoc;
 			affordance.Interval = 4.0f;
 			Controller->EMPlayerState->AffordanceLines.Add(affordance);
@@ -374,6 +375,8 @@ bool URectangleTool::UpdatePreview()
 	}
 
 	UpdatePendingPlane();
+
+	UpdateEdgeDimension(snappedCursor);
 
 	GameState->Document->StartPreviewing();
 

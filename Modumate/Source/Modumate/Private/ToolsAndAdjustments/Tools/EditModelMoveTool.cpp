@@ -60,9 +60,10 @@ bool UMoveObjectTool::FrameUpdate()
 {
 	Super::FrameUpdate();
 
-	if (IsInUse() && Controller->EMPlayerState->SnappedCursor.Visible)
+	const FSnappedCursor& snappedCursor = Controller->EMPlayerState->SnappedCursor;
+	if (IsInUse() && snappedCursor.Visible)
 	{
-		const FVector &hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+		const FVector &hitLoc = snappedCursor.WorldPosition;
 
 		ALineActor *pendingSegment = nullptr;
 		if (auto dimensionActor = DimensionManager->GetDimensionActor(PendingSegmentID))
@@ -81,7 +82,7 @@ bool UMoveObjectTool::FrameUpdate()
 			return false;
 		}
 
-		switch (Controller->EMPlayerState->SnappedCursor.SnapType)
+		switch (snappedCursor.SnapType)
 		{
 			case ESnapType::CT_WORLDSNAPX:
 			case ESnapType::CT_WORLDSNAPY:
@@ -146,6 +147,8 @@ bool UMoveObjectTool::FrameUpdate()
 				FModumateObjectDeltaStatics::PasteObjects(&CurrentRecord, AnchorPoint, doc, Controller, true, &groupDeltas);
 			}
 		}
+
+		UpdateEdgeDimension(snappedCursor);
 
 	}
 	return true;

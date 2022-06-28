@@ -5,7 +5,7 @@
 #include "Components/EditableTextBox.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "UI/DimensionManager.h"
-#include "UI/PendingSegmentActor.h"
+#include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
 #include "UnrealClasses/EditModelGameState.h"
@@ -135,12 +135,13 @@ bool ULineTool::FrameUpdate()
 
 	CurDeltas.Reset();
 
-	if (!Controller->EMPlayerState->SnappedCursor.Visible)
+	const FSnappedCursor& snappedCursor = Controller->EMPlayerState->SnappedCursor;
+	if (!snappedCursor.Visible)
 	{
 		return true;
 	}
 
-	FVector hitLoc = Controller->EMPlayerState->SnappedCursor.WorldPosition;
+	FVector hitLoc = snappedCursor.WorldPosition;
 
 	if (State != NewSegmentPending || !ensure(GameState && GameState->Document))
 	{
@@ -154,6 +155,8 @@ bool ULineTool::FrameUpdate()
 		pendingSegment = dimensionActor->GetLineActor();
 	}
 	pendingSegment->Point2 = hitLoc;
+
+	UpdateEdgeDimension(snappedCursor);
 
 	GameState->Document->StartPreviewing();
 

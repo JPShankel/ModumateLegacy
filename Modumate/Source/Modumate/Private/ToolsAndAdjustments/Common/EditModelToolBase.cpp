@@ -12,6 +12,7 @@
 #include "UI/DimensionActor.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
+#include "UnrealClasses/LineActor.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "UnrealClasses/DimensionWidget.h"
 #include "UnrealClasses/EditModelGameMode.h"
@@ -119,6 +120,12 @@ bool UEditModelToolBase::PostEndOrAbort()
 		PendingSegment = nullptr;
 	}
 
+	if (EdgeDimensionID)
+	{
+		DimensionManager->ReleaseDimensionActor(EdgeDimensionID);
+		EdgeDimensionID = MOD_ID_NONE;
+	}
+
 	return true;
 }
 
@@ -196,4 +203,56 @@ bool UEditModelToolBase::IsObjectInActiveGroup(const AModumateObjectInstance* MO
 	const auto* doc = Controller->GetDocument();
 	const FGraph3D* graph = doc->FindVolumeGraph(MOI->ID);
 	return graph->GraphID == doc->GetActiveVolumeGraphID();
+}
+
+// Display length along any snapped line from nearest end.
+void UEditModelToolBase::UpdateEdgeDimension(const FSnappedCursor& snappedCursor)
+{
+	ALineActor* snappedEdgeActor = Cast<ALineActor>(snappedCursor.Actor);
+	if (snappedEdgeActor && snappedCursor.SnapType != ESnapType::CT_MIDSNAP && snappedCursor.CP1 != -1)
+	{
+		ADimensionActor* edgeDimensionActor = nullptr;
+		if (EdgeDimensionID == MOD_ID_NONE)
+		{
+			edgeDimensionActor = DimensionManager->AddDimensionActor(APendingSegmentActor::StaticClass());
+			EdgeDimensionID = edgeDimensionActor->ID;
+			edgeDimensionActor->DimensionText->Measurement->SetIsReadOnly(true);
+			edgeDimensionActor->GetLineActor()->SetVisibilityInApp(false);
+		}
+		else
+		{
+			edgeDimensionActor = DimensionManager->GetDimensionActor(EdgeDimensionID);
+		}
+
+		if (edgeDimensionActor && snappedEdgeActor)
+		{
+			const FVector& hitLocation = snappedCursor.HasProjectedPosition ? snappedCursor.ProjectedPosition : snappedCursor.WorldPosition;
+			const FVector& closestPoint =
+				FVector::DistSquared(hitLocation, snappedEdgeActor->Point1) < FVector::DistSquared(hitLocation, snappedEdgeActor->Point2) ?
+				snappedEdgeActor->Point1 : snappedEdgeActor->Point2;
+
+			
+			auto* edgeDimensionSegment = edgeDimensionActor->GetLineActor();
+			edgeDimensionSegment->Point1 = closestPoint;
+			edgeDimensionSegment->Point2 = hitLocation;
+			
+			ESlateVisibility visibility = ESlateVisibility::Visible;
+			if (PendingDimensionActor)
+			{   // Don't overlay the pending segment dimension. Just test equality of FVectors
+				// since values are copied from MOI or snapped cursor.
+				auto* pendingSegmentActor = PendingDimensionActor->GetLineActor();
+				if ((pendingSegmentActor->Point1 == edgeDimensionSegment->Point1 && pendingSegmentActor->Point2 == edgeDimensionSegment->Point2)
+					|| (pendingSegmentActor->Point1 == edgeDimensionSegment->Point2 && pendingSegmentActor->Point2 == edgeDimensionSegment->Point1))
+				{
+					visibility = ESlateVisibility::Hidden;
+				}
+			}
+
+			DimensionManager->GetDimensionActor(EdgeDimensionID)->DimensionText->SetVisibility(visibility);
+		}
+	}
+	else if (EdgeDimensionID != MOD_ID_NONE)
+	{
+		DimensionManager->GetDimensionActor(EdgeDimensionID)->DimensionText->SetVisibility(ESlateVisibility::Hidden);
+	}
 }

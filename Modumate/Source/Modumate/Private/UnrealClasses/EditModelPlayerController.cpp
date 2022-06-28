@@ -2876,6 +2876,8 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 				UModumateGeometryStatics::RayIntersection3D(sketchHit.Origin, sketchHit.Normal, structuralHit.Origin, structuralHit.EdgeDir, lineIntersection, sketchRayDist, structuralEdgeDist, false))
 			{
 				sketchHit.Location = lineIntersection;
+				sketchHit.CP1 = structuralHit.CP1;  // Control points' presence indicates this is combined sketch-plane/structural snap.
+				sketchHit.CP2 = structuralHit.CP2;
 			}
 
 			// If this sketch hit is being used because of a world or custom axis snap, then allow it to just be a snapped structural hit.
@@ -2928,9 +2930,8 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 			EMPlayerState->SnappedCursor.HasProjectedPosition = true;
 
 			// Fully inherit the projected hit, which for now clears any structural information from the base hit.
-			ESnapType baseSnapType = baseHit.SnapType;
+			const FMouseWorldHitType originalBaseHit(baseHit);
 			baseHit = projectedHit;
-			baseHit.SnapType = baseSnapType;
 
 			// If we have a projected hit, then similar to snapped sketch hits, we want to perform a structural hit in order to have accurate
 			// non-location hit result data for the projected location, so that tools can filter results accordingly.
@@ -2947,17 +2948,22 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 					(screenSpaceDist < SnapPointMaxScreenDistance))
 				{
 					baseHit = projectedStructuralHit;
-					baseHit.SnapType = baseSnapType;
 					baseHit.Location = projectedHit.Location;
 				}
 			}
+
+			// Restore required parts of baseHit.
+			baseHit.SnapType = originalBaseHit.SnapType;
+			baseHit.Actor = originalBaseHit.Actor;
+			baseHit.CP1 = originalBaseHit.CP1;
+			baseHit.CP2 = originalBaseHit.CP2;
 		}
 
 		EMPlayerState->SnappedCursor.bValid = true;
 		EMPlayerState->SnappedCursor.SnapType = baseHit.SnapType;
 		EMPlayerState->SnappedCursor.WorldPosition = baseHit.Location;
 		ProjectWorldLocationToScreen(baseHit.Location, EMPlayerState->SnappedCursor.ScreenPosition);
-		EMPlayerState->SnappedCursor.ProjectedPosition = projectedLocation;
+		EMPlayerState->SnappedCursor.ProjectedPosition = projectedLocation;  // ie. original cursor hit; why is it called ProjectedPosition?
 		EMPlayerState->SnappedCursor.Actor = baseHit.Actor.Get();
 		EMPlayerState->SnappedCursor.CP1 = baseHit.CP1;
 		EMPlayerState->SnappedCursor.CP2 = baseHit.CP2;
@@ -3584,6 +3590,11 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 			objectHit.CP1 = bestLine.CP1;
 			objectHit.CP2 = bestLine.CP2;
 
+			// Quantize distance along snapped line:
+			const FVector& closestEnd = FVector::DistSquared(bestLineIntersection, bestLine.P1) <= FVector::DistSquared(bestLineIntersection, bestLine.P2)
+				? bestLine.P1 : bestLine.P2;
+			SnapDistAlongAffordance(objectHit.Location, closestEnd, objectHit.EdgeDir);
+
 			AModumateObjectInstance *bestObj = Document->GetObjectById(bestLine.ObjID);
 			if (bestObj)
 			{
@@ -3743,7 +3754,6 @@ FMouseWorldHitType AEditModelPlayerController::GetShiftConstrainedMouseHit(const
 				direction = EMPlayerState->SnappedCursor.AffordanceFrame.Tangent;
 				break;
 			case ESnapType::CT_CUSTOMSNAPY:
-				direction = EMPlayerState->SnappedCursor.AffordanceFrame.Tangent;
 				direction = FVector::CrossProduct(EMPlayerState->SnappedCursor.AffordanceFrame.Normal, EMPlayerState->SnappedCursor.AffordanceFrame.Tangent);
 				break;
 			case ESnapType::CT_CUSTOMSNAPZ:

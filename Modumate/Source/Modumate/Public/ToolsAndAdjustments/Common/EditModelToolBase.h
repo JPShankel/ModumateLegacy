@@ -11,6 +11,8 @@
 
 #include "EditModelToolBase.generated.h"
 
+struct FSnappedCursor;
+
 /**
  *
  */
@@ -70,6 +72,8 @@ protected:
 	virtual void OnAssemblyChanged();
 	virtual bool IsObjectInActiveGroup(const AModumateObjectInstance* MOI) const;
 
+	void UpdateEdgeDimension(const FSnappedCursor& snappedCursor);
+
 	bool InUse;
 	bool Active;
 
@@ -108,6 +112,9 @@ protected:
 
 	UPROPERTY()
 	class ALineActor* PendingSegment;
+
+	// Read-only dimension text for closest vertex when hitting an edge.
+	int32 EdgeDimensionID = MOD_ID_NONE;
 
 	// ModumateGreen
 	FColor AffordanceLineColor = FColor(3, 196, 168);
