@@ -40,7 +40,7 @@ public:
 	void PaginateScheduleViews(IModumateDraftingDraw *drawingInterface);
 
 public:
-	void GeneratePagesFromCutPlanes();
+	void GeneratePagesFromCutPlanes(TArray<int32> InCutPlaneIDs);
 	void GeneratePageForDD(int32 CutPlaneID, const FDrawingDesignerGenericRequest& Request);
 
 // Generate schedules

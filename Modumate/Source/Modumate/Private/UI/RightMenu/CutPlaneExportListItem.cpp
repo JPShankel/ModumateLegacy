@@ -60,7 +60,6 @@ void UCutPlaneExportListItem::NativeOnListItemObjectSet(UObject* ListItemObject)
 
 	TextTitle->ChangeText(FText::FromString(cutPlaneItemObject->DisplayName));
 	ObjID = cutPlaneItemObject->ObjId;
-	CheckBoxExport->SetCheckedState(cutPlaneItemObject->CanExport ? ECheckBoxState::Checked : ECheckBoxState::Unchecked);
 
 	switch (cutPlaneItemObject->CutPlaneType)
 	{

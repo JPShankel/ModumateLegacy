@@ -70,10 +70,6 @@ public:
 
 	bool UpdateDraftingPreview(bool bForce = false);
 
-	void SetIsExported(bool bOn) { bIsExported = bOn; }
-	bool GetIsExported() const { return bIsExported; }
-
-
 	FDraftingHUDDraw DrawingInterface;
 
 	// These two objects are similar in purpose and use, but there are differences between what the HUD and the PDF 
@@ -105,7 +101,6 @@ protected:
 
 	bool bHUDDwgDrafting;
 	bool bIsCulling = false;
-	bool bIsExported = false;
-
+	
 	TArray<int32> CachedForegroundMOIs;
 };

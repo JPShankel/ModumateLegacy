@@ -3066,12 +3066,12 @@ void UModumateDocument::GetObjectIdsByAssembly(const FGuid& AssemblyKey, TArray<
 	}
 }
 
-bool UModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath)
+bool UModumateDocument::ExportDWG(UWorld * world, const TCHAR * filepath, TArray<int32> InCutPlaneIDs)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::ExportDWG"));
 	CurrentDraftingView = MakeShared<FModumateDraftingView>(world, this, UDraftingManager::kDWG);
 	CurrentDraftingView->CurrentFilePath = FString(filepath);
-	CurrentDraftingView->GeneratePagesFromCutPlanes();
+	CurrentDraftingView->GeneratePagesFromCutPlanes(InCutPlaneIDs);
 
 	return true;
 }
@@ -5301,18 +5301,11 @@ void UModumateDocument::export_dwgs(TArray<int32> InCutPlaneIDs)
 	{
 		return;
 	}
-	// Find all cutplanes, toggle its export state by whether is included from input array
-	TArray<AMOICutPlane*> mois;
-	GetObjectsOfTypeCasted(EObjectType::OTCutPlane, mois);
-	for (auto* curCutPlane : mois)
-	{
-		curCutPlane->SetIsExported(InCutPlaneIDs.Contains(curCutPlane->ID));
-	}
 
 	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
 	if (controller)
 	{
-		controller->OnCreateDwg();
+		controller->OnCreateDwg(InCutPlaneIDs);
 	}
 }
 

@@ -255,7 +255,7 @@ void FModumateDraftingView::PaginateScheduleViews(IModumateDraftingDraw *drawing
 	currentPage->Children.Add(currentScheduleArea);
 }
 
-void FModumateDraftingView::GeneratePagesFromCutPlanes()
+void FModumateDraftingView::GeneratePagesFromCutPlanes(TArray<int32> InCutPlaneIDs)
 {
 	UModumateGameInstance *modGameInst = World.IsValid() ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
 	UDraftingManager *draftMan = modGameInst ? modGameInst->DraftingManager : nullptr;
@@ -273,8 +273,7 @@ void FModumateDraftingView::GeneratePagesFromCutPlanes()
 
 	for (const auto curCutPlane : cutPlanes)
 	{
-		FMOICutPlaneData cutPlaneData;
-		if (curCutPlane->GetIsExported())
+		if (InCutPlaneIDs.Contains(curCutPlane->ID))
 		{
 			exportableCutPlanes.Add(curCutPlane);
 		}

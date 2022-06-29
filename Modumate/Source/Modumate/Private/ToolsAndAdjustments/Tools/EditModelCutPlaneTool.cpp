@@ -168,12 +168,7 @@ bool UCutPlaneTool::EnterNextStage()
 	auto delta = MakeShared<FMOIDelta>();
 	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
 
-	bool bSuccess = doc->ApplyDeltas({ delta }, GetWorld());
-	if (bSuccess)
-	{
-		RecentCreatedCutPlaneID = stateData.ID;
-		Cast<AMOICutPlane>(doc->GetObjectById(RecentCreatedCutPlaneID))->SetIsExported(true);
-	}
+	doc->ApplyDeltas({ delta }, GetWorld());
 
 	// Return false so that EndUse is called, returning true would chain cut plane creation
 	return false;

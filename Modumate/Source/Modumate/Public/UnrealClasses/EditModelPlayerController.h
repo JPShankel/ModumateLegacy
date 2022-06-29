@@ -525,7 +525,7 @@ public:
 	bool CheckSaveModel();
 
 	bool OnSavePDF();
-	bool OnCreateDwg();
+	bool OnCreateDwg(TArray<int32> InCutPlaneIDs);
 	bool OnCreateQuantitiesCsv(const TFunction<void(FString, bool)>& UsageNotificationCallback = nullptr);
 
 	void LaunchCloudWorkspacePlanURL();

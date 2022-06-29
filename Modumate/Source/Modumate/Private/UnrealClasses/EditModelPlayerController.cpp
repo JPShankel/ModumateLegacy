@@ -1449,7 +1449,7 @@ void AEditModelPlayerController::UploadWebThumbnail()
 #endif
 }
 
-bool AEditModelPlayerController::OnCreateDwg()
+bool AEditModelPlayerController::OnCreateDwg(TArray<int32> InCutPlaneIDs)
 {
 	if (!CanShowFileDialog())
 	{
@@ -1490,7 +1490,7 @@ bool AEditModelPlayerController::OnCreateDwg()
 	{
 		EMPlayerState->ShowingFileDialog = false;
 
-		if (!Document->ExportDWG(GetWorld(), *filename))
+		if (!Document->ExportDWG(GetWorld(), *filename, InCutPlaneIDs))
 		{
 			FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("DWGCreationFailText", "DWG Creation Failed"),
 				&dialogTitle);

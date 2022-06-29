@@ -329,7 +329,7 @@ public:
 	TArray<AModumateObjectInstance *> CloneObjects(UWorld *world, const TArray<AModumateObjectInstance *> &obs, const FTransform& offsetTransform = FTransform::Identity);
 	int32 CloneObject(UWorld *world, const AModumateObjectInstance *original);
 
-	bool ExportDWG(UWorld* World, const TCHAR* Filepath);
+	bool ExportDWG(UWorld* World, const TCHAR* Filepath, TArray<int32> InCutPlaneIDs);
 
 	void Undo(UWorld *World);
 	void Redo(UWorld *World);

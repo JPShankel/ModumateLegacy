@@ -195,7 +195,6 @@ void UCutPlaneMenuWidget::BuildCutPlaneItemFromMoi(UGeneralListItemObject* CutPl
 		if (moiCutPlane)
 		{
 			CutPlaneObj->bIsCulling = moiCutPlane->GetIsCulling();
-			CutPlaneObj->CanExport = moiCutPlane->GetIsExported();
 		}
 	}
 }
