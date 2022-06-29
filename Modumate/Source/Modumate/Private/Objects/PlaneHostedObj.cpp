@@ -153,6 +153,7 @@ bool AMOIPlaneHostedObj::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 		// edges as miter-dirty, so they can re-evaluate mitering with our new structure.
 		MarkDirty(EObjectDirtyFlags::Mitering);
 		MarkEdgesMiterDirty();
+		Document->DirtyAllCutPlanes();
 	}
 	break;
 	case EObjectDirtyFlags::Mitering:

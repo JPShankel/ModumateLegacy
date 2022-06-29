@@ -58,7 +58,6 @@ public:
 	virtual void PostCreateObject(bool bNewObject) override;
 	virtual void PreDestroy() override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
-	virtual bool GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled) override;
 	virtual bool FromWebMOI(const FString& InJson) override;
 	virtual bool ToWebMOI(FWebMOI& OutMOI) const override;
 

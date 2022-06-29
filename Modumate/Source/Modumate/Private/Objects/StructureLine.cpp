@@ -108,6 +108,7 @@ FVector AMOIStructureLine::GetLocation() const
 void AMOIStructureLine::SetupDynamicGeometry()
 {
 	UpdateCachedGeometry(true, true);
+	Document->DirtyAllCutPlanes();
 }
 
 void AMOIStructureLine::UpdateDynamicGeometry()

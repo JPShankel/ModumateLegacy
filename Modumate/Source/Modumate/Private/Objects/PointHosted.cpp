@@ -261,6 +261,8 @@ void AMOIPointHosted::InternalUpdateGeometry(bool bCreateCollision)
 			cma->SetActorTransform(cmaTransform);
 		}
 	}
+
+	Document->DirtyAllCutPlanes();
 }
 
 void AMOIPointHosted::OnInstPropUIChangedFlip(int32 FlippedAxisInt)

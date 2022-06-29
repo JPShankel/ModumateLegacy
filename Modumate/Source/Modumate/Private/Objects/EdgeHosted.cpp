@@ -279,6 +279,8 @@ void AMOIEdgeHosted::InternalUpdateGeometry(bool bCreateCollision)
 			cma->SetActorTransform(cmaTransform);
 		}
 	}
+
+	Document->DirtyAllCutPlanes();
 }
 
 void AMOIEdgeHosted::OnInstPropUIChangedExtension(float NewValue, int32 ExtensionIdx)

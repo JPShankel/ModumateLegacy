@@ -285,10 +285,12 @@ public:
 	void UpdateVolumeGraphObjects(UWorld *World);
 
 	FBox GetAffectedBounds(const FAffectedObjMap& AffectedObjects, const TSet<int32>& DirtiedObjects) const;
+	void DirtyAllCutPlanes();
 
 private:
 	bool FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas, int32 GraphID = MOD_ID_NONE);
 	bool PostApplyDeltas(UWorld *World, bool bCleanObjects, bool bMarkDocumentDirty);
+
 	bool DeepCloneForFinalize(FGraph3D& TempGraph, const AModumateObjectInstance* ChildObj, int32 ChildFaceID, TArray<FDeltaPtr>& OutDerivedDeltas);
 	void StartTrackingDeltaObjects();
 	void EndTrackingDeltaObjects();

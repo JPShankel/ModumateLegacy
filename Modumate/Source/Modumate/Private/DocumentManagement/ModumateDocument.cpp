@@ -1638,16 +1638,12 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World, bool bCleanObjects, bool 
 	// TODO: Find a better way to determine what objects were or are now dependents of CutPlanes,
 	// so we don't always have to update them in order to have always-correct lines.
 	// Also, this involves a very unfortunate workaround for preventing deltas from serializing cut planes dirtied by their application.
-	bool bWasTrackingDeltaObjects = bTrackingDeltaObjects;
-	bTrackingDeltaObjects = false;
 
-	TArray<AModumateObjectInstance*> cutPlanes = GetObjectsOfType(EObjectType::OTCutPlane);
-	for (auto cutPlane : cutPlanes)
+	if (!IsPreviewingDeltas())
 	{
-		cutPlane->MarkDirty(EObjectDirtyFlags::Visuals);
+		DirtyAllCutPlanes();
 	}
 
-	bTrackingDeltaObjects = bWasTrackingDeltaObjects;
 
 	if (bMarkDocumentDirty)
 	{
@@ -1659,6 +1655,20 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World, bool bCleanObjects, bool 
 	UModumateObjectStatics::UpdateDesignOptionVisibility(this);
 
 	return true;
+}
+
+void UModumateDocument::DirtyAllCutPlanes()
+{
+	bool bWasTrackingDeltaObjects = bTrackingDeltaObjects;
+	bTrackingDeltaObjects = false;
+
+	TArray<AModumateObjectInstance*> cutPlanes = GetObjectsOfType(EObjectType::OTCutPlane);
+	for (auto cutPlane : cutPlanes)
+	{
+		cutPlane->MarkDirty(EObjectDirtyFlags::Visuals);
+	}
+
+	bTrackingDeltaObjects = bWasTrackingDeltaObjects;
 }
 
 void UModumateDocument::StartTrackingDeltaObjects()

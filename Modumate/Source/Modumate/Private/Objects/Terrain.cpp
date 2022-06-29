@@ -352,6 +352,9 @@ void AMOITerrain::UpdateTerrainActor()
 
 		}
 	}
+
+	Document->DirtyAllCutPlanes();
+
 #endif
 }
 

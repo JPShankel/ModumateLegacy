@@ -122,22 +122,6 @@ bool AMOICutPlane::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* O
 	}
 }
 
-bool AMOICutPlane::GetUpdatedVisuals(bool &bOutVisible, bool &bOutCollisionEnabled)
-{
-	if (!Super::GetUpdatedVisuals(bOutVisible, bOutCollisionEnabled))
-	{
-		return false;
-	}
-
-	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
-	if (controller && controller->EditModelUserWidget)
-	{
-		controller->EditModelUserWidget->UpdateCutPlaneInList(ID);
-	}
-
-	return true;
-}
-
 int32 AMOICutPlane::GetCutPlaneVerticalDegree(const FQuat& Rotation)
 {
 	// Converting from ue4 axis to Modumate axis

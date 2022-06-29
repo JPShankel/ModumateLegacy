@@ -495,6 +495,8 @@ bool AMOITrim::UpdateCachedStructure()
 	TrimExtrusionFlip.Set(1.0f, InstanceData.FlipSigns.Y, InstanceData.FlipSigns.X);
 	ProfileFlip.Set(1.0f, InstanceData.FlipSigns.Y);
 
+	Document->DirtyAllCutPlanes();
+
 	return UModumateObjectStatics::GetExtrusionProfilePoints(CachedAssembly, InstanceData.OffsetNormal, InstanceData.OffsetUp, ProfileFlip, CachedProfilePoints, CachedProfileExtents);
 }
 
