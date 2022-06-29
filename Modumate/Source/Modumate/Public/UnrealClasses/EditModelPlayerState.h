@@ -391,4 +391,7 @@ protected:
 	TSet<int32> HiddenObjectsID;
 
 	enum class EStencilFlags;
+
+private:
+	static const FString DefaultEnvDateTime;	
 };

@@ -39,6 +39,7 @@
 #include "UnrealClasses/ThumbnailCacheManager.h"
 
 const FString AEditModelPlayerState::ViewOnlyArg(TEXT("ModViewOnly"));
+const FString AEditModelPlayerState::DefaultEnvDateTime(TEXT("2020-09-21T13:30:00.000Z"));
 
 enum class AEditModelPlayerState::EStencilFlags { Selected = 0x1, LegacyGroup = 0x2, Hovered = 0x4, Error = 0x8,  InactiveGroup = 0x10};
 
@@ -1715,8 +1716,20 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 		OutState.toolMode = GetEnumValueString<EToolCreateObjectMode>(EMPlayerController->CurrentTool->GetCreateObjectMode());
 		OutState.viewMode = GetEnumValueString<EEditViewModes>(EMPlayerController->EMPlayerState->SelectedViewMode);
 		OutState.culledCutplane = EMPlayerController->CurrentCullingCutPlaneID;
+
+		FDateTime dateTime;
+		if (!ensureMsgf(!EMPlayerController->SkyActor->GetCurrentDateTime().ToIso8601().IsEmpty(),
+			TEXT("The SkyActor date/time is empty. Setting it to %s"), *DefaultEnvDateTime))
+		{
+			FDateTime::ParseIso8601(*DefaultEnvDateTime, dateTime);
+		}
+		else
+		{
+			dateTime = EMPlayerController->SkyActor->GetCurrentDateTime();
+			FDateTime::ParseIso8601(*CachedInputCameraState.SavedTime, dateTime);
+		}
 		
-		OutState.camera.SavedTime = EMPlayerController->SkyActor->GetCurrentDateTime().ToIso8601();
+		OutState.camera.SavedTime = dateTime.ToIso8601(); 
 		OutState.camera.bAxesActorVisibility = CachedInputCameraState.bAxesActorVisibility;
 		OutState.camera.bViewCubeVisibility = CachedInputCameraState.bViewCubeVisibility;
 		OutState.camera.bGraphDirectionVisibility = CachedInputCameraState.bGraphDirectionVisibility;
@@ -1829,7 +1842,14 @@ bool AEditModelPlayerState::FromWebPlayerState(const FWebEditModelPlayerState& I
 	else if (EMPlayerController)
 	{
 		FDateTime dateTime;
-		FDateTime::ParseIso8601(*InState.camera.SavedTime, dateTime);
+		if (!ensureMsgf(!InState.camera.SavedTime.IsEmpty(), TEXT("The camera saved time was lost. Defaulting to %s"), *DefaultEnvDateTime))
+		{
+			FDateTime::ParseIso8601(*DefaultEnvDateTime, dateTime);
+		}
+		else
+		{
+			FDateTime::ParseIso8601(*InState.camera.SavedTime, dateTime);
+		}
 		
 		EMPlayerController->SetFieldOfViewCommand(InState.camera.FOV);
 		EMPlayerController->ToggleAllCutPlanesColor(InState.camera.bCutPlanesColorVisibility);
