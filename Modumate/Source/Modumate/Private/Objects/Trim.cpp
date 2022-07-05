@@ -303,8 +303,17 @@ void AMOITrim::GetDraftingLines(const TSharedPtr<FDraftingComposite>& ParentPage
 	}
 	else
 	{   // In-plane lines.
-	 UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox,
-			perimeter, TrimStartPos, TrimEndPos, FModumateLayerType::kSeparatorCutTrim, 0.3f);
+		FBox boundingBox(ForceInit);
+		for (auto& p: perimeter)
+		{
+			boundingBox += p + TrimStartPos;
+			boundingBox += p + TrimEndPos;
+		}
+		if (FMath::PlaneAABBIntersection(Plane, boundingBox))
+		{
+			UModumateObjectStatics::GetExtrusionCutPlaneDraftingLines(ParentPage, Plane, AxisX, AxisY, Origin, BoundingBox,
+				perimeter, TrimStartPos, TrimEndPos, FModumateLayerType::kSeparatorCutTrim, 0.3f);
+		}
 	}
 }
 

@@ -632,22 +632,15 @@ bool AMOICutPlane::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage,
 	// Add hosted objs
 	TArray<AModumateObjectInstance*> hostedObjectMois;
 	hostedObjectMois.Append(Document->GetObjectsOfType(EObjectType::OTPointHosted));
-	hostedObjectMois.Append(Document->GetObjectsOfType(EObjectType::OTEdgeHosted));
-	for (auto curCp : hostedObjectMois)
+
+	for (auto curCp: hostedObjectMois)
 	{
 		if (!draftingObjectMois.Contains(curCp) && curCp->GetActor())
 		{
-			FBox moiBox = curCp->GetActor()->GetComponentsBoundingBox();
-			FVector boxCenter, boxExtents;
-			moiBox.GetCenterAndExtents(boxCenter, boxExtents);
+			const FBox moiBox = curCp->GetActor()->GetComponentsBoundingBox();
 
-			// Find distance of box center from plane
-			FPlane slicePlane(GetLocation(), GetNormal());
-			float boxCenterDist = slicePlane.PlaneDot(boxCenter);
-
-			// Compare size of box in plane normal direction
-			float boxSize = FVector::BoxPushOut(slicePlane, boxExtents);
-			if (FMath::Abs(boxCenterDist) < boxSize)
+			// TODO: use cut-plane extents as part of culling
+			if (FMath::PlaneAABBIntersection(CachedPlane, moiBox))
 			{
 				draftingObjectMois.Add(curCp);
 			}
@@ -658,8 +651,6 @@ bool AMOICutPlane::GetForegroundLines(TSharedPtr<FDraftingComposite> ParentPage,
 
 	for (auto moi : draftingObjectMois)
 	{
-		// TODO: this only is implemented for plane hosted objects right now, this function should be
-		// a part of ModumateObjectInstance instead and should propagate down through the children
 		TArray<TArray<FVector>> WallCutPerimeters;
 		if (!moi->IsRequestedHidden())
 		{
