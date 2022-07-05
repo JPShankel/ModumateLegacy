@@ -103,11 +103,38 @@ void ADrawingDesignerRender::SetDocument(UModumateDocument* InDoc, FDrawingDesig
 
 void ADrawingDesignerRender::AddLines(const TArray<FDrawingDesignerLine>& Lines, bool bInPlane)
 {
+	const FVector cameraOrigin(ViewTransform.GetLocation());
+	const FVector cameraDirection(ViewTransform.TransformVector(FVector::ForwardVector).GetSafeNormal());
+
 	for (const auto& line : Lines)
 	{
+		FVector P1 = line.P1;
+		FVector P2 = line.P2;
+		if (!bInPlane)
+		{
+			// Clip lines against cut plane:
+			double d1 = cameraDirection | (P1 - cameraOrigin);
+			double d2 = cameraDirection | (P2 - cameraOrigin);
+			if (d1 < 0.0 && d2 < 0.0)
+			{
+				continue;
+			}
+			if (d1 * d2 < 0.0)
+			{   // Line straddles cut plane
+				if (d2 < 0.0)
+				{
+					P2 = P1 + (d1 / (d1 - d2)) * (P2 - P1);
+				}
+				else
+				{
+					P1 = P2 + (d2 / (d2 - d1)) * (P1 - P2);
+				}
+			}
+		}
+
 		ALineActor* lineActor = DrawingDesignerRenderControl->GetLineActor();
-		lineActor->Point1 = line.P1;
-		lineActor->Point2 = line.P2;
+		lineActor->Point1 = P1;
+		lineActor->Point2 = P2;
 		lineActor->SetIsHUD(false);
 		lineActor->MakeGeometry();
 		lineActor->ToggleForDrawingRender(true);
