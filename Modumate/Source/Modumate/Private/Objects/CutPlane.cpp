@@ -488,22 +488,21 @@ bool AMOICutPlane::UpdateDraftingPreview(bool bForce /*= false*/)
 {
 	PreviewHUDLines = nullptr;
 
-	if (!IsVisible() && !bForce)
+	if (IsVisible() || bForce)
 	{
-		return true;
+		PreviewHUDLines = MakeShared<FDraftingComposite>();
+
+		FVector axisY = CachedAxisY * -1.0f;
+
+		if (!GetForegroundLines(PreviewHUDLines, CachedAxisX, axisY))
+		{
+			return false;
+		}
+
+		DrawingInterface.CurrentAxisX = CachedAxisX;
+		DrawingInterface.CurrentAxisY = CachedAxisY * -1.0f;
+		DrawingInterface.CurrentOrigin = CachedOrigin;
 	}
-	PreviewHUDLines = MakeShared<FDraftingComposite>();
-
-	FVector axisY = CachedAxisY * -1.0f;
-
-	if (!GetForegroundLines(PreviewHUDLines, CachedAxisX, axisY))
-	{
-		return false;
-	}
-
-	DrawingInterface.CurrentAxisX = CachedAxisX;
-	DrawingInterface.CurrentAxisY = CachedAxisY * -1.0f;
-	DrawingInterface.CurrentOrigin = CachedOrigin;
 
 	if (bIsCulling)
 	{
