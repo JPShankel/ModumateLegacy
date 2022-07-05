@@ -743,7 +743,10 @@ void UEditModelInputHandler::HandleBoundChord(FInputChord Chord)
 
 void UEditModelInputHandler::HandleDigitKey(int32 DigitNumber)
 {
-	Controller->HandleDigitKey(DigitNumber);
+	if (IsInputEnabled())
+	{
+		Controller->HandleDigitKey(DigitNumber);
+	}
 }
 
 void UEditModelInputHandler::OnCommandReset()
