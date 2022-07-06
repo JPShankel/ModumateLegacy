@@ -9,19 +9,6 @@
 #include "DocumentManagement/ModumateSerialization.h"
 
 /**
- * View
- */
-bool FDrawingDesignerView::operator==(const FDrawingDesignerView& RHS) const
-{
-	return this->moi_id == RHS.moi_id && this->size == RHS.size;
-}
-
-bool FDrawingDesignerView::operator!=(const FDrawingDesignerView& RHS) const
-{
-	return !(*this == RHS);
-}
-
-/**
  * View Image
  */
 
@@ -156,14 +143,14 @@ bool FDrawingDesignerViewRegion::operator!=(const FDrawingDesignerViewRegion& RH
  */
 bool FDrawingDesignerViewList::operator==(const FDrawingDesignerViewList& RHS) const
 {
-	if (this->views.Num() != RHS.views.Num())
+	if (this->cutPlanes.Num() != RHS.cutPlanes.Num())
 	{
 		return false;
 	}
 
-	for (auto& view : this->views)
+	for (const auto& view : this->cutPlanes)
 	{
-		int found = RHS.views.Find(view);
+		int found = RHS.cutPlanes.Find(view);
 		if (found == INDEX_NONE)
 		{
 			return false;

@@ -130,27 +130,6 @@ struct MODUMATE_API FDrawingDesignerSnap
 };
 
 USTRUCT()
-struct MODUMATE_API FDrawingDesignerView
-{
-	GENERATED_BODY()
-	FDrawingDesignerView() = default;
-
-	UPROPERTY()
-	int32 moi_id = INDEX_NONE;
-
-	UPROPERTY()
-	FDrawingDesignerPoint size;
-
-	UPROPERTY()
-	FString name;
-
-	//TODO: Add Object Type def pending more discussion
-
-	bool operator==(const FDrawingDesignerView& RHS) const;
-	bool operator!=(const FDrawingDesignerView& RHS) const;
-};
-
-USTRUCT()
 struct MODUMATE_API FDrawingDesignerDrawingImage
 {
 	GENERATED_BODY()
@@ -158,7 +137,7 @@ struct MODUMATE_API FDrawingDesignerDrawingImage
 	FDrawingDesignerDrawingImage() = default;
 
 	UPROPERTY()
-	FDrawingDesignerView view;
+	FWebMOI view;
 
 	UPROPERTY() //FString key encoded from view ID
 	TMap<FString, FDrawingDesignerSnap> snaps;
@@ -183,10 +162,10 @@ struct MODUMATE_API FDrawingDesignerViewList
 	FDrawingDesignerViewList() = default;
 
 	UPROPERTY()
-	TArray<FDrawingDesignerView> views;
+	TArray<FWebMOI> cameraViews;
 
 	UPROPERTY()
-	TArray<FWebMOI> cameraViews;
+	TArray<FWebMOI> cutPlanes;
 
 	bool WriteJson(FString& OutJson) const;
 	bool ReadJson(const FString& InJson);

@@ -67,6 +67,8 @@ public:
 	void SetHUDDwgDrafting(bool NewEnable) { bHUDDwgDrafting = NewEnable; };
 	TArray<int32> GetCachedForegroundMoiIDs() const { return CachedForegroundMOIs; };
 
+	FVector2D GetSize() const;
+
 	bool UpdateDraftingPreview(bool bForce = false);
 
 	FDraftingHUDDraw DrawingInterface;

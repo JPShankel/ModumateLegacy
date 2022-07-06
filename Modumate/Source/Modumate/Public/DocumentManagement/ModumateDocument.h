@@ -435,9 +435,6 @@ public:
 	void drawing_apply_delta(const FString& InDelta);
 
 	UFUNCTION()
-	void drawing_request_view_list();
-
-	UFUNCTION()
 	void drawing_get_drawing_image(const FString& InRequest);
 
 	UFUNCTION()

@@ -30,7 +30,8 @@ enum class EWebMOIPropertyType : uint8
 	cameraTime,
 	cameraPositionUpdate,
 	edgeDetailHash,
-	edgeDetail
+	edgeDetail,
+	size
 };
 
 USTRUCT()
@@ -85,6 +86,22 @@ struct MODUMATE_API FWebMOI
 
 	UPROPERTY()
 	TMap<FString, FWebMOIProperty> Properties;
+
+	friend bool operator==(const FWebMOI& Lhs, const FWebMOI& RHS)
+	{
+		return Lhs.ID == RHS.ID
+			&& Lhs.DisplayName == RHS.DisplayName
+			&& Lhs.PresetID == RHS.PresetID
+			&& Lhs.Parent == RHS.Parent
+			&& Lhs.Type == RHS.Type
+			&& Lhs.isVisible == RHS.isVisible
+			&& Lhs.Children == RHS.Children;
+	}
+
+	friend bool operator!=(const FWebMOI& Lhs, const FWebMOI& RHS)
+	{
+		return !(Lhs == RHS);
+	}
 };
 
 USTRUCT()

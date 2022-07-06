@@ -27,60 +27,6 @@ FDrawingDesignerRenderControl::~FDrawingDesignerRenderControl()
 	DestroyLineActors();
 }
 
-FString FDrawingDesignerRenderControl::GetViewList() const
-{
-	FDrawingDesignerViewList viewList;
-
-	TArray<const AModumateObjectInstance*> cutPlanes = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType(EObjectType::OTCutPlane);
-	for (const auto* cutPlane : cutPlanes)
-	{
-		if (cutPlane->GetNumCorners() != 4)
-		{
-			continue;
-		}
-
-		FDrawingDesignerView view;
-		view.moi_id = cutPlane->ID;
-		TArray<FVector> controlPoints;
-		for (int32 c = 0; c < 4; ++c)
-		{
-			controlPoints.Add(cutPlane->GetCorner(c));
-		}
-
-		FPlane plane;
-		FVector axisX, axisY, center;
-		TArray<FVector2D> points2d;
-		if (UModumateGeometryStatics::AnalyzeCachedPositions(controlPoints, plane, axisX, axisY, points2d, center))
-		{
-			FVector2D size((points2d[2] - points2d[0]).GetAbs());
-			view.size.x = size.X;
-			view.size.y = size.Y;
-			
-			FMOICutPlaneData cutPlaneData;
-			cutPlane->GetStateData().CustomData.LoadStructData(cutPlaneData);
-			view.name = cutPlaneData.Name;
-
-			viewList.views.Add(view);
-		}
-	}
-
-	TArray<const AModumateObjectInstance*> cameraViews = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType(EObjectType::OTCameraView);
-	TArray<FWebMOI> cameraViewsFWebMOI;
-	UModumateObjectStatics::GetWebMOIArrayForObjects(cameraViews, cameraViewsFWebMOI);
-	
-	viewList.cameraViews = cameraViewsFWebMOI;
-
-	FString responseString;
-	if (ensureAlways(viewList.WriteJson(responseString)))
-	{
-		return responseString;
-	}
-	else
-	{
-		return FString();
-	}
-}
-
 bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString& OutJsonResponse)
 {
 	double currentTime = FPlatformTime::Seconds();
@@ -198,13 +144,14 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 		FMOICutPlaneData cutPlaneData;
 		cutPlane->GetStateData().CustomData.LoadStructData(cutPlaneData);
 
+		FWebMOI webMoi;
+		cutPlane->ToWebMOI(webMoi);
+
 		FDrawingDesignerDrawingResponse viewResponse;
 		viewResponse.request = viewRequest;
 		viewResponse.response.resolution_pixels = viewRequest.minimum_resolution_pixels;
-		viewResponse.response.view.moi_id = viewRequest.moi_id;
-		viewResponse.response.view.size = { viewWidth, viewHeight };
+		viewResponse.response.view = webMoi;
 		viewResponse.response.resolution_pixels = viewRequest.minimum_resolution_pixels;
-		viewResponse.response.view.name = cutPlaneData.Name;
 		viewResponse.response.scale = FModumateUnitValue(CachedSize.Y, EModumateUnitType::WorldCentimeters).AsWorldInches();
 
 		//(D) 100ms
@@ -228,7 +175,7 @@ bool FDrawingDesignerRenderControl::GetView(const FString& JsonRequest, FString&
 	return bSuccess;
 }
 
-bool FDrawingDesignerRenderControl::GetMoiFromView(FVector2D uv, FDrawingDesignerView& view, int32& OutMoiId) const
+bool FDrawingDesignerRenderControl::GetMoiFromView(FVector2D uv, AMOICutPlane& view, int32& OutMoiId) const
 {
 	FVector2D size;
 	FVector xaxis, yaxis, zaxis, origin;
@@ -315,21 +262,13 @@ void FDrawingDesignerRenderControl::FreeLineActor(ALineActor* LineActor)
 	}
 }
 
-bool FDrawingDesignerRenderControl::GetViewAxis(FDrawingDesignerView& View, FVector& OutXAxis, FVector& OutYAxis, FVector& OutZAxis, FVector& OutOrigin, FVector2D& OutSize) const
+bool FDrawingDesignerRenderControl::GetViewAxis(AMOICutPlane& View, FVector& OutXAxis, FVector& OutYAxis, FVector& OutZAxis, FVector& OutOrigin, FVector2D& OutSize) const
 {
-	const AModumateObjectInstance* moi = Doc->GetObjectById(View.moi_id);
-
-	if (!ensureAlways(moi) || !ensureAlways(moi->GetObjectType() == EObjectType::OTCutPlane))
-	{
-		return false;
-	}
-
-	const AMOICutPlane* cutPlane = Cast<const AMOICutPlane>(moi);
 	
 	FVector corners[4];
 	for (int32 c = 0; c < 4; ++c)
 	{
-		corners[c] = cutPlane->GetCorner(c);
+		corners[c] = View.GetCorner(c);
 	}
 
 	OutSize.X = (corners[1] - corners[0]).Size();
@@ -655,17 +594,8 @@ void FDrawingDesignerRenderControl::DestroyLineActors()
 	LinePool.Empty();
 }
 
-bool FDrawingDesignerRenderControl::IsFloorplan(const FDrawingDesignerView& View) const
-{
-	const AModumateObjectInstance* moi = Doc->GetObjectById(View.moi_id);
-
-	if (!ensureAlways(moi) || !ensureAlways(moi->GetObjectType() == EObjectType::OTCutPlane))
-	{
-		return false;
-	}
-
-	const AMOICutPlane* cutPlane = Cast<const AMOICutPlane>(moi);
-	
-	const FQuat cutPlaneRotation(cutPlane->GetRotation());
+bool FDrawingDesignerRenderControl::IsFloorplan(const AMOICutPlane& View) const
+{	
+	const FQuat cutPlaneRotation(View.GetRotation());
 	return (FVector::Parallel(cutPlaneRotation * FVector::UpVector, FVector::UpVector));
 }

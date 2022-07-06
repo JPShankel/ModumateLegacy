@@ -8,6 +8,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "Misc/AutomationTest.h"
 #include "JsonObjectConverter.h"
+#include "Objects/CutPlane.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
@@ -15,15 +16,17 @@
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDrawingDesignerViewTest, "Modumate.DrawingDesigner.ViewTest", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 bool FModumateDrawingDesignerViewTest::RunTest(const FString& Parameters)
 {
+	UModumateDocument* testDocument = NewObject<UModumateDocument>();
 	bool doVerbose = false;
 	if (doVerbose) FPlatformProcess::Sleep(15.0);
 
 	FDrawingDesignerViewList myList;
-	FDrawingDesignerView sample;
-	sample.size.x = 1;
-	sample.size.y = 1;
-	sample.moi_id = INDEX_NONE; // Just for sample...
-	myList.views.Add(sample);
+	FWebMOI moi;
+	moi.isVisible = true;
+	moi.Type = EObjectType::OTCutPlane;
+	moi.DisplayName = "CutPlane 1";
+	
+	myList.cutPlanes.Add(moi);
 
 	FString response;
 	if (!myList.WriteJson(response))
@@ -44,7 +47,7 @@ bool FModumateDrawingDesignerViewTest::RunTest(const FString& Parameters)
 	req.moi_id = 999;
 
 	FDrawingDesignerDrawingImage image;
-	image.view = sample;
+	image.view = moi;
 	image.image_base64 = TEXT("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==");
 
 	FDrawingDesignerDrawingResponse resp;

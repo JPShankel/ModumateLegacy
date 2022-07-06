@@ -46,12 +46,40 @@ AMOICutPlane::AMOICutPlane()
 	prop.isEditable = true;
 	prop.isVisible = true;
 	WebProperties.Add(prop.Name, prop);
+
+	prop.Name = TEXT("Size");
+	prop.Type = EWebMOIPropertyType::size;
+	prop.DisplayName = TEXT("Size");
+	prop.isEditable = false;
+	prop.isVisible = false;
+	WebProperties.Add(prop.Name, prop);
 }
 
 AActor* AMOICutPlane::CreateActor(const FVector& loc, const FQuat& rot)
 {
 	AActor *returnActor = AMOIPlaneBase::CreateActor(loc, rot);
 	return returnActor;
+}
+
+FVector2D AMOICutPlane::GetSize() const
+{
+	TArray<FVector> controlPoints;
+	for (int32 c = 0; c < 4; ++c)
+	{
+		controlPoints.Add(GetCorner(c));
+	}
+
+	FPlane plane;
+	FVector axisX, axisY, center;
+	TArray<FVector2D> points2d;
+	if (UModumateGeometryStatics::AnalyzeCachedPositions(controlPoints, plane, axisX, axisY, points2d, center))
+	{
+		FVector2D size((points2d[2] - points2d[0]).GetAbs());
+		return size;
+	}
+
+	// if unable to get size, return 0 in size
+	return FVector2D::ZeroVector;
 }
 
 void AMOICutPlane::PostCreateObject(bool bNewObject)
@@ -768,6 +796,13 @@ bool AMOICutPlane::ToWebMOI(FWebMOI& OutMOI) const
 		const FString Visible = HideRequests.Contains(UModumateDocument::DocumentHideRequestTag) ? TEXT("false") : TEXT("true");
 		WebPropVisible.ValueArray.Add(Visible);
 		OutMOI.Properties.Add("Visible", WebPropVisible);
+		
+		const FWebMOIProperty* FormPropSize = WebProperties.Find(TEXT("Size"));
+		FWebMOIProperty WebPropSize = *FormPropSize;
+
+		const FVector2D Size = GetSize();
+		WebPropSize.ValueArray.Add(Size.ToString());
+		OutMOI.Properties.Add("Size", WebPropSize);
 		
 		return true;
 	}

@@ -26,7 +26,7 @@ struct MODUMATE_API FDrawingDesignerGenericRequest
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FDrawingDesignerView view;
+	int32 viewId;
 	UPROPERTY()
 	FDrawingDesignerPoint uvPosition;
 	UPROPERTY()

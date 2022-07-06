@@ -240,7 +240,8 @@ void UModumateDocument::Undo(UWorld *World)
 	if (controller->EMPlayerState->IsNetMode(NM_Client))
 	{
 		controller->EMPlayerState->TryUndo();
-		drawing_request_view_list();
+		UpdateWebMOIs(EObjectType::OTCutPlane);
+		UpdateWebMOIs(EObjectType::OTCameraView);
 	}
 	else if (ensureAlways(!InUndoRedoMacro()))
 	{
@@ -260,7 +261,8 @@ void UModumateDocument::Redo(UWorld *World)
 	if (controller->EMPlayerState->IsNetMode(NM_Client))
 	{
 		controller->EMPlayerState->TryRedo();
-		drawing_request_view_list();
+		UpdateWebMOIs(EObjectType::OTCutPlane);
+		UpdateWebMOIs(EObjectType::OTCameraView);
 	}
 	else if (ensureAlways(!InUndoRedoMacro()))
 	{
@@ -761,7 +763,8 @@ bool UModumateDocument::ApplyRemoteUndo(UWorld* World, const FString& UndoingUse
 	}
 
 	PostApplyDeltas(World, true, true);
-	drawing_request_view_list();
+	UpdateWebMOIs(EObjectType::OTCutPlane);
+	UpdateWebMOIs(EObjectType::OTCameraView);
 	return true;
 }
 
@@ -1326,7 +1329,6 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	// TODO: move this to after object cleaning or a more efficient location. maybe "Mark yourself dirty for network and send all dirty network devices"
 	if (resendDDViews)
 	{
-		drawing_request_view_list();
 		for (auto& at : affectedTypes)
 		{
 			UpdateWebMOIs(at);
@@ -4768,21 +4770,12 @@ void UModumateDocument::drawing_apply_delta(const FString& InDelta)
 	}
 }
 
-void UModumateDocument::drawing_request_view_list()
-{
-	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_request_view_list"));
-
-	FString response = DrawingDesignerRenderControl->GetViewList();
-	DrawingSendResponse(TEXT("on3DViewsChanged"), response);
-}
-
 /*
 * Should only be called by web
 */
 void UModumateDocument::trigger_update(const TArray<FString>& ObjectTypes)
 {
 	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::trigger_update"));
-	drawing_request_view_list();
 	DrawingPushDD();
 	UpdateWebProjectSettings();
 
@@ -4830,12 +4823,16 @@ void UModumateDocument::drawing_get_clicked(const FString& InRequest)
 		
 		FDrawingDesignerMoiResponse moiResponse;
 		moiResponse.request = req;
-		FVector2D uvVector; uvVector.X = req.uvPosition.x; uvVector.Y = req.uvPosition.y;
-		DrawingDesignerRenderControl->GetMoiFromView(uvVector, req.view, moiResponse.moiId);
 
-		const AModumateObjectInstance* moi = GetObjectById(moiResponse.moiId);
+		AModumateObjectInstance* moi = GetObjectById(req.viewId);
 		if (moi)
 		{
+			if (moi->GetObjectType() == EObjectType::OTCutPlane)
+			{
+				AMOICutPlane* cutPlane = Cast<AMOICutPlane>(moi);
+				FVector2D uvVector; uvVector.X = req.uvPosition.x; uvVector.Y = req.uvPosition.y;
+				DrawingDesignerRenderControl->GetMoiFromView(uvVector, *cutPlane, moiResponse.moiId);
+			}
 			moiResponse.spanId = moi->GetParentID();
 			const FBIMPresetInstance* preset = BIMPresetCollection.PresetFromGUID(moi->GetAssembly().PresetGUID);
 			if (preset) 
