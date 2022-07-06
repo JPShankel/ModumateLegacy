@@ -13,7 +13,7 @@
 AMOIPlaneBase::AMOIPlaneBase()
 	: AModumateObjectInstance()
 	, SelectedColor(0x03, 0xC4, 0xA8)
-	, HoveredColor(0xCF, 0xCF, 0xCF)
+	, HoveredColor(0x9E, 0x9E, 0x9E)
 	, BaseColor(0xFF, 0xFF, 0xFF)
 	, CachedPlane(ForceInitToZero)
 	, CachedAxisX(ForceInitToZero)
