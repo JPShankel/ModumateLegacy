@@ -45,6 +45,18 @@ struct MODUMATE_API FDocumentSettings
 	UPROPERTY()
 	float TrueNorthDegree = 0.f;
 
+	UPROPERTY()
+	float Number = 0.f;
+
+	UPROPERTY()
+	FString Name = TEXT("Name");
+
+	UPROPERTY()
+	FString Address = TEXT("Address");
+
+	UPROPERTY()
+	FString Description = TEXT("Description");
+
 	bool operator==(const FDocumentSettings& RHS) const;
 	bool operator!=(const FDocumentSettings& RHS) const;
 

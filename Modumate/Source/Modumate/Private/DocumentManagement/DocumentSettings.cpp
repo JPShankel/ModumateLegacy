@@ -76,6 +76,10 @@ bool FDocumentSettings::ToWebProjectSettings(FWebProjectSettings& OutSettings) c
 	OutSettings.latitude.value = FString::SanitizeFloat(Latitude);
 	OutSettings.longitude.value = FString::SanitizeFloat(Longitude);
 	OutSettings.trueNorth.value = FString::SanitizeFloat(TrueNorthDegree);
+	OutSettings.number.value = FString::SanitizeFloat(Number);
+	OutSettings.name.value = Name;
+	OutSettings.address.value = Address;
+	OutSettings.description.value = Description;
 
 	return true;
 }
@@ -144,6 +148,10 @@ bool FDocumentSettings::FromWebProjectSettings(const FWebProjectSettings& InSett
 	Latitude = FCString::Atof(*InSettings.latitude.value);
 	Longitude = FCString::Atof(*InSettings.longitude.value);
 	TrueNorthDegree = FCString::Atof(*InSettings.trueNorth.value);
+	Number = FCString::Atof(*InSettings.number.value);
+	Name = *InSettings.name.value;
+	Address = *InSettings.address.value;
+	Description = *InSettings.description.value;
 
 	return bUnitFound && bIncrementFound;
 }
@@ -160,7 +168,11 @@ bool FDocumentSettings::operator==(const FDocumentSettings& RHS) const
 		(MinimumDistanceIncrement == RHS.MinimumDistanceIncrement) &&
 		(FMath::IsNearlyEqual(Latitude, RHS.Latitude, 0.001f)) &&
 		(FMath::IsNearlyEqual(Longitude, RHS.Longitude, 0.001f)) &&
-		(FMath::IsNearlyEqual(TrueNorthDegree, RHS.TrueNorthDegree, 0.001f));
+		(FMath::IsNearlyEqual(TrueNorthDegree, RHS.TrueNorthDegree, 0.001f)) &&
+		(Name == RHS.Name) &&
+		(FMath::IsNearlyEqual(Number, RHS.Number, 0.001f)) &&
+		(Address == RHS.Address) &&
+		(Description == RHS.Description);
 }
 
 bool FDocumentSettings::operator!=(const FDocumentSettings& RHS) const

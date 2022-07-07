@@ -48,6 +48,18 @@ struct MODUMATE_API FWebProjectSettings
 	FWebProjectSettingsProperty increment;
 
 	UPROPERTY()
+	FWebProjectSettingsProperty name;
+
+	UPROPERTY()
+	FWebProjectSettingsProperty number;
+ 
+	UPROPERTY()
+	FWebProjectSettingsProperty address;
+
+	UPROPERTY()
+	FWebProjectSettingsProperty description;
+
+	UPROPERTY()
 	FWebProjectSettingsProperty latitude;
 
 	UPROPERTY()
