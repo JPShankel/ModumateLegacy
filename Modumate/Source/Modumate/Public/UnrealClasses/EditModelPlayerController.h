@@ -100,7 +100,7 @@ private:
 
 	bool SnapDistAlongAffordance(FVector& SnappedPosition, const FVector& AffordanceOrigin, const FVector& AffordanceDir) const;
 	bool ValidateVirtualHit(const FVector& MouseOrigin, const FVector& MouseDir, const FVector2D& MouseScreenSpace, const FVector& HitPoint,
-		float CurObjectHitDist, float CurVirtualHitDist, float MaxScreenDist, float &OutRayDist) const;
+		float CurObjectHitDist, float CurMouseDist, float& OutMouseDist) const;
 	bool FindBestMousePointHit(const TArray<FStructurePoint> &Points, const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist, int32 &OutBestIndex, float &OutBestRayDist) const;
 	bool FindBestMouseLineHit(const TArray<TPair<FVector, FVector>> &Lines, const FVector &MouseOrigin, const FVector &MouseDir, float CurObjectHitDist, int32 &OutBestIndex, FVector &OutBestIntersection, float &OutBestRayDist) const;
 	FMouseWorldHitType GetAffordanceHit(const FVector &mouseLoc, const FVector &mouseDir, const FAffordanceFrame &affordance, bool allowZSnap) const;
@@ -394,7 +394,7 @@ public:
 
 	// The maximum distance, in pixels, between the cursor in screen space and a valid point snap location
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Snap)
-	float SnapPointMaxScreenDistance = 18.0f;
+	float SnapPointMaxScreenDistance = 15.0f;
 
 	// The maximum distance, in pixels, between the cursor in screen space and a valid line snap location
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Snap)

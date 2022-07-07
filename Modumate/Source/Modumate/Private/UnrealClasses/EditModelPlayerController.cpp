@@ -2703,6 +2703,13 @@ void AEditModelPlayerController::UpdateMouseHits(float deltaTime)
 		return;
 	}
 
+	{
+		// Interpolate mouse-hit max distance from 15 pixels down to 9 for small screens.
+		FVector2D viewSize(ForceInitToZero);
+		GetLocalPlayer()->ViewportClient->GetViewportSize(viewSize);
+		SnapPointMaxScreenDistance = viewSize.Y > 0.0f ? FMath::Clamp(8.333e-3f * viewSize.Y + 3.0f, 9.0f, 15.0f) : 15.0f;
+	}
+
 	// Reset frame defaults
 	baseHit.Valid = false;
 	projectedHit.Valid = false;
@@ -3161,17 +3168,18 @@ bool AEditModelPlayerController::SnapDistAlongAffordance(FVector& SnappedPositio
 }
 
 bool AEditModelPlayerController::ValidateVirtualHit(const FVector& MouseOrigin, const FVector& MouseDir, const FVector2D& MouseScreenSpace,
-	const FVector& HitPoint, float CurObjectHitDist, float CurVirtualHitDist, float MaxScreenDist, float &OutRayDist) const
+	const FVector& HitPoint, float CurObjectHitDist, float CurMouseDist, float& OutMouseDist) const
 {
 	// The virtual hit point needs to be within a maximum screen distance, and ahead of the mouse
-	OutRayDist = (HitPoint - MouseOrigin) | MouseDir;
+	float hitPointDist = (HitPoint - MouseOrigin) | MouseDir;
 	float screenSpaceDist;
-	if ((OutRayDist > KINDA_SMALL_NUMBER) && (OutRayDist < CurVirtualHitDist) &&
-		DistanceBetweenWorldPointsInScreenSpace(MouseScreenSpace, HitPoint, screenSpaceDist) && (screenSpaceDist < MaxScreenDist))
+	if ((hitPointDist > KINDA_SMALL_NUMBER) &&
+		DistanceBetweenWorldPointsInScreenSpace(MouseScreenSpace, HitPoint, screenSpaceDist) && (screenSpaceDist < CurMouseDist))
 	{
+		OutMouseDist = screenSpaceDist;
 		// If virtual hit point is a candidate, make sure it's either
 		// in front of our current object hit distance, or verify that it's not occluded.
-		if ((CurObjectHitDist < FLT_MAX) && (OutRayDist < CurObjectHitDist))
+		if ((CurObjectHitDist < FLT_MAX) && (hitPointDist < CurObjectHitDist))
 		{
 			return true;
 		}
@@ -3192,6 +3200,7 @@ bool AEditModelPlayerController::FindBestMousePointHit(const TArray<FStructurePo
 {
 	OutBestIndex = INDEX_NONE;
 	OutBestRayDist = FLT_MAX;
+	float closestMouseDistance = SnapPointMaxScreenDistance;
 
 	FVector2D mouseScreenSpace;
 	ProjectWorldLocationToScreen(MouseOrigin, mouseScreenSpace);
@@ -3201,12 +3210,10 @@ bool AEditModelPlayerController::FindBestMousePointHit(const TArray<FStructurePo
 		const FStructurePoint& structurePoint = Points[pointIdx];
 
 		// See if this is our best valid point hit
-		float rayDist;
+		float newMouseDist;
 		if (ValidateVirtualHit(MouseOrigin, MouseDir, mouseScreenSpace,
-			structurePoint.Point, CurObjectHitDist, OutBestRayDist, SnapPointMaxScreenDistance, rayDist))
+			structurePoint.Point, CurObjectHitDist, closestMouseDistance, newMouseDist))
 		{
-			auto nextPoint = Points[pointIdx];
-
 			//If we have a previous best, run a quick heuristic on it to
 			// determine if we should replace it
 			if (OutBestIndex != INDEX_NONE)
@@ -3214,30 +3221,35 @@ bool AEditModelPlayerController::FindBestMousePointHit(const TArray<FStructurePo
 				//If the 'next' point returned from ValidateVirtualHit
 				// is a midpoint, we need to score it worse so that we
 				// prioritize corners over mids.
-				if (nextPoint.PointType == EPointType::Middle)
+				if (structurePoint.PointType == EPointType::Middle)
 				{
 					
-					rayDist = rayDist * MidPointHitBias;
+					newMouseDist = newMouseDist * MidPointHitBias;
 				}
 
-				if (rayDist < OutBestRayDist)
+				if (newMouseDist < closestMouseDistance)
 				{
-					OutBestRayDist = rayDist;
+					closestMouseDistance = newMouseDist;
 					OutBestIndex = pointIdx;
 				}
 			}
-
 			//Otherwise, just flat out replace it...
 			else
 			{
-				OutBestRayDist = nextPoint.PointType == EPointType::Middle ? (rayDist * MidPointHitBias) : rayDist;
+				closestMouseDistance = structurePoint.PointType == EPointType::Middle ? (newMouseDist * MidPointHitBias) : newMouseDist;
 				OutBestIndex = pointIdx;
 			}
 
 		}
 	}
 
-	return (OutBestIndex != INDEX_NONE);
+	if (OutBestIndex != INDEX_NONE)
+	{
+		OutBestRayDist = (Points[OutBestIndex].Point - MouseOrigin) | MouseDir;
+		return true;
+	}
+	
+	return false;
 }
 
 bool AEditModelPlayerController::FindBestMouseLineHit(const TArray<TPair<FVector, FVector>> &Lines,
@@ -3250,6 +3262,7 @@ bool AEditModelPlayerController::FindBestMouseLineHit(const TArray<TPair<FVector
 	OutBestIndex = INDEX_NONE;
 	OutBestIntersection = MouseOrigin;
 	OutBestRayDist = FLT_MAX;
+	float closestMouseDistance = SnapPointMaxScreenDistance;
 
 	int32 numLines = Lines.Num();
 	for (int32 lineIdx = 0; lineIdx < numLines; ++lineIdx)
@@ -3280,17 +3293,23 @@ bool AEditModelPlayerController::FindBestMouseLineHit(const TArray<TPair<FVector
 		}
 
 		// See if this is our best valid line hit
-		float rayDist;
+		float newMouseDist;
 		if (ValidateVirtualHit(MouseOrigin, MouseDir, mouseScreenSpace,
-			lineIntercept, CurObjectHitDist, OutBestRayDist, SnapLineMaxScreenDistance, rayDist))
+			lineIntercept, CurObjectHitDist, closestMouseDistance, newMouseDist))
 		{
-			OutBestRayDist = rayDist;
+			closestMouseDistance = newMouseDist;
 			OutBestIndex = lineIdx;
 			OutBestIntersection = lineIntercept;
 		}
 	}
 
-	return (OutBestIndex != INDEX_NONE);
+	if (OutBestIndex != INDEX_NONE)
+	{
+		OutBestRayDist = (OutBestIntersection - MouseOrigin) | MouseDir;
+		return true;
+	}
+
+	return false;
 }
 
 FMouseWorldHitType AEditModelPlayerController::GetAffordanceHit(const FVector &mouseLoc, const FVector &mouseDir, const FAffordanceFrame &affordance, bool allowZSnap) const
@@ -3634,7 +3653,7 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 
 		// TODO: we know this is inefficient, should replace with an interface that allows for optimization
 		// (like not needing to iterate over every single object in the scene)
-		auto& allObjects = Document->GetObjectInstances();
+		const auto& allObjects = Document->GetObjectInstances();
 		for (auto* moi : allObjects)
 		{
 			// Use the same collision compatibility checks that the snapping view uses;
@@ -3647,12 +3666,12 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 
 			if (moi && moi->IsCollisionEnabled() && moi->UseStructureDataForCollision() && bObjectInMouseQuery)
 			{
-				moi->RouteGetStructuralPointsAndLines(tempStructurePoints, tempStructureLines, false, false, cullingPlane);
+				moi->RouteGetStructuralPointsAndLines(tempStructurePoints, tempStructureLines, false /*bForSnapping*/, false /*bForSelection*/, cullingPlane);
 
 				// Structural points and lines used for cursor hit collision are mutually exclusive
 				if (tempStructureLines.Num() > 0)
 				{
-					for (auto line : tempStructureLines)
+					for (const auto& line : tempStructureLines)
 					{
 						if (validateStructureLine(line))
 						{
@@ -3663,7 +3682,7 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 				}
 				else
 				{
-					for (auto point : tempStructurePoints)
+					for (const auto& point : tempStructurePoints)
 					{
 						if (validateStructurePoint(point))
 						{
@@ -3682,7 +3701,6 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 			objectHit.Actor = CurHitPointMOIs[bestVirtualHitIndex]->GetActor();
 			objectHit.Location = CurHitPointLocations[bestVirtualHitIndex].Point;
 			objectHit.SnapType = ESnapType::CT_FACESELECT;
-			objectHitDist = bestVirtualHitDist;
 			if (objectHit.Actor == directHitActor)
 			{
 				objectHit.Normal = directHitNormal;
@@ -3694,7 +3712,6 @@ FMouseWorldHitType AEditModelPlayerController::GetObjectMouseHit(const FVector& 
 			objectHit.Actor = CurHitLineMOIs[bestVirtualHitIndex]->GetActor();
 			objectHit.Location = bestLineIntersection;
 			objectHit.SnapType = ESnapType::CT_FACESELECT;
-			objectHitDist = bestVirtualHitDist;
 			if (objectHit.Actor == directHitActor)
 			{
 				objectHit.Normal = directHitNormal;
