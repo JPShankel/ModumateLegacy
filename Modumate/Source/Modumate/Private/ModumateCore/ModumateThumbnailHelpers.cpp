@@ -18,7 +18,7 @@
 
 EImageFormat FModumateThumbnailHelpers::DefaultThumbImageFormat = EImageFormat::JPEG;
 int32 FModumateThumbnailHelpers::DefaultThumbCompression = 80;
-FIntPoint FModumateThumbnailHelpers::DefaultThumbSize(256, 256);
+FIntPoint FModumateThumbnailHelpers::DefaultThumbSize(1280, 720);
 
 TSharedPtr<FSlateDynamicImageBrush> FModumateThumbnailHelpers::LoadProjectThumbnail(const FString &thumbnailBase64, const FString &thumbnailName)
 {

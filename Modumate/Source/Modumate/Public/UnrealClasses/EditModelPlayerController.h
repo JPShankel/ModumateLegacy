@@ -116,7 +116,7 @@ private:
 	mutable TArray<AModumateObjectInstance *> CurHitLineMOIs;
 	mutable TArray<TPair<FVector, FVector>> CurHitLineLocations;
 
-
+	bool CaptureThumbnailFromView();
 
 protected:
 	virtual void SetupInputComponent() override;
@@ -547,7 +547,7 @@ public:
 	void SetThumbnailCapturer(class ASceneCapture2D* InThumbnailCapturer);
 
 	UFUNCTION(BlueprintCallable)
-	bool CaptureProjectThumbnail();
+	bool CaptureProjectThumbnail(bool bUseSavedView);
 
 	UFUNCTION(BlueprintCallable)
 	bool GetScreenshotFileNameWithDialog(FString& Filepath, FString &Filename);

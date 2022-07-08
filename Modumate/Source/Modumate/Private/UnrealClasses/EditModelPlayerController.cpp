@@ -622,7 +622,7 @@ void AEditModelPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReaso
 			AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
 			if (gameState)
 			{
-				CaptureProjectThumbnail();
+				CaptureProjectThumbnail(true);
 				EMPlayerState->UploadProjectThumbnail(gameState->Document->CurrentEncodedThumbnail);
 			}
 
@@ -1109,7 +1109,7 @@ bool AEditModelPlayerController::SaveModelAs()
 	}
 
 	// Try to capture a thumbnail for the project
-	CaptureProjectThumbnail();
+	CaptureProjectThumbnail(true);
 
 	EMPlayerState->ShowingFileDialog = true;
 
@@ -1136,7 +1136,7 @@ bool AEditModelPlayerController::SaveModelFilePath(const FString &filepath)
 	FText filePathText = FText::FromString(filepath);
 
 	// Try to capture a thumbnail for the project
-	CaptureProjectThumbnail();
+	CaptureProjectThumbnail(true);
 
 	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	if (gameState->Document->SaveFile(GetWorld(), filepath, true))
@@ -1325,8 +1325,13 @@ void AEditModelPlayerController::SetThumbnailCapturer(ASceneCapture2D* InThumbna
 	}
 }
 
-bool AEditModelPlayerController::CaptureProjectThumbnail()
+bool AEditModelPlayerController::CaptureProjectThumbnail(bool bUseSavedView)
 {
+	if (bUseSavedView)
+	{
+		return CaptureThumbnailFromView();
+	}
+
 	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	USceneCaptureComponent2D *captureComp = ThumbnailCapturer ? ThumbnailCapturer->GetCaptureComponent2D() : nullptr;
 	if (gameState && captureComp && captureComp->TextureTarget)
@@ -1356,6 +1361,73 @@ bool AEditModelPlayerController::CaptureProjectThumbnail()
 			gameState->Document->CurrentEncodedThumbnail = encodedThumbnail;
 			return true;
 		}
+	}
+
+	return false;
+}
+
+bool AEditModelPlayerController::CaptureThumbnailFromView()
+{
+	AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+	USceneCaptureComponent2D* captureComp = ThumbnailCapturer ? ThumbnailCapturer->GetCaptureComponent2D() : nullptr;
+	if (gameState && captureComp && captureComp->TextureTarget)
+	{
+		TArray<AMOICameraView*> views;
+		Document->GetObjectsOfTypeCasted(EObjectType::OTCameraView, views);
+		if (views.Num() == 0 || views[0] == nullptr)
+		{
+			return CaptureProjectThumbnail(false);
+		}
+
+		// Use lowest ID for now - views not explicitly ordered.
+		int32 viewIndex = 0;
+		int32 viewID = views[0]->ID;
+		for (int32 i = 1; i < views.Num(); ++i)
+		{
+			if (ensure(views[i]) && views[i]->ID < viewID)
+			{
+				viewIndex = i;
+				viewID = views[i]->ID;
+			}
+		}
+		const AMOICameraView& view = *views[viewIndex];
+
+		Document->OnCameraViewSelected(viewID);
+
+#if 0	// Not currently working
+		for (const auto& cutPlaneVisible : view.InstanceData.SavedCutPlaneVisibilities)
+		{
+			AMOICutPlane* cutPlane = Cast<AMOICutPlane>(Document->GetObjectById(cutPlaneVisible.Key));
+			if (cutPlane && cutPlaneVisible.Value)
+			{
+				cutPlane->AddDraftingLines(HUDDrawWidget);
+			}
+		}
+#endif
+
+		Document->CleanObjects();  // Apply visibility changes
+
+		captureComp->SetWorldLocation(view.InstanceData.Position);
+		captureComp->SetWorldRotation(view.InstanceData.Rotation);
+		captureComp->OrthoWidth = view.InstanceData.OrthoWidth;
+		captureComp->FOVAngle = view.InstanceData.FOV;
+		captureComp->ProjectionType = view.InstanceData.bOrthoView ? ECameraProjectionMode::Orthographic : ECameraProjectionMode::Perspective;
+		captureComp->HiddenActors.Add(AxesActor);
+		captureComp->HiddenActors.Add(EMPlayerPawn);
+
+		captureComp->CaptureScene();
+
+		captureComp->HiddenActors.Empty();
+
+		// Now, read the render texture contents, compress it, and encode it as a string for the project metadata.
+		FString encodedThumbnail;
+		if (gameState && FModumateThumbnailHelpers::CreateProjectThumbnail(captureComp->TextureTarget, encodedThumbnail))
+		{
+			gameState->Document->CurrentEncodedThumbnail = encodedThumbnail;
+			return true;
+		}
+
+		return true;
 	}
 
 	return false;
@@ -1440,7 +1512,7 @@ void AEditModelPlayerController::UploadWebThumbnail()
 			AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
 			if (gameState)
 			{
-				CaptureProjectThumbnail();
+				CaptureProjectThumbnail(true);
 				EMPlayerState->UploadProjectThumbnail(gameState->Document->CurrentEncodedThumbnail);
 			}
 
