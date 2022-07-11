@@ -176,6 +176,7 @@ void UBIMDesigner::PerformDrag()
 	else
 	{
 		DragReset = true;
+		Controller->SetShowMouseCursor(true);
 	}
 
 }

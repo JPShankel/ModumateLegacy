@@ -333,8 +333,15 @@ void UEditModelCameraController::OnActionPanShiftPressed()
 void UEditModelCameraController::OnActionPanShiftReleased()
 {
 	// Because PanShift is binded with "Shift + RightMouseButton", this might not be fired if a Shift button is released too early
-	// Because PanShift shares button with orbit, OnActionOrbitReleased() is used for double checking if PanShift is released
-	OnActionPanReleased();
+	// Because PanShift shares button with orbit, check with current movement state
+	if (CurMovementState == ECameraMovementState::Orbiting)
+	{
+		OnActionOrbitReleased();
+	}
+	else if (CurMovementState == ECameraMovementState::Panning)
+	{
+		OnActionPanReleased();
+	}
 }
 
 void UEditModelCameraController::OnActionZoomIn()
