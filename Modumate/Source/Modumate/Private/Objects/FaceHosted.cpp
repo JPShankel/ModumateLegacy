@@ -18,6 +18,7 @@
 #include "ToolsAndAdjustments/Handles/AdjustInvertHandle.h"
 #include "ToolsAndAdjustments/Handles/AdjustPolyEdgeHandle.h"
 #include "ToolsAndAdjustments/Handles/JustificationHandle.h"
+#include "UnrealClasses/EditModelDatasmithImporter.h"
 
 
 FMOIFaceHostedData::FMOIFaceHostedData()
@@ -303,7 +304,7 @@ void AMOIFaceHosted::InternalUpdateGeometry(bool bCreateCollision)
 		if (CachedAssembly.Parts.Num() > 0)
 		{
 			//make compound mesh actor from assembly
-			cma->MakeFromAssembly(CachedAssembly, cmaScale, false, bCreateCollision);
+			cma->MakeFromAssemblyPartAsync(FAssetRequest(CachedAssembly, nullptr), 0, cmaScale, false, bCreateCollision);
 
 			//set CMA transform based on values calculated above
 			FTransform cmaTransform;

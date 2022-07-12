@@ -61,6 +61,9 @@ public:
 	UStaticMesh* DirectionArrowMeshForEdge;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
+	UStaticMesh* DownloadableProxyMesh;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")
 	UMaterialInterface *VolumeHoverMaterial;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Core Content")

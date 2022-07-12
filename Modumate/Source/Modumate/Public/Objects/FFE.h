@@ -21,9 +21,6 @@ struct MODUMATE_API FMOIFFEData
 
 	UPROPERTY()
 	bool bLateralInverted = false;
-
-	UPROPERTY()
-	int32 ParentFaceIndex = 0;
 };
 
 UCLASS()

@@ -31,12 +31,25 @@ ACompoundMeshActor::ACompoundMeshActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	RootComponent = CreateDefaultSubobject<USceneComponent>(USceneComponent::GetDefaultSceneRootVariableName());
+	ProxyStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProxyStaticMesh"));
+	ProxyStaticMesh->SetupAttachment(RootComponent);
+	ProxyStaticMesh->SetMobility(EComponentMobility::Movable);
+	ProxyStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ProxyStaticMesh->CastShadow = false;
+	ProxyStaticMesh->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
 void ACompoundMeshActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	auto* gameMode = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
+	if (gameMode && gameMode->DownloadableProxyMesh)
+	{
+		ProxyStaticMesh->SetStaticMesh(gameMode->DownloadableProxyMesh);
+		ProxyStaticMeshDimension = gameMode->DownloadableProxyMesh->GetBounds().BoxExtent * 2.f;
+	}
 }
 
 // Called every frame
@@ -56,27 +69,7 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 		return;
 	}
 
-	for (int32 compIdx = 0; compIdx < StaticMeshComps.Num(); ++compIdx)
-	{
-		if (UStaticMeshComponent* staticMeshComp = StaticMeshComps[compIdx])
-		{
-			if (compIdx < maxNumMeshes)
-			{
-				staticMeshComp->SetVisibility(false);
-				staticMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			}
-			else
-			{
-				staticMeshComp->DestroyComponent();
-				StaticMeshComps[compIdx] = nullptr;
-			}
-			UseSlicedMesh[compIdx] = false;
-		}
-	}
-	// Clear out StaticMeshComponents beyond what we need (SetNumZeroed leaves existing elements intact)
-	StaticMeshComps.SetNumZeroed(maxNumMeshes);
-	UseSlicedMesh.SetNumZeroed(maxNumMeshes);
-
+	ResetStaticMeshComponents(maxNumMeshes);
 	ResetProcMeshComponents(NineSliceComps, maxNumMeshes);
 	ResetProcMeshComponents(NineSliceLowLODComps, maxNumMeshes);
 	ClearCapGeometry();
@@ -165,7 +158,9 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 		FRotator partRotator = FRotator::MakeFromEuler(CachedPartLayout.PartSlotInstances[slotIdx].Rotation);
 		FVector partNativeSize = assemblyPart.Mesh.NativeSize * UModumateDimensionStatics::InchesToCentimeters;
 
-		FVector partScale = CachedPartLayout.PartSlotInstances[slotIdx].Size / partNativeSize;
+		// TODO: Check why assemblyPart.Mesh.NativeSize can be zero, default scale to one if partNativeSize is zero
+		FVector partScale = partNativeSize.IsNearlyZero() ?
+			FVector::OneVector : CachedPartLayout.PartSlotInstances[slotIdx].Size / partNativeSize;
 
 		FVector partDesiredSize = CachedPartLayout.PartSlotInstances[slotIdx].Size;
 
@@ -453,6 +448,54 @@ void ACompoundMeshActor::MakeFromAssembly(const FBIMAssemblySpec& ObAsm, FVector
 	MakeFromAssemblyPart(ObAsm, 0, Scale, bLateralInvert, bMakeCollision);
 }
 
+bool ACompoundMeshActor::MakeFromAssemblyPartAsync(const FAssetRequest& InAssetRequest, int32 PartIndex, FVector Scale, bool bLateralInvert, bool bMakeCollision)
+{
+	ResetStaticMeshComponents(1);
+	ResetProcMeshComponents(NineSliceComps, 1);
+	ResetProcMeshComponents(NineSliceLowLODComps, 1);
+	ClearCapGeometry();
+
+	FVector proxyMeshOrigin = FVector::ZeroVector;
+	FVector proxyMeshScale = FVector::OneVector;
+	if (InAssetRequest.Assembly.Parts.Num() > 0 && InAssetRequest.Assembly.Parts[0].Mesh.EngineMesh.IsValid())
+	{
+		FBoxSphereBounds bound = InAssetRequest.Assembly.Parts[0].Mesh.EngineMesh->GetBounds();
+		proxyMeshScale = bound.BoxExtent * 2.f / ProxyStaticMeshDimension;
+		proxyMeshOrigin = bound.Origin;
+	}
+
+	ProxyStaticMesh->SetRelativeLocation(proxyMeshOrigin);
+	ProxyStaticMesh->SetWorldScale3D(proxyMeshScale);
+	ProxyStaticMesh->SetVisibility(true);
+
+	// Get importer
+	UWorld* world = GetWorld();
+	auto controller = world ? world->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+	auto importer = controller ? controller->EditModelDatasmithImporter : nullptr;
+
+	if (!importer)
+	{
+		return false;
+	}
+
+	// Create callback
+	auto weakThis = MakeWeakObjectPtr<ACompoundMeshActor>(this);
+	auto deferredMakeFromAssemblyPart = [weakThis, InAssetRequest, PartIndex, Scale, bLateralInvert, bMakeCollision]() {
+		if (weakThis.IsValid() && !weakThis.Get()->IsActorBeingDestroyed())
+		{
+			weakThis->MakeFromAssemblyPart(InAssetRequest.Assembly, PartIndex, Scale, bLateralInvert, bMakeCollision);
+			weakThis->ProxyStaticMesh->SetVisibility(false);
+			if (InAssetRequest.CallbackTask)
+			{
+				InAssetRequest.CallbackTask();
+			}
+		}
+	};
+
+	importer->HandleAssetRequest(FAssetRequest(InAssetRequest.Assembly, deferredMakeFromAssemblyPart));
+	return false;
+}
+
 void ACompoundMeshActor::SetupCapGeometry()
 {
 	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
@@ -636,6 +679,30 @@ void ACompoundMeshActor::ResetProcMeshComponents(TArray<UProceduralMeshComponent
 	}
 	// Clear out ProceduralMeshComponents beyond what we need (SetNumZeroed leaves existing elements intact)
 	ProcMeshComps.SetNumZeroed(9 * maxNumMeshes);
+}
+
+void ACompoundMeshActor::ResetStaticMeshComponents(int32 maxNumMeshes)
+{
+	for (int32 compIdx = 0; compIdx < StaticMeshComps.Num(); ++compIdx)
+	{
+		if (UStaticMeshComponent* staticMeshComp = StaticMeshComps[compIdx])
+		{
+			if (compIdx < maxNumMeshes)
+			{
+				staticMeshComp->SetVisibility(false);
+				staticMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			}
+			else
+			{
+				staticMeshComp->DestroyComponent();
+				StaticMeshComps[compIdx] = nullptr;
+			}
+			UseSlicedMesh[compIdx] = false;
+		}
+	}
+	// Clear out StaticMeshComponents beyond what we need (SetNumZeroed leaves existing elements intact)
+	StaticMeshComps.SetNumZeroed(maxNumMeshes);
+	UseSlicedMesh.SetNumZeroed(maxNumMeshes);
 }
 
 bool ACompoundMeshActor::InitializeProcMeshComponent(TArray<UProceduralMeshComponent*> &ProcMeshComps, USceneComponent *rootComp, int32 index)

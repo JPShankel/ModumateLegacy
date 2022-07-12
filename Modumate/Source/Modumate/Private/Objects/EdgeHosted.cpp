@@ -15,6 +15,7 @@
 #include "Drafting/ModumateDraftingElements.h"
 #include "DrawingDesigner/DrawingDesignerMeshCache.h"
 #include "Quantities/QuantitiesManager.h"
+#include "UnrealClasses/EditModelDatasmithImporter.h"
 
 
 FMOIEdgeHostedData::FMOIEdgeHostedData()
@@ -271,7 +272,7 @@ void AMOIEdgeHosted::InternalUpdateGeometry(bool bCreateCollision)
 
 		if (CachedAssembly.Parts.Num() > 0)
 		{
-			cma->MakeFromAssembly(CachedAssembly, cmaScale, false, bCreateCollision);
+			cma->MakeFromAssemblyPartAsync(FAssetRequest(CachedAssembly, nullptr), 0, cmaScale, false, bCreateCollision);
 			FTransform cmaTransform;
 			cmaTransform.SetLocation(cmaLocation);
 			cmaTransform.SetRotation(cmaRotation);

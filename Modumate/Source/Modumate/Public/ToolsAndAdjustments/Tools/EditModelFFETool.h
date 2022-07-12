@@ -13,13 +13,8 @@ class MODUMATE_API UFFETool : public UEditModelToolBase
 {
 	GENERATED_BODY()
 
-private:
-	AStaticMeshActor * Cursor;
-	ACompoundMeshActor* CursorCompoundMesh;
 public:
 	UFFETool();
-
-	FBIMAssemblySpec CurrentFFEAssembly;
 
 	virtual EToolMode GetToolMode() override { return EToolMode::VE_PLACEOBJECT; }
 	virtual bool Activate() override;
@@ -28,4 +23,13 @@ public:
 
 	virtual bool FrameUpdate() override;
 	virtual bool BeginUse() override;
+
+protected:
+
+	void ResetState();
+	bool GetObjectCreationDeltas(const int32 InLastParentID, const FVector& InLocation, const FQuat& InRotation, TArray<FDeltaPtr>& OutDeltaPtrs);
+
+	int32 LastParentID = MOD_ID_NONE;
+	FVector TargetLocation = FVector::ZeroVector;
+	FQuat TargetRotation = FQuat::Identity;
 };

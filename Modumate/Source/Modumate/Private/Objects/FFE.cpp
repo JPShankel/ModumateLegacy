@@ -16,6 +16,7 @@
 #include "Objects/ModumateObjectStatics.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Quantities/QuantitiesManager.h"
+#include "UnrealClasses/EditModelDatasmithImporter.h"
 
 class AEditModelPlayerController;
 
@@ -117,7 +118,7 @@ void AMOIFFE::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TA
 void AMOIFFE::InternalUpdateGeometry()
 {
 	ACompoundMeshActor *cma = Cast<ACompoundMeshActor>(GetActor());
-	cma->MakeFromAssembly(GetAssembly(), FVector::OneVector, InstanceData.bLateralInverted, true);
+	cma->MakeFromAssemblyPartAsync(FAssetRequest(GetAssembly(), nullptr), 0, FVector::OneVector, InstanceData.bLateralInverted, true);
 
 	FTransform dataStateTransform;
 	dataStateTransform.SetLocation(InstanceData.Location);

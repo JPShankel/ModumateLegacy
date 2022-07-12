@@ -25,6 +25,7 @@
 #include "Quantities/QuantitiesManager.h"
 #include "DrawingDesigner/DrawingDesignerLine.h"
 #include "DrawingDesigner/DrawingDesignerMeshCache.h"
+#include "UnrealClasses/EditModelDatasmithImporter.h"
 
 
 class AEditModelPlayerController;
@@ -115,7 +116,7 @@ bool AMOIPortal::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* Out
 			}
 		}
 
-		return SetupCompoundActorGeometry() && SetRelativeTransform(CachedRelativePos, CachedRelativeRot);
+		return SetupCompoundActorGeometry();
 	}
 	case EObjectDirtyFlags::Visuals:
 		return TryUpdateVisuals();
@@ -298,7 +299,15 @@ bool AMOIPortal::SetupCompoundActorGeometry()
 		bResult = true;
 	}
 
-	cma->MakeFromAssembly(GetAssembly(), scale, InstanceData.bLateralInverted, true);
+	auto weakThis = MakeWeakObjectPtr<AMOIPortal>(this);
+	auto deferredSetRelativeTransform = [weakThis]() {
+		if (weakThis.IsValid() && !weakThis.Get()->IsDestroyed())
+		{
+			weakThis->SetRelativeTransform(weakThis.Get()->CachedRelativePos, weakThis.Get()->CachedRelativeRot);
+		}
+	};
+
+	cma->MakeFromAssemblyPartAsync(FAssetRequest(GetAssembly(), deferredSetRelativeTransform), 0, scale, InstanceData.bLateralInverted, true);
 
 	return bResult;
 }
@@ -340,7 +349,6 @@ bool AMOIPortal::SetRelativeTransform(const FVector2D &InRelativePos, const FQua
 	size.Y *= normalInvertFactor;
 	auto rotator = CachedWorldRot;
 	CachedBounds = rotator.RotateVector(size);
-
 
 
 	return true;

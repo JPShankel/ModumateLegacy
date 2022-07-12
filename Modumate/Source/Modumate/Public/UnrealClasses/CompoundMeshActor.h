@@ -6,6 +6,7 @@
 #include "Objects/ModumateObjectEnums.h"
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
+#include "UnrealClasses/EditModelDatasmithImporter.h"
 #include "GameFramework/Actor.h"
 
 #include "CompoundMeshActor.generated.h"
@@ -40,6 +41,7 @@ public:
 
 	void MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int32 PartIndex, FVector Scale, bool bLateralInvert, bool bMakeCollision);
 	void MakeFromAssembly(const FBIMAssemblySpec& ObAsm, FVector Scale, bool bLateralInvert, bool bMakeCollision);
+	bool MakeFromAssemblyPartAsync(const FAssetRequest& InAssetRequest, int32 PartIndex, FVector Scale, bool bLateralInvert, bool bMakeCollision);
 
 	void SetupCapGeometry();
 	void ClearCapGeometry();
@@ -66,6 +68,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TArray<UStaticMeshComponent*> StaticMeshComps;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UStaticMeshComponent* ProxyStaticMesh;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TArray<UProceduralMeshComponent*> NineSliceComps;
@@ -95,9 +100,12 @@ public:
 
 private:
 	void ResetProcMeshComponents(TArray<UProceduralMeshComponent*> &ProcMeshComps, int32 maxNumMeshes);
+	void ResetStaticMeshComponents(int32 maxNumMeshes);
 	bool InitializeProcMeshComponent(TArray<UProceduralMeshComponent*> &ProcMeshComps, USceneComponent *rootComp, int32 index);
 	void CalculateNineSliceComponents(TArray<UProceduralMeshComponent*> &ProcMeshComps, USceneComponent *rootComp, const int32 LodIndex, int32 sliceCompIdxStart, FBox &nineSliceInterior, const FVector &partNativeSize, const UStaticMeshComponent* StaticMeshRef);
 
 	bool GetOrAddProceduralMeshCap(int32 CapId, UProceduralMeshComponent*& OutMesh);
 	TArray<UProceduralMeshComponent*> ProceduralMeshCaps;
+
+	FVector ProxyStaticMeshDimension = FVector::OneVector;
 };

@@ -3,6 +3,7 @@
 #include "UnrealClasses/EditModelDatasmithImporter.h"
 #include "UnrealClasses/EditModelGameMode.h"
 #include "DatasmithRuntimeBlueprintLibrary.h"
+#include "TimerManager.h"
 
 // Sets default values
 AEditModelDatasmithImporter::AEditModelDatasmithImporter()
@@ -68,5 +69,63 @@ void AEditModelDatasmithImporter::RequestCompleteCallback(FHttpRequestPtr Reques
 
 		bool bLoadResult = UDatasmithRuntimeLibrary::LoadFile(DatasmithRuntimeActor.Get(), cacheFile);
 		UE_LOG(LogTemp, Error, TEXT("bLoadResult is %s"), (bLoadResult ? TEXT("true") : TEXT("false")));
+	}
+}
+
+void AEditModelDatasmithImporter::HandleAssetRequest(const FAssetRequest& InAssetRequest)
+{
+	const auto assets = StaticMeshAssetMap.FindRef(InAssetRequest.Assembly.PresetGUID);
+
+	if (assets.Num() > 0)
+	{
+		// If there are assets available, call the task
+		InAssetRequest.CallbackTask();
+	}
+	else
+	{
+		// Fake lazy load if assets are unavailable
+		// TODO: Check if the same asset is currently loading
+#if 0
+		auto weakThis = MakeWeakObjectPtr<AEditModelDatasmithImporter>(this);
+		FTimerManager& timerManager = GetWorld()->GetFirstPlayerController()->GetWorldTimerManager();
+		FTimerHandle loadTimerHandle;
+
+		timerManager.SetTimer(loadTimerHandle, [weakThis, InAssetRequest]() {
+			if (weakThis.IsValid())
+			{
+				// Fake save meshes that would be downloaded
+				TArray<UStaticMesh*> requestMeshes;
+				for (auto curPart : InAssetRequest.Assembly.Parts)
+				{
+					if (curPart.Mesh.EngineMesh.IsValid())
+					{
+						requestMeshes.Add(curPart.Mesh.EngineMesh.Get());
+					}
+				}
+				weakThis->StaticMeshAssetMap.Add(InAssetRequest.Assembly.PresetGUID, requestMeshes);
+
+				// Assets are available now, call the task if available
+				if (InAssetRequest.CallbackTask)
+				{
+					InAssetRequest.CallbackTask();
+				}
+			}
+		}, 2.f, false);
+#else
+		TArray<UStaticMesh*> requestMeshes;
+		for (auto curPart : InAssetRequest.Assembly.Parts)
+		{
+			if (curPart.Mesh.EngineMesh.IsValid())
+			{
+				requestMeshes.Add(curPart.Mesh.EngineMesh.Get());
+			}
+		}
+		StaticMeshAssetMap.Add(InAssetRequest.Assembly.PresetGUID, requestMeshes);
+		// Assets are available now, call the task if available
+		if (InAssetRequest.CallbackTask)
+		{
+			InAssetRequest.CallbackTask();
+		}
+#endif
 	}
 }

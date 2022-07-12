@@ -12,42 +12,34 @@
 #include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/EditModelDatasmithImporter.h"
 
 
 
 UFFETool::UFFETool()
 	: Super()
-	, Cursor(nullptr)
 {}
 
 bool UFFETool::Activate()
 {
-	Super::Activate();
-	// Spawn CompoundMeshActor as cursor
-	CursorCompoundMesh = Controller->GetWorld()->SpawnActor<ACompoundMeshActor>(ACompoundMeshActor::StaticClass(), FTransform::Identity);
-	CursorCompoundMesh->SetActorEnableCollision(false);
-	AEditModelGameState *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
-	UModumateDocument* doc = gameState->Document;
-	FGuid key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
-	const FBIMAssemblySpec *obAsmPtr = doc->GetPresetCollection().GetAssemblyByGUID(EToolMode::VE_PLACEOBJECT,key);
-
-	if (!ensureAlways(obAsmPtr))
+	if (!UEditModelToolBase::Activate())
 	{
 		return false;
 	}
 
-	CurrentFFEAssembly = *obAsmPtr;
-	CursorCompoundMesh->MakeFromAssembly(CurrentFFEAssembly, FVector::OneVector, false, false);
-	TArray<UStaticMeshComponent*> smcs;
-	CursorCompoundMesh->GetComponents(smcs);
-	for (auto curSmc : smcs)
-	{
-		Cast<UStaticMeshComponent>(curSmc)->SetRelativeLocation(FVector::ZeroVector);
-	}
+	// Set default settings for NewMOIStateData
+	FMOIFFEData newFFECustomData;
+	NewMOIStateData.ObjectType = EObjectType::OTFurniture;
+	NewMOIStateData.CustomData.SaveStructData(newFFECustomData);
 
 	Controller->DeselectAll();
 	Controller->EMPlayerState->SnappedCursor.ClearAffordanceFrame();
-	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Location;
+	Controller->EMPlayerState->SetHoveredObject(nullptr);
+	Controller->EMPlayerState->SnappedCursor.MouseMode = EMouseMode::Object;
+	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = true;
+
+	ResetState();
+
 	return true;
 }
 
@@ -58,88 +50,106 @@ bool UFFETool::ScrollToolOption(int32 dir)
 
 bool UFFETool::Deactivate()
 {
+	ResetState();
 	Super::Deactivate();
-	if (Cursor != nullptr)
-	{
-		Cursor->Destroy();
-		Cursor = nullptr;
-	}
-	if (CursorCompoundMesh != nullptr)
-	{
-		CursorCompoundMesh->Destroy();
-		CursorCompoundMesh = nullptr;
-	}
 
 	return true;
 }
 
 bool UFFETool::FrameUpdate()
 {
-	AEditModelGameState *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
-	UModumateDocument* doc = gameState->Document;
-	FGuid key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
-	const FBIMAssemblySpec *assembly = doc->GetPresetCollection().GetAssemblyByGUID(EToolMode::VE_PLACEOBJECT, key);
-
-	if (assembly != nullptr)
+	const FBIMAssemblySpec* assemblySpec = GameState->Document->GetPresetCollection().GetAssemblyByGUID(EToolMode::VE_PLACEOBJECT, AssemblyGUID);
+	if (!assemblySpec)
 	{
-		if (CurrentFFEAssembly.UniqueKey() != assembly->UniqueKey())
-		{
-			if (CursorCompoundMesh != nullptr)
-			{
-				CursorCompoundMesh->MakeFromAssembly(*assembly, FVector::OneVector, false, false);
-				TArray<UStaticMeshComponent*> smcs;
-				CursorCompoundMesh->GetComponents(smcs);
-				for (auto curSmc : smcs)
-				{
-					Cast<UStaticMeshComponent>(curSmc)->SetRelativeLocation(FVector::ZeroVector);
-				}
-			}
-		}
+		return false;
+	}
 
-		CurrentFFEAssembly = *assembly;
+	const FSnappedCursor& snappedCursor = Controller->EMPlayerState->SnappedCursor;
+	AModumateObjectInstance* hitMOI = GameState->Document->ObjectFromActor(snappedCursor.Actor);
+	if (hitMOI && IsObjectInActiveGroup(hitMOI))
+	{
+		LastParentID = hitMOI->ID;
+	}
+	else
+	{
+		LastParentID = MOD_ID_NONE;
 	}
 
 	FTransform mountedTransform;
-	if (UModumateObjectStatics::GetFFEMountedTransform(&CurrentFFEAssembly,
-		Controller->EMPlayerState->SnappedCursor, mountedTransform))
+	if (!UModumateObjectStatics::GetFFEMountedTransform(assemblySpec, snappedCursor, mountedTransform))
 	{
-		CursorCompoundMesh->SetActorTransform(mountedTransform);
+		return false;
+	}
+	TargetLocation = mountedTransform.GetLocation();
+	TargetRotation = mountedTransform.GetRotation();
+	if (GameState->Document->StartPreviewing() && GetObjectCreationDeltas(LastParentID, TargetLocation, TargetRotation, CurDeltas))
+	{
+		GameState->Document->ApplyPreviewDeltas(CurDeltas, GetWorld());
 	}
 	return true;
 }
 
 bool UFFETool::BeginUse()
 {
+	if (!AssemblyGUID.IsValid())
+	{
+		return false;
+	}
+
 	Super::BeginUse();
 	Super::EndUse();
 
-	const FSnappedCursor &snappedCursor = Controller->EMPlayerState->SnappedCursor;
-	FVector hitLoc = snappedCursor.WorldPosition;
+	GameState->Document->ClearPreviewDeltas(GetWorld());
 
-	AEditModelGameState *gameState = Controller->GetWorld()->GetGameState<AEditModelGameState>();
-	UModumateDocument* doc = gameState->Document;
-	FGuid key = Controller->EMPlayerState->GetAssemblyForToolMode(EToolMode::VE_PLACEOBJECT);
+	TArray<FDeltaPtr> deltas;
+	if (!GetObjectCreationDeltas(LastParentID, TargetLocation, TargetRotation, deltas))
+	{
+		return false;
+	}
 
-	AModumateObjectInstance *hitMOI = doc->ObjectFromActor(snappedCursor.Actor);
-	int32 parentID = hitMOI != nullptr ? hitMOI->ID : MOD_ID_NONE;
-	// If hit object not in active group then treat as unmounted FF&E.
-	hitMOI = IsObjectInActiveGroup(hitMOI) ? hitMOI : nullptr;
-	int32 parentFaceIdx = UModumateTargetingStatics::GetFaceIndexFromTargetHit(hitMOI, hitLoc, snappedCursor.HitNormal);
+	if (deltas.Num() == 0)
+	{
+		return false;
+	}
 
-	FMOIFFEData ffeData;
-	ffeData.Location = hitLoc;
-	ffeData.Rotation = CursorCompoundMesh->GetActorRotation().Quaternion();
-	ffeData.bLateralInverted = false;
-	ffeData.ParentFaceIndex = parentFaceIdx;
+	bool bSuccess = GameState->Document->ApplyDeltas(deltas, GetWorld());
 
-	FMOIStateData stateData(doc->GetNextAvailableID(), EObjectType::OTFurniture, parentID);
-	stateData.AssemblyGUID = key;
-	stateData.CustomData.SaveStructData(ffeData);
-
-	auto delta = MakeShared<FMOIDelta>();
-	delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
-
-	bool bSuccess = doc->ApplyDeltas({ delta }, GetWorld());
+	EndUse();
 
 	return bSuccess;
+}
+
+void UFFETool::ResetState()
+{
+	LastParentID = MOD_ID_NONE;
+	TargetLocation = FVector::ZeroVector;
+	TargetRotation = FQuat::Identity;
+}
+
+bool UFFETool::GetObjectCreationDeltas(const int32 InLastParentID, const FVector& InLocation, const FQuat& InRotation, TArray<FDeltaPtr>& OutDeltaPtrs)
+{
+	OutDeltaPtrs.Reset();
+	NewObjectIDs.Reset();
+
+	TSharedPtr<FMOIDelta> delta;
+	int32 nextID = GameState->Document->GetNextAvailableID();
+
+	if (!delta.IsValid())
+	{
+		delta = MakeShared<FMOIDelta>();
+		OutDeltaPtrs.Add(delta);
+	}
+
+	FMOIFFEData newFFECustomData;
+	newFFECustomData.Location = InLocation;
+	newFFECustomData.Rotation = InRotation;
+	NewMOIStateData.CustomData.SaveStructData(newFFECustomData);
+
+	NewMOIStateData.ID = nextID++;
+	NewMOIStateData.ParentID = InLastParentID;
+	NewMOIStateData.AssemblyGUID = AssemblyGUID;
+	NewObjectIDs.Add(NewMOIStateData.ID);
+
+	delta->AddCreateDestroyState(NewMOIStateData, EMOIDeltaType::Create);
+	return true;
 }

@@ -12,6 +12,7 @@
 #include "Drafting/ModumateDraftingElements.h"
 #include "DrawingDesigner/DrawingDesignerMeshCache.h"
 #include "Quantities/QuantitiesManager.h"
+#include "UnrealClasses/EditModelDatasmithImporter.h"
 
 FMOIPointHostedData::FMOIPointHostedData()
 {}
@@ -253,7 +254,7 @@ void AMOIPointHosted::InternalUpdateGeometry(bool bCreateCollision)
 
 		if (CachedAssembly.Parts.Num() > 0)
 		{
-			cma->MakeFromAssembly(CachedAssembly, FVector::OneVector, false, bCreateCollision);
+			cma->MakeFromAssemblyPartAsync(FAssetRequest(CachedAssembly, nullptr), 0, FVector::OneVector, false, bCreateCollision);
 			FTransform cmaTransform;
 			cmaTransform.SetLocation(cmaLocation);
 			cmaTransform.SetRotation(cmaRot);
