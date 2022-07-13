@@ -249,8 +249,9 @@ bool AMainMenuGameMode::OpenCloudProject(const FString& ProjectID)
 					if (!ensure(bSuccessful && Response.IsValid() &&
 						FJsonObjectConverter::JsonObjectToUStruct(Response.ToSharedRef(), &createConnectionResponse)))
 					{
-						UE_LOG(LogTemp, Error, TEXT("Unexpected error in response to creating a connection to project %s."), *weakThis->PendingCloudProjectID);
-						weakThis->OnProjectConnectionFailed(EHttpResponseCodes::Unknown, FString());
+						FString errMessage = FString::Printf(TEXT("Unexpected error in response to creating a connection to project %s."), *weakThis->PendingCloudProjectID);
+						UE_LOG(LogTemp, Error, TEXT("%s"), *errMessage);
+						weakThis->OnProjectConnectionFailed(EHttpResponseCodes::Unknown, errMessage);
 						return;
 					}
 
@@ -327,6 +328,12 @@ void AMainMenuGameMode::OnProjectConnectionFailed(int32 ErrorCode, const FString
 	else
 	{
 		OnCloudProjectFailure(LOCTEXT("OpenProjectError", "Failed to connect to server! Please try again later."));
+		auto* gameInstance = GetGameInstance<UModumateGameInstance>();
+		auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
+		if (cloudConnection)
+		{
+			cloudConnection->ReportMultiPlayerFailure(TEXT("OnProjectConnectionFailed"), FString::Printf(TEXT("%s (status %d)"), *ErrorMessage, ErrorCode));
+		}
 	}
 }
 

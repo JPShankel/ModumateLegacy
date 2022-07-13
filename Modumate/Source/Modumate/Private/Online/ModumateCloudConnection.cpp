@@ -4,9 +4,9 @@
 
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/PlatformFunctions.h"
+#include "ModumateCore/PrettyJSONWriter.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ProjectConnection.h"
-#include "Serialization/JsonSerializer.h"
 
 /*
 * With this (without the ECVF_Cheat flag) we can override the AMS endpoint on any shipping build (installer or otherwise) by adding these lines to:
@@ -776,4 +776,38 @@ void FModumateCloudConnection::SetAutomationHandler(ICloudConnectionAutomation* 
 {
 	AutomationHandler = InAutomationHandler;
 	NextRequestAutomationIndex = 0;
+}
+
+void FModumateCloudConnection::ReportMultiPlayerFailure(const FString& Category, const FString& Details, const FString& NetworkInfo /*= FString()*/)
+{
+#if UE_SERVER
+	return;
+#endif
+
+	UE_LOG(LogTemp, Warning, TEXT("Reporting multiplayer error %s: \"%s\", %s"), *Category, *Details, *NetworkInfo);
+
+	FMultiplayerError errorReport = { Category, Details, NetworkInfo };
+	FString jsonReport;
+	if (!ensure(WriteJsonGeneric(jsonReport, &errorReport)))
+	{
+		return;
+	}
+
+	if (!RequestEndpoint(TEXT("/networkreport"), ERequestType::Post,
+		[&jsonReport](FHttpRequestRef& RefRequest)
+		{
+			RefRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+			RefRequest->SetContentAsString(jsonReport);
+		},
+
+		[](bool bSuccess, const TSharedPtr<FJsonObject>& Payload) { ensure(bSuccess); },
+
+		[](int32 ErrorCode, const FString& ErrorMessage)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to report network error: %d - %s"), ErrorCode, *ErrorMessage);
+		},
+		false))
+	{
+		UE_LOG(LogTemp, Error, TEXT("ReportMultiPlayerFailure: Failed to create error-report request"));
+	}
 }

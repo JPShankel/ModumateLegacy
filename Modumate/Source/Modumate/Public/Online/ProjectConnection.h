@@ -62,3 +62,18 @@ struct MODUMATE_API FProjectInfoResponse
 	UPROPERTY()
 	bool bLocked = false;
 };
+
+USTRUCT()
+struct MODUMATE_API FMultiplayerError
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString Category;
+
+	UPROPERTY()
+	FString Details;
+
+	UPROPERTY()
+	FString NetworkInfo;
+};

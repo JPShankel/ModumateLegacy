@@ -90,6 +90,8 @@ class MODUMATE_API FModumateCloudConnection : public TSharedFromThis<FModumateCl
 
 		void NetworkTick(UWorld* World);
 
+		void ReportMultiPlayerFailure(const FString& Category, const FString& Details, const FString& NetworkInfo = FString());
+
 	private:
 		void HandleRequestResponse(const FSuccessCallback& Callback, const FErrorCallback& ServerErrorCallback, bool bRefreshTokenOnAuthFailure,
 			bool bSuccessfulConnection, int32 ResponseCode, const FString& ResponseContent);

@@ -1110,6 +1110,7 @@ void UModumateGameInstance::GoToMainMenu(const FText& StatusMessage)
 void UModumateGameInstance::OnKickedFromMPSession(const FText& KickReason)
 {
 	static const FString eventName(TEXT("ErrorClientKicked"));
+	GetCloudConnection()->ReportMultiPlayerFailure(TEXT("OnKickedFromMPSession"), KickReason.ToString());
 	UModumateAnalyticsStatics::RecordEventCustomString(this, EModumateAnalyticsCategory::Network, eventName, *KickReason.ToString());
 	PendingMainMenuStatus = KickReason;
 }
@@ -1119,6 +1120,7 @@ void UModumateGameInstance::OnTravelFailure(UWorld* World, ETravelFailure::Type 
 	static const FString eventName(TEXT("ErrorClientTravel"));
 	FString failureTypeStr = GetEnumValueString<ETravelFailure::Type>(FailureType);
 	FString err = FString::Printf(TEXT("%s - %s"), *failureTypeStr, *ErrorMessage);
+	GetCloudConnection()->ReportMultiPlayerFailure(TEXT("OnTravelFailure"), err);
 	UModumateAnalyticsStatics::RecordEventCustomString(this, EModumateAnalyticsCategory::Network, eventName, *err);
 	PendingMainMenuStatus = LOCTEXT("GenericTravelFailure", "Failed to open project, please try again later.");
 }
@@ -1128,6 +1130,8 @@ void UModumateGameInstance::OnNetworkFailure(UWorld* World, UNetDriver* NetDrive
 	static const FString eventName(TEXT("ErrorClientNetworkFailure"));
 	FString failureTypeStr = GetEnumValueString<ENetworkFailure::Type>(FailureType);
 	FString err = FString::Printf(TEXT("%s - %s"), *failureTypeStr, *ErrorMessage);
+	GetCloudConnection()->ReportMultiPlayerFailure(TEXT("OnNetworkFailure"), err, NetDrive->ServerConnection ? NetDrive->ServerConnection->LowLevelGetRemoteAddress(true) : FString());
+
 	UModumateAnalyticsStatics::RecordEventCustomString(this, EModumateAnalyticsCategory::Network, eventName, err);
 	PendingMainMenuStatus = LOCTEXT("GenericTravelFailure", "Network error; please check your internet connection and try to reconnect later.");
 }
