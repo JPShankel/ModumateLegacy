@@ -5,6 +5,7 @@
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/EdgeDetailData.h"
 #include "Objects/ModumateObjectEnums.h"
+#include "Quantities/QuantitiesDimensions.h"
 #include "BIMKernel/Presets/BIMPresetPatternDefinition.h"
 #include "ModumateCore/EnumHelpers.h"
 
@@ -265,6 +266,14 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 	{
 		switch (presetMatrix.Name)
 		{
+			case ECSVMatrixNames::ConstructionCost:
+			{
+				FBIMConstructionCost constructionCost;
+				constructionCost.MaterialCostRate = FCString::Atof(*NormalizeCell(Row[presetMatrix.First]));
+				constructionCost.LaborCostRate = FCString::Atof(*NormalizeCell(Row[presetMatrix.First+1]));
+				Preset.SetCustomData(constructionCost);
+			}
+			break;
 			case ECSVMatrixNames::PatternSegments:
 			{
 				FBIMPattern bimPattern;

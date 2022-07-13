@@ -13,3 +13,15 @@ enum class EQuantitiesDimensions
 	Area = 0x4,
 	Volume= 0x8
 };
+
+USTRUCT()
+struct MODUMATE_API FBIMConstructionCost
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	float MaterialCostRate = 0.0f;
+
+	UPROPERTY()
+	float LaborCostRate = 0.0f;
+};

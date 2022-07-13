@@ -36,6 +36,7 @@ enum class ECSVMatrixNames : uint8
 {
 	Category,
 	Color,
+	ConstructionCost,
 	Dimensions,
 	FinalPartTransformAtSlot,
 	GUID,

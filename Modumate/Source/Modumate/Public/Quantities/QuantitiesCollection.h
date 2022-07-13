@@ -3,7 +3,7 @@
 #pragma once
 #include "CoreMinimal.h"
 
-struct FQuantityItemId
+struct MODUMATE_API FQuantityItemId
 {
 	FGuid Id;
 	FString Subname;
@@ -14,7 +14,7 @@ struct FQuantityItemId
 	operator FString() const;
 };
 
-struct FQuantityKey
+struct MODUMATE_API FQuantityKey
 {
 	FQuantityItemId Item;
 	FQuantityItemId Parent;
@@ -27,7 +27,7 @@ struct FQuantityKey
 uint32 GetTypeHash(const FQuantityItemId& Key);
 uint32 GetTypeHash(const FQuantityKey& Key);
 
-struct FQuantity
+struct MODUMATE_API FQuantity
 {
 	float Count = 0.0f;
 	float Linear = 0.0f;
