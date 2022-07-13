@@ -1,39 +1,39 @@
-TYPENAME,,Assembly_Pattern2D,,Assembly,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,PropertyType,,PropertyName,,Scope.Property,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PROPERTY,,DisplayText,,Name,,Assembly.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-INPUTPIN,,1..,,ChildLayerArray,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-,,Presets,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,DataType=StartsInProject,X,DataType=Dimensions,Dimension,Value,DataType=PatternSegments,Direction,Magnitude,Format,DataType=PatternSpans,Span.ID,Span.Element,Span.Members,Span.Cutters,Preset,Origin,BasisX,BasisZ,OffsetX,OffsetY,OffsetZ,RotationX,RotationY,RotationZ,FlipX,FlipY,FlipZ,WrapX,WrapY,SizeX,SizeY,SizeZ
+TYPENAME,,Assembly_Pattern2D,,Assembly,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Definition,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,PropertyType,,PropertyName,,Scope.Property,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PROPERTY,,DisplayText,,Name,,Assembly.Name,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,InputExtensibility,,InputPreset,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+INPUTPIN,,1..,,ChildLayerArray,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Presets,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=Properties,Assembly.Name,DataType=StartsInProject,X,DataType=Dimensions,Dimension,Value,DataType=PatternSegments,Direction,Magnitude,Format,DataType=PatternSpans,Span.ID,Span.Element,Span.Members,Span.Cutters,Preset,Origin,BasisX,BasisZ,OffsetX,OffsetY,OffsetZ,RotationX,RotationY,RotationZ,FlipX,FlipY,FlipZ,WrapX,WrapY,SizeX,SizeY,SizeZ,DataType=ConstructionCost,MaterialCostRate,LaborCostRate
 PRESET,,5add62c5-2388-43c4-b82e-e043ba4cc3bc,,"Planar_Pattern2D
 Simple Railing
-5add62c5-2388-43c4-b82e-e043ba4cc3bc",,Planar_Pattern2D,,Simple Railing,,X,,IconSizeX,48in,,X,6,Absolute,,S00,EdgeY,"0,0",,Part_1FlexDim2Fixed_Baluster-Property_Spatiality_Mesh_Baluster-Railing-Baluster-05.Railing-Baluster-05'-Finish1-0RawMaterial-Steel-0RawMaterial-Paint-F3F1ED-DBEC5F63-52D6-0240-92C4-D5A13C3CBE3D,"0,0",ParentFaceNormal,"EdgeY=0,0",0,0,0,0,0,0,,,,,,from Preset,from Preset,S00-whatever_V00/V10_details_say
-PRESET,,,,,,,,,,,,IconSizeY,64in,,Y,1,FractionalRemainder,,S01,EdgeX,"0,1",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Steel Tube-Diameter-2in-Thickness-0.337in-0Profile-Tube Steel-Finish1-0RawMaterial-Aluminum-333333,"1,0",ParentFaceNormal,"EdgeX=0,1",0,0,0,0,0,0,,,X,X,,from Preset,from Preset,S01
-PRESET,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+5add62c5-2388-43c4-b82e-e043ba4cc3bc",,Planar_Pattern2D,,Simple Railing,,X,,IconSizeX,48in,,X,6,Absolute,,S00,EdgeY,"0,0",,Part_1FlexDim2Fixed_Baluster-Property_Spatiality_Mesh_Baluster-Railing-Baluster-05.Railing-Baluster-05'-Finish1-0RawMaterial-Steel-0RawMaterial-Paint-F3F1ED-DBEC5F63-52D6-0240-92C4-D5A13C3CBE3D,"0,0",ParentFaceNormal,"EdgeY=0,0",0,0,0,0,0,0,,,,,,from Preset,from Preset,S00-whatever_V00/V10_details_say,,4,2
+PRESET,,,,,,,,,,,,IconSizeY,64in,,Y,1,FractionalRemainder,,S01,EdgeX,"0,1",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Steel Tube-Diameter-2in-Thickness-0.337in-0Profile-Tube Steel-Finish1-0RawMaterial-Aluminum-333333,"1,0",ParentFaceNormal,"EdgeX=0,1",0,0,0,0,0,0,,,X,X,,from Preset,from Preset,S01,,,
+PRESET,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 PRESET,,3d49d19b-41de-4378-8352-270671d1a4c9,,"Planar_Pattern2D
 Running Bond Bricks
-3d49d19b-41de-4378-8352-270671d1a4c9",,Planar_Pattern2D,,Running Bond Bricks,,X,,IconSizeX,48in,,X,50,PercentageOfLargestChild,,S00,FaceXY,"0,0",,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633,"0,0","EdgeX=0,0",ParentFaceNormal,0,0,0,0,0,0,,,X,,,from Preset,from Preset,from Preset
-PRESET,,,,,,,,,,,,IconSizeY,64in,,X,50,PercentageOfLargestChild,,,,"1,0",,,,,,,,,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,Y,100,PercentageOfLargestChild,,S01,FaceXY,"1,1","EdgeY=1,1",Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633,"1,1","EdgeX=1,1",ParentFaceNormal,0,0,0,0,0,0,,,X,X,,from Preset,from Preset,from Preset
-PRESET,,,,,,,,,,,,,,,Y,100,PercentageOfLargestChild,,,,"1,0",,,,,,,,,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,S02,EdgeX,"0,0",,Part_1FlexDim2Fixed_ExtrudedProfile_Mortar-Width-.375in-Depth-3.125in-0Profile-Rectangular Mullion-Finish1-0RawMaterial-Cement-DDDDDD,"0,0","EdgeX=0,0",ParentFaceNormal,0,0,0,0,0,0,,,,,,from Preset,from Preset,"S02-whatever_V0,0/V2,0_details_say"
-PRESET,,,,,,,,,,,,,,,,,,,,,"1,0",,,,,,,,,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,S03,EdgeX,"0,1","Vertex=1,1",Part_1FlexDim2Fixed_ExtrudedProfile_Mortar-Width-.375in-Depth-3.125in-0Profile-Rectangular Mullion-Finish1-0RawMaterial-Cement-DDDDDD,"0,1","EdgeX=0,1",ParentFaceNormal,0,0,0,0,0,0,,,,X,,from Preset,from Preset,"S03-whatever_V0,0/V2,0_details_say"
-PRESET,,,,,,,,,,,,,,,,,,,,,"1,1",,,,,,,,,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,S04,EdgeY,"0,0",,Part_1FlexDim2Fixed_ExtrudedProfile_Mortar-Width-.375in-Depth-3.125in-0Profile-Rectangular Mullion-Finish1-0RawMaterial-Cement-DDDDDD,"0,0","EdgeY=0,0",ParentFaceNormal,0,0,0,0,0,0,,,,,,from Preset,from Preset,"S04-whatever_V0,0/V2,0_details_say"
-PRESET,,,,,,,,,,,,,,,,,,,S05,EdgeY,"1,1",,Part_1FlexDim2Fixed_ExtrudedProfile_Mortar-Width-.375in-Depth-3.125in-0Profile-Rectangular Mullion-Finish1-0RawMaterial-Cement-DDDDDD,"1,1","EdgeY=1,1",ParentFaceNormal,0,0,0,0,0,0,,,,,,from Preset,from Preset,"S05-whatever_V0,0/V2,0_details_say"
+3d49d19b-41de-4378-8352-270671d1a4c9",,Planar_Pattern2D,,Running Bond Bricks,,X,,IconSizeX,48in,,X,50,PercentageOfLargestChild,,S00,FaceXY,"0,0",,Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633,"0,0","EdgeX=0,0",ParentFaceNormal,0,0,0,0,0,0,,,X,,,from Preset,from Preset,from Preset,,,
+PRESET,,,,,,,,,,,,IconSizeY,64in,,X,50,PercentageOfLargestChild,,,,"1,0",,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,Y,100,PercentageOfLargestChild,,S01,FaceXY,"1,1","EdgeY=1,1",Part_0FlexDims3Fixed_ModuleVolumetric_Clay Brick-Length-7.625in-Width-3.625in-Height-2.29167in-BevelWidth-0.1875in-Finish1-0RawMaterial-Clay-A05633,"1,1","EdgeX=1,1",ParentFaceNormal,0,0,0,0,0,0,,,X,X,,from Preset,from Preset,from Preset,,,
+PRESET,,,,,,,,,,,,,,,Y,100,PercentageOfLargestChild,,,,"1,0",,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,,,,,S02,EdgeX,"0,0",,Part_1FlexDim2Fixed_ExtrudedProfile_Mortar-Width-.375in-Depth-3.125in-0Profile-Rectangular Mullion-Finish1-0RawMaterial-Cement-DDDDDD,"0,0","EdgeX=0,0",ParentFaceNormal,0,0,0,0,0,0,,,,,,from Preset,from Preset,"S02-whatever_V0,0/V2,0_details_say",,,
+PRESET,,,,,,,,,,,,,,,,,,,,,"1,0",,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,,,,,S03,EdgeX,"0,1","Vertex=1,1",Part_1FlexDim2Fixed_ExtrudedProfile_Mortar-Width-.375in-Depth-3.125in-0Profile-Rectangular Mullion-Finish1-0RawMaterial-Cement-DDDDDD,"0,1","EdgeX=0,1",ParentFaceNormal,0,0,0,0,0,0,,,,X,,from Preset,from Preset,"S03-whatever_V0,0/V2,0_details_say",,,
+PRESET,,,,,,,,,,,,,,,,,,,,,"1,1",,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,,,,,S04,EdgeY,"0,0",,Part_1FlexDim2Fixed_ExtrudedProfile_Mortar-Width-.375in-Depth-3.125in-0Profile-Rectangular Mullion-Finish1-0RawMaterial-Cement-DDDDDD,"0,0","EdgeY=0,0",ParentFaceNormal,0,0,0,0,0,0,,,,,,from Preset,from Preset,"S04-whatever_V0,0/V2,0_details_say",,,
+PRESET,,,,,,,,,,,,,,,,,,,S05,EdgeY,"1,1",,Part_1FlexDim2Fixed_ExtrudedProfile_Mortar-Width-.375in-Depth-3.125in-0Profile-Rectangular Mullion-Finish1-0RawMaterial-Cement-DDDDDD,"1,1","EdgeY=1,1",ParentFaceNormal,0,0,0,0,0,0,,,,,,from Preset,from Preset,"S05-whatever_V0,0/V2,0_details_say",,,
 PRESET,,ef5cec83-8046-4e15-b712-b3e0af4a5bb7,,"Planar_Pattern2D
 Joists With Alternating Blocking
-ef5cec83-8046-4e15-b712-b3e0af4a5bb7",,Planar_Pattern2D,,Joists With Alternating Blocking,,X,,IconSizeX,48in,,X,24,Absolute,,S00,EdgeY,"0,0",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-1.5in-Depth-7.25in-0Profile-Plate Section-Finish1-0RawMaterial-Oak (White)-FFFFFF,"0,0",ParentFaceNormal,"EdgeY=0,0",0,0,0,0,0,0,,,,,X,from Preset,from Preset,S00-whatever_V00/V10_details_say
-PRESET,,,,,,,,,,,,IconSizeY,64in,,X,24,Absolute,,,,"0,1",,,,,,,,,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,Y,1,FractionalRemainder,,,,"0,2",,,,,,,,,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,Y,1,FractionalRemainder,,S01,EdgeY,"1,0",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-1.5in-Depth-7.25in-0Profile-Plate Section-Finish1-0RawMaterial-Oak (White)-FFFFFF,"1,0",ParentFaceNormal,"EdgeY=1,0",0,0,0,0,0,0,,,,,X,from Preset,from Preset,S00-whatever_V00/V10_details_say
-PRESET,,,,,,,,,,,,,,,Y,1,FractionalRemainder,,,,"1,1",,,,,,,,,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,,,"1,2",,,,,,,,,,,,,,,,,,,
-PRESET,,,,,,,,,,,,,,,,,,,S02,EdgeX,"0,1",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-1.5in-Depth-7.25in-0Profile-Plate Section-Finish1-0RawMaterial-Oak (White)-FFFFFF,"0,1",ParentFaceNormal,"EdgeX=0,1",0,0,0,0,0,0,,,,,,from Preset,from Preset,S00-whatever_V00/V10_details_say
-PRESET,,,,,,,,,,,,,,,,,,,S03,EdgeX,"1,2",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-1.5in-Depth-7.25in-0Profile-Plate Section-Finish1-0RawMaterial-Oak (White)-FFFFFF,"1,2",ParentFaceNormal,"EdgeX=1,2",0,0,0,0,0,0,,,,,,from Preset,from Preset,S00-whatever_V00/V10_details_say
+ef5cec83-8046-4e15-b712-b3e0af4a5bb7",,Planar_Pattern2D,,Joists With Alternating Blocking,,X,,IconSizeX,48in,,X,24,Absolute,,S00,EdgeY,"0,0",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-1.5in-Depth-7.25in-0Profile-Plate Section-Finish1-0RawMaterial-Oak (White)-FFFFFF,"0,0",ParentFaceNormal,"EdgeY=0,0",0,0,0,0,0,0,,,,,X,from Preset,from Preset,S00-whatever_V00/V10_details_say,,,
+PRESET,,,,,,,,,,,,IconSizeY,64in,,X,24,Absolute,,,,"0,1",,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,Y,1,FractionalRemainder,,,,"0,2",,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,Y,1,FractionalRemainder,,S01,EdgeY,"1,0",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-1.5in-Depth-7.25in-0Profile-Plate Section-Finish1-0RawMaterial-Oak (White)-FFFFFF,"1,0",ParentFaceNormal,"EdgeY=1,0",0,0,0,0,0,0,,,,,X,from Preset,from Preset,S00-whatever_V00/V10_details_say,,,
+PRESET,,,,,,,,,,,,,,,Y,1,FractionalRemainder,,,,"1,1",,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,,,,,,,"1,2",,,,,,,,,,,,,,,,,,,,,,
+PRESET,,,,,,,,,,,,,,,,,,,S02,EdgeX,"0,1",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-1.5in-Depth-7.25in-0Profile-Plate Section-Finish1-0RawMaterial-Oak (White)-FFFFFF,"0,1",ParentFaceNormal,"EdgeX=0,1",0,0,0,0,0,0,,,,,,from Preset,from Preset,S00-whatever_V00/V10_details_say,,,
+PRESET,,,,,,,,,,,,,,,,,,,S03,EdgeX,"1,2",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-1.5in-Depth-7.25in-0Profile-Plate Section-Finish1-0RawMaterial-Oak (White)-FFFFFF,"1,2",ParentFaceNormal,"EdgeX=1,2",0,0,0,0,0,0,,,,,,from Preset,from Preset,S00-whatever_V00/V10_details_say,,,
 PRESET,,af6b4674-a03f-46c9-92fe-d881853e0d94,,"Planar_Pattern2D
 Wainscoting
 af6b4674-a03f-46c9-92fe-d881853e0d94",,Planar_Pattern2D,,Wainscoting,,X,,IconSizeX,48in,,X,30,Absolute,,S00,FaceXY,"0,0",,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
@@ -42,11 +42,40 @@ Part_0FlexDims3Fixed_ModulePlanar_Board/Panel_Plywood-Length-96in-Width-48in-Thi
 0LayerPattern_2D-Running Bond
 Part_1FlexDim2Fixed_Gap2D-Width-0in-Recess-0in-Finish1-0RawMaterial-Air-FFFFFF
 F96EBDB4-140A-C442-B6D7-39EC3271FBD3
-086A28F7-F483-C04E-BF3A-9B647EB47F94","0,0",ParentFaceNormal,"EdgeX=0,0",0,0,0,0,0,0,,,,,,from Preset,from Preset,S00-whatever_V00/V10_details_say
+086A28F7-F483-C04E-BF3A-9B647EB47F94","0,0",ParentFaceNormal,"EdgeX=0,0",0,0,0,0,0,0,,,,,,from Preset,from Preset,S00-whatever_V00/V10_details_say,,,
 PRESET,,,,,,,,,,,,IconSizeY,64in,,Y,42,Absolute,,S01,FaceXY,"0,1",,"Assembly_2FlexDims1Fixed_PlanarGroup_Wall
 Assembly_2FlexDims1Fixed_PlanarPattern-Thickness-0.02in-Finish1-0RawMaterial-Paint-F3F1ED-672BB2A2-EE65-264B-AFD6-F753EF54F68D
-17BE5D04-EC69-874A-AC74-5B32CB5E4398","0,1",ParentFaceNormal,"EdgeX=0,1",0,0,0,0,0,0,,,,X,,from Preset,from Preset,S00-whatever_V00/V10_details_say
-PRESET,,,,,,,,,,,,,,,Y,1,FractionalRemainder,,S02,EdgeX,"0,0",,"Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-0.625in-Depth-5.5in-0Profile-Colonial Base, 5 1/4""-Finish1-0RawMaterial-Paint-C4C4C4","0,0",ParentFaceNormal,"EdgeX=0,0",0,0,0,0,0,0,,,,X,,from Preset,from Preset,S00-whatever_V00/V10_details_say
-PRESET,,,,,,,,,,,,,,,,,,,S03,EdgeY,"0,0",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-.75in-Depth-1.5in-0Profile-Plate Section-Finish1-0RawMaterial-Oak (White)-FFFFFF,"0,0",ParentFaceNormal,"EdgeY=0,0",0,0,0,0,0,0,,,,,,from Preset,from Preset,S00-whatever_V00/V10_details_say
-PRESET,,,,,,,,,,,,,,,,,,,S04,EdgeX,"0,1",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-.75in-Depth-1.5in-0Profile-Plate Section-Finish1-0RawMaterial-Oak (White)-FFFFFF,"0,1",ParentFaceNormal,"EdgeX=0,1",0,0,0,0,0,0,,,,X,,from Preset,from Preset,S00-whatever_V00/V10_details_say
-PRESET,,,,,,,,,,,,,,,,,,,S05,EdgeX,"0,2",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-3.25in-Depth-3.3125in-0Profile-Crown 1-Finish1-0RawMaterial-Paint-F3F1ED,"0,2",ParentFaceNormal,"EdgeX=0,2",0,0,0,0,0,0,,,,X,,from Preset,from Preset,S00-whatever_V00/V10_details_say
+17BE5D04-EC69-874A-AC74-5B32CB5E4398","0,1",ParentFaceNormal,"EdgeX=0,1",0,0,0,0,0,0,,,,X,,from Preset,from Preset,S00-whatever_V00/V10_details_say,,,
+PRESET,,,,,,,,,,,,,,,Y,1,FractionalRemainder,,S02,EdgeX,"0,0",,"Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-0.625in-Depth-5.5in-0Profile-Colonial Base, 5 1/4""-Finish1-0RawMaterial-Paint-C4C4C4","0,0",ParentFaceNormal,"EdgeX=0,0",0,0,0,0,0,0,,,,X,,from Preset,from Preset,S00-whatever_V00/V10_details_say,,,
+PRESET,,,,,,,,,,,,,,,,,,,S03,EdgeY,"0,0",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-.75in-Depth-1.5in-0Profile-Plate Section-Finish1-0RawMaterial-Oak (White)-FFFFFF,"0,0",ParentFaceNormal,"EdgeY=0,0",0,0,0,0,0,0,,,,,,from Preset,from Preset,S00-whatever_V00/V10_details_say,,,
+PRESET,,,,,,,,,,,,,,,,,,,S04,EdgeX,"0,1",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-.75in-Depth-1.5in-0Profile-Plate Section-Finish1-0RawMaterial-Oak (White)-FFFFFF,"0,1",ParentFaceNormal,"EdgeX=0,1",0,0,0,0,0,0,,,,X,,from Preset,from Preset,S00-whatever_V00/V10_details_say,,,
+PRESET,,,,,,,,,,,,,,,,,,,S05,EdgeX,"0,2",,Part_1FlexDim2Fixed_ExtrudedProfile_BeamColumn_Wood Rectangular-Width-3.25in-Depth-3.3125in-0Profile-Crown 1-Finish1-0RawMaterial-Paint-F3F1ED,"0,2",ParentFaceNormal,"EdgeX=0,2",0,0,0,0,0,0,,,,X,,from Preset,from Preset,S00-whatever_V00/V10_details_say,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

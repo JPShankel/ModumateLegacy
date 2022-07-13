@@ -32,7 +32,7 @@ Property_Materiality_SurfaceTreatment,Surface Treatments,,,,,,X,,,,,SurfaceTreat
 Property_Performance,Performance,,,,,,,,,,Performance,,,,,,,,,,,,,
 Property_Performance_Comfort Provision,Comfort Provision,,,,,,,,,,,Comfort Provision,,,,,,,,,,,,
 Property_Performance_Comfort Provision_Illuminance,Illuminance,,,,,,,,,,,,Illuminance,,,,,,,,,,,
-Property_Performance_Comfort Provision_Illuminance_IESProfile,IES Profile,,,,,,,,,,,,,IESProfile,,,,,,,,,,
+Property_Performance_Comfort Provision_Illuminance_IESProfile,IES Profile,,,IESProfile,,,,,,,,,,IESProfile,,,,,,,,,,
 Property_Performance_Resource Consumption,Resource Consumption,,,,,,,,,,,Resource Consumption,,,,,,,,,,,,
 Property_Spatiality,Spatiality,,,,,,,,,,Spatiality,,,,,,,,,,,,,
 Property_Spatiality_ConnectionDetail,Connection Details,,,,,,X,,,,,ConnectionDetail,,,,,,,,,,,,

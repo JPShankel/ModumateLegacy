@@ -121,5 +121,6 @@ enum class EBIMAssetType : uint8
 	Pattern,
 	Material,
 	Color,
+	IESProfile,
 	Error = 255
 };
