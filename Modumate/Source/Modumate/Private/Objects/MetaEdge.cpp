@@ -293,8 +293,8 @@ bool AMOIMetaEdge::ToWebMOI(FWebMOI& OutMOI) const
 		prop->ValueArray.Empty();
 		prop->ValueArray.Add("false");
 
-		const auto& graph = *GetDocument()->FindVolumeGraph(ID);
-		auto edge = graph.FindEdge(ID);
+		const auto* graph = GetDocument()->FindVolumeGraph(ID);
+		auto edge = graph ? graph->FindEdge(ID) : nullptr;
 		if (edge)
 		{
 			AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());

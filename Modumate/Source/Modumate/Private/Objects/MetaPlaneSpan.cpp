@@ -166,13 +166,17 @@ bool AMOIMetaPlaneSpan::UpdateCachedPerimeterFace()
 	CachedGraphID = graph->GraphID;
 
 	// Dirty metagraph MOI for bounding box.
-	Document->GetObjectById(CachedGraphID)->MarkDirty(EObjectDirtyFlags::Structure);
+	AModumateObjectInstance* graphOb = Document->GetObjectById(CachedGraphID);
+	if (ensure(graphOb))
+	{
+		graphOb->MarkDirty(EObjectDirtyFlags::Structure);
+	}
 
 	TArray<const FGraph3DFace* > memberFaces;
 	Algo::Transform(InstanceData.GraphMembers, memberFaces,
 		[graph](int32 FaceID) {return graph->FindFace(FaceID); });
 
-	FPlane basePlane = memberFaces[0]->CachedPlane;
+	FPlane basePlane  = memberFaces[0]->CachedPlane;
 
 #ifdef ENFORCE_SINGLETON_SPANS
 	CachedPerimeterFace = *memberFaces[0];
