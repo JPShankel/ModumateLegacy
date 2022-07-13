@@ -6,6 +6,7 @@
 #include "ModumateCore/ModumateUserSettings.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/EdgeDetailData.h"
+#include "Database/ModumateArchitecturalLight.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
@@ -295,6 +296,9 @@ void FModumateDatabase::ReadPresetData()
 	{
 		switch (preset.Value.AssetType)
 		{
+			case EBIMAssetType::IESProfile:
+				AddLightFromPreset(preset.Value);
+				break;
 			case EBIMAssetType::Mesh:
 				AddMeshFromPreset(preset.Value);
 				break;
@@ -415,6 +419,20 @@ bool FModumateDatabase::AddMaterialFromPreset(const FBIMPresetInstance& Preset)
 		}
 	}
 	return false;
+}
+
+bool FModumateDatabase::AddLightFromPreset(const FBIMPresetInstance& Preset)
+{
+	FArchitecturalLight light;
+	light.Key = Preset.GUID;
+
+	Preset.TryGetProperty(BIMPropertyNames::Name, light.DisplayName);
+	Preset.TryGetProperty(BIMPropertyNames::CraftingIconAssetFilePath, light.IconPath);
+	Preset.TryGetProperty(BIMPropertyNames::AssetPath, light.ProfilePath);
+
+	Lights.AddData(light);
+
+	return true;
 }
 
 bool FModumateDatabase::AddProfileFromPreset(const FBIMPresetInstance& Preset)

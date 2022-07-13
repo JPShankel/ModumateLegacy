@@ -6,6 +6,7 @@
 #include "Database/ModumateDataCollection.h"
 #include "Database/ModumateArchitecturalMaterial.h"
 #include "Database/ModumateArchitecturalMesh.h"
+#include "Database/ModumateArchitecturalLight.h"
 
 #include "Objects/ModumateRoomStatics.h"
 
@@ -55,6 +56,7 @@ struct FModumateBIMCacheRecord
 	FBIMPresetNCPTaxonomy PresetTaxonomy;
 };
 
+
 class MODUMATE_API FModumateDatabase
 {
 private:
@@ -64,6 +66,7 @@ private:
 	TModumateDataCollection<FSimpleMeshRef> SimpleMeshes;
 	TModumateDataCollection<FStaticIconTexture> StaticIconTextures;
 	TModumateDataCollection<FLayerPattern> Patterns;
+	TModumateDataCollection<FArchitecturalLight> Lights;
 
 	void AddArchitecturalMaterial(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 	void AddArchitecturalMesh(const FGuid& Key, const FString& Name, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath);
@@ -81,6 +84,7 @@ private:
 	bool AddMaterialFromPreset(const FBIMPresetInstance& Preset);
 	bool AddProfileFromPreset(const FBIMPresetInstance& Preset);
 	bool AddPatternFromPreset(const FBIMPresetInstance& Preset);
+	bool AddLightFromPreset(const FBIMPresetInstance& Preset);
 
 public:
 

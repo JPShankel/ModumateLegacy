@@ -124,3 +124,6 @@ enum class EBIMAssetType : uint8
 	IESProfile,
 	Error = 255
 };
+
+using FBIMNameType = FName;
+

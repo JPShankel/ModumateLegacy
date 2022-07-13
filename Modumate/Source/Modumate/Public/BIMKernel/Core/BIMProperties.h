@@ -10,7 +10,6 @@
 #include "BIMProperties.generated.h"
 
 struct  FBIMPropertySheetRecord;
-typedef FName FBIMNameType;
 
 UENUM()
 enum class EBIMValueType : uint8
@@ -50,6 +49,7 @@ enum class EBIMValueScope : uint8
 	Dimension,
 	Parent,
 	Preset,
+	IESProfile,
 	SlotConfig,
 	Slot,
 	SurfaceTreatment,
