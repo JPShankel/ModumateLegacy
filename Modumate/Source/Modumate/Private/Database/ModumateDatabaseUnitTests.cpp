@@ -53,6 +53,9 @@ static bool testVectorFormula()
 	return true;
 }
 
+#if WITH_AUTOMATION_TESTS
+
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDatabaseBIMTest, "Modumate.Database.BIM.UnitTest", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
 	bool FModumateDatabaseBIMTest::RunTest(const FString& Parameters)
 {
@@ -96,20 +99,20 @@ bool FWaitForModumateOnlineAssetsLoad::Update()
 	auto importer = controller ? controller->EditModelDatasmithImporter : nullptr;
 	if (!importer)
 	{
-		UE_LOG(LogEngineAutomationTests, Error, TEXT("Cannot get importer"));
+		UE_LOG(LogUnitTest, Error, TEXT("Cannot get importer"));
 		return true;
 	}
 
 	if (importer->StaticMeshAssetMap.Num() == *NumAssets)
 	{
-		UE_LOG(LogEngineAutomationTests, Log, TEXT("All assets loaded for importer: %d out of %d"), importer->StaticMeshAssetMap.Num(), *NumAssets);
+		UE_LOG(LogUnitTest, Log, TEXT("All assets loaded for importer: %d out of %d"), importer->StaticMeshAssetMap.Num(), *NumAssets);
 		return true;
 	}
 
 	float elapsed = (FPlatformTime::Seconds() - StartTime);
 	if (elapsed > 10.f)
 	{
-		UE_LOG(LogEngineAutomationTests, Error, TEXT("Timed out for importer loading assets"));
+		UE_LOG(LogUnitTest, Error, TEXT("Timed out for importer loading assets"));
 		return true;
 	}
 
@@ -133,7 +136,7 @@ bool FModumateOnlineAssetsLoadBody::Update()
 	auto importer = controller ? controller->EditModelDatasmithImporter : nullptr;
 	if (!importer)
 	{
-		UE_LOG(LogEngineAutomationTests, Error, TEXT("Cannot get importer"));
+		UE_LOG(LogUnitTest, Error, TEXT("Cannot get importer"));
 		return true;
 	}
 
@@ -147,7 +150,7 @@ bool FModumateOnlineAssetsLoadBody::Update()
 	auto deferredReport = [weakImporter]() {
 		if (weakImporter.IsValid())
 		{
-			UE_LOG(LogEngineAutomationTests, Log, TEXT("Imported: %d"), weakImporter->StaticMeshAssetMap.Num());
+			UE_LOG(LogUnitTest, Log, TEXT("Imported: %d"), weakImporter->StaticMeshAssetMap.Num());
 		}
 	};
 #endif
@@ -177,3 +180,5 @@ bool FModumateOnlineAssetsLoad::RunTest(const FString& Parameters)
 	ADD_LATENT_AUTOMATION_COMMAND(FWaitForMapToLoadCommand());
 	return true;
 }
+
+#endif
