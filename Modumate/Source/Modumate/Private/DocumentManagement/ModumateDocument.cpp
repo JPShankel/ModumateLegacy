@@ -5253,6 +5253,7 @@ void UModumateDocument::download_pdf_from_blob(const FString& Blob, const FStrin
 
 					FFileHelper::SaveArrayToFile(PdfBytes, *OutPath);
 					FPlatformProcess::LaunchFileInDefaultExternalApplication(*OutPath, nullptr, ELaunchVerb::Open);
+					NotifyWeb(ENotificationLevel::INFO, TEXT("PDF Exported Successfully"));
 				}
 			}
 		}
@@ -5502,6 +5503,12 @@ void UModumateDocument::BeginDestroy()
 	Super::BeginDestroy();
 	// Destruct here to prevent crash on program shutdown.
 	DrawingDesignerRenderControl.Reset(nullptr);
+}
+
+void UModumateDocument::NotifyWeb(ENotificationLevel lvl, const FString& text)
+{
+	FString level = GetEnumValueShortName<ENotificationLevel>(lvl).ToString();
+	DrawingSendResponse(TEXT("notify"), TEXT("\"" + level + "\",\"" + text + "\""));
 }
 
 #undef LOCTEXT_NAMESPACE

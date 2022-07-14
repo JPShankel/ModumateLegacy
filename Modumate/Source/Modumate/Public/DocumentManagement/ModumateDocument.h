@@ -21,6 +21,16 @@ class FDrawingDesignerRenderControl;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAppliedMOIDeltas, EObjectType, ObjectType, int32, Count, EMOIDeltaType, DeltaType);
 
+UENUM()
+enum class ENotificationLevel : uint8
+{
+	DEBUG,
+	WARN,
+	INFO,
+	HINT,
+	ERROR
+};
+
 UCLASS()
 class MODUMATE_API UModumateDocument : public UObject
 {
@@ -509,4 +519,7 @@ public:
 	void ForceShiftReleaseOnWeb() const;
 
 	void OnCameraViewSelected(int32 ID);
+
+	UFUNCTION()
+	void NotifyWeb(ENotificationLevel lvl, const FString& text);
 };
