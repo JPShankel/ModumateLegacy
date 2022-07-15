@@ -123,6 +123,8 @@ AEditModelPlayerController::AEditModelPlayerController()
 	CameraController = CreateDefaultSubobject<UEditModelCameraController>(TEXT("CameraController"));
 
 	DefaultViewModes = { EEditViewModes::AllObjects, EEditViewModes::Physical, EEditViewModes::MetaGraph, EEditViewModes::Separators, EEditViewModes::SurfaceGraphs };
+
+	bResetFocusToGameViewport = true;
 }
 
 AEditModelPlayerController::~AEditModelPlayerController()

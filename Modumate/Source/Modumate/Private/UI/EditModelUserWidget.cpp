@@ -332,6 +332,11 @@ void UEditModelUserWidget::ToggleBIMDesigner(bool Open)
 		// TODO: Replace with closing animation
 		BIMDesigner->SetVisibility(ESlateVisibility::Collapsed);
 		BIMBlockDialogBox->SetVisibility(ESlateVisibility::Collapsed);
+
+		if (Controller)
+		{
+			Controller->bResetFocusToGameViewport = true;	
+		}
 	}
 }
 
