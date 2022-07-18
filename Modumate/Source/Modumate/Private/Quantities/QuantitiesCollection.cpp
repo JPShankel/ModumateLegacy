@@ -3,6 +3,7 @@
 #include "Quantities/QuantitiesCollection.h"
 
 #include "Quantities/QuantitiesManager.h"
+#include "Quantities/QuantitiesDimensions.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/AssemblySpec/BIMLegacyPattern.h"
 #include "BIMKernel/AssemblySpec/BIMLayerSpec.h"
@@ -206,6 +207,8 @@ FQuantity& FQuantity::operator+=(const FQuantity& Rhs)
 	Linear += Rhs.Linear;
 	Area += Rhs.Area;
 	Volume += Rhs.Volume;
+	MaterialCost += Rhs.MaterialCost;
+	LaborCost += Rhs.LaborCost;
 	return *this;
 }
 
@@ -215,7 +218,33 @@ FQuantity& FQuantity::operator*=(float rhs)
 	Linear *= rhs;
 	Area *= rhs;
 	Volume *= rhs;
+	MaterialCost *= rhs;
+	LaborCost *= rhs;
 	return *this;
+}
+
+void FQuantity::CalculateCosts(const FBIMConstructionCost& CostRate)
+{
+	if (Volume != 0.0f)
+	{
+		MaterialCost = Volume * CostRate.MaterialCostRate * 1e-6;
+		LaborCost = Volume * CostRate.LaborCostRate * 1e-6;
+	}
+	else if (Area != 0.0)
+	{
+		MaterialCost = Area * CostRate.MaterialCostRate * 1e-4;
+		LaborCost = Area * CostRate.LaborCostRate * 1e-4;
+	}
+	else if (Linear != 0.0)
+	{
+		MaterialCost = Linear * CostRate.MaterialCostRate * 1e-2;
+		LaborCost = Linear * CostRate.LaborCostRate * 1e-2;
+	}
+	else
+	{
+		MaterialCost = Count * CostRate.MaterialCostRate;
+		LaborCost = Count * CostRate.LaborCostRate;
+	}
 }
 
 FQuantityItemId::operator FString() const

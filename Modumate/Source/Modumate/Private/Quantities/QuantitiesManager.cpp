@@ -1,6 +1,7 @@
 // Copyright 2021 Modumate, Inc. All Rights Reserved.
 
 #include "Quantities/QuantitiesManager.h"
+#include "Quantities/QuantitiesDimensions.h"
 #include "UnrealClasses/EditModelGameState.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include <algorithm>
@@ -118,6 +119,7 @@ struct FQuantitiesManager::FReportItem
 	FString Name;
 	FString Subname;
 	FString NameForSorting;
+	FGuid Id;
 	EBIMValueScope ItemScope;
 	FQuantity Quantity;
 	TArray<FReportItem> UsedIn;
@@ -136,6 +138,8 @@ struct FQuantitiesManager::FNcpTree
 	FString Tag;
 	TArray<FNcpTree> Children;
 	int32 Position = 0;  // Node position in taxonomy list for sorting.
+	float MaterialCost = 0.0f;
+	float LaborCost = 0.0f;
 	TArray<int32> Items;
 
 	bool operator==(const FString& Rhs) const { return Tag == Rhs; }
@@ -189,18 +193,20 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 	UModumateDocument* doc = world->GetGameState<AEditModelGameState>()->Document;
 	const FBIMPresetCollection& presets = doc->GetPresetCollection();
 	auto& documentSettings = doc->GetCurrentSettings();
-	const bool bMetric = (documentSettings.DimensionType == EDimensionUnits::DU_Metric);
+	bMetric = (documentSettings.DimensionType == EDimensionUnits::DU_Metric);
 	const double linearScaleFactor = bMetric ? 100.0 : 30.48;
 	const double areaScaleFactor = FMath::Pow(linearScaleFactor, 2);
 	const double volumeScaleFactor = FMath::Pow(linearScaleFactor, 3);
 
+	// Costs for each preset.
+	ProcessCosts(presets);
+
 	auto printCsvQuantities = [linearScaleFactor, areaScaleFactor, volumeScaleFactor](const FQuantity& Q)
 	{
-		static constexpr TCHAR format[] = TEXT("%.1f");
-		return (Q.Count != 0.0f ? CsvEscape(FString::Printf(format, Q.Count)) : FString())
-			+ TEXT(",") + (Q.Volume != 0.0f ? CsvEscape(FString::Printf(format, Q.Volume / volumeScaleFactor)) : FString())
-			+ TEXT(",") + (Q.Area != 0.0f ? CsvEscape(FString::Printf(format, Q.Area / areaScaleFactor)) : FString())
-			+ TEXT(",") + (Q.Linear != 0.0f ? CsvEscape(FString::Printf(format, Q.Linear / linearScaleFactor)) : FString());
+		return (Q.Count != 0.0f ? PrintNumber(Q.Count) : FString())
+			+ TEXT(",") + (Q.Volume != 0.0f ? PrintNumber(Q.Volume / volumeScaleFactor) : FString())
+			+ TEXT(",") + (Q.Area != 0.0f ? PrintNumber(Q.Area / areaScaleFactor) : FString())
+			+ TEXT(",") + (Q.Linear != 0.0f ? PrintNumber(Q.Linear / linearScaleFactor) : FString());
 	};
 
 	const FQuantitiesCollection::QuantitiesMap& quantities = CurrentQuantities->GetQuantities();
@@ -222,6 +228,7 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 		reportItem.Name = preset->DisplayName.ToString();
 		reportItem.Subname = item.Key.Subname;
 		reportItem.NameForSorting = reportItem.Name + item.Key;
+		reportItem.Id = item.Key.Id;
 
 		reportItem.ItemScope = preset->NodeScope;
 		reportItem.Quantity = item.Value;
@@ -245,6 +252,7 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 				subItem.Name = parentPreset->DisplayName.ToString();
 				subItem.Subname = usedByPreset.Key.Subname;
 				subItem.Quantity = usedByPreset.Value;
+				subItem.Id = usedByPreset.Key.Id;
 				reportItem.UsedIn.Add(MoveTemp(subItem));
 			}
 
@@ -265,6 +273,7 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 				subItem.Name = childPreset->DisplayName.ToString();
 				subItem.Subname = usesPreset.Key.Subname;
 				subItem.Quantity = usesPreset.Value;
+				subItem.Id = usesPreset.Key.Id;
 				reportItem.Uses.Add(MoveTemp(subItem));
 			}
 		}
@@ -295,7 +304,14 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 			FBIMPresetTaxonomyNode ncpNode;
 			presets.PresetTaxonomy.GetExactMatch(currentTagPath, ncpNode);
 			FString nodeName = ncpNode.DisplayName.ToString();
-			CsvHeaderLines += CsvEscape(nodeName) + TEXT("\n");
+			CsvHeaderLines += CsvEscape(nodeName);
+			if (child.MaterialCost + child.LaborCost != 0.0f)
+			{
+				CsvHeaderLines += commas(categoryIndent + 9 - depth) + PrintNumber(child.MaterialCost)
+					+ TEXT(",,") + PrintNumber(child.LaborCost)
+					+ TEXT(",") + PrintNumber(child.MaterialCost + child.LaborCost);
+			}
+			CsvHeaderLines += TEXT("\n");
 			processTreeItems(&child, depth + 1);
 			currentTagPath.Tags.SetNum(currentTagPath.Tags.Num() - 1);
 		}
@@ -312,6 +328,32 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 		}
 	};
 
+	TFunction<void(FNcpTree*, float&, float&)> sumCosts = [&](FNcpTree* tree, float& material, float& labor)
+	{
+		float childrenMaterial = 0.0f, childrenLabor = 0.0f;
+		for (auto& child : tree->Children)
+		{
+			float m, l;
+			sumCosts(&child, m, l);
+			childrenMaterial += m;
+			childrenLabor += l;
+		}
+		for (int32 i : tree->Items)
+		{
+			FReportItem item = topReportItems[i];
+			childrenMaterial += item.Quantity.MaterialCost;
+			childrenLabor += item.Quantity.LaborCost;
+		}
+		tree->MaterialCost = childrenMaterial;
+		tree->LaborCost = childrenLabor;
+		material = childrenMaterial;
+		labor = childrenLabor;
+	};
+
+	// Process hierarchical costs.
+	float materialTotal = 0.0f, laborTotal = 0.0f;
+	sumCosts(&ncpTree, materialTotal, laborTotal);
+
 	// Walk tree creating new FReportItem list in treeReportItems.
 	processTreeItems(&ncpTree, 0);
 
@@ -321,14 +363,27 @@ bool FQuantitiesManager::CreateReport(const FString& Filename)
 	// Now generate the CSV contents.
 	FString csvContents;
 	csvContents += TEXT("TOTAL ESTIMATES") + commas(categoryIndent + 4) +
-		(bMetric ? TEXT("Count,m3,m2,m,\n") : TEXT("Count,ft^3,ft^2,ft,\n"));
+		(bMetric ? TEXT("Count,m3,m2,m") : TEXT("Count,ft^3,ft^2,ft")) + TEXT(",Material Cost Rate,Material Cost,Labor Cost Rate,Labor Cost,Total Cost\n");
+
+	if (materialTotal + laborTotal != 0.0f)
+	{
+		csvContents += TEXT("Totals") + commas(categoryIndent + 9) + PrintNumber(materialTotal)
+			+ TEXT(",,") + PrintNumber(laborTotal) + TEXT(",")
+			+ PrintNumber(materialTotal + laborTotal) + TEXT("\n");
+	}
 
 	for (auto& item : treeReportItems)
 	{
 		csvContents += TEXT("\n");
 		csvContents += item.Preface;
 		int32 depth = item.Indentlevel;
-		csvContents += commas(depth) + CsvEscape(item.GetName()) + commas(categoryIndent - depth + 4) + printCsvQuantities(item.Quantity) + TEXT(",\n");
+		csvContents += commas(depth) + CsvEscape(item.GetName()) + commas(categoryIndent - depth + 4) + printCsvQuantities(item.Quantity);
+		if (item.Quantity.LaborCost + item.Quantity.MaterialCost != 0.0f)
+		{
+			csvContents += TEXT(",") + PrintCsvCosts(item, presets);
+		}
+		csvContents += TEXT("\n");
+
 		if (item.UsedIn.Num() > 0)
 		{
 			csvContents += commas(depth + 1) + FString(TEXT("Used In Presets:,,,,,,,\n"));
@@ -444,6 +499,23 @@ void FQuantitiesManager::PostProcessSizeGroups(TArray<FReportItem>& ReportItems)
 	}
 }
 
+void FQuantitiesManager::ProcessCosts(const FBIMPresetCollection& Presets)
+{
+	// Calculate inherent costs for each quantity in AllQuantities.
+	for (auto& quantity: AllQuantities)
+	{
+		const FBIMPresetInstance* preset = Presets.PresetFromGUID(quantity.Key.Id);
+		if (ensure(preset))
+		{
+			FBIMConstructionCost costRate;
+			if (preset->TryGetCustomData(costRate))
+			{
+				quantity.Value.CalculateCosts(costRate);
+			}
+		}
+	}
+}
+
 FString FQuantitiesManager::CsvEscape(const FString& String)
 {
 	if (String.Contains(TEXT("\"")) || String.Contains(TEXT(",")) || String.Contains(TEXT("\n"))
@@ -455,4 +527,54 @@ FString FQuantitiesManager::CsvEscape(const FString& String)
 	{
 		return String;
 	}
+}
+
+FString FQuantitiesManager::PrintNumber(float N)
+{
+	static constexpr TCHAR format[] = TEXT("%.1f");
+	return CsvEscape(FString::Printf(format, N));
+}
+
+FString FQuantitiesManager::PrintCsvCosts(const FReportItem& Item, const FBIMPresetCollection& Presets)
+{
+	const FBIMPresetInstance* preset = Presets.PresetFromGUID(Item.Id);
+	FString materialRate, laborRate;
+	float scale = 1.0f;
+	const FQuantity& Quantity = Item.Quantity;
+	if (!bMetric)
+	{
+		if (Quantity.Volume != 0.0f)
+		{
+			scale = 2.8317e-2f;
+		}
+		else if (Quantity.Area != 0.0f)
+		{
+			scale = 9.2903e-2f;
+		}
+		else if (Quantity.Linear != 0.0f)
+		{
+			scale = 0.3048f;
+		}
+	}
+
+	if (preset)
+	{
+		FBIMConstructionCost costRate;
+		if (preset->TryGetCustomData(costRate))
+		{
+			if (costRate.MaterialCostRate != 0.0f)
+			{
+				materialRate = PrintNumber(costRate.MaterialCostRate * scale);
+			}
+			if (costRate.LaborCostRate)
+			{
+				laborRate = PrintNumber(costRate.LaborCostRate * scale);
+			}
+		}
+	}
+
+	FString costsString = materialRate + TEXT(",") + PrintNumber(Quantity.MaterialCost)
+		+ TEXT(",") + laborRate + TEXT(",") + PrintNumber(Quantity.LaborCost) + TEXT(",")
+		+ PrintNumber(Quantity.MaterialCost + Quantity.LaborCost);
+	return costsString;
 }

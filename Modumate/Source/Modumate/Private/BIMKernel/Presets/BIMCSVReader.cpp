@@ -271,7 +271,11 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				FBIMConstructionCost constructionCost;
 				constructionCost.MaterialCostRate = FCString::Atof(*NormalizeCell(Row[presetMatrix.First]));
 				constructionCost.LaborCostRate = FCString::Atof(*NormalizeCell(Row[presetMatrix.First+1]));
-				Preset.SetCustomData(constructionCost);
+				if ((constructionCost.MaterialCostRate != 0.0f || constructionCost.LaborCostRate != 0.0f)
+					&& ensure(!Preset.HasCustomData<FBIMConstructionCost>()) )
+				{
+					Preset.SetCustomData(constructionCost);
+				}
 			}
 			break;
 			case ECSVMatrixNames::PatternSegments:

@@ -219,6 +219,11 @@ struct MODUMATE_API FBIMPresetInstance
 		return EBIMResult::Error;
 	}
 
+	template<class T> bool HasCustomData() const
+	{
+		return CustomDataByClassName.Contains(T::StaticStruct()->GetFName());
+	}
+
 	bool HasProperty(const FBIMNameType& Name) const;
 
 	template<class T>

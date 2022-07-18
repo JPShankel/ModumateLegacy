@@ -33,6 +33,7 @@ private:
 	TUniquePtr<FQuantitiesCollection> CurrentQuantities;
 
 	bool bQuantitiesDirty = true;
+	bool bMetric = false;
 
 	// Processed state
 	TMap<FQuantityItemId, FQuantity> AllQuantities;
@@ -42,6 +43,9 @@ private:
 
 	int32 TreeDepth(const FNcpTree& Tree);
 	void PostProcessSizeGroups(TArray<FReportItem>& ReportItems);
+	void ProcessCosts(const FBIMPresetCollection& Presets);
 
 	static FString CsvEscape(const FString& String);
+	static FString PrintNumber(float N);
+	FString PrintCsvCosts(const FReportItem& Item, const FBIMPresetCollection& Presets);
 };

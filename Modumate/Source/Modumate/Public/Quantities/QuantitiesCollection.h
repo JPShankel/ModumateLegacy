@@ -3,6 +3,8 @@
 #pragma once
 #include "CoreMinimal.h"
 
+struct FBIMConstructionCost;
+
 struct MODUMATE_API FQuantityItemId
 {
 	FGuid Id;
@@ -33,8 +35,11 @@ struct MODUMATE_API FQuantity
 	float Linear = 0.0f;
 	float Area = 0.0f;
 	float Volume = 0.0f;
+	float MaterialCost = 0.0f;
+	float LaborCost = 0.0f;
 	FQuantity& operator+=(const FQuantity& Rhs);
 	FQuantity& operator*=(float rhs);
+	void CalculateCosts(const FBIMConstructionCost& CostRate);
 };
 
 class FQuantitiesManager;
