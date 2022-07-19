@@ -192,6 +192,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 	// Handle ID first
 	// If there is no ID, this is a multi-line preset
 	// If there is an ID and a pre-existing GUID, we just wrapped up
+	bool bOnFirstRow = false;
 	for (auto& presetMatrix : PresetMatrices)
 	{
 		if (presetMatrix.Name == ECSVMatrixNames::ID)
@@ -200,6 +201,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 			if (!presetID.IsNone())
 			{
+				bOnFirstRow = true;
 				if (!Preset.PresetID.IsNone())
 				{
 					if (OutPresets.PresetFromGUID(Preset.GUID)==nullptr)
@@ -235,6 +237,10 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				propertyKey = FBIMPropertyKey(EBIMValueScope::Preset, BIMPropertyNames::Comments);
 				Preset.Properties.SetProperty<FString>(propertyKey.Scope, propertyKey.Name, FString());
 			}
+			else
+			{
+				bOnFirstRow = false;
+			}
 		}
 	}
 
@@ -268,12 +274,14 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 		{
 			case ECSVMatrixNames::ConstructionCost:
 			{
-				FBIMConstructionCost constructionCost;
-				constructionCost.MaterialCostRate = FCString::Atof(*NormalizeCell(Row[presetMatrix.First]));
-				constructionCost.LaborCostRate = FCString::Atof(*NormalizeCell(Row[presetMatrix.First+1]));
-				if ((constructionCost.MaterialCostRate != 0.0f || constructionCost.LaborCostRate != 0.0f)
-					&& ensure(!Preset.HasCustomData<FBIMConstructionCost>()) )
+				//Only get data from the first row (with preset ID present)
+				if (bOnFirstRow)
 				{
+					FBIMConstructionCost constructionCost;
+					GetOrCreateCustomData(constructionCost);
+					constructionCost.MaterialCostRate = FCString::Atof(*NormalizeCell(Row[presetMatrix.First]));
+					constructionCost.LaborCostRate = FCString::Atof(*NormalizeCell(Row[presetMatrix.First + 1]));
+					Preset.PresetForm.AddConstructionCostElements();
 					Preset.SetCustomData(constructionCost);
 				}
 			}

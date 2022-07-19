@@ -8,6 +8,7 @@
 #include "ModumateCore/EnumHelpers.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateCommands.h"
+#include "Quantities/QuantitiesDimensions.h"
 
 #define LOCTEXT_NAMESPACE "BIMPresetInstance"
 
@@ -226,6 +227,36 @@ bool FBIMPresetInstance::ValidatePreset() const
 	return true;
 }
 
+EBIMResult FBIMPresetInstance::HandleConstructionCostLaborDelta(const FBIMPresetEditorDelta& Delta)
+{
+	FBIMConstructionCost constructionCost;
+	float newValue;
+
+	if (ensureAlways(TryGetCustomData(constructionCost) &&
+		LexTryParseString(newValue, *Delta.NewStringRepresentation)))
+	{
+		constructionCost.LaborCostRate = newValue;
+		SetCustomData(constructionCost);
+		return EBIMResult::Success;
+	}
+	return EBIMResult::Error;
+}
+
+EBIMResult FBIMPresetInstance::HandleConstructionCostMaterialDelta(const FBIMPresetEditorDelta& Delta)
+{
+	FBIMConstructionCost constructionCost;
+	float newValue;
+
+	if (ensureAlways(TryGetCustomData(constructionCost) &&
+		LexTryParseString(newValue, *Delta.NewStringRepresentation)))
+	{
+		constructionCost.MaterialCostRate = newValue;
+		SetCustomData(constructionCost);
+		return EBIMResult::Success;
+	}
+	return EBIMResult::Error;
+}
+
 EBIMResult FBIMPresetInstance::HandleMaterialBindingDelta(const FBIMPresetEditorDelta& Delta)
 {
 	FBIMPresetMaterialBindingSet bindingSet;
@@ -331,6 +362,16 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,co
 		case EBIMPresetEditorField::MaterialBinding:
 		{
 			return HandleMaterialBindingDelta(Delta);
+		}
+
+		case EBIMPresetEditorField::ConstructionCostLabor:
+		{
+			return HandleConstructionCostLaborDelta(Delta);
+		}
+
+		case EBIMPresetEditorField::ConstructionCostMaterial:
+		{
+			return HandleConstructionCostMaterialDelta(Delta);
 		}
 
 		case EBIMPresetEditorField::AssetProperty:
@@ -441,7 +482,27 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 
 	switch (FormElement.FieldType)
 	{
-		case EBIMPresetEditorField::LayerPriorityGroup:
+	case EBIMPresetEditorField::ConstructionCostLabor:
+		{
+			FBIMConstructionCost constructionCost;
+			if (ensure(TryGetCustomData(constructionCost)))
+			{
+				OutDelta.OldStringRepresentation = FString::Printf(TEXT("%0.2f"),constructionCost.LaborCostRate);
+				return EBIMResult::Success;
+			}
+		}
+		break;
+	case EBIMPresetEditorField::ConstructionCostMaterial:
+	{
+		FBIMConstructionCost constructionCost;
+		if (ensure(TryGetCustomData(constructionCost)))
+		{
+			OutDelta.OldStringRepresentation = FString::Printf(TEXT("%0.2f"), constructionCost.MaterialCostRate);
+			return EBIMResult::Success;
+		}
+	}
+	break;
+	case EBIMPresetEditorField::LayerPriorityGroup:
 		{
 			FBIMPresetLayerPriority layerPriority;
 
@@ -548,6 +609,24 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(const UModumateDocument* InDoc
 
 		switch (element.FieldType)
 		{
+		case EBIMPresetEditorField::ConstructionCostMaterial:
+		{
+			FBIMConstructionCost constructionCost;
+			if (ensure(TryGetCustomData(constructionCost)))
+			{
+				element.StringRepresentation = FString::Printf(TEXT("%0.2f"), constructionCost.MaterialCostRate);
+			}
+		}
+		break;
+		case EBIMPresetEditorField::ConstructionCostLabor:
+		{
+			FBIMConstructionCost constructionCost;
+			if (ensure(TryGetCustomData(constructionCost)))
+			{
+				element.StringRepresentation = FString::Printf(TEXT("%0.2f"), constructionCost.LaborCostRate);
+			}
+		}
+		break;
 		case EBIMPresetEditorField::LayerPriorityValue:
 		{
 			FBIMPresetLayerPriority layerPriority;

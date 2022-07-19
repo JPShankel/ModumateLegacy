@@ -261,6 +261,8 @@ struct MODUMATE_API FBIMPresetInstance
 	EBIMResult HandleLayerPriorityGroupDelta(const FBIMPresetEditorDelta& Delta);
 	EBIMResult HandleLayerPriorityValueDelta(const FBIMPresetEditorDelta& Delta);
 	EBIMResult MakeMaterialBindingDelta(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const;
+	EBIMResult HandleConstructionCostLaborDelta(const FBIMPresetEditorDelta& Delta);
+	EBIMResult HandleConstructionCostMaterialDelta(const FBIMPresetEditorDelta& Delta);
 
 	// Sort child nodes by PinSetIndex and PinSetPosition so serialization will be consistent
 	EBIMResult SortChildPresets();

@@ -9,6 +9,8 @@
 
 #include "BIMPresetEditorForm.generated.h"
 
+struct FBIMConstructionCost;
+
 // TODO: Only property deltas implemented for now
 // Coming soon: custom data deltas (material bindings, construction details)
 
@@ -22,7 +24,9 @@ enum class EBIMPresetEditorField : uint8
 	DimensionProperty,
 	MaterialBinding,
 	LayerPriorityGroup,
-	LayerPriorityValue
+	LayerPriorityValue,
+	ConstructionCostLabor,
+	ConstructionCostMaterial
 };
 
 /* TODO:
@@ -100,6 +104,7 @@ struct MODUMATE_API FBIMPresetForm
 	EBIMResult AddMaterialBindingElement(const FText& DisplayName, const FName& ChannelName, EMaterialChannelFields MaterialSubField);
 	EBIMResult AddLayerPriorityGroupElement();
 	EBIMResult AddLayerPriorityValueElement();
+	EBIMResult AddConstructionCostElements();
 
 	bool HasField(const FName& Field) const;
 

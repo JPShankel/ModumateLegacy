@@ -150,4 +150,19 @@ EBIMResult FBIMPresetForm::AddLayerPriorityValueElement()
  	return EBIMResult::Success;
 }
 
+EBIMResult FBIMPresetForm::AddConstructionCostElements()
+{
+	FBIMPresetFormElement& materialElement = Elements.AddDefaulted_GetRef();
+	materialElement.DisplayName = LOCTEXT("ConstructionCostMaterial", "Material Cost");
+	materialElement.FieldType = EBIMPresetEditorField::ConstructionCostMaterial;
+	materialElement.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
+
+	FBIMPresetFormElement& laborElement = Elements.AddDefaulted_GetRef();
+	laborElement.DisplayName = LOCTEXT("ConstructionCostLabor", "Labor Cost");
+	laborElement.FieldType = EBIMPresetEditorField::ConstructionCostLabor;
+	laborElement.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
+
+	return EBIMResult::Success;
+}
+
 #undef LOCTEXT_NAMESPACE
