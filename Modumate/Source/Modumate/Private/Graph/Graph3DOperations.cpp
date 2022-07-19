@@ -74,6 +74,12 @@ bool FGraph3D::GetDeltaForVertexMovements(const TArray<int32> &VertexIDs, const 
 	int32 numVertices = VertexIDs.Num();
 	TSet<int32> oldConnectedFaceIDs;
 	TMap<int32, int32> joinableVertexIDs;
+
+	if (!ensure(numVertices <= NewVertexPositions.Num()))
+	{
+		numVertices = NewVertexPositions.Num();
+	}
+
 	for (int32 i = 0; i < numVertices; ++i)
 	{
 		int32 vertexID = VertexIDs[i];
