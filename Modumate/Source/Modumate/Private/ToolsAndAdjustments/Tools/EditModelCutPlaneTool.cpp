@@ -185,7 +185,6 @@ bool UCutPlaneTool::EndUse()
 	PendingPlanePoints.Reset();
 
 	Controller->EMPlayerState->SnappedCursor.WantsVerticalAffordanceSnap = false;
-	Controller->SetCurrentCullingCutPlane(RecentCreatedCutPlaneID);
 
 	return UEditModelToolBase::EndUse();
 }

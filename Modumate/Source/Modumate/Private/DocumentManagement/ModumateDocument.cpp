@@ -1334,6 +1334,8 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 			UpdateWebMOIs(at);
 		}
 	}
+	UpdateWebMOIs(EObjectType::OTCutPlane);
+	UpdateWebMOIs(EObjectType::OTCameraView);
 
 	return true;
 }
