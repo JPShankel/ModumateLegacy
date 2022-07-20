@@ -159,7 +159,14 @@ bool UPortalToolBase::HandleFlip(EAxis::Type FlipAxis)
 	{
 		return false;
 	}
+	// Portal tool create single new span, 
+	// we handle flip by setting its child (Portal object) instance data
 	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	AMOIMetaPlaneSpan* span = Cast<AMOIMetaPlaneSpan>(newMOI);
+	if (span && span->GetChildObjects().Num() > 0)
+	{
+		newMOI = span->GetChildObjects()[0];
+	}
 	return newMOI && newMOI->GetFlippedState(FlipAxis, NewMOIStateData);
 }
 
@@ -193,8 +200,14 @@ bool UPortalToolBase::HandleOffset(const FVector2D& ViewSpaceDirection)
 		(ViewSpaceDirection.X * cameraRotation.GetRightVector()) +
 		(ViewSpaceDirection.Y * cameraRotation.GetUpVector());
 
-	// Offset portal moi
+	// Portal tool create single new span, 
+	// we handle offset by setting its child (portal object) instance data
 	AModumateObjectInstance* newMOI = GameState->Document->GetObjectById(NewObjectIDs[0]);
+	AMOIMetaPlaneSpan* span = Cast<AMOIMetaPlaneSpan>(newMOI);
+	if (span && span->GetChildObjects().Num() > 0)
+	{
+		newMOI = span->GetChildObjects()[0];
+	}
 	return newMOI && newMOI->GetOffsetState(worldSpaceDirection, NewMOIStateData);
 }
 
