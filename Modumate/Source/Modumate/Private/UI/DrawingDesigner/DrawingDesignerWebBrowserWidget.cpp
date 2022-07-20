@@ -18,7 +18,12 @@
 #define LOCTEXT_NAMESPACE "DrawingDesignerWebBrowserWidget"
 
 TAutoConsoleVariable<FString> CVarModumateDrawingDesignerURL(TEXT("modumate.DrawingDesignerURL"),
-	TEXT("http://app.modumate.com"), TEXT("Address of Drawing Designer app"), ECVF_Default);
+#if WITH_EDITOR
+	TEXT("http://staging.app.modumate.com"),
+#else
+	TEXT("http://app.modumate.com"),
+#endif
+	TEXT("Address of Drawing Designer app"), ECVF_Default);
 
 
 UDrawingDesignerWebBrowserWidget::UDrawingDesignerWebBrowserWidget(const FObjectInitializer& ObjectInitializer)
