@@ -5497,6 +5497,26 @@ void UModumateDocument::OnCameraViewSelected(int32 ID)
 
 	CachedCameraViewID = ID;
 	UModumateObjectStatics::UpdateDesignOptionVisibility(this);
+
+	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+	AEditModelPlayerState* playerState = controller ? controller->EMPlayerState : nullptr;
+
+	if (playerState)
+	{
+		TArray<int32> unselected;
+		TArray<int32> selected;
+		Algo::TransformIf(cameraView->InstanceData.SavedCutPlaneVisibilities, selected, [](const TPair<int32, bool>& a) { return a.Value; },
+			[](const TPair<int32, bool>& a) {return a.Key; });
+		Algo::TransformIf(cameraView->InstanceData.SavedCutPlaneVisibilities, unselected, [](const TPair<int32, bool>& a) { return !a.Value; },
+			[](const TPair<int32, bool>& a) {return a.Key; });
+		playerState->AddHideObjectsById(unselected, false);
+		playerState->UnhideObjectsById(selected, false);
+
+		controller->SetCurrentCullingCutPlane(cameraView->InstanceData.SavedCullingCutPlane, false);
+
+		playerState->SendWebPlayerState();
+	}
+
 	UpdateWebMOIs(EObjectType::OTDesignOption); // TODO: visibility of design options should be moved to the player state
 }
 
