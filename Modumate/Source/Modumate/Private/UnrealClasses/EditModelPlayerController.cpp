@@ -617,20 +617,6 @@ void AEditModelPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReaso
 	}
 
 #if !UE_SERVER
-	if (IsNetMode(NM_Client))
-	{
-		if (EMPlayerState)
-		{
-			AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
-			if (gameState)
-			{
-				CaptureProjectThumbnail(true);
-				EMPlayerState->UploadProjectThumbnail(gameState->Document->CurrentEncodedThumbnail);
-			}
-
-		}
-	}
-
 	FTimespan sessionTime = FDateTime::Now() - SessionStartTime;
 	UModumateAnalyticsStatics::RecordSessionDuration(this, sessionTime);
 #endif
@@ -1509,15 +1495,11 @@ void AEditModelPlayerController::UploadWebThumbnail()
 #if !UE_SERVER
 	if (IsNetMode(NM_Client))
 	{
-		if (EMPlayerState)
+		AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
+		if (ensure(EMPlayerState) && ensure(gameState))
 		{
-			AEditModelGameState* gameState = GetWorld()->GetGameState<AEditModelGameState>();
-			if (gameState)
-			{
-				CaptureProjectThumbnail(true);
-				EMPlayerState->UploadProjectThumbnail(gameState->Document->CurrentEncodedThumbnail);
-			}
-
+			CaptureProjectThumbnail(true);
+			EMPlayerState->UploadProjectThumbnail(gameState->Document->CurrentEncodedThumbnail);
 		}
 	}
 #endif
