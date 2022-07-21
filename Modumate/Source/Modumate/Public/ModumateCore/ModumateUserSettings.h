@@ -26,6 +26,8 @@ struct MODUMATE_API FModumateGraphicsSettings
 {
 	GENERATED_USTRUCT_BODY();
 
+	FModumateGraphicsSettings();
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool bLit = true;
 
@@ -35,9 +37,21 @@ struct MODUMATE_API FModumateGraphicsSettings
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	int32 AntiAliasing = 3;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	bool bRayTracingEnabled = false;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	int32 RayTracingQuality = 2;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	int32 ExposureValue = 2;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	bool bRayTracingCapable = false;
+
 	// Unreal graphics settings: 0:low, 1:medium, 2:high, 3:epic, 4:cinematic
 	static const int32 UnrealGraphicsSettingsMaxValue = 4;
-
+	bool IsRayTracingCapable();
 	bool ToWebProjectSettings(FWebProjectSettings& OutSettings) const;
 	bool FromWebProjectSettings(const FWebProjectSettings& InSettings);
 };
@@ -84,7 +98,7 @@ struct MODUMATE_API FModumateUserSettings
 	static FString GetLocalTempDir();
 
 	void RecordRecentProject(const FString &projectPath, bool bAutoSave = true);
-
+	
 	bool SaveLocally();
 	bool LoadLocally();
 };

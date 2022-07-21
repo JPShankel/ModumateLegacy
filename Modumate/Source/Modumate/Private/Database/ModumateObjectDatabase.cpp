@@ -294,6 +294,18 @@ void FModumateDatabase::ReadPresetData()
 	// If this preset implies an asset type, load it
 	for (auto& preset : BIMPresetCollection.PresetsByGUID)
 	{
+		FLightConfiguration lightConfig;
+		if (preset.Value.TryGetCustomData(lightConfig))
+		{
+			
+			const FBIMPresetInstance* bimPresetInstance = BIMPresetCollection.PresetsByGUID.Find(lightConfig.PresetGUID);
+			if (bimPresetInstance != nullptr)
+			{
+				FString assetPath = bimPresetInstance->GetScopedProperty<FString>(EBIMValueScope::IESProfile, BIMPropertyNames::AssetPath);
+				//TODO: find and load runtime IES assets
+				preset.Value.SetCustomData(lightConfig);
+			}			
+		}
 		switch (preset.Value.AssetType)
 		{
 			case EBIMAssetType::IESProfile:
@@ -429,7 +441,8 @@ bool FModumateDatabase::AddLightFromPreset(const FBIMPresetInstance& Preset)
 	Preset.TryGetProperty(BIMPropertyNames::Name, light.DisplayName);
 	Preset.TryGetProperty(BIMPropertyNames::CraftingIconAssetFilePath, light.IconPath);
 	Preset.TryGetProperty(BIMPropertyNames::AssetPath, light.ProfilePath);
-
+	//fetch IES resource from profile path
+	//fill in light configuration
 	Lights.AddData(light);
 
 	return true;
@@ -502,7 +515,7 @@ const FLayerPattern* FModumateDatabase::GetPatternByGUID(const FGuid& GUID) cons
 
 bool FModumateDatabase::UnitTest()
 {
-	bool success = BIMPresetCollection.AssembliesByObjectType.Num() > 0;
+	bool bSuccess = BIMPresetCollection.AssembliesByObjectType.Num() > 0;
 	FBIMPresetCollectionProxy presetCollection(BIMPresetCollection);
 	for (auto& kvdp : BIMPresetCollection.AssembliesByObjectType)
 	{
@@ -517,35 +530,41 @@ bool FModumateDatabase::UnitTest()
 			FBIMPresetEditor editor;
 			FBIMPresetEditorNodeSharedPtr root;
 			editor.PresetCollectionProxy = presetCollection;
-			success = ensureAlways(editor.InitFromPreset(*this, kvp.Value.PresetGUID, root) == EBIMResult::Success) && success;
+			bSuccess = ensureAlways(editor.InitFromPreset(*this, kvp.Value.PresetGUID, root) == EBIMResult::Success) && bSuccess;
 
 			FBIMAssemblySpec editSpec;
-			success = ensureAlways(editor.CreateAssemblyFromNodes(*this, editSpec) == EBIMResult::Success) && success;
+			bSuccess = ensureAlways(editor.CreateAssemblyFromNodes(*this, editSpec) == EBIMResult::Success) && bSuccess;
 
 			FBIMAssemblySpec makeSpec;
-			success = ensureAlways(makeSpec.FromPreset(*this, FBIMPresetCollectionProxy(BIMPresetCollection), editSpec.PresetGUID) == EBIMResult::Success) && success;
+			if (!ensureAlways(makeSpec.FromPreset(*this, FBIMPresetCollectionProxy(BIMPresetCollection), editSpec.PresetGUID) == EBIMResult::Success))
+			{
+				bSuccess = false;
+				makeSpec.FromPreset(*this, FBIMPresetCollectionProxy(BIMPresetCollection), editSpec.PresetGUID);
+			}
 
-			success = ensureAlways(FBIMAssemblySpec::StaticStruct()->CompareScriptStruct(&editSpec, &kvp.Value, PPF_None)) && success;
-			success = ensureAlways(FBIMAssemblySpec::StaticStruct()->CompareScriptStruct(&makeSpec, &kvp.Value, PPF_None)) && success;
+			UScriptStruct* scriptStruct = FBIMAssemblySpec::StaticStruct();
+
+			bSuccess = ensureAlways(FBIMAssemblySpec::StaticStruct()->CompareScriptStruct(&editSpec, &kvp.Value, PPF_None)) && bSuccess;
+			bSuccess = ensureAlways(FBIMAssemblySpec::StaticStruct()->CompareScriptStruct(&makeSpec, &kvp.Value, PPF_None)) && bSuccess;
 		}
 	}
 
 	FBIMPresetInstance edgePreset;
 	BIMPresetCollection.GetBlankPresetForObjectType(EObjectType::OTEdgeDetail, edgePreset);
-	success = !edgePreset.GUID.IsValid() && success;
+	bSuccess = !edgePreset.GUID.IsValid() && bSuccess;
 
 	auto createEdgeDelta = BIMPresetCollection.MakeCreateNewDelta(edgePreset);
-	success = !createEdgeDelta->OldState.GUID.IsValid() && success;
-	success = createEdgeDelta->NewState.GUID.IsValid() && success;
+	bSuccess = !createEdgeDelta->OldState.GUID.IsValid() && bSuccess;
+	bSuccess = createEdgeDelta->NewState.GUID.IsValid() && bSuccess;
 
 	// Note: ApplyDelta is in Document...simulate effect here
-	success = (BIMPresetCollection.AddPreset(createEdgeDelta->NewState) == EBIMResult::Success) && success;
+	bSuccess = (BIMPresetCollection.AddPreset(createEdgeDelta->NewState) == EBIMResult::Success) && bSuccess;
 	const FBIMPresetInstance* edgeInst = BIMPresetCollection.PresetFromGUID(createEdgeDelta->NewState.GUID);
-	success = (edgeInst != nullptr) && success;
+	bSuccess = (edgeInst != nullptr) && bSuccess;
 
 	auto updateEdgeDelta = BIMPresetCollection.MakeUpdateDelta(createEdgeDelta->NewState);
-	success = (updateEdgeDelta->OldState.GUID == updateEdgeDelta->NewState.GUID) && success;
-	success = updateEdgeDelta->NewState.GUID.IsValid() && success;
+	bSuccess = (updateEdgeDelta->OldState.GUID == updateEdgeDelta->NewState.GUID) && bSuccess;
+	bSuccess = updateEdgeDelta->NewState.GUID.IsValid() && bSuccess;
 
-	return success;
+	return bSuccess;
 }

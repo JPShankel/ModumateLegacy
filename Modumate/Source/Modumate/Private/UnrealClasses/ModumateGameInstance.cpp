@@ -44,6 +44,9 @@
 #include "Objects/FaceHosted.h"
 #include "ModumateCore/EnumHelpers.h"
 #include "DrawingDesigner/DrawingDesignerMeshCache.h"
+#include "ModumateCore/ModumateRayTracingSettings.h"
+#include "UnrealClasses/SkyActor.h"
+
 
 using namespace ModumateCommands;
 using namespace ModumateParameters;
@@ -126,7 +129,10 @@ void UModumateGameInstance::Init()
 		engine->TravelFailureEvent.AddUObject(this, &UModumateGameInstance::OnTravelFailure);
 		engine->NetworkFailureEvent.AddUObject(this, &UModumateGameInstance::OnNetworkFailure);
 	}
-
+	//ensure RT is off by default
+	UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
+	APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+	RTSettings->SetRayTracingEnabled(ppv, false);
 	ApplyGraphicsFromModumateUserSettings();
 
 	if (ensure(DrawingDesignerMeshCacheClass))
@@ -1323,6 +1329,21 @@ void UModumateGameInstance::ApplyGraphicsFromModumateUserSettings()
 	curGameUserSettings->SetShadowQuality(UserSettings.GraphicsSettings.Shadows);
 	curGameUserSettings->SetAntiAliasingQuality(UserSettings.GraphicsSettings.AntiAliasing);
 	curGameUserSettings->ApplySettings(true);
+	UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
+	APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+	if (ppv != nullptr && RTSettings != nullptr)
+	{
+		RTSettings->Init();
+		RTSettings->SetRayTracingEnabled(ppv, UserSettings.GraphicsSettings.bRayTracingEnabled);
+		RTSettings->ApplyRayTraceQualitySettings(ppv, UserSettings.GraphicsSettings.RayTracingQuality);
+		RTSettings->SetExposure(ppv, UserSettings.GraphicsSettings.ExposureValue);
+	}
+	
+	ASkyActor* skyActor = Cast<ASkyActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ASkyActor::StaticClass()));
+	if (skyActor != nullptr)
+	{
+		skyActor->UpdateComponentsWithDateTime(skyActor->GetCurrentDateTime());
+	}
 }
 
 void UModumateGameInstance::AutoDetectAndSaveModumateUserSettings()

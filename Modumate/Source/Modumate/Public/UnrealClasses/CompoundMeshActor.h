@@ -36,6 +36,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	static int32 MaxLightCount;
+	static int32 CurrentLightCount;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -46,7 +48,7 @@ public:
 	void SetupCapGeometry();
 	void ClearCapGeometry();
 
-	void UpdateLightFromLightConfig(UStaticMeshComponent* parentMesh, const FLightConfiguration &lightConfig, const FTransform &lightTransform);
+	void UpdateLightFromLightConfig(UStaticMeshComponent* parentMesh, const FLightConfiguration &lightConfig);
 	void RemoveAllLights();
 
 	bool ConvertProcMeshToLinesOnPlane(const FVector &PlanePosition, const FVector &PlaneNormal, TArray<TPair<FVector, FVector>> &OutEdges);

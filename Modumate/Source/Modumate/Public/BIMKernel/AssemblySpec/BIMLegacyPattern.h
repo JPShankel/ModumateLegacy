@@ -157,7 +157,6 @@ struct FLightConfiguration
 	UPROPERTY()
 	float LightIntensity = 0.f;
 
-	UPROPERTY()
 	FLinearColor LightColor = FLinearColor::White;
 
 	UPROPERTY()
@@ -165,6 +164,12 @@ struct FLightConfiguration
 
 	UPROPERTY()
 	bool bAsSpotLight = false;
+
+	UPROPERTY()
+	FString Name;
+
+	UPROPERTY()
+	FVector Location = FVector::ZeroVector;
 
 	FGuid UniqueKey() const { return PresetGUID; }
 };

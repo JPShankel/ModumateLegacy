@@ -70,6 +70,8 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		return EBIMResult::Error;
 	}
 
+	assemblyPreset->TryGetCustomData(LightConfiguration);
+
 	switch (assemblyPreset->ObjectType)
 	{
 		case EObjectType::OTEdgeDetail: 
@@ -294,6 +296,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 #endif
 			partSpec.SlotGUID = partIterator.Slot.SlotPresetGUID;
 			partSpec.PresetGUID = partPreset->GUID;
+			partPreset->TryGetCustomData(partSpec.LightConfiguration);
 			// If this child has a mesh asset ID, this fetch the mesh and use it 
 			FGuid meshAsset;
 			if (partPreset->Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshAsset))
@@ -526,6 +529,7 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 		partSlot.Flip[0] = false;
 		partSlot.Flip[1] = false;
 		partSlot.Flip[2] = false;
+		partSlot.LightConfiguration = LightConfiguration;
 		partSlot.ParentSlotIndex = INDEX_NONE;
 
 		// Point hosted obj uses MaterialBindingSet from assembly 

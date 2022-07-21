@@ -51,6 +51,9 @@ public:
 	float DayLightBrightness = 8.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float RTDayLightBrightness = 400.f;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float NightLightBrightness = 0.f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -104,4 +107,5 @@ public:
 	void SetSkyDomePositionScaleByCameraProjection(bool bIsPerspective);
 	void ToggleBackgroundSkyPlane(bool bVisible, const FVector& CameraPosition = FVector::ZeroVector, const FRotator& CameraRotation = FRotator::ZeroRotator);
 	void UpdateCoordinate(float InLatitude, float InLongitude, float TrueNorth);
+	void AdjustIntensityForRT(bool bRayTracingEnabled);
 };

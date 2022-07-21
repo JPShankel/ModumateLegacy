@@ -7,9 +7,12 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Policies/PrettyJsonPrintPolicy.h"
-
+#include "GenericPlatform/GenericPlatformMisc.h"
+#include "GenericPlatform/GenericPlatformDriver.h"
 
 const FString FModumateUserSettings::FileName(TEXT("UserSettings.json"));
+
+
 
 FString FModumateUserSettings::GetLocalSavePath()
 {
@@ -143,13 +146,60 @@ bool FModumateUserSettings::LoadLocally()
 	return bConversionSuccess;
 }
 
+FModumateGraphicsSettings::FModumateGraphicsSettings()
+{
+	bRayTracingCapable = IsRayTracingCapable();
+}
+
+bool FModumateGraphicsSettings::IsRayTracingCapable()
+{
+	FGPUDriverInfo GPUDriverInfo = FPlatformMisc::GetGPUDriverInfo(GRHIAdapterName);
+	bRayTracingCapable = false;
+	TArray<FString> compatibleCards;
+	compatibleCards.Add(TEXT("RTX"));
+	compatibleCards.Add(TEXT("GTX 1060"));
+	compatibleCards.Add(TEXT("GTX 1070"));
+	compatibleCards.Add(TEXT("GTX 1080"));
+	if (GPUDriverInfo.IsNVIDIA())
+	{
+		for (int32 i = 0; i < compatibleCards.Num(); i++)
+		{
+			if (GPUDriverInfo.DeviceDescription.Contains(compatibleCards[i], ESearchCase::IgnoreCase))
+			{
+				bRayTracingCapable = true;
+			}
+		}
+	}
+
+	return bRayTracingCapable;
+}
+
 bool FModumateGraphicsSettings::ToWebProjectSettings(FWebProjectSettings& OutSettings) const
 {
 	OutSettings.shadows.value = FString::FromInt(Shadows);
 	OutSettings.shadows.range = {0, UnrealGraphicsSettingsMaxValue};
 	OutSettings.antiAliasing.value = FString::FromInt(AntiAliasing);
 	OutSettings.antiAliasing.range = {0, UnrealGraphicsSettingsMaxValue};
-
+	if (bRayTracingEnabled)
+	{
+		OutSettings.rayTracing.value = "true";
+	}
+	else
+	{
+		OutSettings.rayTracing.value = "false";
+	}
+	OutSettings.rayTracingQuality.value = FString::FromInt(RayTracingQuality);
+	OutSettings.rayTracingQuality.range = { 0, UnrealGraphicsSettingsMaxValue };
+	OutSettings.Exposure.value = FString::FromInt(ExposureValue);
+	OutSettings.Exposure.range = { 0, 4 };
+	if (bRayTracingCapable)
+	{
+		OutSettings.rayTracingCapable.value = "true";
+	}
+	else
+	{
+		OutSettings.rayTracingCapable.value = "false";
+	}
 	return true;
 }
 
@@ -157,5 +207,8 @@ bool FModumateGraphicsSettings::FromWebProjectSettings(const FWebProjectSettings
 {
 	Shadows = FCString::Atoi(*InSettings.shadows.value);
 	AntiAliasing = FCString::Atoi(*InSettings.antiAliasing.value);
+	RayTracingQuality = FCString::Atoi(*InSettings.rayTracingQuality.value);
+	ExposureValue = FCString::Atoi(*InSettings.Exposure.value);
+	bRayTracingEnabled = InSettings.rayTracing.value.ToLower() == TEXT("true");
 	return true;
 }

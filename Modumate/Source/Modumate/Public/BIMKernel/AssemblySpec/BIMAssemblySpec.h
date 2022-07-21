@@ -115,6 +115,9 @@ public:
 	UPROPERTY()
 	EPresetMeasurementMethod MeasurementMethod = EPresetMeasurementMethod::None;
 
+	UPROPERTY()
+	FLightConfiguration LightConfiguration;
+
 	// For DataCollection support in preset manager
 	FGuid UniqueKey() const { return PresetGUID; }
 

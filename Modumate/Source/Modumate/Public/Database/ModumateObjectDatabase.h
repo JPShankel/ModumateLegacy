@@ -37,6 +37,7 @@ static constexpr int32 BIMCacheCurrentVersion = 20;
 // Version 18: user-editable part sizes
 // Version 19: face-hosted objects
 // Verison 20: mark and comments added to all presets
+// Version 21: (temp) lighting prototype
 
 USTRUCT()
 struct FModumateBIMCacheRecord
@@ -67,6 +68,8 @@ private:
 	TModumateDataCollection<FStaticIconTexture> StaticIconTextures;
 	TModumateDataCollection<FLayerPattern> Patterns;
 	TModumateDataCollection<FArchitecturalLight> Lights;
+
+	TMap<FString, FLightConfiguration> LightConfigurations;
 
 	void AddArchitecturalMaterial(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 	void AddArchitecturalMesh(const FGuid& Key, const FString& Name, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath);

@@ -82,4 +82,16 @@ struct MODUMATE_API FWebProjectSettings
 
 	UPROPERTY()
 	FWebProjectSettingsProperty version;
+
+	UPROPERTY()
+	FWebProjectSettingsProperty rayTracing;
+	
+	UPROPERTY()
+	FWebProjectSettingsProperty rayTracingQuality;
+
+	UPROPERTY()
+	FWebProjectSettingsProperty Exposure;
+
+	UPROPERTY()
+	FWebProjectSettingsProperty rayTracingCapable;
 };

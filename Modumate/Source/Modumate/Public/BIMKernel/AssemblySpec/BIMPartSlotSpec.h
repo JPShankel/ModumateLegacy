@@ -102,6 +102,9 @@ public:
 
 	UPROPERTY()
 	FArchitecturalMesh Mesh;
+
+	UPROPERTY()
+	FLightConfiguration LightConfiguration;
 	
 	UPROPERTY()
 	TMap<FName, FArchitecturalMaterial> ChannelMaterials;

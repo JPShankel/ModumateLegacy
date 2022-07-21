@@ -272,6 +272,24 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 	{
 		switch (presetMatrix.Name)
 		{
+			case ECSVMatrixNames::IESLight:
+			{
+				FBIMKey key(NormalizeCell(Row[presetMatrix.First]));
+				FGuid* guid = KeyGuidMap.Find(key);
+				//preset guid, intensity, color tint (in hex)
+				if (guid != nullptr)
+				{
+					FLightConfiguration lightConfig;
+					lightConfig.PresetGUID = *guid;
+					lightConfig.LightIntensity = FCString::Atof(*NormalizeCell(Row[presetMatrix.First + 1]));
+					lightConfig.LightColor = FColor::FromHex(NormalizeCell(Row[presetMatrix.First + 2]));
+					lightConfig.Location.X = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 3]).Centimeters;
+					lightConfig.Location.Y = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 4]).Centimeters;
+					lightConfig.Location.Z = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 5]).Centimeters;
+					Preset.SetCustomData(lightConfig);
+				}
+			}
+			break;
 			case ECSVMatrixNames::ConstructionCost:
 			{
 				//Only get data from the first row (with preset ID present)

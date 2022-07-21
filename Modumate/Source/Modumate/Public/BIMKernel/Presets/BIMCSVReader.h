@@ -41,6 +41,7 @@ enum class ECSVMatrixNames : uint8
 	FinalPartTransformAtSlot,
 	GUID,
 	ID,
+	IESLight,
 	InputPins,
 	Material,
 	Mesh,

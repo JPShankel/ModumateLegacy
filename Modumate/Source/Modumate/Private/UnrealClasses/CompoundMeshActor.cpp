@@ -24,7 +24,8 @@
 #include "DrawingDesigner/DrawingDesignerLine.h"
 
 #define DEBUG_NINE_SLICING 0
-
+int32 ACompoundMeshActor::MaxLightCount = 0;
+int32 ACompoundMeshActor::CurrentLightCount = 0;
 // Sets default values
 ACompoundMeshActor::ACompoundMeshActor()
 {
@@ -146,6 +147,12 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 		{
 			partStaticMeshComp = NewObject<UStaticMeshComponent>(this);
 			partStaticMeshComp->SetupAttachment(rootComp);
+
+			if (assemblyPart.LightConfiguration.PresetGUID.IsValid())
+			{
+				UpdateLightFromLightConfig(partStaticMeshComp, assemblyPart.LightConfiguration);
+			}
+
 			AddOwnedComponent(partStaticMeshComp);
 			partStaticMeshComp->RegisterComponent();
 			StaticMeshComps[slotIdx] = partStaticMeshComp;
@@ -584,16 +591,22 @@ bool ACompoundMeshActor::ConvertStaticMeshToLinesOnPlane(const FVector &PlanePos
 	return true;
 }
 
-void ACompoundMeshActor::UpdateLightFromLightConfig(UStaticMeshComponent* parentMesh, const FLightConfiguration &lightConfig, const FTransform &lightTransform)
+void ACompoundMeshActor::UpdateLightFromLightConfig(UStaticMeshComponent* parentMesh, const FLightConfiguration &lightConfig)
 {
-	bool makePointLight = (lightConfig.LightIntensity > 0.f) && lightConfig.bAsSpotLight == false;
-	bool makeSpotLight = (lightConfig.LightIntensity > 0.f) && lightConfig.bAsSpotLight;
+	if (CurrentLightCount < MaxLightCount)
+	{
+		CurrentLightCount++;
+	}
+	else {
+		return;
+	}
+	bool makePointLight = lightConfig.LightIntensity > 0.f;
 	float lightIntensity = lightConfig.LightIntensity;
 	FLinearColor lightColor = lightConfig.LightColor;
-
-	// Point Light WIP
+	FString lightName = TEXT("Light");
 	if (makePointLight)
 	{
+		lightName.Append(TEXT("Point"));
 		if (!PointLightComp)
 		{
 			PointLightComp = NewObject<UPointLightComponent>(this);
@@ -602,10 +615,20 @@ void ACompoundMeshActor::UpdateLightFromLightConfig(UStaticMeshComponent* parent
 			PointLightComp->SetupAttachment(parentMesh);
 			PointLightComp->RegisterComponent();
 		}
-		PointLightComp->SetRelativeTransform(lightTransform);
+		FTransform xform;
+		xform.SetLocation(lightConfig.Location);
+		xform.SetRotation(FQuat::Identity);
+		xform.SetScale3D(FVector::OneVector);
+		PointLightComp->SetRelativeTransform(xform);
 		PointLightComp->SetIntensity(lightIntensity);
+		PointLightComp->SetAttenuationRadius(400.0f);
 		PointLightComp->SetLightColor(lightColor);
-		//PointLight->SetIESTexture(lightProfile); // Should point light uses light profile?
+		UTextureLightProfile* lightProfile = lightConfig.LightProfile.Get();
+		if (lightProfile)
+		{
+			PointLightComp->SetIESTexture(lightProfile);
+		}
+		PointLightComp->bCastRaytracedShadow = true;
 	}
 	else if (PointLightComp)
 	{
@@ -613,32 +636,11 @@ void ACompoundMeshActor::UpdateLightFromLightConfig(UStaticMeshComponent* parent
 		PointLightComp = nullptr;
 	}
 
-	// Spot Light WIP
-	if (makeSpotLight)
-	{
-		if (!SpotLightComp)
-		{
-			SpotLightComp = NewObject<USpotLightComponent>(this);
-			SpotLightComp->IntensityUnits = ELightUnits::Lumens;
-			SpotLightComp->SetMobility(EComponentMobility::Movable);
-			SpotLightComp->SetupAttachment(parentMesh);
-			SpotLightComp->RegisterComponent();
-		}
-		SpotLightComp->SetRelativeTransform(lightTransform);
-		SpotLightComp->SetIntensity(lightIntensity);
-		SpotLightComp->SetLightColor(lightColor);
-
-		UTextureLightProfile* lightProfile = lightConfig.LightProfile.Get();
-		if (lightProfile)
-		{
-			SpotLightComp->SetIESTexture(lightProfile);
-		}
-	}
-	else if (SpotLightComp)
-	{
-		SpotLightComp->DestroyComponent();
-		SpotLightComp = nullptr;
-	}
+	lightName.AppendInt(CurrentLightCount);
+	this->Rename(*lightName);
+#if WITH_EDITOR
+	this->SetActorLabel(lightName);
+#endif
 }
 
 void ACompoundMeshActor::RemoveAllLights()

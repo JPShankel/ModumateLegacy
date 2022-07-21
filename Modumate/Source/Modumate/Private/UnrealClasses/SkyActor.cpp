@@ -39,6 +39,20 @@ ASkyActor::ASkyActor()
 	SkyLight->SetupAttachment(Root);
 	BackgroundSkyPlane = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BackgroundSkyPlane"));
 	BackgroundSkyPlane->SetupAttachment(Root);
+	
+	SkyDomeMesh->bVisibleInRayTracing = false;
+	SkyLight->SamplesPerPixel = 10;
+	DirectionalLight->SamplesPerPixel = 2;
+	extern FAutoConsoleVariableRef CVarRayTracingOcclusion;
+	auto bRTEnabledCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
+	if (bRTEnabledCVAR->GetInt() == 1)
+		SkyLight->SetIntensity(1.2f);
+	else
+		SkyLight->SetIntensity(1.0f);
+	SkyLight->SetCastRaytracedShadow(true);
+	DirectionalLight->SetCastRaytracedShadow(true);
+	DirectionalLight->LightSourceAngle = 1.2f;
+	
 }
 
 // Called when the game starts or when spawned
@@ -88,12 +102,23 @@ void ASkyActor::UpdateComponentsWithDateTime(const FDateTime &DateTime)
 
 	DirectionalLight->SetWorldRotation(FRotator(sunPositionData.CorrectedElevation, (sunPositionData.Azimuth - 90.f), 0.f));
 
+	float correctedDayLightBrightness;
+	extern FAutoConsoleVariableRef CVarRayTracingOcclusion;
+	auto bRTEnabledCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
+	if (bRTEnabledCVAR->GetInt() == 1)
+	{
+		correctedDayLightBrightness = RTDayLightBrightness;
+	}
+	else
+	{
+		correctedDayLightBrightness = DayLightBrightness;
+	}
 	// Change light intensity based on angle
 	float newIntensity = UKismetMathLibrary::MapRangeClamped(
 		DirectionalLight->GetComponentRotation().Pitch,
 		DayAnglePitch,
 		0.f,
-		DayLightBrightness,
+		correctedDayLightBrightness,
 		NightLightBrightness);
 	DirectionalLight->SetIntensity(newIntensity);
 
@@ -105,6 +130,11 @@ void ASkyActor::UpdateComponentsWithDateTime(const FDateTime &DateTime)
 		0.f,
 		1.f);
 	DirectionalLight->SetLightColor(UKismetMathLibrary::LinearColorLerp(DayColor, DuskColor, newLightColorAlpha));
+
+	if (bRTEnabledCVAR->GetInt() == 1)
+		SkyLight->SetIntensity(1.2f);
+	else
+		SkyLight->SetIntensity(1.0f);
 
 	SkyLight->RecaptureSky();
 
