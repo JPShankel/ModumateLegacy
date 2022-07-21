@@ -16,6 +16,9 @@ struct MODUMATE_API FDrawingDesignerDocument
 	FDrawingDesignerDocument();
 
 	UPROPERTY()
+	int32 version = INDEX_NONE;
+	
+	UPROPERTY()
 	int32 nextId = 1;
 
 	UPROPERTY()
