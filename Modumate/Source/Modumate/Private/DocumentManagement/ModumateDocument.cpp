@@ -5221,6 +5221,7 @@ void UModumateDocument::update_project_settings(const FString& InRequest)
 		gameInstance->UserSettings.SaveLocally();
 		gameInstance->ApplyGraphicsFromModumateUserSettings();
 	}
+	UpdateWebProjectSettings();
 }
 
 void UModumateDocument::update_auto_detect_graphic_settings()
