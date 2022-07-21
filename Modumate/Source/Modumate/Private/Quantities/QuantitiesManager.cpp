@@ -564,11 +564,11 @@ FString FQuantitiesManager::PrintCsvCosts(const FReportItem& Item, const FBIMPre
 		{
 			if (costRate.MaterialCostRate != 0.0f)
 			{
-				materialRate = PrintNumber(costRate.MaterialCostRate * scale);
+				materialRate = CsvEscape(FString::Printf(TEXT("%.3f"), costRate.MaterialCostRate * scale));
 			}
 			if (costRate.LaborCostRate)
 			{
-				laborRate = PrintNumber(costRate.LaborCostRate * scale);
+				laborRate = CsvEscape(FString::Printf(TEXT("%.3f"), costRate.LaborCostRate * scale));
 			}
 		}
 	}
