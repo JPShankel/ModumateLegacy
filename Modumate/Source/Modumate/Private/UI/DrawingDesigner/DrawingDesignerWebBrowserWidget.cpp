@@ -53,25 +53,7 @@ void UDrawingDesignerWebBrowserWidget::NativeConstruct()
 
 void UDrawingDesignerWebBrowserWidget::ResetDocumentButtonPressed()
 {
-	auto controller = GetOwningPlayer<AEditModelPlayerController>();
 
-	if (ensure(controller))
-	{
-		UModumateDocument* doc = controller->GetDocument();
-		auto newDoc = FDrawingDesignerDocument();
-		
-		FDrawingDesignerJsDeltaPackage package;		
-		TSharedPtr<FDrawingDesignerDocumentDelta> delta = MakeShared<FDrawingDesignerDocumentDelta>();
-		
-		delta->from = doc->DrawingDesignerDocument;
-		delta->to = newDoc;
-
-		TArray<FDeltaPtr> wrapped;
-		wrapped.Add(delta);
-
-		doc->ApplyDeltas(wrapped, doc->GetWorld());
-		doc->DrawingPushDD();
-	}
 }
 
 void UDrawingDesignerWebBrowserWidget::InitWithController()

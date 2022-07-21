@@ -42,6 +42,9 @@ struct MODUMATE_API FDrawingDesignerJsDelta
 
 	UPROPERTY()
 	FDrawingDesignerNode details;
+
+	UPROPERTY()
+	FDrawingDesignerNode reverse;
 };
 
 
@@ -66,19 +69,16 @@ struct MODUMATE_API FDrawingDesignerDocumentDelta : public FDocumentDelta
 {
 	GENERATED_BODY()
 	FDrawingDesignerDocumentDelta() = default;
-	FDrawingDesignerDocumentDelta(const FDrawingDesignerDocument& doc, FDrawingDesignerJsDeltaPackage package);
+	FDrawingDesignerDocumentDelta(const FDrawingDesignerDocument& Doc, FDrawingDesignerJsDeltaPackage Package);
 
 	UPROPERTY()
-	FDrawingDesignerDocument to;
-
-	UPROPERTY()
-	FDrawingDesignerDocument from;
-
+	FDrawingDesignerJsDeltaPackage package;
+	
 	virtual bool ApplyTo(UModumateDocument* Doc, UWorld* World) const override;
 	virtual TSharedPtr<FDocumentDelta> MakeInverse() const override;
 	virtual FStructDataWrapper SerializeStruct() override;
 
 protected:
-
-	bool ParseDeltaVerb(FDrawingDesignerJsDelta& delta);
+	FDrawingDesignerJsDelta GetInverted(const FDrawingDesignerJsDelta& Delta) const;
+	static bool ParseDeltaVerb(FDrawingDesignerDocument* DDDoc, FDrawingDesignerJsDelta& Delta);
 };
