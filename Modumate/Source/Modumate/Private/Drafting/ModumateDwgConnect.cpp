@@ -13,6 +13,8 @@
 #include "UI/ModalDialog/ModalDialogWidget.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ModumateCloudConnection.h"
+#include "DocumentManagement/ModumateDocument.h"
+
 
 #include "Drafting/MiniZip.h"
 
@@ -104,13 +106,13 @@ void FModumateDwgConnect::DwgSaver::OnHttpReply(FHttpRequestPtr Request, FHttpRe
 			if (gameInstance)
 			{
 				AEditModelPlayerController* controller = CastChecked<AEditModelPlayerController>(gameInstance->GetFirstLocalPlayerController());
-				if (controller && controller->EditModelUserWidget && controller->EditModelUserWidget->ModalDialogWidgetBP)
+				if (controller)
 				{
-					FModalButtonParam dismissButton(EModalButtonStyle::Default, LOCTEXT("SavedDWGok", "OK"), nullptr);
-					controller->EditModelUserWidget->ModalDialogWidgetBP->CreateModalDialog(LOCTEXT("SavedDWGTitle", "Notice"),
-						FText::Format(LOCTEXT("SavedDWGMsg", "Saved DWG bundle to {0}.zip"), FText::FromString(ZipDirectory)),
-						TArray<FModalButtonParam>({ dismissButton })
-						);
+					UModumateDocument* document = controller->GetDocument();
+					if (document) {
+						FString message = FString(TEXT("Saved DWG bundle to ")) + ZipDirectory.ReplaceCharWithEscapedChar() + FString(TEXT(".zip"));
+						document->NotifyWeb(ENotificationLevel::INFO, message);
+					}
 				}
 			}
 		}
@@ -123,13 +125,13 @@ void FModumateDwgConnect::DwgSaver::OnHttpReply(FHttpRequestPtr Request, FHttpRe
 		if (gameInstance)
 		{
 			AEditModelPlayerController* controller = CastChecked<AEditModelPlayerController>(gameInstance->GetFirstLocalPlayerController());
-			if (controller && controller->EditModelUserWidget && controller->EditModelUserWidget->ModalDialogWidgetBP)
+			if (controller)
 			{
-				FModalButtonParam dismissButton(EModalButtonStyle::Default, LOCTEXT("SavedDWGok", "OK"), nullptr);
-				controller->EditModelUserWidget->ModalDialogWidgetBP->CreateModalDialog(LOCTEXT("SavedDWGTitle", "Notice"),
-					FText::Format(LOCTEXT("SavedDWGMsg", "Saved DWG bundle to {0}"), FText::FromString(ZipDirectory)),
-					TArray<FModalButtonParam>({ dismissButton })
-				);
+				UModumateDocument* document = controller->GetDocument();
+				if (document) {
+					FString message = FString(TEXT("Saved DWG bundle to ")) + ZipDirectory.ReplaceCharWithEscapedChar();
+					document->NotifyWeb(ENotificationLevel::INFO, message);
+				}
 			}
 		}
 #endif

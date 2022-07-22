@@ -1589,15 +1589,12 @@ bool AEditModelPlayerController::OnCreateQuantitiesCsv(const TFunction<void(FStr
 	{
 		EMPlayerState->ShowingFileDialog = false;
 		FModalButtonParam dismissButton(EModalButtonStyle::Default, LOCTEXT("SavedCSVok", "OK"), nullptr);
+		UModumateDocument* document = GetDocument();
 
 		if (!quantitiesManager->CreateReport(filename))
 		{
-			if (EditModelUserWidget && EditModelUserWidget->ModalDialogWidgetBP)
-			{
-				EditModelUserWidget->ModalDialogWidgetBP->CreateModalDialog(
-					LOCTEXT("ClientExportQuantitiesError", "Error"),
-					LOCTEXT("QuantityEstimateCreateFail", "Quantity Estimate CSV creation failed"),
-					TArray<FModalButtonParam>({ dismissButton }));
+			if (document) {
+				document->NotifyWeb(ENotificationLevel::ERROR, TEXT("Quantity Estimate CSV creation failed"));
 			}
 
 			retValue = false;
@@ -1605,12 +1602,10 @@ bool AEditModelPlayerController::OnCreateQuantitiesCsv(const TFunction<void(FStr
 		else
 		{
 			gameInstance->GetAccountManager()->NotifyServiceUse(FModumateAccountManager::ServiceQuantityEstimates, UsageNotificationCallback);
-			if (EditModelUserWidget && EditModelUserWidget->ModalDialogWidgetBP)
+			if (document)
 			{
-				EditModelUserWidget->ModalDialogWidgetBP->CreateModalDialog(
-					LOCTEXT("ClientExportQuantities", "Notice"),
-					FText::Format(LOCTEXT("ClientExportQuantitiesText", "Saved Quantity Estimates to {0}"), FText::FromString(filename)),
-					TArray<FModalButtonParam>({ dismissButton }));
+				FString message = FString(TEXT("Saved Quantity Estimates to ")) + filename.ReplaceCharWithEscapedChar();
+				document->NotifyWeb(ENotificationLevel::INFO, message);
 			}
 		}
 	}
