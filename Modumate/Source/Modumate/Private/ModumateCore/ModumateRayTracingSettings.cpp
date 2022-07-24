@@ -1,9 +1,10 @@
-// Copyright 2019 Modumate, Inc. All Rights Reserved.
+// Copyright 2022 Modumate, Inc. All Rights Reserved.
 
 #include "ModumateCore/ModumateRayTracingSettings.h"
 
 #include "Engine/PostProcessVolume.h"
 #include "Kismet/GameplayStatics.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 UModumateRayTracingSettings::UModumateRayTracingSettings(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -90,17 +91,21 @@ void UModumateRayTracingSettings::Init()
 	}
 	if (RTExposure.Num() < 5)
 	{
-		RTExposure.Init(0.0f, 5);
+		RTExposure.Init(1.0f, 5);
 	}
 }
+extern FAutoConsoleVariableRef CVarForceAllRayTracingEffects;
+extern FAutoConsoleVariableRef CVarRayTracingOcclusion;
+extern FAutoConsoleVariableRef CVarEnableRayTracingMaterials;
+extern FAutoConsoleVariableRef CVarRayTracingGlobalIlluminationFireflySuppression;
 void UModumateRayTracingSettings::SetRayTracingEnabled(APostProcessVolume* ppv, bool bIsRayTracingEnabled)
 {
 	if (ppv == nullptr)
 	{
 		return;
 	}
-	
 	bRayTracingEnabled = bIsRayTracingEnabled;
+	//UserSettings.GraphicsSettings
 	ppv->Settings.bOverride_AmbientCubemapIntensity = true;
 	ppv->Settings.bOverride_AutoExposureMinBrightness = true;
 	ppv->Settings.bOverride_AutoExposureMaxBrightness = true;
@@ -119,33 +124,46 @@ void UModumateRayTracingSettings::SetRayTracingEnabled(APostProcessVolume* ppv, 
 		ApplyRayTraceQualitySettings(ppv, 0);
 	}
 
-	extern FAutoConsoleVariableRef CVarRayTracingOcclusion;
+	
 	auto enableRTShadowsCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
 	if (enableRTShadowsCVAR == nullptr)
 	{
 		return;
 	}
-	enableRTShadowsCVAR->Set(bIsRayTracingEnabled, EConsoleVariableFlags::ECVF_SetByConsole);
-
-	extern FAutoConsoleVariableRef CVarEnableRayTracingMaterials;
+	enableRTShadowsCVAR->Set(bIsRayTracingEnabled ? 1 : 0, EConsoleVariableFlags::ECVF_SetByGameSetting);
+	
 	auto enableRTMaterialsCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.EnableMaterials"));
 	if (enableRTMaterialsCVAR == nullptr)
 	{
 		return;
 	}
-	enableRTMaterialsCVAR->Set(bIsRayTracingEnabled, EConsoleVariableFlags::ECVF_SetByConsole);
+	enableRTMaterialsCVAR->Set(bIsRayTracingEnabled, EConsoleVariableFlags::ECVF_SetByGameSetting);
 
-	extern FAutoConsoleVariableRef CVarRayTracingGlobalIlluminationFireflySuppression;
+	
 	auto enableFireflySuppression = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.GlobalIllumination.FireflySuppression"));
 	if (enableFireflySuppression == nullptr)
 	{
 		return;
 	}
-	enableFireflySuppression->Set(bIsRayTracingEnabled, EConsoleVariableFlags::ECVF_SetByConsole);
+	enableFireflySuppression->Set(bIsRayTracingEnabled, EConsoleVariableFlags::ECVF_SetByGameSetting);
+
+	
+	auto bForceAllRTOff = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.ForceAllRayTracingEffects"));
+	if (bForceAllRTOff != nullptr)
+	{
+		if (bIsRayTracingEnabled)
+		{
+			//if rt is on send -1 which will revert to using our defined RT settings
+			bForceAllRTOff->Set(-1, EConsoleVariableFlags::ECVF_SetByGameSetting);
+		}
+		else {
+			//if rt is off force disable all RT effects
+			bForceAllRTOff->Set(0, EConsoleVariableFlags::ECVF_SetByGameSetting);
+		}
+	}
 }
 void UModumateRayTracingSettings::SetExposure(APostProcessVolume* ppv, uint8 ExposureIndex)
 {
-	extern FAutoConsoleVariableRef CVarRayTracingOcclusion;
 	auto bRTEnabledCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
 	if (ppv == nullptr || bRTEnabledCVAR == nullptr ||  bRTEnabledCVAR->GetInt() == 0)
 	{
@@ -157,8 +175,7 @@ void UModumateRayTracingSettings::SetExposure(APostProcessVolume* ppv, uint8 Exp
 	ppv->Settings.AutoExposureMaxBrightness = RTExposure[ExposureIndex];
 }
 bool UModumateRayTracingSettings::ApplyRayTraceQualitySettings(APostProcessVolume* ppv, uint8 QualitySetting)
-{
-	extern FAutoConsoleVariableRef CVarRayTracingOcclusion;
+{	
 	auto bRTEnabledCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
 	if (bRTEnabledCVAR == nullptr)
 	{

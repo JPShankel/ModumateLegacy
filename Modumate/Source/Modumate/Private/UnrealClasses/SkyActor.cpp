@@ -46,11 +46,18 @@ ASkyActor::ASkyActor()
 	extern FAutoConsoleVariableRef CVarRayTracingOcclusion;
 	auto bRTEnabledCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
 	if (bRTEnabledCVAR->GetInt() == 1)
+	{
 		SkyLight->SetIntensity(1.2f);
+		SkyLight->SetCastRaytracedShadow(true);
+		DirectionalLight->SetCastRaytracedShadow(true);
+	}
 	else
+	{
 		SkyLight->SetIntensity(1.0f);
-	SkyLight->SetCastRaytracedShadow(true);
-	DirectionalLight->SetCastRaytracedShadow(true);
+		SkyLight->SetCastRaytracedShadow(false);
+		DirectionalLight->SetCastRaytracedShadow(false);
+	}
+	
 	DirectionalLight->LightSourceAngle = 1.2f;
 	
 }
@@ -83,7 +90,7 @@ void ASkyActor::Tick(float DeltaTime)
 		SetActorLocation(Controller->PlayerCameraManager->GetCameraLocation());
 	}
 }
-
+extern FAutoConsoleVariableRef CVarRayTracingOcclusion;
 void ASkyActor::UpdateComponentsWithDateTime(const FDateTime &DateTime)
 {
 	FSunPositionData sunPositionData;
@@ -103,11 +110,11 @@ void ASkyActor::UpdateComponentsWithDateTime(const FDateTime &DateTime)
 	DirectionalLight->SetWorldRotation(FRotator(sunPositionData.CorrectedElevation, (sunPositionData.Azimuth - 90.f), 0.f));
 
 	float correctedDayLightBrightness;
-	extern FAutoConsoleVariableRef CVarRayTracingOcclusion;
+
 	auto bRTEnabledCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
 	if (bRTEnabledCVAR->GetInt() == 1)
 	{
-		correctedDayLightBrightness = RTDayLightBrightness;
+		correctedDayLightBrightness = DayLightBrightness;// RTDayLightBrightness;
 	}
 	else
 	{
@@ -132,12 +139,19 @@ void ASkyActor::UpdateComponentsWithDateTime(const FDateTime &DateTime)
 	DirectionalLight->SetLightColor(UKismetMathLibrary::LinearColorLerp(DayColor, DuskColor, newLightColorAlpha));
 
 	if (bRTEnabledCVAR->GetInt() == 1)
+	{
 		SkyLight->SetIntensity(1.2f);
+		SkyLight->SetCastRaytracedShadow(true);
+		DirectionalLight->SetCastRaytracedShadow(true);
+	}
 	else
+	{
 		SkyLight->SetIntensity(1.0f);
+		SkyLight->SetCastRaytracedShadow(false);
+		DirectionalLight->SetCastRaytracedShadow(false);
+	}
 
 	SkyLight->RecaptureSky();
-
 }
 
 void ASkyActor::SetCurrentDateTime(const FDateTime &NewDateTime)

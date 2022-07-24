@@ -12,8 +12,6 @@
 
 const FString FModumateUserSettings::FileName(TEXT("UserSettings.json"));
 
-
-
 FString FModumateUserSettings::GetLocalSavePath()
 {
 	return FPaths::Combine(FPlatformProcess::UserSettingsDir(), FApp::GetProjectName(), FileName);
@@ -150,7 +148,8 @@ FModumateGraphicsSettings::FModumateGraphicsSettings()
 {
 	bRayTracingCapable = IsRayTracingCapable();
 }
-
+extern FAutoConsoleVariableRef CVarRayTracingOcclusion;
+extern FAutoConsoleVariableRef CVarForceAllRayTracingEffects;
 bool FModumateGraphicsSettings::IsRayTracingCapable()
 {
 	FGPUDriverInfo GPUDriverInfo = FPlatformMisc::GetGPUDriverInfo(GRHIAdapterName);
@@ -170,7 +169,21 @@ bool FModumateGraphicsSettings::IsRayTracingCapable()
 			}
 		}
 	}
-
+	if (!bRayTracingCapable)
+	{
+		//if hardware does not support raytracing enforce all ray tracing effects off
+		auto bForceAllRTOff = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.ForceAllRayTracingEffects"));
+		if (bForceAllRTOff != nullptr)
+		{
+			bForceAllRTOff->Set(0, EConsoleVariableFlags::ECVF_SetByGameSetting);
+		}
+		auto enableRTShadowsCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
+		if (enableRTShadowsCVAR != nullptr)
+		{
+			enableRTShadowsCVAR->Set(0, EConsoleVariableFlags::ECVF_SetByGameSetting);
+		}
+	}
+	UE_LOG(LogTemp, Log, TEXT("bRayTracingCapable = %d"), bRayTracingCapable);
 	return bRayTracingCapable;
 }
 

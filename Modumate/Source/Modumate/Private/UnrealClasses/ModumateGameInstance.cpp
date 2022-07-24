@@ -133,6 +133,7 @@ void UModumateGameInstance::Init()
 	UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
 	APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
 	RTSettings->SetRayTracingEnabled(ppv, false);
+	UserSettings.GraphicsSettings.bRayTracingEnabled = false;
 	ApplyGraphicsFromModumateUserSettings();
 
 	if (ensure(DrawingDesignerMeshCacheClass))

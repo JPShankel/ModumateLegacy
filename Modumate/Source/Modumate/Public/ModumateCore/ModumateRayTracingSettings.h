@@ -1,4 +1,4 @@
-// Copyright 2019 Modumate, Inc. All Rights Reserved.
+// Copyright 2022 Modumate, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -9,14 +9,13 @@
 #include "ModumateRayTracingSettings.generated.h"
 
 
-UCLASS(Config = Game)
+UCLASS(config=Engine)
 class MODUMATE_API UModumateRayTracingSettings : public UObject
 {
 	GENERATED_UCLASS_BODY()
 public:
 	UPROPERTY(Config)
 	bool bRayTracingEnabled;
-	
 	/*
 		Ray Tracing Ambient Occlusion
 	*/
@@ -78,15 +77,15 @@ public:
 	UPROPERTY(Config)
 	TArray<float> RTExposure;
 	UPROPERTY(Config)
-	float RTCubemapIntensity = 1.5f;
+	float RTCubemapIntensity = 0.3f;
 	UPROPERTY(Config)
-	float DefaultCubemapIntensity = 0.0f;
+	float DefaultCubemapIntensity = 0.3f;
 	UPROPERTY(Config)
 	float RTToe= 0.4f;
 	UPROPERTY(Config)
 	float DefaultToe = 0.55f;
 	UPROPERTY(Config)
-	float DefaultExposure = 0.03f;
+	float DefaultExposure = 1.0f;
 
 	bool ApplyRayTraceQualitySettings(APostProcessVolume* ppv, uint8 QualitySetting);
 	void SetRayTracingEnabled(APostProcessVolume* ppv, bool bIsRayTracingEnabled);
