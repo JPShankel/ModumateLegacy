@@ -221,6 +221,11 @@ void ADrawingDesignerRender::RenderImage(AMOICutPlane* CutPlane, float MinLength
 	}
 
 	CaptureComponent->ClearShowOnlyComponents();
+	SceneStaticMaterialMap.Empty();
+	SceneMeshComponents.Empty();
+	HiddenObjects.Empty();
+
+	ExistingVisibility.Empty();
 
 	const FVector viewDirection = CutPlane->GetNormal();
 	InPlaneOffset = -0.5f * CaptureActorOffset * viewDirection;
@@ -250,6 +255,7 @@ void ADrawingDesignerRender::RenderImage(AMOICutPlane* CutPlane, float MinLength
 	SceneStaticMaterialMap.Empty();
 	SceneMeshComponents.Empty();
 	HiddenObjects.Empty();
+	ExistingVisibility.Empty();
 
 #if 0
 	UKismetRenderingLibrary::ExportRenderTarget(GetWorld(), RenderTarget, TEXT("/Modumate"), TEXT("portaldrawing_test.png"));
@@ -394,16 +400,18 @@ void ADrawingDesignerRender::RestoreFfeMaterials()
 
 void ADrawingDesignerRender::AddObjects(const FVector& ViewDirection, float MinLength)
 {
-	TArray<const AModumateObjectInstance*> sceneObjects = static_cast<const UModumateDocument*>(Doc)->GetObjectsOfType(RenderedObjectTypes);
+	TArray<AModumateObjectInstance*> sceneObjects = static_cast<UModumateDocument*>(Doc)->GetObjectsOfType(RenderedObjectTypes);
 	TArray<FDrawingDesignerLine> sceneLines;
 
-	for (const auto* moi : sceneObjects)
+	for (auto* moi : sceneObjects)
 	{
 		if (!HiddenObjects.Contains(moi))
 		{
-			const ACompoundMeshActor* compoundActor = Cast<ACompoundMeshActor>(moi->GetActor());
+			ACompoundMeshActor* compoundActor = Cast<ACompoundMeshActor>(moi->GetActor());
 			if (compoundActor)
 			{
+				ExistingVisibility.Add(compoundActor, !compoundActor->IsHidden());
+				compoundActor->SetActorHiddenInGame(false);
 				const int32 numComponents = compoundActor->UseSlicedMesh.Num();
 				for (int32 componentIndex = 0; componentIndex < numComponents; ++componentIndex)
 				{
@@ -442,9 +450,12 @@ void ADrawingDesignerRender::AddObjects(const FVector& ViewDirection, float MinL
 			}
 			else
 			{
-				const ADynamicMeshActor* dynamicActor = Cast<ADynamicMeshActor>(moi->GetActor());
+				ADynamicMeshActor* dynamicActor = Cast<ADynamicMeshActor>(moi->GetActor());
 				if (dynamicActor)
 				{
+					ExistingVisibility.Add(dynamicActor, !dynamicActor->IsHidden());
+					dynamicActor->SetActorHiddenInGame(false);
+
 					TArray<UProceduralMeshComponent*> meshComponents({ dynamicActor->Mesh, dynamicActor->MeshCap });
 					meshComponents.Append(dynamicActor->ProceduralSubLayers);
 					meshComponents.Append(dynamicActor->ProceduralSubLayerCaps);
@@ -495,10 +506,14 @@ void ADrawingDesignerRender::AddInPlaneObjects(AMOICutPlane* CutPlane, float Min
 
 void ADrawingDesignerRender::RestoreObjects()
 {
-	for (auto& meshKvp : SceneMeshComponents)
+	for (const auto& meshKvp : SceneMeshComponents)
 	{
 		meshKvp.Key->SetCustomDepthStencilValue(meshKvp.Value);
 		meshKvp.Key->SetRenderCustomDepth(meshKvp.Value != 0);
+	}
+	for (const auto& meshKvp : ExistingVisibility)
+	{
+		meshKvp.Key->SetActorHiddenInGame(!meshKvp.Value);
 	}
 }
 

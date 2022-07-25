@@ -75,7 +75,8 @@ private:
 	FVector InPlaneOffset;
 	float LineScalefactor = 1.0f;
 
-	TSet<AModumateObjectInstance*> HiddenObjects;
+	TSet<AModumateObjectInstance*> HiddenObjects;  // For per-cut-plane design options
+	TMap<AActor*, bool> ExistingVisibility;  // To restore pre-render visibility
 
 	// Stencil-buffer values that are coordinated with the post-process material PP_DrawingDesignerRender.
 	// Also with ALineActor::ToggleForDrawingRender().
