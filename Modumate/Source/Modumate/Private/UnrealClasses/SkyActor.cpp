@@ -114,7 +114,7 @@ void ASkyActor::UpdateComponentsWithDateTime(const FDateTime &DateTime)
 	auto bRTEnabledCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
 	if (bRTEnabledCVAR->GetInt() == 1)
 	{
-		correctedDayLightBrightness = DayLightBrightness;// RTDayLightBrightness;
+		correctedDayLightBrightness = RTDayLightBrightness;
 	}
 	else
 	{

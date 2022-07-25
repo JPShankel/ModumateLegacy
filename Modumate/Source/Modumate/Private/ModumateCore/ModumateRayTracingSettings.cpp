@@ -105,7 +105,6 @@ void UModumateRayTracingSettings::SetRayTracingEnabled(APostProcessVolume* ppv, 
 		return;
 	}
 	bRayTracingEnabled = bIsRayTracingEnabled;
-	//UserSettings.GraphicsSettings
 	ppv->Settings.bOverride_AmbientCubemapIntensity = true;
 	ppv->Settings.bOverride_AutoExposureMinBrightness = true;
 	ppv->Settings.bOverride_AutoExposureMaxBrightness = true;

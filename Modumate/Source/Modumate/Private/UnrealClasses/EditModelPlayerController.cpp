@@ -95,6 +95,8 @@
 #include "ToolsAndAdjustments/Tools/EditModelFaceHostedTool.h"
 #include "ToolsAndAdjustments/Tools/EditModelPattern2DTool.h"
 #include "UI/Custom/WebKeyboardCapture.h"
+#include "ModumateCore/ModumateRayTracingSettings.h"
+#include "UnrealClasses/SkyActor.h"
 
 const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetry"));
 
@@ -519,6 +521,20 @@ void AEditModelPlayerController::BeginPlay()
 	}
 
 	TryInitPlayerState();
+	//initialize RT settings to off.
+	UModumateRayTracingSettings* RTSettings = NewObject<UModumateRayTracingSettings>();
+	APostProcessVolume* ppv = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+	if (ppv != nullptr && RTSettings != nullptr)
+	{
+		RTSettings->Init();
+		RTSettings->SetRayTracingEnabled(ppv, false);
+	}
+	//update skylight
+	ASkyActor* skyActor = Cast<ASkyActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ASkyActor::StaticClass()));
+	if (skyActor != nullptr)
+	{
+		skyActor->UpdateComponentsWithDateTime(skyActor->GetCurrentDateTime());
+	}
 }
 
 bool AEditModelPlayerController::StartTelemetrySession(bool bRecordLoadedDocument)
