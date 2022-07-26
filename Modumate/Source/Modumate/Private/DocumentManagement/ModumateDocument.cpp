@@ -240,8 +240,6 @@ void UModumateDocument::Undo(UWorld *World)
 	if (controller->EMPlayerState->IsNetMode(NM_Client))
 	{
 		controller->EMPlayerState->TryUndo();
-		UpdateWebMOIs(EObjectType::OTCutPlane);
-		UpdateWebMOIs(EObjectType::OTCameraView);
 	}
 	else if (ensureAlways(!InUndoRedoMacro()))
 	{
@@ -261,8 +259,6 @@ void UModumateDocument::Redo(UWorld *World)
 	if (controller->EMPlayerState->IsNetMode(NM_Client))
 	{
 		controller->EMPlayerState->TryRedo();
-		UpdateWebMOIs(EObjectType::OTCutPlane);
-		UpdateWebMOIs(EObjectType::OTCameraView);
 	}
 	else if (ensureAlways(!InUndoRedoMacro()))
 	{
@@ -763,8 +759,7 @@ bool UModumateDocument::ApplyRemoteUndo(UWorld* World, const FString& UndoingUse
 	}
 
 	PostApplyDeltas(World, true, true);
-	UpdateWebMOIs(EObjectType::OTCutPlane);
-	UpdateWebMOIs(EObjectType::OTCameraView);
+
 	return true;
 }
 
@@ -1333,9 +1328,9 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 		{
 			UpdateWebMOIs(at);
 		}
+		//This forces an update of the renders on the DD side
+		UpdateWebMOIs(EObjectType::OTCutPlane);
 	}
-	UpdateWebMOIs(EObjectType::OTCutPlane);
-	UpdateWebMOIs(EObjectType::OTCameraView);
 
 	return true;
 }
