@@ -8,6 +8,7 @@
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Objects/ModumateObjectEnums.h"
 #include "Objects/DimensionOffset.h"
+#include "Objects/MOIState.h"
 #include "ToolsAndAdjustments/Common/ModumateSnappedCursor.h"
 #include "UObject/Object.h"
 
@@ -17,6 +18,8 @@
 struct FBIMAssemblySpec;
 class UModumateDocument;
 class AModumateObjectInstance;
+class AMOIPlaneHostedObj;
+class AMOIMetaPlaneSpan;
 struct FSimplePolygon;
 struct FWebMOI;
 
@@ -69,11 +72,14 @@ public:
 
 	static void GetGraphIDsFromMOIs(const TSet<AModumateObjectInstance *> &MOIs, TSet<int32> &OutGraphObjIDs);
 
+	static void GetMOIAlignmentTargets(const UModumateDocument* Doc, const AMOIMetaPlaneSpan* SpanMOI, TSet<int32>& OutTargets);
+
 	// Given a plane hosted object, find some basic values:
 	// the thickness of the assembly,
 	// the distance along its normal vector from which the rest of its layers are positioned,
 	// and the plane normal.
 	static bool GetPlaneHostedValues(const AModumateObjectInstance *PlaneHostedObj, float &OutThickness, float &OutStartOffset, FVector &OutNormal);
+	static bool GetPlaneHostedZonePlane(const AMOIPlaneHostedObj* PlaneHostedObj, const FString& ZoneID, EZoneOrigin Origin, float Offset, FPlane& OutPlane);
 
 	// Given a plane hosted object, find the outermost delta vectors from the plane to its layer extents.
 	// This does not include finishes or other hosted children (yet).

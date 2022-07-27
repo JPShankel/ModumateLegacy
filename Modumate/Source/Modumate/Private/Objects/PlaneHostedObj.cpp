@@ -39,12 +39,11 @@ FMOIPlaneHostedObjData::FMOIPlaneHostedObjData(int32 InVersion)
 {
 }
 
-
 AMOIPlaneHostedObj::AMOIPlaneHostedObj()
 	: AModumateObjectInstance()
 {
 	FWebMOIProperty prop;
-
+	
 	prop.Name = TEXT("Offset");
 	prop.Type = EWebMOIPropertyType::offset;
 	prop.DisplayName = TEXT("Offset");
@@ -169,6 +168,7 @@ bool AMOIPlaneHostedObj::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaP
 		}
 
 		UpdateMeshWithLayers(false, true);
+		UpdateAlignmentTargets();
 
 		// Mark SurfaceGraph children as structurally dirty, since their bounds may have changed as a result of re-mitering.
 		for (int32 childID : CachedChildIDs)
@@ -644,6 +644,8 @@ void AMOIPlaneHostedObj::UpdateConnectedEdges()
 			}
 		}
 	}
+
+	UpdateAlignmentTargets();
 }
 
 void AMOIPlaneHostedObj::MarkEdgesMiterDirty()
@@ -972,3 +974,87 @@ bool AMOIPlaneHostedObj::IsValidParentObjectType(EObjectType ParentObjectType) c
 {
 	return ParentObjectType == EObjectType::OTMetaPlane || ParentObjectType == EObjectType::OTMetaPlaneSpan;
 }
+
+void AMOIPlaneHostedObj::UpdateAlignmentTargets()
+{
+	const AMOIMetaPlaneSpan* parentSpan = Cast<const AMOIMetaPlaneSpan>(GetParentObject());
+
+	if (parentSpan != nullptr && parentSpan->GetPerimeterFace()!=nullptr)
+	{
+		TSet<int32> targets;
+		UModumateObjectStatics::GetMOIAlignmentTargets(Document, parentSpan, targets);
+		CachedAlignmentTargets = targets.Array();
+	}
+	else
+	{
+		return;
+	}
+
+	// If we don't have any alignment data, we're done
+	if (StateData.Alignment.SubjectPZP.ZoneID.IsEmpty())
+	{
+		return;
+	}
+
+	FPlane myPZP;
+	UModumateObjectStatics::GetPlaneHostedZonePlane(this, StateData.Alignment.SubjectPZP.ZoneID, StateData.Alignment.SubjectPZP.Origin, StateData.Alignment.SubjectPZP.Displacement, myPZP);
+
+	const AMOIPlaneHostedObj* target = Cast<AMOIPlaneHostedObj>(Document->GetObjectById(StateData.Alignment.TargetPZP.MoiId));
+	float delta=0.0f;
+	if (target != nullptr)
+	{
+		FPlane theirPZP;
+		UModumateObjectStatics::GetPlaneHostedZonePlane(target, StateData.Alignment.TargetPZP.ZoneID, StateData.Alignment.TargetPZP.Origin, StateData.Alignment.TargetPZP.Displacement, theirPZP);
+		delta = FVector::PointPlaneDist(myPZP.GetOrigin(), theirPZP.GetOrigin(), myPZP.GetNormal());
+	}
+	else
+	{
+		delta = FVector::PointPlaneDist(myPZP.GetOrigin(), parentSpan->GetPerimeterFace()->CachedPlane.GetOrigin(), myPZP.GetNormal());
+	}
+
+	InstanceData.Offset.Type = EDimensionOffsetType::Custom;
+	InstanceData.Offset.CustomValue = delta;
+	StateData.CustomData.SaveStructData(InstanceData);
+}
+
+bool AMOIPlaneHostedObj::ToWebMOI(FWebMOI& OutMOI) const
+{
+	if (Super::ToWebMOI(OutMOI))
+	{
+		for (auto& layer : GetAssembly().Layers)
+		{
+			FWebMOIZone& zone = OutMOI.Zones.AddDefaulted_GetRef();
+			zone.ID = layer.PresetZoneID;
+			zone.DisplayName = layer.ZoneDisplayName;
+		}
+
+		for (auto& alignmentTarget : CachedAlignmentTargets)
+		{
+			const AModumateObjectInstance* MOI = Document->GetObjectById(alignmentTarget);
+			if (ensure(MOI != nullptr))
+			{
+				FWebMOIAlignmentTarget& newTarget = OutMOI.AlignmentTargets.AddDefaulted_GetRef();
+				newTarget.MoiID = MOI->ID;
+				
+				FBIMPresetCollection& presetCollection = Document->GetPresetCollection();
+				const FBIMPresetInstance* preset = presetCollection.PresetFromGUID(MOI->GetStateData().AssemblyGUID);
+				if (ensure(preset != nullptr))
+				{
+					newTarget.PresetID = MOI->GetStateData().AssemblyGUID;
+					newTarget.DisplayName = preset->DisplayName.ToString();
+				}
+				
+				for (auto& layer : MOI->GetAssembly().Layers)
+				{
+					FWebMOIZone& newZone = newTarget.Zones.AddDefaulted_GetRef();
+					newZone.ID = layer.PresetZoneID;
+					newZone.DisplayName = layer.ZoneDisplayName;
+				}
+			}
+		}
+
+		return true;
+	}
+	return false;
+}
+

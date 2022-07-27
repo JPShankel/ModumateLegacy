@@ -752,6 +752,7 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 	StateData.DisplayName = webMOI.DisplayName;
 	StateData.ParentID = webMOI.Parent;
 	StateData.AssemblyGUID = webMOI.PresetID;
+	StateData.Alignment = webMOI.Alignment;
 
 	bVisible = webMOI.isVisible;
 
@@ -854,6 +855,15 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 					}
 				}
 
+				if (structProp->Struct == FMOIAlignment::StaticStruct())
+				{
+					FMOIAlignment* offsetPtr = structProp->ContainerPtrToValuePtr<FMOIAlignment>(structPtr);
+					if (offsetPtr != nullptr)
+					{
+						offsetPtr->FromString(moiProp->ValueArray[0]);
+					}
+				}
+				
 				if (structProp->Struct->GetName() == TEXT("Vector"))
 				{
 					FVector* vectorPtr = structProp->ContainerPtrToValuePtr<FVector>(structPtr);
@@ -929,6 +939,7 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 	OutMOI.Type = GetObjectType();
 	OutMOI.Children = GetChildIDs();
 	OutMOI.PresetID = GetStateData().AssemblyGUID;
+	OutMOI.Alignment = GetStateData().Alignment;
 
 	// Get custom data
 	UScriptStruct* structDef;
@@ -1007,8 +1018,6 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 			FScriptArrayHelper arrayHelp(arrayProp, propAddr);
 			int32 numElements = arrayHelp.Num();
 
-			auto innerClass = arrayProp->Inner->StaticClass();
-
 			if (arrayProp->Inner->IsA<FIntProperty>())
 			{
 				const int32* intArray = reinterpret_cast<int32*>(arrayHelp.GetRawPtr());
@@ -1039,12 +1048,18 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 			if (structProp->Struct == FDimensionOffset::StaticStruct())
 			{
 				// Get the data pointer and store its string value
-				const FDimensionOffset* demoPtr = structProp->ContainerPtrToValuePtr<FDimensionOffset>(structPtr);
-				if (demoPtr != nullptr)
+				const FDimensionOffset* offsetPtr = structProp->ContainerPtrToValuePtr<FDimensionOffset>(structPtr);
+				if (offsetPtr != nullptr)
 				{
-					webProp.ValueArray.Add(demoPtr->ToString());
+					webProp.ValueArray.Add(offsetPtr->ToString());
 					OutMOI.Properties.Add(webProp.Name, webProp);
 				}
+			}
+
+			if (structProp->Struct == FMOIAlignment::StaticStruct())
+			{
+				webProp.ValueArray.Add(StateData.Alignment.ToString());
+				OutMOI.Properties.Add(webProp.Name, webProp);
 			}
 
 			if (structProp->Struct->GetName() == TEXT("Vector"))

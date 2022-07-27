@@ -57,6 +57,7 @@ enum class ECSVMatrixNames : uint8
 	StartsInProject,
 	SubcategoryPath,
 	EdgeDetail,
+	AlignmentDetail,
 	PatternSegments,
 	PatternSpans,
 	PatternHostedElements,

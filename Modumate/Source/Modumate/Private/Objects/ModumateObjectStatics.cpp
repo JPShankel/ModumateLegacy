@@ -1723,3 +1723,106 @@ bool UModumateObjectStatics::IsValidParentObjectType(EObjectType ParentObjectTyp
 	
 	return CompatibleObjectTypes.Contains(ParentObjectType);
 }
+
+bool UModumateObjectStatics::GetPlaneHostedZonePlane(const AMOIPlaneHostedObj* PlaneHostedObj, const FString& ZoneID, EZoneOrigin Origin, float Offset, FPlane& OutPlane)
+{
+	if (PlaneHostedObj == nullptr)
+	{
+		return false;
+	}
+
+	const AMOIMetaPlaneSpan* parentSpan = Cast<AMOIMetaPlaneSpan>(PlaneHostedObj->GetParentObject());
+	if (parentSpan == nullptr)
+	{
+		return false;
+	}
+
+	float thickness = Offset;
+	if (Origin != EZoneOrigin::MassingPlane)
+	{
+		const FBIMLayerSpec* layerSpec = nullptr;
+		for (const auto& lp : PlaneHostedObj->GetAssembly().Layers)
+		{
+			if (lp.PresetZoneID == ZoneID)
+			{
+				layerSpec = &lp;
+				break;
+			}
+			thickness += lp.ThicknessCentimeters;
+		}
+
+		if (ensure(layerSpec != nullptr))
+		{
+			switch (Origin)
+			{
+			case EZoneOrigin::Back: thickness += layerSpec->ThicknessCentimeters; break;
+			case EZoneOrigin::Center: thickness += layerSpec->ThicknessCentimeters * 0.5f; break;
+			};
+		}
+	}
+
+	OutPlane = parentSpan->GetPerimeterFace()->CachedPlane;
+	FVector outplaneOrigin = OutPlane.GetOrigin();
+
+	outplaneOrigin -= OutPlane.GetNormal() * PlaneHostedObj->CalculateThickness() * 0.5f;
+	outplaneOrigin += OutPlane.GetNormal() * thickness;
+
+	OutPlane = FPlane(outplaneOrigin, OutPlane.GetNormal());
+
+	return true;
+}
+
+void UModumateObjectStatics::GetMOIAlignmentTargets(const UModumateDocument* Doc, const AMOIMetaPlaneSpan* SpanMOI, TSet<int32>& OutTargets)
+{
+	OutTargets.Reset();
+	if (SpanMOI == nullptr)
+	{
+		return;
+	}
+
+	const FGraph3DFace* spanFace = SpanMOI->GetPerimeterFace();
+	const FGraph3D* graph3D = spanFace && spanFace->EdgeIDs.Num() > 0 ? Doc->FindVolumeGraph(spanFace->EdgeIDs[0]) : nullptr;
+
+	if (!ensure(graph3D != nullptr))
+	{
+		return;
+	}
+
+	TArray<int32> spanMembers = SpanMOI->GetFaceSpanMembers();
+
+	TSet<FGraphSignedID> allFaces;
+	for (auto edge : spanFace->EdgeIDs)
+	{
+		const FGraph3DEdge* edgePtr = graph3D->GetEdges().Find(FMath::Abs(edge));
+		if (edgePtr == nullptr)
+		{
+			continue;
+		}
+		for (auto faceCon : edgePtr->ConnectedFaces)
+		{
+			// negative indices indicate reverse winding
+			int32 faceAbs = FMath::Abs(faceCon.FaceID);
+			if (!spanMembers.Contains(faceAbs))
+			{
+				const FGraph3DFace* facePtr = graph3D->GetFaces().Find(faceAbs);
+				if (ensure(facePtr != nullptr) && UModumateGeometryStatics::ArePlanesCoplanar(facePtr->CachedPlane, spanFace->CachedPlane))
+				{
+					allFaces.Add(faceAbs);
+				}
+			}
+		}
+	}
+
+	for (auto face : allFaces)
+	{
+		TArray<const AModumateObjectInstance*> descendents;
+		UModumateObjectStatics::GetAllDescendents(Doc->GetObjectById(face), descendents);
+		for (auto* descendent : descendents)
+		{
+			if (Cast<AMOIPlaneHostedObj>(descendent) != nullptr)
+			{
+				OutTargets.Add(descendent->ID);
+			}
+		}
+	}
+}

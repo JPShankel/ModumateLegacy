@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Objects/MOIState.h"
 
 #include "EdgeDetailData.generated.h"
 
@@ -144,3 +145,32 @@ struct TStructOpsTypeTraits<FEdgeDetailData> : public TStructOpsTypeTraitsBase2<
 	};
 };
 
+USTRUCT()
+struct MODUMATE_API FBIMAlignmentDetail
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FGuid SubjectPreset;
+
+	UPROPERTY()
+	EZoneOrigin SubjectOrigin;
+
+	UPROPERTY()
+	FString SubjectZone;
+
+	UPROPERTY()
+	float SubjectDisplacement = 0.0f;
+
+	UPROPERTY()
+	FGuid TargetPreset;
+
+	UPROPERTY()
+	EZoneOrigin TargetOrigin;
+
+	UPROPERTY()
+	FString TargetZone;
+
+	UPROPERTY()
+	float TargetDisplacement = 0.0f;
+};

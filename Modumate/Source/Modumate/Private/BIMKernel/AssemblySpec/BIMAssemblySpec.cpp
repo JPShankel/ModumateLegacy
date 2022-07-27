@@ -98,6 +98,8 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 		}
 	}
 
+	// TODO: derive zone ids from presets, for now just make them unique
+	int32 zoneID = 0;
 	while (iteratorStack.Num() > 0)
 	{
 		// Make a copy of the top iterator
@@ -162,6 +164,9 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBI
 			presetIterator.TargetProperties = nullptr;
 			presetIterator.TargetLayer->MeasurementMethod = presetIterator.Preset->MeasurementMethod;
 			presetIterator.TargetLayer->PresetGUID = presetIterator.PresetGUID;
+			// TODO: derive zone id from preset and pin, just a sequence for now
+			presetIterator.TargetLayer->PresetZoneID = presetIterator.Preset->DisplayName.ToString() + FString::Printf(TEXT("%d"), ++zoneID);
+			presetIterator.TargetLayer->ZoneDisplayName = presetIterator.TargetLayer->PresetZoneID;
 			presetIterator.TargetLayer->UpdatePatternFromPreset(InDB, *presetIterator.Preset);
 		}
 		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Module || presetIterator.Preset->NodeScope == EBIMValueScope::Gap)

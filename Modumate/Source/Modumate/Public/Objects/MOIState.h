@@ -14,7 +14,8 @@ enum class EZoneOrigin : uint8
 	None = 0,
 	Center,
 	Back,
-	Front
+	Front,
+	MassingPlane
 };
 
 USTRUCT()
@@ -45,15 +46,42 @@ struct MODUMATE_API FMOIZoneOffset
 };
 
 USTRUCT()
-struct MODUMATE_API FMOIOffset
+struct MODUMATE_API FMOIPresetZonePlane
 {
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FMOIZoneOffset SubjectOffset;
+	int32 MoiId = 0;
+
+	UPROPERTY()
+	FString ZoneID;
+
+	UPROPERTY()
+	EZoneOrigin Origin = EZoneOrigin::Center;
+
+	UPROPERTY()
+	float Displacement = 0.0f;
+
+	bool operator==(const FMOIPresetZonePlane& Other) const;
+	bool operator!=(const FMOIPresetZonePlane& Other) const;
+};
+
+USTRUCT()
+struct MODUMATE_API FMOIAlignment
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FMOIPresetZonePlane SubjectPZP;
 	
 	UPROPERTY()
-	FMOIZoneOffset TargetOffset;
+	FMOIPresetZonePlane TargetPZP;
+	
+	bool operator==(const FMOIAlignment& Other) const;
+	bool operator!=(const FMOIAlignment& Other) const;
+
+	FString ToString() const;
+	void FromString(FString& str);
 };
 
 USTRUCT()
@@ -83,7 +111,7 @@ struct MODUMATE_API FMOIStateData
 	FStructDataWrapper CustomData;
 
 	UPROPERTY()
-	FMOIOffset Offset;
+	FMOIAlignment Alignment;
 
 	bool operator==(const FMOIStateData& Other) const;
 	bool operator!=(const FMOIStateData& Other) const;

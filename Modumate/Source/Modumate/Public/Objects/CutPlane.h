@@ -102,6 +102,7 @@ protected:
 
 	bool bHUDDwgDrafting;
 	bool bIsCulling = false;
+
 	
 	TArray<int32> CachedForegroundMOIs;
 };

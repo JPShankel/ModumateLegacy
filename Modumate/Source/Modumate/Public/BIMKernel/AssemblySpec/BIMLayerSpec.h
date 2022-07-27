@@ -33,9 +33,6 @@ private:
 
 public:
 	UPROPERTY()
-	ELayerFunction Function = ELayerFunction::None;
-
-	UPROPERTY()
 	FString CodeName;
 
 	UPROPERTY()
@@ -56,6 +53,12 @@ public:
 
 	UPROPERTY()
 	FGuid PresetGUID;
+
+	UPROPERTY()
+	FString PresetZoneID;
+
+	UPROPERTY()
+	FString ZoneDisplayName;
 
 	UPROPERTY()
 	FBIMPresetLayerPriority LayerPriority;

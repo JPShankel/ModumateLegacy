@@ -49,45 +49,6 @@ enum class EBIMResult : uint8
 	Error
 };
 
-UENUM(BlueprintType)
-enum class ELayerFunction : uint8
-{
-	None,
-	Void,
-	Insulation,
-	Structure,
-	Substrate,
-	Membrane,
-	// Items below are for finishes, for now
-	Adhesive,
-	Underlayment,
-	Finish,
-	Abstract
-};
-
-UENUM(BlueprintType)
-enum class ELayerFormat : uint8
-{
-	None,
-	Block,
-	Board,
-	Brick,
-	Channel,
-	Deck,
-	Joist,
-	Masonry,
-	Mass,
-	Panel,
-	Plank,
-	Roll,
-	Spread,
-	Stud,
-	Sheet,
-	Shingle,
-	Tile
-};
-
-
 UENUM()
 enum class EPresetMeasurementMethod : uint8
 {

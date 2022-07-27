@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "Objects/ModumateObjectEnums.h"
+#include "Objects/MOIState.h"
 #include "WebMOI.generated.h"
 
 UENUM()
@@ -59,6 +60,36 @@ struct MODUMATE_API FWebMOIProperty
 };
 
 USTRUCT()
+struct MODUMATE_API FWebMOIZone
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString ID;
+
+	UPROPERTY()
+	FString DisplayName;
+};
+
+USTRUCT()
+struct MODUMATE_API FWebMOIAlignmentTarget
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	int32 MoiID;
+	
+	UPROPERTY()
+	FGuid PresetID;
+
+	UPROPERTY()
+	FString DisplayName;
+
+	UPROPERTY()
+	TArray<FWebMOIZone> Zones;
+};
+
+USTRUCT()
 struct MODUMATE_API FWebMOI
 {
 	GENERATED_BODY()
@@ -102,6 +133,15 @@ struct MODUMATE_API FWebMOI
 	{
 		return !(Lhs == RHS);
 	}
+
+	UPROPERTY()
+	FMOIAlignment Alignment;
+
+	UPROPERTY()
+	TArray<FWebMOIZone> Zones;
+
+	UPROPERTY()
+	TArray<FWebMOIAlignmentTarget> AlignmentTargets;
 };
 
 USTRUCT()

@@ -85,9 +85,12 @@ public:
 
 	virtual bool GetBoundingLines(TArray<FDrawingDesignerLine>& outBounding)  const override;
 
+	virtual bool ToWebMOI(FWebMOI& OutMOI) const override;
+
 protected:
 	virtual void PostLoadInstanceData() override;
 	virtual void UpdateQuantities() override;
+	void UpdateAlignmentTargets();
 
 	void UpdateMeshWithLayers(bool bRecreateMesh, bool bRecalculateEdgeExtensions);
 	void UpdateConnectedEdges();
@@ -105,6 +108,7 @@ protected:
 	FCachedLayerDimsByType CachedLayerDims;
 	TArray<FLayerGeomDef> LayerGeometries;
 	TArray<FPolyHole3D> CachedHoles;
+	TArray<int32> CachedAlignmentTargets;
 	TPair<TArray<FVector>, TArray<FVector>> CachedExtendedSurfaceFaces;
 	mutable TArray<FVector> TempHoleRelativePoints;
 
