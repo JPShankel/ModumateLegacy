@@ -1921,12 +1921,19 @@ void AEditModelPlayerState::AddHideObjectsById(const TArray<int32>& IDs, bool bU
 		}
 	}
 
+	bool bAnyUnhidden = HiddenObjectsID.Num() > 0;
+
 	// UpdateDesignOptionVisibility uses this function to set visibility of design option groups
 	// Design options use the player state's hidden object system to track hidden objects
 	// This list can be overridden by user actions to hide/unhide objects, but we want the design option visibility to win
 	if (bUpdateDesignOptions)
 	{
 		UModumateObjectStatics::UpdateDesignOptionVisibility(gameState->Document);
+	}
+	
+	if (bAnyUnhidden)
+	{
+		SendWebPlayerState();
 	}
 }
 
