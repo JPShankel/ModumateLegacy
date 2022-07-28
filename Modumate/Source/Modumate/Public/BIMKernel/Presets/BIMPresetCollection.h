@@ -103,6 +103,9 @@ struct MODUMATE_API FBIMPresetCollection
 	TSharedPtr<FBIMPresetDelta> MakeDuplicateDelta(const FGuid& OriginalID, FBIMPresetInstance& NewPreset, UObject* AnalyticsWorldContextObject = nullptr);
 	EBIMResult MakeDeleteDeltas(const FGuid& DeleteGUID, const FGuid& ReplacementGUID, TArray<FDeltaPtr>& OutDeltas, UObject* AnalyticsWorldContextObject = nullptr);
 
+	// Datasmith
+	EBIMResult MakeNewPresetFromDatasmith(const FModumateDatabase& AssetDatabase, const FString& NewPresetName, const FGuid& ArchitecturalMeshID, FGuid& OutPresetID);
+
 	bool TryGetProjectAssemblyForPreset(EObjectType ObjectType, const FGuid& PresetID, FBIMAssemblySpec& OutAssembly) const;
 	bool TryGetDefaultAssemblyForToolMode(EToolMode ToolMode, FBIMAssemblySpec& OutAssembly) const;
 

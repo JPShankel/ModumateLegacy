@@ -118,4 +118,7 @@ public:
 	bool UnitTest();
 
 	TModumateDataCollection<FRoomConfiguration> RoomConfigurations;
+
+	// Datasmith
+	void AddArchitecturalMeshFromDatasmith(const FString& AssetUrl, FGuid& OutArchitecturalMeshKey);
 };

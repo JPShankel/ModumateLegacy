@@ -1031,6 +1031,36 @@ EBIMResult FBIMPresetCollection::MakeDeleteDeltas(const FGuid& DeleteGUID, const
 	return EBIMResult::Success;
 }
 
+EBIMResult FBIMPresetCollection::MakeNewPresetFromDatasmith(const FModumateDatabase& AssetDatabase, const FString& NewPresetName, const FGuid& ArchitecturalMeshID, FGuid& OutPresetID)
+{
+	const FBIMAssemblySpec* originalPresetAssembly = DefaultAssembliesByObjectType.Find(EObjectType::OTFurniture);
+	const FBIMPresetInstance* original = PresetFromGUID(originalPresetAssembly->UniqueKey());
+	if (!ensureAlways(original != nullptr))
+	{
+		return EBIMResult::Error;
+	}
+
+	FBIMPresetInstance NewPreset = *original;
+	NewPreset.DisplayName = FText::Format(LOCTEXT("DisplayName", "Datasmith from {0}"), FText::FromString(NewPresetName));
+	NewPreset.Properties.SetProperty(NewPreset.NodeScope, BIMPropertyNames::Name, NewPreset.DisplayName.ToString());
+	NewPreset.Properties.SetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, ArchitecturalMeshID.ToString());
+
+	GetAvailableGUID(NewPreset.GUID);
+	OutPresetID = NewPreset.GUID;
+	AddPreset(NewPreset);
+
+	FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(EObjectType::OTFurniture);
+	FBIMAssemblySpec newSpec;
+	if (newSpec.FromPreset(AssetDatabase, FBIMPresetCollectionProxy(*this), NewPreset.GUID) == EBIMResult::Success)
+	{
+		db.AddData(newSpec);
+		return EBIMResult::Success;
+	}
+
+	return EBIMResult::Error;
+}
+
+
 FBIMPresetCollectionProxy::FBIMPresetCollectionProxy(const FBIMPresetCollection& InCollection) : BaseCollection(&InCollection)
 {}
 

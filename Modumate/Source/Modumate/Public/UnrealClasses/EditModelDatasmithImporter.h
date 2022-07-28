@@ -24,6 +24,14 @@ struct MODUMATE_API FAssetRequest
 	FCallback CallbackTask = nullptr;
 };
 
+UENUM(BlueprintType)
+enum class EAssetImportLoadStatus : uint8
+{
+	None,
+	Loading,
+	Loaded
+};
+
 UCLASS()
 class MODUMATE_API AEditModelDatasmithImporter : public AActor
 {
@@ -37,13 +45,25 @@ public:
 	USceneComponent* Root;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TSubclassOf<ADatasmithRuntimeActor> DatasmithRuntimeActorClass;
+	TSubclassOf<class AEditModelDatasmithRuntimeActor> DatasmithRuntimeActorClass;
 
 	UPROPERTY()
-	TWeakObjectPtr<ADatasmithRuntimeActor> DatasmithRuntimeActor = nullptr;
+	TWeakObjectPtr<class AEditModelDatasmithRuntimeActor> CurrentDatasmithRuntimeActor = nullptr;
 
-	// TODO: Check how this get clean and garbage collect
+	// This is the time in second for calling a method to check whether a second attempt is necessary
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float CheckAfterImportTime = 5.f;
+
 	TMap<FGuid, TArray<UStaticMesh*>> StaticMeshAssetMap;
+	TMap<FGuid, TArray<FTransform>> StaticMeshTransformMap;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TMap<FGuid, EAssetImportLoadStatus> PresetLoadStatusMap;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TMap<FGuid, class AEditModelDatasmithRuntimeActor*> PresetToDatasmithRuntimeActorMap;
+
+	FTimerHandle AssetImportCheckTimer;
 
 protected:
 	// Called when the game starts or when spawned
@@ -59,4 +79,9 @@ public:
 
 	void RequestCompleteCallback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void HandleAssetRequest(const FAssetRequest& InAssetRequest);
+
+	void OnRuntimeActorImportDone(class AEditModelDatasmithRuntimeActor* FromActor);
+
+	UFUNCTION()
+	void OnAssetImportCheckTimer();
 };

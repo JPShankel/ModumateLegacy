@@ -24,8 +24,11 @@
 #include "DrawingDesigner/DrawingDesignerLine.h"
 
 #define DEBUG_NINE_SLICING 0
+#define DEBUG_USE_IMPORT_ASSETS 1
+
 int32 ACompoundMeshActor::MaxLightCount = 0;
 int32 ACompoundMeshActor::CurrentLightCount = 0;
+
 // Sets default values
 ACompoundMeshActor::ACompoundMeshActor()
 {
@@ -64,6 +67,22 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 	// Figure out how many components we might need.
 
 	int32 maxNumMeshes = ObAsm.Parts.Num();
+
+	// Datasmith assets
+	TArray<UStaticMesh*> importedAssets;
+	TArray<FTransform> importedMeshTransforms;
+	bool bUsesImportedAssets = ObAsm.Parts.Num() > 0 && !ObAsm.Parts[0].Mesh.DatasmithUrl.IsEmpty();
+	if (bUsesImportedAssets)
+	{
+		auto controller = GetWorld() ? GetWorld()->GetFirstPlayerController<AEditModelPlayerController>() : nullptr;
+		auto importer = controller ? controller->EditModelDatasmithImporter : nullptr;
+		if (importer && importer->PresetLoadStatusMap.FindRef(ObAsm.PresetGUID) == EAssetImportLoadStatus::Loaded)
+		{
+			importedAssets = importer->StaticMeshAssetMap.FindRef(ObAsm.PresetGUID);
+			importedMeshTransforms = importer->StaticMeshTransformMap.FindRef(ObAsm.PresetGUID);
+			maxNumMeshes = importedAssets.Num();
+		}
+	}
 
 	if (!ensureAlways(PartIndex >= 0 && PartIndex < maxNumMeshes))
 	{
@@ -130,16 +149,20 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 			continue;
 		}
 
+		UStaticMesh* partMesh = nullptr;
+
 		const FBIMPartSlotSpec& assemblyPart = ObAsm.Parts[slotIdx];
 		// Part[0] and potentially other parts are mesh-less containers used to store parenting values
 		// All they need is their VariableValues set, there are no mesh components to make
-		if (!assemblyPart.Mesh.EngineMesh.IsValid())
+		if (assemblyPart.Mesh.EngineMesh.IsValid())
 		{
-			continue;
+			partMesh = assemblyPart.Mesh.EngineMesh.Get();
 		}
-
-		// Now make the mesh component and set it up using the cached transform data
-		UStaticMesh* partMesh = assemblyPart.Mesh.EngineMesh.Get();
+		else if (bUsesImportedAssets && importedAssets.IsValidIndex(slotIdx))
+		{
+			// TODO Datasmith: FFE only uses one part
+			partMesh = importedAssets[slotIdx];
+		}
 
 		// Make sure that there's a static mesh component for each part that has the engine mesh.
 		UStaticMeshComponent* partStaticMeshComp = StaticMeshComps[slotIdx];
@@ -160,6 +183,26 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 
 		bool bMeshChanged = partStaticMeshComp->SetStaticMesh(partMesh);
 		partStaticMeshComp->SetMobility(EComponentMobility::Movable);
+
+#if DEBUG_USE_IMPORT_ASSETS
+		if (importedAssets.Num() > 0)
+		{
+			for (int32 i = 1; i < importedAssets.Num(); ++i)
+			{
+				UStaticMeshComponent* comp = StaticMeshComps[i];
+				if (comp == nullptr)
+				{
+					comp = NewObject<UStaticMeshComponent>(this);
+					comp->SetupAttachment(rootComp);
+					AddOwnedComponent(comp);
+					comp->RegisterComponent();
+					StaticMeshComps[i] = comp;
+				}
+				comp->SetStaticMesh(importedAssets[i]);
+				comp->SetMobility(EComponentMobility::Movable);
+			}
+		}
+#endif
 
 		const FVector& partRelativePos = CachedPartLayout.PartSlotInstances[slotIdx].Location;
 		FRotator partRotator = FRotator::MakeFromEuler(CachedPartLayout.PartSlotInstances[slotIdx].Rotation);
@@ -232,6 +275,23 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 			partStaticMeshComp->SetRelativeLocation(rootFlip * partRelativePos);
 			partStaticMeshComp->SetRelativeRotation(partRotator);
 			partStaticMeshComp->SetRelativeScale3D(rootFlip * partScale * CachedPartLayout.PartSlotInstances[slotIdx].FlipVector);
+
+#if DEBUG_USE_IMPORT_ASSETS
+			if (importedAssets.Num() > 0)
+			{
+				for (int32 i = 0; i < importedAssets.Num(); ++i)
+				{
+					UStaticMeshComponent* comp = StaticMeshComps[i];
+					comp->SetVisibility(true);
+					comp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+					comp->SetRelativeLocation(rootFlip * importedMeshTransforms[i].GetLocation());
+					comp->SetRelativeRotation(importedMeshTransforms[i].GetRotation());
+					comp->SetRelativeScale3D(rootFlip * partScale * CachedPartLayout.PartSlotInstances[slotIdx].FlipVector);
+				}
+			}
+#endif
+
 
 			UModumateFunctionLibrary::SetMeshMaterialsFromMapping(partStaticMeshComp, assemblyPart.ChannelMaterials);
 

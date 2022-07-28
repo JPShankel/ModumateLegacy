@@ -568,3 +568,15 @@ bool FModumateDatabase::UnitTest()
 
 	return bSuccess;
 }
+
+void FModumateDatabase::AddArchitecturalMeshFromDatasmith(const FString& AssetUrl, FGuid& OutArchitecturalMeshKey)
+{
+	FArchitecturalMesh mesh;
+	//mesh.NativeSize = InNativeSize;
+	//mesh.NineSliceBox = InNineSliceBox;
+	mesh.Key = FGuid::NewGuid(); // This is empty because Datasmith file is not part of embedded meshes
+	OutArchitecturalMeshKey = mesh.Key;
+	mesh.DatasmithUrl = AssetUrl;
+
+	AMeshes.AddData(mesh);
+}

@@ -2,8 +2,14 @@
 
 #include "UnrealClasses/EditModelDatasmithImporter.h"
 #include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelDatasmithRuntimeActor.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
+#include "DocumentManagement/ModumateDocument.h"
+#include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "DatasmithRuntimeBlueprintLibrary.h"
 #include "TimerManager.h"
+#include "ModumateCore/PlatformFunctions.h"
 
 // Sets default values
 AEditModelDatasmithImporter::AEditModelDatasmithImporter()
@@ -15,26 +21,36 @@ AEditModelDatasmithImporter::AEditModelDatasmithImporter()
 void AEditModelDatasmithImporter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	FActorSpawnParameters datasmithRuntimeActorSpawnParams;
-	datasmithRuntimeActorSpawnParams.Name = FName(*FString::Printf(TEXT("%s_DatasmithRuntimeActor"), *GetName()));
-	DatasmithRuntimeActor = GetWorld()->SpawnActor<ADatasmithRuntimeActor>(DatasmithRuntimeActorClass, datasmithRuntimeActorSpawnParams);
-	DatasmithRuntimeActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
 }
 
 bool AEditModelDatasmithImporter::ImportDatasmithFromDialogue()
 {
-	// For now, spawn a new datasmith actor
-	DatasmithRuntimeActor = GetWorld()->SpawnActor<ADatasmithRuntimeActor>(DatasmithRuntimeActorClass, FTransform::Identity);
-	if (DatasmithRuntimeActor == nullptr)
+	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+	controller->EMPlayerState->ShowingFileDialog = true;
+
+	FString filename;
+	bool bLoadSuccess = false;
+
+	// Open import dialog
+	if (FModumatePlatform::GetOpenFilename(filename, nullptr, false))
 	{
-		return false;
+		// Create new archMesh from Datasmith
+		FGuid newArchitecturalMeshKey;
+		FModumateDatabase* db = GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase;
+		db->AddArchitecturalMeshFromDatasmith(filename, newArchitecturalMeshKey);
+
+		// Create new preset
+		int32 urlLastSlashIdx;
+		filename.FindLastChar(TEXT('\\'), urlLastSlashIdx);
+		FString newPresetName = filename.RightChop(urlLastSlashIdx + 1);
+
+		FGuid newPresetID;
+		controller->GetDocument()->GetPresetCollection().MakeNewPresetFromDatasmith(*db, newPresetName, newArchitecturalMeshKey, newPresetID);
+		controller->GetDocument()->UpdateWebPresets();
 	}
-	const FString defaultPath;
-	bool bLoadResult = UDatasmithRuntimeLibrary::LoadFileFromExplorer(DatasmithRuntimeActor.Get(), defaultPath);
 
-	return bLoadResult;
-
+	controller->EMPlayerState->ShowingFileDialog = false;
+	return bLoadSuccess;
 }
 
 bool AEditModelDatasmithImporter::ImportDatasmithFromURL(const FString& URL)
@@ -67,65 +83,117 @@ void AEditModelDatasmithImporter::RequestCompleteCallback(FHttpRequestPtr Reques
 		FString cacheFile = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), cacheFileName);
 		FFileHelper::SaveStringToFile(Response->GetContentAsString(), *cacheFile);
 
-		bool bLoadResult = UDatasmithRuntimeLibrary::LoadFile(DatasmithRuntimeActor.Get(), cacheFile);
+		bool bLoadResult = UDatasmithRuntimeLibrary::LoadFile(CurrentDatasmithRuntimeActor.Get(), cacheFile);
 		UE_LOG(LogTemp, Error, TEXT("bLoadResult is %s"), (bLoadResult ? TEXT("true") : TEXT("false")));
 	}
 }
 
 void AEditModelDatasmithImporter::HandleAssetRequest(const FAssetRequest& InAssetRequest)
 {
-	const auto assets = StaticMeshAssetMap.FindRef(InAssetRequest.Assembly.PresetGUID);
-
-	if (assets.Num() > 0)
+	if (!ensure(InAssetRequest.Assembly.Parts.Num() != 0))
 	{
-		// If there are assets available, call the task
-		InAssetRequest.CallbackTask();
+		return;
 	}
-	else
+
+	// Check if this is an embedded assets first
+	FSoftObjectPath assetRequestPath = InAssetRequest.Assembly.Parts[0].Mesh.AssetPath;
+	if ((assetRequestPath.IsAsset() && assetRequestPath.IsValid()))
 	{
-		// Fake lazy load if assets are unavailable
-		// TODO: Check if the same asset is currently loading
-#if 0
-		auto weakThis = MakeWeakObjectPtr<AEditModelDatasmithImporter>(this);
-		FTimerManager& timerManager = GetWorld()->GetFirstPlayerController()->GetWorldTimerManager();
-		FTimerHandle loadTimerHandle;
-
-		timerManager.SetTimer(loadTimerHandle, [weakThis, InAssetRequest]() {
-			if (weakThis.IsValid())
-			{
-				// Fake save meshes that would be downloaded
-				TArray<UStaticMesh*> requestMeshes;
-				for (auto curPart : InAssetRequest.Assembly.Parts)
-				{
-					if (curPart.Mesh.EngineMesh.IsValid())
-					{
-						requestMeshes.Add(curPart.Mesh.EngineMesh.Get());
-					}
-				}
-				weakThis->StaticMeshAssetMap.Add(InAssetRequest.Assembly.PresetGUID, requestMeshes);
-
-				// Assets are available now, call the task if available
-				if (InAssetRequest.CallbackTask)
-				{
-					InAssetRequest.CallbackTask();
-				}
-			}
-		}, 2.f, false);
-#else
-		TArray<UStaticMesh*> requestMeshes;
-		for (auto curPart : InAssetRequest.Assembly.Parts)
-		{
-			if (curPart.Mesh.EngineMesh.IsValid())
-			{
-				requestMeshes.Add(curPart.Mesh.EngineMesh.Get());
-			}
-		}
-		StaticMeshAssetMap.Add(InAssetRequest.Assembly.PresetGUID, requestMeshes);
-		// Assets are available now, call the task if available
+		// This is an embedded asset, save to assets list and use callback if available
+		// TODO: Adding embedded assets to StaticMeshAssetMap is for testing purposes, 
+		// should re-evaluate when Datasmith assets can be bundled with presets properly.
+		StaticMeshAssetMap.Add(InAssetRequest.Assembly.PresetGUID, { InAssetRequest.Assembly.Parts[0].Mesh.EngineMesh.Get() });
 		if (InAssetRequest.CallbackTask)
 		{
 			InAssetRequest.CallbackTask();
 		}
-#endif
+		return;
+	}
+	
+	// If not an embedded asset, is a Datasmith asset
+	const auto assets = StaticMeshAssetMap.FindRef(InAssetRequest.Assembly.PresetGUID);
+
+	if (assets.Num() > 0)
+	{
+		// If there are assets, call the task if available
+		if (InAssetRequest.CallbackTask)
+		{
+			InAssetRequest.CallbackTask();
+		}
+	}
+	else
+	{
+		const auto loadStatus = PresetLoadStatusMap.FindRef(InAssetRequest.Assembly.PresetGUID);
+		if (loadStatus == EAssetImportLoadStatus::None)
+		{
+			FString testFile = InAssetRequest.Assembly.Parts[0].Mesh.DatasmithUrl;
+			if (FPaths::FileExists(testFile))
+			{
+				PresetLoadStatusMap.Add(InAssetRequest.Assembly.PresetGUID, EAssetImportLoadStatus::Loading);
+
+				FActorSpawnParameters datasmithRuntimeActorSpawnParams;
+				datasmithRuntimeActorSpawnParams.Owner = this;
+				CurrentDatasmithRuntimeActor = GetWorld()->SpawnActor<AEditModelDatasmithRuntimeActor>(DatasmithRuntimeActorClass, datasmithRuntimeActorSpawnParams);
+				CurrentDatasmithRuntimeActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
+				CurrentDatasmithRuntimeActor->DatasmithImporter = this;
+				CurrentDatasmithRuntimeActor->PresetKey = InAssetRequest.Assembly.PresetGUID;
+				CurrentDatasmithRuntimeActor->ImportFilePath = testFile;
+				PresetToDatasmithRuntimeActorMap.Add(InAssetRequest.Assembly.PresetGUID, CurrentDatasmithRuntimeActor.Get());
+
+				// Timer to keep track of import progress
+				// In rare cases, import thread doesn't start at 1st, but will start at 2nd attempt
+				GetWorldTimerManager().SetTimer(AssetImportCheckTimer, this, &AEditModelDatasmithImporter::OnAssetImportCheckTimer, CheckAfterImportTime, false);
+
+				UE_LOG(LogTemp, Log, TEXT("Begin Import: %s"), *testFile);
+				bool bLoadResult = CurrentDatasmithRuntimeActor->MakeFromImportFilePath();
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Import from path failed: %s"), *testFile);
+			}
+		}
+	}
+}
+
+void AEditModelDatasmithImporter::OnRuntimeActorImportDone(class AEditModelDatasmithRuntimeActor* FromActor)
+{
+	// Cache meshes param from DatasmithActor
+	PresetLoadStatusMap.Add(FromActor->PresetKey, EAssetImportLoadStatus::Loaded);
+	StaticMeshAssetMap.Add(FromActor->PresetKey, FromActor->StaticMeshRefs);
+	StaticMeshTransformMap.Add(FromActor->PresetKey, FromActor->StaticMeshTransforms);
+
+	// Clean any objects that are using this model
+	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+	if (controller)
+	{
+		TArray<int32> affectedMoiIDs;
+		controller->GetDocument()->GetObjectIdsByAssembly(FromActor->PresetKey, affectedMoiIDs);
+		for (auto curMoiID : affectedMoiIDs)
+		{
+			auto curMoi = controller->GetDocument()->GetObjectById(curMoiID);
+			if (curMoi)
+			{
+				curMoi->MarkDirty(EObjectDirtyFlags::Structure);
+			}
+		}
+		controller->GetDocument()->CleanObjects(nullptr);
+	}
+}
+
+void AEditModelDatasmithImporter::OnAssetImportCheckTimer()
+{
+	// If a DatasmithActor is loading but not building, try import it again
+	for (const auto kvp : PresetLoadStatusMap)
+	{
+		if (kvp.Value == EAssetImportLoadStatus::Loading)
+		{
+			auto curDatasmithActor = PresetToDatasmithRuntimeActorMap.FindRef(kvp.Key);
+			if (curDatasmithActor && !curDatasmithActor->bBuilding)
+			{
+				UE_LOG(LogTemp, Log, TEXT("Reattempt to Import: %s"), *curDatasmithActor->ImportFilePath);
+				curDatasmithActor->MakeFromImportFilePath();
+				GetWorldTimerManager().SetTimer(AssetImportCheckTimer, this, &AEditModelDatasmithImporter::OnAssetImportCheckTimer, CheckAfterImportTime, false);
+			}
+		}
 	}
 }

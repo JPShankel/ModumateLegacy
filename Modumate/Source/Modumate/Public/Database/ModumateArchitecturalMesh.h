@@ -22,6 +22,9 @@ struct FArchitecturalMesh
 
 	UPROPERTY()
 	FSoftObjectPath AssetPath;
+
+	UPROPERTY()
+	FString DatasmithUrl;
 	
 	TWeakObjectPtr<UStaticMesh> EngineMesh = nullptr;
 
