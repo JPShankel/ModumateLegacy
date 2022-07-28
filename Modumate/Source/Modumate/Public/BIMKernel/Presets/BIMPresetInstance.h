@@ -89,24 +89,88 @@ struct MODUMATE_API FPresetCustomDataWrapper
 };
 
 USTRUCT()
+struct MODUMATE_API FWebQuantity
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	float Count = 0.0f;
+	
+	UPROPERTY()
+	float Linear = 0.0f;
+	
+	UPROPERTY()
+	float Area = 0.0f;
+
+	UPROPERTY()
+	float Volume = 0.0f;
+	
+	UPROPERTY()
+	float MaterialCost = 0.0f;
+
+	UPROPERTY()
+	float LaborCost = 0.0f;
+
+};
+
+UENUM()
+enum class EBIMWebPresetPropertyType : uint8
+{
+	none = 0,
+	string,
+	number,
+	boolean,
+	color,
+};
+
+USTRUCT()
+struct MODUMATE_API FBIMWebPresetProperty
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString key;
+
+	UPROPERTY()
+	FString name;
+	
+	UPROPERTY()
+	EBIMWebPresetPropertyType type;
+	
+	UPROPERTY()
+	TArray<FString> value;
+	
+	UPROPERTY()
+	bool isEditable;
+	
+	UPROPERTY()
+	bool isVisibleInEditor;
+};
+
+USTRUCT()
 struct MODUMATE_API FBIMWebPreset
 {
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FGuid presetID;
+	FGuid guid;
 
 	UPROPERTY()
 	FString name;
-
+	
 	UPROPERTY()
 	FBIMTagPath tagPath;
 
+	// deprecated
 	UPROPERTY()
 	FString customDataJSON;
 
+	// deprecated
 	UPROPERTY()
 	FString typeMark;
+	
+	UPROPERTY()
+	TMap<FString, FBIMWebPresetProperty> properties;
 };
 
 USTRUCT()
@@ -283,7 +347,9 @@ struct MODUMATE_API FBIMPresetInstance
 
 	EBIMResult UpgradeData(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, int32 InDocVersion);
 
-	EBIMResult ToWebPreset(FBIMWebPreset& OutPreset) const;
+	EBIMResult ToWebPreset(FBIMWebPreset& OutPreset, UWorld* World) const;
+	
+	void GetQuantitiesAndUses(UWorld* World, TMap<FString, FBIMWebPresetProperty>& Properties) const;
 
 	bool operator==(const FBIMPresetInstance& RHS) const;
 	bool operator!=(const FBIMPresetInstance& RHS) const;

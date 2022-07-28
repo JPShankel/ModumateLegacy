@@ -10,6 +10,7 @@
 #include "ModumateCore/ModumateScriptProcessor.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
+#include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/EnumHelpers.h"
 #include "Objects/ModumateObjectStatics.h"
 
@@ -1138,12 +1139,12 @@ EBIMResult FBIMPresetCollection::SetPartSizesFromMeshes()
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMPresetCollection::GetWebPresets(FBIMWebPresetCollection& OutPresets)
+EBIMResult FBIMPresetCollection::GetWebPresets(FBIMWebPresetCollection& OutPresets, UWorld* World)
 {
 	for (auto& kvp : PresetsByGUID)
 	{
-		FBIMWebPreset& webPreset = OutPresets.presets.AddDefaulted_GetRef();
-		kvp.Value.ToWebPreset(webPreset);
+		FBIMWebPreset& webPreset = OutPresets.presets.Add(kvp.Key);
+		kvp.Value.ToWebPreset(webPreset, World);
 	}
 
 	OutPresets.ncpTaxonomy = PresetTaxonomy.Nodes;

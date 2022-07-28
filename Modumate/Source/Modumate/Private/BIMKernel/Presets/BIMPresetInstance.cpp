@@ -9,6 +9,9 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "Quantities/QuantitiesDimensions.h"
+#include "Quantities/QuantitiesManager.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/ModumateGameInstance.h"
 
 #define LOCTEXT_NAMESPACE "BIMPresetInstance"
 
@@ -1001,11 +1004,17 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const 
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset) const
+EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* World) const
 {
 	OutPreset.name = DisplayName.ToString();
-	OutPreset.presetID = GUID;
+	OutPreset.guid = GUID;
 	OutPreset.tagPath = MyTagPath;
+
+	TMap<FString, FBIMWebPresetProperty> properties;
+
+	// add properties here
+	
+	OutPreset.properties = properties;
 
 	//get custom data
 	FString customDataJSONString;
@@ -1014,6 +1023,7 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset) const
 	WriteJsonGeneric<FPresetCustomDataWrapper>(customDataJSONString, &presetCustomData);
 	OutPreset.customDataJSON = customDataJSONString;
 
+	// typeMark is deprecated
 	const FBIMPropertyKey propertyKey(EBIMValueScope::Preset, BIMPropertyNames::Mark);
 	const FString typeMark = Properties.GetProperty<FString>(propertyKey.Scope, propertyKey.Name);
 	OutPreset.typeMark = typeMark;

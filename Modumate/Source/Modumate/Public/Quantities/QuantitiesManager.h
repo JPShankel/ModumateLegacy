@@ -15,6 +15,7 @@ public:
 	void GetQuantityTree(const TMap<FQuantityItemId, FQuantity>*& OutAllQuantities,
 		const TMap<FQuantityItemId, TMap<FQuantityItemId, FQuantity>>*& OutUsedByQuantities,
 		const TMap<FQuantityItemId, TMap<FQuantityItemId, FQuantity>>*& OutUsesQuantities);
+	void GetWebQuantities(TArray<FGuid>& OutUsedBy, TArray<FGuid>& OutUses);
 	TArray<FQuantityItemId> GetItemsForGuid(const FGuid& PresetId);
 	void SetDirtyBit(bool bValue = true) { bQuantitiesDirty = bValue; }
 

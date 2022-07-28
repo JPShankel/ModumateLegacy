@@ -4943,7 +4943,7 @@ void UModumateDocument::centimeters_to_string(const FString& InRequest)
 void UModumateDocument::UpdateWebPresets()
 {
 	FBIMWebPresetCollection collection;
-	BIMPresetCollection.GetWebPresets(collection);
+	BIMPresetCollection.GetWebPresets(collection, GetWorld());
 	FString jsonPresets;
 	if (WriteJsonGeneric(jsonPresets, &collection))
 	{

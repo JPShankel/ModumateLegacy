@@ -247,6 +247,19 @@ void FQuantity::CalculateCosts(const FBIMConstructionCost& CostRate)
 	}
 }
 
+FWebQuantity FQuantity::toWebQuantity() const
+{
+	FWebQuantity quantity;
+	quantity.Area = Area;
+	quantity.Count = Count;
+	quantity.Linear = Linear;
+	quantity.Volume = Volume;
+	quantity.LaborCost = LaborCost;
+	quantity.MaterialCost = MaterialCost;
+
+	return quantity;
+}
+
 FQuantityItemId::operator FString() const
 {
 	return Subname.IsEmpty() ? FString() : FString(TEXT(" (")) + Subname + TEXT(")");

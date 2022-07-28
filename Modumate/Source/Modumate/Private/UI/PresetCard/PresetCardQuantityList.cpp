@@ -52,77 +52,7 @@ void UPresetCardQuantityList::OnMainButtonReleased()
 
 void UPresetCardQuantityList::BuildAsQuantityList(const FGuid& InGUID, bool bAsExpandedList)
 {
-	EmptyList();
-	PresetGUID = InGUID;
-
-	if (bAsExpandedList)
-	{
-		UModumateGameInstance* gameInstance = GetGameInstance<UModumateGameInstance>();
-		if (gameInstance && gameInstance->GetQuantitiesManager())
-		{
-			// Total quantity of this preset
-			bool bMetric = false;
-			const UModumateDocument* doc = GetWorld()->GetGameState<AEditModelGameState>()->Document;
-			if (doc)
-			{
-				bMetric = doc->GetCurrentSettings().DimensionType == EDimensionUnits::DU_Metric;
-			}
-
-			FQuantity totalQuantity = gameInstance->GetQuantitiesManager()->QuantityForOnePreset(PresetGUID);
-			UPresetCardQuantityListTotal* newTotalWidget = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardQuantityListTotal>(PresetCardQuantityListTotalClass);
-			DynamicQuantityList->AddChildToVerticalBox(newTotalWidget);
-			newTotalWidget->BuildTotalLabel(totalQuantity, bMetric);
-
-			// Get quantities for uses and used by
-			const TMap<FQuantityItemId, FQuantity>* allQuantities;
-			const TMap<FQuantityItemId, TMap<FQuantityItemId, FQuantity>>* usedByQuantities;
-			const TMap<FQuantityItemId, TMap<FQuantityItemId, FQuantity>>* usesQuantities;
-			gameInstance->GetQuantitiesManager()->GetQuantityTree(allQuantities, usedByQuantities, usesQuantities);
-			TArray<FQuantityItemId> itemIds = gameInstance->GetQuantitiesManager()->GetItemsForGuid(PresetGUID);
-
-			// Uses
-			UPresetCardQuantityListSubTotal* newUsesLabelWidget = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardQuantityListSubTotal>(PresetCardQuantityListSubTotalClass);
-			DynamicQuantityList->AddChildToVerticalBox(newUsesLabelWidget);
-			newUsesLabelWidget->SetVisibility(ESlateVisibility::Collapsed);
-			FText usesLabelText = LOCTEXT("UsesTitle", "Uses:");
-			for (FQuantityItemId& curItemId : itemIds)
-			{
-				const TMap<FQuantityItemId, FQuantity>* usesMap = usesQuantities->Find(curItemId);
-				if (usesMap != nullptr && usesMap->Num() > 0)
-				{
-					newUsesLabelWidget->SetVisibility(ESlateVisibility::Visible);
-					for (auto& curQuantityItem : *usesMap)
-					{
-						UPresetCardQuantityListSubTotalListItem* newSubItem = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardQuantityListSubTotalListItem>(PresetCardQuantityListSubTotalListItemClass);
-						DynamicQuantityList->AddChildToVerticalBox(newSubItem);
-						newSubItem->BuildAsSubTotalListItem(curQuantityItem.Key, curQuantityItem.Value, bMetric);
-						newUsesLabelWidget->BuildSubLabel(usesLabelText, curQuantityItem.Value, bMetric);
-					}
-				}
-			}
-
-			// Used By
-			UPresetCardQuantityListSubTotal* newUsedByLabelWidget = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardQuantityListSubTotal>(PresetCardQuantityListSubTotalClass);
-			DynamicQuantityList->AddChildToVerticalBox(newUsedByLabelWidget);
-			newUsedByLabelWidget->SetVisibility(ESlateVisibility::Collapsed);
-			FText usedByLabelText = LOCTEXT("UsedByTitle", "Used By:");
-			for (FQuantityItemId& curItemId : itemIds)
-			{
-				const TMap<FQuantityItemId, FQuantity>* usedByMap = usedByQuantities->Find(curItemId);
-				if (usedByMap  != nullptr && usedByMap->Num() > 0)
-				{
-					newUsedByLabelWidget->SetVisibility(ESlateVisibility::Visible);
-					for (auto& curQuantityItem : *usedByMap)
-					{
-						UPresetCardQuantityListSubTotalListItem* newSubItem = EMPlayerController->GetEditModelHUD()->GetOrCreateWidgetInstance<UPresetCardQuantityListSubTotalListItem>(PresetCardQuantityListSubTotalListItemClass);
-						DynamicQuantityList->AddChildToVerticalBox(newSubItem);
-						newSubItem->BuildAsSubTotalListItem(curQuantityItem.Key, curQuantityItem.Value, bMetric);
-						newUsedByLabelWidget->BuildSubLabel(usedByLabelText, curQuantityItem.Value, bMetric);
-					}
-				}
-			}
-		}
-	}
+	// deprecated, moved to web
 }
 
 void UPresetCardQuantityList::EmptyList()

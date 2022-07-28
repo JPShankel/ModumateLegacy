@@ -31,7 +31,7 @@ struct MODUMATE_API FBIMWebPresetCollection
 	GENERATED_BODY()
 
 	UPROPERTY()
-	TArray<FBIMWebPreset> presets;
+	TMap<FGuid, FBIMWebPreset> presets;
 
 	UPROPERTY()
 	TArray<FBIMPresetTaxonomyNode> ncpTaxonomy;
@@ -114,7 +114,7 @@ struct MODUMATE_API FBIMPresetCollection
 	bool SavePresetsToDocRecord(FMOIDocumentRecord& DocRecord) const;
 	bool ReadPresetsFromDocRecord(const FModumateDatabase& InDB, int32 DocRecordVersion, const FMOIDocumentRecord& DocRecord);
 
-	EBIMResult GetWebPresets(FBIMWebPresetCollection& OutPresets);
+	EBIMResult GetWebPresets(FBIMWebPresetCollection& OutPresets, UWorld* World);
 
 	bool operator==(const FBIMPresetCollection& RHS) const;
 	bool operator!=(const FBIMPresetCollection& RHS) const;

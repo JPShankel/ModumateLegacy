@@ -98,6 +98,20 @@ void FQuantitiesManager::GetQuantityTree(const TMap<FQuantityItemId, FQuantity>*
 	OutUsesQuantities = &UsesQuantities;
 }
 
+void FQuantitiesManager::GetWebQuantities(TArray<FGuid>& OutUsedBy, TArray<FGuid>& OutUses)
+{
+	CalculateAllQuantities();
+	
+	for (auto preset : UsedByQuantities)
+	{
+		OutUsedBy.Add(preset.Key.Id); 
+	}
+	for (auto preset : UsesQuantities)
+	{
+		OutUses.Add(preset.Key.Id); 
+	}
+}
+
 TArray<FQuantityItemId> FQuantitiesManager::GetItemsForGuid(const FGuid& PresetId)
 {
 	CalculateAllQuantities();

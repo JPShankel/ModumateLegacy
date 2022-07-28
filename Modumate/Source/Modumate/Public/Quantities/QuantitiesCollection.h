@@ -2,6 +2,7 @@
 
 #pragma once
 #include "CoreMinimal.h"
+#include "BIMKernel/Presets/BIMPresetInstance.h"
 
 struct FBIMConstructionCost;
 
@@ -40,6 +41,7 @@ struct MODUMATE_API FQuantity
 	FQuantity& operator+=(const FQuantity& Rhs);
 	FQuantity& operator*=(float rhs);
 	void CalculateCosts(const FBIMConstructionCost& CostRate);
+	FWebQuantity toWebQuantity() const;
 };
 
 class FQuantitiesManager;
