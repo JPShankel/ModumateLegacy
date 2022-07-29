@@ -96,13 +96,20 @@ void AEditModelDatasmithImporter::HandleAssetRequest(const FAssetRequest& InAsse
 	}
 
 	// Check if this is an embedded assets first
-	FSoftObjectPath assetRequestPath = InAssetRequest.Assembly.Parts[0].Mesh.AssetPath;
-	if ((assetRequestPath.IsAsset() && assetRequestPath.IsValid()))
+	if (InAssetRequest.Assembly.Parts[0].Mesh.DatasmithUrl.IsEmpty())
 	{
 		// This is an embedded asset, save to assets list and use callback if available
 		// TODO: Adding embedded assets to StaticMeshAssetMap is for testing purposes, 
 		// should re-evaluate when Datasmith assets can be bundled with presets properly.
-		StaticMeshAssetMap.Add(InAssetRequest.Assembly.PresetGUID, { InAssetRequest.Assembly.Parts[0].Mesh.EngineMesh.Get() });
+		TArray<UStaticMesh*> meshes;
+		for (const auto curPart : InAssetRequest.Assembly.Parts)
+		{
+			if (curPart.Mesh.EngineMesh.IsValid())
+			{
+				meshes.Add(curPart.Mesh.EngineMesh.Get());
+			}
+		}
+		StaticMeshAssetMap.Add(InAssetRequest.Assembly.PresetGUID, meshes);
 		if (InAssetRequest.CallbackTask)
 		{
 			InAssetRequest.CallbackTask();
