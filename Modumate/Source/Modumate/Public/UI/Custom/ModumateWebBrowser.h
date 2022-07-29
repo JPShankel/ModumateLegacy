@@ -6,6 +6,7 @@
 #include "WebBrowserWidget/Public/WebBrowser.h"
 #include "Input/Events.h"
 #include "Layout/Geometry.h"
+#include "Online/WebWatchdog.h"
 #include "ModumateWebBrowser.generated.h"
 
 /**
@@ -44,4 +45,10 @@ protected:
 	void HandleOnLoadCompleted();
 	void HandleOnLoadError();
 	void HandleOnLoadStarted();
+
+	UPROPERTY()
+	UWebWatchdog* WebReloadWatchdog;
+
+	UFUNCTION()
+	void WatchdogTriggered();
 };

@@ -2,6 +2,7 @@
 
 #include "UI/Custom/ModumateWebBrowser.h"
 #include "Runtime/WebBrowser/Public/SWebBrowser.h"
+#include "UnrealClasses/EditModelPlayerController.h"
 
 const FName UModumateWebBrowser::MODUMATE_WEB_TAG = FName(TEXT("ModumateWebBrowser"));
 
@@ -42,13 +43,21 @@ TSharedRef<SWidget> UModumateWebBrowser::RebuildWidget()
 			.OnLoadStarted(BIND_UOBJECT_DELEGATE(FSimpleDelegate, HandleOnLoadStarted));
 		
 		WebBrowserWidget->SetTag(MODUMATE_WEB_TAG);
-
+		
 		return WebBrowserWidget.ToSharedRef();
 	}
 }
 
 void UModumateWebBrowser::HandleOnLoadCompleted()
 {
+	if(!WebReloadWatchdog)
+	{
+		WebReloadWatchdog = NewObject<UWebWatchdog>();
+		WebReloadWatchdog->Rename(nullptr, this);
+		WebReloadWatchdog->OnWatchdogExpired().AddUObject(this, &UModumateWebBrowser::WatchdogTriggered);
+		CallBindUObject(TEXT("watchdog"), WebReloadWatchdog, true);
+		
+	}	
 	OnLoadCompleted.Broadcast();
 }
 
@@ -60,4 +69,10 @@ void UModumateWebBrowser::HandleOnLoadError()
 void UModumateWebBrowser::HandleOnLoadStarted()
 {
 	OnLoadStarted.Broadcast();
+}
+
+void UModumateWebBrowser::WatchdogTriggered()
+{
+	GetOwningLocalPlayer<AEditModelPlayerController>()->PostServerLog(TEXT("Web Watchdog Triggered, reloading"));
+	WebBrowserWidget->Reload();
 }

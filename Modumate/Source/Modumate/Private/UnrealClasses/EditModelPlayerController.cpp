@@ -97,7 +97,7 @@
 #include "UI/Custom/WebKeyboardCapture.h"
 #include "ModumateCore/ModumateRayTracingSettings.h"
 #include "UnrealClasses/SkyActor.h"
-
+DEFINE_LOG_CATEGORY(ModumateEMPC);
 const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetry"));
 
 #define LOCTEXT_NAMESPACE "ModumateDialog"
@@ -4288,6 +4288,12 @@ bool AEditModelPlayerController::UnhideAll()
 	GetPlayerState<AEditModelPlayerState>()->UnhideAllObjects();
 	RefreshCutPlanes();
 	return true;
+}
+
+void AEditModelPlayerController::PostServerLog_Implementation(const FString& Message)
+{
+	UE_LOG(ModumateEMPC, Warning, TEXT("PostServerLog (%d)[%s]: %s"),
+		EMPlayerState->MultiplayerClientIdx, *EMPlayerState->ReplicatedUserInfo.ID, *Message);
 }
 
 void AEditModelPlayerController::HandleUndo()

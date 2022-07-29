@@ -21,6 +21,7 @@
 /**
  *
  */
+DECLARE_LOG_CATEGORY_EXTERN(ModumateEMPC, Log, All);
 
 class AAdjustmentHandleActor;
 class AEditModelPlayerState;
@@ -639,6 +640,9 @@ public:
 		}
 	}
 
+	UFUNCTION(Server, Reliable)
+	void PostServerLog(const FString& Message);
+	
 private:
 	FVoiceEvent VoiceConnectedEvent;
 	FTextChatClientEvent TextChatConnectedEvent;
