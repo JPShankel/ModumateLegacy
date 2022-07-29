@@ -88,31 +88,6 @@ struct MODUMATE_API FPresetCustomDataWrapper
 
 };
 
-USTRUCT()
-struct MODUMATE_API FWebQuantity
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	float Count = 0.0f;
-	
-	UPROPERTY()
-	float Linear = 0.0f;
-	
-	UPROPERTY()
-	float Area = 0.0f;
-
-	UPROPERTY()
-	float Volume = 0.0f;
-	
-	UPROPERTY()
-	float MaterialCost = 0.0f;
-
-	UPROPERTY()
-	float LaborCost = 0.0f;
-
-};
-
 UENUM()
 enum class EBIMWebPresetPropertyType : uint8
 {
@@ -135,16 +110,16 @@ struct MODUMATE_API FBIMWebPresetProperty
 	FString name;
 	
 	UPROPERTY()
-	EBIMWebPresetPropertyType type;
+	EBIMWebPresetPropertyType type = EBIMWebPresetPropertyType::string;
 	
 	UPROPERTY()
 	TArray<FString> value;
 	
 	UPROPERTY()
-	bool isEditable;
+	bool isEditable = false;
 	
 	UPROPERTY()
-	bool isVisibleInEditor;
+	bool isVisibleInEditor = false;
 };
 
 USTRUCT()
@@ -171,6 +146,37 @@ struct MODUMATE_API FBIMWebPreset
 	
 	UPROPERTY()
 	TMap<FString, FBIMWebPresetProperty> properties;
+	
+	UPROPERTY()
+	TArray<FString> usedBy;
+	
+	UPROPERTY()
+	TArray<FString> uses;
+};
+
+USTRUCT()
+struct MODUMATE_API FWebQuantity
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	float Count = 0.0f;
+
+	UPROPERTY()
+	float Linear = 0.0f;
+
+	UPROPERTY()
+	float Area = 0.0f;
+
+	UPROPERTY()
+	float Volume = 0.0f;
+
+	UPROPERTY()
+	float MaterialCost = 0.0f;
+
+	UPROPERTY()
+	float LaborCost = 0.0f;
+
 };
 
 USTRUCT()
@@ -349,7 +355,7 @@ struct MODUMATE_API FBIMPresetInstance
 
 	EBIMResult ToWebPreset(FBIMWebPreset& OutPreset, UWorld* World) const;
 	
-	void GetQuantitiesAndUses(UWorld* World, TMap<FString, FBIMWebPresetProperty>& Properties) const;
+	void GetUses(UWorld* World, FBIMWebPreset& Property) const;
 
 	bool operator==(const FBIMPresetInstance& RHS) const;
 	bool operator!=(const FBIMPresetInstance& RHS) const;

@@ -133,6 +133,7 @@ EBIMResult FBIMPresetForm::AddLayerPriorityGroupElement()
 	FBIMPresetFormElement& newElement = Elements.AddDefaulted_GetRef();
 	newElement.DisplayName = LOCTEXT("MiterGroup","Miter Group");
 	newElement.FieldType = EBIMPresetEditorField::LayerPriorityGroup;
+	newElement.FieldName = TEXT("MiterGroup");
 	newElement.FormElementWidgetType = EBIMFormElementWidget::EnumSelect;
 
 	UEnum* enumClass = StaticEnum<EBIMPresetLayerPriorityGroup>();
@@ -146,6 +147,7 @@ EBIMResult FBIMPresetForm::AddLayerPriorityValueElement()
 	FBIMPresetFormElement& newElement = Elements.AddDefaulted_GetRef();
 	newElement.DisplayName = LOCTEXT("MiterPriority","Miter Priority");
 	newElement.FieldType = EBIMPresetEditorField::LayerPriorityValue;
+	newElement.FieldName = TEXT("MiterPriority");
 	newElement.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
  	return EBIMResult::Success;
 }
@@ -155,11 +157,13 @@ EBIMResult FBIMPresetForm::AddConstructionCostElements()
 	FBIMPresetFormElement& materialElement = Elements.AddDefaulted_GetRef();
 	materialElement.DisplayName = LOCTEXT("ConstructionCostMaterial", "Material Cost");
 	materialElement.FieldType = EBIMPresetEditorField::ConstructionCostMaterial;
+	materialElement.FieldName = TEXT("MaterialCost");
 	materialElement.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
 
 	FBIMPresetFormElement& laborElement = Elements.AddDefaulted_GetRef();
 	laborElement.DisplayName = LOCTEXT("ConstructionCostLabor", "Labor Cost");
 	laborElement.FieldType = EBIMPresetEditorField::ConstructionCostLabor;
+	laborElement.FieldName = TEXT("LaborCost");
 	laborElement.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
 
 	return EBIMResult::Success;

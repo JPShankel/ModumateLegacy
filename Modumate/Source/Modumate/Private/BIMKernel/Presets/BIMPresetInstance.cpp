@@ -1010,6 +1010,8 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	OutPreset.guid = GUID;
 	OutPreset.tagPath = MyTagPath;
 
+	GetUses(World, OutPreset);
+
 	TMap<FString, FBIMWebPresetProperty> properties;
 
 	// add properties here
@@ -1029,5 +1031,23 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	OutPreset.typeMark = typeMark;
 	return EBIMResult::Success;
 }
+
+void FBIMPresetInstance::GetUses(UWorld* World, FBIMWebPreset& Property) const
+{
+	const UModumateGameInstance* gameInstance = World->GetGameInstance<UModumateGameInstance>();
+	if (gameInstance == nullptr)
+	{
+		return;
+	}
+	
+	// Get uses and used by
+	TArray<FString> usedByValues;
+	TArray<FString> usesValues;
+	gameInstance->GetQuantitiesManager()->GetWebQuantities(usedByValues, usesValues);
+
+	Property.usedBy = usedByValues;
+	Property.uses = usesValues;
+}
+
 
 #undef LOCTEXT_NAMESPACE
