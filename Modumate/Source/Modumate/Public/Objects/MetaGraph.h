@@ -16,6 +16,10 @@ struct MODUMATE_API FMOIMetaGraphData
 
 	UPROPERTY()
 	FQuat Rotation = FQuat::Identity;
+
+	// If root of symbol then ID of Symbol Preset.
+	UPROPERTY()
+	FGuid SymbolID;
 };
 
 UCLASS()
@@ -34,6 +38,9 @@ public:
 	virtual bool ShowStructureOnSelection() const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
+
+	UPROPERTY()
+	FMOIMetaGraphData InstanceData;
 
 private:
 	FBox CachedBounds { ForceInitToZero };

@@ -17,7 +17,7 @@
 
 #include "ModumateObjectDatabase.generated.h"
 
-static constexpr int32 BIMCacheCurrentVersion = 22;
+static constexpr int32 BIMCacheCurrentVersion = 23;
 // Version 2: deprecate FBIMKeys for FGuids
 // Version 3: move named parameters from meshes to presets
 // Version 4: material binding editor
@@ -39,6 +39,7 @@ static constexpr int32 BIMCacheCurrentVersion = 22;
 // Verison 20: mark and comments added to all presets
 // Version 21: lighting & construction cost data
 // Version 22: bim dynamic properties wip
+// Version 23: Symbol NodeType added
 
 
 USTRUCT()

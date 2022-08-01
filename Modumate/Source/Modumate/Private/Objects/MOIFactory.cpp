@@ -8,7 +8,6 @@
 #include "Objects/EdgeDetailObj.h"
 #include "Objects/FFE.h"
 #include "Objects/Finish.h"
-#include "Objects/Group.h"
 #include "Objects/MetaEdge.h"
 #include "Objects/MetaPlane.h"
 #include "Objects/MetaVertex.h"

@@ -926,7 +926,7 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 			return;
 		}
 
-		const AModumateObjectInstance* graphObject = Doc->GetObjectById(groupID);
+		const AMOIMetaGraph* graphObject = Cast<AMOIMetaGraph>(Doc->GetObjectById(groupID));
 		if (!ensure(graphObject))
 		{
 			return;
@@ -945,7 +945,8 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 		}
 
 		FMOIStateData stateData(newGroupID, EObjectType::OTMetaGraph, parentID);
-		stateData.CustomData.SaveStructData<FMOIMetaGraphData>(FMOIMetaGraphData());
+		FMOIMetaGraphData groupInstanceData(graphObject->InstanceData);
+		stateData.CustomData.SaveStructData(groupInstanceData);
 
 		auto delta = MakeShared<FMOIDelta>();
 		delta->AddCreateDestroyState(stateData, EMOIDeltaType::Create);
@@ -1065,6 +1066,46 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 				optionToNewGroupsMap.FindOrAdd(optionID).Add(newGroupID);
 			}
 		}
+
+		// Handle Symbol Groups:
+#if 0
+		if (groupInstanceData.SymbolID.IsValid())
+		{
+			const int32 symbolID = groupInstanceData.SymbolID;
+			const auto* symbol = Cast<AMOISymbol>(Doc->GetObjectById(symbolID));
+			if (ensure(symbol))
+			{
+				FMOISymbolData symbolInstanceData(symbol->InstanceData);
+				for (const auto& idMapping : oldIDToNewID)
+				{
+					if (idMapping.Key == MOD_ID_NONE)
+					{
+						continue;
+					}
+
+					bool bFound = false;
+					for (auto& IdSet : symbolInstanceData.EquivalentIDs)
+					{
+						if (IdSet.IDs.Contains(idMapping.Key))
+						{
+							IdSet.IDs.Add(idMapping.Value);
+							bFound = true;
+							break;
+						}
+					}
+
+					if (!bFound)
+					{   // New Symbols might not contain any mappings
+						symbolInstanceData.EquivalentIDs.Add(FMOISymbolIDSet({ idMapping.Key, idMapping.Value }));
+					}
+				}
+
+				FMOIStateData newSymbolState(symbol->GetStateData());
+				newSymbolState.CustomData.SaveStructData(symbolInstanceData, UE_EDITOR);
+				moiDelta->AddMutationState(symbol, symbol->GetStateData(), MoveTemp(newSymbolState));
+			}
+		}
+#endif
 
 		OutDeltas.Emplace(false, moiDelta);
 	}

@@ -4,6 +4,8 @@
 
 #include "Algo/Transform.h"
 #include "BIMKernel/Core/BIMProperties.h"
+#include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
+#include "BIMKernel/Presets/BIMSymbolPresetData.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "Dom/JsonObject.h"
@@ -18,6 +20,7 @@
 #include "ModumateCore/PlatformFunctions.h"
 #include "Objects/ModumateObjectStatics.h"
 #include "Objects/MOIPattern2D.h"
+#include "Objects/MetaGraph.h"
 #include "Online/ModumateAccountManager.h"
 #include "Online/ModumateAnalyticsStatics.h"
 #include "Runtime/Core/Public/Misc/FileHelper.h"
@@ -615,6 +618,70 @@ void UModumateGameInstance::RegisterAllCommands()
 			}
 		}
 		return false;
+	});
+
+	RegisterCommand(kCreateSymbol, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
+	{
+		UModumateDocument* doc = GetDocument();
+
+		AEditModelPlayerController* playerController = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
+		AEditModelPlayerState* playerState = playerController ? playerController->EMPlayerState : nullptr;
+
+		if (playerState && playerState->SelectedGroupObjects.Num() == 1)
+		{
+			const AMOIMetaGraph* group = Cast<const AMOIMetaGraph>(*playerState->SelectedGroupObjects.begin());
+#if 0
+			int32 symbolID = doc->GetNextAvailableID();
+			FMOIMetaGraphData newGroupData = group->InstanceData;
+			if (ensure(newGroupData.SymbolID == MOD_ID_NONE) && group->ID != doc->GetRootVolumeGraphID())
+			{
+				newGroupData.SymbolID = symbolID;
+				auto delta = MakeShared<FMOIDelta>();
+				FMOIStateData groupInstanceData(group->GetStateData());
+				groupInstanceData.CustomData.SaveStructData(newGroupData, UE_EDITOR);
+				delta->AddMutationState(group, group->GetStateData(), groupInstanceData);
+
+				FMOIStateData newSymbolStateData(symbolID, EObjectType::OTSymbol);
+				FMOISymbolData newSymbolInstanceData;
+				newSymbolStateData.DisplayName = TEXT("ExampleSymbol");
+				newSymbolStateData.CustomData.SaveStructData(newSymbolInstanceData, UE_EDITOR);
+				delta->AddCreateDestroyState(newSymbolStateData, EMOIDeltaType::Create);
+				doc->ApplyDeltas({ delta }, GetWorld());
+			}
+#endif
+			FMOIMetaGraphData newGroupData = group->InstanceData;
+			if (ensure(!newGroupData.SymbolID.IsValid()) && group->ID != doc->GetRootVolumeGraphID())
+			{
+				static const FName symbolNodeType(TEXT("0Symbol"));
+				static const FString symbolNcp(TEXT("Part_0FlexDims3Fixed_Symbol"));
+				FBIMPresetCollection& presets = doc->GetPresetCollection();
+				FBIMPresetInstance newSymbolPreset;
+				newSymbolPreset.DisplayName = FText::FromString(TEXT("ExampleSymbol"));
+				newSymbolPreset.NodeType = symbolNodeType;
+				newSymbolPreset.MyTagPath.FromString(symbolNcp);
+
+				FBIMSymbolPresetData symbolData;
+				TSet<AModumateObjectInstance*> groupMembers;
+				UModumateObjectStatics::GetObjectsInGroups(doc, { group->ID }, groupMembers);
+				for (const auto* moi : groupMembers)
+				{
+					symbolData.Members.Add(moi->GetStateData());
+				}
+				newSymbolPreset.SetCustomData(symbolData);
+				FDeltaPtr presetDelta(presets.MakeCreateNewDelta(newSymbolPreset));
+
+				newGroupData.SymbolID = newSymbolPreset.GUID;
+				FMOIStateData groupInstanceData(group->GetStateData());
+				groupInstanceData.CustomData.SaveStructData(newGroupData, UE_EDITOR);
+
+				auto groupDelta = MakeShared<FMOIDelta>();
+				groupDelta->AddMutationState(group, group->GetStateData(), groupInstanceData);
+
+				doc->ApplyDeltas({ presetDelta, groupDelta }, GetWorld());
+			}
+		}
+
+		return true;
 	});
 
 	// Use this as a general scratch area for dev testing...no longterm code

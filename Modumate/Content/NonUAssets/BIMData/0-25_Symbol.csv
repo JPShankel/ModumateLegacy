@@ -1,0 +1,6 @@
+TYPENAME,,0Symbol,,Part,,,,
+,,Definition,,,,,,
+,,PropertyType,,PropertyName,,,,
+,,Presets,,,,,,
+TAGPATHS,DataType=GUID,GUID,DataType=ID,ID,DataType=MyCategoryPath,TG_MyNode+CategoryPath,DataType=EdgeDetail,YOLO
+PRESET,,de8d7c6b-cbfc-4112-85c8-02be9b7d8925,,Property_Spatiality_ConnectionDetail_Edge_DummySymbol,,Property_Spatiality_ConnectionDetail_Edge,,1

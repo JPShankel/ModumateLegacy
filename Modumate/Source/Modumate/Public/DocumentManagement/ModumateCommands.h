@@ -43,6 +43,9 @@ namespace ModumateCommands
 	// Design Options
 	MODUMATE_COMMAND(kDesignOption, "design_option");
 
+	// Symbols
+	MODUMATE_COMMAND(kCreateSymbol, "create_symbol");
+
 	// For temporary tests during feature development
 	MODUMATE_COMMAND(kTest, "test");
 
