@@ -4,6 +4,7 @@
 #include "BIMKernel/Core/BIMProperties.h"
 #include "Misc/AutomationTest.h"
 #include "Tests/AutomationCommon.h"
+#include "Quantities/QuantitiesDimensions.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "UnrealClasses/EditModelPlayerController.h"
@@ -53,30 +54,43 @@ static bool testVectorFormula()
 	return true;
 }
 
+#if WITH_AUTOMATION_TESTS
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDatabaseBIMTest, "Modumate.Database.BIM.UnitTest", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
 	bool FModumateDatabaseBIMTest::RunTest(const FString& Parameters)
 {
-	bool ret = true;
+	bool bSuccess = true;
 	UE_LOG(LogUnitTest, Display, TEXT("Modumate BIM Schema - Unit Test Started"));
 
 	FBIMPropertyKey vs;
-	ret = vs.Scope == EBIMValueScope::None && ret;
-	ret = vs.Name == TEXT("");
+	bSuccess = vs.Scope == EBIMValueScope::None && bSuccess;
+	bSuccess = vs.Name == TEXT("") && bSuccess;
 
 	vs = FBIMPropertyKey(EBIMValueScope::Assembly, TEXT("Name"));
 
 	FBIMNameType fqn = vs.QN();
-	ret = (fqn == TEXT("Assembly.Name")) && ret;
+	bSuccess = (fqn == TEXT("Assembly.Name")) && bSuccess;
 
-	ret = testVectorFormula() && ret;
+	bSuccess = testVectorFormula() && bSuccess;
 
 	FModumateDatabase bimDatabase;
 	bimDatabase.Init();
 	bimDatabase.ReadPresetData();
-	ret = bimDatabase.UnitTest() && ret;
+	bSuccess = bimDatabase.UnitTest() && bSuccess;
 
-	UE_LOG(LogUnitTest, Display, TEXT("Modumate BIM Schema - Unit Test Completed %s"), ret ? TEXT("PASSED") : TEXT("FAILED"));
-	return ret;
+	FBIMPresetInstance preset;
+
+	FLightConfiguration lightConfig;
+	preset.SetCustomData(lightConfig);
+
+	FBIMConstructionCost constructionCost;
+	preset.SetCustomData(constructionCost);
+
+	FBIMWebPreset webPreset;
+	preset.ToWebPreset(webPreset, nullptr);
+
+	UE_LOG(LogEngineAutomationTests, Log, TEXT("Modumate BIM Schema - Unit Test Completed %s"), bSuccess ? TEXT("PASSED") : TEXT("FAILED"));
+	return bSuccess;
 }
 
 DEFINE_LATENT_AUTOMATION_COMMAND_ONE_PARAMETER(FWaitForModumateOnlineAssetsLoad, int32*, NumAssets);
@@ -178,3 +192,4 @@ bool FModumateOnlineAssetsLoad::RunTest(const FString& Parameters)
 	return true;
 }
 
+#endif

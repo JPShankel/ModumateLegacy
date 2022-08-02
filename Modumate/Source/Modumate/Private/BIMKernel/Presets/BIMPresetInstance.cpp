@@ -847,69 +847,6 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 
 EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, int32 InDocVersion)
 {
-	// Prior to version 11, material bindings were a named member, not custom data
-	if (InDocVersion < 11)
-	{
-		FGuid matGUID;
-
-		// Prior to version 11, BIM forms were simple arrays of text/property pairs, upgrade to rich form
-		if (FormItemToProperty_DEPRECATED.Num() > 0)
-		{
-			FBIMPresetMaterialBindingSet bindingSet;
-			TryGetCustomData(bindingSet); // okay if this fails
-
-			static const FName defaultChannel = TEXT("Finish1");
-
-			// Deprecated map of form display text to property QN
-			for (auto& fitp : FormItemToProperty_DEPRECATED)
-			{
-				FBIMPropertyKey propKey(fitp.Value);
-
-				switch (propKey.Scope)
-				{
-					// Dimensions and meshes are properties
-				case EBIMValueScope::Dimension:
-					PresetForm.AddPropertyElement(FText::FromString(fitp.Key), fitp.Value, EBIMPresetEditorField::DimensionProperty);
-					break;
-
-				case EBIMValueScope::Mesh:
-				case EBIMValueScope::Profile:
-					PresetForm.AddPropertyElement(FText::FromString(fitp.Key), fitp.Value, EBIMPresetEditorField::AssetProperty);
-					break;
-
-					// Colors and materials require upgraded material bindings
-				case EBIMValueScope::Color:
-					if (bindingSet.MaterialBindings.Num() == 0)
-					{
-						bindingSet.MaterialBindings.AddDefaulted();
-						bindingSet.MaterialBindings.Last().InnerMaterialGUID = InDB.GetDefaultMaterialGUID();
-						bindingSet.MaterialBindings.Last().Channel = defaultChannel;
-					}
-					PresetForm.AddMaterialBindingElement(FText::FromString(fitp.Key), defaultChannel, EMaterialChannelFields::ColorTint);
-					ensureAlways(Properties.TryGetProperty(EBIMValueScope::Color, BIMPropertyNames::HexValue, bindingSet.MaterialBindings.Last().ColorHexValue));
-					break;
-
-				case EBIMValueScope::RawMaterial:
-					if (bindingSet.MaterialBindings.Num() == 0)
-					{
-						bindingSet.MaterialBindings.AddDefaulted();
-						bindingSet.MaterialBindings.Last().ColorHexValue = FColor::White.ToString();
-						bindingSet.MaterialBindings.Last().Channel = defaultChannel;
-					}
-					PresetForm.AddMaterialBindingElement(FText::FromString(fitp.Key), defaultChannel, EMaterialChannelFields::InnerMaterial);
-					ensureAlways(Properties.TryGetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, bindingSet.MaterialBindings.Last().InnerMaterialGUID));
-					break;
-				};
-			}
-
-			// If we got a material binding, set custom data for it
-			if (bindingSet.MaterialBindings.Num() == 1)
-			{
-				SetCustomData(bindingSet);
-			}
-		}
-	}
-
 	// Prior to version 12, some NCPs had spaces
 	if (InDocVersion < 12)
 	{
@@ -956,27 +893,6 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const 
 		}
 	}
 
-	// Prior to version 15, Presets only had a single custom data member, either material binding or edge detail
-	if (InDocVersion < 15)
-	{
-		if (CustomData_DEPRECATED.IsValid())
-		{
-			FBIMPresetMaterialBindingSet bindingSet;
-			if (CustomData_DEPRECATED.LoadStructData(bindingSet))
-			{
-				SetCustomData(bindingSet);
-			}
-			else
-			{
-				FEdgeDetailData edgeDetailData;
-				if (CustomData_DEPRECATED.LoadStructData(edgeDetailData))
-				{
-					SetCustomData(edgeDetailData);
-				}
-			}
-		}
-	}
-
 	// Prior to version 16, layers did not have miter priority data
 	if (InDocVersion < 16 && NodeScope == EBIMValueScope::Layer)
 	{
@@ -1004,18 +920,68 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const 
 	return EBIMResult::Success;
 }
 
+
 EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* World) const
 {
+
 	OutPreset.name = DisplayName.ToString();
 	OutPreset.guid = GUID;
 	OutPreset.tagPath = MyTagPath;
+
 
 	GetUses(World, OutPreset);
 
 	TMap<FString, FBIMWebPresetProperty> properties;
 
-	// add properties here
-	
+	// TODO: need scheme for identifying color properties
+	const static TMap<EJson, EBIMWebPresetPropertyType> typeMap =
+	{
+		{EJson::Boolean,EBIMWebPresetPropertyType::boolean},
+		{EJson::Number,EBIMWebPresetPropertyType::number},
+		{EJson::String,EBIMWebPresetPropertyType::string}
+	};
+
+	for (auto& kvp : CustomDataByClassName)
+	{
+		TSharedPtr<FJsonObject> jsonObject;
+		kvp.Value.GetJsonObject(jsonObject);
+		for (auto& val : jsonObject->Values)
+		{
+			const EBIMWebPresetPropertyType* type = typeMap.Find(val.Value->Type);
+			if (type != nullptr)
+			{
+				FBIMWebPresetProperty webProperty;
+				webProperty.key = kvp.Key.ToString() + TEXT(".") + val.Key;
+				webProperty.name = val.Key;
+				webProperty.value.Add(val.Value->AsString());
+				webProperty.type = (type != nullptr) ? *type : EBIMWebPresetPropertyType::none;
+				properties.Add(webProperty.key, webProperty);
+			}
+		}
+	}
+
+	Properties.ForEachProperty([&properties](const FBIMPropertyKey& Key, const FString& Value)
+		{
+			FBIMWebPresetProperty property;
+			property.key = FString(TEXT("RootProperties.")) + Key.Name.ToString();
+			property.name = Key.Name.ToString();
+			property.type = EBIMWebPresetPropertyType::string;
+			property.value.Add(Value);
+			properties.Add(property.key, property);
+		}
+	);
+
+	Properties.ForEachProperty([&properties](const FBIMPropertyKey& Key, float Value)
+		{
+			FBIMWebPresetProperty property;
+			property.key = FString(TEXT("RootProperties.")) + Key.Name.ToString();
+			property.name = Key.Name.ToString();
+			property.type = EBIMWebPresetPropertyType::number;
+			property.value.Add(FString::Printf(TEXT("%f"),Value));
+			properties.Add(property.key, property);
+		}
+	);
+
 	OutPreset.properties = properties;
 
 	//get custom data
@@ -1029,24 +995,20 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	const FBIMPropertyKey propertyKey(EBIMValueScope::Preset, BIMPropertyNames::Mark);
 	const FString typeMark = Properties.GetProperty<FString>(propertyKey.Scope, propertyKey.Name);
 	OutPreset.typeMark = typeMark;
+
 	return EBIMResult::Success;
 }
 
 void FBIMPresetInstance::GetUses(UWorld* World, FBIMWebPreset& Property) const
 {
-	const UModumateGameInstance* gameInstance = World->GetGameInstance<UModumateGameInstance>();
-	if (gameInstance == nullptr)
+	const UModumateGameInstance* gameInstance = World ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
+	if (gameInstance == nullptr || gameInstance->GetQuantitiesManager() == nullptr)
 	{
 		return;
 	}
 	
 	// Get uses and used by
-	TArray<FString> usedByValues;
-	TArray<FString> usesValues;
-	gameInstance->GetQuantitiesManager()->GetWebQuantities(usedByValues, usesValues);
-
-	Property.usedBy = usedByValues;
-	Property.uses = usesValues;
+	gameInstance->GetQuantitiesManager()->GetWebQuantities(Property.usedBy, Property.uses);
 }
 
 

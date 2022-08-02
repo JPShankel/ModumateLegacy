@@ -310,3 +310,9 @@ void FStructDataWrapper::FreeTempStruct()
 	FMemory::Free(TempStructBuffer);
 	TempStructBuffer = nullptr;
 }
+
+bool FStructDataWrapper::GetJsonObject(TSharedPtr<FJsonObject>& OutJson) const
+{
+	OutJson = StructJson.JsonObject;
+	return true;
+}

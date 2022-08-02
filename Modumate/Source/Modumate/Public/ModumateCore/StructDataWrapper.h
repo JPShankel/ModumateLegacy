@@ -34,6 +34,8 @@ struct MODUMATE_API FStructDataWrapper
 		return LoadStructData(OutStructType::StaticStruct(), &OutStruct, bResetStruct);
 	}
 
+	bool GetJsonObject(TSharedPtr<FJsonObject>& OutJson) const;
+
 	// TODO: these three Save* helper functions should be unnecessary if we can more deeply customize JSON and/or CBOR serialization behavior.
 
 	// If JSON wasn't saved during initialization (not by default for performance), it must be saved before serialization.

@@ -16,10 +16,12 @@ namespace ModumateOnlineTests
 	{
 		for (const FWorldContext& worldContext : GEngine->GetWorldContexts())
 		{
-			if (worldContext.WorldType == EWorldType::Game)
+			switch (worldContext.WorldType)
 			{
+			case EWorldType::Game:
+			case EWorldType::PIE:
 				return worldContext.World();
-			}
+			};
 		}
 
 		return nullptr;

@@ -257,12 +257,6 @@ struct MODUMATE_API FBIMPresetInstance
 	EBIMAssetType AssetType = EBIMAssetType::None;
 
 	UPROPERTY()
-	FStructDataWrapper CustomData_DEPRECATED;
-
-	UPROPERTY()
-	TMap<FString, FName> FormItemToProperty_DEPRECATED;
-
-	UPROPERTY()
 	TMap<FName, FStructDataWrapper> CustomDataByClassName;
 
 	template<class T>
