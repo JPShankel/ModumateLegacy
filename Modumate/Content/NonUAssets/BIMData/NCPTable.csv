@@ -36,6 +36,7 @@ Property_Performance_Comfort Provision_Illuminance_IESProfile,IES Profile,,,IESP
 Property_Performance_Resource Consumption,Resource Consumption,,,,,,,,,,,Resource Consumption,,,,,,,,,,,,
 Property_Spatiality,Spatiality,,,,,,,,,,Spatiality,,,,,,,,,,,,,
 Property_Spatiality_ConnectionDetail,Connection Details,,,,,,X,,,,,ConnectionDetail,,,,,,,,,,,,
+Property_Spatiality_ConnectionDetail_Alignment,,,,,,,,,,,,,Alignment,,,,,,,,,,,
 Property_Spatiality_ConnectionDetail_Edge,Edge Details,,OTEdgeDetail,,,,,,,,,,Edge,,,,,,,,,,,
 Property_Spatiality_ConnectionDetail_Vertex,Vertex Details,,,,,,,,,,,,Vertex,,,,,,,,,,,
 Property_Spatiality_Dimension,Dimensions,,,,,,X,,,,,Dimension,,,,,,,,,,,,
