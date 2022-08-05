@@ -1045,8 +1045,15 @@ EBIMResult FBIMPresetCollection::MakeNewPresetFromDatasmith(const FModumateDatab
 	NewPreset.Properties.SetProperty(NewPreset.NodeScope, BIMPropertyNames::Name, NewPreset.DisplayName.ToString());
 	NewPreset.Properties.SetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, ArchitecturalMeshID.ToString());
 
-	GetAvailableGUID(NewPreset.GUID);
-	OutPresetID = NewPreset.GUID;
+	if (OutPresetID.IsValid())
+	{
+		NewPreset.GUID = OutPresetID;
+	}
+	else
+	{
+		GetAvailableGUID(NewPreset.GUID);
+		OutPresetID = NewPreset.GUID;
+	}
 	AddPreset(NewPreset);
 
 	FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(EObjectType::OTFurniture);
