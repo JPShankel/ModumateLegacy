@@ -920,14 +920,75 @@ EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const 
 	return EBIMResult::Success;
 }
 
+EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWorld* World)
+{
+	MyTagPath = InPreset.tagPath;
+	DisplayName = FText::FromString(InPreset.name);
+
+	for (auto& property : InPreset.properties)
+	{
+		TArray<FString> splitKey;
+		property.Key.ParseIntoArray(splitKey, TEXT("."));
+		if (ensure(splitKey.Num() == 2))
+		{
+			EBIMValueScope scope;
+			if (FindEnumValueByString(splitKey[0],scope))
+			{
+				if (property.Value.type == EBIMWebPresetPropertyType::number)
+				{
+					SetScopedProperty(scope, *splitKey[0], FCString::Atof(*splitKey[1]));
+				}
+				else
+				{
+					SetScopedProperty(scope, *splitKey[0], splitKey[1]);
+				}
+			}
+			else
+			{
+				auto* customData = CustomDataByClassName.Find(*splitKey[0]);
+				if (ensure(customData))
+				{
+					// TODO: pre-populate local map
+					TSharedPtr<FJsonObject> jsonOb;
+					if (!ensure(customData->GetJsonObject(jsonOb)))
+					{
+						continue;
+					}
+
+					auto jsonVal = jsonOb->GetField<EJson::None>(splitKey[1]);
+
+					if (!ensure(jsonVal))
+					{
+						continue;
+					}
+
+					switch (jsonVal->Type)
+					{
+					case EJson::Number:
+						jsonOb->SetNumberField(splitKey[1], FCString::Atof(*property.Value.value[0]));
+						break;
+					case EJson::Boolean:
+						jsonOb->SetBoolField(splitKey[1], property.Value.value[0].Equals(TEXT("true")) ? true : false);
+						break;
+					case EJson::String:
+						jsonOb->SetStringField(splitKey[1], property.Value.value[0]);
+						break;
+					};
+
+					customData->SetJsonObject(jsonOb);
+				}
+			}
+		}
+	}
+
+	return EBIMResult::Success;
+}
 
 EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* World) const
 {
-
 	OutPreset.name = DisplayName.ToString();
 	OutPreset.guid = GUID;
 	OutPreset.tagPath = MyTagPath;
-
 
 	GetUses(World, OutPreset);
 
@@ -963,7 +1024,7 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	Properties.ForEachProperty([&properties](const FBIMPropertyKey& Key, const FString& Value)
 		{
 			FBIMWebPresetProperty property;
-			property.key = FString(TEXT("RootProperties.")) + Key.Name.ToString();
+			property.key = Key.QN().ToString();
 			property.name = Key.Name.ToString();
 			property.type = EBIMWebPresetPropertyType::string;
 			property.value.Add(Value);
@@ -974,7 +1035,7 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	Properties.ForEachProperty([&properties](const FBIMPropertyKey& Key, float Value)
 		{
 			FBIMWebPresetProperty property;
-			property.key = FString(TEXT("RootProperties.")) + Key.Name.ToString();
+			property.key = Key.QN().ToString();
 			property.name = Key.Name.ToString();
 			property.type = EBIMWebPresetPropertyType::number;
 			property.value.Add(FString::Printf(TEXT("%f"),Value));

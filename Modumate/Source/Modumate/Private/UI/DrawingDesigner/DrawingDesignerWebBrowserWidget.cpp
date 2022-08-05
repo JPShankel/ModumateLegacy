@@ -7,6 +7,8 @@
 #include "UI/Custom/ModumateButton.h"
 #include "Components/MultiLineEditableTextBox.h"
 #include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "UI/ModalDialog/ModalDialogWidget.h"
 #include "Online/ModumateCloudConnection.h"
@@ -14,6 +16,7 @@
 #include "DrawingDesigner/DrawingDesignerDocument.h"
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
+#include "DocumentManagement/DocumentWebBridge.h"
 
 #define LOCTEXT_NAMESPACE "DrawingDesignerWebBrowserWidget"
 
@@ -59,16 +62,16 @@ void UDrawingDesignerWebBrowserWidget::ResetDocumentButtonPressed()
 void UDrawingDesignerWebBrowserWidget::InitWithController()
 {
 	auto controller = GetOwningPlayer<AEditModelPlayerController>();
-	auto gameInstance = controller->GetGameInstance<UModumateGameInstance>();
-	auto cloudConnection = gameInstance->GetCloudConnection();
+	auto gameState = GetWorld() ? Cast<AEditModelGameState>(GetWorld()->GetGameState()) : nullptr;
+	auto gameInstance = controller ? controller->GetGameInstance<UModumateGameInstance>() : nullptr;
+	auto cloudConnection = gameInstance ? gameInstance->GetCloudConnection() : nullptr;
 	
-	if (ensureAlways(controller && controller->GetDocument()))
+	if (ensureAlways(controller && controller->GetDocument() && gameState && gameState->DocumentWebBridge))
 	{
 		static const FString bindObjName(TEXT("doc"));
-		DrawingSetWebBrowser->CallBindUObject(bindObjName, controller->GetDocument(), true);
+		DrawingSetWebBrowser->CallBindUObject(bindObjName, gameState->DocumentWebBridge, true);
 		DrawingSetWebBrowser->CallBindUObject(TEXT("ui"), controller->InputHandlerComponent, true);
-		DrawingSetWebBrowser->CallBindUObject(TEXT("game"), GetGameInstance(), true);
-		
+		DrawingSetWebBrowser->CallBindUObject(TEXT("game"), GetGameInstance(), true);		
 	}
 
 	const auto* projectSettings = GetDefault<UGeneralProjectSettings>();

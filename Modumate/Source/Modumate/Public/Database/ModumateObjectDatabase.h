@@ -41,7 +41,6 @@ static constexpr int32 BIMCacheCurrentVersion = 23;
 // Version 22: bim dynamic properties wip
 // Version 23: Symbol NodeType added
 
-
 USTRUCT()
 struct FModumateBIMCacheRecord
 {

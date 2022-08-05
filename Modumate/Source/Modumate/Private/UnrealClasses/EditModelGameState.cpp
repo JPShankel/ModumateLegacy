@@ -38,6 +38,9 @@ void AEditModelGameState::InitDocument(const FString& LocalUserID, int32 LocalUs
 		// Only expected to be non-null on offline clients and dedicated servers
 		UWorld* world = GetWorld();
 		EditModelGameMode = world ? world->GetAuthGameMode<AEditModelGameMode>() : nullptr;
+
+		DocumentWebBridge = NewObject<UModumateDocumentWebBridge>(this);
+		DocumentWebBridge->Document = Document;
 	}
 }
 

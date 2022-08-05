@@ -35,6 +35,7 @@ struct MODUMATE_API FStructDataWrapper
 	}
 
 	bool GetJsonObject(TSharedPtr<FJsonObject>& OutJson) const;
+	bool SetJsonObject(const TSharedPtr<FJsonObject>& InJson);
 
 	// TODO: these three Save* helper functions should be unnecessary if we can more deeply customize JSON and/or CBOR serialization behavior.
 

@@ -183,12 +183,18 @@ EBIMResult FBIMPresetCollection::LoadCSVManifest(const FString& ManifestPath, co
 	static const FName kTagPaths = TEXT("TAGPATHS");
 	static const FName kPreset = TEXT("PRESET");
 	static const FName kInputPin = TEXT("INPUTPIN");
+	static const FName kFormElement = TEXT("FORMELEMENT");
 	static const FName kString = TEXT("String");
 	static const FName kDimension = TEXT("Dimension");
 
 	FBIMCSVReader tableData;
 	tableData.KeyGuidMap.Empty();
 	tableData.GuidKeyMap.Empty();
+
+	processor.AddRule(kFormElement, [&OutMessages, &tableData](const TArray<const TCHAR*> &Row, int32 RowNumber)
+	{
+		ensureAlways(tableData.ProcessFormElementRow(Row, RowNumber, OutMessages) == EBIMResult::Success);
+	});
 
 	processor.AddRule(kTypeName, [&OutMessages, &tableData](const TArray<const TCHAR*> &Row, int32 RowNumber)
 	{

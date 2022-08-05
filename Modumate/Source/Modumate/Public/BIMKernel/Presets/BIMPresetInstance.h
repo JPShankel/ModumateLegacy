@@ -85,7 +85,6 @@ struct MODUMATE_API FPresetCustomDataWrapper
 
 	UPROPERTY()
 	TMap<FName, FStructDataWrapper> CustomDataWrapper;
-
 };
 
 UENUM()
@@ -348,7 +347,8 @@ struct MODUMATE_API FBIMPresetInstance
 	EBIMResult UpgradeData(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, int32 InDocVersion);
 
 	EBIMResult ToWebPreset(FBIMWebPreset& OutPreset, UWorld* World) const;
-	
+	EBIMResult FromWebPreset(const FBIMWebPreset& InPreset, UWorld* World);
+
 	void GetUses(UWorld* World, FBIMWebPreset& Property) const;
 
 	bool operator==(const FBIMPresetInstance& RHS) const;

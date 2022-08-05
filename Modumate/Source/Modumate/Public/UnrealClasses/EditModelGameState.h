@@ -6,6 +6,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "Interfaces/IHttpRequest.h"
 #include "Online/ProjectConnection.h"
+#include "DocumentManagement/DocumentWebBridge.h"
 
 #include "EditModelGameState.generated.h"
 
@@ -21,6 +22,9 @@ public:
 
 	UPROPERTY()
 	UModumateDocument* Document;
+
+	UPROPERTY()
+	UModumateDocumentWebBridge* DocumentWebBridge;
 
 	UFUNCTION(NetMulticast, Reliable)
 	void BroadcastServerDeltas(const FString& SourceUserID, const FDeltasRecord& Deltas, bool bRedoingRecord = false);

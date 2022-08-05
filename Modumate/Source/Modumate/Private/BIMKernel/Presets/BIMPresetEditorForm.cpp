@@ -169,4 +169,18 @@ EBIMResult FBIMPresetForm::AddConstructionCostElements()
 	return EBIMResult::Success;
 }
 
+EBIMResult FBIMWebPresetForm::AddPropertyElement(const FString& DisplayName, const FString& FieldName)
+{
+	if (ensureAlways(!DisplayName.IsEmpty() && !FieldName.IsEmpty()))
+	{
+		FBIMWebPresetFormElement& elem = Elements.AddDefaulted_GetRef();
+		elem.DisplayName = DisplayName;
+		elem.FieldName = FieldName;
+		
+		return EBIMResult::Success;
+	}
+
+	return EBIMResult::Error;
+}
+
 #undef LOCTEXT_NAMESPACE

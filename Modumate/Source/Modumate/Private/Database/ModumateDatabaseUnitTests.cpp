@@ -78,16 +78,35 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDatabaseBIMTest, "Modumate.Database.BI
 	bimDatabase.ReadPresetData();
 	bSuccess = bimDatabase.UnitTest() && bSuccess;
 
-	FBIMPresetInstance preset;
+	FBIMPresetInstance sourcePreset, targetPreset;
+
+	sourcePreset.SetScopedProperty(EBIMValueScope::Preset, BIMPropertyNames::Description, FString(TEXT("My Preset Condition")));
+	sourcePreset.SetScopedProperty(EBIMValueScope::Preset, BIMPropertyNames::Code, 555.0f);
 
 	FLightConfiguration lightConfig;
-	preset.SetCustomData(lightConfig);
+	lightConfig.Name = TEXT("My Light");
+	sourcePreset.SetCustomData(lightConfig);
 
 	FBIMConstructionCost constructionCost;
-	preset.SetCustomData(constructionCost);
+	constructionCost.LaborCostRate = 777.0f;
+	sourcePreset.SetCustomData(constructionCost);
+
+	targetPreset.SetCustomData(FLightConfiguration());
+	targetPreset.SetCustomData(FBIMConstructionCost());
 
 	FBIMWebPreset webPreset;
-	preset.ToWebPreset(webPreset, nullptr);
+	sourcePreset.ToWebPreset(webPreset, nullptr);
+
+	targetPreset.FromWebPreset(webPreset, nullptr);
+
+	FBIMConstructionCost outConstructionCost;
+	FLightConfiguration outLightConfig;
+
+	bSuccess = targetPreset.TryGetCustomData(outConstructionCost) && bSuccess;
+	bSuccess = targetPreset.TryGetCustomData(outLightConfig) && bSuccess;
+
+	bSuccess = (outConstructionCost.LaborCostRate == constructionCost.LaborCostRate) && bSuccess;
+	bSuccess = (outLightConfig.Name == lightConfig.Name) && bSuccess;
 
 	UE_LOG(LogEngineAutomationTests, Log, TEXT("Modumate BIM Schema - Unit Test Completed %s"), bSuccess ? TEXT("PASSED") : TEXT("FAILED"));
 	return bSuccess;

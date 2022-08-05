@@ -316,3 +316,12 @@ bool FStructDataWrapper::GetJsonObject(TSharedPtr<FJsonObject>& OutJson) const
 	OutJson = StructJson.JsonObject;
 	return true;
 }
+
+bool FStructDataWrapper::SetJsonObject(const TSharedPtr<FJsonObject>& InJson)
+{
+	StructJson.JsonObject = InJson;
+	StructJson.JsonObjectToString(StructJson.JsonString);
+	LoadFromJson();
+	SaveCborFromJson();
+	return true;
+}

@@ -111,3 +111,29 @@ struct MODUMATE_API FBIMPresetForm
 	bool operator==(const FBIMPresetForm& RHS) const;
 	bool operator!=(const FBIMPresetForm& RHS) const;
 };
+
+USTRUCT()
+struct FBIMWebPresetFormElement
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString DisplayName;
+
+	UPROPERTY()
+	FString FieldName;
+
+	UPROPERTY()
+	FString StringRepresentation;
+};
+
+USTRUCT()
+struct FBIMWebPresetForm
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FBIMWebPresetFormElement> Elements;
+
+	EBIMResult AddPropertyElement(const FString& DisplayName, const FString& FieldName);
+};

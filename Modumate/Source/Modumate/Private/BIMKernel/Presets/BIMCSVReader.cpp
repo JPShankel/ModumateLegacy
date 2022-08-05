@@ -22,7 +22,7 @@ bool FBIMCSVReader::FPresetMatrix::IsIn(int32 i) const
 {
 	return First >= 0 && i >= First && i < First + Columns.Num();
 }
-
+ 
 static FString NormalizeCell(const FString& Row)
 {
 	int32 sl = Row.Len();
@@ -39,6 +39,13 @@ static FString NormalizeCell(const FString& Row)
 	}
 	return cell;
 };
+
+EBIMResult FBIMCSVReader::ProcessFormElementRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages)
+{
+	//Row Format:
+	//[TYPENAME][][FieldName][][DisplayName]
+	return NodeType.WebFormTemplate.AddPropertyElement(Row[4], Row[2]);
+}
 
 EBIMResult FBIMCSVReader::ProcessNodeTypeRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages)
 {

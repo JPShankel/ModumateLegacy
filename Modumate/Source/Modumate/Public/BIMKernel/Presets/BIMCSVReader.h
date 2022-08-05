@@ -101,6 +101,7 @@ struct MODUMATE_API FBIMCSVReader
 		return EBIMResult::Success;
 	}
 
+	EBIMResult ProcessFormElementRow(const TArray< const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
 	EBIMResult ProcessNodeTypeRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
 	EBIMResult ProcessPropertyDeclarationRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);
 	EBIMResult ProcessTagPathRow(const TArray<const TCHAR*>& Row, int32 RowNumber, TArray<FString>& OutMessages);

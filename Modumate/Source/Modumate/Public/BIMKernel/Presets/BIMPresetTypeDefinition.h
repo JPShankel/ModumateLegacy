@@ -81,6 +81,9 @@ struct MODUMATE_API FBIMPresetTypeDefinition
 	FBIMPresetForm FormTemplate;
 
 	UPROPERTY()
+	FBIMWebPresetForm WebFormTemplate;
+
+	UPROPERTY()
 	TArray<FBIMPresetNodePinSet> PinSets;
 
 	UPROPERTY()
