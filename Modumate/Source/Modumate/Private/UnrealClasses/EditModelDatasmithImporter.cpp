@@ -102,7 +102,7 @@ void AEditModelDatasmithImporter::HandleAssetRequest(const FAssetRequest& InAsse
 		// TODO: Adding embedded assets to StaticMeshAssetMap is for testing purposes, 
 		// should re-evaluate when Datasmith assets can be bundled with presets properly.
 		TArray<UStaticMesh*> meshes;
-		for (const auto curPart : InAssetRequest.Assembly.Parts)
+		for (const auto& curPart : InAssetRequest.Assembly.Parts)
 		{
 			if (curPart.Mesh.EngineMesh.IsValid())
 			{

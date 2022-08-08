@@ -582,7 +582,7 @@ void FModumateDatabase::ImportDatasmithFromTempFolder()
 	TArray<FString> foundFolders;
 	FFileManagerGeneric::Get().FindFilesRecursive(foundFolders, *absoluteDownloadFolderPath, TEXT("*"), false, true, true);
 
-	for (const auto curFolder : foundFolders)
+	for (const auto& curFolder : foundFolders)
 	{
 		// For each folder name, check if it is valid Guid
 		FString relPath = curFolder;
