@@ -1702,6 +1702,7 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 	const UModumateDocument* doc = gameState ? gameState->Document : nullptr;
 
 	OutState = FWebEditModelPlayerState();
+	OutState.clientIdx = MultiplayerClientIdx;
 	UModumateObjectStatics::GetWebMOIArrayForObjects(obs, OutState.selectedObjects);
 
 	if (ensure(doc))
@@ -1716,7 +1717,7 @@ bool AEditModelPlayerState::ToWebPlayerState(FWebEditModelPlayerState& OutState)
 		OutState.toolMode = GetEnumValueString<EToolCreateObjectMode>(EMPlayerController->CurrentTool->GetCreateObjectMode());
 		OutState.viewMode = GetEnumValueString<EEditViewModes>(EMPlayerController->EMPlayerState->SelectedViewMode);
 		OutState.culledCutplane = EMPlayerController->CurrentCullingCutPlaneID;
-
+		
 		FDateTime dateTime;
 		if (!ensureMsgf(!EMPlayerController->SkyActor->GetCurrentDateTime().ToIso8601().IsEmpty(),
 			TEXT("The SkyActor date/time is empty. Setting it to %s"), *DefaultEnvDateTime))

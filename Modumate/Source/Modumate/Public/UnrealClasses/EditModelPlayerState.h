@@ -75,6 +75,9 @@ struct MODUMATE_API FWebEditModelPlayerState
 
 	UPROPERTY()
 	TArray<FWebPlayerDetails> players;
+
+	UPROPERTY()
+	int32 clientIdx = INDEX_NONE;
 };
 
 /**
