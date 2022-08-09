@@ -1134,7 +1134,10 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 			DeltaAffectedPresets.Add(PresetDelta.NewState.GUID);
 		}
 
-		UpdateWebPresets();
+		if (!IsPreviewingDeltas())
+		{
+			UpdateWebPresets();
+		}
 
 		return true;
 	}
@@ -1252,6 +1255,11 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 	{
 			UndoBuffer.Add(ur);
 	}
+
+	// For Symbol propagation:
+	TArray<FDeltaPtr> derivedDestroyDeltas;
+	FModumateObjectDeltaStatics::GetDerivedDeltasFromDeltas(this, EMOIDeltaType::Destroy, Deltas, derivedDestroyDeltas);
+	ur->Deltas.Append(derivedDestroyDeltas);
 
 	TSet<EObjectType> affectedTypes;
 
@@ -1457,17 +1465,47 @@ void UModumateDocument::CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWo
 	// Next, clean objects while gathering potential side effect deltas,
 	// apply side effect deltas, and add them to the undo/redo-able list of deltas.
 	// Prevent infinite loops, but allow for iteration due to multiple levels of dependency.
-	int32 sideEffectIterationGuard = 8;
+	static constexpr int32 maxSideEffectIteration = 8;
+	int32 sideEffectIterationGuard = maxSideEffectIteration;
 	TArray<FDeltaPtr> sideEffectDeltas;
+
+	// Deltas created by Symbol reflection logic:
+	TArray<FDeltaPtr> derivedDeltas;
+	const bool bCreateDerived = !IsPreviewingDeltas();
+
 	do
 	{
 		sideEffectDeltas.Reset();
 		CleanObjects(&sideEffectDeltas);
+
 		for (auto& delta : sideEffectDeltas)
 		{
 			Deltas.Add(delta);
 			delta->ApplyTo(this, World);
 		}
+
+		if (bCreateDerived && sideEffectIterationGuard == maxSideEffectIteration)
+		{
+			FModumateObjectDeltaStatics::GetDerivedDeltasFromDeltas(this, EMOIDeltaType::Mutate, Deltas, derivedDeltas);
+
+			if (derivedDeltas.Num() > 0)
+			{
+				for (auto& delta : derivedDeltas)
+				{
+					Deltas.Add(delta);
+					delta->ApplyTo(this, World);
+				}
+
+				sideEffectDeltas.Reset();
+				CleanObjects(&sideEffectDeltas);
+				for (auto& delta : sideEffectDeltas)
+				{
+					Deltas.Add(delta);
+					delta->ApplyTo(this, World);
+				}
+			}
+		}
+
 		PostApplyDeltas(World, false, false);
 
 		if (!ensure(--sideEffectIterationGuard > 0))

@@ -1189,6 +1189,30 @@ int32 UModumateObjectStatics::GetGraphIDForSpanObject(const AModumateObjectInsta
 	return INDEX_NONE;
 }
 
+int32 UModumateObjectStatics::GetGroupIdForObject(const UModumateDocument* Doc, int32 MoiId)
+{
+	const AModumateObjectInstance* object = Doc->GetObjectById(MoiId);
+	while (object && UModumateTypeStatics::Graph3DObjectTypeFromObjectType(object->GetObjectType()) == EGraph3DObjectType::None
+		&& !UModumateTypeStatics::IsSpanObject(object))
+	{
+		object = object->GetParentObject();
+	}
+
+	if (!object)
+	{
+		return MOD_ID_NONE;
+	}
+
+	int32 graphId = UModumateObjectStatics::GetGraphIDForSpanObject(object);
+	if (graphId != MOD_ID_NONE)
+	{
+		return graphId;
+	}
+
+	const FGraph3D* volumeGraph = Doc->FindVolumeGraph(object->ID);
+	return volumeGraph ? volumeGraph->GraphID : MOD_ID_NONE;
+}
+
 bool UModumateObjectStatics::IsObjectInSubgroup(const UModumateDocument* Doc, const AModumateObjectInstance* Object, int32 ActiveGroup,
 	int32& OutSubgroup, bool& bOutIsInGroup)
 {

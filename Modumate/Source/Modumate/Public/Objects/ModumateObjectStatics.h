@@ -120,6 +120,7 @@ public:
 
 	static void GetTerrainSurfaceObjectEnabledFlags(const AModumateObjectInstance* TerrainSurfaceObj, bool& bOutVisible, bool& bOutCollisionEnabled);
 
+	// Group/Graph3D
 	static bool IsObjectInGroup(const UModumateDocument* Doc, const AModumateObjectInstance* Object, int32 GroupID = MOD_ID_NONE);
 	// True if the Object is in a descendent group of ActiveGroup - if so OutSubgroup is the child group towards
 	// Object, o/wise bOutIsInGroup true if Object directly in ActiveGroup.
@@ -129,6 +130,7 @@ public:
 	static void GetObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, TSet<AModumateObjectInstance*>& OutObjects);
 	static void GetObjectsInGroupRecursive(UModumateDocument* Doc, int32 GroupID, TSet<AModumateObjectInstance*>& OutObjects);
 	static void HideObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, bool bHide=true);
+	static int32 GetGroupIdForObject(const UModumateDocument* Doc, int32 MoiId);
 
 	static void GetDesignOptionsForGroup(UModumateDocument* Doc, int32 GroupID, TArray<int32>& OutDesignOptionIDs);
 	static void UpdateDesignOptionVisibility(UModumateDocument* Doc);

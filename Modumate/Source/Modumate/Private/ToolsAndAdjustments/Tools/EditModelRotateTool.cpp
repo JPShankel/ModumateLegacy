@@ -115,7 +115,7 @@ bool URotateObjectTool::EndUse()
 		FQuat userQuat = CalcToolAngle();
 		const FTransform objectTransform(userQuat, AnchorPoint - userQuat.RotateVector(AnchorPoint));
 		TArray<FDeltaPtr> groupDeltas;
-		FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(Controller->GetDocument(), OriginalGroupVertexPositions, objectTransform, groupDeltas);
+		FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(Controller->GetDocument(), OriginalGroupTransforms, objectTransform, groupDeltas);
 
 		ReleaseObjectsAndApplyDeltas(&groupDeltas);
 	}
@@ -173,7 +173,7 @@ void URotateObjectTool::ApplyRotation()
 	}
 
 	TArray<FDeltaPtr> groupDeltas;
-	FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(Controller->GetDocument(), OriginalGroupVertexPositions, objectTransform, groupDeltas);
+	FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(Controller->GetDocument(), OriginalGroupTransforms, objectTransform, groupDeltas);
 
 
 	FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, Controller->GetDocument(), Controller->GetWorld(), true, &groupDeltas);
@@ -250,7 +250,7 @@ bool URotateObjectTool::HandleInputNumber(double n)
 	const FTransform objectTransform(deltaRot, AnchorPoint - deltaRot.RotateVector(AnchorPoint));
 
 	TArray<FDeltaPtr> groupDeltas;
-	FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(Controller->GetDocument(), OriginalGroupVertexPositions, objectTransform, groupDeltas);
+	FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(Controller->GetDocument(), OriginalGroupTransforms, objectTransform, groupDeltas);
 
 	TMap<int32, FTransform> objectInfo;
 	for (auto& kvp : OriginalTransforms)

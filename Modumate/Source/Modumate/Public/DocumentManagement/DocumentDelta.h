@@ -24,6 +24,7 @@ public:
 	virtual TSharedPtr<FDocumentDelta> MakeInverse() const { return nullptr; };
 	virtual FStructDataWrapper SerializeStruct();
 	virtual void GetAffectedObjects(TArray<TPair<int32, EMOIDeltaType>>& OutAffectedObjects) const { }
+	virtual void GetDerivedDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaOperation, TArray<TSharedPtr<FDocumentDelta>>& OutDeltas) const { }
 
 protected:
 	// Generic helper for populated the results of GetAffectedObjects

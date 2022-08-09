@@ -165,4 +165,5 @@ struct MODUMATE_API FGraph3DDelta : public FDocumentDelta
 	virtual bool ApplyTo(UModumateDocument *doc, UWorld *world) const override;
 	virtual FStructDataWrapper SerializeStruct() override { return FStructDataWrapper(StaticStruct(), this, true); }
 	virtual void GetAffectedObjects(TArray<TPair<int32, EMOIDeltaType>>& OutAffectedObjects) const override;
+	virtual void GetDerivedDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaOperation, TArray<TSharedPtr<FDocumentDelta>>& OutDeltas) const override;
 };

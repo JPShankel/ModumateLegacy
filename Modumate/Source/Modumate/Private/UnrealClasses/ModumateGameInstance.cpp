@@ -630,25 +630,6 @@ void UModumateGameInstance::RegisterAllCommands()
 		if (playerState && playerState->SelectedGroupObjects.Num() == 1)
 		{
 			const AMOIMetaGraph* group = Cast<const AMOIMetaGraph>(*playerState->SelectedGroupObjects.begin());
-#if 0
-			int32 symbolID = doc->GetNextAvailableID();
-			FMOIMetaGraphData newGroupData = group->InstanceData;
-			if (ensure(newGroupData.SymbolID == MOD_ID_NONE) && group->ID != doc->GetRootVolumeGraphID())
-			{
-				newGroupData.SymbolID = symbolID;
-				auto delta = MakeShared<FMOIDelta>();
-				FMOIStateData groupInstanceData(group->GetStateData());
-				groupInstanceData.CustomData.SaveStructData(newGroupData, UE_EDITOR);
-				delta->AddMutationState(group, group->GetStateData(), groupInstanceData);
-
-				FMOIStateData newSymbolStateData(symbolID, EObjectType::OTSymbol);
-				FMOISymbolData newSymbolInstanceData;
-				newSymbolStateData.DisplayName = TEXT("ExampleSymbol");
-				newSymbolStateData.CustomData.SaveStructData(newSymbolInstanceData, UE_EDITOR);
-				delta->AddCreateDestroyState(newSymbolStateData, EMOIDeltaType::Create);
-				doc->ApplyDeltas({ delta }, GetWorld());
-			}
-#endif
 			FMOIMetaGraphData newGroupData = group->InstanceData;
 			if (ensure(!newGroupData.SymbolID.IsValid()) && group->ID != doc->GetRootVolumeGraphID())
 			{

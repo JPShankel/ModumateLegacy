@@ -55,6 +55,7 @@ struct MODUMATE_API FMOIDelta : public FDocumentDelta
 	virtual FDeltaPtr MakeInverse() const override;
 	virtual FStructDataWrapper SerializeStruct() override;
 	virtual void GetAffectedObjects(TArray<TPair<int32, EMOIDeltaType>>& OutAffectedObjects) const override;
+	virtual void GetDerivedDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaOperation, TArray<TSharedPtr<FDocumentDelta>>& OutDeltas) const override;
 
 	UPROPERTY()
 	TArray<FMOIDeltaState> States;

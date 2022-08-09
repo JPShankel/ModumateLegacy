@@ -2,6 +2,7 @@
 
 #include "DocumentManagement/ModumateCommands.h"
 #include "Objects/ModumateObjectDeltaStatics.h"
+#include "Objects/MetaGraph.h"
 #include "UI/DimensionManager.h"
 #include "UI/PendingSegmentActor.h"
 #include "UnrealClasses/EditModelGameMode.h"
@@ -122,12 +123,12 @@ bool UMoveObjectTool::FrameUpdate()
 
 				// Move entire groups
 				TArray<FDeltaPtr> deltas;
-				FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(doc, OriginalGroupVertexPositions, FTransform(offset),
+				FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(doc, OriginalGroupTransforms, FTransform(offset),
 					deltas);
 
 				for (auto& kvp : OriginalTransforms)
 				{
-					objectInfo.Add(kvp.Key, FTransform(kvp.Value.GetRotation(), kvp.Value.GetTranslation() + offset));;
+					objectInfo.Add(kvp.Key, FTransform(kvp.Value.GetRotation(), kvp.Value.GetTranslation() + offset));
 				}
 
 				if (!FModumateObjectDeltaStatics::MoveTransformableIDs(objectInfo, doc, Controller->GetWorld(), true, &deltas))
@@ -174,7 +175,7 @@ bool UMoveObjectTool::HandleInputNumber(double n)
 
 				// Move entire groups
 				TArray<FDeltaPtr> deltas;
-				FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(doc, OriginalGroupVertexPositions, FTransform(offset),
+				FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(doc, OriginalGroupTransforms, FTransform(offset),
 					deltas);
 
 				for (auto& kvp : OriginalTransforms)
@@ -221,13 +222,13 @@ bool UMoveObjectTool::EndUse()
 			// Move entire groups
 			TArray<FDeltaPtr> groupDeltas;
 
-			if (OriginalGroupVertexPositions.Num() > 0)
+			if (OriginalGroupTransforms.Num() > 0)
 			{
-				AModumateObjectInstance* targetMOI = doc->GetObjectById(OriginalGroupVertexPositions.begin()->Key);
+				AModumateObjectInstance* targetMOI = doc->GetObjectById(OriginalGroupTransforms.begin()->Key);
 				if (ensure(targetMOI))
 				{
-					FVector offset(targetMOI->GetWorldTransform().GetLocation() - OriginalGroupVertexPositions.begin()->Value);
-					FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(doc, OriginalGroupVertexPositions, FTransform(offset),
+					FTransform newXform(OriginalGroupTransforms.begin()->Value.Inverse()* targetMOI->GetWorldTransform());
+					FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(doc, OriginalGroupTransforms, newXform,
 						groupDeltas);
 				}
 			}
@@ -253,7 +254,7 @@ bool UMoveObjectTool::EndUse()
 		snappedCursor.SetAffordanceFrame(AnchorPoint, snappedCursor.HitNormal, snappedCursor.HitTangent);
 		// Re-acquire for next copy.
 		OriginalTransforms.Empty();
-		OriginalGroupVertexPositions.Empty();
+		OriginalGroupTransforms.Empty();
 		OriginalSelectedObjects.Empty();
 		OriginalSelectedGroupObjects.Empty();
 		GroupCopyDeltas.Empty();
@@ -285,18 +286,35 @@ void UMoveObjectTool::GetDeltasForGroupCopies(UModumateDocument* Doc, FVector Of
 	for (const auto& deltaPair: GroupCopyDeltas)
 	{
 		FDeltaPtr delta = deltaPair.Value;
-		if (deltaPair.Key)
+		if (deltaPair.Key == kVertexPosition)
 		{
 			FGraph3DDelta graphDelta(*static_cast<FGraph3DDelta*>(delta.Get()));
 			for (auto& kvp : graphDelta.VertexAdditions)
 			{
 				kvp.Value += Offset;
 			}
-			OutDeltas.Add(MakeShared<FGraph3DDelta>(graphDelta));
+			OutDeltas.Add(MakeShared<FGraph3DDelta>(MoveTemp(graphDelta)) );
+		}
+		else if (deltaPair.Key == kGroup)
+		{	// Update the reference transform on the group itself.
+			const FMOIDelta* groupDelta = static_cast<FMOIDelta*>(delta.Get());
+			FMOIMetaGraphData groupCustomData;
+
+			check(groupDelta->States.Num() == 1 && groupDelta->States[0].DeltaType == EMOIDeltaType::Create);
+
+			FMOIStateData groupData(groupDelta->States[0].NewState);
+
+			groupData.CustomData.LoadStructData(groupCustomData);
+			groupCustomData.Location += Offset;
+			groupData.CustomData.SaveStructData(groupCustomData, UE_EDITOR);
+			auto moiDelta = MakeShared<FMOIDelta>();
+			moiDelta->AddCreateDestroyState(groupData, EMOIDeltaType::Create);
+			OutDeltas.Add(moiDelta);
 		}
 		else
 		{
 			OutDeltas.Add(delta);
 		}
 	}
+
 }

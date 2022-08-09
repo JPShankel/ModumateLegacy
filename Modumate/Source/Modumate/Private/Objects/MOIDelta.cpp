@@ -3,6 +3,7 @@
 #include "Objects/MOIDelta.h"
 
 #include "DocumentManagement/ModumateDocument.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 #include "DrawingDesigner/DrawingDesignerRequests.h"
 
 
@@ -101,5 +102,13 @@ void FMOIDelta::GetAffectedObjects(TArray<TPair<int32, EMOIDeltaType>>& OutAffec
 	for (const FMOIDeltaState& statePair : States)
 	{
 		OutAffectedObjects.Add(TPair<int32, EMOIDeltaType>(statePair.OldState.ID, statePair.DeltaType));
+	}
+}
+
+void FMOIDelta::GetDerivedDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaOperation, TArray<TSharedPtr<FDocumentDelta>>& OutDeltas) const
+{
+	for (const auto& deltaState : States)
+	{
+		FModumateObjectDeltaStatics::CreateSymbolDerivedDeltasForMoi(Doc, deltaState, DeltaOperation, OutDeltas);
 	}
 }

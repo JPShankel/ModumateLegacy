@@ -38,6 +38,7 @@ public:
 	virtual bool ShowStructureOnSelection() const override;
 	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas) override;
 	virtual bool GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled) override;
+	virtual FTransform GetWorldTransform() const override;
 
 	UPROPERTY()
 	FMOIMetaGraphData InstanceData;

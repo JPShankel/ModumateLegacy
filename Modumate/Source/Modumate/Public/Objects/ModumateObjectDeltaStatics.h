@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "MOIState.h"
+#include "ToolsAndAdjustments/Common/SelectedObjectToolMixin.h"
 
 class UModumateDocument;
 
@@ -11,6 +12,8 @@ using FMOIDocumentRecord = FMOIDocumentRecordV5;
 
 struct FDocumentDelta;
 using FDeltaPtr = TSharedPtr<FDocumentDelta>;
+struct FMOIDeltaState;
+enum class EMOIDeltaType : uint8;
 
 struct FGraph3DDelta;
 class FGraph3D;
@@ -40,11 +43,16 @@ public:
 	static void MergeGraphToCurrentGraph(UModumateDocument* Doc, const FGraph3D* OldGraph, int32& NextID, TArray<FDeltaPtr>& OutDeltas, TSet<int32>& OutItemsForSelection);
 
 	// Duplicate a set of groups.
-	static void DuplicateGroups(const UModumateDocument* Doc, const TSet<int32>& GroupIDs, int32& NextID, TArray<TPair<bool, FDeltaPtr>>& OutDeltas);
+	static void DuplicateGroups(const UModumateDocument* Doc, const TSet<int32>& GroupIDs, int32& NextID, TArray<TPair<FSelectedObjectToolMixin::CopyDeltaType, FDeltaPtr>>& OutDeltas);
 
 	// Transform all positions for groups.
-	static void GetDeltasForGroupTransforms(UModumateDocument* Doc, const TMap<int32, FVector>& OriginalGroupVertexTranslations, const FTransform transform,
+	static void GetDeltasForGroupTransforms(UModumateDocument* Doc, const TMap<int32,FTransform>& OriginalGroupVertexTranslations, const FTransform transform,
 		TArray<FDeltaPtr>& OutDeltas);
+
+	// Symbols
+	static void GetDerivedDeltasFromDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaType, const TArray<FDeltaPtr>& InDeltas, TArray<FDeltaPtr>& DerivedDeltas);
+	static void CreateSymbolDerivedDeltasForMoi(UModumateDocument* Doc, const FMOIDeltaState& DeltaState, EMOIDeltaType DeltaType, TArray<FDeltaPtr>& OutDeltas);
+	static void GetDerivedDeltasForGraph3d(UModumateDocument* Doc, const FGraph3DDelta* GraphDelta, EMOIDeltaType DeltaType, TArray<TSharedPtr<FDocumentDelta>>& OutDeltas);
 
 	// Create deltas for wholesale deletion of graph and its contents.
 	static void GetDeltasForGraphDelete(const UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas);

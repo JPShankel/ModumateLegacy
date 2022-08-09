@@ -9,17 +9,20 @@
 
 class MODUMATE_API FSelectedObjectToolMixin
 {
+public:
+	enum CopyDeltaType { kOther, kVertexPosition, kGroup };
+
 protected:
 
 	TSet<int32> OriginalSelectedObjects;
 	TSet<int32> OriginalSelectedGroupObjects;
 	TMap<int32, FTransform> OriginalTransforms;
-	TMap<int32, FVector> OriginalGroupVertexPositions;
+	TMap<int32, FTransform> OriginalGroupTransforms;
 	TWeakObjectPtr<AEditModelPlayerController> ControllerPtr;
 
 	bool bPaste = false;
 	FMOIDocumentRecord CurrentRecord;
-	TArray<TPair<bool, FDeltaPtr>> GroupCopyDeltas;
+	TArray<TPair<CopyDeltaType, FDeltaPtr>> GroupCopyDeltas;
 
 	FSelectedObjectToolMixin(AEditModelPlayerController *InController = nullptr);
 

@@ -141,3 +141,8 @@ bool AMOIMetaGraph::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnab
 	bOutVisible = false; bOutCollisionEnabled = false;
 	return true;
 }
+
+FTransform AMOIMetaGraph::GetWorldTransform() const
+{
+	return FTransform(InstanceData.Rotation, InstanceData.Location);
+}

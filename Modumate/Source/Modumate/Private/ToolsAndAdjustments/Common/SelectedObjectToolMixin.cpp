@@ -89,6 +89,10 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 
 	vertexIDs.Reset();
 	FModumateObjectDeltaStatics::GetTransformableIDs(OriginalSelectedGroupObjects.Array(), doc, vertexIDs);
+	if (vertexIDs.Num() > 0)
+	{
+		vertexIDs.Append(OriginalSelectedGroupObjects);  // Add group postitions themselves.
+	}
 	for (int32 id : vertexIDs)
 	{
 		auto obj = doc->GetObjectById(id);
@@ -97,7 +101,7 @@ void FSelectedObjectToolMixin::AcquireSelectedObjects()
 			continue;
 		}
 
-		OriginalGroupVertexPositions.Add(id, obj->GetWorldTransform().GetTranslation());
+		OriginalGroupTransforms.Add(id, obj->GetWorldTransform());
 	}
 
 	int32 nextID = doc->GetNextAvailableID();
@@ -126,7 +130,7 @@ void FSelectedObjectToolMixin::ReleaseSelectedObjects()
 	}
 
 	OriginalTransforms.Empty();
-	OriginalGroupVertexPositions.Empty();
+	OriginalGroupTransforms.Empty();
 	OriginalSelectedObjects.Empty();
 	OriginalSelectedGroupObjects.Empty();
 	GroupCopyDeltas.Empty();

@@ -3,6 +3,7 @@
 #include "Graph/Graph3DDelta.h"
 #include "Objects/ModumateObjectEnums.h"
 #include "DocumentManagement/ModumateDocument.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 
 
 FGraph3DFaceContainmentDelta::FGraph3DFaceContainmentDelta()
@@ -255,4 +256,12 @@ void FGraph3DDelta::GetAffectedObjects(TArray<TPair<int32, EMOIDeltaType>>& OutA
 	AddAffectedIDs(FaceVertexIDUpdates, EMOIDeltaType::Mutate, OutAffectedObjects);
 	AddAffectedIDs(EdgeReversals, EMOIDeltaType::Mutate, OutAffectedObjects);
 	AddAffectedIDs(FaceReversals, EMOIDeltaType::Mutate, OutAffectedObjects);
+}
+
+void FGraph3DDelta::GetDerivedDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaOperation, TArray<TSharedPtr<FDocumentDelta>>& OutDeltas) const
+{
+	if (DeltaOperation == EMOIDeltaType::Mutate)
+	{
+		FModumateObjectDeltaStatics::GetDerivedDeltasForGraph3d(Doc, this, DeltaOperation, OutDeltas);
+	}
 }
