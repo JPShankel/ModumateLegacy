@@ -171,5 +171,14 @@ struct FLightConfiguration
 	UPROPERTY()
 	FVector Location = FVector::ZeroVector;
 
+	UPROPERTY()
+	FVector Scale = FVector::ZeroVector;
+
+	UPROPERTY()
+	FRotator Rotation = FRotator::ZeroRotator;
+
+	UPROPERTY()
+	float SourceRadius = 0.0f;
+
 	FGuid UniqueKey() const { return PresetGUID; }
 };

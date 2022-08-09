@@ -36,7 +36,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	static int32 MaxLightCount;
 	static int32 CurrentLightCount;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -102,7 +101,14 @@ public:
 	// cached so it can provide calculated values and potentially avoid re-evaluating itself unnecessarily.
 	FBIMPartLayout CachedPartLayout;
 
+	//should be called when ray tracing enabled is toggled
+	void RayTracingEnabled_OnToggled();
+
 private:
+	//will hold the original light intensity of the light in lumens
+	float OriginalLightIntensity = 0.0f;
+	//the amount to reduce light intensity when not in RayTracing
+	static const float LightReductionFactor;
 	void ResetProcMeshComponents(TArray<UProceduralMeshComponent*> &ProcMeshComps, int32 maxNumMeshes);
 	void ResetStaticMeshComponents(int32 maxNumMeshes);
 	bool InitializeProcMeshComponent(TArray<UProceduralMeshComponent*> &ProcMeshComps, USceneComponent *rootComp, int32 index);

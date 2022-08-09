@@ -5,6 +5,7 @@
 #include "Engine/PostProcessVolume.h"
 #include "Kismet/GameplayStatics.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/CompoundMeshActor.h"
 
 UModumateRayTracingSettings::UModumateRayTracingSettings(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -160,6 +161,13 @@ void UModumateRayTracingSettings::SetRayTracingEnabled(APostProcessVolume* ppv, 
 			bForceAllRTOff->Set(0, EConsoleVariableFlags::ECVF_SetByGameSetting);
 		}
 	}
+	TArray<ACompoundMeshActor*> outActors;
+	FindAllActorsOfClass(ppv->GetWorld(), outActors);
+	
+	for (ACompoundMeshActor* actor : outActors)
+	{
+		actor->RayTracingEnabled_OnToggled();
+	}
 }
 void UModumateRayTracingSettings::SetExposure(APostProcessVolume* ppv, uint8 ExposureIndex)
 {
@@ -301,3 +309,4 @@ bool UModumateRayTracingSettings::ApplyRayTraceQualitySettings(APostProcessVolum
 
 	return true;
 }
+

@@ -293,6 +293,14 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					lightConfig.Location.X = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 3]).Centimeters;
 					lightConfig.Location.Y = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 4]).Centimeters;
 					lightConfig.Location.Z = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 5]).Centimeters;
+					lightConfig.Scale.X = FCString::Atof(Row[presetMatrix.First + 6]);
+					lightConfig.Scale.Y = FCString::Atof(Row[presetMatrix.First + 7]);
+					lightConfig.Scale.Z = FCString::Atof(Row[presetMatrix.First + 8]);
+					lightConfig.Rotation.Roll = FCString::Atof(Row[presetMatrix.First + 9]);
+					lightConfig.Rotation.Pitch = FCString::Atof(Row[presetMatrix.First + 10]);
+					lightConfig.Rotation.Yaw = FCString::Atof(Row[presetMatrix.First + 11]);
+					lightConfig.SourceRadius = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 15]).Centimeters;
+
 					Preset.SetCustomData(lightConfig);
 				}
 			}

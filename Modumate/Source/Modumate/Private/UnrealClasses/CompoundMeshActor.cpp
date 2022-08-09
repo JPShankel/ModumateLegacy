@@ -25,8 +25,8 @@
 
 #define DEBUG_NINE_SLICING 0
 
-int32 ACompoundMeshActor::MaxLightCount = 0;
 int32 ACompoundMeshActor::CurrentLightCount = 0;
+const float ACompoundMeshActor::LightReductionFactor = 100.0f;
 
 // Sets default values
 ACompoundMeshActor::ACompoundMeshActor()
@@ -648,17 +648,29 @@ bool ACompoundMeshActor::ConvertStaticMeshToLinesOnPlane(const FVector &PlanePos
 	return true;
 }
 
-void ACompoundMeshActor::UpdateLightFromLightConfig(UStaticMeshComponent* parentMesh, const FLightConfiguration &lightConfig)
+
+
+extern FAutoConsoleVariableRef CVarRayTracingOcclusion;
+void ACompoundMeshActor::RayTracingEnabled_OnToggled()
 {
-	if (CurrentLightCount < MaxLightCount)
+	if (PointLightComp == nullptr)
 	{
-		CurrentLightCount++;
-	}
-	else {
 		return;
 	}
+	auto bRTEnabledCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
+	if (bRTEnabledCVAR != nullptr && bRTEnabledCVAR->GetInt() == 1)
+	{
+		PointLightComp->SetIntensity(OriginalLightIntensity);
+	}
+	else {
+		PointLightComp->SetIntensity(OriginalLightIntensity / LightReductionFactor);
+	}
+}
+
+void ACompoundMeshActor::UpdateLightFromLightConfig(UStaticMeshComponent* parentMesh, const FLightConfiguration &lightConfig)
+{
 	bool makePointLight = lightConfig.LightIntensity > 0.f;
-	float lightIntensity = lightConfig.LightIntensity;
+	OriginalLightIntensity = lightConfig.LightIntensity;
 	FLinearColor lightColor = lightConfig.LightColor;
 	FString lightName = TEXT("Light");
 	if (makePointLight)
@@ -674,12 +686,21 @@ void ACompoundMeshActor::UpdateLightFromLightConfig(UStaticMeshComponent* parent
 		}
 		FTransform xform;
 		xform.SetLocation(lightConfig.Location);
-		xform.SetRotation(FQuat::Identity);
+		xform.SetRotation(lightConfig.Rotation.Quaternion());
 		xform.SetScale3D(FVector::OneVector);
 		PointLightComp->SetRelativeTransform(xform);
-		PointLightComp->SetIntensity(lightIntensity);
-		PointLightComp->SetAttenuationRadius(400.0f);
+		auto bRTEnabledCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
+		if (bRTEnabledCVAR->GetInt() == 1)
+		{
+			PointLightComp->SetIntensity(OriginalLightIntensity);
+		}
+		else {
+			PointLightComp->SetIntensity(OriginalLightIntensity / LightReductionFactor);
+		}
+		//restrict the attenuation radius for performance reasons
+		PointLightComp->SetAttenuationRadius(500.0f);
 		PointLightComp->SetLightColor(lightColor);
+		PointLightComp->SetSourceRadius(lightConfig.SourceRadius); 
 		UTextureLightProfile* lightProfile = lightConfig.LightProfile.Get();
 		if (lightProfile)
 		{
@@ -697,6 +718,7 @@ void ACompoundMeshActor::UpdateLightFromLightConfig(UStaticMeshComponent* parent
 	this->Rename(*lightName);
 #if WITH_EDITOR
 	this->SetActorLabel(lightName);
+	CurrentLightCount++;
 #endif
 }
 

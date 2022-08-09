@@ -22,6 +22,7 @@ static const FVector OrthogonalDomeScale(2e4f, 2e3f, 2e4f);
 static const float BackgroundSkyPlanePreviewDistance(1e5f);
 
 // Sets default values
+extern FAutoConsoleVariableRef CVarRayTracingOcclusion;
 ASkyActor::ASkyActor()
 	: Controller(nullptr)
 {
@@ -43,7 +44,7 @@ ASkyActor::ASkyActor()
 	SkyDomeMesh->bVisibleInRayTracing = false;
 	SkyLight->SamplesPerPixel = 10;
 	DirectionalLight->SamplesPerPixel = 2;
-	extern FAutoConsoleVariableRef CVarRayTracingOcclusion;
+	
 	auto bRTEnabledCVAR = IConsoleManager::Get().FindConsoleVariable(TEXT("r.RayTracing.Shadows"));
 	if (bRTEnabledCVAR->GetInt() == 1)
 	{

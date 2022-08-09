@@ -1708,6 +1708,10 @@ bool UModumateObjectStatics::GetHostingMOIsForMOI(UModumateDocument* Doc, AModum
 
 void UModumateObjectStatics::GetAllDescendents(const AModumateObjectInstance* Moi, TArray<const AModumateObjectInstance*>& OutMOIs)
 {
+	if (Moi == nullptr)
+	{
+		return;
+	}
 	const UModumateDocument* doc = Moi->GetDocument();
 	TArray<const AModumateObjectInstance*> allMOIs(Moi->GetAllDescendents());
 	TArray<int32> spandIDs;

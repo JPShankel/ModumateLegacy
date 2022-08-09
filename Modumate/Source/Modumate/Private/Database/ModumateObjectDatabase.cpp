@@ -13,6 +13,8 @@
 #include "Misc/FileHelper.h"
 #include "Serialization/Csv/CsvParser.h"
 #include "DocumentManagement/ModumateSerialization.h"
+#include "Engine/StreamableManager.h"
+#include "Engine/AssetManager.h"
 #include "HAL/FileManagerGeneric.h"
 
 const static FString RelativeDownloadFolderPath(TEXT("DownloadedAssets"));
@@ -301,12 +303,20 @@ void FModumateDatabase::ReadPresetData()
 		FLightConfiguration lightConfig;
 		if (preset.Value.TryGetCustomData(lightConfig))
 		{
-			
 			const FBIMPresetInstance* bimPresetInstance = BIMPresetCollection.PresetsByGUID.Find(lightConfig.PresetGUID);
 			if (bimPresetInstance != nullptr)
 			{
 				FString assetPath = bimPresetInstance->GetScopedProperty<FString>(EBIMValueScope::IESProfile, BIMPropertyNames::AssetPath);
-				//TODO: find and load runtime IES assets
+				FSoftObjectPath referencePath = FString(TEXT("TextureLightProfile'")).Append(assetPath).Append(TEXT("'"));
+				TSharedPtr<FStreamableHandle> SyncStreamableHandle = UAssetManager::GetStreamableManager().RequestSyncLoad(referencePath);
+				if (SyncStreamableHandle)
+				{
+					UTextureLightProfile* IESProfile = Cast<UTextureLightProfile>(SyncStreamableHandle->GetLoadedAsset());
+					if (IESProfile)
+					{
+						lightConfig.LightProfile = IESProfile;
+					}
+				}
 				preset.Value.SetCustomData(lightConfig);
 			}			
 		}
