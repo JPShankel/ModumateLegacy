@@ -20,6 +20,12 @@ public:
 
 	UPROPERTY()
 	UModumateDocument* Document;
+	
+	UFUNCTION()
+	void set_web_focus(bool HasFocus);
+
+	UFUNCTION()
+	void toggle_drawing_designer(bool DrawingEnabled);
 
 	UFUNCTION()
 	void trigger_update(const TArray<FString>& ObjectTypes);

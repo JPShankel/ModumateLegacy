@@ -6,6 +6,15 @@
 UModumateDocumentWebBridge::UModumateDocumentWebBridge() {}
 UModumateDocumentWebBridge::~UModumateDocumentWebBridge() {}
 
+void UModumateDocumentWebBridge::set_web_focus(bool HasFocus)
+{
+	Document->set_web_focus(HasFocus);
+}
+
+void UModumateDocumentWebBridge::toggle_drawing_designer(bool DrawingEnabled)
+{
+	Document->toggle_drawing_designer(DrawingEnabled);
+}
 
 void UModumateDocumentWebBridge::trigger_update(const TArray<FString>& ObjectTypes)
 {
