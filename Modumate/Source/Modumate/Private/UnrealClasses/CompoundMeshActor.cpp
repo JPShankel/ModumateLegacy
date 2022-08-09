@@ -24,7 +24,6 @@
 #include "DrawingDesigner/DrawingDesignerLine.h"
 
 #define DEBUG_NINE_SLICING 0
-#define DEBUG_USE_IMPORT_ASSETS 1
 
 int32 ACompoundMeshActor::MaxLightCount = 0;
 int32 ACompoundMeshActor::CurrentLightCount = 0;
@@ -184,7 +183,6 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 		bool bMeshChanged = partStaticMeshComp->SetStaticMesh(partMesh);
 		partStaticMeshComp->SetMobility(EComponentMobility::Movable);
 
-#if DEBUG_USE_IMPORT_ASSETS
 		if (importedAssets.Num() > 0)
 		{
 			for (int32 i = 1; i < importedAssets.Num(); ++i)
@@ -202,7 +200,6 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 				comp->SetMobility(EComponentMobility::Movable);
 			}
 		}
-#endif
 
 		const FVector& partRelativePos = CachedPartLayout.PartSlotInstances[slotIdx].Location;
 		FRotator partRotator = FRotator::MakeFromEuler(CachedPartLayout.PartSlotInstances[slotIdx].Rotation);
@@ -276,7 +273,6 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 			partStaticMeshComp->SetRelativeRotation(partRotator);
 			partStaticMeshComp->SetRelativeScale3D(rootFlip * partScale * CachedPartLayout.PartSlotInstances[slotIdx].FlipVector);
 
-#if DEBUG_USE_IMPORT_ASSETS
 			if (importedAssets.Num() > 0)
 			{
 				for (int32 i = 0; i < importedAssets.Num(); ++i)
@@ -289,11 +285,12 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 					comp->SetRelativeRotation(importedMeshTransforms[i].GetRotation());
 					comp->SetRelativeScale3D(rootFlip * partScale * CachedPartLayout.PartSlotInstances[slotIdx].FlipVector);
 				}
+				ApplyDatasmithMaterials();
 			}
-#endif
-
-
-			UModumateFunctionLibrary::SetMeshMaterialsFromMapping(partStaticMeshComp, assemblyPart.ChannelMaterials);
+			else
+			{
+				UModumateFunctionLibrary::SetMeshMaterialsFromMapping(partStaticMeshComp, assemblyPart.ChannelMaterials);
+			}
 
 			// And also, disable the proc mesh components that we won't be using for this slot
 			for (int32 sliceIdx = 0; sliceIdx < 9; ++sliceIdx)
@@ -1156,6 +1153,63 @@ void ACompoundMeshActor::GetDrawingDesignerLines(const FVector& ViewDirection, T
 		if (line)
 		{
 			Outlines.Add(line);
+		}
+	}
+}
+
+void ACompoundMeshActor::ApplyDatasmithMaterials()
+{
+	// The original plugin Datasmith materials use these parameters for opacity settings
+	static const FName opacityParamName(TEXT("Opacity"));
+	static const FName transparencyParamName(TEXT("Transparency"));
+
+	const auto gameMode = GetWorld()->GetGameInstance<UModumateGameInstance>()->GetEditModelGameMode();
+	if (!gameMode)
+	{
+		return;
+	}
+
+	for (auto curStaticMesh : StaticMeshComps)
+	{
+		for (int32 matId = 0; matId < curStaticMesh->GetNumMaterials(); ++matId)
+		{
+			// If material isn't dynamic (ex: missing or static mat), create dynamic material from Modumate's version of Datasmith materials
+			UMaterialInstanceDynamic* curMeshMat = Cast<UMaterialInstanceDynamic>(curStaticMesh->GetMaterial(matId));
+			if (!curMeshMat)
+			{
+				// Create opaque dynamic mat by default
+				UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(gameMode->ModumateDatasmithMaterialPbrOpaque, curStaticMesh);
+				curStaticMesh->SetMaterial(matId, dynMat);
+				continue;
+			}
+			// Prevent creating another Modumate Datasmith material by checking its parent
+			if (curMeshMat->Parent == gameMode->ModumateDatasmithMaterialPbrOpaque ||
+				curMeshMat->Parent == gameMode->ModumateDatasmithMaterialPbrTranslucent ||
+				curMeshMat->Parent == gameMode->ModumateDatasmithMaterialPbrTransparent)
+			{
+				continue;
+			}
+			
+			// By this point, the current material should only be the original dynamic Datasmith material
+			// Replace it with Modumate version of Datasmith material
+			UMaterialInterface* newMat = gameMode->ModumateDatasmithMaterialPbrOpaque;
+			if (curMeshMat->GetBlendMode() != BLEND_Opaque)
+			{
+				float opacityValue = 0.f;
+				float transparencyValue = 0.f;
+				if (curMeshMat->GetScalarParameterValue(opacityParamName, opacityValue))
+				{
+					newMat = gameMode->ModumateDatasmithMaterialPbrTranslucent;
+				}
+				else if (curMeshMat->GetScalarParameterValue(transparencyParamName, transparencyValue))
+				{
+					newMat = gameMode->ModumateDatasmithMaterialPbrTransparent;
+				}
+			}
+
+			UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(newMat, curStaticMesh);
+			dynMat->CopyMaterialUniformParameters(curMeshMat);
+			curStaticMesh->SetMaterial(matId, dynMat);
 		}
 	}
 }
