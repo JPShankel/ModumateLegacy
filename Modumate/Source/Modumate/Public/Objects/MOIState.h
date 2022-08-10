@@ -60,6 +60,9 @@ struct MODUMATE_API FMOIPresetZonePlane
 	EZoneOrigin Origin = EZoneOrigin::Center;
 
 	UPROPERTY()
+	FGuid PresetGUID;
+
+	UPROPERTY()
 	float Displacement = 0.0f;
 
 	bool operator==(const FMOIPresetZonePlane& Other) const;
@@ -70,6 +73,9 @@ USTRUCT()
 struct MODUMATE_API FMOIAlignment
 {
 	GENERATED_BODY()
+
+	UPROPERTY()
+	FString DisplayName = TEXT("Alignment Preset");
 
 	UPROPERTY()
 	FMOIPresetZonePlane SubjectPZP;

@@ -753,6 +753,7 @@ bool AModumateObjectInstance::FromWebMOI(const FString& InJson)
 	StateData.ParentID = webMOI.Parent;
 	StateData.AssemblyGUID = webMOI.PresetID;
 	StateData.Alignment = webMOI.Alignment;
+	StateData.Alignment.SubjectPZP.PresetGUID = webMOI.PresetID;
 
 	bVisible = webMOI.isVisible;
 
@@ -940,6 +941,7 @@ bool AModumateObjectInstance::ToWebMOI(FWebMOI& OutMOI) const
 	OutMOI.Children = GetChildIDs();
 	OutMOI.PresetID = GetStateData().AssemblyGUID;
 	OutMOI.Alignment = GetStateData().Alignment;
+	OutMOI.Alignment.SubjectPZP.PresetGUID = GetStateData().AssemblyGUID;
 
 	// Get custom data
 	UScriptStruct* structDef;

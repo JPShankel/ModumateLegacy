@@ -38,6 +38,8 @@ class MODUMATE_API UModumateDocument : public UObject
 
 private:
 
+	friend class UModumateDocumentWebBridge;
+
 	struct UndoRedo
 	{
 		TArray<FDeltaPtr> Deltas;

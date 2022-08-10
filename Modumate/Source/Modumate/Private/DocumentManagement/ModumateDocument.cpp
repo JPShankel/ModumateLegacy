@@ -64,6 +64,7 @@
 #include "UnrealClasses/SkyActor.h"
 #include "ModumateCore/EnumHelpers.h"
 #include "ModumateCore/ModumateBrowserStatics.h"
+#include "ModumateCore/ModumateStats.h"
 #include "Objects/EdgeDetailObj.h"
 
 #include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
@@ -72,6 +73,8 @@
 #include "UnrealClasses/EditModelInputHandler.h"
 
 #define LOCTEXT_NAMESPACE "ModumateDocument"
+
+DECLARE_DWORD_COUNTER_STAT(TEXT("Num Objects Cleaned"), STAT_ModumateNumObjectsCleaned, STATGROUP_Modumate)
 
 const FName UModumateDocument::DocumentHideRequestTag(TEXT("DocumentHide"));
 

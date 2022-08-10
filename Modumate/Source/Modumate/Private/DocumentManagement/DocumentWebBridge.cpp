@@ -2,6 +2,10 @@
 
 #include "DocumentManagement/DocumentWebBridge.h"
 #include "DocumentManagement/ModumateDocument.h"
+#include "DrawingDesigner//DrawingDesignerRequests.h"
+#include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
+#include "Objects/CameraView.h"
+#include "Objects/DesignOption.h"
 
 UModumateDocumentWebBridge::UModumateDocumentWebBridge() {}
 UModumateDocumentWebBridge::~UModumateDocumentWebBridge() {}
@@ -74,7 +78,10 @@ void UModumateDocumentWebBridge::delete_mois(TArray<int32> ID)
 
 void UModumateDocumentWebBridge::update_mois(TArray<int32> ID, TArray<FString> MOIData)
 {
-	Document->update_mois(ID, MOIData);
+	if (ensure(Document != nullptr))
+	{
+		Document->update_mois(ID, MOIData);
+	}
 }
 
 void UModumateDocumentWebBridge::update_player_state(const FString& PlayerStateData)
@@ -132,8 +139,178 @@ void UModumateDocumentWebBridge::create_or_swap_edge_detail(TArray<int32> Select
 	Document->create_or_swap_edge_detail(SelectedEdges, InNewDetailPresetGUID, InCurrentPresetGUID);
 }
 
-void UModumateDocumentWebBridge::update_presets(TArray<FString>& PresetsData)
-{}
+void UModumateDocumentWebBridge::create_or_update_preset(const FString& PresetData)
+{
+	FBIMPresetInstance newPreset;
+	FBIMWebPreset webPreset;
 
-void UModumateDocumentWebBridge::create_preset(const FString& PresetData)
-{}
+	if (!ReadJsonGeneric<FBIMWebPreset>(PresetData, &webPreset))
+	{
+		return;
+	}
+
+	if (!ensure(newPreset.FromWebPreset(webPreset,GetWorld()) == EBIMResult::Success))
+	{
+		return;
+	}
+
+	TArray<FDeltaPtr> deltas;
+
+	if (newPreset.GUID.IsValid())
+	{
+		auto updatePresetDelta = Document->GetPresetCollection().MakeUpdateDelta(newPreset);
+		deltas.Add(updatePresetDelta);
+	}
+	else
+	{
+		auto newPresetDelta = Document->GetPresetCollection().MakeCreateNewDelta(newPreset);
+		deltas.Add(newPresetDelta);
+	}
+
+	Document->ApplyDeltas(deltas, GetWorld());
+}
+
+void UModumateDocumentWebBridge::delete_preset(const FString& InGUID)
+{
+	if (!ensure(Document!=nullptr))
+	{
+		return;
+	}
+
+	FGuid presetGuid;
+	FGuid::Parse(InGUID, presetGuid);
+	TArray<FDeltaPtr> deltas;
+	if (ensure(Document->GetPresetCollection().MakeDeleteDeltas(presetGuid, FGuid(), deltas) == EBIMResult::Success) && deltas.Num() > 0)
+	{
+		Document->ApplyDeltas(deltas, GetWorld());
+	}
+}
+
+void UModumateDocumentWebBridge::request_alignment_presets(const FString& GenericRequestJson)
+{
+	FDrawingDesignerGenericRequest genericRequest;
+	FAlignmentPresetWebResponse presetResponse;
+
+	if (!ensure(ReadJsonGeneric<FDrawingDesignerGenericRequest>(GenericRequestJson,&genericRequest)))
+	{
+		return;
+	}
+
+	if (!ensure(genericRequest.requestType == EDrawingDesignerRequestType::getAlignmentPresets))
+	{
+		return;
+	}
+
+	if (!ensure(Document))
+	{
+		return;
+	}
+
+	AModumateObjectInstance* subject = Document->GetObjectById(FCString::Atoi(*genericRequest.data));
+
+	if (!ensure(subject))
+	{
+		return;
+	}
+
+	FBIMTagPath tagPath;
+	tagPath.FromString(TEXT("Property_Spatiality_ConnectionDetail_Alignment"));
+
+	TArray<FGuid> alignmentPresets;
+	EBIMResult result = Document->GetPresetCollection().GetPresetsForNCP(tagPath, alignmentPresets, true);
+	if (!ensure(result == EBIMResult::Success))
+	{
+		return;
+	}
+
+	presetResponse.TagPath = tagPath;
+
+	for (auto& presetGUID : alignmentPresets)
+	{
+		const FBIMPresetInstance* preset = Document->GetPresetCollection().PresetFromGUID(presetGUID);
+		if (!ensure(preset != nullptr))
+		{
+			continue;
+		}
+
+		FMOIAlignment moiAlignment;
+		if (preset->TryGetCustomData(moiAlignment))
+		{
+			if (ensure(subject != nullptr))
+			{
+				if (subject->GetStateData().AssemblyGUID == moiAlignment.SubjectPZP.PresetGUID)
+				{
+					FBIMWebPreset webPreset;
+					if (ensure(preset->ToWebPreset(webPreset, GetWorld()) == EBIMResult::Success))
+					{
+						presetResponse.Presets.Add(webPreset);
+					}
+				}
+			}
+		}
+	}
+
+	FDrawingDesignerGenericStringResponse stringResponse;
+	stringResponse.request = genericRequest;
+
+	if (ensure(WriteJsonGeneric<FAlignmentPresetWebResponse>(stringResponse.answer, &presetResponse)))
+	{
+		FString jsonToSend;
+		stringResponse.WriteJson(jsonToSend);
+		Document->DrawingSendResponse(TEXT("onGenericResponse"), jsonToSend);
+	}
+}
+
+void UModumateDocumentWebBridge::create_alignment_preset(int32 SubjectMOI, int32 TargetMOI)
+{
+	if (!ensure(Document))
+	{
+		return;
+	}
+
+	AModumateObjectInstance* subject = Document->GetObjectById(SubjectMOI);
+
+	if (!ensure(subject))
+	{
+		return;
+	}
+	
+	FBIMTagPath tagPath;
+	tagPath.FromString(TEXT("Property_Spatiality_ConnectionDetail_Alignment"));
+
+	if (!ensure(tagPath.Tags.Num() > 0))
+	{
+		return;
+	}
+
+	TArray<FGuid> alignmentPresets;
+	if (!ensure(Document->GetPresetCollection().GetPresetsForNCP(tagPath, alignmentPresets, true) == EBIMResult::Success))
+	{
+		return;
+	}
+
+	if (!ensure(alignmentPresets.Num() > 0))
+	{
+		return;
+	}
+
+	const FBIMPresetInstance* basePreset = Document->GetPresetCollection().PresetsByGUID.Find(alignmentPresets.Last());
+
+	if (!ensure(basePreset))
+	{
+		return;
+	}
+
+	subject->GetStateData().Alignment.SubjectPZP.PresetGUID = subject->GetAssembly().PresetGUID;
+
+	FBIMPresetInstance newPreset = *basePreset;
+	newPreset.GUID = FGuid();
+	newPreset.SetCustomData(subject->GetStateData().Alignment);
+
+	TArray<FDeltaPtr> deltas;
+	auto newPresetDelta = Document->GetPresetCollection().MakeCreateNewDelta(newPreset);
+	deltas.Add(newPresetDelta);
+
+	Document->ApplyDeltas({ newPresetDelta }, GetWorld());
+}
+

@@ -17,7 +17,8 @@ enum class EDrawingDesignerRequestType
 	stringToCentimeters,
 	centimetersToString,
 	getCutplaneLines,
-	getPresetThumbnail
+	getPresetThumbnail,
+	getAlignmentPresets
 };
 
 USTRUCT()

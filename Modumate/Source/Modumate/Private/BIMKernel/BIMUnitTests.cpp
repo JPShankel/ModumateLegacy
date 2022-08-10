@@ -200,15 +200,8 @@ bool testPreset(const FBIMPresetCollection &PresetCollection, const FGuid& Prese
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateCraftingUnitTest, "Modumate.Database.ModumateCrafting.UnitTest", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
 bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
 {
-	if (!testTags())
-	{
-		return false;
-	}
+	bool bSuccess = testTags();
+	bSuccess = testKeys() && bSuccess;
 
-	if (!testKeys())
-	{
-		return false;
-	}
-
-	return true;
+	return bSuccess;
 }

@@ -3,10 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BIMKernel/Core/BIMTagPath.h"
+#include "BIMKernel/Presets/BIMPresetInstance.h"
 
 #include "DocumentWebBridge.generated.h"
 
 class UModumateDocument;
+
+USTRUCT()
+struct MODUMATE_API FAlignmentPresetWebResponse
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FBIMWebPreset> Presets;
+
+	UPROPERTY()
+	FBIMTagPath TagPath;
+};
 
 UCLASS()
 class MODUMATE_API UModumateDocumentWebBridge : public UObject
@@ -43,9 +57,6 @@ public:
 	void drawing_get_cutplane_lines(const FString& InRequest);
 
 	UFUNCTION()
-	void get_preset_thumbnail(const FString& InRequest);
-
-	UFUNCTION()
 	void string_to_inches(const FString& InRequest);
 
 	UFUNCTION()
@@ -80,13 +91,7 @@ public:
 
 	UFUNCTION()
 	void open_detail_designer();
-
-	UFUNCTION()
-	void open_delete_preset_menu(const FString& InGUID);
 	
-	UFUNCTION()
-	void duplicate_preset(const FString& InGUID);
-
 	UFUNCTION()
 	void export_estimates();
 
@@ -96,10 +101,26 @@ public:
 	UFUNCTION()
 	void create_or_swap_edge_detail(TArray<int32> SelectedEdges, const FString&  InNewDetailPresetGUID, const FString&  InCurrentPresetGUID);
 
+	// Presets
 	UFUNCTION()
-	void create_preset(const FString& PresetData);
+	void create_or_update_preset(const FString& PresetData);
 
 	UFUNCTION()
-	void update_presets(TArray<FString>& PresetsData);
+	void duplicate_preset(const FString& InGUID);
 
+	UFUNCTION()
+	void delete_preset(const FString& InGUID);
+
+	UFUNCTION()
+	void get_preset_thumbnail(const FString& InRequest);
+
+	UFUNCTION()
+	void open_delete_preset_menu(const FString& InGUID);
+
+	// Alignments
+	UFUNCTION()
+	void create_alignment_preset(int32 SubjectMOI, int32 TargetMOI);
+
+	UFUNCTION()
+	void request_alignment_presets(const FString& GenericRequestJson);
 };
