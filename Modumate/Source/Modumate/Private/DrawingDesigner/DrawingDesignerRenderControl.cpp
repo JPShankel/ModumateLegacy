@@ -434,69 +434,6 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 		OutSnap.id = Id;
 	};
 
-#ifdef USE_GRAPH_SNAPS_FOR_DD
-	for (auto& kvp : edges) {
-		const FGraph3DEdge& val = kvp.Value;
-
-		FGraph3DVertex v1 = vertices[val.StartVertexID];
-		FGraph3DVertex v2 = vertices[val.EndVertexID];
-
-		//Three possible conditions
-		//	1) line lies entirely on the correct side of the cut plane
-		//  2) both points are behind the cut plane
-		//  3) One of the points are on the correct side of the cut plane
-		if ((cutPlane.PlaneDot(v1.Position) > -PLANAR_DOT_EPSILON) && (cutPlane.PlaneDot(v2.Position) > -PLANAR_DOT_EPSILON))
-		{
-			//Both points are good, do nothing
-		}
-		else if (cutPlane.PlaneDot(v1.Position) > -PLANAR_DOT_EPSILON) {
-			//v1 is good, v2 needs correcting
-			correctPoint(v1, v2);
-		}
-		else if (cutPlane.PlaneDot(v2.Position) > -PLANAR_DOT_EPSILON) {
-			//v2 is good, v1 need correcting
-			correctPoint(v2, v1);
-		}
-		else {
-			//Neither is good
-			continue;
-		}
-
-
-		//One snap per edge/line
-		FDrawingDesignerSnapId edgeId = FDrawingDesignerSnapId(EDDSnapType::line, FString::FromInt(viewId), INDEX_NONE, INDEX_NONE, kvp.Key);
-		FDrawingDesignerSnap edgeSnap = FDrawingDesignerSnap(edgeId);
-
-		//Two points per line snap
-		FDrawingDesignerSnapPoint p1, p2;
-		copyPoint(FDrawingDesignerSnapId(edgeId, 0), v1.Position, p1);
-		copyPoint(FDrawingDesignerSnapId(edgeId, 1), v2.Position, p2);
-		edgeSnap.points.Add(p1);
-		edgeSnap.points.Add(p2);
-
-		//Add the mid snap as well
-		FDrawingDesignerSnapId midSnapId = FDrawingDesignerSnapId(EDDSnapType::midpoint, FString::FromInt(viewId), INDEX_NONE, INDEX_NONE, kvp.Key);
-		FDrawingDesignerSnap midSnap = FDrawingDesignerSnap(midSnapId);
-
-		//mid point for mid snap
-		FDrawingDesignerSnapPoint mid;
-		mid.x = (p1.x + p2.x) / 2;
-		mid.y = (p1.y + p2.y) / 2;
-		mid.id = midSnapId;
-		mid.id.pointIndex = 0;
-		midSnap.points.Add(mid);
-
-		//KLUDGE: Javascript sucks -JN
-		FString edgeEntryKey = TEXT("");
-		edgeSnap.id.EncodeKey(edgeEntryKey);
-		OutSnapPoints.Add(edgeEntryKey, edgeSnap);
-
-		FString midEntryKey = TEXT("");
-		midSnap.id.EncodeKey(midEntryKey);
-		OutSnapPoints.Add(midEntryKey, midSnap);
-	}
-#endif
-
 	//MOI-Based bounding points
 	TArray<AModumateObjectInstance*> snapObjects = Doc->GetObjectsOfType(
 		{
@@ -517,11 +454,12 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 		//EObjectType::OTPointHosted,
 		//EObjectType::OTEdgeHosted
 		});
-
+	
 	
 	for (AModumateObjectInstance* moi : snapObjects)
 	{
 		TArray<FDrawingDesignerLine> bounds;
+
 		if (moi->GetBoundingLines(bounds)) {
 			//Evaluate each line
 			for (int i = 0; i < bounds.Num(); i++)
@@ -550,38 +488,54 @@ void FDrawingDesignerRenderControl::GetSnapPoints(int32 viewId, TMap<FString, FD
 
 				//One snap per edge
 				FDrawingDesignerSnapId edgeId = FDrawingDesignerSnapId(EDDSnapType::line, FString::FromInt(viewId), moi->ID, moi->GetParentID(),INDEX_NONE, i);
-				FDrawingDesignerSnap edgeSnap = FDrawingDesignerSnap(edgeId);
+				FDrawingDesignerSnap candidateSnap = FDrawingDesignerSnap(edgeId);
 				
 				//Two points per snap
 				FDrawingDesignerSnapPoint p1, p2;
 				copyPoint(FDrawingDesignerSnapId(edgeId, 0), v1, p1);
 				copyPoint(FDrawingDesignerSnapId(edgeId, 1), v2, p2);
-				edgeSnap.points.Add(p1);
-				edgeSnap.points.Add(p2);
-
+				
+				//Only add lines/mids that are >length(0) after projection
+				bool same = FMath::IsNearlyEqual(p1.x, p2.x) && FMath::IsNearlyEqual(p1.y, p2.y);
+				if(same) continue;
+				
+				candidateSnap.points.Add(p1);
+				candidateSnap.points.Add(p2);
+				
+				candidateSnap.points[0].z = FVector::DistSquared(line.P1, v1);
+				candidateSnap.points[1].z = FVector::DistSquared(line.P2, v2);
+				
 				//Add the mid snap as well
-				FDrawingDesignerSnapId midSnapId = FDrawingDesignerSnapId(EDDSnapType::midpoint, FString::FromInt(viewId), moi->ID, moi->GetParentID(), INDEX_NONE, i);
+				FDrawingDesignerSnapId midSnapId = FDrawingDesignerSnapId(candidateSnap.id, INDEX_NONE);
+				midSnapId.type = EDDSnapType::midpoint;
+				midSnapId.id = candidateSnap.id.id;
 				FDrawingDesignerSnap midSnap = FDrawingDesignerSnap(midSnapId);
 
+				FVector worldMid = (line.P1 + line.P2)/2;
+				FVector planeMid = (v1 + v2)/2; 
+				float midZ = FVector::DistSquared(worldMid, planeMid);
+				
 				//mid point for mid snap
 				FDrawingDesignerSnapPoint mid;
-				mid.x = (p1.x + p2.x) / 2;
-				mid.y = (p1.y + p2.y) / 2;
+				FVector2D P1 = FVector2D{candidateSnap.points[0].x, candidateSnap.points[0].y};
+				FVector2D P2 = FVector2D{candidateSnap.points[1].x, candidateSnap.points[1].y};
+				mid.x = (P1.X + P2.X) / 2;
+				mid.y = (P1.Y + P2.Y) / 2;
+				
+				mid.z = midZ;
 				mid.id = midSnapId;
 				mid.id.pointIndex = 0;
 				midSnap.points.Add(mid);
-
-				FString edgeEntryKey = TEXT("");
-				edgeSnap.id.EncodeKey(edgeEntryKey);
-				OutSnapPoints.Add(edgeEntryKey, edgeSnap);
-
+		
 				FString midKey = TEXT("");
 				midSnap.id.EncodeKey(midKey);
 				OutSnapPoints.Add(midKey, midSnap);
-			}
-
-		}
 		
+				FString edgeEntryKey = TEXT("");
+				candidateSnap.id.EncodeKey(edgeEntryKey);
+				OutSnapPoints.Add(edgeEntryKey, candidateSnap);
+			}
+		}
 	}
 }
 

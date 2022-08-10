@@ -103,6 +103,9 @@ struct MODUMATE_API FDrawingDesignerSnapPoint {
 	UPROPERTY()
 	float y = 0.0f;
 
+	UPROPERTY()
+	float z = 0.0f;
+
 	bool operator==(const FDrawingDesignerSnapPoint& RHS) const;
 	bool operator!=(const FDrawingDesignerSnapPoint& RHS) const;
 };

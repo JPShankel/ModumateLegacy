@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DrawingDesignerView.h"
 
 class UModumateDocument;
 class ADrawingDesignerRender;
@@ -29,7 +30,7 @@ public:
 	void FreeLineActor(ALineActor* LineActor);
 
 private:
-
+	
 	FName MOITraceTag = FName(TEXT("MOITrace"));
 
 	bool GetViewAxis(AMOICutPlane& View, FVector& OutXAxis, FVector& OutYAxis, FVector& OutZAxis, FVector& OutOrigin, FVector2D& OutSize) const;

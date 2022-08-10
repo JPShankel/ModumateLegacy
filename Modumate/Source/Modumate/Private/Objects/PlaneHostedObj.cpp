@@ -907,15 +907,21 @@ bool AMOIPlaneHostedObj::GetBoundingLines(TArray<FDrawingDesignerLine>& outBound
 	FVector parentLocation = GetParentObject()->GetLocation();
 
 	const auto& layers = LayerGeometries;
+	TArray<FVector> topPoints;
+	TArray<FVector>  bottomPoints;
 	
-	auto acculumateLines = [&](const TArray<FVector>& layerPoints) {
+	auto acculumateLines = [&](const TArray<FVector>& layerPoints, TArray<FVector>&collector) {
 		const TArray<FVector>& points = layerPoints;
 		const int32 numPoints = points.Num();
 		for (int32 p = 0; p < numPoints; ++p)
 		{
 			FVector p1(points[p] + parentLocation);
 			FVector p2(points[(p + 1) % numPoints] + parentLocation);
-			outBounding.Add(FDrawingDesignerLine(p1, p2));
+			if(!p1.Equals(p2))
+			{
+				collector.Add(p1);
+				outBounding.Add(FDrawingDesignerLine(p1, p2));	
+			}
 		}
 	};
 
@@ -924,16 +930,16 @@ bool AMOIPlaneHostedObj::GetBoundingLines(TArray<FDrawingDesignerLine>& outBound
 	auto& lastLayer = layers[layers.Num() - 1].OriginalPointsB;
 
 	/* FIRST LAYER */
-	acculumateLines(firstLayer);
+	acculumateLines(firstLayer, topPoints);
 
 	/* LAST LAYER OTHER SIDE */
-	acculumateLines(lastLayer);
+	acculumateLines(lastLayer, bottomPoints);
 
 	/* Joining lines */
 	//TODO: This can be sped up to a single loop incl with the last 2 if needed -JN
-	for (int i = 0; i < firstLayer.Num(); i++) {
-		FVector p1 = firstLayer[i] + parentLocation;
-		FVector p2 = lastLayer[i] + parentLocation;
+	for (int i = 0; i < topPoints.Num(); i++) {
+		FVector p1 = topPoints[i];
+		FVector p2 = bottomPoints[i];
 		outBounding.Add(FDrawingDesignerLine(p1, p2));
 	}
 

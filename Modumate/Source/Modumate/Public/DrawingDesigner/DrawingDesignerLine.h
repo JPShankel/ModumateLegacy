@@ -37,6 +37,8 @@ public:
 private:
 	static constexpr float ThicknessScale = 6.0f;
 	static bool LessThan(const FVector& A, const FVector& B);	// Lexicographic comparison
+	
+
 };
 
 class MODUMATE_API FDrawingDesignerLined
