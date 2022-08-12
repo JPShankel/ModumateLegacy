@@ -917,11 +917,9 @@ bool AMOIPlaneHostedObj::GetBoundingLines(TArray<FDrawingDesignerLine>& outBound
 		{
 			FVector p1(points[p] + parentLocation);
 			FVector p2(points[(p + 1) % numPoints] + parentLocation);
-			if(!p1.Equals(p2))
-			{
-				collector.Add(p1);
-				outBounding.Add(FDrawingDesignerLine(p1, p2));	
-			}
+			//Sometimes p1 can == p2, but we need them all to draw cross lines
+			collector.Add(p1);
+			outBounding.Add(FDrawingDesignerLine(p1, p2));	
 		}
 	};
 
@@ -938,9 +936,12 @@ bool AMOIPlaneHostedObj::GetBoundingLines(TArray<FDrawingDesignerLine>& outBound
 	/* Joining lines */
 	//TODO: This can be sped up to a single loop incl with the last 2 if needed -JN
 	for (int i = 0; i < topPoints.Num(); i++) {
-		FVector p1 = topPoints[i];
-		FVector p2 = bottomPoints[i];
-		outBounding.Add(FDrawingDesignerLine(p1, p2));
+		if(ensure(bottomPoints.Num() > i))
+		{
+			FVector p1 = topPoints[i];
+			FVector p2 = bottomPoints[i];
+			outBounding.Add(FDrawingDesignerLine(p1, p2));
+		}
 	}
 
 	return true;
