@@ -1011,7 +1011,7 @@ void AMOIPlaneHostedObj::UpdateAlignmentTargets()
 	{
 		FPlane theirPZP;
 		UModumateObjectStatics::GetPlaneHostedZonePlane(target, StateData.Alignment.TargetPZP.ZoneID, StateData.Alignment.TargetPZP.Origin, StateData.Alignment.TargetPZP.Displacement, theirPZP);
-		delta = FVector::PointPlaneDist(myPZP.GetOrigin(), theirPZP.GetOrigin(), myPZP.GetNormal());
+		delta = FVector::PointPlaneDist(theirPZP.GetOrigin(), myPZP.GetOrigin(), myPZP.GetNormal());
 	}
 	else
 	{
