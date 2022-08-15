@@ -1204,7 +1204,7 @@ int32 UModumateObjectStatics::GetGroupIdForObject(const UModumateDocument* Doc, 
 	}
 
 	int32 graphId = UModumateObjectStatics::GetGraphIDForSpanObject(object);
-	if (graphId != MOD_ID_NONE)
+	if (graphId != INDEX_NONE)
 	{
 		return graphId;
 	}
