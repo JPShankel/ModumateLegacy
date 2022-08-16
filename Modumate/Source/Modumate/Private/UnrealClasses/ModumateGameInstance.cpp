@@ -39,6 +39,7 @@
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "UnrealClasses/TooltipManager.h"
 #include "UnrealClasses/EditModelDatasmithImporter.h"
+#include "UnrealClasses/DynamicIconGenerator.h"
 #include "Online/ModumateCloudConnection.h"
 #include "Quantities/QuantitiesManager.h"
 #include "GameFramework/GameUserSettings.h"
@@ -664,6 +665,26 @@ void UModumateGameInstance::RegisterAllCommands()
 
 		return true;
 	});
+
+	RegisterCommand(kExport, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
+		{
+			FModumateCommandParameter exportIconsValue = params.GetValue(TEXT("preset_icons"));
+			if (exportIconsValue.AsBool())
+			{
+				AEditModelPlayerController* playerController = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+				if (playerController && playerController->DynamicIconGenerator)
+				{
+					const auto presets = GetDocument()->GetPresetCollection().PresetsByGUID;
+					for (auto kvp : presets)
+					{
+						FString response;
+						playerController->DynamicIconGenerator->GetIconMeshForAssemblyForWeb(kvp.Key, response, true);
+					}
+					return true;
+				}
+			}
+			return false;
+		});
 
 	// Use this as a general scratch area for dev testing...no longterm code
 	RegisterCommand(kTest, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)

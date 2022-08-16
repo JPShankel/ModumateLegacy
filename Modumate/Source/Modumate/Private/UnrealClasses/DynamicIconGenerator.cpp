@@ -433,7 +433,7 @@ bool ADynamicIconGenerator::SetIconMeshForAssemblyType(const FBIMAssemblySpec &A
 	return false;
 }
 
-bool ADynamicIconGenerator::GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FString& OutResponse)
+bool ADynamicIconGenerator::GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FString& OutResponse, bool bExportToTempFolder /*= false*/)
 {
 #if UE_SERVER
 	return false;
@@ -489,6 +489,12 @@ bool ADynamicIconGenerator::GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FS
 	
 	if (bCaptureSuccess)
 	{
+		if (bExportToTempFolder)
+		{
+			const FString filePath = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), TEXT("PresetIcons"));
+			const FString fileName = AsmKey.ToString() + TEXT(".png");
+			UKismetRenderingLibrary::ExportRenderTarget(this, IconRenderTargetForWeb, filePath, fileName);
+		}
 		// TODO: Cache?
 		FBufferArchive imageBuffer;
 		if (!FImageUtils::ExportRenderTarget2DAsPNG(IconRenderTargetForWeb, imageBuffer))

@@ -171,7 +171,7 @@ public:
 	bool GetSavedIconFromPreset(const FGuid& PresetID, UTexture2D*& OutTexture);
 	bool SetIconMeshForAssemblyType(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget, int32 PartIndex, bool bFromRootNode);
 	
-	bool GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FString& OutResponse);
+	bool GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FString& OutResponse, bool bExportToTempFolder = false);
 
 	bool SetIconMeshForWallAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);
 	bool SetIconMeshForFloorAssembly(const FBIMAssemblySpec &Assembly, UTextureRenderTarget2D* InRenderTarget);

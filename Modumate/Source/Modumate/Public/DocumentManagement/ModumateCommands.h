@@ -56,6 +56,9 @@ namespace ModumateCommands
 
 	// WEB
 	MODUMATE_COMMAND(kWebUI, "webui");
+
+	// Export
+	MODUMATE_COMMAND(kExport, "export");
 }
 
 namespace ModumateParameters
