@@ -195,6 +195,23 @@ void AEditModelPlayerState::TryInitController()
 	}
 }
 
+void AEditModelPlayerState::RenderSelectedAlignmentTargetLines(UModumateDocument& Document, const FMOIAlignment& SelectedMOIAlignment)
+{
+	AModumateObjectInstance* targetMoi = Document.GetObjectById(SelectedMOIAlignment.TargetPZP.MoiId);
+	targetMoi->RouteGetStructuralPointsAndLines(TempObjectStructurePoints, TempObjectStructureLines, false, false, EMPlayerController->GetCurrentCullingPlane());
+	for (const auto line : TempObjectStructureLines)
+	{
+		FModumateLines alignmentLine;
+		alignmentLine.Thickness = 2.0f;
+		alignmentLine.DashLength = 6.0f;
+		alignmentLine.DashSpacing = 10.0f;
+		alignmentLine.Color = FLinearColor(FColor(0x63, 0xC3, 0xBA));
+		alignmentLine.Point1 = line.P1;
+		alignmentLine.Point2 = line.P2;
+		EMPlayerController->HUDDrawWidget->LinesToDraw.Add(MoveTemp(alignmentLine));
+	}
+}
+
 void AEditModelPlayerState::BatchRenderLines()
 {
 	CurSelectionStructurePoints.Reset();
@@ -204,6 +221,17 @@ void AEditModelPlayerState::BatchRenderLines()
 	AEditModelGameState *gameState = GetWorld()->GetGameState<AEditModelGameState>();
 	UModumateDocument* doc = gameState->Document;
 	FPlane cullingPlane = EMPlayerController->GetCurrentCullingPlane();
+	
+	if (SelectedObjects.Num() == 1 && SelectedGroupObjects.Num() == 0)
+	{
+		for (auto *selectedObj : SelectedObjects)
+		{
+			if (selectedObj->GetStateData().Alignment.TargetPZP.MoiId != 0)
+			{
+				RenderSelectedAlignmentTargetLines(*doc, selectedObj->GetStateData().Alignment);
+			}
+		}
+	}
 
 	if ((SelectedObjects.Num() + SelectedGroupObjects.Num() > 0))
 	{

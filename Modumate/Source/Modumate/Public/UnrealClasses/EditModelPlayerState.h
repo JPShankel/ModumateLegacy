@@ -396,5 +396,7 @@ protected:
 	enum class EStencilFlags;
 
 private:
-	static const FString DefaultEnvDateTime;	
+	static const FString DefaultEnvDateTime;
+
+	void RenderSelectedAlignmentTargetLines(UModumateDocument& Document, const FMOIAlignment& SelectedMOIAlignment);
 };
