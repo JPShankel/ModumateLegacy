@@ -90,9 +90,9 @@ void UModumateRayTracingSettings::Init()
 	{
 		RayTracingTranslucencyRefraction.Init(false, 5);
 	}
-	if (RTExposure.Num() < 5)
+	if (RTExposure.Num() < 9)
 	{
-		RTExposure.Init(1.0f, 5);
+		RTExposure.Init(1.0f, 9);
 	}
 }
 extern FAutoConsoleVariableRef CVarForceAllRayTracingEffects;

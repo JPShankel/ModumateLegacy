@@ -44,7 +44,7 @@ struct MODUMATE_API FModumateGraphicsSettings
 	int32 RayTracingQuality = 2;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	int32 ExposureValue = 2;
+	int32 ExposureValue = 5;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool bRayTracingCapable = false;

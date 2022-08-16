@@ -718,8 +718,9 @@ void ACompoundMeshActor::UpdateLightFromLightConfig(UStaticMeshComponent* parent
 	this->Rename(*lightName);
 #if WITH_EDITOR
 	this->SetActorLabel(lightName);
-	CurrentLightCount++;
 #endif
+	CurrentLightCount++;
+
 }
 
 void ACompoundMeshActor::RemoveAllLights()

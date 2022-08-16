@@ -204,7 +204,7 @@ bool FModumateGraphicsSettings::ToWebProjectSettings(FWebProjectSettings& OutSet
 	OutSettings.rayTracingQuality.value = FString::FromInt(RayTracingQuality);
 	OutSettings.rayTracingQuality.range = { 0, UnrealGraphicsSettingsMaxValue };
 	OutSettings.Exposure.value = FString::FromInt(ExposureValue);
-	OutSettings.Exposure.range = { 0, 4 };
+	OutSettings.Exposure.range = { 0, 8 };
 	if (bRayTracingCapable)
 	{
 		OutSettings.rayTracingCapable.value = "true";
