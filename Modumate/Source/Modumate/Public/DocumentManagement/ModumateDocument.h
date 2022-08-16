@@ -408,6 +408,8 @@ private:
 	FDocumentSettings CurrentSettings;
 	FString CachedLocalUserID;
 	int32 CachedLocalUserIdx = 0;
+	// Presets need pushing to Web side.
+	bool bWebPresetsDirty = false;
 
 	// TODO: refactor the different types of dirtiness into flags if we add more with multiplayer, but until then we know there are only two types of dirtiness.
 	bool bUserFileDirty = true;

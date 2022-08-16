@@ -676,7 +676,7 @@ bool AModumateObjectInstance::UpdateStateDataFromObject()
 	const void* customStructPtr;
 	if (GetInstanceDataStruct(customStructDef, customStructPtr))
 	{
-		return StateData.CustomData.SaveStructData(customStructDef, customStructPtr);
+		return StateData.CustomData.SaveStructData(customStructDef, customStructPtr, UE_EDITOR);
 	}
 
 	// Otherwise, the serialized representation doesn't need to be updated.

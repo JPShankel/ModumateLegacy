@@ -24,6 +24,7 @@
 #include "ModumateCore/ModumateMitering.h"
 #include "Objects/ModumateObjectStatics.h"
 #include "Objects/ModumateObjectDeltaStatics.h"
+#include "Objects/ModumateDerivedDeltaStatics.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Objects/MOIFactory.h"
@@ -1139,7 +1140,7 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 
 		if (!IsPreviewingDeltas())
 		{
-			UpdateWebPresets();
+			bWebPresetsDirty = true;
 		}
 
 		return true;
@@ -1261,7 +1262,7 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 
 	// For Symbol propagation:
 	TArray<FDeltaPtr> derivedDestroyDeltas;
-	FModumateObjectDeltaStatics::GetDerivedDeltasFromDeltas(this, EMOIDeltaType::Destroy, Deltas, derivedDestroyDeltas);
+	FModumateDerivedDeltaStatics::GetDerivedDeltasFromDeltas(this, EMOIDeltaType::Destroy, Deltas, derivedDestroyDeltas);
 	ur->Deltas.Append(derivedDestroyDeltas);
 
 	TSet<EObjectType> affectedTypes;
@@ -1489,7 +1490,7 @@ void UModumateDocument::CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWo
 
 		if (bCreateDerived && sideEffectIterationGuard == maxSideEffectIteration)
 		{
-			FModumateObjectDeltaStatics::GetDerivedDeltasFromDeltas(this, EMOIDeltaType::Mutate, Deltas, derivedDeltas);
+			FModumateDerivedDeltaStatics::GetDerivedDeltasFromDeltas(this, EMOIDeltaType::Mutate, Deltas, derivedDeltas);
 
 			if (derivedDeltas.Num() > 0)
 			{
@@ -1690,6 +1691,12 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World, bool bCleanObjects, bool 
 		// TODO: keep track of document dirtiness by a unique identifier of which delta is at the top of the stack,
 		// but that refactor could wait until the multiplayer refactor which would also affect the definition of autosave.
 		SetDirtyFlags(true);
+	}
+
+	if (bWebPresetsDirty)
+	{
+		bWebPresetsDirty = false;
+		UpdateWebPresets();
 	}
 
 	UModumateObjectStatics::UpdateDesignOptionVisibility(this);

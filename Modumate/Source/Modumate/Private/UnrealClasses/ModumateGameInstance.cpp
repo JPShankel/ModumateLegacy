@@ -4,8 +4,8 @@
 
 #include "Algo/Transform.h"
 #include "BIMKernel/Core/BIMProperties.h"
-#include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
-#include "BIMKernel/Presets/BIMSymbolPresetData.h"
+//#include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
+//#include "BIMKernel/Presets/BIMSymbolPresetData.h"
 #include "Database/ModumateObjectDatabase.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "Dom/JsonObject.h"
@@ -19,6 +19,7 @@
 #include "ModumateCore/ModumateStats.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "Objects/ModumateObjectStatics.h"
+#include "Objects/ModumateDerivedDeltaStatics.h"
 #include "Objects/MOIPattern2D.h"
 #include "Objects/MetaGraph.h"
 #include "Online/ModumateAccountManager.h"
@@ -630,36 +631,11 @@ void UModumateGameInstance::RegisterAllCommands()
 
 		if (playerState && playerState->SelectedGroupObjects.Num() == 1)
 		{
+			TArray<FDeltaPtr> symbolDeltas;
 			const AMOIMetaGraph* group = Cast<const AMOIMetaGraph>(*playerState->SelectedGroupObjects.begin());
-			FMOIMetaGraphData newGroupData = group->InstanceData;
-			if (ensure(!newGroupData.SymbolID.IsValid()) && group->ID != doc->GetRootVolumeGraphID())
+			if (FModumateDerivedDeltaStatics::CreateDeltasForNewSymbol(doc, group, symbolDeltas))
 			{
-				static const FName symbolNodeType(TEXT("0Symbol"));
-				static const FString symbolNcp(TEXT("Part_0FlexDims3Fixed_Symbol"));
-				FBIMPresetCollection& presets = doc->GetPresetCollection();
-				FBIMPresetInstance newSymbolPreset;
-				newSymbolPreset.DisplayName = FText::FromString(TEXT("ExampleSymbol"));
-				newSymbolPreset.NodeType = symbolNodeType;
-				newSymbolPreset.MyTagPath.FromString(symbolNcp);
-
-				FBIMSymbolPresetData symbolData;
-				TSet<AModumateObjectInstance*> groupMembers;
-				UModumateObjectStatics::GetObjectsInGroups(doc, { group->ID }, groupMembers);
-				for (const auto* moi : groupMembers)
-				{
-					symbolData.Members.Add(moi->GetStateData());
-				}
-				newSymbolPreset.SetCustomData(symbolData);
-				FDeltaPtr presetDelta(presets.MakeCreateNewDelta(newSymbolPreset));
-
-				newGroupData.SymbolID = newSymbolPreset.GUID;
-				FMOIStateData groupInstanceData(group->GetStateData());
-				groupInstanceData.CustomData.SaveStructData(newGroupData, UE_EDITOR);
-
-				auto groupDelta = MakeShared<FMOIDelta>();
-				groupDelta->AddMutationState(group, group->GetStateData(), groupInstanceData);
-
-				doc->ApplyDeltas({ presetDelta, groupDelta }, GetWorld());
+				doc->ApplyDeltas(symbolDeltas, GetWorld());
 			}
 		}
 

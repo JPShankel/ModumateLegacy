@@ -1088,19 +1088,19 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 					}
 
 					bool bFound = false;
-					for (auto& IdSet : symbolPresetData.EquivalentIDs)
+					for (auto& IdMap : symbolPresetData.EquivalentIDs)
 					{
-						if (IdSet.IDs.Contains(idMapping.Key))
+						if (IdMap.Value.IDSet.Contains(idMapping.Key))
 						{
-							IdSet.IDs.Add(idMapping.Value);
+							IdMap.Value.IDSet.Add(idMapping.Value);
 							bFound = true;
 							break;
 						}
 					}
 
-					if (!bFound)
-					{   // New Symbols might not contain any mappings
-						symbolPresetData.EquivalentIDs.Add(FBIMSymbolPresetIDSet({ idMapping.Key, idMapping.Value }));
+					if (!ensure(bFound))
+					{   // Newly-copied Symbols might not have the base mapping for some objects (eg. spans).
+						symbolPresetData.EquivalentIDs.Add(idMapping.Key).IDSet.Append({ idMapping.Key, idMapping.Value });
 					}
 
 					newSymbolPreset.SetCustomData(symbolPresetData);
@@ -1262,198 +1262,6 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(UModumateDocument*
 	}
 	OutDeltas.Add(moiDelta);
 }
-
-void FModumateObjectDeltaStatics::GetDerivedDeltasFromDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaType, const TArray<FDeltaPtr>& InDeltas, TArray<FDeltaPtr>& DerivedDeltas)
-{
-	for (const auto& delta : InDeltas)
-	{
-		delta->GetDerivedDeltas(Doc, DeltaType, DerivedDeltas);
-	}
-}
-
-void FModumateObjectDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocument* Doc, const FMOIDeltaState& DeltaState, EMOIDeltaType DeltaType, TArray<FDeltaPtr>& OutDeltas)
-{
-	if (DeltaType != EMOIDeltaType::None && DeltaType != DeltaState.DeltaType)
-	{
-		return;
-	}
-
-	int32 id = DeltaState.OldState.ID;
-	int32 groupId = UModumateObjectStatics::GetGroupIdForObject(Doc, id);
-
-	// Return quickly if not in a symbol.
-	if (groupId == MOD_ID_NONE || groupId == Doc->GetRootVolumeGraphID() || UModumateTypeStatics::IsSpanObject(Doc->GetObjectById(id)) )
-	{
-		return;
-	}
-
-	const AMOIMetaGraph* groupMoi = Cast<AMOIMetaGraph>(Doc->GetObjectById(groupId));
-	if (!groupMoi->InstanceData.SymbolID.IsValid())
-	{
-		return;
-	}
-
-	const FBIMPresetCollection& presets = Doc->GetPresetCollection();
-	const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(groupMoi->InstanceData.SymbolID);
-	if (!ensure(symbolPreset))
-	{
-		return;
-	}
-
-	switch (DeltaState.DeltaType)
-	{
-	case EMOIDeltaType::Mutate:
-	{
-		FBIMSymbolPresetData symbolData;
-		if (ensure(symbolPreset->TryGetCustomData(symbolData)) )
-		{
-			for (const auto& idset : symbolData.EquivalentIDs)
-			{
-				if (idset.IDs.Contains(id))
-				{
-					auto newDelta = MakeShared<FMOIDelta>();
-					for (int32 otherId : idset.IDs)
-					{
-						if (otherId != id)
-						{
-							const auto* otherMoi = Doc->GetObjectById(otherId);
-							if (otherMoi)
-							{
-								FMOIDeltaState& otherState = newDelta->States.Add_GetRef(DeltaState);
-								otherState.OldState.ID = otherId;
-								otherState.OldState.ParentID = otherMoi->GetParentID();
-								otherState.NewState.ID = otherId;
-								otherState.NewState.ParentID = otherState.OldState.ParentID;
-							}
-						}
-					}
-
-					if (newDelta->IsValid())
-					{
-						OutDeltas.Add(newDelta);
-					}
-					break;
-				}
-			}
-		}
-		break;
-	}
-
-	case EMOIDeltaType::Create:
-	{
-		break;
-	}
-
-	case EMOIDeltaType::Destroy:
-	{
-		FBIMSymbolPresetData symbolData;
-		if (ensure(symbolPreset->TryGetCustomData(symbolData)))
-		{
-			for (const auto& idset : symbolData.EquivalentIDs)
-			{
-				if (idset.IDs.Contains(id))
-				{
-					auto newDelta = MakeShared<FMOIDelta>();
-					for (int32 otherId : idset.IDs)
-					{
-						if (otherId != id)
-						{
-							const auto* otherMoi = Doc->GetObjectById(otherId);
-							if (otherMoi)
-							{
-								newDelta->AddCreateDestroyState(otherMoi->GetStateData(), EMOIDeltaType::Destroy);
-
-							}
-						}
-					}
-
-					if (newDelta->IsValid())
-					{
-						OutDeltas.Add(newDelta);
-					}
-
-				}
-
-			}
-		}
-		break;
-	}
-
-	default:
-		break;
-	}
-}
-
-void FModumateObjectDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* Doc, const FGraph3DDelta* GraphDelta, EMOIDeltaType DeltaType, TArray<TSharedPtr<FDocumentDelta>>& OutDeltas)
-{
-	// Return quickly if no movements or not in Symbol group.
-	int32 graphId = GraphDelta->GraphID;
-	if (GraphDelta->VertexMovements.Num() == 0 || graphId == MOD_ID_NONE || graphId == Doc->GetRootVolumeGraphID())
-	{
-		return;
-	}
-
-	const AMOIMetaGraph* groupObj = Cast<AMOIMetaGraph>(Doc->GetObjectById(graphId));
-	if (!ensure(groupObj) || !groupObj->InstanceData.SymbolID.IsValid())
-	{
-		return;
-	}
-
-	const FBIMPresetCollection& presets = Doc->GetPresetCollection();
-	const FBIMPresetInstance* symbolPreset = presets.PresetFromGUID(groupObj->InstanceData.SymbolID);
-	if (!ensure(symbolPreset))
-	{
-		return;
-	}
-
-	FBIMSymbolPresetData symbolData;
-	if (!ensure(symbolPreset->TryGetCustomData(symbolData)))
-	{
-		return;
-	}
-
-	auto graphDelta = MakeShared<FGraph3DDelta>();
-	TMap<int32, TSharedPtr<FGraph3DDelta>> newDeltas;  // Per other-group
-
-	const FTransform thisTransformInverse(groupObj->GetWorldTransform().Inverse());
-
-	for (const auto& moveDelta : GraphDelta->VertexMovements)
-	{
-		const int32 vertId = moveDelta.Key;
-		for (const auto& idset : symbolData.EquivalentIDs)
-		{
-			if (idset.IDs.Contains(vertId))
-			{
-				for (int32 otherVertId : idset.IDs)
-				{
-					if (otherVertId != vertId)
-					{
-						const AMOIMetaGraph* otherGroupMoi = Cast<AMOIMetaGraph>(Doc->GetObjectById(Doc->FindGraph3DByObjID(otherVertId)));
-						if (ensure(otherGroupMoi))
-						{
-							const FTransform vertTransform(thisTransformInverse * otherGroupMoi->GetWorldTransform());
-							const int32 otherGroupId = otherGroupMoi->ID;
-							if (!newDeltas.Contains(otherGroupId))
-							{
-								newDeltas.Add(otherGroupId, MakeShared<FGraph3DDelta>(otherGroupId));
-							}
-							newDeltas[otherGroupId]->VertexMovements.Add(otherVertId,
-								{ vertTransform.TransformPosition(moveDelta.Value.Key), vertTransform.TransformPosition(moveDelta.Value.Value) });
-						}
-
-					}
-				}
-			}
-		}
-	}
-
-	for (auto& delta : newDeltas)
-	{
-		OutDeltas.Add(delta.Value);
-	}
-
-}
-
 
 void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas)
 {
