@@ -209,7 +209,7 @@ void UModumateGameInstance::RegisterAllCommands()
 			}
 			else
 			{
-				return controller->EditModelDatasmithImporter->ImportDatasmithFromURL(idString);
+				return controller->EditModelDatasmithImporter->ImportDatasmithFromWeb(idString);
 			}
 		}
 		return false;

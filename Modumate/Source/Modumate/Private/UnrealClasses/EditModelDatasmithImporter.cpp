@@ -11,6 +11,9 @@
 #include "TimerManager.h"
 #include "ModumateCore/PlatformFunctions.h"
 
+#include "Drafting/MiniZip.h"
+#include "HAL/FileManagerGeneric.h"
+
 // Sets default values
 AEditModelDatasmithImporter::AEditModelDatasmithImporter()
 {
@@ -53,38 +56,71 @@ bool AEditModelDatasmithImporter::ImportDatasmithFromDialogue()
 	return bLoadSuccess;
 }
 
-bool AEditModelDatasmithImporter::ImportDatasmithFromURL(const FString& URL)
+bool AEditModelDatasmithImporter::ImportDatasmithFromWeb(const FString& URL)
 {
+	auto controller = GetWorld()->GetFirstPlayerController<AEditModelPlayerController>();
+	if (!controller || URL.IsEmpty())
+	{
+		return false;
+	}
+	// Create new archMesh from Datasmith
+	FGuid newArchitecturalMeshKey;
+	FModumateDatabase* db = GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase;
+	db->AddArchitecturalMeshFromDatasmith(URL, newArchitecturalMeshKey);
+
+	// Create new preset
+	FString newPresetName = TEXT("Downloaded Asset");
+
+	FGuid newPresetID;
+	controller->GetDocument()->GetPresetCollection().MakeNewPresetFromDatasmith(*db, newPresetName, newArchitecturalMeshKey, newPresetID);
+	controller->GetDocument()->UpdateWebPresets();
+	return true;
+}
+
+bool AEditModelDatasmithImporter::RequestDownloadFromURL(const FGuid& InGUID, const FString& URL)
+{
+	PresetLoadStatusMap.Add(InGUID, EAssetImportLoadStatus::Downloading);
+
 	auto Request = FHttpModule::Get().CreateRequest();
 	Request->SetVerb(TEXT("GET"));
 	Request->SetURL(URL);
 	Request->ProcessRequest();
 
 	TWeakObjectPtr<AEditModelDatasmithImporter> weakThisCaptured(this);
-	Request->OnProcessRequestComplete().BindLambda([weakThisCaptured](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+	Request->OnProcessRequestComplete().BindLambda([weakThisCaptured, InGUID](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 	{ 
 		auto sharedThis = weakThisCaptured.Get();
 		if (sharedThis != nullptr)
 		{
-			sharedThis->RequestCompleteCallback(Request, Response, bWasSuccessful);
+			sharedThis->DownloadCompleteCallback(InGUID, Request, Response, bWasSuccessful);
 		}
  });
 	
 	return true;
 }
 
-void AEditModelDatasmithImporter::RequestCompleteCallback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+void AEditModelDatasmithImporter::DownloadCompleteCallback(const FGuid& InGUID, FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	UE_LOG(LogTemp, Error, TEXT("bWasSuccessful is %s"), (bWasSuccessful ? TEXT("true") : TEXT("false")));
+	UE_LOG(LogTemp, Error, TEXT("Download is %s"), (bWasSuccessful ? TEXT("true") : TEXT("false")));
 	if (Request->GetStatus() == EHttpRequestStatus::Succeeded
 		&& Response->GetContent().Num() != 0)
 	{
-		const static FString cacheFileName = TEXT("cacheImport.udatasmith");
-		FString cacheFile = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), cacheFileName);
-		FFileHelper::SaveStringToFile(Response->GetContentAsString(), *cacheFile);
+		const static FString downloadPathName = TEXT("DownloadedAssets");
+		const static FString cacheFileName = TEXT("cacheImport.zip");
+		FString cacheFilePath = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), downloadPathName, InGUID.ToString(), cacheFileName);
+		FFileHelper::SaveArrayToFile(Response->GetContent(), *cacheFilePath);
 
-		bool bLoadResult = UDatasmithRuntimeLibrary::LoadFile(CurrentDatasmithRuntimeActor.Get(), cacheFile);
-		UE_LOG(LogTemp, Error, TEXT("bLoadResult is %s"), (bLoadResult ? TEXT("true") : TEXT("false")));
+		FMiniZip miniZip;
+		miniZip.ExtractFromArchive(cacheFilePath);
+
+		FString extractedFolder = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), downloadPathName, InGUID.ToString());
+		TArray<FString> dataSmithFiles;
+		FFileManagerGeneric::Get().FindFiles(dataSmithFiles, *extractedFolder, TEXT(".udatasmith"));
+		for (auto curDatasmithFile : dataSmithFiles)
+		{
+			FString fullDatasmithPathName = FPaths::Combine(extractedFolder, curDatasmithFile);
+			AddDatasmithRuntimeActor(InGUID, fullDatasmithPathName);
+		}
 	}
 }
 
@@ -136,23 +172,11 @@ void AEditModelDatasmithImporter::HandleAssetRequest(const FAssetRequest& InAsse
 			FString testFile = InAssetRequest.Assembly.Parts[0].Mesh.DatasmithUrl;
 			if (FPaths::FileExists(testFile))
 			{
-				PresetLoadStatusMap.Add(InAssetRequest.Assembly.PresetGUID, EAssetImportLoadStatus::Loading);
-
-				FActorSpawnParameters datasmithRuntimeActorSpawnParams;
-				datasmithRuntimeActorSpawnParams.Owner = this;
-				CurrentDatasmithRuntimeActor = GetWorld()->SpawnActor<AEditModelDatasmithRuntimeActor>(DatasmithRuntimeActorClass, datasmithRuntimeActorSpawnParams);
-				CurrentDatasmithRuntimeActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
-				CurrentDatasmithRuntimeActor->DatasmithImporter = this;
-				CurrentDatasmithRuntimeActor->PresetKey = InAssetRequest.Assembly.PresetGUID;
-				CurrentDatasmithRuntimeActor->ImportFilePath = testFile;
-				PresetToDatasmithRuntimeActorMap.Add(InAssetRequest.Assembly.PresetGUID, CurrentDatasmithRuntimeActor.Get());
-
-				// Timer to keep track of import progress
-				// In rare cases, import thread doesn't start at 1st, but will start at 2nd attempt
-				GetWorldTimerManager().SetTimer(AssetImportCheckTimer, this, &AEditModelDatasmithImporter::OnAssetImportCheckTimer, CheckAfterImportTime, false);
-
-				UE_LOG(LogTemp, Log, TEXT("Begin Import: %s"), *testFile);
-				bool bLoadResult = CurrentDatasmithRuntimeActor->MakeFromImportFilePath();
+				AddDatasmithRuntimeActor(InAssetRequest.Assembly.PresetGUID, testFile);
+			}
+			else if (testFile.Contains(TEXT("http")))
+			{
+				RequestDownloadFromURL(InAssetRequest.Assembly.PresetGUID, testFile);
 			}
 			else
 			{
@@ -203,4 +227,31 @@ void AEditModelDatasmithImporter::OnAssetImportCheckTimer()
 			}
 		}
 	}
+}
+
+bool AEditModelDatasmithImporter::AddDatasmithRuntimeActor(const FGuid& InGUID, const FString& DatasmithImportPath)
+{
+	PresetLoadStatusMap.Add(InGUID, EAssetImportLoadStatus::Loading);
+
+	FActorSpawnParameters datasmithRuntimeActorSpawnParams;
+	datasmithRuntimeActorSpawnParams.Owner = this;
+	AEditModelDatasmithRuntimeActor* newDatasmithRuntimeActor = GetWorld()->SpawnActor<AEditModelDatasmithRuntimeActor>(DatasmithRuntimeActorClass, datasmithRuntimeActorSpawnParams);
+	newDatasmithRuntimeActor->AttachToComponent(Root, FAttachmentTransformRules::KeepWorldTransform);
+	newDatasmithRuntimeActor->DatasmithImporter = this;
+	newDatasmithRuntimeActor->PresetKey = InGUID;
+	newDatasmithRuntimeActor->ImportFilePath = DatasmithImportPath;
+	PresetToDatasmithRuntimeActorMap.Add(InGUID, newDatasmithRuntimeActor);
+
+	// Timer to keep track of import progress
+	// In rare cases, import thread doesn't start at 1st, but will start at 2nd attempt
+	GetWorldTimerManager().SetTimer(AssetImportCheckTimer, this, &AEditModelDatasmithImporter::OnAssetImportCheckTimer, CheckAfterImportTime, false);
+
+	UE_LOG(LogTemp, Log, TEXT("Begin Import: %s"), *DatasmithImportPath);
+	return newDatasmithRuntimeActor->MakeFromImportFilePath();
+}
+
+void AEditModelDatasmithImporter::TestExtract(const FString& URL)
+{
+	FMiniZip miniZip;
+	miniZip.ExtractFromArchive(URL);
 }

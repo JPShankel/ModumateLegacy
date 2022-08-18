@@ -28,6 +28,7 @@ UENUM(BlueprintType)
 enum class EAssetImportLoadStatus : uint8
 {
 	None,
+	Downloading,
 	Loading,
 	Loaded
 };
@@ -75,13 +76,21 @@ public:
 	bool ImportDatasmithFromDialogue();
 
 	UFUNCTION(BlueprintCallable)
-	bool ImportDatasmithFromURL(const FString& URL);
+	bool ImportDatasmithFromWeb(const FString& URL);
 
-	void RequestCompleteCallback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	UFUNCTION(BlueprintCallable)
+	bool RequestDownloadFromURL(const FGuid& InGUID, const FString& URL);
+
+	void DownloadCompleteCallback(const FGuid& InGUID, FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void HandleAssetRequest(const FAssetRequest& InAssetRequest);
 
 	void OnRuntimeActorImportDone(class AEditModelDatasmithRuntimeActor* FromActor);
 
 	UFUNCTION()
 	void OnAssetImportCheckTimer();
+
+	bool AddDatasmithRuntimeActor(const FGuid& InGUID, const FString& DatasmithImportPath);
+
+	UFUNCTION(BlueprintCallable)
+	void TestExtract(const FString& URL);
 };

@@ -15,12 +15,17 @@
 #endif
 
 #include "Drafting/MiniZip/ioapi.h"
+#include <stdio.h>
 
 //@third party BEGIN MODUMATE - disable clang-specific warnings
 #ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wimplicit-function-declaration"
 #pragma clang diagnostic ignored "-Wint-conversion"
+#endif
+
+#if !defined(PLATFORM_WINDOWS)
+#define PLATFORM_WINDOWS 0
 #endif
 //@third party END MODUMATE
 
@@ -120,7 +125,7 @@ static voidpf ZCALLBACK fopen64_file_func (voidpf opaque, const void* filename, 
         mode_fopen = "wb";
 
     if ((filename!=NULL) && (mode_fopen != NULL))
-        file = fopen64((const char*)filename, mode_fopen);
+        file = fopen((const char*)filename, mode_fopen);
     return file;
 }
 
@@ -150,7 +155,11 @@ static long ZCALLBACK ftell_file_func (voidpf opaque, voidpf stream)
 static ZPOS64_T ZCALLBACK ftell64_file_func (voidpf opaque, voidpf stream)
 {
     ZPOS64_T ret;
-    ret = ftello64((FILE *)stream);
+#if PLATFORM_WINDOWS
+    ret = ftello64((FILE*)stream);
+#else
+    ret = ftello((FILE*)stream);
+#endif
     return ret;
 }
 
@@ -196,8 +205,12 @@ static long ZCALLBACK fseek64_file_func (voidpf  opaque, voidpf stream, ZPOS64_T
     }
     ret = 0;
 
-    if(fseeko64((FILE *)stream, offset, fseek_origin) != 0)
-                        ret = -1;
+#if PLATFORM_WINDOWS
+	if (fseeko64((FILE*)stream, offset, fseek_origin) != 0)
+#else
+	if (fseeko((FILE*)stream, offset, fseek_origin) != 0)
+#endif
+    ret = -1;
 
     return ret;
 }

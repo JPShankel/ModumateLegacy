@@ -12,6 +12,7 @@ public:
 		Files.Add(filename);
 	}
 	bool CreateArchive(const FString& archiveFilename);
+	bool ExtractFromArchive(const FString& ArchiveFilename);
 private:
 	TArray<FString> Files;
 
