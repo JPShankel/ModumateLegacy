@@ -63,7 +63,7 @@ public:
 	FMOITerrainData InstanceData;
 
 protected:
-	void UpdateTerrainActor();
+	bool UpdateTerrainActor();
 	void UpdateSiteMaterials(bool bForceUpdate = false);
 	void UpdateEditTerrainList();
 

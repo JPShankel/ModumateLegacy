@@ -66,10 +66,7 @@ bool AMOITerrain::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* Ou
 	switch (DirtyFlag)
 	{
 	case EObjectDirtyFlags::Structure:
-	{
-		UpdateTerrainActor();
-		break;
-	}
+		return UpdateTerrainActor();
 
 	case EObjectDirtyFlags::Visuals:
 		UpdateSiteMaterials();
@@ -219,25 +216,28 @@ bool AMOITerrain::GetTransformedLocationState(const FTransform Transform, FMOISt
 	return OutState.CustomData.SaveStructData(newData);
 }
 
-void AMOITerrain::UpdateTerrainActor()
+bool AMOITerrain::UpdateTerrainActor()
 {
 	// Don't evaluate terrain mesh on server as it's costly and not required.
 #if !UE_SERVER
 
 	const auto graph2d = GetDocument()->FindSurfaceGraph(ID);
-	int32 numTerrainPatches = 0;
 
 	if (ensure(graph2d))
 	{
+		if (graph2d->IsDirty())
+		{
+			return false;
+		}
+
 		const auto& polygons = graph2d->GetPolygons();
-		ADynamicTerrainActor* actor = Cast< ADynamicTerrainActor>(GetActor());
+		ADynamicTerrainActor* actor = Cast<ADynamicTerrainActor>(GetActor());
 		if (!ensure(actor))
 		{
-			return;
+			return true;
 		}
 		actor->ClearAllMeshSections();
 		PolyIDToMeshSection.Empty();
-		const FVector origin = InstanceData.Origin;
 
 		TArray<int32> islandPolys;
 		for (const auto& polygonKvp: polygons)
@@ -248,7 +248,6 @@ void AMOITerrain::UpdateTerrainActor()
 			}
 		}
 
-		const int32 numIslands = islandPolys.Num();  // One TPS domain per island.
 		int32 meshSectionNumber = 0;
 		for (int32 island: islandPolys)
 		{
@@ -320,7 +319,6 @@ void AMOITerrain::UpdateTerrainActor()
 				const float Area = polygonBox3D.GetSize().X * polygonBox3D.GetSize().Y;
 				const FVector size = polygonBox3D.GetSize();
 				float density = 0.1f * size.Z;
-				//gridSize = FMath::Min(FMath::Clamp(( FMath::Sqrt(Area) / verticesDensityPerRow), minGridSize, maxGridSize), gridSize);
 				float targetGridSize = FMath::Max(size.X, size.Y) / density;
 				gridSize = FMath::Min(FMath::Clamp(targetGridSize, minGridSize, maxGridSize), gridSize);
 			}
@@ -354,6 +352,7 @@ void AMOITerrain::UpdateTerrainActor()
 	}
 
 	Document->DirtyAllCutPlanes();
+	return true;
 
 #endif
 }
