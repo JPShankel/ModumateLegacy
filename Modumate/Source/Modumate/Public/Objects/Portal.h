@@ -72,6 +72,7 @@ public:
 	virtual FVector GetLocation() const override;
 	virtual FQuat GetRotation() const override;
 	virtual FTransform GetWorldTransform() const override;
+	virtual int32 GetNumCorners() const override;
 	virtual FVector GetCorner(int32 index) const override;
 	virtual void SetupAdjustmentHandles(AEditModelPlayerController *controller) override;
 

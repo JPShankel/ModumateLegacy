@@ -357,7 +357,7 @@ bool AMOIPortal::SetRelativeTransform(const FVector2D &InRelativePos, const FQua
 void AMOIPortal::GetStructuralPointsAndLines(TArray<FStructurePoint> &outPoints, TArray<FStructureLine> &outLines, bool bForSnapping, bool bForSelection) const
 {
 	const AModumateObjectInstance* parentObject = GetParentObject();
-	if (parentObject && (parentObject->GetObjectType() == EObjectType::OTMetaPlane))
+	if (ensure(parentObject))
 	{
 		parentObject->GetStructuralPointsAndLines(outPoints, outLines, bForSnapping, bForSelection);
 	}
@@ -377,10 +377,21 @@ FQuat AMOIPortal::GetRotation() const
 	return CachedRelativeRot;
 }
 
+int32 AMOIPortal::GetNumCorners() const
+{
+	const AModumateObjectInstance* parentObject = GetParentObject();
+	if (ensure(parentObject))
+	{
+		return parentObject->GetNumCorners();
+	}
+
+	return 0;
+}
+
 FVector AMOIPortal::GetCorner(int32 index) const
 {
 	const AModumateObjectInstance* parentObject = GetParentObject();
-	if (parentObject && (parentObject->GetObjectType() == EObjectType::OTMetaPlane))
+	if (ensure(parentObject))
 	{
 		return parentObject->GetCorner(index);
 	}
