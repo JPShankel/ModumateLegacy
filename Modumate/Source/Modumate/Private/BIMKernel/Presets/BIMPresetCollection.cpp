@@ -715,6 +715,7 @@ TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeDuplicateDelta(const FGuid
 
 	if (ensureAlways(!NewPreset.GUID.IsValid()))
 	{
+		NewPreset.ParentGUID = original->GUID;
 		NewPreset = *original;
 		NewPreset.DisplayName = FText::Format(LOCTEXT("DisplayName", "Duplicate of {0}"), NewPreset.DisplayName);
 		NewPreset.Properties.SetProperty(NewPreset.NodeScope, BIMPropertyNames::Name, NewPreset.DisplayName.ToString());
@@ -735,9 +736,10 @@ TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeDuplicateDelta(const FGuid
 
 TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeCreateNewDelta(FBIMPresetInstance& NewPreset, UObject* AnalyticsWorldContextObject)
 {
-	if (ensureAlways(!NewPreset.GUID.IsValid()))
-	{
-		GetAvailableGUID(NewPreset.GUID);
+		if (!NewPreset.GUID.IsValid())
+		{
+			GetAvailableGUID(NewPreset.GUID);
+		}
 
 		if (AnalyticsWorldContextObject)
 		{
@@ -745,8 +747,6 @@ TSharedPtr<FBIMPresetDelta> FBIMPresetCollection::MakeCreateNewDelta(FBIMPresetI
 		}
 
 		return MakeUpdateDelta(NewPreset);
-	}
-	return nullptr;
 }
 
 EBIMResult FBIMPresetCollection::ForEachPreset(const TFunction<void(const FBIMPresetInstance& Preset)>& Operation) const

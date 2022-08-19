@@ -155,8 +155,9 @@ void UModumateDocumentWebBridge::create_or_update_preset(const FString& PresetDa
 	}
 
 	TArray<FDeltaPtr> deltas;
+	auto* existingPreset = Document->GetPresetCollection().PresetFromGUID(newPreset.GUID);
 
-	if (newPreset.GUID.IsValid())
+	if (existingPreset)
 	{
 		auto updatePresetDelta = Document->GetPresetCollection().MakeUpdateDelta(newPreset);
 		deltas.Add(updatePresetDelta);

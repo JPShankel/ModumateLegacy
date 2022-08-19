@@ -525,4 +525,7 @@ public:
 
 	UFUNCTION()
 	void NotifyWeb(ENotificationLevel lvl, const FString& text);
+	
+	UFUNCTION()
+	void OpenWebMarketplace(FBIMTagPath ncp);
 };

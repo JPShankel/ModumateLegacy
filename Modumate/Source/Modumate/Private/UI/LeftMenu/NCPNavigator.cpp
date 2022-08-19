@@ -21,6 +21,8 @@
 #include "UI/TutorialMenu/HelpMenu.h"
 #include "UI/TutorialMenu/HelpBlockTutorialSearch.h"
 #include "Online/ModumateAnalyticsStatics.h"
+#include "UI/Custom/ModumateButtonUserWidget.h"
+#include "UI/Custom/ModumateButton.h"
 
 const FString UNCPNavigator::AnalyticsEventString = TEXT("NCPSearchString");
 
@@ -57,6 +59,12 @@ bool UNCPNavigator::Initialize()
 			canvasSlotBorder->SetOffsets(bBorderAutoSize ? EnableAutoSizeMargin : DisableAutoSizeMargin);
 		}
 	}
+
+	if (!ButtonMarketplace)
+	{
+		return false;
+	}
+	ButtonMarketplace->ModumateButton->OnReleased.AddDynamic(this, &UNCPNavigator::OnReleaseButtonMarketplace);
 
 	return true;
 }
@@ -459,4 +467,14 @@ UModumateEditableTextBoxUserWidget* UNCPNavigator::GetSearchTextBox()
 	{
 		return SearchBarWidget;
 	}
+}
+
+void UNCPNavigator::OnReleaseButtonMarketplace()
+{
+	FBIMTagPath curNCP;
+	EMPlayerController->GetDocument()->GetPresetCollection().GetNCPForPreset(
+	EMPlayerController->EditModelUserWidget->SwapMenuWidget->GetPresetGUIDToSwap(), curNCP);
+	FBIMTagPath traverseNCP;
+	GetTopTraversalPath(curNCP, traverseNCP);
+	EMPlayerController->GetDocument()->OpenWebMarketplace(traverseNCP);
 }

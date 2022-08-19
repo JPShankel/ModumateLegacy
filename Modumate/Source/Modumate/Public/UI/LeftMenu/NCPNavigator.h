@@ -58,6 +58,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
 	class UVerticalBox* VerticalBox_TitleAndSearchbar;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (BindWidget))
+	class UModumateButtonUserWidget* ButtonMarketplace;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bBorderAutoSize = false;
 
@@ -106,4 +109,7 @@ public:
 	void OnSearchBarChanged(const FText& NewText);
 
 	UModumateEditableTextBoxUserWidget* GetSearchTextBox();
+
+	UFUNCTION()
+	void OnReleaseButtonMarketplace();
 };

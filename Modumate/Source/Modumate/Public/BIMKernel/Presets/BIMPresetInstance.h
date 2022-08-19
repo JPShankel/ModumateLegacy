@@ -130,6 +130,18 @@ struct MODUMATE_API FBIMWebPreset
 	FGuid guid;
 
 	UPROPERTY()
+	TArray<FGuid> childPresets;
+
+	UPROPERTY()
+	TArray<FGuid> parts;
+
+	UPROPERTY()
+	TArray<FGuid> slots;
+
+	UPROPERTY()
+	FGuid slotConfig;
+
+	UPROPERTY()
 	FString name;
 	
 	UPROPERTY()
@@ -145,9 +157,6 @@ struct MODUMATE_API FBIMWebPreset
 	
 	UPROPERTY()
 	TMap<FString, FBIMWebPresetProperty> properties;
-
-	UPROPERTY()
-	TArray<FString> childPresets;
 };
 
 USTRUCT()
@@ -218,6 +227,9 @@ struct MODUMATE_API FBIMPresetInstance
 
 	UPROPERTY()
 	FGuid GUID;
+
+	UPROPERTY()
+	FGuid ParentGUID;
 
 	UPROPERTY()
 	FBIMKey SlotConfigPresetID;

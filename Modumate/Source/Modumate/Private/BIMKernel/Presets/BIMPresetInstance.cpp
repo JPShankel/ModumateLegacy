@@ -12,6 +12,7 @@
 #include "Quantities/QuantitiesManager.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
+#include "UnrealClasses/EditModelGameState.h"
 
 #define LOCTEXT_NAMESPACE "BIMPresetInstance"
 
@@ -924,6 +925,51 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 {
 	MyTagPath = InPreset.tagPath;
 	DisplayName = FText::FromString(InPreset.name);
+	GUID = InPreset.guid;
+	AEditModelGameState* gameState = World ? Cast<AEditModelGameState>(World->GetGameState()) : nullptr;
+
+	if (gameState) {
+		TArray<FGuid> presets;
+		gameState->Document->GetPresetCollection().GetPresetsForNCP(MyTagPath, presets);
+		if (presets.Num() > 0) {
+			FBIMPresetInstance* rootPreset = gameState->Document->GetPresetCollection().PresetFromGUID(presets[0]);
+			if (rootPreset != nullptr) {
+				TypeDefinition = rootPreset->TypeDefinition;
+				NodeType = rootPreset->NodeType;
+				PresetForm = rootPreset->PresetForm;
+				NodeScope = rootPreset->NodeScope;
+				ParentTagPaths = rootPreset->ParentTagPaths;
+				ObjectType = rootPreset->ObjectType;
+			}
+		}
+	}
+
+	FPresetCustomDataWrapper presetCustomData;
+
+	if (ReadJsonGeneric<FPresetCustomDataWrapper>(InPreset.customDataJSON, &presetCustomData)) {
+		CustomDataByClassName = presetCustomData.CustomDataWrapper;
+		for (auto& kvp : CustomDataByClassName) {
+			kvp.Value.LoadFromJson();
+		}
+	}
+
+	int32 setPosition = 0;
+	for (auto& child : InPreset.childPresets)
+	{
+		FBIMPresetInstance* preset = gameState->Document->GetPresetCollection().PresetFromGUID(child);
+		if (preset) {
+			AddChildPreset(child, 0, setPosition++);
+		}
+	}
+
+	PartSlots.Empty();
+	for (int32 partIndex = 0; partIndex < InPreset.parts.Num(); ++partIndex)
+	{
+		FGuid slot = InPreset.slots[partIndex];
+		FGuid part = InPreset.parts[partIndex];
+		SetPartPreset(slot, part);
+	}
+	SlotConfigPresetGUID = InPreset.slotConfig;
 
 	for (auto& property : InPreset.properties)
 	{
@@ -936,11 +982,11 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 			{
 				if (property.Value.type == EBIMWebPresetPropertyType::number)
 				{
-					SetScopedProperty(scope, *splitKey[0], FCString::Atof(*splitKey[1]));
+					SetScopedProperty(scope, *splitKey[1], FCString::Atof(*property.Value.value[0]));
 				}
 				else
 				{
-					SetScopedProperty(scope, *splitKey[0], splitKey[1]);
+					SetScopedProperty(scope, *splitKey[1], property.Value.value[0]);
 				}
 			}
 			else
@@ -1019,6 +1065,19 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 		}
 	}
 
+	for (auto& part : PartSlots)
+	{
+		OutPreset.parts.Add(part.PartPresetGUID);
+		OutPreset.slots.Add(part.SlotPresetGUID);
+	}
+
+	for (auto& child : ChildPresets)
+	{
+		OutPreset.childPresets.Add(child.PresetGUID);
+	}
+
+	OutPreset.slotConfig = SlotConfigPresetGUID;
+
 	Properties.ForEachProperty([&properties](const FBIMPropertyKey& Key, const FString& Value)
 		{
 			FBIMWebPresetProperty property;
@@ -1054,7 +1113,6 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	const FBIMPropertyKey propertyKey(EBIMValueScope::Preset, BIMPropertyNames::Mark);
 	const FString typeMark = Properties.GetProperty<FString>(propertyKey.Scope, propertyKey.Name);
 	OutPreset.typeMark = typeMark;
-
 		
 	// childPresets
 	TArray<FString> childPresets;
@@ -1062,7 +1120,7 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	{
 		childPresets.Add(item.PresetGUID.ToString());
 	}
-	OutPreset.childPresets = childPresets;
+	Algo::Transform(childPresets, OutPreset.childPresets, [](const FString& GUID) {FGuid guid; FGuid::Parse(GUID, guid); return guid; });
 
 	return EBIMResult::Success;
 }

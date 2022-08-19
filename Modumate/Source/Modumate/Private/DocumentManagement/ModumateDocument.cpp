@@ -5612,4 +5612,11 @@ void UModumateDocument::NotifyWeb(ENotificationLevel lvl, const FString& text)
 	DrawingSendResponse(TEXT("notify"), TEXT("\"" + level + "\",\"" + text + "\""));
 }
 
+void UModumateDocument::OpenWebMarketplace(FBIMTagPath npc)
+{
+	FString tagpath;
+	npc.ToString(tagpath);
+	DrawingSendResponse(TEXT("openMarketplace"), TEXT("\"" + tagpath + "\""));
+}
+
 #undef LOCTEXT_NAMESPACE
