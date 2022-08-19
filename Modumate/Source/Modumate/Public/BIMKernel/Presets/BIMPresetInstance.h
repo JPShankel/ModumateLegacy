@@ -145,12 +145,9 @@ struct MODUMATE_API FBIMWebPreset
 	
 	UPROPERTY()
 	TMap<FString, FBIMWebPresetProperty> properties;
-	
+
 	UPROPERTY()
-	TArray<FString> usedBy;
-	
-	UPROPERTY()
-	TArray<FString> uses;
+	TArray<FString> childPresets;
 };
 
 USTRUCT()
@@ -348,8 +345,6 @@ struct MODUMATE_API FBIMPresetInstance
 
 	EBIMResult ToWebPreset(FBIMWebPreset& OutPreset, UWorld* World) const;
 	EBIMResult FromWebPreset(const FBIMWebPreset& InPreset, UWorld* World);
-
-	void GetUses(UWorld* World, FBIMWebPreset& Property) const;
 
 	bool operator==(const FBIMPresetInstance& RHS) const;
 	bool operator!=(const FBIMPresetInstance& RHS) const;

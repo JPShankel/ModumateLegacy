@@ -989,9 +989,7 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	OutPreset.name = DisplayName.ToString();
 	OutPreset.guid = GUID;
 	OutPreset.tagPath = MyTagPath;
-
-	GetUses(World, OutPreset);
-
+	
 	TMap<FString, FBIMWebPresetProperty> properties;
 
 	// TODO: need scheme for identifying color properties
@@ -1057,20 +1055,16 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	const FString typeMark = Properties.GetProperty<FString>(propertyKey.Scope, propertyKey.Name);
 	OutPreset.typeMark = typeMark;
 
+		
+	// childPresets
+	TArray<FString> childPresets;
+	for (auto item : ChildPresets)
+	{
+		childPresets.Add(item.PresetGUID.ToString());
+	}
+	OutPreset.childPresets = childPresets;
+
 	return EBIMResult::Success;
 }
-
-void FBIMPresetInstance::GetUses(UWorld* World, FBIMWebPreset& Property) const
-{
-	const UModumateGameInstance* gameInstance = World ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
-	if (gameInstance == nullptr || gameInstance->GetQuantitiesManager() == nullptr)
-	{
-		return;
-	}
-	
-	// Get uses and used by
-	gameInstance->GetQuantitiesManager()->GetWebQuantities(Property.usedBy, Property.uses);
-}
-
 
 #undef LOCTEXT_NAMESPACE
