@@ -1091,6 +1091,12 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 	// Add or update if we have a new GUID
 	if (PresetDelta.NewState.GUID.IsValid())
 	{
+		bool bIsNewPreset = false;
+		if (!BIMPresetCollection.PresetsByGUID.Contains(PresetDelta.NewState.GUID))
+		{
+			bIsNewPreset = true;
+		}
+		
 		BIMPresetCollection.AddPreset(PresetDelta.NewState);
 
 		// Find all affected presets and update affected assemblies
@@ -1138,10 +1144,14 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 			DeltaAffectedPresets.Add(PresetDelta.NewState.GUID);
 		}
 
-		if (!IsPreviewingDeltas())
+		TArray<FGuid> changedPresets;
+		changedPresets.Add(PresetDelta.NewState.GUID);
+		EWebPresetChangeVerb verb = EWebPresetChangeVerb::Update;
+		if (bIsNewPreset)
 		{
-			bWebPresetsDirty = true;
+			verb = EWebPresetChangeVerb::Add;
 		}
+		TriggerWebPresetChange(verb, changedPresets);
 
 		return true;
 	}
@@ -1166,7 +1176,9 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 			DeltaAffectedPresets.Add(PresetDelta.OldState.GUID);
 		}
 
-		UpdateWebPresets();
+		TArray<FGuid> deletedPresets;
+		deletedPresets.Add(PresetDelta.OldState.GUID);
+		TriggerWebPresetChange(EWebPresetChangeVerb::Remove, deletedPresets);
 
 		return true;
 	}
@@ -1691,12 +1703,6 @@ bool UModumateDocument::PostApplyDeltas(UWorld *World, bool bCleanObjects, bool 
 		// TODO: keep track of document dirtiness by a unique identifier of which delta is at the top of the stack,
 		// but that refactor could wait until the multiplayer refactor which would also affect the definition of autosave.
 		SetDirtyFlags(true);
-	}
-
-	if (bWebPresetsDirty)
-	{
-		bWebPresetsDirty = false;
-		UpdateWebPresets();
 	}
 
 	UModumateObjectStatics::UpdateDesignOptionVisibility(this);
@@ -4843,6 +4849,8 @@ void UModumateDocument::trigger_update(const TArray<FString>& ObjectTypes)
 	}
 
 	controller->EMPlayerState->SendWebPlayerState();
+
+	// initial state of presets
 	UpdateWebPresets();
 }
 
@@ -4996,6 +5004,33 @@ void UModumateDocument::UpdateWebPresets()
 	if (WriteJsonGeneric(jsonPresets, &collection))
 	{
 		DrawingSendResponse(TEXT("onPresetsChanged"), jsonPresets);
+	}
+}
+
+void UModumateDocument::TriggerWebPresetChange(EWebPresetChangeVerb Verb, TArray<FGuid> Presets)
+{
+
+	FWebPresetChangePackage package;
+	package.verb = Verb;
+
+	for (auto& preset : Presets)
+	{
+		FBIMWebPreset& webPreset = package.presets.Add(preset);
+
+		// if we are not deleting the preset, fill out the information
+		if (Verb != EWebPresetChangeVerb::Remove)
+		{
+			auto presetInstance = BIMPresetCollection.PresetsByGUID.Find(preset);
+			if (presetInstance != nullptr) {
+				presetInstance->ToWebPreset(webPreset, GetWorld());
+			}
+		}
+	}
+	
+	FString jsonPresets;
+	if (WriteJsonGeneric(jsonPresets, &package))
+	{
+		DrawingSendResponse(TEXT("onPresetsUpdate"), jsonPresets);
 	}
 }
 

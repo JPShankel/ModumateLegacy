@@ -37,6 +37,26 @@ struct MODUMATE_API FBIMWebPresetCollection
 	TArray<FBIMPresetTaxonomyNode> ncpTaxonomy;
 };
 
+UENUM()
+enum class EWebPresetChangeVerb
+{
+	Add,
+	Update,
+	Remove
+};
+
+USTRUCT()
+struct MODUMATE_API FWebPresetChangePackage
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	EWebPresetChangeVerb verb;
+
+	UPROPERTY()
+	TMap<FGuid, FBIMWebPreset> presets;
+};
+
 USTRUCT()
 struct MODUMATE_API FBIMPresetCollection
 {

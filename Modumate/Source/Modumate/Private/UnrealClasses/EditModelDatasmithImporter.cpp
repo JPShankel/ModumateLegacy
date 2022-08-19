@@ -49,7 +49,11 @@ bool AEditModelDatasmithImporter::ImportDatasmithFromDialogue()
 
 		FGuid newPresetID;
 		controller->GetDocument()->GetPresetCollection().MakeNewPresetFromDatasmith(*db, newPresetName, newArchitecturalMeshKey, newPresetID);
-		controller->GetDocument()->UpdateWebPresets();
+
+		// trigger web update to add new created preset
+		TArray<FGuid> addedPresets;
+		addedPresets.Add(newPresetID);
+		controller->GetDocument()->TriggerWebPresetChange(EWebPresetChangeVerb::Add, addedPresets);
 	}
 
 	controller->EMPlayerState->ShowingFileDialog = false;
