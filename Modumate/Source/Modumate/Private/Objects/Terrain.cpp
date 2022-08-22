@@ -352,9 +352,8 @@ bool AMOITerrain::UpdateTerrainActor()
 	}
 
 	Document->DirtyAllCutPlanes();
-	return true;
-
 #endif
+	return true;
 }
 
 void AMOITerrain::UpdateSiteMaterials(bool bForceUpdate/* = false*/)

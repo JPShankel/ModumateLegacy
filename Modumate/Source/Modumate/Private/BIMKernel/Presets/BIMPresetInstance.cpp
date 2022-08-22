@@ -1120,7 +1120,7 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 	{
 		childPresets.Add(item.PresetGUID.ToString());
 	}
-	Algo::Transform(childPresets, OutPreset.childPresets, [](const FString& GUID) {FGuid guid; FGuid::Parse(GUID, guid); return guid; });
+	Algo::Transform(childPresets, OutPreset.childPresets, [](const FString& InGUID) {FGuid guid; FGuid::Parse(InGUID, guid); return guid; });
 
 	return EBIMResult::Success;
 }
