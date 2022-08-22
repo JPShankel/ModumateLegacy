@@ -83,6 +83,8 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDatabaseBIMTest, "Modumate.Database.BI
 	sourcePreset.SetScopedProperty(EBIMValueScope::Preset, BIMPropertyNames::Description, FString(TEXT("My Preset Condition")));
 	sourcePreset.SetScopedProperty(EBIMValueScope::Preset, BIMPropertyNames::Code, 555.0f);
 
+
+	// Custom data
 	FLightConfiguration lightConfig;
 	lightConfig.Name = TEXT("My Light");
 	sourcePreset.SetCustomData(lightConfig);
@@ -107,6 +109,20 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDatabaseBIMTest, "Modumate.Database.BI
 
 	bSuccess = (outConstructionCost.LaborCostRate == constructionCost.LaborCostRate) && bSuccess;
 	bSuccess = (outLightConfig.Name == lightConfig.Name) && bSuccess;
+
+
+	// Slots
+	FGuid guid;
+	FGuid::Parse(TEXT("FEBDE851177B6A4A8905BC80203A6E1F"), guid);
+	const FBIMPresetInstance* presetInstance = bimDatabase.GetPresetCollection().PresetFromGUID(guid);
+
+	webPreset = FBIMWebPreset();
+	presetInstance->ToWebPreset(webPreset,nullptr);
+	FBIMPresetInstance outInstance;
+	outInstance.FromWebPreset(webPreset, nullptr);
+
+	bSuccess = (outInstance.PartSlots == presetInstance->PartSlots) && bSuccess;
+	bSuccess = (outInstance.SlotConfigPresetGUID == presetInstance->SlotConfigPresetGUID) && bSuccess;
 
 	UE_LOG(LogEngineAutomationTests, Log, TEXT("Modumate BIM Schema - Unit Test Completed %s"), bSuccess ? TEXT("PASSED") : TEXT("FAILED"));
 	return bSuccess;

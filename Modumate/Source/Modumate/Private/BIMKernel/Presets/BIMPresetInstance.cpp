@@ -965,9 +965,9 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 	PartSlots.Empty();
 	for (int32 partIndex = 0; partIndex < InPreset.parts.Num(); ++partIndex)
 	{
-		FGuid slot = InPreset.slots[partIndex];
-		FGuid part = InPreset.parts[partIndex];
-		SetPartPreset(slot, part);
+		FBIMPresetPartSlot& partSlot = PartSlots.AddDefaulted_GetRef();
+		partSlot.SlotPresetGUID = InPreset.slots[partIndex];
+		partSlot.PartPresetGUID = InPreset.parts[partIndex];
 	}
 	SlotConfigPresetGUID = InPreset.slotConfig;
 
