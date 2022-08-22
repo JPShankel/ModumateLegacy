@@ -121,6 +121,5 @@ public:
 	TModumateDataCollection<FRoomConfiguration> RoomConfigurations;
 
 	// Datasmith
-	void ImportDatasmithFromTempFolder();
-	void AddArchitecturalMeshFromDatasmith(const FString& AssetUrl, FGuid& OutArchitecturalMeshKey);
+	void AddArchitecturalMeshFromDatasmith(const FString& AssetUrl, const FGuid& InArchitecturalMeshKey);
 };

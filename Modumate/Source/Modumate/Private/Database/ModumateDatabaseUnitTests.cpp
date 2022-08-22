@@ -156,7 +156,7 @@ bool FWaitForModumateOnlineAssetsLoad::Update()
 	}
 
 	float elapsed = (FPlatformTime::Seconds() - StartTime);
-	if (elapsed > 10.f)
+	if (elapsed > 30.f)
 	{
 		UE_LOG(LogEngineAutomationTests, Error, TEXT("Timed out for importer loading assets"));
 		return true;

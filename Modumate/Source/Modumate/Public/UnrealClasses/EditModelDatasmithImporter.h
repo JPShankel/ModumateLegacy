@@ -48,9 +48,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<class AEditModelDatasmithRuntimeActor> DatasmithRuntimeActorClass;
 
-	UPROPERTY()
-	TWeakObjectPtr<class AEditModelDatasmithRuntimeActor> CurrentDatasmithRuntimeActor = nullptr;
-
 	// This is the time in second for calling a method to check whether a second attempt is necessary
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float CheckAfterImportTime = 5.f;
@@ -72,13 +69,15 @@ protected:
 
 public:
 
+	// Command code for testing import via modal dialog
 	UFUNCTION(BlueprintCallable)
 	bool ImportDatasmithFromDialogue();
 
+	// Command code for testing via URL
 	UFUNCTION(BlueprintCallable)
 	bool ImportDatasmithFromWeb(const FString& URL);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
 	bool RequestDownloadFromURL(const FGuid& InGUID, const FString& URL);
 
 	void DownloadCompleteCallback(const FGuid& InGUID, FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
@@ -91,6 +90,7 @@ public:
 
 	bool AddDatasmithRuntimeActor(const FGuid& InGUID, const FString& DatasmithImportPath);
 
-	UFUNCTION(BlueprintCallable)
-	void TestExtract(const FString& URL);
+	bool GetZipFilePathFromPresetGUID(const FGuid& InGUID, FString& OutFilePath);
+	bool GetFolderPathFromPresetGUID(const FGuid& InGUID, FString& OutFolderPath);
+	bool ImportDatasmithFilesFromPresetFolder(const FGuid& InGUID);
 };

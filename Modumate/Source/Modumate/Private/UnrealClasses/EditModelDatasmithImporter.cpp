@@ -38,7 +38,7 @@ bool AEditModelDatasmithImporter::ImportDatasmithFromDialogue()
 	if (FModumatePlatform::GetOpenFilename(filename, nullptr, false))
 	{
 		// Create new archMesh from Datasmith
-		FGuid newArchitecturalMeshKey;
+		FGuid newArchitecturalMeshKey = FGuid::NewGuid();
 		FModumateDatabase* db = GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase;
 		db->AddArchitecturalMeshFromDatasmith(filename, newArchitecturalMeshKey);
 
@@ -68,7 +68,7 @@ bool AEditModelDatasmithImporter::ImportDatasmithFromWeb(const FString& URL)
 		return false;
 	}
 	// Create new archMesh from Datasmith
-	FGuid newArchitecturalMeshKey;
+	FGuid newArchitecturalMeshKey = FGuid::NewGuid();
 	FModumateDatabase* db = GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase;
 	db->AddArchitecturalMeshFromDatasmith(URL, newArchitecturalMeshKey);
 
@@ -105,26 +105,17 @@ bool AEditModelDatasmithImporter::RequestDownloadFromURL(const FGuid& InGUID, co
 
 void AEditModelDatasmithImporter::DownloadCompleteCallback(const FGuid& InGUID, FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	UE_LOG(LogTemp, Error, TEXT("Download is %s"), (bWasSuccessful ? TEXT("true") : TEXT("false")));
 	if (Request->GetStatus() == EHttpRequestStatus::Succeeded
 		&& Response->GetContent().Num() != 0)
 	{
-		const static FString downloadPathName = TEXT("DownloadedAssets");
-		const static FString cacheFileName = TEXT("cacheImport.zip");
-		FString cacheFilePath = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), downloadPathName, InGUID.ToString(), cacheFileName);
+		FString cacheFilePath;
+		GetZipFilePathFromPresetGUID(InGUID, cacheFilePath);
 		FFileHelper::SaveArrayToFile(Response->GetContent(), *cacheFilePath);
 
 		FMiniZip miniZip;
 		miniZip.ExtractFromArchive(cacheFilePath);
 
-		FString extractedFolder = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), downloadPathName, InGUID.ToString());
-		TArray<FString> dataSmithFiles;
-		FFileManagerGeneric::Get().FindFiles(dataSmithFiles, *extractedFolder, TEXT(".udatasmith"));
-		for (auto curDatasmithFile : dataSmithFiles)
-		{
-			FString fullDatasmithPathName = FPaths::Combine(extractedFolder, curDatasmithFile);
-			AddDatasmithRuntimeActor(InGUID, fullDatasmithPathName);
-		}
+		ImportDatasmithFilesFromPresetFolder(InGUID);
 	}
 }
 
@@ -178,9 +169,13 @@ void AEditModelDatasmithImporter::HandleAssetRequest(const FAssetRequest& InAsse
 			{
 				AddDatasmithRuntimeActor(InAssetRequest.Assembly.PresetGUID, testFile);
 			}
-			else if (testFile.Contains(TEXT("http")))
+			else if (testFile.StartsWith(TEXT("http")))
 			{
-				RequestDownloadFromURL(InAssetRequest.Assembly.PresetGUID, testFile);
+				// Check if there are datasmith files
+				if (!ImportDatasmithFilesFromPresetFolder(InAssetRequest.Assembly.PresetGUID))
+				{
+					RequestDownloadFromURL(InAssetRequest.Assembly.PresetGUID, testFile);
+				}
 			}
 			else
 			{
@@ -254,8 +249,35 @@ bool AEditModelDatasmithImporter::AddDatasmithRuntimeActor(const FGuid& InGUID, 
 	return newDatasmithRuntimeActor->MakeFromImportFilePath();
 }
 
-void AEditModelDatasmithImporter::TestExtract(const FString& URL)
+bool AEditModelDatasmithImporter::GetZipFilePathFromPresetGUID(const FGuid& InGUID, FString& OutFilePath)
 {
-	FMiniZip miniZip;
-	miniZip.ExtractFromArchive(URL);
+	const static FString downloadPathName = TEXT("DownloadedAssets");
+	const static FString cacheFileName = TEXT("cacheImport.zip");
+	OutFilePath = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), downloadPathName, InGUID.ToString(), cacheFileName);
+	return FPaths::FileExists(OutFilePath);
+}
+
+bool AEditModelDatasmithImporter::GetFolderPathFromPresetGUID(const FGuid& InGUID, FString& OutFolderPath)
+{
+	const static FString downloadPathName = TEXT("DownloadedAssets");
+	OutFolderPath = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), downloadPathName, InGUID.ToString());
+	return FPaths::DirectoryExists(OutFolderPath);
+}
+
+bool AEditModelDatasmithImporter::ImportDatasmithFilesFromPresetFolder(const FGuid& InGUID)
+{
+	bool result = false;
+	FString extractedFolder;
+	GetFolderPathFromPresetGUID(InGUID, extractedFolder);
+	TArray<FString> dataSmithFiles;
+	FFileManagerGeneric::Get().FindFiles(dataSmithFiles, *extractedFolder, TEXT(".udatasmith"));
+	for (auto curDatasmithFile : dataSmithFiles)
+	{
+		FString fullDatasmithPathName = FPaths::Combine(extractedFolder, curDatasmithFile);
+		if (ensure(AddDatasmithRuntimeActor(InGUID, fullDatasmithPathName)))
+		{
+			result = true;
+		}
+	}
+	return result;
 }

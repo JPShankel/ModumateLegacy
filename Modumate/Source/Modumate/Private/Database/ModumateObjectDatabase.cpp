@@ -17,8 +17,7 @@
 #include "Engine/AssetManager.h"
 #include "HAL/FileManagerGeneric.h"
 
-const static FString RelativeDownloadFolderPath(TEXT("DownloadedAssets"));
-const static FString DatasmithFileExt(TEXT(".udatasmith"));
+
 
 FModumateDatabase::FModumateDatabase() {}	
 
@@ -353,8 +352,6 @@ void FModumateDatabase::ReadPresetData()
 
 	ensureAlways(BIMPresetCollection.ProcessStarterAssemblies(*this, bimCacheRecord.Starters) == EBIMResult::Success);
 
-	ImportDatasmithFromTempFolder();
-
 #if !UE_BUILD_SHIPPING
 	if (bWantUnitTest)
 	{
@@ -395,7 +392,14 @@ bool FModumateDatabase::AddMeshFromPreset(const FBIMPresetInstance& Preset)
 
 		FString name;
 		Preset.TryGetProperty(BIMPropertyNames::Name, name);
-		AddArchitecturalMesh(Preset.GUID, name, meshNativeSize, meshNineSlice, assetPath);
+		if (assetPath.StartsWith(TEXT("http")))
+		{
+			AddArchitecturalMeshFromDatasmith(assetPath, Preset.GUID);
+		}
+		else
+		{
+			AddArchitecturalMesh(Preset.GUID, name, meshNativeSize, meshNineSlice, assetPath);
+		}
 	}
 	return true;
 }
@@ -585,51 +589,12 @@ bool FModumateDatabase::UnitTest()
 	return bSuccess;
 }
 
-void FModumateDatabase::ImportDatasmithFromTempFolder()
-{
-	// Get all folders from local temp downloaded assets folder
-	const FString absoluteDownloadFolderPath = FPaths::Combine(FModumateUserSettings::GetLocalTempDir(), RelativeDownloadFolderPath);
-	TArray<FString> foundFolders;
-	FFileManagerGeneric::Get().FindFilesRecursive(foundFolders, *absoluteDownloadFolderPath, TEXT("*"), false, true, true);
-
-	for (const auto& curFolder : foundFolders)
-	{
-		// For each folder name, check if it is valid Guid
-		FString relPath = curFolder;
-		FPaths::MakePathRelativeTo(relPath, *relPath);
-		FGuid newPresetID = FGuid(relPath);
-		if (!newPresetID.IsValid())
-		{
-			continue;
-		}
-
-		// For each folder, look for a Datasmith file, limit to only one Datasmith per folder
-		TArray<FString> dataSmithFiles;
-		FFileManagerGeneric::Get().FindFiles(dataSmithFiles, *curFolder, *DatasmithFileExt);
-
-		if (dataSmithFiles.Num() > 0)
-		{
-			// Create new archMesh from Datasmith
-			FGuid newArchitecturalMeshKey;
-			FString fullDatasmithPathName = FPaths::Combine(curFolder, dataSmithFiles[0]);
-			AddArchitecturalMeshFromDatasmith(fullDatasmithPathName, newArchitecturalMeshKey);
-
-			// Create new preset
-			FString newPresetName = dataSmithFiles[0];
-			newPresetName.RemoveFromEnd(DatasmithFileExt, ESearchCase::IgnoreCase);
-			BIMPresetCollection.MakeNewPresetFromDatasmith(*this, newPresetName, newArchitecturalMeshKey, newPresetID);
-			UE_LOG(LogTemp, Log, TEXT("Imported Datasmith file from temp folder: %s"), *newPresetName);
-		}
-	}
-}
-
-void FModumateDatabase::AddArchitecturalMeshFromDatasmith(const FString& AssetUrl, FGuid& OutArchitecturalMeshKey)
+void FModumateDatabase::AddArchitecturalMeshFromDatasmith(const FString& AssetUrl, const FGuid& InArchitecturalMeshKey)
 {
 	FArchitecturalMesh mesh;
 	//mesh.NativeSize = InNativeSize;
 	//mesh.NineSliceBox = InNineSliceBox;
-	mesh.Key = FGuid::NewGuid(); // This is empty because Datasmith file is not part of embedded meshes
-	OutArchitecturalMeshKey = mesh.Key;
+	mesh.Key = InArchitecturalMeshKey;
 	mesh.DatasmithUrl = AssetUrl;
 
 	AMeshes.AddData(mesh);
