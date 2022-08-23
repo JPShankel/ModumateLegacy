@@ -269,7 +269,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 		}
 	}
 
-	if (ensureAlways(!Preset.PresetID.IsNone() && Preset.GUID.IsValid()))
+	if (ensure(!Preset.PresetID.IsNone() && Preset.GUID.IsValid()))
 	{
 		KeyGuidMap.Add(Preset.PresetID, Preset.GUID);
 		GuidKeyMap.Add(Preset.GUID, Preset.PresetID);
@@ -346,14 +346,14 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					seq = &bimPattern.SequenceZ;
 				}
 
-				if (!ensureAlways(seq != nullptr))
+				if (!ensure(seq != nullptr))
 				{
 					OutMessages.Add(FString::Printf(TEXT("Unidentified direction %s in pattern %s"), *direction, *Preset.GUID.ToString()));
 					continue;
 				}
 
 				FBIMPatternSegment& seg = seq->Segments.AddDefaulted_GetRef();
-				if (!ensureAlways(FindEnumValueByString(format, seg.SegmentType)))
+				if (!ensure(FindEnumValueByString(format, seg.SegmentType)))
 				{
 					OutMessages.Add(FString::Printf(TEXT("Unidentified format %s in pattern %s"), *format, *Preset.GUID.ToString()));
 				}
@@ -399,7 +399,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				if (!id.IsEmpty())
 				{
 					EBIMSpanElement elementType = EBIMSpanElement::None;
-					if (ensureAlways(FindEnumValueByString< EBIMSpanElement>(element, elementType)))
+					if (ensure(FindEnumValueByString< EBIMSpanElement>(element, elementType)))
 					{
 						auto& span = bimPattern.Spans.AddDefaulted_GetRef();
 						span.ID = id;
@@ -418,7 +418,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				if (!ncp.IsEmpty())
 				{
 					FGuid* hostedGuid = KeyGuidMap.Find(FBIMKey(ncp));
-					if (ensureAlways(hostedGuid != nullptr))
+					if (ensure(hostedGuid != nullptr))
 					{
 						bimPattern.Spans.Last().HostedPreset = *hostedGuid;
 					}
@@ -463,12 +463,12 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					{
 						TArray<FString> elementCoord;
 						BasisStr.ParseIntoArray(elementCoord, TEXT("="));
-						if (ensureAlways(elementCoord.Num() == 2))
+						if (ensure(elementCoord.Num() == 2))
 						{
 							EBIMSpanElement elementType;
 							TArray<FString> coord;
 							elementCoord[1].ParseIntoArray(coord, TEXT(","));
-							if (ensureAlways(FindEnumValueByString(elementCoord[0], elementType)))
+							if (ensure(FindEnumValueByString(elementCoord[0], elementType)))
 							{
 								OutBasis.Element.ElementType = elementType;
 								if (coord.Num() > 0)
@@ -508,7 +508,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					else
 					{
 						EBIMSpanElement cutterType;
-						if (ensureAlways(FindEnumValueByString<EBIMSpanElement>(cutter[0], cutterType)))
+						if (ensure(FindEnumValueByString<EBIMSpanElement>(cutter[0], cutterType)))
 						{
 							auto& cutterData = bimPattern.Spans.Last().Cutters.AddDefaulted_GetRef();
 							cutterData.ElementType = cutterType;
@@ -552,7 +552,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				if (!profileKey.IsNone())
 				{
 					const FGuid* patternGuid = KeyGuidMap.Find(profileKey);
-					if (ensureAlways(patternGuid != nullptr))
+					if (ensure(patternGuid != nullptr))
 					{
 						Preset.Properties.SetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, patternGuid->ToString());
 						Preset.PresetForm.AddPropertyElement(LOCTEXT("BIMPattern","Pattern"), FBIMPropertyKey(EBIMValueScope::Pattern, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
@@ -567,7 +567,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				if (!profileKey.IsNone())
 				{
 					FGuid* guid = KeyGuidMap.Find(profileKey);
-					if (ensureAlways(guid != nullptr))
+					if (ensure(guid != nullptr))
 					{
 						Preset.Properties.SetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID, guid->ToString());
 						Preset.PresetForm.AddPropertyElement(LOCTEXT("BIMProfile","Profile"), FBIMPropertyKey(EBIMValueScope::Profile, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
@@ -582,7 +582,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				if (!meshKey.IsNone())
 				{
 					FGuid* guid = KeyGuidMap.Find(meshKey);
-					if (ensureAlways(guid != nullptr))
+					if (ensure(guid != nullptr))
 					{
 						Preset.Properties.SetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, guid->ToString());
 						Preset.PresetForm.AddPropertyElement(FText::FromString(TEXT("Mesh")), FBIMPropertyKey(EBIMValueScope::Mesh, BIMPropertyNames::AssetID).QN(), EBIMPresetEditorField::AssetProperty);
@@ -593,7 +593,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 						* The node editor builds forms only for named dimensions that are visible
 						*/
 						const FBIMPresetInstance* meshPreset = OutPresets.PresetFromGUID(*guid);
-						if (ensureAlways(meshPreset != nullptr))
+						if (ensure(meshPreset != nullptr))
 						{
 							meshPreset->Properties.ForEachProperty([this](const FBIMPropertyKey& Key, float Value) {
 								if (Key.Scope == EBIMValueScope::Dimension && !Preset.Properties.HasProperty<float>(EBIMValueScope::Dimension,Key.Name))
@@ -628,7 +628,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 							if (!matKey.IsNone())
 							{
 								const FGuid* guid = KeyGuidMap.Find(matKey);
-								if (ensureAlways(guid != nullptr))
+								if (ensure(guid != nullptr))
 								{
 									materialBinding.InnerMaterialGUID = *guid;
 								}
@@ -642,7 +642,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 							if (!matKey.IsNone())
 							{
 								const FGuid* guid = KeyGuidMap.Find(matKey);
-								if (ensureAlways(guid != nullptr))
+								if (ensure(guid != nullptr))
 								{
 									materialBinding.SurfaceMaterialGUID = *guid;
 								}
@@ -668,7 +668,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 						break;
 
 						default:
-							ensureAlways(false);
+							ensure(false);
 					};
 				}
 
@@ -681,7 +681,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 					FGuid material = materialBinding.SurfaceMaterialGUID.IsValid() ? materialBinding.SurfaceMaterialGUID : materialBinding.InnerMaterialGUID;
 
-					if (ensureAlways(material.IsValid()))
+					if (ensure(material.IsValid()))
 					{
 						Preset.Properties.SetProperty(EBIMValueScope::RawMaterial, BIMPropertyNames::AssetID, material.ToString());
 					}
@@ -706,7 +706,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 			case ECSVMatrixNames::StartsInProject:
 			{
-				if (ensureAlways(Preset.GUID.IsValid()))
+				if (ensure(Preset.GUID.IsValid()))
 				{
 					FString cellStr = Row[presetMatrix.First];
 					if (!cellStr.IsEmpty())
@@ -719,7 +719,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 			case ECSVMatrixNames::Properties:
 			{
-				ensureAlways(!Preset.PresetID.IsNone());
+				ensure(!Preset.PresetID.IsNone());
 				for (int32 i = 0; i < presetMatrix.Columns.Num(); ++i)
 				{
 					const FString& column = presetMatrix.Columns[i];
@@ -731,7 +731,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					if (!Preset.HasProperty(propSpec.Name) || !cell.IsEmpty())
 					{
 						EBIMValueType* propType = PropertyTypeMap.Find(propSpec.QN());
-						if (ensureAlways(propType != nullptr))
+						if (ensure(propType != nullptr))
 						{
 							switch (*propType)
 							{
@@ -770,7 +770,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 							break;
 
 							default:
-								ensureAlways(false);
+								ensure(false);
 							};
 						}
 					}
@@ -780,7 +780,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 			case ECSVMatrixNames::MyCategoryPath:
 			{
-				ensureAlways(!Preset.PresetID.IsNone());
+				ensure(!Preset.PresetID.IsNone());
 				FString ncp = Row[presetMatrix.First];
 				if (!ncp.IsEmpty())
 				{
@@ -791,7 +791,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 			case ECSVMatrixNames::ParentCategoryPath:
 			{
-				ensureAlways(!Preset.PresetID.IsNone());
+				ensure(!Preset.PresetID.IsNone());
 				for (int32 i = 0; i < presetMatrix.Columns.Num(); ++i)
 				{
 					FString cell = Row[presetMatrix.First + i];
@@ -813,7 +813,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 			case ECSVMatrixNames::Slots:
 			{
-				ensureAlways(!Preset.PresetID.IsNone());
+				ensure(!Preset.PresetID.IsNone());
 				for (int32 i = 0; i < presetMatrix.Columns.Num(); ++i)
 				{
 					FString category = presetMatrix.Columns[i];
@@ -827,7 +827,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					{
 						FBIMKey key(NormalizeCell(*cell));
 						FGuid* guid = KeyGuidMap.Find(key);
-						if (ensureAlways(guid != nullptr))
+						if (ensure(guid != nullptr))
 						{
 							Preset.SlotConfigPresetGUID = *guid;
 							Preset.SlotConfigPresetID = key;
@@ -841,7 +841,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 						}
 						FBIMKey bimKey(NormalizeCell(cell));
 						FGuid* guid = KeyGuidMap.Find(bimKey);
-						if (ensureAlways(guid != nullptr))
+						if (ensure(guid != nullptr))
 						{
 							Preset.PartSlots.Last().PartPresetGUID = *guid;
 							Preset.PartSlots.Last().PartPreset = bimKey;
@@ -855,7 +855,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 						}
 						FBIMKey key(NormalizeCell(cell));
 						FGuid* guid = KeyGuidMap.Find(key);
-						if (ensureAlways(guid != nullptr))
+						if (ensure(guid != nullptr))
 						{
 							Preset.PartSlots.Last().SlotPresetGUID = *guid;
 							Preset.PartSlots.Last().SlotPreset = key;
@@ -867,7 +867,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 
 			case ECSVMatrixNames::InputPins:
 			{
-				ensureAlways(!Preset.PresetID.IsNone());
+				ensure(!Preset.PresetID.IsNone());
 				for (int32 i = 0; i < presetMatrix.Columns.Num(); ++i)
 				{
 					FString cell = Row[presetMatrix.First + i];
@@ -902,12 +902,12 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 							}
 
 							FGuid* guid = KeyGuidMap.Find(newCAP.PresetID);
-							if (ensureAlways(guid != nullptr))
+							if (ensure(guid != nullptr))
 							{
 								newCAP.PresetGUID = *guid;
 							}
 
-							ensureAlways(!newCAP.PresetID.IsNone());
+							ensure(!newCAP.PresetID.IsNone());
 							found = true;
 						}
 					}

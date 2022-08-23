@@ -17,6 +17,12 @@
 #include "Engine/AssetManager.h"
 #include "HAL/FileManagerGeneric.h"
 
+TAutoConsoleVariable<bool> CVarModumateUseAllPresets(
+	TEXT("modumate.UseAllPresets"),
+	false,
+	TEXT("Whether to start new projects with all available presets."),
+	ECVF_Default);
+
 
 
 FModumateDatabase::FModumateDatabase() {}	
@@ -230,70 +236,38 @@ FGuid FModumateDatabase::GetDefaultMaterialGUID() const
 This function is in development pending a complete data import/access plan
 In the meantime, we read a manifest of CSV files and look for expected presets to populate tools
 */
+
 void FModumateDatabase::ReadPresetData()
 {
-	const static FString BIMCacheFile = TEXT("_bimCache.json");
-	FModumateBIMCacheRecord bimCacheRecord;
+	// Make sure abstract material is in for default use
+	FGuid::Parse(TEXT("09F17296-2023-944C-A1E7-EEDFE28680E9"), DefaultMaterialGUID);
 
-#if !UE_BUILD_SHIPPING
-	bool bWantUnitTest = false;
-#endif
+	TArray<FGuid> starters;
+	TArray<FString> errors;
 
-	if (!ReadBIMCache(BIMCacheFile, bimCacheRecord))
+	if (!ensure(BIMPresetCollection.LoadCSVManifest(*ManifestDirectoryPath, BIMManifestFileName, starters, errors) == EBIMResult::Success))
 	{
-		TArray<FString> errors;
-		TArray<FGuid> starters;
-		if (!ensureAlways(BIMPresetCollection.LoadCSVManifest(*ManifestDirectoryPath, BIMManifestFileName, starters, errors) == EBIMResult::Success))
-		{
-			return;
-		}
-		if (ensureAlways(errors.Num() == 0))
-		{
-			FString NCPString;
-			FString NCPPath = FPaths::Combine(*ManifestDirectoryPath, BIMNCPFileName);
-			if (!ensureAlways(FFileHelper::LoadFileToString(NCPString, *NCPPath)))
-			{
-				return;
-			}
-
-			FCsvParser NCPParsed(NCPString);
-			const FCsvParser::FRows& NCPRows = NCPParsed.GetRows();
-
-			if (ensureAlways(BIMPresetCollection.PresetTaxonomy.LoadCSVRows(NCPRows) == EBIMResult::Success))
-			{
-				bimCacheRecord = FModumateBIMCacheRecord();
-				bimCacheRecord.Version = BIMCacheCurrentVersion;
-				bimCacheRecord.Presets = BIMPresetCollection;
-
-				ensureAlways(BIMPresetCollection.PostLoad() == EBIMResult::Success);
-
-				TArray<FGuid> furniture;
-				BIMPresetCollection.GetPresetsByPredicate(
-					[](const FBIMPresetInstance& Preset) {
-						return Preset.ObjectType == EObjectType::OTFurniture ||
-							Preset.ObjectType == EObjectType::OTPointHosted ||
-							Preset.ObjectType == EObjectType::OTEdgeHosted ||
-							Preset.ObjectType == EObjectType::OTFaceHosted; },
-					furniture);
-
-				bimCacheRecord.Starters = starters;
-				bimCacheRecord.Starters.Append(furniture);
-				bimCacheRecord.PresetTaxonomy = BIMPresetCollection.PresetTaxonomy;
-
-#if !UE_SERVER
-				WriteBIMCache(BIMCacheFile, bimCacheRecord);
-#endif
-			}
-#if !UE_BUILD_SHIPPING
-			bWantUnitTest = true;
-#endif
-		}
+		return;
 	}
-	else
+	
+	if (!ensure(errors.Num() == 0))
 	{
-		BIMPresetCollection = bimCacheRecord.Presets;
-		BIMPresetCollection.PresetTaxonomy = bimCacheRecord.PresetTaxonomy;
-		ensureAlways(BIMPresetCollection.PostLoad() == EBIMResult::Success);
+		return;
+	}
+
+	FString NCPString;
+	FString NCPPath = FPaths::Combine(*ManifestDirectoryPath, BIMNCPFileName);
+	if (!ensure(FFileHelper::LoadFileToString(NCPString, *NCPPath)))
+	{
+		return;
+	}
+
+	FCsvParser NCPParsed(NCPString);
+	const FCsvParser::FRows& NCPRows = NCPParsed.GetRows();
+
+	if (ensure(BIMPresetCollection.PresetTaxonomy.LoadCSVRows(NCPRows) == EBIMResult::Success))
+	{
+		ensure(BIMPresetCollection.PostLoad() == EBIMResult::Success);
 	}
 
 	// If this preset implies an asset type, load it
@@ -317,48 +291,71 @@ void FModumateDatabase::ReadPresetData()
 					}
 				}
 				preset.Value.SetCustomData(lightConfig);
-			}			
+			}
 		}
 		switch (preset.Value.AssetType)
 		{
-			case EBIMAssetType::IESProfile:
-				AddLightFromPreset(preset.Value);
-				break;
-			case EBIMAssetType::Mesh:
-				AddMeshFromPreset(preset.Value);
-				break;
-			case EBIMAssetType::Profile:
-				AddProfileFromPreset(preset.Value);
-				break;
-			case EBIMAssetType::RawMaterial:
-				AddRawMaterialFromPreset(preset.Value);
-				break;
-			case EBIMAssetType::Material:
-				AddMaterialFromPreset(preset.Value);
-				break;
-			case EBIMAssetType::Pattern:
-				AddPatternFromPreset(preset.Value);
-				break;
+		case EBIMAssetType::IESProfile:
+			AddLightFromPreset(preset.Value);
+			break;
+		case EBIMAssetType::Mesh:
+			AddMeshFromPreset(preset.Value);
+			break;
+		case EBIMAssetType::Profile:
+			AddProfileFromPreset(preset.Value);
+			break;
+		case EBIMAssetType::RawMaterial:
+			AddRawMaterialFromPreset(preset.Value);
+			break;
+		case EBIMAssetType::Material:
+			AddMaterialFromPreset(preset.Value);
+			break;
+		case EBIMAssetType::Pattern:
+			AddPatternFromPreset(preset.Value);
+			break;
 		};
 	}
 
-	// When swapping a mesh, a preset may inherit material mappings it does not yet define, so we need a default material
-	FGuid abstractMaterialGuid;
-	FGuid::Parse(TEXT("09F17296-2023-944C-A1E7-EEDFE28680E9"), DefaultMaterialGUID);
-	const FArchitecturalMaterial* abstractMaterial = GetArchitecturalMaterialByGUID(DefaultMaterialGUID);
-	ensureAlways(abstractMaterial != nullptr);
-
 	BIMPresetCollection.SetPartSizesFromMeshes();
 
-	ensureAlways(BIMPresetCollection.ProcessStarterAssemblies(*this, bimCacheRecord.Starters) == EBIMResult::Success);
-
-#if !UE_BUILD_SHIPPING
-	if (bWantUnitTest)
+#if !UE_SERVER
+	if (!CVarModumateUseAllPresets.GetValueOnAnyThread())
 	{
-		ensureAlways(UnitTest());
+		FBIMPresetCollection presetCollection = BIMPresetCollection;
+
+		TSet<FGuid> presetsToAdd;
+		for (auto& starter : starters)
+		{
+			FBIMPresetInstance* preset = presetCollection.PresetFromGUID(starter);
+			if (ensure(preset != nullptr))
+			{
+				presetsToAdd.Add(preset->GUID);
+				TArray<FGuid> descendents;
+				presetCollection.GetAllDescendentPresets(starter, descendents);
+				for (auto& descendent : descendents)
+				{
+					presetsToAdd.Add(descendent);
+				}
+			}
+		}
+
+		BIMPresetCollection.PresetsByGUID.Empty();
+
+		for (auto& guid : presetsToAdd)
+		{
+			FBIMPresetInstance* preset = presetCollection.PresetFromGUID(guid);
+			if (ensure(preset != nullptr))
+			{
+				BIMPresetCollection.AddPreset(*preset);
+			}
+		}
 	}
 #endif
+
+	ensure(BIMPresetCollection.ProcessStarterAssemblies(*this, starters) == EBIMResult::Success);
 }
+
+
 
 bool FModumateDatabase::AddMeshFromPreset(const FBIMPresetInstance& Preset)
 {

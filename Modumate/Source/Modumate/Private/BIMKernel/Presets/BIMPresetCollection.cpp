@@ -21,41 +21,75 @@ Given a preset ID, recurse through all its children and gather all other presets
 */
 EBIMResult FBIMPresetCollection::GetAllDescendentPresets(const FGuid& PresetID, TArray<FGuid>& OutPresets) const
 {
+	if (!PresetID.IsValid())
+	{
+		return EBIMResult::Error;
+	}
 	TArray<FGuid> presetStack;
+	TSet<FGuid> processed;
 	presetStack.Push(PresetID);
 	while (presetStack.Num() > 0)
 	{
 		FGuid presetID = presetStack.Pop();
-		const FBIMPresetInstance* preset = PresetFromGUID(presetID);
-		if (!ensureAlways(preset != nullptr))
+		if (processed.Contains(presetID))
 		{
-			return EBIMResult::Error;
+			continue;
+		}
+
+		processed.Add(presetID);
+		const FBIMPresetInstance* preset = PresetFromGUID(presetID);
+		if (preset == nullptr)
+		{
+			continue;
+		}
+
+		if (presetID != PresetID && presetID.IsValid())
+		{
+			OutPresets.AddUnique(presetID);
 		}
 
 		for (auto &childNode : preset->ChildPresets)
 		{
-			OutPresets.AddUnique(childNode.PresetGUID);
 			presetStack.Push(childNode.PresetGUID);
 		}
+
 		if (preset->SlotConfigPresetGUID.IsValid())
 		{
-			OutPresets.AddUnique(preset->SlotConfigPresetGUID);
 			presetStack.Push(preset->SlotConfigPresetGUID);
 		}
+
 		for (auto& part : preset->PartSlots)
 		{
 			if (part.PartPresetGUID.IsValid())
 			{
-				OutPresets.AddUnique(part.PartPresetGUID);
 				presetStack.Push(part.PartPresetGUID);
 			}
 		}
 
-		FGuid meshAsset;
-		if (preset->Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshAsset))
+		preset->Properties.ForEachProperty([&presetStack](const FBIMPropertyKey& PropKey,const FString& Value) {
+			FGuid guid;
+			if (!Value.IsEmpty() && FGuid::Parse(Value, guid) && guid.IsValid())
+			{
+				presetStack.Push(guid);
+			}
+		});
+
+		FBIMPresetMaterialBindingSet materialBindingSet;
+		if (preset->TryGetCustomData(materialBindingSet))
 		{
-			OutPresets.AddUnique(meshAsset);
+			for (auto& binding : materialBindingSet.MaterialBindings)
+			{
+				if (binding.SurfaceMaterialGUID.IsValid())
+				{
+					presetStack.Push(binding.SurfaceMaterialGUID);
+				}
+				if (binding.InnerMaterialGUID.IsValid())
+				{
+					presetStack.Push(binding.InnerMaterialGUID);
+				}
+			}
 		}
+
 	}
 	return EBIMResult::Success;
 }
