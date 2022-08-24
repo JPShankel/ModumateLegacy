@@ -318,7 +318,6 @@ void FModumateDatabase::ReadPresetData()
 
 	BIMPresetCollection.SetPartSizesFromMeshes();
 
-#if !UE_SERVER
 	if (!CVarModumateUseAllPresets.GetValueOnAnyThread())
 	{
 		FBIMPresetCollection presetCollection = BIMPresetCollection;
@@ -350,7 +349,6 @@ void FModumateDatabase::ReadPresetData()
 			}
 		}
 	}
-#endif
 
 	ensure(BIMPresetCollection.ProcessStarterAssemblies(*this, starters) == EBIMResult::Success);
 }
