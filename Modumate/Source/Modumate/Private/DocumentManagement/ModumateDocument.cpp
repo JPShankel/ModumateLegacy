@@ -24,7 +24,7 @@
 #include "ModumateCore/ModumateMitering.h"
 #include "Objects/ModumateObjectStatics.h"
 #include "Objects/ModumateObjectDeltaStatics.h"
-#include "Objects/ModumateDerivedDeltaStatics.h"
+#include "Objects/ModumateSymbolDeltaStatics.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Objects/MOIFactory.h"
@@ -1274,7 +1274,7 @@ bool UModumateDocument::ApplyDeltas(const TArray<FDeltaPtr>& Deltas, UWorld* Wor
 
 	// For Symbol propagation:
 	TArray<FDeltaPtr> derivedDestroyDeltas;
-	FModumateDerivedDeltaStatics::GetDerivedDeltasFromDeltas(this, EMOIDeltaType::Destroy, Deltas, derivedDestroyDeltas);
+	FModumateSymbolDeltaStatics::GetDerivedDeltasFromDeltas(this, EMOIDeltaType::Destroy, Deltas, derivedDestroyDeltas);
 	ur->Deltas.Append(derivedDestroyDeltas);
 
 	TSet<EObjectType> affectedTypes;
@@ -1502,7 +1502,7 @@ void UModumateDocument::CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWo
 
 		if (bCreateDerived && sideEffectIterationGuard == maxSideEffectIteration)
 		{
-			FModumateDerivedDeltaStatics::GetDerivedDeltasFromDeltas(this, EMOIDeltaType::Mutate, Deltas, derivedDeltas);
+			FModumateSymbolDeltaStatics::GetDerivedDeltasFromDeltas(this, EMOIDeltaType::Mutate, Deltas, derivedDeltas);
 
 			if (derivedDeltas.Num() > 0)
 			{

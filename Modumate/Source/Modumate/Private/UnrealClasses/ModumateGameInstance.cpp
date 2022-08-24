@@ -19,7 +19,7 @@
 #include "ModumateCore/ModumateStats.h"
 #include "ModumateCore/PlatformFunctions.h"
 #include "Objects/ModumateObjectStatics.h"
-#include "Objects/ModumateDerivedDeltaStatics.h"
+#include "Objects/ModumateSymbolDeltaStatics.h"
 #include "Objects/MOIPattern2D.h"
 #include "Objects/MetaGraph.h"
 #include "Online/ModumateAccountManager.h"
@@ -633,7 +633,7 @@ void UModumateGameInstance::RegisterAllCommands()
 		{
 			TArray<FDeltaPtr> symbolDeltas;
 			const AMOIMetaGraph* group = Cast<const AMOIMetaGraph>(*playerState->SelectedGroupObjects.begin());
-			if (FModumateDerivedDeltaStatics::CreateDeltasForNewSymbol(doc, group, symbolDeltas))
+			if (FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(doc, group, symbolDeltas))
 			{
 				doc->ApplyDeltas(symbolDeltas, GetWorld());
 			}

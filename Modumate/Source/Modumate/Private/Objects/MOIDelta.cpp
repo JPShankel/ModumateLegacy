@@ -3,7 +3,7 @@
 #include "Objects/MOIDelta.h"
 
 #include "DocumentManagement/ModumateDocument.h"
-#include "Objects/ModumateDerivedDeltaStatics.h"
+#include "Objects/ModumateSymbolDeltaStatics.h"
 #include "DrawingDesigner/DrawingDesignerRequests.h"
 
 
@@ -109,6 +109,6 @@ void FMOIDelta::GetDerivedDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaOper
 {
 	for (const auto& deltaState : States)
 	{
-		FModumateDerivedDeltaStatics::CreateSymbolDerivedDeltasForMoi(Doc, deltaState, DeltaOperation, OutDeltas);
+		FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(Doc, deltaState, DeltaOperation, OutDeltas);
 	}
 }

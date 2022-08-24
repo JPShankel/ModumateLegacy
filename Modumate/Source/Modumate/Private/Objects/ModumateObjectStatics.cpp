@@ -1328,7 +1328,8 @@ bool UModumateObjectStatics::GetGroupIdsForGroupChangeHelper(const UModumateDocu
 	return true;
 }
 
-void UModumateObjectStatics::GetObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, TSet<AModumateObjectInstance*>& OutObjects)
+void UModumateObjectStatics::GetObjectsInGroups(UModumateDocument* Doc, const TArray<int32>& GroupIDs, TSet<AModumateObjectInstance*>& OutObjects,
+	bool bSpansToo /*= false*/)
 {
 	for (int32 groupID: GroupIDs)
 	{
@@ -1349,10 +1350,14 @@ void UModumateObjectStatics::GetObjectsInGroups(UModumateDocument* Doc, const TA
 					UModumateObjectStatics::GetSpansForEdgeObject(Doc, metaMoi, spans);
 					for (int32 spanId : spans)
 					{
-						metaMoi = Doc->GetObjectById(spanId);
-						if (metaMoi)
+						auto* spanMoi = Doc->GetObjectById(spanId);
+						if (spanMoi)
 						{
-							OutObjects.Append(metaMoi->GetAllDescendents());
+							OutObjects.Append(spanMoi->GetAllDescendents());
+							if (bSpansToo)
+							{
+								OutObjects.Add(spanMoi);
+							}
 						}
 					}
 				}
