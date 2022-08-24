@@ -113,6 +113,9 @@ void AMOICutPlane::PostCreateObject(bool bNewObject)
 			MasksActor = world->SpawnActor<ADynamicMeshActor>(gameMode->DynamicMeshActorClass.Get());
 			MasksActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepWorldTransform);
 		}
+
+		controller->SetCurrentCullingCutPlane(ID, false);
+		controller->EMPlayerState->SendWebPlayerState();
 	}
 }
 
