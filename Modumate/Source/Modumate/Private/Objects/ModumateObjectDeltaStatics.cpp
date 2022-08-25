@@ -963,25 +963,39 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 		TMap<int32, int32> oldIDToNewID;
 		oldIDToNewID.Add(MOD_ID_NONE, MOD_ID_NONE);
 
+		TArray<const AModumateObjectInstance*> objects;
+		for (const auto& moiKvp : graph->GetAllObjects())
+		{
+			int32 moiID = moiKvp.Key;
+			const AModumateObjectInstance* moi = Doc->GetObjectById(moiID);
+			if (moi)
+			{
+				objects.Add(moi);
+				UModumateObjectStatics::GetAllDescendents(moi, objects);
+			}
+		}
+
+		// Pre-allocate all new IDs other than surface-graph elements.
+		for (const auto* obj : objects)
+		{
+			if (UModumateTypeStatics::Graph2DObjectTypeFromObjectType(obj->GetObjectType()) == EGraphObjectType::None)
+			{
+				oldIDToNewID.Add(obj->GetStateData().ID, NextID++);
+			}
+		}
+
 		auto newElementsDelta = MakeShared<FGraph3DDelta>();
 		newElementsDelta->GraphID = newGroupID;
-		const auto& allVerts = graph->GetVertices();
-		const auto& allEdges = graph->GetEdges();
-		const auto& allFaces = graph->GetFaces();
-		for (const auto& kvp : allVerts)
+		for (const auto& kvp : graph->GetVertices())
 		{
-			newElementsDelta->VertexAdditions.Add(NextID, kvp.Value.Position);
-			oldIDToNewID.Add(kvp.Key, NextID);
-			++NextID;
+			newElementsDelta->VertexAdditions.Add(oldIDToNewID[kvp.Key], kvp.Value.Position);
 		}
-		for (const auto& kvp : allEdges)
+		for (const auto& kvp : graph->GetEdges())
 		{
 			FGraph3DObjDelta newEdge(FGraphVertexPair(oldIDToNewID[kvp.Value.StartVertexID], oldIDToNewID[kvp.Value.EndVertexID]), TArray<int32>());
-			newElementsDelta->EdgeAdditions.Add(NextID, newEdge);
-			oldIDToNewID.Add(kvp.Key, NextID);
-			++NextID;
+			newElementsDelta->EdgeAdditions.Add(oldIDToNewID[kvp.Key], newEdge);
 		}
-		for (const auto& kvp : allFaces)
+		for (const auto& kvp : graph->GetFaces())
 		{
 			TArray<int32> newVertices;
 			for (int32 v : kvp.Value.VertexIDs)
@@ -989,9 +1003,7 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 				newVertices.Add(oldIDToNewID[v]);
 			}
 			FGraph3DObjDelta newFace(newVertices, TArray<int32>(), kvp.Value.ContainingFaceID, kvp.Value.ContainedFaceIDs);
-			newElementsDelta->FaceAdditions.Add(NextID, newFace);
-			oldIDToNewID.Add(kvp.Key, NextID);
-			++NextID;
+			newElementsDelta->FaceAdditions.Add(oldIDToNewID[kvp.Key], newFace);
 		}
 
 		// Map old contained/containing face IDs:
@@ -1011,53 +1023,97 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 		auto moiDelta = MakeShared<FMOIDelta>();
 
 		TArray<FDeltaPtr> objectDeltas;
-		for (const auto& moiKvp : graph->GetAllObjects())
+
+		// Duplicate surface-graph MOIs before actual surface graphs:
+		auto surfaceGraphMoiDelta = MakeShared<FMOIDelta>();
+		TArray<int32> surfaceGraphIDs;  // Existing IDs
+		for (const auto* object : objects)
 		{
-			int32 moiID = moiKvp.Key;
-			TArray<const AModumateObjectInstance*> objects;
-			objects.Add(Doc->GetObjectById(moiID));
-			UModumateObjectStatics::GetAllDescendents(objects[0], objects);
-			for (const auto* object : objects)
+			const auto& moiDef = object->GetStateData();
+			if (moiDef.ObjectType == EObjectType::OTSurfaceGraph)
 			{
-				EObjectType objectType = object->GetObjectType();
-				if (UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType) == EGraph3DObjectType::None)
+				FMOIStateData newState(moiDef);
+				surfaceGraphIDs.Add(newState.ID);
+				newState.ID = oldIDToNewID[newState.ID];
+				newState.ParentID = oldIDToNewID[newState.ParentID];
+				surfaceGraphMoiDelta->AddCreateDestroyState(newState, EMOIDeltaType::Create);
+			}
+		}
+		if (surfaceGraphMoiDelta->IsValid())
+		{
+			OutDeltas.Emplace(FSelectedObjectToolMixin::kOther, surfaceGraphMoiDelta);
+
+			for (int32 oldGraphId: surfaceGraphIDs)
+			{
+				int32 newGraphID = oldIDToNewID[oldGraphId];
+				auto makeGraph2dDelta = MakeShared<FGraph2DDelta>(newGraphID, EGraph2DDeltaType::Add);
+				auto graph2dDelta = MakeShared<FGraph2DDelta>(newGraphID);
+				const auto graph2d = Doc->FindSurfaceGraph(oldGraphId);
+
+				for (const auto& kvp: graph2d->GetVertices())
 				{
-					FMOIStateData newState(object->GetStateData());
-					oldIDToNewID.Add(newState.ID, NextID);
-					newState.ID = NextID;
-					++NextID;
-
-					// Duplicate span objects mapping graph IDs:
-					switch (objectType)
-					{
-					case EObjectType::OTMetaEdgeSpan:
-					{
-						FMOIMetaEdgeSpanData instanceData(Cast<const AMOIMetaEdgeSpan>(object)->InstanceData);
-						Algo::ForEach(instanceData.GraphMembers, [&oldIDToNewID](int32& S)
-							{ S = oldIDToNewID[S]; });
-						newState.CustomData.SaveStructData(instanceData);
-						break;
-					}
-
-					case EObjectType::OTMetaPlaneSpan:
-					{
-						FMOIMetaPlaneSpanData instanceData(Cast<const AMOIMetaPlaneSpan>(object)->InstanceData);
-						Algo::ForEach(instanceData.GraphMembers, [&oldIDToNewID](int32& S)
-							{ S = oldIDToNewID[S]; });
-						newState.CustomData.SaveStructData(instanceData);
-						break;
-					}
-
-					default:
-						break;
-					}
-
-					if (ensure(oldIDToNewID.Contains(newState.ParentID)))
-					{
-						newState.ParentID = oldIDToNewID[newState.ParentID];
-						moiDelta->AddCreateDestroyState(newState, EMOIDeltaType::Create);
-					}
+					oldIDToNewID.Add(kvp.Key, NextID);
+					graph2dDelta->AddNewVertex(kvp.Value.Position, NextID);
 				}
+
+				for (const auto& kvp: graph2d->GetEdges())
+				{
+					oldIDToNewID.Add(kvp.Key, NextID);
+					graph2dDelta->AddNewEdge(FGraphVertexPair(oldIDToNewID[kvp.Value.StartVertexID], oldIDToNewID[kvp.Value.EndVertexID]), NextID);
+				}
+
+				for (const auto& kvp: graph2d->GetPolygons())
+				{
+					TArray<int32> newVertices;
+					Algo::ForEach(kvp.Value.VertexIDs, [&](int32 v)
+						{ newVertices.Add(oldIDToNewID[v]); });
+					oldIDToNewID.Add(kvp.Key, NextID);
+					graph2dDelta->AddNewPolygon(newVertices, NextID);
+				}
+
+				OutDeltas.Emplace(FSelectedObjectToolMixin::kOther, makeGraph2dDelta);
+				OutDeltas.Emplace(FSelectedObjectToolMixin::kOther, graph2dDelta);
+			}
+		}
+
+
+		for (const auto* object : objects)
+		{
+			EObjectType objectType = object->GetObjectType();
+			if (objectType != EObjectType::OTSurfaceGraph
+				&& UModumateTypeStatics::Graph3DObjectTypeFromObjectType(objectType) == EGraph3DObjectType::None
+				&& UModumateTypeStatics::Graph2DObjectTypeFromObjectType(objectType) == EGraphObjectType::None)
+			{
+				FMOIStateData newState(object->GetStateData());
+				newState.ID = oldIDToNewID[newState.ID];
+				newState.ParentID = oldIDToNewID[newState.ParentID];
+
+				// Duplicate span objects mapping graph IDs:
+				switch (objectType)
+				{
+				case EObjectType::OTMetaEdgeSpan:
+				{
+					FMOIMetaEdgeSpanData instanceData(Cast<const AMOIMetaEdgeSpan>(object)->InstanceData);
+					Algo::ForEach(instanceData.GraphMembers, [&oldIDToNewID](int32& S)
+						{ S = oldIDToNewID[S]; });
+					newState.CustomData.SaveStructData(instanceData, UE_EDITOR);
+					break;
+				}
+
+				case EObjectType::OTMetaPlaneSpan:
+				{
+					FMOIMetaPlaneSpanData instanceData(Cast<const AMOIMetaPlaneSpan>(object)->InstanceData);
+					Algo::ForEach(instanceData.GraphMembers, [&oldIDToNewID](int32& S)
+						{ S = oldIDToNewID[S]; });
+					newState.CustomData.SaveStructData(instanceData, UE_EDITOR);
+					break;
+				}
+
+				default:
+					break;
+				}
+
+				moiDelta->AddCreateDestroyState(newState, EMOIDeltaType::Create);
 			}
 		}
 
@@ -1103,11 +1159,12 @@ void FModumateObjectDeltaStatics::DuplicateGroups(const UModumateDocument* Doc, 
 						symbolPresetData.EquivalentIDs.Add(idMapping.Key).IDSet.Append({ idMapping.Key, idMapping.Value });
 					}
 
-					newSymbolPreset.SetCustomData(symbolPresetData);
-					FDeltaPtr presetDelta = presets.MakeUpdateDelta(newSymbolPreset);
-
-					OutDeltas.Emplace(FSelectedObjectToolMixin::kOther, presetDelta);
 				}
+
+				newSymbolPreset.SetCustomData(symbolPresetData);
+				FDeltaPtr presetDelta = presets.MakeUpdateDelta(newSymbolPreset);
+
+				OutDeltas.Emplace(FSelectedObjectToolMixin::kOther, presetDelta);
 			}
 		}
 
