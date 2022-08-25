@@ -26,14 +26,15 @@ enum class EBIMPresetEditorField : uint8
 	LayerPriorityGroup,
 	LayerPriorityValue,
 	ConstructionCostLabor,
-	ConstructionCostMaterial
+	ConstructionCostMaterial,
+	LightIntensity,
+	LightColor,
+	LightRadius,
+	LightIsSpot
 };
 
-/* TODO:
-* It is unclear at this stage whether editor deltas will be in their own undo/redo space or integrated with the document
-* Future refactor may call for edits to live update the document rather than dirty editor nodes
-* If we move in that direction, this delta will supplant the FBIMPresetDocumentDelta and provide fine-grained undo/redoable changes
-* For now, we just use editor deltas internally and send whole preset changes to the document in a document delta
+/* 
+Note: FBIMPresetForm is to be retired with the UMG BIM editor
 */
 
 // BIM deltas are not serialized
@@ -89,7 +90,6 @@ struct MODUMATE_API FBIMPresetFormElement
 
 	// Form values are not serialized, only used to create BIM deltas
 	FString StringRepresentation;
-
 };
 
 USTRUCT()
@@ -105,6 +105,7 @@ struct MODUMATE_API FBIMPresetForm
 	EBIMResult AddLayerPriorityGroupElement();
 	EBIMResult AddLayerPriorityValueElement();
 	EBIMResult AddConstructionCostElements();
+	EBIMResult AddLightConfigElements();
 
 	bool HasField(const FName& Field) const;
 

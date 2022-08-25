@@ -169,6 +169,36 @@ EBIMResult FBIMPresetForm::AddConstructionCostElements()
 	return EBIMResult::Success;
 }
 
+EBIMResult FBIMPresetForm::AddLightConfigElements()
+{
+	FBIMPresetFormElement& elem = Elements.AddDefaulted_GetRef();
+	elem.DisplayName = LOCTEXT("LightDisplayColor", "Color");
+	elem.FieldName = TEXT("Color");
+	elem.FieldType = EBIMPresetEditorField::LightColor;
+	elem.FormElementWidgetType = EBIMFormElementWidget::ColorPicker;
+
+	FBIMPresetFormElement& intensity = Elements.AddDefaulted_GetRef();
+	intensity.DisplayName = LOCTEXT("LightIntensity", "Intensity");
+	intensity.FieldName = TEXT("Intensity");
+	intensity.FieldType = EBIMPresetEditorField::LightIntensity;
+	intensity.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
+
+	FBIMPresetFormElement& radius = Elements.AddDefaulted_GetRef();
+	radius.DisplayName = LOCTEXT("LightRadius", "Radius");
+	radius.FieldName = TEXT("Radius");
+	radius.FieldType = EBIMPresetEditorField::LightRadius;
+	radius.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
+
+	FBIMPresetFormElement& spotlight = Elements.AddDefaulted_GetRef();
+	spotlight.DisplayName = LOCTEXT("Spotlight", "Spotlight");
+	spotlight.FieldName = TEXT("Spotlight");
+	spotlight.FieldType = EBIMPresetEditorField::LightIsSpot;
+	spotlight.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
+
+	return EBIMResult::Success;
+}
+
+
 EBIMResult FBIMWebPresetForm::AddPropertyElement(const FString& DisplayName, const FString& FieldName)
 {
 	if (ensureAlways(!DisplayName.IsEmpty() && !FieldName.IsEmpty()))
@@ -182,5 +212,6 @@ EBIMResult FBIMWebPresetForm::AddPropertyElement(const FString& DisplayName, con
 
 	return EBIMResult::Error;
 }
+
 
 #undef LOCTEXT_NAMESPACE

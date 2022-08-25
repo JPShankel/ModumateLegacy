@@ -284,7 +284,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				FBIMKey key(NormalizeCell(Row[presetMatrix.First]));
 				FGuid* guid = KeyGuidMap.Find(key);
 				//preset guid, intensity, color tint (in hex)
-				if (guid != nullptr)
+				if (bOnFirstRow && guid != nullptr)
 				{
 					FLightConfiguration lightConfig;
 					lightConfig.PresetGUID = *guid;
@@ -301,6 +301,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					lightConfig.Rotation.Yaw = FCString::Atof(Row[presetMatrix.First + 11]);
 					lightConfig.SourceRadius = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 15]).Centimeters;
 
+					Preset.PresetForm.AddLightConfigElements();
 					Preset.SetCustomData(lightConfig);
 				}
 			}

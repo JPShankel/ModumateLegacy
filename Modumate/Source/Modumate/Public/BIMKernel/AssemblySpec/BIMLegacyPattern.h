@@ -157,7 +157,8 @@ struct FLightConfiguration
 	UPROPERTY()
 	float LightIntensity = 0.f;
 
-	FLinearColor LightColor = FLinearColor::White;
+	UPROPERTY()
+	FColor LightColor = FColor::White;
 
 	UPROPERTY()
 	TWeakObjectPtr<UTextureLightProfile> LightProfile = nullptr;

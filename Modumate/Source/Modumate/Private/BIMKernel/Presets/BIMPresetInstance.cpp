@@ -261,6 +261,50 @@ EBIMResult FBIMPresetInstance::HandleConstructionCostMaterialDelta(const FBIMPre
 	return EBIMResult::Error;
 }
 
+EBIMResult FBIMPresetInstance::HandleLightIsSpotDelta(const FBIMPresetEditorDelta& Delta)
+{
+	FLightConfiguration lightConfig;
+	if (ensure(TryGetCustomData(lightConfig)))
+	{
+		lightConfig.bAsSpotLight = Delta.NewStringRepresentation.Equals(TEXT("true"));
+		SetCustomData(lightConfig);
+	}
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetInstance::HandleLightColorDelta(const FBIMPresetEditorDelta& Delta)
+{
+	FLightConfiguration lightConfig;
+	if (ensure(TryGetCustomData(lightConfig)))
+	{
+		lightConfig.LightColor = FColor::FromHex(Delta.NewStringRepresentation);
+		SetCustomData(lightConfig);
+	}
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetInstance::HandleLightIntensityDelta(const FBIMPresetEditorDelta& Delta)
+{
+	FLightConfiguration lightConfig;
+	if (ensure(TryGetCustomData(lightConfig)))
+	{
+		lightConfig.LightIntensity = FCString::Atof(*Delta.NewStringRepresentation);
+		SetCustomData(lightConfig);
+	}
+	return EBIMResult::Success;
+}
+
+EBIMResult FBIMPresetInstance::HandleLightRadiusDelta(const FBIMPresetEditorDelta& Delta)
+{
+	FLightConfiguration lightConfig;
+	if (ensure(TryGetCustomData(lightConfig)))
+	{
+		lightConfig.SourceRadius = FCString::Atof(*Delta.NewStringRepresentation);
+		SetCustomData(lightConfig);
+	}
+	return EBIMResult::Success;
+}
+
 EBIMResult FBIMPresetInstance::HandleMaterialBindingDelta(const FBIMPresetEditorDelta& Delta)
 {
 	FBIMPresetMaterialBindingSet bindingSet;
@@ -376,6 +420,26 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,co
 		case EBIMPresetEditorField::ConstructionCostMaterial:
 		{
 			return HandleConstructionCostMaterialDelta(Delta);
+		}
+
+		case EBIMPresetEditorField::LightIntensity:
+		{
+			return HandleLightIntensityDelta(Delta);
+		}
+
+		case EBIMPresetEditorField::LightColor:
+		{
+			return HandleLightColorDelta(Delta);
+		}
+
+		case EBIMPresetEditorField::LightRadius:
+		{
+			return HandleLightRadiusDelta(Delta);
+		}
+
+		case EBIMPresetEditorField::LightIsSpot:
+		{
+			return HandleLightIsSpotDelta(Delta);
 		}
 
 		case EBIMPresetEditorField::AssetProperty:
@@ -565,6 +629,46 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 			}
 		}
 		break;
+		case EBIMPresetEditorField::LightColor:
+		{
+			FLightConfiguration lightConfig;
+			if (TryGetCustomData(lightConfig))
+			{
+				OutDelta.OldStringRepresentation = lightConfig.LightColor.ToHex();
+				return EBIMResult::Success;
+			}
+		}
+		break;
+		case EBIMPresetEditorField::LightIntensity:
+		{
+			FLightConfiguration lightConfig;
+			if (TryGetCustomData(lightConfig))
+			{
+				OutDelta.OldStringRepresentation = FString::Printf(TEXT("%0.2f"), lightConfig.LightIntensity);
+				return EBIMResult::Success;
+			}
+		}
+		break;
+		case EBIMPresetEditorField::LightRadius:
+		{
+			FLightConfiguration lightConfig;
+			if (TryGetCustomData(lightConfig))
+			{
+				OutDelta.OldStringRepresentation = FString::Printf(TEXT("%0.2f"), lightConfig.SourceRadius);
+				return EBIMResult::Success;
+			}
+		}
+		break;
+		case EBIMPresetEditorField::LightIsSpot:
+		{
+			FLightConfiguration lightConfig;
+			if (TryGetCustomData(lightConfig))
+			{
+				OutDelta.OldStringRepresentation = lightConfig.bAsSpotLight ? TEXT("true") : TEXT("false");
+				return EBIMResult::Success;
+			}
+		}
+		break;
 		default: ensureAlways(false); return EBIMResult::Error;
 	};
 
@@ -613,6 +717,42 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(const UModumateDocument* InDoc
 
 		switch (element.FieldType)
 		{
+		case EBIMPresetEditorField::LightColor:
+		{
+			FLightConfiguration lightConfig;
+			if (ensure(TryGetCustomData(lightConfig)))
+			{
+				element.StringRepresentation = lightConfig.LightColor.ToHex();
+			}
+		}
+			break;
+		case EBIMPresetEditorField::LightIntensity:
+		{
+			FLightConfiguration lightConfig;
+			if (ensure(TryGetCustomData(lightConfig)))
+			{
+				element.StringRepresentation = FString::Printf(TEXT("%f"), lightConfig.LightIntensity);
+			}
+		}
+			break;
+		case EBIMPresetEditorField::LightRadius:
+		{
+			FLightConfiguration lightConfig;
+			if (ensure(TryGetCustomData(lightConfig)))
+			{
+				element.StringRepresentation = FString::Printf(TEXT("%f"), lightConfig.SourceRadius);
+			}
+		}
+			break;
+		case EBIMPresetEditorField::LightIsSpot:
+		{
+			FLightConfiguration lightConfig;
+			if (ensure(TryGetCustomData(lightConfig)))
+			{
+				element.StringRepresentation = lightConfig.bAsSpotLight ? TEXT("true") : TEXT("false");
+			}
+		}
+		break;
 		case EBIMPresetEditorField::ConstructionCostMaterial:
 		{
 			FBIMConstructionCost constructionCost;

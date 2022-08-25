@@ -335,6 +335,10 @@ struct MODUMATE_API FBIMPresetInstance
 	EBIMResult MakeMaterialBindingDelta(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const;
 	EBIMResult HandleConstructionCostLaborDelta(const FBIMPresetEditorDelta& Delta);
 	EBIMResult HandleConstructionCostMaterialDelta(const FBIMPresetEditorDelta& Delta);
+	EBIMResult HandleLightColorDelta(const FBIMPresetEditorDelta& Delta);
+	EBIMResult HandleLightIntensityDelta(const FBIMPresetEditorDelta& Delta);
+	EBIMResult HandleLightRadiusDelta(const FBIMPresetEditorDelta& Delta);
+	EBIMResult HandleLightIsSpotDelta(const FBIMPresetEditorDelta& Delta);
 
 	// Sort child nodes by PinSetIndex and PinSetPosition so serialization will be consistent
 	EBIMResult SortChildPresets();
