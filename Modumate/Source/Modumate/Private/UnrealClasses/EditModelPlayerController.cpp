@@ -4153,6 +4153,7 @@ void AEditModelPlayerController::ConnectTextChatClient(AModumateTextChat* UsersT
 
 void AEditModelPlayerController::SetCurrentCullingCutPlane(int32 ObjID /*= MOD_ID_NONE*/, bool bRefreshMenu /*= true*/)
 {
+#if !UE_SERVER
 	// Stop previous culling cutplane from culling
 	AModumateObjectInstance* previousCullingMoi = Document->GetObjectById(CurrentCullingCutPlaneID);
 	if (previousCullingMoi)
@@ -4182,6 +4183,7 @@ void AEditModelPlayerController::SetCurrentCullingCutPlane(int32 ObjID /*= MOD_I
 	{
 		EditModelUserWidget->CutPlaneMenu->UpdateCutPlaneMenuBlocks();
 	}
+#endif
 }
 
 void AEditModelPlayerController::UpdateCutPlaneCullingMaterialInst(int32 ObjID /*= MOD_ID_NONE*/)
