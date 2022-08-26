@@ -49,6 +49,9 @@ struct MODUMATE_API FModumateGraphicsSettings
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool bRayTracingCapable = false;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	bool MacCompatibility = false;
+
 	// Unreal graphics settings: 0:low, 1:medium, 2:high, 3:epic, 4:cinematic
 	static const int32 UnrealGraphicsSettingsMaxValue = 4;
 	bool IsRayTracingCapable();

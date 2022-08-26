@@ -97,6 +97,7 @@
 #include "UI/Custom/WebKeyboardCapture.h"
 #include "ModumateCore/ModumateRayTracingSettings.h"
 #include "UnrealClasses/SkyActor.h"
+#include "ModumateCore/ModumateMacSettings.h"
 DEFINE_LOG_CATEGORY(ModumateEMPC);
 const FString AEditModelPlayerController::InputTelemetryDirectory(TEXT("Telemetry"));
 
@@ -534,6 +535,12 @@ void AEditModelPlayerController::BeginPlay()
 	if (skyActor != nullptr)
 	{
 		skyActor->UpdateComponentsWithDateTime(skyActor->GetCurrentDateTime());
+	}
+	//initialize Mac settings to off
+	UModumateMacSettings* macSettings = NewObject<UModumateMacSettings>();
+	if (ppv != nullptr && macSettings != nullptr)
+	{
+		macSettings->SetMacSettingsEnabled(ppv, false);
 	}
 }
 

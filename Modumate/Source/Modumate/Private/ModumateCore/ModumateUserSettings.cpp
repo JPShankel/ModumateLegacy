@@ -213,6 +213,14 @@ bool FModumateGraphicsSettings::ToWebProjectSettings(FWebProjectSettings& OutSet
 	{
 		OutSettings.rayTracingCapable.value = "false";
 	}
+	if (MacCompatibility)
+	{
+		OutSettings.macCompatibility.value = "true";
+	}
+	else
+	{
+		OutSettings.macCompatibility.value = "false";
+	}
 	return true;
 }
 
@@ -223,5 +231,6 @@ bool FModumateGraphicsSettings::FromWebProjectSettings(const FWebProjectSettings
 	RayTracingQuality = FCString::Atoi(*InSettings.rayTracingQuality.value);
 	ExposureValue = FCString::Atoi(*InSettings.Exposure.value);
 	bRayTracingEnabled = InSettings.rayTracing.value.ToLower() == TEXT("true");
+	MacCompatibility = InSettings.macCompatibility.value.ToLower() == TEXT("true");
 	return true;
 }

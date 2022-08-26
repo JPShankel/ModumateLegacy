@@ -51,6 +51,7 @@
 #include "DrawingDesigner/DrawingDesignerMeshCache.h"
 #include "ModumateCore/ModumateRayTracingSettings.h"
 #include "UnrealClasses/SkyActor.h"
+#include "ModumateCore/ModumateMacSettings.h"
 
 
 using namespace ModumateCommands;
@@ -1392,6 +1393,13 @@ void UModumateGameInstance::ApplyGraphicsFromModumateUserSettings()
 	if (skyActor != nullptr)
 	{
 		skyActor->UpdateComponentsWithDateTime(skyActor->GetCurrentDateTime());
+	}
+
+	//initialize Mac settings to off
+	UModumateMacSettings* macSettings = NewObject<UModumateMacSettings>();
+	if (ppv != nullptr && macSettings != nullptr)
+	{
+		macSettings->SetMacSettingsEnabled(ppv, UserSettings.GraphicsSettings.MacCompatibility);
 	}
 }
 

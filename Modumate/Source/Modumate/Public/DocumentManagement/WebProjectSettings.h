@@ -94,4 +94,7 @@ struct MODUMATE_API FWebProjectSettings
 
 	UPROPERTY()
 	FWebProjectSettingsProperty rayTracingCapable;
+
+	UPROPERTY()
+	FWebProjectSettingsProperty macCompatibility;
 };
