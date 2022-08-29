@@ -85,7 +85,7 @@ FVector2D AMOICutPlane::GetSize() const
 void AMOICutPlane::PostCreateObject(bool bNewObject)
 {
 	Super::PostCreateObject(bNewObject);
-
+#if !UE_SERVER	
 	UWorld* world = GetWorld();
 	auto controller = world->GetFirstPlayerController<AEditModelPlayerController>();
 	if (controller && controller->EditModelUserWidget)
@@ -117,6 +117,7 @@ void AMOICutPlane::PostCreateObject(bool bNewObject)
 		controller->SetCurrentCullingCutPlane(ID, false);
 		controller->EMPlayerState->SendWebPlayerState();
 	}
+#endif
 }
 
 void AMOICutPlane::PreDestroy()
