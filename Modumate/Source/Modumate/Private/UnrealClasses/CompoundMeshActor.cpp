@@ -170,14 +170,16 @@ void ACompoundMeshActor::MakeFromAssemblyPart(const FBIMAssemblySpec& ObAsm, int
 			partStaticMeshComp = NewObject<UStaticMeshComponent>(this);
 			partStaticMeshComp->SetupAttachment(rootComp);
 
-			if (assemblyPart.LightConfiguration.PresetGUID.IsValid())
-			{
-				UpdateLightFromLightConfig(partStaticMeshComp, assemblyPart.LightConfiguration);
-			}
+			
 
 			AddOwnedComponent(partStaticMeshComp);
 			partStaticMeshComp->RegisterComponent();
 			StaticMeshComps[slotIdx] = partStaticMeshComp;
+		}
+
+		if (assemblyPart.LightConfiguration.PresetGUID.IsValid())
+		{
+			UpdateLightFromLightConfig(partStaticMeshComp, assemblyPart.LightConfiguration);
 		}
 
 		bool bMeshChanged = partStaticMeshComp->SetStaticMesh(partMesh);
@@ -670,6 +672,10 @@ void ACompoundMeshActor::RayTracingEnabled_OnToggled()
 void ACompoundMeshActor::UpdateLightFromLightConfig(UStaticMeshComponent* parentMesh, const FLightConfiguration &lightConfig)
 {
 	bool makePointLight = lightConfig.LightIntensity > 0.f;
+	if (!GetWorld()->GetGameInstance<UModumateGameInstance>()->UserSettings.GraphicsSettings.bPointLightsEnabled)
+	{
+		makePointLight = false;
+	}
 	OriginalLightIntensity = lightConfig.LightIntensity;
 	FLinearColor lightColor = lightConfig.LightColor;
 	FString lightName = TEXT("Light");

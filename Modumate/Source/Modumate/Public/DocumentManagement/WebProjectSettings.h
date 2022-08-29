@@ -97,4 +97,7 @@ struct MODUMATE_API FWebProjectSettings
 
 	UPROPERTY()
 	FWebProjectSettingsProperty macCompatibility;
+
+	UPROPERTY()
+	FWebProjectSettingsProperty showLights;
 };

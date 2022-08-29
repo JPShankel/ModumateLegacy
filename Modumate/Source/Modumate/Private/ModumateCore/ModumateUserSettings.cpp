@@ -221,6 +221,14 @@ bool FModumateGraphicsSettings::ToWebProjectSettings(FWebProjectSettings& OutSet
 	{
 		OutSettings.macCompatibility.value = "false";
 	}
+	if (bPointLightsEnabled)
+	{
+		OutSettings.showLights.value = "true";
+	}
+	else {
+		OutSettings.showLights.value = "false";
+	}
+	
 	return true;
 }
 
@@ -232,5 +240,6 @@ bool FModumateGraphicsSettings::FromWebProjectSettings(const FWebProjectSettings
 	ExposureValue = FCString::Atoi(*InSettings.Exposure.value);
 	bRayTracingEnabled = InSettings.rayTracing.value.ToLower() == TEXT("true");
 	MacCompatibility = InSettings.macCompatibility.value.ToLower() == TEXT("true");
+	bPointLightsEnabled = InSettings.showLights.value.ToLower() == TEXT("true");
 	return true;
 }

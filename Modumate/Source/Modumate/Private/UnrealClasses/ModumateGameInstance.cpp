@@ -626,7 +626,7 @@ void UModumateGameInstance::RegisterAllCommands()
 	RegisterCommand(kCreateSymbol, [this](const FModumateFunctionParameterSet& params, FModumateFunctionParameterSet& output)
 	{
 		UModumateDocument* doc = GetDocument();
-
+		
 		AEditModelPlayerController* playerController = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
 		AEditModelPlayerState* playerState = playerController ? playerController->EMPlayerState : nullptr;
 
@@ -1395,11 +1395,30 @@ void UModumateGameInstance::ApplyGraphicsFromModumateUserSettings()
 		skyActor->UpdateComponentsWithDateTime(skyActor->GetCurrentDateTime());
 	}
 
-	//initialize Mac settings to off
+	//apply mac blownout setting
 	UModumateMacSettings* macSettings = NewObject<UModumateMacSettings>();
 	if (ppv != nullptr && macSettings != nullptr)
 	{
 		macSettings->SetMacSettingsEnabled(ppv, UserSettings.GraphicsSettings.MacCompatibility);
+	}
+	//global toggle lights
+	AEditModelGameState* gameState = GetWorld() != nullptr ? GetWorld()->GetGameState<AEditModelGameState>() : nullptr;
+	if (gameState == nullptr)
+	{
+		return;
+	}
+	UModumateDocument* doc = gameState->Document;
+	TArray<AModumateObjectInstance*> mois = doc->GetObjectsOfType(EObjectType::OTFurniture);
+	for (AModumateObjectInstance* moi : mois)
+	{
+		if (moi != nullptr)
+		{
+			const FBIMPresetInstance* preset = doc->GetPresetCollection().PresetFromGUID(moi->GetStateData().AssemblyGUID);
+			if (preset && preset->HasCustomData<FLightConfiguration>())
+			{
+				moi->MarkDirty(EObjectDirtyFlags::Structure);
+			}
+		}
 	}
 }
 
