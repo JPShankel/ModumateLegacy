@@ -427,33 +427,12 @@ private:
 
 public:
 
-	// Drawing designer API
-	UFUNCTION()
-	void set_web_focus(bool bHasFocus);
-
-	UFUNCTION()
-	void toggle_drawing_designer(bool bDrawingEnabled);
-	
+	// Drawing designer API	
 	UFUNCTION()
 	void DrawingSendResponse(const FString& FunctionName, const FString& Argument) const;
 
 	UFUNCTION()
 	void DrawingPushDD();
-
-	UFUNCTION()
-	void trigger_update(const TArray<FString>& ObjectTypes);
-
-	UFUNCTION()
-	void drawing_apply_delta(const FString& InDelta);
-
-	UFUNCTION()
-	void drawing_get_drawing_image(const FString& InRequest);
-
-	UFUNCTION()
-	void drawing_get_clicked(const FString& InRequest);
-
-	UFUNCTION()
-	void drawing_get_cutplane_lines(const FString& InRequest);
 
 	UFUNCTION()
 	void get_preset_thumbnail(const FString& InRequest);

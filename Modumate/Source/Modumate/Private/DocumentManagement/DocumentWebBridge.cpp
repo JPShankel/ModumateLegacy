@@ -2,47 +2,183 @@
 
 #include "DocumentManagement/DocumentWebBridge.h"
 #include "DocumentManagement/ModumateDocument.h"
-#include "DrawingDesigner//DrawingDesignerRequests.h"
+#include "UnrealClasses/EditModelGameMode.h"
+#include "UnrealClasses/EditModelPlayerController.h"
+#include "UnrealClasses/EditModelPlayerState.h"
+#include "UnrealClasses/EditModelInputHandler.h"
+#include "DrawingDesigner/DrawingDesignerRequests.h"
+#include "DrawingDesigner/DrawingDesignerDocumentDelta.h"
+#include "DrawingDesigner/DrawingDesignerRenderControl.h"
+#include "Drafting/DraftingManager.h"
+#include "Drafting/ModumateDraftingView.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Objects/CameraView.h"
+#include "Objects/CutPlane.h"
 #include "Objects/DesignOption.h"
+#include "ModumateCore/EnumHelpers.h"
+#include "UI/Custom/ModumateWebBrowser.h"
+
 
 UModumateDocumentWebBridge::UModumateDocumentWebBridge() {}
 UModumateDocumentWebBridge::~UModumateDocumentWebBridge() {}
 
-void UModumateDocumentWebBridge::set_web_focus(bool HasFocus)
+void UModumateDocumentWebBridge::set_web_focus(bool bHasFocus)
 {
-	Document->set_web_focus(HasFocus);
+	const auto player = GetWorld()->GetFirstLocalPlayerFromController();
+	const auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
+	if (controller)
+	{
+		if (bHasFocus)
+		{
+			controller->InputHandlerComponent->RequestInputDisabled(UModumateWebBrowser::MODUMATE_WEB_TAG, true);
+		}
+		else
+		{
+			//KLUDGE: Hack for 3.0.0 release. The asynchronus nature of the Javascript communication makes this
+			// necessary so we do not remove focus and evaluate the input in the same frame. For example, closing a menu
+			// with escape, but having that escape ALSO get passed to the input handler component. -JN
+
+			//We use GameInstance because it is valid throughout the lifetime of the application, vs 'this' or 'world'
+			auto gameInstance = GetWorld()->GetGameInstance();
+			GetWorld()->GetTimerManager().SetTimerForNextTick([gameInstance]()
+				{
+					const auto player = gameInstance->GetWorld()->GetFirstLocalPlayerFromController();
+					const auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(gameInstance->GetWorld())) : nullptr;
+
+					if (controller)
+					{
+						controller->InputHandlerComponent->RequestInputDisabled(UModumateWebBrowser::MODUMATE_WEB_TAG, false);
+					}
+				});
+		}
+	}
 }
 
-void UModumateDocumentWebBridge::toggle_drawing_designer(bool DrawingEnabled)
+void UModumateDocumentWebBridge::toggle_drawing_designer(bool bDrawingEnabled)
 {
-	Document->toggle_drawing_designer(DrawingEnabled);
+	auto player = GetWorld()->GetFirstLocalPlayerFromController();
+	auto controller = player ? Cast<AEditModelPlayerController>(player->GetPlayerController(GetWorld())) : nullptr;
+
+	if (controller)
+	{
+		controller->ToggleDrawingDesigner(bDrawingEnabled);
+	}
 }
 
 void UModumateDocumentWebBridge::trigger_update(const TArray<FString>& ObjectTypes)
 {
-	Document->trigger_update(ObjectTypes);
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::trigger_update"));
+	Document->DrawingPushDD();
+	Document->UpdateWebProjectSettings();
+
+	for (auto& ot : ObjectTypes)
+	{
+		EObjectType objectType = EObjectType::OTNone;
+		FindEnumValueByString<EObjectType>(ot, objectType);
+		Document->NetworkClonedObjectTypes.Add(objectType);
+	}
+
+	for (auto& type : Document->NetworkClonedObjectTypes) {
+		Document->UpdateWebMOIs(type);
+	}
+
+	auto* localPlayer = GetWorld() ? GetWorld()->GetFirstLocalPlayerFromController() : nullptr;
+	auto* controller = localPlayer ? Cast<AEditModelPlayerController>(localPlayer->GetPlayerController(GetWorld())) : nullptr;
+	if (!ensure(controller && controller->EMPlayerState))
+	{
+		return;
+	}
+
+	controller->EMPlayerState->SendWebPlayerState();
+
+	// initial state of presets
+	Document->UpdateWebPresets();
 }
 
 void UModumateDocumentWebBridge::drawing_apply_delta(const FString& InDelta)
 {
-	Document->drawing_apply_delta(InDelta);
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_apply_delta"));
+	FDrawingDesignerJsDeltaPackage  package;
+	if (!package.ReadJson(InDelta))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to read JSON package"));
+	}
+	else
+	{
+		TSharedPtr<FDocumentDelta> delta = MakeShared<FDrawingDesignerDocumentDelta>(Document->DrawingDesignerDocument, package);
+		TArray<FDeltaPtr> wrapped;
+		wrapped.Add(delta);
+		if (!Document->ApplyDeltas(wrapped, GetWorld(), package.bAddToUndo))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to apply Delta"));
+		}
+		else
+		{
+			Document->DrawingPushDD();
+		}
+	}
 }
 
 void UModumateDocumentWebBridge::drawing_get_drawing_image(const FString& InRequest)
 {
-	Document->drawing_get_drawing_image(InRequest);
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_get_view_image"));
+	FString response;
+	bool bResult = Document->DrawingDesignerRenderControl->GetView(InRequest, response);
+	if (ensure(bResult))
+	{
+		Document->DrawingSendResponse(TEXT("pushViewImage"), response);
+	}
 }
 
 void UModumateDocumentWebBridge::drawing_get_clicked(const FString& InRequest)
 {
-	Document->drawing_get_clicked(InRequest);
+	UE_LOG(LogCallTrace, Display, TEXT("ModumateDocument::drawing_get_clicked_moi"));
+	FDrawingDesignerGenericRequest req;
+
+	if (req.ReadJson(InRequest))
+	{
+		if (req.requestType != EDrawingDesignerRequestType::getClickedMoi) return;
+
+		FDrawingDesignerMoiResponse moiResponse;
+		moiResponse.request = req;
+
+		AModumateObjectInstance* moi = Document->GetObjectById(req.viewId);
+		if (moi)
+		{
+			if (moi->GetObjectType() == EObjectType::OTCutPlane)
+			{
+				AMOICutPlane* cutPlane = Cast<AMOICutPlane>(moi);
+				FVector2D uvVector; uvVector.X = req.uvPosition.x; uvVector.Y = req.uvPosition.y;
+				Document->DrawingDesignerRenderControl->GetMoiFromView(uvVector, *cutPlane, moiResponse.moiId);
+			}
+			moiResponse.spanId = moi->GetParentID();
+			const FBIMPresetInstance* preset = Document->BIMPresetCollection.PresetFromGUID(moi->GetAssembly().PresetGUID);
+			if (preset)
+			{
+				moiResponse.presetId = preset->GUID;
+			}
+		}
+
+
+		FString jsonResponse;
+		moiResponse.WriteJson(jsonResponse);
+		Document->DrawingSendResponse(TEXT("onGenericResponse"), jsonResponse);
+	}
 }
 
 void UModumateDocumentWebBridge::drawing_get_cutplane_lines(const FString& InRequest)
 {
-	Document->drawing_get_cutplane_lines(InRequest);
+	FDrawingDesignerGenericRequest req;
+	if (req.ReadJson(InRequest) && req.requestType == EDrawingDesignerRequestType::getCutplaneLines)
+	{
+		int32 cutPlane = FCString::Atoi(*req.data);
+
+		if (cutPlane != MOD_ID_NONE)
+		{
+			Document->CurrentDraftingView = MakeShared<FModumateDraftingView>(GetWorld(), Document, UDraftingManager::kDD);
+			Document->CurrentDraftingView->GeneratePageForDD(cutPlane, req);
+		}
+	}
 }
 
 void UModumateDocumentWebBridge::get_preset_thumbnail(const FString& InRequest)

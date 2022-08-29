@@ -50,6 +50,7 @@
 #include "ModumateCore/EnumHelpers.h"
 #include "DrawingDesigner/DrawingDesignerMeshCache.h"
 #include "ModumateCore/ModumateRayTracingSettings.h"
+#include "UnrealClasses/EditModelGameState.h"
 #include "UnrealClasses/SkyActor.h"
 #include "ModumateCore/ModumateMacSettings.h"
 
@@ -308,6 +309,8 @@ void UModumateGameInstance::RegisterAllCommands()
 			return false;
 		}
 
+		AEditModelGameState* gameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
+
 		FString type = params.GetValue(TEXT("type"),TEXT("document"));
 
 		bool hasShow = params.HasValue(TEXT("on"));
@@ -353,7 +356,13 @@ void UModumateGameInstance::RegisterAllCommands()
 		}
 		else if (type.Equals(TEXT("pdf")))
 		{
-			GetDocument()->drawing_get_cutplane_lines(FString());
+			auto bridge = gameState->DocumentWebBridge;
+#if 0
+			if (gameState)
+			{
+				gameState->DocumentWebBridge->drawing_get_cutplane_lines(FString());
+			}
+#endif
 		}
 
 		return true;
