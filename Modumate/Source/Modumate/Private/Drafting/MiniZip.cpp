@@ -136,8 +136,8 @@ bool FMiniZip::ExtractFromArchive(const FString& ArchiveFilename)
 			const char* writeFilename = writePathChar.Get();
 
 			// TODO: Find alternative to fopen64
-			FILE* out = fopen(writeFilename, "wb");
-			if (out != NULL)
+			FILE* out = NULL;
+			if (fopen_s(&out,writeFilename, "wb") == 0 && out!=NULL)
 			{
 				fwrite(fileData.get(), fileLength, 1, out);
 				fclose(out);
