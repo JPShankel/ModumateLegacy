@@ -16,6 +16,7 @@
 // UE4's prebuilt zlib includes the contributed zip & unzip functionality for handling zip archives.
 // UE4 does not appear to cleanly expose the API, hence the fragile #include above.
 
+#pragma warning (disable:4996)
 
 bool FMiniZip::CreateArchive(const FString& archiveFilename)
 {
@@ -136,8 +137,8 @@ bool FMiniZip::ExtractFromArchive(const FString& ArchiveFilename)
 			const char* writeFilename = writePathChar.Get();
 
 			// TODO: Find alternative to fopen64
-			FILE* out = NULL;
-			if (fopen_s(&out,writeFilename, "wb") == 0 && out!=NULL)
+			FILE* out = fopen(writeFilename,"wb");
+			if (out!=NULL)
 			{
 				fwrite(fileData.get(), fileLength, 1, out);
 				fclose(out);
@@ -155,3 +156,4 @@ bool FMiniZip::ExtractFromArchive(const FString& ArchiveFilename)
 
 	return true;
 }
+#undef _CRT_SECURE_NO_DEPRECATE
