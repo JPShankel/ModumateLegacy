@@ -293,59 +293,51 @@ void FModumateDatabase::ReadPresetData()
 				preset.Value.SetCustomData(lightConfig);
 			}
 		}
-		switch (preset.Value.AssetType)
-		{
-		case EBIMAssetType::IESProfile:
-			AddLightFromPreset(preset.Value);
-			break;
-		case EBIMAssetType::Mesh:
-			AddMeshFromPreset(preset.Value);
-			break;
-		case EBIMAssetType::Profile:
-			AddProfileFromPreset(preset.Value);
-			break;
-		case EBIMAssetType::RawMaterial:
-			AddRawMaterialFromPreset(preset.Value);
-			break;
-		case EBIMAssetType::Material:
-			AddMaterialFromPreset(preset.Value);
-			break;
-		case EBIMAssetType::Pattern:
-			AddPatternFromPreset(preset.Value);
-			break;
-		};
 	}
 
+	BIMPresetCollection.ForEachPreset([this](const FBIMPresetInstance& Preset) {
+		AddAssetsFromPreset(Preset);
+		});
 	BIMPresetCollection.SetPartSizesFromMeshes();
+
+	BIMUntruncatedCollection = BIMPresetCollection;
+
+	TSet<FGuid> presetsToAdd;
+	for (auto& starter : starters)
+	{
+		FBIMPresetInstance* preset = BIMUntruncatedCollection.PresetFromGUID(starter);
+		if (ensure(preset != nullptr))
+		{
+			presetsToAdd.Add(preset->GUID);
+			TArray<FGuid> descendents;
+			BIMUntruncatedCollection.GetAllDescendentPresets(starter, descendents);
+			for (auto& descendent : descendents)
+			{
+				presetsToAdd.Add(descendent);
+			}
+		}
+	}
 
 	if (!CVarModumateUseAllPresets.GetValueOnAnyThread())
 	{
-		FBIMPresetCollection presetCollection = BIMPresetCollection;
-
-		TSet<FGuid> presetsToAdd;
-		for (auto& starter : starters)
-		{
-			FBIMPresetInstance* preset = presetCollection.PresetFromGUID(starter);
-			if (ensure(preset != nullptr))
-			{
-				presetsToAdd.Add(preset->GUID);
-				TArray<FGuid> descendents;
-				presetCollection.GetAllDescendentPresets(starter, descendents);
-				for (auto& descendent : descendents)
-				{
-					presetsToAdd.Add(descendent);
-				}
-			}
-		}
-
 		BIMPresetCollection.PresetsByGUID.Empty();
 
 		for (auto& guid : presetsToAdd)
 		{
-			FBIMPresetInstance* preset = presetCollection.PresetFromGUID(guid);
+			FBIMPresetInstance* preset = BIMUntruncatedCollection.PresetFromGUID(guid);
 			if (ensure(preset != nullptr))
 			{
 				BIMPresetCollection.AddPreset(*preset);
+			}
+		}
+	}
+	else
+	{
+		for (auto& kvp : BIMPresetCollection.PresetsByGUID)
+		{
+			if (kvp.Value.ObjectType != EObjectType::OTNone)
+			{
+				starters.Add(kvp.Value.GUID);
 			}
 		}
 	}
@@ -353,7 +345,26 @@ void FModumateDatabase::ReadPresetData()
 	ensure(BIMPresetCollection.ProcessStarterAssemblies(*this, starters) == EBIMResult::Success);
 }
 
+bool FModumateDatabase::AddAssetsFromPreset(const FBIMPresetInstance& Preset)
+{
+	switch (Preset.AssetType)
+	{
+	case EBIMAssetType::IESProfile:
+		return AddLightFromPreset(Preset);
+	case EBIMAssetType::Mesh:
+		return AddMeshFromPreset(Preset);
+	case EBIMAssetType::Profile:
+		return AddProfileFromPreset(Preset);
+	case EBIMAssetType::RawMaterial:
+		return AddRawMaterialFromPreset(Preset);
+	case EBIMAssetType::Material:
+		return AddMaterialFromPreset(Preset);
+	case EBIMAssetType::Pattern:
+		return AddPatternFromPreset(Preset);
+	};
 
+	return false;
+}
 
 bool FModumateDatabase::AddMeshFromPreset(const FBIMPresetInstance& Preset)
 {

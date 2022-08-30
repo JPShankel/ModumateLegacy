@@ -923,6 +923,36 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 
 	if (DocRecordVersion < DocVersion)
 	{
+		// Pre-marketplace projects need to get used presets
+		if (DocRecordVersion < 23)
+		{
+			TSet<FGuid> neededPresets;
+			for (auto& ob : DocRecord.ObjectData)
+			{
+				if (ob.AssemblyGUID.IsValid())
+				{
+					TArray<FGuid> dependents;
+					neededPresets.Add(ob.AssemblyGUID);
+					InDB.BIMUntruncatedCollection.GetAllDescendentPresets(ob.AssemblyGUID, dependents);
+					for (auto& dep : dependents)
+					{
+						if (dep.IsValid())
+						{
+							neededPresets.Add(dep);
+						}
+					}
+				}
+			}
+
+			for (auto needed : neededPresets)
+			{
+				const FBIMPresetInstance* preset = InDB.BIMUntruncatedCollection.PresetFromGUID(needed);
+				if (ensureAlways(preset != nullptr))
+				{
+					AddPreset(*preset);
+				}
+			}
+		}
 		FBIMPresetCollectionProxy proxyCollection(*this);
 
 		for (auto& kvp : docPresets.PresetsByGUID)

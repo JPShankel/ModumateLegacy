@@ -78,18 +78,16 @@ private:
 	void AddSimpleMesh(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 	void AddStaticIconTexture(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath);
 
-	FBIMPresetCollection BIMPresetCollection;
-
-	FString ManifestDirectoryPath;
-
-	FGuid DefaultMaterialGUID;
-
 	bool AddMeshFromPreset(const FBIMPresetInstance& Preset);
 	bool AddRawMaterialFromPreset(const FBIMPresetInstance& Preset);
 	bool AddMaterialFromPreset(const FBIMPresetInstance& Preset);
 	bool AddProfileFromPreset(const FBIMPresetInstance& Preset);
 	bool AddPatternFromPreset(const FBIMPresetInstance& Preset);
 	bool AddLightFromPreset(const FBIMPresetInstance& Preset);
+
+	FString ManifestDirectoryPath;
+
+	FGuid DefaultMaterialGUID;
 
 public:
 
@@ -101,8 +99,10 @@ public:
 
 	// Read database
 	void ReadPresetData();
+	bool AddAssetsFromPreset(const FBIMPresetInstance& Preset);
 
 	const FBIMPresetCollection& GetPresetCollection() const { return BIMPresetCollection; }
+	FBIMPresetCollection BIMPresetCollection, BIMUntruncatedCollection;
 
 	// Data Access
 	const FArchitecturalMesh* GetArchitecturalMeshByGUID(const FGuid& Key) const;

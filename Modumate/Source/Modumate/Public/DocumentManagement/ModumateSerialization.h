@@ -367,7 +367,8 @@ using FModumateDocumentHeader = FModumateDocumentHeaderV2;
 // Version 20: Mark and Comment properties in all presets
 // Version 21: Edge and plane hosted objects have spans for parents
 // Version 22: Portals use MetaPlaneSpan
-static constexpr int32 DocVersion = 22;
+// Version 23: Truncated Preset Marketplace
+static constexpr int32 DocVersion = 23;
 
 struct MODUMATE_API FModumateSerializationStatics
 {
