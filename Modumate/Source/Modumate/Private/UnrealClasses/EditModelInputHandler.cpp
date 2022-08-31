@@ -473,6 +473,11 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 		UModumateObjectStatics::SeparateSelectedMetaSpan(GetWorld());
 		return true;
 	}
+	case EInputCommand::CreateSymbol:
+	{
+		Controller->CreateSymbol();
+		return true;
+	}
 
 	// Non-tool modal commands
 

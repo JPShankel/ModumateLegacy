@@ -7,7 +7,16 @@
 #include "Objects/ModumateObjectStatics.h"
 
 AMOIMetaGraph::AMOIMetaGraph()
-{ }
+{
+	FWebMOIProperty prop;
+
+	prop.Name = TEXT("SymbolGuid");
+	prop.Type = EWebMOIPropertyType::text;
+	prop.DisplayName = TEXT("Symbol Guid");
+	prop.isEditable = false;
+	prop.isVisible = false;
+	WebProperties.Add(prop.Name, prop);
+}
 
 void AMOIMetaGraph::PostCreateObject(bool bNewObject)
 {
@@ -145,4 +154,20 @@ bool AMOIMetaGraph::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnab
 FTransform AMOIMetaGraph::GetWorldTransform() const
 {
 	return FTransform(InstanceData.Rotation, InstanceData.Location);
+}
+
+bool AMOIMetaGraph::ToWebMOI(FWebMOI& OutMOI) const
+{
+	if (AModumateObjectInstance::ToWebMOI(OutMOI))
+	{
+		const FWebMOIProperty* formPropUpdateSymbolGuid = WebProperties.Find(TEXT("SymbolGuid"));
+		FWebMOIProperty webPropSymbolGuid = *formPropUpdateSymbolGuid;
+		webPropSymbolGuid.ValueArray.Empty();
+		webPropSymbolGuid.ValueArray.Add(InstanceData.SymbolID.ToString());
+		OutMOI.Properties.Add(TEXT("SymbolGuid"), webPropSymbolGuid);
+
+		return true;
+	}
+	return false;
+
 }

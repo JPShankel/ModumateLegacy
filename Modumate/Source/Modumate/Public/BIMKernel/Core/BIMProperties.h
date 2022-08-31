@@ -54,6 +54,7 @@ enum class EBIMValueScope : uint8
 	Slot,
 	SurfaceTreatment,
 	Detail,
+	Symbol,
 
 	// These scopes are to be deprecated as we replace the BIM property sheets
 	Node,

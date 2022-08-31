@@ -51,6 +51,7 @@
 #include "UI/DrawingDesigner/DrawingDesignerWebBrowserWidget.h"
 #include "UI/ViewCubeWidget.h"
 #include "Objects/CutPlane.h"
+#include "Objects/ModumateSymbolDeltaStatics.h"
 #include "UI/RightMenu/CutPlaneMenuWidget.h"
 #include "Quantities/QuantitiesManager.h"
 #include "Net/UnrealNetwork.h"
@@ -4149,6 +4150,20 @@ void AEditModelPlayerController::ConnectTextChatClient(AModumateTextChat* UsersT
 		}
 		
 	}
+}
+
+bool AEditModelPlayerController::CreateSymbol()
+{
+	if (EMPlayerState && EMPlayerState->SelectedGroupObjects.Num() == 1)
+	{
+		if (FModumateSymbolDeltaStatics::CreateNewSymbol(Document, *EMPlayerState->SelectedGroupObjects.begin()))
+		{
+			EMPlayerState->PostSelectionChanged();
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void AEditModelPlayerController::SetCurrentCullingCutPlane(int32 ObjID /*= MOD_ID_NONE*/, bool bRefreshMenu /*= true*/)

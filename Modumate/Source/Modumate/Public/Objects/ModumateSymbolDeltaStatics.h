@@ -21,4 +21,5 @@ public:
 	static bool CreatePresetDataForNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* SymbolGroup, FBIMSymbolPresetData& OutPreset);
 	static bool CreateDeltasForNewSymbolInstance(UModumateDocument* Doc, int32 GroupID, int32& NextID, FBIMSymbolPresetData& Preset, const FTransform& Transform,
 		TArray<FDeltaPtr>& OutDeltas);
+	static bool CreateNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* Group);
 };

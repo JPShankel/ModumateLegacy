@@ -606,6 +606,9 @@ public:
 	DECLARE_EVENT(AEditModelPlayerController, FTextChatClientEvent)
 	FTextChatClientEvent& OnTextChatClientConnected() { return TextChatConnectedEvent; }
 
+	UFUNCTION()
+	bool CreateSymbol();
+
 	UPROPERTY(BlueprintReadOnly)
 	AModumateTextChat* TextChatClient;
 

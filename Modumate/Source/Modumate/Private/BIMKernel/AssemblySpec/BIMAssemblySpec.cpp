@@ -692,6 +692,7 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const
 	case EObjectType::OTDesignOption:
 	case EObjectType::OTEdgeDetail:
 	case EObjectType::OTPattern2D:
+	case EObjectType::OTMetaGraph:
 		return EBIMResult::Success;
 
 	default:

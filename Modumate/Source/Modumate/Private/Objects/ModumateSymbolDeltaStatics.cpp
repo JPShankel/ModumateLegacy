@@ -255,12 +255,13 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbol(UModumateDocument* Do
 	if (ensure(!newGroupData.SymbolID.IsValid()) && group->ID != Doc->GetRootVolumeGraphID())
 	{
 		static const FName symbolNodeType(TEXT("0Symbol"));
-		static const FString symbolNcp(TEXT("Part_0FlexDims3Fixed_Symbol"));
+		static const FString symbolNcp(TEXT("Symbol"));
 
 		FBIMPresetCollection& presets = Doc->GetPresetCollection();
 		FBIMPresetInstance newSymbolPreset;
-		newSymbolPreset.DisplayName = FText::FromString(TEXT("ExampleSymbol"));
+		newSymbolPreset.DisplayName = FText::FromString(TEXT("New Symbol"));
 		newSymbolPreset.NodeType = symbolNodeType;
+		newSymbolPreset.NodeScope = EBIMValueScope::Symbol;
 		newSymbolPreset.MyTagPath.FromString(symbolNcp);
 
 		FBIMSymbolPresetData symbolData;
@@ -490,4 +491,19 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(UModumateDocu
 	}
 
 	return true;
+}
+
+bool FModumateSymbolDeltaStatics::CreateNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* Group)
+{
+	if (Group->GetObjectType() == EObjectType::OTMetaGraph)
+	{
+		TArray<FDeltaPtr> symbolDeltas;
+		const AMOIMetaGraph* group = Cast<const AMOIMetaGraph>(Group);
+		if (!group->InstanceData.SymbolID.IsValid() && ensure(CreateDeltasForNewSymbol(Doc, group, symbolDeltas)) )
+		{
+			return Doc->ApplyDeltas(symbolDeltas, Doc->GetWorld());
+		}
+	}
+
+	return false;
 }

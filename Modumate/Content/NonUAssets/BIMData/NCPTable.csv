@@ -439,7 +439,7 @@ Assembly_3FlexDims0Fixed_Prismic_Cabinet_Floor,Floor Cabinets,,OTCabinet,,Cabine
 Assembly_3FlexDims0Fixed_Prismic_Cabinet_Wall,Wall Cabinets,,OTCabinet,,Cabinet,Wall Cabinet,,AssemblyCabinet,,,,,,Wall,,,,,,,,none,,
 Assembly_3FlexDims0Fixed_VolumetricRig,Slot-Based,Slot-Based assemblies have a fixed number of pre-designed slots (e.g. rig track sets).,,,,,X,AssemblyCabinet,,,,VolumetricRig,,,,,,,,,,,,
 Assembly_3FlexDims0Fixed_VolumetricRig_TrackSet,Track Sets,Track Sets are multiple tracks (e.g. for overhead doors) assembled into a set.,,,,Overhead Track Set,,AssemblyRigged,,,,,TrackSet,,,,,,,,,,,
-Symbol,Symbols,,,,,,,,,Symbol,,,,,,,,,,,,,,
+Symbol,Symbols,,OTMetaGraph,,,,,,,Symbol,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,

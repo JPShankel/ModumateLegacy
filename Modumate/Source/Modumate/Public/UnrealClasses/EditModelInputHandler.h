@@ -116,6 +116,8 @@ enum class EInputCommand : uint8
 	SpanEditStart,
 	SpanEditConfirm,
 	SpanEditCancel,
+	CreateSymbol,
+	DetachSymbol,
 	
 	// Span commands
 	SpanJoin,
