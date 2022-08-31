@@ -133,15 +133,6 @@ struct MODUMATE_API FBIMWebPreset
 	TArray<FGuid> childPresets;
 
 	UPROPERTY()
-	TArray<FGuid> parts;
-
-	UPROPERTY()
-	TArray<FGuid> slots;
-
-	UPROPERTY()
-	FGuid slotConfig;
-
-	UPROPERTY()
 	FString name;
 	
 	UPROPERTY()

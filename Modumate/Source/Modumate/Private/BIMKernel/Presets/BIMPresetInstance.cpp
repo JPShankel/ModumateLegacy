@@ -1103,13 +1103,38 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 	}
 
 	PartSlots.Empty();
-	for (int32 partIndex = 0; partIndex < InPreset.parts.Num(); ++partIndex)
+	
+	// Get slot and part preset GUIDs, part preset guids,and slot config to Properties for Web
+	FString SlotConfigPropertyName = TEXT("Slot.SlotConfig");
+	FString PartPresetPropertyName = TEXT("Slot.PartPreset");
+	FString SlotNamePropertyName = TEXT("Slot.SlotName");
+	
+	if (InPreset.properties.Contains(SlotConfigPropertyName))
 	{
-		FBIMPresetPartSlot& partSlot = PartSlots.AddDefaulted_GetRef();
-		partSlot.SlotPresetGUID = InPreset.slots[partIndex];
-		partSlot.PartPresetGUID = InPreset.parts[partIndex];
+		FBIMWebPresetProperty slotConfigProperty = InPreset.properties[SlotConfigPropertyName];
+		FGuid slotConfigGuid;
+		FGuid::Parse(slotConfigProperty.value[0], slotConfigGuid);
+		SlotConfigPresetGUID = slotConfigGuid;
 	}
-	SlotConfigPresetGUID = InPreset.slotConfig;
+
+	if (InPreset.properties.Contains(PartPresetPropertyName) && InPreset.properties.Contains(SlotNamePropertyName))
+	{
+		FBIMWebPresetProperty slotNamesProperty = InPreset.properties[SlotNamePropertyName];
+		FBIMWebPresetProperty partPresetsProperty = InPreset.properties[PartPresetPropertyName];
+		
+		for (int i = 0; i < partPresetsProperty.value.Num(); i++)
+		{
+			FBIMPresetPartSlot& partSlot = PartSlots.AddDefaulted_GetRef();
+
+			FGuid slotPresetGuid;
+			FGuid partPresetGuid;
+			if (FGuid::Parse(partPresetsProperty.value[i], partPresetGuid) && FGuid::Parse(slotNamesProperty.value[i], slotPresetGuid))
+			{
+				partSlot.PartPresetGUID = partPresetGuid;
+				partSlot.SlotPresetGUID = slotPresetGuid;
+			}
+		}
+	}
 
 	for (auto& property : InPreset.properties)
 	{
@@ -1205,19 +1230,6 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 		}
 	}
 
-	for (auto& part : PartSlots)
-	{
-		OutPreset.parts.Add(part.PartPresetGUID);
-		OutPreset.slots.Add(part.SlotPresetGUID);
-	}
-
-	for (auto& child : ChildPresets)
-	{
-		OutPreset.childPresets.Add(child.PresetGUID);
-	}
-
-	OutPreset.slotConfig = SlotConfigPresetGUID;
-
 	Properties.ForEachProperty([&properties](const FBIMPropertyKey& Key, const FString& Value)
 		{
 			FBIMWebPresetProperty property;
@@ -1240,6 +1252,36 @@ EBIMResult FBIMPresetInstance::ToWebPreset(FBIMWebPreset& OutPreset, UWorld* Wor
 		}
 	);
 
+	if (PartSlots.Num() > 0)
+	{
+		// Add slot and part preset GUIDs, part preset guids,and slot config to Properties for Web
+		FBIMWebPresetProperty slotNameProperty;
+		slotNameProperty.key = TEXT("Slot.SlotName");
+		slotNameProperty.name = TEXT("SlotName");
+		slotNameProperty.type = EBIMWebPresetPropertyType::string;
+	
+		FBIMWebPresetProperty partPresetsProperty;
+		partPresetsProperty.key = TEXT("Slot.PartPreset");
+		partPresetsProperty.name = TEXT("PartPreset");
+		partPresetsProperty.type = EBIMWebPresetPropertyType::string;
+
+		FBIMWebPresetProperty slotConfigProperty;
+		slotConfigProperty.key = TEXT("Slot.SlotConfig");
+		slotConfigProperty.name = TEXT("SlotConfig");
+		slotConfigProperty.type = EBIMWebPresetPropertyType::string;
+		slotConfigProperty.value.Add(SlotConfigPresetGUID.ToString());
+	
+		for (auto& partSlot : PartSlots)
+		{
+			slotNameProperty.value.Add(partSlot.SlotPresetGUID.ToString());
+			partPresetsProperty.value.Add(partSlot.PartPresetGUID.ToString());
+		}
+	
+		properties.Add(slotNameProperty.key, slotNameProperty);
+		properties.Add(slotConfigProperty.key, slotConfigProperty);
+		properties.Add(partPresetsProperty.key, partPresetsProperty);
+	}
+	
 	OutPreset.properties = properties;
 
 	//get custom data
