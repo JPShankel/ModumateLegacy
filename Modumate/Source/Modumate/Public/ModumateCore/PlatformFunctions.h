@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 
 
-struct FModumatePlatform
+struct MODUMATE_API FModumatePlatform
 {
 	static constexpr uint32 INDEX_MODFILE = 1;
 	static constexpr uint32 INDEX_PDFFILE = 2;

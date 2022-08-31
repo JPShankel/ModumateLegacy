@@ -523,6 +523,7 @@ void UModumateGameInstance::RegisterAllCommands()
 
 			AEditModelPlayerController* playerController = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
 			AEditModelPlayerState* playerState = playerController ? playerController->EMPlayerState : nullptr;
+			AEditModelGameState* gameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
 
 			FWebEditModelPlayerState webState;
 
@@ -537,7 +538,7 @@ void UModumateGameInstance::RegisterAllCommands()
 				FString stateStr;
 				if (WriteJsonGeneric<FWebEditModelPlayerState>(stateStr, &webState))
 				{
-					doc->update_player_state(stateStr);
+					gameState->DocumentWebBridge->update_player_state(stateStr);
 				}
 			}
 
@@ -550,6 +551,8 @@ void UModumateGameInstance::RegisterAllCommands()
 
 		AEditModelPlayerController* playerController = Cast<AEditModelPlayerController>(GetWorld()->GetFirstPlayerController());
 		AEditModelPlayerState* playerState = playerController ? playerController->EMPlayerState : nullptr;
+		AEditModelGameState* gameState = Cast<AEditModelGameState>(GetWorld()->GetGameState());
+
 		if (playerState == nullptr)
 		{
 			return false;
@@ -599,7 +602,7 @@ void UModumateGameInstance::RegisterAllCommands()
 			FMOIStateData newStateData = parentMOI->GetStateData();
 			FString jsonMoi = getWebMOI(parentMOI, newStateData);
 			parentMOI->SetStateData(oldStateData);
-			doc->update_mois({ parentMOI->ID }, { jsonMoi });
+			gameState->DocumentWebBridge->update_mois({ parentMOI->ID }, { jsonMoi });
 		}
 		else if (ob && action == TEXT("setparent"))
 		{
@@ -611,14 +614,14 @@ void UModumateGameInstance::RegisterAllCommands()
 			auto* newParent = Cast<AMOIDesignOption>(doc->GetObjectById(newStateData.ParentID));
 
 			FString jsonMoi = getWebMOI(ob, newStateData);
-			doc->update_mois({ ob->ID }, { jsonMoi });
+			gameState->DocumentWebBridge->update_mois({ ob->ID }, { jsonMoi });
 
 			if (newParent)
 			{
 				newParent->InstanceData.subOptions.AddUnique(ob->ID);
 				newParent->UpdateStateDataFromObject();
 				jsonMoi = getWebMOI(newParent,newParent->GetStateData());
-				doc->update_mois({ newParent->ID }, { jsonMoi });
+				gameState->DocumentWebBridge->update_mois({ newParent->ID }, { jsonMoi });
 			}
 
 			if (oldParent)
@@ -626,7 +629,7 @@ void UModumateGameInstance::RegisterAllCommands()
 				oldParent->InstanceData.subOptions.Remove(ob->ID);
 				oldParent->UpdateStateDataFromObject();
 				jsonMoi = getWebMOI(oldParent,oldParent->GetStateData());
-				doc->update_mois({ oldParent->ID }, { jsonMoi });
+				gameState->DocumentWebBridge->update_mois({ oldParent->ID }, { jsonMoi });
 			}
 		}
 		return false;
