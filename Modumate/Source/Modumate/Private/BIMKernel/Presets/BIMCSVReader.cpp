@@ -287,7 +287,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 				if (bOnFirstRow && guid != nullptr)
 				{
 					FLightConfiguration lightConfig;
-					lightConfig.PresetGUID = *guid;
+					lightConfig.IESProfileGUID = *guid;
 					lightConfig.LightIntensity = FCString::Atof(*NormalizeCell(Row[presetMatrix.First + 1]));
 					lightConfig.LightColor = FColor::FromHex(NormalizeCell(Row[presetMatrix.First + 2]));
 					lightConfig.Location.X = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 3]).Centimeters;
@@ -301,6 +301,7 @@ EBIMResult FBIMCSVReader::ProcessPresetRow(const TArray<const TCHAR*>& Row, int3
 					lightConfig.Rotation.Yaw = FCString::Atof(Row[presetMatrix.First + 11]);
 					lightConfig.SourceRadius = UModumateDimensionStatics::StringToFormattedDimension(Row[presetMatrix.First + 15]).Centimeters;
 
+					Preset.SetScopedProperty(EBIMValueScope::IESProfile, BIMPropertyNames::AssetID, guid->ToString());
 					Preset.PresetForm.AddLightConfigElements();
 					Preset.SetCustomData(lightConfig);
 				}

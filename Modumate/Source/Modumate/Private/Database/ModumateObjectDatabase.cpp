@@ -276,7 +276,7 @@ void FModumateDatabase::ReadPresetData()
 		FLightConfiguration lightConfig;
 		if (preset.Value.TryGetCustomData(lightConfig))
 		{
-			const FBIMPresetInstance* bimPresetInstance = BIMPresetCollection.PresetsByGUID.Find(lightConfig.PresetGUID);
+			const FBIMPresetInstance* bimPresetInstance = BIMPresetCollection.PresetsByGUID.Find(lightConfig.IESProfileGUID);
 			if (bimPresetInstance != nullptr)
 			{
 				FString assetPath = bimPresetInstance->GetScopedProperty<FString>(EBIMValueScope::IESProfile, BIMPropertyNames::AssetPath);

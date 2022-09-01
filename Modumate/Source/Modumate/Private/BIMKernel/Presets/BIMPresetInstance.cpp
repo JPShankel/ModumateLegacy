@@ -13,6 +13,8 @@
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/ModumateGameInstance.h"
 #include "UnrealClasses/EditModelGameState.h"
+#include "Engine/StreamableManager.h"
+#include "Engine/AssetManager.h"
 
 #define LOCTEXT_NAMESPACE "BIMPresetInstance"
 
@@ -305,6 +307,17 @@ EBIMResult FBIMPresetInstance::HandleLightRadiusDelta(const FBIMPresetEditorDelt
 	return EBIMResult::Success;
 }
 
+EBIMResult FBIMPresetInstance::HandleLightProfileDelta(const FBIMPresetEditorDelta& Delta)
+{
+	FLightConfiguration lightConfig;
+	if (ensure(TryGetCustomData(lightConfig)))
+	{
+		FGuid::Parse(*Delta.NewStringRepresentation, lightConfig.IESProfileGUID);
+		SetCustomData(lightConfig);
+	}
+	return EBIMResult::Success;
+}
+
 EBIMResult FBIMPresetInstance::HandleMaterialBindingDelta(const FBIMPresetEditorDelta& Delta)
 {
 	FBIMPresetMaterialBindingSet bindingSet;
@@ -437,6 +450,11 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,co
 			return HandleLightRadiusDelta(Delta);
 		}
 
+		case EBIMPresetEditorField::LightProfile:
+		{
+			return HandleLightProfileDelta(Delta);
+		}
+
 		case EBIMPresetEditorField::LightIsSpot:
 		{
 			return HandleLightIsSpotDelta(Delta);
@@ -450,6 +468,32 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,co
 			if (FGuid::Parse(Delta.NewStringRepresentation, guid))
 			{
 				SetMaterialChannelsForMesh(InDB, guid);
+				FLightConfiguration lightConfig;
+				if (TryGetCustomData(lightConfig))
+				{
+					lightConfig.IESProfileGUID = guid;
+					if (!InDocument)
+					{
+						break;
+					}
+					const FBIMPresetInstance* profilePreset = InDocument->GetPresetCollection().PresetsByGUID.Find(lightConfig.IESProfileGUID);
+					FString assetPath = profilePreset->GetScopedProperty<FString>(EBIMValueScope::IESProfile, BIMPropertyNames::AssetPath);
+					if (assetPath.IsEmpty())
+					{
+						break;
+					}
+					FSoftObjectPath referencePath = FString(TEXT("TextureLightProfile'")).Append(assetPath).Append(TEXT("'"));
+					TSharedPtr<FStreamableHandle> SyncStreamableHandle = UAssetManager::GetStreamableManager().RequestSyncLoad(referencePath);
+					if (SyncStreamableHandle)
+					{
+						UTextureLightProfile* IESProfile = Cast<UTextureLightProfile>(SyncStreamableHandle->GetLoadedAsset());
+						if (IESProfile)
+						{
+							lightConfig.LightProfile = IESProfile;
+						}
+					}
+					SetCustomData(lightConfig);
+				}
 			}
 			return EBIMResult::Success;
 		}
@@ -659,6 +703,16 @@ EBIMResult FBIMPresetInstance::MakeDeltaForFormElement(const FBIMPresetFormEleme
 			}
 		}
 		break;
+		case EBIMPresetEditorField::LightProfile:
+		{
+			FLightConfiguration lightConfig;
+			if (TryGetCustomData(lightConfig))
+			{
+				OutDelta.OldStringRepresentation = lightConfig.IESProfileGUID.ToString();
+				return EBIMResult::Success;
+			}
+		}
+		break;
 		case EBIMPresetEditorField::LightIsSpot:
 		{
 			FLightConfiguration lightConfig;
@@ -731,7 +785,7 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(const UModumateDocument* InDoc
 			FLightConfiguration lightConfig;
 			if (ensure(TryGetCustomData(lightConfig)))
 			{
-				element.StringRepresentation = FString::Printf(TEXT("%f"), lightConfig.LightIntensity);
+				element.StringRepresentation = FString::Printf(TEXT("%.2f"), lightConfig.LightIntensity);
 			}
 		}
 			break;
@@ -740,10 +794,19 @@ EBIMResult FBIMPresetInstance::UpdateFormElements(const UModumateDocument* InDoc
 			FLightConfiguration lightConfig;
 			if (ensure(TryGetCustomData(lightConfig)))
 			{
-				element.StringRepresentation = FString::Printf(TEXT("%f"), lightConfig.SourceRadius);
+				element.StringRepresentation = FString::Printf(TEXT("%.2f"), lightConfig.SourceRadius);
 			}
 		}
-			break;
+		break;
+		case EBIMPresetEditorField::LightProfile:
+		{
+			FLightConfiguration lightConfig;
+			if (ensure(TryGetCustomData(lightConfig)))
+			{
+				element.StringRepresentation = lightConfig.IESProfileGUID.ToString();
+			}
+		}
+		break;
 		case EBIMPresetEditorField::LightIsSpot:
 		{
 			FLightConfiguration lightConfig;

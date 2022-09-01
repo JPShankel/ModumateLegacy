@@ -22,6 +22,8 @@
 #include "UnrealClasses/ThumbnailCacheManager.h"
 #include "Objects/LayeredObjectInterface.h"
 #include "ImageUtils.h"
+#include "Engine/StreamableManager.h"
+#include "Engine/AssetManager.h"
 
 
 
@@ -178,6 +180,11 @@ bool ADynamicIconGenerator::SetIconMeshForBIMDesigner(const FBIMPresetCollection
 		return true;
 	case EBIMValueScope::Pattern:
 		return SetIconFromTextureAsset(PresetID, OutMaterial);
+	case EBIMValueScope::IESProfile:
+	{
+		return SetIconForIESProfile(preset, OutMaterial);
+	}
+
 	}
 
 	// Attempt to use cached icon first, make new if not available
@@ -477,6 +484,7 @@ bool ADynamicIconGenerator::GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FS
 			bCaptureSuccess = SetIconMeshForLayerPreset(presetCollection, AsmKey, IconRenderTargetForWeb);
 			break;
 		case EBIMValueScope::Pattern:
+		{
 			const FStaticIconTexture* staticIcon = GameInstance->ObjectDatabase->GetStaticIconTextureByGUID(AsmKey);
 			if (staticIcon != nullptr && staticIcon->IsValid())
 			{
@@ -484,6 +492,18 @@ bool ADynamicIconGenerator::GetIconMeshForAssemblyForWeb(const FGuid& AsmKey, FS
 				bCaptureSuccess = true;
 			}
 			break;
+		}
+		case EBIMValueScope::IESProfile:
+		{
+			const FStaticIconTexture* staticIconIES = GameInstance->ObjectDatabase->GetStaticIconTextureByGUID(AsmKey);
+			if (staticIconIES != nullptr && staticIconIES->IsValid())
+			{
+				DrawTextureSampleToRenderTarget(staticIconIES->Texture.Get(), IconRenderTargetForWeb);
+				bCaptureSuccess = true;
+			}
+			break;
+		}
+			
 		}
 	}	
 	
@@ -862,6 +882,31 @@ bool ADynamicIconGenerator::SetIconFromTextureAsset(const FGuid& PresetID, UMate
 		return true;
 	}
 	return false;
+}
+
+bool ADynamicIconGenerator::SetIconForIESProfile(const FBIMPresetInstance* Preset, UMaterialInterface*& OutMaterial)
+{
+	FString iconPath = Preset->GetScopedProperty<FString>(EBIMValueScope::IESProfile, BIMPropertyNames::CraftingIconAssetFilePath);
+	FSoftObjectPath iconReferencePath = FString(TEXT("Texture2D'")).Append(iconPath).Append(TEXT("'"));
+	TSharedPtr<FStreamableHandle> SyncStreamableHandleIcon = UAssetManager::GetStreamableManager().RequestSyncLoad(iconReferencePath);
+	UTexture2D* IESProfileIcon;
+	if (SyncStreamableHandleIcon)
+	{
+		auto* loadedAsset = SyncStreamableHandleIcon->GetLoadedAsset();
+		IESProfileIcon = Cast<UTexture2D>(loadedAsset);
+		if (IESProfileIcon == nullptr)
+		{
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
+	
+	UMaterialInstanceDynamic* dynMat = UMaterialInstanceDynamic::Create(IconMaterial, this);
+	dynMat->SetTextureParameterValue(MaterialIconTextureParamName, IESProfileIcon);
+	OutMaterial = dynMat;
+	return true;
 }
 
 bool ADynamicIconGenerator::SetIconMeshForRawMaterial(const FGuid& MaterialKey, UTextureRenderTarget2D* InRenderTarget)

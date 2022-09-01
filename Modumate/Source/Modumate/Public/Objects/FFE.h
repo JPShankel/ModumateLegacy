@@ -43,6 +43,7 @@ public:
 	virtual bool GetInvertedState(FMOIStateData& OutState) const override;
 	virtual bool GetTransformedLocationState(const FTransform Transform, FMOIStateData& OutState) const override;
 	virtual bool ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const override;
+	virtual bool CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas);
 
 	UPROPERTY()
 	FMOIFFEData InstanceData;

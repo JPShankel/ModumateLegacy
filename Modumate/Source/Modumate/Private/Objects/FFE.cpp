@@ -180,3 +180,9 @@ bool AMOIFFE::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
 
 	return true;
 }
+
+bool AMOIFFE::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
+{
+	SetupDynamicGeometry();
+	return true;
+}

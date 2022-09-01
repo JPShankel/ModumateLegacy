@@ -329,6 +329,7 @@ struct MODUMATE_API FBIMPresetInstance
 	EBIMResult HandleLightColorDelta(const FBIMPresetEditorDelta& Delta);
 	EBIMResult HandleLightIntensityDelta(const FBIMPresetEditorDelta& Delta);
 	EBIMResult HandleLightRadiusDelta(const FBIMPresetEditorDelta& Delta);
+	EBIMResult HandleLightProfileDelta(const FBIMPresetEditorDelta& Delta);
 	EBIMResult HandleLightIsSpotDelta(const FBIMPresetEditorDelta& Delta);
 
 	// Sort child nodes by PinSetIndex and PinSetPosition so serialization will be consistent

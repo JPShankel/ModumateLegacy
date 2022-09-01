@@ -189,11 +189,7 @@ EBIMResult FBIMPresetForm::AddLightConfigElements()
 	radius.FieldType = EBIMPresetEditorField::LightRadius;
 	radius.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
 
-	FBIMPresetFormElement& spotlight = Elements.AddDefaulted_GetRef();
-	spotlight.DisplayName = LOCTEXT("Spotlight", "Spotlight");
-	spotlight.FieldName = TEXT("Spotlight");
-	spotlight.FieldType = EBIMPresetEditorField::LightIsSpot;
-	spotlight.FormElementWidgetType = EBIMFormElementWidget::TextEntry;
+	AddPropertyElement(LOCTEXT("IESProfile","IES Profile"), TEXT("IESProfile.AssetID"), EBIMPresetEditorField::AssetProperty);
 
 	return EBIMResult::Success;
 }

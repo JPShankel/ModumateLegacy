@@ -30,7 +30,8 @@ enum class EBIMPresetEditorField : uint8
 	LightIntensity,
 	LightColor,
 	LightRadius,
-	LightIsSpot
+	LightIsSpot,
+	LightProfile
 };
 
 /* 

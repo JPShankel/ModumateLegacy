@@ -152,7 +152,7 @@ struct FLightConfiguration
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FGuid PresetGUID;
+	FGuid IESProfileGUID;
 
 	UPROPERTY()
 	float LightIntensity = 0.f;
@@ -162,6 +162,9 @@ struct FLightConfiguration
 
 	UPROPERTY()
 	TWeakObjectPtr<UTextureLightProfile> LightProfile = nullptr;
+
+	UPROPERTY()
+	TWeakObjectPtr<UTexture2D> LightProfileIcon = nullptr;
 
 	UPROPERTY()
 	bool bAsSpotLight = false;
@@ -181,5 +184,5 @@ struct FLightConfiguration
 	UPROPERTY()
 	float SourceRadius = 0.0f;
 
-	FGuid UniqueKey() const { return PresetGUID; }
+	FGuid UniqueKey() const { return IESProfileGUID; }
 };
