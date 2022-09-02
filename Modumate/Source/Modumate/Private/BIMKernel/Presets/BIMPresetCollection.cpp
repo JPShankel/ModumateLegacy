@@ -921,49 +921,49 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		}
 	}
 
-	if (DocRecordVersion < DocVersion)
+	TSet<FGuid> neededPresets;
+	for (auto& ob : DocRecord.ObjectData)
 	{
-		// Pre-marketplace projects need to get used presets
-		if (DocRecordVersion < 23)
+		if (ob.AssemblyGUID.IsValid())
 		{
-			TSet<FGuid> neededPresets;
-			for (auto& ob : DocRecord.ObjectData)
+			TArray<FGuid> dependents;
+			neededPresets.Add(ob.AssemblyGUID);
+			InDB.BIMUntruncatedCollection.GetAllDescendentPresets(ob.AssemblyGUID, dependents);
+			for (auto& dep : dependents)
 			{
-				if (ob.AssemblyGUID.IsValid())
+				if (dep.IsValid())
 				{
-					TArray<FGuid> dependents;
-					neededPresets.Add(ob.AssemblyGUID);
-					InDB.BIMUntruncatedCollection.GetAllDescendentPresets(ob.AssemblyGUID, dependents);
-					for (auto& dep : dependents)
-					{
-						if (dep.IsValid())
-						{
-							neededPresets.Add(dep);
-						}
-					}
-				}
-			}
-
-			for (auto needed : neededPresets)
-			{
-				const FBIMPresetInstance* preset = InDB.BIMUntruncatedCollection.PresetFromGUID(needed);
-				if (ensureAlways(preset != nullptr))
-				{
-					AddPreset(*preset);
+					neededPresets.Add(dep);
 				}
 			}
 		}
-		FBIMPresetCollectionProxy proxyCollection(*this);
+	}
 
-		for (auto& kvp : docPresets.PresetsByGUID)
+	TArray<FGuid> starters;
+	for (auto needed : neededPresets)
+	{
+		const FBIMPresetInstance* preset = InDB.BIMUntruncatedCollection.PresetFromGUID(needed);
+		if (ensureAlways(preset != nullptr))
 		{
-			proxyCollection.OverridePreset(kvp.Value);
+			docPresets.AddPreset(*preset);
+			if (preset->ObjectType != EObjectType::OTNone)
+			{
+				starters.Add(preset->GUID);
+			}
 		}
+	}
+		docPresets.ProcessStarterAssemblies(InDB, starters);
 
-		for (auto& kvp : docPresets.PresetsByGUID)
-		{
-			kvp.Value.UpgradeData(InDB, proxyCollection, DocRecordVersion);
-		}
+	FBIMPresetCollectionProxy proxyCollection(*this);
+
+	for (auto& kvp : docPresets.PresetsByGUID)
+	{
+		proxyCollection.OverridePreset(kvp.Value);
+	}
+
+	for (auto& kvp : docPresets.PresetsByGUID)
+	{
+		kvp.Value.UpgradeData(InDB, proxyCollection, DocRecordVersion);
 	}
 
 	PresetsByGUID.Append(docPresets.PresetsByGUID);
