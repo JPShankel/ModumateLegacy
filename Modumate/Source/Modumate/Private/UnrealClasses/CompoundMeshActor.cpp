@@ -673,6 +673,10 @@ void ACompoundMeshActor::UpdateLightFromLightConfig(UStaticMeshComponent* parent
 	OriginalLightIntensity = lightConfig.LightIntensity;
 	FLinearColor lightColor = lightConfig.LightColor;
 	FString lightName = TEXT("Light");
+	if (!GetWorld()->GetGameInstance<UModumateGameInstance>()->UserSettings.GraphicsSettings.bPointLightsEnabled)
+	{
+		makePointLight = false;
+	}
 	if (makePointLight)
 	{
 		lightName.Append(TEXT("Point"));
