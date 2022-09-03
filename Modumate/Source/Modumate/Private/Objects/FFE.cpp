@@ -184,5 +184,9 @@ bool AMOIFFE::ProcessQuantities(FQuantitiesCollection& QuantitiesVisitor) const
 bool AMOIFFE::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	SetupDynamicGeometry();
+	if (DirtyFlag == EObjectDirtyFlags::Visuals)
+	{
+		return TryUpdateVisuals();
+	}
 	return true;
 }
