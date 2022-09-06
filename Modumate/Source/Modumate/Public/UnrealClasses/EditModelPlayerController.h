@@ -608,6 +608,8 @@ public:
 
 	UFUNCTION()
 	bool CreateSymbol();
+	UFUNCTION()
+	bool DetachSymbol();
 
 	UPROPERTY(BlueprintReadOnly)
 	AModumateTextChat* TextChatClient;

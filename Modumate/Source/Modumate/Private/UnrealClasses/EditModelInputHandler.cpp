@@ -478,6 +478,11 @@ bool UEditModelInputHandler::TryCommandInternal(EInputCommand Command)
 		Controller->CreateSymbol();
 		return true;
 	}
+	case EInputCommand::DetachSymbol:
+	{
+		Controller->DetachSymbol();
+		return true;
+	}
 
 	// Non-tool modal commands
 

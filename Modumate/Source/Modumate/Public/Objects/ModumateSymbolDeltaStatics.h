@@ -22,4 +22,5 @@ public:
 	static bool CreateDeltasForNewSymbolInstance(UModumateDocument* Doc, int32 GroupID, int32& NextID, FBIMSymbolPresetData& Preset, const FTransform& Transform,
 		TArray<FDeltaPtr>& OutDeltas);
 	static bool CreateNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* Group);
+	static bool DetachSymbol(UModumateDocument* Doc, const AModumateObjectInstance* Group);
 };

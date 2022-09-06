@@ -4166,6 +4166,20 @@ bool AEditModelPlayerController::CreateSymbol()
 	return false;
 }
 
+bool AEditModelPlayerController::DetachSymbol()
+{
+	if (EMPlayerState && EMPlayerState->SelectedGroupObjects.Num() == 1)
+	{
+		if (FModumateSymbolDeltaStatics::DetachSymbol(Document, *EMPlayerState->SelectedGroupObjects.begin()))
+		{
+			EMPlayerState->PostSelectionChanged();
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void AEditModelPlayerController::SetCurrentCullingCutPlane(int32 ObjID /*= MOD_ID_NONE*/, bool bRefreshMenu /*= true*/)
 {
 #if !UE_SERVER
