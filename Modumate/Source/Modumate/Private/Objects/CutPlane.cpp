@@ -114,8 +114,14 @@ void AMOICutPlane::PostCreateObject(bool bNewObject)
 			MasksActor->AttachToActor(DynamicMeshActor.Get(), FAttachmentTransformRules::KeepWorldTransform);
 		}
 
-		controller->SetCurrentCullingCutPlane(ID, false);
-		controller->EMPlayerState->SendWebPlayerState();
+		//This allows any cutplane created by the Cutplane tool to start as the current cutplane.
+		//This check also prevents cutplanes that are loaded on startup (where bNewObject is *still* true)
+		// from starting as culled. -JN
+		if(controller->CurrentTool && controller->CurrentTool->GetToolMode() == EToolMode::VE_CUTPLANE)
+		{
+			controller->SetCurrentCullingCutPlane(ID, false);
+			controller->EMPlayerState->SendWebPlayerState();
+		}
 	}
 #endif
 }
