@@ -11,10 +11,10 @@
 #include "Objects/MetaGraph.h"
 #include "Objects/MetaEdgeSpan.h"
 #include "Objects/MetaPlaneSpan.h"
+#include "Objects/ModumateObjectDeltaStatics.h"
 #include "BIMKernel/Presets/BIMSymbolPresetData.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
 #include "Algo/ForEach.h"
-
 
 
 void FModumateSymbolDeltaStatics::GetDerivedDeltasFromDeltas(UModumateDocument* Doc, EMOIDeltaType DeltaType, const TArray<FDeltaPtr>& InDeltas, TArray<FDeltaPtr>& DerivedDeltas)
@@ -34,14 +34,18 @@ void FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocum
 
 	int32 id = DeltaState.OldState.ID;
 	int32 groupId = UModumateObjectStatics::GetGroupIdForObject(Doc, id);
+	if (groupId == MOD_ID_NONE)
+	{	// Must be new MOI - assume created in current group.
+		groupId = Doc->GetActiveVolumeGraphID();
+	}
 
 	// Return quickly if not in a symbol.
-	if (groupId == MOD_ID_NONE || groupId == Doc->GetRootVolumeGraphID() || UModumateTypeStatics::IsSpanObject(Doc->GetObjectById(id)))
+	if (groupId == Doc->GetRootVolumeGraphID() || UModumateTypeStatics::IsSpanObject(Doc->GetObjectById(id)))
 	{
 		return;
 	}
 
-	const AMOIMetaGraph* groupMoi = Cast<AMOIMetaGraph>(Doc->GetObjectById(groupId));
+	AMOIMetaGraph* groupMoi = Cast<AMOIMetaGraph>(Doc->GetObjectById(groupId));
 	if (!groupMoi->InstanceData.SymbolID.IsValid())
 	{
 		return;
@@ -114,55 +118,44 @@ void FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocum
 
 	case EMOIDeltaType::Create:
 	{
+		Doc->DirtySymbolGroup(groupId);  // Just re-duplicate group to other symbol instances.
+		auto* moi = Doc->GetObjectById(groupId);
+		if (ensure(moi))
+		{   // Graph might've already been cleaned.
+			moi->MarkDirty(EObjectDirtyFlags::Structure);
+		}
 		break;
 	}
 
 	case EMOIDeltaType::Destroy:
 	{
-		FBIMSymbolPresetData symbolData;
-		if (ensure(symbolPreset->TryGetCustomData(symbolData)))
+		EObjectType objectType = DeltaState.OldState.ObjectType;
+		if (objectType == EObjectType::OTMetaGraph)
 		{
-			int32 primaryId = MOD_ID_NONE;
-			for (const auto& idMapping : symbolData.EquivalentIDs)
+			FBIMSymbolPresetData symbolData;
+			if (ensure(symbolPreset->TryGetCustomData(symbolData)))
 			{
-				if (idMapping.Value.IDSet.Contains(id))
+				TSet<AModumateObjectInstance*> groupMembers;
+				UModumateObjectStatics::GetObjectsInGroups(Doc, { groupId }, groupMembers, true);
+				TSet<int32> groupMemberIDs;
+				Algo::ForEach(groupMembers, [&groupMemberIDs](const AModumateObjectInstance* o) { groupMemberIDs.Add(o->ID); });
+
+				if (RemoveGroupMembersFromSymbol(groupMemberIDs, symbolData))
 				{
-					primaryId = idMapping.Key;
-					auto newDelta = MakeShared<FMOIDelta>();
-					for (int32 otherId : idMapping.Value.IDSet)
-					{
-						if (otherId != id)
-						{
-							const auto* otherMoi = Doc->GetObjectById(otherId);
-							if (otherMoi)
-							{
-								newDelta->AddCreateDestroyState(otherMoi->GetStateData(), EMOIDeltaType::Destroy);
-							}
-						}
-					}
-
-					if (newDelta->IsValid())
-					{
-						OutDeltas.Add(newDelta);
-					}
-
-					break;
+					symbolData.EquivalentIDs.Compact();
+					FBIMPresetInstance newSymbolPreset(*symbolPreset);
+					newSymbolPreset.SetCustomData(symbolData);
+					FDeltaPtr presetDelta(presets.MakeUpdateDelta(newSymbolPreset));
+					OutDeltas.Add(presetDelta);
 				}
-
 			}
 
-			if (ensure(primaryId != MOD_ID_NONE))
-			{
-				symbolData.EquivalentIDs.Remove(primaryId);
-				symbolData.Members.Remove(primaryId);
-				symbolData.EquivalentIDs.Compact();
-				symbolData.Members.Compact();
-
-				// Update the Preset with the new State Data:
-				TSharedPtr<FBIMPresetDelta> presetUpdateDelta(presets.MakeUpdateDelta(symbolPreset->GUID));
-				presetUpdateDelta->NewState.SetCustomData(symbolData);
-				OutDeltas.Add(presetUpdateDelta);
-			}
+			Doc->ClearDirtySymbolGroup(groupId);
+		}
+		else if (objectType != EObjectType::OTMetaEdgeSpan && objectType != EObjectType::OTMetaPlaneSpan)
+		{
+			Doc->DirtySymbolGroup(groupId);  // Just re-duplicate group to other symbol instances.
+			groupMoi->MarkDirty(EObjectDirtyFlags::Structure);
 		}
 		break;
 	}
@@ -175,15 +168,40 @@ void FModumateSymbolDeltaStatics::CreateSymbolDerivedDeltasForMoi(UModumateDocum
 void FModumateSymbolDeltaStatics::GetDerivedDeltasForGraph3d(UModumateDocument* Doc, const FGraph3DDelta* GraphDelta, EMOIDeltaType DeltaType,
 	TArray<FDeltaPtr>& OutDeltas)
 {
-	// Return quickly if no movements or not in Symbol group.
-	int32 graphId = GraphDelta->GraphID;
-	if (GraphDelta->VertexMovements.Num() == 0 || graphId == MOD_ID_NONE || graphId == Doc->GetRootVolumeGraphID())
+	if (GraphDelta->DeltaType != EGraph3DDeltaType::Edit)
 	{
 		return;
 	}
 
+	// Return quickly if no movements or not in Symbol group.
+	int32 graphId = GraphDelta->GraphID;
+
 	const AMOIMetaGraph* groupObj = Cast<AMOIMetaGraph>(Doc->GetObjectById(graphId));
-	if (!ensure(groupObj) || !groupObj->InstanceData.SymbolID.IsValid())
+	if (!groupObj || !groupObj->InstanceData.SymbolID.IsValid())
+	{
+		return;
+	}
+
+	if (graphId == MOD_ID_NONE || graphId == Doc->GetRootVolumeGraphID())
+	{
+		return;
+	}
+
+	if (GraphDelta->VertexDeletions.Num() + GraphDelta->VertexAdditions.Num() + GraphDelta->EdgeAdditions.Num()
+		+ GraphDelta->EdgeDeletions.Num() + GraphDelta->FaceAdditions.Num() + GraphDelta->FaceDeletions.Num()
+		+ GraphDelta->EdgeReversals.Num() + GraphDelta->FaceReversals.Num() + GraphDelta->FaceVertexIDUpdates.Num()
+		+ GraphDelta->FaceContainmentUpdates.Num() != 0)
+	{
+		Doc->DirtySymbolGroup(graphId);  // Just re-duplicate group to other symbol instances.
+		auto* moi = Doc->GetObjectById(graphId);
+		if (ensure(moi))
+		{   // Graph might've already been cleaned.
+			moi->MarkDirty(EObjectDirtyFlags::Structure);
+		}
+		return;
+	}
+
+	if (GraphDelta->VertexMovements.Num() == 0)
 	{
 		return;
 	}
@@ -493,6 +511,69 @@ bool FModumateSymbolDeltaStatics::CreateDeltasForNewSymbolInstance(UModumateDocu
 	return true;
 }
 
+void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstances(UModumateDocument* Doc, int32& NextID, const TSet<int32>& GroupIDs,
+	TArray<FDeltaPtr>& OutDeltas)
+{
+	for (int32 group: GroupIDs)
+	{
+		PropagateChangedSymbolInstance(Doc, NextID, group, OutDeltas);
+	}
+}
+
+void FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(UModumateDocument* Doc, int32& NextID, int32 GroupID, TArray<FDeltaPtr>& OutDeltas)
+{
+	const FBIMPresetCollection& presets = Doc->GetPresetCollection();
+	const AMOIMetaGraph* groupMoi = Cast<AMOIMetaGraph>(Doc->GetObjectById(GroupID));
+	const FBIMPresetInstance* symbolPreset = groupMoi ? presets.PresetFromGUID(groupMoi->InstanceData.SymbolID) : nullptr;
+
+	if (!ensure(symbolPreset != nullptr))
+	{
+		return;
+	}
+
+	FBIMSymbolPresetData symbolData;
+	if (!ensure(symbolPreset->TryGetCustomData(symbolData) && symbolData.EquivalentIDs.Num() != 0))
+	{
+		return;
+	}
+
+	TSet<int32> allGroupIDs;
+	for (int32 itemId : symbolData.EquivalentIDs.begin()->Value.IDSet)
+	{
+		allGroupIDs.Add(UModumateObjectStatics::GetGroupIdForObject(Doc, itemId));
+	}
+
+	FBIMSymbolPresetData newSymbolData;
+	if (!ensure(CreatePresetDataForNewSymbol(Doc, groupMoi, newSymbolData)))
+	{
+		return;
+	}
+
+	FBIMPresetInstance newSymbolPreset(*symbolPreset);
+
+	FTransform masterTransform(groupMoi->GetWorldTransform().Inverse());
+
+	for (int32 otherGroup : allGroupIDs)
+	{
+		if (otherGroup == GroupID)
+		{
+			continue;
+		}
+
+		AModumateObjectInstance* otherGroupMoi = Doc->GetObjectById(otherGroup);
+		if (ensure(otherGroupMoi))
+		{
+			FModumateObjectDeltaStatics::GetDeltasForGraphDelete(Doc, otherGroup, OutDeltas, false);
+			FTransform transform(masterTransform * otherGroupMoi->GetWorldTransform());
+			ensure(CreateDeltasForNewSymbolInstance(Doc, otherGroup, NextID, newSymbolData, transform, OutDeltas));
+		}
+	}
+
+	newSymbolPreset.SetCustomData(newSymbolData);
+	FDeltaPtr presetDelta(presets.MakeUpdateDelta(newSymbolPreset));
+	OutDeltas.Add(presetDelta);
+}
+
 bool FModumateSymbolDeltaStatics::CreateNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* Group)
 {
 	if (Group->GetObjectType() == EObjectType::OTMetaGraph)
@@ -532,17 +613,7 @@ bool FModumateSymbolDeltaStatics::DetachSymbol(UModumateDocument* Doc, const AMo
 			UModumateObjectStatics::GetObjectsInGroups(Doc, { group->ID }, groupMembers, true);
 			TSet<int32> groupMemberIDs;
 			Algo::ForEach(groupMembers, [&groupMemberIDs](const AModumateObjectInstance* o) { groupMemberIDs.Add(o->ID); });
-			for (auto& idSet : symbolData.EquivalentIDs)
-			{
-				for (auto id = idSet.Value.IDSet.CreateIterator(); id; ++id)
-				{
-					if (groupMemberIDs.Contains(*id))
-					{
-						id.RemoveCurrent();
-						break;
-					}
-				}
-			}
+			RemoveGroupMembersFromSymbol(groupMemberIDs, symbolData);
 
 			// Take out Symbol GUID from Group:
 			FMOIMetaGraphData groupData(group->InstanceData);
@@ -563,4 +634,24 @@ bool FModumateSymbolDeltaStatics::DetachSymbol(UModumateDocument* Doc, const AMo
 	}
 
 	return false;
+}
+
+bool FModumateSymbolDeltaStatics::RemoveGroupMembersFromSymbol(const TSet<int32> GroupMembers, FBIMSymbolPresetData& SymbolData)
+{
+	bool bReturn = false;
+	for (auto& idSet : SymbolData.EquivalentIDs)
+	{
+		for (auto id = idSet.Value.IDSet.CreateIterator(); id; ++id)
+		{
+			if (GroupMembers.Contains(*id))
+			{
+				id.RemoveCurrent();
+				bReturn = true;
+				idSet.Value.IDSet.Compact();  // Unclear why this is necessary.
+				break;
+			}
+		}
+	}
+
+	return bReturn;
 }

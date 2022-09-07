@@ -1320,7 +1320,7 @@ void FModumateObjectDeltaStatics::GetDeltasForGroupTransforms(UModumateDocument*
 	OutDeltas.Add(moiDelta);
 }
 
-void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas)
+void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocument* Doc, int32 GraphID, TArray<FDeltaPtr>& OutDeltas, bool bDeleteGraphMoi /*= true*/)
 {
 	auto* graph = Doc->GetVolumeGraph(GraphID);
 	if (graph)
@@ -1361,7 +1361,10 @@ void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocumen
 				UModumateObjectStatics::GetAllDescendents(metaObject, mois);
 				for (auto* moi : mois)
 				{
-					moisDelta->AddCreateDestroyState(moi->GetStateData(), EMOIDeltaType::Destroy);
+					if (!UModumateTypeStatics::IsSpanObject(moi))
+					{   // Spans are deleted via regular side-effect deltas.
+						moisDelta->AddCreateDestroyState(moi->GetStateData(), EMOIDeltaType::Destroy);
+					}
 				}
 			}
 		}
@@ -1374,12 +1377,15 @@ void FModumateObjectDeltaStatics::GetDeltasForGraphDelete(const UModumateDocumen
 		{
 			OutDeltas.Add(graphDelta);
 
-			TSharedPtr<FGraph3DDelta> deleteGraph = MakeShared<FGraph3DDelta>(GraphID);
-			deleteGraph->DeltaType = EGraph3DDeltaType::Remove;
-			OutDeltas.Add(deleteGraph);
-			TSharedPtr<FMOIDelta> deleteMetaGraph = MakeShared<FMOIDelta>();
-			deleteMetaGraph->AddCreateDestroyState(Doc->GetObjectById(GraphID)->GetStateData(), EMOIDeltaType::Destroy);
-			OutDeltas.Add(deleteMetaGraph);
+			if (bDeleteGraphMoi)
+			{
+				TSharedPtr<FGraph3DDelta> deleteGraph = MakeShared<FGraph3DDelta>(GraphID);
+				deleteGraph->DeltaType = EGraph3DDeltaType::Remove;
+				OutDeltas.Add(deleteGraph);
+				TSharedPtr<FMOIDelta> deleteMetaGraph = MakeShared<FMOIDelta>();
+				deleteMetaGraph->AddCreateDestroyState(Doc->GetObjectById(GraphID)->GetStateData(), EMOIDeltaType::Destroy);
+				OutDeltas.Add(deleteMetaGraph);
+			}
 		}
 	}
 }

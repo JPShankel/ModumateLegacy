@@ -172,7 +172,7 @@ void UModumateDocument::UpdateSpanData(const FMOIDeltaState& SpanDelta)
 	if (SpanDelta.DeltaType == EMOIDeltaType::Mutate || SpanDelta.DeltaType == EMOIDeltaType::Destroy)
 	{
 		TArray<int32>* elementIDs = SpanToGraphElementsMap.Find(spanID);
-		if (ensure(elementIDs))
+		if (ensureAlways(elementIDs))
 		{
 			for (int32 id : *elementIDs)
 			{
@@ -1503,8 +1503,9 @@ void UModumateDocument::CalculateSideEffectDeltas(TArray<FDeltaPtr>& Deltas, UWo
 		if (bCreateDerived && sideEffectIterationGuard == maxSideEffectIteration)
 		{
 			FModumateSymbolDeltaStatics::GetDerivedDeltasFromDeltas(this, EMOIDeltaType::Mutate, Deltas, derivedDeltas);
+			FModumateSymbolDeltaStatics::GetDerivedDeltasFromDeltas(this, EMOIDeltaType::Create, Deltas, derivedDeltas);
 
-			if (derivedDeltas.Num() > 0)
+			if (derivedDeltas.Num() > 0 || GetDirtySymbolGroups().Num() > 0)
 			{
 				for (auto& delta : derivedDeltas)
 				{

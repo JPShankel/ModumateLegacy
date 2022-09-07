@@ -1192,6 +1192,11 @@ int32 UModumateObjectStatics::GetGraphIDForSpanObject(const AModumateObjectInsta
 int32 UModumateObjectStatics::GetGroupIdForObject(const UModumateDocument* Doc, int32 MoiId)
 {
 	const AModumateObjectInstance* object = Doc->GetObjectById(MoiId);
+	if (object && object->GetObjectType() == EObjectType::OTMetaGraph)
+	{
+		return object->ID;
+	}
+
 	while (object && UModumateTypeStatics::Graph3DObjectTypeFromObjectType(object->GetObjectType()) == EGraph3DObjectType::None
 		&& !UModumateTypeStatics::IsSpanObject(object))
 	{
@@ -1737,8 +1742,10 @@ bool UModumateTypeStatics::IsSpanObject(const AModumateObjectInstance* Object)
 	return Object && (Object->GetObjectType() == EObjectType::OTMetaEdgeSpan
 		|| Object->GetObjectType() == EObjectType::OTMetaPlaneSpan);
 }
+
 TArray<EObjectType> UModumateObjectStatics::CompatibleObjectTypes;
 bool UModumateObjectStatics::bCompatibleObjectsInitialized = false;
+
 bool UModumateObjectStatics::IsValidParentObjectType(EObjectType ParentObjectType)
 {
 	if (!bCompatibleObjectsInitialized)

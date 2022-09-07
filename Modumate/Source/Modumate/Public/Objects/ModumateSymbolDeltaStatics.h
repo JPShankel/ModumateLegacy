@@ -21,6 +21,11 @@ public:
 	static bool CreatePresetDataForNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* SymbolGroup, FBIMSymbolPresetData& OutPreset);
 	static bool CreateDeltasForNewSymbolInstance(UModumateDocument* Doc, int32 GroupID, int32& NextID, FBIMSymbolPresetData& Preset, const FTransform& Transform,
 		TArray<FDeltaPtr>& OutDeltas);
+	static void PropagateChangedSymbolInstances(UModumateDocument* Doc, int32& NextID, const TSet<int32>& GroupIDs, TArray<FDeltaPtr>& OutDeltas);
+	static void PropagateChangedSymbolInstance(UModumateDocument* Doc, int32& NextID, int32 GroupID, TArray<FDeltaPtr>& OutDeltas);
 	static bool CreateNewSymbol(UModumateDocument* Doc, const AModumateObjectInstance* Group);
 	static bool DetachSymbol(UModumateDocument* Doc, const AModumateObjectInstance* Group);
+
+private:
+	static bool RemoveGroupMembersFromSymbol(const TSet<int32> GroupMembers, FBIMSymbolPresetData& SymbolData);
 };

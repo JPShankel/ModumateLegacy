@@ -115,6 +115,8 @@ private:
 	TSet<int32> DeltaDirtiedObjects;
 	TSet<FGuid> DeltaAffectedPresets;
 
+	TSet<int32> DirtySymbolGroups;
+
 public:
 
 	UModumateDocument();
@@ -298,6 +300,12 @@ public:
 
 	FBox GetAffectedBounds(const FAffectedObjMap& AffectedObjects, const TSet<int32>& DirtiedObjects) const;
 	void DirtyAllCutPlanes();
+
+	void DirtySymbolGroup(int32 GroupID) { DirtySymbolGroups.Add(GroupID); }
+	bool IsSymbolGroupDirty(int32 GroupID) const { return DirtySymbolGroups.Contains(GroupID); }
+	const TSet<int32>& GetDirtySymbolGroups() const { return DirtySymbolGroups; }
+	void ClearDirtySymbolGroups() { DirtySymbolGroups.Empty(); }
+	void ClearDirtySymbolGroup(int32 GroupID) { DirtySymbolGroups.Remove(GroupID); }
 
 private:
 	bool FinalizeGraphDeltas(const TArray<FGraph3DDelta> &InDeltas, TArray<FDeltaPtr> &OutDeltas, int32 GraphID = MOD_ID_NONE);

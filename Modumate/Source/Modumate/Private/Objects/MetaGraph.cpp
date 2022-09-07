@@ -5,6 +5,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "Graph/Graph3D.h"
 #include "Objects/ModumateObjectStatics.h"
+#include "Objects/ModumateSymbolDeltaStatics.h"
 
 AMOIMetaGraph::AMOIMetaGraph()
 {
@@ -142,7 +143,22 @@ bool AMOIMetaGraph::ShowStructureOnSelection() const
 bool AMOIMetaGraph::CleanObject(EObjectDirtyFlags DirtyFlag, TArray<FDeltaPtr>* OutSideEffectDeltas)
 {
 	Super::CleanObject(DirtyFlag, OutSideEffectDeltas);
-	return DirtyFlag == EObjectDirtyFlags::Structure ? SetupBoundingBox() : true;
+	if (DirtyFlag == EObjectDirtyFlags::Structure)
+	{
+		if (!SetupBoundingBox())
+		{
+			return false;
+		}
+
+		if (OutSideEffectDeltas && Document->IsSymbolGroupDirty(ID))
+		{
+			int32 nextID = Document->GetNextAvailableID();
+			FModumateSymbolDeltaStatics::PropagateChangedSymbolInstance(Document, nextID, ID, *OutSideEffectDeltas);
+			Document->ClearDirtySymbolGroups();
+		}
+	}
+
+	return true;
 }
 
 bool AMOIMetaGraph::GetUpdatedVisuals(bool& bOutVisible, bool& bOutCollisionEnabled)
