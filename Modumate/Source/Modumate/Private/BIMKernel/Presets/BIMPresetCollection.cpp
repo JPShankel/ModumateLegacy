@@ -903,12 +903,14 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 	*this = InDB.GetPresetCollection();
 
 	FBIMPresetCollection docPresets = DocRecord.PresetCollection;
+	FBIMPresetCollection fullCollection = InDB.BIMUntruncatedCollection;
 
 	// Presets in the doc were edited by definition
 	// If bEdited comes in false for a custom preset for any reason, it won't get saved
 	for (auto& kvp : docPresets.PresetsByGUID)
 	{
 		kvp.Value.bEdited = true;
+		fullCollection.AddPreset(kvp.Value);
 	}
 
 	PresetTaxonomy = InDB.GetPresetCollection().PresetTaxonomy;
@@ -928,7 +930,9 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		{
 			TArray<FGuid> dependents;
 			neededPresets.Add(ob.AssemblyGUID);
-			InDB.BIMUntruncatedCollection.GetAllDescendentPresets(ob.AssemblyGUID, dependents);
+
+			fullCollection.GetAllDescendentPresets(ob.AssemblyGUID, dependents);
+\
 			for (auto& dep : dependents)
 			{
 				if (dep.IsValid())
@@ -942,17 +946,18 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 	TArray<FGuid> starters;
 	for (auto needed : neededPresets)
 	{
-		const FBIMPresetInstance* preset = InDB.BIMUntruncatedCollection.PresetFromGUID(needed);
-		if (ensureAlways(preset != nullptr))
+		const FBIMPresetInstance* preset = fullCollection.PresetFromGUID(needed);
+		if (ensureAlways(preset != nullptr) && preset->ObjectType != EObjectType::OTNone)
+		{
+			starters.Add(preset->GUID);
+		}
+		if (docPresets.PresetFromGUID(needed) == nullptr)
 		{
 			docPresets.AddPreset(*preset);
-			if (preset->ObjectType != EObjectType::OTNone)
-			{
-				starters.Add(preset->GUID);
-			}
 		}
 	}
-		docPresets.ProcessStarterAssemblies(InDB, starters);
+	
+	docPresets.ProcessStarterAssemblies(InDB, starters);
 
 	FBIMPresetCollectionProxy proxyCollection(*this);
 
