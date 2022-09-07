@@ -409,7 +409,13 @@ void AMOITerrain::UpdateSiteMaterials(bool bForceUpdate/* = false*/)
 									materialInst->CopyMaterialUniformParameters(material->EngineMaterial.Get());
 									materialInst->SetVectorParameterValue(colorMultiplierName, tint);
 									static const FName opacityParamName(TEXT("OpacityValue"));
-									materialInst->SetScalarParameterValue(opacityParamName, bIsTranslucent ? 0.5f : 1.f);
+									//if the opacity value of the base material is 0 we should not override this value
+									float opacityValue;
+									materialInst->GetScalarParameterValue(opacityParamName, opacityValue);
+									if (opacityValue > SMALL_NUMBER)
+									{
+										materialInst->SetScalarParameterValue(opacityParamName, bIsTranslucent ? 0.5f : 1.f);
+									}
 
 									mesh->SetMaterial(meshSectionIndex, materialInst);
 									CachedMaterials[meshSectionIndex] = materialGuid;
