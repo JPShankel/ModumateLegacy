@@ -800,6 +800,7 @@ void AEditModelPlayerState::OnNewModel()
 	// Reset fields that have pointers/references to MOIs
 	HoveredObject = nullptr;
 	SelectedObjects.Reset();
+	SelectedGroupObjects.Reset();
 	LastSelectedObjectSet.Reset();
 	LastHoveredObjectSet.Reset();
 	LastErrorObjectSet.Reset();

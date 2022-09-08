@@ -35,6 +35,7 @@ bool UCopyTool::Activate()
 		}
 		objIds.Add(obj->ID);
 	}
+	Algo::Transform(Controller->EMPlayerState->SelectedGroupObjects, objIds, [](AModumateObjectInstance* o) { return o->ID; });
 
 	auto doc = Controller->GetDocument();
 

@@ -604,10 +604,26 @@ bool FModumateObjectDeltaStatics::PasteObjects(const FMOIDocumentRecord* InRecor
 
 	OutDeltas.Add(attachmentDelta);
 
+	// Third pass - Groups (for paste tool, vector-copy handled in the move tool).
+	TSet<int32> groupIDs;
+	for (const auto& objRec : InRecord->ObjectData)
+	{
+		if (objRec.ObjectType == EObjectType::OTMetaGraph && Doc->GetVolumeGraph(objRec.ID))
+		{
+			groupIDs.Add(objRec.ID);
+		}
+	}
+	if (groupIDs.Num() > 0)
+	{
+		TArray<TPair<FSelectedObjectToolMixin::CopyDeltaType, FDeltaPtr>> groupCopyDeltas;
+		DuplicateGroups(Doc, groupIDs, nextID, groupCopyDeltas);
+		// Apply offset:
+		GetDeltasForGroupCopies(Doc, offset, groupCopyDeltas, OutDeltas);
+	}
+
 	bIsPreview ? 
 		Doc->ApplyPreviewDeltas(OutDeltas, World) :
 		Doc->ApplyDeltas(OutDeltas, World);
-
 
 	return true;
 }
@@ -1770,6 +1786,44 @@ bool FModumateObjectDeltaStatics::GetObjectCreationDeltasForFaceSpans(const UMod
 		}
 	}
 	return true;
+}
+
+void FModumateObjectDeltaStatics::GetDeltasForGroupCopies(UModumateDocument* Doc, FVector Offset, const TArray<TPair<FSelectedObjectToolMixin::CopyDeltaType,
+	FDeltaPtr>>& GroupCopyDeltas, TArray<FDeltaPtr>& OutDeltas)
+{
+	for (const auto& deltaPair : GroupCopyDeltas)
+	{
+		FDeltaPtr delta = deltaPair.Value;
+		if (deltaPair.Key == FSelectedObjectToolMixin::kVertexPosition)
+		{
+			FGraph3DDelta graphDelta(*static_cast<FGraph3DDelta*>(delta.Get()));
+			for (auto& kvp : graphDelta.VertexAdditions)
+			{
+				kvp.Value += Offset;
+			}
+			OutDeltas.Add(MakeShared<FGraph3DDelta>(MoveTemp(graphDelta)));
+		}
+		else if (deltaPair.Key == FSelectedObjectToolMixin::kGroup)
+		{	// Update the reference transform on the group itself.
+			const FMOIDelta* groupDelta = static_cast<FMOIDelta*>(delta.Get());
+			FMOIMetaGraphData groupCustomData;
+
+			check(groupDelta->States.Num() == 1 && groupDelta->States[0].DeltaType == EMOIDeltaType::Create);
+
+			FMOIStateData groupData(groupDelta->States[0].NewState);
+
+			groupData.CustomData.LoadStructData(groupCustomData);
+			groupCustomData.Location += Offset;
+			groupData.CustomData.SaveStructData(groupCustomData, UE_EDITOR);
+			auto moiDelta = MakeShared<FMOIDelta>();
+			moiDelta->AddCreateDestroyState(groupData, EMOIDeltaType::Create);
+			OutDeltas.Add(moiDelta);
+		}
+		else
+		{
+			OutDeltas.Add(delta);
+		}
+	}
 }
 
 template<class T>

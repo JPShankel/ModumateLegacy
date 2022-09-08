@@ -47,12 +47,27 @@ bool UPasteTool::Activate()
 		return false;
 	}
 
-	if (CurrentRecord.VolumeGraph.Vertices.Num() > 0)
+	TArray<FVector> vertices;
+	for (const auto& moi: CurrentRecord.ObjectData)
 	{
-		for (auto& vertexRecord : CurrentRecord.VolumeGraph.Vertices)
+		if (moi.ObjectType == EObjectType::OTMetaGraph)
 		{
-			auto& pos = vertexRecord.Value.Position;
+			FGraph3D* group = GameState->Document->GetVolumeGraph(moi.ID);
+			if (group)
+			{
+				Algo::Transform(group->GetVertices(), vertices,
+					[](const TPair<int32, FGraph3DVertex>& GraphVert) { return GraphVert.Value.Position; });
+			}
+		}
+	}
 
+	Algo::Transform(CurrentRecord.VolumeGraph.Vertices, vertices,
+		[](const TPair<int32, FGraph3DVertexRecordV1> GraphVert) { return FVector(GraphVert.Value.Position); });
+
+	if (vertices.Num() > 0)
+	{
+		for (auto& pos: vertices)
+		{
 			if (PasteOrigin.IsZero())
 			{
 				PasteOrigin = FVector(pos);

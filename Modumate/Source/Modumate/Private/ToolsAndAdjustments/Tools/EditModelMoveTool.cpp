@@ -283,38 +283,5 @@ bool UMoveObjectTool::PostEndOrAbort()
 // Copy all the new-graph deltas shifting the vertices by Offset.
 void UMoveObjectTool::GetDeltasForGroupCopies(UModumateDocument* Doc, FVector Offset, TArray<FDeltaPtr>& OutDeltas)
 {
-	for (const auto& deltaPair: GroupCopyDeltas)
-	{
-		FDeltaPtr delta = deltaPair.Value;
-		if (deltaPair.Key == kVertexPosition)
-		{
-			FGraph3DDelta graphDelta(*static_cast<FGraph3DDelta*>(delta.Get()));
-			for (auto& kvp : graphDelta.VertexAdditions)
-			{
-				kvp.Value += Offset;
-			}
-			OutDeltas.Add(MakeShared<FGraph3DDelta>(MoveTemp(graphDelta)) );
-		}
-		else if (deltaPair.Key == kGroup)
-		{	// Update the reference transform on the group itself.
-			const FMOIDelta* groupDelta = static_cast<FMOIDelta*>(delta.Get());
-			FMOIMetaGraphData groupCustomData;
-
-			check(groupDelta->States.Num() == 1 && groupDelta->States[0].DeltaType == EMOIDeltaType::Create);
-
-			FMOIStateData groupData(groupDelta->States[0].NewState);
-
-			groupData.CustomData.LoadStructData(groupCustomData);
-			groupCustomData.Location += Offset;
-			groupData.CustomData.SaveStructData(groupCustomData, UE_EDITOR);
-			auto moiDelta = MakeShared<FMOIDelta>();
-			moiDelta->AddCreateDestroyState(groupData, EMOIDeltaType::Create);
-			OutDeltas.Add(moiDelta);
-		}
-		else
-		{
-			OutDeltas.Add(delta);
-		}
-	}
-
+	FModumateObjectDeltaStatics::GetDeltasForGroupCopies(Doc, Offset, GroupCopyDeltas, OutDeltas);
 }
