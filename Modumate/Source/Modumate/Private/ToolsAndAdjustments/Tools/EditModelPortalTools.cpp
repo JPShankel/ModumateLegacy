@@ -11,7 +11,7 @@
 #include "UnrealClasses/EditModelGameMode.h"
 #include "UnrealClasses/CompoundMeshActor.h"
 #include "ModumateCore/ExpressionEvaluator.h"
-#include "Database/ModumateObjectDatabase.h"
+
 #include "Objects/ModumateObjectStatics.h"
 #include "Objects/ModumateObjectDeltaStatics.h"
 #include "Objects/MetaPlaneSpan.h"

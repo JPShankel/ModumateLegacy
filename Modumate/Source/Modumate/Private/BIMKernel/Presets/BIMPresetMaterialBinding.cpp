@@ -2,7 +2,7 @@
 
 #include "BIMKernel/Presets/BIMPresetMaterialBinding.h"
 #include "BIMKernel/Core/BIMEnums.h"
-#include "Database/ModumateObjectDatabase.h"
+#include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "BIMKernel/Presets/BIMPresetEditorForm.h"
 
 #define LOCTEXT_NAMESPACE "ModumatePresetMaterialBindings"
@@ -53,7 +53,7 @@ bool FBIMPresetMaterialBinding::operator!=(const FBIMPresetMaterialBinding& RHS)
 	return !(*this == RHS);
 }
 
-EBIMResult FBIMPresetMaterialBinding::GetEngineMaterial(const FModumateDatabase& DB, FArchitecturalMaterial& OutMaterial) const
+EBIMResult FBIMPresetMaterialBinding::GetEngineMaterial(const FBIMPresetCollectionProxy& PresetCollection, FArchitecturalMaterial& OutMaterial) const
 {
 	FGuid matGuid = SurfaceMaterialGUID.IsValid() ? SurfaceMaterialGUID : InnerMaterialGUID;
 	if (!matGuid.IsValid())
@@ -61,7 +61,7 @@ EBIMResult FBIMPresetMaterialBinding::GetEngineMaterial(const FModumateDatabase&
 		return EBIMResult::Error;
 	}
 
-	const FArchitecturalMaterial* material = DB.GetArchitecturalMaterialByGUID(matGuid);
+	const FArchitecturalMaterial* material = PresetCollection.GetArchitecturalMaterialByGUID(matGuid);
 	if (material == nullptr)
 	{
 		return EBIMResult::Error;

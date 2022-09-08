@@ -185,8 +185,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UModumateTutorialManager* TutorialManager;
 
-	class FModumateDatabase* ObjectDatabase;
-
 	static const FString TestScriptRelativePath;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)

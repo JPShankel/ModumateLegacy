@@ -2,7 +2,7 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelFFETool.h"
 
-#include "Database/ModumateObjectDatabase.h"
+
 #include "DocumentManagement/ModumateCommands.h"
 #include "Objects/ModumateObjectStatics.h"
 #include "ModumateCore/ModumateTargetingStatics.h"

@@ -5,7 +5,7 @@
 #include "BIMKernel/AssemblySpec/BIMAssemblySpec.h"
 #include "BIMKernel/Presets/BIMCSVReader.h"
 #include "BIMKernel/Presets/BIMPresetDocumentDelta.h"
-#include "Database/ModumateObjectDatabase.h"
+
 #include "DocumentManagement/ModumateSerialization.h"
 #include "ModumateCore/ModumateScriptProcessor.h"
 #include "Online/ModumateAnalyticsStatics.h"
@@ -13,6 +13,7 @@
 #include "DocumentManagement/ModumateDocument.h"
 #include "ModumateCore/EnumHelpers.h"
 #include "Objects/ModumateObjectStatics.h"
+#include "Engine/AssetManager.h"
 
 #define LOCTEXT_NAMESPACE "BIMPresetCollection"
 
@@ -491,7 +492,7 @@ EBIMResult FBIMPresetCollection::ProcessNamedDimensions()
 	return res;
 }
 
-EBIMResult FBIMPresetCollection::ProcessStarterAssemblies(const FModumateDatabase& AssetDatabase, const TArray<FGuid>& StarterPresets)
+EBIMResult FBIMPresetCollection::ProcessStarterAssemblies(const TArray<FGuid>& StarterPresets)
 {
 	/*
 	Now build every preset that was returned in 'starters' by the manifest parse and add it to the project
@@ -509,7 +510,7 @@ EBIMResult FBIMPresetCollection::ProcessStarterAssemblies(const FModumateDatabas
 
 		FBIMAssemblySpec outSpec;
 		
-		EBIMResult fromRes = outSpec.FromPreset(AssetDatabase, FBIMPresetCollectionProxy(*this), preset->GUID);
+		EBIMResult fromRes = outSpec.FromPreset(FBIMPresetCollectionProxy(*this), preset->GUID);
 		if (fromRes != EBIMResult::Success)
 		{
 			res = fromRes;
@@ -898,12 +899,12 @@ const FBIMAssemblySpec* FBIMPresetCollection::GetAssemblyByGUID(EToolMode ToolMo
 	}
 }
 
-bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InDB, int32 DocRecordVersion, const FMOIDocumentRecord& DocRecord)
+bool FBIMPresetCollection::ReadPresetsFromDocRecord(int32 DocRecordVersion, const FMOIDocumentRecord& DocRecord, const FBIMPresetCollection& UntruncatedCollection)
 {
-	*this = InDB.GetPresetCollection();
+	*this = FBIMPresetCollection();
 
 	FBIMPresetCollection docPresets = DocRecord.PresetCollection;
-	FBIMPresetCollection fullCollection = InDB.BIMUntruncatedCollection;
+	FBIMPresetCollection fullCollection = UntruncatedCollection;
 
 	// Presets in the doc were edited by definition
 	// If bEdited comes in false for a custom preset for any reason, it won't get saved
@@ -912,8 +913,6 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		kvp.Value.bEdited = true;
 		fullCollection.AddPreset(kvp.Value);
 	}
-
-	PresetTaxonomy = InDB.GetPresetCollection().PresetTaxonomy;
 
 	for (auto& kvp : DocRecord.PresetCollection.NodeDescriptors)
 	{
@@ -944,7 +943,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 	}
 
 	TArray<FGuid> starters;
-	for (auto needed : neededPresets)
+	for (const auto& needed : neededPresets)
 	{
 		const FBIMPresetInstance* preset = fullCollection.PresetFromGUID(needed);
 		if (ensureAlways(preset != nullptr) && preset->ObjectType != EObjectType::OTNone)
@@ -954,10 +953,13 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		if (docPresets.PresetFromGUID(needed) == nullptr)
 		{
 			docPresets.AddPreset(*preset);
+			if (preset->ObjectType != EObjectType::OTNone)
+			{
+				starters.Add(needed);
+			}
 		}
 	}
-	
-	docPresets.ProcessStarterAssemblies(InDB, starters);
+	docPresets.ProcessStarterAssemblies(starters);
 
 	FBIMPresetCollectionProxy proxyCollection(*this);
 
@@ -968,7 +970,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 
 	for (auto& kvp : docPresets.PresetsByGUID)
 	{
-		kvp.Value.UpgradeData(InDB, proxyCollection, DocRecordVersion);
+		kvp.Value.UpgradeData(proxyCollection, DocRecordVersion);
 	}
 
 	PresetsByGUID.Append(docPresets.PresetsByGUID);
@@ -984,7 +986,7 @@ bool FBIMPresetCollection::ReadPresetsFromDocRecord(const FModumateDatabase& InD
 		{
 			FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(kvp.Value.ObjectType);
 			FBIMAssemblySpec newSpec;
-			if (newSpec.FromPreset(InDB, FBIMPresetCollectionProxy(*this), kvp.Value.GUID) == EBIMResult::Success)
+			if (newSpec.FromPreset(FBIMPresetCollectionProxy(*this), kvp.Value.GUID) == EBIMResult::Success)
 			{
 				db.AddData(newSpec);
 			}
@@ -1106,7 +1108,7 @@ EBIMResult FBIMPresetCollection::MakeDeleteDeltas(const FGuid& DeleteGUID, const
 	return EBIMResult::Success;
 }
 
-EBIMResult FBIMPresetCollection::MakeNewPresetFromDatasmith(const FModumateDatabase& AssetDatabase, const FString& NewPresetName, const FGuid& ArchitecturalMeshID, FGuid& OutPresetID)
+EBIMResult FBIMPresetCollection::MakeNewPresetFromDatasmith(const FString& NewPresetName, const FGuid& ArchitecturalMeshID, FGuid& OutPresetID)
 {
 	const FBIMAssemblySpec* originalPresetAssembly = DefaultAssembliesByObjectType.Find(EObjectType::OTFurniture);
 	const FBIMPresetInstance* original = PresetFromGUID(originalPresetAssembly->UniqueKey());
@@ -1133,7 +1135,7 @@ EBIMResult FBIMPresetCollection::MakeNewPresetFromDatasmith(const FModumateDatab
 
 	FAssemblyDataCollection& db = AssembliesByObjectType.FindOrAdd(EObjectType::OTFurniture);
 	FBIMAssemblySpec newSpec;
-	if (newSpec.FromPreset(AssetDatabase, FBIMPresetCollectionProxy(*this), NewPreset.GUID) == EBIMResult::Success)
+	if (newSpec.FromPreset(FBIMPresetCollectionProxy(*this), NewPreset.GUID) == EBIMResult::Success)
 	{
 		db.AddData(newSpec);
 		return EBIMResult::Success;
@@ -1178,7 +1180,7 @@ const FBIMAssemblySpec* FBIMPresetCollectionProxy::AssemblySpecFromGUID(EObjectT
 	return nullptr;
 }
 
-EBIMResult FBIMPresetCollectionProxy::CreateAssemblyFromLayerPreset(const FModumateDatabase& InDB, const FGuid& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec)
+EBIMResult FBIMPresetCollectionProxy::CreateAssemblyFromLayerPreset(const FGuid& LayerPresetKey, EObjectType ObjectType, FBIMAssemblySpec& OutAssemblySpec)
 {
 
 	// Build a temporary top-level assembly preset to host the single layer
@@ -1197,7 +1199,7 @@ EBIMResult FBIMPresetCollectionProxy::CreateAssemblyFromLayerPreset(const FModum
 	// Add the temp assembly and layer presets
 	OverridePreset(assemblyPreset);
 
-	return OutAssemblySpec.FromPreset(InDB, *this, assemblyPreset.GUID);
+	return OutAssemblySpec.FromPreset(*this, assemblyPreset.GUID);
 }
 
 EBIMResult FBIMPresetCollection::SetPartSizesFromMeshes()
@@ -1263,6 +1265,449 @@ EBIMResult FBIMPresetCollection::GetWebPresets(FBIMWebPresetCollection& OutPrese
 
 	return EBIMResult::Success;
 }
+
+
+
+bool FBIMPresetCollection::AddMeshFromPreset(const FBIMPresetInstance& Preset)
+{
+	FString assetPath = Preset.GetScopedProperty<FString>(EBIMValueScope::Mesh, BIMPropertyNames::AssetPath);
+
+	if (ensureAlways(assetPath.Len() > 0))
+	{
+		FVector meshNativeSize(ForceInitToZero);
+		FBox meshNineSlice(ForceInitToZero);
+
+		FVector presetNativeSize(ForceInitToZero);
+		if (Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeX"), presetNativeSize.X) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeY"), presetNativeSize.Y) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("NativeSizeZ"), presetNativeSize.Z))
+		{
+			meshNativeSize = presetNativeSize * UModumateDimensionStatics::CentimetersToInches;
+		}
+
+		FVector presetNineSliceMin(ForceInitToZero), presetNineSliceMax(ForceInitToZero);
+		if (Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceX1"), presetNineSliceMin.X) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceY1"), presetNineSliceMin.Y) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceZ1"), presetNineSliceMin.Z) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceX2"), presetNineSliceMax.X) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceY2"), presetNineSliceMax.Y) &&
+			Preset.Properties.TryGetProperty(EBIMValueScope::Mesh, TEXT("SliceZ2"), presetNineSliceMax.Z))
+		{
+			meshNineSlice = FBox(
+				presetNineSliceMin * UModumateDimensionStatics::CentimetersToInches,
+				presetNineSliceMax * UModumateDimensionStatics::CentimetersToInches);
+		}
+
+		FString name;
+		Preset.TryGetProperty(BIMPropertyNames::Name, name);
+		if (assetPath.StartsWith(TEXT("http")))
+		{
+			AddArchitecturalMeshFromDatasmith(assetPath, Preset.GUID);
+		}
+		else
+		{
+			AddArchitecturalMesh(Preset.GUID, name, meshNativeSize, meshNineSlice, assetPath);
+		}
+	}
+	return true;
+}
+
+bool FBIMPresetCollection::AddRawMaterialFromPreset(const FBIMPresetInstance& Preset)
+{
+	FString assetPath;
+	Preset.TryGetProperty(BIMPropertyNames::AssetPath, assetPath);
+	if (assetPath.Len() != 0)
+	{
+		FString matName;
+		if (ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
+		{
+			AddArchitecturalMaterial(Preset.GUID, matName, assetPath);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool FBIMPresetCollection::AddMaterialFromPreset(const FBIMPresetInstance& Preset)
+{
+	FGuid rawMaterial;
+
+	for (auto& cp : Preset.ChildPresets)
+	{
+		const FBIMPresetInstance* childPreset = PresetFromGUID(cp.PresetGUID);
+		if (childPreset != nullptr)
+		{
+			if (childPreset->NodeScope == EBIMValueScope::RawMaterial)
+			{
+				rawMaterial = cp.PresetGUID;
+			}
+		}
+	}
+
+	if (rawMaterial.IsValid())
+	{
+		const FBIMPresetInstance* preset = PresetFromGUID(rawMaterial);
+		if (preset != nullptr)
+		{
+			FString assetPath, matName;
+			if (ensureAlways(preset->TryGetProperty(BIMPropertyNames::AssetPath, assetPath)
+				&& Preset.TryGetProperty(BIMPropertyNames::Name, matName)))
+			{
+				AddArchitecturalMaterial(Preset.GUID, matName, assetPath);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool FBIMPresetCollection::AddLightFromPreset(const FBIMPresetInstance& Preset)
+{
+	FArchitecturalLight light;
+	light.Key = Preset.GUID;
+
+	Preset.TryGetProperty(BIMPropertyNames::Name, light.DisplayName);
+	Preset.TryGetProperty(BIMPropertyNames::CraftingIconAssetFilePath, light.IconPath);
+	Preset.TryGetProperty(BIMPropertyNames::AssetPath, light.ProfilePath);
+	//fetch IES resource from profile path
+	//fill in light configuration
+	Lights.AddData(light);
+
+	return true;
+}
+
+bool FBIMPresetCollection::AddProfileFromPreset(const FBIMPresetInstance& Preset)
+{
+	FString assetPath;
+	Preset.TryGetProperty(BIMPropertyNames::AssetPath, assetPath);
+	if (assetPath.Len() != 0)
+	{
+		FString name;
+		if (ensureAlways(Preset.TryGetProperty(BIMPropertyNames::Name, name)))
+		{
+			AddSimpleMesh(Preset.GUID, name, assetPath);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool FBIMPresetCollection::AddPatternFromPreset(const FBIMPresetInstance& Preset)
+{
+	FLayerPattern newPattern;
+	newPattern.InitFromCraftingPreset(Preset);
+	Patterns.AddData(newPattern);
+
+	FString assetPath;
+	Preset.TryGetProperty(BIMPropertyNames::CraftingIconAssetFilePath, assetPath);
+	if (assetPath.Len() > 0)
+	{
+		FString iconName;
+		if (Preset.TryGetProperty(BIMPropertyNames::Name, iconName))
+		{
+			AddStaticIconTexture(Preset.GUID, iconName, assetPath);
+			return true;
+		}
+	}
+	return false;
+}
+
+
+void FBIMPresetCollection::AddArchitecturalMesh(const FGuid& Key, const FString& Name, const FVector& InNativeSize, const FBox& InNineSliceBox, const FSoftObjectPath& AssetPath)
+{
+	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
+	{
+		return;
+	}
+
+	FArchitecturalMesh mesh;
+	mesh.AssetPath = AssetPath;
+	mesh.NativeSize = InNativeSize;
+	mesh.NineSliceBox = InNineSliceBox;
+	mesh.Key = Key;
+
+	mesh.EngineMesh = Cast<UStaticMesh>(AssetPath.TryLoad());
+	if (ensureAlways(mesh.EngineMesh.IsValid()))
+	{
+		mesh.EngineMesh->AddToRoot();
+	}
+
+	AMeshes.AddData(mesh);
+}
+
+void FBIMPresetCollection::AddArchitecturalMaterial(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath)
+{
+	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
+	{
+		return;
+	}
+
+	FArchitecturalMaterial mat;
+	mat.Key = Key;
+	mat.DisplayName = FText::FromString(Name);
+
+	mat.EngineMaterial = Cast<UMaterialInterface>(AssetPath.TryLoad());
+	if (ensureAlways(mat.EngineMaterial.IsValid()))
+	{
+		mat.EngineMaterial->AddToRoot();
+	}
+
+	mat.UVScaleFactor = 1;
+	AMaterials.AddData(mat);
+}
+
+void FBIMPresetCollection::AddSimpleMesh(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath)
+{
+	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
+	{
+		return;
+	}
+
+	FSimpleMeshRef mesh;
+
+	mesh.Key = Key;
+	mesh.AssetPath = AssetPath;
+
+	mesh.Asset = Cast<USimpleMeshData>(AssetPath.TryLoad());
+	if (ensureAlways(mesh.Asset.IsValid()))
+	{
+		mesh.Asset->AddToRoot();
+	}
+
+	SimpleMeshes.AddData(mesh);
+}
+
+/*
+* TODO: Refactor for FArchive binary format
+*/
+
+void FBIMPresetCollection::AddStaticIconTexture(const FGuid& Key, const FString& Name, const FSoftObjectPath& AssetPath)
+{
+	if (!ensureAlways(AssetPath.IsAsset() && AssetPath.IsValid()))
+	{
+		return;
+	}
+
+	FStaticIconTexture staticTexture;
+
+	staticTexture.Key = Key;
+	staticTexture.DisplayName = FText::FromString(Name);
+	staticTexture.Texture = Cast<UTexture2D>(AssetPath.TryLoad());
+	if (staticTexture.Texture.IsValid())
+	{
+		staticTexture.Texture->AddToRoot();
+		StaticIconTextures.AddData(staticTexture);
+	}
+}
+
+void FBIMPresetCollection::AddArchitecturalMeshFromDatasmith(const FString& AssetUrl, const FGuid& InArchitecturalMeshKey)
+{
+	FArchitecturalMesh mesh;
+	//mesh.NativeSize = InNativeSize;
+	//mesh.NineSliceBox = InNineSliceBox;
+	mesh.Key = InArchitecturalMeshKey;
+	mesh.DatasmithUrl = AssetUrl;
+
+	AMeshes.AddData(mesh);
+}
+
+static constexpr TCHAR BIMCacheRecordField[] = TEXT("BIMCacheRecord");
+static constexpr TCHAR BIMManifestFileName[] = TEXT("BIMManifest.txt");
+static constexpr TCHAR BIMNCPFileName[] = TEXT("NCPTable.csv");
+
+void FBIMPresetCollection::ReadPresetData(bool bTruncate)
+{
+	// Make sure abstract material is in for default use
+	FGuid::Parse(TEXT("09F17296-2023-944C-A1E7-EEDFE28680E9"), DefaultMaterialGUID);
+
+	TArray<FGuid> starters;
+	TArray<FString> errors;
+
+	ManifestDirectoryPath = FPaths::ProjectContentDir() / TEXT("NonUAssets") / TEXT("BIMData");
+
+	if (!ensure(LoadCSVManifest(*ManifestDirectoryPath, BIMManifestFileName, starters, errors) == EBIMResult::Success))
+	{
+		return;
+	}
+
+	if (!ensure(errors.Num() == 0))
+	{
+		return;
+	}
+
+	FString NCPString;
+	FString NCPPath = FPaths::Combine(*ManifestDirectoryPath, BIMNCPFileName);
+	if (!ensure(FFileHelper::LoadFileToString(NCPString, *NCPPath)))
+	{
+		return;
+	}
+
+	FCsvParser NCPParsed(NCPString);
+	const FCsvParser::FRows& NCPRows = NCPParsed.GetRows();
+
+	if (ensure(PresetTaxonomy.LoadCSVRows(NCPRows) == EBIMResult::Success))
+	{
+		ensure(PostLoad() == EBIMResult::Success);
+	}
+
+	// If this preset implies an asset type, load it
+	for (auto& preset : PresetsByGUID)
+	{
+		FLightConfiguration lightConfig;
+		if (preset.Value.TryGetCustomData(lightConfig))
+		{
+			const FBIMPresetInstance* bimPresetInstance = PresetsByGUID.Find(lightConfig.IESProfileGUID);
+			if (bimPresetInstance != nullptr)
+			{
+				FString assetPath = bimPresetInstance->GetScopedProperty<FString>(EBIMValueScope::IESProfile, BIMPropertyNames::AssetPath);
+				FSoftObjectPath referencePath = FString(TEXT("TextureLightProfile'")).Append(assetPath).Append(TEXT("'"));
+				TSharedPtr<FStreamableHandle> SyncStreamableHandle = UAssetManager::GetStreamableManager().RequestSyncLoad(referencePath);
+				if (SyncStreamableHandle)
+				{
+					UTextureLightProfile* IESProfile = Cast<UTextureLightProfile>(SyncStreamableHandle->GetLoadedAsset());
+					if (IESProfile)
+					{
+						lightConfig.LightProfile = IESProfile;
+					}
+				}
+				preset.Value.SetCustomData(lightConfig);
+			}
+		}
+		switch (preset.Value.AssetType)
+		{
+		case EBIMAssetType::IESProfile:
+			AddLightFromPreset(preset.Value);
+			break;
+		case EBIMAssetType::Mesh:
+			AddMeshFromPreset(preset.Value);
+			break;
+		case EBIMAssetType::Profile:
+			AddProfileFromPreset(preset.Value);
+			break;
+		case EBIMAssetType::RawMaterial:
+			AddRawMaterialFromPreset(preset.Value);
+			break;
+		case EBIMAssetType::Material:
+			AddMaterialFromPreset(preset.Value);
+			break;
+		case EBIMAssetType::Pattern:
+			AddPatternFromPreset(preset.Value);
+			break;
+		};
+	}
+
+	SetPartSizesFromMeshes();
+
+	if (bTruncate)
+	{
+		FBIMPresetCollection presetCollection = *this;
+
+		TSet<FGuid> presetsToAdd;
+		for (auto& starter : starters)
+		{
+			FBIMPresetInstance* preset = presetCollection.PresetFromGUID(starter);
+			if (ensure(preset != nullptr))
+			{
+				presetsToAdd.Add(preset->GUID);
+				TArray<FGuid> descendents;
+				presetCollection.GetAllDescendentPresets(starter, descendents);
+				for (auto& descendent : descendents)
+				{
+					presetsToAdd.Add(descendent);
+				}
+			}
+		}
+
+		PresetsByGUID.Empty();
+
+		for (auto& guid : presetsToAdd)
+		{
+			FBIMPresetInstance* preset = presetCollection.PresetFromGUID(guid);
+			if (ensure(preset != nullptr))
+			{
+				AddPreset(*preset);				
+				if (preset->ObjectType != EObjectType::OTNone)
+				{
+					starters.Add(guid);
+				}
+			}
+		}
+	}
+
+	ensure(ProcessStarterAssemblies(starters) == EBIMResult::Success);
+}
+
+// Data Access
+const FArchitecturalMesh* FBIMPresetCollection::GetArchitecturalMeshByGUID(const FGuid& Key) const
+{
+	return AMeshes.GetData(Key);
+}
+
+const FArchitecturalMaterial* FBIMPresetCollection::GetArchitecturalMaterialByGUID(const FGuid& Key) const
+{
+	return AMaterials.GetData(Key);
+}
+
+const FSimpleMeshRef* FBIMPresetCollection::GetSimpleMeshByGUID(const FGuid& Key) const
+{
+	return SimpleMeshes.GetData(Key);
+}
+
+const FStaticIconTexture* FBIMPresetCollection::GetStaticIconTextureByGUID(const FGuid& Key) const
+{
+	return StaticIconTextures.GetData(Key);
+}
+
+const FLayerPattern* FBIMPresetCollection::GetPatternByGUID(const FGuid& Key) const
+{
+	return Patterns.GetData(Key);
+}
+
+const FArchitecturalMesh* FBIMPresetCollectionProxy::GetArchitecturalMeshByGUID(const FGuid& InGUID) const
+{
+	if (BaseCollection)
+	{
+		return BaseCollection->GetArchitecturalMeshByGUID(InGUID);
+	}
+	return nullptr;
+}
+
+const FLayerPattern* FBIMPresetCollectionProxy::GetPatternByGUID(const FGuid& Key) const
+{
+	if (BaseCollection)
+	{
+		return BaseCollection->GetPatternByGUID(Key);
+	}
+	return nullptr;
+}
+
+const FArchitecturalMaterial* FBIMPresetCollectionProxy::GetArchitecturalMaterialByGUID(const FGuid& Key) const
+{
+	if (BaseCollection)
+	{
+		return BaseCollection->GetArchitecturalMaterialByGUID(Key);
+	}
+	return nullptr;
+}
+
+const FSimpleMeshRef* FBIMPresetCollectionProxy::GetSimpleMeshByGUID(const FGuid& Key) const
+{
+	if (BaseCollection)
+	{
+		return BaseCollection->GetSimpleMeshByGUID(Key);
+	}
+	return nullptr;
+}
+
+FGuid FBIMPresetCollectionProxy::GetDefaultMaterialGUID() const
+{
+	if (BaseCollection)
+	{
+		return BaseCollection->DefaultMaterialGUID;
+	}
+	return FGuid();
+}
+
 
 
 #undef LOCTEXT_NAMESPACE

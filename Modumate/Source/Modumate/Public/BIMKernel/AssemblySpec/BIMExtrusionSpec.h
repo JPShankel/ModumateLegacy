@@ -32,7 +32,7 @@ private:
 	UPROPERTY()
 	FBIMPropertySheet Properties;
 
-	EBIMResult BuildFromProperties(const FModumateDatabase& InDB);
+	EBIMResult BuildFromProperties(const FBIMPresetCollectionProxy& PresetCollection);
 
 public:
 	UPROPERTY()

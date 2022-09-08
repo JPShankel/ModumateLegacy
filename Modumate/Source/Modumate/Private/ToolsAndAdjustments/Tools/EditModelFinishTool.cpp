@@ -2,7 +2,7 @@
 
 #include "ToolsAndAdjustments/Tools/EditModelFinishTool.h"
 
-#include "Database/ModumateObjectDatabase.h"
+
 #include "DocumentManagement/ModumateCommands.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "DocumentManagement/ObjIDReservationHandle.h"
