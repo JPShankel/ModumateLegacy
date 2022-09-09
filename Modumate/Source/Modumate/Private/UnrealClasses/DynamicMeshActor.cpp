@@ -3,7 +3,7 @@
 #include "UnrealClasses/DynamicMeshActor.h"
 
 #include "UnrealClasses/EditModelGameMode.h"
-
+#include "Database/ModumateObjectDatabase.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
 #include "ModumateCore/ModumateGeometryStatics.h"
 #include "Objects/ModumateObjectStatics.h"

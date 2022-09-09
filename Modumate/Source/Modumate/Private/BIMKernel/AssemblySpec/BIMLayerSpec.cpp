@@ -3,14 +3,13 @@
 #include "BIMKernel/AssemblySpec/BIMLayerSpec.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateFunctionLibrary.h"
-#include "BIMKernel/Presets/BIMPresetCollection.h"
+#include "Database/ModumateObjectDatabase.h"
 
-
-EBIMResult FBIMLayerSpec::BuildFromProperties(const FBIMPresetCollectionProxy& PresetCollection)
+EBIMResult FBIMLayerSpec::BuildFromProperties(const FModumateDatabase& InDB)
 {
 	if (Pattern.Key.IsValid())
 	{
-		return BuildPatternedLayer(PresetCollection);
+		return BuildPatternedLayer(InDB);
 	}
 
 	return ensureAlways(ThicknessCentimeters > 0.0f) ? EBIMResult::Success : EBIMResult::Error;
@@ -21,7 +20,7 @@ TODO: a "patterned" layer reads properties corresponding to the DDL 1.0 table en
 The parameters established here are accessed in UModumateFunctionLibrary::ApplyTileMaterialToMeshFromLayer
 We want to refactor this for new patterns
 */
-EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FBIMPresetCollectionProxy& PresetCollection)
+EBIMResult FBIMLayerSpec::BuildPatternedLayer(const FModumateDatabase& InDB)
 {
 	EvaluateParameterizedPatternExtents();
 
@@ -85,7 +84,7 @@ void FBIMLayerSpec::EvaluateParameterizedPatternExtents()
 * This function may be called multiple times with different component presets (module, pattern, gap)
 */
 
-EBIMResult FBIMLayerSpec::UpdatePatternFromPreset(const FBIMPresetCollectionProxy& PresetCollection,const FBIMPresetInstance& Preset)
+EBIMResult FBIMLayerSpec::UpdatePatternFromPreset(const FModumateDatabase& InDB,const FBIMPresetInstance& Preset)
 {
 	/*
 	* If we have a pattern, grab it
@@ -94,7 +93,7 @@ EBIMResult FBIMLayerSpec::UpdatePatternFromPreset(const FBIMPresetCollectionProx
 	FGuid patternGuid;
 	if (Preset.Properties.TryGetProperty(EBIMValueScope::Pattern, BIMPropertyNames::AssetID, patternGuidString) && FGuid::Parse(patternGuidString, patternGuid))
 	{
-		const FLayerPattern* pattern = PresetCollection.GetPatternByGUID(patternGuid);
+		const FLayerPattern* pattern = InDB.GetPatternByGUID(patternGuid);
 		if (ensureAlways(pattern != nullptr))
 		{
 			Pattern = *pattern;
@@ -113,7 +112,7 @@ EBIMResult FBIMLayerSpec::UpdatePatternFromPreset(const FBIMPresetCollectionProx
 		{
 			if (ensureAlways(materialBindings.MaterialBindings.Num() > 0))
 			{
-				ensureAlways(materialBindings.MaterialBindings[0].GetEngineMaterial(PresetCollection, Gap.Material) == EBIMResult::Success);
+				ensureAlways(materialBindings.MaterialBindings[0].GetEngineMaterial(InDB, Gap.Material) == EBIMResult::Success);
 				FVector gapExtents3;
 				float bevelWidth,thickness;
 				Preset.GetModularDimensions(gapExtents3,bevelWidth,thickness);
@@ -145,9 +144,9 @@ EBIMResult FBIMLayerSpec::UpdatePatternFromPreset(const FBIMPresetCollectionProx
 		for (auto& materialBinding : materialBindings.MaterialBindings)
 		{
 			FLayerPatternModule& module = Modules.AddDefaulted_GetRef();
-			if (!ensureAlways(materialBinding.GetEngineMaterial(PresetCollection, module.Material) == EBIMResult::Success))
+			if (!ensureAlways(materialBinding.GetEngineMaterial(InDB, module.Material) == EBIMResult::Success))
 			{
-				const FArchitecturalMaterial* material = PresetCollection.GetArchitecturalMaterialByGUID(PresetCollection.GetDefaultMaterialGUID());
+				const FArchitecturalMaterial* material = InDB.GetArchitecturalMaterialByGUID(InDB.GetDefaultMaterialGUID());
 				if (ensureAlways(material != nullptr))
 				{
 					module.Material = *material;

@@ -5,7 +5,7 @@
 #include "Algo/Accumulate.h"
 #include "Algo/ForEach.h"
 #include "Algo/Transform.h"
-
+#include "Database/ModumateObjectDatabase.h"
 #include "DocumentManagement/DocumentDelta.h"
 #include "Drafting/DraftingManager.h"
 #include "Drafting/ModumateDraftingView.h"
@@ -1118,7 +1118,7 @@ bool UModumateDocument::ApplyPresetDelta(const FBIMPresetDelta& PresetDelta, UWo
 			}
 			
 			FBIMAssemblySpec newSpec;
-			if (ensureAlways(newSpec.FromPreset(FBIMPresetCollectionProxy(BIMPresetCollection), affectedPreset) == EBIMResult::Success))
+			if (ensureAlways(newSpec.FromPreset(*gameInstance->ObjectDatabase, FBIMPresetCollectionProxy(BIMPresetCollection), affectedPreset) == EBIMResult::Success))
 			{
 				affectedAssemblies.Add(affectedPreset);
 				BIMPresetCollection.UpdateProjectAssembly(newSpec);
@@ -2979,7 +2979,8 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 		kvp.Value.Reset();
 	}
 
-	BIMPresetCollection.ReadPresetData();
+	UModumateGameInstance* gameInstance = World ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
+	BIMPresetCollection = gameInstance->ObjectDatabase->GetPresetCollection();
 
 	AEditModelPlayerController* controller = Cast<AEditModelPlayerController>(World->GetFirstPlayerController());
 	if (controller && controller->DynamicIconGenerator)
@@ -2989,7 +2990,6 @@ void UModumateDocument::MakeNew(UWorld *World, bool bClearName)
 	}
 
 	// Clear drafting render directories
-	UModumateGameInstance* gameInstance = World ? World->GetGameInstance<UModumateGameInstance>() : nullptr;
 	UDraftingManager *draftMan = gameInstance ? gameInstance->DraftingManager : nullptr;
 	if (draftMan != nullptr)
 	{
@@ -3363,10 +3363,9 @@ bool UModumateDocument::LoadRecord(UWorld* world, const FModumateDocumentHeader&
 	VolumeGraphs.Reset();
 
 	UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
+	FModumateDatabase* objectDB = gameInstance->ObjectDatabase;
 
-	FBIMPresetCollection untruncatedCollection;
-	untruncatedCollection.ReadPresetData(false);
-	BIMPresetCollection.ReadPresetsFromDocRecord(InHeader.Version, InDocumentRecord, untruncatedCollection);
+	BIMPresetCollection.ReadPresetsFromDocRecord(*objectDB, InHeader.Version, InDocumentRecord);
 
 	// Load the connectivity graphs now, which contain associations between object IDs,
 	// so that any objects whose geometry setup needs to know about connectivity can find it.
@@ -3743,6 +3742,7 @@ bool UModumateDocument::LoadDeltas(UWorld* world, const FString& path, bool bSet
 	MakeNew(world);
 
 	UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
+	FModumateDatabase* objectDB = gameInstance->ObjectDatabase;
 
 	CachedHeader = FModumateDocumentHeader();
 	CachedRecord = FMOIDocumentRecord();
@@ -4755,6 +4755,9 @@ void UModumateDocument::DrawingSendResponse(const FString& FunctionName, const F
 	}
 }
 
+/*
+* Should only be called by web
+*/
 
 void UModumateDocument::UpdateWebPresets()
 {

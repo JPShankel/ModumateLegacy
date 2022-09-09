@@ -184,7 +184,7 @@ void UBIMDesigner::PerformDrag()
 bool UBIMDesigner::UpdateCraftingAssembly()
 {
 	UpdateCachedPresetCollection();
-	return InstancePool.CreateAssemblyFromNodes(CraftingAssembly) == EBIMResult::Success;
+	return InstancePool.CreateAssemblyFromNodes(*GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase, CraftingAssembly) == EBIMResult::Success;
 }
 
 void UBIMDesigner::ToggleCollapseExpandNodes()
@@ -303,7 +303,10 @@ bool UBIMDesigner::EditPresetInBIMDesigner(const FGuid& PresetID, bool bCenterOn
 	InstancePool.PresetCollectionProxy = FBIMPresetCollectionProxy(Controller->GetDocument()->GetPresetCollection());
 
 	FBIMPresetEditorNodeSharedPtr rootNode;
-	EBIMResult getPresetResult = InstancePool.InitFromPreset(PresetID,rootNode);
+	EBIMResult getPresetResult = InstancePool.InitFromPreset(
+		*GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase,
+		PresetID,
+		rootNode);
 	if (getPresetResult != EBIMResult::Success)
 	{
 		return false;
@@ -355,7 +358,7 @@ void UBIMDesigner::UpdateBIMDesigner(bool AutoAdjustToRootNode)
 
 	UpdateCachedPresetCollection();
 
-	EBIMResult asmResult = InstancePool.CreateAssemblyFromNodes(CraftingAssembly);
+	EBIMResult asmResult = InstancePool.CreateAssemblyFromNodes(*GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase, CraftingAssembly);
 
 	bool bAssemblyHasPart = false;
 
@@ -835,7 +838,7 @@ bool UBIMDesigner::ApplyBIMFormElement(const FBIMEditorNodeIDType& NodeID, const
 	FBIMPresetEditorDelta delta;
 	if (ensureAlways(instPtr->Preset.MakeDeltaForFormElement(FormElement, delta) == EBIMResult::Success))
 	{
-		instPtr->Preset.ApplyDelta(Controller->GetDocument(),delta);
+		instPtr->Preset.ApplyDelta(Controller->GetDocument(),*GetWorld()->GetGameInstance<UModumateGameInstance>()->ObjectDatabase, delta);
 
 		// If this preset is used elsewhere in the graph, update all copies to match this edit
 		for (auto& other : InstancePool.GetInstancePool())

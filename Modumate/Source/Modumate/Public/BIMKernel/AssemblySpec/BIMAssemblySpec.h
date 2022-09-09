@@ -37,11 +37,11 @@ struct MODUMATE_API FBIMAssemblySpec
 {
 	GENERATED_BODY()
 private:
-	EBIMResult MakeLayeredAssembly(const FBIMPresetCollectionProxy& InDB);
-	EBIMResult MakeExtrudedAssembly(const FBIMPresetCollectionProxy& InDB);
-	EBIMResult MakeRiggedAssembly(const FBIMPresetCollectionProxy& InDB);
-	EBIMResult MakeCabinetAssembly(const FBIMPresetCollectionProxy& InDB);
-	EBIMResult DoMakeAssembly(const FBIMPresetCollectionProxy& PresetCollection);
+	EBIMResult MakeLayeredAssembly(const FModumateDatabase& InDB);
+	EBIMResult MakeExtrudedAssembly(const FModumateDatabase& InDB);
+	EBIMResult MakeRiggedAssembly(const FModumateDatabase& InDB);	
+	EBIMResult MakeCabinetAssembly(const FModumateDatabase& InDB);
+	EBIMResult DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection);
 
 	UPROPERTY()
 	FBIMPropertySheet RootProperties;
@@ -123,7 +123,7 @@ public:
 
 	EBIMResult Reset();
 
-	EBIMResult FromPreset(const FBIMPresetCollectionProxy& PresetCollection, const FGuid& InPresetID);
+	EBIMResult FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, const FGuid& InPresetID);
 
 	FModumateUnitValue CalculateThickness() const;
 

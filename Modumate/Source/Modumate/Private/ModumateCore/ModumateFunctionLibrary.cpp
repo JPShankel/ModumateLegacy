@@ -6,7 +6,7 @@
 #include "BIMKernel/Core/BIMKey.h"
 #include "Components/SkyLightComponent.h"
 #include "Components/StaticMeshComponent.h"
-
+#include "Database/ModumateObjectDatabase.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "DocumentManagement/ModumateDocument.h"
 #include "DrawDebugHelpers.h"

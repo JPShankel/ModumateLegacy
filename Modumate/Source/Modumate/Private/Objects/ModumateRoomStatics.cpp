@@ -3,7 +3,7 @@
 #include "Objects/ModumateRoomStatics.h"
 
 #include "Algo/LevenshteinDistance.h"
-
+#include "Database/ModumateObjectDatabase.h"
 #include "Graph/Graph3D.h"
 #include "Objects/ModumateObjectInstance.h"
 #include "UnrealClasses/DynamicMeshActor.h"
@@ -42,12 +42,41 @@ const FGuid UModumateRoomStatics::DefaultRoomConfigKey;
 
 bool UModumateRoomStatics::GetRoomConfigurationsFromTable(UObject* WorldContextObject, TArray<FRoomConfigurationBlueprint> &OutRoomConfigs)
 {
-	return false;
+	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
+	UModumateGameInstance* gameInstance = world ? world->GetGameInstance<UModumateGameInstance>() : nullptr;
+	if (!ensure(gameInstance && gameInstance->ObjectDatabase))
+	{
+		return false;
+	}
+
+	for (auto &kvp : gameInstance->ObjectDatabase->RoomConfigurations.DataMap)
+	{
+		OutRoomConfigs.Add(kvp.Value.AsBlueprintObject());
+	}
+
+	return true;
 }
 
 bool UModumateRoomStatics::GetRoomConfigurationsFromProject(UObject* WorldContextObject, TArray<FRoomConfigurationBlueprint> &OutRoomConfigs)
 {
-	return false;
+	OutRoomConfigs.Reset();
+
+	UWorld *world = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
+	AEditModelGameState *gameState = world ? Cast<AEditModelGameState>(world->GetGameState()) : nullptr;
+	if (gameState == nullptr)
+	{
+		return false;
+	}
+
+	bool bSuccess = true;
+	TArray<AModumateObjectInstance *> roomObjs = gameState->Document->GetObjectsOfType(EObjectType::OTRoom);
+	for (auto *roomObj : roomObjs)
+	{
+		auto &roomConfig = OutRoomConfigs.AddDefaulted_GetRef();
+		bSuccess = GetRoomConfig(roomObj, roomConfig) && bSuccess;
+	}
+
+	return bSuccess;
 }
 
 bool UModumateRoomStatics::GetRoomConfig(const AModumateObjectInstance *RoomObj, FRoomConfigurationBlueprint &OutRoomConfig)

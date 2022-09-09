@@ -1,13 +1,11 @@
 #include "CoreMinimal.h"
 #include "ModumateCore/ExpressionEvaluator.h"
-
+#include "Database/ModumateObjectDatabase.h"
 #include "BIMKernel/Core/BIMProperties.h"
 #include "Misc/AutomationTest.h"
 #include "Tests/AutomationCommon.h"
-#include "DocumentManagement/ModumateDocument.h"
 #include "Quantities/QuantitiesDimensions.h"
 #include "UnrealClasses/ModumateGameInstance.h"
-#include "UnrealClasses/EditModelPlayerController.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "UnrealClasses/EditModelPlayerController.h"
 #include "UnrealClasses/EditModelDatasmithImporter.h"
@@ -57,6 +55,78 @@ static bool testVectorFormula()
 }
 
 #if WITH_AUTOMATION_TESTS
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateDatabaseBIMTest, "Modumate.Database.BIM.UnitTest", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
+	bool FModumateDatabaseBIMTest::RunTest(const FString& Parameters)
+{
+	bool bSuccess = true;
+	UE_LOG(LogUnitTest, Display, TEXT("Modumate BIM Schema - Unit Test Started"));
+
+	FBIMPropertyKey vs;
+	bSuccess = vs.Scope == EBIMValueScope::None && bSuccess;
+	bSuccess = vs.Name == TEXT("") && bSuccess;
+
+	vs = FBIMPropertyKey(EBIMValueScope::Assembly, TEXT("Name"));
+
+	FBIMNameType fqn = vs.QN();
+	bSuccess = (fqn == TEXT("Assembly.Name")) && bSuccess;
+
+	bSuccess = testVectorFormula() && bSuccess;
+
+	FModumateDatabase bimDatabase;
+	bimDatabase.Init();
+	bimDatabase.ReadPresetData();
+	bSuccess = bimDatabase.UnitTest() && bSuccess;
+
+	FBIMPresetInstance sourcePreset, targetPreset;
+
+	sourcePreset.SetScopedProperty(EBIMValueScope::Preset, BIMPropertyNames::Description, FString(TEXT("My Preset Condition")));
+	sourcePreset.SetScopedProperty(EBIMValueScope::Preset, BIMPropertyNames::Code, 555.0f);
+
+
+	// Custom data
+	FLightConfiguration lightConfig;
+	lightConfig.Name = TEXT("My Light");
+	sourcePreset.SetCustomData(lightConfig);
+
+	FBIMConstructionCost constructionCost;
+	constructionCost.LaborCostRate = 777.0f;
+	sourcePreset.SetCustomData(constructionCost);
+
+	targetPreset.SetCustomData(FLightConfiguration());
+	targetPreset.SetCustomData(FBIMConstructionCost());
+
+	FBIMWebPreset webPreset;
+	sourcePreset.ToWebPreset(webPreset, nullptr);
+
+	targetPreset.FromWebPreset(webPreset, nullptr);
+
+	FBIMConstructionCost outConstructionCost;
+	FLightConfiguration outLightConfig;
+
+	bSuccess = targetPreset.TryGetCustomData(outConstructionCost) && bSuccess;
+	bSuccess = targetPreset.TryGetCustomData(outLightConfig) && bSuccess;
+
+	bSuccess = (outConstructionCost.LaborCostRate == constructionCost.LaborCostRate) && bSuccess;
+	bSuccess = (outLightConfig.Name == lightConfig.Name) && bSuccess;
+
+
+	// Slots
+	FGuid guid;
+	FGuid::Parse(TEXT("FEBDE851177B6A4A8905BC80203A6E1F"), guid);
+	const FBIMPresetInstance* presetInstance = bimDatabase.GetPresetCollection().PresetFromGUID(guid);
+
+	webPreset = FBIMWebPreset();
+	presetInstance->ToWebPreset(webPreset,nullptr);
+	FBIMPresetInstance outInstance;
+	outInstance.FromWebPreset(webPreset, nullptr);
+
+	bSuccess = (outInstance.PartSlots == presetInstance->PartSlots) && bSuccess;
+	bSuccess = (outInstance.SlotConfigPresetGUID == presetInstance->SlotConfigPresetGUID) && bSuccess;
+
+	UE_LOG(LogEngineAutomationTests, Log, TEXT("Modumate BIM Schema - Unit Test Completed %s"), bSuccess ? TEXT("PASSED") : TEXT("FAILED"));
+	return bSuccess;
+}
 
 DEFINE_LATENT_AUTOMATION_COMMAND_ONE_PARAMETER(FWaitForModumateOnlineAssetsLoad, int32*, NumAssets);
 bool FWaitForModumateOnlineAssetsLoad::Update()
@@ -118,8 +188,8 @@ bool FModumateOnlineAssetsLoadBody::Update()
 
 	UModumateGameInstance* gameInstance = world->GetGameInstance<UModumateGameInstance>();
 	TArray<FBIMAssemblySpec> assemblies;
+	gameInstance->ObjectDatabase->GetPresetCollection().GetProjectAssembliesForObjectType(EObjectType::OTFurniture, assemblies);
 
-	controller->GetDocument()->GetPresetCollection().GetProjectAssembliesForObjectType(EObjectType::OTFurniture, assemblies);
 	// Create callback if needed
 #if 0
 	auto weakImporter = MakeWeakObjectPtr<AEditModelDatasmithImporter>(importer);

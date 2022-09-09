@@ -14,20 +14,29 @@ void UModumateMacSettings::SetMacSettingsEnabled(APostProcessVolume* ppv, bool b
 	{
 		return;
 	}
-	ppv->Settings.bOverride_ColorSaturationMidtones = true;
-	ppv->Settings.bOverride_ColorSaturationHighlights = true;
+	ppv->Settings.bOverride_ColorGamma = true;
+	ppv->Settings.bOverride_ColorGammaShadows = true;
+	ppv->Settings.bOverride_ColorGammaMidtones = true;
+	ppv->Settings.bOverride_ColorGammaHighlights = true;
+	
 	ppv->Settings.bOverride_ColorGainShadows = true;
 	ppv->Settings.bOverride_FilmShoulder = true;
 	if (bIsMacEnabled)
 	{
-		ppv->Settings.ColorSaturationMidtones = FVector4(MacMidtoneSaturation, MacMidtoneSaturation, MacMidtoneSaturation, 1.0f);
-		ppv->Settings.ColorSaturationHighlights = FVector4(MacHighlightsSaturation, MacHighlightsSaturation, MacHighlightsSaturation, 1.0f);
+		ppv->Settings.ColorGamma = FVector4(MacGlobalGamma, MacGlobalGamma, MacGlobalGamma, 1.0f);
+		ppv->Settings.ColorGammaShadows = FVector4(MacShadowsGamma, MacShadowsGamma, MacShadowsGamma, 1.0f);
+		ppv->Settings.ColorGammaMidtones = FVector4(MacMidtonesGamma, MacMidtonesGamma, MacMidtonesGamma, 1.0f);
+		ppv->Settings.ColorGammaHighlights = FVector4(MacHighlightsGamma, MacHighlightsGamma, MacHighlightsGamma, 1.0f);
+		
 		ppv->Settings.ColorGainShadows = FVector4(MacShadowsGain, MacShadowsGain, MacShadowsGain, 1.0f);
 		ppv->Settings.FilmShoulder = MacShoulder;
 	}
 	else {
-		ppv->Settings.ColorSaturationMidtones = FVector4(MidtoneSaturation, MidtoneSaturation, MidtoneSaturation, 1.0f);
-		ppv->Settings.ColorSaturationHighlights = FVector4(HighlightsSaturation, HighlightsSaturation, HighlightsSaturation, 1.0f);
+		ppv->Settings.ColorGamma = FVector4(GlobalGamma, GlobalGamma, GlobalGamma, 1.0f);
+		ppv->Settings.ColorGammaShadows = FVector4(ShadowsGamma, ShadowsGamma, ShadowsGamma, 1.0f);
+		ppv->Settings.ColorGammaMidtones = FVector4(MidtonesGamma, MidtonesGamma, MidtonesGamma, 1.0f);
+		ppv->Settings.ColorGammaHighlights = FVector4(HighlightsGamma, HighlightsGamma, HighlightsGamma, 1.0f);
+		
 		ppv->Settings.ColorGainShadows = FVector4(ShadowsGain, ShadowsGain, ShadowsGain, 1.0f);
 		ppv->Settings.FilmShoulder = Shoulder;
 	}

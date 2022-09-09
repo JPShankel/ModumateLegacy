@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Database/ModumateObjectDatabase.h"
 #include "DocumentManagement/DocumentDelta.h"
 #include "DocumentManagement/DocumentSettings.h"
 #include "DocumentManagement/ModumateSerialization.h"

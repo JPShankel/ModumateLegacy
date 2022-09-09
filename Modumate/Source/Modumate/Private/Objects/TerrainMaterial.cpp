@@ -173,6 +173,10 @@ void AMOITerrainMaterial::SetupSiteMaterials()
 {
 	const FBIMPresetCollection& presets = GetDocument()->GetPresetCollection();
 	UModumateGameInstance* gameInstance = GetWorld()->GetGameInstance<UModumateGameInstance>();
+	if (!gameInstance || !gameInstance->ObjectDatabase)
+	{
+		return;
+	}
 
 	MaterialGuids.Empty();
 	TArray<FGuid> presetGuids;

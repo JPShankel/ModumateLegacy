@@ -14,6 +14,7 @@
 
 #include "BIMPresetInstance.generated.h"
 
+class FModumateDatabase;
 struct FBIMKey;
 
 /*
@@ -317,7 +318,7 @@ struct MODUMATE_API FBIMPresetInstance
 	EBIMResult GetForm(const UModumateDocument* InDocument,FBIMPresetForm& OutForm) const;
 	EBIMResult UpdateFormElements(const UModumateDocument* InDocument, FBIMPresetForm& RefForm) const;
 	EBIMResult MakeDeltaForFormElement(const FBIMPresetFormElement& FormElement, FBIMPresetEditorDelta& OutDelta) const;
-	EBIMResult ApplyDelta(const UModumateDocument* InDocument,const FBIMPresetEditorDelta& Delta);
+	EBIMResult ApplyDelta(const UModumateDocument* InDocument,const FModumateDatabase& InDB, const FBIMPresetEditorDelta& Delta);
 
 	EBIMResult HandleMaterialBindingDelta(const FBIMPresetEditorDelta& Delta);
 	EBIMResult HandleLayerPriorityGroupDelta(const FBIMPresetEditorDelta& Delta);
@@ -342,13 +343,13 @@ struct MODUMATE_API FBIMPresetInstance
 	bool HasPin(int32 PinSetIndex, int32 PinSetPosition) const;
 	bool HasOpenPin() const;
 
-	EBIMResult SetMaterialChannelsForMesh(const FBIMPresetCollection& PresetCollection, const FGuid& InMeshGuid);
+	EBIMResult SetMaterialChannelsForMesh(const FModumateDatabase& InDB, const FGuid& InMeshGuid);
 
 	bool ValidatePreset() const;
 
 	EBIMResult GetModularDimensions(FVector& OutDimensions, float& OutBevelWidth,float& OutThickness) const;
 
-	EBIMResult UpgradeData(const FBIMPresetCollectionProxy& PresetCollection, int32 InDocVersion);
+	EBIMResult UpgradeData(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, int32 InDocVersion);
 
 	EBIMResult ToWebPreset(FBIMWebPreset& OutPreset, UWorld* World) const;
 	EBIMResult FromWebPreset(const FBIMWebPreset& InPreset, UWorld* World);

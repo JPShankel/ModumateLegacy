@@ -1,10 +1,10 @@
 // Copyright 2018 Modumate, Inc.All Rights Reserved.
 
 #include "BIMKernel/AssemblySpec/BIMExtrusionSpec.h"
-#include "BIMKernel/Presets/BIMPresetCollection.h"
+#include "Database/ModumateObjectDatabase.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 
-EBIMResult FBIMExtrusionSpec::BuildFromProperties(const FBIMPresetCollectionProxy& PresetCollection)
+EBIMResult FBIMExtrusionSpec::BuildFromProperties(const FModumateDatabase& InDB)
 {
 	FModumateUnitValue xDim, yDim;
 	if (Properties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::Diameter, xDim))
@@ -20,7 +20,7 @@ EBIMResult FBIMExtrusionSpec::BuildFromProperties(const FBIMPresetCollectionProx
 	FGuid profileKey;
 	if (ensureAlways(Properties.TryGetProperty(EBIMValueScope::Profile, BIMPropertyNames::AssetID,profileKey) && profileKey.IsValid()))
 	{
-		const FSimpleMeshRef* trimMesh = PresetCollection.GetSimpleMeshByGUID(profileKey);
+		const FSimpleMeshRef* trimMesh = InDB.GetSimpleMeshByGUID(profileKey);
 
 		if (ensureAlways(trimMesh != nullptr))
 		{

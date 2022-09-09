@@ -6,7 +6,7 @@
 #include "BIMKernel/AssemblySpec/BIMPartLayout.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "BIMKernel/Presets/BIMPresetMaterialBinding.h"
-
+#include "Database/ModumateObjectDatabase.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/ModumateConsoleCommand.h"
 #include "ModumateCore/ModumateUnits.h"
@@ -15,12 +15,11 @@
 #include "Algo/Accumulate.h"
 #include "Containers/Queue.h"
 
-EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetCollection, const FGuid& InPresetGUID)
+EBIMResult FBIMAssemblySpec::FromPreset(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, const FGuid& InPresetGUID)
 {
 	Reset();
 	EBIMResult ret = EBIMResult::Success;
 	PresetGUID = InPresetGUID;
-
 
 	/*
 	We build an assembly spec by iterating through the tree of presets and assigning BIM values to specific targets like structural layers, risers, treads, etc		
@@ -168,13 +167,13 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 			// TODO: derive zone id from preset and pin, just a sequence for now
 			presetIterator.TargetLayer->PresetZoneID = presetIterator.Preset->DisplayName.ToString() + FString::Printf(TEXT("%d"), ++zoneID);
 			presetIterator.TargetLayer->ZoneDisplayName = presetIterator.TargetLayer->PresetZoneID;
-			presetIterator.TargetLayer->UpdatePatternFromPreset(PresetCollection, *presetIterator.Preset);
+			presetIterator.TargetLayer->UpdatePatternFromPreset(InDB, *presetIterator.Preset);
 		}
 		else if (presetIterator.Preset->NodeScope == EBIMValueScope::Module || presetIterator.Preset->NodeScope == EBIMValueScope::Gap)
 		{
 			if (ensureAlways(presetIterator.TargetLayer != nullptr))
 			{
-				presetIterator.TargetLayer->UpdatePatternFromPreset(PresetCollection, *presetIterator.Preset);
+				presetIterator.TargetLayer->UpdatePatternFromPreset(InDB, *presetIterator.Preset);
 			}
 		}
 		else if (
@@ -307,7 +306,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 			FGuid meshAsset;
 			if (partPreset->Properties.TryGetProperty(EBIMValueScope::Mesh, BIMPropertyNames::AssetID, meshAsset))
 			{
-				const FArchitecturalMesh* mesh = PresetCollection.GetArchitecturalMeshByGUID(meshAsset);
+				const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByGUID(meshAsset);
 				if (!ensureAlways(mesh != nullptr))
 				{
 					ret = EBIMResult::Error;
@@ -323,7 +322,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 				for (auto& matBinding : bindingSet.MaterialBindings)
 				{
 					FArchitecturalMaterial newMat;
-					if (ensureAlways(matBinding.GetEngineMaterial(PresetCollection, newMat) == EBIMResult::Success))
+					if (ensureAlways(matBinding.GetEngineMaterial(InDB, newMat) == EBIMResult::Success))
 					{
 						partSpec.ChannelMaterials.Add(matBinding.Channel, newMat);
 					}
@@ -384,7 +383,7 @@ EBIMResult FBIMAssemblySpec::FromPreset(const FBIMPresetCollectionProxy& PresetC
 	// All assembly specs must bind to an object type
 	if (ret == EBIMResult::Success && ObjectType != EObjectType::OTNone)
 	{
-		return DoMakeAssembly(PresetCollection);
+		return DoMakeAssembly(InDB, PresetCollection);
 	}
 
 	return ret;
@@ -435,7 +434,7 @@ FVector FBIMAssemblySpec::GetCompoundAssemblyNativeSize() const
 	return nativeSize;
 }
 
-EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FBIMPresetCollectionProxy& PresetCollection)
+EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FModumateDatabase& InDB)
 {
 	FModumateUnitValue dimension;
 	if (RootProperties.TryGetProperty(EBIMValueScope::Dimension, BIMPropertyNames::ToeKickDepth, dimension))
@@ -463,7 +462,7 @@ EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FBIMPresetCollectionProxy
 		const auto& binding = MaterialBindingSet.MaterialBindings[0];
 
 		FBIMExtrusionSpec& extrusion = Extrusions.AddDefaulted_GetRef();
-		if (ensureAlways(binding.GetEngineMaterial(PresetCollection, extrusion.Material) == EBIMResult::Success))
+		if (ensureAlways(binding.GetEngineMaterial(InDB, extrusion.Material) == EBIMResult::Success))
 		{
 #if WITH_EDITOR
 			FBIMPartLayout layout;
@@ -476,7 +475,7 @@ EBIMResult FBIMAssemblySpec::MakeCabinetAssembly(const FBIMPresetCollectionProxy
 	return EBIMResult::Error;
 }
 
-EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FBIMPresetCollectionProxy& PresetCollection)
+EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FModumateDatabase& InDB)
 {
 	// TODO: "Stubby" temporary FFE don't have parts, just one mesh on their root
 	if (Parts.Num() == 0)
@@ -522,7 +521,7 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FBIMPresetCollectionProxy&
 			return EBIMResult::Error;
 		}
 
-		const FArchitecturalMesh* mesh = PresetCollection.GetArchitecturalMeshByGUID(meshKey);
+		const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByGUID(meshKey);
 		if (mesh == nullptr)
 		{
 			return EBIMResult::Error;
@@ -547,7 +546,7 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FBIMPresetCollectionProxy&
 			for (auto& matBinding : MaterialBindingSet.MaterialBindings)
 			{
 				FArchitecturalMaterial aMat;
-				if (matBinding.GetEngineMaterial(PresetCollection, aMat) == EBIMResult::Success)
+				if (matBinding.GetEngineMaterial(InDB, aMat) == EBIMResult::Success)
 				{
 					partSlot.ChannelMaterials.Add(matBinding.Channel, aMat);
 				}
@@ -559,13 +558,13 @@ EBIMResult FBIMAssemblySpec::MakeRiggedAssembly(const FBIMPresetCollectionProxy&
 	return layout.FromAssembly(*this, FVector::OneVector);
 }
 
-EBIMResult FBIMAssemblySpec::MakeLayeredAssembly(const FBIMPresetCollectionProxy& PresetCollection)
+EBIMResult FBIMAssemblySpec::MakeLayeredAssembly(const FModumateDatabase& InDB)
 {
-	auto buildLayers = [PresetCollection](TArray<FBIMLayerSpec>& LayersToBuild)
+	auto buildLayers = [InDB](TArray<FBIMLayerSpec>& LayersToBuild)
 	{
 		for (auto& layer : LayersToBuild)
 		{
-			EBIMResult res = layer.BuildFromProperties(PresetCollection);
+			EBIMResult res = layer.BuildFromProperties(InDB);
 			if (res != EBIMResult::Success)
 			{
 				return res;
@@ -596,7 +595,7 @@ EBIMResult FBIMAssemblySpec::MakeLayeredAssembly(const FBIMPresetCollectionProxy
 	return res;
 }
 
-EBIMResult FBIMAssemblySpec::MakeExtrudedAssembly(const FBIMPresetCollectionProxy& PresetCollection)
+EBIMResult FBIMAssemblySpec::MakeExtrudedAssembly(const FModumateDatabase& InDB)
 {
 	if (MaterialBindingSet.MaterialBindings.Num() == 0)
 	{
@@ -606,12 +605,12 @@ EBIMResult FBIMAssemblySpec::MakeExtrudedAssembly(const FBIMPresetCollectionProx
 	const auto& binding = MaterialBindingSet.MaterialBindings[0];
 
 	FArchitecturalMaterial newMat;
-	if (ensureAlways(binding.GetEngineMaterial(PresetCollection, newMat) == EBIMResult::Success))
+	if (ensureAlways(binding.GetEngineMaterial(InDB, newMat) == EBIMResult::Success))
 	{
 		for (auto& extrusion : Extrusions)
 		{
 			extrusion.Material = newMat;
-			EBIMResult res = extrusion.BuildFromProperties(PresetCollection);
+			EBIMResult res = extrusion.BuildFromProperties(InDB);
 			if (!ensureAlways(res == EBIMResult::Success))
 			{
 				return res;
@@ -638,7 +637,7 @@ FModumateUnitValue FBIMAssemblySpec::CalculateThickness() const
 	));
 }
 
-EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FBIMPresetCollectionProxy& PresetCollection)
+EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection)
 {
 	RootProperties.TryGetProperty(EBIMValueScope::Assembly,BIMPropertyNames::Name, DisplayName);
 	RootProperties.TryGetProperty(EBIMValueScope::Assembly, BIMPropertyNames::Comments, Comments);
@@ -651,7 +650,7 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FBIMPresetCollectionProxy& Pre
 	case EObjectType::OTTrim:
 	case EObjectType::OTStructureLine:
 	case EObjectType::OTMullion:
-		return MakeExtrudedAssembly(PresetCollection);
+		return MakeExtrudedAssembly(InDB);
 
 	case EObjectType::OTFloorSegment:
 	case EObjectType::OTWallSegment:
@@ -661,7 +660,7 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FBIMPresetCollectionProxy& Pre
 	case EObjectType::OTCountertop:
 	case EObjectType::OTSystemPanel:
 	case EObjectType::OTFinish:
-		return MakeLayeredAssembly(PresetCollection);
+		return MakeLayeredAssembly(InDB);
 
 	case EObjectType::OTStaircase:
 	{
@@ -675,7 +674,7 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FBIMPresetCollectionProxy& Pre
 			// Prevent divide by zero errors with treads of ludicrous size
 			TreadDepthCentimeters = 1.0f;
 		}
-		return MakeLayeredAssembly(PresetCollection);
+		return MakeLayeredAssembly(InDB);
 	}
 
 	case EObjectType::OTDoor:
@@ -684,10 +683,10 @@ EBIMResult FBIMAssemblySpec::DoMakeAssembly(const FBIMPresetCollectionProxy& Pre
 	case EObjectType::OTPointHosted:
 	case EObjectType::OTEdgeHosted:
 	case EObjectType::OTFaceHosted:
-		return MakeRiggedAssembly(PresetCollection);
+		return MakeRiggedAssembly(InDB);
 
 	case EObjectType::OTCabinet:
-		return MakeCabinetAssembly(PresetCollection);
+		return MakeCabinetAssembly(InDB);
 
 	// Presets that carry their own data don't need an assembly
 	case EObjectType::OTDesignOption:

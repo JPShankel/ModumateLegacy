@@ -7,7 +7,7 @@
 
 TMap<FString, FPartNamedDimension> FBIMPartSlotSpec::NamedDimensionMap;
 
-EBIMResult FBIMPartSlotSpec::BuildFromProperties(const FBIMPresetCollectionProxy& InDB)
+EBIMResult FBIMPartSlotSpec::BuildFromProperties(const FModumateDatabase& InDB)
 {
 	// TODO: not yet implemented
 	ensureAlways(false);

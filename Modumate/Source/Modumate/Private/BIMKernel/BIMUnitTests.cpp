@@ -8,7 +8,7 @@
 #include "BIMKernel/Presets/BIMPresetCollection.h"
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/Core/BIMKey.h"
-
+#include "Database/ModumateObjectDatabase.h"
 
 static bool testKeys()
 {
@@ -195,4 +195,13 @@ bool testPreset(const FBIMPresetCollection &PresetCollection, const FGuid& Prese
 	}
 	// TODO: node editor tests
 	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FModumateCraftingUnitTest, "Modumate.Database.ModumateCrafting.UnitTest", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::HighPriority)
+bool FModumateCraftingUnitTest::RunTest(const FString &Parameters)
+{
+	bool bSuccess = testTags();
+	bSuccess = testKeys() && bSuccess;
+
+	return bSuccess;
 }

@@ -3,7 +3,7 @@
 #include "BIMKernel/Presets/BIMPresetInstance.h"
 #include "BIMKernel/Presets/BIMPresetEditor.h"
 #include "BIMKernel/Presets/BIMPresetCollection.h"
-
+#include "Database/ModumateObjectDatabase.h"
 #include "ModumateCore/ModumateDimensionStatics.h"
 #include "ModumateCore/EnumHelpers.h"
 #include "DocumentManagement/ModumateDocument.h"
@@ -406,7 +406,7 @@ EBIMResult FBIMPresetInstance::HandleLayerPriorityValueDelta(const FBIMPresetEdi
 	return EBIMResult::Error;
 }
 
-EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,const FBIMPresetEditorDelta& Delta)
+EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,const FModumateDatabase& InDB,const FBIMPresetEditorDelta& Delta)
 {
 	switch (Delta.FieldType)
 	{
@@ -467,7 +467,7 @@ EBIMResult FBIMPresetInstance::ApplyDelta(const UModumateDocument* InDocument,co
 			FGuid guid;
 			if (FGuid::Parse(Delta.NewStringRepresentation, guid))
 			{
-				SetMaterialChannelsForMesh(InDocument->GetPresetCollection(),guid);
+				SetMaterialChannelsForMesh(InDB, guid);
 				FLightConfiguration lightConfig;
 				if (TryGetCustomData(lightConfig))
 				{
@@ -902,7 +902,7 @@ EBIMResult FBIMPresetInstance::GetForm(const UModumateDocument* InDocument,FBIMP
 * 1. Remove any current channels the new mesh does not carry
 * 2. Add default mappings for any channels in the new mesh that the preset doesn't have
 */
-EBIMResult FBIMPresetInstance::SetMaterialChannelsForMesh(const FBIMPresetCollection& PresetCollection, const FGuid& InMeshGuid)
+EBIMResult FBIMPresetInstance::SetMaterialChannelsForMesh(const FModumateDatabase& InDB, const FGuid& InMeshGuid)
 {
 	FBIMPresetMaterialBindingSet bindingSet;
 
@@ -911,7 +911,7 @@ EBIMResult FBIMPresetInstance::SetMaterialChannelsForMesh(const FBIMPresetCollec
 		return EBIMResult::Error;
 	}
 
-	const FArchitecturalMesh* mesh = PresetCollection.GetArchitecturalMeshByGUID(InMeshGuid);
+	const FArchitecturalMesh* mesh = InDB.GetArchitecturalMeshByGUID(InMeshGuid);
 	if (mesh == nullptr || !mesh->EngineMesh.IsValid())
 	{
 		return EBIMResult::Error;
@@ -941,7 +941,7 @@ EBIMResult FBIMPresetInstance::SetMaterialChannelsForMesh(const FBIMPresetCollec
 		});
 
 
-	FGuid defaultMaterialGuid = PresetCollection.DefaultMaterialGUID;
+	FGuid defaultMaterialGuid = InDB.GetDefaultMaterialGUID();
 	// Add default bindings for any new channels
 	for (auto& staticMat : staticMats)
 	{
@@ -1049,7 +1049,7 @@ EBIMResult FBIMPresetInstance::GetModularDimensions(FVector& OutDimensions, floa
 	return EBIMResult::Error;
 }
 
-EBIMResult FBIMPresetInstance::UpgradeData(const FBIMPresetCollectionProxy& PresetCollection, int32 InDocVersion)
+EBIMResult FBIMPresetInstance::UpgradeData(const FModumateDatabase& InDB, const FBIMPresetCollectionProxy& PresetCollection, int32 InDocVersion)
 {
 	// Prior to version 12, some NCPs had spaces
 	if (InDocVersion < 12)

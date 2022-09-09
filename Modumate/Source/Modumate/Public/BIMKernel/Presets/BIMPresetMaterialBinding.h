@@ -21,7 +21,6 @@ enum class EMaterialChannelFields : uint8
 
 class FModumateDatabase;
 struct FArchitecturalMaterial;
-class FBIMPresetCollectionProxy;
 
 USTRUCT()
 struct MODUMATE_API FBIMPresetMaterialBinding
@@ -43,7 +42,7 @@ struct MODUMATE_API FBIMPresetMaterialBinding
 	UPROPERTY()
 	float ColorTintVariationPercent = 0;
 
-	EBIMResult GetEngineMaterial(const FBIMPresetCollectionProxy& PresetCollection, FArchitecturalMaterial& OutMaterial) const;
+	EBIMResult GetEngineMaterial(const FModumateDatabase& DB, FArchitecturalMaterial& OutMaterial) const;
 
 	bool operator==(const FBIMPresetMaterialBinding& RHS) const;
 	bool operator!=(const FBIMPresetMaterialBinding& RHS) const;

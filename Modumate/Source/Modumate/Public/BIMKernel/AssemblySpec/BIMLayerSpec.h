@@ -24,12 +24,12 @@ struct MODUMATE_API FBIMLayerSpec
 	friend struct FBIMAssemblySpec;
 private:
 
-	EBIMResult BuildPatternedLayer(const FBIMPresetCollectionProxy& InDB);
-	EBIMResult BuildFromProperties(const FBIMPresetCollectionProxy& PresetCollection);
+	EBIMResult BuildPatternedLayer(const FModumateDatabase& InDB);
+	EBIMResult BuildFromProperties(const FModumateDatabase& InDB);
 	void EvaluateParameterizedPatternExtents();
 	static void PopulatePatternModuleVariables(TMap<FString, float>& patternExprVars, const FVector& moduleDims, int32 moduleIdx);
 
-	EBIMResult UpdatePatternFromPreset(const FBIMPresetCollectionProxy& InDB, const FBIMPresetInstance& Preset);
+	EBIMResult UpdatePatternFromPreset(const FModumateDatabase& InDB, const FBIMPresetInstance& Preset);
 
 public:
 	UPROPERTY()

@@ -3,7 +3,7 @@
 #include "UnrealClasses/EditModelPlayerState.h"
 
 #include "Algo/Transform.h"
-
+#include "Database/ModumateObjectDatabase.h"
 #include "Objects/ModumateObjectEnums.h"
 #include "DocumentManagement/ModumateCommands.h"
 #include "DocumentManagement/ModumateDocument.h"
