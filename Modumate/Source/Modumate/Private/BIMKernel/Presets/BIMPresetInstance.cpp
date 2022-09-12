@@ -1129,6 +1129,7 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 	MyTagPath = InPreset.tagPath;
 	DisplayName = FText::FromString(InPreset.name);
 	GUID = InPreset.guid;
+	UModumateGameInstance* gameInstance = nullptr;
 	AEditModelGameState* gameState = World ? Cast<AEditModelGameState>(World->GetGameState()) : nullptr;
 
 	if (gameState) {
@@ -1143,6 +1144,12 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 				NodeScope = rootPreset->NodeScope;
 				ParentTagPaths = rootPreset->ParentTagPaths;
 				ObjectType = rootPreset->ObjectType;
+
+				gameInstance = Cast<UModumateGameInstance>(gameState->GetGameInstance());
+				if (gameInstance != nullptr)
+				{
+					gameInstance->ObjectDatabase->AddAssetsFromPreset(*rootPreset);
+				}
 			}
 		}
 	}
@@ -1162,6 +1169,10 @@ EBIMResult FBIMPresetInstance::FromWebPreset(const FBIMWebPreset& InPreset, UWor
 		FBIMPresetInstance* preset = gameState->Document->GetPresetCollection().PresetFromGUID(child);
 		if (preset) {
 			AddChildPreset(child, 0, setPosition++);
+			if (gameInstance != nullptr)
+			{
+				gameInstance->ObjectDatabase->AddAssetsFromPreset(*preset);
+			}
 		}
 	}
 
